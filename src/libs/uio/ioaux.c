@@ -71,7 +71,7 @@ uio_walkPhysicalPath(uio_PDirHandle *startPDirHandle, const char *path,
 
 	uio_PDirHandle_ref(startPDirHandle);
 	pDirHandle = startPDirHandle;
-	tempBuf = uio_malloc(strlen(path) + 1);
+	tempBuf = (char*)uio_malloc(strlen(path) + 1);
 			// XXX: Use a dynamically allocated array when moving to C99.
 	pathEnd = path + pathLen;
 	getFirstPathComponent(path, pathEnd, &partStart, &partEnd);
@@ -134,7 +134,7 @@ uio_makePath(uio_PDirHandle *pDirHandle, const char *path, size_t pathLen,
 
 	pathEnd = path + pathLen;
 	
-	buf = uio_malloc(pathLen + 1);
+	buf = (char*)uio_malloc(pathLen + 1);
 			// worst case length
 			// XXX: Use a dynamically allocated array when moving to C99.
 
@@ -219,7 +219,7 @@ uio_copyFilePhysical(uio_PDirHandle *fromDir, const char *fromName,
 		return copyError(errno, fromHandler, fromHandle,
 				toHandler, NULL, NULL, NULL, NULL);
 
-	buf = uio_malloc(BUFSIZE);
+	buf = (char*)uio_malloc(BUFSIZE);
 			// not allocated on the stack, as this function may be called
 			// from a thread with little stack space.
 	while (1) {
@@ -650,9 +650,9 @@ uio_getPathPhysicalDirs(uio_DirHandle *dirHandle, const char *path,
 
 	// fill pDirHandles with all the PDirHandles for the path
 	numPDirHandles = uio_mountTreeCountPLocs(tree);
-	pDirHandles = uio_malloc(numPDirHandles * sizeof (uio_PDirHandle *));
+	pDirHandles = (uio_PDirHandle**)uio_malloc(numPDirHandles * sizeof (uio_PDirHandle *));
 	if (resItems != NULL) {
-		items = uio_malloc(numPDirHandles * sizeof (uio_MountTreeItem *));
+		items = (uio_MountTreeItem**)uio_malloc(numPDirHandles * sizeof (uio_MountTreeItem *));
 	} else {
 		items = NULL;  // satisfy compiler
 	}
@@ -690,10 +690,10 @@ uio_getPathPhysicalDirs(uio_DirHandle *dirHandle, const char *path,
 
 	uio_free(fullPath);
 
-	*resPDirHandles = uio_realloc(pDirHandles,
+	*resPDirHandles = (uio_PDirHandle**)uio_realloc(pDirHandles,
 			numPDirHandles * sizeof (uio_PDirHandle *));
 	if (resItems != NULL)
-		*resItems = uio_realloc(items,
+		*resItems = (uio_MountTreeItem**)uio_realloc(items,
 				numPDirHandles * sizeof (uio_MountTreeItem *));
 	*resNumPDirHandles = numPDirHandles;
 
@@ -852,14 +852,14 @@ uio_resolvePath(uio_DirHandle *dirHandle, const char *path, size_t pathLen,
 	}
 
 	if (len == 0) {
-		*destPath = uio_malloc(1);
+		*destPath = (char*)uio_malloc(1);
 		(*destPath)[0] = '\0';
 		return 0;
 	}
 
 	// len--;  // we don't want a '/' at the start
 	// len++;  // for the terminating '\0'
-	buffer = uio_malloc(len);
+	buffer = (char*)uio_malloc(len);
 	
 	// Pass 2: fill the buffer
 	endBufPtr = buffer + len - 1;

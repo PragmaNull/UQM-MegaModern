@@ -119,7 +119,7 @@ processFontChar (TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
 	// Currently, each font char has its own separate data
 	// but that can change to common mem area
 	dpitch = CharPtr->extent.width;
-	newdata = HMalloc (dpitch * CharPtr->extent.height * sizeof (BYTE));
+	newdata = (BYTE*)HMalloc (dpitch * CharPtr->extent.height * sizeof (BYTE));
 	TFB_DrawCanvas_GetFontCharData (canvas, newdata, dpitch);
 
 	CharPtr->data = newdata;
@@ -164,7 +164,7 @@ _GetCelData (uio_Stream *fp, DWORD length)
 	opos = uio_ftell (fp);
 
 	{
-		char *s1, *s2;
+		const char *s1, *s2;
 		char aniDirName[PATH_MAX];
 		const char *aniFileName;
 		uint8 buf[4] = { 0, 0, 0, 0 };
@@ -224,8 +224,8 @@ _GetCelData (uio_Stream *fp, DWORD length)
 		++cel_total;
 	}
 
-	img = HMalloc (sizeof (TFB_Canvas) * cel_total);
-	ani = HMalloc (sizeof (AniData) * cel_total);
+	img = (TFB_Canvas*)HMalloc (sizeof (TFB_Canvas) * cel_total);
+	ani = (AniData*)HMalloc (sizeof (AniData) * cel_total);
 	if (!img || !ani)
 	{
 		log_add (log_Warning, "Couldn't allocate space for '%s'", _cur_resfile_name);
@@ -316,7 +316,7 @@ _ReleaseCelData (void *handle)
 	int cel_ct;
 	FRAME FramePtr = NULL;
 
-	if ((DrawablePtr = handle) == 0)
+	if ((DrawablePtr = (DRAWABLE)handle) == 0)
 		return (FALSE);
 
 	cel_ct = DrawablePtr->MaxIndex + 1;
@@ -377,7 +377,7 @@ _GetFontData (uio_Stream *fp, DWORD length)
 	{
 		// font is zipped instead of being in a directory
 
-		char *s1, *s2;
+		const char *s1, *s2;
 		int n;
 		const char *fontZipName;
 		char fontDirName[PATH_MAX];
@@ -416,7 +416,7 @@ _GetFontData (uio_Stream *fp, DWORD length)
 	if (fontDirHandle == NULL)
 		goto err;
 		
-	bcds = HMalloc (numDirEntries * sizeof (BuildCharDesc));
+	bcds = (BuildCharDesc*)HMalloc (numDirEntries * sizeof (BuildCharDesc));
 	if (bcds == NULL)
 		goto err;
 

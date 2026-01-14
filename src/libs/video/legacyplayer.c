@@ -30,7 +30,7 @@ PlayLegacyVideo (LEGACY_VIDEO vid)
 
 	if (!vid)
 		return NULL;
-	ref = HCalloc (sizeof (*ref));
+	ref = (LEGACY_VIDEO_REF)HCalloc (sizeof (*ref));
 	if (!ref)
 		return NULL;
 	name = vid->video;
@@ -80,5 +80,5 @@ PlayingLegacyVideo (LEGACY_VIDEO_REF ref)
 {
 	if (!ref)
 		return FALSE;
-	return TFB_VideoPlaying (ref->vidref);
+	return (BOOLEAN)TFB_VideoPlaying (ref->vidref);
 }

@@ -341,7 +341,7 @@ SplitSubPages (UNICODE *text, UNICODE *pages[], sint32 timestamp[], int size)
 		//   are used exclusively
 		aft_ellips = 3 * (text[pos] != '\0' && pos > 0 &&
 				!ispunct (text[pos - 1]) && !isspace (text[pos - 1]));
-		pages[page] = HMalloc (sizeof (UNICODE) *
+		pages[page] = (UNICODE*)HMalloc (sizeof (UNICODE) *
 				(lead_ellips + pos + aft_ellips + 1));
 		if (lead_ellips)
 			strcpy (pages[page], "...");
@@ -433,7 +433,7 @@ SpliceMultiTrack (UNICODE *TrackNames[], UNICODE *TrackText)
 
 	slen1 = strlen (last_sub->text);
 	slen2 = strlen (TrackText);
-	last_sub->text = HRealloc (last_sub->text, slen1 + slen2 + 1);
+	last_sub->text = (UNICODE*)HRealloc (last_sub->text, slen1 + slen2 + 1);
 	strcpy (last_sub->text + slen1, TrackText);
 
 	no_page_break = 1;
@@ -485,7 +485,7 @@ SpliceTrack (UNICODE *TrackName, UNICODE *TrackText, UNICODE *TimeStamp, Callbac
 		// Add the first piece to the last subtitle page
 		slen1 = strlen (last_sub->text);
 		slen2 = strlen (pages[0]);
-		last_sub->text = HRealloc (last_sub->text, slen1 + slen2 + 1);
+		last_sub->text = (UNICODE*)HRealloc (last_sub->text, slen1 + slen2 + 1);
 		strcpy (last_sub->text + slen1, pages[0]);
 		HFree (pages[0]);
 		
@@ -543,7 +543,7 @@ SpliceTrack (UNICODE *TrackName, UNICODE *TrackText, UNICODE *TimeStamp, Callbac
 
 			slen1 = strlen (last_sub->text);
 			slen2 = strlen (pages[0]);
-			last_sub->text = HRealloc (last_sub->text, slen1 + slen2 + 1);
+			last_sub->text = (UNICODE*)HRealloc (last_sub->text, slen1 + slen2 + 1);
 			strcpy (last_sub->text + slen1, pages[0]);
 			HFree (pages[0]);
 		}
@@ -794,7 +794,7 @@ TFB_SoundChunk *
 create_SoundChunk (TFB_SoundDecoder *decoder, float start_time)
 {
 	TFB_SoundChunk *chunk;
-	chunk = HCalloc (sizeof (*chunk));
+	chunk = (TFB_SoundChunk*)HCalloc (sizeof (*chunk));
 	chunk->decoder = decoder;
 	chunk->start_time = start_time;
 	return chunk;

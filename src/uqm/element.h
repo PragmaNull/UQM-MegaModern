@@ -172,7 +172,7 @@ struct element
 static inline BOOLEAN
 elementsOfSamePlayer (ELEMENT *ElementPtr0, ELEMENT *ElementPtr1)
 {
-	return ElementPtr0->playerNr == ElementPtr1->playerNr;
+	return (BOOLEAN)(ElementPtr0->playerNr == ElementPtr1->playerNr);
 }
 
 extern QUEUE disp_q;
@@ -189,8 +189,8 @@ extern PRIMITIVE DisplayArray[MAX_DISPLAY_PRIMS];
 #define FreeDisplayPrim(p) SetPrimLinks (&DisplayArray[p], END_OF_LIST, DisplayFreeList); \
 								DisplayFreeList = (p)
 
-#define GetElementStarShip(e,ppsd) do { *(ppsd) = (e)->pParent; } while (0)
-#define SetElementStarShip(e,psd)  do { (e)->pParent = psd; } while (0)
+#define GetElementStarShip(e,ppsd) do { *(ppsd) = (STARSHIP*)(e)->pParent; } while (0)
+#define SetElementStarShip(e,psd)  do { (e)->pParent = (STARSHIP*)psd; } while (0)
 
 #define MAX_CREW_SIZE 42
 #define MAX_ENERGY_SIZE 42

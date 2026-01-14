@@ -65,7 +65,7 @@ volatile int GameActive = 1; // Track the SDL_ACTIVEEVENT state SDL_APPACTIVE
 static inline BOOLEAN
 IsWholeScreen (RECT *r)
 {
-	return (r->corner.x == 0 && r->corner.y == 0 &&
+	return (BOOLEAN)(r->corner.x == 0 && r->corner.y == 0 &&
 		r->extent.width == CanvasWidth && r->extent.height == CanvasHeight);
 }
 
@@ -230,7 +230,7 @@ TFB_ProcessEvents ()
 	}
 }
 
-static BOOLEAN system_box_active = 0;
+static bool system_box_active = false;
 static SDL_Rect system_box;
 
 void
@@ -697,7 +697,7 @@ TFB_ScreenShot (void)
 	if (len < 0)
 		return;
 
-	fullPath = HMalloc (len + 1);
+	fullPath = (char*)HMalloc (len + 1);
 	if (!fullPath)
 		return;
 

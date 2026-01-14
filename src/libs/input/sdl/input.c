@@ -181,7 +181,7 @@ initKeyConfig (void)
 		exit (EXIT_FAILURE);
 	}
 
-	controls = HCalloc (sizeof (*controls) * num_templ * num_flight
+	controls = (VCONTROL_GESTURE*)HCalloc (sizeof (*controls) * num_templ * num_flight
 			* MAX_FLIGHT_ALTERNATES);
 
 	/* First, load in the menu keys */
@@ -274,7 +274,7 @@ initJoystick (void)
 	len = snprintf (NULL, 0, "%s%sgamecontrollerdb.txt",
 			baseContentPath, slash);
 
-	mapping_db = HMalloc (len + 1);
+	mapping_db = (char*)HMalloc (len + 1);
 
 	snprintf (mapping_db, len + 1, "%s%sgamecontrollerdb.txt",
 		baseContentPath, slash);

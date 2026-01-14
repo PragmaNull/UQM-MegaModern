@@ -131,7 +131,7 @@ PropFile_from_file (uio_Stream *f, PROPERTY_HANDLER handler, const char *prefix)
 
 	flen = LengthResFile (f);
 
-	data = malloc (flen + 1);
+	data = (char*)malloc (flen + 1);
 	if (!data) {
 		return;
 	}

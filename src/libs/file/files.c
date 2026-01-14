@@ -91,7 +91,7 @@ copyFile (uio_DirHandle *srcDir, const char *srcName,
 	if (dst == NULL)
 		return copyError (src, NULL, NULL, NULL, NULL);
 	
-	buf = HMalloc(BUFSIZE);
+	buf = (uint8*)HMalloc(BUFSIZE);
 			// This was originally a statically allocated buffer,
 			// but as this function might be run from a thread with
 			// a small stack, this is better.

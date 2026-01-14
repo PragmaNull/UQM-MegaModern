@@ -282,7 +282,7 @@ _GetMusicData (uio_Stream *fp, DWORD length)
 		return NULL;
 	}
 
-	h = AllocMusicData (sizeof (void *));
+	h = (MUSIC_REF)AllocMusicData (sizeof (void *));
 	if (!h)
 	{
 		SoundDecoder_Free (decoder);
@@ -304,7 +304,7 @@ _GetMusicData (uio_Stream *fp, DWORD length)
 BOOLEAN
 _ReleaseMusicData (void *data)
 {
-	TFB_SoundSample **pmus = data;
+	TFB_SoundSample **pmus = (TFB_SoundSample**)data;
 	TFB_SoundSample *sample;
 
 	if (pmus == NULL)

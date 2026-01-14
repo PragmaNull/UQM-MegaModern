@@ -370,7 +370,7 @@ zip_open(uio_PDirHandle *pDirHandle, const char *name, int flags,
 	}
 #endif
 	
-	handle = uio_malloc(sizeof (zip_Handle));
+	handle = (zip_Handle*)uio_malloc(sizeof (zip_Handle));
 	uio_GPFile_ref(gPFile);
 	handle->file = gPFile;
 	handle->fileBlock = uio_openFileBlock2(pDirHandle->pRoot->handle,
@@ -415,7 +415,7 @@ zip_readStored(uio_Handle *handle, void *buf, size_t count) {
 
 	zipHandle = handle->native;
 	numBytes = uio_copyFileBlock(zipHandle->fileBlock,
-			zipHandle->uncompressedOffset, buf, count);
+			zipHandle->uncompressedOffset, (char*)buf, count);
 	if (numBytes == -1) {
 		// errno is set
 		return -1;
@@ -597,7 +597,7 @@ zip_seekDeflated(uio_Handle *handle, off_t offset) {
 		ssize_t numRead;
 		size_t toRead;
 
-		buffer = uio_malloc(zip_SEEK_BUFFER_SIZE);
+		buffer = (char*)uio_malloc(zip_SEEK_BUFFER_SIZE);
 		toRead = offset - zipHandle->uncompressedOffset;
 		while (toRead > 0) {
 			numRead = zip_read(handle, buffer,
@@ -792,7 +792,7 @@ zip_fillDirStructureCentralProcessEntry(uio_GPDir *topGPDir,
 	numBytes = uio_accessFileBlock(fileBlock, *pos, fileNameLength, &buf);
 	if (numBytes != fileNameLength)
 		return zip_badFile(gPFileData, NULL);
-	fileName = uio_malloc(fileNameLength + 1);
+	fileName = (char*)uio_malloc(fileNameLength + 1);
 	memcpy(fileName, buf, fileNameLength);
 	fileName[fileNameLength] = '\0';
 	*pos += fileNameLength;
@@ -1435,7 +1435,7 @@ zip_foundFile(uio_GPDir *gPDir, const char *path, zip_GPFileData *gPFileData) {
 			break;
 	}
 
-	buf = uio_malloc(pathLen + 1);
+	buf = (char*)uio_malloc(pathLen + 1);
 	getFirstPathComponent(rest, pathEnd, &start, &end);
 	while (1) {
 		uio_GPDir *newGPDir;
@@ -1506,7 +1506,7 @@ zip_foundDir(uio_GPDir *gPDir, const char *path, zip_GPDirData *gPDirData) {
 			break;
 	}
 
-	buf = uio_malloc(pathLen + 1);
+	buf = (char*)uio_malloc(pathLen + 1);
 	getFirstPathComponent(rest, pathEnd, &start, &end);
 	while (start < pathEnd) {
 		uio_GPDir *newGPDir;
@@ -1654,7 +1654,7 @@ zip_GPFileData_delete(zip_GPFileData *gPFileData) {
 
 static inline zip_GPFileData *
 zip_GPFileData_alloc(void) {
-	zip_GPFileData *result = uio_malloc(sizeof (zip_GPFileData));
+	zip_GPFileData *result = (zip_GPFileData*)uio_malloc(sizeof (zip_GPFileData));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(zip_GPFileData, (void *) result);
 #endif

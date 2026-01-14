@@ -147,20 +147,20 @@ DrawBatch (PRIMITIVE *lpBasePrim, PRIM_LINKS PrimLinks,
 					if (flags & HYPER_TO_QUASI_COLOR)
 						TFB_Prim_Stamp (&lpWorkPrim->Object.Stamp, 
 							MAKE_DRAW_MODE (DRAW_HYPTOQUAS, TRANSFER_ALPHA),
-							origin, flags & UNSCALED_STAMP);
+							origin, (BOOLEAN)(flags & UNSCALED_STAMP));
 					else
 						TFB_Prim_Stamp (&lpWorkPrim->Object.Stamp, mode,
-							origin, flags & UNSCALED_STAMP);
+							origin, (BOOLEAN)(flags & UNSCALED_STAMP));
 					break;
 				case STAMPFILL_PRIM:
 					color = GetPrimColor (lpWorkPrim);
 					if (flags & HS_STARMASK)
 						TFB_Prim_StampFill (&lpWorkPrim->Object.Stamp, color,
 							MAKE_DRAW_MODE (DRAW_OVERLAY, TRANSFER_ALPHA), 
-							origin, flags & UNSCALED_STAMP);
+							origin, (BOOLEAN)(flags & UNSCALED_STAMP));
 					else
 						TFB_Prim_StampFill (&lpWorkPrim->Object.Stamp, color,
-								mode, origin, flags & UNSCALED_STAMP);
+								mode, origin, (BOOLEAN)(flags & UNSCALED_STAMP));
 					break;
 				case LINE_PRIM:
 					color = GetPrimColor (lpWorkPrim);
@@ -237,7 +237,7 @@ DrawPoint (POINT *lpPoint)
 void
 InstaPoint (int x, int y)
 {
-	POINT origin = { x, y };
+	POINT origin = { (COORD)x, (COORD)y };
 	DrawPoint (&origin);
 }
 
@@ -257,7 +257,7 @@ DrawRectangle (RECT *lpRect, BOOLEAN scaled)
 void
 InstaRect (int x, int y, int w, int h, BOOLEAN scaled)
 {
-	RECT r = { {x, y}, { w, h } };
+	RECT r = { {(COORD)x, (COORD)y}, { (COORD)w, (COORD)h } };
 	DrawRectangle (&r, scaled);
 }
 
@@ -277,7 +277,7 @@ DrawFilledRectangle (RECT *lpRect)
 void
 InstaFilledRect (int x, int y, int w, int h)
 {
-	RECT r = { {x, y}, { w, h } };
+	RECT r = { {(COORD)x, (COORD)y}, { (COORD)w, (COORD)h } };
 	DrawFilledRectangle (&r);
 }
 
@@ -297,7 +297,7 @@ DrawLine (LINE *lpLine, BYTE thickness)
 void
 InstaLine (int x1, int y1, int x2, int y2)
 {
-	LINE line = { { x1, y1 }, { x2, y2 } };
+	LINE line = { { (COORD)x1, (COORD)y1 }, { (COORD)x2, (COORD)y2 } };
 	DrawLine (&line, 1);
 }
 

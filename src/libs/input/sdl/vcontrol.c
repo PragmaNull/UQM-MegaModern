@@ -119,7 +119,7 @@ static SDL_Event last_interesting;
 static keypool *
 allocate_key_chunk (void)
 {
-	keypool *x = HMalloc (sizeof (keypool));
+	keypool *x = (keypool*)HMalloc (sizeof (keypool));
 	if (x)
 	{
 		int i;
@@ -160,7 +160,7 @@ store_default_binding (int is_axis_binding, int axis, int polarity,
 	{
 		new_capacity = default_binding_capacity == 0
 				? 16 : default_binding_capacity * 2;
-		new_bindings = HRealloc (default_bindings,
+		new_bindings = (default_binding*)HRealloc (default_bindings,
 				sizeof (default_binding) *new_capacity);
 
 		if (!new_bindings)
@@ -248,7 +248,7 @@ create_joystick (int device_index)
 		current = current->next;
 	}
 
-	new_controller = HMalloc (sizeof (controller_list));
+	new_controller = (controller_list*)HMalloc (sizeof (controller_list));
 	if (!new_controller)
 	{
 		log_add (log_Warning,
@@ -260,8 +260,8 @@ create_joystick (int device_index)
 	x = &new_controller->gamepad;
 	x->numaxes = SDL_CONTROLLER_AXIS_MAX;
 	x->numbuttons = SDL_CONTROLLER_BUTTON_MAX;
-	x->axes = HMalloc (sizeof (axis_type) *x->numaxes);
-	x->buttons = HMalloc (sizeof (keybinding *) *x->numbuttons);
+	x->axes = (axis_type*)HMalloc (sizeof (axis_type) *x->numaxes);
+	x->buttons = (keybinding**)HMalloc (sizeof (keybinding *) *x->numbuttons);
 
 	for (int j = 0; j < x->numaxes; j++)
 	{

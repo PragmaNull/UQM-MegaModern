@@ -217,9 +217,9 @@ bool
 TFB_PlayVideo (VIDEO_REF vid, uint32 x, uint32 y)
 {
 	RECT scrn_r;
-	RECT clip_r = {{0, 0}, {vid->w, vid->h}};
+	RECT clip_r = {{0, 0}, {(COORD)vid->w, (COORD)vid->h}};
 	RECT vid_r = {{0, 0}, {CanvasWidth, CanvasHeight}};
-	RECT dr = {{x, y}, {vid->w, vid->h}};
+	RECT dr = {{(COORD)x, (COORD)y}, {(COORD)vid->w, (COORD)vid->h}};
 	RECT sr;
 	bool loop_music = false;
 	int ret;
@@ -286,7 +286,7 @@ TFB_PlayVideo (VIDEO_REF vid, uint32 x, uint32 y)
 	
 	loop_music = !vid->decoder->audio_synced && vid->loop_frame != VID_NO_LOOP;
 	if (vid->hAudio)
-		PLRPlaySong (vid->hAudio, loop_music, 1);
+		PLRPlaySong (vid->hAudio, (BOOLEAN)loop_music, 1);
 
 	if (vid->decoder->audio_synced)
 	{
@@ -382,7 +382,7 @@ TFB_SeekVideo (VIDEO_REF vid, uint32 pos)
 static void
 vp_BeginFrame (TFB_VideoDecoder* decoder)
 {
-	TFB_VideoClip* vid = decoder->data;
+	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
 	if (vid)
 		TFB_DrawCanvas_Lock (vid->frame->NormalImg);
@@ -391,7 +391,7 @@ vp_BeginFrame (TFB_VideoDecoder* decoder)
 static void
 vp_EndFrame (TFB_VideoDecoder* decoder)
 {
-	TFB_VideoClip* vid = decoder->data;
+	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
 	if (vid)
 		TFB_DrawCanvas_Unlock (vid->frame->NormalImg);
@@ -400,7 +400,7 @@ vp_EndFrame (TFB_VideoDecoder* decoder)
 static void*
 vp_GetCanvasLine (TFB_VideoDecoder* decoder, uint32 line)
 {
-	TFB_VideoClip* vid = decoder->data;
+	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
 	if (!vid)
 		return NULL;
@@ -420,7 +420,7 @@ vp_GetTicks (TFB_VideoDecoder* decoder)
 static bool
 vp_SetTimer (TFB_VideoDecoder* decoder, uint32 msecs)
 {
-	TFB_VideoClip* vid = decoder->data;
+	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
 	if (!vid)
 		return false;
@@ -433,7 +433,7 @@ vp_SetTimer (TFB_VideoDecoder* decoder, uint32 msecs)
 static bool
 vp_AudioStart (TFB_SoundSample* sample)
 {
-	TFB_VideoClip* vid = TFB_GetSoundSampleData (sample);
+	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData (sample);
 	TFB_SoundDecoder *decoder;
 
 	assert (sizeof (intptr_t) >= sizeof (vid));
@@ -451,7 +451,7 @@ vp_AudioStart (TFB_SoundSample* sample)
 static void
 vp_AudioEnd (TFB_SoundSample* sample)
 {
-	TFB_VideoClip* vid = TFB_GetSoundSampleData (sample);
+	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData (sample);
 
 	assert (vid != NULL);
 
@@ -463,7 +463,7 @@ vp_AudioEnd (TFB_SoundSample* sample)
 static void
 vp_BufferTag (TFB_SoundSample* sample, TFB_SoundTag* tag)
 {
-	TFB_VideoClip* vid = TFB_GetSoundSampleData (sample);
+	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData (sample);
 	uint32 frame = (uint32) tag->data;
 
 	assert (sizeof (tag->data) >= sizeof (frame));

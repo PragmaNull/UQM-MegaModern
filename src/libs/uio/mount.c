@@ -45,7 +45,7 @@ uio_repositoryAddMount(uio_Repository *repository,
 		case uio_MOUNT_TOP: {
 			uio_MountInfo **newMounts;
 
-			newMounts = uio_malloc(
+			newMounts = (uio_MountInfo**)uio_malloc(
 					(repository->numMounts + 2) * sizeof (uio_MountInfo *));
 			newMounts[0] = mountInfo;
 			memcpy(&newMounts[1], repository->mounts,
@@ -56,7 +56,7 @@ uio_repositoryAddMount(uio_Repository *repository,
 			break;
 		}
 		case uio_MOUNT_BOTTOM:
-			repository->mounts = uio_realloc(repository->mounts,
+			repository->mounts = (uio_MountInfo**)uio_realloc(repository->mounts,
 					(repository->numMounts + 2) * sizeof (uio_MountInfo *));
 			repository->mounts[repository->numMounts] = mountInfo;
 			repository->numMounts++;
@@ -126,7 +126,7 @@ uio_Repository_new(int flags) {
 	result->ref = 1;
 	result->flags = flags;
 	result->numMounts = 0;
-	result->mounts = uio_malloc(1 * sizeof (uio_MountInfo *));
+	result->mounts = (uio_MountInfo**)uio_malloc(1 * sizeof (uio_MountInfo *));
 	result->mounts[0] = NULL;
 	result->mountTree = uio_makeRootMountTree();
 	return result;
@@ -142,7 +142,7 @@ uio_Repository_unref(uio_Repository *repository) {
 
 static uio_Repository *
 uio_Repository_alloc(void) {
-	uio_Repository *result = uio_malloc(sizeof (uio_Repository));
+	uio_Repository *result = (uio_Repository*)uio_malloc(sizeof (uio_Repository));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_Repository, (void *) result);
 #endif

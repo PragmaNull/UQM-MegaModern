@@ -16,6 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+//#include <string_view>
 #include "options.h"
 #include "port.h"
 #include "resintrn.h"
@@ -42,6 +43,10 @@ loadResourceDesc (ResourceDesc *desc)
 void *
 LoadResourceFromPath (const char *path, ResourceLoadFileFun *loadFun)
 {
+	auto pathLen{ strlen(path) };
+
+	//std::string_view sv{ path };
+
 	uio_Stream *stream;
 	unsigned long dataLen;
 	void *resdata;
@@ -159,7 +164,7 @@ res_GetIntResource (RESOURCE res)
 BOOLEAN
 res_GetBooleanResource (RESOURCE res)
 {
-	return (res_GetIntResource (res) != 0);
+	return (BOOLEAN)(res_GetIntResource (res) != 0);
 }
 
 // NB: this function appears to be never called!

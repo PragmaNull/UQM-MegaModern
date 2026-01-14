@@ -526,7 +526,7 @@ SoundDecoder_Decode (TFB_SoundDecoder *decoder)
 			decoder->format == decoder_formats.mono16))
 	{
 		SoundDecoder_SwapWords (
-				decoder->buffer, decoded_bytes);
+				(uint16*)decoder->buffer, decoded_bytes);
 	}
 
 	return decoded_bytes;
@@ -583,7 +583,7 @@ SoundDecoder_DecodeAll (TFB_SoundDecoder *decoder)
 			decoder->format == decoder_formats.mono16))
 	{
 		SoundDecoder_SwapWords (
-				decoder->buffer, decoded_bytes);
+			(uint16*)decoder->buffer, decoded_bytes);
 	}
 
 	if (rc < 0)

@@ -251,7 +251,7 @@ mixSDL_Init (audio_Driver *driver, sint32 flags)
 
 	log_add (log_Info, "Initializing mixer.");
 	if (!mixer_Init (obtained.freq, MIX_FORMAT_MAKE (2, obtained.channels),
-			quality, 0))
+			quality, MIX_NOFLAGS))
 	{
 		log_add (log_Error, "Mixer initialization failed: %x",
 				mixer_GetError ());

@@ -39,7 +39,7 @@ InitVideoPlayer (BOOLEAN useCDROM)
 			fmt.Gmask, fmt.Bmask, 0))
 		return FALSE;
 
-	return TFB_InitVideoPlayer ();
+	return (BOOLEAN)TFB_InitVideoPlayer ();
 	
 	(void)useCDROM;  /* dodge compiler warning */
 }
@@ -80,7 +80,7 @@ VidProcessFrame (void)
 {
 	if (!_cur_video)
 		return FALSE;
-	return TFB_ProcessVideoFrame (_cur_video);
+	return (BOOLEAN)TFB_ProcessVideoFrame (_cur_video);
 }
 
 // return current video position in milliseconds
@@ -98,7 +98,7 @@ VidSeek (DWORD pos)
 {
 	if (!VidPlaying ())
 		return FALSE;
-	return TFB_SeekVideo (_cur_video, pos);
+	return (BOOLEAN)TFB_SeekVideo (_cur_video, pos);
 }
 
 VIDEO_TYPE
@@ -164,7 +164,7 @@ _init_video_file (const char *pStr)
 	if (!dec)
 		return NULL_VIDEO_REF;
 
-	vid = HCalloc (sizeof (*vid));
+	vid = (TFB_VideoClip*)HCalloc (sizeof (*vid));
 	vid->decoder = dec;
 	vid->length = dec->length;
 	vid->w = vid->decoder->w - IF_HD (4);

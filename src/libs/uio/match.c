@@ -18,6 +18,7 @@
  *
  */
 
+#include <regex.h>
 #include <string.h>
 #ifdef DEBUG
 #	include <stdio.h>
@@ -67,7 +68,7 @@ static inline void match_freeRegexContext(match_RegexContext *context);
 
 static inline match_MatchContext *
 match_allocMatchContext(void) {
-	return uio_malloc(sizeof (match_MatchContext));
+	return (match_MatchContext*)uio_malloc(sizeof (match_MatchContext));
 }
 
 static inline void
@@ -271,7 +272,7 @@ match_newLiteralContext(char *pattern) {
 
 static inline match_LiteralContext *
 match_allocLiteralContext(void) {
-	return uio_malloc(sizeof (match_LiteralContext));
+	return (match_LiteralContext*)uio_malloc(sizeof (match_LiteralContext));
 }
 
 static inline void
@@ -327,7 +328,7 @@ match_newPrefixContext(char *pattern) {
 
 static inline match_PrefixContext *
 match_allocPrefixContext(void) {
-	return uio_malloc(sizeof (match_PrefixContext));
+	return (match_PrefixContext*)uio_malloc(sizeof (match_PrefixContext));
 }
 
 static inline void
@@ -378,7 +379,7 @@ match_newSuffixContext(char *pattern, size_t len) {
 
 static inline match_SuffixContext *
 match_allocSuffixContext(void) {
-	return uio_malloc(sizeof (match_SuffixContext));
+	return (match_SuffixContext*)uio_malloc(sizeof (match_SuffixContext));
 }
 
 static inline void
@@ -418,7 +419,7 @@ match_newSubStringContext(char *pattern) {
 
 static inline match_SubStringContext *
 match_allocSubStringContext(void) {
-	return uio_malloc(sizeof (match_SubStringContext));
+	return (match_SubStringContext*)uio_malloc(sizeof (match_SubStringContext));
 }
 
 static inline void
@@ -488,8 +489,7 @@ match_freeGlobContext(match_GlobContext *context) {
 match_Result
 match_prepareRegex(const char *pattern, match_RegexContext **contextPtr) {
 	*contextPtr = match_newRegexContext();
-	(*contextPtr)->errorCode = regcomp(&(*contextPtr)->native, pattern,
-			REG_EXTENDED | REG_NOSUB);
+	(*contextPtr)->errorCode = regcomp(&(*contextPtr)->native, pattern, REG_EXTENDED | REG_NOSUB);
 	if ((*contextPtr)->errorCode == 0) {
 		(*contextPtr)->flags = match_REGEX_INITIALISED;
 		return match_OK;
@@ -530,7 +530,7 @@ match_errorStringRegex(match_RegexContext *context, int errorCode) {
 
 	errorStringLength = regerror(context->errorCode, &context->native,
 			NULL, 0);
-	context->errorString = uio_malloc(errorStringLength);
+	context->errorString = (char*)uio_malloc(errorStringLength);
 	regerror(context->errorCode, &context->native,
 			context->errorString, errorStringLength);
 	
@@ -558,7 +558,7 @@ match_newRegexContext(void) {
 
 static inline match_RegexContext *
 match_allocRegexContext(void) {
-	return uio_malloc(sizeof (match_RegexContext));
+	return (match_RegexContext*)uio_malloc(sizeof (match_RegexContext));
 }
 
 static inline void

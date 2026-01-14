@@ -60,7 +60,7 @@ res_CloseResFile (uio_Stream *fp)
 BOOLEAN
 DeleteResFile (uio_DirHandle *dir, const char *filename)
 {
-	return (uio_unlink (dir, filename) == 0);
+	return (BOOLEAN)(uio_unlink (dir, filename) == 0);
 }
 
 size_t

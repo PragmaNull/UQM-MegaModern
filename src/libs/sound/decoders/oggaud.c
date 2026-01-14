@@ -237,7 +237,7 @@ ova_Decode (THIS_PTR, void* buf, sint32 bufsize)
 #ifdef OVCODEC_TREMOR
 	rc = ov_read (&ova->vf, buf, bufsize, &bitstream);
 #else
-	rc = ov_read (&ova->vf, buf, bufsize, ova_formats->want_big_endian,
+	rc = ov_read (&ova->vf, (char*)buf, bufsize, ova_formats->want_big_endian,
 			2, 1, &bitstream);
 #endif  /* OVCODEC_TREMOR */
 	

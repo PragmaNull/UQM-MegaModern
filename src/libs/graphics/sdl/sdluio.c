@@ -136,7 +136,7 @@ static SDL_RWops *
 sdluio_makeRWops (uio_Stream *stream) {
 	SDL_RWops *result;
 	
-	result = HMalloc (sizeof (SDL_RWops));
+	result = (SDL_RWops*)HMalloc (sizeof (SDL_RWops));
 #if 0
 	*(struct SDL_RWops *) result = sdluio_templateRWops;
 			// structure assignment

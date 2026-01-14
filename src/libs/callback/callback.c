@@ -77,7 +77,7 @@ Callback_uninit(void) {
 // Callbacks are guaranteed to be called in the order that they are queued.
 CallbackID
 Callback_add(CallbackFunction callback, CallbackArg arg) {
-	CallbackLink *link = malloc(sizeof (CallbackLink));
+	CallbackLink *link = (CallbackLink*)(malloc(sizeof (CallbackLink)));
 	link->callback = callback;
 	link->arg = arg;
 	link->next = NULL;

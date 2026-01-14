@@ -1163,8 +1163,8 @@ extern void UninitGameStructures (void);
 static inline POINT
 LoadLastLoc (void)
 {
-	return (POINT) { GET_GAME_STATE (LAST_LOCATION_X),
-			GET_GAME_STATE (LAST_LOCATION_Y) };
+	return POINT {(COORD)GET_GAME_STATE (LAST_LOCATION_X),
+			(COORD)GET_GAME_STATE (LAST_LOCATION_Y) };
 }
 
 static inline void
@@ -1184,15 +1184,15 @@ ZeroLastLoc (void)
 static inline POINT
 LoadAdvancedQuasiPilot (void)
 {
-	return (POINT) { GET_GAME_STATE (ADV_AUTOPILOT_QUASI_X),
-			GET_GAME_STATE (ADV_AUTOPILOT_QUASI_Y) };
+	return POINT{ (COORD)GET_GAME_STATE (ADV_AUTOPILOT_QUASI_X),
+			(COORD)GET_GAME_STATE (ADV_AUTOPILOT_QUASI_Y) };
 }
 
 static inline POINT
 LoadAdvancedAutoPilot (void)
 {
-	return (POINT) { GET_GAME_STATE (ADV_AUTOPILOT_SAVE_X),
-			GET_GAME_STATE (ADV_AUTOPILOT_SAVE_Y) };
+	return POINT{(COORD)GET_GAME_STATE (ADV_AUTOPILOT_SAVE_X),
+			(COORD)GET_GAME_STATE (ADV_AUTOPILOT_SAVE_Y) };
 }
 
 static inline void
@@ -1239,7 +1239,7 @@ IsHomeworldKnown (DWORD homeworld)
 	if (homeworld > 18)
 		return FALSE;
 
-	return GET_GAME_STATE (KNOW_HOMEWORLD) & (1 << homeworld);
+	return (BOOLEAN)(GET_GAME_STATE (KNOW_HOMEWORLD) & (1 << homeworld));
 }
 
 static inline void

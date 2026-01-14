@@ -43,7 +43,7 @@ getFirstPathComponent(const char *dir, const char *dirEnd,
 		*endComp = *startComp;
 		return;
 	}
-	*endComp = memchr(*startComp, '/', dirEnd - *startComp);
+	*endComp = (char*)memchr(*startComp, '/', dirEnd - *startComp);
 	if (*endComp == NULL)
 		*endComp = dirEnd;
 }
@@ -81,7 +81,7 @@ getNextPathComponent(const char *dirEnd,
 	}
 	assert(**endComp == '/');
 	*startComp = *endComp + 1;
-	*endComp = memchr(*startComp, '/', dirEnd - *startComp);
+	*endComp = (char*)memchr(*startComp, '/', dirEnd - *startComp);
 	if (*endComp == NULL)
 		*endComp = dirEnd;
 }
@@ -162,7 +162,7 @@ joinPaths(const char *first, const char *second) {
 	if (first[firstLen - 1] == '/')
 		firstLen--;
 	secondLen = strlen(second);
-	result = uio_malloc(firstLen + secondLen + 2);
+	result = (char*)uio_malloc(firstLen + secondLen + 2);
 	resPtr = result;
 
 	memcpy(resPtr, first, firstLen);
@@ -189,7 +189,7 @@ joinPathsAbsolute(const char *first, const char *second) {
 
 	if (first[0] == '\0') {
 		secondLen = strlen(second);
-		result = uio_malloc(secondLen + 2);
+		result = (char*)uio_malloc(secondLen + 2);
 		result[0] = '/';
 		memcpy(&result[1], second, secondLen);
 		result[secondLen + 1] = '\0';
@@ -200,7 +200,7 @@ joinPathsAbsolute(const char *first, const char *second) {
 	if (first[firstLen - 1] == '/')
 		firstLen--;
 	secondLen = strlen(second);
-	result = uio_malloc(firstLen + secondLen + 3);
+	result = (char*)uio_malloc(firstLen + secondLen + 3);
 	resPtr = result;
 
 	*resPtr = '/';
@@ -332,7 +332,7 @@ uio_getUNCServerShare(const char *inPath, char **outPath, size_t *outLen) {
 
 	// Allocate a new string and fill it.
 	nameLen = (serverEnd - server) + (shareEnd - share) + 3;
-	name = uio_malloc(nameLen + 1);
+	name = (char*)uio_malloc(nameLen + 1);
 	nameEnd = name;
 	*(nameEnd++) = '\\';
 	*(nameEnd++) = '\\';
@@ -499,7 +499,7 @@ composePath(const uio_PathComp *pathComp, uio_bool absolute,
 
 static inline uio_PathComp *
 uio_PathComp_alloc(void) {
-	uio_PathComp *result = uio_malloc(sizeof (uio_PathComp));
+	uio_PathComp *result = (uio_PathComp*)uio_malloc(sizeof (uio_PathComp));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_PathComp, (void *) result);
 #endif
@@ -572,7 +572,7 @@ uio_makePathComps(const char *path, uio_PathComp *upComp) {
 	compPtr = &result;
 	getFirstPath0Component(path, &start, &end);
 	while (*start != '\0') {
-		str = uio_malloc(end - start + 1);
+		str = (char*)uio_malloc(end - start + 1);
 		memcpy(str, start, end - start);
 		str[end - start] = '\0';
 		

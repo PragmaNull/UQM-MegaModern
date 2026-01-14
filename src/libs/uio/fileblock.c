@@ -55,7 +55,7 @@ uio_FileBlock_new(uio_Handle *handle, int flags, off_t offset,
 
 static inline uio_FileBlock *
 uio_FileBlock_alloc(void) {
-	return uio_malloc(sizeof (uio_FileBlock));
+	return (uio_FileBlock*)uio_malloc(sizeof (uio_FileBlock));
 }
 
 static inline void
@@ -182,7 +182,7 @@ uio_accessFileBlockNoMmap(uio_FileBlock *block, off_t offset, size_t length,
 	//oldBufSize = block->bufSize;
 	if (block->buffer != NULL || block->bufSize != bufSize) {
 		// We don't have a buffer, or we have one, but of the wrong size.
-		block->buffer = uio_malloc(bufSize);
+		block->buffer = (char*)uio_malloc(bufSize);
 		block->bufSize = bufSize;
 	}
 

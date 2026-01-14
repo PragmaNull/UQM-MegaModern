@@ -223,7 +223,7 @@ uio_walkGPPath(uio_GPDir *startGPDir, const char *path,
 	int retVal;
 
 	gPDir = startGPDir;
-	tempBuf = uio_malloc(strlen(path) + 1);
+	tempBuf = (char*)uio_malloc(strlen(path) + 1);
 			// XXX: Use a dynamically allocated array when moving to C99.
 	pathEnd = path + pathLen;
 	getFirstPathComponent(path, pathEnd, &partStart, &partEnd);
@@ -467,7 +467,7 @@ uio_GPDir_deepPersistentUnref(uio_GPDir *gPDir) {
 
 static inline uio_GPDir *
 uio_GPDir_alloc(void) {
-	uio_GPDir *result = uio_malloc(sizeof (uio_GPDir));
+	uio_GPDir *result = (uio_GPDir*)uio_malloc(sizeof (uio_GPDir));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_GPDir, (void *) result);
 #endif
@@ -504,7 +504,7 @@ uio_GPFile_delete(uio_GPFile *gPFile) {
 
 static inline uio_GPFile *
 uio_GPFile_alloc(void) {
-	uio_GPFile *result = uio_malloc(sizeof (uio_GPFile));
+	uio_GPFile *result = (uio_GPFile*)uio_malloc(sizeof (uio_GPFile));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_GPFile, (void *) result);
 #endif
@@ -573,7 +573,7 @@ uio_GPRoot_delete(uio_GPRoot *gPRoot) {
 
 static uio_GPRoot *
 uio_GPRoot_alloc(void) {
-	uio_GPRoot *result = uio_malloc(sizeof (uio_GPRoot));
+	uio_GPRoot *result = (uio_GPRoot*)uio_malloc(sizeof (uio_GPRoot));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_GPRoot, (void *) result);
 #endif

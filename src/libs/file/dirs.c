@@ -73,7 +73,7 @@ mkdirhier (const char *path)
 	struct stat statbuf;
 	
 	len = strlen (path);
-	buf = HMalloc (len + 2);  // one extra for possibly added '/'
+	buf = (char*)HMalloc (len + 2);  // one extra for possibly added '/'
 
 	ptr = buf;
 	pathstart = path;
@@ -298,7 +298,7 @@ expandPath (char *dest, size_t len, const char *src, int what)
 
 	if (what & EP_ENVVARS)
 	{
-		buf = HMalloc (len);
+		buf = (char*)HMalloc (len);
 		bufptr = buf;
 		bufend = buf + len;
 		while (*src != '\0')
@@ -323,7 +323,7 @@ expandPath (char *dest, size_t len, const char *src, int what)
 					}
 					
 					envNameLen = end - src;
-					envName = HMalloc (envNameLen + 1);
+					envName = (char*)HMalloc (envNameLen + 1);
 					memcpy (envName, src, envNameLen + 1);
 					envName[envNameLen] = '\0';
 					envVar = getenv (envName);

@@ -250,15 +250,15 @@ SCALE_(DiffYUV) (Uint32 yuv1, Uint32 yuv2)
 		return 0;
 
 	// compute Y delta
-	delta = abs ((yuv1 & 0xff0000) - (yuv2 & 0xff0000));
+	delta = abs (int(yuv1 & 0xff0000u) - int(yuv2 & 0xff0000u));
 	ret = (SCALE_DIFFYUV_TY << 16) - delta; // save sign bit
 	
 	// compute U delta
-	delta = abs ((yuv1 & 0x00ff00) - (yuv2 & 0x00ff00));
+	delta = abs (int(yuv1 & 0x00ff00) - int(yuv2 & 0x00ff00));
 	ret |= (SCALE_DIFFYUV_TU << 8) - delta; // save sign bit
 	
 	// compute V delta
-	delta = abs ((yuv1 & 0x0000ff) - (yuv2 & 0x0000ff));
+	delta = abs (int(yuv1 & 0x0000ff) - int(yuv2 & 0x0000ff));
 	ret |= SCALE_DIFFYUV_TV - delta; // save sign bit
 
 	return (ret >> 31);

@@ -623,13 +623,13 @@ dukv_Open (THIS_PTR, uio_DirHandle *dir, const char *filename)
 	uint8* vectors;
 	
 	dukv->basedir = dir;
-	dukv->basename = HMalloc (strlen (filename) + 1);
+	dukv->basename = (char*)HMalloc (strlen (filename) + 1);
 	strcpy (dukv->basename, filename);
 	pext = strrchr (dukv->basename, '.');
 	if (pext) // strip extension
 		*pext = 0;
 
-	vectors = HMalloc (NUM_VEC_ITEMS * NUM_VECTORS);
+	vectors = (uint8*)HMalloc (NUM_VEC_ITEMS * NUM_VECTORS);
 
 	if (!dukv_OpenStream (dukv)
 			|| !dukv_ReadFrames (dukv)
@@ -649,8 +649,8 @@ dukv_Open (THIS_PTR, uio_DirHandle *dir, const char *filename)
 	This->frame_count = dukv->cframes;
 	This->interframe_wait = (uint32) (1000.0 / DUCK_GENERAL_FPS);
 
-	dukv->inbuf = HMalloc (DUCK_MAX_FRAME_SIZE);
-	dukv->decbuf = HMalloc (
+	dukv->inbuf = (uint8*)HMalloc (DUCK_MAX_FRAME_SIZE);
+	dukv->decbuf = (uint32*)HMalloc (
 			dukv->decoder.w * dukv->decoder.h * sizeof (uint16));
 
 	return true;

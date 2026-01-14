@@ -768,7 +768,7 @@ loadAddon (const char *addon)
 	uio_closeDir (addonDir);
 	uio_closeDir (addonsDir);
 	
-	return (numLoaded > 0);
+	return (BOOLEAN)(numLoaded > 0);
 }
 
 void

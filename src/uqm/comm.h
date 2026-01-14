@@ -24,6 +24,10 @@
 #include "libs/gfxlib.h"
 		// for CONVERSATION
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #ifdef COMM_INTERNAL
 
 #define SLIDER_Y (RES_SCALE (107))
@@ -32,9 +36,7 @@
 
 #include "commanim.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+
 
 extern LOCDATA CommData;
 

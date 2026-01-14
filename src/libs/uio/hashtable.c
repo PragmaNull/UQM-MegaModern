@@ -176,7 +176,7 @@ HASHTABLE_(setup)(HASHTABLE_(HashTable) *hashTable, uio_uint32 initialSize) {
 			* hashTable->minFillQuotient);
 	hashTable->maxSize = floor(((double) hashTable->size)
 			* hashTable->maxFillQuotient);
-	hashTable->entries = uio_calloc(hashTable->size,
+	hashTable->entries = (HASHTABLE_(HashEntry)**)uio_calloc(hashTable->size,
 			sizeof (HASHTABLE_(HashEntry) *));
 	hashTable->numEntries = 0;
 #ifdef HashTable_PROFILE
@@ -244,7 +244,7 @@ HASHTABLE_(getIterator)(const HASHTABLE_(HashTable) *hashTable) {
 	HASHTABLE_(Iterator) *iterator;
 	uio_uint32 i;
 
-	iterator = uio_malloc(sizeof (HASHTABLE_(Iterator)));
+	iterator = (HASHTABLE_(Iterator)*)uio_malloc(sizeof (HASHTABLE_(Iterator)));
 	iterator->hashTable = hashTable;
 	
 	// Look for the first used bucket.
@@ -318,7 +318,7 @@ HASHTABLE_(freeIterator)(HASHTABLE_(Iterator) *iterator) {
 // Auxiliary function to allocate a HashTable.
 static inline HASHTABLE_(HashTable) *
 HASHTABLE_(allocHashTable)(void) {
-	return uio_malloc(sizeof (HASHTABLE_(HashTable)));
+	return (HASHTABLE_(HashTable)*)uio_malloc(sizeof (HASHTABLE_(HashTable)));
 }
 
 // Auxiliary function to create a HashEntry.
@@ -338,7 +338,7 @@ HASHTABLE_(newHashEntry)(uio_uint32 hash, HASHTABLE_(Key) *key,
 // Allocate a new HashEntry.
 static inline HASHTABLE_(HashEntry) *
 HASHTABLE_(allocHashEntry)(void) {
-	return uio_malloc(sizeof (HASHTABLE_(HashEntry)));
+	return (HASHTABLE_(HashEntry)*)uio_malloc(sizeof (HASHTABLE_(HashEntry)));
 }
 
 // Delete the HashTable.

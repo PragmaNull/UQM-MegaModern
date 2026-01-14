@@ -106,6 +106,7 @@
       <AdditionalIncludeDirectories>..\..\src;..\..\src\regex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <PostBuildEvent>
       <Command>xcopy /Y "$(TargetPath)" "$(LocalDebuggerWorkingDirectory)"
@@ -144,6 +145,7 @@ editbin /REBASE:BASE=0x400000 /DYNAMICBASE:NO "$(LocalDebuggerWorkingDirectory)$
       <AdditionalIncludeDirectories>..\..\src;..\..\src\regex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <PostBuildEvent>
       <Command>xcopy /Y "$(TargetPath)" "$(LocalDebuggerWorkingDirectory)"
@@ -185,7 +187,7 @@ editbin /REBASE:BASE=0x400000 /DYNAMICBASE:NO "$(LocalDebuggerWorkingDirectory)$
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <CompileAs>Default</CompileAs>
+      <CompileAs>CompileAsCpp</CompileAs>
       <UseFullPaths>false</UseFullPaths>
     </ClCompile>
     <Midl>
@@ -238,6 +240,7 @@ editbin /REBASE:BASE=0x400000 /DYNAMICBASE:NO "$(LocalDebuggerWorkingDirectory)$
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Midl>
       <TypeLibraryName>.\Debug\UrQuanMasters.tlb</TypeLibraryName>

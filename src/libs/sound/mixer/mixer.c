@@ -17,6 +17,8 @@
 /* Mixer for low-level sound output drivers
  */
 
+
+#include <algorithm>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
@@ -494,7 +496,7 @@ void mixer_Sourcefv (mixer_Object srcobj, mixer_SourceProp pname, float *value)
 		case MIX_POSITION:
 		{
 			float dist = sqrt (value[0] * value[0] + value[2] * value[2]);
-			float invDist = 1.f / max (0.01f, dist);
+			float invDist = 1.f / std::max(0.01f, dist);
 			float pan;
 			if (dist == 0 || mixer_channels == 1)
 				pan = 0;
@@ -1441,7 +1443,7 @@ mixer_BufferData (mixer_Object bufobj, uint32 format, void* data,
 			/* only copy/convert the data if not faking */
 			if (! (mixer_flags & MIX_FAKE_DATA))
 			{
-				buf->data = HMalloc (dstsize);
+				buf->data = (uint8*)HMalloc (dstsize);
 			
 				if (MIX_FORMAT_BPC (format) == MIX_FORMAT_BPC (mixer_format) &&
 					MIX_FORMAT_CHANS (format) <= MIX_FORMAT_CHANS (mixer_format))
@@ -1544,7 +1546,7 @@ mixer_ConvertBuffer_internal (mixer_Convertion *conv)
 	conv->dstbpc = MIX_FORMAT_BPC (conv->dstfmt);
 	conv->dstchans = MIX_FORMAT_CHANS (conv->dstfmt);
 
-	conv->flags = 0;
+	conv->flags = mixConvNone;
 	if (conv->srcbpc > conv->dstbpc)
 		conv->flags |= mixConvSizeDown;
 	else if (conv->srcbpc < conv->dstbpc)
@@ -1785,8 +1787,8 @@ static void
 mixer_ResampleFlat (mixer_Convertion *conv)
 {
 	mixer_ConvFlags flags = conv->flags;
-	uint8 *src = conv->srcdata;
-	uint8 *dst = conv->dstdata;
+	uint8 *src = (uint8*)conv->srcdata;
+	uint8 *dst = (uint8*)conv->dstdata;
 	uint32 srcbpc = conv->srcbpc;
 	uint32 dstbpc = conv->dstbpc;
 	uint32 samples;

@@ -269,7 +269,7 @@ uio_mountDir(uio_Repository *destRep, const char *mountPoint,
 			return NULL;
 		}
 	
-		dirName = uio_malloc(endInPath - inPath + 1);
+		dirName = (char*)uio_malloc(endInPath - inPath + 1);
 		memcpy(dirName, inPath, endInPath - inPath);
 		dirName[endInPath - inPath] = '\0';
 #ifdef BACKSLASH_IS_PATH_SEPARATOR
@@ -279,9 +279,9 @@ uio_mountDir(uio_Repository *destRep, const char *mountPoint,
 		mountInfo = uio_MountInfo_new(fsType, NULL, endDirHandle, dirName,
 				autoMount, NULL, flags);
 		uio_repositoryAddMount(destRep, mountInfo,
-				flags & uio_MOUNT_LOCATION_MASK, relativeInfo);
+			(uio_MountLocation)(flags & uio_MOUNT_LOCATION_MASK), relativeInfo);
 		mountTree = uio_mountTreeAddMountInfo(destRep, destRep->mountTree,
-				mountInfo, mountPoint, flags & uio_MOUNT_LOCATION_MASK,
+				mountInfo, mountPoint, (uio_MountLocation)(flags & uio_MOUNT_LOCATION_MASK),
 				relativeInfo);
 		// mountTree is the node in destRep->mountTree where mountInfo
 		// leads to.
@@ -367,10 +367,9 @@ uio_transplantDir(const char *mountPoint, uio_DirHandle *sourceDir, int flags,
 		uio_PDirHandle_ref(pDirHandle);
 		uio_PRoot_refMount(pDirHandle->pRoot);
 
-		uio_repositoryAddMount(rep, mountInfo,
-				flags & uio_MOUNT_LOCATION_MASK, relativeInfo);
+		uio_repositoryAddMount(rep, mountInfo, (uio_MountLocation)(flags & uio_MOUNT_LOCATION_MASK), relativeInfo);
 		mountTree = uio_mountTreeAddMountInfo(rep, rep->mountTree,
-				mountInfo, mountPoint, flags & uio_MOUNT_LOCATION_MASK,
+				mountInfo, mountPoint, (uio_MountLocation)(flags & uio_MOUNT_LOCATION_MASK),
 				relativeInfo);
 		// mountTree is the node in rep->mountTree where mountInfo leads to
 		mountInfo->mountTree = mountTree;
@@ -889,7 +888,7 @@ uio_openDir(uio_Repository *repository, const char *path, int flags) {
 	const char * const rootStr = "";
 
 	dirHandle = uio_DirHandle_new(repository,
-			unconst(rootStr), unconst(rootStr));
+			(char*)unconst(rootStr), (char*)unconst(rootStr));
 			// dirHandle->path will be replaced before uio_openDir()
 			// exits()
 	if (uio_verifyPath(dirHandle, path, &dirHandle->path) == -1) {
@@ -1373,15 +1372,15 @@ uio_getDirListMulti(uio_PDirHandle **pDirHandles,
 
 	// first get the directory listings for all seperate relevant dirs.
 	totalNumNames = 0;
-	links = uio_malloc(numPDirHandles * sizeof (uio_DirBufferLink *));
-	numNames = uio_malloc(numPDirHandles * sizeof (int));
+	links = (uio_DirBufferLink**)uio_malloc(numPDirHandles * sizeof (uio_DirBufferLink *));
+	numNames = (int*)uio_malloc(numPDirHandles * sizeof (int));
 	for (pDirI = 0; pDirI < numPDirHandles; pDirI++) {
 		uio_collectDirEntries(pDirHandles[pDirI], &links[pDirI],
 				&numNames[pDirI]);
 		totalNumNames += numNames[pDirI];
 	}
 
-	bigNameBuffer = uio_malloc(totalNumNames * sizeof (uio_DirBufferLink *));	
+	bigNameBuffer = (const char**)uio_malloc(totalNumNames * sizeof (uio_DirBufferLink *));	
 
 	// Fill the bigNameBuffer with all the names from all the DirBufferLinks
 	// of all the physical dirs.
@@ -1416,7 +1415,7 @@ uio_getDirListMulti(uio_PDirHandle **pDirHandles,
 	}
 
 	// resize the bigNameBuffer
-	bigNameBuffer = uio_realloc((void *) bigNameBuffer,
+	bigNameBuffer = (const char**)uio_realloc((void *) bigNameBuffer,
 			totalNumNames * sizeof (char *));
 
 	// put the lot in a DirList, copying the strings themselves
@@ -1445,7 +1444,7 @@ uio_makeDirList(const char **newNames, const char * const *names,
 	uio_DirList *result;
 
 	if (newNames == NULL)
-		newNames = uio_malloc(numNames * sizeof (char *));
+		newNames = (const char**)uio_malloc(numNames * sizeof (char *));
 
 	totLen = 0;
 	for (i = 0; i < numNames; i++)
@@ -1453,7 +1452,7 @@ uio_makeDirList(const char **newNames, const char * const *names,
 	totLen += numNames;
 			// for the \0's
 
-	result = uio_DirList_new(newNames, numNames, uio_malloc(totLen));
+	result = uio_DirList_new(newNames, numNames, (char*)uio_malloc(totLen));
 
 	bufPtr = result->buffer;
 	for (i = 0; i < numNames; i++) {
@@ -1487,8 +1486,8 @@ uio_collectDirEntries(uio_PDirHandle *pDirHandle, uio_DirBufferLink **linkPtr,
 	linkEndPtr = linkPtr;
 	totalEntries = 0;
 	while (1) {
-		*linkEndPtr = uio_malloc(sizeof (uio_DirBufferLink));
-		buffer = uio_malloc(uio_DIR_BUFFER_SIZE);
+		*linkEndPtr = (uio_DirBufferLink*)uio_malloc(sizeof (uio_DirBufferLink));
+		buffer = (char*)uio_malloc(uio_DIR_BUFFER_SIZE);
 		(*linkEndPtr)->buffer = buffer;
 		numRead = uio_readEntriesPhysical(entriesContext, buffer,
 				uio_DIR_BUFFER_SIZE);
@@ -1553,7 +1552,7 @@ uio_openEntriesPhysical(uio_PDirHandle *dirHandle) {
 	pRoot = dirHandle->pRoot;
 
 	assert(pRoot->handler->openEntries != NULL);
-	native = pRoot->handler->openEntries(dirHandle);
+	native = (uio_NativeEntriesContext*)pRoot->handler->openEntries(dirHandle);
 	if (native == NULL)
 		return NULL;
 	uio_PRoot_refHandle(pRoot);
@@ -1585,7 +1584,7 @@ uio_EntriesContext_new(uio_PRoot *pRoot, uio_NativeEntriesContext *native) {
 
 static inline uio_EntriesContext *
 uio_EntriesContext_alloc(void) {
-	return uio_malloc(sizeof (uio_EntriesContext));
+	return (uio_EntriesContext*)uio_malloc(sizeof (uio_EntriesContext));
 }
 
 static inline void
@@ -1628,7 +1627,7 @@ uio_DirList_new(const char **names, int numNames, char *buffer) {
 
 static uio_DirList *
 uio_DirList_alloc(void) {
-	return uio_malloc(sizeof (uio_DirList));
+	return (uio_DirList*)uio_malloc(sizeof (uio_DirList));
 }
 
 void
@@ -1697,7 +1696,7 @@ uio_PDirHandle_delete(uio_PDirHandle *pDirHandle) {
 
 static inline uio_PDirHandle *
 uio_PDirHandle_alloc(void) {
-	uio_PDirHandle *result = uio_malloc(sizeof (uio_PDirHandle));
+	uio_PDirHandle *result = (uio_PDirHandle*)uio_malloc(sizeof (uio_PDirHandle));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_PDirHandle, (void *) result);
 #endif
@@ -1732,7 +1731,7 @@ uio_PFileHandle_delete(uio_PFileHandle *pFileHandle) {
 
 static inline uio_PFileHandle *
 uio_PFileHandle_alloc(void) {
-	uio_PFileHandle *result = uio_malloc(sizeof (uio_PFileHandle));
+	uio_PFileHandle *result = (uio_PFileHandle*)uio_malloc(sizeof (uio_PFileHandle));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_PFileHandle, (void *) result);
 #endif
@@ -1773,7 +1772,7 @@ uio_Handle_delete(uio_Handle *handle) {
 
 static inline uio_Handle *
 uio_Handle_alloc(void) {
-	uio_Handle *result = uio_malloc(sizeof (uio_Handle));
+	uio_Handle *result = (uio_Handle*)uio_malloc(sizeof (uio_Handle));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_Handle, (void *) result);
 #endif
@@ -1809,7 +1808,7 @@ uio_DirHandle_delete(uio_DirHandle *dirHandle) {
 
 static inline uio_DirHandle *
 uio_DirHandle_alloc(void) {
-	uio_DirHandle *result = uio_malloc(sizeof (uio_DirHandle));
+	uio_DirHandle *result = (uio_DirHandle*)uio_malloc(sizeof (uio_DirHandle));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_DirHandle, (void *) result);
 #endif
@@ -1848,7 +1847,7 @@ uio_MountHandle_delete(uio_MountHandle *mountHandle) {
 
 static inline uio_MountHandle *
 uio_MountHandle_alloc(void) {
-	uio_MountHandle *result = uio_malloc(sizeof (uio_MountHandle));
+	uio_MountHandle *result = (uio_MountHandle*)uio_malloc(sizeof (uio_MountHandle));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_MountHandle, (void *) result);
 #endif
@@ -1863,7 +1862,7 @@ uio_MountHandle_free(uio_MountHandle *mountHandle) {
 	uio_free(mountHandle);
 }
 
-unsigned char *
+const char *
 Get_Basename (const char *path)
 {
 	const char *last_slash = strrchr (path, '/');

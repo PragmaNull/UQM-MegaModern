@@ -84,13 +84,15 @@ struct NetStatistics {
 }
 #endif
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #ifdef NETCONNECTION_INTERNAL
 #include "libs/net.h"
 #include "packetq.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+
 
 typedef struct {
 	// For actions that require agreement by both parties.

@@ -107,7 +107,7 @@ copen (void *InStream, STREAM_TYPE SType, STREAM_MODE SMode)
 	DWORD StreamLength;
 
 	_StreamType = SType;
-	_Stream = InStream;
+	_Stream = (BYTE*)InStream;
 	if (SMode == STREAM_WRITE) /* writing */
 	{
 		OutChar (0); /* skip future StreamLength */
@@ -133,7 +133,7 @@ copen (void *InStream, STREAM_TYPE SType, STREAM_MODE SMode)
 	}
 
 	if (StreamLength == 0xFFFFFFFF
-			|| (_lpCurCodeDesc = AllocCodeDesc ()) == NULL)
+			|| (_lpCurCodeDesc = (PLZHCODE_DESC)AllocCodeDesc ()) == NULL)
 	{
 		FreeCodeDesc (_lpCurCodeDesc);
 		_lpCurCodeDesc = NULL;
@@ -313,7 +313,7 @@ cread (void *buf, COUNT size, COUNT count, PLZHCODE_DESC lpCodeDesc)
 	lpStr = (BYTE*)buf;
 	_StreamType = lpCodeDesc->StreamType;
 
-	_Stream = lpCodeDesc->Stream;
+	_Stream = (BYTE*)lpCodeDesc->Stream;
 	_workbuf = lpCodeDesc->workbuf;
 	_workbuflen = lpCodeDesc->workbuflen;
 

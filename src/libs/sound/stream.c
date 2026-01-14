@@ -223,7 +223,7 @@ IsTracker (uint32 source)
 
 	filetype = SoundDecoder_GetName (sample->decoder);
 
-	return (strcmp (filetype, "MikMod") == 0);
+	return (BOOLEAN)(strcmp (filetype, "MikMod") == 0);
 }
 
 float
@@ -251,7 +251,7 @@ GetStreamTime (uint32 source)
 BOOLEAN
 PlayingStream (uint32 source)
 {	
-	return soundSource[source].stream_should_be_playing;
+	return (BOOLEAN)soundSource[source].stream_should_be_playing;
 }
 
 
@@ -261,10 +261,10 @@ TFB_CreateSoundSample (TFB_SoundDecoder *decoder, uint32 num_buffers,
 {
 	TFB_SoundSample *sample;
 
-	sample = HCalloc (sizeof (*sample));
+	sample = (TFB_SoundSample*)HCalloc (sizeof (*sample));
 	sample->decoder = decoder;
 	sample->num_buffers = num_buffers;
-	sample->buffer = HCalloc (sizeof (audio_Object) * num_buffers);
+	sample->buffer = (audio_Object*)HCalloc (sizeof (audio_Object) * num_buffers);
 	audio_GenBuffers (num_buffers, sample->buffer);
 	if (pcbs)
 		sample->callbacks = *pcbs;
@@ -339,7 +339,7 @@ TFB_TagBuffer (TFB_SoundSample *sample, audio_Object buffer, intptr_t data)
 	uint32 buf_num;
 
 	if (!sample->buffer_tag)
-		sample->buffer_tag = HCalloc (sizeof (TFB_SoundTag) *
+		sample->buffer_tag = (TFB_SoundTag*)HCalloc (sizeof (TFB_SoundTag) *
 				sample->num_buffers);
 
 	for (buf_num = 0;
@@ -382,8 +382,8 @@ remove_scope_data (TFB_SoundSource *source, audio_Object buffer)
 static void
 add_scope_data (TFB_SoundSource *source, uint32 bytes)
 {
-	uint8 *sbuffer = source->sbuffer;
-	uint8 *dec_buf = source->sample->decoder->buffer;
+	uint8 *sbuffer = (uint8*)source->sbuffer;
+	uint8 *dec_buf = (uint8*)source->sample->decoder->buffer;
 	uint32 tail_bytes;
 	uint32 wrap_bytes;
 								
@@ -767,7 +767,7 @@ GraphForegroundStream (uint8 *data, sint32 width, sint32 height,
 		step = 1;
 	step *= full_sample;
 
-	sbuffer = source->sbuffer;
+	sbuffer = (uint8*)source->sbuffer;
 	pos = source->sbuf_head + delta;
 
 	// We are not basing the scaling factor on signal energy, because we

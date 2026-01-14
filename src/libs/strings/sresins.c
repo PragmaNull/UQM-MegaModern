@@ -58,7 +58,7 @@ LoadStringInstance (RESOURCE res)
 {
 	const char *data;
 
-	data = res_GetResource (res);
+	data = (const char*)res_GetResource (res);
 	if (data)
 		res_DetachResource (res);
 

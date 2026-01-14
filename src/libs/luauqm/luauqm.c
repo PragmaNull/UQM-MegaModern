@@ -138,7 +138,7 @@ luaUqm_loadScript(lua_State *luaState, uio_DirHandle *dir,
 		goto err;
 	}
 
-	buf = malloc(LOADSCRIPT_BUFSIZE);
+	buf = (char*)malloc(LOADSCRIPT_BUFSIZE);
 	if (buf == NULL)
 		goto err;
 

@@ -306,7 +306,7 @@ main (int argc, char *argv[])
 {
 	struct options_struct options = {
 		/* .logFile = */            NULL,
-		/* .runMode = */            runMode_normal,
+		/* .runMode = */            options_struct::runMode_normal,
 		/* .configDir = */          NULL,
 		/* .contentDir = */         NULL,
 		/* .addonDir = */           NULL,
@@ -440,7 +440,7 @@ main (int argc, char *argv[])
 			log_add (log_User, "argv[%d] = [%s]", i, argv[i]);
 	}
 
-	if (options.runMode == runMode_version)
+	if (options.runMode == options_struct::runMode_version)
 	{
  		printf ("%d.%d.%d %s\n", UQM_MAJOR_VERSION, UQM_MINOR_VERSION,
 				UQM_PATCH_VERSION,
@@ -502,7 +502,7 @@ main (int argc, char *argv[])
 		errBuffer[0] = '\0';
 	}
 
-	if (options.runMode == runMode_usage)
+	if (options.runMode == options_struct::runMode_usage)
 	{
 		usage (stdout, &defaults);
 		log_showBox (true, false);
@@ -557,9 +557,9 @@ main (int argc, char *argv[])
 	soundflags = options.soundQuality.value;
 
 	// Fill in global variables:
-	opt3doMusic = options.use3doMusic.value;
-	optRemixMusic = options.useRemixMusic.value;
-	optSpeech = options.useSpeech.value;
+	opt3doMusic = (OPT_ENABLABLE)options.use3doMusic.value;
+	optRemixMusic = (OPT_ENABLABLE)options.useRemixMusic.value;
+	optSpeech = (OPT_ENABLABLE)options.useSpeech.value;
 	optWhichCoarseScan = options.whichCoarseScan.value;
 	optWhichMenu = options.whichMenu.value;
 	optWhichFonts = options.whichFonts.value;
@@ -567,8 +567,8 @@ main (int argc, char *argv[])
 	optWhichShield = options.whichShield.value;
 	optSmoothScroll = options.smoothScroll.value;
 	optMeleeScale = options.meleeScale.value;
-	optSubtitles = options.subtitles.value;
-	optStereoSFX = options.stereoSFX.value;
+	optSubtitles = (OPT_ENABLABLE)options.subtitles.value;
+	optStereoSFX = (OPT_ENABLABLE)options.stereoSFX.value;
 	musicVolumeScale = options.musicVolumeScale.value;
 	sfxVolumeScale = options.sfxVolumeScale.value;
 	speechVolumeScale = options.speechVolumeScale.value;
@@ -576,73 +576,73 @@ main (int argc, char *argv[])
 
 	optGodModes = options.optGodModes.value;
 	timeDilationScale = options.timeDilationScale.value;
-	optBubbleWarp = options.bubbleWarp.value;
-	optUnlockShips = options.unlockShips.value;
-	optHeadStart = options.headStart.value;
+	optBubbleWarp = (OPT_ENABLABLE)options.bubbleWarp.value;
+	optUnlockShips = (OPT_ENABLABLE)options.unlockShips.value;
+	optHeadStart = (OPT_ENABLABLE)options.headStart.value;
 	//optUnlockUpgrades = options.unlockUpgrades.value;
-	optInfiniteRU = options.infiniteRU.value;
-	optSkipIntro = options.skipIntro.value;
-	optMainMenuMusic = options.mainMenuMusic.value;
-	optNebulae = options.nebulae.value;
-	optOrbitingPlanets = options.orbitingPlanets.value;
-	optTexturedPlanets = options.texturedPlanets.value;
- 	optCheatMode = options.cheatMode.value;
+	optInfiniteRU = (OPT_ENABLABLE)options.infiniteRU.value;
+	optSkipIntro = (OPT_ENABLABLE)options.skipIntro.value;
+	optMainMenuMusic = (OPT_ENABLABLE)options.mainMenuMusic.value;
+	optNebulae = (OPT_ENABLABLE)options.nebulae.value;
+	optOrbitingPlanets = (OPT_ENABLABLE)options.orbitingPlanets.value;
+	optTexturedPlanets = (OPT_ENABLABLE)options.texturedPlanets.value;
+ 	optCheatMode = (OPT_ENABLABLE)options.cheatMode.value;
 	optDateFormat = options.optDateFormat.value;
-	optInfiniteFuel = options.infiniteFuel.value;
-	optPartialPickup = options.partialPickup.value;
-	optSubmenu = options.submenu.value;
-	optInfiniteCredits = options.infiniteCredits.value;
-	optCustomBorder = options.customBorder.value;
+	optInfiniteFuel = (OPT_ENABLABLE)options.infiniteFuel.value;
+	optPartialPickup = (OPT_ENABLABLE)options.partialPickup.value;
+	optSubmenu = (OPT_ENABLABLE)options.submenu.value;
+	optInfiniteCredits = (OPT_ENABLABLE)options.infiniteCredits.value;
+	optCustomBorder = (OPT_ENABLABLE)options.customBorder.value;
 	optSeedType = options.seedType.value;
 	optCustomSeed = options.customSeed.value;
-	optShipSeed = options.shipSeed.value;
+	optShipSeed = (OPT_ENABLABLE)options.shipSeed.value;
 	optSphereColors = options.sphereColors.value;
 	optRequiresReload = FALSE;
 	optRequiresRestart = FALSE;
 	optSpaceMusic = options.spaceMusic.value;
-	optVolasMusic = options.volasMusic.value;
-	optWholeFuel = options.wholeFuel.value;
-	optDirectionalJoystick = options.directionalJoystick.value;
+	optVolasMusic = (OPT_ENABLABLE)options.volasMusic.value;
+	optWholeFuel = (OPT_ENABLABLE)options.wholeFuel.value;
+	optDirectionalJoystick = (OPT_ENABLABLE)options.directionalJoystick.value;
 	optLanderHold = options.landerHold.value;
 	optScrTrans = options.scrTrans.value;
 	optDifficulty = options.optDifficulty.value;
 	optDiffChooser = options.optDiffChooser.value;
 	optFuelRange = options.optFuelRange.value;
-	optExtended = options.extended.value;
+	optExtended = (OPT_ENABLABLE)options.extended.value;
 	optNomad = options.nomad.value;
-	optGameOver = options.gameOver.value;
-	optShipDirectionIP = options.shipDirectionIP.value;
-	optHazardColors = options.hazardColors.value;
-	optOrzCompFont = options.orzCompFont.value;
+	optGameOver = (OPT_ENABLABLE)options.gameOver.value;
+	optShipDirectionIP = (OPT_ENABLABLE)options.shipDirectionIP.value;
+	optHazardColors = (OPT_ENABLABLE)options.hazardColors.value;
+	optOrzCompFont = (OPT_ENABLABLE)options.orzCompFont.value;
 	optControllerType = options.optControllerType.value;
-	optSmartAutoPilot = options.smartAutoPilot.value;
+	optSmartAutoPilot = (OPT_ENABLABLE)options.smartAutoPilot.value;
 	optTintPlanSphere = options.tintPlanSphere.value;
 	optPlanetStyle = options.planetStyle.value;
 	optStarBackground = options.starBackground.value;
 	optScanStyle = options.scanStyle.value;
-	optNonStopOscill = options.nonStopOscill.value;
+	optNonStopOscill = (OPT_ENABLABLE)options.nonStopOscill.value;
 	optScopeStyle = options.scopeStyle.value;
-	optHyperStars = options.hyperStars.value;
+	optHyperStars = (OPT_ENABLABLE)options.hyperStars.value;
 	optSuperPC = options.landerStyle.value;
-	optPlanetTexture = options.planetTexture.value;
+	optPlanetTexture = (OPT_ENABLABLE)options.planetTexture.value;
 	optFlagshipColor = options.flagshipColor.value;
-	optNoHQEncounters = options.noHQEncounters.value;
-	optDeCleansing = options.deCleansing.value;
-	optMeleeObstacles = options.meleeObstacles.value;
-	optShowVisitedStars = options.showVisitedStars.value;
-	optUnscaledStarSystem = options.unscaledStarSystem.value;
+	optNoHQEncounters = (OPT_ENABLABLE)options.noHQEncounters.value;
+	optDeCleansing = (OPT_ENABLABLE)options.deCleansing.value;
+	optMeleeObstacles = (OPT_ENABLABLE)options.meleeObstacles.value;
+	optShowVisitedStars = (OPT_ENABLABLE)options.showVisitedStars.value;
+	optUnscaledStarSystem = (OPT_ENABLABLE)options.unscaledStarSystem.value;
 	optScanSphere = options.sphereType.value;
 	optNebulaeVolume = options.nebulaevol.value;
-	optSlaughterMode = options.slaughterMode.value;
-	optAdvancedAutoPilot = options.advancedAutoPilot.value;
-	optMeleeToolTips = options.meleeToolTips.value;
+	optSlaughterMode = (OPT_ENABLABLE)options.slaughterMode.value;
+	optAdvancedAutoPilot = (OPT_ENABLABLE)options.advancedAutoPilot.value;
+	optMeleeToolTips = (OPT_ENABLABLE)options.meleeToolTips.value;
 	optMusicResume = options.musicResume.value;
-	optScatterElements = options.scatterElements.value;
-	optShowUpgrades = options.showUpgrades.value;
-	optFleetPointSys = options.fleetPointSys.value;
-	optShipStore = options.shipStore.value;
-	optCaptainNames = options.captainNames.value;
-	optDosMenus = options.dosMenus.value;
+	optScatterElements = (OPT_ENABLABLE)options.scatterElements.value;
+	optShowUpgrades = (OPT_ENABLABLE)options.showUpgrades.value;
+	optFleetPointSys = (OPT_ENABLABLE)options.fleetPointSys.value;
+	optShipStore = (OPT_ENABLABLE)options.shipStore.value;
+	optCaptainNames = (OPT_ENABLABLE)options.captainNames.value;
+	optDosMenus = (OPT_ENABLABLE)options.dosMenus.value;
 
 	prepareContentDir (options.contentDir, options.addonDir, argv[0]);
 
@@ -652,7 +652,7 @@ main (int argc, char *argv[])
 	options.resolutionFactor.set = true;
 
 	loresBlowupScale = (unsigned int)options.loresBlowupScale.value;
-	optKeepAspectRatio = options.keepAspectRatio.value;
+	optKeepAspectRatio = (OPT_ENABLABLE)options.keepAspectRatio.value;
 
 	optWindowType = OPTVAL_UQM_WINDOW;
 	if (options.windowType.value < OPTVAL_UQM_WINDOW &&
@@ -1204,7 +1204,7 @@ getUserConfigOptions (struct options_struct *options)
 	
 	if (res_IsInteger ("config.player1control"))
 	{
-		PlayerControls[0] = res_GetInteger ("config.player1control");
+		PlayerControls[0] = (CONTROL_TEMPLATE)res_GetInteger ("config.player1control");
 		/* This is an unsigned, so no < 0 check is necessary */
 		if (PlayerControls[0] >= NUM_TEMPLATES)
 		{
@@ -1217,7 +1217,7 @@ getUserConfigOptions (struct options_struct *options)
 	if (res_IsInteger ("config.player2control"))
 	{
 		/* This is an unsigned, so no < 0 check is necessary */
-		PlayerControls[1] = res_GetInteger ("config.player2control");
+		PlayerControls[1] = (CONTROL_TEMPLATE)res_GetInteger ("config.player2control");
 		if (PlayerControls[1] >= NUM_TEMPLATES)
 		{
 			log_add (log_Error, "Illegal control template '%d' for Player "
@@ -1496,7 +1496,7 @@ parseOptions (int argc, char *argv[], struct options_struct *options)
 
 	opterr = 0;
 
-	options->addons = HMalloc (1 * sizeof (const char *));
+	options->addons = (const char**)HMalloc (1 * sizeof (const char *));
 	options->addons[0] = NULL;
 	options->numAddons = 0;
 
@@ -1536,10 +1536,10 @@ parseOptions (int argc, char *argv[], struct options_struct *options)
 				}
 				// fall through
 			case 'h':
-				options->runMode = runMode_usage;
+				options->runMode = options_struct::runMode_usage;
 				return EXIT_SUCCESS;
 			case 'v':
-				options->runMode = runMode_version;
+				options->runMode = options_struct::runMode_version;
 				return EXIT_SUCCESS;
 			case 'r':
 			{
@@ -1727,7 +1727,7 @@ parseOptions (int argc, char *argv[], struct options_struct *options)
 				break;
 			case ADDON_OPT:
 				options->numAddons++;
-				options->addons = HRealloc ((void *)options->addons,
+				options->addons = (const char**)HRealloc ((void *)options->addons,
 						(options->numAddons + 1) * sizeof (const char *));
 				options->addons[options->numAddons - 1] = optarg;
 				options->addons[options->numAddons] = NULL;
@@ -1740,7 +1740,7 @@ parseOptions (int argc, char *argv[], struct options_struct *options)
 				int value;
 				if (lookupOptionValue (accelList, optarg, &value))
 				{
-					force_platform = value;
+					force_platform = (PLATFORM_TYPE)value;
 				}
 				else
 				{

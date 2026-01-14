@@ -406,7 +406,7 @@ TFB_SDL2_UpdateTexture (SDL_Texture *dest, SDL_Surface *src, SDL_Rect *rect)
 {
 	char *srcBytes;
 	SDL_LockSurface (src);
-	srcBytes = src->pixels;
+	srcBytes = (char*)src->pixels;
 	if (rect)
 	{
 		/* SDL2 screen surfaces are always 32bpp */
@@ -574,7 +574,7 @@ TFB_SDL2_ColorLayer (Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect *rect)
 		{
 			SDL_SetRenderDrawBlendMode (renderer,
 					SDL_ComposeCustomBlendMode (SDL_BLENDFACTOR_ONE,
-						SDL_BLENDFACTOR_ONE, r, SDL_BLENDFACTOR_ONE,
+						SDL_BLENDFACTOR_ONE, (SDL_BlendOperation)r, SDL_BLENDFACTOR_ONE,
 						SDL_BLENDFACTOR_ONE,
 						SDL_BLENDOPERATION_MAXIMUM));
 

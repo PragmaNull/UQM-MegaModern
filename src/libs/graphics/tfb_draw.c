@@ -299,7 +299,7 @@ TFB_DrawImage_MaskImage (TFB_Image *img, DrawMode mode, TFB_Image *target, Color
 TFB_Image *
 TFB_DrawImage_New (TFB_Canvas canvas)
 {
-	TFB_Image *img = HMalloc (sizeof (TFB_Image));
+	TFB_Image *img = (TFB_Image*)HMalloc (sizeof (TFB_Image));
 	img->mutex = CreateMutex ("image lock", SYNC_CLASS_VIDEO);
 	img->ScaledImg = NULL;
 	img->MipmapImg = NULL;
@@ -329,7 +329,7 @@ TFB_DrawImage_New (TFB_Canvas canvas)
 TFB_Image*
 TFB_DrawImage_CreateForScreen (int w, int h, BOOLEAN withalpha)
 {
-	TFB_Image* img = HMalloc (sizeof (TFB_Image));
+	TFB_Image* img = (TFB_Image*)HMalloc (sizeof (TFB_Image));
 	img->mutex = CreateMutex ("image lock", SYNC_CLASS_VIDEO);
 	img->ScaledImg = NULL;
 	img->MipmapImg = NULL;

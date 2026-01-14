@@ -62,6 +62,6 @@ static inline char *
 StringHashTable_copy(StringHashTable_HashTable *hashTable,
 		const char *key) {
 	(void) hashTable;
-	return unconst(key);
+	return (char*)unconst(key);
 }
 

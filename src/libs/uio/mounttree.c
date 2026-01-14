@@ -715,7 +715,7 @@ uio_MountTree_delete(uio_MountTree *tree) {
 
 static inline uio_MountTree *
 uio_MountTree_alloc(void) {
-	uio_MountTree *result = uio_malloc(sizeof (uio_MountTree));
+	uio_MountTree *result = (uio_MountTree*)uio_malloc(sizeof (uio_MountTree));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_MountTree, (void *) result);
 #endif
@@ -752,7 +752,7 @@ uio_MountTreeItem_delete(uio_MountTreeItem *item) {
 
 static inline uio_MountTreeItem *
 uio_MountTreeItem_alloc(void) {
-	uio_MountTreeItem *result = uio_malloc(sizeof (uio_MountTreeItem));
+	uio_MountTreeItem *result = (uio_MountTreeItem*)uio_malloc(sizeof (uio_MountTreeItem));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_MountTreeItem, (void *) result);
 #endif
@@ -796,7 +796,7 @@ uio_MountInfo_delete(uio_MountInfo *mountInfo) {
 
 static inline uio_MountInfo *
 uio_MountInfo_alloc(void) {
-	uio_MountInfo *result = uio_malloc(sizeof (uio_MountInfo));
+	uio_MountInfo *result = (uio_MountInfo*)uio_malloc(sizeof (uio_MountInfo));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_MountInfo, (void *) result);
 #endif

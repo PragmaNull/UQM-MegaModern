@@ -21,6 +21,7 @@
 #ifndef LIBS_SOUND_MIXER_MIXERINT_H_
 #define LIBS_SOUND_MIXER_MIXERINT_H_
 
+#include <type_traits>
 #include "port.h"
 #include "types.h"
 
@@ -38,6 +39,10 @@ typedef enum
 	mixConvSizeDown = 8
 
 } mixer_ConvFlags;
+
+mixer_ConvFlags operator|=(mixer_ConvFlags lhs, mixer_ConvFlags rhs) {
+	return static_cast<mixer_ConvFlags>(static_cast<std::underlying_type_t<mixer_ConvFlags>>(lhs) | static_cast<std::underlying_type_t<mixer_ConvFlags>>(rhs));
+}
 
 typedef struct
 {

@@ -56,7 +56,7 @@ set_strtab_entry (STRING_TABLE_DESC *strtab, int index, const char *value,
 	}
 	if (len)
 	{
-		str->data = HMalloc (len);
+		str->data = (STRINGPTR)HMalloc (len);
 		str->length = len;
 		memcpy (str->data, value, len);
 	}
@@ -102,7 +102,7 @@ ensureBufSize (char **buf, size_t *curSize, size_t minSize, size_t increment)
 
 	newSize = ((minSize + (increment - 1)) / increment) * increment;
 			// Smallest multiple of 'increment' larger or equal to minSize.
-	newBuf = HRealloc (*buf, newSize);
+	newBuf = (char*)HRealloc (*buf, newSize);
 	if (newBuf == NULL)
 		return FALSE;
 
@@ -211,17 +211,17 @@ _GetConversationData (const char *path, RESOURCE_DATA *resdata)
 	}
 	
 	tot_string_size = POOL_SIZE;
-	strdata = HMalloc (tot_string_size);
+	strdata = (char*)HMalloc (tot_string_size);
 	if (strdata == 0)
 		goto err;
 	
 	tot_name_size = POOL_SIZE;
-	namedata = HMalloc (tot_name_size);
+	namedata = (char*)HMalloc (tot_name_size);
 	if (namedata == 0)
 		goto err;
 	
 	tot_clip_size = POOL_SIZE;
-	clipdata = HMalloc (tot_clip_size);
+	clipdata = (char*)HMalloc (tot_clip_size);
 	if (clipdata == 0)
 		goto err;
 	ts_data = NULL;
@@ -239,7 +239,7 @@ _GetConversationData (const char *path, RESOURCE_DATA *resdata)
 		if (timestamp_fp != NULL)
 		{
 			tot_ts_size = POOL_SIZE;
-			ts_data = HMalloc (tot_ts_size);
+			ts_data = (char*)HMalloc (tot_ts_size);
 			if (ts_data == 0)
 				goto err;
 		}
@@ -497,7 +497,7 @@ _GetStringData (uio_Stream *fp, DWORD length)
 	char *strdata = NULL;
 
 	tot_string_size = POOL_SIZE;
-	strdata = HMalloc (tot_string_size);
+	strdata = (char*)HMalloc (tot_string_size);
 	if (strdata == 0)
 		goto err;
 

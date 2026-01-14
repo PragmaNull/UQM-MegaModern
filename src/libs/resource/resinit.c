@@ -33,7 +33,7 @@
 
 static RESOURCE_INDEX
 allocResourceIndex (void) {
-	RESOURCE_INDEX ndx = HMalloc (sizeof (RESOURCE_INDEX_DESC));
+	RESOURCE_INDEX ndx = (RESOURCE_INDEX)HMalloc (sizeof (RESOURCE_INDEX_DESC));
 	ndx->map = CharHashTable_newHashTable (NULL, NULL, NULL, NULL, NULL,
 			0, 0.85, 0.9);
 	return ndx;
@@ -99,11 +99,11 @@ newResourceDesc (const char *res_id, const char *resval)
 		return NULL;
 	}
 
-	result = HMalloc (sizeof (ResourceDesc));
+	result = (ResourceDesc*)HMalloc (sizeof (ResourceDesc));
 	if (result == NULL)
 		return NULL;
 
-	result->fname = HMalloc (pathlen + 1);
+	result->fname = (char*)HMalloc (pathlen + 1);
 	strncpy (result->fname, path, pathlen);
 	result->fname[pathlen] = '\0';
 	result->vtable = vtable;
@@ -395,7 +395,7 @@ SaveResourceIndex (uio_DirHandle *dir, const char *rmpfile, const char *root, BO
 
 	count = 0;
 	capacity = 100;
-	keys = HMalloc (capacity * sizeof (char *));
+	keys = (char**)HMalloc (capacity * sizeof (char *));
 
 	for (it = CharHashTable_getIterator (_get_current_index_header ()->map);
 		!CharHashTable_iteratorDone (it);
@@ -404,9 +404,9 @@ SaveResourceIndex (uio_DirHandle *dir, const char *rmpfile, const char *root, BO
 		if (!root || !strncmp (root, key, prefix_len)) {
 			if (count >= capacity){
 				capacity *= 2;
-				keys = HRealloc (keys, capacity * sizeof (char *));
+				keys = (char**)HRealloc (keys, capacity * sizeof (char *));
 			}
-			keys[count] = HMalloc (strlen (key) + 1);
+			keys[count] = (char*)HMalloc (strlen (key) + 1);
 			strcpy (keys[count], key);
 			count++;
 		}
@@ -417,7 +417,7 @@ SaveResourceIndex (uio_DirHandle *dir, const char *rmpfile, const char *root, BO
 
 	for (int i = 0; i < count; i++) {
 		char *key = keys[i];
-		ResourceDesc *value = CharHashTable_find (_get_current_index_header ()->map, key);
+		ResourceDesc *value = (ResourceDesc*)CharHashTable_find (_get_current_index_header ()->map, key);
 		if (!value) {
 			log_add(log_Warning, "Resource %s had no value", key);
 		} else if (!value->vtable) {
@@ -466,7 +466,7 @@ InstallResTypeVectors (const char *resType, ResourceLoadFun *loadFun,
 	key[TYPESIZ-1] = '\0';
 	typelen = strlen(resType);
 	
-	handlers = HMalloc (sizeof (ResourceHandlers));
+	handlers = (ResourceHandlers*)HMalloc (sizeof (ResourceHandlers));
 	if (handlers == NULL)
 	{
 		return FALSE;
@@ -476,18 +476,18 @@ InstallResTypeVectors (const char *resType, ResourceLoadFun *loadFun,
 	handlers->toString = stringFun;
 	handlers->resType = resType;
 	
-	result = HMalloc (sizeof (ResourceDesc));
+	result = (ResourceDesc*)HMalloc (sizeof (ResourceDesc));
 	if (result == NULL)
 		return FALSE;
 
-	result->fname = HMalloc (strlen(resType) + 1);
+	result->fname = (char*)HMalloc (strlen(resType) + 1);
 	strncpy (result->fname, resType, typelen);
 	result->fname[typelen] = '\0';
 	result->vtable = NULL;
 	result->resdata.ptr = handlers;
 
 	map = _get_current_index_header ()->map;
-	return CharHashTable_add (map, key, result) != 0;
+	return (BOOLEAN)(CharHashTable_add (map, key, result) != 0);
 }
 
 /* These replace the mapres.c calls and probably should be split out at some point. */
@@ -496,7 +496,7 @@ res_IsString (const char *key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header ();
 	ResourceDesc *desc = lookupResourceDesc (idx, key);
-	return desc && !strcmp(desc->vtable->resType, "STRING");
+	return (BOOLEAN)(desc && !strcmp(desc->vtable->resType, "STRING"));
 }
 
 const char *
@@ -527,7 +527,7 @@ res_PutString (const char *key, const char *value)
 	srclen = strlen (value);
 	dstlen = strlen (desc->fname);
 	if (srclen > dstlen) {
-		char *newValue = HMalloc(srclen + 1);
+		char *newValue = (char*)HMalloc(srclen + 1);
 		char *oldValue = desc->fname;
 		log_add(log_Warning, "Reallocating string space for '%s'", key);
 		strncpy (newValue, value, srclen + 1);
@@ -544,7 +544,7 @@ res_IsInteger (const char *key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header ();
 	ResourceDesc *desc = lookupResourceDesc (idx, key);
-	return desc && !strcmp(desc->vtable->resType, "INT32");
+	return (BOOLEAN)(desc && !strcmp(desc->vtable->resType, "INT32"));
 }
 
 int
@@ -579,7 +579,7 @@ res_IsBoolean (const char *key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header ();
 	ResourceDesc *desc = lookupResourceDesc (idx, key);
-	return desc && !strcmp(desc->vtable->resType, "BOOLEAN");
+	return (BOOLEAN)(desc && !strcmp(desc->vtable->resType, "BOOLEAN"));
 }
 
 BOOLEAN
@@ -614,7 +614,7 @@ res_IsColor (const char *key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header ();
 	ResourceDesc *desc = lookupResourceDesc (idx, key);
-	return desc && !strcmp(desc->vtable->resType, "COLOR");
+	return (BOOLEAN)(desc && !strcmp(desc->vtable->resType, "COLOR"));
 }
 
 Color
@@ -654,7 +654,7 @@ BOOLEAN
 res_HasKey (const char *key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header ();
-	return (lookupResourceDesc(idx, key) != NULL);
+	return (BOOLEAN)(lookupResourceDesc(idx, key) != NULL);
 }
 
 BOOLEAN
@@ -676,5 +676,5 @@ res_Remove (const char *key)
 		HFree (oldDesc->fname);
 		HFree (oldDesc);
 	}
-	return CharHashTable_remove (map, key);
+	return (BOOLEAN)CharHashTable_remove (map, key);
 }

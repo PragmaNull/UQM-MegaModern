@@ -129,7 +129,7 @@ alloc_colormap (void)
 	}
 	else
 	{	// no spares, need a new one
-		map = HMalloc (sizeof (*map));
+		map = (TFB_ColorMap*)HMalloc (sizeof (*map));
 		map->palette = AllocNativePalette ();
 		if (!map->palette)
 		{

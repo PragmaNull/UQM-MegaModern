@@ -238,7 +238,7 @@ stdio_open(uio_PDirHandle *pDirHandle, const char *file, int flags,
 	}
 #endif
 
-	handle = uio_malloc(sizeof (stdio_Handle));
+	handle = (stdio_Handle*)uio_malloc(sizeof (stdio_Handle));
 	handle->fd = fd;
 
 	return uio_Handle_new(pDirHandle->pRoot, handle, flags);
@@ -716,7 +716,7 @@ stdio_EntriesIterator_delete(stdio_EntriesIterator *iterator) {
 
 static inline stdio_EntriesIterator *
 stdio_EntriesIterator_alloc(void) {
-	return uio_malloc(sizeof (stdio_EntriesIterator));
+	return (stdio_EntriesIterator*)uio_malloc(sizeof (stdio_EntriesIterator));
 }
 
 static inline void
@@ -764,7 +764,7 @@ stdio_getPath(uio_GPDir *gPDir) {
 		if (gPDir->extra->upDir == NULL) {
 #if defined(HAVE_DRIVE_LETTERS) || defined(HAVE_UNC_PATHS)
 			// Drive letter or UNC \\server\share still needs to follow.
-			gPDir->extra->cachedPath = uio_malloc(1);
+			gPDir->extra->cachedPath = (char*)uio_malloc(1);
 			gPDir->extra->cachedPath[0] = '\0';
 #else
 			gPDir->extra->cachedPath = uio_malloc(2);
@@ -801,7 +801,7 @@ stdio_getPath(uio_GPDir *gPDir) {
 			errno = ENAMETOOLONG;
 			return NULL;
 		}
-		gPDir->extra->cachedPath = uio_malloc(upPathLen + nameLen + 2);
+		gPDir->extra->cachedPath = (char*)uio_malloc(upPathLen + nameLen + 2);
 		memcpy(gPDir->extra->cachedPath, upPath, upPathLen);
 		gPDir->extra->cachedPath[upPathLen] = '/';
 		memcpy(gPDir->extra->cachedPath + upPathLen + 1,
@@ -833,7 +833,7 @@ static inline stdio_GPDirData *
 stdio_GPDirData_alloc(void) {
 	stdio_GPDirData *result;
 	
-	result = uio_malloc(sizeof (stdio_GPDirData));
+	result = (stdio_GPDirData*)uio_malloc(sizeof (stdio_GPDirData));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(stdio_GPDirData, (void *) result);
 #endif

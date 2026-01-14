@@ -43,7 +43,7 @@ static SWORD *encode_arrays;
 static BOOLEAN
 InitTree (void)
 {
-	if ((encode_arrays = AllocEncodeArrays ()) == NULL)
+	if ((encode_arrays = (SWORD*)AllocEncodeArrays ()) == NULL)
 	{
 		FreeCodeArrays (encode_arrays);
 		encode_arrays = NULL;
@@ -292,7 +292,7 @@ _encode_cleanup (void)
 	UWORD r, s, last_match_length, len;
 
 	_StreamType = _lpCurCodeDesc->StreamType;
-	_Stream = _lpCurCodeDesc->Stream;
+	_Stream = (BYTE*)_lpCurCodeDesc->Stream;
 	_workbuf = _lpCurCodeDesc->workbuf;
 	_workbuflen = _lpCurCodeDesc->workbuflen;
 
@@ -377,7 +377,7 @@ cwrite (const void *buf, COUNT size, COUNT count, PLZHCODE_DESC lpCodeDesc)
 		return (0);
 
 	_StreamType = lpCodeDesc->StreamType;
-	_Stream = lpCodeDesc->Stream;
+	_Stream = (BYTE*)lpCodeDesc->Stream;
 	_workbuf = lpCodeDesc->workbuf;
 	_workbuflen = lpCodeDesc->workbuflen;
 	lpStr = (const BYTE *) buf;

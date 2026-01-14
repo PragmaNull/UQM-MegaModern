@@ -37,8 +37,8 @@ typedef struct FontPage
 static inline FONT_PAGE *
 AllocFontPage (int numChars)
 {
-	FONT_PAGE *result = HMalloc (sizeof (FONT_PAGE));
-	result->charDesc = HCalloc (numChars * sizeof *result->charDesc);
+	FONT_PAGE *result = (FONT_PAGE*)HMalloc (sizeof (FONT_PAGE));
+	result->charDesc = (TFB_Char*)HCalloc (numChars * sizeof *result->charDesc);
 	return result;
 }
 

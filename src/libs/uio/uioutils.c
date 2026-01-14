@@ -42,7 +42,7 @@ strcata(const char *first, const char *second) {
 	
 	firstLen = strlen(first);
 	secondLen = strlen(second);
-	result = uio_malloc(firstLen + secondLen + 1);
+	result = (char*)uio_malloc(firstLen + secondLen + 1);
 	resPtr = result;
 
 	memcpy(resPtr, first, firstLen);
@@ -85,7 +85,7 @@ insertArrayPointer(const void **array, size_t oldNumElements, int insertPos,
 	const void **arrayPtr;
 	size_t preInsertSize;
 
-	newArray = uio_malloc((oldNumElements + 1) * sizeof (void *));
+	newArray = (void**)uio_malloc((oldNumElements + 1) * sizeof (void *));
 	preInsertSize = insertPos * sizeof (void *);
 	memcpy(newArray, array, preInsertSize);
 	newArrayPtr = newArray + insertPos;
@@ -124,7 +124,7 @@ excludeArrayPointer(const void **array, size_t oldNumElements, int startPos,
 		int numExclude) {
 	void **newArray;
 
-	newArray = uio_malloc((oldNumElements - numExclude) * sizeof (void *));
+	newArray = (void**)uio_malloc((oldNumElements - numExclude) * sizeof (void *));
 	memcpy(newArray, array, startPos * sizeof (void *));
 	memcpy(&newArray[startPos], &array[startPos + numExclude],
 			(oldNumElements - startPos - numExclude) * sizeof (void *));
@@ -191,7 +191,7 @@ dosToUnixPath(const char *path) {
 	char *result, *dstPtr;
 	size_t skip;
 
-	result = uio_malloc(strlen(path) + 1);
+	result = (char*)uio_malloc(strlen(path) + 1);
 	srcPtr = path;
 	dstPtr = result;
 
@@ -205,7 +205,7 @@ dosToUnixPath(const char *path) {
 		char *slash;
 		memcpy(dstPtr, srcPtr, skip);
 
-		slash = memchr(srcPtr + 2, '/', skip - 2);
+		slash = (char*)memchr(srcPtr + 2, '/', skip - 2);
 		if (slash != NULL)
 			*slash = '\\';
 

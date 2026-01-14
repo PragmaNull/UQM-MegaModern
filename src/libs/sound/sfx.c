@@ -170,7 +170,7 @@ _GetSoundBankData (uio_Stream *fp, DWORD length)
 	uio_ftell (fp);
 
 	{
-		char *s1, *s2;
+		const char *s1, *s2;
 
 		if (_cur_resfile_name == 0
 			|| (((s2 = 0), (s1 = strrchr (_cur_resfile_name, '/')) == 0)
@@ -244,7 +244,7 @@ _GetSoundBankData (uio_Stream *fp, DWORD length)
 	// Populate the STRING_TABLE with ptrs to sample
 	for (i = 0, str = Snd->strings; i < snd_ct; ++i, ++str)
 	{
-		TFB_SoundSample **target = HMalloc (sizeof (sndfx[0]));
+		TFB_SoundSample **target = (TFB_SoundSample**)HMalloc (sizeof (sndfx[0]));
 		*target = sndfx[i];
 		str->data = (STRINGPTR)target;
 		str->length = sizeof (sndfx[0]);
@@ -256,7 +256,7 @@ _GetSoundBankData (uio_Stream *fp, DWORD length)
 BOOLEAN
 _ReleaseSoundBankData (void *Snd)
 {
-	STRING_TABLE fxTab = Snd;
+	STRING_TABLE fxTab = (STRING_TABLE)Snd;
 	int index;
 	
 	if (!fxTab)

@@ -182,7 +182,7 @@ IncreaseBrightness (BYTE *ch, BYTE value)
 static inline BOOLEAN
 AreTheyShades (Color first_color, Color second_color)
 {
-	return ((first_color.r == first_color.g
+	return (BOOLEAN)((first_color.r == first_color.g
 			&& first_color.g == first_color.b)
 			&& (second_color.r == second_color.g
 			&& second_color.g == second_color.b));
@@ -442,7 +442,7 @@ ZeroPoint (POINT *pt)
 static inline BOOLEAN
 ValidPoint (POINT pt)
 {
-	return (pt.x != ~0 && pt.y != ~0);
+	return (BOOLEAN)(pt.x != ~0 && pt.y != ~0);
 }
 
 typedef enum

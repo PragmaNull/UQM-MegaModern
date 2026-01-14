@@ -40,12 +40,15 @@ typedef SWORD              SIZE;
 
 typedef char            UNICODE;
 
-
-typedef enum
-{
-	FALSE = 0,
-	TRUE
-} BOOLEAN;
+// TODO-pragmanull: get rid of BOOLEAN and the TRUE/FALSE defines.
+using BOOLEAN = bool;
+#define TRUE true
+#define FALSE false
+//typedef enum
+//{
+//	FALSE = 0,
+//	TRUE
+//} BOOLEAN;
 
 typedef void     (*PVOIDFUNC) (void);
 typedef BOOLEAN  (*PBOOLFUNC) (void);

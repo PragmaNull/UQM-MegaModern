@@ -361,7 +361,7 @@ void transformSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, 
     ay = (cy << 16) - (isin * cx);
     sw = src->w - 1;
     sh = src->h - 1;
-    pc = dst->pixels;
+    pc = (tColorRGBA*)dst->pixels;
     gap = dst->pitch - dst->w * 4;
 
     /*
@@ -517,7 +517,7 @@ void transformSurfaceY(SDL_Surface * src, SDL_Surface * dst, int cx, int cy, int
     ay = (cy << 16) - (isin * cx);
     // sw = src->w - 1; unused
     // sh = src->h - 1;
-    pc = dst->pixels;
+    pc = (tColorY*)dst->pixels;
     gap = dst->pitch - dst->w;
     /*
      * Clear surface to colorkey 

@@ -22,7 +22,7 @@
 STRING_TABLE
 AllocStringTable (int num_entries, int flags)
 {
-	STRING_TABLE strtab = HMalloc (sizeof (STRING_TABLE_DESC));
+	STRING_TABLE strtab = (STRING_TABLE)HMalloc (sizeof (STRING_TABLE_DESC));
 	int i, multiplier = 1;
 
 	if (flags & HAS_NAMEINDEX)
@@ -40,7 +40,7 @@ AllocStringTable (int num_entries, int flags)
 	strtab->flags = flags;
 	strtab->size = num_entries;
 	num_entries *= multiplier;
-	strtab->strings = HMalloc (sizeof (STRING_TABLE_ENTRY_DESC) * num_entries);
+	strtab->strings = (STRING_TABLE_ENTRY_DESC*)HMalloc (sizeof (STRING_TABLE_ENTRY_DESC) * num_entries);
 	for (i = 0; i < num_entries; i++)
 	{
 		strtab->strings[i].data = NULL;

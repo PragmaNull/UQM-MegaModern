@@ -591,7 +591,7 @@ aifa_DecodeSDX2 (TFB_AiffSoundDecoder* aifa, void* buf, sint32 bufsize)
 {
 	uint32 dec_pcm;
 	sint8 *src;
-	sint16 *dst = buf;
+	sint16 *dst = (sint16*)buf;
 	uint32 left;
 
 	dec_pcm = bufsize / aifa->block_align;

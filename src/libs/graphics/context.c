@@ -85,7 +85,7 @@ CreateContextAux (void)
 {
 	CONTEXT NewContext;
 
-	NewContext = AllocContext ();
+	NewContext = (CONTEXT)AllocContext ();
 	if (NewContext)
 	{
 		/* initialize context */
@@ -276,7 +276,7 @@ GetContextClipRect (RECT *lpRect)
 		*lpRect = _get_context_fg_rect ();
 	}
 
-	return (_pCurContext->ClipRect.extent.width != 0);
+	return (BOOLEAN)(_pCurContext->ClipRect.extent.width != 0);
 }
 
 POINT

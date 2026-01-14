@@ -229,7 +229,7 @@ Widget_DrawToolTips (int numlines, const char **tips)
 	for (i = 0; i < numlines; i++)
 	{
 		t.pStr = tips[i];
-		warning = strncmp (amperBang, t.pStr, abSize) == 0;
+		warning = (BOOLEAN)(strncmp (amperBang, t.pStr, abSize) == 0);
 
 		if (warning)
 		{
@@ -570,8 +570,8 @@ Widget_DrawLabel (WIDGET *_self, int x, int y)
 	for (i = 0; i < self->line_count; i++)
 	{
 		t.pStr = self->lines[i];
-		underline = strncmp (amperScore, t.pStr, asSize) == 0;
-		warning = strncmp (amperBang, t.pStr, asSize) == 0;
+		underline = (BOOLEAN)(strncmp (amperScore, t.pStr, asSize) == 0);
+		warning = (BOOLEAN)(strncmp (amperBang, t.pStr, asSize) == 0);
 
 		if (underline)
 			t.pStr += asSize;

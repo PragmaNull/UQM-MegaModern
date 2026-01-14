@@ -23,7 +23,7 @@
 NativePalette *
 AllocNativePalette (void)
 {
-	return HCalloc (sizeof (NativePalette));
+	return (NativePalette*)HCalloc (sizeof (NativePalette));
 }
 
 void

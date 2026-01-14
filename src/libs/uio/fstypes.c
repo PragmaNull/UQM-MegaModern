@@ -251,7 +251,7 @@ uio_FileSystemInfo_new(uio_FileSystemID id, uio_FileSystemHandler *handler,
 
 static inline uio_FileSystemInfo *
 uio_FileSystemInfo_alloc(void) {
-	uio_FileSystemInfo *result = uio_malloc(sizeof (uio_FileSystemInfo));
+	uio_FileSystemInfo *result = (uio_FileSystemInfo*)uio_malloc(sizeof (uio_FileSystemInfo));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_FileSystemInfo, (void *) result);
 #endif
