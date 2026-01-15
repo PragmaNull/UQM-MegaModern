@@ -30,7 +30,7 @@ Heap *alarmHeap;
 
 static inline Alarm *
 Alarm_alloc(void) {
-	return malloc(sizeof (Alarm));
+	return (Alarm * )malloc(sizeof (Alarm));
 }
 
 static inline void

@@ -124,7 +124,7 @@ uio_PRoot_delete(uio_PRoot *pRoot) {
 
 static inline uio_PRoot *
 uio_PRoot_alloc(void) {
-	uio_PRoot *result = uio_malloc(sizeof (uio_PRoot));
+	uio_PRoot *result = (uio_PRoot * )uio_malloc(sizeof (uio_PRoot));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_PRoot, (void *) result);
 #endif

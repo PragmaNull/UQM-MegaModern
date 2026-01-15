@@ -200,9 +200,9 @@ SetPlanetColors (COLORMAPPTR cmap)
 	COUNT i;
 	const COUNT numcolors = 128;
 
-	colors = HMalloc (sizeof(Color) * numcolors);
+	colors = (Color*) HMalloc (sizeof(Color) * numcolors);
 	c = colors;
-	cbase = GetColorMapAddress (pSolarSysState->OrbitalCMap);
+	cbase = (BYTE*)GetColorMapAddress (pSolarSysState->OrbitalCMap);
 
 	for (i = 0; i < numcolors; ++i, ++c)
 	{
@@ -307,7 +307,7 @@ ExpandLevelMasks (PLANET_ORBIT* Orbit)
 	halfBound = width + spherespanx;
 	colorSize = height * (halfBound);
 
-	colors = HMalloc (sizeof (Color) * colorSize);
+	colors = (Color*)HMalloc (sizeof (Color) * colorSize);
 
 	ReadFramePixelColors (Orbit->TopoMask, colors, halfBound, height);
 
@@ -507,14 +507,14 @@ RenderTopography (FRAME DstFrame, SBYTE *pTopoData, int w, int h,
 	xlat_tab = (const BYTE *)xlatDesc->xlat_tab;
 
 	if (scanTable == NULL)
-		cbase = GetColorMapAddress (pSolarSysState->OrbitalCMap);
+		cbase = (BYTE*)GetColorMapAddress (pSolarSysState->OrbitalCMap);
 	else
-		cbase = GetColorMapAddress (scanTable);
+		cbase = (BYTE*)GetColorMapAddress (scanTable);
 
 	pSrc = pTopoData;
 	sqr = w * h;
 
-	map = HMalloc (sizeof (Color) * sqr);
+	map =(Color*) HMalloc (sizeof (Color) * sqr);
 	pix = map;
 
 	for (i = 0; i < sqr; ++i, ++pSrc, ++pix)
@@ -1933,7 +1933,7 @@ planet_orbit_init (COUNT width, COUNT height, BOOLEAN forOrbit)
 	COUNT i;
 
 	{// always needed
-		Orbit->lpTopoData = HCalloc(width * height);
+		Orbit->lpTopoData = (SBYTE*)HCalloc(width * height);
 
 		Orbit->TopoZoomFrame = 0;
 		Orbit->ObjectFrame = 0;
@@ -1950,7 +1950,7 @@ planet_orbit_init (COUNT width, COUNT height, BOOLEAN forOrbit)
 		Orbit->TopoColors = NULL;
 		Orbit->ScanColors = NULL;
 
-		Orbit->ScratchArray = HMalloc (sizeof (Orbit->ScratchArray[0])
+		Orbit->ScratchArray = (Color*)HMalloc (sizeof (Orbit->ScratchArray[0])
 				* (shielddiam) * (shielddiam));
 
 		Orbit->WorkFrame = 0;
@@ -1973,33 +1973,33 @@ planet_orbit_init (COUNT width, COUNT height, BOOLEAN forOrbit)
 		Orbit->SphereFrame = CaptureDrawable (CreateDrawable (
 				WANT_PIXMAP | WANT_ALPHA, diameter, diameter, 2));
 
-		Orbit->TopoColors = HMalloc (sizeof (Orbit->TopoColors[0])
+		Orbit->TopoColors = (Color*)HMalloc (sizeof (Orbit->TopoColors[0])
 				* (height * (width + spherespanx)));
 
 		if (forOrbit && isPC (optScanStyle) && isPC (optTintPlanSphere)
 				&& !use3DOSpheres)
 		{	// generate only on that conditions and then use if not NULL
 			Orbit->ScanColors =
-				HMalloc (sizeof (Color*) * NUM_SCAN_TYPES);
+				(Color**)HMalloc (sizeof (Color*) * NUM_SCAN_TYPES);
 			for (i = 0; i < NUM_SCAN_TYPES; i++)
 			{
 				Orbit->ScanColors[i] =
-					HMalloc (sizeof (Orbit->ScanColors[0][0])
+					(Color*)HMalloc (sizeof (Orbit->ScanColors[0][0])
 						* (height * (width + spherespanx)));
 			}
 		}
 
 		if (!use3DOSpheres)
-			Orbit->light_diff = HMalloc (sizeof (DWORD *) * diameter);
+			Orbit->light_diff = (DWORD**)HMalloc (sizeof (DWORD *) * diameter);
 
-		Orbit->map_rotate = HMalloc (sizeof (MAP3D_POINT *) * diameter);
+		Orbit->map_rotate = (MAP3D_POINT**)HMalloc (sizeof (MAP3D_POINT *) * diameter);
 
 		for (i = 0; i < diameter; i++)
 		{
 			if (!use3DOSpheres)
-				Orbit->light_diff[i] = HMalloc (sizeof (DWORD) * diameter);
+				Orbit->light_diff[i] = (DWORD*)HMalloc (sizeof (DWORD) * diameter);
 			Orbit->map_rotate[i] =
-					HMalloc (sizeof (MAP3D_POINT) * diameter);
+					(MAP3D_POINT*)HMalloc (sizeof (MAP3D_POINT) * diameter);
 		}
 
 		if (use3DOSpheres)
@@ -2008,7 +2008,7 @@ planet_orbit_init (COUNT width, COUNT height, BOOLEAN forOrbit)
 					CaptureDrawable (LoadGraphic (PLANET_MASK_SHADE));
 
 			Orbit->ShadeColors =
-					HMalloc (sizeof (Color) * GetFrameWidth (Orbit->Shade)
+					(Color*)HMalloc (sizeof (Color) * GetFrameWidth (Orbit->Shade)
 					* GetFrameHeight (Orbit->Shade));
 		}
 	}
@@ -2020,7 +2020,7 @@ planet_orbit_init (COUNT width, COUNT height, BOOLEAN forOrbit)
 		Orbit->TopoMask = CaptureDrawable (CreateDrawable (
 				WANT_PIXMAP, (SIZE)width, (SIZE)height, 1));
 
-		Orbit->sphereBytes = HMalloc (sizeof (BYTE)
+		Orbit->sphereBytes = (BYTE*)HMalloc (sizeof (BYTE)
 				* GetFrameWidth (Orbit->SphereFrame)
 				* GetFrameHeight (Orbit->SphereFrame));
 
@@ -2625,7 +2625,7 @@ GetPlanetTopography (PLANET_DESC *pPlanetDesc, FRAME SurfDefFrame)
 
 		pSolarSysState->XlatPtr = GetStringAddress (pSolarSysState->XlatRef);
 
-		Orbit->lpTopoData = HCalloc (width * height);
+		Orbit->lpTopoData = (SBYTE*)HCalloc (width * height);
 		RandomContext_SeedRandom (SysGenRNG, pPlanetDesc->rand_seed);
 		generate_surface_frame (width, height, Orbit, PlanDataPtr);
 
@@ -2784,7 +2784,7 @@ GeneratePlanetSurface (PLANET_DESC *pPlanetDesc, FRAME SurfDefFrame,
 					CreateDrawable (WANT_PIXMAP, (SIZE)width,
 					(SIZE)height, 1));
 
-				map = HMalloc (sizeof (Color) * width * height);
+				map = (Color*)HMalloc (sizeof (Color) * width * height);
 				ReadFramePixelColors (
 					pSolarSysState->TopoFrame, map, width, height);
 
@@ -2840,7 +2840,7 @@ GeneratePlanetSurface (PLANET_DESC *pPlanetDesc, FRAME SurfDefFrame,
 		}
 		else
 		{	// usual smooth 3DO landscape
-			SBYTE* pScaledTopo = HMalloc (
+			SBYTE* pScaledTopo = (SBYTE*)HMalloc (
 					SCALED_MAP_WIDTH * 4 * MAP_HEIGHT * 4);
 
 			Orbit->TopoZoomFrame = CaptureDrawable (CreateDrawable (

@@ -35,7 +35,7 @@
 
 static NetDescriptor *
 NetDescriptor_alloc(void) {
-	return malloc(sizeof (NetDescriptor));
+	return (NetDescriptor*)malloc(sizeof (NetDescriptor));
 }
 
 static void

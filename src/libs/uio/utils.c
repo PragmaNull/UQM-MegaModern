@@ -88,7 +88,7 @@ uio_copyFile(uio_DirHandle *srcDir, const char *srcName,
 	if (dst == NULL)
 		return uio_copyError(src, NULL, NULL, NULL, NULL);
 	
-	buf = uio_malloc(BUFSIZE);
+	buf = (uio_uint8*)uio_malloc(BUFSIZE);
 			// This was originally a statically allocated buffer,
 			// but as this function might be run from a thread with
 			// a small Stack, this is better.
@@ -194,7 +194,7 @@ uio_getStdioAccess(uio_DirHandle *dir, const char *path, int flags,
 		// generated name, as a temporary location to store a copy of
 		// the file.
 		dirNum = (uio_uint32) time(NULL);
-		tempDirName = uio_malloc(sizeof "01234567");
+		tempDirName = (char*)uio_malloc(sizeof "01234567");
 		for (i = 0; ; i++) {
 #ifdef NUM_TEMP_RETRIES
 			if (i >= NUM_TEMP_RETRIES) {
@@ -359,7 +359,7 @@ uio_StdioAccessHandle_delete(uio_StdioAccessHandle *handle) {
 
 static inline uio_StdioAccessHandle *
 uio_StdioAccessHandle_alloc(void) {
-	return uio_malloc(sizeof (uio_StdioAccessHandle));
+	return (uio_StdioAccessHandle*)uio_malloc(sizeof (uio_StdioAccessHandle));
 }
 
 static inline void
@@ -421,7 +421,7 @@ uio_vasprintf(const char *format, va_list args) {
 			// Start with enough for one screen line, and a power of 2,
 			// which might give faster result with allocations.
 
-	buf = uio_malloc(bufSize);
+	buf = (char*)uio_malloc(bufSize);
 	if (buf == NULL) {
 		// errno is set.
 		return NULL;
@@ -445,7 +445,7 @@ uio_vasprintf(const char *format, va_list args) {
 			if ((unsigned int) printResult + 1 != bufSize) {
 				// Shorten the resulting buffer to the size that was
 				// actually needed.
-				char *newBuf = uio_realloc(buf, printResult + 1);
+				char *newBuf = (char*)uio_realloc(buf, printResult + 1);
 				if (newBuf == NULL) {
 					// We could have returned the (overly large) original
 					// buffer, but the unused memory might not be
@@ -463,7 +463,7 @@ uio_vasprintf(const char *format, va_list args) {
 		}
 
 		{
-			char *newBuf = uio_realloc(buf, bufSize);
+			char *newBuf = (char*)uio_realloc(buf, bufSize);
 			if (newBuf == NULL)
 			{
 				int savedErrno = errno;

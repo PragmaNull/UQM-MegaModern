@@ -111,7 +111,7 @@ LIST_(remove)(LIST_(List) *list, LIST_(Entry) entry) {
 
 static inline LIST_(List) *
 LIST_(allocList)(void) {
-	return malloc(sizeof (LIST_(List)));
+	return (LIST_(List)*)malloc(sizeof (LIST_(List)));
 }
 
 static inline void
@@ -121,7 +121,7 @@ LIST_(freeList)(LIST_(List) *list) {
 
 static inline LIST_(Link) *
 LIST_(allocLink)(void) {
-	return malloc(sizeof (LIST_(Link)));
+	return (LIST_(Link) * )malloc(sizeof (LIST_(Link)));
 }
 
 static inline void

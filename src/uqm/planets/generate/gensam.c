@@ -440,7 +440,7 @@ BuildUrquanGuard (SOLARSYS_STATE *solarSys)
 	assert (CountLinks (&GLOBAL (npc_built_ship_q)) == 0);
 
 	for (b0 = 0; b0 < MAX_SHIPS_PER_SIDE; ++b0)
-		CloneShipFragment (ship1, &GLOBAL (npc_built_ship_q), 0);
+		CloneShipFragment ((RACE_ID)ship1, &GLOBAL (npc_built_ship_q), 0);
 
 	if (GLOBAL (BattleGroupRef) == 0)
 	{
@@ -454,7 +454,7 @@ BuildUrquanGuard (SOLARSYS_STATE *solarSys)
 
 	ReinitQueue (&GLOBAL (npc_built_ship_q));
 	for (b0 = 0; b0 < MAX_SHIPS_PER_SIDE; ++b0)
-		CloneShipFragment (ship2, &GLOBAL (npc_built_ship_q), 0);
+		CloneShipFragment ((RACE_ID)ship2, &GLOBAL (npc_built_ship_q), 0);
 
 #define NUM_URQUAN_GUARDS1 4
 	for (b0 = 1; b0 <= NUM_URQUAN_GUARDS1; ++b0)

@@ -834,7 +834,7 @@ AnalyzeCondition (void)
 		FleetStrength = CalculateEscortsWorth ();
 		for (i = 0; i < NUM_AVAILABLE_RACES; ++i)
 		{
-			if (i != HUMAN_SHIP && CheckAlliance (i) == GOOD_GUY)
+			if (i != HUMAN_SHIP && CheckAlliance ((RACE_ID)i) == GOOD_GUY)
 				++num_aliens;
 		}
 

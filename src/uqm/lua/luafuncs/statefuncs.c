@@ -214,7 +214,7 @@ luaUqm_state_escort_addShips(lua_State *luaState) {
 
 	count = luaL_checkint(luaState, 2);
 
-	numAdded = AddEscortShips(shipId - 1, count);
+	numAdded = AddEscortShips((RACE_ID)(shipId - 1), count);
 	lua_pushinteger(luaState, numAdded);
 	return 1;
 }
@@ -231,7 +231,7 @@ luaUqm_state_escort_canAddShips(lua_State *luaState) {
 		return 1;
 	}
 
-	result = EscortFeasibilityStudy(shipId - 1);
+	result = EscortFeasibilityStudy((RACE_ID)(shipId - 1));
 	lua_pushinteger(luaState, result);
 	return 1;
 }
@@ -250,10 +250,10 @@ luaUqm_state_escort_removeShips(lua_State *luaState) {
 	}
 
 	if (lua_isnil(luaState, 2)) {
-		numRemoved = RemoveEscortShips(shipId - 1);
+		numRemoved = RemoveEscortShips((RACE_ID)(shipId - 1));
 	} else {
 		int count = luaL_checkint(luaState, 2);
-		numRemoved = RemoveSomeEscortShips(shipId - 1, count);
+		numRemoved = RemoveSomeEscortShips((RACE_ID)(shipId - 1), count);
 	}
 
 	lua_pushinteger(luaState, numRemoved);
@@ -272,7 +272,7 @@ luaUqm_state_escort_shipCount(lua_State *luaState) {
 		return 1;
 	}
 
-	result = CountEscortShips(shipId - 1);
+	result = CountEscortShips((RACE_ID)(shipId - 1));
 	lua_pushinteger(luaState, result);
 	return 1;
 }
@@ -299,7 +299,7 @@ luaUqm_state_race_isAlive(lua_State *luaState) {
 		return 1;
 	}
 
-	result = (CheckAlliance(raceId) != DEAD_GUY);
+	result = (CheckAlliance((RACE_ID)raceId) != DEAD_GUY);
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -316,7 +316,7 @@ luaUqm_state_race_isAllied(lua_State *luaState) {
 		return 1;
 	}
 
-	result = (CheckAlliance(raceId) == GOOD_GUY);
+	result = (CheckAlliance((RACE_ID)raceId) == GOOD_GUY);
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -334,7 +334,7 @@ luaUqm_state_race_isKnown(lua_State *luaState) {
 		return 1;
 	}
 
-	result = CheckSphereTracking(raceId);
+	result = CheckSphereTracking((RACE_ID)raceId);
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -361,7 +361,7 @@ luaUqm_state_race_setAlive(lua_State *luaState) {
 		return 1;
 	}
 
-	result = KillRace(raceId);
+	result = KillRace((RACE_ID)raceId);
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -382,7 +382,7 @@ luaUqm_state_race_setAllied(lua_State *luaState) {
 
 	flag = lua_toboolean(luaState, 2);
 
-	result = SetRaceAllied(raceId, flag);
+	result = SetRaceAllied((RACE_ID)raceId, flag);
 	lua_pushboolean(luaState, result);
 	return 1;
 }
@@ -409,7 +409,7 @@ luaUqm_state_race_setKnown(lua_State *luaState) {
 		return 1;
 	}
 
-	result = (StartSphereTracking(raceId) != 0);
+	result = (StartSphereTracking((RACE_ID)raceId) != 0);
 	lua_pushboolean(luaState, result);
 	return 1;
 }

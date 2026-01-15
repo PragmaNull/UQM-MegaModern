@@ -466,24 +466,24 @@ POINT
 GetPointOfEllipse (double a, double b, double radian)
 {
 	double t[2] = { a * cos (radian), b * sin (radian) };
-	return (POINT) { (COORD)MATH_ROUND (t[0]), (COORD)MATH_ROUND (t[1]) };
+	return POINT{ (COORD)MATH_ROUND (t[0]), (COORD)MATH_ROUND (t[1]) };
 }
 
 POINT
-ShiftPoint (POINT p, POINT S)
+ShiftPoint (POINT p, POINT s)
 {
-	return (POINT) { p.x + S.x, p.y + S.y };
+	return p + s;
 }
 
 POINT
 RotatePoint (POINT p, POINT Pivot, double radian)
 {
-	double d[2] = { p.x - Pivot.x, p.y - Pivot.y };
+	double d[2] = { static_cast<double>(p.x - Pivot.x), static_cast<double>(p.y - Pivot.y) };
 	double cosine[2] = { cos (radian), sin (radian) };
 	double x = Pivot.x + (d[0] * cosine[0] - d[1] * cosine[1]);
 	double y = Pivot.y + (d[0] * cosine[1] + d[1] * cosine[0]);
 
-	return (POINT) { MATH_ROUND (x), MATH_ROUND (y) };
+	return POINT{ (COORD)MATH_ROUND (x), (COORD)MATH_ROUND (y) };
 }
 
 // Kruzen: Merged together with overflow check. Functions above are redundant
@@ -506,7 +506,7 @@ CalcEllipsePoint (double a, double b, double rad_one, double rad_two, POINT Pivo
 	if (y > 32767.0) { y = 32767.0; }
 	if (y < -32768.0) { y = -32768.0; }
 
-	return (POINT) { UNIVERSE_TO_DISPX2 (x), UNIVERSE_TO_DISPY2 (y) };
+	return POINT{ UNIVERSE_TO_DISPX2 (x), UNIVERSE_TO_DISPY2 (y) };
 }
 
 BOOLEAN
@@ -528,7 +528,7 @@ DrawNoReturnZone (void)
 	double halfFuel = GLOBAL_SIS (FuelOnBoard) / 2;
 
 	sol = plot_map[SOL_DEFINED].star_pt;
-	sis = (POINT){ LOGX_TO_UNIVERSE (GLOBAL_SIS (log_x)),
+	sis = POINT{ LOGX_TO_UNIVERSE (GLOBAL_SIS (log_x)),
 			LOGY_TO_UNIVERSE (GLOBAL_SIS (log_y)) };
 
 	dist = (double)FuelRequiredTo (sol) / 2;
@@ -546,8 +546,8 @@ DrawNoReturnZone (void)
 		center = MAKE_POINT ((sis.x + sol.x) / 2, (sis.y + sol.y) / 2);
 		rotation = atan2 (sol.y - sis.y, sol.x - sis.x);
 
-		rmax_y = (POINT){ -1 , -1 };
-		rmin_y = (POINT){ SIS_SCREEN_WIDTH, SIS_SCREEN_HEIGHT };
+		rmax_y = POINT{ -1 , -1 };
+		rmin_y = POINT{ SIS_SCREEN_WIDTH, SIS_SCREEN_HEIGHT };
 
 		for (i = 0; i < M_PI * 2; i += Step)
 		{
@@ -974,62 +974,62 @@ RaceColor (COUNT index)
 	switch (index)
 	{
 		case ARILOU_SHIP: // Bold blue
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x00, 0x00, 0x17), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x00, 0x00, 0x17), 0x00);
 		case CHMMR_SHIP: // Pale blue-grey
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x10, 0x15, 0x19), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x10, 0x15, 0x19), 0x00);
 		case HUMAN_SHIP: // Blue
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x09, 0x09, 0x1B), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x09, 0x09, 0x1B), 0x00);
 		case ORZ_SHIP: // Plum
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x0D, 0x00, 0x05), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x0D, 0x00, 0x05), 0x00);
 		case PKUNK_SHIP: // Pinkunk
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x1C, 0x07, 0x19), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x1C, 0x07, 0x19), 0x00);
 		case SHOFIXTI_SHIP: // Marsupial brown
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x0A, 0x06, 0x00), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x0A, 0x06, 0x00), 0x00);
 		case SPATHI_SHIP: // Mustard yellow
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x15, 0x12, 0x03), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x15, 0x12, 0x03), 0x00);
 		case SUPOX_SHIP: // Leaf green
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x05, 0x14, 0x01), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x05, 0x14, 0x01), 0x00);
 		case THRADDASH_SHIP: // Dark cyan
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x00, 0x06, 0x08), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x00, 0x06, 0x08), 0x00);
 		case UTWIG_SHIP: // Beige
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x1A, 0x16, 0x12), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x1A, 0x16, 0x12), 0x00);
 		case VUX_SHIP: // Very Ugly Aqua
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x06, 0x16, 0x0F), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x06, 0x16, 0x0F), 0x00);
 		case YEHAT_SHIP: // Royal purple
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x0A, 0x00, 0x11), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x0A, 0x00, 0x11), 0x00);
 		case MELNORME_SHIP: // Yellowish
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x1A, 0x16, 0x08), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x1A, 0x16, 0x08), 0x00);
 		case DRUUGE_SHIP: // Crimson (tm)
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x0F, 0x00, 0x00), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x0F, 0x00, 0x00), 0x00);
 		case ILWRATH_SHIP: // Purple
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x0E, 0x00, 0x0E), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x0E, 0x00, 0x0E), 0x00);
 		case MYCON_SHIP: // Fungal fuchsia
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x14, 0x00, 0x0C), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x14, 0x00, 0x0C), 0x00);
 		case SLYLANDRO_SHIP: // Red Alert
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x1D, 0x00, 0x07), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x1D, 0x00, 0x07), 0x00);
 		case UMGAH_SHIP: // Olive
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x0B, 0x0C, 0x00), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x0B, 0x0C, 0x00), 0x00);
 		case URQUAN_SHIP: // Dark Green
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x00, 0x08, 0x00), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x00, 0x08, 0x00), 0x00);
 		case ZOQFOTPIK_SHIP: // Orange
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x16, 0x0D, 0x00), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x16, 0x0D, 0x00), 0x00);
 		case SYREEN_SHIP: // Slightly-orange red
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x15, 0x07, 0x03), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x15, 0x07, 0x03), 0x00);
 		case BLACK_URQUAN_SHIP: // Dark grey
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x06, 0x06, 0x06), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x06, 0x06, 0x06), 0x00);
 		case ANDROSYNTH_SHIP: // Violet
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x09, 0x00, 0x15), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x09, 0x00, 0x15), 0x00);
 		case CHENJESU_SHIP: // Cyan
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x00, 0x15, 0x1C), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x00, 0x15, 0x1C), 0x00);
 		case MMRNMHRM_SHIP: // Silver
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x10, 0x10, 0x10), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x10, 0x10, 0x10), 0x00);
 		case YEHAT_REBEL_SHIP: // Lavender
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x19, 0x10, 0x1F), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x19, 0x10, 0x1F), 0x00);
 		default: // Hot pink (just a fail state but also reserved)
-			return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x1C, 0x00, 0x0C), 0x00);
+			return Color BUILD_COLOR (MAKE_RGB15_INIT (0x1C, 0x00, 0x0C), 0x00);
 	}
 	// Slylandro lightish red (pale pink for gas giant creatures)
-	return (Color) BUILD_COLOR (MAKE_RGB15_INIT (0x1F, 0x15, 0x19), 0x00);
+	return Color BUILD_COLOR (MAKE_RGB15_INIT (0x1F, 0x15, 0x19), 0x00);
 #if 0
 	// A way to choose colors entirely "fairly", although colors don't really map
 	// in such an even distribution.
@@ -2363,7 +2363,7 @@ DoStarSearch (MENU_STATE *pMS)
 	STAR_SEARCH_STATE *pss;
 	BOOLEAN success;
 
-	pss = HMalloc (sizeof (*pss));
+	pss = (STAR_SEARCH_STATE*)HMalloc (sizeof (*pss));
 	if (!pss)
 		return FALSE;
 
@@ -2623,7 +2623,7 @@ DoMoveCursor (MENU_STATE *pMS)
 				++NewState;
 
 			if (NewState != which_starmap)
-				which_starmap = NewState;
+				which_starmap = (CURRENT_STARMAP_SHOWN)NewState;
 
 			PlayMenuSound (MENU_SOUND_MOVE);
 

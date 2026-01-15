@@ -212,7 +212,7 @@ uio_fgets(char *s, int size, uio_Stream *stream) {
 		
 		// Search in buffer
 		maxRead = minu(stream->dataEnd - stream->dataStart, size);
-		newLinePos = memchr(stream->dataStart, '\n', maxRead);
+		newLinePos = (const char*)memchr(stream->dataStart, '\n', maxRead);
 		if (newLinePos != NULL) {
 			// Newline found.
 			maxRead = newLinePos + 1 - stream->dataStart;
@@ -581,7 +581,7 @@ uio_Stream_new(uio_Handle *handle, int openFlags) {
 	result->openFlags = openFlags;
 	result->status = uio_Stream_STATUS_OK;
 	result->operation = uio_StreamOperation_none;
-	result->buf = uio_malloc(uio_Stream_BLOCK_SIZE);
+	result->buf = (char*)uio_malloc(uio_Stream_BLOCK_SIZE);
 	result->dataStart = result->buf;
 	result->dataEnd = result->buf;
 	result->bufEnd = result->buf + uio_Stream_BLOCK_SIZE;
@@ -590,7 +590,7 @@ uio_Stream_new(uio_Handle *handle, int openFlags) {
 
 static inline uio_Stream *
 uio_Stream_alloc(void) {
-	uio_Stream *result = uio_malloc(sizeof (uio_Stream));
+	uio_Stream *result = (uio_Stream*)uio_malloc(sizeof (uio_Stream));
 #ifdef uio_MEM_DEBUG
 	uio_MemDebug_debugAlloc(uio_Stream, (void *) result);
 #endif

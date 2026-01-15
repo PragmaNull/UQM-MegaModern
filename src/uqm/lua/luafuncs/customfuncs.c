@@ -29,7 +29,7 @@ luaFunctionWrapper(lua_State *luaState) {
 	int arg;
 	int result;
 	int isNum;
-	int (*fun)(int) = lua_topointer(luaState, lua_upvalueindex(1));
+	int (*fun)(int) = (int (__cdecl*)(int))lua_topointer(luaState, lua_upvalueindex(1));
 
 	if (lua_gettop(luaState) == 0) {
 		arg = 0;

@@ -28,7 +28,7 @@ static inline size_t nextPower2(size_t x);
 
 static void
 Heap_resize(Heap *heap, size_t size) {
-	heap->entries = realloc(heap->entries, size * sizeof (HeapValue *));
+	heap->entries = (HeapValue**)realloc(heap->entries, size * sizeof (HeapValue *));
 	heap->size = size;
 }
 
@@ -40,7 +40,7 @@ Heap_new(HeapValue_Comparator comparator, size_t initialSize, size_t minSize,
 
 	assert(minFillQuotient >= 0.0);
 
-	heap = malloc(sizeof (Heap));
+	heap = (Heap*)malloc(sizeof (Heap));
 
 	if (initialSize < minSize)
 		initialSize = minSize;
@@ -51,7 +51,7 @@ Heap_new(HeapValue_Comparator comparator, size_t initialSize, size_t minSize,
 	heap->size = nextPower2(initialSize);
 	heap->minFill = ceil(((double) (heap->size >> 1))
 			* heap->minFillQuotient);
-	heap->entries = malloc(heap->size * sizeof (HeapValue *));
+	heap->entries = (HeapValue**)malloc(heap->size * sizeof (HeapValue *));
 	heap->numEntries = 0;
 
 	return heap;

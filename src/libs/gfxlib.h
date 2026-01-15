@@ -254,6 +254,12 @@ typedef struct point
 	COORD x, y;
 } POINT;
 
+POINT operator+(const POINT& lhs, const POINT& rhs)
+{
+	return { static_cast<COORD>(lhs.x + rhs.x), static_cast<COORD>(lhs.y + rhs.y) };
+}
+
+
 // JMS: coordinate point with larger values to avoid overflows in hires modes.
 typedef struct dpoint
 {

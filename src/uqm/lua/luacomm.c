@@ -139,7 +139,7 @@ luaUqm_comm_addToBuffer  (char **buf, size_t *bufLen, char **bufPtr,
 	}
 
 	if (newLen != *bufLen) {
-		char *newBuf = HRealloc (*buf, newLen);
+		char *newBuf = (char*)HRealloc (*buf, newLen);
 		if (newBuf == NULL)
 		{
 			log_add (log_Error, "Error: luaUqm_addToBuffer(): could not "
@@ -175,7 +175,7 @@ luaUqm_comm_stringInterpolate (const char *str)
 	assert(luaUqm_commState != NULL);
 
 	bufLen = 2048;
-	buf = HMalloc (bufLen);
+	buf = (char*)HMalloc (bufLen);
 	if (buf == NULL)
 		return NULL;
 
@@ -212,7 +212,7 @@ luaUqm_comm_stringInterpolate (const char *str)
 		{
 			size_t exprLen = endTag - luaStart;
 #define LUAEXPR_START "return "
-			char *exprBuf = HMalloc(sizeof LUAEXPR_START + exprLen);
+			char *exprBuf = (char*)HMalloc(sizeof LUAEXPR_START + exprLen);
 					// 'sizeof LUAEXPR_START' includes a null byte
 			char *exprBufPtr = exprBuf;
 			strcpy(exprBuf, LUAEXPR_START);
@@ -272,7 +272,7 @@ out:
 			// luaUqm_addToBuffer() always leaves one byte for the '\0'.
 
 	{
-		char *newBuf = HRealloc (buf, bufPtr - buf + 1);
+		char *newBuf = (char*)HRealloc (buf, bufPtr - buf + 1);
 		if (newBuf == NULL)
 		{
 			// If we can't shorten 'newBuf', we'll just keep using the

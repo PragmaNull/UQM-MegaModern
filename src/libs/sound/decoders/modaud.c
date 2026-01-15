@@ -123,7 +123,7 @@ moda_mmout_Update (void)
 	if (!buffer || bufsize == 0)
 		return;
 
-	written = VC_WriteBytes (buffer, bufsize);
+	written = VC_WriteBytes ((SBYTE*)buffer, bufsize);
 }
 
 static BOOL

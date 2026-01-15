@@ -175,7 +175,7 @@ FindThreadInfo (SDL_threadID threadID)
 	ptr = threadQueue;
 	while (ptr)
 	{
-		if (SDL_GetThreadID (ptr->native) == threadID)
+		if (SDL_GetThreadID ((SDL_Thread*)ptr->native) == threadID)
 		{
 			SDL_mutexV (threadQueueMutex);
 			return ptr;
@@ -321,7 +321,7 @@ TaskSwitch_SDL (void) {
 
 void
 WaitThread_SDL (Thread thread, int *status) {
-	SDL_WaitThread (((TrueThread)thread)->native, status);
+	SDL_WaitThread ((SDL_Thread*)((TrueThread)thread)->native, status);
 }
 
 ThreadLocal *
@@ -356,7 +356,7 @@ CreateMutex_SDL (const char *name, DWORD syncClass)
 CreateMutex_SDL (void)
 #endif
 {
-	Mut *mutex = malloc (sizeof (Mut));
+	Mut *mutex = (Mut*)malloc (sizeof (Mut));
 	if (mutex != NULL)
 	{
 		mutex->mutex = SDL_CreateMutex();

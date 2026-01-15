@@ -18,7 +18,9 @@
  *
  */
 
+#ifdef HAVE_REGEX
 #include <regex.h>
+#endif
 #include <string.h>
 #ifdef DEBUG
 #	include <stdio.h>

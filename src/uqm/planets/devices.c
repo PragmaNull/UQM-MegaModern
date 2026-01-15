@@ -501,7 +501,7 @@ InvokeSpawner (void)
 static BOOLEAN
 DoManipulateDevices (MENU_STATE *pMS)
 {
-	DEVICES_STATE *devState = pMS->privData;
+	DEVICES_STATE *devState = (DEVICES_STATE*)pMS->privData;
 	BOOLEAN select, cancel, back, forward;
 	BOOLEAN pagefwd, pageback;
 	
