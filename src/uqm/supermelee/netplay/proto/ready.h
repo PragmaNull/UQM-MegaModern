@@ -21,7 +21,7 @@
 
 #include "../netconnection.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -31,7 +31,7 @@ bool Netplay_remoteReady(NetConnection *conn);
 bool Netplay_isLocalReady(const NetConnection *conn);
 bool Netplay_isRemoteReady(const NetConnection *conn);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

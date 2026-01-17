@@ -17,7 +17,7 @@
 #ifndef UQM_STARCON_H_
 #define UQM_STARCON_H_
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -28,7 +28,7 @@ extern void ProcessUtilityKeys (void);
 extern int Starcon2Main (void *threadArg);
 extern void FreeGameData (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

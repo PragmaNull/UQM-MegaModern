@@ -21,7 +21,7 @@
 
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -72,7 +72,7 @@ typedef struct
 
 extern LIFEFORM_DESC CreatureData[];
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

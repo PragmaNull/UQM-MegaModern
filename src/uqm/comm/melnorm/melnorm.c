@@ -37,9 +37,89 @@
 #include "uqm/controls.h"
 #include "uqm/races.h"
 
+static COUNT melnorme_digit_names[] =
+{
+	ENUMERATE_ZERO,
+	ENUMERATE_ONE,
+	ENUMERATE_TWO,
+	ENUMERATE_THREE,
+	ENUMERATE_FOUR,
+	ENUMERATE_FIVE,
+	ENUMERATE_SIX,
+	ENUMERATE_SEVEN,
+	ENUMERATE_EIGHT,
+	ENUMERATE_NINE
+};
 
-static const NUMBER_SPEECH_DESC melnorme_numbers_english;
+static COUNT melnorme_teen_names[] =
+{
+	ENUMERATE_TEN,
+	ENUMERATE_ELEVEN,
+	ENUMERATE_TWELVE,
+	ENUMERATE_THIRTEEN,
+	ENUMERATE_FOURTEEN,
+	ENUMERATE_FIFTEEN,
+	ENUMERATE_SIXTEEN,
+	ENUMERATE_SEVENTEEN,
+	ENUMERATE_EIGHTEEN,
+	ENUMERATE_NINETEEN
+};
 
+static COUNT melnorme_tens_names[] =
+{
+	0, /* invalid */
+	0, /* skip digit */
+	ENUMERATE_TWENTY,
+	ENUMERATE_THIRTY,
+	ENUMERATE_FOURTY,
+	ENUMERATE_FIFTY,
+	ENUMERATE_SIXTY,
+	ENUMERATE_SEVENTY,
+	ENUMERATE_EIGHTY,
+	ENUMERATE_NINETY
+};
+
+static const NUMBER_SPEECH_DESC melnorme_numbers_english =
+{
+	5, /* NumDigits */
+	{
+		{ /* 1000-999999 */
+			1000, /* Divider */
+			0, /* Subtrahend */
+			NULL, /* StrDigits - recurse */
+			NULL, /* Names - not used */
+			ENUMERATE_THOUSAND /* CommonIndex */
+		},
+		{ /* 100-999 */
+			100, /* Divider */
+			0, /* Subtrahend */
+			melnorme_digit_names, /* StrDigits */
+			NULL, /* Names - not used */
+			ENUMERATE_HUNDRED /* CommonIndex */
+		},
+		{ /* 20-99 */
+			10, /* Divider */
+			0, /* Subtrahend */
+			melnorme_tens_names, /* StrDigits */
+			NULL, /* Names - not used */
+			0 /* CommonIndex - not used */
+		},
+		{ /* 10-19 */
+			1, /* Divider */
+			10, /* Subtrahend */
+			melnorme_teen_names, /* StrDigits */
+			NULL, /* Names - not used */
+			0 /* CommonIndex - not used */
+		},
+		{ /* 0-9 */
+			1, /* Divider */
+			0, /* Subtrahend */
+			melnorme_digit_names, /* StrDigits */
+			NULL, /* Names - not used */
+			0 /* CommonIndex - not used */
+		}
+	}
+};
 static LOCDATA melnorme_desc =
 {
 	MELNORME_CONVERSATION, /* AlienConv */
@@ -128,89 +208,8 @@ static LOCDATA melnorme_desc =
 	NULL,
 };
 
-static COUNT melnorme_digit_names[] =
-{
-	ENUMERATE_ZERO,
-	ENUMERATE_ONE,
-	ENUMERATE_TWO,
-	ENUMERATE_THREE,
-	ENUMERATE_FOUR,
-	ENUMERATE_FIVE,
-	ENUMERATE_SIX,
-	ENUMERATE_SEVEN,
-	ENUMERATE_EIGHT,
-	ENUMERATE_NINE
-};
 
-static COUNT melnorme_teen_names[] =
-{
-	ENUMERATE_TEN,
-	ENUMERATE_ELEVEN,
-	ENUMERATE_TWELVE,
-	ENUMERATE_THIRTEEN,
-	ENUMERATE_FOURTEEN,
-	ENUMERATE_FIFTEEN,
-	ENUMERATE_SIXTEEN,
-	ENUMERATE_SEVENTEEN,
-	ENUMERATE_EIGHTEEN,
-	ENUMERATE_NINETEEN
-};
 
-static COUNT melnorme_tens_names[] =
-{
-	0, /* invalid */
-	0, /* skip digit */
-	ENUMERATE_TWENTY,
-	ENUMERATE_THIRTY,
-	ENUMERATE_FOURTY,
-	ENUMERATE_FIFTY,
-	ENUMERATE_SIXTY,
-	ENUMERATE_SEVENTY,
-	ENUMERATE_EIGHTY,
-	ENUMERATE_NINETY
-};
-
-static const NUMBER_SPEECH_DESC melnorme_numbers_english =
-{
-	5, /* NumDigits */
-	{
-		{ /* 1000-999999 */
-			1000, /* Divider */
-			0, /* Subtrahend */
-			NULL, /* StrDigits - recurse */
-			NULL, /* Names - not used */
-			ENUMERATE_THOUSAND /* CommonIndex */
-		},
-		{ /* 100-999 */
-			100, /* Divider */
-			0, /* Subtrahend */
-			melnorme_digit_names, /* StrDigits */
-			NULL, /* Names - not used */
-			ENUMERATE_HUNDRED /* CommonIndex */
-		},
-		{ /* 20-99 */
-			10, /* Divider */
-			0, /* Subtrahend */
-			melnorme_tens_names, /* StrDigits */
-			NULL, /* Names - not used */
-			0 /* CommonIndex - not used */
-		},
-		{ /* 10-19 */
-			1, /* Divider */
-			10, /* Subtrahend */
-			melnorme_teen_names, /* StrDigits */
-			NULL, /* Names - not used */
-			0 /* CommonIndex - not used */
-		},
-		{ /* 0-9 */
-			1, /* Divider */
-			0, /* Subtrahend */
-			melnorme_digit_names, /* StrDigits */
-			NULL, /* Names - not used */
-			0 /* CommonIndex - not used */
-		}
-	}
-};
 
 
 //////////////Technology System///////////////////////
@@ -379,7 +378,7 @@ countTech (void)
 	BYTE i = 0;
 
 	for (i = 0; i <= NUM_TECHNOLOGIES; ++i)
-		numTech += HasTech (i);
+		numTech += HasTech ((TechId_t)i);
 
 	return numTech;
 }

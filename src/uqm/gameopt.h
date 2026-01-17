@@ -19,7 +19,7 @@
 #include "libs/compiler.h"
 #include "libs/gfxlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -35,7 +35,7 @@ extern BYTE OutfitOrShipyard;
 extern BOOLEAN SaveOrLoad;
 extern BOOLEAN TextEntry3DO;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

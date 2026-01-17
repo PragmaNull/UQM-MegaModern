@@ -19,7 +19,7 @@
 #ifndef LIBS_NET_H_
 #define LIBS_NET_H_
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -29,7 +29,7 @@ extern "C" {
 #include "network/connect/listen.h"
 #include "network/connect/resolve.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

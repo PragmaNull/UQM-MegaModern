@@ -22,7 +22,7 @@
 #include "netplay.h"
 		// for NETPLAY_STATISTICS
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -42,7 +42,7 @@ typedef void (*NetConnection_DeleteCallback)(NetConnection *nd);
 typedef void (*NetConnection_ReadyCallback)(NetConnection *conn, void *arg);
 typedef void (*NetConnection_ResetCallback)(NetConnection *conn, void *arg);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
@@ -58,7 +58,7 @@ typedef void (*NetConnection_ResetCallback)(NetConnection *conn, void *arg);
 #	include "libs/uio.h"
 #endif
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -80,11 +80,11 @@ struct NetStatistics {
 };
 #endif
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -253,7 +253,7 @@ void *NetConnection_getResetCallbackArg(const NetConnection *conn);
 extern uio_Stream *netplayDebugFile;
 #endif
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -31,7 +31,7 @@
 #include "../meleesetup.h"
 		// for FleetShipIndex
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -60,7 +60,7 @@ void sendAbort(NetConnection *conn, NetplayAbortReason reason);
 void sendReset(NetConnection *conn, NetplayResetReason reason);
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

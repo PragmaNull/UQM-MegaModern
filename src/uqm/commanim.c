@@ -210,7 +210,7 @@ AdvanceAmbientSequence (SEQUENCE *pSeq)
 		{	// YOYO_ANIM never draws the first frame
 			// ("first" depends on direction)
 			--pSeq->FramesLeft;
-			pSeq->Direction = -pSeq->Direction;
+			pSeq->Direction = (ANIM_DIR) - pSeq->Direction;
 		}
 		else if (ADPtr->AnimFlags & CIRCULAR_ANIM)
 		{	// Rewind the CIRCULAR_ANIM
@@ -629,7 +629,7 @@ ApplyFilterToStamp (STAMP s)
 		if (factor == 0x00 && FTPtr->Kind == DRAW_ALPHA)
 			continue;
 
-		mode = MAKE_DRAW_MODE (FTPtr->Kind, factor);
+		mode = MAKE_DRAW_MODE ((DrawKind)FTPtr->Kind, factor);
 		oldMode = SetContextDrawMode (mode);
 		oldColor = SetContextForeGroundColor (FGColor);
 
@@ -749,7 +749,7 @@ DrawAlienFrame (SEQUENCE *Sequences, COUNT Num, BOOLEAN fullRedraw)
 				if (factor == 0x00 && FTPtr->Kind == DRAW_ALPHA)
 					goto postprocess;
 
-				mode = MAKE_DRAW_MODE (FTPtr->Kind, factor);
+				mode = MAKE_DRAW_MODE ((DrawKind)FTPtr->Kind, factor);
 				oldMode = SetContextDrawMode (mode);
 				oldColor = SetContextForeGroundColor (FGColor);
 

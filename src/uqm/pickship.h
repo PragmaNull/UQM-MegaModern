@@ -20,7 +20,7 @@
 #include "libs/compiler.h"
 #include "races.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -32,7 +32,7 @@ extern void InitPickFrame (void);
 extern void DestroyPickFrame (void);
 extern void RepairPickFrame (RECT *pRect, COUNT frame);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

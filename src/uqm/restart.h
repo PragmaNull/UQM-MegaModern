@@ -19,14 +19,14 @@
 
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 
 extern BOOLEAN StartGame (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

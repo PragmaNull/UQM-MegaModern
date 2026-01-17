@@ -21,7 +21,7 @@
 #include "races.h"
 #include "element.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -36,7 +36,7 @@ extern void collision (ELEMENT *ElementPtr0, POINT *pPt0,
 
 extern STATUS_FLAGS inertial_thrust (ELEMENT *ElementPtr);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

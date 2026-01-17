@@ -68,7 +68,7 @@ ChecksumBuffer_init(ChecksumBuffer *cb, size_t delay, size_t interval) {
 		size_t i;
 #endif
 
-		cb->checksums = malloc(bufSize * sizeof (ChecksumEntry));
+		cb->checksums = (ChecksumEntry*) malloc(bufSize * sizeof (ChecksumEntry));
 		cb->maxSize = bufSize;
 		cb->interval = interval;
 

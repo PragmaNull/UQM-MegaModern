@@ -31,7 +31,7 @@
 #include "../../races.h"
 		// for STARSHIP
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -83,7 +83,7 @@ bool waitReady(NetConnection *conn);
 bool waitReset(NetConnection *conn, NetState nextState);
 bool waitResetConnections(NetState nextState);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

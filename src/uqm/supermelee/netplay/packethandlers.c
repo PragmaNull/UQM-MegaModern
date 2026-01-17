@@ -628,7 +628,7 @@ PacketHandler_Checksum(NetConnection *conn, const Packet_Checksum *packet) {
 
 int
 PacketHandler_Abort(NetConnection *conn, const Packet_Abort *packet) {
-	abortFeedback(conn, packet->reason);
+	abortFeedback(conn, (NetplayAbortReason)packet->reason);
 
 	return -1;
 			// Close connection.
@@ -641,7 +641,7 @@ PacketHandler_Reset(NetConnection *conn, const Packet_Reset *packet) {
 	if (!testNetState(!conn->stateFlags.reset.remoteReset, PACKET_RESET))
 		return -1;  // errno is set
 
-	reason = ntoh16(packet->reason);
+	reason = (NetplayResetReason)ntoh16(packet->reason);
 
 	Netplay_remoteReset(conn, reason);
 	return 0;

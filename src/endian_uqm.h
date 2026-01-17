@@ -62,7 +62,7 @@
 #endif
 #endif /* linux */
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -129,7 +129,7 @@ static __inline__ uint64 UQM_Swap64(uint64 val)
 #define UQM_SwapBE64(X)	(X)
 #endif
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

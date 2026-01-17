@@ -21,7 +21,7 @@
 #include "libs/sndlib.h"
 #include "libs/gfxlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -48,7 +48,7 @@ extern void UninitMenuMusic (void);
 
 extern BOOLEAN ShowPresentation (RESOURCE presentation);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

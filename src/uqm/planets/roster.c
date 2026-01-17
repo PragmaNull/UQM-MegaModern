@@ -254,7 +254,7 @@ selectSupportShip (ROSTER_STATE *rosterState, COUNT shipIndex)
 static BOOLEAN
 DoModifyRoster (MENU_STATE *pMS)
 {
-	ROSTER_STATE *rosterState = pMS->privData;
+	ROSTER_STATE *rosterState = (ROSTER_STATE*)pMS->privData;
 	BOOLEAN select, cancel, up, down, pgup, pgdn, horiz;
 
 	if (GLOBAL (CurrentActivity) & CHECK_ABORT)

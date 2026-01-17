@@ -17,13 +17,13 @@
 #ifndef UTWIG_H
 #define UTWIG_H
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 RACE_DESC *init_utwig (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -26,7 +26,7 @@
 
 #include "libs/threadlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -54,7 +54,7 @@ extern DWORD Task_ReadState (Task task, DWORD state_mask);
 extern void  FinishTask (Task task);
 extern void  ConcludeTask (Task task);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

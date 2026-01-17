@@ -33,7 +33,7 @@
 static inline PacketQueueLink *
 PacketQueueLink_alloc(void) {
 	// XXX: perhaps keep a pool of links?
-	return malloc(sizeof (PacketQueueLink));
+	return (PacketQueueLink*)malloc(sizeof (PacketQueueLink));
 }
 
 static inline void

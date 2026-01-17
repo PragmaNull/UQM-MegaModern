@@ -29,13 +29,13 @@
 
 
 // Compilation related
-#ifndef inline
-#	ifdef _MSC_VER
-#		define inline __inline
-#	else
-#		define inline __inline__
-#	endif
-#endif
+//#ifndef inline
+//#	ifdef _MSC_VER
+//#		define inline __inline
+//#	else
+//#		define inline __inline__
+//#	endif
+//#endif
 
 // Paths
 #ifdef WIN32

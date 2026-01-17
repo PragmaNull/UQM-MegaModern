@@ -50,7 +50,7 @@
 #	endif  /* defined(PRIxPTR) */
 #endif
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -204,7 +204,7 @@ UQM_COMPILE_TIME_ASSERT(uint64, sizeof(uint64) == 8);
 #	endif /* Visual Studio 2008 */
 #endif /* !_STDINT_H_ && !HAVE_STDINT_H */
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

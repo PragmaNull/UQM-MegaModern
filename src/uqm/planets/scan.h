@@ -26,7 +26,7 @@ typedef struct scan_block SCAN_BLOCK;
 #include "libs/gfxlib.h"
 #include "planets.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -67,7 +67,7 @@ void setNodeNotRetrieved (PLANET_INFO *planetInfo, BYTE scanType, BYTE nodeNr);
 
 void GetPlanetTitle (UNICODE* buf, COUNT bufsize);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

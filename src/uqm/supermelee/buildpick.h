@@ -5,7 +5,7 @@
 #include "melee.h"
 #include "../races.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -20,7 +20,7 @@ void DrawPickIcon (MeleeShip ship, bool DrawErase);
 
 void DrawTooltip (SHIP_INFO *SIPtr);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

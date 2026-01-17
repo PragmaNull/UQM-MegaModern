@@ -21,14 +21,14 @@
 
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 #include "math/random.h"
 
 extern COUNT square_root (DWORD value);
-extern uint32_t crc32b (const UNICODE *str);
+//extern uint32_t crc32b (const UNICODE *str);
 
 inline static float
 scaleThing (float original, float thingToScale)
@@ -37,7 +37,7 @@ scaleThing (float original, float thingToScale)
 }
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

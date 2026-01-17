@@ -26,7 +26,7 @@
 #include "libs/timelib.h"
 #include "../element.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -92,7 +92,7 @@ enum
 	PS_NON_PLAYER,
 };
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

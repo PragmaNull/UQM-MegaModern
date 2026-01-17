@@ -20,7 +20,7 @@
 #include "libs/compiler.h"
 #include "planets/planets.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -108,7 +108,7 @@ extern BOOLEAN isStarMarked (const int star_index,
 		const char *marker_state);
 extern void setStarMarked (const int star_index, const char *marker_state);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -475,7 +475,7 @@ LoadTeamList (MELEE_STATE *pMS)
 	if (pMS->load.entryIndices != NULL)
 		HFree (pMS->load.entryIndices);
 	pMS->load.numIndices = GetDirEntryTableCount (pMS->load.dirEntries);
-	pMS->load.entryIndices = HMalloc (pMS->load.numIndices *
+	pMS->load.entryIndices = (COUNT*)HMalloc (pMS->load.numIndices *
 			sizeof pMS->load.entryIndices[0]);
 	for (i = 0; i < pMS->load.numIndices; i++)
 		pMS->load.entryIndices[i] = i;
@@ -534,7 +534,7 @@ InitPreBuilt (MELEE_STATE *pMS)
 
 #define PREBUILT_COUNT 15
 	pMS->load.preBuiltList =
-			HMalloc (PREBUILT_COUNT * sizeof (MeleeTeam *));
+			(MeleeTeam**)HMalloc (PREBUILT_COUNT * sizeof (MeleeTeam *));
 	pMS->load.preBuiltCount = PREBUILT_COUNT;
 #undef PREBUILT_COUNT
 

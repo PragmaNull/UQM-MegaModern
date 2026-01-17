@@ -20,7 +20,7 @@
 #include "libs/compiler.h"
 #include "libs/gfxlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -218,7 +218,7 @@ extern void RunOneTimeSequence (COUNT animIndex, COUNT flags);
 extern void EngageFilters (FILTER_DESC* f_desc);
 extern void DisengageFilters (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

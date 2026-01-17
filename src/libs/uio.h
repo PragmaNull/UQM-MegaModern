@@ -21,13 +21,13 @@
 #ifndef LIBS_UIO_H_
 #define LIBS_UIO_H_
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 #include "uio/io.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

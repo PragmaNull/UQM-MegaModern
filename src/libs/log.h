@@ -14,12 +14,12 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 #include "log/uqmlog.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif

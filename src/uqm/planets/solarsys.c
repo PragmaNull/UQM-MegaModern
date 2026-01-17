@@ -1432,7 +1432,7 @@ ScreenCompass (COUNT index)
 {
 	SIZE facing;
 	POINT scrLoc = GLOBAL (ShipStamp.origin);
-	EXTENT sisScr = { SIS_SCREEN_WIDTH, SIS_SCREEN_HEIGHT };
+	EXTENT sisScr = {(COORD) SIS_SCREEN_WIDTH, (COORD)SIS_SCREEN_HEIGHT };
 	BOOLEAN westOfCenter = scrLoc.x < (sisScr.width >> 1);
 	BOOLEAN northOfCenter = scrLoc.y < (sisScr.height >> 1);
 	int quadrant = (westOfCenter ? 0 : 1) | (northOfCenter ? 0 : 2);

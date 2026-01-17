@@ -22,7 +22,7 @@
 #include "../netconnection.h"
 #include "../packet.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -33,7 +33,7 @@ void Netplay_remoteReset(NetConnection *conn, NetplayResetReason reason);
 bool Netplay_isLocalReset(const NetConnection *conn);
 bool Netplay_isRemoteReset(const NetConnection *conn);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

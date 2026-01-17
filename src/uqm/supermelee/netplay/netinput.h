@@ -23,7 +23,7 @@
 		// for BATTLE_INPUT_STATE
 #include "../../init.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 		// for NUM_PLAYERS
@@ -50,7 +50,7 @@ bool BattleInputBuffer_pop(BattleInputBuffer *bib,
 
 BattleInputBuffer *getBattleInputBuffer(size_t player);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

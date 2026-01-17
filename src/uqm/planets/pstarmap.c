@@ -528,8 +528,8 @@ DrawNoReturnZone (void)
 	double halfFuel = GLOBAL_SIS (FuelOnBoard) / 2;
 
 	sol = plot_map[SOL_DEFINED].star_pt;
-	sis = POINT{ LOGX_TO_UNIVERSE (GLOBAL_SIS (log_x)),
-			LOGY_TO_UNIVERSE (GLOBAL_SIS (log_y)) };
+	sis = POINT{ (COORD)LOGX_TO_UNIVERSE (GLOBAL_SIS (log_x)),
+			(COORD)LOGY_TO_UNIVERSE (GLOBAL_SIS (log_y)) };
 
 	dist = (double)FuelRequiredTo (sol) / 2;
 	
@@ -547,7 +547,7 @@ DrawNoReturnZone (void)
 		rotation = atan2 (sol.y - sis.y, sol.x - sis.x);
 
 		rmax_y = POINT{ -1 , -1 };
-		rmin_y = POINT{ SIS_SCREEN_WIDTH, SIS_SCREEN_HEIGHT };
+		rmin_y = POINT{ (COORD)SIS_SCREEN_WIDTH, (COORD)SIS_SCREEN_HEIGHT };
 
 		for (i = 0; i < M_PI * 2; i += Step)
 		{

@@ -23,7 +23,7 @@
 #include "units.h"
 		// for UNIT_SCREEN_WIDTH/HEIGHT
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -53,7 +53,7 @@ extern BOOLEAN hyper_transition (ELEMENT *ElementPtr);
 extern void HyperspaceMenu (void);
 extern void SaveSisHyperState (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

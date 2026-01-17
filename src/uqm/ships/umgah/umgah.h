@@ -17,13 +17,13 @@
 #ifndef UMGAH_H
 #define UMGAH_H
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 RACE_DESC *init_umgah (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -20,7 +20,7 @@
 #include "libs/compiler.h"
 #include "libs/gfxlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -37,7 +37,7 @@ extern void InitSlider (int x, int y, int width, FRAME sliderFrame,
 extern void SetSliderImage (FRAME f);
 void DrawSlider (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

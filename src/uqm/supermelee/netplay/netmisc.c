@@ -81,7 +81,7 @@ NetMelee_connectCallback(NetConnection *conn) {
 
 	meleeState = (struct melee_state *) NetConnection_getExtra(conn);
 	battleStateData = BattleStateData_new(meleeState, NULL, NULL);
-	NetConnection_setStateData(conn, (void *) battleStateData);
+	NetConnection_setStateData(conn, (NetConnectionStateData *) battleStateData);
 	NetConnection_setExtra(conn, NULL);
 
 	// We have sent no teams yet. Initialize the state accordingly.

@@ -303,7 +303,7 @@ NPCPhrase_cb (int index, CallbackFunction cb)
 #ifdef DEBUG_STARSEED
 					fprintf (stderr, "Allocating for track %d.\n", i);
 #endif
-					tracks[i] = HCalloc (sizeof (char) * MAX_CLIPNAME);
+					tracks[i] = (UNICODE*)HCalloc (sizeof (char) * MAX_CLIPNAME);
 					GetSubClip (tracks[i], pClip, clip_number);
 #ifdef DEBUG_STARSEED
 					fprintf (stderr, "RoboTrack[%d] = <<%s>>.\n", i, tracks[i]);
@@ -368,7 +368,7 @@ NPCPhrase_splice (int index)
 	{	// Splicing in some voice
 		UNICODE *tracks[] = {NULL, NULL};
 
-		tracks[0] = pClip;
+		tracks[0] = (UNICODE*)pClip;
 		SpliceMultiTrack (tracks, pStr);
 	}
 }

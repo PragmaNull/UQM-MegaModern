@@ -45,7 +45,7 @@
 #include <sys/types.h>
 #include "libs/timelib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -179,7 +179,7 @@ void WaitCondVar (CondVar);
 void SignalCondVar (CondVar);
 void BroadcastCondVar (CondVar);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

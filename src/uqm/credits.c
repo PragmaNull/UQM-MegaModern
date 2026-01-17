@@ -203,7 +203,7 @@ Credits_RenderTextFrame (CONTEXT TempContext, int *istr, int dir,
 		TextLines[i].baseline.x = 0;
 		TextLines[i].baseline.y = i + 1;
 
-		for (icol = 1, nextcol = strchr (TextLines[i].pStr, '\t');
+		for (icol = 1, nextcol = (char*)strchr (TextLines[i].pStr, '\t');
 				icol < MAX_TEXT_COLS && nextcol;
 				++icol, nextcol = strchr (nextcol, '\t'))
 		{

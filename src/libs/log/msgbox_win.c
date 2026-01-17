@@ -33,7 +33,7 @@ toWideChar (const /*UTF-8*/char *str)
 	if (cch == 0)
 		return NULL; // failed, probably no UTF8 converter
 
-	wstr = malloc (cch * sizeof (WCHAR));
+	wstr = (LPWSTR) malloc (cch * sizeof (WCHAR));
 	if (!wstr)
 		return NULL; // out of memory
 

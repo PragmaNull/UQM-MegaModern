@@ -30,7 +30,7 @@ typedef struct encounter ENCOUNTER;
 #include "element.h"
 #include "races.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -114,7 +114,7 @@ extern void SetBattlePlanet (void);
 extern SIZE EncounterRace;
 extern BYTE EncounterGroup;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

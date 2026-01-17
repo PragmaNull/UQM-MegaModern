@@ -62,7 +62,7 @@ NetConnection_open(int player, const NetplayPeerOptions *options,
 		NetConnection_DeleteCallback deleteCallback, void *extra) {
 	NetConnection *conn;
 
-	conn = malloc(sizeof (NetConnection));
+	conn = (NetConnection*) malloc(sizeof (NetConnection));
 
 #if defined(NETPLAY_DEBUG) && defined(NETPLAY_DEBUG_FILE)
 	{
@@ -123,7 +123,7 @@ NetConnection_open(int player, const NetplayPeerOptions *options,
 	conn->resetCallback = NULL;
 	conn->resetCallbackArg = NULL;
 	
-	conn->readBuf = malloc(NETPLAY_READBUFSIZE);
+	conn->readBuf = (uint8*)malloc(NETPLAY_READBUFSIZE);
 	conn->readEnd = conn->readBuf;
 
 	conn->stateData = NULL;

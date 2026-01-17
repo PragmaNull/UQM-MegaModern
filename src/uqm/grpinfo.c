@@ -343,7 +343,7 @@ FoundHome:
 			{
 				if (Index <= LONIBBLE (EncounterMakeup[BestIndex])
 						|| (COUNT)TFB_Random () % 100 < 50)
-					CloneShipFragment (BestIndex,
+					CloneShipFragment ((RACE_ID)BestIndex,
 							&GLOBAL (npc_built_ship_q), 0);
 			}
 
@@ -391,7 +391,7 @@ findRaceSOI (void)
 		FleetPtr = LockFleetInfo (&GLOBAL (avail_race_q), hFleet);
 		hNextFleet = _GetSuccLink(FleetPtr);
 		SpeciesID = FleetPtr->SpeciesID;
-		RaceID = SpeciesID - 1;
+		RaceID = (RACE_ID)(SpeciesID - 1);
 
 		if (HomeWorld[Index] && CurStarDescPtr->Index == HomeWorld[Index]
 				&& !RaceDead (RaceID)

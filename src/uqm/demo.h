@@ -19,7 +19,7 @@
 #ifndef UQM_DEMO_H_
 #define UQM_DEMO_H_
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -48,7 +48,7 @@ extern void JournalInput (INPUT_STATE InputState);
 
 #endif
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

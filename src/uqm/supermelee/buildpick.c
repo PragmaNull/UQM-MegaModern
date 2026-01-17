@@ -53,7 +53,7 @@ BuildBuildPickFrame (void)
 	DrawStamp (&s);
 
 	for (i = 0; i < NUM_PICK_COLS * NUM_PICK_ROWS; ++i)
-		DrawPickIcon (i, true);
+		DrawPickIcon ((MeleeShip)i, true);
 
 	DrawShipPickerText (s);
 
@@ -372,7 +372,7 @@ BuildPickShip (MELEE_STATE *pMS)
 	FlushInput ();
 
 	if (pMS->currentShip == MELEE_NONE)
-		pMS->currentShip = 0;
+		pMS->currentShip = (MeleeShip)0;
 
 	DrawPickFrame (pMS);
 

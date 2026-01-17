@@ -25,7 +25,7 @@ typedef struct crc_State crc_State;
 
 #include <stddef.h>
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -40,7 +40,7 @@ void crc_processUint16(crc_State *state, uint16 val);
 void crc_processUint32(crc_State *state, uint32 val);
 uint32 crc_finish(const crc_State *state);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

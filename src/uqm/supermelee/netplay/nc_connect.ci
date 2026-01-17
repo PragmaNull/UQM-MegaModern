@@ -103,7 +103,7 @@ NetConnection_go(NetConnection *conn) {
 	}
 	connectStateData->isServer = conn->options->isServer;
 
-	NetConnection_setStateData(conn, (void *) connectStateData);
+	NetConnection_setStateData(conn, (NetConnectionStateData *) connectStateData);
 	return 0;
 }
 

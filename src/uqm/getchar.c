@@ -73,7 +73,7 @@ LoadJoystickAlpha (STRING String, int *count)
 		return 0;
 
 	c = utf8StringCount (str);
-	chars = HMalloc (c * sizeof (*chars));
+	chars = (joy_char_t *)HMalloc (c * sizeof (*chars));
 	if (!chars)
 		return 0;
 
@@ -244,7 +244,7 @@ DoTextEntry (TEXTENTRY_STATE *pTES)
 					pTES->JoyRegLength);
 		}
 
-		pTES->CacheStr = HMalloc (pTES->MaxSize * sizeof (*pTES->CacheStr));
+		pTES->CacheStr = (UNICODE*)HMalloc (pTES->MaxSize * sizeof (*pTES->CacheStr));
 
 		EnterCharacterMode ();
 		DoInput (pTES, TRUE);

@@ -22,7 +22,7 @@
 #include <string.h> /* for memset */
 #include "libs/gfxlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -74,7 +74,7 @@ VelocitySquared (SIZE dx, SIZE dy)
 #define VELOCITY_TO_WORLD(v) ((v)>>VELOCITY_SHIFT)
 #define WORLD_TO_VELOCITY(l) ((l)<<VELOCITY_SHIFT)
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -35,7 +35,7 @@ struct Color {
 
 #include "libs/reslib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -238,10 +238,10 @@ typedef BYTE CREATE_FLAGS;
 #define MAPPED_TO_DISPLAY (CREATE_FLAGS)(1 << 2)
 #define WANT_ALPHA (CREATE_FLAGS)(1 << 3)
 
-typedef struct extent
+struct EXTENT
 {
 	COORD width, height;
-} EXTENT;
+} ;
 
 // JMS: Extent with larger values to avoid overflows in hires modes.
 typedef struct dextent
@@ -251,7 +251,13 @@ typedef struct dextent
 
 typedef struct point
 {
-	COORD x, y;
+	point() = default;
+	point(COORD _x, COORD _y) : x{ _x }, y{ _y } {}
+	point(int _x, int _y) : x{ (COORD)_x }, y{ (COORD)_y } {}
+	point(float _x, float _y) : x{ (COORD)_x }, y{ (COORD)_y } {}
+	point(double _x, double _y) : x{ (COORD)_x }, y{ (COORD)_y } {}
+	COORD x{};
+	COORD y{};
 } POINT;
 
 POINT operator+(const POINT& lhs, const POINT& rhs)
@@ -473,13 +479,13 @@ typedef struct text
 	COUNT CharCount;
 } TEXT;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
 #include "libs/strlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -758,7 +764,7 @@ extern COLORMAPPTR GetColorMapAddress (COLORMAP);
 void SetSystemRect (const RECT *pRect);
 void ClearSystemRect (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

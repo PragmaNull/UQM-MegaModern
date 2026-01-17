@@ -23,7 +23,7 @@
 
 #include <stddef.h>
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -49,7 +49,7 @@ typedef struct {
 extern NetplayOptions netplayOptions;
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -17,13 +17,13 @@
 #ifndef THRADD_H
 #define THRADD_H
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 RACE_DESC *init_thraddash (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

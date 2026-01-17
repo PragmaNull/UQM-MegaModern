@@ -1992,7 +1992,7 @@ InitCommunication (CONVERSATION which_comm)
 				status = HUMAN_SHIP;
 			}
 		}
-		StartSphereTracking (status);
+		StartSphereTracking ((RACE_ID)status);
 
 		if (which_comm == ORZ_CONVERSATION
 				|| (which_comm == TALKING_PET_CONVERSATION
@@ -2149,7 +2149,7 @@ RaceCommunication (void)
 
 			for (i = 0; i < EncounterPtr->num_ships; ++i)
 			{
-				CloneShipFragment (EncounterPtr->race_id,
+				CloneShipFragment ((RACE_ID)EncounterPtr->race_id,
 						&GLOBAL (npc_built_ship_q),
 						EncounterPtr->ShipList[i].crew_level);
 			}
@@ -2351,7 +2351,7 @@ SetCustomBaseLine (COUNT sentence, POINT bl, TEXT_ALIGN align)
 {	// Add custom baseline to the list
 	CUSTOM_BASELINE *cur, *sPtr;
 
-	cur = HCalloc (sizeof (*cur));
+	cur = (CUSTOM_BASELINE*) HCalloc (sizeof (*cur));
 	cur->index = sentence;
 	cur->baseline.x = RES_SCALE (bl.x);
 	cur->baseline.y = RES_SCALE (bl.y);

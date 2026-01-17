@@ -19,7 +19,7 @@
 
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -31,7 +31,7 @@ extern void NotifyOthers (COUNT which_race, BYTE target_loc);
 
 extern void DoMissions (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -26,7 +26,7 @@ typedef DWORD BattleFrameCounter;
 #include "init.h"
 		// For NUM_SIDES
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -60,7 +60,7 @@ extern void BattleSong (BOOLEAN DoPlay);
 extern void FreeBattleSong (void);
 extern BOOLEAN RunAwayAllowed (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

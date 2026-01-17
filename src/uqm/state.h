@@ -23,7 +23,7 @@
 #include "libs/compiler.h"
 #include <assert.h>
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -160,7 +160,7 @@ swrite_a32 (GAME_STATE_FILE *fp, const DWORD *ar, COUNT count)
 	return 1;
 }
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

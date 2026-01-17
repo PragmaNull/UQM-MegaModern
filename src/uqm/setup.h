@@ -24,7 +24,7 @@
 #include "libs/gfxlib.h"
 #include "libs/threadlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -108,7 +108,7 @@ void ClearPlayerInput (COUNT playerI);
 void ClearPlayerInputAll (void);
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

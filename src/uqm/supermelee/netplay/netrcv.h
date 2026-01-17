@@ -21,13 +21,13 @@
 
 #include "libs/net.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 void dataReadyCallback(NetDescriptor *nd);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

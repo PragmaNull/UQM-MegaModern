@@ -21,7 +21,7 @@
 
 #include "port.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -41,13 +41,13 @@ typedef enum {
 	NetState_endingBattle2,  /* Waiting for the final synchronisation */
 } NetState;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
 #include "types.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -76,7 +76,7 @@ NetState_battleActive(NetState state) {
 }
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

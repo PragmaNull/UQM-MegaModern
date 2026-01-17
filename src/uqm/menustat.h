@@ -23,7 +23,7 @@
 #include "libs/sndlib.h"
 #include "flash.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -152,7 +152,7 @@ extern void DrawMenuStateStrings (BYTE beg_index, SWORD NewState);
 extern void DrawMineralHelpers (void);
 extern void DrawBorder (BYTE Visible);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

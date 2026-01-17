@@ -1578,7 +1578,7 @@ ProcessEncounter (ENCOUNTER *EncounterPtr, POINT *puniverse,
 				SIZE speed;
 
 #define ENCOUNTER_TRACK_WAIT 3
-				speed = RaceHyperSpeed (EncounterPtr->race_id);
+				speed = RaceHyperSpeed ((RACE_ID)EncounterPtr->race_id);
 				if (delta_facing < ANGLE_TO_FACING (HALF_CIRCLE))
 					--cur_facing;
 				else

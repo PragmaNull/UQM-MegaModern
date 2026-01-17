@@ -27,7 +27,89 @@
 #include "uqm/starmap.h"
 
 
-static const NUMBER_SPEECH_DESC probe_numbers_english;
+static COUNT probe_digit_names[] =
+{
+	ENUMERATE_ZERO,
+	ENUMERATE_ONE,
+	ENUMERATE_TWO,
+	ENUMERATE_THREE,
+	ENUMERATE_FOUR,
+	ENUMERATE_FIVE,
+	ENUMERATE_SIX,
+	ENUMERATE_SEVEN,
+	ENUMERATE_EIGHT,
+	ENUMERATE_NINE,
+};
+
+static COUNT probe_teen_names[] =
+{
+	ENUMERATE_TEN,
+	ENUMERATE_ELEVEN,
+	ENUMERATE_TWELVE,
+	ENUMERATE_THIRTEEN,
+	ENUMERATE_FOURTEEN,
+	ENUMERATE_FIFTEEN,
+	ENUMERATE_SIXTEEN,
+	ENUMERATE_SEVENTEEN,
+	ENUMERATE_EIGHTEEN,
+	ENUMERATE_NINETEEN,
+};
+
+static COUNT probe_tens_names[] =
+{
+	0, /* invalid */
+	0, /* skip digit */
+	ENUMERATE_TWENTY,
+	ENUMERATE_THIRTY,
+	ENUMERATE_FOURTY,
+	ENUMERATE_FIFTY,
+	ENUMERATE_SIXTY,
+	ENUMERATE_SEVENTY,
+	ENUMERATE_EIGHTY,
+	ENUMERATE_NINETY,
+};
+
+static const NUMBER_SPEECH_DESC probe_numbers_english =
+{
+	5, /* NumDigits */
+	{
+		{ /* 1000-999999 */
+			1000, /* Divider */
+			0, /* Subtrahend */
+			NULL, /* StrDigits - recurse */
+			NULL, /* Names - not used */
+			ENUMERATE_THOUSAND /* CommonIndex */
+		},
+		{ /* 100-999 */
+			100, /* Divider */
+			0, /* Subtrahend */
+			probe_digit_names, /* StrDigits */
+			NULL, /* Names - not used */
+			ENUMERATE_HUNDRED /* CommonIndex */
+		},
+		{ /* 20-99 */
+			10, /* Divider */
+			0, /* Subtrahend */
+			probe_tens_names, /* StrDigits */
+			NULL, /* Names - not used */
+			0 /* CommonIndex - not used */
+		},
+		{ /* 10-19 */
+			1, /* Divider */
+			10, /* Subtrahend */
+			probe_teen_names, /* StrDigits */
+			NULL, /* Names - not used */
+			0 /* CommonIndex - not used */
+		},
+		{ /* 0-9 */
+			1, /* Divider */
+			0, /* Subtrahend */
+			probe_digit_names, /* StrDigits */
+			NULL, /* Names - not used */
+			0 /* CommonIndex - not used */
+		}
+	}
+};
 
 static LOCDATA slylandro_desc =
 {
@@ -125,47 +207,6 @@ static LOCDATA slylandro_desc =
 	NULL,
 };
 
-static COUNT probe_digit_names[] =
-{
-	ENUMERATE_ZERO,
-	ENUMERATE_ONE,
-	ENUMERATE_TWO,
-	ENUMERATE_THREE,
-	ENUMERATE_FOUR,
-	ENUMERATE_FIVE,
-	ENUMERATE_SIX,
-	ENUMERATE_SEVEN,
-	ENUMERATE_EIGHT,
-	ENUMERATE_NINE,
-};
-
-static COUNT probe_teen_names[] =
-{
-	ENUMERATE_TEN,
-	ENUMERATE_ELEVEN,
-	ENUMERATE_TWELVE,
-	ENUMERATE_THIRTEEN,
-	ENUMERATE_FOURTEEN,
-	ENUMERATE_FIFTEEN,
-	ENUMERATE_SIXTEEN,
-	ENUMERATE_SEVENTEEN,
-	ENUMERATE_EIGHTEEN,
-	ENUMERATE_NINETEEN,
-};
-
-static COUNT probe_tens_names[] =
-{
-	0, /* invalid */
-	0, /* skip digit */
-	ENUMERATE_TWENTY,
-	ENUMERATE_THIRTY,
-	ENUMERATE_FOURTY,
-	ENUMERATE_FIFTY,
-	ENUMERATE_SIXTY,
-	ENUMERATE_SEVENTY,
-	ENUMERATE_EIGHTY,
-	ENUMERATE_NINETY,
-};
 
 static DWORD random_ramble[] =
 {
@@ -188,47 +229,7 @@ static DWORD random_ramble[] =
 	1337
 };
 
-static const NUMBER_SPEECH_DESC probe_numbers_english =
-{
-	5, /* NumDigits */
-	{
-		{ /* 1000-999999 */
-			1000, /* Divider */
-			0, /* Subtrahend */
-			NULL, /* StrDigits - recurse */
-			NULL, /* Names - not used */
-			ENUMERATE_THOUSAND /* CommonIndex */
-		},
-		{ /* 100-999 */
-			100, /* Divider */
-			0, /* Subtrahend */
-			probe_digit_names, /* StrDigits */
-			NULL, /* Names - not used */
-			ENUMERATE_HUNDRED /* CommonIndex */
-		},
-		{ /* 20-99 */
-			10, /* Divider */
-			0, /* Subtrahend */
-			probe_tens_names, /* StrDigits */
-			NULL, /* Names - not used */
-			0 /* CommonIndex - not used */
-		},
-		{ /* 10-19 */
-			1, /* Divider */
-			10, /* Subtrahend */
-			probe_teen_names, /* StrDigits */
-			NULL, /* Names - not used */
-			0 /* CommonIndex - not used */
-		},
-		{ /* 0-9 */
-			1, /* Divider */
-			0, /* Subtrahend */
-			probe_digit_names, /* StrDigits */
-			NULL, /* Names - not used */
-			0 /* CommonIndex - not used */
-		}
-	}
-};
+
 
 static RESPONSE_REF threat,
 			something_wrong,

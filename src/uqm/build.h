@@ -24,7 +24,7 @@
 #include "libs/compiler.h"
 #include "starmap.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -85,7 +85,7 @@ extern SPECIES_ID SeedShip (SPECIES_ID SpeciesID, BOOLEAN loadWindow);
 extern BOOLEAN legacySave;
 extern BYTE GTFO;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

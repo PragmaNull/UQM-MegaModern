@@ -31,25 +31,25 @@ enum gfx_object
 };
 typedef BYTE GRAPHICS_PRIM;
 
-typedef union
+union PRIM_DESC
 {
 	POINT Point;
 	STAMP Stamp;
 	LINE Line;
 	TEXT Text;
 	RECT Rect;
-} PRIM_DESC;
+} ;
 
 typedef DWORD PRIM_LINKS;
 
-typedef struct
+struct PRIMITIVE
 {
-	PRIM_LINKS Links;
-	GRAPHICS_PRIM Type;
-	Color color;
-	PRIM_DESC Object;
-	BYTE flags;
-} PRIMITIVE;
+	PRIM_LINKS Links{};
+	GRAPHICS_PRIM Type{};
+	Color color{};
+	PRIM_DESC Object{};
+	BYTE flags{};
+};
 
 #define END_OF_LIST ((COUNT)0xFFFF)
 

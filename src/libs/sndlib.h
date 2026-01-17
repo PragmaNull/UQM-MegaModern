@@ -22,7 +22,7 @@
 #include "port.h"
 #include "libs/strlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -140,7 +140,7 @@ print_mp_array (const MUSIC_POSITION mp_array[], const COUNT num_items)
 	printf ("\n--------------------\n\n");
 }
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

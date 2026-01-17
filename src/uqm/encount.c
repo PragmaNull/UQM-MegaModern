@@ -925,7 +925,7 @@ UninitEncounter (void)
 			SET_GAME_STATE (THRADDASH_BODY_COUNT, ships_killed);
 		}
 
-		if (optSlaughterMode && CheckSphereTracking (EncounterRace)
+		if (optSlaughterMode && CheckSphereTracking ((RACE_ID)EncounterRace)
 				&& ships_killed)
 		{
 			HFLEETINFO hEncounter;

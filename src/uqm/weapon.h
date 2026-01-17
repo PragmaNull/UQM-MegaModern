@@ -22,7 +22,7 @@
 #include "element.h"
 #include "libs/gfxlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -61,7 +61,7 @@ extern void Untarget (ELEMENT *ElementPtr);
 extern FRAME ModifySilhouette (ELEMENT *ElementPtr, STAMP *modify_stamp,
 		BYTE modify_flags);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -26,7 +26,7 @@ struct melee_load_state;
 #include "melee.h"
 #include "meleesetup.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -60,7 +60,7 @@ bool ReadTeamImage (MeleeTeam *pTI, uio_Stream *load_fp);
 int WriteTeamImage (const MeleeTeam *pTI, uio_Stream *save_fp);
 void LoadTeamList (MELEE_STATE *pMS);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

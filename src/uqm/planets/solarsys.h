@@ -21,7 +21,7 @@
 
 #include "uqm/races.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -30,7 +30,7 @@ extern void InitialIntersect (void);
 extern void LoadIPData (void);
 extern void FreeIPData (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

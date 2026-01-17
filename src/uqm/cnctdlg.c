@@ -29,6 +29,7 @@
 #include "libs/graphics/widgets.h"
 #include "supermelee/netplay/netoptions.h"
 
+
 #define MCD_WIDTH RES_SCALE (260) 
 #define MCD_HEIGHT RES_SCALE (110) 
 

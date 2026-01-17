@@ -26,7 +26,7 @@ typedef struct PacketQueue PacketQueue;
 
 #include <sys/types.h>
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -51,7 +51,7 @@ void queuePacket(NetConnection *conn, Packet *packet);
 int flushPacketQueue(NetConnection *conn);
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include "port.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -58,7 +58,7 @@ unconst(const void *arg) {
 	return u.c;
 }
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

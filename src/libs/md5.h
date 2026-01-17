@@ -19,13 +19,13 @@
 #ifndef LIBS_MD5_H_
 #define LIBS_MD5_H_
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 #include "md5/md5.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

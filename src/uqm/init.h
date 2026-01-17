@@ -21,7 +21,7 @@
 #include "libs/reslib.h"
 #include "units.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -43,7 +43,7 @@ extern BOOLEAN load_animation (FRAME *pixarray, RESOURCE big_res,
 		RESOURCE med_res, RESOURCE sml_res);
 extern BOOLEAN free_image (FRAME *pixarray);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

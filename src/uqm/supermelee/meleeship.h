@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -40,6 +40,10 @@ typedef enum MeleeShip {
 			// Empty fleet position.
 } MeleeShip;
 #define NUM_MELEE_SHIPS (MELEE_ZOQFOTPIK + 1)
+MeleeShip operator+=(MeleeShip lhs, int rhs) {return static_cast<MeleeShip>(static_cast<int>(lhs) + rhs); }
+MeleeShip operator-=(MeleeShip lhs, int rhs) {return static_cast<MeleeShip>(static_cast<int>(lhs) - rhs); }
+MeleeShip operator++(MeleeShip val) { return static_cast<MeleeShip>(static_cast<int>(val) + 1); }
+MeleeShip operator--(MeleeShip val) { return static_cast<MeleeShip>(static_cast<int>(val) - 1); }
 
 static inline bool
 MeleeShip_valid (MeleeShip ship)
@@ -47,7 +51,7 @@ MeleeShip_valid (MeleeShip ship)
 	return (ship < NUM_MELEE_SHIPS) || (ship == MELEE_NONE);
 }
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

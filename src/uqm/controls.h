@@ -23,7 +23,7 @@
 #include "libs/strlib.h"
 #include "libs/timelib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -179,7 +179,7 @@ extern BOOLEAN DoTextEntry (TEXTENTRY_STATE *pTES);
 
 extern void TestSpeechSound (STRING snd);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

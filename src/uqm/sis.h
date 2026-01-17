@@ -24,7 +24,7 @@
 #include "units.h"
                 // for RESOLUTION_FACTOR
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -302,7 +302,7 @@ typedef enum
 	THICK_OUT_INV_BEVEL = THICK_OUTER_BEVEL + 8,
 } BEVEL_LEVEL;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

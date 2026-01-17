@@ -28,7 +28,7 @@
 #include "netplay/packet.h"
 		// for NetplayAbortReason and NetplayResetReason.
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -55,7 +55,7 @@ extern FRAME PickMeleeFrame;
 
 typedef BYTE MELEE_OPTIONS;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
@@ -63,7 +63,7 @@ typedef BYTE MELEE_OPTIONS;
 #include "meleesetup.h"
 #include "meleeship.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -218,7 +218,7 @@ enum
 	SPECIAL_PS,
 };
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

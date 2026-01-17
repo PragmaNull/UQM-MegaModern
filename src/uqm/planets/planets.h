@@ -201,7 +201,7 @@ struct planet_orbit
 	Color *ShadeColors;
 };
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -472,7 +472,7 @@ extern void SaveSolarSysLocation (void);
 
 extern BYTE PickClosestHabitable (SOLARSYS_STATE *solarSys);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -26,7 +26,7 @@
 #include "libs/strlib.h"
 #include "sis.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -100,7 +100,7 @@ extern void SetCursorRect (RECT *r, CONTEXT context);
 extern void FlushCursorRect (void);
 void SetCursorFlashBlock (BOOLEAN state);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -27,7 +27,7 @@ typedef stringbank chunk;
 static stringbank *
 add_chunk (stringbank *bank)
 {
-	stringbank *n = malloc (sizeof (stringbank));
+	stringbank *n = (stringbank*)malloc (sizeof (stringbank));
 	n->len = 0;
 	n->next = NULL;
 	if (bank)

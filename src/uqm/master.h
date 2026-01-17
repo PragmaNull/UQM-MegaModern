@@ -20,7 +20,7 @@
 #include "races.h"
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -63,7 +63,7 @@ COUNT GetShipCostFromIndex (unsigned Index);
 FRAME GetShipIconsFromIndex (unsigned Index);
 FRAME GetShipMeleeIconsFromIndex (unsigned Index);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

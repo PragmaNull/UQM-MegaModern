@@ -48,7 +48,7 @@ MeleeTeam_uninit (MeleeTeam *team)
 MeleeTeam *
 MeleeTeam_new (void)
 {
-	MeleeTeam *result = HMalloc (sizeof (MeleeTeam));
+	MeleeTeam *result = (MeleeTeam*)HMalloc (sizeof (MeleeTeam));
 	MeleeTeam_init (result);
 	return result;
 }
@@ -223,7 +223,7 @@ MeleeSetup *
 MeleeSetup_new (void)
 {
 	size_t teamI;
-	MeleeSetup *result = HMalloc (sizeof (MeleeSetup));
+	MeleeSetup *result = (MeleeSetup*)HMalloc (sizeof (MeleeSetup));
 	if (result == NULL)
 		return NULL;
 

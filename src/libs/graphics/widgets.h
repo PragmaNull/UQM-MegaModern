@@ -19,6 +19,7 @@
 #ifndef LIBS_GRAPHICS_WIDGETS_H_
 #define LIBS_GRAPHICS_WIDGETS_H_
 
+#include <type_traits>
 #include "libs/gfxlib.h"
 
 enum {
@@ -138,6 +139,20 @@ typedef enum {
 	WTE_BLOCKCUR,
 
 } WIDGET_TEXTENTRY_STATE;
+
+WIDGET_TEXTENTRY_STATE operator~(WIDGET_TEXTENTRY_STATE rhs)
+{
+	return static_cast<WIDGET_TEXTENTRY_STATE>(~static_cast<uint32_t>(rhs));
+}
+WIDGET_TEXTENTRY_STATE operator |= (WIDGET_TEXTENTRY_STATE lhs, WIDGET_TEXTENTRY_STATE rhs) 
+{
+	return static_cast<WIDGET_TEXTENTRY_STATE>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
+}
+WIDGET_TEXTENTRY_STATE operator &= (WIDGET_TEXTENTRY_STATE lhs, WIDGET_TEXTENTRY_STATE rhs) 
+{
+	return static_cast<WIDGET_TEXTENTRY_STATE>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
+}
+
 
 typedef struct _widget_textentry {
 	WIDGET_TYPE tag;

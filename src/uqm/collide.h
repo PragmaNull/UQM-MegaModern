@@ -21,7 +21,7 @@
 
 #include "element.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -63,7 +63,7 @@ extern "C" {
 
 extern void collide (ELEMENT *ElementPtr0, ELEMENT *ElementPtr1);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -70,7 +70,7 @@ Packet_create(PacketType type, size_t extraSize) {
 	assert(extraSize % 4 == 0);
 
 	len = packetTypeData[type].len + extraSize;
-	result = Packet_alloc(len);
+	result = (Packet*) Packet_alloc(len);
 	result->header.len = hton16((uint16) len);
 	result->header.type = hton16((uint16) type);
 	return result;

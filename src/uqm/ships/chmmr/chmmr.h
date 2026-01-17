@@ -17,13 +17,13 @@
 #ifndef CHMMR_H
 #define CHMMR_H
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 RACE_DESC *init_chmmr (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

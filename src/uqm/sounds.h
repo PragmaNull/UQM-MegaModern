@@ -26,7 +26,7 @@
 #include "globdata.h"
 #include "cons_res.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -85,7 +85,7 @@ extern void UpdateSoundPositions (void);
 extern void FlushSounds (void);
 extern void RemoveSoundsForObject (ELEMENT *PosObj);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

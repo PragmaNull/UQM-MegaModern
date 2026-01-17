@@ -71,7 +71,7 @@ InputContext_delete (InputContext *context)
 ComputerInputContext *
 ComputerInputContext_new (COUNT playerNr)
 {
-	ComputerInputContext *result = HMalloc (sizeof (ComputerInputContext));
+	ComputerInputContext *result = (ComputerInputContext *)HMalloc (sizeof (ComputerInputContext));
 	InputContext_init ((InputContext *) result,
 			&ComputerInputHandlers, playerNr);
 	return result;
@@ -80,7 +80,7 @@ ComputerInputContext_new (COUNT playerNr)
 HumanInputContext *
 HumanInputContext_new (COUNT playerNr)
 {
-	HumanInputContext *result = HMalloc (sizeof (HumanInputContext));
+	HumanInputContext *result = (HumanInputContext*)HMalloc (sizeof (HumanInputContext));
 	InputContext_init ((InputContext *) result,
 			&HumanInputHandlers, playerNr);
 	return result;
@@ -90,7 +90,7 @@ HumanInputContext_new (COUNT playerNr)
 NetworkInputContext *
 NetworkInputContext_new (COUNT playerNr)
 {
-	NetworkInputContext *result = HMalloc (sizeof (NetworkInputContext));
+	NetworkInputContext *result = (NetworkInputContext*)HMalloc (sizeof (NetworkInputContext));
 	InputContext_init ((InputContext *) result,
 			&NetworkInputHandlers, playerNr);
 	return result;

@@ -19,7 +19,7 @@
 
 #include "libs/sndlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -37,7 +37,7 @@ extern void PlaySoundEffect (SOUND S, COUNT Channel, SoundPosition Pos,
 extern void PlaySpeechEffect (SOUND S, SoundPosition Pos, void* PositionalObject, BYTE Priority);
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

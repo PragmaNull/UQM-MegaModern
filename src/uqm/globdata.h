@@ -28,7 +28,7 @@
 #include "commanim.h"
 #include "lua/luastate.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -1155,7 +1155,7 @@ extern void UninitGameStructures (void);
 // Nomad
 #define NOMAD (GLOBAL_SIS (Nomad) ? TRUE : FALSE)
 #define NOMAD_DIF(a) (GLOBAL_SIS (Nomad) == (a) ? TRUE : FALSE)
-#define NOMAD_STR(a) ((a) == 2 ? "Normal" : ((a) == 1 ? "Easy" : "Off"))
+#define NOMAD_STR(a) ((a) == 1 ? "Normal" : ((a) == 1 ? "Easy" : "Off"))
 
 // Storage Queue
 #define STORAGE_Q (optShipStore || DIF_HARD || optFleetPointSys)
@@ -1255,7 +1255,7 @@ SetHomeworldKnown (DWORD homeworld)
 	SET_GAME_STATE (KNOW_HOMEWORLD, current);
 }
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

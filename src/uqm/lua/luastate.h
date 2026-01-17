@@ -20,7 +20,7 @@
 #include "libs/compiler.h"
 #include "libs/scriptlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -49,7 +49,7 @@ DWORD getGameStateUint (const char *name);
 
 void luaUqm_getEventTable (lua_State *luaState);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

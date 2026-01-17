@@ -36,7 +36,7 @@ typedef char *STRINGPTR;
 /* This has to go here because reslib requires the above typedefs. */
 #include "libs/reslib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -96,7 +96,7 @@ extern const char *LoadStringInstance (RESOURCE res);
 
 #define STR_NULL "null"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

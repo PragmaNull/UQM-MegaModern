@@ -17,19 +17,19 @@
 #ifndef UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H_
 #define UQM_LUA_LUAFUNCS_CUSTOMFUNCS_H_
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 typedef struct luaUqm_custom_Function luaUqm_custom_Function;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
 #include "libs/scriptlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -42,7 +42,7 @@ luaUqm_custom_Function {
 int luaUqm_custom_init(lua_State *luaState,
 		const luaUqm_custom_Function *funs);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

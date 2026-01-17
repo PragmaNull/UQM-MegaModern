@@ -20,7 +20,7 @@
 #include "libs/gfxlib.h"
 #include "libs/sndlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -36,7 +36,7 @@ extern int num_orbit_themes (void);
 #define NUM_MM_THEMES 3
 MUSIC_REF loadMainMenuMusic (BYTE selector);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

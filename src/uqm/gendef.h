@@ -10,7 +10,7 @@
 //#include "planets/generate.h"
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -98,7 +98,7 @@ enum
 
 #define UMGAH_DEFINED TALKING_PET_DEFINED
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

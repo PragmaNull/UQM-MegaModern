@@ -24,7 +24,7 @@
 #include "libs/gfxlib.h"
 		// for CONVERSATION
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -181,7 +181,7 @@ extern BOOLEAN cwLock;
 #define USE_ALT_ALL (USE_ALT_FRAME | USE_ALT_COLORMAP | USE_ALT_SONG)
 extern BYTE altResFlags;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

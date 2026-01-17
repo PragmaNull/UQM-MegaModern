@@ -33,7 +33,7 @@ typedef uint32 Checksum;
 
 #include "netconnection.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -92,7 +92,7 @@ void addRemoteChecksum(NetConnection *conn, BattleFrameCounter frameNr,
 		Checksum checksum);
 bool verifyChecksums(BattleFrameCounter frameNr);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

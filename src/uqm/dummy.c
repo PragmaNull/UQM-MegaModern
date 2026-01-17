@@ -126,7 +126,7 @@ GetCodeResData (const char *ship_id, RESOURCE_DATA *resdata)
 	hData = HMalloc (sizeof (CODERES_STRUCT));
 	if (hData)
 	{
-		RaceDescInitFunc initFunc = CodeResToInitFunc (which_res);
+		RaceDescInitFunc initFunc = CodeResToInitFunc ((ShipCodeRes)which_res);
 		RACE_DESC *RDPtr = (initFunc == NULL) ? NULL : (*initFunc)();
 		if (RDPtr == 0)
 		{

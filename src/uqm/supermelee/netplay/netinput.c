@@ -48,7 +48,7 @@ getBattleInputDelay(void) {
 
 static void
 BattleInputBuffer_init(BattleInputBuffer *bib, size_t bufSize) {
-	bib->buf = malloc(bufSize * sizeof (BATTLE_INPUT_STATE));
+	bib->buf = (BATTLE_INPUT_STATE*) malloc(bufSize * sizeof (BATTLE_INPUT_STATE));
 	bib->maxSize = bufSize;
 	bib->first = 0;
 	bib->size = 0;

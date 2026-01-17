@@ -73,7 +73,7 @@ static CONTEXT workGfxContext;
 static FlashContext *
 Flash_create (CONTEXT gfxContext)
 {
-	FlashContext *context = HMalloc (sizeof (FlashContext));
+	FlashContext *context = (FlashContext * )HMalloc (sizeof (FlashContext));
 
 	context->gfxContext     = gfxContext;
 
@@ -265,14 +265,14 @@ Flash_fixState (FlashContext *context)
 		}
 		if (stateTime != 0)
 			break;
-		context->state = (context->state + 1) & 0x3;
+		context->state = (FlashState)((context->state + 1) & 0x3);
 	}
 }
 
 static void
 Flash_nextState (FlashContext *context)
 {
-	context->state = (context->state + 1) & 0x3;
+	context->state = (FlashState)((context->state + 1) & 0x3);
 	Flash_fixState (context);
 }
 
@@ -530,7 +530,7 @@ Flash_initCache (FlashContext *context)
 {
 	COUNT i;
 
-	context->cache = HMalloc (context->cacheSize * sizeof (FRAME));
+	context->cache = (FRAME*)HMalloc (context->cacheSize * sizeof (FRAME));
 	for (i = 0; i < context->cacheSize; i++)
 		context->cache[i] = (FRAME) 0;
 }

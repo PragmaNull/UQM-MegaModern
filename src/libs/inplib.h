@@ -24,7 +24,7 @@
 #include "libs/uio.h"
 #include "libs/unicode.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -65,7 +65,7 @@ void SaveKeyConfiguration (uio_DirHandle *path, const char *fname);
 
 void BeginInputFrame (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

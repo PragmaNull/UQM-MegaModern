@@ -21,7 +21,7 @@
 #include "libs/reslib.h"
 #include "luafuncs/customfuncs.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -38,7 +38,7 @@ char *luaUqm_comm_stringInterpolate(const char *str);
 
 extern lua_State *luaUqm_commState;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

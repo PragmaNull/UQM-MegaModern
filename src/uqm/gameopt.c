@@ -536,7 +536,7 @@ static BOOLEAN
 OnSaveNameChange (TEXTENTRY_STATE *pTES)
 {
 	COUNT hl = DDSHS_EDIT;
-	COUNT *gameIndex = pTES->CbParam;
+	COUNT *gameIndex = (COUNT*)pTES->CbParam;
 
 	if (pTES->JoystickMode)
 		hl |= DDSHS_BLOCKCUR;
@@ -549,7 +549,7 @@ NameSaveGame (COUNT gameIndex, UNICODE *buf)
 {
 	TEXTENTRY_STATE tes;
 	COUNT CursPos = (COUNT)strlen(buf);
-	COUNT *gIndex = HMalloc (sizeof (COUNT));
+	COUNT *gIndex = (COUNT*)HMalloc (sizeof (COUNT));
 	RECT r;
 	*gIndex = gameIndex;
 
@@ -1268,7 +1268,7 @@ DrawSavegameSummary (PICK_GAME_STATE *pickState, COUNT gameIndex)
 	if (pSD->year_index == 0)
 	{
 		// Unused save slot, draw 'Empty Game' message.
-		DrawSaveInfo ((SIS_STATE) { 0 });
+		DrawSaveInfo (SIS_STATE{ 0 });
 		DrawEmptySlot ();
 	}
 	else
@@ -1308,7 +1308,7 @@ DrawSavegameSummary (PICK_GAME_STATE *pickState, COUNT gameIndex)
 		for (i = 0; i < pSD->NumShips; ++i)
 		{
 			CloneShipFragment (
-					pSD->ShipList[i], &GLOBAL (built_ship_q), 0);
+					(RACE_ID)pSD->ShipList[i], &GLOBAL (built_ship_q), 0);
 		}
 		DateToString (buf, sizeof buf,
 				pSD->month_index, pSD->day_index, pSD->year_index);
@@ -1625,7 +1625,7 @@ LoadGameDescriptions (SUMMARY_DESC *pSD)
 static BOOLEAN
 DoPickGame (MENU_STATE *pMS)
 {
-	PICK_GAME_STATE *pickState = pMS->privData;
+	PICK_GAME_STATE *pickState = (PICK_GAME_STATE*)pMS->privData;
 	BYTE NewState;
 	SUMMARY_DESC *pSD;
 	DWORD TimeIn = GetTimeCounter ();

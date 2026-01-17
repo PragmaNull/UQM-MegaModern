@@ -21,7 +21,7 @@
 
 #include "menustat.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -49,7 +49,7 @@ extern COUNT WrapText (const UNICODE *pStr, COUNT len, TEXT *tarray, SIZE
 
 extern COUNT ShipCost (BYTE race_id);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

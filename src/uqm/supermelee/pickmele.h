@@ -24,7 +24,7 @@ typedef struct getmelee_struct GETMELEE_STATE;
 #include "meleesetup.h"
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -45,7 +45,7 @@ BOOLEAN selectShipComputer (ComputerInputContext *context,
 BOOLEAN selectShipNetwork (NetworkInputContext *context, GETMELEE_STATE *gms);
 #endif  /* NETPLAY */
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
@@ -55,7 +55,7 @@ BOOLEAN selectShipNetwork (NetworkInputContext *context, GETMELEE_STATE *gms);
 #include "libs/timelib.h"
 #include "../init.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -92,7 +92,7 @@ struct getmelee_struct {
 bool setShipSelected(GETMELEE_STATE *gms, COUNT playerI, COUNT choice,
 		bool reportNetwork);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

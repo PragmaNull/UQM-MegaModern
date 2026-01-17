@@ -28,7 +28,7 @@ typedef struct BattleStateData BattleStateData;
 #include "../../battle.h"
 		// for BattleFrameCounter, BATTLE_FRAME_RATE
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -70,7 +70,7 @@ readyFlagsMeaningful(NetState state) {
 }
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

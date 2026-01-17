@@ -158,7 +158,7 @@ ProcessThreadLifecycles (void)
 Thread
 CreateThread_Core (ThreadFunction func, void *data, SDWORD stackSize, const char *name)
 {
-	SpawnRequest s = HMalloc(sizeof (SpawnRequest_struct));
+	SpawnRequest s = (SpawnRequest) HMalloc(sizeof (SpawnRequest_struct));
 	s->func = func;
 	s->data = data;
 	s->stackSize = stackSize;
@@ -170,7 +170,7 @@ CreateThread_Core (ThreadFunction func, void *data, SDWORD stackSize, const char
 void
 StartThread_Core (ThreadFunction func, void *data, SDWORD stackSize, const char *name)
 {
-	SpawnRequest s = HMalloc(sizeof (SpawnRequest_struct));
+	SpawnRequest s = (SpawnRequest)HMalloc(sizeof (SpawnRequest_struct));
 	s->func = func;
 	s->data = data;
 	s->stackSize = stackSize;
@@ -261,7 +261,7 @@ DestroyThread (Thread t)
 ThreadLocal *
 CreateThreadLocal (void)
 {
-	ThreadLocal *tl = HMalloc (sizeof (ThreadLocal));
+	ThreadLocal *tl = (ThreadLocal*)HMalloc (sizeof (ThreadLocal));
 	tl->flushSem = CreateSemaphore (0, "FlushGraphics", SYNC_CLASS_VIDEO);
 	return tl;
 }

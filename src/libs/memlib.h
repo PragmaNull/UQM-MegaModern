@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -35,7 +35,7 @@ extern void HFree (void *p);
 extern void *HCalloc (size_t size);
 extern void *HRealloc (void *p, size_t size);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

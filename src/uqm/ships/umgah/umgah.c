@@ -135,7 +135,7 @@ typedef UMGAH_DATA CustomShipData_t;
 static CustomShipData_t *
 GetCustomShipData (RACE_DESC *pRaceDesc)
 {
-	return pRaceDesc->data;
+	return (CustomShipData_t*)pRaceDesc->data;
 }
 
 // Set the race-specific data in a race desc
@@ -154,7 +154,7 @@ SetCustomShipData (RACE_DESC *pRaceDesc, const CustomShipData_t *data)
 
 	if (data) // In with the new
 	{
-		CustomShipData_t* newData = HMalloc (sizeof (*data));
+		CustomShipData_t* newData = (CustomShipData_t*)HMalloc (sizeof (*data));
 		*newData = *data;
 		pRaceDesc->data = newData;
 	}

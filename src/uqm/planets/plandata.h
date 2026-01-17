@@ -21,7 +21,7 @@
 
 #include "libs/reslib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -326,7 +326,7 @@ extern UWORD CalcGravity (const PLANET_INFO*);
 
 extern const PlanetFrame *PlanData;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

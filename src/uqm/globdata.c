@@ -176,7 +176,7 @@ serialiseGameState (const GameStateBitMap *bm, BYTE **buf,
 	totalBytes = (totalBits + 7) / 8;
 
 	// Allocate memory for the serialised data.
-	result = HMalloc (totalBytes);
+	result = (BYTE*)HMalloc (totalBytes);
 	if (result == NULL)
 		return FALSE;
 
@@ -420,14 +420,14 @@ LoadFleetInfo (void)
 { 		/* Yehat Rebels and Ur-Quan probe */
 	COUNT num_ships = LAST_MELEE_ID - ARILOU_ID + 1 + 2;
 	InitQueue (&GLOBAL (avail_race_q), num_ships, sizeof (FLEET_INFO));
-	SPECIES_ID ship_ref = ARILOU_ID - 1;
+	SPECIES_ID ship_ref = (SPECIES_ID)(ARILOU_ID - 1);
 	for (int i = 0; i < num_ships; ++i)
 	{
 		HFLEETINFO hFleet;
 		FLEET_INFO *FleetPtr;
 
 		if (i < num_ships - 2)
-			ship_ref++;
+			ship_ref = (SPECIES_ID)((int)(ship_ref)+1);
 		else if (i == num_ships - 2)
 			ship_ref = YEHAT_ID;
 		else  /* (i == num_ships - 1) */
@@ -539,7 +539,7 @@ InitGameStructures (void)
 	GLOBAL_SIS (Nomad) = optNomad;
 	if (PrimeSeed)
 	{
-		optShipSeed = false;
+		optShipSeed = OPTVAL_DISABLED;
 		optCustomSeed = PrimeA;
 	}
 	if (DIF_HARD && !PrimeSeed && !StarSeed)
@@ -1058,13 +1058,13 @@ inQuasiSpace (void)
 OPT_CONSOLETYPE
 isPC (int optWhich)
 {
-	return optWhich == OPT_PC;
+	return optWhich == OPT_PC ? OPTVAL_PC : OPTVAL_3DO;
 }
 
 OPT_CONSOLETYPE
 is3DO (int optWhich)
 {
-	return optWhich == OPT_3DO;
+	return optWhich == OPT_3DO ? OPTVAL_3DO : OPTVAL_PC;
 }
 
 // Does not work with UTF encoding!

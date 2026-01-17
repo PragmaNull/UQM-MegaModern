@@ -23,7 +23,7 @@ typedef struct GenerateFunctions GenerateFunctions;
 #include "planets.h"
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -105,7 +105,7 @@ struct GenerateFunctions {
 // JSD - GenerateFunctions moved from gendef.h due to dependency issues caused by needing
 // to #include planets/generate.h only for this one declaration.  Anyway, it belongs here.
 const GenerateFunctions *getGenerateFunctions (BYTE Index);
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

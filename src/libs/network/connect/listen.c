@@ -201,7 +201,7 @@ listenPortMulti(struct ListenState *listenState, struct addrinfo *info) {
 
 	// This is where we intend to store the file descriptors of the
 	// listening sockets.
-	nds = malloc(addrCount * sizeof listenState->nds[0]);
+	nds = (NetDescriptor**)malloc(addrCount * sizeof listenState->nds[0]);
 
 	// Bind to each address.
 	addrOkCount = 0;
@@ -238,7 +238,7 @@ listenPortMulti(struct ListenState *listenState, struct addrinfo *info) {
 	freeaddrinfo(info);
 
 	listenState->nds =
-			realloc(nds, addrOkCount * sizeof listenState->nds[0]);
+			(NetDescriptor**)realloc(nds, addrOkCount * sizeof listenState->nds[0]);
 	listenState->numNd = addrOkCount;
 
 	if (addrOkCount == 0) {

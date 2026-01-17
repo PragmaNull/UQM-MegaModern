@@ -31,7 +31,7 @@ typedef HLINK HSTARSHIP;
 #include "libs/sndlib.h"
 #include "libs/reslib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -77,7 +77,7 @@ typedef UWORD STATUS_FLAGS;
 #define ANDROSYN_COMET_TOGGLE  (1 << 11)
 
 /* These track the old resource package orderings for the ship resource indices */
-typedef enum
+enum SPECIES_ID
 {
 	NO_ID,
 	ARILOU_ID,
@@ -110,9 +110,9 @@ typedef enum
 	SA_MATRA_ID,
 	UR_QUAN_PROBE_ID,
 	NUM_SPECIES_ID
-} SPECIES_ID;
+};
 
-typedef struct captain_stuff
+struct CAPTAIN_STUFF
 {
 	RESOURCE captain_rsc;
 	FRAME background;
@@ -125,15 +125,15 @@ typedef struct captain_stuff
 	BYTE thrust_offset;
 	BYTE weapon_offset;
 	BYTE special_offset;
-} CAPTAIN_STUFF;
+} ;
 
-typedef enum
+ enum MOVEMENT_STATE
 {
 	PURSUE = 0,
 	AVOID,
 	ENTICE,
 	NO_MOVEMENT
-} MOVEMENT_STATE;
+} ;
 
 typedef struct
 {
@@ -873,7 +873,7 @@ SpeciesToHomeID (SPECIES_ID species_id)
 }
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

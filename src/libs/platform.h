@@ -17,7 +17,7 @@
 #ifndef PLATFORM_H_
 #define PLATFORM_H_
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -50,7 +50,7 @@ typedef enum
 
 extern PLATFORM_TYPE force_platform;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -19,7 +19,7 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_PACKET_H_
 #define UQM_SUPERMELEE_NETPLAY_PACKET_H_
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -64,7 +64,7 @@ typedef enum NetplayResetReason {
 	ResetReason_manualReset,
 } NetplayResetReason;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
@@ -74,7 +74,7 @@ typedef enum NetplayResetReason {
 #include "types.h"
 #include "libs/network/bytesex.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -93,13 +93,13 @@ typedef struct {
 
 extern PacketTypeData packetTypeData[];
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
 #endif
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -195,7 +195,7 @@ typedef struct {
 	uint8 side;
 	uint8 padding;
 	uint16 numShips;
-	FleetEntry ships[];
+	FleetEntry* ships;
 	// Be sure to add padding to this structure to make it a multiple of
 	// 4 bytes in length.
 } Packet_Fleet;
@@ -204,7 +204,7 @@ typedef struct {
 	PacketHeader header;
 	uint8 side;
 	uint8 padding;
-	uint8 name[];
+	uint8* name;
 			// '\0' terminated.
 	// Be sure to add padding to this structure to make it a multiple of
 	// 4 bytes in length.
@@ -291,7 +291,7 @@ Packet_Abort *Packet_Abort_create(uint16 reason);
 Packet_Reset *Packet_Reset_create(uint16 reason);
 #endif
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

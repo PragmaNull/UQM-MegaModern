@@ -22,7 +22,7 @@
 #include "races.h"
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -72,7 +72,7 @@ extern BOOLEAN DeltaCrew (ELEMENT *ElementPtr, SIZE crew_delta);
 extern void PreProcessStatus (ELEMENT *ShipPtr);
 extern void PostProcessStatus (ELEMENT *ShipPtr);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

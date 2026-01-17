@@ -25,7 +25,7 @@
 #include "libs/memlib.h"
 #include "libs/uio.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -83,14 +83,14 @@ void *GetResourceData (uio_Stream *fp, DWORD length);
 #define AllocResourceData HMalloc
 BOOLEAN FreeResourceData (void *);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
 #include "libs/strlib.h"
 #include "libs/gfxlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 		// For Color
@@ -133,7 +133,7 @@ void res_PutColor (const char *key, Color value);
 
 BOOLEAN res_Remove (const char *key);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

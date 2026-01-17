@@ -21,7 +21,7 @@
 
 #include "libs/reslib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -36,7 +36,7 @@ typedef struct
 	UWORD size;
 } CODE_REF;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

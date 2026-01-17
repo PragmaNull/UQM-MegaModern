@@ -21,7 +21,7 @@
 #include "libs/gfxlib.h"
 #include "element.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -30,7 +30,7 @@ extern void InitDisplayList (void);
 extern void SetUpElement (ELEMENT *ElementPtr);
 extern void InsertPrim (PRIM_LINKS *pLinks, COUNT primIndex, COUNT iPI);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

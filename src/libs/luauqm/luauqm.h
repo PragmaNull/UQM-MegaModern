@@ -25,13 +25,13 @@
 #	include "lauxlib.h"
 #endif
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 typedef struct luaUqm_EnumValue luaUqm_EnumValue;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
@@ -40,7 +40,7 @@ typedef struct luaUqm_EnumValue luaUqm_EnumValue;
 
 #include "scriptres.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -71,7 +71,7 @@ void luaUqm_makeEnum(lua_State *luaState, const luaUqm_EnumValue *enumVals);
 void luaUqm_dumpStack(lua_State *luaState);
 #endif
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

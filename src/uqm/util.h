@@ -21,7 +21,7 @@
 #include "libs/gfxlib.h"
 #include "setupmenu.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -42,7 +42,7 @@ extern DWORD get_fuel_to_sol (void);
 extern void DrawFlagStatDisplay (UNICODE *str);
 extern UNICODE *WholeFuelValue (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -21,7 +21,7 @@
 
 #include "menustat.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -41,7 +41,7 @@ extern SIZE InventoryDevices (BYTE *pDeviceMap, COUNT Size);
 
 extern FONT ModuleFont;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

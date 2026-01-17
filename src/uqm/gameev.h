@@ -20,7 +20,7 @@
 #include "libs/compiler.h"
 #include "libs/gfxlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -67,7 +67,7 @@ extern void SetRaceDest (BYTE which_race, COORD x, COORD y, BYTE days_left,
 		BYTE func_index);
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

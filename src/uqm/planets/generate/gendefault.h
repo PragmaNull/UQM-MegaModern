@@ -21,7 +21,7 @@
 #include "../planets.h"
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -87,7 +87,7 @@ typedef enum {
 	READY_TO_BARGAIN // druuge sell rosy sphere on second deal
 } HARDMODE_ENCOUNTERS;
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

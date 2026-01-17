@@ -25,7 +25,7 @@
 #include "compiler.h"
 		// for UNICODE
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -71,7 +71,7 @@ UNICODE *AddPadd (const UNICODE *str, sint16 *padding);
 
 #undef UNICODE_CHAR
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -24,7 +24,7 @@
 #include "libs/compiler.h"
 #include "libs/memlib.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -92,7 +92,7 @@ UnlockLink (const QUEUE *pq, HLINK h)
 #define GetFreeList(pq) (pq)->free_list
 #define SetFreeList(pq, h) (pq)->free_list = (h)
 #define AllocQueueTab(pq,n) \
-		((pq)->pq_tab = HMalloc (((COUNT)(pq)->object_size * \
+		((pq)->pq_tab = (BYTE*)HMalloc (((COUNT)(pq)->object_size * \
 		(COUNT)((pq)->num_objects = (BYTE)(n)))))
 #define FreeQueueTab(pq) HFree ((pq)->pq_tab); (pq)->pq_tab = NULL
 #define SizeQueueTab(pq) (COUNT)((pq)->num_objects)
@@ -124,7 +124,7 @@ extern void RemoveQueue (QUEUE *pq, HLINK hLink);
 extern COUNT CountLinks (QUEUE *pq);
 void ForAllLinks(QUEUE *pq, void (*callback)(LINK *, void *), void *arg);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

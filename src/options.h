@@ -29,7 +29,7 @@
 
 #include "uqmversion.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -204,7 +204,7 @@ BOOLEAN isAddonAvailable (const char *addon_name);
 
 bool setGammaCorrection (float gamma);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

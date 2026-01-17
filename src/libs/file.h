@@ -25,7 +25,7 @@
 // for bool
 #include "types.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -87,7 +87,7 @@ static inline int isDriveLetter(int c)
 }
 #endif  /* HAVE_DRIVE_LETTERS */
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

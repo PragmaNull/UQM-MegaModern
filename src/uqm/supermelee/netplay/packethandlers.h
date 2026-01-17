@@ -21,7 +21,7 @@
 
 #include "packet.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -49,7 +49,7 @@ DECLARE_PACKETHANDLER(Abort);
 DECLARE_PACKETHANDLER(Reset);
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -68,7 +68,7 @@ NetManager_uninit(void) {
 
 static inline SocketManagementDataWin *
 SocketManagementData_alloc(void) {
-	return malloc(sizeof (SocketManagementDataWin));
+	return (SocketManagementDataWin*) malloc(sizeof (SocketManagementDataWin));
 }
 
 static inline void

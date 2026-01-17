@@ -781,7 +781,7 @@ typedef struct
 static BOOLEAN
 DoPickPlanetSide (MENU_STATE *pMS)
 {
-	PICK_PLANET_STATE *pickState = pMS->privData;
+	PICK_PLANET_STATE *pickState = (PICK_PLANET_STATE*)pMS->privData;
 	DWORD TimeIn = GetTimeCounter ();
 	BOOLEAN select, cancel;
 

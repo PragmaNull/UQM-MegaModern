@@ -143,9 +143,9 @@ typedef struct tfb_dc_callback
 	void *arg;
 } TFB_DrawCommand_Callback;
 
-typedef struct tfb_drawcommand
+struct TFB_DrawCommand
 {
-	int Type;
+	int Type{};
 	union {
 		TFB_DrawCommand_Line line;
 		TFB_DrawCommand_Rect rect;
@@ -161,8 +161,8 @@ typedef struct tfb_drawcommand
 		TFB_DrawCommand_SendSignal sendsignal;
 		TFB_DrawCommand_ReinitVideo reinitvideo;
 		TFB_DrawCommand_Callback callback;
-	} data;
-} TFB_DrawCommand;
+	} data{};
+};
 
 // Queue Stuff
 

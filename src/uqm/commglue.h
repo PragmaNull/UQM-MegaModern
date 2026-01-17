@@ -24,7 +24,7 @@
 #include "libs/sound/trackplayer.h"
 #include "libs/callback.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -318,7 +318,7 @@ enum
 	ROBOT_POSTFIX_131
 };
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

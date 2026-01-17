@@ -32,7 +32,7 @@ typedef COUNT FleetShipIndex;
 #include "melee.h"
 #include "meleeship.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -135,7 +135,7 @@ void MeleeState_setTeamName (MELEE_STATE *pMS, size_t teamNr,
 void MeleeState_setTeam (MELEE_STATE *pMS, size_t teamNr,
 		const MeleeTeam *team);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -21,7 +21,7 @@
 
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -50,7 +50,7 @@ extern COUNT cread (void *pStr, COUNT size, COUNT count,
 extern COUNT cwrite (const void *pStr, COUNT size, COUNT count,
 		DECODE_REF DecodeRef);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

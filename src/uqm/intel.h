@@ -25,7 +25,7 @@
 #include "races.h"
 #include "setup.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -122,7 +122,7 @@ isNetwork (void)
 			|| PlayerControl[1] & NETWORK_CONTROL);
 }
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

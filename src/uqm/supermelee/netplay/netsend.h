@@ -21,14 +21,14 @@
 
 #include "packet.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 int sendPacket(NetConnection *conn, Packet *packet);
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

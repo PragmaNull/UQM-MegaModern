@@ -1024,7 +1024,7 @@ process_graphics_options (WIDGET_CHOICE *self, int OldVal)
 			toggle_showfps (self, &NewGfxFlags);
 			break;
 		case CHOICE_ASPRATIO:
-			optKeepAspectRatio = self->selected;
+			optKeepAspectRatio = (OPT_ENABLABLE)self->selected;
 			res_PutBoolean ("config.keepaspectratio", self->selected);
 			break;
 		case CHOICE_RESOLUTION:
@@ -1296,117 +1296,117 @@ PropagateResults (void)
 	GLOBALOPTS opts;
 	BYTE i;
 
-	opts.screenResolution = choices[CHOICE_GRAPHICS     ].selected;
-	opts.driver =           choices[CHOICE_FRBUFFER     ].selected;
-	opts.scaler =           choices[CHOICE_SCALER       ].selected;
-	opts.scanlines =        choices[CHOICE_SCANLINE     ].selected;
-	opts.menu =             choices[CHOICE_MENUSTYLE    ].selected;
-	opts.text =             choices[CHOICE_FONTSTYLE    ].selected;
+	opts.screenResolution = (OPT_RESTYPE)choices[CHOICE_GRAPHICS     ].selected;
+	opts.driver =           (OPT_DRIVERTYPE)choices[CHOICE_FRBUFFER     ].selected;
+	opts.scaler =           (OPT_SCALETYPE)choices[CHOICE_SCALER       ].selected;
+	opts.scanlines =        (OPT_ENABLABLE)choices[CHOICE_SCANLINE     ].selected;
+	opts.menu =             (OPT_CONSOLETYPE)choices[CHOICE_MENUSTYLE    ].selected;
+	opts.text = (OPT_CONSOLETYPE)choices[CHOICE_FONTSTYLE    ].selected;
 	opts.cscan =            choices[CHOICE_SCANMENU     ].selected;
-	opts.scroll =           choices[CHOICE_SCROLLSTYLE  ].selected;
-	opts.subtitles =        choices[CHOICE_SUBTITLES    ].selected;
-	opts.music3do =         choices[CHOICE_REMIXES1     ].selected;
-	opts.fullscreen =       choices[CHOICE_DISPLAY      ].selected;
-	opts.intro =            choices[CHOICE_CUTSCENE     ].selected;
-	opts.fps =              choices[CHOICE_SHOWFPS      ].selected;
+	opts.scroll = (OPT_CONSOLETYPE)choices[CHOICE_SCROLLSTYLE  ].selected;
+	opts.subtitles =		(OPT_ENABLABLE)choices[CHOICE_SUBTITLES    ].selected;
+	opts.music3do =			(OPT_ENABLABLE)choices[CHOICE_REMIXES1     ].selected;
+	opts.fullscreen =		choices[CHOICE_DISPLAY      ].selected;
+	opts.intro = (OPT_CONSOLETYPE)choices[CHOICE_CUTSCENE     ].selected;
+	opts.fps =				(OPT_ENABLABLE)choices[CHOICE_SHOWFPS      ].selected;
 
 #ifndef MELEE_ZOOM
-	opts.meleezoom =        choices[CHOICE_MELEEZOOM    ].selected;
+	opts.meleezoom =        (OPT_MELEEZOOM)choices[CHOICE_MELEEZOOM    ].selected;
 #endif
 
-	opts.stereo =           choices[CHOICE_POSAUDIO     ].selected;
-	opts.adriver =          choices[CHOICE_SNDDRIVER    ].selected;
-	opts.aquality =         choices[CHOICE_SNDQUALITY   ].selected;
-	opts.shield =           choices[CHOICE_SLVSHIELD    ].selected;
-	opts.player1 =          choices[CHOICE_BTMPLAYER    ].selected;
-	opts.player2 =          choices[CHOICE_TOPPLAYER    ].selected;
-	opts.musicremix =       choices[CHOICE_REMIXES2     ].selected;
-	opts.speech =           choices[CHOICE_SPEECH       ].selected;
-	opts.keepaspect =       choices[CHOICE_ASPRATIO     ].selected;
- 	opts.cheatMode =        choices[CHOICE_CHEATING     ].selected;
-	opts.godModes =         choices[CHOICE_CHGODMODE    ].selected;
-	opts.tdType =           choices[CHOICE_CHTIME       ].selected;
-	opts.bubbleWarp =       choices[CHOICE_CHWARP       ].selected;
-	opts.unlockShips =      choices[CHOICE_CHSHIPS      ].selected;
-	opts.headStart =        choices[CHOICE_CHHEADSTART  ].selected;
+	opts.stereo =			(OPT_ENABLABLE)choices[CHOICE_POSAUDIO     ].selected;
+	opts.adriver =          (OPT_ADRIVERTYPE)choices[CHOICE_SNDDRIVER    ].selected;
+	opts.aquality =         (OPT_AQUALITYTYPE)choices[CHOICE_SNDQUALITY   ].selected;
+	opts.shield = (OPT_CONSOLETYPE)choices[CHOICE_SLVSHIELD    ].selected;
+	opts.player1 = (CONTROL_TEMPLATE)choices[CHOICE_BTMPLAYER    ].selected;
+	opts.player2 =          (CONTROL_TEMPLATE)choices[CHOICE_TOPPLAYER    ].selected;
+	opts.musicremix =		(OPT_ENABLABLE)choices[CHOICE_REMIXES2     ].selected;
+	opts.speech =			(OPT_ENABLABLE)choices[CHOICE_SPEECH       ].selected;
+	opts.keepaspect = (OPT_ENABLABLE)choices[CHOICE_ASPRATIO     ].selected;
+ 	opts.cheatMode = (OPT_ENABLABLE)choices[CHOICE_CHEATING     ].selected;
+	opts.godModes =         (OPT_GODTYPE)choices[CHOICE_CHGODMODE    ].selected;
+	opts.tdType =           (OPT_TDTYPE)choices[CHOICE_CHTIME       ].selected;
+	opts.bubbleWarp = (OPT_ENABLABLE)choices[CHOICE_CHWARP       ].selected;
+	opts.unlockShips = (OPT_ENABLABLE)choices[CHOICE_CHSHIPS      ].selected;
+	opts.headStart = (OPT_ENABLABLE)choices[CHOICE_CHHEADSTART  ].selected;
 //	opts.unlockUpgrades =   choices[CHOICE_CHUPGRADES   ].selected;
-	opts.infiniteRU =       choices[CHOICE_CHINFRU      ].selected;
-	opts.skipIntro =        choices[CHOICE_SKIPINTRO    ].selected;
-	opts.fuelRange =        choices[CHOICE_FUELCIRCLE   ].selected;
-	opts.mainMenuMusic =    choices[CHOICE_MMENUMUSIC   ].selected;
-	opts.nebulae =          choices[CHOICE_NEBULAE      ].selected;
-	opts.orbitingPlanets =  choices[CHOICE_ORBPLANETS   ].selected;
-	opts.texturedPlanets =  choices[CHOICE_TEXPLANETS   ].selected;
-	opts.dateType =         choices[CHOICE_DATESTRING   ].selected;
-	opts.infiniteFuel =     choices[CHOICE_CHINFFUEL    ].selected;
-	opts.partialPickup =    choices[CHOICE_PARTPICKUP   ].selected;
-	opts.submenu =          choices[CHOICE_SUBMENU      ].selected;
-	opts.loresBlowup =      choices[CHOICE_RESOLUTION   ].selected;
-	opts.infiniteCredits =  choices[CHOICE_CHINFCRD     ].selected;
-	opts.hazardColors =     choices[CHOICE_HAZARDCLR    ].selected;
-	opts.customBorder =     choices[CHOICE_CUSTBORDER   ].selected;
-	opts.spaceMusic =       choices[CHOICE_IPMUSIC      ].selected;
-	opts.volasMusic =       choices[CHOICE_REMIXES3     ].selected;
-	opts.wholeFuel =        choices[CHOICE_FUELDECIM    ].selected;
+	opts.infiniteRU = (OPT_ENABLABLE)choices[CHOICE_CHINFRU      ].selected;
+	opts.skipIntro = (OPT_ENABLABLE)choices[CHOICE_SKIPINTRO    ].selected;
+	opts.fuelRange =        (OPT_FUELRANGE)choices[CHOICE_FUELCIRCLE   ].selected;
+	opts.mainMenuMusic = (OPT_ENABLABLE)choices[CHOICE_MMENUMUSIC   ].selected;
+	opts.nebulae = (OPT_ENABLABLE)choices[CHOICE_NEBULAE      ].selected;
+	opts.orbitingPlanets = (OPT_ENABLABLE)choices[CHOICE_ORBPLANETS   ].selected;
+	opts.texturedPlanets = (OPT_ENABLABLE)choices[CHOICE_TEXPLANETS   ].selected;
+	opts.dateType =         (OPT_DATETYPE)choices[CHOICE_DATESTRING   ].selected;
+	opts.infiniteFuel = (OPT_ENABLABLE)choices[CHOICE_CHINFFUEL    ].selected;
+	opts.partialPickup = (OPT_ENABLABLE)choices[CHOICE_PARTPICKUP   ].selected;
+	opts.submenu = (OPT_ENABLABLE)choices[CHOICE_SUBMENU      ].selected;
+	opts.loresBlowup =      (OPT_RESSCALER)choices[CHOICE_RESOLUTION   ].selected;
+	opts.infiniteCredits = (OPT_ENABLABLE)choices[CHOICE_CHINFCRD     ].selected;
+	opts.hazardColors = (OPT_ENABLABLE)choices[CHOICE_HAZARDCLR    ].selected;
+	opts.customBorder = (OPT_ENABLABLE)choices[CHOICE_CUSTBORDER   ].selected;
+	opts.spaceMusic =       (OPT_SPACEMUSIC)choices[CHOICE_IPMUSIC      ].selected;
+	opts.volasMusic = (OPT_ENABLABLE)choices[CHOICE_REMIXES3     ].selected;
+	opts.wholeFuel = (OPT_ENABLABLE)choices[CHOICE_FUELDECIM    ].selected;
 #ifdef DIRECTIONAL_JOY
 	opts.directionalJoystick = choices[CHOICE_JOYSTICK  ].selected;
 #endif
 #ifdef MELEE_ZOOM
 	opts.meleezoom =           choices[CHOICE_ANDRZOOM  ].selected;
 #endif
-	opts.landerHold =       choices[CHOICE_LANDERHOLD   ].selected;
-	opts.scrTrans =         choices[CHOICE_SCRMELT      ].selected;
-	opts.difficulty =       choices[CHOICE_SKILLLVL     ].selected;
-	opts.extended =         choices[CHOICE_EXTENDED     ].selected;
-	opts.nomad =            choices[CHOICE_NOMAD        ].selected;
-	opts.gameOver =         choices[CHOICE_GAMEOVER     ].selected;
-	opts.shipDirectionIP =  choices[CHOICE_IPSHIPDIR    ].selected;
-	opts.orzCompFont =      choices[CHOICE_ORZFONT      ].selected;
-	opts.controllerType =   choices[CHOICE_INPDEVICE    ].selected;
-	opts.smartAutoPilot =   choices[CHOICE_SMARTAUTO    ].selected;
-	opts.tintPlanSphere =   choices[CHOICE_SCANTINT     ].selected;
-	opts.planetStyle =      choices[CHOICE_IPSTYLE      ].selected;
+	opts.landerHold = (OPT_CONSOLETYPE)choices[CHOICE_LANDERHOLD   ].selected;
+	opts.scrTrans = (OPT_CONSOLETYPE)choices[CHOICE_SCRMELT      ].selected;
+	opts.difficulty =       (OPT_DIFFICULTY)choices[CHOICE_SKILLLVL     ].selected;
+	opts.extended = (OPT_ENABLABLE)choices[CHOICE_EXTENDED     ].selected;
+	opts.nomad =            (OPT_NOMAD)choices[CHOICE_NOMAD        ].selected;
+	opts.gameOver = (OPT_ENABLABLE)choices[CHOICE_GAMEOVER     ].selected;
+	opts.shipDirectionIP = (OPT_ENABLABLE)choices[CHOICE_IPSHIPDIR    ].selected;
+	opts.orzCompFont = (OPT_ENABLABLE)choices[CHOICE_ORZFONT      ].selected;
+	opts.controllerType =   (OPT_CONTROLLER)choices[CHOICE_INPDEVICE    ].selected;
+	opts.smartAutoPilot = (OPT_ENABLABLE)choices[CHOICE_SMARTAUTO    ].selected;
+	opts.tintPlanSphere = (OPT_CONSOLETYPE)choices[CHOICE_SCANTINT     ].selected;
+	opts.planetStyle = (OPT_CONSOLETYPE)choices[CHOICE_IPSTYLE      ].selected;
 	opts.starBackground =   choices[CHOICE_IPBACKGROUND ].selected;
-	opts.scanStyle =        choices[CHOICE_SCANSTYLE    ].selected;
-	opts.nonStopOscill =    choices[CHOICE_NOSTOSCILL   ].selected;
-	opts.scopeStyle =       choices[CHOICE_OSCILLSTYLE  ].selected;
-	opts.hyperStars =       choices[CHOICE_ANIMHYPER    ].selected;
-	opts.landerStyle =      choices[CHOICE_LANDERSTYLE  ].selected;
-	opts.planetTexture =    choices[CHOICE_PLNTEXTURE   ].selected;
-	opts.flagshipColor =    choices[CHOICE_FLAGSHIP     ].selected;
-	opts.noHQEncounters =   choices[CHOICE_CHCLEANHYPER ].selected;
-	opts.deCleansing =      choices[CHOICE_CHDECLEAN    ].selected;
-	opts.meleeObstacles =   choices[CHOICE_CHNOPLANET   ].selected;
-	opts.showVisitedStars = choices[CHOICE_VISITED      ].selected;
-	opts.unscaledStarSystem=choices[CHOICE_HDM_IP       ].selected;
-	opts.sphereType =       choices[CHOICE_SCANSPHERE   ].selected;
-	opts.slaughterMode =    choices[CHOICE_SLAUGHTER    ].selected;
-	opts.advancedAutoPilot= choices[CHOICE_ADVAUTO      ].selected;
-	opts.meleeToolTips =    choices[CHOICE_MLTOOLTIP    ].selected;
-	opts.musicResume =      choices[CHOICE_MUSRESUME    ].selected;
-	opts.windowType =       choices[CHOICE_WINDOWTYPE   ].selected;
-	opts.seedType =         choices[CHOICE_GAMESEED     ].selected;
-	opts.sphereColors =     choices[CHOICE_SOICOLOR     ].selected;
-	opts.scatterElements =  choices[CHOICE_SCATTERCARGO ].selected;
-	opts.showUpgrades =     choices[CHOICE_LANDERUPGMASK].selected;
-	opts.fleetPointSys =    choices[CHOICE_FLEETPOINT   ].selected;
+	opts.scanStyle = (OPT_CONSOLETYPE)choices[CHOICE_SCANSTYLE    ].selected;
+	opts.nonStopOscill = (OPT_ENABLABLE)choices[CHOICE_NOSTOSCILL   ].selected;
+	opts.scopeStyle = (OPT_CONSOLETYPE)choices[CHOICE_OSCILLSTYLE  ].selected;
+	opts.hyperStars = (OPT_ENABLABLE)choices[CHOICE_ANIMHYPER    ].selected;
+	opts.landerStyle = (OPT_CONSOLETYPE)choices[CHOICE_LANDERSTYLE  ].selected;
+	opts.planetTexture = (OPT_ENABLABLE)choices[CHOICE_PLNTEXTURE   ].selected;
+	opts.flagshipColor = (OPT_CONSOLETYPE)choices[CHOICE_FLAGSHIP     ].selected;
+	opts.noHQEncounters = (OPT_ENABLABLE)choices[CHOICE_CHCLEANHYPER ].selected;
+	opts.deCleansing = (OPT_ENABLABLE)choices[CHOICE_CHDECLEAN    ].selected;
+	opts.meleeObstacles = (OPT_ENABLABLE)choices[CHOICE_CHNOPLANET   ].selected;
+	opts.showVisitedStars = (OPT_ENABLABLE)choices[CHOICE_VISITED      ].selected;
+	opts.unscaledStarSystem= (OPT_ENABLABLE)choices[CHOICE_HDM_IP       ].selected;
+	opts.sphereType =       (OPT_SPHERETYPE)choices[CHOICE_SCANSPHERE   ].selected;
+	opts.slaughterMode = (OPT_ENABLABLE)choices[CHOICE_SLAUGHTER    ].selected;
+	opts.advancedAutoPilot= (OPT_ENABLABLE)choices[CHOICE_ADVAUTO      ].selected;
+	opts.meleeToolTips = (OPT_ENABLABLE)choices[CHOICE_MLTOOLTIP    ].selected;
+	opts.musicResume =      (OPT_MUSICRESUME)choices[CHOICE_MUSRESUME    ].selected;
+	opts.windowType =       (OPT_WINDOWTYPE)choices[CHOICE_WINDOWTYPE   ].selected;
+	opts.seedType =         (OPT_SEED)choices[CHOICE_GAMESEED     ].selected;
+	opts.sphereColors =     (OPT_SPHERECOLORS)choices[CHOICE_SOICOLOR     ].selected;
+	opts.scatterElements = (OPT_ENABLABLE)choices[CHOICE_SCATTERCARGO ].selected;
+	opts.showUpgrades = (OPT_ENABLABLE)choices[CHOICE_LANDERUPGMASK].selected;
+	opts.fleetPointSys = (OPT_ENABLABLE)choices[CHOICE_FLEETPOINT   ].selected;
 
 	// Devices
 	for (i = DEVICE_START;
 			i < DEVICE_START + ARRAY_SIZE (opts.deviceArray); i++)
 	{
-		opts.deviceArray[i - DEVICE_START] = choices[i].selected;
+		opts.deviceArray[i - DEVICE_START] = (OPT_ADD_REMOVE)choices[i].selected;
 	}
 
 	for (i = UPGRADE_START; i < UPGRADE_START + NUM_UPGRADES; i++)
 	{
-		opts.upgradeArray[i - UPGRADE_START] = choices[i].selected;
+		opts.upgradeArray[i - UPGRADE_START] = (OPT_ADD_REMOVE)choices[i].selected;
 	}
 
-	opts.shipSeed = choices[CHOICE_SHIPSEED].selected;
-	opts.shipStore = choices[CHOICE_SHIPSTORE].selected;
-	opts.captainNames = choices[CHOICE_CAPTNAMES].selected;
-	opts.dosMenus = choices[CHOICE_DOSMENUS].selected;
+	opts.shipSeed = (OPT_ENABLABLE)choices[CHOICE_SHIPSEED].selected;
+	opts.shipStore = (OPT_ENABLABLE)choices[CHOICE_SHIPSTORE].selected;
+	opts.captainNames = (OPT_ENABLABLE)choices[CHOICE_CAPTNAMES].selected;
+	opts.dosMenus = (OPT_ENABLABLE)choices[CHOICE_DOSMENUS].selected;
 
 	opts.musicvol   = sliders[SLIDER_MUSVOLUME ].value;
 	opts.sfxvol     = sliders[SLIDER_SFXVOLUME ].value;
@@ -1849,7 +1849,7 @@ init_widgets (void)
 				SetAbsStringTableIndex (SetupTab, index++));
 		optcount = SplitString (str, '\n', MAX_BUFF, buffer, bank);
 		choices[i].numopts = optcount;
-		choices[i].options = HMalloc (optcount * sizeof (CHOICE_OPTION));
+		choices[i].options = (CHOICE_OPTION*)HMalloc (optcount * sizeof (CHOICE_OPTION));
 		choices[i].choice_num = i;
 		for (j = 0; j < optcount; j++)
 		{
@@ -2303,10 +2303,10 @@ GetGlobalOptions (GLOBALOPTS *opts)
 /*
  *		Graphics options
  */
-	opts->screenResolution = resolutionFactor >> 1;
+	opts->screenResolution = (OPT_RESTYPE)(resolutionFactor >> 1);
 
 	if (GfxFlags & TFB_GFXFLAGS_FULLSCREEN)
-		opts->fullscreen = 2;
+		opts->fullscreen = 2; /// hmm OPT_ENABLABLE only has 0 and 1. 
 	else if (GfxFlags & TFB_GFXFLAGS_EX_FULLSCREEN)
 		opts->fullscreen = 1;
 	else

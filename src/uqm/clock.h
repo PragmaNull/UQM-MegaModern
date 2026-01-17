@@ -22,7 +22,7 @@
 #include "libs/tasklib.h"
 #include "displist.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -108,7 +108,7 @@ extern void UnlockGameClock (void);
 // but not much else
 extern BOOLEAN GameClockRunning (void);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -24,7 +24,7 @@
 		// for POINT
 #include <assert.h>
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -95,7 +95,7 @@ LockIpGroup (const QUEUE *pq, HIPGROUP h)
 
 extern HIPGROUP BuildGroup (QUEUE *pDstQueue, BYTE race_id);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

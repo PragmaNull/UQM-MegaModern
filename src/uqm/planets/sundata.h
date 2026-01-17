@@ -22,7 +22,7 @@
 #include "plandata.h"
 #include "libs/compiler.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -69,7 +69,7 @@ extern COUNT GeneratePresetLife (const SYSTEM_INFO *,
 extern void DoPlanetaryAnalysis (SYSTEM_INFO *SysInfoPtr,
 		PLANET_DESC *pPlanetDesc);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

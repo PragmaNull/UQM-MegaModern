@@ -32,7 +32,7 @@
 #include "../meleesetup.h"
 		// for FleetShipIndex
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -55,7 +55,7 @@ void Netplay_Notify_checksum(NetConnection *conn,
 #endif
 
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

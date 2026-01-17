@@ -22,14 +22,14 @@
 #include "../netplay.h"
 #include "../netconnection.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 int Netplay_confirm(NetConnection *conn);
 int Netplay_cancelConfirmation(NetConnection *conn);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 

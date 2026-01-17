@@ -24,7 +24,7 @@
 #include "element.h"
 #include "battlecontrols.h"
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -50,7 +50,7 @@ extern void SetWinnerStarShip (STARSHIP *winner);
 extern void RecordShipDeath (ELEMENT *deadShip);
 extern void StartShipExplosion (ELEMENT *ShipPtr, bool playSound);
 
-#if defined(__cplusplus)
+#if 0 //defined(__cplusplus)
 }
 #endif
 
