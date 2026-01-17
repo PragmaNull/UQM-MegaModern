@@ -1153,9 +1153,9 @@ extern void UninitGameStructures (void);
 #define EXT_CASE(a,b) (!EXTENDED ? (a) : (b))
 
 // Nomad
-#define NOMAD (GLOBAL_SIS (Nomad) ? TRUE : FALSE)
+#define NOMAD (static_cast<OPT_NOMAD>(GLOBAL_SIS (Nomad)))
 #define NOMAD_DIF(a) (GLOBAL_SIS (Nomad) == (a) ? TRUE : FALSE)
-#define NOMAD_STR(a) ((a) == 1 ? "Normal" : ((a) == 1 ? "Easy" : "Off"))
+#define NOMAD_STR(a) (toString(static_cast<OPT_NOMAD>(a)))
 
 // Storage Queue
 #define STORAGE_Q (optShipStore || DIF_HARD || optFleetPointSys)

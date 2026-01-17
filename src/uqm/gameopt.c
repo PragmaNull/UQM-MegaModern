@@ -1886,7 +1886,7 @@ PickGame (BOOLEAN saving, BOOLEAN fromMainMenu)
 		log_add (log_Info, "Seed: %d\n", GLOBAL_SIS (Seed));
 		log_add (log_Info, "Difficulty: %s\n", DIF_STR (DIFFICULTY));
 		log_add (log_Info, "Extended: %s\n", BOOL_STR (EXTENDED));
-		log_add (log_Info, "Nomad: %s\n\n", NOMAD_STR (NOMAD));
+		log_add (log_Info, "Nomad: %s\n\n", toString(NOMAD));
 	}
 
 	if (!(GLOBAL (CurrentActivity) & CHECK_ABORT) &&

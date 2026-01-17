@@ -102,11 +102,18 @@ typedef enum {
 	OPTVAL_IMPO
 } OPT_DIFFICULTY;
 
-typedef enum {
+enum OPT_NOMAD {
 	OPTVAL_NOM_OFF,
 	OPTVAL_NOM_EASY,
 	OPTVAL_NOM_NORM
-} OPT_NOMAD;
+} ;
+const char* toString(const OPT_NOMAD optVal)
+{
+	static constexpr char* Strings[3]{
+		"Off", "Easy", "Normal"
+	};
+	return Strings[static_cast<int>(optVal)];
+}
 
 typedef enum {
 	OPTVAL_KBM,
