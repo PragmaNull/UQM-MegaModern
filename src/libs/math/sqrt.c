@@ -95,25 +95,25 @@ square_root (DWORD value)
 }
 
 // Added CRC calculation here for lack of better code residence
-uint32_t
-crc32b (const char *str)
-{	// Source: https://stackoverflow.com/a/21001712
-	unsigned int byte, crc, mask;
-	int i = 0, j;
-
-	crc = 0xFFFFFFFF;
-
-	while (str[i] != 0)
-	{
-		byte = str[i];
-		crc = crc ^ byte;
-
-		for (j = 7; j >= 0; j--)
-		{
-			mask = -(int)(crc & 1);
-			crc = (crc >> 1) ^ (0xEDB88320 & mask);
-		}
-		i = i + 1;
-	}
-	return ~crc;
-}
+//uint32_t
+//crc32b (const char *str)
+//{	// Source: https://stackoverflow.com/a/21001712
+//	unsigned int byte, crc, mask;
+//	int i = 0, j;
+//
+//	crc = 0xFFFFFFFF;
+//
+//	while (str[i] != 0)
+//	{
+//		byte = str[i];
+//		crc = crc ^ byte;
+//
+//		for (j = 7; j >= 0; j--)
+//		{
+//			mask = -(int)(crc & 1);
+//			crc = (crc >> 1) ^ (0xEDB88320 & mask);
+//		}
+//		i = i + 1;
+//	}
+//	return ~crc;
+//}

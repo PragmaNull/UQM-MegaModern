@@ -27,8 +27,11 @@ typedef struct match_MatchContext match_MatchContext;
 
 // TODO: make this into a configurable option
 //#define HAVE_GLOB
-//#define HAVE_REGEX
+#define HAVE_REGEX
 
+#ifdef HAVE_REGEX
+#include <regex>
+#endif
 
 typedef enum {
 	match_MATCH_LITERAL = 0,
@@ -126,7 +129,7 @@ struct match_GlobContext {
 
 #ifdef HAVE_REGEX
 struct match_RegexContext {
-	regex_t native;
+	std::regex native;
 	char *errorString;
 	int errorCode;
 	int flags;

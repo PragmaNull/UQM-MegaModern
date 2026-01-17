@@ -18,9 +18,6 @@
  *
  */
 
-#ifdef HAVE_REGEX
-#include <regex.h>
-#endif
 #include <string.h>
 #ifdef DEBUG
 #	include <stdio.h>
@@ -31,6 +28,7 @@
 #include "match.h"
 #include "mem.h"
 #include "uioport.h"
+
 
 #ifdef HAVE_GLOB
 #	include <fnmatch.h>
@@ -491,7 +489,9 @@ match_freeGlobContext(match_GlobContext *context) {
 match_Result
 match_prepareRegex(const char *pattern, match_RegexContext **contextPtr) {
 	*contextPtr = match_newRegexContext();
-	(*contextPtr)->errorCode = regcomp(&(*contextPtr)->native, pattern, REG_EXTENDED | REG_NOSUB);
+	(*contextPtr)->native = std::regex(pattern);
+	(*contextPtr)->errorCode = 0;
+	//(*contextPtr)->errorCode = regcomp(&(*contextPtr)->native, pattern, REG_EXTENDED | REG_NOSUB);
 	if ((*contextPtr)->errorCode == 0) {
 		(*contextPtr)->flags = match_REGEX_INITIALISED;
 		return match_OK;
@@ -511,38 +511,34 @@ match_matchRegex(match_RegexContext *context, const char *string) {
 		uio_free(context->errorString);
 		context->errorString = NULL;
 	}
-	retval = regexec(&context->native, string, 0, NULL, 0);
-	switch (retval) {
-		case 0:
-			return match_MATCH;
-		case REG_NOMATCH:
-			return match_NOMATCH;
-		default:
-			context->errorCode = retval;
-			return match_ECUSTOM;
-	}
+
+	if (std::regex_search(string, context->native))
+		return match_MATCH;
+	
+	return match_NOMATCH;
 }
 
 const char *
 match_errorStringRegex(match_RegexContext *context, int errorCode) {
-	size_t errorStringLength;
-
+	constexpr const char err[]{ "Unknown regex error or match failure." };
+	constexpr size_t errorStringLength{ sizeof(err) };
+	
 	if (context->errorString != NULL)
 		uio_free(context->errorString);
 
-	errorStringLength = regerror(context->errorCode, &context->native,
-			NULL, 0);
 	context->errorString = (char*)uio_malloc(errorStringLength);
-	regerror(context->errorCode, &context->native,
-			context->errorString, errorStringLength);
-	
-	(void) errorCode;
+	strncpy(context->errorString, err, errorStringLength);
+
+	std::ignore = errorCode;
 	return context->errorString;
+	//(void) errorCode;
+	//return context->errorString;
 }
 
 void
 match_freeRegex(match_RegexContext *context) {
-	regfree(&context->native);
+
+	//regfree(&context->native);
 	if (context->errorString)
 		uio_free(context->errorString);
 	match_freeRegexContext(context);
@@ -565,6 +561,7 @@ match_allocRegexContext(void) {
 
 static inline void
 match_freeRegexContext(match_RegexContext *context) {
+	(*context).~match_RegexContext();
 	uio_free(context);
 }
 #endif  /* HAVE_REGEX */
