@@ -1306,7 +1306,7 @@ PropagateResults (void)
 	opts.scroll = (OPT_CONSOLETYPE)choices[CHOICE_SCROLLSTYLE  ].selected;
 	opts.subtitles =		(OPT_ENABLABLE)choices[CHOICE_SUBTITLES    ].selected;
 	opts.music3do =			(OPT_ENABLABLE)choices[CHOICE_REMIXES1     ].selected;
-	opts.fullscreen =		choices[CHOICE_DISPLAY      ].selected;
+	opts.fullscreen =		(OPT_FULLSCREEN)choices[CHOICE_DISPLAY      ].selected;
 	opts.intro = (OPT_CONSOLETYPE)choices[CHOICE_CUTSCENE     ].selected;
 	opts.fps =				(OPT_ENABLABLE)choices[CHOICE_SHOWFPS      ].selected;
 
@@ -2306,11 +2306,11 @@ GetGlobalOptions (GLOBALOPTS *opts)
 	opts->screenResolution = (OPT_RESTYPE)(resolutionFactor >> 1);
 
 	if (GfxFlags & TFB_GFXFLAGS_FULLSCREEN)
-		opts->fullscreen = 2; /// hmm OPT_ENABLABLE only has 0 and 1. 
+		opts->fullscreen = OPTVAL_BORDERED_FULLSCREEN;
 	else if (GfxFlags & TFB_GFXFLAGS_EX_FULLSCREEN)
-		opts->fullscreen = 1;
+		opts->fullscreen = OPTVAL_EXCLUSIVE_FULLSCREEN;
 	else
-		opts->fullscreen = 0;
+		opts->fullscreen = OPTVAL_WINDOWED;
 	/*opts->fullscreen = (GfxFlags & TFB_GFXFLAGS_FULLSCREEN) ?
 		OPTVAL_ENABLED : OPTVAL_DISABLED;*/
 	opts->fps = (GfxFlags & TFB_GFXFLAGS_SHOWFPS) ?
@@ -2356,7 +2356,7 @@ GetGlobalOptions (GLOBALOPTS *opts)
 
 
 
-	opts->loresBlowup = loresBlowupScale;
+	opts->loresBlowup = (OPT_RESSCALER)loresBlowupScale;
 	/* Work out resolution.  On the way, try to guess a good default
 	 * for config.alwaysgl, then overwrite it if it was set previously. */
 	if ((!IS_HD && (GraphicsDriver != TFB_GFXDRIVER_SDL_PURE) &&
@@ -2366,19 +2366,19 @@ GetGlobalOptions (GLOBALOPTS *opts)
 	else
 		opts->driver = OPTVAL_PURE_IF_POSSIBLE;
 
-	opts->windowType = optWindowType;
+	opts->windowType = (OPT_WINDOWTYPE)optWindowType;
 	switch (opts->windowType)
 	{
 		case OPTVAL_PC_WINDOW:
 			if (!isAddonAvailable (DOS_MODE (IS_HD)))
 			{
-				opts->windowType = 2;
+				opts->windowType = OPTVAL_UQM_WINDOW;
 			}
 			break;
 		case OPTVAL_3DO_WINDOW:
 			if (!isAddonAvailable (THREEDO_MODE (IS_HD)))
 			{
-				opts->windowType = 2;
+				opts->windowType = OPTVAL_UQM_WINDOW;
 			}
 			break;
 		default:
@@ -2393,9 +2393,9 @@ GetGlobalOptions (GLOBALOPTS *opts)
 	opts->musicremix = optRemixMusic; // Precursors Pack
 	opts->volasMusic = optVolasMusic;
 
-	opts->spaceMusic = optSpaceMusic;
+	opts->spaceMusic = (OPT_SPACEMUSIC)optSpaceMusic;
 	opts->mainMenuMusic = optMainMenuMusic;
-	opts->musicResume = optMusicResume;
+	opts->musicResume = (OPT_MUSICRESUME)optMusicResume;
 	opts->speech = optSpeech;
 
 	switch (snddriver) 
@@ -2446,18 +2446,18 @@ GetGlobalOptions (GLOBALOPTS *opts)
 			(OPT_MELEEZOOM)(optMeleeScale == TFB_SCALE_STEP ?
 			OPTVAL_PC : OPTVAL_3DO);
 #endif
-	opts->controllerType = optControllerType;
+	opts->controllerType = (OPT_CONTROLLER)optControllerType;
 	opts->directionalJoystick = optDirectionalJoystick; // For Android
-	opts->dateType = optDateFormat;
+	opts->dateType = (OPT_DATETYPE)optDateFormat;
 	opts->customBorder = optCustomBorder;
 	opts->flagshipColor = is3DO (optFlagshipColor);
 	opts->gameOver = optGameOver;
 	opts->hyperStars = optHyperStars;
 	opts->showVisitedStars = optShowVisitedStars;
-	opts->fuelRange = optFuelRange;
+	opts->fuelRange = (OPT_FUELRANGE)optFuelRange;
 	opts->wholeFuel = optWholeFuel;
 	opts->meleeToolTips = optMeleeToolTips;
-	opts->sphereColors = optSphereColors;
+	opts->sphereColors = (OPT_SPHERECOLORS)optSphereColors;
 	opts->dosMenus = optDosMenus;
 
 	// Interplanetary
@@ -2477,16 +2477,16 @@ GetGlobalOptions (GLOBALOPTS *opts)
 	opts->scanStyle = is3DO (optScanStyle);
 	opts->landerStyle = is3DO (optSuperPC);
 	opts->planetTexture = optPlanetTexture;
-	opts->sphereType = optScanSphere;
+	opts->sphereType = (OPT_SPHERETYPE)optScanSphere;
 	opts->tintPlanSphere = is3DO (optTintPlanSphere);
 	opts->shield = is3DO (optWhichShield);
 
 	// Game modes
-	opts->difficulty = optDiffChooser;
+	opts->difficulty = (OPT_DIFFICULTY)optDiffChooser;
 	opts->extended = optExtended;
-	opts->nomad = optNomad;
+	opts->nomad = (OPT_NOMAD)optNomad;
 	opts->slaughterMode = optSlaughterMode;
-	opts->seedType = optSeedType;
+	opts->seedType = (OPT_SEED)optSeedType;
 	opts->shipSeed = optShipSeed;
 	opts->fleetPointSys = optFleetPointSys;
 	
@@ -2515,8 +2515,8 @@ GetGlobalOptions (GLOBALOPTS *opts)
  *		Cheats
  */
  	opts->cheatMode = optCheatMode;
-	opts->godModes = optGodModes;
-	opts->tdType = timeDilationScale;
+	opts->godModes = (OPT_GODTYPE)optGodModes;
+	opts->tdType = (OPT_TDTYPE)timeDilationScale;
 	opts->bubbleWarp = optBubbleWarp;
 	opts->unlockShips = optUnlockShips;
 	opts->headStart = optHeadStart;

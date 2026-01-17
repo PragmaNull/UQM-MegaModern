@@ -161,14 +161,14 @@ _check_gestalt (DWORD NewTime)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
 		{
-			CachedGestalt |= ImmediateInputState.key[i][j];
-			CurrentGestalt |= PulsedInputState.key[i][j];
+			CachedGestalt |= (bool)ImmediateInputState.key[i][j];
+			CurrentGestalt |= (bool)PulsedInputState.key[i][j];
 		}
 	}
 	for (i = 0; i < NUM_MENU_KEYS; i++)
 	{
-		CachedGestalt |= ImmediateInputState.menu[i];
-		CurrentGestalt |= PulsedInputState.menu[i];
+		CachedGestalt |= (bool)ImmediateInputState.menu[i];
+		CurrentGestalt |= (bool)PulsedInputState.menu[i];
 	}
 
 	if (OldGestalt && CachedGestalt)

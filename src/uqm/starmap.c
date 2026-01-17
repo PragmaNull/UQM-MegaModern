@@ -36,7 +36,7 @@
 // there.  "starmap_array" should never be altered and referenced as little
 // as possible.
 //STAR_DESC *star_array;
-STAR_DESC star_array[NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 3] = {0};
+STAR_DESC star_array[NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 3] {};
 //STAR_DESC star_array[NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 3] =
 //		{[0 ... (NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 2)] =
 //		{{~0, ~0}, 0, 0, 0, 0}};
@@ -44,7 +44,7 @@ STAR_DESC *CurStarDescPtr = 0;
 POINT *constel_array;
 // JSD Give my own starseed
 RandomContext *StarGenRNG;
-PORTAL_LOCATION portal_map[NUM_HYPER_VORTICES + 1] = {0};
+PORTAL_LOCATION portal_map[NUM_HYPER_VORTICES + 1] {};
 //PORTAL_LOCATION portal_map[NUM_HYPER_VORTICES+1] =
 //		{[0 ... (NUM_HYPER_VORTICES)] = {{0, 0}, {0, 0}, NULL}};
 
@@ -200,7 +200,7 @@ FindNearestConstellation (STAR_DESC *starmap, POINT p)
 // distances are set.
 // The COORDS are initialized with {~0, ~0}, the rest 0.
 // Plot ID 0 (ARILOU_DEFINED) is ARILOU_HYPERSPACE_PORTAL location.
-PLOT_LOCATION plot_map[NUM_PLOTS] = {0};
+PLOT_LOCATION plot_map[NUM_PLOTS] = {};
 //PLOT_LOCATION plot_map[NUM_PLOTS] = {[0 ... (NUM_PLOTS - 1)] =
 //		{{~0, ~0}, NULL, {[0 ... (NUM_PLOTS - 1)] = 0}}};
 
@@ -538,7 +538,7 @@ ResetPlot (PLOT_LOCATION *plot)
 	{
 		for (j = 0; j < NUM_PLOTS; j++)
 			plot[i].dist_sq[j] = 0;
-		plot[i].star_pt = (POINT) {~0, ~0};
+		plot[i].star_pt = POINT{~0, ~0};
 		plot[i].star = NULL;
 	}
 }
@@ -559,7 +559,7 @@ DefaultPlot (PLOT_LOCATION *plot, STAR_DESC *starmap)
 	}
 
 	ResetPlot (plot);
-	plot[0].star_pt = (POINT) {ARILOU_SPACE_X, ARILOU_SPACE_Y};
+	plot[0].star_pt = POINT{ARILOU_SPACE_X, ARILOU_SPACE_Y};
 	plot[0].star = &(starmap[NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1]);
 	for (i = 0; i < NUM_SOLAR_SYSTEMS; i++)
 		if (starmap[i].Index > 0)
@@ -786,7 +786,7 @@ InitMelnormeRainbow (PLOT_LOCATION *plotmap)
 	for (i = RAINBOW0_DEFINED; i <= RAINBOW9_DEFINED; i++)
 	{
 		plotmap[i].star = NULL;
-		plotmap[i].star_pt = (POINT) {~0, ~0};
+		plotmap[i].star_pt = POINT{~0, ~0};
 		for (j = RAINBOW0_DEFINED; j <= RAINBOW9_DEFINED; j++)
 			if (i != j)
 				SetPlotLength (plotmap, i, j, 2500, MAX_PLOT);
@@ -794,7 +794,7 @@ InitMelnormeRainbow (PLOT_LOCATION *plotmap)
 	for (i = MELNORME0_DEFINED; i <= MELNORME8_DEFINED; i++)
 	{
 		plotmap[i].star = NULL;
-		plotmap[i].star_pt = (POINT) {~0, ~0};
+		plotmap[i].star_pt = POINT{~0, ~0};
 		for (j = MELNORME0_DEFINED; j <= MELNORME8_DEFINED; j++)
 			if (i != j)
 				SetPlotLength (plotmap, i, j, 2750, MAX_PLOT);
@@ -1320,8 +1320,8 @@ SeedPlot (PLOT_LOCATION *plotmap, STAR_DESC *starmap)
 		if (plot_id == ARILOU_DEFINED)
 		{
 			star_id = (rand_val + i * STAR_FACTOR) % 100;
-			plotmap[ARILOU_DEFINED].star_pt = (POINT)
-					{(star_id / 10) * 1000 +
+			plotmap[ARILOU_DEFINED].star_pt = POINT{
+					(star_id / 10) * 1000 +
 					LOBYTE (rand_val) * 100 / 256,
 					(star_id % 10) * 1000 +
 					HIBYTE (rand_val) * 100 / 256};
@@ -1396,7 +1396,7 @@ SeedPlot (PLOT_LOCATION *plotmap, STAR_DESC *starmap)
 #endif
 				if (plot_id != ARILOU_DEFINED)
 					starmap[star_id].Index = 0;
-				plotmap[plot_id].star_pt = (POINT) {~0, ~0};
+				plotmap[plot_id].star_pt = POINT{~0, ~0};
 				plotmap[plot_id].star = NULL;
 				if (my_clock)
 				{
@@ -1416,7 +1416,7 @@ SeedPlot (PLOT_LOCATION *plotmap, STAR_DESC *starmap)
 #endif
 		if (plot_id != ARILOU_DEFINED)
 			starmap[star_id].Index = 0;
-		plotmap[plot_id].star_pt = (POINT) {~0, ~0};
+		plotmap[plot_id].star_pt = POINT{~0, ~0};
 		plotmap[plot_id].star = NULL;
 	}
 #ifdef DEBUG_STARSEED_TRACE_Z
@@ -1449,7 +1449,7 @@ DefaultQuasispace (PORTAL_LOCATION *portalmap)
 		portalmap[i].star_pt = portalmap_array[i].star_pt;
 		portalmap[i].quasi_pt = portalmap_array[i].quasi_pt;
 		portalmap[i].nearest_star = FindNearestConstellation
-				((void *) starmap_array, portalmap[i].star_pt);
+				((STAR_DESC *) starmap_array, portalmap[i].star_pt);
 		if (!portalmap[i].nearest_star)
 			fprintf (stderr, "BAD Quasi Portal %c at %05.1f : %05.1f, %s",
 					'A' + i, (float) portalmap[i].star_pt.x / 10,
@@ -1498,7 +1498,7 @@ SeedQuasispace (PORTAL_LOCATION *portalmap, PLOT_LOCATION *plotmap,
 				// half above.
 				// We locate the portal by up to 1147 (114.7) in any direction.
 				// Also note COORD is just SWORD and can be negative.
-				portalmap[i].star_pt = (POINT) {
+				portalmap[i].star_pt = POINT{
 						(COORD) LOBYTE (rand_val) * 9 +
 						plotmap[SOL_DEFINED].star_pt.x - 1147,
 						(COORD) HIBYTE (rand_val) * 9 +
@@ -1544,7 +1544,7 @@ SeedQuasispace (PORTAL_LOCATION *portalmap, PLOT_LOCATION *plotmap,
 				// 189 [0] and 9810 [255].
 				// ([rnd] 255 * 9999 / 265 = 9621) + 189 = 9810
 				// (or 189 below the top)
-				portalmap[i].star_pt = (POINT) {LOBYTE (rand_val) *
+				portalmap[i].star_pt = POINT{LOBYTE (rand_val) *
 						MAX_X_UNIVERSE / 265 + 189,
 						HIBYTE (rand_val) * MAX_Y_UNIVERSE / 265 + 189};
 				for (j = 0; j < i; j++)
@@ -1612,7 +1612,7 @@ SeedQuasispace (PORTAL_LOCATION *portalmap, PLOT_LOCATION *plotmap,
 		{
 			valid = TRUE;
 			rand_val = RandomContext_Random (StarGenRNG);
-			portalmap[i].quasi_pt = (POINT)
+			portalmap[i].quasi_pt = POINT
 					{(LOBYTE (rand_val) * 51 / 256 - 25) * VORTEX_SCALE + 5000,
 					(HIBYTE (rand_val) * 51 / 256 - 25) * VORTEX_SCALE + 5000};
 			for (j = 0; j < i; j++)
@@ -1754,7 +1754,7 @@ PlotIdStrToIndex (const char *plotIdStr)
 	fprintf (stderr, "START PlotIdStrToIndex %s.\n", plotIdStr);
 #endif
 	PlotIdMap key = { /* .idStr = */ plotIdStr, /* .id = */ ~0 };
-	PlotIdMap *found = bsearch (&key, plotIdMap, ARRAY_SIZE (plotIdMap),
+	PlotIdMap *found = (PlotIdMap*)bsearch (&key, plotIdMap, ARRAY_SIZE (plotIdMap),
 			sizeof plotIdMap[0], PlotIdCompare);
 	if (found == NULL)
 		return NUM_PLOTS + 1;

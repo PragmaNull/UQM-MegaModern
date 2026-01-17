@@ -82,10 +82,29 @@ typedef enum {
 	NUM_TEMPLATES
 } CONTROL_TEMPLATE;
 
-typedef struct _controller_input_state {
+struct CONTROLLER_INPUT_STATE {
 	int key[NUM_TEMPLATES][NUM_KEYS];
 	int menu[NUM_MENU_KEYS];
-} CONTROLLER_INPUT_STATE;
+
+	// TODO: need to define this because of volatile ImmediateInputState variable!? Figure this out. This is ugly
+	CONTROLLER_INPUT_STATE& operator=(const volatile CONTROLLER_INPUT_STATE& rhs) 
+	{
+		for (int t = 0; t < NUM_TEMPLATES; ++t)
+		{
+			for (int k = 0; k < NUM_KEYS; ++k)
+			{
+				key[t][k] = rhs.key[t][k];
+			}
+		}
+		
+		for (int mk = 0; mk < NUM_MENU_KEYS; ++mk)
+		{
+			menu[mk] = rhs.menu[mk];
+		}
+
+		return *this;
+	}
+};
 
 typedef UBYTE BATTLE_INPUT_STATE;
 #define BATTLE_LEFT       ((BATTLE_INPUT_STATE)(1 << 0))

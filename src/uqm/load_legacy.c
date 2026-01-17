@@ -532,7 +532,7 @@ read_8 (void *fp, BYTE *v)
 	BYTE t;
 	if (!v) /* read value ignored */
 		v = &t;
-	return ReadResFile (v, 1, 1, fp);
+	return ReadResFile (v, 1, 1, (uio_Stream*)fp);
 }
 
 static inline size_t
@@ -541,7 +541,7 @@ read_16 (void *fp, UWORD *v)
 	UWORD t;
 	if (!v) /* read value ignored */
 		v = &t;
-	return ReadResFile (v, 2, 1, fp);
+	return ReadResFile (v, 2, 1, (uio_Stream*)fp);
 }
 
 static inline size_t
@@ -550,7 +550,7 @@ read_32 (void *fp, DWORD *v)
 	DWORD t;
 	if (!v) /* read value ignored */
 		v = &t;
-	return ReadResFile (v, 4, 1, fp);
+	return ReadResFile (v, 4, 1, (uio_Stream*)fp);
 }
 
 static inline size_t
@@ -577,7 +577,7 @@ static inline size_t
 read_a8 (void *fp, BYTE *ar, COUNT count)
 {
 	assert (ar != NULL);
-	return ReadResFile (ar, 1, count, fp) == count;
+	return ReadResFile (ar, 1, count, (uio_Stream*)fp) == count;
 }
 
 static inline size_t
@@ -631,7 +631,7 @@ LoadShipQueue (DECODE_REF fh, QUEUE *pQueue)
 
 		cread_16 (fh, &Index);
 
-		hStarShip = CloneShipFragment (Index, pQueue, 0);
+		hStarShip = CloneShipFragment ((RACE_ID)Index, pQueue, 0);
 		FragPtr = LockShipFrag (pQueue, hStarShip);
 
 		// Read SHIP_FRAGMENT elements
@@ -939,7 +939,7 @@ LoadGameState (GAME_STATE *GSPtr, DECODE_REF fh, BOOLEAN vanilla)
 		int rev = (vanilla ? 0 : 1);
 		size_t numBytes = (totalBitsForGameState (
 				legacyGameStateBitMap, rev) + 7) >> 3;
-		BYTE *buf = HMalloc (numBytes);
+		BYTE *buf = (BYTE*) HMalloc (numBytes);
 		if (buf != NULL)
 		{
 			cread_a8  (fh, buf, (COUNT)numBytes);

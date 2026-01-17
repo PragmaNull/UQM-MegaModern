@@ -146,7 +146,7 @@ resetEnergyBattle (void)
 			StarShipPtr->RaceDescPtr->ship_info.energy_level;
 
 	OldContext = SetContext (StatusContext);
-	DeltaEnergy (StarShipPtr->hShip, delta);
+	DeltaEnergy ((ELEMENT*)StarShipPtr->hShip, delta);
 	SetContext (OldContext);
 }
 
@@ -177,9 +177,9 @@ scuttleOpponent (void)
 	if (delta > 0)
 	{
 		OldContext = SetContext (StatusContext);
-		DeltaCrew (StarShipPtr->hShip, -delta);
+		DeltaCrew ((ELEMENT*)StarShipPtr->hShip, -delta);
 		SetContext (OldContext);
-		ship_death (StarShipPtr->hShip);
+		ship_death ((ELEMENT*)StarShipPtr->hShip);
 	}
 }
 

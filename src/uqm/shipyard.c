@@ -1863,7 +1863,7 @@ DMS_TryAddEscortShip (MENU_STATE *pMS)
 	COUNT shipCost = ShipCost (Index);
 
 	if (CanBuyPoints (hFleet) && GLOBAL_SIS (ResUnits) >= (DWORD)shipCost
-			&& CloneShipFragment (Index, &GLOBAL (built_ship_q), 1))
+			&& CloneShipFragment ((RACE_ID)Index, &GLOBAL (built_ship_q), 1))
 	{
 		ShowCombatShip (pMS, pMS->CurState, NULL);
 				// Reset flash rectangle
@@ -1899,7 +1899,7 @@ DMS_TryUnstowEscortShip (MENU_STATE *pMS)
 	HFLEETINFO hFleet = GetStarShipFromIndex (&GLOBAL (avail_race_q), Index);
 
 	if (CanBuyPoints (hFleet) && (hStarShip =
-			CloneShipFragment (Index, &GLOBAL (built_ship_q),
+			CloneShipFragment ((RACE_ID)Index, &GLOBAL (built_ship_q),
 			StowShipPtr->crew_level)))
 	{
 		SHIP_FRAGMENT *StarShipPtr =
@@ -2076,7 +2076,7 @@ DMS_StowEscortShip (MENU_STATE *pMS, HSHIPFRAG hStarShip)
 	ShowCombatShip (pMS, pMS->CurState, StarShipPtr);
 
 	COUNT Index = StarShipPtr->race_id;
-	if ((hStowShip = CloneShipFragment (Index, &GLOBAL (stowed_ship_q),
+	if ((hStowShip = CloneShipFragment ((RACE_ID)Index, &GLOBAL (stowed_ship_q),
 			StarShipPtr->crew_level)))
 	{
 		SHIP_FRAGMENT *StowShipPtr =

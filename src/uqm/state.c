@@ -66,7 +66,7 @@ OpenStateFile (int stateFile, const char *mode)
 	
 	if (!fp->data)
 	{
-		fp->data = HMalloc (fp->size_hint);
+		fp->data = (BYTE*)HMalloc (fp->size_hint);
 		if (!fp->data)
 			return NULL;
 		fp->size = fp->size_hint;
@@ -169,7 +169,7 @@ WriteStateFile (const void *lpBuf, COUNT size, COUNT count, GAME_STATE_FILE *fp)
 		if (newsize < fp->size * 3 / 2)
 			newsize = fp->size * 3 / 2;
 
-		fp->data = HRealloc (fp->data, newsize);
+		fp->data = (BYTE*)HRealloc (fp->data, newsize);
 		if (!fp->data)
 			return 0;
 		

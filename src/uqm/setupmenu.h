@@ -35,6 +35,13 @@ typedef enum {
 	OPTVAL_3DO
 } OPT_CONSOLETYPE;
 
+enum OPT_FULLSCREEN
+{
+	OPTVAL_WINDOWED,
+	OPTVAL_EXCLUSIVE_FULLSCREEN,
+	OPTVAL_BORDERED_FULLSCREEN
+};
+
 typedef enum {
 	OPTVAL_NO_SCALE,
 	OPTVAL_BILINEAR_SCALE,
@@ -422,7 +429,7 @@ typedef struct globalopts_struct {
 	OPT_SPHERECOLORS sphereColors;
 	OPT_SPACEMUSIC spaceMusic;
 	OPT_ADD_REMOVE deviceArray[28], upgradeArray[NUM_UPGRADES];
-	OPT_ENABLABLE fullscreen, subtitles, scanlines, fps, stereo, music3do,
+	OPT_ENABLABLE subtitles, scanlines, fps, stereo, music3do,
 			musicremix, speech, keepaspect, cheatMode, mainMenuMusic,
 			nebulae, orbitingPlanets, texturedPlanets, godMode, bubbleWarp,
 			unlockShips, headStart, unlockUpgrades, infiniteRU, skipIntro,
@@ -434,6 +441,7 @@ typedef struct globalopts_struct {
 			unscaledStarSystem, slaughterMode, advancedAutoPilot,
 			meleeToolTips, scatterElements, showUpgrades, fleetPointSys,
 			shipSeed, shipStore, captainNames, dosMenus;
+	OPT_FULLSCREEN fullscreen;
 	OPT_CONSOLETYPE menu, text, scroll, intro, shield, scrTrans,
 			landerHold, tintPlanSphere, planetStyle, scanStyle,
 			scopeStyle, landerStyle, flagshipColor;

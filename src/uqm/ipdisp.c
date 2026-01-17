@@ -199,7 +199,7 @@ ip_group_preprocess (ELEMENT *ElementPtr)
 	EPtr->state_flags &= ~(DISAPPEARING | NONSOLID); // "I'm not quite dead"
 	++EPtr->life_span; // so that it will 'die' again next time
 
-	GetElementStarShip (EPtr, &GroupPtr);
+	*(&GroupPtr) = (IP_GROUP*)(EPtr)->pParent;
 	group_loc = GroupPtr->sys_loc; // save old location
 	DisplayArray[EPtr->PrimIndex].Object.Point = GroupPtr->loc;
 
@@ -217,7 +217,7 @@ ip_group_preprocess (ELEMENT *ElementPtr)
 	flagship_loc = getFlagshipLocation ();
 
 	if ((GET_GAME_STATE (KOHR_AH_FRENZY)
-		 && CheckAlliance (GroupPtr->race_id) == DEAD_GUY)
+		 && CheckAlliance ((RACE_ID)GroupPtr->race_id) == DEAD_GUY)
 		|| (GTFO == 1 && GroupPtr->race_id == ILWRATH_SHIP))
 	{
 		GTFO = 0;
@@ -267,7 +267,7 @@ ip_group_preprocess (ELEMENT *ElementPtr)
 		{
 			SWORD detect_dist = 1200;
 
-			if (EXTENDED && CheckAlliance (GroupPtr->race_id) == GOOD_GUY)
+			if (EXTENDED && CheckAlliance ((RACE_ID)GroupPtr->race_id) == GOOD_GUY)
 				detect_dist = 0;
 
 			if (group_loc != 0) /* if in planetary views */
@@ -423,7 +423,7 @@ ip_group_preprocess (ELEMENT *ElementPtr)
 			}
 			else
 			{
-				speed = RaceIPSpeed (GroupPtr->race_id);
+				speed = RaceIPSpeed ((RACE_ID)GroupPtr->race_id);
 				EPtr->thrust_wait = TRACK_WAIT;
 			}
 
@@ -686,11 +686,11 @@ ip_group_collision (ELEMENT *ElementPtr0, POINT *pPt0,
 	if (GLOBAL (CurrentActivity) & START_ENCOUNTER)
 		return; // ignore the rest of the collisions
 
-	GetElementStarShip (ElementPtr0, &GroupPtr);
+	*(&GroupPtr) = (IP_GROUP*)(ElementPtr0)->pParent;
 	GetElementStarShip (ElementPtr1, &OtherPtr);
 
 	if (!(GLOBAL (autopilot.x) == ~0 && GLOBAL (autopilot.y) == ~0)
-			&& (CheckAlliance (GroupPtr->race_id) == GOOD_GUY))
+			&& (CheckAlliance ((RACE_ID)GroupPtr->race_id) == GOOD_GUY))
 		return; // Ignore collisions when allied during Auto-Pilot
 
 	if (OtherPtr)
@@ -1047,7 +1047,7 @@ DoMissions (void)
 		hNextGroup = _GetSuccLink (GroupPtr);
 
 		if (GroupPtr->in_system
-				&& CheckAlliance (GroupPtr->race_id) != DEAD_GUY)
+				&& CheckAlliance ((RACE_ID)GroupPtr->race_id) != DEAD_GUY)
 		{
 			spawn_ip_group (GroupPtr);
 		}

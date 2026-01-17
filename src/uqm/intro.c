@@ -125,7 +125,7 @@ DoFadeScreen (PRESENTATION_INPUT_STATE* pPIS, const char *Src, BYTE FadeType)
 	int msecs;
 	if (1 == sscanf (Src, "%d", &msecs))
 	{
-		pPIS->TimeOut = FadeScreen (FadeType, msecs * ONE_SECOND / 1000)
+		pPIS->TimeOut = FadeScreen ((ScreenFadeType)FadeType, msecs * ONE_SECOND / 1000)
 				+ ONE_SECOND / 10;
 		pPIS->TimeOutOnSkip = FALSE;
 	}

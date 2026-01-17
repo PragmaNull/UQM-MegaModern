@@ -149,7 +149,7 @@ UpdateSoundPositions (void)
 		if (!ChannelPlaying(i))
 			continue;
 
-		posobj = GetPositionalObject (i);
+		posobj = (ELEMENT*)GetPositionalObject (i);
 		if (posobj != NULL)
 		{
 			SoundPosition pos;

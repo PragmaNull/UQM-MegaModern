@@ -53,7 +53,7 @@ LoadMasterShipList (void (* YieldProcessing)(void))
 			YieldProcessing ();
 
 		BuiltPtr = LockMasterShip (&master_q, hBuiltShip);
-		BuiltPtr->SpeciesID = s_id++;
+		BuiltPtr->SpeciesID = postIncSpeciesId_HACK(s_id);
 		RDPtr = load_ship (BuiltPtr->SpeciesID, FALSE);
 		if (!RDPtr)
 		{

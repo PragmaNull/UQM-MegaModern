@@ -46,7 +46,7 @@ read_8 (void *fp, BYTE *v)
 	BYTE t;
 	if (!v) /* read value ignored */
 		v = &t;
-	return ReadResFile (v, 1, 1, fp);
+	return ReadResFile (v, 1, 1, (uio_Stream*)fp);
 }
 
 static inline size_t
@@ -103,7 +103,7 @@ static inline size_t
 read_a8 (void *fp, BYTE *ar, COUNT count)
 {
 	assert (ar != NULL);
-	return ReadResFile (ar, 1, count, fp) == count;
+	return ReadResFile (ar, 1, count, (uio_Stream*)fp) == count;
 }
 
 static inline size_t
@@ -157,7 +157,7 @@ LoadShipQueue (void *fh, QUEUE *pQueue, DWORD size)
 
 		read_16 (fh, &Index);
 
-		hStarShip = CloneShipFragment (Index, pQueue, 0);
+		hStarShip = CloneShipFragment ((RACE_ID)Index, pQueue, 0);
 		FragPtr = LockShipFrag (pQueue, hStarShip);
 
 		// Read SHIP_FRAGMENT elements
@@ -401,7 +401,7 @@ LoadGameState (GAME_STATE *GSPtr, void *fh, BOOLEAN try_core)
 		log_add (log_Debug, "Detected save game state rev %d: %s",
 				rev, gameStateBitMapRevTag[rev]);
 
-		buf = HMalloc (gameStateByteCount);
+		buf = (BYTE*)HMalloc (gameStateByteCount);
 		if (buf == NULL)
 		{
 			log_add (log_Error, "Warning: Cannot allocate enough bytes for "
@@ -831,7 +831,7 @@ LoadGame (COUNT which_game, SUMMARY_DESC *SummPtr, uio_Stream *in_fp, BOOLEAN tr
 	GlobData.SIS_state = SummPtr->SS;
 
 	optCustomSeed = GLOBAL_SIS (Seed);
-	optShipSeed = (GLOBAL_SIS (ShipSeed) != 0 ? true : false);
+	optShipSeed = (GLOBAL_SIS (ShipSeed) != 0 ? OPTVAL_ENABLED : OPTVAL_DISABLED);
 	ReloadMasterShipList (NULL);
 	LoadFleetInfo ();
 

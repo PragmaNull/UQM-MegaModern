@@ -806,7 +806,7 @@ static inline void
 write_8 (void *fp, BYTE v)
 {
 	if (io_ok)
-		if (WriteResFile (&v, 1, 1, fp) != 1)
+		if (WriteResFile (&v, 1, 1, (uio_Stream*)fp) != 1)
 			io_ok = FALSE;
 }
 
@@ -830,7 +830,7 @@ static inline void
 write_a8 (void *fp, const BYTE *ar, COUNT count)
 {
 	if (io_ok)
-		if (WriteResFile (ar, 1, count, fp) != count)
+		if (WriteResFile (ar, 1, count, (uio_Stream*)fp) != count)
 			io_ok = FALSE;
 }
 

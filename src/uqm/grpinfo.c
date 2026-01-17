@@ -864,7 +864,7 @@ GetGroupInfo (DWORD offset, BYTE which_group)
 
 			sread_8 (fp, &RaceType);
 
-			hStarShip = CloneShipFragment (RaceType,
+			hStarShip = CloneShipFragment ((RACE_ID)RaceType,
 					&GLOBAL (npc_built_ship_q), 0);
 
 			FragPtr = LockShipFrag (&GLOBAL (npc_built_ship_q), hStarShip);

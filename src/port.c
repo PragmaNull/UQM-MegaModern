@@ -69,7 +69,7 @@ setenv (const char *name, const char *value, int overwrite)
 	nameLen = strlen (name);	
 	valueLen = strlen (value);
 
-	string = malloc (nameLen + valueLen + 2);
+	string = (char*)malloc (nameLen + valueLen + 2);
 			// "NAME=VALUE\0"
 			// putenv() does NOT make a copy, but uses the string passed.
 

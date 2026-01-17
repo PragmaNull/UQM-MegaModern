@@ -111,6 +111,14 @@ enum SPECIES_ID
 	UR_QUAN_PROBE_ID,
 	NUM_SPECIES_ID
 };
+// TODO figure out why we need this.
+SPECIES_ID postIncSpeciesId_HACK(SPECIES_ID& id)
+{
+	SPECIES_ID ret{ id };
+	++reinterpret_cast<int&>(id);
+	return ret;
+}
+
 
 struct CAPTAIN_STUFF
 {

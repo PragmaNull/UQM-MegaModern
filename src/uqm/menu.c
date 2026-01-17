@@ -781,11 +781,11 @@ DrawMenuStateStrings (BYTE beg_index, SWORD NewState)
 
 		Draw3DOMenuText (&r, beg_index + NewState);
 
+		TEXT t;
+		UNICODE buf[20];
+
 		switch (beg_index + NewState)
 		{
-			TEXT t;
-			UNICODE buf[20];
-
 			case PM_CREW:
 				t.baseline.x = s.origin.x + RADAR_WIDTH - RES_SCALE (2);
 				t.baseline.y = s.origin.y + RADAR_HEIGHT - RES_SCALE (2);
