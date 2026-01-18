@@ -531,14 +531,11 @@ match_errorStringRegex(match_RegexContext *context, int errorCode) {
 
 	std::ignore = errorCode;
 	return context->errorString;
-	//(void) errorCode;
-	//return context->errorString;
 }
 
 void
 match_freeRegex(match_RegexContext *context) {
 
-	//regfree(&context->native);
 	if (context->errorString)
 		uio_free(context->errorString);
 	match_freeRegexContext(context);

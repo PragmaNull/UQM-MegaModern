@@ -3,6 +3,7 @@
 ** 'ctype' functions for Lua
 ** See Copyright Notice in lua.h
 */
+#pragma once
 
 #ifndef lctype_h
 #define lctype_h

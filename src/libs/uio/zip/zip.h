@@ -22,7 +22,7 @@ typedef struct zip_Handle *uio_NativeHandle;
 typedef void *uio_GPRootExtra;
 typedef struct zip_GPFileData *uio_GPFileExtra;
 typedef struct zip_GPFileData *uio_GPDirExtra;
-typedef struct uio_GPDirEntries_Iterator *uio_NativeEntriesContext;
+typedef struct CharHashTable_Iterator *uio_NativeEntriesContext;
 
 #define uio_INTERNAL_PHYSICAL
 
