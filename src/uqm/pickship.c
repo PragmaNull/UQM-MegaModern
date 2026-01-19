@@ -85,6 +85,9 @@ RepairPickFrame (RECT *pRect, COUNT frame)
 static BOOLEAN
 DoPickBattleShip (MENU_STATE *pMS)
 {
+	RECT r{};
+	TEXT t{};
+
 	if (GLOBAL (CurrentActivity) & CHECK_ABORT)
 	{
 		pMS->CurFrame = 0;
@@ -122,8 +125,6 @@ DoPickBattleShip (MENU_STATE *pMS)
 		if (new_row != pMS->first_item.y
 				|| new_col != pMS->first_item.x)
 		{
-			RECT r;
-			TEXT t;
 			COUNT crew_level, max_crew;
 			COUNT ship_index;
 			HSTARSHIP hBattleShip, hNextShip;

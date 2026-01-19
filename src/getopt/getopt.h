@@ -36,7 +36,7 @@
 # include <ctype.h>
 #endif
 
-#ifdef	__cplusplus
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -172,7 +172,7 @@ extern int _getopt_internal ();
 # endif
 #endif /* __STDC__ */
 
-#ifdef	__cplusplus
+#if 0 //defined(__cplusplus)
 }
 #endif
 

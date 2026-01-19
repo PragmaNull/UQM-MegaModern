@@ -27,7 +27,7 @@
 #ifndef _MIKMOD_INTERNALS_H
 #define _MIKMOD_INTERNALS_H
 
-#ifdef __cplusplus
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -717,7 +717,7 @@ extern int  VC2_SetNumVoices(void);
 
 extern MikMod_callback_t vc_callback;
 
-#ifdef __cplusplus
+#if 0 //defined(__cplusplus)
 }
 #endif
 
@@ -850,12 +850,12 @@ static __inline __m128i mm_hiqq(const __m128i a) {
    memory in SIMD-enabled builds.
  - the returned memory can be freed with MikMod_afree()
  - the returned memory CAN NOT be realloc()'ed safely.  */
-#ifdef __cplusplus
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 void* MikMod_amalloc(size_t);
 void MikMod_afree(void *);  /* frees if ptr != NULL */
-#ifdef __cplusplus
+#if 0 //defined(__cplusplus)
 }
 #endif
 

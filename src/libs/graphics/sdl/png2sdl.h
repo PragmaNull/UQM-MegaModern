@@ -23,7 +23,7 @@
 
 SDL_Surface *TFB_png_to_sdl (SDL_RWops *src);
 
-#ifdef __cplusplus
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -32,7 +32,7 @@ extern "C" {
 extern int TFB_sdl_to_png (SDL_Surface *surface, SDL_RWops *rw, int freedst);
 extern SDL_Surface *SDL_PNGFormatAlpha (SDL_Surface *src);
 
-#ifdef __cplusplus
+#if 0 //defined(__cplusplus)
 }
 #endif
 

@@ -260,7 +260,7 @@ typedef struct point
 	COORD y{};
 } POINT;
 
-POINT operator+(const POINT& lhs, const POINT& rhs)
+inline POINT operator+(const POINT& lhs, const POINT& rhs)
 {
 	return { static_cast<COORD>(lhs.x + rhs.x), static_cast<COORD>(lhs.y + rhs.y) };
 }

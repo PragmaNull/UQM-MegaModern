@@ -28,7 +28,7 @@ extern "C" {
 #include "math/random.h"
 
 extern COUNT square_root (DWORD value);
-uint32_t crc32b(const char* str)
+inline uint32_t crc32b(const char* str)
 {	// Source: https://stackoverflow.com/a/21001712
 	unsigned int byte, crc, mask;
 	int i = 0, j;

@@ -1753,7 +1753,7 @@ PlotIdStrToIndex (const char *plotIdStr)
 #ifdef DEBUG_STARSEED
 	fprintf (stderr, "START PlotIdStrToIndex %s.\n", plotIdStr);
 #endif
-	PlotIdMap key = { /* .idStr = */ plotIdStr, /* .id = */ ~0 };
+	PlotIdMap key = { /* .idStr = */ plotIdStr, /* .id = */ std::numeric_limits<COUNT>::max() };
 	PlotIdMap *found = (PlotIdMap*)bsearch (&key, plotIdMap, ARRAY_SIZE (plotIdMap),
 			sizeof plotIdMap[0], PlotIdCompare);
 	if (found == NULL)

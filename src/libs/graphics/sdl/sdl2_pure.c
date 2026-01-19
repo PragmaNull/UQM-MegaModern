@@ -647,7 +647,7 @@ TFB_SDL_ScreenShot (const char *path)
 	SDL_LockSurface (tmp);
 	SDL_RenderReadPixels (renderer, NULL, tmp->format->format,
 		tmp->pixels, tmp->pitch);
-	if (SDL_SavePNG (tmp, path) == 0)
+	if (TFB_sdl_to_png(tmp, SDL_RWFromFile(path, "wb"), 1) == 0)
 		successful = TRUE;
 
 	if (successful && CopySurfaceToClipboard (tmp) != 0)

@@ -114,7 +114,7 @@ enum OPT_NOMAD {
 	OPTVAL_NOM_EASY,
 	OPTVAL_NOM_NORM
 } ;
-const char* toString(const OPT_NOMAD optVal)
+inline static const char* toString(const OPT_NOMAD optVal)
 {
 	static constexpr char* Strings[3]{
 		"Off", "Easy", "Normal"

@@ -1748,7 +1748,6 @@ uio_PFileHandle_free(uio_PFileHandle *pFileHandle) {
 
 // *** PDirEntryHandle stuff *** //
 
-
 // ref count set to 1
 uio_Handle *
 uio_Handle_new(uio_PRoot *root, uio_NativeHandle native, int openFlags) {

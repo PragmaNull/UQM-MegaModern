@@ -18,38 +18,9 @@
 
 #include "gendef.h"
 #include "planets/generate.h"
+#include "planets/generate/genall.h"
 
 
-extern GenerateFunctions generateDefaultFunctions;
-
-extern GenerateFunctions generateAndrosynthFunctions;
-extern GenerateFunctions generateBurvixeseFunctions;
-extern GenerateFunctions generateChmmrFunctions;
-extern GenerateFunctions generateColonyFunctions;
-extern GenerateFunctions generateDruugeFunctions;
-extern GenerateFunctions generateIlwrathFunctions;
-extern GenerateFunctions generateMelnormeFunctions;
-extern GenerateFunctions generateMyconFunctions;
-extern GenerateFunctions generateOrzFunctions;
-extern GenerateFunctions generatePkunkFunctions;
-extern GenerateFunctions generateRainbowWorldFunctions;
-extern GenerateFunctions generateSaMatraFunctions;
-extern GenerateFunctions generateShofixtiFunctions;
-extern GenerateFunctions generateSlylandroFunctions;
-extern GenerateFunctions generateSolFunctions;
-extern GenerateFunctions generateSpathiFunctions;
-extern GenerateFunctions generateSupoxFunctions;
-extern GenerateFunctions generateSyreenFunctions;
-extern GenerateFunctions generateTalkingPetFunctions;
-extern GenerateFunctions generateThraddashFunctions;
-extern GenerateFunctions generateTrapFunctions;
-extern GenerateFunctions generateUtwigFunctions;
-extern GenerateFunctions generateVaultFunctions;
-extern GenerateFunctions generateVuxFunctions;
-extern GenerateFunctions generateWreckFunctions;
-extern GenerateFunctions generateYehatFunctions;
-extern GenerateFunctions generateZoqFotPikFunctions;
-extern GenerateFunctions generateZoqFotPikScoutFunctions;
 
 
 const GenerateFunctions *

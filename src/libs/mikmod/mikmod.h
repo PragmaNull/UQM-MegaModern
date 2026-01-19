@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef __cplusplus
+#if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -839,7 +839,7 @@ MIKMODAPI extern BOOL  VC_VoiceStopped(UBYTE);
 MIKMODAPI extern SLONG VC_VoiceGetPosition(UBYTE);
 MIKMODAPI extern ULONG VC_VoiceRealVolume(UBYTE);
 
-#ifdef __cplusplus
+#if 0 //defined(__cplusplus)
 }
 #endif
 

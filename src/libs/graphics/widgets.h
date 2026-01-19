@@ -140,15 +140,15 @@ typedef enum {
 
 } WIDGET_TEXTENTRY_STATE;
 
-WIDGET_TEXTENTRY_STATE operator~(WIDGET_TEXTENTRY_STATE rhs)
+inline WIDGET_TEXTENTRY_STATE operator~(WIDGET_TEXTENTRY_STATE rhs)
 {
 	return static_cast<WIDGET_TEXTENTRY_STATE>(~static_cast<uint32_t>(rhs));
 }
-WIDGET_TEXTENTRY_STATE operator |= (WIDGET_TEXTENTRY_STATE lhs, WIDGET_TEXTENTRY_STATE rhs) 
+inline WIDGET_TEXTENTRY_STATE operator |= (WIDGET_TEXTENTRY_STATE lhs, WIDGET_TEXTENTRY_STATE rhs)
 {
 	return static_cast<WIDGET_TEXTENTRY_STATE>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
 }
-WIDGET_TEXTENTRY_STATE operator &= (WIDGET_TEXTENTRY_STATE lhs, WIDGET_TEXTENTRY_STATE rhs) 
+inline WIDGET_TEXTENTRY_STATE operator &= (WIDGET_TEXTENTRY_STATE lhs, WIDGET_TEXTENTRY_STATE rhs)
 {
 	return static_cast<WIDGET_TEXTENTRY_STATE>(static_cast<uint32_t>(lhs) & static_cast<uint32_t>(rhs));
 }

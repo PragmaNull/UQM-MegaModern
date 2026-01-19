@@ -41,6 +41,7 @@
 #include <fcntl.h>
 #include <ctype.h>
 
+#include "../iointrn.h"
 #include "../uioport.h"
 #include "../paths.h"
 #include "../mem.h"
