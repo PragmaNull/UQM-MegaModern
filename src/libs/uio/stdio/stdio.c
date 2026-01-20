@@ -20,10 +20,10 @@
 
 // The GPDir structures and functions are used for caching only.
 
-#ifdef __svr4__
-#	define _POSIX_PTHREAD_SEMANTICS
-			// For the POSIX variant of readdir_r()
-#endif
+//#ifdef __svr4__
+//#	define _POSIX_PTHREAD_SEMANTICS
+//			// For the POSIX variant of readdir_r()
+//#endif
 
 #include "./stdio.h"
 
@@ -46,6 +46,7 @@
 #include "../paths.h"
 #include "../mem.h"
 #include "../physical.h"
+#include "../gphys.h"
 #ifdef uio_MEM_DEBUG
 #	include "../memdebug.h"
 #endif
@@ -56,7 +57,7 @@ static inline uio_GPDir *stdio_addDir(uio_GPDir *gPDir, const char *dirName);
 static char *stdio_getPath(uio_GPDir *gPDir);
 static stdio_GPDirData *stdio_GPDirData_new(char *name, char *cachedPath,
 		uio_GPDir *upDir);
-static void stdio_GPDirData_delete(stdio_GPDirData *gPDirData);
+static void stdio_GPDirData_delete(void *gPDirData);
 static inline stdio_GPDirData *stdio_GPDirData_alloc(void);
 static inline void stdio_GPDirData_free(stdio_GPDirData *gPDirData);
 static inline stdio_EntriesIterator *stdio_EntriesIterator_alloc(void);
@@ -107,7 +108,8 @@ stdio_close(uio_Handle *handle) {
 	int fd;
 	int result;
 	
-	fd = handle->native->fd;
+	auto nhandle = (stdio_Handle*)(handle->native);
+	fd = nhandle->fd;
 	uio_free(handle->native);
 	
 	while (1) {
@@ -147,7 +149,9 @@ stdio_access(uio_PDirHandle *pDirHandle, const char *name, int mode) {
 
 int
 stdio_fstat(uio_Handle *handle, struct stat *statBuf) {
-	return fstat(handle->native->fd, statBuf);
+	auto nHandle = (stdio_Handle*)(handle->native);
+
+	return fstat(nHandle->fd, statBuf);
 }
 
 int
@@ -247,7 +251,8 @@ stdio_open(uio_PDirHandle *pDirHandle, const char *file, int flags,
 
 ssize_t
 stdio_read(uio_Handle *handle, void *buf, size_t count) {
-	return read(handle->native->fd, buf, count);
+	auto nHandle = (stdio_Handle*)(handle->native);
+	return read(nHandle->fd, buf, count);
 }
 
 int
@@ -325,12 +330,14 @@ stdio_rmdir(uio_PDirHandle *pDirHandle, const char *name) {
 
 off_t
 stdio_seek(uio_Handle *handle, off_t offset, int whence) {
-	return lseek(handle->native->fd, offset, whence);
+	auto nHandle = (stdio_Handle*)(handle->native);
+	return lseek(nHandle->fd, offset, whence);
 }
 
 ssize_t
 stdio_write(uio_Handle *handle, const void *buf, size_t count) {
-	return write(handle->native->fd, buf, count);
+	auto nHandle = (stdio_Handle*)(handle->native);
+	return write(nHandle->fd, buf, count);
 }
 
 int
@@ -368,9 +375,10 @@ stdio_getPDirEntryHandle(const uio_PDirHandle *pDirHandle, const char *name) {
 #ifdef HAVE_DRIVE_LETTERS
 	char driveName[3];
 #endif  /* HAVE_DRIVE_LETTERS */
+	auto xtra = (stdio_GPDirData*)(pDirHandle->extra->extra);
 
 #if defined(HAVE_DRIVE_LETTERS) || defined(HAVE_UNC_PATHS)
-	if (pDirHandle->extra->extra->upDir == NULL) {
+	if (xtra->upDir == NULL) {
 		// Top dir. Contains only drive letters and UNC \\server\share
 		// parts.
 #ifdef HAVE_DRIVE_LETTERS
@@ -406,7 +414,7 @@ stdio_getPDirEntryHandle(const uio_PDirHandle *pDirHandle, const char *name) {
 		return result;
 
 #if defined(HAVE_DRIVE_LETTERS) || defined(HAVE_UNC_PATHS)
-	if (pDirHandle->extra->extra->upDir == NULL) {
+	if (xtra->upDir == NULL) {
 		// Need to create a 'directory' for the drive letter or UNC
 		// "\\server\share" part.
 		// It's no problem if we happen to create a dir for a non-existing
@@ -755,27 +763,28 @@ stdio_addDir(uio_GPDir *gPDir, const char *dirName) {
 
 // returns a pointer to gPDir->extra->cachedPath
 // pointer should not be stored, the memory it points to can be freed
-// lateron. TODO: not threadsafe.
+// later on. TODO: not threadsafe.
 static char *
 stdio_getPath(uio_GPDir *gPDir) {
-	if (gPDir->extra->cachedPath == NULL) {
+	auto xtra = (stdio_GPDirData*)(gPDir->extra);
+	if (xtra->cachedPath == NULL) {
 		char *upPath;
 		size_t upPathLen, nameLen;
 	
-		if (gPDir->extra->upDir == NULL) {
+		if (xtra->upDir == NULL) {
 #if defined(HAVE_DRIVE_LETTERS) || defined(HAVE_UNC_PATHS)
 			// Drive letter or UNC \\server\share still needs to follow.
-			gPDir->extra->cachedPath = (char*)uio_malloc(1);
-			gPDir->extra->cachedPath[0] = '\0';
+			xtra->cachedPath = (char*)uio_malloc(1);
+			xtra->cachedPath[0] = '\0';
 #else
-			gPDir->extra->cachedPath = uio_malloc(2);
-			gPDir->extra->cachedPath[0] = '/';
-			gPDir->extra->cachedPath[1] = '\0';
+			xtra->cachedPath = uio_malloc(2);
+			xtra->cachedPath[0] = '/';
+			xtra->cachedPath[1] = '\0';
 #endif  /* defined(HAVE_DRIVE_LETTERS) || defined(HAVE_UNC_PATHS) */
-			return gPDir->extra->cachedPath;
+			return xtra->cachedPath;
 		}
 		
-		upPath = stdio_getPath(gPDir->extra->upDir);
+		upPath = stdio_getPath(xtra->upDir);
 		if (upPath == NULL) {
 			// errno is set
 			return NULL;
@@ -786,8 +795,8 @@ stdio_getPath(uio_GPDir *gPDir) {
 			// The up dir is the root dir. Directly below the root dir are
 			// only dirs for drive letters and UNC \\share\server parts.
 			// No '/' needs to be attached.
-			gPDir->extra->cachedPath = uio_strdup(gPDir->extra->name);
-			return gPDir->extra->cachedPath;
+			xtra->cachedPath = uio_strdup(xtra->name);
+			return xtra->cachedPath;
 		}
 #endif  /* defined(HAVE_DRIVE_LETTERS) || defined(HAVE_UNC_PATHS) */
 		upPathLen = strlen(upPath);
@@ -797,19 +806,19 @@ stdio_getPath(uio_GPDir *gPDir) {
 			upPathLen--;
 		}
 #endif  /* !defined(HAVE_DRIVE_LETTERS) && !defined(HAVE_UNC_PATHS) */
-		nameLen = strlen(gPDir->extra->name);
+		nameLen = strlen(xtra->name);
 		if (upPathLen + nameLen + 1 >= PATH_MAX) {
 			errno = ENAMETOOLONG;
 			return NULL;
 		}
-		gPDir->extra->cachedPath = (char*)uio_malloc(upPathLen + nameLen + 2);
-		memcpy(gPDir->extra->cachedPath, upPath, upPathLen);
-		gPDir->extra->cachedPath[upPathLen] = '/';
-		memcpy(gPDir->extra->cachedPath + upPathLen + 1,
-				gPDir->extra->name, nameLen);
-		gPDir->extra->cachedPath[upPathLen + nameLen + 1] = '\0';
+		xtra->cachedPath = (char*)uio_malloc(upPathLen + nameLen + 2);
+		memcpy(xtra->cachedPath, upPath, upPathLen);
+		xtra->cachedPath[upPathLen] = '/';
+		memcpy(xtra->cachedPath + upPathLen + 1,
+			xtra->name, nameLen);
+		xtra->cachedPath[upPathLen + nameLen + 1] = '\0';
 	}
-	return gPDir->extra->cachedPath;
+	return xtra->cachedPath;
 }
 
 static stdio_GPDirData *
@@ -824,7 +833,8 @@ stdio_GPDirData_new(char *name, char *cachedPath, uio_GPDir *upDir) {
 }
 
 static void
-stdio_GPDirData_delete(stdio_GPDirData *gPDirData) {
+stdio_GPDirData_delete(void *arg) {
+	stdio_GPDirData* gPDirData = (stdio_GPDirData*)arg;
 	if (gPDirData->upDir != NULL)
 		uio_GPDir_unref(gPDirData->upDir);
 	stdio_GPDirData_free(gPDirData);

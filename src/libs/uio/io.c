@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "stdio/stdio.h"
 #include "iointrn.h"
 #include "ioaux.h"
 #include "mount.h"
@@ -1578,7 +1579,7 @@ uio_EntriesContext_new(uio_PRoot *pRoot, uio_NativeEntriesContext *native) {
 	uio_EntriesContext *result;
 	result = uio_EntriesContext_alloc();
 	result->pRoot = pRoot;
-	result->native = native;
+	result->native = *native;
 	return result;
 }
 

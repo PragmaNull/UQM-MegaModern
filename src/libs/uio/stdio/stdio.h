@@ -18,10 +18,10 @@
  *
  */
 
-typedef struct stdio_Handle *uio_NativeHandle;
-typedef void *uio_GPRootExtra;
-typedef struct stdio_GPDirData *uio_GPDirExtra;
-typedef void *uio_GPFileExtra;
+typedef void* uio_NativeHandle;
+typedef void* uio_GPRootExtra;
+typedef void* uio_GPDirExtra;
+typedef void* uio_GPFileExtra;
 typedef struct stdio_EntriesIterator stdio_EntriesIterator;
 typedef stdio_EntriesIterator *uio_NativeEntriesContext;
 

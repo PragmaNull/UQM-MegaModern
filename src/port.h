@@ -7,7 +7,7 @@
 #if defined(__GNUC__) && __GNUC__ >= 7
 #	define FALLTHROUGH __attribute__((fallthrough))
 #else
-#	define FALLTHROUGH /* fall through */
+#	define FALLTHROUGH
 #endif
 
 #ifdef NEVER
@@ -27,22 +27,6 @@
 #	endif
 #endif
 
-
-// Compilation related
-#ifdef _MSC_VER
-#	if (_MSC_VER < 1900)
-#	define inline __inline
-#	endif
-#elif defined(__SYMBIAN32__)
-#else
-#	define inline __inline__
-#	ifdef __MINGW32__
-		// For when including Microsoft Windows header files.
-#		ifndef _inline
-#			define _inline inline
-#		endif
-#	endif
-#endif
 
 
 // Compilation warnings:

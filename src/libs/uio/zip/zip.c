@@ -35,6 +35,8 @@
 
 #include "zip.h"
 #include "../physical.h"
+#include "../gphys.h"
+#include "../iointrn.h"
 #include "../uioport.h"
 #include "../paths.h"
 #include "../uioutils.h"
@@ -79,10 +81,10 @@ static voidpf zip_alloc(voidpf opaque, uInt items, uInt size);
 static void zip_free(voidpf opaque, voidpf address);
 
 static inline zip_GPFileData * zip_GPFileData_new(void);
-static inline void zip_GPFileData_delete(zip_GPFileData *gPFileData);
+static inline void zip_GPFileData_delete(void* gPFileData);
 static inline zip_GPFileData *zip_GPFileData_alloc(void);
 static inline void zip_GPFileData_free(zip_GPFileData *gPFileData);
-static inline void zip_GPDirData_delete(zip_GPDirData *gPDirData);
+static inline void zip_GPDirData_delete(void *gPDirData);
 static inline void zip_GPDirData_free(zip_GPDirData *gPDirData);
 
 static ssize_t zip_readStored(uio_Handle *handle, void *buf, size_t count);
@@ -200,7 +202,7 @@ zip_close(uio_Handle *handle) {
 #if defined(DEBUG) && DEBUG > 1
 	fprintf(stderr, "zip_close - handle=%p\n", (void *) handle);
 #endif
-	zip_handle = handle->native;
+	zip_handle = (zip_Handle*)handle->native;
 	uio_GPFile_unref(zip_handle->file);
 	zip_unInitZipStream(&zip_handle->zipStream);
 	uio_closeFileBlock(zip_handle->fileBlock);
@@ -270,17 +272,18 @@ zip_access(uio_PDirHandle *pDirHandle, const char *name, int mode) {
 
 int
 zip_fstat(uio_Handle *handle, struct stat *statBuf) {
+	auto nhandle = (zip_Handle*)(handle->native);
 #if zip_USE_HEADERS == zip_USE_CENTRAL_HEADERS
-	if (handle->native->file->extra->fileOffset == -1) {
+	auto xtra = (zip_GPFileData*)(nhandle->file->extra);
+	if (xtra->fileOffset == -1) {
 		// The local header wasn't read in yet.
-		if (zip_updateFileDataFromLocalHeader(handle->root->handle,
-				handle->native->file->extra) == -1) {
+		if (zip_updateFileDataFromLocalHeader(handle->root->handle, xtra) == -1) {
 			// errno is set
 			return -1;
 		}
 	}
 #endif  /* zip_USE_HEADERS == zip_USE_CENTRAL_HEADERS */
-	zip_fillStat(statBuf, handle->native->file->extra);
+	zip_fillStat(statBuf, (const zip_GPFileData*)(nhandle->file->extra));
 	return 0;
 }
 
@@ -359,13 +362,15 @@ zip_open(uio_PDirHandle *pDirHandle, const char *name, int flags,
 		return NULL;
 	}
 
+	auto xtra = (zip_GPFileData*)(gPFile->extra);
 #if zip_USE_HEADERS == zip_USE_CENTRAL_HEADERS
-	if (gPFile->extra->fileOffset == -1) {
-		// The local header wasn't read in yet.
-		if (zip_updateFileDataFromLocalHeader(pDirHandle->pRoot->handle,
-				gPFile->extra) == -1) {
-			// errno is set
-			return NULL;
+	{
+		if (xtra->fileOffset == -1) {
+			// The local header wasn't read in yet.
+			if (zip_updateFileDataFromLocalHeader(pDirHandle->pRoot->handle, xtra) == -1) {
+				// errno is set
+				return NULL;
+			}
 		}
 	}
 #endif
@@ -373,8 +378,7 @@ zip_open(uio_PDirHandle *pDirHandle, const char *name, int flags,
 	handle = (zip_Handle*)uio_malloc(sizeof (zip_Handle));
 	uio_GPFile_ref(gPFile);
 	handle->file = gPFile;
-	handle->fileBlock = uio_openFileBlock2(pDirHandle->pRoot->handle,
-			gPFile->extra->fileOffset, gPFile->extra->compressedSize);
+	handle->fileBlock = uio_openFileBlock2(pDirHandle->pRoot->handle, xtra->fileOffset, xtra->compressedSize);
 	if (handle->fileBlock == NULL) {
 		// errno is set
 		return NULL;
@@ -400,7 +404,9 @@ zip_read(uio_Handle *handle, void *buf, size_t count) {
 	fprintf(stderr, "zip_read - handle=%p buf=%p count=%d: ", (void *) handle,
 			(void *) buf, count);
 #endif
-	result = zip_readMethods[handle->native->file->extra->compressionMethod]
+	auto nhandle = (zip_Handle*)(handle->native);
+	auto xtra = (zip_GPFileData*)(nhandle->file->extra);
+	result = zip_readMethods[xtra->compressionMethod]
 			(handle, buf, count);
 #if defined(DEBUG) && DEBUG > 1
 	fprintf(stderr, "%d\n", result);
@@ -413,7 +419,7 @@ zip_readStored(uio_Handle *handle, void *buf, size_t count) {
 	int numBytes;
 	zip_Handle *zipHandle;
 
-	zipHandle = handle->native;
+	zipHandle = (zip_Handle*)handle->native;
 	numBytes = uio_copyFileBlock(zipHandle->fileBlock,
 			zipHandle->uncompressedOffset, (char*)buf, count);
 	if (numBytes == -1) {
@@ -430,7 +436,7 @@ zip_readDeflated(uio_Handle *handle, void *buf, size_t count) {
 	zip_Handle *zipHandle;
 	int inflateResult;
 
-	zipHandle = handle->native;
+	zipHandle = (zip_Handle*)handle->native;
 
 	if (count > ((zip_GPFileData *) (zipHandle->file->extra))->
 			uncompressedSize - zipHandle->zipStream.total_out)
@@ -533,7 +539,8 @@ zip_seek(uio_Handle *handle, off_t offset, int whence) {
 			whence == SEEK_CUR ? "SEEK_CUR" :
 			whence == SEEK_END ? "SEEK_END" : "INVALID");
 #endif
-	zipHandle = handle->native;
+	zipHandle = (zip_Handle*)handle->native;
+	auto xtra = (zip_GPFileData*)(zipHandle->file->extra);
 
 	assert(whence == SEEK_SET || whence == SEEK_CUR || whence == SEEK_END);
 	switch(whence) {
@@ -543,25 +550,24 @@ zip_seek(uio_Handle *handle, off_t offset, int whence) {
 			offset += zipHandle->uncompressedOffset;
 			break;
 		case SEEK_END:
-			offset += zipHandle->file->extra->uncompressedSize;
+			offset += xtra->uncompressedSize;
 			break;
 	}
 	if (offset < 0) {
 		offset = 0;
-	} else if (offset > zipHandle->file->extra->uncompressedSize) {
-		offset = zipHandle->file->extra->uncompressedSize;
+	} else if (offset > xtra->uncompressedSize) {
+		offset = xtra->uncompressedSize;
 	}
-	return zip_seekMethods[handle->native->file->extra->compressionMethod]
-			(handle, offset);
+	return zip_seekMethods[xtra->compressionMethod](handle, offset);
 }
 
 static off_t
 zip_seekStored(uio_Handle *handle, off_t offset) {
 	zip_Handle *zipHandle;
-
-	zipHandle = handle->native;
-	if (offset > zipHandle->file->extra->uncompressedSize)
-		offset = zipHandle->file->extra->uncompressedSize;
+	zipHandle = (zip_Handle*)handle->native;
+	auto xtra = (zip_GPFileData*)(zipHandle->file->extra);
+	if (offset > xtra->uncompressedSize)
+		offset = xtra->uncompressedSize;
 
 	zipHandle->compressedOffset = offset;
 	zipHandle->uncompressedOffset = offset;
@@ -572,7 +578,7 @@ static off_t
 zip_seekDeflated(uio_Handle *handle, off_t offset) {
 	zip_Handle *zipHandle;
 
-	zipHandle = handle->native;
+	zipHandle = (zip_Handle*)handle->native;
 
 	if (offset < zipHandle->uncompressedOffset) {
 		// The new offset is earlier than the current offset. We need to
@@ -1648,8 +1654,8 @@ zip_GPFileData_new(void) {
 }
 
 static inline void
-zip_GPFileData_delete(zip_GPFileData *gPFileData) {
-	zip_GPFileData_free(gPFileData);
+zip_GPFileData_delete(void* gPFileData) {
+	zip_GPFileData_free((zip_GPFileData*)gPFileData);
 }
 
 static inline zip_GPFileData *
@@ -1670,7 +1676,8 @@ zip_GPFileData_free(zip_GPFileData *gPFileData) {
 }
 
 static inline void
-zip_GPDirData_delete(zip_GPDirData *gPDirData) {
+zip_GPDirData_delete(void *arg) {
+	zip_GPDirData* gPDirData = (zip_GPDirData*)arg;
 	zip_GPDirData_free(gPDirData);
 }
 

@@ -72,26 +72,24 @@ struct uio_DirList {
 };
 
 
-#define uio_PHandle_COMMON \
-	int flags; \
-	int ref; \
-	uio_PRoot *pRoot;
-
 #define uio_PDirEntryHandle_TYPE_REG 0x0000
 #define uio_PDirEntryHandle_TYPE_DIR 0x0001
 #define uio_PDirEntryHandle_TYPEMASK 0x0001
 
-struct uio_PDirEntryHandle {
-	uio_PHandle_COMMON
+struct uio_HandleCommon {
+	int flags;
+	int ref;
+	uio_PRoot* pRoot;
 };
 
-struct uio_PDirHandle {
-	uio_PHandle_COMMON
+struct uio_PDirEntryHandle : public uio_HandleCommon {
+};
+
+struct uio_PDirHandle : public uio_HandleCommon {
 	uio_PDirHandleExtra extra;
 };
 
-struct uio_PFileHandle {
-	uio_PHandle_COMMON
+struct uio_PFileHandle : public uio_HandleCommon {
 	uio_PFileHandleExtra extra;
 };
 
@@ -101,8 +99,7 @@ struct uio_EntriesContext {
 };
 
 
-uio_Handle *uio_Handle_new(uio_PRoot *root, uio_NativeHandle native,
-		int openFlags);
+uio_Handle *uio_Handle_new(uio_PRoot *root, uio_NativeHandle native, int openFlags);
 void uio_Handle_delete(uio_Handle *handle);
 void uio_DirHandle_delete(uio_DirHandle *dirHandle);
 
