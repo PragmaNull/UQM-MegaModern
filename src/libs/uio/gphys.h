@@ -77,7 +77,7 @@ typedef CharHashTable_Iterator uio_GPDirEntries_Iterator;
 #ifdef uio_INTERNAL_GPHYS
 typedef uio_GPDirEntries_Iterator *uio_NativeEntriesContext;
 #endif
-typedef struct uio_GPRoot *uio_PRootExtra;
+typedef void* uio_PRootExtra;
 typedef struct uio_GPDir uio_GPDirHandle;
 typedef uio_GPDirHandle *uio_PDirHandleExtra;
 typedef struct uio_GPFile uio_GPFileHandle;
@@ -236,7 +236,7 @@ void uio_GPFileHandle_delete(uio_GPFileHandle *gPFileHandle);
 void uio_GPDirEntry_delete(uio_GPDirEntry *gPDirEntry);
 uio_GPRoot *uio_GPRoot_new(uio_GPRoot_Operations *ops, uio_GPRootExtra extra,
 		int flags);
-void uio_GPRoot_delete(uio_GPRoot *gPRoot);
+void uio_GPRoot_delete(void *gPRoot);
 uio_GPDir *uio_GPDir_new(uio_PRoot *pRoot, uio_GPDirExtra extra, int flags);
 void uio_GPDir_delete(uio_GPDir *gPDir);
 uio_GPFile *uio_GPFile_new(uio_PRoot *pRoot, uio_GPFileExtra extra, int flags);

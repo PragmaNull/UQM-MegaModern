@@ -320,8 +320,9 @@ uio_GPDir_fill(uio_GPDir *gPDir) {
 	if ((gPDir->flags & uio_GPDir_COMPLETE) &&
 			!(gPDir->flags & uio_GPDir_NOCACHE))
 		return;
-	assert(gPDir->pRoot->extra->ops->fillGPDir != NULL);
-	gPDir->pRoot->extra->ops->fillGPDir(gPDir);
+	auto xtra = (uio_GPRoot*)gPDir->pRoot->extra;
+	assert(xtra->ops->fillGPDir != NULL);
+	xtra->ops->fillGPDir(gPDir);
 }
 
 void
@@ -336,16 +337,19 @@ void
 uio_GPDir_deleteGPDirExtra(uio_GPDir *gPDir) {
 	if (gPDir->extra == NULL)
 		return;
-	assert(gPDir->pRoot->extra->ops->deleteGPDirExtra != NULL);
-	gPDir->pRoot->extra->ops->deleteGPDirExtra(gPDir->extra);
+	auto xtra = (uio_GPRoot*)gPDir->pRoot->extra;
+	assert(xtra->ops->deleteGPDirExtra != NULL);
+	xtra->ops->deleteGPDirExtra(gPDir->extra);
 }
 
 void
 uio_GPFile_deleteGPFileExtra(uio_GPFile *gPFile) {
 	if (gPFile->extra == NULL)
 		return;
-	assert(gPFile->pRoot->extra->ops->deleteGPFileExtra != NULL);
-	gPFile->pRoot->extra->ops->deleteGPFileExtra(gPFile->extra);
+	
+	auto xtra = (uio_GPRoot*)gPFile->pRoot->extra; 
+	assert(xtra->ops->deleteGPFileExtra != NULL);
+	xtra->ops->deleteGPFileExtra(gPFile->extra);
 }
 
 int
@@ -408,7 +412,8 @@ uio_GPDir_new(uio_PRoot *pRoot, uio_GPDirExtra extra, int flags) {
 	gPDir->entries = uio_GPDirEntries_new();
 	gPDir->extra = extra;
 	flags |= uio_gPDirFlagsFromPRootFlags(gPDir->pRoot->flags);
-	if (pRoot->extra->flags & uio_GPRoot_PERSISTENT)
+	auto xtra = (uio_GPRoot*)pRoot->extra;
+	if (xtra->flags & uio_GPRoot_PERSISTENT)
 		flags |= uio_GPDir_PERSISTENT;
 	gPDir->flags = flags | uio_GPDirEntry_TYPE_DIR;
 	return gPDir;
@@ -547,7 +552,8 @@ uio_GPRoot_umount(uio_PRoot *pRoot) {
 
 	topDirHandle = uio_PRoot_getRootDirHandle(pRoot);
 	topDir = topDirHandle->extra;
-	if (pRoot->extra->flags & uio_GPRoot_PERSISTENT)
+	auto xtra = (uio_GPRoot*)pRoot->extra;
+	if (xtra->flags & uio_GPRoot_PERSISTENT)
 		uio_GPDir_deepPersistentUnref(topDir);
 	uio_PDirHandle_unref(topDirHandle);
 	(void) pRoot;
@@ -566,7 +572,8 @@ uio_GPRoot_new(uio_GPRoot_Operations *ops, uio_GPRootExtra extra, int flags) {
 }
 
 void
-uio_GPRoot_delete(uio_GPRoot *gPRoot) {
+uio_GPRoot_delete(void* arg) {
+	uio_GPRoot* gPRoot = (uio_GPRoot*)arg;
 	uio_GPRoot_deleteGPRootExtra(gPRoot);
 	uio_GPRoot_free(gPRoot);
 }
