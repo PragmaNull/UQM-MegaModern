@@ -205,13 +205,13 @@ enum
 // TODO: This struct is highly alignment and padding dependent and
 //   should not be used! The data is loaded as binary from files and
 //   cast to this struct.
-typedef struct
+struct XLAT_DESC
 {
 	const SIZE level_tab[3];
 	const BYTE xlat_tab[256];
-} XLAT_DESC;
+} ;
 
-typedef struct
+struct ELEMENT_ENTRY
 {
 	BYTE ElementType;
 			/* Index of this element in element_array */
@@ -220,11 +220,11 @@ typedef struct
 			 *           deposits), one of FEW, MODERATE, or NUMEROUS
 			 * bits 4-7: quality of the deposit, one of LOW, MEDIUM, or HEAVY
 			 */
-} ELEMENT_ENTRY;
+};
 
 // PlanetFrame describes a type of planet. It is not used to describe
 // individual planets.
-typedef struct
+struct PlanetFrame
 {
 	BYTE Type;
 			/* bits 0-1: size, one of SMALL_ROCKY_WORLD, LARGE_ROCKY_WORLD, or
@@ -263,9 +263,9 @@ typedef struct
 	SIZE fault_depth;
 	COUNT num_blemishes;
 	SIZE base_elevation;
-} PlanetFrame;
+};
 
-typedef struct
+struct PLANET_INFO
 {
 	SIZE AxialTilt;
 	UWORD Tectonics;
@@ -297,7 +297,7 @@ typedef struct
 	STRING DiscoveryString;
 	FONT LanderFont;
 	FRAME LanderFontEff;
-} PLANET_INFO;
+} ;
 
 enum
 {

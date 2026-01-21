@@ -38,6 +38,7 @@
 #include "libs/mathlib.h"
 #include "lua/luadebug.h"
 #include "tactrans.h"
+#include "StarmapGlobalData.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -1638,10 +1639,9 @@ forAllPlanetTypes (void (*callback) (int, const PlanetFrame *, void *),
 		void *arg)
 {
 	int i;
-	extern const PlanetFrame planet_array[];
-
+	
 	for (i = 0; i < NUMBER_OF_PLANET_TYPES; i++)
-		callback (i, &planet_array[i], arg);
+		callback (i, &PlanetsArray[i], arg);
 }
 	
 typedef struct

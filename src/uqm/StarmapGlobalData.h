@@ -24,7 +24,7 @@
 
 
 // JSD Changed the way RAINBOW#_DEFINED works
-STAR_DESC starmap_array[] =
+static constexpr STAR_DESC StarmapArray[] =
 {
 	//                           postfix name index (like 'Normae')
 	//                         prefix name index (like 'Alpha')   |
@@ -574,7 +574,7 @@ STAR_DESC starmap_array[] =
 	{{MAX_X_UNIVERSE << 1, MAX_Y_UNIVERSE << 1}, 0, 0, 0, 0},
 };
 
-POINT constell_array[] =
+static constexpr POINT ConstellationsArray[] =
 {
 	/* Crateris */
 	{6014, 5632}, {6107, 5785},
@@ -1209,7 +1209,7 @@ POINT constell_array[] =
 	{MAX_X_UNIVERSE << 1, MAX_Y_UNIVERSE << 1}
 };
 
-const BYTE element_array[NUMBER_OF_ELEMENTS] =
+static constexpr BYTE ElementsArray[NUMBER_OF_ELEMENTS] =
 {
 	COMMON, /* HYDROGEN */
 	COMMON, /* HELIUM */
@@ -1357,7 +1357,7 @@ const BYTE element_array[NUMBER_OF_ELEMENTS] =
 #define HEAVY_USEFUL MINERAL_DEPOSIT (MODERATE, HEAVY)
 #define HUGE_USEFUL MINERAL_DEPOSIT (NUMEROUS, HEAVY)
 
-const PlanetFrame planet_array[NUMBER_OF_PLANET_TYPES] =
+static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 {
 	{ /* OOLITE_WORLD */
 		MAKE_BYTE (SMALL_ROCKY_WORLD + CRATERED_ALGO,

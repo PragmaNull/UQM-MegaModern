@@ -1430,7 +1430,7 @@ DrawStarMap (COUNT race_update, RECT *pClipRect)
 		}
 #else
 		Color oldColor;
-		POINT *CNPtr;
+		const POINT *CNPtr;
 		LINE l;
 		BYTE c = 0x3F + IF_HD (0x11);
 		CNPtr = &constel_array[0];

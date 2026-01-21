@@ -46,6 +46,7 @@
 #include "cons_res.h"
 #include "build.h"
 #include "master.h"
+#include "StarmapGlobalData.h"
 
 #include "libs/resource/stringbank.h"
 // for StringBank_Create() & SplitString()
@@ -852,11 +853,6 @@ StartGame (void)
 			optSeedType, optCustomSeed, optShipSeed ? "on" : "off");
 #endif
 	{
-		extern STAR_DESC starmap_array[];
-		extern const BYTE element_array[];
-		extern const PlanetFrame planet_array[];
-		extern POINT constell_array[];
-
 		// We no longer make a global pointer to the static starmap,
 		// we make our own global copy in static memory so it behaves
 		// the same throughout the code but can be reset as needed.
@@ -874,10 +870,10 @@ StartGame (void)
 		fprintf(stderr, "Initializing star_array, just in case...\n");
 #endif
 		for (i = 0; i < NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1 + 1; i++)
-			star_array[i] = starmap_array[i];
-		Elements = element_array;
-		PlanData = planet_array;
-		constel_array = constell_array;
+			star_array[i] = StarmapArray[i];
+		Elements = ElementsArray;
+		PlanData = PlanetsArray;
+		constel_array = (const POINT*)ConstellationsArray;
 	}
 	PlayerControl[0] = HUMAN_CONTROL | STANDARD_RATING;
 	PlayerControl[1] = COMPUTER_CONTROL | AWESOME_RATING;

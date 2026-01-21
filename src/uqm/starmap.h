@@ -33,7 +33,7 @@ extern STAR_DESC *CurStarDescPtr;
 // star_array is now a static buffer we will copy the starmap_array into, and
 // then manipulate from there, so that original starmap is never altered.
 extern STAR_DESC star_array[];
-extern POINT *constel_array;
+extern const POINT *constel_array;
 
 // Global plot_map stores star_pt (coords) used while seeding into starmap
 // Once seeded the plot_map will contain STAR_DESC pointers to the

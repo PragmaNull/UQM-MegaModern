@@ -125,11 +125,12 @@ editbin /REBASE:BASE=0x400000 /DYNAMICBASE:NO "$(LocalDebuggerWorkingDirectory)$
     </Bscmake>
     <Link>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <IgnoreSpecificDefaultLibraries>msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;libpng16.lib;zdll.lib;ws2_32.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(TargetDir)$(TargetFileName)</OutputFile>
+      <GenerateMapFile>true</GenerateMapFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release SDL1|Win32'">
@@ -281,7 +282,6 @@ editbin /REBASE:BASE=0x400000 /DYNAMICBASE:NO "$(LocalDebuggerWorkingDirectory)$
     <ClCompile Include="..\..\src\libs\graphics\sdl\sdl2_common.c" />
     <ClCompile Include="..\..\src\libs\graphics\sdl\sdl2_pure.c" />
     <ClCompile Include="..\..\src\libs\network\wspiapiwrap.c" />
-    <ClCompile Include="..\..\src\regex\regex.c" />
     <ClCompile Include="..\..\src\libs\callback\alarm.c" />
     <ClCompile Include="..\..\src\libs\callback\async.c" />
     <ClCompile Include="..\..\src\libs\callback\callback.c" />
@@ -684,8 +684,6 @@ editbin /REBASE:BASE=0x400000 /DYNAMICBASE:NO "$(LocalDebuggerWorkingDirectory)$
   <ItemGroup>
     <ClInclude Include="..\..\src\getopt\getopt.h" />
     <ClInclude Include="..\..\src\libs\graphics\sdl\png2sdl.h" />
-    <ClInclude Include="..\..\src\regex\regex.h" />
-    <ClInclude Include="..\..\src\regex\regex_internal.h" />
     <ClInclude Include="..\..\src\libs\callback\alarm.h" />
     <ClInclude Include="..\..\src\libs\callback\async.h" />
     <ClInclude Include="..\..\src\libs\callback\callback.h" />
@@ -1116,15 +1114,6 @@ editbin /REBASE:BASE=0x400000 /DYNAMICBASE:NO "$(LocalDebuggerWorkingDirectory)$
     <ClInclude Include="..\..\src\uqmversion.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\src\regex\regcomp.ci">
-      <FileType>Document</FileType>
-    </CustomBuild>
-    <CustomBuild Include="..\..\src\regex\regex_internal.ci">
-      <FileType>Document</FileType>
-    </CustomBuild>
-    <CustomBuild Include="..\..\src\regex\regexec.ci">
-      <FileType>Document</FileType>
-    </CustomBuild>
     <CustomBuild Include="..\..\src\libs\network\netmanager\ndindex.ci">
       <FileType>Document</FileType>
     </CustomBuild>

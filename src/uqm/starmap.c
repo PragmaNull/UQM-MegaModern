@@ -22,6 +22,7 @@
 //#define DEBUG_STARSEED_TRACE_Y
 //#define DEBUG_STARSEED_TRACE_Z
 
+#include "StarmapGlobalData.h"
 #include "starmap.h"
 #include "gamestr.h"
 #include "globdata.h"
@@ -30,7 +31,7 @@
 #include <stdlib.h>	// bsearch needs this or it cores!
 #include <time.h>	// For the clock.
 
-// The "starmap_array" variable (from plandata) is only used to intialize
+// The "starmap_array" variable (from StarmapGlobalData) is only used to intialize
 // the "star_array" global variable.  This is now intentionally a copy
 // of the data so that it may be manipulated or placed back to default from
 // there.  "starmap_array" should never be altered and referenced as little
@@ -41,7 +42,7 @@ STAR_DESC star_array[NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 3] {};
 //		{[0 ... (NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 2)] =
 //		{{~0, ~0}, 0, 0, 0, 0}};
 STAR_DESC *CurStarDescPtr = 0;
-POINT *constel_array;
+const POINT* constel_array;
 // JSD Give my own starseed
 RandomContext *StarGenRNG;
 PORTAL_LOCATION portal_map[NUM_HYPER_VORTICES + 1] {};
@@ -210,7 +211,7 @@ PLOT_LOCATION plot_map[NUM_PLOTS] = {};
 #define MIN_PORTAL_SOL 500	// The min distance between SOL and portal 0
 #define MAX_PORTAL_SOL 1000	// The max distance between SOL and portal 0
 
-// portal_map and portalmap_array work exactly like star_map and starmap_array
+// portal_map and portalmap_array work exactly like star_map and StarmapArray
 // but for Quasispace.  We use this static one here for reference to initialize
 // the global portal_map to the default Prime Seed values.
 // These are called Hyperspace Vortices (Vortex) when in Quasispace,
@@ -265,9 +266,8 @@ DefaultStarmap (STAR_DESC *starmap)
 	fprintf (stderr, "DefaultStarmap setting star map to original values.\n");
 #endif
 	COUNT i;
-	extern const STAR_DESC starmap_array[];
 	for (i = 0; i < NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1 + 1; i++)
-			starmap[i] = starmap_array[i];
+			starmap[i] = StarmapArray[i];
 }
 
 // Seed the type of each star, randomly selecting a color and
@@ -873,7 +873,7 @@ CheckValid (PLOT_LOCATION *plot, COUNT plot_id)
 // star - star you are adjusting to the plot
 // Using the provided starmap, set the passed star to proper plot
 // specifications, using other plots on the starmap, and/or using
-// the global starmap_array constants.
+// the global StarmapArray constants.
 // We let the colors mostly stay random but this is easily changed.
 void
 Plotify (STAR_DESC *starmap, STAR_DESC *star)
@@ -883,25 +883,24 @@ Plotify (STAR_DESC *starmap, STAR_DESC *star)
 		fprintf (stderr, "Plotify (starmap, star) called with NULL PTR.\n");
 		return;
 	}
-	extern const STAR_DESC starmap_array[];
 	COUNT i = 0;
 
-	while (star->Index != starmap_array[i].Index)
+	while (star->Index != StarmapArray[i].Index)
 		if (++i >= NUM_SOLAR_SYSTEMS)
 			return; // It doesn't have one
 
 	// Section 1: change the star to the right size for the plot
-	if (STAR_TYPE (starmap_array[i].Type) == SUPER_GIANT_STAR)
+	if (STAR_TYPE (StarmapArray[i].Type) == SUPER_GIANT_STAR)
 		star->Type = MAKE_STAR (
 				SUPER_GIANT_STAR,
 				STAR_COLOR (star->Type),
 				STAR_OWNER (star->Type));
-	if (STAR_TYPE (starmap_array[i].Type) == GIANT_STAR)
+	if (STAR_TYPE (StarmapArray[i].Type) == GIANT_STAR)
 		star->Type = MAKE_STAR (
 				GIANT_STAR,
 				STAR_COLOR (star->Type),
 				STAR_OWNER (star->Type));
-	if (STAR_TYPE (starmap_array[i].Type) == DWARF_STAR)
+	if (STAR_TYPE (StarmapArray[i].Type) == DWARF_STAR)
 		star->Type = MAKE_STAR (
 				DWARF_STAR,
 				STAR_COLOR (star->Type),
@@ -910,14 +909,14 @@ Plotify (STAR_DESC *starmap, STAR_DESC *star)
 	// Section 2: change colors of stars based on plot
 	// Specific homeworlds that work best with their correct color star (SOL)
 	if (star->Index == SOL_DEFINED)
-		star->Type = starmap_array[i].Type;
+		star->Type = StarmapArray[i].Type;
 	// On world 44s, the Eye Of Dogar is Green, of course
 	// All other channels are false gods
 	if (star->Index == ILWRATH_DEFINED)
 	{
 		COUNT newcolor = (STAR_COLOR (star->Type) + optCustomSeed) % 5;
 		if (optCustomSeed % 44 == 0 || optCustomSeed % 100 == 44)
-				star->Type = starmap_array[i].Type;
+				star->Type = StarmapArray[i].Type;
 		else star->Type = MAKE_STAR (
 				STAR_TYPE (star->Type),
 				newcolor >= GREEN_BODY ? newcolor + 1 : newcolor,
@@ -1442,14 +1441,14 @@ DefaultQuasispace (PORTAL_LOCATION *portalmap)
 				"with NULL PTR.\n");
 		return;
 	}
-	extern const STAR_DESC starmap_array[];
+	
 	COUNT i;
 	for (i = 0; i < NUM_HYPER_VORTICES + 1; i++)
 	{
 		portalmap[i].star_pt = portalmap_array[i].star_pt;
 		portalmap[i].quasi_pt = portalmap_array[i].quasi_pt;
 		portalmap[i].nearest_star = FindNearestConstellation
-				((STAR_DESC *) starmap_array, portalmap[i].star_pt);
+				((STAR_DESC *)StarmapArray, portalmap[i].star_pt);
 		if (!portalmap[i].nearest_star)
 			fprintf (stderr, "BAD Quasi Portal %c at %05.1f : %05.1f, %s",
 					'A' + i, (float) portalmap[i].star_pt.x / 10,
@@ -1657,13 +1656,13 @@ SeedQuasispace (PORTAL_LOCATION *portalmap, PLOT_LOCATION *plotmap,
 	return TRUE;
 }
 
-typedef struct {
+struct PlotIdMap {
 	const char *idStr;
 	COUNT id;
-} PlotIdMap;
+};
 
 // The PlotIdMap is sorted **by name** for the binary search function.
-static PlotIdMap plotIdMap[] = {
+static constexpr PlotIdMap plotIdMap[] = {
 	{"algolites",			ALGOLITES_DEFINED},		// Algol [IV]
 	{"androsynth",			ANDROSYNTH_DEFINED},	// Eta Vulpeculae
 	{"aqua helix",			AQUA_HELIX_DEFINED},	// Zeta Draconis
