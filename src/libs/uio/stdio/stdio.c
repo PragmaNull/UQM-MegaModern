@@ -606,7 +606,6 @@ stdio_readEntries(stdio_EntriesIterator **iteratorPtr,
 	stdio_EntriesIterator *iterator;
 
 	iterator = *iteratorPtr;
-
 	// buf will be filled like this:
 	// The start of buf will contain pointers to char *,
 	// the end will contain the actual char[] that those pointers point to.

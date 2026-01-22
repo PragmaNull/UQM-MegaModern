@@ -1272,7 +1272,7 @@ static int uio_readEntriesPhysical(uio_EntriesContext *iterator, char *buf,
 		size_t len);
 static void uio_closeEntriesPhysical(uio_EntriesContext *iterator);
 static uio_EntriesContext *uio_EntriesContext_new(uio_PRoot *pRoot,
-		uio_NativeEntriesContext *native);
+		uio_NativeEntriesContext native);
 static inline uio_EntriesContext *uio_EntriesContext_alloc(void);
 static inline void uio_EntriesContext_delete(uio_EntriesContext *entriesContext);
 static inline void uio_EntriesContext_free(uio_EntriesContext
@@ -1475,6 +1475,7 @@ uio_collectDirEntries(uio_PDirHandle *pDirHandle, uio_DirBufferLink **linkPtr,
 	char *buffer;
 
 	entriesContext = uio_openEntriesPhysical(pDirHandle);
+	auto UNUSED = entriesContext->native->status;
 	if (entriesContext == NULL) {
 #ifdef DEBUG
 		fprintf(stderr, "Error: uio_openEntriesPhysical() failed: %s\n",
@@ -1547,13 +1548,13 @@ strPtrCmp(const char * const *ptr1, const char * const *ptr2) {
 
 static uio_EntriesContext *
 uio_openEntriesPhysical(uio_PDirHandle *dirHandle) {
-	uio_NativeEntriesContext *native;
+	uio_NativeEntriesContext native;
 	uio_PRoot *pRoot;
 
 	pRoot = dirHandle->pRoot;
 
 	assert(pRoot->handler->openEntries != NULL);
-	native = (uio_NativeEntriesContext*)pRoot->handler->openEntries(dirHandle);
+	native = pRoot->handler->openEntries(dirHandle);
 	if (native == NULL)
 		return NULL;
 	uio_PRoot_refHandle(pRoot);
@@ -1575,11 +1576,11 @@ uio_closeEntriesPhysical(uio_EntriesContext *iterator) {
 }
 
 static uio_EntriesContext *
-uio_EntriesContext_new(uio_PRoot *pRoot, uio_NativeEntriesContext *native) {
+uio_EntriesContext_new(uio_PRoot *pRoot, uio_NativeEntriesContext native) {
 	uio_EntriesContext *result;
 	result = uio_EntriesContext_alloc();
 	result->pRoot = pRoot;
-	result->native = *native;
+	result->native = native;
 	return result;
 }
 

@@ -22,9 +22,25 @@ typedef void* uio_NativeHandle;
 typedef void* uio_GPRootExtra;
 typedef void* uio_GPDirExtra;
 typedef void* uio_GPFileExtra;
-typedef struct stdio_EntriesIterator stdio_EntriesIterator;
-typedef stdio_EntriesIterator *uio_NativeEntriesContext;
+//typedef struct stdio_EntriesIterator stdio_EntriesIterator;
 
+#ifdef WIN32
+#include <io.h>
+struct stdio_EntriesIterator {
+	long dirHandle;
+	struct _finddata_t findData;
+	int status;
+};
+#else
+struct stdio_EntriesIterator {
+	DIR* dirHandle;
+	struct dirent* entry;
+	struct dirent* direntBuffer;
+	int status;
+};
+#endif	
+
+using uio_NativeEntriesContext = stdio_EntriesIterator*;
 
 #define uio_INTERNAL_PHYSICAL
 
@@ -40,7 +56,7 @@ typedef stdio_EntriesIterator *uio_NativeEntriesContext;
 #endif
 
 
-typedef struct stdio_GPDirData {
+struct stdio_GPDirData {
 	// The reason that names are stored is that in the system filesystem
 	// you need names to refer to files and directories.
 	// (you could keep a file descriptor to each one, but that would
@@ -52,28 +68,13 @@ typedef struct stdio_GPDirData {
 	char *name;
 	char *cachedPath;
 	uio_GPDir *upDir;
-} stdio_GPDirData;
+};
 
-typedef struct stdio_Handle {
+struct stdio_Handle {
 	int fd;
-} stdio_Handle;
-
-#ifdef WIN32
-struct stdio_EntriesIterator {
-	long dirHandle;
-	struct _finddata_t findData;
-	int status;
 };
-#endif	
 
-#ifndef WIN32
-struct stdio_EntriesIterator {
-	DIR *dirHandle;
-	struct dirent *entry;
-	struct dirent *direntBuffer;
-	int status;
-};
-#endif	
+
 
 
 uio_PRoot *stdio_mount(uio_Handle *handle, int flags);
