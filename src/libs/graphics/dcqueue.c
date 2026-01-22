@@ -30,6 +30,9 @@
 #include "libs/graphics/font.h"
 #include "uqm/setup.h"
 
+#ifdef DEBUG_DCQ_THREADS
+#include "../threads/sdl/sdlthreads.h"
+#endif
 static RecursiveMutex DCQ_Mutex;
 
 CondVar RenderingCond;
@@ -232,7 +235,7 @@ checkExclusiveThread (TFB_DrawCommand* DrawCommand)
 {
 #ifdef DEBUG_DCQ_THREADS
 	static uint32 exclusiveThreadId;
-	extern uint32 SDL_ThreadID(void);
+	//extern uint32 SDL_ThreadID(void);
 
 	// Only one thread is currently allowed to enqueue commands
 	// This is not a technical limitation but rather a semantical one atm.

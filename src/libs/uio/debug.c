@@ -315,7 +315,7 @@ makeArgs(char *lineBuf, int *argc, char ***argv) {
 			ptr++;
 	}
 
-	args = uio_malloc((numArg + 1) * sizeof (char *));
+	args = (char**)uio_malloc((numArg + 1) * sizeof (char *));
 	numArg = 0;
 	ptr = lineBuf;
 	while(true) {
@@ -441,7 +441,7 @@ debugCmdExec(DebugContext *debugContext, int argc, char *argv[]) {
 	int i;
 	const char **newArgs;
 	int errCode = 0;
-	uio_StdioAccessHandle **handles;
+	uio_StdioAccessHandlePtr *handles;
 	uio_DirHandle *tempDir;
 
 	if (argc < 2) {
@@ -456,9 +456,9 @@ debugCmdExec(DebugContext *debugContext, int argc, char *argv[]) {
 		return 1;
 	}
 
-	newArgs = uio_malloc(argc * sizeof (char *));
+	newArgs = (const char**)uio_malloc(argc * sizeof (char *));
 	newArgs[0] = argv[1];
-	handles = uio_malloc(argc * sizeof (uio_StdioAccessHandle *));
+	handles = (uio_StdioAccessHandlePtr*)uio_malloc(argc * sizeof (uio_StdioAccessHandlePtr));
 	handles[0] = NULL;
 	
 	for (i = 2; i < argc; i++) {
@@ -686,7 +686,7 @@ listOneDir(DebugContext *debugContext, const char *arg) {
 			if (pattern == arg) {
 				cpath = "/";
 			} else {
-				buf = uio_malloc(pattern - arg + 1);
+				buf = (char*)uio_malloc(pattern - arg + 1);
 				memcpy(buf, arg, pattern - arg);
 				buf[pattern - arg] = '\0';
 				cpath = buf;
@@ -727,7 +727,7 @@ debugCmdLs(DebugContext *debugContext, int argc, char *argv[]) {
 	int retVal;
 
 	if (argc == 1)
-		return listOneDir(debugContext, unconst(""));
+		return listOneDir(debugContext, (const char*)unconst(""));
 	
 	for (argI = 1; argI < argc; argI++) {
 		retVal = listOneDir(debugContext, argv[argI]);

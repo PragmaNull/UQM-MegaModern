@@ -81,9 +81,6 @@ match_Result match_matchPatternOnce(const char *pattern, match_MatchType type,
 #ifdef match_INTERNAL
 
 #include <sys/types.h>
-#ifdef HAVE_REGEX
-#	include <regex.h>
-#endif
 
 #include "uioport.h"
 
@@ -129,10 +126,10 @@ struct match_GlobContext {
 
 #ifdef HAVE_REGEX
 struct match_RegexContext {
-	std::regex native;
-	char *errorString;
-	int errorCode;
-	int flags;
+	std::regex native{};
+	char* errorString{};
+	int errorCode{};
+	int flags{};
 #define match_REGEX_INITIALISED 1
 };
 #endif

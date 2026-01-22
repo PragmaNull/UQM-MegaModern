@@ -751,7 +751,7 @@ showSpheres (BOOLEAN Animated)
 	{	// Alternative which allows you to view		
 		// the animated SOI expand for each race
 		for (i = 0; i <= BLACK_URQUAN_SHIP; i++)
-			StartSphereTracking (i);
+			StartSphereTracking ((RACE_ID)i);
 	}
 	else
 	{
@@ -1866,7 +1866,7 @@ resetCrewBattle (void)
 			StarShipPtr->RaceDescPtr->ship_info.crew_level;
 
 	OldContext = SetContext (StatusContext);
-	DeltaCrew (StarShipPtr->hShip, delta);
+	DeltaCrew ((ELEMENT*)StarShipPtr->hShip, delta);
 	SetContext (OldContext);
 }
 

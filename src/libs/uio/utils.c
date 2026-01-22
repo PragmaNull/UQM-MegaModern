@@ -162,7 +162,7 @@ uio_copyError(uio_Handle *srcHandle, uio_Handle *dstHandle,
 		// Retry this many times to create a temporary dir, before giving
 		// up. If undefined, keep trying indefinately.
 
-uio_StdioAccessHandle *
+uio_StdioAccessHandlePtr
 uio_getStdioAccess(uio_DirHandle *dir, const char *path, int flags,
 		uio_DirHandle *tempDir) {
 	int res;
@@ -293,7 +293,8 @@ uio_getStdioAccess(uio_DirHandle *dir, const char *path, int flags,
 }
 
 void
-uio_releaseStdioAccess(uio_StdioAccessHandle *handle) {
+uio_releaseStdioAccess(uio_StdioAccessHandlePtr handlePtr) {
+	auto* handle{ (uio_StdioAccessHandle*)handlePtr };
 	if (handle->tempDir != NULL) {
 		if (uio_unlink(handle->tempDir, handle->fileName) == -1) {
 #ifdef DEBUG
@@ -319,7 +320,8 @@ uio_releaseStdioAccess(uio_StdioAccessHandle *handle) {
 }
 
 const char *
-uio_StdioAccessHandle_getPath(uio_StdioAccessHandle *handle) {
+uio_StdioAccessHandle_getPath(uio_StdioAccessHandlePtr handlePtr) {
+	auto* handle{ (uio_StdioAccessHandle*)handlePtr };
 	return (const char *) handle->stdioPath;
 }
 

@@ -681,6 +681,7 @@ editbin /REBASE:BASE=0x400000 /DYNAMICBASE:NO "$(LocalDebuggerWorkingDirectory)$
     <ClCompile Include="..\..\src\uqm.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\core\memory\memory.h" />
     <ClInclude Include="..\..\src\getopt\getopt.h" />
     <ClInclude Include="..\..\src\libs\graphics\sdl\png2sdl.h" />
     <ClInclude Include="..\..\src\libs\callback\alarm.h" />

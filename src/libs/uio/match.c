@@ -543,7 +543,7 @@ match_freeRegex(match_RegexContext *context) {
 
 static inline match_RegexContext *
 match_newRegexContext(void) {
-	match_RegexContext *result;
+	match_RegexContext* result;
 	result = match_allocRegexContext();
 	result->errorString = NULL;
 	result->errorCode = 0;
@@ -553,13 +553,12 @@ match_newRegexContext(void) {
 
 static inline match_RegexContext *
 match_allocRegexContext(void) {
-	return (match_RegexContext*)uio_malloc(sizeof (match_RegexContext));
+	return new match_RegexContext{};
 }
 
 static inline void
 match_freeRegexContext(match_RegexContext *context) {
-	(*context).~match_RegexContext();
-	uio_free(context);
+	delete context;
 }
 #endif  /* HAVE_REGEX */
 

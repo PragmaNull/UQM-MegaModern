@@ -328,6 +328,12 @@
     <Filter Include="Resources">
       <UniqueIdentifier>{d82aab96-5346-4d53-8772-f47f3e1a86bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\_core">
+      <UniqueIdentifier>{89c7dc76-6f42-4fce-8391-32c0e27a23db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\_core\memory">
+      <UniqueIdentifier>{75f94fb3-3fb7-4368-a8a9-8c8c29f9d0c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\getopt\getopt.c">
@@ -2797,6 +2803,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\uqm\StarmapGlobalData.h">
       <Filter>Source Files\uqm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\core\memory\memory.h">
+      <Filter>Source Files\_core\memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

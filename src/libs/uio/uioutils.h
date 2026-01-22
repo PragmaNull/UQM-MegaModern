@@ -41,15 +41,18 @@ char *dosToUnixPath(const char *path);
 /* Sometimes you just have to remove a 'const'.
  * (for instance, when implementing a function like strchr)
  */
-static inline void *
-unconst(const void *arg) {
-	union {
-		void *c;
-		const void *cc;
-	} u;
-	u.cc = arg;
-	return u.c;
-}
+//static inline void *
+//unconst(const void *arg) {
+//	union {
+//		void *c;
+//		const void *cc;
+//	} u;
+//	u.cc = arg;
+//	return u.c;
+//}
+template <typename T>
+inline T* unconst(const T* arg) { return const_cast<T*>(arg); }
+
 
 // byte1 is the lowest byte, byte4 the highest
 static inline uio_uint32
