@@ -17,19 +17,11 @@
    License along with the GNU C Library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
-
+
 #include <config.h>
 
 #ifndef HAVE_GETOPT_LONG
 #include "getopt.h"
-
-#if !defined __STDC__ || !__STDC__
-/* This is a separate conditional since some stdc systems
-   reject `defined (const)'.  */
-#ifndef const
-#define const
-#endif
-#endif
 
 #include <stdio.h>
 
@@ -81,7 +73,7 @@ getopt_long_only (int argc, char* const* argv, const char* options, const struct
 
 
 #endif	/* Not ELIDE_CODE.  */
-
+
 #ifdef TEST
 
 #include <stdio.h>

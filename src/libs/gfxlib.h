@@ -251,11 +251,12 @@ typedef struct dextent
 
 typedef struct point
 {
-	point() = default;
-	point(COORD _x, COORD _y) : x{ _x }, y{ _y } {}
-	point(int _x, int _y) : x{ (COORD)_x }, y{ (COORD)_y } {}
-	point(float _x, float _y) : x{ (COORD)_x }, y{ (COORD)_y } {}
-	point(double _x, double _y) : x{ (COORD)_x }, y{ (COORD)_y } {}
+	constexpr point() = default;
+	constexpr point(COORD _x, COORD _y) : x{ _x }, y{ _y } {}
+	constexpr point(int _x, int _y) : x{ (COORD)_x }, y{ (COORD)_y } {}
+	constexpr point(float _x, float _y) : x{ (COORD)_x }, y{ (COORD)_y } {}
+	constexpr point(double _x, double _y) : x{ (COORD)_x }, y{ (COORD)_y } {}
+	
 	COORD x{};
 	COORD y{};
 } POINT;

@@ -22,7 +22,8 @@
 #include "types.h"
 
 #ifdef CALLBACK_INTERNAL
-typedef CallbackLink *CallbackID;
+//typedef CallbackLink* CallbackID;
+typedef void* CallbackID;
 #else
 typedef void *CallbackID;
 		// Uniquely identifies a queued callback.

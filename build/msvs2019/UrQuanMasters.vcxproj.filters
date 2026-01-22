@@ -7,9 +7,6 @@
     <Filter Include="Source Files\getopt">
       <UniqueIdentifier>{d98a6508-8c6c-4e72-a2af-139f4189a37e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\regex">
-      <UniqueIdentifier>{53bc8c6d-a65d-4c6b-a9e5-2bd9ffa10bf1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\libs">
       <UniqueIdentifier>{54f1b955-0e23-4acc-8b67-e73a2ab7f32a}</UniqueIdentifier>
     </Filter>
@@ -338,9 +335,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\getopt\getopt1.c">
       <Filter>Source Files\getopt</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\regex\regex.c">
-      <Filter>Source Files\regex</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\libs\callback\alarm.c">
       <Filter>Source Files\libs\callback</Filter>
@@ -1419,9 +1413,6 @@
     <ClCompile Include="..\..\src\uqm\pickship.c">
       <Filter>Source Files\uqm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\uqm\plandata.c">
-      <Filter>Source Files\uqm</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\uqm\process.c">
       <Filter>Source Files\uqm</Filter>
     </ClCompile>
@@ -1516,12 +1507,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\getopt\getopt.h">
       <Filter>Source Files\getopt</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\regex\regex.h">
-      <Filter>Source Files\regex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\regex\regex_internal.h">
-      <Filter>Source Files\regex</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\libs\callback\alarm.h">
       <Filter>Source Files\libs\callback</Filter>
@@ -2810,6 +2795,9 @@
     <ClInclude Include="..\..\src\uqm\supermelee\meleeship.h">
       <Filter>Source Files\uqm\supermelee</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\uqm\StarmapGlobalData.h">
+      <Filter>Source Files\uqm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\src\res\UrQuanMasters.rc">
@@ -2817,15 +2805,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\src\regex\regcomp.ci">
-      <Filter>Source Files\regex</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\src\regex\regex_internal.ci">
-      <Filter>Source Files\regex</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\src\regex\regexec.ci">
-      <Filter>Source Files\regex</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\src\libs\network\netmanager\ndindex.ci">
       <Filter>Source Files\libs\network\netmanager</Filter>
     </CustomBuild>
