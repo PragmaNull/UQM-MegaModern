@@ -1,0 +1,8 @@
+* Convert build system to cmake
+* Add unit tests for new features
+* Replace alarm.h/c with std::chrono and a sorted container.
+* replace uses of hashtable with unordered_map
+* Port "options" code to C++
+* Convert comm dialogue and .ts (timestamp) files to single JSON files. (https://github.com/nlohmann/json)
+* replace zip library with zlib
+* imgui
