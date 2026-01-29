@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
 
 set(CMAKE_SYSTEM_VERSION 10.0 CACHE STRING "" FORCE)
 
-project(UrQuanMastersMegaModern CXX)
+project(UrQuanMastersMegaModern C CXX)
+
+set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ################################################################################
 # Set target arch type if empty. Visual studio solution generator provides it.
@@ -67,6 +70,7 @@ endfunction()
 # Common utils
 ################################################################################
 include(CMake/Utils.cmake)
+include(CMake/helpers.cmake)
 
 ################################################################################
 # Additional Global Settings(add specific info there)
@@ -1533,6 +1537,59 @@ set(ALL_FILES
 ################################################################################
 add_executable(${PROJECT_NAME} ${ALL_FILES})
 
+################################################################################
+# Dependencies
+################################################################################
+find_package (SDL2 QUIET)
+if (SDL2_FOUND)
+	message (STATUS "Found SDL2: ${SDL2_VERSION}")
+else ()
+	FetchSDL ()
+	message (STATUS "Fetched SDL2: ${SDL2_VERSION}")
+endif ()
+
+find_package (ZLIB QUIET)
+if (ZLIB_FOUND)
+    message (STATUS "Found ZLIB: ${ZLIB_VERSION}")
+else ()
+    FetchZLIB ()
+    message (STATUS "Fetched ZLIB: ${ZLIB_VERSION}")
+endif ()
+
+find_package (PNG QUIET)
+if (PNG_FOUND)
+	message (STATUS "Found libPNG: ${PNG_VERSION_STRING}")
+else ()
+	FetchPNG ()
+	message (STATUS "Fetched libPNG: ${PNG_VERSION}")
+endif ()
+
+find_package (Ogg QUIET)
+if (Ogg_FOUND)
+	message (STATUS "Found ogg: ${Ogg_VERSION}")
+else ()
+	FetchOgg ()
+	message (STATUS "Fetched ogg: ${OGG_VERSION}")
+endif ()
+
+find_package (Vorbis QUIET)
+if (Vorbis_FOUND)
+	message (STATUS "Found Vorbis: ${Vorbis_VERSION}")
+	set (UQM_OGG_CODEC "standard")
+else ()
+	FetchVorbis ()
+	message (STATUS "Fetched Vorbis: ${VORBIS_VERSION}")
+endif ()
+
+if (UQM_NETPLAY)
+	if (CMAKE_HOST_WIN32)
+		set (EXTRA_LIBS ${EXTRA_LIBS} ws2_32)
+	endif ()
+	set (NETPLAY "FULL")
+else ()
+	set (NETPLAY "")
+endif ()
+
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 ################################################################################
 # Target name
@@ -1545,8 +1602,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # Output directory
 ################################################################################
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    OUTPUT_DIRECTORY_DEBUG       "${CMAKE_CURRENT_SOURCE_DIR}/"
-    OUTPUT_DIRECTORY_RELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/"
+    OUTPUT_DIRECTORY_DEBUG       "${CMAKE_CURRENT_SOURCE_DIR}/bin"
+    OUTPUT_DIRECTORY_RELEASE     "${CMAKE_CURRENT_SOURCE_DIR}/bin"
 )
 ################################################################################
 # Linker Language
@@ -1576,6 +1633,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUN
 target_include_directories(${PROJECT_NAME} PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/src;"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/regex"
+    "${SDL2_INCLUDE_DIRS}"
+	"${PNG_INCLUDE_DIRS}"
+	"${ZLIB_INCLUDE_DIRS}"
+	"${VORBISFILE_INCLUDE_DIRS}"
 )
 
 ################################################################################
