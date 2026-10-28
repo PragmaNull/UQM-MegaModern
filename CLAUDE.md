@@ -8,6 +8,22 @@ UQM-MegaModern is a C++20 modernization of The Ur-Quan Masters (a port of Star C
 
 ## Build Instructions
 
+### Helper scripts (Windows)
+
+Root `.bat` files wrap Python scripts in `scripts/`:
+
+```bat
+install.bat [-c CONFIG] [--asan] [-p PROFILE]   :: conan install
+setup.bat   [-c CONFIG] [--asan]                :: cmake configure (Ninja)
+build.bat   [-c CONFIG] [--asan] [-t TARGET] [-j N] [--clean]
+test.bat    [-c CONFIG] [--build] [-R REGEX] [-j N]
+```
+
+- `CONFIG`: `Release` (default), `Debug`, `RelWithDebInfo`, `MinSizeRel`. All take `-B DIR` (default `conanbuild`).
+- `build`/`test` default to the config already in `CMakeCache.txt`; `build` reconfigures if `--config`/`--asan` differ.
+- Commands run inside conan's `conanbuild`/`conanrun` env scripts, so no VS developer prompt is needed.
+- Unrecognized arguments are forwarded to conan/cmake/ctest. Scripts can also be run directly with `python scripts/<name>.py`.
+
 ### CMake + Conan (primary method)
 
 ```bash
@@ -90,6 +106,7 @@ Test sources are in `test/tests/` organized by subsystem (core, lib, options, uq
 - **Integer types**: Use `<cstdint>` types (`int32_t`, `uint8_t`, etc.) — not legacy custom types
 - **Enums**: Use `enum class` with `magic_enum` for reflection where needed
 - **String safety**: Use `uqstl::string_view` for safe string views (pass by value); use `uqgsl::czstring` when the API deals with C-style null-terminated strings; use `scn::scan` instead of `sscanf`
+- **Comments**: Keep comments minimal. Write them in Simplified Technical English. Do not explain "why", and do not refer to other classes or files unless necessary; such comments read as notes to self. Get user approval before adding a comment longer than 3 lines.
 - **Initialization**: Use braced initialization throughout — for variables (`int x{42};`), and for class members/locals with default constructors (`uqstl::vector<int> v{};`) even when the default constructor would be called implicitly
 
 ## Formatting
@@ -103,3 +120,7 @@ Run clang-format on all modified files after making changes:
 ```
 
 Format rules are in `src/.clang-format`.
+
+## Commits
+
+Do not add a `Co-Authored-By: Claude` line or any other Claude attribution to commit messages.
