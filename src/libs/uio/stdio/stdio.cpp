@@ -30,6 +30,7 @@
 
 #ifdef WIN32
 #include <io.h>
+#include <share.h>
 #else
 #include <sys/stat.h>
 #include <unistd.h>
@@ -240,7 +241,15 @@ stdio_open(uio_PDirHandle* pDirHandle, const char* file, int flags,
 		return nullptr;
 	}
 
+#ifdef WIN32
+	if (const errno_t err {_sopen_s(&fd, path, flags, _SH_DENYNO, static_cast<int>(mode))}; err != 0)
+	{
+		errno = err;
+		fd = -1;
+	}
+#else
 	fd = open(path, flags, mode);
+#endif
 	if (fd == -1)
 	{
 		int save_errno;

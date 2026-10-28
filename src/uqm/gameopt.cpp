@@ -451,8 +451,7 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 
 	DateToString(dateStr, sizeof dateStr, GLOBAL(GameClock.month_index),
 				 GLOBAL(GameClock.day_index), GLOBAL(GameClock.year_index));
-	strncat(dateStr, ": ", sizeof(dateStr) - strlen(dateStr) - 1);
-	fmt::format_to_sz_n(fullStr, "{}{}", dateStr, Str);
+	fmt::format_to_sz_n(fullStr, "{}: {}", dateStr, Str);
 
 	SetContextForeGroundColor(SAVE_SELECTED_COLOR);
 	r.extent.width = RES_SCALE(15);

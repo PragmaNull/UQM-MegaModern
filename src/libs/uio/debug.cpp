@@ -28,6 +28,7 @@
 #if defined(__unix__) && !defined(_WIN32_WCE)
 #include <sys/wait.h>
 #endif
+#include <fmt/chrono.h>
 #include <fmt/format.h>
 
 #include "core/platform/platform.h"
@@ -1006,20 +1007,19 @@ debugCmdStat(DebugContext* debugContext, int argc, char* argv[])
 	}
 
 	fmt::print(debugContext->out,
-			   "size %ld bytes\n"
-			   "uid {}  gid {}  mode 0%o\n",
+			   "size {} bytes\n"
+			   "uid {}  gid {}  mode 0{:o}\n",
 			   (unsigned long)statBuf.st_size,
 			   (unsigned int)statBuf.st_uid,
 			   (unsigned int)statBuf.st_gid,
 			   (unsigned int)statBuf.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO | S_ISUID | S_ISGID));
-	// Can't do these next three in one fmt::print, as ctime uses a static buffer
-	// that is overwritten with each call.
 	fmt::print(debugContext->out,
-			   "last access:        {}", ctime(&statBuf.st_atime));
-	fmt::print(debugContext->out,
-			   "last modification:  {}", ctime(&statBuf.st_mtime));
-	fmt::print(debugContext->out,
-			   "last status change: {}", ctime(&statBuf.st_ctime));
+			   "last access:        {0:%a %b %e %H:%M:%S %Y}\n"
+			   "last modification:  {1:%a %b %e %H:%M:%S %Y}\n"
+			   "last status change: {2:%a %b %e %H:%M:%S %Y}\n",
+			   uqm::localtime(statBuf.st_atime),
+			   uqm::localtime(statBuf.st_mtime),
+			   uqm::localtime(statBuf.st_ctime));
 
 	return 0;
 }
