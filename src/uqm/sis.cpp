@@ -37,6 +37,7 @@
 #include "libs/callback/alarm.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
+#include "core/string/Utf8.h"
 #include "hyper.h"
 #include "gameopt.h"
 #include <math.h>
@@ -735,25 +736,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 		t.pStr = buf;
 		fmt::format_to_sz_n(buf, "{} {}",
 							GAME_STRING(NAMING_STRING_BASE + 1), GLOBAL_SIS(ShipName));
-		// XXX: this will not work with UTF-8 strings
-		_strupr(buf);
-
-		{ // Handling the a-umlaut and o-umlaut characters
-			unsigned char* ptr;
-			ptr = (unsigned char*)buf;
-			while (*ptr)
-			{
-				if (*ptr == 0xc3)
-				{
-					ptr++;
-					if (*ptr == 0xb6 || *ptr == 0xa4)
-					{
-						*ptr += 'A' - 'a';
-					}
-				}
-				ptr++;
-			}
-		}
+		utf8StringCopy(buf, sizeof buf, uqm::toUpperUtf8(buf).c_str());
 
 		if (IS_HD)
 		{

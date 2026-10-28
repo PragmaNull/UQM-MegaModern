@@ -43,6 +43,7 @@
 #include "util.h" // JMS: For SaveContextFrame()
 #include "libs/graphics/gfx_common.h"
 #include "core/log/log.h"
+#include "core/string/Utf8.h"
 #include "libs/mathlib.h"
 #include "libs/inplib.h"
 #include "libs/misc.h"
@@ -747,27 +748,7 @@ UninitEncounter(void)
 								SetContextFont(isPC(uqm::UQMOptions::read().whichFonts) ? TinyFont : TinyFontBold);
 
 								utf8StringCopy(buf, sizeof buf,
-											   GetStringAddress(FragPtr->race_strings));
-								// XXX: this will not work with UTF-8 strings
-								_strupr(buf);
-
-								{ // JMS: Handling the a-umlaut and o-umlaut characters
-									unsigned char* ptr;
-									ptr = (unsigned char*)buf;
-
-									while (*ptr)
-									{
-										if (*ptr == 0xc3)
-										{
-											ptr++;
-											if (*ptr == 0xb6 || *ptr == 0xa4)
-											{
-												*ptr += 'A' - 'a';
-											}
-										}
-										ptr++;
-									}
-								}
+											   uqm::toUpperUtf8(GetStringAddress(FragPtr->race_strings)).c_str());
 
 								t.baseline.x = scavenge_r.corner.x + RES_SCALE(100);
 								t.baseline.y = scavenge_r.corner.y + RES_SCALE(68);

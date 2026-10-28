@@ -83,7 +83,7 @@ find_package(PNG REQUIRED)
 find_package(scn REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(spdlog REQUIRED)
-find_package(utf8cpp REQUIRED)
+find_package(utf8proc REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(ZLIB REQUIRED)
 
@@ -261,7 +261,7 @@ target_link_libraries(${APP_TARGET}
         scn::scn
         SDL2::SDL2main 
         spdlog::spdlog
-        utf8cpp
+        utf8proc::utf8proc
         vorbis::vorbis 
         ws2_32
         ZLIB::ZLIB 

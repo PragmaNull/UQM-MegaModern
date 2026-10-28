@@ -30,7 +30,7 @@ class UrQuanMastersConan(ConanFile):
         'scnlib/4.0.1',
         'sdl/2.32.10',
         'spdlog/1.17.0',
-        'utfcpp/4.0.8',
+        'utf8proc/2.12.0',
         'vorbis/1.3.7',
         'zlib/1.3.1',
     )
@@ -43,6 +43,8 @@ class UrQuanMastersConan(ConanFile):
         'enable_asan': False,
         'enable_linter': False,
         'openal-soft/*:shared': True,
+        # The recipe names the static library wrong for clang-cl.
+        'utf8proc/*:shared': True,
     }
 
     def layout(self):

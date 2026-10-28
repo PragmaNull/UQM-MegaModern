@@ -10,6 +10,8 @@ list(APPEND uqm_tests_core_master_files
 	"../src/core/stl/ring_buffer.h"
 	"../src/core/string/StringUtils.h"
 	"../src/core/string/StringUtils.cpp"
+	"../src/core/string/Utf8.h"
+	"../src/core/string/Utf8.cpp"
 )
 
 ############################################################
@@ -17,6 +19,7 @@ list(APPEND uqm_tests_core_master_files
 set(uqm_tests_core_files
 	"tests/core/test_log_BacktraceCaptureSink.cpp"
 	"tests/core/test_StringUtils.cpp"
+	"tests/core/test_Utf8.cpp"
 	"tests/core/test_ring_buffer.cpp"
 )
 

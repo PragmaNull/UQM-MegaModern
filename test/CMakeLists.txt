@@ -51,6 +51,7 @@ find_package(GTest REQUIRED)
 find_package(lua REQUIRED)
 find_package(magic_enum REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(utf8proc REQUIRED)
 
 # GTest::gtest and GTest::gtest_main are the modern imported targets
 target_link_libraries(UQM_Tests
@@ -62,6 +63,7 @@ target_link_libraries(UQM_Tests
         fmt::fmt
         gsl-lite::gsl-lite
         spdlog::spdlog
+        utf8proc::utf8proc
 
 )
 
@@ -69,6 +71,17 @@ target_link_libraries(UQM_Tests
 
 # If you want tests to match main compile settings:
 # target_link_libraries(UQM_Tests PRIVATE UrQuanMasters)
+
+# ---- Runtime DLLs ----------------------------------------------------------
+
+if (WIN32)
+    add_custom_command(TARGET UQM_Tests POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:UQM_Tests>
+            $<TARGET_FILE_DIR:UQM_Tests>
+        COMMAND_EXPAND_LISTS
+    )
+endif()
 
 # ---- Enable GTest integration ---------------------------------------------
 

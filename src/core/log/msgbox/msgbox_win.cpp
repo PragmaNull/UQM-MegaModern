@@ -18,28 +18,11 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <utf8.h>
+#include "core/string/Utf8.h"
 
 namespace uqm
 {
 
-
-// Converts a UTF-8 string to Windows WideChar.
-uqstl::wstring toWideChar(uqgsl::czstring str)
-{
-	assert(utf8::is_valid(str));
-
-	if (const int charCount {MultiByteToWideChar(CP_UTF8, 0, str, -1, nullptr, 0)}; charCount != 0)
-	{
-		uqstl::wstring out {};
-		out.resize(charCount + 1);
-
-		MultiByteToWideChar(CP_UTF8, 0, str, -1, out.data(), charCount);
-
-		return out;
-	}
-	return {};
-}
 
 void displayMessageBox(uqgsl::czstring utf8Title, uqgsl::czstring utf8Message, MessageBoxType type)
 {
@@ -59,16 +42,13 @@ void displayMessageBox(uqgsl::czstring utf8Title, uqgsl::czstring utf8Message, M
 		return MB_ICONEXCLAMATION;
 	}();
 
-	if (utf8::is_valid(utf8Title) && utf8::is_valid(utf8Message))
-	{
-		const auto wsTitle {toWideChar(utf8Title)};
-		const auto wsMsg {toWideChar(utf8Message)};
+	const auto wsTitle {toWideChar(utf8Title)};
+	const auto wsMsg {toWideChar(utf8Message)};
 
-		if (!wsTitle.empty() && !wsMsg.empty())
-		{
-			MessageBoxW(nullptr, wsMsg.c_str(), wsTitle.c_str(), msgBoxType);
-			return;
-		}
+	if (!wsTitle.empty() && !wsMsg.empty())
+	{
+		MessageBoxW(nullptr, wsMsg.c_str(), wsTitle.c_str(), msgBoxType);
+		return;
 	}
 
 	// fallback to ascii
