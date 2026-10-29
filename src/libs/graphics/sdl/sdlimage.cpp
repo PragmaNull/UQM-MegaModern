@@ -14,7 +14,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "sdluio.h"
+#include "sdlimage.h"
 
 #include "port.h"
 #include "libs/io/FileSystem.h"
@@ -24,7 +24,7 @@
 #include "png2sdl.h"
 
 SDL_Surface*
-sdluio_loadImage(const uqm::io::Directory& dir, const char* fileName)
+sdl_loadImage(const uqm::io::Directory& dir, const char* fileName)
 {
 	uqstl::error_code error {};
 	uqstl::optional<uqm::io::File> file {dir.open(fileName, uqm::io::OpenMode::Read, error)};

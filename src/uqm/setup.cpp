@@ -32,7 +32,6 @@
 #include "sounds.h"
 #include "fmv.h"
 #include "libs/compiler.h"
-#include "libs/uio.h"
 #include "libs/file.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/sound/sound.h"

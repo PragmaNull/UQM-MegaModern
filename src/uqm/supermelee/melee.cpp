@@ -63,7 +63,6 @@
 #include "core/log/log.h"
 #include "libs/file/textfile.h"
 #include "uqm/supermelee/meleeconfig.h"
-#include "libs/uio.h"
 
 
 #include <assert.h>

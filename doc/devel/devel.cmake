@@ -31,6 +31,7 @@ set(uqm_doc_devel_files
 	"doc/devel/glossary"
 	"doc/devel/historical"
 	"doc/devel/input"
+	"doc/devel/io"
 	"doc/devel/livecd"
 	"doc/devel/lua"
 	"doc/devel/luasyntax"

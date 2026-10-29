@@ -55,7 +55,7 @@ typedef void (*NetConnection_ResetCallback)(NetConnection* conn, void* arg);
 #include "packet.h"
 #endif
 #if defined(NETPLAY_DEBUG) && defined(NETPLAY_DEBUG_FILE)
-#include "libs/uio.h"
+#include "libs/io/FileSystem.h"
 #endif
 
 #if 0 //defined(__cplusplus)

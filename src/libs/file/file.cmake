@@ -13,7 +13,6 @@ set(uqm_src_libs_file_files
 	"src/libs/file/filintrn.h"
 	"src/libs/file/textfile.cpp"
 	"src/libs/file/textfile.h"
-#	"src/libs/file/temp.cpp"
 )
 
 source_group("src\\libs\\file" FILES ${uqm_src_libs_file_files})

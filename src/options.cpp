@@ -29,7 +29,6 @@
 #include "libs/file.h"
 #include "config.h"
 #include "libs/compiler.h"
-#include "libs/uio.h"
 #include "libs/strlib.h"
 #include "core/log/log.h"
 #include "libs/reslib.h"

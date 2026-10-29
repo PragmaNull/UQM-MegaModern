@@ -41,8 +41,8 @@ set(uqm_src_libs_graphics_sdl_files
 	"src/libs/graphics/sdl/sdl2_pure.cpp"
 	"src/libs/graphics/sdl/sdl_common.cpp"
 	"src/libs/graphics/sdl/sdl_common.h"
-	"src/libs/graphics/sdl/sdluio.cpp"
-	"src/libs/graphics/sdl/sdluio.h"
+	"src/libs/graphics/sdl/sdlimage.cpp"
+	"src/libs/graphics/sdl/sdlimage.h"
 	"src/libs/graphics/sdl/triscan2x.cpp"
 )
 

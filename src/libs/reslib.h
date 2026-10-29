@@ -23,7 +23,6 @@
 #include "libs/compiler.h"
 #include "port.h"
 #include "libs/memlib.h"
-#include "libs/uio.h"
 #include "libs/io/FileSystem.h"
 
 #if 0 //defined(__cplusplus)

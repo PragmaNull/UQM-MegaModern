@@ -17,8 +17,7 @@ By setting one of these hooks, a function can be called from the Starcon2Main
 thread, thereby eliminating threading issues that may otherwise arrise.
 The debug key can be specified in user's override.cfg by adding a line
 with a text similar to "debug.1 = STRING:key F12".
-An interactive way to access various debugging code, similar to
-the uio debug mode (see below) is in the works.
+An interactive way to access various debugging code is in the works.
 
 The most interesting debugging functionality available at the moment is
 listed below:
@@ -56,10 +55,6 @@ listed below:
   This function, when called in melee, sets the current crew or energy
   level of the bottom player's ship to its maximum. This works both in
   Supermelee and in the full game.
-- the function uio_debugInteractive()
-  This function is not defined in sc2code/uqmdebug.h, but in libs/uio.h.
-  This function can interactively (tty-based) display information on
-  the state of the uio file system, and modifications can be made.
 - the function luaUqm_debug_run()
   This function is not defined in sc2code/uqmdebug.h, but in
   uqm/lua/luadebug.c

@@ -23,7 +23,6 @@
 #include "options.h"
 #include "port.h"
 #include "uqm/units.h"
-#include "libs/uio.h"
 #include "libs/reslib.h"
 // for _cur_resfile_name
 #include "core/log/log.h"

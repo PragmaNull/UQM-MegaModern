@@ -20,7 +20,6 @@
 #define LIBS_FILE_H_
 
 #include "port.h"
-#include "libs/uio.h"
 #include "core/platform/platform.h"
 
 // for bool
@@ -28,14 +27,6 @@
 
 #if 0 //defined(__cplusplus)
 extern "C" {
-#endif
-
-#if 0
-// from temp.h
-void initTempDir (void);
-void unInitTempDir (void);
-char *tempFilePath (const char *filename);
-extern uio_DirHandle *tempDir;
 #endif
 
 

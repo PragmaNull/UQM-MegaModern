@@ -1,4 +1,5 @@
 // Read-only mount source for a zip archive.
+// Based on the uio zip code, Copyright (C) 2003 Serge van den Boom, GPL version 2.
 #include "libs/io/standard/ZipSource.h"
 
 #include "core/log/log.h"
