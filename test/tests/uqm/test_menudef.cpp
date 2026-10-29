@@ -166,7 +166,7 @@ TEST(MenuDefTest, ContentMenuDefinitionIsValid)
 	ASSERT_TRUE(definition.has_value());
 	const OptionsStruct options {};
 	EXPECT_EQ(validateMenuDefinition(*definition, options), uqstl::vector<uqstl::string> {});
-	for (const char* id : {"engine", "music", "visual", "qol"})
+	for (const char* id : {"engine", "advanced", "music", "visual", "qol"})
 	{
 		EXPECT_NE(definition->find(id), nullptr) << id;
 	}

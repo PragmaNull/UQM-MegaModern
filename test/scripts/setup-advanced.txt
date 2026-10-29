@@ -1,0 +1,28 @@
+# Changes Setup > Advanced > Difficulty and Nomad Mode, and saves.
+# Expect "difficulty": "Hard" and "nomad": "Easy" in settings.json when starting from defaults.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+# Advanced is the eighth item.
+down 7
+select
+wait 1500
+log advanced menu
+dumpmenu
+left
+select
+down 2
+right
+select
+log advanced after changes
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 3000
+quit

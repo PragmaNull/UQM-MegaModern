@@ -414,29 +414,14 @@ typedef struct globalopts_struct
 	OPT_ADRIVERTYPE adriver;
 	OPT_AQUALITYTYPE aquality;
 	OPT_GODTYPE godModes;
-	uqm::Difficulty difficulty;
-	uqm::NomadMode nomad;
 	OPT_MELEEZOOM meleezoom;
 	uqm::ControllerType controllerType;
 	OPT_WINDOWTYPE windowType;
 	OPT_SEED seedType;
 	OPT_ADD_REMOVE deviceArray[28], upgradeArray[NUM_UPGRADES];
-	OPT_ENABLABLE scanlines, fps, stereo,
-		keepaspect, cheatMode,
-		godMode, bubbleWarp,
-		unlockShips, headStart, unlockUpgrades, infiniteRU,
-		infiniteFuel, infiniteCredits,
-		directionalJoystick,
-		extended,
-		
-		noHQEncounters, deCleansing, meleeObstacles,
-		slaughterMode,
-		fleetPointSys,
-		shipSeed;
+	OPT_ENABLABLE scanlines, fps, stereo, keepaspect, cheatMode, godMode, bubbleWarp, unlockShips, headStart, unlockUpgrades, infiniteRU, infiniteFuel, infiniteCredits, directionalJoystick, noHQEncounters, deCleansing, meleeObstacles;
 	OPT_FULLSCREEN fullscreen;
-	OPT_CONSOLETYPE 
-		landerHold,
-		cscan;
+	OPT_CONSOLETYPE landerHold, cscan;
 	ControlTemplate player1, player2;
 	int speechvol, musicvol, sfxvol;
 	int gamma;

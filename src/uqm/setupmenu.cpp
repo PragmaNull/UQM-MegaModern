@@ -316,21 +316,8 @@ static WIDGET* keyconfig_widgets[] = {
 	(WIDGET*)(&buttons[BTN_QUITSUBMENU]), // Exit to Menu
 	nullptr};
 
-static WIDGET* advanced_widgets[] = {
-	(WIDGET*)(&choices[CHOICE_SKILLLVL]),	// Difficulty
-	(WIDGET*)(&choices[CHOICE_EXTENDED]),	// Extended features
-	(WIDGET*)(&choices[CHOICE_NOMAD]),		// Nomad Mode
-	(WIDGET*)(&choices[CHOICE_SLAUGHTER]),	// Slaughter Mode
-	(WIDGET*)(&choices[CHOICE_FLEETPOINT]), // Fleet Point System
-
-	(WIDGET*)(&labels[LABEL_SPACER]),		// Spacer
-	(WIDGET*)(&choices[CHOICE_GAMESEED]),	// Seed usage selection
-	(WIDGET*)(&choices[CHOICE_SHIPSEED]),	// Ship seeding toggle
-	(WIDGET*)(&textentries[TEXT_GAMESEED]), // Custom Seed entry
-
-	(WIDGET*)(&labels[LABEL_SPACER]),	  // Spacer
-	(WIDGET*)(&buttons[BTN_QUITSUBMENU]), // Exit to Menu
-	nullptr};
+// Built from the menu definition file.
+static WIDGET* advanced_widgets[] = {nullptr};
 
 // Built from the menu definition file.
 static WIDGET* visual_widgets[] = {nullptr};
@@ -1139,17 +1126,12 @@ SetDefaults(void)
 	choices[CHOICE_ANDRZOOM].selected = opts.meleezoom;
 #endif
 	choices[CHOICE_LANDERHOLD].selected = static_cast<int>(opts.landerHold);
-	choices[CHOICE_SKILLLVL].selected = static_cast<int>(opts.difficulty);
-	choices[CHOICE_EXTENDED].selected = opts.extended;
-	choices[CHOICE_NOMAD].selected = static_cast<int>(opts.nomad);
 	choices[CHOICE_INPDEVICE].selected = static_cast<int>(opts.controllerType);
 	choices[CHOICE_CHCLEANHYPER].selected = opts.noHQEncounters;
 	choices[CHOICE_CHDECLEAN].selected = opts.deCleansing;
 	choices[CHOICE_CHNOPLANET].selected = opts.meleeObstacles;
-	choices[CHOICE_SLAUGHTER].selected = opts.slaughterMode;
 	choices[CHOICE_WINDOWTYPE].selected = opts.windowType;
 	choices[CHOICE_GAMESEED].selected = opts.seedType;
-	choices[CHOICE_FLEETPOINT].selected = opts.fleetPointSys;
 
 	// Devices
 	for (i = DEVICE_START; i < DEVICE_START
@@ -1165,7 +1147,6 @@ SetDefaults(void)
 	}
 
 	// Next choice should be choices[CHOICE_SHIPSEED]
-	choices[CHOICE_SHIPSEED].selected = opts.shipSeed;
 
 	sliders[SLIDER_MUSVOLUME].value = opts.musicvol;
 	sliders[SLIDER_SFXVOLUME].value = opts.sfxvol;
@@ -1215,17 +1196,12 @@ PropagateResults(void)
 	opts.meleezoom = choices[CHOICE_ANDRZOOM].selected;
 #endif
 	opts.landerHold = (OPT_CONSOLETYPE)choices[CHOICE_LANDERHOLD].selected;
-	opts.difficulty = static_cast<uqm::Difficulty>(choices[CHOICE_SKILLLVL].selected);
-	opts.extended = (OPT_ENABLABLE)choices[CHOICE_EXTENDED].selected;
-	opts.nomad = static_cast<uqm::NomadMode>(choices[CHOICE_NOMAD].selected);
 	opts.controllerType = static_cast<uqm::ControllerType>(choices[CHOICE_INPDEVICE].selected);
 	opts.noHQEncounters = (OPT_ENABLABLE)choices[CHOICE_CHCLEANHYPER].selected;
 	opts.deCleansing = (OPT_ENABLABLE)choices[CHOICE_CHDECLEAN].selected;
 	opts.meleeObstacles = (OPT_ENABLABLE)choices[CHOICE_CHNOPLANET].selected;
-	opts.slaughterMode = (OPT_ENABLABLE)choices[CHOICE_SLAUGHTER].selected;
 	opts.windowType = (OPT_WINDOWTYPE)choices[CHOICE_WINDOWTYPE].selected;
 	opts.seedType = (OPT_SEED)choices[CHOICE_GAMESEED].selected;
-	opts.fleetPointSys = (OPT_ENABLABLE)choices[CHOICE_FLEETPOINT].selected;
 
 	// Devices
 	for (i = DEVICE_START;
@@ -1239,7 +1215,6 @@ PropagateResults(void)
 		opts.upgradeArray[i - UPGRADE_START] = (OPT_ADD_REMOVE)choices[i].selected;
 	}
 
-	opts.shipSeed = (OPT_ENABLABLE)choices[CHOICE_SHIPSEED].selected;
 
 	opts.musicvol = sliders[SLIDER_MUSVOLUME].value;
 	opts.sfxvol = sliders[SLIDER_SFXVOLUME].value;
@@ -1586,6 +1561,7 @@ static const struct
 	const char* id;
 	int menu;
 } definedMenus[] = {
+	{"advanced", MENU_ADVANCED},
 	{"engine", MENU_ENGINE},
 	{"visual", MENU_VISUAL},
 	{"music",  MENU_MUSIC },
@@ -1641,6 +1617,8 @@ build_defined_menus(void)
 		{"meleeZoom",	 (WIDGET*)(&choices[CHOICE_MELEEZOOM])  },
 #endif
 		{"coarseScan", (WIDGET*)(&choices[CHOICE_SCANMENU])  },
+		{"seedType",	 (WIDGET*)(&choices[CHOICE_GAMESEED])  },
+		{"customSeed", (WIDGET*)(&textentries[TEXT_GAMESEED])},
 	};
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
 	for (const auto& defined : definedMenus)
@@ -2460,13 +2438,7 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 	opts->cscan = whichPlatformOpt(uqmOptions.whichCoarseScan.value);
 
 	// Game modes
-	opts->difficulty = uqmOptions.optDiffChooser.value;
-	opts->extended = uqmOptions.extended.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->nomad = uqmOptions.nomad.value;
-	opts->slaughterMode = uqmOptions.slaughterMode.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->seedType = (OPT_SEED)g_seedType;
-	opts->shipSeed = uqmOptions.shipSeed.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->fleetPointSys = uqmOptions.fleetPointSys.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	// Comm screen
 
@@ -2707,18 +2679,12 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 			customSeed = PrimeA;
 		}
 		putOpt(uqmOptions.customSeed.value, customSeed, false);
-		putOpt(uqmOptions.shipSeed.value, (bool)opts->shipSeed, false);
 	}
 
-	putOpt(uqmOptions.optDiffChooser.value, (int)opts->difficulty, false);
-	if ((uqm::UQMOptions::edit().optDifficulty = (uqm::Difficulty)opts->difficulty) == uqm::Difficulty::ChooseYourOwn)
+	if ((uqm::UQMOptions::edit().optDifficulty = *uqmOptions.optDiffChooser) == uqm::Difficulty::ChooseYourOwn)
 	{
 		uqm::UQMOptions::edit().optDifficulty = uqm::Difficulty::Normal;
 	}
-	putOpt(uqmOptions.extended.value, (bool)opts->extended, false);
-	putOpt(uqmOptions.nomad.value, (int)opts->nomad, false);
-	putOpt(uqmOptions.slaughterMode.value, (bool)opts->slaughterMode, false);
-	putOpt(uqmOptions.fleetPointSys.value, (bool)opts->fleetPointSys, false);
 
 	// Comm screen
 
