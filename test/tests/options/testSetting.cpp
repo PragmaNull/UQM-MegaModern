@@ -304,6 +304,19 @@ TEST(OptionsSettingsTest, CoarseScanStyles)
 	EXPECT_EQ(options.whichCoarseScan.valueNames(), (uqstl::vector<uqstl::string> {"Text", "Pictograms", "P6014Text", "P6014Pictograms"}));
 }
 
+TEST(OptionsSettingsTest, CoarseScanStyleAcceptsOldNames)
+{
+	OptionsStruct options {};
+	ASSERT_TRUE(options.fromJson(R"({"visuals": {"coarseScanStyle": "Console3DO"}})"));
+	EXPECT_EQ(*options.whichCoarseScan, CoarseScanStyle::Pictograms);
+	ASSERT_TRUE(options.fromJson(R"({"visuals": {"coarseScanStyle": "PC"}})"));
+	EXPECT_EQ(*options.whichCoarseScan, CoarseScanStyle::Text);
+
+	EXPECT_TRUE(options.whichCoarseScan.parseText("3DO"));
+	EXPECT_EQ(*options.whichCoarseScan, CoarseScanStyle::Pictograms);
+	EXPECT_EQ(options.whichCoarseScan.valueText(), "Pictograms");
+}
+
 TEST(OptionsSettingsTest, ReloadAndRestartFlags)
 {
 	const OptionsStruct options {};

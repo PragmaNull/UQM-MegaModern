@@ -64,7 +64,7 @@ void showText(WIDGET_TEXTENTRY& widget, const SettingBase& setting)
 
 void fillTooltip(const char* (&tooltip)[3], const uqstl::vector<uqstl::string>& lines)
 {
-	for (size_t line = 0; line < 3; ++line)
+	for (size_t line {0}; line < 3; ++line)
 	{
 		tooltip[line] = line < lines.size() ? lines[line].c_str() : "";
 	}
@@ -167,7 +167,7 @@ int MenuWidgets::selectedOption(const BoundChoice& choice) const
 		const int value {m_hooks.getState(item.state).value_or(0)};
 		return value >= 0 && value < static_cast<int>(item.options.size()) ? value : 0;
 	}
-	for (size_t index = 0; index < item.options.size(); ++index)
+	for (size_t index {0}; index < item.options.size(); ++index)
 	{
 		if (choice.setting->hasValueText(item.options[index].value))
 		{
@@ -408,18 +408,19 @@ WIDGET* MenuWidgets::buildHeading(const MenuItemDef& item)
 	return reinterpret_cast<WIDGET*>(&widget);
 }
 
-void MenuWidgets::applyChange(SettingBase& setting, uqstl::string_view text)
+bool MenuWidgets::applyChange(SettingBase& setting, uqstl::string_view text)
 {
 	const uqstl::string before {setting.valueText()};
 	if (!setting.parseText(text))
 	{
 		uqm::log::error("Menu: '{}' is not a valid value for '{}'.", text, setting.key());
-		return;
+		return false;
 	}
 	if (setting.valueText() != before && m_hooks.settingChanged)
 	{
 		m_hooks.settingChanged(setting);
 	}
+	return true;
 }
 
 void MenuWidgets::onChoiceChanged(WIDGET_CHOICE* self, int oldValue)
@@ -461,7 +462,10 @@ void MenuWidgets::onChoiceChanged(WIDGET_CHOICE* self, int oldValue)
 		}
 		return;
 	}
-	choice.owner->applyChange(*choice.setting, option.value);
+	if (!choice.owner->applyChange(*choice.setting, option.value))
+	{
+		self->selected = oldValue;
+	}
 }
 
 void MenuWidgets::onTextChanged(WIDGET_TEXTENTRY* self)

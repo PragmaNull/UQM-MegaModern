@@ -224,12 +224,12 @@ TEST(MenuDefTest, ValidationChecksSliderRange)
 
 TEST(MenuDefTest, ContentMenuDefinitionIsValid)
 {
-	std::ifstream file {UQM_TEST_CONTENT_DIR "/base/ui/setupmenu.json", std::ios::binary};
+	uqstl::ifstream file {UQM_TEST_CONTENT_DIR "/base/ui/setupmenu.json", uqstl::ios::binary};
 	if (!file)
 	{
 		GTEST_SKIP() << "Content is not present.";
 	}
-	std::stringstream text {};
+	uqstl::stringstream text {};
 	text << file.rdbuf();
 
 	const auto definition {menuDefinitionFromJson(text.str())};

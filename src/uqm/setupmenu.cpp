@@ -113,7 +113,7 @@ static float maxGammaX;
 static WIDGET*
 find_menu(uqstl::string_view id)
 {
-	for (size_t index = 0; index < menuDefinition->menus.size(); ++index)
+	for (size_t index {0}; index < menuDefinition->menus.size(); ++index)
 	{
 		if (menuDefinition->menus[index].id == id)
 		{
@@ -177,14 +177,14 @@ rename_template(WIDGET_TEXTENTRY* self)
 static uqm::CheatAction*
 find_cheat_state(uqstl::string_view key)
 {
-	const auto indexed = [key](uqstl::string_view prefix, size_t count) -> uqstl::optional<size_t> {
+	const auto indexed {[key](uqstl::string_view prefix, size_t count) -> uqstl::optional<size_t> {
 		size_t index {};
 		if (!key.starts_with(prefix) || uqm::parseStr(key.substr(prefix.size()), index) != uqstl::errc {} || index >= count)
 		{
 			return uqstl::nullopt;
 		}
 		return index;
-	};
+	}};
 	if (const auto device {indexed("device.", uqstl::size(optDeviceArray))})
 	{
 		return &optDeviceArray[*device];
@@ -194,6 +194,28 @@ find_cheat_state(uqstl::string_view key)
 		return &optUpgradeArray[*upgrade];
 	}
 	return nullptr;
+}
+
+// Sets the display settings from the current display flags.
+static void
+read_graphics_settings(void)
+{
+	auto& edit {uqm::UQMOptions::edit()};
+	if (testFlag(g_gfxFlags, uqm::GfxFlags::ExclusiveFullscreen))
+	{
+		edit.windowMode = uqm::WindowMode::Fullscreen;
+	}
+	else if (testFlag(g_gfxFlags, uqm::GfxFlags::Fullscreen))
+	{
+		edit.windowMode = uqm::WindowMode::WindowedFullscreen;
+	}
+	else
+	{
+		edit.windowMode = uqm::WindowMode::Windowed;
+	}
+	edit.scaler = static_cast<uqm::ScalingMode>(g_gfxFlags & uqm::GfxFlagsScaleAny);
+	edit.scanlines = testFlag(g_gfxFlags, uqm::GfxFlags::Scanlines);
+	edit.showFps = testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS);
 }
 
 // Sets the window size and the display flags from the settings.
@@ -289,6 +311,7 @@ DoSetupMenu(SETUP_MENU_STATE* pInputState)
 	{
 		SetDefaultMenuRepeatDelay();
 		pInputState->NextTime = GetTimeCounter();
+		read_graphics_settings();
 		populate_gamma();
 		menuWidgets->refresh();
 		Widget_SetFont(PlyrFont);
@@ -645,6 +668,11 @@ static void
 read_menu_definition(void)
 {
 	const char* path {res_GetString(c_menuDefinitionResource)};
+	if (path == nullptr)
+	{
+		uqm::log::critical("PANIC: The resource '{}' is not defined.", c_menuDefinitionResource);
+		exit(EXIT_FAILURE);
+	}
 	const auto json {uqm::readTextFile(contentDir, path)};
 	if (!json)
 	{
@@ -680,7 +708,7 @@ init_button(WIDGET_BUTTON& button, const uqm::MenuButtonDef& def, int (*handler)
 	button.height = Widget_HeightOneLine;
 	button.width = Widget_WidthFullScreen;
 	button.name = def.label.c_str();
-	for (size_t line = 0; line < uqstl::size(button.tooltip); ++line)
+	for (size_t line {0}; line < uqstl::size(button.tooltip); ++line)
 	{
 		button.tooltip[line] = line < def.tooltip.size() ? def.tooltip[line].c_str() : "";
 	}
@@ -744,7 +772,7 @@ init_shared_widgets(void)
 	layoutName.state = WTE_NORMAL;
 	layoutName.onChange = rename_template;
 
-	for (int i = 0; i < NUM_KEYS; i++)
+	for (int i {0}; i < NUM_KEYS; i++)
 	{
 		WIDGET_CONTROLENTRY& entry {controlentries[i]};
 		entry = {};
@@ -824,7 +852,8 @@ init_widgets(void)
 		}
 		else if (setting.key() == "seed.type" || setting.key() == "seed.value")
 		{
-			if (*options.seedType == uqm::SeedType::None && *options.customSeed != PrimeA)
+			const bool primeSeed {*options.seedType == uqm::SeedType::None || *options.seedType == uqm::SeedType::Prime};
+			if (primeSeed && *options.customSeed != PrimeA)
 			{
 				uqm::UQMOptions::edit().customSeed = PrimeA;
 				menuWidgets->refresh();
@@ -900,14 +929,14 @@ init_widgets(void)
 		{"gamma",	  (WIDGET*)(&gammaSlider)},
 		{"layoutName", (WIDGET*)(&layoutName) },
 	};
-	for (int i = 0; i < NUM_KEYS; i++)
+	for (int i {0}; i < NUM_KEYS; i++)
 	{
 		shared.legacy[uqstl::string {"control."} + c_controlNames[i]] = (WIDGET*)(&controlentries[i]);
 	}
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
 
 	menus.assign(menuDefinition->menus.size(), WIDGET_MENU_SCREEN {});
-	for (size_t index = 0; index < menus.size(); ++index)
+	for (size_t index {0}; index < menus.size(); ++index)
 	{
 		const uqm::MenuDef& menu {menuDefinition->menus[index]};
 		WIDGET_MENU_SCREEN& screen {menus[index]};
@@ -960,7 +989,7 @@ dump_setup_menu(void)
 
 	const auto& menu {*reinterpret_cast<const WIDGET_MENU_SCREEN*>(current)};
 	uqm::log::info("Menu: {}", menu.subtitle ? menu.subtitle : "");
-	for (int i = 0; i < menu.num_children; ++i)
+	for (int i {0}; i < menu.num_children; ++i)
 	{
 		const WIDGET* child {menu.child[i]};
 		const char marker {i == menu.highlighted ? '>' : ' '};

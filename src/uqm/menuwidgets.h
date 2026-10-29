@@ -33,19 +33,19 @@ public:
 
 	struct Hooks
 	{
-		std::function<bool(uqstl::string_view addon)> isAddonAvailable {};
+		uqstl::function<bool(uqstl::string_view addon)> isAddonAvailable {};
 		// Called after a choice is refused because its addon is missing.
-		std::function<void()> addonUnavailable {};
+		uqstl::function<void()> addonUnavailable {};
 		// Called after a widget changes a setting.
-		std::function<void(const SettingBase& setting)> settingChanged {};
+		uqstl::function<void(const SettingBase& setting)> settingChanged {};
 		// Gives the label of an option from a list that the game supplies. Returns nullptr if there is no label.
-		std::function<const char*(uqstl::string_view list, size_t index)> optionLabel {};
+		uqstl::function<const char*(uqstl::string_view list, size_t index)> optionLabel {};
 		// Gives the value of a state. Returns nullopt if there is no such state.
-		std::function<uqstl::optional<int>(uqstl::string_view key)> getState {};
+		uqstl::function<uqstl::optional<int>(uqstl::string_view key)> getState {};
 		// Called after a widget changes a state.
-		std::function<void(uqstl::string_view key, int value)> setState {};
+		uqstl::function<void(uqstl::string_view key, int value)> setState {};
 		// Opens the menu with this id. Returns false if there is no such menu.
-		std::function<bool(uqstl::string_view id)> openMenu {};
+		uqstl::function<bool(uqstl::string_view id)> openMenu {};
 		// Edits the text of a Text item when the player selects it.
 		int (*textEntrySelect)(WIDGET_TEXTENTRY* self) {};
 	};
@@ -83,7 +83,7 @@ private:
 	WIDGET* buildLegacy(const MenuDef& menu, const MenuItemDef& item);
 	[[nodiscard]] bool isAvailable(const MenuItemDef& item) const;
 	[[nodiscard]] int selectedOption(const BoundChoice& choice) const;
-	void applyChange(SettingBase& setting, uqstl::string_view text);
+	bool applyChange(SettingBase& setting, uqstl::string_view text);
 
 	SettingsRegistry& m_settings;
 	SharedWidgets m_shared {};

@@ -83,17 +83,18 @@ static InputFrameCallback* inputCallback;
 static uqstl::optional<uqm::InputScript> inputScript {};
 static void (*inputScriptMenuDump)(void) {};
 static bool inputScriptFinishedLogged {};
-static std::mutex inputScriptMutex {};
+static uqstl::mutex inputScriptMutex {};
+static uqstl::chrono::steady_clock::time_point inputScriptStart {};
 
 bool LoadInputScript(const char* path)
 {
-	std::ifstream file {path, std::ios::binary};
+	uqstl::ifstream file {path, uqstl::ios::binary};
 	if (!file)
 	{
 		uqm::log::error("Input script: cannot open '{}'.", path);
 		return false;
 	}
-	std::stringstream text {};
+	uqstl::stringstream text {};
 	text << file.rdbuf();
 
 	uqstl::string error {};
@@ -104,6 +105,7 @@ bool LoadInputScript(const char* path)
 		return false;
 	}
 	uqm::log::info("Input script: running '{}' ({} commands).", path, inputScript->commands().size());
+	inputScriptStart = uqstl::chrono::steady_clock::now();
 	return true;
 }
 
@@ -153,8 +155,8 @@ scriptMenuKey(uqm::ScriptKey key)
 static void
 applyInputScript(void)
 {
-	const std::lock_guard lock {inputScriptMutex};
-	const auto now {std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count()};
+	const uqstl::lock_guard lock {inputScriptMutex};
+	const auto now {uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(uqstl::chrono::steady_clock::now() - inputScriptStart).count()};
 	const uqm::InputScript::Step step {inputScript->update(static_cast<uint32_t>(now))};
 
 	if (step.press == uqm::ScriptKey::Screenshot)
@@ -187,7 +189,8 @@ applyInputScript(void)
 	{
 		uqm::log::info("Input script: quit.");
 		uqm::log::default_logger()->flush();
-		std::exit(EXIT_SUCCESS);
+		// The main thread exits on the abort key.
+		ImmediateInputState.menu[KEY_ABORT] = 1;
 	}
 	if (inputScript->finished() && !inputScriptFinishedLogged)
 	{

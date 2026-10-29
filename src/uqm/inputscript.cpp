@@ -76,10 +76,10 @@ uqstl::optional<InputScript> InputScript::parse(uqstl::string_view text, uqstl::
 		const uqstl::string_view word {line.substr(0, space)};
 		const uqstl::string_view argument {space == uqstl::string_view::npos ? uqstl::string_view {} : trim(line.substr(space))};
 
-		auto fail = [&](uqstl::string_view reason) {
+		const auto fail {[&](uqstl::string_view reason) {
 			error = fmt::format("line {}: {}", lineNumber, reason);
 			return uqstl::nullopt;
-		};
+		}};
 
 		if (compareICase(word, "wait") || compareICase(word, "delay"))
 		{
@@ -110,7 +110,7 @@ uqstl::optional<InputScript> InputScript::parse(uqstl::string_view text, uqstl::
 			{
 				return fail("expected a key count of 1 or more");
 			}
-			for (uint32_t i = 0; i < *count; ++i)
+			for (uint32_t i {0}; i < *count; ++i)
 			{
 				script.m_commands.push_back({.kind = ScriptCommand::Kind::Press, .key = *key});
 			}

@@ -394,7 +394,7 @@ uqstl::optional<int> sliderDisplayedValue(const MenuItemDef& slider, uqstl::stri
 	{
 		return uqstl::nullopt;
 	}
-	return static_cast<int>(std::lround(value * slider.scale));
+	return static_cast<int>(uqstl::lround(value * slider.scale));
 }
 
 uqstl::vector<uqstl::string> validateMenuDefinition(const MenuDefinition& definition, const SettingsRegistry& settings)
