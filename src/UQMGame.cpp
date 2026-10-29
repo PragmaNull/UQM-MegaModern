@@ -257,8 +257,6 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	resolutionFactor = isAddonAvailable(HD_MODE) ?
 						   (unsigned int)options.resolutionFactor.value :
 						   0;
-	m_options.edit().resolutionFactor.value = resolutionFactor;
-	m_options.edit().resolutionFactor.set = true;
 
 	optWindowType = OPTVAL_UQM_WINDOW;
 	const char* windowMode = WINDOW_MODE(resolutionFactor, options.windowEmulationMode.value);
@@ -266,9 +264,8 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	{
 		optWindowType = options.windowEmulationMode.value;
 	}
-	m_options.edit().windowEmulationMode.value = optWindowType;
-	m_options.edit().windowEmulationMode.set = true;
 
+	Vec2u windowSize {*options.resolution};
 	{
 		int w = 320;
 		int h = (DOS_BOOL(240, 200));
@@ -297,17 +294,17 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 			if (ratio > threshold) // screen is narrower than 4:3
 			{
-				m_options.edit().resolution.value.y = SavedHeight / threshold;
+				windowSize.y = SavedHeight / threshold;
 			}
 			else if (ratio < threshold) // screen is wider than 4:3
 			{
-				m_options.edit().resolution.value.x = SavedWidth * threshold;
+				windowSize.x = SavedWidth * threshold;
 			}
 		}
 		else
 		{
-			m_options.edit().resolution.value.x = SavedWidth;
-			m_options.edit().resolution.value.y = SavedHeight;
+			windowSize.x = SavedWidth;
+			windowSize.y = SavedHeight;
 		}
 	}
 
@@ -362,7 +359,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 		gfxFlags |= uqm::GfxFlags::ShowFPS;
 	}
 	TFB_InitGraphics(gfxDriver, gfxFlags, options.graphicsBackend.c_str(),
-					 options.resolution.value.x, options.resolution.value.y,
+					 windowSize.x, windowSize.y,
 					 &resolutionFactor, &optWindowType);
 	if (options.gamma.set && setGammaCorrection(options.gamma.value))
 	{
