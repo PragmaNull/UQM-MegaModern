@@ -354,8 +354,6 @@ src/libs/time/sdl/sdltime.h
 src/libs/time/timecommon.cpp
 src/libs/time/timecommon.h
 src/libs/time/timelib.h
-src/libs/io/Backend.h.in
-src/libs/io/Concepts.h
 src/libs/io/FileSystem.h
 src/libs/io/Matcher.cpp
 src/libs/io/Matcher.h

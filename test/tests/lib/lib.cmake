@@ -8,7 +8,6 @@ list(APPEND uqm_tests_lib_master_files
 	"../src/lib/Math2D/Math2D.cpp"
 	"../src/lib/Math2D/Math2DStringUtils.h"
 	"../src/lib/Math2D/Math2DStringUtils.cpp"
-	"../src/libs/io/Concepts.h"
 	"../src/libs/io/FileSystem.h"
 	"../src/libs/io/Matcher.cpp"
 	"../src/libs/io/Matcher.h"

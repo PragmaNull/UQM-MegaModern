@@ -1,22 +1,17 @@
-// File system types of the back end that the build selects.
+// The file system types that the game uses.
 #pragma once
 #ifndef UQM_LIBS_IO_FILESYSTEM_H_
 #define UQM_LIBS_IO_FILESYSTEM_H_
 
-#include "libs/io/Concepts.h"
-
-// Generated from Backend.h.in. Sets UQM_IO_BACKEND_NAMESPACE.
-#include "libs/io/Backend.h"
+#include "libs/io/standard/FileSystem.h"
 
 namespace uqm::io
 {
 
-using FileSystem = UQM_IO_BACKEND_NAMESPACE::FileSystem;
+using FileSystem = standard::FileSystem;
 using File = FileSystem::File;
 using Directory = FileSystem::Directory;
 using Mount = FileSystem::Mount;
-
-static_assert(FileSystemImpl<FileSystem>);
 
 } // namespace uqm::io
 

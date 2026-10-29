@@ -7,19 +7,16 @@ The game reads and writes files through a virtual file system. It stacks
 host directories and zip archives on top of each other, so that addons can
 replace content files without changing them.
 
-Back ends
----------
+Sources
+-------
 
-The CMake option UQM_IO_BACKEND selects the back end at build time. The
-value is the name of a directory in src/libs/io. The default is "standard",
-which uses std::filesystem and std::filebuf.
+The implementation is in src/libs/io/standard and uses std::filesystem,
+std::filebuf and zlib. libs/io/FileSystem.h makes uqm::io::FileSystem,
+File, Directory and Mount aliases for its types.
 
-A back end supplies FileSystem, File, Directory and Mount types in the
-namespace uqm::io::<name>, in the header libs/io/<name>/FileSystem.h.
-The concepts in libs/io/Concepts.h state what each type must do.
-libs/io/FileSystem.h makes uqm::io::FileSystem, File, Directory and Mount
-aliases for the selected types, and does not compile if they do not meet
-the concepts.
+Each mount has a MountSource (standard/MountSource.h): DirectorySource for
+a host directory and ZipSource for a zip archive. A new kind of storage,
+for example files in memory, is a new MountSource.
 
 Types
 -----
