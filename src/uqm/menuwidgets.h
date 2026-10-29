@@ -97,6 +97,11 @@ private:
 	uqstl::vector<uqstl::unique_ptr<uqstl::vector<WIDGET*>>> m_lists {};
 };
 
+// Sets up a full-width button. The strings must stay valid while the widget is in use.
+void initButtonWidget(WIDGET_BUTTON& widget, const uqstl::string& name, const uqstl::vector<uqstl::string>& tooltip, int (*handler)(WIDGET*, int));
+// Sets up a full-width label. The lines must stay valid while the widget is in use.
+void initLabelWidget(WIDGET_LABEL& widget, uqstl::vector<const char*>& lines);
+
 } // namespace uqm
 
 #endif // UQM_MENUWIDGETS_H_

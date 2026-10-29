@@ -113,14 +113,12 @@ static float maxGammaX;
 static WIDGET*
 find_menu(uqstl::string_view id)
 {
-	for (size_t index {0}; index < menuDefinition->menus.size(); ++index)
+	const uqm::MenuDef* const menu {menuDefinition->find(id)};
+	if (menu == nullptr)
 	{
-		if (menuDefinition->menus[index].id == id)
-		{
-			return (WIDGET*)(&menus[index]);
-		}
+		return nullptr;
 	}
-	return nullptr;
+	return (WIDGET*)(&menus[static_cast<size_t>(menu - menuDefinition->menus.data())]);
 }
 
 static int
@@ -697,46 +695,15 @@ read_menu_definition(void)
 	}
 }
 
-static void
-init_button(WIDGET_BUTTON& button, const uqm::MenuButtonDef& def, int (*handler)(WIDGET*, int))
-{
-	button = {};
-	button.tag = WIDGET_TYPE_BUTTON;
-	button.handleEvent = handler;
-	button.receiveFocus = Widget_ReceiveFocusSimple;
-	button.draw = Widget_DrawButton;
-	button.height = Widget_HeightOneLine;
-	button.width = Widget_WidthFullScreen;
-	button.name = def.label.c_str();
-	for (size_t line {0}; line < uqstl::size(button.tooltip); ++line)
-	{
-		button.tooltip[line] = line < def.tooltip.size() ? def.tooltip[line].c_str() : "";
-	}
-}
-
-static void
-init_label(WIDGET_LABEL& label, uqstl::vector<const char*>& lines)
-{
-	label = {};
-	label.tag = WIDGET_TYPE_LABEL;
-	label.handleEvent = Widget_HandleEventIgnoreAll;
-	label.receiveFocus = Widget_ReceiveFocusRefuseFocus;
-	label.draw = Widget_DrawLabel;
-	label.height = Widget_HeightLabel;
-	label.width = Widget_WidthFullScreen;
-	label.line_count = static_cast<int>(lines.size());
-	label.lines = lines.data();
-}
-
 // Sets up the widgets that the menu definition does not build.
 static void
 init_shared_widgets(void)
 {
-	init_button(backButton, menuDefinition->back, quit_sub_menu);
-	init_button(exitButton, menuDefinition->exit, quit_main_menu);
+	uqm::initButtonWidget(backButton, menuDefinition->back.label, menuDefinition->back.tooltip, quit_sub_menu);
+	uqm::initButtonWidget(exitButton, menuDefinition->exit.label, menuDefinition->exit.tooltip, quit_main_menu);
 
 	static uqstl::vector<const char*> noLines {};
-	init_label(spacer, noLines);
+	uqm::initLabelWidget(spacer, noLines);
 
 	pressToEditLines.clear();
 	if (const auto found {menuDefinition->messages.find("pressToEdit")}; found != menuDefinition->messages.end())
@@ -746,7 +713,7 @@ init_shared_widgets(void)
 			pressToEditLines.push_back(line.c_str());
 		}
 	}
-	init_label(pressToEdit, pressToEditLines);
+	uqm::initLabelWidget(pressToEdit, pressToEditLines);
 
 	gammaSlider = {};
 	gammaSlider.tag = WIDGET_TYPE_SLIDER;

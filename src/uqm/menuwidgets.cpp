@@ -356,14 +356,7 @@ WIDGET* MenuWidgets::buildMenuButton(const MenuItemDef& item)
 	button.item = item;
 
 	WIDGET_BUTTON& widget {button.widget};
-	widget.tag = WIDGET_TYPE_BUTTON;
-	widget.handleEvent = onMenuButtonEvent;
-	widget.receiveFocus = Widget_ReceiveFocusSimple;
-	widget.draw = Widget_DrawButton;
-	widget.height = Widget_HeightOneLine;
-	widget.width = Widget_WidthFullScreen;
-	widget.name = button.item.label.c_str();
-	fillTooltip(widget.tooltip, button.item.tooltip);
+	initButtonWidget(widget, button.item.label, button.item.tooltip, onMenuButtonEvent);
 
 	s_bindings[&widget] = &button;
 	return reinterpret_cast<WIDGET*>(&widget);
@@ -397,15 +390,34 @@ WIDGET* MenuWidgets::buildHeading(const MenuItemDef& item)
 	}
 
 	WIDGET_LABEL& widget {heading.widget};
+	initLabelWidget(widget, heading.lines);
+	return reinterpret_cast<WIDGET*>(&widget);
+}
+
+void initButtonWidget(WIDGET_BUTTON& widget, const uqstl::string& name, const uqstl::vector<uqstl::string>& tooltip, int (*handler)(WIDGET*, int))
+{
+	widget = {};
+	widget.tag = WIDGET_TYPE_BUTTON;
+	widget.handleEvent = handler;
+	widget.receiveFocus = Widget_ReceiveFocusSimple;
+	widget.draw = Widget_DrawButton;
+	widget.height = Widget_HeightOneLine;
+	widget.width = Widget_WidthFullScreen;
+	widget.name = name.c_str();
+	fillTooltip(widget.tooltip, tooltip);
+}
+
+void initLabelWidget(WIDGET_LABEL& widget, uqstl::vector<const char*>& lines)
+{
+	widget = {};
 	widget.tag = WIDGET_TYPE_LABEL;
 	widget.handleEvent = Widget_HandleEventIgnoreAll;
 	widget.receiveFocus = Widget_ReceiveFocusRefuseFocus;
 	widget.draw = Widget_DrawLabel;
 	widget.height = Widget_HeightLabel;
 	widget.width = Widget_WidthFullScreen;
-	widget.line_count = static_cast<int>(heading.lines.size());
-	widget.lines = heading.lines.data();
-	return reinterpret_cast<WIDGET*>(&widget);
+	widget.line_count = static_cast<int>(lines.size());
+	widget.lines = lines.data();
 }
 
 bool MenuWidgets::applyChange(SettingBase& setting, uqstl::string_view text)
