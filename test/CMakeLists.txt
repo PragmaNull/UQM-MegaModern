@@ -46,6 +46,7 @@ target_include_directories(UQM_Tests
 target_compile_definitions(UQM_Tests
     PRIVATE
         UQM_TEST_CONTENT_DIR="${CMAKE_SOURCE_DIR}/content"
+        UQM_TEST_DATA_DIR="${CMAKE_SOURCE_DIR}/test/data"
 )
 
 # ---- Link libraries --------------------------------------------------------
@@ -59,6 +60,7 @@ find_package(spdlog REQUIRED)
 find_package(utf8proc REQUIRED)
 find_package(yyjson REQUIRED)
 find_package(CLI11 REQUIRED)
+find_package(ZLIB REQUIRED)
 
 # GTest::gtest and GTest::gtest_main are the modern imported targets
 target_link_libraries(UQM_Tests
@@ -73,6 +75,7 @@ target_link_libraries(UQM_Tests
         utf8proc::utf8proc
         yyjson::yyjson
         CLI11::CLI11
+        ZLIB::ZLIB
 
 )
 

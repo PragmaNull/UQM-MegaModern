@@ -50,6 +50,10 @@ source_group("Doc" FILES ${Doc_files})
 
 set(uqm_project_files_master ${Doc_files})
 
+# File system back end: a directory in src/libs/io.
+set(UQM_IO_BACKEND "standard" CACHE STRING "File system back end")
+configure_file(src/libs/io/Backend.h.in "${CMAKE_BINARY_DIR}/generated/libs/io/Backend.h" @ONLY)
+
 include("doc/doc.cmake")
 list(APPEND uqm_project_files_master ${uqm_doc_master_files})
 include("src/src.cmake")
@@ -112,6 +116,10 @@ target_compile_definitions(uqm_project_features
         NETPLAY
         USE_PLATFORM_ACCEL
         __STDC_WANT_LIB_EXT1__=1
+)
+
+target_include_directories(uqm_project_features
+    INTERFACE "${CMAKE_BINARY_DIR}/generated"
 )
 
 target_link_libraries(${APP_TARGET} PRIVATE uqm_project_features)
