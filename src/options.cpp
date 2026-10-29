@@ -246,7 +246,7 @@ void prepareConfigDir(uqgsl::czstring configDirName)
 	uio_MountHandle* contentHandle;
 
 	uqstl::string envVar {};
-	if (configDirName == nullptr)
+	if (configDirName == nullptr || configDirName[0] == '\0')
 	{
 		envVar = uqm::getEnvironmentValue("UQM_CONFIG_DIR");
 

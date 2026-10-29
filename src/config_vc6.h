@@ -14,7 +14,7 @@
 #define CONTENTDIR "./content/"
 
 /* Directory where game data will be stored */
-#define USERDIR "%APPDATA%/UQM-MegaMod/"
+#define USERDIR "~/.uqm-megamodern/"
 
 /* Directory where config files will be stored */
 #define CONFIGDIR USERDIR

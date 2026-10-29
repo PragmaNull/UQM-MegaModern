@@ -266,7 +266,12 @@ err:
 uqstl::string getHomeDir(void)
 {
 #ifdef WIN32
-	return uqm::getEnvironmentValue("HOME");
+	uqstl::string home {uqm::getEnvironmentValue("HOME")};
+	if (!home.empty())
+	{
+		return home;
+	}
+	return uqm::getEnvironmentValue("USERPROFILE");
 #else
 	uqstl::string home = uqm::getEnvironmentValue("HOME");
 	if (!home.empty())
@@ -486,7 +491,6 @@ int expandPath(char* dest, size_t len, const char* src, int what)
 				errno = ENOENT;
 				goto err;
 			}
-			homelen = home.size();
 
 			if (what & EP_ABSOLUTE)
 			{
@@ -498,12 +502,13 @@ int expandPath(char* dest, size_t len, const char* src, int what)
 					// errno is set
 					goto err;
 				}
-				home += skip;
+				home.erase(0, skip);
 				what &= ~EP_ABSOLUTE;
 				// The part after the '~' should not be seen
 				// as absolute.
 			}
 
+			homelen = home.size();
 			CHECKLEN(dest, homelen);
 			memcpy(destptr, home.c_str(), homelen);
 			destptr += homelen;
