@@ -4,6 +4,8 @@
 
 #include "libs/graphics/gfx_defs.h"	  // for GfxFlags
 #include "libs/sound/audiocoredefs.h" // for AudioFlags.
+
+#include <magic_enum/magic_enum.hpp>
 namespace uqm
 {
 
@@ -280,5 +282,13 @@ enum class ControllerType
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } // namespace uqm
+
+// ScalingMode values are GfxFlags bits.
+template <>
+struct magic_enum::customize::enum_range<uqm::ScalingMode>
+{
+	static constexpr int min {0};
+	static constexpr int max {static_cast<int>(uqm::GfxFlags::Scale_HQXX)};
+};
 
 #endif /* OPTIONS_OPTIONDEFS_H_ */

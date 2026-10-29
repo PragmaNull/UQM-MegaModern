@@ -172,6 +172,7 @@ bool putOpt<uqm::EmulationMode, OPT_CONSOLETYPE>(uqm::EmulationMode& glob, const
 static bool DoSetupMenu(SETUP_MENU_STATE* pInputState);
 static bool done;
 static WIDGET *current, *next;
+static uqstl::unique_ptr<uqm::MenuWidgets> menuWidgets {};
 
 static int quit_main_menu(WIDGET* self, int event);
 static int quit_sub_menu(WIDGET* self, int event);
@@ -190,6 +191,7 @@ static int do_devices(WIDGET* self, int event);
 static int do_upgrades(WIDGET* self, int event);
 static void change_template(WIDGET_CHOICE* self, int oldval);
 static void rename_template(WIDGET_TEXTENTRY* self);
+static void populate_gamma(void);
 static void rebind_control(WIDGET_CONTROLENTRY* widget);
 static void clear_control(WIDGET_CONTROLENTRY* widget);
 
@@ -217,28 +219,8 @@ static HANDLER button_handlers[BUTTON_COUNT] = {
 // Built from the menu definition file.
 static WIDGET* main_widgets[] = {nullptr};
 
-static WIDGET* graphics_widgets[] = {
-	(WIDGET*)(&choices[CHOICE_GRAPHICS]),	// Graphics
-	(WIDGET*)(&choices[CHOICE_RESOLUTION]), // Resolution
-	(WIDGET*)(&textentries[TEXT_CUSTMRES]), // Custom resolution entry
-#if SDL_MAJOR_VERSION == 1
-#if defined(HAVE_OPENGL)
-	(WIDGET*)(&choices[CHOICE_FRBUFFER]), // Use Framebuffer
-#endif
-#endif
-	(WIDGET*)(&choices[CHOICE_ASPRATIO]), // Aspect Ratio
-	(WIDGET*)(&choices[CHOICE_DISPLAY]),  // Display Mode
-	(WIDGET*)(&sliders[SLIDER_GAMMA]),	  // Gamma Correction
-	(WIDGET*)(&choices[CHOICE_SCALER]),	  // Scaler
-	(WIDGET*)(&choices[CHOICE_SCANLINE]), // Scanlines
-
-#if SDL_MAJOR_VERSION == 2
-	(WIDGET*)(&choices[CHOICE_SHOWFPS]), // Show FPS
-#endif
-
-	(WIDGET*)(&labels[LABEL_SPACER]),	  // Spacer
-	(WIDGET*)(&buttons[BTN_QUITSUBMENU]), // Exit to Menu
-	nullptr};
+// Built from the menu definition file.
+static WIDGET* graphics_widgets[] = {nullptr};
 
 // Built from the menu definition file.
 static WIDGET* engine_widgets[] = {nullptr};
@@ -596,76 +578,6 @@ change_template(WIDGET_CHOICE* self, int oldval)
 }
 
 static void
-addon_unavailable(WIDGET_CHOICE* self, int oldval)
-{
-	self->selected = oldval;
-	DoPopupWindow(GAME_STRING(MAINMENU_STRING_BASE + 36));
-	Widget_SetFont(PlyrFont);
-}
-
-static void
-check_for_hd(WIDGET_CHOICE* self, int oldval)
-{
-	if (self->selected != OPTVAL_REAL_1280_960)
-	{
-		return;
-	}
-
-	if (!uqm::isAddonAvailable(HD_MODE))
-	{
-		oldval = OPTVAL_320_240;
-		addon_unavailable(self, OPTVAL_320_240);
-	}
-
-	(void)oldval; // Satisfy compiler
-}
-
-static bool
-check_dos_3do_modes(WIDGET_CHOICE* self, int oldval)
-{
-	bool selected = choices[CHOICE_GRAPHICS].selected;
-	int shmagoigle = (selected && !IS_HD) ? HD : IS_HD;
-
-	switch (self->selected)
-	{
-		case OPTVAL_PC_WINDOW:
-			if (!uqm::isAddonAvailable(DOS_MODE(shmagoigle)))
-			{
-				oldval = OPTVAL_UQM_WINDOW;
-				addon_unavailable(self, oldval);
-				return false;
-			}
-			break;
-		case OPTVAL_3DO_WINDOW:
-			if (!uqm::isAddonAvailable(THREEDO_MODE(shmagoigle)))
-			{
-				oldval = OPTVAL_UQM_WINDOW;
-				addon_unavailable(self, OPTVAL_UQM_WINDOW);
-				return false;
-			}
-			break;
-		default:
-			break;
-	}
-
-	return true;
-}
-
-static void
-check_availability(WIDGET_CHOICE* self, int oldval)
-{
-	if (self->choice_num == CHOICE_GRAPHICS)
-	{
-		check_for_hd(self, oldval);
-	}
-
-	if (self->choice_num == CHOICE_WINDOWTYPE)
-	{
-		check_dos_3do_modes(self, oldval);
-	}
-}
-
-static void
 rename_template(WIDGET_TEXTENTRY* self)
 {
 	/* TODO: This will have to change if the size of the
@@ -677,282 +589,95 @@ rename_template(WIDGET_TEXTENTRY* self)
 }
 
 
+// Sets the window size and the display flags from the settings.
 static void
-toggle_scanlines(WIDGET_CHOICE* self, uqm::GfxFlags* NewGfxFlags)
+apply_graphics_from_settings(void)
 {
-	if (self->selected == 1)
-	{
-		*NewGfxFlags |= uqm::GfxFlags::Scanlines;
-	}
-	else
-	{
-		*NewGfxFlags &= ~uqm::GfxFlags::Scanlines;
-	}
-	uqm::UQMOptions::edit().scanlines = (self->selected == 1);
-}
+	const uqm::OptionsStruct& options {uqm::UQMOptions::read()};
 
-static void
-change_scaling(WIDGET_CHOICE* self, int* NewWidth, int* NewHeight)
-{
-	if (self->selected < 6)
+	uqm::GfxFlags newFlags {g_gfxFlags & ~(uqm::GfxFlagsScaleAny | uqm::GfxFlags::Fullscreen | uqm::GfxFlags::ExclusiveFullscreen | uqm::GfxFlags::Scanlines | uqm::GfxFlags::ShowFPS)};
+	newFlags |= toGfxFlags(*options.scaler);
+	switch (*options.windowMode)
 	{
-		if (!self->selected)
-		{ // No blowup
-			*NewWidth = RES_SCALE(320);
-			*NewHeight = RES_SCALE(DOS_BOOL(240, 200));
-		}
-		else
-		{
-			*NewWidth = 320 * (1 + self->selected);
-			*NewHeight = DOS_BOOL(240, 200) * (1 + self->selected);
-		}
+		case uqm::WindowMode::Windowed:
+			break;
+		case uqm::WindowMode::WindowedFullscreen:
+			newFlags |= uqm::GfxFlags::Fullscreen;
+			break;
+		case uqm::WindowMode::Fullscreen:
+			newFlags |= uqm::GfxFlags::ExclusiveFullscreen;
+			break;
+	}
+	if (*options.scanlines)
+	{
+		newFlags |= uqm::GfxFlags::Scanlines;
+	}
+	if (*options.showFps)
+	{
+		newFlags |= uqm::GfxFlags::ShowFPS;
 	}
 
-	SavedWidth = inBounds(*NewWidth, 320, 1920);
-	SavedHeight = inBounds(*NewHeight, 200, 1400);
-
-	putOpt(uqm::UQMOptions::edit().loresBlowupScale.value, (int)(self->selected), false);
-	uqm::UQMOptions::edit().resolution = uqm::Vec2u {static_cast<uint32_t>(*NewWidth), static_cast<uint32_t>(*NewHeight)};
-}
-
-static void
-toggle_fullscreen(WIDGET_CHOICE* self, uqm::GfxFlags* NewGfxFlags)
-{
-	if (self->selected == 1)
-	{
-		*NewGfxFlags &= ~uqm::GfxFlags::Fullscreen;
-		*NewGfxFlags |= uqm::GfxFlags::ExclusiveFullscreen;
-	}
-	else if (self->selected == 2)
-	{
-		*NewGfxFlags &= ~uqm::GfxFlags::ExclusiveFullscreen;
-		*NewGfxFlags |= uqm::GfxFlags::Fullscreen;
-	}
-	else
-	{
-		*NewGfxFlags &= ~(uqm::GfxFlags::Fullscreen | uqm::GfxFlags::ExclusiveFullscreen);
-	}
-	uqm::UQMOptions::edit().windowMode = static_cast<uqm::WindowMode>(self->selected);
-}
-
-static void
-change_scaler(WIDGET_CHOICE* self, int OldVal, uqm::GfxFlags* NewGfxFlags)
-{
-	const uqm::ScalingMode oldMode {scaleTypeOptionToScalingMode((OPT_SCALETYPE)OldVal)};
-	const uqm::ScalingMode selectedMode {scaleTypeOptionToScalingMode((OPT_SCALETYPE)self->selected)};
-	*NewGfxFlags &= ~toGfxFlags(oldMode);
-	*NewGfxFlags |= toGfxFlags(selectedMode);
-	uqm::UQMOptions::edit().scaler = selectedMode;
-}
-
-static void
-toggle_showfps(WIDGET_CHOICE* self, uqm::GfxFlags* NewGfxFlags)
-{
-	if (self->selected == 1)
-	{
-		*NewGfxFlags |= uqm::GfxFlags::ShowFPS;
-	}
-	else
-	{
-		*NewGfxFlags &= ~uqm::GfxFlags::ShowFPS;
-	}
-	uqm::UQMOptions::edit().showFps = (self->selected == 1);
-}
-
-static void
-change_gfxdriver(WIDGET_CHOICE* self, uqm::GfxDriver* NewGfxDriver)
-{
-#ifdef HAVE_OPENGL
-	*NewGfxDriver = (self->selected == OPTVAL_ALWAYS_GL ?
-						 uqm::GfxDriver::SDL_OpenGL :
-						 uqm::GfxDriver::SDL_Pure);
-#else
-	*NewGfxDriver = uqm::GfxDriver::SDL_Pure;
+	uqm::GfxDriver newDriver {GraphicsDriver};
+#if SDL_MAJOR_VERSION == 1 && defined(HAVE_OPENGL)
+	newDriver = *options.alwaysOpenGL ? uqm::GfxDriver::SDL_OpenGL : uqm::GfxDriver::SDL_Pure;
 #endif
-	if (GraphicsDriver != *NewGfxDriver)
+
+	const int blowup {*options.loresBlowupScale};
+	if (blowup == 0)
 	{
-		uqm::UQMOptions::edit().alwaysOpenGL = (self->selected == OPTVAL_ALWAYS_GL);
-		uqm::UQMOptions::edit().opengl = (*NewGfxDriver == uqm::GfxDriver::SDL_OpenGL);
+		SavedWidth = RES_SCALE(320);
+		SavedHeight = RES_SCALE(DOS_BOOL(240, 200));
 	}
-}
-
-void process_graphics_options(WIDGET_CHOICE* self, int OldVal)
-{
-	uqm::GfxFlags NewGfxFlags = g_gfxFlags;
-	uqm::GfxDriver NewGfxDriver = GraphicsDriver;
-	int NewWidth = SavedWidth;
-	int NewHeight = SavedHeight;
-	bool isExclusive = false;
-
-	if (OldVal == self->selected)
+	else if (blowup < 6)
 	{
-		return;
+		SavedWidth = 320 * (1 + blowup);
+		SavedHeight = DOS_BOOL(240, 200) * (1 + blowup);
+	}
+	else
+	{
+		SavedWidth = inBounds(static_cast<int>(options.resolution.value.x), 320, 1920);
+		SavedHeight = inBounds(static_cast<int>(options.resolution.value.y), 200, 1440);
 	}
 
-	switch (self->choice_num)
+	int newWidth {SavedWidth};
+	int newHeight {SavedHeight};
+	if (*options.keepAspectRatio)
 	{
-		case CHOICE_FRBUFFER:
-			change_gfxdriver(self, &NewGfxDriver);
-			break;
-		case CHOICE_SCALER:
-			change_scaler(self, OldVal, &NewGfxFlags);
-			break;
-		case CHOICE_SCANLINE:
-			toggle_scanlines(self, &NewGfxFlags);
-			break;
-		case CHOICE_DISPLAY:
-			toggle_fullscreen(self, &NewGfxFlags);
-			break;
-		case CHOICE_SHOWFPS:
-			toggle_showfps(self, &NewGfxFlags);
-			break;
-		case CHOICE_ASPRATIO:
-			uqm::UQMOptions::edit().keepAspectRatio = (bool)self->selected;
-			break;
-		case CHOICE_RESOLUTION:
-			change_scaling(self, &NewWidth, &NewHeight);
-			isExclusive = testFlag(NewGfxFlags, uqm::GfxFlags::ExclusiveFullscreen);
-			break;
-		default:
-			return;
-	}
-
-	if (uqm::UQMOptions::read().keepAspectRatio)
-	{
-		float threshold = 0.75f;
-		float ratio = (float)NewHeight / (float)NewWidth;
-
+		const float threshold {0.75f};
+		const float ratio {(float)newHeight / (float)newWidth};
 		if (ratio > threshold) // screen is narrower than 4:3
 		{
-			NewWidth = NewHeight / threshold;
+			newWidth = newHeight / threshold;
 		}
 		else if (ratio < threshold) // screen is wider than 4:3
 		{
-			NewHeight = NewWidth * threshold;
+			newHeight = newWidth * threshold;
 		}
 	}
 
-	if (NewWidth != WindowWidth || NewHeight != WindowHeight || NewGfxFlags != g_gfxFlags || NewGfxDriver != GraphicsDriver)
+	if (newWidth != WindowWidth || newHeight != WindowHeight || newFlags != g_gfxFlags || newDriver != GraphicsDriver)
 	{
-		if (isExclusive)
+		// Exclusive fullscreen needs a second reinit after a size change.
+		const bool exclusive {testFlag(newFlags, uqm::GfxFlags::ExclusiveFullscreen)};
+		const bool resized {newWidth != WindowWidth || newHeight != WindowHeight};
+		if (exclusive && resized)
 		{
-			NewGfxFlags &= ~uqm::GfxFlags::ExclusiveFullscreen;
+			TFB_DrawScreen_ReinitVideo(newDriver, newFlags & ~uqm::GfxFlags::ExclusiveFullscreen, newWidth, newHeight);
+			FlushInput();
 		}
-
-		TFB_DrawScreen_ReinitVideo(NewGfxDriver, NewGfxFlags,
-								   NewWidth, NewHeight);
+		TFB_DrawScreen_ReinitVideo(newDriver, newFlags, newWidth, newHeight);
 	}
-
 	FlushInput();
-
-	if (isExclusive)
-	{ // needed twice to reinitialize Exclusive Full Screen after a
-		// resolution change
-		g_gfxFlags |= uqm::GfxFlags::ExclusiveFullscreen;
-		TFB_DrawScreen_ReinitVideo(GraphicsDriver, g_gfxFlags,
-								   WindowWidth, WindowHeight);
-	}
-
 	populate_res();
 }
-
-//static bool
-//res_check (int width, int height)
-//{
-//	if (width % 320)
-//		return false;
-//
-//	if (height % DOS_BOOL (240, 200))
-//		return false;
-//
-//	if (width > 1920 || height > 1440)
-//		return false;
-//
-//	return true;
-//}
 
 static void
-change_res(WIDGET_TEXTENTRY* self)
+change_renderer(WIDGET_CHOICE* self, int oldval)
 {
-	int NewWidth = SavedWidth;
-	int NewHeight = SavedHeight;
-	uqm::GfxFlags NewGfxFlags = g_gfxFlags;
-	bool isExclusive = testFlag(NewGfxFlags, uqm::GfxFlags::ExclusiveFullscreen);
-
-	if (const auto result {scn::scan<int, int>(self->value, "{}x{}")})
-	{
-		const auto [w, h] = result->values();
-		NewWidth = w;
-		NewHeight = h;
-	}
-	else
-	{
-		populate_res();
-		return;
-	}
-
-	NewWidth = inBounds(NewWidth, 320, 1920);
-	NewHeight = inBounds(NewHeight, 200, 1440);
-
-	SavedWidth = NewWidth;
-	SavedHeight = NewHeight;
-
-	if (uqm::UQMOptions::read().keepAspectRatio)
-	{
-		float threshold = 0.75f;
-		float ratio = (float)NewHeight / (float)NewWidth;
-
-		if (ratio > threshold) // screen is narrower than 4:3
-		{
-			NewWidth = NewHeight / threshold;
-		}
-		else if (ratio < threshold) // screen is wider than 4:3
-		{
-			NewHeight = NewWidth * threshold;
-		}
-	}
-
-	if (NewWidth != WindowWidth || NewHeight != WindowHeight)
-	{
-		if (isExclusive)
-		{
-			NewGfxFlags &= ~uqm::GfxFlags::ExclusiveFullscreen;
-		}
-
-		TFB_DrawScreen_ReinitVideo(GraphicsDriver, g_gfxFlags,
-								   NewWidth, NewHeight);
-	}
-	else
-	{
-		return;
-	}
-
-	if (NewGfxFlags != g_gfxFlags)
-	{
-		g_gfxFlags = NewGfxFlags;
-	}
-
-	FlushInput();
-
-	if (isExclusive)
-	{ // needed twice to reinitialize Exclusive Full Screen after a
-		// resolution change
-		g_gfxFlags |= uqm::GfxFlags::ExclusiveFullscreen;
-		TFB_DrawScreen_ReinitVideo(GraphicsDriver, g_gfxFlags,
-								   WindowWidth, WindowHeight);
-	}
-
-	/*if (res_check(NewWidth, NewHeight))
-	{
-		choices[CHOICE_RESOLUTION].selected = (NewWidth / 320) - 1;
-	}
-	else
-		choices[CHOICE_RESOLUTION].selected = 6;*/
-
-	populate_res();
-
-	putOpt(uqm::UQMOptions::edit().loresBlowupScale.edit(), (int)(choices[CHOICE_RESOLUTION].selected), false);
-	uqm::UQMOptions::edit().resolution = uqm::Vec2u {static_cast<uint32_t>(SavedWidth), static_cast<uint32_t>(SavedHeight)};
+	uqm::UQMOptions::edit().alwaysOpenGL = (self->selected == OPTVAL_ALWAYS_GL);
+	uqm::UQMOptions::edit().opengl = (self->selected == OPTVAL_ALWAYS_GL);
+	apply_graphics_from_settings();
+	(void)oldval;
 }
 
 #define NUM_STEPS 20
@@ -970,22 +695,13 @@ SetDefaults(void)
 	uint8_t i;
 
 	GetGlobalOptions(&opts);
-	choices[CHOICE_GRAPHICS].selected = opts.screenResolution;
-	choices[CHOICE_FRBUFFER].selected = opts.driver;
-	choices[CHOICE_SCALER].selected = opts.scaler;
-	choices[CHOICE_SCANLINE].selected = opts.scanlines;
-	choices[CHOICE_DISPLAY].selected = opts.fullscreen;
-	choices[CHOICE_SHOWFPS].selected = opts.fps;
 
 	choices[CHOICE_KBLAYOUT].selected = 0;
-	choices[CHOICE_ASPRATIO].selected = opts.keepaspect;
 	//	choices[CHOICE_CHUPGRADES   ].selected = opts.unlockUpgrades;
-	choices[CHOICE_RESOLUTION].selected = opts.loresBlowup;
 #ifdef DIRECTIONAL_JOY
 	choices[CHOICE_JOYSTICK].selected = opts.directionalJoystick;
 #endif
 	choices[CHOICE_LANDERHOLD].selected = static_cast<int>(opts.landerHold);
-	choices[CHOICE_WINDOWTYPE].selected = opts.windowType;
 
 	// Devices
 	for (i = DEVICE_START; i < DEVICE_START
@@ -1002,7 +718,8 @@ SetDefaults(void)
 
 	// Next choice should be choices[CHOICE_SHIPSEED]
 
-	sliders[SLIDER_GAMMA].value = opts.gamma;
+	populate_gamma();
+	menuWidgets->refresh();
 }
 
 static void
@@ -1011,21 +728,12 @@ PropagateResults(void)
 	GLOBALOPTS opts;
 	uint8_t i;
 
-	opts.screenResolution = (OPT_RESTYPE)choices[CHOICE_GRAPHICS].selected;
-	opts.driver = (OPT_DRIVERTYPE)choices[CHOICE_FRBUFFER].selected;
-	opts.scaler = (OPT_SCALETYPE)choices[CHOICE_SCALER].selected;
-	opts.scanlines = (OPT_ENABLABLE)choices[CHOICE_SCANLINE].selected;
-	opts.fullscreen = (OPT_FULLSCREEN)choices[CHOICE_DISPLAY].selected;
-	opts.fps = (OPT_ENABLABLE)choices[CHOICE_SHOWFPS].selected;
 
-	opts.keepaspect = (OPT_ENABLABLE)choices[CHOICE_ASPRATIO].selected;
 	//	opts.unlockUpgrades =   choices[CHOICE_CHUPGRADES   ].selected;
-	opts.loresBlowup = (OPT_RESSCALER)choices[CHOICE_RESOLUTION].selected;
 #ifdef DIRECTIONAL_JOY
 	opts.directionalJoystick = choices[CHOICE_JOYSTICK].selected;
 #endif
 	opts.landerHold = (OPT_CONSOLETYPE)choices[CHOICE_LANDERHOLD].selected;
-	opts.windowType = (OPT_WINDOWTYPE)choices[CHOICE_WINDOWTYPE].selected;
 
 	// Devices
 	for (i = DEVICE_START;
@@ -1039,8 +747,6 @@ PropagateResults(void)
 		opts.upgradeArray[i - UPGRADE_START] = (OPT_ADD_REMOVE)choices[i].selected;
 	}
 
-
-	opts.gamma = sliders[SLIDER_GAMMA].value;
 
 	SetGlobalOptions(&opts);
 }
@@ -1312,7 +1018,27 @@ gamma_HandleEventSlider(WIDGET* _self, int event)
 		// at the highest end
 		self->value = 100;
 	}
+	uqm::UQMOptions::edit().gamma = sliderToGamma(self->value);
 	return true;
+}
+
+static void
+populate_gamma(void)
+{
+	const float gamma {uqm::UQMOptions::read().gamma.value};
+	const bool whichBound {gamma < maxGamma};
+	// The option supplied by the user may be beyond our starting range
+	// but valid nonetheless. We need to account for that.
+	if (gamma <= minGamma)
+	{
+		minGamma = gamma - 0.03f;
+	}
+	else if (gamma >= maxGamma)
+	{
+		maxGamma = gamma + 0.3f;
+	}
+	updateGammaBounds(whichBound);
+	sliders[SLIDER_GAMMA].value = gammaToSlider(gamma);
 }
 
 static void
@@ -1372,7 +1098,6 @@ static FRAME setup_frame = nullptr;
 
 static constexpr const char* c_menuDefinitionResource {"ui.setupmenu"};
 static uqstl::optional<uqm::MenuDefinition> menuDefinition {};
-static uqstl::unique_ptr<uqm::MenuWidgets> menuWidgets {};
 static bool mainMenuMusicChanged {};
 
 // Menus that the setup menu can open. The menu definition file describes the menus with 'defined' set.
@@ -1383,7 +1108,7 @@ static const struct
 	bool defined;
 } menuIds[] = {
 	{"main",	 MENU_QUITSUB,  true },
-	{"graphics", MENU_GRAPHICS, false},
+	{"graphics", MENU_GRAPHICS, true },
 	{"engine",   MENU_ENGINE,	true },
 	{"visual",   MENU_VISUAL,	true },
 	{"audio",	  MENU_AUDIO,	  true },
@@ -1411,6 +1136,10 @@ open_menu(uqstl::string_view id)
 	{
 		choices[CHOICE_KBLAYOUT].selected = 0;
 		populate_editkeys(0);
+	}
+	else if (found->menu == MENU_GRAPHICS)
+	{
+		populate_res();
 	}
 	next = (WIDGET*)(&menus[found->menu]);
 	(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
@@ -1441,6 +1170,16 @@ build_defined_menus(void)
 
 	uqm::MenuWidgets::Hooks hooks {};
 	hooks.isAddonAvailable = [](uqstl::string_view addon) {
+		// The window type addons depend on the selected graphics mode.
+		const bool hd {*uqm::UQMOptions::read().resolutionFactor != 0};
+		if (addon == "dos-mode")
+		{
+			return uqm::isAddonAvailable(DOS_MODE(hd));
+		}
+		if (addon == "3do-mode")
+		{
+			return uqm::isAddonAvailable(THREEDO_MODE(hd));
+		}
 		return uqm::isAddonAvailable(uqstl::string {addon}.c_str());
 	};
 	hooks.addonUnavailable = [] {
@@ -1479,6 +1218,22 @@ build_defined_menus(void)
 			}
 			g_seedType = *options.seedType;
 		}
+		else if (setting.key() == "graphics.loresBlowupScale" || setting.key() == "graphics.resolution")
+		{
+			auto& edit {uqm::UQMOptions::edit()};
+			if (setting.key() == "graphics.resolution")
+			{
+				edit.loresBlowupScale = 6;
+			}
+			apply_graphics_from_settings();
+			edit.resolution = uqm::Vec2u {static_cast<uint32_t>(SavedWidth), static_cast<uint32_t>(SavedHeight)};
+			menuWidgets->refresh();
+		}
+		else if (setting.key() == "graphics.windowMode" || setting.key() == "graphics.scaler" || setting.key() == "graphics.scanlines"
+				 || setting.key() == "graphics.showFps" || setting.key() == "graphics.keepAspectRatio")
+		{
+			apply_graphics_from_settings();
+		}
 		else if (setting.key() == "controls.player1Template")
 		{
 			PlayerControlTemplates[0] = static_cast<ControlTemplate>(*options.player1Control);
@@ -1502,9 +1257,12 @@ build_defined_menus(void)
 	shared.back = (WIDGET*)(&buttons[BTN_QUITSUBMENU]);
 	shared.exit = (WIDGET*)(&buttons[BTN_QUITSETUP]);
 	shared.legacy = {
-		{"windowType",		   (WIDGET*)(&choices[CHOICE_WINDOWTYPE])},
+		{"gamma",				  (WIDGET*)(&sliders[SLIDER_GAMMA])   },
+#if SDL_MAJOR_VERSION == 1 && defined(HAVE_OPENGL)
+		{"renderer",			 (WIDGET*)(&choices[CHOICE_FRBUFFER])},
+#endif
 #ifdef DIRECTIONAL_JOY
-		{"directionalJoystick", (WIDGET*)(&choices[CHOICE_JOYSTICK])	},
+		{"directionalJoystick", (WIDGET*)(&choices[CHOICE_JOYSTICK])},
 #endif
 	};
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
@@ -1691,19 +1449,11 @@ init_widgets(void)
 
 	/* Choice 20 has a special onChange handler, too. */
 	choices[CHOICE_KBLAYOUT].onChange = change_template;
+	choices[CHOICE_FRBUFFER].onChange = change_renderer;
 
 	// Check addon availability for HD mode, DOS/3DO mode, and music remixes
-	choices[CHOICE_GRAPHICS].onChange = check_availability;
-	choices[CHOICE_WINDOWTYPE].onChange = check_availability;
 
 	// Handle display option
-	choices[CHOICE_FRBUFFER].onChange = process_graphics_options;
-	choices[CHOICE_SCALER].onChange = process_graphics_options;
-	choices[CHOICE_SCANLINE].onChange = process_graphics_options;
-	choices[CHOICE_DISPLAY].onChange = process_graphics_options;
-	choices[CHOICE_SHOWFPS].onChange = process_graphics_options;
-	choices[CHOICE_ASPRATIO].onChange = process_graphics_options;
-	choices[CHOICE_RESOLUTION].onChange = process_graphics_options;
 
 	/* Sliders */
 	if (index >= count)
@@ -1959,7 +1709,6 @@ init_widgets(void)
 	}
 
 	textentries[TEXT_LOUTNAME].onChange = rename_template;
-	textentries[TEXT_CUSTMRES].onChange = change_res;
 
 	/* Control Entry boxes */
 	if (index >= count)
@@ -2153,115 +1902,9 @@ void SetupMenu(void)
 
 void GetGlobalOptions(GLOBALOPTS* opts)
 {
-	bool whichBound;
 	uint8_t i;
 
 	uqm::OptionsStruct& uqmOptions {uqm::UQMOptions::edit()};
-
-	/*
- *		Graphics options
- */
-	opts->screenResolution = (OPT_RESTYPE)(resolutionFactor >> 1);
-
-	if (testFlag(g_gfxFlags, uqm::GfxFlags::Fullscreen))
-	{
-		opts->fullscreen = OPTVAL_BORDERED_FULLSCREEN;
-	}
-	else if (testFlag(g_gfxFlags, uqm::GfxFlags::ExclusiveFullscreen))
-	{
-		opts->fullscreen = OPTVAL_EXCLUSIVE_FULLSCREEN;
-	}
-	else
-	{
-		opts->fullscreen = OPTVAL_WINDOWED;
-	}
-	/*opts->fullscreen = (GfxFlags & TFB_GFXFLAGS_FULLSCREEN) ?
-		OPTVAL_ENABLED : OPTVAL_DISABLED;*/
-	opts->fps = testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS) ?
-					OPTVAL_ENABLED :
-					OPTVAL_DISABLED;
-	opts->scanlines = testFlag(g_gfxFlags, uqm::GfxFlags::Scanlines) ?
-						  OPTVAL_ENABLED :
-						  OPTVAL_DISABLED;
-
-	uqm::GfxFlags flags = g_gfxFlags & uqm::GfxFlagsScaleAny;
-
-	switch (flags)
-	{ // this works because there is only 1 scaler flag at a time
-		case uqm::GfxFlags::Scale_Bilinear:
-			opts->scaler = OPTVAL_BILINEAR_SCALE;
-			break;
-		case uqm::GfxFlags::Scale_BiAdapt:
-			opts->scaler = OPTVAL_BIADAPT_SCALE;
-			break;
-		case uqm::GfxFlags::Scale_BiAdaptAdv:
-			opts->scaler = OPTVAL_BIADV_SCALE;
-			break;
-		case uqm::GfxFlags::Scale_Triscan:
-			opts->scaler = OPTVAL_TRISCAN_SCALE;
-			break;
-		case uqm::GfxFlags::Scale_HQXX:
-			opts->scaler = OPTVAL_HQXX_SCALE;
-			break;
-		case uqm::GfxFlags::ExclusiveFullscreen:
-		case uqm::GfxFlags::Fullscreen:
-		case uqm::GfxFlags::Scanlines:
-		case uqm::GfxFlags::ShowFPS:
-		default:
-			opts->scaler = OPTVAL_NO_SCALE;
-			break;
-	}
-
-	opts->keepaspect = uqmOptions.keepAspectRatio.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-
-	{
-		float gamma = uqmOptions.gamma.value;
-		whichBound = (gamma < maxGamma);
-		// The option supplied by the user may be beyond our starting range
-		// but valid nonetheless. We need to account for that.
-		if (gamma <= minGamma)
-		{
-			minGamma = gamma - 0.03f;
-		}
-		else if (gamma >= maxGamma)
-		{
-			maxGamma = gamma + 0.3f;
-		}
-		updateGammaBounds(whichBound);
-		opts->gamma = gammaToSlider(gamma);
-	}
-
-
-	opts->loresBlowup = (OPT_RESSCALER)uqmOptions.loresBlowupScale.value;
-	/* Work out resolution.  On the way, try to guess a good default
-	 * for config.alwaysgl, then overwrite it if it was set previously. */
-	if ((!IS_HD && (GraphicsDriver != uqm::GfxDriver::SDL_Pure) && ((WindowWidth == 320) || (WindowWidth == 640))) || uqmOptions.alwaysOpenGL)
-	{
-		opts->driver = OPTVAL_ALWAYS_GL;
-	}
-	else
-	{
-		opts->driver = OPTVAL_PURE_IF_POSSIBLE;
-	}
-
-	opts->windowType = (OPT_WINDOWTYPE)optWindowType;
-	switch (opts->windowType)
-	{
-		case OPTVAL_PC_WINDOW:
-			if (!uqm::isAddonAvailable(DOS_MODE(IS_HD)))
-			{
-				opts->windowType = OPTVAL_UQM_WINDOW;
-			}
-			break;
-		case OPTVAL_3DO_WINDOW:
-			if (!uqm::isAddonAvailable(THREEDO_MODE(IS_HD)))
-			{
-				opts->windowType = OPTVAL_UQM_WINDOW;
-			}
-			break;
-		default:
-			break;
-	}
 
 	/*
  *		Audio options
@@ -2306,8 +1949,6 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 
 void SetGlobalOptions(GLOBALOPTS* opts)
 {
-	int resFactor = resolutionFactor;
-	int newFactor;
 	uint8_t i;
 
 	auto& uqmOptions {uqm::UQMOptions::edit()};
@@ -2315,50 +1956,24 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 	/*
  *		Graphics options
  */
-
-	newFactor = (int)(opts->screenResolution << 1);
-	putOpt(resFactor, newFactor, true);
-	uqmOptions.resolutionFactor = resFactor;
-
-	if (resFactor != (int)resolutionFactor)
+	const int factor {uqm::isAddonAvailable(HD_MODE) ? *uqmOptions.resolutionFactor : 0};
+	if (factor != (int)resolutionFactor)
 	{
 		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
-		resolutionFactor = resFactor;
-
-		switch (opts->windowType)
-		{
-			case OPTVAL_PC_WINDOW:
-				if (!uqm::isAddonAvailable(DOS_MODE(resolutionFactor)))
-				{
-					opts->windowType = OPTVAL_UQM_WINDOW;
-				}
-				break;
-			case OPTVAL_3DO_WINDOW:
-				if (!uqm::isAddonAvailable(THREEDO_MODE(resolutionFactor)))
-				{
-					opts->windowType = OPTVAL_UQM_WINDOW;
-				}
-				break;
-			default:
-				break;
-		}
+		resolutionFactor = factor;
 	}
 
-	if (optWindowType != opts->windowType)
+	uint32_t windowType {static_cast<uint32_t>(*uqmOptions.windowEmulationMode)};
+	if (windowType < OPTVAL_UQM_WINDOW && !uqm::isAddonAvailable(WINDOW_MODE(resolutionFactor, windowType)))
 	{
-		putOpt((int&)optWindowType, (int)opts->windowType, true);
-		uqmOptions.windowEmulationMode = (int)optWindowType;
+		windowType = OPTVAL_UQM_WINDOW;
+		uqmOptions.windowEmulationMode = static_cast<int>(windowType);
 	}
-
-	putOpt(uqmOptions.keepAspectRatio.value, (bool)opts->keepaspect, false);
-
-	// Avoid setting gamma when it is not necessary
-	if (uqmOptions.gamma.value != 1.0f || sliderToGamma(opts->gamma) != 1.0f)
+	if (optWindowType != windowType)
 	{
-		uqmOptions.gamma = sliderToGamma(opts->gamma);
-		uqm::setGammaCorrection(uqmOptions.gamma.value);
+		optWindowType = windowType;
+		optRequiresReload = true;
 	}
-
 
 	/*
  *		Audio options
@@ -2447,7 +2062,7 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 		CanvasWidth = 320 << resolutionFactor;
 		CanvasHeight = DOS_BOOL(240, 200) << resolutionFactor;
 
-		if (choices[CHOICE_RESOLUTION].selected != 6)
+		if (*uqmOptions.loresBlowupScale < 6)
 		{
 			h = DOS_BOOL(240, 200) * (uqmOptions.loresBlowupScale.value + 1);
 			SavedHeight = h;
