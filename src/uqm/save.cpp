@@ -1662,6 +1662,11 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 		// Save out the Star Descriptor
 		SaveStarDesc(&SD, *out_fp);
 
+		out_fp->close();
+		if (out_fp->error())
+		{
+			io_ok = false;
+		}
 		out_fp.reset();
 		if (!io_ok)
 		{

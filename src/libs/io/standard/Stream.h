@@ -32,6 +32,8 @@ public:
 	[[nodiscard]] virtual uint64_t tell() const = 0;
 	[[nodiscard]] virtual uint64_t size() = 0;
 	virtual bool flush(uqstl::error_code& error);
+	// True if reads translate line ends.
+	[[nodiscard]] virtual bool translatesLineEnds() const { return false; }
 };
 
 inline size_t Stream::write(uqstl::span<const uqstl::byte> /*buffer*/, uqstl::error_code& error)

@@ -41,7 +41,7 @@ size_t File::read(uqstl::span<uqstl::byte> buffer)
 			m_bufferPos += count;
 			done += count;
 		}
-		else if (rest.size() >= c_bufferSize)
+		else if (rest.size() >= c_bufferSize || m_stream->translatesLineEnds())
 		{
 			const size_t count {m_stream->read(rest, m_error)};
 			done += count;
@@ -201,8 +201,10 @@ bool File::fillReadBuffer()
 	{
 		m_buffer.resize(c_bufferSize);
 	}
+	// Read streams that translate line ends one byte at a time.
+	const size_t readSize {m_stream->translatesLineEnds() ? 1 : m_buffer.size()};
 	m_bufferPos = 0;
-	m_bufferEnd = m_stream->read(m_buffer, m_error);
+	m_bufferEnd = m_stream->read(uqstl::span {m_buffer}.first(readSize), m_error);
 	return m_bufferEnd > 0;
 }
 

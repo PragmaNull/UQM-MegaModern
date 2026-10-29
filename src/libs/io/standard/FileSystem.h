@@ -97,7 +97,7 @@ public:
 	[[nodiscard]] uqstl::optional<Mount> mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error);
 
 private:
-	uqstl::shared_ptr<MountTable> m_table;
+	uqstl::shared_ptr<MountTable> m_table {};
 };
 
 } // namespace uqm::io::standard

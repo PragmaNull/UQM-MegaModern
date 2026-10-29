@@ -304,14 +304,14 @@ uqstl::error_code MountTable::makeDir(const uqstl::string& path) const
 uqstl::error_code MountTable::remove(const uqstl::string& path) const
 {
 	const uqstl::shared_lock lock {m_mutex};
-	bool removed {false};
+	uqstl::vector<uqstl::pair<const MountEntry*, uqstl::string>> copies {};
 	for (const MountEntry& mount : m_mounts)
 	{
 		if (!path::isWithin(path, mount.mountPoint))
 		{
 			continue;
 		}
-		const uqstl::string sourcePath {path::join(mount.sourcePath, path::relativeTo(path, mount.mountPoint))};
+		uqstl::string sourcePath {path::join(mount.sourcePath, path::relativeTo(path, mount.mountPoint))};
 		if (!mount.source->stat(sourcePath))
 		{
 			continue;
@@ -320,13 +320,20 @@ uqstl::error_code MountTable::remove(const uqstl::string& path) const
 		{
 			return uqstl::make_error_code(uqstl::errc::permission_denied);
 		}
-		if (const uqstl::error_code error {mount.source->remove(sourcePath)})
+		copies.emplace_back(&mount, uqstl::move(sourcePath));
+	}
+	if (copies.empty())
+	{
+		return uqstl::make_error_code(uqstl::errc::no_such_file_or_directory);
+	}
+	for (const auto& [mount, sourcePath] : copies)
+	{
+		if (const uqstl::error_code error {mount->source->remove(sourcePath)})
 		{
 			return error;
 		}
-		removed = true;
 	}
-	return removed ? uqstl::error_code {} : uqstl::make_error_code(uqstl::errc::no_such_file_or_directory);
+	return {};
 }
 
 uqstl::error_code MountTable::rename(const uqstl::string& from, const uqstl::string& to) const

@@ -327,6 +327,79 @@ TEST_F(IoTest, DestroyingAMountUnmountsIt)
 	EXPECT_FALSE(m_fileSystem.root().exists("a.txt"));
 }
 
+TEST_F(IoTest, RemoveChangesNothingWhenACopyIsReadOnly)
+{
+	const fs::path lower {hostDir("lower")};
+	const fs::path upper {hostDir("upper")};
+	writeHostFile(lower / "a.txt", "lower");
+	writeHostFile(upper / "a.txt", "upper");
+	const Mount lowerMount {mount("/", lower, Access::ReadOnly)};
+	const Mount upperMount {mount("/", upper, Access::ReadWrite)};
+
+	EXPECT_EQ(m_fileSystem.root().remove("a.txt"), uqstl::errc::permission_denied);
+	EXPECT_TRUE(fs::exists(upper / "a.txt"));
+	EXPECT_EQ(readText(m_fileSystem.root(), "a.txt"), "upper");
+}
+
+TEST_F(IoTest, RenameDoesNotReplaceAFileAndRemoveKeepsDirectories)
+{
+	const fs::path host {hostDir("rw")};
+	writeHostFile(host / "a.txt", "a");
+	writeHostFile(host / "b.txt", "b");
+	fs::create_directories(host / "dir");
+	const Mount rw {mount("/", host, Access::ReadWrite)};
+	const Directory root {m_fileSystem.root()};
+
+	EXPECT_EQ(root.rename("a.txt", root, "b.txt"), uqstl::errc::file_exists);
+	EXPECT_EQ(readHostFile(host / "b.txt"), "b");
+	EXPECT_EQ(root.remove("dir"), uqstl::errc::is_a_directory);
+	EXPECT_TRUE(fs::is_directory(host / "dir"));
+}
+
+TEST_F(IoTest, AppendModes)
+{
+	const fs::path host {hostDir("rw")};
+	writeHostFile(host / "old.txt", "abc");
+	const Mount rw {mount("/", host, Access::ReadWrite)};
+	const Directory root {m_fileSystem.root()};
+	uqstl::error_code error {};
+
+	{
+		uqstl::optional<File> file {root.open("new.txt", OpenMode::Read | OpenMode::Write | OpenMode::Create | OpenMode::Append, error)};
+		ASSERT_TRUE(file.has_value()) << error.message();
+		writeText(*file, "x");
+	}
+	EXPECT_EQ(readHostFile(host / "new.txt"), "x");
+	{
+		uqstl::optional<File> file {root.open("old.txt", OpenMode::Write | OpenMode::Append, error)};
+		ASSERT_TRUE(file.has_value()) << error.message();
+		writeText(*file, "d");
+	}
+	EXPECT_EQ(readHostFile(host / "old.txt"), "abcd");
+	{
+		uqstl::optional<File> file {root.open("old.txt", OpenMode::Write | OpenMode::Append | OpenMode::Truncate, error)};
+		ASSERT_TRUE(file.has_value()) << error.message();
+		writeText(*file, "e");
+	}
+	EXPECT_EQ(readHostFile(host / "old.txt"), "e");
+}
+
+TEST_F(IoTest, TextModeTellIsTheFilePosition)
+{
+	const fs::path host {hostDir("rw")};
+	writeHostFile(host / "lines.txt", "a\r\nb\r\n");
+	const Mount rw {mount("/", host, Access::ReadOnly)};
+
+	uqstl::error_code error {};
+	uqstl::optional<File> file {m_fileSystem.root().open("lines.txt", OpenMode::Read | OpenMode::Text, error)};
+	ASSERT_TRUE(file.has_value()) << error.message();
+	uqstl::array<char, 16> line {};
+	ASSERT_TRUE(file->readLine(line));
+	EXPECT_EQ(file->tell(), 3u);
+	ASSERT_TRUE(file->seek(0, SeekFrom::Current));
+	EXPECT_EQ(file->getChar(), 'b');
+}
+
 TEST_F(IoTest, HandlesCanOutliveTheFileSystem)
 {
 	const fs::path host {hostDir("rw")};

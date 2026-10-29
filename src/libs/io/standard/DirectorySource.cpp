@@ -16,6 +16,13 @@ namespace fs = uqstl::filesystem;
 class DiskStream final : public Stream
 {
 public:
+	explicit DiskStream(bool text)
+		: m_text {text}
+	{
+	}
+
+	[[nodiscard]] bool translatesLineEnds() const override { return m_text; }
+
 	bool open(const fs::path& path, uqstl::ios_base::openmode mode, uqstl::error_code& error)
 	{
 		errno = 0;
@@ -81,6 +88,7 @@ public:
 private:
 	// Seeking does not change the file, so const functions can seek.
 	mutable uqstl::filebuf m_buffer {};
+	bool m_text {false};
 };
 
 int64_t toUnixTime(fs::file_time_type time)
@@ -104,7 +112,9 @@ uqstl::ios_base::openmode openFlags(OpenMode mode, bool exists)
 	flags |= uqstl::ios_base::out;
 	if (testAllBits(mode, OpenMode::Append))
 	{
+		// open() empties an existing file first if the mode has Truncate.
 		flags |= uqstl::ios_base::app;
+		return testAllBits(mode, OpenMode::Read) ? flags | uqstl::ios_base::in : flags;
 	}
 	if (testAllBits(mode, OpenMode::Truncate) || !exists)
 	{
@@ -211,7 +221,16 @@ uqstl::unique_ptr<Stream> DirectorySource::open(uqstl::string_view path, OpenMod
 		return nullptr;
 	}
 
-	auto stream {uqstl::make_unique<DiskStream>()};
+	if (exists && testAllBits(mode, OpenMode::Write | OpenMode::Append | OpenMode::Truncate))
+	{
+		fs::resize_file(host, 0, error);
+		if (error)
+		{
+			return nullptr;
+		}
+	}
+
+	auto stream {uqstl::make_unique<DiskStream>(testAllBits(mode, OpenMode::Text))};
 	if (!stream->open(host, openFlags(mode, exists), error))
 	{
 		return nullptr;
@@ -232,6 +251,11 @@ uqstl::error_code DirectorySource::makeDir(uqstl::string_view path) const
 uqstl::error_code DirectorySource::remove(uqstl::string_view path) const
 {
 	uqstl::error_code error {};
+	if (fs::is_directory(hostPath(path), error))
+	{
+		return uqstl::make_error_code(uqstl::errc::is_a_directory);
+	}
+	error.clear();
 	if (!fs::remove(hostPath(path), error) && !error)
 	{
 		error = uqstl::make_error_code(uqstl::errc::no_such_file_or_directory);
@@ -242,6 +266,11 @@ uqstl::error_code DirectorySource::remove(uqstl::string_view path) const
 uqstl::error_code DirectorySource::rename(uqstl::string_view from, uqstl::string_view to) const
 {
 	uqstl::error_code error {};
+	if (fs::exists(hostPath(to), error))
+	{
+		return uqstl::make_error_code(uqstl::errc::file_exists);
+	}
+	error.clear();
 	fs::rename(hostPath(from), hostPath(to), error);
 	return error;
 }

@@ -25,7 +25,10 @@ LoadDirEntryTable(const uqm::io::Directory& dir, const char* path, const uqm::io
 {
 	uqstl::error_code error {};
 	const uqstl::optional<uqm::io::Directory> subdir {dir.subdir(path)};
-	assert(subdir.has_value());
+	if (!subdir)
+	{
+		return ((DIRENTRY_REF)0);
+	}
 	uqstl::vector<uqstl::string> names {subdir->list("", matcher, error)};
 	uqstl::erase_if(names, [&subdir](const uqstl::string& name) {
 		if (name.starts_with('.'))

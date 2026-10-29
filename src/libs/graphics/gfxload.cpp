@@ -431,6 +431,10 @@ void* _GetFontData(uqm::io::File* fp, uint32_t length)
 		{
 			uqstl::error_code error {};
 			fontMount = g_fileSystem->mountArchive(_cur_resfile_name, *fontParent, fontZipName, uqm::io::MountPosition::Top, nullptr, error);
+			if (!fontMount)
+			{
+				uqm::log::warn("Could not mount font archive '{}': {}", _cur_resfile_name, error.message());
+			}
 		}
 	}
 
