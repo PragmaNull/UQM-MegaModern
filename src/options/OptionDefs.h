@@ -2,7 +2,7 @@
 #ifndef OPTIONS_OPTIONDEFS_H_
 #define OPTIONS_OPTIONDEFS_H_
 
-#include "libs/graphics/gfx_defs.h" // for GfxFlags
+#include "libs/graphics/gfx_defs.h"	  // for GfxFlags
 #include "libs/sound/audiocoredefs.h" // for AudioFlags.
 namespace uqm
 {
@@ -180,10 +180,10 @@ ENUM_BITWISE_OPS(GodModeFlags);
 // it makes sense, I usppose.
 enum class DateFormat
 {
-	MMM_dd_yyyy,	//MMM dd.yyyy ie: Mar 01.2500
-	MM_dd_yyyy,		//MM.dd.yyyy  ie: 03.01.2500
-	dd_MMM_yyyy,	//dd MMM yyyy ie: 01 Mar 2500
-	dd_MM_yyyy		//dd.MM.yyyy  ie: 01.03.2500
+	MMM_dd_yyyy, //MMM dd.yyyy ie: Mar 01.2500
+	MM_dd_yyyy,	 //MM.dd.yyyy  ie: 03.01.2500
+	dd_MMM_yyyy, //dd MMM yyyy ie: 01 Mar 2500
+	dd_MM_yyyy	 //dd.MM.yyyy  ie: 01.03.2500
 };
 static constexpr const char* toStringImpl(const DateFormat fmt)
 {
@@ -249,12 +249,33 @@ enum class NomadMode : uint8_t
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+enum class CoarseScanStyle
+{
+	Text,
+	Pictograms,
+	P6014Text,
+	P6014Pictograms,
+};
+
+[[nodiscard]] constexpr bool usesPictograms(CoarseScanStyle style) noexcept
+{
+	return style == CoarseScanStyle::Pictograms || style == CoarseScanStyle::P6014Pictograms;
+}
+
+// All styles except Text use the alternative scan title colors.
+[[nodiscard]] constexpr bool usesAltScanColors(CoarseScanStyle style) noexcept
+{
+	return style != CoarseScanStyle::Text;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 enum class ControllerType
 {
 	KeyboardMouse,
 	XBox,
 	Playstation,
-};	
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

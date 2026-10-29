@@ -1025,7 +1025,6 @@ SetDefaults(void)
 	choices[CHOICE_FRBUFFER].selected = opts.driver;
 	choices[CHOICE_SCALER].selected = opts.scaler;
 	choices[CHOICE_SCANLINE].selected = opts.scanlines;
-	choices[CHOICE_SCANMENU].selected = static_cast<int>(opts.cscan);
 	choices[CHOICE_DISPLAY].selected = opts.fullscreen;
 	choices[CHOICE_SHOWFPS].selected = opts.fps;
 
@@ -1077,7 +1076,6 @@ PropagateResults(void)
 	opts.driver = (OPT_DRIVERTYPE)choices[CHOICE_FRBUFFER].selected;
 	opts.scaler = (OPT_SCALETYPE)choices[CHOICE_SCALER].selected;
 	opts.scanlines = (OPT_ENABLABLE)choices[CHOICE_SCANLINE].selected;
-	opts.cscan = (OPT_CONSOLETYPE)choices[CHOICE_SCANMENU].selected;
 	opts.fullscreen = (OPT_FULLSCREEN)choices[CHOICE_DISPLAY].selected;
 	opts.fps = (OPT_ENABLABLE)choices[CHOICE_SHOWFPS].selected;
 
@@ -1528,7 +1526,6 @@ build_defined_menus(void)
 #else
 		{"meleeZoom", (WIDGET*)(&choices[CHOICE_MELEEZOOM])},
 #endif
-		{"coarseScan",   (WIDGET*)(&choices[CHOICE_SCANMENU])  },
 		{"seedType",	 (WIDGET*)(&choices[CHOICE_GAMESEED])	 },
 		{"customSeed",   (WIDGET*)(&textentries[TEXT_GAMESEED])},
 		{"devicesMenu",	(WIDGET*)(&buttons[BTN_DEVMENU])		},
@@ -2315,7 +2312,6 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 
 	// Orbit
 	opts->landerHold = whichPlatformOpt(uqmOptions.landerHold.value);
-	opts->cscan = whichPlatformOpt(uqmOptions.whichCoarseScan.value);
 
 	// Game modes
 	opts->seedType = (OPT_SEED)g_seedType;
@@ -2459,7 +2455,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 
 	// Orbit
 	putOpt(uqmOptions.landerHold.value, opts->landerHold, false);
-	putOpt(uqmOptions.whichCoarseScan.value, opts->cscan, false);
 
 	// Game modes
 	{

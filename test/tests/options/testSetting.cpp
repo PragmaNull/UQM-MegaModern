@@ -289,6 +289,21 @@ TEST(SettingTest, ChecksTextWithoutChangingValue)
 	EXPECT_FALSE(settings.color.hasValueText("Blue"));
 }
 
+TEST(OptionsSettingsTest, CoarseScanStyles)
+{
+	EXPECT_FALSE(usesPictograms(CoarseScanStyle::Text));
+	EXPECT_TRUE(usesPictograms(CoarseScanStyle::Pictograms));
+	EXPECT_FALSE(usesPictograms(CoarseScanStyle::P6014Text));
+	EXPECT_TRUE(usesPictograms(CoarseScanStyle::P6014Pictograms));
+
+	EXPECT_FALSE(usesAltScanColors(CoarseScanStyle::Text));
+	EXPECT_TRUE(usesAltScanColors(CoarseScanStyle::Pictograms));
+	EXPECT_TRUE(usesAltScanColors(CoarseScanStyle::P6014Text));
+
+	OptionsStruct options {};
+	EXPECT_EQ(options.whichCoarseScan.valueNames(), (uqstl::vector<uqstl::string> {"Text", "Pictograms", "P6014Text", "P6014Pictograms"}));
+}
+
 TEST(OptionsSettingsTest, ReloadAndRestartFlags)
 {
 	const OptionsStruct options {};

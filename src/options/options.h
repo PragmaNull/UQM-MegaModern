@@ -125,12 +125,12 @@ struct OptionsStruct : SettingsRegistry
 	 };
 	Setting<AudioDriverType> soundDriver {
 		*this, {.key = "audio.driver", .description = "Backend used for audio output (MixSDL, OpenAL, or silence).", .cli = "--sound,--sounddriver", .requiresRestart = true},
-		  AudioDriverType::MixSDL
-	 };
+		   AudioDriverType::MixSDL
+	  };
 	Setting<AudioQuality> soundQuality {
 		*this, {.key = "audio.quality", .description = "Resampling quality level for the audio mixer.", .cli = "-q,--audioquality", .requiresRestart = true},
-		 AudioQuality::High
-	   };
+		  AudioQuality::High
+	};
 	Setting<bool> use3doMusic {
 		*this, {.key = "audio.music3do", .description = "Play the 3DO remixed music tracks instead of the PC MIDI/MOD originals.", .requiresReload = true},
 			true
@@ -143,10 +143,10 @@ struct OptionsStruct : SettingsRegistry
 		*this, {.key = "audio.speech", .description = "Enable voiced dialogue during alien conversations.", .requiresReload = true},
 		 true
 	 };
-	Setting<EmulationMode> whichCoarseScan {
-		*this, {.key = "visuals.coarseScanStyle", .description = "Coarse-scan display, PC=text, 3DO=hieroglyphs.", .cli = "--cscan"},
-		  EmulationMode::PC
-	   };
+	Setting<CoarseScanStyle> whichCoarseScan {
+		*this, {.key = "visuals.coarseScanStyle", .description = "Coarse-scan display: text or pictograms, in the original or the P6014 style.", .cli = "--cscan"},
+			CoarseScanStyle::Text
+	 };
 	Setting<EmulationMode> whichMenu {
 		*this, {.key = "interface.menuStyle", .description = "Menu type, PC=text, 3DO=graphical.", .cli = "--menu"},
 		 uqm::EmulationMode::PC
