@@ -54,18 +54,6 @@ namespace
 // The widget callbacks get only the widget, so the bindings are found by widget address.
 uqstl::map<const void*, void*> s_bindings {};
 
-int selectedOption(const SettingBase& setting, const MenuItemDef& item)
-{
-	for (size_t index = 0; index < item.options.size(); ++index)
-	{
-		if (setting.hasValueText(item.options[index].value))
-		{
-			return static_cast<int>(index);
-		}
-	}
-	return 0;
-}
-
 void showText(WIDGET_TEXTENTRY& widget, const SettingBase& setting)
 {
 	const uqstl::string text {setting.valueText()};
@@ -116,6 +104,10 @@ WIDGET** MenuWidgets::build(const MenuDef& menu)
 	auto& list {*m_lists.emplace_back(uqstl::make_unique<uqstl::vector<WIDGET*>>())};
 	for (const MenuItemDef& item : menu.items)
 	{
+		if (!isAvailable(item))
+		{
+			continue;
+		}
 		WIDGET* widget {};
 		switch (item.kind)
 		{
@@ -132,14 +124,7 @@ WIDGET** MenuWidgets::build(const MenuDef& menu)
 				widget = buildMenuButton(item);
 				break;
 			case MenuItemKind::Legacy:
-				if (const auto found {m_shared.legacy.find(item.widget)}; found != m_shared.legacy.end())
-				{
-					widget = found->second;
-				}
-				else if (!item.optional)
-				{
-					uqm::log::error("Menu '{}': unknown widget '{}'.", menu.id, item.widget);
-				}
+				widget = buildLegacy(menu, item);
 				break;
 			case MenuItemKind::Heading:
 				widget = buildHeading(item);
@@ -163,12 +148,96 @@ WIDGET** MenuWidgets::build(const MenuDef& menu)
 	return list.data();
 }
 
+bool MenuWidgets::isAvailable(const MenuItemDef& item) const
+{
+	if (item.requiresAddon.empty() || !m_hooks.isAddonAvailable)
+	{
+		return true;
+	}
+	return uqstl::any_of(item.requiresAddon.begin(), item.requiresAddon.end(), [this](const uqstl::string& addon) {
+		return m_hooks.isAddonAvailable(addon);
+	});
+}
+
+int MenuWidgets::selectedOption(const BoundChoice& choice) const
+{
+	const MenuItemDef& item {choice.item};
+	if (choice.setting == nullptr)
+	{
+		const int value {m_hooks.getState(item.state).value_or(0)};
+		return value >= 0 && value < static_cast<int>(item.options.size()) ? value : 0;
+	}
+	for (size_t index = 0; index < item.options.size(); ++index)
+	{
+		if (choice.setting->hasValueText(item.options[index].value))
+		{
+			return static_cast<int>(index);
+		}
+	}
+	return 0;
+}
+
+WIDGET* MenuWidgets::buildLegacy(const MenuDef& menu, const MenuItemDef& item)
+{
+	const auto found {m_shared.legacy.find(item.widget)};
+	if (found == m_shared.legacy.end())
+	{
+		if (!item.optional)
+		{
+			uqm::log::error("Menu '{}': unknown widget '{}'.", menu.id, item.widget);
+		}
+		return nullptr;
+	}
+
+	WIDGET* widget {found->second};
+	if (item.label.empty())
+	{
+		return widget;
+	}
+	const MenuItemDef& stored {*m_legacyItems.emplace_back(uqstl::make_unique<MenuItemDef>(item))};
+	const char* label {stored.label.c_str()};
+	switch (widget->tag)
+	{
+		case WIDGET_TYPE_CHOICE:
+			reinterpret_cast<WIDGET_CHOICE*>(widget)->category = label;
+			break;
+		case WIDGET_TYPE_SLIDER:
+			reinterpret_cast<WIDGET_SLIDER*>(widget)->category = label;
+			fillTooltip(reinterpret_cast<WIDGET_SLIDER*>(widget)->tooltip, stored.tooltip);
+			break;
+		case WIDGET_TYPE_TEXTENTRY:
+			reinterpret_cast<WIDGET_TEXTENTRY*>(widget)->category = label;
+			fillTooltip(reinterpret_cast<WIDGET_TEXTENTRY*>(widget)->tooltip, stored.tooltip);
+			break;
+		case WIDGET_TYPE_CONTROLENTRY:
+			reinterpret_cast<WIDGET_CONTROLENTRY*>(widget)->category = label;
+			break;
+		case WIDGET_TYPE_BUTTON:
+			reinterpret_cast<WIDGET_BUTTON*>(widget)->name = label;
+			fillTooltip(reinterpret_cast<WIDGET_BUTTON*>(widget)->tooltip, stored.tooltip);
+			break;
+		default:
+			uqm::log::error("Menu '{}': widget '{}' has no label.", menu.id, item.widget);
+			break;
+	}
+	return widget;
+}
+
 WIDGET* MenuWidgets::buildChoice(const MenuDef& menu, const MenuItemDef& item)
 {
-	SettingBase* setting {m_settings.find(item.setting)};
-	if (setting == nullptr)
+	SettingBase* setting {};
+	if (item.state.empty())
 	{
-		uqm::log::error("Menu '{}': unknown setting '{}'.", menu.id, item.setting);
+		setting = m_settings.find(item.setting);
+		if (setting == nullptr)
+		{
+			uqm::log::error("Menu '{}': unknown setting '{}'.", menu.id, item.setting);
+			return nullptr;
+		}
+	}
+	else if (!m_hooks.getState || !m_hooks.getState(item.state))
+	{
+		uqm::log::error("Menu '{}': unknown state '{}'.", menu.id, item.state);
 		return nullptr;
 	}
 
@@ -191,7 +260,7 @@ WIDGET* MenuWidgets::buildChoice(const MenuDef& menu, const MenuItemDef& item)
 		choice.options.push_back(widgetOption);
 	}
 
-	const int selected {selectedOption(*setting, choice.item)};
+	const int selected {selectedOption(choice)};
 
 	WIDGET_CHOICE& widget {choice.widget};
 	widget.tag = WIDGET_TYPE_CHOICE;
@@ -304,7 +373,7 @@ void MenuWidgets::refresh()
 {
 	for (const auto& choice : m_choices)
 	{
-		choice->widget.selected = selectedOption(*choice->setting, choice->item);
+		choice->widget.selected = selectedOption(*choice);
 		choice->widget.highlighted = choice->widget.selected;
 	}
 	for (const auto& slider : m_sliders)
@@ -384,6 +453,14 @@ void MenuWidgets::onChoiceChanged(WIDGET_CHOICE* self, int oldValue)
 		}
 	}
 
+	if (choice.setting == nullptr)
+	{
+		if (hooks.setState)
+		{
+			hooks.setState(choice.item.state, self->selected);
+		}
+		return;
+	}
 	choice.owner->applyChange(*choice.setting, option.value);
 }
 

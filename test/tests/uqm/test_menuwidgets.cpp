@@ -374,6 +374,84 @@ TEST_F(MenuWidgetsTest, LegacyItemsUseTheGivenWidget)
 	EXPECT_EQ(list[2], nullptr);
 }
 
+TEST_F(MenuWidgetsTest, LegacyItemsGetTheirText)
+{
+	const auto legacyMenu {menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [
+		{"legacy": "gamma", "label": "Gamma", "tooltip": ["Sets the gamma."]}, {"legacy": "up", "label": "Up"}
+	]}]})")};
+	ASSERT_TRUE(legacyMenu.has_value());
+
+	WIDGET_SLIDER gamma {};
+	gamma.tag = WIDGET_TYPE_SLIDER;
+	WIDGET_CONTROLENTRY up {};
+	up.tag = WIDGET_TYPE_CONTROLENTRY;
+	MenuWidgets::SharedWidgets shared {&spacer, &back};
+	shared.legacy["gamma"] = reinterpret_cast<WIDGET*>(&gamma);
+	shared.legacy["up"] = reinterpret_cast<WIDGET*>(&up);
+	MenuWidgets builder {options, shared, {}};
+	builder.build(legacyMenu->menus[0]);
+	EXPECT_STREQ(gamma.category, "Gamma");
+	EXPECT_STREQ(gamma.tooltip[0], "Sets the gamma.");
+	EXPECT_STREQ(gamma.tooltip[1], "");
+	EXPECT_STREQ(up.category, "Up");
+}
+
+TEST_F(MenuWidgetsTest, StateChoiceUsesTheStateHooks)
+{
+	const auto stateMenu {menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [
+		{"state": "device.0", "label": "Portal Spawner", "options": [{"label": "Do Nothing"}, {"label": "Remove"}, {"label": "Add"}]},
+		{"state": "missing", "label": "Missing", "options": [{"label": "x"}]}
+	]}]})")};
+	ASSERT_TRUE(stateMenu.has_value());
+
+	int device {2};
+	uqstl::vector<int> stored {};
+	MenuWidgets::Hooks hooks {};
+	hooks.getState = [&device](uqstl::string_view key) -> uqstl::optional<int> {
+		return key == "device.0" ? uqstl::optional<int> {device} : uqstl::nullopt;
+	};
+	hooks.setState = [&](uqstl::string_view key, int value) {
+		EXPECT_EQ(key, "device.0");
+		stored.push_back(value);
+		device = value;
+	};
+	MenuWidgets builder {
+		options, MenuWidgets::SharedWidgets {&spacer, &back},
+		  uqstl::move(hooks)
+	};
+	WIDGET** list {builder.build(stateMenu->menus[0])};
+	ASSERT_EQ(list[1], nullptr);
+	WIDGET_CHOICE& widget {choice(list, 0)};
+	EXPECT_EQ(widget.selected, 2);
+
+	select(widget, 1);
+	EXPECT_EQ(stored, (uqstl::vector<int> {1}));
+
+	device = 0;
+	builder.refresh();
+	EXPECT_EQ(widget.selected, 0);
+}
+
+TEST_F(MenuWidgetsTest, ItemsNeedTheirAddons)
+{
+	const auto addonMenu {menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [
+		{"spacer": true, "requiresAddon": ["missing"]}, {"back": true, "requiresAddon": ["present", "missing"]}
+	]}]})")};
+	ASSERT_TRUE(addonMenu.has_value());
+
+	MenuWidgets::Hooks hooks {};
+	hooks.isAddonAvailable = [](uqstl::string_view addon) {
+		return addon == "present";
+	};
+	MenuWidgets builder {
+		options, MenuWidgets::SharedWidgets {&spacer, &back},
+		  uqstl::move(hooks)
+	};
+	WIDGET** list {builder.build(addonMenu->menus[0])};
+	EXPECT_EQ(list[0], &back);
+	EXPECT_EQ(list[1], nullptr);
+}
+
 TEST_F(MenuWidgetsTest, ContentMenusBuild)
 {
 	std::ifstream file {UQM_TEST_CONTENT_DIR "/base/ui/setupmenu.json", std::ios::binary};
@@ -388,18 +466,24 @@ TEST_F(MenuWidgetsTest, ContentMenusBuild)
 
 	WIDGET exit {};
 	MenuWidgets::SharedWidgets shared {&spacer, &back, &exit};
-	uqstl::vector<uqstl::unique_ptr<WIDGET>> legacyWidgets {};
+	uqstl::vector<uqstl::unique_ptr<WIDGET_TEXTENTRY>> legacyWidgets {};
 	for (const MenuDef& menu : content->menus)
 	{
 		for (const MenuItemDef& item : menu.items)
 		{
 			if (item.kind == MenuItemKind::Legacy && !shared.legacy.contains(item.widget))
 			{
-				shared.legacy[item.widget] = legacyWidgets.emplace_back(uqstl::make_unique<WIDGET>()).get();
+				auto& widget {*legacyWidgets.emplace_back(uqstl::make_unique<WIDGET_TEXTENTRY>())};
+				widget.tag = WIDGET_TYPE_TEXTENTRY;
+				shared.legacy[item.widget] = reinterpret_cast<WIDGET*>(&widget);
 			}
 		}
 	}
-	MenuWidgets builder {options, shared, {}};
+	MenuWidgets::Hooks hooks {};
+	hooks.getState = [](uqstl::string_view) -> uqstl::optional<int> {
+		return 0;
+	};
+	MenuWidgets builder {options, shared, uqstl::move(hooks)};
 	for (const MenuDef& menu : content->menus)
 	{
 		WIDGET** list {builder.build(menu)};

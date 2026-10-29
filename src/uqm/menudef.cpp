@@ -29,9 +29,8 @@ uqstl::optional<uqstl::string> getString(yyjson_val* obj, const char* name)
 }
 
 // A missing array gives an empty list.
-uqstl::optional<uqstl::vector<uqstl::string>> getStringArray(yyjson_val* obj, const char* name, size_t maxCount = SIZE_MAX)
+uqstl::optional<uqstl::vector<uqstl::string>> toStringArray(yyjson_val* arr, size_t maxCount = SIZE_MAX)
 {
-	yyjson_val* arr {yyjson_obj_get(obj, name)};
 	if (arr == nullptr)
 	{
 		return uqstl::vector<uqstl::string> {};
@@ -56,6 +55,11 @@ uqstl::optional<uqstl::vector<uqstl::string>> getStringArray(yyjson_val* obj, co
 	return result;
 }
 
+uqstl::optional<uqstl::vector<uqstl::string>> getStringArray(yyjson_val* obj, const char* name, size_t maxCount = SIZE_MAX)
+{
+	return toStringArray(yyjson_obj_get(obj, name), maxCount);
+}
+
 bool getInt(yyjson_val* obj, const char* name, int& out)
 {
 	yyjson_val* val {yyjson_obj_get(obj, name)};
@@ -71,20 +75,37 @@ bool getInt(yyjson_val* obj, const char* name, int& out)
 	return true;
 }
 
-uqstl::optional<MenuOptionDef> readOption(yyjson_val* optionObj)
+uqstl::optional<MenuOptionDef> readOption(yyjson_val* optionObj, bool needsValue)
 {
 	const auto value {getString(optionObj, "value")};
 	const auto label {getString(optionObj, "label")};
 	auto tooltip {getStringArray(optionObj, "tooltip", c_maxTooltipLines)};
 	auto requiresAddon {getStringArray(optionObj, "requiresAddon")};
-	if (!value || !label || !tooltip || !requiresAddon)
+	if ((needsValue && !value) || !label || !tooltip || !requiresAddon)
 	{
 		return uqstl::nullopt;
 	}
-	return MenuOptionDef {*value, *label, uqstl::move(*tooltip), uqstl::move(*requiresAddon)};
+	return MenuOptionDef {value.value_or(""), *label, uqstl::move(*tooltip), uqstl::move(*requiresAddon)};
 }
 
-uqstl::optional<MenuItemDef> readChoice(yyjson_val* itemObj, uqstl::string setting)
+// A missing button gives an empty one.
+uqstl::optional<MenuButtonDef> readButton(yyjson_val* buttonObj)
+{
+	if (buttonObj == nullptr)
+	{
+		return MenuButtonDef {};
+	}
+	const auto label {getString(buttonObj, "label")};
+	auto tooltip {getStringArray(buttonObj, "tooltip", c_maxTooltipLines)};
+	if (!label || !tooltip)
+	{
+		return uqstl::nullopt;
+	}
+	return MenuButtonDef {*label, uqstl::move(*tooltip)};
+}
+
+// A Choice has either a setting or a state.
+uqstl::optional<MenuItemDef> readChoice(yyjson_val* itemObj, uqstl::string setting, uqstl::string state)
 {
 	const auto label {getString(itemObj, "label")};
 	yyjson_val* options {yyjson_obj_get(itemObj, "options")};
@@ -93,7 +114,7 @@ uqstl::optional<MenuItemDef> readChoice(yyjson_val* itemObj, uqstl::string setti
 		return uqstl::nullopt;
 	}
 
-	MenuItemDef item {.kind = MenuItemKind::Choice, .setting = uqstl::move(setting), .label = *label};
+	MenuItemDef item {.kind = MenuItemKind::Choice, .setting = uqstl::move(setting), .state = uqstl::move(state), .label = *label};
 	if (yyjson_obj_get(itemObj, "labels") != nullptr)
 	{
 		auto labels {getString(itemObj, "labels")};
@@ -108,7 +129,7 @@ uqstl::optional<MenuItemDef> readChoice(yyjson_val* itemObj, uqstl::string setti
 	yyjson_val* optionObj {};
 	yyjson_arr_foreach(options, index, count, optionObj)
 	{
-		auto option {readOption(optionObj)};
+		auto option {readOption(optionObj, item.state.empty())};
 		if (!option)
 		{
 			return uqstl::nullopt;
@@ -148,12 +169,8 @@ uqstl::optional<MenuItemDef> readSlider(yyjson_val* itemObj, uqstl::string setti
 	return item;
 }
 
-uqstl::optional<MenuItemDef> readItem(yyjson_val* itemObj)
+uqstl::optional<MenuItemDef> readItemKind(yyjson_val* itemObj)
 {
-	if (!yyjson_is_obj(itemObj))
-	{
-		return uqstl::nullopt;
-	}
 	if (yyjson_is_true(yyjson_obj_get(itemObj, "spacer")))
 	{
 		return MenuItemDef {.kind = MenuItemKind::Spacer};
@@ -178,7 +195,16 @@ uqstl::optional<MenuItemDef> readItem(yyjson_val* itemObj)
 	}
 	if (auto widget {getString(itemObj, "legacy")})
 	{
-		return MenuItemDef {.kind = MenuItemKind::Legacy, .widget = uqstl::move(*widget), .optional = yyjson_is_true(yyjson_obj_get(itemObj, "optional"))};
+		auto tooltip {getStringArray(itemObj, "tooltip", c_maxTooltipLines)};
+		if (!tooltip || (yyjson_obj_get(itemObj, "label") != nullptr && !getString(itemObj, "label")))
+		{
+			return uqstl::nullopt;
+		}
+		return MenuItemDef {.kind = MenuItemKind::Legacy,
+							.label = getString(itemObj, "label").value_or(""),
+							.tooltip = uqstl::move(*tooltip),
+							.widget = uqstl::move(*widget),
+							.optional = yyjson_is_true(yyjson_obj_get(itemObj, "optional"))};
 	}
 	if (yyjson_obj_get(itemObj, "heading") != nullptr)
 	{
@@ -191,7 +217,11 @@ uqstl::optional<MenuItemDef> readItem(yyjson_val* itemObj)
 	}
 	if (auto setting {getString(itemObj, "choice")})
 	{
-		return readChoice(itemObj, uqstl::move(*setting));
+		return readChoice(itemObj, uqstl::move(*setting), {});
+	}
+	if (auto state {getString(itemObj, "state")})
+	{
+		return readChoice(itemObj, {}, uqstl::move(*state));
 	}
 	if (auto setting {getString(itemObj, "slider")})
 	{
@@ -208,6 +238,48 @@ uqstl::optional<MenuItemDef> readItem(yyjson_val* itemObj)
 		return MenuItemDef {.kind = MenuItemKind::Text, .setting = uqstl::move(*setting), .label = *label, .tooltip = uqstl::move(*tooltip)};
 	}
 	return uqstl::nullopt;
+}
+
+uqstl::optional<MenuItemDef> readItem(yyjson_val* itemObj)
+{
+	if (!yyjson_is_obj(itemObj))
+	{
+		return uqstl::nullopt;
+	}
+	auto item {readItemKind(itemObj)};
+	auto requiresAddon {getStringArray(itemObj, "requiresAddon")};
+	if (!item || !requiresAddon)
+	{
+		return uqstl::nullopt;
+	}
+	item->requiresAddon = uqstl::move(*requiresAddon);
+	return item;
+}
+
+bool readMessages(yyjson_val* messagesObj, MenuDefinition& definition)
+{
+	if (messagesObj == nullptr)
+	{
+		return true;
+	}
+	if (!yyjson_is_obj(messagesObj))
+	{
+		return false;
+	}
+	size_t index {};
+	size_t count {};
+	yyjson_val* key {};
+	yyjson_val* value {};
+	yyjson_obj_foreach(messagesObj, index, count, key, value)
+	{
+		auto lines {toStringArray(value)};
+		if (!lines)
+		{
+			return false;
+		}
+		definition.messages.emplace(uqstl::string {yyjson_get_str(key), yyjson_get_len(key)}, uqstl::move(*lines));
+	}
+	return true;
 }
 
 uqstl::optional<MenuDef> readMenu(yyjson_val* menuObj)
@@ -263,15 +335,31 @@ uqstl::optional<MenuDefinition> menuDefinitionFromJson(uqstl::string_view json)
 	}
 
 	uqstl::optional<MenuDefinition> result {};
-	yyjson_val* menus {yyjson_obj_get(yyjson_doc_get_root(doc), "menus")};
-	if (yyjson_is_arr(menus))
+	yyjson_val* root {yyjson_doc_get_root(doc)};
+	yyjson_val* menus {yyjson_obj_get(root, "menus")};
+	yyjson_val* titleVal {yyjson_obj_get(root, "title")};
+	const auto title {titleVal == nullptr ? uqstl::string {} : getString(root, "title")};
+	auto back {readButton(yyjson_obj_get(root, "back"))};
+	auto exit {readButton(yyjson_obj_get(root, "exit"))};
+	if (yyjson_is_arr(menus) && title && back && exit)
 	{
 		result.emplace();
+		result->title = *title;
+		result->back = uqstl::move(*back);
+		result->exit = uqstl::move(*exit);
+		if (!readMessages(yyjson_obj_get(root, "messages"), *result))
+		{
+			result.reset();
+		}
 		size_t index {};
 		size_t count {};
 		yyjson_val* menuObj {};
 		yyjson_arr_foreach(menus, index, count, menuObj)
 		{
+			if (!result)
+			{
+				break;
+			}
 			auto menu {readMenu(menuObj)};
 			if (!menu)
 			{
@@ -316,7 +404,7 @@ uqstl::vector<uqstl::string> validateMenuDefinition(const MenuDefinition& defini
 	{
 		for (const MenuItemDef& item : menu.items)
 		{
-			if (item.kind != MenuItemKind::Choice && item.kind != MenuItemKind::Slider && item.kind != MenuItemKind::Text)
+			if ((item.kind != MenuItemKind::Choice && item.kind != MenuItemKind::Slider && item.kind != MenuItemKind::Text) || !item.state.empty())
 			{
 				continue;
 			}

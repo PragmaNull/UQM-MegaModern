@@ -125,6 +125,71 @@ TEST(MenuDefTest, ReadsLegacyItems)
 	EXPECT_TRUE(optional->menus[0].items[0].optional);
 }
 
+TEST(MenuDefTest, ReadsLegacyText)
+{
+	const auto definition {menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [
+		{"legacy": "gamma", "label": "Gamma", "tooltip": ["Sets the gamma."]}
+	]}]})")};
+	ASSERT_TRUE(definition.has_value());
+	const MenuItemDef& item {definition->menus[0].items[0]};
+	EXPECT_EQ(item.label, "Gamma");
+	EXPECT_EQ(item.tooltip, (uqstl::vector<uqstl::string> {"Sets the gamma."}));
+}
+
+TEST(MenuDefTest, ReadsStateChoices)
+{
+	const auto definition {menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [
+		{"state": "device.0", "label": "Portal Spawner", "options": [{"label": "Do Nothing"}, {"label": "Add Device"}]}
+	]}]})")};
+	ASSERT_TRUE(definition.has_value());
+	const MenuItemDef& item {definition->menus[0].items[0]};
+	EXPECT_EQ(item.kind, MenuItemKind::Choice);
+	EXPECT_EQ(item.state, "device.0");
+	EXPECT_TRUE(item.setting.empty());
+	ASSERT_EQ(item.options.size(), 2u);
+	EXPECT_TRUE(item.options[0].value.empty());
+
+	OptionsStruct options {};
+	EXPECT_TRUE(validateMenuDefinition(*definition, options).empty());
+
+	// A Choice bound to a setting needs option values.
+	EXPECT_FALSE(menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [
+		{"choice": "interface.skipIntro", "label": "x", "options": [{"label": "a"}]}
+	]}]})"));
+}
+
+TEST(MenuDefTest, ReadsItemAddons)
+{
+	const auto definition {menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [
+		{"legacy": "renderer", "requiresAddon": ["opengl"]}, {"spacer": true}
+	]}]})")};
+	ASSERT_TRUE(definition.has_value());
+	EXPECT_EQ(definition->menus[0].items[0].requiresAddon, (uqstl::vector<uqstl::string> {"opengl"}));
+	EXPECT_TRUE(definition->menus[0].items[1].requiresAddon.empty());
+}
+
+TEST(MenuDefTest, ReadsTitleButtonsAndMessages)
+{
+	const auto definition {menuDefinitionFromJson(R"({
+		"title": "Setup",
+		"back": {"label": "Back", "tooltip": ["Go back."]},
+		"exit": {"label": "Quit"},
+		"messages": {"pressKey": ["Press a key", "now."]},
+		"menus": []
+	})")};
+	ASSERT_TRUE(definition.has_value());
+	EXPECT_EQ(definition->title, "Setup");
+	EXPECT_EQ(definition->back.label, "Back");
+	EXPECT_EQ(definition->back.tooltip, (uqstl::vector<uqstl::string> {"Go back."}));
+	EXPECT_EQ(definition->exit.label, "Quit");
+	EXPECT_TRUE(definition->exit.tooltip.empty());
+	EXPECT_EQ(definition->messages.at("pressKey"), (uqstl::vector<uqstl::string> {"Press a key", "now."}));
+
+	EXPECT_FALSE(menuDefinitionFromJson(R"({"title": 1, "menus": []})"));
+	EXPECT_FALSE(menuDefinitionFromJson(R"({"back": {}, "menus": []})"));
+	EXPECT_FALSE(menuDefinitionFromJson(R"({"messages": {"a": "text"}, "menus": []})"));
+}
+
 TEST(MenuDefTest, RejectsInvalidSliders)
 {
 	EXPECT_FALSE(menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [{"slider": "k", "label": "x", "min": 10, "max": 5}]}]})"));

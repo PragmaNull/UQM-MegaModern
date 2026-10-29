@@ -40,6 +40,10 @@ public:
 		std::function<void(const SettingBase& setting)> settingChanged {};
 		// Gives the label of an option from a list that the game supplies. Returns nullptr if there is no label.
 		std::function<const char*(uqstl::string_view list, size_t index)> optionLabel {};
+		// Gives the value of a state. Returns nullopt if there is no such state.
+		std::function<uqstl::optional<int>(uqstl::string_view key)> getState {};
+		// Called after a widget changes a state.
+		std::function<void(uqstl::string_view key, int value)> setState {};
 		// Opens the menu with this id. Returns false if there is no such menu.
 		std::function<bool(uqstl::string_view id)> openMenu {};
 		// Edits the text of a Text item when the player selects it.
@@ -56,7 +60,7 @@ public:
 	// Choices and sliders show the value of their setting, and set the setting when they change.
 	WIDGET** build(const MenuDef& menu);
 
-	// Shows the current setting values again, for example after a hook changed a setting.
+	// Shows the current setting and state values again, for example after a hook changed a setting.
 	void refresh();
 
 private:
@@ -76,6 +80,9 @@ private:
 	WIDGET* buildText(const MenuDef& menu, const MenuItemDef& item);
 	WIDGET* buildMenuButton(const MenuItemDef& item);
 	WIDGET* buildHeading(const MenuItemDef& item);
+	WIDGET* buildLegacy(const MenuDef& menu, const MenuItemDef& item);
+	[[nodiscard]] bool isAvailable(const MenuItemDef& item) const;
+	[[nodiscard]] int selectedOption(const BoundChoice& choice) const;
 	void applyChange(SettingBase& setting, uqstl::string_view text);
 
 	SettingsRegistry& m_settings;
@@ -86,6 +93,7 @@ private:
 	uqstl::vector<uqstl::unique_ptr<BoundText>> m_texts {};
 	uqstl::vector<uqstl::unique_ptr<MenuButton>> m_menuButtons {};
 	uqstl::vector<uqstl::unique_ptr<Heading>> m_headings {};
+	uqstl::vector<uqstl::unique_ptr<MenuItemDef>> m_legacyItems {};
 	uqstl::vector<uqstl::unique_ptr<uqstl::vector<WIDGET*>>> m_lists {};
 };
 
