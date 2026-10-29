@@ -35,6 +35,10 @@
 #include "sounds.h"
 #include "tactrans.h"
 #include "uqmdebug.h"
+#include "globdata.h"
+#include "libs/math/random.h"
+
+#include <fmt/format.h>
 #include "libs/async.h"
 #include "libs/inplib.h"
 #include "libs/time/timelib.h"
@@ -104,6 +108,64 @@ static uqstl::optional<uint32_t> recordSeed {};
 static uqstl::optional<uqm::FrameInput> recordPending {};
 static uqm::FrameInput recordWritten {};
 static uqstl::mutex recordMutex {};
+
+// Input frames between state checks in a recording.
+static constexpr uint64_t c_recordCheckInterval {120};
+static bool stateMismatchReported {};
+
+// Returns a hash of the game state that a replay must reproduce.
+static uint64_t
+computeStateHash(void)
+{
+	uint64_t hash {0xcbf29ce484222325};
+	const auto add {[&hash](uint64_t value, int bytes) {
+		for (int i {0}; i < bytes; ++i)
+		{
+			hash ^= (value >> (8 * i)) & 0xff;
+			hash *= 0x100000001b3;
+		}
+	}};
+	const auto addBytes {[&add](uqstl::span<const uint8_t> bytes) {
+		for (const uint8_t byte : bytes)
+		{
+			add(byte, 1);
+		}
+	}};
+
+	add(TFB_RandomState(), 4);
+
+	const GAME_STATE& game {GlobData.Game_state};
+	add(game.CurrentActivity, 2);
+	add(game.GameClock.day_index, 1);
+	add(game.GameClock.month_index, 1);
+	add(game.GameClock.year_index, 2);
+	add(static_cast<uint16_t>(game.GameClock.tick_count), 2);
+	add(static_cast<uint16_t>(game.autopilot.x), 2);
+	add(static_cast<uint16_t>(game.autopilot.y), 2);
+	add(static_cast<uint16_t>(game.ip_location.x), 2);
+	add(static_cast<uint16_t>(game.ip_location.y), 2);
+	add(game.ShipFacing, 2);
+	add(game.ip_planet, 1);
+	add(game.in_orbit, 1);
+
+	const SIS_STATE& sis {GlobData.SIS_state};
+	add(static_cast<uint32_t>(sis.log_x), 4);
+	add(static_cast<uint32_t>(sis.log_y), 4);
+	add(sis.ResUnits, 4);
+	add(sis.FuelOnBoard, 4);
+	add(sis.CrewEnlisted, 2);
+	add(sis.TotalElementMass, 2);
+	add(sis.TotalBioMass, 2);
+	addBytes(sis.ModuleSlots);
+	addBytes(sis.DriveSlots);
+	addBytes(sis.JetSlots);
+	add(sis.NumLanders, 1);
+	for (const uint16_t amount : sis.ElementAmounts)
+	{
+		add(amount, 2);
+	}
+	return hash;
+}
 
 static bool
 isReplayingFrames(void)
@@ -275,6 +337,10 @@ recordFrameInput(void)
 		return;
 	}
 	writePendingFrame();
+	if (inputFrame % c_recordCheckInterval == 0)
+	{
+		recordFile << fmt::format("check {} {:016x}\n", inputFrame, computeStateHash());
+	}
 	uqm::FrameInput input {.frame = inputFrame};
 	for (int t {0}; t < static_cast<int>(ControlTemplate::NUM); t++)
 	{
@@ -643,6 +709,14 @@ void UpdateInputState(void)
 	if (isReplayingFrames())
 	{
 		applyFrameInput();
+	}
+	if (inputScript && !stateMismatchReported)
+	{
+		if (const uqstl::optional<uint64_t> expected {inputScript->checkAt(inputFrame)}; expected && *expected != computeStateHash())
+		{
+			uqm::log::error("Input script: the game state differs from the recording at input frame {}.", inputFrame);
+			stateMismatchReported = true;
+		}
 	}
 	recordFrameInput();
 	++inputFrame;

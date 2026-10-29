@@ -76,6 +76,18 @@ TEST(InputScriptTest, FrameInputStaysUntilTheNextFrame)
 	EXPECT_TRUE(script.finished());
 }
 
+TEST(InputScriptTest, ChecksAreFoundByFrame)
+{
+	InputScript script {parseOrFail("check 0 1a\ncheck 120 ff00ff00ff00ff00\n")};
+	EXPECT_EQ(script.checkAt(0), 0x1au);
+	EXPECT_FALSE(script.checkAt(60).has_value());
+	EXPECT_EQ(script.checkAt(120), 0xff00ff00ff00ff00u);
+	uqstl::string error {};
+	EXPECT_FALSE(InputScript::parse("check 5\n", error));
+	EXPECT_FALSE(InputScript::parse("check 5 xyz\n", error));
+	EXPECT_FALSE(InputScript::parse("check 5 1\ncheck 5 2\n", error));
+}
+
 TEST(InputScriptTest, ReportsInvalidFrames)
 {
 	uqstl::string error {};

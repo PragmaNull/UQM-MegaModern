@@ -3,6 +3,7 @@
 
 #include "core/string/StringUtils.h"
 
+#include <charconv>
 #include <fmt/format.h>
 
 namespace uqm
@@ -304,6 +305,23 @@ uqstl::optional<InputScript> InputScript::parse(uqstl::string_view text, uqstl::
 			}
 			script.m_frames.push_back(uqstl::move(input));
 		}
+		else if (compareICase(word, "check"))
+		{
+			const size_t space {argument.find_first_of(" \t")};
+			uint64_t frame {};
+			uint64_t hash {};
+			const uqstl::string_view hashText {space == uqstl::string_view::npos ? uqstl::string_view {} : trim(argument.substr(space))};
+			if (parseStr(argument.substr(0, space), frame) != uqstl::errc {} || hashText.empty()
+				|| uqstl::from_chars(hashText.data(), hashText.data() + hashText.size(), hash, 16).ptr != hashText.data() + hashText.size())
+			{
+				return fail("expected a frame number and a hexadecimal hash");
+			}
+			if (!script.m_checks.empty() && frame <= script.m_checks.back().first)
+			{
+				return fail("check frame numbers must increase");
+			}
+			script.m_checks.emplace_back(frame, hash);
+		}
 		else if (compareICase(word, "seed"))
 		{
 			const auto seed {parseCount(argument)};
@@ -383,6 +401,19 @@ InputScript::Step InputScript::update(uint32_t now)
 		}
 	}
 	return {};
+}
+
+uqstl::optional<uint64_t> InputScript::checkAt(uint64_t frame)
+{
+	while (m_nextCheck < m_checks.size() && m_checks[m_nextCheck].first < frame)
+	{
+		++m_nextCheck;
+	}
+	if (m_nextCheck < m_checks.size() && m_checks[m_nextCheck].first == frame)
+	{
+		return m_checks[m_nextCheck++].second;
+	}
+	return uqstl::nullopt;
 }
 
 bool InputScript::finished() const noexcept

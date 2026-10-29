@@ -40,6 +40,7 @@ enum class ScriptKey
 //   quit            stop the game
 //   seed <n>        run deterministically: a virtual game clock and random numbers from seed n
 //   frame <n> ...   the input from input frame n on, see FrameInput
+//   check <n> <hex> the expected hash of the game state at input frame n
 // Empty lines and lines that start with '#' are ignored.
 struct ScriptCommand
 {
@@ -125,10 +126,15 @@ public:
 	// Call with frames in increasing order.
 	[[nodiscard]] const FrameInput* frameInput(uint64_t frame);
 
+	// Returns the expected state hash at input frame 'frame', or nullopt. Call with frames in increasing order.
+	[[nodiscard]] uqstl::optional<uint64_t> checkAt(uint64_t frame);
+
 private:
 	uqstl::vector<ScriptCommand> m_commands {};
 	uqstl::vector<FrameInput> m_frames {};
 	size_t m_nextFrame {};
+	uqstl::vector<uqstl::pair<uint64_t, uint64_t>> m_checks {};
+	size_t m_nextCheck {};
 	uqstl::optional<uint32_t> m_seed {};
 	size_t m_next {};
 	uint32_t m_delay {c_defaultDelay};
