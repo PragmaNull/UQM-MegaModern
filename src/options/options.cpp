@@ -524,9 +524,9 @@ uqstl::pair<int, bool> UQMOptions::parseArgs(uqstl::span<uqgsl::zstring> args)
 	modGroup->add_option("--scrtrans", m_options.scrTrans.edit(), "Screen transitions, pc=instantaneous, 3do=crossfade")
 		->transform(emulationModeTransformer)
 		->default_str(fmt::format("{:s}", *defaults.scrTrans));
-	modGroup->add_option("--difficulty", m_options.optDifficulty.edit(), "Game difficulty.")
+	modGroup->add_option("--difficulty", m_options.optDiffChooser.edit(), "Game difficulty.")
 		->transform(CLI::CheckedTransformer {EnumNames<Difficulty>::pairs<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.optDifficulty));
+		->default_str(fmt::format("{:s}", *defaults.optDiffChooser));
 	uqstl::vector<FuelRangeDisplay> specifiedFuelRangeDisplayFlags {};
 	modGroup->add_option("--fuelrange", specifiedFuelRangeDisplayFlags, "A comma-separated list of fuel range display flags to enable. Can be any combindation") // todo: selected flags.
 		->expected(-1)
