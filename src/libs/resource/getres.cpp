@@ -41,21 +41,8 @@ void loadResourceDesc(ResourceDesc* desc)
 
 void* LoadResourceFromPath(const char* path, ResourceLoadFileFun* loadFun)
 {
-	const uqstl::optional<uqm::io::FileInfo> info {contentDir->stat(path)};
-	if (!info)
-	{
-		uqm::log::warn("Warning: Can't open '{}'", path);
-		return nullptr;
-	}
-	if (!info->isDirectory() && info->size == 0)
-	{
-		uqm::log::warn("Warning: Trying to load empty file '{}'.", path);
-		return nullptr;
-	}
-	uqm::log::debug("\t'{}' -- {} bytes", path, info->isDirectory() ? 1 : info->size);
-
 	void* const resdata {res_LoadResFile(*contentDir, path, loadFun)};
-	if (resdata == nullptr && !info->isDirectory())
+	if (resdata == nullptr)
 	{
 		uqm::log::warn("Warning: Can't load '{}'", path);
 	}

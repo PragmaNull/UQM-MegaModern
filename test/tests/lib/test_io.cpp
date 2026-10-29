@@ -387,6 +387,26 @@ TEST_F(IoTest, AppendModes)
 	EXPECT_EQ(readHostFile(host / "old.txt"), "e");
 }
 
+TEST_F(IoTest, SeekInsideTheReadBuffer)
+{
+	const fs::path host {hostDir("rw")};
+	writeHostFile(host / "abc.txt", "abcdef");
+	const Mount rw {mount("/", host, Access::ReadOnly)};
+
+	uqstl::error_code error {};
+	uqstl::optional<File> file {m_fileSystem.root().open("abc.txt", OpenMode::Read, error)};
+	ASSERT_TRUE(file.has_value()) << error.message();
+	EXPECT_EQ(file->getChar(), 'a');
+	EXPECT_EQ(file->getChar(), 'b');
+	EXPECT_EQ(file->getChar(), 'c');
+	ASSERT_TRUE(file->seek(1, SeekFrom::Start));
+	EXPECT_EQ(file->tell(), 1u);
+	EXPECT_EQ(file->getChar(), 'b');
+	ASSERT_TRUE(file->seek(-1, SeekFrom::End));
+	EXPECT_EQ(file->getChar(), 'f');
+	EXPECT_EQ(file->getChar(), File::c_endOfFile);
+}
+
 TEST_F(IoTest, TextModeTellIsTheFilePosition)
 {
 	const fs::path host {hostDir("rw")};

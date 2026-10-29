@@ -23,6 +23,8 @@ constexpr size_t c_centralHeaderSize {46};
 constexpr size_t c_localHeaderSize {30};
 constexpr size_t c_maxCommentSize {0xffff};
 constexpr size_t c_inputBufferSize {0x10000};
+// Deflated entries up to this size are inflated into memory when opened.
+constexpr uint64_t c_memoryEntryLimit {4 * 1024 * 1024};
 
 constexpr uint16_t c_methodStored {0};
 constexpr uint16_t c_methodDeflated {8};
@@ -126,6 +128,37 @@ private:
 	bool m_valid {false};
 };
 
+// A read-only stream over bytes in memory.
+class MemoryStream final : public Stream
+{
+public:
+	explicit MemoryStream(uqstl::vector<uqstl::byte> data)
+		: m_data {uqstl::move(data)}
+	{
+	}
+
+	size_t read(uqstl::span<uqstl::byte> buffer, uqstl::error_code& /*error*/) override
+	{
+		const size_t count {uqstl::min(buffer.size(), m_data.size() - m_position)};
+		uqstl::copy_n(m_data.begin() + static_cast<ptrdiff_t>(m_position), count, buffer.begin());
+		m_position += count;
+		return count;
+	}
+
+	bool seek(uint64_t position, uqstl::error_code& /*error*/) override
+	{
+		m_position = static_cast<size_t>(uqstl::min<uint64_t>(position, m_data.size()));
+		return true;
+	}
+
+	[[nodiscard]] uint64_t tell() const override { return m_position; }
+	[[nodiscard]] uint64_t size() override { return m_data.size(); }
+
+private:
+	uqstl::vector<uqstl::byte> m_data {};
+	size_t m_position {0};
+};
+
 class ZipEntryStream final : public Stream
 {
 public:
@@ -137,7 +170,7 @@ public:
 		if (m_entry.deflated)
 		{
 			m_inflater = uqstl::make_unique<ZStream>();
-			m_input.resize(c_inputBufferSize);
+			m_input.resize(static_cast<size_t>(uqstl::min<uint64_t>(c_inputBufferSize, uqstl::max<uint64_t>(m_entry.compressedSize, 1))));
 		}
 	}
 
@@ -193,11 +226,14 @@ public:
 private:
 	size_t readStored(uqstl::span<uqstl::byte> buffer, uqstl::error_code& error)
 	{
-		if (!m_archive->seek(m_dataOffset + m_position, error))
+		const uint64_t archivePosition {m_dataOffset + m_position};
+		if (m_archivePosition != archivePosition && !m_archive->seek(archivePosition, error))
 		{
 			return 0;
 		}
-		return m_archive->read(buffer, error);
+		const size_t count {m_archive->read(buffer, error)};
+		m_archivePosition = archivePosition + count;
+		return count;
 	}
 
 	size_t readDeflated(uqstl::span<uqstl::byte> buffer, uqstl::error_code& error)
@@ -239,6 +275,8 @@ private:
 	}
 
 	uqstl::unique_ptr<Stream> m_archive {};
+	// The position of m_archive, if known.
+	uint64_t m_archivePosition {UINT64_MAX};
 	uint64_t m_dataOffset {0};
 	ZipSource::Entry m_entry {};
 	uint64_t m_position {0};
@@ -481,7 +519,18 @@ uqstl::unique_ptr<Stream> ZipSource::open(uqstl::string_view path, OpenMode mode
 	{
 		return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::not_enough_memory);
 	}
-	return stream;
+	if (!entry.deflated || entry.size > c_memoryEntryLimit)
+	{
+		return stream;
+	}
+
+	// Inflate small entries into memory.
+	uqstl::vector<uqstl::byte> data(static_cast<size_t>(entry.size));
+	if (stream->read(data, error) != data.size())
+	{
+		return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::illegal_byte_sequence);
+	}
+	return uqstl::make_unique<MemoryStream>(uqstl::move(data));
 }
 
 } // namespace uqm::io::standard

@@ -48,23 +48,23 @@ uqgsl::owner<uqm::io::File*> res_NewResFile(const uqm::io::Directory& dir, const
 
 void* res_LoadResFile(const uqm::io::Directory& dir, const char* filename, ResourceLoadFileFun* loadFun)
 {
-	const uqstl::optional<uqm::io::FileInfo> info {dir.stat(filename)};
-	if (!info)
+	uqstl::error_code error {};
+	uqstl::optional<uqm::io::File> file {dir.open(filename, uqm::io::OpenMode::Read, error)};
+	uint32_t length {1};
+	if (file)
+	{
+		length = static_cast<uint32_t>(file->size());
+		if (length == 0)
+		{
+			uqm::log::warn("Warning: Trying to load empty file '{}'.", filename);
+			return nullptr;
+		}
+	}
+	else if (error != uqstl::errc::is_a_directory)
 	{
 		return nullptr;
 	}
-
-	uqstl::optional<uqm::io::File> file {};
-	uint32_t length {1};
-	if (!info->isDirectory())
-	{
-		file = res_OpenResFile(dir, filename, uqm::io::OpenMode::Read);
-		if (!file)
-		{
-			return nullptr;
-		}
-		length = static_cast<uint32_t>(LengthResFile(*file));
-	}
+	uqm::log::debug("\t'{}' -- {} bytes", filename, length);
 
 	_cur_resfile_name = filename;
 	void* const data {loadFun(file ? &*file : nullptr, length)};

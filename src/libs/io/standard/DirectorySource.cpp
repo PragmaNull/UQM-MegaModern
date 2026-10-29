@@ -26,6 +26,11 @@ public:
 	bool open(const fs::path& path, uqstl::ios_base::openmode mode, uqstl::error_code& error)
 	{
 		errno = 0;
+		if (!m_text)
+		{
+			// File buffers the reads.
+			m_buffer.pubsetbuf(nullptr, 0);
+		}
 		if (m_buffer.open(path, mode) == nullptr)
 		{
 			error = errno != 0 ? uqstl::error_code {errno, uqstl::generic_category()} : uqstl::make_error_code(uqstl::errc::io_error);
@@ -42,6 +47,7 @@ public:
 
 	size_t write(uqstl::span<const uqstl::byte> buffer, uqstl::error_code& error) override
 	{
+		m_size.reset();
 		const uqstl::streamsize count {m_buffer.sputn(reinterpret_cast<const char*>(buffer.data()), static_cast<uqstl::streamsize>(buffer.size()))};
 		if (count < static_cast<uqstl::streamsize>(buffer.size()))
 		{
@@ -69,10 +75,14 @@ public:
 
 	[[nodiscard]] uint64_t size() override
 	{
-		const auto current {m_buffer.pubseekoff(0, uqstl::ios_base::cur)};
-		const auto end {m_buffer.pubseekoff(0, uqstl::ios_base::end)};
-		m_buffer.pubseekpos(current);
-		return end == uqstl::streampos {uqstl::streamoff {-1}} ? 0 : static_cast<uint64_t>(uqstl::streamoff {end});
+		if (!m_size)
+		{
+			const auto current {m_buffer.pubseekoff(0, uqstl::ios_base::cur)};
+			const auto end {m_buffer.pubseekoff(0, uqstl::ios_base::end)};
+			m_buffer.pubseekpos(current);
+			m_size = end == uqstl::streampos {uqstl::streamoff {-1}} ? 0 : static_cast<uint64_t>(uqstl::streamoff {end});
+		}
+		return *m_size;
 	}
 
 	bool flush(uqstl::error_code& error) override
@@ -89,6 +99,7 @@ private:
 	// Seeking does not change the file, so const functions can seek.
 	mutable uqstl::filebuf m_buffer {};
 	bool m_text {false};
+	uqstl::optional<uint64_t> m_size {};
 };
 
 int64_t toUnixTime(fs::file_time_type time)
@@ -146,26 +157,22 @@ fs::path DirectorySource::hostPath(uqstl::string_view path) const
 
 uqstl::optional<FileInfo> DirectorySource::stat(uqstl::string_view path) const
 {
-	const fs::path host {hostPath(path)};
 	uqstl::error_code error {};
-	const fs::file_status status {fs::status(host, error)};
-	if (error || !fs::exists(status))
+	const fs::directory_entry entry {hostPath(path), error};
+	if (error || !entry.exists(error))
 	{
 		return uqstl::nullopt;
 	}
 
 	FileInfo info {};
-	info.type = fs::is_directory(status) ? FileType::Directory : FileType::Regular;
-	info.writable = (status.permissions() & fs::perms::owner_write) != fs::perms::none;
+	info.type = entry.is_directory(error) ? FileType::Directory : FileType::Regular;
+	info.writable = (entry.status(error).permissions() & fs::perms::owner_write) != fs::perms::none;
 	if (!info.isDirectory())
 	{
-		info.size = fs::file_size(host, error);
-		if (error)
-		{
-			info.size = 0;
-		}
+		const uintmax_t size {entry.file_size(error)};
+		info.size = error ? 0 : size;
 	}
-	const fs::file_time_type modified {fs::last_write_time(host, error)};
+	const fs::file_time_type modified {entry.last_write_time(error)};
 	if (!error)
 	{
 		info.modifiedTime = toUnixTime(modified);
@@ -193,6 +200,26 @@ uqstl::vector<uqstl::string> DirectorySource::list(uqstl::string_view path, uqst
 uqstl::unique_ptr<Stream> DirectorySource::open(uqstl::string_view path, OpenMode mode, uqstl::error_code& error) const
 {
 	const fs::path host {hostPath(path)};
+	if (!testAllBits(mode, OpenMode::Write))
+	{
+		auto stream {uqstl::make_unique<DiskStream>(testAllBits(mode, OpenMode::Text))};
+		if (stream->open(host, openFlags(mode, true), error))
+		{
+			return stream;
+		}
+		uqstl::error_code statusError {};
+		const fs::file_status status {fs::status(host, statusError)};
+		if (!fs::exists(status))
+		{
+			error = uqstl::make_error_code(uqstl::errc::no_such_file_or_directory);
+		}
+		else if (fs::is_directory(status))
+		{
+			error = uqstl::make_error_code(uqstl::errc::is_a_directory);
+		}
+		return nullptr;
+	}
+
 	uqstl::error_code statusError {};
 	const fs::file_status status {fs::status(host, statusError)};
 	const bool exists {fs::exists(status)};

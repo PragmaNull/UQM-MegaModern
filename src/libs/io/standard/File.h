@@ -47,7 +47,7 @@ public:
 	void clearError();
 
 private:
-	static constexpr size_t c_bufferSize {4096};
+	static constexpr size_t c_bufferSize {16384};
 
 	// Returns false and sets the error if the file is closed.
 	bool checkOpen();

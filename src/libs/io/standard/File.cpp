@@ -142,10 +142,17 @@ bool File::seek(int64_t offset, SeekFrom from)
 		return false;
 	}
 
+	m_eof = false;
+	const uint64_t target {static_cast<uint64_t>(base + offset)};
+	const uint64_t streamPosition {m_stream->tell()};
+	if (!m_stream->translatesLineEnds() && target <= streamPosition && streamPosition - target <= m_bufferEnd)
+	{
+		m_bufferPos = m_bufferEnd - static_cast<size_t>(streamPosition - target);
+		return true;
+	}
 	m_bufferPos = 0;
 	m_bufferEnd = 0;
-	m_eof = false;
-	return m_stream->seek(static_cast<uint64_t>(base + offset), m_error);
+	return m_stream->seek(target, m_error);
 }
 
 uint64_t File::tell() const

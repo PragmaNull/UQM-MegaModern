@@ -42,7 +42,8 @@ uqstl::error_code copyStream(Stream& from, Stream& to)
 
 uqstl::string MountTable::MountEntry::sourcePathFor(uqstl::string_view path) const
 {
-	return path::join(sourcePath, path::relativeTo(path, mountPoint));
+	const uqstl::string_view relative {path::relativeTo(path, mountPoint)};
+	return sourcePath.empty() ? uqstl::string {relative} : path::join(sourcePath, relative);
 }
 
 Directory MountTable::root()
@@ -118,6 +119,28 @@ uqstl::optional<Mount> MountTable::mountTransplant(uqstl::string_view mountPoint
 uqstl::optional<File> MountTable::open(const uqstl::string& path, OpenMode mode, uqstl::error_code& error) const
 {
 	const uqstl::shared_lock lock {m_mutex};
+	if (!testAllBits(mode, OpenMode::Write))
+	{
+		for (const MountEntry& mount : m_mounts)
+		{
+			if (!path::isWithin(path, mount.mountPoint))
+			{
+				continue;
+			}
+			uqstl::error_code openError {};
+			if (uqstl::unique_ptr<Stream> stream {mount.source->open(mount.sourcePathFor(path), mode, openError)})
+			{
+				return File {uqstl::move(stream)};
+			}
+			if (openError != uqstl::errc::no_such_file_or_directory)
+			{
+				error = openError;
+				return uqstl::nullopt;
+			}
+		}
+		return fail<uqstl::optional<File>>(error, isMountAncestorLocked(path) ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
+	}
+
 	const uqstl::optional<Found> found {findLocked(path)};
 
 	const auto openIn {[&](const MountEntry& mount, const uqstl::string& sourcePath, OpenMode openMode) -> uqstl::optional<File> {
@@ -133,15 +156,6 @@ uqstl::optional<File> MountTable::open(const uqstl::string& path, OpenMode mode,
 	if (found && found->info.isDirectory())
 	{
 		return fail<Result>(error, uqstl::errc::is_a_directory);
-	}
-
-	if (!testAllBits(mode, OpenMode::Write))
-	{
-		if (!found)
-		{
-			return fail<Result>(error, isMountAncestorLocked(path) ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
-		}
-		return openIn(m_mounts[found->index], found->sourcePath, mode);
 	}
 
 	if (found)
