@@ -37,6 +37,12 @@ def main():
             fail(f"{CONTENT_DIR} not found; clone UQM-MegaModern-Content there")
         extra = ["-n", CONTENT_DIR, *extra]
 
+    # Run scripted games in a window.
+    has_script_arg = any(arg == "--input-script" or arg.startswith("--input-script=") for arg in extra)
+    has_window_arg = any(arg in ("-f", "--fullscreen") or arg.startswith("--fullscreen=") for arg in extra)
+    if has_script_arg and not has_window_arg:
+        extra = [*extra, "--fullscreen", "Windowed"]
+
     run([exe, *extra])
 
 

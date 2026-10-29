@@ -74,7 +74,7 @@ ctest --output-on-failure --build-config Release
 
 Test sources are in `test/tests/` organized by subsystem (core, lib, options, uqm).
 
-Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each one with a new config dir and fails on a non-zero exit code or an `[error]` or `[critical]` log line. A `<name>.settings.json` file next to a script is copied in as the start settings.
+Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each one with a new config dir and fails on a non-zero exit code or an `[error]` or `[critical]` log line. A `<name>.settings.json` file next to a script is copied in as the start settings. `regress.bat`, and `run.bat` with `--input-script`, run the game in a window unless `-f` is given.
 
 ## Code Architecture
 
