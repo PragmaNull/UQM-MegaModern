@@ -37,9 +37,6 @@
 /* Defined if your system has setenv of its own */
 #undef HAVE_SETENV
 
-/* Defined if your system has strupr of its own */
-#define HAVE_STRUPR
-
 /* Defined if your system has strcasecmp of its own */
 #undef HAVE_STRCASECMP_UQM
 // Not using "HAVE_STRCASECMP" as that conflicts with SDL.

@@ -77,16 +77,6 @@
 #endif
 
 
-#ifndef HAVE_STRUPR
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-char* strupr(char* str);
-#if 0 //defined(__cplusplus)
-}
-#endif
-#endif
-
 #if !defined(_MSC_VER) && !defined(HAVE_READDIR_R)
 #include <dirent.h>
 #if 0 //defined(__cplusplus)
