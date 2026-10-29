@@ -368,17 +368,16 @@ _get_current_index_header(void)
 	return curResourceIndex;
 }
 
-void LoadResourceIndex(uio_DirHandle* dir, const char* rmpfile, const char* prefix)
+void LoadResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const char* prefix)
 {
 	PropFile_from_filename(dir, rmpfile, process_resource_desc, prefix);
 }
 
-void SaveResourceIndex(uio_DirHandle* dir, const char* rmpfile, const char* root, bool strip_root)
+void SaveResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const char* root, bool strip_root)
 {
-	uio_Stream* f;
 	unsigned int prefix_len;
 
-	f = res_OpenResFile(dir, rmpfile, "wb");
+	uqstl::optional<uqm::io::File> f {res_OpenResFile(dir, rmpfile, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)};
 	if (!f)
 	{
 		/* TODO: Warning message */
@@ -416,22 +415,21 @@ void SaveResourceIndex(uio_DirHandle* dir, const char* rmpfile, const char* root
 			buf[255] = 0;
 			if (root && strip_root)
 			{
-				WriteResFile(key.c_str() + prefix_len, 1, key.size() - prefix_len, f);
+				WriteResFile(key.c_str() + prefix_len, 1, key.size() - prefix_len, *f);
 			}
 			else
 			{
-				WriteResFile(key.c_str(), 1, key.size(), f);
+				WriteResFile(key.c_str(), 1, key.size(), *f);
 			}
-			PutResFileChar(' ', f);
-			PutResFileChar('=', f);
-			PutResFileChar(' ', f);
-			WriteResFile(value->vtable->resType, 1, strlen(value->vtable->resType), f);
-			PutResFileChar(':', f);
-			WriteResFile(buf, 1, strlen(buf), f);
-			PutResFileNewline(f);
+			PutResFileChar(' ', *f);
+			PutResFileChar('=', *f);
+			PutResFileChar(' ', *f);
+			WriteResFile(value->vtable->resType, 1, strlen(value->vtable->resType), *f);
+			PutResFileChar(':', *f);
+			WriteResFile(buf, 1, strlen(buf), *f);
+			PutResFileNewline(*f);
 		}
 	}
-	res_CloseResFile(f);
 }
 
 void UninitResourceSystem(void)

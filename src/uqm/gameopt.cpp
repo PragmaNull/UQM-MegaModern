@@ -1699,7 +1699,7 @@ LoadGameDescriptions(SUMMARY_DESC* pSD)
 
 	for (i = 0; i < MAX_SAVED_GAMES; ++i, ++pSD)
 	{
-		if (!LoadGame(i, pSD, nullptr, false))
+		if (!LoadGame(i, pSD, uqstl::nullopt, false))
 		{
 			pSD->year_index = 0;
 		}
@@ -1862,7 +1862,7 @@ SaveLoadGame(PICK_GAME_STATE* pickState, uint16_t gameIndex, bool* canceled_by_u
 	else
 	{
 		ConfirmSaveLoad(pickState->saving ? &saveStamp : nullptr);
-		success = LoadGame(gameIndex, nullptr, nullptr, false);
+		success = LoadGame(gameIndex, nullptr, uqstl::nullopt, false);
 	}
 
 	// TODO: the same should be done for both save and load if we also

@@ -154,7 +154,7 @@ void SetChannelVolume(uint16_t channel, uint16_t volume, uint8_t priority)
 	(void)priority; // ignored
 }
 
-void* _GetSoundBankData(uio_Stream* fp, uint32_t length)
+void* _GetSoundBankData(uqm::io::File* fp, uint32_t length)
 {
 	int snd_ct, n;
 	char CurrentLine[1024] {};
@@ -166,7 +166,10 @@ void* _GetSoundBankData(uio_Stream* fp, uint32_t length)
 	int i;
 
 	(void)length; // ignored
-	uio_ftell(fp);
+	if (fp == nullptr)
+	{
+		return nullptr;
+	}
 
 	{
 		const char *s1, *s2;
@@ -189,7 +192,7 @@ void* _GetSoundBankData(uio_Stream* fp, uint32_t length)
 	}
 
 	snd_ct = 0;
-	while (uio_fgets(CurrentLine, sizeof(CurrentLine), fp) && snd_ct < MAX_FX)
+	while (fp->readLine(CurrentLine) && snd_ct < MAX_FX)
 	{
 		TFB_SoundSample* sample;
 		TFB_SoundDecoder* decoder;

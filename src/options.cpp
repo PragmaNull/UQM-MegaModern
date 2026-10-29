@@ -667,7 +667,7 @@ int loadIndices(uio_DirHandle* dir)
 		{
 			uqm::log::debug("Loading resource index '{}'",
 							indices->names[i]);
-			LoadResourceIndex(dir, indices->names[i], nullptr);
+			LoadResourceIndex(*dir, indices->names[i], nullptr);
 			numLoaded++;
 		}
 	}

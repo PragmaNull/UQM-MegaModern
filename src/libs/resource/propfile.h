@@ -24,7 +24,7 @@
 typedef void (*PROPERTY_HANDLER)(const char*, const char*);
 
 void PropFile_from_string(char* d, PROPERTY_HANDLER handler, const char* prefix);
-void PropFile_from_file(uio_Stream* f, PROPERTY_HANDLER handler, const char* prefix);
-void PropFile_from_filename(uio_DirHandle* path, const char* fname, PROPERTY_HANDLER handler, const char* prefix);
+void PropFile_from_file(uqm::io::File& f, PROPERTY_HANDLER handler, const char* prefix);
+void PropFile_from_filename(const uqm::io::Directory& path, const char* fname, PROPERTY_HANDLER handler, const char* prefix);
 
 #endif

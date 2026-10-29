@@ -265,7 +265,7 @@ char* CheckMusicResName(char* fileName)
 	return fileName;
 }
 
-void* _GetMusicData(uio_Stream* fp, uint32_t length)
+void* _GetMusicData(uqm::io::File* fp, uint32_t length)
 {
 	MUSIC_REF h;
 	TFB_SoundSample* sample;

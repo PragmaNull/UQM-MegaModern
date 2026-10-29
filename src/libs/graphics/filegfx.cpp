@@ -24,8 +24,6 @@
 DRAWABLE
 LoadGraphicFile(const char* pStr)
 {
-	uio_Stream* fp;
-
 	// FIXME: this theoretically needs a mechanism to prevent races
 	if (_cur_resfile_name)
 	{
@@ -33,25 +31,11 @@ LoadGraphicFile(const char* pStr)
 		return 0;
 	}
 
-	fp = res_OpenResFile(contentDir, pStr, "rb");
-	if (fp != nullptr)
-	{
-		DRAWABLE hData;
-
-		_cur_resfile_name = pStr;
-		hData = (DRAWABLE)_GetCelData(fp, LengthResFile(fp));
-		_cur_resfile_name = 0;
-		res_CloseResFile(fp);
-		return hData;
-	}
-
-	return (nullptr);
+	return static_cast<DRAWABLE>(res_LoadResFile(*contentDir, pStr, _GetCelData));
 }
 
 FONT LoadFontFile(const char* pStr)
 {
-	uio_Stream* fp;
-
 	// FIXME: this theoretically needs a mechanism to prevent races
 	if (_cur_resfile_name)
 	{
@@ -59,17 +43,5 @@ FONT LoadFontFile(const char* pStr)
 		return 0;
 	}
 
-	fp = res_OpenResFile(contentDir, pStr, "rb");
-	if (fp != nullptr)
-	{
-		FONT hData;
-
-		_cur_resfile_name = pStr;
-		hData = (FONT)_GetFontData(fp, LengthResFile(fp));
-		_cur_resfile_name = 0;
-		res_CloseResFile(fp);
-		return hData;
-	}
-
-	return (0);
+	return static_cast<FONT>(res_LoadResFile(*contentDir, pStr, _GetFontData));
 }

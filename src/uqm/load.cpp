@@ -64,14 +64,14 @@ struct ReadValueTypes<4>
 
 
 template <typename T>
-static inline bool readValue(void* fp, T* v)
+static inline bool readValue(uqm::io::File& fp, T* v)
 {
 	using temp_type = typename ReadValueTypes<sizeof(T)>::temp_type;
 	temp_type t {};
 	for (uint8_t n {}, shift {}; n < sizeof(T); ++n, shift += 8)
 	{
 		uint8_t b {};
-		if (const auto bytesRead = ReadResFile(&b, 1, 1, (uio_Stream*)fp); bytesRead != 1) [[unlikely]]
+		if (const auto bytesRead = ReadResFile(&b, 1, 1, fp); bytesRead != 1) [[unlikely]]
 		{
 			return false;
 		}
@@ -87,12 +87,12 @@ static inline bool readValue(void* fp, T* v)
 }
 
 template <typename T>
-static inline bool readValueArray(void* fp, uqstl::span<T> ar)
+static inline bool readValueArray(uqm::io::File& fp, uqstl::span<T> ar)
 {
 	assert(!ar.empty());
 	if constexpr (sizeof(T) == 1)
 	{
-		return ReadResFile(ar.data(), 1, ar.size(), (uio_Stream*)fp) == ar.size();
+		return ReadResFile(ar.data(), 1, ar.size(), fp) == ar.size();
 	}
 	else
 	{
@@ -107,14 +107,14 @@ static inline bool readValueArray(void* fp, uqstl::span<T> ar)
 	}
 }
 
-static inline bool read_str(void* fp, uqstl::span<char> str)
+static inline bool read_str(uqm::io::File& fp, uqstl::span<char> str)
 {
 	// no type conversion needed for strings
 	return readValueArray(fp, str);
 }
 
 template <typename T>
-static inline bool skipN(void* fp, uint16_t count)
+static inline bool skipN(uqm::io::File& fp, uint16_t count)
 {
 	for (int i = 0; i < count; ++i)
 	{
@@ -128,7 +128,7 @@ static inline bool skipN(void* fp, uint16_t count)
 
 
 static void
-LoadShipQueue(void* fh, QUEUE* pQueue, uint32_t size)
+LoadShipQueue(uqm::io::File& fh, QUEUE* pQueue, uint32_t size)
 {
 	uint16_t num_links = size / 11;
 
@@ -157,7 +157,7 @@ LoadShipQueue(void* fh, QUEUE* pQueue, uint32_t size)
 }
 
 static void
-LoadRaceQueue(void* fh, QUEUE* pQueue, uint32_t size)
+LoadRaceQueue(uqm::io::File& fh, QUEUE* pQueue, uint32_t size)
 {
 	uint16_t num_links = size / 30;
 
@@ -203,7 +203,7 @@ LoadRaceQueue(void* fh, QUEUE* pQueue, uint32_t size)
 }
 
 static void
-LoadGroupQueue(void* fh, QUEUE* pQueue, uint32_t size)
+LoadGroupQueue(uqm::io::File& fh, QUEUE* pQueue, uint32_t size)
 {
 	uint16_t num_links = size / 13;
 
@@ -231,7 +231,7 @@ LoadGroupQueue(void* fh, QUEUE* pQueue, uint32_t size)
 }
 
 static void
-LoadEncounter(ENCOUNTER* EncounterPtr, void* fh, bool try_core)
+LoadEncounter(ENCOUNTER* EncounterPtr, uqm::io::File& fh, bool try_core)
 {
 	uint16_t i;
 
@@ -277,7 +277,7 @@ LoadEncounter(ENCOUNTER* EncounterPtr, void* fh, bool try_core)
 }
 
 static void
-LoadEvent(EVENT* EventPtr, void* fh)
+LoadEvent(EVENT* EventPtr, uqm::io::File& fh)
 {
 	EventPtr->pred = 0;
 	EventPtr->succ = 0;
@@ -288,7 +288,7 @@ LoadEvent(EVENT* EventPtr, void* fh)
 }
 
 static void
-LoadClockState(CLOCK_STATE* ClockPtr, void* fh)
+LoadClockState(CLOCK_STATE* ClockPtr, uqm::io::File& fh)
 {
 	readValue(fh, &ClockPtr->day_index);
 	readValue(fh, &ClockPtr->month_index);
@@ -298,7 +298,7 @@ LoadClockState(CLOCK_STATE* ClockPtr, void* fh)
 }
 
 static bool
-LoadGameState(GAME_STATE* GSPtr, void* fh, bool try_core)
+LoadGameState(GAME_STATE* GSPtr, uqm::io::File& fh, bool try_core)
 {
 	uint32_t magic;
 	legacySave = try_core;
@@ -429,7 +429,7 @@ LoadGameState(GAME_STATE* GSPtr, void* fh, bool try_core)
 }
 
 static bool
-LoadSisState(SIS_STATE* SSPtr, void* fp, bool try_core,
+LoadSisState(SIS_STATE* SSPtr, uqm::io::File& fp, bool try_core,
 			 int legacyMM)
 {
 	uint16_t SisNameSize = (legacyMM == 1 || try_core) ?
@@ -476,7 +476,7 @@ LoadSisState(SIS_STATE* SSPtr, void* fp, bool try_core,
 }
 
 static bool
-LoadSummary(SUMMARY_DESC* SummPtr, void* fp, bool try_core)
+LoadSummary(SUMMARY_DESC* SummPtr, uqm::io::File& fp, bool try_core)
 {
 	uint32_t magic;
 	uint32_t magicTag = try_core ? SAVEFILE_TAG : MMV4_TAG;
@@ -569,7 +569,7 @@ LoadSummary(SUMMARY_DESC* SummPtr, void* fp, bool try_core)
 }
 
 static void
-LoadStarDesc(STAR_DESC* SDPtr, void* fh)
+LoadStarDesc(STAR_DESC* SDPtr, uqm::io::File& fh)
 {
 	readValue(fh, &SDPtr->star_pt.x);
 	readValue(fh, &SDPtr->star_pt.y);
@@ -580,7 +580,7 @@ LoadStarDesc(STAR_DESC* SDPtr, void* fh)
 }
 
 static void
-LoadScanInfo(uio_Stream* fh, uint32_t flen)
+LoadScanInfo(uqm::io::File& fh, uint32_t flen)
 {
 	GAME_STATE_FILE* fp = OpenStateFile(STARINFO_FILE, "wb");
 	if (fp)
@@ -597,7 +597,7 @@ LoadScanInfo(uio_Stream* fh, uint32_t flen)
 }
 
 static void
-LoadGroupList(uio_Stream* fh, uint32_t chunksize)
+LoadGroupList(uqm::io::File& fh, uint32_t chunksize)
 {
 	GAME_STATE_FILE* fp = OpenStateFile(RANDGRPINFO_FILE, "rb");
 	if (fp)
@@ -698,7 +698,7 @@ SetBattleGroupOffset(int encounterIndex, uint32_t offset)
 }
 
 static void
-LoadBattleGroup(uio_Stream* fh, uint32_t chunksize)
+LoadBattleGroup(uqm::io::File& fh, uint32_t chunksize)
 {
 	GAME_STATE_FILE* fp;
 	GROUP_HEADER h;
@@ -792,20 +792,20 @@ LoadBattleGroup(uio_Stream* fh, uint32_t chunksize)
 
 bool LoadCoreGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
 {
-	uio_Stream* in_fp;
+	uqstl::optional<uqm::io::File> in_fp {};
 	char file[PATH_MAX] {};
 	SUMMARY_DESC loc_sd;
 
 	fmt::format_to_n(file, sizeof(file) - 1, "uqmsave.{:02}", which_game);
-	in_fp = res_OpenResFile(saveDir, file, "rb");
+	in_fp = res_OpenResFile(*saveDir, file, uqm::io::OpenMode::Read);
 	if (!in_fp)
 	{
 		return LoadLegacyGame(which_game, SummPtr, false);
 	}
 
-	if (!LoadSummary(&loc_sd, in_fp, true))
+	if (!LoadSummary(&loc_sd, *in_fp, true))
 	{
-		res_CloseResFile(in_fp);
+		in_fp.reset();
 		return LoadLegacyGame(which_game, SummPtr, false);
 	}
 
@@ -816,20 +816,20 @@ bool LoadCoreGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
 	else
 	{ // only need summary for displaying to user
 		memcpy(SummPtr, &loc_sd, sizeof(*SummPtr));
-		res_CloseResFile(in_fp);
+		in_fp.reset();
 		return true;
 	}
 
-	if (!LoadGame(which_game, SummPtr, in_fp, true))
+	if (!LoadGame(which_game, SummPtr, uqstl::move(in_fp), true))
 	{
-		res_CloseResFile(in_fp);
+		in_fp.reset();
 		return false;
 	}
 
 	return true;
 }
 
-bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uio_Stream* in_fp, bool try_core)
+bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uqstl::optional<uqm::io::File> in_fp, bool try_core)
 {
 	char file[PATH_MAX] {};
 	SUMMARY_DESC loc_sd;
@@ -842,15 +842,15 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uio_Stream* in_fp, boo
 	if (!try_core)
 	{
 		fmt::format_to_n(file, sizeof(file) - 1, "uqmsave.{:02}", which_game);
-		in_fp = res_OpenResFile(saveDir, file, "rb");
+		in_fp = res_OpenResFile(*saveDir, file, uqm::io::OpenMode::Read);
 		if (!in_fp)
 		{
 			return LoadLegacyGame(which_game, SummPtr, false);
 		}
 
-		if (!LoadSummary(&loc_sd, in_fp, false))
+		if (!LoadSummary(&loc_sd, *in_fp, false))
 		{
-			res_CloseResFile(in_fp);
+			in_fp.reset();
 			return LoadCoreGame(which_game, SummPtr);
 		}
 
@@ -861,7 +861,7 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uio_Stream* in_fp, boo
 		else
 		{ // only need summary for displaying to user
 			memcpy(SummPtr, &loc_sd, sizeof(*SummPtr));
-			res_CloseResFile(in_fp);
+			in_fp.reset();
 			return true;
 		}
 	}
@@ -886,9 +886,9 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uio_Stream* in_fp, boo
 	initEventSystem();
 
 	Activity = GLOBAL(CurrentActivity);
-	if (!LoadGameState(&GlobData.Game_state, in_fp, try_core))
+	if (!LoadGameState(&GlobData.Game_state, *in_fp, try_core))
 	{
-		res_CloseResFile(in_fp);
+		in_fp.reset();
 		return false;
 	}
 	NextActivity = GLOBAL(CurrentActivity);
@@ -897,22 +897,22 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uio_Stream* in_fp, boo
 	chunk = 0;
 	while (true)
 	{
-		if (!readValue(in_fp, &chunk))
+		if (!readValue(*in_fp, &chunk))
 		{
 			break;
 		}
-		if (!readValue(in_fp, &chunkSize))
+		if (!readValue(*in_fp, &chunkSize))
 		{
-			res_CloseResFile(in_fp);
+			in_fp.reset();
 			return false;
 		}
 		switch (chunk)
 		{
 			case RACE_Q_TAG:
-				LoadRaceQueue(in_fp, &GLOBAL(avail_race_q), chunkSize);
+				LoadRaceQueue(*in_fp, &GLOBAL(avail_race_q), chunkSize);
 				break;
 			case IP_GRP_Q_TAG:
-				LoadGroupQueue(in_fp, &GLOBAL(ip_group_q), chunkSize);
+				LoadGroupQueue(*in_fp, &GLOBAL(ip_group_q), chunkSize);
 				break;
 			case ENCOUNTERS_TAG:
 				num_links = chunkSize / 65;
@@ -924,7 +924,7 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uio_Stream* in_fp, boo
 					hEncounter = AllocEncounter();
 					LockEncounter(hEncounter, &EncounterPtr);
 
-					LoadEncounter(EncounterPtr, in_fp, try_core);
+					LoadEncounter(EncounterPtr, *in_fp, try_core);
 
 					UnlockEncounter(hEncounter);
 					PutEncounter(hEncounter);
@@ -944,7 +944,7 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uio_Stream* in_fp, boo
 					hEvent = AllocEvent();
 					LockEvent(hEvent, &EventPtr);
 
-					LoadEvent(EventPtr, in_fp);
+					LoadEvent(EventPtr, *in_fp);
 
 #ifdef DEBUG_LOAD
 					uqm::log::debug("\t{}/{}/{} -- {}",
@@ -977,20 +977,20 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uio_Stream* in_fp, boo
 				}
 				break;
 			case STAR_TAG:
-				LoadStarDesc(&SD, in_fp);
+				LoadStarDesc(&SD, *in_fp);
 				loadGameCheats();
 				break;
 			case NPC_SHIP_Q_TAG:
-				LoadShipQueue(in_fp, &GLOBAL(npc_built_ship_q), chunkSize);
+				LoadShipQueue(*in_fp, &GLOBAL(npc_built_ship_q), chunkSize);
 				break;
 			case SHIP_Q_TAG:
-				LoadShipQueue(in_fp, &GLOBAL(built_ship_q), chunkSize);
+				LoadShipQueue(*in_fp, &GLOBAL(built_ship_q), chunkSize);
 				break;
 			case STOWED_Q_TAG:
-				LoadShipQueue(in_fp, &GLOBAL(stowed_ship_q), chunkSize);
+				LoadShipQueue(*in_fp, &GLOBAL(stowed_ship_q), chunkSize);
 				break;
 			case SCAN_TAG:
-				LoadScanInfo(in_fp, chunkSize);
+				LoadScanInfo(*in_fp, chunkSize);
 				break;
 			case GROUP_LIST_TAG:
 				if (first_group_spec)
@@ -999,7 +999,7 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uio_Stream* in_fp, boo
 					GLOBAL(BattleGroupRef) = 0;
 					first_group_spec = false;
 				}
-				LoadGroupList(in_fp, chunkSize);
+				LoadGroupList(*in_fp, chunkSize);
 				break;
 			case BATTLE_GROUP_TAG:
 				if (first_group_spec)
@@ -1008,19 +1008,19 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uio_Stream* in_fp, boo
 					GLOBAL(BattleGroupRef) = 0;
 					first_group_spec = false;
 				}
-				LoadBattleGroup(in_fp, chunkSize);
+				LoadBattleGroup(*in_fp, chunkSize);
 				break;
 			default:
 				uqm::log::debug("Skipping chunk of tag %08X (size {})", chunk, chunkSize);
-				if (!skipN<char>(in_fp, chunkSize))
+				if (!skipN<char>(*in_fp, chunkSize))
 				{
-					res_CloseResFile(in_fp);
+					in_fp.reset();
 					return false;
 				}
 				break;
 		}
 	}
-	res_CloseResFile(in_fp);
+	in_fp.reset();
 
 	EncounterGroup = 0;
 	EncounterRace = -1;

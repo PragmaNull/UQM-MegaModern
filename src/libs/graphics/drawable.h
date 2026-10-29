@@ -76,7 +76,7 @@ typedef struct
 extern INTERSECT_CODE _clip_line(const DRECT* pClipRect,
 								 BRESENHAM_LINE* pLine);
 
-extern void* _GetCelData(uio_Stream* fp, uint32_t length);
+extern void* _GetCelData(uqm::io::File* fp, uint32_t length);
 extern bool _ReleaseCelData(void* handle);
 
 extern FRAME _CurFramePtr;

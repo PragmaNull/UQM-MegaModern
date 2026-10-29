@@ -157,7 +157,7 @@ void PropFile_from_string(char* d, PROPERTY_HANDLER handler, const char* prefix)
 	}
 }
 
-void PropFile_from_file(uio_Stream* f, PROPERTY_HANDLER handler, const char* prefix)
+void PropFile_from_file(uqm::io::File& f, PROPERTY_HANDLER handler, const char* prefix)
 {
 	size_t flen;
 	char* data;
@@ -179,13 +179,12 @@ void PropFile_from_file(uio_Stream* f, PROPERTY_HANDLER handler, const char* pre
 	free(data);
 }
 
-void PropFile_from_filename(uio_DirHandle* path, const char* fname, PROPERTY_HANDLER handler, const char* prefix)
+void PropFile_from_filename(const uqm::io::Directory& path, const char* fname, PROPERTY_HANDLER handler, const char* prefix)
 {
-	uio_Stream* f = res_OpenResFile(path, fname, "rt");
+	uqstl::optional<uqm::io::File> f {res_OpenResFile(path, fname, uqm::io::OpenMode::Read | uqm::io::OpenMode::Text)};
 	if (!f)
 	{
 		return;
 	}
-	PropFile_from_file(f, handler, prefix);
-	res_CloseResFile(f);
+	PropFile_from_file(*f, handler, prefix);
 }

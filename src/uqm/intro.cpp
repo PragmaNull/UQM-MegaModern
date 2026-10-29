@@ -454,7 +454,7 @@ Present_DrawMovieFrame(PRESENTATION_INPUT_STATE* pPIS)
 static bool
 ShowPresentationFile(const char* name)
 {
-	STRING pres = CaptureStringTable(LoadStringTableFile(contentDir, name));
+	STRING pres = CaptureStringTable(LoadStringTableFile(*contentDir, name));
 	bool result = ShowSlidePresentation(pres);
 	DestroyStringTable(ReleaseStringTable(pres));
 	return result;

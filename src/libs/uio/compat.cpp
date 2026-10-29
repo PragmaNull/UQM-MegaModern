@@ -11,11 +11,6 @@ using uqm::io::Access;
 using uqm::io::MountPosition;
 using uqm::io::OpenMode;
 
-struct uio_Repository
-{
-	uqm::io::FileSystem fileSystem {};
-};
-
 struct uio_MountHandle
 {
 	uqm::io::Mount mount {};

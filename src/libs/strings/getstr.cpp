@@ -156,8 +156,8 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 	char* clip_path;
 	char* ts_path;
 
-	uio_Stream* fp = nullptr;
-	uio_Stream* timestamp_fp = nullptr;
+	uqstl::optional<uqm::io::File> fp {};
+	uqstl::optional<uqm::io::File> timestamp_fp {};
 	std::unordered_map<std::string, STRING_TABLE_ENTRY_DESC*>* nameHashTable = nullptr;
 	// Hash table of string names (such as "GLAD_WHEN_YOU_COME_BACK")
 	// to a STRING.
@@ -183,15 +183,15 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 		}
 	}
 
-	fp = res_OpenResFile(contentDir, paths, "rb");
-	if (fp == nullptr)
+	fp = res_OpenResFile(*contentDir, paths, uqm::io::OpenMode::Read);
+	if (!fp)
 	{
 		uqm::log::warn("Warning: Can't open '{}'", paths);
 		resdata->ptr = nullptr;
 		return;
 	}
 
-	dataLen = LengthResFile(fp);
+	dataLen = LengthResFile(*fp);
 	uqm::log::info("\t'{}' -- conversation phrases -- {} bytes", paths,
 				   dataLen);
 	if (clip_path)
@@ -250,8 +250,8 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 
 	if (ts_path)
 	{
-		timestamp_fp = uio_fopen(contentDir, ts_path, "rb");
-		if (timestamp_fp != nullptr)
+		timestamp_fp = res_OpenResFile(*contentDir, ts_path, uqm::io::OpenMode::Read);
+		if (timestamp_fp)
 		{
 			tot_ts_size = POOL_SIZE;
 			ts_data = (char*)HMalloc(tot_ts_size);
@@ -262,7 +262,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 		}
 	}
 
-	opos = uio_ftell(fp);
+	opos = fp->tell();
 	stringI = -1;
 	NameOffs = 0;
 	StringOffs = 0;
@@ -272,7 +272,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 	{
 		int l;
 
-		if (uio_fgets(CurrentLine, sizeof(CurrentLine), fp) == nullptr)
+		if (!fp->readLine(CurrentLine))
 		{
 			// EOF or read error.
 			break;
@@ -340,7 +340,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 					char TimeStampLine[1024] {};
 					char* tsptr;
 					bool ts_ok = false;
-					uio_fgets(TimeStampLine, sizeof(TimeStampLine), timestamp_fp);
+					timestamp_fp->readLine(TimeStampLine);
 					if (TimeStampLine[0] == '#')
 					{
 						// Line is of the following form:
@@ -378,8 +378,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 									   name);
 						HFree(ts_data);
 						ts_data = nullptr;
-						uio_fclose(timestamp_fp);
-						timestamp_fp = nullptr;
+						timestamp_fp.reset();
 						TSOffs = 0;
 					}
 				}
@@ -427,7 +426,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 			uqm::strncpy_safe({s, static_cast<uint32_t>(l)}, {CurrentLine, static_cast<uint32_t>(l - 1)});
 		}
 
-		if ((int)uio_ftell(fp) - (int)opos >= (int)dataLen)
+		if ((int)fp->tell() - (int)opos >= (int)dataLen)
 		{
 			break;
 		}
@@ -442,10 +441,6 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 		}
 	}
 
-	if (timestamp_fp)
-	{
-		uio_fclose(timestamp_fp);
-	}
 
 	result = nullptr;
 	// num_data_sets = (ClipOffs ? 1 : 0) + (TSOffs ? 1 : 0) + 1; unused
@@ -539,12 +534,15 @@ err:
 	{
 		HFree(strdata);
 	}
-	res_CloseResFile(fp);
 	resdata->ptr = nullptr;
 }
 
-void* _GetStringData(uio_Stream* fp, uint32_t length)
+void* _GetStringData(uqm::io::File* fp, uint32_t length)
 {
+	if (fp == nullptr)
+	{
+		return nullptr;
+	}
 	void* result;
 
 	int stringI;
@@ -562,14 +560,14 @@ void* _GetStringData(uio_Stream* fp, uint32_t length)
 		goto err;
 	}
 
-	opos = uio_ftell(fp);
+	opos = fp->tell();
 	stringI = -1;
 	StringOffs = 0;
 	for (;;)
 	{
 		int l;
 
-		if (uio_fgets(CurrentLine, sizeof(CurrentLine), fp) == nullptr)
+		if (!fp->readLine(CurrentLine))
 		{
 			// EOF or read error.
 			break;
@@ -626,7 +624,7 @@ void* _GetStringData(uio_Stream* fp, uint32_t length)
 			uqm::strncpy_safe({s, static_cast<uint32_t>(l)}, {CurrentLine, static_cast<uint32_t>(l - 1)});
 		}
 
-		if ((int)uio_ftell(fp) - (int)opos >= (int)length)
+		if ((int)fp->tell() - (int)opos >= (int)length)
 		{
 			break;
 		}
@@ -667,10 +665,14 @@ err:
 }
 
 
-void* _GetBinaryTableData(uio_Stream* fp, uint32_t length)
+void* _GetBinaryTableData(uqm::io::File* fp, uint32_t length)
 {
+	if (fp == nullptr)
+	{
+		return nullptr;
+	}
 	void* result;
-	result = GetResourceData(fp, length);
+	result = GetResourceData(*fp, length);
 
 	if (result)
 	{

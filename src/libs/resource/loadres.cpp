@@ -21,7 +21,7 @@
 #include "core/log/log.h"
 
 
-void* GetResourceData(uio_Stream* fp, uint32_t length)
+void* GetResourceData(uqm::io::File& fp, uint32_t length)
 {
 	void* result;
 	uint32_t compLen;

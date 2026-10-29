@@ -19,84 +19,46 @@
 #include "libs/strings/strintrn.h"
 #include "libs/memlib.h"
 #include "port.h"
-#include "libs/uio.h"
-#include <sys/stat.h>
 
 DIRENTRY_REF
-LoadDirEntryTable(uio_DirHandle* dirHandle, const char* path,
-				  const char* pattern, match_MatchType matchType)
+LoadDirEntryTable(const uqm::io::Directory& dir, const char* path, const uqm::io::Matcher& matcher)
 {
-	uio_DirList* dirList;
-	uint16_t num_entries;
-	uint16_t i;
-	uio_DirHandle* dir;
-	STRING_TABLE StringTable;
-	STRING_TABLE_DESC* lpST;
-	STRING lpLastString;
+	uqstl::error_code error {};
+	const uqstl::optional<uqm::io::Directory> subdir {dir.subdir(path)};
+	assert(subdir.has_value());
+	uqstl::vector<uqstl::string> names {subdir->list("", matcher, error)};
+	uqstl::erase_if(names, [&subdir](const uqstl::string& name) {
+		if (name.starts_with('.'))
+		{
+			return true;
+		}
+		const uqstl::optional<uqm::io::FileInfo> info {subdir->stat(name)};
+		return !info || info->isDirectory();
+	});
 
-	dir = uio_openDirRelative(dirHandle, path, 0);
-	assert(dir != nullptr);
-	dirList = uio_getDirList(dir, "", pattern, matchType);
-	assert(dirList != nullptr);
-	num_entries = 0;
-
-	// First, count the amount of space needed
-	for (i = 0; i < dirList->numNames; i++)
+	if (names.empty())
 	{
-		struct stat sb;
-
-		if (dirList->names[i][0] == '.')
-		{
-			dirList->names[i] = nullptr;
-			continue;
-		}
-		if (uio_stat(dir, dirList->names[i], &sb) == -1)
-		{
-			dirList->names[i] = nullptr;
-			continue;
-		}
-		if (!S_ISREG(sb.st_mode))
-		{
-			dirList->names[i] = nullptr;
-			continue;
-		}
-		num_entries++;
-	}
-	uio_closeDir(dir);
-
-	if (num_entries == 0)
-	{
-		uio_DirList_free(dirList);
 		return ((DIRENTRY_REF)0);
 	}
 
-	StringTable = AllocStringTable(num_entries, 0);
-	lpST = StringTable;
+	STRING_TABLE StringTable {AllocStringTable(static_cast<int>(names.size()), 0)};
+	STRING_TABLE_DESC* lpST {StringTable};
 	if (lpST == 0)
 	{
 		FreeStringTable(StringTable);
-		uio_DirList_free(dirList);
 		return ((DIRENTRY_REF)0);
 	}
-	lpST->size = num_entries;
-	lpLastString = lpST->strings;
+	lpST->size = static_cast<int>(names.size());
 
-	for (i = 0; i < dirList->numNames; i++)
+	STRING lpLastString {lpST->strings};
+	for (const uqstl::string& name : names)
 	{
-		int size;
-		STRINGPTR target;
-		if (dirList->names[i] == nullptr)
-		{
-			continue;
-		}
-		size = strlen(dirList->names[i]) + 1;
-		target = (STRINGPTR)HMalloc(size);
-		memcpy(target, dirList->names[i], size);
+		const size_t size {name.size() + 1};
+		STRINGPTR target {static_cast<STRINGPTR>(HMalloc(size))};
+		memcpy(target, name.c_str(), size);
 		lpLastString->data = target;
-		lpLastString->length = size;
+		lpLastString->length = static_cast<int>(size);
 		lpLastString++;
 	}
-
-	uio_DirList_free(dirList);
 	return StringTable;
 }

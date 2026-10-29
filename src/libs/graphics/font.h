@@ -71,7 +71,7 @@ struct font_desc
 
 extern FONT _CurFontPtr;
 
-extern void* _GetFontData(uio_Stream* fp, uint32_t length);
+extern void* _GetFontData(uqm::io::File* fp, uint32_t length);
 extern bool _ReleaseFontData(void* handle);
 extern TFB_Char* GetFrameForFPS(UniChar ch);
 extern void GetFontDims(int16_t* w, int16_t* h);

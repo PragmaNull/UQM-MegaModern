@@ -29,7 +29,10 @@ typedef unsigned short mode_t;
 #define O_TEXT 0
 #endif
 
-typedef struct uio_Repository uio_Repository;
+struct uio_Repository
+{
+	uqm::io::FileSystem fileSystem {};
+};
 typedef struct uio_MountHandle uio_MountHandle;
 
 // The handles are io types, so migrated code can take them as Directory or File.

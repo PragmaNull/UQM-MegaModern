@@ -227,8 +227,8 @@ initKeyConfig(void)
 										  * MAX_FLIGHT_ALTERNATES);
 
 	/* First, load in the menu keys */
-	LoadResourceIndex(contentDir, "menu.key", "menu.");
-	LoadResourceIndex(configDir, "override.cfg", "menu.");
+	LoadResourceIndex(*contentDir, "menu.key", "menu.");
+	LoadResourceIndex(*configDir, "override.cfg", "menu.");
 	for (i = 0; i < num_menu; i++)
 	{
 		if (!menu_res_names[i])
@@ -240,7 +240,7 @@ initKeyConfig(void)
 
 	if (!loadKeyConfiguration())
 	{
-		LoadResourceIndex(contentDir, "uqm.key", "keys.");
+		LoadResourceIndex(*contentDir, "uqm.key", "keys.");
 	}
 
 	register_flight_controls();

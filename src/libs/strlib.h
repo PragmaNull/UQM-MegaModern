@@ -42,7 +42,7 @@ extern "C" {
 
 extern bool InstallStringTableResType(void);
 extern STRING_TABLE LoadStringTableInstance(RESOURCE res);
-extern STRING_TABLE LoadStringTableFile(uio_DirHandle* dir,
+extern STRING_TABLE LoadStringTableFile(const uqm::io::Directory& dir,
 										const char* fileName);
 extern bool DestroyStringTable(STRING_TABLE StringTable);
 extern STRING CaptureStringTable(STRING_TABLE StringTable);
