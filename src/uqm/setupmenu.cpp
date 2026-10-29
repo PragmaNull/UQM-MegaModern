@@ -2952,7 +2952,7 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 	}
 
 	uqm::saveUserSettings(uqmOptions);
-	SaveKeyConfiguration(configDir, "flight.cfg");
+	SaveKeyConfiguration(configDir);
 
 	if (optRequiresReload)
 	{

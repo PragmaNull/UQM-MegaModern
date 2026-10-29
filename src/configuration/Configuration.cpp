@@ -3,6 +3,7 @@
 #include "options.h"
 #include "options/options.h"
 #include "core/log/log.h"
+#include "libs/file/textfile.h"
 #include "libs/reslib.h"
 #include "uqm/controls.h"
 
@@ -12,39 +13,21 @@ namespace uqm
 {
 
 static constexpr const char* c_settingsFile {"settings.json"};
-static constexpr const char* c_badSettingsFile {"settings.json.bad"};
 
 static_assert(c_controlTemplateCount == static_cast<int>(ControlTemplate::NUM));
 
 bool loadUserSettings(OptionsStruct& options)
 {
-	uio_Stream* stream {uio_fopen(configDir, c_settingsFile, "rb")};
-	if (stream == nullptr)
+	const auto json {readTextFile(configDir, c_settingsFile)};
+	if (!json)
 	{
 		uqm::log::info("No {} found; using default settings.", c_settingsFile);
 		return false;
 	}
 
-	uqstl::string json {};
-	char buffer[4096] {};
-	size_t count {};
-	while ((count = uio_fread(buffer, 1, sizeof buffer, stream)) > 0)
+	if (!options.fromJson(*json))
 	{
-		json.append(buffer, count);
-	}
-	uio_fclose(stream);
-
-	if (!options.fromJson(json))
-	{
-		uio_unlink(configDir, c_badSettingsFile);
-		if (uio_rename(configDir, c_settingsFile, configDir, c_badSettingsFile) == 0)
-		{
-			uqm::log::warn("Moved unreadable {} to {}; using default settings.", c_settingsFile, c_badSettingsFile);
-		}
-		else
-		{
-			uqm::log::error("Could not move unreadable {} to {}.", c_settingsFile, c_badSettingsFile);
-		}
+		moveToBadFile(configDir, c_settingsFile);
 		return false;
 	}
 	return true;
@@ -52,17 +35,7 @@ bool loadUserSettings(OptionsStruct& options)
 
 bool saveUserSettings(const OptionsStruct& options)
 {
-	uio_Stream* stream {res_OpenResFile(configDir, c_settingsFile, "wb")};
-	if (stream == nullptr)
-	{
-		uqm::log::error("Could not open {} for writing.", c_settingsFile);
-		return false;
-	}
-
-	const uqstl::string json {options.toJson()};
-	const bool written {WriteResFile(json.data(), 1, json.size(), stream) == json.size()};
-	res_CloseResFile(stream);
-
+	const bool written {writeTextFile(configDir, c_settingsFile, options.toJson())};
 	if (!written)
 	{
 		uqm::log::error("Could not write {}.", c_settingsFile);

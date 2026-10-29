@@ -59,7 +59,7 @@ void InterrogateInputState(int templat, int control, int index, char* buffer, in
 void RemoveInputState(int templat, int control, int index);
 void RebindInputState(int templat, int control, int index);
 
-void SaveKeyConfiguration(uio_DirHandle* path, const char* fname);
+void SaveKeyConfiguration(uio_DirHandle* path);
 
 /* Separate inputs into frames for dealing with very fast inputs */
 

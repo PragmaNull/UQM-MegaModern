@@ -30,6 +30,8 @@
 #include "libs/reslib.h"
 #include "options.h"
 #include "core/string/StringUtils.h"
+#include "libs/file/textfile.h"
+#include "libs/input/keyconfig.h"
 
 #define KBDBUFSIZE (1 << 8)
 static int kbdhead = 0, kbdtail = 0;
@@ -125,6 +127,49 @@ register_menu_controls(int index)
 }
 
 static VCONTROL_GESTURE* controls;
+
+static constexpr const char* c_keyConfigFile {"keys.json"};
+
+static uqstl::span<const uqgsl::czstring> flightControlNames()
+{
+	return {flight_res_names, static_cast<size_t>(num_flight)};
+}
+
+// Loads the user key configuration into the "keys." resources.
+static bool loadKeyConfiguration()
+{
+	const auto json {uqm::readTextFile(configDir, c_keyConfigFile)};
+	if (!json)
+	{
+		return false;
+	}
+
+	const auto templates {uqm::keyConfigFromJson(*json, flightControlNames())};
+	if (!templates)
+	{
+		uqm::moveToBadFile(configDir, c_keyConfigFile);
+		return false;
+	}
+
+	char key[40] {};
+	for (size_t templ = 0; templ < templates->size() && templ < static_cast<size_t>(num_templ); ++templ)
+	{
+		const uqm::KeyTemplate& keyTemplate {(*templates)[templ]};
+		fmt::format_to_sz_n(key, "keys.{}.name", templ + 1);
+		res_PutString(key, keyTemplate.name.c_str());
+
+		for (size_t control = 0; control < keyTemplate.bindings.size(); ++control)
+		{
+			const auto& gestures {keyTemplate.bindings[control]};
+			for (size_t alternate = 0; alternate < gestures.size() && alternate < MAX_FLIGHT_ALTERNATES; ++alternate)
+			{
+				fmt::format_to_sz_n(key, "keys.{}.{}.{}", templ + 1, flight_res_names[control], alternate + 1);
+				res_PutString(key, gestures[alternate].c_str());
+			}
+		}
+	}
+	return true;
+}
 #define CONTROL_PTR(i, j, k) \
 	(controls + ((i) * num_flight + (j)) * MAX_FLIGHT_ALTERNATES + (k))
 
@@ -193,13 +238,8 @@ initKeyConfig(void)
 		register_menu_controls(i);
 	}
 
-	LoadResourceIndex(configDir, "flight.cfg", "keys.");
-	if (!res_HasKey("keys.1.name"))
+	if (!loadKeyConfiguration())
 	{
-		/* Either flight.cfg doesn't exist, or we're using an old version
-		   of flight.cfg, and thus we wound up loading untyped values into
-		   'keys.keys.1.name' and such.  Load the defaults from the content
-		   directory. */
 		LoadResourceIndex(contentDir, "uqm.key", "keys.");
 	}
 
@@ -774,9 +814,37 @@ void RebindInputState(int templat, int control, int index)
 	res_PutString(keybuf, valbuf);
 }
 
-void SaveKeyConfiguration(uio_DirHandle* path, const char* fname)
+void SaveKeyConfiguration(uio_DirHandle* path)
 {
-	SaveResourceIndex(path, fname, "keys.", true);
+	uqstl::vector<uqm::KeyTemplate> templates(static_cast<size_t>(num_templ));
+	char key[40] {};
+	for (size_t templ = 0; templ < templates.size(); ++templ)
+	{
+		uqm::KeyTemplate& keyTemplate {templates[templ]};
+		fmt::format_to_sz_n(key, "keys.{}.name", templ + 1);
+		if (res_IsString(key))
+		{
+			keyTemplate.name = res_GetString(key);
+		}
+
+		keyTemplate.bindings.resize(static_cast<size_t>(num_flight));
+		for (size_t control = 0; control < keyTemplate.bindings.size(); ++control)
+		{
+			for (size_t alternate = 0; alternate < MAX_FLIGHT_ALTERNATES; ++alternate)
+			{
+				fmt::format_to_sz_n(key, "keys.{}.{}.{}", templ + 1, flight_res_names[control], alternate + 1);
+				if (res_IsString(key))
+				{
+					keyTemplate.bindings[control].emplace_back(res_GetString(key));
+				}
+			}
+		}
+	}
+
+	if (!uqm::writeTextFile(path, c_keyConfigFile, uqm::keyConfigToJson(templates, flightControlNames())))
+	{
+		uqm::log::error("Could not write {}.", c_keyConfigFile);
+	}
 }
 
 void BeginInputFrame(void)

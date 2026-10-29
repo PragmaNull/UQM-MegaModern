@@ -61,6 +61,8 @@
 // for TFB_Random()
 #include "libs/reslib.h"
 #include "core/log/log.h"
+#include "libs/file/textfile.h"
+#include "uqm/supermelee/meleeconfig.h"
 #include "libs/uio.h"
 
 
@@ -2747,104 +2749,66 @@ bool DoMelee(MELEE_STATE* pMS)
 	return true;
 }
 
+static constexpr const char* c_meleeConfigFile {"melee.json"};
+
 static int
 LoadMeleeConfig(MELEE_STATE* pMS)
 {
-	uio_Stream* stream;
-	int status;
-	uint16_t side;
-
-	stream = uio_fopen(configDir, "melee.cfg", "rb");
-	if (stream == nullptr)
+	const auto json {uqm::readTextFile(configDir, c_meleeConfigFile)};
+	if (!json)
 	{
-		goto err;
+		return -1;
 	}
 
+	const auto sides {uqm::meleeConfigFromJson(*json)};
+	if (!sides || sides->size() != NUM_SIDES)
 	{
-		struct stat sb;
-
-		if (uio_fstat(uio_streamHandle(stream), &sb) == -1)
-		{
-			goto err;
-		}
-		if ((size_t)sb.st_size != (1 + MeleeTeam_serialSize) * NUM_SIDES)
-		{
-			goto err;
-		}
+		uqm::moveToBadFile(configDir, c_meleeConfigFile);
+		return -1;
 	}
 
-	for (side = 0; side < NUM_SIDES; side++)
+	for (uint16_t side = 0; side < NUM_SIDES; side++)
 	{
-		status = uio_getc(stream);
-		if (status == EOF)
-		{
-			goto err;
-		}
-		PlayerControl[side] = (PlayerControlFlags)status;
-		// TODO XXX: insert sanity check on PlayerControl here.
-
-		if (MeleeSetup_deserializeTeam(pMS->meleeSetup, side, stream) == -1)
-		{
-			goto err;
-		}
+		const uqm::MeleeSideConfig& config {(*sides)[side]};
 
 		/* Do not allow netplay mode at the start. */
-		if (testFlag(PlayerControl[side], PlayerControlFlags::Network))
+		PlayerControl[side] = config.control;
+		if (PlayerControl[side] == PlayerControlFlags::None || testFlag(PlayerControl[side], PlayerControlFlags::Network))
 		{
 			PlayerControl[side] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
 		}
-	}
 
-	uio_fclose(stream);
+		MeleeSetup_setTeamName(pMS->meleeSetup, side, config.teamName.c_str());
+		for (FleetShipIndex slot = 0; slot < MELEE_FLEET_SIZE; slot++)
+		{
+			const MeleeShip ship {slot < config.ships.size() ? config.ships[slot] : MELEE_NONE};
+			MeleeSetup_setShip(pMS->meleeSetup, side, slot, ship);
+		}
+	}
 	return 0;
-
-err:
-	if (stream)
-	{
-		uio_fclose(stream);
-	}
-	return -1;
 }
 
 static int
 WriteMeleeConfig(MELEE_STATE* pMS)
 {
-	uio_Stream* stream;
-	uint16_t side;
-
-	stream = res_OpenResFile(configDir, "melee.cfg", "wb");
-	if (stream == nullptr)
+	uqstl::vector<uqm::MeleeSideConfig> sides(NUM_SIDES);
+	for (uint16_t side = 0; side < NUM_SIDES; side++)
 	{
-		goto err;
-	}
-
-	for (side = 0; side < NUM_SIDES; side++)
-	{
-		if (uio_putc(static_cast<int>(PlayerControl[side]), stream) == EOF)
+		uqm::MeleeSideConfig& config {sides[side]};
+		config.control = PlayerControl[side];
+		config.teamName = MeleeSetup_getTeamName(pMS->meleeSetup, side);
+		for (FleetShipIndex slot = 0; slot < MELEE_FLEET_SIZE; slot++)
 		{
-			goto err;
-		}
-
-		if (MeleeSetup_serializeTeam(pMS->meleeSetup, side, stream) == -1)
-		{
-			goto err;
+			config.ships.push_back(MeleeSetup_getShip(pMS->meleeSetup, side, slot));
 		}
 	}
 
-	if (!res_CloseResFile(stream))
+	if (!uqm::writeTextFile(configDir, c_meleeConfigFile, uqm::meleeConfigToJson(sides)))
 	{
-		goto err;
+		uqm::log::error("Could not write {}.", c_meleeConfigFile);
+		return -1;
 	}
-
 	return 0;
-
-err:
-	if (stream)
-	{
-		res_CloseResFile(stream);
-		DeleteResFile(configDir, "melee.cfg");
-	}
-	return -1;
 }
 
 void Melee(void)
