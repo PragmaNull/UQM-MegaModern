@@ -12,6 +12,7 @@ namespace uqm
 {
 
 static constexpr const char* c_settingsFile {"settings.json"};
+static constexpr const char* c_badSettingsFile {"settings.json.bad"};
 
 static_assert(c_controlTemplateCount == static_cast<int>(ControlTemplate::NUM));
 
@@ -33,7 +34,20 @@ bool loadUserSettings(OptionsStruct& options)
 	}
 	uio_fclose(stream);
 
-	return options.fromJson(json);
+	if (!options.fromJson(json))
+	{
+		uio_unlink(configDir, c_badSettingsFile);
+		if (uio_rename(configDir, c_settingsFile, configDir, c_badSettingsFile) == 0)
+		{
+			uqm::log::warn("Moved unreadable {} to {}; using default settings.", c_settingsFile, c_badSettingsFile);
+		}
+		else
+		{
+			uqm::log::error("Could not move unreadable {} to {}.", c_settingsFile, c_badSettingsFile);
+		}
+		return false;
+	}
+	return true;
 }
 
 bool saveUserSettings(const OptionsStruct& options)
