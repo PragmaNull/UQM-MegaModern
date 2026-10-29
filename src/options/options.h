@@ -404,6 +404,10 @@ struct OptionsStruct : SettingsRegistry
 		*this, {.key = "cheats.meleeObstacles", .description = "Removes the planet and asteroids from Super Melee.", .cli = "--nomeleeobstacles"},
 		   false
 	};
+	Setting<bool> passiveEnemy {
+		*this, {.key = "cheats.passiveEnemy", .description = "Computer-controlled enemy ships do nothing in combat.", .cli = "--passiveenemy"},
+			false
+	 };
 	Setting<bool> showVisitedStars {
 		*this, {.key = "visuals.showVisitedStars", .description = "Dim visited stars on the StarMap and encase the star name in parenthesis.", .cli = "--showvisitstars"},
 		   false
