@@ -13,8 +13,7 @@ UQM-MegaModern is a C++20 modernization of The Ur-Quan Masters (a port of Star C
 Root `.bat` files wrap Python scripts in `scripts/`:
 
 ```bat
-install.bat [-c CONFIG] [--asan] [-p PROFILE]   :: conan install
-setup.bat   [-c CONFIG] [--asan]                :: cmake configure (Ninja)
+setup.bat   [-c CONFIG] [--asan] [-p PROFILE]   :: conan install, then cmake configure (Ninja)
 build.bat   [-c CONFIG] [--asan] [-t TARGET] [-j N] [--clean]
 test.bat    [-c CONFIG] [--build] [-R REGEX] [-j N]
 run.bat     [--build] [GAME ARGS...]           :: run the game with -n content
@@ -23,8 +22,9 @@ regress.bat [--build] [-R REGEX] [-j N]         :: run the input scripts in test
 
 - `CONFIG`: `Release` (default), `Debug`, `RelWithDebInfo`, `MinSizeRel`. All take `-B DIR` (default `conanbuild`).
 - `build`/`test` default to the config already in `CMakeCache.txt`; `build` reconfigures if `--config`/`--asan` differ.
+- `setup --skip-install` runs only the cmake step. `build` runs conan install itself when the conan files for the config are missing.
 - Commands run inside conan's `conanbuild`/`conanrun` env scripts, so no VS developer prompt is needed.
-- Unrecognized arguments are forwarded to conan/cmake/ctest. Scripts can also be run directly with `python scripts/<name>.py`.
+- Unrecognized arguments are forwarded to cmake/ctest. Scripts can also be run directly with `python scripts/<name>.py`.
 
 ### CMake + Conan (primary method)
 
