@@ -412,7 +412,6 @@ typedef struct globalopts_struct
 	OPT_RESSCALER loresBlowup;
 	OPT_DRIVERTYPE driver;
 	OPT_WINDOWTYPE windowType;
-	OPT_SEED seedType;
 	OPT_ADD_REMOVE deviceArray[28], upgradeArray[NUM_UPGRADES];
 	OPT_ENABLABLE scanlines, fps, keepaspect, godMode, unlockUpgrades, directionalJoystick;
 	OPT_FULLSCREEN fullscreen;

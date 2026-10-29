@@ -487,24 +487,12 @@ do_keyconfig(WIDGET* self, int event)
 	return false;
 }
 
-static void
-populate_seed(void)
-{
-	if (choices[CHOICE_GAMESEED].selected == OPTVAL_PRIME || !SANE_SEED(uqm::UQMOptions::read().customSeed.value))
-	{
-		uqm::UQMOptions::edit().customSeed = PrimeA;
-	}
-	fmt::format_to_sz_n(textentries[TEXT_GAMESEED].value,
-						sizeof(textentries[TEXT_GAMESEED].value), "{}", uqm::UQMOptions::read().customSeed.value);
-}
-
 static int
 do_advanced(WIDGET* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
 		next = (WIDGET*)(&menus[MENU_ADVANCED]);
-		populate_seed();
 		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
 		return true;
 	}
@@ -698,32 +686,6 @@ rename_template(WIDGET_TEXTENTRY* self)
 	   buffer is always at least this big; this will require some
 	   reworking of widgets */
 	uqm::strncpy_safe(uqm::input_templates[choices[CHOICE_KBLAYOUT].selected].name, self->value);
-}
-
-static void
-change_seedtype(WIDGET_CHOICE* self, int oldval)
-{
-	if (self->selected == OPTVAL_PRIME)
-	{
-		uqm::UQMOptions::edit().customSeed = PrimeA;
-		fmt::format_to_sz_n(textentries[TEXT_GAMESEED].value,
-							sizeof(textentries[TEXT_GAMESEED].value),
-							"{}", uqm::UQMOptions::read().customSeed.value);
-	}
-
-	(void)oldval; // Satisfy compiler
-}
-
-static void
-change_seed(WIDGET_TEXTENTRY* self)
-{
-	int customSeed = atoi(self->value);
-	if (choices[CHOICE_GAMESEED].selected == OPTVAL_PRIME || !SANE_SEED(uqm::UQMOptions::read().customSeed.value))
-	{
-		customSeed = PrimeA;
-		fmt::format_to_sz_n(self->value, "{}", customSeed);
-	}
-	uqm::UQMOptions::edit().customSeed = customSeed;
 }
 
 
@@ -1038,7 +1000,6 @@ SetDefaults(void)
 #endif
 	choices[CHOICE_LANDERHOLD].selected = static_cast<int>(opts.landerHold);
 	choices[CHOICE_WINDOWTYPE].selected = opts.windowType;
-	choices[CHOICE_GAMESEED].selected = opts.seedType;
 
 	// Devices
 	for (i = DEVICE_START; i < DEVICE_START
@@ -1081,7 +1042,6 @@ PropagateResults(void)
 #endif
 	opts.landerHold = (OPT_CONSOLETYPE)choices[CHOICE_LANDERHOLD].selected;
 	opts.windowType = (OPT_WINDOWTYPE)choices[CHOICE_WINDOWTYPE].selected;
-	opts.seedType = (OPT_SEED)choices[CHOICE_GAMESEED].selected;
 
 	// Devices
 	for (i = DEVICE_START;
@@ -1500,14 +1460,22 @@ build_defined_menus(void)
 			SetSpeechVolume(speechVolumeScale);
 			TestSpeechSound(SetAbsSoundIndex(testSounds, speechVolumeScale >= 1.0f));
 		}
+		else if (setting.key() == "seed.type" || setting.key() == "seed.value")
+		{
+			if (*options.seedType == uqm::SeedType::None && *options.customSeed != PrimeA)
+			{
+				uqm::UQMOptions::edit().customSeed = PrimeA;
+				menuWidgets->refresh();
+			}
+			g_seedType = *options.seedType;
+		}
 	};
+	hooks.textEntrySelect = OnTextEntryEvent;
 	uqm::MenuWidgets::SharedWidgets shared {};
 	shared.spacer = (WIDGET*)(&labels[LABEL_SPACER]);
 	shared.back = (WIDGET*)(&buttons[BTN_QUITSUBMENU]);
 	shared.legacy = {
 		{"windowType",		   (WIDGET*)(&choices[CHOICE_WINDOWTYPE])},
-		{"seedType",			 (WIDGET*)(&choices[CHOICE_GAMESEED])	 },
-		{"customSeed",		   (WIDGET*)(&textentries[TEXT_GAMESEED])},
 		{"devicesMenu",			(WIDGET*)(&buttons[BTN_DEVMENU])		},
 		{"upgradesMenu",		 (WIDGET*)(&buttons[BTN_UPGMENU])		 },
 		{"player1Template",		(WIDGET*)(&choices[CHOICE_BTMPLAYER]) },
@@ -1699,7 +1667,6 @@ init_widgets(void)
 
 	/* Choice 20 has a special onChange handler, too. */
 	choices[CHOICE_KBLAYOUT].onChange = change_template;
-	choices[CHOICE_GAMESEED].onChange = change_seedtype;
 
 	// Check addon availability for HD mode, DOS/3DO mode, and music remixes
 	choices[CHOICE_GRAPHICS].onChange = check_availability;
@@ -1968,7 +1935,6 @@ init_widgets(void)
 	}
 
 	textentries[TEXT_LOUTNAME].onChange = rename_template;
-	textentries[TEXT_GAMESEED].onChange = change_seed;
 	textentries[TEXT_CUSTMRES].onChange = change_res;
 
 	/* Control Entry boxes */
@@ -2287,8 +2253,6 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 	// Orbit
 	opts->landerHold = whichPlatformOpt(uqmOptions.landerHold.value);
 
-	// Game modes
-	opts->seedType = (OPT_SEED)g_seedType;
 
 	// Comm screen
 
@@ -2406,17 +2370,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 	// Orbit
 	putOpt(uqmOptions.landerHold.value, opts->landerHold, false);
 
-	// Game modes
-	{
-		putOpt(g_seedType, (int)(opts->seedType), false);
-		uqmOptions.seedType = g_seedType;
-		int customSeed = atoi(textentries[TEXT_GAMESEED].value);
-		if (!SANE_SEED(customSeed) || g_seedType == uqm::SeedType::Prime)
-		{
-			customSeed = PrimeA;
-		}
-		putOpt(uqmOptions.customSeed.value, customSeed, false);
-	}
 
 	if ((uqm::UQMOptions::edit().optDifficulty = *uqmOptions.optDiffChooser) == uqm::Difficulty::ChooseYourOwn)
 	{
