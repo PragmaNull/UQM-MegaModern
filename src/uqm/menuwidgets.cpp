@@ -26,6 +26,14 @@ struct MenuWidgets::BoundSlider
 	MenuItemDef item {};
 };
 
+struct MenuWidgets::BoundText
+{
+	WIDGET_TEXTENTRY widget {};
+	MenuWidgets* owner {};
+	SettingBase* setting {};
+	MenuItemDef item {};
+};
+
 struct MenuWidgets::Heading
 {
 	WIDGET_LABEL widget {};
@@ -38,6 +46,26 @@ namespace
 
 // The widget callbacks get only the widget, so the bindings are found by widget address.
 uqstl::map<const void*, void*> s_bindings {};
+
+int selectedOption(const SettingBase& setting, const MenuItemDef& item)
+{
+	for (size_t index = 0; index < item.options.size(); ++index)
+	{
+		if (setting.hasValueText(item.options[index].value))
+		{
+			return static_cast<int>(index);
+		}
+	}
+	return 0;
+}
+
+void showText(WIDGET_TEXTENTRY& widget, const SettingBase& setting)
+{
+	const uqstl::string text {setting.valueText()};
+	const size_t length {uqstl::min(text.size(), static_cast<size_t>(widget.maxlen))};
+	uqstl::copy_n(text.begin(), length, widget.value);
+	widget.value[length] = '\0';
+}
 
 void fillTooltip(const char* (&tooltip)[3], const uqstl::vector<uqstl::string>& lines)
 {
@@ -65,6 +93,10 @@ MenuWidgets::~MenuWidgets()
 	for (const auto& slider : m_sliders)
 	{
 		s_bindings.erase(&slider->widget);
+	}
+	for (const auto& text : m_texts)
+	{
+		s_bindings.erase(&text->widget);
 	}
 }
 
@@ -101,6 +133,9 @@ WIDGET** MenuWidgets::build(const MenuDef& menu)
 			case MenuItemKind::Slider:
 				widget = buildSlider(menu, item);
 				break;
+			case MenuItemKind::Text:
+				widget = buildText(menu, item);
+				break;
 		}
 		if (widget != nullptr)
 		{
@@ -131,15 +166,7 @@ WIDGET* MenuWidgets::buildChoice(const MenuDef& menu, const MenuItemDef& item)
 		choice.options.push_back(widgetOption);
 	}
 
-	int selected {};
-	for (size_t index = 0; index < choice.item.options.size(); ++index)
-	{
-		if (setting->hasValueText(choice.item.options[index].value))
-		{
-			selected = static_cast<int>(index);
-			break;
-		}
-	}
+	const int selected {selectedOption(*setting, choice.item)};
 
 	WIDGET_CHOICE& widget {choice.widget};
 	widget.tag = WIDGET_TYPE_CHOICE;
@@ -192,6 +219,58 @@ WIDGET* MenuWidgets::buildSlider(const MenuDef& menu, const MenuItemDef& item)
 
 	s_bindings[&widget] = &slider;
 	return reinterpret_cast<WIDGET*>(&widget);
+}
+
+WIDGET* MenuWidgets::buildText(const MenuDef& menu, const MenuItemDef& item)
+{
+	SettingBase* setting {m_settings.find(item.setting)};
+	if (setting == nullptr)
+	{
+		uqm::log::error("Menu '{}': unknown setting '{}'.", menu.id, item.setting);
+		return nullptr;
+	}
+
+	auto& text {*m_texts.emplace_back(uqstl::make_unique<BoundText>())};
+	text.owner = this;
+	text.setting = setting;
+	text.item = item;
+
+	WIDGET_TEXTENTRY& widget {text.widget};
+	widget.tag = WIDGET_TYPE_TEXTENTRY;
+	widget.handleEvent = Widget_HandleEventTextEntry;
+	widget.receiveFocus = Widget_ReceiveFocusSimple;
+	widget.draw = Widget_DrawTextEntry;
+	widget.height = Widget_HeightOneLine;
+	widget.width = Widget_WidthFullScreen;
+	widget.handleEventSelect = m_hooks.textEntrySelect;
+	widget.category = text.item.label.c_str();
+	widget.maxlen = WIDGET_TEXTENTRY_WIDTH - 1;
+	widget.state = WTE_NORMAL;
+	widget.cursor_pos = 0;
+	fillTooltip(widget.tooltip, text.item.tooltip);
+	widget.onChange = onTextChanged;
+	showText(widget, *setting);
+
+	s_bindings[&widget] = &text;
+	return reinterpret_cast<WIDGET*>(&widget);
+}
+
+void MenuWidgets::refresh()
+{
+	for (const auto& choice : m_choices)
+	{
+		choice->widget.selected = selectedOption(*choice->setting, choice->item);
+		choice->widget.highlighted = choice->widget.selected;
+	}
+	for (const auto& slider : m_sliders)
+	{
+		const auto value {sliderDisplayedValue(slider->item, slider->setting->valueText())};
+		slider->widget.value = uqstl::clamp(value.value_or(slider->item.min), slider->item.min, slider->item.max);
+	}
+	for (const auto& text : m_texts)
+	{
+		showText(text->widget, *text->setting);
+	}
 }
 
 WIDGET* MenuWidgets::buildHeading(const MenuItemDef& item)
@@ -261,6 +340,18 @@ void MenuWidgets::onChoiceChanged(WIDGET_CHOICE* self, int oldValue)
 	}
 
 	choice.owner->applyChange(*choice.setting, option.value);
+}
+
+void MenuWidgets::onTextChanged(WIDGET_TEXTENTRY* self)
+{
+	const auto found {s_bindings.find(self)};
+	if (found == s_bindings.end())
+	{
+		return;
+	}
+	BoundText& text {*static_cast<BoundText*>(found->second)};
+	text.owner->applyChange(*text.setting, self->value);
+	showText(*self, *text.setting);
 }
 
 void MenuWidgets::onSliderChanged(WIDGET_SLIDER* self)

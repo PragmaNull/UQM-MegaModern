@@ -29,6 +29,7 @@ enum class MenuItemKind
 {
 	Choice,
 	Slider,
+	Text,
 	Heading,
 	Spacer,
 	Back,
@@ -39,7 +40,7 @@ enum class MenuItemKind
 struct MenuItemDef
 {
 	MenuItemKind kind {MenuItemKind::Spacer};
-	// Setting key for a Choice or Slider.
+	// Setting key for a Choice, Slider or Text.
 	uqstl::string setting {};
 	uqstl::string label {};
 	uqstl::vector<MenuOptionDef> options {};
@@ -50,7 +51,7 @@ struct MenuItemDef
 	int step {5};
 	double scale {1.0};
 	bool percent {};
-	// At most three lines.
+	// Tooltip of a Slider or Text. At most three lines.
 	uqstl::vector<uqstl::string> tooltip {};
 
 	// Text of a Heading.

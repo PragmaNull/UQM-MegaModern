@@ -4,6 +4,7 @@
 #include "options/options.h"
 #include "uqm/menuwidgets.h"
 
+#include <cstring>
 #include <fstream>
 #include <sstream>
 
@@ -49,6 +50,11 @@ int Widget_ReceiveFocusRefuseFocus(WIDGET*, int)
 	return 0;
 }
 void Widget_DrawLabel(WIDGET*, int, int) {}
+int Widget_HandleEventTextEntry(WIDGET*, int)
+{
+	return 0;
+}
+void Widget_DrawTextEntry(WIDGET*, int, int) {}
 int Widget_HeightLabel(WIDGET*)
 {
 	return 0;
@@ -249,6 +255,49 @@ TEST_F(MenuWidgetsTest, SliderChangeSetsTheSetting)
 	move(slider(list, c_nebulae), 33);
 	EXPECT_EQ(*options.nebulaevol, 33);
 	EXPECT_EQ(changed, (uqstl::vector<uqstl::string> {"audio.musicVolume", "visuals.nebulaeVolume"}));
+}
+
+TEST_F(MenuWidgetsTest, TextShowsAndSetsTheSetting)
+{
+	const auto textMenu {menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [
+		{"text": "seed.value", "label": "Seed", "tooltip": ["Type a seed."]}
+	]}]})")};
+	ASSERT_TRUE(textMenu.has_value());
+	options.customSeed = 12345;
+	MenuWidgets::Hooks hooks {};
+	hooks.settingChanged = [this](const SettingBase& setting) {
+		changed.emplace_back(setting.key());
+	};
+	MenuWidgets builder {
+		options, MenuWidgets::SharedWidgets {&spacer, &back},
+		  uqstl::move(hooks)
+	};
+	WIDGET** list {builder.build(textMenu->menus[0])};
+	ASSERT_EQ(list[0]->tag, WIDGET_TYPE_TEXTENTRY);
+	auto& widget {*reinterpret_cast<WIDGET_TEXTENTRY*>(list[0])};
+	EXPECT_STREQ(widget.category, "Seed");
+	EXPECT_STREQ(widget.tooltip[0], "Type a seed.");
+	EXPECT_STREQ(widget.value, "12345");
+
+	std::strcpy(widget.value, "777");
+	widget.onChange(&widget);
+	EXPECT_EQ(*options.customSeed, 777);
+	EXPECT_EQ(changed, (uqstl::vector<uqstl::string> {"seed.value"}));
+
+	std::strcpy(widget.value, "abc");
+	widget.onChange(&widget);
+	EXPECT_EQ(*options.customSeed, 777);
+	EXPECT_STREQ(widget.value, "777");
+}
+
+TEST_F(MenuWidgetsTest, RefreshShowsChangedSettings)
+{
+	WIDGET** list {build()};
+	options.skipIntro = true;
+	options.nebulaevol = 12;
+	widgets->refresh();
+	EXPECT_EQ(choice(list, c_skipIntro).selected, 1);
+	EXPECT_EQ(slider(list, c_nebulae).value, 12);
 }
 
 TEST_F(MenuWidgetsTest, LegacyItemsUseTheGivenWidget)

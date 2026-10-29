@@ -174,6 +174,16 @@ uqstl::optional<MenuItemDef> readItem(yyjson_val* itemObj)
 	{
 		return readSlider(itemObj, uqstl::move(*setting));
 	}
+	if (auto setting {getString(itemObj, "text")})
+	{
+		const auto label {getString(itemObj, "label")};
+		auto tooltip {getStringArray(itemObj, "tooltip", c_maxTooltipLines)};
+		if (!label || !tooltip)
+		{
+			return uqstl::nullopt;
+		}
+		return MenuItemDef {.kind = MenuItemKind::Text, .setting = uqstl::move(*setting), .label = *label, .tooltip = uqstl::move(*tooltip)};
+	}
 	return uqstl::nullopt;
 }
 
@@ -283,7 +293,7 @@ uqstl::vector<uqstl::string> validateMenuDefinition(const MenuDefinition& defini
 	{
 		for (const MenuItemDef& item : menu.items)
 		{
-			if (item.kind != MenuItemKind::Choice && item.kind != MenuItemKind::Slider)
+			if (item.kind != MenuItemKind::Choice && item.kind != MenuItemKind::Slider && item.kind != MenuItemKind::Text)
 			{
 				continue;
 			}
