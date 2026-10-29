@@ -8,7 +8,6 @@
 #include "lib/Math2D/Math2D.h"
 #include "options/OptionTypes.h"
 
-#include <concepts>
 #include <optional>
 
 struct yyjson_val;
@@ -98,23 +97,6 @@ struct JsonCodec<Vec2u>
 yyjson_mut_val* writeEnum(yyjson_mut_doc* doc, uqstl::string_view name, int64_t value);
 uqstl::optional<int64_t> readEnumInt(yyjson_val* val);
 uqstl::optional<uqstl::string_view> readEnumName(yyjson_val* val);
-
-template <typename E>
-concept FlagEnum = EnumType<E> && requires(E a) {
-	{ a | a } -> uqstl::same_as<E>;
-};
-
-// Returns the OR of all declared values of 'E'.
-template <EnumType E>
-constexpr int64_t declaredBits()
-{
-	int64_t bits {};
-	for (const E value : magic_enum::enum_values<E>())
-	{
-		bits |= static_cast<int64_t>(value);
-	}
-	return bits;
-}
 
 // Enums are written by name. Values without a name, such as combined flags, are written as integers.
 template <EnumType E>
