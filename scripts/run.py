@@ -37,11 +37,16 @@ def main():
             fail(f"{CONTENT_DIR} not found; clone UQM-MegaModern-Content there")
         extra = ["-n", CONTENT_DIR, *extra]
 
-    # Run scripted games in a window.
-    has_script_arg = any(arg == "--input-script" or arg.startswith("--input-script=") for arg in extra)
-    has_window_arg = any(arg in ("-f", "--fullscreen") or arg.startswith("--fullscreen=") for arg in extra)
-    if has_script_arg and not has_window_arg:
-        extra = [*extra, "--fullscreen", "Windowed"]
+    # Run scripted games muted and in a window.
+    def has_arg(*names):
+        return any(str(arg) in names or str(arg).startswith(tuple(f"{name}=" for name in names)) for arg in extra)
+
+    if has_arg("--input-script"):
+        if not has_arg("-f", "--fullscreen"):
+            extra = [*extra, "--fullscreen", "Windowed"]
+        for short, long in (("-M", "--musicvol"), ("-S", "--sfxvol"), ("-T", "--speechvol")):
+            if not has_arg(short, long):
+                extra = [*extra, long, "0"]
 
     run([exe, *extra])
 

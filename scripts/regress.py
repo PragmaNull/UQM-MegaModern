@@ -31,7 +31,8 @@ def run_script(exe, script, out_dir, timeout):
     log = out_dir / f"{name}.log"
 
     cmd = [exe, "-n", CONTENT_DIR, "-C", config_dir, "-l", log,
-           "--input-script", script, "--fullscreen", "Windowed"]
+           "--input-script", script, "--fullscreen", "Windowed",
+           "--musicvol", "0", "--sfxvol", "0", "--speechvol", "0"]
     try:
         result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=timeout)
     except subprocess.TimeoutExpired:
