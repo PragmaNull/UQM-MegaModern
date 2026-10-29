@@ -34,9 +34,7 @@
 #include "libs/inplib.h"
 #include "libs/vidlib.h"
 #include "libs/sound/sound.h"
-#include "libs/resource/stringbank.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include "resinst.h"
 #include "nameref.h"
 #include <math.h>
@@ -49,9 +47,18 @@
 #include "uqm/menuwidgets.h"
 
 #include "SDL_version.h"
-#include <scn/scan.h>
 
-static STRING SetupTab;
+#if defined(HAVE_OPENGL)
+#define HAVE_OPENGL_RENDERER true
+#else
+#define HAVE_OPENGL_RENDERER false
+#endif
+
+#if defined(DIRECTIONAL_JOY)
+#define HAVE_DIRECTIONAL_JOYSTICK true
+#else
+#define HAVE_DIRECTIONAL_JOYSTICK false
+#endif
 
 typedef struct setup_menu_state
 {
@@ -62,276 +69,35 @@ typedef struct setup_menu_state
 	uint32_t NextTime;
 } SETUP_MENU_STATE;
 
-struct option_list_value
-{
-	const char* str;
-	int value;
-};
-
-//const struct option_list_value scalerList[6] =
-//	{
-//		{"no",	   0							},
-//		{"bilinear", TFB_GFXFLAGS_SCALE_BILINEAR	},
-//		{"biadapt",	TFB_GFXFLAGS_SCALE_BIADAPT	  },
-//		{"biadv",	  TFB_GFXFLAGS_SCALE_BIADAPTADV},
-//		{"triscan",	TFB_GFXFLAGS_SCALE_TRISCAN	  },
-//		{"hq",	   TFB_GFXFLAGS_SCALE_HQXX	  }
-//};
-
-
 static SOUND testSounds;
 
-uqm::ScalingMode scaleTypeOptionToScalingMode(OPT_SCALETYPE opt)
-{
-	switch (opt)
-	{
-		case OPTVAL_NO_SCALE:
-			return uqm::ScalingMode::None;
-		case OPTVAL_BILINEAR_SCALE:
-			return uqm::ScalingMode::Bilinear;
-		case OPTVAL_BIADAPT_SCALE:
-			return uqm::ScalingMode::BiAdapt;
-		case OPTVAL_BIADV_SCALE:
-			return uqm::ScalingMode::BiAdaptAdv;
-		case OPTVAL_TRISCAN_SCALE:
-			return uqm::ScalingMode::Triscan;
-		case OPTVAL_HQXX_SCALE:
-			return uqm::ScalingMode::HQ;
-	}
-	return uqm::ScalingMode::None;
-}
-
-int whichPlatformRef(OPT_CONSOLETYPE opt)
-{
-	// Returns 1 if OPTVAL_3DO and 2 of OPTVAL_PC (1 and 0 respectively)
-	switch (opt)
-	{
-		case OPT_CONSOLETYPE::OPTVAL_PC:
-			return static_cast<int>(uqm::EmulationMode::PC);
-		case OPT_CONSOLETYPE::OPTVAL_3DO:
-			return static_cast<int>(uqm::EmulationMode::Console3DO);
-	}
-	return 0;
-}
-
-OPT_CONSOLETYPE whichPlatformOpt(uqm::EmulationMode platform)
-{
-	switch (platform)
-	{
-		case uqm::EmulationMode::Console3DO:
-			return OPT_CONSOLETYPE::OPTVAL_3DO;
-		case uqm::EmulationMode::PC:
-			return OPT_CONSOLETYPE::OPTVAL_PC;
-		case uqm::EmulationMode::None:
-		case uqm::EmulationMode::All:
-			break;
-	}
-	return OPT_CONSOLETYPE::OPTVAL_PC;
-}
-
-OPT_DATETYPE dateFormatToDateTypeOpt(uqm::DateFormat fmt)
-{
-	switch (fmt)
-	{
-		case uqm::DateFormat::MMM_dd_yyyy:
-			return OPTVAL_MMMDDYYYY;
-		case uqm::DateFormat::MM_dd_yyyy:
-			return OPTVAL_MMDDYYYY;
-		case uqm::DateFormat::dd_MMM_yyyy:
-			return OPTVAL_DDMMMYYYY;
-		case uqm::DateFormat::dd_MM_yyyy:
-			return OPTVAL_DDMMYYYY;
-	}
-	return OPTVAL_MMMDDYYYY;
-}
-
-template <typename GlobT, typename SetT>
-bool putOpt(GlobT& glob, const SetT set, const bool reload)
-{
-	if (glob != static_cast<GlobT>(set))
-	{
-		glob = static_cast<GlobT>(set);
-
-		if (reload)
-		{
-			optRequiresReload = true;
-		}
-		return true;
-	}
-
-	return false;
-}
-
-template <>
-bool putOpt<uqm::EmulationMode, OPT_CONSOLETYPE>(uqm::EmulationMode& glob, const OPT_CONSOLETYPE set, const bool reload)
-{
-	const int emuMode {whichPlatformRef(set)};
-	return putOpt<int, int>(reinterpret_cast<int&>(glob), emuMode, reload);
-}
-
 static bool DoSetupMenu(SETUP_MENU_STATE* pInputState);
-static bool done;
 static WIDGET *current, *next;
 static uqstl::unique_ptr<uqm::MenuWidgets> menuWidgets {};
 
-static int quit_main_menu(WIDGET* self, int event);
-static int quit_sub_menu(WIDGET* self, int event);
-static int do_graphics(WIDGET* self, int event);
-static int do_audio(WIDGET* self, int event);
-static int do_engine(WIDGET* self, int event);
-static int do_cheats(WIDGET* self, int event);
-static int do_keyconfig(WIDGET* self, int event);
-static int do_advanced(WIDGET* self, int event);
-static int do_editkeys(WIDGET* self, int event);
-static int do_music(WIDGET* self, int event);
-static int do_visual(WIDGET* self, int event);
-static int do_qol(WIDGET* self, int event);
-static int do_qol(WIDGET* self, int event);
-static int do_devices(WIDGET* self, int event);
-static int do_upgrades(WIDGET* self, int event);
-static void change_template(WIDGET_CHOICE* self, int oldval);
-static void rename_template(WIDGET_TEXTENTRY* self);
+static constexpr const char* c_menuDefinitionResource {"ui.setupmenu"};
+static uqstl::optional<uqm::MenuDefinition> menuDefinition {};
+static bool mainMenuMusicChanged {};
+
+// One screen for each menu of the menu definition, in the same order.
+static uqstl::vector<WIDGET_MENU_SCREEN> menus {};
+static WIDGET_BUTTON backButton {};
+static WIDGET_BUTTON exitButton {};
+static WIDGET_LABEL spacer {};
+static WIDGET_LABEL pressToEdit {};
+static uqstl::vector<const char*> pressToEditLines {};
+static WIDGET_SLIDER gammaSlider {};
+static WIDGET_TEXTENTRY layoutName {};
+static WIDGET_CONTROLENTRY controlentries[NUM_KEYS] {};
+static constexpr const char* c_controlNames[NUM_KEYS] {"up", "down", "left", "right", "weapon", "special", "escape", "thrust"};
+
+// The control template that the Edit Controls menu shows.
+static int editTemplate {};
+
+static FRAME setup_frame = nullptr;
+
 static void populate_gamma(void);
-static void rebind_control(WIDGET_CONTROLENTRY* widget);
-static void clear_control(WIDGET_CONTROLENTRY* widget);
-
-/* The space for our widgets */
-static WIDGET_MENU_SCREEN menus[MENU_COUNT];
-static WIDGET_CHOICE choices[CHOICE_COUNT];
-static WIDGET_SLIDER sliders[SLIDER_COUNT];
-static WIDGET_BUTTON buttons[BUTTON_COUNT];
-static WIDGET_LABEL labels[LABEL_COUNT];
-static WIDGET_TEXTENTRY textentries[TEXTENTRY_COUNT];
-static WIDGET_CONTROLENTRY controlentries[CONTROLENTRY_COUNT];
-
-/* The hardcoded data that isn't strings */
-
-typedef int (*HANDLER)(WIDGET*, int);
-
-static HANDLER button_handlers[BUTTON_COUNT] = {
-	quit_main_menu, quit_sub_menu, do_graphics, do_engine,
-	do_audio, do_cheats, do_keyconfig, do_advanced, do_editkeys,
-	do_keyconfig, do_music, do_visual, do_qol, do_devices, do_upgrades,
-	do_cheats};
-
-/* These refer to uninitialized widgets, but that's OK; we'll fill
- * them in before we touch them */
-// Built from the menu definition file.
-static WIDGET* main_widgets[] = {nullptr};
-
-// Built from the menu definition file.
-static WIDGET* graphics_widgets[] = {nullptr};
-
-// Built from the menu definition file.
-static WIDGET* engine_widgets[] = {nullptr};
-
-// Built from the menu definition file.
-static WIDGET* audio_widgets[] = {nullptr};
-
-// Built from the menu definition file.
-static WIDGET* music_widgets[] = {nullptr};
-
-// Built from the menu definition file.
-static WIDGET* cheat_widgets[] = {nullptr};
-
-// Built from the menu definition file.
-static WIDGET* keyconfig_widgets[] = {nullptr};
-
-// Built from the menu definition file.
-static WIDGET* advanced_widgets[] = {nullptr};
-
-// Built from the menu definition file.
-static WIDGET* visual_widgets[] = {nullptr};
-
-// Built from the menu definition file.
-static WIDGET* qol_widgets[] = {nullptr};
-
-static WIDGET* editkeys_widgets[] = {
-	(WIDGET*)(&choices[CHOICE_KBLAYOUT]),	  // Current layout
-	(WIDGET*)(&textentries[TEXT_LOUTNAME]),	  // Layout name
-	(WIDGET*)(&labels[LABEL_TAPTOOLTIP]),	  // "Press return to..."
-	(WIDGET*)(&controlentries[CONTROL_UP]),	  // Up
-	(WIDGET*)(&controlentries[CONTROL_DOWN]), // Down
-	(WIDGET*)(&controlentries[CONTROL_LEFT]), // Left
-	(WIDGET*)(&controlentries[CONTROL_RGHT]), // Right
-	(WIDGET*)(&controlentries[CONTROL_WEAP]), // Weapon
-	(WIDGET*)(&controlentries[CONTROL_SPEC]), // Special
-	(WIDGET*)(&controlentries[CONTROL_ESC]),  // Escape
-	(WIDGET*)(&controlentries[CONTROL_THRU]), // Thrust
-	(WIDGET*)(&buttons[BTN_PREVMENU]),		  // Previous menu
-	nullptr};
-
-static WIDGET* devices_widgets[] = {
-	(WIDGET*)(&choices[CHOICE_DEVSPAWNER]), // Portal Spawner
-	(WIDGET*)(&choices[CHOICE_DEVPET]),		// Talking Pet
-	(WIDGET*)(&choices[CHOICE_DEVBOMB]),	// Utwig Bomb
-	(WIDGET*)(&choices[CHOICE_DEVSUN]),		// Sun Device
-	(WIDGET*)(&choices[CHOICE_DEVSPHERE]),	// Rosy Sphere
-	(WIDGET*)(&choices[CHOICE_DEVHELIX]),	// Aqua Helix
-	(WIDGET*)(&choices[CHOICE_DEVSPINDLE]), // Clear Spindle
-	(WIDGET*)(&choices[CHOICE_DEVULTRON0]), // Ultron (Broken)
-	(WIDGET*)(&choices[CHOICE_DEVULTRON1]), // Ultron (Semi-Broken)
-	(WIDGET*)(&choices[CHOICE_DEVULTRON2]), // Ultron (Semi-Fixed)
-	(WIDGET*)(&choices[CHOICE_DEVULTRON3]), // Ultron (Fixed)
-	(WIDGET*)(&choices[CHOICE_DEVMAIDENS]), // Shofixti Maidens
-	(WIDGET*)(&choices[CHOICE_DEVCASTER0]), // Umgah Caster
-	(WIDGET*)(&choices[CHOICE_DEVCASTER1]), // Burvixese Caster
-	(WIDGET*)(&choices[CHOICE_DEVSHIELD]),	// Taalo Shield
-	(WIDGET*)(&choices[CHOICE_DEVEGGCS0]),	// Egg Case 01
-	(WIDGET*)(&choices[CHOICE_DEVEGGCS1]),	// Egg Case 02
-	(WIDGET*)(&choices[CHOICE_DEVEGGCS2]),	// Egg Case 03
-	(WIDGET*)(&choices[CHOICE_DEVSHUTTLE]), // Syreen Shuttle
-	(WIDGET*)(&choices[CHOICE_DEVBEAST]),	// VUX Beast
-	(WIDGET*)(&choices[CHOICE_DEVSLYCODE]), // Slylandro Destruct
-	(WIDGET*)(&choices[CHOICE_DEVWARPPOD]), // Ur-Quan Warp Pod
-	(WIDGET*)(&choices[CHOICE_DEVTRIDENT]), // Wimbli's Trident
-	(WIDGET*)(&choices[CHOICE_DEVROD]),		// Glowing Rod
-	(WIDGET*)(&choices[CHOICE_DEVLUNBASE]), // Lunar Base
-
-	(WIDGET*)(&labels[LABEL_SPACER]), // Spacer
-	(WIDGET*)(&buttons[BTN_CHTPREV]), // Back to Cheats
-	nullptr};
-
-static WIDGET* upgrades_widgets[] = {
-	(WIDGET*)(&choices[CHOICE_UPGLANDERSPD]), // Lander Speed
-	(WIDGET*)(&choices[CHOICE_UPGLANDERCRG]), // Lander Cargo
-	(WIDGET*)(&choices[CHOICE_UPGLANDERFRE]), // Lander Rapid Fire
-	(WIDGET*)(&choices[CHOICE_UPGLANDERBSH]), // Lander Bio Shield
-	(WIDGET*)(&choices[CHOICE_UPGLANDERQSH]), // Lander Quake Shield
-	(WIDGET*)(&choices[CHOICE_UPGLANDERLSH]), // Lander Lightning Shield
-	(WIDGET*)(&choices[CHOICE_UPGLANDERHSH]), // Lander Heat Shield
-	(WIDGET*)(&choices[CHOICE_MODPOINTDEF]),  // Point Defense Module
-	(WIDGET*)(&choices[CHOICE_MODFUSBLAST]),  // Fusion Blaster Module
-	(WIDGET*)(&choices[CHOICE_MODFUELTANK]),  // Hi-Eff Fuel Module
-	(WIDGET*)(&choices[CHOICE_MODTRACKING]),  // Tracking Module
-	(WIDGET*)(&choices[CHOICE_MODHELLBORE]),  // Hellbore Cannon Module
-	(WIDGET*)(&choices[CHOICE_MODFURNACE]),	  // Shiva Furnace Module
-
-	(WIDGET*)(&labels[LABEL_SPACER]), // Spacer
-	(WIDGET*)(&buttons[BTN_CHTPREV]), // Back to Cheats
-	nullptr};
-
-static const struct
-{
-	WIDGET** widgets;
-	int bgIndex;
-} menu_defs[] =
-	{
-		{main_widgets,	   0 },
-		{graphics_widgets,  1 },
-		{audio_widgets,		2 },
-		{engine_widgets,	 3 },
-		{cheat_widgets,		4 },
-		{keyconfig_widgets, 5 },
-		{advanced_widgets,  6 },
-		{editkeys_widgets,  7 },
-		{music_widgets,		8 },
-		{visual_widgets,	 9 },
-		{qol_widgets,		  10},
-		{devices_widgets,	  11},
-		{upgrades_widgets,  12},
-		{nullptr,			  0 }
-};
+static int OnTextEntryEvent(WIDGET_TEXTENTRY* widget);
 
 // Start with reasonable gamma bounds. These will get updated
 // as we find out the actual bounds.
@@ -344,19 +110,18 @@ static float maxGamma = 2.5f;
 static float minGammaX;
 static float maxGammaX;
 
-//No longer used
-//static int
-//number_res_options (void)
-//{
-//	if (TFB_SupportsHardwareScaling ())
-//	{
-//		return 4;
-//	}
-//	else
-//	{
-//		return 2;
-//	}
-//}
+static WIDGET*
+find_menu(uqstl::string_view id)
+{
+	for (size_t index = 0; index < menuDefinition->menus.size(); ++index)
+	{
+		if (menuDefinition->menus[index].id == id)
+		{
+			return (WIDGET*)(&menus[index]);
+		}
+	}
+	return nullptr;
+}
 
 static int
 quit_main_menu(WIDGET* self, int event)
@@ -376,159 +141,8 @@ quit_sub_menu(WIDGET* self, int event)
 	if (event == WIDGET_EVENT_SELECT)
 	{
 		ResetOffset();
-		next = (WIDGET*)(&menus[MENU_QUITSUB]);
+		next = find_menu("main");
 		(*next->receiveFocus)(next, WIDGET_EVENT_SELECT);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static void
-populate_res(void)
-{
-	fmt::format_to_n(textentries[TEXT_CUSTMRES].value, WIDGET_TEXTENTRY_WIDTH - 1, "{}x{}",
-					 SavedWidth, SavedHeight);
-}
-
-static int
-do_graphics(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENU_GRAPHICS]);
-		populate_res();
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static int
-do_audio(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENU_AUDIO]);
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static int
-do_engine(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENU_ENGINE]);
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static int
-do_cheats(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENU_CHEATS]);
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static int
-do_keyconfig(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENY_KEYCONF]);
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static int
-do_advanced(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENU_ADVANCED]);
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static int
-do_music(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENU_MUSIC]);
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static int
-do_visual(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENU_VISUAL]);
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static int
-do_qol(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENU_QOL]);
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static int
-do_devices(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENU_DEVICES]);
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static int
-do_upgrades(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENU_UPGRADES]);
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
 		return true;
 	}
 	(void)self;
@@ -540,7 +154,7 @@ populate_editkeys(int templat)
 {
 	int i, j;
 
-	uqm::strncpy_safe(textentries[TEXT_LOUTNAME].value, {uqm::input_templates[templat].name, static_cast<uint32_t>(textentries[TEXT_LOUTNAME].maxlen)});
+	uqm::strncpy_safe(layoutName.value, {uqm::input_templates[templat].name, static_cast<uint32_t>(layoutName.maxlen)});
 
 	for (i = 0; i < NUM_KEYS; i++)
 	{
@@ -553,41 +167,34 @@ populate_editkeys(int templat)
 	}
 }
 
-static int
-do_editkeys(WIDGET* self, int event)
-{
-	if (event == WIDGET_EVENT_SELECT)
-	{
-		next = (WIDGET*)(&menus[MENU_EDITKEYS]);
-		/* Prepare the components */
-		choices[CHOICE_KBLAYOUT].selected = 0;
-
-		populate_editkeys(0);
-		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
-		return true;
-	}
-	(void)self;
-	return false;
-}
-
-static void
-change_template(WIDGET_CHOICE* self, int oldval)
-{
-	(void)oldval;
-	populate_editkeys(self->selected);
-}
-
 static void
 rename_template(WIDGET_TEXTENTRY* self)
 {
-	/* TODO: This will have to change if the size of the
-	   input_templates name is changed.  It would probably be nice
-	   to track this symbolically or ensure that self->value's
-	   buffer is always at least this big; this will require some
-	   reworking of widgets */
-	uqm::strncpy_safe(uqm::input_templates[choices[CHOICE_KBLAYOUT].selected].name, self->value);
+	uqm::strncpy_safe(uqm::input_templates[editTemplate].name, self->value);
 }
 
+// Returns the cheat value of a device or upgrade state, or nullptr if there is no such state.
+static OPT_ADD_REMOVE*
+find_cheat_state(uqstl::string_view key)
+{
+	const auto indexed = [key](uqstl::string_view prefix, size_t count) -> uqstl::optional<size_t> {
+		size_t index {};
+		if (!key.starts_with(prefix) || uqm::parseStr(key.substr(prefix.size()), index) != uqstl::errc {} || index >= count)
+		{
+			return uqstl::nullopt;
+		}
+		return index;
+	};
+	if (const auto device {indexed("device.", uqstl::size(optDeviceArray))})
+	{
+		return &optDeviceArray[*device];
+	}
+	if (const auto upgrade {indexed("upgrade.", uqstl::size(optUpgradeArray))})
+	{
+		return &optUpgradeArray[*upgrade];
+	}
+	return nullptr;
+}
 
 // Sets the window size and the display flags from the settings.
 static void
@@ -668,88 +275,9 @@ apply_graphics_from_settings(void)
 		TFB_DrawScreen_ReinitVideo(newDriver, newFlags, newWidth, newHeight);
 	}
 	FlushInput();
-	populate_res();
 }
 
-static void
-change_renderer(WIDGET_CHOICE* self, int oldval)
-{
-	uqm::UQMOptions::edit().alwaysOpenGL = (self->selected == OPTVAL_ALWAYS_GL);
-	uqm::UQMOptions::edit().opengl = (self->selected == OPTVAL_ALWAYS_GL);
-	apply_graphics_from_settings();
-	(void)oldval;
-}
-
-#define NUM_STEPS 20
-#define X_STEP (SCREEN_WIDTH / NUM_STEPS)
-#define Y_STEP (SCREEN_HEIGHT / NUM_STEPS)
 #define MENU_FRAME_RATE (GameTicksPerSecond / 20)
-
-#define DEVICE_START 87
-#define UPGRADE_START 112
-
-static void
-SetDefaults(void)
-{
-	GLOBALOPTS opts;
-	uint8_t i;
-
-	GetGlobalOptions(&opts);
-
-	choices[CHOICE_KBLAYOUT].selected = 0;
-	//	choices[CHOICE_CHUPGRADES   ].selected = opts.unlockUpgrades;
-#ifdef DIRECTIONAL_JOY
-	choices[CHOICE_JOYSTICK].selected = opts.directionalJoystick;
-#endif
-	choices[CHOICE_LANDERHOLD].selected = static_cast<int>(opts.landerHold);
-
-	// Devices
-	for (i = DEVICE_START; i < DEVICE_START
-								   + std::size(opts.deviceArray);
-		 i++)
-	{
-		choices[i].selected = opts.deviceArray[i - DEVICE_START];
-	}
-
-	for (i = UPGRADE_START; i < UPGRADE_START + NUM_UPGRADES; i++)
-	{
-		choices[i].selected = opts.upgradeArray[i - UPGRADE_START];
-	}
-
-	// Next choice should be choices[CHOICE_SHIPSEED]
-
-	populate_gamma();
-	menuWidgets->refresh();
-}
-
-static void
-PropagateResults(void)
-{
-	GLOBALOPTS opts;
-	uint8_t i;
-
-
-	//	opts.unlockUpgrades =   choices[CHOICE_CHUPGRADES   ].selected;
-#ifdef DIRECTIONAL_JOY
-	opts.directionalJoystick = choices[CHOICE_JOYSTICK].selected;
-#endif
-	opts.landerHold = (OPT_CONSOLETYPE)choices[CHOICE_LANDERHOLD].selected;
-
-	// Devices
-	for (i = DEVICE_START;
-		 i < DEVICE_START + std::size(opts.deviceArray); i++)
-	{
-		opts.deviceArray[i - DEVICE_START] = (OPT_ADD_REMOVE)choices[i].selected;
-	}
-
-	for (i = UPGRADE_START; i < UPGRADE_START + NUM_UPGRADES; i++)
-	{
-		opts.upgradeArray[i - UPGRADE_START] = (OPT_ADD_REMOVE)choices[i].selected;
-	}
-
-
-	SetGlobalOptions(&opts);
-}
 
 static bool
 DoSetupMenu(SETUP_MENU_STATE* pInputState)
@@ -761,13 +289,14 @@ DoSetupMenu(SETUP_MENU_STATE* pInputState)
 	{
 		SetDefaultMenuRepeatDelay();
 		pInputState->NextTime = GetTimeCounter();
-		SetDefaults();
+		populate_gamma();
+		menuWidgets->refresh();
 		Widget_SetFont(PlyrFont);
 		Widget_SetWindowColors(SHADOWBOX_BACKGROUND_COLOR,
 							   SHADOWBOX_DARK_COLOR, SHADOWBOX_MEDIUM_COLOR);
 
 		current = nullptr;
-		next = (WIDGET*)(&menus[0]);
+		next = find_menu("main");
 		(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
 
 		pInputState->initialized = true;
@@ -1038,7 +567,7 @@ populate_gamma(void)
 		maxGamma = gamma + 0.3f;
 	}
 	updateGammaBounds(whichBound);
-	sliders[SLIDER_GAMMA].value = gammaToSlider(gamma);
+	gammaSlider.value = gammaToSlider(gamma);
 }
 
 static void
@@ -1061,12 +590,12 @@ gamma_DrawValue(WIDGET_SLIDER* self, int x, int y)
 static void
 rebind_control(WIDGET_CONTROLENTRY* widget)
 {
-	int templat = choices[CHOICE_KBLAYOUT].selected;
+	int templat = editTemplate;
 	int control = widget->controlindex;
 	int index = widget->highlighted;
 
 	FlushInput();
-	DrawLabelAsWindow(&labels[LABEL_PRESSTOEDIT], nullptr);
+	DrawLabelAsWindow(&pressToEdit, nullptr);
 	RebindInputState(templat, control, index);
 	populate_editkeys(templat);
 	FlushInput();
@@ -1075,7 +604,7 @@ rebind_control(WIDGET_CONTROLENTRY* widget)
 static void
 clear_control(WIDGET_CONTROLENTRY* widget)
 {
-	int templat = choices[CHOICE_KBLAYOUT].selected;
+	int templat = editTemplate;
 	int control = widget->controlindex;
 	int index = widget->highlighted;
 
@@ -1093,61 +622,27 @@ count_widgets(WIDGET** widgets)
 	return count;
 }
 
-static stringbank* bank = nullptr;
-static FRAME setup_frame = nullptr;
-
-static constexpr const char* c_menuDefinitionResource {"ui.setupmenu"};
-static uqstl::optional<uqm::MenuDefinition> menuDefinition {};
-static bool mainMenuMusicChanged {};
-
-// Menus that the setup menu can open. The menu definition file describes the menus with 'defined' set.
-static const struct
-{
-	const char* id;
-	int menu;
-	bool defined;
-} menuIds[] = {
-	{"main",	 MENU_QUITSUB,  true },
-	{"graphics", MENU_GRAPHICS, true },
-	{"engine",   MENU_ENGINE,	true },
-	{"visual",   MENU_VISUAL,	true },
-	{"audio",	  MENU_AUDIO,	  true },
-	{"music",	  MENU_MUSIC,	  true },
-	{"controls", MENY_KEYCONF,  true },
-	{"qol",		MENU_QOL,	  true },
-	{"advanced", MENU_ADVANCED, true },
-	{"cheats",   MENU_CHEATS,	true },
-	{"editkeys", MENU_EDITKEYS, false},
-	{"devices",	MENU_DEVICES,  false},
-	{"upgrades", MENU_UPGRADES, false},
-};
-
 static bool
 open_menu(uqstl::string_view id)
 {
-	const auto found {uqstl::find_if(uqstl::begin(menuIds), uqstl::end(menuIds), [id](const auto& entry) {
-		return id == entry.id;
-	})};
-	if (found == uqstl::end(menuIds))
+	WIDGET* menu {find_menu(id)};
+	if (menu == nullptr)
 	{
 		return false;
 	}
-	if (found->menu == MENU_EDITKEYS)
+	if (id == "editkeys")
 	{
-		choices[CHOICE_KBLAYOUT].selected = 0;
+		editTemplate = 0;
 		populate_editkeys(0);
+		menuWidgets->refresh();
 	}
-	else if (found->menu == MENU_GRAPHICS)
-	{
-		populate_res();
-	}
-	next = (WIDGET*)(&menus[found->menu]);
+	next = menu;
 	(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
 	return true;
 }
 
 static void
-build_defined_menus(void)
+read_menu_definition(void)
 {
 	const char* path {res_GetString(c_menuDefinitionResource)};
 	const auto json {uqm::readTextFile(contentDir, path)};
@@ -1167,6 +662,116 @@ build_defined_menus(void)
 	{
 		uqm::log::error("{}", error);
 	}
+	if (menuDefinition->find("main") == nullptr)
+	{
+		uqm::log::critical("PANIC: The setup menu definition has no 'main' menu.");
+		exit(EXIT_FAILURE);
+	}
+}
+
+static void
+init_button(WIDGET_BUTTON& button, const uqm::MenuButtonDef& def, int (*handler)(WIDGET*, int))
+{
+	button = {};
+	button.tag = WIDGET_TYPE_BUTTON;
+	button.handleEvent = handler;
+	button.receiveFocus = Widget_ReceiveFocusSimple;
+	button.draw = Widget_DrawButton;
+	button.height = Widget_HeightOneLine;
+	button.width = Widget_WidthFullScreen;
+	button.name = def.label.c_str();
+	for (size_t line = 0; line < uqstl::size(button.tooltip); ++line)
+	{
+		button.tooltip[line] = line < def.tooltip.size() ? def.tooltip[line].c_str() : "";
+	}
+}
+
+static void
+init_label(WIDGET_LABEL& label, uqstl::vector<const char*>& lines)
+{
+	label = {};
+	label.tag = WIDGET_TYPE_LABEL;
+	label.handleEvent = Widget_HandleEventIgnoreAll;
+	label.receiveFocus = Widget_ReceiveFocusRefuseFocus;
+	label.draw = Widget_DrawLabel;
+	label.height = Widget_HeightLabel;
+	label.width = Widget_WidthFullScreen;
+	label.line_count = static_cast<int>(lines.size());
+	label.lines = lines.data();
+}
+
+// Sets up the widgets that the menu definition does not build.
+static void
+init_shared_widgets(void)
+{
+	init_button(backButton, menuDefinition->back, quit_sub_menu);
+	init_button(exitButton, menuDefinition->exit, quit_main_menu);
+
+	static uqstl::vector<const char*> noLines {};
+	init_label(spacer, noLines);
+
+	pressToEditLines.clear();
+	if (const auto found {menuDefinition->messages.find("pressToEdit")}; found != menuDefinition->messages.end())
+	{
+		for (const uqstl::string& line : found->second)
+		{
+			pressToEditLines.push_back(line.c_str());
+		}
+	}
+	init_label(pressToEdit, pressToEditLines);
+
+	gammaSlider = {};
+	gammaSlider.tag = WIDGET_TYPE_SLIDER;
+	gammaSlider.handleEvent = gamma_HandleEventSlider;
+	gammaSlider.receiveFocus = Widget_ReceiveFocusSimple;
+	gammaSlider.draw = Widget_DrawSlider;
+	gammaSlider.height = Widget_HeightOneLine;
+	gammaSlider.width = Widget_WidthFullScreen;
+	gammaSlider.draw_value = gamma_DrawValue;
+	gammaSlider.min = 0;
+	gammaSlider.max = 100;
+	gammaSlider.step = 1;
+
+	layoutName = {};
+	layoutName.tag = WIDGET_TYPE_TEXTENTRY;
+	layoutName.handleEvent = Widget_HandleEventTextEntry;
+	layoutName.receiveFocus = Widget_ReceiveFocusSimple;
+	layoutName.draw = Widget_DrawTextEntry;
+	layoutName.height = Widget_HeightOneLine;
+	layoutName.width = Widget_WidthFullScreen;
+	layoutName.handleEventSelect = OnTextEntryEvent;
+	layoutName.maxlen = WIDGET_TEXTENTRY_WIDTH - 1;
+	layoutName.state = WTE_NORMAL;
+	layoutName.onChange = rename_template;
+
+	for (int i = 0; i < NUM_KEYS; i++)
+	{
+		WIDGET_CONTROLENTRY& entry {controlentries[i]};
+		entry = {};
+		entry.tag = WIDGET_TYPE_CONTROLENTRY;
+		entry.handleEvent = Widget_HandleEventControlEntry;
+		entry.receiveFocus = Widget_ReceiveFocusControlEntry;
+		entry.draw = Widget_DrawControlEntry;
+		entry.height = Widget_HeightOneLine;
+		entry.width = Widget_WidthFullScreen;
+		entry.controlindex = i;
+		entry.onChange = rebind_control;
+		entry.onDelete = clear_control;
+	}
+}
+
+static void
+init_widgets(void)
+{
+	if (setup_frame == nullptr || optRequiresReload)
+	{
+		// Load the different menus depending on the resolution factor.
+		setup_frame = CaptureDrawable(LoadGraphic(MENUBKG_PMAP_ANIM));
+		LoadArrows();
+	}
+
+	read_menu_definition();
+	init_shared_widgets();
 
 	uqm::MenuWidgets::Hooks hooks {};
 	hooks.isAddonAvailable = [](uqstl::string_view addon) {
@@ -1179,6 +784,14 @@ build_defined_menus(void)
 		if (addon == "3do-mode")
 		{
 			return uqm::isAddonAvailable(THREEDO_MODE(hd));
+		}
+		if (addon == "opengl-renderer")
+		{
+			return SDL_MAJOR_VERSION == 1 && HAVE_OPENGL_RENDERER;
+		}
+		if (addon == "directional-joystick")
+		{
+			return HAVE_DIRECTIONAL_JOYSTICK;
 		}
 		return uqm::isAddonAvailable(uqstl::string {addon}.c_str());
 	};
@@ -1229,6 +842,11 @@ build_defined_menus(void)
 			edit.resolution = uqm::Vec2u {static_cast<uint32_t>(SavedWidth), static_cast<uint32_t>(SavedHeight)};
 			menuWidgets->refresh();
 		}
+		else if (setting.key() == "graphics.alwaysOpenGL")
+		{
+			uqm::UQMOptions::edit().opengl = *options.alwaysOpenGL;
+			apply_graphics_from_settings();
+		}
 		else if (setting.key() == "graphics.windowMode" || setting.key() == "graphics.scaler" || setting.key() == "graphics.scanlines"
 				 || setting.key() == "graphics.showFps" || setting.key() == "graphics.keepAspectRatio")
 		{
@@ -1250,509 +868,61 @@ build_defined_menus(void)
 		}
 		return nullptr;
 	};
+	hooks.getState = [](uqstl::string_view key) -> uqstl::optional<int> {
+		if (key == "controls.editTemplate")
+		{
+			return editTemplate;
+		}
+		if (const OPT_ADD_REMOVE* cheat {find_cheat_state(key)})
+		{
+			return static_cast<int>(*cheat);
+		}
+		return uqstl::nullopt;
+	};
+	hooks.setState = [](uqstl::string_view key, int value) {
+		if (key == "controls.editTemplate")
+		{
+			editTemplate = value;
+			populate_editkeys(value);
+		}
+		else if (OPT_ADD_REMOVE * cheat {find_cheat_state(key)})
+		{
+			*cheat = static_cast<OPT_ADD_REMOVE>(value);
+		}
+	};
 	hooks.openMenu = open_menu;
 	hooks.textEntrySelect = OnTextEntryEvent;
 	uqm::MenuWidgets::SharedWidgets shared {};
-	shared.spacer = (WIDGET*)(&labels[LABEL_SPACER]);
-	shared.back = (WIDGET*)(&buttons[BTN_QUITSUBMENU]);
-	shared.exit = (WIDGET*)(&buttons[BTN_QUITSETUP]);
+	shared.spacer = (WIDGET*)(&spacer);
+	shared.back = (WIDGET*)(&backButton);
+	shared.exit = (WIDGET*)(&exitButton);
 	shared.legacy = {
-		{"gamma",				  (WIDGET*)(&sliders[SLIDER_GAMMA])   },
-#if SDL_MAJOR_VERSION == 1 && defined(HAVE_OPENGL)
-		{"renderer",			 (WIDGET*)(&choices[CHOICE_FRBUFFER])},
-#endif
-#ifdef DIRECTIONAL_JOY
-		{"directionalJoystick", (WIDGET*)(&choices[CHOICE_JOYSTICK])},
-#endif
+		{"gamma",	  (WIDGET*)(&gammaSlider)},
+		{"layoutName", (WIDGET*)(&layoutName) },
 	};
+	for (int i = 0; i < NUM_KEYS; i++)
+	{
+		shared.legacy[uqstl::string {"control."} + c_controlNames[i]] = (WIDGET*)(&controlentries[i]);
+	}
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
-	for (const auto& defined : menuIds)
-	{
-		if (!defined.defined)
-		{
-			continue;
-		}
-		const uqm::MenuDef* menu {menuDefinition->find(defined.id)};
-		if (menu == nullptr)
-		{
-			uqm::log::critical("PANIC: The setup menu definition has no '{}' menu.", defined.id);
-			exit(EXIT_FAILURE);
-		}
 
-		WIDGET_MENU_SCREEN& screen {menus[defined.menu]};
-		screen.subtitle = menu->subtitle.c_str();
-		screen.bgStamp.frame = SetAbsFrameIndex(setup_frame, menu->background);
-		screen.child = menuWidgets->build(*menu);
+	menus.assign(menuDefinition->menus.size(), WIDGET_MENU_SCREEN {});
+	for (size_t index = 0; index < menus.size(); ++index)
+	{
+		const uqm::MenuDef& menu {menuDefinition->menus[index]};
+		WIDGET_MENU_SCREEN& screen {menus[index]};
+		screen.tag = WIDGET_TYPE_MENU_SCREEN;
+		screen.handleEvent = Widget_HandleEventMenuScreen;
+		screen.receiveFocus = Widget_ReceiveFocusMenuScreen;
+		screen.draw = Widget_DrawMenuScreen;
+		screen.height = Widget_HeightFullScreen;
+		screen.width = Widget_WidthFullScreen;
+		screen.title = menuDefinition->title.c_str();
+		screen.subtitle = menu.subtitle.c_str();
+		screen.bgStamp.frame = SetAbsFrameIndex(setup_frame, menu.background);
+		screen.child = menuWidgets->build(menu);
 		screen.num_children = count_widgets(screen.child);
-		screen.highlighted = 0;
 	}
-}
-
-#define MAX_BUFF (MENU_COUNT + CHOICE_COUNT + SLIDER_COUNT + BUTTON_COUNT + LABEL_COUNT + TEXTENTRY_COUNT + CONTROLENTRY_COUNT)
-
-static void
-init_widgets(void)
-{
-	const char *buffer[MAX_BUFF], *str, *title;
-	int count, i, index;
-
-	if (bank == nullptr)
-	{
-		bank = StringBank_Create();
-	}
-
-	if (setup_frame == nullptr || optRequiresReload)
-	{
-		// Load the different menus depending on the resolution factor.
-		setup_frame = CaptureDrawable(LoadGraphic(MENUBKG_PMAP_ANIM));
-		LoadArrows();
-	}
-
-	count = GetStringTableCount(SetupTab);
-
-	if (count < 3)
-	{
-		uqm::log::critical("PANIC: Setup string table too short to even "
-						   "hold all indices!");
-		exit(EXIT_FAILURE);
-	}
-
-	/* Menus */
-	title = StringBank_AddOrFindString(bank,
-									   GetStringAddress(SetAbsStringTableIndex(SetupTab, 0)));
-	if (SplitString(GetStringAddress(SetAbsStringTableIndex(
-						SetupTab, 1)),
-					'\n', MAX_BUFF, buffer, bank)
-		!= MENU_COUNT)
-	{
-		/* TODO: Ignore extras instead of dying. */
-		uqm::log::critical("PANIC: Incorrect number of Menu Subtitles");
-		exit(EXIT_FAILURE);
-	}
-
-	for (i = 0; i < MENU_COUNT; i++)
-	{
-		menus[i].tag = WIDGET_TYPE_MENU_SCREEN;
-		menus[i].parent = nullptr;
-		menus[i].handleEvent = Widget_HandleEventMenuScreen;
-		menus[i].receiveFocus = Widget_ReceiveFocusMenuScreen;
-		menus[i].draw = Widget_DrawMenuScreen;
-		menus[i].height = Widget_HeightFullScreen;
-		menus[i].width = Widget_WidthFullScreen;
-		menus[i].title = title;
-		menus[i].subtitle = buffer[i];
-		menus[i].bgStamp.origin.x = 0;
-		menus[i].bgStamp.origin.y = 0;
-		menus[i].bgStamp.frame =
-			SetAbsFrameIndex(setup_frame, menu_defs[i].bgIndex);
-		menus[i].num_children = count_widgets(menu_defs[i].widgets);
-		menus[i].child = menu_defs[i].widgets;
-		menus[i].highlighted = 0;
-	}
-	if (menu_defs[i].widgets != nullptr)
-	{
-		uqm::log::error("Menu definition array has more items!");
-	}
-
-	/* Options */
-	if (SplitString(GetStringAddress(SetAbsStringTableIndex(
-						SetupTab, 2)),
-					'\n', MAX_BUFF, buffer, bank)
-		!= CHOICE_COUNT)
-	{
-		const int expected {SplitString(GetStringAddress(SetAbsStringTableIndex(SetupTab, 2)), '\n', MAX_BUFF, buffer, bank)};
-		uqm::log::critical("PANIC: Incorrect number of Choice Options: {}. Should be {}", static_cast<uint32_t>(CHOICE_COUNT), expected);
-		exit(EXIT_FAILURE);
-	}
-
-	for (i = 0; i < CHOICE_COUNT; i++)
-	{
-		choices[i].tag = WIDGET_TYPE_CHOICE;
-		choices[i].parent = nullptr;
-		choices[i].handleEvent = Widget_HandleEventChoice;
-		choices[i].receiveFocus = Widget_ReceiveFocusChoice;
-		choices[i].draw = Widget_DrawChoice;
-		choices[i].height = Widget_HeightChoice;
-		choices[i].width = Widget_WidthFullScreen;
-		choices[i].category = buffer[i];
-		choices[i].numopts = 0;
-		choices[i].options = nullptr;
-		choices[i].selected = 0;
-		choices[i].highlighted = 0;
-		choices[i].onChange = nullptr;
-	}
-
-	/* Fill in the options now */
-	index = 3; /* Index into string table */
-	for (i = 0; i < CHOICE_COUNT; i++)
-	{
-		int j, optcount;
-
-		if (index >= count)
-		{
-			uqm::log::critical("PANIC: String table cut short while "
-							   "reading choices");
-			exit(EXIT_FAILURE);
-		}
-		str = GetStringAddress(
-			SetAbsStringTableIndex(SetupTab, index++));
-		optcount = SplitString(str, '\n', MAX_BUFF, buffer, bank);
-		choices[i].numopts = optcount;
-		choices[i].options = (CHOICE_OPTION*)HMalloc(optcount * sizeof(CHOICE_OPTION));
-		choices[i].choice_num = i;
-		for (j = 0; j < optcount; j++)
-		{
-			choices[i].options[j].optname = buffer[j];
-			choices[i].options[j].tooltip[0] = "";
-			choices[i].options[j].tooltip[1] = "";
-			choices[i].options[j].tooltip[2] = "";
-		}
-		for (j = 0; j < optcount; j++)
-		{
-			int k, tipcount;
-
-			if (index >= count)
-			{
-				uqm::log::critical("PANIC: String table cut short while "
-								   "reading choices");
-				exit(EXIT_FAILURE);
-			}
-			str = GetStringAddress(
-				SetAbsStringTableIndex(SetupTab, index++));
-			tipcount = SplitString(str, '\n', MAX_BUFF, buffer, bank);
-			if (tipcount > 3)
-			{
-				tipcount = 3;
-			}
-			for (k = 0; k < tipcount; k++)
-			{
-				choices[i].options[j].tooltip[k] = buffer[k];
-			}
-		}
-	}
-
-	// Code to swap resolution optnames for correct ones
-	/*for (i = 0; i < choices[CHOICE_RESOLUTION].numopts - 1; i++)
-	{
-		fmt::format_to_sz_n(choices[CHOICE_RESOLUTION].options[i].optname,
-			strlen(choices[CHOICE_RESOLUTION].options[i].optname),
-			"{}x{}", RES_DESCALE (CanvasWidth)*(i+1), 
-			RES_DESCALE (CanvasHeight)* (i + 1));
-	}*/
-
-	// Choices 18-20 are also special, being the names of the key
-	// configurations
-	for (i = 0; i < 6; i++)
-	{
-		choices[CHOICE_KBLAYOUT].options[i].optname = uqm::input_templates[i].name;
-	}
-
-	/* Choice 20 has a special onChange handler, too. */
-	choices[CHOICE_KBLAYOUT].onChange = change_template;
-	choices[CHOICE_FRBUFFER].onChange = change_renderer;
-
-	// Check addon availability for HD mode, DOS/3DO mode, and music remixes
-
-	// Handle display option
-
-	/* Sliders */
-	if (index >= count)
-	{
-		uqm::log::critical(
-			"PANIC: String table cut short while reading sliders");
-		exit(EXIT_FAILURE);
-	}
-
-	const auto rawSliderString {GetStringAddress(SetAbsStringTableIndex(SetupTab, index++))};
-	if (SplitString(rawSliderString, '\n', MAX_BUFF, buffer, bank)
-		!= SLIDER_COUNT)
-	{
-		/* TODO: Ignore extras instead of dying. */
-		uqm::log::critical("PANIC: Incorrect number of Slider Options");
-		exit(EXIT_FAILURE);
-	}
-
-	for (i = 0; i < SLIDER_COUNT; i++)
-	{
-		sliders[i].tag = WIDGET_TYPE_SLIDER;
-		sliders[i].parent = nullptr;
-		sliders[i].handleEvent = Widget_HandleEventSlider;
-		sliders[i].receiveFocus = Widget_ReceiveFocusSimple;
-		sliders[i].draw = Widget_DrawSlider;
-		sliders[i].height = Widget_HeightOneLine;
-		sliders[i].width = Widget_WidthFullScreen;
-		sliders[i].draw_value = Widget_Slider_DrawValue;
-		sliders[i].min = 0;
-		sliders[i].max = 100;
-		sliders[i].step = 5;
-		sliders[i].value = 75;
-		sliders[i].category = buffer[i];
-		sliders[i].tooltip[0] = "";
-		sliders[i].tooltip[1] = "";
-		sliders[i].tooltip[2] = "";
-		sliders[i].onChange = nullptr;
-	}
-
-	// gamma is a special case
-	sliders[SLIDER_GAMMA].step = 1;
-	sliders[SLIDER_GAMMA].handleEvent = gamma_HandleEventSlider;
-	sliders[SLIDER_GAMMA].draw_value = gamma_DrawValue;
-
-	// nebulaevol is a special case
-	sliders[SLIDER_NEBULA].step = 1;
-	sliders[SLIDER_NEBULA].max = 50;
-
-	// special settings for time dilation
-	sliders[SLIDER_TIMEDILATION].min = 0;
-	sliders[SLIDER_TIMEDILATION].max = 1000;
-	sliders[SLIDER_TIMEDILATION].step = 10;
-	sliders[SLIDER_TIMEDILATION].draw_value = Widget_Slider_DrawPercentageValue;
-
-	for (i = 0; i < SLIDER_COUNT; i++)
-	{
-		int j, tipcount;
-
-		if (index >= count)
-		{
-			uqm::log::critical(
-				"PANIC: String table cut short while reading sliders");
-			exit(EXIT_FAILURE);
-		}
-		str = GetStringAddress(
-			SetAbsStringTableIndex(SetupTab, index++));
-		tipcount = SplitString(str, '\n', MAX_BUFF, buffer, bank);
-		if (tipcount > 3)
-		{
-			tipcount = 3;
-		}
-		for (j = 0; j < tipcount; j++)
-		{
-			sliders[i].tooltip[j] = buffer[j];
-		}
-	}
-
-	/* Buttons */
-	if (index >= count)
-	{
-		uqm::log::critical(
-			"PANIC: String table cut short while reading buttons");
-		exit(EXIT_FAILURE);
-	}
-
-	if (SplitString(GetStringAddress(SetAbsStringTableIndex(
-						SetupTab, index++)),
-					'\n', MAX_BUFF, buffer, bank)
-		!= BUTTON_COUNT)
-	{
-		/* TODO: Ignore extras instead of dying. */
-		uqm::log::critical("PANIC: Incorrect number of Button Options");
-		exit(EXIT_FAILURE);
-	}
-
-	for (i = 0; i < BUTTON_COUNT; i++)
-	{
-		buttons[i].tag = WIDGET_TYPE_BUTTON;
-		buttons[i].parent = nullptr;
-		buttons[i].handleEvent = button_handlers[i];
-		buttons[i].receiveFocus = Widget_ReceiveFocusSimple;
-		buttons[i].draw = Widget_DrawButton;
-		buttons[i].height = Widget_HeightOneLine;
-		buttons[i].width = Widget_WidthFullScreen;
-		buttons[i].name = buffer[i];
-		buttons[i].tooltip[0] = "";
-		buttons[i].tooltip[1] = "";
-		buttons[i].tooltip[2] = "";
-	}
-
-	for (i = 0; i < BUTTON_COUNT; i++)
-	{
-		int j, tipcount;
-
-		if (index >= count)
-		{
-			uqm::log::critical(
-				"PANIC: String table cut short while reading buttons");
-			exit(EXIT_FAILURE);
-		}
-		str = GetStringAddress(
-			SetAbsStringTableIndex(SetupTab, index++));
-		tipcount = SplitString(str, '\n', MAX_BUFF, buffer, bank);
-		if (tipcount > 3)
-		{
-			tipcount = 3;
-		}
-		for (j = 0; j < tipcount; j++)
-		{
-			buttons[i].tooltip[j] = buffer[j];
-		}
-	}
-
-	/* Labels */
-	if (index >= count)
-	{
-		uqm::log::critical(
-			"PANIC: String table cut short while reading labels");
-		exit(EXIT_FAILURE);
-	}
-
-	if (SplitString(GetStringAddress(SetAbsStringTableIndex(
-						SetupTab, index++)),
-					'\n', MAX_BUFF, buffer, bank)
-		!= LABEL_COUNT)
-	{
-		/* TODO: Ignore extras instead of dying. */
-		uqm::log::critical("PANIC: Incorrect number of Label Options");
-		exit(EXIT_FAILURE);
-	}
-
-	for (i = 0; i < LABEL_COUNT; i++)
-	{
-		labels[i].tag = WIDGET_TYPE_LABEL;
-		labels[i].parent = nullptr;
-		labels[i].handleEvent = Widget_HandleEventIgnoreAll;
-		labels[i].receiveFocus = Widget_ReceiveFocusRefuseFocus;
-		labels[i].draw = Widget_DrawLabel;
-		labels[i].height = Widget_HeightLabel;
-		labels[i].width = Widget_WidthFullScreen;
-		labels[i].line_count = 0;
-		labels[i].lines = nullptr;
-	}
-
-	for (i = 0; i < LABEL_COUNT; i++)
-	{
-		int j, linecount;
-
-		if (index >= count)
-		{
-			uqm::log::critical("PANIC: String table cut short while "
-							   "reading labels");
-			exit(EXIT_FAILURE);
-		}
-		str = GetStringAddress(
-			SetAbsStringTableIndex(SetupTab, index++));
-		linecount = SplitString(str, '\n', MAX_BUFF, buffer, bank);
-		labels[i].line_count = linecount;
-		labels[i].lines =
-			(const char**)HMalloc(linecount * sizeof(const char*));
-		for (j = 0; j < linecount; j++)
-		{
-			labels[i].lines[j] = buffer[j];
-		}
-	}
-
-	/* Text Entry boxes */
-	if (index >= count)
-	{
-		uqm::log::critical("PANIC: String table cut short while reading "
-						   "text entries");
-		exit(EXIT_FAILURE);
-	}
-
-	if (SplitString(GetStringAddress(SetAbsStringTableIndex(
-						SetupTab, index++)),
-					'\n', MAX_BUFF, buffer, bank)
-		!= TEXTENTRY_COUNT)
-	{
-		uqm::log::critical("PANIC: Incorrect number of Text Entries");
-		exit(EXIT_FAILURE);
-	}
-	for (i = 0; i < TEXTENTRY_COUNT; i++)
-	{
-		textentries[i].tag = WIDGET_TYPE_TEXTENTRY;
-		textentries[i].parent = nullptr;
-		textentries[i].handleEvent = Widget_HandleEventTextEntry;
-		textentries[i].receiveFocus = Widget_ReceiveFocusSimple;
-		textentries[i].draw = Widget_DrawTextEntry;
-		textentries[i].height = Widget_HeightOneLine;
-		textentries[i].width = Widget_WidthFullScreen;
-		textentries[i].handleEventSelect = OnTextEntryEvent;
-		textentries[i].category = buffer[i];
-		textentries[i].value[0] = 0;
-		textentries[i].maxlen = WIDGET_TEXTENTRY_WIDTH - 1;
-		textentries[i].state = WTE_NORMAL;
-		textentries[i].cursor_pos = 0;
-		textentries[i].tooltip[0] = "";
-		textentries[i].tooltip[1] = "";
-		textentries[i].tooltip[2] = "";
-	}
-	if (SplitString(GetStringAddress(SetAbsStringTableIndex(
-						SetupTab, index++)),
-					'\n', MAX_BUFF, buffer, bank)
-		!= TEXTENTRY_COUNT)
-	{
-		/* TODO: Ignore extras instead of dying. */
-		uqm::log::critical("PANIC: Incorrect number of Text Entries");
-		exit(EXIT_FAILURE);
-	}
-	for (i = 0; i < TEXTENTRY_COUNT; i++)
-	{
-		int j, tipcount;
-
-		uqm::strncpy_safe(textentries[i].value, {buffer[i], static_cast<uint32_t>(textentries[i].maxlen)});
-
-		if (index >= count)
-		{
-			uqm::log::critical("PANIC: String table cut short while "
-							   "reading text entries");
-			exit(EXIT_FAILURE);
-		}
-		str = GetStringAddress(SetAbsStringTableIndex(SetupTab, index++));
-		tipcount = SplitString(str, '\n', MAX_BUFF, buffer, bank);
-		if (tipcount > 3)
-		{
-			tipcount = 3;
-		}
-		for (j = 0; j < tipcount; j++)
-		{
-			textentries[i].tooltip[j] = buffer[j];
-		}
-	}
-
-	textentries[TEXT_LOUTNAME].onChange = rename_template;
-
-	/* Control Entry boxes */
-	if (index >= count)
-	{
-		uqm::log::critical("PANIC: String table cut short while reading "
-						   "control entries");
-		exit(EXIT_FAILURE);
-	}
-
-	if (SplitString(GetStringAddress(SetAbsStringTableIndex(
-						SetupTab, index++)),
-					'\n', MAX_BUFF, buffer, bank)
-		!= CONTROLENTRY_COUNT)
-	{
-		uqm::log::critical("PANIC: Incorrect number of Control Entries");
-		exit(EXIT_FAILURE);
-	}
-	for (i = 0; i < CONTROLENTRY_COUNT; i++)
-	{
-		controlentries[i].tag = WIDGET_TYPE_CONTROLENTRY;
-		controlentries[i].parent = nullptr;
-		controlentries[i].handleEvent = Widget_HandleEventControlEntry;
-		controlentries[i].receiveFocus = Widget_ReceiveFocusControlEntry;
-		controlentries[i].draw = Widget_DrawControlEntry;
-		controlentries[i].height = Widget_HeightOneLine;
-		controlentries[i].width = Widget_WidthFullScreen;
-		controlentries[i].category = buffer[i];
-		controlentries[i].highlighted = 0;
-		controlentries[i].controlname[0][0] = 0;
-		controlentries[i].controlname[1][0] = 0;
-		controlentries[i].controlindex = i;
-		controlentries[i].onChange = rebind_control;
-		controlentries[i].onDelete = clear_control;
-	}
-
-	/* Check for garbage at the end */
-	if (index < count)
-	{
-		uqm::log::warn("WARNING: Setup strings had {} garbage "
-					   "entries at the end.",
-					   count - index);
-	}
-
-	build_defined_menus();
 
 	testSounds = CaptureSound(LoadSound(TEST_SOUNDS));
 }
@@ -1760,39 +930,10 @@ init_widgets(void)
 static void
 clean_up_widgets(void)
 {
-	int i;
-
+	menus.clear();
 	menuWidgets.reset();
 	menuDefinition.reset();
 
-	for (i = 0; i < CHOICE_COUNT; i++)
-	{
-		if (choices[i].options)
-		{
-			HFree(choices[i].options);
-		}
-	}
-
-	for (i = 0; i < LABEL_COUNT; i++)
-	{
-		if (labels[i].lines)
-		{
-			HFree((void*)labels[i].lines);
-		}
-	}
-
-	/* Clear out the master tables */
-
-	if (SetupTab)
-	{
-		DestroyStringTable(ReleaseStringTable(SetupTab));
-		SetupTab = 0;
-	}
-	if (bank)
-	{
-		StringBank_Free(bank);
-		bank = nullptr;
-	}
 	if (setup_frame)
 	{
 		DestroyDrawable(ReleaseDrawable(setup_frame));
@@ -1866,96 +1007,12 @@ dump_setup_menu(void)
 	}
 }
 
-void SetupMenu(void)
+// Applies the settings that take effect when the player leaves the setup menu.
+static void
+apply_settings(void)
 {
-	SETUP_MENU_STATE s;
-
-	s.InputFunc = DoSetupMenu;
-	s.initialized = false;
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
-	SetupTab = CaptureStringTable(LoadStringTable(SETUP_MENU_STRTAB));
-	if (SetupTab)
-	{
-		init_widgets();
-	}
-	else
-	{
-		uqm::log::critical(
-			"PANIC: Could not find strings for the setup menu!");
-		exit(EXIT_FAILURE);
-	}
-	done = false;
-
-	SetInputScriptMenuDump(dump_setup_menu);
-	DoInput(&s, true);
-	SetInputScriptMenuDump(nullptr);
-	GLOBAL(CurrentActivity) &= ~CHECK_ABORT;
-	PropagateResults();
-	if (SetupTab)
-	{
-		clean_up_widgets();
-	}
-
-	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN,
-				  MENU_SOUND_SELECT);
-}
-
-void GetGlobalOptions(GLOBALOPTS* opts)
-{
-	uint8_t i;
-
-	uqm::OptionsStruct& uqmOptions {uqm::UQMOptions::edit()};
-
-	/*
- *		Audio options
- */
-	/*
- *		Engine&Visuals options
- */
-	// Mics
-	opts->directionalJoystick = uqmOptions.directionalJoystick.value ? OPTVAL_ENABLED : OPTVAL_DISABLED; // For Android
-
-	// Interplanetary
-
-	// Orbit
-	opts->landerHold = whichPlatformOpt(uqmOptions.landerHold.value);
-
-
-	// Comm screen
-
-	// Auto-Pilot
-
-	// Controls
-
-	// QoL
-
-	/*
- *		Cheats
- */
-	//opts->unlockUpgrades = optUnlockUpgrades;
-
-	// Devices
-	for (i = 0; i < NUM_DEVICES; i++)
-	{
-		opts->deviceArray[i] = optDeviceArray[i];
-	}
-
-	// Upgrades
-	for (i = 0; i < NUM_UPGRADES; i++)
-	{
-		opts->upgradeArray[i] = optUpgradeArray[i];
-	}
-}
-
-void SetGlobalOptions(GLOBALOPTS* opts)
-{
-	uint8_t i;
-
 	auto& uqmOptions {uqm::UQMOptions::edit()};
 
-	/*
- *		Graphics options
- */
 	const int factor {uqm::isAddonAvailable(HD_MODE) ? *uqmOptions.resolutionFactor : 0};
 	if (factor != (int)resolutionFactor)
 	{
@@ -1975,11 +1032,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 		optRequiresReload = true;
 	}
 
-	/*
- *		Audio options
- */
-
-
 	if (mainMenuMusicChanged)
 	{
 		mainMenuMusicChanged = false;
@@ -1993,55 +1045,17 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 		}
 	}
 
-
-	/*
- *		Engine&Visuals options
- */
-	// Mics
-#ifdef DIRECTIONAL_JOY
-	putOpt(uqmOptions.directionalJoystick.value, (bool)opts->directionalJoystick, false);
-#endif
-
-	// Interplanetary
-
-	// Orbit
-	putOpt(uqmOptions.landerHold.value, opts->landerHold, false);
-
-
 	if ((uqm::UQMOptions::edit().optDifficulty = *uqmOptions.optDiffChooser) == uqm::Difficulty::ChooseYourOwn)
 	{
 		uqm::UQMOptions::edit().optDifficulty = uqm::Difficulty::Normal;
 	}
 
-	// Comm screen
-
-	// Auto-Pilot
-
-	// Controls
 	res_PutString("keys.1.name", uqm::input_templates[0].name);
 	res_PutString("keys.2.name", uqm::input_templates[1].name);
 	res_PutString("keys.3.name", uqm::input_templates[2].name);
 	res_PutString("keys.4.name", uqm::input_templates[3].name);
 	res_PutString("keys.5.name", uqm::input_templates[4].name);
 	res_PutString("keys.6.name", uqm::input_templates[5].name);
-
-
-	/*
- *		Cheats
- */
-	//putOpt(optUnlockUpgrades opts->unlockUpgrades, false);
-
-	// Devices
-	for (i = 0; i < NUM_DEVICES; i++)
-	{
-		optDeviceArray[i] = opts->deviceArray[i];
-	}
-
-	// Upgrades
-	for (i = 0; i < NUM_UPGRADES; i++)
-	{
-		optUpgradeArray[i] = opts->upgradeArray[i];
-	}
 
 	uqm::saveUserSettings(uqmOptions);
 	SaveKeyConfiguration(configDir);
@@ -2100,4 +1114,24 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 
 		Reload();
 	}
+}
+
+void SetupMenu(void)
+{
+	SETUP_MENU_STATE s;
+
+	s.InputFunc = DoSetupMenu;
+	s.initialized = false;
+	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	init_widgets();
+
+	SetInputScriptMenuDump(dump_setup_menu);
+	DoInput(&s, true);
+	SetInputScriptMenuDump(nullptr);
+	GLOBAL(CurrentActivity) &= ~CHECK_ABORT;
+	apply_settings();
+	clean_up_widgets();
+
+	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN,
+				  MENU_SOUND_SELECT);
 }

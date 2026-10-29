@@ -143,7 +143,6 @@
 #define SCAN_COLOR_TAB "planet.scans.colortable"
 #define SELENIC_COLOR_TAB "planet.selenic.colortable"
 #define SELENIC_XLAT_TAB "planet.selenic.translatetable"
-#define SETUP_MENU_STRTAB "text.setupmenu"
 #define SHATTERED_COLOR_TAB "planet.shattered.colortable"
 #define SHATTERED_XLAT_TAB "planet.shattered.translatetable"
 #define SHOFIXTI_BASE_STRTAB "text.shofixtibase"
