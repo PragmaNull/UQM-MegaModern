@@ -79,9 +79,6 @@ struct option_list_value
 //};
 
 
-static int SfxVol;
-static int MusVol;
-static int SpcVol;
 static int optMScale;
 static SOUND testSounds;
 
@@ -259,19 +256,8 @@ static WIDGET* graphics_widgets[] = {
 // Built from the menu definition file.
 static WIDGET* engine_widgets[] = {nullptr};
 
-static WIDGET* audio_widgets[] = {
-	(WIDGET*)(&sliders[SLIDER_MUSVOLUME]),	// Music Volume
-	(WIDGET*)(&sliders[SLIDER_SFXVOLUME]),	// SFX Volume
-	(WIDGET*)(&sliders[SLIDER_SPCHVOLUME]), // Speech Volume
-
-	(WIDGET*)(&labels[LABEL_SPACER]),		// Spacer
-	(WIDGET*)(&choices[CHOICE_POSAUDIO]),	// Positional Audio
-	(WIDGET*)(&choices[CHOICE_SNDDRIVER]),	// Sound Driver
-	(WIDGET*)(&choices[CHOICE_SNDQUALITY]), // Sound Quality
-
-	(WIDGET*)(&labels[LABEL_SPACER]),	  // Spacer
-	(WIDGET*)(&buttons[BTN_QUITSUBMENU]), // Exit to Menu
-	nullptr};
+// Built from the menu definition file.
+static WIDGET* audio_widgets[] = {nullptr};
 
 // Built from the menu definition file.
 static WIDGET* music_widgets[] = {nullptr};
@@ -759,27 +745,6 @@ change_seed(WIDGET_TEXTENTRY* self)
 	uqm::UQMOptions::edit().customSeed = customSeed;
 }
 
-static void
-adjustMusic(WIDGET_SLIDER* self)
-{
-	musicVolumeScale = self->value / 100.0f;
-	SetMusicVolume(musicVolume);
-}
-
-static void
-adjustSFX(WIDGET_SLIDER* self)
-{
-	sfxVolumeScale = self->value / 100.0f;
-}
-
-static void
-adjustSpeech(WIDGET_SLIDER* self)
-{
-	speechVolumeScale = self->value / 100.0f;
-	SetSpeechVolume(speechVolumeScale);
-
-	TestSpeechSound(SetAbsSoundIndex(testSounds, (self->value == 100)));
-}
 
 static void
 toggle_scanlines(WIDGET_CHOICE* self, uqm::GfxFlags* NewGfxFlags)
@@ -1086,9 +1051,6 @@ SetDefaults(void)
 	choices[CHOICE_MELEEZOOM].selected = opts.meleezoom;
 #endif
 
-	choices[CHOICE_POSAUDIO].selected = opts.stereo;
-	choices[CHOICE_SNDDRIVER].selected = opts.adriver;
-	choices[CHOICE_SNDQUALITY].selected = opts.aquality;
 	choices[CHOICE_BTMPLAYER].selected = static_cast<int>(opts.player1);
 	choices[CHOICE_TOPPLAYER].selected = static_cast<int>(opts.player2);
 	choices[CHOICE_KBLAYOUT].selected = 0;
@@ -1121,9 +1083,6 @@ SetDefaults(void)
 
 	// Next choice should be choices[CHOICE_SHIPSEED]
 
-	sliders[SLIDER_MUSVOLUME].value = opts.musicvol;
-	sliders[SLIDER_SFXVOLUME].value = opts.sfxvol;
-	sliders[SLIDER_SPCHVOLUME].value = opts.speechvol;
 	sliders[SLIDER_GAMMA].value = opts.gamma;
 }
 
@@ -1145,9 +1104,6 @@ PropagateResults(void)
 	opts.meleezoom = (OPT_MELEEZOOM)choices[CHOICE_MELEEZOOM].selected;
 #endif
 
-	opts.stereo = (OPT_ENABLABLE)choices[CHOICE_POSAUDIO].selected;
-	opts.adriver = (OPT_ADRIVERTYPE)choices[CHOICE_SNDDRIVER].selected;
-	opts.aquality = (OPT_AQUALITYTYPE)choices[CHOICE_SNDQUALITY].selected;
 	opts.player1 = (ControlTemplate)choices[CHOICE_BTMPLAYER].selected;
 	opts.player2 = (ControlTemplate)choices[CHOICE_TOPPLAYER].selected;
 	opts.keepaspect = (OPT_ENABLABLE)choices[CHOICE_ASPRATIO].selected;
@@ -1177,9 +1133,6 @@ PropagateResults(void)
 	}
 
 
-	opts.musicvol = sliders[SLIDER_MUSVOLUME].value;
-	opts.sfxvol = sliders[SLIDER_SFXVOLUME].value;
-	opts.speechvol = sliders[SLIDER_SPCHVOLUME].value;
 	opts.gamma = sliders[SLIDER_GAMMA].value;
 
 	SetGlobalOptions(&opts);
@@ -1521,12 +1474,13 @@ static const struct
 	const char* id;
 	int menu;
 } definedMenus[] = {
-	{"cheats", MENU_CHEATS},
+	{"audio",	  MENU_AUDIO	},
+	{"cheats",   MENU_CHEATS  },
 	{"advanced", MENU_ADVANCED},
-	{"engine", MENU_ENGINE},
-	{"visual", MENU_VISUAL},
-	{"music",  MENU_MUSIC },
-	{"qol",	MENU_QOL	},
+	{"engine",   MENU_ENGINE  },
+	{"visual",   MENU_VISUAL  },
+	{"music",	  MENU_MUSIC	},
+	{"qol",		MENU_QOL		},
 };
 
 static void
@@ -1562,26 +1516,42 @@ build_defined_menus(void)
 	hooks.settingChanged = [](const uqm::SettingBase& setting) {
 		optRequiresReload = optRequiresReload || setting.requiresReload();
 		optRequiresRestart = optRequiresRestart || setting.requiresRestart();
+		const uqm::OptionsStruct& options {uqm::UQMOptions::read()};
 		if (setting.key() == "audio.mainMenuMusic")
 		{
 			mainMenuMusicChanged = true;
+		}
+		else if (setting.key() == "audio.musicVolume")
+		{
+			musicVolumeScale = *options.musicVolumeScale;
+			SetMusicVolume(musicVolume);
+		}
+		else if (setting.key() == "audio.sfxVolume")
+		{
+			sfxVolumeScale = *options.sfxVolumeScale;
+		}
+		else if (setting.key() == "audio.speechVolume")
+		{
+			speechVolumeScale = *options.speechVolumeScale;
+			SetSpeechVolume(speechVolumeScale);
+			TestSpeechSound(SetAbsSoundIndex(testSounds, speechVolumeScale >= 1.0f));
 		}
 	};
 	uqm::MenuWidgets::SharedWidgets shared {};
 	shared.spacer = (WIDGET*)(&labels[LABEL_SPACER]);
 	shared.back = (WIDGET*)(&buttons[BTN_QUITSUBMENU]);
 	shared.legacy = {
-		{"windowType", (WIDGET*)(&choices[CHOICE_WINDOWTYPE])},
+		{"windowType",   (WIDGET*)(&choices[CHOICE_WINDOWTYPE])},
 #ifdef MELEE_ZOOM
-		{"meleeZoom",	 (WIDGET*)(&choices[CHOICE_ANDRZOOM])  },
+		{"meleeZoom",	  (WIDGET*)(&choices[CHOICE_ANDRZOOM])  },
 #else
-		{"meleeZoom",	 (WIDGET*)(&choices[CHOICE_MELEEZOOM])  },
+		{"meleeZoom", (WIDGET*)(&choices[CHOICE_MELEEZOOM])},
 #endif
-		{"coarseScan", (WIDGET*)(&choices[CHOICE_SCANMENU])  },
-		{"seedType",	 (WIDGET*)(&choices[CHOICE_GAMESEED])  },
-		{"customSeed", (WIDGET*)(&textentries[TEXT_GAMESEED])},
-		{"devicesMenu", (WIDGET*)(&buttons[BTN_DEVMENU])},
-		{"upgradesMenu", (WIDGET*)(&buttons[BTN_UPGMENU])},
+		{"coarseScan",   (WIDGET*)(&choices[CHOICE_SCANMENU])  },
+		{"seedType",	 (WIDGET*)(&choices[CHOICE_GAMESEED])	 },
+		{"customSeed",   (WIDGET*)(&textentries[TEXT_GAMESEED])},
+		{"devicesMenu",	(WIDGET*)(&buttons[BTN_DEVMENU])		},
+		{"upgradesMenu", (WIDGET*)(&buttons[BTN_UPGMENU])		 },
 	};
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
 	for (const auto& defined : definedMenus)
@@ -1817,9 +1787,6 @@ init_widgets(void)
 		sliders[i].tooltip[2] = "";
 		sliders[i].onChange = nullptr;
 	}
-	sliders[SLIDER_MUSVOLUME].onChange = adjustMusic;
-	sliders[SLIDER_SFXVOLUME].onChange = adjustSFX;
-	sliders[SLIDER_SPCHVOLUME].onChange = adjustSpeech;
 
 	// gamma is a special case
 	sliders[SLIDER_GAMMA].step = 1;
@@ -2342,49 +2309,13 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 			break;
 	}
 
-	/*
+		/*
  *		Audio options
  */
-	opts->stereo = uqmOptions.stereoSFX.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-
-
-	switch (snddriver)
-	{
-		case AudioDriverType::OpenAL:
-			opts->adriver = OPTVAL_OPENAL;
-			break;
-		case AudioDriverType::MixSDL:
-			opts->adriver = OPTVAL_MIXSDL;
-			break;
-		default:
-			opts->adriver = OPTVAL_SILENCE;
-			break;
-	}
-
-	if (testFlag(soundflags, AudioFlags::QualityHigh))
-	{
-		opts->aquality = OPTVAL_HIGH;
-	}
-	else if (testFlag(soundflags, AudioFlags::QualityLow))
-	{
-		opts->aquality = OPTVAL_LOW;
-	}
-	else
-	{
-		opts->aquality = OPTVAL_MEDIUM;
-	}
-
-	MusVol = opts->musicvol =
-		(((int)(musicVolumeScale * 100.0f) + 2) / 5) * 5;
-	SfxVol = opts->sfxvol = (((int)(sfxVolumeScale * 100.0f) + 2) / 5) * 5;
-	SpcVol = opts->speechvol =
-		(((int)(speechVolumeScale * 100.0f) + 2) / 5) * 5;
-
-
-	/*
+		/*
  *		Engine&Visuals options
  */
-	// Mics
+		// Mics
 #ifdef MELEE_ZOOM
 	optMScale = opts->meleezoom = (int)uqmOptions.meleeScale.value;
 #else
@@ -2433,7 +2364,6 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 
 void SetGlobalOptions(GLOBALOPTS* opts)
 {
-	AudioFlags NewSndFlags {AudioFlags::None};
 	int resFactor = resolutionFactor;
 	int newFactor;
 	uint8_t i;
@@ -2491,7 +2421,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 	/*
  *		Audio options
  */
-	putOpt(uqmOptions.stereoSFX.value, (bool)opts->stereo, true);
 
 
 	if (mainMenuMusicChanged)
@@ -2506,76 +2435,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 			UninitMenuMusic();
 		}
 	}
-
-
-	{
-		AudioDriverType newDriver {snddriver};
-		switch (opts->adriver)
-		{
-			case OPTVAL_SILENCE:
-				newDriver = AudioDriverType::NoSound;
-				break;
-			case OPTVAL_MIXSDL:
-				newDriver = AudioDriverType::MixSDL;
-				break;
-			case OPTVAL_OPENAL:
-				newDriver = AudioDriverType::OpenAL;
-				break;
-			default:
-				break;
-		}
-		if (snddriver != newDriver)
-		{
-			snddriver = newDriver;
-			uqm::UQMOptions::edit().soundDriver = newDriver;
-			optRequiresRestart = true;
-		}
-	}
-
-	{
-		AudioFlags newQualityFlag {AudioFlags::None};
-		switch (opts->aquality)
-		{
-			case OPTVAL_LOW:
-				newQualityFlag = AudioFlags::QualityLow;
-				break;
-			case OPTVAL_MEDIUM:
-				newQualityFlag = AudioFlags::QualityMedium;
-				break;
-			case OPTVAL_HIGH:
-				newQualityFlag = AudioFlags::QualityHigh;
-				break;
-			default:
-				break;
-		}
-		if ((soundflags & AudioQualityFlagMask) != newQualityFlag)
-		{
-			NewSndFlags |= newQualityFlag;
-			uqm::AudioQuality newQuality {uqm::AudioQuality::High};
-			switch (opts->aquality)
-			{
-				case OPTVAL_LOW:
-					newQuality = uqm::AudioQuality::Low;
-					break;
-				case OPTVAL_MEDIUM:
-					newQuality = uqm::AudioQuality::Medium;
-					break;
-				default:
-					break;
-			}
-			uqm::UQMOptions::edit().soundQuality = newQuality;
-			soundflags = NewSndFlags;
-			optRequiresRestart = true;
-		}
-	}
-
-	// update actual volumes
-	putOpt(SfxVol, opts->sfxvol, false);
-	putOpt(MusVol, opts->musicvol, false);
-	putOpt(SpcVol, opts->speechvol, false);
-	uqmOptions.sfxVolumeScale = SfxVol / 100.0f;
-	uqmOptions.musicVolumeScale = MusVol / 100.0f;
-	uqmOptions.speechVolumeScale = SpcVol / 100.0f;
 
 
 	/*

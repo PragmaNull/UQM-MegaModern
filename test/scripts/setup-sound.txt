@@ -1,0 +1,28 @@
+# Changes Setup > Sound > Music Volume and Sound Quality, and saves.
+# Expect "musicVolume": 0.9 and "quality": "Medium" in settings.json when starting from defaults.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+# Sound is the fourth item.
+down 3
+select
+wait 1500
+log sound menu
+dumpmenu
+left 2
+# Music, SFX and Speech Volume, Positional Audio, Sound Driver, Sound Quality.
+down 5
+left
+select
+log sound after changes
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 3000
+quit
