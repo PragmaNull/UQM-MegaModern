@@ -151,7 +151,7 @@ option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 #add_compile_options(/fsanitize=address /Zi /BLAH)
 if (ENABLE_ASAN)
     if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        if (NOT "$<CONFIG>" STREQUAL "Release")
+        if (NOT CMAKE_BUILD_TYPE STREQUAL "Release")
             message (FATAL_ERROR "ASAN requires a release build in clang (RelWithDbgInfo does not count!)")
         endif()
 
