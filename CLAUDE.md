@@ -111,6 +111,7 @@ Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each o
 - **Enums**: Use `enum class` with `magic_enum` for reflection where needed
 - **String safety**: Use `uqstl::string_view` for safe string views (pass by value); use `uqgsl::czstring` when the API deals with C-style null-terminated strings; use `scn::scan` instead of `sscanf`
 - **Comments**: Keep comments minimal. Write them in Simplified Technical English. Do not explain "why", and do not refer to other classes or files unless necessary; such comments read as notes to self. Get user approval before adding a comment longer than 3 lines. Start every new source file with a one-line comment that states its purpose.
+- **C++ Core Guidelines**: Follow the [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines) as closely as possible: RAII for all resources, no owning raw pointers, `const` by default, no C-style casts, prefer value types and the rule of zero
 - **Initialization**: Use braced initialization throughout — for variables (`int x{42};`), and for class members/locals with default constructors (`uqstl::vector<int> v{};`) even when the default constructor would be called implicitly
 
 ## Formatting
