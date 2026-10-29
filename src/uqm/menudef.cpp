@@ -162,6 +162,20 @@ uqstl::optional<MenuItemDef> readItem(yyjson_val* itemObj)
 	{
 		return MenuItemDef {.kind = MenuItemKind::Back};
 	}
+	if (yyjson_is_true(yyjson_obj_get(itemObj, "exit")))
+	{
+		return MenuItemDef {.kind = MenuItemKind::Exit};
+	}
+	if (auto target {getString(itemObj, "menu")})
+	{
+		const auto label {getString(itemObj, "label")};
+		auto tooltip {getStringArray(itemObj, "tooltip", c_maxTooltipLines)};
+		if (!label || !tooltip)
+		{
+			return uqstl::nullopt;
+		}
+		return MenuItemDef {.kind = MenuItemKind::Menu, .label = *label, .tooltip = uqstl::move(*tooltip), .target = uqstl::move(*target)};
+	}
 	if (auto widget {getString(itemObj, "legacy")})
 	{
 		return MenuItemDef {.kind = MenuItemKind::Legacy, .widget = uqstl::move(*widget), .optional = yyjson_is_true(yyjson_obj_get(itemObj, "optional"))};

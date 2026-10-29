@@ -214,20 +214,8 @@ static HANDLER button_handlers[BUTTON_COUNT] = {
 
 /* These refer to uninitialized widgets, but that's OK; we'll fill
  * them in before we touch them */
-static WIDGET* main_widgets[] = {
-	(WIDGET*)(&buttons[BTN_GFXMENU]), // Graphics
-	(WIDGET*)(&buttons[BTN_ENGMENU]), // PC/3DO
-	(WIDGET*)(&buttons[BTN_VISMENU]), // Visuals
-	(WIDGET*)(&buttons[BTN_SNDMENU]), // Sound
-	(WIDGET*)(&buttons[BTN_MUSMENU]), // Music
-	(WIDGET*)(&buttons[BTN_KEYMENU]), // Controls
-	(WIDGET*)(&buttons[BTN_QOLMENU]), // Quality of Life
-	(WIDGET*)(&buttons[BTN_ADVMENU]), // Advanced
-	(WIDGET*)(&buttons[BTN_CHTMENU]), // Cheats
-
-	(WIDGET*)(&labels[LABEL_SPACER]),	// Spacer
-	(WIDGET*)(&buttons[BTN_QUITSETUP]), // Quit Setup Menu
-	nullptr};
+// Built from the menu definition file.
+static WIDGET* main_widgets[] = {nullptr};
 
 static WIDGET* graphics_widgets[] = {
 	(WIDGET*)(&choices[CHOICE_GRAPHICS]),	// Graphics
@@ -1387,21 +1375,47 @@ static uqstl::optional<uqm::MenuDefinition> menuDefinition {};
 static uqstl::unique_ptr<uqm::MenuWidgets> menuWidgets {};
 static bool mainMenuMusicChanged {};
 
-// Menus that the menu definition file describes.
+// Menus that the setup menu can open. The menu definition file describes the menus with 'defined' set.
 static const struct
 {
 	const char* id;
 	int menu;
-} definedMenus[] = {
-	{"controls", MENY_KEYCONF },
-	{"audio",	  MENU_AUDIO	},
-	{"cheats",   MENU_CHEATS  },
-	{"advanced", MENU_ADVANCED},
-	{"engine",   MENU_ENGINE  },
-	{"visual",   MENU_VISUAL  },
-	{"music",	  MENU_MUSIC	},
-	{"qol",		MENU_QOL		},
+	bool defined;
+} menuIds[] = {
+	{"main",	 MENU_QUITSUB,  true },
+	{"graphics", MENU_GRAPHICS, false},
+	{"engine",   MENU_ENGINE,	true },
+	{"visual",   MENU_VISUAL,	true },
+	{"audio",	  MENU_AUDIO,	  true },
+	{"music",	  MENU_MUSIC,	  true },
+	{"controls", MENY_KEYCONF,  true },
+	{"qol",		MENU_QOL,	  true },
+	{"advanced", MENU_ADVANCED, true },
+	{"cheats",   MENU_CHEATS,	true },
+	{"editkeys", MENU_EDITKEYS, false},
+	{"devices",	MENU_DEVICES,  false},
+	{"upgrades", MENU_UPGRADES, false},
 };
+
+static bool
+open_menu(uqstl::string_view id)
+{
+	const auto found {uqstl::find_if(uqstl::begin(menuIds), uqstl::end(menuIds), [id](const auto& entry) {
+		return id == entry.id;
+	})};
+	if (found == uqstl::end(menuIds))
+	{
+		return false;
+	}
+	if (found->menu == MENU_EDITKEYS)
+	{
+		choices[CHOICE_KBLAYOUT].selected = 0;
+		populate_editkeys(0);
+	}
+	next = (WIDGET*)(&menus[found->menu]);
+	(*next->receiveFocus)(next, WIDGET_EVENT_DOWN);
+	return true;
+}
 
 static void
 build_defined_menus(void)
@@ -1481,22 +1495,25 @@ build_defined_menus(void)
 		}
 		return nullptr;
 	};
+	hooks.openMenu = open_menu;
 	hooks.textEntrySelect = OnTextEntryEvent;
 	uqm::MenuWidgets::SharedWidgets shared {};
 	shared.spacer = (WIDGET*)(&labels[LABEL_SPACER]);
 	shared.back = (WIDGET*)(&buttons[BTN_QUITSUBMENU]);
+	shared.exit = (WIDGET*)(&buttons[BTN_QUITSETUP]);
 	shared.legacy = {
 		{"windowType",		   (WIDGET*)(&choices[CHOICE_WINDOWTYPE])},
-		{"devicesMenu",			(WIDGET*)(&buttons[BTN_DEVMENU])		},
-		{"upgradesMenu",		 (WIDGET*)(&buttons[BTN_UPGMENU])		 },
-		{"editKeysMenu",		 (WIDGET*)(&buttons[BTN_EDITKEYS])	  },
 #ifdef DIRECTIONAL_JOY
 		{"directionalJoystick", (WIDGET*)(&choices[CHOICE_JOYSTICK])	},
 #endif
 	};
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
-	for (const auto& defined : definedMenus)
+	for (const auto& defined : menuIds)
 	{
+		if (!defined.defined)
+		{
+			continue;
+		}
 		const uqm::MenuDef* menu {menuDefinition->find(defined.id)};
 		if (menu == nullptr)
 		{

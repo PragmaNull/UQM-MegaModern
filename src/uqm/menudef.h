@@ -33,6 +33,10 @@ enum class MenuItemKind
 	Heading,
 	Spacer,
 	Back,
+	// A button that leaves the setup menu.
+	Exit,
+	// A button that opens another menu.
+	Menu,
 	// An existing widget that the setup menu builds itself.
 	Legacy,
 };
@@ -53,11 +57,14 @@ struct MenuItemDef
 	int step {5};
 	double scale {1.0};
 	bool percent {};
-	// Tooltip of a Slider or Text. At most three lines.
+	// Tooltip of a Slider, Text or Menu. At most three lines.
 	uqstl::vector<uqstl::string> tooltip {};
 
 	// Text of a Heading.
 	uqstl::vector<uqstl::string> lines {};
+
+	// Id of the menu that a Menu item opens.
+	uqstl::string target {};
 
 	// Name of the widget for a Legacy item.
 	uqstl::string widget {};

@@ -26,6 +26,7 @@ public:
 	{
 		WIDGET* spacer {};
 		WIDGET* back {};
+		WIDGET* exit {};
 		// Widgets for Legacy items, by name.
 		uqstl::map<uqstl::string, WIDGET*> legacy {};
 	};
@@ -39,6 +40,8 @@ public:
 		std::function<void(const SettingBase& setting)> settingChanged {};
 		// Gives the label of an option from a list that the game supplies. Returns nullptr if there is no label.
 		std::function<const char*(uqstl::string_view list, size_t index)> optionLabel {};
+		// Opens the menu with this id. Returns false if there is no such menu.
+		std::function<bool(uqstl::string_view id)> openMenu {};
 		// Edits the text of a Text item when the player selects it.
 		int (*textEntrySelect)(WIDGET_TEXTENTRY* self) {};
 	};
@@ -60,15 +63,18 @@ private:
 	struct BoundChoice;
 	struct BoundSlider;
 	struct BoundText;
+	struct MenuButton;
 	struct Heading;
 
 	static void onChoiceChanged(WIDGET_CHOICE* self, int oldValue);
 	static void onSliderChanged(WIDGET_SLIDER* self);
 	static void onTextChanged(WIDGET_TEXTENTRY* self);
+	static int onMenuButtonEvent(WIDGET* self, int event);
 
 	WIDGET* buildChoice(const MenuDef& menu, const MenuItemDef& item);
 	WIDGET* buildSlider(const MenuDef& menu, const MenuItemDef& item);
 	WIDGET* buildText(const MenuDef& menu, const MenuItemDef& item);
+	WIDGET* buildMenuButton(const MenuItemDef& item);
 	WIDGET* buildHeading(const MenuItemDef& item);
 	void applyChange(SettingBase& setting, uqstl::string_view text);
 
@@ -78,6 +84,7 @@ private:
 	uqstl::vector<uqstl::unique_ptr<BoundChoice>> m_choices {};
 	uqstl::vector<uqstl::unique_ptr<BoundSlider>> m_sliders {};
 	uqstl::vector<uqstl::unique_ptr<BoundText>> m_texts {};
+	uqstl::vector<uqstl::unique_ptr<MenuButton>> m_menuButtons {};
 	uqstl::vector<uqstl::unique_ptr<Heading>> m_headings {};
 	uqstl::vector<uqstl::unique_ptr<uqstl::vector<WIDGET*>>> m_lists {};
 };

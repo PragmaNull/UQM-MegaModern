@@ -55,6 +55,7 @@ int Widget_HandleEventTextEntry(WIDGET*, int)
 	return 0;
 }
 void Widget_DrawTextEntry(WIDGET*, int, int) {}
+void Widget_DrawButton(WIDGET*, int, int) {}
 int Widget_HeightLabel(WIDGET*)
 {
 	return 0;
@@ -306,12 +307,44 @@ TEST_F(MenuWidgetsTest, ChoiceUsesSuppliedLabels)
 	};
 	MenuWidgets builder {
 		options, MenuWidgets::SharedWidgets {&spacer, &back},
-		  uqstl::move(hooks)
-	};
+		uqstl::move(hooks)
+	  };
 	WIDGET** list {builder.build(labelMenu->menus[0])};
 	const WIDGET_CHOICE& widget {choice(list, 0)};
 	EXPECT_STREQ(widget.options[0].optname, "Arrows");
 	EXPECT_STREQ(widget.options[1].optname, "Template 2");
+}
+
+TEST_F(MenuWidgetsTest, MenuButtonOpensTheTarget)
+{
+	const auto buttonMenu {menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [
+		{"menu": "audio", "label": "Sound", "tooltip": ["Opens the sound menu."]},
+		{"menu": "missing", "label": "Missing"},
+		{"exit": true}
+	]}]})")};
+	ASSERT_TRUE(buttonMenu.has_value());
+
+	uqstl::vector<uqstl::string> opened {};
+	MenuWidgets::Hooks hooks {};
+	hooks.openMenu = [&opened](uqstl::string_view id) {
+		opened.emplace_back(id);
+		return id == "audio";
+	};
+	WIDGET exit {};
+	MenuWidgets::SharedWidgets shared {&spacer, &back, &exit};
+	MenuWidgets builder {options, shared, uqstl::move(hooks)};
+	WIDGET** list {builder.build(buttonMenu->menus[0])};
+	ASSERT_EQ(list[0]->tag, WIDGET_TYPE_BUTTON);
+	const auto& button {*reinterpret_cast<WIDGET_BUTTON*>(list[0])};
+	EXPECT_STREQ(button.name, "Sound");
+	EXPECT_STREQ(button.tooltip[0], "Opens the sound menu.");
+	EXPECT_EQ(list[2], &exit);
+
+	EXPECT_FALSE(list[0]->handleEvent(list[0], WIDGET_EVENT_DOWN));
+	EXPECT_TRUE(opened.empty());
+	EXPECT_TRUE(list[0]->handleEvent(list[0], WIDGET_EVENT_SELECT));
+	EXPECT_FALSE(list[1]->handleEvent(list[1], WIDGET_EVENT_SELECT));
+	EXPECT_EQ(opened, (uqstl::vector<uqstl::string> {"audio", "missing"}));
 }
 
 TEST_F(MenuWidgetsTest, RefreshShowsChangedSettings)
@@ -353,7 +386,8 @@ TEST_F(MenuWidgetsTest, ContentMenusBuild)
 	const auto content {menuDefinitionFromJson(text.str())};
 	ASSERT_TRUE(content.has_value());
 
-	MenuWidgets::SharedWidgets shared {&spacer, &back};
+	WIDGET exit {};
+	MenuWidgets::SharedWidgets shared {&spacer, &back, &exit};
 	uqstl::vector<uqstl::unique_ptr<WIDGET>> legacyWidgets {};
 	for (const MenuDef& menu : content->menus)
 	{

@@ -1,0 +1,38 @@
+# Opens Setup > Cheats > Devices and Upgrades, then leaves Setup with Exit.
+# Expect the Devices and Upgrades menus in the log, and the main menu after Exit.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+log setup menu
+dumpmenu
+# Cheats is the ninth item.
+down 8
+select
+wait 1500
+select
+wait 1500
+log devices menu
+dumpmenu
+cancel
+wait 1000
+down
+select
+wait 1500
+log upgrades menu
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 1000
+# Cheats is highlighted; Quit Setup is next after the spacer.
+down
+select
+wait 3000
+log after exit
+dumpmenu
+quit

@@ -34,6 +34,13 @@ struct MenuWidgets::BoundText
 	MenuItemDef item {};
 };
 
+struct MenuWidgets::MenuButton
+{
+	WIDGET_BUTTON widget {};
+	MenuWidgets* owner {};
+	MenuItemDef item {};
+};
+
 struct MenuWidgets::Heading
 {
 	WIDGET_LABEL widget {};
@@ -98,6 +105,10 @@ MenuWidgets::~MenuWidgets()
 	{
 		s_bindings.erase(&text->widget);
 	}
+	for (const auto& button : m_menuButtons)
+	{
+		s_bindings.erase(&button->widget);
+	}
 }
 
 WIDGET** MenuWidgets::build(const MenuDef& menu)
@@ -113,6 +124,12 @@ WIDGET** MenuWidgets::build(const MenuDef& menu)
 				break;
 			case MenuItemKind::Back:
 				widget = m_shared.back;
+				break;
+			case MenuItemKind::Exit:
+				widget = m_shared.exit;
+				break;
+			case MenuItemKind::Menu:
+				widget = buildMenuButton(item);
 				break;
 			case MenuItemKind::Legacy:
 				if (const auto found {m_shared.legacy.find(item.widget)}; found != m_shared.legacy.end())
@@ -263,6 +280,26 @@ WIDGET* MenuWidgets::buildText(const MenuDef& menu, const MenuItemDef& item)
 	return reinterpret_cast<WIDGET*>(&widget);
 }
 
+WIDGET* MenuWidgets::buildMenuButton(const MenuItemDef& item)
+{
+	auto& button {*m_menuButtons.emplace_back(uqstl::make_unique<MenuButton>())};
+	button.owner = this;
+	button.item = item;
+
+	WIDGET_BUTTON& widget {button.widget};
+	widget.tag = WIDGET_TYPE_BUTTON;
+	widget.handleEvent = onMenuButtonEvent;
+	widget.receiveFocus = Widget_ReceiveFocusSimple;
+	widget.draw = Widget_DrawButton;
+	widget.height = Widget_HeightOneLine;
+	widget.width = Widget_WidthFullScreen;
+	widget.name = button.item.label.c_str();
+	fillTooltip(widget.tooltip, button.item.tooltip);
+
+	s_bindings[&widget] = &button;
+	return reinterpret_cast<WIDGET*>(&widget);
+}
+
 void MenuWidgets::refresh()
 {
 	for (const auto& choice : m_choices)
@@ -360,6 +397,26 @@ void MenuWidgets::onTextChanged(WIDGET_TEXTENTRY* self)
 	BoundText& text {*static_cast<BoundText*>(found->second)};
 	text.owner->applyChange(*text.setting, self->value);
 	showText(*self, *text.setting);
+}
+
+int MenuWidgets::onMenuButtonEvent(WIDGET* self, int event)
+{
+	if (event != WIDGET_EVENT_SELECT)
+	{
+		return false;
+	}
+	const auto found {s_bindings.find(self)};
+	if (found == s_bindings.end())
+	{
+		return false;
+	}
+	const MenuButton& button {*static_cast<MenuButton*>(found->second)};
+	if (!button.owner->m_hooks.openMenu || !button.owner->m_hooks.openMenu(button.item.target))
+	{
+		uqm::log::error("Menu: no menu '{}'.", button.item.target);
+		return false;
+	}
+	return true;
 }
 
 void MenuWidgets::onSliderChanged(WIDGET_SLIDER* self)
