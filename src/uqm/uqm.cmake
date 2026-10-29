@@ -87,6 +87,8 @@ set(uqm_src_uqm_files
 	"src/uqm/imusicre.h"
 	"src/uqm/init.cpp"
 	"src/uqm/init.h"
+	"src/uqm/inputscript.cpp"
+	"src/uqm/inputscript.h"
 	"src/uqm/intel.cpp"
 	"src/uqm/intel.h"
 #	"src/uqm/inteldefs.h"

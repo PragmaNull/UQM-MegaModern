@@ -76,6 +76,10 @@ uqstl::pair<int, bool> UQMOptions::parseArgs(uqstl::span<uqgsl::zstring> args)
 		->expected(-1)
 		->capture_default_str();
 
+	settingsCli.group("Testing")
+		.add_option("--input-script", m_options.inputScript, "File of menu key presses to run, for testing. See uqm/inputscript.h.")
+		->check(CLI::ExistingFile);
+
 	settingsCli.group("Cheats")
 		.add_flag("--unlockupgrades", m_options.unlockUpgrades.edit(), "Unlocks every upgrade for your flagship and landers)")
 		->default_str(defaults.unlockUpgrades.toString());

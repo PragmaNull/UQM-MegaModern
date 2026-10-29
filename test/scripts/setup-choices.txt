@@ -1,0 +1,34 @@
+# Changes Setup > Visuals > Date Format and Setup > Quality of Life > Skip Intro, and saves.
+# Expect "dateFormat": "MM_dd_yyyy" and "skipIntro": true in settings.json when starting from defaults.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+# Visuals: change Date Format to the second option.
+down 2
+select
+wait 1500
+right
+select
+log visual after date change
+dumpmenu
+cancel
+wait 1000
+# Quality of Life is the seventh item: turn on Skip Intro.
+down 4
+select
+wait 1500
+right
+select
+log qol after change
+dumpmenu
+screenshot
+cancel
+wait 1000
+cancel
+wait 3000
+quit

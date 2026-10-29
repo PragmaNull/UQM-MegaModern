@@ -219,6 +219,11 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	uqm::log::info("\tvorbis:        {}", vorbis_version_string());
 	uqm::log::info("{:-^40}", "");
 
+	if (!options.inputScript.empty() && !LoadInputScript(options.inputScript.c_str()))
+	{
+		return {EXIT_FAILURE, true};
+	}
+
 	TFB_PreInit();
 	mem_init();
 	InitThreadSystem();

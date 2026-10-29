@@ -153,6 +153,10 @@ extern ControlTemplate PlayerControlTemplates[];
 extern bool WarpFromMenu;
 
 void UpdateInputState(void);
+// Runs a script of menu key presses. Returns false if the file cannot be read or parsed.
+bool LoadInputScript(const char* path);
+// Sets the function that the "dumpmenu" script command calls. Null when no setup menu is open.
+void SetInputScriptMenuDump(void (*dump)(void));
 extern void FlushInput(void);
 void SetMenuRepeatDelay(uint32_t min, uint32_t max, uint32_t step, bool gestalt);
 void SetDefaultMenuRepeatDelay(void);

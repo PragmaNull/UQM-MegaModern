@@ -5,6 +5,8 @@ set(uqm_tests_uqm_master_files "")
 
 list(APPEND uqm_tests_uqm_master_files 
 	"../src/uqm/intel.h"
+	"../src/uqm/inputscript.cpp"
+	"../src/uqm/inputscript.h"
 	"../src/libs/input/keyconfig.cpp"
 	"../src/libs/input/keyconfig.h"
 	"../src/uqm/supermelee/meleeconfig.cpp"
@@ -20,6 +22,7 @@ list(APPEND uqm_tests_uqm_master_files
 set(uqm_tests_uqm_files
 	"tests/uqm/uqm.cmake"
 	"tests/uqm/test_intel.cpp"
+	"tests/uqm/test_inputscript.cpp"
 	"tests/uqm/test_keyconfig.cpp"
 	"tests/uqm/test_meleeconfig.cpp"
 	"tests/uqm/test_menudef.cpp"

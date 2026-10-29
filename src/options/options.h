@@ -84,6 +84,7 @@ struct OptionsStruct : SettingsRegistry
 	uqstl::vector<uqstl::string> addons {}; // Ordered list of add-on package names to load at startup.
 
 	uqstl::string graphicsBackend {}; // SDL renderer backend hint passed to TFB_InitGraphics.
+	uqstl::string inputScript {};	  // File of scripted menu key presses, for testing.
 
 	// Commandline and user config options
 	Setting<bool> opengl {

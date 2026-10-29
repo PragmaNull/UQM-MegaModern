@@ -1660,8 +1660,8 @@ static const struct
 	int menu;
 } definedMenus[] = {
 	{"visual", MENU_VISUAL},
-	{"music", MENU_MUSIC},
-	{"qol", MENU_QOL},
+	{"music",  MENU_MUSIC },
+	{"qol",	MENU_QOL	},
 };
 
 static void
@@ -2258,6 +2258,65 @@ clean_up_widgets(void)
 	}
 }
 
+// Logs the open setup menu for the "dumpmenu" input script command.
+static void
+dump_setup_menu(void)
+{
+	if (current == nullptr || current->tag != WIDGET_TYPE_MENU_SCREEN)
+	{
+		uqm::log::warn("Input script: dumpmenu: no setup menu is shown.");
+		return;
+	}
+
+	const auto& menu {*reinterpret_cast<const WIDGET_MENU_SCREEN*>(current)};
+	uqm::log::info("Menu: {}", menu.subtitle ? menu.subtitle : "");
+	for (int i = 0; i < menu.num_children; ++i)
+	{
+		const WIDGET* child {menu.child[i]};
+		const char marker {i == menu.highlighted ? '>' : ' '};
+		switch (child->tag)
+		{
+			case WIDGET_TYPE_CHOICE:
+				{
+					const auto& choice {*reinterpret_cast<const WIDGET_CHOICE*>(child)};
+					const bool valid {choice.selected >= 0 && choice.selected < choice.numopts};
+					uqm::log::info("{} {}: {}", marker, choice.category, valid ? choice.options[choice.selected].optname : "?");
+					break;
+				}
+			case WIDGET_TYPE_SLIDER:
+				{
+					const auto& slider {*reinterpret_cast<const WIDGET_SLIDER*>(child)};
+					uqm::log::info("{} {}: {}", marker, slider.category, slider.value);
+					break;
+				}
+			case WIDGET_TYPE_BUTTON:
+				uqm::log::info("{} [{}]", marker, reinterpret_cast<const WIDGET_BUTTON*>(child)->name);
+				break;
+			case WIDGET_TYPE_LABEL:
+				{
+					const auto& label {*reinterpret_cast<const WIDGET_LABEL*>(child)};
+					uqm::log::info("{} -- {}", marker, label.line_count > 0 ? label.lines[0] : "");
+					break;
+				}
+			case WIDGET_TYPE_TEXTENTRY:
+				{
+					const auto& entry {*reinterpret_cast<const WIDGET_TEXTENTRY*>(child)};
+					uqm::log::info("{} {}: \"{}\"", marker, entry.category, entry.value);
+					break;
+				}
+			case WIDGET_TYPE_CONTROLENTRY:
+				{
+					const auto& entry {*reinterpret_cast<const WIDGET_CONTROLENTRY*>(child)};
+					uqm::log::info("{} {}: {} | {}", marker, entry.category, entry.controlname[0], entry.controlname[1]);
+					break;
+				}
+			default:
+				uqm::log::info("{} (widget type {})", marker, static_cast<int>(child->tag));
+				break;
+		}
+	}
+}
+
 void SetupMenu(void)
 {
 	SETUP_MENU_STATE s;
@@ -2278,7 +2337,9 @@ void SetupMenu(void)
 	}
 	done = false;
 
+	SetInputScriptMenuDump(dump_setup_menu);
 	DoInput(&s, true);
+	SetInputScriptMenuDump(nullptr);
 	GLOBAL(CurrentActivity) &= ~CHECK_ABORT;
 	PropagateResults();
 	if (SetupTab)

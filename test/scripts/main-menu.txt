@@ -1,0 +1,11 @@
+# Reaches the main menu and takes a screenshot.
+# Run: UrQuanMasters.exe -n content -C <empty config dir> --input-script test/scripts/main-menu.txt
+log start
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+screenshot
+wait 1000
+quit
