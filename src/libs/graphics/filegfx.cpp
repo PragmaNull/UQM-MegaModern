@@ -31,7 +31,7 @@ LoadGraphicFile(const char* pStr)
 		return 0;
 	}
 
-	return static_cast<DRAWABLE>(res_LoadResFile(*contentDir, pStr, _GetCelData));
+	return static_cast<DRAWABLE>(res_LoadResFile(uqm::contentDir(), pStr, _GetCelData));
 }
 
 FONT LoadFontFile(const char* pStr)
@@ -43,5 +43,5 @@ FONT LoadFontFile(const char* pStr)
 		return 0;
 	}
 
-	return static_cast<FONT>(res_LoadResFile(*contentDir, pStr, _GetFontData));
+	return static_cast<FONT>(res_LoadResFile(uqm::contentDir(), pStr, _GetFontData));
 }

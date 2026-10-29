@@ -86,7 +86,7 @@ void OpenJournal(void)
 	else
 #endif /* CREATE_JOURNAL */
 	{
-		if (uqstl::optional<uqm::io::File> fp {res_OpenResFile(*configDir, "starcon.jnl", uqm::io::OpenMode::Read)})
+		if (uqstl::optional<uqm::io::File> fp {res_OpenResFile(uqm::configDir(), "starcon.jnl", uqm::io::OpenMode::Read)})
 		{
 			ReadResFile(journal_buf, 1, sizeof(journal_buf), *fp);
 			fp.reset();
@@ -119,7 +119,7 @@ bool CloseJournal(void)
 			return (false);
 		}
 #if CREATE_JOURNAL
-		else if (uqstl::optional<uqm::io::File> fp {res_OpenResFile(*configDir, "starcon.jnl", uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)})
+		else if (uqstl::optional<uqm::io::File> fp {res_OpenResFile(uqm::configDir(), "starcon.jnl", uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)})
 		{
 			WriteResFile(journal_buf, 1, sizeof(journal_buf), *fp);
 		}

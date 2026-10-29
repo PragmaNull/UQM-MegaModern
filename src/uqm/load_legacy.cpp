@@ -1137,7 +1137,7 @@ bool LoadLegacyGame(uint16_t which_game, SUMMARY_DESC* SummPtr, bool try_vanilla
 	ACTIVITY Activity;
 
 	fmt::format_to_n(file, sizeof(file) - 1, "starcon2.{:02}", which_game);
-	in_fp = res_OpenResFile(*saveDir, file, uqm::io::OpenMode::Read);
+	in_fp = res_OpenResFile(uqm::saveDir(), file, uqm::io::OpenMode::Read);
 	if (!in_fp)
 	{
 		return false;

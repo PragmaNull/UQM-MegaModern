@@ -18,7 +18,7 @@ static_assert(c_controlTemplateCount == static_cast<int>(ControlTemplate::NUM));
 
 bool loadUserSettings(OptionsStruct& options)
 {
-	const auto json {readTextFile(*configDir, c_settingsFile)};
+	const auto json {readTextFile(uqm::configDir(), c_settingsFile)};
 	if (!json)
 	{
 		uqm::log::info("No {} found; using default settings.", c_settingsFile);
@@ -27,7 +27,7 @@ bool loadUserSettings(OptionsStruct& options)
 
 	if (!options.fromJson(*json))
 	{
-		moveToBadFile(*configDir, c_settingsFile);
+		moveToBadFile(uqm::configDir(), c_settingsFile);
 		return false;
 	}
 	return true;
@@ -35,7 +35,7 @@ bool loadUserSettings(OptionsStruct& options)
 
 bool saveUserSettings(const OptionsStruct& options)
 {
-	const bool written {writeTextFile(*configDir, c_settingsFile, options.toJson())};
+	const bool written {writeTextFile(uqm::configDir(), c_settingsFile, options.toJson())};
 	if (!written)
 	{
 		uqm::log::error("Could not write {}.", c_settingsFile);

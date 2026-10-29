@@ -95,7 +95,7 @@ NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
 		// The user needs to create the debug/ dir manually. If there
 		// is no debug/ dir, no log will be created.
 		uqstl::error_code error {};
-		uqstl::optional<uqm::io::File> debugFile {configDir->open(dumpFileName, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate | uqm::io::OpenMode::Text, error)};
+		uqstl::optional<uqm::io::File> debugFile {uqm::configDir().open(dumpFileName, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate | uqm::io::OpenMode::Text, error)};
 		conn->debugFile = debugFile ? new uqm::io::File {uqstl::move(*debugFile)} : nullptr;
 		if (conn->debugFile == nullptr)
 		{

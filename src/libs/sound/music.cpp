@@ -258,7 +258,7 @@ void SetMusicVolume(uint16_t Volume)
 
 char* CheckMusicResName(char* fileName)
 {
-	if (!contentDir->exists(fileName))
+	if (!uqm::contentDir().exists(fileName))
 	{
 		uqm::log::warn("Requested track '{}' not found.", fileName);
 	}
@@ -281,7 +281,7 @@ void* _GetMusicData(uqm::io::File* fp, uint32_t length)
 	CheckMusicResName(filename);
 
 	uqm::log::debug("_GetMusicData(): loading {}", filename);
-	decoder = SoundDecoder_Load(*contentDir, filename, 4096, 0, 0);
+	decoder = SoundDecoder_Load(uqm::contentDir(), filename, 4096, 0, 0);
 	if (!decoder)
 	{
 		uqm::log::warn("_GetMusicData(): couldn't load {}", filename);

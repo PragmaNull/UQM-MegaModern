@@ -41,7 +41,7 @@ void loadResourceDesc(ResourceDesc* desc)
 
 void* LoadResourceFromPath(const char* path, ResourceLoadFileFun* loadFun)
 {
-	void* const resdata {res_LoadResFile(*contentDir, path, loadFun)};
+	void* const resdata {res_LoadResFile(uqm::contentDir(), path, loadFun)};
 	if (resdata == nullptr)
 	{
 		uqm::log::warn("Warning: Can't load '{}'", path);

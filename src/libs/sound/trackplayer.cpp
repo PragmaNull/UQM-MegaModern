@@ -429,7 +429,7 @@ void SpliceMultiTrack(char* TrackNames[], char* TrackText)
 	uqm::log::info("SpliceMultiTrack(): loading...");
 	for (tracks = 0; *TrackNames && tracks < MAX_MULTI_TRACKS; TrackNames++, tracks++)
 	{
-		track_decs[tracks] = SoundDecoder_Load(*contentDir, *TrackNames,
+		track_decs[tracks] = SoundDecoder_Load(uqm::contentDir(), *TrackNames,
 											   32768, 0, -3 * TEXT_SPEED);
 		if (track_decs[tracks])
 		{
@@ -531,7 +531,7 @@ void SpliceTrack(char* TrackName, char* TrackText, char* TimeStamp, CallbackFunc
 			}
 			else
 			{ // probably no timestamps were provided, so need more work
-				TFB_SoundDecoder* decoder = SoundDecoder_Load(*contentDir,
+				TFB_SoundDecoder* decoder = SoundDecoder_Load(uqm::contentDir(),
 															  last_track_name, 4096, dec_offset, time_stamps[page]);
 				if (!decoder)
 				{
@@ -607,7 +607,7 @@ void SpliceTrack(char* TrackName, char* TrackText, char* TimeStamp, CallbackFunc
 		dec_offset = 0;
 		for (page = 0; page < num_timestamps; ++page)
 		{
-			TFB_SoundDecoder* decoder = SoundDecoder_Load(*contentDir,
+			TFB_SoundDecoder* decoder = SoundDecoder_Load(uqm::contentDir(),
 														  TrackName, 4096, dec_offset, time_stamps[page]);
 			if (!decoder)
 			{

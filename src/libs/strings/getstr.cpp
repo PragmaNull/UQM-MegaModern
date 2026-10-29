@@ -183,7 +183,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 		}
 	}
 
-	fp = res_OpenResFile(*contentDir, paths, uqm::io::OpenMode::Read);
+	fp = res_OpenResFile(uqm::contentDir(), paths, uqm::io::OpenMode::Read);
 	if (!fp)
 	{
 		uqm::log::warn("Warning: Can't open '{}'", paths);
@@ -250,7 +250,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 
 	if (ts_path)
 	{
-		timestamp_fp = res_OpenResFile(*contentDir, ts_path, uqm::io::OpenMode::Read);
+		timestamp_fp = res_OpenResFile(uqm::contentDir(), ts_path, uqm::io::OpenMode::Read);
 		if (timestamp_fp)
 		{
 			tot_ts_size = POOL_SIZE;

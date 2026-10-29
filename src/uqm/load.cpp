@@ -797,7 +797,7 @@ bool LoadCoreGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
 	SUMMARY_DESC loc_sd;
 
 	fmt::format_to_n(file, sizeof(file) - 1, "uqmsave.{:02}", which_game);
-	in_fp = res_OpenResFile(*saveDir, file, uqm::io::OpenMode::Read);
+	in_fp = res_OpenResFile(uqm::saveDir(), file, uqm::io::OpenMode::Read);
 	if (!in_fp)
 	{
 		return LoadLegacyGame(which_game, SummPtr, false);
@@ -842,7 +842,7 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uqstl::optional<uqm::i
 	if (!try_core)
 	{
 		fmt::format_to_n(file, sizeof(file) - 1, "uqmsave.{:02}", which_game);
-		in_fp = res_OpenResFile(*saveDir, file, uqm::io::OpenMode::Read);
+		in_fp = res_OpenResFile(uqm::saveDir(), file, uqm::io::OpenMode::Read);
 		if (!in_fp)
 		{
 			return LoadLegacyGame(which_game, SummPtr, false);

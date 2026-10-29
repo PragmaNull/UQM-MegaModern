@@ -73,7 +73,7 @@ bool luaUqm_event_init(const luaUqm_custom_Function* customFuncs,
 	}
 
 	// Load the script.
-	loadOk = luaUqm_loadScript(luaUqm_eventState, *contentDir, scriptFileName);
+	loadOk = luaUqm_loadScript(luaUqm_eventState, uqm::contentDir(), scriptFileName);
 	ReleaseScriptResData(scriptFileName);
 	if (!loadOk)
 	{

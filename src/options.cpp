@@ -64,19 +64,30 @@ bool optMaskOfDeceit;
 bool optNoClassic;
 uqm::CheatAction optDeviceArray[28];
 uqm::CheatAction optUpgradeArray[NUM_UPGRADES];
-uqstl::optional<uqm::io::Directory> contentDir {};
-uqstl::optional<uqm::io::Directory> configDir {};
-uqstl::optional<uqm::io::Directory> saveDir {};
-uqstl::optional<uqm::io::Directory> meleeDir {};
-uqstl::optional<uqm::io::Directory> scrShotDir {};
-
 namespace
 {
-// Mounts that stay until unprepareAllDirs.
-uqstl::optional<uqm::io::Mount> s_configMount {};
-uqstl::optional<uqm::io::Mount> s_contentMount {};
-uqstl::optional<uqm::io::Mount> s_addonsMount {};
-uqstl::vector<uqm::io::Mount> s_mounts {};
+// The game file system. The members are destroyed in reverse order: the directories, the mounts, then the file system.
+struct GameFiles
+{
+	uqm::io::FileSystem fileSystem {};
+	uqstl::optional<uqm::io::Mount> configMount {};
+	uqstl::optional<uqm::io::Mount> contentMount {};
+	uqstl::optional<uqm::io::Mount> addonsMount {};
+	uqstl::vector<uqm::io::Mount> mounts {};
+	uqstl::optional<uqm::io::Directory> contentDir {};
+	uqstl::optional<uqm::io::Directory> configDir {};
+	uqstl::optional<uqm::io::Directory> saveDir {};
+	uqstl::optional<uqm::io::Directory> meleeDir {};
+	uqstl::optional<uqm::io::Directory> scrShotDir {};
+};
+
+uqstl::optional<GameFiles> s_gameFiles {};
+
+const uqm::io::Directory& gameDirectory(const uqstl::optional<uqm::io::Directory>& dir)
+{
+	assert(dir.has_value());
+	return *dir;
+}
 
 const uqm::io::Matcher& packageMatcher()
 {
@@ -97,6 +108,37 @@ uqstl::vector<uint32_t> g_addonList {};
 namespace uqm
 {
 INPUT_TEMPLATE input_templates[6];
+
+uqm::io::FileSystem& gameFileSystem()
+{
+	assert(s_gameFiles.has_value());
+	return s_gameFiles->fileSystem;
+}
+
+const uqm::io::Directory& contentDir()
+{
+	return gameDirectory(s_gameFiles->contentDir);
+}
+
+const uqm::io::Directory& configDir()
+{
+	return gameDirectory(s_gameFiles->configDir);
+}
+
+const uqm::io::Directory& saveDir()
+{
+	return gameDirectory(s_gameFiles->saveDir);
+}
+
+const uqm::io::Directory& meleeDir()
+{
+	return gameDirectory(s_gameFiles->meleeDir);
+}
+
+const uqm::io::Directory& scrShotDir()
+{
+	return gameDirectory(s_gameFiles->scrShotDir);
+}
 
 
 static const char* findFileInDirs(const char* locs[], int numLocs,
@@ -291,14 +333,14 @@ void prepareConfigDir(uqstl::string_view configDirOption)
 	}
 
 	uqstl::error_code error {};
-	s_configMount = g_fileSystem->mountDirectory("/", configDirName, uqm::io::Access::ReadWrite, uqm::io::MountPosition::Top, nullptr, error);
-	if (!s_configMount)
+	s_gameFiles->configMount = s_gameFiles->fileSystem.mountDirectory("/", configDirName, uqm::io::Access::ReadWrite, uqm::io::MountPosition::Top, nullptr, error);
+	if (!s_gameFiles->configMount)
 	{
 		uqm::log::critical("Fatal error: Could not mount config dir: {}",
 						   error.message());
 		exit(EXIT_FAILURE);
 	}
-	configDir = g_fileSystem->root();
+	s_gameFiles->configDir = s_gameFiles->fileSystem.root();
 }
 
 void prepareSaveDir(void)
@@ -330,10 +372,10 @@ void prepareSaveDir(void)
 
 	uqm::log::debug("Saved games are kept in {}.", saveDirName);
 
-	saveDir = configDir->subdir("save");
+	s_gameFiles->saveDir = uqm::configDir().subdir("save");
 	// TODO: this doesn't work if the save dir is not
 	//       "save" in the config dir.
-	if (!saveDir)
+	if (!s_gameFiles->saveDir)
 	{
 		uqm::log::critical("Fatal error: Could not open save dir.");
 		exit(EXIT_FAILURE);
@@ -367,10 +409,10 @@ void prepareMeleeDir(void)
 		exit(EXIT_FAILURE);
 	}
 
-	meleeDir = configDir->subdir("teams");
+	s_gameFiles->meleeDir = uqm::configDir().subdir("teams");
 	// TODO: this doesn't work if the save dir is not
 	//       "teams" in the config dir.
-	if (!meleeDir)
+	if (!s_gameFiles->meleeDir)
 	{
 		uqm::log::critical("Fatal error: Could not open melee teams dir.");
 		exit(EXIT_FAILURE);
@@ -404,10 +446,10 @@ void prepareScrShotDir(void)
 		exit(EXIT_FAILURE);
 	}
 
-	scrShotDir = configDir->subdir("screenshots");
+	s_gameFiles->scrShotDir = uqm::configDir().subdir("screenshots");
 	// TODO: this doesn't work if the save dir is not
 	//       "screenshots" in the SCRSHOTDIR macro.
-	if (!scrShotDir)
+	if (!s_gameFiles->scrShotDir)
 	{
 		uqm::log::critical("Fatal error: Could not open screenshot dir.");
 		exit(EXIT_FAILURE);
@@ -418,43 +460,43 @@ static void
 mountContentDir(const char* contentPath)
 {
 	uqstl::error_code error {};
-	s_contentMount = g_fileSystem->mountDirectory("/", contentPath, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr, error);
-	if (!s_contentMount)
+	s_gameFiles->contentMount = s_gameFiles->fileSystem.mountDirectory("/", contentPath, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr, error);
+	if (!s_gameFiles->contentMount)
 	{
 		uqm::log::critical("Fatal error: Could not mount content dir: {}",
 						   error.message());
 		exit(EXIT_FAILURE);
 	}
 
-	contentDir = g_fileSystem->root();
+	s_gameFiles->contentDir = s_gameFiles->fileSystem.root();
 
-	if (const uqstl::optional<uqm::io::Directory> packagesDir {contentDir->subdir("packages")})
+	if (const uqstl::optional<uqm::io::Directory> packagesDir {uqm::contentDir().subdir("packages")})
 	{
-		mountBaseZip(*packagesDir, "/", uqm::io::MountPosition::Below, *s_contentMount);
+		mountBaseZip(*packagesDir, "/", uqm::io::MountPosition::Below, *s_gameFiles->contentMount);
 	}
 }
 
 void mountAddonDir(uqgsl::czstring addonDirName)
 {
-	const uqm::io::Mount* addonsMount {&*s_contentMount};
+	const uqm::io::Mount* addonsMount {&*s_gameFiles->contentMount};
 	if (!isEmpty(addonDirName))
 	{
 		uqstl::error_code error {};
-		s_addonsMount = g_fileSystem->mountDirectory("addons", addonDirName, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr, error);
-		if (!s_addonsMount)
+		s_gameFiles->addonsMount = s_gameFiles->fileSystem.mountDirectory("addons", addonDirName, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr, error);
+		if (!s_gameFiles->addonsMount)
 		{
 			uqm::log::warn("Warning: Could not mount addon directory: {}"
 						   ";\n\t'--addon' options are ignored.",
 						   error.message());
 			return;
 		}
-		addonsMount = &*s_addonsMount;
+		addonsMount = &*s_gameFiles->addonsMount;
 	}
 
 	// NB: note the difference between addonsDir and addonDir.
 	//     the former is the dir 'addons', the latter a directory
 	//     in that dir.
-	const uqstl::optional<uqm::io::Directory> addonsDir {contentDir->subdir("addons")};
+	const uqstl::optional<uqm::io::Directory> addonsDir {uqm::contentDir().subdir("addons")};
 	if (!addonsDir)
 	{ // No addon dir found.
 		uqm::log::warn("Warning: There's no 'addons' "
@@ -510,9 +552,9 @@ static void
 mountArchive(const uqm::io::Directory& dir, const uqstl::string& name, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
 	uqstl::error_code error {};
-	if (uqstl::optional<uqm::io::Mount> mount {g_fileSystem->mountArchive(mountPoint, dir, name, position, &relative, error)})
+	if (uqstl::optional<uqm::io::Mount> mount {s_gameFiles->fileSystem.mountArchive(mountPoint, dir, name, position, &relative, error)})
 	{
-		s_mounts.push_back(uqstl::move(*mount));
+		s_gameFiles->mounts.push_back(uqstl::move(*mount));
 	}
 	else
 	{
@@ -563,7 +605,7 @@ bool loadAddon(uqgsl::czstring addon)
 		return false;
 	}
 
-	const uqstl::optional<uqm::io::Directory> addonsDir {contentDir->subdir("addons")};
+	const uqstl::optional<uqm::io::Directory> addonsDir {uqm::contentDir().subdir("addons")};
 	if (!addonsDir)
 	{
 		// If anything fails here, it will fail again later, so
@@ -593,7 +635,7 @@ void prepareShadowAddons(uqstl::span<const std::string> addons)
 {
 	const char* shadowDirName = "shadow-content";
 
-	const uqstl::optional<uqm::io::Directory> addonsDir {contentDir->subdir("addons")};
+	const uqstl::optional<uqm::io::Directory> addonsDir {uqm::contentDir().subdir("addons")};
 	if (!addonsDir)
 	{
 		return;
@@ -616,12 +658,12 @@ void prepareShadowAddons(uqstl::span<const std::string> addons)
 		if (const uqstl::optional<uqm::io::Directory> shadowDir {addonDir->subdir(shadowDirName)})
 		{
 			uqm::log::debug("Mounting shadow content of '{}' addon", c_str(addon));
-			mountDirZips(*shadowDir, "/", uqm::io::MountPosition::Above, *s_contentMount);
+			mountDirZips(*shadowDir, "/", uqm::io::MountPosition::Above, *s_gameFiles->contentMount);
 			// Mount non-zipped shadow content
 			uqstl::error_code error {};
-			if (uqstl::optional<uqm::io::Mount> mount {g_fileSystem->mountTransplant("/", *shadowDir, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Above, &*s_contentMount, error)})
+			if (uqstl::optional<uqm::io::Mount> mount {s_gameFiles->fileSystem.mountTransplant("/", *shadowDir, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Above, &*s_gameFiles->contentMount, error)})
 			{
-				s_mounts.push_back(uqstl::move(*mount));
+				s_gameFiles->mounts.push_back(uqstl::move(*mount));
 			}
 			else
 			{
@@ -648,17 +690,14 @@ void prepareAddons(uqstl::span<const uqstl::string> addons)
 	}
 }
 
-void unprepareAllDirs(void)
+void createGameFiles(void)
 {
-	saveDir.reset();
-	meleeDir.reset();
-	contentDir.reset();
-	configDir.reset();
-	scrShotDir.reset();
-	s_mounts.clear();
-	s_addonsMount.reset();
-	s_contentMount.reset();
-	s_configMount.reset();
+	s_gameFiles.emplace();
+}
+
+void releaseGameFiles(void)
+{
+	s_gameFiles.reset();
 }
 
 bool setGammaCorrection(float gamma)

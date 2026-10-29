@@ -68,13 +68,6 @@ extern uqm::CheatAction optUpgradeArray[NUM_UPGRADES];
 
 #define GAMMA_SCALE 1000
 
-// The file system for all game files. It exists between initIO and uninitIO.
-extern uqstl::optional<uqm::io::FileSystem> g_fileSystem;
-extern uqstl::optional<uqm::io::Directory> contentDir;
-extern uqstl::optional<uqm::io::Directory> configDir;
-extern uqstl::optional<uqm::io::Directory> saveDir;
-extern uqstl::optional<uqm::io::Directory> meleeDir;
-extern uqstl::optional<uqm::io::Directory> scrShotDir;
 extern char baseContentPath[PATH_MAX];
 
 extern uqgsl::czstring contentDirPath;
@@ -122,7 +115,16 @@ void prepareSaveDir(void);
 void prepareScrShotDir(void);
 void prepareAddons(uqstl::span<const uqstl::string> addons);
 void prepareShadowAddons(uqstl::span<const uqstl::string> addons);
-void unprepareAllDirs(void);
+// The file system for all game files and its directories. They exist between createGameFiles and releaseGameFiles,
+// and each directory from its prepare function on.
+void createGameFiles(void);
+void releaseGameFiles(void);
+io::FileSystem& gameFileSystem();
+const io::Directory& contentDir();
+const io::Directory& configDir();
+const io::Directory& saveDir();
+const io::Directory& meleeDir();
+const io::Directory& scrShotDir();
 
 bool loadAddon(uqgsl::czstring addon);
 int loadIndices(const io::Directory& dir);

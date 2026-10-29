@@ -2758,7 +2758,7 @@ static constexpr const char* c_meleeConfigFile {"melee.json"};
 static int
 LoadMeleeConfig(MELEE_STATE* pMS)
 {
-	const auto json {uqm::readTextFile(*configDir, c_meleeConfigFile)};
+	const auto json {uqm::readTextFile(uqm::configDir(), c_meleeConfigFile)};
 	if (!json)
 	{
 		return -1;
@@ -2767,7 +2767,7 @@ LoadMeleeConfig(MELEE_STATE* pMS)
 	const auto sides {uqm::meleeConfigFromJson(*json)};
 	if (!sides || sides->size() != NUM_SIDES)
 	{
-		uqm::moveToBadFile(*configDir, c_meleeConfigFile);
+		uqm::moveToBadFile(uqm::configDir(), c_meleeConfigFile);
 		return -1;
 	}
 
@@ -2807,7 +2807,7 @@ WriteMeleeConfig(MELEE_STATE* pMS)
 		}
 	}
 
-	if (!uqm::writeTextFile(*configDir, c_meleeConfigFile, uqm::meleeConfigToJson(sides)))
+	if (!uqm::writeTextFile(uqm::configDir(), c_meleeConfigFile, uqm::meleeConfigToJson(sides)))
 	{
 		uqm::log::error("Could not write {}.", c_meleeConfigFile);
 		return -1;

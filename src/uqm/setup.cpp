@@ -94,7 +94,6 @@ bool SpaceMusicOK;
 bool oldPlanetsPresent;
 bool classicPackPresent;
 
-uqstl::optional<uqm::io::FileSystem> g_fileSystem {};
 
 bool usingSpeech;
 
@@ -140,7 +139,7 @@ bool LoadKernel(int argc, char* argv[])
 	}
 
 	/* Load base content. */
-	if (uqm::loadIndices(*contentDir) == 0)
+	if (uqm::loadIndices(uqm::contentDir()) == 0)
 	{
 		return false; // Must have at least one index in content dir
 	}
@@ -536,11 +535,11 @@ void ClearPlayerInputAll(void)
 
 int initIO(void)
 {
-	g_fileSystem.emplace();
+	uqm::createGameFiles();
 	return 0;
 }
 
 void uninitIO(void)
 {
-	g_fileSystem.reset();
+	uqm::releaseGameFiles();
 }

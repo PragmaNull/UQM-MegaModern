@@ -138,7 +138,7 @@ static uqstl::span<const uqgsl::czstring> flightControlNames()
 // Loads the user key configuration into the "keys." resources.
 static bool loadKeyConfiguration()
 {
-	const auto json {uqm::readTextFile(*configDir, c_keyConfigFile)};
+	const auto json {uqm::readTextFile(uqm::configDir(), c_keyConfigFile)};
 	if (!json)
 	{
 		return false;
@@ -147,7 +147,7 @@ static bool loadKeyConfiguration()
 	const auto templates {uqm::keyConfigFromJson(*json, flightControlNames())};
 	if (!templates)
 	{
-		uqm::moveToBadFile(*configDir, c_keyConfigFile);
+		uqm::moveToBadFile(uqm::configDir(), c_keyConfigFile);
 		return false;
 	}
 
@@ -227,8 +227,8 @@ initKeyConfig(void)
 										  * MAX_FLIGHT_ALTERNATES);
 
 	/* First, load in the menu keys */
-	LoadResourceIndex(*contentDir, "menu.key", "menu.");
-	LoadResourceIndex(*configDir, "override.cfg", "menu.");
+	LoadResourceIndex(uqm::contentDir(), "menu.key", "menu.");
+	LoadResourceIndex(uqm::configDir(), "override.cfg", "menu.");
 	for (i = 0; i < num_menu; i++)
 	{
 		if (!menu_res_names[i])
@@ -240,7 +240,7 @@ initKeyConfig(void)
 
 	if (!loadKeyConfiguration())
 	{
-		LoadResourceIndex(*contentDir, "uqm.key", "keys.");
+		LoadResourceIndex(uqm::contentDir(), "uqm.key", "keys.");
 	}
 
 	register_flight_controls();

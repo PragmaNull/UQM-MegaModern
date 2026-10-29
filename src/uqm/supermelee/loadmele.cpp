@@ -60,7 +60,7 @@ LoadTeamImage(DIRENTRY DirEntry, MeleeTeam* team)
 	const char* fileName {GetDirEntryAddress(DirEntry)};
 
 	uqstl::error_code error {};
-	uqstl::optional<uqm::io::File> stream {meleeDir->open(fileName, uqm::io::OpenMode::Read, error)};
+	uqstl::optional<uqm::io::File> stream {uqm::meleeDir().open(fileName, uqm::io::OpenMode::Read, error)};
 	if (!stream)
 	{
 		return false;
@@ -492,7 +492,7 @@ void LoadTeamList(MELEE_STATE* pMS)
 
 	DestroyDirEntryTable(ReleaseDirEntryTable(pMS->load.dirEntries));
 	pMS->load.dirEntries = CaptureDirEntryTable(
-		LoadDirEntryTable(*meleeDir, "", uqm::io::Matcher {uqm::io::Matcher::Kind::Suffix, ".mle"}));
+		LoadDirEntryTable(uqm::meleeDir(), "", uqm::io::Matcher {uqm::io::Matcher::Kind::Suffix, ".mle"}));
 
 	if (pMS->load.entryIndices != nullptr)
 	{
@@ -522,7 +522,7 @@ bool DoSaveTeam(MELEE_STATE* pMS)
 	// Show the "Saving . . ." message.
 
 	uqstl::error_code error {};
-	if (uqstl::optional<uqm::io::File> stream {meleeDir->open(file, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate, error)})
+	if (uqstl::optional<uqm::io::File> stream {uqm::meleeDir().open(file, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate, error)})
 	{
 		opened = true;
 		saveOk = MeleeTeam_serialize(&pMS->meleeSetup->teams[pMS->side], *stream) == 0 && stream->flush();
@@ -530,7 +530,7 @@ bool DoSaveTeam(MELEE_STATE* pMS)
 
 		if (!saveOk)
 		{
-			(void)meleeDir->remove(file);
+			(void)uqm::meleeDir().remove(file);
 		}
 	}
 

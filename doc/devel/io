@@ -21,8 +21,9 @@ for example files in memory, is a new MountSource.
 Types
 -----
 
-FileSystem  Owns the mount stack. The game has one, g_fileSystem, which
-            exists between initIO() and uninitIO().
+FileSystem  Owns the mount stack. The game has one, gameFileSystem() in
+            options.h, from initIO() to uninitIO(). Its directories are
+            contentDir(), configDir(), saveDir(), meleeDir() and scrShotDir().
 Directory   A path in a file system. It is a value type and can be copied.
             It keeps the mounts alive, so it can outlive the FileSystem.
 File        An open file. It is move-only and closes the file when it is

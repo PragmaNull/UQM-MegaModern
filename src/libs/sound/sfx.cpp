@@ -213,7 +213,7 @@ void* _GetSoundBankData(uqm::io::File* fp, uint32_t length)
 
 		uqm::log::debug("_GetSoundBankData(): loading {}", filename);
 
-		decoder = SoundDecoder_Load(*contentDir, filename, 4096, 0, 0);
+		decoder = SoundDecoder_Load(uqm::contentDir(), filename, 4096, 0, 0);
 		if (!decoder)
 		{
 			uqm::log::warn("_GetSoundBankData(): couldn't load {}",

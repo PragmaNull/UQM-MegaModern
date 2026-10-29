@@ -1606,7 +1606,7 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 
 	// Write the memory file to the actual savegame file.
 	fmt::format_to_n(file, sizeof(file) - 1, "uqmsave.{:02}", which_game);
-	if ((out_fp = res_OpenResFile(*saveDir, file, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)))
+	if ((out_fp = res_OpenResFile(uqm::saveDir(), file, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)))
 	{
 		io_ok = true;
 		writeValue(*out_fp, MMV4_TAG);
@@ -1670,7 +1670,7 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 		out_fp.reset();
 		if (!io_ok)
 		{
-			DeleteResFile(*saveDir, file);
+			DeleteResFile(uqm::saveDir(), file);
 			return false;
 		}
 	}

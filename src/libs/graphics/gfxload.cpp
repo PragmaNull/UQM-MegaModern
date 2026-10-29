@@ -213,11 +213,11 @@ void* _GetCelData(uqm::io::File* fp, uint32_t length)
 				uqm::strncpy_safe(aniDirName, ".");
 				aniFileName = _cur_resfile_name;
 			}
-			aniDir = g_fileSystem->root().subdir(aniDirName);
+			aniDir = uqm::gameFileSystem().root().subdir(aniDirName);
 			if (aniDir)
 			{
 				uqstl::error_code error {};
-				aniMount = g_fileSystem->mountArchive(aniDirName, *aniDir, aniFileName, uqm::io::MountPosition::Top, nullptr, error);
+				aniMount = uqm::gameFileSystem().mountArchive(aniDirName, *aniDir, aniFileName, uqm::io::MountPosition::Top, nullptr, error);
 				zippedAniFile = res_OpenResFile(*aniDir, aniFileName, uqm::io::OpenMode::Read);
 			}
 			if (!zippedAniFile)
@@ -234,7 +234,7 @@ void* _GetCelData(uqm::io::File* fp, uint32_t length)
 			// unpacked ani file
 			uqm::strncpy_safe(filename, {_cur_resfile_name, static_cast<uint32_t>(n)});
 			aniFile = fp;
-			aniDir = *contentDir;
+			aniDir = uqm::contentDir();
 		}
 	}
 
@@ -427,10 +427,10 @@ void* _GetFontData(uqm::io::File* fp, uint32_t length)
 			fontZipName = _cur_resfile_name + n;
 		}
 
-		if (const uqstl::optional<uqm::io::Directory> fontParent {g_fileSystem->root().subdir(fontDirName)})
+		if (const uqstl::optional<uqm::io::Directory> fontParent {uqm::gameFileSystem().root().subdir(fontDirName)})
 		{
 			uqstl::error_code error {};
-			fontMount = g_fileSystem->mountArchive(_cur_resfile_name, *fontParent, fontZipName, uqm::io::MountPosition::Top, nullptr, error);
+			fontMount = uqm::gameFileSystem().mountArchive(_cur_resfile_name, *fontParent, fontZipName, uqm::io::MountPosition::Top, nullptr, error);
 			if (!fontMount)
 			{
 				uqm::log::warn("Could not mount font archive '{}': {}", _cur_resfile_name, error.message());
@@ -438,14 +438,14 @@ void* _GetFontData(uqm::io::File* fp, uint32_t length)
 		}
 	}
 
-	fontDir = CaptureDirEntryTable(LoadDirEntryTable(*contentDir, _cur_resfile_name, uqm::io::Matcher {uqm::io::Matcher::Kind::Substring, "."}));
+	fontDir = CaptureDirEntryTable(LoadDirEntryTable(uqm::contentDir(), _cur_resfile_name, uqm::io::Matcher {uqm::io::Matcher::Kind::Substring, "."}));
 	if (fontDir == 0)
 	{
 		goto err;
 	}
 	numDirEntries = GetDirEntryTableCount(fontDir);
 
-	fontDirHandle = contentDir->subdir(_cur_resfile_name);
+	fontDirHandle = uqm::contentDir().subdir(_cur_resfile_name);
 	if (!fontDirHandle)
 	{
 		goto err;
