@@ -74,14 +74,10 @@ target_link_libraries(UQM_Tests
 
 # ---- Runtime DLLs ----------------------------------------------------------
 
-if (WIN32)
-    add_custom_command(TARGET UQM_Tests POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_RUNTIME_DLLS:UQM_Tests>
-            $<TARGET_FILE_DIR:UQM_Tests>
-        COMMAND_EXPAND_LISTS
-    )
-endif()
+add_custom_command(TARGET UQM_Tests POST_BUILD
+    COMMAND "$<$<BOOL:$<TARGET_RUNTIME_DLLS:UQM_Tests>>:${CMAKE_COMMAND};-E;copy_if_different;$<TARGET_RUNTIME_DLLS:UQM_Tests>;$<TARGET_FILE_DIR:UQM_Tests>>"
+    COMMAND_EXPAND_LISTS
+)
 
 # ---- Enable GTest integration ---------------------------------------------
 

@@ -272,9 +272,7 @@ target_link_libraries(${APP_TARGET}
 
 # Copy runtime DLLs as needed.
 add_custom_command(TARGET ${APP_TARGET} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_RUNTIME_DLLS:${APP_TARGET}>
-        $<TARGET_FILE_DIR:${APP_TARGET}>
+    COMMAND "$<$<BOOL:$<TARGET_RUNTIME_DLLS:${APP_TARGET}>>:${CMAKE_COMMAND};-E;copy_if_different;$<TARGET_RUNTIME_DLLS:${APP_TARGET}>;$<TARGET_FILE_DIR:${APP_TARGET}>>"
     COMMAND_EXPAND_LISTS
 )
 
