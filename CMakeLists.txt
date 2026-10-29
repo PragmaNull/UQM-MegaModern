@@ -85,6 +85,7 @@ find_package(SDL2 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(utf8proc REQUIRED)
 find_package(Vorbis REQUIRED)
+find_package(yyjson REQUIRED)
 find_package(ZLIB REQUIRED)
 
 #OPTIONAL
@@ -263,6 +264,7 @@ target_link_libraries(${APP_TARGET}
         spdlog::spdlog
         utf8proc::utf8proc
         vorbis::vorbis 
+        yyjson::yyjson
         ws2_32
         ZLIB::ZLIB 
         $<$<CONFIG:Release>:user32>

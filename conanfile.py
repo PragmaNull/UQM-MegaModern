@@ -32,6 +32,7 @@ class UrQuanMastersConan(ConanFile):
         'spdlog/1.17.0',
         'utf8proc/2.12.0',
         'vorbis/1.3.7',
+        'yyjson/0.12.0',
         'zlib/1.3.1',
     )
 

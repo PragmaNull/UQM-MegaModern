@@ -125,6 +125,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	{
 		return {parseResult, needExit};
 	}
+	m_options.edit().captureCommandLine();
 
 	//log_init(15);
 
@@ -219,20 +220,6 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	uqm::log::info("\tvorbis:        {}", vorbis_version_string());
 	uqm::log::info("{:-^40}", "");
 
-	/*if (options.runMode == RunMode::Usage)
-	{
-		const OptionsStruct defaults {};
-		printUsage(stdout, defaults);
-		m_logger.showLogOnExit(true, false);
-		return EXIT_SUCCESS;
-	}*/
-
-	//if (optionsResult != EXIT_SUCCESS)
-	//{ // Options parsing failed. Oh, well.
-	//	uqm::log::critical("Run with -h to see the allowed arguments.");
-	//	return optionsResult;
-	//}
-
 	TFB_PreInit();
 	mem_init();
 	InitThreadSystem();
@@ -240,31 +227,11 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	initIO();
 	prepareConfigDir(options.configDir.c_str());
 
-	PlayerControlTemplates[0] = ControlTemplate::KB_1;
-	PlayerControlTemplates[1] = ControlTemplate::JOY_1;
-
-	// Fill in the options struct based on uqm.cfg
 	if (!options.safeMode.value)
 	{
-		LoadResourceIndex(configDir, "uqm.cfg", "config.");
-		LoadResourceIndex(configDir, "cheats.cfg", "cheat.");
-		LoadResourceIndex(configDir, "megamod.cfg", "mm.");
-		getUserConfigOptions(m_options.edit());
+		loadUserSettings(m_options.edit());
 	}
-
-	{ /* remove old control template names */
-		int i;
-
-		for (i = 0; i < 6; ++i)
-		{
-			char cfgkey[64] {};
-
-			fmt::format_to_sz_n(cfgkey, "config.keys.{}.name", i + 1);
-			cfgkey[sizeof(cfgkey) - 1] = '\0';
-
-			res_Remove(cfgkey);
-		}
-	}
+	applyUserSettings(m_options.edit());
 
 
 	/* TODO: Once threading is gone, these become local variables
