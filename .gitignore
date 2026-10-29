@@ -44,7 +44,7 @@ CMakeUserPresets.json
 bld/
 build/
 cbld/
-conanbuild/
+conanbuild*/
 vsbuild/
 
 #claude
