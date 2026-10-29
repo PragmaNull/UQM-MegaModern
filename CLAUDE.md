@@ -18,6 +18,7 @@ setup.bat   [-c CONFIG] [--asan]                :: cmake configure (Ninja)
 build.bat   [-c CONFIG] [--asan] [-t TARGET] [-j N] [--clean]
 test.bat    [-c CONFIG] [--build] [-R REGEX] [-j N]
 run.bat     [--build] [GAME ARGS...]           :: run the game with -n content
+regress.bat [--build] [-R REGEX] [-j N]         :: run the input scripts in test/scripts
 ```
 
 - `CONFIG`: `Release` (default), `Debug`, `RelWithDebInfo`, `MinSizeRel`. All take `-B DIR` (default `conanbuild`).
@@ -72,6 +73,8 @@ ctest --output-on-failure --build-config Release
 ```
 
 Test sources are in `test/tests/` organized by subsystem (core, lib, options, uqm).
+
+Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each one with a new config dir and fails on a non-zero exit code or an `[error]` or `[critical]` log line. A `<name>.settings.json` file next to a script is copied in as the start settings.
 
 ## Code Architecture
 

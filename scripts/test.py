@@ -1,5 +1,6 @@
 """Run the unit tests (ctest), optionally building first."""
 
+import os
 import sys
 
 from _common import cached_config, env_script, fail, make_parser, run
@@ -11,7 +12,8 @@ def main():
     parser.add_argument("--build", action="store_true",
                         help="build the test target before running")
     parser.add_argument("-R", "--filter", help="only run tests matching this regex")
-    parser.add_argument("-j", "--jobs", type=int, help="number of tests to run in parallel")
+    parser.add_argument("-j", "--jobs", type=int, default=os.cpu_count(),
+                        help="number of tests to run in parallel (default: number of CPUs)")
     args, extra = parser.parse_known_args()
 
     if args.build:

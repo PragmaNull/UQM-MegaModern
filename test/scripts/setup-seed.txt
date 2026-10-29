@@ -1,5 +1,5 @@
 # Changes Setup > Advanced > Seed Type from Planet to None, and saves.
-# Start with "seed": {"type": "Planet", "value": 12345} in settings.json.
+# Starts with setup-seed.settings.json: "seed": {"type": "Planet", "value": 12345}.
 # Expect "type": "None" and "value": 16807 in settings.json.
 wait 4000
 cancel
