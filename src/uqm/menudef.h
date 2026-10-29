@@ -32,6 +32,8 @@ enum class MenuItemKind
 	Heading,
 	Spacer,
 	Back,
+	// An existing widget that the setup menu builds itself.
+	Legacy,
 };
 
 struct MenuItemDef
@@ -53,6 +55,9 @@ struct MenuItemDef
 
 	// Text of a Heading.
 	uqstl::vector<uqstl::string> lines {};
+
+	// Name of the widget for a Legacy item.
+	uqstl::string widget {};
 };
 
 struct MenuDef

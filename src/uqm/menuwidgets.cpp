@@ -82,6 +82,16 @@ WIDGET** MenuWidgets::build(const MenuDef& menu)
 			case MenuItemKind::Back:
 				widget = m_shared.back;
 				break;
+			case MenuItemKind::Legacy:
+				if (const auto found {m_shared.legacy.find(item.widget)}; found != m_shared.legacy.end())
+				{
+					widget = found->second;
+				}
+				else
+				{
+					uqm::log::error("Menu '{}': unknown widget '{}'.", menu.id, item.widget);
+				}
+				break;
 			case MenuItemKind::Heading:
 				widget = buildHeading(item);
 				break;

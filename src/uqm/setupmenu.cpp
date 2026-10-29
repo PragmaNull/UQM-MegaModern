@@ -256,47 +256,8 @@ static WIDGET* graphics_widgets[] = {
 	(WIDGET*)(&buttons[BTN_QUITSUBMENU]), // Exit to Menu
 	nullptr};
 
-static WIDGET* engine_widgets[] = {
-	(WIDGET*)(&labels[LABEL_UI]),			// UI Label
-	(WIDGET*)(&choices[CHOICE_WINDOWTYPE]), // Window Type
-
-	(WIDGET*)(&labels[LABEL_SPACER]),	   // Spacer
-	(WIDGET*)(&choices[CHOICE_MENUSTYLE]), // Menu Style
-	(WIDGET*)(&choices[CHOICE_DOSMENUS]),  // DOS side menu in shipyard
-	(WIDGET*)(&choices[CHOICE_FONTSTYLE]), // Font Style
-	(WIDGET*)(&choices[CHOICE_CUTSCENE]),  // Cutscenes
-
-#ifdef MELEE_ZOOM
-	(WIDGET*)(&choices[CHOICE_ANDRZOOM]), // Android: Melee Zoom
-#else
-	(WIDGET*)(&choices[CHOICE_MELEEZOOM]), // Melee Zoom
-#endif
-
-	(WIDGET*)(&choices[CHOICE_FLAGSHIP]), // Flagship Style
-	(WIDGET*)(&choices[CHOICE_SCRMELT]),  // Screen Transitions
-
-	(WIDGET*)(&labels[LABEL_SPACER]),		 // Spacer
-	(WIDGET*)(&labels[LABEL_COMM]),			 // Comm Label
-	(WIDGET*)(&choices[CHOICE_SCROLLSTYLE]), // Scroll Style
-	(WIDGET*)(&choices[CHOICE_SPEECH]),		 // Speech
-	(WIDGET*)(&choices[CHOICE_SUBTITLES]),	 // Subtitles
-	(WIDGET*)(&choices[CHOICE_OSCILLSTYLE]), // Oscilloscope Style
-
-	(WIDGET*)(&labels[LABEL_SPACER]),		  // Spacer
-	(WIDGET*)(&labels[LABEL_IP]),			  // IP Label
-	(WIDGET*)(&choices[CHOICE_IPSTYLE]),	  // Interplanetary Style
-	(WIDGET*)(&choices[CHOICE_IPBACKGROUND]), // Star Background
-
-	(WIDGET*)(&labels[LABEL_SPACER]),		 // Spacer
-	(WIDGET*)(&labels[LABEL_SCAN]),			 // Scan Label
-	(WIDGET*)(&choices[CHOICE_SCANMENU]),	 // Scan Menu Display
-	(WIDGET*)(&choices[CHOICE_SLVSHIELD]),	 // Slave Shields
-	(WIDGET*)(&choices[CHOICE_SCANSTYLE]),	 // Scan Style
-	(WIDGET*)(&choices[CHOICE_SCANSPHERE]),	 // Scan Sphere Type
-	(WIDGET*)(&choices[CHOICE_SCANTINT]),	 // Scanned Sphere Tint
-	(WIDGET*)(&choices[CHOICE_LANDERSTYLE]), // Lander Style
-	(WIDGET*)(&buttons[BTN_QUITSUBMENU]),	 // Exit to Menu
-	nullptr};
+// Built from the menu definition file.
+static WIDGET* engine_widgets[] = {nullptr};
 
 static WIDGET* audio_widgets[] = {
 	(WIDGET*)(&sliders[SLIDER_MUSVOLUME]),	// Music Volume
@@ -1146,13 +1107,8 @@ SetDefaults(void)
 	choices[CHOICE_FRBUFFER].selected = opts.driver;
 	choices[CHOICE_SCALER].selected = opts.scaler;
 	choices[CHOICE_SCANLINE].selected = opts.scanlines;
-	choices[CHOICE_MENUSTYLE].selected = static_cast<int>(opts.menu);
-	choices[CHOICE_FONTSTYLE].selected = static_cast<int>(opts.text);
 	choices[CHOICE_SCANMENU].selected = static_cast<int>(opts.cscan);
-	choices[CHOICE_SCROLLSTYLE].selected = static_cast<int>(opts.scroll);
-	choices[CHOICE_SUBTITLES].selected = opts.subtitles;
 	choices[CHOICE_DISPLAY].selected = opts.fullscreen;
-	choices[CHOICE_CUTSCENE].selected = static_cast<int>(opts.intro);
 	choices[CHOICE_SHOWFPS].selected = opts.fps;
 
 #ifndef MELEE_ZOOM
@@ -1162,11 +1118,9 @@ SetDefaults(void)
 	choices[CHOICE_POSAUDIO].selected = opts.stereo;
 	choices[CHOICE_SNDDRIVER].selected = opts.adriver;
 	choices[CHOICE_SNDQUALITY].selected = opts.aquality;
-	choices[CHOICE_SLVSHIELD].selected = static_cast<int>(opts.shield);
 	choices[CHOICE_BTMPLAYER].selected = static_cast<int>(opts.player1);
 	choices[CHOICE_TOPPLAYER].selected = static_cast<int>(opts.player2);
 	choices[CHOICE_KBLAYOUT].selected = 0;
-	choices[CHOICE_SPEECH].selected = opts.speech;
 	choices[CHOICE_ASPRATIO].selected = opts.keepaspect;
 	choices[CHOICE_CHEATING].selected = opts.cheatMode;
 	choices[CHOICE_CHGODMODE].selected = opts.godModes;
@@ -1185,22 +1139,13 @@ SetDefaults(void)
 	choices[CHOICE_ANDRZOOM].selected = opts.meleezoom;
 #endif
 	choices[CHOICE_LANDERHOLD].selected = static_cast<int>(opts.landerHold);
-	choices[CHOICE_SCRMELT].selected = static_cast<int>(opts.scrTrans);
 	choices[CHOICE_SKILLLVL].selected = static_cast<int>(opts.difficulty);
 	choices[CHOICE_EXTENDED].selected = opts.extended;
 	choices[CHOICE_NOMAD].selected = static_cast<int>(opts.nomad);
 	choices[CHOICE_INPDEVICE].selected = static_cast<int>(opts.controllerType);
-	choices[CHOICE_SCANTINT].selected = static_cast<int>(opts.tintPlanSphere);
-	choices[CHOICE_IPSTYLE].selected = static_cast<int>(opts.planetStyle);
-	choices[CHOICE_IPBACKGROUND].selected = opts.starBackground;
-	choices[CHOICE_SCANSTYLE].selected = static_cast<int>(opts.scanStyle);
-	choices[CHOICE_OSCILLSTYLE].selected = static_cast<int>(opts.scopeStyle);
-	choices[CHOICE_LANDERSTYLE].selected = static_cast<int>(opts.landerStyle);
-	choices[CHOICE_FLAGSHIP].selected = static_cast<int>(opts.flagshipColor);
 	choices[CHOICE_CHCLEANHYPER].selected = opts.noHQEncounters;
 	choices[CHOICE_CHDECLEAN].selected = opts.deCleansing;
 	choices[CHOICE_CHNOPLANET].selected = opts.meleeObstacles;
-	choices[CHOICE_SCANSPHERE].selected = opts.sphereType;
 	choices[CHOICE_SLAUGHTER].selected = opts.slaughterMode;
 	choices[CHOICE_WINDOWTYPE].selected = opts.windowType;
 	choices[CHOICE_GAMESEED].selected = opts.seedType;
@@ -1221,7 +1166,6 @@ SetDefaults(void)
 
 	// Next choice should be choices[CHOICE_SHIPSEED]
 	choices[CHOICE_SHIPSEED].selected = opts.shipSeed;
-	choices[CHOICE_DOSMENUS].selected = opts.dosMenus;
 
 	sliders[SLIDER_MUSVOLUME].value = opts.musicvol;
 	sliders[SLIDER_SFXVOLUME].value = opts.sfxvol;
@@ -1240,13 +1184,8 @@ PropagateResults(void)
 	opts.driver = (OPT_DRIVERTYPE)choices[CHOICE_FRBUFFER].selected;
 	opts.scaler = (OPT_SCALETYPE)choices[CHOICE_SCALER].selected;
 	opts.scanlines = (OPT_ENABLABLE)choices[CHOICE_SCANLINE].selected;
-	opts.menu = (OPT_CONSOLETYPE)choices[CHOICE_MENUSTYLE].selected;
-	opts.text = (OPT_CONSOLETYPE)choices[CHOICE_FONTSTYLE].selected;
 	opts.cscan = (OPT_CONSOLETYPE)choices[CHOICE_SCANMENU].selected;
-	opts.scroll = (OPT_CONSOLETYPE)choices[CHOICE_SCROLLSTYLE].selected;
-	opts.subtitles = (OPT_ENABLABLE)choices[CHOICE_SUBTITLES].selected;
 	opts.fullscreen = (OPT_FULLSCREEN)choices[CHOICE_DISPLAY].selected;
-	opts.intro = (OPT_CONSOLETYPE)choices[CHOICE_CUTSCENE].selected;
 	opts.fps = (OPT_ENABLABLE)choices[CHOICE_SHOWFPS].selected;
 
 #ifndef MELEE_ZOOM
@@ -1256,10 +1195,8 @@ PropagateResults(void)
 	opts.stereo = (OPT_ENABLABLE)choices[CHOICE_POSAUDIO].selected;
 	opts.adriver = (OPT_ADRIVERTYPE)choices[CHOICE_SNDDRIVER].selected;
 	opts.aquality = (OPT_AQUALITYTYPE)choices[CHOICE_SNDQUALITY].selected;
-	opts.shield = (OPT_CONSOLETYPE)choices[CHOICE_SLVSHIELD].selected;
 	opts.player1 = (ControlTemplate)choices[CHOICE_BTMPLAYER].selected;
 	opts.player2 = (ControlTemplate)choices[CHOICE_TOPPLAYER].selected;
-	opts.speech = (OPT_ENABLABLE)choices[CHOICE_SPEECH].selected;
 	opts.keepaspect = (OPT_ENABLABLE)choices[CHOICE_ASPRATIO].selected;
 	opts.cheatMode = (OPT_ENABLABLE)choices[CHOICE_CHEATING].selected;
 	opts.godModes = (OPT_GODTYPE)choices[CHOICE_CHGODMODE].selected;
@@ -1278,22 +1215,13 @@ PropagateResults(void)
 	opts.meleezoom = choices[CHOICE_ANDRZOOM].selected;
 #endif
 	opts.landerHold = (OPT_CONSOLETYPE)choices[CHOICE_LANDERHOLD].selected;
-	opts.scrTrans = (OPT_CONSOLETYPE)choices[CHOICE_SCRMELT].selected;
 	opts.difficulty = static_cast<uqm::Difficulty>(choices[CHOICE_SKILLLVL].selected);
 	opts.extended = (OPT_ENABLABLE)choices[CHOICE_EXTENDED].selected;
 	opts.nomad = static_cast<uqm::NomadMode>(choices[CHOICE_NOMAD].selected);
 	opts.controllerType = static_cast<uqm::ControllerType>(choices[CHOICE_INPDEVICE].selected);
-	opts.tintPlanSphere = (OPT_CONSOLETYPE)choices[CHOICE_SCANTINT].selected;
-	opts.planetStyle = (OPT_CONSOLETYPE)choices[CHOICE_IPSTYLE].selected;
-	opts.starBackground = choices[CHOICE_IPBACKGROUND].selected;
-	opts.scanStyle = (OPT_CONSOLETYPE)choices[CHOICE_SCANSTYLE].selected;
-	opts.scopeStyle = (OPT_CONSOLETYPE)choices[CHOICE_OSCILLSTYLE].selected;
-	opts.landerStyle = (OPT_CONSOLETYPE)choices[CHOICE_LANDERSTYLE].selected;
-	opts.flagshipColor = (OPT_CONSOLETYPE)choices[CHOICE_FLAGSHIP].selected;
 	opts.noHQEncounters = (OPT_ENABLABLE)choices[CHOICE_CHCLEANHYPER].selected;
 	opts.deCleansing = (OPT_ENABLABLE)choices[CHOICE_CHDECLEAN].selected;
 	opts.meleeObstacles = (OPT_ENABLABLE)choices[CHOICE_CHNOPLANET].selected;
-	opts.sphereType = (OPT_SPHERETYPE)choices[CHOICE_SCANSPHERE].selected;
 	opts.slaughterMode = (OPT_ENABLABLE)choices[CHOICE_SLAUGHTER].selected;
 	opts.windowType = (OPT_WINDOWTYPE)choices[CHOICE_WINDOWTYPE].selected;
 	opts.seedType = (OPT_SEED)choices[CHOICE_GAMESEED].selected;
@@ -1312,7 +1240,6 @@ PropagateResults(void)
 	}
 
 	opts.shipSeed = (OPT_ENABLABLE)choices[CHOICE_SHIPSEED].selected;
-	opts.dosMenus = (OPT_ENABLABLE)choices[CHOICE_DOSMENUS].selected;
 
 	opts.musicvol = sliders[SLIDER_MUSVOLUME].value;
 	opts.sfxvol = sliders[SLIDER_SFXVOLUME].value;
@@ -1659,6 +1586,7 @@ static const struct
 	const char* id;
 	int menu;
 } definedMenus[] = {
+	{"engine", MENU_ENGINE},
 	{"visual", MENU_VISUAL},
 	{"music",  MENU_MUSIC },
 	{"qol",	MENU_QOL	},
@@ -1702,9 +1630,19 @@ build_defined_menus(void)
 			mainMenuMusicChanged = true;
 		}
 	};
-	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(),
-													   uqm::MenuWidgets::SharedWidgets {(WIDGET*)(&labels[LABEL_SPACER]), (WIDGET*)(&buttons[BTN_QUITSUBMENU])},
-													   uqstl::move(hooks));
+	uqm::MenuWidgets::SharedWidgets shared {};
+	shared.spacer = (WIDGET*)(&labels[LABEL_SPACER]);
+	shared.back = (WIDGET*)(&buttons[BTN_QUITSUBMENU]);
+	shared.legacy = {
+		{"windowType", (WIDGET*)(&choices[CHOICE_WINDOWTYPE])},
+#ifdef MELEE_ZOOM
+		{"meleeZoom",	 (WIDGET*)(&choices[CHOICE_ANDRZOOM])  },
+#else
+		{"meleeZoom",	 (WIDGET*)(&choices[CHOICE_MELEEZOOM])  },
+#endif
+		{"coarseScan", (WIDGET*)(&choices[CHOICE_SCANMENU])  },
+	};
+	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
 	for (const auto& defined : definedMenus)
 	{
 		const uqm::MenuDef* menu {menuDefinition->find(defined.id)};
@@ -2468,7 +2406,6 @@ void GetGlobalOptions(GLOBALOPTS* opts)
  */
 	opts->stereo = uqmOptions.stereoSFX.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
-	opts->speech = uqmOptions.useSpeech.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	switch (snddriver)
 	{
@@ -2507,11 +2444,6 @@ void GetGlobalOptions(GLOBALOPTS* opts)
  *		Engine&Visuals options
  */
 	// Mics
-	opts->subtitles = uqmOptions.subtitles.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->menu = whichPlatformOpt(uqmOptions.whichMenu.value);
-	opts->text = whichPlatformOpt(uqmOptions.whichFonts.value);
-	opts->scrTrans = whichPlatformOpt(uqmOptions.scrTrans.value);
-	opts->intro = whichPlatformOpt(uqmOptions.whichIntro.value);
 #ifdef MELEE_ZOOM
 	optMScale = opts->meleezoom = (int)uqmOptions.meleeScale.value;
 #else
@@ -2520,21 +2452,12 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 #endif
 	opts->controllerType = uqmOptions.optControllerType.value;
 	opts->directionalJoystick = uqmOptions.directionalJoystick.value ? OPTVAL_ENABLED : OPTVAL_DISABLED; // For Android
-	opts->flagshipColor = whichPlatformOpt(uqmOptions.flagshipColor.value);
-	opts->dosMenus = uqmOptions.dosMenus.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	// Interplanetary
-	opts->starBackground = uqmOptions.starBackground.value;
-	opts->planetStyle = whichPlatformOpt(uqmOptions.planetStyle.value);
 
 	// Orbit
 	opts->landerHold = whichPlatformOpt(uqmOptions.landerHold.value);
 	opts->cscan = whichPlatformOpt(uqmOptions.whichCoarseScan.value);
-	opts->scanStyle = whichPlatformOpt(uqmOptions.scanStyle.value);
-	opts->landerStyle = whichPlatformOpt(uqmOptions.landerStyle.value);
-	opts->sphereType = (OPT_SPHERETYPE)uqmOptions.sphereType.value;
-	opts->tintPlanSphere = whichPlatformOpt(uqmOptions.tintPlanSphere.value);
-	opts->shield = whichPlatformOpt(uqmOptions.whichShield.value);
 
 	// Game modes
 	opts->difficulty = uqmOptions.optDiffChooser.value;
@@ -2546,8 +2469,6 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 	opts->fleetPointSys = uqmOptions.fleetPointSys.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	// Comm screen
-	opts->scroll = whichPlatformOpt(uqmOptions.smoothScroll.value);
-	opts->scopeStyle = whichPlatformOpt(uqmOptions.scopeStyle.value);
 
 	// Auto-Pilot
 
@@ -2663,7 +2584,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 		}
 	}
 
-	putOpt(uqmOptions.useSpeech.value, (bool)opts->speech, true);
 
 	{
 		AudioDriverType newDriver {snddriver};
@@ -2739,11 +2659,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
  *		Engine&Visuals options
  */
 	// Mics
-	putOpt(uqmOptions.subtitles.value, (bool)opts->subtitles, false);
-	putOpt(uqmOptions.whichMenu.value, opts->menu, false);
-	putOpt(uqmOptions.whichFonts.value, opts->text, false);
-	putOpt(uqmOptions.scrTrans.value, opts->scrTrans, false);
-	putOpt(uqmOptions.whichIntro.value, opts->intro, true);
 	if (optMScale != (int)opts->meleezoom)
 	{
 #ifdef MELEE_ZOOM
@@ -2775,21 +2690,12 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 #ifdef DIRECTIONAL_JOY
 	putOpt(uqmOptions.directionalJoystick.value, (bool)opts->directionalJoystick, false);
 #endif
-	putOpt(uqmOptions.flagshipColor.value, opts->flagshipColor, false);
-	putOpt(uqmOptions.dosMenus.value, (bool)opts->dosMenus, false);
 
 	// Interplanetary
-	putOpt(uqmOptions.starBackground.value, opts->starBackground, false);
-	putOpt(uqmOptions.planetStyle.value, opts->planetStyle, false);
 
 	// Orbit
 	putOpt(uqmOptions.landerHold.value, opts->landerHold, false);
 	putOpt(uqmOptions.whichCoarseScan.value, opts->cscan, false);
-	putOpt(uqmOptions.scanStyle.value, opts->scanStyle, false);
-	putOpt(uqmOptions.landerStyle.value, opts->landerStyle, false);
-	putOpt(uqmOptions.sphereType.value, (int)opts->sphereType, false);
-	putOpt(uqmOptions.tintPlanSphere.value, opts->tintPlanSphere, false);
-	putOpt(uqmOptions.whichShield.value, opts->shield, false);
 
 	// Game modes
 	{
@@ -2815,8 +2721,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 	putOpt(uqmOptions.fleetPointSys.value, (bool)opts->fleetPointSys, false);
 
 	// Comm screen
-	putOpt(uqmOptions.smoothScroll.value, opts->scroll, false);
-	putOpt(uqmOptions.scopeStyle.value, opts->scopeStyle, false);
 
 	// Auto-Pilot
 

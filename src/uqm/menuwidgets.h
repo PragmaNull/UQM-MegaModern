@@ -9,6 +9,7 @@
 #include "uqm/menudef.h"
 
 #include <functional>
+#include <map>
 #include <memory>
 
 namespace uqm
@@ -25,6 +26,8 @@ public:
 	{
 		WIDGET* spacer {};
 		WIDGET* back {};
+		// Widgets for Legacy items, by name.
+		uqstl::map<uqstl::string, WIDGET*> legacy {};
 	};
 
 	struct Hooks

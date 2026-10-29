@@ -153,6 +153,10 @@ uqstl::optional<MenuItemDef> readItem(yyjson_val* itemObj)
 	{
 		return MenuItemDef {.kind = MenuItemKind::Back};
 	}
+	if (auto widget {getString(itemObj, "legacy")})
+	{
+		return MenuItemDef {.kind = MenuItemKind::Legacy, .widget = uqstl::move(*widget)};
+	}
 	if (yyjson_obj_get(itemObj, "heading") != nullptr)
 	{
 		auto lines {getStringArray(itemObj, "heading")};

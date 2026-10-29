@@ -251,6 +251,23 @@ TEST_F(MenuWidgetsTest, SliderChangeSetsTheSetting)
 	EXPECT_EQ(changed, (uqstl::vector<uqstl::string> {"audio.musicVolume", "visuals.nebulaeVolume"}));
 }
 
+TEST_F(MenuWidgetsTest, LegacyItemsUseTheGivenWidget)
+{
+	const auto legacyMenu {menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [
+		{"legacy": "windowType"}, {"legacy": "missing"}, {"back": true}
+	]}]})")};
+	ASSERT_TRUE(legacyMenu.has_value());
+
+	WIDGET windowType {};
+	MenuWidgets::SharedWidgets shared {&spacer, &back};
+	shared.legacy["windowType"] = &windowType;
+	MenuWidgets builder {options, shared, {}};
+	WIDGET** list {builder.build(legacyMenu->menus[0])};
+	EXPECT_EQ(list[0], &windowType);
+	EXPECT_EQ(list[1], &back);
+	EXPECT_EQ(list[2], nullptr);
+}
+
 TEST_F(MenuWidgetsTest, ContentMenusBuild)
 {
 	std::ifstream file {UQM_TEST_CONTENT_DIR "/base/ui/setupmenu.json", std::ios::binary};
@@ -263,10 +280,19 @@ TEST_F(MenuWidgetsTest, ContentMenusBuild)
 	const auto content {menuDefinitionFromJson(text.str())};
 	ASSERT_TRUE(content.has_value());
 
-	MenuWidgets builder {
-		options, {&spacer, &back},
-		   {}
-	 };
+	MenuWidgets::SharedWidgets shared {&spacer, &back};
+	uqstl::vector<uqstl::unique_ptr<WIDGET>> legacyWidgets {};
+	for (const MenuDef& menu : content->menus)
+	{
+		for (const MenuItemDef& item : menu.items)
+		{
+			if (item.kind == MenuItemKind::Legacy && !shared.legacy.contains(item.widget))
+			{
+				shared.legacy[item.widget] = legacyWidgets.emplace_back(uqstl::make_unique<WIDGET>()).get();
+			}
+		}
+	}
+	MenuWidgets builder {options, shared, {}};
 	for (const MenuDef& menu : content->menus)
 	{
 		WIDGET** list {builder.build(menu)};

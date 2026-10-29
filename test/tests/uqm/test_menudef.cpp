@@ -112,6 +112,14 @@ TEST(MenuDefTest, ReadsHeadingsSlidersAndAddons)
 	EXPECT_EQ(items[2].options[1].requiresAddon, (uqstl::vector<uqstl::string> {"3domusic"}));
 }
 
+TEST(MenuDefTest, ReadsLegacyItems)
+{
+	const auto definition {menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [{"legacy": "windowType"}]}]})")};
+	ASSERT_TRUE(definition.has_value());
+	EXPECT_EQ(definition->menus[0].items[0].kind, MenuItemKind::Legacy);
+	EXPECT_EQ(definition->menus[0].items[0].widget, "windowType");
+}
+
 TEST(MenuDefTest, RejectsInvalidSliders)
 {
 	EXPECT_FALSE(menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [{"slider": "k", "label": "x", "min": 10, "max": 5}]}]})"));
@@ -158,7 +166,7 @@ TEST(MenuDefTest, ContentMenuDefinitionIsValid)
 	ASSERT_TRUE(definition.has_value());
 	const OptionsStruct options {};
 	EXPECT_EQ(validateMenuDefinition(*definition, options), uqstl::vector<uqstl::string> {});
-	for (const char* id : {"music", "visual", "qol"})
+	for (const char* id : {"engine", "music", "visual", "qol"})
 	{
 		EXPECT_NE(definition->find(id), nullptr) << id;
 	}

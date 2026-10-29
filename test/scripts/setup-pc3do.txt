@@ -1,0 +1,34 @@
+# Changes Setup > PC/3DO > Menu Style and Star Background, and saves.
+# Expect "menuStyle": "Console3DO" and "starBackground": 1 in settings.json when starting from defaults.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+# PC/3DO is the second item.
+down
+select
+wait 1500
+log pc3do menu
+dumpmenu
+# The first item is the legacy Window Type choice; Menu Style is next.
+down
+right
+select
+# Star Background: Menu Style, DOS Side Menu, Font Style, Cutscenes, Melee Zoom,
+# Flagship Engine Color, Screen Transitions, Scroll Style, Speech, Subtitles,
+# Oscilloscope Style, Planet Style, Star Background.
+down 12
+right
+select
+log pc3do after changes
+dumpmenu
+screenshot
+cancel
+wait 1000
+cancel
+wait 3000
+quit

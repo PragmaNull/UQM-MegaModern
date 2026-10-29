@@ -418,12 +418,11 @@ typedef struct globalopts_struct
 	uqm::NomadMode nomad;
 	OPT_MELEEZOOM meleezoom;
 	uqm::ControllerType controllerType;
-	OPT_SPHERETYPE sphereType;
 	OPT_WINDOWTYPE windowType;
 	OPT_SEED seedType;
 	OPT_ADD_REMOVE deviceArray[28], upgradeArray[NUM_UPGRADES];
-	OPT_ENABLABLE subtitles, scanlines, fps, stereo,
-		speech, keepaspect, cheatMode,
+	OPT_ENABLABLE scanlines, fps, stereo,
+		keepaspect, cheatMode,
 		godMode, bubbleWarp,
 		unlockShips, headStart, unlockUpgrades, infiniteRU,
 		infiniteFuel, infiniteCredits,
@@ -433,14 +432,14 @@ typedef struct globalopts_struct
 		noHQEncounters, deCleansing, meleeObstacles,
 		slaughterMode,
 		fleetPointSys,
-		shipSeed, dosMenus;
+		shipSeed;
 	OPT_FULLSCREEN fullscreen;
-	OPT_CONSOLETYPE menu, text, scroll, intro, shield, scrTrans,
-		landerHold, tintPlanSphere, planetStyle, scanStyle,
-		scopeStyle, landerStyle, flagshipColor, cscan;
+	OPT_CONSOLETYPE 
+		landerHold,
+		cscan;
 	ControlTemplate player1, player2;
 	int speechvol, musicvol, sfxvol;
-	int gamma, starBackground;
+	int gamma;
 	int timeDilationPct;
 } GLOBALOPTS;
 
