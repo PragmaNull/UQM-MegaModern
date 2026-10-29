@@ -79,7 +79,6 @@ struct option_list_value
 //};
 
 
-static int optMScale;
 static SOUND testSounds;
 
 uqm::ScalingMode scaleTypeOptionToScalingMode(OPT_SCALETYPE opt)
@@ -1028,10 +1027,6 @@ SetDefaults(void)
 	choices[CHOICE_DISPLAY].selected = opts.fullscreen;
 	choices[CHOICE_SHOWFPS].selected = opts.fps;
 
-#ifndef MELEE_ZOOM
-	choices[CHOICE_MELEEZOOM].selected = opts.meleezoom;
-#endif
-
 	choices[CHOICE_BTMPLAYER].selected = static_cast<int>(opts.player1);
 	choices[CHOICE_TOPPLAYER].selected = static_cast<int>(opts.player2);
 	choices[CHOICE_KBLAYOUT].selected = 0;
@@ -1040,9 +1035,6 @@ SetDefaults(void)
 	choices[CHOICE_RESOLUTION].selected = opts.loresBlowup;
 #ifdef DIRECTIONAL_JOY
 	choices[CHOICE_JOYSTICK].selected = opts.directionalJoystick;
-#endif
-#ifdef MELEE_ZOOM
-	choices[CHOICE_ANDRZOOM].selected = opts.meleezoom;
 #endif
 	choices[CHOICE_LANDERHOLD].selected = static_cast<int>(opts.landerHold);
 	choices[CHOICE_WINDOWTYPE].selected = opts.windowType;
@@ -1079,10 +1071,6 @@ PropagateResults(void)
 	opts.fullscreen = (OPT_FULLSCREEN)choices[CHOICE_DISPLAY].selected;
 	opts.fps = (OPT_ENABLABLE)choices[CHOICE_SHOWFPS].selected;
 
-#ifndef MELEE_ZOOM
-	opts.meleezoom = (OPT_MELEEZOOM)choices[CHOICE_MELEEZOOM].selected;
-#endif
-
 	opts.player1 = (ControlTemplate)choices[CHOICE_BTMPLAYER].selected;
 	opts.player2 = (ControlTemplate)choices[CHOICE_TOPPLAYER].selected;
 	opts.keepaspect = (OPT_ENABLABLE)choices[CHOICE_ASPRATIO].selected;
@@ -1090,9 +1078,6 @@ PropagateResults(void)
 	opts.loresBlowup = (OPT_RESSCALER)choices[CHOICE_RESOLUTION].selected;
 #ifdef DIRECTIONAL_JOY
 	opts.directionalJoystick = choices[CHOICE_JOYSTICK].selected;
-#endif
-#ifdef MELEE_ZOOM
-	opts.meleezoom = choices[CHOICE_ANDRZOOM].selected;
 #endif
 	opts.landerHold = (OPT_CONSOLETYPE)choices[CHOICE_LANDERHOLD].selected;
 	opts.windowType = (OPT_WINDOWTYPE)choices[CHOICE_WINDOWTYPE].selected;
@@ -1452,7 +1437,7 @@ static const struct
 	const char* id;
 	int menu;
 } definedMenus[] = {
-	{"controls", MENY_KEYCONF},
+	{"controls", MENY_KEYCONF },
 	{"audio",	  MENU_AUDIO	},
 	{"cheats",   MENU_CHEATS  },
 	{"advanced", MENU_ADVANCED},
@@ -1520,21 +1505,16 @@ build_defined_menus(void)
 	shared.spacer = (WIDGET*)(&labels[LABEL_SPACER]);
 	shared.back = (WIDGET*)(&buttons[BTN_QUITSUBMENU]);
 	shared.legacy = {
-		{"windowType",   (WIDGET*)(&choices[CHOICE_WINDOWTYPE])},
-#ifdef MELEE_ZOOM
-		{"meleeZoom",	  (WIDGET*)(&choices[CHOICE_ANDRZOOM])  },
-#else
-		{"meleeZoom", (WIDGET*)(&choices[CHOICE_MELEEZOOM])},
-#endif
-		{"seedType",	 (WIDGET*)(&choices[CHOICE_GAMESEED])	 },
-		{"customSeed",   (WIDGET*)(&textentries[TEXT_GAMESEED])},
-		{"devicesMenu",	(WIDGET*)(&buttons[BTN_DEVMENU])		},
-		{"upgradesMenu", (WIDGET*)(&buttons[BTN_UPGMENU])		 },
-		{"player1Template", (WIDGET*)(&choices[CHOICE_BTMPLAYER])},
-		{"player2Template", (WIDGET*)(&choices[CHOICE_TOPPLAYER])},
-		{"editKeysMenu", (WIDGET*)(&buttons[BTN_EDITKEYS])},
+		{"windowType",		   (WIDGET*)(&choices[CHOICE_WINDOWTYPE])},
+		{"seedType",			 (WIDGET*)(&choices[CHOICE_GAMESEED])	 },
+		{"customSeed",		   (WIDGET*)(&textentries[TEXT_GAMESEED])},
+		{"devicesMenu",			(WIDGET*)(&buttons[BTN_DEVMENU])		},
+		{"upgradesMenu",		 (WIDGET*)(&buttons[BTN_UPGMENU])		 },
+		{"player1Template",		(WIDGET*)(&choices[CHOICE_BTMPLAYER]) },
+		{"player2Template",		(WIDGET*)(&choices[CHOICE_TOPPLAYER]) },
+		{"editKeysMenu",		 (WIDGET*)(&buttons[BTN_EDITKEYS])	  },
 #ifdef DIRECTIONAL_JOY
-		{"directionalJoystick", (WIDGET*)(&choices[CHOICE_JOYSTICK])},
+		{"directionalJoystick", (WIDGET*)(&choices[CHOICE_JOYSTICK])	},
 #endif
 	};
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
@@ -2293,19 +2273,13 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 			break;
 	}
 
-		/*
+	/*
  *		Audio options
  */
-		/*
+	/*
  *		Engine&Visuals options
  */
-		// Mics
-#ifdef MELEE_ZOOM
-	optMScale = opts->meleezoom = (int)uqmOptions.meleeScale.value;
-#else
-	optMScale = opts->meleezoom =
-		(OPT_MELEEZOOM)(uqm::toTFBScaleMode(uqmOptions.meleeScale.value) == uqm::TFBScaleMode::Step ? uqm::EmulationMode::PC : uqm::EmulationMode::Console3DO);
-#endif
+	// Mics
 	opts->directionalJoystick = uqmOptions.directionalJoystick.value ? OPTVAL_ENABLED : OPTVAL_DISABLED; // For Android
 
 	// Interplanetary
@@ -2423,30 +2397,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
  *		Engine&Visuals options
  */
 	// Mics
-	if (optMScale != (int)opts->meleezoom)
-	{
-#ifdef MELEE_ZOOM
-		switch (opts->meleezoom)
-		{
-			case TFB_SCALE_NEAREST:
-				uqmOptions.meleeScale = uqm::MeleeScaleMode::Nearest;
-				break;
-			case TFB_SCALE_BILINEAR:
-				uqmOptions.meleeScale = uqm::MeleeScaleMode::Bilinear;
-				break;
-			case TFB_SCALE_TRILINEAR:
-				uqmOptions.meleeScale = uqm::MeleeScaleMode::Smooth;
-				break;
-			case TFB_SCALE_STEP:
-			default:
-				uqmOptions.meleeScale = uqm::MeleeScaleMode::Step;
-				break;
-		}
-#else
-		uqm::TFBScaleMode tfbScale {((uqm::EmulationMode)opts->meleezoom == uqm::EmulationMode::Console3DO) ? uqm::TFBScaleMode::Trilinear : uqm::TFBScaleMode::Step};
-		uqm::UQMOptions::edit().meleeScale = toMeleeScaleMode(tfbScale);
-#endif
-	}
 #ifdef DIRECTIONAL_JOY
 	putOpt(uqmOptions.directionalJoystick.value, (bool)opts->directionalJoystick, false);
 #endif

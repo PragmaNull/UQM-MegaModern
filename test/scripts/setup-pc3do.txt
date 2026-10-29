@@ -14,7 +14,7 @@ select
 wait 1500
 log pc3do menu
 dumpmenu
-# The first item is the legacy Window Type choice; Menu Style is next.
+# The first item is Platform UI; Menu Style is next.
 down
 right
 select

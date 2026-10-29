@@ -1,0 +1,24 @@
+# Changes Setup > PC/3DO > Melee Zoom, and saves.
+# Expect "meleeScale": "Step" in settings.json when starting from defaults (Smooth).
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+down
+select
+wait 1500
+# Window Type, Menu Style, DOS Side Menu, Font Style, Cutscenes, Melee Zoom.
+down 5
+right
+select
+log pc3do after melee zoom
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 3000
+quit

@@ -411,7 +411,6 @@ typedef struct globalopts_struct
 	OPT_RESTYPE screenResolution;
 	OPT_RESSCALER loresBlowup;
 	OPT_DRIVERTYPE driver;
-	OPT_MELEEZOOM meleezoom;
 	OPT_WINDOWTYPE windowType;
 	OPT_SEED seedType;
 	OPT_ADD_REMOVE deviceArray[28], upgradeArray[NUM_UPGRADES];
