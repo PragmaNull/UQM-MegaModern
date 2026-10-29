@@ -265,26 +265,8 @@ static WIDGET* music_widgets[] = {nullptr};
 // Built from the menu definition file.
 static WIDGET* cheat_widgets[] = {nullptr};
 
-static WIDGET* keyconfig_widgets[] = {
-
-#if SDL_MAJOR_VERSION == 2				   // Refined joypad controls not supported in SDL1
-	(WIDGET*)(&choices[CHOICE_INPDEVICE]), // Control Display
-#endif
-
-	(WIDGET*)(&choices[CHOICE_BTMPLAYER]), // Bottom Player
-	(WIDGET*)(&choices[CHOICE_TOPPLAYER]), // Top Player
-
-#ifdef DIRECTIONAL_JOY
-	(WIDGET*)(&choices[CHOICE_JOYSTICK]), // Directional Joystick toggle
-#endif
-
-	(WIDGET*)(&labels[LABEL_SPACER]),	   // Spacer
-	(WIDGET*)(&labels[LABEL_KEYSTOOLTIP]), // "To view or edit..."
-	(WIDGET*)(&buttons[BTN_EDITKEYS]),	   // Edit Controls
-
-	(WIDGET*)(&labels[LABEL_SPACER]),	  // Spacer
-	(WIDGET*)(&buttons[BTN_QUITSUBMENU]), // Exit to Menu
-	nullptr};
+// Built from the menu definition file.
+static WIDGET* keyconfig_widgets[] = {nullptr};
 
 // Built from the menu definition file.
 static WIDGET* advanced_widgets[] = {nullptr};
@@ -1064,7 +1046,6 @@ SetDefaults(void)
 	choices[CHOICE_ANDRZOOM].selected = opts.meleezoom;
 #endif
 	choices[CHOICE_LANDERHOLD].selected = static_cast<int>(opts.landerHold);
-	choices[CHOICE_INPDEVICE].selected = static_cast<int>(opts.controllerType);
 	choices[CHOICE_WINDOWTYPE].selected = opts.windowType;
 	choices[CHOICE_GAMESEED].selected = opts.seedType;
 
@@ -1116,7 +1097,6 @@ PropagateResults(void)
 	opts.meleezoom = choices[CHOICE_ANDRZOOM].selected;
 #endif
 	opts.landerHold = (OPT_CONSOLETYPE)choices[CHOICE_LANDERHOLD].selected;
-	opts.controllerType = static_cast<uqm::ControllerType>(choices[CHOICE_INPDEVICE].selected);
 	opts.windowType = (OPT_WINDOWTYPE)choices[CHOICE_WINDOWTYPE].selected;
 	opts.seedType = (OPT_SEED)choices[CHOICE_GAMESEED].selected;
 
@@ -1474,6 +1454,7 @@ static const struct
 	const char* id;
 	int menu;
 } definedMenus[] = {
+	{"controls", MENY_KEYCONF},
 	{"audio",	  MENU_AUDIO	},
 	{"cheats",   MENU_CHEATS  },
 	{"advanced", MENU_ADVANCED},
@@ -1552,6 +1533,12 @@ build_defined_menus(void)
 		{"customSeed",   (WIDGET*)(&textentries[TEXT_GAMESEED])},
 		{"devicesMenu",	(WIDGET*)(&buttons[BTN_DEVMENU])		},
 		{"upgradesMenu", (WIDGET*)(&buttons[BTN_UPGMENU])		 },
+		{"player1Template", (WIDGET*)(&choices[CHOICE_BTMPLAYER])},
+		{"player2Template", (WIDGET*)(&choices[CHOICE_TOPPLAYER])},
+		{"editKeysMenu", (WIDGET*)(&buttons[BTN_EDITKEYS])},
+#ifdef DIRECTIONAL_JOY
+		{"directionalJoystick", (WIDGET*)(&choices[CHOICE_JOYSTICK])},
+#endif
 	};
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
 	for (const auto& defined : definedMenus)
@@ -2322,7 +2309,6 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 	optMScale = opts->meleezoom =
 		(OPT_MELEEZOOM)(uqm::toTFBScaleMode(uqmOptions.meleeScale.value) == uqm::TFBScaleMode::Step ? uqm::EmulationMode::PC : uqm::EmulationMode::Console3DO);
 #endif
-	opts->controllerType = uqmOptions.optControllerType.value;
 	opts->directionalJoystick = uqmOptions.directionalJoystick.value ? OPTVAL_ENABLED : OPTVAL_DISABLED; // For Android
 
 	// Interplanetary
@@ -2465,10 +2451,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 		uqm::UQMOptions::edit().meleeScale = toMeleeScaleMode(tfbScale);
 #endif
 	}
-#if SDL_MAJOR_VERSION == 1 // Refined joypad controls aren't supported on SDL1
-	opts->controllerType = 0;
-#endif
-	putOpt(uqmOptions.optControllerType.value, opts->controllerType, false);
 #ifdef DIRECTIONAL_JOY
 	putOpt(uqmOptions.directionalJoystick.value, (bool)opts->directionalJoystick, false);
 #endif

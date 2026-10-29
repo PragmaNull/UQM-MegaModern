@@ -58,6 +58,8 @@ struct MenuItemDef
 
 	// Name of the widget for a Legacy item.
 	uqstl::string widget {};
+	// A Legacy item whose widget is missing in this build is left out without an error.
+	bool optional {};
 };
 
 struct MenuDef

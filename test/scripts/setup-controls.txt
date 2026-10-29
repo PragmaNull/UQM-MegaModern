@@ -1,0 +1,35 @@
+# Changes Setup > Controls > Control Display, opens Edit Controls, and saves.
+# Expect "controllerType": "XBox" in settings.json when starting from defaults.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+# Controls is the sixth item.
+down 5
+select
+wait 1500
+log controls menu
+dumpmenu
+right
+select
+log controls after change
+dumpmenu
+# Control Display, Bottom Player, Top Player, Edit Controls.
+down 3
+select
+wait 1500
+log edit controls menu
+dumpmenu
+cancel
+wait 1000
+log after leaving edit controls
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 3000
+quit

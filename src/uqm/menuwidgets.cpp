@@ -87,7 +87,7 @@ WIDGET** MenuWidgets::build(const MenuDef& menu)
 				{
 					widget = found->second;
 				}
-				else
+				else if (!item.optional)
 				{
 					uqm::log::error("Menu '{}': unknown widget '{}'.", menu.id, item.widget);
 				}

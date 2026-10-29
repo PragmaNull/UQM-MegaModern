@@ -155,7 +155,7 @@ uqstl::optional<MenuItemDef> readItem(yyjson_val* itemObj)
 	}
 	if (auto widget {getString(itemObj, "legacy")})
 	{
-		return MenuItemDef {.kind = MenuItemKind::Legacy, .widget = uqstl::move(*widget)};
+		return MenuItemDef {.kind = MenuItemKind::Legacy, .widget = uqstl::move(*widget), .optional = yyjson_is_true(yyjson_obj_get(itemObj, "optional"))};
 	}
 	if (yyjson_obj_get(itemObj, "heading") != nullptr)
 	{
