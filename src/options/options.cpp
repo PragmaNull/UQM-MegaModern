@@ -70,7 +70,7 @@ uqstl::pair<int, bool> UQMOptions::parseArgs(uqstl::span<uqgsl::zstring> args)
 	pathGroup.add_option("--addondir", m_options.addonDir, "Path to the directory containing game addons.")
 		->check(CLI::ExistingPath)
 		->capture_default_str();
-	pathGroup.add_option("-l,--logfile", m_options.logFile, "Path to the log file to create. If not specified, no log will be generated.")
+	pathGroup.add_option("-l,--logfile", m_options.logFile, "Path to the log file to create. The default is logs/uqm.log in the config dir.")
 		->capture_default_str();
 	pathGroup.add_option("--addon", m_options.addons, "Addons to load from the addons directory. Any number may be specified")
 		->expected(-1)

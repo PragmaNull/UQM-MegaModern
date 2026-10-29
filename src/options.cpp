@@ -239,12 +239,8 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 #endif
 }
 
-void prepareConfigDir(uqstl::string_view configDirOption)
+uqstl::string resolveConfigDir(uqstl::string_view configDirOption)
 {
-	char buf[PATH_MAX];
-	static uio_AutoMount* autoMount[] = {nullptr};
-	uio_MountHandle* contentHandle;
-
 	uqstl::string configDirPath {configDirOption};
 	if (configDirPath.empty())
 	{
@@ -255,15 +251,29 @@ void prepareConfigDir(uqstl::string_view configDirOption)
 		configDirPath = CONFIGDIR;
 	}
 
+	char buf[PATH_MAX];
 	if (expandPath(buf, PATH_MAX - 13, configDirPath.c_str(), EP_ALL_SYSTEM)
 		== -1)
+	{
+		return {};
+	}
+	return buf;
+}
+
+void prepareConfigDir(uqstl::string_view configDirOption)
+{
+	static uio_AutoMount* autoMount[] = {nullptr};
+	uio_MountHandle* contentHandle;
+
+	const uqstl::string configDirPath {resolveConfigDir(configDirOption)};
+	if (configDirPath.empty())
 	{
 		// Doesn't have to be fatal, but might mess up things when saving
 		// config files.
 		uqm::log::critical("Fatal error: Invalid path to config files.");
 		exit(EXIT_FAILURE);
 	}
-	const char* const configDirName {buf};
+	const char* const configDirName {configDirPath.c_str()};
 
 	uqm::log::debug("Using config dir '{}'", configDirName);
 

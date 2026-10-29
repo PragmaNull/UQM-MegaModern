@@ -130,10 +130,14 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	const auto& options {m_options.get()};
 
-	// For debugging!!
 	if (options.logFile.empty())
 	{
-		m_options.edit().logFile = "uqm.log";
+		uqstl::string logDir {resolveConfigDir(options.configDir)};
+		if (!logDir.empty() && logDir.back() != '/' && logDir.back() != '\\')
+		{
+			logDir += '/';
+		}
+		m_options.edit().logFile = logDir + "logs/uqm.log";
 	}
 
 	m_logger.init(options.logFile);

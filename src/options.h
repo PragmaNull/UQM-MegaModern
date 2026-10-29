@@ -112,6 +112,8 @@ typedef struct _input_template
 extern INPUT_TEMPLATE input_templates[6];
 
 void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirName, uqgsl::czstring execFile);
+// Returns the expanded config dir path, or an empty string if the path is not valid.
+uqstl::string resolveConfigDir(uqstl::string_view configDirOption);
 void prepareConfigDir(uqstl::string_view configDirOption);
 void prepareMeleeDir(void);
 void prepareSaveDir(void);
