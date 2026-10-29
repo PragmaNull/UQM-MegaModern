@@ -1,10 +1,10 @@
 // Tests for setup menu widgets that are bound to settings.
 #include <gtest/gtest.h>
 
+#include "core/string/StringUtils.h"
 #include "options/options.h"
 #include "uqm/menuwidgets.h"
 
-#include <cstring>
 #include <fstream>
 #include <sstream>
 
@@ -280,12 +280,12 @@ TEST_F(MenuWidgetsTest, TextShowsAndSetsTheSetting)
 	EXPECT_STREQ(widget.tooltip[0], "Type a seed.");
 	EXPECT_STREQ(widget.value, "12345");
 
-	std::strcpy(widget.value, "777");
+	uqm::strncpy_safe(widget.value, "777");
 	widget.onChange(&widget);
 	EXPECT_EQ(*options.customSeed, 777);
 	EXPECT_EQ(changed, (uqstl::vector<uqstl::string> {"seed.value"}));
 
-	std::strcpy(widget.value, "abc");
+	uqm::strncpy_safe(widget.value, "abc");
 	widget.onChange(&widget);
 	EXPECT_EQ(*options.customSeed, 777);
 	EXPECT_STREQ(widget.value, "777");
@@ -417,8 +417,8 @@ TEST_F(MenuWidgetsTest, StateChoiceUsesTheStateHooks)
 	};
 	MenuWidgets builder {
 		options, MenuWidgets::SharedWidgets {&spacer, &back},
-		  uqstl::move(hooks)
-	};
+		uqstl::move(hooks)
+	  };
 	WIDGET** list {builder.build(stateMenu->menus[0])};
 	ASSERT_EQ(list[1], nullptr);
 	WIDGET_CHOICE& widget {choice(list, 0)};
@@ -445,8 +445,8 @@ TEST_F(MenuWidgetsTest, ItemsNeedTheirAddons)
 	};
 	MenuWidgets builder {
 		options, MenuWidgets::SharedWidgets {&spacer, &back},
-		  uqstl::move(hooks)
-	};
+		uqstl::move(hooks)
+	  };
 	WIDGET** list {builder.build(addonMenu->menus[0])};
 	EXPECT_EQ(list[0], &back);
 	EXPECT_EQ(list[1], nullptr);

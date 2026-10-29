@@ -2496,37 +2496,42 @@ check_for_disconnects(MELEE_STATE* pMS)
 static void
 nextControlType(uint16_t which_side)
 {
-	switch (PlayerControl[which_side])
+	const PlayerControlFlags human {PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard};
+	const PlayerControlFlags current {PlayerControl[which_side]};
+	PlayerControlFlags& control {PlayerControl[which_side]};
+	if (current == human)
 	{
-		case PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard:
-			PlayerControl[which_side] = ComputerControlFlags | PlayerControlFlags::DifficultyStandard;
-			break;
-		case ComputerControlFlags | PlayerControlFlags::DifficultyStandard:
-			PlayerControl[which_side] = ComputerControlFlags | PlayerControlFlags::DifficultyGood;
-			break;
-		case ComputerControlFlags | PlayerControlFlags::DifficultyGood:
-			PlayerControl[which_side] = ComputerControlFlags | PlayerControlFlags::DifficultyAwesome;
-			break;
-		case ComputerControlFlags | PlayerControlFlags::DifficultyAwesome:
-			PlayerControl[which_side] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
-			break;
-
+		control = ComputerControlFlags | PlayerControlFlags::DifficultyStandard;
+	}
+	else if (current == (ComputerControlFlags | PlayerControlFlags::DifficultyStandard))
+	{
+		control = ComputerControlFlags | PlayerControlFlags::DifficultyGood;
+	}
+	else if (current == (ComputerControlFlags | PlayerControlFlags::DifficultyGood))
+	{
+		control = ComputerControlFlags | PlayerControlFlags::DifficultyAwesome;
+	}
+	else if (current == (ComputerControlFlags | PlayerControlFlags::DifficultyAwesome))
+	{
+		control = human;
+	}
 #ifdef NETPLAY
-		case PlayerControlFlags::Network | PlayerControlFlags::DifficultyStandard:
-			if (netConnections[which_side] != nullptr)
-			{
-				closePlayerNetworkConnection(which_side);
-			}
-			UpdateMeleeStatusMessage(-1);
-			PlayerControl[which_side] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
-			break;
+	else if (current == (PlayerControlFlags::Network | PlayerControlFlags::DifficultyStandard))
+	{
+		if (netConnections[which_side] != nullptr)
+		{
+			closePlayerNetworkConnection(which_side);
+		}
+		UpdateMeleeStatusMessage(-1);
+		control = human;
+	}
 #endif /* NETPLAY */
-		default:
-			uqm::log::error("Error: Bad control type ({}) in "
-							"nextControlType().\n",
-							PlayerControl[which_side]);
-			PlayerControl[which_side] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
-			break;
+	else
+	{
+		uqm::log::error("Error: Bad control type ({}) in "
+						"nextControlType().\n",
+						current);
+		control = human;
 	}
 
 	DrawControls(which_side, true);
