@@ -49,14 +49,12 @@ uint32_t crc_finish(const crc_State* state);
 #include "netconnection.h"
 // for netplayDebugFile
 //#define crc_log(...)  log_add (logDebug, __VA_ARGS__)
-#define crc_log(...)                                   \
-	if (netplayDebugFile != nullptr)                   \
-	{                                                  \
-		uio_fmt::print(netplayDebugFile, __VA_ARGS__); \
-		uio_putc('\n', netplayDebugFile);              \
-	}                                                  \
-	else                                               \
-		(void)0
+#define crc_log(...)                                      \
+	do                                                    \
+	{                                                     \
+		netplayDebugPrint(netplayDebugFile, __VA_ARGS__); \
+		netplayDebugPrint(netplayDebugFile, "\n");        \
+	} while (false)
 #endif
 
 #endif /* UQM_SUPERMELEE_NETPLAY_CRC_H_ */

@@ -58,20 +58,19 @@ void MeleeTeam_delete(MeleeTeam* team)
 	HFree(team);
 }
 
-int MeleeTeam_serialize(const MeleeTeam* team, uio_Stream* stream)
+int MeleeTeam_serialize(const MeleeTeam* team, uqm::io::File& stream)
 {
 	FleetShipIndex slotI;
 
 	for (slotI = 0; slotI < MELEE_FLEET_SIZE; slotI++)
 	{
-		if (uio_putc((int)team->ships[slotI], stream) == EOF)
+		const uqstl::byte ship {static_cast<uqstl::byte>(team->ships[slotI])};
+		if (stream.write({&ship, 1}) != 1)
 		{
 			return -1;
 		}
 	}
-	if (uio_fwrite((const char*)team->name, sizeof team->name, 1,
-				   stream)
-		!= 1)
+	if (stream.write(uqstl::as_bytes(uqstl::span {team->name})) != sizeof team->name)
 	{
 		return -1;
 	}
@@ -79,15 +78,15 @@ int MeleeTeam_serialize(const MeleeTeam* team, uio_Stream* stream)
 	return 0;
 }
 
-int MeleeTeam_deserialize(MeleeTeam* team, uio_Stream* stream)
+int MeleeTeam_deserialize(MeleeTeam* team, uqm::io::File& stream)
 {
 	FleetShipIndex slotI;
 
 	// Sanity check on the ships.
 	for (slotI = 0; slotI < MELEE_FLEET_SIZE; slotI++)
 	{
-		int ship = uio_getc(stream);
-		if (ship == EOF)
+		const int ship {stream.getChar()};
+		if (ship == uqm::io::File::c_endOfFile)
 		{
 			goto err;
 		}
@@ -106,7 +105,7 @@ int MeleeTeam_deserialize(MeleeTeam* team, uio_Stream* stream)
 		}
 	}
 
-	if (uio_fread(team->name, sizeof team->name, 1, stream) != 1)
+	if (stream.read(uqstl::as_writable_bytes(uqstl::span {team->name})) != sizeof team->name)
 	{
 		goto err;
 	}
@@ -332,7 +331,7 @@ MeleeSetup_getFleetValue(const MeleeSetup* setup, size_t teamNr)
 }
 
 int MeleeSetup_deserializeTeam(MeleeSetup* setup, size_t teamNr,
-							   uio_Stream* stream)
+							   uqm::io::File& stream)
 {
 	MeleeTeam* team = &setup->teams[teamNr];
 	int ret = MeleeTeam_deserialize(team, stream);
@@ -344,7 +343,7 @@ int MeleeSetup_deserializeTeam(MeleeSetup* setup, size_t teamNr,
 }
 
 int MeleeSetup_serializeTeam(const MeleeSetup* setup, size_t teamNr,
-							 uio_Stream* stream)
+							 uqm::io::File& stream)
 {
 	const MeleeTeam* team = &setup->teams[teamNr];
 	return MeleeTeam_serialize(team, stream);

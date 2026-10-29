@@ -52,9 +52,9 @@ int sendPacket(NetConnection* conn, Packet* packet)
 #ifdef NETPLAY_DEBUG_FILE
 	if (conn->debugFile != nullptr)
 	{
-		uio_fmt::print(conn->debugFile,
-					   "NETPLAY: [{}] ==> Sending packet of type {}.\n",
-					   conn->player, packetTypeData[packetType(packet)].name);
+		netplayDebugPrint(conn->debugFile,
+						  "NETPLAY: [{}] ==> Sending packet of type {}.\n",
+						  conn->player, packetTypeData[packetType(packet)].name);
 	}
 #endif /* NETPLAY_DEBUG_FILE */
 #endif /* NETPLAY_DEBUG */

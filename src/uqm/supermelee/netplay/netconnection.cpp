@@ -46,7 +46,7 @@ static void NetConnection_doClose(NetConnection* conn);
 #include "nc_connect.ci"
 
 #if defined(NETPLAY_DEBUG) && defined(NETPLAY_DEBUG_FILE)
-uio_Stream* netplayDebugFile;
+uqm::io::File* netplayDebugFile;
 #endif
 
 // Used as initial value for Agreement structures, by structure assignment.
@@ -94,7 +94,9 @@ NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
 
 		// The user needs to create the debug/ dir manually. If there
 		// is no debug/ dir, no log will be created.
-		conn->debugFile = uio_fopen(configDir, dumpFileName, "wt");
+		uqstl::error_code error {};
+		uqstl::optional<uqm::io::File> debugFile {configDir->open(dumpFileName, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate | uqm::io::OpenMode::Text, error)};
+		conn->debugFile = debugFile ? new uqm::io::File {uqstl::move(*debugFile)} : nullptr;
 		if (conn->debugFile == nullptr)
 		{
 			uqm::log::debug("Not creating a netplay debug log for "
@@ -204,7 +206,7 @@ NetConnection_delete(NetConnection* conn)
 			// The debugging person just has to work around that.
 			netplayDebugFile = nullptr;
 		}
-		uio_fclose(conn->debugFile);
+		delete conn->debugFile;
 	}
 #endif
 

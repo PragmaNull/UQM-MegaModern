@@ -57,25 +57,15 @@ static bool FillFileView(MELEE_STATE* pMS);
 static bool
 LoadTeamImage(DIRENTRY DirEntry, MeleeTeam* team)
 {
-	const char* fileName;
-	uio_Stream* stream;
+	const char* fileName {GetDirEntryAddress(DirEntry)};
 
-	fileName = GetDirEntryAddress(DirEntry);
-
-	stream = uio_fopen(meleeDir, fileName, "rb");
-	if (stream == nullptr)
+	uqstl::error_code error {};
+	uqstl::optional<uqm::io::File> stream {meleeDir->open(fileName, uqm::io::OpenMode::Read, error)};
+	if (!stream)
 	{
 		return false;
 	}
-
-	if (MeleeTeam_deserialize(team, stream) == -1)
-	{
-		return false;
-	}
-
-	uio_fclose(stream);
-
-	return true;
+	return MeleeTeam_deserialize(team, *stream) != -1;
 }
 
 #if 0 /* Not used */
@@ -520,9 +510,9 @@ bool DoSaveTeam(MELEE_STATE* pMS)
 {
 	STAMP MsgStamp;
 	char file[NAME_MAX];
-	uio_Stream* stream;
 	GFXCONTEXT OldContext;
 	bool saveOk = false;
+	bool opened {false};
 
 	fmt::format_to_sz_n(file, "{}.mle",
 						MeleeSetup_getTeamName(pMS->meleeSetup, pMS->side));
@@ -531,17 +521,16 @@ bool DoSaveTeam(MELEE_STATE* pMS)
 	ConfirmSaveLoad(&MsgStamp);
 	// Show the "Saving . . ." message.
 
-	stream = uio_fopen(meleeDir, file, "wb");
-	if (stream != nullptr)
+	uqstl::error_code error {};
+	if (uqstl::optional<uqm::io::File> stream {meleeDir->open(file, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate, error)})
 	{
-		saveOk = (MeleeTeam_serialize(&pMS->meleeSetup->teams[pMS->side],
-									  stream)
-				  == 0);
-		uio_fclose(stream);
+		opened = true;
+		saveOk = MeleeTeam_serialize(&pMS->meleeSetup->teams[pMS->side], *stream) == 0 && stream->flush();
+		stream.reset();
 
 		if (!saveOk)
 		{
-			uio_unlink(meleeDir, file);
+			(void)meleeDir->remove(file);
 		}
 	}
 
@@ -563,7 +552,7 @@ bool DoSaveTeam(MELEE_STATE* pMS)
 	LoadTeamList(pMS);
 	SelectTeamByFileName(pMS, file);
 
-	return (stream != 0);
+	return opened;
 }
 
 static void

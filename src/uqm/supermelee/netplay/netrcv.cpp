@@ -93,9 +93,9 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 #ifdef NETPLAY_DEBUG_FILE
 	if (conn->debugFile != nullptr)
 	{
-		uio_fmt::print(conn->debugFile,
-					   "NETPLAY: [{}] <== Received packet of type {}.\n",
-					   NetConnection_getPlayerNr(conn), packetTypeData[type].name);
+		netplayDebugPrint(conn->debugFile,
+						  "NETPLAY: [{}] <== Received packet of type {}.\n",
+						  NetConnection_getPlayerNr(conn), packetTypeData[type].name);
 	}
 #endif /* NETPLAY_DEBUG_FILE */
 #endif /* NETPLAY_DEBUG */

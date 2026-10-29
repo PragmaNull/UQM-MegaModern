@@ -184,7 +184,7 @@ struct NetConnection
 	ChecksumBuffer checksumBuffer;
 #endif
 #if defined(NETPLAY_DEBUG) && defined(NETPLAY_DEBUG_FILE)
-	uio_Stream* debugFile;
+	uqgsl::owner<uqm::io::File*> debugFile;
 #endif
 
 	NetConnection_ConnectCallback connectCallback;
@@ -259,7 +259,18 @@ void* NetConnection_getResetCallbackArg(const NetConnection* conn);
 
 
 #if defined(NETPLAY_DEBUG) && defined(NETPLAY_DEBUG_FILE)
-extern uio_Stream* netplayDebugFile;
+extern uqm::io::File* netplayDebugFile;
+
+// Writes formatted text to a netplay debug file, if 'file' is not nullptr.
+template <typename... Args>
+void netplayDebugPrint(uqm::io::File* file, fmt::format_string<Args...> format, Args&&... args)
+{
+	if (file != nullptr)
+	{
+		const uqstl::string text {fmt::format(format, uqstl::forward<Args>(args)...)};
+		file->write(uqstl::as_bytes(uqstl::span {text}));
+	}
+}
 #endif
 
 #if 0 //defined(__cplusplus)

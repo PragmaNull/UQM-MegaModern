@@ -98,10 +98,10 @@ void queuePacket(NetConnection* conn, Packet* packet)
 #ifdef NETPLAY_DEBUG_FILE
 	if (conn->debugFile != nullptr)
 	{
-		uio_fmt::print(conn->debugFile,
-					   "NETPLAY: [{}] ==> Queueing packet of type {}.\n",
-					   NetConnection_getPlayerNr(conn),
-					   packetTypeData[packetType(packet)].name);
+		netplayDebugPrint(conn->debugFile,
+						  "NETPLAY: [{}] ==> Queueing packet of type {}.\n",
+						  NetConnection_getPlayerNr(conn),
+						  packetTypeData[packetType(packet)].name);
 	}
 #endif /* NETPLAY_DEBUG_FILE */
 #endif /* NETPLAY_DEBUG */
