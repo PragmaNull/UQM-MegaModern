@@ -17,6 +17,7 @@ install.bat [-c CONFIG] [--asan] [-p PROFILE]   :: conan install
 setup.bat   [-c CONFIG] [--asan]                :: cmake configure (Ninja)
 build.bat   [-c CONFIG] [--asan] [-t TARGET] [-j N] [--clean]
 test.bat    [-c CONFIG] [--build] [-R REGEX] [-j N]
+run.bat     [--build] [GAME ARGS...]           :: run the game with -n content
 ```
 
 - `CONFIG`: `Release` (default), `Debug`, `RelWithDebInfo`, `MinSizeRel`. All take `-B DIR` (default `conanbuild`).
