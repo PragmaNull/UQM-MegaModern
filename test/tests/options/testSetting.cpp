@@ -1,3 +1,4 @@
+// Tests for Setting<T> and SettingsRegistry.
 #include <gtest/gtest.h>
 
 #include "options/Setting.h"

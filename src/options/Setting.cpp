@@ -1,3 +1,4 @@
+// Persisted options (Setting<T>) and the registry that saves them as JSON.
 #include "Setting.h"
 
 #include "core/log/log.h"

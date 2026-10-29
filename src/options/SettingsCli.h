@@ -1,3 +1,4 @@
+// Command-line options generated from the settings registry.
 #pragma once
 #ifndef UQM_OPTIONS_SETTINGSCLI_H_
 #define UQM_OPTIONS_SETTINGSCLI_H_

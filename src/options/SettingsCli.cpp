@@ -1,3 +1,4 @@
+// Command-line options generated from the settings registry.
 #include "SettingsCli.h"
 
 #include "options/options.h"

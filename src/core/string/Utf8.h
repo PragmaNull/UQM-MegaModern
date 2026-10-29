@@ -1,3 +1,4 @@
+// UTF-8 validation, case conversion and Windows wide-string conversion.
 #pragma once
 #ifndef UQM_CORE_STRING_UTF8_H_
 #define UQM_CORE_STRING_UTF8_H_

@@ -1,3 +1,4 @@
+// UTF-8 validation, case conversion and Windows wide-string conversion.
 #include "Utf8.h"
 
 #include <utf8proc.h>

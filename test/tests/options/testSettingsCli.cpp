@@ -1,3 +1,4 @@
+// Tests for the command-line options generated from settings.
 #include <gtest/gtest.h>
 
 #include "options/SettingsCli.h"

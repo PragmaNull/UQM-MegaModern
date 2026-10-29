@@ -1,3 +1,4 @@
+// Tests for the UTF-8 helpers.
 #include <gtest/gtest.h>
 
 #include "core/string/Utf8.h"

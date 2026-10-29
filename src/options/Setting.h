@@ -1,3 +1,4 @@
+// Persisted options (Setting<T>) and the registry that saves them as JSON.
 #pragma once
 #ifndef UQM_OPTIONS_SETTING_H_
 #define UQM_OPTIONS_SETTING_H_
