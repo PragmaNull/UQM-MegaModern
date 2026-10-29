@@ -49,6 +49,8 @@ public:
 private:
 	static constexpr size_t c_bufferSize {4096};
 
+	// Returns false and sets the error if the file is closed.
+	bool checkOpen();
 	// Moves the stream to the position the reader sees, and drops the read buffer.
 	bool dropReadBuffer();
 	bool fillReadBuffer();

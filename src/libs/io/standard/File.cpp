@@ -24,9 +24,8 @@ void File::close()
 
 size_t File::read(uqstl::span<uqstl::byte> buffer)
 {
-	if (m_stream == nullptr)
+	if (!checkOpen())
 	{
-		m_error = uqstl::make_error_code(uqstl::errc::bad_file_descriptor);
 		return 0;
 	}
 
@@ -62,9 +61,8 @@ size_t File::read(uqstl::span<uqstl::byte> buffer)
 
 size_t File::write(uqstl::span<const uqstl::byte> buffer)
 {
-	if (m_stream == nullptr)
+	if (!checkOpen())
 	{
-		m_error = uqstl::make_error_code(uqstl::errc::bad_file_descriptor);
 		return 0;
 	}
 	if (!dropReadBuffer())
@@ -121,9 +119,8 @@ bool File::unget(size_t count)
 
 bool File::seek(int64_t offset, SeekFrom from)
 {
-	if (m_stream == nullptr)
+	if (!checkOpen())
 	{
-		m_error = uqstl::make_error_code(uqstl::errc::bad_file_descriptor);
 		return false;
 	}
 
@@ -167,9 +164,8 @@ uint64_t File::size()
 
 bool File::flush()
 {
-	if (m_stream == nullptr)
+	if (!checkOpen())
 	{
-		m_error = uqstl::make_error_code(uqstl::errc::bad_file_descriptor);
 		return false;
 	}
 	return dropReadBuffer() && m_stream->flush(m_error);
@@ -179,6 +175,16 @@ void File::clearError()
 {
 	m_error.clear();
 	m_eof = false;
+}
+
+bool File::checkOpen()
+{
+	if (m_stream == nullptr)
+	{
+		m_error = uqstl::make_error_code(uqstl::errc::bad_file_descriptor);
+		return false;
+	}
+	return true;
 }
 
 bool File::dropReadBuffer()

@@ -199,26 +199,22 @@ uqstl::unique_ptr<Stream> DirectorySource::open(uqstl::string_view path, OpenMod
 
 	if (exists && fs::is_directory(status))
 	{
-		error = uqstl::make_error_code(uqstl::errc::is_a_directory);
-		return nullptr;
+		return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::is_a_directory);
 	}
 	if (testAllBits(mode, OpenMode::Write))
 	{
 		if (exists && testAllBits(mode, OpenMode::Create | OpenMode::Exclusive))
 		{
-			error = uqstl::make_error_code(uqstl::errc::file_exists);
-			return nullptr;
+			return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::file_exists);
 		}
 		if (!exists && !testAllBits(mode, OpenMode::Create))
 		{
-			error = uqstl::make_error_code(uqstl::errc::no_such_file_or_directory);
-			return nullptr;
+			return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::no_such_file_or_directory);
 		}
 	}
 	else if (!exists)
 	{
-		error = uqstl::make_error_code(uqstl::errc::no_such_file_or_directory);
-		return nullptr;
+		return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::no_such_file_or_directory);
 	}
 
 	if (exists && testAllBits(mode, OpenMode::Write | OpenMode::Append | OpenMode::Truncate))

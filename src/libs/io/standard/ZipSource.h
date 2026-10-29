@@ -34,6 +34,8 @@ private:
 	bool readCentralDirectory(uqstl::error_code& error);
 	void addEntry(uqstl::string name, bool isDirectory, const Entry& entry);
 	void addDirectory(const uqstl::string& name);
+	// Adds 'name' to the list of its parent directory, which is created if needed. Returns false if the parent is a file.
+	bool linkToParent(const uqstl::string& name);
 
 	uqstl::shared_ptr<const MountSource> m_archive {};
 	uqstl::string m_path {};

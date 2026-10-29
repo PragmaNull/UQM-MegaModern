@@ -132,35 +132,33 @@ public:
 	ZipEntryStream(uqstl::unique_ptr<Stream> archive, uint64_t dataOffset, const ZipSource::Entry& entry)
 		: m_archive {uqstl::move(archive)}
 		, m_dataOffset {dataOffset}
-		, m_compressedSize {entry.compressedSize}
-		, m_size {entry.size}
-		, m_deflated {entry.deflated}
+		, m_entry {entry}
 	{
-		if (m_deflated)
+		if (m_entry.deflated)
 		{
 			m_inflater = uqstl::make_unique<ZStream>();
 			m_input.resize(c_inputBufferSize);
 		}
 	}
 
-	[[nodiscard]] bool valid() const { return !m_deflated || m_inflater->valid(); }
+	[[nodiscard]] bool valid() const { return !m_entry.deflated || m_inflater->valid(); }
 
 	size_t read(uqstl::span<uqstl::byte> buffer, uqstl::error_code& error) override
 	{
-		const size_t count {static_cast<size_t>(uqstl::min<uint64_t>(buffer.size(), m_size - m_position))};
+		const size_t count {static_cast<size_t>(uqstl::min<uint64_t>(buffer.size(), m_entry.size - m_position))};
 		if (count == 0)
 		{
 			return 0;
 		}
-		const size_t done {m_deflated ? readDeflated(buffer.first(count), error) : readStored(buffer.first(count), error)};
+		const size_t done {m_entry.deflated ? readDeflated(buffer.first(count), error) : readStored(buffer.first(count), error)};
 		m_position += done;
 		return done;
 	}
 
 	bool seek(uint64_t position, uqstl::error_code& error) override
 	{
-		position = uqstl::min(position, m_size);
-		if (!m_deflated)
+		position = uqstl::min(position, m_entry.size);
+		if (!m_entry.deflated)
 		{
 			m_position = position;
 			return true;
@@ -190,7 +188,7 @@ public:
 	}
 
 	[[nodiscard]] uint64_t tell() const override { return m_position; }
-	[[nodiscard]] uint64_t size() override { return m_size; }
+	[[nodiscard]] uint64_t size() override { return m_entry.size; }
 
 private:
 	size_t readStored(uqstl::span<uqstl::byte> buffer, uqstl::error_code& error)
@@ -211,7 +209,7 @@ private:
 		{
 			if (stream.avail_in == 0)
 			{
-				const size_t chunk {static_cast<size_t>(uqstl::min<uint64_t>(m_input.size(), m_compressedSize - m_compressedRead))};
+				const size_t chunk {static_cast<size_t>(uqstl::min<uint64_t>(m_input.size(), m_entry.compressedSize - m_compressedRead))};
 				if (chunk == 0)
 				{
 					error = badArchive();
@@ -242,9 +240,7 @@ private:
 
 	uqstl::unique_ptr<Stream> m_archive {};
 	uint64_t m_dataOffset {0};
-	uint64_t m_compressedSize {0};
-	uint64_t m_size {0};
-	bool m_deflated {false};
+	ZipSource::Entry m_entry {};
 	uint64_t m_position {0};
 	uint64_t m_compressedRead {0};
 	uqstl::unique_ptr<ZStream> m_inflater {};
@@ -390,14 +386,10 @@ void ZipSource::addEntry(uqstl::string name, bool isDirectory, const Entry& entr
 		uqm::log::warn("Zip entry '{}' is a duplicate; skipped.", name);
 		return;
 	}
-	const uqstl::string parent {path::parent(name)};
-	addDirectory(parent);
-	if (!m_directories.contains(parent))
+	if (linkToParent(name))
 	{
-		return;
+		m_files.emplace(uqstl::move(name), entry);
 	}
-	m_directories[parent].emplace_back(path::fileName(name));
-	m_files.emplace(uqstl::move(name), entry);
 }
 
 void ZipSource::addDirectory(const uqstl::string& name)
@@ -411,14 +403,23 @@ void ZipSource::addDirectory(const uqstl::string& name)
 		uqm::log::warn("Zip entry '{}' is a file and a directory; skipped.", name);
 		return;
 	}
+	if (linkToParent(name))
+	{
+		m_directories.emplace(name, uqstl::vector<uqstl::string> {});
+	}
+}
+
+bool ZipSource::linkToParent(const uqstl::string& name)
+{
 	const uqstl::string parent {path::parent(name)};
 	addDirectory(parent);
-	if (!m_directories.contains(parent))
+	const auto directory {m_directories.find(parent)};
+	if (directory == m_directories.end())
 	{
-		return;
+		return false;
 	}
-	m_directories[parent].emplace_back(path::fileName(name));
-	m_directories.emplace(name, uqstl::vector<uqstl::string> {});
+	directory->second.emplace_back(path::fileName(name));
+	return true;
 }
 
 uqstl::optional<FileInfo> ZipSource::stat(uqstl::string_view path) const
@@ -440,8 +441,7 @@ uqstl::vector<uqstl::string> ZipSource::list(uqstl::string_view path, uqstl::err
 	const auto directory {m_directories.find(path)};
 	if (directory == m_directories.end())
 	{
-		error = uqstl::make_error_code(m_files.contains(path) ? uqstl::errc::not_a_directory : uqstl::errc::no_such_file_or_directory);
-		return {};
+		return fail<uqstl::vector<uqstl::string>>(error, m_files.contains(path) ? uqstl::errc::not_a_directory : uqstl::errc::no_such_file_or_directory);
 	}
 	return directory->second;
 }
@@ -450,14 +450,12 @@ uqstl::unique_ptr<Stream> ZipSource::open(uqstl::string_view path, OpenMode mode
 {
 	if (testAllBits(mode, OpenMode::Write))
 	{
-		error = uqstl::make_error_code(uqstl::errc::read_only_file_system);
-		return nullptr;
+		return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::read_only_file_system);
 	}
 	const auto file {m_files.find(path)};
 	if (file == m_files.end())
 	{
-		error = uqstl::make_error_code(m_directories.contains(path) ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
-		return nullptr;
+		return fail<uqstl::unique_ptr<Stream>>(error, m_directories.contains(path) ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
 	}
 	const Entry& entry {file->second};
 
@@ -481,8 +479,7 @@ uqstl::unique_ptr<Stream> ZipSource::open(uqstl::string_view path, OpenMode mode
 	auto stream {uqstl::make_unique<ZipEntryStream>(uqstl::move(archive), dataOffset, entry)};
 	if (!stream->valid())
 	{
-		error = uqstl::make_error_code(uqstl::errc::not_enough_memory);
-		return nullptr;
+		return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::not_enough_memory);
 	}
 	return stream;
 }

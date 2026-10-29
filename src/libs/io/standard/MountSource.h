@@ -39,6 +39,14 @@ public:
 	virtual uqstl::error_code rename(uqstl::string_view from, uqstl::string_view to) const;
 };
 
+// Sets 'error' to 'code' and returns 'result'.
+template <typename T>
+T fail(uqstl::error_code& error, uqstl::errc code, T result = T {})
+{
+	error = uqstl::make_error_code(code);
+	return result;
+}
+
 inline uqstl::error_code MountSource::makeDir(uqstl::string_view /*path*/) const
 {
 	return uqstl::make_error_code(uqstl::errc::read_only_file_system);

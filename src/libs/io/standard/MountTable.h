@@ -37,6 +37,17 @@ private:
 		uqstl::shared_ptr<const MountSource> source {};
 		uqstl::string sourcePath {};
 		Access access {Access::ReadOnly};
+
+		// Returns the path in the source for 'path', which must be within the mount point.
+		[[nodiscard]] uqstl::string sourcePathFor(uqstl::string_view path) const;
+		[[nodiscard]] bool isWritable() const { return access == Access::ReadWrite; }
+	};
+
+	// A mount to create an entry in, and the path in its source.
+	struct WriteTarget
+	{
+		const MountEntry* mount {};
+		uqstl::string sourcePath {};
 	};
 
 	// An entry that one mount has.
@@ -54,6 +65,9 @@ private:
 	// Returns the index of the highest writable mount above 'below' that has 'path'.
 	[[nodiscard]] uqstl::optional<size_t> writableMountLocked(const uqstl::string& path, size_t below) const;
 	uqstl::error_code makeParentsLocked(const MountEntry& mount, uqstl::string_view sourcePath) const;
+	// Finds the highest writable mount above 'below' that has 'path', and creates the parent directories in it.
+	// Returns nullopt and sets 'error', to 'noMount' if there is no such mount.
+	[[nodiscard]] uqstl::optional<WriteTarget> writeTargetLocked(const uqstl::string& path, size_t below, uqstl::errc noMount, uqstl::error_code& error) const;
 	[[nodiscard]] uqstl::optional<Mount> insertLocked(uqstl::vector<MountEntry> entries, MountPosition position, const Mount* relative, uqstl::error_code& error);
 
 	mutable uqstl::shared_mutex m_mutex {};
