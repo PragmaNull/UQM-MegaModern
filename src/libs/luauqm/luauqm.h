@@ -22,7 +22,7 @@
 typedef struct luaUqm_EnumValue luaUqm_EnumValue;
 
 #include "libs/compiler.h"
-#include "libs/uio.h"
+#include "libs/io/FileSystem.h"
 
 #include "scriptres.h"
 
@@ -36,11 +36,11 @@ void luaUqm_init(void);
 void luaUqm_uninit(void);
 
 void luaUqm_prepareEnvironment(lua_State* luaState);
-bool luaUqm_loadScript(lua_State* luaState, uio_DirHandle* dir,
+bool luaUqm_loadScript(lua_State* luaState, const uqm::io::Directory& dir,
 					   const char* fileName);
-bool luaUqm_runScript(lua_State* luaState, uio_DirHandle* dir,
+bool luaUqm_runScript(lua_State* luaState, const uqm::io::Directory& dir,
 					  const char* fileName);
-void luaUqm_runLuaDir(lua_State* luaState, uio_DirHandle* dirHandle,
+void luaUqm_runLuaDir(lua_State* luaState, const uqm::io::Directory& dir,
 					  const char* luaDirName);
 
 void luaUqm_loadLib(lua_State* luaState, const luaL_Reg* lib);

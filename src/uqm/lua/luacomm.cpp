@@ -80,7 +80,7 @@ bool luaUqm_comm_init(const luaUqm_custom_Function* customFuncs,
 		}
 
 		// Load the script.
-		loadOk = luaUqm_loadScript(luaUqm_commState, contentDir,
+		loadOk = luaUqm_loadScript(luaUqm_commState, *contentDir,
 								   scriptFileName);
 		ReleaseScriptResData(scriptFileName);
 		if (!loadOk)
@@ -229,7 +229,7 @@ char* luaUqm_comm_stringInterpolate(const char* str)
 			char* exprBuf = (char*)HMalloc(exprBufSize);
 			// 'sizeof LUAEXPR_START' includes a null byte
 			char* exprBufPtr = exprBuf;
-			uqm::strncpy_safe({exprBuf, exprBufSize}, {LUAEXPR_START, sizeof(LUAEXPR_START)});			
+			uqm::strncpy_safe({exprBuf, exprBufSize}, {LUAEXPR_START, sizeof(LUAEXPR_START)});
 			exprBufPtr += sizeof LUAEXPR_START - 1;
 			memcpy(exprBufPtr, luaStart, exprLen);
 			exprBufPtr += exprLen;

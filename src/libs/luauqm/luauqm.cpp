@@ -85,7 +85,7 @@ void luaUqm_uninit(void)
 typedef struct
 {
 	const char* fileName;
-	uio_Stream* in;
+	uqm::io::File* in;
 	char* buf;
 } luaUqm_ReaderState;
 
@@ -94,9 +94,8 @@ luaUqm_reader(lua_State* luaState, void* data, size_t* size)
 {
 	luaUqm_ReaderState* readerState = (luaUqm_ReaderState*)data;
 
-	size_t numRead = uio_fread(readerState->buf, 1, LOADSCRIPT_BUFSIZE,
-							   readerState->in);
-	if (numRead == (size_t)-1)
+	const size_t numRead {readerState->in->read(uqstl::as_writable_bytes(uqstl::span {readerState->buf, LOADSCRIPT_BUFSIZE}))};
+	if (numRead == 0 && readerState->in->error())
 	{
 		uqm::log::error("luaUqm_loadScript(): Read error readin "
 						"script file '{}'.",
@@ -121,63 +120,36 @@ void luaUqm_prepareEnvironment(lua_State* luaState)
 
 // On success, the script is on the stack as a function.
 // Returns true on success, and false on error.
-bool luaUqm_loadScript(lua_State* luaState, uio_DirHandle* dir,
+bool luaUqm_loadScript(lua_State* luaState, const uqm::io::Directory& dir,
 					   const char* fileName)
 {
-	uio_Stream* in = nullptr;
-	char* buf = nullptr;
-	luaUqm_ReaderState readerState;
-
 	uqm::log::debug("Loading script '{}'.", fileName);
 
-	in = uio_fopen(dir, fileName, "rt");
-	if (in == nullptr)
+	uqstl::error_code error {};
+	uqstl::optional<uqm::io::File> in {dir.open(fileName, uqm::io::OpenMode::Read | uqm::io::OpenMode::Text, error)};
+	if (!in)
 	{
 		uqm::log::error("luaUqm_loadScript(): Unable to open script file "
 						"'{}' for reading.",
 						fileName);
-		goto err;
+		return false;
 	}
 
-	buf = (char*)malloc(LOADSCRIPT_BUFSIZE);
-	if (buf == nullptr)
-	{
-		goto err;
-	}
-
-	readerState.fileName = fileName;
-	readerState.in = in;
-	readerState.buf = buf;
-
+	uqstl::vector<char> buf(LOADSCRIPT_BUFSIZE);
+	luaUqm_ReaderState readerState {fileName, &*in, buf.data()};
 	if (lua_load(luaState, luaUqm_reader, (void*)&readerState, nullptr, nullptr)
 		!= LUA_OK)
 	{
 		uqm::log::error("luaUqm_loadScript(): lua_load() failed: {}",
 						lua_tostring(luaState, -1));
 		lua_pop(luaState, 1);
-		goto err;
+		return false;
 	}
-
-	free(buf);
-	uio_fclose(in);
 	return true;
-
-err:
-	if (buf != nullptr)
-	{
-		free(buf);
-	}
-
-	if (in != nullptr)
-	{
-		uio_fclose(in);
-	}
-
-	return false;
 }
 
 // Load a script from file and run it.
-bool luaUqm_runScript(lua_State* luaState, uio_DirHandle* dir,
+bool luaUqm_runScript(lua_State* luaState, const uqm::io::Directory& dir,
 					  const char* fileName)
 {
 	if (!luaUqm_loadScript(luaState, dir, fileName))
@@ -192,51 +164,33 @@ bool luaUqm_runScript(lua_State* luaState, uio_DirHandle* dir,
 // Run all Lua scripts in a directory.
 // Currently, all scripts are run in the same environment.
 // Maybe we do not want this.
-void luaUqm_runLuaDir(lua_State* luaState, uio_DirHandle* dirHandle,
+void luaUqm_runLuaDir(lua_State* luaState, const uqm::io::Directory& dir,
 					  const char* luaDirName)
 {
-	uio_DirHandle* luaDir = nullptr;
-	uio_DirList* luaFiles = nullptr;
-	int fileI;
-
-	luaDir = uio_openDirRelative(dirHandle, luaDirName, 0);
-	if (luaDir == nullptr)
+	const uqstl::optional<uqm::io::Directory> luaDir {dir.subdir(luaDirName)};
+	if (!luaDir)
 	{
 		uqm::log::warn("Warning: Could not open Lua script directory "
 					   "'{}'.",
 					   luaDirName);
-		goto err;
+		return;
 	}
 
-	luaFiles = uio_getDirList(luaDir, "", ".lua", match_MATCH_SUFFIX);
-	if (luaFiles == nullptr)
+	uqstl::error_code error {};
+	const uqstl::vector<uqstl::string> luaFiles {luaDir->list("", *uqm::io::Matcher::create(uqm::io::Matcher::Kind::Suffix, ".lua"), error)};
+	if (error)
 	{
 		uqm::log::warn("Warning: Could not read Lua script directory "
 					   "'{}'.",
 					   luaDirName);
-		goto err;
+		return;
 	}
 
 	uqm::log::debug("Script directory '{}': loading {} file(s).",
-					luaDirName, luaFiles->numNames);
-	for (fileI = 0; fileI < luaFiles->numNames; fileI++)
+					luaDirName, luaFiles.size());
+	for (const uqstl::string& fileName : luaFiles)
 	{
-		const char* fileName = luaFiles->names[fileI];
-		luaUqm_runScript(luaState, luaDir, fileName);
-	}
-
-	uio_DirList_free(luaFiles);
-	uio_closeDir(luaDir);
-	return;
-
-err:
-	if (luaFiles != nullptr)
-	{
-		uio_DirList_free(luaFiles);
-	}
-	if (luaDir != nullptr)
-	{
-		uio_closeDir(luaDir);
+		luaUqm_runScript(luaState, *luaDir, fileName.c_str());
 	}
 }
 

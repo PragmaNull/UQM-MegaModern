@@ -23,7 +23,6 @@
 #include "dukvid.h"
 #include <stdio.h>
 #include <string.h>
-#include "libs/uio.h"
 #include "libs/memlib.h"
 #include "endian_uqm.h"
 #include "uqm/units.h"
@@ -38,7 +37,7 @@ static uint32_t dukv_GetStructSize(void);
 static int dukv_GetError(THIS_PTR);
 static bool dukv_Init(THIS_PTR, TFB_PixelFormat* fmt);
 static void dukv_Term(THIS_PTR);
-static bool dukv_Open(THIS_PTR, uio_DirHandle* dir, const char* filename);
+static bool dukv_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
 static void dukv_Close(THIS_PTR);
 static int dukv_DecodeNext(THIS_PTR);
 static uint32_t dukv_SeekFrame(THIS_PTR, uint32_t frame);
@@ -93,9 +92,10 @@ typedef struct tfb_duckvideodecoder
 	TFB_VideoDecoder decoder;
 
 	int32_t last_error;
-	uio_DirHandle* basedir;
+	// Set while dukv_Open runs.
+	const uqm::io::Directory* basedir;
 	char* basename;
-	uio_Stream* stream;
+	uqgsl::owner<uqm::io::File*> stream;
 
 	// loaded from disk
 	uint32_t* frames;
@@ -289,9 +289,13 @@ dukv_OpenStream(TFB_DuckVideoDecoder* dukv)
 	char filename[280] {};
 	fmt::format_to_sz_n(filename, "{}.duk", dukv->basename);
 
-	return (dukv->stream =
-				uio_fopen(dukv->basedir, filename, "rb"))
-		!= nullptr;
+	uqstl::optional<uqm::io::File> stream {res_OpenResFile(*dukv->basedir, filename, uqm::io::OpenMode::Read)};
+	if (!stream)
+	{
+		return false;
+	}
+	dukv->stream = new uqm::io::File {uqstl::move(*stream)};
+	return true;
 }
 
 static bool
@@ -299,30 +303,28 @@ dukv_ReadFrames(TFB_DuckVideoDecoder* dukv)
 {
 	char filename[280] {};
 	uint32_t i;
-	uio_Stream* fp;
+	uqstl::optional<uqm::io::File> fp {};
 
 	fmt::format_to_sz_n(filename, "{}.frm", dukv->basename);
 
-	if (!(fp = uio_fopen(dukv->basedir, filename, "rb")))
+	if (!(fp = res_OpenResFile(*dukv->basedir, filename, uqm::io::OpenMode::Read)))
 	{
 		return false;
 	}
 
 	// get number of frames
-	uio_fseek(fp, 0, SEEK_END);
-	dukv->cframes = uio_ftell(fp) / sizeof(uint32_t);
-	uio_fseek(fp, 0, SEEK_SET);
+	SeekResFile(*fp, 0, SEEK_END);
+	dukv->cframes = TellResFile(*fp) / sizeof(uint32_t);
+	SeekResFile(*fp, 0, SEEK_SET);
 	dukv->frames = (uint32_t*)HMalloc(dukv->cframes * sizeof(uint32_t));
 
-	if (uio_fread(dukv->frames, sizeof(uint32_t), dukv->cframes,
-				  fp)
-		!= dukv->cframes)
+	if (ReadResFile(dukv->frames, sizeof(uint32_t), dukv->cframes, *fp) != dukv->cframes)
 	{
 		HFree(dukv->frames);
 		dukv->frames = 0;
 		return 0;
 	}
-	uio_fclose(fp);
+	fp.reset();
 
 	for (i = 0; i < dukv->cframes; ++i)
 	{
@@ -335,19 +337,19 @@ dukv_ReadFrames(TFB_DuckVideoDecoder* dukv)
 static bool
 dukv_ReadVectors(TFB_DuckVideoDecoder* dukv, uint8_t* vectors)
 {
-	uio_Stream* fp;
+	uqstl::optional<uqm::io::File> fp {};
 	char filename[280] {};
 	int ret;
 
 	fmt::format_to_sz_n(filename, "{}.tbl", dukv->basename);
 
-	if (!(fp = uio_fopen(dukv->basedir, filename, "rb")))
+	if (!(fp = res_OpenResFile(*dukv->basedir, filename, uqm::io::OpenMode::Read)))
 	{
 		return false;
 	}
 
-	ret = uio_fread(vectors, NUM_VEC_ITEMS, NUM_VECTORS, fp);
-	uio_fclose(fp);
+	ret = ReadResFile(vectors, NUM_VEC_ITEMS, NUM_VECTORS, *fp);
+	fp.reset();
 
 	return ret == NUM_VECTORS;
 }
@@ -355,7 +357,7 @@ dukv_ReadVectors(TFB_DuckVideoDecoder* dukv, uint8_t* vectors)
 static bool
 dukv_ReadHeader(TFB_DuckVideoDecoder* dukv, int32_t* pl, int32_t* pc)
 {
-	uio_Stream* fp;
+	uqstl::optional<uqm::io::File> fp {};
 	char filename[280] {};
 	int ret;
 	int i;
@@ -363,13 +365,13 @@ dukv_ReadHeader(TFB_DuckVideoDecoder* dukv, int32_t* pl, int32_t* pc)
 
 	fmt::format_to_sz_n(filename, "{}.hdr", dukv->basename);
 
-	if (!(fp = uio_fopen(dukv->basedir, filename, "rb")))
+	if (!(fp = res_OpenResFile(*dukv->basedir, filename, uqm::io::OpenMode::Read)))
 	{
 		return false;
 	}
 
-	ret = uio_fread(&hdr, sizeof(hdr), 1, fp);
-	uio_fclose(fp);
+	ret = ReadResFile(&hdr, sizeof(hdr), 1, *fp);
+	fp.reset();
 	if (!ret)
 	{
 		return false;
@@ -644,14 +646,14 @@ dukv_Term(THIS_PTR)
 }
 
 static bool
-dukv_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
+dukv_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*)This;
 	char* pext;
 	int32_t lumas[8], chromas[8];
 	uint8_t* vectors;
 
-	dukv->basedir = dir;
+	dukv->basedir = &dir;
 	const uint32_t filenameLen = strlen(filename);
 	dukv->basename = (char*)HMalloc(filenameLen + 1);
 	uqm::strncpy_safe({dukv->basename, filenameLen + 1}, {filename, filenameLen});
@@ -671,11 +673,13 @@ dukv_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
 		HFree(vectors);
 		dukv_Close(This);
 		dukv->last_error = dukve_BadFile;
+		dukv->basedir = nullptr;
 		return false;
 	}
 
 	dukv_InitDeltas(dukv, vectors, lumas, chromas);
 	HFree(vectors);
+	dukv->basedir = nullptr;
 
 	This->length = (float)dukv->cframes / DUCK_GENERAL_FPS;
 	This->frame_count = dukv->cframes;
@@ -705,7 +709,7 @@ dukv_Close(THIS_PTR)
 	}
 	if (dukv->stream)
 	{
-		uio_fclose(dukv->stream);
+		delete dukv->stream;
 		dukv->stream = nullptr;
 	}
 	if (dukv->inbuf)
@@ -734,8 +738,8 @@ dukv_DecodeNext(THIS_PTR)
 		return 0;
 	}
 
-	uio_fseek(dukv->stream, dukv->frames[dukv->iframe], SEEK_SET);
-	if (uio_fread(&fh, sizeof(fh), 1, dukv->stream) != 1)
+	SeekResFile(*dukv->stream, dukv->frames[dukv->iframe], SEEK_SET);
+	if (ReadResFile(&fh, sizeof(fh), 1, *dukv->stream) != 1)
 	{
 		dukv->last_error = dukve_EOF;
 		return 0;
@@ -749,8 +753,8 @@ dukv_DecodeNext(THIS_PTR)
 		return -1;
 	}
 
-	uio_fseek(dukv->stream, vofs, SEEK_CUR);
-	if (uio_fread(dukv->inbuf, 1, vsize, dukv->stream) != vsize)
+	SeekResFile(*dukv->stream, vofs, SEEK_CUR);
+	if (ReadResFile(dukv->inbuf, 1, vsize, *dukv->stream) != vsize)
 	{
 		dukv->last_error = dukve_EOF;
 		return 0;

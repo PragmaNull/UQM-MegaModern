@@ -179,7 +179,7 @@ _init_video_file(const char* pStr)
 	TFB_VideoClip* vid;
 	TFB_VideoDecoder* dec;
 
-	dec = VideoDecoder_Load(contentDir, pStr);
+	dec = VideoDecoder_Load(*contentDir, pStr);
 	if (!dec)
 	{
 		return NULL_VIDEO_REF;

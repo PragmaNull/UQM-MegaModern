@@ -814,7 +814,7 @@ void RebindInputState(int templat, int control, int index)
 	res_PutString(keybuf, valbuf);
 }
 
-void SaveKeyConfiguration(uio_DirHandle* path)
+void SaveKeyConfiguration(const uqm::io::Directory& path)
 {
 	uqstl::vector<uqm::KeyTemplate> templates(static_cast<size_t>(num_templ));
 	char key[40] {};
@@ -841,7 +841,7 @@ void SaveKeyConfiguration(uio_DirHandle* path)
 		}
 	}
 
-	if (!uqm::writeTextFile(*path, c_keyConfigFile, uqm::keyConfigToJson(templates, flightControlNames())))
+	if (!uqm::writeTextFile(path, c_keyConfigFile, uqm::keyConfigToJson(templates, flightControlNames())))
 	{
 		uqm::log::error("Could not write {}.", c_keyConfigFile);
 	}

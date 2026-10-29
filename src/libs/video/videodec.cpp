@@ -219,7 +219,7 @@ VideoDecoder_Lookup(const char* fileext)
 }
 
 TFB_VideoDecoder*
-VideoDecoder_Load(uio_DirHandle* dir, const char* filename)
+VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 {
 	const char* pext;
 	TFB_RegVideoDecoder* info;
@@ -260,7 +260,6 @@ VideoDecoder_Load(uio_DirHandle* dir, const char* filename)
 		return nullptr;
 	}
 
-	decoder->dir = dir;
 	const uint32_t filenameLen = strlen(filename);
 	decoder->filename = (char*)HMalloc(filenameLen + 1);
 	uqm::strncpy_safe({decoder->filename, filenameLen + 1}, {filename, filenameLen});

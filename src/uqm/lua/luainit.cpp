@@ -59,6 +59,6 @@ void luaUqm_runInitScripts(void)
 	}
 	else
 	{
-		luaUqm_runLuaDir(luaUqm_globalState, contentDir, scriptDir);
+		luaUqm_runLuaDir(luaUqm_globalState, *contentDir, scriptDir);
 	}
 }

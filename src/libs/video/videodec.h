@@ -35,7 +35,7 @@ typedef struct tfb_videodecoderfunc
 	int (*GetError)(THIS_PTR);
 	bool (*Init)(THIS_PTR, TFB_PixelFormat* fmt);
 	void (*Term)(THIS_PTR);
-	bool (*Open)(THIS_PTR, uio_DirHandle* dir, const char* filename);
+	bool (*Open)(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
 	void (*Close)(THIS_PTR);
 	int (*DecodeNext)(THIS_PTR);
 	uint32_t (*SeekFrame)(THIS_PTR, uint32_t frame);
@@ -88,7 +88,6 @@ struct tfb_videodecoder
 	uint32_t cur_frame;
 
 	// semi-private
-	uio_DirHandle* dir;
 	char* filename;
 };
 
@@ -110,7 +109,7 @@ const TFB_VideoDecoderFuncs* VideoDecoder_Lookup(const char* fileext);
 bool VideoDecoder_Init(int flags, int depth, uint32_t Rmask, uint32_t Gmask,
 					   uint32_t Bmask, uint32_t Amask);
 void VideoDecoder_Uninit(void);
-TFB_VideoDecoder* VideoDecoder_Load(uio_DirHandle* dir,
+TFB_VideoDecoder* VideoDecoder_Load(const uqm::io::Directory& dir,
 									const char* filename);
 int VideoDecoder_Decode(TFB_VideoDecoder* decoder);
 float VideoDecoder_Seek(TFB_VideoDecoder* decoder, float time_pos);

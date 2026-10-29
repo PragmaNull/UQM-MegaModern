@@ -1012,7 +1012,7 @@ apply_settings(void)
 	res_PutString("keys.6.name", uqm::input_templates[5].name);
 
 	uqm::saveUserSettings(uqmOptions);
-	SaveKeyConfiguration(configDir);
+	SaveKeyConfiguration(*configDir);
 
 	if (optRequiresReload)
 	{
