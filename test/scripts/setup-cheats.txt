@@ -1,0 +1,39 @@
+# Changes Setup > Cheats > God Modes and Time Dilation, opens the Devices submenu, and saves.
+# Expect "godModes": "All" and "timeDilation": 110 in settings.json when starting from defaults.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+# Cheats is the ninth item.
+down 8
+select
+wait 1500
+log cheats menu
+dumpmenu
+# Devices, Upgrades, Kohr-Stahp, DeCleansing, God Modes.
+down 4
+right 3
+select
+down
+right
+log cheats after changes
+dumpmenu
+# Open the Devices submenu and come back.
+up 5
+select
+wait 1500
+log devices menu
+dumpmenu
+cancel
+wait 1000
+log after leaving devices
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 3000
+quit

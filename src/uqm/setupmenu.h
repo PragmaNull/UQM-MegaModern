@@ -413,19 +413,17 @@ typedef struct globalopts_struct
 	OPT_DRIVERTYPE driver;
 	OPT_ADRIVERTYPE adriver;
 	OPT_AQUALITYTYPE aquality;
-	OPT_GODTYPE godModes;
 	OPT_MELEEZOOM meleezoom;
 	uqm::ControllerType controllerType;
 	OPT_WINDOWTYPE windowType;
 	OPT_SEED seedType;
 	OPT_ADD_REMOVE deviceArray[28], upgradeArray[NUM_UPGRADES];
-	OPT_ENABLABLE scanlines, fps, stereo, keepaspect, cheatMode, godMode, bubbleWarp, unlockShips, headStart, unlockUpgrades, infiniteRU, infiniteFuel, infiniteCredits, directionalJoystick, noHQEncounters, deCleansing, meleeObstacles;
+	OPT_ENABLABLE scanlines, fps, stereo, keepaspect, godMode, unlockUpgrades, directionalJoystick;
 	OPT_FULLSCREEN fullscreen;
 	OPT_CONSOLETYPE landerHold, cscan;
 	ControlTemplate player1, player2;
 	int speechvol, musicvol, sfxvol;
 	int gamma;
-	int timeDilationPct;
 } GLOBALOPTS;
 
 void SetupMenu(void);

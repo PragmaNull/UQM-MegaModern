@@ -276,24 +276,8 @@ static WIDGET* audio_widgets[] = {
 // Built from the menu definition file.
 static WIDGET* music_widgets[] = {nullptr};
 
-static WIDGET* cheat_widgets[] = {
-	(WIDGET*)(&buttons[BTN_DEVMENU]),		  // Devices Menu
-	(WIDGET*)(&buttons[BTN_UPGMENU]),		  // Upgrades Menu
-	(WIDGET*)(&choices[CHOICE_CHEATING]),	  // JMS: cheatMode on/off
-	(WIDGET*)(&choices[CHOICE_CHDECLEAN]),	  // Kohr-Ah DeCleansing mode
-	(WIDGET*)(&choices[CHOICE_CHGODMODE]),	  // Precursor Mode
-	(WIDGET*)(&sliders[SLIDER_TIMEDILATION]), // Time Dilation
-	(WIDGET*)(&choices[CHOICE_CHWARP]),		  // Bubble Warp
-	(WIDGET*)(&choices[CHOICE_CHHEADSTART]),  // Head Start
-	(WIDGET*)(&choices[CHOICE_CHSHIPS]),	  // Unlock Ships
-											  //	(WIDGET *)(&choices[CHOICE_CHUPGRADES  ]), // Unlock Upgrades
-	(WIDGET*)(&choices[CHOICE_CHINFRU]),	  // Infinite RU
-	(WIDGET*)(&choices[CHOICE_CHINFFUEL]),	  // Infinite Fuel
-	(WIDGET*)(&choices[CHOICE_CHINFCRD]),	  // Infinite Credits
-	(WIDGET*)(&choices[CHOICE_CHCLEANHYPER]), // No HyperSpace Encounters
-	(WIDGET*)(&choices[CHOICE_CHNOPLANET]),	  // No Planets in melee
-	(WIDGET*)(&buttons[BTN_QUITSUBMENU]),	  // Exit to Menu
-	nullptr};
+// Built from the menu definition file.
+static WIDGET* cheat_widgets[] = {nullptr};
 
 static WIDGET* keyconfig_widgets[] = {
 
@@ -1109,16 +1093,8 @@ SetDefaults(void)
 	choices[CHOICE_TOPPLAYER].selected = static_cast<int>(opts.player2);
 	choices[CHOICE_KBLAYOUT].selected = 0;
 	choices[CHOICE_ASPRATIO].selected = opts.keepaspect;
-	choices[CHOICE_CHEATING].selected = opts.cheatMode;
-	choices[CHOICE_CHGODMODE].selected = opts.godModes;
-	choices[CHOICE_CHWARP].selected = opts.bubbleWarp;
-	choices[CHOICE_CHSHIPS].selected = opts.unlockShips;
-	choices[CHOICE_CHHEADSTART].selected = opts.headStart;
 	//	choices[CHOICE_CHUPGRADES   ].selected = opts.unlockUpgrades;
-	choices[CHOICE_CHINFRU].selected = opts.infiniteRU;
-	choices[CHOICE_CHINFFUEL].selected = opts.infiniteFuel;
 	choices[CHOICE_RESOLUTION].selected = opts.loresBlowup;
-	choices[CHOICE_CHINFCRD].selected = opts.infiniteCredits;
 #ifdef DIRECTIONAL_JOY
 	choices[CHOICE_JOYSTICK].selected = opts.directionalJoystick;
 #endif
@@ -1127,9 +1103,6 @@ SetDefaults(void)
 #endif
 	choices[CHOICE_LANDERHOLD].selected = static_cast<int>(opts.landerHold);
 	choices[CHOICE_INPDEVICE].selected = static_cast<int>(opts.controllerType);
-	choices[CHOICE_CHCLEANHYPER].selected = opts.noHQEncounters;
-	choices[CHOICE_CHDECLEAN].selected = opts.deCleansing;
-	choices[CHOICE_CHNOPLANET].selected = opts.meleeObstacles;
 	choices[CHOICE_WINDOWTYPE].selected = opts.windowType;
 	choices[CHOICE_GAMESEED].selected = opts.seedType;
 
@@ -1152,7 +1125,6 @@ SetDefaults(void)
 	sliders[SLIDER_SFXVOLUME].value = opts.sfxvol;
 	sliders[SLIDER_SPCHVOLUME].value = opts.speechvol;
 	sliders[SLIDER_GAMMA].value = opts.gamma;
-	sliders[SLIDER_TIMEDILATION].value = opts.timeDilationPct;
 }
 
 static void
@@ -1179,16 +1151,8 @@ PropagateResults(void)
 	opts.player1 = (ControlTemplate)choices[CHOICE_BTMPLAYER].selected;
 	opts.player2 = (ControlTemplate)choices[CHOICE_TOPPLAYER].selected;
 	opts.keepaspect = (OPT_ENABLABLE)choices[CHOICE_ASPRATIO].selected;
-	opts.cheatMode = (OPT_ENABLABLE)choices[CHOICE_CHEATING].selected;
-	opts.godModes = (OPT_GODTYPE)choices[CHOICE_CHGODMODE].selected;
-	opts.bubbleWarp = (OPT_ENABLABLE)choices[CHOICE_CHWARP].selected;
-	opts.unlockShips = (OPT_ENABLABLE)choices[CHOICE_CHSHIPS].selected;
-	opts.headStart = (OPT_ENABLABLE)choices[CHOICE_CHHEADSTART].selected;
 	//	opts.unlockUpgrades =   choices[CHOICE_CHUPGRADES   ].selected;
-	opts.infiniteRU = (OPT_ENABLABLE)choices[CHOICE_CHINFRU].selected;
-	opts.infiniteFuel = (OPT_ENABLABLE)choices[CHOICE_CHINFFUEL].selected;
 	opts.loresBlowup = (OPT_RESSCALER)choices[CHOICE_RESOLUTION].selected;
-	opts.infiniteCredits = (OPT_ENABLABLE)choices[CHOICE_CHINFCRD].selected;
 #ifdef DIRECTIONAL_JOY
 	opts.directionalJoystick = choices[CHOICE_JOYSTICK].selected;
 #endif
@@ -1197,9 +1161,6 @@ PropagateResults(void)
 #endif
 	opts.landerHold = (OPT_CONSOLETYPE)choices[CHOICE_LANDERHOLD].selected;
 	opts.controllerType = static_cast<uqm::ControllerType>(choices[CHOICE_INPDEVICE].selected);
-	opts.noHQEncounters = (OPT_ENABLABLE)choices[CHOICE_CHCLEANHYPER].selected;
-	opts.deCleansing = (OPT_ENABLABLE)choices[CHOICE_CHDECLEAN].selected;
-	opts.meleeObstacles = (OPT_ENABLABLE)choices[CHOICE_CHNOPLANET].selected;
 	opts.windowType = (OPT_WINDOWTYPE)choices[CHOICE_WINDOWTYPE].selected;
 	opts.seedType = (OPT_SEED)choices[CHOICE_GAMESEED].selected;
 
@@ -1220,7 +1181,6 @@ PropagateResults(void)
 	opts.sfxvol = sliders[SLIDER_SFXVOLUME].value;
 	opts.speechvol = sliders[SLIDER_SPCHVOLUME].value;
 	opts.gamma = sliders[SLIDER_GAMMA].value;
-	opts.timeDilationPct = sliders[SLIDER_TIMEDILATION].value;
 
 	SetGlobalOptions(&opts);
 }
@@ -1561,6 +1521,7 @@ static const struct
 	const char* id;
 	int menu;
 } definedMenus[] = {
+	{"cheats", MENU_CHEATS},
 	{"advanced", MENU_ADVANCED},
 	{"engine", MENU_ENGINE},
 	{"visual", MENU_VISUAL},
@@ -1619,6 +1580,8 @@ build_defined_menus(void)
 		{"coarseScan", (WIDGET*)(&choices[CHOICE_SCANMENU])  },
 		{"seedType",	 (WIDGET*)(&choices[CHOICE_GAMESEED])  },
 		{"customSeed", (WIDGET*)(&textentries[TEXT_GAMESEED])},
+		{"devicesMenu", (WIDGET*)(&buttons[BTN_DEVMENU])},
+		{"upgradesMenu", (WIDGET*)(&buttons[BTN_UPGMENU])},
 	};
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
 	for (const auto& defined : definedMenus)
@@ -2453,19 +2416,7 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 	/*
  *		Cheats
  */
-	opts->cheatMode = uqmOptions.cheatMode.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->godModes = (OPT_GODTYPE)uqmOptions.optGodModes.value;
-	opts->timeDilationPct = uqmOptions.timeDilationPct.value;
-	opts->bubbleWarp = uqmOptions.bubbleWarp.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->unlockShips = uqmOptions.unlockShips.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->headStart = uqmOptions.headStart.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	//opts->unlockUpgrades = optUnlockUpgrades;
-	opts->infiniteCredits = uqmOptions.infiniteCredits.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->infiniteRU = uqmOptions.infiniteRU.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->infiniteFuel = uqmOptions.infiniteFuel.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->noHQEncounters = uqmOptions.noHQEncounters.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->deCleansing = uqmOptions.deCleansing.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->meleeObstacles = uqmOptions.meleeObstacles.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	// Devices
 	for (i = 0; i < NUM_DEVICES; i++)
@@ -2708,19 +2659,7 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 	/*
  *		Cheats
  */
-	putOpt(uqmOptions.cheatMode.value, (bool)opts->cheatMode, false);
-	putOpt(uqmOptions.optGodModes.value, (int)opts->godModes, false);
-	putOpt(uqmOptions.timeDilationPct.value, opts->timeDilationPct, false);
-	putOpt(uqmOptions.bubbleWarp.value, (bool)opts->bubbleWarp, false);
-	putOpt(uqmOptions.unlockShips.value, (bool)opts->unlockShips, false);
-	putOpt(uqmOptions.headStart.value, (bool)opts->headStart, false);
 	//putOpt(optUnlockUpgrades opts->unlockUpgrades, false);
-	putOpt(uqmOptions.infiniteCredits.value, (bool)opts->infiniteCredits, false);
-	putOpt(uqmOptions.infiniteRU.value, (bool)opts->infiniteRU, false);
-	putOpt(uqmOptions.infiniteFuel.value, (bool)opts->infiniteFuel, false);
-	putOpt(uqmOptions.noHQEncounters.value, (bool)opts->noHQEncounters, false);
-	putOpt(uqmOptions.deCleansing.value, (bool)opts->deCleansing, false);
-	putOpt(uqmOptions.meleeObstacles.value, (bool)opts->meleeObstacles, false);
 
 	// Devices
 	for (i = 0; i < NUM_DEVICES; i++)
