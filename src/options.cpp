@@ -50,7 +50,7 @@
 
 
 unsigned int resolutionFactor;
-uint32_t optWindowType;
+uqm::WindowStyle optWindowType {uqm::WindowStyle::UQM};
 
 // Runtime state (kept as globals)
 bool optRequiresReload;

@@ -262,11 +262,11 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 						   (unsigned int)options.resolutionFactor.value :
 						   0;
 
-	optWindowType = static_cast<uint32_t>(WindowStyle::UQM);
+	optWindowType = WindowStyle::UQM;
 	const WindowStyle windowStyle {*options.windowEmulationMode};
 	if (windowStyle != WindowStyle::UQM && isAddonAvailable(WINDOW_MODE(resolutionFactor, static_cast<int>(windowStyle))))
 	{
-		optWindowType = static_cast<uint32_t>(windowStyle);
+		optWindowType = windowStyle;
 	}
 
 	Vec2u windowSize {*options.resolution};
@@ -362,9 +362,10 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	{
 		gfxFlags |= uqm::GfxFlags::ShowFPS;
 	}
+	unsigned int windowType {static_cast<unsigned int>(optWindowType)};
 	TFB_InitGraphics(gfxDriver, gfxFlags, options.graphicsBackend.c_str(),
 					 windowSize.x, windowSize.y,
-					 &resolutionFactor, &optWindowType);
+					 &resolutionFactor, &windowType);
 	if (options.gamma.set && setGammaCorrection(options.gamma.value))
 	{
 		// gamma.value already holds the correct value in the singleton

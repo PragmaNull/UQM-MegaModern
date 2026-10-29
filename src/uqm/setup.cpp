@@ -160,7 +160,7 @@ bool LoadKernel(int argc, char* argv[])
 		HDPackPresent = true;
 		solTexturesPresent = uqm::loadAddon("sol-textures-hd");
 		uqm::loadAddon("yellow-fried-hd");
-		if (optWindowType == 2)
+		if (optWindowType == uqm::WindowStyle::UQM)
 		{
 			classicPackPresent =
 				optNoClassic ? false : uqm::loadAddon("classic-pack");

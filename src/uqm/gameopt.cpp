@@ -43,7 +43,7 @@
 extern FRAME PlayFrame;
 
 #define MAX_SAVED_GAMES 50
-#define SAVES_PER_PAGE (optWindowType < 2 ? 2 : 5)
+#define SAVES_PER_PAGE (optWindowType != uqm::WindowStyle::UQM ? 2 : 5)
 #define MAX_NAME_SIZE SIS_NAME_SIZE
 
 #define SUMMARY_X_OFFS NSAFE_NUM_SCL(14)

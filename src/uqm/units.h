@@ -57,7 +57,7 @@ static inline constexpr auto chooseIfHd(const T& a, const T& b) -> const T&
 #define RES_RBSHIFT(a, b) (RES_SCALE(RES_DESCALE((a)) >> (b)))
 #define RES_RECENTER(a) (RES_RBSHIFT((a), 1))
 
-#define IS_DOS ((optWindowType == 0) ? true : false)
+#define IS_DOS (optWindowType == uqm::WindowStyle::DOS)
 #define DOS_BOOL(a, b) (IS_DOS ? (b) : (a))
 // Returns the 2nd input in DOS mode, the 1st input otherwise
 #define DOS_BOOL_SCL(a, b) (RES_SCALE(IS_DOS ? (b) : (a)))
@@ -71,7 +71,7 @@ static inline constexpr auto chooseIfHd(const T& a, const T& b) -> const T&
 #define NDOS_NUM_SCL(a) (RES_SCALE(NDOS_NUM((a))))
 // Same as NDOS_NUM but scales it to HD
 
-#define IS_PAD ((optWindowType == 1) ? true : false)
+#define IS_PAD (optWindowType == uqm::WindowStyle::Console3DO)
 #define SAFE_BOOL(a, b) (IS_PAD ? (b) : (a))
 // Returns the 2nd input in 3DO mode, the 1st input otherwise
 #define SAFE_BOOL_SCL(a, b) (RES_SCALE(SAFE_BOOL((a), (b))))

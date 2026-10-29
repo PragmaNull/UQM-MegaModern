@@ -36,7 +36,7 @@
 
 
 extern unsigned int resolutionFactor;
-extern uint32_t optWindowType;
+extern uqm::WindowStyle optWindowType;
 
 // Runtime state (kept as globals)
 extern bool optRequiresReload;

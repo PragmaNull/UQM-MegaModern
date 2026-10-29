@@ -1026,9 +1026,9 @@ apply_settings(void)
 		windowStyle = uqm::WindowStyle::UQM;
 		uqmOptions.windowEmulationMode = windowStyle;
 	}
-	if (optWindowType != static_cast<uint32_t>(windowStyle))
+	if (optWindowType != windowStyle)
 	{
-		optWindowType = static_cast<uint32_t>(windowStyle);
+		optWindowType = windowStyle;
 		optRequiresReload = true;
 	}
 
