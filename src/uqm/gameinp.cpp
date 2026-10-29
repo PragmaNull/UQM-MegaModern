@@ -97,6 +97,14 @@ static uqstl::vector<uint32_t> frameText {};
 static size_t frameTextNext {};
 static uint32_t frameLast {};
 
+// Recording
+static uqstl::ofstream recordFile {};
+static uqstl::optional<uint32_t> recordSeed {};
+// The input of the frame that is being recorded. Its characters arrive after UpdateInputState.
+static uqstl::optional<uqm::FrameInput> recordPending {};
+static uqm::FrameInput recordWritten {};
+static uqstl::mutex recordMutex {};
+
 static bool
 isReplayingFrames(void)
 {
@@ -150,16 +158,38 @@ applyFrameInput(void)
 
 UniChar GetNextInputCharacter(void)
 {
-	if (!isReplayingFrames())
+	UniChar ch {};
+	if (isReplayingFrames())
 	{
-		return GetNextCharacter();
+		ch = frameTextNext < frameText.size() ? static_cast<UniChar>(frameText[frameTextNext++]) : 0;
 	}
-	return frameTextNext < frameText.size() ? static_cast<UniChar>(frameText[frameTextNext++]) : 0;
+	else
+	{
+		ch = GetNextCharacter();
+	}
+	if (ch != 0)
+	{
+		const uqstl::lock_guard lock {recordMutex};
+		if (recordPending)
+		{
+			recordPending->text.push_back(ch);
+		}
+	}
+	return ch;
 }
 
 UniChar GetLastInputCharacter(void)
 {
-	return isReplayingFrames() ? static_cast<UniChar>(frameLast) : GetLastCharacter();
+	const UniChar ch {isReplayingFrames() ? static_cast<UniChar>(frameLast) : GetLastCharacter()};
+	if (ch != 0)
+	{
+		const uqstl::lock_guard lock {recordMutex};
+		if (recordPending)
+		{
+			recordPending->last = ch;
+		}
+	}
+	return ch;
 }
 
 bool LoadInputScript(const char* path)
@@ -185,8 +215,107 @@ bool LoadInputScript(const char* path)
 	return true;
 }
 
+bool StartInputRecording(const char* path)
+{
+	recordFile.open(path, uqstl::ios::binary | uqstl::ios::trunc);
+	if (!recordFile)
+	{
+		uqm::log::error("Input recording: cannot create '{}'.", path);
+		return false;
+	}
+	recordSeed = inputScript && inputScript->seed() ? *inputScript->seed() : static_cast<uint32_t>(uqstl::time(nullptr));
+	recordFile << "# Input recorded by UQM-MegaModern. Replay it with --input-script.\n";
+	recordFile << "seed " << *recordSeed << "\n";
+	recordFile.flush();
+	uqm::log::info("Input recording: writing '{}' with seed {}.", path, *recordSeed);
+	return true;
+}
+
+static void
+writePendingFrame(void)
+{
+	if (!recordPending)
+	{
+		return;
+	}
+	if (!recordPending->sameKeys(recordWritten) || !recordPending->text.empty() || recordPending->last != 0 || recordPending->end)
+	{
+		recordFile << recordPending->format() << "\n";
+		recordFile.flush();
+		recordWritten = *recordPending;
+	}
+	recordPending.reset();
+}
+
+// Keys that a replay must not press.
+static bool
+isRecordedMenuKey(int key)
+{
+	switch (key)
+	{
+		case KEY_PAUSE:
+		case KEY_FULLSCREEN:
+		case KEY_DEBUG:
+		case KEY_DEBUG_2:
+		case KEY_DEBUG_3:
+		case KEY_DEBUG_4:
+			return false;
+		default:
+			return true;
+	}
+}
+
+// Starts the record of this frame, from the final input state of the frame.
+static void
+recordFrameInput(void)
+{
+	const uqstl::lock_guard lock {recordMutex};
+	if (!recordFile.is_open())
+	{
+		return;
+	}
+	writePendingFrame();
+	uqm::FrameInput input {.frame = inputFrame};
+	for (int t {0}; t < static_cast<int>(ControlTemplate::NUM); t++)
+	{
+		for (int k {0}; k < NUM_KEYS; k++)
+		{
+			const uint64_t bit {uint64_t {1} << (t * NUM_KEYS + k)};
+			input.heldBattle |= CurrentInputState.key[t][k] ? bit : 0;
+			input.pulsedBattle |= PulsedInputState.key[t][k] ? bit : 0;
+		}
+	}
+	for (int k {0}; k < NUM_MENU_KEYS; k++)
+	{
+		if (isRecordedMenuKey(k))
+		{
+			const uint64_t bit {uint64_t {1} << k};
+			input.heldMenu |= CurrentInputState.menu[k] ? bit : 0;
+			input.pulsedMenu |= PulsedInputState.menu[k] ? bit : 0;
+		}
+	}
+	recordPending = uqstl::move(input);
+}
+
+void StopInputRecording(void)
+{
+	const uqstl::lock_guard lock {recordMutex};
+	if (!recordFile.is_open())
+	{
+		return;
+	}
+	writePendingFrame();
+	recordFile << uqm::FrameInput {.frame = inputFrame, .heldMenu = recordWritten.heldMenu, .pulsedMenu = recordWritten.pulsedMenu, .heldBattle = recordWritten.heldBattle, .pulsedBattle = recordWritten.pulsedBattle, .end = true}.format() << "\n";
+	recordFile.close();
+	uqm::log::info("Input recording: {} input frames recorded.", inputFrame);
+}
+
 uqstl::optional<uint32_t> GetDeterministicSeed(void)
 {
+	if (recordSeed)
+	{
+		return recordSeed;
+	}
 	return inputScript ? inputScript->seed() : uqstl::nullopt;
 }
 
@@ -238,7 +367,7 @@ applyInputScript(void)
 {
 	const uqstl::lock_guard lock {inputScriptMutex};
 	uint32_t now {};
-	if (inputScript->seed())
+	if (GetDeterministicSeed())
 	{
 		// A deterministic run counts game time.
 		const TimeCount gameNow {GetTimeCounter()};
@@ -515,6 +644,7 @@ void UpdateInputState(void)
 	{
 		applyFrameInput();
 	}
+	recordFrameInput();
 	++inputFrame;
 
 	if (CurrentInputState.menu[KEY_PAUSE])

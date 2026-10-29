@@ -227,6 +227,10 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	{
 		return {EXIT_FAILURE, true};
 	}
+	if (!options.recordInput.empty() && !StartInputRecording(options.recordInput.c_str()))
+	{
+		return {EXIT_FAILURE, true};
+	}
 
 	TFB_PreInit();
 	mem_init();
@@ -432,6 +436,7 @@ void UQMGame::teardown()
 #if 0
 		unInitTempDir ();
 #endif
+		StopInputRecording();
 		unprepareAllDirs();
 		uninitIO();
 		UnInitThreadSystem();

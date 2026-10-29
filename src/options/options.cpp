@@ -79,6 +79,8 @@ uqstl::pair<int, bool> UQMOptions::parseArgs(uqstl::span<uqgsl::zstring> args)
 	settingsCli.group("Testing")
 		.add_option("--input-script", m_options.inputScript, "File of menu key presses to run, for testing. See uqm/inputscript.h.")
 		->check(CLI::ExistingFile);
+	settingsCli.group("Testing")
+		.add_option("--record-input", m_options.recordInput, "File to record all input to, as a deterministic input script that replays the session.");
 
 	settingsCli.group("Cheats")
 		.add_flag("--unlockupgrades", m_options.unlockUpgrades.edit(), "Unlocks every upgrade for your flagship and landers)")

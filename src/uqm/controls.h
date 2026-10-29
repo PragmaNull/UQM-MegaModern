@@ -155,7 +155,11 @@ extern bool WarpFromMenu;
 void UpdateInputState(void);
 // Runs a script of menu key presses. Returns false if the file cannot be read or parsed.
 bool LoadInputScript(const char* path);
-// The seed of a deterministic run, or nullopt. Call after LoadInputScript.
+// Records all input to 'path' as a deterministic input script. Returns false if the file cannot be created.
+bool StartInputRecording(const char* path);
+// Writes the end of the recording. Call on the thread that calls UpdateInputState.
+void StopInputRecording(void);
+// The seed of a deterministic run, or nullopt. Call after LoadInputScript and StartInputRecording.
 uqstl::optional<uint32_t> GetDeterministicSeed(void);
 // Return typed characters, like GetNextCharacter and GetLastCharacter, from the input script when it has recorded frames.
 UniChar GetNextInputCharacter(void);

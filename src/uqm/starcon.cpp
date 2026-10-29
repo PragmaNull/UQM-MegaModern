@@ -452,6 +452,7 @@ int Starcon2Main(void* threadArg)
 	FreeMasterShipList();
 	FreeKernel();
 
+	StopInputRecording();
 	MainExited = true;
 
 	(void)threadArg; /* Satisfying compiler (unused parameter) */
