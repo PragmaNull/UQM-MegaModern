@@ -1,5 +1,5 @@
 # Changes Setup > PC/3DO > Platform UI to DOS, and leaves Setup.
-# Expect "windowStyle": 0 in settings.json, and a DOS style main menu in the screenshot.
+# Expect "windowStyle": "DOS" in settings.json, and a DOS style main menu in the screenshot.
 wait 4000
 cancel
 wait 3000

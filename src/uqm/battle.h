@@ -18,6 +18,7 @@
 
 #include "options.h"
 #include "libs/compiler.h"
+#include "libs/time/timelib.h"
 
 #if defined(NETPLAY)
 typedef uint32_t BattleFrameCounter;

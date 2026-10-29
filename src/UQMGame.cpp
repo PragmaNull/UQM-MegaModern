@@ -262,11 +262,11 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 						   (unsigned int)options.resolutionFactor.value :
 						   0;
 
-	optWindowType = OPTVAL_UQM_WINDOW;
-	const char* windowMode = WINDOW_MODE(resolutionFactor, options.windowEmulationMode.value);
-	if (options.windowEmulationMode.value < OPTVAL_UQM_WINDOW && isAddonAvailable(windowMode))
+	optWindowType = static_cast<uint32_t>(WindowStyle::UQM);
+	const WindowStyle windowStyle {*options.windowEmulationMode};
+	if (windowStyle != WindowStyle::UQM && isAddonAvailable(WINDOW_MODE(resolutionFactor, static_cast<int>(windowStyle))))
 	{
-		optWindowType = options.windowEmulationMode.value;
+		optWindowType = static_cast<uint32_t>(windowStyle);
 	}
 
 	Vec2u windowSize {*options.resolution};

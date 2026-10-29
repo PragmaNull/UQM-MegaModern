@@ -52,11 +52,6 @@ inline bool isValidResolutionFactor(const int& value)
 	return value >= 0 && value <= 2;
 }
 
-inline bool isValidWindowStyle(const int& value)
-{
-	return value >= 0 && value <= 2;
-}
-
 inline bool isValidNebulaeVolume(const int& value)
 {
 	return value >= 0 && value <= 50;
@@ -441,10 +436,10 @@ struct OptionsStruct : SettingsRegistry
 		*this, {.key = "audio.musicResume", .description = "Music resume mode: 0 = restart track, 1 = resume from last position."},
 			0, settings::isNonNegative
 	  };
-	Setting<int> windowEmulationMode {
-		*this, {.key = "graphics.windowStyle", .description = "Window chrome/border style: 0 = DOS, 1 = 3DO, 2 = UQM native.", .requiresReload = true},
-			2, settings::isValidWindowStyle
-	   };
+	Setting<WindowStyle> windowEmulationMode {
+		*this, {.key = "graphics.windowStyle", .description = "Window chrome/border style.", .requiresReload = true},
+		  WindowStyle::UQM
+	  };
 	Setting<bool> scatterElements {
 		*this, {.key = "gameplay.scatterElements", .description = "Scatter a percentage of the elements in the lander's cargo hold onto the planet's surface when the lander explodes.", .cli = "--scatterelements"},
 		  false

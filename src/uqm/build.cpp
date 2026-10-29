@@ -1112,13 +1112,9 @@ cheatAddRemoveDevices(void)
 
 	for (i = 0; i < std::size(optDeviceArray); i++)
 	{
-		if (!optDeviceArray[i])
+		if (optDeviceArray[i] != uqm::CheatAction::None)
 		{
-			continue;
-		}
-		else
-		{
-			deviceSwitch(i, optDeviceArray[i]);
+			deviceSwitch(i, static_cast<int>(optDeviceArray[i]));
 		}
 	}
 }
@@ -1130,13 +1126,9 @@ cheatAddRemoveUpgrades(void)
 
 	for (i = 0; i < NUM_UPGRADES; i++)
 	{
-		if (!optUpgradeArray[i])
+		if (optUpgradeArray[i] != uqm::CheatAction::None)
 		{
-			continue;
-		}
-		else
-		{
-			upgradeSwitch(i, optUpgradeArray[i]);
+			upgradeSwitch(i, static_cast<int>(optUpgradeArray[i]));
 		}
 	}
 }

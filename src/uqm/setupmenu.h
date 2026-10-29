@@ -19,25 +19,6 @@
 #ifndef UQM_SETUPMENU_H_
 #define UQM_SETUPMENU_H_
 
-#include "options/OptionTypes.h"
-#include "controls.h"
-
-typedef enum
-{
-	OPTVAL_PC_WINDOW,
-	OPTVAL_3DO_WINDOW,
-	OPTVAL_UQM_WINDOW
-} OPT_WINDOWTYPE;
-
-typedef enum
-{
-	OPTVAL_DO_NOTHING,
-	OPTVAL_REM_THING,
-	OPTVAL_ADD_THING
-} OPT_ADD_REMOVE;
-
-#define NUM_UPGRADES 13
-
 void SetupMenu(void);
 
 #endif // UQM_SETUPMENU_H_

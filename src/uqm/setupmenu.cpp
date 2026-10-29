@@ -174,7 +174,7 @@ rename_template(WIDGET_TEXTENTRY* self)
 }
 
 // Returns the cheat value of a device or upgrade state, or nullptr if there is no such state.
-static OPT_ADD_REMOVE*
+static uqm::CheatAction*
 find_cheat_state(uqstl::string_view key)
 {
 	const auto indexed = [key](uqstl::string_view prefix, size_t count) -> uqstl::optional<size_t> {
@@ -873,7 +873,7 @@ init_widgets(void)
 		{
 			return editTemplate;
 		}
-		if (const OPT_ADD_REMOVE* cheat {find_cheat_state(key)})
+		if (const uqm::CheatAction* cheat {find_cheat_state(key)})
 		{
 			return static_cast<int>(*cheat);
 		}
@@ -885,9 +885,9 @@ init_widgets(void)
 			editTemplate = value;
 			populate_editkeys(value);
 		}
-		else if (OPT_ADD_REMOVE * cheat {find_cheat_state(key)})
+		else if (uqm::CheatAction * cheat {find_cheat_state(key)})
 		{
-			*cheat = static_cast<OPT_ADD_REMOVE>(value);
+			*cheat = static_cast<uqm::CheatAction>(value);
 		}
 	};
 	hooks.openMenu = open_menu;
@@ -1020,15 +1020,15 @@ apply_settings(void)
 		resolutionFactor = factor;
 	}
 
-	uint32_t windowType {static_cast<uint32_t>(*uqmOptions.windowEmulationMode)};
-	if (windowType < OPTVAL_UQM_WINDOW && !uqm::isAddonAvailable(WINDOW_MODE(resolutionFactor, windowType)))
+	uqm::WindowStyle windowStyle {*uqmOptions.windowEmulationMode};
+	if (windowStyle != uqm::WindowStyle::UQM && !uqm::isAddonAvailable(WINDOW_MODE(resolutionFactor, static_cast<int>(windowStyle))))
 	{
-		windowType = OPTVAL_UQM_WINDOW;
-		uqmOptions.windowEmulationMode = static_cast<int>(windowType);
+		windowStyle = uqm::WindowStyle::UQM;
+		uqmOptions.windowEmulationMode = windowStyle;
 	}
-	if (optWindowType != windowType)
+	if (optWindowType != static_cast<uint32_t>(windowStyle))
 	{
-		optWindowType = windowType;
+		optWindowType = static_cast<uint32_t>(windowStyle);
 		optRequiresReload = true;
 	}
 

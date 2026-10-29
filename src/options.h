@@ -50,8 +50,21 @@ extern bool optMaskOfDeceit;
 extern bool restartGame;
 extern bool optNoClassic;
 
-extern OPT_ADD_REMOVE optDeviceArray[28];
-extern OPT_ADD_REMOVE optUpgradeArray[13];
+namespace uqm
+{
+// What a device or upgrade cheat does when a game loads.
+enum class CheatAction : uint8_t
+{
+	None,
+	Remove,
+	Add,
+};
+} // namespace uqm
+
+#define NUM_UPGRADES 13
+
+extern uqm::CheatAction optDeviceArray[28];
+extern uqm::CheatAction optUpgradeArray[NUM_UPGRADES];
 
 #define GAMMA_SCALE 1000
 

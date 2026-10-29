@@ -59,8 +59,8 @@ void applyUserSettings(OptionsStruct& options)
 	PlayerControlTemplates[0] = static_cast<ControlTemplate>(*options.player1Control);
 	PlayerControlTemplates[1] = static_cast<ControlTemplate>(*options.player2Control);
 
-	memset(&optDeviceArray, 0, sizeof(optDeviceArray));
-	memset(&optUpgradeArray, 0, sizeof(optUpgradeArray));
+	uqstl::fill(uqstl::begin(optDeviceArray), uqstl::end(optDeviceArray), CheatAction::None);
+	uqstl::fill(uqstl::begin(optUpgradeArray), uqstl::end(optUpgradeArray), CheatAction::None);
 }
 
 } // namespace uqm
