@@ -15,7 +15,7 @@ uqstl::string getEnvironmentValue(uqgsl::czstring env_name)
 	size_t bufferSize {};
 	if (_dupenv_s(&buffer, &bufferSize, env_name) == 0 && buffer != nullptr)
 	{
-		uqstl::string ret {buffer, bufferSize};
+		uqstl::string ret {buffer};
 
 		free(buffer);
 		return ret;

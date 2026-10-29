@@ -396,7 +396,7 @@ int expandPath(char* dest, size_t len, const char* src, int what)
 #endif /* APPDATA_FALLBACK */
 						}
 
-						envVarLen = envVar.length() - 1;
+						envVarLen = envVar.length();
 						CHECKLEN(buf, envVarLen);
 						uqm::strncpy_safe({bufptr, bufend}, envVar);
 						bufptr += envVarLen;
