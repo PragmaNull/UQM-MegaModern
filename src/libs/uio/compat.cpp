@@ -16,25 +16,9 @@ struct uio_Repository
 	uqm::io::FileSystem fileSystem {};
 };
 
-struct uio_DirHandle
-{
-	uio_Repository* repository;
-	uqm::io::Directory directory;
-};
-
 struct uio_MountHandle
 {
 	uqm::io::Mount mount {};
-};
-
-struct uio_Handle
-{
-	uqm::io::File file {};
-};
-
-struct uio_Stream
-{
-	uio_Handle handle {};
 };
 
 namespace
@@ -99,7 +83,7 @@ uio_DirHandle* wrapDirectory(uio_Repository* repository, uqstl::optional<uqm::io
 	{
 		return fail<uio_DirHandle*>(ENOENT, nullptr);
 	}
-	return new uio_DirHandle {repository, uqstl::move(*directory)};
+	return new uio_DirHandle {{uqstl::move(*directory)}, repository};
 }
 
 uqstl::string_view orEmpty(const char* text)
@@ -165,7 +149,7 @@ uio_MountHandle* uio_mountDir(uio_Repository* destRep, const char* mountPoint, u
 			{
 				return fail<uio_MountHandle*>(EACCES, nullptr);
 			}
-			return wrapMount(destRep->fileSystem.mountArchive(orEmpty(mountPoint), sourceDir->directory, sourcePath, mountPosition(flags), relativeMount(relative), error), error);
+			return wrapMount(destRep->fileSystem.mountArchive(orEmpty(mountPoint), *sourceDir, sourcePath, mountPosition(flags), relativeMount(relative), error), error);
 		default:
 			return fail<uio_MountHandle*>(ENODEV, nullptr);
 	}
@@ -174,7 +158,7 @@ uio_MountHandle* uio_mountDir(uio_Repository* destRep, const char* mountPoint, u
 uio_MountHandle* uio_transplantDir(const char* mountPoint, uio_DirHandle* sourceDir, int flags, uio_MountHandle* relative)
 {
 	uqstl::error_code error {};
-	return wrapMount(sourceDir->repository->fileSystem.mountTransplant(orEmpty(mountPoint), sourceDir->directory, mountAccess(flags), mountPosition(flags), relativeMount(relative), error), error);
+	return wrapMount(sourceDir->repository->fileSystem.mountTransplant(orEmpty(mountPoint), *sourceDir, mountAccess(flags), mountPosition(flags), relativeMount(relative), error), error);
 }
 
 int uio_unmountDir(uio_MountHandle* mountHandle)
@@ -190,7 +174,7 @@ uio_DirHandle* uio_openDir(uio_Repository* repository, const char* path, int /*f
 
 uio_DirHandle* uio_openDirRelative(uio_DirHandle* base, const char* path, int /*flags*/)
 {
-	return wrapDirectory(base->repository, base->directory.subdir(orEmpty(path)));
+	return wrapDirectory(base->repository, base->subdir(orEmpty(path)));
 }
 
 int uio_closeDir(uio_DirHandle* dirHandle)
@@ -227,7 +211,7 @@ uio_DirList* uio_getDirList(uio_DirHandle* dirHandle, const char* path, const ch
 
 	auto list {uqstl::make_unique<DirListStorage>()};
 	uqstl::error_code error {};
-	list->storage = dirHandle->directory.list(orEmpty(path), *matcher, error);
+	list->storage = dirHandle->list(orEmpty(path), *matcher, error);
 	setErrno(error);
 	for (const uqstl::string& name : list->storage)
 	{
@@ -272,13 +256,13 @@ uio_Handle* uio_open(uio_DirHandle* dir, const char* file, int flags, mode_t /*m
 	}
 
 	uqstl::error_code error {};
-	uqstl::optional<uqm::io::File> opened {dir->directory.open(orEmpty(file), mode, error)};
+	uqstl::optional<uqm::io::File> opened {dir->open(orEmpty(file), mode, error)};
 	if (!opened)
 	{
 		setErrno(error);
 		return nullptr;
 	}
-	return new uio_Handle {uqstl::move(*opened)};
+	return new uio_Handle {{uqstl::move(*opened)}};
 }
 
 int uio_close(uio_Handle* handle)
@@ -289,10 +273,10 @@ int uio_close(uio_Handle* handle)
 
 ssize_t uio_read(uio_Handle* handle, void* buf, size_t count)
 {
-	const size_t done {handle->file.read(bytes(buf, count))};
-	if (done == 0 && handle->file.error())
+	const size_t done {handle->read(bytes(buf, count))};
+	if (done == 0 && handle->error())
 	{
-		setErrno(handle->file.error());
+		setErrno(handle->error());
 		return -1;
 	}
 	return static_cast<ssize_t>(done);
@@ -300,10 +284,10 @@ ssize_t uio_read(uio_Handle* handle, void* buf, size_t count)
 
 ssize_t uio_write(uio_Handle* handle, const void* buf, size_t count)
 {
-	const size_t done {handle->file.write(bytes(buf, count))};
-	if (done == 0 && handle->file.error())
+	const size_t done {handle->write(bytes(buf, count))};
+	if (done == 0 && handle->error())
 	{
-		setErrno(handle->file.error());
+		setErrno(handle->error());
 		return -1;
 	}
 	return static_cast<ssize_t>(done);
@@ -311,17 +295,17 @@ ssize_t uio_write(uio_Handle* handle, const void* buf, size_t count)
 
 int uio_fstat(uio_Handle* handle, struct stat* statBuf)
 {
-	if (!handle->file.isOpen())
+	if (!handle->isOpen())
 	{
 		return fail(EBADF, -1);
 	}
-	fillStat(statBuf, uqm::io::FileInfo {.size = handle->file.size()});
+	fillStat(statBuf, uqm::io::FileInfo {.size = handle->size()});
 	return 0;
 }
 
 int uio_stat(uio_DirHandle* dir, const char* path, struct stat* statBuf)
 {
-	const uqstl::optional<uqm::io::FileInfo> info {dir->directory.stat(orEmpty(path))};
+	const uqstl::optional<uqm::io::FileInfo> info {dir->stat(orEmpty(path))};
 	if (!info)
 	{
 		return fail(ENOENT, -1);
@@ -332,21 +316,21 @@ int uio_stat(uio_DirHandle* dir, const char* path, struct stat* statBuf)
 
 int uio_mkdir(uio_DirHandle* dir, const char* name, mode_t /*mode*/)
 {
-	const uqstl::error_code error {dir->directory.makeDir(orEmpty(name))};
+	const uqstl::error_code error {dir->makeDir(orEmpty(name))};
 	setErrno(error);
 	return error ? -1 : 0;
 }
 
 int uio_unlink(uio_DirHandle* dirHandle, const char* path)
 {
-	const uqstl::error_code error {dirHandle->directory.remove(orEmpty(path))};
+	const uqstl::error_code error {dirHandle->remove(orEmpty(path))};
 	setErrno(error);
 	return error ? -1 : 0;
 }
 
 int uio_rename(uio_DirHandle* oldDir, const char* oldPath, uio_DirHandle* newDir, const char* newPath)
 {
-	const uqstl::error_code error {oldDir->directory.rename(orEmpty(oldPath), newDir->directory, orEmpty(newPath))};
+	const uqstl::error_code error {oldDir->rename(orEmpty(oldPath), *newDir, orEmpty(newPath))};
 	setErrno(error);
 	return error ? -1 : 0;
 }
@@ -381,19 +365,19 @@ uio_Stream* uio_fopen(uio_DirHandle* dir, const char* path, const char* modeStri
 	}
 
 	uqstl::error_code error {};
-	uqstl::optional<uqm::io::File> opened {dir->directory.open(orEmpty(path), mode, error)};
+	uqstl::optional<uqm::io::File> opened {dir->open(orEmpty(path), mode, error)};
 	if (!opened)
 	{
 		setErrno(error);
 		return nullptr;
 	}
-	return new uio_Stream {uio_Handle {uqstl::move(*opened)}};
+	return new uio_Stream {{{uqstl::move(*opened)}}};
 }
 
 int uio_fclose(uio_Stream* stream)
 {
-	stream->handle.file.close();
-	const bool failed {static_cast<bool>(stream->handle.file.error())};
+	stream->close();
+	const bool failed {static_cast<bool>(stream->error())};
 	delete stream;
 	return failed ? EOF : 0;
 }
@@ -404,7 +388,7 @@ size_t uio_fread(void* buf, size_t size, size_t nmemb, uio_Stream* stream)
 	{
 		return 0;
 	}
-	return stream->handle.file.read(bytes(buf, size * nmemb)) / size;
+	return stream->read(bytes(buf, size * nmemb)) / size;
 }
 
 char* uio_fgets(char* buf, int size, uio_Stream* stream)
@@ -416,7 +400,7 @@ char* uio_fgets(char* buf, int size, uio_Stream* stream)
 	int count {0};
 	while (count < size - 1)
 	{
-		const int c {stream->handle.file.getChar()};
+		const int c {stream->getChar()};
 		if (c == uqm::io::File::c_endOfFile)
 		{
 			break;
@@ -433,29 +417,29 @@ char* uio_fgets(char* buf, int size, uio_Stream* stream)
 
 int uio_fgetc(uio_Stream* stream)
 {
-	return stream->handle.file.getChar();
+	return stream->getChar();
 }
 
 int uio_ungetc(int c, uio_Stream* stream)
 {
-	return c != EOF && stream->handle.file.unget() ? c : EOF;
+	return c != EOF && stream->unget() ? c : EOF;
 }
 
 int uio_backtrack(int rewinded_bytes, uio_Stream* stream)
 {
-	return rewinded_bytes >= 0 && stream->handle.file.unget(static_cast<size_t>(rewinded_bytes)) ? 0 : -1;
+	return rewinded_bytes >= 0 && stream->unget(static_cast<size_t>(rewinded_bytes)) ? 0 : -1;
 }
 
 int uio_fputc(int c, uio_Stream* stream)
 {
 	const uqstl::byte value {static_cast<uqstl::byte>(c)};
-	return stream->handle.file.write({&value, 1}) == 1 ? static_cast<unsigned char>(c) : EOF;
+	return stream->write({&value, 1}) == 1 ? static_cast<unsigned char>(c) : EOF;
 }
 
 int uio_fputs(const char* s, uio_Stream* stream)
 {
 	const size_t length {std::strlen(s)};
-	return stream->handle.file.write(bytes(s, length)) == length ? 0 : EOF;
+	return stream->write(bytes(s, length)) == length ? 0 : EOF;
 }
 
 int uio_fseek(uio_Stream* stream, long offset, int whence)
@@ -474,9 +458,9 @@ int uio_fseek(uio_Stream* stream, long offset, int whence)
 		default:
 			return fail(EINVAL, -1);
 	}
-	if (!stream->handle.file.seek(offset, from))
+	if (!stream->seek(offset, from))
 	{
-		setErrno(stream->handle.file.error());
+		setErrno(stream->error());
 		return -1;
 	}
 	return 0;
@@ -484,7 +468,7 @@ int uio_fseek(uio_Stream* stream, long offset, int whence)
 
 long uio_ftell(uio_Stream* stream)
 {
-	return static_cast<long>(stream->handle.file.tell());
+	return static_cast<long>(stream->tell());
 }
 
 size_t uio_fwrite(const void* buf, size_t size, size_t nmemb, uio_Stream* stream)
@@ -493,7 +477,7 @@ size_t uio_fwrite(const void* buf, size_t size, size_t nmemb, uio_Stream* stream
 	{
 		return 0;
 	}
-	return stream->handle.file.write(bytes(buf, size * nmemb)) / size;
+	return stream->write(bytes(buf, size * nmemb)) / size;
 }
 
 int uio_fflush(uio_Stream* stream)
@@ -502,25 +486,25 @@ int uio_fflush(uio_Stream* stream)
 	{
 		return 0;
 	}
-	return stream->handle.file.flush() ? 0 : EOF;
+	return stream->flush() ? 0 : EOF;
 }
 
 int uio_feof(uio_Stream* stream)
 {
-	return stream->handle.file.eof() ? 1 : 0;
+	return stream->eof() ? 1 : 0;
 }
 
 int uio_ferror(uio_Stream* stream)
 {
-	return stream->handle.file.error() ? 1 : 0;
+	return stream->error() ? 1 : 0;
 }
 
 void uio_clearerr(uio_Stream* stream)
 {
-	stream->handle.file.clearError();
+	stream->clearError();
 }
 
 uio_Handle* uio_streamHandle(uio_Stream* stream)
 {
-	return &stream->handle;
+	return stream;
 }

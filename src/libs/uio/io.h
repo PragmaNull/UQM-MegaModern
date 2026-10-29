@@ -3,6 +3,8 @@
 #ifndef LIBS_UIO_IO_H_
 #define LIBS_UIO_IO_H_
 
+#include "libs/io/FileSystem.h"
+
 #include <cstdint>
 #include <cstdio>
 #include <sys/stat.h>
@@ -28,10 +30,21 @@ typedef unsigned short mode_t;
 #endif
 
 typedef struct uio_Repository uio_Repository;
-typedef struct uio_Handle uio_Handle;
-typedef struct uio_DirHandle uio_DirHandle;
 typedef struct uio_MountHandle uio_MountHandle;
-typedef struct uio_Stream uio_Stream;
+
+// The handles are io types, so migrated code can take them as Directory or File.
+struct uio_DirHandle : uqm::io::Directory
+{
+	uio_Repository* repository {};
+};
+
+struct uio_Handle : uqm::io::File
+{
+};
+
+struct uio_Stream : uio_Handle
+{
+};
 
 typedef int uio_FileSystemID;
 #define uio_FSTYPE_STDIO 1
