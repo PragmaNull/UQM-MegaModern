@@ -50,16 +50,6 @@ cmake . -G Ninja -B conanbuild \
 cmake --build conanbuild
 ```
 
-### Visual Studio (Windows alternative)
-
-Open the solution in `build/msvs2019/`. Required DLLs are in `dev-lib/lib/`.
-
-### Legacy MSYS2/Linux
-
-```bash
-./build.sh uqm -j
-```
-
 ## Running Tests
 
 Tests use Google Test, discovered automatically via CMake.

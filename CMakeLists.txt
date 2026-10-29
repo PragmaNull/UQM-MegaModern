@@ -42,8 +42,7 @@ set(APP_TARGET UrQuanMasters)
 ################################################################################
 
 set(Doc_files
-"BUGS"
-"ChangeLog"
+"README.md"
 "TODO.txt"
 )
 source_group("Doc" FILES ${Doc_files})
