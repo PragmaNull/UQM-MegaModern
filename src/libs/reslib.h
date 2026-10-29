@@ -60,6 +60,7 @@ uqstl::optional<uqm::io::File> res_OpenResFile(const uqm::io::Directory& dir, co
 uqgsl::owner<uqm::io::File*> res_NewResFile(const uqm::io::Directory& dir, const char* filename);
 // Calls 'loadFun' for 'filename' while _cur_resfile_name is 'filename'. Returns nullptr if 'filename' cannot be opened.
 void* res_LoadResFile(const uqm::io::Directory& dir, const char* filename, ResourceLoadFileFun* loadFun);
+// fread and fseek style functions, for C callbacks and macros.
 size_t ReadResFile(void* lpBuf, size_t size, size_t count, uqm::io::File& fp);
 size_t WriteResFile(const void* lpBuf, size_t size, size_t count, uqm::io::File& fp);
 int GetResFileChar(uqm::io::File& fp);

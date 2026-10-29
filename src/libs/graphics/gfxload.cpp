@@ -198,7 +198,7 @@ void* _GetCelData(uqm::io::File* fp, uint32_t length)
 			n = s1 - _cur_resfile_name + 1;
 		}
 
-		ReadResFile(buf, 4, 1, *fp);
+		fp->read(uqstl::as_writable_bytes(uqstl::span {buf}));
 		header = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
 		if (_cur_resfile_name && header == 0x04034b50)
 		{
@@ -578,7 +578,7 @@ void* _GetFontData(uqm::io::File* fp, uint32_t length)
 			}
 
 			if ((int)cfgFile->tell() - (int)opos
-				>= (int)LengthResFile(*cfgFile))
+				>= (int)cfgFile->size())
 			{
 				break;
 			}

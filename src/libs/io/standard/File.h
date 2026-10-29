@@ -28,6 +28,16 @@ public:
 	size_t read(uqstl::span<uqstl::byte> buffer);
 	// Returns the number of bytes written.
 	size_t write(uqstl::span<const uqstl::byte> buffer);
+	// Return false if not all bytes were read or written.
+	bool readExact(uqstl::span<uqstl::byte> buffer) { return read(buffer) == buffer.size(); }
+	bool writeAll(uqstl::span<const uqstl::byte> buffer) { return write(buffer) == buffer.size(); }
+	// Reads the bytes of one value. Returns false if not all bytes were read.
+	template <typename T>
+		requires uqstl::is_trivially_copyable_v<T>
+	bool readValue(T& value)
+	{
+		return readExact(uqstl::as_writable_bytes(uqstl::span {&value, 1}));
+	}
 	// Reads up to and including the next newline, at most buffer.size() - 1 characters, and adds a null character.
 	// Returns false if no characters were read.
 	bool readLine(uqstl::span<char> buffer);

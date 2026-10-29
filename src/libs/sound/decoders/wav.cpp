@@ -163,7 +163,7 @@ wava_Term(THIS_PTR)
 static bool
 read_le_16(uqm::io::File* fp, uint16_t* v)
 {
-	if (!ReadResFile(v, sizeof(*v), 1, *fp))
+	if (!fp->readValue(*v))
 	{
 		return false;
 	}
@@ -174,7 +174,7 @@ read_le_16(uqm::io::File* fp, uint16_t* v)
 static bool
 read_le_32(uqm::io::File* fp, uint32_t* v)
 {
-	if (!ReadResFile(v, sizeof(*v), 1, *fp))
+	if (!fp->readValue(*v))
 	{
 		return false;
 	}
@@ -265,22 +265,22 @@ wava_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 				wava_Close(This);
 				return false;
 			}
-			SeekResFile(*wava->fp, chunkHdr.size - 16, SEEK_CUR);
+			wava->fp->seek(chunkHdr.size - 16, uqm::io::SeekFrom::Current);
 		}
 		else
 		{
 			if (chunkHdr.id == wave_DataID)
 			{
 				wava->data_size = chunkHdr.size;
-				wava->data_ofs = TellResFile(*wava->fp);
+				wava->data_ofs = wava->fp->tell();
 			}
-			SeekResFile(*wava->fp, chunkHdr.size, SEEK_CUR);
+			wava->fp->seek(chunkHdr.size, uqm::io::SeekFrom::Current);
 		}
 
 		// 2-align the file ptr
 		// XXX: I do not think this is necessary in WAVE files;
 		//   possibly a remnant of ported AIFF reader
-		SeekResFile(*wava->fp, chunkHdr.size & 1, SEEK_CUR);
+		wava->fp->seek(chunkHdr.size & 1, uqm::io::SeekFrom::Current);
 	}
 
 	if (!wava->data_size || !wava->data_ofs)
@@ -322,7 +322,7 @@ wava_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 	This->frequency = wava->fmtHdr.samplesPerSec;
 	This->filename_hash = crc32b(filename);
 
-	SeekResFile(*wava->fp, wava->data_ofs, SEEK_SET);
+	wava->fp->seek(wava->data_ofs, uqm::io::SeekFrom::Start);
 	wava->max_pcm = wava->data_size / wava->fmtHdr.blockAlign;
 	wava->cur_pcm = 0;
 	This->length = (float)wava->max_pcm / wava->fmtHdr.samplesPerSec;
@@ -355,7 +355,7 @@ wava_Decode(THIS_PTR, void* buf, int32_t bufsize)
 		dec_pcm = wava->max_pcm - wava->cur_pcm;
 	}
 
-	dec_pcm = ReadResFile(buf, wava->fmtHdr.blockAlign, dec_pcm, *wava->fp);
+	dec_pcm = static_cast<decltype(dec_pcm)>(wava->fp->read(uqm::io::asBytes(buf, wava->fmtHdr.blockAlign * dec_pcm)) / wava->fmtHdr.blockAlign);
 	wava->cur_pcm += dec_pcm;
 
 	return dec_pcm * wava->fmtHdr.blockAlign;
@@ -371,9 +371,8 @@ wava_Seek(THIS_PTR, uint32_t pcm_pos)
 		pcm_pos = wava->max_pcm;
 	}
 	wava->cur_pcm = pcm_pos;
-	SeekResFile(*wava->fp,
-				wava->data_ofs + pcm_pos * wava->fmtHdr.blockAlign,
-				SEEK_SET);
+	wava->fp->seek(
+		wava->data_ofs + pcm_pos * wava->fmtHdr.blockAlign, uqm::io::SeekFrom::Start);
 
 	return pcm_pos;
 }

@@ -113,15 +113,15 @@ duka_readAudFrameHeader(TFB_DuckSoundDecoder* duka, uint32_t iframe,
 {
 	DukAud_FrameHeader hdr;
 
-	SeekResFile(*duka->duk, duka->frames[iframe], SEEK_SET);
-	if (ReadResFile(&hdr, sizeof(hdr), 1, *duka->duk) != 1)
+	duka->duk->seek(duka->frames[iframe], uqm::io::SeekFrom::Start);
+	if (!duka->duk->readValue(hdr))
 	{
 		duka->last_error = errno;
 		return dukae_BadFile;
 	}
 	hdr.audsize = UQM_SwapBE32(hdr.audsize);
 
-	if (ReadResFile(aud, sizeof(*aud), 1, *duka->duk) != 1)
+	if (!duka->duk->readValue(*aud))
 	{
 		duka->last_error = errno;
 		return dukae_BadFile;
@@ -289,8 +289,8 @@ duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 	DukAud_AudSubframe* aud;
 	uint8_t* p;
 
-	SeekResFile(*duka->duk, duka->frames[duka->iframe], SEEK_SET);
-	if (ReadResFile(&hdr, sizeof(hdr), 1, *duka->duk) != 1)
+	duka->duk->seek(duka->frames[duka->iframe], uqm::io::SeekFrom::Start);
+	if (!duka->duk->readValue(hdr))
 	{
 		duka->last_error = errno;
 		return dukae_BadFile;
@@ -299,7 +299,7 @@ duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 
 	// dump encoded data at the end of the buffer aligned on 8-byte
 	p = ((uint8_t*)duka->data + duka->maxdata - ((hdr.audsize + 7) & (-8)));
-	if (ReadResFile(p, 1, hdr.audsize, *duka->duk) != hdr.audsize)
+	if (!duka->duk->readExact(uqm::io::asBytes(p, hdr.audsize)))
 	{
 		duka->last_error = errno;
 		return dukae_BadFile;
@@ -440,9 +440,7 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 
 	duka->duk = duk;
 
-	SeekResFile(*frm, 0, SEEK_END);
-	duka->cframes = TellResFile(*frm) / sizeof(uint32_t);
-	SeekResFile(*frm, 0, SEEK_SET);
+	duka->cframes = static_cast<uint32_t>(frm->size() / sizeof(uint32_t));
 	if (!duka->cframes)
 	{
 		duka->last_error = dukae_BadFile;
@@ -452,7 +450,7 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 	}
 
 	duka->frames = (uint32_t*)HMalloc(duka->cframes * sizeof(uint32_t));
-	cread = ReadResFile(duka->frames, sizeof(uint32_t), duka->cframes, *frm);
+	cread = frm->read(uqm::io::asBytes(duka->frames, sizeof(uint32_t) * duka->cframes)) / sizeof(uint32_t);
 	delete frm;
 	if (cread != duka->cframes)
 	{

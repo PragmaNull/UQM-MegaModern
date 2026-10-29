@@ -309,7 +309,7 @@ dukv_ReadFrames(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir)
 	dukv->cframes = static_cast<uint32_t>(fp->size() / sizeof(uint32_t));
 	dukv->frames = (uint32_t*)HMalloc(dukv->cframes * sizeof(uint32_t));
 
-	if (ReadResFile(dukv->frames, sizeof(uint32_t), dukv->cframes, *fp) != dukv->cframes)
+	if (!fp->readExact(uqm::io::asBytes(dukv->frames, sizeof(uint32_t) * dukv->cframes)))
 	{
 		HFree(dukv->frames);
 		dukv->frames = 0;
@@ -339,7 +339,7 @@ dukv_ReadVectors(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir, uint
 		return false;
 	}
 
-	ret = ReadResFile(vectors, NUM_VEC_ITEMS, NUM_VECTORS, *fp);
+	ret = static_cast<int>(fp->read(uqm::io::asBytes(vectors, NUM_VEC_ITEMS * NUM_VECTORS)) / NUM_VEC_ITEMS);
 	fp.reset();
 
 	return ret == NUM_VECTORS;
@@ -361,7 +361,7 @@ dukv_ReadHeader(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir, int32
 		return false;
 	}
 
-	ret = ReadResFile(&hdr, sizeof(hdr), 1, *fp);
+	ret = fp->readValue(hdr) ? 1 : 0;
 	fp.reset();
 	if (!ret)
 	{
@@ -726,8 +726,8 @@ dukv_DecodeNext(THIS_PTR)
 		return 0;
 	}
 
-	SeekResFile(*dukv->stream, dukv->frames[dukv->iframe], SEEK_SET);
-	if (ReadResFile(&fh, sizeof(fh), 1, *dukv->stream) != 1)
+	dukv->stream->seek(dukv->frames[dukv->iframe], uqm::io::SeekFrom::Start);
+	if (!dukv->stream->readValue(fh))
 	{
 		dukv->last_error = dukve_EOF;
 		return 0;
@@ -741,8 +741,8 @@ dukv_DecodeNext(THIS_PTR)
 		return -1;
 	}
 
-	SeekResFile(*dukv->stream, vofs, SEEK_CUR);
-	if (ReadResFile(dukv->inbuf, 1, vsize, *dukv->stream) != vsize)
+	dukv->stream->seek(vofs, uqm::io::SeekFrom::Current);
+	if (!dukv->stream->readExact(uqm::io::asBytes(dukv->inbuf, vsize)))
 	{
 		dukv->last_error = dukve_EOF;
 		return 0;

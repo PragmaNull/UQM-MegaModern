@@ -808,7 +808,7 @@ static inline void writeValue(uqm::io::File& fp, T v)
 		for (int byteNum = 0; byteNum < sizeof(T); ++byteNum)
 		{
 			const uint8_t valueToWrite {static_cast<uint8_t>((v >> (8 * byteNum)) & 0xff)};
-			if (WriteResFile(&valueToWrite, 1, 1, fp) != 1)
+			if (!fp.writeAll(uqm::io::asBytes(&valueToWrite, 1)))
 			{
 				io_ok = false;
 				break;
@@ -824,7 +824,7 @@ static inline void writeValueArray(uqm::io::File& fp, uqstl::span<const T> ar)
 	{
 		if constexpr (sizeof(T) == 1)
 		{
-			if (WriteResFile(ar.data(), 1, ar.size(), fp) != ar.size()) [[unlikely]]
+			if (!fp.writeAll(uqstl::as_bytes(ar))) [[unlikely]]
 			{
 				io_ok = false;
 			}

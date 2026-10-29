@@ -191,7 +191,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 		return;
 	}
 
-	dataLen = LengthResFile(*fp);
+	dataLen = static_cast<decltype(dataLen)>(fp->size());
 	uqm::log::info("\t'{}' -- conversation phrases -- {} bytes", paths,
 				   dataLen);
 	if (clip_path)

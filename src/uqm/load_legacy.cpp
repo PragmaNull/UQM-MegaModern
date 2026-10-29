@@ -544,7 +544,7 @@ read_8(void* fp, uint8_t* v)
 	{
 		v = &t;
 	}
-	return ReadResFile(v, 1, 1, *static_cast<uqm::io::File*>(fp));
+	return static_cast<uqm::io::File*>(fp)->readValue(*v);
 }
 
 static inline size_t
@@ -555,7 +555,7 @@ read_16(void* fp, uint16_t* v)
 	{
 		v = &t;
 	}
-	return ReadResFile(v, 2, 1, *static_cast<uqm::io::File*>(fp));
+	return static_cast<uqm::io::File*>(fp)->readValue(*v);
 }
 
 static inline size_t
@@ -566,7 +566,7 @@ read_32(void* fp, uint32_t* v)
 	{
 		v = &t;
 	}
-	return ReadResFile(v, 4, 1, *static_cast<uqm::io::File*>(fp));
+	return static_cast<uqm::io::File*>(fp)->readValue(*v);
 }
 
 static inline size_t
@@ -595,7 +595,7 @@ static inline size_t
 read_a8(void* fp, uint8_t* ar, uint16_t count)
 {
 	assert(ar != nullptr);
-	return ReadResFile(ar, 1, count, *static_cast<uqm::io::File*>(fp)) == count;
+	return static_cast<uqm::io::File*>(fp)->readExact(uqm::io::asBytes(ar, count));
 }
 
 static inline size_t

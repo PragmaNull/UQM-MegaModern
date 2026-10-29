@@ -71,7 +71,7 @@ static inline bool readValue(uqm::io::File& fp, T* v)
 	for (uint8_t n {}, shift {}; n < sizeof(T); ++n, shift += 8)
 	{
 		uint8_t b {};
-		if (const auto bytesRead = ReadResFile(&b, 1, 1, fp); bytesRead != 1) [[unlikely]]
+		if (!fp.readValue(b)) [[unlikely]]
 		{
 			return false;
 		}
@@ -92,7 +92,7 @@ static inline bool readValueArray(uqm::io::File& fp, uqstl::span<T> ar)
 	assert(!ar.empty());
 	if constexpr (sizeof(T) == 1)
 	{
-		return ReadResFile(ar.data(), 1, ar.size(), fp) == ar.size();
+		return fp.readExact(uqstl::as_writable_bytes(ar));
 	}
 	else
 	{

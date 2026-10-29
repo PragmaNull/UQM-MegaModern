@@ -3,6 +3,7 @@
 #ifndef UQM_LIBS_IO_TYPES_H_
 #define UQM_LIBS_IO_TYPES_H_
 
+#include "core/stl/stl.h"
 #include "core/types/enum.h"
 
 #include <cstdint>
@@ -69,6 +70,17 @@ enum class Access : uint8_t
 	ReadOnly,
 	ReadWrite,
 };
+
+// The 'size' bytes at 'data'.
+inline uqstl::span<uqstl::byte> asBytes(void* data, size_t size)
+{
+	return {static_cast<uqstl::byte*>(data), size};
+}
+
+inline uqstl::span<const uqstl::byte> asBytes(const void* data, size_t size)
+{
+	return {static_cast<const uqstl::byte*>(data), size};
+}
 
 } // namespace uqm::io
 

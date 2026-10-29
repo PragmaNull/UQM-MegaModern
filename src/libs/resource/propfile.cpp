@@ -163,7 +163,7 @@ void PropFile_from_file(uqm::io::File& f, PROPERTY_HANDLER handler, const char* 
 	size_t flen;
 	char* data;
 
-	flen = LengthResFile(f);
+	flen = static_cast<size_t>(f.size());
 
 	data = (char*)malloc(flen + 1);
 	if (!data)
@@ -173,7 +173,7 @@ void PropFile_from_file(uqm::io::File& f, PROPERTY_HANDLER handler, const char* 
 
 	// We may end up with less bytes than we asked for due to the
 	// DOS->Unix newline conversion
-	flen = ReadResFile(data, 1, flen, f);
+	flen = f.read(uqm::io::asBytes(data, flen));
 	data[flen] = '\0';
 
 	PropFile_from_string(data, handler, prefix);
