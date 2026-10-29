@@ -231,6 +231,10 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	{
 		return {EXIT_FAILURE, true};
 	}
+	if (options.fastReplay)
+	{
+		SetVirtualClockPacing(false);
+	}
 
 	TFB_PreInit();
 	mem_init();
