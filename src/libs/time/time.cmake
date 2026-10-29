@@ -15,8 +15,6 @@ set(uqm_src_libs_time_files
 	"src/libs/time/timecommon.cpp"
 	"src/libs/time/timecommon.h"
 	"src/libs/time/timelib.h"
-	"src/libs/time/VirtualClock.cpp"
-	"src/libs/time/VirtualClock.h"
 )
 
 source_group("src\\libs\\time" FILES ${uqm_src_libs_time_files})

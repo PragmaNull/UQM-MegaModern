@@ -22,7 +22,6 @@
 
 #include <chrono>
 #include "libs/compiler.h"
-#include "libs/time/VirtualClock.h"
 
 
 typedef uint32_t TimeCount;
@@ -45,14 +44,7 @@ static constexpr uint32_t getTicksForFramerate(const uint32_t desiredFps)
 
 extern void InitTimeSystem(void);
 extern void UnInitTimeSystem(void);
-// Returns the virtual time on a thread that uses a virtual clock, and the real time on other threads.
 extern TimeCount GetTimeCounter(void);
-extern TimeCount GetRealTimeCounter(void);
-
-// Makes the calling thread use a virtual clock that starts at 'start'.
-extern void UseVirtualClock(TimeCount start);
-// Returns the virtual clock of the calling thread, or nullptr.
-extern uqm::VirtualClock* ThreadVirtualClock(void);
 
 
 #endif /* LIBS_TIME_TIMELIB_H_ */

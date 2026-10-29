@@ -205,14 +205,6 @@ void ProcessUtilityKeys(void)
 static void
 SetRandomMenuMusic(void)
 {
-	if (const uqstl::optional<uint32_t> seed {GetDeterministicSeed()})
-	{
-		srand(*seed);
-		Rando = (rand() % NUM_MM_THEMES);
-		optMaskOfDeceit = false;
-		return;
-	}
-
 	time_t t = time(nullptr);
 	const uqstl::tm tm {uqm::localtime(t)};
 
@@ -253,13 +245,6 @@ int Starcon2Main(void* threadArg)
 		}
 	}
 #endif // CREATE_JOURNAL
-
-	if (const uqstl::optional<uint32_t> seed {GetDeterministicSeed()})
-	{
-		UseVirtualClock(1);
-		TFB_SeedRandom(*seed);
-		uqm::log::info("Deterministic run with seed {}.", *seed);
-	}
 
 	{
 		/* TODO: Put initAudio back in main where it belongs once threading
@@ -452,7 +437,6 @@ int Starcon2Main(void* threadArg)
 	FreeMasterShipList();
 	FreeKernel();
 
-	StopInputRecording();
 	MainExited = true;
 
 	(void)threadArg; /* Satisfying compiler (unused parameter) */

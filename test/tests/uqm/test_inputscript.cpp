@@ -38,66 +38,6 @@ TEST(InputScriptTest, ParsesCommands)
 	EXPECT_EQ(commands[8].kind, ScriptCommand::Kind::Quit);
 }
 
-TEST(InputScriptTest, SeedMakesTheRunDeterministic)
-{
-	EXPECT_FALSE(parseOrFail("down\n").seed().has_value());
-	EXPECT_EQ(parseOrFail("seed 42\ndown\n").seed(), 42u);
-	uqstl::string error {};
-	EXPECT_FALSE(InputScript::parse("seed soon", error));
-}
-
-TEST(InputScriptTest, ParsesAndFormatsFrames)
-{
-	const char* const line {"frame 12 held down,t1.thrust,t2.weapon pulsed down text 72,105 last 105 end"};
-	InputScript script {parseOrFail(uqstl::string {line} + "\nframe 13\n")};
-	ASSERT_EQ(script.frames().size(), 2u);
-
-	const FrameInput& input {script.frames()[0]};
-	EXPECT_EQ(input.frame, 12u);
-	EXPECT_EQ(input.heldMenu, uint64_t {1} << 6);
-	EXPECT_EQ(input.pulsedMenu, uint64_t {1} << 6);
-	EXPECT_EQ(input.heldBattle, (uint64_t {1} << 7) | (uint64_t {1} << (8 + 4)));
-	EXPECT_EQ(input.text, (uqstl::vector<uint32_t> {72, 105}));
-	EXPECT_EQ(input.last, 105u);
-	EXPECT_TRUE(input.end);
-	EXPECT_EQ(input.format(), line);
-	EXPECT_EQ(script.frames()[1].format(), "frame 13");
-	EXPECT_FALSE(input.sameKeys(script.frames()[1]));
-}
-
-TEST(InputScriptTest, FrameInputStaysUntilTheNextFrame)
-{
-	InputScript script {parseOrFail("frame 5 held select\nframe 9\n")};
-	EXPECT_EQ(script.frameInput(4), nullptr);
-	ASSERT_NE(script.frameInput(5), nullptr);
-	EXPECT_EQ(script.frameInput(8)->frame, 5u);
-	EXPECT_FALSE(script.finished());
-	EXPECT_EQ(script.frameInput(9)->frame, 9u);
-	EXPECT_TRUE(script.finished());
-}
-
-TEST(InputScriptTest, ChecksAreFoundByFrame)
-{
-	InputScript script {parseOrFail("check 0 1a\ncheck 120 ff00ff00ff00ff00\n")};
-	EXPECT_EQ(script.checkAt(0), 0x1au);
-	EXPECT_FALSE(script.checkAt(60).has_value());
-	EXPECT_EQ(script.checkAt(120), 0xff00ff00ff00ff00u);
-	uqstl::string error {};
-	EXPECT_FALSE(InputScript::parse("check 5\n", error));
-	EXPECT_FALSE(InputScript::parse("check 5 xyz\n", error));
-	EXPECT_FALSE(InputScript::parse("check 5 1\ncheck 5 2\n", error));
-}
-
-TEST(InputScriptTest, ReportsInvalidFrames)
-{
-	uqstl::string error {};
-	EXPECT_FALSE(InputScript::parse("frame 5\nframe 5\n", error));
-	EXPECT_EQ(error, "line 2: frame numbers must increase");
-	EXPECT_FALSE(InputScript::parse("frame 1 held jump\n", error));
-	EXPECT_FALSE(InputScript::parse("frame 1 held t7.up\n", error));
-	EXPECT_FALSE(InputScript::parse("frame 1 hold up\n", error));
-}
-
 TEST(InputScriptTest, ReportsInvalidLines)
 {
 	uqstl::string error {};

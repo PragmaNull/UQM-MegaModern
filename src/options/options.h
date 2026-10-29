@@ -80,8 +80,6 @@ struct OptionsStruct : SettingsRegistry
 
 	uqstl::string graphicsBackend {}; // SDL renderer backend hint passed to TFB_InitGraphics.
 	uqstl::string inputScript {};	  // File of scripted menu key presses, for testing.
-	uqstl::string recordInput {};	  // File to record the input to, as an input script.
-	bool fastReplay {};				  // Run deterministic scripts as fast as possible.
 
 	// Commandline and user config options
 	Setting<bool> opengl {

@@ -35,10 +35,6 @@
 #include "sounds.h"
 #include "tactrans.h"
 #include "uqmdebug.h"
-#include "globdata.h"
-#include "libs/math/random.h"
-
-#include <fmt/format.h>
 #include "libs/async.h"
 #include "libs/inplib.h"
 #include "libs/time/timelib.h"
@@ -89,170 +85,6 @@ static void (*inputScriptMenuDump)(void) {};
 static bool inputScriptFinishedLogged {};
 static uqstl::mutex inputScriptMutex {};
 static uqstl::chrono::steady_clock::time_point inputScriptStart {};
-static uqstl::optional<TimeCount> inputScriptGameStart {};
-
-static_assert(uqm::c_scriptMenuKeyCount == NUM_MENU_KEYS);
-static_assert(uqm::c_scriptBattleKeyCount == NUM_KEYS);
-static_assert(uqm::c_scriptTemplateCount == static_cast<int>(ControlTemplate::NUM));
-// The number of UpdateInputState calls so far.
-static uint64_t inputFrame {};
-// The recorded characters of the current input frame.
-static uqstl::vector<uint32_t> frameText {};
-static size_t frameTextNext {};
-static uint32_t frameLast {};
-
-// Recording
-static uqstl::ofstream recordFile {};
-static uqstl::optional<uint32_t> recordSeed {};
-// The input of the frame that is being recorded. Its characters arrive after UpdateInputState.
-static uqstl::optional<uqm::FrameInput> recordPending {};
-static uqm::FrameInput recordWritten {};
-static uqstl::mutex recordMutex {};
-
-// Input frames between state checks in a recording.
-static constexpr uint64_t c_recordCheckInterval {120};
-static bool stateMismatchReported {};
-
-// Returns a hash of the game state that a replay must reproduce.
-static uint64_t
-computeStateHash(void)
-{
-	uint64_t hash {0xcbf29ce484222325};
-	const auto add {[&hash](uint64_t value, int bytes) {
-		for (int i {0}; i < bytes; ++i)
-		{
-			hash ^= (value >> (8 * i)) & 0xff;
-			hash *= 0x100000001b3;
-		}
-	}};
-	const auto addBytes {[&add](uqstl::span<const uint8_t> bytes) {
-		for (const uint8_t byte : bytes)
-		{
-			add(byte, 1);
-		}
-	}};
-
-	add(TFB_RandomState(), 4);
-
-	const GAME_STATE& game {GlobData.Game_state};
-	add(game.CurrentActivity, 2);
-	add(game.GameClock.day_index, 1);
-	add(game.GameClock.month_index, 1);
-	add(game.GameClock.year_index, 2);
-	add(static_cast<uint16_t>(game.GameClock.tick_count), 2);
-	add(static_cast<uint16_t>(game.autopilot.x), 2);
-	add(static_cast<uint16_t>(game.autopilot.y), 2);
-	add(static_cast<uint16_t>(game.ip_location.x), 2);
-	add(static_cast<uint16_t>(game.ip_location.y), 2);
-	add(game.ShipFacing, 2);
-	add(game.ip_planet, 1);
-	add(game.in_orbit, 1);
-
-	const SIS_STATE& sis {GlobData.SIS_state};
-	add(static_cast<uint32_t>(sis.log_x), 4);
-	add(static_cast<uint32_t>(sis.log_y), 4);
-	add(sis.ResUnits, 4);
-	add(sis.FuelOnBoard, 4);
-	add(sis.CrewEnlisted, 2);
-	add(sis.TotalElementMass, 2);
-	add(sis.TotalBioMass, 2);
-	addBytes(sis.ModuleSlots);
-	addBytes(sis.DriveSlots);
-	addBytes(sis.JetSlots);
-	add(sis.NumLanders, 1);
-	for (const uint16_t amount : sis.ElementAmounts)
-	{
-		add(amount, 2);
-	}
-	return hash;
-}
-
-static bool
-isReplayingFrames(void)
-{
-	return inputScript && !inputScript->frames().empty();
-}
-
-// Replaces all input of this frame with the recorded input.
-static void
-applyFrameInput(void)
-{
-	const uqm::FrameInput* const input {inputScript->frameInput(inputFrame)};
-	const uqm::FrameInput none {};
-	const uqm::FrameInput& keys {input ? *input : none};
-	const bool thisFrame {input && input->frame == inputFrame};
-
-	for (int t {0}; t < static_cast<int>(ControlTemplate::NUM); t++)
-	{
-		for (int k {0}; k < NUM_KEYS; k++)
-		{
-			const uint64_t bit {uint64_t {1} << (t * NUM_KEYS + k)};
-			CurrentInputState.key[t][k] = (keys.heldBattle & bit) != 0;
-			CachedInputState.key[t][k] = CurrentInputState.key[t][k];
-			PulsedInputState.key[t][k] = (keys.pulsedBattle & bit) != 0;
-		}
-	}
-	for (int k {0}; k < NUM_MENU_KEYS; k++)
-	{
-		const uint64_t bit {uint64_t {1} << k};
-		CurrentInputState.menu[k] = (keys.heldMenu & bit) != 0;
-		CachedInputState.menu[k] = CurrentInputState.menu[k];
-		PulsedInputState.menu[k] = (keys.pulsedMenu & bit) != 0;
-	}
-	// The main thread reads these keys from the immediate input state.
-	ImmediateInputState.menu[KEY_SCREENSHOT] = CurrentInputState.menu[KEY_SCREENSHOT];
-	if (CurrentInputState.menu[KEY_ABORT])
-	{
-		ImmediateInputState.menu[KEY_ABORT] = 1;
-	}
-
-	frameText = thisFrame ? input->text : uqstl::vector<uint32_t> {};
-	frameTextNext = 0;
-	frameLast = thisFrame ? input->last : 0;
-
-	if (thisFrame && input->end)
-	{
-		uqm::log::info("Input script: end of the recording.");
-		uqm::log::default_logger()->flush();
-		ImmediateInputState.menu[KEY_ABORT] = 1;
-	}
-}
-
-UniChar GetNextInputCharacter(void)
-{
-	UniChar ch {};
-	if (isReplayingFrames())
-	{
-		ch = frameTextNext < frameText.size() ? static_cast<UniChar>(frameText[frameTextNext++]) : 0;
-	}
-	else
-	{
-		ch = GetNextCharacter();
-	}
-	if (ch != 0)
-	{
-		const uqstl::lock_guard lock {recordMutex};
-		if (recordPending)
-		{
-			recordPending->text.push_back(ch);
-		}
-	}
-	return ch;
-}
-
-UniChar GetLastInputCharacter(void)
-{
-	const UniChar ch {isReplayingFrames() ? static_cast<UniChar>(frameLast) : GetLastCharacter()};
-	if (ch != 0)
-	{
-		const uqstl::lock_guard lock {recordMutex};
-		if (recordPending)
-		{
-			recordPending->last = ch;
-		}
-	}
-	return ch;
-}
 
 bool LoadInputScript(const char* path)
 {
@@ -275,114 +107,6 @@ bool LoadInputScript(const char* path)
 	uqm::log::info("Input script: running '{}' ({} commands).", path, inputScript->commands().size());
 	inputScriptStart = uqstl::chrono::steady_clock::now();
 	return true;
-}
-
-bool StartInputRecording(const char* path)
-{
-	recordFile.open(path, uqstl::ios::binary | uqstl::ios::trunc);
-	if (!recordFile)
-	{
-		uqm::log::error("Input recording: cannot create '{}'.", path);
-		return false;
-	}
-	recordSeed = inputScript && inputScript->seed() ? *inputScript->seed() : static_cast<uint32_t>(uqstl::time(nullptr));
-	recordFile << "# Input recorded by UQM-MegaModern. Replay it with --input-script.\n";
-	recordFile << "seed " << *recordSeed << "\n";
-	recordFile.flush();
-	uqm::log::info("Input recording: writing '{}' with seed {}.", path, *recordSeed);
-	return true;
-}
-
-static void
-writePendingFrame(void)
-{
-	if (!recordPending)
-	{
-		return;
-	}
-	if (!recordPending->sameKeys(recordWritten) || !recordPending->text.empty() || recordPending->last != 0 || recordPending->end)
-	{
-		recordFile << recordPending->format() << "\n";
-		recordFile.flush();
-		recordWritten = *recordPending;
-	}
-	recordPending.reset();
-}
-
-// Keys that a replay must not press.
-static bool
-isRecordedMenuKey(int key)
-{
-	switch (key)
-	{
-		case KEY_PAUSE:
-		case KEY_FULLSCREEN:
-		case KEY_DEBUG:
-		case KEY_DEBUG_2:
-		case KEY_DEBUG_3:
-		case KEY_DEBUG_4:
-			return false;
-		default:
-			return true;
-	}
-}
-
-// Starts the record of this frame, from the final input state of the frame.
-static void
-recordFrameInput(void)
-{
-	const uqstl::lock_guard lock {recordMutex};
-	if (!recordFile.is_open())
-	{
-		return;
-	}
-	writePendingFrame();
-	if (inputFrame % c_recordCheckInterval == 0)
-	{
-		recordFile << fmt::format("check {} {:016x}\n", inputFrame, computeStateHash());
-	}
-	uqm::FrameInput input {.frame = inputFrame};
-	for (int t {0}; t < static_cast<int>(ControlTemplate::NUM); t++)
-	{
-		for (int k {0}; k < NUM_KEYS; k++)
-		{
-			const uint64_t bit {uint64_t {1} << (t * NUM_KEYS + k)};
-			input.heldBattle |= CurrentInputState.key[t][k] ? bit : 0;
-			input.pulsedBattle |= PulsedInputState.key[t][k] ? bit : 0;
-		}
-	}
-	for (int k {0}; k < NUM_MENU_KEYS; k++)
-	{
-		if (isRecordedMenuKey(k))
-		{
-			const uint64_t bit {uint64_t {1} << k};
-			input.heldMenu |= CurrentInputState.menu[k] ? bit : 0;
-			input.pulsedMenu |= PulsedInputState.menu[k] ? bit : 0;
-		}
-	}
-	recordPending = uqstl::move(input);
-}
-
-void StopInputRecording(void)
-{
-	const uqstl::lock_guard lock {recordMutex};
-	if (!recordFile.is_open())
-	{
-		return;
-	}
-	writePendingFrame();
-	recordFile << uqm::FrameInput {.frame = inputFrame, .heldMenu = recordWritten.heldMenu, .pulsedMenu = recordWritten.pulsedMenu, .heldBattle = recordWritten.heldBattle, .pulsedBattle = recordWritten.pulsedBattle, .end = true}.format() << "\n";
-	recordFile.close();
-	uqm::log::info("Input recording: {} input frames recorded.", inputFrame);
-}
-
-uqstl::optional<uint32_t> GetDeterministicSeed(void)
-{
-	if (recordSeed)
-	{
-		return recordSeed;
-	}
-	return inputScript ? inputScript->seed() : uqstl::nullopt;
 }
 
 void SetInputScriptMenuDump(void (*dump)(void))
@@ -432,22 +156,8 @@ static void
 applyInputScript(void)
 {
 	const uqstl::lock_guard lock {inputScriptMutex};
-	uint32_t now {};
-	if (GetDeterministicSeed())
-	{
-		// A deterministic run counts game time.
-		const TimeCount gameNow {GetTimeCounter()};
-		if (!inputScriptGameStart)
-		{
-			inputScriptGameStart = gameNow;
-		}
-		now = static_cast<uint32_t>(uint64_t {gameNow - *inputScriptGameStart} * 1000 / GameTicksPerSecond);
-	}
-	else
-	{
-		now = static_cast<uint32_t>(uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(uqstl::chrono::steady_clock::now() - inputScriptStart).count());
-	}
-	const uqm::InputScript::Step step {inputScript->update(now)};
+	const auto now {uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(uqstl::chrono::steady_clock::now() - inputScriptStart).count()};
+	const uqm::InputScript::Step step {inputScript->update(static_cast<uint32_t>(now))};
 
 	if (step.press == uqm::ScriptKey::Screenshot)
 	{
@@ -705,21 +415,6 @@ void UpdateInputState(void)
 							 &RepeatDelays.menu[i], &NewTime, &Times.menu[i]);
 		}
 	}
-
-	if (isReplayingFrames())
-	{
-		applyFrameInput();
-	}
-	if (inputScript && !stateMismatchReported)
-	{
-		if (const uqstl::optional<uint64_t> expected {inputScript->checkAt(inputFrame)}; expected && *expected != computeStateHash())
-		{
-			uqm::log::error("Input script: the game state differs from the recording at input frame {}.", inputFrame);
-			stateMismatchReported = true;
-		}
-	}
-	recordFrameInput();
-	++inputFrame;
 
 	if (CurrentInputState.menu[KEY_PAUSE])
 	{

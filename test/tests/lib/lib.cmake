@@ -9,8 +9,6 @@ list(APPEND uqm_tests_lib_master_files
 	"../src/lib/Math2D/Math2DStringUtils.h"
 	"../src/lib/Math2D/Math2DStringUtils.cpp"
 	"../src/libs/io/Concepts.h"
-	"../src/libs/time/VirtualClock.cpp"
-	"../src/libs/time/VirtualClock.h"
 	"../src/libs/io/FileSystem.h"
 	"../src/libs/io/Matcher.cpp"
 	"../src/libs/io/Matcher.h"
@@ -37,7 +35,6 @@ list(APPEND uqm_tests_lib_master_files
 set(uqm_tests_lib_files
 	"tests/lib/lib.cmake"
 	"tests/lib/test_io.cpp"
-	"tests/lib/test_VirtualClock.cpp"
 	"tests/lib/test_Math2D.cpp"
 )
 

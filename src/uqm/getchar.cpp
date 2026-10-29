@@ -290,14 +290,14 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	memcpy(pTES->CacheStr, pTES->BaseStr, pTES->MaxSize);
 
 	// process the pending character buffer
-	ch = GetNextInputCharacter();
+	ch = GetNextCharacter();
 	if (TextEntry3DO && ch == UNICHAR_SPACE)
 	{
 		ch = UNICHAR_TAB;
 	}
 	if (!ch && PulsedInputState.menu[KEY_MENU_ANY])
 	{ // keyboard repeat, but only when buffer empty
-		ch = GetLastInputCharacter();
+		ch = GetLastCharacter();
 	}
 	while (ch)
 	{
@@ -322,7 +322,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 				PlayMenuSound(MENU_SOUND_FAILURE);
 			}
 		}
-		ch = GetNextInputCharacter();
+		ch = GetNextCharacter();
 		if (TextEntry3DO && ch == UNICHAR_SPACE)
 		{
 			ch = UNICHAR_TAB;

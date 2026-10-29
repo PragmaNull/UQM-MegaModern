@@ -150,8 +150,6 @@ void HibernateThread(TimePeriod timePeriod);
 void HibernateThreadUntil(TimeCount wakeTime);
 void SleepThread(TimePeriod timePeriod);
 void SleepThreadUntil(TimeCount wakeTime);
-// With false, threads with a virtual clock do not wait in real time when they sleep, so the game runs as fast as it can.
-void SetVirtualClockPacing(bool pacing);
 void DestroyThread(Thread);
 void TaskSwitch(void);
 void WaitThread(Thread thread, int* status);

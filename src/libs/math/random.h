@@ -37,8 +37,6 @@
 
 uint32_t TFB_SeedRandom(uint32_t seed);
 uint32_t TFB_Random(void);
-// Returns the state of the random number generator, without changing it.
-uint32_t TFB_RandomState(void);
 
 
 typedef struct RandomContext RandomContext;

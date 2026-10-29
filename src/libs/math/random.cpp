@@ -92,12 +92,6 @@ TFB_Random(void)
 *****************************************************************************/
 
 uint32_t
-TFB_RandomState(void)
-{
-	return seed;
-}
-
-uint32_t
 TFB_SeedRandom(uint32_t new_seed)
 {
 	uint32_t old_seed;
