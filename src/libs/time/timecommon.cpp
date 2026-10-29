@@ -18,6 +18,7 @@
  */
 
 #include <stdio.h>
+#include "core/stl/optional.h"
 #include "libs/time/timelib.h"
 #include "timecommon.h"
 
@@ -31,8 +32,29 @@ void UnInitTimeSystem(void)
 	NativeUnInitTimeSystem();
 }
 
+namespace
+{
+thread_local uqstl::optional<uqm::VirtualClock> t_virtualClock {};
+} // namespace
+
 TimeCount
 GetTimeCounter(void)
 {
+	return t_virtualClock ? t_virtualClock->read() : NativeGetTimeCounter();
+}
+
+TimeCount
+GetRealTimeCounter(void)
+{
 	return NativeGetTimeCounter();
+}
+
+void UseVirtualClock(TimeCount start)
+{
+	t_virtualClock.emplace(start, NativeGetTimeCounter());
+}
+
+uqm::VirtualClock* ThreadVirtualClock(void)
+{
+	return t_virtualClock ? &*t_virtualClock : nullptr;
 }

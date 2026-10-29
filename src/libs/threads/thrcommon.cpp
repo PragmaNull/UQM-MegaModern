@@ -23,6 +23,8 @@
 #include "libs/memlib.h"
 #include "thrcommon.h"
 
+#include <atomic>
+
 #define LIFECYCLE_SIZE 8
 typedef struct
 {
@@ -280,6 +282,30 @@ extern uint32_t mainThreadId;
 extern uint32_t SDL_ThreadID(void);
 #endif /* DEBUG_SLEEP */
 
+static uqstl::atomic<bool> virtualClockPacing {true};
+
+void SetVirtualClockPacing(bool pacing)
+{
+	virtualClockPacing = pacing;
+}
+
+// Advances the virtual clock of the calling thread. Returns false if the thread has no virtual clock.
+static bool
+sleepVirtualClockUntil(TimeCount wakeTime)
+{
+	uqm::VirtualClock* const clock {ThreadVirtualClock()};
+	if (clock == nullptr)
+	{
+		return false;
+	}
+	const TimeCount realTarget {clock->sleepUntil(wakeTime, GetRealTimeCounter())};
+	if (virtualClockPacing && static_cast<int32_t>(realTarget - GetRealTimeCounter()) > 0)
+	{
+		NativeSleepThreadUntil(realTarget);
+	}
+	return true;
+}
+
 void HibernateThread(TimePeriod timePeriod)
 {
 #ifdef DEBUG_SLEEP
@@ -289,6 +315,11 @@ void HibernateThread(TimePeriod timePeriod)
 	}
 #endif /* DEBUG_SLEEP */
 
+	if (ThreadVirtualClock() != nullptr)
+	{
+		SleepThread(timePeriod);
+		return;
+	}
 	NativeSleepThread(timePeriod);
 }
 
@@ -302,6 +333,10 @@ void HibernateThreadUntil(TimeCount wakeTime)
 	}
 #endif /* DEBUG_SLEEP */
 
+	if (sleepVirtualClockUntil(wakeTime))
+	{
+		return;
+	}
 	NativeSleepThreadUntil(wakeTime);
 }
 
@@ -331,6 +366,13 @@ void SleepThreadUntil(TimeCount wakeTime)
 						"thread.\n");
 	}
 #endif /* DEBUG_SLEEP */
+
+	if (ThreadVirtualClock() != nullptr)
+	{
+		Async_process();
+		sleepVirtualClockUntil(wakeTime);
+		return;
+	}
 
 	for (;;)
 	{
