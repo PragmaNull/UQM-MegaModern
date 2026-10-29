@@ -91,6 +91,15 @@ uqstl::optional<InputScript> InputScript::parse(uqstl::string_view text, uqstl::
 			const auto kind {compareICase(word, "wait") ? ScriptCommand::Kind::Wait : ScriptCommand::Kind::Delay};
 			script.m_commands.push_back({.kind = kind, .milliseconds = *ms});
 		}
+		else if (compareICase(word, "seed"))
+		{
+			const auto seed {parseCount(argument)};
+			if (!seed)
+			{
+				return fail("expected a seed number");
+			}
+			script.m_seed = *seed;
+		}
 		else if (compareICase(word, "dumpmenu"))
 		{
 			script.m_commands.push_back({.kind = ScriptCommand::Kind::DumpMenu});

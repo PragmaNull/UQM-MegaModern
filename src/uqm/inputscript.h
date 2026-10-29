@@ -38,6 +38,7 @@ enum class ScriptKey
 //   dumpmenu        log the current setup menu
 //   log <text>      write text to the log
 //   quit            stop the game
+//   seed <n>        run deterministically: a virtual game clock and random numbers from seed n
 // Empty lines and lines that start with '#' are ignored.
 struct ScriptCommand
 {
@@ -79,6 +80,9 @@ public:
 
 	[[nodiscard]] bool finished() const noexcept;
 
+	// The seed of a deterministic run, or nullopt.
+	[[nodiscard]] uqstl::optional<uint32_t> seed() const noexcept { return m_seed; }
+
 	[[nodiscard]] uqstl::span<const ScriptCommand> commands() const noexcept
 	{
 		return m_commands;
@@ -86,6 +90,7 @@ public:
 
 private:
 	uqstl::vector<ScriptCommand> m_commands {};
+	uqstl::optional<uint32_t> m_seed {};
 	size_t m_next {};
 	uint32_t m_delay {c_defaultDelay};
 	uqstl::optional<uint32_t> m_waitUntil {};

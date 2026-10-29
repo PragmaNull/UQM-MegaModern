@@ -85,6 +85,7 @@ static void (*inputScriptMenuDump)(void) {};
 static bool inputScriptFinishedLogged {};
 static uqstl::mutex inputScriptMutex {};
 static uqstl::chrono::steady_clock::time_point inputScriptStart {};
+static uqstl::optional<TimeCount> inputScriptGameStart {};
 
 bool LoadInputScript(const char* path)
 {
@@ -107,6 +108,11 @@ bool LoadInputScript(const char* path)
 	uqm::log::info("Input script: running '{}' ({} commands).", path, inputScript->commands().size());
 	inputScriptStart = uqstl::chrono::steady_clock::now();
 	return true;
+}
+
+uqstl::optional<uint32_t> GetDeterministicSeed(void)
+{
+	return inputScript ? inputScript->seed() : uqstl::nullopt;
 }
 
 void SetInputScriptMenuDump(void (*dump)(void))
@@ -156,8 +162,22 @@ static void
 applyInputScript(void)
 {
 	const uqstl::lock_guard lock {inputScriptMutex};
-	const auto now {uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(uqstl::chrono::steady_clock::now() - inputScriptStart).count()};
-	const uqm::InputScript::Step step {inputScript->update(static_cast<uint32_t>(now))};
+	uint32_t now {};
+	if (inputScript->seed())
+	{
+		// A deterministic run counts game time.
+		const TimeCount gameNow {GetTimeCounter()};
+		if (!inputScriptGameStart)
+		{
+			inputScriptGameStart = gameNow;
+		}
+		now = static_cast<uint32_t>(uint64_t {gameNow - *inputScriptGameStart} * 1000 / GameTicksPerSecond);
+	}
+	else
+	{
+		now = static_cast<uint32_t>(uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(uqstl::chrono::steady_clock::now() - inputScriptStart).count());
+	}
+	const uqm::InputScript::Step step {inputScript->update(now)};
 
 	if (step.press == uqm::ScriptKey::Screenshot)
 	{

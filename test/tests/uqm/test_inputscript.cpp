@@ -38,6 +38,14 @@ TEST(InputScriptTest, ParsesCommands)
 	EXPECT_EQ(commands[8].kind, ScriptCommand::Kind::Quit);
 }
 
+TEST(InputScriptTest, SeedMakesTheRunDeterministic)
+{
+	EXPECT_FALSE(parseOrFail("down\n").seed().has_value());
+	EXPECT_EQ(parseOrFail("seed 42\ndown\n").seed(), 42u);
+	uqstl::string error {};
+	EXPECT_FALSE(InputScript::parse("seed soon", error));
+}
+
 TEST(InputScriptTest, ReportsInvalidLines)
 {
 	uqstl::string error {};
