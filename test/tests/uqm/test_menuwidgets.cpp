@@ -270,8 +270,8 @@ TEST_F(MenuWidgetsTest, TextShowsAndSetsTheSetting)
 	};
 	MenuWidgets builder {
 		options, MenuWidgets::SharedWidgets {&spacer, &back},
-		  uqstl::move(hooks)
-	};
+		uqstl::move(hooks)
+	  };
 	WIDGET** list {builder.build(textMenu->menus[0])};
 	ASSERT_EQ(list[0]->tag, WIDGET_TYPE_TEXTENTRY);
 	auto& widget {*reinterpret_cast<WIDGET_TEXTENTRY*>(list[0])};
@@ -288,6 +288,30 @@ TEST_F(MenuWidgetsTest, TextShowsAndSetsTheSetting)
 	widget.onChange(&widget);
 	EXPECT_EQ(*options.customSeed, 777);
 	EXPECT_STREQ(widget.value, "777");
+}
+
+TEST_F(MenuWidgetsTest, ChoiceUsesSuppliedLabels)
+{
+	const auto labelMenu {menuDefinitionFromJson(R"({"menus": [{"id": "a", "subtitle": "", "background": 0, "items": [
+		{"choice": "controls.player1Template", "label": "Player", "labels": "templates", "options": [
+			{"value": "0", "label": "Template 1"}, {"value": "1", "label": "Template 2"}
+		]}
+	]}]})")};
+	ASSERT_TRUE(labelMenu.has_value());
+	EXPECT_EQ(labelMenu->menus[0].items[0].labels, "templates");
+
+	MenuWidgets::Hooks hooks {};
+	hooks.optionLabel = [](uqstl::string_view list, size_t index) -> const char* {
+		return list == "templates" && index == 0 ? "Arrows" : nullptr;
+	};
+	MenuWidgets builder {
+		options, MenuWidgets::SharedWidgets {&spacer, &back},
+		  uqstl::move(hooks)
+	};
+	WIDGET** list {builder.build(labelMenu->menus[0])};
+	const WIDGET_CHOICE& widget {choice(list, 0)};
+	EXPECT_STREQ(widget.options[0].optname, "Arrows");
+	EXPECT_STREQ(widget.options[1].optname, "Template 2");
 }
 
 TEST_F(MenuWidgetsTest, RefreshShowsChangedSettings)

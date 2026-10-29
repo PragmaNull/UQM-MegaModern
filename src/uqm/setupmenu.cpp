@@ -989,8 +989,6 @@ SetDefaults(void)
 	choices[CHOICE_DISPLAY].selected = opts.fullscreen;
 	choices[CHOICE_SHOWFPS].selected = opts.fps;
 
-	choices[CHOICE_BTMPLAYER].selected = static_cast<int>(opts.player1);
-	choices[CHOICE_TOPPLAYER].selected = static_cast<int>(opts.player2);
 	choices[CHOICE_KBLAYOUT].selected = 0;
 	choices[CHOICE_ASPRATIO].selected = opts.keepaspect;
 	//	choices[CHOICE_CHUPGRADES   ].selected = opts.unlockUpgrades;
@@ -1032,8 +1030,6 @@ PropagateResults(void)
 	opts.fullscreen = (OPT_FULLSCREEN)choices[CHOICE_DISPLAY].selected;
 	opts.fps = (OPT_ENABLABLE)choices[CHOICE_SHOWFPS].selected;
 
-	opts.player1 = (ControlTemplate)choices[CHOICE_BTMPLAYER].selected;
-	opts.player2 = (ControlTemplate)choices[CHOICE_TOPPLAYER].selected;
 	opts.keepaspect = (OPT_ENABLABLE)choices[CHOICE_ASPRATIO].selected;
 	//	opts.unlockUpgrades =   choices[CHOICE_CHUPGRADES   ].selected;
 	opts.loresBlowup = (OPT_RESSCALER)choices[CHOICE_RESOLUTION].selected;
@@ -1469,6 +1465,21 @@ build_defined_menus(void)
 			}
 			g_seedType = *options.seedType;
 		}
+		else if (setting.key() == "controls.player1Template")
+		{
+			PlayerControlTemplates[0] = static_cast<ControlTemplate>(*options.player1Control);
+		}
+		else if (setting.key() == "controls.player2Template")
+		{
+			PlayerControlTemplates[1] = static_cast<ControlTemplate>(*options.player2Control);
+		}
+	};
+	hooks.optionLabel = [](uqstl::string_view list, size_t index) -> const char* {
+		if (list == "controlTemplates" && index < uqstl::size(uqm::input_templates))
+		{
+			return uqm::input_templates[index].name;
+		}
+		return nullptr;
 	};
 	hooks.textEntrySelect = OnTextEntryEvent;
 	uqm::MenuWidgets::SharedWidgets shared {};
@@ -1478,8 +1489,6 @@ build_defined_menus(void)
 		{"windowType",		   (WIDGET*)(&choices[CHOICE_WINDOWTYPE])},
 		{"devicesMenu",			(WIDGET*)(&buttons[BTN_DEVMENU])		},
 		{"upgradesMenu",		 (WIDGET*)(&buttons[BTN_UPGMENU])		 },
-		{"player1Template",		(WIDGET*)(&choices[CHOICE_BTMPLAYER]) },
-		{"player2Template",		(WIDGET*)(&choices[CHOICE_TOPPLAYER]) },
 		{"editKeysMenu",		 (WIDGET*)(&buttons[BTN_EDITKEYS])	  },
 #ifdef DIRECTIONAL_JOY
 		{"directionalJoystick", (WIDGET*)(&choices[CHOICE_JOYSTICK])	},
@@ -1660,8 +1669,6 @@ init_widgets(void)
 	// configurations
 	for (i = 0; i < 6; i++)
 	{
-		choices[CHOICE_BTMPLAYER].options[i].optname = uqm::input_templates[i].name;
-		choices[CHOICE_TOPPLAYER].options[i].optname = uqm::input_templates[i].name;
 		choices[CHOICE_KBLAYOUT].options[i].optname = uqm::input_templates[i].name;
 	}
 
@@ -2259,8 +2266,6 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 	// Auto-Pilot
 
 	// Controls
-	opts->player1 = PlayerControlTemplates[0];
-	opts->player2 = PlayerControlTemplates[1];
 
 	// QoL
 
@@ -2381,12 +2386,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 	// Auto-Pilot
 
 	// Controls
-	PlayerControlTemplates[0] = opts->player1;
-	PlayerControlTemplates[1] = opts->player2;
-
-	uqmOptions.player1Control = static_cast<int>(opts->player1);
-	uqmOptions.player2Control = static_cast<int>(opts->player2);
-
 	res_PutString("keys.1.name", uqm::input_templates[0].name);
 	res_PutString("keys.2.name", uqm::input_templates[1].name);
 	res_PutString("keys.3.name", uqm::input_templates[2].name);

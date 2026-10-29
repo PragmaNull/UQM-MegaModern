@@ -94,6 +94,15 @@ uqstl::optional<MenuItemDef> readChoice(yyjson_val* itemObj, uqstl::string setti
 	}
 
 	MenuItemDef item {.kind = MenuItemKind::Choice, .setting = uqstl::move(setting), .label = *label};
+	if (yyjson_obj_get(itemObj, "labels") != nullptr)
+	{
+		auto labels {getString(itemObj, "labels")};
+		if (!labels)
+		{
+			return uqstl::nullopt;
+		}
+		item.labels = uqstl::move(*labels);
+	}
 	size_t index {};
 	size_t count {};
 	yyjson_val* optionObj {};

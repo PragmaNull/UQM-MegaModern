@@ -161,7 +161,15 @@ WIDGET* MenuWidgets::buildChoice(const MenuDef& menu, const MenuItemDef& item)
 	choice.item = item;
 	for (const MenuOptionDef& option : choice.item.options)
 	{
-		CHOICE_OPTION widgetOption {option.label.c_str(), {}};
+		const char* label {option.label.c_str()};
+		if (!choice.item.labels.empty() && m_hooks.optionLabel)
+		{
+			if (const char* supplied {m_hooks.optionLabel(choice.item.labels, choice.options.size())})
+			{
+				label = supplied;
+			}
+		}
+		CHOICE_OPTION widgetOption {label, {}};
 		fillTooltip(widgetOption.tooltip, option.tooltip);
 		choice.options.push_back(widgetOption);
 	}

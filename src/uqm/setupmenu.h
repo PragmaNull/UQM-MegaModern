@@ -416,7 +416,6 @@ typedef struct globalopts_struct
 	OPT_ENABLABLE scanlines, fps, keepaspect, godMode, unlockUpgrades, directionalJoystick;
 	OPT_FULLSCREEN fullscreen;
 	OPT_CONSOLETYPE landerHold;
-	ControlTemplate player1, player2;
 	int gamma;
 } GLOBALOPTS;
 

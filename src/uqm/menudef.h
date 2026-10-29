@@ -44,6 +44,8 @@ struct MenuItemDef
 	uqstl::string setting {};
 	uqstl::string label {};
 	uqstl::vector<MenuOptionDef> options {};
+	// Name of a list that the game supplies at run time. Its entries replace the option labels of a Choice.
+	uqstl::string labels {};
 
 	// Slider range in displayed units. The setting value is the displayed value divided by 'scale'.
 	int min {0};

@@ -37,6 +37,8 @@ public:
 		std::function<void()> addonUnavailable {};
 		// Called after a widget changes a setting.
 		std::function<void(const SettingBase& setting)> settingChanged {};
+		// Gives the label of an option from a list that the game supplies. Returns nullptr if there is no label.
+		std::function<const char*(uqstl::string_view list, size_t index)> optionLabel {};
 		// Edits the text of a Text item when the player selects it.
 		int (*textEntrySelect)(WIDGET_TEXTENTRY* self) {};
 	};

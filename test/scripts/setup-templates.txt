@@ -1,0 +1,30 @@
+# Changes Setup > Controls > Bottom Player and Top Player, and saves.
+# Expect "player1Template": 1 and "player2Template": 2 in settings.json when starting from defaults (0 and 3).
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+# Controls is the sixth item.
+down 5
+select
+wait 1500
+log controls menu
+dumpmenu
+# Control Display, Bottom Player, Top Player.
+down
+right
+select
+down
+left
+select
+log controls after changes
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 3000
+quit
