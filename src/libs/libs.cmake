@@ -19,6 +19,8 @@ include("src/libs/heap/heap.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_heap_master_files})
 include("src/libs/input/input.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_input_master_files})
+include("src/libs/io/io.cmake")
+list(APPEND uqm_src_libs_master_files ${uqm_src_libs_io_master_files})
 include("src/libs/list/list.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_list_master_files})
 include("src/libs/luauqm/luauqm.cmake")
@@ -43,8 +45,6 @@ include("src/libs/threads/threads.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_threads_master_files})
 include("src/libs/time/time.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_time_master_files})
-include("src/libs/uio/uio.cmake")
-list(APPEND uqm_src_libs_master_files ${uqm_src_libs_uio_master_files})
 include("src/libs/video/video.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_video_master_files})
 
@@ -73,8 +73,6 @@ set(uqm_src_libs_files
 	"src/libs/strlib.h"
 	"src/libs/tasklib.h"
 	"src/libs/threadlib.h"
-	"src/libs/uio.h"
-#	"src/libs/uioutils.h"
 	"src/libs/unicode.h"
 	"src/libs/vidlib.h"
 )

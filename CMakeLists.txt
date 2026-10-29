@@ -42,8 +42,7 @@ set(APP_TARGET UrQuanMasters)
 ################################################################################
 
 set(Doc_files
-"BUGS"
-"ChangeLog"
+"README.md"
 "TODO.txt"
 )
 source_group("Doc" FILES ${Doc_files})
@@ -83,8 +82,9 @@ find_package(PNG REQUIRED)
 find_package(scn REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(spdlog REQUIRED)
-find_package(utf8cpp REQUIRED)
+find_package(utf8proc REQUIRED)
 find_package(Vorbis REQUIRED)
+find_package(yyjson REQUIRED)
 find_package(ZLIB REQUIRED)
 
 #OPTIONAL
@@ -150,7 +150,7 @@ option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 #add_compile_options(/fsanitize=address /Zi /BLAH)
 if (ENABLE_ASAN)
     if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        if (NOT "$<CONFIG>" STREQUAL "Release")
+        if (NOT CMAKE_BUILD_TYPE STREQUAL "Release")
             message (FATAL_ERROR "ASAN requires a release build in clang (RelWithDbgInfo does not count!)")
         endif()
 
@@ -261,8 +261,9 @@ target_link_libraries(${APP_TARGET}
         scn::scn
         SDL2::SDL2main 
         spdlog::spdlog
-        utf8cpp
+        utf8proc::utf8proc
         vorbis::vorbis 
+        yyjson::yyjson
         ws2_32
         ZLIB::ZLIB 
         $<$<CONFIG:Release>:user32>
@@ -272,9 +273,7 @@ target_link_libraries(${APP_TARGET}
 
 # Copy runtime DLLs as needed.
 add_custom_command(TARGET ${APP_TARGET} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_RUNTIME_DLLS:${APP_TARGET}>
-        $<TARGET_FILE_DIR:${APP_TARGET}>
+    COMMAND "$<$<BOOL:$<TARGET_RUNTIME_DLLS:${APP_TARGET}>>:${CMAKE_COMMAND};-E;copy_if_different;$<TARGET_RUNTIME_DLLS:${APP_TARGET}>;$<TARGET_FILE_DIR:${APP_TARGET}>>"
     COMMAND_EXPAND_LISTS
 )
 

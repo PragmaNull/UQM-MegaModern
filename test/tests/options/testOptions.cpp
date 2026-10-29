@@ -233,10 +233,11 @@ TEST_F(OptionsTests, ParseOptionValue_InvalidInputsThrow)
 		uqstl::ignore = parseOptionValue<int>(" 42", "ws-int");
 	}(),
 				 std::invalid_argument);
-	// trailing whitespace is.
-	auto x = parseOptionValue<int>("42 ", "ws-int2");
-	ASSERT_TRUE(x.has_value());
-	EXPECT_EQ(*x, 42);
+	// trailing whitespace is not accepted either.
+	EXPECT_THROW([]() {
+		uqstl::ignore = parseOptionValue<int>("42 ", "ws-int2");
+	}(),
+				 std::invalid_argument);
 
 	// bool specialisation: whitespace will not match known tokens
 	EXPECT_THROW([]() {

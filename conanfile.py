@@ -1,5 +1,5 @@
 from conan import ConanFile
-from conan.tools.cmake import cmake_layout, CMakeToolchain
+from conan.tools.cmake import cmake_layout, CMakeDeps, CMakeToolchain
 
 
 class UrQuanMastersConan(ConanFile):
@@ -30,19 +30,15 @@ class UrQuanMastersConan(ConanFile):
         'scnlib/4.0.1',
         'sdl/2.32.10',
         'spdlog/1.17.0',
-        'utfcpp/4.0.8',
+        'utf8proc/2.12.0',
         'vorbis/1.3.7',
+        'yyjson/0.12.0',
         'zlib/1.3.1',
-    )
-
-    generators = (
-        'CMakeDeps',
     )
 
     default_options = {
         'enable_asan': False,
         'enable_linter': False,
-        'openal-soft/*:shared': True,
     }
 
     def layout(self):
@@ -53,3 +49,10 @@ class UrQuanMastersConan(ConanFile):
         tc.variables['ENABLE_ASAN'] = bool(self.options.enable_asan)
         tc.variables['ENABLE_LINTER'] = bool(self.options.enable_linter)
         tc.generate()
+
+        # The utf8proc recipe expects 'utf8proc.lib' for static clang-cl builds.
+        utf8proc = self.dependencies['utf8proc']
+        if utf8proc.settings.get_safe('compiler.runtime') and not utf8proc.options.shared:
+            utf8proc.cpp_info.libs = ['utf8proc_static']
+
+        CMakeDeps(self).generate()

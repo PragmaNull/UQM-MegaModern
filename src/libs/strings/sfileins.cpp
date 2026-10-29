@@ -18,34 +18,11 @@
 
 #include "port.h"
 #include "strintrn.h"
-#include "libs/uio.h"
 #include "libs/reslib.h"
 
 
 STRING_TABLE
-LoadStringTableFile(uio_DirHandle* dir, const char* fileName)
+LoadStringTableFile(const uqm::io::Directory& dir, const char* fileName)
 {
-	uio_Stream* fp;
-
-	// FIXME: this theoretically needs a mechanism to prevent races
-	if (_cur_resfile_name)
-	{
-		// something else is loading resources atm
-		return 0;
-	}
-
-	fp = res_OpenResFile(dir, fileName, "rb");
-	if (fp)
-	{
-		STRING_TABLE data;
-
-		_cur_resfile_name = fileName;
-		data = (STRING_TABLE)_GetStringData(fp, LengthResFile(fp));
-		_cur_resfile_name = 0;
-		res_CloseResFile(fp);
-
-		return data;
-	}
-
-	return (0);
+	return static_cast<STRING_TABLE>(res_LoadResFile(dir, fileName, _GetStringData));
 }

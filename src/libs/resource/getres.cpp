@@ -23,8 +23,6 @@
 #include "libs/memlib.h"
 #include "core/log/log.h"
 
-const char* _cur_resfile_name;
-// When a file is being loaded, _cur_resfile_name is set to its name.
 // At other times, it is nullptr.
 
 ResourceDesc*
@@ -41,40 +39,12 @@ void loadResourceDesc(ResourceDesc* desc)
 
 void* LoadResourceFromPath(const char* path, ResourceLoadFileFun* loadFun)
 {
-	auto pathLen {strlen(path)};
-
-	//std::string_view sv{ path };
-
-	uio_Stream* stream;
-	unsigned long dataLen;
-	void* resdata;
-
-	stream = res_OpenResFile(contentDir, path, "rb");
-	if (stream == nullptr)
+	void* const resdata {res_LoadResFile(uqm::contentDir(), path, loadFun)};
+	if (resdata == nullptr)
 	{
-		uqm::log::warn("Warning: Can't open '{}'", path);
-		return nullptr;
+		uqm::log::warn("Warning: Can't load '{}'", path);
 	}
-
-	dataLen = LengthResFile(stream);
-	uqm::log::debug("\t'{}' -- {} bytes", path, dataLen);
-
-	if (dataLen == 0)
-	{
-		uqm::log::warn("Warning: Trying to load empty file '{}'.", path);
-		goto err;
-	}
-
-	_cur_resfile_name = path;
-	resdata = (*loadFun)(stream, dataLen);
-	_cur_resfile_name = nullptr;
-	res_CloseResFile(stream);
-
 	return resdata;
-
-err:
-	res_CloseResFile(stream);
-	return nullptr;
 }
 
 const char*

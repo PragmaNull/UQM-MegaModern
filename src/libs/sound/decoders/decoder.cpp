@@ -46,7 +46,7 @@ static uint32_t bufa_GetStructSize(void);
 static int bufa_GetError(THIS_PTR);
 static bool bufa_Init(THIS_PTR);
 static void bufa_Term(THIS_PTR);
-static bool bufa_Open(THIS_PTR, uio_DirHandle* dir, const char* filename);
+static bool bufa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
 static void bufa_Close(THIS_PTR);
 static int bufa_Decode(THIS_PTR, void* buf, int32_t bufsize);
 static uint32_t bufa_Seek(THIS_PTR, uint32_t pcm_pos);
@@ -89,7 +89,7 @@ static uint32_t nula_GetStructSize(void);
 static int nula_GetError(THIS_PTR);
 static bool nula_Init(THIS_PTR);
 static void nula_Term(THIS_PTR);
-static bool nula_Open(THIS_PTR, uio_DirHandle* dir, const char* filename);
+static bool nula_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
 static void nula_Close(THIS_PTR);
 static int nula_Decode(THIS_PTR, void* buf, int32_t bufsize);
 static uint32_t nula_Seek(THIS_PTR, uint32_t pcm_pos);
@@ -320,7 +320,7 @@ SoundDecoder_Lookup(const char* fileext)
 }
 
 TFB_SoundDecoder*
-SoundDecoder_Load(uio_DirHandle* dir, char* filename,
+SoundDecoder_Load(const uqm::io::Directory& dir, char* filename,
 				  uint32_t buffer_size, uint32_t startTime, int32_t runTime)
 // runTime < 0 specifies a default length for a nul decoder
 {
@@ -363,7 +363,7 @@ SoundDecoder_Load(uio_DirHandle* dir, char* filename,
 		funcs = info->funcs;
 	}
 
-	if (!fileExists2(dir, filename))
+	if (!dir.exists(filename))
 	{
 		if (runTime)
 		{
@@ -410,7 +410,6 @@ SoundDecoder_Load(uio_DirHandle* dir, char* filename,
 	decoder->buffer_size = buffer_size;
 	decoder->looping = false;
 	decoder->error = SOUNDDECODER_OK;
-	decoder->dir = dir;
 	const uint32_t filenameLen = strlen(filename);
 	decoder->filename = (char*)HMalloc(filenameLen + 1);
 	memcpy(decoder->filename, filename, filenameLen);
@@ -785,7 +784,7 @@ bufa_Term(THIS_PTR)
 }
 
 static bool
-bufa_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
+bufa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 {
 	// this should never be called
 	uqm::log::debug("bufa_Open(): dead function called");
@@ -918,7 +917,7 @@ nula_Term(THIS_PTR)
 }
 
 static bool
-nula_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
+nula_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 {
 	This->frequency = 11025;
 	This->format = decoder_formats.mono16;

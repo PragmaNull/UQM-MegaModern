@@ -22,6 +22,7 @@
 #include "controls.h"
 #include "globdata.h"
 #include "setup.h"
+#include "options.h"
 #include "core/log/log.h"
 
 #include <stdio.h>
@@ -40,7 +41,13 @@ computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 	if (StarShipPtr)
 	{
 		// Selecting the next action for in battle.
-		if (testFlag(StarShipPtr->control, PlayerControlFlags::Cyborg))
+		const bool isMelee {lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE};
+		if (testFlag(StarShipPtr->control, PlayerControlFlags::Cyborg) && uqm::UQMOptions::read().passiveEnemy
+			&& (isMelee || StarShipPtr->playerNr != RPG_PLAYER_NUM))
+		{
+			InputState = 0;
+		}
+		else if (testFlag(StarShipPtr->control, PlayerControlFlags::Cyborg))
 		{
 			InputState = tactical_intelligence(context, StarShipPtr);
 

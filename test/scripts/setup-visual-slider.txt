@@ -1,0 +1,30 @@
+# Opens Setup > Visuals, moves the nebulae brightness slider up by 3, and saves.
+# Expect "nebulaeVolume": 19 in settings.json when starting from defaults.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+log setup main menu
+dumpmenu
+# Visuals is the third item
+down 2
+select
+wait 1500
+log visual menu
+dumpmenu
+screenshot
+right
+down 11
+right 3
+log after changes
+dumpmenu
+screenshot
+cancel
+wait 1000
+cancel
+wait 3000
+quit

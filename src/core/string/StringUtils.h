@@ -165,8 +165,19 @@ template <>
 template <typename T, typename uqstl::enable_if_t<std::is_arithmetic_v<T>, bool> = true>
 inline uqstl::errc parseStr(uqstl::string_view str, T& out)
 {
-	const auto [_, ec] = uqstl::from_chars(str.data(), uqstl::to_address(str.end()), out);
-	return ec;
+	const char* const end {uqstl::to_address(str.end())};
+	T value {};
+	const auto [ptr, ec] = uqstl::from_chars(str.data(), end, value);
+	if (ec != uqstl::errc {})
+	{
+		return ec;
+	}
+	if (ptr != end)
+	{
+		return uqstl::errc::invalid_argument;
+	}
+	out = value;
+	return {};
 }
 
 // template specialization for bool. Impl in cpp.

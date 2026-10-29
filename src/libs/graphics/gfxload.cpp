@@ -23,9 +23,8 @@
 #include "options.h"
 #include "port.h"
 #include "uqm/units.h"
-#include "libs/uio.h"
 #include "libs/reslib.h"
-// for _cur_resfile_name
+#include "libs/io/Path.h"
 #include "core/log/log.h"
 #include "libs/memlib.h"
 #include "libs/graphics/tfb_draw.h"
@@ -39,8 +38,6 @@ typedef struct anidata
 	int hotspot_y;
 } AniData;
 
-extern uio_Repository* repository;
-static uio_AutoMount* autoMount[] = {nullptr};
 
 static void
 process_image(FRAME FramePtr, TFB_Canvas img[], AniData* ani, int cel_ct)
@@ -159,78 +156,62 @@ processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
 	}
 }
 
-void* _GetCelData(uio_Stream* fp, uint32_t length)
+void* _GetCelData(const ResourceFile& resource)
 {
+	uqm::io::File* const fp {&resource.file};
+	const uint32_t length {resource.length};
+
 	int cel_total, cel_index, n;
 	uint32_t opos;
 	char CurrentLine[1024], filename[PATH_MAX];
 	TFB_Canvas* img;
 	AniData* ani;
 	DRAWABLE Drawable;
-	uio_MountHandle* aniMount = 0;
-	uio_DirHandle* aniDir = 0;
-	uio_Stream* aniFile = 0;
+	uqstl::optional<uqm::io::Directory> aniDir {};
+	uqstl::optional<uqm::io::File> zippedAniFile {};
+	uqm::io::File* aniFile {fp};
 
-	opos = uio_ftell(fp);
+	opos = fp->tell();
 
 	{
-		const char *s1, *s2;
-		char aniDirName[PATH_MAX] {};
-		const char* aniFileName;
 		uint8_t buf[4] = {0, 0, 0, 0};
 		uint32_t header;
 
-		if (_cur_resfile_name == 0
-			|| (((s2 = 0), (s1 = strrchr(_cur_resfile_name, '/')) == 0)
-				&& (s2 = strrchr(_cur_resfile_name, '\\')) == 0))
-		{
-			n = 0;
-		}
-		else
-		{
-			if (s2 > s1)
-			{
-				s1 = s2;
-			}
-			n = s1 - _cur_resfile_name + 1;
-		}
+		const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
+		n = parent.empty() ? 0 : static_cast<int>(parent.size()) + 1;
 
-		uio_fread(buf, 4, 1, fp);
+		fp->read(uqstl::as_writable_bytes(uqstl::span {buf}));
 		header = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
-		if (_cur_resfile_name && header == 0x04034b50)
+		if (header == 0x04034b50)
 		{
-			// zipped ani file
-			if (n)
+			// A zipped ani file holds the ani file with the same name, and its images.
+			uqstl::error_code error {};
+			aniDir = uqm::gameFileSystem().openArchive(resource.dir, resource.path, error);
+			if (aniDir)
 			{
-				uqm::strncpy_safe(aniDirName, {_cur_resfile_name, static_cast<uint32_t>(n - 1)});
-				aniFileName = _cur_resfile_name + n;
+				zippedAniFile = aniDir->open(uqm::io::path::fileName(resource.path), uqm::io::OpenMode::Read, error);
 			}
-			else
+			if (!zippedAniFile)
 			{
-				uqm::strncpy_safe(aniDirName, ".");
-				aniFileName = _cur_resfile_name;
+				uqm::log::warn("Couldn't open zipped '{}': {}", resource.path, error.message());
+				return nullptr;
 			}
-			aniDir = uio_openDir(repository, aniDirName, 0);
-			aniMount = uio_mountDir(repository, aniDirName, uio_FSTYPE_ZIP,
-									aniDir, aniFileName, "/", autoMount,
-									uio_MOUNT_RDONLY | uio_MOUNT_TOP,
-									nullptr);
-			aniFile = uio_fopen(aniDir, aniFileName, "r");
+			aniFile = &*zippedAniFile;
 			opos = 0;
 			n = 0;
 		}
 		else
 		{
 			// unpacked ani file
-			uqm::strncpy_safe(filename, {_cur_resfile_name, static_cast<uint32_t>(n)});
+			uqm::strncpy_safe(filename, {resource.path.data(), static_cast<uint32_t>(n)});
 			aniFile = fp;
-			aniDir = contentDir;
+			aniDir = resource.dir;
 		}
 	}
 
 	cel_total = 0;
-	uio_fseek(aniFile, opos, SEEK_SET);
-	while (uio_fgets(CurrentLine, sizeof(CurrentLine), aniFile))
+	aniFile->seek(opos, uqm::io::SeekFrom::Start);
+	while (aniFile->readLine(CurrentLine))
 	{
 		++cel_total;
 	}
@@ -239,21 +220,15 @@ void* _GetCelData(uio_Stream* fp, uint32_t length)
 	ani = (AniData*)HMalloc(sizeof(AniData) * cel_total);
 	if (!img || !ani)
 	{
-		uqm::log::warn("Couldn't allocate space for '{}'", _cur_resfile_name);
-		if (aniMount)
-		{
-			uio_fclose(aniFile);
-			uio_closeDir(aniDir);
-			uio_unmountDir(aniMount);
-		}
+		uqm::log::warn("Couldn't allocate space for '{}'", resource.path);
 		HFree(img);
 		HFree(ani);
 		return nullptr;
 	}
 
 	cel_index = 0;
-	uio_fseek(aniFile, opos, SEEK_SET);
-	while (uio_fgets(CurrentLine, sizeof(CurrentLine), aniFile) && cel_index < cel_total)
+	aniFile->seek(opos, uqm::io::SeekFrom::Start);
+	while (aniFile->readLine(CurrentLine) && cel_index < cel_total)
 	{
 		if (auto result {scn::scan<uqstl::string, int, int, int, int>(CurrentLine, "{} {} {} {} {}")})
 		{
@@ -269,7 +244,7 @@ void* _GetCelData(uio_Stream* fp, uint32_t length)
 			break;
 		}
 
-		img[cel_index] = TFB_DrawCanvas_LoadFromFile(aniDir, filename);
+		img[cel_index] = TFB_DrawCanvas_LoadFromFile(*aniDir, filename);
 		if (img[cel_index] == nullptr)
 		{
 			const char* err;
@@ -286,7 +261,7 @@ void* _GetCelData(uio_Stream* fp, uint32_t length)
 			++cel_index;
 		}
 
-		if ((int)uio_ftell(aniFile) - (int)opos >= (int)length)
+		if ((int)aniFile->tell() - (int)opos >= (int)length)
 		{
 			break;
 		}
@@ -323,14 +298,7 @@ void* _GetCelData(uio_Stream* fp, uint32_t length)
 	if (Drawable == nullptr)
 	{
 		uqm::log::warn("Couldn't get cel data for '{}'",
-					   _cur_resfile_name);
-	}
-
-	if (aniMount)
-	{
-		uio_fclose(aniFile);
-		uio_closeDir(aniDir);
-		uio_unmountDir(aniMount);
+					   resource.path);
 	}
 
 	HFree(img);
@@ -386,71 +354,42 @@ compareBCDIndex(const void* arg1, const void* arg2)
 	return (int)bcd1->index - (int)bcd2->index;
 }
 
-void* _GetFontData(uio_Stream* fp, uint32_t length)
+void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 {
 	uint16_t numDirEntries;
 	DIRENTRY fontDir = nullptr;
 	BuildCharDesc* bcds = nullptr;
 	size_t numBCDs = 0;
 	int dirEntryI;
-	uio_DirHandle* fontDirHandle = nullptr;
-	uio_MountHandle* fontMount = nullptr;
+	uqstl::optional<uqm::io::Directory> fontDirHandle {};
 	FONT fontPtr = nullptr;
-	uio_Stream* cfgFile = 0;
+	uqstl::optional<uqm::io::File> cfgFile {};
 	const char* cfg_name = "kerndat.fnt";
 
-	if (_cur_resfile_name == 0)
+	if (const uqstl::optional<uqm::io::FileInfo> info {dir.stat(path)}; info && !info->isDirectory())
+	{
+		uqstl::error_code error {};
+		fontDirHandle = uqm::gameFileSystem().openArchive(dir, path, error);
+		if (!fontDirHandle)
+		{
+			uqm::log::warn("Could not open font archive '{}': {}", path, error.message());
+		}
+	}
+	else
+	{
+		fontDirHandle = dir.subdir(path);
+	}
+	if (!fontDirHandle)
 	{
 		goto err;
 	}
 
-	if (fp != (uio_Stream*)~0)
-	{
-		// font is zipped instead of being in a directory
-
-		const char *s1, *s2;
-		int n;
-		const char* fontZipName;
-		char fontDirName[PATH_MAX] {};
-
-		if ((((s2 = 0), (s1 = strrchr(_cur_resfile_name, '/')) == 0)
-			 && (s2 = strrchr(_cur_resfile_name, '\\')) == 0))
-		{
-			uqm::strncpy_safe(fontDirName, ".");
-			fontZipName = _cur_resfile_name;
-		}
-		else
-		{
-			if (s2 > s1)
-			{
-				s1 = s2;
-			}
-			n = s1 - _cur_resfile_name + 1;
-			uqm::strncpy_safe(fontDirName, {_cur_resfile_name, static_cast<uint32_t>(n - 1)});
-			fontZipName = _cur_resfile_name + n;
-		}
-
-		fontDirHandle = uio_openDir(repository, fontDirName, 0);
-		fontMount = uio_mountDir(repository, _cur_resfile_name, uio_FSTYPE_ZIP,
-								 fontDirHandle, fontZipName, "/", autoMount,
-								 uio_MOUNT_RDONLY | uio_MOUNT_TOP,
-								 nullptr);
-		uio_closeDir(fontDirHandle);
-	}
-
-	fontDir = CaptureDirEntryTable(LoadDirEntryTable(contentDir,
-													 _cur_resfile_name, ".", match_MATCH_SUBSTRING));
+	fontDir = CaptureDirEntryTable(LoadDirEntryTable(*fontDirHandle, "", uqm::io::Matcher {uqm::io::Matcher::Kind::Substring, "."}));
 	if (fontDir == 0)
 	{
 		goto err;
 	}
 	numDirEntries = GetDirEntryTableCount(fontDir);
-
-	fontDirHandle = uio_openDirRelative(contentDir, _cur_resfile_name, 0);
-	if (fontDirHandle == nullptr)
-	{
-		goto err;
-	}
 
 	bcds = (BuildCharDesc*)HMalloc(numDirEntries * sizeof(BuildCharDesc));
 	if (bcds == nullptr)
@@ -487,7 +426,7 @@ void* _GetFontData(uio_Stream* fp, uint32_t length)
 			continue;
 		}
 
-		canvas = TFB_DrawCanvas_LoadFromFile(fontDirHandle, char_name);
+		canvas = TFB_DrawCanvas_LoadFromFile(*fontDirHandle, char_name);
 		if (canvas == nullptr)
 		{
 			continue;
@@ -511,7 +450,7 @@ void* _GetFontData(uio_Stream* fp, uint32_t length)
 		goto err;
 	}
 
-	cfgFile = uio_fopen(fontDirHandle, cfg_name, "r");
+	cfgFile = res_OpenResFile(*fontDirHandle, cfg_name, uqm::io::OpenMode::Read | uqm::io::OpenMode::Text);
 
 	if (cfgFile)
 	{
@@ -522,8 +461,8 @@ void* _GetFontData(uio_Stream* fp, uint32_t length)
 
 		memset(&fontPtr->KernTab, (uint8_t)~0, sizeof(fontPtr->KernTab));
 
-		uio_fseek(cfgFile, opos, SEEK_SET);
-		while (uio_fgets(CurrentLine, sizeof(CurrentLine), cfgFile))
+		cfgFile->seek(opos, uqm::io::SeekFrom::Start);
+		while (cfgFile->readLine(CurrentLine))
 		{
 			++cel_total;
 			if (cel_total == MAX_UNICODE)
@@ -532,11 +471,8 @@ void* _GetFontData(uio_Stream* fp, uint32_t length)
 			}
 		}
 
-		uio_fseek(cfgFile, opos, SEEK_SET);
-		while (uio_fgets(
-				   CurrentLine, sizeof(CurrentLine),
-				   cfgFile)
-			   && cel_index < cel_total)
+		cfgFile->seek(opos, uqm::io::SeekFrom::Start);
+		while (cfgFile->readLine(CurrentLine) && cel_index < cel_total)
 		{
 			if (cel_index > 0)
 			{
@@ -581,21 +517,17 @@ void* _GetFontData(uio_Stream* fp, uint32_t length)
 				break;
 			}
 
-			if ((int)uio_ftell(cfgFile) - (int)opos
-				>= (int)LengthResFile(cfgFile))
+			if ((int)cfgFile->tell() - (int)opos
+				>= (int)cfgFile->size())
 			{
 				break;
 			}
 		}
-		uio_fclose(cfgFile);
+		cfgFile.reset();
 	}
 
-	uio_closeDir(fontDirHandle);
+	fontDirHandle.reset();
 	DestroyDirEntryTable(ReleaseDirEntryTable(fontDir));
-	if (fontMount != 0)
-	{
-		uio_unmountDir(fontMount);
-	}
 
 #if 0
 	if (numBCDs == 0)
@@ -645,7 +577,7 @@ void* _GetFontData(uio_Stream* fp, uint32_t length)
 						uqm::log::debug("Duplicate image for character {} "
 										"for font {}.",
 										(int)bcd->index,
-										_cur_resfile_name);
+										path);
 						TFB_DrawCanvas_Delete(bcd->canvas);
 						continue;
 					}
@@ -677,8 +609,6 @@ void* _GetFontData(uio_Stream* fp, uint32_t length)
 
 	HFree(bcds);
 
-	(void)fp;	  /* Satisfying compiler (unused parameter) */
-	(void)length; /* Satisfying compiler (unused parameter) */
 	return fontPtr;
 
 err:
@@ -697,20 +627,13 @@ err:
 		HFree(bcds);
 	}
 
-	if (fontDirHandle != nullptr)
-	{
-		uio_closeDir(fontDirHandle);
-	}
+	fontDirHandle.reset();
 
 	if (fontDir != 0)
 	{
 		DestroyDirEntryTable(ReleaseDirEntryTable(fontDir));
 	}
 
-	if (fontMount != 0)
-	{
-		uio_unmountDir(fontMount);
-	}
 
 	return 0;
 }

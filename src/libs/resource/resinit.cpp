@@ -27,6 +27,9 @@
 #include "options.h"
 #include <cstdint>
 #include "core/log/log.h"
+#include "libs/file/textfile.h"
+
+#include <fmt/format.h>
 #include "core/string/StringUtils.h"
 #include "libs/gfxlib.h"
 #include "libs/reslib.h"
@@ -368,23 +371,20 @@ _get_current_index_header(void)
 	return curResourceIndex;
 }
 
-void LoadResourceIndex(uio_DirHandle* dir, const char* rmpfile, const char* prefix)
+void LoadResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const char* prefix)
 {
 	PropFile_from_filename(dir, rmpfile, process_resource_desc, prefix);
 }
 
-void SaveResourceIndex(uio_DirHandle* dir, const char* rmpfile, const char* root, bool strip_root)
+void SaveResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const char* root, bool strip_root)
 {
-	uio_Stream* f;
-	unsigned int prefix_len;
-
-	f = res_OpenResFile(dir, rmpfile, "wb");
-	if (!f)
-	{
-		/* TODO: Warning message */
-		return;
-	}
-	prefix_len = root ? strlen(root) : 0;
+#ifdef WIN32
+	constexpr uqstl::string_view newline {"\r\n"};
+#else
+	constexpr uqstl::string_view newline {"\n"};
+#endif
+	const size_t prefix_len {root ? strlen(root) : 0};
+	uqstl::string text {};
 
 	std::vector<std::string> keys;
 	for (const auto& [key, val] : *(_get_current_index_header()->map))
@@ -414,24 +414,15 @@ void SaveResourceIndex(uio_DirHandle* dir, const char* rmpfile, const char* root
 			char buf[256];
 			value->vtable->toString(&value->resdata, buf, 256);
 			buf[255] = 0;
-			if (root && strip_root)
-			{
-				WriteResFile(key.c_str() + prefix_len, 1, key.size() - prefix_len, f);
-			}
-			else
-			{
-				WriteResFile(key.c_str(), 1, key.size(), f);
-			}
-			PutResFileChar(' ', f);
-			PutResFileChar('=', f);
-			PutResFileChar(' ', f);
-			WriteResFile(value->vtable->resType, 1, strlen(value->vtable->resType), f);
-			PutResFileChar(':', f);
-			WriteResFile(buf, 1, strlen(buf), f);
-			PutResFileNewline(f);
+			const uqstl::string_view name {root && strip_root ? uqstl::string_view {key}.substr(prefix_len) : uqstl::string_view {key}};
+			fmt::format_to(uqstl::back_inserter(text), "{} = {}:{}{}", name, value->vtable->resType, buf, newline);
 		}
 	}
-	res_CloseResFile(f);
+
+	if (!uqm::writeTextFile(dir, rmpfile, text))
+	{
+		uqm::log::warn("Could not write resource index '{}'.", rmpfile);
+	}
 }
 
 void UninitResourceSystem(void)

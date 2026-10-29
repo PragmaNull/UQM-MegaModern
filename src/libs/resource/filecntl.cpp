@@ -25,83 +25,82 @@
 #include <sys/stat.h>
 #include "port.h"
 #include "resintrn.h"
-#include "libs/uio.h"
 #include "core/log/log.h"
 
-uio_Stream*
-res_OpenResFile(uio_DirHandle* dir, const char* filename, const char* mode)
+uqstl::optional<uqm::io::File>
+res_OpenResFile(const uqm::io::Directory& dir, const char* filename, uqm::io::OpenMode mode)
 {
-	uio_Stream* fp;
-	struct stat sb;
-
-	if (uio_stat(dir, filename, &sb) == 0 && S_ISDIR(sb.st_mode))
-	{
-		// uqm::log::debug( "res_OpenResFile('{}', '{}') - cannot open dir as file", filename, mode);
-		return ((uio_Stream*)~0);
-	}
-
-	fp = uio_fopen(dir, filename, mode);
-
-	return (fp);
+	uqstl::error_code error {};
+	return dir.open(filename, mode, error);
 }
 
-bool res_CloseResFile(uio_Stream* fp)
+uqgsl::owner<uqm::io::File*> res_NewResFile(const uqm::io::Directory& dir, const char* filename)
 {
-	if (fp)
+	uqstl::error_code error {};
+	uqstl::optional<uqm::io::File> file {dir.open(filename, uqm::io::OpenMode::Read, error)};
+	if (!file)
 	{
-		if (fp != (uio_Stream*)~0)
-		{
-			uio_fclose(fp);
-		}
-		return (true);
+		errno = error.default_error_condition().value();
+		return nullptr;
 	}
-
-	return (false);
+	return new uqm::io::File {uqstl::move(*file)};
 }
 
-bool DeleteResFile(uio_DirHandle* dir, const char* filename)
+void* res_LoadResFile(const uqm::io::Directory& dir, const char* filename, ResourceLoadFileFun* loadFun)
 {
-	return (bool)(uio_unlink(dir, filename) == 0);
+	uqstl::error_code error {};
+	uqstl::optional<uqm::io::File> file {dir.open(filename, uqm::io::OpenMode::Read, error)};
+	if (!file)
+	{
+		return nullptr;
+	}
+	const uint32_t length {static_cast<uint32_t>(file->size())};
+	if (length == 0)
+	{
+		uqm::log::warn("Warning: Trying to load empty file '{}'.", filename);
+		return nullptr;
+	}
+	uqm::log::debug("\t'{}' -- {} bytes", filename, length);
+	return loadFun(ResourceFile {*file, dir, filename, length});
+}
+
+bool DeleteResFile(const uqm::io::Directory& dir, const char* filename)
+{
+	return !dir.remove(filename);
 }
 
 size_t
-ReadResFile(void* lpBuf, size_t size, size_t count, uio_Stream* fp)
+ReadResFile(void* lpBuf, size_t size, size_t count, uqm::io::File& fp)
 {
-	int retval;
-
-	retval = uio_fread(lpBuf, size, count, fp);
-
-	return (retval);
+	if (size == 0 || count == 0)
+	{
+		return 0;
+	}
+	return fp.read({static_cast<uqstl::byte*>(lpBuf), size * count}) / size;
 }
 
 size_t
-WriteResFile(const void* lpBuf, size_t size, size_t count, uio_Stream* fp)
+WriteResFile(const void* lpBuf, size_t size, size_t count, uqm::io::File& fp)
 {
-	int retval;
-
-	retval = uio_fwrite(lpBuf, size, count, fp);
-
-	return (retval);
+	if (size == 0 || count == 0)
+	{
+		return 0;
+	}
+	return fp.write({static_cast<const uqstl::byte*>(lpBuf), size * count}) / size;
 }
 
-int GetResFileChar(uio_Stream* fp)
+int GetResFileChar(uqm::io::File& fp)
 {
-	int retval;
-
-	retval = uio_getc(fp);
-
-	return (retval);
+	return fp.getChar();
 }
 
-int PutResFileChar(char ch, uio_Stream* fp)
+int PutResFileChar(char ch, uqm::io::File& fp)
 {
-	int retval;
-
-	retval = uio_putc(ch, fp);
-	return (retval);
+	const uqstl::byte value {static_cast<uqstl::byte>(ch)};
+	return fp.write({&value, 1}) == 1 ? static_cast<unsigned char>(ch) : EOF;
 }
 
-int PutResFileNewline(uio_Stream* fp)
+int PutResFileNewline(uqm::io::File& fp)
 {
 	int retval;
 
@@ -112,36 +111,27 @@ int PutResFileNewline(uio_Stream* fp)
 	return (retval);
 }
 
-long SeekResFile(uio_Stream* fp, long offset, int whence)
+long SeekResFile(uqm::io::File& fp, long offset, int whence)
 {
-	long retval;
-
-	retval = uio_fseek(fp, offset, whence);
-
-	return (retval);
+	uqm::io::SeekFrom from {uqm::io::SeekFrom::Start};
+	if (whence == SEEK_CUR)
+	{
+		from = uqm::io::SeekFrom::Current;
+	}
+	else if (whence == SEEK_END)
+	{
+		from = uqm::io::SeekFrom::End;
+	}
+	return fp.seek(offset, from) ? 0 : -1;
 }
 
-long TellResFile(uio_Stream* fp)
+long TellResFile(uqm::io::File& fp)
 {
-	long retval;
-
-	retval = uio_ftell(fp);
-
-	return (retval);
+	return static_cast<long>(fp.tell());
 }
 
 size_t
-LengthResFile(uio_Stream* fp)
+LengthResFile(uqm::io::File& fp)
 {
-	struct stat sb;
-
-	if (fp == (uio_Stream*)~0)
-	{
-		return (1);
-	}
-	if (uio_fstat(uio_streamHandle(fp), &sb) == -1)
-	{
-		return 1;
-	}
-	return sb.st_size;
+	return static_cast<size_t>(fp.size());
 }

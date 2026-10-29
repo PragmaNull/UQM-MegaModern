@@ -356,7 +356,7 @@ _encode_cleanup(void)
 				/* rewind */
 				if (_lpCurCodeDesc->StreamType == FILE_STREAM)
 				{
-					SeekResFile((uio_Stream*)_Stream,
+					SeekResFile(*reinterpret_cast<uqm::io::File*>(_Stream),
 								-(int)_lpCurCodeDesc->StreamIndex, SEEK_CUR);
 				}
 				else /* _lpCurCodeDesc->StreamType == MEMORY_STREAM */

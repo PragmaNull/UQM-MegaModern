@@ -122,7 +122,7 @@ void TFB_DrawImage_FontChar(TFB_Char*, TFB_Image* backing, int x, int y,
 							DrawMode, TFB_Image* target);
 void TFB_DrawImage_MaskImage(TFB_Image* img, DrawMode mode, TFB_Image* target, Color* fill);
 
-TFB_Canvas TFB_DrawCanvas_LoadFromFile(void* dir, const char* fileName);
+TFB_Canvas TFB_DrawCanvas_LoadFromFile(const uqm::io::Directory& dir, const char* fileName);
 TFB_Canvas TFB_DrawCanvas_New_TrueColor(int w, int h, bool hasalpha);
 TFB_Canvas TFB_DrawCanvas_New_ForScreen(int w, int h, bool withalpha);
 TFB_Canvas TFB_DrawCanvas_New_Paletted(int w, int h, Color palette[256],

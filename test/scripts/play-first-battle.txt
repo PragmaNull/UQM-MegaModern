@@ -1,0 +1,999 @@
+# Input recorded by UQM-MegaModern. Replay it with --input-script.
+seed 1793300496
+check 0 42981207b022cc78
+check 120 42981207b022cc78
+check 240 42981207b022cc78
+frame 339 held cancel pulsed cancel
+frame 340
+check 360 42981207b022cc78
+check 480 42981207b022cc78
+frame 554 held select,t1.weapon pulsed select,t1.weapon
+frame 555
+frame 575 held select,t1.weapon pulsed select,t1.weapon
+frame 576
+check 600 17759ce44df66f68
+check 720 17759ce44df66f68
+check 840 17759ce44df66f68
+check 960 17759ce44df66f68
+frame 1067 held cancel pulsed cancel
+frame 1068
+check 1080 a931dbcff6924d56
+check 1200 a931dbcff6924d56
+check 1320 a931dbcff6924d56
+frame 1428 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 1429 held up,t1.up,t3.up
+check 1440 a931dbcff6924d56
+check 1560 a931dbcff6924d56
+check 1680 a931dbcff6924d56
+check 1800 a931dbcff6924d56
+frame 1804
+check 1920 a931dbcff6924d56
+check 2040 a931dbcff6924d56
+check 2160 a931dbcff6924d56
+check 2280 a931dbcff6924d56
+check 2400 a931dbcff6924d56
+frame 2410 held down,t1.down,t3.down pulsed down,t1.down,t3.down
+frame 2411 held down,t1.down,t3.down
+frame 2467
+frame 2508 held down,t1.down,t3.down pulsed down,t1.down,t3.down
+frame 2509 held down,t1.down,t3.down
+check 2520 a931dbcff6924d56
+frame 2556
+frame 2581 held down,t1.down,t3.down pulsed down,t1.down,t3.down
+frame 2582 held down,t1.down,t3.down
+frame 2634
+check 2640 a931dbcff6924d56
+frame 2667 held down,t1.down,t3.down pulsed down,t1.down,t3.down
+frame 2668 held down,t1.down,t3.down
+frame 2716
+check 2760 a931dbcff6924d56
+check 2880 a931dbcff6924d56
+check 3000 a931dbcff6924d56
+check 3120 a931dbcff6924d56
+check 3240 a931dbcff6924d56
+check 3360 a931dbcff6924d56
+check 3480 a931dbcff6924d56
+check 3600 a931dbcff6924d56
+check 3720 a931dbcff6924d56
+check 3840 a931dbcff6924d56
+frame 3868 held select,t1.weapon pulsed select,t1.weapon
+frame 3869
+check 3960 a931dbcff6924d56
+frame 4043 held select,t1.weapon pulsed select,t1.weapon
+frame 4044
+check 4080 a931dbcff6924d56
+check 4200 a931dbcff6924d56
+check 4320 a931dbcff6924d56
+check 4440 a931dbcff6924d56
+frame 4446 held down,t1.down,t3.down pulsed down,t1.down,t3.down
+frame 4447 held down,t1.down,t3.down
+frame 4507
+frame 4547 held select,t1.weapon pulsed select,t1.weapon
+frame 4548
+check 4560 a931dbcff6924d56
+check 4680 a931dbcff6924d56
+check 4800 a931dbcff6924d56
+check 4920 a931dbcff6924d56
+frame 5031 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 5032 held up,t1.up,t3.up
+check 5040 a931dbcff6924d56
+frame 5100
+check 5160 a931dbcff6924d56
+frame 5186 held select,t1.weapon pulsed select,t1.weapon
+frame 5187
+check 5280 846d0946d7443064
+check 5400 a8458a690ebf8182
+frame 5452 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 5453 held up,t1.up,t3.up
+check 5520 adea665bfe624665
+check 5640 a2acb6e0e3e89baa
+frame 5662 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 5663 held up,t1.up,t3.up
+check 5760 652ef4afd8f4b2e2
+frame 5837 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 5838 held up,t1.up,t3.up
+check 5880 ce8bea70ec2e70bb
+frame 5977 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 5978 held up,t1.up,t3.up
+check 6000 24d31cf7970887e4
+frame 6082 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6083 held up,t1.up,t3.up
+check 6120 b9c48a247ea8b1d1
+frame 6152 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6153 held up,t1.up,t3.up
+frame 6187 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6188 held up,t1.up,t3.up
+frame 6222 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6223 held up,t1.up,t3.up
+check 6240 330ed27c2ec49f34
+frame 6257 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6258 held up,t1.up,t3.up
+frame 6292 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6293 held up,t1.up,t3.up
+frame 6327 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6328 held up,t1.up,t3.up
+check 6360 7624dfaecbc4eeb3
+frame 6362 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6363 held up,t1.up,t3.up
+frame 6397 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6398 held up,t1.up,t3.up
+frame 6432 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6433 held up,t1.up,t3.up
+frame 6467 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6468 held up,t1.up,t3.up
+check 6480 fa2c56dbc0fece5f
+frame 6502 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6503 held up,t1.up,t3.up
+frame 6537 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6538 held up,t1.up,t3.up
+frame 6572 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6573 held up,t1.up,t3.up
+check 6600 56a81ff6d977272a
+frame 6607 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6608 held up,t1.up,t3.up
+frame 6642 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6643 held up,t1.up,t3.up
+frame 6677 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6678 held up,t1.up,t3.up
+frame 6712 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6713 held up,t1.up,t3.up
+check 6720 2d965043634eb53d
+frame 6747 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6748 held up,t1.up,t3.up
+frame 6782 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6783 held up,t1.up,t3.up
+frame 6817 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6818 held up,t1.up,t3.up
+check 6840 08060cd1cbca0385
+frame 6852 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6853 held up,t1.up,t3.up
+frame 6887 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6888 held up,t1.up,t3.up
+frame 6922 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6923 held up,t1.up,t3.up
+frame 6957 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6958 held up,t1.up,t3.up
+check 6960 9a491e90403ede87
+frame 6992 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 6993 held up,t1.up,t3.up
+frame 7027 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7028 held up,t1.up,t3.up
+frame 7062 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7063 held up,t1.up,t3.up
+check 7080 6a088c59098f2628
+frame 7097 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7098 held up,t1.up,t3.up
+frame 7132 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7133 held up,t1.up,t3.up
+frame 7167 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7168 held up,t1.up,t3.up
+check 7200 00224101d11916d4
+frame 7202 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7203 held up,t1.up,t3.up
+frame 7237 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7238 held up,t1.up,t3.up
+frame 7272 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7273 held up,t1.up,t3.up
+frame 7307 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7308 held up,t1.up,t3.up
+check 7320 279208743985673d
+frame 7342 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7343 held up,t1.up,t3.up
+frame 7377 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7378 held up,t1.up,t3.up
+frame 7412 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7413 held up,t1.up,t3.up
+check 7440 ae0f9291c3740e12
+frame 7447 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7448 held up,t1.up,t3.up
+frame 7482 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7483 held up,t1.up,t3.up
+frame 7517 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7518 held up,t1.up,t3.up
+frame 7552 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7553 held up,t1.up,t3.up
+check 7560 746f856bd16a5002
+frame 7587 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7588 held up,t1.up,t3.up
+frame 7622 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7623 held up,t1.up,t3.up
+frame 7657 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7658 held up,t1.up,t3.up
+check 7680 f8124f6b9f8f6123
+frame 7692 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7693 held up,t1.up,t3.up
+frame 7727 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7728 held up,t1.up,t3.up
+frame 7762 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7763 held up,t1.up,t3.up
+frame 7797 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7798 held up,t1.up,t3.up
+check 7800 7f354fd840c2efb4
+frame 7832 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7833 held up,t1.up,t3.up
+frame 7867 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7868 held up,t1.up,t3.up
+frame 7902 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7903 held up,t1.up,t3.up
+check 7920 15a1ab44f10e6f41
+frame 7937 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7938 held up,t1.up,t3.up
+frame 7972 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 7973 held up,t1.up,t3.up
+frame 8007 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8008 held up,t1.up,t3.up
+check 8040 919ca2edda9fdee4
+frame 8042 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8043 held up,t1.up,t3.up
+frame 8077 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8078 held up,t1.up,t3.up
+frame 8112 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8113 held up,t1.up,t3.up
+frame 8147 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8148 held up,t1.up,t3.up
+check 8160 60bdd814ce8d141c
+frame 8182 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8183 held up,t1.up,t3.up
+frame 8217 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8218 held up,t1.up,t3.up
+frame 8252 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8253 held up,t1.up,t3.up
+check 8280 07690cb12eefac29
+frame 8287 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8288 held up,t1.up,t3.up
+frame 8322 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8323 held up,t1.up,t3.up
+frame 8357 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8358 held up,t1.up,t3.up
+frame 8392 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8393 held up,t1.up,t3.up
+check 8400 cac89b4707d2a90f
+frame 8427 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8428 held up,t1.up,t3.up
+frame 8462 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8463 held up,t1.up,t3.up
+frame 8497 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8498 held up,t1.up,t3.up
+check 8520 56b653eaa93b0499
+frame 8532 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8533 held up,t1.up,t3.up
+frame 8567 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8568 held up,t1.up,t3.up
+frame 8602 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8603 held up,t1.up,t3.up
+frame 8637 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8638 held up,t1.up,t3.up
+check 8640 39b2d343d1fecfa2
+frame 8672 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8673 held up,t1.up,t3.up
+frame 8707 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8708 held up,t1.up,t3.up
+frame 8742 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8743 held up,t1.up,t3.up
+check 8760 aac995fefba56db2
+frame 8777 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8778 held up,t1.up,t3.up
+frame 8812 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8813 held up,t1.up,t3.up
+frame 8847 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8848 held up,t1.up,t3.up
+check 8880 4d6bae852537e63e
+frame 8882 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8883 held up,t1.up,t3.up
+frame 8917 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8918 held up,t1.up,t3.up
+frame 8952 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8953 held up,t1.up,t3.up
+frame 8987 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 8988 held up,t1.up,t3.up
+check 9000 b3591bc0978f4fa2
+frame 9022 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9023 held up,t1.up,t3.up
+frame 9057 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9058 held up,t1.up,t3.up
+frame 9092 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9093 held up,t1.up,t3.up
+check 9120 a98cbe26bb179e68
+frame 9127 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9128 held up,t1.up,t3.up
+frame 9162 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9163 held up,t1.up,t3.up
+frame 9197 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9198 held up,t1.up,t3.up
+frame 9232 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9233 held up,t1.up,t3.up
+check 9240 85a23f3b280589ba
+frame 9267 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9268 held up,t1.up,t3.up
+frame 9302 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9303 held up,t1.up,t3.up
+frame 9337 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9338 held up,t1.up,t3.up
+check 9360 38bb7f7dd2faa169
+frame 9372 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9373 held up,t1.up,t3.up
+frame 9407 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9408 held up,t1.up,t3.up
+frame 9442 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9443 held up,t1.up,t3.up
+frame 9477 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9478 held up,t1.up,t3.up
+check 9480 9efb77d0b6248005
+frame 9512 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9513 held up,t1.up,t3.up
+frame 9547 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9548 held up,t1.up,t3.up
+frame 9582 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9583 held up,t1.up,t3.up
+check 9600 ce8ba717ffcd9f19
+frame 9617 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9618 held up,t1.up,t3.up
+frame 9652 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9653 held up,t1.up,t3.up
+frame 9687 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9688 held up,t1.up,t3.up
+check 9720 9dd8bd5d0e546a8b
+frame 9722 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 9723 held up,t1.up,t3.up
+frame 9742
+frame 9839 held left,t1.left,t3.left pulsed left,t1.left,t3.left
+check 9840 58625fc5d98d13c3
+frame 9840 held left,t1.left,t3.left
+frame 9934 held up,left,t1.up,t1.left,t3.up,t3.left pulsed up,t1.up,t3.up
+frame 9935 held up,left,t1.up,t1.left,t3.up,t3.left
+frame 9939 held up,t1.up,t3.up
+frame 9954 held up,left,t1.up,t1.left,t3.up,t3.left pulsed left,t1.left,t3.left
+frame 9955 held up,left,t1.up,t1.left,t3.up,t3.left
+check 9960 3a602112329cb75b
+frame 10010 held up,t1.up,t3.up
+frame 10013
+check 10080 4c02f332c9cfed67
+frame 10148 held left,t1.left,t3.left pulsed left,t1.left,t3.left
+frame 10149 held left,t1.left,t3.left
+frame 10180 held up,left,t1.up,t1.left,t3.up,t3.left pulsed up,t1.up,t3.up
+frame 10181 held up,left,t1.up,t1.left,t3.up,t3.left
+check 10200 d3c61895086ff20a
+frame 10235 held up,t1.up,t3.up
+frame 10269
+check 10320 7adf827d15fd2574
+check 10440 06629d00cbda3033
+check 10560 f5664a8d2b9c75e0
+check 10680 2b8ce9964827997e
+check 10800 8cac970fb6fcdfeb
+check 10920 3e1265b9a0db230c
+check 11040 07e7bfb9ede8ae04
+frame 11112 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 11113 held up,t1.up,t3.up
+frame 11149 held up,left,t1.up,t1.left,t3.up,t3.left pulsed left,t1.left,t3.left
+frame 11150 held up,left,t1.up,t1.left,t3.up,t3.left
+check 11160 dbad0f2d10681d2a
+check 11280 66d48d87df2884e7
+frame 11322 held up,left,t1.up,t1.left,t3.up,t3.left pulsed up,t1.up,t3.up
+frame 11323 held up,left,t1.up,t1.left,t3.up,t3.left
+frame 11359 held up,left,t1.up,t1.left,t3.up,t3.left pulsed left,t1.left,t3.left
+frame 11360 held up,left,t1.up,t1.left,t3.up,t3.left
+check 11400 af74db3fbb603f48
+frame 11449 held left,t1.left,t3.left
+frame 11454
+check 11520 c3340eade32d8840
+check 11640 06d659d0644cb29b
+check 11760 b98e14d41ef29596
+check 11880 7507dcf3e8900784
+check 12000 bdf61a2ac36751af
+check 12120 5ba26e951bdb014a
+check 12240 2054e0dea7105ae8
+check 12360 8a29291214be03c3
+frame 12425 held cancel pulsed cancel
+frame 12426 held cancel
+frame 12444 held cancel pulsed cancel
+frame 12445 held cancel
+frame 12447
+check 12480 9deac2300a5a00bd
+frame 12514 held cancel pulsed cancel
+frame 12515 held cancel
+frame 12517
+check 12600 9deac2300a5a00bd
+frame 12630 held cancel pulsed cancel
+frame 12631 held cancel
+frame 12650 held cancel pulsed cancel
+frame 12651 held cancel
+frame 12653
+check 12720 01a0060778fc91ad
+check 12840 01a0060778fc91ad
+frame 12950 held cancel pulsed cancel
+frame 12951 held cancel
+frame 12953
+check 12960 01a0060778fc91ad
+check 13080 01a0060778fc91ad
+frame 13120 held select,t1.weapon pulsed select,t1.weapon
+frame 13121 held select,t1.weapon
+frame 13140 held select,t1.weapon pulsed select,t1.weapon
+frame 13141 held select,t1.weapon
+frame 13156 held select,t1.weapon pulsed select,t1.weapon
+frame 13157 held select,t1.weapon
+frame 13169 held select,t1.weapon pulsed select,t1.weapon
+frame 13170 held select,t1.weapon
+frame 13172
+check 13200 56e25011de9123fa
+check 13320 58387433a63f8cf0
+check 13440 bb946dd42d8a7d2b
+check 13560 cf21eb3685e82e8e
+frame 13619 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 13620 held up,t1.up,t3.up
+check 13680 65e5f42d6503b7dc
+check 13800 7db18802da9865e9
+frame 13829 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 13830 held up,t1.up,t3.up
+check 13920 b873a54f370f7e3e
+frame 14004 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14005 held up,t1.up,t3.up
+check 14040 ac457f55f239496e
+frame 14144 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14145 held up,t1.up,t3.up
+check 14160 c09a49be433b61ce
+frame 14249 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14250 held up,t1.up,t3.up
+check 14280 64961563c7e95749
+frame 14319 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14320 held up,t1.up,t3.up
+frame 14354 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14355 held up,t1.up,t3.up
+frame 14389 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14390 held up,t1.up,t3.up
+check 14400 0a8f687e616be2f6
+frame 14424 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14425 held up,t1.up,t3.up
+frame 14459 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14460 held up,t1.up,t3.up
+frame 14494 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14495 held up,t1.up,t3.up
+check 14520 7773e09db9067a1b
+frame 14529 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14530 held up,t1.up,t3.up
+frame 14564 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14565 held up,t1.up,t3.up
+frame 14599 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14600 held up,t1.up,t3.up
+frame 14634 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14635 held up,t1.up,t3.up
+check 14640 8d66aae59894d09c
+frame 14669 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14670 held up,t1.up,t3.up
+frame 14693 held up,left,t1.up,t1.left,t3.up,t3.left pulsed left,t1.left,t3.left
+frame 14694 held up,left,t1.up,t1.left,t3.up,t3.left
+frame 14704 held up,left,t1.up,t1.left,t3.up,t3.left pulsed up,t1.up,t3.up
+frame 14705 held up,left,t1.up,t1.left,t3.up,t3.left
+frame 14739 held up,left,t1.up,t1.left,t3.up,t3.left pulsed up,t1.up,t3.up
+frame 14740 held up,left,t1.up,t1.left,t3.up,t3.left
+check 14760 db8fbe6fdb544900
+frame 14774 held up,left,t1.up,t1.left,t3.up,t3.left pulsed up,t1.up,t3.up
+frame 14775 held up,left,t1.up,t1.left,t3.up,t3.left
+frame 14805 held up,t1.up,t3.up
+frame 14809 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14810 held up,t1.up,t3.up
+frame 14844 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14845 held up,t1.up,t3.up
+frame 14879 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+check 14880 350530142fe137a4
+frame 14880 held up,t1.up,t3.up
+frame 14914 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14915 held up,t1.up,t3.up
+frame 14949 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14950 held up,t1.up,t3.up
+frame 14984 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 14985 held up,t1.up,t3.up
+check 15000 b078f9e571a7bce3
+frame 15019 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15020 held up,t1.up,t3.up
+frame 15054 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15055 held up,t1.up,t3.up
+frame 15089 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15090 held up,t1.up,t3.up
+check 15120 5fb70830031bb552
+frame 15124 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15125 held up,t1.up,t3.up
+frame 15159 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15160 held up,t1.up,t3.up
+frame 15194 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15195 held up,t1.up,t3.up
+frame 15229 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15230 held up,t1.up,t3.up
+check 15240 5e18ab1ee7264e30
+frame 15264 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15265 held up,t1.up,t3.up
+frame 15299 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15300 held up,t1.up,t3.up
+frame 15334 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15335 held up,t1.up,t3.up
+check 15360 af69c71a5b353a3b
+frame 15369 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15370 held up,t1.up,t3.up
+frame 15404 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15405 held up,t1.up,t3.up
+frame 15439 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15440 held up,t1.up,t3.up
+frame 15474 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15475 held up,t1.up,t3.up
+check 15480 ee29e2206840ee80
+frame 15509 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15510 held up,t1.up,t3.up
+frame 15544 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15545 held up,t1.up,t3.up
+frame 15579 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15580 held up,t1.up,t3.up
+check 15600 c535801f4a425391
+frame 15614 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15615 held up,t1.up,t3.up
+frame 15649 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15650 held up,t1.up,t3.up
+frame 15684 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15685 held up,t1.up,t3.up
+frame 15719 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+check 15720 358eb15fb914443e
+frame 15720 held up,t1.up,t3.up
+frame 15754 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15755 held up,t1.up,t3.up
+frame 15789 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15790 held up,t1.up,t3.up
+frame 15824 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15825 held up,t1.up,t3.up
+check 15840 65a5715c45b9f1d5
+frame 15859 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15860 held up,t1.up,t3.up
+frame 15894 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15895 held up,t1.up,t3.up
+frame 15929 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15930 held up,t1.up,t3.up
+check 15960 d8572909c2e386da
+frame 15964 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 15965 held up,t1.up,t3.up
+frame 15999 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16000 held up,t1.up,t3.up
+frame 16034 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16035 held up,t1.up,t3.up
+frame 16069 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16070 held up,t1.up,t3.up
+check 16080 6a56a2ed85eb0544
+frame 16104 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16105 held up,t1.up,t3.up
+frame 16139 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16140 held up,t1.up,t3.up
+frame 16174 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16175 held up,t1.up,t3.up
+check 16200 2e1911cf2699e71a
+frame 16207 held up,right,t1.up,t1.right,t3.up,t3.right pulsed right,t1.right,t3.right
+frame 16208 held up,right,t1.up,t1.right,t3.up,t3.right
+frame 16209 held up,right,t1.up,t1.right,t3.up,t3.right pulsed up,t1.up,t3.up
+frame 16210 held up,right,t1.up,t1.right,t3.up,t3.right
+frame 16244 held up,right,t1.up,t1.right,t3.up,t3.right pulsed up,t1.up,t3.up
+frame 16245 held up,right,t1.up,t1.right,t3.up,t3.right
+frame 16279 held up,right,t1.up,t1.right,t3.up,t3.right pulsed up,t1.up,t3.up
+frame 16280 held up,right,t1.up,t1.right,t3.up,t3.right
+frame 16285 held up,t1.up,t3.up
+frame 16314 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16315 held up,t1.up,t3.up
+check 16320 a53ac80e9a48ce0a
+frame 16349 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16350 held up,t1.up,t3.up
+frame 16384 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16385 held up,t1.up,t3.up
+frame 16419 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16420 held up,t1.up,t3.up
+check 16440 a243541ee97a0027
+frame 16454 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16455 held up,t1.up,t3.up
+frame 16489 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16490 held up,t1.up,t3.up
+frame 16524 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16525 held up,t1.up,t3.up
+frame 16559 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+check 16560 8feda76aed926489
+frame 16560 held up,t1.up,t3.up
+frame 16594 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16595 held up,t1.up,t3.up
+frame 16629 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16630 held up,t1.up,t3.up
+frame 16664 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16665 held up,t1.up,t3.up
+check 16680 50c42cbdf824dcd0
+frame 16699 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16700 held up,t1.up,t3.up
+frame 16734 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16735 held up,t1.up,t3.up
+frame 16769 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16770 held up,t1.up,t3.up
+check 16800 b58686106f295a88
+frame 16804 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16805 held up,t1.up,t3.up
+frame 16839 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16840 held up,t1.up,t3.up
+frame 16874 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16875 held up,t1.up,t3.up
+frame 16909 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16910 held up,t1.up,t3.up
+check 16920 6cea09684e13d892
+frame 16944 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16945 held up,t1.up,t3.up
+frame 16979 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 16980 held up,t1.up,t3.up
+frame 17014 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17015 held up,t1.up,t3.up
+check 17040 1a3795dd772454e7
+frame 17049 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17050 held up,t1.up,t3.up
+frame 17084 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17085 held up,t1.up,t3.up
+frame 17119 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17120 held up,t1.up,t3.up
+frame 17154 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17155 held up,t1.up,t3.up
+check 17160 d23b3efac5a701e8
+frame 17189 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17190 held up,t1.up,t3.up
+frame 17224 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17225 held up,t1.up,t3.up
+frame 17259 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17260 held up,t1.up,t3.up
+check 17280 d21fea4b483beb4c
+frame 17294 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17295 held up,t1.up,t3.up
+frame 17329 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17330 held up,t1.up,t3.up
+frame 17364 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17365 held up,t1.up,t3.up
+frame 17399 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+check 17400 78eeff7c0f553079
+frame 17400 held up,t1.up,t3.up
+frame 17423 held up,right,t1.up,t1.right,t3.up,t3.right pulsed right,t1.right,t3.right
+frame 17424 held up,right,t1.up,t1.right,t3.up,t3.right
+frame 17434 held up,right,t1.up,t1.right,t3.up,t3.right pulsed up,t1.up,t3.up
+frame 17435 held up,right,t1.up,t1.right,t3.up,t3.right
+frame 17469 held up,right,t1.up,t1.right,t3.up,t3.right pulsed up,t1.up,t3.up
+frame 17470 held up,right,t1.up,t1.right,t3.up,t3.right
+frame 17504 held up,right,t1.up,t1.right,t3.up,t3.right pulsed up,t1.up,t3.up
+frame 17505 held up,t1.up,t3.up
+check 17520 8c6c98a85ec56824
+frame 17539 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17540 held up,t1.up,t3.up
+frame 17574 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17575 held up,t1.up,t3.up
+frame 17609 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17610 held up,t1.up,t3.up
+check 17640 11355dfd18eca8d1
+frame 17644 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17645 held up,t1.up,t3.up
+frame 17679 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17680 held up,t1.up,t3.up
+frame 17714 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17715 held up,t1.up,t3.up
+frame 17749 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17750 held up,t1.up,t3.up
+check 17760 cad06daa928dd7a4
+frame 17784 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17785 held up,t1.up,t3.up
+frame 17819 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17820 held up,t1.up,t3.up
+frame 17854 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17855 held up,t1.up,t3.up
+check 17880 f420b433820c8df1
+frame 17889 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17890 held up,t1.up,t3.up
+frame 17924 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17925 held up,t1.up,t3.up
+frame 17959 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17960 held up,t1.up,t3.up
+frame 17994 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 17995 held up,t1.up,t3.up
+check 18000 e05aba17863bc43e
+frame 18029 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18030 held up,t1.up,t3.up
+frame 18064 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18065 held up,t1.up,t3.up
+frame 18099 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18100 held up,t1.up,t3.up
+check 18120 5732f55232cc9af8
+frame 18134 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18135 held up,t1.up,t3.up
+frame 18169 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18170 held up,t1.up,t3.up
+frame 18204 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18205 held up,t1.up,t3.up
+frame 18239 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+check 18240 4d0a0ad54c7f25ca
+frame 18240 held up,t1.up,t3.up
+frame 18274 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18275 held up,t1.up,t3.up
+frame 18309 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18310 held up,t1.up,t3.up
+frame 18344 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18345 held up,t1.up,t3.up
+check 18360 eae325b024432535
+frame 18379 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18380 held up,t1.up,t3.up
+frame 18414 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18415 held up,t1.up,t3.up
+frame 18449 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18450 held up,t1.up,t3.up
+check 18480 8ed091581b510803
+frame 18484 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18485 held up,t1.up,t3.up
+frame 18519 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18520 held up,t1.up,t3.up
+frame 18554 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18555 held up,t1.up,t3.up
+frame 18589 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18590 held up,t1.up,t3.up
+check 18600 68dcdad5c68b14d3
+frame 18624 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18625 held up,t1.up,t3.up
+frame 18659 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 18660 held up,t1.up,t3.up
+frame 18687
+check 18720 d3ac346588f7f1d9
+check 18840 1d39f0a8e1645700
+frame 18893 held cancel pulsed cancel
+frame 18894
+check 18960 063f70c060721e6f
+check 19080 e958ba8ad39f2bdf
+check 19200 dd04577de6a03226
+check 19320 a56deed6af336733
+frame 19422 held select,t1.weapon pulsed select,t1.weapon
+frame 19423 held select,t1.weapon
+frame 19425
+frame 19426 held cancel pulsed cancel
+frame 19427 held cancel
+frame 19428
+check 19440 735813f143a3b4b5
+check 19560 6965bba785b8d590
+check 19680 cd31b6177126cdcc
+frame 19718 held select,t1.weapon pulsed select,t1.weapon
+frame 19719 held select,t1.weapon
+frame 19721
+frame 19722 held cancel pulsed cancel
+frame 19723
+frame 19762 held cancel pulsed cancel
+frame 19763 held cancel
+frame 19765
+check 19800 c84ed388a4f5b8fb
+check 19920 c84ed388a4f5b8fb
+check 20040 c84ed388a4f5b8fb
+check 20160 c84ed388a4f5b8fb
+frame 20188 held select,t1.weapon pulsed select,t1.weapon
+frame 20189 held select,t1.weapon
+frame 20208 held select,t1.weapon pulsed select,t1.weapon
+frame 20209 held select,t1.weapon
+frame 20224 held select,t1.weapon pulsed select,t1.weapon
+frame 20225 held select,t1.weapon
+frame 20237 held select,t1.weapon pulsed select,t1.weapon
+frame 20238 held select,t1.weapon
+frame 20241
+check 20280 864bf7b2f6b63c56
+check 20400 51fc1758ca0b4a44
+check 20520 e6a6310590e7df29
+check 20640 cf4474b03346bfcf
+check 20760 613a8e3d854b1ff0
+frame 20814 held left,t1.left,t3.left pulsed left,t1.left,t3.left
+frame 20815 held left,t1.left,t3.left
+check 20880 99e1857a0fc506a5
+check 21000 b92531d8dbb6528b
+frame 21024 held left,t1.left,t3.left pulsed left,t1.left,t3.left
+frame 21025 held left,t1.left,t3.left
+check 21120 293885647cb9027c
+frame 21199 held left,t1.left,t3.left pulsed left,t1.left,t3.left
+frame 21200 held left,t1.left,t3.left
+check 21240 7835eec4b6033941
+frame 21339 held left,t1.left,t3.left pulsed left,t1.left,t3.left
+frame 21340 held left,t1.left,t3.left
+check 21360 ee18f07bda765787
+frame 21398
+check 21480 e282f9f33f9c5988
+check 21600 b2a8247e6f1d461d
+check 21720 e3a092bb82d1b3a3
+frame 21729 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 21730 held up,t1.up,t3.up
+check 21840 cad8dc7c24946175
+frame 21939 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 21940 held up,t1.up,t3.up
+check 21960 953a1521dcc4944f
+frame 21992 held up,left,t1.up,t1.left,t3.up,t3.left pulsed left,t1.left,t3.left
+frame 21993 held up,left,t1.up,t1.left,t3.up,t3.left
+frame 22073 held up,t1.up,t3.up
+check 22080 20f4797c2cb04690
+frame 22114 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 22115 held up,t1.up,t3.up
+check 22200 5a4edec154f8f286
+frame 22254 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 22255 held up,t1.up,t3.up
+check 22320 64c96a769ce3fddd
+frame 22359 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 22360 held up,t1.up,t3.up
+frame 22429 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 22430 held up,t1.up,t3.up
+check 22440 65ed511321dad9a2
+frame 22464 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 22465 held up,t1.up,t3.up
+frame 22470
+check 22560 1295a6b5e8399255
+check 22680 012c2dc468c7d420
+check 22800 754b8f69fc9e28ed
+check 22920 10f81b492c3f49d3
+check 23040 95671721921afb02
+check 23160 909f5fe09fda81ec
+check 23280 ee0270d05c366d9a
+check 23400 f97ff5451390fd04
+check 23520 8ccf605c8f7e5606
+check 23640 8ccf605c8f7e5606
+check 23760 8ccf605c8f7e5606
+check 23880 8ccf605c8f7e5606
+frame 23985 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 23986 held up,t1.up,t3.up
+check 24000 8ccf605c8f7e5606
+frame 24075
+check 24120 8ccf605c8f7e5606
+frame 24191 held select,t1.weapon pulsed select,t1.weapon
+frame 24192
+check 24240 2eb89282bfeda9f0
+check 24360 fa38054684fa062b
+frame 24427 held left,t1.left,t3.left pulsed left,t1.left,t3.left
+frame 24428 held left,t1.left,t3.left
+check 24480 47507663acd00695
+check 24600 1a3179f1f299d7cc
+frame 24637 held left,t1.left,t3.left pulsed left,t1.left,t3.left
+frame 24638 held left,t1.left,t3.left
+check 24720 e0d4ac7e4be3edc7
+frame 24812 held left,t1.left,t3.left pulsed left,t1.left,t3.left
+frame 24813 held left,t1.left,t3.left
+frame 24823 held up,left,t1.up,t1.left,t3.up,t3.left pulsed up,t1.up,t3.up
+frame 24824 held up,left,t1.up,t1.left,t3.up,t3.left
+check 24840 17e3b66bb29e6fca
+frame 24841 held up,t1.up,t3.up
+check 24960 f364d19f8f2e7f05
+frame 25033 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 25034 held up,t1.up,t3.up
+check 25080 58b80258506535de
+check 25200 5077733293dbbb46
+frame 25208 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 25209 held up,t1.up,t3.up
+check 25320 bc4e5a2cfadb2659
+frame 25348 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 25349 held up,t1.up,t3.up
+check 25440 33c247e4a65c5e9e
+frame 25453 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 25454 held up,t1.up,t3.up
+frame 25523 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 25524 held up,t1.up,t3.up
+frame 25558 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 25559 held up,t1.up,t3.up
+check 25560 9a507ff338eb45f2
+frame 25593 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 25594 held up,t1.up,t3.up
+frame 25628 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 25629 held up,t1.up,t3.up
+frame 25663 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 25664 held up,t1.up,t3.up
+frame 25678
+check 25680 daba9b07847d8d69
+check 25800 07696c74aa0e64b0
+check 25920 2f8552857725ad6e
+check 26040 14443dfc528d3cbd
+check 26160 d1e54e0b83888f0c
+check 26280 1fbd64a63ebc807a
+check 26400 93053ae984ce05dd
+check 26520 d632a5d66658d420
+check 26640 bf7f68aea17bd8f8
+check 26760 380db08f96f89b7d
+check 26880 29229f88a5139b3f
+check 27000 585e24c6d7277f48
+check 27120 7c2c53150736e0f5
+frame 27211 held right,t1.right,t3.right pulsed right,t1.right,t3.right
+frame 27212 held right,t1.right,t3.right
+check 27240 3f5fee89e9d90d40
+frame 27281
+frame 27326 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 27327 held up,t1.up,t3.up
+check 27360 24213bdd49fc3698
+frame 27395
+frame 27445 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 27446 held up,t1.up,t3.up
+check 27480 6711af2c4f783913
+frame 27511
+frame 27555 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 27556 held up,t1.up,t3.up
+check 27600 4c8fe3910bce00b5
+frame 27647
+frame 27692 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 27693 held up,t1.up,t3.up
+check 27720 8f6d3c1ad7f2a184
+frame 27801
+check 27840 db8591b6cb3f9618
+check 27960 50530884e2372582
+check 28080 dd73f25b2551050c
+check 28200 aa388ed7df0714d3
+check 28320 9e95342306b08eca
+check 28440 be9d560d674eb7b8
+check 28560 dfcdc24bbfb7a8ca
+check 28680 9686add7a25d2a5a
+check 28800 375aa9053b81b3a4
+check 28920 a19867f79ab4715e
+check 29040 dc20747ee94be835
+check 29160 c32a153f3b45f04f
+check 29280 b8b65be1d3bf8e2a
+check 29400 e3ab1e79701ec371
+check 29520 8700559a04972a80
+check 29640 c1375b1fb1560d39
+check 29760 9cf8be616bca6dca
+check 29880 9a9df1576f4162ac
+check 30000 78373ae00286ecc5
+check 30120 637d20ea3de75ae6
+check 30240 2e8c392534a7a248
+check 30360 5450b627d8810141
+check 30480 858c32414467a7d2
+check 30600 ad5e0a90ab47f054
+check 30720 3ec19d30562bcaed
+frame 30763 held cancel,editcancel,t1.escape,t2.escape,t3.escape,t4.escape pulsed cancel,editcancel,t1.escape,t2.escape,t3.escape,t4.escape
+frame 30764
+check 30840 ba1b25ba7349e7a2
+check 30960 ba1b25ba7349e7a2
+frame 31040 held down,t1.down,t3.down pulsed down,t1.down,t3.down
+frame 31041 held down,t1.down,t3.down
+check 31080 ba1b25ba7349e7a2
+frame 31102
+frame 31135 held down,t1.down,t3.down pulsed down,t1.down,t3.down
+frame 31136 held down,t1.down,t3.down
+frame 31181
+check 31200 ba1b25ba7349e7a2
+frame 31254 held select,t1.weapon pulsed select,t1.weapon
+frame 31255
+check 31320 ba1b25ba7349e7a2
+check 31440 ba1b25ba7349e7a2
+check 31560 ba1b25ba7349e7a2
+check 31680 ba1b25ba7349e7a2
+check 31800 ba1b25ba7349e7a2
+check 31920 ba1b25ba7349e7a2
+frame 31975 held select,t1.weapon pulsed select,t1.weapon
+frame 31976
+frame 32018 held select,t1.weapon pulsed select,t1.weapon
+frame 32019
+check 32040 ba1b25ba7349e7a2
+check 32160 ba1b25ba7349e7a2
+check 32280 ba1b25ba7349e7a2
+check 32400 ba1b25ba7349e7a2
+frame 32413 held select,t1.weapon pulsed select,t1.weapon
+frame 32414
+check 32520 fe8c27b8525d9c83
+check 32640 fe8c27b8525d9c83
+check 32760 fe8c27b8525d9c83
+check 32880 fe8c27b8525d9c83
+check 33000 fe8c27b8525d9c83
+check 33120 fe8c27b8525d9c83
+check 33240 fe8c27b8525d9c83
+check 33360 fe8c27b8525d9c83
+check 33480 fe8c27b8525d9c83
+check 33600 fe8c27b8525d9c83
+check 33720 fe8c27b8525d9c83
+check 33840 fe8c27b8525d9c83
+check 33960 fe8c27b8525d9c83
+check 34080 fe8c27b8525d9c83
+frame 34080 held select,t1.weapon pulsed select,t1.weapon
+frame 34081
+check 34200 fe8c27b8525d9c83
+check 34320 fe8c27b8525d9c83
+check 34440 fe8c27b8525d9c83
+frame 34461 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 34462 held up,t1.up,t3.up
+frame 34552
+check 34560 fe8c27b8525d9c83
+frame 34651 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 34652 held up,t1.up,t3.up
+check 34680 fe8c27b8525d9c83
+frame 34696
+frame 34733 held up,t1.up,t3.up pulsed up,t1.up,t3.up
+frame 34734 held up,t1.up,t3.up
+frame 34777
+check 34800 fe8c27b8525d9c83
+frame 34872 held select,t1.weapon pulsed select,t1.weapon
+frame 34873
+frame 34875 held left,right,t1.left,t1.right,t3.left,t3.right pulsed left,right,t1.left,t1.right,t3.left,t3.right
+frame 34876 held left,t1.left,t3.left
+frame 34877 held select,t1.weapon pulsed select,t1.weapon
+frame 34878

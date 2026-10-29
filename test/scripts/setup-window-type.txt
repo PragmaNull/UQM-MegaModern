@@ -1,0 +1,25 @@
+# Changes Setup > PC/3DO > Platform UI to DOS, and leaves Setup.
+# Expect "windowStyle": "DOS" in settings.json, and a DOS style main menu in the screenshot.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+down
+select
+wait 1500
+# Platform UI is the first item. UQM is the last option, so right wraps to DOS.
+right
+select
+log pc3do after change
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 5000
+screenshot
+wait 1000
+quit

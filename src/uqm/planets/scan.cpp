@@ -99,7 +99,7 @@ EraseCoarseScan(void)
 static void
 PrintScanTitleText(TEXT* t)
 {
-	SetContextForeGroundColor(uqm::UQMOptions::read().whichCoarseScan == uqm::EmulationMode::Console3DO ? SCAN_PC_TITLE_COLOR_6014 : SCAN_PC_TITLE_COLOR);
+	SetContextForeGroundColor(uqm::usesAltScanColors(uqm::UQMOptions::read().whichCoarseScan) ? SCAN_PC_TITLE_COLOR_6014 : SCAN_PC_TITLE_COLOR);
 
 	if (!uqm::UQMOptions::read().nebulae)
 	{
@@ -107,7 +107,7 @@ PrintScanTitleText(TEXT* t)
 	}
 	else
 	{
-		font_DrawTracedText(t, (uqm::UQMOptions::read().whichCoarseScan == uqm::EmulationMode::Console3DO ? SCAN_PC_TITLE_COLOR_6014 : GetContextForeGroundColor()), OUTLINE_COLOR);
+		font_DrawTracedText(t, (uqm::usesAltScanColors(uqm::UQMOptions::read().whichCoarseScan) ? SCAN_PC_TITLE_COLOR_6014 : GetContextForeGroundColor()), OUTLINE_COLOR);
 	}
 
 	SetContextForeGroundColor(SCAN_INFO_COLOR);
@@ -132,7 +132,7 @@ PrintScanTitlePC(TEXT* t, char* buf, int16_t xpos)
 static void
 PrintScanText(TEXT* t)
 {
-	if (uqm::UQMOptions::read().whichCoarseScan == uqm::EmulationMode::PC)
+	if (!uqm::usesPictograms(uqm::UQMOptions::read().whichCoarseScan))
 	{
 		t->CharCount = (uint16_t)~0;
 	}
@@ -284,7 +284,7 @@ PrintCoarseScanPC(void)
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 
-	SetContextForeGroundColor(uqm::UQMOptions::read().whichCoarseScan == uqm::EmulationMode::Console3DO ?
+	SetContextForeGroundColor(uqm::usesAltScanColors(uqm::UQMOptions::read().whichCoarseScan) ?
 								  SCAN_INFO_COLOR :
 								  SCAN_PC_TITLE_COLOR);
 	SetContextFont(MicroFont);
@@ -462,12 +462,10 @@ PrintCoarseScan3DO(void)
 	char buf[200] {};
 	uint16_t frameIndex = 20;
 
-
-	// options here were PC(0), or 3DO(1). Not sure how this ever became 3. - PragmaNull
-	//if (uqm::UQMOptions::read().whichCoarseScan == 3)
-	//{
-	//	frameIndex = 24;
-	//}
+	if (uqm::UQMOptions::read().whichCoarseScan == uqm::CoarseScanStyle::P6014Pictograms)
+	{
+		frameIndex = 24;
+	}
 
 	SetContext(PlanetContext);
 
@@ -839,7 +837,7 @@ DispatchLander(void)
 		return false;
 	}
 
-	if (uqm::UQMOptions::read().whichCoarseScan == uqm::EmulationMode::Console3DO)
+	if (uqm::usesPictograms(uqm::UQMOptions::read().whichCoarseScan))
 	{
 		PrintCoarseScan3DO();
 	}
@@ -1634,7 +1632,7 @@ void ScanSystem(void)
 
 	SetFlashRect(SFR_MENU_3DO, false);
 
-	if (uqm::UQMOptions::read().whichCoarseScan == uqm::EmulationMode::Console3DO)
+	if (uqm::usesPictograms(uqm::UQMOptions::read().whichCoarseScan))
 	{
 		PrintCoarseScan3DO();
 	}

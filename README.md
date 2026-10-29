@@ -104,98 +104,15 @@ It should look like this:
 
 
 <details>
-<summary>Windows 10+</summary>
+<summary>Building</summary>
 
-#### Visual Studio 
+The game builds with CMake and Conan. On Windows, from the repository root:
 
-I've made this process super easy, as long as you have Visual Studio 2008 or Visual Studio 2015-2022.  
-For Visual Studio 2008 the solution file is under `UQM-MegaMod/build/msvs2008` for Visual Studio 2015-2022 the solution file is under `build/msvs2019`  
-Just load up the solution file and compile away.
+	setup.bat
+	build.bat
+	run.bat
 
-Once the build is complete you'll either have a `UrQuanMasters.exe` or `UrQuanMastersDebug.exe` in the root directory that you can run directly.
-
-If you get a message about missing .dll files they can be found in the `UQM-MegaMod/dev-lib/lib` directory.
-Copy them to the root UQM-MegaMod directory.  
-The .dll are as follows:
-
-	libpng16.dll
-	ogg.dll
-	OpenAL32.dll
-	SDL2.dll
-	vorbis.dll
-	vorbisfile.dll
-	wrap_oal.dll
-	zlib1.dll
-
-#### MSYS2
-
-Make sure you've installed all the necessary packages by executing these two commands in the MSYS2 bash:
-
-	pacman -Syuu
-
-then
-
-	pacman -S make pkg-config mingw-w64-i686-gcc mingw-w64-i686-libogg \
-		mingw-w64-i686-libpng mingw-w64-i686-libsystre \
-		mingw-w64-i686-libvorbis mingw-w64-i686-SDL2 mingw-w64-i686-zlib
-
-Start a MSYS2 MinGW 32-bit bash, `cd` to the UQM-MegaMod directory, then execute this command: 
-
-	./build.sh uqm -j
-
-When executing this command for the first time you'll come to a configuration screen where you can select a few developer-centric options.
-Just hit enter and UQM will start building. It'll take awhile and you'll see a few scary warnings but everything should build fine.
-
-Once the build is complete you'll either have a `UrQuanMasters.exe` or `UrQuanMastersDebug.exe` in the root directory that you can run directly.
-
-If you get a message about missing .dll files they can be copied to the root directory via running the `msys2-depend.sh` bash script like so:
-
-	./msys2-depend.sh
-
-Note though that this script does not work for Visual Studio compiled binaries.
-
-</details>
-
-<details>
-<summary>Linux</summary>
-
-On Debian based distros it's fairly simple, just install the following packages:  
-
-	sudo apt-get install build-essential libogg-dev libpng-dev \
-			libsdl2-dev libvorbis-dev libz-dev
-
-Then when those have finished installing you can either clone the repository or download the source tarball and extract it wherever you like, taking note of where it is.
-
-`cd` to the UQM-MegaMod directory, then execute this command: 
-
-	./build.sh uqm -j
-
-When executing this command for the first time you'll come to a configuration screen where you can select a few developer-centric options.
-Just hit enter and UQM will start building. It'll take awhile and you'll see a few scary warnings but everything should build fine.
-
-Once the build is complete you'll either have a `UrQuanMasters` or `UrQuanMastersDebug` binary in the root directory that you can run directly.
-
-</details>
-
-<details>
-<summary>macOS</summary>
-
-Install Xcode from the App Store, and then when you run it the first time make sure to install "Additional components".  
-You can then install brew from https://brew.sh and then use it to install your requirements from the Terminal:
-
-	brew install libogg libpng libvorbis sdl2
-
-
-Then when those have finished installing you can either clone the MegaMod repository or download the source tarball and extract it wherever you like, taking note of where it is.
-
-`cd` to the UQM-MegaMod directory, then execute this command: 
-
-	./build.sh uqm -j
-
-When executing this command for the first time you'll come to a configuration screen where you can select a few developer-centric options.
-Just hit enter and UQM will start building. It'll take awhile and you'll see a few scary warnings but everything should build fine.
-
-Once the build is complete you'll either have a `UrQuanMasters` or `UrQuanMastersDebug` binary in the root directory that you can run directly.
+On other systems, use the CMake and Conan commands in [CLAUDE.md](CLAUDE.md).
 
 </details>
 

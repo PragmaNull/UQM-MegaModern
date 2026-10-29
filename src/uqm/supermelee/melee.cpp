@@ -61,7 +61,8 @@
 // for TFB_Random()
 #include "libs/reslib.h"
 #include "core/log/log.h"
-#include "libs/uio.h"
+#include "libs/file/textfile.h"
+#include "uqm/supermelee/meleeconfig.h"
 
 
 #include <assert.h>
@@ -2494,37 +2495,42 @@ check_for_disconnects(MELEE_STATE* pMS)
 static void
 nextControlType(uint16_t which_side)
 {
-	switch (PlayerControl[which_side])
+	const PlayerControlFlags human {PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard};
+	const PlayerControlFlags current {PlayerControl[which_side]};
+	PlayerControlFlags& control {PlayerControl[which_side]};
+	if (current == human)
 	{
-		case PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard:
-			PlayerControl[which_side] = ComputerControlFlags | PlayerControlFlags::DifficultyStandard;
-			break;
-		case ComputerControlFlags | PlayerControlFlags::DifficultyStandard:
-			PlayerControl[which_side] = ComputerControlFlags | PlayerControlFlags::DifficultyGood;
-			break;
-		case ComputerControlFlags | PlayerControlFlags::DifficultyGood:
-			PlayerControl[which_side] = ComputerControlFlags | PlayerControlFlags::DifficultyAwesome;
-			break;
-		case ComputerControlFlags | PlayerControlFlags::DifficultyAwesome:
-			PlayerControl[which_side] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
-			break;
-
+		control = ComputerControlFlags | PlayerControlFlags::DifficultyStandard;
+	}
+	else if (current == (ComputerControlFlags | PlayerControlFlags::DifficultyStandard))
+	{
+		control = ComputerControlFlags | PlayerControlFlags::DifficultyGood;
+	}
+	else if (current == (ComputerControlFlags | PlayerControlFlags::DifficultyGood))
+	{
+		control = ComputerControlFlags | PlayerControlFlags::DifficultyAwesome;
+	}
+	else if (current == (ComputerControlFlags | PlayerControlFlags::DifficultyAwesome))
+	{
+		control = human;
+	}
 #ifdef NETPLAY
-		case PlayerControlFlags::Network | PlayerControlFlags::DifficultyStandard:
-			if (netConnections[which_side] != nullptr)
-			{
-				closePlayerNetworkConnection(which_side);
-			}
-			UpdateMeleeStatusMessage(-1);
-			PlayerControl[which_side] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
-			break;
+	else if (current == (PlayerControlFlags::Network | PlayerControlFlags::DifficultyStandard))
+	{
+		if (netConnections[which_side] != nullptr)
+		{
+			closePlayerNetworkConnection(which_side);
+		}
+		UpdateMeleeStatusMessage(-1);
+		control = human;
+	}
 #endif /* NETPLAY */
-		default:
-			uqm::log::error("Error: Bad control type ({}) in "
-							"nextControlType().\n",
-							PlayerControl[which_side]);
-			PlayerControl[which_side] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
-			break;
+	else
+	{
+		uqm::log::error("Error: Bad control type ({}) in "
+						"nextControlType().\n",
+						current);
+		control = human;
 	}
 
 	DrawControls(which_side, true);
@@ -2747,104 +2753,66 @@ bool DoMelee(MELEE_STATE* pMS)
 	return true;
 }
 
+static constexpr const char* c_meleeConfigFile {"melee.json"};
+
 static int
 LoadMeleeConfig(MELEE_STATE* pMS)
 {
-	uio_Stream* stream;
-	int status;
-	uint16_t side;
-
-	stream = uio_fopen(configDir, "melee.cfg", "rb");
-	if (stream == nullptr)
+	const auto json {uqm::readTextFile(uqm::configDir(), c_meleeConfigFile)};
+	if (!json)
 	{
-		goto err;
+		return -1;
 	}
 
+	const auto sides {uqm::meleeConfigFromJson(*json)};
+	if (!sides || sides->size() != NUM_SIDES)
 	{
-		struct stat sb;
-
-		if (uio_fstat(uio_streamHandle(stream), &sb) == -1)
-		{
-			goto err;
-		}
-		if ((size_t)sb.st_size != (1 + MeleeTeam_serialSize) * NUM_SIDES)
-		{
-			goto err;
-		}
+		uqm::moveToBadFile(uqm::configDir(), c_meleeConfigFile);
+		return -1;
 	}
 
-	for (side = 0; side < NUM_SIDES; side++)
+	for (uint16_t side = 0; side < NUM_SIDES; side++)
 	{
-		status = uio_getc(stream);
-		if (status == EOF)
-		{
-			goto err;
-		}
-		PlayerControl[side] = (PlayerControlFlags)status;
-		// TODO XXX: insert sanity check on PlayerControl here.
-
-		if (MeleeSetup_deserializeTeam(pMS->meleeSetup, side, stream) == -1)
-		{
-			goto err;
-		}
+		const uqm::MeleeSideConfig& config {(*sides)[side]};
 
 		/* Do not allow netplay mode at the start. */
-		if (testFlag(PlayerControl[side], PlayerControlFlags::Network))
+		PlayerControl[side] = config.control;
+		if (PlayerControl[side] == PlayerControlFlags::None || testFlag(PlayerControl[side], PlayerControlFlags::Network))
 		{
 			PlayerControl[side] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
 		}
-	}
 
-	uio_fclose(stream);
+		MeleeSetup_setTeamName(pMS->meleeSetup, side, config.teamName.c_str());
+		for (FleetShipIndex slot = 0; slot < MELEE_FLEET_SIZE; slot++)
+		{
+			const MeleeShip ship {slot < config.ships.size() ? config.ships[slot] : MELEE_NONE};
+			MeleeSetup_setShip(pMS->meleeSetup, side, slot, ship);
+		}
+	}
 	return 0;
-
-err:
-	if (stream)
-	{
-		uio_fclose(stream);
-	}
-	return -1;
 }
 
 static int
 WriteMeleeConfig(MELEE_STATE* pMS)
 {
-	uio_Stream* stream;
-	uint16_t side;
-
-	stream = res_OpenResFile(configDir, "melee.cfg", "wb");
-	if (stream == nullptr)
+	uqstl::vector<uqm::MeleeSideConfig> sides(NUM_SIDES);
+	for (uint16_t side = 0; side < NUM_SIDES; side++)
 	{
-		goto err;
-	}
-
-	for (side = 0; side < NUM_SIDES; side++)
-	{
-		if (uio_putc(static_cast<int>(PlayerControl[side]), stream) == EOF)
+		uqm::MeleeSideConfig& config {sides[side]};
+		config.control = PlayerControl[side];
+		config.teamName = MeleeSetup_getTeamName(pMS->meleeSetup, side);
+		for (FleetShipIndex slot = 0; slot < MELEE_FLEET_SIZE; slot++)
 		{
-			goto err;
-		}
-
-		if (MeleeSetup_serializeTeam(pMS->meleeSetup, side, stream) == -1)
-		{
-			goto err;
+			config.ships.push_back(MeleeSetup_getShip(pMS->meleeSetup, side, slot));
 		}
 	}
 
-	if (!res_CloseResFile(stream))
+	if (!uqm::writeTextFile(uqm::configDir(), c_meleeConfigFile, uqm::meleeConfigToJson(sides)))
 	{
-		goto err;
+		uqm::log::error("Could not write {}.", c_meleeConfigFile);
+		return -1;
 	}
-
 	return 0;
-
-err:
-	if (stream)
-	{
-		res_CloseResFile(stream);
-		DeleteResFile(configDir, "melee.cfg");
-	}
-	return -1;
 }
 
 void Melee(void)

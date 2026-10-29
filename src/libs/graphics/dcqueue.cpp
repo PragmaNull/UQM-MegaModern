@@ -668,16 +668,17 @@ void TFB_FlushGraphics(void)
 					const uqm::GfxFlags oldFlags = g_gfxFlags;
 					const int oldWidth = WindowWidth;
 					const int oldHeight = WindowHeight;
+					unsigned int windowType {static_cast<unsigned int>(optWindowType)};
 					if (TFB_ReInitGraphics(cmd->driver, cmd->flags,
 										   cmd->width, cmd->height, &resolutionFactor,
-										   &optWindowType))
+										   &windowType))
 					{
 						uqm::log::error("Could not provide requested mode: "
 										"reverting to last known driver.");
 						// We don't know what exactly failed, so roll it all back
 						if (TFB_ReInitGraphics(oldDriver, oldFlags,
 											   oldWidth, oldHeight, &resolutionFactor,
-											   &optWindowType))
+											   &windowType))
 						{
 							uqm::log::critical(
 								"Couldn't reinit at that point either. "

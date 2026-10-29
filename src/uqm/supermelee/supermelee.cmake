@@ -16,6 +16,8 @@ set(uqm_src_uqm_supermelee_files
 	"src/uqm/supermelee/loadmele.cpp"
 	"src/uqm/supermelee/loadmele.h"
 	"src/uqm/supermelee/melee.cpp"
+	"src/uqm/supermelee/meleeconfig.cpp"
+	"src/uqm/supermelee/meleeconfig.h"
 	"src/uqm/supermelee/melee.h"
 	"src/uqm/supermelee/meleesetup.cpp"
 	"src/uqm/supermelee/meleesetup.h"

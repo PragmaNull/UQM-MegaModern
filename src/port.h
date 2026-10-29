@@ -77,16 +77,6 @@
 #endif
 
 
-#ifndef HAVE_STRUPR
-#if 0 //defined(__cplusplus)
-extern "C" {
-#endif
-char* strupr(char* str);
-#if 0 //defined(__cplusplus)
-}
-#endif
-#endif
-
 #if !defined(_MSC_VER) && !defined(HAVE_READDIR_R)
 #include <dirent.h>
 #if 0 //defined(__cplusplus)
@@ -151,12 +141,6 @@ typedef unsigned short mode_t;
 #define F_OK 0
 #define W_OK 2
 #define R_OK 4
-#define open _open
-#define read _read
-//#	define fstat _fstat
-#define write _write
-//#	define stat _stat
-#define unlink _unlink
 #endif
 
 // Memory

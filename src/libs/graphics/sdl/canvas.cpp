@@ -27,7 +27,7 @@
 #include "libs/memlib.h"
 #include "primitives.h"
 #include "palette.h"
-#include "sdluio.h"
+#include "sdlimage.h"
 #include "rotozoom.h"
 #include "options.h"
 #include <cstdint>
@@ -990,9 +990,9 @@ TFB_DrawCanvas_New_RotationTarget(TFB_Canvas src_canvas, int angle)
 }
 
 TFB_Canvas
-TFB_DrawCanvas_LoadFromFile(void* dir, const char* fileName)
+TFB_DrawCanvas_LoadFromFile(const uqm::io::Directory& dir, const char* fileName)
 {
-	SDL_Surface* surf = sdluio_loadImage((uio_DirHandle*)dir, fileName);
+	SDL_Surface* surf = sdl_loadImage(dir, fileName);
 	if (!surf)
 	{
 		return nullptr;

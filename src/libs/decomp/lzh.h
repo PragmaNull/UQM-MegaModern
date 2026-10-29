@@ -67,11 +67,11 @@ struct _LZHCODE_DESC
 typedef struct _LZHCODE_DESC LZHCODE_DESC;
 typedef LZHCODE_DESC* PLZHCODE_DESC;
 
-#define InChar() (_StreamType == FILE_STREAM ?               \
-					  GetResFileChar((uio_Stream*)_Stream) : \
+#define InChar() (_StreamType == FILE_STREAM ?                                     \
+					  GetResFileChar(*reinterpret_cast<uqm::io::File*>(_Stream)) : \
 					  (int)*_Stream++)
-#define OutChar(c) (_StreamType == FILE_STREAM ?                    \
-						PutResFileChar((c), (uio_Stream*)_Stream) : \
+#define OutChar(c) (_StreamType == FILE_STREAM ?                                          \
+						PutResFileChar((c), *reinterpret_cast<uqm::io::File*>(_Stream)) : \
 						(*_Stream++ = (uint8_t)(c)))
 
 

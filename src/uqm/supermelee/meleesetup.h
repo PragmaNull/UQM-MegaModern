@@ -28,7 +28,7 @@ typedef struct MeleeSetup MeleeSetup;
 
 typedef uint16_t FleetShipIndex;
 
-#include "libs/uio.h"
+#include "libs/io/FileSystem.h"
 #include "melee.h"
 #include "meleeship.h"
 
@@ -77,8 +77,8 @@ void MeleeTeam_delete(MeleeTeam* team);
 #ifdef NETPLAY
 void MeleeSetup_resetSentTeams(MeleeSetup* setup);
 #endif /* NETPLAY */
-int MeleeTeam_serialize(const MeleeTeam* team, uio_Stream* stream);
-int MeleeTeam_deserialize(MeleeTeam* team, uio_Stream* stream);
+int MeleeTeam_serialize(const MeleeTeam* team, uqm::io::File& stream);
+int MeleeTeam_deserialize(MeleeTeam* team, uqm::io::File& stream);
 uint16_t MeleeTeam_getValue(const MeleeTeam* team);
 MeleeShip MeleeTeam_getShip(const MeleeTeam* team, FleetShipIndex slotNr);
 void MeleeTeam_setShip(MeleeTeam* team, FleetShipIndex slotNr,
@@ -121,9 +121,9 @@ const char* MeleeSetup_getTeamName(const MeleeSetup* setup,
 								   size_t teamNr);
 uint16_t MeleeSetup_getFleetValue(const MeleeSetup* setup, size_t teamNr);
 int MeleeSetup_deserializeTeam(MeleeSetup* setup, size_t teamNr,
-							   uio_Stream* stream);
+							   uqm::io::File& stream);
 int MeleeSetup_serializeTeam(const MeleeSetup* setup, size_t teamNr,
-							 uio_Stream* stream);
+							 uqm::io::File& stream);
 
 
 void MeleeState_setShip(MELEE_STATE* pMS, size_t teamNr,

@@ -23,7 +23,7 @@
 
 #include "port.h"
 #include <cstdint>
-#include "libs/uio.h"
+#include "libs/io/FileSystem.h"
 #include "libs/sound/audiocoredefs.h"
 
 #ifndef OVCODEC_NONE
@@ -66,7 +66,7 @@ typedef struct tfb_sounddecoderfunc
 	int (*GetError)(THIS_PTR);
 	bool (*Init)(THIS_PTR);
 	void (*Term)(THIS_PTR);
-	bool (*Open)(THIS_PTR, uio_DirHandle* dir, const char* filename);
+	bool (*Open)(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
 	void (*Close)(THIS_PTR);
 	int (*Decode)(THIS_PTR, void* buf, int32_t bufsize);
 	// returns <0 on error, ==0 when no more data, >0 bytes returned
@@ -100,7 +100,6 @@ struct tfb_sounddecoder
 	bool looping;
 
 	// semi-private
-	uio_DirHandle* dir;
 	char* filename;
 	uint32_t pos;
 	uint32_t start_sample;
@@ -130,7 +129,7 @@ const TFB_SoundDecoderFuncs* SoundDecoder_Lookup(const char* fileext);
 void SoundDecoder_SwapWords(uint16_t* data, uint32_t size);
 int32_t SoundDecoder_Init(AudioFlags flags, TFB_DecoderFormats* formats);
 void SoundDecoder_Uninit(void);
-TFB_SoundDecoder* SoundDecoder_Load(uio_DirHandle* dir,
+TFB_SoundDecoder* SoundDecoder_Load(const uqm::io::Directory& dir,
 									char* filename, uint32_t buffer_size, uint32_t startTime, int32_t runTime);
 uint32_t SoundDecoder_Decode(TFB_SoundDecoder* decoder);
 uint32_t SoundDecoder_DecodeAll(TFB_SoundDecoder* decoder);

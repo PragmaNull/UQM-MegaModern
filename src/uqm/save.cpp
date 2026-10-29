@@ -801,14 +801,14 @@ const char* gameStateBitMapRevTag[] = {
 	"MegaMod v0.8.4"};
 
 template <typename T>
-static inline void writeValue(void* fp, T v)
+static inline void writeValue(uqm::io::File& fp, T v)
 {
 	if (io_ok)
 	{
 		for (int byteNum = 0; byteNum < sizeof(T); ++byteNum)
 		{
 			const uint8_t valueToWrite {static_cast<uint8_t>((v >> (8 * byteNum)) & 0xff)};
-			if (WriteResFile(&valueToWrite, 1, 1, (uio_Stream*)fp) != 1)
+			if (!fp.writeAll(uqm::io::asBytes(&valueToWrite, 1)))
 			{
 				io_ok = false;
 				break;
@@ -818,13 +818,13 @@ static inline void writeValue(void* fp, T v)
 }
 
 template <typename T>
-static inline void writeValueArray(void* fp, uqstl::span<const T> ar)
+static inline void writeValueArray(uqm::io::File& fp, uqstl::span<const T> ar)
 {
 	if (io_ok)
 	{
 		if constexpr (sizeof(T) == 1)
 		{
-			if (WriteResFile(ar.data(), 1, ar.size(), (uio_Stream*)fp) != ar.size()) [[unlikely]]
+			if (!fp.writeAll(uqstl::as_bytes(ar))) [[unlikely]]
 			{
 				io_ok = false;
 			}
@@ -844,14 +844,14 @@ static inline void writeValueArray(void* fp, uqstl::span<const T> ar)
 }
 
 static inline void
-write_str(void* fp, uqstl::string_view str)
+write_str(uqm::io::File& fp, uqstl::string_view str)
 {
 	// no type conversion needed for strings
 	writeValueArray<char>(fp, str);
 }
 
 static void
-SaveShipQueue(uio_Stream* fh, QUEUE* pQueue, uint32_t tag)
+SaveShipQueue(uqm::io::File& fh, QUEUE* pQueue, uint32_t tag)
 {
 	uint16_t num_links;
 	HSHIPFRAG hStarShip;
@@ -895,7 +895,7 @@ SaveShipQueue(uio_Stream* fh, QUEUE* pQueue, uint32_t tag)
 }
 
 static void
-SaveRaceQueue(uio_Stream* fh, QUEUE* pQueue)
+SaveRaceQueue(uqm::io::File& fh, QUEUE* pQueue)
 {
 	uint16_t num_links;
 	HFLEETINFO hFleet;
@@ -949,7 +949,7 @@ SaveRaceQueue(uio_Stream* fh, QUEUE* pQueue)
 }
 
 static void
-SaveGroupQueue(uio_Stream* fh, QUEUE* pQueue)
+SaveGroupQueue(uqm::io::File& fh, QUEUE* pQueue)
 {
 	HIPGROUP hGroup, hNextGroup;
 	uint16_t num_links;
@@ -985,7 +985,7 @@ SaveGroupQueue(uio_Stream* fh, QUEUE* pQueue)
 }
 
 static void
-SaveEncounters(uio_Stream* fh)
+SaveEncounters(uqm::io::File& fh)
 {
 	uint16_t num_links;
 	HENCOUNTER hEncounter;
@@ -1039,7 +1039,7 @@ SaveEncounters(uio_Stream* fh)
 }
 
 static void
-SaveEvents(uio_Stream* fh)
+SaveEvents(uqm::io::File& fh)
 {
 	uint16_t num_links;
 	HEVENT hEvent;
@@ -1072,7 +1072,7 @@ SaveEvents(uio_Stream* fh)
 
 /* The clock state is folded in with the game state chunk. */
 static void
-SaveClockState(const CLOCK_STATE* ClockPtr, uio_Stream* fh)
+SaveClockState(const CLOCK_STATE* ClockPtr, uqm::io::File& fh)
 {
 	writeValue(fh, ClockPtr->day_index);
 	writeValue(fh, ClockPtr->month_index);
@@ -1085,7 +1085,7 @@ SaveClockState(const CLOCK_STATE* ClockPtr, uio_Stream* fh)
  * State chunk is fixed size, but the Game State tag can be extended
  * by modders. */
 static bool
-SaveGameState(const GAME_STATE* GSPtr, uio_Stream* fh)
+SaveGameState(const GAME_STATE* GSPtr, uqm::io::File& fh)
 {
 	uint8_t res_scale;
 
@@ -1154,7 +1154,7 @@ SaveGameState(const GAME_STATE* GSPtr, uio_Stream* fh)
 
 /* This is folded into the Summary chunk */
 static void
-SaveSisState(const SIS_STATE* SSPtr, void* fp)
+SaveSisState(const SIS_STATE* SSPtr, uqm::io::File& fp)
 {
 	writeValue(fp, RES_DESCALE(SSPtr->log_x));
 	writeValue(fp, RES_DESCALE(SSPtr->log_y));
@@ -1182,7 +1182,7 @@ SaveSisState(const SIS_STATE* SSPtr, void* fp)
 /* Write out the Summary Chunk. This is variable length because of the
    savegame name */
 static void
-SaveSummary(const SUMMARY_DESC* SummPtr, void* fp)
+SaveSummary(const SUMMARY_DESC* SummPtr, uqm::io::File& fp)
 {
 	writeValue(fp, SUMMARY_TAG);
 	writeValue(fp, 160 + strlen(SummPtr->SaveName));
@@ -1207,7 +1207,7 @@ SaveSummary(const SUMMARY_DESC* SummPtr, void* fp)
  * the Star *Info* chunk, which records which planetary features you
  * have exploited with your lander */
 static void
-SaveStarDesc(const STAR_DESC* SDPtr, uio_Stream* fh)
+SaveStarDesc(const STAR_DESC* SDPtr, uqm::io::File& fh)
 {
 	writeValue(fh, STAR_TAG);
 	writeValue(fh, 8);
@@ -1396,7 +1396,7 @@ SaveFlagshipState(void)
 }
 
 static void
-SaveStarInfo(uio_Stream* fh)
+SaveStarInfo(uqm::io::File& fh)
 {
 	GAME_STATE_FILE* fp;
 	fp = OpenStateFile(STARINFO_FILE, "rb");
@@ -1426,7 +1426,7 @@ SaveStarInfo(uio_Stream* fh)
 
 static void
 SaveBattleGroup(GAME_STATE_FILE* fp, uint32_t encounter_id, uint32_t grpoffs,
-				uio_Stream* fh)
+				uqm::io::File& fh)
 {
 	GROUP_HEADER h;
 	uint32_t size = 12;
@@ -1522,7 +1522,7 @@ GetBattleGroupOffset(int encounterIndex)
 }
 
 static void
-SaveGroups(uio_Stream* fh)
+SaveGroups(uqm::io::File& fh)
 {
 	GAME_STATE_FILE* fp;
 	fp = OpenStateFile(RANDGRPINFO_FILE, "rb");
@@ -1581,7 +1581,7 @@ SaveGroups(uio_Stream* fh)
 // lot to the actual save file at once.
 bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 {
-	uio_Stream* out_fp;
+	uqstl::optional<uqm::io::File> out_fp {};
 	GFXPOINT pt;
 	STAR_DESC SD;
 	char file[PATH_MAX] {};
@@ -1606,15 +1606,15 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 
 	// Write the memory file to the actual savegame file.
 	fmt::format_to_n(file, sizeof(file) - 1, "uqmsave.{:02}", which_game);
-	if ((out_fp = res_OpenResFile(saveDir, file, "wb")))
+	if ((out_fp = res_OpenResFile(uqm::saveDir(), file, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)))
 	{
 		io_ok = true;
-		writeValue(out_fp, MMV4_TAG);
+		writeValue(*out_fp, MMV4_TAG);
 
 		PrepareSummary(SummPtr, name);
-		SaveSummary(SummPtr, out_fp);
+		SaveSummary(SummPtr, *out_fp);
 
-		if (!SaveGameState(&GlobData.Game_state, out_fp))
+		if (!SaveGameState(&GlobData.Game_state, *out_fp))
 		{
 			io_ok = false;
 		}
@@ -1624,7 +1624,7 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 		// Only relevant when loading a game and must be cleaned
 		GLOBAL(in_orbit) = 0;
 
-		SaveRaceQueue(out_fp, &GLOBAL(avail_race_q));
+		SaveRaceQueue(*out_fp, &GLOBAL(avail_race_q));
 		// START_INTERPLANETARY is only set when saving from Homeworld
 		//   encounter screen. When the game is loaded, the
 		//   GenerateOrbitalFunction for the current star system
@@ -1633,7 +1633,7 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 		{
 			if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
 			{
-				SaveShipQueue(out_fp, &GLOBAL(npc_built_ship_q),
+				SaveShipQueue(*out_fp, &GLOBAL(npc_built_ship_q),
 							  NPC_SHIP_Q_TAG);
 			}
 			else if (lowByte(GLOBAL(CurrentActivity))
@@ -1643,29 +1643,34 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 				//   saved/loaded at all. IP groups will be reloaded
 				//   from group state files. But the original code did,
 				//   and so will we until we can prove we do not need to.
-				SaveGroupQueue(out_fp, &GLOBAL(ip_group_q));
+				SaveGroupQueue(*out_fp, &GLOBAL(ip_group_q));
 			}
 		}
-		SaveShipQueue(out_fp, &GLOBAL(built_ship_q), SHIP_Q_TAG);
-		SaveShipQueue(out_fp, &GLOBAL(stowed_ship_q), STOWED_Q_TAG);
+		SaveShipQueue(*out_fp, &GLOBAL(built_ship_q), SHIP_Q_TAG);
+		SaveShipQueue(*out_fp, &GLOBAL(stowed_ship_q), STOWED_Q_TAG);
 
 		// Save the game event chunk
-		SaveEvents(out_fp);
+		SaveEvents(*out_fp);
 
 		// Save the encounter chunk (black globes in HS/QS)
-		SaveEncounters(out_fp);
+		SaveEncounters(*out_fp);
 
 		// Save out the data that used to be in state files
-		SaveStarInfo(out_fp);
-		SaveGroups(out_fp);
+		SaveStarInfo(*out_fp);
+		SaveGroups(*out_fp);
 
 		// Save out the Star Descriptor
-		SaveStarDesc(&SD, out_fp);
+		SaveStarDesc(&SD, *out_fp);
 
-		res_CloseResFile(out_fp);
+		out_fp->close();
+		if (out_fp->error())
+		{
+			io_ok = false;
+		}
+		out_fp.reset();
 		if (!io_ok)
 		{
-			DeleteResFile(saveDir, file);
+			DeleteResFile(uqm::saveDir(), file);
 			return false;
 		}
 	}

@@ -20,7 +20,6 @@
 #define LIBS_FILE_H_
 
 #include "port.h"
-#include "libs/uio.h"
 #include "core/platform/platform.h"
 
 // for bool
@@ -28,14 +27,6 @@
 
 #if 0 //defined(__cplusplus)
 extern "C" {
-#endif
-
-#if 0
-// from temp.h
-void initTempDir (void);
-void unInitTempDir (void);
-char *tempFilePath (const char *filename);
-extern uio_DirHandle *tempDir;
 #endif
 
 
@@ -70,10 +61,7 @@ int expandPath(char* dest, size_t len, const char* src, int what);
 #endif
 
 // from files.h
-int copyFile(uio_DirHandle* srcDir, const char* srcName,
-			 uio_DirHandle* dstDir, const char* newName);
 bool fileExists(const char* name);
-bool fileExists2(uio_DirHandle* dir, const char* fileName);
 #ifdef HAVE_UNC_PATHS
 size_t skipUNCServerShare(const char* inPath);
 #endif /* HAVE_UNC_PATHS */

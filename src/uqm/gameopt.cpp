@@ -43,7 +43,7 @@
 extern FRAME PlayFrame;
 
 #define MAX_SAVED_GAMES 50
-#define SAVES_PER_PAGE (optWindowType < 2 ? 2 : 5)
+#define SAVES_PER_PAGE (optWindowType != uqm::WindowStyle::UQM ? 2 : 5)
 #define MAX_NAME_SIZE SIS_NAME_SIZE
 
 #define SUMMARY_X_OFFS NSAFE_NUM_SCL(14)
@@ -451,8 +451,7 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 
 	DateToString(dateStr, sizeof dateStr, GLOBAL(GameClock.month_index),
 				 GLOBAL(GameClock.day_index), GLOBAL(GameClock.year_index));
-	strncat(dateStr, ": ", sizeof(dateStr) - strlen(dateStr) - 1);
-	fmt::format_to_sz_n(fullStr, "{}{}", dateStr, Str);
+	fmt::format_to_sz_n(fullStr, "{}: {}", dateStr, Str);
 
 	SetContextForeGroundColor(SAVE_SELECTED_COLOR);
 	r.extent.width = RES_SCALE(15);
@@ -1700,7 +1699,7 @@ LoadGameDescriptions(SUMMARY_DESC* pSD)
 
 	for (i = 0; i < MAX_SAVED_GAMES; ++i, ++pSD)
 	{
-		if (!LoadGame(i, pSD, nullptr, false))
+		if (!LoadGame(i, pSD, uqstl::nullopt, false))
 		{
 			pSD->year_index = 0;
 		}
@@ -1863,7 +1862,7 @@ SaveLoadGame(PICK_GAME_STATE* pickState, uint16_t gameIndex, bool* canceled_by_u
 	else
 	{
 		ConfirmSaveLoad(pickState->saving ? &saveStamp : nullptr);
-		success = LoadGame(gameIndex, nullptr, nullptr, false);
+		success = LoadGame(gameIndex, nullptr, uqstl::nullopt, false);
 	}
 
 	// TODO: the same should be done for both save and load if we also

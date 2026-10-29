@@ -15,6 +15,8 @@ set(uqm_src_libs_input_files
 	"src/libs/input/input.cmake"
 	"src/libs/input/input_common.cpp"
 	"src/libs/input/input_common.h"
+	"src/libs/input/keyconfig.cpp"
+	"src/libs/input/keyconfig.h"
 )
 
 source_group("src\\libs\\input" FILES ${uqm_src_libs_input_files})

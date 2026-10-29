@@ -1,0 +1,44 @@
+# Changes Setup > Graphics > Resolution, Scaler, Scanlines and Show FPS, and saves.
+# Expect "loresBlowupScale": 2, "resolution": [960, 720], "scaler": "Bilinear",
+# "scanlines": true and "showFps": true in settings.json when starting from defaults.
+# The second screenshot is 960x720 with scanlines and the frame counter.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+# Graphics is the first item.
+select
+wait 1500
+log graphics menu
+dumpmenu
+screenshot
+# Graphics, Resolution.
+down
+right
+select
+wait 1500
+# Custom Resolution, Aspect Ratio, Display Mode, Gamma Correction, Scaler.
+down 5
+right
+select
+wait 500
+down
+right
+select
+wait 500
+down
+right
+select
+wait 1500
+log graphics after changes
+dumpmenu
+screenshot
+cancel
+wait 1000
+cancel
+wait 3000
+quit

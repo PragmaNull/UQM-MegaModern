@@ -1,6 +1,7 @@
 #include "platform.h"
 
 #include <stdlib.h>
+#include <system_error>
 #include "core/string/StringUtils.h"
 
 namespace uqm
@@ -14,7 +15,7 @@ uqstl::string getEnvironmentValue(uqgsl::czstring env_name)
 	size_t bufferSize {};
 	if (_dupenv_s(&buffer, &bufferSize, env_name) == 0 && buffer != nullptr)
 	{
-		uqstl::string ret {buffer, bufferSize};
+		uqstl::string ret {buffer};
 
 		free(buffer);
 		return ret;
@@ -59,17 +60,20 @@ bool setEnvironmentValue(uqgsl::czstring name, uqgsl::czstring value, bool overw
 }
 
 
-uqstl::string strerror(errno_t err)
+uqstl::string strerror(int err)
 {
-#ifdef __STDC_LIB_EXT1__
-	const size_t errLen {strerrorlen_s(err))};
-	uqstl::string errStr(errLen + 1, '\0');
-	strerror_s(errStr.data(), errLen, err);
-	return errStr;
+	return uqstl::generic_category().message(err);
+}
+
+uqstl::tm localtime(time_t time)
+{
+	uqstl::tm result {};
+#ifdef _WIN32
+	localtime_s(&result, &time);
 #else
-	// yolo.
-	return ::strerror(err);
+	localtime_r(&time, &result);
 #endif
+	return result;
 }
 
 

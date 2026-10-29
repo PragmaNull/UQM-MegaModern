@@ -26,10 +26,10 @@
 
 #define PAD_SCOPE_BYTES 256
 
-extern void* _GetMusicData(uio_Stream* fp, uint32_t length);
+extern void* _GetMusicData(const ResourceFile& resource);
 extern bool _ReleaseMusicData(void* handle);
 
-extern void* _GetSoundBankData(uio_Stream* fp, uint32_t length);
+extern void* _GetSoundBankData(const ResourceFile& resource);
 extern bool _ReleaseSoundBankData(void* handle);
 
 #define AllocMusicData HMalloc

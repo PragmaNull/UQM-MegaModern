@@ -1,0 +1,76 @@
+# Sets Setup > Cheats > Devices > Portal Spawner to Add Device and Upgrades > Lander Speed to Add Upgrade.
+# Then opens Edit Controls, selects the second control set, leaves Setup and opens Setup again.
+# Expect "Portal Spawner: Add Device" and "Lander Speed: Add Upgrade" after Setup opens again.
+# Expect the control set names in the Edit Controls menu, and the keys of the second set after the change.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+# Cheats is the ninth item.
+down 8
+select
+wait 1500
+select
+wait 1500
+right 2
+select
+log devices after change
+dumpmenu
+cancel
+wait 1000
+down
+select
+wait 1500
+right 2
+select
+log upgrades after change
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 1000
+# Controls is three items above Cheats.
+up 3
+select
+wait 1500
+# Control Display, Bottom Player, Top Player, Edit Controls.
+down 3
+select
+wait 1500
+log edit controls
+dumpmenu
+right
+select
+log edit controls after change
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 1000
+# Controls is highlighted; Quit Setup is four items below.
+down 4
+select
+wait 3000
+log main menu
+dumpmenu
+select
+wait 1500
+down 8
+select
+wait 1500
+select
+wait 1500
+log devices after reopen
+dumpmenu
+cancel
+wait 1000
+down
+select
+wait 1500
+log upgrades after reopen
+dumpmenu
+quit

@@ -23,7 +23,7 @@
 #include "libs/compiler.h"
 #include "port.h"
 #include "libs/memlib.h"
-#include "libs/uio.h"
+#include "libs/io/FileSystem.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -44,27 +44,39 @@ typedef union
 
 #define NULL_RESOURCE nullptr
 
-extern const char* _cur_resfile_name;
 
 typedef void(ResourceLoadFun)(const char* pathname, RESOURCE_DATA* resdata);
 typedef bool(ResourceFreeFun)(void* handle);
 typedef void(ResourceStringFun)(RESOURCE_DATA* handle, char* buf, unsigned int size);
 
-typedef void*(ResourceLoadFileFun)(uio_Stream * fp, uint32_t len);
+// A resource file for a loader to read.
+struct ResourceFile
+{
+	uqm::io::File& file;
+	const uqm::io::Directory& dir;
+	// The path of the file in 'dir'.
+	uqstl::string_view path;
+	uint32_t length;
+};
+typedef void*(ResourceLoadFileFun)(const ResourceFile& resource);
 
 void* LoadResourceFromPath(const char* pathname, ResourceLoadFileFun fn);
 
-uio_Stream* res_OpenResFile(uio_DirHandle* dir, const char* filename, const char* mode);
-size_t ReadResFile(void* lpBuf, size_t size, size_t count, uio_Stream* fp);
-size_t WriteResFile(const void* lpBuf, size_t size, size_t count, uio_Stream* fp);
-int GetResFileChar(uio_Stream* fp);
-int PutResFileChar(char ch, uio_Stream* fp);
-int PutResFileNewline(uio_Stream* fp);
-long SeekResFile(uio_Stream* fp, long offset, int whence);
-long TellResFile(uio_Stream* fp);
-size_t LengthResFile(uio_Stream* fp);
-bool res_CloseResFile(uio_Stream* fp);
-bool DeleteResFile(uio_DirHandle* dir, const char* filename);
+uqstl::optional<uqm::io::File> res_OpenResFile(const uqm::io::Directory& dir, const char* filename, uqm::io::OpenMode mode);
+// Opens a file that the caller owns and deletes, for structures in C memory. Returns nullptr and sets errno on failure.
+uqgsl::owner<uqm::io::File*> res_NewResFile(const uqm::io::Directory& dir, const char* filename);
+// Opens 'filename' and calls 'loadFun' for it. Returns nullptr if 'filename' cannot be opened or is empty.
+void* res_LoadResFile(const uqm::io::Directory& dir, const char* filename, ResourceLoadFileFun* loadFun);
+// fread and fseek style functions, for C callbacks and macros.
+size_t ReadResFile(void* lpBuf, size_t size, size_t count, uqm::io::File& fp);
+size_t WriteResFile(const void* lpBuf, size_t size, size_t count, uqm::io::File& fp);
+int GetResFileChar(uqm::io::File& fp);
+int PutResFileChar(char ch, uqm::io::File& fp);
+int PutResFileNewline(uqm::io::File& fp);
+long SeekResFile(uqm::io::File& fp, long offset, int whence);
+long TellResFile(uqm::io::File& fp);
+size_t LengthResFile(uqm::io::File& fp);
+bool DeleteResFile(const uqm::io::Directory& dir, const char* filename);
 
 RESOURCE_INDEX InitResourceSystem(void);
 void UninitResourceSystem(void);
@@ -77,10 +89,10 @@ uint32_t res_GetIntResource(RESOURCE res);
 bool res_GetBooleanResource(RESOURCE res);
 const char* res_GetResourceType(RESOURCE res);
 
-void LoadResourceIndex(uio_DirHandle* dir, const char* filename, const char* prefix);
-void SaveResourceIndex(uio_DirHandle* dir, const char* rmpfile, const char* root, bool strip_root);
+void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix);
+void SaveResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const char* root, bool strip_root);
 
-void* GetResourceData(uio_Stream* fp, uint32_t length);
+void* GetResourceData(uqm::io::File& fp, uint32_t length);
 
 #define AllocResourceData HMalloc
 bool FreeResourceData(void*);
@@ -100,8 +112,7 @@ extern "C" {
 typedef STRING_TABLE DIRENTRY_REF;
 typedef STRING DIRENTRY;
 
-extern DIRENTRY_REF LoadDirEntryTable(uio_DirHandle* dirHandle,
-									  const char* path, const char* pattern, match_MatchType matchType);
+extern DIRENTRY_REF LoadDirEntryTable(const uqm::io::Directory& dir, const char* path, const uqm::io::Matcher& matcher);
 #define CaptureDirEntryTable CaptureStringTable
 #define ReleaseDirEntryTable ReleaseStringTable
 #define DestroyDirEntryTable DestroyStringTable

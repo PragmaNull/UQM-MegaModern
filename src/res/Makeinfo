@@ -1,6 +1,0 @@
-case "$HOST_SYSTEM" in
-	MINGW32*)
-		uqm_RCFILES="UrQuanMasters.rc"
-		;;
-esac
-

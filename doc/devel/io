@@ -1,0 +1,83 @@
+This file describes the file system used for all game files, in src/libs/io.
+
+		       THE UQM FILE SYSTEM
+		       -------------------
+
+The game reads and writes files through a virtual file system. It stacks
+host directories and zip archives on top of each other, so that addons can
+replace content files without changing them.
+
+Sources
+-------
+
+The implementation is in src/libs/io/standard and uses std::filesystem,
+std::filebuf and zlib. libs/io/FileSystem.h makes uqm::io::FileSystem,
+File, Directory and Mount aliases for its types.
+
+Each mount has a MountSource (standard/MountSource.h): DirectorySource for
+a host directory and ZipSource for a zip archive. A new kind of storage,
+for example files in memory, is a new MountSource.
+
+Types
+-----
+
+FileSystem  Owns the mount stack. The game has one, gameFileSystem() in
+            options.h, from initIO() to uninitIO(). Its directories are
+            contentDir(), configDir(), saveDir(), meleeDir() and scrShotDir().
+Directory   A path in a file system. It is a value type and can be copied.
+            It keeps the mounts alive, so it can outlive the FileSystem.
+File        An open file. It is move-only and closes the file when it is
+            destroyed. It is buffered, and supports unget() of bytes that
+            are still in the buffer.
+Mount       A mount in the stack. It is move-only and removes the mount
+            when it is destroyed. It can outlive the FileSystem.
+Matcher     A file name filter for Directory::list(): literal, prefix,
+            suffix, substring or regular expression.
+
+Functions that can fail return an empty optional or an error_code. They
+do not throw and do not set errno.
+
+Mounts
+------
+
+FileSystem::mountDirectory() mounts a host directory.
+FileSystem::mountArchive() mounts a zip archive that is a file in the
+file system. Archives are always read-only. Stored and deflated entries are
+supported. Zip64 and encrypted entries are not.
+FileSystem::mountTransplant() mounts what a directory currently shows at a
+different mount point. The game uses it for addon "shadow-content".
+
+Each mount goes at the top or bottom of the stack, or directly above or
+below a mount that is given as the relative mount.
+
+Rules for the mount stack
+-------------------------
+
+- A higher mount hides the entries of a lower mount with the same name.
+  A directory can hide a file, and a file can hide a directory.
+- Reading a file opens the highest entry.
+- Directory listings contain the entries of all mounts, without
+  duplicates, sorted by name. Mount points show as directories.
+- A new file or directory goes into the highest writable mount that
+  contains the path. The parent directories are created in that mount.
+  The parent directory must exist in the file system.
+- Opening a file for writing that exists only in a read-only mount first
+  copies it to the highest writable mount above that mount. If there is no
+  such mount, the open fails.
+- Removing an entry removes it from all mounts that have it. It fails at
+  the first read-only mount that has the entry.
+- A rename must stay in one mount.
+
+Threads
+-------
+
+A FileSystem can be used from many threads. A File must be used by one
+thread at a time. Mounting and unmounting can happen while other threads
+read files.
+
+Old code
+--------
+
+The resource functions in libs/reslib.h (res_OpenResFile, ReadResFile and
+so on) are thin functions over File. Code that keeps a file in a structure
+that is allocated as C memory owns it as uqgsl::owner<uqm::io::File*>.

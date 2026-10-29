@@ -23,7 +23,7 @@
 #include "libs/memlib.h"
 #include "port.h"
 #include <cstdint>
-#include "libs/uio.h"
+#include "libs/reslib.h"
 #include "dukaud.h"
 #include "decoder.h"
 #include "endian_uqm.h"
@@ -43,7 +43,7 @@ static uint32_t duka_GetStructSize(void);
 static int duka_GetError(THIS_PTR);
 static bool duka_Init(THIS_PTR);
 static void duka_Term(THIS_PTR);
-static bool duka_Open(THIS_PTR, uio_DirHandle* dir, const char* filename);
+static bool duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
 static void duka_Close(THIS_PTR);
 static int duka_Decode(THIS_PTR, void* buf, int32_t bufsize);
 static uint32_t duka_Seek(THIS_PTR, uint32_t pcm_pos);
@@ -78,7 +78,7 @@ typedef struct tfb_ducksounddecoder
 
 	// private
 	int32_t last_error;
-	uio_Stream* duk;
+	uqgsl::owner<uqm::io::File*> duk;
 	uint32_t* frames;
 	// buffer
 	void* data;
@@ -113,15 +113,15 @@ duka_readAudFrameHeader(TFB_DuckSoundDecoder* duka, uint32_t iframe,
 {
 	DukAud_FrameHeader hdr;
 
-	uio_fseek(duka->duk, duka->frames[iframe], SEEK_SET);
-	if (uio_fread(&hdr, sizeof(hdr), 1, duka->duk) != 1)
+	duka->duk->seek(duka->frames[iframe], uqm::io::SeekFrom::Start);
+	if (!duka->duk->readValue(hdr))
 	{
 		duka->last_error = errno;
 		return dukae_BadFile;
 	}
 	hdr.audsize = UQM_SwapBE32(hdr.audsize);
 
-	if (uio_fread(aud, sizeof(*aud), 1, duka->duk) != 1)
+	if (!duka->duk->readValue(*aud))
 	{
 		duka->last_error = errno;
 		return dukae_BadFile;
@@ -289,8 +289,8 @@ duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 	DukAud_AudSubframe* aud;
 	uint8_t* p;
 
-	uio_fseek(duka->duk, duka->frames[duka->iframe], SEEK_SET);
-	if (uio_fread(&hdr, sizeof(hdr), 1, duka->duk) != 1)
+	duka->duk->seek(duka->frames[duka->iframe], uqm::io::SeekFrom::Start);
+	if (!duka->duk->readValue(hdr))
 	{
 		duka->last_error = errno;
 		return dukae_BadFile;
@@ -299,7 +299,7 @@ duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 
 	// dump encoded data at the end of the buffer aligned on 8-byte
 	p = ((uint8_t*)duka->data + duka->maxdata - ((hdr.audsize + 7) & (-8)));
-	if (uio_fread(p, 1, hdr.audsize, duka->duk) != hdr.audsize)
+	if (!duka->duk->readExact(uqm::io::asBytes(p, hdr.audsize)))
 	{
 		duka->last_error = errno;
 		return dukae_BadFile;
@@ -401,11 +401,11 @@ duka_Term(THIS_PTR)
 }
 
 static bool
-duka_Open(THIS_PTR, uio_DirHandle* dir, const char* file)
+duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
-	uio_Stream* duk;
-	uio_Stream* frm;
+	uqgsl::owner<uqm::io::File*> duk {};
+	uqgsl::owner<uqm::io::File*> frm {};
 	DukAud_AudSubframe aud;
 	char filename[256] {};
 	uint32_t filelen;
@@ -420,7 +420,7 @@ duka_Open(THIS_PTR, uio_DirHandle* dir, const char* file)
 	uqstl::span<char> filenameDst {filename};
 	uqm::strncpy_safe(filenameDst, {file, filelen});
 
-	duk = uio_fopen(dir, filename, "rb");
+	duk = res_NewResFile(dir, filename);
 	if (!duk)
 	{
 		duka->last_error = errno;
@@ -430,30 +430,28 @@ duka_Open(THIS_PTR, uio_DirHandle* dir, const char* file)
 	// overwrite the extension with 'frm".. weird.
 	filenameDst = filenameDst.subspan(filelen - 3);
 	uqm::strncpy_safe(filenameDst, "frm");
-	frm = uio_fopen(dir, filename, "rb");
+	frm = res_NewResFile(dir, filename);
 	if (!frm)
 	{
 		duka->last_error = errno;
-		uio_fclose(duk);
+		delete duk;
 		return false;
 	}
 
 	duka->duk = duk;
 
-	uio_fseek(frm, 0, SEEK_END);
-	duka->cframes = uio_ftell(frm) / sizeof(uint32_t);
-	uio_fseek(frm, 0, SEEK_SET);
+	duka->cframes = static_cast<uint32_t>(frm->size() / sizeof(uint32_t));
 	if (!duka->cframes)
 	{
 		duka->last_error = dukae_BadFile;
-		uio_fclose(frm);
+		delete frm;
 		duka_Close(This);
 		return false;
 	}
 
 	duka->frames = (uint32_t*)HMalloc(duka->cframes * sizeof(uint32_t));
-	cread = uio_fread(duka->frames, sizeof(uint32_t), duka->cframes, frm);
-	uio_fclose(frm);
+	cread = frm->read(uqm::io::asBytes(duka->frames, sizeof(uint32_t) * duka->cframes)) / sizeof(uint32_t);
+	delete frm;
 	if (cread != duka->cframes)
 	{
 		duka->last_error = dukae_BadFile;
@@ -506,7 +504,7 @@ duka_Close(THIS_PTR)
 	}
 	if (duka->duk)
 	{
-		uio_fclose(duka->duk);
+		delete duka->duk;
 		duka->duk = nullptr;
 	}
 	duka->last_error = 0;

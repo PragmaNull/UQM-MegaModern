@@ -258,30 +258,25 @@ void SetMusicVolume(uint16_t Volume)
 
 char* CheckMusicResName(char* fileName)
 {
-	if (!fileExists2(contentDir, fileName))
+	if (!uqm::contentDir().exists(fileName))
 	{
 		uqm::log::warn("Requested track '{}' not found.", fileName);
 	}
 	return fileName;
 }
 
-void* _GetMusicData(uio_Stream* fp, uint32_t length)
+void* _GetMusicData(const ResourceFile& resource)
 {
 	MUSIC_REF h;
 	TFB_SoundSample* sample;
 	TFB_SoundDecoder* decoder;
 	char filename[256] {};
 
-	if (!_cur_resfile_name)
-	{
-		return nullptr;
-	}
-
-	uqm::strncpy_safe(filename, _cur_resfile_name);
+	uqm::strncpy_safe(filename, {resource.path.data(), static_cast<uint32_t>(resource.path.size())});
 	CheckMusicResName(filename);
 
 	uqm::log::debug("_GetMusicData(): loading {}", filename);
-	decoder = SoundDecoder_Load(contentDir, filename, 4096, 0, 0);
+	decoder = SoundDecoder_Load(uqm::contentDir(), filename, 4096, 0, 0);
 	if (!decoder)
 	{
 		uqm::log::warn("_GetMusicData(): couldn't load {}", filename);
@@ -302,8 +297,6 @@ void* _GetMusicData(uio_Stream* fp, uint32_t length)
 				   SoundDecoder_GetName(sample->decoder),
 				   sample->decoder->frequency, sample->decoder->format);
 
-	(void)fp;	  /* satisfy compiler (unused parameter) */
-	(void)length; /* satisfy compiler (unused parameter) */
 	return (h);
 }
 

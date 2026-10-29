@@ -72,7 +72,7 @@ typedef struct
 
 extern ACTIVITY NextActivity;
 
-extern bool LoadGame(uint16_t which_game, SUMMARY_DESC* summary_desc, uio_Stream* in_fp, bool try_core);
+extern bool LoadGame(uint16_t which_game, SUMMARY_DESC* summary_desc, uqstl::optional<uqm::io::File> in_fp, bool try_core);
 extern bool LoadLegacyGame(uint16_t which_game, SUMMARY_DESC* SummPtr, bool try_vanilla);
 
 extern void SaveProblem(void);

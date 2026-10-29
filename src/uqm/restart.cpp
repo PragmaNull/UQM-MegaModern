@@ -472,7 +472,7 @@ DoRestart(MENU_STATE* pMS)
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
 
-	if (optWindowType < 2)
+	if (optWindowType != uqm::WindowStyle::UQM)
 	{
 		uqm::UQMOptions::edit().meleeToolTips = false;
 	}

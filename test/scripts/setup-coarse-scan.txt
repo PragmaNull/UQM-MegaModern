@@ -1,0 +1,26 @@
+# Sets Setup > PC/3DO > Stats Display to P6014 Pictograms, and saves.
+# Expect "coarseScanStyle": "P6014Pictograms" in settings.json when starting from defaults.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+down
+select
+wait 1500
+# Window Type, Menu Style, DOS Side Menu, Font Style, Cutscenes, Melee Zoom, Flagship Engine Color,
+# Screen Transitions, Scroll Style, Speech, Subtitles, Oscilloscope Style, Planet Style,
+# Star Background, Stats Display.
+down 14
+right 3
+select
+log after change
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 3000
+quit

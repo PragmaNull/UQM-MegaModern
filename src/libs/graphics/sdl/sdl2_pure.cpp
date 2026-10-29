@@ -682,7 +682,11 @@ bool TFB_SDL_ScreenShot(const char* path)
 	SDL_LockSurface(tmp);
 	SDL_RenderReadPixels(renderer, nullptr, tmp->format->format,
 						 tmp->pixels, tmp->pitch);
-	if (TFB_sdl_to_png(tmp, SDL_RWFromFile(path, "wb"), 1) == 0)
+	if (SDL_RWops* file {SDL_RWFromFile(path, "wb")}; file == nullptr)
+	{
+		uqm::log::error("Cannot open '{}' for the screenshot: {}", path, SDL_GetError());
+	}
+	else if (TFB_sdl_to_png(tmp, file, 1) == 0)
 	{
 		successful = true;
 	}

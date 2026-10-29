@@ -137,10 +137,10 @@ TEST_F(StringUtilsTest, ParseIntegers_EdgeCases)
 	EXPECT_EQ(ec, uqstl::errc {});
 	EXPECT_EQ(value, 42);
 
-	// Partial parse: from_chars parses prefix digits; implementation doesn't require full-consumption
+	// Characters after the number are an error, and the value does not change
 	ec = parseStr("12abc", value);
-	EXPECT_EQ(ec, uqstl::errc {}); // success, 12 parsed
-	EXPECT_EQ(value, 12);
+	EXPECT_EQ(ec, uqstl::errc::invalid_argument);
+	EXPECT_EQ(value, 42);
 
 	// Leading whitespace is not skipped by from_chars -> invalid_argument
 	ec = parseStr(" 45", value);

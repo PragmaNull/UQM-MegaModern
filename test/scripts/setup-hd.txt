@@ -1,0 +1,23 @@
+# Changes Setup > Graphics > Graphics to HD, and leaves Setup.
+# Expect "resolutionFactor": 2 in settings.json, and the HD main menu in the screenshot.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+down 3
+select
+wait 1500
+select
+wait 1500
+right
+select
+log graphics after change
+dumpmenu
+cancel
+wait 1000
+cancel
+wait 6000
+screenshot
+wait 1000
+quit

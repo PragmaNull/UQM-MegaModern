@@ -1387,7 +1387,7 @@ void RenderPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
 	t += clock() - t1;
 	if (frames_done == width)
 	{
-		uqm::log::debug("Rotation frames/sec: {}/%ld(msec)={}",
+		uqm::log::debug("Rotation frames/sec: {}/{}(msec)={}",
 						frames_done,
 						(long int)(((double)t / CLOCKS_PER_SEC) * 1000.0 + 0.5),
 						frames_done / ((double)t / CLOCKS_PER_SEC + 0.5));

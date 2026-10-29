@@ -8,6 +8,24 @@ UQM-MegaModern is a C++20 modernization of The Ur-Quan Masters (a port of Star C
 
 ## Build Instructions
 
+### Helper scripts (Windows)
+
+Root `.bat` files wrap Python scripts in `scripts/`:
+
+```bat
+setup.bat   [-c CONFIG] [--asan] [-p PROFILE]   :: conan install, then cmake configure (Ninja)
+build.bat   [-c CONFIG] [--asan] [-t TARGET] [-j N] [--clean]
+test.bat    [-c CONFIG] [--build] [-R REGEX] [-j N]
+run.bat     [--build] [GAME ARGS...]           :: run the game with -n content
+regress.bat [--build] [-R REGEX] [-j N]         :: run the input scripts in test/scripts
+```
+
+- `CONFIG`: `Release` (default), `Debug`, `RelWithDebInfo`, `MinSizeRel`. All take `-B DIR` (default `conanbuild`).
+- `build`/`test` default to the config already in `CMakeCache.txt`; `build` reconfigures if `--config`/`--asan` differ.
+- `setup --skip-install` runs only the cmake step. `build` runs conan install itself when the conan files for the config are missing.
+- Commands run inside conan's `conanbuild`/`conanrun` env scripts, so no VS developer prompt is needed.
+- Unrecognized arguments are forwarded to cmake/ctest. Scripts can also be run directly with `python scripts/<name>.py`.
+
 ### CMake + Conan (primary method)
 
 ```bash
@@ -32,16 +50,6 @@ cmake . -G Ninja -B conanbuild \
 cmake --build conanbuild
 ```
 
-### Visual Studio (Windows alternative)
-
-Open the solution in `build/msvs2019/`. Required DLLs are in `dev-lib/lib/`.
-
-### Legacy MSYS2/Linux
-
-```bash
-./build.sh uqm -j
-```
-
 ## Running Tests
 
 Tests use Google Test, discovered automatically via CMake.
@@ -55,6 +63,8 @@ ctest --output-on-failure --build-config Release
 ```
 
 Test sources are in `test/tests/` organized by subsystem (core, lib, options, uqm).
+
+Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each one with a new config dir and fails on a non-zero exit code or an `[error]` or `[critical]` log line. A `<name>.settings.json` file next to a script is copied in as the start settings. `regress.bat` runs the game muted and in a window. `run.bat` does the same with `--input-script`, unless the volume or `-f` options are given.
 
 ## Code Architecture
 
@@ -90,6 +100,8 @@ Test sources are in `test/tests/` organized by subsystem (core, lib, options, uq
 - **Integer types**: Use `<cstdint>` types (`int32_t`, `uint8_t`, etc.) — not legacy custom types
 - **Enums**: Use `enum class` with `magic_enum` for reflection where needed
 - **String safety**: Use `uqstl::string_view` for safe string views (pass by value); use `uqgsl::czstring` when the API deals with C-style null-terminated strings; use `scn::scan` instead of `sscanf`
+- **Comments**: Keep comments minimal. Write them in Simplified Technical English. Do not explain "why", and do not refer to other classes or files unless necessary; such comments read as notes to self. Get user approval before adding a comment longer than 3 lines. Start every new source file with a one-line comment that states its purpose.
+- **C++ Core Guidelines**: Follow the [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines) as closely as possible: RAII for all resources, no owning raw pointers, `const` by default, no C-style casts, prefer value types and the rule of zero
 - **Initialization**: Use braced initialization throughout — for variables (`int x{42};`), and for class members/locals with default constructors (`uqstl::vector<int> v{};`) even when the default constructor would be called implicitly
 
 ## Formatting
@@ -103,3 +115,7 @@ Run clang-format on all modified files after making changes:
 ```
 
 Format rules are in `src/.clang-format`.
+
+## Commits
+
+Do not add a `Co-Authored-By: Claude` line or any other Claude attribution to commit messages.

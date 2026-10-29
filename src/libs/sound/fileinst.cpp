@@ -26,59 +26,15 @@
 SOUND_REF
 LoadSoundFile(const char* pStr)
 {
-	uio_Stream* fp;
-
-	// FIXME: this theoretically needs a mechanism to prevent races
-	if (_cur_resfile_name)
-	{
-		// something else is loading resources atm
-		return 0;
-	}
-
-	fp = res_OpenResFile(contentDir, pStr, "rb");
-	if (fp)
-	{
-		SOUND_REF hData;
-
-		_cur_resfile_name = pStr;
-		hData = (SOUND_REF)_GetSoundBankData(fp, LengthResFile(fp));
-		_cur_resfile_name = 0;
-
-		res_CloseResFile(fp);
-
-		return hData;
-	}
-
-	return nullptr;
+	return static_cast<SOUND_REF>(res_LoadResFile(uqm::contentDir(), pStr, _GetSoundBankData));
 }
 
 MUSIC_REF
 LoadMusicFile(const char* pStr)
 {
-	// FIXME: this theoretically needs a mechanism to prevent races
-	if (_cur_resfile_name)
-	{
-		// something else is loading resources atm
-		return 0;
-	}
-
 	char filename[256] {};
 	uqm::strncpy_safe(filename, pStr);
 	CheckMusicResName(filename);
 
-	// Opening the res file is not technically necessary right now
-	// since _GetMusicData() completely ignores the arguments
-	// But just for the sake of correctness
-	if (uio_Stream * fp {res_OpenResFile(contentDir, filename, "rb")})
-	{
-		_cur_resfile_name = filename;
-		 MUSIC_REF hData = (MUSIC_REF)_GetMusicData(fp, LengthResFile(fp));
-		_cur_resfile_name = 0;
-
-		res_CloseResFile(fp);
-
-		return hData;
-	}
-
-	return (0);
+	return static_cast<MUSIC_REF>(res_LoadResFile(uqm::contentDir(), filename, _GetMusicData));
 }

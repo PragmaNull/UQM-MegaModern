@@ -36,7 +36,6 @@
 // for ProcessInputEvent()
 #include "libs/graphics/bbox.h"
 #include "port.h"
-#include "libs/uio.h"
 #include "core/log/log.h"
 #include "libs/memlib.h"
 #include "libs/vidlib.h"

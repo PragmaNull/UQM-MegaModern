@@ -1190,6 +1190,9 @@ static inline uqm::NomadMode getNomadMode() { return GLOBAL_SIS(Nomad); }
 // Storage Queue
 #define STORAGE_Q (uqm::UQMOptions::read().shipStore || isDifficulty(uqm::Difficulty::Hard) || uqm::UQMOptions::read().fleetPointSys)
 
+// The stored value for no location. The location states are 16 bits; they hold int16_t coordinates.
+constexpr uint16_t c_noLocation {0xffff};
+
 static inline GFXPOINT
 LoadLastLoc(void)
 {
@@ -1200,15 +1203,15 @@ LoadLastLoc(void)
 static inline void
 SaveLastLoc(GFXPOINT pt)
 {
-	SET_GAME_STATE(LAST_LOCATION_X, pt.x);
-	SET_GAME_STATE(LAST_LOCATION_Y, pt.y);
+	SET_GAME_STATE(LAST_LOCATION_X, static_cast<uint16_t>(pt.x));
+	SET_GAME_STATE(LAST_LOCATION_Y, static_cast<uint16_t>(pt.y));
 }
 
 static inline void
 ZeroLastLoc(void)
 {
-	SET_GAME_STATE(LAST_LOCATION_X, ~0);
-	SET_GAME_STATE(LAST_LOCATION_Y, ~0);
+	SET_GAME_STATE(LAST_LOCATION_X, c_noLocation);
+	SET_GAME_STATE(LAST_LOCATION_Y, c_noLocation);
 }
 
 static inline GFXPOINT
@@ -1228,29 +1231,29 @@ LoadAdvancedAutoPilot(void)
 static inline void
 SaveAdvancedQuasiPilot(GFXPOINT pt)
 {
-	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_X, pt.x);
-	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_Y, pt.y);
+	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_X, static_cast<uint16_t>(pt.x));
+	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_Y, static_cast<uint16_t>(pt.y));
 }
 
 static inline void
 SaveAdvancedAutoPilot(GFXPOINT pt)
 {
-	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_X, pt.x);
-	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_Y, pt.y);
+	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_X, static_cast<uint16_t>(pt.x));
+	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_Y, static_cast<uint16_t>(pt.y));
 }
 
 static inline void
 ZeroAdvancedQuasiPilot(void)
 {
-	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_X, ~0);
-	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_Y, ~0);
+	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_X, c_noLocation);
+	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_Y, c_noLocation);
 }
 
 static inline void
 ZeroAdvancedAutoPilot(void)
 {
-	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_X, ~0);
-	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_Y, ~0);
+	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_X, c_noLocation);
+	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_Y, c_noLocation);
 }
 
 #define BOOL_STR(a) ((a) ? "True" : "False")

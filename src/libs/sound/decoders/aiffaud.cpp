@@ -33,7 +33,7 @@
 #include <string.h>
 #include "port.h"
 #include <cstdint>
-#include "libs/uio.h"
+#include "libs/reslib.h"
 #include "endian_uqm.h"
 #include "core/log/log.h"
 #include "aiffaud.h"
@@ -114,7 +114,7 @@ static uint32_t aifa_GetStructSize(void);
 static int aifa_GetError(THIS_PTR);
 static bool aifa_Init(THIS_PTR);
 static void aifa_Term(THIS_PTR);
-static bool aifa_Open(THIS_PTR, uio_DirHandle* dir, const char* filename);
+static bool aifa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
 static void aifa_Close(THIS_PTR);
 static int aifa_Decode(THIS_PTR, void* buf, int32_t bufsize);
 static uint32_t aifa_Seek(THIS_PTR, uint32_t pcm_pos);
@@ -152,7 +152,7 @@ typedef struct tfb_wavesounddecoder
 
 	// private
 	int32_t last_error;
-	uio_Stream* fp;
+	uqgsl::owner<uqm::io::File*> fp;
 	aiff_ExtCommonChunk fmtHdr;
 	aiff_CompressionType comp_type;
 	unsigned bits_per_sample;
@@ -224,9 +224,9 @@ aifa_Term(THIS_PTR)
 }
 
 static bool
-read_be_16(uio_Stream* fp, uint16_t* v)
+read_be_16(uqm::io::File* fp, uint16_t* v)
 {
-	if (!uio_fread(v, sizeof(*v), 1, fp))
+	if (!fp->readValue(*v))
 	{
 		return false;
 	}
@@ -235,9 +235,9 @@ read_be_16(uio_Stream* fp, uint16_t* v)
 }
 
 static bool
-read_be_32(uio_Stream* fp, uint32_t* v)
+read_be_32(uqm::io::File* fp, uint32_t* v)
 {
-	if (!uio_fread(v, sizeof(*v), 1, fp))
+	if (!fp->readValue(*v))
 	{
 		return false;
 	}
@@ -249,7 +249,7 @@ read_be_32(uio_Stream* fp, uint32_t* v)
 // We are only interested in values that we can work with,
 //   so using an int32_t here is fine.
 static bool
-read_be_f80(uio_Stream* fp, int32_t* v)
+read_be_f80(uqm::io::File* fp, int32_t* v)
 {
 	int sign, exp;
 	int shift;
@@ -353,14 +353,14 @@ aifa_readSoundDataChunk(TFB_AiffSoundDecoder* aifa,
 }
 
 static bool
-aifa_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
+aifa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 	aiff_FileHeader fileHdr;
 	aiff_ChunkHeader chunkHdr;
 	int32_t remSize;
 
-	aifa->fp = uio_fopen(dir, filename, "rb");
+	aifa->fp = res_NewResFile(dir, filename);
 	if (!aifa->fp)
 	{
 		aifa->last_error = errno;
@@ -413,7 +413,7 @@ aifa_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
 				aifa_Close(This);
 				return false;
 			}
-			uio_fseek(aifa->fp, chunkHdr.size - read, SEEK_CUR);
+			aifa->fp->seek(chunkHdr.size - read, uqm::io::SeekFrom::Current);
 		}
 		else if (chunkHdr.id == aiff_SoundDataID)
 		{
@@ -423,16 +423,16 @@ aifa_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
 				aifa_Close(This);
 				return false;
 			}
-			aifa->data_ofs = uio_ftell(aifa->fp) + data.offset;
-			uio_fseek(aifa->fp, chunkHdr.size - AIFF_SSND_SIZE, SEEK_CUR);
+			aifa->data_ofs = aifa->fp->tell() + data.offset;
+			aifa->fp->seek(chunkHdr.size - AIFF_SSND_SIZE, uqm::io::SeekFrom::Current);
 		}
 		else
 		{ // skip uninteresting chunk
-			uio_fseek(aifa->fp, chunkHdr.size, SEEK_CUR);
+			aifa->fp->seek(chunkHdr.size, uqm::io::SeekFrom::Current);
 		}
 
 		// 2-align the file ptr
-		uio_fseek(aifa->fp, chunkHdr.size & 1, SEEK_CUR);
+		aifa->fp->seek(chunkHdr.size & 1, uqm::io::SeekFrom::Current);
 	}
 
 	if (aifa->fmtHdr.sampleFrames == 0)
@@ -523,7 +523,7 @@ aifa_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
 							 aifa_formats->stereo16));
 	This->frequency = aifa->fmtHdr.sampleRate;
 
-	uio_fseek(aifa->fp, aifa->data_ofs, SEEK_SET);
+	aifa->fp->seek(aifa->data_ofs, uqm::io::SeekFrom::Start);
 	aifa->max_pcm = aifa->fmtHdr.sampleFrames;
 	aifa->cur_pcm = 0;
 	This->length = (float)aifa->max_pcm / aifa->fmtHdr.sampleRate;
@@ -542,7 +542,7 @@ aifa_Close(THIS_PTR)
 
 	if (aifa->fp)
 	{
-		uio_fclose(aifa->fp);
+		delete aifa->fp;
 		aifa->fp = nullptr;
 	}
 }
@@ -575,7 +575,7 @@ aifa_DecodePCM(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
 		dec_pcm = aifa->max_pcm - aifa->cur_pcm;
 	}
 
-	dec_pcm = uio_fread(buf, aifa->file_block, dec_pcm, aifa->fp);
+	dec_pcm = static_cast<decltype(dec_pcm)>(aifa->fp->read(uqm::io::asBytes(buf, aifa->file_block * dec_pcm)) / aifa->file_block);
 	aifa->cur_pcm += dec_pcm;
 	size = dec_pcm * aifa->block_align;
 
@@ -608,7 +608,7 @@ aifa_DecodeSDX2(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
 	}
 
 	src = (int8_t*)buf + bufsize - (dec_pcm * aifa->file_block);
-	dec_pcm = uio_fread(src, aifa->file_block, dec_pcm, aifa->fp);
+	dec_pcm = static_cast<decltype(dec_pcm)>(aifa->fp->read(uqm::io::asBytes(src, aifa->file_block * dec_pcm)) / aifa->file_block);
 	aifa->cur_pcm += dec_pcm;
 
 	for (left = dec_pcm; left > 0; --left)
@@ -649,9 +649,8 @@ aifa_Seek(THIS_PTR, uint32_t pcm_pos)
 		pcm_pos = aifa->max_pcm;
 	}
 	aifa->cur_pcm = pcm_pos;
-	uio_fseek(aifa->fp,
-			  aifa->data_ofs + pcm_pos * aifa->file_block,
-			  SEEK_SET);
+	aifa->fp->seek(
+		aifa->data_ofs + pcm_pos * aifa->file_block, uqm::io::SeekFrom::Start);
 
 	// reset previous values for SDX2 on seek ops
 	// the delta will recover faster with reset

@@ -26,7 +26,7 @@ interface kind		a unique identifier of a particular defined
 
 standard interface	interface *defined* by the core engine
 			all host, sound, video, gfx, threads, time,
-			input, io (uio), memory, resource interfaces
+			input, io (libs/io), memory, resource interfaces
 			are standard, including all subdivisions like
 			'sound mixer' and 'sound decoder';
 			a module can implement standard behavior of

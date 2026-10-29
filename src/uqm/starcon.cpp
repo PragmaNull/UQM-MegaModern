@@ -42,6 +42,7 @@
 #include "uqm/lua/luastate.h"
 #include "libs/tasklib.h"
 #include "core/log/log.h"
+#include "core/platform/platform.h"
 #include "libs/gfxlib.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
@@ -205,7 +206,7 @@ static void
 SetRandomMenuMusic(void)
 {
 	time_t t = time(nullptr);
-	struct tm tm = *localtime(&t);
+	const uqstl::tm tm {uqm::localtime(t)};
 
 	srand(t);
 	Rando = (rand() % NUM_MM_THEMES);

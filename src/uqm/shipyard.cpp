@@ -442,7 +442,7 @@ FillHangarX(void)
 	}
 }
 
-#define WANDERING_X (optWindowType == 2 ? 2 : (optWindowType == 1 ? 6 : 19))
+#define WANDERING_X (optWindowType == uqm::WindowStyle::UQM ? 2 : (optWindowType == uqm::WindowStyle::Console3DO ? 6 : 19))
 
 static void
 showRemainingCrew(void)
@@ -466,7 +466,7 @@ showRemainingCrew(void)
 	r.corner = MAKE_POINT(RES_SCALE(WANDERING_X),
 						  RES_SCALE(74) - (r.extent.height + RES_SCALE(2)));
 
-	if (optWindowType < 2)
+	if (optWindowType != uqm::WindowStyle::UQM)
 	{
 		r.corner.y = RES_SCALE(1);
 	}
@@ -626,13 +626,13 @@ showRemainingPoints(int delta)
 
 	// Draw black rectangle before drawing text
 	r.extent = MAKE_EXTENT(RES_SCALE(100), RES_SCALE(7));
-	r.corner.x = RES_SCALE(((optWindowType == 2 || optWindowType == 0) ?
+	r.corner.x = RES_SCALE(((optWindowType != uqm::WindowStyle::Console3DO) ?
 								DOS_SIS_SCREEN_WIDTH :
 								THREEDO_SIS_SCREEN_WIDTH)
 						   - 100);
 	r.corner.y = RES_SCALE(74) - (r.extent.height + RES_SCALE(2));
 
-	if (optWindowType < 2)
+	if (optWindowType != uqm::WindowStyle::UQM)
 	{
 		r.corner.y = RES_SCALE(1);
 	}
@@ -648,7 +648,7 @@ showRemainingPoints(int delta)
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{}", FP);
 	t.pStr = buf;
 
-	r.corner.x = RES_SCALE(((optWindowType == 2 || optWindowType == 0) ?
+	r.corner.x = RES_SCALE(((optWindowType != uqm::WindowStyle::Console3DO) ?
 								DOS_SIS_SCREEN_WIDTH :
 								THREEDO_SIS_SCREEN_WIDTH)
 						   - WANDERING_X);

@@ -25,7 +25,7 @@
 #include "core/stl/stl.h"
 #include "port.h"
 #include "libs/compiler.h"
-#include "libs/uio.h"
+#include "libs/io/FileSystem.h"
 #include "uqm/setupmenu.h"
 
 #include "options/OptionDefs.h"
@@ -36,7 +36,7 @@
 
 
 extern unsigned int resolutionFactor;
-extern uint32_t optWindowType;
+extern uqm::WindowStyle optWindowType;
 
 // Runtime state (kept as globals)
 extern bool optRequiresReload;
@@ -50,16 +50,24 @@ extern bool optMaskOfDeceit;
 extern bool restartGame;
 extern bool optNoClassic;
 
-extern OPT_ADD_REMOVE optDeviceArray[28];
-extern OPT_ADD_REMOVE optUpgradeArray[13];
+namespace uqm
+{
+// What a device or upgrade cheat does when a game loads.
+enum class CheatAction : uint8_t
+{
+	None,
+	Remove,
+	Add,
+};
+} // namespace uqm
+
+#define NUM_UPGRADES 13
+
+extern uqm::CheatAction optDeviceArray[28];
+extern uqm::CheatAction optUpgradeArray[NUM_UPGRADES];
 
 #define GAMMA_SCALE 1000
 
-extern uio_DirHandle* contentDir;
-extern uio_DirHandle* configDir;
-extern uio_DirHandle* saveDir;
-extern uio_DirHandle* meleeDir;
-extern uio_DirHandle* scrShotDir;
 extern char baseContentPath[PATH_MAX];
 
 extern uqgsl::czstring contentDirPath;
@@ -99,16 +107,27 @@ typedef struct _input_template
 extern INPUT_TEMPLATE input_templates[6];
 
 void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirName, uqgsl::czstring execFile);
-void prepareConfigDir(uqgsl::czstring configDirName);
+// Returns the expanded config dir path, or an empty string if the path is not valid.
+uqstl::string resolveConfigDir(uqstl::string_view configDirOption);
+void prepareConfigDir(uqstl::string_view configDirOption);
 void prepareMeleeDir(void);
 void prepareSaveDir(void);
 void prepareScrShotDir(void);
 void prepareAddons(uqstl::span<const uqstl::string> addons);
 void prepareShadowAddons(uqstl::span<const uqstl::string> addons);
-void unprepareAllDirs(void);
+// The file system for all game files and its directories. They exist between createGameFiles and releaseGameFiles,
+// and each directory from its prepare function on.
+void createGameFiles(void);
+void releaseGameFiles(void);
+io::FileSystem& gameFileSystem();
+const io::Directory& contentDir();
+const io::Directory& configDir();
+const io::Directory& saveDir();
+const io::Directory& meleeDir();
+const io::Directory& scrShotDir();
 
 bool loadAddon(uqgsl::czstring addon);
-int loadIndices(uio_DirHandle* baseDir);
+int loadIndices(const io::Directory& dir);
 [[nodiscard]] bool isAddonAvailable(uqgsl::czstring addon_name);
 
 bool setGammaCorrection(float gamma);

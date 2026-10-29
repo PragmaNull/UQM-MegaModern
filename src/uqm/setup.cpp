@@ -32,7 +32,6 @@
 #include "sounds.h"
 #include "fmv.h"
 #include "libs/compiler.h"
-#include "libs/uio.h"
 #include "libs/file.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/sound/sound.h"
@@ -95,8 +94,6 @@ bool SpaceMusicOK;
 bool oldPlanetsPresent;
 bool classicPackPresent;
 
-uio_Repository* repository;
-uio_DirHandle* rootDir;
 
 bool usingSpeech;
 
@@ -142,7 +139,7 @@ bool LoadKernel(int argc, char* argv[])
 	}
 
 	/* Load base content. */
-	if (uqm::loadIndices(contentDir) == 0)
+	if (uqm::loadIndices(uqm::contentDir()) == 0)
 	{
 		return false; // Must have at least one index in content dir
 	}
@@ -160,7 +157,7 @@ bool LoadKernel(int argc, char* argv[])
 		HDPackPresent = true;
 		solTexturesPresent = uqm::loadAddon("sol-textures-hd");
 		uqm::loadAddon("yellow-fried-hd");
-		if (optWindowType == 2)
+		if (optWindowType == uqm::WindowStyle::UQM)
 		{
 			classicPackPresent =
 				optNoClassic ? false : uqm::loadAddon("classic-pack");
@@ -538,21 +535,11 @@ void ClearPlayerInputAll(void)
 
 int initIO(void)
 {
-	uio_init();
-	repository = uio_openRepository(0);
-
-	rootDir = uio_openDir(repository, "/", 0);
-	if (rootDir == nullptr)
-	{
-		uqm::log::critical("Could not open '/' dir.");
-		return -1;
-	}
+	uqm::createGameFiles();
 	return 0;
 }
 
 void uninitIO(void)
 {
-	uio_closeDir(rootDir);
-	uio_closeRepository(repository);
-	uio_unInit();
+	uqm::releaseGameFiles();
 }

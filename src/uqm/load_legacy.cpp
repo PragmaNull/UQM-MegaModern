@@ -544,7 +544,7 @@ read_8(void* fp, uint8_t* v)
 	{
 		v = &t;
 	}
-	return ReadResFile(v, 1, 1, (uio_Stream*)fp);
+	return static_cast<uqm::io::File*>(fp)->readValue(*v);
 }
 
 static inline size_t
@@ -555,7 +555,7 @@ read_16(void* fp, uint16_t* v)
 	{
 		v = &t;
 	}
-	return ReadResFile(v, 2, 1, (uio_Stream*)fp);
+	return static_cast<uqm::io::File*>(fp)->readValue(*v);
 }
 
 static inline size_t
@@ -566,7 +566,7 @@ read_32(void* fp, uint32_t* v)
 	{
 		v = &t;
 	}
-	return ReadResFile(v, 4, 1, (uio_Stream*)fp);
+	return static_cast<uqm::io::File*>(fp)->readValue(*v);
 }
 
 static inline size_t
@@ -595,7 +595,7 @@ static inline size_t
 read_a8(void* fp, uint8_t* ar, uint16_t count)
 {
 	assert(ar != nullptr);
-	return ReadResFile(ar, 1, count, (uio_Stream*)fp) == count;
+	return static_cast<uqm::io::File*>(fp)->readExact(uqm::io::asBytes(ar, count));
 }
 
 static inline size_t
@@ -1044,10 +1044,7 @@ LoadSummary(SUMMARY_DESC* SummPtr, void* fp, bool try_vanilla)
 		memcpy(&temp_fuel, &(SummPtr->SaveNameChecker[2 * sizeof(int32_t) + sizeof(uint32_t)]), sizeof(uint32_t));
 
 		// Rewind the position in savefile.
-		for (i = 0; i < LEGACY_SAVE_CHECKER_SIZE; i++)
-		{
-			uio_backtrack(1, (uio_Stream*)fp);
-		}
+		static_cast<uqm::io::File*>(fp)->unget(LEGACY_SAVE_CHECKER_SIZE);
 
 		// Zero the bogus savenamechecker.
 		for (i = 0; i < LEGACY_SAVE_CHECKER_SIZE; i++)
@@ -1129,7 +1126,7 @@ LoadStarDesc(STAR_DESC* SDPtr, DECODE_REF fh)
 
 bool LoadLegacyGame(uint16_t which_game, SUMMARY_DESC* SummPtr, bool try_vanilla)
 {
-	uio_Stream* in_fp;
+	uqstl::optional<uqm::io::File> in_fp {};
 	char file[PATH_MAX] {};
 	char buf[256];
 	SUMMARY_DESC loc_sd;
@@ -1140,17 +1137,17 @@ bool LoadLegacyGame(uint16_t which_game, SUMMARY_DESC* SummPtr, bool try_vanilla
 	ACTIVITY Activity;
 
 	fmt::format_to_n(file, sizeof(file) - 1, "starcon2.{:02}", which_game);
-	in_fp = res_OpenResFile(saveDir, file, "rb");
+	in_fp = res_OpenResFile(uqm::saveDir(), file, uqm::io::OpenMode::Read);
 	if (!in_fp)
 	{
 		return false;
 	}
 
 	loc_sd.SaveName[0] = '\0';
-	if (!LoadSummary(&loc_sd, in_fp, try_vanilla))
+	if (!LoadSummary(&loc_sd, &*in_fp, try_vanilla))
 	{
 		uqm::log::error("Warning: Savegame is corrupt");
-		res_CloseResFile(in_fp);
+		in_fp.reset();
 		return false;
 	}
 
@@ -1161,7 +1158,7 @@ bool LoadLegacyGame(uint16_t which_game, SUMMARY_DESC* SummPtr, bool try_vanilla
 	else
 	{ // only need summary for displaying to user
 		memcpy(SummPtr, &loc_sd, sizeof(*SummPtr));
-		res_CloseResFile(in_fp);
+		in_fp.reset();
 		return true;
 	}
 
@@ -1172,15 +1169,15 @@ bool LoadLegacyGame(uint16_t which_game, SUMMARY_DESC* SummPtr, bool try_vanilla
 	{
 		uqm::log::error("Warning: Savegame corrupt or from "
 						"an incompatible platform.");
-		res_CloseResFile(in_fp);
+		in_fp.reset();
 		return false;
 	}
 
 	GlobData.SIS_state = SummPtr->SS;
 
-	if ((fh = copen(in_fp, FILE_STREAM, STREAM_READ)) == 0)
+	if ((fh = copen(&*in_fp, FILE_STREAM, STREAM_READ)) == 0)
 	{
-		res_CloseResFile(in_fp);
+		in_fp.reset();
 		return false;
 	}
 
@@ -1204,7 +1201,7 @@ bool LoadLegacyGame(uint16_t which_game, SUMMARY_DESC* SummPtr, bool try_vanilla
 	// with the vanilla method.
 	if (!(LoadGameState(&GlobData.Game_state, fh, try_vanilla)))
 	{
-		res_CloseResFile(in_fp);
+		in_fp.reset();
 
 		if (!try_vanilla)
 		{
@@ -1377,7 +1374,7 @@ bool LoadLegacyGame(uint16_t which_game, SUMMARY_DESC* SummPtr, bool try_vanilla
 	LoadStarDesc(&SD, fh);
 	loadGameCheats();
 	cclose(fh);
-	res_CloseResFile(in_fp);
+	in_fp.reset();
 
 	EncounterGroup = 0;
 	EncounterRace = -1;

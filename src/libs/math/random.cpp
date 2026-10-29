@@ -44,7 +44,7 @@
 
 /* ----------------------------STATIC DATA-------------------------------- */
 
-static uqm::SeedType g_seedType {};
+uqm::SeedType g_seedType {};
 static uint32_t seed = 12345L; /* random number seed */
 
 /* ----------------------------CODE--------------------------------------- */

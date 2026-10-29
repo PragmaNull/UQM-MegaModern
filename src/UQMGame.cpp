@@ -130,10 +130,14 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	const auto& options {m_options.get()};
 
-	// For debugging!!
 	if (options.logFile.empty())
 	{
-		m_options.edit().logFile = "uqm.log";
+		uqstl::string logDir {resolveConfigDir(options.configDir)};
+		if (!logDir.empty() && logDir.back() != '/' && logDir.back() != '\\')
+		{
+			logDir += '/';
+		}
+		m_options.edit().logFile = logDir + "logs/uqm.log";
 	}
 
 	m_logger.init(options.logFile);
@@ -219,52 +223,23 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	uqm::log::info("\tvorbis:        {}", vorbis_version_string());
 	uqm::log::info("{:-^40}", "");
 
-	/*if (options.runMode == RunMode::Usage)
+	if (!options.inputScript.empty() && !LoadInputScript(options.inputScript.c_str()))
 	{
-		const OptionsStruct defaults {};
-		printUsage(stdout, defaults);
-		m_logger.showLogOnExit(true, false);
-		return EXIT_SUCCESS;
-	}*/
-
-	//if (optionsResult != EXIT_SUCCESS)
-	//{ // Options parsing failed. Oh, well.
-	//	uqm::log::critical("Run with -h to see the allowed arguments.");
-	//	return optionsResult;
-	//}
+		return {EXIT_FAILURE, true};
+	}
 
 	TFB_PreInit();
 	mem_init();
 	InitThreadSystem();
 	//log_initThreads();
 	initIO();
-	prepareConfigDir(options.configDir.c_str());
+	prepareConfigDir(options.configDir);
 
-	PlayerControlTemplates[0] = ControlTemplate::KB_1;
-	PlayerControlTemplates[1] = ControlTemplate::JOY_1;
-
-	// Fill in the options struct based on uqm.cfg
 	if (!options.safeMode.value)
 	{
-		LoadResourceIndex(configDir, "uqm.cfg", "config.");
-		LoadResourceIndex(configDir, "cheats.cfg", "cheat.");
-		LoadResourceIndex(configDir, "megamod.cfg", "mm.");
-		getUserConfigOptions(m_options.edit());
+		loadUserSettings(m_options.edit());
 	}
-
-	{ /* remove old control template names */
-		int i;
-
-		for (i = 0; i < 6; ++i)
-		{
-			char cfgkey[64] {};
-
-			fmt::format_to_sz_n(cfgkey, "config.keys.{}.name", i + 1);
-			cfgkey[sizeof(cfgkey) - 1] = '\0';
-
-			res_Remove(cfgkey);
-		}
-	}
+	applyUserSettings(m_options.edit());
 
 
 	/* TODO: Once threading is gone, these become local variables
@@ -290,18 +265,15 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	resolutionFactor = isAddonAvailable(HD_MODE) ?
 						   (unsigned int)options.resolutionFactor.value :
 						   0;
-	m_options.edit().resolutionFactor.value = resolutionFactor;
-	m_options.edit().resolutionFactor.set = true;
 
-	optWindowType = OPTVAL_UQM_WINDOW;
-	const char* windowMode = WINDOW_MODE(resolutionFactor, options.windowEmulationMode.value);
-	if (options.windowEmulationMode.value < OPTVAL_UQM_WINDOW && isAddonAvailable(windowMode))
+	optWindowType = WindowStyle::UQM;
+	const WindowStyle windowStyle {*options.windowEmulationMode};
+	if (windowStyle != WindowStyle::UQM && isAddonAvailable(WINDOW_MODE(resolutionFactor, static_cast<int>(windowStyle))))
 	{
-		optWindowType = options.windowEmulationMode.value;
+		optWindowType = windowStyle;
 	}
-	m_options.edit().windowEmulationMode.value = optWindowType;
-	m_options.edit().windowEmulationMode.set = true;
 
+	Vec2u windowSize {*options.resolution};
 	{
 		int w = 320;
 		int h = (DOS_BOOL(240, 200));
@@ -330,17 +302,17 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 			if (ratio > threshold) // screen is narrower than 4:3
 			{
-				m_options.edit().resolution.value.y = SavedHeight / threshold;
+				windowSize.y = SavedHeight / threshold;
 			}
 			else if (ratio < threshold) // screen is wider than 4:3
 			{
-				m_options.edit().resolution.value.x = SavedWidth * threshold;
+				windowSize.x = SavedWidth * threshold;
 			}
 		}
 		else
 		{
-			m_options.edit().resolution.value.x = SavedWidth;
-			m_options.edit().resolution.value.y = SavedHeight;
+			windowSize.x = SavedWidth;
+			windowSize.y = SavedHeight;
 		}
 	}
 
@@ -373,30 +345,11 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 #else
 	const uqm::GfxDriver gfxDriver = uqm::GfxDriver::SDL_Pure;
 #endif
-	uqm::GfxFlags gfxFlags = toGfxFlags(options.scaler);
-	switch (options.windowMode)
-	{
-		case WindowMode::Windowed:
-			break;
-		case WindowMode::WindowedFullscreen:
-			gfxFlags |= uqm::GfxFlags::Fullscreen;
-			break;
-		case WindowMode::Fullscreen:
-			gfxFlags |= uqm::GfxFlags::ExclusiveFullscreen;
-			break;
-	}
-
-	if (options.scanlines.value)
-	{
-		gfxFlags |= uqm::GfxFlags::Scanlines;
-	}
-	if (options.showFps.value)
-	{
-		gfxFlags |= uqm::GfxFlags::ShowFPS;
-	}
+	const uqm::GfxFlags gfxFlags {uqm::displayFlags(options)};
+	unsigned int windowType {static_cast<unsigned int>(optWindowType)};
 	TFB_InitGraphics(gfxDriver, gfxFlags, options.graphicsBackend.c_str(),
-					 options.resolution.value.x, options.resolution.value.y,
-					 &resolutionFactor, &optWindowType);
+					 windowSize.x, windowSize.y,
+					 &resolutionFactor, &windowType);
 	if (options.gamma.set && setGammaCorrection(options.gamma.value))
 	{
 		// gamma.value already holds the correct value in the singleton
@@ -479,7 +432,6 @@ void UQMGame::teardown()
 #if 0
 		unInitTempDir ();
 #endif
-		unprepareAllDirs();
 		uninitIO();
 		UnInitThreadSystem();
 		mem_uninit();

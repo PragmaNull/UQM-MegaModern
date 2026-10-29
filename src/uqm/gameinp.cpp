@@ -18,6 +18,12 @@
 
 #include <stdlib.h>
 #include "controls.h"
+#include "core/log/log.h"
+#include "uqm/inputscript.h"
+#include <chrono>
+#include <fstream>
+#include <mutex>
+#include <sstream>
 #include "battlecontrols.h"
 #include "init.h"
 #include "intel.h"
@@ -73,6 +79,125 @@ volatile bool GamePaused;
 volatile bool OnScreenKeyboardLocked;
 
 static InputFrameCallback* inputCallback;
+
+static uqstl::optional<uqm::InputScript> inputScript {};
+static void (*inputScriptMenuDump)(void) {};
+static bool inputScriptFinishedLogged {};
+static uqstl::mutex inputScriptMutex {};
+static uqstl::chrono::steady_clock::time_point inputScriptStart {};
+
+bool LoadInputScript(const char* path)
+{
+	uqstl::ifstream file {path, uqstl::ios::binary};
+	if (!file)
+	{
+		uqm::log::error("Input script: cannot open '{}'.", path);
+		return false;
+	}
+	uqstl::stringstream text {};
+	text << file.rdbuf();
+
+	uqstl::string error {};
+	inputScript = uqm::InputScript::parse(text.str(), error);
+	if (!inputScript)
+	{
+		uqm::log::error("Input script '{}': {}", path, error);
+		return false;
+	}
+	uqm::log::info("Input script: running '{}' ({} commands).", path, inputScript->commands().size());
+	inputScriptStart = uqstl::chrono::steady_clock::now();
+	return true;
+}
+
+void SetInputScriptMenuDump(void (*dump)(void))
+{
+	inputScriptMenuDump = dump;
+}
+
+static int
+scriptMenuKey(uqm::ScriptKey key)
+{
+	switch (key)
+	{
+		case uqm::ScriptKey::Up:
+			return KEY_MENU_UP;
+		case uqm::ScriptKey::Down:
+			return KEY_MENU_DOWN;
+		case uqm::ScriptKey::Left:
+			return KEY_MENU_LEFT;
+		case uqm::ScriptKey::Right:
+			return KEY_MENU_RIGHT;
+		case uqm::ScriptKey::Select:
+			return KEY_MENU_SELECT;
+		case uqm::ScriptKey::Cancel:
+			return KEY_MENU_CANCEL;
+		case uqm::ScriptKey::Special:
+			return KEY_MENU_SPECIAL;
+		case uqm::ScriptKey::Delete:
+			return KEY_MENU_DELETE;
+		case uqm::ScriptKey::Backspace:
+			return KEY_MENU_BACKSPACE;
+		case uqm::ScriptKey::PageUp:
+			return KEY_MENU_PAGE_UP;
+		case uqm::ScriptKey::PageDown:
+			return KEY_MENU_PAGE_DOWN;
+		case uqm::ScriptKey::Home:
+			return KEY_MENU_HOME;
+		case uqm::ScriptKey::End:
+			return KEY_MENU_END;
+		case uqm::ScriptKey::Screenshot:
+			return KEY_SCREENSHOT;
+	}
+	return KEY_MENU_SELECT;
+}
+
+// Adds the scripted key, if any, to the input of this frame.
+static void
+applyInputScript(void)
+{
+	const uqstl::lock_guard lock {inputScriptMutex};
+	const auto now {uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(uqstl::chrono::steady_clock::now() - inputScriptStart).count()};
+	const uqm::InputScript::Step step {inputScript->update(static_cast<uint32_t>(now))};
+
+	if (step.press == uqm::ScriptKey::Screenshot)
+	{
+		// The main thread takes screenshots from the immediate input state.
+		ImmediateInputState.menu[KEY_SCREENSHOT] = 1;
+	}
+	else if (step.press)
+	{
+		const int key {scriptMenuKey(*step.press)};
+		CurrentInputState.menu[key] = 1;
+		CachedInputState.menu[key] = 1;
+	}
+	if (step.dumpMenu)
+	{
+		if (inputScriptMenuDump)
+		{
+			inputScriptMenuDump();
+		}
+		else
+		{
+			uqm::log::warn("Input script: dumpmenu: no setup menu is open.");
+		}
+	}
+	if (step.log)
+	{
+		uqm::log::info("Input script: {}", *step.log);
+	}
+	if (step.quit)
+	{
+		uqm::log::info("Input script: quit.");
+		uqm::log::default_logger()->flush();
+		// The main thread exits on the abort key.
+		ImmediateInputState.menu[KEY_ABORT] = 1;
+	}
+	if (inputScript->finished() && !inputScriptFinishedLogged)
+	{
+		uqm::log::info("Input script: finished.");
+		inputScriptFinishedLogged = true;
+	}
+}
 
 static void
 _clear_menu_state(void)
@@ -260,6 +385,10 @@ void UpdateInputState(void)
 	CurrentInputState = ImmediateInputState;
 	OldInputState = CachedInputState;
 	CachedInputState = ImmediateInputState;
+	if (inputScript)
+	{
+		applyInputScript();
+	}
 	BeginInputFrame();
 	NewTime = GetTimeCounter();
 	if (_gestalt_keys)

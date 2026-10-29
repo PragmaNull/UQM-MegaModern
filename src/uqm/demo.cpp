@@ -86,12 +86,10 @@ void OpenJournal(void)
 	else
 #endif /* CREATE_JOURNAL */
 	{
-		uio_Stream* fp;
-
-		if (fp = res_OpenResFile("starcon.jnl", "rb"))
+		if (uqstl::optional<uqm::io::File> fp {res_OpenResFile(uqm::configDir(), "starcon.jnl", uqm::io::OpenMode::Read)})
 		{
-			ReadResFile(journal_buf, 1, sizeof(journal_buf), fp);
-			res_CloseResFile(fp);
+			fp->read(uqm::io::asBytes(journal_buf, sizeof(journal_buf)));
+			fp.reset();
 
 			if (journal_fh = copen(journal_buf, MEMORY_STREAM, STREAM_READ))
 			{
@@ -112,8 +110,6 @@ bool CloseJournal(void)
 {
 	if (journal_fh)
 	{
-		uio_Stream* fp;
-
 		cclose(journal_fh);
 		journal_fh = 0;
 
@@ -123,10 +119,9 @@ bool CloseJournal(void)
 			return (false);
 		}
 #if CREATE_JOURNAL
-		else if (fp = res_OpenResFile("starcon.jnl", "wb"))
+		else if (uqstl::optional<uqm::io::File> fp {res_OpenResFile(uqm::configDir(), "starcon.jnl", uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)})
 		{
-			WriteResFile(journal_buf, 1, sizeof(journal_buf), fp);
-			res_CloseResFile(fp);
+			fp->write(uqm::io::asBytes(journal_buf, sizeof(journal_buf)));
 		}
 #endif /* CREATE_JOURNAL */
 	}

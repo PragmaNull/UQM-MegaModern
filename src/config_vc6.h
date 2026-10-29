@@ -14,7 +14,7 @@
 #define CONTENTDIR "./content/"
 
 /* Directory where game data will be stored */
-#define USERDIR "%APPDATA%/UQM-MegaMod/"
+#define USERDIR "~/.uqm-megamodern/"
 
 /* Directory where config files will be stored */
 #define CONFIGDIR USERDIR
@@ -36,9 +36,6 @@
 
 /* Defined if your system has setenv of its own */
 #undef HAVE_SETENV
-
-/* Defined if your system has strupr of its own */
-#define HAVE_STRUPR
 
 /* Defined if your system has strcasecmp of its own */
 #undef HAVE_STRCASECMP_UQM

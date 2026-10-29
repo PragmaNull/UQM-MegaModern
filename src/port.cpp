@@ -35,21 +35,6 @@
 #endif
 #include "core/string/StringUtils.h"
 
-#ifndef HAVE_STRUPR
-char* strupr(char* str)
-{
-	char* ptr;
-
-	ptr = str;
-	while (*ptr)
-	{
-		*ptr = (char)toupper(*ptr);
-		ptr++;
-	}
-	return str;
-}
-#endif
-
 #if !defined(_MSC_VER) && !defined(HAVE_READDIR_R)
 // NB. This function calls readdir() directly, and as such has the same
 //     reentrance issues as that function. For the purposes of UQM it will

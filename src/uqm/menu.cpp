@@ -769,13 +769,13 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 		if (beg_index == PM_CREW)
 		{
 			fmt::format_to_sz_n(pm_crew_str, "{}({})",
-								GAME_STRING(MAINMENU_STRING_BASE + PM_CREW),
+								GAME_STRING(MAINMENU_STRING_BASE + static_cast<int>(PM_CREW)),
 								GLOBAL(CrewCost));
 		}
 		if (beg_index == PM_FUEL)
 		{
 			fmt::format_to_sz_n(pm_fuel_str, "{}({})",
-								GAME_STRING(MAINMENU_STRING_BASE + PM_FUEL),
+								GAME_STRING(MAINMENU_STRING_BASE + static_cast<int>(PM_FUEL)),
 								GLOBAL(FuelCost));
 		}
 		if (beg_index == PM_SOUND_ON)

@@ -21,7 +21,7 @@
 #include "core/log/log.h"
 
 
-void* GetResourceData(uio_Stream* fp, uint32_t length)
+void* GetResourceData(uqm::io::File& fp, uint32_t length)
 {
 	void* result;
 	uint32_t compLen;
@@ -30,7 +30,7 @@ void* GetResourceData(uio_Stream* fp, uint32_t length)
 	// A valid length prefix indicated compressed data, and
 	// a length prefix ~0 meant uncompressed.
 	// Currently, .ct and .xlt files still carry a ~0 length prefix.
-	if (ReadResFile(&compLen, sizeof(compLen), 1, fp) != 1)
+	if (!fp.readValue(compLen))
 	{
 		return nullptr;
 	}
@@ -47,7 +47,7 @@ void* GetResourceData(uio_Stream* fp, uint32_t length)
 		return nullptr;
 	}
 
-	if (ReadResFile(result, 1, length, fp) != length)
+	if (!fp.readExact(uqm::io::asBytes(result, length)))
 	{
 		FreeResourceData(result);
 		result = nullptr;
