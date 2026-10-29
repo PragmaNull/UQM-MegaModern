@@ -363,7 +363,7 @@ SoundDecoder_Load(uio_DirHandle* dir, char* filename,
 		funcs = info->funcs;
 	}
 
-	if (!fileExists2(dir, filename))
+	if (!dir->exists(filename))
 	{
 		if (runTime)
 		{

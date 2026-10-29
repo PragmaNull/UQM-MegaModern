@@ -138,7 +138,7 @@ static uqstl::span<const uqgsl::czstring> flightControlNames()
 // Loads the user key configuration into the "keys." resources.
 static bool loadKeyConfiguration()
 {
-	const auto json {uqm::readTextFile(configDir, c_keyConfigFile)};
+	const auto json {uqm::readTextFile(*configDir, c_keyConfigFile)};
 	if (!json)
 	{
 		return false;
@@ -147,7 +147,7 @@ static bool loadKeyConfiguration()
 	const auto templates {uqm::keyConfigFromJson(*json, flightControlNames())};
 	if (!templates)
 	{
-		uqm::moveToBadFile(configDir, c_keyConfigFile);
+		uqm::moveToBadFile(*configDir, c_keyConfigFile);
 		return false;
 	}
 
@@ -841,7 +841,7 @@ void SaveKeyConfiguration(uio_DirHandle* path)
 		}
 	}
 
-	if (!uqm::writeTextFile(path, c_keyConfigFile, uqm::keyConfigToJson(templates, flightControlNames())))
+	if (!uqm::writeTextFile(*path, c_keyConfigFile, uqm::keyConfigToJson(templates, flightControlNames())))
 	{
 		uqm::log::error("Could not write {}.", c_keyConfigFile);
 	}

@@ -70,10 +70,7 @@ int expandPath(char* dest, size_t len, const char* src, int what);
 #endif
 
 // from files.h
-int copyFile(uio_DirHandle* srcDir, const char* srcName,
-			 uio_DirHandle* dstDir, const char* newName);
 bool fileExists(const char* name);
-bool fileExists2(uio_DirHandle* dir, const char* fileName);
 #ifdef HAVE_UNC_PATHS
 size_t skipUNCServerShare(const char* inPath);
 #endif /* HAVE_UNC_PATHS */

@@ -1,57 +1,49 @@
-// Reads and writes whole text files in a uio directory.
+// Reads and writes whole text files in a directory.
 #include "textfile.h"
 
 #include "core/log/log.h"
-#include "libs/reslib.h"
 
 #include <fmt/format.h>
 
 namespace uqm
 {
 
-uqstl::optional<uqstl::string> readTextFile(uio_DirHandle* dir, uqgsl::czstring name)
+uqstl::optional<uqstl::string> readTextFile(const io::Directory& dir, uqgsl::czstring name)
 {
-	uio_Stream* stream {uio_fopen(dir, name, "rb")};
-	if (stream == nullptr)
+	uqstl::error_code error {};
+	uqstl::optional<io::File> file {dir.open(name, io::OpenMode::Read, error)};
+	if (!file)
 	{
 		return uqstl::nullopt;
 	}
 
-	uqstl::string text {};
-	char buffer[4096] {};
-	size_t count {};
-	while ((count = uio_fread(buffer, 1, sizeof buffer, stream)) > 0)
-	{
-		text.append(buffer, count);
-	}
-	const bool failed {uio_ferror(stream) != 0};
-	uio_fclose(stream);
-
-	if (failed)
+	uqstl::string text(static_cast<size_t>(file->size()), '\0');
+	text.resize(file->read(uqstl::as_writable_bytes(uqstl::span {text})));
+	if (file->error())
 	{
 		return uqstl::nullopt;
 	}
 	return text;
 }
 
-bool writeTextFile(uio_DirHandle* dir, uqgsl::czstring name, uqstl::string_view text)
+bool writeTextFile(const io::Directory& dir, uqgsl::czstring name, uqstl::string_view text)
 {
-	uio_Stream* stream {res_OpenResFile(dir, name, "wb")};
-	if (stream == nullptr)
+	uqstl::error_code error {};
+	uqstl::optional<io::File> file {dir.open(name, io::OpenMode::Write | io::OpenMode::Create | io::OpenMode::Truncate, error)};
+	if (!file)
 	{
 		return false;
 	}
 
-	const bool written {WriteResFile(text.data(), 1, text.size(), stream) == text.size()};
-	const bool closed {res_CloseResFile(stream)};
-	return written && closed;
+	const bool written {file->write(uqstl::as_bytes(uqstl::span {text})) == text.size()};
+	return written && file->flush();
 }
 
-void moveToBadFile(uio_DirHandle* dir, uqgsl::czstring name)
+void moveToBadFile(const io::Directory& dir, uqgsl::czstring name)
 {
 	const uqstl::string badName {fmt::format("{}.bad", name)};
-	uio_unlink(dir, badName.c_str());
-	if (uio_rename(dir, name, dir, badName.c_str()) == 0)
+	(void)dir.remove(badName);
+	if (!dir.rename(name, dir, badName))
 	{
 		uqm::log::warn("Moved unreadable {} to {}; using defaults.", name, badName);
 	}

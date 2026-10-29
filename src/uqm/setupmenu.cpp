@@ -629,7 +629,7 @@ read_menu_definition(void)
 		uqm::log::critical("PANIC: The resource '{}' is not defined.", c_menuDefinitionResource);
 		exit(EXIT_FAILURE);
 	}
-	const auto json {uqm::readTextFile(contentDir, path)};
+	const auto json {uqm::readTextFile(*contentDir, path)};
 	if (!json)
 	{
 		uqm::log::critical("PANIC: Could not read the setup menu definition '{}'.", path);

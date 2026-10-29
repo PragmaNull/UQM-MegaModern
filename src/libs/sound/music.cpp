@@ -258,7 +258,7 @@ void SetMusicVolume(uint16_t Volume)
 
 char* CheckMusicResName(char* fileName)
 {
-	if (!fileExists2(contentDir, fileName))
+	if (!contentDir->exists(fileName))
 	{
 		uqm::log::warn("Requested track '{}' not found.", fileName);
 	}
