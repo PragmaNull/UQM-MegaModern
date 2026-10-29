@@ -87,6 +87,81 @@ static uqstl::mutex inputScriptMutex {};
 static uqstl::chrono::steady_clock::time_point inputScriptStart {};
 static uqstl::optional<TimeCount> inputScriptGameStart {};
 
+static_assert(uqm::c_scriptMenuKeyCount == NUM_MENU_KEYS);
+static_assert(uqm::c_scriptBattleKeyCount == NUM_KEYS);
+static_assert(uqm::c_scriptTemplateCount == static_cast<int>(ControlTemplate::NUM));
+// The number of UpdateInputState calls so far.
+static uint64_t inputFrame {};
+// The recorded characters of the current input frame.
+static uqstl::vector<uint32_t> frameText {};
+static size_t frameTextNext {};
+static uint32_t frameLast {};
+
+static bool
+isReplayingFrames(void)
+{
+	return inputScript && !inputScript->frames().empty();
+}
+
+// Replaces all input of this frame with the recorded input.
+static void
+applyFrameInput(void)
+{
+	const uqm::FrameInput* const input {inputScript->frameInput(inputFrame)};
+	const uqm::FrameInput none {};
+	const uqm::FrameInput& keys {input ? *input : none};
+	const bool thisFrame {input && input->frame == inputFrame};
+
+	for (int t {0}; t < static_cast<int>(ControlTemplate::NUM); t++)
+	{
+		for (int k {0}; k < NUM_KEYS; k++)
+		{
+			const uint64_t bit {uint64_t {1} << (t * NUM_KEYS + k)};
+			CurrentInputState.key[t][k] = (keys.heldBattle & bit) != 0;
+			CachedInputState.key[t][k] = CurrentInputState.key[t][k];
+			PulsedInputState.key[t][k] = (keys.pulsedBattle & bit) != 0;
+		}
+	}
+	for (int k {0}; k < NUM_MENU_KEYS; k++)
+	{
+		const uint64_t bit {uint64_t {1} << k};
+		CurrentInputState.menu[k] = (keys.heldMenu & bit) != 0;
+		CachedInputState.menu[k] = CurrentInputState.menu[k];
+		PulsedInputState.menu[k] = (keys.pulsedMenu & bit) != 0;
+	}
+	// The main thread reads these keys from the immediate input state.
+	ImmediateInputState.menu[KEY_SCREENSHOT] = CurrentInputState.menu[KEY_SCREENSHOT];
+	if (CurrentInputState.menu[KEY_ABORT])
+	{
+		ImmediateInputState.menu[KEY_ABORT] = 1;
+	}
+
+	frameText = thisFrame ? input->text : uqstl::vector<uint32_t> {};
+	frameTextNext = 0;
+	frameLast = thisFrame ? input->last : 0;
+
+	if (thisFrame && input->end)
+	{
+		uqm::log::info("Input script: end of the recording.");
+		uqm::log::default_logger()->flush();
+		ImmediateInputState.menu[KEY_ABORT] = 1;
+	}
+}
+
+UniChar GetNextInputCharacter(void)
+{
+	if (!isReplayingFrames())
+	{
+		return GetNextCharacter();
+	}
+	return frameTextNext < frameText.size() ? static_cast<UniChar>(frameText[frameTextNext++]) : 0;
+}
+
+UniChar GetLastInputCharacter(void)
+{
+	return isReplayingFrames() ? static_cast<UniChar>(frameLast) : GetLastCharacter();
+}
+
 bool LoadInputScript(const char* path)
 {
 	uqstl::ifstream file {path, uqstl::ios::binary};
@@ -435,6 +510,12 @@ void UpdateInputState(void)
 							 &RepeatDelays.menu[i], &NewTime, &Times.menu[i]);
 		}
 	}
+
+	if (isReplayingFrames())
+	{
+		applyFrameInput();
+	}
+	++inputFrame;
 
 	if (CurrentInputState.menu[KEY_PAUSE])
 	{

@@ -157,6 +157,9 @@ void UpdateInputState(void);
 bool LoadInputScript(const char* path);
 // The seed of a deterministic run, or nullopt. Call after LoadInputScript.
 uqstl::optional<uint32_t> GetDeterministicSeed(void);
+// Return typed characters, like GetNextCharacter and GetLastCharacter, from the input script when it has recorded frames.
+UniChar GetNextInputCharacter(void);
+UniChar GetLastInputCharacter(void);
 // Sets the function that the "dumpmenu" script command calls. Null when no setup menu is open.
 void SetInputScriptMenuDump(void (*dump)(void));
 extern void FlushInput(void);

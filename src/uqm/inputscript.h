@@ -39,6 +39,7 @@ enum class ScriptKey
 //   log <text>      write text to the log
 //   quit            stop the game
 //   seed <n>        run deterministically: a virtual game clock and random numbers from seed n
+//   frame <n> ...   the input from input frame n on, see FrameInput
 // Empty lines and lines that start with '#' are ignored.
 struct ScriptCommand
 {
@@ -56,6 +57,35 @@ struct ScriptCommand
 	ScriptKey key {ScriptKey::Select};
 	uint32_t milliseconds {};
 	uqstl::string text {};
+};
+
+// The names of the menu keys, in the order of the KEY_PAUSE enum, and of the battle keys, in the order of the KEY_UP enum.
+uqstl::span<const char* const> menuKeyNames();
+uqstl::span<const char* const> battleKeyNames();
+inline constexpr int c_scriptMenuKeyCount {29};
+inline constexpr int c_scriptBattleKeyCount {8};
+inline constexpr int c_scriptTemplateCount {6};
+
+// Recorded input from one input frame on: frame <n> [held <keys>] [pulsed <keys>] [text <codes>] [last <code>] [end].
+// Keys are comma lists of menu key names and t<template>.<battle key>, e.g. "down,t1.thrust". Codes are character codes.
+// Held and pulsed keys stay until the next line. The characters are for this frame only. 'end' stops the game.
+struct FrameInput
+{
+	uint64_t frame {};
+	// Bit i is menu key i.
+	uint64_t heldMenu {};
+	uint64_t pulsedMenu {};
+	// Bit (template * battle key count + key) is a battle key.
+	uint64_t heldBattle {};
+	uint64_t pulsedBattle {};
+	uqstl::vector<uint32_t> text {};
+	uint32_t last {};
+	bool end {};
+
+	// Returns true if the held and pulsed keys are the same.
+	[[nodiscard]] bool sameKeys(const FrameInput& other) const noexcept;
+	// Returns the script line for this input.
+	[[nodiscard]] uqstl::string format() const;
 };
 
 class InputScript
@@ -88,8 +118,17 @@ public:
 		return m_commands;
 	}
 
+	// The recorded frames, in frame order.
+	[[nodiscard]] uqstl::span<const FrameInput> frames() const noexcept { return m_frames; }
+
+	// Returns the recorded input for input frame 'frame', or nullptr before the first recorded frame.
+	// Call with frames in increasing order.
+	[[nodiscard]] const FrameInput* frameInput(uint64_t frame);
+
 private:
 	uqstl::vector<ScriptCommand> m_commands {};
+	uqstl::vector<FrameInput> m_frames {};
+	size_t m_nextFrame {};
 	uqstl::optional<uint32_t> m_seed {};
 	size_t m_next {};
 	uint32_t m_delay {c_defaultDelay};
