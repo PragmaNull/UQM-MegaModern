@@ -26,7 +26,7 @@
 #include "decoder.h"
 #include "libs/compiler.h"
 #include "libs/memlib.h"
-#include "libs/uio.h"
+#include "libs/reslib.h"
 #include "libs/sound/audiocore.h"
 #include "core/log/log.h"
 #include "modaud.h"
@@ -42,7 +42,7 @@ static uint32_t moda_GetStructSize(void);
 static int moda_GetError(THIS_PTR);
 static bool moda_Init(THIS_PTR);
 static void moda_Term(THIS_PTR);
-static bool moda_Open(THIS_PTR, uio_DirHandle* dir, const char* filename);
+static bool moda_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
 static void moda_Close(THIS_PTR);
 static int moda_Decode(THIS_PTR, void* buf, int32_t bufsize);
 static uint32_t moda_Seek(THIS_PTR, uint32_t pcm_pos);
@@ -183,42 +183,42 @@ static const TFB_DecoderFormats* moda_formats = nullptr;
 typedef struct MUIOREADER
 {
 	MREADER core;
-	uio_Stream* file;
+	uqm::io::File* file;
 
 } MUIOREADER;
 
 static BOOL
 moda_uioReader_Eof(MREADER* reader)
 {
-	return uio_feof(((MUIOREADER*)reader)->file);
+	return ((MUIOREADER*)reader)->file->eof();
 }
 
 static BOOL
 moda_uioReader_Read(MREADER* reader, void* ptr, size_t size)
 {
-	return uio_fread(ptr, size, 1, ((MUIOREADER*)reader)->file);
+	return ReadResFile(ptr, size, 1, *((MUIOREADER*)reader)->file);
 }
 
 static int
 moda_uioReader_Get(MREADER* reader)
 {
-	return uio_fgetc(((MUIOREADER*)reader)->file);
+	return ((MUIOREADER*)reader)->file->getChar();
 }
 
 static BOOL
 moda_uioReader_Seek(MREADER* reader, long offset, int whence)
 {
-	return uio_fseek(((MUIOREADER*)reader)->file, offset, whence);
+	return SeekResFile(*((MUIOREADER*)reader)->file, offset, whence);
 }
 
 static long
 moda_uioReader_Tell(MREADER* reader)
 {
-	return uio_ftell(((MUIOREADER*)reader)->file);
+	return TellResFile(*((MUIOREADER*)reader)->file);
 }
 
 static MREADER*
-moda_new_uioReader(uio_Stream* fp)
+moda_new_uioReader(uqm::io::File* fp)
 {
 	MUIOREADER* reader = (MUIOREADER*)HMalloc(sizeof(MUIOREADER));
 	if (reader)
@@ -332,14 +332,14 @@ moda_Term(THIS_PTR)
 }
 
 static bool
-moda_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
+moda_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
-	uio_Stream* fp;
+	uqgsl::owner<uqm::io::File*> fp {};
 	MREADER* reader;
 	MODULE* mod;
 
-	fp = uio_fopen(dir, filename, "rb");
+	fp = SoundDecoder_OpenFile(dir, filename);
 	if (!fp)
 	{
 		moda->last_error = errno;
@@ -350,7 +350,7 @@ moda_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
 	if (!reader)
 	{
 		moda->last_error = -1;
-		uio_fclose(fp);
+		delete fp;
 		return false;
 	}
 
@@ -358,7 +358,7 @@ moda_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
 
 	// can already dispose of reader and fileh
 	moda_delete_uioReader(reader);
-	uio_fclose(fp);
+	delete fp;
 	if (!mod)
 	{
 		uqm::log::warn("moda_Open(): could not load {}", filename);

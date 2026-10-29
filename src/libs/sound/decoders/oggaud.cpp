@@ -23,7 +23,7 @@
 #include "core/log/log.h"
 #include "port.h"
 #include <cstdint>
-#include "libs/uio.h"
+#include "libs/reslib.h"
 #include "decoder.h"
 #ifdef OVCODEC_TREMOR
 #include <tremor/ivorbiscodec.h>
@@ -44,7 +44,7 @@ static uint32_t ova_GetStructSize(void);
 static int ova_GetError(THIS_PTR);
 static bool ova_Init(THIS_PTR);
 static void ova_Term(THIS_PTR);
-static bool ova_Open(THIS_PTR, uio_DirHandle* dir, const char* filename);
+static bool ova_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
 static void ova_Close(THIS_PTR);
 static int ova_Decode(THIS_PTR, void* buf, int32_t bufsize);
 static uint32_t ova_Seek(THIS_PTR, uint32_t pcm_pos);
@@ -82,26 +82,27 @@ static const TFB_DecoderFormats* ova_formats = nullptr;
 static size_t
 ogg_read(void* ptr, size_t size, size_t nmemb, void* datasource)
 {
-	return uio_fread(ptr, size, nmemb, (uio_Stream*)datasource);
+	return ReadResFile(ptr, size, nmemb, *static_cast<uqm::io::File*>(datasource));
 }
 
 static int
 ogg_seek(void* datasource, ogg_int64_t offset, int whence)
 {
 	long off = (long)offset;
-	return uio_fseek((uio_Stream*)datasource, off, whence);
+	return SeekResFile(*static_cast<uqm::io::File*>(datasource), off, whence);
 }
 
 static int
 ogg_close(void* datasource)
 {
-	return uio_fclose((uio_Stream*)datasource);
+	delete static_cast<uqm::io::File*>(datasource);
+	return 0;
 }
 
 static long
 ogg_tell(void* datasource)
 {
-	return uio_ftell((uio_Stream*)datasource);
+	return TellResFile(*static_cast<uqm::io::File*>(datasource));
 }
 
 static const ov_callbacks ogg_callbacks =
@@ -164,14 +165,14 @@ ova_Term(THIS_PTR)
 }
 
 static bool
-ova_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
+ova_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 	int rc;
-	uio_Stream* fp;
+	uqgsl::owner<uqm::io::File*> fp {};
 	vorbis_info* vinfo;
 
-	fp = uio_fopen(dir, filename, "rb");
+	fp = SoundDecoder_OpenFile(dir, filename);
 	if (fp == nullptr)
 	{
 		uqm::log::warn("ova_Open(): could not open {}", filename);
@@ -184,7 +185,7 @@ ova_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
 		uqm::log::warn("ova_Open(): "
 					   "ov_open_callbacks failed for {}, error code {}",
 					   filename, rc);
-		uio_fclose(fp);
+		delete fp;
 		return false;
 	}
 

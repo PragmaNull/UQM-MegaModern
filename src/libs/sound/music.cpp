@@ -281,7 +281,7 @@ void* _GetMusicData(uqm::io::File* fp, uint32_t length)
 	CheckMusicResName(filename);
 
 	uqm::log::debug("_GetMusicData(): loading {}", filename);
-	decoder = SoundDecoder_Load(contentDir, filename, 4096, 0, 0);
+	decoder = SoundDecoder_Load(*contentDir, filename, 4096, 0, 0);
 	if (!decoder)
 	{
 		uqm::log::warn("_GetMusicData(): couldn't load {}", filename);

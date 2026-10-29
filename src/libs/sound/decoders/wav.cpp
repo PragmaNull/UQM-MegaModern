@@ -22,7 +22,7 @@
 #include <errno.h>
 #include "port.h"
 #include <cstdint>
-#include "libs/uio.h"
+#include "libs/reslib.h"
 #include "endian_uqm.h"
 #include "core/log/log.h"
 #include "wav.h"
@@ -68,7 +68,7 @@ static uint32_t wava_GetStructSize(void);
 static int wava_GetError(THIS_PTR);
 static bool wava_Init(THIS_PTR);
 static void wava_Term(THIS_PTR);
-static bool wava_Open(THIS_PTR, uio_DirHandle* dir, const char* filename);
+static bool wava_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
 static void wava_Close(THIS_PTR);
 static int wava_Decode(THIS_PTR, void* buf, int32_t bufsize);
 static uint32_t wava_Seek(THIS_PTR, uint32_t pcm_pos);
@@ -97,7 +97,7 @@ typedef struct tfb_wavesounddecoder
 
 	// private
 	int32_t last_error;
-	uio_Stream* fp;
+	uqgsl::owner<uqm::io::File*> fp;
 	wave_FormatHeader fmtHdr;
 	uint32_t data_ofs;
 	uint32_t data_size;
@@ -161,9 +161,9 @@ wava_Term(THIS_PTR)
 }
 
 static bool
-read_le_16(uio_Stream* fp, uint16_t* v)
+read_le_16(uqm::io::File* fp, uint16_t* v)
 {
-	if (!uio_fread(v, sizeof(*v), 1, fp))
+	if (!ReadResFile(v, sizeof(*v), 1, *fp))
 	{
 		return false;
 	}
@@ -172,9 +172,9 @@ read_le_16(uio_Stream* fp, uint16_t* v)
 }
 
 static bool
-read_le_32(uio_Stream* fp, uint32_t* v)
+read_le_32(uqm::io::File* fp, uint32_t* v)
 {
-	if (!uio_fread(v, sizeof(*v), 1, fp))
+	if (!ReadResFile(v, sizeof(*v), 1, *fp))
 	{
 		return false;
 	}
@@ -216,14 +216,14 @@ wava_readFormatHeader(TFB_WaveSoundDecoder* wava, wave_FormatHeader* fmt)
 }
 
 static bool
-wava_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
+wava_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*)This;
 	wave_FileHeader fileHdr;
 	wave_ChunkHeader chunkHdr;
 	long dataLeft;
 
-	wava->fp = uio_fopen(dir, filename, "rb");
+	wava->fp = SoundDecoder_OpenFile(dir, filename);
 	if (!wava->fp)
 	{
 		wava->last_error = errno;
@@ -265,22 +265,22 @@ wava_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
 				wava_Close(This);
 				return false;
 			}
-			uio_fseek(wava->fp, chunkHdr.size - 16, SEEK_CUR);
+			SeekResFile(*wava->fp, chunkHdr.size - 16, SEEK_CUR);
 		}
 		else
 		{
 			if (chunkHdr.id == wave_DataID)
 			{
 				wava->data_size = chunkHdr.size;
-				wava->data_ofs = uio_ftell(wava->fp);
+				wava->data_ofs = TellResFile(*wava->fp);
 			}
-			uio_fseek(wava->fp, chunkHdr.size, SEEK_CUR);
+			SeekResFile(*wava->fp, chunkHdr.size, SEEK_CUR);
 		}
 
 		// 2-align the file ptr
 		// XXX: I do not think this is necessary in WAVE files;
 		//   possibly a remnant of ported AIFF reader
-		uio_fseek(wava->fp, chunkHdr.size & 1, SEEK_CUR);
+		SeekResFile(*wava->fp, chunkHdr.size & 1, SEEK_CUR);
 	}
 
 	if (!wava->data_size || !wava->data_ofs)
@@ -322,7 +322,7 @@ wava_Open(THIS_PTR, uio_DirHandle* dir, const char* filename)
 	This->frequency = wava->fmtHdr.samplesPerSec;
 	This->filename_hash = crc32b(filename);
 
-	uio_fseek(wava->fp, wava->data_ofs, SEEK_SET);
+	SeekResFile(*wava->fp, wava->data_ofs, SEEK_SET);
 	wava->max_pcm = wava->data_size / wava->fmtHdr.blockAlign;
 	wava->cur_pcm = 0;
 	This->length = (float)wava->max_pcm / wava->fmtHdr.samplesPerSec;
@@ -338,7 +338,7 @@ wava_Close(THIS_PTR)
 
 	if (wava->fp)
 	{
-		uio_fclose(wava->fp);
+		delete wava->fp;
 		wava->fp = nullptr;
 	}
 }
@@ -355,7 +355,7 @@ wava_Decode(THIS_PTR, void* buf, int32_t bufsize)
 		dec_pcm = wava->max_pcm - wava->cur_pcm;
 	}
 
-	dec_pcm = uio_fread(buf, wava->fmtHdr.blockAlign, dec_pcm, wava->fp);
+	dec_pcm = ReadResFile(buf, wava->fmtHdr.blockAlign, dec_pcm, *wava->fp);
 	wava->cur_pcm += dec_pcm;
 
 	return dec_pcm * wava->fmtHdr.blockAlign;
@@ -371,9 +371,9 @@ wava_Seek(THIS_PTR, uint32_t pcm_pos)
 		pcm_pos = wava->max_pcm;
 	}
 	wava->cur_pcm = pcm_pos;
-	uio_fseek(wava->fp,
-			  wava->data_ofs + pcm_pos * wava->fmtHdr.blockAlign,
-			  SEEK_SET);
+	SeekResFile(*wava->fp,
+				wava->data_ofs + pcm_pos * wava->fmtHdr.blockAlign,
+				SEEK_SET);
 
 	return pcm_pos;
 }
