@@ -27,6 +27,9 @@
 #include "options.h"
 #include <cstdint>
 #include "core/log/log.h"
+#include "libs/file/textfile.h"
+
+#include <fmt/format.h>
 #include "core/string/StringUtils.h"
 #include "libs/gfxlib.h"
 #include "libs/reslib.h"
@@ -375,15 +378,13 @@ void LoadResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const
 
 void SaveResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const char* root, bool strip_root)
 {
-	unsigned int prefix_len;
-
-	uqstl::optional<uqm::io::File> f {res_OpenResFile(dir, rmpfile, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)};
-	if (!f)
-	{
-		/* TODO: Warning message */
-		return;
-	}
-	prefix_len = root ? strlen(root) : 0;
+#ifdef WIN32
+	constexpr uqstl::string_view newline {"\r\n"};
+#else
+	constexpr uqstl::string_view newline {"\n"};
+#endif
+	const size_t prefix_len {root ? strlen(root) : 0};
+	uqstl::string text {};
 
 	std::vector<std::string> keys;
 	for (const auto& [key, val] : *(_get_current_index_header()->map))
@@ -413,22 +414,14 @@ void SaveResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const
 			char buf[256];
 			value->vtable->toString(&value->resdata, buf, 256);
 			buf[255] = 0;
-			if (root && strip_root)
-			{
-				WriteResFile(key.c_str() + prefix_len, 1, key.size() - prefix_len, *f);
-			}
-			else
-			{
-				WriteResFile(key.c_str(), 1, key.size(), *f);
-			}
-			PutResFileChar(' ', *f);
-			PutResFileChar('=', *f);
-			PutResFileChar(' ', *f);
-			WriteResFile(value->vtable->resType, 1, strlen(value->vtable->resType), *f);
-			PutResFileChar(':', *f);
-			WriteResFile(buf, 1, strlen(buf), *f);
-			PutResFileNewline(*f);
+			const uqstl::string_view name {root && strip_root ? uqstl::string_view {key}.substr(prefix_len) : uqstl::string_view {key}};
+			fmt::format_to(uqstl::back_inserter(text), "{} = {}:{}{}", name, value->vtable->resType, buf, newline);
 		}
+	}
+
+	if (!uqm::writeTextFile(dir, rmpfile, text))
+	{
+		uqm::log::warn("Could not write resource index '{}'.", rmpfile);
 	}
 }
 

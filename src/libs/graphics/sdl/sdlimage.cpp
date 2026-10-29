@@ -17,6 +17,7 @@
 #include "sdlimage.h"
 
 #include "port.h"
+#include "libs/file/textfile.h"
 #include "libs/io/FileSystem.h"
 #include "SDL.h"
 #include "SDL_error.h"
@@ -26,22 +27,14 @@
 SDL_Surface*
 sdl_loadImage(const uqm::io::Directory& dir, const char* fileName)
 {
-	uqstl::error_code error {};
-	uqstl::optional<uqm::io::File> file {dir.open(fileName, uqm::io::OpenMode::Read, error)};
-	if (!file)
-	{
-		SDL_SetError("Couldn't open '%s': %s", fileName, error.message().c_str());
-		return nullptr;
-	}
-
-	uqstl::vector<uqstl::byte> data(static_cast<size_t>(file->size()));
-	if (file->read(data) != data.size())
+	const uqstl::optional<uqstl::vector<uqstl::byte>> data {uqm::readBinaryFile(dir, fileName)};
+	if (!data)
 	{
 		SDL_SetError("Couldn't read '%s'", fileName);
 		return nullptr;
 	}
 
-	SDL_RWops* const rwops {SDL_RWFromConstMem(data.data(), static_cast<int>(data.size()))};
+	SDL_RWops* const rwops {SDL_RWFromConstMem(data->data(), static_cast<int>(data->size()))};
 	if (rwops == nullptr)
 	{
 		return nullptr;

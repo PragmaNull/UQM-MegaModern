@@ -1044,10 +1044,7 @@ LoadSummary(SUMMARY_DESC* SummPtr, void* fp, bool try_vanilla)
 		memcpy(&temp_fuel, &(SummPtr->SaveNameChecker[2 * sizeof(int32_t) + sizeof(uint32_t)]), sizeof(uint32_t));
 
 		// Rewind the position in savefile.
-		for (i = 0; i < LEGACY_SAVE_CHECKER_SIZE; i++)
-		{
-			static_cast<uqm::io::File*>(fp)->unget(1);
-		}
+		static_cast<uqm::io::File*>(fp)->unget(LEGACY_SAVE_CHECKER_SIZE);
 
 		// Zero the bogus savenamechecker.
 		for (i = 0; i < LEGACY_SAVE_CHECKER_SIZE; i++)

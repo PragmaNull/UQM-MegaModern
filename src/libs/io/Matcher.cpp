@@ -1,6 +1,10 @@
 // File name filter for directory listings.
 #include "libs/io/Matcher.h"
 
+#include "core/string/StringUtils.h"
+
+#include <cassert>
+
 namespace uqm::io
 {
 
@@ -9,6 +13,13 @@ Matcher::Matcher(Kind kind, uqstl::string pattern, uqstl::shared_ptr<const uqstl
 	, m_pattern {uqstl::move(pattern)}
 	, m_regex {uqstl::move(regex)}
 {
+}
+
+Matcher::Matcher(Kind kind, uqstl::string_view pattern)
+	: m_kind {kind}
+	, m_pattern {pattern}
+{
+	assert(kind != Kind::Regex);
 }
 
 uqstl::optional<Matcher> Matcher::create(Kind kind, uqstl::string_view pattern)
@@ -38,6 +49,8 @@ bool Matcher::matches(uqstl::string_view name) const
 			return name.starts_with(m_pattern);
 		case Kind::Suffix:
 			return name.ends_with(m_pattern);
+		case Kind::SuffixIgnoreCase:
+			return name.size() >= m_pattern.size() && compareICase(name.substr(name.size() - m_pattern.size()), m_pattern);
 		case Kind::Substring:
 			return name.find(m_pattern) != uqstl::string_view::npos;
 		case Kind::Regex:

@@ -34,6 +34,18 @@ res_OpenResFile(const uqm::io::Directory& dir, const char* filename, uqm::io::Op
 	return dir.open(filename, mode, error);
 }
 
+uqgsl::owner<uqm::io::File*> res_NewResFile(const uqm::io::Directory& dir, const char* filename)
+{
+	uqstl::error_code error {};
+	uqstl::optional<uqm::io::File> file {dir.open(filename, uqm::io::OpenMode::Read, error)};
+	if (!file)
+	{
+		errno = error.default_error_condition().value();
+		return nullptr;
+	}
+	return new uqm::io::File {uqstl::move(*file)};
+}
+
 void* res_LoadResFile(const uqm::io::Directory& dir, const char* filename, ResourceLoadFileFun* loadFun)
 {
 	const uqstl::optional<uqm::io::FileInfo> info {dir.stat(filename)};

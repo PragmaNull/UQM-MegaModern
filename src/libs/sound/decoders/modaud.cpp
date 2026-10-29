@@ -339,7 +339,7 @@ moda_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 	MREADER* reader;
 	MODULE* mod;
 
-	fp = SoundDecoder_OpenFile(dir, filename);
+	fp = res_NewResFile(dir, filename);
 	if (!fp)
 	{
 		moda->last_error = errno;

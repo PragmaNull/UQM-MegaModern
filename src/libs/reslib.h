@@ -56,6 +56,8 @@ typedef void*(ResourceLoadFileFun)(uqm::io::File * fp, uint32_t len);
 void* LoadResourceFromPath(const char* pathname, ResourceLoadFileFun fn);
 
 uqstl::optional<uqm::io::File> res_OpenResFile(const uqm::io::Directory& dir, const char* filename, uqm::io::OpenMode mode);
+// Opens a file that the caller owns and deletes, for structures in C memory. Returns nullptr and sets errno on failure.
+uqgsl::owner<uqm::io::File*> res_NewResFile(const uqm::io::Directory& dir, const char* filename);
 // Calls 'loadFun' for 'filename' while _cur_resfile_name is 'filename'. Returns nullptr if 'filename' cannot be opened.
 void* res_LoadResFile(const uqm::io::Directory& dir, const char* filename, ResourceLoadFileFun* loadFun);
 size_t ReadResFile(void* lpBuf, size_t size, size_t count, uqm::io::File& fp);

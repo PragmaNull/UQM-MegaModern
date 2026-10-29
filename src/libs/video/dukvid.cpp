@@ -92,8 +92,6 @@ typedef struct tfb_duckvideodecoder
 	TFB_VideoDecoder decoder;
 
 	int32_t last_error;
-	// Set while dukv_Open runs.
-	const uqm::io::Directory* basedir;
 	char* basename;
 	uqgsl::owner<uqm::io::File*> stream;
 
@@ -284,22 +282,17 @@ dukv_DecodeFrameV3(uint8_t* src_p, uint32_t* dst_p, uint32_t wb, uint32_t hb,
 }
 
 static bool
-dukv_OpenStream(TFB_DuckVideoDecoder* dukv)
+dukv_OpenStream(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir)
 {
 	char filename[280] {};
 	fmt::format_to_sz_n(filename, "{}.duk", dukv->basename);
 
-	uqstl::optional<uqm::io::File> stream {res_OpenResFile(*dukv->basedir, filename, uqm::io::OpenMode::Read)};
-	if (!stream)
-	{
-		return false;
-	}
-	dukv->stream = new uqm::io::File {uqstl::move(*stream)};
-	return true;
+	dukv->stream = res_NewResFile(dir, filename);
+	return dukv->stream != nullptr;
 }
 
 static bool
-dukv_ReadFrames(TFB_DuckVideoDecoder* dukv)
+dukv_ReadFrames(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir)
 {
 	char filename[280] {};
 	uint32_t i;
@@ -307,15 +300,13 @@ dukv_ReadFrames(TFB_DuckVideoDecoder* dukv)
 
 	fmt::format_to_sz_n(filename, "{}.frm", dukv->basename);
 
-	if (!(fp = res_OpenResFile(*dukv->basedir, filename, uqm::io::OpenMode::Read)))
+	if (!(fp = res_OpenResFile(dir, filename, uqm::io::OpenMode::Read)))
 	{
 		return false;
 	}
 
 	// get number of frames
-	SeekResFile(*fp, 0, SEEK_END);
-	dukv->cframes = TellResFile(*fp) / sizeof(uint32_t);
-	SeekResFile(*fp, 0, SEEK_SET);
+	dukv->cframes = static_cast<uint32_t>(fp->size() / sizeof(uint32_t));
 	dukv->frames = (uint32_t*)HMalloc(dukv->cframes * sizeof(uint32_t));
 
 	if (ReadResFile(dukv->frames, sizeof(uint32_t), dukv->cframes, *fp) != dukv->cframes)
@@ -335,7 +326,7 @@ dukv_ReadFrames(TFB_DuckVideoDecoder* dukv)
 }
 
 static bool
-dukv_ReadVectors(TFB_DuckVideoDecoder* dukv, uint8_t* vectors)
+dukv_ReadVectors(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir, uint8_t* vectors)
 {
 	uqstl::optional<uqm::io::File> fp {};
 	char filename[280] {};
@@ -343,7 +334,7 @@ dukv_ReadVectors(TFB_DuckVideoDecoder* dukv, uint8_t* vectors)
 
 	fmt::format_to_sz_n(filename, "{}.tbl", dukv->basename);
 
-	if (!(fp = res_OpenResFile(*dukv->basedir, filename, uqm::io::OpenMode::Read)))
+	if (!(fp = res_OpenResFile(dir, filename, uqm::io::OpenMode::Read)))
 	{
 		return false;
 	}
@@ -355,7 +346,7 @@ dukv_ReadVectors(TFB_DuckVideoDecoder* dukv, uint8_t* vectors)
 }
 
 static bool
-dukv_ReadHeader(TFB_DuckVideoDecoder* dukv, int32_t* pl, int32_t* pc)
+dukv_ReadHeader(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir, int32_t* pl, int32_t* pc)
 {
 	uqstl::optional<uqm::io::File> fp {};
 	char filename[280] {};
@@ -365,7 +356,7 @@ dukv_ReadHeader(TFB_DuckVideoDecoder* dukv, int32_t* pl, int32_t* pc)
 
 	fmt::format_to_sz_n(filename, "{}.hdr", dukv->basename);
 
-	if (!(fp = res_OpenResFile(*dukv->basedir, filename, uqm::io::OpenMode::Read)))
+	if (!(fp = res_OpenResFile(dir, filename, uqm::io::OpenMode::Read)))
 	{
 		return false;
 	}
@@ -653,7 +644,6 @@ dukv_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 	int32_t lumas[8], chromas[8];
 	uint8_t* vectors;
 
-	dukv->basedir = &dir;
 	const uint32_t filenameLen = strlen(filename);
 	dukv->basename = (char*)HMalloc(filenameLen + 1);
 	uqm::strncpy_safe({dukv->basename, filenameLen + 1}, {filename, filenameLen});
@@ -665,21 +655,19 @@ dukv_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 
 	vectors = (uint8_t*)HMalloc(NUM_VEC_ITEMS * NUM_VECTORS);
 
-	if (!dukv_OpenStream(dukv)
-		|| !dukv_ReadFrames(dukv)
-		|| !dukv_ReadHeader(dukv, lumas, chromas)
-		|| !dukv_ReadVectors(dukv, vectors))
+	if (!dukv_OpenStream(dukv, dir)
+		|| !dukv_ReadFrames(dukv, dir)
+		|| !dukv_ReadHeader(dukv, dir, lumas, chromas)
+		|| !dukv_ReadVectors(dukv, dir, vectors))
 	{
 		HFree(vectors);
 		dukv_Close(This);
 		dukv->last_error = dukve_BadFile;
-		dukv->basedir = nullptr;
 		return false;
 	}
 
 	dukv_InitDeltas(dukv, vectors, lumas, chromas);
 	HFree(vectors);
-	dukv->basedir = nullptr;
 
 	This->length = (float)dukv->cframes / DUCK_GENERAL_FPS;
 	This->frame_count = dukv->cframes;

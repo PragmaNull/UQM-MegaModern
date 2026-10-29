@@ -360,7 +360,7 @@ aifa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 	aiff_ChunkHeader chunkHdr;
 	int32_t remSize;
 
-	aifa->fp = SoundDecoder_OpenFile(dir, filename);
+	aifa->fp = res_NewResFile(dir, filename);
 	if (!aifa->fp)
 	{
 		aifa->last_error = errno;

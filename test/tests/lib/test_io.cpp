@@ -130,6 +130,9 @@ TEST(IoMatcher, Kinds)
 	EXPECT_FALSE(Matcher::create(Matcher::Kind::Regex, "\\.zip$")->matches("zip.txt"));
 	EXPECT_FALSE(Matcher::create(Matcher::Kind::Regex, "(").has_value());
 	EXPECT_TRUE(Matcher {}.matches("anything"));
+	EXPECT_TRUE((Matcher {Matcher::Kind::SuffixIgnoreCase, ".rmp"}.matches("uqm.RMP")));
+	EXPECT_FALSE((Matcher {Matcher::Kind::SuffixIgnoreCase, ".rmp"}.matches("rmp")));
+	EXPECT_TRUE((Matcher {Matcher::Kind::Suffix, ".lua"}.matches("init.lua")));
 }
 
 TEST_F(IoTest, WriteAndReadBack)

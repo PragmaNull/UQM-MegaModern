@@ -438,7 +438,7 @@ void* _GetFontData(uqm::io::File* fp, uint32_t length)
 		}
 	}
 
-	fontDir = CaptureDirEntryTable(LoadDirEntryTable(*contentDir, _cur_resfile_name, *uqm::io::Matcher::create(uqm::io::Matcher::Kind::Substring, ".")));
+	fontDir = CaptureDirEntryTable(LoadDirEntryTable(*contentDir, _cur_resfile_name, uqm::io::Matcher {uqm::io::Matcher::Kind::Substring, "."}));
 	if (fontDir == 0)
 	{
 		goto err;

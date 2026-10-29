@@ -21,6 +21,8 @@ public:
 		Literal,
 		Prefix,
 		Suffix,
+		// A suffix that ignores ASCII case, e.g. ".rmp" matches "uqm.RMP".
+		SuffixIgnoreCase,
 		Substring,
 		// ECMAScript regular expression, found anywhere in the name.
 		Regex,
@@ -28,6 +30,8 @@ public:
 
 	// Matches all names.
 	Matcher() = default;
+	// For all kinds except Regex, which create() makes.
+	Matcher(Kind kind, uqstl::string_view pattern);
 
 	// Returns nullopt if 'pattern' is not a valid regular expression.
 	static uqstl::optional<Matcher> create(Kind kind, uqstl::string_view pattern);

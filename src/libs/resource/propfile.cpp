@@ -22,6 +22,7 @@
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
 #include "propfile.h"
+#include "libs/file/textfile.h"
 #include "libs/reslib.h"
 #include "options.h"
 
@@ -181,10 +182,10 @@ void PropFile_from_file(uqm::io::File& f, PROPERTY_HANDLER handler, const char* 
 
 void PropFile_from_filename(const uqm::io::Directory& path, const char* fname, PROPERTY_HANDLER handler, const char* prefix)
 {
-	uqstl::optional<uqm::io::File> f {res_OpenResFile(path, fname, uqm::io::OpenMode::Read | uqm::io::OpenMode::Text)};
-	if (!f)
+	uqstl::optional<uqstl::string> text {uqm::readTextFile(path, fname)};
+	if (!text)
 	{
 		return;
 	}
-	PropFile_from_file(*f, handler, prefix);
+	PropFile_from_string(text->data(), handler, prefix);
 }

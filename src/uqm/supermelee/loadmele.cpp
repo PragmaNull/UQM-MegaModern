@@ -492,7 +492,7 @@ void LoadTeamList(MELEE_STATE* pMS)
 
 	DestroyDirEntryTable(ReleaseDirEntryTable(pMS->load.dirEntries));
 	pMS->load.dirEntries = CaptureDirEntryTable(
-		LoadDirEntryTable(*meleeDir, "", *uqm::io::Matcher::create(uqm::io::Matcher::Kind::Suffix, ".mle")));
+		LoadDirEntryTable(*meleeDir, "", uqm::io::Matcher {uqm::io::Matcher::Kind::Suffix, ".mle"}));
 
 	if (pMS->load.entryIndices != nullptr)
 	{

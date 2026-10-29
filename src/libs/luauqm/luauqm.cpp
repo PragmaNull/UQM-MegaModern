@@ -177,7 +177,7 @@ void luaUqm_runLuaDir(lua_State* luaState, const uqm::io::Directory& dir,
 	}
 
 	uqstl::error_code error {};
-	const uqstl::vector<uqstl::string> luaFiles {luaDir->list("", *uqm::io::Matcher::create(uqm::io::Matcher::Kind::Suffix, ".lua"), error)};
+	const uqstl::vector<uqstl::string> luaFiles {luaDir->list("", uqm::io::Matcher {uqm::io::Matcher::Kind::Suffix, ".lua"}, error)};
 	if (error)
 	{
 		uqm::log::warn("Warning: Could not read Lua script directory "

@@ -1,4 +1,4 @@
-// Reads and writes whole text files in a directory.
+// Reads and writes whole files in a directory.
 #include "textfile.h"
 
 #include "core/log/log.h"
@@ -8,7 +8,12 @@
 namespace uqm
 {
 
-uqstl::optional<uqstl::string> readTextFile(const io::Directory& dir, uqgsl::czstring name)
+namespace
+{
+
+// Reads the whole file into a container of byte-sized elements.
+template <typename Container>
+uqstl::optional<Container> readWholeFile(const io::Directory& dir, uqgsl::czstring name)
 {
 	uqstl::error_code error {};
 	uqstl::optional<io::File> file {dir.open(name, io::OpenMode::Read, error)};
@@ -17,13 +22,25 @@ uqstl::optional<uqstl::string> readTextFile(const io::Directory& dir, uqgsl::czs
 		return uqstl::nullopt;
 	}
 
-	uqstl::string text(static_cast<size_t>(file->size()), '\0');
-	text.resize(file->read(uqstl::as_writable_bytes(uqstl::span {text})));
+	Container data(static_cast<size_t>(file->size()), {});
+	data.resize(file->read(uqstl::as_writable_bytes(uqstl::span {data})));
 	if (file->error())
 	{
 		return uqstl::nullopt;
 	}
-	return text;
+	return data;
+}
+
+} // namespace
+
+uqstl::optional<uqstl::string> readTextFile(const io::Directory& dir, uqgsl::czstring name)
+{
+	return readWholeFile<uqstl::string>(dir, name);
+}
+
+uqstl::optional<uqstl::vector<uqstl::byte>> readBinaryFile(const io::Directory& dir, uqgsl::czstring name)
+{
+	return readWholeFile<uqstl::vector<uqstl::byte>>(dir, name);
 }
 
 bool writeTextFile(const io::Directory& dir, uqgsl::czstring name, uqstl::string_view text)

@@ -172,7 +172,7 @@ ova_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 	uqgsl::owner<uqm::io::File*> fp {};
 	vorbis_info* vinfo;
 
-	fp = SoundDecoder_OpenFile(dir, filename);
+	fp = res_NewResFile(dir, filename);
 	if (fp == nullptr)
 	{
 		uqm::log::warn("ova_Open(): could not open {}", filename);

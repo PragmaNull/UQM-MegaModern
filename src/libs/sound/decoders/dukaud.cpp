@@ -420,7 +420,7 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 	uqstl::span<char> filenameDst {filename};
 	uqm::strncpy_safe(filenameDst, {file, filelen});
 
-	duk = SoundDecoder_OpenFile(dir, filename);
+	duk = res_NewResFile(dir, filename);
 	if (!duk)
 	{
 		duka->last_error = errno;
@@ -430,7 +430,7 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 	// overwrite the extension with 'frm".. weird.
 	filenameDst = filenameDst.subspan(filelen - 3);
 	uqm::strncpy_safe(filenameDst, "frm");
-	frm = SoundDecoder_OpenFile(dir, filename);
+	frm = res_NewResFile(dir, filename);
 	if (!frm)
 	{
 		duka->last_error = errno;

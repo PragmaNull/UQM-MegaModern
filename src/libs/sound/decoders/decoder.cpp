@@ -319,18 +319,6 @@ SoundDecoder_Lookup(const char* fileext)
 	return info->ext ? info->funcs : nullptr;
 }
 
-uqgsl::owner<uqm::io::File*> SoundDecoder_OpenFile(const uqm::io::Directory& dir, const char* filename)
-{
-	uqstl::error_code error {};
-	uqstl::optional<uqm::io::File> file {dir.open(filename, uqm::io::OpenMode::Read, error)};
-	if (!file)
-	{
-		errno = error.default_error_condition().value();
-		return nullptr;
-	}
-	return new uqm::io::File {uqstl::move(*file)};
-}
-
 TFB_SoundDecoder*
 SoundDecoder_Load(const uqm::io::Directory& dir, char* filename,
 				  uint32_t buffer_size, uint32_t startTime, int32_t runTime)

@@ -533,25 +533,19 @@ mountDirZips(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::Mou
 static void
 mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
-	uqstl::error_code error {};
-	const uqstl::vector<uqstl::string> names {dir.list("", packageMatcher(), error)};
-	const uint32_t nameHash {crc32b(BASE_CONTENT_NAME)};
-	const auto base {uqstl::find_if(names.begin(), names.end(), [nameHash](const uqstl::string& name) {
-		return crc32b(name.c_str()) == nameHash;
-	})};
-	if (base == names.end())
+	if (!dir.exists(BASE_CONTENT_NAME))
 	{
 		uqm::log::warn("Warning: Could not find '{}'.", BASE_CONTENT_NAME);
 		return;
 	}
-	mountArchive(dir, *base, mountPoint, position, relative);
+	mountArchive(dir, BASE_CONTENT_NAME, mountPoint, position, relative);
 }
 
 int loadIndices(const uqm::io::Directory& dir)
 {
 	uqstl::error_code error {};
 	int numLoaded {0};
-	for (const uqstl::string& name : dir.list("", *uqm::io::Matcher::create(uqm::io::Matcher::Kind::Regex, "\\.[rR][mM][pP]$"), error))
+	for (const uqstl::string& name : dir.list("", uqm::io::Matcher {uqm::io::Matcher::Kind::SuffixIgnoreCase, ".rmp"}, error))
 	{
 		uqm::log::debug("Loading resource index '{}'", name);
 		LoadResourceIndex(dir, name.c_str(), nullptr);

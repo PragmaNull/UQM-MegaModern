@@ -223,7 +223,7 @@ wava_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 	wave_ChunkHeader chunkHdr;
 	long dataLeft;
 
-	wava->fp = SoundDecoder_OpenFile(dir, filename);
+	wava->fp = res_NewResFile(dir, filename);
 	if (!wava->fp)
 	{
 		wava->last_error = errno;
