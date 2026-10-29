@@ -5,6 +5,10 @@
 #include "libs/graphics/gfx_defs.h"	  // for GfxFlags
 #include "libs/sound/audiocoredefs.h" // for AudioFlags.
 
+#include "core/stl/optional.h"
+#include "core/stl/string.h"
+#include "core/string/StringUtils.h"
+
 #include <magic_enum/magic_enum.hpp>
 namespace uqm
 {
@@ -268,6 +272,27 @@ enum class CoarseScanStyle
 	P6014Text,
 	P6014Pictograms,
 };
+
+// Returns the value for an old name that an enum setting still accepts.
+template <typename E>
+[[nodiscard]] inline uqstl::optional<E> fromOldEnumName(uqstl::string_view)
+{
+	return uqstl::nullopt;
+}
+
+template <>
+[[nodiscard]] inline uqstl::optional<CoarseScanStyle> fromOldEnumName(uqstl::string_view name)
+{
+	if (compareICase(name, "PC"))
+	{
+		return CoarseScanStyle::Text;
+	}
+	if (compareICase(name, "3DO") || compareICase(name, "Console3DO"))
+	{
+		return CoarseScanStyle::Pictograms;
+	}
+	return uqstl::nullopt;
+}
 
 [[nodiscard]] constexpr bool usesPictograms(CoarseScanStyle style) noexcept
 {

@@ -475,6 +475,55 @@ struct OptionsStruct : SettingsRegistry
 	};
 };
 
+// Gives the window mode, scaler, scanline and FPS display flags of the settings.
+[[nodiscard]] inline GfxFlags displayFlags(const OptionsStruct& options) noexcept
+{
+	GfxFlags flags {toGfxFlags(*options.scaler)};
+	switch (*options.windowMode)
+	{
+		case WindowMode::Windowed:
+			break;
+		case WindowMode::WindowedFullscreen:
+			flags |= GfxFlags::Fullscreen;
+			break;
+		case WindowMode::Fullscreen:
+			flags |= GfxFlags::ExclusiveFullscreen;
+			break;
+	}
+	if (*options.scanlines)
+	{
+		flags |= GfxFlags::Scanlines;
+	}
+	if (*options.showFps)
+	{
+		flags |= GfxFlags::ShowFPS;
+	}
+	return flags;
+}
+
+// Sets the window mode, scaler, scanline and FPS settings from the display flags.
+inline void setDisplayFlags(OptionsStruct& options, GfxFlags flags)
+{
+	if (testFlag(flags, GfxFlags::ExclusiveFullscreen))
+	{
+		options.windowMode = WindowMode::Fullscreen;
+	}
+	else if (testFlag(flags, GfxFlags::Fullscreen))
+	{
+		options.windowMode = WindowMode::WindowedFullscreen;
+	}
+	else
+	{
+		options.windowMode = WindowMode::Windowed;
+	}
+	options.scaler = static_cast<ScalingMode>(flags & GfxFlagsScaleAny);
+	options.scanlines = testFlag(flags, GfxFlags::Scanlines);
+	options.showFps = testFlag(flags, GfxFlags::ShowFPS);
+}
+
+// The display flags that displayFlags() and setDisplayFlags() handle.
+inline constexpr GfxFlags c_displayFlagsMask {GfxFlagsScaleAny | GfxFlags::Fullscreen | GfxFlags::ExclusiveFullscreen | GfxFlags::Scanlines | GfxFlags::ShowFPS};
+
 template <typename ListT>
 [[nodiscard]] inline uqstl::optional<typename ListT::value_type::value_type> getOptionListValue(const ListT& list, uqstl::string_view name) noexcept
 {

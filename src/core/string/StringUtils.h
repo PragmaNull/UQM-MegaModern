@@ -177,7 +177,7 @@ inline uqstl::errc parseStr(uqstl::string_view str, T& out)
 		return uqstl::errc::invalid_argument;
 	}
 	out = value;
-	return ec;
+	return {};
 }
 
 // template specialization for bool. Impl in cpp.

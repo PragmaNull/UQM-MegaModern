@@ -229,7 +229,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	InitThreadSystem();
 	//log_initThreads();
 	initIO();
-	prepareConfigDir(options.configDir.c_str());
+	prepareConfigDir(options.configDir);
 
 	if (!options.safeMode.value)
 	{
@@ -341,27 +341,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 #else
 	const uqm::GfxDriver gfxDriver = uqm::GfxDriver::SDL_Pure;
 #endif
-	uqm::GfxFlags gfxFlags = toGfxFlags(options.scaler);
-	switch (options.windowMode)
-	{
-		case WindowMode::Windowed:
-			break;
-		case WindowMode::WindowedFullscreen:
-			gfxFlags |= uqm::GfxFlags::Fullscreen;
-			break;
-		case WindowMode::Fullscreen:
-			gfxFlags |= uqm::GfxFlags::ExclusiveFullscreen;
-			break;
-	}
-
-	if (options.scanlines.value)
-	{
-		gfxFlags |= uqm::GfxFlags::Scanlines;
-	}
-	if (options.showFps.value)
-	{
-		gfxFlags |= uqm::GfxFlags::ShowFPS;
-	}
+	const uqm::GfxFlags gfxFlags {uqm::displayFlags(options)};
 	unsigned int windowType {static_cast<unsigned int>(optWindowType)};
 	TFB_InitGraphics(gfxDriver, gfxFlags, options.graphicsBackend.c_str(),
 					 windowSize.x, windowSize.y,

@@ -194,55 +194,13 @@ find_cheat_state(uqstl::string_view key)
 	return nullptr;
 }
 
-// Sets the display settings from the current display flags.
-static void
-read_graphics_settings(void)
-{
-	auto& edit {uqm::UQMOptions::edit()};
-	if (testFlag(g_gfxFlags, uqm::GfxFlags::ExclusiveFullscreen))
-	{
-		edit.windowMode = uqm::WindowMode::Fullscreen;
-	}
-	else if (testFlag(g_gfxFlags, uqm::GfxFlags::Fullscreen))
-	{
-		edit.windowMode = uqm::WindowMode::WindowedFullscreen;
-	}
-	else
-	{
-		edit.windowMode = uqm::WindowMode::Windowed;
-	}
-	edit.scaler = static_cast<uqm::ScalingMode>(g_gfxFlags & uqm::GfxFlagsScaleAny);
-	edit.scanlines = testFlag(g_gfxFlags, uqm::GfxFlags::Scanlines);
-	edit.showFps = testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS);
-}
-
 // Sets the window size and the display flags from the settings.
 static void
 apply_graphics_from_settings(void)
 {
 	const uqm::OptionsStruct& options {uqm::UQMOptions::read()};
 
-	uqm::GfxFlags newFlags {g_gfxFlags & ~(uqm::GfxFlagsScaleAny | uqm::GfxFlags::Fullscreen | uqm::GfxFlags::ExclusiveFullscreen | uqm::GfxFlags::Scanlines | uqm::GfxFlags::ShowFPS)};
-	newFlags |= toGfxFlags(*options.scaler);
-	switch (*options.windowMode)
-	{
-		case uqm::WindowMode::Windowed:
-			break;
-		case uqm::WindowMode::WindowedFullscreen:
-			newFlags |= uqm::GfxFlags::Fullscreen;
-			break;
-		case uqm::WindowMode::Fullscreen:
-			newFlags |= uqm::GfxFlags::ExclusiveFullscreen;
-			break;
-	}
-	if (*options.scanlines)
-	{
-		newFlags |= uqm::GfxFlags::Scanlines;
-	}
-	if (*options.showFps)
-	{
-		newFlags |= uqm::GfxFlags::ShowFPS;
-	}
+	const uqm::GfxFlags newFlags {(g_gfxFlags & ~uqm::c_displayFlagsMask) | uqm::displayFlags(options)};
 
 	uqm::GfxDriver newDriver {GraphicsDriver};
 #if SDL_MAJOR_VERSION == 1 && defined(HAVE_OPENGL)
@@ -309,7 +267,7 @@ DoSetupMenu(SETUP_MENU_STATE* pInputState)
 	{
 		SetDefaultMenuRepeatDelay();
 		pInputState->NextTime = GetTimeCounter();
-		read_graphics_settings();
+		uqm::setDisplayFlags(uqm::UQMOptions::edit(), g_gfxFlags);
 		populate_gamma();
 		menuWidgets->refresh();
 		Widget_SetFont(PlyrFont);

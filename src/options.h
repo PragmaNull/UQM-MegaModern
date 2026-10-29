@@ -112,7 +112,7 @@ typedef struct _input_template
 extern INPUT_TEMPLATE input_templates[6];
 
 void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirName, uqgsl::czstring execFile);
-void prepareConfigDir(uqgsl::czstring configDirName);
+void prepareConfigDir(uqstl::string_view configDirOption);
 void prepareMeleeDir(void);
 void prepareSaveDir(void);
 void prepareScrShotDir(void);

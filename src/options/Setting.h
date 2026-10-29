@@ -156,26 +156,8 @@ template <EnumType E>
 	}
 }
 
-// Returns the value for an old name that an enum setting still accepts.
-template <EnumType E>
-[[nodiscard]] inline uqstl::optional<E> fromOldEnumName(uqstl::string_view)
-{
-	return uqstl::nullopt;
-}
-
-template <>
-[[nodiscard]] inline uqstl::optional<CoarseScanStyle> fromOldEnumName(uqstl::string_view name)
-{
-	if (compareICase(name, "PC"))
-	{
-		return CoarseScanStyle::Text;
-	}
-	if (compareICase(name, "3DO") || compareICase(name, "Console3DO"))
-	{
-		return CoarseScanStyle::Pictograms;
-	}
-	return uqstl::nullopt;
-}
+template <typename T>
+struct TextCodec;
 
 // Enums are written by name. Values without a name, such as combined flags, are written as integers.
 template <EnumType E>
@@ -190,11 +172,7 @@ struct JsonCodec<E>
 	{
 		if (const auto name {readEnumName(val)})
 		{
-			if (const auto value {magic_enum::enum_cast<E>(*name, magic_enum::case_insensitive)})
-			{
-				return *value;
-			}
-			return fromOldEnumName<E>(*name);
+			return TextCodec<E>::fromText(*name);
 		}
 		if (const auto number {readEnumInt(val)}; number && isAcceptedEnumValue<E>(*number))
 		{

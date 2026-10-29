@@ -57,11 +57,11 @@ def cache_is_stale(build_dir, config, asan):
     return False
 
 
-def configure(build_dir, config, asan, extra=()):
-    """Run the CMake configure step. Installs the conan dependencies first if they are missing."""
+def configure(build_dir, config, asan, extra=(), profile="default", policy="missing", force_install=False):
+    """Run the CMake configure step. Installs the conan dependencies first if forced or missing."""
     toolchain = generators_dir(build_dir, config) / "conan_toolchain.cmake"
-    if not toolchain.is_file():
-        install(build_dir, config, asan)
+    if force_install or not toolchain.is_file():
+        install(build_dir, config, asan, profile, policy)
 
     cmd = [
         "cmake", ".",
@@ -94,10 +94,8 @@ def main():
                         help="do not run conan install if the dependencies are already installed")
     args, extra = parser.parse_known_args()
 
-    asan = bool(args.asan)
-    if not args.skip_install:
-        install(args.build_dir, args.config, asan, args.profile, args.build_policy)
-    configure(args.build_dir, args.config, asan, extra)
+    configure(args.build_dir, args.config, bool(args.asan), extra,
+              args.profile, args.build_policy, force_install=not args.skip_install)
 
 
 if __name__ == "__main__":

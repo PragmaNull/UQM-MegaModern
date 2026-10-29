@@ -1,4 +1,4 @@
-"""Shared helpers for the install/setup/build/test scripts."""
+"""Shared helpers for the setup/build/test scripts."""
 
 import argparse
 import os
