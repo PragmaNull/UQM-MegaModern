@@ -60,7 +60,7 @@ uqstl::optional<int> JsonCodec<int>::decode(yyjson_val* val)
 
 yyjson_mut_val* JsonCodec<float>::encode(yyjson_mut_doc* doc, float value)
 {
-	return yyjson_mut_real(doc, value);
+	return yyjson_mut_float(doc, value);
 }
 
 uqstl::optional<float> JsonCodec<float>::decode(yyjson_val* val)

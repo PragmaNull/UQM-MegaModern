@@ -97,6 +97,15 @@ TEST(SettingTest, WritesNestedObjectsAndVersion)
 	EXPECT_NE(json.find("\"color\": \"Green\""), uqstl::string::npos);
 }
 
+TEST(SettingTest, WritesFloatsAtSinglePrecision)
+{
+	TestSettings settings {};
+	settings.scale = 0.85f;
+	const uqstl::string json {settings.toJson()};
+	EXPECT_NE(json.find("\"scale\": 0.85"), uqstl::string::npos) << json;
+	EXPECT_EQ(json.find("0.8500000"), uqstl::string::npos) << json;
+}
+
 TEST(SettingTest, ReadsEnumsByNameOrNumber)
 {
 	TestSettings settings {};
