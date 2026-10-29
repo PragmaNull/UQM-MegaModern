@@ -128,6 +128,19 @@ TEST(SettingTest, RejectsOutOfRangeEnumNumber)
 	EXPECT_EQ(*settings.color, Color::Red);
 }
 
+TEST(SettingTest, FlagEnumNumberMustUseDeclaredBits)
+{
+	TestSettings settings {};
+	ASSERT_TRUE(settings.fromJson(R"({"graphics": {"flags": 3}})"));
+	EXPECT_EQ(*settings.flags, Flags::A | Flags::B);
+
+	ASSERT_TRUE(settings.fromJson(R"({"graphics": {"flags": 4}})"));
+	EXPECT_EQ(*settings.flags, Flags::A | Flags::B);
+
+	ASSERT_TRUE(settings.fromJson(R"({"graphics": {"flags": -1}})"));
+	EXPECT_EQ(*settings.flags, Flags::A | Flags::B);
+}
+
 TEST(SettingTest, IgnoresUnknownKeys)
 {
 	TestSettings settings {};

@@ -104,6 +104,18 @@ concept FlagEnum = EnumType<E> && requires(E a) {
 	{ a | a } -> uqstl::same_as<E>;
 };
 
+// Returns the OR of all declared values of 'E'.
+template <EnumType E>
+constexpr int64_t declaredBits()
+{
+	int64_t bits {};
+	for (const E value : magic_enum::enum_values<E>())
+	{
+		bits |= static_cast<int64_t>(value);
+	}
+	return bits;
+}
+
 // Enums are written by name. Values without a name, such as combined flags, are written as integers.
 template <EnumType E>
 struct JsonCodec<E>
@@ -122,7 +134,14 @@ struct JsonCodec<E>
 		if (const auto number {readEnumInt(val)})
 		{
 			const auto value {static_cast<E>(*number)};
-			if (FlagEnum<E> || magic_enum::enum_contains(value))
+			if constexpr (FlagEnum<E>)
+			{
+				if ((*number & ~declaredBits<E>()) == 0)
+				{
+					return value;
+				}
+			}
+			else if (magic_enum::enum_contains(value))
 			{
 				return value;
 			}
