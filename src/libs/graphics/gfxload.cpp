@@ -39,7 +39,6 @@ typedef struct anidata
 	int hotspot_y;
 } AniData;
 
-extern uio_Repository* repository;
 
 static void
 process_image(FRAME FramePtr, TFB_Canvas img[], AniData* ani, int cel_ct)
@@ -215,11 +214,11 @@ void* _GetCelData(uqm::io::File* fp, uint32_t length)
 				uqm::strncpy_safe(aniDirName, ".");
 				aniFileName = _cur_resfile_name;
 			}
-			aniDir = repository->fileSystem.root().subdir(aniDirName);
+			aniDir = g_fileSystem->root().subdir(aniDirName);
 			if (aniDir)
 			{
 				uqstl::error_code error {};
-				aniMount = repository->fileSystem.mountArchive(aniDirName, *aniDir, aniFileName, uqm::io::MountPosition::Top, nullptr, error);
+				aniMount = g_fileSystem->mountArchive(aniDirName, *aniDir, aniFileName, uqm::io::MountPosition::Top, nullptr, error);
 				zippedAniFile = res_OpenResFile(*aniDir, aniFileName, uqm::io::OpenMode::Read);
 			}
 			if (!zippedAniFile)
@@ -429,10 +428,10 @@ void* _GetFontData(uqm::io::File* fp, uint32_t length)
 			fontZipName = _cur_resfile_name + n;
 		}
 
-		if (const uqstl::optional<uqm::io::Directory> fontParent {repository->fileSystem.root().subdir(fontDirName)})
+		if (const uqstl::optional<uqm::io::Directory> fontParent {g_fileSystem->root().subdir(fontDirName)})
 		{
 			uqstl::error_code error {};
-			fontMount = repository->fileSystem.mountArchive(_cur_resfile_name, *fontParent, fontZipName, uqm::io::MountPosition::Top, nullptr, error);
+			fontMount = g_fileSystem->mountArchive(_cur_resfile_name, *fontParent, fontZipName, uqm::io::MountPosition::Top, nullptr, error);
 		}
 	}
 

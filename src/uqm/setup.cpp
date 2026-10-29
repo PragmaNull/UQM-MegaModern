@@ -95,8 +95,7 @@ bool SpaceMusicOK;
 bool oldPlanetsPresent;
 bool classicPackPresent;
 
-uio_Repository* repository;
-uio_DirHandle* rootDir;
+uqstl::optional<uqm::io::FileSystem> g_fileSystem {};
 
 bool usingSpeech;
 
@@ -142,7 +141,7 @@ bool LoadKernel(int argc, char* argv[])
 	}
 
 	/* Load base content. */
-	if (uqm::loadIndices(contentDir) == 0)
+	if (uqm::loadIndices(*contentDir) == 0)
 	{
 		return false; // Must have at least one index in content dir
 	}
@@ -538,21 +537,11 @@ void ClearPlayerInputAll(void)
 
 int initIO(void)
 {
-	uio_init();
-	repository = uio_openRepository(0);
-
-	rootDir = uio_openDir(repository, "/", 0);
-	if (rootDir == nullptr)
-	{
-		uqm::log::critical("Could not open '/' dir.");
-		return -1;
-	}
+	g_fileSystem.emplace();
 	return 0;
 }
 
 void uninitIO(void)
 {
-	uio_closeDir(rootDir);
-	uio_closeRepository(repository);
-	uio_unInit();
+	g_fileSystem.reset();
 }

@@ -65,12 +65,26 @@ bool optMaskOfDeceit;
 bool optNoClassic;
 uqm::CheatAction optDeviceArray[28];
 uqm::CheatAction optUpgradeArray[NUM_UPGRADES];
-uio_DirHandle* contentDir;
-uio_DirHandle* configDir;
-uio_DirHandle* saveDir;
-uio_DirHandle* meleeDir;
-uio_DirHandle* scrShotDir;
-uio_MountHandle* contentMountHandle;
+uqstl::optional<uqm::io::Directory> contentDir {};
+uqstl::optional<uqm::io::Directory> configDir {};
+uqstl::optional<uqm::io::Directory> saveDir {};
+uqstl::optional<uqm::io::Directory> meleeDir {};
+uqstl::optional<uqm::io::Directory> scrShotDir {};
+
+namespace
+{
+// Mounts that stay until unprepareAllDirs.
+uqstl::optional<uqm::io::Mount> s_configMount {};
+uqstl::optional<uqm::io::Mount> s_contentMount {};
+uqstl::optional<uqm::io::Mount> s_addonsMount {};
+uqstl::vector<uqm::io::Mount> s_mounts {};
+
+const uqm::io::Matcher& packageMatcher()
+{
+	static const uqm::io::Matcher matcher {*uqm::io::Matcher::create(uqm::io::Matcher::Kind::Regex, "\\.([zZ][iI][pP]|[uU][qQ][mM])$")};
+	return matcher;
+}
+} // namespace
 
 uqgsl::czstring contentDirPath;
 uqgsl::czstring addonDirPath;
@@ -80,8 +94,6 @@ char baseContentPath[PATH_MAX];
 // addon availability
 uqstl::vector<uint32_t> g_addonList {};
 
-extern uio_Repository* repository;
-extern uio_DirHandle* rootDir;
 
 namespace uqm
 {
@@ -90,15 +102,10 @@ INPUT_TEMPLATE input_templates[6];
 
 static const char* findFileInDirs(const char* locs[], int numLocs,
 								  const char* file);
-static uio_MountHandle* mountContentDir(uio_Repository* repository,
-										const char* contentPath);
-static void mountAddonDir(uio_Repository* repository, uio_MountHandle* contentMountHandle, uqgsl::czstring addonDirName);
-
-static void mountDirZips(uio_DirHandle* dirHandle, const char* mountPoint,
-						 int relativeFlags, uio_MountHandle* relativeHandle);
-
-static void mountBaseZip(uio_DirHandle* dirHandle, const char* mountPoint,
-						 int relativeFlags, uio_MountHandle* relativeHandle);
+static void mountContentDir(const char* contentPath);
+static void mountAddonDir(uqgsl::czstring addonDirName);
+static void mountDirZips(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative);
+static void mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative);
 
 // Looks for a file 'file' in all 'numLocs' locations from 'locs'.
 // returns the first element from locs where 'file' is found.
@@ -216,7 +223,7 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 	}
 
 	uqm::log::debug("Using '{}' as base content dir.", baseContentPath);
-	contentMountHandle = mountContentDir(repository, baseContentPath);
+	mountContentDir(baseContentPath);
 
 	if (!isEmpty(contentDirName) && isEmpty(contentDirPath))
 	{
@@ -232,7 +239,7 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 
 		uqm::log::debug("Using '{}' as addon dir.", c_str(addonDirName));
 	}
-	mountAddonDir(repository, contentMountHandle, addonDirName);
+	mountAddonDir(addonDirName);
 
 #ifndef __APPLE__
 	(void)execFile;
@@ -262,9 +269,6 @@ uqstl::string resolveConfigDir(uqstl::string_view configDirOption)
 
 void prepareConfigDir(uqstl::string_view configDirOption)
 {
-	static uio_AutoMount* autoMount[] = {nullptr};
-	uio_MountHandle* contentHandle;
-
 	const uqstl::string configDirPath {resolveConfigDir(configDirOption)};
 	if (configDirPath.empty())
 	{
@@ -287,23 +291,15 @@ void prepareConfigDir(uqstl::string_view configDirOption)
 		exit(EXIT_FAILURE);
 	}
 
-	contentHandle = uio_mountDir(repository, "/",
-								 uio_FSTYPE_STDIO, nullptr, nullptr, configDirName, autoMount,
-								 uio_MOUNT_TOP, nullptr);
-	if (contentHandle == nullptr)
+	uqstl::error_code error {};
+	s_configMount = g_fileSystem->mountDirectory("/", configDirName, uqm::io::Access::ReadWrite, uqm::io::MountPosition::Top, nullptr, error);
+	if (!s_configMount)
 	{
 		uqm::log::critical("Fatal error: Could not mount config dir: {}",
-						   uqm::strerror(errno));
+						   error.message());
 		exit(EXIT_FAILURE);
 	}
-
-	configDir = uio_openDir(repository, "/", 0);
-	if (configDir == nullptr)
-	{
-		uqm::log::critical("Fatal error: Could not open config dir: {}",
-						   uqm::strerror(errno));
-		exit(EXIT_FAILURE);
-	}
+	configDir = g_fileSystem->root();
 }
 
 void prepareSaveDir(void)
@@ -335,13 +331,12 @@ void prepareSaveDir(void)
 
 	uqm::log::debug("Saved games are kept in {}.", saveDirName);
 
-	saveDir = uio_openDirRelative(configDir, "save", 0);
+	saveDir = configDir->subdir("save");
 	// TODO: this doesn't work if the save dir is not
 	//       "save" in the config dir.
-	if (saveDir == nullptr)
+	if (!saveDir)
 	{
-		uqm::log::critical("Fatal error: Could not open save dir: {}",
-						   uqm::strerror(errno));
+		uqm::log::critical("Fatal error: Could not open save dir.");
 		exit(EXIT_FAILURE);
 	}
 }
@@ -373,13 +368,12 @@ void prepareMeleeDir(void)
 		exit(EXIT_FAILURE);
 	}
 
-	meleeDir = uio_openDirRelative(configDir, "teams", 0);
+	meleeDir = configDir->subdir("teams");
 	// TODO: this doesn't work if the save dir is not
 	//       "teams" in the config dir.
-	if (meleeDir == nullptr)
+	if (!meleeDir)
 	{
-		uqm::log::critical("Fatal error: Could not open melee teams dir: {}",
-						   uqm::strerror(errno));
+		uqm::log::critical("Fatal error: Could not open melee teams dir.");
 		exit(EXIT_FAILURE);
 	}
 }
@@ -411,83 +405,58 @@ void prepareScrShotDir(void)
 		exit(EXIT_FAILURE);
 	}
 
-	scrShotDir = uio_openDirRelative(configDir, "screenshots", 0);
+	scrShotDir = configDir->subdir("screenshots");
 	// TODO: this doesn't work if the save dir is not
 	//       "screenshots" in the SCRSHOTDIR macro.
-	if (scrShotDir == nullptr)
+	if (!scrShotDir)
 	{
-		uqm::log::critical("Fatal error: Could not open screenshot dir: {}",
-						   uqm::strerror(errno));
+		uqm::log::critical("Fatal error: Could not open screenshot dir.");
 		exit(EXIT_FAILURE);
 	}
 }
 
-static uio_MountHandle*
-mountContentDir(uio_Repository* repository, const char* contentPath)
+static void
+mountContentDir(const char* contentPath)
 {
-	uio_DirHandle* packagesDir;
-	static uio_AutoMount* autoMount[] = {nullptr};
-	uio_MountHandle* contentMountHandle;
-
-	contentMountHandle = uio_mountDir(repository, "/",
-									  uio_FSTYPE_STDIO, nullptr, nullptr, contentPath, autoMount,
-									  uio_MOUNT_TOP | uio_MOUNT_RDONLY, nullptr);
-	if (contentMountHandle == nullptr)
+	uqstl::error_code error {};
+	s_contentMount = g_fileSystem->mountDirectory("/", contentPath, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr, error);
+	if (!s_contentMount)
 	{
 		uqm::log::critical("Fatal error: Could not mount content dir: {}",
-						   uqm::strerror(errno));
+						   error.message());
 		exit(EXIT_FAILURE);
 	}
 
-	contentDir = uio_openDir(repository, "/", 0);
-	if (contentDir == nullptr)
-	{
-		uqm::log::critical("Fatal error: Could not open content dir: {}",
-						   uqm::strerror(errno));
-		exit(EXIT_FAILURE);
-	}
+	contentDir = g_fileSystem->root();
 
-	packagesDir = uio_openDir(repository, "/packages", 0);
-	if (packagesDir != nullptr)
+	if (const uqstl::optional<uqm::io::Directory> packagesDir {contentDir->subdir("packages")})
 	{
-		mountBaseZip(packagesDir, "/", uio_MOUNT_BELOW,
-					 contentMountHandle);
-		uio_closeDir(packagesDir);
+		mountBaseZip(*packagesDir, "/", uqm::io::MountPosition::Below, *s_contentMount);
 	}
-
-	return contentMountHandle;
 }
 
-void mountAddonDir(uio_Repository* repository, uio_MountHandle* contentMountHandle, uqgsl::czstring addonDirName)
+void mountAddonDir(uqgsl::czstring addonDirName)
 {
-	uio_DirHandle* addonsDir;
-	static uio_AutoMount* autoMount[] = {nullptr};
-	uio_MountHandle* mountHandle;
-	uio_DirList* availableAddons;
-
+	const uqm::io::Mount* addonsMount {&*s_contentMount};
 	if (!isEmpty(addonDirName))
 	{
-		mountHandle = uio_mountDir(repository, "addons",
-								   uio_FSTYPE_STDIO, nullptr, nullptr, addonDirName, autoMount,
-								   uio_MOUNT_TOP | uio_MOUNT_RDONLY, nullptr);
-		if (mountHandle == nullptr)
+		uqstl::error_code error {};
+		s_addonsMount = g_fileSystem->mountDirectory("addons", addonDirName, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr, error);
+		if (!s_addonsMount)
 		{
 			uqm::log::warn("Warning: Could not mount addon directory: {}"
 						   ";\n\t'--addon' options are ignored.",
-						   uqm::strerror(errno));
+						   error.message());
 			return;
 		}
-	}
-	else
-	{
-		mountHandle = contentMountHandle;
+		addonsMount = &*s_addonsMount;
 	}
 
 	// NB: note the difference between addonsDir and addonDir.
 	//     the former is the dir 'addons', the latter a directory
 	//     in that dir.
-	addonsDir = uio_openDirRelative(contentDir, "addons", 0);
-	if (addonsDir == nullptr)
+	const uqstl::optional<uqm::io::Directory> addonsDir {contentDir->subdir("addons")};
+	if (!addonsDir)
 	{ // No addon dir found.
 		uqm::log::warn("Warning: There's no 'addons' "
 					   "directory in the 'content' directory;\n\t'--addon' "
@@ -495,68 +464,37 @@ void mountAddonDir(uio_Repository* repository, uio_MountHandle* contentMountHand
 		return;
 	}
 
-	mountDirZips(addonsDir, "addons", uio_MOUNT_BELOW, mountHandle);
+	mountDirZips(*addonsDir, "addons", uqm::io::MountPosition::Below, *addonsMount);
 
-	availableAddons = uio_getDirList(addonsDir, "", "", match_MATCH_PREFIX);
-	if (availableAddons != nullptr)
+	uqstl::error_code error {};
+	uqstl::vector<uqstl::string> availableAddons {addonsDir->list("", uqm::io::Matcher {}, error)};
+	// count the actual addon dirs
+	uqstl::erase_if(availableAddons, [&addonsDir](const uqstl::string& name) {
+		const uqstl::optional<uqm::io::FileInfo> info {addonsDir->stat(name)};
+		return name.starts_with('.') || !info || !info->isDirectory();
+	});
+	uqm::log::info("{} available addon pack{}.", availableAddons.size(),
+				   availableAddons.size() == 1 ? "" : "s");
+
+	int count {0};
+	for (const uqstl::string& addon : availableAddons)
 	{
-		int i, count;
+		g_addonList.push_back(crc32b(addon.c_str()));
 
-		// count the actual addon dirs
-		count = 0;
-		for (i = 0; i < availableAddons->numNames; ++i)
+		++count;
+		uqm::log::info("    {}. {}", count, addon);
+
+		const uqstl::optional<uqm::io::Directory> addonDir {addonsDir->subdir(addon)};
+		if (!addonDir)
 		{
-			struct stat sb;
-
-			if (availableAddons->names[i][0] == '.' || uio_stat(addonsDir, availableAddons->names[i], &sb) == -1
-				|| !S_ISDIR(sb.st_mode))
-			{ // this dir entry ignored
-				availableAddons->names[i] = nullptr;
-				continue;
-			}
-			++count;
+			uqm::log::warn("Warning: directory 'addons/{}' "
+						   "not found; addon skipped.",
+						   addon);
+			continue;
 		}
-		uqm::log::info("{} available addon pack{}.", count,
-					   count == 1 ? "" : "s");
-
-		count = 0;
-		for (i = 0; i < availableAddons->numNames; ++i)
-		{
-			char mountname[128] {};
-			uio_DirHandle* addonDir;
-			const char* addon = availableAddons->names[i];
-
-			if (!addon)
-			{
-				continue;
-			}
-
-			g_addonList.push_back(crc32b(addon));
-
-			++count;
-			uqm::log::info("    {}. {}", count, addon);
-
-			fmt::format_to_sz_n(mountname, "addons/{}", addon);
-
-			addonDir = uio_openDirRelative(addonsDir, addon, 0);
-			if (addonDir == nullptr)
-			{
-				uqm::log::warn("Warning: directory 'addons/{}' "
-							   "not found; addon skipped.",
-							   addon);
-				continue;
-			}
-			mountDirZips(addonDir, mountname, uio_MOUNT_BELOW, mountHandle);
-			uio_closeDir(addonDir);
-		}
+		const uqstl::string mountName {fmt::format("addons/{}", addon)};
+		mountDirZips(*addonDir, mountName.c_str(), uqm::io::MountPosition::Below, *addonsMount);
 	}
-	else
-	{
-		uqm::log::info("0 available addon packs.");
-	}
-
-	uio_DirList_free(availableAddons);
-	uio_closeDir(addonsDir);
 }
 
 bool isAddonAvailable(uqgsl::czstring addon_name)
@@ -570,108 +508,56 @@ bool isAddonAvailable(uqgsl::czstring addon_name)
 }
 
 static void
-mountDirZips(uio_DirHandle* dirHandle, const char* mountPoint,
-			 int relativeFlags, uio_MountHandle* relativeHandle)
+mountArchive(const uqm::io::Directory& dir, const uqstl::string& name, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
-	static uio_AutoMount* autoMount[] = {nullptr};
-	uio_DirList* dirList;
-	const char* pattern = "\\.([zZ][iI][pP]|[uU][qQ][mM])$";
-
-	dirList = uio_getDirList(dirHandle, "", pattern, match_MATCH_REGEX);
-	if (dirList != nullptr)
+	uqstl::error_code error {};
+	if (uqstl::optional<uqm::io::Mount> mount {g_fileSystem->mountArchive(mountPoint, dir, name, position, &relative, error)})
 	{
-		int i;
-
-		for (i = 0; i < dirList->numNames; i++)
-		{
-			if (uio_mountDir(repository, mountPoint, uio_FSTYPE_ZIP,
-							 dirHandle, dirList->names[i], "/", autoMount,
-							 relativeFlags | uio_MOUNT_RDONLY,
-							 relativeHandle)
-				== nullptr)
-			{
-				uqm::log::warn("Warning: Could not mount '{}': {}.",
-							   dirList->names[i], uqm::strerror(errno));
-			}
-		}
+		s_mounts.push_back(uqstl::move(*mount));
 	}
-	uio_DirList_free(dirList);
+	else
+	{
+		uqm::log::warn("Warning: Could not mount '{}': {}.", name, error.message());
+	}
 }
 
 static void
-mountBaseZip(uio_DirHandle* dirHandle, const char* mountPoint,
-			 int relativeFlags, uio_MountHandle* relativeHandle)
+mountDirZips(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
-	static uio_AutoMount* autoMount[] = {nullptr};
-	uio_DirList* dirList;
-	const char* pattern = "\\.([zZ][iI][pP]|[uU][qQ][mM])$";
-	const uint32_t name_hash = crc32b(BASE_CONTENT_NAME);
-
-	dirList = uio_getDirList(dirHandle, "", pattern, match_MATCH_REGEX);
-	if (dirList != nullptr)
+	uqstl::error_code error {};
+	for (const uqstl::string& name : dir.list("", packageMatcher(), error))
 	{
-		uint32_t names_hash = 0;
-		int i;
-
-		for (i = 0; i < dirList->numNames; i++)
-		{
-			names_hash = crc32b(dirList->names[i]);
-			if (name_hash == names_hash)
-			{
-				break;
-			}
-		}
-
-		if (i == dirList->numNames)
-		{
-			if (name_hash != names_hash)
-			{
-				uqm::log::warn("Warning: Could not find '{}': {}.",
-							   BASE_CONTENT_NAME, uqm::strerror(errno));
-
-				uio_DirList_free(dirList);
-				return;
-			}
-			else
-			{
-				i--;
-			}
-		}
-
-		if (uio_mountDir(repository, mountPoint, uio_FSTYPE_ZIP,
-						 dirHandle, dirList->names[i], "/", autoMount,
-						 relativeFlags | uio_MOUNT_RDONLY,
-						 relativeHandle)
-			== nullptr)
-		{
-			uqm::log::warn("Warning: Could not mount '{}': {}.",
-						   dirList->names[i], uqm::strerror(errno));
-		}
+		mountArchive(dir, name, mountPoint, position, relative);
 	}
-	uio_DirList_free(dirList);
 }
 
-int loadIndices(uio_DirHandle* dir)
+static void
+mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
-	uio_DirList* indices;
-	int numLoaded = 0;
-
-	indices = uio_getDirList(dir, "", "\\.[rR][mM][pP]$",
-							 match_MATCH_REGEX);
-
-	if (indices != nullptr)
+	uqstl::error_code error {};
+	const uqstl::vector<uqstl::string> names {dir.list("", packageMatcher(), error)};
+	const uint32_t nameHash {crc32b(BASE_CONTENT_NAME)};
+	const auto base {uqstl::find_if(names.begin(), names.end(), [nameHash](const uqstl::string& name) {
+		return crc32b(name.c_str()) == nameHash;
+	})};
+	if (base == names.end())
 	{
-		int i;
-
-		for (i = 0; i < indices->numNames; i++)
-		{
-			uqm::log::debug("Loading resource index '{}'",
-							indices->names[i]);
-			LoadResourceIndex(*dir, indices->names[i], nullptr);
-			numLoaded++;
-		}
+		uqm::log::warn("Warning: Could not find '{}'.", BASE_CONTENT_NAME);
+		return;
 	}
-	uio_DirList_free(indices);
+	mountArchive(dir, *base, mountPoint, position, relative);
+}
+
+int loadIndices(const uqm::io::Directory& dir)
+{
+	uqstl::error_code error {};
+	int numLoaded {0};
+	for (const uqstl::string& name : dir.list("", *uqm::io::Matcher::create(uqm::io::Matcher::Kind::Regex, "\\.[rR][mM][pP]$"), error))
+	{
+		uqm::log::debug("Loading resource index '{}'", name);
+		LoadResourceIndex(dir, name.c_str(), nullptr);
+		numLoaded++;
+	}
 
 	/* Return the number of index files loaded. */
 	return numLoaded;
@@ -684,47 +570,38 @@ bool loadAddon(uqgsl::czstring addon)
 		return false;
 	}
 
-	uio_DirHandle *addonsDir, *addonDir;
-	int numLoaded;
-
-	addonsDir = uio_openDirRelative(contentDir, "addons", 0);
-	if (addonsDir == nullptr)
+	const uqstl::optional<uqm::io::Directory> addonsDir {contentDir->subdir("addons")};
+	if (!addonsDir)
 	{
-		// No addon dir found.
+		// If anything fails here, it will fail again later, so
+		// we'll just keep quiet about it for now
 		uqm::log::warn("Warning: There's no 'addons' "
 					   "directory in the 'content' directory;\n\t'--addon' "
 					   "options are ignored.");
 		return false;
 	}
-	addonDir = uio_openDirRelative(addonsDir, addon, 0);
-	if (addonDir == nullptr)
+	const uqstl::optional<uqm::io::Directory> addonDir {addonsDir->subdir(addon)};
+	if (!addonDir)
 	{
 		uqm::log::warn("Warning: Addon '{}' not found", c_str(addon));
-		uio_closeDir(addonsDir);
 		return false;
 	}
 
-	numLoaded = loadIndices(addonDir);
+	const int numLoaded {loadIndices(*addonDir)};
 	if (!numLoaded)
 	{
 		uqm::log::error("No RMP index files were loaded for addon '{}'", c_str(addon));
 	}
 
-	uio_closeDir(addonDir);
-	uio_closeDir(addonsDir);
-
-	return (bool)(numLoaded > 0);
+	return numLoaded > 0;
 }
 
 void prepareShadowAddons(uqstl::span<const std::string> addons)
 {
-	uio_DirHandle* addonsDir;
 	const char* shadowDirName = "shadow-content";
 
-	addonsDir = uio_openDirRelative(contentDir, "addons", 0);
-	// If anything fails here, it will fail again later, so
-	// we'll just keep quiet about it for now
-	if (addonsDir == nullptr)
+	const uqstl::optional<uqm::io::Directory> addonsDir {contentDir->subdir("addons")};
+	if (!addonsDir)
 	{
 		return;
 	}
@@ -736,35 +613,31 @@ void prepareShadowAddons(uqstl::span<const std::string> addons)
 			break;
 		}
 
-		uio_DirHandle* addonDir;
-		uio_DirHandle* shadowDir;
-
-		addonDir = uio_openDirRelative(addonsDir, c_str(addon), 0);
-		if (addonDir == nullptr)
+		const uqstl::optional<uqm::io::Directory> addonDir {addonsDir->subdir(c_str(addon))};
+		if (!addonDir)
 		{
 			continue;
 		}
 
 		// Mount addon's "shadow-content" on top of "/"
-		shadowDir = uio_openDirRelative(addonDir, shadowDirName, 0);
-		if (shadowDir)
+		if (const uqstl::optional<uqm::io::Directory> shadowDir {addonDir->subdir(shadowDirName)})
 		{
 			uqm::log::debug("Mounting shadow content of '{}' addon", c_str(addon));
-			mountDirZips(shadowDir, "/", uio_MOUNT_ABOVE, contentMountHandle);
+			mountDirZips(*shadowDir, "/", uqm::io::MountPosition::Above, *s_contentMount);
 			// Mount non-zipped shadow content
-			if (uio_transplantDir("/", shadowDir, uio_MOUNT_RDONLY | uio_MOUNT_ABOVE, contentMountHandle) == nullptr)
+			uqstl::error_code error {};
+			if (uqstl::optional<uqm::io::Mount> mount {g_fileSystem->mountTransplant("/", *shadowDir, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Above, &*s_contentMount, error)})
+			{
+				s_mounts.push_back(uqstl::move(*mount));
+			}
+			else
 			{
 				uqm::log::warn("Warning: Could not mount shadow content"
 							   " of '{}': {}.",
-							   c_str(addon), uqm::strerror(errno));
+							   c_str(addon), error.message());
 			}
-
-			uio_closeDir(shadowDir);
 		}
-		uio_closeDir(addonDir);
 	}
-
-	uio_closeDir(addonsDir);
 }
 
 void prepareAddons(uqstl::span<const uqstl::string> addons)
@@ -784,31 +657,15 @@ void prepareAddons(uqstl::span<const uqstl::string> addons)
 
 void unprepareAllDirs(void)
 {
-	if (saveDir)
-	{
-		uio_closeDir(saveDir);
-		saveDir = 0;
-	}
-	if (meleeDir)
-	{
-		uio_closeDir(meleeDir);
-		meleeDir = 0;
-	}
-	if (contentDir)
-	{
-		uio_closeDir(contentDir);
-		contentDir = 0;
-	}
-	if (configDir)
-	{
-		uio_closeDir(configDir);
-		configDir = 0;
-	}
-	if (scrShotDir)
-	{
-		uio_closeDir(scrShotDir);
-		scrShotDir = 0;
-	}
+	saveDir.reset();
+	meleeDir.reset();
+	contentDir.reset();
+	configDir.reset();
+	scrShotDir.reset();
+	s_mounts.clear();
+	s_addonsMount.reset();
+	s_contentMount.reset();
+	s_configMount.reset();
 }
 
 bool setGammaCorrection(float gamma)

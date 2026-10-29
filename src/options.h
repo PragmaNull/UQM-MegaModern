@@ -25,7 +25,7 @@
 #include "core/stl/stl.h"
 #include "port.h"
 #include "libs/compiler.h"
-#include "libs/uio.h"
+#include "libs/io/FileSystem.h"
 #include "uqm/setupmenu.h"
 
 #include "options/OptionDefs.h"
@@ -68,11 +68,13 @@ extern uqm::CheatAction optUpgradeArray[NUM_UPGRADES];
 
 #define GAMMA_SCALE 1000
 
-extern uio_DirHandle* contentDir;
-extern uio_DirHandle* configDir;
-extern uio_DirHandle* saveDir;
-extern uio_DirHandle* meleeDir;
-extern uio_DirHandle* scrShotDir;
+// The file system for all game files. It exists between initIO and uninitIO.
+extern uqstl::optional<uqm::io::FileSystem> g_fileSystem;
+extern uqstl::optional<uqm::io::Directory> contentDir;
+extern uqstl::optional<uqm::io::Directory> configDir;
+extern uqstl::optional<uqm::io::Directory> saveDir;
+extern uqstl::optional<uqm::io::Directory> meleeDir;
+extern uqstl::optional<uqm::io::Directory> scrShotDir;
 extern char baseContentPath[PATH_MAX];
 
 extern uqgsl::czstring contentDirPath;
@@ -123,7 +125,7 @@ void prepareShadowAddons(uqstl::span<const uqstl::string> addons);
 void unprepareAllDirs(void);
 
 bool loadAddon(uqgsl::czstring addon);
-int loadIndices(uio_DirHandle* baseDir);
+int loadIndices(const io::Directory& dir);
 [[nodiscard]] bool isAddonAvailable(uqgsl::czstring addon_name);
 
 bool setGammaCorrection(float gamma);
