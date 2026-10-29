@@ -12,21 +12,17 @@
 #include "libs/io/standard/File.h"
 
 #include <filesystem>
-#include <shared_mutex>
 #include <system_error>
 
 namespace uqm::io::standard
 {
 
-class FileSystem;
-class MountSource;
+class MountTable;
 
-// A directory path in a file system. The file system must stay alive while the directory is in use.
+// A directory path in a file system. It keeps the mounts alive.
 class Directory
 {
 public:
-	Directory(FileSystem& fileSystem, uqstl::string path);
-
 	// Returns nullopt and sets 'error' if the file cannot be opened.
 	[[nodiscard]] uqstl::optional<File> open(uqstl::string_view path, OpenMode mode, uqstl::error_code& error) const;
 	[[nodiscard]] uqstl::optional<FileInfo> stat(uqstl::string_view path) const;
@@ -41,16 +37,19 @@ public:
 
 	// The normal path from the root of the file system.
 	[[nodiscard]] const uqstl::string& path() const { return m_path; }
-	[[nodiscard]] FileSystem& fileSystem() const { return *m_fileSystem; }
 
 private:
+	friend class FileSystem;
+	friend class MountTable;
+	Directory(uqstl::shared_ptr<MountTable> table, uqstl::string path);
+
 	[[nodiscard]] uqstl::string resolve(uqstl::string_view path) const;
 
-	FileSystem* m_fileSystem {};
+	uqstl::shared_ptr<MountTable> m_table {};
 	uqstl::string m_path {};
 };
 
-// A mount in a file system. Destroying it removes the mount.
+// A mount in a file system. Destroying it removes the mount. It can outlive the file system.
 class Mount
 {
 public:
@@ -59,17 +58,17 @@ public:
 
 	Mount(const Mount&) = delete;
 	Mount& operator=(const Mount&) = delete;
-	Mount(Mount&& other) noexcept;
+	Mount(Mount&& other) noexcept = default;
 	Mount& operator=(Mount&& other) noexcept;
 
-	[[nodiscard]] bool isMounted() const { return m_fileSystem != nullptr; }
+	[[nodiscard]] bool isMounted() const { return !m_table.expired(); }
 	void unmount();
 
 private:
-	friend class FileSystem;
-	Mount(FileSystem& fileSystem, uint64_t id);
+	friend class MountTable;
+	Mount(const uqstl::shared_ptr<MountTable>& table, uint64_t id);
 
-	FileSystem* m_fileSystem {};
+	uqstl::weak_ptr<MountTable> m_table {};
 	uint64_t m_id {0};
 };
 
@@ -98,47 +97,7 @@ public:
 	[[nodiscard]] uqstl::optional<Mount> mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error);
 
 private:
-	friend class standard::Directory;
-	friend class standard::Mount;
-
-	struct MountEntry
-	{
-		uint64_t id {0};
-		uqstl::string mountPoint {};
-		uqstl::shared_ptr<const MountSource> source {};
-		uqstl::string sourcePath {};
-		Access access {Access::ReadOnly};
-	};
-
-	// An entry that one mount has.
-	struct Found
-	{
-		size_t index {0};
-		uqstl::string sourcePath {};
-		FileInfo info {};
-	};
-
-	[[nodiscard]] uqstl::optional<File> open(const uqstl::string& path, OpenMode mode, uqstl::error_code& error);
-	[[nodiscard]] uqstl::optional<FileInfo> stat(const uqstl::string& path) const;
-	[[nodiscard]] uqstl::vector<uqstl::string> list(const uqstl::string& path, const Matcher& matcher, uqstl::error_code& error) const;
-	uqstl::error_code makeDir(const uqstl::string& path);
-	uqstl::error_code remove(const uqstl::string& path);
-	uqstl::error_code rename(const uqstl::string& from, const uqstl::string& to);
-	void unmount(uint64_t id);
-
-	// These functions expect the caller to hold m_mutex.
-	[[nodiscard]] uqstl::optional<Found> findLocked(const uqstl::string& path) const;
-	[[nodiscard]] uqstl::optional<FileInfo> statLocked(const uqstl::string& path) const;
-	[[nodiscard]] bool isMountAncestorLocked(const uqstl::string& path) const;
-	// Returns the index of the highest writable mount above 'below' that has 'path'.
-	[[nodiscard]] uqstl::optional<size_t> writableMountLocked(const uqstl::string& path, size_t below) const;
-	uqstl::error_code makeParentsLocked(const MountEntry& mount, uqstl::string_view sourcePath) const;
-	[[nodiscard]] uqstl::optional<Mount> insertLocked(uqstl::vector<MountEntry> entries, MountPosition position, const Mount* relative, uqstl::error_code& error);
-
-	mutable uqstl::shared_mutex m_mutex {};
-	// The highest mount is first.
-	uqstl::vector<MountEntry> m_mounts {};
-	uint64_t m_nextId {1};
+	uqstl::shared_ptr<MountTable> m_table;
 };
 
 } // namespace uqm::io::standard

@@ -327,6 +327,27 @@ TEST_F(IoTest, DestroyingAMountUnmountsIt)
 	EXPECT_FALSE(m_fileSystem.root().exists("a.txt"));
 }
 
+TEST_F(IoTest, HandlesCanOutliveTheFileSystem)
+{
+	const fs::path host {hostDir("rw")};
+	writeHostFile(host / "a.txt", "a");
+
+	uqstl::optional<Directory> directory {};
+	Mount mount {};
+	{
+		FileSystem fileSystem {};
+		uqstl::error_code error {};
+		mount = fileSystem.mountDirectory("/", host, Access::ReadOnly, MountPosition::Top, nullptr, error).value();
+		directory = fileSystem.root();
+	}
+	EXPECT_EQ(readText(*directory, "a.txt"), "a");
+	mount.unmount();
+	EXPECT_FALSE(directory->exists("a.txt"));
+
+	directory.reset();
+	EXPECT_FALSE(mount.isMounted());
+}
+
 TEST_F(IoTest, FileCharacterAccessAndMove)
 {
 	const fs::path host {hostDir("rw")};

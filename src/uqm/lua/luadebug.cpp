@@ -16,6 +16,7 @@
 
 //#include <stdlib.h>
 //#include <lauxlib.h>
+#include <cassert>
 #include <string.h>
 
 #define LUAUQM_INTERNAL

@@ -92,23 +92,23 @@ int64_t toUnixTime(fs::file_time_type time)
 uqstl::ios_base::openmode openFlags(OpenMode mode, bool exists)
 {
 	uqstl::ios_base::openmode flags {};
-	if (!hasFlag(mode, OpenMode::Text))
+	if (!testAllBits(mode, OpenMode::Text))
 	{
 		flags |= uqstl::ios_base::binary;
 	}
-	if (!hasFlag(mode, OpenMode::Write))
+	if (!testAllBits(mode, OpenMode::Write))
 	{
 		return flags | uqstl::ios_base::in;
 	}
 
 	flags |= uqstl::ios_base::out;
-	if (hasFlag(mode, OpenMode::Append))
+	if (testAllBits(mode, OpenMode::Append))
 	{
 		flags |= uqstl::ios_base::app;
 	}
-	if (hasFlag(mode, OpenMode::Truncate) || !exists)
+	if (testAllBits(mode, OpenMode::Truncate) || !exists)
 	{
-		if (hasFlag(mode, OpenMode::Read))
+		if (testAllBits(mode, OpenMode::Read))
 		{
 			flags |= uqstl::ios_base::in | uqstl::ios_base::trunc;
 		}
@@ -192,14 +192,14 @@ uqstl::unique_ptr<Stream> DirectorySource::open(uqstl::string_view path, OpenMod
 		error = uqstl::make_error_code(uqstl::errc::is_a_directory);
 		return nullptr;
 	}
-	if (hasFlag(mode, OpenMode::Write))
+	if (testAllBits(mode, OpenMode::Write))
 	{
-		if (exists && hasFlag(mode, OpenMode::Create | OpenMode::Exclusive))
+		if (exists && testAllBits(mode, OpenMode::Create | OpenMode::Exclusive))
 		{
 			error = uqstl::make_error_code(uqstl::errc::file_exists);
 			return nullptr;
 		}
-		if (!exists && !hasFlag(mode, OpenMode::Create))
+		if (!exists && !testAllBits(mode, OpenMode::Create))
 		{
 			error = uqstl::make_error_code(uqstl::errc::no_such_file_or_directory);
 			return nullptr;

@@ -22,6 +22,8 @@ list(APPEND uqm_tests_lib_master_files
 	"../src/libs/io/standard/FileSystem.cpp"
 	"../src/libs/io/standard/FileSystem.h"
 	"../src/libs/io/standard/MountSource.h"
+	"../src/libs/io/standard/MountTable.cpp"
+	"../src/libs/io/standard/MountTable.h"
 	"../src/libs/io/standard/Stream.h"
 	"../src/libs/io/standard/ZipSource.cpp"
 	"../src/libs/io/standard/ZipSource.h"

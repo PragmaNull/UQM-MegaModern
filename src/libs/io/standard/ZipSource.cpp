@@ -447,7 +447,7 @@ uqstl::vector<uqstl::string> ZipSource::list(uqstl::string_view path, uqstl::err
 
 uqstl::unique_ptr<Stream> ZipSource::open(uqstl::string_view path, OpenMode mode, uqstl::error_code& error) const
 {
-	if (hasFlag(mode, OpenMode::Write))
+	if (testAllBits(mode, OpenMode::Write))
 	{
 		error = uqstl::make_error_code(uqstl::errc::read_only_file_system);
 		return nullptr;

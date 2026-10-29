@@ -349,7 +349,6 @@ void debugKeyPressed(void)
 		// problems.
 
 		// Interactive:
-		uio_debugInteractive(stdin, stdout, stderr);
 		luaUqm_debug_run();
 	}
 }

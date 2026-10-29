@@ -92,7 +92,7 @@ int copyFile(uio_DirHandle* srcDir, const char* srcName,
 										| O_BINARY
 #endif
 				   ,
-				   sb.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO));
+				   sb.st_mode);
 	if (dst == nullptr)
 	{
 		return copyError(src, nullptr, nullptr, nullptr, nullptr);

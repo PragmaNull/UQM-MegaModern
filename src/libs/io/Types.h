@@ -3,8 +3,9 @@
 #ifndef UQM_LIBS_IO_TYPES_H_
 #define UQM_LIBS_IO_TYPES_H_
 
+#include "core/types/enum.h"
+
 #include <cstdint>
-#include <type_traits>
 
 namespace uqm::io
 {
@@ -26,28 +27,7 @@ enum class OpenMode : uint8_t
 	Append = 1 << 6,
 };
 
-constexpr OpenMode operator|(OpenMode a, OpenMode b)
-{
-	using U = std::underlying_type_t<OpenMode>;
-	return static_cast<OpenMode>(static_cast<U>(a) | static_cast<U>(b));
-}
-
-constexpr OpenMode operator&(OpenMode a, OpenMode b)
-{
-	using U = std::underlying_type_t<OpenMode>;
-	return static_cast<OpenMode>(static_cast<U>(a) & static_cast<U>(b));
-}
-
-constexpr OpenMode& operator|=(OpenMode& a, OpenMode b)
-{
-	a = a | b;
-	return a;
-}
-
-constexpr bool hasFlag(OpenMode mode, OpenMode flag)
-{
-	return (mode & flag) == flag;
-}
+ENUM_BITWISE_OPS(OpenMode)
 
 enum class SeekFrom : uint8_t
 {
