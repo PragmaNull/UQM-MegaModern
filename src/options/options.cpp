@@ -13,6 +13,7 @@
 
 //#include "getopt/getopt.h"
 
+#include "options/SettingsCli.h"
 #ifdef NETPLAY
 #include "options/netoptions.h" // for NETPLAY options
 #endif
@@ -309,310 +310,54 @@ UQMOptions& UQMOptions::getInstance()
 
 uqstl::pair<int, bool> UQMOptions::parseArgs(uqstl::span<uqgsl::zstring> args)
 {
-
 	CLI::App app("A port of the UQM MegaMod depot to modern C++", "Ur-Quan Masters MegaModERN");
 	auto normalizedArgs {app.ensure_utf8(args.data())};
 
 	const OptionsStruct defaults {};
+	SettingsCli settingsCli {app, m_options};
 
-	const uqstl::map<std::string, EmulationMode> emulationModeOptions {
-		{"PC",  EmulationMode::PC		},
-		{"3DO", EmulationMode::Console3DO}
-	  };
-	const auto emulationModeTransformer {
-		CLI::CheckedTransformer {emulationModeOptions, CLI::ignore_case}
-	};
-
-	auto transformIntToPct = [](const std::string& val) {
-		const auto n {std::stoul(val)};
-		return fmt::format("{}", static_cast<float>(n) / 100.0f);
-	};
-	auto gameplayGroup {app.add_option_group("Gameplay", "General gameplay options")};
-
-	gameplayGroup->add_flag("-u,--subtitles,--nosubtitles{false}", m_options.subtitles.edit(), "Display subtitles (or not)")
-		->default_str(defaults.subtitles.toString());
-	gameplayGroup->add_flag("--safe,--safemode", m_options.safeMode.edit(), "Start the game in safe-mode. No configurations or other options will be loaded.")
+	// Options that are not saved settings.
+	CLI::App& gameplayGroup {settingsCli.group("Gameplay")};
+	gameplayGroup.add_flag("--safe,--safemode", m_options.safeMode.edit(), "Start the game in safe-mode. No configurations or other options will be loaded.")
 		->default_str(defaults.safeMode.toString());
-	gameplayGroup->add_option("-i,--intro", m_options.whichIntro.edit(), "Which intro/ending version to use.")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.whichIntro));
-	gameplayGroup->add_option("--cscan", m_options.whichCoarseScan.edit(), "Coarse-scan display, PC=text, 3DO=hieroglyphs")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.whichCoarseScan));
-	gameplayGroup->add_option("--menu", m_options.whichMenu.edit(), "Menu type, PC=text, 3DO=graphical")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.whichMenu));
-	gameplayGroup->add_option("--font", m_options.whichFonts.edit(), "Font types and colors")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.whichFonts));
-	gameplayGroup->add_option("--shield", m_options.whichShield.edit(), "Slave shield type; PC=static, 3DO=throbbing")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.whichShield));
-	gameplayGroup->add_option("--scroll", m_options.smoothScroll.edit(), "Scrolling animation during dialogue. PC=page-flip, 3DO=smooth scroll")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.smoothScroll));
+	gameplayGroup.add_flag("--melee", optSuperMelee, "Takes you straight to Super Melee after the splash screen.");
+	gameplayGroup.add_flag("--loadgame", optLoadGame, "Takes you straight to the Load Game sceen after the splash screen.");
 
-
-	// Rendering Options
-	auto renderGroup {app.add_option_group("Rendering", "Options which control the rendering and display of the game.")};
-
-	// Resolution CLI option does not actually work. Disable for now.
-	//auto resolutionAssignmentCallback = [&](const std::string& value) {
-	//	static const std::regex re {R"(^(\d+)[x,](\d+)$)"};
-	//	if (std::smatch match {}; std::regex_match(value, match, re))
-	//	{
-	//		m_options.resolution = Vec2u {
-	//			std::stoul(match[1]),
-	//			std::stoul(match[2])};
-	//	}
-	//	else
-	//	{
-	//		throw CLI::ValidationError {"--resolution", "Must be in WIDTHxHEIGHT format."};
-	//	}
-	//};
-
-	//renderGroup->add_option_function<std::string>("-r,--resolution", resolutionAssignmentCallback, "Screen resolution; higher resolutions only work with --opengl enabled.")
-	//	->default_str(fmt::format("{:(}", *defaults.resolution));
-	renderGroup->add_option("-f,--fullscreen", m_options.windowMode.edit(), "Fullscreen mode.")
-		->transform(CLI::CheckedTransformer {EnumNames<WindowMode>::map<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.windowMode));
-	renderGroup->add_flag("-o,-x{false},--opengl,--nogl{false}", m_options.opengl.edit(), "Use OpenGL (or not)")
-		->default_str(defaults.opengl.toString());
-	renderGroup->add_flag("-k,--keepaspectratio", m_options.keepAspectRatio.edit(), "Keep the aspect ratio")
-		->default_str(defaults.keepAspectRatio.toString());
-	renderGroup->add_option("-c,--scale", m_options.scaler.edit(), "Upscaler mode.Keep the aspect ratio.")
-		->transform(CLI::CheckedTransformer {EnumNames<ScalingMode>::map<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.scaler));
-	renderGroup->add_option("-b,--meleezoom", m_options.meleeScale.edit(), "Zoom mode in melee combat")
-		->transform(CLI::CheckedTransformer {EnumNames<MeleeScaleMode>::map<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.meleeScale));
-	renderGroup->add_flag("-s,--scanlines", m_options.scanlines.edit(), "Render simulated scanlines, like an old CRT")
-		->default_str(defaults.scanlines.toString());
-	renderGroup->add_flag("-p,--fps", m_options.showFps.edit(), "Render FPS overlay")
-		->default_str(defaults.showFps.toString());
-	renderGroup->add_option("-g,--gamma", m_options.gamma.edit(), "Gamma correction value, a value of 1.0 means no change")
-		->check(CLI::Range(0.1f, 10.0f))
-		->capture_default_str();
 	uqstl::vector<uqstl::string> rendererBackends {};
 	TFB_Pure_GetRendererBackends(rendererBackends);
 	uqstl::sort(rendererBackends.begin(), rendererBackends.end());
-	renderGroup->add_option("--renderer", m_options.graphicsBackend, "Rendering backend to use. If not specified, SDL will choose a default for us.")
+	settingsCli.group("Graphics")
+		.add_option("--renderer", m_options.graphicsBackend, "Rendering backend to use. If not specified, SDL will choose a default for us.")
 		->check(CLI::IsMember(rendererBackends, CLI::ignore_case));
 
-	// Directory options
-	auto pathGroup {app.add_option_group("Paths", "Paths to load content from, or load/save configuration and saves from.")};
-
-	pathGroup->add_option("-C,--configdir", m_options.configDir, "Path to the directory containing configuration files.")
+	CLI::App& pathGroup {settingsCli.group("Paths")};
+	pathGroup.add_option("-C,--configdir", m_options.configDir, "Path to the directory containing configuration files.")
 		->check(CLI::ExistingPath)
 		->capture_default_str();
-	pathGroup->add_option("-n,--contentdir", m_options.contentDir, "Path to the directory containing game content.")
+	pathGroup.add_option("-n,--contentdir", m_options.contentDir, "Path to the directory containing game content.")
 		->check(CLI::ExistingPath)
 		->capture_default_str();
-	pathGroup->add_option("--addondir", m_options.addonDir, "Path to the directory containing game addons.")
+	pathGroup.add_option("--addondir", m_options.addonDir, "Path to the directory containing game addons.")
 		->check(CLI::ExistingPath)
 		->capture_default_str();
-	pathGroup->add_option("-l,--logfile", m_options.logFile, "Path to the log file to create. If not specified, no log will be generated.")
+	pathGroup.add_option("-l,--logfile", m_options.logFile, "Path to the log file to create. If not specified, no log will be generated.")
 		->capture_default_str();
-	pathGroup->add_option("--addon", m_options.addons, "Addons to load from the addons directory. Any number may be specified")
+	pathGroup.add_option("--addon", m_options.addons, "Addons to load from the addons directory. Any number may be specified")
 		->expected(-1)
 		->capture_default_str();
 
-	// Audio Options
-	auto audioGroup {app.add_option_group("Audio", "Options which control the game's audio.")};
-
-
-	audioGroup->add_option("-M,--musicvol", m_options.musicVolumeScale, "Music volume")
-		->check(CLI::Range(0, 100))
-		->transform(transformIntToPct)
-		->default_str(fmt::format("{}", static_cast<int>(m_options.musicVolumeScale * 100)));
-	audioGroup->add_option("-S,--sfxvol", m_options.sfxVolumeScale, "SFX volume")
-		->check(CLI::Range(0, 100))
-		->transform(transformIntToPct)
-		->default_str(fmt::format("{}", static_cast<int>(m_options.sfxVolumeScale * 100)));
-	audioGroup->add_option("-T,--speechvol", m_options.speechVolumeScale, "Speech volume, 0-100")
-		->check(CLI::Range(0, 100))
-		->transform(transformIntToPct)
-		->default_str(fmt::format("{}", static_cast<int>(m_options.speechVolumeScale * 100)));
-	audioGroup->add_option("-q,--audioquality", m_options.soundQuality, "Audio quality")
-		->transform(CLI::CheckedTransformer {EnumNames<AudioQuality>::map<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.soundQuality));
-	audioGroup->add_option("--sound,--sounddriver", m_options.soundDriver, "Sound driver")
-		->transform(CLI::CheckedTransformer {EnumNames<AudioDriverType>::map<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.soundDriver));
-	audioGroup->add_flag("--stereosfx", m_options.stereoSFX, "Enable stereo sfx. Requires --sounddriver to be \"OpenAL\".")
-		->default_str(fmt::format("{}", *defaults.stereoSFX))
-		->check([&](const std::string&) -> std::string {
-			if (m_options.soundDriver != AudioDriverType::OpenAL)
-			{
-				return "--stereosfx option requires --sounddriver=OpenAL";
-			}
-			return ""; // no error
-		});
+	settingsCli.group("Cheats")
+		.add_flag("--unlockupgrades", m_options.unlockUpgrades.edit(), "Unlocks every upgrade for your flagship and landers)")
+		->default_str(defaults.unlockUpgrades.toString());
 
 #ifdef NETPLAY
 	m_netplayOptions.configureCommands(app);
 #endif
 
-	// MegaMod specific options
-	auto modGroup {app.add_option_group("MegaMod", "The following options are MegaMod specific.")};
-
-	modGroup->add_flag("--kohrstahp", m_options.cheatMode.edit(), "Stops Kohr-Ah advancing")
-		->default_str(m_options.cheatMode.toString());
-	uqstl::vector<GodModeFlags> specifiedGodModeFlags {};
-	modGroup->add_option("--precursormode,--godmode", specifiedGodModeFlags, "A comma-separated list of god-mode flags to enable. Can be any combindation") // todo: selected flags.
-		->expected(-1)
-		->transform(CLI::CheckedTransformer {EnumNames<GodModeFlags>::map<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.optGodModes));
-	modGroup->add_option("--timedilation", m_options.timeDilationPct.edit(), "Time dilation scale percentage. 100 = regular speed")
-		->check(CLI::Range(0, 1000))
-		->default_str(fmt::format("{}", *defaults.timeDilationPct));
-	modGroup->add_flag("--bubblewarp", m_options.bubbleWarp.edit(), "Instantaneous travel to any point on the Starmap")
-		->default_str(defaults.bubbleWarp.toString());
-	modGroup->add_flag("--unlockships", m_options.unlockShips.edit(), "Allows you to purchase ships that you can't normally acquire in the main game")
-		->default_str(defaults.unlockShips.toString());
-	modGroup->add_flag("--headstart", m_options.headStart.edit(), "Gives you an extra storage bay full of minerals, Fwiffo, and the Moonbase during a new game")
-		->default_str(defaults.headStart.toString());
-	modGroup->add_flag("--unlockupgrades", m_options.unlockUpgrades.edit(), "Unlocks every upgrade for your flagship and landers)")
-		->default_str(defaults.unlockUpgrades.toString());
-	modGroup->add_flag("--infiniteru", m_options.infiniteRU.edit(), "Gives you infinite R.U. as long as the cheat is on")
-		->default_str(defaults.infiniteRU.toString());
-	modGroup->add_flag("--skipintro", m_options.skipIntro.edit(), "Skips the intro and Logo fmv")
-		->default_str(defaults.skipIntro.toString());
-	modGroup->add_flag("--mainmenumusic", m_options.mainMenuMusic.edit(), "Switches the main menu music on/off")
-		->default_str(defaults.mainMenuMusic.toString());
-	modGroup->add_flag("--nebulae", m_options.nebulae.edit(), "Enables/Disables nebulae in star systems")
-		->default_str(defaults.nebulae.toString());
-	modGroup->add_flag("--orbitingplanets", m_options.orbitingPlanets.edit(), "Enables/Disables orbiting planets in star systems")
-		->default_str(defaults.orbitingPlanets.toString());
-	modGroup->add_flag("--texturedplanets", m_options.texturedPlanets.edit(), "Enables/Disables textured planets in star systems")
-		->default_str(defaults.texturedPlanets.toString());
-	modGroup->add_flag("--infinitefuel", m_options.infiniteFuel.edit(), "Infinite fuel in the main game")
-		->default_str(defaults.infiniteFuel.toString());
-	modGroup->add_flag("--partialpickup", m_options.partialPickup.edit(), "Enables/Disables partial mineral pickup")
-		->default_str(defaults.partialPickup.toString());
-	modGroup->add_flag("--submenu", m_options.submenu.edit(), "Enables/Disables mineral and star map keys submenu")
-		->default_str(defaults.submenu.toString());
-	modGroup->add_option("--dateformat", m_options.optDateFormat.edit(), "Date format to use in-game")
-		->transform(CLI::CheckedTransformer {EnumNames<DateFormat>::pairs<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.optDateFormat));
-	modGroup->add_flag("--infinitecredits", m_options.infiniteCredits.edit(), "Gives you infinite Melnorme Credits")
-		->default_str(defaults.infiniteCredits.toString());
-	modGroup->add_flag("--melee", optSuperMelee, "Takes you straight to Super Melee after the splash screen.");
-	modGroup->add_flag("--loadgame", optLoadGame, "Takes you straight to the Load Game sceen after the splash screen.");
-	modGroup->add_flag("--customborder", m_options.customBorder.edit(), "Enables the custom border frame")
-		->default_str(defaults.customBorder.toString());
-	modGroup->add_option("--seedtype", m_options.seedType.edit(), "Seed type for solar system generation. Default is \"None\", which is the same seed used in the original game. Changing this will change the layout of the entire star map")
-		->transform(CLI::CheckedTransformer {EnumNames<SeedType>::pairs<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.seedType));
-	modGroup->add_option("--customseed", m_options.customSeed, "Allows you to customize the internal seed used to generate the solar systems in-game.")
-		->capture_default_str();
-	modGroup->add_flag("--shipseed", m_options.shipSeed.edit(), "Seeds the ships assigned to each race. Uses --customseed value")
-		->default_str(defaults.shipSeed.toString());
-	modGroup->add_option("--spherecolors", m_options.sphereColors.edit(), "Color scheme for race spheres of influence in star map")
-		->transform(CLI::CheckedTransformer {EnumNames<SphereOfInfluenceColors>::pairs<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.sphereColors));
-	modGroup->add_option("--spacemusic", m_options.spaceMusic.edit(), "Enables localized music for aliens when you are in their sphere of influence")
-		->transform(CLI::CheckedTransformer {EnumNames<SphereOfInfluenceMusic>::pairs<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.spaceMusic));
-	modGroup->add_flag("--wholefuel", m_options.wholeFuel.edit(), "Enables the display of the whole fuel value in the ship status")
-		->default_str(defaults.wholeFuel.toString());
-	modGroup->add_flag("--dirjoystick", m_options.directionalJoystick.edit(), "Enables the use of directional joystick controls for Android")
-		->default_str(defaults.directionalJoystick.toString());
-	modGroup->add_option("--landerhold", m_options.landerHold.edit(), "Switch between PC/3DO max lander hold, pc=64, 3do=50")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.landerHold));
-	modGroup->add_option("--scrtrans", m_options.scrTrans.edit(), "Screen transitions, pc=instantaneous, 3do=crossfade")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.scrTrans));
-	modGroup->add_option("--difficulty", m_options.optDiffChooser.edit(), "Game difficulty.")
-		->transform(CLI::CheckedTransformer {EnumNames<Difficulty>::pairs<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.optDiffChooser));
-	uqstl::vector<FuelRangeDisplay> specifiedFuelRangeDisplayFlags {};
-	modGroup->add_option("--fuelrange", specifiedFuelRangeDisplayFlags, "A comma-separated list of fuel range display flags to enable. Can be any combindation") // todo: selected flags.
-		->expected(-1)
-		->transform(CLI::CheckedTransformer {EnumNames<FuelRangeDisplay>::pairs<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.optGodModes));
-	modGroup->add_flag("--extended", m_options.extended.edit(), "Enables Extended Edition features")
-		->default_str(defaults.extended.toString());
-	modGroup->add_option("--nomad", m_options.nomad.edit(), "Enables 'Nomad Mode' (No Starbase)")
-		->transform(CLI::CheckedTransformer {EnumNames<NomadMode>::pairs<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.nomad));
-	modGroup->add_flag("--gameover", m_options.gameOver.edit(), "Enables Game Over cutscenes")
-		->default_str(defaults.gameOver.toString());
-	modGroup->add_flag("--shipdirectionip", m_options.shipDirectionIP.edit(), "Enable NPC ships in IP to face their direction of travel")
-		->default_str(defaults.shipDirectionIP.toString());
-	modGroup->add_flag("--hazardcolors", m_options.hazardColors.edit(), "Enable colored text based on hazard severity when viewing planetary scans")
-		->default_str(defaults.hazardColors.toString());
-	modGroup->add_flag("--orzcompfont", m_options.orzCompFont.edit(), "Enable alternate font for untranslatable Orz speech")
-		->default_str(defaults.orzCompFont.toString());
-	modGroup->add_flag("--smartautopilot", m_options.smartAutoPilot.edit(), "Activating Auto-Pilot within Solar System pilots the Flagship out via the shortest route.")
-		->default_str(defaults.smartAutoPilot.toString());
-	modGroup->add_option("--controllertype", m_options.optControllerType.edit(), "Controller type to use for input.")
-		->transform(CLI::CheckedTransformer {EnumNames<ControllerType>::pairs<std::string>(), CLI::ignore_case})
-		->default_str(fmt::format("{:s}", *defaults.optControllerType));
-	modGroup->add_option("--tintplansphere", m_options.tintPlanSphere.edit(), "Tint the planet sphere with scan color during scan")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.tintPlanSphere));
-	modGroup->add_option("--planetstyle", m_options.planetStyle.edit(), "Choose between PC or 3DO planet color and shading")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.planetStyle));
-	//	uqm::log::info("  --starbackground : Set the background stars in solar system between PC, 3DO, UQM, or HD-mod patterns (default: pc)");
-	modGroup->add_option("--scanstyle", m_options.scanStyle.edit(), "Choose between PC or 3DO scanning types")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.scanStyle));
-	modGroup->add_flag("--nonstoposcill", m_options.nonStopOscill.edit(), "Oscilloscope uses both voice and music data")
-		->default_str(defaults.nonStopOscill.toString());
-	modGroup->add_option("--scopestyle", m_options.scopeStyle.edit(), "Choose between either the PC or 3DO oscilloscope type")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.scopeStyle));
-	modGroup->add_flag("--animhyperstars", m_options.hyperStars.edit(), "HD only - Use old HD-mod animated HyperSpace stars")
-		->default_str(defaults.hyperStars.toString());
-	modGroup->add_option("--landerview", m_options.landerStyle.edit(), "Choose between either the PC or 3DO lander view")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.landerStyle));
-	//	uqm::log::info("  --planettexture : Choose between either 3DO or UQM planet map texture [when not using custom seed] (default: 3do)");
-	modGroup->add_option("--sisenginecolor", m_options.flagshipColor.edit(), "Choose between either the PC or 3DO Flagship engine color")
-		->transform(emulationModeTransformer)
-		->default_str(fmt::format("{:s}", *defaults.flagshipColor));
-	modGroup->add_flag("--nohqencounters", m_options.noHQEncounters.edit(), "Disables HyperSpace encounters")
-		->default_str(defaults.noHQEncounters.toString());
-	modGroup->add_flag("--decleanse", m_options.deCleansing.edit(), "Moves the Death March 100 years ahead from its actual start date [does not work once the Death March has started]")
-		->default_str(defaults.deCleansing.toString());
-	modGroup->add_flag("--nomeleeobstacles", m_options.meleeObstacles.edit(), "Removes the planet and asteroids from Super Melee")
-		->default_str(defaults.meleeObstacles.toString());
-	modGroup->add_flag("--showvisitstars", m_options.showVisitedStars.edit(), "Dim visited stars on the StarMap and encase the star name in parenthesis")
-		->default_str(defaults.showVisitedStars.toString());
-	modGroup->add_flag("--unscaledstarsystem", m_options.unscaledStarSystem.edit(), "Show the classic HD-mod Beta Star System view")
-		->default_str(defaults.unscaledStarSystem.toString());
-	//	uqm::log::info("  --spheretype : Choose between PC, 3DO, or UQM scan sphere styles", defaults.sphereType.toString());
-	modGroup->add_option("--nebulaevol", m_options.nebulaevol.edit(), "Nebula volume scale") // TODO Pragma null why 0-50? Make all music/audoi volume options 0-100 for consistency!
-		->check(CLI::Range(0, 50))
-		->capture_default_str();
-	modGroup->add_flag("--slaughtermode", m_options.slaughterMode.edit(), "Affect a race's SOI by destroying their ships in battle")
-		->default_str(defaults.slaughterMode.toString());
-	modGroup->add_flag("--advancedautopilot", m_options.advancedAutoPilot.edit(), "Finds the route that uses the least amount of fuel through HyperSpace or QuasiSpace and Auto-Pilots the Flagship on the best route")
-		->default_str(defaults.advancedAutoPilot.toString());
-	modGroup->add_flag("--meleetooltips", m_options.meleeToolTips.edit(), "Show SC1-style ship description tooltips at the bottom of the Super-Melee screen when picking a ship for your fleet")
-		->default_str(defaults.meleeToolTips.toString());
-	//	uqm::log::info("  --musicresume : Resumes the music in UQM where it last left off : 0: Off | 1: 5 Minutes | 2: Indefinite (default: 0)");
-	//	uqm::log::info("  --windowtype : Choose between DOS, 3DO or UQM window types : 0: DOS | 1: 3DO | 2: UQM (default: 0)");
-	modGroup->add_flag("--scatterelements", m_options.scatterElements.edit(), "Scatter a percentage of the elements in the lander's cargo hold onto the planet's surface when the lander explodes")
-		->default_str(defaults.scatterElements.toString());
-	modGroup->add_flag("--showupgrades", m_options.showUpgrades.edit(), "Show lander upgrade graphics when exploring planets")
-		->default_str(defaults.showUpgrades.toString());
-	modGroup->add_flag("--fleetpointsys", m_options.fleetPointSys.edit(), "Restrict the amount of ships that can be purchased via their melee points")
-		->default_str(defaults.fleetPointSys.toString());
-	modGroup->add_flag("--shipstore", m_options.shipStore.edit(), "Enable a storage queue accessed at the shipyard")
-		->default_str(defaults.shipStore.toString());
-	modGroup->add_flag("--captainnames", m_options.captainNames.edit(), "Display captain names at shipyard")
-		->default_str(defaults.captainNames.toString());
-	modGroup->add_flag("--dosmenus", m_options.dosMenus.edit(), "Display DOS style menu in shipyard in place of SIS window")
-		->default_str(defaults.dosMenus.toString());
-
-
 	try
 	{
 		app.parse(args.size(), args.data());
+		settingsCli.apply();
 	}
 	catch (const CLI::CallForHelp& e)
 	{
@@ -627,38 +372,6 @@ uqstl::pair<int, bool> UQMOptions::parseArgs(uqstl::span<uqgsl::zstring> args)
 	catch (const CLI::ParseError& e)
 	{
 		return {app.exit(e), true};
-	}
-
-	// Collect selected god mode flags into a final value
-	if (!specifiedGodModeFlags.empty())
-	{
-		for (const GodModeFlags flag : specifiedGodModeFlags)
-		{
-			if (m_options.optGodModes.set)
-			{
-				m_options.optGodModes.value |= flag;
-			}
-			else
-			{
-				m_options.optGodModes = flag;
-			}
-		}
-	}
-
-	// Collect selected fuel display flags into a final value
-	if (!specifiedFuelRangeDisplayFlags.empty())
-	{
-		for (const FuelRangeDisplay flag : specifiedFuelRangeDisplayFlags)
-		{
-			if (m_options.optFuelRange.set)
-			{
-				m_options.optFuelRange.value |= flag;
-			}
-			else
-			{
-				m_options.optFuelRange = flag;
-			}
-		}
 	}
 
 	return {EXIT_SUCCESS, false};

@@ -72,7 +72,7 @@ bool saveUserSettings(const OptionsStruct& options)
 
 void applyUserSettings(OptionsStruct& options)
 {
-	if (options.alwaysOpenGL)
+	if (options.alwaysOpenGL && !options.opengl.hasCommandLineOverride())
 	{
 		options.opengl.value = true;
 	}

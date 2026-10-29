@@ -53,6 +53,7 @@ find_package(magic_enum REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(utf8proc REQUIRED)
 find_package(yyjson REQUIRED)
+find_package(CLI11 REQUIRED)
 
 # GTest::gtest and GTest::gtest_main are the modern imported targets
 target_link_libraries(UQM_Tests
@@ -66,6 +67,7 @@ target_link_libraries(UQM_Tests
         spdlog::spdlog
         utf8proc::utf8proc
         yyjson::yyjson
+        CLI11::CLI11
 
 )
 

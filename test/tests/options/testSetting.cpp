@@ -31,16 +31,34 @@ bool isPercent(const int& value)
 
 struct TestSettings : SettingsRegistry
 {
-	Setting<bool> enabled {*this, "general.enabled", false, "A bool."};
-	Setting<int> percent {*this, "general.percent", 50, "An int with a validator.", isPercent};
-	Setting<float> scale {*this, "audio.scale", 1.0f, "A float."};
-	Setting<uqstl::string> name {*this, "name", "default", "A top-level string."};
+	Setting<bool> enabled {
+		*this, {.key = "general.enabled", .description = "A bool.", .cli = "--enabled"},
+		 false
+	  };
+	Setting<int> percent {
+		*this, {.key = "general.percent", .description = "An int with a validator.", .cli = "--percent"},
+		  50, isPercent
+	   };
+	Setting<float> scale {
+		*this, {.key = "audio.scale", .description = "A float."},
+		  1.0f
+	  };
+	Setting<uqstl::string> name {
+		*this, {.key = "name", .description = "A top-level string."},
+		  "default"
+	   };
 	Setting<Vec2u> size {
-		*this, "graphics.window.size", Vec2u {640, 480},
-		"A nested Vec2u."
-	 };
-	Setting<Color> color {*this, "graphics.color", Color::Red, "An enum."};
-	Setting<Flags> flags {*this, "graphics.flags", Flags::None, "A flag enum."};
+		*this, {.key = "graphics.window.size", .description = "A nested Vec2u."},
+		  Vec2u {640,							  480							 }
+	  };
+	Setting<Color> color {
+		*this, {.key = "graphics.color", .description = "An enum."},
+		 Color::Red
+	   };
+	Setting<Flags> flags {
+		*this, {.key = "graphics.flags", .description = "A flag enum."},
+		 Flags::None
+	};
 };
 
 } // namespace
@@ -168,17 +186,27 @@ TEST(SettingTest, CommandLineOverrideWinsOverFile)
 {
 	TestSettings settings {};
 	settings.percent = 10;
-	settings.captureCommandLine();
+	settings.percent.markCommandLine();
 
 	ASSERT_TRUE(settings.fromJson(R"({"general": {"percent": 80}})"));
 	EXPECT_EQ(*settings.percent, 10);
+	EXPECT_TRUE(settings.percent.hasCommandLineOverride());
+}
+
+TEST(SettingTest, CommandLineValueEqualToDefaultWinsOverFile)
+{
+	TestSettings settings {};
+	settings.percent.markCommandLine();
+
+	ASSERT_TRUE(settings.fromJson(R"({"general": {"percent": 80}})"));
+	EXPECT_EQ(*settings.percent, 50);
 }
 
 TEST(SettingTest, CommandLineOverrideIsNotSaved)
 {
 	TestSettings settings {};
 	settings.percent = 10;
-	settings.captureCommandLine();
+	settings.percent.markCommandLine();
 	ASSERT_TRUE(settings.fromJson(R"({"general": {"percent": 80}})"));
 
 	TestSettings saved {};
@@ -190,8 +218,9 @@ TEST(SettingTest, ChangeAfterCommandLineOverrideIsSaved)
 {
 	TestSettings settings {};
 	settings.percent = 10;
-	settings.captureCommandLine();
+	settings.percent.markCommandLine();
 	settings.percent = 30;
+	EXPECT_FALSE(settings.percent.hasCommandLineOverride());
 
 	TestSettings saved {};
 	ASSERT_TRUE(saved.fromJson(settings.toJson()));
@@ -202,13 +231,61 @@ TEST(SettingTest, ResetRestoresDefaults)
 {
 	TestSettings settings {};
 	settings.percent = 10;
-	settings.captureCommandLine();
+	settings.percent.markCommandLine();
 	settings.resetAll();
 	EXPECT_EQ(*settings.percent, 50);
 	EXPECT_FALSE(settings.percent.set);
 
 	ASSERT_TRUE(settings.fromJson(R"({"general": {"percent": 80}})"));
 	EXPECT_EQ(*settings.percent, 80);
+}
+
+TEST(SettingTest, ParsesTextForEachType)
+{
+	TestSettings settings {};
+	EXPECT_TRUE(settings.enabled.parseText("true"));
+	EXPECT_TRUE(*settings.enabled);
+	EXPECT_TRUE(settings.percent.parseText("75"));
+	EXPECT_EQ(*settings.percent, 75);
+	EXPECT_TRUE(settings.scale.parseText("0.5"));
+	EXPECT_FLOAT_EQ(*settings.scale, 0.5f);
+	EXPECT_TRUE(settings.name.parseText("text"));
+	EXPECT_EQ(*settings.name, "text");
+	EXPECT_TRUE(settings.size.parseText("800x600"));
+	EXPECT_EQ(*settings.size, (Vec2u {800, 600}));
+	EXPECT_TRUE(settings.color.parseText("blue"));
+	EXPECT_EQ(*settings.color, Color::Blue);
+	EXPECT_TRUE(settings.color.parseText("1"));
+	EXPECT_EQ(*settings.color, Color::Green);
+	EXPECT_TRUE(settings.flags.parseText("3"));
+	EXPECT_EQ(*settings.flags, Flags::A | Flags::B);
+}
+
+TEST(SettingTest, RejectsInvalidText)
+{
+	TestSettings settings {};
+	EXPECT_FALSE(settings.percent.parseText("abc"));
+	EXPECT_FALSE(settings.percent.parseText("150"));
+	EXPECT_FALSE(settings.size.parseText("800"));
+	EXPECT_FALSE(settings.color.parseText("Purple"));
+	EXPECT_FALSE(settings.color.parseText("7"));
+	EXPECT_FALSE(settings.flags.parseText("4"));
+	EXPECT_EQ(*settings.percent, 50);
+	EXPECT_EQ(*settings.color, Color::Red);
+}
+
+TEST(SettingTest, DescribesCommandLineValues)
+{
+	TestSettings settings {};
+	EXPECT_TRUE(settings.enabled.isFlag());
+	EXPECT_FALSE(settings.percent.isFlag());
+	EXPECT_EQ(settings.percent.cliNames(), "--percent");
+	EXPECT_TRUE(settings.scale.cliNames().empty());
+	EXPECT_EQ(settings.percent.defaultText(), "50");
+	EXPECT_EQ(settings.size.defaultText(), "640x480");
+	EXPECT_EQ(settings.color.defaultText(), "Red");
+	EXPECT_EQ(settings.color.valueNames(), (uqstl::vector<uqstl::string> {"Red", "Green", "Blue"}));
+	EXPECT_TRUE(settings.percent.valueNames().empty());
 }
 
 TEST(OptionsSettingsTest, KeysAreUniqueAndDescribed)
@@ -231,6 +308,40 @@ TEST(OptionsSettingsTest, KeysAreUniqueAndDescribed)
 			EXPECT_FALSE(key.starts_with(uqstl::string {other} + ".")) << other << " is a prefix of " << key;
 		}
 	}
+}
+
+TEST(OptionsSettingsTest, CommandLineNamesAreUnique)
+{
+	const OptionsStruct options {};
+	uqstl::vector<uqstl::string> seen {};
+	for (const SettingBase* setting : options.settings())
+	{
+		uqstl::string_view names {setting->cliNames()};
+		while (!names.empty())
+		{
+			const size_t comma {names.find(',')};
+			uqstl::string name {names.substr(0, comma)};
+			name = name.substr(0, name.find('{'));
+			EXPECT_EQ(uqstl::count(seen.begin(), seen.end(), name), 0) << name;
+			seen.push_back(name);
+			names = comma == uqstl::string_view::npos ? uqstl::string_view {} : names.substr(comma + 1);
+		}
+	}
+	EXPECT_FALSE(seen.empty());
+}
+
+TEST(OptionsSettingsTest, EmulationModeAcceptsOnlyPcAnd3do)
+{
+	OptionsStruct options {};
+	EXPECT_EQ(options.whichFonts.valueNames(), (uqstl::vector<uqstl::string> {"PC", "3DO"}));
+	EXPECT_TRUE(options.whichFonts.parseText("3do"));
+	EXPECT_EQ(*options.whichFonts, EmulationMode::Console3DO);
+	EXPECT_FALSE(options.whichFonts.parseText("None"));
+
+	ASSERT_TRUE(options.fromJson(R"({"interface": {"fontStyle": "None"}})"));
+	EXPECT_EQ(*options.whichFonts, EmulationMode::Console3DO);
+	ASSERT_TRUE(options.fromJson(R"({"interface": {"fontStyle": "PC"}})"));
+	EXPECT_EQ(*options.whichFonts, EmulationMode::PC);
 }
 
 TEST(OptionsSettingsTest, DefaultsRoundTrip)

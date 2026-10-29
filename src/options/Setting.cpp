@@ -11,9 +11,8 @@
 namespace uqm
 {
 
-SettingBase::SettingBase(SettingsRegistry& registry, uqgsl::czstring key, uqgsl::czstring description)
-	: m_key {key}
-	, m_description {description}
+SettingBase::SettingBase(SettingsRegistry& registry, const SettingInfo& info)
+	: m_info {info}
 {
 	registry.add(*this);
 }
@@ -107,6 +106,27 @@ uqstl::optional<Vec2u> JsonCodec<Vec2u>::decode(yyjson_val* val)
 	return Vec2u {static_cast<uint32_t>(yyjson_get_uint(x)), static_cast<uint32_t>(yyjson_get_uint(y))};
 }
 
+uqstl::optional<Vec2u> TextCodec<Vec2u>::fromText(uqstl::string_view text)
+{
+	const size_t separator {text.find_first_of("x,")};
+	if (separator == uqstl::string_view::npos)
+	{
+		return uqstl::nullopt;
+	}
+	Vec2u value {};
+	if (parseStr(text.substr(0, separator), value.x) != uqstl::errc {}
+		|| parseStr(text.substr(separator + 1), value.y) != uqstl::errc {})
+	{
+		return uqstl::nullopt;
+	}
+	return value;
+}
+
+uqstl::string TextCodec<Vec2u>::toText(const Vec2u& value)
+{
+	return fmt::format("{}x{}", value.x, value.y);
+}
+
 yyjson_mut_val* writeEnum(yyjson_mut_doc* doc, uqstl::string_view name, int64_t value)
 {
 	if (name.empty())
@@ -152,14 +172,6 @@ SettingBase* SettingsRegistry::find(uqstl::string_view key) const noexcept
 		}
 	}
 	return nullptr;
-}
-
-void SettingsRegistry::captureCommandLine()
-{
-	for (SettingBase* setting : m_settings)
-	{
-		setting->captureCommandLine();
-	}
 }
 
 void SettingsRegistry::resetAll()

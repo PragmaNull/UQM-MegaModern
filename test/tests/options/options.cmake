@@ -9,6 +9,8 @@ list(APPEND uqm_tests_options_master_files
 	"../src/options/options.h"
 	"../src/options/Setting.cpp"
 	"../src/options/Setting.h"
+	"../src/options/SettingsCli.cpp"
+	"../src/options/SettingsCli.h"
 )
 
 ############################################################
@@ -17,6 +19,7 @@ set(uqm_tests_options_files
 	"tests/options/options.cmake"
 	"tests/options/testOptions.cpp"
 	"tests/options/testSetting.cpp"
+	"tests/options/testSettingsCli.cpp"
 )
 
 source_group("tests\\options" FILES ${uqm_tests_options_files})

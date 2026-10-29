@@ -86,112 +86,397 @@ struct OptionsStruct : SettingsRegistry
 	uqstl::string graphicsBackend {}; // SDL renderer backend hint passed to TFB_InitGraphics.
 
 	// Commandline and user config options
-	Setting<bool> opengl {*this, "graphics.useOpenGL", false, "Force OpenGL renderer on SDL1 builds; ignored on SDL2."};
-	Setting<bool> alwaysOpenGL {*this, "graphics.alwaysOpenGL", false, "Use OpenGL even at native resolutions."};
+	Setting<bool> opengl {
+		*this, {.key = "graphics.useOpenGL", .description = "Force OpenGL renderer on SDL1 builds; ignored on SDL2.", .cli = "-o,-x{false},--opengl,--nogl{false}"},
+		 false
+	  };
+	Setting<bool> alwaysOpenGL {
+		*this, {.key = "graphics.alwaysOpenGL", .description = "Use OpenGL even at native resolutions."},
+		  false
+	   };
 	Setting<Vec2u> resolution {
-		*this, "graphics.resolution", Vec2u {640, 480},
-			"Window/framebuffer pixel dimensions when not using a blowup scaler."
+		*this, {.key = "graphics.resolution", .description = "Window/framebuffer pixel dimensions when not using a blowup scaler."},
+		 Vec2u {640,							 480																					}
 	 };
-	Setting<WindowMode> windowMode {*this, "graphics.windowMode", WindowMode::Fullscreen, "Windowed, windowed-fullscreen, or exclusive fullscreen."};
-	Setting<bool> scanlines {*this, "graphics.scanlines", false, "Overlay a scanline effect over the rendered frame."};
-	Setting<ScalingMode> scaler {*this, "graphics.scaler", ScalingMode::None, "Post-process pixel scaler applied when blitting to the display."};
-	Setting<bool> showFps {*this, "graphics.showFps", false, "Draw an on-screen frames-per-second counter."};
-	Setting<bool> keepAspectRatio {*this, "graphics.keepAspectRatio", false, "Letterbox/pillarbox to preserve the native 4:3 aspect ratio."};
-	Setting<float> gamma {*this, "graphics.gamma", 1.0f, "Display gamma correction value applied via the GPU or SDL.", settings::isValidGamma};
-	Setting<AudioDriverType> soundDriver {*this, "audio.driver", AudioDriverType::MixSDL, "Backend used for audio output (MixSDL, OpenAL, or silence)."};
-	Setting<AudioQuality> soundQuality {*this, "audio.quality", AudioQuality::High, "Resampling quality level for the audio mixer."};
-	Setting<bool> use3doMusic {*this, "audio.music3do", true, "Play the 3DO remixed music tracks instead of the PC MIDI/MOD originals."};
-	Setting<bool> useRemixMusic {*this, "audio.musicRemix", false, "Play the Precursors fan-remix music pack when available."};
-	Setting<bool> useSpeech {*this, "audio.speech", true, "Enable voiced dialogue during alien conversations."};
-	Setting<EmulationMode> whichCoarseScan {*this, "visuals.coarseScanStyle", EmulationMode::PC, "Planetary coarse-scan display: iconic (PC) or full image (3DO)."};
-	Setting<EmulationMode> whichMenu {*this, "interface.menuStyle", uqm::EmulationMode::PC, "Main menu layout: text list (PC) or animated orb (3DO)."};
-	Setting<EmulationMode> whichFonts {*this, "interface.fontStyle", uqm::EmulationMode::PC, "Text rendering style: flat PC fonts or gradient 3DO fonts."};
-	Setting<EmulationMode> whichIntro {*this, "interface.introStyle", uqm::EmulationMode::PC, "Introduction sequence: slides (PC) or FMV movies (3DO)."};
-	Setting<EmulationMode> whichShield {*this, "visuals.shieldStyle", uqm::EmulationMode::PC, "Flagship shield appearance: static (PC) or animated pulse (3DO)."};
-	Setting<EmulationMode> smoothScroll {*this, "visuals.smoothScroll", uqm::EmulationMode::PC, "Starmap/comm scrolling: stepped (PC) or smooth (3DO)."};
-	Setting<MeleeScaleMode> meleeScale {*this, "graphics.meleeScale", MeleeScaleMode::Smooth, "Scaling algorithm used when zooming the melee battle view."};
-	Setting<bool> subtitles {*this, "interface.subtitles", true, "Show text subtitles alongside voiced alien dialogue."};
-	Setting<bool> stereoSFX {*this, "audio.positionalSfx", false, "Pan sound effects in stereo based on screen position."};
-	Setting<float> musicVolumeScale {*this, "audio.musicVolume", 1.0f, "Master volume multiplier for background music (0–1).", settings::isUnitInterval};
-	Setting<float> sfxVolumeScale {*this, "audio.sfxVolume", 1.0f, "Master volume multiplier for sound effects (0–1).", settings::isUnitInterval};
-	Setting<float> speechVolumeScale {*this, "audio.speechVolume", 1.0f, "Master volume multiplier for speech audio (0–1).", settings::isUnitInterval};
+	Setting<WindowMode> windowMode {
+		*this, {.key = "graphics.windowMode", .description = "Windowed, windowed-fullscreen, or exclusive fullscreen.", .cli = "-f,--fullscreen"},
+		   WindowMode::Fullscreen
+	 };
+	Setting<bool> scanlines {
+		*this, {.key = "graphics.scanlines", .description = "Render simulated scanlines, like an old CRT.", .cli = "-s,--scanlines"},
+		  false
+	   };
+	Setting<ScalingMode> scaler {
+		*this, {.key = "graphics.scaler", .description = "Post-process pixel scaler applied when blitting to the display.", .cli = "-c,--scale"},
+		  ScalingMode::None
+	   };
+	Setting<bool> showFps {
+		*this, {.key = "graphics.showFps", .description = "Draw an on-screen frames-per-second counter.", .cli = "-p,--fps"},
+		  false
+	   };
+	Setting<bool> keepAspectRatio {
+		*this, {.key = "graphics.keepAspectRatio", .description = "Letterbox/pillarbox to preserve the native 4:3 aspect ratio.", .cli = "-k,--keepaspectratio"},
+		  false
+	   };
+	Setting<float> gamma {
+		*this, {.key = "graphics.gamma", .description = "Gamma correction value, a value of 1.0 means no change.", .cli = "-g,--gamma"},
+		 1.0f, settings::isValidGamma
+	 };
+	Setting<AudioDriverType> soundDriver {
+		*this, {.key = "audio.driver", .description = "Backend used for audio output (MixSDL, OpenAL, or silence).", .cli = "--sound,--sounddriver"},
+		  AudioDriverType::MixSDL
+	 };
+	Setting<AudioQuality> soundQuality {
+		*this, {.key = "audio.quality", .description = "Resampling quality level for the audio mixer.", .cli = "-q,--audioquality"},
+		 AudioQuality::High
+	   };
+	Setting<bool> use3doMusic {
+		*this, {.key = "audio.music3do", .description = "Play the 3DO remixed music tracks instead of the PC MIDI/MOD originals."},
+			true
+	};
+	Setting<bool> useRemixMusic {
+		*this, {.key = "audio.musicRemix", .description = "Play the Precursors fan-remix music pack when available."},
+		   false
+	};
+	Setting<bool> useSpeech {
+		*this, {.key = "audio.speech", .description = "Enable voiced dialogue during alien conversations."},
+		 true
+	 };
+	Setting<EmulationMode> whichCoarseScan {
+		*this, {.key = "visuals.coarseScanStyle", .description = "Coarse-scan display, PC=text, 3DO=hieroglyphs.", .cli = "--cscan"},
+		  EmulationMode::PC
+	   };
+	Setting<EmulationMode> whichMenu {
+		*this, {.key = "interface.menuStyle", .description = "Menu type, PC=text, 3DO=graphical.", .cli = "--menu"},
+		 uqm::EmulationMode::PC
+	   };
+	Setting<EmulationMode> whichFonts {
+		*this, {.key = "interface.fontStyle", .description = "Font types and colors.", .cli = "--font"},
+		 uqm::EmulationMode::PC
+	   };
+	Setting<EmulationMode> whichIntro {
+		*this, {.key = "interface.introStyle", .description = "Which intro/ending version to use.", .cli = "-i,--intro"},
+		  uqm::EmulationMode::PC
+	};
+	Setting<EmulationMode> whichShield {
+		*this, {.key = "visuals.shieldStyle", .description = "Slave shield type; PC=static, 3DO=throbbing.", .cli = "--shield"},
+		 uqm::EmulationMode::PC
+	   };
+	Setting<EmulationMode> smoothScroll {
+		*this, {.key = "visuals.smoothScroll", .description = "Scrolling animation during dialogue. PC=page-flip, 3DO=smooth scroll.", .cli = "--scroll"},
+		   uqm::EmulationMode::PC
+	 };
+	Setting<MeleeScaleMode> meleeScale {
+		*this, {.key = "graphics.meleeScale", .description = "Scaling algorithm used when zooming the melee battle view.", .cli = "-b,--meleezoom"},
+		 MeleeScaleMode::Smooth
+	   };
+	Setting<bool> subtitles {
+		*this, {.key = "interface.subtitles", .description = "Show text subtitles alongside voiced alien dialogue.", .cli = "-u,--subtitles,--nosubtitles{false}"},
+			true
+	};
+	Setting<bool> stereoSFX {
+		*this, {.key = "audio.positionalSfx", .description = "Enable stereo sfx. Requires --sounddriver to be \"OpenAL\".", .cli = "--stereosfx"},
+		   false
+	};
+	Setting<float> musicVolumeScale {
+		*this, {.key = "audio.musicVolume", .description = "Master volume multiplier for background music (0–1).", .cli = "-M,--musicvol"},
+			1.0f, settings::isUnitInterval
+	  };
+	Setting<float> sfxVolumeScale {
+		*this, {.key = "audio.sfxVolume", .description = "Master volume multiplier for sound effects (0–1).", .cli = "-S,--sfxvol"},
+		 1.0f, settings::isUnitInterval
+	   };
+	Setting<float> speechVolumeScale {
+		*this, {.key = "audio.speechVolume", .description = "Master volume multiplier for speech audio (0–1).", .cli = "-T,--speechvol"},
+		  1.0f, settings::isUnitInterval
+	};
 	BoolOption safeMode {false}; // Skip loading settings.json so the game starts with all defaults.
 
 	// megamod options
-	Setting<int> resolutionFactor {*this, "graphics.resolutionFactor", 0, "HD scale factor: 0 = SD (320×240), 2 = HD (640×480 canvas).", settings::isValidResolutionFactor};
-	Setting<int> loresBlowupScale {*this, "graphics.loresBlowupScale", 1, "Integer upscale applied to the SD canvas for windowed HD displays.", settings::isNonNegative};
-	Setting<bool> cheatMode {*this, "cheats.kohrAhStop", false, "Freeze the Kohr-Ah death march timer so their fleet never advances."};
-	Setting<GodModeFlags> optGodModes {*this, "cheats.godModes", GodModeFlags::None, "Bitfield enabling infinite battery and/or no-damage in combat."};
-	Setting<int> timeDilationPct {*this, "cheats.timeDilation", 100, "Game clock speed as a percentage of normal (100 = real-time).", settings::isPositive};
-	Setting<bool> bubbleWarp {*this, "cheats.bubbleWarp", false, "Allow warping to any star system regardless of fuel range."};
-	Setting<bool> unlockShips {*this, "cheats.unlockShips", false, "Make all ships available in the Full-Game Melee roster from the start."};
-	Setting<bool> headStart {*this, "cheats.headStart", false, "Begin the campaign with extra fuel, RU, and crew."};
+	Setting<int> resolutionFactor {
+		*this, {.key = "graphics.resolutionFactor", .description = "HD scale factor: 0 = SD (320×240), 2 = HD (640×480 canvas)."},
+		   0, settings::isValidResolutionFactor
+	   };
+	Setting<int> loresBlowupScale {
+		*this, {.key = "graphics.loresBlowupScale", .description = "Integer upscale applied to the SD canvas for windowed HD displays."},
+		  1, settings::isNonNegative
+	};
+	Setting<bool> cheatMode {
+		*this, {.key = "cheats.kohrAhStop", .description = "Stops Kohr-Ah advancing.", .cli = "--kohrstahp"},
+		  false
+	   };
+	Setting<GodModeFlags> optGodModes {
+		*this, {.key = "cheats.godModes", .description = "Bitfield enabling infinite battery and/or no-damage in combat."},
+			GodModeFlags::None
+	  };
+	Setting<int> timeDilationPct {
+		*this, {.key = "cheats.timeDilation", .description = "Time dilation scale percentage. 100 = regular speed.", .cli = "--timedilation"},
+		   100, settings::isPositive
+	};
+	Setting<bool> bubbleWarp {
+		*this, {.key = "cheats.bubbleWarp", .description = "Instantaneous travel to any point on the Starmap.", .cli = "--bubblewarp"},
+			false
+	 };
+	Setting<bool> unlockShips {
+		*this, {.key = "cheats.unlockShips", .description = "Allows you to purchase ships that you can't normally acquire in the main game.", .cli = "--unlockships"},
+		   false
+	};
+	Setting<bool> headStart {
+		*this, {.key = "cheats.headStart", .description = "Gives you an extra storage bay full of minerals, Fwiffo, and the Moonbase during a new game.", .cli = "--headstart"},
+		 false
+	  };
 	BoolOption unlockUpgrades {false}; // Make all ship upgrades purchasable immediately at the starbase.
-	Setting<bool> infiniteRU {*this, "cheats.infiniteRU", false, "Grant unlimited Resource Units so the player never runs out of money."};
-	Setting<bool> skipIntro {*this, "interface.skipIntro", false, "Jump past the opening intro sequence directly to the main menu."};
-	Setting<bool> mainMenuMusic {*this, "audio.mainMenuMusic", true, "Play background music on the main menu screen."};
-	Setting<bool> nebulae {*this, "visuals.nebulae", false, "Render nebula cloud artwork in the Hyperspace star map."};
-	Setting<bool> orbitingPlanets {*this, "visuals.orbitingPlanets", false, "Animate planets orbiting their star in the solar system view."};
-	Setting<bool> texturedPlanets {*this, "visuals.texturedPlanets", false, "Apply surface texture maps to planets in the solar system view."};
-	Setting<DateFormat> optDateFormat {*this, "interface.dateFormat", DateFormat::MMM_dd_yyyy, "Date display format shown on the starmap HUD clock."};
-	Setting<bool> infiniteFuel {*this, "cheats.infiniteFuel", false, "Flagship fuel never depletes during hyperspace travel."};
-	Setting<bool> partialPickup {*this, "gameplay.partialPickup", false, "Allow picking up a partial mineral load when the lander is nearly full."};
-	Setting<bool> submenu {*this, "interface.submenu", false, "Show an extra submenu layer in the in-flight status/outfit screens."};
-	Setting<bool> infiniteCredits {*this, "cheats.infiniteCredits", false, "Crew cost at the starbase is waived; credits never decrease."};
-	Setting<bool> customBorder {*this, "graphics.customBorder", false, "Draw a decorative border frame around the game viewport."};
-	Setting<SeedType> seedType {*this, "seed.type", SeedType::None, "Algorithm used to generate the galaxy map seed (None, Planet, MRQ, etc.)."};
-	Setting<int> customSeed {*this, "seed.value", PrimeA, "Explicit seed value fed to the star/planet generation RNG.", settings::isSaneSeed};
-	Setting<bool> shipSeed {*this, "seed.ships", false, "Derive the starting ship layout from the custom seed instead of a fixed value."};
-	Setting<SphereOfInfluenceColors> sphereColors {*this, "visuals.sphereColors", SphereOfInfluenceColors::Default, "Color scheme for alien sphere-of-influence overlays on the starmap."};
-	Setting<SphereOfInfluenceMusic> spaceMusic {*this, "audio.spaceMusic", SphereOfInfluenceMusic::None, "Switch hyperspace music to the race whose SOI the flagship is inside."};
-	Setting<bool> volasMusic {*this, "audio.musicVolasaurus", false, "Enable the Volasaurus fan-remix music pack when available."};
-	Setting<bool> wholeFuel {*this, "interface.wholeFuel", false, "Snap fuel pickup amounts to whole units, avoiding fractional values."};
-	Setting<bool> directionalJoystick {*this, "interface.directionalJoystick", false, "Treat joystick input as a D-pad (Android/touch-device support)."};
-	Setting<EmulationMode> landerHold {*this, "gameplay.landerHold", EmulationMode::Console3DO, "Lander cargo-hold display: text list (PC) or graphical icons (3DO)."};
-	Setting<EmulationMode> scrTrans {*this, "interface.screenTransition", EmulationMode::Console3DO, "Screen-transition style: cut (PC) or crossfade (3DO)."};
+	Setting<bool> infiniteRU {
+		*this, {.key = "cheats.infiniteRU", .description = "Gives you infinite R.U. as long as the cheat is on.", .cli = "--infiniteru"},
+		  false
+	   };
+	Setting<bool> skipIntro {
+		*this, {.key = "interface.skipIntro", .description = "Skips the intro and Logo fmv.", .cli = "--skipintro"},
+		 false
+	  };
+	Setting<bool> mainMenuMusic {
+		*this, {.key = "audio.mainMenuMusic", .description = "Switches the main menu music on/off.", .cli = "--mainmenumusic"},
+			true
+	};
+	Setting<bool> nebulae {
+		*this, {.key = "visuals.nebulae", .description = "Enables/Disables nebulae in star systems.", .cli = "--nebulae"},
+		   false
+	};
+	Setting<bool> orbitingPlanets {
+		*this, {.key = "visuals.orbitingPlanets", .description = "Enables/Disables orbiting planets in star systems.", .cli = "--orbitingplanets"},
+			false
+	 };
+	Setting<bool> texturedPlanets {
+		*this, {.key = "visuals.texturedPlanets", .description = "Enables/Disables textured planets in star systems.", .cli = "--texturedplanets"},
+			false
+	 };
+	Setting<DateFormat> optDateFormat {
+		*this, {.key = "interface.dateFormat", .description = "Date format to use in-game.", .cli = "--dateformat"},
+		 DateFormat::MMM_dd_yyyy
+	};
+	Setting<bool> infiniteFuel {
+		*this, {.key = "cheats.infiniteFuel", .description = "Infinite fuel in the main game.", .cli = "--infinitefuel"},
+		  false
+	   };
+	Setting<bool> partialPickup {
+		*this, {.key = "gameplay.partialPickup", .description = "Enables/Disables partial mineral pickup.", .cli = "--partialpickup"},
+		   false
+	};
+	Setting<bool> submenu {
+		*this, {.key = "interface.submenu", .description = "Enables/Disables mineral and star map keys submenu.", .cli = "--submenu"},
+		   false
+	};
+	Setting<bool> infiniteCredits {
+		*this, {.key = "cheats.infiniteCredits", .description = "Gives you infinite Melnorme Credits.", .cli = "--infinitecredits"},
+		 false
+	  };
+	Setting<bool> customBorder {
+		*this, {.key = "graphics.customBorder", .description = "Enables the custom border frame.", .cli = "--customborder"},
+		 false
+	  };
+	Setting<SeedType> seedType {
+		*this, {.key = "seed.type", .description = "Seed type for solar system generation. Default is \"None\", which is the same seed used in the original game. Changing this will change the layout of the entire star map.", .cli = "--seedtype"},
+		   SeedType::None
+	 };
+	Setting<int> customSeed {
+		*this, {.key = "seed.value", .description = "Allows you to customize the internal seed used to generate the solar systems in-game.", .cli = "--customseed"},
+		 PrimeA, settings::isSaneSeed
+	 };
+	Setting<bool> shipSeed {
+		*this, {.key = "seed.ships", .description = "Seeds the ships assigned to each race. Uses --customseed value.", .cli = "--shipseed"},
+		 false
+	  };
+	Setting<SphereOfInfluenceColors> sphereColors {
+		*this, {.key = "visuals.sphereColors", .description = "Color scheme for race spheres of influence in star map.", .cli = "--spherecolors"},
+		   SphereOfInfluenceColors::Default
+	   };
+	Setting<SphereOfInfluenceMusic> spaceMusic {
+		*this, {.key = "audio.spaceMusic", .description = "Enables localized music for aliens when you are in their sphere of influence.", .cli = "--spacemusic"},
+		   SphereOfInfluenceMusic::None
+	   };
+	Setting<bool> volasMusic {
+		*this, {.key = "audio.musicVolasaurus", .description = "Enable the Volasaurus fan-remix music pack when available."},
+		  false
+	   };
+	Setting<bool> wholeFuel {
+		*this, {.key = "interface.wholeFuel", .description = "Enables the display of the whole fuel value in the ship status.", .cli = "--wholefuel"},
+		   false
+	};
+	Setting<bool> directionalJoystick {
+		*this, {.key = "interface.directionalJoystick", .description = "Enables the use of directional joystick controls for Android.", .cli = "--dirjoystick"},
+		 false
+	  };
+	Setting<EmulationMode> landerHold {
+		*this, {.key = "gameplay.landerHold", .description = "Switch between PC/3DO max lander hold, pc=64, 3do=50.", .cli = "--landerhold"},
+		  EmulationMode::Console3DO
+	   };
+	Setting<EmulationMode> scrTrans {
+		*this, {.key = "interface.screenTransition", .description = "Screen transitions, pc=instantaneous, 3do=crossfade.", .cli = "--scrtrans"},
+		  EmulationMode::Console3DO
+	   };
 	OptionT<Difficulty> optDifficulty {Difficulty::Normal}; // Active difficulty level applied to game mechanics (Normal/Easy/Hard).
-	Setting<Difficulty> optDiffChooser {*this, "gameplay.difficulty", Difficulty::ChooseYourOwn, "Difficulty shown in the setup menu (may be ChooseYourOwn)."};
-	Setting<FuelRangeDisplay> optFuelRange {*this, "interface.fuelRange", FuelRangeDisplay::Normal, "Starmap fuel-range indicator style (circle, destination, Sol distance)."};
-	Setting<bool> extended {*this, "gameplay.extended", false, "Enable extended game content (extra star systems, dialogue, events)."};
-	Setting<NomadMode> nomad {*this, "gameplay.nomad", NomadMode::Off, "Nomad variant: starts the player without a homeworld or starbase."};
-	Setting<bool> gameOver {*this, "gameplay.gameOver", false, "End the game when the flagship is destroyed instead of retrying."};
-	Setting<bool> shipDirectionIP {*this, "visuals.shipDirectionIP", false, "Rotate the flagship icon to face its travel direction in interplanetary space."};
-	Setting<bool> hazardColors {*this, "visuals.hazardColors", false, "Color-code planetary hazard indicators (bio, weather, tectonics) distinctly."};
-	Setting<bool> orzCompFont {*this, "visuals.orzCompFont", false, "Use a compact font variant for Orz dialogue to fit their unusual phrasing."};
+	Setting<Difficulty> optDiffChooser {
+		*this, {.key = "gameplay.difficulty", .description = "Difficulty shown in the setup menu (may be ChooseYourOwn).", .cli = "--difficulty"},
+		   Difficulty::ChooseYourOwn
+	};
+	Setting<FuelRangeDisplay> optFuelRange {
+		*this, {.key = "interface.fuelRange", .description = "Starmap fuel-range indicator style (circle, destination, Sol distance)."},
+		 FuelRangeDisplay::Normal
+	 };
+	Setting<bool> extended {
+		*this, {.key = "gameplay.extended", .description = "Enables Extended Edition features.", .cli = "--extended"},
+		   false
+	};
+	Setting<NomadMode> nomad {
+		*this, {.key = "gameplay.nomad", .description = "Enables 'Nomad Mode' (No Starbase).", .cli = "--nomad"},
+		  NomadMode::Off
+	};
+	Setting<bool> gameOver {
+		*this, {.key = "gameplay.gameOver", .description = "Enables Game Over cutscenes.", .cli = "--gameover"},
+		 false
+	  };
+	Setting<bool> shipDirectionIP {
+		*this, {.key = "visuals.shipDirectionIP", .description = "Enable NPC ships in IP to face their direction of travel.", .cli = "--shipdirectionip"},
+		   false
+	};
+	Setting<bool> hazardColors {
+		*this, {.key = "visuals.hazardColors", .description = "Enable colored text based on hazard severity when viewing planetary scans.", .cli = "--hazardcolors"},
+		  false
+	   };
+	Setting<bool> orzCompFont {
+		*this, {.key = "visuals.orzCompFont", .description = "Enable alternate font for untranslatable Orz speech.", .cli = "--orzcompfont"},
+		  false
+	   };
 
-	Setting<ControllerType> optControllerType {*this, "interface.controllerType", ControllerType::KeyboardMouse, "Button-prompt artwork set: keyboard/mouse, Xbox, or PlayStation layout."};
-	Setting<bool> smartAutoPilot {*this, "autopilot.smart", false, "Auto-pilot avoids obstacles and optimises the hyperspace route to the destination."};
-	Setting<EmulationMode> tintPlanSphere {*this, "visuals.tintPlanetSphere", uqm::EmulationMode::Console3DO, "Tint the planet sphere with its dominant surface color (3DO style)."};
-	Setting<EmulationMode> planetStyle {*this, "visuals.planetStyle", uqm::EmulationMode::Console3DO, "Planet rendering pipeline: PC flat-color or 3DO shaded sphere."};
-	Setting<int> starBackground {*this, "visuals.starBackground", 0, "Starfield density/style index used in the Hyperspace and combat backgrounds.", settings::isNonNegative};
-	Setting<EmulationMode> scanStyle {*this, "visuals.scanStyle", uqm::EmulationMode::Console3DO, "Planetary scan display layout: PC text readout or 3DO graphical panels."};
-	Setting<bool> nonStopOscill {*this, "visuals.nonStopOscilloscope", false, "Keep the comm oscilloscope animating continuously instead of only during speech."};
-	Setting<EmulationMode> scopeStyle {*this, "visuals.scopeStyle", uqm::EmulationMode::Console3DO, "Oscilloscope visual style: simple PC waveform or stylized 3DO display."};
-	Setting<bool> hyperStars {*this, "visuals.hyperStars", false, "Draw animated star-streak effect during hyperspace travel."};
-	Setting<EmulationMode> landerStyle {*this, "visuals.landerStyle", uqm::EmulationMode::Console3DO, "Planetary lander mini-game rendering: PC sprites or 3DO visuals."};
-	Setting<bool> planetTexture {*this, "visuals.planetTexture", true, "Apply surface detail textures to the rotating planet sphere."};
-	Setting<EmulationMode> flagshipColor {*this, "visuals.flagshipColor", uqm::EmulationMode::PC, "Flagship hull color palette: original PC blue or 3DO gold scheme."};
-	Setting<bool> noHQEncounters {*this, "cheats.noHQEncounters", false, "Suppress random Hierarchy ship encounters in Ur-Quan-controlled space."};
-	Setting<bool> deCleansing {*this, "cheats.deCleansing", false, "Remove the Kohr-Ah Cleansing event so the death march never triggers a loss."};
-	Setting<bool> meleeObstacles {*this, "cheats.meleeObstacles", false, "Spawn asteroid/obstacle fields in the melee combat arena."};
-	Setting<bool> showVisitedStars {*this, "visuals.showVisitedStars", false, "Mark previously visited star systems with a distinct icon on the starmap."};
-	Setting<bool> unscaledStarSystem {*this, "visuals.unscaledStarSystem", false, "Display the solar system view at native canvas resolution without HD scaling."};
-	Setting<int> sphereType {*this, "visuals.sphereType", 2, "Visual style index for the sphere-of-influence overlay (filled, outline, etc.).", settings::isNonNegative};
-	Setting<int> nebulaevol {*this, "visuals.nebulaeVolume", 16, "Opacity/density of the hyperspace nebula cloud overlay (0–50).", settings::isValidNebulaeVolume};
-	Setting<bool> slaughterMode {*this, "gameplay.slaughterMode", false, "Hostile alien ships no longer flee combat, always fighting to the death."};
-	Setting<bool> advancedAutoPilot {*this, "autopilot.advanced", false, "Auto-pilot also handles refuelling stops and quasispace portal navigation."};
-	Setting<bool> meleeToolTips {*this, "interface.meleeToolTips", false, "Show contextual control hints during melee battles."};
-	Setting<int> musicResume {*this, "audio.musicResume", 0, "Music resume mode: 0 = restart track, 1 = resume from last position.", settings::isNonNegative};
-	Setting<int> windowEmulationMode {*this, "graphics.windowStyle", 2, "Window chrome/border style: 0 = DOS, 1 = 3DO, 2 = UQM native.", settings::isValidWindowStyle};
-	Setting<bool> scatterElements {*this, "gameplay.scatterElements", false, "Scatter mineral element deposits randomly across the planet surface."};
-	Setting<bool> showUpgrades {*this, "visuals.showUpgrades", false, "Display purchased ship-upgrade icons in the flagship status screen."};
-	Setting<bool> fleetPointSys {*this, "gameplay.fleetPointSystem", false, "Use a fleet-point budget system to limit ships chosen in Full-Game Melee."};
-	Setting<bool> shipStore {*this, "gameplay.shipStore", false, "Enable a ship store at the starbase where ally vessels can be purchased."};
-	Setting<bool> captainNames {*this, "interface.captainNames", false, "Show individual captain names on ships in the melee roster."};
-	Setting<bool> dosMenus {*this, "interface.dosMenus", false, "Use the DOS-style text menus for outfit, crew, and fuel purchasing screens."};
+	Setting<ControllerType> optControllerType {
+		*this, {.key = "interface.controllerType", .description = "Controller type to use for input.", .cli = "--controllertype"},
+		   ControllerType::KeyboardMouse
+	};
+	Setting<bool> smartAutoPilot {
+		*this, {.key = "autopilot.smart", .description = "Activating Auto-Pilot within Solar System pilots the Flagship out via the shortest route.", .cli = "--smartautopilot"},
+		  false
+	   };
+	Setting<EmulationMode> tintPlanSphere {
+		*this, {.key = "visuals.tintPlanetSphere", .description = "Tint the planet sphere with scan color during scan.", .cli = "--tintplansphere"},
+		 uqm::EmulationMode::Console3DO
+	   };
+	Setting<EmulationMode> planetStyle {
+		*this, {.key = "visuals.planetStyle", .description = "Choose between PC or 3DO planet color and shading.", .cli = "--planetstyle"},
+			uqm::EmulationMode::Console3DO
+	  };
+	Setting<int> starBackground {
+		*this, {.key = "visuals.starBackground", .description = "Starfield density/style index used in the Hyperspace and combat backgrounds."},
+		 0, settings::isNonNegative
+	   };
+	Setting<EmulationMode> scanStyle {
+		*this, {.key = "visuals.scanStyle", .description = "Choose between PC or 3DO scanning types.", .cli = "--scanstyle"},
+		  uqm::EmulationMode::Console3DO
+	};
+	Setting<bool> nonStopOscill {
+		*this, {.key = "visuals.nonStopOscilloscope", .description = "Oscilloscope uses both voice and music data.", .cli = "--nonstoposcill"},
+			false
+	 };
+	Setting<EmulationMode> scopeStyle {
+		*this, {.key = "visuals.scopeStyle", .description = "Choose between either the PC or 3DO oscilloscope type.", .cli = "--scopestyle"},
+		  uqm::EmulationMode::Console3DO
+	};
+	Setting<bool> hyperStars {
+		*this, {.key = "visuals.hyperStars", .description = "HD only - Use old HD-mod animated HyperSpace stars.", .cli = "--animhyperstars"},
+		   false
+	};
+	Setting<EmulationMode> landerStyle {
+		*this, {.key = "visuals.landerStyle", .description = "Choose between either the PC or 3DO lander view.", .cli = "--landerview"},
+		 uqm::EmulationMode::Console3DO
+	   };
+	Setting<bool> planetTexture {
+		*this, {.key = "visuals.planetTexture", .description = "Apply surface detail textures to the rotating planet sphere."},
+			true
+	};
+	Setting<EmulationMode> flagshipColor {
+		*this, {.key = "visuals.flagshipColor", .description = "Choose between either the PC or 3DO Flagship engine color.", .cli = "--sisenginecolor"},
+		 uqm::EmulationMode::PC
+	   };
+	Setting<bool> noHQEncounters {
+		*this, {.key = "cheats.noHQEncounters", .description = "Disables HyperSpace encounters.", .cli = "--nohqencounters"},
+		  false
+	   };
+	Setting<bool> deCleansing {
+		*this, {.key = "cheats.deCleansing", .description = "Moves the Death March 100 years ahead from its actual start date [does not work once the Death March has started].", .cli = "--decleanse"},
+		 false
+	  };
+	Setting<bool> meleeObstacles {
+		*this, {.key = "cheats.meleeObstacles", .description = "Removes the planet and asteroids from Super Melee.", .cli = "--nomeleeobstacles"},
+		   false
+	};
+	Setting<bool> showVisitedStars {
+		*this, {.key = "visuals.showVisitedStars", .description = "Dim visited stars on the StarMap and encase the star name in parenthesis.", .cli = "--showvisitstars"},
+		   false
+	};
+	Setting<bool> unscaledStarSystem {
+		*this, {.key = "visuals.unscaledStarSystem", .description = "Show the classic HD-mod Beta Star System view.", .cli = "--unscaledstarsystem"},
+		  false
+	   };
+	Setting<int> sphereType {
+		*this, {.key = "visuals.sphereType", .description = "Visual style index for the sphere-of-influence overlay (filled, outline, etc.)."},
+			2, settings::isNonNegative
+	  };
+	Setting<int> nebulaevol {
+		*this, {.key = "visuals.nebulaeVolume", .description = "Opacity/density of the hyperspace nebula cloud overlay (0–50).", .cli = "--nebulaevol"},
+		 16, settings::isValidNebulaeVolume
+	   };
+	Setting<bool> slaughterMode {
+		*this, {.key = "gameplay.slaughterMode", .description = "Affect a race's SOI by destroying their ships in battle.", .cli = "--slaughtermode"},
+		   false
+	};
+	Setting<bool> advancedAutoPilot {
+		*this, {.key = "autopilot.advanced", .description = "Finds the route that uses the least amount of fuel through HyperSpace or QuasiSpace and Auto-Pilots the Flagship on the best route.", .cli = "--advancedautopilot"},
+		  false
+	   };
+	Setting<bool> meleeToolTips {
+		*this, {.key = "interface.meleeToolTips", .description = "Show SC1-style ship description tooltips at the bottom of the Super-Melee screen when picking a ship for your fleet.", .cli = "--meleetooltips"},
+			false
+	 };
+	Setting<int> musicResume {
+		*this, {.key = "audio.musicResume", .description = "Music resume mode: 0 = restart track, 1 = resume from last position."},
+			0, settings::isNonNegative
+	  };
+	Setting<int> windowEmulationMode {
+		*this, {.key = "graphics.windowStyle", .description = "Window chrome/border style: 0 = DOS, 1 = 3DO, 2 = UQM native."},
+			2, settings::isValidWindowStyle
+	   };
+	Setting<bool> scatterElements {
+		*this, {.key = "gameplay.scatterElements", .description = "Scatter a percentage of the elements in the lander's cargo hold onto the planet's surface when the lander explodes.", .cli = "--scatterelements"},
+		  false
+	   };
+	Setting<bool> showUpgrades {
+		*this, {.key = "visuals.showUpgrades", .description = "Show lander upgrade graphics when exploring planets.", .cli = "--showupgrades"},
+			false
+	 };
+	Setting<bool> fleetPointSys {
+		*this, {.key = "gameplay.fleetPointSystem", .description = "Restrict the amount of ships that can be purchased via their melee points.", .cli = "--fleetpointsys"},
+			false
+	 };
+	Setting<bool> shipStore {
+		*this, {.key = "gameplay.shipStore", .description = "Enable a storage queue accessed at the shipyard.", .cli = "--shipstore"},
+		   false
+	};
+	Setting<bool> captainNames {
+		*this, {.key = "interface.captainNames", .description = "Display captain names at shipyard.", .cli = "--captainnames"},
+			false
+	 };
+	Setting<bool> dosMenus {
+		*this, {.key = "interface.dosMenus", .description = "Display DOS style menu in shipyard in place of SIS window.", .cli = "--dosmenus"},
+			false
+	 };
 
-	Setting<int> player1Control {*this, "controls.player1Template", 0, "Control template index used by player one.", settings::isValidControlTemplate};
-	Setting<int> player2Control {*this, "controls.player2Template", 3, "Control template index used by player two.", settings::isValidControlTemplate};
+	Setting<int> player1Control {
+		*this, {.key = "controls.player1Template", .description = "Control template index used by player one."},
+		 0, settings::isValidControlTemplate
+	};
+	Setting<int> player2Control {
+		*this, {.key = "controls.player2Template", .description = "Control template index used by player two."},
+		 3, settings::isValidControlTemplate
+	};
 };
 
 template <typename ListT>

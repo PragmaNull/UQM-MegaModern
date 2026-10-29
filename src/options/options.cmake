@@ -18,6 +18,8 @@ set(uqm_src_options_files
 	"src/options/options.h"
 	"src/options/Setting.cpp"
 	"src/options/Setting.h"
+	"src/options/SettingsCli.cpp"
+	"src/options/SettingsCli.h"
 )
 
 source_group("src\\options" FILES ${uqm_src_options_files})

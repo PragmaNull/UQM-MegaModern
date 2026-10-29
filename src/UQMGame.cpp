@@ -125,7 +125,6 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	{
 		return {parseResult, needExit};
 	}
-	m_options.edit().captureCommandLine();
 
 	//log_init(15);
 
