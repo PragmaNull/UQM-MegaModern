@@ -74,6 +74,30 @@ size_t File::write(uqstl::span<const uqstl::byte> buffer)
 	return m_stream->write(buffer, m_error);
 }
 
+bool File::readLine(uqstl::span<char> buffer)
+{
+	if (buffer.empty())
+	{
+		return false;
+	}
+	size_t count {0};
+	while (count + 1 < buffer.size())
+	{
+		const int c {getChar()};
+		if (c == c_endOfFile)
+		{
+			break;
+		}
+		buffer[count++] = static_cast<char>(c);
+		if (c == '\n')
+		{
+			break;
+		}
+	}
+	buffer[count] = '\0';
+	return count > 0;
+}
+
 int File::getChar()
 {
 	if (m_bufferPos >= m_bufferEnd && (m_stream == nullptr || !fillReadBuffer()))

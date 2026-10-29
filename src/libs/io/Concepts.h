@@ -18,11 +18,12 @@ namespace uqm::io
 
 template <typename F>
 concept FileImpl = uqstl::movable<F> && !uqstl::copyable<F> && uqstl::default_initializable<F>
-				&& requires(F file, const F constFile, uqstl::span<uqstl::byte> buffer, uqstl::span<const uqstl::byte> data, int64_t offset, SeekFrom from, size_t count) {
+				&& requires(F file, const F constFile, uqstl::span<uqstl::byte> buffer, uqstl::span<const uqstl::byte> data, uqstl::span<char> chars, int64_t offset, SeekFrom from, size_t count) {
 					   { constFile.isOpen() } -> uqstl::same_as<bool>;
 					   { file.close() };
 					   { file.read(buffer) } -> uqstl::same_as<size_t>;
 					   { file.write(data) } -> uqstl::same_as<size_t>;
+					   { file.readLine(chars) } -> uqstl::same_as<bool>;
 					   { file.getChar() } -> uqstl::same_as<int>;
 					   { file.unget(count) } -> uqstl::same_as<bool>;
 					   { file.seek(offset, from) } -> uqstl::same_as<bool>;

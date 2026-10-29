@@ -28,6 +28,9 @@ public:
 	size_t read(uqstl::span<uqstl::byte> buffer);
 	// Returns the number of bytes written.
 	size_t write(uqstl::span<const uqstl::byte> buffer);
+	// Reads up to and including the next newline, at most buffer.size() - 1 characters, and adds a null character.
+	// Returns false if no characters were read.
+	bool readLine(uqstl::span<char> buffer);
 	// Returns the next byte, or c_endOfFile.
 	int getChar();
 	// Moves back 'count' bytes that were just read. Returns false if they are no longer in the buffer.

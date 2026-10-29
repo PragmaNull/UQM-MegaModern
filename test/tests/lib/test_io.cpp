@@ -365,6 +365,14 @@ TEST_F(IoTest, FileCharacterAccessAndMove)
 	EXPECT_EQ(file->getChar(), File::c_endOfFile);
 	EXPECT_TRUE(file->eof());
 
+	ASSERT_TRUE(file->seek(0, SeekFrom::Start));
+	uqstl::array<char, 2> line {};
+	EXPECT_TRUE(file->readLine(line));
+	EXPECT_STREQ(line.data(), "x");
+	EXPECT_TRUE(file->readLine(line));
+	EXPECT_STREQ(line.data(), "y");
+	EXPECT_FALSE(file->readLine(line));
+
 	File moved {uqstl::move(*file)};
 	EXPECT_TRUE(moved.isOpen());
 	EXPECT_FALSE(file->isOpen());

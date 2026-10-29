@@ -397,22 +397,7 @@ char* uio_fgets(char* buf, int size, uio_Stream* stream)
 	{
 		return nullptr;
 	}
-	int count {0};
-	while (count < size - 1)
-	{
-		const int c {stream->getChar()};
-		if (c == uqm::io::File::c_endOfFile)
-		{
-			break;
-		}
-		buf[count++] = static_cast<char>(c);
-		if (c == '\n')
-		{
-			break;
-		}
-	}
-	buf[count] = '\0';
-	return count == 0 && size > 1 ? nullptr : buf;
+	return stream->readLine({buf, static_cast<size_t>(size)}) || size == 1 ? buf : nullptr;
 }
 
 int uio_fgetc(uio_Stream* stream)
