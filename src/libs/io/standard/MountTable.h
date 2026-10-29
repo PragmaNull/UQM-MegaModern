@@ -18,6 +18,8 @@ public:
 
 	[[nodiscard]] uqstl::optional<Mount> mountSource(uqstl::string_view mountPoint, uqstl::shared_ptr<const MountSource> source, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error);
 	[[nodiscard]] uqstl::optional<Mount> mountArchive(uqstl::string_view mountPoint, const Directory& directory, uqstl::string_view archivePath, MountPosition position, const Mount* relative, uqstl::error_code& error);
+	// Returns a directory over a new mount table that holds only the zip archive 'archivePath' in 'directory'.
+	[[nodiscard]] uqstl::optional<Directory> openArchive(const Directory& directory, uqstl::string_view archivePath, uqstl::error_code& error);
 	[[nodiscard]] uqstl::optional<Mount> mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error);
 	void unmount(uint64_t id);
 
@@ -57,6 +59,8 @@ private:
 		uqstl::string sourcePath {};
 		FileInfo info {};
 	};
+
+	[[nodiscard]] uqstl::shared_ptr<const MountSource> openZip(const Directory& directory, uqstl::string_view archivePath, uqstl::error_code& error) const;
 
 	// These functions expect the caller to hold m_mutex.
 	[[nodiscard]] uqstl::optional<Found> findLocked(const uqstl::string& path) const;

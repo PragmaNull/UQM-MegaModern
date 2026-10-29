@@ -93,6 +93,8 @@ public:
 	[[nodiscard]] uqstl::optional<Mount> mountDirectory(uqstl::string_view mountPoint, const uqstl::filesystem::path& hostPath, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error);
 	// Mounts the zip archive 'archivePath' in 'directory' at 'mountPoint', read-only.
 	[[nodiscard]] uqstl::optional<Mount> mountArchive(uqstl::string_view mountPoint, const Directory& directory, uqstl::string_view archivePath, MountPosition position, const Mount* relative, uqstl::error_code& error);
+	// Returns a directory over only the zip archive 'archivePath' in 'directory', without a mount in this file system.
+	[[nodiscard]] uqstl::optional<Directory> openArchive(const Directory& directory, uqstl::string_view archivePath, uqstl::error_code& error);
 	// Mounts what 'source' currently shows at 'mountPoint'.
 	[[nodiscard]] uqstl::optional<Mount> mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error);
 

@@ -24,12 +24,5 @@
 STRING_TABLE
 LoadStringTableFile(const uqm::io::Directory& dir, const char* fileName)
 {
-	// FIXME: this theoretically needs a mechanism to prevent races
-	if (_cur_resfile_name)
-	{
-		// something else is loading resources atm
-		return 0;
-	}
-
 	return static_cast<STRING_TABLE>(res_LoadResFile(dir, fileName, _GetStringData));
 }

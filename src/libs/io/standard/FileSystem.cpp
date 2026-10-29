@@ -134,6 +134,11 @@ uqstl::optional<Mount> FileSystem::mountArchive(uqstl::string_view mountPoint, c
 	return m_table->mountArchive(mountPoint, directory, archivePath, position, relative, error);
 }
 
+uqstl::optional<Directory> FileSystem::openArchive(const Directory& directory, uqstl::string_view archivePath, uqstl::error_code& error)
+{
+	return m_table->openArchive(directory, archivePath, error);
+}
+
 uqstl::optional<Mount> FileSystem::mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error)
 {
 	return m_table->mountTransplant(mountPoint, source, access, position, relative, error);

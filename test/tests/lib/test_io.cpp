@@ -557,6 +557,20 @@ TEST_F(IoZipTest, SeeksInDeflatedEntry)
 	EXPECT_EQ(file->tell(), expected.size());
 }
 
+TEST_F(IoZipTest, OpenArchiveDoesNotMount)
+{
+	m_zip.unmount();
+	const uqstl::optional<Directory> packages {m_fileSystem.root().subdir("packages")};
+	ASSERT_TRUE(packages.has_value());
+
+	uqstl::error_code error {};
+	const uqstl::optional<Directory> archive {m_fileSystem.openArchive(*packages, "sample.uqm", error)};
+	ASSERT_TRUE(archive.has_value()) << error.message();
+	EXPECT_EQ(readText(*archive, "dir/nested.txt"), "nested\n");
+	EXPECT_FALSE(m_fileSystem.root().exists("stored.txt"));
+	EXPECT_TRUE(m_fileSystem.root().exists("packages/sample.uqm"));
+}
+
 TEST_F(IoZipTest, ZipIsReadOnly)
 {
 	uqstl::error_code error {};

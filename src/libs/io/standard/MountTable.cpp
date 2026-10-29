@@ -59,11 +59,11 @@ uqstl::optional<Mount> MountTable::mountSource(uqstl::string_view mountPoint, uq
 	return insertLocked(uqstl::move(entries), position, relative, error);
 }
 
-uqstl::optional<Mount> MountTable::mountArchive(uqstl::string_view mountPoint, const Directory& directory, uqstl::string_view archivePath, MountPosition position, const Mount* relative, uqstl::error_code& error)
+uqstl::shared_ptr<const MountSource> MountTable::openZip(const Directory& directory, uqstl::string_view archivePath, uqstl::error_code& error) const
 {
 	if (directory.m_table.get() != this)
 	{
-		return fail<uqstl::optional<Mount>>(error, uqstl::errc::invalid_argument);
+		return fail<uqstl::shared_ptr<const MountSource>>(error, uqstl::errc::invalid_argument);
 	}
 	uqstl::shared_ptr<const MountSource> archive {};
 	uqstl::string sourcePath {};
@@ -72,19 +72,34 @@ uqstl::optional<Mount> MountTable::mountArchive(uqstl::string_view mountPoint, c
 		const uqstl::optional<Found> found {findLocked(path::join(directory.path(), archivePath))};
 		if (!found || found->info.isDirectory())
 		{
-			return fail<uqstl::optional<Mount>>(error, found ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
+			return fail<uqstl::shared_ptr<const MountSource>>(error, found ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
 		}
 		archive = m_mounts[found->index].source;
 		sourcePath = found->sourcePath;
 	}
+	return ZipSource::create(uqstl::move(archive), uqstl::move(sourcePath), error);
+}
 
-	uqstl::shared_ptr<ZipSource> zip {ZipSource::create(uqstl::move(archive), uqstl::move(sourcePath), error)};
+uqstl::optional<Mount> MountTable::mountArchive(uqstl::string_view mountPoint, const Directory& directory, uqstl::string_view archivePath, MountPosition position, const Mount* relative, uqstl::error_code& error)
+{
+	uqstl::shared_ptr<const MountSource> zip {openZip(directory, archivePath, error)};
 	if (zip == nullptr)
 	{
 		return uqstl::nullopt;
 	}
-
 	return mountSource(mountPoint, uqstl::move(zip), Access::ReadOnly, position, relative, error);
+}
+
+uqstl::optional<Directory> MountTable::openArchive(const Directory& directory, uqstl::string_view archivePath, uqstl::error_code& error)
+{
+	uqstl::shared_ptr<const MountSource> zip {openZip(directory, archivePath, error)};
+	if (zip == nullptr)
+	{
+		return uqstl::nullopt;
+	}
+	auto table {uqstl::make_shared<MountTable>()};
+	table->m_mounts.push_back({.id = table->m_nextId++, .source = uqstl::move(zip), .access = Access::ReadOnly});
+	return table->root();
 }
 
 uqstl::optional<Mount> MountTable::mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error)

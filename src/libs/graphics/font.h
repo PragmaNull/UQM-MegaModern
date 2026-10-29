@@ -71,7 +71,8 @@ struct font_desc
 
 extern FONT _CurFontPtr;
 
-extern void* _GetFontData(uqm::io::File* fp, uint32_t length);
+// A font is a directory of glyph images, or a zip archive of them.
+extern void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path);
 extern bool _ReleaseFontData(void* handle);
 extern TFB_Char* GetFrameForFPS(UniChar ch);
 extern void GetFontDims(int16_t* w, int16_t* h);

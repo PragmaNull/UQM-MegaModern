@@ -537,12 +537,10 @@ err:
 	resdata->ptr = nullptr;
 }
 
-void* _GetStringData(uqm::io::File* fp, uint32_t length)
+void* _GetStringData(const ResourceFile& resource)
 {
-	if (fp == nullptr)
-	{
-		return nullptr;
-	}
+	uqm::io::File* const fp {&resource.file};
+	const uint32_t length {resource.length};
 	void* result;
 
 	int stringI;
@@ -665,14 +663,10 @@ err:
 }
 
 
-void* _GetBinaryTableData(uqm::io::File* fp, uint32_t length)
+void* _GetBinaryTableData(const ResourceFile& resource)
 {
-	if (fp == nullptr)
-	{
-		return nullptr;
-	}
 	void* result;
-	result = GetResourceData(*fp, length);
+	result = GetResourceData(resource.file, resource.length);
 
 	if (result)
 	{

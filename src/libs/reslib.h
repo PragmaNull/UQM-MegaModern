@@ -44,21 +44,28 @@ typedef union
 
 #define NULL_RESOURCE nullptr
 
-extern const char* _cur_resfile_name;
 
 typedef void(ResourceLoadFun)(const char* pathname, RESOURCE_DATA* resdata);
 typedef bool(ResourceFreeFun)(void* handle);
 typedef void(ResourceStringFun)(RESOURCE_DATA* handle, char* buf, unsigned int size);
 
-// Loads a resource from a file. A directory resource gets a nullptr file and length 1.
-typedef void*(ResourceLoadFileFun)(uqm::io::File * fp, uint32_t len);
+// A resource file for a loader to read.
+struct ResourceFile
+{
+	uqm::io::File& file;
+	const uqm::io::Directory& dir;
+	// The path of the file in 'dir'.
+	uqstl::string_view path;
+	uint32_t length;
+};
+typedef void*(ResourceLoadFileFun)(const ResourceFile& resource);
 
 void* LoadResourceFromPath(const char* pathname, ResourceLoadFileFun fn);
 
 uqstl::optional<uqm::io::File> res_OpenResFile(const uqm::io::Directory& dir, const char* filename, uqm::io::OpenMode mode);
 // Opens a file that the caller owns and deletes, for structures in C memory. Returns nullptr and sets errno on failure.
 uqgsl::owner<uqm::io::File*> res_NewResFile(const uqm::io::Directory& dir, const char* filename);
-// Calls 'loadFun' for 'filename' while _cur_resfile_name is 'filename'. Returns nullptr if 'filename' cannot be opened.
+// Opens 'filename' and calls 'loadFun' for it. Returns nullptr if 'filename' cannot be opened or is empty.
 void* res_LoadResFile(const uqm::io::Directory& dir, const char* filename, ResourceLoadFileFun* loadFun);
 // fread and fseek style functions, for C callbacks and macros.
 size_t ReadResFile(void* lpBuf, size_t size, size_t count, uqm::io::File& fp);

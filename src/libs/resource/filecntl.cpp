@@ -50,26 +50,18 @@ void* res_LoadResFile(const uqm::io::Directory& dir, const char* filename, Resou
 {
 	uqstl::error_code error {};
 	uqstl::optional<uqm::io::File> file {dir.open(filename, uqm::io::OpenMode::Read, error)};
-	uint32_t length {1};
-	if (file)
-	{
-		length = static_cast<uint32_t>(file->size());
-		if (length == 0)
-		{
-			uqm::log::warn("Warning: Trying to load empty file '{}'.", filename);
-			return nullptr;
-		}
-	}
-	else if (error != uqstl::errc::is_a_directory)
+	if (!file)
 	{
 		return nullptr;
 	}
+	const uint32_t length {static_cast<uint32_t>(file->size())};
+	if (length == 0)
+	{
+		uqm::log::warn("Warning: Trying to load empty file '{}'.", filename);
+		return nullptr;
+	}
 	uqm::log::debug("\t'{}' -- {} bytes", filename, length);
-
-	_cur_resfile_name = filename;
-	void* const data {loadFun(file ? &*file : nullptr, length)};
-	_cur_resfile_name = nullptr;
-	return data;
+	return loadFun(ResourceFile {*file, dir, filename, length});
 }
 
 bool DeleteResFile(const uqm::io::Directory& dir, const char* filename)

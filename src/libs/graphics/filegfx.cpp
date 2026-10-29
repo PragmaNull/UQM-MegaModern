@@ -24,24 +24,10 @@
 DRAWABLE
 LoadGraphicFile(const char* pStr)
 {
-	// FIXME: this theoretically needs a mechanism to prevent races
-	if (_cur_resfile_name)
-	{
-		// something else is loading resources atm
-		return 0;
-	}
-
 	return static_cast<DRAWABLE>(res_LoadResFile(uqm::contentDir(), pStr, _GetCelData));
 }
 
 FONT LoadFontFile(const char* pStr)
 {
-	// FIXME: this theoretically needs a mechanism to prevent races
-	if (_cur_resfile_name)
-	{
-		// something else is loading resources atm
-		return 0;
-	}
-
-	return static_cast<FONT>(res_LoadResFile(uqm::contentDir(), pStr, _GetFontData));
+	return static_cast<FONT>(_GetFontData(uqm::contentDir(), pStr));
 }

@@ -26,32 +26,15 @@
 SOUND_REF
 LoadSoundFile(const char* pStr)
 {
-	// FIXME: this theoretically needs a mechanism to prevent races
-	if (_cur_resfile_name)
-	{
-		// something else is loading resources atm
-		return 0;
-	}
-
 	return static_cast<SOUND_REF>(res_LoadResFile(uqm::contentDir(), pStr, _GetSoundBankData));
 }
 
 MUSIC_REF
 LoadMusicFile(const char* pStr)
 {
-	// FIXME: this theoretically needs a mechanism to prevent races
-	if (_cur_resfile_name)
-	{
-		// something else is loading resources atm
-		return 0;
-	}
-
 	char filename[256] {};
 	uqm::strncpy_safe(filename, pStr);
 	CheckMusicResName(filename);
 
-	// Opening the res file is not technically necessary right now
-	// since _GetMusicData() completely ignores the arguments
-	// But just for the sake of correctness
 	return static_cast<MUSIC_REF>(res_LoadResFile(uqm::contentDir(), filename, _GetMusicData));
 }

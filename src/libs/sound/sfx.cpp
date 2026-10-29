@@ -20,6 +20,7 @@
 #include "options.h"
 #include "sound.h"
 #include "sndintrn.h"
+#include "libs/io/Path.h"
 #include "libs/reslib.h"
 #include "core/log/log.h"
 #include "libs/strlib.h"
@@ -154,8 +155,9 @@ void SetChannelVolume(uint16_t channel, uint16_t volume, uint8_t priority)
 	(void)priority; // ignored
 }
 
-void* _GetSoundBankData(uqm::io::File* fp, uint32_t length)
+void* _GetSoundBankData(const ResourceFile& resource)
 {
+	uqm::io::File* const fp {&resource.file};
 	int snd_ct, n;
 	char CurrentLine[1024] {};
 	char filename[1024] {};
@@ -165,30 +167,11 @@ void* _GetSoundBankData(uqm::io::File* fp, uint32_t length)
 	STRING str;
 	int i;
 
-	(void)length; // ignored
-	if (fp == nullptr)
+	// The sound file names are relative to the directory of the bank.
 	{
-		return nullptr;
-	}
-
-	{
-		const char *s1, *s2;
-
-		if (_cur_resfile_name == 0
-			|| (((s2 = 0), (s1 = strrchr(_cur_resfile_name, '/')) == 0)
-				&& (s2 = strrchr(_cur_resfile_name, '\\')) == 0))
-		{
-			n = 0;
-		}
-		else
-		{
-			if (s2 > s1)
-			{
-				s1 = s2;
-			}
-			n = s1 - _cur_resfile_name + 1;
-			uqm::strncpy_safe(filename, {_cur_resfile_name, static_cast<uint32_t>(n)});
-		}
+		const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
+		n = parent.empty() ? 0 : static_cast<int>(parent.size()) + 1;
+		uqm::strncpy_safe(filename, {resource.path.data(), static_cast<uint32_t>(n)});
 	}
 
 	snd_ct = 0;

@@ -23,8 +23,6 @@
 #include "libs/memlib.h"
 #include "core/log/log.h"
 
-const char* _cur_resfile_name;
-// When a file is being loaded, _cur_resfile_name is set to its name.
 // At other times, it is nullptr.
 
 ResourceDesc*
