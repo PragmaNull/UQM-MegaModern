@@ -21,11 +21,15 @@ struct MenuOptionDef
 	uqstl::string label {};
 	// At most three lines.
 	uqstl::vector<uqstl::string> tooltip {};
+	// The option needs at least one of these addons. Empty if it needs none.
+	uqstl::vector<uqstl::string> requiresAddon {};
 };
 
 enum class MenuItemKind
 {
 	Choice,
+	Slider,
+	Heading,
 	Spacer,
 	Back,
 };
@@ -33,10 +37,22 @@ enum class MenuItemKind
 struct MenuItemDef
 {
 	MenuItemKind kind {MenuItemKind::Spacer};
-	// Setting key for a Choice.
+	// Setting key for a Choice or Slider.
 	uqstl::string setting {};
 	uqstl::string label {};
 	uqstl::vector<MenuOptionDef> options {};
+
+	// Slider range in displayed units. The setting value is the displayed value divided by 'scale'.
+	int min {0};
+	int max {100};
+	int step {5};
+	double scale {1.0};
+	bool percent {};
+	// At most three lines.
+	uqstl::vector<uqstl::string> tooltip {};
+
+	// Text of a Heading.
+	uqstl::vector<uqstl::string> lines {};
 };
 
 struct MenuDef
@@ -57,7 +73,13 @@ struct MenuDefinition
 // Returns nullopt if 'json' is not a valid menu definition.
 [[nodiscard]] uqstl::optional<MenuDefinition> menuDefinitionFromJson(uqstl::string_view json);
 
-// Returns one message for each choice that refers to an unknown setting or has an invalid option value.
+// Converts a slider position to the setting value in text form.
+[[nodiscard]] uqstl::string sliderSettingText(const MenuItemDef& slider, int displayed);
+
+// Converts a setting value in text form to a slider position.
+[[nodiscard]] uqstl::optional<int> sliderDisplayedValue(const MenuItemDef& slider, uqstl::string_view settingText);
+
+// Returns one message for each item that refers to an unknown setting or has an invalid value.
 [[nodiscard]] uqstl::vector<uqstl::string> validateMenuDefinition(const MenuDefinition& definition, const SettingsRegistry& settings);
 
 } // namespace uqm

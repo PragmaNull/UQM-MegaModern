@@ -28,6 +28,10 @@ struct SettingInfo
 	uqgsl::czstring description {};
 	// CLI11 option names, e.g. "-s,--scanlines". Empty if the setting has no command-line option.
 	uqgsl::czstring cli {""};
+	// The game reloads its resources after this setting changes in the setup menu.
+	bool requiresReload {};
+	// A change takes effect after the game restarts.
+	bool requiresRestart {};
 };
 
 // A persisted option. Each Setting registers itself with its owning registry on construction.
@@ -55,12 +59,24 @@ public:
 		return m_info.cli;
 	}
 
+	[[nodiscard]] bool requiresReload() const noexcept
+	{
+		return m_info.requiresReload;
+	}
+
+	[[nodiscard]] bool requiresRestart() const noexcept
+	{
+		return m_info.requiresRestart;
+	}
+
 	// Command-line support.
 	[[nodiscard]] virtual bool isFlag() const noexcept = 0;
 	// Returns false if 'text' is not a valid value.
 	virtual bool parseText(uqstl::string_view text) = 0;
 	// Returns true if parseText() would accept 'text'. Does not change the value.
 	[[nodiscard]] virtual bool acceptsText(uqstl::string_view text) const = 0;
+	// Returns true if 'text' parses to the current value.
+	[[nodiscard]] virtual bool hasValueText(uqstl::string_view text) const = 0;
 	[[nodiscard]] virtual uqstl::string defaultText() const = 0;
 	[[nodiscard]] virtual uqstl::string valueText() const = 0;
 	// Accepted names for an enum setting. Empty for other types.
@@ -357,6 +373,12 @@ public:
 	[[nodiscard]] bool acceptsText(uqstl::string_view text) const override
 	{
 		return isAcceptable(detail::TextCodec<T>::fromText(text));
+	}
+
+	[[nodiscard]] bool hasValueText(uqstl::string_view text) const override
+	{
+		const auto parsed {detail::TextCodec<T>::fromText(text)};
+		return parsed && *parsed == this->value;
 	}
 
 	[[nodiscard]] uqstl::string defaultText() const override

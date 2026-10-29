@@ -275,6 +275,29 @@ TEST(SettingTest, RejectsInvalidText)
 	EXPECT_EQ(*settings.color, Color::Red);
 }
 
+TEST(SettingTest, ChecksTextWithoutChangingValue)
+{
+	TestSettings settings {};
+	EXPECT_TRUE(settings.percent.acceptsText("75"));
+	EXPECT_FALSE(settings.percent.acceptsText("150"));
+	EXPECT_EQ(*settings.percent, 50);
+
+	EXPECT_TRUE(settings.percent.hasValueText("50"));
+	EXPECT_FALSE(settings.percent.hasValueText("75"));
+	EXPECT_TRUE(settings.color.hasValueText("red"));
+	EXPECT_TRUE(settings.color.hasValueText("0"));
+	EXPECT_FALSE(settings.color.hasValueText("Blue"));
+}
+
+TEST(OptionsSettingsTest, ReloadAndRestartFlags)
+{
+	const OptionsStruct options {};
+	EXPECT_TRUE(options.use3doMusic.requiresReload());
+	EXPECT_FALSE(options.use3doMusic.requiresRestart());
+	EXPECT_TRUE(options.soundDriver.requiresRestart());
+	EXPECT_FALSE(options.scanlines.requiresReload());
+}
+
 TEST(SettingTest, DescribesCommandLineValues)
 {
 	TestSettings settings {};

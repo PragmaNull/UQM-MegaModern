@@ -312,19 +312,8 @@ static WIDGET* audio_widgets[] = {
 	(WIDGET*)(&buttons[BTN_QUITSUBMENU]), // Exit to Menu
 	nullptr};
 
-static WIDGET* music_widgets[] = {
-	(WIDGET*)(&choices[CHOICE_REMIXES1]), // 3DO Remixes
-	(WIDGET*)(&choices[CHOICE_REMIXES2]), // Precursor's Remixes
-	(WIDGET*)(&choices[CHOICE_REMIXES3]), // Volasaurus' Remix Pack
-
-	(WIDGET*)(&labels[LABEL_SPACER]),		// Spacer
-	(WIDGET*)(&choices[CHOICE_IPMUSIC]),	// Volasaurus' Space Music
-	(WIDGET*)(&choices[CHOICE_MMENUMUSIC]), // Main Menu Music
-	(WIDGET*)(&choices[CHOICE_MUSRESUME]),	// Music Resume
-
-	(WIDGET*)(&labels[LABEL_SPACER]),	  // Spacer
-	(WIDGET*)(&buttons[BTN_QUITSUBMENU]), // Exit to Menu
-	nullptr};
+// Built from the menu definition file.
+static WIDGET* music_widgets[] = {nullptr};
 
 static WIDGET* cheat_widgets[] = {
 	(WIDGET*)(&buttons[BTN_DEVMENU]),		  // Devices Menu
@@ -382,38 +371,8 @@ static WIDGET* advanced_widgets[] = {
 	(WIDGET*)(&buttons[BTN_QUITSUBMENU]), // Exit to Menu
 	nullptr};
 
-static WIDGET* visual_widgets[] = {
-	(WIDGET*)(&labels[LABEL_UI]),			// UI Label
-	(WIDGET*)(&choices[CHOICE_DATESTRING]), // Switch date formats
-	(WIDGET*)(&choices[CHOICE_CUSTBORDER]), // Custom Border switch
-	(WIDGET*)(&choices[CHOICE_FUELDECIM]),	// Whole Fuel Value switch
-	(WIDGET*)(&choices[CHOICE_FUELCIRCLE]), // Fuel Range
-	(WIDGET*)(&choices[CHOICE_SOICOLOR]),	// SOI Color Selection
-	(WIDGET*)(&choices[CHOICE_ANIMHYPER]),	// Animated HyperStars
-	(WIDGET*)(&choices[CHOICE_CAPTNAMES]),	// Captain names in shipyard
-	(WIDGET*)(&choices[CHOICE_GAMEOVER]),	// Game Over switch
-
-	(WIDGET*)(&labels[LABEL_SPACER]),		// Spacer
-	(WIDGET*)(&labels[LABEL_COMM]),			// Comm Label
-	(WIDGET*)(&choices[CHOICE_ORZFONT]),	// Alternate Orz font
-	(WIDGET*)(&choices[CHOICE_NOSTOSCILL]), // Non-Stop Scope
-
-	(WIDGET*)(&labels[LABEL_SPACER]),		// Spacer
-	(WIDGET*)(&labels[LABEL_IP]),			// IP Label
-	(WIDGET*)(&choices[CHOICE_NEBULAE]),	// IP nebulae on/off
-	(WIDGET*)(&sliders[SLIDER_NEBULA]),		// Nebulae Volume
-	(WIDGET*)(&choices[CHOICE_ORBPLANETS]), // orbitingPlanets on/off
-	(WIDGET*)(&choices[CHOICE_TEXPLANETS]), // texturedPlanets on/off
-	(WIDGET*)(&choices[CHOICE_HDM_IP]),		// HD's Star System View
-	(WIDGET*)(&choices[CHOICE_IPSHIPDIR]),	// NPC Ship Direction in IP
-
-	(WIDGET*)(&labels[LABEL_SPACER]),		   // Spacer
-	(WIDGET*)(&labels[LABEL_SCAN]),			   // Scan Label
-	(WIDGET*)(&choices[CHOICE_HAZARDCLR]),	   // Hazard Colors
-	(WIDGET*)(&choices[CHOICE_PLNTEXTURE]),	   // Planet Texture
-	(WIDGET*)(&choices[CHOICE_LANDERUPGMASK]), // Show Lander Upgrades
-	(WIDGET*)(&buttons[BTN_QUITSUBMENU]),	   // Exit to Menu
-	nullptr};
+// Built from the menu definition file.
+static WIDGET* visual_widgets[] = {nullptr};
 
 // Built from the menu definition file.
 static WIDGET* qol_widgets[] = {nullptr};
@@ -817,51 +776,12 @@ check_dos_3do_modes(WIDGET_CHOICE* self, int oldval)
 	return true;
 }
 
-static bool
-check_remixes(WIDGET_CHOICE* self, int oldval)
-{
-	bool addon_available = false;
-	switch (self->choice_num)
-	{
-		case CHOICE_REMIXES1:
-			addon_available = uqm::isAddonAvailable(THREEDO_MUSIC);
-			break;
-		case CHOICE_REMIXES2:
-			addon_available = uqm::isAddonAvailable(REMIX_MUSIC);
-			break;
-		case CHOICE_REMIXES3:
-			addon_available = uqm::isAddonAvailable(VOL_RMX_MUSIC);
-			break;
-		case CHOICE_IPMUSIC:
-			addon_available = uqm::isAddonAvailable(VOL_RMX_MUSIC) || uqm::isAddonAvailable(REGION_MUSIC);
-			break;
-		default:
-			uqm::log::error("invalid choice_num in check_remixes()");
-			break;
-	}
-
-	if (!addon_available)
-	{
-		oldval = OPTVAL_DISABLED;
-		choices[self->choice_num].selected = oldval;
-		addon_unavailable(self, oldval);
-		return false;
-	}
-
-	return true;
-}
-
 static void
 check_availability(WIDGET_CHOICE* self, int oldval)
 {
 	if (self->choice_num == CHOICE_GRAPHICS)
 	{
 		check_for_hd(self, oldval);
-	}
-
-	if (self->choice_num == CHOICE_REMIXES1 || self->choice_num == CHOICE_REMIXES2 || self->choice_num == CHOICE_REMIXES3 || self->choice_num == CHOICE_IPMUSIC)
-	{
-		check_remixes(self, oldval);
 	}
 
 	if (self->choice_num == CHOICE_WINDOWTYPE)
@@ -1231,7 +1151,6 @@ SetDefaults(void)
 	choices[CHOICE_SCANMENU].selected = static_cast<int>(opts.cscan);
 	choices[CHOICE_SCROLLSTYLE].selected = static_cast<int>(opts.scroll);
 	choices[CHOICE_SUBTITLES].selected = opts.subtitles;
-	choices[CHOICE_REMIXES1].selected = opts.music3do;
 	choices[CHOICE_DISPLAY].selected = opts.fullscreen;
 	choices[CHOICE_CUTSCENE].selected = static_cast<int>(opts.intro);
 	choices[CHOICE_SHOWFPS].selected = opts.fps;
@@ -1247,7 +1166,6 @@ SetDefaults(void)
 	choices[CHOICE_BTMPLAYER].selected = static_cast<int>(opts.player1);
 	choices[CHOICE_TOPPLAYER].selected = static_cast<int>(opts.player2);
 	choices[CHOICE_KBLAYOUT].selected = 0;
-	choices[CHOICE_REMIXES2].selected = opts.musicremix;
 	choices[CHOICE_SPEECH].selected = opts.speech;
 	choices[CHOICE_ASPRATIO].selected = opts.keepaspect;
 	choices[CHOICE_CHEATING].selected = opts.cheatMode;
@@ -1257,20 +1175,9 @@ SetDefaults(void)
 	choices[CHOICE_CHHEADSTART].selected = opts.headStart;
 	//	choices[CHOICE_CHUPGRADES   ].selected = opts.unlockUpgrades;
 	choices[CHOICE_CHINFRU].selected = opts.infiniteRU;
-	choices[CHOICE_FUELCIRCLE].selected = static_cast<int>(opts.fuelRange);
-	choices[CHOICE_MMENUMUSIC].selected = opts.mainMenuMusic;
-	choices[CHOICE_NEBULAE].selected = opts.nebulae;
-	choices[CHOICE_ORBPLANETS].selected = opts.orbitingPlanets;
-	choices[CHOICE_TEXPLANETS].selected = opts.texturedPlanets;
-	choices[CHOICE_DATESTRING].selected = opts.dateType;
 	choices[CHOICE_CHINFFUEL].selected = opts.infiniteFuel;
 	choices[CHOICE_RESOLUTION].selected = opts.loresBlowup;
 	choices[CHOICE_CHINFCRD].selected = opts.infiniteCredits;
-	choices[CHOICE_HAZARDCLR].selected = opts.hazardColors;
-	choices[CHOICE_CUSTBORDER].selected = opts.customBorder;
-	choices[CHOICE_IPMUSIC].selected = static_cast<int>(opts.spaceMusic);
-	choices[CHOICE_REMIXES3].selected = opts.volasMusic;
-	choices[CHOICE_FUELDECIM].selected = opts.wholeFuel;
 #ifdef DIRECTIONAL_JOY
 	choices[CHOICE_JOYSTICK].selected = opts.directionalJoystick;
 #endif
@@ -1282,31 +1189,21 @@ SetDefaults(void)
 	choices[CHOICE_SKILLLVL].selected = static_cast<int>(opts.difficulty);
 	choices[CHOICE_EXTENDED].selected = opts.extended;
 	choices[CHOICE_NOMAD].selected = static_cast<int>(opts.nomad);
-	choices[CHOICE_GAMEOVER].selected = opts.gameOver;
-	choices[CHOICE_IPSHIPDIR].selected = opts.shipDirectionIP;
-	choices[CHOICE_ORZFONT].selected = opts.orzCompFont;
 	choices[CHOICE_INPDEVICE].selected = static_cast<int>(opts.controllerType);
 	choices[CHOICE_SCANTINT].selected = static_cast<int>(opts.tintPlanSphere);
 	choices[CHOICE_IPSTYLE].selected = static_cast<int>(opts.planetStyle);
 	choices[CHOICE_IPBACKGROUND].selected = opts.starBackground;
 	choices[CHOICE_SCANSTYLE].selected = static_cast<int>(opts.scanStyle);
-	choices[CHOICE_NOSTOSCILL].selected = opts.nonStopOscill;
 	choices[CHOICE_OSCILLSTYLE].selected = static_cast<int>(opts.scopeStyle);
-	choices[CHOICE_ANIMHYPER].selected = opts.hyperStars;
 	choices[CHOICE_LANDERSTYLE].selected = static_cast<int>(opts.landerStyle);
-	choices[CHOICE_PLNTEXTURE].selected = opts.planetTexture;
 	choices[CHOICE_FLAGSHIP].selected = static_cast<int>(opts.flagshipColor);
 	choices[CHOICE_CHCLEANHYPER].selected = opts.noHQEncounters;
 	choices[CHOICE_CHDECLEAN].selected = opts.deCleansing;
 	choices[CHOICE_CHNOPLANET].selected = opts.meleeObstacles;
-	choices[CHOICE_HDM_IP].selected = opts.unscaledStarSystem;
 	choices[CHOICE_SCANSPHERE].selected = opts.sphereType;
 	choices[CHOICE_SLAUGHTER].selected = opts.slaughterMode;
-	choices[CHOICE_MUSRESUME].selected = opts.musicResume;
 	choices[CHOICE_WINDOWTYPE].selected = opts.windowType;
 	choices[CHOICE_GAMESEED].selected = opts.seedType;
-	choices[CHOICE_SOICOLOR].selected = static_cast<int>(opts.sphereColors);
-	choices[CHOICE_LANDERUPGMASK].selected = opts.showUpgrades;
 	choices[CHOICE_FLEETPOINT].selected = opts.fleetPointSys;
 
 	// Devices
@@ -1324,14 +1221,12 @@ SetDefaults(void)
 
 	// Next choice should be choices[CHOICE_SHIPSEED]
 	choices[CHOICE_SHIPSEED].selected = opts.shipSeed;
-	choices[CHOICE_CAPTNAMES].selected = opts.captainNames;
 	choices[CHOICE_DOSMENUS].selected = opts.dosMenus;
 
 	sliders[SLIDER_MUSVOLUME].value = opts.musicvol;
 	sliders[SLIDER_SFXVOLUME].value = opts.sfxvol;
 	sliders[SLIDER_SPCHVOLUME].value = opts.speechvol;
 	sliders[SLIDER_GAMMA].value = opts.gamma;
-	sliders[SLIDER_NEBULA].value = opts.nebulaevol;
 	sliders[SLIDER_TIMEDILATION].value = opts.timeDilationPct;
 }
 
@@ -1350,7 +1245,6 @@ PropagateResults(void)
 	opts.cscan = (OPT_CONSOLETYPE)choices[CHOICE_SCANMENU].selected;
 	opts.scroll = (OPT_CONSOLETYPE)choices[CHOICE_SCROLLSTYLE].selected;
 	opts.subtitles = (OPT_ENABLABLE)choices[CHOICE_SUBTITLES].selected;
-	opts.music3do = (OPT_ENABLABLE)choices[CHOICE_REMIXES1].selected;
 	opts.fullscreen = (OPT_FULLSCREEN)choices[CHOICE_DISPLAY].selected;
 	opts.intro = (OPT_CONSOLETYPE)choices[CHOICE_CUTSCENE].selected;
 	opts.fps = (OPT_ENABLABLE)choices[CHOICE_SHOWFPS].selected;
@@ -1365,7 +1259,6 @@ PropagateResults(void)
 	opts.shield = (OPT_CONSOLETYPE)choices[CHOICE_SLVSHIELD].selected;
 	opts.player1 = (ControlTemplate)choices[CHOICE_BTMPLAYER].selected;
 	opts.player2 = (ControlTemplate)choices[CHOICE_TOPPLAYER].selected;
-	opts.musicremix = (OPT_ENABLABLE)choices[CHOICE_REMIXES2].selected;
 	opts.speech = (OPT_ENABLABLE)choices[CHOICE_SPEECH].selected;
 	opts.keepaspect = (OPT_ENABLABLE)choices[CHOICE_ASPRATIO].selected;
 	opts.cheatMode = (OPT_ENABLABLE)choices[CHOICE_CHEATING].selected;
@@ -1375,20 +1268,9 @@ PropagateResults(void)
 	opts.headStart = (OPT_ENABLABLE)choices[CHOICE_CHHEADSTART].selected;
 	//	opts.unlockUpgrades =   choices[CHOICE_CHUPGRADES   ].selected;
 	opts.infiniteRU = (OPT_ENABLABLE)choices[CHOICE_CHINFRU].selected;
-	opts.fuelRange = static_cast<uqm::FuelRangeDisplay>(choices[CHOICE_FUELCIRCLE].selected);
-	opts.mainMenuMusic = (OPT_ENABLABLE)choices[CHOICE_MMENUMUSIC].selected;
-	opts.nebulae = (OPT_ENABLABLE)choices[CHOICE_NEBULAE].selected;
-	opts.orbitingPlanets = (OPT_ENABLABLE)choices[CHOICE_ORBPLANETS].selected;
-	opts.texturedPlanets = (OPT_ENABLABLE)choices[CHOICE_TEXPLANETS].selected;
-	opts.dateType = (OPT_DATETYPE)choices[CHOICE_DATESTRING].selected;
 	opts.infiniteFuel = (OPT_ENABLABLE)choices[CHOICE_CHINFFUEL].selected;
 	opts.loresBlowup = (OPT_RESSCALER)choices[CHOICE_RESOLUTION].selected;
 	opts.infiniteCredits = (OPT_ENABLABLE)choices[CHOICE_CHINFCRD].selected;
-	opts.hazardColors = (OPT_ENABLABLE)choices[CHOICE_HAZARDCLR].selected;
-	opts.customBorder = (OPT_ENABLABLE)choices[CHOICE_CUSTBORDER].selected;
-	opts.spaceMusic = static_cast<uqm::SphereOfInfluenceMusic>(choices[CHOICE_IPMUSIC].selected);
-	opts.volasMusic = (OPT_ENABLABLE)choices[CHOICE_REMIXES3].selected;
-	opts.wholeFuel = (OPT_ENABLABLE)choices[CHOICE_FUELDECIM].selected;
 #ifdef DIRECTIONAL_JOY
 	opts.directionalJoystick = choices[CHOICE_JOYSTICK].selected;
 #endif
@@ -1400,31 +1282,21 @@ PropagateResults(void)
 	opts.difficulty = static_cast<uqm::Difficulty>(choices[CHOICE_SKILLLVL].selected);
 	opts.extended = (OPT_ENABLABLE)choices[CHOICE_EXTENDED].selected;
 	opts.nomad = static_cast<uqm::NomadMode>(choices[CHOICE_NOMAD].selected);
-	opts.gameOver = (OPT_ENABLABLE)choices[CHOICE_GAMEOVER].selected;
-	opts.shipDirectionIP = (OPT_ENABLABLE)choices[CHOICE_IPSHIPDIR].selected;
-	opts.orzCompFont = (OPT_ENABLABLE)choices[CHOICE_ORZFONT].selected;
 	opts.controllerType = static_cast<uqm::ControllerType>(choices[CHOICE_INPDEVICE].selected);
 	opts.tintPlanSphere = (OPT_CONSOLETYPE)choices[CHOICE_SCANTINT].selected;
 	opts.planetStyle = (OPT_CONSOLETYPE)choices[CHOICE_IPSTYLE].selected;
 	opts.starBackground = choices[CHOICE_IPBACKGROUND].selected;
 	opts.scanStyle = (OPT_CONSOLETYPE)choices[CHOICE_SCANSTYLE].selected;
-	opts.nonStopOscill = (OPT_ENABLABLE)choices[CHOICE_NOSTOSCILL].selected;
 	opts.scopeStyle = (OPT_CONSOLETYPE)choices[CHOICE_OSCILLSTYLE].selected;
-	opts.hyperStars = (OPT_ENABLABLE)choices[CHOICE_ANIMHYPER].selected;
 	opts.landerStyle = (OPT_CONSOLETYPE)choices[CHOICE_LANDERSTYLE].selected;
-	opts.planetTexture = (OPT_ENABLABLE)choices[CHOICE_PLNTEXTURE].selected;
 	opts.flagshipColor = (OPT_CONSOLETYPE)choices[CHOICE_FLAGSHIP].selected;
 	opts.noHQEncounters = (OPT_ENABLABLE)choices[CHOICE_CHCLEANHYPER].selected;
 	opts.deCleansing = (OPT_ENABLABLE)choices[CHOICE_CHDECLEAN].selected;
 	opts.meleeObstacles = (OPT_ENABLABLE)choices[CHOICE_CHNOPLANET].selected;
-	opts.unscaledStarSystem = (OPT_ENABLABLE)choices[CHOICE_HDM_IP].selected;
 	opts.sphereType = (OPT_SPHERETYPE)choices[CHOICE_SCANSPHERE].selected;
 	opts.slaughterMode = (OPT_ENABLABLE)choices[CHOICE_SLAUGHTER].selected;
-	opts.musicResume = (OPT_MUSICRESUME)choices[CHOICE_MUSRESUME].selected;
 	opts.windowType = (OPT_WINDOWTYPE)choices[CHOICE_WINDOWTYPE].selected;
 	opts.seedType = (OPT_SEED)choices[CHOICE_GAMESEED].selected;
-	opts.sphereColors = static_cast<uqm::SphereOfInfluenceColors>(choices[CHOICE_SOICOLOR].selected);
-	opts.showUpgrades = (OPT_ENABLABLE)choices[CHOICE_LANDERUPGMASK].selected;
 	opts.fleetPointSys = (OPT_ENABLABLE)choices[CHOICE_FLEETPOINT].selected;
 
 	// Devices
@@ -1440,14 +1312,12 @@ PropagateResults(void)
 	}
 
 	opts.shipSeed = (OPT_ENABLABLE)choices[CHOICE_SHIPSEED].selected;
-	opts.captainNames = (OPT_ENABLABLE)choices[CHOICE_CAPTNAMES].selected;
 	opts.dosMenus = (OPT_ENABLABLE)choices[CHOICE_DOSMENUS].selected;
 
 	opts.musicvol = sliders[SLIDER_MUSVOLUME].value;
 	opts.sfxvol = sliders[SLIDER_SFXVOLUME].value;
 	opts.speechvol = sliders[SLIDER_SPCHVOLUME].value;
 	opts.gamma = sliders[SLIDER_GAMMA].value;
-	opts.nebulaevol = sliders[SLIDER_NEBULA].value;
 	opts.timeDilationPct = sliders[SLIDER_TIMEDILATION].value;
 
 	SetGlobalOptions(&opts);
@@ -1781,6 +1651,7 @@ static FRAME setup_frame = nullptr;
 static constexpr const char* c_menuDefinitionResource {"ui.setupmenu"};
 static uqstl::optional<uqm::MenuDefinition> menuDefinition {};
 static uqstl::unique_ptr<uqm::MenuWidgets> menuWidgets {};
+static bool mainMenuMusicChanged {};
 
 // Menus that the menu definition file describes.
 static const struct
@@ -1788,6 +1659,8 @@ static const struct
 	const char* id;
 	int menu;
 } definedMenus[] = {
+	{"visual", MENU_VISUAL},
+	{"music", MENU_MUSIC},
 	{"qol", MENU_QOL},
 };
 
@@ -1813,8 +1686,25 @@ build_defined_menus(void)
 		uqm::log::error("{}", error);
 	}
 
+	uqm::MenuWidgets::Hooks hooks {};
+	hooks.isAddonAvailable = [](uqstl::string_view addon) {
+		return uqm::isAddonAvailable(uqstl::string {addon}.c_str());
+	};
+	hooks.addonUnavailable = [] {
+		DoPopupWindow(GAME_STRING(MAINMENU_STRING_BASE + 36));
+		Widget_SetFont(PlyrFont);
+	};
+	hooks.settingChanged = [](const uqm::SettingBase& setting) {
+		optRequiresReload = optRequiresReload || setting.requiresReload();
+		optRequiresRestart = optRequiresRestart || setting.requiresRestart();
+		if (setting.key() == "audio.mainMenuMusic")
+		{
+			mainMenuMusicChanged = true;
+		}
+	};
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(),
-													   uqm::MenuWidgets::SharedWidgets {(WIDGET*)(&labels[LABEL_SPACER]), (WIDGET*)(&buttons[BTN_QUITSUBMENU])});
+													   uqm::MenuWidgets::SharedWidgets {(WIDGET*)(&labels[LABEL_SPACER]), (WIDGET*)(&buttons[BTN_QUITSUBMENU])},
+													   uqstl::move(hooks));
 	for (const auto& defined : definedMenus)
 	{
 		const uqm::MenuDef* menu {menuDefinition->find(defined.id)};
@@ -2000,10 +1890,6 @@ init_widgets(void)
 
 	// Check addon availability for HD mode, DOS/3DO mode, and music remixes
 	choices[CHOICE_GRAPHICS].onChange = check_availability;
-	choices[CHOICE_REMIXES1].onChange = check_availability;
-	choices[CHOICE_REMIXES2].onChange = check_availability;
-	choices[CHOICE_IPMUSIC].onChange = check_availability;
-	choices[CHOICE_REMIXES3].onChange = check_availability;
 	choices[CHOICE_WINDOWTYPE].onChange = check_availability;
 
 	// Handle display option
@@ -2520,13 +2406,7 @@ void GetGlobalOptions(GLOBALOPTS* opts)
  *		Audio options
  */
 	opts->stereo = uqmOptions.stereoSFX.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->music3do = uqmOptions.use3doMusic.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->musicremix = uqmOptions.useRemixMusic.value ? OPTVAL_ENABLED : OPTVAL_DISABLED; // Precursors Pack
-	opts->volasMusic = uqmOptions.volasMusic.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
-	opts->spaceMusic = uqmOptions.spaceMusic.value;
-	opts->mainMenuMusic = uqmOptions.mainMenuMusic.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->musicResume = (OPT_MUSICRESUME)uqmOptions.musicResume.value;
 	opts->speech = uqmOptions.useSpeech.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	switch (snddriver)
@@ -2579,32 +2459,18 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 #endif
 	opts->controllerType = uqmOptions.optControllerType.value;
 	opts->directionalJoystick = uqmOptions.directionalJoystick.value ? OPTVAL_ENABLED : OPTVAL_DISABLED; // For Android
-	opts->dateType = dateFormatToDateTypeOpt(uqmOptions.optDateFormat.value);
-	opts->customBorder = uqmOptions.customBorder.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->flagshipColor = whichPlatformOpt(uqmOptions.flagshipColor.value);
-	opts->gameOver = uqmOptions.gameOver.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->hyperStars = uqmOptions.hyperStars.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->fuelRange = uqmOptions.optFuelRange.value;
-	opts->wholeFuel = uqmOptions.wholeFuel.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->sphereColors = uqmOptions.sphereColors.value;
 	opts->dosMenus = uqmOptions.dosMenus.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	// Interplanetary
-	opts->nebulae = uqmOptions.nebulae.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->nebulaevol = uqmOptions.nebulaevol.value;
 	opts->starBackground = uqmOptions.starBackground.value;
-	opts->unscaledStarSystem = uqmOptions.unscaledStarSystem.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->planetStyle = whichPlatformOpt(uqmOptions.planetStyle.value);
-	opts->orbitingPlanets = uqmOptions.orbitingPlanets.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->texturedPlanets = uqmOptions.texturedPlanets.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	// Orbit
 	opts->landerHold = whichPlatformOpt(uqmOptions.landerHold.value);
 	opts->cscan = whichPlatformOpt(uqmOptions.whichCoarseScan.value);
-	opts->hazardColors = uqmOptions.hazardColors.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->scanStyle = whichPlatformOpt(uqmOptions.scanStyle.value);
 	opts->landerStyle = whichPlatformOpt(uqmOptions.landerStyle.value);
-	opts->planetTexture = uqmOptions.planetTexture.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->sphereType = (OPT_SPHERETYPE)uqmOptions.sphereType.value;
 	opts->tintPlanSphere = whichPlatformOpt(uqmOptions.tintPlanSphere.value);
 	opts->shield = whichPlatformOpt(uqmOptions.whichShield.value);
@@ -2620,20 +2486,15 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 
 	// Comm screen
 	opts->scroll = whichPlatformOpt(uqmOptions.smoothScroll.value);
-	opts->orzCompFont = uqmOptions.orzCompFont.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->scopeStyle = whichPlatformOpt(uqmOptions.scopeStyle.value);
-	opts->nonStopOscill = uqmOptions.nonStopOscill.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	// Auto-Pilot
-	opts->shipDirectionIP = uqmOptions.shipDirectionIP.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	// Controls
 	opts->player1 = PlayerControlTemplates[0];
 	opts->player2 = PlayerControlTemplates[1];
 
 	// QoL
-	opts->showUpgrades = uqmOptions.showUpgrades.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->captainNames = uqmOptions.captainNames.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	/*
  *		Cheats
@@ -2726,14 +2587,11 @@ void SetGlobalOptions(GLOBALOPTS* opts)
  *		Audio options
  */
 	putOpt(uqmOptions.stereoSFX.value, (bool)opts->stereo, true);
-	putOpt(uqmOptions.use3doMusic.value, (bool)opts->music3do, true);
-	putOpt(uqmOptions.useRemixMusic.value, (bool)opts->musicremix, true);
-	putOpt(uqmOptions.volasMusic.value, (bool)opts->volasMusic, true);
 
-	putOpt(uqmOptions.spaceMusic.value, (int)opts->spaceMusic, true);
 
-	if (putOpt(uqmOptions.mainMenuMusic.value, (bool)opts->mainMenuMusic, false))
+	if (mainMenuMusicChanged)
 	{
+		mainMenuMusicChanged = false;
 		if (uqmOptions.mainMenuMusic)
 		{
 			InitMenuMusic();
@@ -2744,7 +2602,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 		}
 	}
 
-	putOpt(uqmOptions.musicResume.value, (int)opts->musicResume, false);
 	putOpt(uqmOptions.useSpeech.value, (bool)opts->speech, true);
 
 	{
@@ -2857,37 +2714,21 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 #ifdef DIRECTIONAL_JOY
 	putOpt(uqmOptions.directionalJoystick.value, (bool)opts->directionalJoystick, false);
 #endif
-	putOpt(uqmOptions.optDateFormat.value, opts->dateType, false);
-	putOpt(uqmOptions.customBorder.value, (bool)opts->customBorder, false);
 	putOpt(uqmOptions.flagshipColor.value, opts->flagshipColor, false);
-	putOpt(uqmOptions.gameOver.value, (bool)opts->gameOver, false);
-	putOpt(uqmOptions.hyperStars.value, (bool)opts->hyperStars, false);
-	putOpt(uqmOptions.optFuelRange.value, opts->fuelRange, false);
-	putOpt(uqmOptions.wholeFuel.value, (bool)opts->wholeFuel, false);
-	putOpt(uqmOptions.sphereColors.value, opts->sphereColors, false);
-	putOpt(uqmOptions.captainNames.value, (bool)opts->captainNames, false);
 	putOpt(uqmOptions.dosMenus.value, (bool)opts->dosMenus, false);
 
 	// Interplanetary
-	putOpt(uqmOptions.nebulae.value, (bool)opts->nebulae, false);
-	putOpt(uqmOptions.nebulaevol.value, opts->nebulaevol, false);
 	putOpt(uqmOptions.starBackground.value, opts->starBackground, false);
-	putOpt(uqmOptions.unscaledStarSystem.value, (bool)opts->unscaledStarSystem, false);
 	putOpt(uqmOptions.planetStyle.value, opts->planetStyle, false);
-	putOpt(uqmOptions.orbitingPlanets.value, (bool)opts->orbitingPlanets, false);
-	putOpt(uqmOptions.texturedPlanets.value, (bool)opts->texturedPlanets, false);
 
 	// Orbit
 	putOpt(uqmOptions.landerHold.value, opts->landerHold, false);
 	putOpt(uqmOptions.whichCoarseScan.value, opts->cscan, false);
-	putOpt(uqmOptions.hazardColors.value, (bool)opts->hazardColors, false);
 	putOpt(uqmOptions.scanStyle.value, opts->scanStyle, false);
 	putOpt(uqmOptions.landerStyle.value, opts->landerStyle, false);
-	putOpt(uqmOptions.planetTexture.value, (bool)opts->planetTexture, false);
 	putOpt(uqmOptions.sphereType.value, (int)opts->sphereType, false);
 	putOpt(uqmOptions.tintPlanSphere.value, opts->tintPlanSphere, false);
 	putOpt(uqmOptions.whichShield.value, opts->shield, false);
-	putOpt(uqmOptions.showUpgrades.value, (bool)opts->showUpgrades, false);
 
 	// Game modes
 	{
@@ -2914,12 +2755,9 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 
 	// Comm screen
 	putOpt(uqmOptions.smoothScroll.value, opts->scroll, false);
-	putOpt(uqmOptions.orzCompFont.value, (bool)opts->orzCompFont, false);
 	putOpt(uqmOptions.scopeStyle.value, opts->scopeStyle, false);
-	putOpt(uqmOptions.nonStopOscill.value, (bool)opts->nonStopOscill, false);
 
 	// Auto-Pilot
-	putOpt(uqmOptions.shipDirectionIP.value, (bool)opts->shipDirectionIP, false);
 
 	// Controls
 	PlayerControlTemplates[0] = opts->player1;

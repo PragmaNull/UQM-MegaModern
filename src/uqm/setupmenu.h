@@ -414,37 +414,32 @@ typedef struct globalopts_struct
 	OPT_ADRIVERTYPE adriver;
 	OPT_AQUALITYTYPE aquality;
 	OPT_GODTYPE godModes;
-	OPT_DATETYPE dateType;
 	uqm::Difficulty difficulty;
 	uqm::NomadMode nomad;
 	OPT_MELEEZOOM meleezoom;
 	uqm::ControllerType controllerType;
-	uqm::FuelRangeDisplay fuelRange;
 	OPT_SPHERETYPE sphereType;
 	OPT_WINDOWTYPE windowType;
-	OPT_MUSICRESUME musicResume;
 	OPT_SEED seedType;
-	uqm::SphereOfInfluenceColors sphereColors;
-	uqm::SphereOfInfluenceMusic spaceMusic;
 	OPT_ADD_REMOVE deviceArray[28], upgradeArray[NUM_UPGRADES];
-	OPT_ENABLABLE subtitles, scanlines, fps, stereo, music3do,
-		musicremix, speech, keepaspect, cheatMode, mainMenuMusic,
-		nebulae, orbitingPlanets, texturedPlanets, godMode, bubbleWarp,
+	OPT_ENABLABLE subtitles, scanlines, fps, stereo,
+		speech, keepaspect, cheatMode,
+		godMode, bubbleWarp,
 		unlockShips, headStart, unlockUpgrades, infiniteRU,
 		infiniteFuel, infiniteCredits,
-		customBorder, volasMusic, directionalJoystick, wholeFuel,
-		extended, gameOver, shipDirectionIP, hazardColors, orzCompFont,
-		nonStopOscill, hyperStars, planetTexture,
+		directionalJoystick,
+		extended,
+		
 		noHQEncounters, deCleansing, meleeObstacles,
-		unscaledStarSystem, slaughterMode,
-		showUpgrades, fleetPointSys,
-		shipSeed, captainNames, dosMenus;
+		slaughterMode,
+		fleetPointSys,
+		shipSeed, dosMenus;
 	OPT_FULLSCREEN fullscreen;
 	OPT_CONSOLETYPE menu, text, scroll, intro, shield, scrTrans,
 		landerHold, tintPlanSphere, planetStyle, scanStyle,
 		scopeStyle, landerStyle, flagshipColor, cscan;
 	ControlTemplate player1, player2;
-	int speechvol, musicvol, sfxvol, nebulaevol;
+	int speechvol, musicvol, sfxvol;
 	int gamma, starBackground;
 	int timeDilationPct;
 } GLOBALOPTS;

@@ -123,23 +123,23 @@ struct OptionsStruct : SettingsRegistry
 		 1.0f, settings::isValidGamma
 	 };
 	Setting<AudioDriverType> soundDriver {
-		*this, {.key = "audio.driver", .description = "Backend used for audio output (MixSDL, OpenAL, or silence).", .cli = "--sound,--sounddriver"},
+		*this, {.key = "audio.driver", .description = "Backend used for audio output (MixSDL, OpenAL, or silence).", .cli = "--sound,--sounddriver", .requiresRestart = true},
 		  AudioDriverType::MixSDL
 	 };
 	Setting<AudioQuality> soundQuality {
-		*this, {.key = "audio.quality", .description = "Resampling quality level for the audio mixer.", .cli = "-q,--audioquality"},
+		*this, {.key = "audio.quality", .description = "Resampling quality level for the audio mixer.", .cli = "-q,--audioquality", .requiresRestart = true},
 		 AudioQuality::High
 	   };
 	Setting<bool> use3doMusic {
-		*this, {.key = "audio.music3do", .description = "Play the 3DO remixed music tracks instead of the PC MIDI/MOD originals."},
+		*this, {.key = "audio.music3do", .description = "Play the 3DO remixed music tracks instead of the PC MIDI/MOD originals.", .requiresReload = true},
 			true
 	};
 	Setting<bool> useRemixMusic {
-		*this, {.key = "audio.musicRemix", .description = "Play the Precursors fan-remix music pack when available."},
+		*this, {.key = "audio.musicRemix", .description = "Play the Precursors fan-remix music pack when available.", .requiresReload = true},
 		   false
 	};
 	Setting<bool> useSpeech {
-		*this, {.key = "audio.speech", .description = "Enable voiced dialogue during alien conversations."},
+		*this, {.key = "audio.speech", .description = "Enable voiced dialogue during alien conversations.", .requiresReload = true},
 		 true
 	 };
 	Setting<EmulationMode> whichCoarseScan {
@@ -155,7 +155,7 @@ struct OptionsStruct : SettingsRegistry
 		 uqm::EmulationMode::PC
 	   };
 	Setting<EmulationMode> whichIntro {
-		*this, {.key = "interface.introStyle", .description = "Which intro/ending version to use.", .cli = "-i,--intro"},
+		*this, {.key = "interface.introStyle", .description = "Which intro/ending version to use.", .cli = "-i,--intro", .requiresReload = true},
 		  uqm::EmulationMode::PC
 	};
 	Setting<EmulationMode> whichShield {
@@ -175,7 +175,7 @@ struct OptionsStruct : SettingsRegistry
 			true
 	};
 	Setting<bool> stereoSFX {
-		*this, {.key = "audio.positionalSfx", .description = "Enable stereo sfx. Requires --sounddriver to be \"OpenAL\".", .cli = "--stereosfx"},
+		*this, {.key = "audio.positionalSfx", .description = "Enable stereo sfx. Requires --sounddriver to be \"OpenAL\".", .cli = "--stereosfx", .requiresReload = true},
 		   false
 	};
 	Setting<float> musicVolumeScale {
@@ -194,7 +194,7 @@ struct OptionsStruct : SettingsRegistry
 
 	// megamod options
 	Setting<int> resolutionFactor {
-		*this, {.key = "graphics.resolutionFactor", .description = "HD scale factor: 0 = SD (320×240), 2 = HD (640×480 canvas)."},
+		*this, {.key = "graphics.resolutionFactor", .description = "HD scale factor: 0 = SD (320×240), 2 = HD (640×480 canvas).", .requiresReload = true},
 		   0, settings::isValidResolutionFactor
 	   };
 	Setting<int> loresBlowupScale {
@@ -291,11 +291,11 @@ struct OptionsStruct : SettingsRegistry
 		   SphereOfInfluenceColors::Default
 	   };
 	Setting<SphereOfInfluenceMusic> spaceMusic {
-		*this, {.key = "audio.spaceMusic", .description = "Enables localized music for aliens when you are in their sphere of influence.", .cli = "--spacemusic"},
+		*this, {.key = "audio.spaceMusic", .description = "Enables localized music for aliens when you are in their sphere of influence.", .cli = "--spacemusic", .requiresReload = true},
 		   SphereOfInfluenceMusic::None
 	   };
 	Setting<bool> volasMusic {
-		*this, {.key = "audio.musicVolasaurus", .description = "Enable the Volasaurus fan-remix music pack when available."},
+		*this, {.key = "audio.musicVolasaurus", .description = "Enable the Volasaurus fan-remix music pack when available.", .requiresReload = true},
 		  false
 	   };
 	Setting<bool> wholeFuel {
@@ -441,7 +441,7 @@ struct OptionsStruct : SettingsRegistry
 			0, settings::isNonNegative
 	  };
 	Setting<int> windowEmulationMode {
-		*this, {.key = "graphics.windowStyle", .description = "Window chrome/border style: 0 = DOS, 1 = 3DO, 2 = UQM native."},
+		*this, {.key = "graphics.windowStyle", .description = "Window chrome/border style: 0 = DOS, 1 = 3DO, 2 = UQM native.", .requiresReload = true},
 			2, settings::isValidWindowStyle
 	   };
 	Setting<bool> scatterElements {

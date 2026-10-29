@@ -11,6 +11,8 @@ list(APPEND uqm_tests_uqm_master_files
 	"../src/uqm/supermelee/meleeconfig.h"
 	"../src/uqm/menudef.cpp"
 	"../src/uqm/menudef.h"
+	"../src/uqm/menuwidgets.cpp"
+	"../src/uqm/menuwidgets.h"
 )
 
 ############################################################
@@ -21,6 +23,7 @@ set(uqm_tests_uqm_files
 	"tests/uqm/test_keyconfig.cpp"
 	"tests/uqm/test_meleeconfig.cpp"
 	"tests/uqm/test_menudef.cpp"
+	"tests/uqm/test_menuwidgets.cpp"
 )
 
 source_group("tests\\uqm" FILES ${uqm_tests_uqm_files})
