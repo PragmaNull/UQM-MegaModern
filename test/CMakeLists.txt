@@ -43,6 +43,11 @@ target_include_directories(UQM_Tests
         ${CMAKE_SOURCE_DIR}/src
 )
 
+target_compile_definitions(UQM_Tests
+    PRIVATE
+        UQM_TEST_CONTENT_DIR="${CMAKE_SOURCE_DIR}/content"
+)
+
 # ---- Link libraries --------------------------------------------------------
 
 find_package(fmt REQUIRED)

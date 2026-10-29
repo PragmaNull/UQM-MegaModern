@@ -45,6 +45,8 @@
 #include "libs/math/random.h"
 #include "libs/input/input_common.h"
 #include "configuration/Configuration.h"
+#include "libs/file/textfile.h"
+#include "uqm/menuwidgets.h"
 
 #include "SDL_version.h"
 #include <scn/scan.h>
@@ -413,20 +415,8 @@ static WIDGET* visual_widgets[] = {
 	(WIDGET*)(&buttons[BTN_QUITSUBMENU]),	   // Exit to Menu
 	nullptr};
 
-static WIDGET* qol_widgets[] = {
-	(WIDGET*)(&choices[CHOICE_SKIPINTRO]),	  // Skip Intro
-	(WIDGET*)(&choices[CHOICE_PARTPICKUP]),	  // Partial Pickup switch
-	(WIDGET*)(&choices[CHOICE_SCATTERCARGO]), // Scatter Elements
-	(WIDGET*)(&choices[CHOICE_SUBMENU]),	  // Submenu switch
-	(WIDGET*)(&choices[CHOICE_SMARTAUTO]),	  // Smart Auto-Pilot
-	(WIDGET*)(&choices[CHOICE_ADVAUTO]),	  // Advanced Auto-Pilot
-	(WIDGET*)(&choices[CHOICE_VISITED]),	  // Show Visited Stars
-	(WIDGET*)(&choices[CHOICE_MLTOOLTIP]),	  // Melee Tool Tips
-	(WIDGET*)(&choices[CHOICE_SHIPSTORE]),	  // Ship storage queue
-
-	(WIDGET*)(&labels[LABEL_SPACER]),	  // Spacer
-	(WIDGET*)(&buttons[BTN_QUITSUBMENU]), // Exit to Menu
-	nullptr};
+// Built from the menu definition file.
+static WIDGET* qol_widgets[] = {nullptr};
 
 static WIDGET* editkeys_widgets[] = {
 	(WIDGET*)(&choices[CHOICE_KBLAYOUT]),	  // Current layout
@@ -1267,7 +1257,6 @@ SetDefaults(void)
 	choices[CHOICE_CHHEADSTART].selected = opts.headStart;
 	//	choices[CHOICE_CHUPGRADES   ].selected = opts.unlockUpgrades;
 	choices[CHOICE_CHINFRU].selected = opts.infiniteRU;
-	choices[CHOICE_SKIPINTRO].selected = opts.skipIntro;
 	choices[CHOICE_FUELCIRCLE].selected = static_cast<int>(opts.fuelRange);
 	choices[CHOICE_MMENUMUSIC].selected = opts.mainMenuMusic;
 	choices[CHOICE_NEBULAE].selected = opts.nebulae;
@@ -1275,8 +1264,6 @@ SetDefaults(void)
 	choices[CHOICE_TEXPLANETS].selected = opts.texturedPlanets;
 	choices[CHOICE_DATESTRING].selected = opts.dateType;
 	choices[CHOICE_CHINFFUEL].selected = opts.infiniteFuel;
-	choices[CHOICE_PARTPICKUP].selected = opts.partialPickup;
-	choices[CHOICE_SUBMENU].selected = opts.submenu;
 	choices[CHOICE_RESOLUTION].selected = opts.loresBlowup;
 	choices[CHOICE_CHINFCRD].selected = opts.infiniteCredits;
 	choices[CHOICE_HAZARDCLR].selected = opts.hazardColors;
@@ -1299,7 +1286,6 @@ SetDefaults(void)
 	choices[CHOICE_IPSHIPDIR].selected = opts.shipDirectionIP;
 	choices[CHOICE_ORZFONT].selected = opts.orzCompFont;
 	choices[CHOICE_INPDEVICE].selected = static_cast<int>(opts.controllerType);
-	choices[CHOICE_SMARTAUTO].selected = opts.smartAutoPilot;
 	choices[CHOICE_SCANTINT].selected = static_cast<int>(opts.tintPlanSphere);
 	choices[CHOICE_IPSTYLE].selected = static_cast<int>(opts.planetStyle);
 	choices[CHOICE_IPBACKGROUND].selected = opts.starBackground;
@@ -1313,17 +1299,13 @@ SetDefaults(void)
 	choices[CHOICE_CHCLEANHYPER].selected = opts.noHQEncounters;
 	choices[CHOICE_CHDECLEAN].selected = opts.deCleansing;
 	choices[CHOICE_CHNOPLANET].selected = opts.meleeObstacles;
-	choices[CHOICE_VISITED].selected = opts.showVisitedStars;
 	choices[CHOICE_HDM_IP].selected = opts.unscaledStarSystem;
 	choices[CHOICE_SCANSPHERE].selected = opts.sphereType;
 	choices[CHOICE_SLAUGHTER].selected = opts.slaughterMode;
-	choices[CHOICE_ADVAUTO].selected = opts.advancedAutoPilot;
-	choices[CHOICE_MLTOOLTIP].selected = opts.meleeToolTips;
 	choices[CHOICE_MUSRESUME].selected = opts.musicResume;
 	choices[CHOICE_WINDOWTYPE].selected = opts.windowType;
 	choices[CHOICE_GAMESEED].selected = opts.seedType;
 	choices[CHOICE_SOICOLOR].selected = static_cast<int>(opts.sphereColors);
-	choices[CHOICE_SCATTERCARGO].selected = opts.scatterElements;
 	choices[CHOICE_LANDERUPGMASK].selected = opts.showUpgrades;
 	choices[CHOICE_FLEETPOINT].selected = opts.fleetPointSys;
 
@@ -1342,7 +1324,6 @@ SetDefaults(void)
 
 	// Next choice should be choices[CHOICE_SHIPSEED]
 	choices[CHOICE_SHIPSEED].selected = opts.shipSeed;
-	choices[CHOICE_SHIPSTORE].selected = opts.shipStore;
 	choices[CHOICE_CAPTNAMES].selected = opts.captainNames;
 	choices[CHOICE_DOSMENUS].selected = opts.dosMenus;
 
@@ -1394,7 +1375,6 @@ PropagateResults(void)
 	opts.headStart = (OPT_ENABLABLE)choices[CHOICE_CHHEADSTART].selected;
 	//	opts.unlockUpgrades =   choices[CHOICE_CHUPGRADES   ].selected;
 	opts.infiniteRU = (OPT_ENABLABLE)choices[CHOICE_CHINFRU].selected;
-	opts.skipIntro = (OPT_ENABLABLE)choices[CHOICE_SKIPINTRO].selected;
 	opts.fuelRange = static_cast<uqm::FuelRangeDisplay>(choices[CHOICE_FUELCIRCLE].selected);
 	opts.mainMenuMusic = (OPT_ENABLABLE)choices[CHOICE_MMENUMUSIC].selected;
 	opts.nebulae = (OPT_ENABLABLE)choices[CHOICE_NEBULAE].selected;
@@ -1402,8 +1382,6 @@ PropagateResults(void)
 	opts.texturedPlanets = (OPT_ENABLABLE)choices[CHOICE_TEXPLANETS].selected;
 	opts.dateType = (OPT_DATETYPE)choices[CHOICE_DATESTRING].selected;
 	opts.infiniteFuel = (OPT_ENABLABLE)choices[CHOICE_CHINFFUEL].selected;
-	opts.partialPickup = (OPT_ENABLABLE)choices[CHOICE_PARTPICKUP].selected;
-	opts.submenu = (OPT_ENABLABLE)choices[CHOICE_SUBMENU].selected;
 	opts.loresBlowup = (OPT_RESSCALER)choices[CHOICE_RESOLUTION].selected;
 	opts.infiniteCredits = (OPT_ENABLABLE)choices[CHOICE_CHINFCRD].selected;
 	opts.hazardColors = (OPT_ENABLABLE)choices[CHOICE_HAZARDCLR].selected;
@@ -1426,7 +1404,6 @@ PropagateResults(void)
 	opts.shipDirectionIP = (OPT_ENABLABLE)choices[CHOICE_IPSHIPDIR].selected;
 	opts.orzCompFont = (OPT_ENABLABLE)choices[CHOICE_ORZFONT].selected;
 	opts.controllerType = static_cast<uqm::ControllerType>(choices[CHOICE_INPDEVICE].selected);
-	opts.smartAutoPilot = (OPT_ENABLABLE)choices[CHOICE_SMARTAUTO].selected;
 	opts.tintPlanSphere = (OPT_CONSOLETYPE)choices[CHOICE_SCANTINT].selected;
 	opts.planetStyle = (OPT_CONSOLETYPE)choices[CHOICE_IPSTYLE].selected;
 	opts.starBackground = choices[CHOICE_IPBACKGROUND].selected;
@@ -1440,17 +1417,13 @@ PropagateResults(void)
 	opts.noHQEncounters = (OPT_ENABLABLE)choices[CHOICE_CHCLEANHYPER].selected;
 	opts.deCleansing = (OPT_ENABLABLE)choices[CHOICE_CHDECLEAN].selected;
 	opts.meleeObstacles = (OPT_ENABLABLE)choices[CHOICE_CHNOPLANET].selected;
-	opts.showVisitedStars = (OPT_ENABLABLE)choices[CHOICE_VISITED].selected;
 	opts.unscaledStarSystem = (OPT_ENABLABLE)choices[CHOICE_HDM_IP].selected;
 	opts.sphereType = (OPT_SPHERETYPE)choices[CHOICE_SCANSPHERE].selected;
 	opts.slaughterMode = (OPT_ENABLABLE)choices[CHOICE_SLAUGHTER].selected;
-	opts.advancedAutoPilot = (OPT_ENABLABLE)choices[CHOICE_ADVAUTO].selected;
-	opts.meleeToolTips = (OPT_ENABLABLE)choices[CHOICE_MLTOOLTIP].selected;
 	opts.musicResume = (OPT_MUSICRESUME)choices[CHOICE_MUSRESUME].selected;
 	opts.windowType = (OPT_WINDOWTYPE)choices[CHOICE_WINDOWTYPE].selected;
 	opts.seedType = (OPT_SEED)choices[CHOICE_GAMESEED].selected;
 	opts.sphereColors = static_cast<uqm::SphereOfInfluenceColors>(choices[CHOICE_SOICOLOR].selected);
-	opts.scatterElements = (OPT_ENABLABLE)choices[CHOICE_SCATTERCARGO].selected;
 	opts.showUpgrades = (OPT_ENABLABLE)choices[CHOICE_LANDERUPGMASK].selected;
 	opts.fleetPointSys = (OPT_ENABLABLE)choices[CHOICE_FLEETPOINT].selected;
 
@@ -1467,7 +1440,6 @@ PropagateResults(void)
 	}
 
 	opts.shipSeed = (OPT_ENABLABLE)choices[CHOICE_SHIPSEED].selected;
-	opts.shipStore = (OPT_ENABLABLE)choices[CHOICE_SHIPSTORE].selected;
 	opts.captainNames = (OPT_ENABLABLE)choices[CHOICE_CAPTNAMES].selected;
 	opts.dosMenus = (OPT_ENABLABLE)choices[CHOICE_DOSMENUS].selected;
 
@@ -1805,6 +1777,61 @@ count_widgets(WIDGET** widgets)
 
 static stringbank* bank = nullptr;
 static FRAME setup_frame = nullptr;
+
+static constexpr const char* c_menuDefinitionResource {"ui.setupmenu"};
+static uqstl::optional<uqm::MenuDefinition> menuDefinition {};
+static uqstl::unique_ptr<uqm::MenuWidgets> menuWidgets {};
+
+// Menus that the menu definition file describes.
+static const struct
+{
+	const char* id;
+	int menu;
+} definedMenus[] = {
+	{"qol", MENU_QOL},
+};
+
+static void
+build_defined_menus(void)
+{
+	const char* path {res_GetString(c_menuDefinitionResource)};
+	const auto json {uqm::readTextFile(contentDir, path)};
+	if (!json)
+	{
+		uqm::log::critical("PANIC: Could not read the setup menu definition '{}'.", path);
+		exit(EXIT_FAILURE);
+	}
+
+	menuDefinition = uqm::menuDefinitionFromJson(*json);
+	if (!menuDefinition)
+	{
+		uqm::log::critical("PANIC: The setup menu definition '{}' is not valid.", path);
+		exit(EXIT_FAILURE);
+	}
+	for (const uqstl::string& error : uqm::validateMenuDefinition(*menuDefinition, uqm::UQMOptions::edit()))
+	{
+		uqm::log::error("{}", error);
+	}
+
+	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(),
+													   uqm::MenuWidgets::SharedWidgets {(WIDGET*)(&labels[LABEL_SPACER]), (WIDGET*)(&buttons[BTN_QUITSUBMENU])});
+	for (const auto& defined : definedMenus)
+	{
+		const uqm::MenuDef* menu {menuDefinition->find(defined.id)};
+		if (menu == nullptr)
+		{
+			uqm::log::critical("PANIC: The setup menu definition has no '{}' menu.", defined.id);
+			exit(EXIT_FAILURE);
+		}
+
+		WIDGET_MENU_SCREEN& screen {menus[defined.menu]};
+		screen.subtitle = menu->subtitle.c_str();
+		screen.bgStamp.frame = SetAbsFrameIndex(setup_frame, menu->background);
+		screen.child = menuWidgets->build(*menu);
+		screen.num_children = count_widgets(screen.child);
+		screen.highlighted = 0;
+	}
+}
 
 #define MAX_BUFF (MENU_COUNT + CHOICE_COUNT + SLIDER_COUNT + BUTTON_COUNT + LABEL_COUNT + TEXTENTRY_COUNT + CONTROLENTRY_COUNT)
 
@@ -2290,6 +2317,8 @@ init_widgets(void)
 					   count - index);
 	}
 
+	build_defined_menus();
+
 	testSounds = CaptureSound(LoadSound(TEST_SOUNDS));
 }
 
@@ -2297,6 +2326,9 @@ static void
 clean_up_widgets(void)
 {
 	int i;
+
+	menuWidgets.reset();
+	menuDefinition.reset();
 
 	for (i = 0; i < CHOICE_COUNT; i++)
 	{
@@ -2536,11 +2568,9 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 	// Mics
 	opts->subtitles = uqmOptions.subtitles.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->menu = whichPlatformOpt(uqmOptions.whichMenu.value);
-	opts->submenu = uqmOptions.submenu.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->text = whichPlatformOpt(uqmOptions.whichFonts.value);
 	opts->scrTrans = whichPlatformOpt(uqmOptions.scrTrans.value);
 	opts->intro = whichPlatformOpt(uqmOptions.whichIntro.value);
-	opts->skipIntro = uqmOptions.skipIntro.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 #ifdef MELEE_ZOOM
 	optMScale = opts->meleezoom = (int)uqmOptions.meleeScale.value;
 #else
@@ -2554,10 +2584,8 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 	opts->flagshipColor = whichPlatformOpt(uqmOptions.flagshipColor.value);
 	opts->gameOver = uqmOptions.gameOver.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->hyperStars = uqmOptions.hyperStars.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->showVisitedStars = uqmOptions.showVisitedStars.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->fuelRange = uqmOptions.optFuelRange.value;
 	opts->wholeFuel = uqmOptions.wholeFuel.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->meleeToolTips = uqmOptions.meleeToolTips.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->sphereColors = uqmOptions.sphereColors.value;
 	opts->dosMenus = uqmOptions.dosMenus.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
@@ -2572,7 +2600,6 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 
 	// Orbit
 	opts->landerHold = whichPlatformOpt(uqmOptions.landerHold.value);
-	opts->partialPickup = uqmOptions.partialPickup.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->cscan = whichPlatformOpt(uqmOptions.whichCoarseScan.value);
 	opts->hazardColors = uqmOptions.hazardColors.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->scanStyle = whichPlatformOpt(uqmOptions.scanStyle.value);
@@ -2598,8 +2625,6 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 	opts->nonStopOscill = uqmOptions.nonStopOscill.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	// Auto-Pilot
-	opts->smartAutoPilot = uqmOptions.smartAutoPilot.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->advancedAutoPilot = uqmOptions.advancedAutoPilot.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->shipDirectionIP = uqmOptions.shipDirectionIP.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	// Controls
@@ -2607,9 +2632,7 @@ void GetGlobalOptions(GLOBALOPTS* opts)
 	opts->player2 = PlayerControlTemplates[1];
 
 	// QoL
-	opts->scatterElements = uqmOptions.scatterElements.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->showUpgrades = uqmOptions.showUpgrades.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
-	opts->shipStore = uqmOptions.shipStore.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 	opts->captainNames = uqmOptions.captainNames.value ? OPTVAL_ENABLED : OPTVAL_DISABLED;
 
 	/*
@@ -2800,11 +2823,9 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 	// Mics
 	putOpt(uqmOptions.subtitles.value, (bool)opts->subtitles, false);
 	putOpt(uqmOptions.whichMenu.value, opts->menu, false);
-	putOpt(uqmOptions.submenu.value, (bool)opts->submenu, false);
 	putOpt(uqmOptions.whichFonts.value, opts->text, false);
 	putOpt(uqmOptions.scrTrans.value, opts->scrTrans, false);
 	putOpt(uqmOptions.whichIntro.value, opts->intro, true);
-	putOpt(uqmOptions.skipIntro.value, (bool)opts->skipIntro, false);
 	if (optMScale != (int)opts->meleezoom)
 	{
 #ifdef MELEE_ZOOM
@@ -2841,13 +2862,9 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 	putOpt(uqmOptions.flagshipColor.value, opts->flagshipColor, false);
 	putOpt(uqmOptions.gameOver.value, (bool)opts->gameOver, false);
 	putOpt(uqmOptions.hyperStars.value, (bool)opts->hyperStars, false);
-	putOpt(uqmOptions.showVisitedStars.value, (bool)opts->showVisitedStars, false);
 	putOpt(uqmOptions.optFuelRange.value, opts->fuelRange, false);
 	putOpt(uqmOptions.wholeFuel.value, (bool)opts->wholeFuel, false);
-	putOpt(uqmOptions.meleeToolTips.value, (bool)opts->meleeToolTips, false);
 	putOpt(uqmOptions.sphereColors.value, opts->sphereColors, false);
-	putOpt(uqmOptions.scatterElements.value, (bool)opts->scatterElements, false);
-	putOpt(uqmOptions.shipStore.value, (bool)opts->shipStore, false);
 	putOpt(uqmOptions.captainNames.value, (bool)opts->captainNames, false);
 	putOpt(uqmOptions.dosMenus.value, (bool)opts->dosMenus, false);
 
@@ -2862,7 +2879,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 
 	// Orbit
 	putOpt(uqmOptions.landerHold.value, opts->landerHold, false);
-	putOpt(uqmOptions.partialPickup.value, (bool)opts->partialPickup, false);
 	putOpt(uqmOptions.whichCoarseScan.value, opts->cscan, false);
 	putOpt(uqmOptions.hazardColors.value, (bool)opts->hazardColors, false);
 	putOpt(uqmOptions.scanStyle.value, opts->scanStyle, false);
@@ -2903,8 +2919,6 @@ void SetGlobalOptions(GLOBALOPTS* opts)
 	putOpt(uqmOptions.nonStopOscill.value, (bool)opts->nonStopOscill, false);
 
 	// Auto-Pilot
-	putOpt(uqmOptions.smartAutoPilot.value, (bool)opts->smartAutoPilot, false);
-	putOpt(uqmOptions.advancedAutoPilot.value, (bool)opts->advancedAutoPilot, false);
 	putOpt(uqmOptions.shipDirectionIP.value, (bool)opts->shipDirectionIP, false);
 
 	// Controls

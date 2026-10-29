@@ -430,15 +430,15 @@ typedef struct globalopts_struct
 	OPT_ENABLABLE subtitles, scanlines, fps, stereo, music3do,
 		musicremix, speech, keepaspect, cheatMode, mainMenuMusic,
 		nebulae, orbitingPlanets, texturedPlanets, godMode, bubbleWarp,
-		unlockShips, headStart, unlockUpgrades, infiniteRU, skipIntro,
-		infiniteFuel, partialPickup, submenu, infiniteCredits,
+		unlockShips, headStart, unlockUpgrades, infiniteRU,
+		infiniteFuel, infiniteCredits,
 		customBorder, volasMusic, directionalJoystick, wholeFuel,
 		extended, gameOver, shipDirectionIP, hazardColors, orzCompFont,
-		smartAutoPilot, nonStopOscill, hyperStars, planetTexture,
-		noHQEncounters, deCleansing, meleeObstacles, showVisitedStars,
-		unscaledStarSystem, slaughterMode, advancedAutoPilot,
-		meleeToolTips, scatterElements, showUpgrades, fleetPointSys,
-		shipSeed, shipStore, captainNames, dosMenus;
+		nonStopOscill, hyperStars, planetTexture,
+		noHQEncounters, deCleansing, meleeObstacles,
+		unscaledStarSystem, slaughterMode,
+		showUpgrades, fleetPointSys,
+		shipSeed, captainNames, dosMenus;
 	OPT_FULLSCREEN fullscreen;
 	OPT_CONSOLETYPE menu, text, scroll, intro, shield, scrTrans,
 		landerHold, tintPlanSphere, planetStyle, scanStyle,

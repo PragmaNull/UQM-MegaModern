@@ -59,6 +59,8 @@ public:
 	[[nodiscard]] virtual bool isFlag() const noexcept = 0;
 	// Returns false if 'text' is not a valid value.
 	virtual bool parseText(uqstl::string_view text) = 0;
+	// Returns true if parseText() would accept 'text'. Does not change the value.
+	[[nodiscard]] virtual bool acceptsText(uqstl::string_view text) const = 0;
 	[[nodiscard]] virtual uqstl::string defaultText() const = 0;
 	[[nodiscard]] virtual uqstl::string valueText() const = 0;
 	// Accepted names for an enum setting. Empty for other types.
@@ -350,6 +352,11 @@ public:
 		}
 		*this = *parsed;
 		return true;
+	}
+
+	[[nodiscard]] bool acceptsText(uqstl::string_view text) const override
+	{
+		return isAcceptable(detail::TextCodec<T>::fromText(text));
 	}
 
 	[[nodiscard]] uqstl::string defaultText() const override
