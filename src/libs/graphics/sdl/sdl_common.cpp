@@ -48,6 +48,7 @@ SDL_Surface* TransitionScreen;
 
 SDL_Surface* SDL_Screens[TFB_GFX_NUMSCREENS];
 SDL_Surface* SDL_Screen_fps;
+bool SDL_Screen_fps_changed {};
 
 SDL_Surface* format_conv_surf = nullptr;
 
@@ -661,6 +662,7 @@ void TFB_ScreenShot(void)
 void TFB_ClearFPSCanvas(void)
 {
 	SDL_FillSurfaceRect(SDL_Screen_fps, nullptr, 0x00000000);
+	SDL_Screen_fps_changed = true;
 }
 
 void TFB_GetScreenSize(int16_t* width, int16_t* height)

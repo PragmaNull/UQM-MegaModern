@@ -58,6 +58,8 @@ uqstl::unique_ptr<uqm::GpuShaders> s_gpuShaders {};
 float s_gamma {1.0f};
 // The frame renders into this texture when gamma correction is on.
 uqstl::unique_ptr<SDL_Texture, TextureDeleter> s_frameTarget {};
+// The texture of the FPS overlay.
+uqstl::unique_ptr<SDL_Texture, TextureDeleter> s_fpsTexture {};
 int s_frameLogicalWidth {};
 int s_frameLogicalHeight {};
 bool s_gammaPass {};
@@ -137,6 +139,7 @@ ReInit_FPS_Screen(SDL_Surface** screen, int w, int h)
 	{
 		SDL_DestroySurface(*screen);
 	}
+	s_fpsTexture.reset();
 	*screen = TFB_CreateSurface(w, h, 32, R_MASK, G_MASK,
 								B_MASK, A_MASK);
 	if (*screen == 0)
@@ -474,6 +477,7 @@ int TFB_Pure_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char
 
 void TFB_Pure_UninitGraphics(void)
 {
+	s_fpsTexture.reset();
 	s_frameTarget.reset();
 	s_gpuShaders.reset();
 	if (renderer)
@@ -544,20 +548,36 @@ TFB_SDL2_ScanLines(bool hd)
 static void
 TFB_SDL2_FPS(void)
 {
-	SDL_Texture* texture;
+	if (!SDL_Screen_fps)
+	{
+		return;
+	}
+	if (!s_fpsTexture)
+	{
+		s_fpsTexture.reset(SDL_CreateTexture(renderer, SDL_Screen_fps->format, SDL_TEXTUREACCESS_STREAMING,
+											 SDL_Screen_fps->w, SDL_Screen_fps->h));
+		if (!s_fpsTexture)
+		{
+			return;
+		}
+		SDL_SetTextureBlendMode(s_fpsTexture.get(), SDL_BLENDMODE_BLEND);
+		SDL_Screen_fps_changed = true;
+	}
+	if (SDL_Screen_fps_changed)
+	{
+		TFB_SDL2_UpdateTexture(s_fpsTexture.get(), SDL_Screen_fps, nullptr);
+		SDL_Screen_fps_changed = false;
+	}
+
 	SDL_Rect r, t;
 	r.x = r.y = t.x = t.y = 0;
 	r.w = CanvasWidth >> FpsScreenWidthShift;
 	r.h = CanvasHeight >> FpsScreenHeightShift;
 	t.w = WindowWidth >> FpsScreenWidthShift;
 	t.h = WindowHeight >> FpsScreenHeightShift;
-	texture = SDL_CreateTextureFromSurface(renderer, SDL_Screen_fps);
-	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 	const SDL_FRect src {ToFRect(r)};
 	const SDL_FRect dst {ToFRect(t)};
-	SDL_RenderTexture(renderer, texture, &src, &dst);
-	SDL_DestroyTexture(texture);
-	texture = nullptr;
+	SDL_RenderTexture(renderer, s_fpsTexture.get(), &src, &dst);
 }
 
 // Makes the texture that the frame renders into for the gamma pass. It has the
