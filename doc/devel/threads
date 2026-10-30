@@ -54,6 +54,20 @@ between threads, as TFB_DrawScreen_WaitForSignal does.
 Use std::atomic, not volatile, for a flag that more than one thread
 reads or writes.
 
+                          SHARED GAME DATA
+                          ----------------
+
+- Input: the main thread changes ImmediateInputState through the
+  VControl bindings, and the game thread copies and resets it. Its
+  values are std::atomic<int>, and VControl changes them with a
+  compare-exchange loop. A recursive mutex in vcontrol.cpp guards the
+  binding tables. Each public VControl function locks it.
+- Draw command queue: the DCQ mutex guards the queue. Lock_DCQ and
+  Unlock_DCQ hold it across calls.
+- Sound: each TFB_SoundSource has a stream_mutex for its stream data.
+  The stream functions in stream.h require it. The mixer locks
+  src_mutex, buf_mutex and act_mutex, in that order.
+
                               SLEEPING
                               --------
 
