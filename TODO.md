@@ -1,0 +1,39 @@
+# TODO
+
+## General
+
+- Add unit tests for new features.
+- Change `AlarmTime` and `TimeCount` from `uint32_t` milliseconds to `std::chrono` types.
+- Convert the comm dialogue and `.ts` (timestamp) files to single JSON files.
+- Add imgui.
+
+## Cleanup of src/libs
+
+- **UTF-8 paths:** paths on Windows use the ANSI code page in `libs/file/paths.cpp` and `libs/io`. Use UTF-8 paths in both.
+- **Raw pointers in C structs:** some C structs own raw pointers made with `new`. Make them RAII when the struct is no longer cleared with `memset`:
+  - `PLANET_ORBIT` buffers (`SOLARSYS_STATE` is cleared with `memset`, and `PLANET_DESC` holds an orbit by value).
+  - The queue tables in `displist.h`.
+  - Font character data, which the draw thread deletes.
+
+Keep these, because they are large and in use: `graphics`, `sound`, `video`, `input`, `io`, `resource`, `strings`, `luauqm`, `network` (`NETPLAY` is on), `callback` (netplay and `uqm/sis.cpp` use the alarms and async calls), and `math`. Do not change the RNG or `square_root`: seeded games must give the same results.
+
+## Graphics
+
+- **MSL shaders:** the MSL output of `shaders.bat` is not tested yet.
+- **Shader header check:** add a check in the build that the shader headers match the `.hlsl` files.
+- **GPU backend setting:** add a setting for the GPU backend. Now only the `SDL_GPU_DRIVER` environment variable selects it.
+- **Gamma slider without the GPU shaders:** when `TFB_SetGamma` fails (CPU path, `--renderer` other than `gpu`, or GPU Scaling off), `gamma_HandleEventSlider` treats the failure as the end of the range. Each key press moves the slider to its minimum or maximum, and that value (for example 0.4) is saved. Disable or hide the slider when gamma correction is not available.
+
+## Stability
+
+- **Exit code 127:** with the settings.json of one developer, the game exits with code 127 after the input script quits (`ProcessUtilityKeys` calls `exit(EXIT_SUCCESS)` while the game thread runs). The default settings exit with 0. The graphics section alone exits with 0, and the full settings with `resolutionFactor` 0 still exit with 127, so the cause is in a non-graphics section. Not bisected further. Also check whether `TFB_PreQuit` (it releases the renderer before `SDL_Quit`) is involved, because the game thread can still draw at that time.
+- **Crash:** an intermittent crash happens in about 1 of 15–50 scripted runs, mostly `setup-hd`. The cause is unknown, and the crash happened before the io changes.
+- **Threads:**
+  - `TFB_SoundSource::sample` has no `UQM_GUARDED_BY`, because the sound effect channels use it without the stream lock.
+  - The mixer lock order (`src_mutex`, `buf_mutex`, `act_mutex`) is only a comment. Clang can check it with `UQM_ACQUIRED_AFTER` annotations and `-Wthread-safety-beta`.
+- **Busy waits:** the `TaskSwitch()` loops (input rebinding, init, starcon, util, battle and others) sleep for 1 ms in each pass. Change them to waits on a condition.
+
+## Testing
+
+- **Gameplay recording:** it was reverted in `28da13c9`. Do it again later with a different design.
+

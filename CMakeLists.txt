@@ -43,7 +43,7 @@ set(APP_TARGET UrQuanMasters)
 
 set(Doc_files
 "README.md"
-"TODO.txt"
+"TODO.md"
 )
 source_group("Doc" FILES ${Doc_files})
 
