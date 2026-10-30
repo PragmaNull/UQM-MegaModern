@@ -65,7 +65,6 @@ extern bool SaveGame(uint16_t which_game, SUMMARY_DESC* summary_desc, const char
 // Saves the game to the text of a save file, or nullopt if it cannot.
 uqstl::optional<uqstl::string> SaveGameJson(SUMMARY_DESC* summary_desc, const char* name);
 
-extern const GameStateBitMap gameStateBitMap[];
 
 #if 0 //defined(__cplusplus)
 }

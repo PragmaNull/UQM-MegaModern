@@ -9,6 +9,9 @@ set(uqm_src_uqm_session_master_files "")
 set(uqm_src_uqm_session_files
 	"src/uqm/session/GameClock.cpp"
 	"src/uqm/session/GameClock.h"
+	"src/uqm/session/GameFlags.cpp"
+	"src/uqm/session/GameFlags.h"
+	"src/uqm/session/GameFlags.inc"
 	"src/uqm/session/GameSession.cpp"
 	"src/uqm/session/GameSession.h"
 	"src/uqm/session/GameState.cpp"

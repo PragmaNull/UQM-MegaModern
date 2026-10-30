@@ -10,7 +10,9 @@
 #include "core/stl/map.h"
 #include "core/stl/optional.h"
 #include "core/stl/string.h"
+#include "core/stl/array.h"
 #include "uqm/session/GameClock.h"
+#include "uqm/session/GameFlags.h"
 #include "uqm/sis.h"
 #include "uqm/state.h"
 #include <cstdint>
@@ -44,9 +46,21 @@ public:
 		return m_stateFiles[index];
 	}
 
-	// The value of a game state flag, such as "SHOFIXTI_VISITS", or nullopt if it is not set.
+	[[nodiscard]] uint32_t flag(GameFlag flag) const noexcept
+	{
+		return m_flagValues[static_cast<size_t>(flag)];
+	}
+
+	void setFlag(GameFlag flag, uint32_t value) noexcept
+	{
+		m_flagValues[static_cast<size_t>(flag)] = value;
+	}
+
+	// The value of a flag by name, such as "SHOFIXTI_VISITS". A name that is not a GameFlag can hold a value too.
+	// Returns nullopt for such a name that has no value.
 	[[nodiscard]] uqstl::optional<uint32_t> flag(uqstl::string_view name) const;
 	void setFlag(uqstl::string_view name, uint32_t value);
+	// Sets all flags to 0, and removes the names that are not GameFlags.
 	void clearFlags() noexcept;
 
 	// The star system that the flagship is in or last visited, or nullptr. It points into star_array.
@@ -60,7 +74,8 @@ private:
 	GAME_STATE m_game {};
 	GameClock m_clock {};
 	uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> m_stateFiles {MakeStateFiles()};
-	uqstl::map<uqstl::string, uint32_t, uqstl::less<>> m_flags {};
+	uqstl::array<uint32_t, c_gameFlagCount> m_flagValues {};
+	uqstl::map<uqstl::string, uint32_t, uqstl::less<>> m_otherFlags {};
 	star_desc* m_currentStar {};
 };
 

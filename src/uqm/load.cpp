@@ -421,23 +421,19 @@ void LoadClockState(SaveReader& reader, yyjson_val* obj, uqm::GameClock& clock)
 }
 
 // A game state that is not in the file is set to 0.
-void LoadGameStateFlags(SaveReader& reader, yyjson_val* root)
+void LoadGameStateFlags(SaveReader& reader, yyjson_val* root, uqm::GameState& gameState)
 {
 	yyjson_val* flags {reader.object(root, "gameState")};
-	for (const GameStateBitMap* bm {gameStateBitMap}; bm->name || bm->numBits; ++bm)
+	for (size_t index {0}; index < uqm::c_gameFlagCount; ++index)
 	{
-		if (!bm->name)
-		{
-			continue;
-		}
-
+		const uqm::GameFlagInfo& info {uqm::c_gameFlags[index]};
 		uint32_t value {};
-		yyjson_val* val {yyjson_obj_get(flags, bm->name)};
+		yyjson_val* val {yyjson_obj_getn(flags, info.name.data(), info.name.size())};
 		if (val && !toInt(val, value))
 		{
-			reader.fail(bm->name);
+			reader.fail(info.name.data());
 		}
-		setGameStateUint(bm->name, value);
+		gameState.setFlag(static_cast<uqm::GameFlag>(index), value);
 	}
 }
 
@@ -483,7 +479,7 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, uqm::GameState& gameSta
 		velocity.incr.height <<= RESOLUTION_FACTOR;
 	}
 
-	LoadGameStateFlags(reader, root);
+	LoadGameStateFlags(reader, root, gameState);
 }
 
 void LoadSisState(SaveReader& reader, yyjson_val* obj, SIS_STATE& SS)

@@ -8,8 +8,12 @@ namespace uqm
 
 uqstl::optional<uint32_t> GameState::flag(uqstl::string_view name) const
 {
-	const auto found {m_flags.find(name)};
-	if (found == m_flags.end())
+	if (const auto gameFlag {findGameFlag(name)})
+	{
+		return flag(*gameFlag);
+	}
+	const auto found {m_otherFlags.find(name)};
+	if (found == m_otherFlags.end())
 	{
 		return uqstl::nullopt;
 	}
@@ -18,10 +22,15 @@ uqstl::optional<uint32_t> GameState::flag(uqstl::string_view name) const
 
 void GameState::setFlag(uqstl::string_view name, uint32_t value)
 {
-	const auto found {m_flags.find(name)};
-	if (found == m_flags.end())
+	if (const auto gameFlag {findGameFlag(name)})
 	{
-		m_flags.emplace(uqstl::string {name}, value);
+		setFlag(*gameFlag, value);
+		return;
+	}
+	const auto found {m_otherFlags.find(name)};
+	if (found == m_otherFlags.end())
+	{
+		m_otherFlags.emplace(uqstl::string {name}, value);
 	}
 	else
 	{
@@ -31,7 +40,8 @@ void GameState::setFlag(uqstl::string_view name, uint32_t value)
 
 void GameState::clearFlags() noexcept
 {
-	m_flags.clear();
+	m_flagValues.fill(0);
+	m_otherFlags.clear();
 }
 
 } // namespace uqm
