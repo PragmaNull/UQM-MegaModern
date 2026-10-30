@@ -120,7 +120,7 @@ register_menu_controls(int index)
 	}
 }
 
-static VCONTROL_GESTURE* controls;
+static uqstl::vector<VCONTROL_GESTURE> controls {};
 
 static constexpr const char* c_keyConfigFile {"keys.json"};
 
@@ -165,7 +165,7 @@ static bool loadKeyConfiguration()
 	return true;
 }
 #define CONTROL_PTR(i, j, k) \
-	(controls + ((i) * num_flight + (j)) * MAX_FLIGHT_ALTERNATES + (k))
+	(controls.data() + ((i) * num_flight + (j)) * MAX_FLIGHT_ALTERNATES + (k))
 
 static void
 register_flight_controls(void)
@@ -217,8 +217,7 @@ initKeyConfig(void)
 		exit(EXIT_FAILURE);
 	}
 
-	controls = (VCONTROL_GESTURE*)HCalloc(sizeof(*controls) * num_templ * num_flight
-										  * MAX_FLIGHT_ALTERNATES);
+	controls.assign(static_cast<size_t>(num_templ) * num_flight * MAX_FLIGHT_ALTERNATES, VCONTROL_GESTURE {});
 
 	/* First, load in the menu keys */
 	LoadResourceIndex(uqm::contentDir(), "menu.key", "menu.");
@@ -268,8 +267,6 @@ initJoystick(void)
 {
 	int nJoysticks;
 
-	char* mapping_db;
-	int len;
 	size_t base_len;
 	const char* slash;
 
@@ -294,14 +291,9 @@ initJoystick(void)
 	}
 
 	static constexpr const char* DbFilenameFormat {"{}{}gamecontrollerdb.txt"};
-	len = fmt::formatted_size(DbFilenameFormat, baseContentPath, slash);
+	const uqstl::string mapping_db {fmt::format(DbFilenameFormat, baseContentPath, slash)};
 
-	mapping_db = (char*)HMalloc(len + 1);
-
-	fmt::format_to_sz_n(mapping_db, len + 1, DbFilenameFormat,
-						baseContentPath, slash);
-
-	if (SDL_GameControllerAddMappingsFromFile(mapping_db) == -1)
+	if (SDL_GameControllerAddMappingsFromFile(mapping_db.c_str()) == -1)
 	{
 		uqm::log::warn("Could not load controller mappings "
 					   "from {}: {}",
@@ -313,7 +305,6 @@ initJoystick(void)
 						mapping_db);
 	}
 
-	HFree(mapping_db);
 	nJoysticks = SDL_NumJoysticks();
 	uqm::log::info("{} joysticks were found.", nJoysticks);
 
@@ -370,7 +361,7 @@ int TFB_InitInput(int driver, int flags)
 void TFB_UninitInput(void)
 {
 	VControl_Uninit();
-	HFree(controls);
+	controls = {};
 	SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
 }
 

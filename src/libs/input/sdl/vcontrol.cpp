@@ -73,10 +73,8 @@ typedef struct vcontrol_joystick
 	SDL_GameController* stick;
 	int numaxes, numbuttons;
 	int threshold;
-	axis_type* axes;
-	keybinding** buttons;
-	int numhats;
-	hat_type* hats;
+	uqstl::vector<axis_type> axes;
+	uqstl::vector<keybinding*> buttons;
 } joystick;
 
 
@@ -101,9 +99,7 @@ typedef struct
 	int logical_port;
 } default_binding;
 
-static default_binding* default_bindings UQM_GUARDED_BY(s_vcontrolLock) = nullptr;
-static int default_binding_count UQM_GUARDED_BY(s_vcontrolLock) = 0;
-static int default_binding_capacity UQM_GUARDED_BY(s_vcontrolLock) = 0;
+static uqstl::vector<default_binding> default_bindings UQM_GUARDED_BY(s_vcontrolLock) {};
 
 #endif /* HAVE_JOYSTICK */
 
@@ -118,19 +114,15 @@ static SDL_Event last_interesting UQM_GUARDED_BY(s_vcontrolLock);
 static keypool*
 allocate_key_chunk(void) UQM_REQUIRES(s_vcontrolLock)
 {
-	keypool* x = (keypool*)HMalloc(sizeof(keypool));
-	if (x)
+	auto* x {new keypool {}};
+	x->remaining = POOL_CHUNK_SIZE;
+	x->next = nullptr;
+	for (int i {}; i < POOL_CHUNK_SIZE; i++)
 	{
-		int i;
-		x->remaining = POOL_CHUNK_SIZE;
-		x->next = nullptr;
-		for (i = 0; i < POOL_CHUNK_SIZE; i++)
-		{
-			x->pool[i].target = nullptr;
-			x->pool[i].keycode = SDLK_UNKNOWN;
-			x->pool[i].next = nullptr;
-			x->pool[i].parent = x;
-		}
+		x->pool[i].target = nullptr;
+		x->pool[i].keycode = SDLK_UNKNOWN;
+		x->pool[i].next = nullptr;
+		x->pool[i].parent = x;
 	}
 	return x;
 }
@@ -138,10 +130,11 @@ allocate_key_chunk(void) UQM_REQUIRES(s_vcontrolLock)
 static void
 free_key_pool(keypool* x)
 {
-	if (x)
+	while (x)
 	{
-		free_key_pool(x->next);
-		HFree(x);
+		keypool* next {x->next};
+		delete x;
+		x = next;
 	}
 }
 
@@ -151,47 +144,16 @@ static void
 store_default_binding(int is_axis_binding, int axis, int polarity,
 					  int button, uqstl::atomic<int>* target, int logical_port) UQM_REQUIRES(s_vcontrolLock)
 {
-	default_binding *new_bindings, *binding;
-	int new_capacity;
-
-	if (default_binding_count >= default_binding_capacity)
-	{
-		new_capacity = default_binding_capacity == 0 ? 16 : default_binding_capacity * 2;
-		new_bindings = (default_binding*)HRealloc(default_bindings,
-												  sizeof(default_binding) * new_capacity);
-
-		if (!new_bindings)
-		{
-			return;
-		}
-
-		default_bindings = new_bindings;
-		default_binding_capacity = new_capacity;
-	}
-
-	binding = &default_bindings[default_binding_count++];
-	binding->is_axis_binding = is_axis_binding;
-	binding->axis = axis;
-	binding->polarity = polarity;
-	binding->button = button;
-	binding->target = target;
-	binding->logical_port = logical_port;
+	default_bindings.push_back(default_binding {is_axis_binding, axis, polarity, button, target, logical_port});
 }
 
 static void
 apply_default_bindings_to_controller(SDL_JoystickID instance_id,
 									 int logical_port) UQM_REQUIRES(s_vcontrolLock)
 {
-	default_binding* binding;
-
-	if (!default_bindings)
+	for (const default_binding& entry : default_bindings)
 	{
-		return;
-	}
-
-	for (int i = 0; i < default_binding_count; i++)
-	{
-		binding = &default_bindings[i];
+		const default_binding* binding {&entry};
 
 		if (binding->logical_port != logical_port)
 		{
@@ -212,7 +174,7 @@ apply_default_bindings_to_controller(SDL_JoystickID instance_id,
 
 	uqm::log::debug("Applied {} bindings for logical port {} "
 					"(instance {})",
-					default_binding_count, logical_port,
+					default_bindings.size(), logical_port,
 					instance_id);
 }
 
@@ -255,45 +217,12 @@ void create_joystick(int device_index)
 		current = current->next;
 	}
 
-	new_controller = (controller_list*)HMalloc(sizeof(controller_list));
-	if (!new_controller)
-	{
-		uqm::log::warn(
-			"Failed to allocate memory for new controller");
-		SDL_GameControllerClose(gamecontroller);
-		return;
-	}
-
-	x = &new_controller->gamepad;
-	x->numaxes = SDL_CONTROLLER_AXIS_MAX;
-	x->numbuttons = SDL_CONTROLLER_BUTTON_MAX;
-	x->axes = (axis_type*)HMalloc(sizeof(axis_type) * x->numaxes);
-	x->buttons = (keybinding**)HMalloc(sizeof(keybinding*) * x->numbuttons);
-
-	for (int j = 0; j < x->numaxes; j++)
-	{
-		x->axes[j].neg = x->axes[j].pos = nullptr;
-		x->axes[j].polarity = 0;
-	}
-	for (int j = 0; j < x->numbuttons; j++)
-	{
-		x->buttons[j] = nullptr;
-	}
-	x->stick = gamecontroller;
-	x->threshold = 10000;
-
-	new_controller->instance_id = instance_id;
-	new_controller->next = controller_list_head;
-	controller_list_head = new_controller;
-
 	int logical_port = -1;
 	for (int i = 0; i < 2; i++)
 	{
 		if (controller_assignments[i] == -1)
 		{
 			logical_port = i;
-			controller_assignments[i] = instance_id;
-			active_controller_count++;
 			break;
 		}
 	}
@@ -303,11 +232,23 @@ void create_joystick(int device_index)
 		uqm::log::info("Maximum of 2 controllers already connected, "
 					   "ignoring additional controller");
 		SDL_GameControllerClose(gamecontroller);
-		HFree(x->axes);
-		HFree(x->buttons);
-		HFree(new_controller);
 		return;
 	}
+	controller_assignments[logical_port] = instance_id;
+	active_controller_count++;
+
+	new_controller = new controller_list {};
+	x = &new_controller->gamepad;
+	x->numaxes = SDL_CONTROLLER_AXIS_MAX;
+	x->numbuttons = SDL_CONTROLLER_BUTTON_MAX;
+	x->axes.assign(x->numaxes, axis_type {nullptr, nullptr, 0});
+	x->buttons.assign(x->numbuttons, nullptr);
+	x->stick = gamecontroller;
+	x->threshold = 10000;
+
+	new_controller->instance_id = instance_id;
+	new_controller->next = controller_list_head;
+	controller_list_head = new_controller;
 
 	uqm::log::info("VControl opened controller {} (logical port {}): "
 				   "{} (instance {})",
@@ -351,9 +292,7 @@ destroy_joystick(SDL_JoystickID instance_id) UQM_REQUIRES(s_vcontrolLock)
 				x->stick = nullptr;
 			}
 
-			HFree(x->axes);
-			HFree(x->buttons);
-			HFree(current);
+			delete current;
 
 			uqm::log::info(
 				"Controller instance {} removed", instance_id);
@@ -386,9 +325,7 @@ key_init(void) UQM_REQUIRES(s_vcontrolLock)
 	}
 	active_controller_count = 0;
 	controller_list_head = nullptr;
-	default_bindings = nullptr;
-	default_binding_count = 0;
-	default_binding_capacity = 0;
+	default_bindings.clear();
 #else
 	active_controller_count = 0;
 #endif /* HAVE_JOYSTICK */
@@ -418,11 +355,7 @@ key_uninit(void) UQM_REQUIRES(s_vcontrolLock)
 	controller_list_head = nullptr;
 	active_controller_count = 0;
 
-	// Free binding tracking
-	HFree(default_bindings);
-	default_bindings = nullptr;
-	default_binding_count = 0;
-	default_binding_capacity = 0;
+	default_bindings.clear();
 #endif /* HAVE_JOYSTICK */
 }
 
