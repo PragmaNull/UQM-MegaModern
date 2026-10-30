@@ -30,11 +30,18 @@ GetBinaryTableFileData(const char* pathname, RESOURCE_DATA* resdata)
 	resdata->ptr = LoadResourceFromPath(pathname, _GetBinaryTableData);
 }
 
+static bool
+ReleaseStringTableData(void* data)
+{
+	FreeStringTable(static_cast<STRING_TABLE>(data));
+	return true;
+}
+
 bool InstallStringTableResType(void)
 {
-	InstallResTypeVectors("STRTAB", GetStringTableFileData, FreeResourceData, nullptr);
-	InstallResTypeVectors("BINTAB", GetBinaryTableFileData, FreeResourceData, nullptr);
-	InstallResTypeVectors("CONVERSATION", _GetConversationData, FreeResourceData, nullptr);
+	InstallResTypeVectors("STRTAB", GetStringTableFileData, ReleaseStringTableData, nullptr);
+	InstallResTypeVectors("BINTAB", GetBinaryTableFileData, ReleaseStringTableData, nullptr);
+	InstallResTypeVectors("CONVERSATION", _GetConversationData, ReleaseStringTableData, nullptr);
 	return true;
 }
 

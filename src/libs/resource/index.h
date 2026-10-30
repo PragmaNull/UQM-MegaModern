@@ -38,7 +38,8 @@ struct resource_handlers
 struct resource_desc
 {
 	RESOURCE res_id;
-	char* fname;
+	// The text after the type. STRING and UNKNOWNRES values point into it.
+	uqstl::string fname;
 	ResourceHandlers* vtable;
 	RESOURCE_DATA resdata;
 	// refcount is rudimentary as nothing really frees the descriptors

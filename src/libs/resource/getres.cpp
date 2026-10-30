@@ -34,7 +34,7 @@ lookupResourceDesc(RESOURCE_INDEX idx, RESOURCE res)
 
 void loadResourceDesc(ResourceDesc* desc)
 {
-	desc->vtable->loadFun(desc->fname, &desc->resdata);
+	desc->vtable->loadFun(desc->fname.c_str(), &desc->resdata);
 }
 
 void* LoadResourceFromPath(const char* path, ResourceLoadFileFun* loadFun)
@@ -227,10 +227,4 @@ void* res_DetachResource(RESOURCE res)
 	desc->refcount = 0;
 
 	return result;
-}
-
-bool FreeResourceData(void* data)
-{
-	HFree(data);
-	return true;
 }

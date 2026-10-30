@@ -53,15 +53,10 @@ LoadDirEntryTable(const uqm::io::Directory& dir, const char* path, const uqm::io
 	}
 	lpST->size = static_cast<int>(names.size());
 
-	STRING lpLastString {lpST->strings};
+	int index {};
 	for (const uqstl::string& name : names)
 	{
-		const size_t size {name.size() + 1};
-		STRINGPTR target {static_cast<STRINGPTR>(HMalloc(size))};
-		memcpy(target, name.c_str(), size);
-		lpLastString->data = target;
-		lpLastString->length = static_cast<int>(size);
-		lpLastString++;
+		SetStringTableEntry(StringTable, index++, name.c_str(), static_cast<int>(name.size() + 1));
 	}
 	return StringTable;
 }

@@ -92,10 +92,6 @@ const char* res_GetResourceType(RESOURCE res);
 void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix);
 void SaveResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const char* root, bool strip_root);
 
-void* GetResourceData(uqm::io::File& fp, uint32_t length);
-
-#define AllocResourceData HMalloc
-bool FreeResourceData(void*);
 
 #if 0 //defined(__cplusplus)
 }

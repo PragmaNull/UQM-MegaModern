@@ -22,7 +22,7 @@
 STRING_TABLE
 AllocStringTable(int num_entries, int flags)
 {
-	STRING_TABLE strtab = (STRING_TABLE)HMalloc(sizeof(STRING_TABLE_DESC));
+	auto* strtab {new STRING_TABLE_DESC {}};
 	int i, multiplier = 1;
 
 	if (flags & HAS_NAMEINDEX)
@@ -40,7 +40,7 @@ AllocStringTable(int num_entries, int flags)
 	strtab->flags = flags;
 	strtab->size = num_entries;
 	num_entries *= multiplier;
-	strtab->strings = (STRING_TABLE_ENTRY_DESC*)HMalloc(sizeof(STRING_TABLE_ENTRY_DESC) * num_entries);
+	strtab->strings = new STRING_TABLE_ENTRY_DESC[num_entries] {};
 	for (i = 0; i < num_entries; i++)
 	{
 		strtab->strings[i].data = nullptr;
@@ -72,16 +72,13 @@ void FreeStringTable(STRING_TABLE strtab)
 
 	for (i = 0; i < strtab->size * multiplier; i++)
 	{
-		if (strtab->strings[i].data != nullptr)
-		{
-			HFree(strtab->strings[i].data);
-		}
+		delete[] strtab->strings[i].data;
 	}
 
 	delete strtab->nameIndex;
 	strtab->nameIndex = nullptr;
-	HFree(strtab->strings);
-	HFree(strtab);
+	delete[] strtab->strings;
+	delete strtab;
 }
 
 bool DestroyStringTable(STRING_TABLE StringTable)

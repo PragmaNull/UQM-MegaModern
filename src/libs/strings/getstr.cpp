@@ -41,21 +41,17 @@ dword_convert(uint32_t* dword_array, uint16_t num_dwords)
 	} while (--num_dwords);
 }
 
-static STRING
-set_strtab_entry(STRING_TABLE_DESC* strtab, int index, const char* value,
-				 int len)
+STRING
+SetStringTableEntry(STRING_TABLE strtab, int index, const void* value, int len)
 {
 	STRING str = &strtab->strings[index];
 
-	if (str->data)
-	{
-		HFree(str->data);
-		str->data = nullptr;
-		str->length = 0;
-	}
+	delete[] str->data;
+	str->data = nullptr;
+	str->length = 0;
 	if (len)
 	{
-		str->data = (STRINGPTR)HMalloc(len);
+		str->data = new char[len];
 		str->length = len;
 		memcpy(str->data, value, len);
 	}
@@ -71,46 +67,20 @@ copy_strings_to_strtab(STRING_TABLE_DESC* strtab, size_t firstIndex,
 
 	for (stringI = 0; stringI < count; stringI++)
 	{
-		set_strtab_entry(strtab, firstIndex + stringI,
-						 off, lens[stringI]);
+		SetStringTableEntry(strtab, firstIndex + stringI,
+							off, lens[stringI]);
 		off += lens[stringI];
 	}
 }
 
-// Check whether a buffer has a certain minimum size, and enlarge it
-// if necessary.
-// buf: pointer to the pointer to the buffer. May be nullptr.
-// curSize: pointer to the current size (multiple of 'increment')
-// minSize: required minimum size
-// increment: size to increment the buffer with if necessary
-// On success, *buf and *curSize are updated. On failure, they are
-// unchanged.
-// returns false if and only if the buffer needs to be enlarged but
-// memory allocation failed.
-static bool
-ensureBufSize(char** buf, size_t* curSize, size_t minSize, size_t increment)
+// Enlarges 'buf' to at least 'minSize' bytes.
+static void
+ensureBufSize(uqstl::vector<char>& buf, size_t minSize)
 {
-	char* newBuf;
-	size_t newSize;
-
-	if (minSize <= *curSize)
+	if (buf.size() < minSize)
 	{
-		// Buffer is large enough as it is.
-		return true;
+		buf.resize(minSize + POOL_SIZE);
 	}
-
-	newSize = ((minSize + (increment - 1)) / increment) * increment;
-	// Smallest multiple of 'increment' larger or equal to minSize.
-	newBuf = (char*)HRealloc(*buf, newSize);
-	if (newBuf == nullptr)
-	{
-		return false;
-	}
-
-	// Success
-	*buf = newBuf;
-	*curSize = newSize;
-	return true;
 }
 
 void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
@@ -122,34 +92,30 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 	// int num_data_sets; unused
 	uint32_t opos;
 
-	char* namedata = nullptr;
+	uqstl::vector<char> namedata(POOL_SIZE);
 	// Contains the names (indexes) of the dialogs.
 	uint32_t nlen[MAX_STRINGS];
 	// Length of each of the names.
 	uint32_t NameOffs;
-	size_t tot_name_size;
 
-	char* strdata = nullptr;
+	uqstl::vector<char> strdata(POOL_SIZE);
 	// Contains the dialog strings.
 	uint32_t slen[MAX_STRINGS];
 	// Length of each of the dialog strings.
 	uint32_t StringOffs;
-	size_t tot_string_size;
 
-	char* clipdata = nullptr;
+	uqstl::vector<char> clipdata(POOL_SIZE);
 	// Contains the file names of the speech files.
 	uint32_t clen[MAX_STRINGS];
 	// Length of each of the speech file names.
 	uint32_t ClipOffs;
-	size_t tot_clip_size;
 
-	char* ts_data = nullptr;
+	uqstl::vector<char> ts_data {};
 	// Contains the timestamp data for synching the text with the
 	// speech.
 	uint32_t tslen[MAX_STRINGS];
 	// Length of each of the timestamp strings.
 	uint32_t TSOffs;
-	size_t tot_ts_size = 0;
 
 	char CurrentLine[1024] {};
 	char paths[1024] {};
@@ -158,7 +124,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 
 	uqstl::optional<uqm::io::File> fp {};
 	uqstl::optional<uqm::io::File> timestamp_fp {};
-	std::unordered_map<std::string, STRING_TABLE_ENTRY_DESC*>* nameHashTable = nullptr;
+	uqstl::unique_ptr<uqstl::unordered_map<uqstl::string, STRING_TABLE_ENTRY_DESC*>> nameHashTable {};
 	// Hash table of string names (such as "GLAD_WHEN_YOU_COME_BACK")
 	// to a STRING.
 
@@ -218,33 +184,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 		goto err;
 	}
 
-	tot_string_size = POOL_SIZE;
-	strdata = (char*)HMalloc(tot_string_size);
-	if (strdata == 0)
-	{
-		goto err;
-	}
-
-	tot_name_size = POOL_SIZE;
-	namedata = (char*)HMalloc(tot_name_size);
-	if (namedata == 0)
-	{
-		goto err;
-	}
-
-	tot_clip_size = POOL_SIZE;
-	clipdata = (char*)HMalloc(tot_clip_size);
-	if (clipdata == 0)
-	{
-		goto err;
-	}
-	ts_data = nullptr;
-
-	nameHashTable = new std::unordered_map<std::string, STRING_TABLE_ENTRY_DESC*>();
-	if (nameHashTable == nullptr)
-	{
-		goto err;
-	}
+	nameHashTable = uqstl::make_unique<uqstl::unordered_map<uqstl::string, STRING_TABLE_ENTRY_DESC*>>();
 
 	path_len = clip_path ? strlen(clip_path) : 0;
 
@@ -253,12 +193,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 		timestamp_fp = res_OpenResFile(uqm::contentDir(), ts_path, uqm::io::OpenMode::Read);
 		if (timestamp_fp)
 		{
-			tot_ts_size = POOL_SIZE;
-			ts_data = (char*)HMalloc(tot_ts_size);
-			if (ts_data == 0)
-			{
-				goto err;
-			}
+			ts_data.resize(POOL_SIZE);
 		}
 	}
 
@@ -324,11 +259,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 
 				// Store the string name.
 				l = name.size() + 1;
-				if (!ensureBufSize(&namedata, &tot_name_size,
-								   NameOffs + l, POOL_SIZE))
-				{
-					goto err;
-				}
+				ensureBufSize(namedata, NameOffs + l);
 				uqm::strncpy_safe({&namedata[NameOffs], static_cast<uint32_t>(l)}, name);
 				NameOffs += l;
 				nlen[stringI] = l;
@@ -358,11 +289,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 							if (!timeStampView.empty())
 							{
 								l = timeStampView.size() + 1;
-								if (!ensureBufSize(&ts_data, &tot_ts_size, TSOffs + l,
-												   POOL_SIZE))
-								{
-									goto err;
-								}
+								ensureBufSize(ts_data, TSOffs + l);
 
 								uqm::strncpy_safe({&ts_data[TSOffs], static_cast<uint32_t>(l)}, timeStampView);
 								TSOffs += l;
@@ -376,8 +303,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 						uqm::log::warn("Invalid timestamp data "
 									   "for '{}'.  Disabling timestamps",
 									   name);
-						HFree(ts_data);
-						ts_data = nullptr;
+						ts_data.clear();
 						timestamp_fp.reset();
 						TSOffs = 0;
 					}
@@ -387,11 +313,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 				{
 					const uint32_t tsLen = ts.size();
 					l = path_len + tsLen + 1;
-					if (!ensureBufSize(&clipdata, &tot_clip_size,
-									   ClipOffs + l, POOL_SIZE))
-					{
-						goto err;
-					}
+					ensureBufSize(clipdata, ClipOffs + l);
 
 					if (clip_path)
 					{
@@ -408,11 +330,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 			char* s;
 			l = strlen(CurrentLine) + 1;
 
-			if (!ensureBufSize(&strdata, &tot_string_size, StringOffs + l,
-							   POOL_SIZE))
-			{
-				goto err;
-			}
+			ensureBufSize(strdata, StringOffs + l);
 
 			if (slen[stringI])
 			{
@@ -469,19 +387,19 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 
 			// Store the dialog string.
 			copy_strings_to_strtab(
-				lpST, stringI, stringCount, strdata, slen);
+				lpST, stringI, stringCount, strdata.data(), slen);
 			stringI += stringCount;
 
 			// Store the dialog names.
 			copy_strings_to_strtab(
-				lpST, stringI, stringCount, namedata, nlen);
+				lpST, stringI, stringCount, namedata.data(), nlen);
 			stringI += stringCount;
 
 			// Store sound clip file names.
 			if (lpST->flags & HAS_SOUND_CLIPS)
 			{
 				copy_strings_to_strtab(
-					lpST, stringI, stringCount, clipdata, clen);
+					lpST, stringI, stringCount, clipdata.data(), clen);
 				stringI += stringCount;
 			}
 
@@ -489,7 +407,7 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 			if (lpST->flags & HAS_TIMESTAMP)
 			{
 				copy_strings_to_strtab(
-					lpST, stringI, stringCount, ts_data, tslen);
+					lpST, stringI, stringCount, ts_data.data(), tslen);
 				//stringI += stringCount;
 			}
 
@@ -501,39 +419,14 @@ void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 				(*nameHashTable)[(const char*)str[stringI].data] = &str[stringI];
 			}
 
-			lpST->nameIndex = nameHashTable;
+			lpST->nameIndex = nameHashTable.release();
 		}
-	}
-	HFree(strdata);
-	if (clipdata != nullptr)
-	{
-		HFree(clipdata);
-	}
-	if (ts_data != nullptr)
-	{
-		HFree(ts_data);
 	}
 
 	resdata->ptr = result;
 	return;
 
 err:
-	if (nameHashTable != nullptr)
-	{
-		delete nameHashTable;
-	}
-	if (ts_data != nullptr)
-	{
-		HFree(ts_data);
-	}
-	if (clipdata != nullptr)
-	{
-		HFree(clipdata);
-	}
-	if (strdata != nullptr)
-	{
-		HFree(strdata);
-	}
 	resdata->ptr = nullptr;
 }
 
@@ -547,16 +440,8 @@ void* _GetStringData(const ResourceFile& resource)
 	uint32_t opos;
 	uint32_t slen[MAX_STRINGS];
 	uint32_t StringOffs;
-	size_t tot_string_size;
 	char CurrentLine[1024];
-	char* strdata = nullptr;
-
-	tot_string_size = POOL_SIZE;
-	strdata = (char*)HMalloc(tot_string_size);
-	if (strdata == 0)
-	{
-		goto err;
-	}
+	uqstl::vector<char> strdata(POOL_SIZE);
 
 	opos = fp->tell();
 	stringI = -1;
@@ -604,11 +489,7 @@ void* _GetStringData(const ResourceFile& resource)
 			char* s;
 			l = strlen(CurrentLine) + 1;
 
-			if (!ensureBufSize(&strdata, &tot_string_size, StringOffs + l,
-							   POOL_SIZE))
-			{
-				goto err;
-			}
+			ensureBufSize(strdata, StringOffs + l);
 
 			if (slen[stringI])
 			{
@@ -647,33 +528,37 @@ void* _GetStringData(const ResourceFile& resource)
 		if (result)
 		{
 			STRING_TABLE_DESC* lpST = (STRING_TABLE)result;
-			copy_strings_to_strtab(lpST, 0, stringCount, strdata, slen);
+			copy_strings_to_strtab(lpST, 0, stringCount, strdata.data(), slen);
 		}
 	}
-	HFree(strdata);
 
 	return result;
-
-err:
-	if (strdata != nullptr)
-	{
-		HFree(strdata);
-	}
-	return 0;
 }
 
 
 void* _GetBinaryTableData(const ResourceFile& resource)
 {
-	void* result;
-	result = GetResourceData(resource.file, resource.length);
-
-	if (result)
+	// The data has a length prefix. ~0 means uncompressed data; compressed data is not supported.
+	uint32_t compLen {};
+	if (!resource.file.readValue(compLen))
 	{
-		uint32_t* fileData;
-		STRING_TABLE lpST;
+		return nullptr;
+	}
+	if (compLen != ~uint32_t {0})
+	{
+		uqm::log::warn("LZ-compressed binary data not supported");
+		return nullptr;
+	}
+	const uint32_t length {resource.length - static_cast<uint32_t>(sizeof(uint32_t))};
+	uqstl::vector<uint32_t> data((length + 3) / 4, 0);
+	if (!resource.file.readExact(uqm::io::asBytes(data.data(), length)))
+	{
+		return nullptr;
+	}
 
-		fileData = (uint32_t*)result;
+	STRING_TABLE lpST {};
+	{
+		uint32_t* fileData {data.data()};
 
 		dword_convert(fileData, 1); /* Length */
 
@@ -689,13 +574,11 @@ void* _GetBinaryTableData(const ResourceFile& resource)
 			stringptr = (uint8_t*)(fileData + 2 + size + fileData[1]);
 			for (i = 0; i < size; i++)
 			{
-				set_strtab_entry(lpST, i, (char*)stringptr, fileData[2 + i]);
+				SetStringTableEntry(lpST, i, stringptr, fileData[2 + i]);
 				stringptr += fileData[2 + i];
 			}
 		}
-		HFree(result);
-		result = lpST;
 	}
 
-	return result;
+	return lpST;
 }

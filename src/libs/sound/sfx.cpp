@@ -242,10 +242,8 @@ void* _GetSoundBankData(const ResourceFile& resource)
 	// Populate the STRING_TABLE with ptrs to sample
 	for (i = 0, str = Snd->strings; i < snd_ct; ++i, ++str)
 	{
-		TFB_SoundSample** target = (TFB_SoundSample**)HMalloc(sizeof(sndfx[0]));
-		*target = sndfx[i];
-		str->data = (STRINGPTR)target;
-		str->length = sizeof(sndfx[0]);
+		// The entry holds the pointer to the sample.
+		SetStringTableEntry(Snd, i, &sndfx[i], sizeof(sndfx[0]));
 	}
 
 	return Snd;

@@ -42,8 +42,8 @@
 static RESOURCE_INDEX
 allocResourceIndex(void)
 {
-	RESOURCE_INDEX ndx = (RESOURCE_INDEX)HMalloc(sizeof(RESOURCE_INDEX_DESC));
-	ndx->map = new std::unordered_map<std::string, ResourceDesc*>();
+	auto* ndx {new RESOURCE_INDEX_DESC {}};
+	ndx->map = new uqstl::unordered_map<uqstl::string, ResourceDesc*>();
 	return ndx;
 }
 
@@ -52,9 +52,18 @@ freeResourceIndex(RESOURCE_INDEX h)
 {
 	if (h != nullptr)
 	{
-		/* TODO: This leaks the contents of h->map */
+		// Loaded resource data is not freed here.
+		for (auto& [key, desc] : *h->map)
+		{
+			if (desc->vtable == nullptr)
+			{
+				// A type entry: its data is the handlers.
+				delete static_cast<ResourceHandlers*>(desc->resdata.ptr);
+			}
+			delete desc;
+		}
 		delete h->map;
-		HFree(h);
+		delete h;
 	}
 }
 
@@ -106,22 +115,15 @@ newResourceDesc(const char* res_id, const char* resval)
 		return nullptr;
 	}
 
-	result = (ResourceDesc*)HMalloc(sizeof(ResourceDesc));
-	if (result == nullptr)
-	{
-		return nullptr;
-	}
-
-	result->fname = (char*)HMalloc(pathlen + 1);
-	uqm::strncpy_safe({result->fname, static_cast<uint32_t>(pathlen + 1)}, path);
-	result->fname[pathlen] = '\0';
+	result = new ResourceDesc {};
+	result->fname = uqstl::string {path, static_cast<size_t>(pathlen)};
 	result->vtable = vtable;
 	result->refcount = 0;
 
 	if (vtable->freeFun == nullptr)
 	{
 		/* Non-heap resources are raw values. Work those out at load time. */
-		vtable->loadFun(result->fname, &result->resdata);
+		vtable->loadFun(result->fname.c_str(), &result->resdata);
 	}
 	else
 	{
@@ -442,25 +444,14 @@ bool InstallResTypeVectors(const char* resType, ResourceLoadFun* loadFun,
 	fmt::format_to_sz_n(key, TYPESIZ, "sys.{}", resType);
 	typelen = strlen(resType);
 
-	handlers = (ResourceHandlers*)HMalloc(sizeof(ResourceHandlers));
-	if (handlers == nullptr)
-	{
-		return false;
-	}
+	handlers = new ResourceHandlers {};
 	handlers->loadFun = loadFun;
 	handlers->freeFun = freeFun;
 	handlers->toString = stringFun;
 	handlers->resType = resType;
 
-	result = (ResourceDesc*)HMalloc(sizeof(ResourceDesc));
-	if (result == nullptr)
-	{
-		return false;
-	}
-
-	const auto resTypeLen = strlen(resType);
-	result->fname = (char*)HMalloc(resTypeLen + 1);
-	uqm::strncpy_safe({result->fname, resTypeLen}, resType);
+	result = new ResourceDesc {};
+	result->fname = resType;
 	result->vtable = nullptr;
 	result->resdata.ptr = handlers;
 
@@ -502,22 +493,8 @@ void res_PutString(const char* key, const char* value)
 		process_resource_desc(key, "STRING:undefined");
 		desc = lookupResourceDesc(idx, key);
 	}
-	srclen = strlen(value);
-	dstlen = strlen(desc->fname);
-	if (srclen > dstlen)
-	{
-		char* newValue = (char*)HMalloc(srclen + 1);
-		char* oldValue = desc->fname;
-		uqm::log::warn("Reallocating string space for '{}'", key);
-		uqm::strncpy_safe({newValue, static_cast<uint32_t>(srclen + 1)}, value);
-		desc->resdata.str = newValue;
-		desc->fname = newValue;
-		HFree(oldValue);
-	}
-	else
-	{
-		uqm::strncpy_safe({desc->fname, static_cast<uint32_t>(dstlen + 1)}, value);
-	}
+	desc->fname = value;
+	desc->resdata.str = desc->fname.c_str();
 }
 
 bool res_IsInteger(const char* key)
@@ -678,8 +655,7 @@ bool res_Remove(const char* key)
 				oldDesc->vtable->freeFun(oldDesc->resdata.ptr);
 			}
 		}
-		HFree(oldDesc->fname);
-		HFree(oldDesc);
+		delete oldDesc;
 	}
 	return map->erase(key) > 0;
 }

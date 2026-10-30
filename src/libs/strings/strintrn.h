@@ -47,6 +47,8 @@ struct string_table
 
 STRING_TABLE AllocStringTable(int num_entries, int flags);
 void FreeStringTable(STRING_TABLE strtab);
+// Copies 'len' bytes of 'value' into the entry. A length of 0 empties the entry.
+STRING SetStringTableEntry(STRING_TABLE strtab, int index, const void* value, int len);
 
 void* _GetStringData(const ResourceFile& resource);
 void* _GetBinaryTableData(const ResourceFile& resource);
