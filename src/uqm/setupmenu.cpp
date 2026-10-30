@@ -727,11 +727,6 @@ init_widgets(void)
 		{
 			return uqm::isAddonAvailable(THREEDO_MODE(hd));
 		}
-		if (addon == "opengl-renderer")
-		{
-			// The OpenGL renderer needed SDL1.
-			return false;
-		}
 		if (addon == "directional-joystick")
 		{
 			return HAVE_DIRECTIONAL_JOYSTICK;
@@ -785,11 +780,6 @@ init_widgets(void)
 			apply_graphics_from_settings();
 			edit.resolution = uqm::Vec2u {static_cast<uint32_t>(SavedWidth), static_cast<uint32_t>(SavedHeight)};
 			menuWidgets->refresh();
-		}
-		else if (setting.key() == "graphics.alwaysOpenGL")
-		{
-			uqm::UQMOptions::edit().opengl = *options.alwaysOpenGL;
-			apply_graphics_from_settings();
 		}
 		else if (setting.key() == "graphics.windowMode" || setting.key() == "graphics.scaler" || setting.key() == "graphics.scanlines"
 				 || setting.key() == "graphics.showFps" || setting.key() == "graphics.keepAspectRatio")

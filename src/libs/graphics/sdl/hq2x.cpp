@@ -96,9 +96,9 @@ void SCALE_(HqFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 	int dsrc, ddst;
 	SDL_Rect* region = r;
 	SDL_Rect limits;
-	SDL_PixelFormat* fmt = dst->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(dst->format);
 	const int sp = src->pitch, dp = dst->pitch;
-	const int bpp = fmt->BytesPerPixel;
+	const int bpp = fmt->bytes_per_pixel;
 	const int slen = sp / bpp, dlen = dp / bpp;
 	Uint32* src_p = (Uint32*)src->pixels;
 	Uint32* dst_p = (Uint32*)dst->pixels;

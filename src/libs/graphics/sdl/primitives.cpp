@@ -111,7 +111,7 @@ putpixel_32(SDL_Surface* surface, int x, int y, Uint32 pixel)
 GetPixelFn
 getpixel_for(SDL_Surface* surface)
 {
-	int bpp = surface->format->BytesPerPixel;
+	int bpp = SDL_GetPixelFormatDetails(surface->format)->bytes_per_pixel;
 	switch (bpp)
 	{
 		case 1:
@@ -136,7 +136,7 @@ getpixel_for(SDL_Surface* surface)
 PutPixelFn
 putpixel_for(SDL_Surface* surface)
 {
-	int bpp = surface->format->BytesPerPixel;
+	int bpp = SDL_GetPixelFormatDetails(surface->format)->bytes_per_pixel;
 	switch (bpp)
 	{
 		case 1:
@@ -271,7 +271,7 @@ linburn_blend(Uint8 dc, Uint8 sc)
 
 // Assumes the channels already clipped to 8 bits
 static inline Uint32
-PACK_PIXEL_RGB(const SDL_PixelFormat* fmt,
+PACK_PIXEL_RGB(const SDL_PixelFormatDetails* fmt,
 			   Uint8 r, Uint8 g, Uint8 b)
 {
 	return ((Uint32)r << fmt->Rshift) | ((Uint32)g << fmt->Gshift)
@@ -279,7 +279,7 @@ PACK_PIXEL_RGB(const SDL_PixelFormat* fmt,
 }
 
 static inline Uint32
-PACK_PIXEL_RGBA(const SDL_PixelFormat* fmt,
+PACK_PIXEL_RGBA(const SDL_PixelFormatDetails* fmt,
 				Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
 	return ((Uint32)r << fmt->Rshift) | ((Uint32)g << fmt->Gshift)
@@ -290,7 +290,7 @@ static void
 renderpixel_additive(SDL_Surface* surface, int x, int y, Uint32 pixel,
 					 int factor)
 {
-	const SDL_PixelFormat* fmt = surface->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(surface->format);
 	Uint32* p;
 	Uint32 sp;
 	Uint8 sr, sg, sb;
@@ -324,7 +324,7 @@ static void
 renderpixel_alpha(SDL_Surface* surface, int x, int y, Uint32 pixel,
 				  int factor)
 {
-	const SDL_PixelFormat* fmt = surface->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(surface->format);
 	Uint32* p;
 	Uint32 sp;
 	Uint8 sr, sg, sb;
@@ -351,7 +351,7 @@ static void
 renderpixel_multiply(SDL_Surface* surface, int x, int y, Uint32 pixel,
 					 int factor)
 {
-	const SDL_PixelFormat* fmt = surface->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(surface->format);
 	Uint32* p;
 	Uint32 sp;
 	Uint8 sr, sg, sb;
@@ -373,7 +373,7 @@ static void
 renderpixel_overlay(SDL_Surface* surface, int x, int y, Uint32 pixel,
 					int factor)
 {
-	const SDL_PixelFormat* fmt = surface->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(surface->format);
 	Uint32* p;
 	Uint32 sp;
 	Uint8 sr, sg, sb;
@@ -393,7 +393,7 @@ static void
 renderpixel_screen(SDL_Surface* surface, int x, int y, Uint32 pixel,
 				   int factor)
 {
-	const SDL_PixelFormat* fmt = surface->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(surface->format);
 	Uint32* p;
 	Uint32 sp;
 	Uint8 sr, sg, sb;
@@ -415,7 +415,7 @@ static void
 renderpixel_grayscale(SDL_Surface* surface, int x, int y, Uint32 pixel,
 					  int factor)
 {
-	const SDL_PixelFormat* fmt = surface->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(surface->format);
 	Uint32* p;
 	Uint32 sp;
 	Uint8 avr;
@@ -435,7 +435,7 @@ static void
 renderpixel_linearburn(SDL_Surface* surface, int x, int y, Uint32 pixel,
 					   int factor)
 {
-	const SDL_PixelFormat* fmt = surface->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(surface->format);
 	Uint32* p;
 	Uint32 sp;
 	Uint8 sr, sg, sb;
@@ -455,7 +455,7 @@ static void
 renderpixel_desaturate(SDL_Surface* surface, int x, int y, Uint32 pixel,
 					   int factor)
 {
-	const SDL_PixelFormat* fmt = surface->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(surface->format);
 	Uint32* p;
 	Uint32 sp;
 	Uint8 sr, sg, sb;
@@ -481,7 +481,7 @@ static void
 renderpixel_hypertoquasi(SDL_Surface* surface, int x, int y, Uint32 pixel,
 						 int factor)
 {
-	const SDL_PixelFormat* fmt = surface->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(surface->format);
 	Uint32* p;
 	Uint32 sp;
 	Uint8 sr, sg, sb;
@@ -500,11 +500,11 @@ renderpixel_hypertoquasi(SDL_Surface* surface, int x, int y, Uint32 pixel,
 RenderPixelFn
 renderpixel_for(SDL_Surface* surface, RenderKind kind, bool forMask)
 {
-	const SDL_PixelFormat* fmt = surface->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(surface->format);
 	// forMask ignores some older conditions
 
 	// The only supported rendering is to 32bpp surfaces
-	if (fmt->BytesPerPixel != 4 && !forMask)
+	if (fmt->bytes_per_pixel != 4 && !forMask)
 	{
 		return nullptr;
 	}
@@ -552,7 +552,7 @@ void line_prim(int x1, int y1, int x2, int y2, Uint32 color, RenderPixelFn plot,
 	int d, x, y, ax, ay, sx, sy, dx, dy;
 	SDL_Rect clip_r;
 
-	SDL_GetClipRect(dst, &clip_r);
+	SDL_GetSurfaceClipRect(dst, &clip_r);
 	if (!clip_line(&x1, &y1, &x2, &y2, &clip_r))
 	{
 		return; // line is completely outside clipping rectangle
@@ -615,7 +615,7 @@ void line_aa_prim(int x1, int y1, int x2, int y2, Uint32 color, RenderPixelFn pl
 	int d, x, y, ax, ay, sx, sy, dx, dy;
 	SDL_Rect clip_r;
 
-	SDL_GetClipRect(dst, &clip_r);
+	SDL_GetSurfaceClipRect(dst, &clip_r);
 	if (!clip_line(&x1, &y1, &x2, &y2, &clip_r))
 	{
 		return; // line is completely outside clipping rectangle
@@ -796,7 +796,7 @@ void fillrect_prim(SDL_Rect r, Uint32 color, RenderPixelFn plot, int factor,
 	int x1, y1;
 	SDL_Rect clip_r;
 
-	SDL_GetClipRect(dst, &clip_r);
+	SDL_GetSurfaceClipRect(dst, &clip_r);
 	if (!clip_rect(&r, &clip_r))
 	{
 		return; // rect is completely outside clipping rectangle
@@ -864,16 +864,16 @@ int clip_rect(SDL_Rect* r, const SDL_Rect* clip_r)
 void blt_prim(SDL_Surface* src, SDL_Rect src_r, RenderPixelFn plot, int factor,
 			  SDL_Surface* dst, SDL_Rect dst_r)
 {
-	SDL_PixelFormat* srcfmt = src->format;
-	SDL_Palette* srcpal = srcfmt->palette;
-	SDL_PixelFormat* dstfmt = dst->format;
+	const SDL_PixelFormatDetails* srcfmt = SDL_GetPixelFormatDetails(src->format);
+	SDL_Palette* srcpal = SDL_GetSurfacePalette(src);
+	const SDL_PixelFormatDetails* dstfmt = SDL_GetPixelFormatDetails(dst->format);
 	Uint32 mask = 0;
 	Uint32 key = ~0;
 	GetPixelFn getpix = getpixel_for(src);
 	SDL_Rect clip_r;
 	int x, y;
 
-	SDL_GetClipRect(dst, &clip_r);
+	SDL_GetSurfaceClipRect(dst, &clip_r);
 	if (!clip_blt_rects(&src_r, &dst_r, &clip_r))
 	{
 		return; // rect is completely outside clipping rectangle
@@ -929,11 +929,11 @@ void blt_prim(SDL_Surface* src, SDL_Rect src_r, RenderPixelFn plot, int factor,
 			}
 
 			// convert pixel format to destination
-			SDL_GetRGBA(p, srcfmt, &r, &g, &b, &a);
+			SDL_GetRGBA(p, srcfmt, srcpal, &r, &g, &b, &a);
 			// TODO: handle source pixel alpha; plot() should probably
 			//   get a source alpha parameter
 			// Kruzen: Done via TRANSFER_ALPHA flag, although a bit ugly
-			p = SDL_MapRGBA(dstfmt, r, g, b, a);
+			p = SDL_MapSurfaceRGBA(dst, r, g, b, a);
 
 			plot(dst, dst_r.x + x, dst_r.y + y, p, factor == TRANSFER_ALPHA ? a : factor);
 		}
@@ -944,14 +944,14 @@ void blt_prim(SDL_Surface* src, SDL_Rect src_r, RenderPixelFn plot, int factor,
 void blt_filtered_prim(SDL_Surface* layer, RenderPixelFn plot, int factor,
 					   SDL_Surface* base, Color* fill)
 {
-	SDL_PixelFormat* lrfmt = layer->format;
-	SDL_PixelFormat* bsfmt = base->format;
+	const SDL_PixelFormatDetails* lrfmt = SDL_GetPixelFormatDetails(layer->format);
+	const SDL_PixelFormatDetails* bsfmt = SDL_GetPixelFormatDetails(base->format);
 	GetPixelFn getpix;
 	Uint32 color = 0;
 	int x, y;
 
 	// Cannot process surfaces of different formats
-	if (lrfmt->BytesPerPixel != bsfmt->BytesPerPixel)
+	if (lrfmt->bytes_per_pixel != bsfmt->bytes_per_pixel)
 	{
 		return;
 	}
@@ -961,7 +961,7 @@ void blt_filtered_prim(SDL_Surface* layer, RenderPixelFn plot, int factor,
 	}
 
 	// For paletted
-	if (lrfmt->palette)
+	if (SDL_GetSurfacePalette(layer))
 	{
 		Uint32 lkey = ~0;
 		Uint32 bkey = ~0;
@@ -991,7 +991,7 @@ void blt_filtered_prim(SDL_Surface* layer, RenderPixelFn plot, int factor,
 	{ // For truecolor
 		if (fill)
 		{
-			color = SDL_MapRGB(bsfmt, fill->r, fill->g, fill->b);
+			color = SDL_MapSurfaceRGB(base, fill->r, fill->g, fill->b);
 		}
 
 		for (y = 0; y < base->h; ++y)
@@ -1027,17 +1027,17 @@ void blt_filtered_prim(SDL_Surface* layer, RenderPixelFn plot, int factor,
 void blt_filtered_fill(SDL_Surface* base, RenderPixelFn plot, int factor,
 					   Color* fill)
 {
-	SDL_PixelFormat* fmt = base->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(base->format);
 	int x, y;
 	Uint32 color;
 
 	// Not for paletted yet!
-	if (fmt->palette)
+	if (SDL_GetSurfacePalette(base))
 	{
 		return;
 	}
 
-	color = SDL_MapRGB(fmt, fill->r, fill->g, fill->b);
+	color = SDL_MapSurfaceRGB(base, fill->r, fill->g, fill->b);
 
 	for (y = 0; y < base->h; ++y)
 	{
@@ -1066,12 +1066,12 @@ void blt_filtered_fill(SDL_Surface* base, RenderPixelFn plot, int factor,
 
 void blt_filtered_pal(SDL_Surface* layer, SDL_Surface* base, Color* fill)
 {
-	SDL_PixelFormat* lrfmt = layer->format;
-	SDL_PixelFormat* bsfmt = base->format;
+	const SDL_PixelFormatDetails* lrfmt = SDL_GetPixelFormatDetails(layer->format);
+	const SDL_PixelFormatDetails* bsfmt = SDL_GetPixelFormatDetails(base->format);
 	int x, y;
 
 	// Wrong formats
-	if (!lrfmt->palette || bsfmt->BytesPerPixel != 4)
+	if (!SDL_GetSurfacePalette(layer) || bsfmt->bytes_per_pixel != 4)
 	{
 		return;
 	}

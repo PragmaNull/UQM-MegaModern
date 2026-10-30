@@ -68,7 +68,7 @@
 bool restartGame;
 
 #if defined(GFXMODULE_SDL)
-#include <SDL.h>
+#include <SDL3/SDL.h>
 // Including this is actually necessary on OSX.
 #endif
 
@@ -190,12 +190,11 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	// Library versions.
 	uqm::log::info("{:-^40}", "Library versions");
 	uqm::log::info("\tSDL (compiled): {}.{}.{}",
-				   SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+				   SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_MICRO_VERSION);
 	{
-		SDL_version sdlRuntime {};
-		SDL_GetVersion(&sdlRuntime);
+		const int sdlRuntime {SDL_GetVersion()};
 		uqm::log::info("\tSDL (runtime):  {}.{}.{}",
-					   sdlRuntime.major, sdlRuntime.minor, sdlRuntime.patch);
+					   SDL_VERSIONNUM_MAJOR(sdlRuntime), SDL_VERSIONNUM_MINOR(sdlRuntime), SDL_VERSIONNUM_MICRO(sdlRuntime));
 	}
 	uqm::log::info("\tfmt:           {}.{}.{}",
 				   FMT_VERSION / 10000, (FMT_VERSION % 10000) / 100, FMT_VERSION % 100);

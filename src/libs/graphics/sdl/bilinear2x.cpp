@@ -37,9 +37,9 @@ void SCALE_(BilinearFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 	int dsrc, ddst;
 	SDL_Rect* region = r;
 	SDL_Rect limits;
-	SDL_PixelFormat* fmt = dst->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(dst->format);
 	const int pitch = src->pitch, dp = dst->pitch;
-	const int bpp = fmt->BytesPerPixel;
+	const int bpp = fmt->bytes_per_pixel;
 	const int len = pitch / bpp, dlen = dp / bpp;
 	Uint32 p[4]; // influential pixels array
 	Uint32* srow0 = (Uint32*)src->pixels;

@@ -87,49 +87,6 @@ function(copy_dlls target)
     endif()
 endfunction()
 
-function (FetchSDL)
-	message (STATUS "Fetching SDL2...")
-
-	set (SDL_SHARED ON CACHE BOOL "Build SDL2 as a shared library")
-	set (SDL_STATIC ON CACHE BOOL "Build SDL2 as a static library")
-
-	set (CMAKE_MESSAGE_LOG_LEVEL "WARNING") # Disable status messages
-
-	FetchContent_Declare (
-			SDL2
-			URL https://github.com/libsdl-org/SDL/releases/download/release-2.32.8/SDL2-2.32.8.tar.gz
-			URL_HASH SHA256=0ca83e9c9b31e18288c7ec811108e58bac1f1bb5ec6577ad386830eac51c787e
-			SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/SDL2
-			DOWNLOAD_NO_PROGRESS TRUE
-			DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-			
-	)
-	FetchContent_MakeAvailable (SDL2)
-
-	set (CMAKE_MESSAGE_LOG_LEVEL "STATUS") # Re-enable status messages
-
-	file (RELATIVE_PATH SDL2_REL_PATH
-			${CMAKE_SOURCE_DIR}
-			${sdl2_SOURCE_DIR}
-	)
-	set (SDL_DIR           "${SDL2_REL_PATH}" PARENT_SCOPE)
-	set (SDL2_CFLAGS_OTHER ""                 PARENT_SCOPE)
-	set (SDL2_VERSION      "2.32.8"           PARENT_SCOPE)
-
-	
-	add_custom_command(TARGET ${PROJECT_NAME}  PRE_LINK
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			$<TARGET_FILE:SDL2::SDL2>
-			$<TARGET_FILE_DIR:${PROJECT_NAME}>
-	)
-	add_custom_command(TARGET ${PROJECT_NAME}  PRE_LINK
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			$<TARGET_FILE:SDL2::SDL2main>
-			$<TARGET_FILE_DIR:${PROJECT_NAME}>
-	)
-
-endfunction ()
-
 function (FetchPNG)
 	message (STATUS "Fetching libPNG...")
 

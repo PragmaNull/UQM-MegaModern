@@ -15,13 +15,13 @@
  */
 
 /*
- * This code is adapted from IMG_png.c in the SDL2_image library, which is
+ * This code is adapted from IMG_png.c in the SDL_image library, which is
  * available under the zlib license and is (c) 1997-2019 Sam Lantinga. The
  * code itself is credited to Philippe Lavoie as the original author. It
  * also shares some heritage with libpng's own example.c file, and
  * ultimately inherits the GPL2+ license from the rest of UQM.
  *
- * Differences from SDL2_image are:
+ * Differences from SDL_image are:
  *  - It is PNG-only
  *  - It directly links the relevant version of libpng at compile time
  *  - It always uses libpng and will never forward to alternative
@@ -35,18 +35,19 @@
 
 #include <fmt/base.h>
 #include "png2sdl.h"
+#include "sdl_common.h"
 #include <png.h>
 
-/* Link function between SDL_RWops and PNG's data source */
+/* Link function between SDL_IOStream and PNG's data source */
 static void
 png_read_data(png_structp ctx, png_bytep area, png_size_t size)
 {
-	SDL_RWops* src = (SDL_RWops*)png_get_io_ptr(ctx);
-	SDL_RWread(src, area, size, 1);
+	SDL_IOStream* src = (SDL_IOStream*)png_get_io_ptr(ctx);
+	SDL_ReadIO(src, area, size);
 }
 
 SDL_Surface*
-TFB_png_to_sdl(SDL_RWops* src)
+TFB_png_to_sdl(SDL_IOStream* src)
 {
 	Sint64 start;
 	const char* error;
@@ -63,10 +64,10 @@ TFB_png_to_sdl(SDL_RWops* src)
 
 	if (!src)
 	{
-		/* The error message has been set in SDL_RWFromFile */
+		/* The error message has been set in SDL_IOFromFile */
 		return nullptr;
 	}
-	start = SDL_RWtell(src);
+	start = SDL_TellIO(src);
 
 	/* Initialize the data we will clean up when we're done */
 	error = nullptr;
@@ -191,9 +192,9 @@ TFB_png_to_sdl(SDL_RWops* src)
 		Amask = 0x000000FF >> s;
 #endif
 	}
-	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height,
-								   bit_depth * num_channels,
-								   Rmask, Gmask, Bmask, Amask);
+	surface = TFB_CreateSurface(width, height,
+								bit_depth * num_channels,
+								Rmask, Gmask, Bmask, Amask);
 	if (surface == nullptr)
 	{
 		error = SDL_GetError();
@@ -205,12 +206,12 @@ TFB_png_to_sdl(SDL_RWops* src)
 		if (color_type != PNG_COLOR_TYPE_PALETTE)
 		{
 			/* FIXME: Should these be truncated or shifted down? */
-			ckey = SDL_MapRGB(surface->format,
-							  (Uint8)transv->red,
-							  (Uint8)transv->green,
-							  (Uint8)transv->blue);
+			ckey = SDL_MapSurfaceRGB(surface,
+									 (Uint8)transv->red,
+									 (Uint8)transv->green,
+									 (Uint8)transv->blue);
 		}
-		SDL_SetColorKey(surface, SDL_TRUE, ckey);
+		SDL_SetSurfaceColorKey(surface, true, ckey);
 	}
 
 	SDL_LockSurface(surface);
@@ -237,7 +238,7 @@ TFB_png_to_sdl(SDL_RWops* src)
 	 * we omit png_read_end */
 
 	/* Load the palette, if any */
-	if (surface->format->palette)
+	if (SDL_GetSurfacePalette(surface))
 	{
 		SDL_Color palette[256];
 		int png_num_palette;
@@ -262,7 +263,7 @@ TFB_png_to_sdl(SDL_RWops* src)
 				palette[i].r = png_palette[i].red;
 			}
 		}
-		SDL_SetPaletteColors(surface->format->palette, palette,
+		SDL_SetPaletteColors(SDL_GetSurfacePalette(surface), palette,
 							 0, png_num_palette);
 	}
 
@@ -279,10 +280,10 @@ done: /* Clean up and return */
 	}
 	if (error)
 	{
-		SDL_RWseek(src, start, RW_SEEK_SET);
+		SDL_SeekIO(src, start, SDL_IO_SEEK_SET);
 		if (surface)
 		{
-			SDL_FreeSurface(surface);
+			SDL_DestroySurface(surface);
 			surface = nullptr;
 		}
 		fmt::print(stderr, "{}", error);
@@ -290,7 +291,7 @@ done: /* Clean up and return */
 	return surface;
 }
 
-/* SDL2PNG
+/* SDL to PNG
  * Based entirely on driedfruit's SDL_SavePNG
  * A libpng-based SDL_Surface writer.
  * https://github.com/driedfruit/SDL_SavePNG/
@@ -311,8 +312,8 @@ done: /* Clean up and return */
 static void
 png_write_data(png_structp ctx, png_bytep area, png_size_t size)
 {
-	SDL_RWops* rw = (SDL_RWops*)png_get_io_ptr(ctx);
-	SDL_RWwrite(rw, area, sizeof(png_byte), size);
+	SDL_IOStream* rw = (SDL_IOStream*)png_get_io_ptr(ctx);
+	SDL_WriteIO(rw, area, size);
 }
 
 SDL_Surface*
@@ -322,7 +323,7 @@ SDL_PNGFormatAlpha(SDL_Surface* src)
 	SDL_Rect rect = {0};
 
 	/* NO-OP for images < 32bpp and 32bpp images that already have Alpha channel */
-	if (src->format->BitsPerPixel <= 24 || src->format->Amask)
+	if (SDL_GetPixelFormatDetails(src->format)->bits_per_pixel <= 24 || SDL_GetPixelFormatDetails(src->format)->Amask)
 	{
 		src->refcount++;
 		return src;
@@ -331,14 +332,14 @@ SDL_PNGFormatAlpha(SDL_Surface* src)
 	/* Convert 32bpp alpha-less image to 24bpp alpha-less image */
 	rect.w = src->w;
 	rect.h = src->h;
-	surf = SDL_CreateRGBSurface(src->flags, src->w, src->h, 24,
-								src->format->Rmask, src->format->Gmask, src->format->Bmask, 0);
-	SDL_LowerBlit(src, &rect, surf, &rect);
+	surf = TFB_CreateSurface(src->w, src->h, 24,
+							 SDL_GetPixelFormatDetails(src->format)->Rmask, SDL_GetPixelFormatDetails(src->format)->Gmask, SDL_GetPixelFormatDetails(src->format)->Bmask, 0);
+	SDL_BlitSurfaceUnchecked(src, &rect, surf, &rect);
 
 	return surf;
 }
 
-int TFB_sdl_to_png(SDL_Surface* surface, SDL_RWops* dst, int freedst)
+int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* dst, int freedst)
 {
 	png_structp png_ptr;
 	png_infop info_ptr;
@@ -395,9 +396,9 @@ int TFB_sdl_to_png(SDL_Surface* surface, SDL_RWops* dst, int freedst)
 
 	/* Prepare chunks */
 	colortype = PNG_COLOR_MASK_COLOR;
-	if (surface->format->BytesPerPixel > 0
-		&& surface->format->BytesPerPixel <= 8
-		&& (pal = surface->format->palette))
+	if (SDL_GetPixelFormatDetails(surface->format)->bytes_per_pixel > 0
+		&& SDL_GetPixelFormatDetails(surface->format)->bytes_per_pixel <= 8
+		&& (pal = SDL_GetSurfacePalette(surface)))
 	{
 		colortype |= PNG_COLOR_MASK_PALETTE;
 		pal_ptr = (png_colorp)malloc(pal->ncolors * sizeof(png_color));
@@ -410,7 +411,7 @@ int TFB_sdl_to_png(SDL_Surface* surface, SDL_RWops* dst, int freedst)
 		png_set_PLTE(png_ptr, info_ptr, pal_ptr, pal->ncolors);
 		free(pal_ptr);
 	}
-	else if (surface->format->BytesPerPixel > 3 || surface->format->Amask)
+	else if (SDL_GetPixelFormatDetails(surface->format)->bytes_per_pixel > 3 || SDL_GetPixelFormatDetails(surface->format)->Amask)
 	{
 		colortype |= PNG_COLOR_MASK_ALPHA;
 	}
@@ -423,9 +424,9 @@ int TFB_sdl_to_png(SDL_Surface* surface, SDL_RWops* dst, int freedst)
 	png_set_packing(png_ptr);
 
 	/* Allow BGR surfaces */
-	if (surface->format->Rmask == B_MASK
-		&& surface->format->Gmask == G_MASK
-		&& surface->format->Bmask == R_MASK)
+	if (SDL_GetPixelFormatDetails(surface->format)->Rmask == B_MASK
+		&& SDL_GetPixelFormatDetails(surface->format)->Gmask == G_MASK
+		&& SDL_GetPixelFormatDetails(surface->format)->Bmask == R_MASK)
 	{
 		png_set_bgr(png_ptr);
 	}
@@ -452,7 +453,7 @@ int TFB_sdl_to_png(SDL_Surface* surface, SDL_RWops* dst, int freedst)
 done: /* Clean up and return */
 	if (freedst)
 	{
-		SDL_RWclose(dst);
+		SDL_CloseIO(dst);
 	}
 	if (row_pointers)
 	{
@@ -467,7 +468,7 @@ done: /* Clean up and return */
 	{
 		if (surface)
 		{
-			SDL_FreeSurface(surface);
+			SDL_DestroySurface(surface);
 			surface = nullptr;
 		}
 		fmt::print(stderr, "{}", error);

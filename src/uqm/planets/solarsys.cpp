@@ -58,7 +58,7 @@
 #include <math.h>
 #include <time.h>
 
-#include "SDL_version.h"
+#include <SDL3/SDL_version.h>
 
 //#define DEBUG_STARSEED
 //#define DEBUG_SOLARSYS

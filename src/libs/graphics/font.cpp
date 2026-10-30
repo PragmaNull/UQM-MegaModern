@@ -55,6 +55,11 @@ void GetFontDims(int16_t* w, int16_t* h)
 	*h = (int16_t)StarConFont->disp.height;
 }
 
+int GetFontCharSpace(void)
+{
+	return StarConFont->CharSpace;
+}
+
 FONT SetContextFont(FONT Font)
 {
 	FONT LastFont;

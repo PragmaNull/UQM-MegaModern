@@ -28,7 +28,7 @@ class UrQuanMastersConan(ConanFile):
         'nlohmann_json/3.12.0',
         'openal-soft/1.23.1',
         'scnlib/4.0.1',
-        'sdl/2.32.10',
+        'sdl/3.4.16',
         'spdlog/1.17.0',
         'utf8proc/2.12.0',
         'vorbis/1.3.7',

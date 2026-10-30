@@ -22,7 +22,7 @@
 #include "libs/time/timelib.h"
 #include <atomic>
 #include "options.h"
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 int fs_height = 0;
 int fs_width = 0;

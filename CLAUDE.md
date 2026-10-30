@@ -18,10 +18,12 @@ build.bat   [-c CONFIG] [--asan] [-t TARGET] [-j N] [--clean]
 test.bat    [-c CONFIG] [--build] [-R REGEX] [-j N]
 run.bat     [--build] [GAME ARGS...]           :: run the game with -n content
 regress.bat [--build] [-R REGEX] [-j N]         :: run the input scripts in test/scripts
+shaders.bat                                     :: compile src/libs/graphics/sdl/shaders/*.hlsl to headers
 ```
 
 - `CONFIG`: `Release` (default), `Debug`, `RelWithDebInfo`, `MinSizeRel`. All take `-B DIR` (default `conanbuild`).
 - `build`/`test` default to the config already in `CMakeCache.txt`; `build` reconfigures if `--config`/`--asan` differ.
+- `shaders` downloads its shader compilers to `.cache/shadertools` the first time. The generated headers are committed, so run it only after a change to a shader.
 - `setup --skip-install` runs only the cmake step. `build` runs conan install itself when the conan files for the config are missing.
 - Commands run inside conan's `conanbuild`/`conanrun` env scripts, so no VS developer prompt is needed.
 - Unrecognized arguments are forwarded to cmake/ctest. Scripts can also be run directly with `python scripts/<name>.py`.
@@ -77,7 +79,7 @@ Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each o
 | Directory | Purpose |
 |-----------|---------|
 | `src/core/` | Foundational utilities: logging (spdlog), STL abstraction layer, string utilities, platform-specific code |
-| `src/libs/` | Engine subsystems: graphics (SDL2), sound (OpenAL/Vorbis), input, video, threading, Lua scripting, netplay |
+| `src/libs/` | Engine subsystems: graphics (SDL3), sound (OpenAL/Vorbis), input, video, threading, Lua scripting, netplay |
 | `src/uqm/` | Game logic: dialogue system, planet mechanics, ship definitions, combat (supermelee), galaxy/starmap |
 | `src/options/` | CLI and config file parsing (CLI11) |
 | `src/configuration/` | Build-time configuration headers |

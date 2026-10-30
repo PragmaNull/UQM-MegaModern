@@ -25,7 +25,7 @@ Explanation of the Setup Menu options:
 
       Custom Resolution - A text entry field that lets you input a custom resolution
 
-      Display Mode - Choose between windowed, exclusive fullscreen (changes the display resolution to fit game resolution), or borderless full screen (stretches the game to the display resolution [SDL2 only])
+      Display Mode - Choose between windowed, exclusive fullscreen (changes the display resolution to fit game resolution), or borderless full screen (stretches the game to the display resolution)
 
       Gamma Correction - Adjusts the gamma of the screen.
 

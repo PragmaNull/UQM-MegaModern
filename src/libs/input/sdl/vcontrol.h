@@ -18,7 +18,7 @@
 #define LIBS_INPUT_SDL_VCONTROL_H_
 
 #include "port.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include "core/stl/stl.h"
 #include <atomic>
 
@@ -70,7 +70,7 @@ void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* targ
 int VControl_AddKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target);
 void VControl_RemoveKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target);
 
-void create_joystick(int device_index);
+void create_joystick(SDL_JoystickID instance_id);
 
 int VControl_AddJoyAxisBinding(int port, int axis, int polarity,
 							   uqstl::atomic<int>* target);

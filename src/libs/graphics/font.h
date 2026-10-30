@@ -74,6 +74,7 @@ extern void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path
 extern bool _ReleaseFontData(void* handle);
 extern TFB_Char* GetFrameForFPS(uqm::UniChar ch);
 extern void GetFontDims(int16_t* w, int16_t* h);
+extern int GetFontCharSpace(void);
 extern bool GoodToGoFPS(void);
 
 #endif /* LIBS_GRAPHICS_FONT_H_ */

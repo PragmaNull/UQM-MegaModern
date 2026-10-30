@@ -61,10 +61,6 @@
 #include "sounds.h"
 
 uqstl::atomic<bool> MainExited {false};
-#ifdef DEBUG_SLEEP
-uint32_t mainThreadId;
-extern uint32_t SDL_ThreadID(void);
-#endif
 
 // Open or close the periodically occuring QuasiSpace portal.
 // It changes the appearant portal size when necessary.
@@ -220,10 +216,6 @@ extern AudioFlags soundflags;
 
 int Starcon2Main(void* threadArg)
 {
-#ifdef DEBUG_SLEEP
-	mainThreadId = SDL_ThreadID();
-#endif
-
 	{
 		/* TODO: Put initAudio back in main where it belongs once threading
 		 *       is gone.

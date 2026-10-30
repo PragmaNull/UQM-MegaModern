@@ -30,6 +30,7 @@
 
 #include "core/thread/Mutex.h"
 
+#include <chrono>
 #include <condition_variable>
 #include <thread>
 
@@ -353,8 +354,22 @@ void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand)
 	TFB_DrawCommandQueue_Push(DrawCommand);
 }
 
+// Time spent on rendering, and the frames rendered in that time, since the last FPS update.
+static uqstl::chrono::steady_clock::duration s_renderTime {};
+static int s_renderFrames {};
+
+// Adds the time since start to the render time, for one rendered frame.
 static void
-computeFPS(int* fps)
+addRenderTime(uqstl::chrono::steady_clock::time_point start)
+{
+	s_renderTime += uqstl::chrono::steady_clock::now() - start;
+	++s_renderFrames;
+}
+
+// fps is the rate of the frames that the game draws. renderFps is the rate
+// that the rendering could reach if it did not wait for the game.
+static void
+computeFPS(int* fps, int* renderFps)
 {
 	static TimeCount last_time;
 	static TimePeriod fps_counter;
@@ -368,66 +383,64 @@ computeFPS(int* fps)
 	fps_counter += delta_time;
 	if (fps_counter > DCQueueTicksForFps)
 	{
-		*fps = (int)((float)DCQueueTicksForFps * RenderedFrames / fps_counter);
-		uqm::log::info("fps {:.2}, effective {}",
-					   (float)DCQueueTicksForFps / delta_time, *fps);
+		*fps = (int)((float)GameTicksPerSecond * RenderedFrames / fps_counter);
+		const double renderSeconds {uqstl::chrono::duration<double>(s_renderTime).count()};
+		*renderFps = renderSeconds > 0.0 ? static_cast<int>(s_renderFrames / renderSeconds) : 0;
+		uqm::log::info("fps {:.2}, effective {}, render {}",
+					   (float)GameTicksPerSecond / delta_time, *fps, *renderFps);
 
 		fps_counter = 0;
 		RenderedFrames = 0;
+		s_renderTime = {};
+		s_renderFrames = 0;
 	}
 }
 
+// Draws text on the FPS canvas. The text starts at x.
 static void
-RenderFPS(int* fps)
+drawFPSText(uqstl::string_view text, int x, int y, Color color)
+{
+	GFXRECT tr;
+	int16_t w, h;
+
+	GetFontDims(&w, &h);
+	TFB_Image* img = TFB_DrawImage_CreateForScreen(w, h, true);
+	tr.corner.x = tr.corner.y = 0;
+	tr.extent.width = w;
+	tr.extent.height = h;
+	TFB_DrawImage_Rect(&tr, color, DRAW_REPLACE_MODE, img);
+
+	for (const char c : text)
+	{
+		TFB_Char* ch = GetFrameForFPS(static_cast<unsigned char>(c));
+		if (ch && ch->disp.width)
+		{
+			TFB_DrawCanvas_FontChar(ch, img, x, y, MAKE_DRAW_MODE(DRAW_ALPHA, 0xff), TFB_GetFPSCanvas());
+			x += ch->disp.width + GetFontCharSpace();
+		}
+		else
+		{
+			x += w / 2;
+		}
+	}
+	TFB_DrawImage_Delete(img);
+}
+
+static void
+RenderFPS(int fps, int renderFps)
 {
 	static int prevFPS = 0;
-	if (GoodToGoFPS() && (prevFPS != *fps))
+	static int prevRenderFPS = 0;
+	if (GoodToGoFPS() && (prevFPS != fps || prevRenderFPS != renderFps))
 	{
-		GFXRECT tr;
-		int16_t w, h;
-		int i;
-		int max;
-		int step = 6;
-		TFB_Char* ch;
-		TFB_Image* img;
-
-		prevFPS = *fps;
+		prevFPS = fps;
+		prevRenderFPS = renderFps;
 
 		TFB_ClearFPSCanvas();
 
-		int x = 14 << resolutionFactor;
-		int y = 7 << resolutionFactor;
-
-		char buf[8] {};
-		const auto fmtResult = fmt::format_to_sz_n(buf, "{}", *fps);
-
-		max = fmtResult.size; //(uint16_t) utf8StringCount(buf);
-
-		GetFontDims(&w, &h);
-		img = TFB_DrawImage_CreateForScreen(w, h, true);
-		tr.corner.x = tr.corner.y = 0;
-		tr.extent.width = w;
-		tr.extent.height = h;
-		TFB_DrawImage_Rect(&tr, BUILD_COLOR_RGBA(0x00, 0xFF, 0x00, 0xFF), DRAW_REPLACE_MODE, img);
-
-		for (i = max - 1; i >= 0; i--)
-		{
-			ch = GetFrameForFPS(buf[i]);
-			if (ch)
-			{
-				TFB_DrawCanvas_FontChar(ch, img, x, y, MAKE_DRAW_MODE(DRAW_ALPHA, 0xff), TFB_GetFPSCanvas());
-				if ((i > 0) && (buf[i - 1] == '1'))
-				{
-					step = 5;
-				}
-				else
-				{
-					step = 6;
-				}
-				x -= step << resolutionFactor;
-			}
-		}
-		TFB_DrawImage_Delete(img);
+		const int x = 2 << resolutionFactor;
+		drawFPSText(fmt::format("CPU: {}", fps), x, 7 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0x00, 0xFF));
+		drawFPSText(fmt::format("GPU: {}", renderFps), x, 16 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0xFF, 0xFF));
 	}
 }
 
@@ -440,7 +453,10 @@ void TFB_FlushGraphics(void)
 {
 	int commands_handled;
 	static int fps = 0;
+	static int renderFps = 0;
 	bool livelock_deterrence;
+	const bool showFps {testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS)};
+	const uqstl::chrono::steady_clock::time_point start {uqstl::chrono::steady_clock::now()};
 
 	if (DCQ_Size() == 0)
 	{
@@ -453,6 +469,10 @@ void TFB_FlushGraphics(void)
 		{
 			TFB_SwapBuffers(uqm::TFBRedraw::Fading);
 			// if fading, redraw every frame
+			if (showFps)
+			{
+				addRenderTime(start);
+			}
 		}
 		else
 		{
@@ -465,9 +485,9 @@ void TFB_FlushGraphics(void)
 		return;
 	}
 
-	if (testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS))
+	if (showFps)
 	{
-		computeFPS(&fps);
+		computeFPS(&fps, &renderFps);
 	}
 
 	commands_handled = 0;
@@ -749,13 +769,17 @@ void TFB_FlushGraphics(void)
 		Unlock_DCQ();
 	}
 
-	if (testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS))
+	if (showFps)
 	{
-		RenderFPS(&fps);
+		RenderFPS(fps, renderFps);
 	}
 
 	TFB_SwapBuffers(uqm::TFBRedraw::No);
 	RenderedFrames++;
+	if (showFps)
+	{
+		addRenderTime(start);
+	}
 	s_renderingDone.notify_all();
 }
 

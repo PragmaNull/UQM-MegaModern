@@ -1,0 +1,268 @@
+"""Compile the HLSL shaders to SPIR-V, DXIL and MSL, and write them as C++ headers.
+
+The generated headers are in the repository, so a normal build does not need
+this script. Run it after a change to a shader. It downloads the shader
+compilers to .cache/shadertools the first time.
+"""
+
+import argparse
+import hashlib
+import re
+import os
+import platform
+import shutil
+import subprocess
+import tarfile
+import tempfile
+import urllib.request
+import zipfile
+from pathlib import Path
+
+from _common import IS_WINDOWS, PROJECT_ROOT, fail
+
+SHADER_DIR = PROJECT_ROOT / "src" / "libs" / "graphics" / "sdl" / "shaders"
+CACHE_DIR = PROJECT_ROOT / ".cache" / "shadertools"
+
+DXC_TOOLS = {
+    "Windows": {
+        "url": "https://github.com/microsoft/DirectXShaderCompiler/releases/download/v1.9.2609/dxc_2026_09_29.zip",
+        "sha256": "ad31b1fc8443175d204f77a611fdb3ef2ec42759bdc2f1167368de24a4a7e7f1",
+        "exe": "bin/x64/dxc.exe",
+    },
+    "Linux": {
+        "url": "https://github.com/microsoft/DirectXShaderCompiler/releases/download/v1.9.2609/linux_dxc_2026_09_28.x86_x64.tar.gz",
+        "sha256": "96faadc7f5c282d2ffda49804beb4c3ee38127bc252b723234e3c5cdf7aa39a1",
+        "exe": "bin/dxc",
+    },
+}
+
+SPIRV_CROSS_TOOLS = {
+    "Windows": {
+        "url": "https://github.com/KhronosGroup/SPIRV-Cross/releases/download/2021-01-15/spirv-cross-vs2017-64bit-9acb9ec31f.tar.gz",
+        "sha256": "f27bd8aeb36991c9e893d516dc680503ad66b2c548ba540c8b551afa0d230c03",
+        "exe": "bin/spirv-cross.exe",
+    },
+    "Linux": {
+        "url": "https://github.com/KhronosGroup/SPIRV-Cross/releases/download/2021-01-15/spirv-cross-gcc-trusty-64bit-9acb9ec31f.tar.gz",
+        "sha256": "7621ce136adbc7b80916188dd0e69411d9dcd87094607cc7918a4b0adf53dc19",
+        "exe": "bin/spirv-cross",
+    },
+}
+
+# Shader model for each shader stage, from the second suffix of the file name.
+PROFILES = {"frag": "ps_6_0", "vert": "vs_6_0"}
+
+
+def fetch_tool(name, tool):
+    """Download and unpack a tool once. Returns the path of its executable."""
+    tool_dir = CACHE_DIR / name
+    exe = tool_dir / tool["exe"]
+    if exe.is_file():
+        return exe
+
+    print(f"Downloading {tool['url']}", flush=True)
+    with urllib.request.urlopen(tool["url"]) as response:
+        data = response.read()
+    digest = hashlib.sha256(data).hexdigest()
+    if digest != tool["sha256"]:
+        fail(f"{name}: SHA-256 is {digest}, expected {tool['sha256']}")
+
+    shutil.rmtree(tool_dir, ignore_errors=True)
+    tool_dir.mkdir(parents=True)
+    archive = tool_dir / Path(tool["url"]).name
+    archive.write_bytes(data)
+    if archive.suffix == ".zip":
+        with zipfile.ZipFile(archive) as zf:
+            for member in zf.infolist():
+                # The DXC archive uses backslashes as path separators.
+                target = tool_dir / member.filename.replace("\\", "/")
+                if member.filename.endswith(("/", "\\")):
+                    target.mkdir(parents=True, exist_ok=True)
+                    continue
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(zf.read(member))
+    else:
+        with tarfile.open(archive) as tf:
+            tf.extractall(tool_dir, filter="data")
+    archive.unlink()
+
+    if not exe.is_file():
+        fail(f"{name}: {tool['exe']} is not in the archive")
+    if not IS_WINDOWS:
+        exe.chmod(0o755)
+    return exe
+
+
+def run_tool(cmd, env=None):
+    result = subprocess.run([str(part) for part in cmd], env=env, capture_output=True, text=True)
+    if result.returncode != 0:
+        fail(f"{Path(cmd[0]).name} failed:\n{result.stdout}{result.stderr}")
+
+
+def byte_array(name, data):
+    """C++ definition of a byte array."""
+    lines = []
+    for start in range(0, len(data), 16):
+        chunk = data[start:start + 16]
+        lines.append("\t" + ", ".join(f"0x{byte:02x}" for byte in chunk) + ",")
+    body = "\n".join(lines)
+    return f"static const uint8_t {name}[] = {{\n{body}\n}};\n"
+
+
+def compile_shader(source, dxc, dxc_env, spirv_cross, work_dir):
+    """Compile one shader and write its header next to it."""
+    parts = source.name.split(".")
+    if len(parts) != 3 or parts[1] not in PROFILES:
+        fail(f"{source.name}: the name must be <name>.<frag|vert>.hlsl")
+    profile = PROFILES[parts[1]]
+    stem = f"{parts[0]}.{parts[1]}"
+    symbol = stem.replace(".", "_")
+
+    dxil = work_dir / f"{stem}.dxil"
+    spv = work_dir / f"{stem}.spv"
+    msl = work_dir / f"{stem}.msl"
+    run_tool([dxc, "-T", profile, "-E", "main", "-Fo", dxil, source], dxc_env)
+    run_tool([dxc, "-T", profile, "-E", "main", "-spirv",
+              "-fspv-flatten-resource-arrays", "-fspv-preserve-interface",
+              "-Fo", spv, source], dxc_env)
+    run_tool([spirv_cross, spv, "--msl", "--msl-version", "20100",
+              "--msl-decoration-binding", "--output", msl])
+
+    header = source.with_name(f"{stem}.h")
+    text = (f"// Generated by scripts/build_shaders.py from {source.name}. Do not edit.\n"
+            "#pragma once\n\n"
+            "#include <cstdint>\n\n"
+            + byte_array(f"{symbol}_dxil", dxil.read_bytes()) + "\n"
+            + byte_array(f"{symbol}_spv", spv.read_bytes()) + "\n"
+            + byte_array(f"{symbol}_msl", msl.read_bytes()))
+    with open(header, "w", newline="\r\n" if IS_WINDOWS else "\n") as out:
+        out.write(text)
+    print(f"{source.name} -> {header.name}")
+
+
+HQ2X_SOURCE = PROJECT_ROOT / "src" / "libs" / "graphics" / "sdl" / "hq2x.cpp"
+# Blend types of the hq2x rules, in the order of the shader. 0 copies the center pixel.
+HQ2X_BLENDS = {"31": 1, "211": 2, "521": 3, "611": 4, "233": 5, "e11": 6}
+# Output pixel of a PIXELyx macro: 00 top left, 01 top right, 10 bottom left, 11 bottom right.
+HQ2X_QUADS = {"00": 0, "01": 1, "10": 2, "11": 3}
+
+
+def hq2x_macros(text):
+    """Rule code of each PIXELyx_n macro: blend type, then the two other pixels."""
+    rules = {}
+    pattern = re.compile(r"#define (PIXEL\d\d_\d+) dst_p\[[^\]]+\] = "
+                         r"(?:pix\[5\];|Scale_Blend_(\w+)\(pix\[5\]((?:, pix\[\d\])*)\);)")
+    for name, blend, args in pattern.findall(text):
+        others = [int(n) for n in re.findall(r"pix\[(\d)\]", args)] if blend else []
+        others += [0] * (2 - len(others))
+        kind = HQ2X_BLENDS[blend] if blend else 0
+        rules[name] = kind | (others[0] << 3) | (others[1] << 7)
+    return rules
+
+
+def hq2x_table(text):
+    """For each pattern and output pixel: an optional DIFFYUV condition and the rule for each outcome."""
+    macros = hq2x_macros(text)
+    body = text[text.index("switch (pattern)"):]
+    tokens = re.findall(r"case (\d+):|(\{)|(\})|if \(HQXX_DIFFYUV\(yuv\[(\d)\], yuv\[(\d)\]\)\)|(else)|(PIXEL\d\d_\d+)|(break;)", body)
+    table = [[None] * 4 for _ in range(256)]
+    pos = 1  # after the brace of the switch
+
+    def statement(cond, outcome, entries):
+        nonlocal pos
+        _, open_, _, cond_a, cond_b, _, pixel, _ = tokens[pos]
+        pos += 1
+        if open_:
+            while not tokens[pos][2]:
+                statement(cond, outcome, entries)
+            pos += 1
+        elif pixel:
+            quad = HQ2X_QUADS[pixel[5:7]]
+            entry = entries.setdefault(quad, [cond, None, None])
+            if cond is None:
+                entry[1] = entry[2] = macros[pixel]
+            else:
+                entry[1 if outcome else 2] = macros[pixel]
+        elif cond_a:
+            if cond is not None:
+                fail("hq2x: nested conditions are not supported")
+            new_cond = (int(cond_a), int(cond_b))
+            statement(new_cond, True, entries)
+            if tokens[pos][5]:
+                pos += 1
+                statement(new_cond, False, entries)
+        else:
+            fail(f"hq2x: unexpected token {tokens[pos - 1]}")
+
+    while tokens[pos][0]:
+        cases = []
+        while tokens[pos][0]:
+            cases.append(int(tokens[pos][0]))
+            pos += 1
+        if not tokens[pos][1]:
+            fail(f"hq2x: case {cases} has no block")
+        pos += 1
+        entries = {}
+        while not tokens[pos][7]:
+            statement(None, True, entries)
+        pos += 1
+        if not tokens[pos][2]:
+            fail(f"hq2x: case {cases} does not end after its break")
+        pos += 1
+        if sorted(entries) != [0, 1, 2, 3] or any(e[1] is None or e[2] is None for e in entries.values()):
+            fail(f"hq2x: case {cases} does not set all four pixels")
+        for case in cases:
+            for quad, (cond, if_diff, if_same) in entries.items():
+                code = if_same << 20
+                if cond is not None:
+                    code |= 1 | (cond[0] << 1) | (cond[1] << 5) | (if_diff << 9)
+                table[case][quad] = code
+    if any(entry is None for row in table for entry in row):
+        fail("hq2x: some patterns have no case")
+    return table
+
+
+def write_hq2x_rules():
+    """Write the rule table of the hq2x shader, from the switch in hq2x.cpp."""
+    table = hq2x_table(HQ2X_SOURCE.read_text(encoding="utf-8"))
+    lines = ["\t" + ", ".join(f"0x{code:08x}" for code in row) + "," for row in table]
+    header = HQ2X_SOURCE.parent / "shaders" / "hq2x_rules.h"
+    text = ("// Generated by scripts/build_shaders.py from hq2x.cpp. Do not edit.\n"
+            "#pragma once\n\n"
+            "#include <cstdint>\n\n"
+            "// The rules of the 4 output pixels for each pattern. Bit 0: use DIFFYUV of the pixels in bits 1-4 and 5-8.\n"
+            "// Bits 9-19: the rule if they differ. Bits 20-30: the rule otherwise.\n"
+            "// A rule is a blend type in bits 0-2 and two pixel numbers in bits 3-6 and 7-10.\n"
+            "static const uint32_t hq2x_rules[256 * 4] = {\n" + "\n".join(lines) + "\n};\n")
+    with open(header, "w", newline="\r\n" if IS_WINDOWS else "\n") as out:
+        out.write(text)
+    print(f"{HQ2X_SOURCE.name} -> {header.name}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.parse_args()
+
+    system = platform.system()
+    if system not in DXC_TOOLS:
+        fail(f"no shader compiler download for {system}; run this script on Windows or Linux")
+
+    dxc = fetch_tool("dxc", DXC_TOOLS[system])
+    spirv_cross = fetch_tool("spirv-cross", SPIRV_CROSS_TOOLS[system])
+    dxc_env = None
+    if system == "Linux":
+        dxc_env = os.environ.copy()
+        lib_dir = str(dxc.parent.parent / "lib")
+        dxc_env["LD_LIBRARY_PATH"] = os.pathsep.join(filter(None, [lib_dir, dxc_env.get("LD_LIBRARY_PATH")]))
+
+    write_hq2x_rules()
+    sources = sorted(SHADER_DIR.glob("*.hlsl"))
+    if not sources:
+        fail(f"no shaders in {SHADER_DIR}")
+    with tempfile.TemporaryDirectory() as work_dir:
+        for source in sources:
+            compile_shader(source, dxc, dxc_env, spirv_cross, Path(work_dir))
+
+
+if __name__ == "__main__":
+    main()

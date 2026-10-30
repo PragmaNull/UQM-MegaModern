@@ -45,11 +45,6 @@ bool saveUserSettings(const OptionsStruct& options)
 
 void applyUserSettings(OptionsStruct& options)
 {
-	if (options.alwaysOpenGL && !options.opengl.hasCommandLineOverride())
-	{
-		options.opengl.value = true;
-	}
-
 	options.optDifficulty.value = *options.optDiffChooser;
 	if (options.optDifficulty.value == Difficulty::ChooseYourOwn)
 	{

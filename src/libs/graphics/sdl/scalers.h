@@ -24,6 +24,6 @@ void Scale_Init(void);
 typedef void (*TFB_ScaleFunc)(SDL_Surface* src, SDL_Surface* dst,
 							  SDL_Rect* r);
 
-TFB_ScaleFunc Scale_PrepPlatform(uqm::GfxFlags flags, const SDL_PixelFormat* fmt);
+TFB_ScaleFunc Scale_PrepPlatform(uqm::GfxFlags flags, const SDL_PixelFormatDetails* fmt);
 
 #endif /* SCALERS_H_ */

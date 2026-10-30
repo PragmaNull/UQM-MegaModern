@@ -81,14 +81,6 @@ struct OptionsStruct : SettingsRegistry
 	uqstl::string inputScript {};	  // File of scripted menu key presses, for testing.
 
 	// Commandline and user config options
-	Setting<bool> opengl {
-		*this, {.key = "graphics.useOpenGL", .description = "Force OpenGL renderer on SDL1 builds; ignored on SDL2.", .cli = "-o,-x{false},--opengl,--nogl{false}"},
-		 false
-	  };
-	Setting<bool> alwaysOpenGL {
-		*this, {.key = "graphics.alwaysOpenGL", .description = "Use OpenGL even at native resolutions."},
-		  false
-	   };
 	Setting<Vec2u> resolution {
 		*this, {.key = "graphics.resolution", .description = "Window/framebuffer pixel dimensions when not using a blowup scaler."},
 		 Vec2u {640,							 480																					}
@@ -117,6 +109,10 @@ struct OptionsStruct : SettingsRegistry
 		*this, {.key = "graphics.gamma", .description = "Gamma correction value, a value of 1.0 means no change.", .cli = "-g,--gamma"},
 		 1.0f, settings::isValidGamma
 	 };
+	Setting<bool> gpuScaling {
+		*this, {.key = "graphics.gpuScaling", .description = "Run the scalers and gamma correction as GPU shaders when the GPU renderer is available.", .cli = "--gpuscaling,--nogpuscaling{false}", .requiresRestart = true},
+		   true
+	   };
 	Setting<AudioDriverType> soundDriver {
 		*this, {.key = "audio.driver", .description = "Backend used for audio output (MixSDL, OpenAL, or silence).", .cli = "--sound,--sounddriver", .requiresRestart = true},
 		   AudioDriverType::MixSDL

@@ -30,7 +30,8 @@ void TFB_Pure_UninitGraphics(void);
 int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int width, int height,
 							int togglefullscreen, unsigned int resFactor, unsigned int windowType);
 void Scale_PerfTest(void);
-bool TFB_SDL2_GammaCorrection(float gamma);
-void TFB_SDL2_GetDisplaySize(SDL_Rect* bounds);
+bool TFB_SDL_GammaCorrection(float gamma);
+void TFB_SDL_GetDisplaySize(SDL_Rect* bounds);
+SDL_Window* TFB_GetSDLWindow(void);
 
 #endif
