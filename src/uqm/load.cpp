@@ -131,14 +131,6 @@ public:
 		get(point, "y", y);
 	}
 
-	template <typename W, typename H>
-	void getExtent(yyjson_val* obj, const char* key, W& width, H& height)
-	{
-		yyjson_val* extent {object(obj, key)};
-		get(extent, "width", width);
-		get(extent, "height", height);
-	}
-
 	// Returns the number of values read.
 	template <typename T>
 	size_t getArray(yyjson_val* obj, const char* key, uqstl::span<T> out)
@@ -469,10 +461,10 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, GAME_STATE& GS)
 	VELOCITY_DESC& velocity {GS.velocity};
 	yyjson_val* velocityObj {reader.object(state, "velocity")};
 	reader.get(velocityObj, "TravelAngle", velocity.TravelAngle);
-	reader.getExtent(velocityObj, "vector", velocity.vector.width, velocity.vector.height);
-	reader.getExtent(velocityObj, "fract", velocity.fract.width, velocity.fract.height);
-	reader.getExtent(velocityObj, "error", velocity.error.width, velocity.error.height);
-	reader.getExtent(velocityObj, "incr", velocity.incr.width, velocity.incr.height);
+	reader.getPoint(velocityObj, "vector", velocity.vector.width, velocity.vector.height);
+	reader.getPoint(velocityObj, "fract", velocity.fract.width, velocity.fract.height);
+	reader.getPoint(velocityObj, "error", velocity.error.width, velocity.error.height);
+	reader.getPoint(velocityObj, "incr", velocity.incr.width, velocity.incr.height);
 
 	if (lowByte(GS.CurrentActivity) != IN_INTERPLANETARY)
 	{ // Let's make savegames work even between different resolution modes.

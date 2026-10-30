@@ -252,18 +252,12 @@ class Reader:
     def point(self):
         return {"x": self.s16(), "y": self.s16()}
 
-    def extent(self):
-        return {"width": self.s16(), "height": self.s16()}
-
     def shifted16(self):
         """Reads a 16-bit value that was shifted before it was saved."""
         return self.s32() if self.wide else self.s16()
 
     def shifted_point(self):
         return {"x": self.shifted16(), "y": self.shifted16()}
-
-    def shifted_extent(self):
-        return {"width": self.shifted16(), "height": self.shifted16()}
 
 
 def cdiv(a, b):
@@ -481,10 +475,10 @@ def read_global_state(r, core):
         "in_orbit": r.u8(),
         "velocity": {
             "TravelAngle": r.s32() if r.wide else r.u16(),
-            "vector": r.shifted_extent(),
-            "fract": r.shifted_extent(),
-            "error": r.shifted_extent(),
-            "incr": r.shifted_extent(),
+            "vector": r.shifted_point(),
+            "fract": r.shifted_point(),
+            "error": r.shifted_point(),
+            "incr": r.shifted_point(),
         },
     }
 

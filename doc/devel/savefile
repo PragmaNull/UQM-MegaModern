@@ -14,8 +14,8 @@ and the script do not read "starcon2.NN" saves.
 
 The key names are the names of the C struct members that hold the
 values. All values are integers, strings, booleans, arrays or objects.
-A point is an object {"x", "y"}. An extent is an object
-{"width", "height"}.
+A point is an object {"x", "y"}. The velocity components are also
+points.
 
 Coordinates in hyperspace (the "log" points) and the ship origin are
 stored at 1x resolution. The velocity is stored at 1x resolution

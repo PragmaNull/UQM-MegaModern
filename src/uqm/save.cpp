@@ -830,14 +830,6 @@ void addPoint(yyjson_mut_doc* doc, yyjson_mut_val* obj, const char* key, Point x
 	addInt(doc, point, "y", y);
 }
 
-template <typename Extent>
-void addExtent(yyjson_mut_doc* doc, yyjson_mut_val* obj, const char* key, Extent width, Extent height)
-{
-	yyjson_mut_val* extent {yyjson_mut_obj_add_obj(doc, obj, key)};
-	addInt(doc, extent, "width", width);
-	addInt(doc, extent, "height", height);
-}
-
 void addString(yyjson_mut_doc* doc, yyjson_mut_val* obj, const char* key, uqstl::span<const char> buffer)
 {
 	yyjson_mut_obj_add_strncpy(doc, obj, key, buffer.data(), strnlen(buffer.data(), buffer.size()));
@@ -1064,10 +1056,10 @@ void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, const GAME_STATE& 
 	const VELOCITY_DESC& velocity {GS.velocity};
 	yyjson_mut_val* velocityObj {yyjson_mut_obj_add_obj(doc, state, "velocity")};
 	addInt(doc, velocityObj, "TravelAngle", velocity.TravelAngle);
-	addExtent(doc, velocityObj, "vector", velocity.vector.width >> res_scale, velocity.vector.height >> res_scale);
-	addExtent(doc, velocityObj, "fract", velocity.fract.width >> res_scale, velocity.fract.height >> res_scale);
-	addExtent(doc, velocityObj, "error", velocity.error.width >> res_scale, velocity.error.height >> res_scale);
-	addExtent(doc, velocityObj, "incr", velocity.incr.width >> res_scale, velocity.incr.height >> res_scale);
+	addPoint(doc, velocityObj, "vector", velocity.vector.width >> res_scale, velocity.vector.height >> res_scale);
+	addPoint(doc, velocityObj, "fract", velocity.fract.width >> res_scale, velocity.fract.height >> res_scale);
+	addPoint(doc, velocityObj, "error", velocity.error.width >> res_scale, velocity.error.height >> res_scale);
+	addPoint(doc, velocityObj, "incr", velocity.incr.width >> res_scale, velocity.incr.height >> res_scale);
 
 	SaveGameStateFlags(doc, root);
 }
