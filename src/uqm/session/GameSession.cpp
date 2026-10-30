@@ -22,7 +22,7 @@ void GameSession::startGame()
 	{
 		return;
 	}
-	luaUqm_reinitState();
+	luaUqm_initState();
 	InitGameStructures();
 	InitGameClock();
 	initEventSystem();
@@ -38,6 +38,7 @@ void GameSession::endGame()
 	uninitEventSystem();
 	UninitGameClock();
 	UninitGameStructures();
+	luaUqm_uninitState();
 }
 
 GameState& gameState()

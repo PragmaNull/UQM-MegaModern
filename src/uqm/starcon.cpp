@@ -249,7 +249,6 @@ int Starcon2Main(void* threadArg)
 	uqm::log::info("We've loaded the Kernel");
 
 	uqm::currentActivity() = 0;
-	luaUqm_initState();
 	// show logo then splash and init the kernel in the meantime
 	if (!uqm::UQMOptions::read().skipIntro)
 	{
@@ -393,7 +392,6 @@ int Starcon2Main(void* threadArg)
 		uqm::UQMGame::getInstance().endSession();
 		ClearPlayerInputAll();
 	}
-	luaUqm_uninitState();
 
 	UninitGameKernel();
 	FreeMasterShipList();

@@ -34,14 +34,7 @@ extern DELTA_TYPES luaUqm_delta;
 
 void luaUqm_initState(void);
 void luaUqm_uninitState(void);
-void luaUqm_reinitState(void);
-void luaUqm_getProp(lua_State* luaState, int nameIndex);
-void luaUqm_setProp(lua_State* luaState, int nameIndex, int valueIndex);
-int luaUqm_checkPropValueType(lua_State* luaState, const char* funName,
-							  int nameIndex);
 
-void setGameStateUint(const char* name, uint32_t val);
-uint32_t getGameStateUint(const char* name);
 
 void luaUqm_getEventTable(lua_State* luaState);
 

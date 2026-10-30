@@ -25,20 +25,17 @@
 #include "libs/luauqm/luauqm.h"
 
 
-// We store the game state in the global Lua context, in the Lua registry.
+// The Lua state of the current game. The game state flags are in GameState.
 
-static void luaUqm_initStatePropertyTable(lua_State* luaState);
 static void luaUqm_initEventTable(lua_State* luaState);
 
 lua_State* luaUqm_globalState = nullptr;
-static const char statePropRegistryKey[] =
-	"uqm_state_prop_registryKey";
 static const char eventRegistryKey[] =
 	"uqm_event_registryKey";
 
 DELTA_TYPES luaUqm_delta;
 
-// Init the global Lua state. Called at the start of the main loop.
+// Init the global Lua state. Called at the start of a game.
 void luaUqm_initState(void)
 {
 	if (luaUqm_globalState != nullptr)
@@ -47,7 +44,6 @@ void luaUqm_initState(void)
 		luaUqm_uninitState();
 	}
 	luaUqm_globalState = luaL_newstate();
-	luaUqm_initStatePropertyTable(luaUqm_globalState);
 	luaUqm_initEventTable(luaUqm_globalState);
 
 	// XXX TODO: set up an alternative to the Lua 'require' function,
@@ -68,145 +64,6 @@ void luaUqm_uninitState(void)
 	{
 		uqm::log::warn("Lua state multiply uninitialized");
 	}
-}
-
-// Reinit the global Lua state. This does nothing that initState doesn't
-// do, but unlike initState it warns only if you call it without having
-// old data to dispose of. Called at the start of a new game, or when a
-// game is loaded.
-
-void luaUqm_reinitState(void)
-{
-	if (luaUqm_globalState == nullptr)
-	{
-		uqm::log::warn("Lua state reinitialized while nullptr");
-	}
-	else
-	{
-		luaUqm_uninitState();
-	}
-	luaUqm_initState();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// Game state
-/////////////////////////////////////////////////////////////////////////////
-
-static void
-luaUqm_initStatePropertyTable(lua_State* luaState)
-{
-	lua_pushstring(luaState, statePropRegistryKey);
-	lua_newtable(luaState);
-	lua_settable(luaState, LUA_REGISTRYINDEX);
-}
-
-// Check whether a lua value has a type acceptable as a property value.
-int luaUqm_checkPropValueType(lua_State* luaState, const char* funName,
-							  int nameIndex)
-{
-	int type = lua_type(luaState, nameIndex);
-	switch (type)
-	{
-		case LUA_TNUMBER:
-		case LUA_TBOOLEAN:
-		case LUA_TSTRING:
-			// Ok
-			return 0;
-		default:
-			{
-				const char* typeName = lua_typename(luaState, nameIndex);
-				return luaL_error(luaState, "Property value has an invalid "
-											"type, in parameter to {}() ({})",
-								  funName, typeName);
-			}
-	}
-}
-
-// Set the value of the property with the name on the stack on position
-// 'nameIndex' to the value on the stack with index 'valueIndex'.
-// Pre: nameIndex points to a string, and valueIndex points to a valid
-// value.
-void luaUqm_setProp(lua_State* luaState, int nameIndex, int valueIndex)
-{
-	nameIndex = lua_absindex(luaState, nameIndex);
-	valueIndex = lua_absindex(luaState, valueIndex);
-
-	lua_getfield(luaState, LUA_REGISTRYINDEX, statePropRegistryKey);
-	lua_pushvalue(luaState, nameIndex);
-	lua_pushvalue(luaState, valueIndex);
-	// [-3] -> registry[statePropRegistrykey]
-	// [-2] -> name
-	// [-1] -> value
-	lua_settable(luaState, -3);
-	// [-1] -> registry[statePropRegistrykey]
-	lua_pop(luaState, 1);
-}
-
-// Get the value of the property with the name on the stack on position
-// 'nameIndex'.
-// Pushes the property value on the stack.
-// Pre: nameIndex points to a string.
-void luaUqm_getProp(lua_State* luaState, int nameIndex)
-{
-	nameIndex = lua_absindex(luaState, nameIndex);
-
-	lua_getfield(luaState, LUA_REGISTRYINDEX, statePropRegistryKey);
-	// [-1] -> registry[statePropRegistrykey]
-	lua_pushvalue(luaState, nameIndex);
-	// [-2] -> registry[statePropRegistrykey]
-	// [-1] -> name
-	lua_gettable(luaState, -2);
-	// [-2] -> registry[statePropRegistrykey]
-	// [-1] -> registry[statePropRegistrykey][name]
-	lua_replace(luaState, -2);
-	// [-1] -> registry[statePropRegistrykey][name]
-}
-
-void setGameStateUint(const char* name, uint32_t val)
-{
-	lua_pushstring(luaUqm_globalState, name);
-	lua_pushinteger(luaUqm_globalState, val);
-	luaUqm_setProp(luaUqm_globalState, -2, -1);
-	lua_pop(luaUqm_globalState, 2);
-
-#ifdef STATE_DEBUG
-	uqm::log::debug("State '{}' set to {}.", name, val);
-#endif
-}
-
-uint32_t
-getGameStateUint(const char* name)
-{
-	uint32_t result;
-	int resultType;
-
-	lua_pushstring(luaUqm_globalState, name);
-	luaUqm_getProp(luaUqm_globalState, -1);
-	// [-2] -> name
-	// [-1] -> propValue
-
-	resultType = lua_type(luaUqm_globalState, -1);
-	switch (resultType)
-	{
-		case LUA_TNIL:
-			// Unitialised properties are 0.
-			lua_pop(luaUqm_globalState, 2);
-			return 0;
-		case LUA_TNUMBER:
-			// Ok.
-			break;
-		default:
-			uqm::log::error("Warning: getGameState(): property '{}' has "
-							"a non-number value ({}).",
-							name,
-							lua_typename(luaUqm_globalState, -1));
-			lua_pop(luaUqm_globalState, 2);
-			return 0;
-	}
-
-	result = (uint32_t)lua_tointeger(luaUqm_globalState, -1);
-	lua_pop(luaUqm_globalState, 2);
-	return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////

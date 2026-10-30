@@ -854,6 +854,7 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
 
 	uninitEventSystem();
 	luaUqm_uninitState();
+	uqm::gameState().clearFlags();
 	luaUqm_initState();
 	initEventSystem();
 

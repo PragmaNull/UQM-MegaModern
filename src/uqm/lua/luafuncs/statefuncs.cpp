@@ -463,7 +463,7 @@ luaUqm_state_sis_addCrew(lua_State* luaState)
 static int
 luaUqm_state_sis_addFuel(lua_State* luaState)
 {
-	
+
 	const auto delta = luaL_checkinteger(luaState, 1);
 
 	const auto oldFuel = GLOBAL_SIS(FuelOnBoard);
@@ -559,25 +559,33 @@ luaUqm_state_sis_getShipName(lua_State* luaState)
 
 /////////////////////////////////////////////////////////////////////////////
 
-// [1] -> int name
+// [1] -> string name
+// Returns nil if the flag is not set.
 static int
 luaUqm_state_prop_get(lua_State* luaState)
 {
 	luaL_checktype(luaState, 1, LUA_TSTRING);
 
-	luaUqm_getProp(luaState, 1);
+	if (const auto value {uqm::gameState().flag(lua_tostring(luaState, 1))})
+	{
+		lua_pushinteger(luaState, *value);
+	}
+	else
+	{
+		lua_pushnil(luaState);
+	}
 	return 1;
 }
 
-// [1] -> int name
-// [2] -> int|bool|string value
+// [1] -> string name
+// [2] -> int|bool value
 static int
 luaUqm_state_prop_set(lua_State* luaState)
-{ 
+{
 	luaL_checktype(luaState, 1, LUA_TSTRING);
-	luaUqm_checkPropValueType(luaState, "state.prop.set", 2);
+	const uint32_t value {lua_isboolean(luaState, 2) ? (lua_toboolean(luaState, 2) ? 1u : 0u) : static_cast<uint32_t>(luaL_checkinteger(luaState, 2))};
 
-	luaUqm_setProp(luaState, 1, 2);
+	uqm::gameState().setFlag(lua_tostring(luaState, 1), value);
 	return 0;
 }
 
