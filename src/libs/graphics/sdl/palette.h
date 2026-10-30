@@ -20,7 +20,7 @@
 #define PALETTE_H_INCL__
 
 #include "port.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include "libs/graphics/cmap.h"
 
 struct NativePalette

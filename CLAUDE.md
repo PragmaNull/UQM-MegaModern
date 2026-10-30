@@ -77,7 +77,7 @@ Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each o
 | Directory | Purpose |
 |-----------|---------|
 | `src/core/` | Foundational utilities: logging (spdlog), STL abstraction layer, string utilities, platform-specific code |
-| `src/libs/` | Engine subsystems: graphics (SDL2), sound (OpenAL/Vorbis), input, video, threading, Lua scripting, netplay |
+| `src/libs/` | Engine subsystems: graphics (SDL3), sound (OpenAL/Vorbis), input, video, threading, Lua scripting, netplay |
 | `src/uqm/` | Game logic: dialogue system, planet mechanics, ship definitions, combat (supermelee), galaxy/starmap |
 | `src/options/` | CLI and config file parsing (CLI11) |
 | `src/configuration/` | Build-time configuration headers |

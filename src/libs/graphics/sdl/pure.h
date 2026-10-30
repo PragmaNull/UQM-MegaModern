@@ -32,5 +32,6 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 void Scale_PerfTest(void);
 bool TFB_SDL2_GammaCorrection(float gamma);
 void TFB_SDL2_GetDisplaySize(SDL_Rect* bounds);
+SDL_Window* TFB_GetSDLWindow(void);
 
 #endif

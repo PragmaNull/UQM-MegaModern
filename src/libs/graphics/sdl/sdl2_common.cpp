@@ -37,25 +37,13 @@ static void TFB_PreQuit(void);
 
 void TFB_PreInit(void)
 {
-	SDL_version compiled, linked;
-	SDL_VERSION(&compiled);
-	SDL_GetVersion(&linked);
+	const int linked {SDL_GetVersion()};
 	uqm::log::info("Initializing base SDL functionality.");
 	uqm::log::info("Using SDL version {}.{}.{} (compiled with {}.{}.{})",
-				   linked.major, linked.minor, linked.patch,
-				   compiled.major, compiled.minor, compiled.patch);
-#if 0
-	if (compiled.major != linked.major || compiled.minor != linked.minor ||
-			compiled.patch != linked.patch)
-	{
-		uqm::log::warn("The used SDL library is not the same version "
-				"as the one used to compile The Ur-Quan Masters with! "
-				"If you experience any crashes, this would be an excellent "
-				"suspect.");
-	}
-#endif
+				   SDL_VERSIONNUM_MAJOR(linked), SDL_VERSIONNUM_MINOR(linked), SDL_VERSIONNUM_MICRO(linked),
+				   SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_MICRO_VERSION);
 
-	if ((SDL_Init(SDL_INIT_VIDEO) == -1))
+	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
 		uqm::log::critical("Could not initialize SDL: {}.", SDL_GetError());
 		exit(EXIT_FAILURE);
@@ -89,11 +77,11 @@ int TFB_ReInitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, int width, in
 
 	if (testAnyFlag(flags, uqm::GfxFlagsFullscreen))
 	{
-		SDL_ShowCursor(SDL_DISABLE);
+		SDL_HideCursor();
 	}
 	else
 	{
-		SDL_ShowCursor(SDL_ENABLE);
+		SDL_ShowCursor();
 	}
 
 	return result;
@@ -114,7 +102,7 @@ int TFB_HasSurfaceAlphaMod(SDL_Surface* surface)
 	{
 		return 0;
 	}
-	if (SDL_GetSurfaceBlendMode(surface, &blend_mode) != 0)
+	if (!SDL_GetSurfaceBlendMode(surface, &blend_mode))
 	{
 		return 0;
 	}
@@ -128,11 +116,11 @@ int TFB_GetSurfaceAlphaMod(SDL_Surface* surface, Uint8* alpha)
 	{
 		return -1;
 	}
-	if (SDL_GetSurfaceBlendMode(surface, &blend_mode) == 0)
+	if (SDL_GetSurfaceBlendMode(surface, &blend_mode))
 	{
 		if (blend_mode == SDL_BLENDMODE_BLEND)
 		{
-			return SDL_GetSurfaceAlphaMod(surface, alpha);
+			return SDL_GetSurfaceAlphaMod(surface, alpha) ? 0 : -1;
 		}
 	}
 	*alpha = 255;
@@ -141,17 +129,11 @@ int TFB_GetSurfaceAlphaMod(SDL_Surface* surface, Uint8* alpha)
 
 int TFB_SetSurfaceAlphaMod(SDL_Surface* surface, Uint8 alpha)
 {
-	int result;
 	if (!surface)
 	{
 		return -1;
 	}
-	result = SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND);
-	if (result == 0)
-	{
-		result = SDL_SetSurfaceAlphaMod(surface, alpha);
-	}
-	return result;
+	return SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND) && SDL_SetSurfaceAlphaMod(surface, alpha) ? 0 : -1;
 }
 
 int TFB_DisableSurfaceAlphaMod(SDL_Surface* surface)
@@ -161,7 +143,7 @@ int TFB_DisableSurfaceAlphaMod(SDL_Surface* surface)
 		return -1;
 	}
 	SDL_SetSurfaceAlphaMod(surface, 255);
-	return SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE);
+	return SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE) ? 0 : -1;
 }
 
 int TFB_GetColorKey(SDL_Surface* surface, Uint32* key)
@@ -170,7 +152,7 @@ int TFB_GetColorKey(SDL_Surface* surface, Uint32* key)
 	{
 		return -1;
 	}
-	return SDL_GetColorKey(surface, key);
+	return SDL_GetSurfaceColorKey(surface, key) ? 0 : -1;
 }
 
 int TFB_SetColorKey(SDL_Surface* surface, Uint32 key, int rleaccel)
@@ -179,8 +161,8 @@ int TFB_SetColorKey(SDL_Surface* surface, Uint32 key, int rleaccel)
 	{
 		return -1;
 	}
-	SDL_SetSurfaceRLE(surface, rleaccel);
-	return SDL_SetColorKey(surface, SDL_TRUE, key);
+	SDL_SetSurfaceRLE(surface, rleaccel != 0);
+	return SDL_SetSurfaceColorKey(surface, true, key) ? 0 : -1;
 }
 
 int TFB_DisableColorKey(SDL_Surface* surface)
@@ -189,21 +171,17 @@ int TFB_DisableColorKey(SDL_Surface* surface)
 	{
 		return -1;
 	}
-	return SDL_SetColorKey(surface, SDL_FALSE, 0);
+	return SDL_SetSurfaceColorKey(surface, false, 0) ? 0 : -1;
 }
 
 int TFB_SetColors(SDL_Surface* surface, SDL_Color* colors, int firstcolor, int ncolors)
 {
-	if (!surface || !colors || !surface->format || !surface->format->palette)
+	SDL_Palette* palette {surface ? SDL_GetSurfacePalette(surface) : nullptr};
+	if (!colors || !palette)
 	{
 		return 0;
 	}
-	if (SDL_SetPaletteColors(surface->format->palette, colors, firstcolor, ncolors) == 0)
-	{
-		// SDL2's success code is opposite from SDL1's SDL_SetColors
-		return 1;
-	}
-	return 0;
+	return SDL_SetPaletteColors(palette, colors, firstcolor, ncolors) ? 1 : 0;
 }
 
 int TFB_SupportsHardwareScaling(void)

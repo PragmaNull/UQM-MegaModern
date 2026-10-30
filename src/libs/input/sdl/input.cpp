@@ -30,6 +30,7 @@
 #include "core/string/StringUtils.h"
 #include "libs/file/textfile.h"
 #include "libs/input/keyconfig.h"
+#include "libs/graphics/sdl/pure.h"
 #include <atomic>
 
 #define KBDBUFSIZE (1 << 8)
@@ -264,19 +265,17 @@ void TFB_SetInputVectors(uqstl::atomic<int>* menu, int num_menu_, uqstl::atomic<
 static void
 initJoystick(void)
 {
-	int nJoysticks;
-
 	size_t base_len;
 	const char* slash;
 
-	if ((SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER)) == -1)
+	if (!SDL_InitSubSystem(SDL_INIT_GAMEPAD))
 	{
 		uqm::log::critical("Couldn't initialize joystick subsystem: {}",
 						   SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 
-	SDL_GameControllerEventState(SDL_ENABLE);
+	SDL_SetGamepadEventsEnabled(true);
 
 	base_len = strlen(baseContentPath);
 	if (base_len > 0)
@@ -292,7 +291,7 @@ initJoystick(void)
 	static constexpr const char* DbFilenameFormat {"{}{}gamecontrollerdb.txt"};
 	const uqstl::string mapping_db {fmt::format(DbFilenameFormat, baseContentPath, slash)};
 
-	if (SDL_GameControllerAddMappingsFromFile(mapping_db.c_str()) == -1)
+	if (SDL_AddGamepadMappingsFromFile(mapping_db.c_str()) == -1)
 	{
 		uqm::log::warn("Could not load controller mappings "
 					   "from {}: {}",
@@ -304,31 +303,32 @@ initJoystick(void)
 						mapping_db);
 	}
 
-	nJoysticks = SDL_NumJoysticks();
+	int nJoysticks {};
+	SDL_JoystickID* const joysticks {SDL_GetJoysticks(&nJoysticks)};
 	uqm::log::info("{} joysticks were found.", nJoysticks);
 
 	if (nJoysticks > 0)
 	{
-		int i;
 		uqm::log::info("The names of the joysticks are:");
-		for (i = 0; i < nJoysticks; i++)
+		for (int i {}; i < nJoysticks; i++)
 		{
-			if (SDL_IsGameController(i))
+			if (SDL_IsGamepad(joysticks[i]))
 			{
-				uqm::log::info("    {} (controller)",
-							   SDL_GameControllerNameForIndex(i));
+				const char* name {SDL_GetGamepadNameForID(joysticks[i])};
+				uqm::log::info("    {} (controller)", name ? name : "");
 			}
 			else
 			{
-				uqm::log::info("    {} (joystick)",
-							   SDL_JoystickNameForIndex(i));
+				const char* name {SDL_GetJoystickNameForID(joysticks[i])};
+				uqm::log::info("    {} (joystick)", name ? name : "");
 			}
 		}
-		for (int i = 0; i < nJoysticks; i++)
+		for (int i {}; i < nJoysticks; i++)
 		{
-			create_joystick(i);
+			create_joystick(joysticks[i]);
 		}
 	}
+	SDL_free(joysticks);
 }
 
 #endif /* HAVE_JOYSTICK */
@@ -361,7 +361,7 @@ void TFB_UninitInput(void)
 {
 	VControl_Uninit();
 	controls = {};
-	SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
+	SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
 }
 
 void EnterCharacterMode(void)
@@ -407,10 +407,10 @@ ProcessMouseEvent (const SDL_Event *e)
 {
 	switch (e->type)
 	{
-	case SDL_MOUSEBUTTONDOWN:
+	case SDL_EVENT_MOUSE_BUTTON_DOWN:
 		MouseButtonDown = 1;
 		break;
-	case SDL_MOUSEBUTTONUP:
+	case SDL_EVENT_MOUSE_BUTTON_UP:
 		MouseButtonDown = 0;
 		break;
 	default:
@@ -423,9 +423,9 @@ ProcessMouseEvent (const SDL_Event *e)
 static inline int
 is_numpad_char_event(const SDL_Event* Event)
 {
-	return in_character_mode && (Event->type == SDL_KEYDOWN || Event->type == SDL_KEYUP) && (Event->key.keysym.mod & KMOD_NUM) && /* Numlock on */
-		   Event->key.keysym.sym >= SDLK_KP_1 &&																				  /* Keypad key */
-		   Event->key.keysym.sym <= SDLK_KP_PERIOD;
+	return in_character_mode && (Event->type == SDL_EVENT_KEY_DOWN || Event->type == SDL_EVENT_KEY_UP) && (Event->key.mod & SDL_KMOD_NUM) && /* Numlock on */
+		   Event->key.key >= SDLK_KP_1 &&																									 /* Keypad key */
+		   Event->key.key <= SDLK_KP_PERIOD;
 	// Note that in the SDL2 enumeration 0 comes after 9 and before period
 }
 
@@ -439,13 +439,13 @@ void ProcessInputEvent(const SDL_Event* Event)
 	if (in_character_mode && !set_character_mode)
 	{
 		set_character_mode = true;
-		SDL_StartTextInput();
+		SDL_StartTextInput(TFB_GetSDLWindow());
 	}
 
 	if (!in_character_mode && set_character_mode)
 	{
 		set_character_mode = false;
-		SDL_StopTextInput();
+		SDL_StopTextInput(TFB_GetSDLWindow());
 	}
 
 	/* "Block" numpad input when NUM_LOCK is on */
@@ -454,7 +454,7 @@ void ProcessInputEvent(const SDL_Event* Event)
 		VControl_HandleEvent(Event);
 	}
 
-	if (Event->type == SDL_TEXTINPUT)
+	if (Event->type == SDL_EVENT_TEXT_INPUT)
 	{
 		int newtail;
 		int i = 0;
@@ -527,24 +527,24 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 {
 	VCONTROL_GESTURE* g = CONTROL_PTR(templat, control, index);
 
-	const char xbx_buttons[SDL_CONTROLLER_BUTTON_MAX][16] =
+	const char xbx_buttons[SDL_GAMEPAD_BUTTON_COUNT][16] =
 		{
 			"A", "B", "X", "Y", "Back", "Guide", "Start",
 			"LStick", "RStick", "LShoulder", "RShoulder",
 			"DUp", "DDown", "DLeft", "DRight", "Misc"};
 
-	const char ds4_buttons[SDL_CONTROLLER_BUTTON_MAX][16] =
+	const char ds4_buttons[SDL_GAMEPAD_BUTTON_COUNT][16] =
 		{
 			STR_CROSS, STR_CIRCLE, STR_SQUARE, STR_TRIANGLE,
 			"Share", "PS", "Options", "L3", "R3", "L1", "R1",
 			"DUp", "DDown", "DLeft", "DRight", "TouchPad"};
 
-	const char xbx_axes[SDL_CONTROLLER_AXIS_MAX][16] =
+	const char xbx_axes[SDL_GAMEPAD_AXIS_COUNT][16] =
 		{
 			"LStick H", "LStick V", "RStick H", "RStick V",
 			"LTrigger", "RTrigger"};
 
-	const char ds4_axes[SDL_CONTROLLER_AXIS_MAX][16] =
+	const char ds4_axes[SDL_GAMEPAD_AXIS_COUNT][16] =
 		{
 			"LStick H", "LStick V", "RStick H", "RStick V",
 			"L2", "R2"};

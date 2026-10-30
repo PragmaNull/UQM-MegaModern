@@ -39,9 +39,9 @@ void SCALE_(TriScanFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 	int dsrc, ddst;
 	SDL_Rect* region = r;
 	SDL_Rect limits;
-	SDL_PixelFormat* fmt = dst->format;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(dst->format);
 	const int sp = src->pitch, dp = dst->pitch;
-	const int bpp = fmt->BytesPerPixel;
+	const int bpp = fmt->bytes_per_pixel;
 	const int slen = sp / bpp, dlen = dp / bpp;
 	// for clarity purposes, the 'pixels' array here is transposed
 	Uint32 pixels[3][3];

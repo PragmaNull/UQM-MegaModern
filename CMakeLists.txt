@@ -80,7 +80,7 @@ find_package(Ogg REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(PNG REQUIRED)
 find_package(scn REQUIRED)
-find_package(SDL2 REQUIRED)
+find_package(SDL3 REQUIRED CONFIG)
 find_package(spdlog REQUIRED)
 find_package(utf8proc REQUIRED)
 find_package(Vorbis REQUIRED)
@@ -262,7 +262,7 @@ target_link_libraries(${APP_TARGET}
         OpenAL::OpenAL
         PNG::PNG
         scn::scn
-        SDL2::SDL2main 
+        SDL3::SDL3
         spdlog::spdlog
         utf8proc::utf8proc
         vorbis::vorbis 
@@ -272,7 +272,7 @@ target_link_libraries(${APP_TARGET}
         $<$<CONFIG:Release>:user32>
 )
 
-#print_library_properties(SDL2::SDL2main)
+#print_library_properties(SDL3::SDL3)
 
 # Copy runtime DLLs as needed.
 add_custom_command(TARGET ${APP_TARGET} POST_BUILD

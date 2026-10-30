@@ -19,9 +19,9 @@
 #include "port.h"
 #include "libs/file/textfile.h"
 #include "libs/io/FileSystem.h"
-#include "SDL.h"
-#include "SDL_error.h"
-#include "SDL_rwops.h"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_iostream.h>
 #include "png2sdl.h"
 
 SDL_Surface*
@@ -34,12 +34,12 @@ sdl_loadImage(const uqm::io::Directory& dir, const char* fileName)
 		return nullptr;
 	}
 
-	SDL_RWops* const rwops {SDL_RWFromConstMem(data->data(), static_cast<int>(data->size()))};
+	SDL_IOStream* const rwops {SDL_IOFromConstMem(data->data(), static_cast<int>(data->size()))};
 	if (rwops == nullptr)
 	{
 		return nullptr;
 	}
 	SDL_Surface* const result {TFB_png_to_sdl(rwops)};
-	SDL_RWclose(rwops);
+	SDL_CloseIO(rwops);
 	return result;
 }

@@ -388,7 +388,7 @@ makeMatchingFrame(FRAME frame, int width, int height)
 	FRAME newFrame;
 	CREATE_FLAGS flags;
 	const bool dst_has_alpha =
-		((SDL_Surface*)(frame->image->NormalImg))->format->Amask != 0;
+		SDL_GetPixelFormatDetails(((SDL_Surface*)(frame->image->NormalImg))->format)->Amask != 0;
 
 	flags = dst_has_alpha ? WANT_ALPHA : GetFrameParentDrawable(frame)->Flags;
 	drawable = CreateDrawable(flags, width, height, 1);

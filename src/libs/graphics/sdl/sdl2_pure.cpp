@@ -81,8 +81,8 @@ static TFB_GRAPHICS_BACKEND sdl2_unscaled_backend = {
 static SDL_Surface*
 Create_Screen(int w, int h)
 {
-	SDL_Surface* newsurf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h,
-												32, R_MASK, G_MASK, B_MASK, 0);
+	SDL_Surface* newsurf = TFB_CreateSurface(w, h,
+											 32, R_MASK, G_MASK, B_MASK, 0);
 	if (newsurf == 0)
 	{
 		uqm::log::error("Couldn't create screen buffers: {}",
@@ -96,7 +96,7 @@ ReInit_Screen(SDL_Surface** screen, int w, int h)
 {
 	if (*screen)
 	{
-		SDL_FreeSurface(*screen);
+		SDL_DestroySurface(*screen);
 	}
 	*screen = Create_Screen(w, h);
 
@@ -108,10 +108,10 @@ ReInit_FPS_Screen(SDL_Surface** screen, int w, int h)
 {
 	if (*screen)
 	{
-		SDL_FreeSurface(*screen);
+		SDL_DestroySurface(*screen);
 	}
-	*screen = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32, R_MASK, G_MASK,
-								   B_MASK, A_MASK);
+	*screen = TFB_CreateSurface(w, h, 32, R_MASK, G_MASK,
+								B_MASK, A_MASK);
 	if (*screen == 0)
 	{
 		uqm::log::error("Couldn't create screen buffers: {}",
@@ -121,38 +121,78 @@ ReInit_FPS_Screen(SDL_Surface** screen, int w, int h)
 	return *screen == 0 ? -1 : 0;
 }
 
-static int
+// Returns the name of the render driver to use, or nullptr to let SDL choose.
+static const char*
 FindBestRenderDriver(void)
 {
-	int i, n;
 	if (!rendererBackend || !*rendererBackend)
 	{
-		/* If the user has no preference, just let SDL2 choose */
-		return -1;
+		return nullptr;
 	}
-	n = SDL_GetNumRenderDrivers();
 	uqm::log::info("Searching for render driver \"{}\".",
 				   rendererBackend);
 
-	for (i = 0; i < n; i++)
+	const int n {SDL_GetNumRenderDrivers()};
+	for (int i {}; i < n; i++)
 	{
-		SDL_RendererInfo info;
-		if (SDL_GetRenderDriverInfo(i, &info) < 0)
+		const char* name {SDL_GetRenderDriver(i)};
+		if (name && !strcmp(name, rendererBackend))
 		{
-			continue;
+			return name;
 		}
-		if (!strcmp(info.name, rendererBackend))
-		{
-			return i;
-		}
-		uqm::log::info("Skipping render driver \"{}\"", info.name);
+		uqm::log::info("Skipping render driver \"{}\"", name ? name : "");
 	}
-	/* We did not find any accelerated drivers that weren't D3D9.
-	 * Return -1 to ask SDL2 to do its best. */
 	uqm::log::info("Render driver \"{}\" not available, using system "
 				   "default",
 				   rendererBackend);
-	return -1;
+	return nullptr;
+}
+
+static void
+SetFullscreen(uqm::GfxFlags flags, int width, int height)
+{
+	if (testFlag(flags, uqm::GfxFlags::Fullscreen))
+	{
+		SDL_SetWindowFullscreenMode(window, nullptr);
+		SDL_SetWindowFullscreen(window, true);
+	}
+	else if (testFlag(flags, uqm::GfxFlags::ExclusiveFullscreen))
+	{
+		SDL_DisplayMode mode {};
+		if (SDL_GetClosestFullscreenDisplayMode(SDL_GetDisplayForWindow(window), width, height, 0.0f, false, &mode))
+		{
+			SDL_SetWindowFullscreenMode(window, &mode);
+		}
+		else
+		{
+			uqm::log::warn("No fullscreen mode for {}x{}: {}", width, height, SDL_GetError());
+			SDL_SetWindowFullscreenMode(window, nullptr);
+		}
+		SDL_SetWindowFullscreen(window, true);
+	}
+	else
+	{
+		SDL_SetWindowFullscreen(window, false);
+	}
+}
+
+static SDL_Texture*
+CreateScreenTexture(int width, int height)
+{
+	SDL_Texture* texture {SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBX8888, SDL_TEXTUREACCESS_STREAMING, width, height)};
+	if (texture)
+	{
+		SDL_SetTextureScaleMode(texture, testFlag(g_gfxFlags, uqm::GfxFlagsScaleAny) ? SDL_SCALEMODE_LINEAR : SDL_SCALEMODE_NEAREST);
+	}
+	return texture;
+}
+
+static SDL_FRect
+ToFRect(const SDL_Rect& rect)
+{
+	SDL_FRect result {};
+	SDL_RectToFRect(&rect, &result);
+	return result;
 }
 
 int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int width, int height,
@@ -171,40 +211,30 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 
 	if (window == nullptr)
 	{
-		SDL_RendererInfo info;
-
-		window = SDL_CreateWindow(caption,
-								  SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-								  width, height, 0);
-		if (testFlag(flags, uqm::GfxFlags::Fullscreen))
-		{
-			/* If we create the window fullscreen, it will have
-			 * no icon if and when it becomes windowed. */
-			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		}
-		else if (testFlag(flags, uqm::GfxFlags::ExclusiveFullscreen))
-		{
-			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-		}
-
+		window = SDL_CreateWindow(caption, width, height, 0);
 		if (!window)
 		{
 			return -1;
 		}
-		renderer = SDL_CreateRenderer(window, FindBestRenderDriver(), 0);
+		SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+		/* If we create the window fullscreen, it will have
+		 * no icon if and when it becomes windowed. */
+		SetFullscreen(flags, width, height);
+
+		renderer = SDL_CreateRenderer(window, FindBestRenderDriver());
 		if (!renderer)
 		{
 			return -1;
 		}
-		if (SDL_GetRendererInfo(renderer, &info) == 0)
+		if (const char* name {SDL_GetRendererName(renderer)})
 		{
-			uqm::log::info("SDL2 renderer '{}' selected.\n", info.name);
+			uqm::log::info("SDL renderer '{}' selected.", name);
 		}
 		else
 		{
-			uqm::log::info("SDL2 renderer had no name.");
+			uqm::log::info("SDL renderer had no name.");
 		}
-		SDL_RenderSetLogicalSize(renderer, width, height);
+		SDL_SetRenderLogicalPresentation(renderer, width, height, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 		for (i = 0; i < TFB_GFX_NUMSCREENS; i++)
 		{
 			SDL2_Screens[i].scaled = nullptr;
@@ -230,8 +260,8 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		SDL2_Screens[1].active = false;
 		SDL_Screen = SDL_Screens[0];
 		TransitionScreen = SDL_Screens[2];
-		format_conv_surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 0, 0,
-												32, R_MASK, G_MASK, B_MASK, A_MASK);
+		format_conv_surf = TFB_CreateSurface(0, 0,
+											 32, R_MASK, G_MASK, B_MASK, A_MASK);
 		if (!format_conv_surf)
 		{
 			return -1;
@@ -240,10 +270,11 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 	else
 	{
 		int LastScreenWidth, LastScreenHeight;
-		SDL_RenderGetLogicalSize(renderer, &LastScreenWidth, &LastScreenHeight);
+		SDL_RendererLogicalPresentation mode;
+		SDL_GetRenderLogicalPresentation(renderer, &LastScreenWidth, &LastScreenHeight, &mode);
 		if (LastScreenWidth != width || LastScreenHeight != height)
 		{
-			SDL_RenderSetLogicalSize(renderer, width, height);
+			SDL_SetRenderLogicalPresentation(renderer, width, height, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 		}
 		if (SDL_Screens[0]->h != CanvasHeight)
 		{
@@ -269,31 +300,12 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		{
 			UnInit_Screen(&SDL_Screen_fps);
 		}
-		if (testFlag(flags, uqm::GfxFlags::Fullscreen))
+		SetFullscreen(flags, width, height);
+		if (!testAnyFlag(flags, uqm::GfxFlagsFullscreen))
 		{
-			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		}
-		else if (testFlag(flags, uqm::GfxFlags::ExclusiveFullscreen))
-		{
-			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-		}
-		else
-		{
-			SDL_SetWindowFullscreen(window, 0);
 			SDL_SetWindowSize(window, width, height);
 		}
 		SDL_SetWindowTitle(window, caption);
-	}
-
-	if (testFlag(g_gfxFlags, uqm::GfxFlagsScaleAny))
-	{
-		/* Linear scaling */
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-	}
-	else
-	{
-		/* Nearest-neighbor scaling */
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 	}
 
 	if (testFlag(g_gfxFlags, uqm::GfxFlagsScaleSoftwareOnly))
@@ -313,9 +325,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 				SDL_DestroyTexture(SDL2_Screens[i].texture);
 				SDL2_Screens[i].texture = nullptr;
 			}
-			SDL2_Screens[i].texture = SDL_CreateTexture(renderer,
-														SDL_PIXELFORMAT_RGBX8888, SDL_TEXTUREACCESS_STREAMING,
-														CanvasWidth * 2, CanvasHeight * 2);
+			SDL2_Screens[i].texture = CreateScreenTexture(CanvasWidth * 2, CanvasHeight * 2);
 			SDL_LockSurface(SDL2_Screens[i].scaled);
 			SDL_UpdateTexture(SDL2_Screens[i].texture, nullptr,
 							  SDL2_Screens[i].scaled->pixels,
@@ -333,7 +343,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		{
 			UnInit_Screen(&SDL_Screen_fps);
 		}
-		scaler = Scale_PrepPlatform(flags, SDL2_Screens[0].scaled->format);
+		scaler = Scale_PrepPlatform(flags, SDL_GetPixelFormatDetails(SDL2_Screens[0].scaled->format));
 		graphics_backend = &sdl2_scaled_backend;
 	}
 	else
@@ -342,7 +352,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		{
 			if (SDL2_Screens[i].scaled)
 			{
-				SDL_FreeSurface(SDL2_Screens[i].scaled);
+				SDL_DestroySurface(SDL2_Screens[i].scaled);
 				SDL2_Screens[i].scaled = nullptr;
 			}
 			if (SDL2_Screens[i].texture)
@@ -350,9 +360,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 				SDL_DestroyTexture(SDL2_Screens[i].texture);
 				SDL2_Screens[i].texture = nullptr;
 			}
-			SDL2_Screens[i].texture = SDL_CreateTexture(renderer,
-														SDL_PIXELFORMAT_RGBX8888, SDL_TEXTUREACCESS_STREAMING,
-														CanvasWidth, CanvasHeight);
+			SDL2_Screens[i].texture = CreateScreenTexture(CanvasWidth, CanvasHeight);
 			SDL_LockSurface(SDL_Screens[i]);
 			SDL_UpdateTexture(SDL2_Screens[i].texture, nullptr,
 							  SDL_Screens[i]->pixels, SDL_Screens[i]->pitch);
@@ -375,12 +383,10 @@ void TFB_Pure_GetRendererBackends(uqstl::vector<uqstl::string>& backends)
 
 	for (int i {0}; i < numDrivers; ++i)
 	{
-		SDL_RendererInfo info {};
-		if (SDL_GetRenderDriverInfo(i, &info) < 0)
+		if (const char* name {SDL_GetRenderDriver(i)})
 		{
-			continue;
+			backends.emplace_back(name);
 		}
-		backends.emplace_back(info.name);
 	}
 }
 
@@ -471,7 +477,7 @@ TFB_SDL2_ScanLines(bool hd)
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	for (y = 0; y < WindowHeight; y += 2)
 	{
-		SDL_RenderDrawLine(renderer, 0, y, WindowWidth - 1, y);
+		SDL_RenderLine(renderer, 0.0f, static_cast<float>(y), static_cast<float>(WindowWidth - 1), static_cast<float>(y));
 	}
 
 	(void)hd; // satisfy compiler (unused parameter)
@@ -489,7 +495,9 @@ TFB_SDL2_FPS(void)
 	t.h = WindowHeight >> 4;
 	texture = SDL_CreateTextureFromSurface(renderer, SDL_Screen_fps);
 	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-	SDL_RenderCopy(renderer, texture, &r, &t);
+	const SDL_FRect src {ToFRect(r)};
+	const SDL_FRect dst {ToFRect(t)};
+	SDL_RenderTexture(renderer, texture, &src, &dst);
 	SDL_DestroyTexture(texture);
 	texture = nullptr;
 }
@@ -544,14 +552,24 @@ TFB_SDL2_Unscaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 		SDL_SetTextureAlphaMod(texture, a);
 	}
 
-	SDL_RenderCopy(renderer, texture, rect, rect);
+	if (rect)
+	{
+		const SDL_FRect frect {ToFRect(*rect)};
+		SDL_RenderTexture(renderer, texture, &frect, &frect);
+	}
+	else
+	{
+		SDL_RenderTexture(renderer, texture, nullptr, nullptr);
+	}
 }
 
 static void
 TFB_SDL2_Scaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 {
 	SDL_Texture* texture = SDL2_Screens[screen].texture;
-	SDL_Rect srcRect, *pSrcRect = nullptr;
+	SDL_FRect srcRect, dstRect;
+	SDL_FRect* pSrcRect = nullptr;
+	SDL_FRect* pDstRect = nullptr;
 	if (SDL2_Screens[screen].dirty)
 	{
 		SDL_Surface* src = SDL2_Screens[screen].scaled;
@@ -578,14 +596,30 @@ TFB_SDL2_Scaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 	 * rect, however, must be scaled to match. */
 	if (rect)
 	{
-		srcRect = *rect;
+		dstRect = ToFRect(*rect);
+		srcRect = dstRect;
 		srcRect.x *= 2;
 		srcRect.y *= 2;
 		srcRect.w *= 2;
 		srcRect.h *= 2;
 		pSrcRect = &srcRect;
+		pDstRect = &dstRect;
 	}
-	SDL_RenderCopy(renderer, texture, pSrcRect, rect);
+	SDL_RenderTexture(renderer, texture, pSrcRect, pDstRect);
+}
+
+static void
+FillRect(const SDL_Rect* rect)
+{
+	if (rect)
+	{
+		const SDL_FRect frect {ToFRect(*rect)};
+		SDL_RenderFillRect(renderer, &frect);
+	}
+	else
+	{
+		SDL_RenderFillRect(renderer, nullptr);
+	}
 }
 
 static void
@@ -596,7 +630,7 @@ TFB_SDL2_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect)
 		SDL_SetRenderDrawBlendMode(renderer, a == 255 ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
 
 		SDL_SetRenderDrawColor(renderer, r, g, b, a);
-		SDL_RenderFillRect(renderer, rect);
+		FillRect(rect);
 	}
 	else
 	{
@@ -609,7 +643,7 @@ TFB_SDL2_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect)
 																  SDL_BLENDOPERATION_MAXIMUM));
 
 			SDL_SetRenderDrawColor(renderer, a, a, a, 255);
-			SDL_RenderFillRect(renderer, rect);
+			FillRect(rect);
 		}
 		else
 		{
@@ -620,7 +654,7 @@ TFB_SDL2_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect)
 																  SDL_BLENDFACTOR_ONE, SDL_BLENDFACTOR_ONE,
 																  SDL_BLENDOPERATION_MAXIMUM));
 			SDL_SetRenderDrawColor(renderer, c, c, c, 255);
-			SDL_RenderFillRect(renderer, rect);
+			FillRect(rect);
 
 			SDL_SetRenderDrawBlendMode(renderer,
 									   SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ONE,
@@ -629,7 +663,7 @@ TFB_SDL2_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect)
 																  SDL_BLENDFACTOR_ONE, SDL_BLENDFACTOR_ONE,
 																  SDL_BLENDOPERATION_MAXIMUM));
 			SDL_SetRenderDrawColor(renderer, a, a, a, 255);
-			SDL_RenderFillRect(renderer, rect);
+			FillRect(rect);
 		}
 	}
 }
@@ -652,36 +686,31 @@ TFB_SDL2_Postprocess(bool hd)
 
 bool TFB_SDL2_GammaCorrection(float gamma)
 {
-	return (SDL_SetWindowBrightness(window, gamma) == 0);
+	// SDL3 has no window gamma.
+	(void)gamma;
+	return false;
 }
 
 bool TFB_SDL_ScreenShot(const char* path)
 {
-	SDL_Surface* tmp = SDL_GetWindowSurface(window);
 	bool successful = false;
 
-	if (testAnyFlag(g_gfxFlags, uqm::GfxFlagsFullscreen))
+	SDL_Surface* rendered {SDL_RenderReadPixels(renderer, nullptr)};
+	if (!rendered)
 	{
-		const float width = (float)tmp->w / 320;
-		const float height = (float)tmp->h / 240;
-
-		if (width > height)
-		{
-			tmp->w = width * 320;
-		}
-		else if (height > width)
-		{
-			tmp->h = width * 240;
-		}
+		uqm::log::error("Cannot read the screen for the screenshot: {}", SDL_GetError());
+		return false;
+	}
+	SDL_Surface* tmp {SDL_ConvertSurface(rendered, SDL_PIXELFORMAT_RGBA32)};
+	SDL_DestroySurface(rendered);
+	if (!tmp)
+	{
+		uqm::log::error("Cannot convert the screenshot: {}", SDL_GetError());
+		return false;
 	}
 
-	tmp = SDL_CreateRGBSurfaceWithFormat(0, tmp->w, tmp->h, 32,
-										 SDL_PIXELFORMAT_RGBA32);
-
 	SDL_LockSurface(tmp);
-	SDL_RenderReadPixels(renderer, nullptr, tmp->format->format,
-						 tmp->pixels, tmp->pitch);
-	if (SDL_RWops* file {SDL_RWFromFile(path, "wb")}; file == nullptr)
+	if (SDL_IOStream* file {SDL_IOFromFile(path, "wb")}; file == nullptr)
 	{
 		uqm::log::error("Cannot open '{}' for the screenshot: {}", path, SDL_GetError());
 	}
@@ -696,14 +725,19 @@ bool TFB_SDL_ScreenShot(const char* path)
 	}
 
 	SDL_UnlockSurface(tmp);
-	SDL_FreeSurface(tmp);
+	SDL_DestroySurface(tmp);
 
 	return successful;
 }
 
+SDL_Window* TFB_GetSDLWindow(void)
+{
+	return window;
+}
+
 void TFB_SDL2_GetDisplaySize(SDL_Rect* bounds)
 {
-	if (SDL_GetDisplayBounds(0, bounds) != 0)
+	if (!SDL_GetDisplayBounds(SDL_GetPrimaryDisplay(), bounds))
 	{
 		fmt::print("{}\n", SDL_GetError());
 	}

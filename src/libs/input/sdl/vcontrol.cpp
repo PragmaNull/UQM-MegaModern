@@ -15,7 +15,7 @@
  */
 
 #include "port.h"
-#include "SDL.h"
+#include <SDL3/SDL.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -69,7 +69,7 @@ typedef struct vcontrol_joystick_hat
 
 typedef struct vcontrol_joystick
 {
-	SDL_GameController* stick;
+	SDL_Gamepad* stick;
 	int numaxes, numbuttons;
 	int threshold;
 	uqstl::vector<axis_type> axes;
@@ -177,31 +177,27 @@ apply_default_bindings_to_controller(SDL_JoystickID instance_id,
 					instance_id);
 }
 
-void create_joystick(int device_index)
+void create_joystick(SDL_JoystickID instance_id)
 {
 	const uqm::LockGuard lock {s_vcontrolLock};
-	SDL_GameController* gamecontroller;
-	SDL_Joystick* gamepad;
-	SDL_JoystickID instance_id;
+	SDL_Gamepad* gamecontroller;
 	controller_list *current, *new_controller;
 	joystick* x;
 
-	if (!SDL_IsGameController(device_index))
+	if (!SDL_IsGamepad(instance_id))
 	{
 		return;
 	}
 
-	gamecontroller = SDL_GameControllerOpen(device_index);
+	gamecontroller = SDL_OpenGamepad(instance_id);
 	if (!gamecontroller)
 	{
 		uqm::log::warn("VControl: Could not initialize "
 					   "controller #{}",
-					   device_index);
+					   instance_id);
 		return;
 	}
 
-	gamepad = SDL_GameControllerGetJoystick(gamecontroller);
-	instance_id = SDL_JoystickInstanceID(gamepad);
 
 	current = controller_list_head;
 	while (current)
@@ -210,7 +206,7 @@ void create_joystick(int device_index)
 		{
 			uqm::log::warn("Controller instance {} already in list",
 						   instance_id);
-			SDL_GameControllerClose(gamecontroller);
+			SDL_CloseGamepad(gamecontroller);
 			return;
 		}
 		current = current->next;
@@ -230,7 +226,7 @@ void create_joystick(int device_index)
 	{
 		uqm::log::info("Maximum of 2 controllers already connected, "
 					   "ignoring additional controller");
-		SDL_GameControllerClose(gamecontroller);
+		SDL_CloseGamepad(gamecontroller);
 		return;
 	}
 	controller_assignments[logical_port] = instance_id;
@@ -238,8 +234,8 @@ void create_joystick(int device_index)
 
 	new_controller = new controller_list {};
 	x = &new_controller->gamepad;
-	x->numaxes = SDL_CONTROLLER_AXIS_MAX;
-	x->numbuttons = SDL_CONTROLLER_BUTTON_MAX;
+	x->numaxes = SDL_GAMEPAD_AXIS_COUNT;
+	x->numbuttons = SDL_GAMEPAD_BUTTON_COUNT;
 	x->axes.assign(x->numaxes, axis_type {nullptr, nullptr, 0});
 	x->buttons.assign(x->numbuttons, nullptr);
 	x->stick = gamecontroller;
@@ -249,10 +245,10 @@ void create_joystick(int device_index)
 	new_controller->next = controller_list_head;
 	controller_list_head = new_controller;
 
-	uqm::log::info("VControl opened controller {} (logical port {}): "
+	const char* name {SDL_GetGamepadName(gamecontroller)};
+	uqm::log::info("VControl opened controller (logical port {}): "
 				   "{} (instance {})",
-				   device_index, logical_port,
-				   SDL_GameControllerName(gamecontroller), instance_id);
+				   logical_port, name ? name : "", instance_id);
 
 	apply_default_bindings_to_controller(instance_id, logical_port);
 }
@@ -287,7 +283,7 @@ destroy_joystick(SDL_JoystickID instance_id) UQM_REQUIRES(s_vcontrolLock)
 			x = &current->gamepad;
 			if (x->stick)
 			{
-				SDL_GameControllerClose(x->stick);
+				SDL_CloseGamepad(x->stick);
 				x->stick = nullptr;
 			}
 
@@ -544,21 +540,21 @@ event2gesture(SDL_Event* e, VCONTROL_GESTURE* g)
 {
 	switch (e->type)
 	{
-		case SDL_KEYDOWN:
+		case SDL_EVENT_KEY_DOWN:
 			g->type = VCONTROL_KEY;
-			g->gesture.key = e->key.keysym.sym;
+			g->gesture.key = e->key.key;
 			break;
 #ifdef HAVE_JOYSTICK
-		case SDL_CONTROLLERAXISMOTION:
+		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
 			g->type = VCONTROL_JOYAXIS;
-			g->gesture.axis.port = e->caxis.which;
-			g->gesture.axis.index = e->caxis.axis;
-			g->gesture.axis.polarity = (e->caxis.value < 0) ? -1 : 1;
+			g->gesture.axis.port = e->gaxis.which;
+			g->gesture.axis.index = e->gaxis.axis;
+			g->gesture.axis.polarity = (e->gaxis.value < 0) ? -1 : 1;
 			break;
-		case SDL_CONTROLLERBUTTONDOWN:
+		case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
 			g->type = VCONTROL_JOYBUTTON;
-			g->gesture.button.port = e->cbutton.which;
-			g->gesture.button.index = e->cbutton.button;
+			g->gesture.button.port = e->gbutton.which;
+			g->gesture.button.index = e->gbutton.button;
 			break;
 #endif /* HAVE_JOYSTICK */
 		default:
@@ -1049,45 +1045,45 @@ void VControl_HandleEvent(const SDL_Event* e)
 	const uqm::LockGuard lock {s_vcontrolLock};
 	switch (e->type)
 	{
-		case SDL_KEYDOWN:
+		case SDL_EVENT_KEY_DOWN:
 			if (!e->key.repeat)
 			{
-				VControl_ProcessKeyDown(e->key.keysym.sym);
+				VControl_ProcessKeyDown(e->key.key);
 				last_interesting = *e;
 				event_ready = 1;
 			}
 			break;
-		case SDL_KEYUP:
-			VControl_ProcessKeyUp(e->key.keysym.sym);
+		case SDL_EVENT_KEY_UP:
+			VControl_ProcessKeyUp(e->key.key);
 			break;
 
 #ifdef HAVE_JOYSTICK
-		case SDL_CONTROLLERAXISMOTION:
-			VControl_ProcessJoyAxis(e->caxis.which, e->caxis.axis,
-									e->caxis.value);
-			if ((e->caxis.value > 15000) || (e->caxis.value < -15000))
+		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
+			VControl_ProcessJoyAxis(e->gaxis.which, e->gaxis.axis,
+									e->gaxis.value);
+			if ((e->gaxis.value > 15000) || (e->gaxis.value < -15000))
 			{
 				last_interesting = *e;
 				event_ready = 1;
 			}
 			break;
-		case SDL_CONTROLLERBUTTONDOWN:
-			VControl_ProcessJoyButtonDown(e->cbutton.which,
-										  e->cbutton.button);
+		case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+			VControl_ProcessJoyButtonDown(e->gbutton.which,
+										  e->gbutton.button);
 			last_interesting = *e;
 			event_ready = 1;
 			break;
-		case SDL_CONTROLLERBUTTONUP:
-			VControl_ProcessJoyButtonUp(e->cbutton.which,
-										e->cbutton.button);
+		case SDL_EVENT_GAMEPAD_BUTTON_UP:
+			VControl_ProcessJoyButtonUp(e->gbutton.which,
+										e->gbutton.button);
 			break;
-		case SDL_CONTROLLERDEVICEADDED:
-			create_joystick(e->cdevice.which);
+		case SDL_EVENT_GAMEPAD_ADDED:
+			create_joystick(e->gdevice.which);
 			break;
-		case SDL_CONTROLLERDEVICEREMOVED:
-			destroy_joystick(e->cdevice.which);
+		case SDL_EVENT_GAMEPAD_REMOVED:
+			destroy_joystick(e->gdevice.which);
 			break;
-		case SDL_CONTROLLERDEVICEREMAPPED:
+		case SDL_EVENT_GAMEPAD_REMAPPED:
 			uqm::log::info("Controller mapping updated");
 			break;
 #endif /* HAVE_JOYSTICK */

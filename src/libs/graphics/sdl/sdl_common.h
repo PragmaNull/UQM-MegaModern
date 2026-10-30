@@ -20,7 +20,7 @@
 #define SDL_COMMON_H
 
 #include "port.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 #include "../gfxintrn.h"
 #include "libs/graphics/tfb_draw.h"
@@ -47,6 +47,9 @@ extern SDL_Surface* SDL_Screen_fps;
 extern SDL_Surface* format_conv_surf;
 
 
+// Makes a surface. An indexed surface gets a palette.
+SDL_Surface* TFB_CreateSurface(int width, int height, SDL_PixelFormat format);
+SDL_Surface* TFB_CreateSurface(int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask);
 SDL_Surface* TFB_DisplayFormatAlpha(SDL_Surface* surface);
 int TFB_HasSurfaceAlphaMod(SDL_Surface* surface);
 int TFB_GetSurfaceAlphaMod(SDL_Surface* surface, Uint8* alpha);

@@ -102,7 +102,7 @@ int TFB_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char* ren
 
 	if (testAnyFlag(flags, uqm::GfxFlagsFullscreen))
 	{
-		SDL_ShowCursor(SDL_DISABLE);
+		SDL_HideCursor();
 	}
 
 	Init_DrawCommandQueue();
@@ -134,7 +134,7 @@ void TFB_ProcessEvents()
 {
 	SDL_Event Event;
 
-	while (SDL_PollEvent(&Event) > 0)
+	while (SDL_PollEvent(&Event))
 	{
 		/* Run through the InputEvent filter. */
 		ProcessInputEvent(&Event);
@@ -156,15 +156,12 @@ void TFB_ProcessEvents()
 				// TODO
 				break;
 #endif
-			case SDL_QUIT:
+			case SDL_EVENT_QUIT:
 				QuitPosted = 1;
 				break;
-			case SDL_WINDOWEVENT:
-				if (Event.window.event == SDL_WINDOWEVENT_EXPOSED)
-				{
-					/* Screen needs to be redrawn */
-					TFB_SwapBuffers(uqm::TFBRedraw::Expose);
-				}
+			case SDL_EVENT_WINDOW_EXPOSED:
+				/* Screen needs to be redrawn */
+				TFB_SwapBuffers(uqm::TFBRedraw::Expose);
 				break;
 			default:
 				break;
@@ -283,25 +280,16 @@ SDL_Surface*
 TFB_DisplayFormatAlpha(SDL_Surface* surface)
 {
 	SDL_Surface* newsurf;
-	SDL_PixelFormat* dstfmt;
-	const SDL_PixelFormat* srcfmt = surface->format;
 
 	// figure out what format to use (alpha/no alpha)
-	if (surface->format->Amask)
-	{
-		dstfmt = format_conv_surf->format;
-	}
-	else
-	{
-		dstfmt = SDL_Screen->format;
-	}
+	const SDL_PixelFormat dstformat {SDL_GetPixelFormatDetails(surface->format)->Amask ? format_conv_surf->format : SDL_Screen->format};
 
-	if (srcfmt->BytesPerPixel == dstfmt->BytesPerPixel && srcfmt->Rmask == dstfmt->Rmask && srcfmt->Gmask == dstfmt->Gmask && srcfmt->Bmask == dstfmt->Bmask && srcfmt->Amask == dstfmt->Amask)
+	if (surface->format == dstformat)
 	{
 		return surface; // no conversion needed
 	}
 
-	newsurf = SDL_ConvertSurface(surface, dstfmt, surface->flags);
+	newsurf = SDL_ConvertSurface(surface, dstformat);
 	// Colorkeys and surface-level alphas cannot work at the same time,
 	// so we need to disable one of them
 	if (TFB_HasColorKey(surface) && newsurf && TFB_HasColorKey(newsurf) && TFB_HasSurfaceAlphaMod(newsurf))
@@ -399,7 +387,9 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 
 	// clip the destination rectangle against the clip rectangle
 	{
-		SDL_Rect* clip = &dst->clip_rect;
+		SDL_Rect clipRect;
+		SDL_GetSurfaceClipRect(dst, &clipRect);
+		SDL_Rect* clip = &clipRect;
 		int dx, dy;
 
 		dx = clip->x - dstrect->x;
@@ -462,7 +452,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 #if 0
 		log_add (log_Debug, "additive blit {} {}, src {} {} {} {} dst {} {},"
 				" srcbpp {}", blend_numer, blend_denom, x1, y1, x2, y2,
-				dstrect->x, dstrect->y, src->format->BitsPerPixel);
+				dstrect->x, dstrect->y, SDL_GetPixelFormatDetails(src->format)->bits_per_pixel);
 #endif
 		for (y = y1; y < y2; ++y)
 		{
@@ -479,8 +469,8 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 
 				dst_pixval = dst_getpix(dst, dst_x2, dst_y2);
 
-				SDL_GetRGB(src_pixval, src->format, &sr, &sg, &sb);
-				SDL_GetRGB(dst_pixval, dst->format, &dr, &dg, &db);
+				SDL_GetRGB(src_pixval, SDL_GetPixelFormatDetails(src->format), SDL_GetSurfacePalette(src), &sr, &sg, &sb);
+				SDL_GetRGB(dst_pixval, SDL_GetPixelFormatDetails(dst->format), SDL_GetSurfacePalette(dst), &dr, &dg, &db);
 
 				nr = sr + dr;
 				ng = sg + dg;
@@ -500,7 +490,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 				}
 
 				putpix(dst, dst_x2, dst_y2,
-					   SDL_MapRGB(dst->format, nr, ng, nb));
+					   SDL_MapSurfaceRGB(dst, nr, ng, nb));
 			}
 		}
 	}
@@ -511,7 +501,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 		log_add (log_Debug, "subtractive blit {} {}, src {} {} {} {}"
 				" dst {} {}, srcbpp {}", blend_numer, blend_denom,
 					x1, y1, x2, y2, dstrect->x, dstrect->y,
-					src->format->BitsPerPixel);
+					SDL_GetPixelFormatDetails(src->format)->bits_per_pixel);
 #endif
 		for (y = y1; y < y2; ++y)
 		{
@@ -528,8 +518,8 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 
 				dst_pixval = dst_getpix(dst, dst_x2, dst_y2);
 
-				SDL_GetRGB(src_pixval, src->format, &sr, &sg, &sb);
-				SDL_GetRGB(dst_pixval, dst->format, &dr, &dg, &db);
+				SDL_GetRGB(src_pixval, SDL_GetPixelFormatDetails(src->format), SDL_GetSurfacePalette(src), &sr, &sg, &sb);
+				SDL_GetRGB(dst_pixval, SDL_GetPixelFormatDetails(dst->format), SDL_GetSurfacePalette(dst), &dr, &dg, &db);
 
 				nr = sr - dr;
 				ng = sg - dg;
@@ -549,7 +539,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 				}
 
 				putpix(dst, dst_x2, dst_y2,
-					   SDL_MapRGB(dst->format, nr, ng, nb));
+					   SDL_MapSurfaceRGB(dst, nr, ng, nb));
 			}
 		}
 	}
@@ -562,7 +552,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 		log_add (log_Debug, "modulated blit {} {}, f {}, src {} {} {} {}"
 				" dst {} {}, srcbpp {}\n", blend_numer, blend_denom, f,
 				x1, y1, x2, y2, dstrect->x, dstrect->y,
-				src->format->BitsPerPixel);
+				SDL_GetPixelFormatDetails(src->format)->bits_per_pixel);
 #endif
 		for (y = y1; y < y2; ++y)
 		{
@@ -577,7 +567,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 					continue;
 				}
 
-				SDL_GetRGB(src_pixval, src->format, &sr, &sg, &sb);
+				SDL_GetRGB(src_pixval, SDL_GetPixelFormatDetails(src->format), SDL_GetSurfacePalette(src), &sr, &sg, &sb);
 
 				nr = (int)(sr * f);
 				ng = (int)(sg * f);
@@ -597,7 +587,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 				}
 
 				putpix(dst, dst_x2, dst_y2,
-					   SDL_MapRGB(dst->format, nr, ng, nb));
+					   SDL_MapSurfaceRGB(dst, nr, ng, nb));
 			}
 		}
 	}
@@ -610,7 +600,7 @@ void UnInit_Screen(SDL_Surface** screen)
 		return;
 	}
 
-	SDL_FreeSurface(*screen);
+	SDL_DestroySurface(*screen);
 	*screen = nullptr;
 }
 
@@ -625,6 +615,22 @@ int TFB_HasColorKey(SDL_Surface* surface)
 {
 	Uint32 key;
 	return TFB_GetColorKey(surface, &key) == 0;
+}
+
+SDL_Surface* TFB_CreateSurface(int width, int height, SDL_PixelFormat format)
+{
+	SDL_Surface* surface {SDL_CreateSurface(width, height, format)};
+	if (surface && SDL_ISPIXELFORMAT_INDEXED(format) && !SDL_CreateSurfacePalette(surface))
+	{
+		SDL_DestroySurface(surface);
+		return nullptr;
+	}
+	return surface;
+}
+
+SDL_Surface* TFB_CreateSurface(int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+{
+	return TFB_CreateSurface(width, height, SDL_GetPixelFormatForMasks(depth, Rmask, Gmask, Bmask, Amask));
 }
 
 void TFB_ScreenShot(void)
@@ -654,7 +660,7 @@ void TFB_ScreenShot(void)
 
 void TFB_ClearFPSCanvas(void)
 {
-	SDL_FillRect(SDL_Screen_fps, nullptr, 0x00000000);
+	SDL_FillSurfaceRect(SDL_Screen_fps, nullptr, 0x00000000);
 }
 
 void TFB_GetScreenSize(int16_t* width, int16_t* height)

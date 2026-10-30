@@ -33,7 +33,7 @@ void SCALE_(Nearest)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 	int y;
 	const int rw = r->w, rh = r->h;
 	const int sp = src->pitch, dp = dst->pitch;
-	const int bpp = dst->format->BytesPerPixel;
+	const int bpp = SDL_GetPixelFormatDetails(dst->format)->bytes_per_pixel;
 	const int slen = sp / bpp, dlen = dp / bpp;
 	const int dsrc = slen - rw, ddst = (dlen - rw) * 2;
 

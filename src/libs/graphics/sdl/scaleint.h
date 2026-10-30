@@ -118,7 +118,7 @@ SCALE_(Prefetch) (const void* p)
 // compute the RGB distance squared between 2 pixels
 // Plain C version
 static inline int
-SCALE_(GetRGBDelta)(const SDL_PixelFormat* fmt, Uint32 pix1, Uint32 pix2)
+SCALE_(GetRGBDelta)(const SDL_PixelFormatDetails* fmt, Uint32 pix1, Uint32 pix2)
 {
 	int c;
 	int delta;
@@ -138,7 +138,7 @@ SCALE_(GetRGBDelta)(const SDL_PixelFormat* fmt, Uint32 pix1, Uint32 pix2)
 // retrieve the Y (intensity) component of pixel's YUV
 // Plain C version
 static inline int
-SCALE_(GetPixY)(const SDL_PixelFormat* fmt, Uint32 pix)
+SCALE_(GetPixY)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
 {
 	Uint32 r, g, b;
 
@@ -152,7 +152,7 @@ SCALE_(GetPixY)(const SDL_PixelFormat* fmt, Uint32 pix)
 }
 
 static inline YUV_VECTOR
-SCALE_(RGBtoYUV)(const SDL_PixelFormat* fmt, Uint32 pix)
+SCALE_(RGBtoYUV)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
 {
 	return RGB15_to_YUV[(((pix >> (fmt->Rshift + 3)) & 0x1f) << 10) | (((pix >> (fmt->Gshift + 3)) & 0x1f) << 5) | (((pix >> (fmt->Bshift + 3)) & 0x1f))];
 }
@@ -162,7 +162,7 @@ SCALE_(RGBtoYUV)(const SDL_PixelFormat* fmt, Uint32 pix)
 // returns true: close; false: distant (-gt toler)
 // Plain C version
 static inline bool
-SCALE_(CmpYUV)(const SDL_PixelFormat* fmt, Uint32 pix1, Uint32 pix2, int toler)
+SCALE_(CmpYUV)(const SDL_PixelFormatDetails* fmt, Uint32 pix1, Uint32 pix2, int toler)
 #if 1
 {
 	int dr, dg, db;

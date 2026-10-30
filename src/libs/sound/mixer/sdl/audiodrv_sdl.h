@@ -23,7 +23,7 @@
 #include "port.h"
 #include "libs/sound/sound.h"
 #include "libs/sound/mixer/mixer.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 /* General */
 int32_t mixSDL_Init(audio_Driver* driver, int32_t flags);

@@ -76,14 +76,12 @@ And the full changelog can be found in the root of this repository: [Changelog](
 	* macOS 10.13+ ([brew](https://brew.sh/) recommended for personal builds)
 	* Any modern Linux distribution
 * Hard Dependencies
-	* [SDL2](https://www.libsdl.org/)
+	* [SDL3](https://www.libsdl.org/)
 	* [libPNG](http://www.libpng.org/pub/png/libpng.html)
 	* [libOGG](https://xiph.org/ogg/)
 	* [libVorbis](https://xiph.org/vorbis)
 	* [zlib](https://www.zlib.net/)
 	* [UQM-MegaMod-Content](https://github.com/PragmaNull/UQM-MegaModern-Content/)
-* Optional Dependencies
-	* [SDL1](https://github.com/libsdl-org/SDL-1.2) (For systems that do not support SDL2)
 
 
 > [!IMPORTANT]  
