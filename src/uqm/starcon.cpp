@@ -328,13 +328,10 @@ int Starcon2Main(void* threadArg)
 
 		do
 		{
-			if (debugHook != nullptr)
+			// No further debugHook calls unless the called
+			// function resets debugHook.
+			if (void (*saveDebugHook)(void) {debugHook.exchange(nullptr)})
 			{
-				void (*saveDebugHook)(void);
-				saveDebugHook = debugHook;
-				debugHook = nullptr;
-				// No further debugHook calls unless the called
-				// function resets debugHook.
 				(*saveDebugHook)();
 				continue;
 			}
