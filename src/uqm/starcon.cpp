@@ -17,6 +17,7 @@
  */
 
 #include <stdlib.h>
+#include <atomic>
 
 #include "comm.h"
 #include "battle.h"
@@ -59,7 +60,7 @@
 #include <time.h> //required to use 'srand(time(nullptr))'
 #include "sounds.h"
 
-volatile int MainExited = false;
+uqstl::atomic<bool> MainExited {false};
 #ifdef DEBUG_SLEEP
 uint32_t mainThreadId;
 extern uint32_t SDL_ThreadID(void);

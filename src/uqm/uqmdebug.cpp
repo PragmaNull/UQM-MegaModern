@@ -16,6 +16,7 @@
 
 
 #include "uqmdebug.h"
+#include <atomic>
 
 #include "build.h"
 #include "colors.h"
@@ -45,7 +46,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-void (*volatile debugHook)(void) = nullptr;
+uqstl::atomic<void (*)(void)> debugHook {nullptr};
 bool DebugKeyPressed;
 
 // Move the Flagship to the destination of the autopilot.

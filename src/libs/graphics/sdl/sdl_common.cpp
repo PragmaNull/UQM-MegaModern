@@ -19,6 +19,7 @@
 #include <filesystem>
 #include <fmt/chrono.h>
 #include <fmt/format.h>
+#include <atomic>
 
 #include "libs/graphics/gfx_defs.h"
 #include "sdl_common.h"
@@ -59,14 +60,14 @@ static SDL_Rect TransitionClipRect;
 const SDL_VideoInfo* SDL_screen_info;
 #endif
 
-static volatile bool abortFlag = false;
+static uqstl::atomic<bool> abortFlag {false};
 
 uqm::GfxFlags g_gfxFlags {uqm::GfxFlags::None};
 
 TFB_GRAPHICS_BACKEND* graphics_backend = nullptr;
 
-volatile int QuitPosted = 0;
-volatile int GameActive = 1; // Track the SDL_ACTIVEEVENT state SDL_APPACTIVE
+uqstl::atomic<int> QuitPosted {0};
+uqstl::atomic<int> GameActive {1}; // Track the SDL_ACTIVEEVENT state SDL_APPACTIVE
 
 static inline bool
 IsWholeScreen(GFXRECT* r)

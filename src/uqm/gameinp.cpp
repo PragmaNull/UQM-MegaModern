@@ -27,6 +27,7 @@
 #include "battlecontrols.h"
 #include "init.h"
 #include "intel.h"
+#include <atomic>
 // For computer_intelligence
 #ifdef NETPLAY
 #include "supermelee/netplay/netmelee.h"
@@ -74,9 +75,9 @@ static MENU_SOUND_FLAGS sound_0, sound_1;
 
 volatile CONTROLLER_INPUT_STATE ImmediateInputState;
 
-volatile bool ExitRequested;
-volatile bool GamePaused;
-volatile bool OnScreenKeyboardLocked;
+uqstl::atomic<bool> ExitRequested {};
+uqstl::atomic<bool> GamePaused {};
+uqstl::atomic<bool> OnScreenKeyboardLocked {};
 
 static InputFrameCallback* inputCallback;
 

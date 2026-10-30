@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
+#include <atomic>
 // for GLOBAL (glob_flags) & READ_SPEED_MASK
 #include "uqm/globdata.h"
 // for usingSpeech bool
@@ -39,7 +40,7 @@ static int no_page_break; // set when combining several tracks into one
 // This is technically a hack, but a decent one ;)
 static TFB_SoundSample* sound_sample;
 
-static volatile uint32_t tracks_length; // total length of tracks in game units
+static uqstl::atomic<uint32_t> tracks_length {}; // total length of tracks in game units
 
 static TFB_SoundChunk* chunks_head; // first decoder in linked list
 static TFB_SoundChunk* chunks_tail; // last decoder in linked list

@@ -32,6 +32,7 @@
 #include "core/string/StringUtils.h"
 #include "libs/file/textfile.h"
 #include "libs/input/keyconfig.h"
+#include <atomic>
 
 #define KBDBUFSIZE (1 << 8)
 static int kbdhead = 0, kbdtail = 0;
@@ -446,7 +447,7 @@ GetLastCharacter(void)
 	return lastchar;
 }
 
-volatile int MouseButtonDown = 0;
+uqstl::atomic<int> MouseButtonDown {0};
 
 #if 0
 static void

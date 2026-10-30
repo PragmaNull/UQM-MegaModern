@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <atomic>
 
 #include "libs/gfxlib.h"
 #include "libs/graphics/gfx_defs.h"
@@ -65,7 +66,7 @@ void TFB_GetScreenSize(int16_t* width, int16_t* height);
 extern uqm::GfxFlags g_gfxFlags;
 
 // TODO: there should be accessor functions for these
-extern volatile int TransitionAmount;
+extern uqstl::atomic<int> TransitionAmount;
 
 extern float FrameRate;
 extern int FrameRateTickBase;

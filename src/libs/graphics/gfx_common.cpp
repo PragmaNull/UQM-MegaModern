@@ -21,6 +21,7 @@
 #include "libs/graphics/drawcmd.h"
 #include "libs/time/timelib.h"
 #include "libs/misc.h"
+#include <atomic>
 // for TFB_DEBUG_HALT
 #include "options.h"
 #include "SDL.h"
@@ -49,7 +50,7 @@ int ScreenColorDepth;
 uqm::GfxDriver GraphicsDriver;
 int TFB_DEBUG_HALT = 0;
 
-volatile int TransitionAmount = 255;
+uqstl::atomic<int> TransitionAmount {255};
 
 static int gscale = GSCALE_IDENTITY;
 static uqm::TFBScaleMode gscale_mode = uqm::TFBScaleMode::Nearest;

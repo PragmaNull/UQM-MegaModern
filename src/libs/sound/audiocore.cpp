@@ -22,6 +22,7 @@
 #include "audiocore.h"
 #include "sound.h"
 #include "core/log/log.h"
+#include <atomic>
 
 static audio_Driver audiodrv;
 
@@ -29,7 +30,7 @@ static audio_Driver audiodrv;
 AudioDriverType snddriver;
 AudioFlags soundflags;
 
-volatile bool audio_inited = false;
+uqstl::atomic<bool> audio_inited {false};
 
 /*
  * Declarations for driver init funcs

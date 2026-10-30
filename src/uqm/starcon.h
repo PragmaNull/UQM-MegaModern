@@ -16,12 +16,13 @@
 
 #ifndef UQM_STARCON_H_
 #define UQM_STARCON_H_
+#include <atomic>
 
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
-extern volatile int MainExited;
+extern uqstl::atomic<bool> MainExited;
 extern void SignalStopMainThread(void);
 extern void ProcessUtilityKeys(void);
 

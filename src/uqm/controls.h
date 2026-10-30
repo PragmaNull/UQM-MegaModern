@@ -1,4 +1,5 @@
 //Copyright Paul Reiche, Fred Ford. 1992-2002#include "libs/time/timelib.h"
+#include <atomic>
 
 /*
  *  This program is free software; you can redistribute it and/or modify
@@ -187,8 +188,8 @@ InputFrameCallback* SetInputCallback(InputFrameCallback*);
 // pInputState must point to a struct derived from INPUT_STATE_DESC
 void DoInput(void* pInputState, bool resetInput);
 
-extern volatile bool GamePaused;
-extern volatile bool ExitRequested;
+extern uqstl::atomic<bool> GamePaused;
+extern uqstl::atomic<bool> ExitRequested;
 
 typedef struct joy_char joy_char_t;
 
