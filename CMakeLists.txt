@@ -112,6 +112,11 @@ target_compile_definitions(uqm_project_features
         __STDC_WANT_LIB_EXT1__=1
 )
 
+# Check lock discipline (see src/core/thread/ThreadSafety.h).
+target_compile_options(uqm_project_features
+    INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang>>:-Wthread-safety>
+)
+
 target_link_libraries(${APP_TARGET} PRIVATE uqm_project_features)
 
 ################################################################################

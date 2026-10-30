@@ -2,7 +2,7 @@
 #include "libs/threadlib.h"
 
 #include "core/log/log.h"
-#include "core/platform/platform.h"
+#include "core/thread/Thread.h"
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
 #include "libs/async.h"
@@ -160,7 +160,7 @@ void SleepThreadUntil(TimeCount wakeTime)
 
 void TaskSwitch(void)
 {
-	uqstl::this_thread::sleep_for(uqstl::chrono::milliseconds {1});
+	uqm::taskSwitch();
 }
 
 // Recursive, like the SDL mutexes that this replaces.
