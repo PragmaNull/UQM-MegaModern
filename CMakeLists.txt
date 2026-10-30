@@ -276,11 +276,12 @@ target_link_libraries(${APP_TARGET}
 
 # Each save file in test/data/saves must load and save again with no change.
 if (GTest_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/content")
-    set(SAVE_CHECK_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/save-check")
-    file(MAKE_DIRECTORY "${SAVE_CHECK_CONFIG_DIR}")
     file(GLOB SAVE_FIXTURES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/test/data/saves/*.json")
     foreach(SAVE_FIXTURE ${SAVE_FIXTURES})
         get_filename_component(SAVE_NAME "${SAVE_FIXTURE}" NAME_WE)
+        # Each test has its own config dir, because the tests run at the same time.
+        set(SAVE_CHECK_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/save-check/${SAVE_NAME}")
+        file(MAKE_DIRECTORY "${SAVE_CHECK_CONFIG_DIR}")
         add_test(NAME "SaveRoundTrip.${SAVE_NAME}"
             COMMAND ${APP_TARGET} -n "${CMAKE_CURRENT_SOURCE_DIR}/content" -C "${SAVE_CHECK_CONFIG_DIR}"
                 --check-save "${SAVE_FIXTURE}" --musicvol 0 --sfxvol 0 --speechvol 0)

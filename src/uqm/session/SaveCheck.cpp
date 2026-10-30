@@ -48,6 +48,11 @@ void compare(yyjson_val* loaded, yyjson_val* saved, const uqstl::string& path, u
 	{
 		return;
 	}
+	// The game knows that the flagship is in orbit only after it enters the star system again.
+	if (path == "/summary/Activity" && yyjson_get_uint(loaded) == IN_PLANET_ORBIT && yyjson_get_uint(saved) == IN_INTERPLANETARY)
+	{
+		return;
+	}
 	if (yyjson_is_obj(loaded) && yyjson_is_obj(saved))
 	{
 		size_t index {};
