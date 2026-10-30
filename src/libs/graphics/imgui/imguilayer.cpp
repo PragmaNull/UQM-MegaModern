@@ -5,6 +5,7 @@
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
 #include "core/log/log.h"
+#include "toolwindows.h"
 
 namespace uqm
 {
@@ -100,6 +101,36 @@ bool ImGuiLayer::processEvent(const SDL_Event& event)
 	return (io.WantCaptureKeyboard && isKeyboardEvent(event)) || (io.WantCaptureMouse && isMouseEvent(event));
 }
 
+void ImGuiLayer::drawWindows()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Windows"))
+		{
+			for (ToolWindow& window : toolWindows())
+			{
+				ImGui::MenuItem(window.name.c_str(), nullptr, &window.open);
+			}
+			ImGui::Separator();
+			ImGui::MenuItem("ImGui Demo", nullptr, &m_showDemo);
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+	for (ToolWindow& window : toolWindows())
+	{
+		if (window.open)
+		{
+			window.draw(window.open);
+		}
+	}
+	if (m_showDemo)
+	{
+		ImGui::ShowDemoWindow(&m_showDemo);
+	}
+}
+
 bool ImGuiLayer::visible() const
 {
 	return m_visible;
@@ -115,7 +146,7 @@ void ImGuiLayer::render()
 	ImGui_ImplSDLRenderer3_NewFrame();
 	ImGui_ImplSDL3_NewFrame();
 	ImGui::NewFrame();
-	ImGui::ShowDemoWindow(&m_visible);
+	drawWindows();
 	ImGui::Render();
 
 	// ImGui draws in window pixels, so the letterbox of the game must be off.

@@ -1,7 +1,7 @@
 // Dear ImGui overlay that draws on top of the game screen with the SDL renderer.
 
-#ifndef LIBS_GRAPHICS_SDL_IMGUILAYER_H_
-#define LIBS_GRAPHICS_SDL_IMGUILAYER_H_
+#ifndef LIBS_GRAPHICS_IMGUI_IMGUILAYER_H_
+#define LIBS_GRAPHICS_IMGUI_IMGUILAYER_H_
 
 #include <SDL3/SDL.h>
 #include "core/stl/memory.h"
@@ -30,11 +30,13 @@ public:
 
 private:
 	explicit ImGuiLayer(SDL_Renderer* renderer);
+	void drawWindows();
 
 	SDL_Renderer* m_renderer;
 	bool m_visible {};
+	bool m_showDemo {};
 };
 
 } // namespace uqm
 
-#endif /* LIBS_GRAPHICS_SDL_IMGUILAYER_H_ */
+#endif /* LIBS_GRAPHICS_IMGUI_IMGUILAYER_H_ */

@@ -5,6 +5,8 @@ set(uqm_src_libs_graphics_master_files "")
 
 ############################################################
 # Sub-directories
+include("src/libs/graphics/imgui/imgui.cmake")
+list(APPEND uqm_src_libs_graphics_master_files ${uqm_src_libs_graphics_imgui_master_files})
 include("src/libs/graphics/sdl/sdl.cmake")
 list(APPEND uqm_src_libs_graphics_master_files ${uqm_src_libs_graphics_sdl_master_files})
 

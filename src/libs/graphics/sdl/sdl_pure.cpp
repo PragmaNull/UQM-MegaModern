@@ -24,7 +24,7 @@
 #include "png2sdl.h"
 #include "options.h"
 #include "gpushaders.h"
-#include "imguilayer.h"
+#include "libs/graphics/imgui/imguilayer.h"
 
 
 typedef struct tfb_sdl_screeninfo_s
