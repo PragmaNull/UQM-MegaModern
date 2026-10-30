@@ -26,7 +26,7 @@
 #include "gpushaders.h"
 
 
-typedef struct tfb_sdl2_screeninfo_s
+typedef struct tfb_sdl_screeninfo_s
 {
 	SDL_Surface* scaled;
 	SDL_Texture* texture;
@@ -34,9 +34,9 @@ typedef struct tfb_sdl2_screeninfo_s
 	SDL_Texture* scaledTarget;
 	bool dirty, active;
 	SDL_Rect updated;
-} TFB_SDL2_SCREENINFO;
+} TFB_SDL_SCREENINFO;
 
-static TFB_SDL2_SCREENINFO SDL2_Screens[TFB_GFX_NUMSCREENS];
+static TFB_SDL_SCREENINFO ScreenTextures[TFB_GFX_NUMSCREENS];
 
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
@@ -86,39 +86,39 @@ static constexpr int FpsScreenHeightShift {3};
 #define R_MASK 0xff000000
 #endif
 
-static void TFB_SDL2_Preprocess(uqm::TFBRedraw force_full_redraw,
-								int transition_amount, int fade_amount);
-static void TFB_SDL2_Postprocess(bool hd);
-static void TFB_SDL2_UploadTransitionScreen(void);
-static void TFB_SDL2_Scaled_ScreenLayer(SCREEN screen, Uint8 a,
-										SDL_Rect* rect);
-static void TFB_SDL2_Unscaled_ScreenLayer(SCREEN screen, Uint8 a,
+static void TFB_SDL_Preprocess(uqm::TFBRedraw force_full_redraw,
+							   int transition_amount, int fade_amount);
+static void TFB_SDL_Postprocess(bool hd);
+static void TFB_SDL_UploadTransitionScreen(void);
+static void TFB_SDL_Scaled_ScreenLayer(SCREEN screen, Uint8 a,
+									   SDL_Rect* rect);
+static void TFB_SDL_Unscaled_ScreenLayer(SCREEN screen, Uint8 a,
+										 SDL_Rect* rect);
+static void TFB_SDL_GpuScaled_ScreenLayer(SCREEN screen, Uint8 a,
 										  SDL_Rect* rect);
-static void TFB_SDL2_GpuScaled_ScreenLayer(SCREEN screen, Uint8 a,
-										   SDL_Rect* rect);
-static void TFB_SDL2_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a,
-								SDL_Rect* rect);
+static void TFB_SDL_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a,
+							   SDL_Rect* rect);
 
-static TFB_GRAPHICS_BACKEND sdl2_scaled_backend = {
-	TFB_SDL2_Preprocess,
-	TFB_SDL2_Postprocess,
-	TFB_SDL2_UploadTransitionScreen,
-	TFB_SDL2_Scaled_ScreenLayer,
-	TFB_SDL2_ColorLayer};
+static TFB_GRAPHICS_BACKEND sdl_scaled_backend = {
+	TFB_SDL_Preprocess,
+	TFB_SDL_Postprocess,
+	TFB_SDL_UploadTransitionScreen,
+	TFB_SDL_Scaled_ScreenLayer,
+	TFB_SDL_ColorLayer};
 
-static TFB_GRAPHICS_BACKEND sdl2_gpu_scaled_backend = {
-	TFB_SDL2_Preprocess,
-	TFB_SDL2_Postprocess,
-	TFB_SDL2_UploadTransitionScreen,
-	TFB_SDL2_GpuScaled_ScreenLayer,
-	TFB_SDL2_ColorLayer};
+static TFB_GRAPHICS_BACKEND sdl_gpu_scaled_backend = {
+	TFB_SDL_Preprocess,
+	TFB_SDL_Postprocess,
+	TFB_SDL_UploadTransitionScreen,
+	TFB_SDL_GpuScaled_ScreenLayer,
+	TFB_SDL_ColorLayer};
 
-static TFB_GRAPHICS_BACKEND sdl2_unscaled_backend = {
-	TFB_SDL2_Preprocess,
-	TFB_SDL2_Postprocess,
-	TFB_SDL2_UploadTransitionScreen,
-	TFB_SDL2_Unscaled_ScreenLayer,
-	TFB_SDL2_ColorLayer};
+static TFB_GRAPHICS_BACKEND sdl_unscaled_backend = {
+	TFB_SDL_Preprocess,
+	TFB_SDL_Postprocess,
+	TFB_SDL_UploadTransitionScreen,
+	TFB_SDL_Unscaled_ScreenLayer,
+	TFB_SDL_ColorLayer};
 
 static SDL_Surface*
 Create_Screen(int w, int h)
@@ -329,10 +329,10 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		SDL_SetRenderLogicalPresentation(renderer, width, height, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 		for (i = 0; i < TFB_GFX_NUMSCREENS; i++)
 		{
-			SDL2_Screens[i].scaled = nullptr;
-			SDL2_Screens[i].texture = nullptr;
-			SDL2_Screens[i].dirty = true;
-			SDL2_Screens[i].active = true;
+			ScreenTextures[i].scaled = nullptr;
+			ScreenTextures[i].texture = nullptr;
+			ScreenTextures[i].dirty = true;
+			ScreenTextures[i].active = true;
 			if (0 != ReInit_Screen(&SDL_Screens[i], CanvasWidth, CanvasHeight))
 			{
 				return -1;
@@ -349,7 +349,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		{
 			UnInit_Screen(&SDL_Screen_fps);
 		}
-		SDL2_Screens[1].active = false;
+		ScreenTextures[1].active = false;
 		SDL_Screen = SDL_Screens[0];
 		TransitionScreen = SDL_Screens[2];
 		format_conv_surf = TFB_CreateSurface(0, 0,
@@ -372,7 +372,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		{
 			for (i = 0; i < TFB_GFX_NUMSCREENS; i++)
 			{
-				SDL2_Screens[i].dirty = true;
+				ScreenTextures[i].dirty = true;
 				if (0 != ReInit_Screen(&SDL_Screens[i], CanvasWidth, CanvasHeight))
 				{
 					return -1;
@@ -402,10 +402,10 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 
 	for (i = 0; i < TFB_GFX_NUMSCREENS; i++)
 	{
-		if (SDL2_Screens[i].scaledTarget)
+		if (ScreenTextures[i].scaledTarget)
 		{
-			SDL_DestroyTexture(SDL2_Screens[i].scaledTarget);
-			SDL2_Screens[i].scaledTarget = nullptr;
+			SDL_DestroyTexture(ScreenTextures[i].scaledTarget);
+			ScreenTextures[i].scaledTarget = nullptr;
 		}
 	}
 	s_gpuScaler = s_gpuShaders ? s_gpuShaders->scaler(g_gfxFlags) : nullptr;
@@ -414,42 +414,42 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 	{
 		for (i = 0; i < TFB_GFX_NUMSCREENS; i++)
 		{
-			if (SDL2_Screens[i].scaled)
+			if (ScreenTextures[i].scaled)
 			{
-				SDL_DestroySurface(SDL2_Screens[i].scaled);
-				SDL2_Screens[i].scaled = nullptr;
+				SDL_DestroySurface(ScreenTextures[i].scaled);
+				ScreenTextures[i].scaled = nullptr;
 			}
-			if (SDL2_Screens[i].texture)
+			if (ScreenTextures[i].texture)
 			{
-				SDL_DestroyTexture(SDL2_Screens[i].texture);
+				SDL_DestroyTexture(ScreenTextures[i].texture);
 			}
-			SDL2_Screens[i].texture = CreateScreenTexture(CanvasWidth, CanvasHeight);
-			if (!SDL2_Screens[i].texture)
+			ScreenTextures[i].texture = CreateScreenTexture(CanvasWidth, CanvasHeight);
+			if (!ScreenTextures[i].texture)
 			{
 				return -1;
 			}
 			// The scaler shaders read single pixels.
-			SDL_SetTextureScaleMode(SDL2_Screens[i].texture, SDL_SCALEMODE_NEAREST);
-			SDL_SetTextureBlendMode(SDL2_Screens[i].texture, SDL_BLENDMODE_NONE);
+			SDL_SetTextureScaleMode(ScreenTextures[i].texture, SDL_SCALEMODE_NEAREST);
+			SDL_SetTextureBlendMode(ScreenTextures[i].texture, SDL_BLENDMODE_NONE);
 			SDL_LockSurface(SDL_Screens[i]);
-			SDL_UpdateTexture(SDL2_Screens[i].texture, nullptr,
+			SDL_UpdateTexture(ScreenTextures[i].texture, nullptr,
 							  SDL_Screens[i]->pixels, SDL_Screens[i]->pitch);
 			SDL_UnlockSurface(SDL_Screens[i]);
 
-			if (!SDL2_Screens[i].active)
+			if (!ScreenTextures[i].active)
 			{
 				continue;
 			}
-			SDL2_Screens[i].scaledTarget = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET,
-															 CanvasWidth * 2, CanvasHeight * 2);
-			if (!SDL2_Screens[i].scaledTarget)
+			ScreenTextures[i].scaledTarget = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET,
+															   CanvasWidth * 2, CanvasHeight * 2);
+			if (!ScreenTextures[i].scaledTarget)
 			{
 				uqm::log::error("Couldn't create a scaler target: {}", SDL_GetError());
 				return -1;
 			}
-			SDL_SetTextureScaleMode(SDL2_Screens[i].scaledTarget, SDL_SCALEMODE_LINEAR);
-			SDL2_Screens[i].updated = {0, 0, CanvasWidth, CanvasHeight};
-			SDL2_Screens[i].dirty = true;
+			SDL_SetTextureScaleMode(ScreenTextures[i].scaledTarget, SDL_SCALEMODE_LINEAR);
+			ScreenTextures[i].updated = {0, 0, CanvasWidth, CanvasHeight};
+			ScreenTextures[i].dirty = true;
 		}
 		if (testFlag(flags, uqm::GfxFlags::ShowFPS))
 		{
@@ -463,31 +463,31 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 			UnInit_Screen(&SDL_Screen_fps);
 		}
 		scaler = nullptr;
-		graphics_backend = &sdl2_gpu_scaled_backend;
+		graphics_backend = &sdl_gpu_scaled_backend;
 	}
 	else if (testFlag(g_gfxFlags, uqm::GfxFlagsScaleSoftwareOnly))
 	{
 		for (i = 0; i < TFB_GFX_NUMSCREENS; i++)
 		{
-			if (!SDL2_Screens[i].active)
+			if (!ScreenTextures[i].active)
 			{
 				continue;
 			}
-			if (0 != ReInit_Screen(&SDL2_Screens[i].scaled, CanvasWidth * 2, CanvasHeight * 2))
+			if (0 != ReInit_Screen(&ScreenTextures[i].scaled, CanvasWidth * 2, CanvasHeight * 2))
 			{
 				return -1;
 			}
-			if (SDL2_Screens[i].texture)
+			if (ScreenTextures[i].texture)
 			{
-				SDL_DestroyTexture(SDL2_Screens[i].texture);
-				SDL2_Screens[i].texture = nullptr;
+				SDL_DestroyTexture(ScreenTextures[i].texture);
+				ScreenTextures[i].texture = nullptr;
 			}
-			SDL2_Screens[i].texture = CreateScreenTexture(CanvasWidth * 2, CanvasHeight * 2);
-			SDL_LockSurface(SDL2_Screens[i].scaled);
-			SDL_UpdateTexture(SDL2_Screens[i].texture, nullptr,
-							  SDL2_Screens[i].scaled->pixels,
-							  SDL2_Screens[i].scaled->pitch);
-			SDL_UnlockSurface(SDL2_Screens[i].scaled);
+			ScreenTextures[i].texture = CreateScreenTexture(CanvasWidth * 2, CanvasHeight * 2);
+			SDL_LockSurface(ScreenTextures[i].scaled);
+			SDL_UpdateTexture(ScreenTextures[i].texture, nullptr,
+							  ScreenTextures[i].scaled->pixels,
+							  ScreenTextures[i].scaled->pitch);
+			SDL_UnlockSurface(ScreenTextures[i].scaled);
 		}
 		if (testFlag(flags, uqm::GfxFlags::ShowFPS))
 		{
@@ -500,31 +500,31 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		{
 			UnInit_Screen(&SDL_Screen_fps);
 		}
-		scaler = Scale_PrepPlatform(flags, SDL_GetPixelFormatDetails(SDL2_Screens[0].scaled->format));
-		graphics_backend = &sdl2_scaled_backend;
+		scaler = Scale_PrepPlatform(flags, SDL_GetPixelFormatDetails(ScreenTextures[0].scaled->format));
+		graphics_backend = &sdl_scaled_backend;
 	}
 	else
 	{
 		for (i = 0; i < TFB_GFX_NUMSCREENS; i++)
 		{
-			if (SDL2_Screens[i].scaled)
+			if (ScreenTextures[i].scaled)
 			{
-				SDL_DestroySurface(SDL2_Screens[i].scaled);
-				SDL2_Screens[i].scaled = nullptr;
+				SDL_DestroySurface(ScreenTextures[i].scaled);
+				ScreenTextures[i].scaled = nullptr;
 			}
-			if (SDL2_Screens[i].texture)
+			if (ScreenTextures[i].texture)
 			{
-				SDL_DestroyTexture(SDL2_Screens[i].texture);
-				SDL2_Screens[i].texture = nullptr;
+				SDL_DestroyTexture(ScreenTextures[i].texture);
+				ScreenTextures[i].texture = nullptr;
 			}
-			SDL2_Screens[i].texture = CreateScreenTexture(CanvasWidth, CanvasHeight);
+			ScreenTextures[i].texture = CreateScreenTexture(CanvasWidth, CanvasHeight);
 			SDL_LockSurface(SDL_Screens[i]);
-			SDL_UpdateTexture(SDL2_Screens[i].texture, nullptr,
+			SDL_UpdateTexture(ScreenTextures[i].texture, nullptr,
 							  SDL_Screens[i]->pixels, SDL_Screens[i]->pitch);
 			SDL_UnlockSurface(SDL_Screens[i]);
 		}
 		scaler = nullptr;
-		graphics_backend = &sdl2_unscaled_backend;
+		graphics_backend = &sdl_unscaled_backend;
 	}
 
 	/* We succeeded, so alter the screen size to our new sizes */
@@ -583,7 +583,7 @@ void TFB_Pure_UninitGraphics(void)
 		// This also destroys the screen textures.
 		SDL_DestroyRenderer(renderer);
 		renderer = nullptr;
-		for (TFB_SDL2_SCREENINFO& screen : SDL2_Screens)
+		for (TFB_SDL_SCREENINFO& screen : ScreenTextures)
 		{
 			screen.texture = nullptr;
 			screen.scaledTarget = nullptr;
@@ -598,24 +598,24 @@ void TFB_Pure_UninitGraphics(void)
 }
 
 static void
-TFB_SDL2_UploadTransitionScreen(void)
+TFB_SDL_UploadTransitionScreen(void)
 {
-	SDL2_Screens[TFB_SCREEN_TRANSITION].updated.x = 0;
-	SDL2_Screens[TFB_SCREEN_TRANSITION].updated.y = 0;
-	SDL2_Screens[TFB_SCREEN_TRANSITION].updated.w = CanvasWidth;
-	SDL2_Screens[TFB_SCREEN_TRANSITION].updated.h = CanvasHeight;
-	SDL2_Screens[TFB_SCREEN_TRANSITION].dirty = true;
+	ScreenTextures[TFB_SCREEN_TRANSITION].updated.x = 0;
+	ScreenTextures[TFB_SCREEN_TRANSITION].updated.y = 0;
+	ScreenTextures[TFB_SCREEN_TRANSITION].updated.w = CanvasWidth;
+	ScreenTextures[TFB_SCREEN_TRANSITION].updated.h = CanvasHeight;
+	ScreenTextures[TFB_SCREEN_TRANSITION].dirty = true;
 }
 
 static void
-TFB_SDL2_UpdateTexture(SDL_Texture* dest, SDL_Surface* src, SDL_Rect* rect)
+TFB_SDL_UpdateTexture(SDL_Texture* dest, SDL_Surface* src, SDL_Rect* rect)
 {
 	char* srcBytes;
 	SDL_LockSurface(src);
 	srcBytes = (char*)src->pixels;
 	if (rect)
 	{
-		/* SDL2 screen surfaces are always 32bpp */
+		/* SDL screen surfaces are always 32bpp */
 		srcBytes += (src->pitch * rect->y) + (rect->x * 4);
 	}
 	/* 2020-08-02: At time of writing, the documentation for
@@ -639,7 +639,7 @@ TFB_SDL2_UpdateTexture(SDL_Texture* dest, SDL_Surface* src, SDL_Rect* rect)
 }
 
 static void
-TFB_SDL2_ScanLines(bool hd)
+TFB_SDL_ScanLines(bool hd)
 {
 	int y;
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 64);
@@ -653,7 +653,7 @@ TFB_SDL2_ScanLines(bool hd)
 }
 
 static void
-TFB_SDL2_FPS(void)
+TFB_SDL_FPS(void)
 {
 	if (!SDL_Screen_fps)
 	{
@@ -672,7 +672,7 @@ TFB_SDL2_FPS(void)
 	}
 	if (SDL_Screen_fps_changed)
 	{
-		TFB_SDL2_UpdateTexture(s_fpsTexture.get(), SDL_Screen_fps, nullptr);
+		TFB_SDL_UpdateTexture(s_fpsTexture.get(), SDL_Screen_fps, nullptr);
 		SDL_Screen_fps_changed = false;
 	}
 
@@ -736,29 +736,29 @@ FinishGammaPass(void)
 }
 
 static void
-TFB_SDL2_Preprocess(uqm::TFBRedraw force_full_redraw, int transition_amount,
-					int fade_amount)
+TFB_SDL_Preprocess(uqm::TFBRedraw force_full_redraw, int transition_amount,
+				   int fade_amount)
 {
 	(void)transition_amount;
 	(void)fade_amount;
 
 	if (force_full_redraw == uqm::TFBRedraw::Yes)
 	{
-		SDL2_Screens[TFB_SCREEN_MAIN].updated.x = 0;
-		SDL2_Screens[TFB_SCREEN_MAIN].updated.y = 0;
-		SDL2_Screens[TFB_SCREEN_MAIN].updated.w = CanvasWidth;
-		SDL2_Screens[TFB_SCREEN_MAIN].updated.h = CanvasHeight;
-		SDL2_Screens[TFB_SCREEN_MAIN].dirty = true;
+		ScreenTextures[TFB_SCREEN_MAIN].updated.x = 0;
+		ScreenTextures[TFB_SCREEN_MAIN].updated.y = 0;
+		ScreenTextures[TFB_SCREEN_MAIN].updated.w = CanvasWidth;
+		ScreenTextures[TFB_SCREEN_MAIN].updated.h = CanvasHeight;
+		ScreenTextures[TFB_SCREEN_MAIN].dirty = true;
 	}
 	else if (TFB_BBox.valid)
 	{
-		SDL2_Screens[TFB_SCREEN_MAIN].updated.x = TFB_BBox.region.corner.x;
-		SDL2_Screens[TFB_SCREEN_MAIN].updated.y = TFB_BBox.region.corner.y;
-		SDL2_Screens[TFB_SCREEN_MAIN].updated.w =
+		ScreenTextures[TFB_SCREEN_MAIN].updated.x = TFB_BBox.region.corner.x;
+		ScreenTextures[TFB_SCREEN_MAIN].updated.y = TFB_BBox.region.corner.y;
+		ScreenTextures[TFB_SCREEN_MAIN].updated.w =
 			TFB_BBox.region.extent.width;
-		SDL2_Screens[TFB_SCREEN_MAIN].updated.h =
+		ScreenTextures[TFB_SCREEN_MAIN].updated.h =
 			TFB_BBox.region.extent.height;
-		SDL2_Screens[TFB_SCREEN_MAIN].dirty = true;
+		ScreenTextures[TFB_SCREEN_MAIN].dirty = true;
 	}
 
 	s_gammaPass = s_gpuShaders && s_gamma != 1.0f && PrepareFrameTarget();
@@ -773,14 +773,14 @@ TFB_SDL2_Preprocess(uqm::TFBRedraw force_full_redraw, int transition_amount,
 }
 
 static void
-TFB_SDL2_Unscaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
+TFB_SDL_Unscaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 {
-	SDL_Texture* texture = SDL2_Screens[screen].texture;
-	if (SDL2_Screens[screen].dirty)
+	SDL_Texture* texture = ScreenTextures[screen].texture;
+	if (ScreenTextures[screen].dirty)
 	{
-		TFB_SDL2_UpdateTexture(texture, SDL_Screens[screen],
-							   &SDL2_Screens[screen].updated);
-		SDL2_Screens[screen].dirty = false;
+		TFB_SDL_UpdateTexture(texture, SDL_Screens[screen],
+							  &ScreenTextures[screen].updated);
+		ScreenTextures[screen].dirty = false;
 	}
 	if (a == 255)
 	{
@@ -838,31 +838,31 @@ DrawScaledScreen(SDL_Texture* texture, Uint8 a, SDL_Rect* rect)
 }
 
 static void
-TFB_SDL2_Scaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
+TFB_SDL_Scaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 {
-	SDL_Texture* texture = SDL2_Screens[screen].texture;
-	if (SDL2_Screens[screen].dirty)
+	SDL_Texture* texture = ScreenTextures[screen].texture;
+	if (ScreenTextures[screen].dirty)
 	{
-		SDL_Surface* src = SDL2_Screens[screen].scaled;
-		SDL_Rect scaled_update = SDL2_Screens[screen].updated;
-		scaler(SDL_Screens[screen], src, &SDL2_Screens[screen].updated);
+		SDL_Surface* src = ScreenTextures[screen].scaled;
+		SDL_Rect scaled_update = ScreenTextures[screen].updated;
+		scaler(SDL_Screens[screen], src, &ScreenTextures[screen].updated);
 		scaled_update.x *= 2;
 		scaled_update.y *= 2;
 		scaled_update.w *= 2;
 		scaled_update.h *= 2;
-		TFB_SDL2_UpdateTexture(texture, src, &scaled_update);
-		SDL2_Screens[screen].dirty = false;
+		TFB_SDL_UpdateTexture(texture, src, &scaled_update);
+		ScreenTextures[screen].dirty = false;
 	}
 	DrawScaledScreen(texture, a, rect);
 }
 
 static void
-TFB_SDL2_GpuScaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
+TFB_SDL_GpuScaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 {
-	TFB_SDL2_SCREENINFO& info {SDL2_Screens[screen]};
+	TFB_SDL_SCREENINFO& info {ScreenTextures[screen]};
 	if (info.dirty)
 	{
-		TFB_SDL2_UpdateTexture(info.texture, SDL_Screens[screen], &info.updated);
+		TFB_SDL_UpdateTexture(info.texture, SDL_Screens[screen], &info.updated);
 		SDL_Texture* const target {SDL_GetRenderTarget(renderer)};
 		SDL_SetRenderTarget(renderer, info.scaledTarget);
 		SDL_SetGPURenderState(renderer, s_gpuScaler);
@@ -889,7 +889,7 @@ FillRect(const SDL_Rect* rect)
 }
 
 static void
-TFB_SDL2_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect)
+TFB_SDL_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect)
 {
 	if (r == 0 || r == 255)
 	{
@@ -935,16 +935,16 @@ TFB_SDL2_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect)
 }
 
 static void
-TFB_SDL2_Postprocess(bool hd)
+TFB_SDL_Postprocess(bool hd)
 {
 	if (testFlag(g_gfxFlags, uqm::GfxFlags::Scanlines))
 	{
-		TFB_SDL2_ScanLines(hd);
+		TFB_SDL_ScanLines(hd);
 	}
 
 	if (testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS))
 	{
-		TFB_SDL2_FPS();
+		TFB_SDL_FPS();
 	}
 
 	if (s_gammaPass)
@@ -955,7 +955,7 @@ TFB_SDL2_Postprocess(bool hd)
 	SDL_RenderPresent(renderer);
 }
 
-bool TFB_SDL2_GammaCorrection(float gamma)
+bool TFB_SDL_GammaCorrection(float gamma)
 {
 	// SDL3 has no window gamma, so only the GPU shaders can do it.
 	if (!s_gpuShaders || gamma <= 0.0f)
@@ -1010,7 +1010,7 @@ SDL_Window* TFB_GetSDLWindow(void)
 	return window;
 }
 
-void TFB_SDL2_GetDisplaySize(SDL_Rect* bounds)
+void TFB_SDL_GetDisplaySize(SDL_Rect* bounds)
 {
 	if (!SDL_GetDisplayBounds(SDL_GetPrimaryDisplay(), bounds))
 	{

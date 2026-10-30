@@ -29,10 +29,9 @@
 /* How many binding slots are allocated at once. */
 #define POOL_CHUNK_SIZE 64
 
-/* Total number of key input buckets. SDL1 keys are a simple enum,
- * but SDL2 scatters key symbols through the entire 32-bit space,
- * so we do not rely on being able to declare an array with one
- * entry per key. */
+/* Total number of key input buckets. SDL scatters key symbols through
+ * the entire 32-bit space, so we do not rely on being able to declare
+ * an array with one entry per key. */
 #define KEYBOARD_INPUT_BUCKETS 512
 
 typedef struct vcontrol_keybinding

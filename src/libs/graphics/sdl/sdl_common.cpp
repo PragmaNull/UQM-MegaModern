@@ -260,7 +260,7 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 #endif
 	}
 
-	// After Pause/F10 exit rework we don't need it in both SDL1 and SDL2
+	// After the Pause/F10 exit rework we don't need it
 	// TODO: delete systembox
 	/*if (system_box_active)
 	{
@@ -663,8 +663,163 @@ void TFB_GetScreenSize(int16_t* width, int16_t* height)
 {
 	SDL_Rect bounds;
 
-	TFB_SDL2_GetDisplaySize(&bounds);
+	TFB_SDL_GetDisplaySize(&bounds);
 
 	*width = bounds.w;
 	*height = bounds.h;
+}
+
+static void TFB_PreQuit(void);
+
+void TFB_PreInit(void)
+{
+	const int linked {SDL_GetVersion()};
+	uqm::log::info("Initializing base SDL functionality.");
+	uqm::log::info("Using SDL version {}.{}.{} (compiled with {}.{}.{})",
+				   SDL_VERSIONNUM_MAJOR(linked), SDL_VERSIONNUM_MINOR(linked), SDL_VERSIONNUM_MICRO(linked),
+				   SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_MICRO_VERSION);
+
+	if (!SDL_Init(SDL_INIT_VIDEO))
+	{
+		uqm::log::critical("Could not initialize SDL: {}.", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+
+	atexit(TFB_PreQuit);
+}
+
+static void
+TFB_PreQuit(void)
+{
+	// Release the renderer and its GPU objects while SDL still runs.
+	TFB_Pure_UninitGraphics();
+	SDL_Quit();
+}
+
+int TFB_ReInitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, int width, int height,
+					   unsigned int* resFactor, unsigned int* windowType)
+{
+	int result;
+	int togglefullscreen = 0;
+
+	if (!testAnyFlag(g_gfxFlags, uqm::GfxFlagsFullscreen)
+		&& driver == GraphicsDriver && width == WindowWidth && height == WindowHeight)
+	{
+		togglefullscreen = 1;
+	}
+
+	g_gfxFlags = flags;
+
+	result = TFB_Pure_ConfigureVideo(uqm::GfxDriver::SDL_Pure, flags,
+									 width, height, togglefullscreen, *resFactor, *windowType);
+
+	if (testAnyFlag(flags, uqm::GfxFlagsFullscreen))
+	{
+		SDL_HideCursor();
+	}
+	else
+	{
+		SDL_ShowCursor();
+	}
+
+	return result;
+}
+
+bool TFB_SetGamma(float gamma)
+{
+	return TFB_SDL_GammaCorrection(gamma);
+}
+
+int TFB_HasSurfaceAlphaMod(SDL_Surface* surface)
+{
+	SDL_BlendMode blend_mode;
+	if (!surface)
+	{
+		return 0;
+	}
+	if (!SDL_GetSurfaceBlendMode(surface, &blend_mode))
+	{
+		return 0;
+	}
+	return blend_mode == SDL_BLENDMODE_BLEND;
+}
+
+int TFB_GetSurfaceAlphaMod(SDL_Surface* surface, Uint8* alpha)
+{
+	SDL_BlendMode blend_mode;
+	if (!surface || !alpha)
+	{
+		return -1;
+	}
+	if (SDL_GetSurfaceBlendMode(surface, &blend_mode))
+	{
+		if (blend_mode == SDL_BLENDMODE_BLEND)
+		{
+			return SDL_GetSurfaceAlphaMod(surface, alpha) ? 0 : -1;
+		}
+	}
+	*alpha = 255;
+	return 0;
+}
+
+int TFB_SetSurfaceAlphaMod(SDL_Surface* surface, Uint8 alpha)
+{
+	if (!surface)
+	{
+		return -1;
+	}
+	return SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND) && SDL_SetSurfaceAlphaMod(surface, alpha) ? 0 : -1;
+}
+
+int TFB_DisableSurfaceAlphaMod(SDL_Surface* surface)
+{
+	if (!surface)
+	{
+		return -1;
+	}
+	SDL_SetSurfaceAlphaMod(surface, 255);
+	return SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE) ? 0 : -1;
+}
+
+int TFB_GetColorKey(SDL_Surface* surface, Uint32* key)
+{
+	if (!surface || !key)
+	{
+		return -1;
+	}
+	return SDL_GetSurfaceColorKey(surface, key) ? 0 : -1;
+}
+
+int TFB_SetColorKey(SDL_Surface* surface, Uint32 key, int rleaccel)
+{
+	if (!surface)
+	{
+		return -1;
+	}
+	SDL_SetSurfaceRLE(surface, rleaccel != 0);
+	return SDL_SetSurfaceColorKey(surface, true, key) ? 0 : -1;
+}
+
+int TFB_DisableColorKey(SDL_Surface* surface)
+{
+	if (!surface)
+	{
+		return -1;
+	}
+	return SDL_SetSurfaceColorKey(surface, false, 0) ? 0 : -1;
+}
+
+int TFB_SetColors(SDL_Surface* surface, SDL_Color* colors, int firstcolor, int ncolors)
+{
+	SDL_Palette* palette {surface ? SDL_GetSurfacePalette(surface) : nullptr};
+	if (!colors || !palette)
+	{
+		return 0;
+	}
+	return SDL_SetPaletteColors(palette, colors, firstcolor, ncolors) ? 1 : 0;
+}
+
+int TFB_SupportsHardwareScaling(void)
+{
+	return 1;
 }

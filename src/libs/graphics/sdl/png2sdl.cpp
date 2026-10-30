@@ -15,13 +15,13 @@
  */
 
 /*
- * This code is adapted from IMG_png.c in the SDL2_image library, which is
+ * This code is adapted from IMG_png.c in the SDL_image library, which is
  * available under the zlib license and is (c) 1997-2019 Sam Lantinga. The
  * code itself is credited to Philippe Lavoie as the original author. It
  * also shares some heritage with libpng's own example.c file, and
  * ultimately inherits the GPL2+ license from the rest of UQM.
  *
- * Differences from SDL2_image are:
+ * Differences from SDL_image are:
  *  - It is PNG-only
  *  - It directly links the relevant version of libpng at compile time
  *  - It always uses libpng and will never forward to alternative
@@ -291,7 +291,7 @@ done: /* Clean up and return */
 	return surface;
 }
 
-/* SDL2PNG
+/* SDL to PNG
  * Based entirely on driedfruit's SDL_SavePNG
  * A libpng-based SDL_Surface writer.
  * https://github.com/driedfruit/SDL_SavePNG/

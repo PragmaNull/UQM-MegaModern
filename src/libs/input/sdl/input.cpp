@@ -45,7 +45,6 @@ static bool set_character_mode = false;
 static uqstl::atomic<int>* menu_vec;
 static int num_menu;
 // The last vector element is the character repeat "key"
-// This is only used in SDL1 input but it's mostly harmless everywhere else
 #define KEY_MENU_ANY (num_menu - 1)
 static uqstl::atomic<int>* flight_vec;
 static int num_templ;
@@ -426,7 +425,7 @@ is_numpad_char_event(const SDL_Event* Event)
 	return in_character_mode && (Event->type == SDL_EVENT_KEY_DOWN || Event->type == SDL_EVENT_KEY_UP) && (Event->key.mod & SDL_KMOD_NUM) && /* Numlock on */
 		   Event->key.key >= SDLK_KP_1 &&																									 /* Keypad key */
 		   Event->key.key <= SDLK_KP_PERIOD;
-	// Note that in the SDL2 enumeration 0 comes after 9 and before period
+	// Note that in the SDL enumeration 0 comes after 9 and before period
 }
 
 void ProcessInputEvent(const SDL_Event* Event)

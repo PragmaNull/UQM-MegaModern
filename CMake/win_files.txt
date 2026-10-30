@@ -139,10 +139,9 @@ src/libs/graphics/sdl/scalemmx.h
 src/libs/graphics/sdl/scalers.cpp
 src/libs/graphics/sdl/scalers.h
 src/libs/graphics/sdl/sdl1_common.cpp
-src/libs/graphics/sdl/sdl2_common.cpp
-src/libs/graphics/sdl/sdl2_pure.cpp
 src/libs/graphics/sdl/sdl_common.cpp
 src/libs/graphics/sdl/sdl_common.h
+src/libs/graphics/sdl/sdl_pure.cpp
 src/libs/graphics/sdl/sdlimage.cpp
 src/libs/graphics/sdl/sdlimage.h
 src/libs/graphics/sdl/triscan2x.cpp

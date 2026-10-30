@@ -24,8 +24,6 @@
 #include "core/stl/vector.h"
 
 
-/* SDL2 wants to talk to a specific device. We'll let SDL1 use the same
- * function names and just throw the device argument away. */
 static SDL_AudioStream* stream {};
 // Mixed data for the audio stream. Only the audio callback uses it.
 static uqstl::vector<uint8_t> s_mixBuffer {};
