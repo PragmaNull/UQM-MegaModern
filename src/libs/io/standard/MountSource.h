@@ -10,7 +10,7 @@
 #include "libs/io/Types.h"
 #include "libs/io/standard/Stream.h"
 
-#include <system_error>
+#include "core/stl/system_error.h"
 
 namespace uqm::io::standard
 {

@@ -1,6 +1,5 @@
 //Copyright Paul Reiche, Fred Ford. 1992-2002#include "libs/time/timelib.h"
-#include <atomic>
-#include <atomic>
+#include "core/stl/atomic.h"
 
 /*
  *  This program is free software; you can redistribute it and/or modify

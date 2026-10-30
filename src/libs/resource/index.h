@@ -23,7 +23,7 @@ typedef struct resource_handlers ResourceHandlers;
 typedef struct resource_desc ResourceDesc;
 
 #include <stdio.h>
-#include <string>
+#include "core/stl/string.h"
 #include "core/stl/map.h"
 #include "libs/reslib.h"
 

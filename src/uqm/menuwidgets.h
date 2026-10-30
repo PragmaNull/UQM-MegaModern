@@ -8,9 +8,9 @@
 #include "libs/graphics/widgets.h"
 #include "uqm/menudef.h"
 
-#include <functional>
-#include <map>
-#include <memory>
+#include "core/stl/functional.h"
+#include "core/stl/map.h"
+#include "core/stl/memory.h"
 
 namespace uqm
 {

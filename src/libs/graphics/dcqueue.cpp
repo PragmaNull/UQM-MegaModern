@@ -30,9 +30,9 @@
 
 #include "core/thread/Mutex.h"
 
-#include <chrono>
-#include <condition_variable>
-#include <thread>
+#include "core/stl/chrono.h"
+#include "core/stl/condition_variable.h"
+#include "core/stl/thread.h"
 
 namespace
 {

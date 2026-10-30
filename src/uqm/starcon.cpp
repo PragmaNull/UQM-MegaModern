@@ -17,7 +17,7 @@
  */
 
 #include <stdlib.h>
-#include <atomic>
+#include "core/stl/atomic.h"
 
 #include "comm.h"
 #include "battle.h"

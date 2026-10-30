@@ -18,7 +18,7 @@
  */
 
 
-#include <algorithm>
+#include "core/stl/stl.h"
 #include <stdio.h>
 #include <string.h>
 #include <math.h>

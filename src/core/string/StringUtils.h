@@ -5,9 +5,9 @@
 
 #define __STDC_WANT_LIB_EXT1__ 1
 
-#include <algorithm>
-#include <ranges>
-#include <charconv>
+#include "core/stl/stl.h"
+#include "core/stl/ranges.h"
+#include "core/stl/charconv.h"
 #include <cctype>
 #include <fmt/format.h>
 #include "core/stl/string.h"

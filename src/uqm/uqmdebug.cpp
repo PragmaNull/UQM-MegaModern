@@ -16,7 +16,7 @@
 
 
 #include "uqmdebug.h"
-#include <atomic>
+#include "core/stl/atomic.h"
 
 #include "build.h"
 #include "colors.h"

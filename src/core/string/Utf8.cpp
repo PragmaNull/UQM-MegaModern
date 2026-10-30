@@ -5,7 +5,7 @@
 
 #include <utf8proc.h>
 
-#include <algorithm>
+#include "core/stl/stl.h"
 #include <cctype>
 #include <cstring>
 

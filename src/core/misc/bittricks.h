@@ -5,9 +5,8 @@
 
 #include "core/stl/stl.h"
 
-#include <concepts>
+#include "core/stl/concepts.h"
 #include <cstdint>
-#include <type_traits>
 
 namespace uqm
 {

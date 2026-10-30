@@ -19,7 +19,7 @@
 #ifndef LIBS_GRAPHICS_WIDGETS_H_
 #define LIBS_GRAPHICS_WIDGETS_H_
 
-#include <type_traits>
+#include "core/stl/stl.h"
 #include "libs/gfxlib.h"
 
 enum

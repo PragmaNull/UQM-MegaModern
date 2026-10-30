@@ -24,7 +24,7 @@
 #include "libs/sound/sound.h"
 #include "libs/sound/mixer/mixer.h"
 
-#include <stop_token>
+#include "core/stl/thread.h"
 
 
 /* Playback task */

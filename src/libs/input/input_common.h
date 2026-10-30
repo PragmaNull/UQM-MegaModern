@@ -18,7 +18,7 @@
 
 #ifndef INPUT_COMMON_H
 #define INPUT_COMMON_H
-#include <atomic>
+#include "core/stl/atomic.h"
 
 // driver for TFB_InitInput
 enum

@@ -6,7 +6,7 @@
 #include "core/stl/stl.h"
 #include "core/thread/ThreadSafety.h"
 
-#include <mutex>
+#include "core/stl/mutex.h"
 
 namespace uqm
 {

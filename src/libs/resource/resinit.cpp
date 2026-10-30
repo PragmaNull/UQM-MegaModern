@@ -17,10 +17,10 @@
  */
 
 #include <scn/scan.h>
-#include <algorithm>
+#include "core/stl/stl.h"
 #include <ctype.h>
 #include <stdlib.h>
-#include <vector>
+#include "core/stl/vector.h"
 
 #include "resintrn.h"
 #include "options.h"

@@ -22,7 +22,7 @@
 #include "audiocore.h"
 #include "sound.h"
 #include "core/log/log.h"
-#include <atomic>
+#include "core/stl/atomic.h"
 
 static audio_Driver audiodrv;
 

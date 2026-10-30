@@ -23,7 +23,7 @@
 #include "core/misc/bittricks.h"
 #include "libs/io/FileSystem.h"
 #include "core/string/Utf8.h"
-#include <atomic>
+#include "core/stl/atomic.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

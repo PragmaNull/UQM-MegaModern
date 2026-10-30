@@ -4,10 +4,10 @@
 
 #include <gtest/gtest.h>
 
-#include <atomic>
-#include <chrono>
-#include <fstream>
-#include <sstream>
+#include "core/stl/atomic.h"
+#include "core/stl/chrono.h"
+#include "core/stl/fstream.h"
+#include "core/stl/sstream.h"
 
 namespace fs = uqstl::filesystem;
 using namespace uqm::io;

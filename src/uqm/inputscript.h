@@ -8,7 +8,7 @@
 #include "core/stl/vector.h"
 
 #include <cstdint>
-#include <optional>
+#include "core/stl/optional.h"
 
 namespace uqm
 {

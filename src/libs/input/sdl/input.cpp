@@ -31,7 +31,7 @@
 #include "libs/file/textfile.h"
 #include "libs/input/keyconfig.h"
 #include "libs/graphics/sdl/pure.h"
-#include <atomic>
+#include "core/stl/atomic.h"
 
 #define KBDBUFSIZE (1 << 8)
 static int kbdhead = 0, kbdtail = 0;

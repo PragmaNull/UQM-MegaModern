@@ -38,7 +38,7 @@
 
 #include <yyjson.h>
 
-#include <utility>
+#include "core/stl/utility.h"
 
 //#define DEBUG_LOAD
 

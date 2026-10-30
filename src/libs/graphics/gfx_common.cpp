@@ -20,7 +20,7 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/drawcmd.h"
 #include "libs/time/timelib.h"
-#include <atomic>
+#include "core/stl/atomic.h"
 #include "options.h"
 #include <SDL3/SDL.h>
 

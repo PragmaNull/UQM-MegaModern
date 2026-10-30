@@ -6,7 +6,7 @@
 #include "core/stl/array.h"
 #include "libs/io/Path.h"
 
-#include <chrono>
+#include "core/stl/chrono.h"
 #include <zlib.h>
 
 namespace uqm::io::standard

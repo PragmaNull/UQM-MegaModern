@@ -6,7 +6,7 @@
 #include "libs/io/standard/FileSystem.h"
 #include "libs/io/standard/MountSource.h"
 
-#include <shared_mutex>
+#include "core/stl/mutex.h"
 
 namespace uqm::io::standard
 {

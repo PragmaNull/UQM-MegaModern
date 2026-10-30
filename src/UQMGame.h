@@ -23,7 +23,7 @@
 #include "options/options.h"
 #include "core/log/logger.h"
 
-#include <thread>
+#include "core/stl/thread.h"
 
 namespace uqm
 {

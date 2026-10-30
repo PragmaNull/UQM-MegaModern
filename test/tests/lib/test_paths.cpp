@@ -4,7 +4,7 @@
 #include "core/platform/platform.h"
 #include "libs/file/paths.h"
 
-#include <filesystem>
+#include "core/stl/filesystem.h"
 
 namespace uqm
 {

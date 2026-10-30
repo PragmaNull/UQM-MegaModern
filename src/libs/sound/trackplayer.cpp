@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
-#include <atomic>
+#include "core/stl/atomic.h"
 // for GLOBAL (glob_flags) & READ_SPEED_MASK
 #include "uqm/globdata.h"
 // for usingSpeech bool

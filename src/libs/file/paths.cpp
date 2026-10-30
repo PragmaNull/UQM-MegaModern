@@ -5,7 +5,7 @@
 #include "core/platform/platform.h"
 
 #include <cctype>
-#include <filesystem>
+#include "core/stl/filesystem.h"
 
 #ifndef _WIN32
 #include <pwd.h>

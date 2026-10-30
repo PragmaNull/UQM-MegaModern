@@ -21,7 +21,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <atomic>
+#include "core/stl/atomic.h"
 
 #include "libs/gfxlib.h"
 #include "libs/graphics/gfx_defs.h"

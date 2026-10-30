@@ -1,7 +1,7 @@
 // Starts named threads, and other thread utilities.
 #include "Thread.h"
 
-#include <chrono>
+#include "core/stl/chrono.h"
 
 #ifdef _WIN32
 #include "core/string/Utf8.h"

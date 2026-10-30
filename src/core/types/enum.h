@@ -1,7 +1,7 @@
 #pragma once
-#include <concepts>
+#include "core/stl/concepts.h"
 #include <cstdint>
-#include <type_traits>
+#include "core/stl/stl.h"
 
 #ifdef WITH_MAGIC_ENUM
 #include <magic_enum/magic_enum.hpp>

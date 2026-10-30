@@ -22,7 +22,7 @@
 
 #include "core/stl/memory.h"
 
-#include <map>
+#include "core/stl/map.h"
 
 // The alarms in time order. Alarms with the same time stay in the order they were added.
 static uqstl::multimap<AlarmTime, uqstl::unique_ptr<Alarm>> s_alarms {};

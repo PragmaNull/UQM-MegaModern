@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include <string>
-#include <sstream>
-#include <algorithm>
+#include "core/stl/string.h"
+#include "core/stl/sstream.h"
+#include "core/stl/stl.h"
 
 #include "core/log/BacktraceCaptureSink.h"
 #include <spdlog/details/log_msg.h>
@@ -14,10 +14,10 @@ namespace uqm
 class BacktraceCaptureSinkMock : public BacktraceCaptureSink
 {
 public:
-	using BacktraceCaptureSink::BacktraceCaptureSink;
-	using BacktraceCaptureSink::sink_it_;
 	using BacktraceCaptureSink::at;
+	using BacktraceCaptureSink::BacktraceCaptureSink;
 	using BacktraceCaptureSink::getIndex;
+	using BacktraceCaptureSink::sink_it_;
 };
 
 
@@ -112,7 +112,7 @@ TEST_F(BacktraceCaptureSinkTests, OverwriteWhenFullKeepsLatestBacktraceSize)
 	const size_t total = BacktraceSize + 10u;
 	for (size_t i = 0; i < total; ++i)
 	{
-		std::string s {"msg-" + std::to_string(i) };
+		std::string s {"msg-" + std::to_string(i)};
 		auto msg = make_msg(s);
 		sink.sink_it_(msg);
 	}

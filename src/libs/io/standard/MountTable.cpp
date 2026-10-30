@@ -4,8 +4,8 @@
 #include "libs/io/Path.h"
 #include "libs/io/standard/ZipSource.h"
 
-#include <mutex>
-#include <set>
+#include "core/stl/mutex.h"
+#include "core/stl/set.h"
 
 namespace uqm::io::standard
 {

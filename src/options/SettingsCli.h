@@ -8,8 +8,8 @@
 #include "core/stl/vector.h"
 #include "options/OptionDefs.h"
 
-#include <map>
-#include <memory>
+#include "core/stl/map.h"
+#include "core/stl/memory.h"
 
 namespace CLI
 {

@@ -7,11 +7,11 @@
 #include <EASTL/ring_buffer.h>
 #else
 
-#include <array>
+#include "core/stl/array.h"
 #include <cstddef>
-#include <iterator>
-#include <stdexcept>
-#include <type_traits>
+#include "core/stl/iterator.h"
+#include "core/stl/stdexcept.h"
+#include "core/stl/stl.h"
 
 #include "core/misc/bittricks.h"
 

@@ -5,8 +5,8 @@
 #include "options/options.h"
 #include "uqm/menuwidgets.h"
 
-#include <fstream>
-#include <sstream>
+#include "core/stl/fstream.h"
+#include "core/stl/sstream.h"
 
 // Widget callbacks from the graphics library. These tests do not draw or handle input.
 int Widget_HandleEventChoice(WIDGET*, int)

@@ -6,7 +6,7 @@
 
 #include <CLI/CLI.hpp>
 
-#include <map>
+#include "core/stl/map.h"
 
 namespace uqm
 {

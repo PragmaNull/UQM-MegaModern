@@ -4,7 +4,7 @@
 #include "core/log/log.h"
 #include "options/Setting.h"
 
-#include <map>
+#include "core/stl/map.h"
 
 namespace uqm
 {

@@ -8,7 +8,7 @@
 #include "core/stl/string.h"
 
 #include <cstdint>
-#include <regex>
+#include "core/stl/regex.h"
 
 namespace uqm::io
 {

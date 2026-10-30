@@ -4,7 +4,7 @@
 #include "core/log/log.h"
 #include "uqm/units.h"
 
-#include <charconv>
+#include "core/stl/charconv.h"
 
 namespace
 {

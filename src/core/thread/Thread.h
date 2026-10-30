@@ -6,9 +6,8 @@
 #include "core/stl/stl.h"
 #include "core/stl/string.h"
 
-#include <stop_token>
-#include <thread>
-#include <utility>
+#include "core/stl/thread.h"
+#include "core/stl/utility.h"
 
 namespace uqm
 {

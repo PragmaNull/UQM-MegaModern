@@ -9,7 +9,7 @@
 #include "uqm/inteldefs.h"
 #include "uqm/supermelee/meleeship.h"
 
-#include <optional>
+#include "core/stl/optional.h"
 
 namespace uqm
 {

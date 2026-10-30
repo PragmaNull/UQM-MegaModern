@@ -21,7 +21,7 @@
 
 #include "libs/graphics/tfb_draw.h"
 
-#include <semaphore>
+#include "core/stl/semaphore.h"
 
 enum
 {

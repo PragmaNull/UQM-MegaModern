@@ -5,7 +5,7 @@
 
 #include <SDL3/SDL.h>
 #include <cstdint>
-#include <span>
+#include "core/stl/stl.h"
 #include "core/stl/memory.h"
 #include "libs/graphics/gfx_defs.h"
 

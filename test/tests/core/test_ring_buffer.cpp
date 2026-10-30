@@ -1,8 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <vector>
-#include <algorithm>
-#include <type_traits>
+#include "core/stl/vector.h"
+#include "core/stl/stl.h"
 
 #include "core/stl/ring_buffer.h"
 

@@ -4,8 +4,8 @@
 #include "options/options.h"
 #include "uqm/menudef.h"
 
-#include <fstream>
-#include <sstream>
+#include "core/stl/fstream.h"
+#include "core/stl/sstream.h"
 
 namespace uqm
 {

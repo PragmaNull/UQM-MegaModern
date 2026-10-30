@@ -20,14 +20,14 @@
 #include "controls.h"
 #include "core/log/log.h"
 #include "uqm/inputscript.h"
-#include <chrono>
-#include <fstream>
-#include <mutex>
-#include <sstream>
+#include "core/stl/chrono.h"
+#include "core/stl/fstream.h"
+#include "core/stl/mutex.h"
+#include "core/stl/sstream.h"
 #include "battlecontrols.h"
 #include "init.h"
 #include "intel.h"
-#include <atomic>
+#include "core/stl/atomic.h"
 // For computer_intelligence
 #ifdef NETPLAY
 #include "supermelee/netplay/netmelee.h"

@@ -20,7 +20,7 @@
 #include "port.h"
 #include <SDL3/SDL.h>
 #include "core/stl/stl.h"
-#include <atomic>
+#include "core/stl/atomic.h"
 
 typedef SDL_Keycode sdl_key_t;
 

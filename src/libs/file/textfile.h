@@ -8,7 +8,7 @@
 #include "core/stl/vector.h"
 #include "libs/io/FileSystem.h"
 
-#include <optional>
+#include "core/stl/optional.h"
 
 namespace uqm
 {

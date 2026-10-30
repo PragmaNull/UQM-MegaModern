@@ -10,7 +10,7 @@
 #include "options/OptionTypes.h"
 
 #include <fmt/format.h>
-#include <optional>
+#include "core/stl/optional.h"
 
 struct yyjson_val;
 struct yyjson_mut_doc;

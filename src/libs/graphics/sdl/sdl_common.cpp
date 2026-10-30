@@ -16,10 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <filesystem>
+#include "core/stl/filesystem.h"
 #include <fmt/chrono.h>
 #include <fmt/format.h>
-#include <atomic>
+#include "core/stl/atomic.h"
 
 #include "libs/graphics/gfx_defs.h"
 #include "sdl_common.h"
