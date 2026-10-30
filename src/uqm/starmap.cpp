@@ -41,7 +41,6 @@ STAR_DESC star_array[NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 3] {};
 //STAR_DESC star_array[NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 3] =
 //		{[0 ... (NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 2)] =
 //		{{~0, ~0}, 0, 0, 0, 0}};
-STAR_DESC* CurStarDescPtr = 0;
 const GFXPOINT* constel_array;
 // JSD Give my own starseed
 RandomContext* StarGenRNG;

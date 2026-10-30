@@ -14,6 +14,8 @@
 #include "uqm/state.h"
 #include <cstdint>
 
+struct star_desc;
+
 namespace uqm
 {
 
@@ -41,11 +43,18 @@ public:
 	void setFlag(uqstl::string_view name, uint32_t value);
 	void clearFlags() noexcept;
 
+	// The star system that the flagship is in or last visited, or nullptr. It points into star_array.
+	[[nodiscard]] star_desc*& currentStar() noexcept
+	{
+		return m_currentStar;
+	}
+
 private:
 	SIS_STATE m_sis {};
 	GAME_STATE m_game {};
 	uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> m_stateFiles {MakeStateFiles()};
 	uqstl::map<uqstl::string, uint32_t, uqstl::less<>> m_flags {};
+	star_desc* m_currentStar {};
 };
 
 // The state of the current session. Use on the game thread only.

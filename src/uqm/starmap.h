@@ -19,6 +19,7 @@
 
 #include "core/misc/bittricks.h"
 #include "planets/planets.h"
+#include "uqm/session/GameState.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -29,7 +30,7 @@ extern "C" {
 #define NUM_SOLAR_SYSTEMS 502
 #define NUM_HYPER_VORTICES 15
 
-extern STAR_DESC* CurStarDescPtr;
+#define CurStarDescPtr (uqm::gameState().currentStar())
 // star_array is now a static buffer we will copy the starmap_array into, and
 // then manipulate from there, so that original starmap is never altered.
 extern STAR_DESC star_array[];
