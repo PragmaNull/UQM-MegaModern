@@ -163,24 +163,25 @@ void TaskSwitch(void)
 	uqstl::this_thread::sleep_for(uqstl::chrono::milliseconds {1});
 }
 
+// Recursive, like the SDL mutexes that this replaces.
 Mutex CreateMutex_Core(void)
 {
-	return new uqstl::mutex {};
+	return new uqstl::recursive_mutex {};
 }
 
 void DestroyMutex(Mutex mutex)
 {
-	delete static_cast<uqstl::mutex*>(mutex);
+	delete static_cast<uqstl::recursive_mutex*>(mutex);
 }
 
 void LockMutex(Mutex mutex)
 {
-	static_cast<uqstl::mutex*>(mutex)->lock();
+	static_cast<uqstl::recursive_mutex*>(mutex)->lock();
 }
 
 void UnlockMutex(Mutex mutex)
 {
-	static_cast<uqstl::mutex*>(mutex)->unlock();
+	static_cast<uqstl::recursive_mutex*>(mutex)->unlock();
 }
 
 Semaphore CreateSemaphore_Core(uint32_t initial)
