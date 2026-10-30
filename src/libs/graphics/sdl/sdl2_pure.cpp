@@ -23,6 +23,7 @@
 #include "uqmversion.h"
 #include "png2sdl.h"
 #include "options.h"
+#include "gpushaders.h"
 
 
 typedef struct tfb_sdl2_screeninfo_s
@@ -40,6 +41,28 @@ static SDL_Renderer* renderer = nullptr;
 static const char* rendererBackend = nullptr;
 
 static TFB_ScaleFunc scaler = nullptr;
+
+namespace
+{
+
+struct TextureDeleter
+{
+	void operator()(SDL_Texture* texture) const
+	{
+		SDL_DestroyTexture(texture);
+	}
+};
+
+// The shaders, if the renderer is the GPU renderer.
+uqstl::unique_ptr<uqm::GpuShaders> s_gpuShaders {};
+float s_gamma {1.0f};
+// The frame renders into this texture when gamma correction is on.
+uqstl::unique_ptr<SDL_Texture, TextureDeleter> s_frameTarget {};
+int s_frameLogicalWidth {};
+int s_frameLogicalHeight {};
+bool s_gammaPass {};
+
+} // namespace
 
 // The FPS overlay is 1 / 2^shift of the screen width and height.
 static constexpr int FpsScreenWidthShift {2};
@@ -180,6 +203,30 @@ SetFullscreen(uqm::GfxFlags flags, int width, int height)
 	}
 }
 
+// Makes the renderer. With GPU scaling on, it tries the GPU renderer first, so that the shaders can run.
+static SDL_Renderer*
+CreateRenderer(void)
+{
+	const char* const driver {FindBestRenderDriver()};
+	if (*uqm::UQMOptions::read().gpuScaling && (!driver || !strcmp(driver, SDL_GPU_RENDERER)))
+	{
+		const SDL_PropertiesID props {SDL_CreateProperties()};
+		SDL_SetStringProperty(props, SDL_PROP_RENDERER_CREATE_NAME_STRING, SDL_GPU_RENDERER);
+		SDL_SetPointerProperty(props, SDL_PROP_RENDERER_CREATE_WINDOW_POINTER, window);
+		SDL_SetBooleanProperty(props, SDL_PROP_RENDERER_CREATE_GPU_SHADERS_SPIRV_BOOLEAN, true);
+		SDL_SetBooleanProperty(props, SDL_PROP_RENDERER_CREATE_GPU_SHADERS_DXIL_BOOLEAN, true);
+		SDL_SetBooleanProperty(props, SDL_PROP_RENDERER_CREATE_GPU_SHADERS_MSL_BOOLEAN, true);
+		SDL_Renderer* const gpuRenderer {SDL_CreateRendererWithProperties(props)};
+		SDL_DestroyProperties(props);
+		if (gpuRenderer)
+		{
+			return gpuRenderer;
+		}
+		uqm::log::warn("Could not make the GPU renderer, so the scalers run on the CPU: {}", SDL_GetError());
+	}
+	return SDL_CreateRenderer(window, driver);
+}
+
 static SDL_Texture*
 CreateScreenTexture(int width, int height)
 {
@@ -225,10 +272,15 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		 * no icon if and when it becomes windowed. */
 		SetFullscreen(flags, width, height);
 
-		renderer = SDL_CreateRenderer(window, FindBestRenderDriver());
+		renderer = CreateRenderer();
 		if (!renderer)
 		{
 			return -1;
+		}
+		s_gpuShaders = uqm::GpuShaders::create(renderer);
+		if (s_gpuShaders)
+		{
+			uqm::log::info("GPU shaders ready ({}).", s_gpuShaders->formatName());
 		}
 		if (const char* name {SDL_GetRendererName(renderer)})
 		{
@@ -422,6 +474,8 @@ int TFB_Pure_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char
 
 void TFB_Pure_UninitGraphics(void)
 {
+	s_frameTarget.reset();
+	s_gpuShaders.reset();
 	if (renderer)
 	{
 		SDL_DestroyRenderer(renderer);
@@ -506,6 +560,54 @@ TFB_SDL2_FPS(void)
 	texture = nullptr;
 }
 
+// Makes the texture that the frame renders into for the gamma pass. It has the
+// pixel size of the window, and the letterbox of the window.
+static bool
+PrepareFrameTarget(void)
+{
+	int width {};
+	int height {};
+	if (!SDL_GetRenderOutputSize(renderer, &width, &height))
+	{
+		return false;
+	}
+	if (s_frameTarget && s_frameTarget->w == width && s_frameTarget->h == height
+		&& s_frameLogicalWidth == WindowWidth && s_frameLogicalHeight == WindowHeight)
+	{
+		return true;
+	}
+
+	s_frameTarget.reset(SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, width, height));
+	if (!s_frameTarget)
+	{
+		uqm::log::warn("Could not make the gamma correction target: {}", SDL_GetError());
+		return false;
+	}
+	SDL_SetTextureScaleMode(s_frameTarget.get(), SDL_SCALEMODE_NEAREST);
+	SDL_SetTextureBlendMode(s_frameTarget.get(), SDL_BLENDMODE_NONE);
+	SDL_SetRenderTarget(renderer, s_frameTarget.get());
+	SDL_SetRenderLogicalPresentation(renderer, WindowWidth, WindowHeight, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+	SDL_SetRenderTarget(renderer, nullptr);
+	s_frameLogicalWidth = WindowWidth;
+	s_frameLogicalHeight = WindowHeight;
+	return true;
+}
+
+// Draws the frame to the window with gamma correction.
+static void
+FinishGammaPass(void)
+{
+	SDL_SetRenderTarget(renderer, nullptr);
+	SDL_SetRenderLogicalPresentation(renderer, WindowWidth, WindowHeight, SDL_LOGICAL_PRESENTATION_DISABLED);
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderClear(renderer);
+	SDL_SetGPURenderState(renderer, s_gpuShaders->gamma(s_gamma));
+	SDL_RenderTexture(renderer, s_frameTarget.get(), nullptr, nullptr);
+	SDL_SetGPURenderState(renderer, nullptr);
+	SDL_SetRenderLogicalPresentation(renderer, WindowWidth, WindowHeight, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+}
+
 static void
 TFB_SDL2_Preprocess(uqm::TFBRedraw force_full_redraw, int transition_amount,
 					int fade_amount)
@@ -530,6 +632,12 @@ TFB_SDL2_Preprocess(uqm::TFBRedraw force_full_redraw, int transition_amount,
 		SDL2_Screens[TFB_SCREEN_MAIN].updated.h =
 			TFB_BBox.region.extent.height;
 		SDL2_Screens[TFB_SCREEN_MAIN].dirty = true;
+	}
+
+	s_gammaPass = s_gpuShaders && s_gamma != 1.0f && PrepareFrameTarget();
+	if (s_gammaPass)
+	{
+		SDL_SetRenderTarget(renderer, s_frameTarget.get());
 	}
 
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
@@ -685,14 +793,23 @@ TFB_SDL2_Postprocess(bool hd)
 		TFB_SDL2_FPS();
 	}
 
+	if (s_gammaPass)
+	{
+		FinishGammaPass();
+	}
+
 	SDL_RenderPresent(renderer);
 }
 
 bool TFB_SDL2_GammaCorrection(float gamma)
 {
-	// SDL3 has no window gamma.
-	(void)gamma;
-	return false;
+	// SDL3 has no window gamma, so only the GPU shaders can do it.
+	if (!s_gpuShaders || gamma <= 0.0f)
+	{
+		return false;
+	}
+	s_gamma = gamma;
+	return true;
 }
 
 bool TFB_SDL_ScreenShot(const char* path)

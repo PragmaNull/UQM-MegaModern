@@ -18,10 +18,12 @@ build.bat   [-c CONFIG] [--asan] [-t TARGET] [-j N] [--clean]
 test.bat    [-c CONFIG] [--build] [-R REGEX] [-j N]
 run.bat     [--build] [GAME ARGS...]           :: run the game with -n content
 regress.bat [--build] [-R REGEX] [-j N]         :: run the input scripts in test/scripts
+shaders.bat                                     :: compile src/libs/graphics/sdl/shaders/*.hlsl to headers
 ```
 
 - `CONFIG`: `Release` (default), `Debug`, `RelWithDebInfo`, `MinSizeRel`. All take `-B DIR` (default `conanbuild`).
 - `build`/`test` default to the config already in `CMakeCache.txt`; `build` reconfigures if `--config`/`--asan` differ.
+- `shaders` downloads its shader compilers to `.cache/shadertools` the first time. The generated headers are committed, so run it only after a change to a shader.
 - `setup --skip-install` runs only the cmake step. `build` runs conan install itself when the conan files for the config are missing.
 - Commands run inside conan's `conanbuild`/`conanrun` env scripts, so no VS developer prompt is needed.
 - Unrecognized arguments are forwarded to cmake/ctest. Scripts can also be run directly with `python scripts/<name>.py`.

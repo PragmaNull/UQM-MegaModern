@@ -117,6 +117,10 @@ struct OptionsStruct : SettingsRegistry
 		*this, {.key = "graphics.gamma", .description = "Gamma correction value, a value of 1.0 means no change.", .cli = "-g,--gamma"},
 		 1.0f, settings::isValidGamma
 	 };
+	Setting<bool> gpuScaling {
+		*this, {.key = "graphics.gpuScaling", .description = "Run the scalers and gamma correction as GPU shaders when the GPU renderer is available.", .cli = "--gpuscaling,--nogpuscaling{false}", .requiresRestart = true},
+		   true
+	   };
 	Setting<AudioDriverType> soundDriver {
 		*this, {.key = "audio.driver", .description = "Backend used for audio output (MixSDL, OpenAL, or silence).", .cli = "--sound,--sounddriver", .requiresRestart = true},
 		   AudioDriverType::MixSDL
