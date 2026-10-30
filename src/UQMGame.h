@@ -23,6 +23,7 @@
 #include "options/options.h"
 #include "core/log/logger.h"
 
+#include "core/stl/atomic.h"
 #include "core/stl/memory.h"
 #include "core/stl/thread.h"
 #include <cstdint>
@@ -72,6 +73,8 @@ private:
 	UQMOptions m_options {};
 	Logger m_logger {};
 	uqstl::jthread m_gameThread {};
+	// The return value of Starcon2Main.
+	uqstl::atomic<int> m_gameExitCode {EXIT_SUCCESS};
 	uqstl::unique_ptr<GameSession> m_session {};
 	uint16_t m_activity {};
 	uint8_t m_globalFlags {};

@@ -61,6 +61,7 @@
 #include "sounds.h"
 #include "UQMGame.h"
 #include "uqm/session/GameSession.h"
+#include "uqm/session/SaveCheck.h"
 
 uqstl::atomic<bool> MainExited {false};
 
@@ -247,6 +248,18 @@ int Starcon2Main(void* threadArg)
 		return EXIT_FAILURE;
 	}
 	uqm::log::info("We've loaded the Kernel");
+
+	if (const uqstl::string& savePath {uqm::UQMOptions::read().checkSave}; !savePath.empty())
+	{
+		LoadMasterShipList(TaskSwitch);
+		InitGameKernel();
+		const bool same {uqm::checkSaveRoundTrip(savePath)};
+		UninitGameKernel();
+		FreeMasterShipList();
+		FreeKernel();
+		MainExited = true;
+		return same ? EXIT_SUCCESS : EXIT_FAILURE;
+	}
 
 	uqm::currentActivity() = 0;
 	// show logo then splash and init the kernel in the meantime

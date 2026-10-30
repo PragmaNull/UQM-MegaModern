@@ -20,6 +20,7 @@
 #include "sis.h" // SUMMARY_DESC includes SIS_STATE in it
 #include "globdata.h"
 #include "core/misc/bittricks.h"
+#include "core/stl/optional.h"
 #include "core/stl/string.h"
 
 #if 0 //defined(__cplusplus)
@@ -55,10 +56,14 @@ extern ACTIVITY NextActivity;
 
 // Loads only the summary when summary_desc is not null.
 extern bool LoadGame(uint16_t which_game, SUMMARY_DESC* summary_desc);
+// Loads a game from the text of a save file. 'file' names the save in error messages.
+bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_DESC* summary_desc);
 uqstl::string saveFileName(uint16_t which_game);
 
 extern void SaveProblem(void);
 extern bool SaveGame(uint16_t which_game, SUMMARY_DESC* summary_desc, const char* name);
+// Saves the game to the text of a save file, or nullopt if it cannot.
+uqstl::optional<uqstl::string> SaveGameJson(SUMMARY_DESC* summary_desc, const char* name);
 
 extern const GameStateBitMap gameStateBitMap[];
 

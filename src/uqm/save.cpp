@@ -1463,6 +1463,18 @@ uqstl::string saveFileName(uint16_t which_game)
 
 bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 {
+	const auto text {SaveGameJson(SummPtr, name)};
+	const uqstl::string file {saveFileName(which_game)};
+	if (!text || !uqm::writeTextFile(uqm::saveDir(), file.c_str(), *text))
+	{
+		DeleteResFile(uqm::saveDir(), file.c_str());
+		return false;
+	}
+	return true;
+}
+
+uqstl::optional<uqstl::string> SaveGameJson(SUMMARY_DESC* SummPtr, const char* name)
+{
 	STAR_DESC SD {};
 	if (CurStarDescPtr)
 	{
@@ -1527,11 +1539,9 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 	const uqstl::unique_ptr<char, decltype(&free)> text {
 		yyjson_mut_write(doc.get(), YYJSON_WRITE_PRETTY_TWO_SPACES | YYJSON_WRITE_ALLOW_INVALID_UNICODE | YYJSON_WRITE_NEWLINE_AT_END, &length),
 		&free};
-	const uqstl::string file {saveFileName(which_game)};
-	if (!text || !uqm::writeTextFile(uqm::saveDir(), file.c_str(), {text.get(), length}))
+	if (!text)
 	{
-		DeleteResFile(uqm::saveDir(), file.c_str());
-		return false;
+		return uqstl::nullopt;
 	}
-	return true;
+	return uqstl::string {text.get(), length};
 }

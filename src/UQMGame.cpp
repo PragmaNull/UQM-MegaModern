@@ -372,8 +372,8 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 int UQMGame::run()
 {
-	m_gameThread = makeThread("Starcon2Main", [](uqstl::stop_token) {
-		(void)Starcon2Main(nullptr);
+	m_gameThread = makeThread("Starcon2Main", [this](uqstl::stop_token) {
+		m_gameExitCode = Starcon2Main(nullptr);
 	});
 
 	for (int i = 0; i < 2000 && !MainExited;)
@@ -401,9 +401,10 @@ int UQMGame::run()
 	else
 	{
 		m_gameThread.detach();
+		return EXIT_SUCCESS;
 	}
 
-	return EXIT_SUCCESS;
+	return m_gameExitCode;
 }
 
 void UQMGame::teardown()

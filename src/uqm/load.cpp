@@ -803,10 +803,14 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
 	{
 		return false;
 	}
+	return LoadGameFromJson(*json, file, SummPtr);
+}
 
+bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_DESC* SummPtr)
+{
 	yyjson_read_err err {};
 	const uqstl::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)> doc {
-		yyjson_read_opts(const_cast<char*>(json->data()), json->size(), YYJSON_READ_ALLOW_INVALID_UNICODE, nullptr, &err),
+		yyjson_read_opts(const_cast<char*>(json.data()), json.size(), YYJSON_READ_ALLOW_INVALID_UNICODE, nullptr, &err),
 		&yyjson_doc_free};
 	if (!doc)
 	{

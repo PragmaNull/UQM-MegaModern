@@ -66,6 +66,8 @@ ctest --output-on-failure --build-config Release
 
 Test sources are in `test/tests/` organized by subsystem (core, lib, options, uqm).
 
+Each save file in `test/data/saves/` is a `SaveRoundTrip.<name>` CTest test. It runs the game with `--check-save FILE`, which loads the save in a new session, saves it again in memory and fails on any changed value. Add a save from each game mode that a change to the game state can break.
+
 Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each one with a new config dir and fails on a non-zero exit code or an `[error]` or `[critical]` log line. A `<name>.settings.json` file next to a script is copied in as the start settings. `regress.bat` runs the game muted and in a window. `run.bat` does the same with `--input-script`, unless the volume or `-f` options are given.
 
 ## Code Architecture

@@ -274,6 +274,22 @@ target_link_libraries(${APP_TARGET}
 
 #print_library_properties(SDL3::SDL3)
 
+# Each save file in test/data/saves must load and save again with no change.
+if (GTest_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/content")
+    set(SAVE_CHECK_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/save-check")
+    file(MAKE_DIRECTORY "${SAVE_CHECK_CONFIG_DIR}")
+    file(GLOB SAVE_FIXTURES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/test/data/saves/*.json")
+    foreach(SAVE_FIXTURE ${SAVE_FIXTURES})
+        get_filename_component(SAVE_NAME "${SAVE_FIXTURE}" NAME_WE)
+        add_test(NAME "SaveRoundTrip.${SAVE_NAME}"
+            COMMAND ${APP_TARGET} -n "${CMAKE_CURRENT_SOURCE_DIR}/content" -C "${SAVE_CHECK_CONFIG_DIR}"
+                --check-save "${SAVE_FIXTURE}" --musicvol 0 --sfxvol 0 --speechvol 0)
+        set_tests_properties("SaveRoundTrip.${SAVE_NAME}" PROPERTIES
+            ENVIRONMENT "SDL_VIDEODRIVER=dummy;SDL_AUDIODRIVER=dummy"
+            TIMEOUT 120)
+    endforeach()
+endif()
+
 # Copy runtime DLLs as needed.
 add_custom_command(TARGET ${APP_TARGET} POST_BUILD
     COMMAND "$<$<BOOL:$<TARGET_RUNTIME_DLLS:${APP_TARGET}>>:${CMAKE_COMMAND};-E;copy_if_different;$<TARGET_RUNTIME_DLLS:${APP_TARGET}>;$<TARGET_FILE_DIR:${APP_TARGET}>>"
