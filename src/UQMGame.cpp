@@ -45,7 +45,8 @@
 #include "libs/sound/sound.h"
 #include "libs/input/input_common.h"
 #include "libs/inplib.h"
-#include "libs/tasklib.h"
+#include "core/thread/Thread.h"
+#include "libs/threadlib.h"
 #include "libs/scriptlib.h"
 #include "uqm/controls.h"
 #include "uqm/battle.h"
@@ -230,7 +231,6 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	TFB_PreInit();
 	mem_init();
-	InitThreadSystem();
 	//log_initThreads();
 	initIO();
 	prepareConfigDir(options.configDir);
@@ -242,11 +242,8 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	applyUserSettings(m_options.edit());
 
 
-	/* TODO: Once threading is gone, these become local variables
-	   again.  In the meantime, they must be global so that
-	   initAudio (in StarCon2Main) can see them.  initAudio needed
-	   to be moved there because calling AssignTask in the main
-	   thread doesn't work */
+	/* TODO: These must be global so that initAudio (in StarCon2Main)
+	   can see them. */
 	snddriver = options.soundDriver.value;
 	// clear existing quality flag before applying the option value.
 	soundflags &= ~AudioQualityFlagMask;
@@ -326,7 +323,6 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 #endif
 
 	InitTimeSystem();
-	InitTaskSystem();
 
 	luaUqm_init();
 
@@ -361,9 +357,6 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	InitColorMaps();
 	init_communication();
-	/* TODO: Once threading is gone, restore initAudio here.
-	   initAudio calls AssignTask, which currently blocks on
-	   ProcessThreadLifecycles... */
 	// initAudio (snddriver, soundflags);
 	// Make sure that the compiler treats multidim arrays the way we expect
 	assert(sizeof(int[static_cast<int>(ControlTemplate::NUM) * NUM_KEYS]) == sizeof(int[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS]));
@@ -378,7 +371,9 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 int UQMGame::run()
 {
-	STARTTHREAD(Starcon2Main, nullptr, 1024, "Starcon2Main");
+	m_gameThread = makeThread("Starcon2Main", [](uqstl::stop_token) {
+		(void)Starcon2Main(nullptr);
+	});
 
 	for (int i = 0; i < 2000 && !MainExited;)
 	{
@@ -394,8 +389,17 @@ int UQMGame::run()
 
 		TFB_ProcessEvents();
 		ProcessUtilityKeys();
-		ProcessThreadLifecycles();
 		TFB_FlushGraphics();
+	}
+
+	// A game thread that did not stop ends with the process.
+	if (MainExited)
+	{
+		m_gameThread.join();
+	}
+	else
+	{
+		m_gameThread.detach();
 	}
 
 	return EXIT_SUCCESS;
@@ -427,13 +431,11 @@ void UQMGame::teardown()
 
 		luaUqm_uninit();
 
-		CleanupTaskSystem();
 		UnInitTimeSystem();
 #if 0
 		unInitTempDir ();
 #endif
 		uninitIO();
-		UnInitThreadSystem();
 		mem_uninit();
 	}
 }

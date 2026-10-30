@@ -31,7 +31,7 @@
 #include "setup.h"
 #include "sounds.h"
 #include "libs/graphics/gfx_common.h"
-#include "libs/tasklib.h"
+#include "libs/threadlib.h"
 #include "core/log/log.h"
 #include "planets/planets.h"
 #include <math.h>

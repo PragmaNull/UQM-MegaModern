@@ -24,8 +24,7 @@
 #include "setup.h"
 #include "libs/compiler.h"
 #include "libs/gfxlib.h"
-#include "libs/tasklib.h"
-#include "libs/threadlib.h"
+#include "core/thread/Mutex.h"
 #include "core/log/log.h"
 #include "libs/misc.h"
 #include "options.h"
@@ -35,7 +34,8 @@
 //   the locking system!
 // XXX: This mutex is only necessary because debugging functions
 //   may access the clock and event data from a different thread
-static Mutex clock_mutex;
+static uqm::RecursiveMutex clock_mutex {};
+static bool s_clockInited {};
 
 static bool
 IsLeapYear(uint16_t year)
@@ -161,7 +161,7 @@ bool InitGameClock(void)
 	{
 		return (false);
 	}
-	clock_mutex = CREATEMUTEX("Clock Mutex", SYNC_CLASS_TOPLEVEL);
+	s_clockInited = true;
 	GLOBAL(GameClock.month_index) = 2;
 	GLOBAL(GameClock.day_index) = 17;
 	GLOBAL(GameClock.year_index) = START_YEAR; /* Feb 17, START_YEAR */
@@ -173,8 +173,7 @@ bool InitGameClock(void)
 
 bool UninitGameClock(void)
 {
-	DestroyMutex(clock_mutex);
-	clock_mutex = nullptr;
+	s_clockInited = false;
 
 	UninitQueue(&GLOBAL(GameClock.event_q));
 
@@ -182,21 +181,21 @@ bool UninitGameClock(void)
 }
 
 // For debugging use only
-void LockGameClock(void)
+void LockGameClock(void) UQM_NO_THREAD_SAFETY_ANALYSIS
 {
 	// Block the GameClockTick() for executing
-	if (clock_mutex)
+	if (s_clockInited)
 	{
-		LockMutex(clock_mutex);
+		clock_mutex.lock();
 	}
 }
 
 // For debugging use only
-void UnlockGameClock(void)
+void UnlockGameClock(void) UQM_NO_THREAD_SAFETY_ANALYSIS
 {
-	if (clock_mutex)
+	if (s_clockInited)
 	{
-		UnlockMutex(clock_mutex);
+		clock_mutex.unlock();
 	}
 }
 
@@ -205,14 +204,15 @@ bool GameClockRunning(void)
 {
 	int16_t day_in_ticks;
 
-	if (!clock_mutex)
+	if (!s_clockInited)
 	{
 		return false;
 	}
 
-	LockMutex(clock_mutex);
-	day_in_ticks = GLOBAL(GameClock.day_in_ticks);
-	UnlockMutex(clock_mutex);
+	{
+		const uqm::LockGuard lock {clock_mutex};
+		day_in_ticks = GLOBAL(GameClock.day_in_ticks);
+	}
 
 	return day_in_ticks != 0;
 }
@@ -340,7 +340,7 @@ void GameClockTick(void)
 {
 	// XXX: This mutex is only necessary because debugging functions
 	//   may access the clock and event data from a different thread
-	LockMutex(clock_mutex);
+	const uqm::LockGuard lock {clock_mutex};
 
 	--GLOBAL(GameClock.tick_count);
 	if (GLOBAL(GameClock.tick_count) <= 0)
@@ -353,8 +353,6 @@ void GameClockTick(void)
 			processClockDayEvents();
 		}
 	}
-
-	UnlockMutex(clock_mutex);
 }
 
 void MoveGameClockDays(uint16_t days)

@@ -23,6 +23,8 @@
 #include "options/options.h"
 #include "core/log/logger.h"
 
+#include <thread>
+
 namespace uqm
 {
 
@@ -41,6 +43,7 @@ public:
 private:
 	UQMOptions m_options {};
 	Logger m_logger {};
+	uqstl::jthread m_gameThread {};
 
 	static UQMGame* s_instance;
 };

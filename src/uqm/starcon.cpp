@@ -40,7 +40,7 @@
 // for ExploreSolarSys()
 #include "uqmdebug.h"
 #include "uqm/lua/luastate.h"
-#include "libs/tasklib.h"
+#include "libs/threadlib.h"
 #include "core/log/log.h"
 #include "core/platform/platform.h"
 #include "libs/gfxlib.h"

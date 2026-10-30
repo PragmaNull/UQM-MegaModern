@@ -19,7 +19,7 @@
 #ifndef UQM_CLOCK_H_
 #define UQM_CLOCK_H_
 
-#include "libs/tasklib.h"
+#include "libs/threadlib.h"
 #include "displist.h"
 
 #define START_YEAR 2155

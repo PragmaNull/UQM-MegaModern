@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-#include "libs/threadlib.h"
+#include "core/thread/Mutex.h"
 
 typedef struct CallbackLink CallbackLink;
 
@@ -37,22 +37,22 @@ struct CallbackLink
 	CallbackArg arg;
 };
 
-static CallbackLink* callbacks;
-static CallbackLink** callbacksEnd;
-static CallbackLink* const* callbacksProcessEnd;
+static uqm::Mutex callbackListLock {};
 
-static Mutex callbackListLock;
+static CallbackLink* callbacks UQM_GUARDED_BY(callbackListLock);
+static CallbackLink** callbacksEnd UQM_GUARDED_BY(callbackListLock);
+static CallbackLink* const* callbacksProcessEnd UQM_GUARDED_BY(callbackListLock);
 
 static inline void
-CallbackList_lock(void)
+CallbackList_lock(void) UQM_ACQUIRE(callbackListLock)
 {
-	LockMutex(callbackListLock);
+	callbackListLock.lock();
 }
 
 static inline void
-CallbackList_unlock(void)
+CallbackList_unlock(void) UQM_RELEASE(callbackListLock)
 {
-	UnlockMutex(callbackListLock);
+	callbackListLock.unlock();
 }
 
 #if 0
@@ -64,17 +64,16 @@ CallbackList_isLocked(void) {
 
 void Callback_init(void)
 {
+	CallbackList_lock();
 	callbacks = nullptr;
 	callbacksEnd = &callbacks;
 	callbacksProcessEnd = &callbacks;
-	callbackListLock = CREATEMUTEX("Callback List Lock", SYNC_CLASS_TOPLEVEL);
+	CallbackList_unlock();
 }
 
 void Callback_uninit(void)
 {
 	// TODO: cleanup the queue?
-	DestroyMutex(callbackListLock);
-	callbackListLock = 0;
 }
 
 // Callbacks are guaranteed to be called in the order that they are queued.
@@ -100,9 +99,8 @@ CallbackLink_delete(CallbackLink* link)
 	free(link);
 }
 
-// Pre: CallbackList is locked.
 static CallbackLink**
-CallbackLink_find(CallbackLink* link)
+CallbackLink_find(CallbackLink* link) UQM_REQUIRES(callbackListLock)
 {
 	CallbackLink** ptr;
 
