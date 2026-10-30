@@ -33,5 +33,7 @@ void Scale_PerfTest(void);
 bool TFB_SDL_GammaCorrection(float gamma);
 void TFB_SDL_GetDisplaySize(SDL_Rect* bounds);
 SDL_Window* TFB_GetSDLWindow(void);
+// Returns true if the ImGui overlay used the event.
+bool TFB_SDL_ImGuiEvent(const SDL_Event* event);
 
 #endif

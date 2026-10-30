@@ -1,4 +1,7 @@
+import os
+
 from conan import ConanFile
+from conan.tools.files import copy
 from conan.tools.cmake import cmake_layout, CMakeDeps, CMakeToolchain
 
 
@@ -21,6 +24,7 @@ class UrQuanMastersConan(ConanFile):
         'fmt/12.1.0',
         'gsl-lite/1.0.1',
         'gtest/1.17.0',
+        'imgui/1.92.8',
         'lua/5.4.7',
         'libmikmod/3.3.11.1',
         'libpng/1.6.54',
@@ -46,6 +50,12 @@ class UrQuanMastersConan(ConanFile):
         
     def generate(self):
         tc = CMakeToolchain(self)
+        # The imgui package has the platform and renderer backends only as sources.
+        imgui_backends = os.path.join(self.generators_folder, 'imgui_backends')
+        imgui_bindings = os.path.join(self.dependencies['imgui'].package_folder, 'res', 'bindings')
+        for pattern in ('imgui_impl_sdl3.*', 'imgui_impl_sdlrenderer3.*'):
+            copy(self, pattern, src=imgui_bindings, dst=imgui_backends)
+        tc.variables['IMGUI_BACKENDS_DIR'] = imgui_backends.replace('\\', '/')
         tc.variables['ENABLE_ASAN'] = bool(self.options.enable_asan)
         tc.variables['ENABLE_LINTER'] = bool(self.options.enable_linter)
         tc.generate()

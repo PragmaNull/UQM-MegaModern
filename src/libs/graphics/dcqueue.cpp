@@ -474,6 +474,11 @@ void TFB_FlushGraphics(void)
 				addRenderTime(start);
 			}
 		}
+		else if (TFB_ImGuiVisible())
+		{
+			TFB_SwapBuffers(uqm::TFBRedraw::Expose);
+			TaskSwitch();
+		}
 		else
 		{
 			TaskSwitch();

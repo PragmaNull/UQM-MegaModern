@@ -72,6 +72,7 @@ add_executable(${APP_TARGET} ${ALL_FILES})
 find_package(CLI11 REQUIRED)
 find_package(fmt REQUIRED)
 find_package(gsl-lite REQUIRED)
+find_package(imgui REQUIRED)
 find_package(lua REQUIRED)
 find_package(libmikmod REQUIRED)
 find_package(magic_enum REQUIRED)
@@ -86,6 +87,14 @@ find_package(utf8proc REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(yyjson REQUIRED)
 find_package(ZLIB REQUIRED)
+
+# The imgui package has its backends only as sources, so build them here.
+add_library(imgui_backends STATIC
+    "${IMGUI_BACKENDS_DIR}/imgui_impl_sdl3.cpp"
+    "${IMGUI_BACKENDS_DIR}/imgui_impl_sdlrenderer3.cpp"
+)
+target_include_directories(imgui_backends PUBLIC "${IMGUI_BACKENDS_DIR}")
+target_link_libraries(imgui_backends PUBLIC imgui::imgui SDL3::SDL3)
 
 #OPTIONAL
 find_package(GTest QUIET)
@@ -254,6 +263,7 @@ target_link_libraries(${APP_TARGET}
         CLI11::CLI11
         fmt::fmt
         gsl-lite::gsl-lite
+        imgui_backends
         lua::lua
         libmikmod::libmikmod
         magic_enum::magic_enum

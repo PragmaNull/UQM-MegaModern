@@ -16,6 +16,8 @@ set(uqm_src_libs_graphics_sdl_files
 	"src/libs/graphics/sdl/gpushaders.cpp"
 	"src/libs/graphics/sdl/gpushaders.h"
 	"src/libs/graphics/sdl/hq2x.cpp"
+	"src/libs/graphics/sdl/imguilayer.cpp"
+	"src/libs/graphics/sdl/imguilayer.h"
 	"src/libs/graphics/sdl/nearest2x.cpp"
 	"src/libs/graphics/sdl/palette.cpp"
 	"src/libs/graphics/sdl/palette.h"

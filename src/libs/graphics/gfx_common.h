@@ -42,6 +42,8 @@ void TFB_UploadTransitionScreen(GFXRECT* pRect);
 int TFB_SupportsHardwareScaling(void);
 // This function should not be called directly
 void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw);
+// True if the ImGui overlay shows, and the screen must update each frame.
+bool TFB_ImGuiVisible(void);
 
 #define GSCALE_IDENTITY 256
 
