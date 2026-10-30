@@ -20,7 +20,6 @@
 #include <string.h>
 #include <ctype.h>
 #include "vcontrol.h"
-#include "libs/memlib.h"
 #include "keynames.h"
 #include "core/log/log.h"
 #include "libs/reslib.h"

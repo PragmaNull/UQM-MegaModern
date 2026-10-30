@@ -68,7 +68,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 
 	if (Orbit->lpTopoData)
 	{
-		HFree(Orbit->lpTopoData);
+		delete[] Orbit->lpTopoData;
 		Orbit->lpTopoData = nullptr;
 	}
 
@@ -85,7 +85,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 
 	if (Orbit->TopoColors)
 	{
-		HFree(Orbit->TopoColors);
+		delete[] Orbit->TopoColors;
 		Orbit->TopoColors = nullptr;
 	}
 
@@ -94,16 +94,16 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 		uint16_t i;
 		for (i = 0; i < NUM_SCAN_TYPES; i++)
 		{
-			HFree(Orbit->ScanColors[i]);
+			delete[] Orbit->ScanColors[i];
 			Orbit->ScanColors[i] = nullptr;
 		}
-		HFree(Orbit->ScanColors);
+		delete[] Orbit->ScanColors;
 		Orbit->ScanColors = nullptr;
 	}
 
 	if (Orbit->ScratchArray)
 	{
-		HFree(Orbit->ScratchArray);
+		delete[] Orbit->ScratchArray;
 		Orbit->ScratchArray = nullptr;
 	}
 
@@ -118,10 +118,10 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 		uint16_t j;
 		for (j = 0; j < height; j++)
 		{
-			HFree(Orbit->light_diff[j]);
+			delete[] Orbit->light_diff[j];
 			Orbit->light_diff[j] = nullptr;
 		}
-		HFree(Orbit->light_diff);
+		delete[] Orbit->light_diff;
 		Orbit->light_diff = nullptr;
 	}
 
@@ -130,10 +130,10 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 		uint16_t k;
 		for (k = 0; k < height; k++)
 		{
-			HFree(Orbit->map_rotate[k]);
+			delete[] Orbit->map_rotate[k];
 			Orbit->map_rotate[k] = nullptr;
 		}
-		HFree(Orbit->map_rotate);
+		delete[] Orbit->map_rotate;
 		Orbit->map_rotate = nullptr;
 	}
 
@@ -142,7 +142,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 
 	if (Orbit->sphereBytes)
 	{
-		HFree(Orbit->sphereBytes);
+		delete[] Orbit->sphereBytes;
 		Orbit->sphereBytes = nullptr;
 	}
 
@@ -156,7 +156,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 
 	if (Orbit->ShadeColors)
 	{
-		HFree(Orbit->ShadeColors);
+		delete[] Orbit->ShadeColors;
 		Orbit->ShadeColors = nullptr;
 	}
 }

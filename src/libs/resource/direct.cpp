@@ -17,7 +17,6 @@
  */
 
 #include "libs/strings/strintrn.h"
-#include "libs/memlib.h"
 #include "port.h"
 
 DIRENTRY_REF

@@ -19,7 +19,6 @@
 #include "vidintrn.h"
 #include "options.h"
 #include "vidplayer.h"
-#include "libs/memlib.h"
 #include "libs/sndlib.h"
 #include "uqm/units.h"
 

@@ -24,7 +24,6 @@
 #include "libs/time/timelib.h"
 #include "libs/input/sdl/vcontrol.h"
 #include "libs/input/sdl/keynames.h"
-#include "libs/memlib.h"
 #include "core/log/log.h"
 #include "libs/reslib.h"
 #include "options.h"

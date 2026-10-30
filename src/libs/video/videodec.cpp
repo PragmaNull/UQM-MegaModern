@@ -20,7 +20,6 @@
 #include "dukvid.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
-#include "libs/memlib.h"
 #include "../../uqm/units.h"
 
 #define MAX_REG_DECODERS 31

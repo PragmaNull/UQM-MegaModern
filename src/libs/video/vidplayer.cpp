@@ -20,7 +20,6 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include "libs/sndlib.h"
 #include "uqm/units.h"
 

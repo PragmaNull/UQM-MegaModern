@@ -31,7 +31,6 @@
 #include "libs/graphics/drawable.h"
 #include "libs/mathlib.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include "../starmap.h"
 #include "../gendef.h"
 #include "../colors.h"
@@ -209,12 +208,12 @@ void SetPlanetColors(COLORMAPPTR cmap)
 	// That way we can have only 1 set of spheres and color them
 	// appropriately
 	uint8_t *cbase, *ctab;
-	Color *colors, *c;
+	Color* c;
 	uint16_t i;
 	const uint16_t numcolors = 128;
+	uqstl::array<Color, numcolors> colors {};
 
-	colors = (Color*)HMalloc(sizeof(Color) * numcolors);
-	c = colors;
+	c = colors.data();
 	cbase = (uint8_t*)GetColorMapAddress(pSolarSysState->OrbitalCMap);
 
 	for (i = 0; i < numcolors; ++i, ++c)
@@ -224,8 +223,7 @@ void SetPlanetColors(COLORMAPPTR cmap)
 		*c = BUILD_COLOR_RGBA(ctab[0], ctab[1], ctab[2], 0xFF);
 	}
 
-	SetColorMapColors(colors, cmap, 0, numcolors);
-	HFree(colors);
+	SetColorMapColors(colors.data(), cmap, 0, numcolors);
 }
 
 void AdjustColor(Color* c, uint16_t scan, uint16_t height, uint16_t width, int8_t diff)
@@ -327,7 +325,8 @@ ExpandLevelMasks(PLANET_ORBIT* Orbit)
 	halfBound = width + spherespanx;
 	colorSize = height * (halfBound);
 
-	colors = (Color*)HMalloc(sizeof(Color) * colorSize);
+	uqstl::vector<Color> colorBuf(colorSize);
+	colors = colorBuf.data();
 
 	ReadFramePixelColors(Orbit->TopoMask, colors, halfBound, height);
 
@@ -374,8 +373,6 @@ ExpandLevelMasks(PLANET_ORBIT* Orbit)
 			RescaleFrame(dupe, halfBound, height + (int16_t)err));
 		DestroyDrawable(ReleaseDrawable(dupe));
 	}
-
-	HFree(colors);
 }
 
 static void
@@ -548,7 +545,8 @@ RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
 	pSrc = pTopoData;
 	sqr = w * h;
 
-	map = (Color*)HMalloc(sizeof(Color) * sqr);
+	uqstl::vector<Color> mapBuf(sqr);
+	map = mapBuf.data();
 	pix = map;
 
 	for (i = 0; i < sqr; ++i, ++pSrc, ++pix)
@@ -583,7 +581,6 @@ RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
 	}
 
 	WriteFramePixelColors(DstFrame, map, w, h);
-	HFree(map);
 }
 
 static inline void
@@ -2069,7 +2066,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 	uint16_t i;
 
 	{ // always needed
-		Orbit->lpTopoData = (int8_t*)HCalloc(width * height);
+		Orbit->lpTopoData = new int8_t[width * height] {};
 
 		Orbit->TopoZoomFrame = 0;
 		Orbit->ObjectFrame = 0;
@@ -2090,8 +2087,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 		Orbit->TopoColors = nullptr;
 		Orbit->ScanColors = nullptr;
 
-		Orbit->ScratchArray = (Color*)HMalloc(sizeof(Orbit->ScratchArray[0])
-											  * (shielddiam) * (shielddiam));
+		Orbit->ScratchArray = new Color[shielddiam * shielddiam];
 
 		Orbit->WorkFrame = 0;
 		Orbit->BackFrame = 0;
@@ -2113,37 +2109,32 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 		Orbit->SphereFrame = CaptureDrawable(CreateDrawable(
 			WANT_PIXMAP | WANT_ALPHA, diameter, diameter, 2));
 
-		Orbit->TopoColors = (Color*)HMalloc(sizeof(Orbit->TopoColors[0])
-											* (height * (width + spherespanx)));
+		Orbit->TopoColors = new Color[height * (width + spherespanx)];
 
 		if (forOrbit && isPC(uqm::UQMOptions::read().scanStyle) && isPC(uqm::UQMOptions::read().tintPlanSphere)
 			&& !use3DOSpheres)
 		{ // generate only on that conditions and then use if not nullptr
-			Orbit->ScanColors =
-				(Color**)HMalloc(sizeof(Color*) * NUM_SCAN_TYPES);
+			Orbit->ScanColors = new Color*[NUM_SCAN_TYPES];
 			for (i = 0; i < NUM_SCAN_TYPES; i++)
 			{
-				Orbit->ScanColors[i] =
-					(Color*)HMalloc(sizeof(Orbit->ScanColors[0][0])
-									* (height * (width + spherespanx)));
+				Orbit->ScanColors[i] = new Color[height * (width + spherespanx)];
 			}
 		}
 
 		if (!use3DOSpheres)
 		{
-			Orbit->light_diff = (uint32_t**)HMalloc(sizeof(uint32_t*) * diameter);
+			Orbit->light_diff = new uint32_t*[diameter];
 		}
 
-		Orbit->map_rotate = (MAP3D_POINT**)HMalloc(sizeof(MAP3D_POINT*) * diameter);
+		Orbit->map_rotate = new MAP3D_POINT*[diameter];
 
 		for (i = 0; i < diameter; i++)
 		{
 			if (!use3DOSpheres)
 			{
-				Orbit->light_diff[i] = (uint32_t*)HMalloc(sizeof(uint32_t) * diameter);
+				Orbit->light_diff[i] = new uint32_t[diameter];
 			}
-			Orbit->map_rotate[i] =
-				(MAP3D_POINT*)HMalloc(sizeof(MAP3D_POINT) * diameter);
+			Orbit->map_rotate[i] = new MAP3D_POINT[diameter];
 		}
 
 		if (use3DOSpheres)
@@ -2151,9 +2142,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 			Orbit->Shade =
 				CaptureDrawable(LoadGraphic(PLANET_MASK_SHADE));
 
-			Orbit->ShadeColors =
-				(Color*)HMalloc(sizeof(Color) * GetFrameWidth(Orbit->Shade)
-								* GetFrameHeight(Orbit->Shade));
+			Orbit->ShadeColors = new Color[GetFrameWidth(Orbit->Shade) * GetFrameHeight(Orbit->Shade)];
 		}
 	}
 	else
@@ -2164,9 +2153,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 		Orbit->TopoMask = CaptureDrawable(CreateDrawable(
 			WANT_PIXMAP, (int16_t)width, (int16_t)height, 1));
 
-		Orbit->sphereBytes = (uint8_t*)HMalloc(sizeof(uint8_t)
-											   * GetFrameWidth(Orbit->SphereFrame)
-											   * GetFrameHeight(Orbit->SphereFrame));
+		Orbit->sphereBytes = new uint8_t[GetFrameWidth(Orbit->SphereFrame) * GetFrameHeight(Orbit->SphereFrame)];
 
 		Orbit->sphereMap =
 			CaptureColorMap(LoadColorMap(DOS_SPHERE_COLOR_TAB));
@@ -2266,8 +2253,8 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 			},
 	};
 
-	prevrow = (int*)HMalloc((SCALED_MAP_WIDTH * 4 + 1)
-							* sizeof(prevrow[0]));
+	uqstl::vector<int> prevrowBuf(SCALED_MAP_WIDTH * 4 + 1);
+	prevrow = prevrowBuf.data();
 
 	var_allow = (num_faults << SCALE_SHIFT) / AVG_VARIANCE;
 	var_min = fault_var << SCALE_SHIFT;
@@ -2436,8 +2423,6 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 		// save last row point
 		prow[0] = elev[4][4];
 	}
-
-	HFree(prevrow);
 }
 
 
@@ -2835,7 +2820,7 @@ void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
 
 		pSolarSysState->XlatPtr = GetStringAddress(pSolarSysState->XlatRef);
 
-		Orbit->lpTopoData = (int8_t*)HCalloc(width * height);
+		Orbit->lpTopoData = new int8_t[width * height] {};
 		RandomContext_SeedRandom(SysGenRNG, pPlanetDesc->rand_seed);
 		generate_surface_frame(width, height, Orbit, PlanDataPtr);
 
@@ -2843,8 +2828,8 @@ void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
 		pSolarSysState->OrbitalCMap = 0;
 		DestroyStringTable(ReleaseStringTable(pSolarSysState->XlatRef));
 		pSolarSysState->XlatRef = 0;
-		HFree(Orbit->lpTopoData);
-		Orbit->lpTopoData = 0;
+		delete[] Orbit->lpTopoData;
+		Orbit->lpTopoData = nullptr;
 	}
 }
 
@@ -3003,7 +2988,8 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 					CreateDrawable(WANT_PIXMAP, (int16_t)width,
 								   (int16_t)height, 1));
 
-				map = (Color*)HMalloc(sizeof(Color) * width * height);
+				uqstl::vector<Color> mapBuf(width * height);
+				map = mapBuf.data();
 				ReadFramePixelColors(
 					pSolarSysState->TopoFrame, map, width, height);
 
@@ -3019,7 +3005,6 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 
 				WriteFramePixelColors(
 					pSolarSysState->ScanFrame[i], map, width, height);
-				HFree(map);
 			}
 		}
 		else
@@ -3059,21 +3044,15 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 		}
 		else
 		{ // usual smooth 3DO landscape
-			int8_t* pScaledTopo = (int8_t*)HMalloc(
-				SCALED_MAP_WIDTH * 4 * MAP_HEIGHT * 4);
+			uqstl::vector<int8_t> scaledTopo(SCALED_MAP_WIDTH * 4 * MAP_HEIGHT * 4);
 
 			Orbit->TopoZoomFrame = CaptureDrawable(CreateDrawable(
 				WANT_PIXMAP, width << 2, height << 2, 1));
 
-			if (pScaledTopo)
-			{
-				TopoScale4x(pScaledTopo, Orbit->lpTopoData,
-							PlanDataPtr->num_faults, PlanDataPtr->fault_depth * (PLANALGO(PlanDataPtr->Type) == CRATERED_ALGO ? 2 : 1));
-				RenderTopography(Orbit->TopoZoomFrame, pScaledTopo,
-								 SCALED_MAP_WIDTH * 4, MAP_HEIGHT * 4, SurfDef, nullptr);
-
-				HFree(pScaledTopo);
-			}
+			TopoScale4x(scaledTopo.data(), Orbit->lpTopoData,
+						PlanDataPtr->num_faults, PlanDataPtr->fault_depth * (PLANALGO(PlanDataPtr->Type) == CRATERED_ALGO ? 2 : 1));
+			RenderTopography(Orbit->TopoZoomFrame, scaledTopo.data(),
+							 SCALED_MAP_WIDTH * 4, MAP_HEIGHT * 4, SurfDef, nullptr);
 		}
 	}
 

@@ -32,7 +32,6 @@
 #include "libs/strlib.h"
 #include "core/log/log.h"
 #include "libs/reslib.h"
-#include "libs/memlib.h"
 #include "uqm/starmap.h"
 #include "uqm/planets/scan.h"
 #include <cstdint>

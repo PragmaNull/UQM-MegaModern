@@ -17,7 +17,6 @@
 #include "vidintrn.h"
 #include "video.h"
 #include "vidplayer.h"
-#include "libs/memlib.h"
 #include "uqm/util.h"
 
 LEGACY_VIDEO_REF

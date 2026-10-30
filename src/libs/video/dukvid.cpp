@@ -23,7 +23,6 @@
 #include "dukvid.h"
 #include <stdio.h>
 #include <string.h>
-#include "libs/memlib.h"
 #include "endian_uqm.h"
 #include "uqm/units.h"
 #include "core/string/StringUtils.h"

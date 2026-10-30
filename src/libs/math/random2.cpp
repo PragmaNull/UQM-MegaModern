@@ -24,7 +24,6 @@
 #define RANDOM2_INTERNAL
 #include "random.h"
 
-#include "libs/memlib.h"
 
 RandomContext*
 RandomContext_New(void)

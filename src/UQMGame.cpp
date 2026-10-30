@@ -47,7 +47,6 @@
 // For BattleFrameRateTicks
 #include <cstdint>
 #include "port.h"
-#include "libs/memlib.h"
 #include "core/log/log.h"
 #include "options.h"
 #include "uqmversion.h"

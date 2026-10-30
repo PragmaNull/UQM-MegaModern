@@ -20,7 +20,6 @@
 #include "options.h"
 #include "port.h"
 #include "resintrn.h"
-#include "libs/memlib.h"
 #include "core/log/log.h"
 
 // At other times, it is nullptr.

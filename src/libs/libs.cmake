@@ -19,8 +19,6 @@ include("src/libs/luauqm/luauqm.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_luauqm_master_files})
 include("src/libs/math/math.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_math_master_files})
-include("src/libs/memory/memory.cmake")
-list(APPEND uqm_src_libs_master_files ${uqm_src_libs_memory_master_files})
 include("src/libs/network/network.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_network_master_files})
 include("src/libs/resource/resource.cmake")
@@ -41,7 +39,6 @@ set(uqm_src_libs_files
 	"src/libs/inplib.h"
 	"src/libs/libs.cmake"
 	"src/libs/mathlib.h"
-	"src/libs/memlib.h"
 	"src/libs/reslib.h"
 #	"src/libs/sndlib.h"
 	"src/libs/strlib.h"

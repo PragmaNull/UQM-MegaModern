@@ -22,7 +22,6 @@
 //#include <stdio.h>
 #include "core/misc/bittricks.h"
 #include "port.h"
-#include "libs/memlib.h"
 #include "libs/io/FileSystem.h"
 
 #if 0 //defined(__cplusplus)

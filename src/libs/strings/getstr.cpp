@@ -21,7 +21,6 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/reslib.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 
 
 #define MAX_STRINGS 2048
