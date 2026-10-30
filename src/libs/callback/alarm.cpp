@@ -19,65 +19,22 @@
 #include "alarm.h"
 
 #include "SDL.h"
-#include "libs/heap.h"
 
-#include <assert.h>
-#include <stdlib.h>
+#include "core/stl/memory.h"
 
+#include <map>
 
-Heap* alarmHeap;
-
-
-static inline Alarm*
-Alarm_alloc(void)
-{
-	return (Alarm*)malloc(sizeof(Alarm));
-}
-
-static inline void
-Alarm_free(Alarm* alarm)
-{
-	free(alarm);
-}
-
-static inline int
-AlarmTime_compare(const AlarmTime t1, const AlarmTime t2)
-{
-	if (t1 < t2)
-	{
-		return -1;
-	}
-	if (t1 > t2) // David Benjamin: Bug#1163
-	{
-		return 1;
-	}
-	return 0;
-}
-
-static int
-Alarm_compare(const Alarm* a1, const Alarm* a2)
-{
-	return AlarmTime_compare(a1->time, a2->time);
-}
+// The alarms in time order. Alarms with the same time stay in the order they were added.
+static uqstl::multimap<AlarmTime, uqstl::unique_ptr<Alarm>> s_alarms {};
 
 void Alarm_init(void)
 {
-	assert(alarmHeap == nullptr);
-	alarmHeap = Heap_new((HeapValue_Comparator)Alarm_compare,
-						 4, 4, 0.8);
+	s_alarms.clear();
 }
 
 void Alarm_uninit(void)
 {
-	assert(alarmHeap != nullptr);
-
-	while (Heap_hasMore(alarmHeap))
-	{
-		Alarm* alarm = (Alarm*)Heap_pop(alarmHeap);
-		Alarm_free(alarm);
-	}
-	Heap_delete(alarmHeap);
-	alarmHeap = nullptr;
+	s_alarms.clear();
 }
 
 static inline AlarmTime
@@ -86,47 +43,40 @@ AlarmTime_nowMs(void)
 	return SDL_GetTicks();
 }
 
+static Alarm*
+Alarm_add(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg)
+{
+	auto alarm {uqstl::make_unique<Alarm>(Alarm {time, callback, arg})};
+	Alarm* result {alarm.get()};
+	s_alarms.emplace(time, uqstl::move(alarm));
+	return result;
+}
+
 Alarm*
 Alarm_addAbsoluteMs(uint32_t ms, AlarmCallback callback,
 					AlarmCallbackArg arg)
 {
-	Alarm* alarm;
-
-	assert(alarmHeap != nullptr);
-
-	alarm = Alarm_alloc();
-	alarm->time = ms;
-	alarm->callback = callback;
-	alarm->arg = arg;
-
-	Heap_add(alarmHeap, (HeapValue*)alarm);
-
-	return alarm;
+	return Alarm_add(ms, callback, arg);
 }
 
 Alarm*
 Alarm_addRelativeMs(uint32_t ms, AlarmCallback callback,
 					AlarmCallbackArg arg)
 {
-	Alarm* alarm;
-
-	assert(alarmHeap != nullptr);
-
-	alarm = Alarm_alloc();
-	alarm->time = AlarmTime_nowMs() + ms;
-	alarm->callback = callback;
-	alarm->arg = arg;
-
-	Heap_add(alarmHeap, (HeapValue*)alarm);
-
-	return alarm;
+	return Alarm_add(AlarmTime_nowMs() + ms, callback, arg);
 }
 
 void Alarm_remove(Alarm* alarm)
 {
-	assert(alarmHeap != nullptr);
-	Heap_remove(alarmHeap, (HeapValue*)alarm);
-	Alarm_free(alarm);
+	auto [first, last] {s_alarms.equal_range(alarm->time)};
+	for (auto it {first}; it != last; ++it)
+	{
+		if (it->second.get() == alarm)
+		{
+			s_alarms.erase(it);
+			return;
+		}
+	}
 }
 
 // Process at most one alarm, if its time has come.
@@ -134,61 +84,24 @@ void Alarm_remove(Alarm* alarm)
 // that it called. It should not be called from multiple threads at once.
 bool Alarm_processOne(void)
 {
-	AlarmTime now;
-	Alarm* alarm;
-
-	assert(alarmHeap != nullptr);
-	if (!Heap_hasMore(alarmHeap))
+	if (s_alarms.empty() || AlarmTime_nowMs() < s_alarms.begin()->first)
 	{
 		return false;
 	}
 
-	now = AlarmTime_nowMs();
-	alarm = (Alarm*)Heap_first(alarmHeap);
-	if (now < alarm->time)
-	{
-		return false;
-	}
-
-	Heap_pop(alarmHeap);
+	// Take the alarm out first, because the callback can add or remove alarms.
+	const uqstl::unique_ptr<Alarm> alarm {uqstl::move(s_alarms.extract(s_alarms.begin()).mapped())};
 	alarm->callback(alarm->arg);
-	Alarm_free(alarm);
 	return true;
 }
-
-#if 0
-// It is safe to call this function again from inside a callback function
-// that it called. It should not be called from multiple threads at once.
-void
-Alarm_processAll(void) {
-	AlarmTime now;
-
-	assert(alarmHeap != nullptr);
-	
-	now = AlarmTime_nowMs();
-	while (Heap_hasMore(alarmHeap)) {
-		Alarm *alarm = (Alarm *) Heap_first(alarmHeap);
-
-		if (now < alarm->time)
-			break;
-
-		Heap_pop(alarmHeap);
-		alarm->callback(alarm->arg);
-		Alarm_free(alarm);
-	}
-}
-#endif
 
 uint32_t
 Alarm_timeBeforeNextMs(void)
 {
-	Alarm* alarm;
-
-	if (!Heap_hasMore(alarmHeap))
+	if (s_alarms.empty())
 	{
 		return UINT32_MAX;
 	}
 
-	alarm = (Alarm*)Heap_first(alarmHeap);
-	return alarmTimeToMsUint32(alarm->time);
+	return alarmTimeToMsUint32(s_alarms.begin()->first);
 }

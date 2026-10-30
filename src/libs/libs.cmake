@@ -11,8 +11,6 @@ include("src/libs/file/file.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_file_master_files})
 include("src/libs/graphics/graphics.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_graphics_master_files})
-include("src/libs/heap/heap.cmake")
-list(APPEND uqm_src_libs_master_files ${uqm_src_libs_heap_master_files})
 include("src/libs/input/input.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_input_master_files})
 include("src/libs/io/io.cmake")
@@ -45,7 +43,6 @@ set(uqm_src_libs_files
 	"src/libs/compiler.h"
 	"src/libs/file.h"
 	"src/libs/gfxlib.h"
-	"src/libs/heap.h"
 	"src/libs/inplib.h"
 	"src/libs/libs.cmake"
 	"src/libs/mathlib.h"

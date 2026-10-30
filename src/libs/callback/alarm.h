@@ -35,9 +35,6 @@ typedef void (*AlarmCallback)(AlarmCallbackArg arg);
 
 struct Alarm
 {
-	size_t index;
-	// For the HeapValue 'base struct'.
-
 	AlarmTime time;
 	AlarmCallback callback;
 	AlarmCallbackArg arg;
@@ -49,7 +46,6 @@ Alarm* Alarm_addAbsoluteMs(uint32_t ms, AlarmCallback callback, AlarmCallbackArg
 Alarm* Alarm_addRelativeMs(uint32_t ms, AlarmCallback callback, AlarmCallbackArg arg);
 void Alarm_remove(Alarm* alarm);
 bool Alarm_processOne(void);
-void Alarm_processAll(void);
 uint32_t Alarm_timeBeforeNextMs(void);
 
 #endif /* LIBS_CALLBACK_ALARM_H_ */
