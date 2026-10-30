@@ -7,6 +7,7 @@
 #define UQM_SESSION_GAMESTATE_H_
 
 #include "uqm/sis.h"
+#include "uqm/state.h"
 
 namespace uqm
 {
@@ -24,9 +25,16 @@ public:
 		return m_game;
 	}
 
+	// One of the files STARINFO_FILE, RANDGRPINFO_FILE and DEFGRPINFO_FILE.
+	[[nodiscard]] GAME_STATE_FILE& stateFile(int index) noexcept
+	{
+		return m_stateFiles[index];
+	}
+
 private:
 	SIS_STATE m_sis {};
 	GAME_STATE m_game {};
+	uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> m_stateFiles {MakeStateFiles()};
 };
 
 // The state of the current session. Use on the game thread only.

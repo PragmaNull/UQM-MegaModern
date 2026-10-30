@@ -19,32 +19,24 @@
 #include "state.h"
 
 #include "starmap.h"
+#include "globdata.h"
 #include "core/log/log.h"
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <memory.h>
 
-// in-memory file i/o
-struct GAME_STATE_FILE
+uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> MakeStateFiles(void)
 {
-	const char* symname;
-	uint32_t size_hint;
-	int open_count {};
-	uqstl::vector<uint8_t> data {};
-	uint32_t used {};
-	uint32_t size {};
-	uint32_t ptr {};
-};
-
-#define NUM_STATE_FILES 3
-
-static GAME_STATE_FILE state_files[NUM_STATE_FILES] =
-	{
-		{"STARINFO",	 STAR_BUFSIZE},
-		{"RANDGRPINFO", RAND_BUFSIZE},
-		{"DEFGRPINFO",  DEF_BUFSIZE }
-};
+	uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> files {};
+	files[STARINFO_FILE].symname = "STARINFO";
+	files[STARINFO_FILE].size_hint = STAR_BUFSIZE;
+	files[RANDGRPINFO_FILE].symname = "RANDGRPINFO";
+	files[RANDGRPINFO_FILE].size_hint = RAND_BUFSIZE;
+	files[DEFGRPINFO_FILE].symname = "DEFGRPINFO";
+	files[DEFGRPINFO_FILE].size_hint = DEF_BUFSIZE;
+	return files;
+}
 
 
 GAME_STATE_FILE*
@@ -57,7 +49,7 @@ OpenStateFile(int stateFile, const char* mode)
 		return nullptr;
 	}
 
-	fp = &state_files[stateFile];
+	fp = &uqm::gameState().stateFile(stateFile);
 	fp->open_count++;
 	if (fp->open_count > 1)
 	{
@@ -118,7 +110,7 @@ void DeleteStateFile(int stateFile)
 		return;
 	}
 
-	fp = &state_files[stateFile];
+	fp = &uqm::gameState().stateFile(stateFile);
 	if (fp->open_count != 0)
 	{
 		uqm::log::warn("WARNING: "

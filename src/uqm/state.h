@@ -21,7 +21,10 @@
 
 #include "port.h"
 #include "core/misc/bittricks.h"
+#include "core/stl/array.h"
+#include "core/stl/vector.h"
 #include <assert.h>
+#include <cstdint>
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -51,7 +54,22 @@ extern uint32_t PutGroupInfo(uint32_t offset, uint8_t which_group);
 extern void BuildGroups(void);
 extern void findRaceSOI(void);
 
-typedef struct GAME_STATE_FILE GAME_STATE_FILE;
+// A file in memory that holds a part of the game state.
+struct GAME_STATE_FILE
+{
+	const char* symname {};
+	uint32_t size_hint {};
+	int open_count {};
+	uqstl::vector<uint8_t> data {};
+	uint32_t used {};
+	uint32_t size {};
+	uint32_t ptr {};
+};
+
+inline constexpr int NUM_STATE_FILES {3};
+
+// Returns the state files of a new game, empty.
+[[nodiscard]] uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> MakeStateFiles(void);
 
 #define STARINFO_FILE 0
 //"starinfo.dat"
