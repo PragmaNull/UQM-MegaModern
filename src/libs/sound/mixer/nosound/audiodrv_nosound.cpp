@@ -22,7 +22,6 @@
 #include "core/thread/Thread.h"
 #include "libs/time/timelib.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include <stdlib.h>
 
 
@@ -202,12 +201,7 @@ void noSound_Uninit(void)
 		{
 			StopStream(i);
 		}
-		if (soundSource[i].sbuffer)
-		{
-			void* sbuffer = soundSource[i].sbuffer;
-			soundSource[i].sbuffer = nullptr;
-			HFree(sbuffer);
-		}
+		soundSource[i].sbuffer = {};
 
 		noSound_DeleteSources(1, &soundSource[i].handle);
 	}
@@ -225,26 +219,22 @@ void noSound_Uninit(void)
 
 void PlaybackTaskFunc(uqstl::stop_token stopToken)
 {
-	uint8_t* stream;
 	uint32_t entryTime;
 	int32_t period, delay;
 	uint32_t len = 2048;
-
-	stream = (uint8_t*)HMalloc(len);
+	uqstl::vector<uint8_t> stream(len);
 	period = (int32_t)((len / (double)nosound_freq) * GameTicksPerSecond);
 
 	while (!stopToken.stop_requested())
 	{
 		entryTime = GetTimeCounter();
-		mixer_MixFake(nullptr, stream, len);
+		mixer_MixFake(nullptr, stream.data(), len);
 		delay = period - (GetTimeCounter() - entryTime);
 		if (delay > 0)
 		{
 			HibernateThread(delay);
 		}
 	}
-
-	HFree(stream);
 }
 
 

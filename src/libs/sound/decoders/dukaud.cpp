@@ -20,7 +20,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include "libs/memlib.h"
 #include "port.h"
 #include <cstdint>
 #include "libs/reslib.h"
@@ -81,9 +80,9 @@ typedef struct tfb_ducksounddecoder
 	// private
 	int32_t last_error;
 	uqgsl::owner<uqm::io::File*> duk;
-	uint32_t* frames;
+	uqstl::vector<uint32_t> frames;
 	// buffer
-	void* data;
+	uqstl::vector<uint8_t> data;
 	uint32_t maxdata;
 	uint32_t cbdata;
 	uint32_t dataofs;
@@ -267,7 +266,7 @@ duka_decodeFrame(TFB_DuckSoundDecoder* duka, DukAud_AudSubframe* header,
 	int32_t outputsize;
 
 	outputsize = header->numsamples * 2 * sizeof(int16_t);
-	outptr = output = (int16_t*)((uint8_t*)duka->data + duka->cbdata);
+	outptr = output = (int16_t*)(duka->data.data() + duka->cbdata);
 
 	for (inend = input + header->numsamples; input < inend; ++input)
 	{
@@ -300,7 +299,7 @@ duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 	hdr.audsize = UQM_SwapBE32(hdr.audsize);
 
 	// dump encoded data at the end of the buffer aligned on 8-byte
-	p = ((uint8_t*)duka->data + duka->maxdata - ((hdr.audsize + 7) & (-8)));
+	p = (duka->data.data() + duka->maxdata - ((hdr.audsize + 7) & (-8)));
 	if (!duka->duk->readExact(uqm::io::asBytes(p, hdr.audsize)))
 	{
 		duka->last_error = errno;
@@ -337,7 +336,7 @@ duka_stuffBuffer(TFB_DuckSoundDecoder* duka, void* buf, int32_t bufsize)
 		{
 			dataleft = bufsize & (-4);
 		}
-		memcpy(buf, (uint8_t*)duka->data + duka->dataofs, dataleft);
+		memcpy(buf, duka->data.data() + duka->dataofs, dataleft);
 		duka->dataofs += dataleft;
 	}
 
@@ -457,8 +456,8 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 		return false;
 	}
 
-	duka->frames = (uint32_t*)HMalloc(duka->cframes * sizeof(uint32_t));
-	cread = frm->read(uqm::io::asBytes(duka->frames, sizeof(uint32_t) * duka->cframes)) / sizeof(uint32_t);
+	duka->frames.assign(duka->cframes, 0);
+	cread = frm->read(uqm::io::asBytes(duka->frames.data(), sizeof(uint32_t) * duka->cframes)) / sizeof(uint32_t);
 	delete frm;
 	if (cread != duka->cframes)
 	{
@@ -482,7 +481,7 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 	This->format = duka_formats->stereo16;
 	duka->channels = 2;
 	duka->pcm_frame = aud.numsamples;
-	duka->data = HMalloc(DATA_BUF_SIZE);
+	duka->data.assign(DATA_BUF_SIZE, 0);
 	duka->maxdata = DATA_BUF_SIZE;
 
 	// estimate
@@ -500,16 +499,8 @@ duka_Close(THIS_PTR)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 
-	if (duka->data)
-	{
-		HFree(duka->data);
-		duka->data = nullptr;
-	}
-	if (duka->frames)
-	{
-		HFree(duka->frames);
-		duka->frames = nullptr;
-	}
+	duka->data = {};
+	duka->frames = {};
 	if (duka->duk)
 	{
 		delete duka->duk;

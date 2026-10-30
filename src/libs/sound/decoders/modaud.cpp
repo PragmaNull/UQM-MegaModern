@@ -25,7 +25,6 @@
 #include "endian_uqm.h"
 #include "decoder.h"
 #include "core/misc/bittricks.h"
-#include "libs/memlib.h"
 #include "libs/reslib.h"
 #include "libs/sound/audiocore.h"
 #include "core/log/log.h"
@@ -222,28 +221,22 @@ moda_ioReader_Tell(MREADER* reader)
 static MREADER*
 moda_new_ioReader(uqm::io::File* fp)
 {
-	MIOREADER* reader = (MIOREADER*)HMalloc(sizeof(MIOREADER));
-	if (reader)
-	{
-		reader->core.Eof = &moda_ioReader_Eof;
-		reader->core.Read = &moda_ioReader_Read;
-		reader->core.Get = &moda_ioReader_Get;
-		reader->core.Seek = &moda_ioReader_Seek;
-		reader->core.Tell = &moda_ioReader_Tell;
-		reader->core.iobase = 0;
-		reader->core.prev_iobase = 0;
-		reader->file = fp;
-	}
-	return (MREADER*)reader;
+	auto* reader {new MIOREADER {}};
+	reader->core.Eof = &moda_ioReader_Eof;
+	reader->core.Read = &moda_ioReader_Read;
+	reader->core.Get = &moda_ioReader_Get;
+	reader->core.Seek = &moda_ioReader_Seek;
+	reader->core.Tell = &moda_ioReader_Tell;
+	reader->core.iobase = 0;
+	reader->core.prev_iobase = 0;
+	reader->file = fp;
+	return &reader->core;
 }
 
 static void
 moda_delete_ioReader(MREADER* reader)
 {
-	if (reader)
-	{
-		HFree(reader);
-	}
+	delete reinterpret_cast<MIOREADER*>(reader);
 }
 
 

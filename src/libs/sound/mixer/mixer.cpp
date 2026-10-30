@@ -28,7 +28,6 @@
 #include "libs/time/timelib.h"
 #include "core/thread/Mutex.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 
 static uint32_t mixer_initialized = 0;
 static uint32_t mixer_format;
@@ -269,7 +268,7 @@ void mixer_GenSources(uint32_t n, mixer_Object* psrcobj)
 	{
 		mixer_Source* src;
 
-		src = (mixer_Source*)HMalloc(sizeof(mixer_Source));
+		src = new mixer_Source {};
 		src->magic = mixer_srcMagic;
 		src->locked = false;
 		src->state = MIX_INITIAL;
@@ -354,7 +353,7 @@ void mixer_DeleteSources(uint32_t n, mixer_Object* psrcobj)
 			 * under ideal circumstances
 			 */
 			mixer_SourceUnqueueAll(src);
-			HFree(src);
+			delete src;
 			*psrcobj = 0;
 		}
 	}
@@ -1255,11 +1254,10 @@ void mixer_GenBuffers(uint32_t n, mixer_Object* pbufobj)
 	{
 		mixer_Buffer* buf;
 
-		buf = (mixer_Buffer*)HMalloc(sizeof(mixer_Buffer));
+		buf = new mixer_Buffer {};
 		buf->magic = mixer_bufMagic;
 		buf->locked = false;
 		buf->state = MIX_BUF_INITIAL;
-		buf->data = 0;
 		buf->size = 0;
 		buf->next = 0;
 		buf->orgdata = 0;
@@ -1335,11 +1333,7 @@ void mixer_DeleteBuffers(uint32_t n, mixer_Object* pbufobj)
 				continue;
 			}
 
-			if (buf->data)
-			{
-				HFree(buf->data);
-			}
-			HFree(buf);
+			delete buf;
 
 			*pbufobj = 0;
 		}
@@ -1462,11 +1456,7 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 	}
 	else
 	{
-		if (buf->data)
-		{
-			HFree(buf->data);
-		}
-		buf->data = 0;
+		buf->data.reset();
 		buf->size = 0;
 
 		/* Store original buffer values for OpenAL compatibility */
@@ -1498,7 +1488,7 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 			/* only copy/convert the data if not faking */
 			if (!(mixer_flags & MIX_FAKE_DATA))
 			{
-				buf->data = (uint8_t*)HMalloc(dstsize);
+				buf->data = uqstl::make_unique_for_overwrite<uint8_t[]>(dstsize);
 
 				if (MIX_FORMAT_BPC(format) == MIX_FORMAT_BPC(mixer_format) && MIX_FORMAT_CHANS(format) <= MIX_FORMAT_CHANS(mixer_format))
 				{
@@ -1506,12 +1496,12 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 					buf->locked = true;
 					buf_mutex.unlock();
 
-					memcpy(buf->data, data, size);
+					memcpy(buf->data.get(), data, size);
 					if (MIX_FORMAT_BPC(format) == 1)
 					{
 						/* convert buffer to S8 format internally */
 						uint8_t* dst;
-						for (dst = buf->data; dstsize; dstsize--, dst++)
+						for (dst = buf->data.get(); dstsize; dstsize--, dst++)
 						{
 							*dst ^= 0x80;
 						}
@@ -1536,7 +1526,7 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 					{
 						conv.dstfmt = mixer_format;
 					}
-					conv.dstdata = buf->data;
+					conv.dstdata = buf->data.get();
 					conv.dstsize = dstsize;
 
 					buf->locked = true;
@@ -1705,7 +1695,7 @@ mixer_PutSampleInt(void* dst, uint32_t bpc, int32_t samp)
 static float
 mixer_ResampleNone(mixer_Source* src, bool left)
 {
-	uint8_t* d0 = src->nextqueued->data + src->pos;
+	uint8_t* d0 = src->nextqueued->data.get() + src->pos;
 	src->pos += mixer_chansize;
 	(void)left; // satisfying compiler - unused arg
 	return mixer_GetSampleInt(d0, mixer_chansize);
@@ -1715,7 +1705,7 @@ mixer_ResampleNone(mixer_Source* src, bool left)
 static float
 mixer_ResampleNearest(mixer_Source* src, bool left)
 {
-	uint8_t* d0 = src->nextqueued->data + src->pos;
+	uint8_t* d0 = src->nextqueued->data.get() + src->pos;
 	d0 += mixer_SourceAdvance(src, left);
 	return mixer_GetSampleInt(d0, mixer_chansize);
 }
@@ -1730,14 +1720,14 @@ mixer_UpsampleLinear(mixer_Source* src, bool left)
 	float s0, s1, t;
 
 	t = src->count / 65536.0f;
-	d0 = curr->data + src->pos;
+	d0 = curr->data.get() + src->pos;
 	d0 += mixer_SourceAdvance(src, left);
 
-	if (d0 + curr->sampsize >= curr->data + curr->size)
+	if (d0 + curr->sampsize >= curr->data.get() + curr->size)
 	{
 		if (next && next->data && next->size >= curr->sampsize)
 		{
-			d1 = next->data;
+			d1 = next->data.get();
 			if (!left)
 			{
 				d1 += mixer_chansize;
@@ -1770,14 +1760,14 @@ mixer_UpsampleCubic(mixer_Source* src, bool left)
 
 	t = src->count / 65536.0f;
 	t2 = t * t;
-	d1 = curr->data + src->pos;
+	d1 = curr->data.get() + src->pos;
 	d1 += mixer_SourceAdvance(src, left);
 
-	if (d1 - curr->sampsize < curr->data)
+	if (d1 - curr->sampsize < curr->data.get())
 	{
 		if (prev && prev->data && prev->size >= curr->sampsize)
 		{
-			d0 = prev->data + prev->size - curr->sampsize;
+			d0 = prev->data.get() + prev->size - curr->sampsize;
 			if (!left)
 			{
 				d0 += mixer_chansize;
@@ -1793,11 +1783,11 @@ mixer_UpsampleCubic(mixer_Source* src, bool left)
 		d0 = d1 - curr->sampsize;
 	}
 
-	if (d1 + curr->sampsize >= curr->data + curr->size)
+	if (d1 + curr->sampsize >= curr->data.get() + curr->size)
 	{
 		if (next && next->data && next->size >= curr->sampsize * 2)
 		{
-			d2 = next->data;
+			d2 = next->data.get();
 			if (!left)
 			{
 				d2 += mixer_chansize;
@@ -1812,11 +1802,11 @@ mixer_UpsampleCubic(mixer_Source* src, bool left)
 	else
 	{
 		d2 = d1 + curr->sampsize;
-		if (d2 + curr->sampsize >= curr->data + curr->size)
+		if (d2 + curr->sampsize >= curr->data.get() + curr->size)
 		{
 			if (next && next->data && next->size >= curr->sampsize)
 			{
-				d3 = next->data;
+				d3 = next->data.get();
 				if (!left)
 				{
 					d3 += mixer_chansize;

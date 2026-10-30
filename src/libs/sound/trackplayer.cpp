@@ -19,7 +19,6 @@
 #include "libs/sound/trackplayer.h"
 #include "trackint.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include "options.h"
 #include <ctype.h>
 #include <stdlib.h>
@@ -350,7 +349,7 @@ GetTimeStamps(char* TimeStamps, int32_t* time_stamps)
 #define TEXT_SPEED 80
 // Returns number of parsed pages
 static int
-SplitSubPages(const char* text, char* pages[], int32_t timestamp[], int size)
+SplitSubPages(const char* text, uqstl::string pages[], int32_t timestamp[], int size)
 {
 	int lead_ellips = 0;
 	uint16_t page;
@@ -365,19 +364,15 @@ SplitSubPages(const char* text, char* pages[], int32_t timestamp[], int size)
 		// XXX: this will only work when ASCII punctuation and spaces
 		//   are used exclusively
 		aft_ellips = 3 * (text[pos] != '\0' && pos > 0 && !ispunct(text[pos - 1]) && !isspace(text[pos - 1]));
-		const uint32_t page_len = lead_ellips + pos + aft_ellips;
-		pages[page] = (char*)HMalloc(sizeof(char) * (page_len + 1));
-		uqstl::span<char> pageBuf {pages[page], page_len + 1};
+		pages[page].clear();
 		if (lead_ellips)
 		{
-			const uint32_t leadElipsLen = uqm::strncpy_safe(pageBuf, "...");
-			pageBuf = pageBuf.subspan(leadElipsLen);
+			pages[page] += "...";
 		}
-		const uint32_t pageTextCopied = uqm::strncpy_safe(pageBuf, {text, static_cast<uint32_t>(pos)});
-		pageBuf = pageBuf.subspan(pageTextCopied);
+		pages[page].append(text, pos);
 		if (aft_ellips)
 		{
-			uqm::strncpy_safe(pageBuf, "...");
+			pages[page] += "...";
 		}
 
 		if (uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC && !usingSpeech
@@ -461,11 +456,7 @@ void SpliceMultiTrack(char* TrackNames[], char* TrackText)
 		return;
 	}
 
-	uint32_t slen1 = strlen(last_sub->text);
-	uint32_t slen2 = strlen(TrackText);
-	const uint32_t newLen {slen1 + slen2 + 1};
-	last_sub->text = (char*)HRealloc(last_sub->text, newLen);
-	uqm::strncpy_safe({last_sub->text + slen1, newLen - slen1}, {TrackText, slen2});
+	*last_sub->text += TrackText;
 
 	no_page_break = 1;
 }
@@ -476,7 +467,7 @@ void SpliceTrack(char* TrackName, const char* TrackText, char* TimeStamp, Callba
 	static char last_track_name[128] = "";
 	static unsigned long dec_offset = 0;
 #define MAX_PAGES 50
-	char* pages[MAX_PAGES];
+	uqstl::string pages[MAX_PAGES];
 	int32_t time_stamps[MAX_PAGES];
 	int num_pages;
 	int page;
@@ -514,12 +505,7 @@ void SpliceTrack(char* TrackName, const char* TrackText, char* TimeStamp, Callba
 		time_stamps[num_pages - 1] = -time_stamps[num_pages - 1];
 
 		// Add the first piece to the last subtitle page
-		const uint32_t slen1 = strlen(last_sub->text);
-		const uint32_t slen2 = strlen(pages[0]);
-		const uint32_t newLen {slen1 + slen2 + 1};
-		last_sub->text = (char*)HRealloc(last_sub->text, newLen);
-		uqm::strncpy_safe({last_sub->text + slen1, static_cast<uint32_t>(newLen - slen1)}, {pages[0], static_cast<uint32_t>(slen2)});
-		HFree(pages[0]);
+		*last_sub->text += pages[0];
 
 		// Add the rest of the pages
 		for (page = 1; page < num_pages; ++page)
@@ -527,7 +513,7 @@ void SpliceTrack(char* TrackName, const char* TrackText, char* TimeStamp, Callba
 			TFB_SoundChunk* next_sub = find_next_page(last_sub);
 			if (next_sub)
 			{ // nodes prepared by previous call, just fill in the subs
-				next_sub->text = pages[page];
+				next_sub->text = uqstl::move(pages[page]);
 				last_sub = next_sub;
 			}
 			else
@@ -544,7 +530,7 @@ void SpliceTrack(char* TrackName, const char* TrackText, char* TimeStamp, Callba
 				chunks_tail = chunks_tail->next;
 				chunks_tail->tag_me = 1;
 				chunks_tail->track_num = track_count - 1;
-				chunks_tail->text = pages[page];
+				chunks_tail->text = uqstl::move(pages[page]);
 				chunks_tail->callback = cb;
 				// TODO: We may have to tag only one page with a callback
 				//cb = nullptr;
@@ -571,12 +557,7 @@ void SpliceTrack(char* TrackName, const char* TrackText, char* TimeStamp, Callba
 
 		if (no_page_break && track_count)
 		{
-			const uint32_t slen1 = strlen(last_sub->text);
-			const uint32_t slen2 = strlen(pages[0]);
-			const uint32_t newLen {slen1 + slen2 + 1};
-			last_sub->text = (char*)HRealloc(last_sub->text, newLen);
-			uqm::strncpy_safe({last_sub->text + slen1, newLen - slen1}, {pages[0], slen2});
-			HFree(pages[0]);
+			*last_sub->text += pages[0];
 		}
 		else
 		{
@@ -640,7 +621,7 @@ void SpliceTrack(char* TrackName, const char* TrackText, char* TimeStamp, Callba
 				chunks_tail->tag_me = 1;
 				if (page < num_pages)
 				{
-					chunks_tail->text = pages[page];
+					chunks_tail->text = uqstl::move(pages[page]);
 					last_sub = chunks_tail;
 				}
 				chunks_tail->callback = cb;
@@ -850,8 +831,7 @@ int GetTrackPosition(int in_units)
 TFB_SoundChunk*
 create_SoundChunk(TFB_SoundDecoder* decoder, float start_time)
 {
-	TFB_SoundChunk* chunk;
-	chunk = (TFB_SoundChunk*)HCalloc(sizeof(*chunk));
+	auto* chunk {new TFB_SoundChunk {}};
 	chunk->decoder = decoder;
 	chunk->start_time = start_time;
 	return chunk;
@@ -867,8 +847,7 @@ void destroy_SoundChunk_list(TFB_SoundChunk* chunk)
 		{
 			SoundDecoder_Free(chunk->decoder);
 		}
-		HFree(chunk->text);
-		HFree(chunk);
+		delete chunk;
 	}
 }
 
@@ -937,7 +916,7 @@ GetTrackSubtitleText(SUBTITLE_REF SubRef)
 		return nullptr;
 	}
 
-	return SubRef->text;
+	return SubRef->text ? SubRef->text->c_str() : nullptr;
 }
 
 // External access to currently active subtitle text
@@ -955,7 +934,7 @@ GetTrackSubtitle(void)
 	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	if (cur_sub_chunk)
 	{
-		cur_sub = cur_sub_chunk->text;
+		cur_sub = GetTrackSubtitleText(cur_sub_chunk);
 	}
 	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 
@@ -980,7 +959,7 @@ GetSubtitleNumber(const char* sub)
 
 	now = chunks_head;
 
-	while (now->text != sub && now->next != nullptr)
+	while (GetTrackSubtitleText(now) != sub && now->next != nullptr)
 	{
 		now = now->next;
 		i++;

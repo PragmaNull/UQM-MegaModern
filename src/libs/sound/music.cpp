@@ -20,7 +20,6 @@
 #include "sndintrn.h"
 #include "libs/reslib.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include "uqm/globdata.h"
 #include "uqm/setup.h"
 #include "libs/mathlib.h"
@@ -253,15 +252,8 @@ void* _GetMusicData(const ResourceFile& resource)
 		return nullptr;
 	}
 
-	h = (MUSIC_REF)AllocMusicData(sizeof(void*));
-	if (!h)
-	{
-		SoundDecoder_Free(decoder);
-		return nullptr;
-	}
-
 	sample = TFB_CreateSoundSample(decoder, 64, nullptr);
-	*h = sample;
+	h = new TFB_SoundSample* {sample};
 
 	uqm::log::info("    decoder: {}, rate {} format {:x}",
 				   SoundDecoder_GetName(sample->decoder),
@@ -296,7 +288,7 @@ bool _ReleaseMusicData(void* data)
 		SoundDecoder_Free(decoder);
 	}
 	TFB_DestroySoundSample(sample);
-	FreeMusicData(data);
+	delete pmus;
 
 	return (true);
 }

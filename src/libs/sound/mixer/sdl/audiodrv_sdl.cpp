@@ -20,7 +20,6 @@
 #include "audiodrv_sdl.h"
 #include "../../sndintrn.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include <stdlib.h>
 
 
@@ -288,12 +287,7 @@ void mixSDL_Uninit(void)
 		{
 			StopStream(i);
 		}
-		if (soundSource[i].sbuffer)
-		{
-			void* sbuffer = soundSource[i].sbuffer;
-			soundSource[i].sbuffer = nullptr;
-			HFree(sbuffer);
-		}
+		soundSource[i].sbuffer = {};
 
 		mixSDL_DeleteSources(1, &soundSource[i].handle);
 	}

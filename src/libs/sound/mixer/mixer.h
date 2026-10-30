@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include <cstdint>
+#include "core/stl/memory.h"
 #include "endian_uqm.h"
 
 /**
@@ -166,7 +167,7 @@ typedef struct _mixer_Buffer
 	uint32_t magic;
 	bool locked;
 	mixer_BufferState state;
-	uint8_t* data;
+	uqstl::unique_ptr<uint8_t[]> data;
 	uint32_t size;
 	uint32_t sampsize;
 	uint32_t high;

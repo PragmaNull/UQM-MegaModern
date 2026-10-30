@@ -20,7 +20,6 @@
 #include "sndintrn.h"
 #include "core/misc/bittricks.h"
 #include "libs/inplib.h"
-#include "libs/memlib.h"
 
 
 int musicVolume = NORMAL_VOLUME;
@@ -42,7 +41,6 @@ void StopSound(void)
 
 void CleanSource(int iSource)
 {
-#define MAX_STACK_BUFFERS 64
 	audio_IntVal processed;
 
 	soundSource[iSource].positional_object = nullptr;
@@ -50,26 +48,9 @@ void CleanSource(int iSource)
 					 audio_BUFFERS_PROCESSED, &processed);
 	if (processed != 0)
 	{
-		audio_Object stack_bufs[MAX_STACK_BUFFERS];
-		audio_Object* bufs;
-
-		if (processed > MAX_STACK_BUFFERS)
-		{
-			bufs = (audio_Object*)HMalloc(
-				sizeof(audio_Object) * processed);
-		}
-		else
-		{
-			bufs = stack_bufs;
-		}
-
+		uqstl::vector<audio_Object> bufs(processed);
 		audio_SourceUnqueueBuffers(soundSource[iSource].handle,
-								   processed, bufs);
-
-		if (processed > MAX_STACK_BUFFERS)
-		{
-			HFree(bufs);
-		}
+								   processed, bufs.data());
 	}
 	// set the source state to 'initial'
 	audio_SourceRewind(soundSource[iSource].handle);

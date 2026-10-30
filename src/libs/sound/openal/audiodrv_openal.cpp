@@ -23,7 +23,6 @@
 #include "audiodrv_openal.h"
 #include "../sndintrn.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include <stdlib.h>
 
 
@@ -248,12 +247,7 @@ void openAL_Uninit(void)
 		{
 			StopStream(i);
 		}
-		if (soundSource[i].sbuffer)
-		{
-			void* sbuffer = soundSource[i].sbuffer;
-			soundSource[i].sbuffer = nullptr;
-			HFree(sbuffer);
-		}
+		soundSource[i].sbuffer = {};
 	}
 
 	alcMakeContextCurrent(nullptr);

@@ -27,7 +27,6 @@
 // for GetStringAddress()
 #include "libs/strings/strintrn.h"
 // for AllocStringTable(), FreeStringTable()
-#include "libs/memlib.h"
 
 
 static void CheckFinishedChannels(void);

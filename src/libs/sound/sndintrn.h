@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <cstdint>
 #include "libs/reslib.h"
-#include "libs/memlib.h"
+#include "core/stl/vector.h"
 #include "core/thread/Mutex.h"
 
 #define PAD_SCOPE_BYTES 256
@@ -33,9 +33,6 @@ extern bool _ReleaseMusicData(void* handle);
 extern void* _GetSoundBankData(const ResourceFile& resource);
 extern bool _ReleaseSoundBankData(void* handle);
 
-#define AllocMusicData HMalloc
-#define FreeMusicData HFree
-
 extern char* CheckMusicResName(char* filename);
 
 // audio data
@@ -43,9 +40,9 @@ struct tfb_soundsample
 {
 	TFB_SoundDecoder* decoder; // decoder to read from
 	float length;			   // total length of decoder chain in seconds
-	audio_Object* buffer;
+	uqstl::vector<audio_Object> buffer;
 	uint32_t num_buffers;
-	TFB_SoundTag* buffer_tag;
+	uqstl::vector<TFB_SoundTag> buffer_tag;
 	int32_t offset;				  // initial offset
 	void* data;					  // user-defined data
 	TFB_SoundCallbacks callbacks; // user-defined callbacks
@@ -65,7 +62,7 @@ typedef struct tfb_soundsource
 	audio_Object last_q_buf UQM_GUARDED_BY(stream_mutex); // for callbacks processing
 
 	// Cyclic waveform buffer for oscilloscope
-	void* sbuffer UQM_GUARDED_BY(stream_mutex);
+	uqstl::vector<uint8_t> sbuffer UQM_GUARDED_BY(stream_mutex);
 	uint32_t sbuf_size UQM_GUARDED_BY(stream_mutex);
 	uint32_t sbuf_tail UQM_GUARDED_BY(stream_mutex);
 	uint32_t sbuf_head UQM_GUARDED_BY(stream_mutex);

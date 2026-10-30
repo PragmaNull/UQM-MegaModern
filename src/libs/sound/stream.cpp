@@ -24,7 +24,6 @@
 #include "core/thread/Mutex.h"
 #include "core/thread/Thread.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 
 
 static uqstl::jthread s_decoderThread {};
@@ -57,11 +56,7 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 		return; // callback failed
 	}
 
-	if (sample->buffer_tag)
-	{
-		memset(sample->buffer_tag, 0,
-			   sample->num_buffers * sizeof(sample->buffer_tag[0]));
-	}
+	uqstl::ranges::fill(sample->buffer_tag, TFB_SoundTag {});
 
 	decoder = sample->decoder;
 	offset = sample->offset;
@@ -87,7 +82,7 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 	{ // Prealloc the scope buffer in advance so that we do not
 		// realloc it a zillion times
 		soundSource[source].sbuf_size = sample->num_buffers * decoder->buffer_size + PAD_SCOPE_BYTES;
-		soundSource[source].sbuffer = HCalloc(soundSource[source].sbuf_size);
+		soundSource[source].sbuffer.assign(soundSource[source].sbuf_size, 0);
 	}
 
 	for (i = 0; i < sample->num_buffers; ++i)
@@ -150,12 +145,7 @@ void StopStream(uint32_t source)
 	soundSource[source].stream_should_be_playing = false;
 	soundSource[source].sample = nullptr;
 
-	if (soundSource[source].sbuffer)
-	{
-		void* sbuffer = soundSource[source].sbuffer;
-		soundSource[source].sbuffer = nullptr;
-		HFree(sbuffer);
-	}
+	soundSource[source].sbuffer = {};
 	soundSource[source].sbuf_size = 0;
 	soundSource[source].sbuf_head = 0;
 	soundSource[source].sbuf_tail = 0;
@@ -196,7 +186,7 @@ void SeekStream(uint32_t source, uint32_t pos)
 		return;
 	}
 	looping = sample->decoder->looping;
-	scope = soundSource[source].sbuffer != nullptr;
+	scope = !soundSource[source].sbuffer.empty();
 
 	StopSource(source);
 	SoundDecoder_Seek(sample->decoder, pos);
@@ -280,13 +270,11 @@ TFB_SoundSample*
 TFB_CreateSoundSample(TFB_SoundDecoder* decoder, uint32_t num_buffers,
 					  const TFB_SoundCallbacks* pcbs /* can be nullptr */)
 {
-	TFB_SoundSample* sample;
-
-	sample = (TFB_SoundSample*)HCalloc(sizeof(*sample));
+	auto* sample {new TFB_SoundSample {}};
 	sample->decoder = decoder;
 	sample->num_buffers = num_buffers;
-	sample->buffer = (audio_Object*)HCalloc(sizeof(audio_Object) * num_buffers);
-	audio_GenBuffers(num_buffers, sample->buffer);
+	sample->buffer.assign(num_buffers, 0);
+	audio_GenBuffers(num_buffers, sample->buffer.data());
 	if (pcbs)
 	{
 		sample->callbacks = *pcbs;
@@ -298,13 +286,8 @@ TFB_CreateSoundSample(TFB_SoundDecoder* decoder, uint32_t num_buffers,
 // Deletes all TFB_SoundSample data structures, except decoder
 void TFB_DestroySoundSample(TFB_SoundSample* sample)
 {
-	if (sample->buffer)
-	{
-		audio_DeleteBuffers(sample->num_buffers, sample->buffer);
-		HFree(sample->buffer);
-	}
-	HFree(sample->buffer_tag);
-	HFree(sample);
+	audio_DeleteBuffers(sample->num_buffers, sample->buffer.data());
+	delete sample;
 }
 
 void TFB_SetSoundSampleData(TFB_SoundSample* sample, void* data)
@@ -341,7 +324,7 @@ TFB_FindTaggedBuffer(TFB_SoundSample* sample, audio_Object buffer)
 {
 	uint32_t buf_num;
 
-	if (!sample->buffer_tag)
+	if (sample->buffer_tag.empty())
 	{
 		return nullptr; // do not have any tags
 	}
@@ -360,9 +343,9 @@ bool TFB_TagBuffer(TFB_SoundSample* sample, audio_Object buffer, intptr_t data)
 {
 	uint32_t buf_num;
 
-	if (!sample->buffer_tag)
+	if (sample->buffer_tag.empty())
 	{
-		sample->buffer_tag = (TFB_SoundTag*)HCalloc(sizeof(TFB_SoundTag) * sample->num_buffers);
+		sample->buffer_tag.assign(sample->num_buffers, TFB_SoundTag {});
 	}
 
 	for (buf_num = 0;
@@ -404,7 +387,7 @@ remove_scope_data(TFB_SoundSource* source, audio_Object buffer) UQM_REQUIRES(sou
 static void
 add_scope_data(TFB_SoundSource* source, uint32_t bytes)
 {
-	uint8_t* sbuffer = (uint8_t*)source->sbuffer;
+	uint8_t* sbuffer = source->sbuffer.data();
 	uint8_t* dec_buf = (uint8_t*)source->sample->decoder->buffer;
 	uint32_t tail_bytes;
 	uint32_t wrap_bytes;
@@ -513,7 +496,7 @@ process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_mutex)
 			}
 		}
 
-		if (source->sbuffer)
+		if (!source->sbuffer.empty())
 		{
 			remove_scope_data(source, buffer);
 		}
@@ -601,7 +584,7 @@ process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_mutex)
 			sample->callbacks.OnQueueBuffer(sample, buffer);
 		}
 
-		if (source->sbuffer)
+		if (!source->sbuffer.empty())
 		{
 			add_scope_data(source, decoded_bytes);
 		}
@@ -775,7 +758,7 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	}
 
 	if (!source->stream_should_be_playing || !source->sample
-		|| !source->sample->decoder || !source->sbuffer
+		|| !source->sample->decoder || source->sbuffer.empty()
 		|| source->sbuf_size == 0)
 	{ // We don't have data to return, oh well.
 		source->stream_mutex.unlock();
@@ -818,7 +801,7 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	}
 	step *= full_sample;
 
-	sbuffer = (uint8_t*)source->sbuffer;
+	sbuffer = source->sbuffer.data();
 	pos = source->sbuf_head + delta;
 
 	// We are not basing the scaling factor on signal energy, because we
