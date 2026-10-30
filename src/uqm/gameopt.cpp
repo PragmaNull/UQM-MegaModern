@@ -581,9 +581,8 @@ NameSaveGame(uint16_t gameIndex, char* buf)
 {
 	TEXTENTRY_STATE tes;
 	uint16_t CursPos = (uint16_t)strlen(buf);
-	uint16_t* gIndex = (uint16_t*)HMalloc(sizeof(uint16_t));
+	uint16_t gIndex {gameIndex};
 	GFXRECT r;
-	*gIndex = gameIndex;
 
 	DrawSaveNameString(buf, CursPos, DDSHS_EDIT, gameIndex);
 
@@ -593,7 +592,7 @@ NameSaveGame(uint16_t gameIndex, char* buf)
 	tes.Initialized = false;
 	tes.BaseStr = buf;
 	tes.CursorPos = CursPos;
-	tes.CbParam = gIndex;
+	tes.CbParam = &gIndex;
 	tes.ChangeCallback = OnSaveNameChange;
 	tes.FrameCallback = 0;
 	r.extent.width = RES_SCALE(204)
@@ -618,8 +617,6 @@ NameSaveGame(uint16_t gameIndex, char* buf)
 	}
 
 	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
-
-	HFree(gIndex);
 
 	SetFlashRect(nullptr, false);
 

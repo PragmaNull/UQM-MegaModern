@@ -60,21 +60,18 @@ struct InputContext
 	INPUT_CONTEXT_COMMON
 };
 
-struct ComputerInputContext
+struct ComputerInputContext : InputContext
 {
-	INPUT_CONTEXT_COMMON
 	// TODO: Put RNG Context used for the AI here.
 };
 
-struct HumanInputContext
+struct HumanInputContext : InputContext
 {
-	INPUT_CONTEXT_COMMON
 };
 
 #ifdef NETPLAY
-struct NetworkInputContext
+struct NetworkInputContext : InputContext
 {
-	INPUT_CONTEXT_COMMON
 	// TODO: put NetworkConnection for this player here.
 };
 #endif /* NETPLAY */
@@ -92,7 +89,6 @@ BATTLE_INPUT_STATE frameInputHuman(HumanInputContext* context,
 								   STARSHIP* StarShipPtr);
 void InputContext_init(InputContext* context, BattleInputHandlers* handlers,
 					   uint16_t playerNr);
-void InputContext_delete(InputContext* context);
 // Do not call directly, only from the FreeInputContextFunction.
 // Call InputContext->handlers->freeContext() to release an
 // InputContext.

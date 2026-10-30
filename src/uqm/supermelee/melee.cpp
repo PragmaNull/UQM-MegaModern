@@ -2819,10 +2819,9 @@ void Melee(void)
 {
 	InitGlobData();
 	{
-		MELEE_STATE MenuState;
+		MELEE_STATE MenuState {};
 
 		pMeleeState = &MenuState;
-		memset(pMeleeState, 0, sizeof(*pMeleeState));
 
 		MenuState.InputFunc = DoMelee;
 		MenuState.Initialized = false;

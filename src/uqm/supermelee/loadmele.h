@@ -25,6 +25,7 @@ struct melee_load_state;
 
 #include "melee.h"
 #include "meleesetup.h"
+#include "core/stl/vector.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -32,11 +33,11 @@ extern "C" {
 
 struct melee_load_state
 {
-	MeleeTeam** preBuiltList;
+	uqstl::vector<MeleeTeam*> preBuiltList;
 	uint16_t preBuiltCount;
 
 	DIRENTRY dirEntries;
-	uint16_t* entryIndices;
+	uqstl::vector<uint16_t> entryIndices;
 	uint16_t numIndices;
 
 	MeleeTeam* view[LOAD_TEAM_VIEW_SIZE];

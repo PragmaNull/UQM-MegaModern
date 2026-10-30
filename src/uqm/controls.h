@@ -23,6 +23,7 @@
 
 #include "core/misc/bittricks.h"
 #include "libs/strlib.h"
+#include "core/stl/vector.h"
 #include "libs/time/timelib.h"
 
 #if 0 //defined(__cplusplus)
@@ -198,7 +199,12 @@ void DoInput(void* pInputState, bool resetInput);
 extern uqstl::atomic<bool> GamePaused;
 extern uqstl::atomic<bool> ExitRequested;
 
-typedef struct joy_char joy_char_t;
+// A UTF-8 character in the joystick alphabet.
+typedef struct joy_char
+{
+	unsigned char len;
+	char enc[7];
+} joy_char_t;
 
 typedef struct textentry_state
 {
@@ -207,16 +213,16 @@ typedef struct textentry_state
 
 	// these are semi-private read-only
 	bool Initialized;
-	uint32_t NextTime;	   // use this for input frame timing
-	bool Success;		   // edit confirmed or canceled
-	char* CacheStr;		   // cached copy to revert immediate changes
-	STRING JoyAlphaString; // joystick alphabet definition
-	bool JoystickMode;	   // true when doing joystick input
-	bool UpperRegister;	   // true when entering Caps
-	joy_char_t* JoyAlpha;  // joystick alphabet
+	uint32_t NextTime;					// use this for input frame timing
+	bool Success;						// edit confirmed or canceled
+	uqstl::vector<char> CacheStr;		// cached copy to revert immediate changes
+	STRING JoyAlphaString;				// joystick alphabet definition
+	bool JoystickMode;					// true when doing joystick input
+	bool UpperRegister;					// true when entering Caps
+	uqstl::vector<joy_char_t> JoyAlpha; // joystick alphabet
 	int JoyAlphaLength;
-	joy_char_t* JoyUpper; // joystick upper register
-	joy_char_t* JoyLower; // joystick lower register
+	uqstl::vector<joy_char_t> JoyUpper; // joystick upper register
+	uqstl::vector<joy_char_t> JoyLower; // joystick lower register
 	int JoyRegLength;
 	char* InsPt; // set to current pos of insertion point
 	// these are public and must be set before calling DoTextEntry

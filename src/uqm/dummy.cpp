@@ -29,7 +29,6 @@
 
 #include "core/misc/bittricks.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -147,35 +146,16 @@ CodeResToInitFunc(ShipCodeRes res)
 static void
 GetCodeResData(const char* ship_id, RESOURCE_DATA* resdata)
 {
-	uint8_t which_res;
-	void* hData;
-
-	which_res = atoi(ship_id);
-	hData = HMalloc(sizeof(CODERES_STRUCT));
-	if (hData)
-	{
-		RaceDescInitFunc initFunc = CodeResToInitFunc((ShipCodeRes)which_res);
-		RACE_DESC* RDPtr = (initFunc == nullptr) ? nullptr : (*initFunc)();
-		if (RDPtr == 0)
-		{
-			HFree(hData);
-			hData = 0;
-		}
-		else
-		{
-			CODERES_STRUCT* cs;
-
-			cs = (CODERES_STRUCT*)hData;
-			cs->data = *RDPtr; // Structure assignment.
-		}
-	}
-	resdata->ptr = hData;
+	const uint8_t which_res = atoi(ship_id);
+	RaceDescInitFunc initFunc = CodeResToInitFunc((ShipCodeRes)which_res);
+	RACE_DESC* RDPtr = (initFunc == nullptr) ? nullptr : (*initFunc)();
+	resdata->ptr = RDPtr ? new CODERES_STRUCT {*RDPtr} : nullptr;
 }
 
 static bool
 _ReleaseCodeResData(void* data)
 {
-	HFree(data);
+	delete static_cast<CODERES_STRUCT*>(data);
 	return true;
 }
 
@@ -202,7 +182,7 @@ void* LoadCodeResInstance(RESOURCE res)
 
 bool DestroyCodeRes(void* hCode)
 {
-	HFree(hCode);
+	delete static_cast<CODERES_STRUCT*>(hCode);
 	return true;
 }
 

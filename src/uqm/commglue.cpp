@@ -302,6 +302,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 			//char *tracks[NUM_ROBO_TRACKS + 1] =
 			//{ [0 ... NUM_ROBO_TRACKS] = nullptr };
 			char* tracks[NUM_ROBO_TRACKS + 1] = {nullptr};
+			char subClips[NUM_ROBO_TRACKS][MAX_CLIPNAME] {};
 			for (i = 0; i < NUM_ROBO_TRACKS && RoboTrack[i]; i++)
 			{
 				if (RoboTrack[i] == (uint16_t)~0)
@@ -311,7 +312,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 #ifdef DEBUG_STARSEED
 					fmt::print(stderr, "Allocating for track {}.\n", i);
 #endif
-					tracks[i] = (char*)HCalloc(sizeof(char) * MAX_CLIPNAME);
+					tracks[i] = subClips[i];
 					GetSubClip({tracks[i], MAX_CLIPNAME}, pClip, clip_number);
 #ifdef DEBUG_STARSEED
 					fmt::print(stderr, "RoboTrack[{}] = <<{}>>.\n", i, tracks[i]);
@@ -339,13 +340,6 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 			SpliceMultiTrack(tracks, str_buf);
 			for (i = 0; i < NUM_ROBO_TRACKS && RoboTrack[i]; i++)
 			{
-				if (RoboTrack[i] == (uint16_t)~0)
-				{
-#ifdef DEBUG_STARSEED
-					fmt::print(stderr, "Freeing track {}.\n", i);
-#endif
-					HFree(tracks[i]);
-				}
 				tracks[i] = nullptr;
 				RoboTrack[i] = 0;
 			}

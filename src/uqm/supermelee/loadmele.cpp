@@ -33,7 +33,6 @@
 #include "options.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
-#include "libs/memlib.h"
 
 
 #define LOAD_TEAM_NAME_TEXT_COLOR \
@@ -494,12 +493,8 @@ void LoadTeamList(MELEE_STATE* pMS)
 	pMS->load.dirEntries = CaptureDirEntryTable(
 		LoadDirEntryTable(uqm::meleeDir(), "", uqm::io::Matcher {uqm::io::Matcher::Kind::Suffix, ".mle"}));
 
-	if (pMS->load.entryIndices != nullptr)
-	{
-		HFree(pMS->load.entryIndices);
-	}
 	pMS->load.numIndices = GetDirEntryTableCount(pMS->load.dirEntries);
-	pMS->load.entryIndices = (uint16_t*)HMalloc(pMS->load.numIndices * sizeof pMS->load.entryIndices[0]);
+	pMS->load.entryIndices.assign(pMS->load.numIndices, 0);
 	for (i = 0; i < pMS->load.numIndices; i++)
 	{
 		pMS->load.entryIndices[i] = i;
@@ -561,8 +556,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	MeleeTeam** list;
 
 #define PREBUILT_COUNT 15
-	pMS->load.preBuiltList =
-		(MeleeTeam**)HMalloc(PREBUILT_COUNT * sizeof(MeleeTeam*));
+	pMS->load.preBuiltList.assign(PREBUILT_COUNT, nullptr);
 	pMS->load.preBuiltCount = PREBUILT_COUNT;
 #undef PREBUILT_COUNT
 
@@ -575,7 +569,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 		}
 	}
 
-	list = pMS->load.preBuiltList;
+	list = pMS->load.preBuiltList.data();
 
 	{
 		/* "Balanced Team 1" */
@@ -822,7 +816,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 		list++;
 	}
 
-	assert(list == pMS->load.preBuiltList + pMS->load.preBuiltCount);
+	assert(list == pMS->load.preBuiltList.data() + pMS->load.preBuiltCount);
 }
 
 static void
@@ -833,7 +827,7 @@ UninitPreBuilt(MELEE_STATE* pMS)
 	{
 		MeleeTeam_delete(pMS->load.preBuiltList[fleetI]);
 	}
-	HFree(pMS->load.preBuiltList);
+	pMS->load.preBuiltList = {};
 	pMS->load.preBuiltCount = 0;
 }
 
@@ -863,7 +857,7 @@ UninitLoadView(MELEE_STATE* pMS)
 
 void InitMeleeLoadState(MELEE_STATE* pMS)
 {
-	pMS->load.entryIndices = nullptr;
+	pMS->load.entryIndices = {};
 	InitPreBuilt(pMS);
 	InitLoadView(pMS);
 }
@@ -872,8 +866,5 @@ void UninitMeleeLoadState(MELEE_STATE* pMS)
 {
 	UninitLoadView(pMS);
 	UninitPreBuilt(pMS);
-	if (pMS->load.entryIndices != nullptr)
-	{
-		HFree(pMS->load.entryIndices);
-	}
+	pMS->load.entryIndices = {};
 }

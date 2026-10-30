@@ -47,7 +47,7 @@ void MeleeTeam_uninit(MeleeTeam* team)
 MeleeTeam*
 MeleeTeam_new(void)
 {
-	MeleeTeam* result = (MeleeTeam*)HMalloc(sizeof(MeleeTeam));
+	auto* result {new MeleeTeam {}};
 	MeleeTeam_init(result);
 	return result;
 }
@@ -55,7 +55,7 @@ MeleeTeam_new(void)
 void MeleeTeam_delete(MeleeTeam* team)
 {
 	MeleeTeam_uninit(team);
-	HFree(team);
+	delete team;
 }
 
 int MeleeTeam_serialize(const MeleeTeam* team, uqm::io::File& stream)
@@ -226,11 +226,7 @@ MeleeSetup*
 MeleeSetup_new(void)
 {
 	size_t teamI;
-	MeleeSetup* result = (MeleeSetup*)HMalloc(sizeof(MeleeSetup));
-	if (result == nullptr)
-	{
-		return nullptr;
-	}
+	auto* result {new MeleeSetup {}};
 
 	for (teamI = 0; teamI < NUM_SIDES; teamI++)
 	{
@@ -245,7 +241,7 @@ MeleeSetup_new(void)
 
 void MeleeSetup_delete(MeleeSetup* setup)
 {
-	HFree(setup);
+	delete setup;
 }
 
 #ifdef NETPLAY

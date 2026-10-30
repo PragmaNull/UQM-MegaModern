@@ -37,7 +37,6 @@
 #include "flash.h"
 
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include "libs/time/timelib.h"
 
 #include "colors.h"
@@ -72,7 +71,7 @@ static GFXCONTEXT workGfxContext;
 static FlashContext*
 Flash_create(GFXCONTEXT gfxContext)
 {
-	FlashContext* context = (FlashContext*)HMalloc(sizeof(FlashContext));
+	auto* context {new FlashContext {}};
 
 	context->gfxContext = gfxContext;
 
@@ -96,7 +95,6 @@ Flash_create(GFXCONTEXT gfxContext)
 	context->started = false;
 	context->paused = false;
 
-	context->cache = 0;
 	context->cacheSize = Flash_DEFAULT_CACHE_SIZE;
 
 	context->lastFrameIndex = (uint16_t)-1;
@@ -230,11 +228,10 @@ void Flash_terminate(FlashContext* context)
 		}
 
 		Flash_clearCache(context);
-		HFree(context->cache);
 		DestroyDrawable(ReleaseDrawable(context->original));
 	}
 
-	HFree(context);
+	delete context;
 }
 
 void Flash_pause(FlashContext* context)
@@ -541,24 +538,17 @@ void Flash_postUpdate(FlashContext* context)
 static void
 Flash_initCache(FlashContext* context)
 {
-	uint16_t i;
-
-	context->cache = (FRAME*)HMalloc(context->cacheSize * sizeof(FRAME));
-	for (i = 0; i < context->cacheSize; i++)
-	{
-		context->cache[i] = (FRAME)0;
-	}
+	context->cache.assign(context->cacheSize, nullptr);
 }
 
 void Flash_setCacheSize(FlashContext* context, uint16_t size)
 {
 	assert(size == 0 || size >= 2);
 
-	if (context->cache != nullptr)
+	if (!context->cache.empty())
 	{
 		Flash_clearCache(context);
-		HFree(context->cache);
-		context->cache = nullptr;
+		context->cache = {};
 	}
 
 	context->cacheSize = size;

@@ -159,15 +159,13 @@ SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 
 	if (pRaceDesc->data) // Out with the old
 	{
-		HFree(pRaceDesc->data);
+		delete static_cast<CustomShipData_t*>(pRaceDesc->data);
 		pRaceDesc->data = nullptr;
 	}
 
 	if (data) // In with the new
 	{
-		CustomShipData_t* newData = (CustomShipData_t*)HMalloc(sizeof(*data));
-		*newData = *data;
-		pRaceDesc->data = newData;
+		pRaceDesc->data = new CustomShipData_t {*data};
 	}
 }
 

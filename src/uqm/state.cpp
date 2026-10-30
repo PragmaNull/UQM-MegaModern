@@ -19,7 +19,6 @@
 #include "state.h"
 
 #include "starmap.h"
-#include "libs/memlib.h"
 #include "core/log/log.h"
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -31,21 +30,20 @@ struct GAME_STATE_FILE
 {
 	const char* symname;
 	uint32_t size_hint;
-	int open_count;
-	uint8_t* data;
-	uint32_t used;
-	uint32_t size;
-	uint32_t ptr;
+	int open_count {};
+	uqstl::vector<uint8_t> data {};
+	uint32_t used {};
+	uint32_t size {};
+	uint32_t ptr {};
 };
-#define STATE_FILE_ITRAILER 0, 0, 0, 0, 0
 
 #define NUM_STATE_FILES 3
 
 static GAME_STATE_FILE state_files[NUM_STATE_FILES] =
 	{
-		{"STARINFO",	 STAR_BUFSIZE, STATE_FILE_ITRAILER},
-		{"RANDGRPINFO", RAND_BUFSIZE, STATE_FILE_ITRAILER},
-		{"DEFGRPINFO",  DEF_BUFSIZE,	STATE_FILE_ITRAILER}
+		{"STARINFO",	 STAR_BUFSIZE},
+		{"RANDGRPINFO", RAND_BUFSIZE},
+		{"DEFGRPINFO",  DEF_BUFSIZE }
 };
 
 
@@ -68,13 +66,9 @@ OpenStateFile(int stateFile, const char* mode)
 					   fp->symname, fp->open_count);
 	}
 
-	if (!fp->data)
+	if (fp->data.empty())
 	{
-		fp->data = (uint8_t*)HMalloc(fp->size_hint);
-		if (!fp->data)
-		{
-			return nullptr;
-		}
+		fp->data.assign(fp->size_hint, 0);
 		fp->size = fp->size_hint;
 	}
 
@@ -85,7 +79,7 @@ OpenStateFile(int stateFile, const char* mode)
 		fp->used = 0;
 #ifdef DEBUG
 		// paint buffer for tracking writes
-		memset(fp->data, 0xCC, fp->size);
+		memset(fp->data.data(), 0xCC, fp->size);
 #endif
 	}
 	else if (mode[0] == 'r')
@@ -134,8 +128,7 @@ void DeleteStateFile(int stateFile)
 
 	fp->used = 0;
 	fp->ptr = 0;
-	HFree(fp->data);
-	fp->data = 0;
+	fp->data = {};
 }
 
 uint32_t
@@ -160,7 +153,7 @@ int ReadStateFile(void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_FILE* f
 
 	if (bytes > 0)
 	{
-		memcpy(lpBuf, fp->data + fp->ptr, bytes);
+		memcpy(lpBuf, fp->data.data() + fp->ptr, bytes);
 		fp->ptr += bytes;
 	}
 	return (bytes / size);
@@ -179,11 +172,7 @@ int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_
 			newsize = fp->size * 3 / 2;
 		}
 
-		fp->data = (uint8_t*)HRealloc(fp->data, newsize);
-		if (!fp->data)
-		{
-			return 0;
-		}
+		fp->data.resize(newsize);
 
 		fp->size = newsize;
 		if (newsize > fp->size_hint)
@@ -194,7 +183,7 @@ int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_
 
 	if (bytes > 0)
 	{
-		memcpy(fp->data + fp->ptr, lpBuf, bytes);
+		memcpy(fp->data.data() + fp->ptr, lpBuf, bytes);
 		fp->ptr += bytes;
 		if (fp->ptr > fp->used)
 		{

@@ -43,7 +43,6 @@
 #include "libs/strlib.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/mathlib.h"
-#include "libs/memlib.h"
 #include "../util.h"
 // For get_fuel_to_sol()
 #include <stdlib.h>
@@ -2606,14 +2605,9 @@ static bool
 DoStarSearch(MENU_STATE* pMS)
 {
 	TEXTENTRY_STATE tes;
-	STAR_SEARCH_STATE* pss;
+	STAR_SEARCH_STATE searchState {};
+	STAR_SEARCH_STATE* pss {&searchState};
 	bool success;
-
-	pss = (STAR_SEARCH_STATE*)HMalloc(sizeof(*pss));
-	if (!pss)
-	{
-		return false;
-	}
 
 	DrawSISMessageEx("", 0, 0, DSME_SETFR);
 
@@ -2664,8 +2658,6 @@ DoStarSearch(MENU_STATE* pMS)
 	}
 
 	DrawSISMessageEx(pss->Text, -1, -1, DSME_CLEARFR);
-
-	HFree(pss);
 
 	TextEntry3DO = false;
 

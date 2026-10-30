@@ -90,6 +90,7 @@
 
 #include "libs/gfxlib.h"
 #include "libs/time/timelib.h"
+#include "core/stl/vector.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -174,7 +175,7 @@ struct FlashContext
 	bool paused;
 	bool isPulsing;
 
-	FRAME* cache;
+	uqstl::vector<FRAME> cache;
 	uint16_t cacheSize;
 
 	uint16_t lastFrameIndex;

@@ -2506,7 +2506,7 @@ void SetCustomBaseLine(uint16_t sentence, GFXPOINT bl, TEXT_ALIGN align)
 { // Add custom baseline to the list
 	CUSTOM_BASELINE *cur, *sPtr;
 
-	cur = (CUSTOM_BASELINE*)HCalloc(sizeof(*cur));
+	cur = new CUSTOM_BASELINE {};
 	cur->index = sentence;
 	cur->baseline.x = RES_SCALE(bl.x);
 	cur->baseline.y = RES_SCALE(bl.y);
@@ -2540,7 +2540,7 @@ void FlushCustomBaseLine(void)
 	while (cur != nullptr)
 	{
 		next = cur->next;
-		HFree(cur);
+		delete cur;
 		cur = next;
 	}
 	head_node = nullptr;

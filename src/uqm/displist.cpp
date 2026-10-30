@@ -19,13 +19,11 @@
 #include "displist.h"
 #include "core/log/log.h"
 
-#ifdef QUEUE_TABLE
 #define NULL_HANDLE nullptr
-#endif
 
 /*
  * This file contains code for generic doubly linked lists.
- * If QUEUE_TABLE is defined, each lists has its own preallocated
+ * Each list has its own preallocated
  * pool of link structures. The size is specific on InitQueue(),
  * and poses a hard limit on the number of elements in the list.
  */
@@ -35,9 +33,6 @@ bool InitQueue(QUEUE* pq, uint16_t num_elements, OBJ_SIZE size)
 	SetHeadLink(pq, NULL_HANDLE);
 	SetTailLink(pq, NULL_HANDLE);
 	SetLinkSize(pq, size);
-#ifndef QUEUE_TABLE
-	return (true);
-#else /* QUEUE_TABLE */
 	SetFreeList(pq, NULL_HANDLE);
 #if 0	
 	log_add (log_Debug, "InitQueue(): num_elements = {} ({})",
@@ -54,32 +49,16 @@ bool InitQueue(QUEUE* pq, uint16_t num_elements, OBJ_SIZE size)
 	}
 
 	return (false);
-#endif /* QUEUE_TABLE */
 }
 
 bool UninitQueue(QUEUE* pq)
 {
-#ifdef QUEUE_TABLE
 	SetHeadLink(pq, NULL_HANDLE);
 	SetTailLink(pq, NULL_HANDLE);
 	SetFreeList(pq, NULL_HANDLE);
 	FreeQueueTab(pq);
 
 	return (true);
-#else  /* !QUEUE_TABLE */
-	HLINK hLink;
-
-	while ((hLink = GetHeadLink(pq)) != NULL_HANDLE)
-	{
-		RemoveQueue(pq, hLink);
-		if (!FreeLink(pq, hLink))
-		{
-			return (false);
-		}
-	}
-
-	return (true);
-#endif /* QUEUE_TABLE */
 }
 
 // Empty the queue. The elements linked to in the queue are unchanged.
@@ -87,7 +66,6 @@ void ReinitQueue(QUEUE* pq)
 {
 	SetHeadLink(pq, NULL_HANDLE);
 	SetTailLink(pq, NULL_HANDLE);
-#ifdef QUEUE_TABLE
 	{
 		uint16_t num_elements;
 
@@ -102,10 +80,8 @@ void ReinitQueue(QUEUE* pq)
 			} while (--num_elements);
 		}
 	}
-#endif /* QUEUE_TABLE */
 }
 
-#ifdef QUEUE_TABLE
 HLINK
 AllocLink(QUEUE* pq)
 {
@@ -138,7 +114,6 @@ void FreeLink(QUEUE* pq, HLINK hLink)
 
 	SetFreeList(pq, hLink);
 }
-#endif /* QUEUE_TABLE */
 
 void PutQueue(QUEUE* pq, HLINK hLink)
 {

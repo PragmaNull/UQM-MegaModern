@@ -22,26 +22,31 @@
 // For battleEndReady*
 #include "init.h"
 // For NUM_PLAYERS
-#include "libs/memlib.h"
-// For HMalloc(), HFree()
 #ifdef NETPLAY
 #include "supermelee/netplay/netmelee.h"
 #endif /* NETPLAY */
 
 InputContext* PlayerInput[NUM_PLAYERS];
 
+template <typename Context>
+static void
+InputContext_delete(InputContext* context)
+{
+	delete static_cast<Context*>(context);
+}
+
 BattleInputHandlers ComputerInputHandlers = {
 	/* .frameInput     = */ (BattleFrameInputFunction)computer_intelligence,
 	/* .selectShip     = */ (SelectShipFunction)selectShipComputer,
 	/* .battleEndReady = */ (BattleEndReadyFunction)battleEndReadyComputer,
-	/* .deleteContext  = */ InputContext_delete,
+	/* .deleteContext  = */ InputContext_delete<ComputerInputContext>,
 };
 
 BattleInputHandlers HumanInputHandlers = {
 	/* .frameInput     = */ (BattleFrameInputFunction)frameInputHuman,
 	/* .selectShip     = */ (SelectShipFunction)selectShipHuman,
 	/* .battleEndReady = */ (BattleEndReadyFunction)battleEndReadyHuman,
-	/* .deleteContext  = */ InputContext_delete,
+	/* .deleteContext  = */ InputContext_delete<HumanInputContext>,
 };
 
 #ifdef NETPLAY
@@ -49,7 +54,7 @@ BattleInputHandlers NetworkInputHandlers = {
 	/* .frameInput     = */ (BattleFrameInputFunction)networkBattleInput,
 	/* .selectShip     = */ (SelectShipFunction)selectShipNetwork,
 	/* .battleEndReady = */ (BattleEndReadyFunction)battleEndReadyNetwork,
-	/* .deleteContext  = */ InputContext_delete,
+	/* .deleteContext  = */ InputContext_delete<NetworkInputContext>,
 };
 #endif
 
@@ -61,16 +66,12 @@ void InputContext_init(InputContext* context, BattleInputHandlers* handlers,
 	context->playerNr = playerNr;
 }
 
-void InputContext_delete(InputContext* context)
-{
-	HFree(context);
-}
 
 ComputerInputContext*
 ComputerInputContext_new(uint16_t playerNr)
 {
-	ComputerInputContext* result = (ComputerInputContext*)HMalloc(sizeof(ComputerInputContext));
-	InputContext_init((InputContext*)result,
+	auto* result {new ComputerInputContext {}};
+	InputContext_init(result,
 					  &ComputerInputHandlers, playerNr);
 	return result;
 }
@@ -78,8 +79,8 @@ ComputerInputContext_new(uint16_t playerNr)
 HumanInputContext*
 HumanInputContext_new(uint16_t playerNr)
 {
-	HumanInputContext* result = (HumanInputContext*)HMalloc(sizeof(HumanInputContext));
-	InputContext_init((InputContext*)result,
+	auto* result {new HumanInputContext {}};
+	InputContext_init(result,
 					  &HumanInputHandlers, playerNr);
 	return result;
 }
@@ -88,8 +89,8 @@ HumanInputContext_new(uint16_t playerNr)
 NetworkInputContext*
 NetworkInputContext_new(uint16_t playerNr)
 {
-	NetworkInputContext* result = (NetworkInputContext*)HMalloc(sizeof(NetworkInputContext));
-	InputContext_init((InputContext*)result,
+	auto* result {new NetworkInputContext {}};
+	InputContext_init(result,
 					  &NetworkInputHandlers, playerNr);
 	return result;
 }

@@ -19,7 +19,6 @@
 #include "port.h"
 #include "controls.h"
 #include "libs/inplib.h"
-#include "libs/memlib.h"
 #include "core/log/log.h"
 #include "globdata.h"
 #include "options.h"
@@ -40,12 +39,6 @@ static bool block = false;
 // TODO: This may be better done with UniChar at the cost of a tiny bit
 //   of overhead to convert UniChar back to UTF8 string. This overhead
 //   will probably be offset by removal of looped string-compare overhead ;)
-struct joy_char
-{
-	unsigned char len;
-	char enc[7];
-	// 1+7 is a nice round number
-};
 
 static int
 ReadOneChar(joy_char_t* ch, const char* str)
@@ -59,32 +52,27 @@ ReadOneChar(joy_char_t* ch, const char* str)
 	return len;
 }
 
-static joy_char_t*
+static uqstl::vector<joy_char_t>
 LoadJoystickAlpha(STRING String, int* count)
 {
 	char* str;
 	int c;
 	int i;
-	joy_char_t* chars;
 	char* cur;
 
 	*count = 0;
 	str = GetStringAddress(String);
 	if (!str)
 	{
-		return 0;
+		return {};
 	}
 
 	c = uqm::utf8StringCount(str);
-	chars = (joy_char_t*)HMalloc(c * sizeof(*chars));
-	if (!chars)
-	{
-		return 0;
-	}
+	uqstl::vector<joy_char_t> chars(c);
 
 	for (i = 0, cur = str; i < c; ++i)
 	{
-		int len = ReadOneChar(chars + i, cur);
+		int len = ReadOneChar(&chars[i], cur);
 		cur += len;
 	}
 
@@ -107,7 +95,7 @@ JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
 static int
 JoyCharIsLower(const joy_char_t* ch, TEXTENTRY_STATE* pTES)
 {
-	return 0 <= JoyCharFindIn(ch, pTES->JoyLower, pTES->JoyRegLength);
+	return 0 <= JoyCharFindIn(ch, pTES->JoyLower.data(), pTES->JoyRegLength);
 }
 
 static void
@@ -126,7 +114,7 @@ JoyCharToUpper(joy_char_t* outch, const joy_char_t* ch,
 			   TEXTENTRY_STATE* pTES)
 {
 	*outch = *ch;
-	JoyCharSwitchReg(outch, pTES->JoyLower, pTES->JoyUpper,
+	JoyCharSwitchReg(outch, pTES->JoyLower.data(), pTES->JoyUpper.data(),
 					 pTES->JoyRegLength);
 }
 
@@ -135,7 +123,7 @@ JoyCharToLower(joy_char_t* outch, const joy_char_t* ch,
 			   TEXTENTRY_STATE* pTES)
 {
 	*outch = *ch;
-	JoyCharSwitchReg(outch, pTES->JoyUpper, pTES->JoyLower,
+	JoyCharSwitchReg(outch, pTES->JoyUpper.data(), pTES->JoyLower.data(),
 					 pTES->JoyRegLength);
 }
 
@@ -255,28 +243,16 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 						   pTES->JoyRegLength);
 		}
 
-		pTES->CacheStr = (char*)HMalloc(pTES->MaxSize * sizeof(*pTES->CacheStr));
+		pTES->CacheStr.assign(pTES->MaxSize, '\0');
 
 		EnterCharacterMode();
 		DoInput(pTES, true);
 		ExitCharacterMode();
 
-		if (pTES->CacheStr)
-		{
-			HFree(pTES->CacheStr);
-		}
-		if (pTES->JoyLower)
-		{
-			HFree(pTES->JoyLower);
-		}
-		if (pTES->JoyUpper)
-		{
-			HFree(pTES->JoyUpper);
-		}
-		if (pTES->JoyAlpha)
-		{
-			HFree(pTES->JoyAlpha);
-		}
+		pTES->CacheStr = {};
+		pTES->JoyLower = {};
+		pTES->JoyUpper = {};
+		pTES->JoyAlpha = {};
 		DestroyStringTable(ReleaseStringTable(pTES->JoyAlphaString));
 
 		return pTES->Success;
@@ -287,7 +263,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	// save a copy of string
 	CacheInsPt = pTES->InsPt;
 	CacheCursorPos = pTES->CursorPos;
-	memcpy(pTES->CacheStr, pTES->BaseStr, pTES->MaxSize);
+	memcpy(pTES->CacheStr.data(), pTES->BaseStr, pTES->MaxSize);
 
 	// process the pending character buffer
 	ch = GetNextCharacter();
@@ -401,7 +377,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		}
 	}
 
-	if (pTES->JoyAlpha && (PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN] || PulsedInputState.menu[KEY_MENU_PAGE_UP] || PulsedInputState.menu[KEY_MENU_PAGE_DOWN]))
+	if (!pTES->JoyAlpha.empty() && (PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN] || PulsedInputState.menu[KEY_MENU_PAGE_UP] || PulsedInputState.menu[KEY_MENU_PAGE_DOWN]))
 	{ // do joystick text
 		joy_char_t ch;
 		joy_char_t newch;
@@ -428,7 +404,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		JoyCharToUpper(&cmpch, &ch, pTES);
 
 		// find current char in the alphabet
-		i = JoyCharFindIn(&cmpch, pTES->JoyAlpha, pTES->JoyAlphaLength);
+		i = JoyCharFindIn(&cmpch, pTES->JoyAlpha.data(), pTES->JoyAlphaLength);
 
 		if (PulsedInputState.menu[KEY_MENU_UP])
 		{
@@ -531,7 +507,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	{
 		if (!pTES->ChangeCallback(pTES))
 		{ // changes not accepted - revert
-			memcpy(pTES->BaseStr, pTES->CacheStr, pTES->MaxSize);
+			memcpy(pTES->BaseStr, pTES->CacheStr.data(), pTES->MaxSize);
 			pTES->InsPt = CacheInsPt;
 			pTES->CursorPos = CacheCursorPos;
 
