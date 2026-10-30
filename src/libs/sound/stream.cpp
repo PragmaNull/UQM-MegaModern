@@ -23,18 +23,20 @@
 #include "libs/tasklib.h"
 #include "libs/time/timelib.h"
 #include "libs/threadlib.h"
+#include "core/thread/Mutex.h"
+#include "core/thread/Thread.h"
 #include "core/log/log.h"
 #include "libs/memlib.h"
 
 
-static Task decoderTask;
+static uqstl::jthread s_decoderThread {};
 
 static TimeCount musicFadeStartTime;
 static int32_t musicFadeInterval;
 static int musicFadeStartVolume;
 static int musicFadeDelta;
 // Mutex protects fade structures
-static Mutex fade_mutex;
+static uqm::Mutex fade_mutex {};
 
 static void add_scope_data(TFB_SoundSource* source, uint32_t bytes);
 
@@ -614,11 +616,11 @@ processMusicFade(void)
 	int32_t elapsed;
 	int newVolume;
 
-	LockMutex(fade_mutex);
+	fade_mutex.lock();
 
 	if (!musicFadeInterval)
 	{ // there is no fade set
-		UnlockMutex(fade_mutex);
+		fade_mutex.unlock();
 		return;
 	}
 
@@ -637,17 +639,16 @@ processMusicFade(void)
 		musicFadeInterval = 0; // fade is over
 	}
 
-	UnlockMutex(fade_mutex);
+	fade_mutex.unlock();
 }
 
-static int
-StreamDecoderTaskFunc(void* data)
+static void
+StreamDecoderTaskFunc(uqstl::stop_token stopToken)
 {
-	Task task = (Task)data;
 	int active_streams;
 	int i;
 
-	while (!Task_ReadState(task, TASK_EXIT))
+	while (!stopToken.stop_requested())
 	{
 		active_streams = 0;
 
@@ -657,18 +658,18 @@ StreamDecoderTaskFunc(void* data)
 		{
 			TFB_SoundSource* source = &soundSource[i];
 
-			LockMutex(source->stream_mutex);
+			source->stream_mutex.lock();
 
 			if (!source->sample || !source->sample->decoder || !source->stream_should_be_playing || source->sample->decoder->error == SOUNDDECODER_ERROR)
 			{
-				UnlockMutex(source->stream_mutex);
+				source->stream_mutex.unlock();
 				continue;
 			}
 
 			process_stream(source);
 			active_streams++;
 
-			UnlockMutex(source->stream_mutex);
+			source->stream_mutex.unlock();
 		}
 
 		if (active_streams == 0)
@@ -680,9 +681,6 @@ StreamDecoderTaskFunc(void* data)
 			TaskSwitch();
 		}
 	}
-
-	FinishTask(task);
-	return 0;
 }
 
 static inline int32_t
@@ -756,7 +754,7 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	// Prefer speech to music
 	source_num = SPEECH_SOURCE;
 	source = &soundSource[source_num];
-	LockMutex(source->stream_mutex);
+	source->stream_mutex.lock();
 	if (wantSpeech && (!source->sample || !source->sample->decoder || !source->sample->decoder->is_null))
 	{ // Use speech waveform, since it's available
 		// Step is picked experimentally. Using step of 1 sample at 11025Hz,
@@ -766,11 +764,11 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	}
 	else
 	{ // We do not have speech -- use music waveform
-		UnlockMutex(source->stream_mutex);
+		source->stream_mutex.unlock();
 
 		source_num = MUSIC_SOURCE;
 		source = &soundSource[source_num];
-		LockMutex(source->stream_mutex);
+		source->stream_mutex.lock();
 
 		// Step is picked experimentally. Using step of 4 samples at 11025Hz.
 		// It looks better this way.
@@ -781,14 +779,14 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 		|| !source->sample->decoder || !source->sbuffer
 		|| source->sbuf_size == 0)
 	{ // We don't have data to return, oh well.
-		UnlockMutex(source->stream_mutex);
+		source->stream_mutex.unlock();
 		return 0;
 	}
 	decoder = source->sample->decoder;
 
 	if (!audio_GetFormatInfo(decoder->format, &channels, &sample_size))
 	{
-		UnlockMutex(source->stream_mutex);
+		source->stream_mutex.unlock();
 		uqm::log::debug("GraphForegroundStream(): uknown format {}",
 						(unsigned)decoder->format);
 		return 0;
@@ -887,7 +885,7 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 		}
 	}
 
-	UnlockMutex(source->stream_mutex);
+	source->stream_mutex.unlock();
 	return 1;
 }
 
@@ -896,7 +894,7 @@ bool SetMusicStreamFade(int32_t howLong, int endVolume)
 {
 	bool ret = true;
 
-	LockMutex(fade_mutex);
+	fade_mutex.lock();
 
 	if (howLong < 0)
 	{
@@ -912,40 +910,18 @@ bool SetMusicStreamFade(int32_t howLong, int endVolume)
 		ret = false; // reject
 	}
 
-	UnlockMutex(fade_mutex);
+	fade_mutex.unlock();
 
 	return ret;
 }
 
 int InitStreamDecoder(void)
 {
-	fade_mutex = CREATEMUTEX("Stream fade mutex", SYNC_CLASS_AUDIO);
-	if (!fade_mutex)
-	{
-		return -1;
-	}
-
-	decoderTask = AssignTask(StreamDecoderTaskFunc, 1024,
-							 "audio stream decoder");
-	if (!decoderTask)
-	{
-		return -1;
-	}
-
+	s_decoderThread = uqm::makeThread("audio stream decoder", StreamDecoderTaskFunc);
 	return 0;
 }
 
 void UninitStreamDecoder(void)
 {
-	if (decoderTask)
-	{
-		ConcludeTask(decoderTask);
-		decoderTask = nullptr;
-	}
-
-	if (fade_mutex)
-	{
-		DestroyMutex(fade_mutex);
-		fade_mutex = nullptr;
-	}
+	s_decoderThread = {};
 }

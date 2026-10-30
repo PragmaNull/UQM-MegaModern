@@ -24,9 +24,11 @@
 #include "libs/sound/sound.h"
 #include "libs/sound/mixer/mixer.h"
 
+#include <stop_token>
+
 
 /* Playback task */
-int PlaybackTaskFunc(void* data);
+void PlaybackTaskFunc(uqstl::stop_token stopToken);
 
 /* General */
 int32_t noSound_Init(audio_Driver* driver, int32_t flags);

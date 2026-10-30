@@ -283,7 +283,6 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
 	{
 		audio_GenSources(1, &soundSource[i].handle);
-		soundSource[i].stream_mutex = CREATEMUTEX("MixSDL stream mutex", SYNC_CLASS_AUDIO);
 	}
 
 	if (InitStreamDecoder())
@@ -328,8 +327,6 @@ void mixSDL_Uninit(void)
 			soundSource[i].sbuffer = nullptr;
 			HFree(sbuffer);
 		}
-		DestroyMutex(soundSource[i].stream_mutex);
-		soundSource[i].stream_mutex = 0;
 
 		mixSDL_DeleteSources(1, &soundSource[i].handle);
 	}

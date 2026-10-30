@@ -97,9 +97,9 @@ void JumpTrack(void)
 		return; // nothing to skip
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	seek_track(tracks_length + 1);
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 }
 
 // This should just start playing a stream
@@ -110,13 +110,13 @@ void PlayTrack(void)
 		return; // nothing to play
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	tracks_length = tracks_end_time();
 	// decoder will be set in OnStreamStart()
 	cur_chunk = chunks_head;
 	// Always scope the speech data, we may need it
 	PlayStream(sound_sample, SPEECH_SOURCE, false, true, true);
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 }
 
 void PauseTrack(void)
@@ -126,9 +126,9 @@ void PauseTrack(void)
 		return; // nothing to pause
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	PauseStream(SPEECH_SOURCE);
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 }
 
 // ResumeTrack should resume a paused track, and do nothing for a playing track
@@ -141,11 +141,11 @@ void ResumeTrack(void)
 		return; // nothing to resume
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 
 	if (!cur_chunk)
 	{ // not playing anything, so no resuming
-		UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+		soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 		return;
 	}
 
@@ -155,7 +155,7 @@ void ResumeTrack(void)
 		ResumeStream(SPEECH_SOURCE);
 	}
 
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 }
 
 uint16_t
@@ -170,25 +170,25 @@ PlayingTrack(void)
 		return 0; // not playing anything
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	if (cur_sub_chunk)
 	{
 		result = cur_sub_chunk->track_num + 1;
 	}
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 
 	return result;
 }
 
 void StopTrack(void)
 {
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	StopStream(SPEECH_SOURCE);
 	track_count = 0;
 	tracks_length = 0;
 	cur_chunk = nullptr;
 	cur_sub_chunk = nullptr;
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 
 	if (chunks_head)
 	{
@@ -209,14 +209,14 @@ void StopTrack(void)
 static void
 DoTrackTag(TFB_SoundChunk* chunk)
 {
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	if (chunk->callback)
 	{
 		chunk->callback(0);
 	}
 
 	cur_sub_chunk = chunk;
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 }
 
 // This func is called by PlayStream() when stream is about
@@ -746,7 +746,7 @@ void FastReverse_Smooth(void)
 		return; // nothing is playing, so.. bye!
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 
 	offset = get_current_track_pos();
 	offset -= ACCEL_SCROLL_SPEED;
@@ -757,7 +757,7 @@ void FastReverse_Smooth(void)
 	{
 		PlayStream(sound_sample, SPEECH_SOURCE, false, true, false);
 	}
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 }
 
 void FastForward_Smooth(void)
@@ -769,13 +769,13 @@ void FastForward_Smooth(void)
 		return; // nothing is playing, so.. bye!
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 
 	offset = get_current_track_pos();
 	offset += ACCEL_SCROLL_SPEED;
 	seek_track(offset);
 
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 }
 
 void FastReverse_Page(void)
@@ -787,7 +787,7 @@ void FastReverse_Page(void)
 		return; // nothing is playing, so.. bye!
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	prev = find_prev_page(cur_sub_chunk);
 	if (prev)
 	{ // Set the chunk to be played
@@ -796,7 +796,7 @@ void FastReverse_Page(void)
 		// Decoder will be set in OnStreamStart()
 		PlayStream(sound_sample, SPEECH_SOURCE, false, true, true);
 	}
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 }
 
 void FastForward_Page(void)
@@ -808,7 +808,7 @@ void FastForward_Page(void)
 		return; // nothing is playing, so.. bye!
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	next = find_next_page(cur_sub_chunk);
 	if (next)
 	{ // Set the chunk to be played
@@ -821,7 +821,7 @@ void FastForward_Page(void)
 	{ // End of the tracks (pun intended)
 		seek_track(tracks_length + 1);
 	}
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 }
 
 // Tells current position of streaming speech in the units
@@ -839,9 +839,9 @@ int GetTrackPosition(int in_units)
 		return 0; // nothing is playing
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	offset = get_current_track_pos();
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 
 	return in_units * offset / length;
 }
@@ -951,12 +951,12 @@ GetTrackSubtitle(void)
 		return nullptr; // not playing anything
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	if (cur_sub_chunk)
 	{
 		cur_sub = cur_sub_chunk->text;
 	}
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 
 	return cur_sub;
 }

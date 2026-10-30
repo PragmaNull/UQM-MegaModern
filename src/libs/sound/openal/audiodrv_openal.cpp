@@ -213,8 +213,6 @@ openAL_Init(audio_Driver* driver, AudioFlags flags)
 		alSourcefv(soundSource[i].handle, AL_POSITION, defaultPos);
 		alSourcefv(soundSource[i].handle, AL_VELOCITY, zero);
 		alSourcefv(soundSource[i].handle, AL_DIRECTION, zero);
-
-		soundSource[i].stream_mutex = CREATEMUTEX("OpenAL stream mutex", SYNC_CLASS_AUDIO);
 	}
 
 	if (InitStreamDecoder())
@@ -255,7 +253,6 @@ void openAL_Uninit(void)
 			soundSource[i].sbuffer = nullptr;
 			HFree(sbuffer);
 		}
-		DestroyMutex(soundSource[i].stream_mutex);
 	}
 
 	alcMakeContextCurrent(nullptr);

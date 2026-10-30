@@ -92,9 +92,9 @@ bool SoundPlaying(void)
 		if (sample && sample->decoder)
 		{
 			bool result;
-			LockMutex(soundSource[i].stream_mutex);
+			soundSource[i].stream_mutex.lock();
 			result = PlayingStream(i);
-			UnlockMutex(soundSource[i].stream_mutex);
+			soundSource[i].stream_mutex.unlock();
 			if (result)
 			{
 				return true;

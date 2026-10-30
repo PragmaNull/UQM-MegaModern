@@ -19,13 +19,14 @@
 
 #include "audiodrv_nosound.h"
 #include "../../sndintrn.h"
-#include "libs/tasklib.h"
+#include "core/thread/Thread.h"
+#include "libs/threadlib.h"
 #include "core/log/log.h"
 #include "libs/memlib.h"
 #include <stdlib.h>
 
 
-static Task PlaybackTask;
+static uqstl::jthread s_playbackThread {};
 static uint32_t nosound_freq = 22050;
 
 static const audio_Driver noSound_Driver =
@@ -172,7 +173,6 @@ noSound_Init(audio_Driver* driver, AudioFlags flags)
 	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
 	{
 		audio_GenSources(1, &soundSource[i].handle);
-		soundSource[i].stream_mutex = CREATEMUTEX("Nosound stream mutex", SYNC_CLASS_AUDIO);
 	}
 
 	if (InitStreamDecoder())
@@ -184,8 +184,7 @@ noSound_Init(audio_Driver* driver, AudioFlags flags)
 		return -1;
 	}
 
-	PlaybackTask = AssignTask(PlaybackTaskFunc, 1024,
-							  "nosound audio playback");
+	s_playbackThread = uqm::makeThread("nosound audio playback", PlaybackTaskFunc);
 
 	return 0;
 }
@@ -208,16 +207,11 @@ void noSound_Uninit(void)
 			soundSource[i].sbuffer = nullptr;
 			HFree(sbuffer);
 		}
-		DestroyMutex(soundSource[i].stream_mutex);
 
 		noSound_DeleteSources(1, &soundSource[i].handle);
 	}
 
-	if (PlaybackTask)
-	{
-		ConcludeTask(PlaybackTask);
-		PlaybackTask = 0;
-	}
+	s_playbackThread = {};
 
 	mixer_Uninit();
 	SoundDecoder_Uninit();
@@ -228,9 +222,8 @@ void noSound_Uninit(void)
  * Playback task
  */
 
-int PlaybackTaskFunc(void* data)
+void PlaybackTaskFunc(uqstl::stop_token stopToken)
 {
-	Task task = (Task)data;
 	uint8_t* stream;
 	uint32_t entryTime;
 	int32_t period, delay;
@@ -239,7 +232,7 @@ int PlaybackTaskFunc(void* data)
 	stream = (uint8_t*)HMalloc(len);
 	period = (int32_t)((len / (double)nosound_freq) * GameTicksPerSecond);
 
-	while (!Task_ReadState(task, TASK_EXIT))
+	while (!stopToken.stop_requested())
 	{
 		entryTime = GetTimeCounter();
 		mixer_MixFake(nullptr, stream, len);
@@ -251,8 +244,6 @@ int PlaybackTaskFunc(void* data)
 	}
 
 	HFree(stream);
-	FinishTask(task);
-	return 0;
 }
 
 

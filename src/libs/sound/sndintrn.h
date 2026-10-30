@@ -23,6 +23,7 @@
 #include <cstdint>
 #include "libs/reslib.h"
 #include "libs/memlib.h"
+#include "core/thread/Mutex.h"
 
 #define PAD_SCOPE_BYTES 256
 
@@ -56,7 +57,7 @@ typedef struct tfb_soundsource
 	TFB_SoundSample* sample;
 	audio_Object handle;
 	bool stream_should_be_playing;
-	Mutex stream_mutex;
+	uqm::RecursiveMutex stream_mutex;
 	int32_t start_time;	 // for tracks played-time math
 	uint32_t pause_time; // keep track for paused tracks
 	void* positional_object;

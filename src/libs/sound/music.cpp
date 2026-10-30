@@ -37,10 +37,10 @@ void PLRPlaySong(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority)
 
 	if (pmus)
 	{
-		LockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.lock();
 		// Always scope the music data, we may need it
 		PlayStream((*pmus), MUSIC_SOURCE, Continuous, true, true);
-		UnlockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
 
 		curMusicRef = MusicRef;
 	}
@@ -52,9 +52,9 @@ void PLRStop(MUSIC_REF MusicRef)
 {
 	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
 	{
-		LockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.lock();
 		StopStream(MUSIC_SOURCE);
-		UnlockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
 
 		curMusicRef = 0;
 	}
@@ -66,9 +66,9 @@ bool PLRPlaying(MUSIC_REF MusicRef)
 	{
 		bool playing;
 
-		LockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.lock();
 		playing = PlayingStream(MUSIC_SOURCE);
-		UnlockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
 
 		return playing;
 	}
@@ -80,9 +80,9 @@ void PLRSeek(MUSIC_REF MusicRef, uint32_t pos)
 {
 	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
 	{
-		LockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.lock();
 		SeekStream(MUSIC_SOURCE, pos);
-		UnlockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
 	}
 }
 
@@ -90,9 +90,9 @@ void PLRPause(MUSIC_REF MusicRef)
 {
 	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
 	{
-		LockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.lock();
 		PauseStream(MUSIC_SOURCE);
-		UnlockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
 	}
 }
 
@@ -110,7 +110,7 @@ get_current_music_pos(MUSIC_REF MusicRef)
 
 	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
 	{
-		LockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.lock();
 
 		//filename = soundSource[MUSIC_SOURCE].sample->decoder->filename;
 
@@ -125,7 +125,7 @@ get_current_music_pos(MUSIC_REF MusicRef)
 			pos = GetStreamTime(MUSIC_SOURCE);
 		}
 
-		UnlockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
 	}
 	else
 	{
@@ -158,9 +158,9 @@ get_current_music_filename(MUSIC_REF MusicRef)
 
 	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
 	{
-		LockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.lock();
 		filename = soundSource[MUSIC_SOURCE].sample->decoder->filename;
-		UnlockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
 
 		return filename;
 	}
@@ -179,9 +179,9 @@ void PLRResume(MUSIC_REF MusicRef)
 {
 	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
 	{
-		LockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.lock();
 		ResumeStream(MUSIC_SOURCE);
-		UnlockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
 	}
 }
 
@@ -197,9 +197,9 @@ get_current_music_filename_hash(MUSIC_REF MusicRef)
 
 	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
 	{
-		LockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.lock();
 		filename_hash = soundSource[MUSIC_SOURCE].sample->decoder->filename_hash;
-		UnlockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
 
 		return filename_hash;
 	}
@@ -221,10 +221,10 @@ void snd_PlaySpeech(MUSIC_REF SpeechRef)
 
 	if (pmus)
 	{
-		LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+		soundSource[SPEECH_SOURCE].stream_mutex.lock();
 		// Do not need to scope the music-as-speech as of now
 		PlayStream(*pmus, SPEECH_SOURCE, false, false, true);
-		UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+		soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 
 		curSpeechRef = SpeechRef;
 	}
@@ -237,9 +237,9 @@ void snd_StopSpeech(void)
 		return;
 	}
 
-	LockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 	StopStream(SPEECH_SOURCE);
-	UnlockMutex(soundSource[SPEECH_SOURCE].stream_mutex);
+	soundSource[SPEECH_SOURCE].stream_mutex.unlock();
 
 	curSpeechRef = 0;
 }
@@ -315,12 +315,12 @@ bool _ReleaseMusicData(void* data)
 	if (sample->decoder)
 	{
 		TFB_SoundDecoder* decoder = sample->decoder;
-		LockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.lock();
 		if (soundSource[MUSIC_SOURCE].sample == sample)
 		{ // Currently playing this sample! Not good.
 			StopStream(MUSIC_SOURCE);
 		}
-		UnlockMutex(soundSource[MUSIC_SOURCE].stream_mutex);
+		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
 
 		sample->decoder = nullptr;
 		SoundDecoder_Free(decoder);

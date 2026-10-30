@@ -26,6 +26,7 @@
 #include "mixerint.h"
 #include "libs/misc.h"
 #include "libs/threadlib.h"
+#include "core/thread/Mutex.h"
 #include "core/log/log.h"
 #include "libs/memlib.h"
 
@@ -43,9 +44,9 @@ static mixer_Flags mixer_flags;
 /* when locking more than one mutex
  * you must lock them in this order
  */
-static RecursiveMutex src_mutex;
-static RecursiveMutex buf_mutex;
-static RecursiveMutex act_mutex;
+static uqm::RecursiveMutex src_mutex {};
+static uqm::RecursiveMutex buf_mutex {};
+static uqm::RecursiveMutex act_mutex {};
 
 #define MAX_SOURCES 8
 mixer_Source* active_sources[MAX_SOURCES];
@@ -109,9 +110,6 @@ bool mixer_Init(uint32_t frequency, uint32_t format, mixer_Quality quality,
 		mixer_resampling.Upsample = mixer_ResampleNearest;
 	}
 
-	src_mutex = CREATERECURSIVEMUTEX("mixer_SourceMutex", SYNC_CLASS_AUDIO);
-	buf_mutex = CREATERECURSIVEMUTEX("mixer_BufferMutex", SYNC_CLASS_AUDIO);
-	act_mutex = CREATERECURSIVEMUTEX("mixer_ActiveMutex", SYNC_CLASS_AUDIO);
 
 	mixer_initialized = 1;
 
@@ -123,9 +121,6 @@ void mixer_Uninit(void)
 {
 	if (mixer_initialized)
 	{
-		DestroyRecursiveMutex(src_mutex);
-		DestroyRecursiveMutex(buf_mutex);
-		DestroyRecursiveMutex(act_mutex);
 		mixer_initialized = 0;
 	}
 }
@@ -142,9 +137,9 @@ void mixer_MixChannels(void* userdata, uint8_t* stream, int32_t len)
 	bool left = true;
 
 	/* keep this order or die */
-	LockRecursiveMutex(src_mutex);
-	LockRecursiveMutex(buf_mutex);
-	LockRecursiveMutex(act_mutex);
+	src_mutex.lock();
+	buf_mutex.lock();
+	act_mutex.lock();
 
 	for (; stream < end_stream; stream += mixer_chansize)
 	{
@@ -202,9 +197,9 @@ void mixer_MixChannels(void* userdata, uint8_t* stream, int32_t len)
 	}
 
 	/* keep this order or die */
-	UnlockRecursiveMutex(act_mutex);
-	UnlockRecursiveMutex(buf_mutex);
-	UnlockRecursiveMutex(src_mutex);
+	act_mutex.unlock();
+	buf_mutex.unlock();
+	src_mutex.unlock();
 
 	(void)userdata; // satisfying compiler - unused arg
 }
@@ -216,9 +211,9 @@ void mixer_MixFake(void* userdata, uint8_t* stream, int32_t len)
 	bool left = true;
 
 	/* keep this order or die */
-	LockRecursiveMutex(src_mutex);
-	LockRecursiveMutex(buf_mutex);
-	LockRecursiveMutex(act_mutex);
+	src_mutex.lock();
+	buf_mutex.lock();
+	act_mutex.lock();
 
 	for (; stream < end_stream; stream += mixer_chansize)
 	{
@@ -241,9 +236,9 @@ void mixer_MixFake(void* userdata, uint8_t* stream, int32_t len)
 	}
 
 	/* keep this order or die */
-	UnlockRecursiveMutex(act_mutex);
-	UnlockRecursiveMutex(buf_mutex);
-	UnlockRecursiveMutex(src_mutex);
+	act_mutex.unlock();
+	buf_mutex.unlock();
+	src_mutex.unlock();
 
 	(void)userdata; // satisfying compiler - unused arg
 }
@@ -310,7 +305,7 @@ void mixer_DeleteSources(uint32_t n, mixer_Object* psrcobj)
 		return;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 
 	/* check to make sure we can delete all sources */
 	for (i = n, pcurobj = psrcobj; i && pcurobj; i--, pcurobj++)
@@ -361,7 +356,7 @@ void mixer_DeleteSources(uint32_t n, mixer_Object* psrcobj)
 		}
 	}
 
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 }
 
 /* check if really is a source */
@@ -375,9 +370,9 @@ bool mixer_IsSource(mixer_Object srcobj)
 		return false;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 	ret = src->magic == mixer_srcMagic;
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 
 	return ret;
 }
@@ -395,7 +390,7 @@ void mixer_Sourcei(mixer_Object srcobj, mixer_SourceProp pname,
 		return;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 
 	if (src->magic != mixer_srcMagic)
 	{
@@ -451,7 +446,7 @@ void mixer_Sourcei(mixer_Object srcobj, mixer_SourceProp pname,
 		}
 	}
 
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 }
 
 /* set source float property */
@@ -466,7 +461,7 @@ void mixer_Sourcef(mixer_Object srcobj, mixer_SourceProp pname, float value)
 		return;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 
 	if (src->magic != mixer_srcMagic)
 	{
@@ -485,7 +480,7 @@ void mixer_Sourcef(mixer_Object srcobj, mixer_SourceProp pname, float value)
 		}
 	}
 
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 }
 
 #if !defined(_MSC_VER)
@@ -505,7 +500,7 @@ void mixer_Sourcefv(mixer_Object srcobj, mixer_SourceProp pname, float* value)
 		return;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 
 	if (src->magic != mixer_srcMagic)
 	{
@@ -538,7 +533,7 @@ void mixer_Sourcefv(mixer_Object srcobj, mixer_SourceProp pname, float* value)
 		}
 	}
 
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 }
 
 
@@ -555,7 +550,7 @@ void mixer_GetSourcei(mixer_Object srcobj, mixer_SourceProp pname,
 		return;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 
 	if (src->magic != mixer_srcMagic)
 	{
@@ -587,7 +582,7 @@ void mixer_GetSourcei(mixer_Object srcobj, mixer_SourceProp pname,
 		}
 	}
 
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 }
 
 /* get source float property */
@@ -603,7 +598,7 @@ void mixer_GetSourcef(mixer_Object srcobj, mixer_SourceProp pname,
 		return;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 
 	if (src->magic != mixer_srcMagic)
 	{
@@ -622,7 +617,7 @@ void mixer_GetSourcef(mixer_Object srcobj, mixer_SourceProp pname,
 		}
 	}
 
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 }
 
 /* start the source; add it to active array */
@@ -637,7 +632,7 @@ void mixer_SourcePlay(mixer_Object srcobj)
 		return;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 
 	if (src->magic != mixer_srcMagic)
 	{
@@ -657,7 +652,7 @@ void mixer_SourcePlay(mixer_Object srcobj)
 		src->state = MIX_PLAYING;
 	}
 
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 }
 
 /* stop the source; remove it from active array and requeue buffers */
@@ -672,7 +667,7 @@ void mixer_SourceRewind(mixer_Object srcobj)
 		return;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 
 	if (src->magic != mixer_srcMagic)
 	{
@@ -684,7 +679,7 @@ void mixer_SourceRewind(mixer_Object srcobj)
 		mixer_SourceRewind_internal(src);
 	}
 
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 }
 
 /* pause the source; keep in active array */
@@ -699,7 +694,7 @@ void mixer_SourcePause(mixer_Object srcobj)
 		return;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 
 	if (src->magic != mixer_srcMagic)
 	{
@@ -715,7 +710,7 @@ void mixer_SourcePause(mixer_Object srcobj)
 		src->state = MIX_PAUSED;
 	}
 
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 }
 
 /* stop the source; remove it from active array
@@ -732,7 +727,7 @@ void mixer_SourceStop(mixer_Object srcobj)
 		return;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 
 	if (src->magic != mixer_srcMagic)
 	{
@@ -749,7 +744,7 @@ void mixer_SourceStop(mixer_Object srcobj)
 		src->state = MIX_STOPPED;
 	}
 
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 }
 
 /* queue buffers on the source */
@@ -768,7 +763,7 @@ void mixer_SourceQueueBuffers(mixer_Object srcobj, uint32_t n,
 		return;
 	}
 
-	LockRecursiveMutex(buf_mutex);
+	buf_mutex.lock();
 	/* check to make sure we can safely queue all buffers */
 	for (i = n, pobj = pbufobj; i; i--, pobj++)
 	{
@@ -778,12 +773,12 @@ void mixer_SourceQueueBuffers(mixer_Object srcobj, uint32_t n,
 			break;
 		}
 	}
-	UnlockRecursiveMutex(buf_mutex);
+	buf_mutex.unlock();
 
 	if (i == 0)
 	{ /* all buffers checked out */
-		LockRecursiveMutex(src_mutex);
-		LockRecursiveMutex(buf_mutex);
+		src_mutex.lock();
+		buf_mutex.lock();
 
 		if (src->magic != mixer_srcMagic)
 		{
@@ -814,8 +809,8 @@ void mixer_SourceQueueBuffers(mixer_Object srcobj, uint32_t n,
 			}
 		}
 
-		UnlockRecursiveMutex(buf_mutex);
-		UnlockRecursiveMutex(src_mutex);
+		buf_mutex.unlock();
+		src_mutex.unlock();
 	}
 }
 
@@ -835,7 +830,7 @@ void mixer_SourceUnqueueBuffers(mixer_Object srcobj, uint32_t n,
 		return;
 	}
 
-	LockRecursiveMutex(src_mutex);
+	src_mutex.lock();
 
 	if (src->magic != mixer_srcMagic)
 	{
@@ -848,7 +843,7 @@ void mixer_SourceUnqueueBuffers(mixer_Object srcobj, uint32_t n,
 	}
 	else
 	{
-		LockRecursiveMutex(buf_mutex);
+		buf_mutex.lock();
 
 		/* check to make sure we can unqueue all buffers */
 		for (i = n, curbuf = src->firstqueued;
@@ -895,10 +890,10 @@ void mixer_SourceUnqueueBuffers(mixer_Object srcobj, uint32_t n,
 			}
 		}
 
-		UnlockRecursiveMutex(buf_mutex);
+		buf_mutex.unlock();
 	}
 
-	UnlockRecursiveMutex(src_mutex);
+	src_mutex.unlock();
 }
 
 /*************************************************
@@ -918,7 +913,7 @@ mixer_SourceUnqueueAll(mixer_Source* src)
 		return;
 	}
 
-	LockRecursiveMutex(buf_mutex);
+	buf_mutex.lock();
 
 	for (buf = src->firstqueued; buf; buf = nextbuf)
 	{
@@ -932,7 +927,7 @@ mixer_SourceUnqueueAll(mixer_Source* src)
 		buf->next = 0;
 	}
 
-	UnlockRecursiveMutex(buf_mutex);
+	buf_mutex.unlock();
 
 	src->firstqueued = 0;
 	src->nextqueued = 0;
@@ -950,7 +945,7 @@ mixer_SourceActivate(mixer_Source* src)
 {
 	uint32_t i;
 
-	LockRecursiveMutex(act_mutex);
+	act_mutex.lock();
 
 	/* check active sources, see if this source is there already */
 	for (i = 0; i < MAX_SOURCES && active_sources[i] != src; i++)
@@ -960,7 +955,7 @@ mixer_SourceActivate(mixer_Source* src)
 		uqm::log::debug("mixer_SourceActivate(): "
 						"source already active in slot {}",
 						i);
-		UnlockRecursiveMutex(act_mutex);
+		act_mutex.unlock();
 		return;
 	}
 
@@ -978,7 +973,7 @@ mixer_SourceActivate(mixer_Source* src)
 						MAX_SOURCES);
 	}
 
-	UnlockRecursiveMutex(act_mutex);
+	act_mutex.unlock();
 }
 
 /* remove the source from the active array */
@@ -987,7 +982,7 @@ mixer_SourceDeactivate(mixer_Source* src)
 {
 	uint32_t i;
 
-	LockRecursiveMutex(act_mutex);
+	act_mutex.lock();
 
 	/* check active sources, see if this source is there */
 	for (i = 0; i < MAX_SOURCES && active_sources[i] != src; i++)
@@ -1001,7 +996,7 @@ mixer_SourceDeactivate(mixer_Source* src)
 		uqm::log::debug("mixer_SourceDeactivate(): source not active");
 	}
 
-	UnlockRecursiveMutex(act_mutex);
+	act_mutex.unlock();
 }
 
 static void
@@ -1025,7 +1020,7 @@ mixer_SourceStop_internal(mixer_Source* src)
 #endif
 	}
 
-	LockRecursiveMutex(buf_mutex);
+	buf_mutex.lock();
 
 	/* find last 'processed' buffer */
 	for (buf = src->firstqueued;
@@ -1057,7 +1052,7 @@ mixer_SourceStop_internal(mixer_Source* src)
 	src->pos = 0;
 	src->count = 0;
 
-	UnlockRecursiveMutex(buf_mutex);
+	buf_mutex.unlock();
 }
 
 static void
@@ -1071,7 +1066,7 @@ mixer_SourceRewind_internal(mixer_Source* src)
 		mixer_SourceDeactivate(src);
 	}
 
-	LockRecursiveMutex(buf_mutex);
+	buf_mutex.lock();
 
 	for (buf = src->firstqueued;
 		 buf && buf->state != MIX_BUF_QUEUED;
@@ -1080,7 +1075,7 @@ mixer_SourceRewind_internal(mixer_Source* src)
 		buf->state = MIX_BUF_QUEUED;
 	}
 
-	UnlockRecursiveMutex(buf_mutex);
+	buf_mutex.unlock();
 
 	src->pos = 0;
 	src->count = 0;
@@ -1292,7 +1287,7 @@ void mixer_DeleteBuffers(uint32_t n, mixer_Object* pbufobj)
 		return;
 	}
 
-	LockRecursiveMutex(buf_mutex);
+	buf_mutex.lock();
 
 	/* check to make sure we can delete all buffers */
 	for (i = n, pcurobj = pbufobj; i && pcurobj; i--, pcurobj++)
@@ -1346,7 +1341,7 @@ void mixer_DeleteBuffers(uint32_t n, mixer_Object* pbufobj)
 			*pbufobj = 0;
 		}
 	}
-	UnlockRecursiveMutex(buf_mutex);
+	buf_mutex.unlock();
 }
 
 /* check if really a buffer object */
@@ -1360,9 +1355,9 @@ bool mixer_IsBuffer(mixer_Object bufobj)
 		return false;
 	}
 
-	LockRecursiveMutex(buf_mutex);
+	buf_mutex.lock();
 	ret = buf->magic == mixer_bufMagic;
-	UnlockRecursiveMutex(buf_mutex);
+	buf_mutex.unlock();
 
 	return ret;
 }
@@ -1380,11 +1375,11 @@ void mixer_GetBufferi(mixer_Object bufobj, mixer_BufferProp pname,
 		return;
 	}
 
-	LockRecursiveMutex(buf_mutex);
+	buf_mutex.lock();
 
 	if (buf->locked)
 	{
-		UnlockRecursiveMutex(buf_mutex);
+		buf_mutex.unlock();
 		mixer_SetError(MIX_INVALID_OPERATION);
 		uqm::log::debug("mixer_GetBufferi() called with locked buffer");
 		return;
@@ -1422,7 +1417,7 @@ void mixer_GetBufferi(mixer_Object bufobj, mixer_BufferProp pname,
 		}
 	}
 
-	UnlockRecursiveMutex(buf_mutex);
+	buf_mutex.unlock();
 }
 
 /* fill buffer with external data */
@@ -1440,11 +1435,11 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 		return;
 	}
 
-	LockRecursiveMutex(buf_mutex);
+	buf_mutex.lock();
 
 	if (buf->locked)
 	{
-		UnlockRecursiveMutex(buf_mutex);
+		buf_mutex.unlock();
 		mixer_SetError(MIX_INVALID_OPERATION);
 		uqm::log::debug("mixer_BufferData() called "
 						"with locked buffer");
@@ -1506,7 +1501,7 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 				{
 					/* format is compatible with internal */
 					buf->locked = true;
-					UnlockRecursiveMutex(buf_mutex);
+					buf_mutex.unlock();
 
 					memcpy(buf->data, data, size);
 					if (MIX_FORMAT_BPC(format) == 1)
@@ -1519,7 +1514,7 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 						}
 					}
 
-					LockRecursiveMutex(buf_mutex);
+					buf_mutex.lock();
 					buf->locked = false;
 				}
 				else
@@ -1542,11 +1537,11 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 					conv.dstsize = dstsize;
 
 					buf->locked = true;
-					UnlockRecursiveMutex(buf_mutex);
+					buf_mutex.unlock();
 
 					mixer_ConvertBuffer_internal(&conv);
 
-					LockRecursiveMutex(buf_mutex);
+					buf_mutex.lock();
 					buf->locked = false;
 				}
 			}
@@ -1569,7 +1564,7 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 		}
 	}
 
-	UnlockRecursiveMutex(buf_mutex);
+	buf_mutex.unlock();
 }
 
 
