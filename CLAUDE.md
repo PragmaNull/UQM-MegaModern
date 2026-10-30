@@ -103,6 +103,7 @@ Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each o
 - **Comments**: Keep comments minimal. Write them in Simplified Technical English. Do not explain "why", and do not refer to other classes or files unless necessary; such comments read as notes to self. Get user approval before adding a comment longer than 3 lines. Start every new source file with a one-line comment that states its purpose.
 - **C++ Core Guidelines**: Follow the [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines) as closely as possible: RAII for all resources, no owning raw pointers, `const` by default, no C-style casts, prefer value types and the rule of zero
 - **Initialization**: Use braced initialization throughout — for variables (`int x{42};`), and for class members/locals with default constructors (`uqstl::vector<int> v{};`) even when the default constructor would be called implicitly
+- **Threading**: Use the types in `src/core/thread`: `uqm::Mutex` or `uqm::RecursiveMutex` with `uqm::LockGuard`, not `std::mutex`, so that the Clang thread safety analysis can check them. Mark shared data with `UQM_GUARDED_BY` and functions that need a lock with `UQM_REQUIRES`. Start threads with `uqm::makeThread`. Use `uqstl::atomic`, not `volatile`, for flags that threads share
 
 ## Formatting
 
