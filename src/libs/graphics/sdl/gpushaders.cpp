@@ -84,6 +84,12 @@ GpuShaders::~GpuShaders()
 	release(m_hq2x);
 }
 
+const char* GpuShaders::driverName() const
+{
+	const char* const name {SDL_GetGPUDeviceDriver(m_device)};
+	return name ? name : "unknown";
+}
+
 const char* GpuShaders::formatName() const
 {
 	switch (m_format)

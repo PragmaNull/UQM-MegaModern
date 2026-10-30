@@ -33,6 +33,9 @@ public:
 	// The name of the shader format in use.
 	[[nodiscard]] const char* formatName() const;
 
+	// The name of the GPU backend, for example "vulkan".
+	[[nodiscard]] const char* driverName() const;
+
 	// Render state that applies gamma correction.
 	[[nodiscard]] SDL_GPURenderState* gamma(float gamma);
 

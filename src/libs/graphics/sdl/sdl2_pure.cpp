@@ -219,13 +219,33 @@ SetFullscreen(uqm::GfxFlags flags, int width, int height)
 	}
 }
 
+// True if the render driver name is also the name of a GPU backend.
+static bool
+IsGpuBackend(const char* driver)
+{
+	for (const char* backend : {"vulkan", "direct3d12", "metal"})
+	{
+		if (!strcmp(driver, backend))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 // Makes the renderer. With GPU scaling on, it tries the GPU renderer first, so that the shaders can run.
+// The render drivers that are also GPU backends select the GPU renderer with that backend.
 static SDL_Renderer*
 CreateRenderer(void)
 {
 	const char* const driver {FindBestRenderDriver()};
-	if (*uqm::UQMOptions::read().gpuScaling && (!driver || !strcmp(driver, SDL_GPU_RENDERER)))
+	const bool gpuBackend {driver && IsGpuBackend(driver)};
+	if (*uqm::UQMOptions::read().gpuScaling && (!driver || !strcmp(driver, SDL_GPU_RENDERER) || gpuBackend))
 	{
+		if (gpuBackend)
+		{
+			SDL_SetHintWithPriority(SDL_HINT_GPU_DRIVER, driver, SDL_HINT_OVERRIDE);
+		}
 		const SDL_PropertiesID props {SDL_CreateProperties()};
 		SDL_SetStringProperty(props, SDL_PROP_RENDERER_CREATE_NAME_STRING, SDL_GPU_RENDERER);
 		SDL_SetPointerProperty(props, SDL_PROP_RENDERER_CREATE_WINDOW_POINTER, window);
@@ -296,7 +316,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		s_gpuShaders = uqm::GpuShaders::create(renderer);
 		if (s_gpuShaders)
 		{
-			uqm::log::info("GPU shaders ready ({}).", s_gpuShaders->formatName());
+			uqm::log::info("GPU shaders ready ({}, {}).", s_gpuShaders->driverName(), s_gpuShaders->formatName());
 		}
 		if (const char* name {SDL_GetRendererName(renderer)})
 		{
