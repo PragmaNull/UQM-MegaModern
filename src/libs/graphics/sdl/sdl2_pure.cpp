@@ -41,6 +41,9 @@ static const char* rendererBackend = nullptr;
 
 static TFB_ScaleFunc scaler = nullptr;
 
+// The FPS overlay is 1 / 2^FpsScreenShift of the screen size.
+static constexpr int FpsScreenShift {3};
+
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 #define A_MASK 0xff000000
 #define B_MASK 0x00ff0000
@@ -248,7 +251,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		}
 		if (testFlag(flags, uqm::GfxFlags::ShowFPS))
 		{
-			if (0 != ReInit_FPS_Screen(&SDL_Screen_fps, CanvasWidth >> 4, CanvasHeight >> 4))
+			if (0 != ReInit_FPS_Screen(&SDL_Screen_fps, CanvasWidth >> FpsScreenShift, CanvasHeight >> FpsScreenShift))
 			{
 				return -1;
 			}
@@ -291,7 +294,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		}
 		if (testFlag(flags, uqm::GfxFlags::ShowFPS))
 		{
-			if (0 != ReInit_FPS_Screen(&SDL_Screen_fps, CanvasWidth >> 4, CanvasHeight >> 4))
+			if (0 != ReInit_FPS_Screen(&SDL_Screen_fps, CanvasWidth >> FpsScreenShift, CanvasHeight >> FpsScreenShift))
 			{
 				return -1;
 			}
@@ -489,10 +492,10 @@ TFB_SDL2_FPS(void)
 	SDL_Texture* texture;
 	SDL_Rect r, t;
 	r.x = r.y = t.x = t.y = 0;
-	r.w = CanvasWidth >> 4;
-	r.h = CanvasHeight >> 4;
-	t.w = WindowWidth >> 4;
-	t.h = WindowHeight >> 4;
+	r.w = CanvasWidth >> FpsScreenShift;
+	r.h = CanvasHeight >> FpsScreenShift;
+	t.w = WindowWidth >> FpsScreenShift;
+	t.h = WindowHeight >> FpsScreenShift;
 	texture = SDL_CreateTextureFromSurface(renderer, SDL_Screen_fps);
 	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 	const SDL_FRect src {ToFRect(r)};
