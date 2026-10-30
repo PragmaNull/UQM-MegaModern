@@ -42,7 +42,6 @@ set(uqm_doc_devel_files
 	"doc/devel/planetrender"
 	"doc/devel/planetrotate"
 	"doc/devel/planettopo"
-	"doc/devel/plugins"
 	"doc/devel/queues"
 	"doc/devel/racestrings"
 	"doc/devel/resources"
