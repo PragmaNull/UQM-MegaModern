@@ -1,5 +1,6 @@
 //Copyright Paul Reiche, Fred Ford. 1992-2002#include "libs/time/timelib.h"
 #include <atomic>
+#include <atomic>
 
 /*
  *  This program is free software; you can redistribute it and/or modify
@@ -109,13 +110,19 @@ static constexpr const char* toString(ControlTemplate val)
 }
 
 
+// The input that the main thread writes while the game thread reads it.
+struct IMMEDIATE_INPUT_STATE
+{
+	uqstl::atomic<int> key[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS];
+	uqstl::atomic<int> menu[NUM_MENU_KEYS];
+};
+
 struct CONTROLLER_INPUT_STATE
 {
 	int key[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS];
 	int menu[NUM_MENU_KEYS];
 
-	// TODO: need to define this because of volatile ImmediateInputState variable!? Figure this out. This is ugly
-	CONTROLLER_INPUT_STATE& operator=(const volatile CONTROLLER_INPUT_STATE& rhs)
+	CONTROLLER_INPUT_STATE& operator=(const IMMEDIATE_INPUT_STATE& rhs)
 	{
 		for (int t = 0; t < static_cast<int>(ControlTemplate::NUM); ++t)
 		{
@@ -149,7 +156,7 @@ BATTLE_INPUT_STATE PulsedInputToBattleInput(uint16_t player);
 
 extern CONTROLLER_INPUT_STATE CurrentInputState;
 extern CONTROLLER_INPUT_STATE PulsedInputState;
-extern volatile CONTROLLER_INPUT_STATE ImmediateInputState;
+extern IMMEDIATE_INPUT_STATE ImmediateInputState;
 extern ControlTemplate PlayerControlTemplates[];
 extern bool WarpFromMenu;
 

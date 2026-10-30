@@ -25,6 +25,7 @@
 #include "core/log/log.h"
 #include "libs/reslib.h"
 #include "core/string/StringUtils.h"
+#include "core/thread/Mutex.h"
 
 /* How many binding slots are allocated at once. */
 #define POOL_CHUNK_SIZE 64
@@ -37,7 +38,7 @@
 
 typedef struct vcontrol_keybinding
 {
-	int* target;
+	uqstl::atomic<int>* target;
 	sdl_key_t keycode;
 	struct vcontrol_keypool* parent;
 	struct vcontrol_keybinding* next;
@@ -49,6 +50,9 @@ typedef struct vcontrol_keypool
 	int remaining;
 	struct vcontrol_keypool* next;
 } keypool;
+
+// The main thread handles input events while the game thread can change the bindings.
+static uqm::RecursiveMutex s_vcontrolLock {};
 
 #ifdef HAVE_JOYSTICK
 
@@ -80,8 +84,8 @@ typedef struct vcontrol_joystick
 } joystick;
 
 #if SDL_MAJOR_VERSION == 1
-static joystick* joysticks;
-static unsigned int joycount;
+static joystick* joysticks UQM_GUARDED_BY(s_vcontrolLock);
+static unsigned int joycount UQM_GUARDED_BY(s_vcontrolLock);
 #endif // SDL_MAJOR_VERSION
 
 #if SDL_MAJOR_VERSION > 1
@@ -93,9 +97,9 @@ typedef struct vcontrol_controller_list
 	SDL_JoystickID instance_id;
 } controller_list;
 
-static controller_list* controller_list_head = nullptr;
-static int controller_assignments[2] = {-1, -1};
-static int active_controller_count = 0;
+static controller_list* controller_list_head UQM_GUARDED_BY(s_vcontrolLock) = nullptr;
+static int controller_assignments[2] UQM_GUARDED_BY(s_vcontrolLock) = {-1, -1};
+static int active_controller_count UQM_GUARDED_BY(s_vcontrolLock) = 0;
 
 typedef struct
 {
@@ -103,27 +107,27 @@ typedef struct
 	int axis;
 	int polarity;
 	int button;
-	int* target;
+	uqstl::atomic<int>* target;
 	int logical_port;
 } default_binding;
 
-static default_binding* default_bindings = nullptr;
-static int default_binding_count = 0;
-static int default_binding_capacity = 0;
+static default_binding* default_bindings UQM_GUARDED_BY(s_vcontrolLock) = nullptr;
+static int default_binding_count UQM_GUARDED_BY(s_vcontrolLock) = 0;
+static int default_binding_capacity UQM_GUARDED_BY(s_vcontrolLock) = 0;
 
 #endif // SDL_MAJOR_VERSION
 #endif /* HAVE_JOYSTICK */
 
-static keybinding* bindings[KEYBOARD_INPUT_BUCKETS];
+static keybinding* bindings[KEYBOARD_INPUT_BUCKETS] UQM_GUARDED_BY(s_vcontrolLock);
 
-static keypool* pool;
+static keypool* pool UQM_GUARDED_BY(s_vcontrolLock);
 
 /* Last interesting event */
-static int event_ready;
-static SDL_Event last_interesting;
+static int event_ready UQM_GUARDED_BY(s_vcontrolLock);
+static SDL_Event last_interesting UQM_GUARDED_BY(s_vcontrolLock);
 
 static keypool*
-allocate_key_chunk(void)
+allocate_key_chunk(void) UQM_REQUIRES(s_vcontrolLock)
 {
 	keypool* x = (keypool*)HMalloc(sizeof(keypool));
 	if (x)
@@ -157,7 +161,7 @@ free_key_pool(keypool* x)
 
 static void
 store_default_binding(int is_axis_binding, int axis, int polarity,
-					  int button, int* target, int logical_port)
+					  int button, uqstl::atomic<int>* target, int logical_port) UQM_REQUIRES(s_vcontrolLock)
 {
 	default_binding *new_bindings, *binding;
 	int new_capacity;
@@ -188,7 +192,7 @@ store_default_binding(int is_axis_binding, int axis, int polarity,
 
 static void
 apply_default_bindings_to_controller(SDL_JoystickID instance_id,
-									 int logical_port)
+									 int logical_port) UQM_REQUIRES(s_vcontrolLock)
 {
 	default_binding* binding;
 
@@ -226,6 +230,7 @@ apply_default_bindings_to_controller(SDL_JoystickID instance_id,
 
 void create_joystick(int device_index)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	SDL_GameController* gamecontroller;
 	SDL_Joystick* gamepad;
 	SDL_JoystickID instance_id;
@@ -325,7 +330,7 @@ void create_joystick(int device_index)
 }
 
 static void
-destroy_joystick(SDL_JoystickID instance_id)
+destroy_joystick(SDL_JoystickID instance_id) UQM_REQUIRES(s_vcontrolLock)
 {
 	controller_list** prev;
 	controller_list* current;
@@ -378,6 +383,7 @@ destroy_joystick(SDL_JoystickID instance_id)
 
 void create_joystick(int index)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	SDL_Joystick* stick;
 	int axes, buttons, hats;
 	if ((unsigned int)index >= joycount)
@@ -438,7 +444,7 @@ void create_joystick(int index)
 }
 
 static void
-destroy_joystick(int index)
+destroy_joystick(int index) UQM_REQUIRES(s_vcontrolLock)
 {
 	SDL_Joystick* stick = joysticks[index].stick;
 	if (stick)
@@ -459,7 +465,7 @@ destroy_joystick(int index)
 #endif /* HAVE_JOYSTICK */
 
 static void
-key_init(void)
+key_init(void) UQM_REQUIRES(s_vcontrolLock)
 {
 	unsigned int i;
 	pool = allocate_key_chunk();
@@ -511,7 +517,7 @@ key_init(void)
 }
 
 static void
-key_uninit(void)
+key_uninit(void) UQM_REQUIRES(s_vcontrolLock)
 {
 	unsigned int i;
 	free_key_pool(pool);
@@ -553,16 +559,19 @@ key_uninit(void)
 
 void VControl_Init(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	key_init();
 }
 
 void VControl_Uninit(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	key_uninit();
 }
 
 int VControl_SetJoyThreshold(int port, int threshold)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
 #if SDL_MAJOR_VERSION == 1
 	if (port >= 0 && (unsigned int)port < joycount)
@@ -599,7 +608,7 @@ int VControl_SetJoyThreshold(int port, int threshold)
 }
 
 static void
-add_binding(keybinding** newptr, int* target, sdl_key_t keycode)
+add_binding(keybinding** newptr, uqstl::atomic<int>* target, sdl_key_t keycode) UQM_REQUIRES(s_vcontrolLock)
 {
 	keybinding* newbinding;
 	keypool* searchbase;
@@ -661,7 +670,7 @@ add_binding(keybinding** newptr, int* target, sdl_key_t keycode)
 }
 
 static void
-remove_binding(keybinding** ptr, int* target, sdl_key_t keycode)
+remove_binding(keybinding** ptr, uqstl::atomic<int>* target, sdl_key_t keycode)
 {
 	if (!(*ptr))
 	{
@@ -696,6 +705,17 @@ remove_binding(keybinding** ptr, int* target, sdl_key_t keycode)
 	}
 }
 
+// Replaces the value of the target with func(value), also if another thread changes it.
+template <typename Func>
+static void
+updateTarget(uqstl::atomic<int>& target, Func func)
+{
+	int value {target.load()};
+	while (!target.compare_exchange_weak(value, func(value)))
+	{
+	}
+}
+
 static void
 activate(keybinding* i, sdl_key_t keycode)
 {
@@ -703,7 +723,9 @@ activate(keybinding* i, sdl_key_t keycode)
 	{
 		if (i->keycode == keycode)
 		{
-			*(i->target) = (*(i->target) + 1) | VCONTROL_STARTBIT;
+			updateTarget(*i->target, [](int v) {
+				return (v + 1) | VCONTROL_STARTBIT;
+			});
 		}
 		i = i->next;
 	}
@@ -714,10 +736,11 @@ deactivate(keybinding* i, sdl_key_t keycode)
 {
 	while (i != nullptr)
 	{
-		int v = *(i->target) & VCONTROL_MASK;
-		if ((i->keycode == keycode) && (v > 0))
+		if (i->keycode == keycode)
 		{
-			*(i->target) = (v - 1) | (*(i->target) & VCONTROL_STARTBIT);
+			updateTarget(*i->target, [](int v) {
+				return (v & VCONTROL_MASK) > 0 ? ((v & VCONTROL_MASK) - 1) | (v & VCONTROL_STARTBIT) : v;
+			});
 		}
 		i = i->next;
 	}
@@ -771,8 +794,9 @@ event2gesture(SDL_Event* e, VCONTROL_GESTURE* g)
 	}
 }
 
-int VControl_AddGestureBinding(VCONTROL_GESTURE* g, int* target)
+int VControl_AddGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	int result = -1;
 	int logical_port;
 	switch (g->type)
@@ -854,8 +878,9 @@ int VControl_AddGestureBinding(VCONTROL_GESTURE* g, int* target)
 	return result;
 }
 
-void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, int* target)
+void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	switch (g->type)
 	{
 		case VCONTROL_KEY:
@@ -903,21 +928,24 @@ void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, int* target)
 	}
 }
 
-int VControl_AddKeyBinding(sdl_key_t symbol, int* target)
+int VControl_AddKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	add_binding(&bindings[symbol % KEYBOARD_INPUT_BUCKETS], target,
 				symbol);
 	return 0;
 }
 
-void VControl_RemoveKeyBinding(sdl_key_t symbol, int* target)
+void VControl_RemoveKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	remove_binding(&bindings[symbol % KEYBOARD_INPUT_BUCKETS], target,
 				   symbol);
 }
 
-int VControl_AddJoyAxisBinding(int port, int axis, int polarity, int* target)
+int VControl_AddJoyAxisBinding(int port, int axis, int polarity, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
 #if SDL_MAJOR_VERSION == 1
 	if (port >= 0 && (unsigned int)port < joycount)
@@ -1009,8 +1037,9 @@ int VControl_AddJoyAxisBinding(int port, int axis, int polarity, int* target)
 }
 
 void VControl_RemoveJoyAxisBinding(int port, int axis,
-								   int polarity, int* target)
+								   int polarity, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
 #if SDL_MAJOR_VERSION == 1
 	if (port >= 0 && (unsigned int)port < joycount)
@@ -1098,8 +1127,9 @@ void VControl_RemoveJoyAxisBinding(int port, int axis,
 	}
 }
 
-int VControl_AddJoyButtonBinding(int port, int button, int* target)
+int VControl_AddJoyButtonBinding(int port, int button, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
 #if SDL_MAJOR_VERSION == 1
 	if (port >= 0 && (unsigned int)port < joycount)
@@ -1163,8 +1193,9 @@ int VControl_AddJoyButtonBinding(int port, int button, int* target)
 	}
 }
 
-void VControl_RemoveJoyButtonBinding(int port, int button, int* target)
+void VControl_RemoveJoyButtonBinding(int port, int button, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
 #if SDL_MAJOR_VERSION == 1
 	if (port >= 0 && (unsigned int)port < joycount)
@@ -1227,8 +1258,9 @@ void VControl_RemoveJoyButtonBinding(int port, int button, int* target)
 
 #if SDL_MAJOR_VERSION == 1
 
-int VControl_AddJoyHatBinding(int port, int which, Uint8 dir, int* target)
+int VControl_AddJoyHatBinding(int port, int which, Uint8 dir, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
 	if (port >= 0 && (unsigned int)port < joycount)
 	{
@@ -1288,8 +1320,9 @@ int VControl_AddJoyHatBinding(int port, int which, Uint8 dir, int* target)
 	}
 }
 
-void VControl_RemoveJoyHatBinding(int port, int which, Uint8 dir, int* target)
+void VControl_RemoveJoyHatBinding(int port, int which, Uint8 dir, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
 	if (port >= 0 && (unsigned int)port < joycount)
 	{
@@ -1350,22 +1383,26 @@ void VControl_RemoveJoyHatBinding(int port, int which, Uint8 dir, int* target)
 
 void VControl_RemoveAllBindings(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	key_uninit();
 	key_init();
 }
 
 void VControl_ProcessKeyDown(sdl_key_t symbol)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	activate(bindings[symbol % KEYBOARD_INPUT_BUCKETS], symbol);
 }
 
 void VControl_ProcessKeyUp(sdl_key_t symbol)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	deactivate(bindings[symbol % KEYBOARD_INPUT_BUCKETS], symbol);
 }
 
 void VControl_ProcessJoyButtonDown(int port, int button)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
 #if SDL_MAJOR_VERSION == 1
 	if (!joysticks[port].stick)
@@ -1393,6 +1430,7 @@ void VControl_ProcessJoyButtonDown(int port, int button)
 
 void VControl_ProcessJoyButtonUp(int port, int button)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
 #if SDL_MAJOR_VERSION == 1
 	if (!joysticks[port].stick)
@@ -1420,6 +1458,7 @@ void VControl_ProcessJoyButtonUp(int port, int button)
 
 void VControl_ProcessJoyAxis(int port, int axis, int value)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
 #if SDL_MAJOR_VERSION == 1
 	int t;
@@ -1530,6 +1569,7 @@ void VControl_ProcessJoyAxis(int port, int axis, int value)
 
 void VControl_ProcessJoyHat(int port, int which, Uint8 value)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
 	Uint8 old;
 	if (!joysticks[port].stick)
@@ -1581,6 +1621,7 @@ void VControl_ProcessJoyHat(int port, int which, Uint8 value)
 
 void VControl_ResetInput(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	/* Step through every valid entry in the binding pool and zero
 	 * them out.  This will probably zero entries multiple times;
 	 * oh well, no harm done. */
@@ -1602,6 +1643,7 @@ void VControl_ResetInput(void)
 
 void VControl_BeginFrame(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	/* Step through every valid entry in the binding pool and zero
 	 * out the frame-start bit.  This will probably zero entries
 	 * multiple times; oh well, no harm done. */
@@ -1614,7 +1656,7 @@ void VControl_BeginFrame(void)
 		{
 			if (base->pool[i].target)
 			{
-				*(base->pool[i].target) &= VCONTROL_MASK;
+				base->pool[i].target->fetch_and(VCONTROL_MASK);
 			}
 		}
 		base = base->next;
@@ -1623,6 +1665,7 @@ void VControl_BeginFrame(void)
 
 void VControl_HandleEvent(const SDL_Event* e)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	switch (e->type)
 	{
 		case SDL_KEYDOWN:
@@ -1707,11 +1750,13 @@ void VControl_HandleEvent(const SDL_Event* e)
 
 void VControl_ClearGesture(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	event_ready = 0;
 }
 
 int VControl_GetLastGesture(VCONTROL_GESTURE* g)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	if (event_ready && g != nullptr)
 	{
 		event2gesture(&last_interesting, g);
@@ -1985,6 +2030,7 @@ parse_gesture(parse_state* state, VCONTROL_GESTURE* gesture)
 
 void VControl_ParseGesture(VCONTROL_GESTURE* g, const char* spec)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	parse_state ps {};
 
 	uqm::strncpy_safe(ps.line, spec);

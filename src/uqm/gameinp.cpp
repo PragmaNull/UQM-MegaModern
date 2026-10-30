@@ -73,7 +73,7 @@ static bool _gestalt_keys;
 
 static MENU_SOUND_FLAGS sound_0, sound_1;
 
-volatile CONTROLLER_INPUT_STATE ImmediateInputState;
+IMMEDIATE_INPUT_STATE ImmediateInputState {};
 
 uqstl::atomic<bool> ExitRequested {};
 uqstl::atomic<bool> GamePaused {};

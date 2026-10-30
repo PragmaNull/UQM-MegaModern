@@ -358,11 +358,8 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	InitColorMaps();
 	init_communication();
 	// initAudio (snddriver, soundflags);
-	// Make sure that the compiler treats multidim arrays the way we expect
-	assert(sizeof(int[static_cast<int>(ControlTemplate::NUM) * NUM_KEYS]) == sizeof(int[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS]));
-
-	TFB_SetInputVectors((int*)ImmediateInputState.menu, NUM_MENU_KEYS,
-						(int*)ImmediateInputState.key, NUM_KEYS,
+	TFB_SetInputVectors(ImmediateInputState.menu, NUM_MENU_KEYS,
+						&ImmediateInputState.key[0][0], NUM_KEYS,
 						static_cast<int>(ControlTemplate::NUM));
 	TFB_InitInput(TFB_INPUTDRIVER_SDL, 0);
 

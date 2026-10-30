@@ -49,12 +49,12 @@ static bool set_character_mode = false;
 // on this setting
 #endif // SDL_MAJOR_VERSION
 
-static volatile int* menu_vec;
+static uqstl::atomic<int>* menu_vec;
 static int num_menu;
 // The last vector element is the character repeat "key"
 // This is only used in SDL1 input but it's mostly harmless everywhere else
 #define KEY_MENU_ANY (num_menu - 1)
-static volatile int* flight_vec;
+static uqstl::atomic<int>* flight_vec;
 static int num_templ;
 static int num_flight;
 
@@ -122,7 +122,7 @@ register_menu_controls(int index)
 			break;
 		}
 		VControl_ParseGesture(&g, res_GetString(buf));
-		VControl_AddGestureBinding(&g, (int*)&menu_vec[index]);
+		VControl_AddGestureBinding(&g, &menu_vec[index]);
 		i++;
 	}
 }
@@ -207,7 +207,7 @@ register_flight_controls(void)
 				}
 				VControl_ParseGesture(g, res_GetString(buf));
 				VControl_AddGestureBinding(g,
-										   (int*)(flight_vec + i * num_flight + j));
+										   (flight_vec + i * num_flight + j));
 			}
 		}
 	}
@@ -258,7 +258,7 @@ resetKeyboardState(void)
 #endif // SDL_MAJOR_VERSION
 }
 
-void TFB_SetInputVectors(int menu[], int num_menu_, int flight[], int num_flight_, int num_templ_)
+void TFB_SetInputVectors(uqstl::atomic<int>* menu, int num_menu_, uqstl::atomic<int>* flight, int num_flight_, int num_templ_)
 {
 	if (num_menu_ < 0 || num_templ_ < 0 || num_flight_ < 0)
 	{
@@ -772,7 +772,7 @@ void RemoveInputState(int templat, int control, int index)
 	}
 
 	VControl_RemoveGestureBinding(g,
-								  (int*)(flight_vec + templat * num_flight + control));
+								  (flight_vec + templat * num_flight + control));
 	g->type = VCONTROL_NONE;
 
 	fmt::format_to_sz_n(keybuf, "keys.{}.{}.{}", templat + 1,
@@ -807,7 +807,7 @@ void RebindInputState(int templat, int control, int index)
 
 	/* And now, add the new binding. */
 	VControl_AddGestureBinding(&g,
-							   (int*)(flight_vec + templat * num_flight + control));
+							   (flight_vec + templat * num_flight + control));
 	*CONTROL_PTR(templat, control, index) = g;
 	fmt::format_to_sz_n(keybuf, "keys.{}.{}.{}", templat + 1,
 						flight_res_names[control], index + 1);

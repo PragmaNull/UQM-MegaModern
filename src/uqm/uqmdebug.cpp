@@ -2228,7 +2228,7 @@ putScreen(FRAME savedFrame)
 // Must be called from the main thread.
 void debugContexts(void)
 {
-	static volatile bool inDebugContexts = false;
+	static uqstl::atomic<bool> inDebugContexts {false};
 	// Prevent this function from being called from within itself.
 
 	GFXCONTEXT orgContext;
@@ -2242,11 +2242,10 @@ void debugContexts(void)
 	FRAME savedScreen;
 
 	// Prevent this function from being called from within itself.
-	if (inDebugContexts)
+	if (inDebugContexts.exchange(true))
 	{
 		return;
 	}
-	inDebugContexts = true;
 
 	contextCount = countVisibleContexts();
 	if (contextCount == 0)

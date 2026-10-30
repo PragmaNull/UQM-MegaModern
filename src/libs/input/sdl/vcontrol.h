@@ -20,6 +20,7 @@
 #include "port.h"
 #include <SDL.h>
 #include "core/stl/stl.h"
+#include <atomic>
 
 #if SDL_MAJOR_VERSION == 1
 typedef SDLKey sdl_key_t;
@@ -67,26 +68,26 @@ typedef struct
 } VCONTROL_GESTURE;
 
 /* Control of bindings */
-int VControl_AddGestureBinding(VCONTROL_GESTURE* g, int* target);
-void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, int* target);
+int VControl_AddGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target);
+void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target);
 
-int VControl_AddKeyBinding(sdl_key_t symbol, int* target);
-void VControl_RemoveKeyBinding(sdl_key_t symbol, int* target);
+int VControl_AddKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target);
+void VControl_RemoveKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target);
 
 void create_joystick(int device_index);
 
 int VControl_AddJoyAxisBinding(int port, int axis, int polarity,
-							   int* target);
+							   uqstl::atomic<int>* target);
 void VControl_RemoveJoyAxisBinding(int port, int axis, int polarity,
-								   int* target);
+								   uqstl::atomic<int>* target);
 int VControl_SetJoyThreshold(int port, int threshold);
-int VControl_AddJoyButtonBinding(int port, int button, int* target);
-void VControl_RemoveJoyButtonBinding(int port, int button, int* target);
+int VControl_AddJoyButtonBinding(int port, int button, uqstl::atomic<int>* target);
+void VControl_RemoveJoyButtonBinding(int port, int button, uqstl::atomic<int>* target);
 #if SDL_MAJOR_VERSION == 1
 int VControl_AddJoyHatBinding(int port, int which, Uint8 dir,
-							  int* target);
+							  uqstl::atomic<int>* target);
 void VControl_RemoveJoyHatBinding(int port, int which, Uint8 dir,
-								  int* target);
+								  uqstl::atomic<int>* target);
 #endif // SDL_MAJOR_VERSION
 
 void VControl_RemoveAllBindings(void);

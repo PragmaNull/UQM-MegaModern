@@ -18,6 +18,7 @@
 
 #ifndef INPUT_COMMON_H
 #define INPUT_COMMON_H
+#include <atomic>
 
 // driver for TFB_InitInput
 enum
@@ -33,6 +34,6 @@ extern void TFB_UninitInput(void);
 
 #define MAX_FLIGHT_ALTERNATES 2
 
-extern void TFB_SetInputVectors(int menu[], int num_menu, int flight[], int num_flight, int num_templ);
+extern void TFB_SetInputVectors(uqstl::atomic<int>* menu, int num_menu, uqstl::atomic<int>* flight, int num_flight, int num_templ);
 
 #endif
