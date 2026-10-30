@@ -1,5 +1,5 @@
-// Implements the sleep functions that count in game ticks.
-#include "libs/threadlib.h"
+// The game clock in game ticks and milliseconds, and the sleep functions that use it.
+#include "timelib.h"
 
 #include "core/thread/Thread.h"
 #include "libs/callback/async.h"
@@ -9,6 +9,20 @@
 
 namespace
 {
+
+using Clock = uqstl::chrono::steady_clock;
+
+Clock::time_point startTime()
+{
+	static const Clock::time_point start {Clock::now()};
+	return start;
+}
+
+TimeCount msToTicks(uint32_t ms)
+{
+	// Overflow-safe conversion.
+	return (ms / 1000) * GameTicksPerSecond + ((ms % 1000) * GameTicksPerSecond / 1000);
+}
 
 void sleepTicks(TimePeriod ticks)
 {
@@ -29,6 +43,17 @@ void sleepUntilTicks(TimeCount wakeTime)
 }
 
 } // namespace
+
+uint32_t GetTimeMs(void)
+{
+	const auto elapsed {uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(Clock::now() - startTime())};
+	return static_cast<uint32_t>(elapsed.count());
+}
+
+TimeCount GetTimeCounter(void)
+{
+	return msToTicks(GetTimeMs());
+}
 
 void HibernateThread(TimePeriod timePeriod)
 {
@@ -57,9 +82,7 @@ void SleepThreadUntil(TimeCount wakeTime)
 			return;
 		}
 
-		const uint32_t nextTimeMs {Async_timeBeforeNextMs()};
-		// Overflow-safe conversion.
-		TimeCount nextTime {(nextTimeMs / 1000) * GameTicksPerSecond + ((nextTimeMs % 1000) * GameTicksPerSecond / 1000)};
+		TimeCount nextTime {msToTicks(Async_timeBeforeNextMs())};
 		if (wakeTime < nextTime)
 		{
 			nextTime = wakeTime;

@@ -39,7 +39,6 @@
 #include "libs/callback/async.h"
 #include "libs/inplib.h"
 #include "libs/time/timelib.h"
-#include "libs/threadlib.h"
 #include "libs/input/sdl/vcontrol.h"
 #include "setup.h"
 #include "setupmenu.h"

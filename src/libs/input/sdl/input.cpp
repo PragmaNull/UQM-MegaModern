@@ -21,7 +21,7 @@
 #include <string.h>
 #include "input.h"
 #include "../inpintrn.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 #include "libs/input/sdl/vcontrol.h"
 #include "libs/input/sdl/keynames.h"
 #include "libs/memlib.h"

@@ -29,8 +29,6 @@ include("src/libs/sound/sound.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_sound_master_files})
 include("src/libs/strings/strings.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_strings_master_files})
-include("src/libs/threads/threads.cmake")
-list(APPEND uqm_src_libs_master_files ${uqm_src_libs_threads_master_files})
 include("src/libs/time/time.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_time_master_files})
 include("src/libs/video/video.cmake")
@@ -48,7 +46,6 @@ set(uqm_src_libs_files
 	"src/libs/reslib.h"
 #	"src/libs/sndlib.h"
 	"src/libs/strlib.h"
-	"src/libs/threadlib.h"
 	"src/libs/vidlib.h"
 )
 

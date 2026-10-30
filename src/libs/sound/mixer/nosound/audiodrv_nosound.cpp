@@ -20,7 +20,7 @@
 #include "audiodrv_nosound.h"
 #include "../../sndintrn.h"
 #include "core/thread/Thread.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 #include "core/log/log.h"
 #include "libs/memlib.h"
 #include <stdlib.h>

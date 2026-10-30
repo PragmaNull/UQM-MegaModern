@@ -21,7 +21,7 @@
 
 #include <cstdint>
 #include "libs/vidlib.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 
 struct legacy_video_desc
 {

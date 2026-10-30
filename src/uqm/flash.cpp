@@ -38,7 +38,7 @@
 
 #include "core/log/log.h"
 #include "libs/memlib.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 
 #include "colors.h"
 #include "globdata.h"

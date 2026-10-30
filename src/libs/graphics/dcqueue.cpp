@@ -16,7 +16,6 @@
 
 #include "port.h"
 #include "core/string/StringUtils.h"
-#include "libs/threadlib.h"
 #include "libs/graphics/drawcmd.h"
 #include "libs/graphics/drawable.h"
 #include "libs/graphics/context.h"

@@ -46,7 +46,7 @@
 #include "libs/input/input_common.h"
 #include "libs/inplib.h"
 #include "core/thread/Thread.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 #include "libs/luauqm/luauqm.h"
 #include "uqm/controls.h"
 #include "uqm/battle.h"
@@ -324,7 +324,6 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	initTempDir ();
 #endif
 
-	InitTimeSystem();
 
 	luaUqm_init();
 
@@ -424,7 +423,6 @@ void UQMGame::teardown()
 
 		luaUqm_uninit();
 
-		UnInitTimeSystem();
 #if 0
 		unInitTempDir ();
 #endif

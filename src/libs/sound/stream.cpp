@@ -20,9 +20,7 @@
 // for abs()
 #include "sound.h"
 #include "sndintrn.h"
-#include "libs/threadlib.h"
 #include "libs/time/timelib.h"
-#include "libs/threadlib.h"
 #include "core/thread/Mutex.h"
 #include "core/thread/Thread.h"
 #include "core/log/log.h"

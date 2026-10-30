@@ -18,7 +18,7 @@
 
 #include "alarm.h"
 
-#include "SDL.h"
+#include "libs/time/timelib.h"
 
 #include "core/stl/memory.h"
 
@@ -40,7 +40,7 @@ void Alarm_uninit(void)
 static inline AlarmTime
 AlarmTime_nowMs(void)
 {
-	return SDL_GetTicks();
+	return GetTimeMs();
 }
 
 static Alarm*

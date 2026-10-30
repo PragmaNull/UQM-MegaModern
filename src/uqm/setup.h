@@ -22,7 +22,7 @@
 #include "libs/reslib.h"
 #include "libs/sndlib.h"
 #include "libs/gfxlib.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 #include "uqm/inteldefs.h"
 
 #if 0 //defined(__cplusplus)

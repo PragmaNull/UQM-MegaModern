@@ -29,7 +29,7 @@
 #include "port.h"
 #include "libs/gfxlib.h"
 #include "core/log/log.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 
 #include <stdlib.h>
 

@@ -29,7 +29,7 @@
 #include "grpintrn.h"
 #include "uqmdebug.h"
 #include "gameev.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 #include "core/log/log.h"
 #include "core/stl/stl.h"
 #include "master.h"

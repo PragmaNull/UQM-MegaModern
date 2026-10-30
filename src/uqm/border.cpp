@@ -18,7 +18,7 @@
 
 
 #include "libs/gfxlib.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 #include "colors.h"
 #include "setup.h"
 #include "sis.h"

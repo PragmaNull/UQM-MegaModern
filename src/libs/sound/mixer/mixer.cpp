@@ -25,7 +25,7 @@
 #include "mixer.h"
 #include "mixerint.h"
 #include "core/misc/FatalExit.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 #include "core/thread/Mutex.h"
 #include "core/log/log.h"
 #include "libs/memlib.h"

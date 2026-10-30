@@ -1,28 +1,8 @@
-/*
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */
-#pragma once
-
+// The game clock in game ticks and milliseconds, and the sleep functions that use it.
 #ifndef LIBS_TIME_TIMELIB_H_
 #define LIBS_TIME_TIMELIB_H_
 
-#define TIMELIB SDL
-
-#include <chrono>
-#include "libs/compiler.h"
-
+#include <cstdint>
 
 typedef uint32_t TimeCount;
 typedef uint32_t TimePeriod;
@@ -33,18 +13,27 @@ typedef uint32_t TimePeriod;
  * (also Comm Oscilloscope is 32 FPS, but it does not require a stable
  * timer and currently runs within the Comm ambient anim paradigm anyway)
  * Thus, the minimum value for GameTicksPerSecond is 840. */
-#if TIMELIB == SDL
 constexpr uint32_t GameTicksPerSecond {840};
+
 static constexpr uint32_t getTicksForFramerate(const uint32_t desiredFps)
 {
 	return GameTicksPerSecond / desiredFps;
 }
-#endif
 
+// Milliseconds since the game clock started. Wraps after about 49 days.
+uint32_t GetTimeMs(void);
+// Game ticks since the game clock started.
+TimeCount GetTimeCounter(void);
 
-extern void InitTimeSystem(void);
-extern void UnInitTimeSystem(void);
-extern TimeCount GetTimeCounter(void);
+// Sleep without processing asynchronous operations.
+void HibernateThread(TimePeriod timePeriod);
+void HibernateThreadUntil(TimeCount wakeTime);
 
+// Sleep, and process asynchronous operations until the wake time.
+void SleepThread(TimePeriod timePeriod);
+void SleepThreadUntil(TimeCount wakeTime);
+
+// Sleeps for a short time, so that busy-wait loops do not use all of a CPU core.
+void TaskSwitch(void);
 
 #endif /* LIBS_TIME_TIMELIB_H_ */

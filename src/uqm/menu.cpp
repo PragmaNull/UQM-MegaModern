@@ -25,7 +25,7 @@
 #include "setup.h"
 #include "gamestr.h"
 #include "libs/graphics/gfx_common.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
 #include "util.h"

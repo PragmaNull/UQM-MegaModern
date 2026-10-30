@@ -71,10 +71,12 @@ reads or writes.
                               SLEEPING
                               --------
 
-libs/threadlib.h has sleep functions that count in game ticks:
+libs/time/timelib.h has the game clock (GetTimeCounter in game ticks,
+GetTimeMs in milliseconds, both from one start time) and sleep
+functions that count in game ticks:
 
 - SleepThread and SleepThreadUntil process the asynchronous operations
-  (libs/async.h) while they wait. Use them on the Starcon2Main thread.
+  (libs/callback/async.h) while they wait. Use them on the Starcon2Main thread.
 - HibernateThread and HibernateThreadUntil only sleep.
 - TaskSwitch sleeps for about 1 ms. Busy-wait loops call it so that
   they do not use all of a CPU core.

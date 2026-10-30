@@ -34,7 +34,7 @@
 #include "libs/compiler.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/sound/sound.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 #include "libs/vidlib.h"
 #include "core/log/log.h"
 #include "core/misc/FatalExit.h"

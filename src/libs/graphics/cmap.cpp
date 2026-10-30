@@ -17,7 +17,6 @@
  */
 
 #include "libs/graphics/cmap.h"
-#include "libs/threadlib.h"
 
 #include "core/thread/Mutex.h"
 #include "libs/time/timelib.h"
