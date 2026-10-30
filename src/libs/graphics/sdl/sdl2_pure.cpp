@@ -482,11 +482,18 @@ void TFB_Pure_UninitGraphics(void)
 	s_gpuShaders.reset();
 	if (renderer)
 	{
+		// This also destroys the screen textures.
 		SDL_DestroyRenderer(renderer);
+		renderer = nullptr;
+		for (TFB_SDL2_SCREENINFO& screen : SDL2_Screens)
+		{
+			screen.texture = nullptr;
+		}
 	}
 	if (window)
 	{
 		SDL_DestroyWindow(window);
+		window = nullptr;
 	}
 }
 

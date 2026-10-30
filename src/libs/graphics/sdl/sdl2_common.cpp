@@ -55,6 +55,8 @@ void TFB_PreInit(void)
 static void
 TFB_PreQuit(void)
 {
+	// Release the renderer and its GPU objects while SDL still runs.
+	TFB_Pure_UninitGraphics();
 	SDL_Quit();
 }
 
