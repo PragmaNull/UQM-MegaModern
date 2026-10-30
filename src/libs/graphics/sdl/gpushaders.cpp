@@ -2,7 +2,10 @@
 
 #include "gpushaders.h"
 #include "core/log/log.h"
+#include "shaders/biadapt.frag.h"
+#include "shaders/biadaptadv.frag.h"
 #include "shaders/gamma.frag.h"
+#include "shaders/triscan.frag.h"
 
 namespace uqm
 {
@@ -47,7 +50,10 @@ uqstl::unique_ptr<GpuShaders> GpuShaders::create(SDL_Renderer* renderer)
 	uqstl::unique_ptr<GpuShaders> shaders {
 		new GpuShaders {renderer, device, format}
 	 };
-	if (!shaders->load(shaders->m_gamma, {gamma_frag_dxil, gamma_frag_spv, gamma_frag_msl}, 1))
+	if (!shaders->load(shaders->m_gamma, {gamma_frag_dxil, gamma_frag_spv, gamma_frag_msl}, 1)
+		|| !shaders->load(shaders->m_biadapt, {biadapt_frag_dxil, biadapt_frag_spv, biadapt_frag_msl}, 0)
+		|| !shaders->load(shaders->m_biadaptAdv, {biadaptadv_frag_dxil, biadaptadv_frag_spv, biadaptadv_frag_msl}, 0)
+		|| !shaders->load(shaders->m_triscan, {triscan_frag_dxil, triscan_frag_spv, triscan_frag_msl}, 0))
 	{
 		return nullptr;
 	}
@@ -64,6 +70,9 @@ GpuShaders::GpuShaders(SDL_Renderer* renderer, SDL_GPUDevice* device, SDL_GPUSha
 GpuShaders::~GpuShaders()
 {
 	release(m_gamma);
+	release(m_biadapt);
+	release(m_biadaptAdv);
+	release(m_triscan);
 }
 
 const char* GpuShaders::formatName() const
@@ -93,6 +102,23 @@ SDL_GPURenderState* GpuShaders::gamma(float gamma)
 		m_gammaValue = gamma;
 	}
 	return m_gamma.state;
+}
+
+SDL_GPURenderState* GpuShaders::scaler(GfxFlags flags) const
+{
+	if (testFlag(flags, GfxFlags::Scale_BiAdapt))
+	{
+		return m_biadapt.state;
+	}
+	if (testFlag(flags, GfxFlags::Scale_BiAdaptAdv))
+	{
+		return m_biadaptAdv.state;
+	}
+	if (testFlag(flags, GfxFlags::Scale_Triscan))
+	{
+		return m_triscan.state;
+	}
+	return nullptr;
 }
 
 bool GpuShaders::load(Effect& effect, const ShaderCode& code, uint32_t numUniformBuffers)

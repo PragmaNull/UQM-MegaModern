@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <span>
 #include "core/stl/memory.h"
+#include "libs/graphics/gfx_defs.h"
 
 namespace uqm
 {
@@ -35,6 +36,10 @@ public:
 	// Render state that applies gamma correction.
 	[[nodiscard]] SDL_GPURenderState* gamma(float gamma);
 
+	// Render state of the 2x scaler in the flags, or nullptr if the scaler has no shader.
+	// It renders a texture with nearest sampling to a target of twice its size.
+	[[nodiscard]] SDL_GPURenderState* scaler(GfxFlags flags) const;
+
 private:
 	// A fragment shader and the render state that uses it.
 	struct Effect
@@ -51,6 +56,9 @@ private:
 	SDL_GPUDevice* m_device;
 	SDL_GPUShaderFormat m_format;
 	Effect m_gamma {};
+	Effect m_biadapt {};
+	Effect m_biadaptAdv {};
+	Effect m_triscan {};
 	float m_gammaValue {0.0f};
 };
 
