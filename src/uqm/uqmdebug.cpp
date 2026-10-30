@@ -404,7 +404,7 @@ void forwardToNextEvent(bool skipHEE)
 
 		for (;;)
 		{
-			if (GLOBAL(GameClock.year_index) > year || (GLOBAL(GameClock.year_index) == year && (GLOBAL(GameClock.month_index) > month || (GLOBAL(GameClock.month_index) == month && GLOBAL(GameClock.day_index) >= day))))
+			if (uqm::gameState().clock().year() > year || (uqm::gameState().clock().year() == year && (uqm::gameState().clock().month() > month || (uqm::gameState().clock().month() == month && uqm::gameState().clock().day() >= day))))
 			{
 				break;
 			}

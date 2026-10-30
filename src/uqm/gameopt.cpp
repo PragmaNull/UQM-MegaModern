@@ -449,8 +449,8 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 	char fullStr[256] {};
 	char dateStr[80] {};
 
-	DateToString(dateStr, sizeof dateStr, GLOBAL(GameClock.month_index),
-				 GLOBAL(GameClock.day_index), GLOBAL(GameClock.year_index));
+	DateToString(dateStr, sizeof dateStr, uqm::gameState().clock().month(),
+				 uqm::gameState().clock().day(), uqm::gameState().clock().year());
 	fmt::format_to_sz_n(fullStr, "{}: {}", dateStr, Str);
 
 	SetContextForeGroundColor(SAVE_SELECTED_COLOR);

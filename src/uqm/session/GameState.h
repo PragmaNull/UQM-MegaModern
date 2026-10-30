@@ -10,6 +10,7 @@
 #include "core/stl/map.h"
 #include "core/stl/optional.h"
 #include "core/stl/string.h"
+#include "uqm/session/GameClock.h"
 #include "uqm/sis.h"
 #include "uqm/state.h"
 #include <cstdint>
@@ -32,6 +33,11 @@ public:
 		return m_game;
 	}
 
+	[[nodiscard]] GameClock& clock() noexcept
+	{
+		return m_clock;
+	}
+
 	// One of the files STARINFO_FILE, RANDGRPINFO_FILE and DEFGRPINFO_FILE.
 	[[nodiscard]] GAME_STATE_FILE& stateFile(int index) noexcept
 	{
@@ -52,6 +58,7 @@ public:
 private:
 	SIS_STATE m_sis {};
 	GAME_STATE m_game {};
+	GameClock m_clock {};
 	uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> m_stateFiles {MakeStateFiles()};
 	uqstl::map<uqstl::string, uint32_t, uqstl::less<>> m_flags {};
 	star_desc* m_currentStar {};

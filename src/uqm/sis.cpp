@@ -590,9 +590,9 @@ void DrawStatusMessage(const char* pStr)
 		else
 		{ // Just a date
 			DateToString(buf, sizeof buf,
-						 GLOBAL(GameClock.month_index),
-						 GLOBAL(GameClock.day_index),
-						 GLOBAL(GameClock.year_index));
+						 uqm::gameState().clock().month(),
+						 uqm::gameState().clock().day(),
+						 uqm::gameState().clock().year());
 		}
 		pStr = buf;
 	}

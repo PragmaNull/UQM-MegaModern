@@ -977,14 +977,14 @@ void SaveEncounters(yyjson_mut_doc* doc, yyjson_mut_val* root)
 
 void SaveEvents(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
-	uint16_t num_links {CountLinks(&GLOBAL(GameClock.event_q))};
+	uint16_t num_links {CountLinks(&uqm::gameState().clock().events())};
 	if (num_links == 0)
 	{
 		return;
 	}
 
 	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "events")};
-	HEVENT hEvent {GetHeadLink(&GLOBAL(GameClock.event_q))};
+	HEVENT hEvent {GetHeadLink(&uqm::gameState().clock().events())};
 	while (num_links--)
 	{
 		EVENT* EventPtr {};
@@ -1002,14 +1002,14 @@ void SaveEvents(yyjson_mut_doc* doc, yyjson_mut_val* root)
 	}
 }
 
-void SaveClockState(yyjson_mut_doc* doc, yyjson_mut_val* obj, const CLOCK_STATE& clock)
+void SaveClockState(yyjson_mut_doc* doc, yyjson_mut_val* obj, const uqm::GameClock& clock)
 {
 	yyjson_mut_val* clockObj {yyjson_mut_obj_add_obj(doc, obj, "GameClock")};
-	addInt(doc, clockObj, "day_index", clock.day_index);
-	addInt(doc, clockObj, "month_index", clock.month_index);
-	addInt(doc, clockObj, "year_index", clock.year_index);
-	addInt(doc, clockObj, "tick_count", clock.tick_count);
-	addInt(doc, clockObj, "day_in_ticks", clock.day_in_ticks);
+	addInt(doc, clockObj, "day_index", clock.day());
+	addInt(doc, clockObj, "month_index", clock.month());
+	addInt(doc, clockObj, "year_index", clock.year());
+	addInt(doc, clockObj, "tick_count", clock.tickCount());
+	addInt(doc, clockObj, "day_in_ticks", clock.dayInTicks());
 }
 
 void SaveGameStateFlags(yyjson_mut_doc* doc, yyjson_mut_val* root)
@@ -1032,8 +1032,9 @@ void SaveGameStateFlags(yyjson_mut_doc* doc, yyjson_mut_val* root)
 	}
 }
 
-void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, const GAME_STATE& GS)
+void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, uqm::GameState& gameState)
 {
+	const GAME_STATE& GS {gameState.game()};
 	const uint8_t res_scale {static_cast<uint8_t>(uqm::lowByte(uqm::currentActivity()) != IN_INTERPLANETARY ? RESOLUTION_FACTOR : 0)};
 
 	yyjson_mut_val* state {yyjson_mut_obj_add_obj(doc, root, "globalState")};
@@ -1043,7 +1044,7 @@ void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, const GAME_STATE& 
 	addArray<uint8_t>(doc, state, "ModuleCost", GS.ModuleCost);
 	addArray<uint8_t>(doc, state, "ElementWorth", GS.ElementWorth);
 	addInt(doc, state, "CurrentActivity", uqm::currentActivity());
-	SaveClockState(doc, state, GS.GameClock);
+	SaveClockState(doc, state, gameState.clock());
 	addPoint(doc, state, "autopilot", GS.autopilot.x, GS.autopilot.y);
 	addPoint(doc, state, "ip_location", GS.ip_location.x, GS.ip_location.y);
 	addPoint(doc, state, "ShipOrigin", RES_DESCALE(GS.ShipStamp.origin.x), RES_DESCALE(GS.ShipStamp.origin.y));
@@ -1178,9 +1179,9 @@ PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 				   | (GET_GAME_STATE(IMPROVED_LANDER_SHOT) << (4 + 2))
 				   | ((GET_GAME_STATE(CHMMR_BOMB_STATE) < 2 ? 0 : 1) << (4 + 3));
 
-	SummPtr->day_index = GLOBAL(GameClock.day_index);
-	SummPtr->month_index = GLOBAL(GameClock.month_index);
-	SummPtr->year_index = GLOBAL(GameClock.year_index);
+	SummPtr->day_index = uqm::gameState().clock().day();
+	SummPtr->month_index = uqm::gameState().clock().month();
+	SummPtr->year_index = uqm::gameState().clock().year();
 	SummPtr->SaveName[SAVE_NAME_SIZE - 1] = 0;
 	uqm::strncpy_safe(SummPtr->SaveName, name);
 	SummPtr->res_factor = RESOLUTION_FACTOR;
@@ -1498,7 +1499,7 @@ uqstl::optional<uqstl::string> SaveGameJson(SUMMARY_DESC* SummPtr, const char* n
 
 	PrepareSummary(SummPtr, name);
 	SaveSummary(doc.get(), root, *SummPtr);
-	SaveGameState(doc.get(), root, uqm::gameState().game());
+	SaveGameState(doc.get(), root, uqm::gameState());
 
 	// XXX: Restore
 	GLOBAL(ip_location) = pt;

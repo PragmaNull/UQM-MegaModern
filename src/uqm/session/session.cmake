@@ -7,6 +7,8 @@ set(uqm_src_uqm_session_master_files "")
 ############################################################
 # Local files
 set(uqm_src_uqm_session_files
+	"src/uqm/session/GameClock.cpp"
+	"src/uqm/session/GameClock.h"
 	"src/uqm/session/GameSession.cpp"
 	"src/uqm/session/GameSession.h"
 	"src/uqm/session/GameState.cpp"

@@ -193,13 +193,13 @@ luaUqm_state_clock_getDate(lua_State* luaState)
 	// Create a table on the stack with space reserved for 3 fields.
 	lua_createtable(luaState, 0, 3);
 
-	lua_pushinteger(luaState, GLOBAL(GameClock.year_index));
+	lua_pushinteger(luaState, uqm::gameState().clock().year());
 	lua_setfield(luaState, -2, "year");
 
-	lua_pushinteger(luaState, GLOBAL(GameClock.month_index));
+	lua_pushinteger(luaState, uqm::gameState().clock().month());
 	lua_setfield(luaState, -2, "month");
 
-	lua_pushinteger(luaState, GLOBAL(GameClock.day_index));
+	lua_pushinteger(luaState, uqm::gameState().clock().day());
 	lua_setfield(luaState, -2, "day");
 
 	return 1;

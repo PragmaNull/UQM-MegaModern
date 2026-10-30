@@ -367,19 +367,19 @@ bool ShipsReady(RACE_ID race)
 		default:
 			return false;
 	}
-	return ((i = (GLOBAL(GameClock.year_index) - START_YEAR) - year) > 0) || (i == 0 && (((i = GLOBAL(GameClock.month_index) - month) > 0) || (i == 0 && GLOBAL(GameClock.day_index) > day)));
+	return ((i = (uqm::gameState().clock().year() - START_YEAR) - year) > 0) || (i == 0 && (((i = uqm::gameState().clock().month() - month) > 0) || (i == 0 && uqm::gameState().clock().day() > day)));
 }
 
 void PrepareShip(RACE_ID race)
 {
 	uint8_t mi, di, yi;
 
-	mi = GLOBAL(GameClock.month_index);
-	if ((di = GLOBAL(GameClock.day_index)) > 28)
+	mi = uqm::gameState().clock().month();
+	if ((di = uqm::gameState().clock().day()) > 28)
 	{
 		di = 28;
 	}
-	yi = (uint8_t)(GLOBAL(GameClock.year_index) - START_YEAR) + 1;
+	yi = (uint8_t)(uqm::gameState().clock().year() - START_YEAR) + 1;
 	switch (race)
 	{
 		case PKUNK_SHIP:

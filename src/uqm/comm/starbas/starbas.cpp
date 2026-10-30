@@ -1700,11 +1700,11 @@ CheckTiming(uint16_t month_index, uint16_t day_index)
 	year_index += (month_index - 1) / 12;
 	month_index = ((month_index - 1) % 12) + 1;
 
-	return (year_index < GLOBAL(GameClock.year_index)
-			|| (year_index == GLOBAL(GameClock.year_index)
-				&& (month_index < GLOBAL(GameClock.month_index)
-					|| (month_index == GLOBAL(GameClock.month_index)
-						&& day_index < GLOBAL(GameClock.day_index)))));
+	return (year_index < uqm::gameState().clock().year()
+			|| (year_index == uqm::gameState().clock().year()
+				&& (month_index < uqm::gameState().clock().month()
+					|| (month_index == uqm::gameState().clock().month()
+						&& day_index < uqm::gameState().clock().day()))));
 }
 
 static void
@@ -2030,9 +2030,9 @@ NormalStarbase(RESPONSE_REF R)
 				oldRU = 2500;
 			}
 			SET_GAME_STATE(STARBASE_MONTH,
-						   GLOBAL(GameClock.month_index));
+						   uqm::gameState().clock().month());
 			SET_GAME_STATE(STARBASE_DAY,
-						   GLOBAL(GameClock.day_index));
+						   uqm::gameState().clock().day());
 		}
 		else if (GET_GAME_STATE(STARBASE_VISITED))
 		{

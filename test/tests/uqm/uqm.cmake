@@ -15,12 +15,17 @@ list(APPEND uqm_tests_uqm_master_files
 	"../src/uqm/menudef.h"
 	"../src/uqm/menuwidgets.cpp"
 	"../src/uqm/menuwidgets.h"
+	"../src/uqm/displist.cpp"
+	"../src/uqm/displist.h"
+	"../src/uqm/session/GameClock.cpp"
+	"../src/uqm/session/GameClock.h"
 )
 
 ############################################################
 # Local files
 set(uqm_tests_uqm_files
 	"tests/uqm/uqm.cmake"
+	"tests/uqm/test_gameclock.cpp"
 	"tests/uqm/test_intel.cpp"
 	"tests/uqm/test_inputscript.cpp"
 	"tests/uqm/test_keyconfig.cpp"

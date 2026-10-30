@@ -1017,7 +1017,6 @@ typedef struct
 	uint8_t ModuleCost[NUM_MODULES];
 	uint8_t ElementWorth[NUM_ELEMENT_CATEGORIES];
 
-	CLOCK_STATE GameClock;
 
 	GFXPOINT autopilot;
 	GFXPOINT ip_location;

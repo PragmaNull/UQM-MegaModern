@@ -30,16 +30,6 @@
 #define CLOCK_BASE_FRAMERATE 24
 #define CLOCK_FRAME_RATE (GameTicksPerSecond / CLOCK_BASE_FRAMERATE)
 
-typedef struct
-{
-	uint8_t day_index, month_index;
-	uint16_t year_index;
-	int16_t tick_count, day_in_ticks;
-
-	QUEUE event_q;
-	/* Queue element is EVENT */
-} CLOCK_STATE;
-
 typedef HLINK HEVENT;
 
 typedef struct event
@@ -58,18 +48,18 @@ typedef enum
 	RELATIVE_EVENT
 } EVENT_TYPE;
 
-#define AllocEvent() AllocLink(&GLOBAL(GameClock.event_q))
-#define PutEvent(h) PutQueue(&GLOBAL(GameClock.event_q), (h))
-#define InsertEvent(h, i) InsertQueue(&GLOBAL(GameClock.event_q), (h), (i))
-#define GetHeadEvent() GetHeadLink(&GLOBAL(GameClock.event_q))
-#define GetTailEvent() GetTailLink(&GLOBAL(GameClock.event_q))
-#define LockEvent(h, ppe) (*(ppe) = (EVENT*)LockLink(&GLOBAL(GameClock.event_q), h))
-#define UnlockEvent(h) UnlockLink(&GLOBAL(GameClock.event_q), (h))
-#define RemoveEvent(h) RemoveQueue(&GLOBAL(GameClock.event_q), (h))
-#define FreeEvent(h) FreeLink(&GLOBAL(GameClock.event_q), (h))
+#define AllocEvent() AllocLink(&uqm::gameState().clock().events())
+#define PutEvent(h) PutQueue(&uqm::gameState().clock().events(), (h))
+#define InsertEvent(h, i) InsertQueue(&uqm::gameState().clock().events(), (h), (i))
+#define GetHeadEvent() GetHeadLink(&uqm::gameState().clock().events())
+#define GetTailEvent() GetTailLink(&uqm::gameState().clock().events())
+#define LockEvent(h, ppe) (*(ppe) = (EVENT*)LockLink(&uqm::gameState().clock().events(), h))
+#define UnlockEvent(h) UnlockLink(&uqm::gameState().clock().events(), (h))
+#define RemoveEvent(h) RemoveQueue(&uqm::gameState().clock().events(), (h))
+#define FreeEvent(h) FreeLink(&uqm::gameState().clock().events(), (h))
 #define GetPredEvent(l) _GetPredLink(l)
 #define GetSuccEvent(l) _GetSuccLink(l)
-#define ForAllEvents(callback, arg) ForAllLinks(&GLOBAL(GameClock.event_q), \
+#define ForAllEvents(callback, arg) ForAllLinks(&uqm::gameState().clock().events(), \
 												(void (*)(LINK*, void*))(callback), (arg))
 
 // Rates are in seconds per game day

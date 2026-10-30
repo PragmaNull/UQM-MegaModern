@@ -709,8 +709,8 @@ ZoqFotHome(RESPONSE_REF R)
 			{
 				++i;
 			}
-			if ((i -= GLOBAL(GameClock.year_index)) == 1
-				&& GLOBAL(GameClock.month_index) > 2)
+			if ((i -= uqm::gameState().clock().year()) == 1
+				&& uqm::gameState().clock().month() > 2)
 			{
 				i = 0;
 			}

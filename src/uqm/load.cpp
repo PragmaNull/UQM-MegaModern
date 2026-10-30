@@ -404,14 +404,20 @@ void LoadEvents(SaveReader& reader, yyjson_val* root)
 	}
 }
 
-void LoadClockState(SaveReader& reader, yyjson_val* obj, CLOCK_STATE& clock)
+void LoadClockState(SaveReader& reader, yyjson_val* obj, uqm::GameClock& clock)
 {
 	yyjson_val* clockObj {reader.object(obj, "GameClock")};
-	reader.get(clockObj, "day_index", clock.day_index);
-	reader.get(clockObj, "month_index", clock.month_index);
-	reader.get(clockObj, "year_index", clock.year_index);
-	reader.get(clockObj, "tick_count", clock.tick_count);
-	reader.get(clockObj, "day_in_ticks", clock.day_in_ticks);
+	uint8_t day {};
+	uint8_t month {};
+	uint16_t year {};
+	int16_t tickCount {};
+	int16_t dayInTicks {};
+	reader.get(clockObj, "day_index", day);
+	reader.get(clockObj, "month_index", month);
+	reader.get(clockObj, "year_index", year);
+	reader.get(clockObj, "tick_count", tickCount);
+	reader.get(clockObj, "day_in_ticks", dayInTicks);
+	clock.restore(day, month, year, tickCount, dayInTicks);
 }
 
 // A game state that is not in the file is set to 0.
@@ -435,8 +441,9 @@ void LoadGameStateFlags(SaveReader& reader, yyjson_val* root)
 	}
 }
 
-void LoadGameState(SaveReader& reader, yyjson_val* root, GAME_STATE& GS)
+void LoadGameState(SaveReader& reader, yyjson_val* root, uqm::GameState& gameState)
 {
+	GAME_STATE& GS {gameState.game()};
 	yyjson_val* state {reader.object(root, "globalState")};
 	reader.get(state, "glob_flags", uqm::globalFlags());
 	reader.get(state, "CrewCost", GS.CrewCost);
@@ -444,7 +451,7 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, GAME_STATE& GS)
 	reader.getFixedArray<uint8_t>(state, "ModuleCost", GS.ModuleCost);
 	reader.getFixedArray<uint8_t>(state, "ElementWorth", GS.ElementWorth);
 	reader.get(state, "CurrentActivity", uqm::currentActivity());
-	LoadClockState(reader, state, GS.GameClock);
+	LoadClockState(reader, state, gameState.clock());
 	reader.getPoint(state, "autopilot", GS.autopilot.x, GS.autopilot.y);
 	reader.getPoint(state, "ip_location", GS.ip_location.x, GS.ip_location.y);
 	reader.getPoint(state, "ShipOrigin", GS.ShipStamp.origin.x, GS.ShipStamp.origin.y);
@@ -849,7 +856,7 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	ReloadMasterShipList(nullptr);
 	LoadFleetInfo();
 
-	ReinitQueue(&GLOBAL(GameClock.event_q));
+	ReinitQueue(&uqm::gameState().clock().events());
 	ReinitQueue(&GLOBAL(encounter_q));
 	ReinitQueue(&GLOBAL(ip_group_q));
 	ReinitQueue(&GLOBAL(npc_built_ship_q));
@@ -863,7 +870,7 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	initEventSystem();
 
 	const ACTIVITY Activity {uqm::currentActivity()};
-	LoadGameState(reader, root, uqm::gameState().game());
+	LoadGameState(reader, root, uqm::gameState());
 	NextActivity = uqm::currentActivity();
 	uqm::currentActivity() = Activity;
 

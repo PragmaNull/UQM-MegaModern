@@ -976,7 +976,7 @@ Intro(void)
 			SET_GAME_STATE(CLEAR_SPINDLE_ON_SHIP, 1);
 		}
 		else if (!GET_GAME_STATE(PKUNK_SENSE_VICTOR)
-				 && GLOBAL(GameClock.year_index) > START_YEAR
+				 && uqm::gameState().clock().year() > START_YEAR
 				 && !GET_GAME_STATE(KOHR_AH_FRENZY))
 		{
 			NPCPhrase(SENSE_KOHRAH_VICTORY);

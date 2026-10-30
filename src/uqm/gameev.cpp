@@ -196,8 +196,8 @@ arilou_exit_event(int arg)
 {
 	uint16_t month_index, year_index;
 
-	year_index = GLOBAL(GameClock.year_index);
-	if ((month_index = GLOBAL(GameClock.month_index) % 12) == 0)
+	year_index = uqm::gameState().clock().year();
+	if ((month_index = uqm::gameState().clock().month() % 12) == 0)
 	{
 		++year_index;
 	}
