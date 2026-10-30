@@ -531,7 +531,7 @@ spawn_ship(STARSHIP* StarShipPtr)
 			StarShipPtr->ShipFacing = NORMALIZE_FACING(TFB_Random());
 			if (inHQSpace())
 			{ // Only one ship is ever spawned in HyperSpace -- flagship
-				uint16_t facing = GLOBAL(ShipFacing);
+				uint16_t facing = uqm::flagship().shipFacing;
 				// XXX: Solar system reentry test depends on ShipFacing != 0
 				if (facing > 0)
 				{

@@ -100,8 +100,8 @@ bool LoadSC2Data(void)
 
 	if (inHQSpace())
 	{
-		GLOBAL(ShipStamp.origin.x) =
-			GLOBAL(ShipStamp.origin.y) = -1;
+		uqm::flagship().shipStamp.origin.x =
+			uqm::flagship().shipStamp.origin.y = -1;
 	}
 
 	return true;
@@ -441,8 +441,7 @@ bool InitGameStructures(void)
 	GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(plot_map[SOL_DEFINED].star_pt.x);
 	GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(plot_map[SOL_DEFINED].star_pt.y);
 	CurStarDescPtr = 0;
-	GLOBAL(autopilot.x) = ~0;
-	GLOBAL(autopilot.y) = ~0;
+	uqm::flagship().autopilot.clear();
 
 	ZeroLastLoc();
 	ZeroAdvancedAutoPilot();

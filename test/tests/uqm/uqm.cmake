@@ -27,6 +27,7 @@ list(APPEND uqm_tests_uqm_master_files
 # Local files
 set(uqm_tests_uqm_files
 	"tests/uqm/uqm.cmake"
+	"tests/uqm/test_flagshipstate.cpp"
 	"tests/uqm/test_gameclock.cpp"
 	"tests/uqm/test_gameflags.cpp"
 	"tests/uqm/test_intel.cpp"

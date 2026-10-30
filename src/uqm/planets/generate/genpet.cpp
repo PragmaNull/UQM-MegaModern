@@ -287,8 +287,8 @@ ZapToUrquanEncounter(void)
 		}
 		DrawSISMessage(nullptr);
 		// DrawHyperCoords (EncounterPtr->loc_pt);
-		GLOBAL(ShipStamp.origin) = EncounterPtr->loc_pt;
-		GLOBAL(ShipFacing) = 6;
+		uqm::flagship().shipStamp.origin = EncounterPtr->loc_pt;
+		uqm::flagship().shipFacing = 6;
 
 
 		UnlockEncounter(hEncounter);

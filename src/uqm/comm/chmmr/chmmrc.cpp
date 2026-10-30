@@ -229,13 +229,13 @@ ExitConversation(RESPONSE_REF R)
 		// GLOBAL_SIS (log_y) = UNIVERSE_TO_LOGY (SOL_Y);
 		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(plot_map[SOL_DEFINED].star_pt.x);
 		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(plot_map[SOL_DEFINED].star_pt.y);
-		GLOBAL(ShipFacing) = 1;
+		uqm::flagship().shipFacing = 1;
 		/* At Earth or at Starbase */
-		GLOBAL(ip_planet) = EARTH_INDEX + 1;
-		GLOBAL(in_orbit) = 0;
+		uqm::flagship().ipPlanet = EARTH_INDEX + 1;
+		uqm::flagship().inOrbit = 0;
 		/* XXX : this should be unhardcoded eventually */
-		GLOBAL(ip_location.x) = EARTH_OUTER_X;
-		GLOBAL(ip_location.y) = EARTH_OUTER_Y;
+		uqm::flagship().ipLocation.x = EARTH_OUTER_X;
+		uqm::flagship().ipLocation.y = EARTH_OUTER_Y;
 
 		if (GET_GAME_STATE(STARBASE_AVAILABLE))
 		{ /* Normal game mode - you are transported to Starbase */
@@ -255,8 +255,8 @@ ExitConversation(RESPONSE_REF R)
 			/* XXX : this should be unhardcoded eventually */
 			/* transport to Starbase */
 			/* note: if uqm::UQMOptions::read().orbitingPlanets is enabled, this will be corrected in DoTimePassage */
-			GLOBAL(ShipStamp.origin.x) = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1) + COSINE(HALF_CIRCLE + QUADRANT, MIN_MOON_RADIUS);
-			GLOBAL(ShipStamp.origin.y) = RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1) + SINE(HALF_CIRCLE + QUADRANT, MIN_MOON_RADIUS >> 1);
+			uqm::flagship().shipStamp.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1) + COSINE(HALF_CIRCLE + QUADRANT, MIN_MOON_RADIUS);
+			uqm::flagship().shipStamp.origin.y = RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1) + SINE(HALF_CIRCLE + QUADRANT, MIN_MOON_RADIUS >> 1);
 		}
 		else
 		{ /* 'Beating Game Differently' mode - never visited Starbase,

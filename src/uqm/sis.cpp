@@ -1969,7 +1969,7 @@ AutoPilotTextLogic(void)
 	Falayalaralfali.y = ARILOU_HOME_Y;
 	current_position.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
 	current_position.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
-	destination = GLOBAL(autopilot);
+	destination = uqm::flagship().autopilot.target();
 	target_distance = ptDistance(current_position, destination) / 10;
 	StarPointer = FindStar(nullptr, &destination, 1, 1);
 
@@ -2058,8 +2058,7 @@ void DrawAutoPilotMessage(bool Reset)
 		return;
 	}
 
-	OnAutoPilot = (GLOBAL(autopilot.x) != ~0
-				   && GLOBAL(autopilot.y) != ~0)
+	OnAutoPilot = (uqm::flagship().autopilot.hasTarget())
 			   || GLOBAL_SIS(FuelOnBoard) == 0;
 
 	if (OnAutoPilot || LastPilot)

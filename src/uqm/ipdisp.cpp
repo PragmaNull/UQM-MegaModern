@@ -304,8 +304,8 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 					detect_dist <<= 1;
 				}
 			}
-			vdx = GLOBAL(ip_location.x) - GroupPtr->loc.x;
-			vdy = GLOBAL(ip_location.y) - GroupPtr->loc.y;
+			vdx = uqm::flagship().ipLocation.x - GroupPtr->loc.x;
+			vdy = uqm::flagship().ipLocation.y - GroupPtr->loc.y;
 			if ((long)vdx * vdx
 					+ (long)vdy * vdy
 				< (long)detect_dist * detect_dist)
@@ -372,7 +372,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 		{
 			if (GroupPtr->dest_loc == IPNL_INTERCEPT_PLAYER)
 			{
-				dest_pt = GLOBAL(ip_location);
+				dest_pt = uqm::flagship().ipLocation;
 			}
 			// ship is circling around a planet.
 			else
@@ -663,7 +663,7 @@ CheckGetAway:
 				GFXPOINT sis_pt;
 
 				sis_pt = displayToLocation(
-					GLOBAL(ShipStamp.origin), radius);
+					uqm::flagship().shipStamp.origin, radius);
 
 				// Destination point is sis location
 				delta_x = sis_pt.x - GroupPtr->loc.x;
@@ -755,7 +755,7 @@ ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	*(&GroupPtr) = (IP_GROUP*)(ElementPtr0)->pParent;
 	GetElementStarShip(ElementPtr1, &OtherPtr);
 
-	if (!(GLOBAL(autopilot.x) == ~0 && GLOBAL(autopilot.y) == ~0)
+	if (!(uqm::flagship().autopilot.target().x == ~0 && uqm::flagship().autopilot.target().y == ~0)
 		&& (CheckAlliance((RACE_ID)GroupPtr->race_id) == GOOD_GUY))
 	{
 		return; // Ignore collisions when allied during Auto-Pilot
@@ -973,7 +973,7 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 		int16_t vdx, vdy, radius;
 		GFXPOINT pt;
 
-		GetCurrentVelocityComponents(&GLOBAL(velocity), &vdx, &vdy);
+		GetCurrentVelocityComponents(&uqm::flagship().velocity, &vdx, &vdy);
 
 		if (!legacySave)
 		{
@@ -991,7 +991,7 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 		radius = zoomRadiusForLocation(flagship_loc);
 		adjustDeltaVforZoom(radius, &vdx, &vdy);
 
-		pt = locationToDisplay(GLOBAL(ip_location), radius);
+		pt = locationToDisplay(uqm::flagship().ipLocation, radius);
 		ElementPtr->current.location.x = DISPLAY_TO_WORLD(pt.x)
 									   + (int16_t)(LOG_SPACE_WIDTH >> 1)
 									   - (LOG_SPACE_WIDTH >> (MAX_REDUCTION + 1));
@@ -1000,10 +1000,10 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 									   - (LOG_SPACE_HEIGHT >> (MAX_REDUCTION + 1));
 		InitIntersectStartPoint(ElementPtr);
 
-		GLOBAL(ip_location.x) += vdx;
-		GLOBAL(ip_location.y) += vdy;
+		uqm::flagship().ipLocation.x += vdx;
+		uqm::flagship().ipLocation.y += vdy;
 
-		pt = locationToDisplay(GLOBAL(ip_location), radius);
+		pt = locationToDisplay(uqm::flagship().ipLocation, radius);
 		ElementPtr->next.location.x = DISPLAY_TO_WORLD(pt.x)
 									+ (int16_t)(LOG_SPACE_WIDTH >> 1)
 									- (LOG_SPACE_WIDTH >> (MAX_REDUCTION + 1));
@@ -1011,8 +1011,8 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 									+ (int16_t)(LOG_SPACE_HEIGHT >> 1)
 									- (LOG_SPACE_HEIGHT >> (MAX_REDUCTION + 1));
 
-		GLOBAL(ShipStamp.origin) = pt;
-		ElementPtr->next.image.frame = GLOBAL(ShipStamp.frame);
+		uqm::flagship().shipStamp.origin = pt;
+		ElementPtr->next.image.frame = uqm::flagship().shipStamp.frame;
 
 		if (ElementPtr->sys_loc == flagship_loc)
 		{
@@ -1051,14 +1051,14 @@ AdjustInitialPosition(void)
 	flagship_loc = getFlagshipLocation();
 	radius = zoomRadiusForLocation(flagship_loc);
 
-	pt = locationToDisplay(GLOBAL(ip_location), radius);
+	pt = locationToDisplay(uqm::flagship().ipLocation, radius);
 
 	if (LastActivity & CHECK_LOAD)
 	{
 		InitialIntersect();
 	}
 
-	GLOBAL(ShipStamp.origin) = pt;
+	uqm::flagship().shipStamp.origin = pt;
 }
 
 static void
@@ -1085,20 +1085,20 @@ spawn_flag_ship(void)
 		FlagShipElementPtr->thrust_wait = FLIP_WAIT;
 		SetPrimType(&DisplayArray[FlagShipElementPtr->PrimIndex], STAMP_PRIM);
 		FlagShipElementPtr->current.image.farray =
-			&GLOBAL(ShipStamp.frame);
+			&uqm::flagship().shipStamp.frame;
 		FlagShipElementPtr->current.image.frame =
-			GLOBAL(ShipStamp.frame);
+			uqm::flagship().shipStamp.frame;
 		FlagShipElementPtr->preprocess_func = flag_ship_preprocess;
 		FlagShipElementPtr->collision_func = flag_ship_collision;
 
 		AdjustInitialPosition();
 
 		FlagShipElementPtr->current.location.x =
-			DISPLAY_TO_WORLD(GLOBAL(ShipStamp.origin.x))
+			DISPLAY_TO_WORLD(uqm::flagship().shipStamp.origin.x)
 			+ (int16_t)(LOG_SPACE_WIDTH >> 1)
 			- (LOG_SPACE_WIDTH >> (MAX_REDUCTION + 1));
 		FlagShipElementPtr->current.location.y =
-			DISPLAY_TO_WORLD(GLOBAL(ShipStamp.origin.y))
+			DISPLAY_TO_WORLD(uqm::flagship().shipStamp.origin.y)
 			+ (int16_t)(LOG_SPACE_HEIGHT >> 1)
 			- (LOG_SPACE_HEIGHT >> (MAX_REDUCTION + 1));
 

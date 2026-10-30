@@ -693,9 +693,9 @@ UninitEncounter(void)
 					DrawSISMessage(nullptr);
 					if (inHQSpace())
 					{
-						DrawHyperCoords(GLOBAL(ShipStamp.origin));
+						DrawHyperCoords(uqm::flagship().shipStamp.origin);
 					}
-					else if (GLOBAL(ip_planet) == 0)
+					else if (uqm::flagship().ipPlanet == 0)
 					{
 						DrawHyperCoords(CurStarDescPtr->star_pt);
 					}

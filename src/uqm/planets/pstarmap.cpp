@@ -768,8 +768,8 @@ DrawFuelCircle(bool secondary)
 
 	if (secondary)
 	{
-		OnBoardFuel -= FuelRequiredTo(GLOBAL(autopilot));
-		corner = GLOBAL(autopilot);
+		OnBoardFuel -= FuelRequiredTo(uqm::flagship().autopilot.target());
+		corner = uqm::flagship().autopilot.target();
 	}
 	else if (!inHQSpace())
 	{
@@ -1283,7 +1283,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 		&& (race_update == 0 && which_space < 2)
 		&& !(uqm::UQMOptions::read().infiniteFuel || GLOBAL_SIS(FuelOnBoard) == 0)
 		&& (testFlag(uqm::UQMOptions::read().optFuelRange, uqm::FuelRangeDisplay::FuelAtDestination))
-		&& (GLOBAL(autopilot.x) != ~0 && GLOBAL(autopilot.y) != ~0))
+		&& (uqm::flagship().autopilot.hasTarget()))
 	{ // Draw the autopilot fuel range circle (on top of the grid)
 		DrawFuelCircle(true);
 	}
@@ -1748,13 +1748,13 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 	}
 
 	if (race_update == 0
-		&& GLOBAL(autopilot.x) != ~0
-		&& GLOBAL(autopilot.y) != ~0)
+		&& uqm::flagship().autopilot.hasTarget())
 	{
-		DrawAutoPilot(&GLOBAL(autopilot));
+		GFXPOINT target {uqm::flagship().autopilot.target()};
+		DrawAutoPilot(&target);
 		if (IS_HD)
 		{
-			DrawMarker(GLOBAL(autopilot), false);
+			DrawMarker(uqm::flagship().autopilot.target(), false);
 		}
 	}
 
@@ -2694,7 +2694,7 @@ AdvancedAutoPilot(void)
 	// (Based on the Python QuasiSpace Calculator by Lukrative525
 	// https://www.reddit.com/r/starcontrol/comments/zpyhkc/quasispace_calculator/
 	GFXPOINT current_position;
-	GFXPOINT destination = GLOBAL(autopilot);
+	GFXPOINT destination = uqm::flagship().autopilot.target();
 	GFXPOINT portal_coordinates;
 	double distance, fuel_no_portal, fuel_with_portal;
 	double minimum = 0.0;
@@ -2741,7 +2741,7 @@ AdvancedAutoPilot(void)
 
 	if (playerInSolarSystem())
 	{
-		GLOBAL(autopilot) = current_position;
+		uqm::flagship().autopilot.setTarget(current_position);
 	}
 
 	if (inHyperSpace())
@@ -2790,14 +2790,14 @@ DoMoveCursor(MENU_STATE* pMS)
 		FlushInput();
 
 		if ((uqm::UQMOptions::read().bubbleWarp && !uqm::UQMOptions::read().infiniteFuel && !inQuasiSpace())
-			&& GLOBAL(autopilot.x) != ~0 && GLOBAL(autopilot.y) != ~0
+			&& uqm::flagship().autopilot.hasTarget()
 			&& GLOBAL_SIS(FuelOnBoard) >= FuelRequired())
 		{
 			DoBubbleWarp(true);
 		}
 
 		if (!inQuasiSpace()
-			&& ValidPoint(GLOBAL(autopilot)))
+			&& ValidPoint(uqm::flagship().autopilot.target()))
 		{
 			if (uqm::UQMOptions::read().smartAutoPilot)
 			{
@@ -2825,20 +2825,20 @@ DoMoveCursor(MENU_STATE* pMS)
 
 		if (uqm::UQMOptions::read().bubbleWarp && (uqm::UQMOptions::read().infiniteFuel || inQuasiSpace()))
 		{
-			GLOBAL(autopilot) = cursorLoc;
+			uqm::flagship().autopilot.setTarget(cursorLoc);
 			DoBubbleWarp(false);
 			return false;
 		}
 		else
 		{
-			if (GLOBAL(autopilot.x) == cursorLoc.x
-				&& GLOBAL(autopilot.y) == cursorLoc.y)
+			if (uqm::flagship().autopilot.target().x == cursorLoc.x
+				&& uqm::flagship().autopilot.target().y == cursorLoc.y)
 			{
-				GLOBAL(autopilot.x) = GLOBAL(autopilot.y) = ~0;
+				uqm::flagship().autopilot.clear();
 			}
 			else
 			{
-				GLOBAL(autopilot) = cursorLoc;
+				uqm::flagship().autopilot.setTarget(cursorLoc);
 			}
 			DrawStarMap(0, nullptr);
 		}
@@ -3469,7 +3469,7 @@ bool StarMap(void)
 		universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
 	}
 
-	cursorLoc = GLOBAL(autopilot);
+	cursorLoc = uqm::flagship().autopilot.target();
 	if (cursorLoc.x == ~0 && cursorLoc.y == ~0)
 	{
 		cursorLoc = universe;
@@ -3532,7 +3532,7 @@ bool StarMap(void)
 	SetDefaultMenuRepeatDelay();
 
 	DrawHyperCoords(universe);
-	if (GLOBAL(autopilot.x) != ~0 && GLOBAL(autopilot.y) != ~0)
+	if (uqm::flagship().autopilot.hasTarget())
 	{
 		DrawAutoPilotMessage(false);
 	}
@@ -3551,6 +3551,5 @@ bool StarMap(void)
 			&& GLOBAL (autopilot.y) == universe.y)
 		GLOBAL (autopilot.x) = GLOBAL (autopilot.y) = ~0;*/
 
-	return (GLOBAL(autopilot.x) != ~0
-			&& GLOBAL(autopilot.y) != ~0);
+	return (uqm::flagship().autopilot.hasTarget());
 }

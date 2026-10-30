@@ -1973,7 +1973,7 @@ HailAlien(void)
 
 				if (inHQSpace())
 				{
-					DrawHyperCoords(GLOBAL(ShipStamp.origin));
+					DrawHyperCoords(uqm::flagship().shipStamp.origin);
 					if (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1
 						&& GET_GAME_STATE(ARILOU_HOME_VISITS)
 						&& (Log.x == ARILOU_HOME_X && Log.y == ARILOU_HOME_Y))
@@ -1981,7 +1981,7 @@ HailAlien(void)
 						DrawSISMessage(GLOBAL_SIS(PlanetName));
 					}
 				}
-				else if (GLOBAL(ip_planet) == 0)
+				else if (uqm::flagship().ipPlanet == 0)
 				{
 					DrawHyperCoords(CurStarDescPtr->star_pt);
 				}
@@ -2072,9 +2072,9 @@ InitCommunication(CONVERSATION which_comm)
 			DrawSISMessage(nullptr);
 			if (inHQSpace())
 			{
-				DrawHyperCoords(GLOBAL(ShipStamp.origin));
+				DrawHyperCoords(uqm::flagship().shipStamp.origin);
 			}
-			else if (GLOBAL(ip_planet) == 0)
+			else if (uqm::flagship().ipPlanet == 0)
 			{
 				DrawHyperCoords(CurStarDescPtr->star_pt);
 			}

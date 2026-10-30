@@ -539,8 +539,8 @@ bool LoadHyperspace(void)
 	hyper_extra = 0;
 	fuel_ticks = 1;
 
-	GLOBAL(ShipStamp.origin.x) = -MAX_X_UNIVERSE;
-	GLOBAL(ShipStamp.origin.y) = -MAX_Y_UNIVERSE;
+	uqm::flagship().shipStamp.origin.x = -MAX_X_UNIVERSE;
+	uqm::flagship().shipStamp.origin.y = -MAX_Y_UNIVERSE;
 
 	LoadHyperData();
 	{
@@ -567,7 +567,7 @@ bool LoadHyperspace(void)
 			RepairSISBorder();
 		}
 	}
-	if (!(GLOBAL(autopilot.x) != ~0 && GLOBAL(autopilot.y) != ~0))
+	if (!(uqm::flagship().autopilot.hasTarget()))
 	{
 		DrawSISMessage(nullptr);
 	}
@@ -678,9 +678,9 @@ typedef enum
 static void
 InterplanetaryTransition(ELEMENT* ElementPtr)
 {
-	GLOBAL(ip_planet) = 0;
-	GLOBAL(in_orbit) = 0;
-	GLOBAL(ShipFacing) = 0; /* Not reentering the system */
+	uqm::flagship().ipPlanet = 0;
+	uqm::flagship().inOrbit = 0;
+	uqm::flagship().shipFacing = 0; /* Not reentering the system */
 	SET_GAME_STATE(USED_BROADCASTER, 0);
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 	{
@@ -693,8 +693,7 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 		GFXPOINT pt;
 		uint16_t KnownQSPortals = GET_GAME_STATE(KNOW_QS_PORTAL);
 
-		GLOBAL(autopilot.x) = ~0;
-		GLOBAL(autopilot.y) = ~0;
+		uqm::flagship().autopilot.clear();
 
 		ElementToUniverse(ElementPtr, &pt);
 		CurStarDescPtr = FindStar(nullptr, &pt, 5, 5);
@@ -751,10 +750,9 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 static void
 ArilouSpaceTransition(void)
 {
-	GLOBAL(ShipFacing) = 0; /* Not reentering the system */
+	uqm::flagship().shipFacing = 0; /* Not reentering the system */
 	SET_GAME_STATE(USED_BROADCASTER, 0);
-	GLOBAL(autopilot.x) = ~0;
-	GLOBAL(autopilot.y) = ~0;
+	uqm::flagship().autopilot.clear();
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 	{
 		// From HyperSpace to QuasiSpace.
@@ -808,8 +806,7 @@ unhyper_transition(ELEMENT* ElementPtr)
 	// JMS: If leaving interplanetary on autopilot, always arrive HS with
 	// the ship's nose pointed into correct direction.
 	if (uqm::UQMOptions::read().smartAutoPilot
-		&& ((GLOBAL(autopilot)).x != ~0
-			&& (GLOBAL(autopilot)).y != ~0))
+		&& (uqm::flagship().autopilot.hasTarget()))
 	{
 		STARSHIP* StarShipPtr;
 		GFXPOINT universe;
@@ -819,8 +816,8 @@ unhyper_transition(ELEMENT* ElementPtr)
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		universe.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
 		universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
-		udx = (GLOBAL(autopilot)).x - universe.x;
-		udy = -((GLOBAL(autopilot)).y - universe.y);
+		udx = uqm::flagship().autopilot.target().x - universe.x;
+		udy = -(uqm::flagship().autopilot.target().y - universe.y);
 
 		facing = NORMALIZE_FACING(ANGLE_TO_FACING(ARCTAN(udx, udy)));
 		StarShipPtr->ShipFacing = facing;
@@ -912,13 +909,13 @@ void DoAdvancedAutoPilot(void)
 	if (inHyperSpace())
 	{
 		if (ValidPoint(QuasiPilot)
-			&& ValidPoint(GLOBAL(autopilot)))
+			&& ValidPoint(uqm::flagship().autopilot.target()))
 		{
 			InvokeSpawner();
 		}
 		else
 		{
-			GLOBAL(autopilot) = SavedPilot;
+			uqm::flagship().autopilot.setTarget(SavedPilot);
 			ZeroAdvancedAutoPilot();
 		}
 
@@ -930,7 +927,7 @@ void DoAdvancedAutoPilot(void)
 		return;
 	}
 
-	GLOBAL(autopilot) = QuasiPilot;
+	uqm::flagship().autopilot.setTarget(QuasiPilot);
 	ZeroAdvancedQuasiPilot();
 }
 
@@ -966,7 +963,7 @@ bool hyper_transition(ELEMENT* ElementPtr)
 
 		// JMS: If leaving interplanetary on autopilot, always arrive HS
 		// with the ship's nose pointed into correct direction.
-		if (uqm::UQMOptions::read().smartAutoPilot && ValidPoint(GLOBAL(autopilot)))
+		if (uqm::UQMOptions::read().smartAutoPilot && ValidPoint(uqm::flagship().autopilot.target()))
 		{
 			STARSHIP* StarShipPtr;
 			GFXPOINT universe;
@@ -976,8 +973,8 @@ bool hyper_transition(ELEMENT* ElementPtr)
 			GetElementStarShip(ElementPtr, &StarShipPtr);
 			universe.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
 			universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
-			udx = (GLOBAL(autopilot)).x - universe.x;
-			udy = -((GLOBAL(autopilot)).y - universe.y);
+			udx = uqm::flagship().autopilot.target().x - universe.x;
+			udy = -(uqm::flagship().autopilot.target().y - universe.y);
 
 			facing =
 				NORMALIZE_FACING(ANGLE_TO_FACING(ARCTAN(udx, udy)));
@@ -1056,10 +1053,9 @@ hyper_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			ElementPtr0->state_flags |= DEFY_PHYSICS | COLLISION;
 		}
 		else if ((uqm::currentActivity() & IN_BATTLE)
-				 && (GLOBAL(autopilot.x) == ~0
-					 || GLOBAL(autopilot.y) == ~0
-					 || (GLOBAL(autopilot.x) == SDPtr->star_pt.x
-						 && GLOBAL(autopilot.y) == SDPtr->star_pt.y)))
+				 && (!uqm::flagship().autopilot.hasTarget()
+					 || (uqm::flagship().autopilot.target().x == SDPtr->star_pt.x
+						 && uqm::flagship().autopilot.target().y == SDPtr->star_pt.y)))
 		{
 			CurStarDescPtr = SDPtr;
 			ElementPtr0->state_flags |= COLLISION;
@@ -1890,10 +1886,10 @@ void SeedUniverse(void)
 				   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
 	   - (RADAR_HEIGHT >> 1);
 
-	ex = (int16_t)((long)GLOBAL(ShipStamp.origin.x)
+	ex = (int16_t)((long)uqm::flagship().shipStamp.origin.x
 				   * RADAR_WIDTH / RADAR_SCAN_WIDTH)
 	   - (RADAR_WIDTH >> 1);
-	ey = (int16_t)((long)(MAX_Y_UNIVERSE - GLOBAL(ShipStamp.origin.y))
+	ey = (int16_t)((long)(MAX_Y_UNIVERSE - uqm::flagship().shipStamp.origin.y)
 				   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
 	   - (RADAR_HEIGHT >> 1);
 
@@ -2219,10 +2215,10 @@ void SeedUniverse(void)
 		AddAmbientElement();
 	}
 
-	if (universe.x != GLOBAL(ShipStamp.origin.x)
-		|| universe.y != GLOBAL(ShipStamp.origin.y))
+	if (universe.x != uqm::flagship().shipStamp.origin.x
+		|| universe.y != uqm::flagship().shipStamp.origin.y)
 	{
-		GLOBAL(ShipStamp.origin) = universe;
+		uqm::flagship().shipStamp.origin = universe;
 		DrawHyperCoords(universe);
 	}
 
@@ -2361,6 +2357,6 @@ void SaveSisHyperState(void)
 	LockElement(hSisElement, &ElementPtr);
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	// XXX: Solar system reentry test depends on ShipFacing != 0
-	GLOBAL(ShipFacing) = StarShipPtr->ShipFacing + 1;
+	uqm::flagship().shipFacing = StarShipPtr->ShipFacing + 1;
 	UnlockElement(hSisElement);
 }

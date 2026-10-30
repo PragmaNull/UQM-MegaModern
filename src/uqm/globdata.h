@@ -254,14 +254,6 @@ typedef struct
 	uint8_t ElementWorth[NUM_ELEMENT_CATEGORIES];
 
 
-	GFXPOINT autopilot;
-	GFXPOINT ip_location;
-	STAMP ShipStamp;
-	uint16_t ShipFacing;
-	uint8_t ip_planet;
-	uint8_t in_orbit;
-	VELOCITY_DESC velocity;
-
 	uint32_t BattleGroupRef;
 	uqm::LinkQueue avail_race_q;
 	/* List of all the races in the game with information

@@ -305,14 +305,15 @@ void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, uqm::GameState& ga
 	addArray<uint8_t>(doc, state, "ElementWorth", GS.ElementWorth);
 	addInt(doc, state, "CurrentActivity", uqm::currentActivity());
 	SaveClockState(doc, state, gameState.clock());
-	addPoint(doc, state, "autopilot", GS.autopilot.x, GS.autopilot.y);
-	addPoint(doc, state, "ip_location", GS.ip_location.x, GS.ip_location.y);
-	addPoint(doc, state, "ShipOrigin", RES_DESCALE(GS.ShipStamp.origin.x), RES_DESCALE(GS.ShipStamp.origin.y));
-	addInt(doc, state, "ShipFacing", GS.ShipFacing);
-	addInt(doc, state, "ip_planet", GS.ip_planet);
-	addInt(doc, state, "in_orbit", GS.in_orbit);
+	const uqm::FlagshipState& flagship {gameState.flagship()};
+	addPoint(doc, state, "autopilot", flagship.autopilot.target().x, flagship.autopilot.target().y);
+	addPoint(doc, state, "ip_location", flagship.ipLocation.x, flagship.ipLocation.y);
+	addPoint(doc, state, "ShipOrigin", RES_DESCALE(flagship.shipStamp.origin.x), RES_DESCALE(flagship.shipStamp.origin.y));
+	addInt(doc, state, "ShipFacing", flagship.shipFacing);
+	addInt(doc, state, "ip_planet", flagship.ipPlanet);
+	addInt(doc, state, "in_orbit", flagship.inOrbit);
 
-	const VELOCITY_DESC& velocity {GS.velocity};
+	const VELOCITY_DESC& velocity {flagship.velocity};
 	yyjson_mut_val* velocityObj {yyjson_mut_obj_add_obj(doc, state, "velocity")};
 	addInt(doc, velocityObj, "TravelAngle", velocity.TravelAngle);
 	addPoint(doc, velocityObj, "vector", velocity.vector.width >> res_scale, velocity.vector.height >> res_scale);
@@ -743,7 +744,7 @@ uqstl::optional<uqstl::string> SaveGameJson(SUMMARY_DESC* SummPtr, const char* n
 	}
 
 	// XXX: Backup: SaveFlagshipState() overwrites ip_location
-	const GFXPOINT pt {GLOBAL(ip_location)};
+	const GFXPOINT pt {uqm::flagship().ipLocation};
 	SaveFlagshipState();
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		&& !(uqm::currentActivity()
@@ -762,9 +763,9 @@ uqstl::optional<uqstl::string> SaveGameJson(SUMMARY_DESC* SummPtr, const char* n
 	SaveGameState(doc.get(), root, uqm::gameState());
 
 	// XXX: Restore
-	GLOBAL(ip_location) = pt;
+	uqm::flagship().ipLocation = pt;
 	// Only relevant when loading a game and must be cleaned
-	GLOBAL(in_orbit) = 0;
+	uqm::flagship().inOrbit = 0;
 
 	SaveRaceQueue(doc.get(), root, &GLOBAL(avail_race_q));
 	// START_INTERPLANETARY is only set when saving from Homeworld

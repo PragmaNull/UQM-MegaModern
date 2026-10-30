@@ -448,18 +448,21 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, uqm::GameState& gameSta
 	reader.getFixedArray<uint8_t>(state, "ElementWorth", GS.ElementWorth);
 	reader.get(state, "CurrentActivity", uqm::currentActivity());
 	LoadClockState(reader, state, gameState.clock());
-	reader.getPoint(state, "autopilot", GS.autopilot.x, GS.autopilot.y);
-	reader.getPoint(state, "ip_location", GS.ip_location.x, GS.ip_location.y);
-	reader.getPoint(state, "ShipOrigin", GS.ShipStamp.origin.x, GS.ShipStamp.origin.y);
-	reader.get(state, "ShipFacing", GS.ShipFacing);
-	reader.get(state, "ip_planet", GS.ip_planet);
-	reader.get(state, "in_orbit", GS.in_orbit);
+	uqm::FlagshipState& flagship {gameState.flagship()};
+	GFXPOINT autopilot {};
+	reader.getPoint(state, "autopilot", autopilot.x, autopilot.y);
+	flagship.autopilot.setTarget(autopilot);
+	reader.getPoint(state, "ip_location", flagship.ipLocation.x, flagship.ipLocation.y);
+	reader.getPoint(state, "ShipOrigin", flagship.shipStamp.origin.x, flagship.shipStamp.origin.y);
+	reader.get(state, "ShipFacing", flagship.shipFacing);
+	reader.get(state, "ip_planet", flagship.ipPlanet);
+	reader.get(state, "in_orbit", flagship.inOrbit);
 
 	// Let's make savegames work even between different resolution modes.
-	GS.ShipStamp.origin.x <<= RESOLUTION_FACTOR;
-	GS.ShipStamp.origin.y <<= RESOLUTION_FACTOR;
+	flagship.shipStamp.origin.x <<= RESOLUTION_FACTOR;
+	flagship.shipStamp.origin.y <<= RESOLUTION_FACTOR;
 
-	VELOCITY_DESC& velocity {GS.velocity};
+	VELOCITY_DESC& velocity {flagship.velocity};
 	yyjson_val* velocityObj {reader.object(state, "velocity")};
 	reader.get(velocityObj, "TravelAngle", velocity.TravelAngle);
 	reader.getPoint(velocityObj, "vector", velocity.vector.width, velocity.vector.height);

@@ -2013,13 +2013,13 @@ PickGame(bool saving, bool fromMainMenu)
 		// Redraws secondary title bar to the right of the main bar
 		if (inHQSpace())
 		{
-			DrawHyperCoords(GLOBAL(ShipStamp.origin));
+			DrawHyperCoords(uqm::flagship().shipStamp.origin);
 		}
 		else if (InStarbase)
 		{
 			DrawSISTitle(GAME_STRING(STARBASE_STRING_BASE + 0));
 		}
-		else if (GLOBAL(ip_planet) == 0)
+		else if (uqm::flagship().ipPlanet == 0)
 		{
 			DrawHyperCoords(CurStarDescPtr->star_pt);
 		}

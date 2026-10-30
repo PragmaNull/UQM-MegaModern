@@ -318,7 +318,7 @@ int Starcon2Main(void* threadArg)
 
 			if (!((uqm::currentActivity() | NextActivity) & CHECK_LOAD))
 			{
-				ZeroVelocityComponents(&GLOBAL(velocity));
+				ZeroVelocityComponents(&uqm::flagship().velocity);
 			}
 			// not going into talking pet conversation
 			else if (uqm::currentActivity() & CHECK_LOAD)

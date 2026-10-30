@@ -140,12 +140,12 @@ GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 			GFXPOINT org;
 
 			org = planetOuterLocation(solarSys->SunDesc[0].PlanetByte);
-			angle = ARCTAN(GLOBAL(ip_location.x) - org.x,
-						   GLOBAL(ip_location.y) - org.y);
-			GLOBAL(ip_location.x) = org.x + COSINE(angle, 3000);
-			GLOBAL(ip_location.y) = org.y + SINE(angle, 3000);
-			XFormIPLoc(&GLOBAL(ip_location),
-					   &GLOBAL(ShipStamp.origin), true);
+			angle = ARCTAN(uqm::flagship().ipLocation.x - org.x,
+						   uqm::flagship().ipLocation.y - org.y);
+			uqm::flagship().ipLocation.x = org.x + COSINE(angle, 3000);
+			uqm::flagship().ipLocation.y = org.y + SINE(angle, 3000);
+			XFormIPLoc(&uqm::flagship().ipLocation,
+					   &uqm::flagship().shipStamp.origin, true);
 		}
 	}
 

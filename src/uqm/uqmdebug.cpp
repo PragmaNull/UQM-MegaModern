@@ -55,25 +55,25 @@ bool DebugKeyPressed;
 void doInstantMove(void)
 {
 	// Move to the new location:
-	if ((GLOBAL(autopilot)).x == ~0 || (GLOBAL(autopilot)).y == ~0)
+	if (!uqm::flagship().autopilot.hasTarget())
 	{
 		// If no destination has been selected, use the current location
 		// as the destination.
-		(GLOBAL(autopilot)).x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-		(GLOBAL(autopilot)).y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+		uqm::flagship().autopilot.setTarget({LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)), LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y))});
 	}
 	else
 	{
 		// A new destination has been selected.
-		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX((GLOBAL(autopilot)).x);
-		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY((GLOBAL(autopilot)).y);
+		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(uqm::flagship().autopilot.target().x);
+		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(uqm::flagship().autopilot.target().y);
 	}
 
 	// Check for a solar systems at the destination.
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 	{
 		// If there's a solar system at the destination, enter it.
-		CurStarDescPtr = FindStar(0, &(GLOBAL(autopilot)), 0, 0);
+		GFXPOINT target {uqm::flagship().autopilot.target()};
+		CurStarDescPtr = FindStar(0, &target, 0, 0);
 		if (CurStarDescPtr)
 		{
 			// Leave HyperSpace/QuasiSpace if we're there:
@@ -81,17 +81,16 @@ void doInstantMove(void)
 			uqm::currentActivity() &= ~IN_BATTLE;
 
 			// Enter IP:
-			GLOBAL(ShipFacing) = 0;
-			GLOBAL(ip_planet) = 0;
-			GLOBAL(in_orbit) = 0;
+			uqm::flagship().shipFacing = 0;
+			uqm::flagship().ipPlanet = 0;
+			uqm::flagship().inOrbit = 0;
 			// This causes the ship position in IP to be reset.
 			uqm::currentActivity() |= START_INTERPLANETARY;
 		}
 	}
 
 	// Turn off the autopilot:
-	(GLOBAL(autopilot)).x = ~0;
-	(GLOBAL(autopilot)).y = ~0;
+	uqm::flagship().autopilot.clear();
 }
 
 // playerNr should be 0 or 1

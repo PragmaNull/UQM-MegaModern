@@ -232,7 +232,7 @@ sis_hyper_preprocess(ELEMENT* ElementPtr)
 
 	if (ElementPtr->state_flags & APPEARING)
 	{
-		ElementPtr->velocity = GLOBAL(velocity);
+		ElementPtr->velocity = uqm::flagship().velocity;
 	}
 
 	AccelerateDirection = 0;
@@ -240,14 +240,12 @@ sis_hyper_preprocess(ELEMENT* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	++StarShipPtr->weapon_counter; /* no shooting in hyperspace! */
 
-	if ((GLOBAL(autopilot)).x == ~0
-		|| (GLOBAL(autopilot)).y == ~0
+	if (!uqm::flagship().autopilot.hasTarget()
 		|| (StarShipPtr->cur_status_flags & (LEFT | RIGHT | THRUST)))
 	{
 LeaveAutoPilot:
 
-		(GLOBAL(autopilot)).x =
-			(GLOBAL(autopilot)).y = ~0;
+		uqm::flagship().autopilot.clear();
 
 		if ((StarShipPtr->cur_status_flags & (LEFT | RIGHT | THRUST))
 			&& (ValidPoint(LoadAdvancedAutoPilot())
@@ -278,8 +276,8 @@ LeaveAutoPilot:
 
 		universe.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
 		universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
-		udx = (GLOBAL(autopilot)).x - universe.x;
-		udy = -((GLOBAL(autopilot)).y - universe.y);
+		udx = uqm::flagship().autopilot.target().x - universe.x;
+		udy = -(uqm::flagship().autopilot.target().y - universe.y);
 		if ((dx = (int16_t)udx) < 0)
 		{
 			dx = -dx;
@@ -412,7 +410,7 @@ sis_hyper_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr;
 
-	GLOBAL(velocity) = ElementPtr->velocity;
+	uqm::flagship().velocity = ElementPtr->velocity;
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (((StarShipPtr->cur_status_flags & WEAPON) || PulsedInputState.menu[KEY_MENU_CANCEL])

@@ -1537,14 +1537,14 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 		new_pt.y = 0;
 		dy = new_pt.y - curLanderLoc.y;
 		dx = 0;
-		ZeroVelocityComponents(&GLOBAL(velocity));
+		ZeroVelocityComponents(&uqm::flagship().velocity);
 	}
 	else if (new_pt.y > (MAP_HEIGHT << MAG_SHIFT) - 1)
 	{
 		new_pt.y = (MAP_HEIGHT << MAG_SHIFT) - 1;
 		dy = new_pt.y - curLanderLoc.y;
 		dx = 0;
-		ZeroVelocityComponents(&GLOBAL(velocity));
+		ZeroVelocityComponents(&uqm::flagship().velocity);
 	}
 
 	new_pt.x = curLanderLoc.x + dx;
@@ -1988,7 +1988,7 @@ LanderFire(int16_t facing)
 	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_UP]
 		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_THRUST])
 	{
-		GetCurrentVelocityComponents(&GLOBAL(velocity), &wdx, &wdy);
+		GetCurrentVelocityComponents(&uqm::flagship().velocity, &wdx, &wdy);
 	}
 	else
 	{
@@ -2301,7 +2301,7 @@ DoPlanetSide(LanderInputState* pMS)
 		landerSpeedNumer = WORLD_TO_VELOCITY(RES_SCALE(48));
 #endif
 
-		SetVelocityComponents(&GLOBAL(velocity),
+		SetVelocityComponents(&uqm::flagship().velocity,
 							  COSINE(angle, landerSpeedNumer) / LANDER_SPEED_DENOM,
 							  SINE(angle, landerSpeedNumer) / LANDER_SPEED_DENOM);
 
@@ -2382,7 +2382,7 @@ DoPlanetSide(LanderInputState* pMS)
 				landerSpeedNumer = WORLD_TO_VELOCITY(RES_SCALE(48));
 #endif
 
-				SetVelocityComponents(&GLOBAL(velocity),
+				SetVelocityComponents(&uqm::flagship().velocity,
 									  COSINE(angle, landerSpeedNumer)
 										  / LANDER_SPEED_DENOM,
 									  SINE(angle, landerSpeedNumer)
@@ -2394,7 +2394,7 @@ DoPlanetSide(LanderInputState* pMS)
 				|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_UP])
 			{
 				GetNextVelocityComponents(
-					&GLOBAL(velocity), &dx, &dy, 1);
+					&uqm::flagship().velocity, &dx, &dy, 1);
 			}
 			else
 			{
@@ -2944,7 +2944,7 @@ void PlanetSide(GFXPOINT planetLoc)
 		}
 	}
 
-	ZeroVelocityComponents(&GLOBAL(velocity));
+	ZeroVelocityComponents(&uqm::flagship().velocity);
 	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
 }
 

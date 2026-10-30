@@ -13,6 +13,7 @@
 #include "core/stl/array.h"
 #include "uqm/session/GameClock.h"
 #include "uqm/session/GameFlags.h"
+#include "uqm/session/FlagshipState.h"
 #include "uqm/sis.h"
 #include "uqm/state.h"
 #include <cstdint>
@@ -38,6 +39,11 @@ public:
 	[[nodiscard]] GameClock& clock() noexcept
 	{
 		return m_clock;
+	}
+
+	[[nodiscard]] FlagshipState& flagship() noexcept
+	{
+		return m_flagship;
 	}
 
 	// One of the files STARINFO_FILE, RANDGRPINFO_FILE and DEFGRPINFO_FILE.
@@ -73,6 +79,7 @@ private:
 	SIS_STATE m_sis {};
 	GAME_STATE m_game {};
 	GameClock m_clock {};
+	FlagshipState m_flagship {};
 	uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> m_stateFiles {MakeStateFiles()};
 	uqstl::array<uint32_t, c_gameFlagCount> m_flagValues {};
 	uqstl::map<uqstl::string, uint32_t, uqstl::less<>> m_otherFlags {};
@@ -81,6 +88,12 @@ private:
 
 // The state of the current session. Use on the game thread only.
 [[nodiscard]] GameState& gameState();
+
+// The flagship of the current session. Use on the game thread only.
+[[nodiscard]] inline FlagshipState& flagship()
+{
+	return gameState().flagship();
+}
 
 } // namespace uqm
 
