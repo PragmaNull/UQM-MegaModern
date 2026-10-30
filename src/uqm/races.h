@@ -20,7 +20,7 @@
 #define UQM_RACES_H_
 
 #include <cstdint>
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "units.h"
 #include "displist.h"
 #include "uqm/inteldefs.h"
@@ -226,11 +226,11 @@ typedef void(UNINIT_FUNC)(RACE_DESC* pRaceDesc);
 
 struct race_desc
 {
-	SHIP_INFO ship_info _ALIGNED_ANY;
-	FLEET_STUFF fleet _ALIGNED_ANY;
-	CHARACTERISTIC_STUFF characteristics _ALIGNED_ANY;
-	DATA_STUFF ship_data _ALIGNED_ANY;
-	INTEL_STUFF cyborg_control _ALIGNED_ANY;
+	SHIP_INFO ship_info;
+	FLEET_STUFF fleet;
+	CHARACTERISTIC_STUFF characteristics;
+	DATA_STUFF ship_data;
+	INTEL_STUFF cyborg_control;
 
 	UNINIT_FUNC* uninit_func;
 	PREPROCESS_FUNC* preprocess_func;
@@ -684,33 +684,33 @@ typedef enum
 // How many ships will an encounter consist of.
 // The first number specifies the minimum, the second the maximum.
 // The chance is 50% for each ship past the minimum to be present.
-#define RACE_ENCOUNTER_MAKEUP                    \
-	MAKE_BYTE(1, 5),	 /* ARILOU_SHIP */       \
-		0,				 /* CHMMR_SHIP */        \
-		0,				 /* HUMAN_SHIP */        \
-		MAKE_BYTE(1, 5), /* ORZ_SHIP */          \
-		MAKE_BYTE(1, 5), /* PKUNK_SHIP */        \
-		0,				 /* SHOFIXTI_SHIP */     \
-		MAKE_BYTE(1, 5), /* SPATHI_SHIP */       \
-		MAKE_BYTE(1, 5), /* SUPOX_SHIP */        \
-		MAKE_BYTE(1, 5), /* THRADDASH_SHIP */    \
-		MAKE_BYTE(1, 5), /* UTWIG_SHIP */        \
-		MAKE_BYTE(1, 5), /* VUX_SHIP */          \
-		MAKE_BYTE(1, 5), /* YEHAT_SHIP */        \
-		MAKE_BYTE(1, 1), /* MELNORME_SHIP */     \
-		MAKE_BYTE(1, 5), /* DRUUGE_SHIP */       \
-		MAKE_BYTE(1, 5), /* ILWRATH_SHIP */      \
-		MAKE_BYTE(1, 5), /* MYCON_SHIP */        \
-		MAKE_BYTE(1, 1), /* SLYLANDRO_SHIP */    \
-		MAKE_BYTE(1, 5), /* UMGAH_SHIP */        \
-		MAKE_BYTE(1, 5), /* URQUAN_SHIP */       \
-		MAKE_BYTE(1, 5), /* ZOQFOTPIK_SHIP */    \
-		0,				 /* SYREEN_SHIP */       \
-		MAKE_BYTE(1, 5), /* BLACK_URQUAN_SHIP */ \
-		0,				 /* ANDROSYNTH_SHIP*/    \
-		0,				 /* CHENJESU_SHIP */     \
-		0,				 /* MMRNMHRM_SHIP */     \
-		MAKE_BYTE(1, 5), /* YEHAT_REBEL_SHIP */
+#define RACE_ENCOUNTER_MAKEUP                        \
+	uqm::makeByte(1, 5),	 /* ARILOU_SHIP */       \
+		0,					 /* CHMMR_SHIP */        \
+		0,					 /* HUMAN_SHIP */        \
+		uqm::makeByte(1, 5), /* ORZ_SHIP */          \
+		uqm::makeByte(1, 5), /* PKUNK_SHIP */        \
+		0,					 /* SHOFIXTI_SHIP */     \
+		uqm::makeByte(1, 5), /* SPATHI_SHIP */       \
+		uqm::makeByte(1, 5), /* SUPOX_SHIP */        \
+		uqm::makeByte(1, 5), /* THRADDASH_SHIP */    \
+		uqm::makeByte(1, 5), /* UTWIG_SHIP */        \
+		uqm::makeByte(1, 5), /* VUX_SHIP */          \
+		uqm::makeByte(1, 5), /* YEHAT_SHIP */        \
+		uqm::makeByte(1, 1), /* MELNORME_SHIP */     \
+		uqm::makeByte(1, 5), /* DRUUGE_SHIP */       \
+		uqm::makeByte(1, 5), /* ILWRATH_SHIP */      \
+		uqm::makeByte(1, 5), /* MYCON_SHIP */        \
+		uqm::makeByte(1, 1), /* SLYLANDRO_SHIP */    \
+		uqm::makeByte(1, 5), /* UMGAH_SHIP */        \
+		uqm::makeByte(1, 5), /* URQUAN_SHIP */       \
+		uqm::makeByte(1, 5), /* ZOQFOTPIK_SHIP */    \
+		0,					 /* SYREEN_SHIP */       \
+		uqm::makeByte(1, 5), /* BLACK_URQUAN_SHIP */ \
+		0,					 /* ANDROSYNTH_SHIP*/    \
+		0,					 /* CHENJESU_SHIP */     \
+		0,					 /* MMRNMHRM_SHIP */     \
+		uqm::makeByte(1, 5), /* YEHAT_REBEL_SHIP */
 
 #define RACE_COLORS                                                                   \
 	BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x10), 0x53),	  /* ARILOU_SHIP */       \

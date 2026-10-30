@@ -110,13 +110,13 @@ GenerateRainbowWorld_generateOrbital(SOLARSYS_STATE* solarSys,
 	{
 		uint16_t rainbow_mask;
 
-		rainbow_mask = MAKE_WORD(
+		rainbow_mask = uqm::makeWord(
 			GET_GAME_STATE(RAINBOW_WORLD0),
 			GET_GAME_STATE(RAINBOW_WORLD1));
 
 		rainbow_mask |= 1 << (CurStarDescPtr->Index - RAINBOW0_DEFINED);
-		SET_GAME_STATE(RAINBOW_WORLD0, lowByte(rainbow_mask));
-		SET_GAME_STATE(RAINBOW_WORLD1, highByte(rainbow_mask));
+		SET_GAME_STATE(RAINBOW_WORLD0, uqm::lowByte(rainbow_mask));
+		SET_GAME_STATE(RAINBOW_WORLD1, uqm::highByte(rainbow_mask));
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);

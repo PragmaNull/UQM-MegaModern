@@ -182,7 +182,7 @@ ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		StarShipPtr->ship_input_state |= WEAPON;
 	}
 	else if (StarShipPtr->special_counter == 0
-			 && (lowByte(GLOBAL(CurrentActivity)) != IN_ENCOUNTER
+			 && (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_ENCOUNTER
 				 || !GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)))
 	{
 		StarShipPtr->ship_input_state &= ~SPECIAL;

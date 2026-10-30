@@ -576,7 +576,7 @@ DrawSISComWindow(void)
 {
 	GFXCONTEXT OldContext;
 
-	if (lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE)
 	{
 		GFXRECT r;
 
@@ -968,7 +968,7 @@ DoTalkSegue(TALKING_STATE* pTS)
 		return false;
 	}
 
-	if (uqm::UQMOptions::read().useSpeech || uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::Console3DO || (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE))
+	if (uqm::UQMOptions::read().useSpeech || uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::Console3DO || (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE))
 	{
 		if (PulsedInputState.menu[KEY_MENU_CANCEL])
 		{
@@ -1583,7 +1583,7 @@ PlayerResponseInput(ENCOUNTER_STATE* pES)
 	{
 		SelectResponse(pES);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_CANCEL] && lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE && !IsDarkMode)
+	else if (PulsedInputState.menu[KEY_MENU_CANCEL] && uqm::lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE && !IsDarkMode)
 	{
 		SelectConversationSummary(pES);
 	}
@@ -1668,7 +1668,7 @@ DoLastReplay(LAST_REPLAY_STATE* pLRS)
 		return false; // timed out and done
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_CANCEL] && lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE)
+	if (PulsedInputState.menu[KEY_MENU_CANCEL] && uqm::lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE)
 	{
 		FadeMusic(BACKGROUND_VOL, GameTicksPerSecond);
 		SelectConversationSummary(nullptr);
@@ -1942,7 +1942,7 @@ HailAlien(void)
 
 		SetTransitionSource(nullptr);
 		BatchGraphics();
-		if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 		{
 			// set the position of outtakes comm
 			CommWndRect.corner.x = ((SCREEN_WIDTH - CommWndRect.extent.width) / 2);
@@ -2065,7 +2065,7 @@ InitCommunication(CONVERSATION which_comm)
 		LastActivity &= ~CHECK_LOAD;
 		if (which_comm != COMMANDER_CONVERSATION)
 		{
-			if (lowByte(LastActivity) == 0)
+			if (uqm::lowByte(LastActivity) == 0)
 			{
 				DrawSISFrame();
 			}
@@ -2085,7 +2085,7 @@ InitCommunication(CONVERSATION which_comm)
 			}
 			else
 			{ // to fix moon suffix on load
-				if (pSolarSysState && lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE
+				if (pSolarSysState && uqm::lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE
 					&& worldIsMoon(pSolarSysState, pSolarSysState->pOrbitalDesc))
 				{
 					if (!(GetNamedPlanetaryBody()) && isPC(uqm::UQMOptions::read().whichFonts)
@@ -2132,7 +2132,7 @@ InitCommunication(CONVERSATION which_comm)
 		if (which_comm == ORZ_CONVERSATION
 			|| (which_comm == TALKING_PET_CONVERSATION
 				&& (!GET_GAME_STATE(TALKING_PET_ON_SHIP)
-					|| lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE))
+					|| uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE))
 			|| (which_comm != CHMMR_CONVERSATION
 				&& which_comm != SYREEN_CONVERSATION)) //&& CheckAlliance (status) == BAD_GUY))
 		{
@@ -2185,7 +2185,7 @@ InitCommunication(CONVERSATION which_comm)
 		// The Sa-Matra battle is skipped when Cyborg is enabled.
 		// Most likely because the Cyborg is too dumb to know what
 		// to do in this battle.
-		if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE
+		if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE
 			&& (GLOBAL(glob_flags) & CYBORG_ENABLED))
 		{
 			ReinitQueue(&GLOBAL(npc_built_ship_q));
@@ -2227,7 +2227,7 @@ void RaceCommunication(void)
 		{
 			RACE_COMMUNICATION};
 
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
 	{
 		/* Going into talking pet conversation */
 		ReinitQueue(&GLOBAL(npc_built_ship_q));
@@ -2266,7 +2266,7 @@ void RaceCommunication(void)
 		if (GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
 		{
 			NextActivity = GLOBAL(CurrentActivity) & ~START_ENCOUNTER;
-			if (lowByte(NextActivity) == IN_INTERPLANETARY)
+			if (uqm::lowByte(NextActivity) == IN_INTERPLANETARY)
 			{
 				NextActivity |= START_INTERPLANETARY;
 			}
@@ -2327,7 +2327,7 @@ void RaceCommunication(void)
 		ReinitQueue(&GLOBAL(npc_built_ship_q));
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
 	{
 		/* if used destruct code in interplanetary */
 		if (i == SLYLANDRO_SHIP && status == 0)

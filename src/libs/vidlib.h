@@ -19,7 +19,7 @@
 #ifndef LIBS_VIDLIB_H_
 #define LIBS_VIDLIB_H_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/sndlib.h"
 #include "libs/reslib.h"
 

@@ -85,7 +85,7 @@ GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		pPlanet->rand_seed =
-			MAKE_DWORD(pPlanet->location.x, pPlanet->location.y);
+			uqm::makeDword(pPlanet->location.x, pPlanet->location.y);
 		ComputeSpeed(pPlanet, false, 1);
 	}
 	else

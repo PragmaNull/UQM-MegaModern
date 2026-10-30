@@ -24,7 +24,7 @@
 #include "process.h"
 #include "units.h"
 #include "options.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/gfxlib.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/mathlib.h"
@@ -256,8 +256,8 @@ void InitGalaxy(void)
 	DPOINT* ppt;
 	PRIM_LINKS Links;
 	bool useScenery = (EXTENDED && GET_GAME_STATE(URQUAN_PROTECTING_SAMATRA)
-					   && lowByte(GLOBAL(CurrentActivity)) != IN_HYPERSPACE
-					   && lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE);
+					   && uqm::lowByte(GLOBAL(CurrentActivity)) != IN_HYPERSPACE
+					   && uqm::lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE);
 
 	uqm::log::debug("InitGalaxy(): transition_width = {}, "
 					"transition_height = {}",
@@ -303,7 +303,7 @@ void InitGalaxy(void)
 			if (IS_HD)
 			{ // In HD the smallest stars are images
 				SetPrimType(&DisplayArray[p], STAMP_PRIM);
-				if (lowByte(GLOBAL(CurrentActivity)) != IN_HYPERSPACE)
+				if (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_HYPERSPACE)
 				{
 					SetPrimFlags(&DisplayArray[p], UNSCALED_STAMP);
 					DisplayArray[p].Object.Stamp.frame =
@@ -322,7 +322,7 @@ void InitGalaxy(void)
 			else
 			{ // Pixel starpoints in original res
 				SetPrimType(&DisplayArray[p], POINT_PRIM);
-				if (lowByte(GLOBAL(CurrentActivity)) != IN_HYPERSPACE)
+				if (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_HYPERSPACE)
 				{
 					SetPrimColor(&DisplayArray[p],
 								 BUILD_COLOR(

@@ -37,7 +37,6 @@ list(APPEND uqm_src_libs_master_files ${uqm_src_libs_video_master_files})
 ############################################################
 # Local files
 set(uqm_src_libs_files
-	"src/libs/compiler.h"
 	"src/libs/gfxlib.h"
 	"src/libs/inplib.h"
 	"src/libs/libs.cmake"

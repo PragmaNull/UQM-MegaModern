@@ -908,7 +908,7 @@ Intro(void)
 {
 	uint8_t NumVisits, Manner;
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -1202,7 +1202,7 @@ init_pkunk_comm(void)
 	pkunk_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	if (GET_GAME_STATE(PKUNK_MANNER) == 3
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		// Enter communications immediately.
 		setSegue(Segue_peace);

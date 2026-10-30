@@ -20,7 +20,7 @@
 
 #include "network.h"
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "core/misc/FatalExit.h"
 #include "core/log/log.h"
 
@@ -44,19 +44,19 @@ void Network_init(void)
 
 #ifdef DEBUG
 	uqm::log::debug("Winsock version {}.{} found: \"{}\".",
-					lowByte(data.wHighVersion), highByte(data.wHighVersion),
+					uqm::lowByte(data.wHighVersion), uqm::highByte(data.wHighVersion),
 					data.szDescription);
 	uqm::log::debug("Requesting to use Winsock version {}.{}, got "
 					"version {}.{}.",
-					lowByte(requestVersion), highByte(requestVersion),
-					lowByte(data.wVersion), highByte(data.wVersion));
+					uqm::lowByte(requestVersion), uqm::highByte(requestVersion),
+					uqm::lowByte(data.wVersion), uqm::highByte(data.wVersion));
 #endif
 	if (data.wVersion != requestVersion)
 	{
 		uqm::log::critical("Winsock version {}.{} presented, requested "
 						   "{}.{}.",
-						   lowByte(data.wVersion), highByte(data.wVersion),
-						   lowByte(requestVersion), highByte(requestVersion));
+						   uqm::lowByte(data.wVersion), uqm::highByte(data.wVersion),
+						   uqm::lowByte(requestVersion), uqm::highByte(requestVersion));
 		(void)WSACleanup();
 		// Ignoring errors; we're going to abort anyhow.
 		uqm::fatalExit();

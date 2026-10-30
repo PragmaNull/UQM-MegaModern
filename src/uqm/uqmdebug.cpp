@@ -556,7 +556,7 @@ void equipShip(void)
 	int i;
 
 	// Don't do anything unless in the full game.
-	if (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
 	{
 		return;
 	}
@@ -665,7 +665,7 @@ void equipShip(void)
 	}
 
 	// Make sure everything is redrawn:
-	if (inHQSpace() || lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
+	if (inHQSpace() || uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
 	{
 		DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
 	}
@@ -1470,7 +1470,7 @@ calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 	{
 		NODE_INFO info;
 		callGenerateForScanType(system, world, i, BIOLOGICAL_SCAN, &info);
-		result += BIO_CREDIT_VALUE * LONIBBLE(CreatureData[info.type].ValueAndHitPoints);
+		result += BIO_CREDIT_VALUE * uqm::lowNibble(CreatureData[info.type].ValueAndHitPoints);
 	}
 	return result;
 }
@@ -1516,7 +1516,7 @@ calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 	{
 		NODE_INFO info;
 		callGenerateForScanType(system, world, i, MINERAL_SCAN, &info);
-		result += highByte(info.density) * GLOBAL(ElementWorth[ElementCategory(info.type)]);
+		result += uqm::highByte(info.density) * GLOBAL(ElementWorth[ElementCategory(info.type)]);
 	}
 	return result;
 }
@@ -1541,7 +1541,7 @@ void generateMineralIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world
 	{
 		NODE_INFO info;
 		callGenerateForScanType(system, world, i, MINERAL_SCAN, &info);
-		minerals[ElementCategory(info.type)] += highByte(info.density);
+		minerals[ElementCategory(info.type)] += uqm::highByte(info.density);
 	}
 }
 
@@ -1715,8 +1715,8 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 			   bodyColorString(PLANCOLOR(planetType->Type)),
 			   worldGenAlgoString(PLANALGO(planetType->Type)),
 			   tectonicsString(planetType->BaseTectonics),
-			   atmosphereString(HINIBBLE(planetType->AtmoAndDensity)),
-			   densityString(LONIBBLE(planetType->AtmoAndDensity)));
+			   atmosphereString(uqm::highNibble(planetType->AtmoAndDensity)),
+			   densityString(uqm::lowNibble(planetType->AtmoAndDensity)));
 	for (i = 0; i < NUM_USEFUL_ELEMENTS; i++)
 	{
 		const ELEMENT_ENTRY* entry;

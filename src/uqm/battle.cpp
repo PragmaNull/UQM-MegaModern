@@ -66,8 +66,8 @@ BattleFrameCounter battleFrameCount;
 
 bool RunAwayAllowed(void)
 {
-	return ((lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
-			 || lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+	return ((uqm::lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
+			 || uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
 			&& (getNomadMode() == uqm::NomadMode::Easy
 				|| GET_GAME_STATE(STARBASE_AVAILABLE))
 			&& (isDifficulty(uqm::Difficulty::Easy) || !GET_GAME_STATE(BOMB_CARRIER)));
@@ -269,7 +269,7 @@ void BattleSong(bool DoPlay)
 		}
 		else
 		{
-			if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+			if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
 			{
 				BattleRef = LoadMusic(BATTLE_MUSIC_SAMATRA);
 
@@ -375,7 +375,7 @@ DoBattle(BATTLE_STATE* bs)
 		return false;
 	}
 
-	battle_speed = highByte(nth_frame);
+	battle_speed = uqm::highByte(nth_frame);
 	if (battle_speed == (uint8_t)~0)
 	{ // maximum speed, nothing rendered at all
 		Async_process();
@@ -445,7 +445,7 @@ bool Battle(BattleFrameCallback* callback)
 {
 	int16_t num_ships;
 
-	if (lowByte(GLOBAL(CurrentActivity)) != SUPER_MELEE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) != SUPER_MELEE)
 	{
 		// In Supermelee, the RNG is already initialised.
 		TFB_SeedRandom(GetTimeCounter());
@@ -519,7 +519,7 @@ bool Battle(BattleFrameCallback* callback)
 		DoInput(&bs, false);
 
 AbortBattle:
-		if (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+		if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
 		{
 			if (GLOBAL(CurrentActivity) & CHECK_ABORT)
 			{

@@ -104,13 +104,13 @@ void ReadIpGroup(GAME_STATE_FILE* fp, IP_GROUP* GroupPtr)
 	sread_16(fp, &GroupPtr->group_counter);
 	sread_8(fp, &GroupPtr->race_id);
 	sread_8(fp, &tmpb); /* was var2 */
-	GroupPtr->sys_loc = LONIBBLE(tmpb);
-	GroupPtr->task = HINIBBLE(tmpb);
+	GroupPtr->sys_loc = uqm::lowNibble(tmpb);
+	GroupPtr->task = uqm::highNibble(tmpb);
 	sread_8(fp, &GroupPtr->in_system); /* was crew_level */
 	sread_8(fp, nullptr);			   /* unused; was max_crew */
 	sread_8(fp, &tmpb);				   /* was energy_level */
-	GroupPtr->dest_loc = LONIBBLE(tmpb);
-	GroupPtr->orbit_pos = HINIBBLE(tmpb);
+	GroupPtr->dest_loc = uqm::lowNibble(tmpb);
+	GroupPtr->orbit_pos = uqm::highNibble(tmpb);
 	sread_8(fp, &GroupPtr->group_id); /* was max_energy */
 	sread_16s(fp, &GroupPtr->loc.x);
 	sread_16s(fp, &GroupPtr->loc.y);
@@ -124,12 +124,12 @@ void WriteIpGroup(GAME_STATE_FILE* fp, const IP_GROUP* GroupPtr)
 	swrite_16(fp, GroupPtr->group_counter);
 	swrite_8(fp, GroupPtr->race_id);
 	assert(GroupPtr->sys_loc < 0x10 && GroupPtr->task < 0x10);
-	swrite_8(fp, MAKE_BYTE(GroupPtr->sys_loc, GroupPtr->task));
+	swrite_8(fp, uqm::makeByte(GroupPtr->sys_loc, GroupPtr->task));
 	/* was var2 */
 	swrite_8(fp, GroupPtr->in_system); /* was crew_level */
 	swrite_8(fp, 0);				   /* unused; was max_crew */
 	assert(GroupPtr->dest_loc < 0x10 && GroupPtr->orbit_pos < 0x10);
-	swrite_8(fp, MAKE_BYTE(GroupPtr->dest_loc, GroupPtr->orbit_pos));
+	swrite_8(fp, uqm::makeByte(GroupPtr->dest_loc, GroupPtr->orbit_pos));
 	/* was energy_level */
 	swrite_8(fp, GroupPtr->group_id); /* was max_energy */
 	swrite_16(fp, GroupPtr->loc.x);
@@ -303,9 +303,9 @@ void BuildGroups(void)
 				}
 
 				rand_val = TFB_Random();
-				if ((int)(LOWORD(rand_val) % 100) < (int)i
+				if ((int)(uqm::lowWord(rand_val) % 100) < (int)i
 					&& (BestPercent == 0
-						|| (HIWORD(rand_val) % (i + BestPercent)) < i))
+						|| (uqm::highWord(rand_val) % (i + BestPercent)) < i))
 				{
 					if (FleetPtr->actual_strength == INFINITE_RADIUS)
 					{ // The prevailing encounter chance is hereby limitted
@@ -345,10 +345,10 @@ FoundHome:
 		}
 		do
 		{
-			for (Index = HINIBBLE(EncounterMakeup[BestIndex]); Index;
+			for (Index = uqm::highNibble(EncounterMakeup[BestIndex]); Index;
 				 --Index)
 			{
-				if (Index <= LONIBBLE(EncounterMakeup[BestIndex])
+				if (Index <= uqm::lowNibble(EncounterMakeup[BestIndex])
 					|| (uint16_t)TFB_Random() % 100 < 50)
 				{
 					CloneShipFragment((RACE_ID)BestIndex,
@@ -712,13 +712,13 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 			GroupPtr->in_system = 1;
 
 			rand_val = TFB_Random();
-			task = (uint8_t)(lowByte(LOWORD(rand_val)) % ON_STATION);
+			task = (uint8_t)(uqm::lowByte(uqm::lowWord(rand_val)) % ON_STATION);
 			if (task == FLEE)
 			{
 				task = ON_STATION;
 			}
 			GroupPtr->orbit_pos = NORMALIZE_FACING(
-				lowByte(HIWORD(rand_val)));
+				uqm::lowByte(uqm::highWord(rand_val)));
 
 			group_loc = pSolarSysState->SunDesc[0].NumPlanets;
 			if (group_loc == 1 && task == EXPLORE)
@@ -727,12 +727,12 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 			}
 			else
 			{
-				group_loc = (uint8_t)((highByte(LOWORD(rand_val)) % group_loc) + 1);
+				group_loc = (uint8_t)((uqm::highByte(uqm::lowWord(rand_val)) % group_loc) + 1);
 			}
 			GroupPtr->dest_loc = group_loc;
 			rand_val = TFB_Random();
-			GroupPtr->loc.x = (LOWORD(rand_val) % 10000) - 5000;
-			GroupPtr->loc.y = (HIWORD(rand_val) % 10000) - 5000;
+			GroupPtr->loc.x = (uqm::lowWord(rand_val) % 10000) - 5000;
+			GroupPtr->loc.y = (uqm::highWord(rand_val) % 10000) - 5000;
 			GroupPtr->group_counter = 0;
 			if (task == EXPLORE)
 			{

@@ -17,7 +17,7 @@
 #ifndef LIBS_LUAUQM_SCRIPTRES_H_
 #define LIBS_LUAUQM_SCRIPTRES_H_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/reslib.h"
 
 #if 0 //defined(__cplusplus)

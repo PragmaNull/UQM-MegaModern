@@ -34,9 +34,9 @@ dword_convert(uint32_t* dword_array, uint16_t num_dwords)
 
 	do
 	{
-		*dword_array++ = MAKE_DWORD(
-			MAKE_WORD(p[3], p[2]),
-			MAKE_WORD(p[1], p[0]));
+		*dword_array++ = uqm::makeDword(
+			uqm::makeWord(p[3], p[2]),
+			uqm::makeWord(p[1], p[0]));
 		p += 4;
 	} while (--num_dwords);
 }

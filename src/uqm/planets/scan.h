@@ -22,7 +22,7 @@
 typedef struct scan_desc SCAN_DESC;
 typedef struct scan_block SCAN_BLOCK;
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/gfxlib.h"
 #include "planets.h"
 #include "core/string/StringUtils.h"

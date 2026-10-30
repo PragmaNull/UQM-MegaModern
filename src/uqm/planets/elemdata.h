@@ -19,7 +19,7 @@
 #ifndef UQM_PLANETS_ELEMDATA_H_
 #define UQM_PLANETS_ELEMDATA_H_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -200,9 +200,9 @@ enum
 };
 #define NOTHING (uint8_t)(~0)
 
-#define MINERAL_DEPOSIT(qn, ql) MAKE_BYTE(qn, ql)
-#define DEPOSIT_QUANTITY(md) LONIBBLE(md)
-#define DEPOSIT_QUALITY(md) HINIBBLE(md)
+#define MINERAL_DEPOSIT(qn, ql) uqm::makeByte(qn, ql)
+#define DEPOSIT_QUANTITY(md) uqm::lowNibble(md)
+#define DEPOSIT_QUALITY(md) uqm::highNibble(md)
 
 #define MAX_ELEMENT_UNITS 0xF
 

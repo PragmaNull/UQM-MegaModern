@@ -775,7 +775,7 @@ init_ilwrath_comm(void)
 	if (GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)
 		|| (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA)
 			& ((1 << 4) | (1 << 5)))
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

@@ -21,7 +21,7 @@
 
 #include "races.h"
 #include "displist.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "starmap.h"
 
 #if 0 //defined(__cplusplus)

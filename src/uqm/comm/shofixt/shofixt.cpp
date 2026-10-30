@@ -587,7 +587,7 @@ Friendly(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 

@@ -55,7 +55,7 @@ void load_gravity_well(uint8_t selector)
 
 	if (selector == SA_MATRA)
 	{
-		if (EXTENDED && lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE)
+		if (EXTENDED && uqm::lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE)
 		{
 			planet[0] = CaptureDrawable(
 				LoadGraphic(SCENERY_MASK_PMAP_ANIM));

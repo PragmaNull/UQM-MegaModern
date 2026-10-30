@@ -7,6 +7,7 @@ set(uqm_src_core_types_master_files "")
 ############################################################
 # Local files
 set(uqm_src_core_types_files
+	"src/core/types/bytes.h"
 	"src/core/types/enum.h"
 	"src/core/types/types.cmake"
 )

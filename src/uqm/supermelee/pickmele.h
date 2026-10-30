@@ -22,7 +22,7 @@ typedef struct getmelee_struct GETMELEE_STATE;
 #include "uqm/races.h"
 #include "uqm/battlecontrols.h"
 #include "meleesetup.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 
 void MeleeShipDeath(STARSHIP*);
 void BuildPickMeleeFrame(void);

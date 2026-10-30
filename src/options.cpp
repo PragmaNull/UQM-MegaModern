@@ -28,7 +28,7 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/file/paths.h"
 #include "config.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/strlib.h"
 #include "core/log/log.h"
 #include "libs/reslib.h"

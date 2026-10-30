@@ -597,7 +597,7 @@ Intro(void)
 {
 	uint8_t NumVisits;
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -771,7 +771,7 @@ init_supox_comm(void)
 	supox_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	if (!GET_GAME_STATE(SUPOX_HOSTILE)
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

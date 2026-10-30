@@ -76,7 +76,7 @@ DoSelectAction(MENU_STATE* pMS)
 			case HAIL:
 			case ATTACK:
 				DrawMenuStateStrings(PM_CONVERSE, pMS->CurState);
-				if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+				if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
 				{
 					pMS->CurState = HAIL;
 				}
@@ -152,7 +152,7 @@ void BuildBattle(uint16_t which_player)
 	if (which_player != RPG_PLAYER_NUM)
 	{ // This function is called first for the NPC character
 		// and this is when a centerpiece is loaded
-		switch (lowByte(GLOBAL(CurrentActivity)))
+		switch (uqm::lowByte(GLOBAL(CurrentActivity)))
 		{
 			case IN_LAST_BATTLE:
 				load_gravity_well(SA_MATRA);
@@ -407,7 +407,7 @@ InitEncounter(void)
 	s.frame = planet[0];
 	DrawStamp(&s);
 
-	if (lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE)
 	{
 #define NUM_DISPLAY_PTS (std::size(display_pt))
 		HSHIPFRAG hStarShip, hNextShip;
@@ -613,8 +613,8 @@ UninitEncounter(void)
 
 	if ((GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
 		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
-		|| lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		goto ExitUninitEncounter;
 	}
@@ -1030,13 +1030,13 @@ void EncounterBattle(void)
 	SET_GAME_STATE(BATTLE_SEGUE, 1);
 
 	OldActivity = GLOBAL(CurrentActivity);
-	if (lowByte(OldActivity) == IN_LAST_BATTLE)
+	if (uqm::lowByte(OldActivity) == IN_LAST_BATTLE)
 	{
-		GLOBAL(CurrentActivity) = MAKE_WORD(IN_LAST_BATTLE, 0);
+		GLOBAL(CurrentActivity) = uqm::makeWord(IN_LAST_BATTLE, 0);
 	}
 	else
 	{
-		GLOBAL(CurrentActivity) = MAKE_WORD(IN_ENCOUNTER, 0);
+		GLOBAL(CurrentActivity) = uqm::makeWord(IN_ENCOUNTER, 0);
 	}
 
 	//    FreeSC2Data ();
@@ -1062,7 +1062,7 @@ void EncounterBattle(void)
 		{
 			cur_speed = (uint8_t)~0; /* maximum speed - no rendering */
 		}
-		nth_frame = MAKE_WORD(1, cur_speed);
+		nth_frame = uqm::makeWord(1, cur_speed);
 		PlayerControl[0] = PlayerControlFlags::Cyborg | PlayerControlFlags::DifficultyAwesome;
 		savedPlayerInput = PlayerInput[0];
 		PlayerInput[0] = nullptr;
@@ -1094,7 +1094,7 @@ void EncounterBattle(void)
 
 	if (GLOBAL(glob_flags) & CYBORG_ENABLED)
 	{
-		nth_frame = MAKE_WORD(0, 0);
+		nth_frame = uqm::makeWord(0, 0);
 		PlayerControl[0] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
 		ClearPlayerInput(0);
 		PlayerInput[0] = savedPlayerInput;

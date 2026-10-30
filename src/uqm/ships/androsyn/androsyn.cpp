@@ -199,8 +199,8 @@ bubble_preprocess(ELEMENT* ElementPtr)
 {
 	uint8_t thrust_wait, turn_wait;
 
-	thrust_wait = HINIBBLE(ElementPtr->turn_wait);
-	turn_wait = LONIBBLE(ElementPtr->turn_wait);
+	thrust_wait = uqm::highNibble(ElementPtr->turn_wait);
+	turn_wait = uqm::lowNibble(ElementPtr->turn_wait);
 	if (thrust_wait > 0)
 	{
 		--thrust_wait;
@@ -242,7 +242,7 @@ bubble_preprocess(ELEMENT* ElementPtr)
 		turn_wait = TRACK_WAIT;
 	}
 
-	ElementPtr->turn_wait = MAKE_BYTE(turn_wait, thrust_wait);
+	ElementPtr->turn_wait = uqm::makeByte(turn_wait, thrust_wait);
 }
 
 static uint16_t

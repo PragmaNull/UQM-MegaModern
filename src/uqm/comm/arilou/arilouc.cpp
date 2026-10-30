@@ -718,7 +718,7 @@ Intro(void)
 {
 	uint8_t NumVisits, Manner;
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -922,7 +922,7 @@ init_arilou_comm(void)
 
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1
 		|| GET_GAME_STATE(ARILOU_MANNER) == 3
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

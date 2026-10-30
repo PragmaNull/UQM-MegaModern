@@ -17,7 +17,7 @@
 #ifndef UQM_LUA_LUACOMM_H_
 #define UQM_LUA_LUACOMM_H_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/reslib.h"
 #include "luafuncs/customfuncs.h"
 

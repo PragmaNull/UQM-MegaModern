@@ -18,7 +18,7 @@
 
 #include "sound.h"
 #include "sndintrn.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/inplib.h"
 #include "libs/memlib.h"
 

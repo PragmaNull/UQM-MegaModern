@@ -17,7 +17,7 @@
 #ifndef UQM_LUA_LUAINIT_H_
 #define UQM_LUA_LUAINIT_H_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

@@ -19,7 +19,7 @@
 // independant RNGs to be used simultaneously.
 // The RNG behavior itself is the same.
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 
 #define RANDOM2_INTERNAL
 #include "random.h"

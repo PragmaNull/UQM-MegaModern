@@ -20,7 +20,7 @@
 #define UQM_STATE_H_
 
 #include "port.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include <assert.h>
 
 #if 0 //defined(__cplusplus)

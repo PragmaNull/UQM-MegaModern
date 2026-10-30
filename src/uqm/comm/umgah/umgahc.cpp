@@ -603,7 +603,7 @@ Intro(void)
 	uint8_t NumVisits;
 
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 		SET_GAME_STATE(BATTLE_SEGUE, 0);
@@ -812,7 +812,7 @@ init_umgah_comm(void)
 	umgah_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	if ((GET_GAME_STATE(TALKING_PET) && !GET_GAME_STATE(UMGAH_HOSTILE))
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

@@ -1456,7 +1456,7 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 
 		t.baseline.y = RES_SCALE(126);
 		fmt::format_to_sz_n(buf, "{}",
-							MAKE_WORD(pSD->MCreditLo, pSD->MCreditHi));
+							uqm::makeWord(pSD->MCreditLo, pSD->MCreditHi));
 		SetContextForeGroundColor(SUMM_VALUE_COLOR);
 		font_DrawText(&t);
 

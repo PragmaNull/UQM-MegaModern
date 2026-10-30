@@ -1713,7 +1713,7 @@ CheckBulletins(bool Repeat)
 	RESPONSE_REF pIntro;
 	uint8_t b0;
 	uint32_t BulletinMask;
-	uint16_t CrewSold = MAKE_WORD(
+	uint16_t CrewSold = uqm::makeWord(
 		GET_GAME_STATE(CREW_SOLD_TO_DRUUGE0),
 		GET_GAME_STATE(CREW_SOLD_TO_DRUUGE1));
 
@@ -1927,7 +1927,7 @@ CheckBulletins(bool Repeat)
 					{
 						uint16_t crew_bought;
 
-						crew_bought = MAKE_WORD(
+						crew_bought = uqm::makeWord(
 							GET_GAME_STATE(CREW_PURCHASED0),
 							GET_GAME_STATE(CREW_PURCHASED1));
 						if (crew_bought >= CREW_EXPENSE_THRESHOLD)

@@ -50,12 +50,12 @@ void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray, GFXRECT* pRect
 
 		rand_val = RandomContext_Random(SysGenRNG);
 
-		w1 = LOWORD(rand_val);
-		w2 = HIWORD(rand_val);
+		w1 = uqm::lowWord(rand_val);
+		w2 = uqm::highWord(rand_val);
 
-		LineDDA0.x_top = (lowByte(w1) % ORIGINAL_MAP_WIDTH)
+		LineDDA0.x_top = (uqm::lowByte(w1) % ORIGINAL_MAP_WIDTH)
 					   * width / ORIGINAL_MAP_WIDTH;
-		LineDDA0.x_bot = (highByte(w1) % ORIGINAL_MAP_WIDTH)
+		LineDDA0.x_bot = (uqm::highByte(w1) % ORIGINAL_MAP_WIDTH)
 					   * width / ORIGINAL_MAP_WIDTH;
 		// LineDDA0.x_top = w1 % width; // JMS_GFX: Replaced previous lines with
 		// these: uint8_t is too small for 640x480 sized maps.
@@ -84,10 +84,10 @@ void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray, GFXRECT* pRect
 			LineDDA0.error_term = -(delta_y >> 1);
 		}
 
-		LineDDA1.x_top = (lowByte(w2) % (ORIGINAL_MAP_WIDTH - 1))
+		LineDDA1.x_top = (uqm::lowByte(w2) % (ORIGINAL_MAP_WIDTH - 1))
 						   * width / ORIGINAL_MAP_WIDTH
 					   + LineDDA0.x_top + 1;
-		LineDDA1.x_bot = (highByte(w2) % (ORIGINAL_MAP_WIDTH - 1))
+		LineDDA1.x_bot = (uqm::highByte(w2) % (ORIGINAL_MAP_WIDTH - 1))
 						   * width / ORIGINAL_MAP_WIDTH
 					   + LineDDA0.x_bot + 1;
 		LineDDA1.delta_x = (LineDDA1.x_bot - LineDDA1.x_top) << 1;

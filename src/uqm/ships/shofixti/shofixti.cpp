@@ -527,7 +527,7 @@ init_shofixti(void)
 	shofixti_desc.cyborg_control.intelligence_func = shofixti_intelligence;
 
 	new_shofixti_desc = shofixti_desc;
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
 		&& CurStarDescPtr && CurStarDescPtr->Index == SHOFIXTI_DEFINED
 		&& !GET_GAME_STATE(SHOFIXTI_RECRUITED))
 	{

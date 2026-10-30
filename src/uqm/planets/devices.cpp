@@ -250,7 +250,7 @@ UseCaster(void)
 		return false;
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) != IN_INTERPLANETARY
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_INTERPLANETARY
 		|| !playerInSolarSystem())
 	{
 		return false;
@@ -349,7 +349,7 @@ InvokeDevice(uint8_t which_device)
 		case GLOWING_ROD_DEVICE:
 			break;
 		case SUN_EFFICIENCY_DEVICE:
-			if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+			if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 				&& playerInPlanetOrbit())
 			{
 				PlayMenuSound(MENU_SOUND_INVOKED);

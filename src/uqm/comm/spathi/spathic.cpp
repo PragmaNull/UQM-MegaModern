@@ -966,7 +966,7 @@ init_spathi_comm(void)
 
 	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1
 		|| GET_GAME_STATE(SPATHI_MANNER) == 3
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

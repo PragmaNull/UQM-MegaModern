@@ -78,76 +78,76 @@ static MUSIC_REF OrbitMusic[NUM_ORBIT_THEMES];
 
 LIFEFORM_DESC CreatureData[] =
 	{
-		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 MAKE_BYTE(1, 1) },
+		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 uqm::makeByte(1, 1) },
 		// Roto-Dendron
-		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 MAKE_BYTE(6, 1) },
+		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 uqm::makeByte(6, 1) },
 		// Macrocillia
-		{SPEED_MOTIONLESS | DANGER_WEAK,									 MAKE_BYTE(3, 1) },
+		{SPEED_MOTIONLESS | DANGER_WEAK,									 uqm::makeByte(3, 1) },
 		// Splort Wort
-		{SPEED_MOTIONLESS | DANGER_NORMAL,								   MAKE_BYTE(5, 3) },
+		{SPEED_MOTIONLESS | DANGER_NORMAL,								   uqm::makeByte(5, 3) },
 		// Whackin' Bush
-		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 MAKE_BYTE(2, 10)},
+		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 uqm::makeByte(2, 10)},
 		// Slot Machine Tree
 		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_HARMLESS,
-		 MAKE_BYTE(1,																	2) },
+		 uqm::makeByte(1,																	2) },
 		// Neon Worm
 		{BEHAVIOR_FLEE | AWARENESS_MEDIUM | SPEED_SLOW | DANGER_HARMLESS,
-		 MAKE_BYTE(8,																	5) },
+		 uqm::makeByte(8,																	5) },
 		// Stiletto Urchin
 		{BEHAVIOR_HUNT | AWARENESS_LOW | SPEED_SLOW | DANGER_WEAK,
-		 MAKE_BYTE(2,																	2) },
+		 uqm::makeByte(2,																	2) },
 		// Deluxe Blob
 		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_NORMAL,
-		 MAKE_BYTE(3,																	8) },
+		 uqm::makeByte(3,																	8) },
 		// Glowing Medusa
 		{BEHAVIOR_HUNT | AWARENESS_MEDIUM | SPEED_SLOW | DANGER_MONSTROUS,
-		 MAKE_BYTE(10,																   15)},
+		 uqm::makeByte(10,																   15)},
 		// Carousel Beast
 		{BEHAVIOR_HUNT | AWARENESS_MEDIUM | SPEED_MEDIUM | DANGER_WEAK,
-		 MAKE_BYTE(3,																	3) },
+		 uqm::makeByte(3,																	3) },
 		// Mysterious Bees
 		{BEHAVIOR_FLEE | AWARENESS_MEDIUM | SPEED_MEDIUM | DANGER_HARMLESS,
-		 MAKE_BYTE(2,																	1) },
+		 uqm::makeByte(2,																	1) },
 		// Hopping Blobby
 		{BEHAVIOR_UNPREDICTABLE | SPEED_MEDIUM | DANGER_WEAK,
-		 MAKE_BYTE(2,																	2) },
+		 uqm::makeByte(2,																	2) },
 		// Blood Monkey
 		{BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_MEDIUM | DANGER_NORMAL,
-		 MAKE_BYTE(4,																	6) },
+		 uqm::makeByte(4,																	6) },
 		// Yompin Yiminy
 		{BEHAVIOR_UNPREDICTABLE | SPEED_MEDIUM | DANGER_MONSTROUS,
-		 MAKE_BYTE(9,																	12)},
+		 uqm::makeByte(9,																	12)},
 		// Amorphous Trandicula
 		{BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_FAST | DANGER_WEAK,
-		 MAKE_BYTE(3,																	1) },
+		 uqm::makeByte(3,																	1) },
 		// Crazy Weasel
 		{BEHAVIOR_FLEE | AWARENESS_HIGH | SPEED_FAST | DANGER_HARMLESS,
-		 MAKE_BYTE(1,																	1) },
+		 uqm::makeByte(1,																	1) },
 		// Merry Whumpet
 		{BEHAVIOR_HUNT | AWARENESS_LOW | SPEED_FAST | DANGER_NORMAL,
-		 MAKE_BYTE(7,																	8) },
+		 uqm::makeByte(7,																	8) },
 		// Fungal Squid
 		{BEHAVIOR_FLEE | AWARENESS_HIGH | SPEED_FAST | DANGER_WEAK,
-		 MAKE_BYTE(15,																   2) },
+		 uqm::makeByte(15,																   2) },
 		// Penguin Cyclops
 		{BEHAVIOR_FLEE | AWARENESS_LOW | SPEED_FAST | DANGER_WEAK,
-		 MAKE_BYTE(1,																	1) },
+		 uqm::makeByte(1,																	1) },
 		// Chicken
-		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_WEAK,					MAKE_BYTE(6, 2) },
+		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_WEAK,					uqm::makeByte(6, 2) },
 		// Bubble Vine
 		{BEHAVIOR_FLEE | AWARENESS_HIGH | SPEED_SLOW | DANGER_WEAK,
-		 MAKE_BYTE(4,																	2) },
+		 uqm::makeByte(4,																	2) },
 		// Bug-Eyed Bait
-		{SPEED_MOTIONLESS | DANGER_WEAK,									 MAKE_BYTE(8, 5) },
+		{SPEED_MOTIONLESS | DANGER_WEAK,									 uqm::makeByte(8, 5) },
 		// Goo Burger
 
-		{SPEED_MOTIONLESS | DANGER_MONSTROUS,								  MAKE_BYTE(1, 1) },
+		{SPEED_MOTIONLESS | DANGER_MONSTROUS,								  uqm::makeByte(1, 1) },
 		// Evil One
 		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_HARMLESS,
-		 MAKE_BYTE(1,																	1) }, // ? was 0, 1
-						   // Brainbox Bulldozers
+		 uqm::makeByte(1,																	1) }, // ? was 0, 1
+							   // Brainbox Bulldozers
 		{BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_FAST | DANGER_MONSTROUS,
-		 MAKE_BYTE(15,																   15)},
+		 uqm::makeByte(15,																   15)},
 		// Zex's Beauty
 };
 
@@ -335,13 +335,13 @@ void object_animation(ELEMENT* ElementPtr)
 	}
 
 	frame_index = GetFrameIndex(pPrim->Object.Stamp.frame) + 1;
-	if (LONIBBLE(ElementPtr->turn_wait))
+	if (uqm::lowNibble(ElementPtr->turn_wait))
 	{
 		--ElementPtr->turn_wait;
 	}
 	else
 	{
-		ElementPtr->turn_wait += HINIBBLE(ElementPtr->turn_wait);
+		ElementPtr->turn_wait += uqm::highNibble(ElementPtr->turn_wait);
 
 		pPrim->Object.Stamp.frame =
 			IncFrameIndex(pPrim->Object.Stamp.frame);
@@ -513,9 +513,9 @@ void object_animation(ELEMENT* ElementPtr)
 					uint16_t rand_val;
 
 					rand_val = TFB_Random();
-					angle = NORMALIZE_ANGLE(lowByte(rand_val));
+					angle = NORMALIZE_ANGLE(uqm::lowByte(rand_val));
 					ElementPtr->thrust_wait =
-						(highByte(rand_val) >> 2) + 10;
+						(uqm::highByte(rand_val) >> 2) + 10;
 				}
 				else if ((CreatureData[index].Attributes
 						  & BEHAVIOR_MASK)
@@ -764,7 +764,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 
 			// JMS: This makes the mineral deposit subtraction keep
 			// in effect even after leaving & re-entering the planet.
-			which_node = highByte(ElementPtr->scan_node) - 1;
+			which_node = uqm::highByte(ElementPtr->scan_node) - 1;
 			pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[MINERAL_SCAN][which_node] =
 				NumRetrieved;
 
@@ -877,9 +877,9 @@ ExplodeCritter(ELEMENT* ElementPtr)
 		ExplosionElementPtr->playerNr = PS_NON_PLAYER;
 		ExplosionElementPtr->next.location = ElementPtr->next.location;
 		ExplosionElementPtr->preprocess_func = object_animation;
-		ExplosionElementPtr->turn_wait = MAKE_BYTE(2, 2);
+		ExplosionElementPtr->turn_wait = uqm::makeByte(2, 2);
 		ExplosionElementPtr->life_span = EXPLOSION_LIFE
-									   * (LONIBBLE(ExplosionElementPtr->turn_wait));
+									   * (uqm::lowNibble(ExplosionElementPtr->turn_wait));
 
 		SetPrimType(&DisplayArray[ExplosionElementPtr->PrimIndex],
 					STAMP_PRIM);
@@ -907,7 +907,7 @@ ExplodeCritter(ELEMENT* ElementPtr)
 		// JMS: This marks the exploded critter "collected". (even though
 		// there was no biodata to collect). This ensures the critter isn't
 		// resurrected when visiting the planet next time.
-		temp_which_node = highByte(ElementPtr->scan_node) - 1;
+		temp_which_node = uqm::highByte(ElementPtr->scan_node) - 1;
 		pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask[BIOLOGICAL_SCAN] |=
 			(1L << temp_which_node);
 		// Mark this bio blip's state as "collected".
@@ -1062,7 +1062,7 @@ CheckObjectCollision(uint16_t index)
 				uint16_t scan, NumRetrieved;
 				int16_t which_node;
 
-				scan = lowByte(ElementPtr->scan_node);
+				scan = uqm::lowByte(ElementPtr->scan_node);
 				if (pLanderPrim == 0)
 				{
 					/* Collision of lander with another object */
@@ -1137,9 +1137,9 @@ CheckObjectCollision(uint16_t index)
 					}
 
 					if (scan == BIOLOGICAL_SCAN
-						&& (value = LONIBBLE(CreatureData[ElementPtr->mass_points
-														  & ~CREATURE_AWARE]
-												 .ValueAndHitPoints)))
+						&& (value = uqm::lowNibble(CreatureData[ElementPtr->mass_points
+																& ~CREATURE_AWARE]
+													   .ValueAndHitPoints)))
 					{
 						// Collision of a stun bolt with a viable creature
 						shotCreature(ElementPtr, value, &LanderControl,
@@ -1169,7 +1169,7 @@ CheckObjectCollision(uint16_t index)
 					}
 				}
 
-				which_node = highByte(ElementPtr->scan_node) - 1;
+				which_node = uqm::highByte(ElementPtr->scan_node) - 1;
 				if (callPickupForScanType(pSolarSysState,
 										  pSolarSysState->pOrbitalDesc, which_node, scan))
 				{ // Node retrieved, remove from the surface
@@ -1190,7 +1190,7 @@ lightning_process(ELEMENT* ElementPtr)
 	PRIMITIVE* pPrim;
 
 	pPrim = &DisplayArray[ElementPtr->PrimIndex];
-	if (LONIBBLE(ElementPtr->turn_wait))
+	if (uqm::lowNibble(ElementPtr->turn_wait))
 	{
 		--ElementPtr->turn_wait;
 	}
@@ -1237,7 +1237,7 @@ lightning_process(ELEMENT* ElementPtr)
 								 TFB_Random() % num_frames);
 		}
 
-		ElementPtr->turn_wait += HINIBBLE(ElementPtr->turn_wait);
+		ElementPtr->turn_wait += uqm::highNibble(ElementPtr->turn_wait);
 	}
 
 	if (GetSuccLink(DisplayLinks) != ElementPtr->PrimIndex)
@@ -1272,16 +1272,16 @@ AddLightning(void)
 		}
 
 		rand_val = TFB_Random();
-		LightningElementPtr->life_span = 10 + (HIWORD(rand_val) % 10) + 1;
+		LightningElementPtr->life_span = 10 + (uqm::highWord(rand_val) % 10) + 1;
 		LightningElementPtr->next.location.x = (curLanderLoc.x
 												+ ((SCALED_MAP_WIDTH << MAG_SHIFT)
 												   - ((SURFACE_WIDTH >> 1) - 6))
-												+ (chooseIfHd(static_cast<uint32_t>(lowByte(rand_val)), rand_val)
+												+ (chooseIfHd(static_cast<uint32_t>(uqm::lowByte(rand_val)), rand_val)
 												   % (SURFACE_WIDTH - RES_SCALE(12))))
 											 % (SCALED_MAP_WIDTH << MAG_SHIFT);
 		LightningElementPtr->next.location.y = (curLanderLoc.y
 												+ ((MAP_HEIGHT << MAG_SHIFT) - ((SURFACE_HEIGHT >> 1) - 6))
-												+ (chooseIfHd(static_cast<uint32_t>(highByte(rand_val)), rand_val)
+												+ (chooseIfHd(static_cast<uint32_t>(uqm::highByte(rand_val)), rand_val)
 												   % (SURFACE_HEIGHT - RES_SCALE(12))))
 											 % (MAP_HEIGHT << MAG_SHIFT);
 
@@ -1336,11 +1336,11 @@ AddGroundDisaster(uint16_t which_disaster)
 		GroundDisasterElementPtr->next.location.x = (curLanderLoc.x
 													 + ((SCALED_MAP_WIDTH << MAG_SHIFT)
 														- (SURFACE_WIDTH * 3 / 8))
-													 + (LOWORD(rand_val) % (SURFACE_WIDTH * 3 / 4)))
+													 + (uqm::lowWord(rand_val) % (SURFACE_WIDTH * 3 / 4)))
 												  % (SCALED_MAP_WIDTH << MAG_SHIFT);
 		GroundDisasterElementPtr->next.location.y = (curLanderLoc.y
 													 + ((MAP_HEIGHT << MAG_SHIFT) - (SURFACE_HEIGHT * 3 / 8))
-													 + (HIWORD(rand_val) % (SURFACE_HEIGHT * 3 / 4)))
+													 + (uqm::highWord(rand_val) % (SURFACE_HEIGHT * 3 / 4)))
 												  % (MAP_HEIGHT << MAG_SHIFT);
 
 
@@ -1356,7 +1356,7 @@ AddGroundDisaster(uint16_t which_disaster)
 			}
 
 			pPrim->Object.Stamp.frame = LanderFrame[1];
-			GroundDisasterElementPtr->turn_wait = MAKE_BYTE(2, 2);
+			GroundDisasterElementPtr->turn_wait = uqm::makeByte(2, 2);
 		}
 		else /* if (which_disaster == LAVASPOT_DISASTER) */
 		{
@@ -1364,11 +1364,11 @@ AddGroundDisaster(uint16_t which_disaster)
 			GroundDisasterElementPtr->facing =
 				NORMALIZE_FACING(TFB_Random());
 			pPrim->Object.Stamp.frame = LanderFrame[3];
-			GroundDisasterElementPtr->turn_wait = MAKE_BYTE(0, 0);
+			GroundDisasterElementPtr->turn_wait = uqm::makeByte(0, 0);
 		}
 		GroundDisasterElementPtr->life_span =
 			GetFrameCount(pPrim->Object.Stamp.frame)
-				* (LONIBBLE(GroundDisasterElementPtr->turn_wait) + 1)
+				* (uqm::lowNibble(GroundDisasterElementPtr->turn_wait) + 1)
 			- 1;
 
 		UnlockElement(hGroundDisasterElement);
@@ -1396,19 +1396,19 @@ BuildObjectList(void)
 	lander_flags &= ~KILL_CREW;
 
 	rand_val = TFB_Random();
-	if (lowByte(HIWORD(rand_val)) < pPSD->FireChance)
+	if (uqm::lowByte(uqm::highWord(rand_val)) < pPSD->FireChance)
 	{
 		AddGroundDisaster(LAVASPOT_DISASTER);
 		PlaySound(SetAbsSoundIndex(LanderSounds, LAVASPOT_DISASTER),
 				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 	}
 
-	if (highByte(LOWORD(rand_val)) < pPSD->TectonicsChance)
+	if (uqm::highByte(uqm::lowWord(rand_val)) < pPSD->TectonicsChance)
 	{
 		AddGroundDisaster(EARTHQUAKE_DISASTER);
 	}
 
-	if (lowByte(LOWORD(rand_val)) < pPSD->WeatherChance)
+	if (uqm::lowByte(uqm::lowWord(rand_val)) < pPSD->WeatherChance)
 	{
 		AddLightning();
 	}
@@ -2039,7 +2039,7 @@ put_node(ELEMENT* ElementPtr)
 	LockElement(hNodeElement, &NodeElementPtr);
 
 	NodeElementPtr->scan_node =
-		MAKE_WORD(MINERAL_SCAN, ElementPtr->cycle + 1);
+		uqm::makeWord(MINERAL_SCAN, ElementPtr->cycle + 1);
 	NodeElementPtr->playerNr = PS_NON_PLAYER;
 	NodeElementPtr->current.location = info.loc_pt;
 
@@ -2049,7 +2049,7 @@ put_node(ELEMENT* ElementPtr)
 
 	// JMS: Partially scavenged energy blips won't return
 	// anymore to original size after leaving planet.
-	NodeElementPtr->mass_points = highByte(info.density)
+	NodeElementPtr->mass_points = uqm::highByte(info.density)
 								- pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[MINERAL_SCAN][ElementPtr->cycle];
 
 	NodeElementPtr->current.image.frame = SetAbsFrameIndex(
@@ -2057,7 +2057,7 @@ put_node(ELEMENT* ElementPtr)
 						   + ElementCategory(info.type) * 5);
 	NodeElementPtr->next.image.frame = SetRelFrameIndex(
 		NodeElementPtr->current.image.frame,
-		lowByte(info.density) + 1);
+		uqm::lowByte(info.density) + 1);
 
 	DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame =
 		IncFrameIndex(NodeElementPtr->next.image.frame);
@@ -2181,7 +2181,7 @@ LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amount)
 
 	NodeElementPtr->next.image.frame = SetRelFrameIndex(
 		NodeElementPtr->current.image.frame,
-		lowByte(MAKE_WORD(deposit_quality_gross, amount)) + 1);
+		uqm::lowByte(uqm::makeWord(deposit_quality_gross, amount)) + 1);
 	DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame =
 		IncFrameIndex(NodeElementPtr->next.image.frame);
 
@@ -2249,9 +2249,9 @@ LanderExplosion(void)
 	ExplosionElementPtr->next.location = curLanderLoc;
 	ExplosionElementPtr->preprocess_func = object_animation;
 	// Animation advances every 3rd frame
-	ExplosionElementPtr->turn_wait = MAKE_BYTE(2, 2);
+	ExplosionElementPtr->turn_wait = uqm::makeByte(2, 2);
 	ExplosionElementPtr->life_span = EXPLOSION_LIFE
-								   * (LONIBBLE(ExplosionElementPtr->turn_wait) + 1);
+								   * (uqm::lowNibble(ExplosionElementPtr->turn_wait) + 1);
 
 	SetPrimType(&DisplayArray[ExplosionElementPtr->PrimIndex],
 				STAMP_PRIM);

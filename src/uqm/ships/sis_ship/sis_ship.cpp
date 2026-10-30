@@ -652,11 +652,11 @@ blaster_preprocess(ELEMENT* ElementPtr)
 			break;
 	}
 
-	if (LONIBBLE(ElementPtr->turn_wait))
+	if (uqm::lowNibble(ElementPtr->turn_wait))
 	{
 		--ElementPtr->turn_wait;
 	}
-	else if ((wait = HINIBBLE(ElementPtr->turn_wait)))
+	else if ((wait = uqm::highNibble(ElementPtr->turn_wait)))
 	{
 		uint16_t facing;
 
@@ -667,7 +667,7 @@ blaster_preprocess(ELEMENT* ElementPtr)
 			SetVelocityVector(&ElementPtr->velocity, BLASTER_SPEED_BOOL, facing);
 		}
 
-		ElementPtr->turn_wait = MAKE_BYTE(wait, wait);
+		ElementPtr->turn_wait = uqm::makeByte(wait, wait);
 	}
 }
 
@@ -702,7 +702,7 @@ initialize_blasters(ELEMENT* ShipPtr, HELEMENT BlasterArray[])
 
 			LockElement(BlasterArray[i], &BlasterPtr);
 			BlasterPtr->collision_func = blaster_collision;
-			BlasterPtr->turn_wait = MAKE_BYTE(nt, nt);
+			BlasterPtr->turn_wait = uqm::makeByte(nt, nt);
 			UnlockElement(BlasterArray[i]);
 		}
 	}
@@ -1058,7 +1058,7 @@ init_sis(void)
 	InitDriveSlots(&new_sis_desc, GLOBAL_SIS(DriveSlots));
 	InitJetSlots(&new_sis_desc, GLOBAL_SIS(JetSlots));
 
-	if (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
 	{
 		new_sis_desc.ship_info.crew_level = new_sis_desc.ship_info.max_crew;
 	}

@@ -827,7 +827,7 @@ StripShip(uint16_t fuel_required)
 			uint32_t rand_val;
 
 			rand_val = RandomContext_Random(rc);
-			switch (which_module = lowByte(LOWORD(rand_val)) % (CREW_POD + 1))
+			switch (which_module = uqm::lowByte(uqm::lowWord(rand_val)) % (CREW_POD + 1))
 			{
 				case PLANET_LANDER:
 					if (SIS_copy.NumLanders == 0)
@@ -865,7 +865,7 @@ StripShip(uint16_t fuel_required)
 					SIS_copy.JetSlots[i] = EMPTY_SLOT + 1;
 					break;
 				case CREW_POD:
-					i = highByte(LOWORD(rand_val)) % NUM_MODULE_SLOTS;
+					i = uqm::highByte(uqm::lowWord(rand_val)) % NUM_MODULE_SLOTS;
 					which_module = SIS_copy.ModuleSlots[i];
 					if (which_module >= BOMB_MODULE_0
 						|| which_module == FUEL_TANK
@@ -1048,16 +1048,16 @@ DoRescue(RESPONSE_REF R)
 static uint16_t
 GetAvailableCredits(void)
 {
-	return MAKE_WORD(GET_GAME_STATE(MELNORME_CREDIT0),
-					 GET_GAME_STATE(MELNORME_CREDIT1));
+	return uqm::makeWord(GET_GAME_STATE(MELNORME_CREDIT0),
+						 GET_GAME_STATE(MELNORME_CREDIT1));
 }
 
 // Extract method for setting the player's current credits.
 static void
 SetAvailableCredits(uint16_t credits)
 {
-	SET_GAME_STATE(MELNORME_CREDIT0, lowByte(credits));
-	SET_GAME_STATE(MELNORME_CREDIT1, highByte(credits));
+	SET_GAME_STATE(MELNORME_CREDIT0, uqm::lowByte(credits));
+	SET_GAME_STATE(MELNORME_CREDIT1, uqm::highByte(credits));
 }
 
 // Now returns whether the purchase succeeded instead of the remaining
@@ -1468,7 +1468,7 @@ DoSell(RESPONSE_REF R)
 	int what_to_sell_queued = 0;
 	uint8_t BioCreditValue = ifHardDifficulty(1, BIO_CREDIT_VALUE);
 
-	rainbow_mask = MAKE_WORD(
+	rainbow_mask = uqm::makeWord(
 		GET_GAME_STATE(RAINBOW_WORLD0),
 		GET_GAME_STATE(RAINBOW_WORLD1));
 	num_new_rainbows = -(int8_t)(GET_GAME_STATE(MELNORME_RAINBOW_COUNT));
@@ -1701,7 +1701,7 @@ NatureOfConversation(RESPONSE_REF R)
 		SET_GAME_STATE(MELNORME_YACK_STACK2, stack + 5);
 	}
 
-	rainbow_mask = MAKE_WORD(
+	rainbow_mask = uqm::makeWord(
 		GET_GAME_STATE(RAINBOW_WORLD0),
 		GET_GAME_STATE(RAINBOW_WORLD1));
 	num_new_rainbows = -(int8_t)(GET_GAME_STATE(MELNORME_RAINBOW_COUNT));
@@ -1926,12 +1926,13 @@ static void
 DoFirstMeeting(RESPONSE_REF R)
 {
 	uint8_t last_stack = 0;
-	PVOIDFUNC temp_func, stack_func[] =
-							 {
-								 yack0_respond,
-								 yack1_respond,
-								 yack2_respond,
-							 };
+	using VoidFunc = void (*)(void);
+	VoidFunc temp_func, stack_func[] =
+							{
+								yack0_respond,
+								yack1_respond,
+								yack2_respond,
+							};
 
 	if (R == 0)
 	{

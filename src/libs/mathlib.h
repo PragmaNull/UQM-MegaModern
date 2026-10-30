@@ -19,7 +19,7 @@
 #ifndef LIBS_MATHLIB_H_
 #define LIBS_MATHLIB_H_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

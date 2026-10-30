@@ -402,7 +402,7 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 		// SIS for the Hyperspace flight
 		return GetHeadLink(&race_q[which_player]);
 	}
-	else if (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+	else if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
 	{
 		// Let the player chose their own ship. (May be a computer player).
 		HSTARSHIP hBattleShip;

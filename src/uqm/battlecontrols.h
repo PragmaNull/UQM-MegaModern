@@ -28,7 +28,7 @@ typedef struct NetworkInputContext NetworkInputContext;
 #include "controls.h"
 #include "supermelee/pickmele.h"
 #include "races.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

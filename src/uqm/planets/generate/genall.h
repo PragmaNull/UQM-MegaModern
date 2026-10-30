@@ -20,7 +20,7 @@
 #include "gendefault.h"
 #include <cstdint>
 #include "../generate.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 
 extern const GenerateFunctions generateDefaultFunctions;
 

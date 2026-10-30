@@ -460,7 +460,7 @@ showRemainingCrew(void)
 
 	BatchGraphics();
 
-	remaining_crew = INITIAL_CREW - (int16_t)MAKE_WORD(GET_GAME_STATE(CREW_PURCHASED0), GET_GAME_STATE(CREW_PURCHASED1));
+	remaining_crew = INITIAL_CREW - (int16_t)uqm::makeWord(GET_GAME_STATE(CREW_PURCHASED0), GET_GAME_STATE(CREW_PURCHASED1));
 
 	r.extent = MAKE_EXTENT(RES_SCALE(122), RES_SCALE(7));
 	r.corner = MAKE_POINT(RES_SCALE(WANDERING_X),
@@ -1398,7 +1398,7 @@ CrewTransaction(int16_t crew_delta)
 	{
 		int16_t crew_bought;
 
-		crew_bought = (int16_t)MAKE_WORD(
+		crew_bought = (int16_t)uqm::makeWord(
 						  GET_GAME_STATE(CREW_PURCHASED0),
 						  GET_GAME_STATE(CREW_PURCHASED1))
 					+ crew_delta;
@@ -1433,8 +1433,8 @@ CrewTransaction(int16_t crew_delta)
 		}
 		if (CheckAlliance(SHOFIXTI_SHIP) != GOOD_GUY)
 		{
-			SET_GAME_STATE(CREW_PURCHASED0, lowByte(crew_bought));
-			SET_GAME_STATE(CREW_PURCHASED1, highByte(crew_bought));
+			SET_GAME_STATE(CREW_PURCHASED0, uqm::lowByte(crew_bought));
+			SET_GAME_STATE(CREW_PURCHASED1, uqm::highByte(crew_bought));
 
 			showRemainingCrew();
 		}
@@ -1511,7 +1511,7 @@ DMS_FlashEscortShipCrewCount(uint8_t slotNr)
 static void
 DMS_FlashActiveShip(MENU_STATE* pMS)
 {
-	if (HINIBBLE(pMS->CurState))
+	if (uqm::highNibble(pMS->CurState))
 	{
 		// Flash the flag ship.
 		DMS_FlashFlagShip();
@@ -1544,7 +1544,7 @@ DMS_SetMode(MENU_STATE* pMS, DMS_Mode mode)
 		case DMS_Mode_editCrew:
 			SetMenuSounds(MENU_SOUND_ARROWS,
 						  MENU_SOUND_PAGE | MENU_SOUND_ACTION);
-			if (HINIBBLE(pMS->CurState))
+			if (uqm::highNibble(pMS->CurState))
 			{
 				// Enter crew editing mode for the flagship.
 				DMS_FlashFlagShipCrewCount();
@@ -1577,7 +1577,7 @@ DMS_SpinShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 	GFXRECT OldClipRect;
 
 	// No spinning the flagship.
-	if (HINIBBLE(pMS->CurState) != 0)
+	if (uqm::highNibble(pMS->CurState) != 0)
 	{
 		return false;
 	}
@@ -1592,7 +1592,7 @@ DMS_SpinShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 	if (!hStarShip && !stowed_q)
 	{
 		// Selecting a ship to build.
-		hSpinShip = GetAvailableRaceFromIndex(lowByte(pMS->delta_item));
+		hSpinShip = GetAvailableRaceFromIndex(uqm::lowByte(pMS->delta_item));
 		if (!hSpinShip)
 		{
 			return false;
@@ -1602,7 +1602,7 @@ DMS_SpinShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 	{
 		// Selecting a stowed ship
 		HSHIPFRAG hStowedShip = GetStarShipFromIndex(
-			&GLOBAL(stowed_ship_q), lowByte(pMS->delta_item));
+			&GLOBAL(stowed_ship_q), uqm::lowByte(pMS->delta_item));
 		SHIP_FRAGMENT* FragPtr = LockShipFrag(
 			&GLOBAL(stowed_ship_q), hStowedShip);
 		hSpinShip = GetStarShipFromIndex(
@@ -1642,7 +1642,7 @@ DMS_HireFlagShipCrew(void)
 	GFXRECT r;
 	int16_t crew_bought;
 
-	crew_bought = (int16_t)MAKE_WORD(
+	crew_bought = (int16_t)uqm::makeWord(
 		GET_GAME_STATE(CREW_PURCHASED0),
 		GET_GAME_STATE(CREW_PURCHASED1));
 
@@ -1696,7 +1696,7 @@ DMS_DismissFlagShipCrew(void)
 		return 0;
 	}
 
-	crew_bought = (int16_t)MAKE_WORD(
+	crew_bought = (int16_t)uqm::makeWord(
 		GET_GAME_STATE(CREW_PURCHASED0),
 		GET_GAME_STATE(CREW_PURCHASED1));
 
@@ -1728,7 +1728,7 @@ DMS_HireEscortShipCrew(SHIP_FRAGMENT* StarShipPtr)
 	int16_t crew_bought;
 	uint16_t crew_level = (StarShipPtr->crew_level > StarShipPtr->max_crew ? StarShipPtr->crew_level - StarShipPtr->max_crew : StarShipPtr->crew_level);
 
-	crew_bought = (int16_t)MAKE_WORD(
+	crew_bought = (int16_t)uqm::makeWord(
 		GET_GAME_STATE(CREW_PURCHASED0),
 		GET_GAME_STATE(CREW_PURCHASED1));
 
@@ -1808,7 +1808,7 @@ DMS_DismissEscortShipCrew(SHIP_FRAGMENT* StarShipPtr)
 		{
 			// The ship was not at 'scrap'.
 			// Give one crew member worth of RU.
-			int16_t crew_bought = (int16_t)MAKE_WORD(
+			int16_t crew_bought = (int16_t)uqm::makeWord(
 				GET_GAME_STATE(CREW_PURCHASED0),
 				GET_GAME_STATE(CREW_PURCHASED1));
 
@@ -1978,7 +1978,7 @@ static void
 DMS_TryAddEscortShip(MENU_STATE* pMS)
 {
 	HFLEETINFO hFleet = GetAvailableRaceFromIndex(
-		lowByte(pMS->delta_item));
+		uqm::lowByte(pMS->delta_item));
 
 	uint16_t Index = GetIndexFromStarShip(&GLOBAL(avail_race_q), hFleet);
 	uint16_t shipCost = ShipCost(Index);
@@ -2013,7 +2013,7 @@ DMS_TryUnstowEscortShip(MENU_STATE* pMS)
 {
 	HSHIPFRAG hStarShip;
 	HSHIPFRAG hStowShip = GetStarShipFromIndex(&GLOBAL(stowed_ship_q),
-											   lowByte(pMS->delta_item));
+											   uqm::lowByte(pMS->delta_item));
 	SHIP_FRAGMENT* StowShipPtr =
 		LockShipFrag(&GLOBAL(stowed_ship_q), hStowShip);
 	uint16_t Index = StowShipPtr->race_id;
@@ -2049,7 +2049,7 @@ DMS_TryUnstowEscortShip(MENU_STATE* pMS)
 
 		showRemainingPoints(0);
 		stowCount = GetStowedShipCount();
-		currentStowShip = lowByte(pMS->delta_item);
+		currentStowShip = uqm::lowByte(pMS->delta_item);
 		stowed_q &= (stowCount > 0);
 	}
 	else
@@ -2071,7 +2071,7 @@ DMS_AddEscortShip(MENU_STATE* pMS, bool special, bool select,
 {
 	assert(pMS->delta_item & MODIFY_CREW_FLAG);
 
-	uint8_t currentShip = lowByte(pMS->delta_item);
+	uint8_t currentShip = uqm::lowByte(pMS->delta_item);
 
 	if (special)
 	{ // JSD: I don't think we can use delta_item, but SpinShip should be ok
@@ -2162,7 +2162,7 @@ DMS_AddEscortShip(MENU_STATE* pMS, bool special, bool select,
 			}
 		}
 
-		if (currentShip != lowByte(pMS->delta_item))
+		if (currentShip != uqm::lowByte(pMS->delta_item))
 		{
 			PreUpdateFlashRect();
 			DrawRaceStrings(currentShip);
@@ -2237,9 +2237,9 @@ DMS_StowEscortShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 static uint8_t
 DMS_MoveCursor(uint8_t curState, int8_t dx, int8_t dy)
 {
-	uint8_t row = LONIBBLE(curState) / HANGAR_SHIPS_ROW;
-	uint8_t col = LONIBBLE(curState) % HANGAR_SHIPS_ROW;
-	bool isFlagShipSelected = (HINIBBLE(curState) != 0);
+	uint8_t row = uqm::lowNibble(curState) / HANGAR_SHIPS_ROW;
+	uint8_t col = uqm::lowNibble(curState) % HANGAR_SHIPS_ROW;
+	bool isFlagShipSelected = (uqm::highNibble(curState) != 0);
 
 	if (dy)
 	{
@@ -2273,8 +2273,8 @@ DMS_MoveCursor(uint8_t curState, int8_t dx, int8_t dy)
 		}
 	}
 
-	return MAKE_BYTE(row * HANGAR_SHIPS_ROW + col,
-					 isFlagShipSelected ? 0xf : 0);
+	return uqm::makeByte(row * HANGAR_SHIPS_ROW + col,
+						 isFlagShipSelected ? 0xf : 0);
 }
 
 // Helper function for DoModifyShips(), called every time DoModifyShip() is
@@ -2393,7 +2393,7 @@ DMS_NavigateShipSlots(MENU_STATE* pMS, bool special, bool select,
 	}
 	else if (select)
 	{
-		if (hStarShip == 0 && HINIBBLE(pMS->CurState) == 0)
+		if (hStarShip == 0 && uqm::highNibble(pMS->CurState) == 0)
 		{
 			// Select button was pressed over an empty escort
 			// ship slot. Switch to 'add escort ship' mode.
@@ -2406,7 +2406,7 @@ DMS_NavigateShipSlots(MENU_STATE* pMS, bool special, bool select,
 				currentStowShip = stowCount - 1;
 			}
 			pMS->delta_item = MODIFY_CREW_FLAG | (stowed_q ? currentStowShip : 0);
-			DrawRaceStrings(lowByte(pMS->delta_item));
+			DrawRaceStrings(uqm::lowByte(pMS->delta_item));
 			DMS_SetMode(pMS, DMS_Mode_addEscort);
 		}
 		else
@@ -2447,7 +2447,7 @@ DoModifyShips(MENU_STATE* pMS)
 	{
 		pMS->InputFunc = DoModifyShips;
 		pMS->Initialized = true;
-		pMS->CurState = MAKE_BYTE(0, 0xF);
+		pMS->CurState = uqm::makeByte(0, 0xF);
 		pMS->delta_item = 0;
 		SetContext(SpaceContext);
 		DMS_SetMode(pMS, DMS_Mode_navigate);
@@ -2490,7 +2490,7 @@ DoModifyShips(MENU_STATE* pMS)
 			// Add an escort ship or edit the crew of a ship.
 			HSHIPFRAG hStarShip = GetEscortByStarShipIndex(pMS->CurState);
 
-			if (hStarShip == 0 && HINIBBLE(pMS->CurState) == 0)
+			if (hStarShip == 0 && uqm::highNibble(pMS->CurState) == 0)
 			{
 				// Cursor is over an empty escort ship slot, while we're
 				// in 'add escort ship' mode.

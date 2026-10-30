@@ -23,7 +23,7 @@
 #include "element.h"
 #include "options.h"
 #include "setup.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/graphics/cmap.h"
 #include "libs/graphics/drawable.h"
 #include "libs/mathlib.h"

@@ -135,8 +135,8 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pCurDesc->rand_seed = RandomContext_Random(SysGenRNG);
 		rand_val = pCurDesc->rand_seed;
-		word_val = LOWORD(rand_val);
-		pCurDesc->angle = NORMALIZE_ANGLE((uint16_t)highByte(word_val));
+		word_val = uqm::lowWord(rand_val);
+		pCurDesc->angle = NORMALIZE_ANGLE((uint16_t)uqm::highByte(word_val));
 
 		switch (planetI)
 		{
@@ -230,7 +230,7 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 				solarSys->MoonDesc[1].radius = MIN_MOON_RADIUS
 											 + (4 - 1) * MOON_DELTA;
 				rand_val = RandomContext_Random(SysGenRNG);
-				angle = NORMALIZE_ANGLE(LOWORD(rand_val));
+				angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 				solarSys->MoonDesc[1].location.x =
 					COSINE(angle, solarSys->MoonDesc[1].radius);
 				solarSys->MoonDesc[1].location.y =

@@ -1655,7 +1655,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 	{
 		uint16_t rainbow_mask;
 
-		rainbow_mask = MAKE_WORD(
+		rainbow_mask = uqm::makeWord(
 			GET_GAME_STATE(RAINBOW_WORLD0),
 			GET_GAME_STATE(RAINBOW_WORLD1));
 
@@ -2681,7 +2681,7 @@ void DoBubbleWarp(bool UseFuel)
 		DeltaSISGauges(0, -(int)FuelRequired(), 0);
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
 	{
 		// We're in a solar system; exit it.
 		GLOBAL(CurrentActivity) |= END_INTERPLANETARY;

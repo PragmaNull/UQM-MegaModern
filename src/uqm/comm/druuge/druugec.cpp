@@ -217,7 +217,7 @@ ExitConversation(RESPONSE_REF R)
 			{
 				uint16_t PreviousSlaves;
 
-				PreviousSlaves = MAKE_WORD(
+				PreviousSlaves = uqm::makeWord(
 					GET_GAME_STATE(CREW_SOLD_TO_DRUUGE0),
 					GET_GAME_STATE(CREW_SOLD_TO_DRUUGE1));
 				SlaveryCount += PreviousSlaves;
@@ -237,8 +237,8 @@ ExitConversation(RESPONSE_REF R)
 					GLOBAL(CrewCost) += 7;
 				}
 
-				SET_GAME_STATE(CREW_SOLD_TO_DRUUGE0, lowByte(SlaveryCount));
-				SET_GAME_STATE(CREW_SOLD_TO_DRUUGE1, highByte(SlaveryCount));
+				SET_GAME_STATE(CREW_SOLD_TO_DRUUGE0, uqm::lowByte(SlaveryCount));
+				SET_GAME_STATE(CREW_SOLD_TO_DRUUGE1, uqm::highByte(SlaveryCount));
 			}
 
 			switch (GET_GAME_STATE(DRUUGE_HOME_VISITS))
@@ -826,7 +826,7 @@ Intro(void)
 {
 	uint8_t NumVisits;
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -1069,7 +1069,7 @@ init_druuge_comm(void)
 
 	if ((GET_GAME_STATE(DRUUGE_MANNER) == 0
 		 && (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

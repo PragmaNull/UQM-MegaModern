@@ -123,7 +123,7 @@ static uint8_t space_ini_cnt;
 bool InitSpace(void)
 {
 	if ((space_ini_cnt++ == 0
-		 && lowByte(GLOBAL(CurrentActivity)) <= IN_ENCOUNTER)
+		 && uqm::lowByte(GLOBAL(CurrentActivity)) <= IN_ENCOUNTER)
 		|| optRequiresReload)
 	{
 		stars_in_space = CaptureDrawable(
@@ -268,7 +268,7 @@ InitShips(void)
 			SetContext(OldContext);
 		}
 
-		if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+		if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
 		{
 			free_gravity_well();
 		}
@@ -381,7 +381,7 @@ void UninitShips(void)
 
 	GLOBAL(CurrentActivity) &= ~IN_BATTLE;
 
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
 		&& !(GLOBAL(CurrentActivity) & CHECK_ABORT))
 	{
 		// Encounter battle in full game.
@@ -397,7 +397,7 @@ void UninitShips(void)
 		}
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) != IN_ENCOUNTER)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_ENCOUNTER)
 	{
 		// Remove any ships left from the race queue.
 		for (i = 0; i < NUM_PLAYERS; i++)

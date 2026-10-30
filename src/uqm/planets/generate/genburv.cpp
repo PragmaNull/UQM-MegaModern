@@ -121,7 +121,7 @@ GenerateBurvixese_generateMoons(SOLARSYS_STATE* solarSys,
 		pMoonDesc->radius =
 			MIN_MOON_RADIUS + (MAX_GEN_MOONS - 1) * MOON_DELTA;
 		rand_val = RandomContext_Random(SysGenRNG);
-		angle = NORMALIZE_ANGLE(LOWORD(rand_val));
+		angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 		pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
 		pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
 		ComputeSpeed(pMoonDesc, true, 1);

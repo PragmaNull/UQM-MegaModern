@@ -23,7 +23,7 @@
 #include "sis.h"
 #include "setup.h"
 #include "core/string/StringUtils.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/mathlib.h"
 #include "planets/planets.h"
 #include "starbase.h"
@@ -1595,8 +1595,8 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 		RandomContext_SeedRandom(StarGenRNG, GetRandomSeedForStar(plotmap[visit].star));
 		uint16_t rand_val_s = RandomContext_Random(StarGenRNG);
 		warpoint = GFXPOINT {
-			plotmap[visit].star_pt.x + lowByte(rand_val_s) * 2 * AWAY_X(visit),
-			plotmap[visit].star_pt.y + highByte(rand_val_s) * 2 * AWAY_Y(visit)};
+			plotmap[visit].star_pt.x + uqm::lowByte(rand_val_s) * 2 * AWAY_X(visit),
+			plotmap[visit].star_pt.y + uqm::highByte(rand_val_s) * 2 * AWAY_Y(visit)};
 
 		fmt::format_to_sz_n(buf, "'Sa-Matra' center {:05.1} : {:05.1}\n",
 							(float)warpoint.x / 10, (float)warpoint.y / 10);

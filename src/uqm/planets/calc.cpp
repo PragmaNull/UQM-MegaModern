@@ -49,7 +49,7 @@ enum
 static uint16_t
 CalcFromBase(uint16_t base, uint16_t variance)
 {
-	return base + LOWORD(RandomContext_Random(SysGenRNG)) % variance;
+	return base + uqm::lowWord(RandomContext_Random(SysGenRNG)) % variance;
 }
 
 static inline uint16_t
@@ -117,7 +117,7 @@ GeneratePlanetComposition(PLANET_INFO* PlanetInfoPtr, int16_t SurfaceTemp,
 
 		PlanetInfoPtr->Weather = 0;
 		atmo = 0;
-		if ((range = HINIBBLE(PlanetInfoPtr->PlanDataPtr->AtmoAndDensity)) <= HEAVY)
+		if ((range = uqm::highNibble(PlanetInfoPtr->PlanDataPtr->AtmoAndDensity)) <= HEAVY)
 		{
 			if (SurfaceTemp < COLD_THRESHOLD)
 			{
@@ -199,7 +199,7 @@ CalcTemp(SYSTEM_INFO* SysInfoPtr, int16_t radius)
 
 	bonus = 0;
 	if (SysInfoPtr == &pSolarSysState->SysInfo
-		&& HINIBBLE(SysInfoPtr->PlanetInfo.PlanDataPtr->AtmoAndDensity) <= HEAVY)
+		&& uqm::highNibble(SysInfoPtr->PlanetInfo.PlanDataPtr->AtmoAndDensity) <= HEAVY)
 	{
 #define COLD_BONUS 20
 #define HOT_BONUS 200
@@ -212,7 +212,7 @@ CalcTemp(SYSTEM_INFO* SysInfoPtr, int16_t radius)
 			bonus = COLD_BONUS;
 		}
 
-		bonus <<= HINIBBLE(SysInfoPtr->PlanetInfo.PlanDataPtr->AtmoAndDensity);
+		bonus <<= uqm::highNibble(SysInfoPtr->PlanetInfo.PlanDataPtr->AtmoAndDensity);
 		bonus = CalcHalfBaseVariance(bonus);
 	}
 
@@ -226,7 +226,7 @@ CalcRotation(PLANET_INFO* PlanetInfoPtr)
 	{
 		return ((uint16_t)CalcFromBase(80, 80));
 	}
-	else if (lowByte(RandomContext_Random(SysGenRNG)) % 10 == 0)
+	else if (uqm::lowByte(RandomContext_Random(SysGenRNG)) % 10 == 0)
 	{
 		return ((uint16_t)CalcFromBase((uint16_t)50 * EARTH_HOURS, (uint16_t)200 * EARTH_HOURS));
 	}
@@ -248,7 +248,7 @@ CalcTilt(void)
 	i = NUM_TOSSES;
 	do /* Using added Randomom values to give bell curve */
 	{
-		tilt += LOWORD(RandomContext_Random(SysGenRNG))
+		tilt += uqm::lowWord(RandomContext_Random(SysGenRNG))
 			  % ((TILT_RANGE / NUM_TOSSES) + 1);
 	} while (--i);
 
@@ -494,7 +494,7 @@ void DoPlanetaryAnalysis(SYSTEM_INFO* SysInfoPtr, PLANET_DESC* pPlanetDesc)
 
 		SysInfoPtr->PlanetInfo.SurfaceTemperature =
 			CalcTemp(SysInfoPtr, radius);
-		switch (LONIBBLE(SysInfoPtr->PlanetInfo.PlanDataPtr->AtmoAndDensity))
+		switch (uqm::lowNibble(SysInfoPtr->PlanetInfo.PlanDataPtr->AtmoAndDensity))
 		{
 			case GAS_DENSITY:
 				SysInfoPtr->PlanetInfo.PlanetDensity = 20;
@@ -517,7 +517,7 @@ void DoPlanetaryAnalysis(SYSTEM_INFO* SysInfoPtr, PLANET_DESC* pPlanetDesc)
 		}
 		SysInfoPtr->PlanetInfo.PlanetDensity +=
 			(SysInfoPtr->PlanetInfo.PlanetDensity / 20)
-			- (LOWORD(RandomContext_Random(SysGenRNG))
+			- (uqm::lowWord(RandomContext_Random(SysGenRNG))
 			   % (SysInfoPtr->PlanetInfo.PlanetDensity / 10));
 
 		switch (PLANSIZE(SysInfoPtr->PlanetInfo.PlanDataPtr->Type))

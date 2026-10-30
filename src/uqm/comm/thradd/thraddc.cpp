@@ -780,7 +780,7 @@ Intro(void)
 	HFLEETINFO hThradd = GetStarShipFromIndex(&GLOBAL(avail_race_q), THRADDASH_SHIP);
 	FLEET_INFO* ThraddPtr = LockFleetInfo(&GLOBAL(avail_race_q), hThradd);
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -1082,7 +1082,7 @@ init_thradd_comm(void)
 	thradd_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	if (GET_GAME_STATE(THRADD_MANNER)
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

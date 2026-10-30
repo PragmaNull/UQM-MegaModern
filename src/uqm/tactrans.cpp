@@ -606,9 +606,9 @@ explosion_preprocess(ELEMENT* ShipPtr)
 			ElementPtr->current.image.farray = explosion;
 			ElementPtr->current.image.frame = explosion[0];
 			rand_val = TFB_Random();
-			angle = lowByte(HIWORD(rand_val));
-			dist = DISPLAY_TO_WORLD(RES_SCALE(lowByte(LOWORD(rand_val)) % 8));
-			if (highByte(LOWORD(rand_val)) < 256 * 1 / 3)
+			angle = uqm::lowByte(uqm::highWord(rand_val));
+			dist = DISPLAY_TO_WORLD(RES_SCALE(uqm::lowByte(uqm::lowWord(rand_val)) % 8));
+			if (uqm::highByte(uqm::lowWord(rand_val)) < 256 * 1 / 3)
 			{
 				dist += DISPLAY_TO_WORLD(RES_SCALE(8));
 			}
@@ -618,9 +618,9 @@ explosion_preprocess(ELEMENT* ShipPtr)
 				ShipPtr->current.location.y + SINE(angle, dist);
 			ElementPtr->preprocess_func = animation_preprocess;
 			rand_val = TFB_Random();
-			angle = lowByte(LOWORD(rand_val));
+			angle = uqm::lowByte(uqm::lowWord(rand_val));
 			dist = WORLD_TO_VELOCITY(
-				DISPLAY_TO_WORLD(RES_SCALE(highByte(LOWORD(rand_val)) % 5)));
+				DISPLAY_TO_WORLD(RES_SCALE(uqm::highByte(uqm::lowWord(rand_val)) % 5)));
 			SetVelocityComponents(&ElementPtr->velocity,
 								  COSINE(angle, dist), SINE(angle, dist));
 			UnlockElement(hElement);
@@ -709,7 +709,7 @@ void RecordShipDeath(ELEMENT* deadShip)
 		battle_counter[deadStarShip->playerNr]--;
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
 	{
 		MeleeShipDeath(deadStarShip);
 	}

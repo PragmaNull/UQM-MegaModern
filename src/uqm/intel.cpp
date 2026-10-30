@@ -33,7 +33,7 @@ computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 {
 	BATTLE_INPUT_STATE InputState;
 
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
 	{
 		return 0;
 	}
@@ -41,7 +41,7 @@ computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 	if (StarShipPtr)
 	{
 		// Selecting the next action for in battle.
-		const bool isMelee {lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE};
+		const bool isMelee {uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE};
 		if (testFlag(StarShipPtr->control, PlayerControlFlags::Cyborg) && uqm::UQMOptions::read().passiveEnemy
 			&& (isMelee || StarShipPtr->playerNr != RPG_PLAYER_NUM))
 		{
@@ -70,7 +70,7 @@ computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 	}
 	else
 	{
-		switch (lowByte(GLOBAL(CurrentActivity)))
+		switch (uqm::lowByte(GLOBAL(CurrentActivity)))
 		{
 			case SUPER_MELEE:
 				{

@@ -296,7 +296,7 @@ void GeneratePlanets(SOLARSYS_STATE* solarSys)
 		uint8_t type;
 
 		rand_val = RandomContext_Random(SysGenRNG);
-		byte_val = lowByte(rand_val);
+		byte_val = uqm::lowByte(rand_val);
 
 		num_moons = 0;
 		type = PlanData[planet->data_index & ~PLANET_SHIELDED].Type;

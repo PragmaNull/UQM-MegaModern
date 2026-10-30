@@ -500,7 +500,7 @@ Intro(void)
 		CommData.AlienAmbientArray[8].AnimFlags &= ~CIRCULAR_ANIM;
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -509,7 +509,7 @@ Intro(void)
 	}
 
 	GrpOffs = GET_GAME_STATE(URQUAN_PROBE_GRPOFFS);
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 		&& GLOBAL(BattleGroupRef)
 		&& GLOBAL(BattleGroupRef) == GrpOffs)
 	{
@@ -533,7 +533,7 @@ Intro(void)
 		}
 
 		GrpOffs = GET_GAME_STATE(COLONY_GRPOFFS);
-		if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+		if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 			&& GLOBAL(BattleGroupRef)
 			&& GLOBAL(BattleGroupRef) == GrpOffs)
 		{
@@ -544,7 +544,7 @@ Intro(void)
 		}
 
 		GrpOffs = GET_GAME_STATE(SAMATRA_GRPOFFS);
-		if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+		if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 			&& GLOBAL(BattleGroupRef)
 			&& GLOBAL(BattleGroupRef) == GrpOffs)
 		{
@@ -633,7 +633,7 @@ init_urquan_comm(void)
 	GrpOffs = GET_GAME_STATE(URQUAN_PROBE_GRPOFFS);
 
 	// use alternate "Probe" track if available
-	if ((lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+	if ((uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 		 && GLOBAL(BattleGroupRef)
 		 && GLOBAL(BattleGroupRef) == GrpOffs))
 	{
@@ -646,8 +646,8 @@ init_urquan_comm(void)
 	}
 
 	if (GET_GAME_STATE(PLAYER_HYPNOTIZED)
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE
-		|| (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE
+		|| (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 			&& GLOBAL(BattleGroupRef)
 			&& GLOBAL(BattleGroupRef) == GrpOffs))
 	{

@@ -27,7 +27,7 @@
 #include "globdata.h"
 #include "races.h"
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "core/log/log.h"
 #include "libs/memlib.h"
 
@@ -37,7 +37,7 @@
 
 typedef struct
 {
-	RACE_DESC data _ALIGNED_ANY;
+	RACE_DESC data;
 } CODERES_STRUCT;
 
 typedef enum

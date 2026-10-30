@@ -17,7 +17,7 @@
 #ifndef UQM_COMMANIM_H_
 #define UQM_COMMANIM_H_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/gfxlib.h"
 
 #if 0 //defined(__cplusplus)

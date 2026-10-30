@@ -20,7 +20,7 @@
 #define LIBS_RESLIB_H_
 
 //#include <stdio.h>
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "port.h"
 #include "libs/memlib.h"
 #include "libs/io/FileSystem.h"

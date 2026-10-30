@@ -388,7 +388,7 @@ luaUqm_comm_setSegue(lua_State* luaState)
 static int
 luaUqm_comm_isInOuttakes(lua_State* luaState)
 {
-	bool result = (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE);
+	bool result = (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE);
 	lua_pushboolean(luaState, result);
 	return 1;
 }

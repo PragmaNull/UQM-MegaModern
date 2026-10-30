@@ -105,7 +105,7 @@ enum
 
 #define PLANSIZE(type) ((uint8_t)((type) & PLAN_SIZE_MASK))
 #define PLANALGO(type) ((uint8_t)((type) & PLAN_ALGO_MASK))
-#define PLANCOLOR(type) HINIBBLE(type)
+#define PLANCOLOR(type) uqm::highNibble(type)
 
 #define THIN_ATMOSPHERE 10
 #define NORMAL_ATMOSPHERE 75

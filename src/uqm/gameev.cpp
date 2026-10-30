@@ -26,7 +26,7 @@
 #include "resinst.h"
 #include "lua/luaevent.h"
 #include "lua/luafuncs/customfuncs.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "core/log/log.h"
 #include "libs/mathlib.h"
 #include "nameref.h"
@@ -434,7 +434,7 @@ advance_thradd_mission(int arg)
 static int
 zoqfot_distress_event(int arg)
 {
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 		&& CurStarDescPtr
 		&& CurStarDescPtr->Index == ZOQFOT_DEFINED)
 	{
@@ -453,7 +453,7 @@ zoqfot_distress_event(int arg)
 static int
 zoqfot_death_event(int arg)
 {
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 		&& CurStarDescPtr
 		&& CurStarDescPtr->Index == ZOQFOT_DEFINED)
 	{
@@ -629,7 +629,7 @@ kohr_ah_genocide_event(int arg)
 	FLEET_INFO* BlackUrquanPtr;
 
 	if (!GET_GAME_STATE(KOHR_AH_FRENZY)
-		&& lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+		&& uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 		&& CurStarDescPtr
 		&& CurStarDescPtr->Index == SAMATRA_DEFINED)
 	{
@@ -742,7 +742,7 @@ kohr_ah_genocide_event(int arg)
 static int
 spathi_shield_event(int arg)
 {
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 		&& CurStarDescPtr
 		&& CurStarDescPtr->Index == SPATHI_DEFINED)
 	{

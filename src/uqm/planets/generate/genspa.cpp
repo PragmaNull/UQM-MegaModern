@@ -157,7 +157,7 @@ GenerateSpathi_generateMoons(SOLARSYS_STATE* solarSys,
 			pMoonDesc->data_index = PELLUCID_WORLD;
 			pMoonDesc->radius = MIN_MOON_RADIUS + MOON_DELTA;
 			angle = NORMALIZE_ANGLE(
-				LOWORD(RandomContext_Random(SysGenRNG)));
+				uqm::lowWord(RandomContext_Random(SysGenRNG)));
 			pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
 			pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
 			ComputeSpeed(pMoonDesc, true, 1);

@@ -500,7 +500,7 @@ LeftShip:
 					StarShipPtr->RaceDescPtr->ship_data.special[0], 21);
 		ElementPtr->thrust_wait = 0;
 		ElementPtr->turn_wait =
-			MAKE_BYTE(0, NORMALIZE_FACING((uint8_t)TFB_Random()));
+			uqm::makeByte(0, NORMALIZE_FACING((uint8_t)TFB_Random()));
 		ElementPtr->preprocess_func = marine_preprocess;
 	}
 }
@@ -575,7 +575,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 	}
 	UnlockElement(StarShipPtr->hShip);
 
-	if (LONIBBLE(ElementPtr->turn_wait))
+	if (uqm::lowNibble(ElementPtr->turn_wait))
 	{
 		--ElementPtr->turn_wait;
 	}
@@ -640,7 +640,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 			UnlockElement(hObject);
 		}
 
-		facing = HINIBBLE(ElementPtr->turn_wait);
+		facing = uqm::highNibble(ElementPtr->turn_wait);
 		if (hTarget == 0)
 		{
 			delta_facing = -1;
@@ -734,7 +734,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 			UnlockElement(hTarget);
 		}
 
-		ElementPtr->turn_wait = MAKE_BYTE(0, NORMALIZE_FACING(facing));
+		ElementPtr->turn_wait = uqm::makeByte(0, NORMALIZE_FACING(facing));
 		if (delta_facing == 0
 			|| ((ElementPtr->thrust_wait & (SHIP_BEYOND_MAX_SPEED >> 6))
 				&& !(ElementPtr->thrust_wait & (SHIP_IN_GRAVITY_WELL >> 6))))
@@ -796,7 +796,7 @@ void marine_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		if (!elementsOfSamePlayer(ElementPtr0, ElementPtr1))
 		{
 			ElementPtr0->turn_wait =
-				MAKE_BYTE(5, HINIBBLE(ElementPtr0->turn_wait));
+				uqm::makeByte(5, uqm::highNibble(ElementPtr0->turn_wait));
 			ElementPtr0->thrust_wait &=
 				~((SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED) >> 6);
 			ElementPtr0->state_flags |= COLLISION;
@@ -1042,8 +1042,8 @@ turret_postprocess(ELEMENT* ElementPtr)
 					StarShipPtr->RaceDescPtr->ship_data.special[0], 20);
 
 				SpaceMarinePtr->turn_wait =
-					MAKE_BYTE(0, NORMALIZE_FACING(
-									 ANGLE_TO_FACING(facing + HALF_CIRCLE)));
+					uqm::makeByte(0, NORMALIZE_FACING(
+										 ANGLE_TO_FACING(facing + HALF_CIRCLE)));
 				SpaceMarinePtr->preprocess_func = marine_preprocess;
 				SpaceMarinePtr->collision_func = marine_collision;
 

@@ -21,7 +21,7 @@
 
 #include <assert.h>
 #include "port.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/memlib.h"
 
 #if 0 //defined(__cplusplus)

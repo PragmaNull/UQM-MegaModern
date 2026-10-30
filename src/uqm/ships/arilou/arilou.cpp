@@ -291,7 +291,7 @@ arilou_preprocess(ELEMENT* ElementPtr)
 			}
 			else
 			{ // JMS: Reduce the odds of teleporting into Sa-Matra.
-				if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+				if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
 				{
 					int32_t dist = 0;
 					int32_t dx, dy;

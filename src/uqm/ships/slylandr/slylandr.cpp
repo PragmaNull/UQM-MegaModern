@@ -218,7 +218,7 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 				LaserPtr->turn_wait = WEAPON_WAIT - LaserPtr->turn_wait;
 			}
 
-			switch (highByte(LOWORD(rand_val)) & 3)
+			switch (uqm::highByte(uqm::lowWord(rand_val)) & 3)
 			{
 				case 0:
 					SetPrimColor(
@@ -245,22 +245,22 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 
 		if (delta == -1 || delta == ANGLE_TO_FACING(HALF_CIRCLE))
 		{
-			angle += LOWORD(rand_val);
+			angle += uqm::lowWord(rand_val);
 		}
 		else if (delta == 0)
 		{
-			angle += LOWORD(rand_val) & 1 ? -1 : 1;
+			angle += uqm::lowWord(rand_val) & 1 ? -1 : 1;
 		}
 		else if (delta < ANGLE_TO_FACING(HALF_CIRCLE))
 		{
-			angle += LOWORD(rand_val) & (QUADRANT - 1);
+			angle += uqm::lowWord(rand_val) & (QUADRANT - 1);
 		}
 		else
 		{
-			angle -= LOWORD(rand_val) & (QUADRANT - 1);
+			angle -= uqm::lowWord(rand_val) & (QUADRANT - 1);
 		}
 		delta = WORLD_TO_VELOCITY(
-			DISPLAY_TO_WORLD((HIWORD(rand_val) & (LASER_LENGTH - 1)) + 4));
+			DISPLAY_TO_WORLD((uqm::highWord(rand_val) & (LASER_LENGTH - 1)) + 4));
 		SetVelocityComponents(&LaserPtr->velocity,
 							  COSINE(angle, delta), SINE(angle, delta));
 
@@ -280,7 +280,7 @@ slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	// no dodging in role playing game, unless you haven't
 	// visited the starbase yet or difficulty is set to Hard
-	if ((lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER) && GET_GAME_STATE(STARBASE_AVAILABLE) && !isDifficulty(uqm::Difficulty::Hard))
+	if ((uqm::lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER) && GET_GAME_STATE(STARBASE_AVAILABLE) && !isDifficulty(uqm::Difficulty::Hard))
 	{
 		ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr = 0;
 	}

@@ -20,7 +20,7 @@
 #define LIBS_INPLIB_H_
 
 #include <stddef.h>
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/io/FileSystem.h"
 #include "core/string/Utf8.h"
 #include <atomic>

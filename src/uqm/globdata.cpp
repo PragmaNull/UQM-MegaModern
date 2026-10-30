@@ -331,8 +331,8 @@ bool InitGameStructures(void)
 			break;
 		case uqm::Difficulty::Hard:
 			GLOBAL(ElementWorth[EXOTIC]) = 16;
-			SET_GAME_STATE(CREW_PURCHASED0, lowByte<uint8_t>(100));
-			SET_GAME_STATE(CREW_PURCHASED1, highByte<uint8_t>(100));
+			SET_GAME_STATE(CREW_PURCHASED0, uqm::lowByte<uint8_t>(100));
+			SET_GAME_STATE(CREW_PURCHASED1, uqm::highByte<uint8_t>(100));
 			break;
 		case uqm::Difficulty::Normal:
 		case uqm::Difficulty::ChooseYourOwn:
@@ -728,13 +728,13 @@ bool InitStarseed(bool newgame)
 
 bool inFullGame(void)
 {
-	ACTIVITY act = lowByte(GLOBAL(CurrentActivity));
+	ACTIVITY act = uqm::lowByte(GLOBAL(CurrentActivity));
 	return (act == IN_LAST_BATTLE || act == IN_ENCOUNTER || act == IN_HYPERSPACE || act == IN_INTERPLANETARY || act == WON_LAST_BATTLE);
 }
 
 bool inSuperMelee(void)
 {
-	return (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE);
+	return (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE);
 	// TODO: && !inMainMenu ()
 }
 
@@ -762,7 +762,7 @@ bool
 inSolarSystem (void)
 {
 	assert (inFullGame ());
-	return (lowByte (GLOBAL (CurrentActivity)) == IN_INTERPLANETARY);
+	return (uqm::lowByte(GLOBAL (CurrentActivity)) == IN_INTERPLANETARY);
 }
 
 // Pre: inFullGame()
@@ -780,7 +780,7 @@ inOrbit (void)
 bool inHQSpace(void)
 {
 	//assert (inFullGame ());
-	return (lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE);
+	return (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE);
 	// IN_HYPERSPACE is also set for QuasiSpace
 }
 
@@ -789,7 +789,7 @@ bool inHQSpace(void)
 bool inHyperSpace(void)
 {
 	//assert (inFullGame ());
-	return (lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1);
+	return (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1);
 	// IN_HYPERSPACE is also set for QuasiSpace
 }
 
@@ -798,7 +798,7 @@ bool inHyperSpace(void)
 bool inQuasiSpace(void)
 {
 	//assert (inFullGame ());
-	return (lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1);
+	return (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1);
 	// IN_HYPERSPACE is also set for QuasiSpace
 }
 

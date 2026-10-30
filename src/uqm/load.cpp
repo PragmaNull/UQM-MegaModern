@@ -464,7 +464,7 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, GAME_STATE& GS)
 	reader.getPoint(velocityObj, "error", velocity.error.width, velocity.error.height);
 	reader.getPoint(velocityObj, "incr", velocity.incr.width, velocity.incr.height);
 
-	if (lowByte(GS.CurrentActivity) != IN_INTERPLANETARY)
+	if (uqm::lowByte(GS.CurrentActivity) != IN_INTERPLANETARY)
 	{ // Let's make savegames work even between different resolution modes.
 		velocity.vector.width <<= RESOLUTION_FACTOR;
 		velocity.vector.height <<= RESOLUTION_FACTOR;
@@ -888,7 +888,7 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
 	ReinitQueue(&race_q[1]);
 	CurStarDescPtr = FindStar(nullptr, &SD.star_pt, 0, 0);
 	if (!(NextActivity & START_ENCOUNTER)
-		&& lowByte(NextActivity) == IN_INTERPLANETARY)
+		&& uqm::lowByte(NextActivity) == IN_INTERPLANETARY)
 	{
 		NextActivity |= START_INTERPLANETARY;
 	}

@@ -202,7 +202,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 		}
 		for (i = 0; i < pSunDesc->NumPlanets / 2; ++i)
 		{
-			uint8_t offset = lowByte(rand_val) % (pSunDesc->NumPlanets - i);
+			uint8_t offset = uqm::lowByte(rand_val) % (pSunDesc->NumPlanets - i);
 
 			while (solarSys->PlanetDesc[planet].data_index == SELENIC_WORLD || offset > 0)
 			{

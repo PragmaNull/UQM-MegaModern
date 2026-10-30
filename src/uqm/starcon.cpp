@@ -347,7 +347,7 @@ int Starcon2Main(void* threadArg)
 				if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
 				{
 					GLOBAL(CurrentActivity) &= ~START_ENCOUNTER;
-					if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
+					if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
 					{
 						GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
 					}
@@ -355,7 +355,7 @@ int Starcon2Main(void* threadArg)
 			}
 			else if (GLOBAL(CurrentActivity) & START_INTERPLANETARY)
 			{
-				GLOBAL(CurrentActivity) = MAKE_WORD(IN_INTERPLANETARY, 0);
+				GLOBAL(CurrentActivity) = uqm::makeWord(IN_INTERPLANETARY, 0);
 
 				DrawAutoPilotMessage(true);
 				SetGameClockRate(INTERPLANETARY_CLOCK_RATE);
@@ -364,7 +364,7 @@ int Starcon2Main(void* threadArg)
 			else
 			{
 				// Entering HyperSpace or QuasiSpace.
-				GLOBAL(CurrentActivity) = MAKE_WORD(IN_HYPERSPACE, 0);
+				GLOBAL(CurrentActivity) = uqm::makeWord(IN_HYPERSPACE, 0);
 
 				DrawAutoPilotMessage(true);
 				SetGameClockRate(HYPERSPACE_CLOCK_RATE);
@@ -376,7 +376,7 @@ int Starcon2Main(void* threadArg)
 			LastActivity = GLOBAL(CurrentActivity);
 
 			if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
-				&& (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE
+				&& (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE
 					// if died for some reason
 					|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0))
 			{

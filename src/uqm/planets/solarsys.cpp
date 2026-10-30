@@ -441,10 +441,10 @@ LoadNebulaeFrame(GFXPOINT location)
 		uint32_t rand_val;
 
 		rand_val = RandomContext_FastRandom(
-			MAKE_DWORD(location.y, location.x));
+			uqm::makeDword(location.y, location.x));
 
-		neb_seed.x = LOWORD(rand_val);
-		neb_seed.y = HIWORD(rand_val);
+		neb_seed.x = uqm::lowWord(rand_val);
+		neb_seed.y = uqm::highWord(rand_val);
 	}
 	else
 	{
@@ -647,18 +647,18 @@ GetRandomSeedForStar(const STAR_DESC* star)
 	fmt::print(stderr, "Get Random Seed For Star. %05.1f : %05.1f "
 					   "[{}] (seed {}) = {}.  Plot ID {} ({}).\n",
 			   (float)star->star_pt.x / 10, (float)star->star_pt.y / 10,
-			   MAKE_DWORD(star->star_pt.x, star->star_pt.y), uqm::UQMOptions::read().customSeed,
-			   MAKE_DWORD(star->star_pt.x, star->star_pt.y)
+			   uqm::makeDword(star->star_pt.x, star->star_pt.y), uqm::UQMOptions::read().customSeed,
+			   uqm::makeDword(star->star_pt.x, star->star_pt.y)
 				   + (StarSeed ? uqm::UQMOptions::read().customSeed : 0),
 			   star->Index, starPresenceString(star->Index));
 #endif
-	return MAKE_DWORD(star->star_pt.x, star->star_pt.y) + (StarSeed ? uqm::UQMOptions::read().customSeed : 0);
+	return uqm::makeDword(star->star_pt.x, star->star_pt.y) + (StarSeed ? uqm::UQMOptions::read().customSeed : 0);
 }
 
 uint32_t
 GetRandomSeedForVar(const GFXPOINT point)
 {
-	return MAKE_DWORD(point.x, point.y);
+	return uqm::makeDword(point.x, point.y);
 }
 
 static void
@@ -1057,7 +1057,7 @@ CheckIntersect(void)
 	PlanetIntersect.EndPoint = PlanetIntersect.IntersectStamp.origin;
 
 	PlanetIntersect.IntersectStamp.frame = getCollisionFrame(pCurDesc,
-															 MAKE_WORD(PlanetOffset, MoonOffset));
+															 uqm::makeWord(PlanetOffset, MoonOffset));
 
 	/*log_add (log_Debug,"Nyt: x:{}, y:{}",
 			PlanetIntersect.IntersectStamp.origin.x,
@@ -1074,7 +1074,7 @@ CheckIntersect(void)
 		uqm::log::debug("0: Planet {}, Moon {}", PlanetOffset,
 						MoonOffset);
 #endif /* DEBUG_SOLARSYS */
-		NewWaitPlanet = MAKE_WORD(PlanetOffset, MoonOffset);
+		NewWaitPlanet = uqm::makeWord(PlanetOffset, MoonOffset);
 		if (pSolarSysState->WaitIntersect != (uint16_t)~0
 			&& pSolarSysState->WaitIntersect != NewWaitPlanet)
 		{
@@ -1109,7 +1109,7 @@ CheckIntersect(void)
 		}
 		++PlanetOffset;
 		PlanetIntersect.IntersectStamp.frame = getCollisionFrame(pCurDesc,
-																 MAKE_WORD(PlanetOffset, MoonOffset));
+																 uqm::makeWord(PlanetOffset, MoonOffset));
 
 		/*log_add (log_Debug, "Ship x:{} y:{}. Planet x:{}, y:{}",
 				ShipIntersect.IntersectStamp.origin.x,
@@ -1124,7 +1124,7 @@ CheckIntersect(void)
 			uqm::log::debug("1: Planet {}, Moon {}", PlanetOffset,
 							MoonOffset);
 #endif /* DEBUG_SOLARSYS */
-			NewWaitPlanet = MAKE_WORD(PlanetOffset, MoonOffset);
+			NewWaitPlanet = uqm::makeWord(PlanetOffset, MoonOffset);
 
 			if (pSolarSysState->WaitIntersect == (uint16_t)~0)
 			{ // All collisions disallowed, but the ship is still
@@ -1673,7 +1673,7 @@ leaveInnerSystem(PLANET_DESC* planet)
 	pSolarSysState->pBaseDesc = pSolarSysState->PlanetDesc;
 	pSolarSysState->pOrbitalDesc = nullptr;
 
-	outerPlanetWait = MAKE_WORD(
+	outerPlanetWait = uqm::makeWord(
 		planet - pSolarSysState->PlanetDesc + 1, 0);
 	// BW: planet may have moved while we were into Inner System
 	ValidateOrbit(planet, DISPLAY_FACTOR,
@@ -2792,8 +2792,8 @@ DrawBackgroundStars(uint8_t num_pieces, uint8_t num_drawn, uint8_t start_index,
 		for (j = 0; j < num_drawn; ++j)
 		{
 			rand_val = RandomContext_Random(SysRNG);
-			s.origin.x = scaleSISWidth(LOWORD(rand_val) % widthPick());
-			s.origin.y = scaleSISHeight(HIWORD(rand_val) % heightPick());
+			s.origin.x = scaleSISWidth(uqm::lowWord(rand_val) % widthPick());
+			s.origin.y = scaleSISHeight(uqm::highWord(rand_val) % heightPick());
 			DrawStamp(&s);
 		}
 		s.frame = IncFrameIndex(s.frame);

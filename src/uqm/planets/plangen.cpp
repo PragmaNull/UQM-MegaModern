@@ -1800,13 +1800,13 @@ MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 			intersect = false;
 
 			rand_val = RandomContext_Random(SysGenRNG);
-			loword = LOWORD(rand_val);
-			hiword = HIWORD(rand_val);
-			switch (highByte(hiword) & 31)
+			loword = uqm::lowWord(rand_val);
+			hiword = uqm::highWord(rand_val);
+			switch (uqm::highByte(hiword) & 31)
 			{
 				case 0:
 					pstorm_r->extent.height =
-						(lowByte(hiword) % (ORIGINAL_MAP_HEIGHT >> 2))
+						(uqm::lowByte(hiword) % (ORIGINAL_MAP_HEIGHT >> 2))
 						+ (ORIGINAL_MAP_HEIGHT >> 2);
 					break;
 				case 1:
@@ -1814,12 +1814,12 @@ MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 				case 3:
 				case 4:
 					pstorm_r->extent.height =
-						(lowByte(hiword) % (ORIGINAL_MAP_HEIGHT >> 3))
+						(uqm::lowByte(hiword) % (ORIGINAL_MAP_HEIGHT >> 3))
 						+ (ORIGINAL_MAP_HEIGHT >> 3);
 					break;
 				default:
 					pstorm_r->extent.height =
-						(lowByte(hiword) % (ORIGINAL_MAP_HEIGHT >> 4))
+						(uqm::lowByte(hiword) % (ORIGINAL_MAP_HEIGHT >> 4))
 						+ 4;
 					break;
 			}
@@ -1830,15 +1830,15 @@ MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 			}
 
 			rand_val = RandomContext_Random(SysGenRNG);
-			loword = LOWORD(rand_val);
-			hiword = HIWORD(rand_val);
+			loword = uqm::lowWord(rand_val);
+			hiword = uqm::highWord(rand_val);
 
 			pstorm_r->extent.width = pstorm_r->extent.height
-								   + (lowByte(loword) % pstorm_r->extent.height);
+								   + (uqm::lowByte(loword) % pstorm_r->extent.height);
 
-			pstorm_r->corner.x = highByte(loword)
+			pstorm_r->corner.x = uqm::highByte(loword)
 							   % (ORIGINAL_MAP_WIDTH - pstorm_r->extent.width);
-			pstorm_r->corner.y = lowByte(loword)
+			pstorm_r->corner.y = uqm::lowByte(loword)
 							   % (ORIGINAL_MAP_HEIGHT - pstorm_r->extent.height);
 
 			pstorm_r->corner.x = pstorm_r->corner.x * width
@@ -1876,7 +1876,7 @@ MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 		pstorm_r->extent.width -= 2;
 		pstorm_r->extent.height -= 2;
 
-		band_delta = highByte(loword) & ((3 << RANGE_SHIFT) + 20);
+		band_delta = uqm::highByte(loword) & ((3 << RANGE_SHIFT) + 20);
 
 		MakeCrater(pstorm_r, DepthArray,
 				   band_delta, band_delta, true, width);
@@ -1928,7 +1928,7 @@ MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t dep
 	band_error = num_bands >> 1;
 	lpDst = DepthArray;
 
-	band_delta = ((LOWORD(RandomContext_Random(SysGenRNG))
+	band_delta = ((uqm::lowWord(RandomContext_Random(SysGenRNG))
 				   & (NUM_BAND_COLORS - 1))
 				  << RANGE_SHIFT)
 			   + (1 << (RANGE_SHIFT - 1));
@@ -1938,8 +1938,8 @@ MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t dep
 		int16_t cur_y;
 
 		rand_val = RandomContext_Random(SysGenRNG);
-		loword = LOWORD(rand_val);
-		hiword = HIWORD(rand_val);
+		loword = uqm::lowWord(rand_val);
+		hiword = uqm::highWord(rand_val);
 
 		next_y += band_height;
 		if ((band_error -= band_bump) < 0)
@@ -1957,7 +1957,7 @@ MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t dep
 
 			cur_y = next_y
 				  + ((band_height - 2) >> 1)
-				  - ((lowByte(hiword) % (band_height - 2)) + 1);
+				  - ((uqm::lowByte(hiword) % (band_height - 2)) + 1);
 			cur_y = cur_y * pRect->extent.height / ORIGINAL_MAP_HEIGHT;
 			r.corner.x = r.corner.y = 0;
 			r.extent.width = pRect->extent.width;
@@ -1981,7 +1981,7 @@ MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t dep
 
 		last_y = cur_y;
 		band_delta = (band_delta
-					  + ((((lowByte(loword) & 1) << 1) - 1) << RANGE_SHIFT))
+					  + ((((uqm::lowByte(loword) & 1) << 1) - 1) << RANGE_SHIFT))
 				   & (((1 << RANGE_SHIFT) * NUM_BAND_COLORS) - 1);
 	}
 
@@ -2721,12 +2721,12 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 				GFXRECT crater_r;
 				uint16_t loword;
 
-				loword = LOWORD(RandomContext_Random(SysGenRNG));
-				switch (highByte(loword) & 31)
+				loword = uqm::lowWord(RandomContext_Random(SysGenRNG));
+				switch (uqm::highByte(loword) & 31)
 				{
 					case 0:
 						crater_r.extent.width =
-							(lowByte(loword)
+							(uqm::lowByte(loword)
 							 % (ORIGINAL_MAP_HEIGHT >> 2))
 							+ (ORIGINAL_MAP_HEIGHT >> 2);
 						break;
@@ -2735,24 +2735,24 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 					case 3:
 					case 4:
 						crater_r.extent.width =
-							(lowByte(loword)
+							(uqm::lowByte(loword)
 							 % (ORIGINAL_MAP_HEIGHT >> 3))
 							+ (ORIGINAL_MAP_HEIGHT >> 3);
 						break;
 					default:
 						crater_r.extent.width =
-							(lowByte(loword)
+							(uqm::lowByte(loword)
 							 % (ORIGINAL_MAP_HEIGHT >> 4))
 							+ 4;
 						break;
 				}
 
-				loword = LOWORD(RandomContext_Random(SysGenRNG));
+				loword = uqm::lowWord(RandomContext_Random(SysGenRNG));
 				crater_r.extent.height = crater_r.extent.width;
-				crater_r.corner.x = highByte(loword)
+				crater_r.corner.x = uqm::highByte(loword)
 								  % (ORIGINAL_MAP_WIDTH
 									 - crater_r.extent.width);
-				crater_r.corner.y = lowByte(loword)
+				crater_r.corner.y = uqm::lowByte(loword)
 								  % (ORIGINAL_MAP_HEIGHT
 									 - crater_r.extent.height);
 

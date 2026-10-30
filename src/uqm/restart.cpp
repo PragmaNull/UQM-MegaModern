@@ -754,7 +754,7 @@ RestartMenu(MENU_STATE* pMS)
 			}
 		}
 
-		if (lowByte(LastActivity) == WON_LAST_BATTLE)
+		if (uqm::lowByte(LastActivity) == WON_LAST_BATTLE)
 		{
 			GLOBAL(CurrentActivity) = WON_LAST_BATTLE;
 			Victory();
@@ -825,7 +825,7 @@ RestartMenu(MENU_STATE* pMS)
 
 	SeedRandomNumbers();
 
-	return (lowByte(GLOBAL(CurrentActivity)) != SUPER_MELEE);
+	return (uqm::lowByte(GLOBAL(CurrentActivity)) != SUPER_MELEE);
 }
 
 static bool
@@ -841,7 +841,7 @@ TryStartGame(void)
 
 	while (!RestartMenu(&MenuState))
 	{ // spin until a game is started or loaded
-		if (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE && !(GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE && !(GLOBAL(CurrentActivity) & CHECK_ABORT))
 		{
 			FreeGameData();
 			Melee();

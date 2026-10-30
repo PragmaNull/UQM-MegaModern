@@ -557,7 +557,7 @@ bool LoadHyperspace(void)
 	}
 	else
 	{
-		if (lowByte(LastActivity) == 0)
+		if (uqm::lowByte(LastActivity) == 0)
 		{
 			DrawSISFrame();
 		}
@@ -1195,16 +1195,16 @@ AddAmbientElement(void)
 		}
 
 		rand_val = TFB_Random();
-		dy = LOWORD(rand_val);
+		dy = uqm::lowWord(rand_val);
 
 		if (!IS_HD)
 		{
-			dx = (int16_t)(lowByte(dy) % SPACE_WIDTH) - (SPACE_WIDTH >> 1);
-			dy = (int16_t)(highByte(dy) % SPACE_HEIGHT) - (SPACE_HEIGHT >> 1);
+			dx = (int16_t)(uqm::lowByte(dy) % SPACE_WIDTH) - (SPACE_WIDTH >> 1);
+			dy = (int16_t)(uqm::highByte(dy) % SPACE_HEIGHT) - (SPACE_HEIGHT >> 1);
 		}
 		else
 		{
-			dx = (int16_t)((HIWORD(rand_val)) % SPACE_WIDTH)
+			dx = (int16_t)((uqm::highWord(rand_val)) % SPACE_WIDTH)
 			   - (SPACE_WIDTH >> 1);
 			dy = (int16_t)(dy % SPACE_HEIGHT) - (SPACE_HEIGHT >> 1);
 		}
@@ -1215,7 +1215,7 @@ AddAmbientElement(void)
 			(LOG_SPACE_HEIGHT >> 1) + DISPLAY_TO_WORLD(dy);
 		HyperSpaceElementPtr->current.image.farray = &stars_in_space;
 
-		if (HIWORD(rand_val) & 7)
+		if (uqm::highWord(rand_val) & 7)
 		{
 			HyperSpaceElementPtr->life_span = 14;
 			HyperSpaceElementPtr->current.image.frame = stars_in_space;
@@ -1416,8 +1416,8 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 			(uint32_t)EncounterPtr->radius * EncounterPtr->radius;
 
 		Type = EncounterPtr->race_id;
-		NumShips = LONIBBLE(EncounterMakeup[Type]);
-		for (i = HINIBBLE(EncounterMakeup[Type]) - NumShips; i; --i)
+		NumShips = uqm::lowNibble(EncounterMakeup[Type]);
+		for (i = uqm::highNibble(EncounterMakeup[Type]) - NumShips; i; --i)
 		{
 			if ((uint16_t)TFB_Random() % 100 < 50)
 			{
@@ -1452,7 +1452,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 			rand_val = TFB_Random();
 
 			enc_pt.x = puniverse->x
-					 + (LOWORD(rand_val) % (XOFFS << 1)) - XOFFS;
+					 + (uqm::lowWord(rand_val) % (XOFFS << 1)) - XOFFS;
 			if (enc_pt.x < 0)
 			{
 				enc_pt.x = 0;
@@ -1462,7 +1462,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 				enc_pt.x = MAX_X_UNIVERSE;
 			}
 			enc_pt.y = puniverse->y
-					 + (HIWORD(rand_val) % (YOFFS << 1)) - YOFFS;
+					 + (uqm::highWord(rand_val) % (YOFFS << 1)) - YOFFS;
 			if (enc_pt.y < 0)
 			{
 				enc_pt.y = 0;
@@ -1586,11 +1586,11 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 	}
 
 	r.corner.y = (int16_t)((long)(MAX_Y_UNIVERSE - ey)
-						 * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+						   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
 			   - oy;
 	r.extent.width = RES_SCALE(1);
 	r.extent.height = ((int16_t)((long)(MAX_Y_UNIVERSE - sy)
-							   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+								 * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
 					   - oy)
 					- r.corner.y
 					+ RES_SCALE(1);
@@ -1609,7 +1609,7 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 	for (uy = sy; uy <= ey; uy += GRID_OFFSET)
 	{
 		r.corner.y = (int16_t)((long)(MAX_Y_UNIVERSE - uy)
-							 * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+							   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
 				   - oy;
 		DrawFilledRectangle(&r);
 	}
@@ -1803,7 +1803,7 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 	stamp->origin.x = (int16_t)((long)ex * RADAR_WIDTH / RADAR_SCAN_WIDTH)
 					- ox;
 	stamp->origin.y = (int16_t)((long)(MAX_Y_UNIVERSE - ey) * RADAR_HEIGHT
-							  / RADAR_SCAN_HEIGHT)
+								/ RADAR_SCAN_HEIGHT)
 					- oy;
 	DrawStamp(stamp);
 
@@ -1887,14 +1887,14 @@ void SeedUniverse(void)
 	ox = (int16_t)((long)universe.x * RADAR_WIDTH / RADAR_SCAN_WIDTH)
 	   - (RADAR_WIDTH >> 1);
 	oy = (int16_t)((long)(MAX_Y_UNIVERSE - universe.y)
-				 * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+				   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
 	   - (RADAR_HEIGHT >> 1);
 
 	ex = (int16_t)((long)GLOBAL(ShipStamp.origin.x)
-				 * RADAR_WIDTH / RADAR_SCAN_WIDTH)
+				   * RADAR_WIDTH / RADAR_SCAN_WIDTH)
 	   - (RADAR_WIDTH >> 1);
 	ey = (int16_t)((long)(MAX_Y_UNIVERSE - GLOBAL(ShipStamp.origin.y))
-				 * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+				   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
 	   - (RADAR_HEIGHT >> 1);
 
 	arilouSpaceCounter = GET_GAME_STATE(ARILOU_SPACE_COUNTER);
@@ -1919,10 +1919,10 @@ void SeedUniverse(void)
 				}
 
 				s.origin.x = (int16_t)((long)ex * RADAR_WIDTH
-									 / RADAR_SCAN_WIDTH)
+									   / RADAR_SCAN_WIDTH)
 						   - ox;
 				s.origin.y = (int16_t)((long)(MAX_Y_UNIVERSE - ey)
-									 * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+									   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
 						   - oy;
 				s.frame = SetRelFrameIndex(blip_frame,
 										   star_type + 2);
@@ -2024,7 +2024,7 @@ void SeedUniverse(void)
 			s.origin.x = (int16_t)((long)ex * RADAR_WIDTH / RADAR_SCAN_WIDTH)
 					   - ox;
 			s.origin.y = (int16_t)((long)(MAX_Y_UNIVERSE - ey)
-								 * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+								   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
 					   - oy;
 			s.frame = SetAbsFrameIndex(stars_in_space, 95);
 			DrawStamp(&s);
@@ -2214,7 +2214,7 @@ void SeedUniverse(void)
 
 	SetContext(StatusContext);
 
-	if (!(LOWORD(TFB_Random()) & 7))
+	if (!(uqm::lowWord(TFB_Random()) & 7))
 	{
 		AddAmbientElement();
 	}

@@ -500,7 +500,7 @@ Intro(void)
 {
 	uint32_t GrpOffs;
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -524,7 +524,7 @@ Intro(void)
 	}
 
 	GrpOffs = GET_GAME_STATE(SAMATRA_GRPOFFS);
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 		&& GLOBAL(BattleGroupRef)
 		&& GLOBAL(BattleGroupRef) == GrpOffs)
 	{
@@ -613,7 +613,7 @@ init_blackurq_comm(void)
 	blackurq_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	if (!GET_GAME_STATE(KOHR_AH_KILLED_ALL)
-		&& lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE)
+		&& uqm::lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE)
 	{
 		setSegue(Segue_hostile);
 	}

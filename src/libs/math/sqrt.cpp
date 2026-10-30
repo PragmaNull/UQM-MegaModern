@@ -24,7 +24,7 @@ square_root(uint32_t value)
 	uint16_t sig_word, mask;
 	uint16_t result, shift;
 
-	if ((sig_word = HIWORD(value)) > 0)
+	if ((sig_word = uqm::highWord(value)) > 0)
 	{
 		uint32_t mask_squared, result_shift;
 
@@ -59,7 +59,7 @@ square_root(uint32_t value)
 
 		return (result);
 	}
-	else if ((sig_word = LOWORD(value)) > 0)
+	else if ((sig_word = uqm::lowWord(value)) > 0)
 	{
 		uint16_t mask_squared, result_shift;
 

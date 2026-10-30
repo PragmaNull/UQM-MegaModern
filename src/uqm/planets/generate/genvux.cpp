@@ -115,7 +115,7 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
-			pPlanet->rand_seed = MAKE_DWORD(
+			pPlanet->rand_seed = uqm::makeDword(
 				pPlanet->location.x,
 				pPlanet->location.y);
 		}

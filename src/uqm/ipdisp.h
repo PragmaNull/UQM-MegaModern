@@ -17,7 +17,7 @@
 #ifndef UQM_IPDISP_H_INCL_
 #define UQM_IPDISP_H_INCL_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

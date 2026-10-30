@@ -20,7 +20,7 @@
 #define UQM_STATUS_H_INCL_
 
 #include "races.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

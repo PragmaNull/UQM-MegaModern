@@ -802,7 +802,7 @@ Intro(void)
 
 	SetHomeworldKnown(ZOQFOTPIK_HOME);
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		NPCPhrase_cb(OUT_TAKES0, &SelectAlienZOQ);
 		NPCPhrase_cb(OUT_TAKES1, &SelectAlienPIK);
@@ -1005,7 +1005,7 @@ init_zoqfot_comm(void)
 	zoqfot_desc.AlienTextWidth = (SIS_TEXT_WIDTH >> 1) - TEXT_X_OFFS;
 
 	if (CheckAlliance(ZOQFOTPIK_SHIP) == GOOD_GUY
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

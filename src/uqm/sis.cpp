@@ -274,7 +274,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 
 	if (pStr == 0)
 	{
-		switch (lowByte(GLOBAL(CurrentActivity)))
+		switch (uqm::lowByte(GLOBAL(CurrentActivity)))
 		{
 			default:
 			case IN_ENCOUNTER:
@@ -568,7 +568,7 @@ void DrawStatusMessage(const char* pStr)
 			}
 			else
 			{
-				fmt::format_to_sz_n(buf, "{} {}", MAKE_WORD(GET_GAME_STATE(MELNORME_CREDIT0), GET_GAME_STATE(MELNORME_CREDIT1)), GAME_STRING(STATUS_STRING_BASE + 0)); // "Cr"
+				fmt::format_to_sz_n(buf, "{} {}", uqm::makeWord(GET_GAME_STATE(MELNORME_CREDIT0), GET_GAME_STATE(MELNORME_CREDIT1)), GAME_STRING(STATUS_STRING_BASE + 0)); // "Cr"
 			}
 		}
 		else if (curMsgMode == SMM_RES_UNITS)

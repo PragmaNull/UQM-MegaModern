@@ -24,7 +24,7 @@
 #include <cstdint>
 #include "endian_uqm.h"
 #include "decoder.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/memlib.h"
 #include "libs/reslib.h"
 #include "libs/sound/audiocore.h"

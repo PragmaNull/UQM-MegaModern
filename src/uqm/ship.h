@@ -17,7 +17,7 @@
 #ifndef UQM_SHIP_H_INCL_
 #define UQM_SHIP_H_INCL_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "races.h"
 #include "element.h"
 

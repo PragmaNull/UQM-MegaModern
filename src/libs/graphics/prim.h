@@ -58,9 +58,9 @@ struct PRIMITIVE
 #define HYPER_TO_QUASI_COLOR (1 << 1) // Stamp be rendered with quasispace filter (for ambience in HD only)
 #define HS_STARMASK (1 << 2)
 
-#define GetPredLink(l) LOWORD(l)
-#define GetSuccLink(l) HIWORD(l)
-#define MakeLinks MAKE_DWORD
+#define GetPredLink(l) uqm::lowWord(l)
+#define GetSuccLink(l) uqm::highWord(l)
+#define MakeLinks uqm::makeDword
 #define SetPrimLinks(pPrim, p, s) ((pPrim)->Links = MakeLinks(p, s))
 #define GetPrimLinks(pPrim) ((pPrim)->Links)
 #define SetPrimType(pPrim, t) ((pPrim)->Type = t)

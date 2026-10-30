@@ -17,7 +17,7 @@
 #ifndef UQM_RESTART_H_
 #define UQM_RESTART_H_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

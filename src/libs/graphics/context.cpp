@@ -49,10 +49,10 @@ SetContext(GFXCONTEXT Context)
 		if (LastContext)
 		{
 			UnsetContextFlags(
-				MAKE_WORD(0, GRAPHICS_ACTIVE | DRAWABLE_ACTIVE));
+				uqm::makeWord(0, GRAPHICS_ACTIVE | DRAWABLE_ACTIVE));
 			SetContextFlags(
-				MAKE_WORD(0, _GraphicsStatusFlags
-								 & (GRAPHICS_ACTIVE | DRAWABLE_ACTIVE)));
+				uqm::makeWord(0, _GraphicsStatusFlags
+									 & (GRAPHICS_ACTIVE | DRAWABLE_ACTIVE)));
 
 			DeactivateContext();
 		}
@@ -63,7 +63,7 @@ SetContext(GFXCONTEXT Context)
 			ActivateContext();
 
 			_GraphicsStatusFlags &= ~(GRAPHICS_ACTIVE | DRAWABLE_ACTIVE);
-			_GraphicsStatusFlags |= highByte(_get_context_flags());
+			_GraphicsStatusFlags |= uqm::highByte(_get_context_flags());
 
 			SetPrimColor(&_locPrim, _get_context_fg_color());
 

@@ -45,7 +45,7 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 	{
 		uint8_t num_possible;
 
-		num_possible = lowByte(RandomContext_Random(SysGenRNG))
+		num_possible = uqm::lowByte(RandomContext_Random(SysGenRNG))
 					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
 		while (num_possible--)
 		{
@@ -56,7 +56,7 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 			// partially scavenged.
 			int32_t temp_deposit_quality;
 
-			deposit_quality_fine = (LOWORD(RandomContext_Random(SysGenRNG)) % 100)
+			deposit_quality_fine = (uqm::lowWord(RandomContext_Random(SysGenRNG)) % 100)
 								 + (DEPOSIT_QUALITY(eptr->Density)
 									+ SysInfoPtr->StarSize)
 									   * 50;
@@ -99,7 +99,7 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 
 			GenerateRandomLocation(&info->loc_pt);
 
-			info->density = MAKE_WORD(
+			info->density = uqm::makeWord(
 				deposit_quality_gross, deposit_quality_fine / 10 + 1);
 			info->type = eptr->ElementType;
 #ifdef DEBUG_SURFACE
@@ -156,15 +156,15 @@ CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
 		{
 			uint8_t num_types;
 
-			num_types = 1 + lowByte(RandomContext_Random(SysGenRNG)) % MAX_LIFE_VARIATION;
+			num_types = 1 + uqm::lowByte(RandomContext_Random(SysGenRNG)) % MAX_LIFE_VARIATION;
 			do
 			{
 				uint8_t index, num_creatures;
 				uint16_t rand_val;
 
 				rand_val = RandomContext_Random(SysGenRNG);
-				index = lowByte(rand_val) % NUM_CREATURE_TYPES;
-				num_creatures = 1 + highByte(rand_val) % 10;
+				index = uqm::lowByte(rand_val) % NUM_CREATURE_TYPES;
+				num_creatures = 1 + uqm::highByte(rand_val) % 10;
 				do
 				{
 					GenerateRandomLocation(&info->loc_pt);
@@ -298,8 +298,8 @@ void GenerateRandomLocation(GFXPOINT* loc)
 
 	rand_val = RandomContext_Random(SysGenRNG);
 
-	loc->x = scaleMapWidth(8 + lowByte(rand_val) % (widthPick() - (8 << 1)));
-	loc->y = scaleMapHeight(8 + highByte(rand_val) % (heightPick() - (8 << 1)));
+	loc->x = scaleMapWidth(8 + uqm::lowByte(rand_val) % (widthPick() - (8 << 1)));
+	loc->y = scaleMapHeight(8 + uqm::highByte(rand_val) % (heightPick() - (8 << 1)));
 }
 
 // Returns:
@@ -363,7 +363,7 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 	{
 		uint8_t num_possible, depositQuality = 0;
 
-		num_possible = lowByte(RandomContext_Random(SysGenRNG))
+		num_possible = uqm::lowByte(RandomContext_Random(SysGenRNG))
 					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
 
 		if (num_possible == 0 && OpenSeason)
@@ -387,7 +387,7 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 			// JMS: For making the mineral blip smaller in case it is partially scavenged.
 			int32_t temp_deposit_quality;
 
-			deposit_quality_fine = (LOWORD(RandomContext_Random(SysGenRNG)) % 100)
+			deposit_quality_fine = (uqm::lowWord(RandomContext_Random(SysGenRNG)) % 100)
 								 + (depositQuality
 									+ SysInfoPtr->StarSize)
 									   * 50;
@@ -428,7 +428,7 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 
 			GenerateRandomLocation(&info->loc_pt);
 
-			info->density = MAKE_WORD(
+			info->density = uqm::makeWord(
 				deposit_quality_gross, deposit_quality_fine / 10 + 1);
 #ifdef DEBUG_SURFACE
 			uqm::log::debug("\t\t{} units of %Fs",
@@ -478,7 +478,7 @@ CustomMineralDeposit(NODE_INFO* info, uint16_t type, uint8_t quality,
 
 	info->loc_pt = location;
 
-	info->density = MAKE_WORD(deposit_quality_gross, quality);
+	info->density = uqm::makeWord(deposit_quality_gross, quality);
 
 	return 1;
 }

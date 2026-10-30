@@ -20,7 +20,7 @@
 #define UQM_PLANETS_LANDER_H_
 
 #include "elemdata.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/gfxlib.h"
 #include "libs/sndlib.h"
 #include "libs/time/timelib.h"

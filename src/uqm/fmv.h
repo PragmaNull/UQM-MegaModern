@@ -17,7 +17,7 @@
 #ifndef UQM_FMV_H_
 #define UQM_FMV_H_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/sndlib.h"
 #include "libs/gfxlib.h"
 

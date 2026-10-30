@@ -18,7 +18,7 @@
 #define UQM_UTIL_H_
 
 #include "core/stl/stl.h"
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "libs/gfxlib.h"
 #include "setupmenu.h"
 

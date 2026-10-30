@@ -19,7 +19,7 @@
 #ifndef LIBS_STRLIB_H_
 #define LIBS_STRLIB_H_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "port.h"
 #include "libs/io/FileSystem.h"
 #include "core/string/Utf8.h"

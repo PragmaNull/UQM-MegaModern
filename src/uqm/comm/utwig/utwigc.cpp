@@ -836,7 +836,7 @@ Intro(void)
 {
 	uint8_t NumVisits;
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -1079,7 +1079,7 @@ init_utwig_comm(void)
 
 
 	if (GET_GAME_STATE(UTWIG_HAVE_ULTRON)
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

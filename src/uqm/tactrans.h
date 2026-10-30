@@ -19,7 +19,7 @@
 #ifndef UQM_TACTRANS_H_
 #define UQM_TACTRANS_H_
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 #include "races.h"
 #include "element.h"
 #include "battlecontrols.h"

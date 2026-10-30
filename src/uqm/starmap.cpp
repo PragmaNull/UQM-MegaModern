@@ -330,8 +330,8 @@ void SeedStarmap(STAR_DESC* starmap)
 		rand_val = RandomContext_Random(StarGenRNG);
 		// 469 is the default number of dwarf stars, and 24 the number of
 		// giant. Super giant is handled elsewhere.
-		starmap[i].Type = MAKE_STAR(lowByte(rand_val) % (469 + 24) >= 24 ? DWARF_STAR : GIANT_STAR,
-									highByte(rand_val) % NUM_STAR_COLORS,
+		starmap[i].Type = MAKE_STAR(uqm::lowByte(rand_val) % (469 + 24) >= 24 ? DWARF_STAR : GIANT_STAR,
+									uqm::highByte(rand_val) % NUM_STAR_COLORS,
 									-1);
 		starmap[i].Index = 0;
 	}
@@ -1499,8 +1499,8 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 		{
 			star_id = (rand_val + i * STAR_FACTOR) % 100;
 			plotmap[ARILOU_DEFINED].star_pt = GFXPOINT {
-				(star_id / 10) * 1000 + lowByte(rand_val) * 100 / 256,
-				(star_id % 10) * 1000 + highByte(rand_val) * 100 / 256};
+				(star_id / 10) * 1000 + uqm::lowByte(rand_val) * 100 / 256,
+				(star_id % 10) * 1000 + uqm::highByte(rand_val) * 100 / 256};
 			plotmap[ARILOU_DEFINED].star = FindNearestStar(starmap,
 														   plotmap[ARILOU_DEFINED].star_pt);
 			// Anything less than 2.0 units from a star is too close
@@ -1674,8 +1674,8 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 				// We locate the portal by up to 1147 (114.7) in any direction.
 				// Also note int16_t is just int16_t and can be negative.
 				portalmap[i].star_pt = GFXPOINT {
-					(int16_t)lowByte(rand_val) * 9 + plotmap[SOL_DEFINED].star_pt.x - 1147,
-					(int16_t)highByte(rand_val) * 9 + plotmap[SOL_DEFINED].star_pt.y - 1147};
+					(int16_t)uqm::lowByte(rand_val) * 9 + plotmap[SOL_DEFINED].star_pt.x - 1147,
+					(int16_t)uqm::highByte(rand_val) * 9 + plotmap[SOL_DEFINED].star_pt.y - 1147};
 				// Take care of anything off the map (w/in 18.9) or too close
 				// to SOL.  Here, 250000 (50.0 squared) is the min distance
 				// squared from SOL to portal and 1000000 (100.0 squared) is
@@ -1698,8 +1698,8 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 				// 189 [0] and 9810 [255].
 				// ([rnd] 255 * 9999 / 265 = 9621) + 189 = 9810
 				// (or 189 below the top)
-				portalmap[i].star_pt = GFXPOINT {lowByte(rand_val) * MAX_X_UNIVERSE / 265 + 189,
-												 highByte(rand_val) * MAX_Y_UNIVERSE / 265 + 189};
+				portalmap[i].star_pt = GFXPOINT {uqm::lowByte(rand_val) * MAX_X_UNIVERSE / 265 + 189,
+												 uqm::highByte(rand_val) * MAX_Y_UNIVERSE / 265 + 189};
 				for (j = 0; j < i; j++)
 				{
 					if ((portalmap[i].star_pt.x - portalmap[j].star_pt.x) * (portalmap[i].star_pt.x - portalmap[j].star_pt.x) + (portalmap[i].star_pt.y - portalmap[j].star_pt.y) * (portalmap[i].star_pt.y - portalmap[j].star_pt.y) < MIN_PORTAL * MIN_PORTAL)
@@ -1754,8 +1754,8 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 		{
 			valid = true;
 			rand_val = RandomContext_Random(StarGenRNG);
-			portalmap[i].quasi_pt = GFXPOINT {(lowByte(rand_val) * 51 / 256 - 25) * VORTEX_SCALE + 5000,
-											  (highByte(rand_val) * 51 / 256 - 25) * VORTEX_SCALE + 5000};
+			portalmap[i].quasi_pt = GFXPOINT {(uqm::lowByte(rand_val) * 51 / 256 - 25) * VORTEX_SCALE + 5000,
+											  (uqm::highByte(rand_val) * 51 / 256 - 25) * VORTEX_SCALE + 5000};
 			for (j = 0; j < i; j++)
 			{
 				if ((portalmap[i].quasi_pt.x - portalmap[j].quasi_pt.x) * (portalmap[i].quasi_pt.x - portalmap[j].quasi_pt.x) + (portalmap[i].quasi_pt.y - portalmap[j].quasi_pt.y) * (portalmap[i].quasi_pt.y - portalmap[j].quasi_pt.y) < MIN_VORTEX * MIN_VORTEX)

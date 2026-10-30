@@ -1000,14 +1000,14 @@ enum
 	IN_PLANET_ORBIT,
 	IN_STARBASE,
 
-	CHECK_PAUSE = MAKE_WORD(0, (1 << 0)),
-	IN_BATTLE = MAKE_WORD(0, (1 << 1)),
+	CHECK_PAUSE = uqm::makeWord(0, (1 << 0)),
+	IN_BATTLE = uqm::makeWord(0, (1 << 1)),
 	/* Is also set while in HyperSpace/QuasiSpace */
-	START_ENCOUNTER = MAKE_WORD(0, (1 << 2)),
-	START_INTERPLANETARY = MAKE_WORD(0, (1 << 3)),
-	CHECK_LOAD = MAKE_WORD(0, (1 << 4)),
-	CHECK_RESTART = MAKE_WORD(0, (1 << 5)),
-	CHECK_ABORT = MAKE_WORD(0, (1 << 6)),
+	START_ENCOUNTER = uqm::makeWord(0, (1 << 2)),
+	START_INTERPLANETARY = uqm::makeWord(0, (1 << 3)),
+	CHECK_LOAD = uqm::makeWord(0, (1 << 4)),
+	CHECK_RESTART = uqm::makeWord(0, (1 << 5)),
+	CHECK_ABORT = uqm::makeWord(0, (1 << 6)),
 };
 typedef uint16_t ACTIVITY;
 

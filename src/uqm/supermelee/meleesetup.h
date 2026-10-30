@@ -24,7 +24,7 @@ typedef struct MeleeSetup MeleeSetup;
 #define MELEETEAM_INTERNAL
 #endif /* MELEESETUP_INTERNAL */
 
-#include "libs/compiler.h"
+#include "core/types/bytes.h"
 
 typedef uint16_t FleetShipIndex;
 

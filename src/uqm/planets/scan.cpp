@@ -1079,7 +1079,7 @@ DrawScannedStuff(uint16_t y, uint16_t scan)
 		hNextElement = GetSuccElement(ElementPtr);
 
 		dy = y - ElementPtr->current.location.y;
-		if (lowByte(ElementPtr->scan_node) != scan || dy < 0)
+		if (uqm::lowByte(ElementPtr->scan_node) != scan || dy < 0)
 		{ // node of wrong type, or not time for it yet
 			UnlockElement(hElement);
 			continue;
@@ -1166,7 +1166,7 @@ DrawPCScannedStuff(uint16_t scan)
 		{
 			LockElement(hElement, &ElementPtr);
 			hNextElement = GetSuccElement(ElementPtr);
-			if (lowByte(ElementPtr->scan_node) != scan)
+			if (uqm::lowByte(ElementPtr->scan_node) != scan)
 			{ // node of wrong type, or not time for it yet
 				UnlockElement(hElement);
 				hElement = hNextElement;
@@ -1222,7 +1222,7 @@ DrawPCScannedStuff(uint16_t scan)
 		{
 			LockElement(hElement, &ElementPtr);
 			hNextElement = GetSuccElement(ElementPtr);
-			if (lowByte(ElementPtr->scan_node) != scan)
+			if (uqm::lowByte(ElementPtr->scan_node) != scan)
 			{ // node of wrong type, or not time for it yet
 				UnlockElement(hElement);
 				hElement = hNextElement;
@@ -1675,7 +1675,7 @@ generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 	{
 		CreatureData[EVIL_ONE].Attributes =
 			BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_SLOW | DANGER_MONSTROUS;
-		CreatureData[EVIL_ONE].ValueAndHitPoints = MAKE_BYTE(5, 5);
+		CreatureData[EVIL_ONE].ValueAndHitPoints = uqm::makeByte(5, 5);
 		// CreatureData[ZEX_BEAUTY].Attributes =
 		//		BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_FAST |
 		//			DANGER_MONSTROUS;
@@ -1685,7 +1685,7 @@ generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 	{
 		CreatureData[ZEX_BEAUTY].Attributes =
 			BEHAVIOR_HUNT | AWARENESS_LOW | SPEED_SLOW | DANGER_MONSTROUS;
-		CreatureData[ZEX_BEAUTY].ValueAndHitPoints = MAKE_BYTE(15, 8);
+		CreatureData[ZEX_BEAUTY].ValueAndHitPoints = uqm::makeByte(15, 8);
 	}
 
 	// NOTE: TFB_Random() calls here are NOT part of the deterministic
@@ -1697,9 +1697,9 @@ generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 		j = (uint32_t)TFB_Random();
 
 		NodeElementPtr->current.location.x =
-			((chooseIfHd(static_cast<uint16_t>(lowByte(i)), LOWORD(j)) % (SCALED_MAP_WIDTH - (8 << 1))) + 8);
+			((chooseIfHd(static_cast<uint16_t>(uqm::lowByte(i)), uqm::lowWord(j)) % (SCALED_MAP_WIDTH - (8 << 1))) + 8);
 		NodeElementPtr->current.location.y =
-			(chooseIfHd(static_cast<uint16_t>(highByte(i)), HIWORD(j)) % (MAP_HEIGHT - (8 << 1))) + 8;
+			(chooseIfHd(static_cast<uint16_t>(uqm::highByte(i)), uqm::highWord(j)) % (MAP_HEIGHT - (8 << 1))) + 8;
 	}
 
 	if (system->PlanetSideFrame[0] == 0)
@@ -1724,7 +1724,7 @@ generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 	}
 
 	NodeElementPtr->mass_points = (uint8_t)creatureType;
-	NodeElementPtr->hit_points = HINIBBLE(
+	NodeElementPtr->hit_points = uqm::highNibble(
 		CreatureData[creatureType].ValueAndHitPoints);
 	DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame = SetAbsFrameIndex(
 		system->PlanetSideFrame[i + 3], (uint16_t)TFB_Random());
@@ -1781,7 +1781,7 @@ void GeneratePlanetSide(void)
 									pSolarSysState->pOrbitalDesc, num_nodes,
 									scan, &info);
 
-			NodeElementPtr->scan_node = MAKE_WORD(scan, num_nodes + 1);
+			NodeElementPtr->scan_node = uqm::makeWord(scan, num_nodes + 1);
 			NodeElementPtr->playerNr = PS_NON_PLAYER;
 			NodeElementPtr->current.location.x = info.loc_pt.x;
 			NodeElementPtr->current.location.y = info.loc_pt.y;
@@ -1794,7 +1794,7 @@ void GeneratePlanetSide(void)
 
 				// JMS: Partially scavenged energy blips won't return
 				// anymore to original size after leaving planet.
-				NodeElementPtr->mass_points = highByte(info.density)
+				NodeElementPtr->mass_points = uqm::highByte(info.density)
 											- pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[scan][num_nodes];
 
 				NodeElementPtr->current.image.frame = SetAbsFrameIndex(
@@ -1802,7 +1802,7 @@ void GeneratePlanetSide(void)
 									   + ElementCategory(info.type) * 5);
 				NodeElementPtr->next.image.frame = SetRelFrameIndex(
 					NodeElementPtr->current.image.frame,
-					lowByte(info.density) + 1);
+					uqm::lowByte(info.density) + 1);
 				DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame =
 					IncFrameIndex(NodeElementPtr->next.image.frame);
 			}
@@ -1811,7 +1811,7 @@ void GeneratePlanetSide(void)
 				NodeElementPtr->current.image.frame = f;
 				NodeElementPtr->next.image.frame = SetRelFrameIndex(
 					f, NUM_SCANDOT_TRANSITIONS - 1);
-				NodeElementPtr->turn_wait = MAKE_BYTE(4, 4);
+				NodeElementPtr->turn_wait = uqm::makeByte(4, 4);
 				NodeElementPtr->preprocess_func = object_animation;
 				if (scan == ENERGY_SCAN)
 				{
