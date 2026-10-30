@@ -232,7 +232,6 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	}
 
 	TFB_PreInit();
-	mem_init();
 	//log_initThreads();
 	initIO();
 	prepareConfigDir(options.configDir);
@@ -427,7 +426,6 @@ void UQMGame::teardown()
 		unInitTempDir ();
 #endif
 		uninitIO();
-		mem_uninit();
 	}
 }
 

@@ -27,9 +27,6 @@
 extern "C" {
 #endif
 
-extern bool mem_init(void);
-extern bool mem_uninit(void);
-
 extern void* HMalloc(size_t size);
 extern void HFree(void* p);
 extern void* HCalloc(size_t size);

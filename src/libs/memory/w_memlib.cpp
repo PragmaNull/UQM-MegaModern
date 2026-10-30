@@ -25,16 +25,6 @@
 #include "core/misc/FatalExit.h"
 
 
-bool mem_init(void)
-{ // This is a stub
-	return true;
-}
-
-bool mem_uninit(void)
-{ // This is a stub
-	return true;
-}
-
 void* HMalloc(size_t size)
 {
 	void* p = malloc(size);
