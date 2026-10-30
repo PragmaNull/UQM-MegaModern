@@ -25,8 +25,6 @@
 #include "libs/graphics/bbox.h"
 #include "libs/time/timelib.h"
 #include "core/log/log.h"
-#include "libs/misc.h"
-// for TFB_DEBUG_HALT
 #include "options.h"
 #include "libs/graphics/font.h"
 #include "uqm/setup.h"

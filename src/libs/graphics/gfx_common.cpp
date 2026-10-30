@@ -20,9 +20,7 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/drawcmd.h"
 #include "libs/time/timelib.h"
-#include "libs/misc.h"
 #include <atomic>
-// for TFB_DEBUG_HALT
 #include "options.h"
 #include "SDL.h"
 

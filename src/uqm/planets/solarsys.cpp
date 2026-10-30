@@ -48,7 +48,7 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/mathlib.h"
 #include "core/log/log.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 #include "scan.h"
 #include "libs/graphics/cmap.h"
 
@@ -2943,7 +2943,7 @@ void ExploreSolarSys(void)
 		{
 			uqm::log::critical(
 				"ExploreSolarSys(): do not know where you are!");
-			explode();
+			uqm::fatalExit();
 		}
 	}
 	GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(CurStarDescPtr->star_pt.x);

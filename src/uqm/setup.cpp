@@ -37,7 +37,7 @@
 #include "libs/threadlib.h"
 #include "libs/vidlib.h"
 #include "core/log/log.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -488,7 +488,7 @@ bool SetPlayerInput(uint16_t playerI)
 	{
 		uqm::log::critical(
 			"Invalid control method {} ,in SetPlayerInput().", extractedControls);
-		explode(); /* Does not return */
+		uqm::fatalExit(); /* Does not return */
 	}
 
 	return PlayerInput[playerI] != nullptr;

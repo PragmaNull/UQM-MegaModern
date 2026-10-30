@@ -64,6 +64,8 @@ void TFB_GetScreenSize(int16_t* width, int16_t* height);
 
 // The flag variable itself
 extern uqm::GfxFlags g_gfxFlags;
+// Set to stop all drawing, for debugging.
+extern int TFB_DEBUG_HALT;
 
 // TODO: there should be accessor functions for these
 extern uqstl::atomic<int> TransitionAmount;

@@ -26,7 +26,6 @@
 #include "libs/gfxlib.h"
 #include "core/thread/Mutex.h"
 #include "core/log/log.h"
-#include "libs/misc.h"
 #include "options.h"
 
 // WARNING: Most of clock functions are only meant to be called by the

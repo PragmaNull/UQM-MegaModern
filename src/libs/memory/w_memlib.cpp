@@ -22,7 +22,7 @@
 #include <string.h>
 #include "libs/memlib.h"
 #include "core/log/log.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 
 
 bool mem_init(void)
@@ -42,7 +42,7 @@ void* HMalloc(size_t size)
 	{
 		uqm::log::critical("HMalloc() FATAL: out of memory.");
 		fflush(stderr);
-		explode();
+		uqm::fatalExit();
 	}
 
 	return p;
@@ -70,7 +70,7 @@ void* HRealloc(void* p, size_t size)
 	{
 		uqm::log::critical("HRealloc() FATAL: out of memory.");
 		fflush(stderr);
-		explode();
+		uqm::fatalExit();
 	}
 
 	return p;

@@ -29,7 +29,7 @@
 #include "ndesc.h"
 #include <cstdint>
 #include "libs/compiler.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 #include "core/log/log.h"
 #include "core/platform/platform.h"
 
@@ -157,7 +157,7 @@ int NetManager_addDesc(NetDescriptor* nd)
 			{
 				uqm::log::critical("closeWSAEvent() failed: {}.",
 								   uqm::strerror(errno));
-				explode();
+				uqm::fatalExit();
 			}
 			SocketManagementData_free(nd->smd);
 			errno = savedErrno;
@@ -199,7 +199,7 @@ void NetManager_removeDesc(NetDescriptor* nd)
 		int closeStatus = closeWSAEvent(events[nd->smd->index]);
 		if (closeStatus == -1)
 		{
-			explode();
+			uqm::fatalExit();
 		}
 	}
 
@@ -256,7 +256,7 @@ NetManager_updateEvent(NetDescriptor* nd)
 		{
 			uqm::log::critical("closeWSAEvent() failed: {}.",
 							   uqm::strerror(errno));
-			explode();
+			uqm::fatalExit();
 		}
 		errno = savedErrno;
 		return -1;
@@ -306,7 +306,7 @@ activateSomeCallback(NetDescriptor* nd, long eventMask)
 		{
 			uqm::log::critical("NetManager_updateEvent() failed: {}.",
 							   uqm::strerror(errno));
-			explode();
+			uqm::fatalExit();
 			// TODO: better error handling.
 		}
 	}
@@ -322,7 +322,7 @@ deactivateSomeCallback(NetDescriptor* nd, long eventMask)
 		{
 			uqm::log::critical("NetManager_updateEvent() failed: {}.",
 							   uqm::strerror(errno));
-			explode();
+			uqm::fatalExit();
 			// TODO: better error handling
 		}
 	}

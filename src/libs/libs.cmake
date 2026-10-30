@@ -45,7 +45,6 @@ set(uqm_src_libs_files
 	"src/libs/libs.cmake"
 	"src/libs/mathlib.h"
 	"src/libs/memlib.h"
-	"src/libs/misc.h"
 	"src/libs/reslib.h"
 #	"src/libs/sndlib.h"
 	"src/libs/strlib.h"

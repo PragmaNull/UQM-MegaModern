@@ -46,7 +46,7 @@
 #include "core/string/Utf8.h"
 #include "libs/mathlib.h"
 #include "libs/inplib.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 #include "planets/solarsys.h"
 #include "starbase.h"
 
@@ -1069,7 +1069,7 @@ void EncounterBattle(void)
 		if (!SetPlayerInput(0))
 		{
 			uqm::log::critical("Could not set cyborg player input.");
-			explode(); // Does not return;
+			uqm::fatalExit(); // Does not return;
 		}
 	}
 

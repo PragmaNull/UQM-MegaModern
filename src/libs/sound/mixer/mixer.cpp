@@ -24,7 +24,7 @@
 #include <math.h>
 #include "mixer.h"
 #include "mixerint.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 #include "libs/threadlib.h"
 #include "core/thread/Mutex.h"
 #include "core/log/log.h"
@@ -1019,7 +1019,7 @@ mixer_SourceStop_internal(mixer_Source* src)
 		uqm::log::debug("mixer_SourceStop_internal(): "
 						"desynced source state");
 #ifdef DEBUG
-		explode();
+		uqm::fatalExit();
 #endif
 	}
 

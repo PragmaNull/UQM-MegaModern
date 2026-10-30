@@ -26,7 +26,7 @@
 #include "resolve.h"
 #include "libs/callback/alarm.h"
 #include "../socket/socket.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 #include "core/log/log.h"
 #include "core/platform/platform.h"
 
@@ -168,7 +168,7 @@ connectCallback(NetDescriptor* nd)
 	if (Socket_getError(NetDescriptor_getSocket(nd), &err) == -1)
 	{
 		uqm::log::critical("Socket_getError() failed: {}.", uqm::strerror(errno));
-		explode();
+		uqm::fatalExit();
 	}
 	if (err != 0)
 	{

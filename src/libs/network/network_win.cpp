@@ -21,7 +21,7 @@
 #include "network.h"
 
 #include "libs/compiler.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 #include "core/log/log.h"
 
 #include <errno.h>
@@ -39,7 +39,7 @@ void Network_init(void)
 		int savedErrno = winsockErrorToErrno(startupResult);
 		uqm::log::critical("WSAStartup failed.");
 		errno = savedErrno;
-		explode();
+		uqm::fatalExit();
 	}
 
 #ifdef DEBUG
@@ -59,7 +59,7 @@ void Network_init(void)
 						   lowByte(requestVersion), highByte(requestVersion));
 		(void)WSACleanup();
 		// Ignoring errors; we're going to abort anyhow.
-		explode();
+		uqm::fatalExit();
 	}
 }
 
@@ -73,6 +73,6 @@ void Network_uninit(void)
 		int savedErrno = getWinsockErrno();
 		uqm::log::critical("WSACleanup failed.");
 		errno = savedErrno;
-		explode();
+		uqm::fatalExit();
 	}
 }

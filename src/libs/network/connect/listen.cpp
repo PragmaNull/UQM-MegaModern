@@ -28,7 +28,7 @@
 #include "resolve.h"
 #include "../socket/socket.h"
 #include "../netmanager/netmanager.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 #include "core/log/log.h"
 #include "core/platform/platform.h"
 
@@ -425,7 +425,7 @@ acceptSingleConnection(ListenState* listenState, NetDescriptor* nd)
 				uqm::log::critical("Internal error: accept() reported "
 								   "'{}'",
 								   uqm::strerror(errno));
-				explode();
+				uqm::fatalExit();
 		}
 	}
 

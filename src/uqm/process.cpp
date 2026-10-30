@@ -32,7 +32,7 @@
 #include "libs/graphics/drawcmd.h"
 #include "libs/graphics/gfx_common.h"
 #include "core/log/log.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 #include "intel.h"
 
 
@@ -96,7 +96,7 @@ AllocElement(void)
 		if (ElementPtr->PrimIndex == END_OF_LIST)
 		{
 			uqm::log::error("AllocElement: Out of display prims!");
-			explode();
+			uqm::fatalExit();
 		}
 		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NO_PRIM);
 		SetPrimFlags(&DisplayArray[ElementPtr->PrimIndex], 0);

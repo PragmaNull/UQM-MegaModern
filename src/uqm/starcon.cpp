@@ -47,7 +47,7 @@
 #include "libs/gfxlib.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 #include "libs/luauqm/luauqm.h"
 #include "build.h"
 #include "uqmversion.h"
@@ -279,7 +279,7 @@ int Starcon2Main(void* threadArg)
 		if (!SetPlayerInputAll())
 		{
 			uqm::log::critical("Could not set player input.");
-			explode(); // Does not return;
+			uqm::fatalExit(); // Does not return;
 		}
 
 		luaUqm_reinitState();
