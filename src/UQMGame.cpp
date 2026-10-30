@@ -32,12 +32,6 @@
 #include <unistd.h>
 #endif
 
-#ifdef HAVE_GETOPT_LONG
-#include <getopt.h>
-#else
-#include "getopt/getopt.h"
-#endif
-
 #include <stdarg.h>
 #include <errno.h>
 #include "libs/graphics/gfx_common.h"
