@@ -31,6 +31,7 @@
 #include "../nameref.h"
 #include "../ifontres.h"
 #include "../igfxres.h"
+#include "core/stl/optional.h"
 
 #include <ctype.h>
 #include <string.h>
@@ -392,7 +393,7 @@ void DoDiscoveryReport(SOUND ReadOutSounds)
 		}
 
 		luaUqm_comm_init(nullptr, NULL_RESOURCE);
-		uqstl::optional<uqstl::string> interpolatedReport{};
+		uqstl::late_constructed<uqstl::string> interpolatedReport{};
 		uqstl::string_view report {GetStringAddress(pSolarSysState->SysInfo.PlanetInfo.DiscoveryString)};
 		if (luaUqm_comm_stringNeedsInterpolate(report.data()))
 		{
