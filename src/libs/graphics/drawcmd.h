@@ -125,8 +125,8 @@ typedef struct tfb_dc_delimg
 
 typedef struct tfb_dc_deldata
 {
-	void* data;
-	// data must be a result of HXalloc() call
+	// Made with new[].
+	uint8_t* data;
 } TFB_DrawCommand_DeleteData;
 
 typedef struct tfb_dc_signal

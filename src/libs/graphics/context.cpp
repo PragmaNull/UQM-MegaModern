@@ -85,7 +85,7 @@ CreateContextAux(void)
 {
 	GFXCONTEXT NewContext;
 
-	NewContext = (GFXCONTEXT)AllocContext();
+	NewContext = new CONTEXT_DESC {};
 	if (NewContext)
 	{
 		/* initialize context */
@@ -156,7 +156,7 @@ bool DestroyContext(GFXCONTEXT ContextRef)
 		TFB_DrawImage_Delete(img);
 	}
 
-	FreeContext(ContextRef);
+	delete ContextRef;
 	return true;
 }
 

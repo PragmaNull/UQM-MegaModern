@@ -21,6 +21,8 @@
 
 #include "libs/time/timelib.h"
 #include "core/thread/Mutex.h"
+#include "core/stl/array.h"
+#include "core/stl/optional.h"
 
 
 typedef void* TFB_Canvas;
@@ -95,7 +97,7 @@ void TFB_DrawScreen_CopyToImage(TFB_Image* img, const GFXRECT* r, SCREEN src);
 void TFB_DrawScreen_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx,
 							  int hoty);
 void TFB_DrawScreen_DeleteImage(TFB_Image* img);
-void TFB_DrawScreen_DeleteData(void*);
+void TFB_DrawScreen_DeleteData(uint8_t* data);
 void TFB_DrawScreen_WaitForSignal(void);
 void TFB_DrawScreen_ReinitVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int width, int height);
 void TFB_DrawScreen_Callback(void (*callback)(void* arg), void* arg);
@@ -166,7 +168,7 @@ void TFB_DrawCanvas_MaskImage(TFB_Image* img, DrawMode mode, TFB_Canvas target, 
 
 bool TFB_DrawCanvas_GetFontCharData(TFB_Canvas canvas, uint8_t* outData,
 									unsigned dataPitch);
-Color* TFB_DrawCanvas_ExtractPalette(TFB_Canvas canvas);
+uqstl::optional<uqstl::array<Color, 256>> TFB_DrawCanvas_ExtractPalette(TFB_Canvas canvas);
 void TFB_DrawCanvas_SetPalette(TFB_Canvas target, Color palette[256]);
 int TFB_DrawCanvas_GetTransparentIndex(TFB_Canvas canvas);
 void TFB_DrawCanvas_SetTransparentIndex(TFB_Canvas canvas, int i,

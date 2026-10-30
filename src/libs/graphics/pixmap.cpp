@@ -162,7 +162,7 @@ IncFrameIndex(FRAME FramePtr)
 	}
 	else
 	{
-		return DrawablePtr->Frame;
+		return DrawablePtr->Frame.data();
 	}
 }
 

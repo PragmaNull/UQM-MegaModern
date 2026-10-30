@@ -121,13 +121,8 @@ alloc_colormap(void) UQM_REQUIRES(s_mapLock)
 	}
 	else
 	{ // no spares, need a new one
-		map = (TFB_ColorMap*)HMalloc(sizeof(*map));
+		map = new TFB_ColorMap {};
 		map->palette = AllocNativePalette();
-		if (!map->palette)
-		{
-			HFree(map);
-			return nullptr;
-		}
 	}
 	map->next = nullptr;
 	map->index = -1;
@@ -167,7 +162,7 @@ static void
 delete_colormap(TFB_ColorMap* map)
 {
 	FreeNativePalette(map->palette);
-	HFree(map);
+	delete map;
 }
 
 static inline void

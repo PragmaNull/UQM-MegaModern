@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include "tfb_draw.h"
+#include "core/stl/vector.h"
 
 #define ValidPrimType(pt) ((pt) < NUM_PRIMS)
 
@@ -52,7 +53,7 @@ struct drawable_desc
 {
 	CREATE_FLAGS Flags;
 	uint16_t MaxIndex;
-	FRAME_DESC* Frame;
+	uqstl::vector<FRAME_DESC> Frame;
 };
 
 #define GetFrameWidth(f) ((f)->Bounds.width)

@@ -23,7 +23,6 @@
 #include "libs/graphics/context.h"
 #include "libs/graphics/drawable.h"
 #include "libs/graphics/tfb_draw.h"
-#include "libs/memlib.h"
 #include "tfb_draw.h"
 #include <math.h>
 #include "core/log/log.h"
@@ -175,33 +174,11 @@ CreateDisplay(CREATE_FLAGS CreateFlags, int16_t* pwidth, int16_t* pheight)
 DRAWABLE
 AllocDrawable(uint16_t n)
 {
-	DRAWABLE Drawable;
-	Drawable = (DRAWABLE)HCalloc(sizeof(DRAWABLE_DESC));
-	if (Drawable)
+	auto* Drawable {new DRAWABLE_DESC {}};
+	Drawable->Frame.assign(n, FRAME_DESC {});
+	for (FRAME_DESC& F : Drawable->Frame)
 	{
-		int i;
-		Drawable->Frame = (FRAME)HMalloc(sizeof(FRAME_DESC) * n);
-		if (Drawable->Frame == nullptr)
-		{
-			HFree(Drawable);
-			return nullptr;
-		}
-
-		/* Zero out the newly allocated frames, since HMalloc doesn't have
-		 * MEM_ZEROINIT. */
-		for (i = 0; i < n; i++)
-		{
-			FRAME F;
-			F = &Drawable->Frame[i];
-			F->parent = Drawable;
-			F->Type = 0;
-			F->Index = 0;
-			F->image = 0;
-			F->Bounds.width = 0;
-			F->Bounds.height = 0;
-			F->HotSpot.x = 0;
-			F->HotSpot.y = 0;
-		}
+		F.parent = Drawable;
 	}
 	return Drawable;
 }
@@ -436,11 +413,10 @@ makeMatchingIndexedFrame(FRAME frame, int width, int height)
 {
 	DRAWABLE drawable;
 	FRAME newFrame;
+	uqstl::optional<uqstl::array<Color, 256>> palette {TFB_DrawCanvas_ExtractPalette(frame->image->NormalImg)};
 
 	drawable =
-		CreateIndexedDrawable(
-			TFB_DrawCanvas_ExtractPalette(frame->image->NormalImg),
-			width, height);
+		CreateIndexedDrawable(palette ? palette->data() : nullptr, width, height);
 	if (!drawable)
 	{
 		return nullptr;

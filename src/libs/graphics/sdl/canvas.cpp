@@ -24,7 +24,6 @@
 #include "libs/graphics/tfb_draw.h"
 #include "libs/graphics/cmap.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include "primitives.h"
 #include "palette.h"
 #include "sdlimage.h"
@@ -771,11 +770,10 @@ TFB_DrawCanvas_Mask(SDL_Surface* layer, SDL_Surface* base, DrawMode mode, Color*
 
 		if (layer->format->palette && base->format->Amask)
 		{ // Layering 8-bit image to 32-bit mask
-			Color* pal;
+			uqstl::array<Color, 256> pal {};
 			SDL_Palette* palette = layer->format->palette;
 			int i;
 
-			pal = (Color*)HCalloc(sizeof(Color) * 256);
 			assert(palette->ncolors <= 256);
 			for (i = 0; i < palette->ncolors; ++i)
 			{
@@ -783,9 +781,8 @@ TFB_DrawCanvas_Mask(SDL_Surface* layer, SDL_Surface* base, DrawMode mode, Color*
 			}
 
 			SDL_LockSurface(base);
-			blt_filtered_pal(layer, base, pal);
+			blt_filtered_pal(layer, base, pal.data());
 			SDL_UnlockSurface(base);
-			HFree(pal);
 		}
 		else
 		{
@@ -1063,23 +1060,21 @@ bool TFB_DrawCanvas_GetFontCharData(TFB_Canvas canvas, uint8_t* outData,
 	return true;
 }
 
-Color*
+uqstl::optional<uqstl::array<Color, 256>>
 TFB_DrawCanvas_ExtractPalette(TFB_Canvas canvas)
 {
-	int i;
-	Color* result;
 	SDL_Surface* surf = (SDL_Surface*)canvas;
 	SDL_Palette* palette = surf->format->palette;
 
 	if (!palette)
 	{
-		return nullptr;
+		return uqstl::nullopt;
 	}
 
 	// There may be less colors in the surface than 256. Init to 0 first.
-	result = (Color*)HCalloc(sizeof(Color) * 256);
+	uqstl::array<Color, 256> result {};
 	assert(palette->ncolors <= 256);
-	for (i = 0; i < palette->ncolors; ++i)
+	for (int i {}; i < palette->ncolors; ++i)
 	{
 		result[i] = NativeToColor(palette->colors[i]);
 	}

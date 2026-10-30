@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "sdl_common.h"
-#include "libs/memlib.h"
 #include "port.h"
 #include "rotozoom.h"
 
@@ -58,26 +57,10 @@ int zoomSurfaceRGBA(SDL_Surface* src, SDL_Surface* dst, int smooth)
      * Allocate memory for row increments 
      */
 
-#ifndef __SYMBIAN32__
-	if ((sax = (int*)alloca((dst->w + 1) * sizeof(Uint32))) == nullptr)
-	{
-		return (-1);
-	}
-	if ((say = (int*)alloca((dst->h + 1) * sizeof(Uint32))) == nullptr)
-	{
-		return (-1);
-	}
-#else
-	if ((sax = (int*)HMalloc((dst->w + 1) * sizeof(Uint32))) == nullptr)
-	{
-		return (-1);
-	}
-	if ((say = (int*)HMalloc((dst->h + 1) * sizeof(Uint32))) == nullptr)
-	{
-		HFree(sax);
-		return (-1);
-	}
-#endif
+	uqstl::vector<int> saxBuf(dst->w + 1);
+	uqstl::vector<int> sayBuf(dst->h + 1);
+	sax = saxBuf.data();
+	say = sayBuf.data();
 
 
 	/*
@@ -222,11 +205,6 @@ int zoomSurfaceRGBA(SDL_Surface* src, SDL_Surface* dst, int smooth)
 		}
 	}
 
-#ifdef __SYMBIAN32__
-	HFree(sax);
-	HFree(say);
-#endif
-
 	return (0);
 }
 
@@ -254,26 +232,10 @@ static int zoomSurfaceY(SDL_Surface* src, SDL_Surface* dst)
 	/*
      * Allocate memory for row increments 
      */
-#ifndef __SYMBIAN32__
-	if ((sax = (Uint32*)alloca(dst->w * sizeof(Uint32))) == nullptr)
-	{
-		return (-1);
-	}
-	if ((say = (Uint32*)alloca(dst->h * sizeof(Uint32))) == nullptr)
-	{
-		return (-1);
-	}
-#else
-	if ((sax = (Uint32*)HMalloc(dst->w * sizeof(Uint32))) == nullptr)
-	{
-		return (-1);
-	}
-	if ((say = (Uint32*)HMalloc(dst->h * sizeof(Uint32))) == nullptr)
-	{
-		HFree(sax);
-		return (-1);
-	}
-#endif
+	uqstl::vector<Uint32> saxBuf(dst->w);
+	uqstl::vector<Uint32> sayBuf(dst->h);
+	sax = saxBuf.data();
+	say = sayBuf.data();
 
 	/*
      * Precalculate row increments 
@@ -353,11 +315,6 @@ static int zoomSurfaceY(SDL_Surface* src, SDL_Surface* dst)
 	 */
 		dp += dgap;
 	}
-
-#ifdef __SYMBIAN32__
-	HFree(sax);
-	HFree(say);
-#endif
 
 	return (0);
 }

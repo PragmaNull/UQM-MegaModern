@@ -26,7 +26,6 @@
 #include "libs/reslib.h"
 #include "libs/io/Path.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include "libs/graphics/tfb_draw.h"
 #include "libs/graphics/drawable.h"
 #include "libs/graphics/font.h"
@@ -119,7 +118,7 @@ processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
 	// Currently, each font char has its own separate data
 	// but that can change to common mem area
 	dpitch = CharPtr->extent.width;
-	newdata = (uint8_t*)HMalloc(dpitch * CharPtr->extent.height * sizeof(uint8_t));
+	newdata = new uint8_t[dpitch * CharPtr->extent.height];
 	TFB_DrawCanvas_GetFontCharData(canvas, newdata, dpitch);
 
 	CharPtr->data = newdata;
@@ -164,8 +163,6 @@ void* _GetCelData(const ResourceFile& resource)
 	int cel_total, cel_index, n;
 	uint32_t opos;
 	char CurrentLine[1024], filename[PATH_MAX];
-	TFB_Canvas* img;
-	AniData* ani;
 	DRAWABLE Drawable;
 	uqstl::optional<uqm::io::Directory> aniDir {};
 	uqstl::optional<uqm::io::File> zippedAniFile {};
@@ -216,15 +213,8 @@ void* _GetCelData(const ResourceFile& resource)
 		++cel_total;
 	}
 
-	img = (TFB_Canvas*)HMalloc(sizeof(TFB_Canvas) * cel_total);
-	ani = (AniData*)HMalloc(sizeof(AniData) * cel_total);
-	if (!img || !ani)
-	{
-		uqm::log::warn("Couldn't allocate space for '{}'", resource.path);
-		HFree(img);
-		HFree(ani);
-		return nullptr;
-	}
+	uqstl::vector<TFB_Canvas> img(cel_total);
+	uqstl::vector<AniData> ani(cel_total);
 
 	cel_index = 0;
 	aniFile->seek(opos, uqm::io::SeekFrom::Start);
@@ -270,28 +260,15 @@ void* _GetCelData(const ResourceFile& resource)
 	Drawable = nullptr;
 	if (cel_index && (Drawable = AllocDrawable(cel_index)))
 	{
-		if (!Drawable)
+		FRAME FramePtr;
+
+		Drawable->Flags = WANT_PIXMAP;
+		Drawable->MaxIndex = cel_index - 1;
+
+		FramePtr = Drawable->Frame.data() + cel_index;
+		while (--FramePtr, cel_index--)
 		{
-			while (cel_index--)
-			{
-				TFB_DrawCanvas_Delete(img[cel_index]);
-			}
-
-			HFree(Drawable);
-			Drawable = nullptr;
-		}
-		else
-		{
-			FRAME FramePtr;
-
-			Drawable->Flags = WANT_PIXMAP;
-			Drawable->MaxIndex = cel_index - 1;
-
-			FramePtr = &Drawable->Frame[cel_index];
-			while (--FramePtr, cel_index--)
-			{
-				process_image(FramePtr, img, ani, cel_index);
-			}
+			process_image(FramePtr, img.data(), ani.data(), cel_index);
 		}
 	}
 
@@ -301,40 +278,26 @@ void* _GetCelData(const ResourceFile& resource)
 					   resource.path);
 	}
 
-	HFree(img);
-	HFree(ani);
 	return Drawable;
 }
 
 bool _ReleaseCelData(void* handle)
 {
-	DRAWABLE DrawablePtr;
-	int cel_ct;
-	FRAME FramePtr = nullptr;
-
-	if ((DrawablePtr = (DRAWABLE)handle) == 0)
+	auto* DrawablePtr {static_cast<DRAWABLE>(handle)};
+	if (DrawablePtr == nullptr)
 	{
 		return (false);
 	}
 
-	cel_ct = DrawablePtr->MaxIndex + 1;
-	FramePtr = DrawablePtr->Frame;
-
-	HFree(handle);
-	if (FramePtr)
+	for (FRAME_DESC& frame : DrawablePtr->Frame)
 	{
-		int i;
-		for (i = 0; i < cel_ct; i++)
+		if (TFB_Image * img {frame.image})
 		{
-			TFB_Image* img = FramePtr[i].image;
-			if (img)
-			{
-				FramePtr[i].image = nullptr;
-				TFB_DrawScreen_DeleteImage(img);
-			}
+			frame.image = nullptr;
+			TFB_DrawScreen_DeleteImage(img);
 		}
-		HFree(FramePtr);
 	}
+	delete DrawablePtr;
 
 	return (true);
 }
@@ -358,7 +321,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 {
 	uint16_t numDirEntries;
 	DIRENTRY fontDir = nullptr;
-	BuildCharDesc* bcds = nullptr;
+	uqstl::vector<BuildCharDesc> bcds {};
 	size_t numBCDs = 0;
 	int dirEntryI;
 	uqstl::optional<uqm::io::Directory> fontDirHandle {};
@@ -391,11 +354,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 	}
 	numDirEntries = GetDirEntryTableCount(fontDir);
 
-	bcds = (BuildCharDesc*)HMalloc(numDirEntries * sizeof(BuildCharDesc));
-	if (bcds == nullptr)
-	{
-		goto err;
-	}
+	bcds.resize(numDirEntries);
 
 	// Load the surfaces for all dir Entries
 	for (dirEntryI = 0; dirEntryI < numDirEntries; dirEntryI++)
@@ -444,7 +403,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 		numBCDs++;
 	}
 
-	fontPtr = AllocFont(0);
+	fontPtr = new FONT_DESC {};
 	if (fontPtr == nullptr)
 	{
 		goto err;
@@ -535,7 +494,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 #endif
 
 	// sort on the character index
-	qsort(bcds, numBCDs, sizeof(BuildCharDesc), compareBCDIndex);
+	qsort(bcds.data(), numBCDs, sizeof(BuildCharDesc), compareBCDIndex);
 
 	{
 		size_t startBCD = 0;
@@ -607,24 +566,14 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 		fontPtr->CharSpace = RES_SCALE(1);
 	}
 
-	HFree(bcds);
-
 	return fontPtr;
 
 err:
-	if (fontPtr != 0)
-	{
-		HFree(fontPtr);
-	}
+	delete fontPtr;
 
-	if (bcds != nullptr)
+	for (size_t bcdI {}; bcdI < numBCDs; bcdI++)
 	{
-		size_t bcdI;
-		for (bcdI = 0; bcdI < numBCDs; bcdI++)
-		{
-			TFB_DrawCanvas_Delete(bcds[bcdI].canvas);
-		}
-		HFree(bcds);
+		TFB_DrawCanvas_Delete(bcds[bcdI].canvas);
 	}
 
 	fontDirHandle.reset();
@@ -672,7 +621,7 @@ bool _ReleaseFontData(void* handle)
 		}
 	}
 
-	HFree(font);
+	delete font;
 
 	return true;
 }

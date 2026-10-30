@@ -699,8 +699,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_DELETEDATA:
 				{
-					void* data = DC.data.deletedata.data;
-					HFree(data);
+					delete[] DC.data.deletedata.data;
 					break;
 				}
 
@@ -784,8 +783,7 @@ void TFB_PurgeDanglingGraphics(void)
 				}
 			case TFB_DRAWCOMMANDTYPE_DELETEDATA:
 				{
-					void* data = DC.data.deletedata.data;
-					HFree(data);
+					delete[] DC.data.deletedata.data;
 					break;
 				}
 			case TFB_DRAWCOMMANDTYPE_IMAGE:

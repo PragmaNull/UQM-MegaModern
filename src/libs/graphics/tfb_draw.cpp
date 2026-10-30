@@ -18,7 +18,6 @@
 #include "tfb_draw.h"
 #include "drawcmd.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 
 
 static const HOT_SPOT NullHs = {0, 0};
@@ -174,8 +173,8 @@ void TFB_DrawScreen_DeleteImage(TFB_Image* img)
 	}
 }
 
-void TFB_DrawScreen_DeleteData(void* data)
-// data must be a result of HXalloc() call
+// Deletes data made with new[], after the draw commands before it.
+void TFB_DrawScreen_DeleteData(uint8_t* data)
 {
 	if (data)
 	{

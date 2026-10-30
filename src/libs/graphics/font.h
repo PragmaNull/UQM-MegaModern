@@ -19,7 +19,7 @@
 #ifndef LIBS_GRAPHICS_FONT_H_
 #define LIBS_GRAPHICS_FONT_H_
 
-#include "libs/memlib.h"
+#include "core/stl/vector.h"
 
 #define MAX_DELTAS 100
 #define MAX_UNICODE 0xFFFF
@@ -31,22 +31,21 @@ typedef struct FontPage
 #define CHARACTER_PAGE_MASK 0xfffff800
 	uqm::UniChar firstChar;
 	size_t numChars;
-	TFB_Char* charDesc;
+	uqstl::vector<TFB_Char> charDesc;
 } FONT_PAGE;
 
 static inline FONT_PAGE*
 AllocFontPage(int numChars)
 {
-	FONT_PAGE* result = (FONT_PAGE*)HMalloc(sizeof(FONT_PAGE));
-	result->charDesc = (TFB_Char*)HCalloc(numChars * sizeof *result->charDesc);
+	auto* result {new FONT_PAGE {}};
+	result->charDesc.assign(numChars, TFB_Char {});
 	return result;
 }
 
 static inline void
 FreeFontPage(FONT_PAGE* page)
 {
-	HFree(page->charDesc);
-	HFree(page);
+	delete page;
 }
 
 struct font_desc
@@ -66,7 +65,6 @@ struct font_desc
 
 #define FONT_PRIORITY DEFAULT_MEM_PRIORITY
 
-#define AllocFont(size) (FONT) HCalloc(sizeof(FONT_DESC) + (size))
 #define FreeFont _ReleaseFontData
 
 extern FONT _CurFontPtr;
