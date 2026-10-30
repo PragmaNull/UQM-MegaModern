@@ -11,8 +11,8 @@
 #include "core/string/StringUtils.h"
 #include "core/thread/Mutex.h"
 #include "configuration/Configuration.h"
-#include "libs/callback/callback.h"
 #include "libs/graphics/imgui/toolwindows.h"
+#include "uqm/imgui/gamethread.h"
 #include "uqm/menudef.h"
 #include "uqm/setupsettings.h"
 
@@ -36,18 +36,6 @@ LoadedDefinition s_loaded {};
 uqstl::optional<MenuDefinition> s_definition {};
 bool s_loadRequested {};
 bool s_loadFailed {};
-
-// Runs the task on the game thread the next time that it processes callbacks.
-void runOnGameThread(uqstl::function<void()> task)
-{
-	auto owned {uqstl::make_unique<uqstl::function<void()>>(uqstl::move(task))};
-	Callback_add(
-		[](CallbackArg arg) {
-			const uqstl::unique_ptr<uqstl::function<void()>> task {static_cast<uqstl::function<void()>*>(arg)};
-			(*task)();
-		},
-		owned.release());
-}
 
 void setSetting(uqstl::string key, uqstl::string text)
 {

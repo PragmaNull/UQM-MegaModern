@@ -214,6 +214,13 @@ SetRandomMenuMusic(void)
 extern AudioDriverType snddriver;
 extern AudioFlags soundflags;
 
+static bool s_gameInProgress {};
+
+bool IsGameInProgress(void)
+{
+	return s_gameInProgress;
+}
+
 int Starcon2Main(void* threadArg)
 {
 	{
@@ -279,6 +286,7 @@ int Starcon2Main(void* threadArg)
 		InitGameClock();
 		initEventSystem();
 		AddInitialGameEvents();
+		s_gameInProgress = true;
 
 		// Reset Debug Key
 		DebugKeyPressed = false;
@@ -390,6 +398,7 @@ int Starcon2Main(void* threadArg)
 			}
 		} while (!(GLOBAL(CurrentActivity) & CHECK_ABORT));
 
+		s_gameInProgress = false;
 		StopSound();
 		uninitEventSystem();
 		UninitGameClock();

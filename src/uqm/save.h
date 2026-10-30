@@ -59,6 +59,9 @@ uqstl::string saveFileName(uint16_t which_game);
 
 extern void SaveProblem(void);
 extern bool SaveGame(uint16_t which_game, SUMMARY_DESC* summary_desc, const char* name);
+// The game state as JSON in the save file format. Does not change the game, so the location of the flagship
+// is as of the last change of activity. Leaves out the state files that are open.
+uqstl::string GameStateJson(void);
 
 extern const GameStateBitMap gameStateBitMap[];
 

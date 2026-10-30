@@ -1461,7 +1461,11 @@ uqstl::string saveFileName(uint16_t which_game)
 	return fmt::format("uqmsave.{:02}.json", which_game);
 }
 
-bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
+using MutDocPtr = uqstl::unique_ptr<yyjson_mut_doc, decltype(&yyjson_mut_doc_free)>;
+
+// Makes the save document from the game state. Skips the state files that are open.
+static MutDocPtr
+WriteGameDocument(const SUMMARY_DESC& summary)
 {
 	STAR_DESC SD {};
 	if (CurStarDescPtr)
@@ -1469,29 +1473,13 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 		SD = *CurStarDescPtr;
 	}
 
-	// XXX: Backup: SaveFlagshipState() overwrites ip_location
-	const GFXPOINT pt {GLOBAL(ip_location)};
-	SaveFlagshipState();
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
-		&& !(GLOBAL(CurrentActivity)
-			 & (START_ENCOUNTER | START_INTERPLANETARY)))
-	{
-		PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
-	}
-
-	const uqstl::unique_ptr<yyjson_mut_doc, decltype(&yyjson_mut_doc_free)> doc {yyjson_mut_doc_new(nullptr), &yyjson_mut_doc_free};
+	MutDocPtr doc {yyjson_mut_doc_new(nullptr), &yyjson_mut_doc_free};
 	yyjson_mut_val* root {yyjson_mut_obj(doc.get())};
 	yyjson_mut_doc_set_root(doc.get(), root);
 	yyjson_mut_obj_add_uint(doc.get(), root, "version", c_saveFormatVersion);
 
-	PrepareSummary(SummPtr, name);
-	SaveSummary(doc.get(), root, *SummPtr);
+	SaveSummary(doc.get(), root, summary);
 	SaveGameState(doc.get(), root, GlobData.Game_state);
-
-	// XXX: Restore
-	GLOBAL(ip_location) = pt;
-	// Only relevant when loading a game and must be cleaned
-	GLOBAL(in_orbit) = 0;
 
 	SaveRaceQueue(doc.get(), root, &GLOBAL(avail_race_q));
 	// START_INTERPLANETARY is only set when saving from Homeworld
@@ -1519,9 +1507,37 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 	SaveEvents(doc.get(), root);
 	// Black globes in HyperSpace and QuasiSpace
 	SaveEncounters(doc.get(), root);
-	SaveStarInfo(doc.get(), root);
-	SaveGroups(doc.get(), root);
+	if (!IsStateFileOpen(STARINFO_FILE))
+	{
+		SaveStarInfo(doc.get(), root);
+	}
+	if (!IsStateFileOpen(RANDGRPINFO_FILE) && !IsStateFileOpen(DEFGRPINFO_FILE))
+	{
+		SaveGroups(doc.get(), root);
+	}
 	SaveStarDesc(doc.get(), root, SD);
+	return doc;
+}
+
+bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
+{
+	// XXX: Backup: SaveFlagshipState() overwrites ip_location
+	const GFXPOINT pt {GLOBAL(ip_location)};
+	SaveFlagshipState();
+	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+		&& !(GLOBAL(CurrentActivity)
+			 & (START_ENCOUNTER | START_INTERPLANETARY)))
+	{
+		PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+	}
+
+	PrepareSummary(SummPtr, name);
+	const MutDocPtr doc {WriteGameDocument(*SummPtr)};
+
+	// XXX: Restore
+	GLOBAL(ip_location) = pt;
+	// Only relevant when loading a game and must be cleaned
+	GLOBAL(in_orbit) = 0;
 
 	size_t length {};
 	const uqstl::unique_ptr<char, decltype(&free)> text {
@@ -1534,4 +1550,16 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 		return false;
 	}
 	return true;
+}
+
+uqstl::string GameStateJson(void)
+{
+	SUMMARY_DESC summary {};
+	PrepareSummary(&summary, "");
+	const MutDocPtr doc {WriteGameDocument(summary)};
+
+	size_t length {};
+	const uqstl::unique_ptr<char, decltype(&free)> text {
+		yyjson_mut_write(doc.get(), YYJSON_WRITE_ALLOW_INVALID_UNICODE, &length), &free};
+	return text ? uqstl::string {text.get(), length} : uqstl::string {};
 }

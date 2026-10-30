@@ -73,6 +73,7 @@ typedef enum
 
 GAME_STATE_FILE* OpenStateFile(int stateFile, const char* mode);
 void CloseStateFile(GAME_STATE_FILE* fp);
+bool IsStateFileOpen(int stateFile);
 void DeleteStateFile(int stateFile);
 uint32_t LengthStateFile(GAME_STATE_FILE* fp);
 int ReadStateFile(void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_FILE* fp);
