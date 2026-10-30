@@ -47,7 +47,7 @@
 #include "libs/inplib.h"
 #include "core/thread/Thread.h"
 #include "libs/threadlib.h"
-#include "libs/scriptlib.h"
+#include "libs/luauqm/luauqm.h"
 #include "uqm/controls.h"
 #include "uqm/battle.h"
 // For BattleFrameRateTicks
@@ -61,7 +61,11 @@
 #ifdef NETPLAY
 #include "libs/callback/callback.h"
 #include "libs/callback/alarm.h"
-#include "libs/net.h"
+#include "libs/network/network.h"
+#include "libs/network/netmanager/netmanager.h"
+#include "libs/network/connect/connect.h"
+#include "libs/network/connect/listen.h"
+#include "libs/network/connect/resolve.h"
 #include "uqm/supermelee/netplay/netplay.h"
 #endif
 #include "uqm/setup.h"

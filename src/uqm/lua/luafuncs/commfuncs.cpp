@@ -27,7 +27,7 @@
 
 #define LUAUQM_INTERNAL
 #include "commfuncs.h"
-#include "libs/scriptlib.h"
+#include "libs/luauqm/luauqm.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
 

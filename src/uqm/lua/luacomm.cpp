@@ -27,7 +27,7 @@
 
 #include "options.h"
 // For contentDir
-#include "libs/scriptlib.h"
+#include "libs/luauqm/luauqm.h"
 #include "uqm/lua/luastate.h"
 #include "luafuncs/commfuncs.h"
 #include "luafuncs/customfuncs.h"

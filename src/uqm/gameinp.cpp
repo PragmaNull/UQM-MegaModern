@@ -36,7 +36,7 @@
 #include "sounds.h"
 #include "tactrans.h"
 #include "uqmdebug.h"
-#include "libs/async.h"
+#include "libs/callback/async.h"
 #include "libs/inplib.h"
 #include "libs/time/timelib.h"
 #include "libs/threadlib.h"

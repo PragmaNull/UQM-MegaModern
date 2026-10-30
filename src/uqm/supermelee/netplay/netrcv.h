@@ -19,7 +19,11 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_NETRCV_H_
 #define UQM_SUPERMELEE_NETPLAY_NETRCV_H_
 
-#include "libs/net.h"
+#include "libs/network/network.h"
+#include "libs/network/netmanager/netmanager.h"
+#include "libs/network/connect/connect.h"
+#include "libs/network/connect/listen.h"
+#include "libs/network/connect/resolve.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

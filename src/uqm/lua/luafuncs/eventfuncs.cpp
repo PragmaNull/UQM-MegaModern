@@ -21,7 +21,7 @@
 #include "uqm/clock.h"
 #include "uqm/gameev.h"
 #include "uqm/lua/luastate.h"
-#include "libs/scriptlib.h"
+#include "libs/luauqm/luauqm.h"
 #include "core/log/log.h"
 
 

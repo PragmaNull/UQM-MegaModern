@@ -18,7 +18,7 @@
 
 #define LUAUQM_INTERNAL
 #include "statefuncs.h"
-#include "libs/scriptlib.h"
+#include "libs/luauqm/luauqm.h"
 #include "core/log/log.h"
 
 #include "uqm/build.h"

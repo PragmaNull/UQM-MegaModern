@@ -48,7 +48,7 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
 #include "libs/misc.h"
-#include "libs/scriptlib.h"
+#include "libs/luauqm/luauqm.h"
 #include "build.h"
 #include "uqmversion.h"
 #include "options.h"

@@ -16,7 +16,7 @@
 
 #define LUAUQM_INTERNAL
 #include "logfuncs.h"
-#include "libs/scriptlib.h"
+#include "libs/luauqm/luauqm.h"
 #include "core/log/log.h"
 
 static int luaUqm_log_debug(lua_State* luaState);

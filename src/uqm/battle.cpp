@@ -40,7 +40,7 @@
 #include "setup.h"
 #include "settings.h"
 #include "sounds.h"
-#include "libs/async.h"
+#include "libs/callback/async.h"
 #include "libs/graphics/gfx_common.h"
 #include "core/log/log.h"
 #include "libs/mathlib.h"

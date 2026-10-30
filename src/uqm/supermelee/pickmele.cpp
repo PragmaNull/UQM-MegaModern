@@ -37,7 +37,7 @@
 #include "../races.h"
 #include "../setup.h"
 #include "../sounds.h"
-#include "libs/async.h"
+#include "libs/callback/async.h"
 #include "core/log/log.h"
 #include "libs/mathlib.h"
 

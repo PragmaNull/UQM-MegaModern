@@ -22,7 +22,7 @@
 #include "luainit.h"
 #include "uqm/globdata.h"
 #include "core/log/log.h"
-#include "libs/scriptlib.h"
+#include "libs/luauqm/luauqm.h"
 
 
 // We store the game state in the global Lua context, in the Lua registry.

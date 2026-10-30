@@ -92,7 +92,11 @@ extern "C" {
 #endif
 
 #ifdef NETCONNECTION_INTERNAL
-#include "libs/net.h"
+#include "libs/network/network.h"
+#include "libs/network/netmanager/netmanager.h"
+#include "libs/network/connect/connect.h"
+#include "libs/network/connect/listen.h"
+#include "libs/network/connect/resolve.h"
 #include "packetq.h"
 
 

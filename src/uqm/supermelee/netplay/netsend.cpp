@@ -26,7 +26,11 @@
 #include "packet.h"
 #include "core/log/log.h"
 #include "core/platform/platform.h"
-#include "libs/net.h"
+#include "libs/network/network.h"
+#include "libs/network/netmanager/netmanager.h"
+#include "libs/network/connect/connect.h"
+#include "libs/network/connect/listen.h"
+#include "libs/network/connect/resolve.h"
 
 #include <assert.h>
 #include <errno.h>

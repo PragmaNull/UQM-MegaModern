@@ -39,7 +39,6 @@ list(APPEND uqm_src_libs_master_files ${uqm_src_libs_video_master_files})
 ############################################################
 # Local files
 set(uqm_src_libs_files
-	"src/libs/async.h"
 	"src/libs/compiler.h"
 	"src/libs/gfxlib.h"
 	"src/libs/inplib.h"
@@ -47,10 +46,8 @@ set(uqm_src_libs_files
 	"src/libs/mathlib.h"
 	"src/libs/memlib.h"
 	"src/libs/misc.h"
-	"src/libs/net.h"
 	"src/libs/reslib.h"
-#	"src/libs/scriptlib.h"
-	"src/libs/sndlib.h"
+#	"src/libs/sndlib.h"
 	"src/libs/strlib.h"
 	"src/libs/threadlib.h"
 	"src/libs/vidlib.h"

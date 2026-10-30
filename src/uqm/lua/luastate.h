@@ -18,7 +18,7 @@
 #define UQM_LUA_LUASTATE_H_
 
 #include "libs/compiler.h"
-#include "libs/scriptlib.h"
+#include "libs/luauqm/luauqm.h"
 
 extern lua_State* luaUqm_globalState;
 
