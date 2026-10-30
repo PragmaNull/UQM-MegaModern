@@ -317,6 +317,7 @@ void mixSDL_Uninit(void)
 
 	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
 	{
+		const uqm::LockGuard lock {soundSource[i].stream_mutex};
 		if (soundSource[i].sample && soundSource[i].sample->decoder)
 		{
 			StopStream(i);

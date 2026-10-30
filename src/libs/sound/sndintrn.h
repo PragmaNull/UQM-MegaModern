@@ -54,22 +54,22 @@ struct tfb_soundsample
 // equivalent to channel in legacy sound code
 typedef struct tfb_soundsource
 {
+	uqm::RecursiveMutex stream_mutex;
 	TFB_SoundSample* sample;
 	audio_Object handle;
-	bool stream_should_be_playing;
-	uqm::RecursiveMutex stream_mutex;
-	int32_t start_time;	 // for tracks played-time math
-	uint32_t pause_time; // keep track for paused tracks
+	bool stream_should_be_playing UQM_GUARDED_BY(stream_mutex);
+	int32_t start_time UQM_GUARDED_BY(stream_mutex);  // for tracks played-time math
+	uint32_t pause_time UQM_GUARDED_BY(stream_mutex); // keep track for paused tracks
 	void* positional_object;
 
-	audio_Object last_q_buf; // for callbacks processing
+	audio_Object last_q_buf UQM_GUARDED_BY(stream_mutex); // for callbacks processing
 
 	// Cyclic waveform buffer for oscilloscope
-	void* sbuffer;
-	uint32_t sbuf_size;
-	uint32_t sbuf_tail;
-	uint32_t sbuf_head;
-	uint32_t sbuf_lasttime; // timestamp of the first queued buffer
+	void* sbuffer UQM_GUARDED_BY(stream_mutex);
+	uint32_t sbuf_size UQM_GUARDED_BY(stream_mutex);
+	uint32_t sbuf_tail UQM_GUARDED_BY(stream_mutex);
+	uint32_t sbuf_head UQM_GUARDED_BY(stream_mutex);
+	uint32_t sbuf_lasttime UQM_GUARDED_BY(stream_mutex); // timestamp of the first queued buffer
 } TFB_SoundSource;
 
 extern TFB_SoundSource soundSource[];

@@ -31,14 +31,14 @@
 
 static uqstl::jthread s_decoderThread {};
 
-static TimeCount musicFadeStartTime;
-static int32_t musicFadeInterval;
-static int musicFadeStartVolume;
-static int musicFadeDelta;
 // Mutex protects fade structures
 static uqm::Mutex fade_mutex {};
+static TimeCount musicFadeStartTime UQM_GUARDED_BY(fade_mutex);
+static int32_t musicFadeInterval UQM_GUARDED_BY(fade_mutex);
+static int musicFadeStartVolume UQM_GUARDED_BY(fade_mutex);
+static int musicFadeDelta UQM_GUARDED_BY(fade_mutex);
 
-static void add_scope_data(TFB_SoundSource* source, uint32_t bytes);
+static void add_scope_data(TFB_SoundSource* source, uint32_t bytes) UQM_REQUIRES(source->stream_mutex);
 
 
 void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool scope,
@@ -273,7 +273,8 @@ GetStreamTime(uint32_t source)
 
 bool PlayingStream(uint32_t source)
 {
-	return (bool)soundSource[source].stream_should_be_playing;
+	const uqm::LockGuard lock {soundSource[source].stream_mutex};
+	return soundSource[source].stream_should_be_playing;
 }
 
 
@@ -390,7 +391,7 @@ void TFB_ClearBufferTag(TFB_SoundTag* ptag)
 }
 
 static void
-remove_scope_data(TFB_SoundSource* source, audio_Object buffer)
+remove_scope_data(TFB_SoundSource* source, audio_Object buffer) UQM_REQUIRES(source->stream_mutex)
 {
 	audio_IntVal buf_size;
 
@@ -444,7 +445,7 @@ add_scope_data(TFB_SoundSource* source, uint32_t bytes)
 }
 
 static void
-process_stream(TFB_SoundSource* source)
+process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_mutex)
 {
 	TFB_SoundSample* sample = source->sample;
 	TFB_SoundDecoder* decoder = sample->decoder;
@@ -775,7 +776,7 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 		step = 4;
 	}
 
-	if (!PlayingStream(source_num) || !source->sample
+	if (!source->stream_should_be_playing || !source->sample
 		|| !source->sample->decoder || !source->sbuffer
 		|| source->sbuf_size == 0)
 	{ // We don't have data to return, oh well.

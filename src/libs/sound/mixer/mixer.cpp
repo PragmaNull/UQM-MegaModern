@@ -49,7 +49,7 @@ static uqm::RecursiveMutex buf_mutex {};
 static uqm::RecursiveMutex act_mutex {};
 
 #define MAX_SOURCES 8
-mixer_Source* active_sources[MAX_SOURCES];
+static mixer_Source* active_sources[MAX_SOURCES] UQM_GUARDED_BY(act_mutex);
 
 
 /*************************************************
@@ -85,7 +85,10 @@ bool mixer_Init(uint32_t frequency, uint32_t format, mixer_Quality quality,
 	}
 
 	last_error = MIX_NO_ERROR;
-	memset(active_sources, 0, sizeof(mixer_Source*) * MAX_SOURCES);
+	{
+		const uqm::LockGuard lock {act_mutex};
+		memset(active_sources, 0, sizeof(mixer_Source*) * MAX_SOURCES);
+	}
 
 	mixer_chansize = MIX_FORMAT_BPC(format);
 	mixer_channels = MIX_FORMAT_CHANS(format);

@@ -17,15 +17,18 @@
 #ifndef STREAM_H
 #define STREAM_H
 
+#include "sndintrn.h"
+
 int InitStreamDecoder(void);
 void UninitStreamDecoder(void);
 
+// The caller must hold the stream lock of the source.
 void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping,
-				bool scope, bool rewind);
-void StopStream(uint32_t source);
-void PauseStream(uint32_t source);
-void ResumeStream(uint32_t source);
-void SeekStream(uint32_t source, uint32_t pos);
+				bool scope, bool rewind) UQM_REQUIRES(soundSource[source].stream_mutex);
+void StopStream(uint32_t source) UQM_REQUIRES(soundSource[source].stream_mutex);
+void PauseStream(uint32_t source) UQM_REQUIRES(soundSource[source].stream_mutex);
+void ResumeStream(uint32_t source) UQM_REQUIRES(soundSource[source].stream_mutex);
+void SeekStream(uint32_t source, uint32_t pos) UQM_REQUIRES(soundSource[source].stream_mutex);
 uint32_t GetStreamFrame(uint32_t source);
 uint16_t GetNumTrackerPos(uint32_t source);
 bool IsTracker(uint32_t source);

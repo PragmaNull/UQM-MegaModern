@@ -58,7 +58,7 @@ static TFB_SoundChunk* cur_sub_chunk; // currently displayed subtitle chunk
 // Use caution when changing code, as you may need to guard other data
 // structures the same way.
 
-static void seek_track(int32_t offset);
+static void seek_track(int32_t offset) UQM_REQUIRES(soundSource[SPEECH_SOURCE].stream_mutex);
 
 // stream callbacks
 static bool OnStreamStart(TFB_SoundSample* sample);
@@ -723,7 +723,7 @@ seek_track(int32_t offset)
 }
 
 static int32_t
-get_current_track_pos(void)
+get_current_track_pos(void) UQM_REQUIRES(soundSource[SPEECH_SOURCE].stream_mutex)
 {
 	int32_t start_time = soundSource[SPEECH_SOURCE].start_time;
 	int32_t pos = GetTimeCounter() - start_time;
