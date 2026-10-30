@@ -190,16 +190,16 @@ void TFB_DrawScreen_DeleteData(void* data)
 
 void TFB_DrawScreen_WaitForSignal(void)
 {
+	// The renderer releases this when it reaches the command.
+	thread_local uqstl::binary_semaphore flushed {0};
 	TFB_DrawCommand DrawCommand;
-	Semaphore s;
-	s = GetMyThreadLocal()->flushSem;
 	DrawCommand.Type = TFB_DRAWCOMMANDTYPE_SENDSIGNAL;
-	DrawCommand.data.sendsignal.sem = s;
+	DrawCommand.data.sendsignal.sem = &flushed;
 	Lock_DCQ(1);
 	TFB_BatchReset();
 	TFB_EnqueueDrawCommand(&DrawCommand);
 	Unlock_DCQ();
-	SetSemaphore(s);
+	flushed.acquire();
 }
 
 void TFB_DrawScreen_ReinitVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int width, int height)
@@ -225,63 +225,56 @@ void TFB_DrawScreen_Callback(void (*callback)(void* arg), void* arg)
 void TFB_DrawImage_Line(int x1, int y1, int x2, int y2, Color color,
 						DrawMode mode, TFB_Image* target, uint8_t thickness)
 {
-	LockMutex(target->mutex);
+	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_Line(x1, y1, x2, y2, color, mode, target->NormalImg, thickness);
 	target->dirty = true;
-	UnlockMutex(target->mutex);
 }
 
 void TFB_DrawImage_Rect(GFXRECT* rect, Color color, DrawMode mode, TFB_Image* target)
 {
-	LockMutex(target->mutex);
+	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_Rect(rect, color, mode, target->NormalImg);
 	target->dirty = true;
-	UnlockMutex(target->mutex);
 }
 
 void TFB_DrawImage_Image(TFB_Image* img, int x, int y, int scale,
 						 uqm::TFBScaleMode scaleMode, TFB_ColorMap* cmap, DrawMode mode, TFB_Image* target)
 {
-	LockMutex(target->mutex);
+	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_Image(img, x, y, scale, scaleMode, cmap,
 						 mode, target->NormalImg);
 	target->dirty = true;
-	UnlockMutex(target->mutex);
 }
 
 void TFB_DrawImage_FilledImage(TFB_Image* img, int x, int y, int scale,
 							   uqm::TFBScaleMode scaleMode, Color color, DrawMode mode, TFB_Image* target)
 {
-	LockMutex(target->mutex);
+	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_FilledImage(img, x, y, scale, scaleMode, color,
 							   mode, target->NormalImg);
 	target->dirty = true;
-	UnlockMutex(target->mutex);
 }
 
 void TFB_DrawImage_FontChar(TFB_Char* fontChar, TFB_Image* backing,
 							int x, int y, DrawMode mode, TFB_Image* target)
 {
-	LockMutex(target->mutex);
+	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_FontChar(fontChar, backing, x, y, mode, target->NormalImg);
 	target->dirty = true;
-	UnlockMutex(target->mutex);
 }
 
 void TFB_DrawImage_MaskImage(TFB_Image* img, DrawMode mode, TFB_Image* target, Color* fill)
 {
-	LockMutex(target->mutex);
+	const uqm::LockGuard lock {target->mutex};
 	TFB_DrawCanvas_MaskImage(img, mode, target->NormalImg, fill);
 	target->dirty = true;
-	UnlockMutex(target->mutex);
 }
 
 
 TFB_Image*
 TFB_DrawImage_New(TFB_Canvas canvas)
 {
-	TFB_Image* img = (TFB_Image*)HMalloc(sizeof(TFB_Image));
-	img->mutex = CREATEMUTEX("image lock", SYNC_CLASS_VIDEO);
+	auto* img {new TFB_Image {}};
 	img->ScaledImg = nullptr;
 	img->MipmapImg = nullptr;
 	img->FilledImg = nullptr;
@@ -310,8 +303,7 @@ TFB_DrawImage_New(TFB_Canvas canvas)
 TFB_Image*
 TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
 {
-	TFB_Image* img = (TFB_Image*)HMalloc(sizeof(TFB_Image));
-	img->mutex = CREATEMUTEX("image lock", SYNC_CLASS_VIDEO);
+	auto* img {new TFB_Image {}};
 	img->ScaledImg = nullptr;
 	img->MipmapImg = nullptr;
 	img->FilledImg = nullptr;
@@ -369,8 +361,8 @@ void TFB_DrawImage_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx, int hot
 		return;
 	}
 
-	LockMutex(img->mutex);
-	LockMutex(mmimg->mutex);
+	const uqm::LockGuard imgLock {img->mutex};
+	const uqm::LockGuard mmimgLock {mmimg->mutex};
 
 	// Either both images must be using the same colormap, or mipmap image
 	// must not be paletted. This restriction is due to the current
@@ -388,9 +380,6 @@ void TFB_DrawImage_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx, int hot
 	{
 		img->MipmapImg = nullptr;
 	}
-
-	UnlockMutex(mmimg->mutex);
-	UnlockMutex(img->mutex);
 }
 
 void TFB_DrawImage_Delete(TFB_Image* image)
@@ -401,26 +390,25 @@ void TFB_DrawImage_Delete(TFB_Image* image)
 		/* Should we die here? */
 		return;
 	}
-	LockMutex(image->mutex);
-
-	TFB_DrawCanvas_Delete(image->NormalImg);
-
-	if (image->ScaledImg)
 	{
-		TFB_DrawCanvas_Delete(image->ScaledImg);
-		image->ScaledImg = 0;
+		const uqm::LockGuard lock {image->mutex};
+
+		TFB_DrawCanvas_Delete(image->NormalImg);
+
+		if (image->ScaledImg)
+		{
+			TFB_DrawCanvas_Delete(image->ScaledImg);
+			image->ScaledImg = 0;
+		}
+
+		if (image->FilledImg)
+		{
+			TFB_DrawCanvas_Delete(image->FilledImg);
+			image->FilledImg = 0;
+		}
 	}
 
-	if (image->FilledImg)
-	{
-		TFB_DrawCanvas_Delete(image->FilledImg);
-		image->FilledImg = 0;
-	}
-
-	UnlockMutex(image->mutex);
-	DestroyMutex(image->mutex);
-
-	HFree(image);
+	delete image;
 }
 
 void TFB_DrawImage_FixScaling(TFB_Image* image, int scaleTarget, uqm::TFBScaleMode type)
@@ -459,26 +447,18 @@ void TFB_DrawImage_FixScaling(TFB_Image* image, int scaleTarget, uqm::TFBScaleMo
 bool TFB_DrawImage_Intersect(TFB_Image* img1, GFXPOINT img1org,
 							 TFB_Image* img2, GFXPOINT img2org, const GFXRECT* interRect)
 {
-	bool ret;
-
-	LockMutex(img1->mutex);
-	LockMutex(img2->mutex);
-	ret = TFB_DrawCanvas_Intersect(img1->NormalImg, img1org,
-								   img2->NormalImg, img2org, interRect);
-	UnlockMutex(img2->mutex);
-	UnlockMutex(img1->mutex);
-
-	return ret;
+	const uqm::LockGuard lock1 {img1->mutex};
+	const uqm::LockGuard lock2 {img2->mutex};
+	return TFB_DrawCanvas_Intersect(img1->NormalImg, img1org,
+									img2->NormalImg, img2org, interRect);
 }
 
 void TFB_DrawImage_CopyRect(TFB_Image* source, const GFXRECT* srcRect,
 							TFB_Image* target, GFXPOINT dstPt)
 {
-	LockMutex(source->mutex);
-	LockMutex(target->mutex);
+	const uqm::LockGuard sourceLock {source->mutex};
+	const uqm::LockGuard targetLock {target->mutex};
 	TFB_DrawCanvas_CopyRect(source->NormalImg, srcRect,
 							target->NormalImg, dstPt);
 	target->dirty = true;
-	UnlockMutex(target->mutex);
-	UnlockMutex(source->mutex);
 }

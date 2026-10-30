@@ -158,20 +158,20 @@ void TFB_Prim_Stamp(STAMP* stmp, DrawMode mode, GFXPOINT ctxOrigin, bool unscale
 		return;
 	}
 
-	LockMutex(img->mutex);
-
-	img->NormalHs = SrcFramePtr->HotSpot;
-	// We scale the image size here, but the caller must scale the origin!
-	x = stmp->origin.x + ctxOrigin.x;
-	y = stmp->origin.y + ctxOrigin.y;
-
-	if (TFB_DrawCanvas_IsPaletted(img->NormalImg) && img->colormap_index != -1)
 	{
-		// returned cmap is addrefed, must release later
-		cmap = TFB_GetColorMap(img->colormap_index);
-	}
+		const uqm::LockGuard imageLock {img->mutex};
 
-	UnlockMutex(img->mutex);
+		img->NormalHs = SrcFramePtr->HotSpot;
+		// We scale the image size here, but the caller must scale the origin!
+		x = stmp->origin.x + ctxOrigin.x;
+		y = stmp->origin.y + ctxOrigin.y;
+
+		if (TFB_DrawCanvas_IsPaletted(img->NormalImg) && img->colormap_index != -1)
+		{
+			// returned cmap is addrefed, must release later
+			cmap = TFB_GetColorMap(img->colormap_index);
+		}
+	}
 
 	if (unscaled)
 	{
@@ -217,14 +217,14 @@ void TFB_Prim_StampFill(STAMP* stmp, Color color, DrawMode mode, GFXPOINT ctxOri
 		return;
 	}
 
-	LockMutex(img->mutex);
+	{
+		const uqm::LockGuard imageLock {img->mutex};
 
-	img->NormalHs = SrcFramePtr->HotSpot;
-	// We scale the image size here, but the caller must scale the origin!
-	x = stmp->origin.x + ctxOrigin.x;
-	y = stmp->origin.y + ctxOrigin.y;
-
-	UnlockMutex(img->mutex);
+		img->NormalHs = SrcFramePtr->HotSpot;
+		// We scale the image size here, but the caller must scale the origin!
+		x = stmp->origin.x + ctxOrigin.x;
+		y = stmp->origin.y + ctxOrigin.y;
+	}
 
 	if (unscaled)
 	{

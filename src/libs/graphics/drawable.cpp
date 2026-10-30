@@ -376,12 +376,10 @@ void SetFrameTransparentColor(FRAME frame, Color color)
 	assert(frame->Type != SCREEN_DRAWABLE);
 
 	img = frame->image;
-	LockMutex(img->mutex);
+	const uqm::LockGuard imageLock {img->mutex};
 
 	// TODO: This should defer to TFB_DrawImage instead
 	TFB_DrawCanvas_SetTransparentColor(img->NormalImg, color, false);
-
-	UnlockMutex(img->mutex);
 }
 
 Color GetFramePixel(FRAME frame, GFXPOINT pixelPt)
@@ -397,12 +395,11 @@ Color GetFramePixel(FRAME frame, GFXPOINT pixelPt)
 	assert(frame->Type != SCREEN_DRAWABLE);
 
 	img = frame->image;
-	LockMutex(img->mutex);
+	const uqm::LockGuard imageLock {img->mutex};
 
 	// TODO: This should defer to TFB_DrawImage instead
 	ret = TFB_DrawCanvas_GetPixel(img->NormalImg, pixelPt.x, pixelPt.y);
 
-	UnlockMutex(img->mutex);
 
 	return ret;
 }
@@ -551,7 +548,7 @@ RescaleFrame(FRAME frame, int width, int height)
 	newFrame->HotSpot.y = frame->HotSpot.y * height / frame->Bounds.height;
 
 	img = frame->image;
-	LockMutex(img->mutex);
+	const uqm::LockGuard imageLock {img->mutex};
 	// NOTE: We do not lock the target image because nothing has a
 	//   reference to it yet!
 	src = img->NormalImg;
@@ -559,7 +556,6 @@ RescaleFrame(FRAME frame, int width, int height)
 
 	TFB_DrawCanvas_Rescale_Nearest(src, dst, -1, nullptr, nullptr, nullptr);
 
-	UnlockMutex(img->mutex);
 
 	return ReleaseDrawable(newFrame);
 }
@@ -596,7 +592,7 @@ RescalePercentage(FRAME frame, float percentage)
 	newFrame->HotSpot.y = (int16_t)(frame->HotSpot.y * percentage);
 
 	img = frame->image;
-	LockMutex(img->mutex);
+	const uqm::LockGuard imageLock {img->mutex};
 	// NOTE: We do not lock the target image because nothing has a
 	//   reference to it yet!
 	src = img->NormalImg;
@@ -604,7 +600,6 @@ RescalePercentage(FRAME frame, float percentage)
 
 	TFB_DrawCanvas_Rescale_Bilinear(src, dst, -1, nullptr, nullptr, nullptr);
 
-	UnlockMutex(img->mutex);
 
 	return ReleaseDrawable(newFrame);
 }

@@ -23,6 +23,7 @@
 #include <cstdint>
 #include "videodec.h"
 #include "libs/sound/sound.h"
+#include "core/thread/Mutex.h"
 
 
 typedef struct tfb_videoclip
@@ -43,9 +44,9 @@ typedef struct tfb_videoclip
 	uint32_t loop_frame; // frame index to loop from
 	uint32_t loop_to;	 // frame index to loop to
 
-	Mutex guard;
-	uint32_t want_frame; // audio-signaled desired frame index
-	int lag_cnt;		 // N of frames video is behind or ahead of audio
+	uqm::Mutex guard;
+	uint32_t want_frame UQM_GUARDED_BY(guard); // audio-signaled desired frame index
+	int lag_cnt;							   // N of frames video is behind or ahead of audio
 
 	void* data; // user-defined data
 

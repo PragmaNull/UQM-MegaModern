@@ -97,9 +97,10 @@ processAudioSyncedFrame(VIDEO_REF vid)
 		return true; // not time yet
 	}
 
-	LockMutex(vid->guard);
-	want_frame = vid->want_frame;
-	UnlockMutex(vid->guard);
+	{
+		const uqm::LockGuard lock {vid->guard};
+		want_frame = vid->want_frame;
+	}
 
 	if (want_frame >= vid->decoder->frame_count)
 	{
@@ -223,15 +224,15 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 {
 	GFXRECT scrn_r;
 	GFXRECT clip_r = {
-		{0,			 0			 },
+		{0,			   0			  },
 		{(int16_t)vid->w, (int16_t)vid->h}
 	  };
 	GFXRECT vid_r = {
-		{0,				  0				  },
+		{0,					0					},
 		{(int16_t)CanvasWidth, (int16_t)CanvasHeight}
 	 };
 	GFXRECT dr = {
-		{(int16_t)x,	   (int16_t)y	   },
+		{(int16_t)x,		 (int16_t)y	   },
 		{(int16_t)vid->w, (int16_t)vid->h}
 	  };
 	GFXRECT sr;
@@ -279,7 +280,10 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 
 	vid->frame = TFB_DrawImage_CreateForScreen(vid->w, vid->h, false);
 	vid->cur_frame = -1;
-	vid->want_frame = -1;
+	{
+		const uqm::LockGuard lock {vid->guard};
+		vid->want_frame = -1;
+	}
 
 	if (!vid->hAudio)
 	{
@@ -387,9 +391,10 @@ TFB_GetVideoPosition(VIDEO_REF vid)
 		return 0;
 	}
 
-	LockMutex(vid->guard);
-	pos = (uint32_t)(vid->decoder->pos * 1000);
-	UnlockMutex(vid->guard);
+	{
+		const uqm::LockGuard lock {vid->guard};
+		pos = (uint32_t)(vid->decoder->pos * 1000);
+	}
 
 	return pos;
 }
@@ -486,9 +491,10 @@ vp_AudioStart(TFB_SoundSample* sample)
 
 	decoder = TFB_GetSoundSampleDecoder(sample);
 
-	LockMutex(vid->guard);
-	vid->want_frame = SoundDecoder_GetFrame(decoder);
-	UnlockMutex(vid->guard);
+	{
+		const uqm::LockGuard lock {vid->guard};
+		vid->want_frame = SoundDecoder_GetFrame(decoder);
+	}
 
 	return true;
 }
@@ -500,9 +506,10 @@ vp_AudioEnd(TFB_SoundSample* sample)
 
 	assert(vid != nullptr);
 
-	LockMutex(vid->guard);
-	vid->want_frame = vid->decoder->frame_count; // end it
-	UnlockMutex(vid->guard);
+	{
+		const uqm::LockGuard lock {vid->guard};
+		vid->want_frame = vid->decoder->frame_count; // end it
+	}
 }
 
 static void
@@ -514,9 +521,10 @@ vp_BufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
 	assert(sizeof(tag->data) >= sizeof(frame));
 	assert(vid != nullptr);
 
-	LockMutex(vid->guard);
-	vid->want_frame = frame; // let it go!
-	UnlockMutex(vid->guard);
+	{
+		const uqm::LockGuard lock {vid->guard};
+		vid->want_frame = frame; // let it go!
+	}
 }
 
 static void

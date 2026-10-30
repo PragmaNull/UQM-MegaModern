@@ -241,7 +241,7 @@ void TFB_DrawCanvas_Image(TFB_Image* img, int x, int y, int scale,
 		return;
 	}
 
-	LockMutex(img->mutex);
+	const uqm::LockGuard imageLock {img->mutex};
 
 	NormalPal = ((SDL_Surface*)img->NormalImg)->format->palette;
 	// only set the new palette if it changed
@@ -346,7 +346,6 @@ void TFB_DrawCanvas_Image(TFB_Image* img, int x, int y, int scale,
 	}
 
 	TFB_DrawCanvas_Blit(surf, pSrcRect, (SDL_Surface*)target, &targetRect, mode);
-	UnlockMutex(img->mutex);
 }
 
 // Assumes the source and destination surfaces are in the same format
@@ -476,7 +475,7 @@ void TFB_DrawCanvas_FilledImage(TFB_Image* img, int x, int y, int scale,
 
 	checkPrimitiveMode(dst, &color, &mode);
 
-	LockMutex(img->mutex);
+	const uqm::LockGuard imageLock {img->mutex};
 
 	if (scale != 0 && scale != GSCALE_IDENTITY)
 	{
@@ -592,7 +591,6 @@ void TFB_DrawCanvas_FilledImage(TFB_Image* img, int x, int y, int scale,
 	}
 
 	TFB_DrawCanvas_Blit(surf, pSrcRect, dst, &targetRect, mode);
-	UnlockMutex(img->mutex);
 }
 
 void TFB_DrawCanvas_FontChar(TFB_Char* fontChar, TFB_Image* backing,
@@ -626,7 +624,7 @@ void TFB_DrawCanvas_FontChar(TFB_Char* fontChar, TFB_Image* backing,
 		return;
 	}
 
-	LockMutex(backing->mutex);
+	const uqm::LockGuard imageLock {backing->mutex};
 
 	surf = (SDL_Surface*)backing->NormalImg;
 	if (surf->format->BytesPerPixel != 4
@@ -636,7 +634,6 @@ void TFB_DrawCanvas_FontChar(TFB_Char* fontChar, TFB_Image* backing,
 					   "TFB_DrawCanvas_FontChar bad backing surface: {}x{}x{}; "
 					   "char: {}x{}",
 					   surf->w, surf->h, (int)surf->format->BytesPerPixel, w, h);
-		UnlockMutex(backing->mutex);
 		return;
 	}
 
@@ -718,7 +715,6 @@ void TFB_DrawCanvas_FontChar(TFB_Char* fontChar, TFB_Image* backing,
 	SDL_UnlockSurface(surf);
 
 	TFB_DrawCanvas_Blit(surf, &srcRect, dst, &targetRect, mode);
-	UnlockMutex(backing->mutex);
 }
 
 static void
@@ -810,7 +806,7 @@ void TFB_DrawCanvas_MaskImage(TFB_Image* img, DrawMode mode, TFB_Canvas target, 
 	{
 		SDL_Surface* surf;
 
-		LockMutex(img->mutex);
+		const uqm::LockGuard imageLock {img->mutex};
 		surf = (SDL_Surface*)img->NormalImg;
 
 		if (surf->format->palette)
@@ -822,7 +818,6 @@ void TFB_DrawCanvas_MaskImage(TFB_Image* img, DrawMode mode, TFB_Canvas target, 
 		}
 
 		TFB_DrawCanvas_Mask(surf, (SDL_Surface*)target, mode, fill);
-		UnlockMutex(img->mutex);
 	}
 }
 

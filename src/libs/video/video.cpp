@@ -185,12 +185,11 @@ _init_video_file(const char* pStr)
 		return NULL_VIDEO_REF;
 	}
 
-	vid = (TFB_VideoClip*)HCalloc(sizeof(*vid));
+	vid = new TFB_VideoClip {};
 	vid->decoder = dec;
 	vid->length = dec->length;
 	vid->w = vid->decoder->w - IF_HD(4);
 	vid->h = vid->decoder->h + IF_HD(7);
-	vid->guard = CREATEMUTEX("video guard", SYNC_CLASS_VIDEO);
 
 	return (VIDEO_REF)vid;
 }
@@ -206,8 +205,7 @@ bool DestroyVideo(VIDEO_REF vid)
 	TFB_StopVideo(vid);
 
 	VideoDecoder_Free(vid->decoder);
-	DestroyMutex(vid->guard);
-	HFree(vid);
+	delete vid;
 
 	return true;
 }

@@ -21,6 +21,8 @@
 
 #include "libs/graphics/tfb_draw.h"
 
+#include <semaphore>
+
 enum
 {
 	TFB_DRAWCOMMANDTYPE_LINE,
@@ -129,7 +131,7 @@ typedef struct tfb_dc_deldata
 
 typedef struct tfb_dc_signal
 {
-	Semaphore sem;
+	uqstl::binary_semaphore* sem;
 } TFB_DrawCommand_SendSignal;
 
 typedef struct tfb_dc_reinit_video

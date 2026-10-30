@@ -31,12 +31,61 @@
 #include "libs/graphics/font.h"
 #include "uqm/setup.h"
 
-#ifdef DEBUG_DCQ_THREADS
-#include "../threads/sdl/sdlthreads.h"
-#endif
-static RecursiveMutex DCQ_Mutex;
+#include "core/thread/Mutex.h"
 
-CondVar RenderingCond;
+#include <condition_variable>
+#include <thread>
+
+namespace
+{
+
+// The DCQ lock. A thread can lock it more than once.
+uqm::RecursiveMutex s_dcqMutex {};
+// The number of times that the owner has locked s_dcqMutex.
+int s_dcqDepth UQM_GUARDED_BY(s_dcqMutex) {};
+// The renderer signals this when the queue is empty.
+uqstl::condition_variable_any s_renderingDone {};
+
+void lockDcq() UQM_ACQUIRE(s_dcqMutex)
+{
+	s_dcqMutex.lock();
+	++s_dcqDepth;
+}
+
+void unlockDcq() UQM_RELEASE(s_dcqMutex)
+{
+	--s_dcqDepth;
+	s_dcqMutex.unlock();
+}
+
+// Releases all the levels of the DCQ lock while a thread waits, and then restores them.
+class DcqFullRelease
+{
+public:
+	void unlock() UQM_NO_THREAD_SAFETY_ANALYSIS
+	{
+		m_depth = s_dcqDepth;
+		s_dcqDepth = 0;
+		for (int i {}; i < m_depth; ++i)
+		{
+			s_dcqMutex.unlock();
+		}
+	}
+
+	void lock() UQM_NO_THREAD_SAFETY_ANALYSIS
+	{
+		for (int i {}; i < m_depth; ++i)
+		{
+			s_dcqMutex.lock();
+		}
+		s_dcqDepth = m_depth;
+	}
+
+private:
+	int m_depth {};
+};
+
+} // namespace
 
 TFB_DrawCommand DCQ[DCQ_MAX];
 
@@ -47,44 +96,42 @@ static inline constexpr auto DCQueueTicksForFps {getTicksForFramerate(DCQueueFPS
 int RenderedFrames = 0;
 
 
-// Wait for the queue to be emptied.
+static bool
+DCQ_HasSpace(int slots)
+{
+	return DrawCommandQueue.FullSize < DCQ_MAX - slots;
+}
+
+// Wait for the queue to be emptied. Always have the DCQ locked when calling this.
 static void
 TFB_WaitForSpace(int requested_slots)
 {
-	int old_depth, i;
 	uqm::log::debug("DCQ overload (Size = {}, FullSize = {}, "
 					"Requested = {}).  Sleeping until renderer is done.",
 					DrawCommandQueue.Size, DrawCommandQueue.FullSize,
 					requested_slots);
-	// Restore the DCQ locking level.  I *think* this is
-	// always 1, but...
 	TFB_BatchReset();
-	old_depth = GetRecursiveMutexDepth(DCQ_Mutex);
-	for (i = 0; i < old_depth; i++)
-	{
-		UnlockRecursiveMutex(DCQ_Mutex);
-	}
-	WaitCondVar(RenderingCond);
-	for (i = 0; i < old_depth; i++)
-	{
-		LockRecursiveMutex(DCQ_Mutex);
-	}
+	DcqFullRelease release {};
+	s_renderingDone.wait(release, [requested_slots] {
+		return DCQ_HasSpace(requested_slots);
+	});
 	uqm::log::debug("DCQ clear (Size = {}, FullSize = {}).  Continuing.",
 					DrawCommandQueue.Size, DrawCommandQueue.FullSize);
 }
 
-void Lock_DCQ(int slots)
+// Holds the DCQ lock until Unlock_DCQ, so the analysis cannot check it.
+void Lock_DCQ(int slots) UQM_NO_THREAD_SAFETY_ANALYSIS
 {
-	LockRecursiveMutex(DCQ_Mutex);
-	while (DrawCommandQueue.FullSize >= DCQ_MAX - slots)
+	lockDcq();
+	if (!DCQ_HasSpace(slots))
 	{
 		TFB_WaitForSpace(slots);
 	}
 }
 
-void Unlock_DCQ(void)
+void Unlock_DCQ(void) UQM_NO_THREAD_SAFETY_ANALYSIS
 {
-	UnlockRecursiveMutex(DCQ_Mutex);
+	unlockDcq();
 }
 
 // Always have the DCQ locked when calling this.
@@ -110,20 +157,20 @@ Synchronize_DCQ(void)
 
 void TFB_BatchGraphics(void)
 {
-	LockRecursiveMutex(DCQ_Mutex);
+	lockDcq();
 	DrawCommandQueue.Batching++;
-	UnlockRecursiveMutex(DCQ_Mutex);
+	unlockDcq();
 }
 
 void TFB_UnbatchGraphics(void)
 {
-	LockRecursiveMutex(DCQ_Mutex);
+	lockDcq();
 	if (DrawCommandQueue.Batching)
 	{
 		DrawCommandQueue.Batching--;
 	}
 	Synchronize_DCQ();
-	UnlockRecursiveMutex(DCQ_Mutex);
+	unlockDcq();
 }
 
 // Cancel all pending batch operations, making them unbatched.  This will
@@ -131,10 +178,10 @@ void TFB_UnbatchGraphics(void)
 // batching problems from freezing the game.
 void TFB_BatchReset(void)
 {
-	LockRecursiveMutex(DCQ_Mutex);
+	lockDcq();
 	DrawCommandQueue.Batching = 0;
 	Synchronize_DCQ();
-	UnlockRecursiveMutex(DCQ_Mutex);
+	unlockDcq();
 }
 
 
@@ -150,27 +197,10 @@ void Init_DrawCommandQueue(void)
 	DrawCommandQueue.Size = 0;
 
 	TFB_BBox_Init(CanvasWidth, CanvasHeight);
-
-	DCQ_Mutex = CREATERECURSIVEMUTEX("DCQ",
-									 SYNC_CLASS_TOPLEVEL | SYNC_CLASS_VIDEO);
-
-	RenderingCond = CREATECONDVAR("DCQ empty",
-								  SYNC_CLASS_TOPLEVEL | SYNC_CLASS_VIDEO);
 }
 
 void Uninit_DrawCommandQueue(void)
 {
-	if (RenderingCond)
-	{
-		DestroyCondVar(RenderingCond);
-		RenderingCond = 0;
-	}
-
-	if (DCQ_Mutex)
-	{
-		DestroyRecursiveMutex(DCQ_Mutex);
-		DCQ_Mutex = 0;
-	}
 }
 
 void TFB_DrawCommandQueue_Push(TFB_DrawCommand* Command)
@@ -186,11 +216,11 @@ void TFB_DrawCommandQueue_Push(TFB_DrawCommand* Command)
 
 int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
 {
-	LockRecursiveMutex(DCQ_Mutex);
+	lockDcq();
 
 	if (DrawCommandQueue.Size == 0)
 	{
-		Unlock_DCQ();
+		unlockDcq();
 		return (0);
 	}
 
@@ -199,7 +229,7 @@ int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
 		uqm::log::debug("Augh!  Assertion failure in DCQ!  "
 						"Front == Back, Size != DCQ_MAX");
 		DrawCommandQueue.Size = 0;
-		Unlock_DCQ();
+		unlockDcq();
 		return (0);
 	}
 
@@ -208,29 +238,28 @@ int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
 
 	DrawCommandQueue.Size--;
 	DrawCommandQueue.FullSize--;
-	UnlockRecursiveMutex(DCQ_Mutex);
+	unlockDcq();
 
 	return 1;
 }
 
 void TFB_DrawCommandQueue_Clear()
 {
-	LockRecursiveMutex(DCQ_Mutex);
+	lockDcq();
 	DrawCommandQueue.Size = 0;
 	DrawCommandQueue.Front = 0;
 	DrawCommandQueue.Back = 0;
 	DrawCommandQueue.Batching = 0;
 	DrawCommandQueue.FullSize = 0;
 	DrawCommandQueue.InsertionPoint = 0;
-	UnlockRecursiveMutex(DCQ_Mutex);
+	unlockDcq();
 }
 
 static void
 checkExclusiveThread(TFB_DrawCommand* DrawCommand)
 {
 #ifdef DEBUG_DCQ_THREADS
-	static uint32_t exclusiveThreadId;
-	//extern uint32_t SDL_ThreadID(void);
+	static uqstl::thread::id exclusiveThreadId {};
 
 	// Only one thread is currently allowed to enqueue commands
 	// This is not a technical limitation but rather a semantical one atm.
@@ -240,13 +269,13 @@ checkExclusiveThread(TFB_DrawCommand* DrawCommand)
 		return;
 	}
 
-	if (!exclusiveThreadId)
+	if (exclusiveThreadId == uqstl::thread::id {})
 	{
-		exclusiveThreadId = SDL_ThreadID();
+		exclusiveThreadId = uqstl::this_thread::get_id();
 	}
 	else
 	{
-		assert(SDL_ThreadID() == exclusiveThreadId);
+		assert(uqstl::this_thread::get_id() == exclusiveThreadId);
 	}
 #else
 	(void)DrawCommand; // suppress unused warning
@@ -411,7 +440,7 @@ void TFB_FlushGraphics(void)
 
 		last_fade = current_fade;
 		last_transition = current_transition;
-		BroadcastCondVar(RenderingCond);
+		s_renderingDone.notify_all();
 		return;
 	}
 
@@ -479,7 +508,7 @@ void TFB_FlushGraphics(void)
 
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
 					{
-						LockMutex(DC_image->mutex);
+						const uqm::LockGuard imageLock {DC_image->mutex};
 						if (cmd->scale)
 						{
 							TFB_BBox_RegisterCanvas(DC_image->ScaledImg,
@@ -492,7 +521,6 @@ void TFB_FlushGraphics(void)
 													x - DC_image->NormalHs.x,
 													y - DC_image->NormalHs.y);
 						}
-						UnlockMutex(DC_image->mutex);
 					}
 
 					break;
@@ -512,7 +540,7 @@ void TFB_FlushGraphics(void)
 
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
 					{
-						LockMutex(DC_image->mutex);
+						const uqm::LockGuard imageLock {DC_image->mutex};
 						if (cmd->scale)
 						{
 							TFB_BBox_RegisterCanvas(DC_image->ScaledImg,
@@ -525,7 +553,6 @@ void TFB_FlushGraphics(void)
 													x - DC_image->NormalHs.x,
 													y - DC_image->NormalHs.y);
 						}
-						UnlockMutex(DC_image->mutex);
 					}
 
 					break;
@@ -619,11 +646,10 @@ void TFB_FlushGraphics(void)
 										"image ptr");
 						break;
 					}
-					LockMutex(DC_image->mutex);
+					const uqm::LockGuard imageLock {DC_image->mutex};
 					TFB_DrawCanvas_CopyRect(
 						TFB_GetScreenCanvas(cmd->srcBuffer), &cmd->rect,
 						DC_image->NormalImg, dstPt);
-					UnlockMutex(DC_image->mutex);
 					break;
 				}
 
@@ -658,7 +684,7 @@ void TFB_FlushGraphics(void)
 				}
 
 			case TFB_DRAWCOMMANDTYPE_SENDSIGNAL:
-				ClearSemaphore(DC.data.sendsignal.sem);
+				DC.data.sendsignal.sem->release();
 				break;
 
 			case TFB_DRAWCOMMANDTYPE_REINITVIDEO:
@@ -710,7 +736,7 @@ void TFB_FlushGraphics(void)
 
 	TFB_SwapBuffers(uqm::TFBRedraw::No);
 	RenderedFrames++;
-	BroadcastCondVar(RenderingCond);
+	s_renderingDone.notify_all();
 }
 
 void TFB_PurgeDanglingGraphics(void)
@@ -752,7 +778,7 @@ void TFB_PurgeDanglingGraphics(void)
 				}
 			case TFB_DRAWCOMMANDTYPE_SENDSIGNAL:
 				{
-					ClearSemaphore(DC.data.sendsignal.sem);
+					DC.data.sendsignal.sem->release();
 					break;
 				}
 		}

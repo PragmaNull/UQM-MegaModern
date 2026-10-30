@@ -20,6 +20,7 @@
 #define TFB_DRAW_H
 
 #include "libs/threadlib.h"
+#include "core/thread/Mutex.h"
 
 
 typedef void* TFB_Canvas;
@@ -51,7 +52,7 @@ typedef struct tfb_image
 	uqm::TFBScaleMode last_scale_type;
 	Color last_fill;
 	EXTENT extent;
-	Mutex mutex;
+	uqm::RecursiveMutex mutex;
 	bool dirty;
 } TFB_Image;
 
