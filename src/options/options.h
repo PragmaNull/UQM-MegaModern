@@ -81,10 +81,6 @@ struct OptionsStruct : SettingsRegistry
 	uqstl::string inputScript {};	  // File of scripted menu key presses, for testing.
 
 	// Commandline and user config options
-	Setting<bool> alwaysOpenGL {
-		*this, {.key = "graphics.alwaysOpenGL", .description = "Use OpenGL even at native resolutions."},
-		  false
-	   };
 	Setting<Vec2u> resolution {
 		*this, {.key = "graphics.resolution", .description = "Window/framebuffer pixel dimensions when not using a blowup scaler."},
 		 Vec2u {640,							 480																					}

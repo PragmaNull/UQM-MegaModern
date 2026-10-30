@@ -727,11 +727,6 @@ init_widgets(void)
 		{
 			return uqm::isAddonAvailable(THREEDO_MODE(hd));
 		}
-		if (addon == "opengl-renderer")
-		{
-			// The OpenGL renderer needed SDL1.
-			return false;
-		}
 		if (addon == "directional-joystick")
 		{
 			return HAVE_DIRECTIONAL_JOYSTICK;

@@ -86,19 +86,8 @@ int TFB_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char* ren
 	g_gfxFlags = flags;
 
 
-	if (driver == uqm::GfxDriver::SDL_OpenGL)
-	{
-		driver = uqm::GfxDriver::SDL_Pure;
-		uqm::log::warn("OpenGL support not compiled in,"
-					   " so using pure SDL driver");
-		result = TFB_Pure_InitGraphics(driver, flags, renderer, width,
-									   height, *resFactor, *windowType);
-	}
-	else
-	{
-		result = TFB_Pure_InitGraphics(driver, flags, renderer, width,
-									   height, *resFactor, *windowType);
-	}
+	result = TFB_Pure_InitGraphics(driver, flags, renderer, width,
+								   height, *resFactor, *windowType);
 
 
 	if (testAnyFlag(flags, uqm::GfxFlagsFullscreen))

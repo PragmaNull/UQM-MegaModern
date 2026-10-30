@@ -10,7 +10,6 @@ namespace uqm
 // driver for TFB_InitGraphics
 enum class GfxDriver
 {
-	SDL_OpenGL,
 	SDL_Pure,
 };
 
