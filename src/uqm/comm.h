@@ -20,7 +20,7 @@
 #include "commglue.h"
 #include "globdata.h"
 #include "units.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 // for CONVERSATION
 

@@ -23,7 +23,7 @@
 
 #include <fmt/base.h>
 #include "port.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include <math.h>
 
 typedef struct Color Color;

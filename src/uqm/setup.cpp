@@ -31,7 +31,7 @@
 #include "resinst.h"
 #include "sounds.h"
 #include "fmv.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/sound/sound.h"
 #include "libs/time/timelib.h"

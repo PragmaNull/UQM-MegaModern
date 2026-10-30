@@ -18,7 +18,7 @@
 #define UQM_MASTER_H_
 
 #include "races.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

@@ -24,7 +24,7 @@
 #include "process.h"
 #include "units.h"
 #include "options.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/mathlib.h"

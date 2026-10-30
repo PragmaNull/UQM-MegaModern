@@ -20,7 +20,7 @@
 #define UQM_SOUNDS_H_
 
 #include "element.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/sndlib.h"
 #include "races.h"
 #include "globdata.h"

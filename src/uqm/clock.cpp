@@ -22,7 +22,7 @@
 #include "sis.h"
 // for DrawStatusMessage()
 #include "setup.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 #include "core/thread/Mutex.h"
 #include "core/log/log.h"

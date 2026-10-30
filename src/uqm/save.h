@@ -19,7 +19,7 @@
 
 #include "sis.h" // SUMMARY_DESC includes SIS_STATE in it
 #include "globdata.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "core/stl/string.h"
 
 #if 0 //defined(__cplusplus)

@@ -8,7 +8,7 @@
 // Added NUM_PLOTS for plot iteration.
 // These are used in the plot randomizer.
 //#include "planets/generate.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

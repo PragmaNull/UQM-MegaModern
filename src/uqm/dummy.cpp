@@ -27,7 +27,7 @@
 #include "globdata.h"
 #include "races.h"
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "core/log/log.h"
 #include "libs/memlib.h"
 

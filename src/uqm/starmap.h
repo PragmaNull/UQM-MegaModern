@@ -17,7 +17,7 @@
 #ifndef STARMAP_H_INCL_
 #define STARMAP_H_INCL_
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "planets/planets.h"
 
 #if 0 //defined(__cplusplus)

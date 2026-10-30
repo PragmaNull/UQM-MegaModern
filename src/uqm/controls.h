@@ -21,7 +21,7 @@
 #ifndef UQM_CONTROLS_H_
 #define UQM_CONTROLS_H_
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/strlib.h"
 #include "libs/time/timelib.h"
 

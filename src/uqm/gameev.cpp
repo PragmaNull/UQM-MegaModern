@@ -26,7 +26,7 @@
 #include "resinst.h"
 #include "lua/luaevent.h"
 #include "lua/luafuncs/customfuncs.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "core/log/log.h"
 #include "libs/mathlib.h"
 #include "nameref.h"

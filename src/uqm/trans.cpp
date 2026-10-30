@@ -17,7 +17,7 @@
  */
 
 #include "units.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 
 
 int32_t sinetab[] =

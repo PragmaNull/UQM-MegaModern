@@ -20,7 +20,7 @@
 #include "gendefault.h"
 #include <cstdint>
 #include "../generate.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 
 extern const GenerateFunctions generateDefaultFunctions;
 

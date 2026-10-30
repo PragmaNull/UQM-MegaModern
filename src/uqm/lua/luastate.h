@@ -17,7 +17,7 @@
 #ifndef UQM_LUA_LUASTATE_H_
 #define UQM_LUA_LUASTATE_H_
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/luauqm/luauqm.h"
 
 extern lua_State* luaUqm_globalState;

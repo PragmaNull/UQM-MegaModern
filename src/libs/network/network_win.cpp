@@ -20,7 +20,7 @@
 
 #include "network.h"
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "core/misc/FatalExit.h"
 #include "core/log/log.h"
 

@@ -23,7 +23,7 @@
 #include "sis.h"
 #include "setup.h"
 #include "core/string/StringUtils.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/mathlib.h"
 #include "planets/planets.h"
 #include "starbase.h"

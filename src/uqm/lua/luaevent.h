@@ -19,7 +19,7 @@
 
 //#define EVENT_DEBUG
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/reslib.h"
 #include "luafuncs/customfuncs.h"
 

@@ -17,7 +17,7 @@
 #ifndef SIS_H_INCL__
 #define SIS_H_INCL__
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 #include "planets/elemdata.h" // for NUM_ELEMENT_CATEGORIES
 #include "units.h"			  // for RESOLUTION_FACTOR

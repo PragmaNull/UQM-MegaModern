@@ -19,7 +19,7 @@
 #ifndef TRACKPLAYER_H
 #define TRACKPLAYER_H
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/callback/callback.h"
 
 #define ACCEL_SCROLL_SPEED 300

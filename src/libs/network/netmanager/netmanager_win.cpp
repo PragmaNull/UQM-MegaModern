@@ -28,7 +28,7 @@
 
 #include "ndesc.h"
 #include <cstdint>
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "core/misc/FatalExit.h"
 #include "core/log/log.h"
 #include "core/platform/platform.h"

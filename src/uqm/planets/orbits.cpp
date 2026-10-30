@@ -18,7 +18,7 @@
 
 #include "planets.h"
 #include "../starmap.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/mathlib.h"
 #include "core/log/log.h"
 #include "../clock.h"

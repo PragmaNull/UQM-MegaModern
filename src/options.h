@@ -24,7 +24,7 @@
 
 #include "core/stl/stl.h"
 #include "port.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/io/FileSystem.h"
 #include "uqm/setupmenu.h"
 

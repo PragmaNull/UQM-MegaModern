@@ -17,7 +17,7 @@
 #define UQM_BATTLE_H_
 
 #include "options.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/time/timelib.h"
 
 #if defined(NETPLAY)

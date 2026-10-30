@@ -19,7 +19,7 @@
 #ifndef UQM_PLANETS_LIFEFORM_H_
 #define UQM_PLANETS_LIFEFORM_H_
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

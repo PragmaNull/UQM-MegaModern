@@ -18,7 +18,7 @@
 #define UQM_GRPINFO_H_
 
 #include "port.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "displist.h"
 #include "libs/gfxlib.h"
 // for GFXPOINT

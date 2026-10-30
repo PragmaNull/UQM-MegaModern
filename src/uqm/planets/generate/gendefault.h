@@ -19,7 +19,7 @@
 
 #include <cstdint>
 #include "../planets.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

@@ -19,7 +19,7 @@
 #include "settings.h"
 
 #include "globdata.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "setup.h"
 
 

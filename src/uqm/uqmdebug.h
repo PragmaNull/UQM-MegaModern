@@ -17,7 +17,7 @@
 #include "clock.h"
 #include "planets/planets.h"
 #include "races.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include <atomic>
 
 #include <stdio.h>

@@ -20,7 +20,7 @@
 #define UQM_RACES_H_
 
 #include <cstdint>
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "units.h"
 #include "displist.h"
 #include "uqm/inteldefs.h"

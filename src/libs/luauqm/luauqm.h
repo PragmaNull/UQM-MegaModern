@@ -21,7 +21,7 @@
 
 typedef struct luaUqm_EnumValue luaUqm_EnumValue;
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/io/FileSystem.h"
 
 #include "scriptres.h"

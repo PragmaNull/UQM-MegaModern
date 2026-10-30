@@ -17,7 +17,7 @@
 #ifndef UQM_COMMANIM_H_
 #define UQM_COMMANIM_H_
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 
 #if 0 //defined(__cplusplus)

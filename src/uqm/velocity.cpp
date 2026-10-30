@@ -19,7 +19,7 @@
 #include "velocity.h"
 
 #include "units.h"
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "core/log/log.h"
 
 #define VELOCITY_REMAINDER(v) ((v) & (VELOCITY_SCALE - 1))

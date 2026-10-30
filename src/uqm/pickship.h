@@ -17,7 +17,7 @@
 #ifndef UQM_PICKSHIP_H_INCL_
 #define UQM_PICKSHIP_H_INCL_
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "races.h"
 
 #if 0 //defined(__cplusplus)

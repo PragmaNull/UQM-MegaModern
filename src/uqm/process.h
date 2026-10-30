@@ -17,7 +17,7 @@
 #ifndef UQM_PROCESS_H_INCL_
 #define UQM_PROCESS_H_INCL_
 
-#include "core/types/bytes.h"
+#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 #include "element.h"
 
