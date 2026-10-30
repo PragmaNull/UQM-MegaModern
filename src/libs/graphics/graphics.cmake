@@ -15,7 +15,6 @@ set(uqm_src_libs_graphics_files
 	"src/libs/graphics/bbox.h"
 	"src/libs/graphics/boxint.cpp"
 	"src/libs/graphics/clipline.cpp"
-#	"src/libs/graphics/cmap.c"
 	"src/libs/graphics/cmap.cpp"
 	"src/libs/graphics/cmap.h"
 	"src/libs/graphics/context.cpp"
