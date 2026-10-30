@@ -59,6 +59,7 @@ private:
 	Effect m_biadapt {};
 	Effect m_biadaptAdv {};
 	Effect m_triscan {};
+	Effect m_hq2x {};
 	float m_gammaValue {0.0f};
 };
 

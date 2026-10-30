@@ -5,6 +5,8 @@
 #include "shaders/biadapt.frag.h"
 #include "shaders/biadaptadv.frag.h"
 #include "shaders/gamma.frag.h"
+#include "shaders/hq2x.frag.h"
+#include "shaders/hq2x_rules.h"
 #include "shaders/triscan.frag.h"
 
 namespace uqm
@@ -53,8 +55,14 @@ uqstl::unique_ptr<GpuShaders> GpuShaders::create(SDL_Renderer* renderer)
 	if (!shaders->load(shaders->m_gamma, {gamma_frag_dxil, gamma_frag_spv, gamma_frag_msl}, 1)
 		|| !shaders->load(shaders->m_biadapt, {biadapt_frag_dxil, biadapt_frag_spv, biadapt_frag_msl}, 0)
 		|| !shaders->load(shaders->m_biadaptAdv, {biadaptadv_frag_dxil, biadaptadv_frag_spv, biadaptadv_frag_msl}, 0)
-		|| !shaders->load(shaders->m_triscan, {triscan_frag_dxil, triscan_frag_spv, triscan_frag_msl}, 0))
+		|| !shaders->load(shaders->m_triscan, {triscan_frag_dxil, triscan_frag_spv, triscan_frag_msl}, 0)
+		|| !shaders->load(shaders->m_hq2x, {hq2x_frag_dxil, hq2x_frag_spv, hq2x_frag_msl}, 1))
 	{
+		return nullptr;
+	}
+	if (!SDL_SetGPURenderStateFragmentUniforms(shaders->m_hq2x.state, 0, hq2x_rules, sizeof(hq2x_rules)))
+	{
+		log::warn("Could not set the hq2x rules: {}", SDL_GetError());
 		return nullptr;
 	}
 	return shaders;
@@ -73,6 +81,7 @@ GpuShaders::~GpuShaders()
 	release(m_biadapt);
 	release(m_biadaptAdv);
 	release(m_triscan);
+	release(m_hq2x);
 }
 
 const char* GpuShaders::formatName() const
@@ -117,6 +126,10 @@ SDL_GPURenderState* GpuShaders::scaler(GfxFlags flags) const
 	if (testFlag(flags, GfxFlags::Scale_Triscan))
 	{
 		return m_triscan.state;
+	}
+	if (testFlag(flags, GfxFlags::Scale_HQXX))
+	{
+		return m_hq2x.state;
 	}
 	return nullptr;
 }
