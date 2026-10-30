@@ -248,7 +248,7 @@ VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 		return nullptr;
 	}
 
-	decoder = (TFB_VideoDecoder*)HCalloc(info->funcs->GetStructSize());
+	decoder = info->funcs->Create();
 	decoder->funcs = info->funcs;
 	if (!decoder->funcs->Init(decoder, &vd_vidfmt))
 	{
@@ -256,13 +256,11 @@ VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 					   "Cannot init '{}' decoder, code {}",
 					   decoder->funcs->GetName(),
 					   decoder->funcs->GetError(decoder));
-		HFree(decoder);
+		decoder->funcs->Destroy(decoder);
 		return nullptr;
 	}
 
-	const uint32_t filenameLen = strlen(filename);
-	decoder->filename = (char*)HMalloc(filenameLen + 1);
-	uqm::strncpy_safe({decoder->filename, filenameLen + 1}, {filename, filenameLen});
+	decoder->filename = filename;
 	decoder->error = VIDEODECODER_OK;
 
 	if (!decoder->funcs->Open(decoder, dir, filename))
@@ -359,8 +357,7 @@ void VideoDecoder_Free(TFB_VideoDecoder* decoder)
 	decoder->funcs->Close(decoder);
 	decoder->funcs->Term(decoder);
 
-	HFree(decoder->filename);
-	HFree(decoder);
+	decoder->funcs->Destroy(decoder);
 }
 
 // BEGIN: adapted from SDL

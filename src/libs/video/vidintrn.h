@@ -20,12 +20,14 @@
 #define VIDINTERN_H_
 
 #include <cstdint>
+#include "core/stl/string.h"
 #include "libs/vidlib.h"
 #include "libs/time/timelib.h"
 
 struct legacy_video_desc
 {
-	char *video, *audio, *speech;
+	// The audio and speech names are empty if the video has none.
+	uqstl::string video, audio, speech;
 	uint32_t loop;
 };
 

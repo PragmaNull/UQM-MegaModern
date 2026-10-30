@@ -32,19 +32,16 @@ PlayLegacyVideo(LEGACY_VIDEO vid)
 	{
 		return nullptr;
 	}
-	ref = (LEGACY_VIDEO_REF)HCalloc(sizeof(*ref));
-	if (!ref)
-	{
-		return nullptr;
-	}
-	name = vid->video;
-	audname = vid->audio;
-	speechname = vid->speech;
+	name = vid->video.c_str();
+	audname = vid->audio.empty() ? nullptr : vid->audio.c_str();
+	speechname = vid->speech.empty() ? nullptr : vid->speech.c_str();
 	loopframe = vid->loop;
 
+	ref = new legacy_video_ref {};
 	ref->vidref = LoadVideoFile(name);
 	if (!ref->vidref)
 	{
+		delete ref;
 		return nullptr;
 	}
 
@@ -87,7 +84,7 @@ void StopLegacyVideo(LEGACY_VIDEO_REF ref)
 		DestroyMusic(ref->audref);
 	}
 
-	HFree(ref);
+	delete ref;
 }
 
 bool PlayingLegacyVideo(LEGACY_VIDEO_REF ref)

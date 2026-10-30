@@ -33,7 +33,8 @@
 static const char* dukv_GetName(void);
 static bool dukv_InitModule(int flags);
 static void dukv_TermModule(void);
-static uint32_t dukv_GetStructSize(void);
+static TFB_VideoDecoder* dukv_Create(void);
+static void dukv_Destroy(TFB_VideoDecoder* decoder);
 static int dukv_GetError(THIS_PTR);
 static bool dukv_Init(THIS_PTR, TFB_PixelFormat* fmt);
 static void dukv_Term(THIS_PTR);
@@ -50,7 +51,8 @@ TFB_VideoDecoderFuncs dukv_DecoderVtbl =
 		dukv_GetName,
 		dukv_InitModule,
 		dukv_TermModule,
-		dukv_GetStructSize,
+		dukv_Create,
+		dukv_Destroy,
 		dukv_GetError,
 		dukv_Init,
 		dukv_Term,
@@ -92,11 +94,11 @@ typedef struct tfb_duckvideodecoder
 	TFB_VideoDecoder decoder;
 
 	int32_t last_error;
-	char* basename;
+	uqstl::string basename;
 	uqgsl::owner<uqm::io::File*> stream;
 
 	// loaded from disk
-	uint32_t* frames;
+	uqstl::vector<uint32_t> frames;
 	uint32_t cframes;
 	uint32_t iframe;
 	uint32_t version;
@@ -105,8 +107,8 @@ typedef struct tfb_duckvideodecoder
 	// generated
 	TFB_DuckVideoDeltas d;
 
-	uint8_t* inbuf;
-	uint32_t* decbuf;
+	uqstl::vector<uint8_t> inbuf;
+	uqstl::vector<uint32_t> decbuf;
 
 } TFB_DuckVideoDecoder;
 
@@ -307,13 +309,12 @@ dukv_ReadFrames(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir)
 
 	// get number of frames
 	dukv->cframes = static_cast<uint32_t>(fp->size() / sizeof(uint32_t));
-	dukv->frames = (uint32_t*)HMalloc(dukv->cframes * sizeof(uint32_t));
+	dukv->frames.assign(dukv->cframes, 0);
 
-	if (!fp->readExact(uqm::io::asBytes(dukv->frames, sizeof(uint32_t) * dukv->cframes)))
+	if (!fp->readExact(uqm::io::asBytes(dukv->frames.data(), sizeof(uint32_t) * dukv->cframes)))
 	{
-		HFree(dukv->frames);
-		dukv->frames = 0;
-		return 0;
+		dukv->frames.clear();
+		return false;
 	}
 	fp.reset();
 
@@ -472,7 +473,7 @@ dukv_RenderFrame(THIS_PTR)
 	TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*)This;
 	const TFB_PixelFormat* fmt = This->format;
 	uint32_t h, x, y, pair;
-	uint32_t* dec = dukv->decbuf;
+	uint32_t* dec = dukv->decbuf.data();
 	uint32_t bufInc = 0;
 	int scale = 4;
 
@@ -608,10 +609,16 @@ dukv_TermModule(void)
 	// do an extensive search on the word 'nothing'
 }
 
-static uint32_t
-dukv_GetStructSize(void)
+static TFB_VideoDecoder*
+dukv_Create(void)
 {
-	return sizeof(TFB_DuckVideoDecoder);
+	return &(new TFB_DuckVideoDecoder {})->decoder;
+}
+
+static void
+dukv_Destroy(TFB_VideoDecoder* decoder)
+{
+	delete reinterpret_cast<TFB_DuckVideoDecoder*>(decoder);
 }
 
 static int
@@ -640,42 +647,34 @@ static bool
 dukv_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*)This;
-	char* pext;
 	int32_t lumas[8], chromas[8];
-	uint8_t* vectors;
+	uqstl::vector<uint8_t> vectors(NUM_VEC_ITEMS * NUM_VECTORS);
 
-	const uint32_t filenameLen = strlen(filename);
-	dukv->basename = (char*)HMalloc(filenameLen + 1);
-	uqm::strncpy_safe({dukv->basename, filenameLen + 1}, {filename, filenameLen});
-	pext = strrchr(dukv->basename, '.');
-	if (pext) // strip extension
+	dukv->basename = filename;
+	if (const size_t ext {dukv->basename.rfind('.')}; ext != uqstl::string::npos) // strip extension
 	{
-		*pext = 0;
+		dukv->basename.resize(ext);
 	}
-
-	vectors = (uint8_t*)HMalloc(NUM_VEC_ITEMS * NUM_VECTORS);
 
 	if (!dukv_OpenStream(dukv, dir)
 		|| !dukv_ReadFrames(dukv, dir)
 		|| !dukv_ReadHeader(dukv, dir, lumas, chromas)
-		|| !dukv_ReadVectors(dukv, dir, vectors))
+		|| !dukv_ReadVectors(dukv, dir, vectors.data()))
 	{
-		HFree(vectors);
 		dukv_Close(This);
 		dukv->last_error = dukve_BadFile;
 		return false;
 	}
 
-	dukv_InitDeltas(dukv, vectors, lumas, chromas);
-	HFree(vectors);
+	dukv_InitDeltas(dukv, vectors.data(), lumas, chromas);
 
 	This->length = (float)dukv->cframes / DUCK_GENERAL_FPS;
 	This->frame_count = dukv->cframes;
 	This->interframe_wait = (uint32_t)(1000.0 / DUCK_GENERAL_FPS);
 
-	dukv->inbuf = (uint8_t*)HMalloc(DUCK_MAX_FRAME_SIZE);
-	dukv->decbuf = (uint32_t*)HMalloc(
-		dukv->decoder.w * dukv->decoder.h * sizeof(uint16_t));
+	dukv->inbuf.assign(DUCK_MAX_FRAME_SIZE, 0);
+	// The buffer holds w * h 16-bit values.
+	dukv->decbuf.assign((dukv->decoder.w * dukv->decoder.h + 1) / 2, 0);
 
 	return true;
 }
@@ -685,31 +684,12 @@ dukv_Close(THIS_PTR)
 {
 	TFB_DuckVideoDecoder* dukv = (TFB_DuckVideoDecoder*)This;
 
-	if (dukv->basename)
-	{
-		HFree(dukv->basename);
-		dukv->basename = nullptr;
-	}
-	if (dukv->frames)
-	{
-		HFree(dukv->frames);
-		dukv->frames = nullptr;
-	}
-	if (dukv->stream)
-	{
-		delete dukv->stream;
-		dukv->stream = nullptr;
-	}
-	if (dukv->inbuf)
-	{
-		HFree(dukv->inbuf);
-		dukv->inbuf = nullptr;
-	}
-	if (dukv->decbuf)
-	{
-		HFree(dukv->decbuf);
-		dukv->decbuf = nullptr;
-	}
+	dukv->basename.clear();
+	dukv->frames = {};
+	delete dukv->stream;
+	dukv->stream = nullptr;
+	dukv->inbuf = {};
+	dukv->decbuf = {};
 }
 
 static int
@@ -742,21 +722,21 @@ dukv_DecodeNext(THIS_PTR)
 	}
 
 	dukv->stream->seek(vofs, uqm::io::SeekFrom::Current);
-	if (!dukv->stream->readExact(uqm::io::asBytes(dukv->inbuf, vsize)))
+	if (!dukv->stream->readExact(uqm::io::asBytes(dukv->inbuf.data(), vsize)))
 	{
 		dukv->last_error = dukve_EOF;
 		return 0;
 	}
 
-	ver = UQM_SwapBE16(*(uint16_t*)dukv->inbuf);
+	ver = UQM_SwapBE16(*(uint16_t*)dukv->inbuf.data());
 	if (ver == 0x0300)
 	{
-		dukv_DecodeFrameV3(dukv->inbuf + 0x10, dukv->decbuf,
+		dukv_DecodeFrameV3(dukv->inbuf.data() + 0x10, dukv->decbuf.data(),
 						   dukv->wb, dukv->hb, &dukv->d);
 	}
 	else
 	{
-		dukv_DecodeFrame(dukv->inbuf + 0x10, dukv->decbuf,
+		dukv_DecodeFrame(dukv->inbuf.data() + 0x10, dukv->decbuf.data(),
 						 dukv->wb, dukv->hb, &dukv->d);
 	}
 

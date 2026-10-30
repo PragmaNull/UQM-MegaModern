@@ -27,34 +27,13 @@
 static bool
 FreeLegacyVideoData(void* data)
 {
-	LEGACY_VIDEO pLV;
-	if (!data)
-	{
-		return false;
-	}
-
-	pLV = (LEGACY_VIDEO)data;
-	if (pLV->video)
-	{
-		HFree(pLV->video);
-	}
-	if (pLV->audio)
-	{
-		HFree(pLV->audio);
-	}
-	if (pLV->speech)
-	{
-		HFree(pLV->speech);
-	}
-	HFree(pLV);
-
-	return true;
+	delete static_cast<LEGACY_VIDEO>(data);
+	return data != nullptr;
 }
 
 static void
 GetLegacyVideoData(const char* path, RESOURCE_DATA* resdata)
 {
-	void* result = nullptr;
 	char paths[1024] {};
 	char *audio_path, *speech_path, *loop_str;
 	uint32_t LoopFrame = VID_NO_LOOP;
@@ -125,59 +104,7 @@ GetLegacyVideoData(const char* path, RESOURCE_DATA* resdata)
 		uqm::log::info("\tNo specified loop frame");
 	}
 
-	result = HMalloc(sizeof(LEGACY_VIDEO_DESC));
-	if (result)
-	{
-		LEGACY_VIDEO pLV = (LEGACY_VIDEO)result;
-		pLV->video = nullptr;
-		pLV->audio = nullptr;
-		pLV->speech = nullptr;
-		pLV->loop = LoopFrame;
-
-		uint32_t len = strlen(paths) + 1;
-		pLV->video = (char*)HMalloc(len);
-		if (!pLV->video)
-		{
-			uqm::log::warn("Warning: Couldn't allocate space for '{}'", paths);
-			goto err;
-		}
-		uqm::strncpy_safe({pLV->video, len}, {paths, len - 1});
-
-		if (audio_path)
-		{
-			len = strlen(audio_path) + 1;
-			pLV->audio = (char*)HMalloc(len);
-			if (!pLV->audio)
-			{
-				uqm::log::warn("Warning: Couldn't allocate space for '{}'", audio_path);
-				goto err;
-			}
-			uqm::strncpy_safe({pLV->audio, len}, {audio_path, len - 1});
-		}
-
-		if (speech_path)
-		{
-			len = strlen(speech_path) + 1;
-			pLV->speech = (char*)HMalloc(len);
-			if (!pLV->speech)
-			{
-				uqm::log::warn("Warning: Couldn't allocate space for '{}'", speech_path);
-				goto err;
-			}
-			uqm::strncpy_safe({pLV->speech, len}, {speech_path, len - 1});
-		}
-
-		resdata->ptr = result;
-	}
-	return;
-err:
-	if (result)
-	{
-		FreeLegacyVideoData((LEGACY_VIDEO)result);
-	}
-
-	resdata->ptr = nullptr;
-	return;
+	resdata->ptr = new LEGACY_VIDEO_DESC {paths, audio_path ? audio_path : "", speech_path ? speech_path : "", LoopFrame};
 }
 
 bool InstallVideoResType(void)

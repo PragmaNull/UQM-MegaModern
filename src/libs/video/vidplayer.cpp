@@ -287,7 +287,7 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 
 	if (!vid->hAudio)
 	{
-		vid->hAudio = LoadMusicFile(vid->decoder->filename);
+		vid->hAudio = LoadMusicFile(vid->decoder->filename.c_str());
 		vid->own_audio = true;
 	}
 

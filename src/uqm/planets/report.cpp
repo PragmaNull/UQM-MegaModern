@@ -392,10 +392,12 @@ void DoDiscoveryReport(SOUND ReadOutSounds)
 		}
 
 		luaUqm_comm_init(nullptr, NULL_RESOURCE);
-		uqstl::string report {GetStringAddress(pSolarSysState->SysInfo.PlanetInfo.DiscoveryString)};
-		if (luaUqm_comm_stringNeedsInterpolate(report.c_str()))
+		uqstl::optional<uqstl::string> interpolatedReport{};
+		uqstl::string_view report {GetStringAddress(pSolarSysState->SysInfo.PlanetInfo.DiscoveryString)};
+		if (luaUqm_comm_stringNeedsInterpolate(report.data()))
 		{
-			report = luaUqm_comm_stringInterpolate(report);
+			interpolatedReport.emplace(luaUqm_comm_stringInterpolate(report));
+			report = *interpolatedReport;
 		}
 		MakeReport(ReadOutSounds, report.data(), (uint16_t)report.size());
 
