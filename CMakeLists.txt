@@ -104,7 +104,6 @@ endif()
 target_compile_definitions(uqm_project_features
     INTERFACE 
         WITH_MAGIC_ENUM
-        THREADLIB_SDL
         GFXMODULE_SDL
         HAVE_OPENAL
         HAVE_JOYSTICK

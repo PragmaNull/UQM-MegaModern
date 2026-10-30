@@ -4,6 +4,14 @@
 #include <system_error>
 #include "core/string/StringUtils.h"
 
+#ifdef _WIN32
+#include "core/string/Utf8.h"
+
+#include <windows.h>
+#else
+#include <pthread.h>
+#endif
+
 namespace uqm
 {
 
@@ -74,6 +82,19 @@ uqstl::tm localtime(time_t time)
 	localtime_r(&time, &result);
 #endif
 	return result;
+}
+
+void setCurrentThreadName(uqgsl::czstring name)
+{
+#ifdef _WIN32
+	(void)SetThreadDescription(GetCurrentThread(), toWideChar(name).c_str());
+#elif defined(__APPLE__)
+	(void)pthread_setname_np(name);
+#else
+	// Linux limits the name to 15 bytes.
+	const uqstl::string shortName {uqstl::string_view {name}.substr(0, 15)};
+	(void)pthread_setname_np(pthread_self(), shortName.c_str());
+#endif
 }
 
 

@@ -12,6 +12,8 @@ uqstl::string getEnvironmentValue(uqgsl::czstring env_name);
 bool setEnvironmentValue(uqgsl::czstring name, uqgsl::czstring value, bool overwrite);
 uqstl::string strerror(int err);
 uqstl::tm localtime(time_t time);
+// Sets the name that debuggers show for the calling thread.
+void setCurrentThreadName(uqgsl::czstring name);
 } // namespace uqm
 
 #endif /* CORE_PLATFORM_PLATFORM_H_ */
