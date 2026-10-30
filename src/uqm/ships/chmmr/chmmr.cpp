@@ -201,7 +201,7 @@ laser_death(ELEMENT* ElementPtr)
 
 			SetElementStarShip(IonSpotsPtr, StarShipPtr);
 
-			SetPrimType(&(DisplayArray)[IonSpotsPtr->PrimIndex], STAMP_PRIM);
+			SetPrimType(&DisplayArray[IonSpotsPtr->PrimIndex], STAMP_PRIM);
 
 			UnlockElement(hIonSpots);
 			PutElement(hIonSpots);
@@ -302,7 +302,7 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 		if (MuzzleFlashPtr != ElementPtr
 			&& elementsOfSamePlayer(MuzzleFlashPtr, ElementPtr)
 			&& (MuzzleFlashPtr->state_flags & APPEARING)
-			&& GetPrimType(&(DisplayArray)[MuzzleFlashPtr->PrimIndex]) == LINE_PRIM
+			&& GetPrimType(&DisplayArray[MuzzleFlashPtr->PrimIndex]) == LINE_PRIM
 			&& !(StarShipPtr->special_counter & 1)
 			&& (hMuzzleFlash = AllocElement()))
 		{
@@ -321,7 +321,7 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 
 			SetElementStarShip(MuzzleFlashPtr, StarShipPtr);
 
-			SetPrimType(&(DisplayArray)[MuzzleFlashPtr->PrimIndex], STAMP_PRIM);
+			SetPrimType(&DisplayArray[MuzzleFlashPtr->PrimIndex], STAMP_PRIM);
 
 			UnlockElement(hMuzzleFlash);
 			PutElement(hMuzzleFlash);
@@ -435,8 +435,8 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 						SetVelocityComponents(&ShadowElementPtr->velocity,
 											  dx, dy);
 
-						SetPrimType(&(DisplayArray)[ShadowElementPtr->PrimIndex], STAMPFILL_PRIM);
-						SetPrimColor(&(DisplayArray)[ShadowElementPtr->PrimIndex], color_tab[i]);
+						SetPrimType(&DisplayArray[ShadowElementPtr->PrimIndex], STAMPFILL_PRIM);
+						SetPrimColor(&DisplayArray[ShadowElementPtr->PrimIndex], color_tab[i]);
 
 						UnlockElement(hShadow);
 						InsertElement(hShadow, GetHeadElement());
@@ -723,7 +723,7 @@ spawn_satellites(ELEMENT* ElementPtr)
 
 				SetElementStarShip(SattPtr, StarShipPtr);
 
-				SetPrimType(&(DisplayArray)[SattPtr->PrimIndex], STAMP_PRIM);
+				SetPrimType(&DisplayArray[SattPtr->PrimIndex], STAMP_PRIM);
 
 				UnlockElement(hSatellite);
 				PutElement(hSatellite);
@@ -757,7 +757,7 @@ chmmr_preprocess(ELEMENT* ElementPtr)
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		SetElementStarShip(SattPtr, StarShipPtr);
 
-		SetPrimType(&(DisplayArray)[SattPtr->PrimIndex], NO_PRIM);
+		SetPrimType(&DisplayArray[SattPtr->PrimIndex], NO_PRIM);
 
 		UnlockElement(hSatellite);
 		PutElement(hSatellite);

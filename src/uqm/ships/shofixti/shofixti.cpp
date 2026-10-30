@@ -166,7 +166,7 @@ destruct_preprocess(ELEMENT* ElementPtr)
 
 	// ship_death() set the ship element's life_span to
 	// (NUM_EXPLOSION_FRAMES * 3)
-	lpPrim = &(DisplayArray)[ElementPtr->PrimIndex];
+	lpPrim = &DisplayArray[ElementPtr->PrimIndex];
 	ElementPtr->state_flags |= CHANGING;
 	if (ElementPtr->life_span > DESTRUCT_SWITCH)
 	{
@@ -245,9 +245,9 @@ destruct_preprocess(ELEMENT* ElementPtr)
 			DestructPtr->mass_points = 0;
 			DestructPtr->playerNr = NEUTRAL_PLAYER_NUM;
 			DestructPtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
-			SetPrimType(&(DisplayArray)[DestructPtr->PrimIndex],
+			SetPrimType(&DisplayArray[DestructPtr->PrimIndex],
 						STAMPFILL_PRIM);
-			SetPrimColor(&(DisplayArray)[DestructPtr->PrimIndex],
+			SetPrimColor(&DisplayArray[DestructPtr->PrimIndex],
 						 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
 			DestructPtr->current.image.farray =
 				StarShipPtr->RaceDescPtr->ship_data.special;

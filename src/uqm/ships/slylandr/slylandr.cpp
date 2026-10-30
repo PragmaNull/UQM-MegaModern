@@ -197,8 +197,8 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 
 			LaserPtr->turn_wait = ElementPtr->turn_wait - 1;
 
-			SetPrimColor(&(DisplayArray)[LaserPtr->PrimIndex],
-						 GetPrimColor(&(DisplayArray)[ElementPtr->PrimIndex]));
+			SetPrimColor(&DisplayArray[LaserPtr->PrimIndex],
+						 GetPrimColor(&DisplayArray[ElementPtr->PrimIndex]));
 		}
 		else
 		{
@@ -222,22 +222,22 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 			{
 				case 0:
 					SetPrimColor(
-						&(DisplayArray)[LaserPtr->PrimIndex],
+						&DisplayArray[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
 					break;
 				case 1:
 					SetPrimColor(
-						&(DisplayArray)[LaserPtr->PrimIndex],
+						&DisplayArray[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x16, 0x17, 0x1F), 0x42));
 					break;
 				case 2:
 					SetPrimColor(
-						&(DisplayArray)[LaserPtr->PrimIndex],
+						&DisplayArray[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x06, 0x07, 0x1F), 0x4A));
 					break;
 				case 3:
 					SetPrimColor(
-						&(DisplayArray)[LaserPtr->PrimIndex],
+						&DisplayArray[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x18), 0x50));
 					break;
 			}

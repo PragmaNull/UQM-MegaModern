@@ -245,7 +245,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	status_flags = StarShipPtr->cur_status_flags;
-	lpPrim = &(DisplayArray)[ElementPtr->PrimIndex];
+	lpPrim = &DisplayArray[ElementPtr->PrimIndex];
 	if (GetPrimType(lpPrim) == STAMPFILL_PRIM)
 	{
 		Color color;

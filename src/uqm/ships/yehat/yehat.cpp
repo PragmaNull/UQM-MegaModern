@@ -266,10 +266,10 @@ yehat_postprocess(ELEMENT* ElementPtr)
 			{
 #ifdef OLD
 				SetPrimColor(
-					&(DisplayArray)[ElementPtr->PrimIndex],
+					&DisplayArray[ElementPtr->PrimIndex],
 					BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
 				SetPrimType(
-					&(DisplayArray)[ElementPtr->PrimIndex],
+					&DisplayArray[ElementPtr->PrimIndex],
 					STAMPFILL_PRIM);
 #endif /* OLD */
 
@@ -298,7 +298,7 @@ yehat_postprocess(ELEMENT* ElementPtr)
 					(CHANGING | PRE_PROCESS | POST_PROCESS)
 					| FINITE_LIFE | NONSOLID;
 				SetPrimType(
-					&(DisplayArray)[ShipElementPtr->PrimIndex],
+					&DisplayArray[ShipElementPtr->PrimIndex],
 					STAMP_PRIM);
 
 				ShipElementPtr->life_span = 0; /* because preprocessing
@@ -339,7 +339,7 @@ yehat_preprocess(ELEMENT* ElementPtr)
 		{
 #ifdef NEVER
 			SetPrimType(
-				&(DisplayArray)[ElementPtr->PrimIndex],
+				&DisplayArray[ElementPtr->PrimIndex],
 				STAMP_PRIM);
 #endif /* NEVER */
 

@@ -217,7 +217,7 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //	{
 //		ElementPtr->life_span = ElementPtr->thrust_wait;
 //
-//		SetPrimColor (&(DisplayArray)[ElementPtr->PrimIndex],
+//		SetPrimColor (&DisplayArray[ElementPtr->PrimIndex],
 //			colorTable[ElementPtr->colorCycleIndex]);
 //
 //		ElementPtr->state_flags &= ~DISAPPEARING;
@@ -245,8 +245,8 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //		IonElementPtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
 //		IonElementPtr->thrust_wait = ION_LIFE;
 //		IonElementPtr->life_span = IonElementPtr->thrust_wait;
-//		SetPrimType (&(DisplayArray)[IonElementPtr->PrimIndex], POINT_PRIM);
-//		SetPrimColor (&(DisplayArray)[IonElementPtr->PrimIndex], START_ION_COLOR);
+//		SetPrimType (&DisplayArray[IonElementPtr->PrimIndex], POINT_PRIM);
+//		SetPrimColor (&DisplayArray[IonElementPtr->PrimIndex], START_ION_COLOR);
 //		IonElementPtr->colorCycleIndex = 0;
 //		IonElementPtr->current.location = ElementPtr->current.location;
 //		IonElementPtr->current.location.x +=
@@ -408,8 +408,8 @@ fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			primIndex = FighterElementPtr->PrimIndex;
 			*FighterElementPtr = *ElementPtr0;
 			FighterElementPtr->PrimIndex = primIndex;
-			(DisplayArray)[primIndex] =
-				(DisplayArray)[ElementPtr0->PrimIndex];
+			DisplayArray[primIndex] =
+				DisplayArray[ElementPtr0->PrimIndex];
 			FighterElementPtr->state_flags &= ~PRE_PROCESS;
 			FighterElementPtr->state_flags |= CHANGING;
 			FighterElementPtr->next = FighterElementPtr->current;
@@ -515,7 +515,7 @@ spawn_fighters(ELEMENT* ElementPtr)
 		FighterElementPtr->state_flags = APPEARING | FINITE_LIFE
 									   | CREW_OBJECT | IGNORE_SIMILAR;
 		FighterElementPtr->life_span = FIGHTER_LIFE;
-		SetPrimType(&(DisplayArray)[FighterElementPtr->PrimIndex],
+		SetPrimType(&DisplayArray[FighterElementPtr->PrimIndex],
 					STAMP_PRIM);
 		{
 			FighterElementPtr->preprocess_func = fighter_preprocess;
