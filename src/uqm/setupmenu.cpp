@@ -46,14 +46,6 @@
 #include "libs/file/textfile.h"
 #include "uqm/menuwidgets.h"
 
-#include "SDL_version.h"
-
-#if defined(HAVE_OPENGL)
-#define HAVE_OPENGL_RENDERER true
-#else
-#define HAVE_OPENGL_RENDERER false
-#endif
-
 #if defined(DIRECTIONAL_JOY)
 #define HAVE_DIRECTIONAL_JOYSTICK true
 #else
@@ -203,9 +195,6 @@ apply_graphics_from_settings(void)
 	const uqm::GfxFlags newFlags {(g_gfxFlags & ~uqm::c_displayFlagsMask) | uqm::displayFlags(options)};
 
 	uqm::GfxDriver newDriver {GraphicsDriver};
-#if SDL_MAJOR_VERSION == 1 && defined(HAVE_OPENGL)
-	newDriver = *options.alwaysOpenGL ? uqm::GfxDriver::SDL_OpenGL : uqm::GfxDriver::SDL_Pure;
-#endif
 
 	const int blowup {*options.loresBlowupScale};
 	if (blowup == 0)
@@ -740,7 +729,8 @@ init_widgets(void)
 		}
 		if (addon == "opengl-renderer")
 		{
-			return SDL_MAJOR_VERSION == 1 && HAVE_OPENGL_RENDERER;
+			// The OpenGL renderer needed SDL1.
+			return false;
 		}
 		if (addon == "directional-joystick")
 		{

@@ -23,7 +23,6 @@
 
 #include "libs/graphics/gfx_defs.h"
 #include "sdl_common.h"
-#include "opengl.h"
 #include "pure.h"
 #include "primitives.h"
 #include "options.h"
@@ -55,10 +54,6 @@ SDL_Surface* format_conv_surf = nullptr;
 
 SDL_Rect* pTransitionClipRect = nullptr;
 
-#if SDL_MAJOR_VERSION == 1
-static SDL_Rect TransitionClipRect;
-const SDL_VideoInfo* SDL_screen_info;
-#endif
 
 static uqstl::atomic<bool> abortFlag {false};
 
@@ -90,58 +85,14 @@ int TFB_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char* ren
 
 	g_gfxFlags = flags;
 
-#if SDL_MAJOR_VERSION == 1
-	// JMS_GFX: Let's read the size of the desktop so we can scale the
-	// fullscreen game according to it.
-	SDL_screen_info = SDL_GetVideoInfo();
-
-	// JMS_GFX: Upon starting the game, let's find out the resolution
-	// of the desktop.
-	if (fs_height == 0)
-	{
-		int curr_h = SDL_screen_info->current_h;
-		int curr_w = SDL_screen_info->current_w;
-
-		// JMS_GFX: This makes it sure on certain HD 16:9 monitors
-		// that a bogus stretched 1600x1200 mode isn't used.
-		if ((curr_w == 1920 && curr_h == 1080) || (curr_h == (curr_w / 16) * 10))
-		{ // MB: fix for 16:10 resolutions
-			fs_height = curr_h;
-			fs_width = curr_w;
-		}
-		else if (curr_h > (curr_w / 4) * 3)
-		{ // MB: for monitors using 5:4 modes
-			fs_width = curr_w;
-			fs_height = (curr_w / 4) * 3;
-		}
-		else
-		{
-			fs_height = curr_h;
-			fs_width = (4 * fs_height) / 3;
-		}
-
-		// MB: Sanitising resolution factor:
-		if (fs_height <= 600 && *resFactor == HD)
-		{ // ie. probably netbook or otherwise
-			*resFactor = 0;
-		}
-
-		uqm::log::debug("fs_height {}, fs_width {}, current_w {}", fs_height, fs_width, SDL_screen_info->current_w);
-	}
-#endif
 
 	if (driver == uqm::GfxDriver::SDL_OpenGL)
 	{
-#ifdef HAVE_OPENGL
-		result = TFB_GL_InitGraphics(driver, flags, width, height,
-									 *resFactor, *windowType);
-#else
 		driver = uqm::GfxDriver::SDL_Pure;
 		uqm::log::warn("OpenGL support not compiled in,"
 					   " so using pure SDL driver");
 		result = TFB_Pure_InitGraphics(driver, flags, renderer, width,
 									   height, *resFactor, *windowType);
-#endif
 	}
 	else
 	{
@@ -149,15 +100,6 @@ int TFB_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char* ren
 									   height, *resFactor, *windowType);
 	}
 
-#if SDL_MAJOR_VERSION == 1
-	char caption[200] {};
-	/* Other versions do this when setting up the window */
-	fmt::format_to_n(caption, sizeof(caption) - 1, "The Ur-Quan Masters v{}.{}.{} {}",
-					 UQM_MAJOR_VERSION, UQM_MINOR_VERSION,
-					 UQM_PATCH_VERSION,
-					 (*resFactor ? "HD " UQM_EXTRA_VERSION : UQM_EXTRA_VERSION));
-	SDL_WM_SetCaption(caption, nullptr);
-#endif
 
 	if (testAnyFlag(flags, uqm::GfxFlagsFullscreen))
 	{
@@ -185,9 +127,6 @@ void TFB_UninitGraphics(void)
 	UnInit_Screen(&SDL_Screen_fps);
 
 	TFB_Pure_UninitGraphics();
-#ifdef HAVE_OPENGL
-	TFB_GL_UninitGraphics();
-#endif
 
 	UnInit_Screen(&format_conv_surf);
 }
@@ -221,11 +160,6 @@ void TFB_ProcessEvents()
 			case SDL_QUIT:
 				QuitPosted = 1;
 				break;
-#if SDL_MAJOR_VERSION == 1
-			case SDL_VIDEOEXPOSE: /* Screen needs to be redrawn */
-				TFB_SwapBuffers(TFBRedraw::Expose);
-				break;
-#else
 			case SDL_WINDOWEVENT:
 				if (Event.window.event == SDL_WINDOWEVENT_EXPOSED)
 				{
@@ -233,7 +167,6 @@ void TFB_ProcessEvents()
 					TFB_SwapBuffers(uqm::TFBRedraw::Expose);
 				}
 				break;
-#endif
 			default:
 				break;
 		}
@@ -297,17 +230,7 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 
 	if (fade_amount != 255)
 	{
-#if SDL_MAJOR_VERSION == 1
-		if (fade_amount < 255)
-		{
-			graphics_backend->color(0, 0, 0, 255 - fade_amount, nullptr);
-		}
-		else
-		{
-			graphics_backend->color(255, 255, 255,
-									fade_amount - 255, nullptr);
-		}
-#elif defined(__APPLE__)
+#if defined(__APPLE__)
 		if (fade_amount < 255)
 		{
 			graphics_backend->color(0, 0, 0, 255 - fade_amount, nullptr);
@@ -696,22 +619,7 @@ void TFB_UploadTransitionScreen(GFXRECT* pRect)
 {
 	graphics_backend->uploadTransitionScreen();
 
-#if SDL_MAJOR_VERSION == 1
-	if (pRect && !IsWholeScreen(pRect))
-	{
-		TransitionClipRect.x = pRect->corner.x;
-		TransitionClipRect.y = pRect->corner.y;
-		TransitionClipRect.w = pRect->extent.width;
-		TransitionClipRect.h = pRect->extent.height;
-		pTransitionClipRect = &TransitionClipRect;
-	}
-	else
-	{
-		pTransitionClipRect = nullptr;
-	}
-#else
 	(void)pRect; /*satisfy compiler (unused parameter)*/
-#endif
 }
 
 int TFB_HasColorKey(SDL_Surface* surface)
@@ -754,13 +662,8 @@ void TFB_GetScreenSize(int16_t* width, int16_t* height)
 {
 	SDL_Rect bounds;
 
-#if SDL_MAJOR_VERSION == 1
-	*width = 1920;
-	*height = 1440;
-#else
 	TFB_SDL2_GetDisplaySize(&bounds);
 
 	*width = bounds.w;
 	*height = bounds.h;
-#endif
 }

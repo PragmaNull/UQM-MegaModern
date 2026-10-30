@@ -24,7 +24,6 @@
 #include "png2sdl.h"
 #include "options.h"
 
-#if SDL_MAJOR_VERSION > 1
 
 typedef struct tfb_sdl2_screeninfo_s
 {
@@ -373,7 +372,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 void TFB_Pure_GetRendererBackends(uqstl::vector<uqstl::string>& backends)
 {
 	const int numDrivers = SDL_GetNumRenderDrivers();
-	
+
 	for (int i {0}; i < numDrivers; ++i)
 	{
 		SDL_RendererInfo info {};
@@ -709,5 +708,3 @@ void TFB_SDL2_GetDisplaySize(SDL_Rect* bounds)
 		fmt::print("{}\n", SDL_GetError());
 	}
 }
-
-#endif /* SDL_MAJOR_VERSION > 1 */

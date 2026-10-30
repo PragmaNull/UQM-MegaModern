@@ -17,7 +17,6 @@
  */
 
 #include "sdl_common.h"
-#include "opengl.h"
 #include "pure.h"
 #include "primitives.h"
 #include "options.h"
@@ -33,8 +32,6 @@
 #include "core/log/log.h"
 #include "libs/memlib.h"
 #include "libs/vidlib.h"
-
-#if SDL_MAJOR_VERSION > 1
 
 
 static void TFB_PreQuit(void);
@@ -214,4 +211,3 @@ int TFB_SupportsHardwareScaling(void)
 {
 	return 1;
 }
-#endif

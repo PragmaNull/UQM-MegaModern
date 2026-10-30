@@ -378,11 +378,7 @@ void PrepareNextRotationFrameForIP(PLANET_DESC* pPlanetDesc, int16_t frameCounte
 	// to DrawStamp won't re-blit the frame unless scale has changed.
 }
 
-#if SDL_MAJOR_VERSION == 1
-#define ZOOM_RATE chooseIfHd(24, 42)
-#else
 #define ZOOM_RATE RES_SCALE(35)
-#endif
 #define ZOOM_TIME (GameTicksPerSecond * 6 / 5)
 
 
@@ -474,11 +470,7 @@ void ZoomInPlanetSphere(void)
 	}
 }
 
-#if SDL_MAJOR_VERSION == 1
-#define PLANET_ROTATION_FPS (GameTicksPerSecond / chooseIfHd(24, 42))
-#else
 #define PLANET_ROTATION_FPS (GameTicksPerSecond / 60)
-#endif
 
 void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 {

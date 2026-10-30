@@ -26,12 +26,7 @@
 
 /* SDL2 wants to talk to a specific device. We'll let SDL1 use the same
  * function names and just throw the device argument away. */
-#if SDL_MAJOR_VERSION > 1
 static SDL_AudioDeviceID dev;
-#else
-#define SDL_CloseAudioDevice(x) SDL_CloseAudio()
-#define SDL_PauseAudioDevice(x, y) SDL_PauseAudio(y)
-#endif
 
 static const audio_Driver mixSDL_Driver =
 	{
@@ -194,7 +189,6 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	desired.callback = audioCallback;
 
 	uqm::log::info("Opening SDL audio device.");
-#if SDL_MAJOR_VERSION > 1
 	dev = SDL_OpenAudioDevice(nullptr, 0, &desired, &obtained,
 							  SDL_AUDIO_ALLOW_FREQUENCY_CHANGE | SDL_AUDIO_ALLOW_CHANNELS_CHANGE
 #ifdef SDL_AUDIO_ALLOW_SAMPLES_CHANGE
@@ -213,9 +207,6 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 		);
 	}
 	if (dev == 0)
-#else
-	if (SDL_OpenAudio(&desired, &obtained) < 0)
-#endif
 	{
 		uqm::log::error("Unable to open audio device: {}",
 						SDL_GetError());
@@ -225,22 +216,13 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	if (obtained.format != desired.format || (obtained.channels != 1 && obtained.channels != 2))
 	{
 		uqm::log::error("Unable to obtain desired audio format.");
-#if SDL_MAJOR_VERSION > 1
 		SDL_CloseAudioDevice(dev);
-#else
-		SDL_CloseAudio();
-#endif
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return -1;
 	}
 
 	{
-#if SDL_MAJOR_VERSION == 1
-		char devicename[256];
-		SDL_AudioDriverName(devicename, sizeof(devicename));
-#else
 		const char* devicename = SDL_GetCurrentAudioDriver();
-#endif
 		uqm::log::info("    using {} at {} Hz 16 bit {}, "
 					   "{} samples audio buffer",
 					   devicename, obtained.freq,
@@ -254,11 +236,7 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	{
 		uqm::log::error("Mixer initialization failed: {:x}",
 						mixer_GetError());
-#if SDL_MAJOR_VERSION > 1
 		SDL_CloseAudioDevice(dev);
-#else
-		SDL_CloseAudio();
-#endif
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return -1;
 	}
@@ -268,11 +246,7 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	if (SoundDecoder_Init(flags, &formats))
 	{
 		uqm::log::error("Sound decoders initialization failed.");
-#if SDL_MAJOR_VERSION > 1
 		SDL_CloseAudioDevice(dev);
-#else
-		SDL_CloseAudio();
-#endif
 		mixer_Uninit();
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return -1;
@@ -289,22 +263,14 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	{
 		uqm::log::error("Stream decoder initialization failed.");
 		// TODO: cleanup source mutexes [or is it "muti"? :) ]
-#if SDL_MAJOR_VERSION > 1
 		SDL_CloseAudioDevice(dev);
-#else
-		SDL_CloseAudio();
-#endif
 		SoundDecoder_Uninit();
 		mixer_Uninit();
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return -1;
 	}
 
-#if SDL_MAJOR_VERSION > 1
 	SDL_PauseAudioDevice(dev, 0);
-#else
-	SDL_PauseAudio(0);
-#endif
 
 	return 0;
 }
@@ -332,11 +298,7 @@ void mixSDL_Uninit(void)
 		mixSDL_DeleteSources(1, &soundSource[i].handle);
 	}
 
-#if SDL_MAJOR_VERSION > 1
 	SDL_CloseAudioDevice(dev);
-#else
-	SDL_CloseAudio();
-#endif
 	mixer_Uninit();
 	SoundDecoder_Uninit();
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);

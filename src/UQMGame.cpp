@@ -334,13 +334,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	NetManager_init();
 #endif
 
-#if SDL_MAJOR_VERSION == 1
-	const uqm::GfxDriver gfxDriver = options.opengl.value ?
-										 uqm::GfxDriver::SDL_OpenGL :
-										 uqm::GfxDriver::SDL_Pure;
-#else
 	const uqm::GfxDriver gfxDriver = uqm::GfxDriver::SDL_Pure;
-#endif
 	const uqm::GfxFlags gfxFlags {uqm::displayFlags(options)};
 	unsigned int windowType {static_cast<unsigned int>(optWindowType)};
 	TFB_InitGraphics(gfxDriver, gfxFlags, options.graphicsBackend.c_str(),

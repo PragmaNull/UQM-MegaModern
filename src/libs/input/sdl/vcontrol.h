@@ -22,11 +22,7 @@
 #include "core/stl/stl.h"
 #include <atomic>
 
-#if SDL_MAJOR_VERSION == 1
-typedef SDLKey sdl_key_t;
-#else
 typedef SDL_Keycode sdl_key_t;
-#endif
 
 /* Initialization routines */
 void VControl_Init(void);
@@ -83,12 +79,6 @@ void VControl_RemoveJoyAxisBinding(int port, int axis, int polarity,
 int VControl_SetJoyThreshold(int port, int threshold);
 int VControl_AddJoyButtonBinding(int port, int button, uqstl::atomic<int>* target);
 void VControl_RemoveJoyButtonBinding(int port, int button, uqstl::atomic<int>* target);
-#if SDL_MAJOR_VERSION == 1
-int VControl_AddJoyHatBinding(int port, int which, Uint8 dir,
-							  uqstl::atomic<int>* target);
-void VControl_RemoveJoyHatBinding(int port, int which, Uint8 dir,
-								  uqstl::atomic<int>* target);
-#endif // SDL_MAJOR_VERSION
 
 void VControl_RemoveAllBindings(void);
 
@@ -104,9 +94,6 @@ void VControl_ProcessKeyUp(sdl_key_t symbol);
 void VControl_ProcessJoyButtonDown(int port, int button);
 void VControl_ProcessJoyButtonUp(int port, int button);
 void VControl_ProcessJoyAxis(int port, int axis, int value);
-#if SDL_MAJOR_VERSION == 1
-void VControl_ProcessJoyHat(int port, int which, Uint8 value);
-#endif // SDL_MAJOR_VERSION
 
 /* Force the input into the blank state.  For preventing "sticky" keys. */
 void VControl_ResetInput(void);
