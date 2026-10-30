@@ -35,58 +35,22 @@ UniChar decodeChar(uqstl::string_view& str)
 		return 0;
 	}
 
-	const auto lead {static_cast<unsigned char>(str[0])};
-	if (lead < 0x80)
+	utf8proc_int32_t codepoint {};
+	const utf8proc_ssize_t length {utf8proc_iterate(reinterpret_cast<const utf8proc_uint8_t*>(str.data()),
+													static_cast<utf8proc_ssize_t>(str.size()), &codepoint)};
+	if (length > 0)
 	{
-		str.remove_prefix(1);
-		return lead;
+		str.remove_prefix(static_cast<size_t>(length));
+		return static_cast<UniChar>(codepoint);
 	}
 
-	size_t length {};
-	UniChar result {};
-	UniChar minimum {};
-	if ((lead & 0xe0) == 0xc0)
+	log::warn("Warning: Invalid UTF8 sequence starting with byte {:#04x}", static_cast<unsigned char>(str[0]));
+	size_t skip {1};
+	while (skip < str.size() && isContinuation(str[skip]))
 	{
-		length = 2;
-		result = lead & 0x1f;
-		minimum = 0x80;
+		++skip;
 	}
-	else if ((lead & 0xf0) == 0xe0)
-	{
-		length = 3;
-		result = lead & 0x0f;
-		minimum = 0x800;
-	}
-	else if ((lead & 0xf8) == 0xf0)
-	{
-		length = 4;
-		result = lead & 0x07;
-		minimum = 0x10000;
-	}
-
-	size_t used {1};
-	bool valid {length != 0};
-	for (; valid && used < length; ++used)
-	{
-		if (used >= str.size() || !isContinuation(str[used]))
-		{
-			valid = false;
-			break;
-		}
-		result = (result << 6) | (static_cast<unsigned char>(str[used]) & 0x3f);
-	}
-	if (valid && result >= minimum)
-	{
-		str.remove_prefix(length);
-		return result;
-	}
-
-	log::warn("Warning: Invalid UTF8 sequence starting with byte {:#04x}", lead);
-	while (used < str.size() && isContinuation(str[used]))
-	{
-		++used;
-	}
-	str.remove_prefix(uqstl::min(used, str.size()));
+	str.remove_prefix(skip);
 	return 0;
 }
 
@@ -188,59 +152,53 @@ int utf8StringCompare(uqstl::string_view str1, uqstl::string_view str2)
 
 int getStringFromChar(uqstl::span<char> out, UniChar ch)
 {
-	int length {};
-	if (ch < 0x80)
-	{
-		length = 1;
-	}
-	else if (ch < 0x800)
-	{
-		length = 2;
-	}
-	else if (ch < 0x10000)
-	{
-		length = 3;
-	}
-	else if (ch < 0x110000)
-	{
-		length = 4;
-	}
-	else
+	const auto codepoint {static_cast<utf8proc_int32_t>(ch)};
+	if (ch > 0x10ffff || !utf8proc_codepoint_valid(codepoint))
 	{
 		log::warn("Warning: Invalid or unsupported unicode char ({})", ch);
 		return 0;
 	}
 
+	utf8proc_uint8_t encoded[4] {};
+	const auto length {static_cast<int>(utf8proc_encode_char(codepoint, encoded))};
 	if (static_cast<size_t>(length) > out.size())
 	{
 		return -length;
 	}
-
-	static constexpr unsigned char c_leadMarkers[] {0x00, 0x00, 0xc0, 0xe0, 0xf0};
-	for (int i {length - 1}; i > 0; --i)
-	{
-		out[i] = static_cast<char>((ch & 0x3f) | 0x80);
-		ch >>= 6;
-	}
-	out[0] = static_cast<char>(ch | c_leadMarkers[length]);
+	uqstl::copy_n(reinterpret_cast<const char*>(encoded), length, out.begin());
 	return length;
 }
 
 bool isGraphChar(UniChar ch)
 {
-	// All characters except the C0 and C1 controls, and the private use area 0xE000-0xF8FF.
-	return (ch > 0xa0 && (ch < 0xe000 || ch > 0xf8ff)) || (ch > 0x20 && ch < 0x7f);
+	if (ch > 0x10ffff)
+	{
+		return false;
+	}
+	switch (utf8proc_category(static_cast<utf8proc_int32_t>(ch)))
+	{
+		case UTF8PROC_CATEGORY_CN: // unassigned
+		case UTF8PROC_CATEGORY_CC: // control
+		case UTF8PROC_CATEGORY_CF: // format
+		case UTF8PROC_CATEGORY_CS: // surrogate
+		case UTF8PROC_CATEGORY_CO: // private use
+		case UTF8PROC_CATEGORY_ZS: // space
+		case UTF8PROC_CATEGORY_ZL: // line separator
+		case UTF8PROC_CATEGORY_ZP: // paragraph separator
+			return false;
+		default:
+			return true;
+	}
 }
 
 bool isPrintChar(UniChar ch)
 {
-	return ch == 0x20 || ch == 0x09 || isGraphChar(ch);
+	return ch == ' ' || ch == '\t' || isGraphChar(ch);
 }
 
 UniChar toUpperChar(UniChar ch)
 {
-	// Latin-1 only.
-	return ch < 0x100 ? static_cast<UniChar>(toupper(static_cast<int>(ch))) : ch;
+	return ch > 0x10ffff ? ch : static_cast<UniChar>(utf8proc_toupper(static_cast<utf8proc_int32_t>(ch)));
 }
 
 bool isValidUtf8(uqstl::string_view str)

@@ -158,6 +158,18 @@ TEST(Utf8Test, CharClasses)
 	EXPECT_FALSE(isGraphChar(0xe000));
 	EXPECT_EQ(toUpperChar('a'), UniChar {'A'});
 	EXPECT_EQ(toUpperChar(0x20ac), UniChar {0x20ac});
+	EXPECT_EQ(toUpperChar(0xe4), UniChar {0xc4});	  // a with diaeresis
+	EXPECT_EQ(toUpperChar(0x0436), UniChar {0x0416}); // Cyrillic zhe
+	EXPECT_FALSE(isGraphChar(0x200b));				  // zero width space (format)
+}
+
+TEST(Utf8Test, GetCharFromString_RejectsSurrogates)
+{
+	const char* text {"\xed\xa0\x80x"}; // U+D800
+	const char* ptr {text};
+	EXPECT_EQ(getCharFromString(&ptr), UniChar {0});
+	EXPECT_EQ(*ptr, 'x');
+	EXPECT_EQ(getStringFromChar(uqstl::span<char> {}, 0xd800), 0);
 }
 
 } // namespace uqm

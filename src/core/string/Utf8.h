@@ -41,7 +41,7 @@ int utf8StringCompare(uqstl::string_view str1, uqstl::string_view str2);
 // 0 for a character that cannot be encoded, or minus the number of bytes needed if 'out' is too small.
 int getStringFromChar(uqstl::span<char> out, UniChar ch);
 
-// Simple Latin-1 character classes.
+// Character classes and case from the Unicode data in utf8proc.
 bool isGraphChar(UniChar ch);
 bool isPrintChar(UniChar ch);
 UniChar toUpperChar(UniChar ch);
