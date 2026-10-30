@@ -314,7 +314,7 @@ DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool* skip)
 	TEXT Text;
 
 	Text.pStr = buf;
-	Text.CharCount = (uint16_t)utf8StringCount(buf);
+	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
 	Text.align = ALIGN_LEFT;
 	Text.baseline.y = y;
 	Text.baseline.x = x;
@@ -365,7 +365,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 	chd.extent.width = chd.extent.height = 4;
 
 	Text.pStr = buf;
-	Text.CharCount = (uint16_t)utf8StringCount(buf);
+	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
 	Text.align = ALIGN_LEFT;
 	Text.baseline.y = y;
 	Text.baseline.x = x;
@@ -606,7 +606,7 @@ SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 	}
 
 	linespun = true;
-	utf8StringCopy(buf, size, ship_map[raceID].race);
+	uqm::utf8StringCopy(buf, size, ship_map[raceID].race);
 	buf += strlen(ship_map[raceID].race) * sizeof(char);
 
 	switch (ship_map[shipID].sID)
@@ -689,7 +689,7 @@ SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 			if (ship_map[raceID].width > 80)
 			{
 				const char* pad = (IS_HD ? "\n   " : "\n       ");
-				utf8StringCopy(buf, size, pad);
+				uqm::utf8StringCopy(buf, size, pad);
 				buf += strlen(pad) * sizeof(char);
 			}
 			break;
@@ -697,15 +697,15 @@ SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 			break;
 	}
 
-	utf8StringCopy(buf, size, ship_map[shipID].ship);
+	uqm::utf8StringCopy(buf, size, ship_map[shipID].ship);
 	return;
 
 SeedTextSpinSkipLine:
-	utf8StringCopy(buf, size, "");
+	uqm::utf8StringCopy(buf, size, "");
 	return;
 
 SeedTextSpinPassThru:
-	utf8StringCopy(buf, size, str);
+	uqm::utf8StringCopy(buf, size, str);
 	return;
 }
 
@@ -1073,8 +1073,8 @@ DoPresentation(void* pIS)
 						}
 						else
 						{
-							utf8StringCopy(pPIS->Buffer, sizeof(pPIS->Buffer),
-										   textStart);
+							uqm::utf8StringCopy(pPIS->Buffer, sizeof(pPIS->Buffer),
+												textStart);
 						}
 						x <<= RESOLUTION_FACTOR;
 						y <<= RESOLUTION_FACTOR;

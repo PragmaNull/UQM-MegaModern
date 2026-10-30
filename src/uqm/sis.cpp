@@ -205,9 +205,9 @@ void DrawSaveInfo(SIS_STATE SisState)
 
 	if (SisState.SaveVersion > 0)
 	{
-		utf8StringCopy(TempVer, sizeof(TempVer),
-					   GAME_STRING(SAVEGAME_STRING_BASE + 4
-								   + SisState.SaveVersion));
+		uqm::utf8StringCopy(TempVer, sizeof(TempVer),
+							GAME_STRING(SAVEGAME_STRING_BASE + 4
+										+ SisState.SaveVersion));
 	}
 
 	DrawSISMessage(TempVer);
@@ -227,13 +227,13 @@ void DrawSaveInfo(SIS_STATE SisState)
 
 		if (SisState.Extended)
 		{
-			utf8StringCopy(TempExt, sizeof(TempExt),
-						   GAME_STRING(MAINMENU_STRING_BASE + 59));
+			uqm::utf8StringCopy(TempExt, sizeof(TempExt),
+								GAME_STRING(MAINMENU_STRING_BASE + 59));
 		}
 
-		utf8StringCopy(TempDiff, sizeof(TempDiff),
-					   GAME_STRING(MAINMENU_STRING_BASE + 56
-								   + static_cast<int>(SisState.Difficulty)));
+		uqm::utf8StringCopy(TempDiff, sizeof(TempDiff),
+							GAME_STRING(MAINMENU_STRING_BASE + 56
+										+ static_cast<int>(SisState.Difficulty)));
 
 		fmt::format_to_sz_n(buf, "{} {}{}{}",
 							GAME_STRING(MAINMENU_STRING_BASE + 55), // Difficulty:
@@ -304,7 +304,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 						&& (Log.x == ARILOU_HOME_X
 							&& Log.y == ARILOU_HOME_Y))
 					{
-						utf8StringCopy(
+						uqm::utf8StringCopy(
 							GLOBAL_SIS(PlanetName),
 							sizeof GLOBAL_SIS(PlanetName),
 							GAME_STRING(STAR_STRING_BASE + 148));
@@ -336,7 +336,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		{
 			char buf[100];
 
-			utf8StringCopy(buf, sizeof(buf), pStr);
+			uqm::utf8StringCopy(buf, sizeof(buf), pStr);
 			replaceChar(buf, UNICHAR_SPACE, UNICHAR_TAB);
 
 			t.pStr = buf;
@@ -471,7 +471,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 			{
 				t.baseline.x += (int16_t)*pchar_deltas++;
 			}
-			t.pStr = skipUTF8Chars(t.pStr, ExPos);
+			t.pStr = uqm::skipUTF8Chars(t.pStr, ExPos);
 			t.CharCount = (uint16_t)~0;
 			font_DrawText(&t);
 		}
@@ -628,7 +628,7 @@ void DrawStatusMessage(const char* pStr)
 
 		SetContextFont(TinyFontBold);
 
-		utf8StringCopy(buf, sizeof(buf), pStr);
+		uqm::utf8StringCopy(buf, sizeof(buf), pStr);
 		replaceChar(buf, UNICHAR_SPACE, UNICHAR_TAB);
 
 		t.pStr = buf;
@@ -736,7 +736,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 		t.pStr = buf;
 		fmt::format_to_sz_n(buf, "{} {}",
 							GAME_STRING(NAMING_STRING_BASE + 1), GLOBAL_SIS(ShipName));
-		utf8StringCopy(buf, sizeof buf, uqm::toUpperUtf8(buf).c_str());
+		uqm::utf8StringCopy(buf, sizeof buf, uqm::toUpperUtf8(buf).c_str());
 
 		if (IS_HD)
 		{

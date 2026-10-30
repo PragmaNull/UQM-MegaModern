@@ -129,7 +129,7 @@ void DrawLabelAsWindow(WIDGET_LABEL* label, GFXRECT* windowRect)
 	win_w = 0;
 	for (i = 0; i < label->line_count; i++)
 	{
-		size_t len = utf8StringCount(label->lines[i]);
+		size_t len = uqm::utf8StringCount(label->lines[i]);
 		if (len > win_w)
 		{
 			win_w = RES_SCALE(len);
@@ -772,7 +772,7 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 	self->value[WIDGET_TEXTENTRY_WIDTH - RES_SCALE(1)] = 0;
 
 	t.baseline.y = y;
-	t.CharCount = (uint16_t)utf8StringCount(self->value);
+	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value);
 	t.pStr = self->value;
 
 	if (!(self->state & WTE_EDITING))

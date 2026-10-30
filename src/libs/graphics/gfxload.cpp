@@ -342,7 +342,7 @@ bool _ReleaseCelData(void* handle)
 typedef struct BuildCharDesc
 {
 	TFB_Canvas canvas;
-	UniChar index;
+	uqm::UniChar index;
 } BuildCharDesc;
 
 static int
@@ -539,7 +539,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 
 	{
 		size_t startBCD = 0;
-		UniChar pageStart;
+		uqm::UniChar pageStart;
 		FONT_PAGE** pageEndPtr = &fontPtr->fontPages;
 		while (startBCD < numBCDs)
 		{

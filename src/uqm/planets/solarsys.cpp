@@ -3122,12 +3122,12 @@ void GetPlanetOrMoonName(char* buf, uint16_t bufsize)
 	named = GetNamedPlanetaryBody();
 	if (named)
 	{
-		utf8StringCopy(buf, bufsize, named);
+		uqm::utf8StringCopy(buf, bufsize, named);
 		return;
 	}
 
 	// Either not named or we already have a name
-	utf8StringCopy(buf, bufsize, GLOBAL_SIS(PlanetName));
+	uqm::utf8StringCopy(buf, bufsize, GLOBAL_SIS(PlanetName));
 
 	if (!playerInSolarSystem() || !playerInInnerSystem()
 		|| worldIsPlanet(pSolarSysState, pSolarSysState->pOrbitalDesc)

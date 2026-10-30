@@ -84,6 +84,6 @@ extern FRAME _CurFramePtr;
 // ClipRect is relative to ctxOrigin
 extern void _text_blt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin);
 extern void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME repair, bool* skip);
-extern uint8_t _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swap, FONT AltFontPtr, UniChar key);
+extern uint8_t _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swap, FONT AltFontPtr, uqm::UniChar key);
 
 #endif /* LIBS_GRAPHICS_DRAWABLE_H_ */

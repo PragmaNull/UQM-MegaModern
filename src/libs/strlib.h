@@ -22,7 +22,7 @@
 #include "libs/compiler.h"
 #include "port.h"
 #include "libs/io/FileSystem.h"
-#include "libs/unicode.h"
+#include "core/string/Utf8.h"
 
 #include <stddef.h>
 
@@ -95,6 +95,11 @@ extern const char* LoadStringInstance(RESOURCE res);
 
 
 #define STR_NULL "null"
+
+// Skip the alignment marker "|n|" or the padding marker ":n:" at the start of 'str',
+// and add n (scaled to the resolution) to the offset.
+const char* AlignText(const char* str, int16_t* loc_x);
+const char* AddPadd(const char* str, int16_t* padding);
 
 #if 0 //defined(__cplusplus)
 }

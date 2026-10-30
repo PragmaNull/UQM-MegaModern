@@ -141,10 +141,10 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 				(i - (PM_CHANGE_CAPTAIN - PM_READ_VERY_SLOW)) :
 				i;
 
-		utf8StringCopy(buf, sizeof buf,
-					   (i == PM_FUEL) ? pm_fuel_str :
-					   (i == PM_CREW) ? pm_crew_str :
-										GAME_STRING(MAINMENU_STRING_BASE + j));
+		uqm::utf8StringCopy(buf, sizeof buf,
+							(i == PM_FUEL) ? pm_fuel_str :
+							(i == PM_CREW) ? pm_crew_str :
+											 GAME_STRING(MAINMENU_STRING_BASE + j));
 		if (hilite && pos == i)
 		{
 			// Currently selected menu option.

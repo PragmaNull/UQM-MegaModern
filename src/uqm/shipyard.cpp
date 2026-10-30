@@ -192,13 +192,13 @@ DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 										 (stowed_q ? CAPTAIN_NAME_TEXT_COLOR : MODULE_NAME_COLOR));
 	t.baseline.y = r.corner.y + TEXT_BASELINE;
 	t.pStr = ShipState.ShipStats[index].ShipName;
-	t.CharCount = (stowed_q ? (uint16_t)~0 : utf8StringPos(t.pStr, ' '));
+	t.CharCount = (stowed_q ? (uint16_t)~0 : uqm::utf8StringPos(t.pStr, ' '));
 	font_DrawText(&t);
 	if (!stowed_q)
 	{
 		// print second half of ship name
 		t.baseline.y += TEXT_SPACING_Y;
-		t.pStr = skipUTF8Chars(t.pStr, t.CharCount + 1);
+		t.pStr = uqm::skipUTF8Chars(t.pStr, t.CharCount + 1);
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 	}
@@ -482,7 +482,7 @@ showRemainingCrew(void)
 	t.align = ALIGN_LEFT;
 	t.CharCount = (uint16_t)~0;
 	t.pStr = buf;
-	utf8StringCopy(
+	uqm::utf8StringCopy(
 		buf, sizeof(buf), GAME_STRING(STARBASE_STRING_BASE + 6));
 	// Remaining Crew:
 
@@ -501,7 +501,7 @@ showRemainingCrew(void)
 	}
 	else if (remaining_crew == 0)
 	{
-		utf8StringCopy(
+		uqm::utf8StringCopy(
 			buf, sizeof(buf), GAME_STRING(STARBASE_STRING_BASE + 7));
 		// Cdr. Hayes
 	}
@@ -669,7 +669,7 @@ showRemainingPoints(int delta)
 	// Draw the "Fleet Points: " text
 	r = font_GetTextRect(&t);
 	t.baseline.x -= r.extent.width;
-	utf8StringCopy(
+	uqm::utf8StringCopy(
 		buf, sizeof(buf), GAME_STRING(STARBASE_STRING_BASE + 8));
 	// Fleet Points:
 
@@ -822,14 +822,14 @@ DrawShipyardShipText(GFXRECT* r, int Index)
 		LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
 	HMASTERSHIP hMasterShip = FindMasterShip(FleetPtr->SpeciesID);
 	MASTER_SHIP_INFO* ShipPtr = LockMasterShip(&master_q, hMasterShip);
-	utf8StringCopy((char*)&race_name, sizeof(race_name),
-				   (char*)GetStringAddress(SetAbsStringTableIndex(
-					   ShipPtr->ShipInfo.race_strings,
-					   GetStringTableCount(ShipPtr->ShipInfo.race_strings) - 3)));
-	utf8StringCopy((char*)&ship_name, sizeof(ship_name),
-				   (char*)GetStringAddress(SetAbsStringTableIndex(
-					   ShipPtr->ShipInfo.race_strings,
-					   GetStringTableCount(ShipPtr->ShipInfo.race_strings) - 2)));
+	uqm::utf8StringCopy((char*)&race_name, sizeof(race_name),
+						(char*)GetStringAddress(SetAbsStringTableIndex(
+							ShipPtr->ShipInfo.race_strings,
+							GetStringTableCount(ShipPtr->ShipInfo.race_strings) - 3)));
+	uqm::utf8StringCopy((char*)&ship_name, sizeof(ship_name),
+						(char*)GetStringAddress(SetAbsStringTableIndex(
+							ShipPtr->ShipInfo.race_strings,
+							GetStringTableCount(ShipPtr->ShipInfo.race_strings) - 2)));
 	UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
 	UnlockMasterShip(&master_q, hMasterShip);
 
@@ -1084,7 +1084,7 @@ DrawRaceStrings(uint8_t NewRaceItem)
 			r = font_GetTextRect(&t);
 			t.baseline.x -= r.extent.width;
 
-			utf8StringCopy(
+			uqm::utf8StringCopy(
 				buf, sizeof(buf),
 				GAME_STRING(STARBASE_STRING_BASE + 9)); // FP:
 			SetContextForeGroundColor(BRIGHT_BLUE_COLOR);
@@ -1150,8 +1150,8 @@ ShowShipCrew(SHIP_FRAGMENT* StarShipPtr, const GFXRECT* pRect)
 	}
 	else if (StarShipPtr->crew_level == 0)
 	{
-		utf8StringCopy(buf, sizeof(buf),
-					   GAME_STRING(STARBASE_STRING_BASE + 5));
+		uqm::utf8StringCopy(buf, sizeof(buf),
+							GAME_STRING(STARBASE_STRING_BASE + 5));
 	}
 	else
 	{

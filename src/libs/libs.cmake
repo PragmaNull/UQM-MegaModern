@@ -53,7 +53,6 @@ set(uqm_src_libs_files
 	"src/libs/sndlib.h"
 	"src/libs/strlib.h"
 	"src/libs/threadlib.h"
-	"src/libs/unicode.h"
 	"src/libs/vidlib.h"
 )
 

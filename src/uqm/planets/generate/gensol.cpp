@@ -280,9 +280,9 @@ GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
 {
 	uint16_t planetNr = planetIndex(solarSys, world);
 
-	utf8StringCopy(GLOBAL_SIS(PlanetName),
-				   sizeof(GLOBAL_SIS(PlanetName)),
-				   GAME_STRING(PLANET_NUMBER_BASE + planetNr));
+	uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
+						sizeof(GLOBAL_SIS(PlanetName)),
+						GAME_STRING(PLANET_NUMBER_BASE + planetNr));
 	SET_GAME_STATE(BATTLE_PLANET,
 				   solarSys->PlanetDesc[planetNr].data_index);
 

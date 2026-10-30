@@ -557,7 +557,7 @@ void SpliceTrack(char* TrackName, char* TrackText, char* TimeStamp, CallbackFunc
 	{ // Adding a new track
 		int num_timestamps = 0;
 
-		utf8StringCopy(last_track_name, sizeof(last_track_name), TrackName);
+		uqm::utf8StringCopy(last_track_name, sizeof(last_track_name), TrackName);
 
 		num_pages = SplitSubPages(TrackText, pages, time_stamps, MAX_PAGES);
 		if (num_pages == 0)

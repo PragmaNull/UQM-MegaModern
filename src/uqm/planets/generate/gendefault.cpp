@@ -105,8 +105,8 @@ bool GenerateDefault_generateName(const SOLARSYS_STATE* solarSys,
 								  const PLANET_DESC* world)
 {
 	uint16_t i = planetIndex(solarSys, world);
-	utf8StringCopy(GLOBAL_SIS(PlanetName), sizeof(GLOBAL_SIS(PlanetName)),
-				   GAME_STRING(PLANET_NUMBER_BASE + (9 + 7) + i));
+	uqm::utf8StringCopy(GLOBAL_SIS(PlanetName), sizeof(GLOBAL_SIS(PlanetName)),
+						GAME_STRING(PLANET_NUMBER_BASE + (9 + 7) + i));
 	SET_GAME_STATE(BATTLE_PLANET, world->data_index);
 
 	return true;

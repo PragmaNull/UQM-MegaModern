@@ -50,7 +50,7 @@ struct joy_char
 static int
 ReadOneChar(joy_char_t* ch, const char* str)
 {
-	char* next = skipUTF8Chars(str, 1);
+	const char* next = uqm::skipUTF8Chars(str, 1);
 	int len = next - str;
 	ch->len = len;
 	memcpy(ch->enc, str, len);
@@ -75,7 +75,7 @@ LoadJoystickAlpha(STRING String, int* count)
 		return 0;
 	}
 
-	c = utf8StringCount(str);
+	c = uqm::utf8StringCount(str);
 	chars = (joy_char_t*)HMalloc(c * sizeof(*chars));
 	if (!chars)
 	{
@@ -198,7 +198,7 @@ FlashCursor(void)
 
 bool DoTextEntry(TEXTENTRY_STATE* pTES)
 {
-	UniChar ch;
+	uqm::UniChar ch;
 	char* pStr;
 	char* CacheInsPt;
 	int CacheCursorPos;
@@ -226,11 +226,11 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		pTES->UpperRegister = false;
 
 		// init insertion point
-		if ((size_t)pTES->CursorPos > utf8StringCount(pTES->BaseStr))
+		if ((size_t)pTES->CursorPos > uqm::utf8StringCount(pTES->BaseStr))
 		{
-			pTES->CursorPos = utf8StringCount(pTES->BaseStr);
+			pTES->CursorPos = uqm::utf8StringCount(pTES->BaseStr);
 		}
-		pTES->InsPt = skipUTF8Chars(pTES->BaseStr, pTES->CursorPos);
+		pTES->InsPt = uqm::skipUTF8Chars(pTES->BaseStr, pTES->CursorPos);
 
 		// load joystick alphabet
 		pTES->JoyAlphaString = CaptureStringTable(
@@ -306,8 +306,8 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 
 		pTES->JoystickMode = false;
 
-		chsize = getStringFromChar(chbuf, sizeof(chbuf), ch);
-		if (UniChar_isPrint(ch) && chsize > 0)
+		chsize = uqm::getStringFromChar(chbuf, ch);
+		if (uqm::isPrintChar(ch) && chsize > 0)
 		{
 			if (pStr + len - pTES->BaseStr + chsize < pTES->MaxSize)
 			{ // insert character, when fits
@@ -345,8 +345,8 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	{
 		if (pStr > pTES->BaseStr)
 		{
-			char* prev = skipUTF8Chars(pTES->BaseStr,
-									   pTES->CursorPos - 1);
+			char* prev = uqm::skipUTF8Chars(pTES->BaseStr,
+											pTES->CursorPos - 1);
 
 			memmove(prev, pStr, len + 1);
 			pStr = prev;
@@ -358,8 +358,8 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	{
 		if (pStr > pTES->BaseStr)
 		{
-			char* prev = skipUTF8Chars(pTES->BaseStr,
-									   pTES->CursorPos - 1);
+			char* prev = uqm::skipUTF8Chars(pTES->BaseStr,
+											pTES->CursorPos - 1);
 
 			pStr = prev;
 			len += (prev - pStr);
@@ -394,7 +394,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	{
 		if (len > 0)
 		{
-			pTES->CursorPos += utf8StringCount(pStr);
+			pTES->CursorPos += uqm::utf8StringCount(pStr);
 			pStr += len;
 			len = 0;
 			changed = true;

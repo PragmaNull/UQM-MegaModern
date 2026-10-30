@@ -28,10 +28,10 @@
 
 #include "uqm/setup.h"
 
-static inline TFB_Char* getCharFrame(FONT_DESC* fontPtr, UniChar ch);
+static inline TFB_Char* getCharFrame(FONT_DESC* fontPtr, uqm::UniChar ch);
 
 TFB_Char*
-GetFrameForFPS(UniChar ch)
+GetFrameForFPS(uqm::UniChar ch)
 {
 	if (StarConFont && !(GLOBAL(CurrentActivity) & CHECK_ABORT))
 	{
@@ -188,7 +188,7 @@ void font_DrawTracedText(TEXT* pText, Color text, Color trace)
 
 // Alt stuff to handle 2 fonts at once (for Orz)
 uint8_t
-font_DrawTextAlt(TEXT* lpText, uint8_t swap, FONT AltFontPtr, UniChar key)
+font_DrawTextAlt(TEXT* lpText, uint8_t swap, FONT AltFontPtr, uqm::UniChar key)
 {
 	GFXRECT ClipRect;
 	GFXPOINT origin;
@@ -211,7 +211,7 @@ font_DrawTextAlt(TEXT* lpText, uint8_t swap, FONT AltFontPtr, UniChar key)
 }
 
 void font_DrawTracedTextAlt(TEXT* pText, Color text, Color trace, FONT AltFontPtr,
-							UniChar key)
+							uqm::UniChar key)
 {
 	// Preserve current foreground color for full correctness
 	const Color oldfg = SetContextForeGroundColor(trace);
@@ -339,7 +339,7 @@ bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 	{
 		int16_t top_y, bot_y;
 		int16_t width;
-		UniChar next_ch = 0;
+		uqm::UniChar next_ch = 0;
 		const char* pStr;
 		uint16_t num_chars;
 
@@ -364,7 +364,7 @@ bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 		pStr = lpText->pStr;
 		if (num_chars > 0)
 		{
-			next_ch = getCharFromString(&pStr);
+			next_ch = uqm::getCharFromString(&pStr);
 			if (next_ch == '\0')
 			{
 				num_chars = 0;
@@ -372,7 +372,7 @@ bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 		}
 		while (num_chars--)
 		{
-			UniChar ch;
+			uqm::UniChar ch;
 			int16_t last_width;
 			TFB_Char* charFrame;
 
@@ -381,7 +381,7 @@ bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 			ch = next_ch;
 			if (num_chars > 0)
 			{
-				next_ch = getCharFromString(&pStr);
+				next_ch = uqm::getCharFromString(&pStr);
 				if (next_ch == '\0')
 				{
 					lpText->CharCount -= num_chars;
@@ -465,7 +465,7 @@ void _text_blt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin)
 {
 	FONT FontPtr;
 	uint16_t num_chars;
-	UniChar next_ch;
+	uqm::UniChar next_ch;
 	const char* pStr;
 	GFXPOINT origin;
 	TFB_Image* backing;
@@ -492,20 +492,20 @@ void _text_blt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin)
 
 	pStr = TextPtr->pStr;
 
-	next_ch = getCharFromString(&pStr);
+	next_ch = uqm::getCharFromString(&pStr);
 	if (next_ch == '\0')
 	{
 		num_chars = 0;
 	}
 	while (num_chars--)
 	{
-		UniChar ch;
+		uqm::UniChar ch;
 		TFB_Char* fontChar;
 
 		ch = next_ch;
 		if (num_chars > 0)
 		{
-			next_ch = getCharFromString(&pStr);
+			next_ch = uqm::getCharFromString(&pStr);
 			if (next_ch == '\0')
 			{
 				num_chars = 0;
@@ -547,7 +547,7 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 {
 	FONT FontPtr;
 	uint16_t num_chars;
-	UniChar next_ch;
+	uqm::UniChar next_ch;
 	const char* pStr;
 	GFXPOINT origin;
 	int16_t leading;
@@ -592,27 +592,27 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 
 	pStr = TextPtr->pStr;
 
-	next_ch = getCharFromString(&pStr);
+	next_ch = uqm::getCharFromString(&pStr);
 	if (next_ch == '\0')
 	{
 		num_chars = 0;
 	}
 	while (num_chars--)
 	{
-		UniChar ch;
+		uqm::UniChar ch;
 		TFB_Char* fontChar;
 
 		while (next_ch == ' ')
 		{
 			fontChar = getCharFrame(FontPtr, next_ch);
 			origin.x += fontChar->disp.width + FontPtr->CharSpace;
-			next_ch = getCharFromString(&pStr);
+			next_ch = uqm::getCharFromString(&pStr);
 			num_chars--;
 		}
 		ch = next_ch;
 		if (num_chars > 0)
 		{
-			next_ch = getCharFromString(&pStr);
+			next_ch = uqm::getCharFromString(&pStr);
 			if (next_ch == '\0')
 			{
 				num_chars = 0;
@@ -656,7 +656,7 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 				origin.x = pClipRect->corner.x;
 				origin.y += leading;
 				pClipRect->extent.height += leading;
-				next_ch = getCharFromString(&pStr);
+				next_ch = uqm::getCharFromString(&pStr);
 				num_chars--;
 			}
 			else if (next_ch != '\0')
@@ -696,7 +696,7 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 }
 
 bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
-				 UniChar key, FONT AltFontPtr)
+				 uqm::UniChar key, FONT AltFontPtr)
 {
 	uint8_t char_delta_array[MAX_DELTAS];
 	FONT FontPtr;
@@ -706,7 +706,7 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 	{
 		int16_t top_y, bot_y;
 		int16_t width;
-		UniChar next_ch = 0;
+		uqm::UniChar next_ch = 0;
 		const char* pStr;
 		uint16_t num_chars;
 
@@ -731,7 +731,7 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 		pStr = lpText->pStr;
 		if (num_chars > 0)
 		{
-			next_ch = getCharFromString(&pStr);
+			next_ch = uqm::getCharFromString(&pStr);
 			if (next_ch == '\0')
 			{
 				num_chars = 0;
@@ -739,7 +739,7 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 		}
 		while (num_chars--)
 		{
-			UniChar ch;
+			uqm::UniChar ch;
 			int16_t last_width;
 			TFB_Char* charFrame;
 
@@ -748,7 +748,7 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 			ch = next_ch;
 			if (num_chars > 0)
 			{
-				next_ch = getCharFromString(&pStr);
+				next_ch = uqm::getCharFromString(&pStr);
 				if (next_ch == '\0')
 				{
 					lpText->CharCount -= num_chars;
@@ -841,7 +841,7 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 
 uint8_t
 _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swap,
-			  FONT AltFontPtr, UniChar key)
+			  FONT AltFontPtr, uqm::UniChar key)
 { // Kruzen: To create text using 2 fonts (Orz case)
 	// Safest way to do so without going too deep into
 	// original code
@@ -849,7 +849,7 @@ _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swa
 	// for chars only in 1 font
 	FONT FontPtr;
 	uint16_t num_chars;
-	UniChar next_ch;
+	uqm::UniChar next_ch;
 	const char* pStr;
 	GFXPOINT origin;
 	TFB_Image *backing, *stock, *ext;
@@ -903,7 +903,7 @@ _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swa
 	leading_step = AltFontPtr->Leading - _CurFontPtr->Leading;
 	pStr = TextPtr->pStr;
 
-	next_ch = getCharFromString(&pStr);
+	next_ch = uqm::getCharFromString(&pStr);
 	if (next_ch == '\0')
 	{
 		num_chars = 0;
@@ -911,13 +911,13 @@ _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swa
 	backing = stock;
 	while (num_chars--)
 	{
-		UniChar ch;
+		uqm::UniChar ch;
 		TFB_Char* fontChar;
 
 		ch = next_ch;
 		if (num_chars > 0)
 		{
-			next_ch = getCharFromString(&pStr);
+			next_ch = uqm::getCharFromString(&pStr);
 			if (next_ch == '\0')
 			{
 				num_chars = 0;
@@ -978,9 +978,9 @@ _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swa
 }
 
 static inline TFB_Char*
-getCharFrame(FONT_DESC* fontPtr, UniChar ch)
+getCharFrame(FONT_DESC* fontPtr, uqm::UniChar ch)
 {
-	UniChar pageStart = ch & CHARACTER_PAGE_MASK;
+	uqm::UniChar pageStart = ch & CHARACTER_PAGE_MASK;
 	size_t charIndex;
 
 	FONT_PAGE* page = fontPtr->fontPages;

@@ -481,7 +481,7 @@ bool getLineWithinWidth(TEXT* pText, const char** startNext,
 	uint16_t oldCount;
 	const char* ptr;
 	const char* wordStart;
-	UniChar ch;
+	uqm::UniChar ch;
 	uint16_t charCount;
 
 	//GetContextClipRect (&rect);
@@ -505,7 +505,7 @@ bool getLineWithinWidth(TEXT* pText, const char** startNext,
 				done = true;
 				break;
 			}
-			ch = getCharFromString(&ptr);
+			ch = uqm::getCharFromString(&ptr);
 			eol = ch == '\0' || ch == '\n' || ch == '\r';
 			done = eol || charCount >= maxChars;
 			if (done || ch == ' ')
@@ -1502,8 +1502,8 @@ SelectResponse(ENCOUNTER_STATE* pES)
 {
 	TEXT* response_text =
 		&pES->response_list[pES->cur_response].response_text;
-	utf8StringCopy(pES->phrase_buf, sizeof pES->phrase_buf,
-				   response_text->pStr);
+	uqm::utf8StringCopy(pES->phrase_buf, sizeof pES->phrase_buf,
+						response_text->pStr);
 
 	if (!uqm::UQMOptions::read().useSpeech && uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC)
 	{ // short pause after choosing response to mimic PC behaviour

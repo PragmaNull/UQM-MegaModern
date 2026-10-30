@@ -692,7 +692,7 @@ DrawNoReturnZone(void)
 						L2.first.y = L2.second.y = prev.y + dy - iter;
 						L2.first.x = L.first.x
 								   - (int16_t)(y_err
-											 * (L.first.y - L2.first.y));
+											   * (L.first.y - L2.first.y));
 						L2.second.x = rmax_y.x
 									- (int16_t)(err * (rmax_y.y - L2.first.y));
 
@@ -1967,12 +1967,12 @@ UpdateCursorInfo(std::span<char> prevbuf)
 
 	if (which_starmap == NORMAL_STARMAP)
 	{ // "(Star Search: F6 | Toggle Maps: F7)"
-		utf8StringCopy(buf, sizeof(buf), GAME_STRING(FEEDBACK_STRING_BASE + 2 + (is3DO(uqm::UQMOptions::read().whichFonts) || IS_PAD)));
+		uqm::utf8StringCopy(buf, sizeof(buf), GAME_STRING(FEEDBACK_STRING_BASE + 2 + (is3DO(uqm::UQMOptions::read().whichFonts) || IS_PAD)));
 	}
 	else
 	{
-		utf8StringCopy(buf, sizeof(buf),
-					   GAME_STRING(FEEDBACK_STRING_BASE + 3 + which_starmap));
+		uqm::utf8StringCopy(buf, sizeof(buf),
+							GAME_STRING(FEEDBACK_STRING_BASE + 3 + which_starmap));
 	}
 
 	pt.x = UNIVERSE_TO_DISPX(cursorLoc.x);
@@ -2003,8 +2003,8 @@ UpdateCursorInfo(std::span<char> prevbuf)
 			&& !(GET_GAME_STATE(KNOW_QS_PORTAL) & (1 << whichPortal)))
 		{
 			// "UNKNOWN" string
-			utf8StringCopy(buf, sizeof(buf),
-						   GAME_STRING(STAR_STRING_BASE + 132));
+			uqm::utf8StringCopy(buf, sizeof(buf),
+								GAME_STRING(STAR_STRING_BASE + 132));
 		}
 		else if (GET_GAME_STATE(ARILOU_SPACE_SIDE) < 2 || whichPortal == NUM_HYPER_VORTICES)
 		{
@@ -2020,7 +2020,7 @@ UpdateCursorInfo(std::span<char> prevbuf)
 			// portal_map[whichPortal].star_pt - coords of the exit
 			//                  nearest_star - STAR_DESC* of nearest constell.
 			char starnameBuf[CURSOR_INFO_BUFSIZE] = "";
-			utf8StringCopy(starnameBuf, sizeof(starnameBuf), GAME_STRING(portal_map[whichPortal].nearest_star->Postfix));
+			uqm::utf8StringCopy(starnameBuf, sizeof(starnameBuf), GAME_STRING(portal_map[whichPortal].nearest_star->Postfix));
 			// Abbreviate names longer than 11 at the 10th (or less)
 			// non-vowel character.
 			if (strlen(starnameBuf) > 11)
@@ -2088,8 +2088,8 @@ UpdateCursorInfo(std::span<char> prevbuf)
 			&& UNIVERSE_TO_DISPY(ari_pt.y) == pt.y)
 		{
 			cursorLoc = ari_pt;
-			utf8StringCopy(buf, sizeof(buf),
-						   GAME_STRING(STAR_STRING_BASE + 132));
+			uqm::utf8StringCopy(buf, sizeof(buf),
+								GAME_STRING(STAR_STRING_BASE + 132));
 		}
 	}
 
@@ -2107,7 +2107,7 @@ UpdateCursorInfo(std::span<char> prevbuf)
 			{
 				char visBuf[CURSOR_INFO_BUFSIZE] = "";
 
-				utf8StringCopy(visBuf, sizeof(visBuf), buf);
+				uqm::utf8StringCopy(visBuf, sizeof(visBuf), buf);
 				// This is how you get rid of compiler warnings over string
 				// length:  %.30s where "30" is a limit.  Enjoy. ~JSD~
 				//snprintf(buf, sizeof buf, "%c %.251s %c", '(', visBuf, ')');
@@ -2205,8 +2205,8 @@ compStarName(const void* ptr1, const void* ptr2)
 	index2 = *(const int*)ptr2;
 	if (star_array[index1].Postfix != star_array[index2].Postfix)
 	{
-		return utf8StringCompare(GAME_STRING(star_array[index1].Postfix),
-								 GAME_STRING(star_array[index2].Postfix));
+		return uqm::utf8StringCompare(GAME_STRING(star_array[index1].Postfix),
+									  GAME_STRING(star_array[index2].Postfix));
 	}
 
 	if (star_array[index1].Prefix < star_array[index2].Prefix)
@@ -2250,7 +2250,7 @@ SplitStarName(STAR_SEARCH_STATE* pSS)
 	pSS->ClusterPos = 0;
 
 	// skip leading space
-	for (next = buf; *next != '\0' && getCharFromString((const char**)&next) == (isPC(uqm::UQMOptions::read().whichFonts) ? UNICHAR_SPACE : UNICHAR_TAB);
+	for (next = buf; *next != '\0' && uqm::getCharFromString((const char**)&next) == (isPC(uqm::UQMOptions::read().whichFonts) ? UNICHAR_SPACE : UNICHAR_TAB);
 		 buf = next)
 		;
 	if (*buf == '\0')
@@ -2261,14 +2261,14 @@ SplitStarName(STAR_SEARCH_STATE* pSS)
 	pSS->Prefix = buf;
 
 	// See if player gave a prefix
-	for (buf = next; *next != '\0' && getCharFromString((const char**)&next) != (isPC(uqm::UQMOptions::read().whichFonts) ? UNICHAR_SPACE : UNICHAR_TAB);
+	for (buf = next; *next != '\0' && uqm::getCharFromString((const char**)&next) != (isPC(uqm::UQMOptions::read().whichFonts) ? UNICHAR_SPACE : UNICHAR_TAB);
 		 buf = next)
 		;
 	if (*buf != '\0')
 	{ // found possibly separating ' '
 		sep = buf;
 		// skip separating space
-		for (buf = next; *next != '\0' && getCharFromString((const char**)&next) == (isPC(uqm::UQMOptions::read().whichFonts) ? UNICHAR_SPACE : UNICHAR_TAB);
+		for (buf = next; *next != '\0' && uqm::getCharFromString((const char**)&next) == (isPC(uqm::UQMOptions::read().whichFonts) ? UNICHAR_SPACE : UNICHAR_TAB);
 			 buf = next)
 			;
 	}
@@ -2276,18 +2276,18 @@ SplitStarName(STAR_SEARCH_STATE* pSS)
 	if (*buf == '\0')
 	{ // reached the end -- cluster only
 		pSS->Cluster = pSS->Prefix;
-		pSS->ClusterLen = utf8StringCount(pSS->Cluster);
-		pSS->ClusterPos = utf8StringCountN(pSS->Buffer, pSS->Cluster);
+		pSS->ClusterLen = uqm::utf8StringCount(pSS->Cluster);
+		pSS->ClusterPos = uqm::utf8StringCount(uqstl::string_view {pSS->Buffer, static_cast<size_t>(pSS->Cluster - pSS->Buffer)});
 		pSS->Prefix = 0;
 		return;
 	}
 
 	// consider the rest cluster name (whatever there is)
 	pSS->Cluster = buf;
-	pSS->ClusterLen = utf8StringCount(pSS->Cluster);
-	pSS->ClusterPos = utf8StringCountN(pSS->Buffer, pSS->Cluster);
+	pSS->ClusterLen = uqm::utf8StringCount(pSS->Cluster);
+	pSS->ClusterPos = uqm::utf8StringCount(uqstl::string_view {pSS->Buffer, static_cast<size_t>(pSS->Cluster - pSS->Buffer)});
 	*sep = '\0'; // split
-	pSS->PrefixLen = utf8StringCount(pSS->Prefix);
+	pSS->PrefixLen = uqm::utf8StringCount(pSS->Prefix);
 }
 
 static inline int
@@ -2321,7 +2321,7 @@ FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
 		int dlen;
 		int c;
 
-		dlen = utf8StringCount(ClusterName);
+		dlen = uqm::utf8StringCount(ClusterName);
 		if (pSS->ClusterLen > dlen)
 		{ // no match, skip the rest of cluster
 			i = SkipStarCluster(pSS->SortedStars, i) - 1;
@@ -2331,10 +2331,10 @@ FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
 		for (c = 0, sptr = pSS->Cluster, dptr = ClusterName;
 			 c < pSS->ClusterLen; ++c)
 		{
-			UniChar sc = getCharFromString(&sptr);
-			UniChar dc = getCharFromString(&dptr);
+			uqm::UniChar sc = uqm::getCharFromString(&sptr);
+			uqm::UniChar dc = uqm::getCharFromString(&dptr);
 
-			if (UniChar_toUpper(sc) != UniChar_toUpper(dc))
+			if (uqm::toUpperChar(sc) != uqm::toUpperChar(dc))
 			{
 				break;
 			}
@@ -2375,7 +2375,7 @@ FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
 
 		// check prefix
 		GetClusterName(SDPtr, FullName);
-		dlen = utf8StringCount(FullName);
+		dlen = uqm::utf8StringCount(FullName);
 		if (pSS->PrefixLen > dlen)
 		{
 			continue;
@@ -2384,10 +2384,10 @@ FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
 		for (c = 0, sptr = pSS->Prefix, dptr = FullName;
 			 c < pSS->PrefixLen; ++c)
 		{
-			UniChar sc = getCharFromString(&sptr);
-			UniChar dc = getCharFromString(&dptr);
+			uqm::UniChar sc = uqm::getCharFromString(&sptr);
+			uqm::UniChar dc = uqm::getCharFromString(&dptr);
 
-			if (UniChar_toUpper(sc) != UniChar_toUpper(dc))
+			if (uqm::toUpperChar(sc) != uqm::toUpperChar(dc))
 			{
 				break;
 			}
@@ -2424,7 +2424,7 @@ DrawMatchedStarName(TEXTENTRY_STATE* pTES)
 
 		uqm::strncpy_safe(buf, pSS->Text);
 		ExPos = pSS->ClusterPos;
-		pstr = skipUTF8Chars(pstr, pSS->ClusterPos);
+		pstr = uqm::skipUTF8Chars(pstr, pSS->ClusterPos);
 
 		uqm::strncpy_safe({pstr, sizeof(buf) - uqstl::distance(buf, pstr)}, pSS->Text);
 		ExPos += pSS->ClusterLen;

@@ -95,7 +95,7 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 {
 	int end_page_len;
 	char end_page_buf[200] {};
-	UniChar last_c = 0;
+	uqm::UniChar last_c = 0;
 	uint16_t row_cells;
 	bool Sleepy;
 	GFXRECT r, contextRect;
@@ -109,7 +109,7 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 
 	fmt::format_to_n(end_page_buf, sizeof(end_page_buf) - 1, "{}\n",
 					 GAME_STRING(static_cast<int>(SCAN_STRING_BASE) + static_cast<int>(NUM_SCAN_TYPES)));
-	end_page_len = utf8StringCount(end_page_buf);
+	end_page_len = uqm::utf8StringCount(end_page_buf);
 
 	GetFrameRect(SetAbsFrameIndex(SpaceJunkFrame, 18), &r);
 	GetContextClipRect(&contextRect);
@@ -155,7 +155,7 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 
 			for (length = StrLen; length > 0; length--)
 			{
-				if (getCharFromString(&pCurrStr) == '\n')
+				if (uqm::getCharFromString(&pCurrStr) == '\n')
 				{
 					total_lines++;
 				}
@@ -180,7 +180,7 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 		// scan for LFs in the remaining string
 		// trailing LF will be ignored
 		for (lf_pos = StrLen, pNextStr = t.pStr;
-			 lf_pos && getCharFromString(&pNextStr) != '\n';
+			 lf_pos && uqm::getCharFromString(&pNextStr) != '\n';
 			 --lf_pos)
 			;
 
@@ -218,16 +218,16 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 		{
 			uint16_t word_chars;
 			const char* pStr;
-			UniChar c;
+			uqm::UniChar c;
 
 			pStr = t.pStr;
 			pNextStr = t.pStr;
-			while (UniChar_isGraph(getCharFromString(&pNextStr)))
+			while (uqm::isGraphChar(uqm::getCharFromString(&pNextStr)))
 			{
 				pStr = pNextStr;
 			}
 
-			word_chars = (uint16_t)utf8StringCountN(t.pStr, pStr);
+			word_chars = (uint16_t)uqm::utf8StringCount(uqstl::string_view {t.pStr, static_cast<size_t>(pStr - t.pStr)});
 			if ((col_cells += word_chars) <= NUM_CELL_COLS)
 			{
 				TimeCount TimeOut;
@@ -240,7 +240,7 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 				while (word_chars--)
 				{
 					pNextStr = t.pStr;
-					c = getCharFromString(&pNextStr);
+					c = uqm::getCharFromString(&pNextStr);
 
 					if (GLOBAL(CurrentActivity) & CHECK_ABORT)
 					{
@@ -316,7 +316,7 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 				}
 
 				++col_cells;
-				last_c = getCharFromString(&t.pStr);
+				last_c = uqm::getCharFromString(&t.pStr);
 				t.baseline.x += r.extent.width + RES_SCALE(1);
 				// Space spacing
 

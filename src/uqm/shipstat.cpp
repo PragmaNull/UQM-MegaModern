@@ -331,8 +331,8 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 				locString = SetAbsStringTableIndex(SIPtr->race_strings,
 												   StarShipPtr->captains_name_index);
 
-				utf8StringCopy(buf, sizeof(buf),
-							   (char*)GetStringAddress(locString));
+				uqm::utf8StringCopy(buf, sizeof(buf),
+									(char*)GetStringAddress(locString));
 
 				if (is3DO(uqm::UQMOptions::read().whichMenu))
 				{
@@ -340,7 +340,7 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 				}
 
 				Text.pStr = buf;
-				Text.CharCount = (uint16_t)utf8StringCount(buf);
+				Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
 			}
 			Text.align = ALIGN_CENTER;
 

@@ -201,7 +201,7 @@ void GetPlanetTitle(uqstl::span<char> buf)
 
 	if (named)
 	{
-		utf8StringCopy(buf.data(), buf.size(), named);
+		uqm::utf8StringCopy(buf.data(), buf.size(), named);
 		return;
 	}
 
@@ -304,7 +304,7 @@ PrintCoarseScanPC(void)
 	t.baseline.y = SCAN_BASELINE_Y_PC;
 	t.align = ALIGN_LEFT;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(0));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(0));
 	PrintScanTitlePC(&t, buf, LEFT_SIDE_BASELINE_X_PC); // "Orbit: "
 
 	val = ((pSolarSysState->SysInfo.PlanetInfo.PlanetToSunDist * 100L
@@ -314,17 +314,17 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(2));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(2));
 	PrintScanTitlePC(&t, buf, LEFT_SIDE_BASELINE_X_PC); // "Atmo: "
 
 	if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity
 		== GAS_GIANT_ATMOSPHERE)
 	{
-		utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(3)); // "Super Thick"
+		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(3)); // "Super Thick"
 	}
 	else if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == 0)
 	{
-		utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(4)); // "Vacuum"
+		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(4)); // "Vacuum"
 	}
 	else
 	{
@@ -336,7 +336,7 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(6));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(6));
 	PrintScanTitlePC(&t, buf, LEFT_SIDE_BASELINE_X_PC); // "Temp: "
 
 	fmt::format_to_sz_n(buf, "{}{} c",
@@ -351,12 +351,12 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(7));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(7));
 	PrintScanTitlePC(&t, buf, LEFT_SIDE_BASELINE_X_PC); // "Weather: "
 
 	if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == 0)
 	{
-		utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(8)); // "None"
+		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(8)); // "None"
 	}
 	else
 	{
@@ -372,12 +372,12 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(10));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(10));
 	PrintScanTitlePC(&t, buf, LEFT_SIDE_BASELINE_X_PC); // "Tectonics: "
 
 	if (PLANSIZE(pSolarSysState->SysInfo.PlanetInfo.PlanDataPtr->Type) == GAS_GIANT)
 	{
-		utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(8)); // "None"
+		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(8)); // "None"
 	}
 	else
 	{
@@ -394,7 +394,7 @@ PrintCoarseScanPC(void)
 
 	t.baseline.y = SCAN_BASELINE_Y_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(11));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(11));
 	PrintScanTitlePC(&t, buf, RIGHT_SIDE_BASELINE_X_PC); // "Mass: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.PlanetRadius;
@@ -410,7 +410,7 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(13));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(13));
 	PrintScanTitlePC(&t, buf, RIGHT_SIDE_BASELINE_X_PC); // "Radius: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.PlanetRadius;
@@ -418,7 +418,7 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(14));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(14));
 	PrintScanTitlePC(&t, buf, RIGHT_SIDE_BASELINE_X_PC); // "Gravity: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.SurfaceGravity;
@@ -430,7 +430,7 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(16));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(16));
 	PrintScanTitlePC(&t, buf, RIGHT_SIDE_BASELINE_X_PC); // "Day: "
 
 	val = GetRotationalPeriod();
@@ -438,7 +438,7 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(18));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(18));
 	PrintScanTitlePC(&t, buf, RIGHT_SIDE_BASELINE_X_PC); // "Tilt: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.AxialTilt;

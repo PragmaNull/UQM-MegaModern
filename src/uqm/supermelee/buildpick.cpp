@@ -194,7 +194,7 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 					 GET_STRING(SIPtr->race_strings, RACE_SHIP_OFFSET));
 
 	Text.pStr = buf;
-	Text.CharCount = (uint16_t)utf8StringCount(buf);
+	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
 	Text.align = ALIGN_CENTER;
 	Text.baseline.y = r.corner.y + RES_SCALE(8) + RES_SCALE(1);
 	Text.baseline.x = r.corner.x + (r.extent.width >> 1) + RES_SCALE(1);
@@ -213,9 +213,9 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 
 	SetContextForeGroundColor(TOOLTIP_COLOR_DESC_FRONT);
 
-	utf8StringCopy(buf, sizeof buf,
-				   GET_STRING(SIPtr->race_strings,
-							  GetStringTableCount(SIPtr->race_strings) - 1));
+	uqm::utf8StringCopy(buf, sizeof buf,
+						GET_STRING(SIPtr->race_strings,
+								   GetStringTableCount(SIPtr->race_strings) - 1));
 	Text.baseline.y += RES_SCALE(2);
 
 	{
@@ -224,7 +224,7 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 		for (const auto& tok : tokens)
 		{
 			Text.pStr = (const char*)tok.c_str();
-			Text.CharCount = (uint16_t)utf8StringCount(Text.pStr);
+			Text.CharCount = (uint16_t)uqm::utf8StringCount(Text.pStr);
 			Text.baseline.y += RES_SCALE(9);
 			font_DrawText(&Text);
 		}

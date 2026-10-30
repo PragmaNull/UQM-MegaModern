@@ -175,7 +175,7 @@ DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 	{
 		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 56
 							 + (!i ? 1 : (i > 1 ? 2 : 0)));
-		t.CharCount = (uint16_t)utf8StringCount(t.pStr);
+		t.CharCount = (uint16_t)uqm::utf8StringCount(t.pStr);
 
 		SetContextForeGroundColor(
 			i == answer ?

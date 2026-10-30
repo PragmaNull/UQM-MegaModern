@@ -134,10 +134,10 @@ DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 									  MODULE_NAME_COLOR);
 		t.baseline.y = r.corner.y + TEXT_BASELINE;
 		t.pStr = GAME_STRING(index + DOS_STARBASE_STRING_BASE);
-		t.CharCount = utf8StringPos(t.pStr, ' ');
+		t.CharCount = uqm::utf8StringPos(t.pStr, ' ');
 		font_DrawText(&t);
 		t.baseline.y += TEXT_SPACING_Y;
-		t.pStr = skipUTF8Chars(t.pStr, t.CharCount + 1);
+		t.pStr = uqm::skipUTF8Chars(t.pStr, t.CharCount + 1);
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 
@@ -314,8 +314,8 @@ DrawModuleMenuText(GFXRECT* r, int Index)
 	text.baseline.y = r->corner.y + leading - RES_SCALE(1);
 	og_baseline_x = text.baseline.x;
 
-	utf8StringCopy((char*)buf, sizeof(buf),
-				   GAME_STRING(TDO_STARBASE_STRING_BASE + Index));
+	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+						GAME_STRING(TDO_STARBASE_STRING_BASE + Index));
 
 	text.align = ALIGN_CENTER;
 	{
@@ -510,8 +510,8 @@ DrawEscapePodText(GFXRECT rect)
 
 	og_baseline_x = text.baseline.x;
 
-	utf8StringCopy((char*)buf, sizeof(buf),
-				   GAME_STRING(END_STARBASE_STRING_BASE + 1));
+	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+						GAME_STRING(END_STARBASE_STRING_BASE + 1));
 
 	text.align = ALIGN_CENTER;
 	SetContextForeGroundColor(LANDER_POD_TEXT_COLOR);

@@ -681,9 +681,9 @@ extern GFXRECT font_GetTextRect(TEXT* pText);
 extern void font_DrawText(TEXT* pText);
 extern void font_DrawText_Fade(TEXT* lpText, FRAME repair, bool* skip);
 extern void font_DrawTracedText(TEXT* pText, Color text, Color trace);
-extern uint8_t font_DrawTextAlt(TEXT* lpText, uint8_t swap, FONT AltFontPtr, UniChar key);
+extern uint8_t font_DrawTextAlt(TEXT* lpText, uint8_t swap, FONT AltFontPtr, uqm::UniChar key);
 extern void font_DrawTracedTextAlt(TEXT* pText, Color text, Color trace, FONT AltFontPtr,
-								   UniChar key);
+								   uqm::UniChar key);
 extern void font_DrawShadowedText(TEXT* pText, uint8_t direction,
 								  Color text_color, Color shadow_color);
 extern void DrawBatch(PRIMITIVE* pBasePrim, PRIM_LINKS PrimLinks,
@@ -726,7 +726,7 @@ extern FONT SetContextFont(FONT Font);
 extern bool DestroyFont(FONT FontRef);
 // The returned pRect is relative to the context drawing origin
 extern bool TextRect(TEXT* pText, GFXRECT* pRect, uint8_t* pdelta);
-extern bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap, UniChar key, FONT AltFontPtr);
+extern bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap, uqm::UniChar key, FONT AltFontPtr);
 extern bool GetContextFontLeading(int16_t* pheight);
 extern bool GetContextFontDispHeight(int16_t* pheight);
 extern bool GetContextFontDispWidth(int16_t* pwidth);

@@ -367,12 +367,12 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 	char revert_buf[256];
 
 	// position cursor at the end of text
-	widget->cursor_pos = utf8StringCount(widget->value);
+	widget->cursor_pos = uqm::utf8StringCount(widget->value);
 	widget->state = WTE_EDITING;
 	redraw_menu();
 
 	// make a backup copy for revert on cancel
-	utf8StringCopy(revert_buf, sizeof(revert_buf), widget->value);
+	uqm::utf8StringCopy(revert_buf, sizeof(revert_buf), widget->value);
 
 	// text entry setup
 	tes.Initialized = false;
@@ -387,7 +387,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_SELECT);
 	if (!DoTextEntry(&tes))
 	{ // editing failed (canceled) -- revert the changes
-		utf8StringCopy(widget->value, widget->maxlen, revert_buf);
+		uqm::utf8StringCopy(widget->value, widget->maxlen, revert_buf);
 	}
 	else
 	{

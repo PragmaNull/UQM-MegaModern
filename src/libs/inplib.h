@@ -22,7 +22,7 @@
 #include <stddef.h>
 #include "libs/compiler.h"
 #include "libs/io/FileSystem.h"
-#include "libs/unicode.h"
+#include "core/string/Utf8.h"
 #include <atomic>
 
 #if 0 //defined(__cplusplus)
@@ -51,8 +51,8 @@ extern uqstl::atomic<int> GameActive;
 
 void EnterCharacterMode(void);
 void ExitCharacterMode(void);
-UniChar GetNextCharacter(void);
-UniChar GetLastCharacter(void);
+uqm::UniChar GetNextCharacter(void);
+uqm::UniChar GetLastCharacter(void);
 
 /* Interrogating the current key configuration */
 

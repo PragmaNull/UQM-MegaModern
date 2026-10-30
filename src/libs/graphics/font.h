@@ -27,9 +27,9 @@
 typedef struct FontPage
 {
 	struct FontPage* next;
-	UniChar pageStart;
+	uqm::UniChar pageStart;
 #define CHARACTER_PAGE_MASK 0xfffff800
-	UniChar firstChar;
+	uqm::UniChar firstChar;
 	size_t numChars;
 	TFB_Char* charDesc;
 } FONT_PAGE;
@@ -74,7 +74,7 @@ extern FONT _CurFontPtr;
 // A font is a directory of glyph images, or a zip archive of them.
 extern void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path);
 extern bool _ReleaseFontData(void* handle);
-extern TFB_Char* GetFrameForFPS(UniChar ch);
+extern TFB_Char* GetFrameForFPS(uqm::UniChar ch);
 extern void GetFontDims(int16_t* w, int16_t* h);
 extern bool GoodToGoFPS(void);
 

@@ -345,8 +345,8 @@ DrawEnterOrbitText(GFXRECT rect)
 
 	og_baseline_x = text.baseline.x;
 
-	utf8StringCopy((char*)buf, sizeof(buf),
-				   GAME_STRING(NAVIGATION_STRING_BASE + 8));
+	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+						GAME_STRING(NAVIGATION_STRING_BASE + 8));
 
 	text.align = ALIGN_CENTER;
 	{

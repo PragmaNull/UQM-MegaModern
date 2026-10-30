@@ -206,8 +206,7 @@ GetStringLength(STRING String)
 	{
 		return 0;
 	}
-	return (uint16_t)utf8StringCountN(
-		String->data, String->data + String->length);
+	return (uint16_t)uqm::utf8StringCount(uqstl::string_view {String->data, static_cast<size_t>(String->length)});
 }
 
 uint16_t

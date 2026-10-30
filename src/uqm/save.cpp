@@ -1144,9 +1144,9 @@ PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 			}
 			break;
 		case IN_LAST_BATTLE:
-			utf8StringCopy(SummPtr->SS.PlanetName,
-						   sizeof(SummPtr->SS.PlanetName),
-						   GAME_STRING(PLANET_NUMBER_BASE + 32)); // Sa-Matra
+			uqm::utf8StringCopy(SummPtr->SS.PlanetName,
+								sizeof(SummPtr->SS.PlanetName),
+								GAME_STRING(PLANET_NUMBER_BASE + 32)); // Sa-Matra
 			break;
 	}
 

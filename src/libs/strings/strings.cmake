@@ -13,7 +13,7 @@ set(uqm_src_libs_strings_files
 	"src/libs/strings/strings.cmake"
 	"src/libs/strings/strings.cpp"
 	"src/libs/strings/strintrn.h"
-	"src/libs/strings/unicode.cpp"
+	"src/libs/strings/textalign.cpp"
 )
 
 source_group("src\\libs\\strings" FILES ${uqm_src_libs_strings_files})

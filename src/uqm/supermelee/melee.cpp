@@ -327,8 +327,8 @@ DrawControlText(STAMP stamp, uint16_t which_icon, bool HiLite)
 
 	GetContextFontLeading(&leading);
 
-	utf8StringCopy((char*)buf, sizeof(buf),
-				   GAME_STRING(MELEE_STRING_BASE + ButtonText(which_icon)));
+	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+						GAME_STRING(MELEE_STRING_BASE + ButtonText(which_icon)));
 
 	t.align = ALIGN_CENTER;
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
@@ -374,8 +374,8 @@ DrawBattleText(STAMP stamp, uint16_t which_icon, bool HiLite)
 
 	GetContextFontLeading(&leading);
 
-	utf8StringCopy((char*)buf, sizeof(buf),
-				   GAME_STRING(MELEE_STRING_BASE + ButtonText(which_icon)));
+	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+						GAME_STRING(MELEE_STRING_BASE + ButtonText(which_icon)));
 
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y + r.extent.height
@@ -418,8 +418,8 @@ DrawButtonText(STAMP stamp, uint16_t which_icon, bool HiLite)
 
 	GetFrameRect(stamp.frame, &r);
 
-	utf8StringCopy(buf, sizeof(buf),
-				   GAME_STRING(MELEE_STRING_BASE + ButtonText(which_icon)));
+	uqm::utf8StringCopy(buf, sizeof(buf),
+						GAME_STRING(MELEE_STRING_BASE + ButtonText(which_icon)));
 
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y;
@@ -448,10 +448,10 @@ DrawVerticalText(char* str, GFXPOINT point)
 
 	t.baseline = point;
 
-	utf8StringCopy(buf, sizeof(buf),
-				   AlignText((const char*)AddPadd(
-								 (const char*)str, &leading),
-							 &t.baseline.x));
+	uqm::utf8StringCopy(buf, sizeof(buf),
+						AlignText((const char*)AddPadd(
+									  (const char*)str, &leading),
+								  &t.baseline.x));
 
 	str_len = strlen(buf);
 
@@ -471,7 +471,7 @@ DrawVerticalText(char* str, GFXPOINT point)
 		t.baseline.x += RES_SCALE(1);
 		font_DrawText(&t);
 
-		t.pStr = skipUTF8Chars(t.pStr, 1);
+		t.pStr = uqm::skipUTF8Chars(t.pStr, 1);
 		t.baseline.y += leading;
 	}
 
@@ -556,8 +556,8 @@ DrawTeamPickerText(STAMP stamp)
 
 	for (i = 0; i < 3; i++)
 	{ // Check if we actually have text to print
-		utf8StringCopy(buf, sizeof(buf),
-					   GAME_STRING(MELEE_STRING_BASE + 20 + i));
+		uqm::utf8StringCopy(buf, sizeof(buf),
+							GAME_STRING(MELEE_STRING_BASE + 20 + i));
 
 		if (!strlen(buf))
 		{
@@ -583,8 +583,8 @@ DrawTeamPickerText(STAMP stamp)
 
 	DrawStamp(&s);
 
-	utf8StringCopy(buf, sizeof(buf),
-				   GAME_STRING(MELEE_STRING_BASE + 20));
+	uqm::utf8StringCopy(buf, sizeof(buf),
+						GAME_STRING(MELEE_STRING_BASE + 20));
 
 	t.baseline.x = r.extent.width + pt.x + TP_PADDING;
 	t.baseline.y = pt.y + leading - RES_SCALE(1);
@@ -609,8 +609,8 @@ DrawTeamPickerText(STAMP stamp)
 				   + RES_SCALE(1);
 		DrawStamp(&s);
 
-		utf8StringCopy(buf, sizeof(buf),
-					   GAME_STRING(MELEE_STRING_BASE + 21 + i));
+		uqm::utf8StringCopy(buf, sizeof(buf),
+							GAME_STRING(MELEE_STRING_BASE + 21 + i));
 		t.baseline.x = s.origin.x + r.extent.width + TP_PADDING;
 		t.CharCount = (uint16_t)~0;
 	}

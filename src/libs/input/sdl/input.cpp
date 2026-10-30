@@ -35,8 +35,8 @@
 
 #define KBDBUFSIZE (1 << 8)
 static int kbdhead = 0, kbdtail = 0;
-static UniChar kbdbuf[KBDBUFSIZE];
-static UniChar lastchar;
+static uqm::UniChar kbdbuf[KBDBUFSIZE];
+static uqm::UniChar lastchar;
 
 static bool set_character_mode = false;
 // Records whether the UI thread has caught up with game thread
@@ -390,10 +390,10 @@ void ExitCharacterMode(void)
 	VControl_ResetInput();
 }
 
-UniChar
+uqm::UniChar
 GetNextCharacter(void)
 {
-	UniChar result;
+	uqm::UniChar result;
 	if (kbdhead == kbdtail)
 	{
 		return 0;
@@ -403,7 +403,7 @@ GetNextCharacter(void)
 	return result;
 }
 
-UniChar
+uqm::UniChar
 GetLastCharacter(void)
 {
 	return lastchar;
@@ -471,7 +471,7 @@ void ProcessInputEvent(const SDL_Event* Event)
 
 		while (Event->text.text[i])
 		{
-			UniChar map_key = Event->text.text[i++];
+			uqm::UniChar map_key = Event->text.text[i++];
 			map_key &= 0xFF; /* Interpret as unsigned byte */
 
 			/* Decode any UTF-8 keys */
@@ -491,10 +491,10 @@ void ProcessInputEvent(const SDL_Event* Event)
 			}
 			else if (map_key >= 0xF0)
 			{
-				/* Out of the BMP, won't fit in a UniChar */
+				/* Out of the BMP, won't fit in a uqm::UniChar */
 				/* Use the replacement character instead */
 				map_key = 0xFFFD;
-				while ((UniChar)Event->text.text[i] > 0x7F)
+				while ((uqm::UniChar)Event->text.text[i] > 0x7F)
 				{
 					++i;
 				}

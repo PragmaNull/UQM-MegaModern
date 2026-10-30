@@ -136,10 +136,10 @@ DrawDevice(uint16_t device, uint16_t pos, bool selected)
 								  DEVICES_NAME_COLOR);
 	t.baseline.y = r.corner.y + TEXT_BASELINE;
 	t.pStr = GAME_STRING(device + DEVICE_STRING_BASE + 1);
-	t.CharCount = utf8StringPos(t.pStr, ' ');
+	t.CharCount = uqm::utf8StringPos(t.pStr, ' ');
 	font_DrawText(&t);
 	t.baseline.y += TEXT_SPACING_Y;
-	t.pStr = skipUTF8Chars(t.pStr, t.CharCount + 1);
+	t.pStr = uqm::skipUTF8Chars(t.pStr, t.CharCount + 1);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 }

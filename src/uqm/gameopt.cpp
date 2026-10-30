@@ -402,11 +402,11 @@ NameCaptainOrShip(bool nameCaptain, bool gamestart)
 
 	if (DoTextEntry(&tes))
 	{
-		utf8StringCopy(Setting, tes.MaxSize, buf);
+		uqm::utf8StringCopy(Setting, tes.MaxSize, buf);
 	}
 	else
 	{
-		utf8StringCopy(buf, sizeof(buf), Setting);
+		uqm::utf8StringCopy(buf, sizeof(buf), Setting);
 	}
 
 	// If the Captain and/or Flagship text entries are blank
@@ -518,7 +518,7 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 
 		pchar_deltas = char_deltas;
 
-		FullCursorPos = CursorPos + (uint16_t)utf8StringCount(dateStr);
+		FullCursorPos = CursorPos + (uint16_t)uqm::utf8StringCount(dateStr);
 		for (i = FullCursorPos; i > 0; --i)
 		{
 			text_r.corner.x += *pchar_deltas++;
@@ -845,7 +845,7 @@ DrawLabel(GFXPOINT pt, int16_t width, uint32_t gamestr)
 
 	DrawLines(SCL_POINT(pt), RES_SCALE(width));
 
-	utf8StringCopy((char*)buf, sizeof(buf), GAME_STRING(gamestr));
+	uqm::utf8StringCopy((char*)buf, sizeof(buf), GAME_STRING(gamestr));
 
 	OldFont = SetContextFont(LabelFont);
 	OldColor = SetContextForeGroundColor(SUMM_TEXT_COLOR);
@@ -1001,8 +1001,8 @@ DrawSaveLoadText(PICK_GAME_STATE* pickState)
 	text.baseline.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH / 2);
 	text.baseline.y = RES_SCALE(5) + SAVE_LOAD_Y + SAFE_BOOL_SCL(2, 1);
 
-	utf8StringCopy(buf, sizeof(buf),
-				   GAME_STRING(LABEL_STRING_BASE + (3 - pickState->saving)));
+	uqm::utf8StringCopy(buf, sizeof(buf),
+						GAME_STRING(LABEL_STRING_BASE + (3 - pickState->saving)));
 
 	text.align = ALIGN_CENTER;
 	text.CharCount = (uint16_t)~0;
@@ -1108,8 +1108,8 @@ DrawEmptySlot(void)
 	t.baseline.x = SIS_SCREEN_WIDTH >> 1;
 	t.baseline.y = RES_SCALE(66);
 
-	utf8StringCopy(buf, sizeof(buf),
-				   GAME_STRING(LABEL_STRING_BASE + 1)); // EMPTY SLOT
+	uqm::utf8StringCopy(buf, sizeof(buf),
+						GAME_STRING(LABEL_STRING_BASE + 1)); // EMPTY SLOT
 
 	t.align = ALIGN_CENTER;
 
@@ -1141,12 +1141,12 @@ DrawEmptySlot(void)
 						t_baseline.y + offset.y);
 
 				t.pStr = buf;
-				t.CharCount = utf8StringPos(buf, ' ');
+				t.CharCount = uqm::utf8StringPos(buf, ' ');
 				font_DrawText(&t);
 
 				t.baseline.y += leading;
 
-				t.pStr = skipUTF8Chars(buf, t.CharCount);
+				t.pStr = uqm::skipUTF8Chars(buf, t.CharCount);
 				t.CharCount = (uint16_t)~0;
 				font_DrawText(&t);
 
@@ -1160,12 +1160,12 @@ DrawEmptySlot(void)
 	SetContextForeGroundColor(SUMM_TEXT_COLOR);
 
 	t.pStr = buf;
-	t.CharCount = utf8StringPos(buf, ' ');
+	t.CharCount = uqm::utf8StringPos(buf, ' ');
 	font_DrawText(&t);
 
 	t.baseline.y += leading;
 
-	t.pStr = skipUTF8Chars(buf, t.CharCount);
+	t.pStr = uqm::skipUTF8Chars(buf, t.CharCount);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
@@ -1200,8 +1200,8 @@ DrawBombPodText(STAMP* s)
 	r.extent.height = RES_SCALE(29);
 	DrawFilledRectangle(&r);
 
-	utf8StringCopy(buf, sizeof(buf),
-				   GAME_STRING(LABEL_STRING_BASE + 9));
+	uqm::utf8StringCopy(buf, sizeof(buf),
+						GAME_STRING(LABEL_STRING_BASE + 9));
 	// AMPLIFIED PRECURSOR BOMB
 
 	t.baseline.x = (r.extent.width >> 1) + r.corner.x + s->origin.x;
@@ -1227,8 +1227,8 @@ DrawBombPodText(STAMP* s)
 	SetContextForeGroundColor(BLACK_COLOR);
 	DrawFilledRectangle(&r);
 
-	utf8StringCopy((char*)buf, sizeof(buf),
-				   GAME_STRING(LABEL_STRING_BASE + 10));
+	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+						GAME_STRING(LABEL_STRING_BASE + 10));
 	// ESCAPE POD
 
 	t.baseline.x = og_baseline_x;
@@ -1493,12 +1493,12 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 				buf[0] = '\0';
 				break;
 			case IN_HYPERSPACE:
-				utf8StringCopy(buf, sizeof(buf),
-							   GAME_STRING(NAVIGATION_STRING_BASE + 0));
+				uqm::utf8StringCopy(buf, sizeof(buf),
+									GAME_STRING(NAVIGATION_STRING_BASE + 0));
 				break;
 			case IN_QUASISPACE:
-				utf8StringCopy(buf, sizeof(buf),
-							   GAME_STRING(NAVIGATION_STRING_BASE + 1));
+				uqm::utf8StringCopy(buf, sizeof(buf),
+									GAME_STRING(NAVIGATION_STRING_BASE + 1));
 				break;
 		}
 

@@ -850,8 +850,8 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 	{
 		// Name contains a space. Print over
 		// two lines.
-		pPSD->MineralText[1].CharCount = (uint16_t)utf8StringCountN(
-			pPSD->MineralText[1].pStr, pStr - 1);
+		pPSD->MineralText[1].CharCount = (uint16_t)uqm::utf8StringCount(
+			uqstl::string_view {pPSD->MineralText[1].pStr, static_cast<size_t>(pStr - 1 - pPSD->MineralText[1].pStr)});
 		pPSD->MineralText[2].pStr = pStr;
 		pPSD->MineralText[2].CharCount = (uint16_t)~0;
 	}

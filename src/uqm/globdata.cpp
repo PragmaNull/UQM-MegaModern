@@ -424,12 +424,12 @@ bool InitGameStructures(void)
 
 	GLOBAL_SIS(NumLanders) = ifEasyDifficulty(2, 1);
 
-	utf8StringCopy(GLOBAL_SIS(ShipName),
-				   sizeof(GLOBAL_SIS(ShipName)),
-				   GAME_STRING(NAMING_STRING_BASE + 6)); // UNNAMED
-	utf8StringCopy(GLOBAL_SIS(CommanderName),
-				   sizeof(GLOBAL_SIS(CommanderName)),
-				   GAME_STRING(NAMING_STRING_BASE + 6)); // UNNAMED
+	uqm::utf8StringCopy(GLOBAL_SIS(ShipName),
+						sizeof(GLOBAL_SIS(ShipName)),
+						GAME_STRING(NAMING_STRING_BASE + 6)); // UNNAMED
+	uqm::utf8StringCopy(GLOBAL_SIS(CommanderName),
+						sizeof(GLOBAL_SIS(CommanderName)),
+						GAME_STRING(NAMING_STRING_BASE + 6)); // UNNAMED
 
 	SetRaceAllied(HUMAN_SHIP, true);
 	CloneShipFragment(HUMAN_SHIP, &GLOBAL(built_ship_q), 0);
@@ -837,7 +837,7 @@ int replaceChar(char* pStr, const char find, const char replace)
 		return -1; // pStr, find, or replace is nullptr
 	}
 
-	if (utf8StringPos(pStr, find) == -1)
+	if (uqm::utf8StringPos(pStr, find) == -1)
 	{
 		return 0; // 'find' not found
 	}

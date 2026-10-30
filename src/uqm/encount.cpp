@@ -185,9 +185,9 @@ void BuildBattle(uint16_t which_player)
 
 						if (selector == SA_MATRA)
 						{
-							utf8StringCopy(GLOBAL_SIS(PlanetName),
-										   sizeof(GLOBAL_SIS(PlanetName)),
-										   GAME_STRING(PLANET_NUMBER_BASE + 32));
+							uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
+												sizeof(GLOBAL_SIS(PlanetName)),
+												GAME_STRING(PLANET_NUMBER_BASE + 32));
 							DrawSISTitle(
 								GAME_STRING(PLANET_NUMBER_BASE + 32));
 						}
@@ -747,8 +747,8 @@ UninitEncounter(void)
 
 								SetContextFont(isPC(uqm::UQMOptions::read().whichFonts) ? TinyFont : TinyFontBold);
 
-								utf8StringCopy(buf, sizeof buf,
-											   uqm::toUpperUtf8(GetStringAddress(FragPtr->race_strings)).c_str());
+								uqm::utf8StringCopy(buf, sizeof buf,
+													uqm::toUpperUtf8(GetStringAddress(FragPtr->race_strings)).c_str());
 
 								t.baseline.x = scavenge_r.corner.x + RES_SCALE(100);
 								t.baseline.y = scavenge_r.corner.y + RES_SCALE(68);

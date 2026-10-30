@@ -208,7 +208,7 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 	self->value[WIDGET_TEXTENTRY_WIDTH - 1] = 0;
 
 	t.baseline.y = y;
-	t.CharCount = (uint16_t)utf8StringCount(self->value);
+	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value);
 	t.pStr = self->value;
 
 	if (!(self->state & WTE_EDITING))
@@ -367,12 +367,12 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 	char revert_buf[256];
 
 	// position cursor at the end of text
-	widget->cursor_pos = utf8StringCount(widget->value);
+	widget->cursor_pos = uqm::utf8StringCount(widget->value);
 	widget->state = WTE_EDITING;
 	DrawConnectDialog();
 
 	// make a backup copy for revert on cancel
-	utf8StringCopy(revert_buf, sizeof(revert_buf), widget->value);
+	uqm::utf8StringCopy(revert_buf, sizeof(revert_buf), widget->value);
 
 	// text entry setup
 	tes.Initialized = false;
@@ -387,7 +387,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 	// SetMenuSounds (0, MENU_SOUND_SELECT);
 	if (!DoTextEntry(&tes))
 	{ // editing failed (canceled) -- revert the changes
-		utf8StringCopy(widget->value, widget->maxlen, revert_buf);
+		uqm::utf8StringCopy(widget->value, widget->maxlen, revert_buf);
 	}
 	else
 	{
