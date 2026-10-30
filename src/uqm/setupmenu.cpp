@@ -786,11 +786,6 @@ init_widgets(void)
 			edit.resolution = uqm::Vec2u {static_cast<uint32_t>(SavedWidth), static_cast<uint32_t>(SavedHeight)};
 			menuWidgets->refresh();
 		}
-		else if (setting.key() == "graphics.alwaysOpenGL")
-		{
-			uqm::UQMOptions::edit().opengl = *options.alwaysOpenGL;
-			apply_graphics_from_settings();
-		}
 		else if (setting.key() == "graphics.windowMode" || setting.key() == "graphics.scaler" || setting.key() == "graphics.scanlines"
 				 || setting.key() == "graphics.showFps" || setting.key() == "graphics.keepAspectRatio")
 		{

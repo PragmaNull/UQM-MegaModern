@@ -81,10 +81,6 @@ struct OptionsStruct : SettingsRegistry
 	uqstl::string inputScript {};	  // File of scripted menu key presses, for testing.
 
 	// Commandline and user config options
-	Setting<bool> opengl {
-		*this, {.key = "graphics.useOpenGL", .description = "Force OpenGL renderer on SDL1 builds; ignored on SDL2.", .cli = "-o,-x{false},--opengl,--nogl{false}"},
-		 false
-	  };
 	Setting<bool> alwaysOpenGL {
 		*this, {.key = "graphics.alwaysOpenGL", .description = "Use OpenGL even at native resolutions."},
 		  false
