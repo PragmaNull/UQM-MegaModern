@@ -54,10 +54,6 @@
 #define SCALE_BILINEAR_BLEND4(r0, r1, dst, dlen) \
 	SCALE_(Blend_bilinear)(r0, r1, dst, dlen)
 
-#define NO_PREFETCH 0
-#define INTEL_PREFETCH 1
-#define AMD_PREFETCH 2
-
 typedef enum
 {
 	YUV_XFORM_R = 0,

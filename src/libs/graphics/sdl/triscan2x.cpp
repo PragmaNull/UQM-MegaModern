@@ -18,7 +18,6 @@
 //     (for scale2x please see http://scale2x.sf.net)
 //  Template
 //    When this file is built standalone is produces a plain C version
-//    Also #included by 2xscalers_mmx.c for an MMX version
 
 #include "libs/graphics/sdl/sdl_common.h"
 #include <cstdint>
@@ -31,7 +30,6 @@
 //	derivative of scale2x -- scale2x.sf.net
 // The name expands to either
 //		Scale_TriScanFilter (for plain C) or
-//		Scale_MMX_TriScanFilter (for MMX)
 //		[others when platforms are added]
 void SCALE_(TriScanFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 {

@@ -108,7 +108,6 @@ target_compile_definitions(uqm_project_features
         HAVE_OPENAL
         HAVE_JOYSTICK
         NETPLAY
-        USE_PLATFORM_ACCEL
         __STDC_WANT_LIB_EXT1__=1
 )
 

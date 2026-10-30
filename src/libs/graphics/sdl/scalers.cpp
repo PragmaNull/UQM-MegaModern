@@ -16,30 +16,16 @@
 
 #include <cstdint>
 #include "libs/graphics/sdl/sdl_common.h"
-#include "libs/platform.h"
 #include "core/log/log.h"
 #include "scalers.h"
 #include "scaleint.h"
 #include "2xscalers.h"
-#ifdef USE_PLATFORM_ACCEL
-#ifndef __APPLE__
-// MacOS X framework has no SDL_cpuinfo.h for some reason
-#include "SDL_cpuinfo.h"
-#endif
-#ifdef MMX_ASM
-#include "2xscalers_mmx.h"
-#endif /* MMX_ASM */
-#endif /* USE_PLATFORM_ACCEL */
 
 
 typedef enum
 {
-	SCALEPLAT_NULL = PLATFORM_NULL,
-	SCALEPLAT_C = PLATFORM_C,
-	SCALEPLAT_MMX = PLATFORM_MMX,
-	SCALEPLAT_SSE = PLATFORM_SSE,
-	SCALEPLAT_3DNOW = PLATFORM_3DNOW,
-	SCALEPLAT_ALTIVEC = PLATFORM_ALTIVEC,
+	SCALEPLAT_NULL,
+	SCALEPLAT_C,
 
 	SCALEPLAT_C_RGBA,
 	SCALEPLAT_C_BGRA,
@@ -81,7 +67,6 @@ int16_t dRGB_to_dYUV[/*RGB*/ 3][/*YUV*/ 3][/*mult-res*/ 512];
 // pre-computed transformations for RGB555
 YUV_VECTOR RGB15_to_YUV[0x8000];
 
-PLATFORM_TYPE force_platform = PLATFORM_NULL;
 Scale_PlatType_t Scale_Platform = SCALEPLAT_NULL;
 
 
@@ -201,13 +186,8 @@ typedef struct
 static const Scale_PlatDef_t
 	Scale_PlatDefs[] =
 		{
-#if defined(MMX_ASM)
-			{SCALEPLAT_SSE,	Scale_SSE_Functions  },
-			{SCALEPLAT_3DNOW, Scale_3DNow_Functions},
-			{SCALEPLAT_MMX,	Scale_MMX_Functions  },
-#endif  /* MMX_ASM */
 			// Default
-			{SCALEPLAT_NULL,	 Scale_C_Functions	  }
+			{SCALEPLAT_NULL, Scale_C_Functions}
 };
 
 
@@ -222,41 +202,6 @@ Scale_PrepPlatform(uqm::GfxFlags flags, const SDL_PixelFormat* fmt)
 
 	// first match wins
 	// add better platform techs to the top
-#ifdef MMX_ASM
-	uqstl::ignore = flags;
-
-	if ((!force_platform && (SDL_HasSSE() || SDL_HasMMX()))
-		|| force_platform == PLATFORM_SSE)
-	{
-		uqm::log::info("Screen scalers are using SSE/MMX-Ext/MMX code");
-		Scale_Platform = SCALEPLAT_SSE;
-
-		Scale_SSE_PrepPlatform(fmt);
-	}
-	else if ((!force_platform && SDL_HasAltiVec())
-			 || force_platform == PLATFORM_ALTIVEC)
-	{
-		uqm::log::info("Screen scalers would use AltiVec code "
-					   "if someone actually wrote it");
-		//Scale_Platform = SCALEPLAT_ALTIVEC;
-	}
-	else if ((!force_platform && SDL_Has3DNow())
-			 || force_platform == PLATFORM_3DNOW)
-	{
-		uqm::log::info("Screen scalers are using 3DNow/MMX code");
-		Scale_Platform = SCALEPLAT_3DNOW;
-
-		Scale_3DNow_PrepPlatform(fmt);
-	}
-	else if ((!force_platform && SDL_HasMMX())
-			 || force_platform == PLATFORM_MMX)
-	{
-		uqm::log::info("Screen scalers are using MMX code");
-		Scale_Platform = SCALEPLAT_MMX;
-
-		Scale_MMX_PrepPlatform(fmt);
-	}
-#endif
 
 	if (Scale_Platform == SCALEPLAT_NULL)
 	{ // Plain C versions

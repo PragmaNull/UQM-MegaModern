@@ -9,10 +9,6 @@ set(uqm_src_libs_graphics_sdl_master_files "")
 set(uqm_src_libs_graphics_sdl_files
 	"src/libs/graphics/sdl/2xscalers.cpp"
 	"src/libs/graphics/sdl/2xscalers.h"
-	"src/libs/graphics/sdl/2xscalers_3dnow.cpp"
-	"src/libs/graphics/sdl/2xscalers_mmx.cpp"
-	"src/libs/graphics/sdl/2xscalers_mmx.h"
-	"src/libs/graphics/sdl/2xscalers_sse.cpp"
 	"src/libs/graphics/sdl/biadv2x.cpp"
 	"src/libs/graphics/sdl/bilinear2x.cpp"
 	"src/libs/graphics/sdl/canvas.cpp"
@@ -29,7 +25,6 @@ set(uqm_src_libs_graphics_sdl_files
 	"src/libs/graphics/sdl/rotozoom.cpp"
 	"src/libs/graphics/sdl/rotozoom.h"
 	"src/libs/graphics/sdl/scaleint.h"
-	"src/libs/graphics/sdl/scalemmx.h"
 	"src/libs/graphics/sdl/scalers.cpp"
 	"src/libs/graphics/sdl/scalers.h"
 	"src/libs/graphics/sdl/sdl.cmake"

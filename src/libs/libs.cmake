@@ -52,7 +52,6 @@ set(uqm_src_libs_files
 	"src/libs/memlib.h"
 	"src/libs/misc.h"
 	"src/libs/net.h"
-	"src/libs/platform.h"
 	"src/libs/reslib.h"
 #	"src/libs/scriptlib.h"
 	"src/libs/sndlib.h"

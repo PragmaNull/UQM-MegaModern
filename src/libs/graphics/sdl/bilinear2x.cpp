@@ -17,7 +17,6 @@
 // Core algorithm of the Bilinear screen scaler
 //  Template
 //    When this file is built standalone is produces a plain C version
-//    Also #included by 2xscalers_mmx.c for an MMX version
 
 #include "libs/graphics/sdl/sdl_common.h"
 #include <cstdint>
@@ -29,8 +28,6 @@
 // Bilinear scaling to 2x
 // The name expands to either
 //		Scale_BilinearFilter (for plain C) or
-//		Scale_MMX_BilinearFilter (for MMX)
-//		Scale_SSE_BilinearFilter (for SSE)
 //		[others when platforms are added]
 void SCALE_(BilinearFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 {

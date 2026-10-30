@@ -10,7 +10,6 @@
 
 #include "lib/Math2D/Math2D.h"
 #include "libs/math/randomdefs.h" // TODO: only used for the PrimeA constant and SeedType. Find a better way to share that perhaps?
-#include "libs/platform.h"
 
 namespace uqm
 {

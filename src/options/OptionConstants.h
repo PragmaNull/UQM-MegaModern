@@ -5,7 +5,6 @@
 #include "options/OptionTypes.h"
 #include "libs/sound/audiocore.h"
 #include "libs/graphics/gfx_common.h"
-#include "libs/platform.h"
 
 namespace uqm
 {
@@ -48,14 +47,6 @@ static inline constexpr uqstl::array<OptionListValueT<EmulationMode>, 2> Emulati
 
 	{{"pc", EmulationMode::PC},
 	 {"3do", EmulationMode::Console3DO}}
-};
-
-static inline constexpr uqstl::array<OptionListValueT<int>, 5> AccelList {
-	{{"mmx", PLATFORM_MMX},
-	 {"sse", PLATFORM_SSE},
-	 {"3dnow", PLATFORM_3DNOW},
-	 {"none", PLATFORM_C},
-	 {"detect", PLATFORM_NULL}}
 };
 
 } // namespace uqm

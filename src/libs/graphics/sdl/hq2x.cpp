@@ -25,7 +25,6 @@
 //	adapted from hq2x -- www.hiend3d.com/hq2x.html
 //  Template
 //    When this file is built standalone is produces a plain C version
-//    Also #included by 2xscalers_mmx.c for an MMX version
 
 #include "libs/graphics/sdl/sdl_common.h"
 #include <cstdint>
@@ -88,7 +87,6 @@
 // HQ scaling to 2x
 // The name expands to
 //		Scale_HqFilter (for plain C)
-//		Scale_MMX_HqFilter (for MMX)
 //		[others when platforms are added]
 void SCALE_(HqFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 {
@@ -119,7 +117,6 @@ void SCALE_(HqFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 	//   | p7 | p8 | p9 |
 	//   +----+----+----+
 
-// MMX code runs faster w/o branching
 #define HQXX_DIFFYUV(p1, p2) \
 	SCALE_DIFFYUV(p1, p2)
 
