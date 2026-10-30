@@ -1027,24 +1027,24 @@ typedef struct
 	VELOCITY_DESC velocity;
 
 	uint32_t BattleGroupRef;
-	QUEUE avail_race_q;
+	uqm::LinkQueue avail_race_q;
 	/* List of all the races in the game with information
 			 * about their ships, and what player knows about their
 			 * fleet, center of SoI, status, etc.
 			 * queue element is FLEET_INFO */
-	QUEUE npc_built_ship_q;
+	uqm::LinkQueue npc_built_ship_q;
 	/* Non-player-character list of ships (during encounter)
 			 * queue element is SHIP_FRAGMENT */
-	QUEUE ip_group_q;
+	uqm::LinkQueue ip_group_q;
 	/* List of groups present in solarsys (during IP);
 			 * queue element is IP_GROUP */
-	QUEUE encounter_q;
+	uqm::LinkQueue encounter_q;
 	/* List of HyperSpace encounters (black globes);
 			 * queue element is ENCOUNTER */
-	QUEUE built_ship_q;
+	uqm::LinkQueue built_ship_q;
 	/* List of SIS escort ships;
 			 * queue element is SHIP_FRAGMENT */
-	QUEUE stowed_ship_q;
+	uqm::LinkQueue stowed_ship_q;
 	/* List of escort ships available at starbase;
 			 * queue element is SHIP_FRAGMENT */
 } GAME_STATE;

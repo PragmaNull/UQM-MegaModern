@@ -106,6 +106,49 @@ extern void RemoveQueue(QUEUE* pq, HLINK hLink);
 extern uint16_t CountLinks(QUEUE* pq);
 void ForAllLinks(QUEUE* pq, void (*callback)(LINK*, void*), void* arg);
 
+namespace uqm
+{
+
+// A QUEUE that owns its table of links. Code that takes a QUEUE* can use it.
+class LinkQueue : public QUEUE
+{
+public:
+	LinkQueue() noexcept
+		: QUEUE {}
+	{
+	}
+
+	~LinkQueue()
+	{
+		release();
+	}
+
+	LinkQueue(const LinkQueue&) = delete;
+	LinkQueue& operator=(const LinkQueue&) = delete;
+
+	// Makes an empty table for 'capacity' links of 'linkSize' bytes. Releases the old table.
+	bool reset(uint16_t capacity, OBJ_SIZE linkSize)
+	{
+		release();
+		return InitQueue(this, capacity, linkSize);
+	}
+
+	// Releases the table. The queue has no links after this.
+	void release() noexcept
+	{
+		UninitQueue(this);
+	}
+
+	friend void swap(LinkQueue& first, LinkQueue& second) noexcept
+	{
+		const QUEUE temp {first};
+		static_cast<QUEUE&>(first) = second;
+		static_cast<QUEUE&>(second) = temp;
+	}
+};
+
+} // namespace uqm
+
 #if 0 //defined(__cplusplus)
 }
 #endif

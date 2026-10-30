@@ -127,7 +127,7 @@ copyFleetInfo(FLEET_INFO* dst, SHIP_INFO* src, FLEET_STUFF* fleet)
 void LoadFleetInfo(void)
 { /* Yehat Rebels and Ur-Quan probe */
 	uint16_t num_ships = LAST_MELEE_ID - ARILOU_ID + 1 + 2;
-	InitQueue(&GLOBAL(avail_race_q), num_ships, sizeof(FLEET_INFO));
+	GLOBAL(avail_race_q).reset(num_ships, sizeof(FLEET_INFO));
 	SPECIES_ID ship_ref = (SPECIES_ID)(ARILOU_ID - 1);
 	for (int i = 0; i < num_ships; ++i)
 	{
@@ -395,15 +395,11 @@ bool InitGameStructures(void)
 
 	loadGameCheats();
 
-	InitQueue(&GLOBAL(stowed_ship_q),
-			  MAX_STOWED_SHIPS, sizeof(SHIP_FRAGMENT));
-	InitQueue(&GLOBAL(built_ship_q),
-			  MAX_BUILT_SHIPS, sizeof(SHIP_FRAGMENT));
-	InitQueue(&GLOBAL(npc_built_ship_q), MAX_SHIPS_PER_SIDE,
-			  sizeof(SHIP_FRAGMENT));
-	InitQueue(&GLOBAL(ip_group_q), MAX_BATTLE_GROUPS,
-			  sizeof(IP_GROUP));
-	InitQueue(&GLOBAL(encounter_q), MAX_ENCOUNTERS, sizeof(ENCOUNTER));
+	GLOBAL(stowed_ship_q).reset(MAX_STOWED_SHIPS, sizeof(SHIP_FRAGMENT));
+	GLOBAL(built_ship_q).reset(MAX_BUILT_SHIPS, sizeof(SHIP_FRAGMENT));
+	GLOBAL(npc_built_ship_q).reset(MAX_SHIPS_PER_SIDE, sizeof(SHIP_FRAGMENT));
+	GLOBAL(ip_group_q).reset(MAX_BATTLE_GROUPS, sizeof(IP_GROUP));
+	GLOBAL(encounter_q).reset(MAX_ENCOUNTERS, sizeof(ENCOUNTER));
 
 	uqm::currentActivity() = IN_INTERPLANETARY | START_INTERPLANETARY;
 
@@ -473,11 +469,11 @@ void UninitGameStructures(void)
 {
 	HFLEETINFO hStarShip;
 
-	UninitQueue(&GLOBAL(encounter_q));
-	UninitQueue(&GLOBAL(ip_group_q));
-	UninitQueue(&GLOBAL(npc_built_ship_q));
-	UninitQueue(&GLOBAL(built_ship_q));
-	UninitQueue(&GLOBAL(stowed_ship_q));
+	GLOBAL(encounter_q).release();
+	GLOBAL(ip_group_q).release();
+	GLOBAL(npc_built_ship_q).release();
+	GLOBAL(built_ship_q).release();
+	GLOBAL(stowed_ship_q).release();
 	UninitGroupInfo();
 	UninitPlanetInfo();
 
@@ -497,7 +493,7 @@ void UninitGameStructures(void)
 		UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
 	}
 
-	UninitQueue(&GLOBAL(avail_race_q));
+	GLOBAL(avail_race_q).release();
 
 	DestroyDrawable(ReleaseDrawable(PlayFrame));
 	PlayFrame = 0;

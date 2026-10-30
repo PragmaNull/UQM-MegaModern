@@ -44,7 +44,7 @@ constexpr uint8_t c_startDay {17};
 
 bool GameClock::start(uint16_t eventCapacity)
 {
-	if (!InitQueue(&m_events, eventCapacity, sizeof(EVENT)))
+	if (!m_events.reset(eventCapacity, sizeof(EVENT)))
 	{
 		return false;
 	}
@@ -54,7 +54,7 @@ bool GameClock::start(uint16_t eventCapacity)
 
 void GameClock::stop()
 {
-	UninitQueue(&m_events);
+	m_events.release();
 }
 
 void GameClock::restore(uint8_t day, uint8_t month, uint16_t year, int16_t tickCount, int16_t dayInTicks) noexcept

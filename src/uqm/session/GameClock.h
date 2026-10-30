@@ -79,7 +79,7 @@ private:
 	uint16_t m_year {};
 	int16_t m_tickCount {};
 	int16_t m_dayInTicks {};
-	QUEUE m_events {};
+	LinkQueue m_events {};
 };
 
 } // namespace uqm

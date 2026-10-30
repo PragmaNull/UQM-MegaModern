@@ -1341,7 +1341,7 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		uint16_t i;
 		GFXRECT OldRect;
 		TEXT t;
-		QUEUE player_built_q;
+		uqm::LinkQueue player_built_q {};
 		GFXCONTEXT OldContext;
 		SIS_STATE SaveSS;
 		char buf[256];
@@ -1349,7 +1349,6 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 
 		// Save the states because we will hack them
 		SaveSS = uqm::gameState().sis();
-		player_built_q = GLOBAL(built_ship_q);
 
 		OldContext = SetContext(StatusContext);
 		// Hack StatusContext so we can use standard SIS display funcs
@@ -1367,8 +1366,8 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		uqm::gameState().sis() = pSD->SS;
 
 		DrawSaveInfo(uqm::gameState().sis());
-		InitQueue(&GLOBAL(built_ship_q),
-				  MAX_BUILT_SHIPS, sizeof(SHIP_FRAGMENT));
+		swap(player_built_q, GLOBAL(built_ship_q));
+		GLOBAL(built_ship_q).reset(MAX_BUILT_SHIPS, sizeof(SHIP_FRAGMENT));
 		for (i = 0; i < pSD->NumShips; ++i)
 		{
 			CloneShipFragment(
@@ -1379,7 +1378,7 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		ClearSISRect(DRAW_SIS_DISPLAY);
 		DrawBorder(SIS_STAT_SUMM_FRAME);
 		DrawStatusMessage(buf);
-		UninitQueue(&GLOBAL(built_ship_q));
+		GLOBAL(built_ship_q).release();
 
 		SetContextClipRect(&OldRect);
 
@@ -1548,7 +1547,7 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		SetContext(OldContext);
 
 		// Restore the state and queues because we hacked them
-		GLOBAL(built_ship_q) = player_built_q;
+		swap(GLOBAL(built_ship_q), player_built_q);
 		uqm::gameState().sis() = SaveSS;
 		if (uqm::UQMOptions::read().customBorder)
 		{
