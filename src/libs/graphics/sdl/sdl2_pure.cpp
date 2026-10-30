@@ -680,6 +680,7 @@ TFB_SDL2_Unscaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 	{
 		TFB_SDL2_UpdateTexture(texture, SDL_Screens[screen],
 							   &SDL2_Screens[screen].updated);
+		SDL2_Screens[screen].dirty = false;
 	}
 	if (a == 255)
 	{
@@ -719,6 +720,7 @@ TFB_SDL2_Scaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 		scaled_update.w *= 2;
 		scaled_update.h *= 2;
 		TFB_SDL2_UpdateTexture(texture, src, &scaled_update);
+		SDL2_Screens[screen].dirty = false;
 	}
 	if (a == 255)
 	{

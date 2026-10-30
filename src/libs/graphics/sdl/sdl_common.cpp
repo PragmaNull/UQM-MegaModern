@@ -164,6 +164,11 @@ void TFB_ProcessEvents()
 				/* Screen needs to be redrawn */
 				TFB_SwapBuffers(uqm::TFBRedraw::Expose);
 				break;
+			case SDL_EVENT_RENDER_TARGETS_RESET:
+			case SDL_EVENT_RENDER_DEVICE_RESET:
+				// The textures lost their contents, so upload all of the screen again.
+				TFB_SwapBuffers(uqm::TFBRedraw::Yes);
+				break;
 			default:
 				break;
 		}
