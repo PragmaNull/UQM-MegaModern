@@ -250,7 +250,7 @@ UseCaster(void)
 		return false;
 	}
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_INTERPLANETARY
+	if (uqm::lowByte(uqm::currentActivity()) != IN_INTERPLANETARY
 		|| !playerInSolarSystem())
 	{
 		return false;
@@ -264,7 +264,7 @@ UseCaster(void)
 	{
 		// In orbit around the Chenjesu/Mmrnmhrm home planet.
 		NextActivity |= CHECK_LOAD; /* fake a load game */
-		GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+		uqm::currentActivity() |= START_ENCOUNTER;
 
 		EncounterGroup = 0;
 		PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
@@ -297,7 +297,7 @@ UseCaster(void)
 		if (FoundIlwrath)
 		{
 			NextActivity |= CHECK_LOAD; /* fake a load game */
-			GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+			uqm::currentActivity() |= START_ENCOUNTER;
 
 			EncounterGroup = 0;
 			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
@@ -349,7 +349,7 @@ InvokeDevice(uint8_t which_device)
 		case GLOWING_ROD_DEVICE:
 			break;
 		case SUN_EFFICIENCY_DEVICE:
-			if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+			if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 				&& playerInPlanetOrbit())
 			{
 				PlayMenuSound(MENU_SOUND_INVOKED);
@@ -367,7 +367,7 @@ InvokeDevice(uint8_t which_device)
 					SET_GAME_STATE(CHMMR_EMERGING, 1);
 
 					EncounterGroup = 0;
-					GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+					uqm::currentActivity() |= START_ENCOUNTER;
 
 					PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
 					ReinitQueue(&GLOBAL(ip_group_q));
@@ -381,7 +381,7 @@ InvokeDevice(uint8_t which_device)
 			break;
 		case UTWIG_BOMB_DEVICE:
 			SET_GAME_STATE(UTWIG_BOMB, 0);
-			GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+			uqm::currentActivity() &= ~IN_BATTLE;
 			GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
 			DeathBySuicide = true;
 			return DEVICE_SUCCESS;
@@ -397,7 +397,7 @@ InvokeDevice(uint8_t which_device)
 			break;
 		case TALKING_PET_DEVICE:
 			NextActivity |= CHECK_LOAD; /* fake a load game */
-			GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+			uqm::currentActivity() |= START_ENCOUNTER;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 0);
 			if (inHQSpace())
 			{
@@ -405,7 +405,7 @@ InvokeDevice(uint8_t which_device)
 				{
 					SET_GAME_STATE(SHIP_TO_COMPEL, 1);
 				}
-				GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+				uqm::currentActivity() &= ~IN_BATTLE;
 
 				SaveSisHyperState();
 			}
@@ -541,7 +541,7 @@ DoManipulateDevices(MENU_STATE* pMS)
 	pagefwd = PulsedInputState.menu[KEY_MENU_PAGE_DOWN];
 	pageback = PulsedInputState.menu[KEY_MENU_PAGE_UP];
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -761,12 +761,12 @@ bool DevicesMenu(void)
 	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
 
 	if (GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0
-		&& !(GLOBAL(CurrentActivity) & CHECK_ABORT))
+		&& !(uqm::currentActivity() & CHECK_ABORT))
 	{
 		ClearSISRect(DRAW_SIS_DISPLAY);
 
 		if (!GET_GAME_STATE(PORTAL_COUNTER)
-			&& !(GLOBAL(CurrentActivity) & START_ENCOUNTER)
+			&& !(uqm::currentActivity() & START_ENCOUNTER)
 			&& GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
 		{
 			return true;

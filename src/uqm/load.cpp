@@ -438,12 +438,12 @@ void LoadGameStateFlags(SaveReader& reader, yyjson_val* root)
 void LoadGameState(SaveReader& reader, yyjson_val* root, GAME_STATE& GS)
 {
 	yyjson_val* state {reader.object(root, "globalState")};
-	reader.get(state, "glob_flags", GS.glob_flags);
+	reader.get(state, "glob_flags", uqm::globalFlags());
 	reader.get(state, "CrewCost", GS.CrewCost);
 	reader.get(state, "FuelCost", GS.FuelCost);
 	reader.getFixedArray<uint8_t>(state, "ModuleCost", GS.ModuleCost);
 	reader.getFixedArray<uint8_t>(state, "ElementWorth", GS.ElementWorth);
-	reader.get(state, "CurrentActivity", GS.CurrentActivity);
+	reader.get(state, "CurrentActivity", uqm::currentActivity());
 	LoadClockState(reader, state, GS.GameClock);
 	reader.getPoint(state, "autopilot", GS.autopilot.x, GS.autopilot.y);
 	reader.getPoint(state, "ip_location", GS.ip_location.x, GS.ip_location.y);
@@ -464,7 +464,7 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, GAME_STATE& GS)
 	reader.getPoint(velocityObj, "error", velocity.error.width, velocity.error.height);
 	reader.getPoint(velocityObj, "incr", velocity.incr.width, velocity.incr.height);
 
-	if (uqm::lowByte(GS.CurrentActivity) != IN_INTERPLANETARY)
+	if (uqm::lowByte(uqm::currentActivity()) != IN_INTERPLANETARY)
 	{ // Let's make savegames work even between different resolution modes.
 		velocity.vector.width <<= RESOLUTION_FACTOR;
 		velocity.vector.height <<= RESOLUTION_FACTOR;
@@ -837,7 +837,7 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
 		return true;
 	}
 
-	GlobData.SIS_state = loc_sd.SS;
+	uqm::gameState().sis() = loc_sd.SS;
 	legacySave = loc_sd.SS.SaveVersion > 0;
 
 	uqm::UQMOptions::edit().customSeed = GLOBAL_SIS(Seed);
@@ -857,10 +857,10 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
 	luaUqm_initState();
 	initEventSystem();
 
-	const ACTIVITY Activity {GLOBAL(CurrentActivity)};
-	LoadGameState(reader, root, GlobData.Game_state);
-	NextActivity = GLOBAL(CurrentActivity);
-	GLOBAL(CurrentActivity) = Activity;
+	const ACTIVITY Activity {uqm::currentActivity()};
+	LoadGameState(reader, root, uqm::gameState().game());
+	NextActivity = uqm::currentActivity();
+	uqm::currentActivity() = Activity;
 
 	LoadRaceQueue(reader, root, &GLOBAL(avail_race_q));
 	LoadShipQueue(reader, root, "npcShipQueue", &GLOBAL(npc_built_ship_q));

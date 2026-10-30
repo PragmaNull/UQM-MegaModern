@@ -2673,10 +2673,10 @@ void DoBubbleWarp(bool UseFuel)
 		DeltaSISGauges(0, -(int)FuelRequired(), 0);
 	}
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
+	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
 	{
 		// We're in a solar system; exit it.
-		GLOBAL(CurrentActivity) |= END_INTERPLANETARY;
+		uqm::currentActivity() |= END_INTERPLANETARY;
 		// Set a hook to move to the new location:
 		debugHook = doInstantMove;
 	}
@@ -3008,7 +3008,7 @@ DoMoveCursor(MENU_STATE* pMS)
 
 	flashCurrentLocation(nullptr, false);
 
-	return !(GLOBAL(CurrentActivity) & CHECK_ABORT);
+	return !(uqm::currentActivity() & CHECK_ABORT);
 }
 
 static void

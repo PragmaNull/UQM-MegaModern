@@ -50,6 +50,8 @@
 #include "StarmapGlobalData.h"
 
 #include "libs/resource/stringbank.h"
+#include "UQMGame.h"
+#include "uqm/session/GameSession.h"
 // for StringBank_Create() & SplitString()
 
 enum
@@ -217,7 +219,7 @@ DoDiffChooser(MENU_STATE* pMS)
 	{
 		UpdateInputState();
 
-		if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+		if (uqm::currentActivity() & CHECK_ABORT)
 		{
 			return false;
 		}
@@ -278,7 +280,7 @@ DoDiffChooser(MENU_STATE* pMS)
 		}
 		else if (GetTimeCounter() - LastInputTime > InactTimeOut)
 		{ // timed out
-			GLOBAL(CurrentActivity) = (ACTIVITY)~0;
+			uqm::currentActivity() = (ACTIVITY)~0;
 			done = true;
 			response = false;
 		}
@@ -457,7 +459,7 @@ RestartMessage(void)
 	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN, MENU_SOUND_SELECT);
 	SetTransitionSource(nullptr);
 	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
-	GLOBAL(CurrentActivity) = CHECK_ABORT;
+	uqm::currentActivity() = CHECK_ABORT;
 	restartGame = true;
 	return true;
 }
@@ -488,7 +490,7 @@ DoRestart(MENU_STATE* pMS)
 		PulsedInputState.menu[KEY_MENU_SELECT] = 65535;
 	}
 
-	if (pMS->Initialized && !(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (pMS->Initialized && !(uqm::currentActivity() & CHECK_ABORT))
 	{
 		Flash_process(pMS->flashContext);
 	}
@@ -521,7 +523,7 @@ DoRestart(MENU_STATE* pMS)
 
 		SleepThreadUntil(FadeScreen(FadeAllToColor, GameTicksPerSecond / 2));
 	}
-	else if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	else if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		SleepThreadUntil(
 			FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
@@ -544,7 +546,7 @@ DoRestart(MENU_STATE* pMS)
 					SetTransitionSource(nullptr);
 					SleepThreadUntil(
 						FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
-					GLOBAL(CurrentActivity) = CHECK_ABORT;
+					uqm::currentActivity() = CHECK_ABORT;
 					restartGame = true;
 					break;
 				}
@@ -556,8 +558,8 @@ DoRestart(MENU_STATE* pMS)
 								   (3 * GameTicksPerSecond) / 16);
 					if (!DoDiffChooser(pMS))
 					{
-						LastInputTime = GetTimeCounter();			 // if we timed out - don't start second credit roll
-						if (GLOBAL(CurrentActivity) != (ACTIVITY)~0) // just declined
+						LastInputTime = GetTimeCounter();			// if we timed out - don't start second credit roll
+						if (uqm::currentActivity() != (ACTIVITY)~0) // just declined
 						{
 							Flash_continue(pMS->flashContext);
 						}
@@ -566,17 +568,17 @@ DoRestart(MENU_STATE* pMS)
 					Flash_continue(pMS->flashContext);
 				}
 				LastActivity = CHECK_LOAD | CHECK_RESTART;
-				GLOBAL(CurrentActivity) = IN_INTERPLANETARY;
+				uqm::currentActivity() = IN_INTERPLANETARY;
 				break;
 			case LOAD_SAVED_GAME:
 				LastActivity = CHECK_LOAD;
-				GLOBAL(CurrentActivity) = IN_INTERPLANETARY;
+				uqm::currentActivity() = IN_INTERPLANETARY;
 				optLoadGame = false;
 				break;
 			case PLAY_SUPER_MELEE:
 				uqm::UQMOptions::edit().shipSeed = false;
 				ReloadMasterShipList(nullptr);
-				GLOBAL(CurrentActivity) = SUPER_MELEE;
+				uqm::currentActivity() = SUPER_MELEE;
 				optSuperMelee = false;
 				break;
 			case SETUP_GAME:
@@ -609,7 +611,7 @@ DoRestart(MENU_STATE* pMS)
 			case QUIT_GAME:
 				SleepThreadUntil(
 					FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
-				GLOBAL(CurrentActivity) = CHECK_ABORT;
+				uqm::currentActivity() = CHECK_ABORT;
 				break;
 		}
 
@@ -679,7 +681,7 @@ DoRestart(MENU_STATE* pMS)
 	{ // No input received, check if timed out
 		if (GetTimeCounter() - LastInputTime > InactTimeOut)
 		{
-			GLOBAL(CurrentActivity) = (ACTIVITY)~0;
+			uqm::currentActivity() = (ACTIVITY)~0;
 			return false;
 		}
 	}
@@ -689,18 +691,17 @@ DoRestart(MENU_STATE* pMS)
 	return true;
 }
 
-static bool
-RestartMenu(MENU_STATE* pMS)
-{
-	TimeCount TimeOut;
-	uint16_t i;
+// The last game ended with the Utwig bomb.
+static bool s_suicideEnding {};
 
-	ReinitQueue(&race_q[0]);
-	ReinitQueue(&race_q[1]);
+void ShowGameEnding(void)
+{
+	const ACTIVITY lastActivity {uqm::currentActivity()};
 
 	SetContext(ScreenContext);
 
-	GLOBAL(CurrentActivity) |= CHECK_ABORT;
+	uqm::currentActivity() |= CHECK_ABORT;
+	s_suicideEnding = false;
 	if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
 		&& GET_GAME_STATE(UTWIG_BOMB_ON_SHIP)
 		&& !GET_GAME_STATE(UTWIG_BOMB)
@@ -714,9 +715,9 @@ RestartMenu(MENU_STATE* pMS)
 
 		ClearDrawable();
 		FlushColorXForms();
-		TimeOut = GameTicksPerSecond / 8;
+		s_suicideEnding = true;
 
-		GLOBAL(CurrentActivity) = IN_ENCOUNTER;
+		uqm::currentActivity() = IN_ENCOUNTER;
 
 		if (uqm::UQMOptions::read().gameOver)
 		{
@@ -724,17 +725,12 @@ RestartMenu(MENU_STATE* pMS)
 		}
 
 		DeathBySuicide = false;
-
-		FreeGameData();
-		GLOBAL(CurrentActivity) = CHECK_ABORT;
 	}
 	else
 	{
-		TimeOut = GameTicksPerSecond / 2;
-
 		if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
 		{
-			GLOBAL(CurrentActivity) = IN_ENCOUNTER;
+			uqm::currentActivity() = IN_ENCOUNTER;
 
 			if (DeathByMelee)
 			{
@@ -754,16 +750,30 @@ RestartMenu(MENU_STATE* pMS)
 			}
 		}
 
-		if (uqm::lowByte(LastActivity) == WON_LAST_BATTLE)
+		if (uqm::lowByte(lastActivity) == WON_LAST_BATTLE)
 		{
-			GLOBAL(CurrentActivity) = WON_LAST_BATTLE;
+			uqm::currentActivity() = WON_LAST_BATTLE;
 			Victory();
 			Credits(true);
 		}
-
-		FreeGameData();
-		GLOBAL(CurrentActivity) = CHECK_ABORT;
 	}
+	uqm::currentActivity() = CHECK_ABORT;
+}
+
+static bool
+RestartMenu(MENU_STATE* pMS)
+{
+	uint16_t i;
+
+	ReinitQueue(&race_q[0]);
+	ReinitQueue(&race_q[1]);
+
+	SetContext(ScreenContext);
+
+	TimeCount TimeOut {s_suicideEnding ? GameTicksPerSecond / 8 : GameTicksPerSecond / 2};
+	s_suicideEnding = false;
+	FreeGameData();
+	uqm::currentActivity() = CHECK_ABORT;
 
 	LastActivity = 0;
 	NextActivity = 0;
@@ -782,7 +792,7 @@ RestartMenu(MENU_STATE* pMS)
 	pMS->CurFrame = CaptureDrawable(LoadGraphic(RESTART_PMAP_ANIM));
 
 	DrawRestartMenuGraphic(pMS);
-	GLOBAL(CurrentActivity) &= ~CHECK_ABORT;
+	uqm::currentActivity() &= ~CHECK_ABORT;
 	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN, MENU_SOUND_SELECT);
 	SetDefaultMenuRepeatDelay();
 	DoInput(pMS, true);
@@ -808,12 +818,12 @@ RestartMenu(MENU_STATE* pMS)
 		Reload();
 	}
 
-	if (GLOBAL(CurrentActivity) == (ACTIVITY)~0)
+	if (uqm::currentActivity() == (ACTIVITY)~0)
 	{
 		return (false); // timed out
 	}
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return (false); // quit
 	}
@@ -825,7 +835,7 @@ RestartMenu(MENU_STATE* pMS)
 
 	SeedRandomNumbers();
 
-	return (uqm::lowByte(GLOBAL(CurrentActivity)) != SUPER_MELEE);
+	return (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE);
 }
 
 static bool
@@ -833,26 +843,28 @@ TryStartGame(void)
 {
 	MENU_STATE MenuState;
 
-	LastActivity = GLOBAL(CurrentActivity);
-	GLOBAL(CurrentActivity) = 0;
+	LastActivity = uqm::currentActivity();
+	uqm::currentActivity() = 0;
 
 	memset(&MenuState, 0, sizeof(MenuState));
 	MenuState.InputFunc = DoRestart;
 
 	while (!RestartMenu(&MenuState))
 	{ // spin until a game is started or loaded
-		if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE && !(GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE && !(uqm::currentActivity() & CHECK_ABORT))
 		{
 			FreeGameData();
+			uqm::UQMGame::getInstance().beginSession(uqm::SessionKind::SuperMelee);
 			Melee();
+			uqm::UQMGame::getInstance().endSession();
 			MenuState.Initialized = false;
 		}
-		else if (GLOBAL(CurrentActivity) == (ACTIVITY)~0)
+		else if (uqm::currentActivity() == (ACTIVITY)~0)
 		{ // timed out
 			SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
 			return (false);
 		}
-		else if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+		else if (uqm::currentActivity() & CHECK_ABORT)
 		{ // quit
 			return (false);
 		}
@@ -867,9 +879,9 @@ bool StartGame(void)
 	{
 		while (!TryStartGame())
 		{
-			if (GLOBAL(CurrentActivity) == (ACTIVITY)~0)
+			if (uqm::currentActivity() == (ACTIVITY)~0)
 			{ // timed out
-				GLOBAL(CurrentActivity) = 0;
+				uqm::currentActivity() = 0;
 
 				if (optRequiresRestart || optRequiresReload)
 				{
@@ -886,7 +898,7 @@ bool StartGame(void)
 				}
 			}
 
-			if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+			if (uqm::currentActivity() & CHECK_ABORT)
 			{
 				return (false); // quit
 			}
@@ -900,7 +912,7 @@ bool StartGame(void)
 			}
 		}
 
-	} while (GLOBAL(CurrentActivity) & CHECK_ABORT);
+	} while (uqm::currentActivity() & CHECK_ABORT);
 
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "StartGame called for {} mode with seed {} shipseed {}.\n",

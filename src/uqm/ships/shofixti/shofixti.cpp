@@ -121,7 +121,7 @@ static RACE_DESC shofixti_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_SPEED* MISSILE_LIFE,
+			MISSILE_SPEED * MISSILE_LIFE,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -166,7 +166,7 @@ destruct_preprocess(ELEMENT* ElementPtr)
 
 	// ship_death() set the ship element's life_span to
 	// (NUM_EXPLOSION_FRAMES * 3)
-	lpPrim = &(GLOBAL(DisplayArray))[ElementPtr->PrimIndex];
+	lpPrim = &(DisplayArray)[ElementPtr->PrimIndex];
 	ElementPtr->state_flags |= CHANGING;
 	if (ElementPtr->life_span > DESTRUCT_SWITCH)
 	{
@@ -245,9 +245,9 @@ destruct_preprocess(ELEMENT* ElementPtr)
 			DestructPtr->mass_points = 0;
 			DestructPtr->playerNr = NEUTRAL_PLAYER_NUM;
 			DestructPtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
-			SetPrimType(&(GLOBAL(DisplayArray))[DestructPtr->PrimIndex],
+			SetPrimType(&(DisplayArray)[DestructPtr->PrimIndex],
 						STAMPFILL_PRIM);
-			SetPrimColor(&(GLOBAL(DisplayArray))[DestructPtr->PrimIndex],
+			SetPrimColor(&(DisplayArray)[DestructPtr->PrimIndex],
 						 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
 			DestructPtr->current.image.farray =
 				StarShipPtr->RaceDescPtr->ship_data.special;
@@ -527,7 +527,7 @@ init_shofixti(void)
 	shofixti_desc.cyborg_control.intelligence_func = shofixti_intelligence;
 
 	new_shofixti_desc = shofixti_desc;
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
+	if (uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
 		&& CurStarDescPtr && CurStarDescPtr->Index == SHOFIXTI_DEFINED
 		&& !GET_GAME_STATE(SHOFIXTI_RECRUITED))
 	{

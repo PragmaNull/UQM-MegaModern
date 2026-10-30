@@ -645,7 +645,7 @@ DoInstallModule(MENU_STATE* pMS)
 	int16_t FirstItem, LastItem;
 	bool select, cancel, motion;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		pMS->InputFunc = DoOutfit;
 		return (true);
@@ -1263,7 +1263,7 @@ onNamingDone(void)
 
 bool DoOutfit(MENU_STATE* pMS)
 {
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		goto ExitOutfit;
 	}

@@ -256,8 +256,8 @@ void InitGalaxy(void)
 	DPOINT* ppt;
 	PRIM_LINKS Links;
 	bool useScenery = (EXTENDED && GET_GAME_STATE(URQUAN_PROTECTING_SAMATRA)
-					   && uqm::lowByte(GLOBAL(CurrentActivity)) != IN_HYPERSPACE
-					   && uqm::lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE);
+					   && uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE
+					   && uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE);
 
 	uqm::log::debug("InitGalaxy(): transition_width = {}, "
 					"transition_height = {}",
@@ -303,7 +303,7 @@ void InitGalaxy(void)
 			if (IS_HD)
 			{ // In HD the smallest stars are images
 				SetPrimType(&DisplayArray[p], STAMP_PRIM);
-				if (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_HYPERSPACE)
+				if (uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE)
 				{
 					SetPrimFlags(&DisplayArray[p], UNSCALED_STAMP);
 					DisplayArray[p].Object.Stamp.frame =
@@ -322,7 +322,7 @@ void InitGalaxy(void)
 			else
 			{ // Pixel starpoints in original res
 				SetPrimType(&DisplayArray[p], POINT_PRIM);
-				if (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_HYPERSPACE)
+				if (uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE)
 				{
 					SetPrimColor(&DisplayArray[p],
 								 BUILD_COLOR(

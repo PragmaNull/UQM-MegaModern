@@ -247,7 +247,7 @@ FixMenuState(uint8_t BadState)
 	switch (BadState)
 	{
 		case PM_SOUND_ON:
-			if (GLOBAL(glob_flags) & SOUND_DISABLED)
+			if (uqm::globalFlags() & SOUND_DISABLED)
 			{
 				return PM_SOUND_OFF;
 			}
@@ -256,7 +256,7 @@ FixMenuState(uint8_t BadState)
 				return PM_SOUND_ON;
 			}
 		case PM_MUSIC_ON:
-			if (GLOBAL(glob_flags) & MUSIC_DISABLED)
+			if (uqm::globalFlags() & MUSIC_DISABLED)
 			{
 				return PM_MUSIC_OFF;
 			}
@@ -265,9 +265,9 @@ FixMenuState(uint8_t BadState)
 				return PM_MUSIC_ON;
 			}
 		case PM_CYBORG_OFF:
-			return (PM_CYBORG_OFF + ((uint8_t)(GLOBAL(glob_flags) & COMBAT_SPEED_MASK) >> COMBAT_SPEED_SHIFT));
+			return (PM_CYBORG_OFF + ((uint8_t)(uqm::globalFlags() & COMBAT_SPEED_MASK) >> COMBAT_SPEED_SHIFT));
 		case PM_READ_VERY_SLOW:
-			return (PM_READ_VERY_SLOW + (uint8_t)(GLOBAL(glob_flags) & READ_SPEED_MASK));
+			return (PM_READ_VERY_SLOW + (uint8_t)(uqm::globalFlags() & READ_SPEED_MASK));
 	}
 	return BadState;
 }
@@ -716,7 +716,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 	uint8_t hilite = 1;
 	extern FRAME PlayFrame;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return;
 	}

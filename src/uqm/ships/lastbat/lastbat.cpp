@@ -343,11 +343,11 @@ gate_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 
 			if ((ElementPtr1->state_flags & PLAYER_SHIP)
 				&& GetPrimType(
-					   &GLOBAL(DisplayArray[ElementPtr0->PrimIndex]))
+					   &DisplayArray[ElementPtr0->PrimIndex])
 					   == STAMPFILL_PRIM
 				&& GET_GAME_STATE(BOMB_CARRIER))
 			{
-				GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+				uqm::currentActivity() &= ~IN_BATTLE;
 			}
 		}
 		else
@@ -390,10 +390,10 @@ gate_preprocess(ELEMENT* ElementPtr)
 		ElementPtr->life_span = NORMAL_LIFE + 1;
 		ElementPtr->preprocess_func = 0;
 		SetPrimColor(
-			&GLOBAL(DisplayArray[ElementPtr->PrimIndex]),
+			&DisplayArray[ElementPtr->PrimIndex],
 			BLACK_COLOR);
 		SetPrimType(
-			&GLOBAL(DisplayArray[ElementPtr->PrimIndex]),
+			&DisplayArray[ElementPtr->PrimIndex],
 			STAMPFILL_PRIM);
 	}
 	else
@@ -885,7 +885,7 @@ samatra_preprocess(ELEMENT* ElementPtr)
 				GeneratorPtr->playerNr = ElementPtr->playerNr;
 				GeneratorPtr->state_flags = APPEARING | IGNORE_SIMILAR;
 				SetPrimType(
-					&GLOBAL(DisplayArray[GeneratorPtr->PrimIndex]),
+					&DisplayArray[GeneratorPtr->PrimIndex],
 					STAMP_PRIM);
 				GeneratorPtr->current.location.x =
 					((LOG_SPACE_WIDTH >> 1)
@@ -927,7 +927,7 @@ samatra_preprocess(ELEMENT* ElementPtr)
 				TurretPtr->playerNr = ElementPtr->playerNr;
 				TurretPtr->state_flags = APPEARING | IGNORE_SIMILAR | NONSOLID;
 				SetPrimType(
-					&GLOBAL(DisplayArray[TurretPtr->PrimIndex]),
+					&DisplayArray[TurretPtr->PrimIndex],
 					STAMP_PRIM);
 				TurretPtr->current.location.x = LOG_SPACE_WIDTH >> 1;
 				TurretPtr->current.location.y = LOG_SPACE_HEIGHT >> 1;
@@ -962,7 +962,7 @@ samatra_preprocess(ELEMENT* ElementPtr)
 				GatePtr->state_flags = APPEARING | FINITE_LIFE
 									 | IGNORE_SIMILAR;
 				SetPrimType(
-					&GLOBAL(DisplayArray[GatePtr->PrimIndex]),
+					&DisplayArray[GatePtr->PrimIndex],
 					STAMP_PRIM);
 				GatePtr->current.location.x = LOG_SPACE_WIDTH >> 1;
 				GatePtr->current.location.y = LOG_SPACE_HEIGHT >> 1;

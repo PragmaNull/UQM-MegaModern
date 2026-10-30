@@ -835,7 +835,7 @@ Intro(void)
 		CommData.AlienAmbientArray[17].AnimFlags &= ~ANIM_DISABLED;
 	}
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -942,7 +942,7 @@ init_vux_comm(void)
 	}
 
 	if ((GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
-		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

@@ -769,7 +769,7 @@ Intro(void)
 {
 	uint8_t NumVisits;
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -777,11 +777,11 @@ Intro(void)
 		return;
 	}
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 	{
 		SET_GAME_STATE(SHIP_TO_COMPEL, 0);
 		setSegue(Segue_hostile);
-		if (!(GLOBAL(glob_flags) & CYBORG_ENABLED))
+		if (!(uqm::globalFlags() & CYBORG_ENABLED))
 		{
 			NPCPhrase(HUMAN_PEP_TALK);
 		}
@@ -962,7 +962,7 @@ init_talkpet_comm(void)
 	talkpet_desc.AlienTextBaseline.y = 0;
 	talkpet_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

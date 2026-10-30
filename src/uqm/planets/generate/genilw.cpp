@@ -102,13 +102,13 @@ GenerateIlwrath_generateOrbital(SOLARSYS_STATE* solarSys,
 			CloneShipFragment(ILWRATH_SHIP,
 							  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
 
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 			InitCommunication(ILWRATH_CONVERSATION);
 
-			if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
-				GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
 				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 			}

@@ -245,7 +245,7 @@ flame_napalm_preprocess(ELEMENT* ElementPtr)
 	{
 		ElementPtr->state_flags &= ~NONSOLID;
 		ElementPtr->state_flags |= APPEARING;
-		SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+		SetPrimType(&(DisplayArray)[ElementPtr->PrimIndex],
 					STAMP_PRIM);
 
 		InitIntersectStartPoint(ElementPtr);
@@ -391,7 +391,7 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 
 				TrailElementPtr->state_flags |= NONSOLID;
 				SetPrimType(
-					&(GLOBAL(DisplayArray))[TrailElementPtr->PrimIndex],
+					&(DisplayArray)[TrailElementPtr->PrimIndex],
 					NO_PRIM);
 
 				/* normally done during preprocess, but because

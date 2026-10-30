@@ -434,7 +434,7 @@ advance_thradd_mission(int arg)
 static int
 zoqfot_distress_event(int arg)
 {
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		&& CurStarDescPtr
 		&& CurStarDescPtr->Index == ZOQFOT_DEFINED)
 	{
@@ -453,7 +453,7 @@ zoqfot_distress_event(int arg)
 static int
 zoqfot_death_event(int arg)
 {
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		&& CurStarDescPtr
 		&& CurStarDescPtr->Index == ZOQFOT_DEFINED)
 	{
@@ -629,7 +629,7 @@ kohr_ah_genocide_event(int arg)
 	FLEET_INFO* BlackUrquanPtr;
 
 	if (!GET_GAME_STATE(KOHR_AH_FRENZY)
-		&& uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+		&& uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		&& CurStarDescPtr
 		&& CurStarDescPtr->Index == SAMATRA_DEFINED)
 	{
@@ -691,7 +691,7 @@ kohr_ah_genocide_event(int arg)
 	if (best_dist < 0 && best_dx == 0 && best_dy == 0)
 	{
 		// All spheres of influence are gone - game over.
-		GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+		uqm::currentActivity() &= ~IN_BATTLE;
 		GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
 
 		SET_GAME_STATE(KOHR_AH_KILLED_ALL, 1);
@@ -742,7 +742,7 @@ kohr_ah_genocide_event(int arg)
 static int
 spathi_shield_event(int arg)
 {
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		&& CurStarDescPtr
 		&& CurStarDescPtr->Index == SPATHI_DEFINED)
 	{

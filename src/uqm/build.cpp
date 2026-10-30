@@ -1143,7 +1143,7 @@ void loadGameCheats(void)
 
 	if (uqm::UQMOptions::read().infiniteRU)
 	{
-		oldRU = GlobData.SIS_state.ResUnits;
+		oldRU = uqm::gameState().sis().ResUnits;
 	}
 	else
 	{
@@ -1162,7 +1162,7 @@ void loadGameCheats(void)
 
 	if (uqm::UQMOptions::read().infiniteFuel)
 	{
-		loadFuel = GlobData.SIS_state.FuelOnBoard;
+		loadFuel = uqm::gameState().sis().FuelOnBoard;
 		GLOBAL_SIS(FuelOnBoard) = GetFuelTankCapacity();
 	}
 	else

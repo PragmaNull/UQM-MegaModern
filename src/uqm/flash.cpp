@@ -222,7 +222,7 @@ void Flash_terminate(FlashContext* context)
 	if (context->started)
 	{
 		// Restore the flash rectangle IF not quiting:
-		if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if (!(uqm::currentActivity() & CHECK_ABORT))
 		{
 			Flash_drawFrame(context, context->original, false);
 		}
@@ -858,7 +858,7 @@ Flash_drawCurrentFrame(FlashContext* context)
 	int numer;
 	int denom;
 
-	/*if (GLOBAL (CurrentActivity) & CHECK_ABORT)
+	/*if (uqm::currentActivity() & CHECK_ABORT)
 		pcRectBool = false;*/
 
 	if (context->state == FlashState_off)

@@ -153,7 +153,7 @@ bool DoConfirmExit(void)
 			ExitRequested = false;
 			GamePaused = false;
 			UpdateInputState();
-			if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+			if (uqm::currentActivity() & CHECK_ABORT)
 			{ // something else triggered an exit
 				done = true;
 				response = true;
@@ -191,10 +191,10 @@ bool DoConfirmExit(void)
 		}
 		DestroyDrawable(ReleaseDrawable(s.frame));
 		ClearSystemRect();
-		if (response || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if (response || (uqm::currentActivity() & CHECK_ABORT))
 		{
 			result = true;
-			GLOBAL(CurrentActivity) |= CHECK_ABORT;
+			uqm::currentActivity() |= CHECK_ABORT;
 		}
 		else
 		{
@@ -231,7 +231,7 @@ DoPopup(struct popup_state* self)
 {
 	(void)self;
 	SleepThread(GameTicksPerSecond / 20);
-	return !(PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL] || (GLOBAL(CurrentActivity) & CHECK_ABORT));
+	return !(PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT));
 }
 
 void DoPopupWindow(const char* msg)

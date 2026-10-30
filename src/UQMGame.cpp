@@ -17,6 +17,7 @@
  */
 
 #include "UQMGame.h"
+#include "uqm/session/GameSession.h"
 
 #include "core/log/log.h"
 #include "options/options.h"
@@ -102,6 +103,23 @@ UQMGame::~UQMGame()
 {
 	assert(s_instance == this);
 	s_instance = nullptr;
+}
+
+GameSession& UQMGame::beginSession(SessionKind kind)
+{
+	endSession();
+	m_session = uqstl::make_unique<GameSession>(kind);
+	m_session->startGame();
+	return *m_session;
+}
+
+void UQMGame::endSession()
+{
+	if (m_session)
+	{
+		m_session->endGame();
+		m_session.reset();
+	}
 }
 
 UQMGame& UQMGame::getInstance()

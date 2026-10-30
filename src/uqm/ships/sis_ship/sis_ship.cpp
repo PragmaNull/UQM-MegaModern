@@ -159,7 +159,7 @@ static RACE_DESC sis_desc =
 		 nullptr},
 		{
 			0,
-			BLASTER_SPEED* BLASTER_LIFE,
+			BLASTER_SPEED * BLASTER_LIFE,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -1056,7 +1056,7 @@ init_sis(void)
 	InitDriveSlots(&new_sis_desc, GLOBAL_SIS(DriveSlots));
 	InitJetSlots(&new_sis_desc, GLOBAL_SIS(JetSlots));
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 	{
 		new_sis_desc.ship_info.crew_level = new_sis_desc.ship_info.max_crew;
 	}

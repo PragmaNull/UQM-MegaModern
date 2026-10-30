@@ -25,6 +25,8 @@ extern "C" {
 
 
 extern bool StartGame(void);
+// Shows how the last game ended, for example the Game Over or Victory screens. Call before the session ends.
+void ShowGameEnding(void);
 
 #if 0 //defined(__cplusplus)
 }

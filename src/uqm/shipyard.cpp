@@ -687,7 +687,7 @@ animatePowerLines(MENU_STATE* pMS)
 	static TimeCount NextTime = 0;
 	TimeCount Now = GetTimeCounter();
 
-	if (IS_PAD || GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (IS_PAD || uqm::currentActivity() & CHECK_ABORT)
 	{
 		return;
 	}
@@ -2437,7 +2437,7 @@ DMS_NavigateShipSlots(MENU_STATE* pMS, bool special, bool select,
 static bool
 DoModifyShips(MENU_STATE* pMS)
 {
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		pMS->InputFunc = DoShipyard;
 		return true;
@@ -2674,7 +2674,7 @@ DrawBluePrint(MENU_STATE* pMS)
 bool DoShipyard(MENU_STATE* pMS)
 {
 	bool select, cancel;
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		goto ExitShipyard;
 	}

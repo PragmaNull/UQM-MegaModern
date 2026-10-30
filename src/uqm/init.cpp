@@ -123,7 +123,7 @@ static uint8_t space_ini_cnt;
 bool InitSpace(void)
 {
 	if ((space_ini_cnt++ == 0
-		 && uqm::lowByte(GLOBAL(CurrentActivity)) <= IN_ENCOUNTER)
+		 && uqm::lowByte(uqm::currentActivity()) <= IN_ENCOUNTER)
 		|| optRequiresReload)
 	{
 		stars_in_space = CaptureDrawable(
@@ -268,7 +268,7 @@ InitShips(void)
 			SetContext(OldContext);
 		}
 
-		if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+		if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{
 			free_gravity_well();
 		}
@@ -379,10 +379,10 @@ void UninitShips(void)
 		UnlockElement(hElement);
 	}
 
-	GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+	uqm::currentActivity() &= ~IN_BATTLE;
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
-		&& !(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
+		&& !(uqm::currentActivity() & CHECK_ABORT))
 	{
 		// Encounter battle in full game.
 		//   Record the crew left in the last ship standing. The crew left
@@ -397,7 +397,7 @@ void UninitShips(void)
 		}
 	}
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_ENCOUNTER)
+	if (uqm::lowByte(uqm::currentActivity()) != IN_ENCOUNTER)
 	{
 		// Remove any ships left from the race queue.
 		for (i = 0; i < NUM_PLAYERS; i++)
@@ -415,7 +415,6 @@ void UninitShips(void)
 void ReloadGameContent(void)
 {
 	//FreeKernel (); Crashes when going from HD to SD
-	UninitGameStructures();
 	ClearPlayerInputAll();
 	UninitGameKernel();
 	FreeMasterShipList();

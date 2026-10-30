@@ -182,7 +182,7 @@ ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		StarShipPtr->ship_input_state |= WEAPON;
 	}
 	else if (StarShipPtr->special_counter == 0
-			 && (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_ENCOUNTER
+			 && (uqm::lowByte(uqm::currentActivity()) != IN_ENCOUNTER
 				 || !GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)))
 	{
 		StarShipPtr->ship_input_state &= ~SPECIAL;
@@ -245,7 +245,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	status_flags = StarShipPtr->cur_status_flags;
-	lpPrim = &(GLOBAL(DisplayArray))[ElementPtr->PrimIndex];
+	lpPrim = &(DisplayArray)[ElementPtr->PrimIndex];
 	if (GetPrimType(lpPrim) == STAMPFILL_PRIM)
 	{
 		Color color;

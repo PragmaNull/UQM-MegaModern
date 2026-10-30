@@ -78,14 +78,14 @@ void doInstantMove(void)
 		{
 			// Leave HyperSpace/QuasiSpace if we're there:
 			SET_GAME_STATE(USED_BROADCASTER, 0);
-			GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+			uqm::currentActivity() &= ~IN_BATTLE;
 
 			// Enter IP:
 			GLOBAL(ShipFacing) = 0;
 			GLOBAL(ip_planet) = 0;
 			GLOBAL(in_orbit) = 0;
 			// This causes the ship position in IP to be reset.
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 		}
 	}
 
@@ -128,7 +128,7 @@ void resetEnergyBattle(void)
 	uint16_t delta;
 	GFXCONTEXT OldContext;
 
-	if (!(GLOBAL(CurrentActivity) & IN_BATTLE) || inHQSpace())
+	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
 	{
 		return;
 	}
@@ -166,7 +166,7 @@ scuttleOpponent(void)
 	uint16_t delta;
 	GFXCONTEXT OldContext;
 
-	if (!(GLOBAL(CurrentActivity) & IN_BATTLE) || inHQSpace())
+	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
 	{
 		return;
 	}
@@ -208,7 +208,7 @@ HaltShips(void)
 	ELEMENT* ElementPtr;
 	uint8_t i;
 
-	if (!(GLOBAL(CurrentActivity) & IN_BATTLE) || inHQSpace())
+	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
 	{
 		return;
 	}
@@ -556,7 +556,7 @@ void equipShip(void)
 	int i;
 
 	// Don't do anything unless in the full game.
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 	{
 		return;
 	}
@@ -665,7 +665,7 @@ void equipShip(void)
 	}
 
 	// Make sure everything is redrawn:
-	if (inHQSpace() || uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
+	if (inHQSpace() || uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
 	{
 		DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
 	}
@@ -901,13 +901,13 @@ void UniverseRecurse(UniverseRecurseArg* universeRecurseArg)
 
 	LockGameClock();
 	//TFB_DEBUG_HALT = 1;
-	savedActivity = GLOBAL(CurrentActivity);
+	savedActivity = uqm::currentActivity();
 	disableInteractivity = true;
 
 	forAllStars(starRecurse, (void*)universeRecurseArg);
 
 	disableInteractivity = false;
-	GLOBAL(CurrentActivity) = savedActivity;
+	uqm::currentActivity() = savedActivity;
 	UnlockGameClock();
 }
 
@@ -1883,7 +1883,7 @@ void resetCrewBattle(void)
 	uint16_t delta;
 	GFXCONTEXT OldContext;
 
-	if (!(GLOBAL(CurrentActivity) & IN_BATTLE) || (inHQSpace()))
+	if (!(uqm::currentActivity() & IN_BATTLE) || (inHQSpace()))
 	{
 		return;
 	}

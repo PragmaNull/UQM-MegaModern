@@ -208,10 +208,10 @@ extern PRIMITIVE DisplayArray[MAX_DISPLAY_PRIMS];
 #define GRAVITY_MASS(m) ((m) > MAX_SHIP_MASS * 10)
 #define GRAVITY_THRESHOLD (uint16_t)RES_SCALE(255)
 
-#define OBJECT_CLOAKED(eptr)                                                     \
-	(GetPrimType(&GLOBAL(DisplayArray[(eptr)->PrimIndex])) >= NUM_PRIMS          \
-	 || (GetPrimType(&GLOBAL(DisplayArray[(eptr)->PrimIndex])) == STAMPFILL_PRIM \
-		 && sameColor(GetPrimColor(&GLOBAL(DisplayArray[(eptr)->PrimIndex])), BLACK_COLOR)))
+#define OBJECT_CLOAKED(eptr)                                             \
+	(GetPrimType(&DisplayArray[(eptr)->PrimIndex]) >= NUM_PRIMS          \
+	 || (GetPrimType(&DisplayArray[(eptr)->PrimIndex]) == STAMPFILL_PRIM \
+		 && sameColor(GetPrimColor(&DisplayArray[(eptr)->PrimIndex]), BLACK_COLOR)))
 #define UNDEFINED_LEVEL 0
 
 extern HELEMENT AllocElement(void);

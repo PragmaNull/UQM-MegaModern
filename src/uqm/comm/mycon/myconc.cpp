@@ -709,7 +709,7 @@ init_mycon_comm(void)
 
 	MadeChoice = 0;
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
 		setSegue(Segue_hostile);
 	}

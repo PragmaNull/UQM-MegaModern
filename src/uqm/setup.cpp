@@ -251,7 +251,7 @@ bool LoadKernel(int argc, char* argv[])
 	}
 
 	InitPlayerInput();
-	GLOBAL(CurrentActivity) = (ACTIVITY)~0;
+	uqm::currentActivity() = (ACTIVITY)~0;
 
 	return true;
 }

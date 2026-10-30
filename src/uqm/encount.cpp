@@ -59,7 +59,7 @@ static bool
 DoSelectAction(MENU_STATE* pMS)
 {
 	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		pMS->CurState = ATTACK + 1;
 		return (false);
@@ -76,7 +76,7 @@ DoSelectAction(MENU_STATE* pMS)
 			case HAIL:
 			case ATTACK:
 				DrawMenuStateStrings(PM_CONVERSE, pMS->CurState);
-				if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+				if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 				{
 					pMS->CurState = HAIL;
 				}
@@ -152,7 +152,7 @@ void BuildBattle(uint16_t which_player)
 	if (which_player != RPG_PLAYER_NUM)
 	{ // This function is called first for the NPC character
 		// and this is when a centerpiece is loaded
-		switch (uqm::lowByte(GLOBAL(CurrentActivity)))
+		switch (uqm::lowByte(uqm::currentActivity()))
 		{
 			case IN_LAST_BATTLE:
 				load_gravity_well(SA_MATRA);
@@ -407,7 +407,7 @@ InitEncounter(void)
 	s.frame = planet[0];
 	DrawStamp(&s);
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
 	{
 #define NUM_DISPLAY_PTS (std::size(display_pt))
 		HSHIPFRAG hStarShip, hNextShip;
@@ -611,10 +611,10 @@ UninitEncounter(void)
 
 	free_gravity_well();
 
-	if ((GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
-		|| uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE
-		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		goto ExitUninitEncounter;
 	}
@@ -855,7 +855,7 @@ UninitEncounter(void)
 								TimeCount Time = GetTimeCounter();
 								for (j = 0; j < NUM_SHIP_FADES; ++j)
 								{
-									Sleepy = (bool)!AnyButtonPress(true) && !(GLOBAL(CurrentActivity) & CHECK_ABORT);
+									Sleepy = (bool)!AnyButtonPress(true) && !(uqm::currentActivity() & CHECK_ABORT);
 
 									if (IS_HD)
 									{ // Back of the current ship
@@ -1029,14 +1029,14 @@ void EncounterBattle(void)
 
 	SET_GAME_STATE(BATTLE_SEGUE, 1);
 
-	OldActivity = GLOBAL(CurrentActivity);
+	OldActivity = uqm::currentActivity();
 	if (uqm::lowByte(OldActivity) == IN_LAST_BATTLE)
 	{
-		GLOBAL(CurrentActivity) = uqm::makeWord(IN_LAST_BATTLE, 0);
+		uqm::currentActivity() = uqm::makeWord(IN_LAST_BATTLE, 0);
 	}
 	else
 	{
-		GLOBAL(CurrentActivity) = uqm::makeWord(IN_ENCOUNTER, 0);
+		uqm::currentActivity() = uqm::makeWord(IN_ENCOUNTER, 0);
 	}
 
 	//    FreeSC2Data ();
@@ -1044,11 +1044,11 @@ void EncounterBattle(void)
 	WaitForSoundEnd(TFBSOUND_WAIT_ALL);
 	//    DestroySound (ReleaseSound (MenuSounds));
 
-	if (GLOBAL(glob_flags) & CYBORG_ENABLED)
+	if (uqm::globalFlags() & CYBORG_ENABLED)
 	{
 		uint8_t cur_speed;
 
-		cur_speed = (uint8_t)(GLOBAL(glob_flags) & COMBAT_SPEED_MASK)
+		cur_speed = (uint8_t)(uqm::globalFlags() & COMBAT_SPEED_MASK)
 				 >> COMBAT_SPEED_SHIFT;
 		if (cur_speed == 1)
 		{
@@ -1087,12 +1087,12 @@ void EncounterBattle(void)
 	DestroySound(ReleaseSound(GameSounds));
 	GameSounds = 0;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
 	}
 
-	if (GLOBAL(glob_flags) & CYBORG_ENABLED)
+	if (uqm::globalFlags() & CYBORG_ENABLED)
 	{
 		nth_frame = uqm::makeWord(0, 0);
 		PlayerControl[0] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
@@ -1106,5 +1106,5 @@ void EncounterBattle(void)
 	//    MenuSounds = CaptureSound (LoadSound (MENU_SOUNDS));
 	//    LoadSC2Data ();
 
-	GLOBAL(CurrentActivity) = OldActivity;
+	uqm::currentActivity() = OldActivity;
 }

@@ -826,7 +826,7 @@ Intro(void)
 {
 	uint8_t NumVisits;
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -1069,7 +1069,7 @@ init_druuge_comm(void)
 
 	if ((GET_GAME_STATE(DRUUGE_MANNER) == 0
 		 && (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
-		|| uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}

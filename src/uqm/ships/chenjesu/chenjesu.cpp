@@ -382,7 +382,7 @@ spawn_doggy(ELEMENT* ElementPtr)
 		DoggyElementPtr->playerNr = ElementPtr->playerNr;
 		DoggyElementPtr->state_flags = APPEARING;
 		DoggyElementPtr->life_span = NORMAL_LIFE;
-		SetPrimType(&(GLOBAL(DisplayArray))[DoggyElementPtr->PrimIndex],
+		SetPrimType(&(DisplayArray)[DoggyElementPtr->PrimIndex],
 					STAMP_PRIM);
 		{
 			DoggyElementPtr->preprocess_func = doggy_preprocess;

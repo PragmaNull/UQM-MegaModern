@@ -23,10 +23,15 @@
 #include "options/options.h"
 #include "core/log/logger.h"
 
+#include "core/stl/memory.h"
 #include "core/stl/thread.h"
+#include <cstdint>
 
 namespace uqm
 {
+
+class GameSession;
+enum class SessionKind;
 
 class UQMGame
 {
@@ -40,10 +45,36 @@ public:
 	[[nodiscard]] int run();
 	void teardown();
 
+	// Use the session functions on the game thread only.
+	// Makes a session and starts its game. Ends the session that runs.
+	GameSession& beginSession(SessionKind kind);
+	// Ends the game of the session that runs, and destroys the session.
+	void endSession();
+	// The session that runs, or nullptr.
+	[[nodiscard]] GameSession* session() noexcept
+	{
+		return m_session.get();
+	}
+
+	// What the game program does now. It stays between sessions.
+	[[nodiscard]] uint16_t& activity() noexcept
+	{
+		return m_activity;
+	}
+
+	// The in-game options of glob_flags. They stay between sessions.
+	[[nodiscard]] uint8_t& globalFlags() noexcept
+	{
+		return m_globalFlags;
+	}
+
 private:
 	UQMOptions m_options {};
 	Logger m_logger {};
 	uqstl::jthread m_gameThread {};
+	uqstl::unique_ptr<GameSession> m_session {};
+	uint16_t m_activity {};
+	uint8_t m_globalFlags {};
 
 	static UQMGame* s_instance;
 };

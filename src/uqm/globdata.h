@@ -1013,15 +1013,9 @@ typedef uint16_t ACTIVITY;
 
 typedef struct
 {
-	uint8_t glob_flags;
-	// See above for the meaning of the bits.
-
 	uint8_t CrewCost, FuelCost;
 	uint8_t ModuleCost[NUM_MODULES];
 	uint8_t ElementWorth[NUM_ELEMENT_CATEGORIES];
-
-	PRIMITIVE* DisplayArray;
-	ACTIVITY CurrentActivity;
 
 	CLOCK_STATE GameClock;
 
@@ -1056,15 +1050,18 @@ typedef struct
 			 * queue element is SHIP_FRAGMENT */
 } GAME_STATE;
 
-typedef struct
+namespace uqm
 {
-	SIS_STATE SIS_state;
-	GAME_STATE Game_state;
-} GLOBDATA;
+// What the game program does now, for example the main menu or HyperSpace. It stays between sessions.
+[[nodiscard]] ACTIVITY& currentActivity();
+// The in-game options, with the bits of the glob_flags values above. They stay between sessions.
+[[nodiscard]] uint8_t& globalFlags();
+} // namespace uqm
 
-extern GLOBDATA GlobData;
-#define GLOBAL(f) GlobData.Game_state.f
-#define GLOBAL_SIS(f) GlobData.SIS_state.f
+#define GLOBAL(f) uqm::gameState().game().f
+#define GLOBAL_SIS(f) uqm::gameState().sis().f
+
+#include "uqm/session/GameState.h"
 
 #define MAX_ENCOUNTERS 16
 #define MAX_BATTLE_GROUPS 32
@@ -1110,7 +1107,6 @@ extern GFXCONTEXT RadarContext;
 extern void FreeSC2Data(void);
 extern bool LoadSC2Data(void);
 
-extern void InitGlobData(void);
 extern bool InitStarseed(bool newgame);
 
 bool inFullGame(void);

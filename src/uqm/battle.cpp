@@ -66,8 +66,8 @@ BattleFrameCounter battleFrameCount;
 
 bool RunAwayAllowed(void)
 {
-	return ((uqm::lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
-			 || uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+	return ((uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
+			 || uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 			&& (getNomadMode() == uqm::NomadMode::Easy
 				|| GET_GAME_STATE(STARBASE_AVAILABLE))
 			&& (isDifficulty(uqm::Difficulty::Easy) || !GET_GAME_STATE(BOMB_CARRIER)));
@@ -244,9 +244,9 @@ ProcessInput(void)
 	flushPacketQueues();
 #endif
 
-	if (GLOBAL(CurrentActivity) & (CHECK_LOAD | CHECK_ABORT))
+	if (uqm::currentActivity() & (CHECK_LOAD | CHECK_ABORT))
 	{
-		GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+		uqm::currentActivity() &= ~IN_BATTLE;
 	}
 }
 
@@ -269,7 +269,7 @@ void BattleSong(bool DoPlay)
 		}
 		else
 		{
-			if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+			if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 			{
 				BattleRef = LoadMusic(BATTLE_MUSIC_SAMATRA);
 
@@ -334,11 +334,11 @@ DoBattle(BATTLE_STATE* bs)
 		if (battleFrameCount >= delay
 			&& (battleFrameCount - delay) % NETPLAY_CHECKSUM_INTERVAL == 0)
 		{
-			if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+			if (!(uqm::currentActivity() & CHECK_ABORT))
 			{
 				if (!verifyChecksums(battleFrameCount - delay))
 				{
-					GLOBAL(CurrentActivity) |= CHECK_ABORT;
+					uqm::currentActivity() |= CHECK_ABORT;
 					resetConnections(ResetReason_syncLoss);
 				}
 			}
@@ -370,7 +370,7 @@ DoBattle(BATTLE_STATE* bs)
 		ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
 	}
 	UnbatchGraphics();
-	if ((!(GLOBAL(CurrentActivity) & IN_BATTLE)) || (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+	if ((!(uqm::currentActivity() & IN_BATTLE)) || (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 	{
 		return false;
 	}
@@ -388,7 +388,7 @@ DoBattle(BATTLE_STATE* bs)
 		bs->NextTime = GetTimeCounter();
 	}
 
-	if ((GLOBAL(CurrentActivity) & IN_BATTLE) == 0)
+	if ((uqm::currentActivity() & IN_BATTLE) == 0)
 	{
 		return false;
 	}
@@ -445,7 +445,7 @@ bool Battle(BattleFrameCallback* callback)
 {
 	int16_t num_ships;
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) != SUPER_MELEE)
+	if (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE)
 	{
 		// In Supermelee, the RNG is already initialised.
 		TFB_SeedRandom(GetTimeCounter());
@@ -467,7 +467,7 @@ bool Battle(BattleFrameCallback* callback)
 	{
 		BATTLE_STATE bs;
 
-		GLOBAL(CurrentActivity) |= IN_BATTLE;
+		uqm::currentActivity() |= IN_BATTLE;
 		battle_counter[0] = CountLinks(&race_q[0]);
 		battle_counter[1] = CountLinks(&race_q[1]);
 
@@ -489,7 +489,7 @@ bool Battle(BattleFrameCallback* callback)
 
 		if (!selectAllShips(num_ships))
 		{
-			GLOBAL(CurrentActivity) |= CHECK_ABORT;
+			uqm::currentActivity() |= CHECK_ABORT;
 			goto AbortBattle;
 		}
 
@@ -502,7 +502,7 @@ bool Battle(BattleFrameCallback* callback)
 			bool allOk = negotiateReadyConnections(true, NetState_inBattle);
 			if (!allOk)
 			{
-				GLOBAL(CurrentActivity) |= CHECK_ABORT;
+				uqm::currentActivity() |= CHECK_ABORT;
 				goto AbortBattle;
 			}
 		}
@@ -519,9 +519,9 @@ bool Battle(BattleFrameCallback* callback)
 		DoInput(&bs, false);
 
 AbortBattle:
-		if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+		if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 		{
-			if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+			if (uqm::currentActivity() & CHECK_ABORT)
 			{
 				// Do not return to the main menu when a game is aborted,
 				// (just to the supermelee menu).
@@ -532,7 +532,7 @@ AbortBattle:
 				// it will generate a warning in debug mode.
 #endif
 
-				GLOBAL(CurrentActivity) &= ~CHECK_ABORT;
+				uqm::currentActivity() &= ~CHECK_ABORT;
 			}
 			else
 			{

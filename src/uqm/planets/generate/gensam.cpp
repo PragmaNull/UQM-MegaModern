@@ -325,7 +325,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 			}
 
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 			SET_GAME_STATE(URQUAN_PROTECTING_SAMATRA, 1);
 			if (EXTENDED && GET_GAME_STATE(KOHR_AH_FRENZY))
@@ -337,14 +337,14 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 				InitCommunication(URQUAN_CONVERSATION);
 			}
 
-			if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
 				bool UrquanSurvivors;
 
 				UrquanSurvivors =
 					GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
 
-				GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
 				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 				if (UrquanSurvivors)
@@ -360,7 +360,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 
 					EncounterGroup = 0;
 					EncounterRace = -1;
-					GLOBAL(CurrentActivity) =
+					uqm::currentActivity() =
 						IN_LAST_BATTLE | START_ENCOUNTER;
 					if (GET_GAME_STATE(YEHAT_CIVIL_WAR)
 						&& StartSphereTracking(YEHAT_SHIP)

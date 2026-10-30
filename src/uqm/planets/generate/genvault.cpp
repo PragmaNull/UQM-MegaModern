@@ -127,17 +127,17 @@ GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 
 				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 6);
-				GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+				uqm::currentActivity() |= START_INTERPLANETARY;
 				InitCommunication(URQUAN_CONVERSATION);
 
-				if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+				if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 				{
 					return true;
 				}
 
 				Survivors = GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
 
-				GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
 				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 

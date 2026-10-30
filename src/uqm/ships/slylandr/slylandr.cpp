@@ -197,8 +197,8 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 
 			LaserPtr->turn_wait = ElementPtr->turn_wait - 1;
 
-			SetPrimColor(&(GLOBAL(DisplayArray))[LaserPtr->PrimIndex],
-						 GetPrimColor(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex]));
+			SetPrimColor(&(DisplayArray)[LaserPtr->PrimIndex],
+						 GetPrimColor(&(DisplayArray)[ElementPtr->PrimIndex]));
 		}
 		else
 		{
@@ -222,22 +222,22 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 			{
 				case 0:
 					SetPrimColor(
-						&(GLOBAL(DisplayArray))[LaserPtr->PrimIndex],
+						&(DisplayArray)[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
 					break;
 				case 1:
 					SetPrimColor(
-						&(GLOBAL(DisplayArray))[LaserPtr->PrimIndex],
+						&(DisplayArray)[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x16, 0x17, 0x1F), 0x42));
 					break;
 				case 2:
 					SetPrimColor(
-						&(GLOBAL(DisplayArray))[LaserPtr->PrimIndex],
+						&(DisplayArray)[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x06, 0x07, 0x1F), 0x4A));
 					break;
 				case 3:
 					SetPrimColor(
-						&(GLOBAL(DisplayArray))[LaserPtr->PrimIndex],
+						&(DisplayArray)[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x18), 0x50));
 					break;
 			}
@@ -280,7 +280,7 @@ slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	// no dodging in role playing game, unless you haven't
 	// visited the starbase yet or difficulty is set to Hard
-	if ((uqm::lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER) && GET_GAME_STATE(STARBASE_AVAILABLE) && !isDifficulty(uqm::Difficulty::Hard))
+	if ((uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER) && GET_GAME_STATE(STARBASE_AVAILABLE) && !isDifficulty(uqm::Difficulty::Hard))
 	{
 		ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr = 0;
 	}

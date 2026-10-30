@@ -1299,9 +1299,9 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 		tried[i] = 0;
 	}
 #endif
-	uint16_t timelimit = (GLOBAL(CurrentActivity) ? 600 : 20);
+	uint16_t timelimit = (uqm::currentActivity() ? 600 : 20);
 #ifdef DEBUG_STARSEED_TRACE
-	timelimit = (GLOBAL(CurrentActivity) ? 3600 : 3600);
+	timelimit = (uqm::currentActivity() ? 3600 : 3600);
 #endif
 
 	if (!StarGenRNG)
@@ -1314,7 +1314,7 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "Starting a timer; global activity {} | "
 						   "uqm::UQMOptions::read().customSeed.value {} | NUM_PLOTS {}.\n",
-				   GLOBAL(CurrentActivity),
+				   uqm::currentActivity(),
 				   uqm::UQMOptions::read().customSeed.value, NUM_PLOTS);
 #endif
 		// Basically a wrapper around the recursion.

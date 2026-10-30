@@ -329,7 +329,7 @@ utwig_preprocess(ELEMENT* ElementPtr)
 		}
 	}
 
-	lpPrim = &(GLOBAL(DisplayArray))[ElementPtr->PrimIndex];
+	lpPrim = &(DisplayArray)[ElementPtr->PrimIndex];
 	if (StarShipPtr->special_counter == 0)
 	{
 		// The shield is off.

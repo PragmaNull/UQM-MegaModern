@@ -126,7 +126,7 @@ static RACE_DESC orz_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_SPEED* MISSILE_LIFE,
+			MISSILE_SPEED * MISSILE_LIFE,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -373,7 +373,7 @@ ion_preprocess(ELEMENT* ElementPtr)
 	{
 		ElementPtr->life_span = ElementPtr->thrust_wait;
 
-		SetPrimColor(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+		SetPrimColor(&(DisplayArray)[ElementPtr->PrimIndex],
 					 colorTable[ElementPtr->colorCycleIndex]);
 
 		ElementPtr->state_flags &= ~DISAPPEARING;
@@ -491,7 +491,7 @@ LeftShip:
 	{
 		ElementPtr->state_flags &= ~NONSOLID;
 		ElementPtr->state_flags |= CHANGING | CREW_OBJECT;
-		SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+		SetPrimType(&(DisplayArray)[ElementPtr->PrimIndex],
 					STAMP_PRIM);
 
 		ElementPtr->current.image.frame =
@@ -529,9 +529,9 @@ spawn_marine_ion_trail(ELEMENT* ElementPtr, STARSHIP* StarShipPtr,
 		// When the element "dies", in the death_func
 		// 'cycle_ion_trail', it is given new life a number of
 		// times, by setting life_span to thrust_wait.
-		SetPrimType(&(GLOBAL(DisplayArray))[IonElementPtr->PrimIndex],
+		SetPrimType(&(DisplayArray)[IonElementPtr->PrimIndex],
 					POINT_PRIM); // Actual marine ion trail
-		SetPrimColor(&(GLOBAL(DisplayArray))[IonElementPtr->PrimIndex],
+		SetPrimColor(&(DisplayArray)[IonElementPtr->PrimIndex],
 					 START_ION_COLOR);
 		IonElementPtr->colorCycleIndex = 0;
 		IonElementPtr->current.location = ElementPtr->current.location;
@@ -850,7 +850,7 @@ void marine_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 					22 + ElementPtr0->turn_wait);
 				ElementPtr0->state_flags |= NONSOLID;
 				ElementPtr0->state_flags &= ~CREW_OBJECT;
-				SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr0->PrimIndex], NO_PRIM);
+				SetPrimType(&(DisplayArray)[ElementPtr0->PrimIndex], NO_PRIM);
 				ElementPtr0->preprocess_func = intruder_preprocess;
 				s.origin.x = RES_SCALE(16 + (ElementPtr0->turn_wait & 3) * 9);
 				s.origin.y = RES_SCALE(14 + (ElementPtr0->turn_wait >> 2) * 11);
@@ -893,7 +893,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 	{
 		STARSHIP* StarShipPtr;
 
-		SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex], NO_PRIM);
+		SetPrimType(&(DisplayArray)[ElementPtr->PrimIndex], NO_PRIM);
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		if (StarShipPtr->hShip)
@@ -956,7 +956,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 					if (TurretEffectPtr != ElementPtr
 						&& elementsOfSamePlayer(TurretEffectPtr, ElementPtr)
 						&& (TurretEffectPtr->state_flags & APPEARING)
-						&& GetPrimType(&(GLOBAL(DisplayArray))[TurretEffectPtr->PrimIndex]) == STAMP_PRIM
+						&& GetPrimType(&(DisplayArray)[TurretEffectPtr->PrimIndex]) == STAMP_PRIM
 						&& (hTurretEffect = AllocElement()))
 					{
 						TurretPtr->current.location.x -=
@@ -989,7 +989,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 
 						SetElementStarShip(TurretEffectPtr, StarShipPtr);
 
-						SetPrimType(&(GLOBAL(DisplayArray))[TurretEffectPtr->PrimIndex], STAMP_PRIM);
+						SetPrimType(&(DisplayArray)[TurretEffectPtr->PrimIndex], STAMP_PRIM);
 
 						UnlockElement(hTurretEffect);
 						PutElement(hTurretEffect);
@@ -998,10 +998,10 @@ turret_postprocess(ELEMENT* ElementPtr)
 				}
 				TurretPtr->next = TurretPtr->current;
 
-				SetPrimType(&(GLOBAL(DisplayArray))[TurretPtr->PrimIndex],
-							GetPrimType(&(GLOBAL(DisplayArray))[ShipPtr->PrimIndex]));
-				SetPrimColor(&(GLOBAL(DisplayArray))[TurretPtr->PrimIndex],
-							 GetPrimColor(&(GLOBAL(DisplayArray))[ShipPtr->PrimIndex]));
+				SetPrimType(&(DisplayArray)[TurretPtr->PrimIndex],
+							GetPrimType(&(DisplayArray)[ShipPtr->PrimIndex]));
+				SetPrimColor(&(DisplayArray)[TurretPtr->PrimIndex],
+							 GetPrimColor(&(DisplayArray)[ShipPtr->PrimIndex]));
 
 				TurretPtr->postprocess_func = ElementPtr->postprocess_func;
 
@@ -1049,7 +1049,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 
 				SetElementStarShip(SpaceMarinePtr, StarShipPtr);
 
-				SetPrimType(&(GLOBAL(DisplayArray))[SpaceMarinePtr->PrimIndex], STAMP_PRIM);
+				SetPrimType(&(DisplayArray)[SpaceMarinePtr->PrimIndex], STAMP_PRIM);
 
 				UnlockElement(hSpaceMarine);
 				PutElement(hSpaceMarine);

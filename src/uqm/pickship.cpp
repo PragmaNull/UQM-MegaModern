@@ -86,7 +86,7 @@ DoPickBattleShip(MENU_STATE* pMS)
 	TEXT t {};
 	int dx = 0, dy = 0;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		pMS->CurFrame = 0;
 		return (false);
@@ -402,7 +402,7 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 		// SIS for the Hyperspace flight
 		return GetHeadLink(&race_q[which_player]);
 	}
-	else if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+	else if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 	{
 		// Let the player chose their own ship. (May be a computer player).
 		HSTARSHIP hBattleShip;

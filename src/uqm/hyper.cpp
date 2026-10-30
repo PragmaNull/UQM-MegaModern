@@ -347,7 +347,7 @@ void check_hyperspace_encounter(void)
 	universe.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
 	universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
 	for (hStarShip = GetHeadLink(&GLOBAL(avail_race_q)), Type = 0;
-		 hStarShip && (GLOBAL(CurrentActivity) & IN_BATTLE);
+		 hStarShip && (uqm::currentActivity() & IN_BATTLE);
 		 hStarShip = hNextShip, ++Type)
 	{
 		uint16_t encounter_radius;
@@ -685,7 +685,7 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 	{
 		// Enter a solar system from HyperSpace.
-		GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+		uqm::currentActivity() |= START_INTERPLANETARY;
 		SET_GAME_STATE(ESCAPE_COUNTER, 0);
 	}
 	else
@@ -714,7 +714,7 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 			&& CurStarDescPtr->star_pt.y == ARILOU_HOME_Y)
 		{
 			// Meet the Arilou.
-			GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+			uqm::currentActivity() |= START_ENCOUNTER;
 
 			// JMS: The arilou homeworld name can now be shown on QS map.
 			KnownQSPortals |= (1 << 15);
@@ -842,13 +842,13 @@ unhyper_transition(ELEMENT* ElementPtr)
 	{
 		cleanup_hyperspace();
 
-		GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+		uqm::currentActivity() &= ~IN_BATTLE;
 		switch ((TRANSITION_TYPE)ElementPtr->turn_wait)
 		{
 			case RANDOM_ENCOUNTER_TRANSITION:
 				SaveSisHyperState();
 				SetBattlePlanet();
-				GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+				uqm::currentActivity() |= START_ENCOUNTER;
 				break;
 			case INTERPLANETARY_TRANSITION:
 				InterplanetaryTransition(ElementPtr);
@@ -1055,7 +1055,7 @@ hyper_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			CurStarDescPtr = SDPtr;
 			ElementPtr0->state_flags |= DEFY_PHYSICS | COLLISION;
 		}
-		else if ((GLOBAL(CurrentActivity) & IN_BATTLE)
+		else if ((uqm::currentActivity() & IN_BATTLE)
 				 && (GLOBAL(autopilot.x) == ~0
 					 || GLOBAL(autopilot.y) == ~0
 					 || (GLOBAL(autopilot.x) == SDPtr->star_pt.x
@@ -1076,7 +1076,7 @@ static void
 hyper_death(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & DEFY_PHYSICS)
-		&& (GLOBAL(CurrentActivity) & IN_BATTLE))
+		&& (uqm::currentActivity() & IN_BATTLE))
 	{
 		CurStarDescPtr = 0;
 	}
@@ -1334,7 +1334,7 @@ encounter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	HENCOUNTER hNextEncounter;
 
 	if (!(ElementPtr1->state_flags & PLAYER_SHIP)
-		|| !(GLOBAL(CurrentActivity) & IN_BATTLE))
+		|| !(uqm::currentActivity() & IN_BATTLE))
 	{
 		return;
 	}
@@ -2235,7 +2235,7 @@ DoHyperspaceMenu(MENU_STATE* pMS)
 	bool select = PulsedInputState.menu[KEY_MENU_SELECT];
 	bool handled;
 
-	if ((GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
 	{
 		return false;
@@ -2262,7 +2262,7 @@ DoHyperspaceMenu(MENU_STATE* pMS)
 			{ // A player-induced portal to QuasiSpace is opening
 				return false;
 			}
-			if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
+			if (uqm::currentActivity() & START_ENCOUNTER)
 			{ // Selected Talking Pet, going into conversation
 				return false;
 			}
@@ -2286,7 +2286,7 @@ DoHyperspaceMenu(MENU_STATE* pMS)
 			return false;
 	}
 
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		if (select)
 		{ // 3DO menu jumps to NAVIGATE after a successful submenu run
@@ -2329,7 +2329,7 @@ void HyperspaceMenu(void)
 
 	SetContext(SpaceContext);
 
-	if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 	{
 		ClearSISRect(CLEAR_SIS_RADAR);
 		WaitForNoInput(GameTicksPerSecond / 2, false);
@@ -2337,7 +2337,7 @@ void HyperspaceMenu(void)
 
 	SetContextBackGroundColor(OldColor);
 	SetContext(OldContext);
-	if (!(GLOBAL(CurrentActivity) & IN_BATTLE))
+	if (!(uqm::currentActivity() & IN_BATTLE))
 	{
 		cleanup_hyperspace();
 	}

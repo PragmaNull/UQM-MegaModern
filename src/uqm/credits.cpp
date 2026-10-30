@@ -732,7 +732,7 @@ OutTakes(void)
 	sliderDisabled = true;
 	oscillDisabled = true;
 
-	for (i = 0; (i < NUM_OUTTAKES) && !(GLOBAL(CurrentActivity) & CHECK_ABORT); i++)
+	for (i = 0; (i < NUM_OUTTAKES) && !(uqm::currentActivity() & CHECK_ABORT); i++)
 	{
 		SetCommIntroMode(CIM_CROSSFADE_WINDOW, 0);
 		InitCommunication(outtake_list[i]);
@@ -765,7 +765,7 @@ DoCreditsInput(void* pIS)
 		pCIS->CloseTimeOut = 0;
 	}
 
-	if ((GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if ((uqm::currentActivity() & CHECK_ABORT)
 		|| (pCIS->AllowCancel && (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL])))
 	{ // aborted
 		return false;
@@ -875,7 +875,7 @@ void Credits(bool WithOuttakes)
 		OutTakesRunning = false;
 	}
 
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		if (hMusic)
 		{

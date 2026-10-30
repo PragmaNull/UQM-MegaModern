@@ -316,7 +316,7 @@ DoSetupMenu(SETUP_MENU_STATE* pInputState)
 
 	SleepThreadUntil(pInputState->NextTime + MENU_FRAME_RATE);
 	pInputState->NextTime = GetTimeCounter();
-	return !((GLOBAL(CurrentActivity) & CHECK_ABORT) || (next == nullptr));
+	return !((uqm::currentActivity() & CHECK_ABORT) || (next == nullptr));
 }
 
 static void
@@ -1062,7 +1062,7 @@ void SetupMenu(void)
 	SetInputScriptMenuDump(dump_setup_menu);
 	DoInput(&s, true);
 	SetInputScriptMenuDump(nullptr);
-	GLOBAL(CurrentActivity) &= ~CHECK_ABORT;
+	uqm::currentActivity() &= ~CHECK_ABORT;
 	apply_settings();
 	clean_up_widgets();
 

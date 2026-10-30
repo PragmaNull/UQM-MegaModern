@@ -157,7 +157,7 @@ void DrawHDMeleeBorder(STARSHIP* StarShipPtr)
 	int16_t y = 0;
 	GFXRECT r;
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE
+	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
 		&& StarShipPtr->playerNr != RPG_PLAYER_NUM)
 	{
 		return;
@@ -195,7 +195,7 @@ void ship_preprocess(ELEMENT* ElementPtr)
 		ElementPtr->crew_level = RDPtr->ship_info.crew_level;
 
 		if (ElementPtr->playerNr == NPC_PLAYER_NUM
-			&& uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{ // Sa-Matra
 			STAMP s;
 			GFXCONTEXT OldContext;
@@ -208,7 +208,7 @@ void ship_preprocess(ELEMENT* ElementPtr)
 			RDPtr->ship_data.captain_control.background = 0;
 			SetContext(OldContext);
 		}
-		else if (uqm::lowByte(GLOBAL(CurrentActivity)) <= IN_ENCOUNTER)
+		else if (uqm::lowByte(uqm::currentActivity()) <= IN_ENCOUNTER)
 		{
 			GFXCONTEXT OldContext;
 
@@ -319,13 +319,13 @@ void ship_preprocess(ELEMENT* ElementPtr)
 		ElementPtr->thrust_wait = RDPtr->characteristics.thrust_wait;
 
 		if (!OBJECT_CLOAKED(ElementPtr)
-			&& uqm::lowByte(GLOBAL(CurrentActivity)) <= IN_ENCOUNTER)
+			&& uqm::lowByte(uqm::currentActivity()) <= IN_ENCOUNTER)
 		{
 			spawn_ion_trail(ElementPtr, 0, 0);
 		}
 	}
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) <= IN_ENCOUNTER)
+	if (uqm::lowByte(uqm::currentActivity()) <= IN_ENCOUNTER)
 	{
 		PreProcessStatus(ElementPtr);
 	}
@@ -407,7 +407,7 @@ void ship_postprocess(ELEMENT* ElementPtr)
 		(*RDPtr->postprocess_func)(ElementPtr);
 	}
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) <= IN_ENCOUNTER)
+	if (uqm::lowByte(uqm::currentActivity()) <= IN_ENCOUNTER)
 	{
 		PostProcessStatus(ElementPtr);
 	}
@@ -461,8 +461,8 @@ spawn_ship(STARSHIP* StarShipPtr)
 	StarShipPtr->cur_status_flags = 0;
 	StarShipPtr->old_status_flags = 0;
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
-		|| uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
+		|| uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 	{
 		if (StarShipPtr->crew_level == 0)
 		{
@@ -515,7 +515,7 @@ spawn_ship(STARSHIP* StarShipPtr)
 		ShipElementPtr->current.image.farray = RDPtr->ship_data.ship;
 
 		if (ShipElementPtr->playerNr == NPC_PLAYER_NUM
-			&& uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{
 			// This is the Sa-Matra
 			StarShipPtr->ShipFacing = 0;
@@ -637,7 +637,7 @@ bool GetNextStarShip(STARSHIP* LastStarShipPtr, uint16_t which_side)
 
 bool GetInitialStarShips(void)
 {
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 	{
 		HSTARSHIP ships[NUM_PLAYERS];
 		uint16_t i;

@@ -108,7 +108,7 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 
 		if (StartSphereTracking(UMGAH_SHIP))
 		{
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 			if (!GET_GAME_STATE(UMGAH_ZOMBIE_BLOBBIES))
 			{
@@ -129,14 +129,14 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 		}
 
-		if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+		if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 		{
 			bool UmgahSurvivors;
 
 			UmgahSurvivors = GetHeadLink(
 								 &GLOBAL(npc_built_ship_q))
 						  != 0;
-			GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+			uqm::currentActivity() &= ~START_INTERPLANETARY;
 
 			if (GET_GAME_STATE(PLAYER_HYPNOTIZED))
 			{
@@ -265,7 +265,7 @@ ZapToUrquanEncounter(void)
 			MoveGameClockDays(LOST_DAYS);
 		}
 
-		GLOBAL(CurrentActivity) =
+		uqm::currentActivity() =
 			uqm::makeWord(IN_HYPERSPACE, 0) | START_ENCOUNTER;
 		SetBattlePlanet();
 

@@ -419,13 +419,13 @@ bool PauseGame(void)
 	TimeCount deltaT;
 
 	if (ActivityFrame == 0
-		|| (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_PAUSE))
+		|| (uqm::currentActivity() & (CHECK_ABORT | CHECK_PAUSE))
 		|| (LastActivity & (CHECK_LOAD | CHECK_RESTART)))
 	{
 		return (false);
 	}
 
-	GLOBAL(CurrentActivity) |= CHECK_PAUSE;
+	uqm::currentActivity() |= CHECK_PAUSE;
 
 	if (PlayingTrack())
 	{
@@ -506,7 +506,7 @@ bool PauseGame(void)
 
 
 	TaskSwitch();
-	GLOBAL(CurrentActivity) &= ~CHECK_PAUSE;
+	uqm::currentActivity() &= ~CHECK_PAUSE;
 	return (true);
 }
 
@@ -526,7 +526,7 @@ bool WaitForAnyButtonUntil(bool newButton, TimeCount timeOut,
 	buttonPressed = AnyButtonPress(true);
 	while (!buttonPressed
 		   && (timeOut == WAIT_INFINITE || GetTimeCounter() < timeOut)
-		   && !(GLOBAL(CurrentActivity) & CHECK_ABORT)
+		   && !(uqm::currentActivity() & CHECK_ABORT)
 		   && !QuitPosted)
 	{
 		SleepThread(GameTicksPerSecond / 40);
@@ -557,7 +557,7 @@ bool WaitForActButtonUntil(bool newButton, TimeCount timeOut,
 	buttonPressed = ActKeysPress();
 	while (!buttonPressed
 		   && (timeOut == WAIT_INFINITE || GetTimeCounter() < timeOut)
-		   && !(GLOBAL(CurrentActivity) & CHECK_ABORT)
+		   && !(uqm::currentActivity() & CHECK_ABORT)
 		   && !QuitPosted)
 	{
 		SleepThread(GameTicksPerSecond / 40);
@@ -601,7 +601,7 @@ bool WaitForNoInputUntil(TimeCount timeOut, bool resetInput)
 	buttonPressed = AnyButtonPress(true);
 	while (buttonPressed
 		   && (timeOut == WAIT_INFINITE || GetTimeCounter() < timeOut)
-		   && !(GLOBAL(CurrentActivity) & CHECK_ABORT)
+		   && !(uqm::currentActivity() & CHECK_ABORT)
 		   && !QuitPosted)
 	{
 		SleepThread(GameTicksPerSecond / 40);

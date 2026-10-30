@@ -101,7 +101,7 @@ get_current_music_pos(MUSIC_REF MusicRef)
 	float length = 0.0f;
 	//char *filename;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return 0;
 	}
@@ -159,7 +159,7 @@ get_current_music_filename_hash(MUSIC_REF MusicRef)
 {
 	uint32_t filename_hash;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return 0;
 	}
@@ -299,7 +299,7 @@ void SetMusicPosition(void)
 	MUSIC_POSITION temp;
 	int i;
 
-	if (!uqm::UQMOptions::read().musicResume || GLOBAL(CurrentActivity) & CHECK_ABORT
+	if (!uqm::UQMOptions::read().musicResume || uqm::currentActivity() & CHECK_ABORT
 		|| !PLRPlaying((MUSIC_REF)~0))
 	{
 		return;
@@ -343,7 +343,7 @@ GetMusicPosition()
 	uint32_t filename_hash;
 	int i;
 
-	if (!uqm::UQMOptions::read().musicResume || GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (!uqm::UQMOptions::read().musicResume || uqm::currentActivity() & CHECK_ABORT)
 	{
 		return 0;
 	}
@@ -378,7 +378,7 @@ bool OkayToResume(void)
 	uint32_t filename_hash;
 	int i;
 
-	if (!uqm::UQMOptions::read().musicResume || GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (!uqm::UQMOptions::read().musicResume || uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}

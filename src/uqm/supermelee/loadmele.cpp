@@ -355,7 +355,7 @@ bool DoLoadTeam(MELEE_STATE* pMS)
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}

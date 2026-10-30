@@ -820,7 +820,7 @@ DispatchLander(void)
 	drawPlanetCursor(false);
 
 	PlanetSide(planetLoc);
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -831,7 +831,7 @@ DispatchLander(void)
 		spawnFwiffo();
 
 		NextActivity |= CHECK_LOAD; /* fake a load game */
-		GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+		uqm::currentActivity() |= START_ENCOUNTER;
 		SaveSolarSysLocation();
 
 		return false;
@@ -868,7 +868,7 @@ DoPickPlanetSide(MENU_STATE* pMS)
 	select = PulsedInputState.menu[KEY_MENU_SELECT];
 	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		pickState->success = false;
 		return false;
@@ -1157,7 +1157,7 @@ DrawPCScannedStuff(uint16_t scan)
 
 	while (hElement && !AnyButtonPress(true))
 	{
-		if ((GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if ((uqm::currentActivity() & CHECK_ABORT))
 		{
 			return;
 		}
@@ -1317,7 +1317,7 @@ ScanPlanet(uint16_t scanType)
 		endScan = scanType;
 	}
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return;
 	}
@@ -1370,7 +1370,7 @@ ScanPlanet(uint16_t scanType)
 		{
 			while (i < SCAN_LINES)
 			{
-				if ((GLOBAL(CurrentActivity) & CHECK_ABORT))
+				if ((uqm::currentActivity() & CHECK_ABORT))
 				{
 					return;
 				}
@@ -1405,7 +1405,7 @@ ScanPlanet(uint16_t scanType)
 			DrawPCScanTint(scan);	  // palette-swap topo and Sphere map
 			DrawPCScannedStuff(scan); // PC-style node pop-in
 
-			if ((GLOBAL(CurrentActivity) & CHECK_ABORT))
+			if ((uqm::currentActivity() & CHECK_ABORT))
 			{
 				return;
 			}
@@ -1467,7 +1467,7 @@ DoScan(MENU_STATE* pMS)
 	select = PulsedInputState.menu[KEY_MENU_SELECT];
 	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -1650,7 +1650,7 @@ void ScanSystem(void)
 	SetFlashRect(nullptr, false);
 
 	// cleanup scan graphics
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		BatchGraphics();
 		SetContext(ScanContext);

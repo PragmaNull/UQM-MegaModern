@@ -650,7 +650,7 @@ DoPlanetOrbit(MENU_STATE* pMS)
 	bool select = (bool)PulsedInputState.menu[KEY_MENU_SELECT];
 	bool handled;
 
-	if ((GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
 	{
 		return false;
@@ -674,14 +674,14 @@ DoPlanetOrbit(MENU_STATE* pMS)
 	{
 		case SCAN:
 			ScanSystem();
-			if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
+			if (uqm::currentActivity() & START_ENCOUNTER)
 			{ // Found Fwiffo on Pluto
 				return false;
 			}
 			break;
 		case EQUIP_DEVICE:
 			select = DevicesMenu();
-			if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
+			if (uqm::currentActivity() & START_ENCOUNTER)
 			{ // Invoked Talking Pet, a Caster or Sun Device over Chmmr,
 				// or a Caster for Ilwrath
 				// Going into conversation
@@ -711,7 +711,7 @@ DoPlanetOrbit(MENU_STATE* pMS)
 				RepairSISBorder();
 
 				AutoPilotSet = StarMap();
-				if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+				if (uqm::currentActivity() & CHECK_ABORT)
 				{
 					return false;
 				}
@@ -730,7 +730,7 @@ DoPlanetOrbit(MENU_STATE* pMS)
 			return false;
 	}
 
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		if (select)
 		{ // 3DO menu jumps to NAVIGATE after a successful submenu run
@@ -752,7 +752,7 @@ DoPlanetOrbit(MENU_STATE* pMS)
 static void
 on_input_frame(void)
 {
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		RotatePlanetSphere(true, nullptr);
 	}
@@ -777,7 +777,7 @@ void PlanetOrbitMenu(void)
 	SetInputCallback(oldCallback);
 
 	SetFlashRect(nullptr, false);
-	if (!(GLOBAL(CurrentActivity) & CHECK_LOAD))
+	if (!(uqm::currentActivity() & CHECK_LOAD))
 	{
 		DrawMenuStateStrings(PM_STARMAP, -NAVIGATION);
 	}

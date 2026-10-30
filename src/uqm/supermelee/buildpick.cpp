@@ -284,7 +284,7 @@ DoPickShip(MELEE_STATE* pMS)
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		pMS->buildPickConfirmed = false;
 		return false;
@@ -375,7 +375,7 @@ DoPickShip(MELEE_STATE* pMS)
 
 // Returns true if a ship has been selected, or false if the operation has
 // been cancelled or if the general abort key was pressed (in which case
-// 'GLOBAL (CurrentActivity) & CHECK_ABORT' is true as usual.
+// 'uqm::currentActivity() & CHECK_ABORT' is true as usual.
 // If a ship was selected, pMS->currentShip is set to the selected ship.
 bool BuildPickShip(MELEE_STATE* pMS)
 {

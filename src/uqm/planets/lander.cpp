@@ -2277,7 +2277,7 @@ DoPlanetSide(LanderInputState* pMS)
 	int16_t dy = 0;
 
 #define SHUTTLE_TURN_WAIT (isPC(uqm::UQMOptions::read().landerStyle) ? 1 : 3)
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return (false);
 	}
@@ -2854,7 +2854,7 @@ void PlanetSide(GFXPOINT planetLoc)
 
 	DoInput(&landerInputState, false);
 
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		if (crew_left == 0)
 		{

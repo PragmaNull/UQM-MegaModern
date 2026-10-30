@@ -137,14 +137,14 @@ FeedbackSetting(uint8_t which_setting)
 		case SOUND_OFF_SETTING:
 			fmt::format_to_sz_n(buf, "{} {}",
 								GAME_STRING(OPTION_STRING_BASE + 0),
-								GLOBAL(glob_flags) & SOUND_DISABLED ? GAME_STRING(OPTION_STRING_BASE + 3) :
+								uqm::globalFlags() & SOUND_DISABLED ? GAME_STRING(OPTION_STRING_BASE + 3) :
 																	  GAME_STRING(OPTION_STRING_BASE + 4));
 			break;
 		case MUSIC_ON_SETTING:
 		case MUSIC_OFF_SETTING:
 			fmt::format_to_sz_n(buf, "{} {}",
 								GAME_STRING(OPTION_STRING_BASE + 1),
-								GLOBAL(glob_flags) & MUSIC_DISABLED ? GAME_STRING(OPTION_STRING_BASE + 3) :
+								uqm::globalFlags() & MUSIC_DISABLED ? GAME_STRING(OPTION_STRING_BASE + 3) :
 																	  GAME_STRING(OPTION_STRING_BASE + 4));
 			break;
 		case CYBORG_OFF_SETTING:
@@ -168,7 +168,7 @@ FeedbackSetting(uint8_t which_setting)
 			}
 			fmt::format_to_sz_n(buf, "{} {}{}",
 								GAME_STRING(OPTION_STRING_BASE + 2),
-								!(GLOBAL(glob_flags) & CYBORG_ENABLED) ? GAME_STRING(OPTION_STRING_BASE + 3) :
+								!(uqm::globalFlags() & CYBORG_ENABLED) ? GAME_STRING(OPTION_STRING_BASE + 3) :
 																		 GAME_STRING(OPTION_STRING_BASE + 4),
 								tmpstr);
 			break;
@@ -179,7 +179,7 @@ FeedbackSetting(uint8_t which_setting)
 		case READ_VERY_FAST_SETTING:
 			fmt::format_to_sz_n(buf, "{}",
 								GAME_STRING(OPTION_STRING_BASE + 5
-											+ (GLOBAL(glob_flags) & READ_SPEED_MASK)));
+											+ (uqm::globalFlags() & READ_SPEED_MASK)));
 			break;
 		case CHANGE_CAPTAIN_SETTING:
 		case CHANGE_SHIP_SETTING:
@@ -418,7 +418,7 @@ NameCaptainOrShip(bool nameCaptain, bool gamestart)
 		CursPos = (uint16_t)strlen(GAME_STRING(NAMING_STRING_BASE + 2 + nameCaptain));
 	}
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		NewGameInit = false;
 	}
@@ -641,15 +641,15 @@ DoSettings(MENU_STATE* pMS)
 	uint8_t cur_speed, read_speed;
 	static uint8_t i = 0;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		i = 0;
 		return false;
 	}
 
-	cur_speed = (GLOBAL(glob_flags) & COMBAT_SPEED_MASK)
+	cur_speed = (uqm::globalFlags() & COMBAT_SPEED_MASK)
 			 >> COMBAT_SPEED_SHIFT;
-	read_speed = (GLOBAL(glob_flags) & READ_SPEED_MASK);
+	read_speed = (uqm::globalFlags() & READ_SPEED_MASK);
 
 	if (NewGameInit)
 	{
@@ -694,15 +694,15 @@ DoSettings(MENU_STATE* pMS)
 			case CYBORG_SUPER_SETTING:
 				if (cur_speed++ < NUM_COMBAT_SPEEDS - 1)
 				{
-					GLOBAL(glob_flags) |= CYBORG_ENABLED;
+					uqm::globalFlags() |= CYBORG_ENABLED;
 				}
 				else
 				{
 					cur_speed = 0;
-					GLOBAL(glob_flags) &= ~CYBORG_ENABLED;
+					uqm::globalFlags() &= ~CYBORG_ENABLED;
 				}
-				GLOBAL(glob_flags) =
-					((GLOBAL(glob_flags) & ~COMBAT_SPEED_MASK)
+				uqm::globalFlags() =
+					((uqm::globalFlags() & ~COMBAT_SPEED_MASK)
 					 | (cur_speed << COMBAT_SPEED_SHIFT));
 				pMS->CurState = CYBORG_OFF_SETTING + cur_speed;
 				DrawMenuStateStrings(PM_SOUND_ON, pMS->CurState);
@@ -721,8 +721,8 @@ DoSettings(MENU_STATE* pMS)
 					read_speed++;
 				}
 
-				GLOBAL(glob_flags) =
-					((GLOBAL(glob_flags) & ~READ_SPEED_MASK)
+				uqm::globalFlags() =
+					((uqm::globalFlags() & ~READ_SPEED_MASK)
 					 | read_speed);
 				pMS->CurState = READ_VERY_SLOW_SETTING + read_speed;
 				DrawMenuStateStrings(PM_SOUND_ON, pMS->CurState);
@@ -1348,7 +1348,7 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		GFXPOINT starPt;
 
 		// Save the states because we will hack them
-		SaveSS = GlobData.SIS_state;
+		SaveSS = uqm::gameState().sis();
 		player_built_q = GLOBAL(built_ship_q);
 
 		OldContext = SetContext(StatusContext);
@@ -1364,9 +1364,9 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		SetContextClipRect(&r);
 
 		// Hack the states so that we can use standard SIS display funcs
-		GlobData.SIS_state = pSD->SS;
+		uqm::gameState().sis() = pSD->SS;
 
-		DrawSaveInfo(GlobData.SIS_state);
+		DrawSaveInfo(uqm::gameState().sis());
 		InitQueue(&GLOBAL(built_ship_q),
 				  MAX_BUILT_SHIPS, sizeof(SHIP_FRAGMENT));
 		for (i = 0; i < pSD->NumShips; ++i)
@@ -1549,7 +1549,7 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 
 		// Restore the state and queues because we hacked them
 		GLOBAL(built_ship_q) = player_built_q;
-		GlobData.SIS_state = SaveSS;
+		uqm::gameState().sis() = SaveSS;
 		if (uqm::UQMOptions::read().customBorder)
 		{
 			DrawStatusMessage(nullptr);
@@ -1703,7 +1703,7 @@ DoPickGame(MENU_STATE* pMS)
 	SUMMARY_DESC* pSD;
 	uint32_t TimeIn = GetTimeCounter();
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -1966,7 +1966,7 @@ PickGame(bool saving, bool fromMainMenu)
 
 	if (pickState.success && !saving)
 	{ // Load succeeded, signal up the chain
-		GLOBAL(CurrentActivity) |= CHECK_LOAD;
+		uqm::currentActivity() |= CHECK_LOAD;
 	}
 
 	if (pickState.success)
@@ -1983,7 +1983,7 @@ PickGame(bool saving, bool fromMainMenu)
 		uqm::log::info("Nomad: {:s}\n", getNomadMode());
 	}
 
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT) && (saving || (!pickState.success && !fromMainMenu)))
+	if (!(uqm::currentActivity() & CHECK_ABORT) && (saving || (!pickState.success && !fromMainMenu)))
 	{ // Restore previous screen
 		bool InStarbase = (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0);
 
@@ -2051,7 +2051,7 @@ PickGame(bool saving, bool fromMainMenu)
 static bool
 DoGameOptions(MENU_STATE* pMS)
 {
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -2116,7 +2116,7 @@ bool GameOptions(void)
 		success = PickGame(false, true);
 		if (!success)
 		{ // Selected LOAD from main menu, and canceled
-			GLOBAL(CurrentActivity) |= CHECK_ABORT;
+			uqm::currentActivity() |= CHECK_ABORT;
 		}
 		return false;
 	}
@@ -2131,5 +2131,5 @@ bool GameOptions(void)
 	DoInput(&MenuState, true);
 	SetFlashRect(nullptr, false);
 
-	return !(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD));
+	return !(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD));
 }

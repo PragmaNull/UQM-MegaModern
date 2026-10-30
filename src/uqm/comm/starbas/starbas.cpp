@@ -228,7 +228,7 @@ DoSellMinerals(void)
 			TimeIn = GetTimeCounter() + GameTicksPerSecond / 2;
 			while (GetTimeCounter() <= TimeIn)
 			{
-				if (AnyButtonPress(true) || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+				if (AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
 				{
 					Sleepy = false;
 					break;
@@ -251,7 +251,7 @@ DoSellMinerals(void)
 			total += amount * GLOBAL(ElementWorth[i]);
 			do
 			{
-				if (!Sleepy || AnyButtonPress(true) || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+				if (!Sleepy || AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
 				{
 					Sleepy = false;
 					GLOBAL_SIS(ElementAmounts[i]) = 0;
@@ -276,7 +276,7 @@ DoSellMinerals(void)
 			TimeIn = GetTimeCounter() + (GameTicksPerSecond / 4);
 			while (GetTimeCounter() <= TimeIn)
 			{
-				if (AnyButtonPress(true) || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+				if (AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
 				{
 					Sleepy = false;
 					break;

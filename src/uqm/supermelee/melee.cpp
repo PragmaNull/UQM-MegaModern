@@ -1794,7 +1794,7 @@ DoEdit(MELEE_STATE* pMS)
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -2046,7 +2046,7 @@ DoConfirmSettings(MELEE_STATE* pMS)
 	pMS->meleeStarted = true;
 	StartMelee(pMS);
 	pMS->meleeStarted = false;
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -2130,7 +2130,7 @@ DoConfirmSettings(MELEE_STATE* pMS)
 	pMS->InputFunc = DoMelee;
 
 	StartMelee(pMS);
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -2229,7 +2229,7 @@ StartMelee(MELEE_STATE* pMS)
 		free_gravity_well();
 		ClearPlayerInputAll();
 
-		if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+		if (uqm::currentActivity() & CHECK_ABORT)
 		{
 			return;
 		}
@@ -2238,8 +2238,8 @@ StartMelee(MELEE_STATE* pMS)
 						 + GameTicksPerSecond / 60);
 		FlushColorXForms();
 
-	} while (0 /* !(GLOBAL (CurrentActivity) & CHECK_ABORT) */);
-	GLOBAL(CurrentActivity) = SUPER_MELEE;
+	} while (0 /* !(uqm::currentActivity() & CHECK_ABORT) */);
+	uqm::currentActivity() = SUPER_MELEE;
 
 	pMS->Initialized = false;
 }
@@ -2356,7 +2356,7 @@ DoConnectingDialog(MELEE_STATE* pMS)
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -2583,7 +2583,7 @@ MeleeOptionSelect(MELEE_STATE* pMS)
 			}
 			break;
 		case QUIT_BOT:
-			GLOBAL(CurrentActivity) |= CHECK_ABORT;
+			uqm::currentActivity() |= CHECK_ABORT;
 			break;
 #ifdef NETPLAY
 		case NET_TOP:
@@ -2622,7 +2622,7 @@ bool DoMelee(MELEE_STATE* pMS)
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -2733,7 +2733,7 @@ bool DoMelee(MELEE_STATE* pMS)
 		if (PulsedInputState.menu[KEY_MENU_SELECT] || force_select)
 		{
 			MeleeOptionSelect(pMS);
-			if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+			if (uqm::currentActivity() & CHECK_ABORT)
 			{
 				return false;
 			}
@@ -2817,7 +2817,6 @@ WriteMeleeConfig(MELEE_STATE* pMS)
 
 void Melee(void)
 {
-	InitGlobData();
 	{
 		MELEE_STATE MenuState {};
 
@@ -2848,7 +2847,7 @@ void Melee(void)
 		MenuState.CurIndex = MELEE_STATE_INDEX_DONE;
 		InitMeleeLoadState(&MenuState);
 
-		GLOBAL(CurrentActivity) = SUPER_MELEE;
+		uqm::currentActivity() = SUPER_MELEE;
 
 		GameSounds = CaptureSound(LoadSound(GAME_SOUNDS));
 		LoadMeleeInfo(&MenuState);
@@ -3028,7 +3027,7 @@ void resetFeedback(NetConnection* conn, NetplayResetReason reason,
 
 	// End supermelee. This must not be done before connectionFeedback(),
 	// otherwise the message will immediately disappear.
-	GLOBAL(CurrentActivity) |= CHECK_ABORT;
+	uqm::currentActivity() |= CHECK_ABORT;
 }
 
 void errorFeedback(NetConnection* conn)

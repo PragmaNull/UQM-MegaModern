@@ -908,7 +908,7 @@ FreeSolarSys(void)
 	{
 		pSolarSysState->InIpFlight = false;
 
-		if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+		if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 		{
 			saveNonOrbitalLocation();
 			SetMusicPosition();
@@ -1759,7 +1759,7 @@ CheckShipLocation(int16_t* newRadius)
 			if (radius == MAX_ZOOM_RADIUS)
 			{
 				// The ship leaves IP.
-				GLOBAL(CurrentActivity) |= END_INTERPLANETARY;
+				uqm::currentActivity() |= END_INTERPLANETARY;
 				return false; // no location change
 			}
 
@@ -2269,7 +2269,7 @@ EnterPlanetOrbit(void)
 	(*pSolarSysState->genFuncs->generateOrbital)(pSolarSysState,
 												 pSolarSysState->pOrbitalDesc);
 	LastActivity &= ~(CHECK_LOAD | CHECK_RESTART);
-	if ((GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD | START_ENCOUNTER)) || GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
+	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD | START_ENCOUNTER)) || GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
 		|| GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
 	{
 		return;
@@ -2288,7 +2288,7 @@ EnterPlanetOrbit(void)
 	// Talking Pet, Sun Device or a Caster over Chmmr, or
 	// a Caster for Ilwrath
 	// Could also have blown self up with Utwig Bomb
-	if (!(GLOBAL(CurrentActivity) & (START_ENCOUNTER | CHECK_ABORT | CHECK_LOAD))
+	if (!(uqm::currentActivity() & (START_ENCOUNTER | CHECK_ABORT | CHECK_LOAD))
 		&& GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
 	{ // Reload the system and return to the inner view
 		PLANET_DESC* orbital = LoadSolarSys();
@@ -2454,9 +2454,9 @@ InitSolarSys(void)
 static void
 endInterPlanetary(void)
 {
-	GLOBAL(CurrentActivity) &= ~END_INTERPLANETARY;
+	uqm::currentActivity() &= ~END_INTERPLANETARY;
 
-	if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 	{
 		// These are game state changing ops and so cannot be
 		// called once another game has been loaded!
@@ -2509,13 +2509,13 @@ UninitSolarSys(void)
 	DestroyDrawable(ReleaseDrawable(StarsFrame));
 	StarsFrame = nullptr;
 
-	if (GLOBAL(CurrentActivity) & END_INTERPLANETARY)
+	if (uqm::currentActivity() & END_INTERPLANETARY)
 	{
 		endInterPlanetary();
 		return;
 	}
 
-	if ((GLOBAL(CurrentActivity) & START_ENCOUNTER) && EncounterGroup)
+	if ((uqm::currentActivity() & START_ENCOUNTER) && EncounterGroup)
 	{
 		GetGroupInfo(GLOBAL(BattleGroupRef), EncounterGroup);
 		// Generate the encounter location name based on the closest planet
@@ -3207,7 +3207,7 @@ DoSolarSysMenu(MENU_STATE* pMS)
 	bool select = PulsedInputState.menu[KEY_MENU_SELECT];
 	bool handled;
 
-	if ((GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
 	{
 		return false;
@@ -3235,7 +3235,7 @@ DoSolarSysMenu(MENU_STATE* pMS)
 	{
 		case EQUIP_DEVICE:
 			select = DevicesMenu();
-			if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
+			if (uqm::currentActivity() & START_ENCOUNTER)
 			{ // Invoked Talking Pet or a Caster for Ilwrath
 				// Going into conversation
 				return false;
@@ -3255,7 +3255,7 @@ DoSolarSysMenu(MENU_STATE* pMS)
 			break;
 		case STARMAP:
 			StarMap();
-			if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+			if (uqm::currentActivity() & CHECK_ABORT)
 			{
 				return false;
 			}
@@ -3271,7 +3271,7 @@ DoSolarSysMenu(MENU_STATE* pMS)
 			return false;
 	}
 
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		if (select)
 		{ // 3DO menu jumps to NAVIGATE after a successful submenu run
@@ -3311,7 +3311,7 @@ SolarSysMenu(void)
 	MenuState.InputFunc = DoSolarSysMenu;
 	DoInput(&MenuState, true);
 
-	if (!(GLOBAL(CurrentActivity) & CHECK_LOAD))
+	if (!(uqm::currentActivity() & CHECK_LOAD))
 	{
 		DrawMenuStateStrings(PM_STARMAP, -NAVIGATION);
 	}
@@ -3334,7 +3334,7 @@ DoIpFlight(SOLARSYS_STATE* pSS)
 		SolarSysMenu();
 		SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
 	}
-	else if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	else if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		static TimeCount TimeOutIP, TimeOutClock;
 		TimeCount Now = GetTimeCounter();
@@ -3362,7 +3362,7 @@ DoIpFlight(SOLARSYS_STATE* pSS)
 		}
 	}
 
-	return (!(GLOBAL(CurrentActivity)
+	return (!(uqm::currentActivity()
 			  & (START_ENCOUNTER | END_INTERPLANETARY
 				 | CHECK_ABORT | CHECK_LOAD))
 			&& GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0);

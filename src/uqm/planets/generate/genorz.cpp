@@ -196,10 +196,10 @@ GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				}
 				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 6);
 			}
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			InitCommunication(ORZ_CONVERSATION);
 
-			if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+			if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 			{
 				return true;
 			}
@@ -211,7 +211,7 @@ GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 							&& (CurStarDescPtr->Index == ORZ_DEFINED
 								|| !GET_GAME_STATE(TAALO_UNPROTECTED));
 
-				GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
 				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 

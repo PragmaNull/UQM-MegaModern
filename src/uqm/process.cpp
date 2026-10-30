@@ -236,7 +236,7 @@ CalcReduction(int32_t dx, int32_t dy)
 	{
 		int32_t sdx, sdy;
 
-		if (uqm::lowByte(GLOBAL(CurrentActivity)) > IN_ENCOUNTER)
+		if (uqm::lowByte(uqm::currentActivity()) > IN_ENCOUNTER)
 		{
 			return (0);
 		}
@@ -269,14 +269,14 @@ CalcReduction(int32_t dx, int32_t dy)
 		}
 
 		if (next_reduction == 0
-			&& uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{
 			next_reduction += REDUCTION_SHIFT;
 		}
 	}
 	else
 	{
-		if (uqm::lowByte(GLOBAL(CurrentActivity)) > IN_ENCOUNTER)
+		if (uqm::lowByte(uqm::currentActivity()) > IN_ENCOUNTER)
 		{
 			return (1 << ZOOM_SHIFT);
 		}
@@ -311,7 +311,7 @@ CalcReduction(int32_t dx, int32_t dy)
 		}
 
 		if (next_reduction < (2 << ZOOM_SHIFT)
-			&& uqm::lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{
 			next_reduction = (2 << ZOOM_SHIFT);
 		}
@@ -401,7 +401,7 @@ CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 		view_state = VIEW_CHANGE;
 	}
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) <= IN_HYPERSPACE)
+	if (uqm::lowByte(uqm::currentActivity()) <= IN_HYPERSPACE)
 	{
 		MoveGalaxy(view_state, dx, dy);
 	}
@@ -1138,8 +1138,8 @@ void RedrawQueue(bool clear)
 	}
 
 	SetContext(SpaceContext);
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE
-		|| !(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE
+		|| !(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 	{
 		uint8_t skip_frames;
 

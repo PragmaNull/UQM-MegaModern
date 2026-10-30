@@ -232,10 +232,10 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 								 code_resources[uqm::UQMOptions::read().shipSeed ?
 													SeedShip(SpeciesID, false) :
 													SpeciesID]),
-							 &GlobData, (void**)(&RDPtr));
+							 nullptr, (void**)(&RDPtr));
 	CodeRefSwap = CaptureCodeRes(LoadCodeRes(
 									 code_resources[SpeciesID]),
-								 &GlobData, (void**)(&RDPtrSwap));
+								 nullptr, (void**)(&RDPtrSwap));
 
 	if (!CodeRef || !CodeRefSwap)
 	{

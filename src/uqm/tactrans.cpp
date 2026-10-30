@@ -498,7 +498,7 @@ void new_ship(ELEMENT* DeadShipPtr)
 			if (!allOk)
 			{
 				// Some network connection has been reset.
-				GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+				uqm::currentActivity() &= ~IN_BATTLE;
 				BatchGraphics();
 				return;
 			}
@@ -521,7 +521,7 @@ void new_ship(ELEMENT* DeadShipPtr)
 				if (!allOk)
 				{
 					// Some network connection has been reset.
-					GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+					uqm::currentActivity() &= ~IN_BATTLE;
 					BatchGraphics();
 					return;
 				}
@@ -535,13 +535,13 @@ void new_ship(ELEMENT* DeadShipPtr)
 		else if (battle_counter[0] == 0 || battle_counter[1] == 0)
 		{
 			// One player is out of ships. The battle is over.
-			GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+			uqm::currentActivity() &= ~IN_BATTLE;
 		}
 #ifdef NETPLAY
 		else
 		{
 			// Battle has been aborted.
-			GLOBAL(CurrentActivity) |= CHECK_ABORT;
+			uqm::currentActivity() |= CHECK_ABORT;
 		}
 #endif
 		BatchGraphics();
@@ -709,7 +709,7 @@ void RecordShipDeath(ELEMENT* deadShip)
 		battle_counter[deadStarShip->playerNr]--;
 	}
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 	{
 		MeleeShipDeath(deadStarShip);
 	}

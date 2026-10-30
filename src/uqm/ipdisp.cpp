@@ -590,7 +590,7 @@ CheckGetAway:
 		{
 			if (GroupPtr->flags & ROTATES)
 			{ // BW : make IP ships face the direction they're going into
-				if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
+				if (uqm::currentActivity() & START_ENCOUNTER)
 				{ // sometimes they give up chase, don't turn them away
 					// from sis during red alert phase
 					suggestedFrame =
@@ -721,7 +721,7 @@ static void
 flag_ship_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 					ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
+	if (uqm::currentActivity() & START_ENCOUNTER)
 	{
 		return; // ignore the rest of the collisions
 	}
@@ -734,7 +734,7 @@ flag_ship_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	else
 	{ // Both element's collisions have now been processed
 		ElementPtr1->state_flags &= ~COLLISION;
-		GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+		uqm::currentActivity() |= START_ENCOUNTER;
 	}
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
@@ -747,7 +747,7 @@ ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	IP_GROUP* GroupPtr;
 	void* OtherPtr;
 
-	if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
+	if (uqm::currentActivity() & START_ENCOUNTER)
 	{
 		return; // ignore the rest of the collisions
 	}
@@ -798,7 +798,7 @@ ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		else
 		{ // Both element's collisions have now been processed
 			ElementPtr1->state_flags &= ~COLLISION;
-			GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+			uqm::currentActivity() |= START_ENCOUNTER;
 		}
 	}
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
@@ -1028,7 +1028,7 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 		}
 
 		if ((ec = GET_GAME_STATE(ESCAPE_COUNTER))
-			&& !(GLOBAL(CurrentActivity) & START_ENCOUNTER))
+			&& !(uqm::currentActivity() & START_ENCOUNTER))
 		{
 			ElementPtr->state_flags |= NONSOLID;
 

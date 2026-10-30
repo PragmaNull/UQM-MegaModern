@@ -340,7 +340,7 @@ bool DoStarBase(MENU_STATE* pMS)
 {
 	// XXX: This function is full of hacks and otherwise strange code
 
-	if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+	if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 	{
 		pMS->CurState = DEPART_BASE;
 		goto ExitStarBase;
@@ -398,7 +398,7 @@ ExitStarBase:
 
 		if (pMS->CurState == DEPART_BASE)
 		{
-			if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
 				SET_GAME_STATE(STARBASE_VISITED, 0);
 			}
@@ -539,7 +539,7 @@ void VisitStarBase(void)
 		SetCommIntroMode(CIM_CROSSFADE_SCREEN, 0);
 		InitCommunication(COMMANDER_CONVERSATION);
 		if (!GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)
-			|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+			|| (uqm::currentActivity() & CHECK_ABORT))
 		{
 			CleanupAfterStarBase();
 			return;
@@ -557,7 +557,7 @@ void VisitStarBase(void)
 
 		InitCommunication(ILWRATH_CONVERSATION);
 		if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
-			|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+			|| (uqm::currentActivity() & CHECK_ABORT))
 		{
 			return; // Killed by Ilwrath
 		}
@@ -565,7 +565,7 @@ void VisitStarBase(void)
 		// After Ilwrath battle, about-to-ally Starbase conversation
 		SetCommIntroMode(CIM_CROSSFADE_SCREEN, 0);
 		InitCommunication(COMMANDER_CONVERSATION);
-		if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+		if (uqm::currentActivity() & CHECK_ABORT)
 		{
 			return;
 		}
@@ -589,7 +589,7 @@ void VisitStarBase(void)
 
 		SetCommIntroMode(CIM_FADE_IN_SCREEN, GameTicksPerSecond * 2);
 		InitCommunication(COMMANDER_CONVERSATION);
-		if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+		if (uqm::currentActivity() & CHECK_ABORT)
 		{
 			return;
 		}
@@ -612,12 +612,12 @@ void VisitStarBase(void)
 static void
 CleanupAfterStarBase(void)
 {
-	if (!(GLOBAL(CurrentActivity) & (CHECK_LOAD | CHECK_ABORT)))
+	if (!(uqm::currentActivity() & (CHECK_LOAD | CHECK_ABORT)))
 	{
 		// Mark as not in Starbase anymore
 		SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 0);
 		// Fake a load so Starcon2Main takes us to IP
-		GLOBAL(CurrentActivity) = CHECK_LOAD;
+		uqm::currentActivity() = CHECK_LOAD;
 		NextActivity = uqm::makeWord(IN_INTERPLANETARY, 0)
 					 | START_INTERPLANETARY;
 	}
@@ -637,8 +637,8 @@ void InstallBombAtEarth(void)
 
 	SleepThreadUntil(FadeScreen(FadeAllToColor, 0));
 
-	SET_GAME_STATE(CHMMR_BOMB_STATE, 3);  /* bomb processed */
-	GLOBAL(CurrentActivity) = CHECK_LOAD; /* fake a load game */
+	SET_GAME_STATE(CHMMR_BOMB_STATE, 3); /* bomb processed */
+	uqm::currentActivity() = CHECK_LOAD; /* fake a load game */
 	NextActivity = uqm::makeWord(IN_INTERPLANETARY, 0) | START_INTERPLANETARY;
 	CurStarDescPtr = 0; /* force SolarSys reload */
 }

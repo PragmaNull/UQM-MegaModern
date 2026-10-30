@@ -193,7 +193,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	int len;
 	bool changed = false;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return (false);
 	}

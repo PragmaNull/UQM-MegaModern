@@ -950,7 +950,7 @@ Intro(void)
 
 	SetHomeworldKnown(SYREEN_HOME);
 
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 

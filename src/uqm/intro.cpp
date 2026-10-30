@@ -394,7 +394,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 		sq.corner.x += RES_SCALE(6);
 
 		UpdateInputState();
-		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT))
 		{
 			*skip = true;
 		}
@@ -433,7 +433,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 		sq.corner.x += RES_SCALE(6);
 
 		UpdateInputState();
-		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT))
 		{
 			*skip = true;
 		}
@@ -727,7 +727,7 @@ DoPresentation(void* pIS)
 	PRESENTATION_INPUT_STATE* pPIS = (PRESENTATION_INPUT_STATE*)pIS;
 
 	if (PulsedInputState.menu[KEY_MENU_CANCEL]
-		|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+		|| (uqm::currentActivity() & CHECK_ABORT))
 	{
 		return false; /* abort requested - we are done */
 	}
@@ -933,7 +933,7 @@ DoPresentation(void* pIS)
 					while (PlayingStream(MUSIC_SOURCE))
 					{
 						if (CurrentInputState.menu[KEY_MENU_CANCEL]
-							|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+							|| (uqm::currentActivity() & CHECK_ABORT))
 						{
 							StopMusic();
 							pPIS->Skip = true;
@@ -955,7 +955,7 @@ DoPresentation(void* pIS)
 						while (GetTimeCounter() < TimeOut)
 						{
 							if (CurrentInputState.menu[KEY_MENU_CANCEL]
-								|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+								|| (uqm::currentActivity() & CHECK_ABORT))
 							{
 								Present_BatchGraphics(pPIS);
 								pPIS->Skip = true;
@@ -1758,7 +1758,7 @@ DoVideoInput(void* pIS)
 	if (PulsedInputState.menu[KEY_MENU_SELECT]
 		|| PulsedInputState.menu[KEY_MENU_CANCEL]
 		|| PulsedInputState.menu[KEY_MENU_SPECIAL]
-		|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+		|| (uqm::currentActivity() & CHECK_ABORT))
 	{ // abort movie
 		return false;
 	}

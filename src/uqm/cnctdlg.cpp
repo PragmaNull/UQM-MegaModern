@@ -620,7 +620,7 @@ DoMeleeConnectDialog(CONNECT_DIALOG_STATE* state)
 
 	SleepThreadUntil(state->NextTime + MENU_FRAME_RATE);
 	state->NextTime = GetTimeCounter();
-	return !((GLOBAL(CurrentActivity) & CHECK_ABORT) || done);
+	return !((uqm::currentActivity() & CHECK_ABORT) || done);
 }
 
 bool MeleeConnectDialog(int side)

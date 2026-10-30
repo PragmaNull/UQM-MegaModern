@@ -317,7 +317,7 @@ new_pkunk(ELEMENT* ElementPtr)
 	ElementPtr->current.image.frame = SetAbsFrameIndex(
 		StarShipPtr->RaceDescPtr->ship_data.ship[0],
 		StarShipPtr->ShipFacing);
-	SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex], STAMP_PRIM);
+	SetPrimType(&(DisplayArray)[ElementPtr->PrimIndex], STAMP_PRIM);
 
 	do
 	{
@@ -410,7 +410,7 @@ spawn_phoenix_trail(ELEMENT* ElementPtr)
 	{
 		ElementPtr->life_span = TRANSITION_LIFE;
 
-		SetPrimColor(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+		SetPrimColor(&(DisplayArray)[ElementPtr->PrimIndex],
 					 colorTable[ElementPtr->colorCycleIndex]);
 
 		ElementPtr->state_flags &= ~DISAPPEARING;
@@ -442,10 +442,10 @@ phoenix_transition(ELEMENT* ElementPtr)
 		ShipImagePtr->playerNr = NEUTRAL_PLAYER_NUM;
 		ShipImagePtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
 		ShipImagePtr->life_span = TRANSITION_LIFE;
-		SetPrimType(&(GLOBAL(DisplayArray))[ShipImagePtr->PrimIndex],
+		SetPrimType(&(DisplayArray)[ShipImagePtr->PrimIndex],
 					STAMPFILL_PRIM);
 		SetPrimColor(
-			&(GLOBAL(DisplayArray))[ShipImagePtr->PrimIndex],
+			&(DisplayArray)[ShipImagePtr->PrimIndex],
 			START_PHOENIX_COLOR);
 		ShipImagePtr->colorCycleIndex = 0;
 		ShipImagePtr->current.image = ElementPtr->current.image;
@@ -558,7 +558,7 @@ pkunk_preprocess(ELEMENT* ElementPtr)
 			}
 
 			ElementPtr->life_span = PHOENIX_LIFE;
-			SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+			SetPrimType(&(DisplayArray)[ElementPtr->PrimIndex],
 						NO_PRIM);
 			ElementPtr->state_flags |= NONSOLID | FINITE_LIFE | CHANGING;
 
@@ -585,7 +585,7 @@ pkunk_preprocess(ELEMENT* ElementPtr)
 					SetEquFrameIndex(
 						ElementPtr->current.image.farray[0],
 						ElementPtr->current.image.frame);
-			SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+			SetPrimType(&(DisplayArray)[ElementPtr->PrimIndex],
 						STAMP_PRIM);
 			InitIntersectStartPoint(ElementPtr);
 			InitIntersectEndPoint(ElementPtr);

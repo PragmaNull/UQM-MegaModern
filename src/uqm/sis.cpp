@@ -274,7 +274,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 
 	if (pStr == 0)
 	{
-		switch (uqm::lowByte(GLOBAL(CurrentActivity)))
+		switch (uqm::lowByte(uqm::currentActivity()))
 		{
 			default:
 			case IN_ENCOUNTER:
@@ -2076,7 +2076,7 @@ void DrawAutoPilotMessage(bool Reset)
 		}
 		else if (GetTimeCounter() >= NextTime)
 		{
-			if (!(GLOBAL(CurrentActivity) & CHECK_ABORT)
+			if (!(uqm::currentActivity() & CHECK_ABORT)
 				&& GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
 			{
 				GFXCONTEXT OldContext;

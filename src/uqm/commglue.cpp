@@ -570,7 +570,7 @@ void setSegue(Segue segue)
 		case Segue_defeat:
 			SET_GAME_STATE(BATTLE_SEGUE, 0);
 			GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
-			GLOBAL(CurrentActivity) |= CHECK_RESTART;
+			uqm::currentActivity() |= CHECK_RESTART;
 			break;
 	}
 }
@@ -579,7 +579,7 @@ Segue getSegue(void)
 {
 	if (GET_GAME_STATE(BATTLE_SEGUE) == 0)
 	{
-		if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0 && (GLOBAL(CurrentActivity) & CHECK_RESTART))
+		if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0 && (uqm::currentActivity() & CHECK_RESTART))
 		{
 			return Segue_defeat;
 		}

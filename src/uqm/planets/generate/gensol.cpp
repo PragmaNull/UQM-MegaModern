@@ -305,7 +305,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
 			EncounterGroup = 0;
-			GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+			uqm::currentActivity() |= START_ENCOUNTER;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, (uint8_t)~0);
 
 			return true;

@@ -318,8 +318,8 @@ buzzsaw_postprocess(ELEMENT* ElementPtr)
 		primIndex = ListElementPtr->PrimIndex;
 		*ListElementPtr = *ElementPtr;
 		ListElementPtr->PrimIndex = primIndex;
-		(GLOBAL(DisplayArray))[primIndex] =
-			(GLOBAL(DisplayArray))[ElementPtr->PrimIndex];
+		(DisplayArray)[primIndex] =
+			(DisplayArray)[ElementPtr->PrimIndex];
 		ListElementPtr->current = ListElementPtr->next;
 		InitIntersectStartPoint(ListElementPtr);
 		InitIntersectEndPoint(ListElementPtr);

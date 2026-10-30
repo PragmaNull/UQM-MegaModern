@@ -123,7 +123,7 @@ static RACE_DESC melnorme_desc =
 		 nullptr},
 		{
 			0,
-			PUMPUP_SPEED* PUMPUP_LIFE,
+			PUMPUP_SPEED * PUMPUP_LIFE,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -264,7 +264,7 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 		UnlockElement(hPumpUp);
 		PutElement(hPumpUp);
 
-		SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+		SetPrimType(&(DisplayArray)[ElementPtr->PrimIndex],
 					NO_PRIM);
 		ElementPtr->state_flags |= NONSOLID;
 	}
@@ -428,9 +428,9 @@ confuse_preprocess_april(ELEMENT* ElementPtr)
 
 			if (ElementPtr->life_span > 1)
 			{
-				SetPrimType(&(GLOBAL(DisplayArray))[eptr->PrimIndex],
+				SetPrimType(&(DisplayArray)[eptr->PrimIndex],
 							STAMPFILL_PRIM);
-				SetPrimColor(&(GLOBAL(DisplayArray))[eptr->PrimIndex],
+				SetPrimColor(&(DisplayArray)[eptr->PrimIndex],
 							 colorTable[ElementPtr->colorCycleIndex]);
 				ElementPtr->colorCycleIndex++;
 
@@ -441,7 +441,7 @@ confuse_preprocess_april(ELEMENT* ElementPtr)
 			}
 			else
 			{
-				SetPrimType(&(GLOBAL(DisplayArray))[eptr->PrimIndex],
+				SetPrimType(&(DisplayArray)[eptr->PrimIndex],
 							STAMP_PRIM);
 				BattleSong(true);
 			}
@@ -520,7 +520,7 @@ confuse_preprocess(ELEMENT* ElementPtr)
 				eptr->life_span = 1;
 				eptr->current = eptr->next = ElementPtr->next;
 				eptr->preprocess_func = confuse_preprocess;
-				SetPrimType(&(GLOBAL(DisplayArray))[eptr->PrimIndex],
+				SetPrimType(&(DisplayArray)[eptr->PrimIndex],
 							STAMP_PRIM);
 
 				GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -578,7 +578,7 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				ConfusionPtr->state_flags = FINITE_LIFE | NONSOLID | CHANGING;
 				ConfusionPtr->preprocess_func = confuse_preprocess;
 				SetPrimType(
-					&(GLOBAL(DisplayArray))[ConfusionPtr->PrimIndex],
+					&(DisplayArray)[ConfusionPtr->PrimIndex],
 					NO_PRIM);
 
 				/*if (AprilFools)

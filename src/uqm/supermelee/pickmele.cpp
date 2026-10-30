@@ -359,7 +359,7 @@ DoGetMelee(GETMELEE_STATE* gms)
 	}
 #endif
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		goto aborted;
 	}
@@ -411,7 +411,7 @@ aborted:
 		gms->player[playerI].choice = 0;
 		gms->player[playerI].hBattleShip = 0;
 	}
-	GLOBAL(CurrentActivity) &= ~CHECK_ABORT;
+	uqm::currentActivity() &= ~CHECK_ABORT;
 	return false;
 }
 
@@ -725,7 +725,7 @@ void MeleeGameOver(void)
 
 		Async_process();
 		TaskSwitch();
-	} while (!(GLOBAL(CurrentActivity) & CHECK_ABORT)
+	} while (!(uqm::currentActivity() & CHECK_ABORT)
 			 && (!ButtonState
 				 && (!testFlag((PlayerControl[0] & PlayerControl[1]), PlayerControlFlags::Psytron)
 					 || GetTimeCounter() < TimeOut)));
@@ -891,7 +891,7 @@ GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 	if (!ok)
 	{
 		// Aborting.
-		GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+		uqm::currentActivity() &= ~IN_BATTLE;
 	}
 
 #ifdef NETPLAY

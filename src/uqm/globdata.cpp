@@ -46,8 +46,6 @@ static void CreateRadar(void);
 GFXCONTEXT RadarContext;
 FRAME PlayFrame;
 
-GLOBDATA GlobData;
-
 
 static void
 CreateRadar(void)
@@ -252,7 +250,6 @@ bool InitGameStructures(void)
 {
 	uint16_t i;
 
-	InitGlobData();
 	// Set Seed Type, then check/start StarSeed
 	SET_GAME_STATE(SEED_TYPE, g_seedType);
 	GLOBAL_SIS(Difficulty) = uqm::UQMOptions::read().optDifficulty;
@@ -302,7 +299,7 @@ bool InitGameStructures(void)
 	InitPlanetInfo();
 	InitGroupInfo(true);
 
-	GLOBAL(glob_flags) = NUM_READ_SPEEDS >> 1;
+	uqm::globalFlags() = NUM_READ_SPEEDS >> 1;
 
 	GLOBAL(ElementWorth[COMMON]) = 1;
 	GLOBAL_SIS(ElementAmounts[COMMON]) = 0;
@@ -408,7 +405,7 @@ bool InitGameStructures(void)
 			  sizeof(IP_GROUP));
 	InitQueue(&GLOBAL(encounter_q), MAX_ENCOUNTERS, sizeof(ENCOUNTER));
 
-	GLOBAL(CurrentActivity) = IN_INTERPLANETARY | START_INTERPLANETARY;
+	uqm::currentActivity() = IN_INTERPLANETARY | START_INTERPLANETARY;
 
 	GLOBAL_SIS(ResUnits) = ifEasyDifficulty(2500, 0);
 	GLOBAL(CrewCost) = 3;
@@ -506,17 +503,6 @@ void UninitGameStructures(void)
 	PlayFrame = 0;
 }
 
-void InitGlobData(void)
-{
-	uint16_t i;
-
-	i = GLOBAL(glob_flags);
-	memset(&GlobData, 0, sizeof(GlobData));
-	GLOBAL(glob_flags) = (uint8_t)i;
-
-	GLOBAL(DisplayArray) = DisplayArray;
-}
-
 
 // For debugging purposes, generate a bunch of seeds and then
 // calculate how many fall into each time category.
@@ -597,7 +583,7 @@ bool InitStarseed(bool newgame)
 	uint16_t i;
 #ifdef DEBUG_STARSEED_TRACE_V
 	SeedDEBUG();
-	fmt::print(stderr, "CurrentActivity {}\n", GLOBAL(CurrentActivity));
+	fmt::print(stderr, "CurrentActivity {}\n", uqm::currentActivity());
 #endif
 	DefaultStarmap(star_array);
 	if (!StarGenRNG)
@@ -640,7 +626,7 @@ bool InitStarseed(bool newgame)
 	fmt::print(stderr, "Starting map generation using seed {}.\n",
 			   uqm::UQMOptions::read().customSeed.value);
 	SeedStarmap(star_array);
-	if (GLOBAL(CurrentActivity) || !newgame)
+	if (uqm::currentActivity() || !newgame)
 	{
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "*+*+* LOADING *+*+*\n");
@@ -728,13 +714,13 @@ bool InitStarseed(bool newgame)
 
 bool inFullGame(void)
 {
-	ACTIVITY act = uqm::lowByte(GLOBAL(CurrentActivity));
+	ACTIVITY act = uqm::lowByte(uqm::currentActivity());
 	return (act == IN_LAST_BATTLE || act == IN_ENCOUNTER || act == IN_HYPERSPACE || act == IN_INTERPLANETARY || act == WON_LAST_BATTLE);
 }
 
 bool inSuperMelee(void)
 {
-	return (uqm::lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE);
+	return (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE);
 	// TODO: && !inMainMenu ()
 }
 
@@ -743,7 +729,7 @@ bool
 inBattle (void)
 {
 	// TODO: IN_BATTLE is also set while in HyperSpace/QuasiSpace.
-	return ((GLOBAL (CurrentActivity) & IN_BATTLE) != 0);
+	return ((uqm::currentActivity() & IN_BATTLE) != 0);
 }
 #endif
 
@@ -762,7 +748,7 @@ bool
 inSolarSystem (void)
 {
 	assert (inFullGame ());
-	return (uqm::lowByte(GLOBAL (CurrentActivity)) == IN_INTERPLANETARY);
+	return (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY);
 }
 
 // Pre: inFullGame()
@@ -780,7 +766,7 @@ inOrbit (void)
 bool inHQSpace(void)
 {
 	//assert (inFullGame ());
-	return (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE);
+	return (uqm::lowByte(uqm::currentActivity()) == IN_HYPERSPACE);
 	// IN_HYPERSPACE is also set for QuasiSpace
 }
 
@@ -789,7 +775,7 @@ bool inHQSpace(void)
 bool inHyperSpace(void)
 {
 	//assert (inFullGame ());
-	return (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1);
+	return (uqm::lowByte(uqm::currentActivity()) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1);
 	// IN_HYPERSPACE is also set for QuasiSpace
 }
 
@@ -798,7 +784,7 @@ bool inHyperSpace(void)
 bool inQuasiSpace(void)
 {
 	//assert (inFullGame ());
-	return (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1);
+	return (uqm::lowByte(uqm::currentActivity()) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1);
 	// IN_HYPERSPACE is also set for QuasiSpace
 }
 

@@ -276,7 +276,7 @@ DoModifyRoster(MENU_STATE* pMS)
 	ROSTER_STATE* rosterState = (ROSTER_STATE*)pMS->privData;
 	bool select, cancel, up, down, pgup, pgdn, horiz;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}

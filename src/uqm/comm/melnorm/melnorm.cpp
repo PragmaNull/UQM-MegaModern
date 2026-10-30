@@ -724,7 +724,7 @@ StripShip(uint16_t fuel_required)
 						  / CREW_POD_CAPACITY);
 	if (fuel_required == 0)
 	{
-		GlobData.SIS_state = SIS_copy;
+		uqm::gameState().sis() = SIS_copy;
 		DeltaSISGauges(UNDEFINED_DELTA, rescue_fuel, UNDEFINED_DELTA);
 	}
 	else if (fuel_required == (uint16_t)~0)
@@ -779,7 +779,7 @@ StripShip(uint16_t fuel_required)
 		rc = RandomContext_New();
 		RandomContext_SeedRandom(rc, getStripRandomSeed());
 
-		SIS_copy = GlobData.SIS_state;
+		SIS_copy = uqm::gameState().sis();
 		for (i = PLANET_LANDER; i < BOMB_MODULE_0; ++i)
 		{
 			module_count[i] = 0;
@@ -1519,7 +1519,7 @@ DoSell(RESPONSE_REF R)
 			while (GetTimeCounter() < TimeIn && Sleepy)
 			{
 				UpdateDuty(true);
-				Sleepy = !(AnyButtonPress(true) || GLOBAL(CurrentActivity) & CHECK_ABORT);
+				Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & CHECK_ABORT);
 			}
 			DrawCargoStrings(
 				(uint8_t)NUM_ELEMENT_CATEGORIES,
@@ -1528,7 +1528,7 @@ DoSell(RESPONSE_REF R)
 			while (GLOBAL_SIS(TotalBioMass) && Sleepy)
 			{
 				Sleepy = !(AnyButtonPress(true)
-						   || GLOBAL(CurrentActivity) & CHECK_ABORT);
+						   || uqm::currentActivity() & CHECK_ABORT);
 
 				UpdateDuty(true);
 
@@ -1553,7 +1553,7 @@ DoSell(RESPONSE_REF R)
 				while (GetTimeCounter() < TimeIn && Sleepy)
 				{
 					UpdateDuty(true);
-					Sleepy = !(AnyButtonPress(true) || GLOBAL(CurrentActivity) & CHECK_ABORT);
+					Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & CHECK_ABORT);
 				}
 			}
 			ClearSISRect(DRAW_SIS_DISPLAY);
@@ -1600,7 +1600,7 @@ DoSell(RESPONSE_REF R)
 				while (GetTimeCounter() < TimeIn && Sleepy)
 				{
 					UpdateDuty(true);
-					Sleepy = !(AnyButtonPress(true) || GLOBAL(CurrentActivity) & CHECK_ABORT);
+					Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & CHECK_ABORT);
 				}
 
 				DrawRainbowPlanet(planets);
@@ -1610,7 +1610,7 @@ DoSell(RESPONSE_REF R)
 				while (planets != 0 && Sleepy)
 				{
 					Sleepy = !(AnyButtonPress(true)
-							   || GLOBAL(CurrentActivity) & CHECK_ABORT);
+							   || uqm::currentActivity() & CHECK_ABORT);
 
 					UpdateDuty(true);
 
@@ -1634,7 +1634,7 @@ DoSell(RESPONSE_REF R)
 					while (GetTimeCounter() < TimeIn && Sleepy)
 					{
 						UpdateDuty(true);
-						Sleepy = !(AnyButtonPress(true) || GLOBAL(CurrentActivity) & CHECK_ABORT);
+						Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & CHECK_ABORT);
 					}
 				}
 				ClearSISRect(DRAW_SIS_DISPLAY);

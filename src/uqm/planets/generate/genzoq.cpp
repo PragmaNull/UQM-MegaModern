@@ -174,18 +174,18 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 				CloneShipFragment(BLACK_URQUAN_SHIP,
 								  &GLOBAL(npc_built_ship_q), 0);
 
-				GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+				uqm::currentActivity() |= START_INTERPLANETARY;
 				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 				InitCommunication(BLACKURQ_CONVERSATION);
 
-				if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+				if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 				{
 					return true;
 				}
 
 				if (GetHeadLink(&GLOBAL(npc_built_ship_q)))
 				{
-					GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+					uqm::currentActivity() &= ~START_INTERPLANETARY;
 					ReinitQueue(&GLOBAL(npc_built_ship_q));
 					GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 					return true;
@@ -195,13 +195,13 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 			CloneShipFragment(ZOQFOTPIK_SHIP,
 							  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
 
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 			InitCommunication(ZOQFOTPIK_CONVERSATION);
 
-			if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
-				GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
 				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 			}

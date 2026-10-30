@@ -84,17 +84,17 @@ GenerateMyconDefenders(uint8_t index)
 							  &GLOBAL(npc_built_ship_q), 0);
 		}
 
-		GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+		uqm::currentActivity() |= START_INTERPLANETARY;
 		InitCommunication(MYCON_CONVERSATION);
 
-		if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+		if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 		{
 			return true;
 		}
 
 		Survivors = GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
 
-		GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+		uqm::currentActivity() &= ~START_INTERPLANETARY;
 		ReinitQueue(&GLOBAL(npc_built_ship_q));
 		GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 
@@ -208,7 +208,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 					}
 				}
 
-				GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+				uqm::currentActivity() |= START_INTERPLANETARY;
 				if (CurStarDescPtr->Index == MYCON_DEFINED)
 				{
 					SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
@@ -219,7 +219,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 				InitCommunication(MYCON_CONVERSATION);
 
-				if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+				if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 				{
 					return true;
 				}
@@ -230,7 +230,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 					MyconSurvivors =
 						GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
 
-					GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+					uqm::currentActivity() &= ~START_INTERPLANETARY;
 					ReinitQueue(&GLOBAL(npc_built_ship_q));
 					GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 

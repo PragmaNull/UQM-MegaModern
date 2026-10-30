@@ -1034,15 +1034,15 @@ void SaveGameStateFlags(yyjson_mut_doc* doc, yyjson_mut_val* root)
 
 void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, const GAME_STATE& GS)
 {
-	const uint8_t res_scale {static_cast<uint8_t>(uqm::lowByte(GS.CurrentActivity) != IN_INTERPLANETARY ? RESOLUTION_FACTOR : 0)};
+	const uint8_t res_scale {static_cast<uint8_t>(uqm::lowByte(uqm::currentActivity()) != IN_INTERPLANETARY ? RESOLUTION_FACTOR : 0)};
 
 	yyjson_mut_val* state {yyjson_mut_obj_add_obj(doc, root, "globalState")};
-	addInt(doc, state, "glob_flags", GS.glob_flags);
+	addInt(doc, state, "glob_flags", uqm::globalFlags());
 	addInt(doc, state, "CrewCost", GS.CrewCost);
 	addInt(doc, state, "FuelCost", GS.FuelCost);
 	addArray<uint8_t>(doc, state, "ModuleCost", GS.ModuleCost);
 	addArray<uint8_t>(doc, state, "ElementWorth", GS.ElementWorth);
-	addInt(doc, state, "CurrentActivity", GS.CurrentActivity);
+	addInt(doc, state, "CurrentActivity", uqm::currentActivity());
 	SaveClockState(doc, state, GS.GameClock);
 	addPoint(doc, state, "autopilot", GS.autopilot.x, GS.autopilot.y);
 	addPoint(doc, state, "ip_location", GS.ip_location.x, GS.ip_location.y);
@@ -1118,9 +1118,9 @@ void SaveStarDesc(yyjson_mut_doc* doc, yyjson_mut_val* root, const STAR_DESC& SD
 static void
 PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 {
-	SummPtr->SS = GlobData.SIS_state;
+	SummPtr->SS = uqm::gameState().sis();
 
-	SummPtr->Activity = uqm::lowByte(GLOBAL(CurrentActivity));
+	SummPtr->Activity = uqm::lowByte(uqm::currentActivity());
 	switch (SummPtr->Activity)
 	{
 		case IN_HYPERSPACE:
@@ -1472,8 +1472,8 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 	// XXX: Backup: SaveFlagshipState() overwrites ip_location
 	const GFXPOINT pt {GLOBAL(ip_location)};
 	SaveFlagshipState();
-	if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
-		&& !(GLOBAL(CurrentActivity)
+	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
+		&& !(uqm::currentActivity()
 			 & (START_ENCOUNTER | START_INTERPLANETARY)))
 	{
 		PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
@@ -1486,7 +1486,7 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 
 	PrepareSummary(SummPtr, name);
 	SaveSummary(doc.get(), root, *SummPtr);
-	SaveGameState(doc.get(), root, GlobData.Game_state);
+	SaveGameState(doc.get(), root, uqm::gameState().game());
 
 	// XXX: Restore
 	GLOBAL(ip_location) = pt;
@@ -1498,13 +1498,13 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 	//   encounter screen. When the game is loaded, the
 	//   GenerateOrbitalFunction for the current star system
 	//   create the encounter anew and populate the npc queue.
-	if (!(GLOBAL(CurrentActivity) & START_INTERPLANETARY))
+	if (!(uqm::currentActivity() & START_INTERPLANETARY))
 	{
-		if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
+		if (uqm::currentActivity() & START_ENCOUNTER)
 		{
 			SaveShipQueue(doc.get(), root, "npcShipQueue", &GLOBAL(npc_built_ship_q));
 		}
-		else if (uqm::lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
+		else if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
 		{
 			// XXX: Technically, this queue does not need to be
 			//   saved/loaded at all. IP groups will be reloaded

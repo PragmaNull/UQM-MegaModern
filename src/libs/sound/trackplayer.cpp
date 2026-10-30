@@ -25,7 +25,7 @@
 #include <string.h>
 #include <memory.h>
 #include "core/stl/atomic.h"
-// for GLOBAL (glob_flags) & READ_SPEED_MASK
+// for uqm::globalFlags() & READ_SPEED_MASK
 #include "uqm/globdata.h"
 // for usingSpeech bool
 #include "uqm/setup.h"
@@ -376,7 +376,7 @@ SplitSubPages(const char* text, uqstl::string pages[], int32_t timestamp[], int 
 		}
 
 		if (uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC && !usingSpeech
-			&& (uqm::lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE))
+			&& (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE))
 		{
 			timestamp[page] =
 				RecalculateDelay(lead_ellips + pos + aft_ellips, true);
@@ -1002,7 +1002,7 @@ RecalculateDelay(uint32_t numChars, bool talk)
 {
 	uint32_t silence_length;
 	uint32_t talk_length = GameTicksPerSecond * numChars / MODERATE_SPEED;
-	uint8_t read_speed = speed_array[GLOBAL(glob_flags) & READ_SPEED_MASK];
+	uint8_t read_speed = speed_array[uqm::globalFlags() & READ_SPEED_MASK];
 
 	if (read_speed)
 	{

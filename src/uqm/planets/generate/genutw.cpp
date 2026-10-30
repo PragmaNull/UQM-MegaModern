@@ -212,7 +212,7 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 			CloneShipFragment(UTWIG_SHIP,
 							  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
 
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			if (CurStarDescPtr->Index == UTWIG_DEFINED)
 			{
 				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
@@ -223,9 +223,9 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 			InitCommunication(UTWIG_CONVERSATION);
 
-			if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
-				GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
 				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 			}
@@ -248,11 +248,11 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 				CloneShipFragment(DRUUGE_SHIP,
 								  &GLOBAL(npc_built_ship_q), 0);
 			}
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 6);
 			InitCommunication(DRUUGE_CONVERSATION);
 
-			if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+			if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 			{
 				return true;
 			}
@@ -263,7 +263,7 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 				DruugeSurvivors =
 					GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
 
-				GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
 				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 
