@@ -198,8 +198,6 @@ int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* Command);
 
 void TFB_DrawCommandQueue_Clear(void);
 
-extern TFB_DrawCommandQueue DrawCommandQueue;
-
 void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand);
 
 void Lock_DCQ(int slots);

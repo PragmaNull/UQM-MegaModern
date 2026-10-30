@@ -87,9 +87,9 @@ private:
 
 } // namespace
 
-TFB_DrawCommand DCQ[DCQ_MAX];
+static TFB_DrawCommand DCQ[DCQ_MAX] UQM_GUARDED_BY(s_dcqMutex);
 
-TFB_DrawCommandQueue DrawCommandQueue;
+static TFB_DrawCommandQueue DrawCommandQueue UQM_GUARDED_BY(s_dcqMutex);
 
 static inline constexpr uint32_t DCQueueFPS {20};
 static inline constexpr auto DCQueueTicksForFps {getTicksForFramerate(DCQueueFPS)};
@@ -97,14 +97,14 @@ int RenderedFrames = 0;
 
 
 static bool
-DCQ_HasSpace(int slots)
+DCQ_HasSpace(int slots) UQM_REQUIRES(s_dcqMutex)
 {
 	return DrawCommandQueue.FullSize < DCQ_MAX - slots;
 }
 
 // Wait for the queue to be emptied. Always have the DCQ locked when calling this.
 static void
-TFB_WaitForSpace(int requested_slots)
+TFB_WaitForSpace(int requested_slots) UQM_REQUIRES(s_dcqMutex)
 {
 	uqm::log::debug("DCQ overload (Size = {}, FullSize = {}, "
 					"Requested = {}).  Sleeping until renderer is done.",
@@ -112,21 +112,45 @@ TFB_WaitForSpace(int requested_slots)
 					requested_slots);
 	TFB_BatchReset();
 	DcqFullRelease release {};
-	s_renderingDone.wait(release, [requested_slots] {
-		return DCQ_HasSpace(requested_slots);
-	});
+	while (!DCQ_HasSpace(requested_slots))
+	{
+		s_renderingDone.wait(release);
+	}
 	uqm::log::debug("DCQ clear (Size = {}, FullSize = {}).  Continuing.",
 					DrawCommandQueue.Size, DrawCommandQueue.FullSize);
 }
 
-// Holds the DCQ lock until Unlock_DCQ, so the analysis cannot check it.
-void Lock_DCQ(int slots) UQM_NO_THREAD_SAFETY_ANALYSIS
+// Locks the DCQ, and waits until it has space for the slots.
+static void
+lockDcqWithSpace(int slots) UQM_ACQUIRE(s_dcqMutex)
 {
 	lockDcq();
 	if (!DCQ_HasSpace(slots))
 	{
 		TFB_WaitForSpace(slots);
 	}
+}
+
+// The number of commands that the renderer can take now.
+static int
+DCQ_Size(void)
+{
+	const uqm::LockGuard lock {s_dcqMutex};
+	return DrawCommandQueue.Size;
+}
+
+// The number of commands in the queue, with the batched ones.
+static int
+DCQ_FullSize(void)
+{
+	const uqm::LockGuard lock {s_dcqMutex};
+	return DrawCommandQueue.FullSize;
+}
+
+// Holds the DCQ lock until Unlock_DCQ, so the analysis cannot check it.
+void Lock_DCQ(int slots) UQM_NO_THREAD_SAFETY_ANALYSIS
+{
+	lockDcqWithSpace(slots);
 }
 
 void Unlock_DCQ(void) UQM_NO_THREAD_SAFETY_ANALYSIS
@@ -136,7 +160,7 @@ void Unlock_DCQ(void) UQM_NO_THREAD_SAFETY_ANALYSIS
 
 // Always have the DCQ locked when calling this.
 static void
-Synchronize_DCQ(void)
+Synchronize_DCQ(void) UQM_REQUIRES(s_dcqMutex)
 {
 	if (!DrawCommandQueue.Batching)
 	{
@@ -189,12 +213,14 @@ void TFB_BatchReset(void)
 
 void Init_DrawCommandQueue(void)
 {
+	lockDcq();
 	DrawCommandQueue.Back = 0;
 	DrawCommandQueue.Front = 0;
 	DrawCommandQueue.InsertionPoint = 0;
 	DrawCommandQueue.Batching = 0;
 	DrawCommandQueue.FullSize = 0;
 	DrawCommandQueue.Size = 0;
+	unlockDcq();
 
 	TFB_BBox_Init(CanvasWidth, CanvasHeight);
 }
@@ -205,13 +231,13 @@ void Uninit_DrawCommandQueue(void)
 
 void TFB_DrawCommandQueue_Push(TFB_DrawCommand* Command)
 {
-	Lock_DCQ(1);
+	lockDcqWithSpace(1);
 	DCQ[DrawCommandQueue.InsertionPoint] = *Command;
 	DrawCommandQueue.InsertionPoint = (DrawCommandQueue.InsertionPoint + 1)
 									% DCQ_MAX;
 	DrawCommandQueue.FullSize++;
 	Synchronize_DCQ();
-	Unlock_DCQ();
+	unlockDcq();
 }
 
 int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
@@ -419,9 +445,7 @@ void TFB_FlushGraphics(void)
 	static int fps = 0;
 	bool livelock_deterrence;
 
-	// This is technically a locking violation on DrawCommandQueue.Size,
-	// but it is likely to not be very destructive.
-	if (DrawCommandQueue.Size == 0)
+	if (DCQ_Size() == 0)
 	{
 		static int last_fade = 255;
 		static int last_transition = 255;
@@ -452,12 +476,12 @@ void TFB_FlushGraphics(void)
 	commands_handled = 0;
 	livelock_deterrence = false;
 
-	if (DrawCommandQueue.FullSize > DCQ_FORCE_BREAK_SIZE)
+	if (DCQ_FullSize() > DCQ_FORCE_BREAK_SIZE)
 	{
 		TFB_BatchReset();
 	}
 
-	if (DrawCommandQueue.Size > DCQ_FORCE_SLOWDOWN_SIZE)
+	if (DCQ_Size() > DCQ_FORCE_SLOWDOWN_SIZE)
 	{
 		Lock_DCQ(-1);
 		livelock_deterrence = true;
@@ -476,7 +500,7 @@ void TFB_FlushGraphics(void)
 		}
 
 		++commands_handled;
-		if (!livelock_deterrence && commands_handled + DrawCommandQueue.Size > DCQ_LIVELOCK_MAX)
+		if (!livelock_deterrence && commands_handled + DCQ_Size() > DCQ_LIVELOCK_MAX)
 		{
 			// log_add (log_Debug, "Initiating livelock deterrence!");
 			livelock_deterrence = true;
