@@ -64,7 +64,8 @@ typedef struct
 static const char* wava_GetName(void);
 static bool wava_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void wava_TermModule(void);
-static uint32_t wava_GetStructSize(void);
+static TFB_SoundDecoder* wava_Create(void);
+static void wava_Destroy(TFB_SoundDecoder* decoder);
 static int wava_GetError(THIS_PTR);
 static bool wava_Init(THIS_PTR);
 static void wava_Term(THIS_PTR);
@@ -79,7 +80,8 @@ TFB_SoundDecoderFuncs wava_DecoderVtbl =
 		wava_GetName,
 		wava_InitModule,
 		wava_TermModule,
-		wava_GetStructSize,
+		wava_Create,
+		wava_Destroy,
 		wava_GetError,
 		wava_Init,
 		wava_Term,
@@ -130,10 +132,16 @@ wava_TermModule(void)
 	// no specific module term
 }
 
-static uint32_t
-wava_GetStructSize(void)
+static TFB_SoundDecoder*
+wava_Create(void)
 {
-	return sizeof(TFB_WaveSoundDecoder);
+	return &(new TFB_WaveSoundDecoder {})->decoder;
+}
+
+static void
+wava_Destroy(TFB_SoundDecoder* decoder)
+{
+	delete reinterpret_cast<TFB_WaveSoundDecoder*>(decoder);
 }
 
 static int

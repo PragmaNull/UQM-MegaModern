@@ -38,7 +38,8 @@
 static const char* moda_GetName(void);
 static bool moda_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void moda_TermModule(void);
-static uint32_t moda_GetStructSize(void);
+static TFB_SoundDecoder* moda_Create(void);
+static void moda_Destroy(TFB_SoundDecoder* decoder);
 static int moda_GetError(THIS_PTR);
 static bool moda_Init(THIS_PTR);
 static void moda_Term(THIS_PTR);
@@ -53,7 +54,8 @@ TFB_SoundDecoderFuncs moda_DecoderVtbl =
 		moda_GetName,
 		moda_InitModule,
 		moda_TermModule,
-		moda_GetStructSize,
+		moda_Create,
+		moda_Destroy,
 		moda_GetError,
 		moda_Init,
 		moda_Term,
@@ -300,10 +302,16 @@ moda_TermModule(void)
 	MikMod_Exit();
 }
 
-static uint32_t
-moda_GetStructSize(void)
+static TFB_SoundDecoder*
+moda_Create(void)
 {
-	return sizeof(TFB_ModSoundDecoder);
+	return &(new TFB_ModSoundDecoder {})->decoder;
+}
+
+static void
+moda_Destroy(TFB_SoundDecoder* decoder)
+{
+	delete reinterpret_cast<TFB_ModSoundDecoder*>(decoder);
 }
 
 static int

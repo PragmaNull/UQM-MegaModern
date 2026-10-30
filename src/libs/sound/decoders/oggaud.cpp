@@ -40,7 +40,8 @@
 static const char* ova_GetName(void);
 static bool ova_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void ova_TermModule(void);
-static uint32_t ova_GetStructSize(void);
+static TFB_SoundDecoder* ova_Create(void);
+static void ova_Destroy(TFB_SoundDecoder* decoder);
 static int ova_GetError(THIS_PTR);
 static bool ova_Init(THIS_PTR);
 static void ova_Term(THIS_PTR);
@@ -55,7 +56,8 @@ TFB_SoundDecoderFuncs ova_DecoderVtbl =
 		ova_GetName,
 		ova_InitModule,
 		ova_TermModule,
-		ova_GetStructSize,
+		ova_Create,
+		ova_Destroy,
 		ova_GetError,
 		ova_Init,
 		ova_Term,
@@ -134,10 +136,16 @@ ova_TermModule(void)
 	// no specific module term
 }
 
-static uint32_t
-ova_GetStructSize(void)
+static TFB_SoundDecoder*
+ova_Create(void)
 {
-	return sizeof(TFB_OggSoundDecoder);
+	return &(new TFB_OggSoundDecoder {})->decoder;
+}
+
+static void
+ova_Destroy(TFB_SoundDecoder* decoder)
+{
+	delete reinterpret_cast<TFB_OggSoundDecoder*>(decoder);
 }
 
 static int

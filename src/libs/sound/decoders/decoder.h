@@ -25,6 +25,8 @@
 #include <cstdint>
 #include "libs/io/FileSystem.h"
 #include "libs/sound/audiocoredefs.h"
+#include "core/stl/string.h"
+#include "core/stl/vector.h"
 
 #ifndef OVCODEC_NONE
 #ifdef _MSC_VER
@@ -62,7 +64,9 @@ typedef struct tfb_sounddecoderfunc
 	const char* (*GetName)(void);
 	bool (*InitModule)(AudioFlags flags, const TFB_DecoderFormats*);
 	void (*TermModule)(void);
-	uint32_t (*GetStructSize)(void);
+	// Make and delete the decoder struct, which starts with a TFB_SoundDecoder.
+	TFB_SoundDecoder* (*Create)(void);
+	void (*Destroy)(TFB_SoundDecoder*);
 	int (*GetError)(THIS_PTR);
 	bool (*Init)(THIS_PTR);
 	void (*Term)(THIS_PTR);
@@ -91,6 +95,8 @@ struct tfb_sounddecoder
 	bool need_swap;
 
 	// public R/O, set by wrapper
+	// The decoded data. 'buffer' points into 'storage'.
+	uqstl::vector<uint8_t> storage;
 	void* buffer;
 	uint32_t buffer_size;
 	int32_t error;
@@ -100,7 +106,12 @@ struct tfb_sounddecoder
 	bool looping;
 
 	// semi-private
-	char* filename;
+	uqstl::string filename;
+	// Deletes the decoder. The functions can change to the buffer decoder after creation.
+	void (*destroy)(TFB_SoundDecoder*);
+	// The read position in 'storage' after the decoder switched to the buffer decoder.
+	uint32_t buffered_max_pcm;
+	uint32_t buffered_cur_pcm;
 	uint32_t pos;
 	uint32_t start_sample;
 	uint32_t end_sample;

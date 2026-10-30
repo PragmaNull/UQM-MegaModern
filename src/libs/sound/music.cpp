@@ -145,35 +145,6 @@ PLRGetPos(void)
 	return curMusicRef != 0 ? get_current_music_pos(curMusicRef) : 0;
 }
 
-static char*
-get_current_music_filename(MUSIC_REF MusicRef)
-{
-	char* filename;
-
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
-	{
-		return 0;
-	}
-
-	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)
-	{
-		soundSource[MUSIC_SOURCE].stream_mutex.lock();
-		filename = soundSource[MUSIC_SOURCE].sample->decoder->filename;
-		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
-
-		return filename;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-char* PLRGetFilename(void)
-{
-	return curMusicRef != 0 ? get_current_music_filename(curMusicRef) : 0;
-}
-
 void PLRResume(MUSIC_REF MusicRef)
 {
 	if (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0)

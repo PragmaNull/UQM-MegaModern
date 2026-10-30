@@ -110,7 +110,8 @@ typedef struct
 static const char* aifa_GetName(void);
 static bool aifa_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void aifa_TermModule(void);
-static uint32_t aifa_GetStructSize(void);
+static TFB_SoundDecoder* aifa_Create(void);
+static void aifa_Destroy(TFB_SoundDecoder* decoder);
 static int aifa_GetError(THIS_PTR);
 static bool aifa_Init(THIS_PTR);
 static void aifa_Term(THIS_PTR);
@@ -125,7 +126,8 @@ TFB_SoundDecoderFuncs aifa_DecoderVtbl =
 		aifa_GetName,
 		aifa_InitModule,
 		aifa_TermModule,
-		aifa_GetStructSize,
+		aifa_Create,
+		aifa_Destroy,
 		aifa_GetError,
 		aifa_Init,
 		aifa_Term,
@@ -193,10 +195,16 @@ aifa_TermModule(void)
 	// no specific module term
 }
 
-static uint32_t
-aifa_GetStructSize(void)
+static TFB_SoundDecoder*
+aifa_Create(void)
 {
-	return sizeof(TFB_AiffSoundDecoder);
+	return &(new TFB_AiffSoundDecoder {})->decoder;
+}
+
+static void
+aifa_Destroy(TFB_SoundDecoder* decoder)
+{
+	delete reinterpret_cast<TFB_AiffSoundDecoder*>(decoder);
 }
 
 static int

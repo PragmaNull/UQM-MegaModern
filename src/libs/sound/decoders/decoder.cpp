@@ -41,7 +41,8 @@
 static const char* bufa_GetName(void);
 static bool bufa_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void bufa_TermModule(void);
-static uint32_t bufa_GetStructSize(void);
+static TFB_SoundDecoder* bufa_Create(void);
+static void bufa_Destroy(TFB_SoundDecoder* decoder);
 static int bufa_GetError(THIS_PTR);
 static bool bufa_Init(THIS_PTR);
 static void bufa_Term(THIS_PTR);
@@ -56,7 +57,8 @@ TFB_SoundDecoderFuncs bufa_DecoderVtbl =
 		bufa_GetName,
 		bufa_InitModule,
 		bufa_TermModule,
-		bufa_GetStructSize,
+		bufa_Create,
+		bufa_Destroy,
 		bufa_GetError,
 		bufa_Init,
 		bufa_Term,
@@ -67,24 +69,12 @@ TFB_SoundDecoderFuncs bufa_DecoderVtbl =
 		bufa_GetFrame,
 };
 
-typedef struct tfb_bufsounddecoder
-{
-	// always the first member
-	TFB_SoundDecoder decoder;
-
-	// private
-	void* data;
-	uint32_t max_pcm;
-	uint32_t cur_pcm;
-
-} TFB_BufSoundDecoder;
-
-#define SD_MIN_SIZE (sizeof(TFB_BufSoundDecoder))
 
 static const char* nula_GetName(void);
 static bool nula_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void nula_TermModule(void);
-static uint32_t nula_GetStructSize(void);
+static TFB_SoundDecoder* nula_Create(void);
+static void nula_Destroy(TFB_SoundDecoder* decoder);
 static int nula_GetError(THIS_PTR);
 static bool nula_Init(THIS_PTR);
 static void nula_Term(THIS_PTR);
@@ -99,7 +89,8 @@ TFB_SoundDecoderFuncs nula_DecoderVtbl =
 		nula_GetName,
 		nula_InitModule,
 		nula_TermModule,
-		nula_GetStructSize,
+		nula_Create,
+		nula_Destroy,
 		nula_GetError,
 		nula_Init,
 		nula_Term,
@@ -378,20 +369,15 @@ SoundDecoder_Load(const uqm::io::Directory& dir, char* filename,
 		}
 	}
 
-	struct_size = funcs->GetStructSize();
-	if (struct_size < SD_MIN_SIZE)
-	{
-		struct_size = SD_MIN_SIZE;
-	}
-
-	decoder = (TFB_SoundDecoder*)HCalloc(struct_size);
+	decoder = funcs->Create();
 	decoder->funcs = funcs;
+	decoder->destroy = funcs->Destroy;
 	if (!decoder->funcs->Init(decoder))
 	{
 		uqm::log::warn("SoundDecoder_Load(): "
 					   "{} decoder instance failed init",
 					   decoder->funcs->GetName());
-		HFree(decoder);
+		decoder->destroy(decoder);
 		return nullptr;
 	}
 
@@ -401,18 +387,16 @@ SoundDecoder_Load(const uqm::io::Directory& dir, char* filename,
 					   "{} decoder could not load {}",
 					   decoder->funcs->GetName(), filename);
 		decoder->funcs->Term(decoder);
-		HFree(decoder);
+		decoder->destroy(decoder);
 		return nullptr;
 	}
 
-	decoder->buffer = HMalloc(buffer_size);
+	decoder->storage.assign(buffer_size, 0);
+	decoder->buffer = decoder->storage.data();
 	decoder->buffer_size = buffer_size;
 	decoder->looping = false;
 	decoder->error = SOUNDDECODER_OK;
-	const uint32_t filenameLen = strlen(filename);
-	decoder->filename = (char*)HMalloc(filenameLen + 1);
-	memcpy(decoder->filename, filename, filenameLen);
-	decoder->filename[filenameLen] = '\0';
+	decoder->filename = filename;
 
 	if (decoder->is_null)
 	{ // fake decoder, keeps voiceovers and etc. going
@@ -587,8 +571,8 @@ SoundDecoder_DecodeAll(TFB_SoundDecoder* decoder)
 		if (decoded_bytes >= decoder->buffer_size)
 		{ // need to grow buffer
 			decoder->buffer_size += reqbufsize;
-			decoder->buffer = HRealloc(
-				decoder->buffer, decoder->buffer_size);
+			decoder->storage.resize(decoder->buffer_size);
+			decoder->buffer = decoder->storage.data();
 		}
 
 		rc = decoder->funcs->Decode(decoder,
@@ -603,7 +587,9 @@ SoundDecoder_DecodeAll(TFB_SoundDecoder* decoder)
 	decoder->buffer_size = decoded_bytes;
 	decoder->pos += decoded_bytes;
 	// Free up some unused memory
-	decoder->buffer = HRealloc(decoder->buffer, decoded_bytes);
+	decoder->storage.resize(decoded_bytes);
+	decoder->storage.shrink_to_fit();
+	decoder->buffer = decoder->storage.data();
 
 	if (decoder->need_swap && decoded_bytes > 0 && (decoder->format == decoder_formats.stereo16 || decoder->format == decoder_formats.mono16))
 	{
@@ -683,9 +669,7 @@ void SoundDecoder_Free(TFB_SoundDecoder* decoder)
 	decoder->funcs->Close(decoder);
 	decoder->funcs->Term(decoder);
 
-	HFree(decoder->buffer);
-	HFree(decoder->filename);
-	HFree(decoder);
+	decoder->destroy(decoder);
 }
 
 float SoundDecoder_GetTime(TFB_SoundDecoder* decoder)
@@ -747,10 +731,16 @@ bufa_TermModule(void)
 	uqm::log::debug("bufa_TermModule(): dead function called");
 }
 
-static uint32_t
-bufa_GetStructSize(void)
+static TFB_SoundDecoder*
+bufa_Create(void)
 {
-	return sizeof(TFB_BufSoundDecoder);
+	return new TFB_SoundDecoder {};
+}
+
+static void
+bufa_Destroy(TFB_SoundDecoder* decoder)
+{
+	delete decoder;
 }
 
 static int
@@ -764,13 +754,9 @@ bufa_GetError(THIS_PTR)
 static bool
 bufa_Init(THIS_PTR)
 {
-	TFB_BufSoundDecoder* bufa = (TFB_BufSoundDecoder*)This;
-
 	This->need_swap = false;
-	// hijack the buffer
-	bufa->data = This->buffer;
-	bufa->max_pcm = This->buffer_size / This->bytes_per_samp;
-	bufa->cur_pcm = bufa->max_pcm;
+	This->buffered_max_pcm = This->buffer_size / This->bytes_per_samp;
+	This->buffered_cur_pcm = This->buffered_max_pcm;
 
 	return true;
 }
@@ -778,7 +764,6 @@ bufa_Init(THIS_PTR)
 static void
 bufa_Term(THIS_PTR)
 {
-	//TFB_BufSoundDecoder* bufa = (TFB_BufSoundDecoder*) This;
 	bufa_Close(This); // ensure cleanup
 }
 
@@ -798,38 +783,30 @@ bufa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 static void
 bufa_Close(THIS_PTR)
 {
-	TFB_BufSoundDecoder* bufa = (TFB_BufSoundDecoder*)This;
-
 	// restore the status quo
-	if (bufa->data)
-	{
-		This->buffer = bufa->data;
-		bufa->data = nullptr;
-	}
-	bufa->cur_pcm = 0;
+	This->buffer = This->storage.data();
+	This->buffered_cur_pcm = 0;
 }
 
 static int
 bufa_Decode(THIS_PTR, void* buf, int32_t bufsize)
 {
-	TFB_BufSoundDecoder* bufa = (TFB_BufSoundDecoder*)This;
 	uint32_t dec_pcm;
 	uint32_t dec_bytes;
 
 	dec_pcm = bufsize / This->bytes_per_samp;
-	if (dec_pcm > bufa->max_pcm - bufa->cur_pcm)
+	if (dec_pcm > This->buffered_max_pcm - This->buffered_cur_pcm)
 	{
-		dec_pcm = bufa->max_pcm - bufa->cur_pcm;
+		dec_pcm = This->buffered_max_pcm - This->buffered_cur_pcm;
 	}
 	dec_bytes = dec_pcm * This->bytes_per_samp;
 
 	// Buffer decode is a hack
-	This->buffer = (uint8_t*)bufa->data
-				 + bufa->cur_pcm * This->bytes_per_samp;
+	This->buffer = This->storage.data() + This->buffered_cur_pcm * This->bytes_per_samp;
 
 	if (dec_pcm > 0)
 	{
-		bufa->cur_pcm += dec_pcm;
+		This->buffered_cur_pcm += dec_pcm;
 	}
 
 	return dec_bytes;
@@ -840,13 +817,11 @@ bufa_Decode(THIS_PTR, void* buf, int32_t bufsize)
 static uint32_t
 bufa_Seek(THIS_PTR, uint32_t pcm_pos)
 {
-	TFB_BufSoundDecoder* bufa = (TFB_BufSoundDecoder*)This;
-
-	if (pcm_pos > bufa->max_pcm)
+	if (pcm_pos > This->buffered_max_pcm)
 	{
-		pcm_pos = bufa->max_pcm;
+		pcm_pos = This->buffered_max_pcm;
 	}
-	bufa->cur_pcm = pcm_pos;
+	This->buffered_cur_pcm = pcm_pos;
 
 	return pcm_pos;
 }
@@ -884,10 +859,16 @@ nula_TermModule(void)
 	uqm::log::debug("nula_TermModule(): dead function called");
 }
 
-static uint32_t
-nula_GetStructSize(void)
+static TFB_SoundDecoder*
+nula_Create(void)
 {
-	return sizeof(TFB_NullSoundDecoder);
+	return &(new TFB_NullSoundDecoder {})->decoder;
+}
+
+static void
+nula_Destroy(TFB_SoundDecoder* decoder)
+{
+	delete reinterpret_cast<TFB_NullSoundDecoder*>(decoder);
 }
 
 static int

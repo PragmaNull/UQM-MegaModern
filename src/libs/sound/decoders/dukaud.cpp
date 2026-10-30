@@ -39,7 +39,8 @@
 static const char* duka_GetName(void);
 static bool duka_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void duka_TermModule(void);
-static uint32_t duka_GetStructSize(void);
+static TFB_SoundDecoder* duka_Create(void);
+static void duka_Destroy(TFB_SoundDecoder* decoder);
 static int duka_GetError(THIS_PTR);
 static bool duka_Init(THIS_PTR);
 static void duka_Term(THIS_PTR);
@@ -54,7 +55,8 @@ TFB_SoundDecoderFuncs duka_DecoderVtbl =
 		duka_GetName,
 		duka_InitModule,
 		duka_TermModule,
-		duka_GetStructSize,
+		duka_Create,
+		duka_Destroy,
 		duka_GetError,
 		duka_Init,
 		duka_Term,
@@ -369,10 +371,16 @@ duka_TermModule(void)
 	// no specific module term
 }
 
-static uint32_t
-duka_GetStructSize(void)
+static TFB_SoundDecoder*
+duka_Create(void)
 {
-	return sizeof(TFB_DuckSoundDecoder);
+	return &(new TFB_DuckSoundDecoder {})->decoder;
+}
+
+static void
+duka_Destroy(TFB_SoundDecoder* decoder)
+{
+	delete reinterpret_cast<TFB_DuckSoundDecoder*>(decoder);
 }
 
 static int
