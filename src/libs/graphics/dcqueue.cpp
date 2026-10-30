@@ -396,16 +396,12 @@ computeFPS(int* fps, int* renderFps)
 	}
 }
 
-// Draws a number on the FPS canvas. The last digit is at x.
+// Draws text on the FPS canvas. The text starts at x.
 static void
-drawFPSNumber(int value, int x, int y, Color color)
+drawFPSText(uqstl::string_view text, int x, int y, Color color)
 {
 	GFXRECT tr;
 	int16_t w, h;
-
-	char buf[12] {};
-	const auto fmtResult = fmt::format_to_sz_n(buf, "{}", value);
-	const int max = static_cast<int>(fmtResult.size);
 
 	GetFontDims(&w, &h);
 	TFB_Image* img = TFB_DrawImage_CreateForScreen(w, h, true);
@@ -414,14 +410,17 @@ drawFPSNumber(int value, int x, int y, Color color)
 	tr.extent.height = h;
 	TFB_DrawImage_Rect(&tr, color, DRAW_REPLACE_MODE, img);
 
-	for (int i = max - 1; i >= 0; i--)
+	for (const char c : text)
 	{
-		TFB_Char* ch = GetFrameForFPS(buf[i]);
-		if (ch)
+		TFB_Char* ch = GetFrameForFPS(static_cast<unsigned char>(c));
+		if (ch && ch->disp.width)
 		{
 			TFB_DrawCanvas_FontChar(ch, img, x, y, MAKE_DRAW_MODE(DRAW_ALPHA, 0xff), TFB_GetFPSCanvas());
-			const int step = ((i > 0) && (buf[i - 1] == '1')) ? 5 : 6;
-			x -= step << resolutionFactor;
+			x += ch->disp.width + GetFontCharSpace();
+		}
+		else
+		{
+			x += w / 2;
 		}
 	}
 	TFB_DrawImage_Delete(img);
@@ -439,9 +438,9 @@ RenderFPS(int fps, int renderFps)
 
 		TFB_ClearFPSCanvas();
 
-		const int x = 34 << resolutionFactor;
-		drawFPSNumber(fps, x, 7 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0x00, 0xFF));
-		drawFPSNumber(renderFps, x, 16 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0xFF, 0xFF));
+		const int x = 2 << resolutionFactor;
+		drawFPSText(fmt::format("CPU: {}", fps), x, 7 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0x00, 0xFF));
+		drawFPSText(fmt::format("GPU: {}", renderFps), x, 16 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0xFF, 0xFF));
 	}
 }
 
