@@ -19,7 +19,6 @@
 #include "build.h"
 #include "starmap.h"
 #include "gendef.h"
-#include "libs/file.h"
 #include "globdata.h"
 #include "intel.h"
 #include "state.h"

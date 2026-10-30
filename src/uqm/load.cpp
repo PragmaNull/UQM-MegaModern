@@ -21,7 +21,6 @@
 #include "build.h"
 #include "encount.h"
 #include "starmap.h"
-#include "libs/file.h"
 #include "globdata.h"
 #include "options.h"
 #include "save.h"

@@ -15,7 +15,6 @@
  */
 
 #include <string.h>
-#include "libs/file.h"
 #include "options.h"
 #include "sound.h"
 #include "sndintrn.h"

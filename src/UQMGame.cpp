@@ -51,7 +51,6 @@
 #include "uqm/controls.h"
 #include "uqm/battle.h"
 // For BattleFrameRateTicks
-#include "libs/file.h"
 #include <cstdint>
 #include "port.h"
 #include "libs/memlib.h"

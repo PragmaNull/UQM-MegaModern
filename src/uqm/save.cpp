@@ -24,7 +24,6 @@
 #include "controls.h"
 #include "starmap.h"
 #include "encount.h"
-#include "libs/file.h"
 #include "gamestr.h"
 #include "globdata.h"
 #include "options.h"

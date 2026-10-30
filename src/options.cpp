@@ -26,7 +26,7 @@
 
 #include "port.h"
 #include "libs/graphics/gfx_common.h"
-#include "libs/file.h"
+#include "libs/file/paths.h"
 #include "config.h"
 #include "libs/compiler.h"
 #include "libs/strlib.h"
@@ -181,7 +181,7 @@ static const char* findFileInDirs(const char* locs[], int numLocs, const char* f
 		}
 
 		fmt::format_to_sz_n(path, "{}{}{}", loc, needSlash ? "/" : "", file);
-		if (fileExists(path))
+		if (uqm::fileExists(path))
 		{
 			return loc;
 		}
@@ -203,10 +203,8 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 
 	if (isEmpty(contentDirName))
 	{
-		char buf[PATH_MAX];
-
-		if (expandPath(buf, PATH_MAX - 13, CONTENTDIR, EP_ALL_SYSTEM)
-			== -1)
+		const uqstl::optional<uqstl::string> expandedContentDir {uqm::expandPath(CONTENTDIR)};
+		if (!expandedContentDir)
 		{
 			uqm::log::critical("Fatal error: Invalid path to "
 							   "content files.");
@@ -215,8 +213,8 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 
 		// Try the default content locations.
 		const char* locs[] = {
-			CONTENTDIR, /* defined in config.h */
-			buf,		/* expanded CONTENTDIR */
+			CONTENTDIR,					 /* defined in config.h */
+			expandedContentDir->c_str(), /* expanded CONTENTDIR */
 			"content",
 		};
 		loc = findFileInDirs(locs, std::size(locs), testFile);
@@ -253,15 +251,15 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 		exit(EXIT_FAILURE);
 	}
 
-	if (expandPath(baseContentPath, sizeof baseContentPath, loc,
-				   EP_ALL_SYSTEM)
-		== -1)
+	const uqstl::optional<uqstl::string> expandedBase {uqm::expandPath(loc)};
+	if (!expandedBase || expandedBase->size() >= sizeof baseContentPath)
 	{
 		uqm::log::critical("Fatal error: Could not expand path to content "
 						   "directory: {}",
-						   uqm::strerror(errno));
+						   loc);
 		exit(EXIT_FAILURE);
 	}
+	uqm::strncpy_safe(baseContentPath, *expandedBase);
 
 	uqm::log::debug("Using '{}' as base content dir.", baseContentPath);
 	mountContentDir(baseContentPath);
@@ -299,13 +297,7 @@ uqstl::string resolveConfigDir(uqstl::string_view configDirOption)
 		configDirPath = CONFIGDIR;
 	}
 
-	char buf[PATH_MAX];
-	if (expandPath(buf, PATH_MAX - 13, configDirPath.c_str(), EP_ALL_SYSTEM)
-		== -1)
-	{
-		return {};
-	}
-	return buf;
+	return uqm::expandPath(configDirPath).value_or(uqstl::string {});
 }
 
 void prepareConfigDir(uqstl::string_view configDirOption)
@@ -327,7 +319,7 @@ void prepareConfigDir(uqstl::string_view configDirOption)
 	uqm::setEnvironmentValue("UQM_CONFIG_DIR", configDirName, true);
 
 	// Create the path upto the config dir, if not already existing.
-	if (mkdirhier(configDirName) == -1)
+	if (!uqm::createDirectories(configDirName))
 	{
 		exit(EXIT_FAILURE);
 	}
@@ -345,15 +337,14 @@ void prepareConfigDir(uqstl::string_view configDirOption)
 
 void prepareSaveDir(void)
 {
-	char buf[PATH_MAX] {};
-
 	uqstl::string saveDirName = uqm::getEnvironmentValue("UQM_SAVE_DIR");
 	if (saveDirName.empty())
 	{
 		saveDirName = SAVEDIR;
 	}
 
-	if (expandPath(buf, PATH_MAX - 13, saveDirName.c_str(), EP_ALL_SYSTEM) == -1)
+	const uqstl::optional<uqstl::string> expanded {uqm::expandPath(saveDirName)};
+	if (!expanded)
 	{
 		// Doesn't have to be fatal, but might mess up things when saving
 		// config files.
@@ -361,11 +352,11 @@ void prepareSaveDir(void)
 		exit(EXIT_FAILURE);
 	}
 
-	saveDirName = buf;
+	saveDirName = *expanded;
 	uqm::setEnvironmentValue("UQM_SAVE_DIR", saveDirName.c_str(), true);
 
 	// Create the path upto the save dir, if not already existing.
-	if (mkdirhier(saveDirName.c_str()) == -1)
+	if (!uqm::createDirectories(saveDirName.c_str()))
 	{
 		exit(EXIT_FAILURE);
 	}
@@ -384,15 +375,14 @@ void prepareSaveDir(void)
 
 void prepareMeleeDir(void)
 {
-	char buf[PATH_MAX] {};
-
 	uqstl::string meleeDirName = uqm::getEnvironmentValue("UQM_MELEE_DIR");
 	if (meleeDirName.empty())
 	{
 		meleeDirName = MELEEDIR;
 	}
 
-	if (expandPath(buf, PATH_MAX - 13, meleeDirName.c_str(), EP_ALL_SYSTEM) == -1)
+	const uqstl::optional<uqstl::string> expanded {uqm::expandPath(meleeDirName)};
+	if (!expanded)
 	{
 		// Doesn't have to be fatal, but might mess up things when saving
 		// config files.
@@ -400,11 +390,11 @@ void prepareMeleeDir(void)
 		exit(EXIT_FAILURE);
 	}
 
-	meleeDirName = buf;
+	meleeDirName = *expanded;
 	uqm::setEnvironmentValue("UQM_MELEE_DIR", meleeDirName.c_str(), true);
 
 	// Create the path upto the save dir, if not already existing.
-	if (mkdirhier(meleeDirName.c_str()) == -1)
+	if (!uqm::createDirectories(meleeDirName.c_str()))
 	{
 		exit(EXIT_FAILURE);
 	}
@@ -421,15 +411,14 @@ void prepareMeleeDir(void)
 
 void prepareScrShotDir(void)
 {
-	char buf[PATH_MAX] {};
-
 	uqstl::string shotDirName = uqm::getEnvironmentValue("UQM_SCR_SHOT_DIR");
 	if (shotDirName.empty())
 	{
 		shotDirName = SCRSHOTDIR;
 	}
 
-	if (expandPath(buf, PATH_MAX - 13, shotDirName.c_str(), EP_ALL_SYSTEM) == -1)
+	const uqstl::optional<uqstl::string> expanded {uqm::expandPath(shotDirName)};
+	if (!expanded)
 	{
 		// Doesn't have to be fatal, but might mess up things when saving
 		// config files.
@@ -437,11 +426,11 @@ void prepareScrShotDir(void)
 		exit(EXIT_FAILURE);
 	}
 
-	shotDirName = buf;
+	shotDirName = *expanded;
 	uqm::setEnvironmentValue("UQM_SCR_SHOT_DIR", shotDirName.c_str(), true);
 
 	// Create the path upto the save dir, if not already existing.
-	if (mkdirhier(shotDirName.c_str()) == -1)
+	if (!uqm::createDirectories(shotDirName.c_str()))
 	{
 		exit(EXIT_FAILURE);
 	}

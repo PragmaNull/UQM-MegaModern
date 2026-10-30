@@ -22,7 +22,6 @@
 #include <stdlib.h>
 #include "port.h"
 #include "libs/memlib.h"
-#include "libs/file.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
 #include "decoder.h"
