@@ -50,8 +50,6 @@ set(uqm_src_uqm_files
 	"src/uqm/credits.cpp"
 	"src/uqm/credits.h"
 	"src/uqm/cyborg.cpp"
-#	"src/uqm/demo.cpp"
-	"src/uqm/demo.h"
 	"src/uqm/displist.cpp"
 	"src/uqm/displist.h"
 	"src/uqm/dummy.cpp"

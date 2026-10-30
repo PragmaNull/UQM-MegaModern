@@ -186,9 +186,6 @@ ProcessInput(void)
 				InputState = PlayerInput[cur_player]->handlers->frameInput(
 					PlayerInput[cur_player], StarShipPtr);
 
-#if CREATE_JOURNAL
-				JournalInput(InputState);
-#endif /* CREATE_JOURNAL */
 #ifdef NETPLAY
 				if (!testFlag(PlayerControl[cur_player], PlayerControlFlags::Network))
 				{
@@ -252,10 +249,6 @@ ProcessInput(void)
 		GLOBAL(CurrentActivity) &= ~IN_BATTLE;
 	}
 }
-
-#if DEMO_MODE || CREATE_JOURNAL
-uint32_t BattleSeed;
-#endif /* DEMO_MODE */
 
 static MUSIC_REF BattleRef;
 uint8_t inHSpace = 0;
@@ -452,20 +445,11 @@ bool Battle(BattleFrameCallback* callback)
 {
 	int16_t num_ships;
 
-#if !(DEMO_MODE || CREATE_JOURNAL)
 	if (lowByte(GLOBAL(CurrentActivity)) != SUPER_MELEE)
 	{
 		// In Supermelee, the RNG is already initialised.
 		TFB_SeedRandom(GetTimeCounter());
 	}
-#else  /* DEMO_MODE */
-	if (BattleSeed == 0)
-	{
-		BattleSeed = TFB_Random();
-	}
-	TFB_SeedRandom(BattleSeed);
-	BattleSeed = TFB_Random(); /* get next battle seed */
-#endif /* DEMO_MODE */
 
 	BattleSong(false);
 

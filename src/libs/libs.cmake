@@ -7,8 +7,6 @@ set(uqm_src_libs_master_files "")
 # Sub-directories
 include("src/libs/callback/callback.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_callback_master_files})
-include("src/libs/decomp/decomp.cmake")
-list(APPEND uqm_src_libs_master_files ${uqm_src_libs_decomp_master_files})
 include("src/libs/file/file.cmake")
 list(APPEND uqm_src_libs_master_files ${uqm_src_libs_file_master_files})
 include("src/libs/graphics/graphics.cmake")
@@ -49,7 +47,6 @@ list(APPEND uqm_src_libs_master_files ${uqm_src_libs_video_master_files})
 set(uqm_src_libs_files
 	"src/libs/async.h"
 	"src/libs/compiler.h"
-	"src/libs/declib.h"
 	"src/libs/file.h"
 	"src/libs/gfxlib.h"
 	"src/libs/heap.h"

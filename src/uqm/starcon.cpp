@@ -224,29 +224,6 @@ int Starcon2Main(void* threadArg)
 	mainThreadId = SDL_ThreadID();
 #endif
 
-#if CREATE_JOURNAL
-	{
-		int ac = argc;
-		char** av = argv;
-
-		while (--ac > 0)
-		{
-			++av;
-			if ((*av)[0] == '-')
-			{
-				switch ((*av)[1])
-				{
-#if CREATE_JOURNAL
-					case 'j':
-						++create_journal;
-						break;
-#endif //CREATE_JOURNAL
-				}
-			}
-		}
-	}
-#endif // CREATE_JOURNAL
-
 	{
 		/* TODO: Put initAudio back in main where it belongs once threading
 		 *       is gone.
@@ -296,7 +273,6 @@ int Starcon2Main(void* threadArg)
 	uqm::log::info("Set Extended: {}", BOOL_STR(uqm::UQMOptions::read().extended));
 	uqm::log::info("Set Nomad: {:s}", uqm::UQMOptions::read().nomad.value);
 
-	//	OpenJournal ();
 	while (StartGame())
 	{
 		// Initialise a new game
@@ -428,7 +404,6 @@ int Starcon2Main(void* threadArg)
 		UninitGameStructures();
 		ClearPlayerInputAll();
 	}
-	//	CloseJournal ();
 	luaUqm_uninitState();
 
 	UninitGameKernel();

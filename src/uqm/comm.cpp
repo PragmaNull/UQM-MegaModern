@@ -988,10 +988,6 @@ DoTalkSegue(TALKING_STATE* pTS)
 			right = CurrentInputState.menu[KEY_MENU_RIGHT] != 0;
 		}
 
-#if DEMO_MODE || CREATE_JOURNAL
-		left = false;
-		right = false;
-#endif
 		curTrack = PlayingTrack();
 
 		if (right)

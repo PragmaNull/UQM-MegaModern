@@ -262,13 +262,7 @@ static inline bool
 readyForBattleEnd(void)
 {
 #ifndef NETPLAY
-#if DEMO_MODE
-	// In Demo mode, the saved journal should be replayed with frame
-	// accuracy. PLRPlaying () isn't consistent enough.
-	return true;
-#else  /* !DEMO_MODE */
 	return !DittyPlaying();
-#endif /* !DEMO_MODE */
 #else  /* defined (NETPLAY) */
 	int playerI;
 

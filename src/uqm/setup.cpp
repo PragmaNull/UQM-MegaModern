@@ -105,9 +105,6 @@ InitPlayerInput(void)
 
 void UninitPlayerInput(void)
 {
-#if DEMO_MODE
-	DestroyInputDevice(ReleaseInputDevice(DemoInput));
-#endif /* DEMO_MODE */
 }
 
 bool LoadKernel(int argc, char* argv[])

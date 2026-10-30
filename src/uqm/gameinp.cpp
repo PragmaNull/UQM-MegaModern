@@ -555,15 +555,6 @@ void DoInput(void* pInputState, bool resetInput)
 
 		UpdateInputState();
 
-#if DEMO_MODE || CREATE_JOURNAL
-		if (ArrowInput != DemoInput)
-#endif
-		{
-#if CREATE_JOURNAL
-			JournalInput(InputState);
-#endif /* CREATE_JOURNAL */
-		}
-
 		soundFlags = MenuKeysToSoundFlags(&PulsedInputState);
 
 		if (MenuSounds && (soundFlags & (sound_0 | sound_1)))
