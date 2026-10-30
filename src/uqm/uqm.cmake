@@ -99,7 +99,6 @@ set(uqm_src_uqm_files
 	"src/uqm/isndres.h"
 	"src/uqm/istrtab.h"
 	"src/uqm/load.cpp"
-	"src/uqm/load_legacy.cpp"
 	"src/uqm/loadship.cpp"
 	"src/uqm/master.cpp"
 	"src/uqm/master.h"

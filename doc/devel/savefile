@@ -1,149 +1,85 @@
                            SAVEFILE FORMAT
                            ---------------
 
-This document represents a work in progress. The save format described
-here will evolve before finalization for 0.8.
+The game saves to "uqmsave.NN.json" in the save directory, where NN is
+the slot number (00 to 49). The file is a JSON object. The game reads
+only this format.
 
-The old save file format used a custom compressor and was very finicky
-about padding and alignment for machines that were not even in use
-anymore. It was also extremely fragile and hard for modders to extend.
+The script scripts/convert_saves.py converts the older binary saves
+("uqmsave.NN", with the tags MMV4, MMV3, MEGA or UMS1) to JSON. The game
+and the script do not read "starcon2.NN" saves.
 
-The new save format seeks to alleviate these problems.
+                            GENERAL RULES
+                            -------------
 
-                            GENERAL FORMAT
+The key names are the names of the C struct members that hold the
+values. All values are integers, strings, booleans, arrays or objects.
+A point is an object {"x", "y"}. An extent is an object
+{"width", "height"}.
+
+Coordinates in hyperspace (the "log" points) and the ship origin are
+stored at 1x resolution. The velocity is stored at 1x resolution
+unless the activity is IN_INTERPLANETARY. The loader scales them to
+the current resolution.
+
+The top-level "version" key is the format version (c_saveFormatVersion
+in save.h). The game does not load a file with a higher version.
+
+A missing or incorrect value makes the load fail, with these
+exceptions:
+- A game state value that is not in "gameState" is set to 0. Thus a
+  new game state value does not need a new format version.
+- An array of queue items that is not in the file is an empty queue.
+
+                            TOP-LEVEL KEYS
                             --------------
 
-All multibyte values are little-endian. There are no alignment
-restrictions inherent in the format.
+- "version": The format version.
 
-The save file begins with a 32-bit identifier and version number (a
-"magic number") that identifies it as a particular version of an UQM
-save file. If the format changes in a way that older versions of UQM
-cannot read it, either the identifier or the version number should
-change.
+- "summary": The data that the load menu shows: SaveName, Activity,
+  Flags, the date, the Melnorme credit, ShipList, DeviceList and
+  res_factor. "sis" holds the SIS_STATE: the flagship configuration,
+  cargo, names, difficulty and seed. "coreSave" is true for a save
+  that was converted from core UQM.
 
-The vanilla UQM system has a save number of 0x01534d55, which, if
-interpreted as a byte stream is UMS (Ur-quan Masters Save) and a
-binary 1 (version 1). Vanilla UQM reserves the tags "UMSx" for all x
-for use to evolve the core save format. Modders are encouraged, but
-not required, to also use the fourth bit as a version number.
+- "globalState": Most of the GAME_STATE struct in globdata.h, with
+  the clock in "GameClock". BattleGroupRef is not saved; the loader
+  calculates it from "battleGroups".
 
-Following the 32-bit file identifier comes a series of chunks. All
-chunks have the same general format: a 32-bit tag, similar to that of
-the file as a whole, followed by a 32-bit integer specifying the size
-of the chunk, and then that many bytes of data.
+- "gameState": The values that GET_GAME_STATE reads, by name. The
+  table gameStateBitMap in save.cpp lists the names that are saved,
+  and the number of bits for each value.
 
-Bytes in a chunk tag should all be in the range 0x20-0x7E -- that is,
-they should be printable ASCII characters. Chunks are traditionally
-referred to by their tag names.
+- "raceQueue": avail_race_q. Which species are active, where they
+  are, etc.
 
-Chunks whose tag has a least significant byte in the range 0x41-0x5a,
-inclusive---that is to say, whose names start with a capital
-letter---are mandatory. If you extend the set of mandatory chunks, you
-must increase the version of the file. Tags that do not start with a
-capital letter may be ignored by other versions of UQM that otherwise
-understand that data version.
+- "npcShipQueue": npc_built_ship_q. The ships of the current
+  encounter. Only when the game was saved at the start of an
+  encounter.
 
-(Why would you want to have ignorable bits of save file? Such chunks
-may contain helpful but ancillary information. For instance, at the
-time of this writing, there is an outstanding bug that life forms are
-un-stunned if you save and load in orbit. One could add a new chunk
-that tracks the stunned status of life forms on the planet you're in
-orbit around, and just revert to the old behavior if it's not there or
-if you're running on a version without that fix. Such an ancillary
-data chunk would have a tag like "stun" or "biot".)
+- "ipGroupQueue": ip_group_q. The groups in the current star system.
 
-Note also that despite being "mandatory", it is not the case that all
-chunks will be present in all save files. Different data is saved out
-depending on the situation you saved in.
+- "shipQueue": built_ship_q. The escort fleet.
 
-Unless otherwise specified, chunks may be stored in any order in the
-save file.
+- "stowedShipQueue": stowed_ship_q.
 
-                           CHUNK INVENTORY
-                           ---------------
+- "events": The scripted future events.
 
-- "Summ": Summary. This chunk must come first. This chunk
-  carries the flagship configuration information and some overview
-  information that is displayed on the savegame view screen. It is of
-  variable length, because the last element of this chunk is the name
-  of the save as chosen by the user.
+- "encounters": The groups that pursue the flagship in HyperSpace.
+  "ships" has one entry for each ship in the group.
 
-- "GlSt": Global State. This chunk must come second, after
-  Summ. Represents most of the data in the global state structure in
-  globdata.h. BattleGroupRef is excised from this; its value is
-  computed later on.
+- "starInfo": The scan masks, as a list of 32-bit values. These show
+  which planetary resources were taken. See doc/devel/statefiles.
 
-- "GmSt": Game State. This chunk must come third, after GlSt. This is
-  the gigantic bitfield that the GET_GAME_STATE macros modify. It is
-  variably-sized; excess bytes in this array will be ignored, and if
-  there are insufficient bytes in the save file, the remaining bits
-  will be initialized to zero. Modders setting extra event flags may
-  be able to import a legacy game into a sensible state by choosing
-  their defaults judiciously.
+- "groupList": The IP_GROUP data of the random groups in the star
+  system that the flagship is in or left last. "LastEnc" is the last
+  group that the flagship encountered.
 
-- "Evts": Events. An array of values describing scripted future
-  events.
+- "battleGroups": The ship lists of the battle groups. "encounter" is
+  0 for the random groups, and the encounter ID for a group that the
+  plot defines (Ur-Quan Probe, Shofixti Survivor, Zoq-Fot-Pik
+  Emissary, the Melnorme Traders, etc.). "current" is true for the
+  group that the flagship encounters now. The data was stored in
+  randgrp.dat and defgrp.dat before.
 
-- "Enct": Encounters. Details of battle groups that are pursuing you
-  through HyperSpace.
-
-- "RacQ": Available Race Queue. Which species are active in the game,
-  where they are, etc. Corresponds to avail_race_q.
-
-- "IGpQ": Interplanetary Group Queue. Battlegroup information for
-  ships in your current star system, if you're in a current star
-  system. It is currently unclear whether or not this ever needs to
-  exist, but in keeping with legacy logic, it will appear whenever you
-  are in a star system but not in the middle of an encounter.
-
-- "NpcQ": NPC Queue. Battlegroup information for ships you are in the
-  middle of encountering. This should only appear if your loaded
-  activity is "IN_ENCOUNTER" and loading the game will trigger the red
-  alert.
-
-- "ShpQ": Ship Queue. Battlegroup information for your flagship's
-  escort fleet.
-
-- "Star": Star Description. Basic indexing information to indicate
-  which star system you are in.
-
-- "Scan": Scanner Masks. This is a semi-structured tree of DWORDs that
-  represents which planetary resources have been captured or
-  removed. It is a format roughly similar to the old star info
-  statefile format (see doc/devel/statefile) but little-endianness is
-  enforced, making this chunk endian-safe where the old statefile dump
-  was not.
-
-- "BtGp": Battle Group. Defines the relevant information for all ships
-  in a given star system. This includes an "encounter ID" - randomly
-  generated fleets have an encounter ID of zero, and ones built by the
-  plot have an 32-bit identifier. Vanilla UQM reserves the first 32
-  encounter IDs for itself, and uses 15 of them (random encounter,
-  Ur-Quan Probe, Shofixti Survivor, Zoq-Fot-Pik Emissary, Unzervalt
-  Guardian, nine Melnorme Traders, and the final boss). This also
-  includes the expiration date for random encounters and which system
-  they are relevant to. Much of this information was originally stored
-  in randgrp.dat, but it has echoes in defgrp.dat as well. The data
-  here is a ragged 2D array of a slight extension of the SHIP_FRAGMENT
-  structure. There is one BtGp chunk per defined group. (Since one of
-  these is defined at game start, and the random encounter structure
-  has values that mean 'no encounter present', there should always be
-  at least two of these chunks in any save.)
-
-- "Grps": Active Battle Groups. These are IP_GROUP structures to
-  supplement the SHIP_FRAGMENTs specified in BtGp chunks. They give
-  more detailed information about the precise location and disposition
-  of each ship in the system you are either in or most recently left.
-
-                          THINGS LEFT TO DO
-                          -----------------
-
-The last 448 bits in GmSt probably shouldn't exist. However, we should
-not remove them from the source base (and thus the save file) until
-after other pending commits have been merged. When this happens, we
-can break out those bits into an array of DWORDs instead. The loading
-code basically ignores those GmSt bits by overwriting them while
-loading later chunks, and GmSt is an expandable array in the first
-place, so removing those final bits from the Game State array should
-be compatible in both directions.
+- "starDesc": The star system that the flagship is in.

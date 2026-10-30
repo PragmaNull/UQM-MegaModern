@@ -209,20 +209,13 @@ enum
 
 #define YEARS_TO_KOHRAH_VICTORY (uqm::UQMOptions::read().deCleansing ? 100 : 4)
 
-// A structure describing how many bits are used for each game state value.
+// A game state value that is saved, and the number of bits it uses.
 typedef struct GameStateBitMap GameStateBitMap;
 struct GameStateBitMap
 {
 	const char* name;
 	uint8_t numBits;
 };
-
-size_t totalBitsForGameState(const GameStateBitMap* bm, int rev);
-int getGameStateRevByBytes(const GameStateBitMap* bm, int bytes);
-bool serialiseGameState(const GameStateBitMap* bm,
-						uint8_t** buf, size_t* numBytes);
-bool deserialiseGameState(const GameStateBitMap* bm,
-						  const uint8_t* buf, size_t numBytes, int rev);
 
 #define START_GAME_STATE enum \
 {

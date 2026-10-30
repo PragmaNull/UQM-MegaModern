@@ -35,576 +35,553 @@
 #include "core/stl/stl.h"
 #include "libs/misc.h"
 #include "master.h"
+#include "libs/file/textfile.h"
+#include "core/string/StringUtils.h"
+
+#include <yyjson.h>
+
+#include <utility>
 
 //#define DEBUG_LOAD
 
 ACTIVITY NextActivity;
 uint8_t IndependantResFactor;
 
-template <size_t TypeSize>
-struct ReadValueTypes
+namespace
 {
-	using temp_type = uint64_t; // default to something absurd.
-};
-template <>
-struct ReadValueTypes<1>
-{
-	using temp_type = uint8_t;
-};
-template <>
-struct ReadValueTypes<2>
-{
-	using temp_type = uint16_t;
-};
-template <>
-struct ReadValueTypes<4>
-{
-	using temp_type = uint32_t;
-};
-
 
 template <typename T>
-static inline bool readValue(uqm::io::File& fp, T* v)
+bool toInt(yyjson_val* val, T& out)
 {
-	using temp_type = typename ReadValueTypes<sizeof(T)>::temp_type;
-	temp_type t {};
-	for (uint8_t n {}, shift {}; n < sizeof(T); ++n, shift += 8)
+	if constexpr (uqstl::is_enum_v<T>)
 	{
-		uint8_t b {};
-		if (!fp.readValue(b)) [[unlikely]]
+		uqstl::underlying_type_t<T> raw {};
+		if (!toInt(val, raw))
 		{
 			return false;
 		}
-
-		t |= static_cast<temp_type>(b) << shift;
-	}
-
-	if (v) [[likely]]
-	{
-		*v = static_cast<T>(t);
-	}
-	return true;
-}
-
-template <typename T>
-static inline bool readValueArray(uqm::io::File& fp, uqstl::span<T> ar)
-{
-	assert(!ar.empty());
-	if constexpr (sizeof(T) == 1)
-	{
-		return fp.readExact(uqstl::as_writable_bytes(ar));
-	}
-	else
-	{
-		for (auto& v : ar)
-		{
-			if (!readValue<T>(fp, &v)) [[unlikely]]
-			{
-				return false;
-			}
-		}
+		out = static_cast<T>(raw);
 		return true;
 	}
-}
-
-static inline bool read_str(uqm::io::File& fp, uqstl::span<char> str)
-{
-	// no type conversion needed for strings
-	return readValueArray(fp, str);
-}
-
-template <typename T>
-static inline bool skipN(uqm::io::File& fp, uint16_t count)
-{
-	for (int i = 0; i < count; ++i)
+	else if (yyjson_is_uint(val))
 	{
-		if (!readValue<T>(fp, nullptr))
+		const uint64_t value {yyjson_get_uint(val)};
+		if (!uqstl::in_range<T>(value))
 		{
 			return false;
 		}
+		out = static_cast<T>(value);
+		return true;
 	}
-	return true;
+	else if (yyjson_is_sint(val))
+	{
+		const int64_t value {yyjson_get_sint(val)};
+		if (!uqstl::in_range<T>(value))
+		{
+			return false;
+		}
+		out = static_cast<T>(value);
+		return true;
+	}
+	return false;
 }
 
-
-static void
-LoadShipQueue(uqm::io::File& fh, QUEUE* pQueue, uint32_t size)
+// Reads values from a save game document. Logs the first error only.
+class SaveReader
 {
-	uint16_t num_links = size / 11;
-
-	while (num_links--)
+public:
+	bool ok() const
 	{
-		HSHIPFRAG hStarShip;
-		SHIP_FRAGMENT* FragPtr;
-		uint16_t Index;
+		return m_ok;
+	}
 
-		readValue(fh, &Index);
+	void fail(const char* key)
+	{
+		if (m_ok)
+		{
+			uqm::log::error("Save game: value '{}' is missing or not valid.", key);
+		}
+		m_ok = false;
+	}
 
-		hStarShip = CloneShipFragment((RACE_ID)Index, pQueue, 0);
-		FragPtr = LockShipFrag(pQueue, hStarShip);
+	template <typename T>
+	void get(yyjson_val* obj, const char* key, T& out)
+	{
+		if (!toInt(yyjson_obj_get(obj, key), out))
+		{
+			fail(key);
+		}
+	}
 
-		// Read SHIP_FRAGMENT elements
-		readValue(fh, &FragPtr->captains_name_index);
-		readValue(fh, &FragPtr->race_id);
-		readValue(fh, &FragPtr->index);
-		readValue(fh, &FragPtr->crew_level);
-		readValue(fh, &FragPtr->max_crew);
-		readValue(fh, &FragPtr->energy_level);
-		readValue(fh, &FragPtr->max_energy);
+	bool getBool(yyjson_val* obj, const char* key)
+	{
+		yyjson_val* val {yyjson_obj_get(obj, key)};
+		if (val && !yyjson_is_bool(val))
+		{
+			fail(key);
+		}
+		return yyjson_get_bool(val);
+	}
 
+	template <typename X, typename Y>
+	void getPoint(yyjson_val* obj, const char* key, X& x, Y& y)
+	{
+		yyjson_val* point {object(obj, key)};
+		get(point, "x", x);
+		get(point, "y", y);
+	}
+
+	template <typename W, typename H>
+	void getExtent(yyjson_val* obj, const char* key, W& width, H& height)
+	{
+		yyjson_val* extent {object(obj, key)};
+		get(extent, "width", width);
+		get(extent, "height", height);
+	}
+
+	// Returns the number of values read.
+	template <typename T>
+	size_t getArray(yyjson_val* obj, const char* key, uqstl::span<T> out)
+	{
+		yyjson_val* list {yyjson_obj_get(obj, key)};
+		if (!yyjson_is_arr(list) || yyjson_arr_size(list) > out.size())
+		{
+			fail(key);
+			return 0;
+		}
+
+		size_t index {};
+		size_t count {};
+		yyjson_val* val {};
+		yyjson_arr_foreach(list, index, count, val)
+		{
+			if (!toInt(val, out[index]))
+			{
+				fail(key);
+				return 0;
+			}
+		}
+		return count;
+	}
+
+	template <typename T>
+	void getFixedArray(yyjson_val* obj, const char* key, uqstl::span<T> out)
+	{
+		if (getArray(obj, key, out) != out.size())
+		{
+			fail(key);
+		}
+	}
+
+	void getString(yyjson_val* obj, const char* key, uqstl::span<char> out)
+	{
+		yyjson_val* val {yyjson_obj_get(obj, key)};
+		if (!yyjson_is_str(val))
+		{
+			fail(key);
+			return;
+		}
+		uqm::strncpy_safe(out, {yyjson_get_str(val), yyjson_get_len(val)});
+	}
+
+	yyjson_val* object(yyjson_val* obj, const char* key)
+	{
+		yyjson_val* val {yyjson_obj_get(obj, key)};
+		if (!yyjson_is_obj(val))
+		{
+			fail(key);
+			return nullptr;
+		}
+		return val;
+	}
+
+	// Returns nullptr if the array is not there.
+	yyjson_val* optionalArray(yyjson_val* obj, const char* key)
+	{
+		yyjson_val* val {yyjson_obj_get(obj, key)};
+		if (val && !yyjson_is_arr(val))
+		{
+			fail(key);
+			return nullptr;
+		}
+		return val;
+	}
+
+private:
+	bool m_ok {true};
+};
+
+void LoadShipFragment(SaveReader& reader, yyjson_val* obj, SHIP_FRAGMENT& frag)
+{
+	reader.get(obj, "captains_name_index", frag.captains_name_index);
+	reader.get(obj, "race_id", frag.race_id);
+	reader.get(obj, "index", frag.index);
+	reader.get(obj, "crew_level", frag.crew_level);
+	reader.get(obj, "max_crew", frag.max_crew);
+	reader.get(obj, "energy_level", frag.energy_level);
+	reader.get(obj, "max_energy", frag.max_energy);
+}
+
+void LoadIpGroup(SaveReader& reader, yyjson_val* obj, IP_GROUP& group)
+{
+	reader.get(obj, "group_counter", group.group_counter);
+	reader.get(obj, "race_id", group.race_id);
+	reader.get(obj, "sys_loc", group.sys_loc);
+	reader.get(obj, "task", group.task);
+	reader.get(obj, "in_system", group.in_system);
+	reader.get(obj, "dest_loc", group.dest_loc);
+	reader.get(obj, "orbit_pos", group.orbit_pos);
+	reader.get(obj, "group_id", group.group_id);
+	reader.getPoint(obj, "loc", group.loc.x, group.loc.y);
+}
+
+void LoadShipQueue(SaveReader& reader, yyjson_val* root, const char* key, QUEUE* pQueue)
+{
+	size_t index {};
+	size_t count {};
+	yyjson_val* item {};
+	yyjson_arr_foreach(reader.optionalArray(root, key), index, count, item)
+	{
+		uint16_t raceId {};
+		reader.get(item, "race_id", raceId);
+		const HSHIPFRAG hStarShip {reader.ok() ? CloneShipFragment(static_cast<RACE_ID>(raceId), pQueue, 0) : HSHIPFRAG {}};
+		if (!hStarShip)
+		{
+			reader.fail(key);
+			return;
+		}
+
+		SHIP_FRAGMENT* FragPtr {LockShipFrag(pQueue, hStarShip)};
+		LoadShipFragment(reader, item, *FragPtr);
 		UnlockShipFrag(pQueue, hStarShip);
 	}
 }
 
-static void
-LoadRaceQueue(uqm::io::File& fh, QUEUE* pQueue, uint32_t size)
+void LoadRaceQueue(SaveReader& reader, yyjson_val* root, QUEUE* pQueue)
 {
-	uint16_t num_links = size / 30;
-
-	while (num_links--)
+	size_t index {};
+	size_t count {};
+	yyjson_val* item {};
+	yyjson_arr_foreach(reader.optionalArray(root, "raceQueue"), index, count, item)
 	{
-		HFLEETINFO hStarShip;
-		FLEET_INFO* FleetPtr;
-		uint16_t Index;
+		uint16_t Index {};
+		reader.get(item, "Index", Index);
+		const HFLEETINFO hStarShip {reader.ok() ? GetStarShipFromIndex(pQueue, Index) : HFLEETINFO {}};
+		if (!hStarShip)
+		{
+			reader.fail("raceQueue");
+			return;
+		}
 
-		readValue(fh, &Index);
-
-		hStarShip = GetStarShipFromIndex(pQueue, Index);
-		FleetPtr = LockFleetInfo(pQueue, hStarShip);
-
-		// Read FLEET_INFO elements
-		readValue(fh, &FleetPtr->allied_state);
-
+		FLEET_INFO* FleetPtr {LockFleetInfo(pQueue, hStarShip)};
+		reader.get(item, "allied_state", FleetPtr->allied_state);
 		if (FleetPtr->allied_state > 2)
 		{
 			FleetPtr->allied_state = BAD_GUY;
 		}
-
-		readValue(fh, &FleetPtr->days_left);
-		readValue(fh, &FleetPtr->growth_fract);
-		readValue(fh, &FleetPtr->crew_level);
-		readValue(fh, &FleetPtr->max_crew);
-		readValue(fh, &FleetPtr->growth);
-		readValue(fh, &FleetPtr->max_energy);
-		readValue(fh, &FleetPtr->loc.x);
-		readValue(fh, &FleetPtr->loc.y);
-
-		readValue(fh, &FleetPtr->actual_strength);
-		readValue(fh, &FleetPtr->known_strength);
-		readValue(fh, &FleetPtr->known_loc.x);
-		readValue(fh, &FleetPtr->known_loc.y);
-		readValue(fh, &FleetPtr->growth_err_term);
-		readValue(fh, &FleetPtr->func_index);
-		readValue(fh, &FleetPtr->dest_loc.x);
-		readValue(fh, &FleetPtr->dest_loc.y);
-
+		reader.get(item, "days_left", FleetPtr->days_left);
+		reader.get(item, "growth_fract", FleetPtr->growth_fract);
+		reader.get(item, "crew_level", FleetPtr->crew_level);
+		reader.get(item, "max_crew", FleetPtr->max_crew);
+		reader.get(item, "growth", FleetPtr->growth);
+		reader.get(item, "max_energy", FleetPtr->max_energy);
+		reader.getPoint(item, "loc", FleetPtr->loc.x, FleetPtr->loc.y);
+		reader.get(item, "actual_strength", FleetPtr->actual_strength);
+		reader.get(item, "known_strength", FleetPtr->known_strength);
+		reader.getPoint(item, "known_loc", FleetPtr->known_loc.x, FleetPtr->known_loc.y);
+		reader.get(item, "growth_err_term", FleetPtr->growth_err_term);
+		reader.get(item, "func_index", FleetPtr->func_index);
+		reader.getPoint(item, "dest_loc", FleetPtr->dest_loc.x, FleetPtr->dest_loc.y);
 		UnlockFleetInfo(pQueue, hStarShip);
 	}
 }
 
-static void
-LoadGroupQueue(uqm::io::File& fh, QUEUE* pQueue, uint32_t size)
+void LoadGroupQueue(SaveReader& reader, yyjson_val* root, QUEUE* pQueue)
 {
-	uint16_t num_links = size / 13;
-
-	while (num_links--)
+	size_t index {};
+	size_t count {};
+	yyjson_val* item {};
+	yyjson_arr_foreach(reader.optionalArray(root, "ipGroupQueue"), index, count, item)
 	{
-		HIPGROUP hGroup;
-		IP_GROUP* GroupPtr;
-
-		hGroup = BuildGroup(pQueue, 0);
-		GroupPtr = LockIpGroup(pQueue, hGroup);
-
-		readValue(fh, &GroupPtr->group_counter);
-		readValue(fh, &GroupPtr->race_id);
-		readValue(fh, &GroupPtr->sys_loc);
-		readValue(fh, &GroupPtr->task);
-		readValue(fh, &GroupPtr->in_system); /* was crew_level */
-		readValue(fh, &GroupPtr->dest_loc);
-		readValue(fh, &GroupPtr->orbit_pos);
-		readValue(fh, &GroupPtr->group_id); /* was max_energy */
-		readValue(fh, &GroupPtr->loc.x);
-		readValue(fh, &GroupPtr->loc.y);
-
+		const HIPGROUP hGroup {BuildGroup(pQueue, 0)};
+		IP_GROUP* GroupPtr {LockIpGroup(pQueue, hGroup)};
+		LoadIpGroup(reader, item, *GroupPtr);
 		UnlockIpGroup(pQueue, hGroup);
 	}
 }
 
-static void
-LoadEncounter(ENCOUNTER* EncounterPtr, uqm::io::File& fh, bool try_core)
+void LoadEncounter(SaveReader& reader, yyjson_val* obj, ENCOUNTER& encounter)
 {
-	uint16_t i;
+	encounter.pred = 0;
+	encounter.succ = 0;
+	encounter.hElement = 0;
+	reader.get(obj, "transition_state", encounter.transition_state);
+	reader.getPoint(obj, "origin", encounter.origin.x, encounter.origin.y);
+	reader.get(obj, "radius", encounter.radius);
+	reader.getPoint(obj, "loc_pt", encounter.loc_pt.x, encounter.loc_pt.y);
+	reader.get(obj, "race_id", encounter.race_id);
+	reader.get(obj, "flags", encounter.flags);
 
-	EncounterPtr->pred = 0;
-	EncounterPtr->succ = 0;
-	EncounterPtr->hElement = 0;
-	readValue(fh, &EncounterPtr->transition_state);
-	readValue(fh, &EncounterPtr->origin.x);
-	readValue(fh, &EncounterPtr->origin.y);
-	readValue(fh, &EncounterPtr->radius);
-	// former STAR_DESC fields
-	readValue(fh, &EncounterPtr->loc_pt.x);
-	readValue(fh, &EncounterPtr->loc_pt.y);
-	readValue(fh, &EncounterPtr->race_id);
-	readValue(fh, &EncounterPtr->num_ships);
-	readValue(fh, &EncounterPtr->flags);
-
-	// Load each entry in the BRIEF_SHIP_INFO array
-	for (i = 0; i < MAX_HYPER_SHIPS; i++)
+	yyjson_val* ships {yyjson_obj_get(obj, "ships")};
+	if (!yyjson_is_arr(ships) || yyjson_arr_size(ships) > MAX_HYPER_SHIPS)
 	{
-		BRIEF_SHIP_INFO* ShipInfo = &EncounterPtr->ShipList[i];
-
-		readValue(fh, &ShipInfo->race_id);
-		readValue(fh, &ShipInfo->crew_level);
-		readValue(fh, &ShipInfo->max_crew);
-		readValue(fh, &ShipInfo->max_energy);
+		reader.fail("ships");
+		return;
+	}
+	encounter.num_ships = static_cast<uint8_t>(yyjson_arr_size(ships));
+	size_t index {};
+	size_t count {};
+	yyjson_val* ship {};
+	yyjson_arr_foreach(ships, index, count, ship)
+	{
+		BRIEF_SHIP_INFO& ShipInfo {encounter.ShipList[index]};
+		reader.get(ship, "race_id", ShipInfo.race_id);
+		reader.get(ship, "crew_level", ShipInfo.crew_level);
+		reader.get(ship, "max_crew", ShipInfo.max_crew);
+		reader.get(ship, "max_energy", ShipInfo.max_energy);
 	}
 
-	// Load the stuff after the BRIEF_SHIP_INFO array
-	readValue(fh, &EncounterPtr->log_x);
-	readValue(fh, &EncounterPtr->log_y);
+	reader.getPoint(obj, "log", encounter.log_x, encounter.log_y);
+	// Let's make savegames work even between different resolution modes.
+	encounter.log_x <<= RESOLUTION_FACTOR;
+	encounter.log_y <<= RESOLUTION_FACTOR;
+}
 
-	if (try_core)
-	{ // Use old Log X to Universe code to get proper coordinates from core saves
-		EncounterPtr->log_x = RES_SCALE(UNIVERSE_TO_LOGX(oldLogxToUniverse(EncounterPtr->log_x)));
-		EncounterPtr->log_y = RES_SCALE(UNIVERSE_TO_LOGY(oldLogyToUniverse(EncounterPtr->log_y)));
-	}
-	else
-	{ // JMS: Let's make savegames work even between different resolution modes.
-		EncounterPtr->log_x <<= RESOLUTION_FACTOR;
-		EncounterPtr->log_y <<= RESOLUTION_FACTOR;
+void LoadEncounters(SaveReader& reader, yyjson_val* root)
+{
+	size_t index {};
+	size_t count {};
+	yyjson_val* item {};
+	yyjson_arr_foreach(reader.optionalArray(root, "encounters"), index, count, item)
+	{
+		const HENCOUNTER hEncounter {AllocEncounter()};
+		ENCOUNTER* EncounterPtr {};
+		LockEncounter(hEncounter, &EncounterPtr);
+		*EncounterPtr = ENCOUNTER {};
+		LoadEncounter(reader, item, *EncounterPtr);
+		UnlockEncounter(hEncounter);
+		PutEncounter(hEncounter);
 	}
 }
 
-static void
-LoadEvent(EVENT* EventPtr, uqm::io::File& fh)
+void LoadEvents(SaveReader& reader, yyjson_val* root)
 {
-	EventPtr->pred = 0;
-	EventPtr->succ = 0;
-	readValue(fh, &EventPtr->day_index);
-	readValue(fh, &EventPtr->month_index);
-	readValue(fh, &EventPtr->year_index);
-	readValue(fh, &EventPtr->func_index);
+	size_t index {};
+	size_t count {};
+	yyjson_val* item {};
+	yyjson_arr_foreach(reader.optionalArray(root, "events"), index, count, item)
+	{
+		const HEVENT hEvent {AllocEvent()};
+		EVENT* EventPtr {};
+		bool DeCleanse {false};
+		LockEvent(hEvent, &EventPtr);
+
+		EventPtr->pred = 0;
+		EventPtr->succ = 0;
+		reader.get(item, "day_index", EventPtr->day_index);
+		reader.get(item, "month_index", EventPtr->month_index);
+		reader.get(item, "year_index", EventPtr->year_index);
+		reader.get(item, "func_index", EventPtr->func_index);
+
+#ifdef DEBUG_LOAD
+		uqm::log::debug("\t{}/{}/{} -- {}",
+						EventPtr->month_index,
+						EventPtr->day_index,
+						EventPtr->year_index,
+						EventPtr->func_index);
+#endif /* DEBUG_LOAD */
+		if (uqm::UQMOptions::read().deCleansing && EventPtr->func_index == KOHR_AH_VICTORIOUS_EVENT)
+		{
+			UnlockEvent(hEvent);
+			uqm::log::debug("EventPtr->year_index: {}\n", EventPtr->year_index);
+
+			if (EventPtr->year_index == 2158)
+			{
+				FreeEvent(hEvent);
+				DeCleanse = true;
+			}
+			continue;
+		}
+
+		UnlockEvent(hEvent);
+		PutEvent(hEvent);
+
+		if (uqm::UQMOptions::read().deCleansing && DeCleanse)
+		{
+			AddEvent(ABSOLUTE_EVENT, 2, 17, START_YEAR + YEARS_TO_KOHRAH_VICTORY,
+					 KOHR_AH_VICTORIOUS_EVENT);
+		}
+	}
 }
 
-static void
-LoadClockState(CLOCK_STATE* ClockPtr, uqm::io::File& fh)
+void LoadClockState(SaveReader& reader, yyjson_val* obj, CLOCK_STATE& clock)
 {
-	readValue(fh, &ClockPtr->day_index);
-	readValue(fh, &ClockPtr->month_index);
-	readValue(fh, &ClockPtr->year_index);
-	readValue(fh, &ClockPtr->tick_count);
-	readValue(fh, &ClockPtr->day_in_ticks);
+	yyjson_val* clockObj {reader.object(obj, "GameClock")};
+	reader.get(clockObj, "day_index", clock.day_index);
+	reader.get(clockObj, "month_index", clock.month_index);
+	reader.get(clockObj, "year_index", clock.year_index);
+	reader.get(clockObj, "tick_count", clock.tick_count);
+	reader.get(clockObj, "day_in_ticks", clock.day_in_ticks);
 }
 
-static bool
-LoadGameState(GAME_STATE* GSPtr, uqm::io::File& fh, bool try_core)
+// A game state that is not in the file is set to 0.
+void LoadGameStateFlags(SaveReader& reader, yyjson_val* root)
 {
-	uint32_t magic;
-	legacySave = try_core;
-	readValue(fh, &magic);
-	if (magic != GLOBAL_STATE_TAG)
+	yyjson_val* flags {reader.object(root, "gameState")};
+	for (const GameStateBitMap* bm {gameStateBitMap}; bm->name || bm->numBits; ++bm)
 	{
-		return false;
+		if (!bm->name)
+		{
+			continue;
+		}
+
+		uint32_t value {};
+		yyjson_val* val {yyjson_obj_get(flags, bm->name)};
+		if (val && !toInt(val, value))
+		{
+			reader.fail(bm->name);
+		}
+		setGameStateUint(bm->name, value);
 	}
-	readValue(fh, &magic);
-	if (magic != 75)
-	{
-		/* Chunk is the wrong size. */
-		return false;
-	}
-	readValue(fh, &GSPtr->glob_flags);
-	readValue(fh, &GSPtr->CrewCost);
-	readValue(fh, &GSPtr->FuelCost);
+}
 
-	readValueArray<uint8_t>(fh, GSPtr->ModuleCost);
-	readValueArray<uint8_t>(fh, GSPtr->ElementWorth);
-	readValue(fh, &GSPtr->CurrentActivity);
-
-	LoadClockState(&GSPtr->GameClock, fh);
-
-	readValue(fh, &GSPtr->autopilot.x);
-	readValue(fh, &GSPtr->autopilot.y);
-	readValue(fh, &GSPtr->ip_location.x);
-	readValue(fh, &GSPtr->ip_location.y);
-	/* STAMP ShipStamp */
-	readValue(fh, &GSPtr->ShipStamp.origin.x);
-	readValue(fh, &GSPtr->ShipStamp.origin.y);
-	readValue(fh, &GSPtr->ShipFacing);
-	readValue(fh, &GSPtr->ip_planet);
-	readValue(fh, &GSPtr->in_orbit);
+void LoadGameState(SaveReader& reader, yyjson_val* root, GAME_STATE& GS)
+{
+	yyjson_val* state {reader.object(root, "globalState")};
+	reader.get(state, "glob_flags", GS.glob_flags);
+	reader.get(state, "CrewCost", GS.CrewCost);
+	reader.get(state, "FuelCost", GS.FuelCost);
+	reader.getFixedArray<uint8_t>(state, "ModuleCost", GS.ModuleCost);
+	reader.getFixedArray<uint8_t>(state, "ElementWorth", GS.ElementWorth);
+	reader.get(state, "CurrentActivity", GS.CurrentActivity);
+	LoadClockState(reader, state, GS.GameClock);
+	reader.getPoint(state, "autopilot", GS.autopilot.x, GS.autopilot.y);
+	reader.getPoint(state, "ip_location", GS.ip_location.x, GS.ip_location.y);
+	reader.getPoint(state, "ShipOrigin", GS.ShipStamp.origin.x, GS.ShipStamp.origin.y);
+	reader.get(state, "ShipFacing", GS.ShipFacing);
+	reader.get(state, "ip_planet", GS.ip_planet);
+	reader.get(state, "in_orbit", GS.in_orbit);
 
 	// Let's make savegames work even between different resolution modes.
-	GSPtr->ShipStamp.origin.x <<= RESOLUTION_FACTOR;
-	GSPtr->ShipStamp.origin.y <<= RESOLUTION_FACTOR;
+	GS.ShipStamp.origin.x <<= RESOLUTION_FACTOR;
+	GS.ShipStamp.origin.y <<= RESOLUTION_FACTOR;
 
-	/* VELOCITY_DESC velocity */
-	readValue(fh, &GSPtr->velocity.TravelAngle);
-	readValue(fh, &GSPtr->velocity.vector.width);
-	readValue(fh, &GSPtr->velocity.vector.height);
-	readValue(fh, &GSPtr->velocity.fract.width);
-	readValue(fh, &GSPtr->velocity.fract.height);
-	readValue(fh, &GSPtr->velocity.error.width);
-	readValue(fh, &GSPtr->velocity.error.height);
-	readValue(fh, &GSPtr->velocity.incr.width);
-	readValue(fh, &GSPtr->velocity.incr.height);
+	VELOCITY_DESC& velocity {GS.velocity};
+	yyjson_val* velocityObj {reader.object(state, "velocity")};
+	reader.get(velocityObj, "TravelAngle", velocity.TravelAngle);
+	reader.getExtent(velocityObj, "vector", velocity.vector.width, velocity.vector.height);
+	reader.getExtent(velocityObj, "fract", velocity.fract.width, velocity.fract.height);
+	reader.getExtent(velocityObj, "error", velocity.error.width, velocity.error.height);
+	reader.getExtent(velocityObj, "incr", velocity.incr.width, velocity.incr.height);
 
-	if (lowByte(GSPtr->CurrentActivity) != IN_INTERPLANETARY)
+	if (lowByte(GS.CurrentActivity) != IN_INTERPLANETARY)
 	{ // Let's make savegames work even between different resolution modes.
-		GSPtr->velocity.vector.width <<= RESOLUTION_FACTOR;
-		GSPtr->velocity.vector.height <<= RESOLUTION_FACTOR;
-		GSPtr->velocity.fract.width <<= RESOLUTION_FACTOR;
-		GSPtr->velocity.fract.height <<= RESOLUTION_FACTOR;
-		GSPtr->velocity.error.width <<= RESOLUTION_FACTOR;
-		GSPtr->velocity.error.height <<= RESOLUTION_FACTOR;
-		GSPtr->velocity.incr.width <<= RESOLUTION_FACTOR;
-		GSPtr->velocity.incr.height <<= RESOLUTION_FACTOR;
+		velocity.vector.width <<= RESOLUTION_FACTOR;
+		velocity.vector.height <<= RESOLUTION_FACTOR;
+		velocity.fract.width <<= RESOLUTION_FACTOR;
+		velocity.fract.height <<= RESOLUTION_FACTOR;
+		velocity.error.width <<= RESOLUTION_FACTOR;
+		velocity.error.height <<= RESOLUTION_FACTOR;
+		velocity.incr.width <<= RESOLUTION_FACTOR;
+		velocity.incr.height <<= RESOLUTION_FACTOR;
 	}
 
-	readValue(fh, &magic);
-	if (magic != GAME_STATE_TAG)
-	{
-		return false;
-	}
-	{
-		uint8_t* buf;
-		bool result;
-		int rev;
-		size_t gameStateByteCount;
-
-		readValue(fh, &magic);
-		rev = (try_core ? 0 : getGameStateRevByBytes(gameStateBitMap, magic));
-		gameStateByteCount = (totalBitsForGameState(gameStateBitMap, rev) + 7) >> 3;
-
-		if (rev < 0 || magic < gameStateByteCount)
-		{
-			uqm::log::error("Warning: Savegame is corrupt: saved game "
-							"state is too small.");
-			return false;
-		}
-
-		uqm::log::debug("Detected save game state rev {}: {}",
-						rev, gameStateBitMapRevTag[rev]);
-
-		buf = (uint8_t*)HMalloc(gameStateByteCount);
-		if (buf == nullptr)
-		{
-			uqm::log::error("Warning: Cannot allocate enough bytes for "
-							"the saved game state ({} bytes).",
-							(unsigned long)gameStateByteCount);
-			return false;
-		}
-
-		readValueArray<uint8_t>(fh, {buf, (uint16_t)gameStateByteCount});
-		result = deserialiseGameState(gameStateBitMap, buf, gameStateByteCount, rev);
-		HFree(buf);
-		if (result == false)
-		{
-			// An error message is already printed.
-			return false;
-		}
-
-		if (rev < 2)
-		{
-			GSPtr->glob_flags = NUM_READ_SPEEDS >> 1;
-		}
-
-		if (rev < 3)
-		{
-			ZeroLastLoc();
-		}
-
-		if (rev < 4)
-		{
-			ZeroAdvancedAutoPilot();
-			ZeroAdvancedQuasiPilot();
-		}
-
-		if (magic > gameStateByteCount)
-		{
-			skipN<uint8_t>(fh, (uint16_t)(magic - gameStateByteCount));
-		}
-	}
-	return true;
+	LoadGameStateFlags(reader, root);
 }
 
-static bool
-LoadSisState(SIS_STATE* SSPtr, uqm::io::File& fp, bool try_core,
-			 int legacyMM)
+void LoadSisState(SaveReader& reader, yyjson_val* obj, SIS_STATE& SS)
 {
-	uint16_t SisNameSize = (legacyMM == 1 || try_core) ?
-							   LEGACY_SIS_NAME_SIZE :
-							   SIS_NAME_SIZE;
+	yyjson_val* sis {reader.object(obj, "sis")};
+	reader.getPoint(sis, "log", SS.log_x, SS.log_y);
+	reader.get(sis, "ResUnits", SS.ResUnits);
+	reader.get(sis, "FuelOnBoard", SS.FuelOnBoard);
+	reader.get(sis, "CrewEnlisted", SS.CrewEnlisted);
+	reader.get(sis, "TotalElementMass", SS.TotalElementMass);
+	reader.get(sis, "TotalBioMass", SS.TotalBioMass);
+	reader.getFixedArray<uint8_t>(sis, "ModuleSlots", SS.ModuleSlots);
+	reader.getFixedArray<uint8_t>(sis, "DriveSlots", SS.DriveSlots);
+	reader.getFixedArray<uint8_t>(sis, "JetSlots", SS.JetSlots);
+	reader.get(sis, "NumLanders", SS.NumLanders);
+	reader.getFixedArray<uint16_t>(sis, "ElementAmounts", SS.ElementAmounts);
+	reader.getString(sis, "ShipName", SS.ShipName);
+	reader.getString(sis, "CommanderName", SS.CommanderName);
+	reader.getString(sis, "PlanetName", SS.PlanetName);
+	reader.get(sis, "Difficulty", SS.Difficulty);
+	reader.get(sis, "Extended", SS.Extended);
+	reader.get(sis, "Nomad", SS.Nomad);
+	reader.get(sis, "Seed", SS.Seed);
+	reader.get(sis, "ShipSeed", SS.ShipSeed);
 
-	if (readValue(fp, &SSPtr->log_x) == false
-		|| readValue(fp, &SSPtr->log_y) == false
-		|| readValue(fp, &SSPtr->ResUnits) == false
-		|| readValue(fp, &SSPtr->FuelOnBoard) == false
-		|| readValue(fp, &SSPtr->CrewEnlisted) == false
-		|| readValue(fp, &SSPtr->TotalElementMass) == false
-		|| readValue(fp, &SSPtr->TotalBioMass) == false
-		|| readValueArray<uint8_t>(fp, SSPtr->ModuleSlots) == false
-		|| readValueArray<uint8_t>(fp, SSPtr->DriveSlots) == false
-		|| readValueArray<uint8_t>(fp, SSPtr->JetSlots) == false
-		|| readValue(fp, &SSPtr->NumLanders) == false
-		|| readValueArray<uint16_t>(fp, SSPtr->ElementAmounts) == false
-		|| read_str(fp, SSPtr->ShipName) == false
-		|| read_str(fp, SSPtr->CommanderName) == false
-		|| read_str(fp, SSPtr->PlanetName) == false
-		|| (!try_core && (readValue(fp, &SSPtr->Difficulty) == false))
-		|| (!try_core && (readValue(fp, &SSPtr->Extended) == false))
-		|| (!try_core && (readValue(fp, &SSPtr->Nomad) == false))
-		|| (!try_core && (readValue(fp, &SSPtr->Seed) == false))
-		|| (!try_core && !(legacyMM > 0) && (readValue(fp, &SSPtr->ShipSeed) == false)))
-	{
-		return false;
-	}
-	else
-	{
-		if (try_core)
-		{ // Use old Log X to Universe code to get proper coordinates from core saves
-			SSPtr->log_x = UNIVERSE_TO_LOGX(oldLogxToUniverse(SSPtr->log_x));
-			SSPtr->log_y = UNIVERSE_TO_LOGY(oldLogyToUniverse(SSPtr->log_y));
-		}
-		else
-		{ // JMS: Let's make savegames work even between different resolution modes.
-			SSPtr->log_x <<= RESOLUTION_FACTOR;
-			SSPtr->log_y <<= RESOLUTION_FACTOR;
-		}
-		return true;
-	}
+	// JMS: Let's make savegames work even between different resolution modes.
+	SS.log_x <<= RESOLUTION_FACTOR;
+	SS.log_y <<= RESOLUTION_FACTOR;
 }
 
-static bool
-LoadSummary(SUMMARY_DESC* SummPtr, uqm::io::File& fp, bool try_core)
+void LoadSummary(SaveReader& reader, yyjson_val* root, SUMMARY_DESC& Summ)
 {
-	uint32_t magic;
-	uint32_t magicTag = try_core ? SAVEFILE_TAG : MMV4_TAG;
-	uint32_t nameSize = 0;
-	int legacyMM = false;
-	if (!readValue(fp, &magic))
-	{
-		return false;
-	}
-	if (magic == magicTag || magic == MEGA_TAG || magic == MMV3_TAG)
-	{
-		legacyMM = magic == MEGA_TAG ? 1 : magic == MMV3_TAG ? 2 :
-															   0;
+	yyjson_val* summary {reader.object(root, "summary")};
+	reader.getString(summary, "SaveName", Summ.SaveName);
+	reader.get(summary, "Activity", Summ.Activity);
+	reader.get(summary, "Flags", Summ.Flags);
+	reader.get(summary, "day_index", Summ.day_index);
+	reader.get(summary, "month_index", Summ.month_index);
+	reader.get(summary, "year_index", Summ.year_index);
+	reader.get(summary, "MCreditLo", Summ.MCreditLo);
+	reader.get(summary, "MCreditHi", Summ.MCreditHi);
+	Summ.NumShips = static_cast<uint8_t>(reader.getArray<uint8_t>(summary, "ShipList", Summ.ShipList));
+	Summ.NumDevices = static_cast<uint8_t>(reader.getArray<uint8_t>(summary, "DeviceList", Summ.DeviceList));
+	reader.get(summary, "res_factor", Summ.res_factor);
+	LoadSisState(reader, summary, Summ.SS);
 
-		if (!readValue(fp, &magic) || magic != SUMMARY_TAG)
-		{
-			return false;
-		}
-		if (!readValue(fp, &magic) || magic < 160)
-		{
-			return false;
-		}
-		nameSize = magic - 160;
-	}
-	else
-	{
-		return false;
-	}
-
-	if (!LoadSisState(&SummPtr->SS, fp, try_core, legacyMM))
-	{
-		return false;
-	}
-
-	SummPtr->SS.SaveVersion = 0;
-
-	if (try_core)
-	{ // Sanitize seed, difficulty, extended, and nomad variables
-		SummPtr->SS.Difficulty = uqm::Difficulty::Normal;
-		SummPtr->SS.Seed = 0;
-		SummPtr->SS.Extended = 0;
-		SummPtr->SS.Nomad = uqm::NomadMode::Off;
-		SummPtr->SS.SaveVersion = 1;
-	}
-	if (try_core || legacyMM > 0)
-	{
-		SummPtr->SS.ShipSeed = 0;
-	}
-
-	if (readValue(fp, &SummPtr->Activity) == false
-		|| readValue(fp, &SummPtr->Flags) == false
-		|| readValue(fp, &SummPtr->day_index) == false
-		|| readValue(fp, &SummPtr->month_index) == false
-		|| readValue(fp, &SummPtr->year_index) == false
-		|| readValue(fp, &SummPtr->MCreditLo) == false
-		|| readValue(fp, &SummPtr->MCreditHi) == false
-		|| readValue(fp, &SummPtr->NumShips) == false
-		|| readValue(fp, &SummPtr->NumDevices) == false
-		|| readValueArray<uint8_t>(fp, SummPtr->ShipList) == false
-		|| readValueArray<uint8_t>(fp, SummPtr->DeviceList) == false
-		|| (!try_core && (readValue(fp, &SummPtr->res_factor) == false)))
-	{
-		return false;
-	}
-
-	IndependantResFactor = !try_core ? SummPtr->res_factor : 0;
-
-	if (nameSize < SAVE_NAME_SIZE)
-	{
-		if (!readValueArray<char>(fp, {SummPtr->SaveName, nameSize}))
-		{
-			return false;
-		}
-		SummPtr->SaveName[nameSize] = 0;
-	}
-	else
-	{
-		uint32_t remaining = nameSize - SAVE_NAME_SIZE + 1;
-		if (!readValueArray<char>(fp, {SummPtr->SaveName, SAVE_NAME_SIZE - 1}))
-		{
-			return false;
-		}
-		SummPtr->SaveName[SAVE_NAME_SIZE - 1] = 0;
-		if (!skipN<char>(fp, remaining))
-		{
-			return false;
-		}
-	}
-	return true;
+	// Core UQM saves converted to this format set "coreSave".
+	Summ.SS.SaveVersion = reader.getBool(summary, "coreSave") ? 1 : 0;
+	IndependantResFactor = Summ.res_factor;
 }
 
-static void
-LoadStarDesc(STAR_DESC* SDPtr, uqm::io::File& fh)
+void LoadStarDesc(SaveReader& reader, yyjson_val* root, STAR_DESC& SD)
 {
-	readValue(fh, &SDPtr->star_pt.x);
-	readValue(fh, &SDPtr->star_pt.y);
-	readValue(fh, &SDPtr->Type);
-	readValue(fh, &SDPtr->Index);
-	readValue(fh, &SDPtr->Prefix);
-	readValue(fh, &SDPtr->Postfix);
+	yyjson_val* star {reader.object(root, "starDesc")};
+	reader.getPoint(star, "star_pt", SD.star_pt.x, SD.star_pt.y);
+	reader.get(star, "Type", SD.Type);
+	reader.get(star, "Index", SD.Index);
+	reader.get(star, "Prefix", SD.Prefix);
+	reader.get(star, "Postfix", SD.Postfix);
 }
 
-static void
-LoadScanInfo(uqm::io::File& fh, uint32_t flen)
+void LoadScanInfo(SaveReader& reader, yyjson_val* root)
 {
-	GAME_STATE_FILE* fp = OpenStateFile(STARINFO_FILE, "wb");
+	yyjson_val* list {reader.optionalArray(root, "starInfo")};
+	if (!list)
+	{
+		return;
+	}
+
+	GAME_STATE_FILE* fp {OpenStateFile(STARINFO_FILE, "wb")};
 	if (fp)
 	{
-		while (flen)
+		size_t index {};
+		size_t count {};
+		yyjson_val* item {};
+		yyjson_arr_foreach(list, index, count, item)
 		{
-			uint32_t val;
-			readValue(fh, &val);
+			uint32_t val {};
+			if (!toInt(item, val))
+			{
+				reader.fail("starInfo");
+			}
 			swrite_32(fp, val);
-			flen -= 4;
 		}
 		CloseStateFile(fp);
 	}
 }
 
-static void
-LoadGroupList(uqm::io::File& fh, uint32_t chunksize)
+void LoadGroupList(SaveReader& reader, yyjson_val* groupList)
 {
-	GAME_STATE_FILE* fp = OpenStateFile(RANDGRPINFO_FILE, "rb");
+	GAME_STATE_FILE* fp {OpenStateFile(RANDGRPINFO_FILE, "rb")};
 	if (fp)
 	{
 		GROUP_HEADER h;
-		uint8_t LastEnc, NumGroups;
-		int i;
+		uint8_t LastEnc {};
 		ReadGroupHeader(fp, &h);
 		/* There's only supposed to be one of these, so group 0 should be
 		 * zero here whenever we're here. We add the group list to the
@@ -613,25 +590,27 @@ LoadGroupList(uqm::io::File& fh, uint32_t chunksize)
 		SeekStateFile(fp, 0, SEEK_SET);
 		WriteGroupHeader(fp, &h);
 		SeekStateFile(fp, h.GroupOffset[0], SEEK_SET);
-		readValue(fh, &LastEnc);
-		NumGroups = (chunksize - 1) / 14;
-		swrite_8(fp, LastEnc);
-		swrite_8(fp, NumGroups);
-		for (i = 0; i < NumGroups; ++i)
+
+		reader.get(groupList, "LastEnc", LastEnc);
+		yyjson_val* groups {yyjson_obj_get(groupList, "groups")};
+		if (!yyjson_is_arr(groups) || yyjson_arr_size(groups) > UINT8_MAX)
 		{
-			uint8_t race_outer;
-			IP_GROUP ip;
-			readValue(fh, &race_outer);
-			readValue(fh, &ip.group_counter);
-			readValue(fh, &ip.race_id);
-			readValue(fh, &ip.sys_loc);
-			readValue(fh, &ip.task);
-			readValue(fh, &ip.in_system);
-			readValue(fh, &ip.dest_loc);
-			readValue(fh, &ip.orbit_pos);
-			readValue(fh, &ip.group_id);
-			readValue(fh, &ip.loc.x);
-			readValue(fh, &ip.loc.y);
+			reader.fail("groups");
+			CloseStateFile(fp);
+			return;
+		}
+		swrite_8(fp, LastEnc);
+		swrite_8(fp, static_cast<uint8_t>(yyjson_arr_size(groups)));
+
+		size_t index {};
+		size_t count {};
+		yyjson_val* item {};
+		yyjson_arr_foreach(groups, index, count, item)
+		{
+			uint8_t race_outer {};
+			IP_GROUP ip {};
+			reader.get(item, "race_outer", race_outer);
+			LoadIpGroup(reader, item, ip);
 
 			swrite_8(fp, race_outer);
 			WriteIpGroup(fp, &ip);
@@ -640,8 +619,7 @@ LoadGroupList(uqm::io::File& fh, uint32_t chunksize)
 	}
 }
 
-static void
-SetBattleGroupOffset(int encounterIndex, uint32_t offset)
+void SetBattleGroupOffset(int encounterIndex, uint32_t offset)
 {
 	// The reason for this switch, even though the group offsets are
 	// successive, is because SET_GAME_STATE is a #define, which stringizes
@@ -697,24 +675,20 @@ SetBattleGroupOffset(int encounterIndex, uint32_t offset)
 	}
 }
 
-static void
-LoadBattleGroup(uqm::io::File& fh, uint32_t chunksize)
+void LoadBattleGroup(SaveReader& reader, yyjson_val* battleGroup)
 {
-	GAME_STATE_FILE* fp;
-	GROUP_HEADER h;
-	uint32_t encounter, offset;
-	uint8_t current;
-	int i;
+	GAME_STATE_FILE* fp {};
+	GROUP_HEADER h {};
+	uint32_t encounter {};
+	uint32_t offset {};
+	bool current {reader.getBool(battleGroup, "current")};
 
-	readValue(fh, &encounter);
-	readValue(fh, &current);
-	chunksize -= 5;
+	reader.get(battleGroup, "encounter", encounter);
 	if (encounter)
 	{
 		/* This is a defined group, so it's new */
 		fp = OpenStateFile(DEFGRPINFO_FILE, "rb");
-		offset = LengthStateFile(fp);
-		memset(&h, 0, sizeof(GROUP_HEADER));
+		offset = fp ? LengthStateFile(fp) : 0;
 	}
 	else
 	{
@@ -722,48 +696,62 @@ LoadBattleGroup(uqm::io::File& fh, uint32_t chunksize)
 		 * as we might have already seen the Group List. */
 		fp = OpenStateFile(RANDGRPINFO_FILE, "rb");
 		current = false;
-		offset = 0;
-		ReadGroupHeader(fp, &h);
+		if (fp)
+		{
+			ReadGroupHeader(fp, &h);
+		}
 	}
 	if (!fp)
 	{
-		skipN<char>(fh, chunksize);
 		return;
 	}
-	readValue(fh, &h.star_index);
-	readValue(fh, &h.day_index);
-	readValue(fh, &h.month_index);
-	readValue(fh, &h.year_index);
-	readValue(fh, &h.NumGroups);
-	chunksize -= 7;
+
+	yyjson_val* groups {yyjson_obj_get(battleGroup, "groups")};
+	if (!yyjson_is_arr(groups) || yyjson_arr_size(groups) > NUM_SAVED_BATTLE_GROUPS)
+	{
+		reader.fail("groups");
+		CloseStateFile(fp);
+		return;
+	}
+	reader.get(battleGroup, "star_index", h.star_index);
+	reader.get(battleGroup, "day_index", h.day_index);
+	reader.get(battleGroup, "month_index", h.month_index);
+	reader.get(battleGroup, "year_index", h.year_index);
+	h.NumGroups = static_cast<uint8_t>(yyjson_arr_size(groups));
+
 	/* Write out the half-finished state file so that we can use
 	 * the file size to compute group offsets */
 	SeekStateFile(fp, offset, SEEK_SET);
 	WriteGroupHeader(fp, &h);
-	for (i = 1; i <= h.NumGroups; ++i)
+
+	size_t index {};
+	size_t count {};
+	yyjson_val* group {};
+	yyjson_arr_foreach(groups, index, count, group)
 	{
-		int j;
-		uint8_t icon, NumShips;
-		readValue(fh, &icon);
-		readValue(fh, &NumShips);
-		chunksize -= 2;
-		h.GroupOffset[i] = LengthStateFile(fp);
-		SeekStateFile(fp, h.GroupOffset[i], SEEK_SET);
-		swrite_8(fp, icon);
-		swrite_8(fp, NumShips);
-		for (j = 0; j < NumShips; ++j)
+		uint8_t icon {};
+		reader.get(group, "icon", icon);
+		yyjson_val* ships {yyjson_obj_get(group, "ships")};
+		if (!yyjson_is_arr(ships) || yyjson_arr_size(ships) > UINT8_MAX)
 		{
-			uint8_t race_outer;
-			SHIP_FRAGMENT sf;
-			readValue(fh, &race_outer);
-			readValue(fh, &sf.captains_name_index);
-			readValue(fh, &sf.race_id);
-			readValue(fh, &sf.index);
-			readValue(fh, &sf.crew_level);
-			readValue(fh, &sf.max_crew);
-			readValue(fh, &sf.energy_level);
-			readValue(fh, &sf.max_energy);
-			chunksize -= 10;
+			reader.fail("ships");
+			break;
+		}
+
+		h.GroupOffset[index + 1] = LengthStateFile(fp);
+		SeekStateFile(fp, h.GroupOffset[index + 1], SEEK_SET);
+		swrite_8(fp, icon);
+		swrite_8(fp, static_cast<uint8_t>(yyjson_arr_size(ships)));
+
+		size_t shipIndex {};
+		size_t shipCount {};
+		yyjson_val* ship {};
+		yyjson_arr_foreach(ships, shipIndex, shipCount, ship)
+		{
+			uint8_t race_outer {};
+			SHIP_FRAGMENT sf {};
+			reader.get(ship, "race_outer", race_outer);
+			LoadShipFragment(reader, ship, sf);
 
 			swrite_8(fp, race_outer);
 			WriteShipFragment(fp, &sf);
@@ -783,90 +771,84 @@ LoadBattleGroup(uqm::io::File& fh, uint32_t chunksize)
 			GLOBAL(BattleGroupRef) = offset;
 		}
 	}
-	/* Consistency check. */
-	if (chunksize)
+}
+
+void LoadGroups(SaveReader& reader, yyjson_val* root)
+{
+	yyjson_val* groupList {yyjson_obj_get(root, "groupList")};
+	yyjson_val* battleGroups {reader.optionalArray(root, "battleGroups")};
+	if (!groupList && !battleGroups)
 	{
-		uqm::log::warn("BattleGroup chunk mis-sized!");
+		return;
+	}
+
+	InitGroupInfo(true);
+	GLOBAL(BattleGroupRef) = 0;
+	if (groupList)
+	{
+		if (!yyjson_is_obj(groupList))
+		{
+			reader.fail("groupList");
+			return;
+		}
+		LoadGroupList(reader, groupList);
+	}
+
+	size_t index {};
+	size_t count {};
+	yyjson_val* battleGroup {};
+	yyjson_arr_foreach(battleGroups, index, count, battleGroup)
+	{
+		LoadBattleGroup(reader, battleGroup);
 	}
 }
 
-bool LoadCoreGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
+} // namespace
+
+bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
 {
-	uqstl::optional<uqm::io::File> in_fp {};
-	char file[PATH_MAX] {};
-	SUMMARY_DESC loc_sd;
-
-	fmt::format_to_n(file, sizeof(file) - 1, "uqmsave.{:02}", which_game);
-	in_fp = res_OpenResFile(uqm::saveDir(), file, uqm::io::OpenMode::Read);
-	if (!in_fp)
+	const uqstl::string file {saveFileName(which_game)};
+	const auto json {uqm::readTextFile(uqm::saveDir(), file.c_str())};
+	if (!json)
 	{
-		return LoadLegacyGame(which_game, SummPtr, false);
-	}
-
-	if (!LoadSummary(&loc_sd, *in_fp, true))
-	{
-		in_fp.reset();
-		return LoadLegacyGame(which_game, SummPtr, false);
-	}
-
-	if (!SummPtr)
-	{
-		SummPtr = &loc_sd;
-	}
-	else
-	{ // only need summary for displaying to user
-		memcpy(SummPtr, &loc_sd, sizeof(*SummPtr));
-		in_fp.reset();
-		return true;
-	}
-
-	if (!LoadGame(which_game, SummPtr, uqstl::move(in_fp), true))
-	{
-		in_fp.reset();
 		return false;
 	}
 
-	return true;
-}
-
-bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uqstl::optional<uqm::io::File> in_fp, bool try_core)
-{
-	char file[PATH_MAX] {};
-	SUMMARY_DESC loc_sd;
-	uint16_t num_links;
-	STAR_DESC SD;
-	ACTIVITY Activity;
-	uint32_t chunk, chunkSize;
-	bool first_group_spec = true;
-
-	if (!try_core)
+	yyjson_read_err err {};
+	const uqstl::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)> doc {
+		yyjson_read_opts(const_cast<char*>(json->data()), json->size(), YYJSON_READ_ALLOW_INVALID_UNICODE, nullptr, &err),
+		&yyjson_doc_free};
+	if (!doc)
 	{
-		fmt::format_to_n(file, sizeof(file) - 1, "uqmsave.{:02}", which_game);
-		in_fp = res_OpenResFile(uqm::saveDir(), file, uqm::io::OpenMode::Read);
-		if (!in_fp)
-		{
-			return LoadLegacyGame(which_game, SummPtr, false);
-		}
-
-		if (!LoadSummary(&loc_sd, *in_fp, false))
-		{
-			in_fp.reset();
-			return LoadCoreGame(which_game, SummPtr);
-		}
-
-		if (!SummPtr)
-		{
-			SummPtr = &loc_sd;
-		}
-		else
-		{ // only need summary for displaying to user
-			memcpy(SummPtr, &loc_sd, sizeof(*SummPtr));
-			in_fp.reset();
-			return true;
-		}
+		uqm::log::error("{}: JSON parse error at byte {}: {}", file, err.pos, err.msg);
+		return false;
 	}
 
-	GlobData.SIS_state = SummPtr->SS;
+	yyjson_val* root {yyjson_doc_get_root(doc.get())};
+	SaveReader reader {};
+	uint32_t version {};
+	reader.get(root, "version", version);
+	if (!reader.ok() || version > c_saveFormatVersion)
+	{
+		uqm::log::error("{}: save game version {} is not supported.", file, version);
+		return false;
+	}
+
+	SUMMARY_DESC loc_sd {};
+	LoadSummary(reader, root, loc_sd);
+	if (!reader.ok())
+	{
+		uqm::log::error("{}: the save game summary is not valid.", file);
+		return false;
+	}
+	if (SummPtr)
+	{ // only need summary for displaying to user
+		*SummPtr = loc_sd;
+		return true;
+	}
+
+	GlobData.SIS_state = loc_sd.SS;
+	legacySave = loc_sd.SS.SaveVersion > 0;
 
 	uqm::UQMOptions::edit().customSeed = GLOBAL_SIS(Seed);
 	uqm::UQMOptions::edit().shipSeed = (GLOBAL_SIS(ShipSeed) != 0);
@@ -885,142 +867,29 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr, uqstl::optional<uqm::i
 	luaUqm_initState();
 	initEventSystem();
 
-	Activity = GLOBAL(CurrentActivity);
-	if (!LoadGameState(&GlobData.Game_state, *in_fp, try_core))
-	{
-		in_fp.reset();
-		return false;
-	}
+	const ACTIVITY Activity {GLOBAL(CurrentActivity)};
+	LoadGameState(reader, root, GlobData.Game_state);
 	NextActivity = GLOBAL(CurrentActivity);
 	GLOBAL(CurrentActivity) = Activity;
 
-	chunk = 0;
-	while (true)
+	LoadRaceQueue(reader, root, &GLOBAL(avail_race_q));
+	LoadShipQueue(reader, root, "npcShipQueue", &GLOBAL(npc_built_ship_q));
+	LoadGroupQueue(reader, root, &GLOBAL(ip_group_q));
+	LoadShipQueue(reader, root, "shipQueue", &GLOBAL(built_ship_q));
+	LoadShipQueue(reader, root, "stowedShipQueue", &GLOBAL(stowed_ship_q));
+	LoadEvents(reader, root);
+	LoadEncounters(reader, root);
+	LoadScanInfo(reader, root);
+	LoadGroups(reader, root);
+
+	STAR_DESC SD {};
+	LoadStarDesc(reader, root, SD);
+	loadGameCheats();
+	if (!reader.ok())
 	{
-		if (!readValue(*in_fp, &chunk))
-		{
-			break;
-		}
-		if (!readValue(*in_fp, &chunkSize))
-		{
-			in_fp.reset();
-			return false;
-		}
-		switch (chunk)
-		{
-			case RACE_Q_TAG:
-				LoadRaceQueue(*in_fp, &GLOBAL(avail_race_q), chunkSize);
-				break;
-			case IP_GRP_Q_TAG:
-				LoadGroupQueue(*in_fp, &GLOBAL(ip_group_q), chunkSize);
-				break;
-			case ENCOUNTERS_TAG:
-				num_links = chunkSize / 65;
-				while (num_links--)
-				{
-					HENCOUNTER hEncounter;
-					ENCOUNTER* EncounterPtr;
-
-					hEncounter = AllocEncounter();
-					LockEncounter(hEncounter, &EncounterPtr);
-
-					LoadEncounter(EncounterPtr, *in_fp, try_core);
-
-					UnlockEncounter(hEncounter);
-					PutEncounter(hEncounter);
-				}
-				break;
-			case EVENTS_TAG:
-				num_links = chunkSize / 5;
-#ifdef DEBUG_LOAD
-				uqm::log::debug("EVENTS:");
-#endif /* DEBUG_LOAD */
-				while (num_links--)
-				{
-					HEVENT hEvent;
-					EVENT* EventPtr;
-					bool DeCleanse = false;
-
-					hEvent = AllocEvent();
-					LockEvent(hEvent, &EventPtr);
-
-					LoadEvent(EventPtr, *in_fp);
-
-#ifdef DEBUG_LOAD
-					uqm::log::debug("\t{}/{}/{} -- {}",
-									EventPtr->month_index,
-									EventPtr->day_index,
-									EventPtr->year_index,
-									EventPtr->func_index);
-#endif /* DEBUG_LOAD */
-					if (uqm::UQMOptions::read().deCleansing && EventPtr->func_index == KOHR_AH_VICTORIOUS_EVENT)
-					{
-						UnlockEvent(hEvent);
-						uqm::log::debug("EventPtr->year_index: {}\n", EventPtr->year_index);
-
-						if (EventPtr->year_index == 2158)
-						{
-							FreeEvent(hEvent);
-							DeCleanse = true;
-						}
-						continue;
-					}
-
-					UnlockEvent(hEvent);
-					PutEvent(hEvent);
-
-					if (uqm::UQMOptions::read().deCleansing && DeCleanse)
-					{
-						AddEvent(ABSOLUTE_EVENT, 2, 17, START_YEAR + YEARS_TO_KOHRAH_VICTORY,
-								 KOHR_AH_VICTORIOUS_EVENT);
-					}
-				}
-				break;
-			case STAR_TAG:
-				LoadStarDesc(&SD, *in_fp);
-				loadGameCheats();
-				break;
-			case NPC_SHIP_Q_TAG:
-				LoadShipQueue(*in_fp, &GLOBAL(npc_built_ship_q), chunkSize);
-				break;
-			case SHIP_Q_TAG:
-				LoadShipQueue(*in_fp, &GLOBAL(built_ship_q), chunkSize);
-				break;
-			case STOWED_Q_TAG:
-				LoadShipQueue(*in_fp, &GLOBAL(stowed_ship_q), chunkSize);
-				break;
-			case SCAN_TAG:
-				LoadScanInfo(*in_fp, chunkSize);
-				break;
-			case GROUP_LIST_TAG:
-				if (first_group_spec)
-				{
-					InitGroupInfo(true);
-					GLOBAL(BattleGroupRef) = 0;
-					first_group_spec = false;
-				}
-				LoadGroupList(*in_fp, chunkSize);
-				break;
-			case BATTLE_GROUP_TAG:
-				if (first_group_spec)
-				{
-					InitGroupInfo(true);
-					GLOBAL(BattleGroupRef) = 0;
-					first_group_spec = false;
-				}
-				LoadBattleGroup(*in_fp, chunkSize);
-				break;
-			default:
-				uqm::log::debug("Skipping chunk of tag %08X (size {})", chunk, chunkSize);
-				if (!skipN<char>(*in_fp, chunkSize))
-				{
-					in_fp.reset();
-					return false;
-				}
-				break;
-		}
+		uqm::log::error("{}: the save game is not valid.", file);
+		return false;
 	}
-	in_fp.reset();
 
 	EncounterGroup = 0;
 	EncounterRace = -1;

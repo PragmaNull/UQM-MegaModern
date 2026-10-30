@@ -42,16 +42,11 @@
 #include "core/log/log.h"
 #include "libs/memlib.h"
 #include "colors.h"
+#include "libs/file/textfile.h"
 
-// Status boolean. If for some insane reason you need to
-// save games in different threads, you'll need to
-// protect your calls to SaveGame with a mutex.
+#include <yyjson.h>
 
-// It's arguably over-paranoid to check for error on
-// every single write, but this preserves the older
-// behavior.
 #pragma clang optimize off
-static bool io_ok = true;
 
 // This defines the order and the number of bits in which the game state
 // properties are saved.
@@ -790,434 +785,345 @@ const GameStateBitMap gameStateBitMap[] = {
 	{nullptr,					   0 },
 };
 
-// This describes the release version corresponding to each game state
-// flag revision chunk.
-const char* gameStateBitMapRevTag[] = {
-	"Core UQM v0.8.0",
-	"MegaMod v0.8.0.85",
-	"MegaMod v0.8.1",
-	"MegaMod v0.8.2",
-	"MegaMod v0.8.3",
-	"MegaMod v0.8.4"};
+namespace
+{
 
 template <typename T>
-static inline void writeValue(uqm::io::File& fp, T v)
+void addInt(yyjson_mut_doc* doc, yyjson_mut_val* obj, const char* key, T value)
 {
-	if (io_ok)
+	if constexpr (uqstl::is_enum_v<T>)
 	{
-		for (int byteNum = 0; byteNum < sizeof(T); ++byteNum)
-		{
-			const uint8_t valueToWrite {static_cast<uint8_t>((v >> (8 * byteNum)) & 0xff)};
-			if (!fp.writeAll(uqm::io::asBytes(&valueToWrite, 1)))
-			{
-				io_ok = false;
-				break;
-			}
-		}
+		addInt(doc, obj, key, static_cast<uqstl::underlying_type_t<T>>(value));
+	}
+	else if constexpr (uqstl::is_signed_v<T>)
+	{
+		yyjson_mut_obj_add_sint(doc, obj, key, value);
+	}
+	else
+	{
+		yyjson_mut_obj_add_uint(doc, obj, key, value);
 	}
 }
 
 template <typename T>
-static inline void writeValueArray(uqm::io::File& fp, uqstl::span<const T> ar)
+void addArray(yyjson_mut_doc* doc, yyjson_mut_val* obj, const char* key, uqstl::span<const T> values)
 {
-	if (io_ok)
+	yyjson_mut_val* array {yyjson_mut_obj_add_arr(doc, obj, key)};
+	for (const T value : values)
 	{
-		if constexpr (sizeof(T) == 1)
+		if constexpr (uqstl::is_signed_v<T>)
 		{
-			if (!fp.writeAll(uqstl::as_bytes(ar))) [[unlikely]]
-			{
-				io_ok = false;
-			}
+			yyjson_mut_arr_add_sint(doc, array, value);
 		}
 		else
 		{
-			for (const auto& v : ar)
-			{
-				if (!io_ok) [[unlikely]]
-				{
-					break;
-				}
-				writeValue<T>(fp, v);
-			}
+			yyjson_mut_arr_add_uint(doc, array, value);
 		}
 	}
 }
 
-static inline void
-write_str(uqm::io::File& fp, uqstl::string_view str)
+template <typename Point>
+void addPoint(yyjson_mut_doc* doc, yyjson_mut_val* obj, const char* key, Point x, Point y)
 {
-	// no type conversion needed for strings
-	writeValueArray<char>(fp, str);
+	yyjson_mut_val* point {yyjson_mut_obj_add_obj(doc, obj, key)};
+	addInt(doc, point, "x", x);
+	addInt(doc, point, "y", y);
 }
 
-static void
-SaveShipQueue(uqm::io::File& fh, QUEUE* pQueue, uint32_t tag)
+template <typename Extent>
+void addExtent(yyjson_mut_doc* doc, yyjson_mut_val* obj, const char* key, Extent width, Extent height)
 {
-	uint16_t num_links;
-	HSHIPFRAG hStarShip;
+	yyjson_mut_val* extent {yyjson_mut_obj_add_obj(doc, obj, key)};
+	addInt(doc, extent, "width", width);
+	addInt(doc, extent, "height", height);
+}
 
-	num_links = CountLinks(pQueue);
+void addString(yyjson_mut_doc* doc, yyjson_mut_val* obj, const char* key, uqstl::span<const char> buffer)
+{
+	yyjson_mut_obj_add_strncpy(doc, obj, key, buffer.data(), strnlen(buffer.data(), buffer.size()));
+}
+
+void addShipFragment(yyjson_mut_doc* doc, yyjson_mut_val* obj, const SHIP_FRAGMENT& frag)
+{
+	addInt(doc, obj, "captains_name_index", frag.captains_name_index);
+	addInt(doc, obj, "race_id", frag.race_id);
+	addInt(doc, obj, "index", frag.index);
+	addInt(doc, obj, "crew_level", frag.crew_level);
+	addInt(doc, obj, "max_crew", frag.max_crew);
+	addInt(doc, obj, "energy_level", frag.energy_level);
+	addInt(doc, obj, "max_energy", frag.max_energy);
+}
+
+void addIpGroup(yyjson_mut_doc* doc, yyjson_mut_val* obj, const IP_GROUP& group)
+{
+	addInt(doc, obj, "group_counter", group.group_counter);
+	addInt(doc, obj, "race_id", group.race_id);
+	addInt(doc, obj, "sys_loc", group.sys_loc);
+	addInt(doc, obj, "task", group.task);
+	addInt(doc, obj, "in_system", group.in_system);
+	addInt(doc, obj, "dest_loc", group.dest_loc);
+	addInt(doc, obj, "orbit_pos", group.orbit_pos);
+	addInt(doc, obj, "group_id", group.group_id);
+	addPoint(doc, obj, "loc", group.loc.x, group.loc.y);
+}
+
+void SaveShipQueue(yyjson_mut_doc* doc, yyjson_mut_val* root, const char* key, QUEUE* pQueue)
+{
+	uint16_t num_links {CountLinks(pQueue)};
 	if (num_links == 0)
 	{
 		return;
 	}
-	writeValue(fh, tag);
-	writeValue(fh, num_links * 11);
-	// Size of chunk: each entry is 11 bytes long.
 
-	hStarShip = GetHeadLink(pQueue);
+	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, key)};
+	HSHIPFRAG hStarShip {GetHeadLink(pQueue)};
 	while (num_links--)
 	{
-		HSHIPFRAG hNextShip;
-		SHIP_FRAGMENT* FragPtr;
-		uint16_t Index;
-
-		FragPtr = LockShipFrag(pQueue, hStarShip);
-		hNextShip = _GetSuccLink(FragPtr);
-
-		Index = FragPtr->race_id;
-		// Write the number identifying this ship type.
-		// See races.h; look for the enum containing NUM_AVAILABLE_RACES.
-		writeValue(fh, Index);
-
-		// Write SHIP_FRAGMENT elements
-		writeValue(fh, FragPtr->captains_name_index);
-		writeValue(fh, FragPtr->race_id);
-		writeValue(fh, FragPtr->index);
-		writeValue(fh, FragPtr->crew_level);
-		writeValue(fh, FragPtr->max_crew);
-		writeValue(fh, FragPtr->energy_level);
-		writeValue(fh, FragPtr->max_energy);
-
+		SHIP_FRAGMENT* FragPtr {LockShipFrag(pQueue, hStarShip)};
+		const HSHIPFRAG hNextShip {_GetSuccLink(FragPtr)};
+		addShipFragment(doc, yyjson_mut_arr_add_obj(doc, list), *FragPtr);
 		UnlockShipFrag(pQueue, hStarShip);
 		hStarShip = hNextShip;
 	}
 }
 
-static void
-SaveRaceQueue(uqm::io::File& fh, QUEUE* pQueue)
+void SaveRaceQueue(yyjson_mut_doc* doc, yyjson_mut_val* root, QUEUE* pQueue)
 {
-	uint16_t num_links;
-	HFLEETINFO hFleet;
-
-	num_links = CountLinks(pQueue);
+	uint16_t num_links {CountLinks(pQueue)};
 	if (num_links == 0)
 	{
 		return;
 	}
-	writeValue(fh, RACE_Q_TAG);
-	// Write chunk size: 30 bytes per entry
-	writeValue(fh, num_links * 30);
 
-	hFleet = GetHeadLink(pQueue);
+	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "raceQueue")};
+	HFLEETINFO hFleet {GetHeadLink(pQueue)};
 	while (num_links--)
 	{
-		HFLEETINFO hNextFleet;
-		FLEET_INFO* FleetPtr;
-		uint16_t Index;
+		FLEET_INFO* FleetPtr {LockFleetInfo(pQueue, hFleet)};
+		const HFLEETINFO hNextFleet {_GetSuccLink(FleetPtr)};
 
-		FleetPtr = LockFleetInfo(pQueue, hFleet);
-		hNextFleet = _GetSuccLink(FleetPtr);
-
-		Index = GetIndexFromStarShip(pQueue, hFleet);
-		// The index is the position in the queue.
-		writeValue(fh, Index);
-
-		// Write FLEET_INFO elements
-		writeValue(fh, FleetPtr->allied_state);
-		writeValue(fh, FleetPtr->days_left);
-		writeValue(fh, FleetPtr->growth_fract);
-		writeValue(fh, FleetPtr->crew_level);
-		writeValue(fh, FleetPtr->max_crew);
-		writeValue(fh, FleetPtr->growth);
-		writeValue(fh, FleetPtr->max_energy);
-		writeValue(fh, FleetPtr->loc.x);
-		writeValue(fh, FleetPtr->loc.y);
-
-		writeValue(fh, FleetPtr->actual_strength);
-		writeValue(fh, FleetPtr->known_strength);
-		writeValue(fh, FleetPtr->known_loc.x);
-		writeValue(fh, FleetPtr->known_loc.y);
-		writeValue(fh, FleetPtr->growth_err_term);
-		writeValue(fh, FleetPtr->func_index);
-		writeValue(fh, FleetPtr->dest_loc.x);
-		writeValue(fh, FleetPtr->dest_loc.y);
+		yyjson_mut_val* fleet {yyjson_mut_arr_add_obj(doc, list)};
+		addInt(doc, fleet, "Index", GetIndexFromStarShip(pQueue, hFleet));
+		addInt(doc, fleet, "allied_state", FleetPtr->allied_state);
+		addInt(doc, fleet, "days_left", FleetPtr->days_left);
+		addInt(doc, fleet, "growth_fract", FleetPtr->growth_fract);
+		addInt(doc, fleet, "crew_level", FleetPtr->crew_level);
+		addInt(doc, fleet, "max_crew", FleetPtr->max_crew);
+		addInt(doc, fleet, "growth", FleetPtr->growth);
+		addInt(doc, fleet, "max_energy", FleetPtr->max_energy);
+		addPoint(doc, fleet, "loc", FleetPtr->loc.x, FleetPtr->loc.y);
+		addInt(doc, fleet, "actual_strength", FleetPtr->actual_strength);
+		addInt(doc, fleet, "known_strength", FleetPtr->known_strength);
+		addPoint(doc, fleet, "known_loc", FleetPtr->known_loc.x, FleetPtr->known_loc.y);
+		addInt(doc, fleet, "growth_err_term", FleetPtr->growth_err_term);
+		addInt(doc, fleet, "func_index", FleetPtr->func_index);
+		addPoint(doc, fleet, "dest_loc", FleetPtr->dest_loc.x, FleetPtr->dest_loc.y);
 
 		UnlockFleetInfo(pQueue, hFleet);
 		hFleet = hNextFleet;
 	}
 }
 
-static void
-SaveGroupQueue(uqm::io::File& fh, QUEUE* pQueue)
+void SaveGroupQueue(yyjson_mut_doc* doc, yyjson_mut_val* root, QUEUE* pQueue)
 {
-	HIPGROUP hGroup, hNextGroup;
-	uint16_t num_links;
-
-	num_links = CountLinks(pQueue);
-	if (num_links == 0)
+	if (CountLinks(pQueue) == 0)
 	{
 		return;
 	}
-	writeValue(fh, IP_GRP_Q_TAG);
-	writeValue(fh, num_links * 13); // 13 bytes per element right now
 
-	for (hGroup = GetHeadLink(pQueue); hGroup; hGroup = hNextGroup)
+	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "ipGroupQueue")};
+	HIPGROUP hNextGroup {};
+	for (HIPGROUP hGroup {GetHeadLink(pQueue)}; hGroup; hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr;
-
-		GroupPtr = LockIpGroup(pQueue, hGroup);
+		IP_GROUP* GroupPtr {LockIpGroup(pQueue, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
-
-		writeValue(fh, GroupPtr->group_counter);
-		writeValue(fh, GroupPtr->race_id);
-		writeValue(fh, GroupPtr->sys_loc);
-		writeValue(fh, GroupPtr->task);
-		writeValue(fh, GroupPtr->in_system); /* was crew_level */
-		writeValue(fh, GroupPtr->dest_loc);
-		writeValue(fh, GroupPtr->orbit_pos);
-		writeValue(fh, GroupPtr->group_id); /* was max_energy */
-		writeValue(fh, GroupPtr->loc.x);
-		writeValue(fh, GroupPtr->loc.y);
-
+		addIpGroup(doc, yyjson_mut_arr_add_obj(doc, list), *GroupPtr);
 		UnlockIpGroup(pQueue, hGroup);
 	}
 }
 
-static void
-SaveEncounters(uqm::io::File& fh)
+void SaveEncounters(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
-	uint16_t num_links;
-	HENCOUNTER hEncounter;
-	num_links = CountLinks(&GLOBAL(encounter_q));
+	uint16_t num_links {CountLinks(&GLOBAL(encounter_q))};
 	if (num_links == 0)
 	{
 		return;
 	}
-	writeValue(fh, ENCOUNTERS_TAG);
-	writeValue(fh, 65 * num_links);
 
-	hEncounter = GetHeadLink(&GLOBAL(encounter_q));
+	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "encounters")};
+	HENCOUNTER hEncounter {GetHeadLink(&GLOBAL(encounter_q))};
 	while (num_links--)
 	{
-		HENCOUNTER hNextEncounter;
-		ENCOUNTER* EncounterPtr;
-		uint16_t i;
-
+		ENCOUNTER* EncounterPtr {};
 		LockEncounter(hEncounter, &EncounterPtr);
-		hNextEncounter = GetSuccEncounter(EncounterPtr);
+		const HENCOUNTER hNextEncounter {GetSuccEncounter(EncounterPtr)};
 
-		writeValue(fh, EncounterPtr->transition_state);
-		writeValue(fh, EncounterPtr->origin.x);
-		writeValue(fh, EncounterPtr->origin.y);
-		writeValue(fh, EncounterPtr->radius);
-		// former STAR_DESC fields
-		writeValue(fh, EncounterPtr->loc_pt.x);
-		writeValue(fh, EncounterPtr->loc_pt.y);
-		writeValue(fh, EncounterPtr->race_id);
-		writeValue(fh, EncounterPtr->num_ships);
-		writeValue(fh, EncounterPtr->flags);
+		yyjson_mut_val* encounter {yyjson_mut_arr_add_obj(doc, list)};
+		addInt(doc, encounter, "transition_state", EncounterPtr->transition_state);
+		addPoint(doc, encounter, "origin", EncounterPtr->origin.x, EncounterPtr->origin.y);
+		addInt(doc, encounter, "radius", EncounterPtr->radius);
+		addPoint(doc, encounter, "loc_pt", EncounterPtr->loc_pt.x, EncounterPtr->loc_pt.y);
+		addInt(doc, encounter, "race_id", EncounterPtr->race_id);
+		addInt(doc, encounter, "flags", EncounterPtr->flags);
 
-		// Save each entry in the BRIEF_SHIP_INFO array
-		for (i = 0; i < MAX_HYPER_SHIPS; i++)
+		yyjson_mut_val* ships {yyjson_mut_obj_add_arr(doc, encounter, "ships")};
+		const uint16_t numShips {uqstl::min<uint16_t>(EncounterPtr->num_ships, MAX_HYPER_SHIPS)};
+		for (uint16_t i {}; i < numShips; ++i)
 		{
-			const BRIEF_SHIP_INFO* ShipInfo = &EncounterPtr->ShipList[i];
-
-			writeValue(fh, ShipInfo->race_id);
-			writeValue(fh, ShipInfo->crew_level);
-			writeValue(fh, ShipInfo->max_crew);
-			writeValue(fh, ShipInfo->max_energy);
+			const BRIEF_SHIP_INFO& ShipInfo {EncounterPtr->ShipList[i]};
+			yyjson_mut_val* ship {yyjson_mut_arr_add_obj(doc, ships)};
+			addInt(doc, ship, "race_id", ShipInfo.race_id);
+			addInt(doc, ship, "crew_level", ShipInfo.crew_level);
+			addInt(doc, ship, "max_crew", ShipInfo.max_crew);
+			addInt(doc, ship, "max_energy", ShipInfo.max_energy);
 		}
 
-		// Save the stuff after the BRIEF_SHIP_INFO array
-		writeValue(fh, RES_DESCALE(EncounterPtr->log_x));
-		writeValue(fh, RES_DESCALE(EncounterPtr->log_y));
+		addPoint(doc, encounter, "log", RES_DESCALE(EncounterPtr->log_x), RES_DESCALE(EncounterPtr->log_y));
 
 		UnlockEncounter(hEncounter);
 		hEncounter = hNextEncounter;
 	}
 }
 
-static void
-SaveEvents(uqm::io::File& fh)
+void SaveEvents(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
-	uint16_t num_links;
-	HEVENT hEvent;
-	num_links = CountLinks(&GLOBAL(GameClock.event_q));
+	uint16_t num_links {CountLinks(&GLOBAL(GameClock.event_q))};
 	if (num_links == 0)
 	{
 		return;
 	}
-	writeValue(fh, EVENTS_TAG);
-	writeValue(fh, num_links * 5); /* Event chunks are five bytes each */
 
-	hEvent = GetHeadLink(&GLOBAL(GameClock.event_q));
+	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "events")};
+	HEVENT hEvent {GetHeadLink(&GLOBAL(GameClock.event_q))};
 	while (num_links--)
 	{
-		HEVENT hNextEvent;
-		EVENT* EventPtr;
-
+		EVENT* EventPtr {};
 		LockEvent(hEvent, &EventPtr);
-		hNextEvent = GetSuccEvent(EventPtr);
+		const HEVENT hNextEvent {GetSuccEvent(EventPtr)};
 
-		writeValue(fh, EventPtr->day_index);
-		writeValue(fh, EventPtr->month_index);
-		writeValue(fh, EventPtr->year_index);
-		writeValue(fh, EventPtr->func_index);
+		yyjson_mut_val* event {yyjson_mut_arr_add_obj(doc, list)};
+		addInt(doc, event, "day_index", EventPtr->day_index);
+		addInt(doc, event, "month_index", EventPtr->month_index);
+		addInt(doc, event, "year_index", EventPtr->year_index);
+		addInt(doc, event, "func_index", EventPtr->func_index);
 
 		UnlockEvent(hEvent);
 		hEvent = hNextEvent;
 	}
 }
 
-/* The clock state is folded in with the game state chunk. */
-static void
-SaveClockState(const CLOCK_STATE* ClockPtr, uqm::io::File& fh)
+void SaveClockState(yyjson_mut_doc* doc, yyjson_mut_val* obj, const CLOCK_STATE& clock)
 {
-	writeValue(fh, ClockPtr->day_index);
-	writeValue(fh, ClockPtr->month_index);
-	writeValue(fh, ClockPtr->year_index);
-	writeValue(fh, ClockPtr->tick_count);
-	writeValue(fh, ClockPtr->day_in_ticks);
+	yyjson_mut_val* clockObj {yyjson_mut_obj_add_obj(doc, obj, "GameClock")};
+	addInt(doc, clockObj, "day_index", clock.day_index);
+	addInt(doc, clockObj, "month_index", clock.month_index);
+	addInt(doc, clockObj, "year_index", clock.year_index);
+	addInt(doc, clockObj, "tick_count", clock.tick_count);
+	addInt(doc, clockObj, "day_in_ticks", clock.day_in_ticks);
 }
 
-/* Save out the game state chunks. There are two of these; the Global
- * State chunk is fixed size, but the Game State tag can be extended
- * by modders. */
-static bool
-SaveGameState(const GAME_STATE* GSPtr, uqm::io::File& fh)
+void SaveGameStateFlags(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
-	uint8_t res_scale;
-
-	if (lowByte(GSPtr->CurrentActivity) != IN_INTERPLANETARY)
+	yyjson_mut_val* flags {yyjson_mut_obj_add_obj(doc, root, "gameState")};
+	for (const GameStateBitMap* bm {gameStateBitMap}; bm->name || bm->numBits; ++bm)
 	{
-		res_scale = RESOLUTION_FACTOR;
-	}
-	else
-	{
-		res_scale = 0;
-	}
-
-	writeValue(fh, GLOBAL_STATE_TAG);
-	writeValue(fh, 75);
-	writeValue(fh, GSPtr->glob_flags);
-	writeValue(fh, GSPtr->CrewCost);
-	writeValue(fh, GSPtr->FuelCost);
-	writeValueArray<uint8_t>(fh, GSPtr->ModuleCost);
-	writeValueArray<uint8_t>(fh, GSPtr->ElementWorth);
-	writeValue(fh, GSPtr->CurrentActivity);
-
-	SaveClockState(&GSPtr->GameClock, fh);
-
-	writeValue(fh, GSPtr->autopilot.x);
-	writeValue(fh, GSPtr->autopilot.y);
-	writeValue(fh, GSPtr->ip_location.x);
-	writeValue(fh, GSPtr->ip_location.y);
-	/* STAMP ShipStamp */
-	writeValue(fh, RES_DESCALE(GSPtr->ShipStamp.origin.x));
-	writeValue(fh, RES_DESCALE(GSPtr->ShipStamp.origin.y));
-	writeValue(fh, GSPtr->ShipFacing);
-	writeValue(fh, GSPtr->ip_planet);
-	writeValue(fh, GSPtr->in_orbit);
-
-	/* VELOCITY_DESC velocity */
-	writeValue(fh, GSPtr->velocity.TravelAngle >> res_scale);
-	writeValue(fh, GSPtr->velocity.vector.width >> res_scale);
-	writeValue(fh, GSPtr->velocity.vector.height >> res_scale);
-	writeValue(fh, GSPtr->velocity.fract.width >> res_scale);
-	writeValue(fh, GSPtr->velocity.fract.height >> res_scale);
-	writeValue(fh, GSPtr->velocity.error.width >> res_scale);
-	writeValue(fh, GSPtr->velocity.error.height >> res_scale);
-	writeValue(fh, GSPtr->velocity.incr.width >> res_scale);
-	writeValue(fh, GSPtr->velocity.incr.height >> res_scale);
-
-	/* The Game state bits. Vanilla UQM uses 155 bytes here at
-	 * present. Only the first 99 bytes are significant, though;
-	 * the rest will be overwritten by the BtGp chunks. */
-	writeValue(fh, GAME_STATE_TAG);
-	{
-		uint8_t* buf = nullptr;
-		size_t bufSize;
-		if (serialiseGameState(gameStateBitMap, &buf, &bufSize))
+		if (!bm->name)
 		{
-			writeValue(fh, bufSize);
-			writeValueArray<uint8_t>(fh, {buf, (uint16_t)bufSize});
-			HFree(buf);
+			continue;
 		}
-		else
+
+		const uint32_t value {getGameStateUint(bm->name)};
+		const uint32_t maxValue {bm->numBits >= 32 ? UINT32_MAX : (uint32_t {1} << bm->numBits) - 1};
+		if (value > maxValue)
 		{
-			return false;
+			uqm::log::error("Game state '{}' ({}) does not fit in {} bits.", bm->name, value, bm->numBits);
 		}
+		yyjson_mut_obj_add_uint(doc, flags, bm->name, value);
 	}
-	return true;
 }
 
-/* This is folded into the Summary chunk */
-static void
-SaveSisState(const SIS_STATE* SSPtr, uqm::io::File& fp)
+void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, const GAME_STATE& GS)
 {
-	writeValue(fp, RES_DESCALE(SSPtr->log_x));
-	writeValue(fp, RES_DESCALE(SSPtr->log_y));
-	writeValue(fp, SSPtr->ResUnits);
-	writeValue(fp, SSPtr->FuelOnBoard);
-	writeValue(fp, SSPtr->CrewEnlisted);
-	writeValue(fp, SSPtr->TotalElementMass);
-	writeValue(fp, SSPtr->TotalBioMass);
-	writeValueArray<uint8_t>(fp, SSPtr->ModuleSlots);
-	writeValueArray<uint8_t>(fp, SSPtr->DriveSlots);
-	writeValueArray<uint8_t>(fp, SSPtr->JetSlots);
-	writeValue(fp, SSPtr->NumLanders);
-	writeValueArray<uint16_t>(fp, SSPtr->ElementAmounts);
+	const uint8_t res_scale {static_cast<uint8_t>(lowByte(GS.CurrentActivity) != IN_INTERPLANETARY ? RESOLUTION_FACTOR : 0)};
 
-	write_str(fp, SSPtr->ShipName);
-	write_str(fp, SSPtr->CommanderName);
-	write_str(fp, SSPtr->PlanetName);
-	writeValue(fp, static_cast<uint8_t>(SSPtr->Difficulty));
-	writeValue(fp, SSPtr->Extended);
-	writeValue(fp, static_cast<uint8_t>(SSPtr->Nomad));
-	writeValue(fp, SSPtr->Seed);
-	writeValue(fp, SSPtr->ShipSeed);
+	yyjson_mut_val* state {yyjson_mut_obj_add_obj(doc, root, "globalState")};
+	addInt(doc, state, "glob_flags", GS.glob_flags);
+	addInt(doc, state, "CrewCost", GS.CrewCost);
+	addInt(doc, state, "FuelCost", GS.FuelCost);
+	addArray<uint8_t>(doc, state, "ModuleCost", GS.ModuleCost);
+	addArray<uint8_t>(doc, state, "ElementWorth", GS.ElementWorth);
+	addInt(doc, state, "CurrentActivity", GS.CurrentActivity);
+	SaveClockState(doc, state, GS.GameClock);
+	addPoint(doc, state, "autopilot", GS.autopilot.x, GS.autopilot.y);
+	addPoint(doc, state, "ip_location", GS.ip_location.x, GS.ip_location.y);
+	addPoint(doc, state, "ShipOrigin", RES_DESCALE(GS.ShipStamp.origin.x), RES_DESCALE(GS.ShipStamp.origin.y));
+	addInt(doc, state, "ShipFacing", GS.ShipFacing);
+	addInt(doc, state, "ip_planet", GS.ip_planet);
+	addInt(doc, state, "in_orbit", GS.in_orbit);
+
+	const VELOCITY_DESC& velocity {GS.velocity};
+	yyjson_mut_val* velocityObj {yyjson_mut_obj_add_obj(doc, state, "velocity")};
+	addInt(doc, velocityObj, "TravelAngle", velocity.TravelAngle);
+	addExtent(doc, velocityObj, "vector", velocity.vector.width >> res_scale, velocity.vector.height >> res_scale);
+	addExtent(doc, velocityObj, "fract", velocity.fract.width >> res_scale, velocity.fract.height >> res_scale);
+	addExtent(doc, velocityObj, "error", velocity.error.width >> res_scale, velocity.error.height >> res_scale);
+	addExtent(doc, velocityObj, "incr", velocity.incr.width >> res_scale, velocity.incr.height >> res_scale);
+
+	SaveGameStateFlags(doc, root);
 }
 
-/* Write out the Summary Chunk. This is variable length because of the
-   savegame name */
-static void
-SaveSummary(const SUMMARY_DESC* SummPtr, uqm::io::File& fp)
+void SaveSisState(yyjson_mut_doc* doc, yyjson_mut_val* obj, const SIS_STATE& SS)
 {
-	writeValue(fp, SUMMARY_TAG);
-	writeValue(fp, 160 + strlen(SummPtr->SaveName));
-	SaveSisState(&SummPtr->SS, fp);
-
-	writeValue(fp, SummPtr->Activity);
-	writeValue(fp, SummPtr->Flags);
-	writeValue(fp, SummPtr->day_index);
-	writeValue(fp, SummPtr->month_index);
-	writeValue(fp, SummPtr->year_index);
-	writeValue(fp, SummPtr->MCreditLo);
-	writeValue(fp, SummPtr->MCreditHi);
-	writeValue(fp, SummPtr->NumShips);
-	writeValue(fp, SummPtr->NumDevices);
-	writeValueArray<uint8_t>(fp, SummPtr->ShipList);
-	writeValueArray<uint8_t>(fp, SummPtr->DeviceList);
-	writeValue(fp, SummPtr->res_factor);
-	write_str(fp, SummPtr->SaveName);
+	yyjson_mut_val* sis {yyjson_mut_obj_add_obj(doc, obj, "sis")};
+	addPoint(doc, sis, "log", RES_DESCALE(SS.log_x), RES_DESCALE(SS.log_y));
+	addInt(doc, sis, "ResUnits", SS.ResUnits);
+	addInt(doc, sis, "FuelOnBoard", SS.FuelOnBoard);
+	addInt(doc, sis, "CrewEnlisted", SS.CrewEnlisted);
+	addInt(doc, sis, "TotalElementMass", SS.TotalElementMass);
+	addInt(doc, sis, "TotalBioMass", SS.TotalBioMass);
+	addArray<uint8_t>(doc, sis, "ModuleSlots", SS.ModuleSlots);
+	addArray<uint8_t>(doc, sis, "DriveSlots", SS.DriveSlots);
+	addArray<uint8_t>(doc, sis, "JetSlots", SS.JetSlots);
+	addInt(doc, sis, "NumLanders", SS.NumLanders);
+	addArray<uint16_t>(doc, sis, "ElementAmounts", SS.ElementAmounts);
+	addString(doc, sis, "ShipName", SS.ShipName);
+	addString(doc, sis, "CommanderName", SS.CommanderName);
+	addString(doc, sis, "PlanetName", SS.PlanetName);
+	addInt(doc, sis, "Difficulty", SS.Difficulty);
+	addInt(doc, sis, "Extended", SS.Extended);
+	addInt(doc, sis, "Nomad", SS.Nomad);
+	addInt(doc, sis, "Seed", SS.Seed);
+	addInt(doc, sis, "ShipSeed", SS.ShipSeed);
 }
 
-/* Save the Star Description chunk. This is not to be confused with
- * the Star *Info* chunk, which records which planetary features you
- * have exploited with your lander */
-static void
-SaveStarDesc(const STAR_DESC* SDPtr, uqm::io::File& fh)
+void SaveSummary(yyjson_mut_doc* doc, yyjson_mut_val* root, const SUMMARY_DESC& Summ)
 {
-	writeValue(fh, STAR_TAG);
-	writeValue(fh, 8);
-	writeValue(fh, SDPtr->star_pt.x);
-	writeValue(fh, SDPtr->star_pt.y);
-	writeValue(fh, SDPtr->Type);
-	writeValue(fh, SDPtr->Index);
-	writeValue(fh, SDPtr->Prefix);
-	writeValue(fh, SDPtr->Postfix);
+	yyjson_mut_val* summary {yyjson_mut_obj_add_obj(doc, root, "summary")};
+	addString(doc, summary, "SaveName", Summ.SaveName);
+	addInt(doc, summary, "Activity", Summ.Activity);
+	addInt(doc, summary, "Flags", Summ.Flags);
+	addInt(doc, summary, "day_index", Summ.day_index);
+	addInt(doc, summary, "month_index", Summ.month_index);
+	addInt(doc, summary, "year_index", Summ.year_index);
+	addInt(doc, summary, "MCreditLo", Summ.MCreditLo);
+	addInt(doc, summary, "MCreditHi", Summ.MCreditHi);
+	addArray<uint8_t>(doc, summary, "ShipList", uqstl::span {Summ.ShipList}.first(Summ.NumShips));
+	addArray<uint8_t>(doc, summary, "DeviceList", uqstl::span {Summ.DeviceList}.first(Summ.NumDevices));
+	addInt(doc, summary, "res_factor", Summ.res_factor);
+	SaveSisState(doc, summary, Summ.SS);
 }
+
+void SaveStarDesc(yyjson_mut_doc* doc, yyjson_mut_val* root, const STAR_DESC& SD)
+{
+	yyjson_mut_val* star {yyjson_mut_obj_add_obj(doc, root, "starDesc")};
+	addPoint(doc, star, "star_pt", SD.star_pt.x, SD.star_pt.y);
+	addInt(doc, star, "Type", SD.Type);
+	addInt(doc, star, "Index", SD.Index);
+	addInt(doc, star, "Prefix", SD.Prefix);
+	addInt(doc, star, "Postfix", SD.Postfix);
+}
+
+} // namespace
 
 static void
 PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
@@ -1396,13 +1302,12 @@ SaveFlagshipState(void)
 }
 
 static void
-SaveStarInfo(uqm::io::File& fh)
+SaveStarInfo(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
-	GAME_STATE_FILE* fp;
-	fp = OpenStateFile(STARINFO_FILE, "rb");
+	GAME_STATE_FILE* fp {OpenStateFile(STARINFO_FILE, "rb")};
 	if (fp)
 	{
-		uint32_t flen = LengthStateFile(fp);
+		uint32_t flen {LengthStateFile(fp)};
 		if (flen % 4)
 		{
 			uqm::log::warn("Unexpected Star Info length! Expected "
@@ -1410,13 +1315,12 @@ SaveStarInfo(uqm::io::File& fh)
 		}
 		else
 		{
-			writeValue(fh, SCAN_TAG);
-			writeValue(fh, flen);
+			yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "starInfo")};
 			while (flen)
 			{
-				uint32_t val;
+				uint32_t val {};
 				sread_32(fp, &val);
-				writeValue(fh, val);
+				yyjson_mut_arr_add_uint(doc, list, val);
 				flen -= 4;
 			}
 		}
@@ -1425,55 +1329,43 @@ SaveStarInfo(uqm::io::File& fh)
 }
 
 static void
-SaveBattleGroup(GAME_STATE_FILE* fp, uint32_t encounter_id, uint32_t grpoffs,
-				uqm::io::File& fh)
+SaveBattleGroup(yyjson_mut_doc* doc, yyjson_mut_val* list, GAME_STATE_FILE* fp,
+				uint32_t encounter_id, uint32_t grpoffs)
 {
 	GROUP_HEADER h;
-	uint32_t size = 12;
-	int i;
 	SeekStateFile(fp, grpoffs, SEEK_SET);
 	ReadGroupHeader(fp, &h);
-	for (i = 1; i <= h.NumGroups; ++i)
+
+	yyjson_mut_val* battleGroup {yyjson_mut_arr_add_obj(doc, list)};
+	addInt(doc, battleGroup, "encounter", encounter_id);
+	yyjson_mut_obj_add_bool(doc, battleGroup, "current", grpoffs && GLOBAL(BattleGroupRef) == grpoffs);
+	addInt(doc, battleGroup, "star_index", h.star_index);
+	addInt(doc, battleGroup, "day_index", h.day_index);
+	addInt(doc, battleGroup, "month_index", h.month_index);
+	addInt(doc, battleGroup, "year_index", h.year_index);
+
+	yyjson_mut_val* groups {yyjson_mut_obj_add_arr(doc, battleGroup, "groups")};
+	for (int i {1}; i <= h.NumGroups; ++i)
 	{
-		uint8_t NumShips;
+		uint8_t icon {};
+		uint8_t NumShips {};
 		SeekStateFile(fp, h.GroupOffset[i], SEEK_SET);
-		sread_8(fp, nullptr);
+		sread_8(fp, &icon);
 		sread_8(fp, &NumShips);
-		size += 2 + 10 * NumShips;
-	}
-	writeValue(fh, BATTLE_GROUP_TAG);
-	writeValue(fh, size);
-	writeValue(fh, encounter_id);
-	writeValue(fh,
-			   (grpoffs && (GLOBAL(BattleGroupRef) == grpoffs)) ? 1 : 0);
-	writeValue(fh, h.star_index);
-	writeValue(fh, h.day_index);
-	writeValue(fh, h.month_index);
-	writeValue(fh, h.year_index);
-	writeValue(fh, h.NumGroups);
-	for (i = 1; i <= h.NumGroups; ++i)
-	{
-		int j;
-		uint8_t b;
-		SeekStateFile(fp, h.GroupOffset[i], SEEK_SET);
-		sread_8(fp, &b); // Group race icon
-		writeValue(fh, b);
-		sread_8(fp, &b); // NumShips
-		writeValue(fh, b);
-		for (j = 0; j < b; ++j)
+
+		yyjson_mut_val* group {yyjson_mut_arr_add_obj(doc, groups)};
+		addInt(doc, group, "icon", icon);
+		yyjson_mut_val* ships {yyjson_mut_obj_add_arr(doc, group, "ships")};
+		for (int j {}; j < NumShips; ++j)
 		{
-			uint8_t race_outer;
+			uint8_t race_outer {};
 			SHIP_FRAGMENT sf;
 			sread_8(fp, &race_outer);
 			ReadShipFragment(fp, &sf);
-			writeValue(fh, race_outer);
-			writeValue(fh, sf.captains_name_index);
-			writeValue(fh, sf.race_id);
-			writeValue(fh, sf.index);
-			writeValue(fh, sf.crew_level);
-			writeValue(fh, sf.max_crew);
-			writeValue(fh, sf.energy_level);
-			writeValue(fh, sf.max_energy);
+
+			yyjson_mut_val* ship {yyjson_mut_arr_add_obj(doc, ships)};
+			addInt(doc, ship, "race_outer", race_outer);
+			addShipFragment(doc, ship, sf);
 		}
 	}
 }
@@ -1522,80 +1414,73 @@ GetBattleGroupOffset(int encounterIndex)
 }
 
 static void
-SaveGroups(uqm::io::File& fh)
+SaveGroups(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
-	GAME_STATE_FILE* fp;
-	fp = OpenStateFile(RANDGRPINFO_FILE, "rb");
+	yyjson_mut_val* battleGroups {};
+	GAME_STATE_FILE* fp {OpenStateFile(RANDGRPINFO_FILE, "rb")};
 	if (fp && LengthStateFile(fp) > 0)
 	{
 		GROUP_HEADER h;
-		uint8_t lastenc, count;
-		int i;
+		uint8_t lastenc {};
+		uint8_t count {};
 		ReadGroupHeader(fp, &h);
-		/* Group List */
 		SeekStateFile(fp, h.GroupOffset[0], SEEK_SET);
 		sread_8(fp, &lastenc);
 		sread_8(fp, &count);
-		writeValue(fh, GROUP_LIST_TAG);
-		writeValue(fh, 1 + 14 * count); // Chunk size
-		writeValue(fh, lastenc);
-		for (i = 0; i < count; ++i)
+
+		yyjson_mut_val* groupList {yyjson_mut_obj_add_obj(doc, root, "groupList")};
+		addInt(doc, groupList, "LastEnc", lastenc);
+		yyjson_mut_val* groups {yyjson_mut_obj_add_arr(doc, groupList, "groups")};
+		for (int i {}; i < count; ++i)
 		{
-			uint8_t race_outer;
+			uint8_t race_outer {};
 			IP_GROUP ip;
 			sread_8(fp, &race_outer);
 			ReadIpGroup(fp, &ip);
 
-			writeValue(fh, race_outer);
-			writeValue(fh, ip.group_counter);
-			writeValue(fh, ip.race_id);
-			writeValue(fh, ip.sys_loc);
-			writeValue(fh, ip.task);
-			writeValue(fh, ip.in_system);
-			writeValue(fh, ip.dest_loc);
-			writeValue(fh, ip.orbit_pos);
-			writeValue(fh, ip.group_id);
-			writeValue(fh, ip.loc.x);
-			writeValue(fh, ip.loc.y);
+			yyjson_mut_val* group {yyjson_mut_arr_add_obj(doc, groups)};
+			addInt(doc, group, "race_outer", race_outer);
+			addIpGroup(doc, group, ip);
 		}
-		SaveBattleGroup(fp, 0, 0, fh);
+
+		battleGroups = yyjson_mut_obj_add_arr(doc, root, "battleGroups");
+		SaveBattleGroup(doc, battleGroups, fp, 0, 0);
 		CloseStateFile(fp);
 	}
 	fp = OpenStateFile(DEFGRPINFO_FILE, "rb");
 	if (fp && LengthStateFile(fp) > 0)
 	{
-		int encounter_index;
-		for (encounter_index = 1; encounter_index < 15; encounter_index++)
+		for (int encounter_index {1}; encounter_index < 15; encounter_index++)
 		{
-			uint32_t grpoffs = GetBattleGroupOffset(encounter_index);
+			const uint32_t grpoffs {GetBattleGroupOffset(encounter_index)};
 			if (grpoffs)
 			{
-				SaveBattleGroup(fp, encounter_index, grpoffs, fh);
+				if (!battleGroups)
+				{
+					battleGroups = yyjson_mut_obj_add_arr(doc, root, "battleGroups");
+				}
+				SaveBattleGroup(doc, battleGroups, fp, encounter_index, grpoffs);
 			}
 		}
 		CloseStateFile(fp);
 	}
 }
 
-// This function first writes to a memory file, and then writes the whole
-// lot to the actual save file at once.
+uqstl::string saveFileName(uint16_t which_game)
+{
+	return fmt::format("uqmsave.{:02}.json", which_game);
+}
+
 bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 {
-	uqstl::optional<uqm::io::File> out_fp {};
-	GFXPOINT pt;
-	STAR_DESC SD;
-	char file[PATH_MAX] {};
+	STAR_DESC SD {};
 	if (CurStarDescPtr)
 	{
 		SD = *CurStarDescPtr;
 	}
-	else
-	{
-		memset(&SD, 0, sizeof(SD));
-	}
 
 	// XXX: Backup: SaveFlagshipState() overwrites ip_location
-	pt = GLOBAL(ip_location);
+	const GFXPOINT pt {GLOBAL(ip_location)};
 	SaveFlagshipState();
 	if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
 		&& !(GLOBAL(CurrentActivity)
@@ -1604,80 +1489,59 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 		PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
 	}
 
-	// Write the memory file to the actual savegame file.
-	fmt::format_to_n(file, sizeof(file) - 1, "uqmsave.{:02}", which_game);
-	if ((out_fp = res_OpenResFile(uqm::saveDir(), file, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)))
+	const uqstl::unique_ptr<yyjson_mut_doc, decltype(&yyjson_mut_doc_free)> doc {yyjson_mut_doc_new(nullptr), &yyjson_mut_doc_free};
+	yyjson_mut_val* root {yyjson_mut_obj(doc.get())};
+	yyjson_mut_doc_set_root(doc.get(), root);
+	yyjson_mut_obj_add_uint(doc.get(), root, "version", c_saveFormatVersion);
+
+	PrepareSummary(SummPtr, name);
+	SaveSummary(doc.get(), root, *SummPtr);
+	SaveGameState(doc.get(), root, GlobData.Game_state);
+
+	// XXX: Restore
+	GLOBAL(ip_location) = pt;
+	// Only relevant when loading a game and must be cleaned
+	GLOBAL(in_orbit) = 0;
+
+	SaveRaceQueue(doc.get(), root, &GLOBAL(avail_race_q));
+	// START_INTERPLANETARY is only set when saving from Homeworld
+	//   encounter screen. When the game is loaded, the
+	//   GenerateOrbitalFunction for the current star system
+	//   create the encounter anew and populate the npc queue.
+	if (!(GLOBAL(CurrentActivity) & START_INTERPLANETARY))
 	{
-		io_ok = true;
-		writeValue(*out_fp, MMV4_TAG);
-
-		PrepareSummary(SummPtr, name);
-		SaveSummary(SummPtr, *out_fp);
-
-		if (!SaveGameState(&GlobData.Game_state, *out_fp))
+		if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
 		{
-			io_ok = false;
+			SaveShipQueue(doc.get(), root, "npcShipQueue", &GLOBAL(npc_built_ship_q));
 		}
-
-		// XXX: Restore
-		GLOBAL(ip_location) = pt;
-		// Only relevant when loading a game and must be cleaned
-		GLOBAL(in_orbit) = 0;
-
-		SaveRaceQueue(*out_fp, &GLOBAL(avail_race_q));
-		// START_INTERPLANETARY is only set when saving from Homeworld
-		//   encounter screen. When the game is loaded, the
-		//   GenerateOrbitalFunction for the current star system
-		//   create the encounter anew and populate the npc queue.
-		if (!(GLOBAL(CurrentActivity) & START_INTERPLANETARY))
+		else if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
 		{
-			if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
-			{
-				SaveShipQueue(*out_fp, &GLOBAL(npc_built_ship_q),
-							  NPC_SHIP_Q_TAG);
-			}
-			else if (lowByte(GLOBAL(CurrentActivity))
-					 == IN_INTERPLANETARY)
-			{
-				// XXX: Technically, this queue does not need to be
-				//   saved/loaded at all. IP groups will be reloaded
-				//   from group state files. But the original code did,
-				//   and so will we until we can prove we do not need to.
-				SaveGroupQueue(*out_fp, &GLOBAL(ip_group_q));
-			}
-		}
-		SaveShipQueue(*out_fp, &GLOBAL(built_ship_q), SHIP_Q_TAG);
-		SaveShipQueue(*out_fp, &GLOBAL(stowed_ship_q), STOWED_Q_TAG);
-
-		// Save the game event chunk
-		SaveEvents(*out_fp);
-
-		// Save the encounter chunk (black globes in HS/QS)
-		SaveEncounters(*out_fp);
-
-		// Save out the data that used to be in state files
-		SaveStarInfo(*out_fp);
-		SaveGroups(*out_fp);
-
-		// Save out the Star Descriptor
-		SaveStarDesc(&SD, *out_fp);
-
-		out_fp->close();
-		if (out_fp->error())
-		{
-			io_ok = false;
-		}
-		out_fp.reset();
-		if (!io_ok)
-		{
-			DeleteResFile(uqm::saveDir(), file);
-			return false;
+			// XXX: Technically, this queue does not need to be
+			//   saved/loaded at all. IP groups will be reloaded
+			//   from group state files. But the original code did,
+			//   and so will we until we can prove we do not need to.
+			SaveGroupQueue(doc.get(), root, &GLOBAL(ip_group_q));
 		}
 	}
-	else
+	SaveShipQueue(doc.get(), root, "shipQueue", &GLOBAL(built_ship_q));
+	SaveShipQueue(doc.get(), root, "stowedShipQueue", &GLOBAL(stowed_ship_q));
+
+	SaveEvents(doc.get(), root);
+	// Black globes in HyperSpace and QuasiSpace
+	SaveEncounters(doc.get(), root);
+	SaveStarInfo(doc.get(), root);
+	SaveGroups(doc.get(), root);
+	SaveStarDesc(doc.get(), root, SD);
+
+	size_t length {};
+	const uqstl::unique_ptr<char, decltype(&free)> text {
+		yyjson_mut_write(doc.get(), YYJSON_WRITE_PRETTY_TWO_SPACES | YYJSON_WRITE_ALLOW_INVALID_UNICODE | YYJSON_WRITE_NEWLINE_AT_END, &length),
+		&free};
+	const uqstl::string file {saveFileName(which_game)};
+	if (!text || !uqm::writeTextFile(uqm::saveDir(), file.c_str(), {text.get(), length}))
 	{
+		DeleteResFile(uqm::saveDir(), file.c_str());
 		return false;
 	}
-
 	return true;
 }

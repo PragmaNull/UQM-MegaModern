@@ -20,6 +20,7 @@
 #include "sis.h" // SUMMARY_DESC includes SIS_STATE in it
 #include "globdata.h"
 #include "libs/compiler.h"
+#include "core/stl/string.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -33,25 +34,7 @@ extern "C" {
 #define MAX_EXCLUSIVE_DEVICES 16
 #define SAVE_NAME_SIZE 64
 
-// The savefile tag numbers.
-#define SAVEFILE_TAG 0x01534d55		// "UMS\x01": UQM Save version 1
-#define MEGA_TAG 0x4147454D			// "MEGA": MegaMod Save version 2
-#define MMV3_TAG 0x33564D4D			// "MMV3": MegaMod Save version 3
-#define MMV4_TAG 0x34564D4D			// "MMV4": MegaMod Save version 4
-#define SUMMARY_TAG 0x6d6d7553		// "Summ": Summary. Must be first!
-#define GLOBAL_STATE_TAG 0x74536c47 // "GlSt": Global State. Must be 2nd!
-#define GAME_STATE_TAG 0x74536d47	// "GmSt": Game State Bits. Must be 3rd!
-#define EVENTS_TAG 0x73747645		// "Evts": Events
-#define ENCOUNTERS_TAG 0x74636e45	// "Enct": Encounters
-#define RACE_Q_TAG 0x51636152		// "RacQ": avail_race_q
-#define IP_GRP_Q_TAG 0x51704749		// "IGpQ": ip_group_q
-#define NPC_SHIP_Q_TAG 0x5163704e	// "NpcQ": npc_built_ship_q
-#define SHIP_Q_TAG 0x51706853		// "ShpQ": built_ship_q
-#define STOWED_Q_TAG 0x51777453		// "StwQ": stowed_ship_q
-#define STAR_TAG 0x72617453			// "Star": STAR_DESC
-#define SCAN_TAG 0x6e616353			// "Scan": Scan Masks (stuff picked up)
-#define BATTLE_GROUP_TAG 0x70477442 // "BtGp": Battle Group definition
-#define GROUP_LIST_TAG 0x73707247	// "Grps": Group List
+constexpr uint32_t c_saveFormatVersion {1};
 
 typedef struct
 {
@@ -65,22 +48,19 @@ typedef struct
 	uint8_t ShipList[MAX_BUILT_SHIPS];
 	uint8_t DeviceList[MAX_EXCLUSIVE_DEVICES];
 	char SaveName[SAVE_NAME_SIZE];
-	char SaveNameChecker[SAVE_CHECKER_SIZE];
-	char LegacySaveName[LEGACY_SAVE_NAME_SIZE];
 	uint8_t res_factor;
 } SUMMARY_DESC;
 
 extern ACTIVITY NextActivity;
 
-extern bool LoadGame(uint16_t which_game, SUMMARY_DESC* summary_desc, uqstl::optional<uqm::io::File> in_fp, bool try_core);
-extern bool LoadLegacyGame(uint16_t which_game, SUMMARY_DESC* SummPtr, bool try_vanilla);
+// Loads only the summary when summary_desc is not null.
+extern bool LoadGame(uint16_t which_game, SUMMARY_DESC* summary_desc);
+uqstl::string saveFileName(uint16_t which_game);
 
 extern void SaveProblem(void);
 extern bool SaveGame(uint16_t which_game, SUMMARY_DESC* summary_desc, const char* name);
 
 extern const GameStateBitMap gameStateBitMap[];
-
-extern const char* gameStateBitMapRevTag[];
 
 #if 0 //defined(__cplusplus)
 }

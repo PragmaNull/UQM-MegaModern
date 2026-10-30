@@ -1661,16 +1661,8 @@ DrawGameSelection(PICK_GAME_STATE* pickState, uint16_t selSlot)
 			DateToString(buf2, sizeof(buf2), desc->month_index,
 						 desc->day_index, desc->year_index);
 
-			if (!(strncmp(desc->SaveNameChecker, LEGACY_SAVE_NAME_CHECKER,
-						  SAVE_CHECKER_SIZE)))
-			{
-				SaveName = desc->LegacySaveName;
-			}
-			else
-			{
-				SaveName = desc->SaveName[0] ? desc->SaveName :
-											   GAME_STRING(SAVEGAME_STRING_BASE + 4);
-			}
+			SaveName = desc->SaveName[0] ? desc->SaveName :
+										   GAME_STRING(SAVEGAME_STRING_BASE + 4);
 
 			fmt::format_to_sz_n(buf, "{}: {}", buf2, SaveName);
 
@@ -1699,7 +1691,7 @@ LoadGameDescriptions(SUMMARY_DESC* pSD)
 
 	for (i = 0; i < MAX_SAVED_GAMES; ++i, ++pSD)
 	{
-		if (!LoadGame(i, pSD, uqstl::nullopt, false))
+		if (!LoadGame(i, pSD))
 		{
 			pSD->year_index = 0;
 		}
@@ -1862,7 +1854,7 @@ SaveLoadGame(PICK_GAME_STATE* pickState, uint16_t gameIndex, bool* canceled_by_u
 	else
 	{
 		ConfirmSaveLoad(pickState->saving ? &saveStamp : nullptr);
-		success = LoadGame(gameIndex, nullptr, uqstl::nullopt, false);
+		success = LoadGame(gameIndex, nullptr);
 	}
 
 	// TODO: the same should be done for both save and load if we also
