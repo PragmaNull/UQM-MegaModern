@@ -368,9 +368,9 @@ computeFPS(int* fps)
 	fps_counter += delta_time;
 	if (fps_counter > DCQueueTicksForFps)
 	{
-		*fps = (int)((float)DCQueueTicksForFps * RenderedFrames / fps_counter);
+		*fps = (int)((float)GameTicksPerSecond * RenderedFrames / fps_counter);
 		uqm::log::info("fps {:.2}, effective {}",
-					   (float)DCQueueTicksForFps / delta_time, *fps);
+					   (float)GameTicksPerSecond / delta_time, *fps);
 
 		fps_counter = 0;
 		RenderedFrames = 0;
