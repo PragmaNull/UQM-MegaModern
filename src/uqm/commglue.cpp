@@ -127,21 +127,14 @@ char* InterpolateChunk(uqstl::span<char> buffer, char* start)
 		}
 
 		uqm::strncpy_safe(str_buf, {start, end});
-		pStr = luaUqm_comm_stringInterpolate(str_buf);
-		if (!pStr)
-		{
-			fmt::print(stderr, "Interpolation failure (null return).\n");
-			return nullptr;
-		}
-		buffsize += (uint16_t)strlen(pStr);
+		const uqstl::string interpolated {luaUqm_comm_stringInterpolate(str_buf)};
+		buffsize += (uint16_t)interpolated.size();
 		if (buffsize > MAX_INTERPOLATE)
 		{
 			fmt::print(stderr, "String too long to interpolate.\n");
 			return nullptr;
 		}
-		uqm::strncpy_safe(buffer, pStr);
-		HFree(pStr);
-		pStr = nullptr;
+		uqm::strncpy_safe(buffer, interpolated);
 		buffer = buffer.subspan(end - start);
 		start = end;
 	}
@@ -183,7 +176,6 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 	char* pStr;
 	char* pClip;
 	char* pTimeStamp;
-	bool isPStrAlloced = false;
 	uint16_t clip_number = 0;
 	uint16_t i;
 
@@ -203,13 +195,12 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 	{
 		if (luaUqm_comm_stringNeedsInterpolate(pStr))
 		{
-			pStr = luaUqm_comm_stringInterpolate(pStr);
-			isPStrAlloced = true;
+			const uqstl::string interpolated {luaUqm_comm_stringInterpolate(pStr)};
+			SpliceTrack(pClip, interpolated.c_str(), pTimeStamp, cb);
 		}
-		SpliceTrack(pClip, pStr, pTimeStamp, cb);
-		if (isPStrAlloced)
+		else
 		{
-			HFree(pStr);
+			SpliceTrack(pClip, pStr, pTimeStamp, cb);
 		}
 		return;
 	}

@@ -340,9 +340,8 @@ luaUqm_comm_getPhrase(lua_State* luaState)
 
 	if (luaUqm_comm_stringNeedsInterpolate(strBuf))
 	{
-		char* interpolated = luaUqm_comm_stringInterpolate(strBuf);
-		lua_pushstring(luaState, interpolated); // This makes a copy.
-		HFree(interpolated);
+		const uqstl::string interpolated {luaUqm_comm_stringInterpolate(strBuf)};
+		lua_pushlstring(luaState, interpolated.data(), interpolated.size());
 	}
 	else
 	{

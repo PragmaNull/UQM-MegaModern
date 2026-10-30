@@ -21,7 +21,7 @@
 
 bool ReleaseScriptResData(void* data)
 {
-	HFree(data);
+	delete[] static_cast<char*>(data);
 	return true;
 }
 
@@ -30,14 +30,10 @@ GetScriptResData(const char* pathName, RESOURCE_DATA* resdata)
 {
 	// We don't actually load the data here. We determine the file name, and
 	// load the data when we need it, directly onto the Lua stack.
-	size_t pathNameLen = strlen(pathName);
-	resdata->ptr = HMalloc(pathNameLen + 1);
-	if (resdata->ptr == nullptr)
-	{
-		return;
-	}
-
-	memcpy(resdata->ptr, pathName, pathNameLen + 1);
+	const size_t size {strlen(pathName) + 1};
+	auto* path {new char[size]};
+	memcpy(path, pathName, size);
+	resdata->ptr = path;
 }
 
 bool InstallScriptResType(void)

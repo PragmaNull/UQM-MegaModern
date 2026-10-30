@@ -88,7 +88,8 @@ typedef struct response_entry
 	RESPONSE_REF response_ref;
 	TEXT response_text;
 	RESPONSE_FUNC response_func;
-	char* allocedResponse;
+	// The response text after Lua interpolation, if it needed that.
+	uqstl::string allocedResponse;
 } RESPONSE_ENTRY;
 
 typedef struct encounter_state
@@ -1487,12 +1488,7 @@ ClearResponses(ENCOUNTER_STATE* pES)
 
 	for (responseI = 0; responseI < MAX_RESPONSES; responseI++)
 	{
-		RESPONSE_ENTRY* response = &pES->response_list[responseI];
-		if (response->allocedResponse != nullptr)
-		{
-			HFree(response->allocedResponse);
-			response->allocedResponse = nullptr;
-		}
+		pES->response_list[responseI].allocedResponse.clear();
 	}
 }
 
@@ -1786,7 +1782,7 @@ void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func,
 		{
 			pEntry->allocedResponse = luaUqm_comm_stringInterpolate(
 				pEntry->response_text.pStr);
-			pEntry->response_text.pStr = pEntry->allocedResponse;
+			pEntry->response_text.pStr = pEntry->allocedResponse.c_str();
 		}
 
 		pEntry->response_text.CharCount = (uint16_t)~0;
@@ -1862,12 +1858,11 @@ void SetUpCommData(void)
 static void
 HailAlien(void)
 {
-	ENCOUNTER_STATE ES;
+	ENCOUNTER_STATE ES {};
 	FONT PlayerFont, OldFont;
 	Color TextBack;
 
 	pCurInputState = &ES;
-	memset(pCurInputState, 0, sizeof(*pCurInputState));
 
 	TalkingFinished = false;
 

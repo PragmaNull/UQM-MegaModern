@@ -350,7 +350,7 @@ GetTimeStamps(char* TimeStamps, int32_t* time_stamps)
 #define TEXT_SPEED 80
 // Returns number of parsed pages
 static int
-SplitSubPages(char* text, char* pages[], int32_t timestamp[], int size)
+SplitSubPages(const char* text, char* pages[], int32_t timestamp[], int size)
 {
 	int lead_ellips = 0;
 	uint16_t page;
@@ -471,7 +471,7 @@ void SpliceMultiTrack(char* TrackNames[], char* TrackText)
 }
 
 // XXX: This code and the entire trackplayer are begging to be overhauled
-void SpliceTrack(char* TrackName, char* TrackText, char* TimeStamp, CallbackFunction cb)
+void SpliceTrack(char* TrackName, const char* TrackText, char* TimeStamp, CallbackFunction cb)
 {
 	static char last_track_name[128] = "";
 	static unsigned long dec_offset = 0;

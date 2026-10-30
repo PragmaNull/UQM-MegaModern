@@ -29,30 +29,24 @@
 RandomContext*
 RandomContext_New(void)
 {
-	RandomContext* result = (RandomContext*)HMalloc(sizeof(RandomContext));
-	result->seed = 12345;
-	return result;
+	return new RandomContext {12345};
 }
 
 RandomContext*
 RandomContext_Set(uint32_t Context)
 {
-	RandomContext* result = (RandomContext*)HMalloc(sizeof(RandomContext));
-	result->seed = Context;
-	return result;
+	return new RandomContext {Context};
 }
 
 void RandomContext_Delete(RandomContext* context)
 {
-	HFree((void*)context);
+	delete context;
 }
 
 RandomContext*
 RandomContext_Copy(const RandomContext* source)
 {
-	RandomContext* result = (RandomContext*)HMalloc(sizeof(RandomContext));
-	*result = *source;
-	return result;
+	return new RandomContext {*source};
 }
 
 uint32_t

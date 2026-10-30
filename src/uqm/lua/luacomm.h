@@ -34,7 +34,7 @@ void luaUqm_comm_genericPost(void);
 void luaUqm_comm_genericUninit(void);
 
 bool luaUqm_comm_stringNeedsInterpolate(const char* str);
-char* luaUqm_comm_stringInterpolate(const char* str);
+uqstl::string luaUqm_comm_stringInterpolate(uqstl::string_view str);
 
 extern lua_State* luaUqm_commState;
 

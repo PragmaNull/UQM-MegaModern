@@ -200,6 +200,9 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 {
 	const char* testFile = "version";
 	const char* loc;
+#ifdef __APPLE__
+	uqstl::string bundleContentDir {};
+#endif
 
 	if (isEmpty(contentDirName))
 	{
@@ -225,18 +228,9 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 		 * by looking relative to the location of the uqm executable. */
 		if (loc == nullptr)
 		{
-			char* tempDir = (char*)HMalloc(PATH_MAX);
-			char* execFileDup;
-
-			/* dirname can modify its argument, so we need a local
-			 * mutable copy of it. */
-			const uint32_t execFileLen = strlen(execFile);
-			execFileDup = (char*)HMalloc(execFileLen + 1);
-			uqm::strncpy_safe({execFileDup, execFileLen + 1}, {execFile, execFileLen});
-			fmt::format_to_sz_n(tempDir, PATH_MAX, "{}/../Resources/content", dirname(execFileDup));
-			loc = findFileInDirs((const char**)&tempDir, 1, testFile);
-			HFree(execFileDup);
-			HFree(tempDir);
+			bundleContentDir = (uqstl::filesystem::path {execFile}.parent_path() / "../Resources/content").generic_string();
+			const char* bundleDirs[] {bundleContentDir.c_str()};
+			loc = findFileInDirs(bundleDirs, 1, testFile);
 		}
 #endif
 	}

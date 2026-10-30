@@ -129,121 +129,44 @@ bool luaUqm_comm_stringNeedsInterpolate(const char* str)
 	return strstr(str, "<%") != nullptr;
 }
 
-// Resizes *buf if necessary. Makes sure that there is always enough
-// space for a final '\0' to be added.
-static void
-luaUqm_comm_addToBuffer(char** buf, size_t* bufLen, char** bufPtr,
-						const char* add, size_t addLen)
+uqstl::string luaUqm_comm_stringInterpolate(uqstl::string_view str)
 {
-	size_t bufFill = *bufPtr - *buf;
-	size_t newLen = *bufLen;
-
-	while ((size_t)(bufFill + addLen >= newLen))
-	{
-		// Need enough space for the terminating '\0' too.
-		newLen = newLen * 2;
-	}
-
-	if (newLen != *bufLen)
-	{
-		char* newBuf = (char*)HRealloc(*buf, newLen);
-		if (newBuf == nullptr)
-		{
-			uqm::log::error("Error: luaUqm_addToBuffer(): could not "
-							"allocate memory.\n");
-			return;
-			// We continue, without adding 'add' to the buffer.
-		}
-
-		*bufLen = newLen;
-		*buf = newBuf;
-		*bufPtr = newBuf + bufFill;
-	}
-
-	memcpy(*bufPtr, add, addLen);
-	*bufPtr += addLen;
-}
-
-// Pre: *bufLen contains the space available in buf.
-// Post: *bufLen contains the size of the string in *buf.
-char* luaUqm_comm_stringInterpolate(const char* str)
-{
-	const char* strPtr;
-	size_t interI;
-	// Interpolation counter.
-	char* buf;
-	//
-	char* bufPtr;
-	size_t bufLen;
-	const char* part;
-	size_t partLen;
-
 	assert(luaUqm_commState != nullptr);
 
-	bufLen = 2048;
-	buf = (char*)HMalloc(bufLen);
-	if (buf == nullptr)
+	uqstl::string result {};
+	size_t pos {};
+	for (size_t interI {};; ++interI)
 	{
-		return nullptr;
-	}
-
-	strPtr = str;
-	bufPtr = buf;
-
-	// We go through the string and put all the parts into a Lua table.
-	for (interI = 0;; interI++)
-	{
-		const char* startTag;
-		const char* endTag;
-		const char* luaStart;
-
-		startTag = strstr(strPtr, "<%");
-		if (startTag == nullptr)
+		const size_t startTag {str.find("<%", pos)};
+		if (startTag == uqstl::string_view::npos)
 		{
 			break;
 		}
-		luaStart = startTag + 2;
 
 		// Store the string before the '<%'.
-		luaUqm_comm_addToBuffer(&buf, &bufLen, &bufPtr,
-								strPtr, startTag - strPtr);
+		result += str.substr(pos, startTag - pos);
 
-		endTag = strstr(startTag + 2, "%>");
-		if (endTag == nullptr)
+		const size_t endTag {str.find("%>", startTag + 2)};
+		if (endTag == uqstl::string_view::npos)
 		{
 			uqm::log::error("luaUqm_stringInterpolate(): Unterminated "
 							"'<%% .. %%>' sequence in string '{}'.",
 							str);
 			// We ignore the rest of the string.
-			goto out;
+			return result;
 		}
-
-		strPtr = endTag + 2;
-		interI++;
+		const uqstl::string expression {fmt::format("return {}", str.substr(startTag + 2, endTag - startTag - 2))};
+		pos = endTag + 2;
 
 		// Compile the string to a Lua function.
+		if (luaL_loadstring(luaUqm_commState, expression.c_str()) != LUA_OK)
 		{
-			size_t exprLen = endTag - luaStart;
-#define LUAEXPR_START "return "
-			const uint32_t exprBufSize = sizeof LUAEXPR_START + exprLen;
-			char* exprBuf = (char*)HMalloc(exprBufSize);
-			// 'sizeof LUAEXPR_START' includes a null byte
-			char* exprBufPtr = exprBuf;
-			uqm::strncpy_safe({exprBuf, exprBufSize}, {LUAEXPR_START, sizeof(LUAEXPR_START)});
-			exprBufPtr += sizeof LUAEXPR_START - 1;
-			memcpy(exprBufPtr, luaStart, exprLen);
-			exprBufPtr += exprLen;
-			*exprBufPtr = '\0';
-
-			if (luaL_loadstring(luaUqm_commState, exprBuf) != LUA_OK)
-			{
-				uqm::log::error("luaUqm_stringInterpolate(): "
-								"lua_loadstring() failed: {}",
-								lua_tostring(luaUqm_commState, -1));
-				lua_pop(luaUqm_commState, 1);
-				// Pop the error.
-				continue;
-			}
+			uqm::log::error("luaUqm_stringInterpolate(): "
+							"lua_loadstring() failed: {}",
+							lua_tostring(luaUqm_commState, -1));
+			// Pop the error.
+			lua_pop(luaUqm_commState, 1);
+			continue;
 		}
 
 		// Call the Lua function.
@@ -254,14 +177,14 @@ char* luaUqm_comm_stringInterpolate(const char* str)
 							"'{}': {}.",
 							interI, str,
 							lua_tostring(luaUqm_commState, -1));
-			lua_pop(luaUqm_commState, 1);
 			// Pop the error.
+			lua_pop(luaUqm_commState, 1);
 			continue;
 		}
-		// Success. Result is on the stack.
 
-		// Convert the result to a string, and get the length.
-		part = lua_tolstring(luaUqm_commState, -1, &partLen);
+		// Convert the result to a string.
+		size_t partLen {};
+		const char* part {lua_tolstring(luaUqm_commState, -1, &partLen)};
 		if (part == nullptr)
 		{
 			// Not a string and not convertable to a string.
@@ -270,38 +193,18 @@ char* luaUqm_comm_stringInterpolate(const char* str)
 							"be converted to a string, in string "
 							"'{}'.",
 							interI, lua_typename(luaUqm_commState, lua_type(luaUqm_commState, -1)), str);
-			lua_pop(luaUqm_commState, 1);
-			continue;
 		}
-
-		// Store the result of the Lua expression in '<% .. %>'.
-		luaUqm_comm_addToBuffer(&buf, &bufLen, &bufPtr, part, partLen);
+		else
+		{
+			// Store the result of the Lua expression in '<% .. %>'.
+			result.append(part, partLen);
+		}
 
 		// Pop the result from the stack.
 		lua_pop(luaUqm_commState, 1);
 	}
 
 	// Store the part of the string after the last '<% .. %>'.
-	luaUqm_comm_addToBuffer(&buf, &bufLen, &bufPtr,
-							strPtr, strlen(strPtr));
-
-out:
-	*bufPtr = '\0';
-	// luaUqm_addToBuffer() always leaves one byte for the '\0'.
-
-	{
-		char* newBuf = (char*)HRealloc(buf, bufPtr - buf + 1);
-		if (newBuf == nullptr)
-		{
-			// If we can't shorten 'newBuf', we'll just keep using the
-			// unnecessarilly long 'buf', and let the next allocating
-			// function worry about the impending memory shortage.
-		}
-		else
-		{
-			buf = newBuf;
-		}
-	}
-
-	return buf;
+	result += str.substr(pos);
+	return result;
 }

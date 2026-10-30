@@ -392,20 +392,14 @@ void DoDiscoveryReport(SOUND ReadOutSounds)
 		}
 
 		luaUqm_comm_init(nullptr, NULL_RESOURCE);
-		bool allocated = false;
-		char* StrPtr = (char*)GetStringAddress(pSolarSysState->SysInfo.PlanetInfo.DiscoveryString);
-		if (luaUqm_comm_stringNeedsInterpolate(StrPtr))
+		uqstl::string report {GetStringAddress(pSolarSysState->SysInfo.PlanetInfo.DiscoveryString)};
+		if (luaUqm_comm_stringNeedsInterpolate(report.c_str()))
 		{
-			allocated = true;
-			StrPtr = luaUqm_comm_stringInterpolate(StrPtr);
+			report = luaUqm_comm_stringInterpolate(report);
 		}
-		MakeReport(ReadOutSounds, StrPtr, (uint16_t)strlen(StrPtr));
+		MakeReport(ReadOutSounds, report.data(), (uint16_t)report.size());
 
 		luaUqm_comm_uninit();
-		if (allocated)
-		{
-			HFree(StrPtr);
-		}
 
 		SetContextFontEffect(OldFontEffect);
 		SetContextFont(OldFont);
