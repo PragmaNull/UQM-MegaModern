@@ -82,6 +82,9 @@ uqstl::pair<int, bool> UQMOptions::parseArgs(uqstl::span<uqgsl::zstring> args)
 	settingsCli.group("Testing")
 		.add_option("--check-save", m_options.checkSave, "Load this save file, save it again, report the differences, and exit.")
 		->check(CLI::ExistingFile);
+	settingsCli.group("Testing")
+		.add_option("--play-save", m_options.playSave, "Skip the main menu and play this save file.")
+		->check(CLI::ExistingFile);
 
 	settingsCli.group("Cheats")
 		.add_flag("--unlockupgrades", m_options.unlockUpgrades.edit(), "Unlocks every upgrade for your flagship and landers)")

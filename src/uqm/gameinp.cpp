@@ -42,6 +42,7 @@
 #include "libs/input/sdl/vcontrol.h"
 #include "setup.h"
 #include "setupmenu.h"
+#include "save.h"
 #include "libs/graphics/gfx_common.h"
 
 #define ACCELERATION_INCREMENT (GameTicksPerSecond / 12)
@@ -185,12 +186,24 @@ applyInputScript(void)
 	{
 		uqm::log::info("Input script: {}", *step.log);
 	}
+	if (step.saveSlot)
+	{
+		SUMMARY_DESC summary {};
+		if (SaveGame(*step.saveSlot, &summary, "Input script"))
+		{
+			uqm::log::info("Input script: saved the game to slot {}.", *step.saveSlot);
+		}
+		else
+		{
+			uqm::log::error("Input script: could not save the game to slot {}.", *step.saveSlot);
+		}
+	}
 	if (step.quit)
 	{
 		uqm::log::info("Input script: quit.");
 		uqm::log::default_logger()->flush();
-		// The main thread exits on the abort key.
-		ImmediateInputState.menu[KEY_ABORT] = 1;
+		// The main thread stops the game thread and then exits, as when the window closes.
+		QuitPosted = 1;
 	}
 	if (inputScript->finished() && !inputScriptFinishedLogged)
 	{

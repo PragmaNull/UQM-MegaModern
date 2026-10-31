@@ -105,8 +105,10 @@ def interplanetary_groups(save):
 
 
 def planet_orbit(save):
+    # Orbit of Earth (planet 3). 2 would be its moon, which has the starbase.
     set_activity(save, IN_INTERPLANETARY, IN_PLANET_ORBIT)
-    save["globalState"]["in_orbit"] = 2
+    save["globalState"]["ip_planet"] = 3
+    save["globalState"]["in_orbit"] = 1
 
 
 def late_game(save):

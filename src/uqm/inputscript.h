@@ -37,6 +37,7 @@ enum class ScriptKey
 //   delay <ms>      set the wait after each command (default 150)
 //   dumpmenu        log the current setup menu
 //   log <text>      write text to the log
+//   savegame <slot> save the game that runs to a save slot
 //   quit            stop the game
 // Empty lines and lines that start with '#' are ignored.
 struct ScriptCommand
@@ -48,6 +49,7 @@ struct ScriptCommand
 		Delay,
 		DumpMenu,
 		Log,
+		SaveGame,
 		Quit,
 	};
 
@@ -55,6 +57,7 @@ struct ScriptCommand
 	ScriptKey key {ScriptKey::Select};
 	uint32_t milliseconds {};
 	uqstl::string text {};
+	uint16_t slot {};
 };
 
 class InputScript
@@ -65,6 +68,7 @@ public:
 		uqstl::optional<ScriptKey> press {};
 		bool dumpMenu {};
 		uqstl::optional<uqstl::string> log {};
+		uqstl::optional<uint16_t> saveSlot {};
 		bool quit {};
 	};
 

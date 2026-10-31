@@ -99,6 +99,15 @@ uqstl::optional<InputScript> InputScript::parse(uqstl::string_view text, uqstl::
 		{
 			script.m_commands.push_back({.kind = ScriptCommand::Kind::Log, .text = uqstl::string {argument}});
 		}
+		else if (compareICase(word, "savegame"))
+		{
+			const auto slot {parseCount(argument)};
+			if (!slot || *slot > UINT16_MAX)
+			{
+				return fail("expected a save slot number");
+			}
+			script.m_commands.push_back({.kind = ScriptCommand::Kind::SaveGame, .slot = static_cast<uint16_t>(*slot)});
+		}
 		else if (compareICase(word, "quit"))
 		{
 			script.m_commands.push_back({.kind = ScriptCommand::Kind::Quit});
@@ -156,6 +165,9 @@ InputScript::Step InputScript::update(uint32_t now)
 				return {.dumpMenu = true};
 			case ScriptCommand::Kind::Log:
 				return {.log = command.text};
+			case ScriptCommand::Kind::SaveGame:
+				m_waitUntil = now + m_delay;
+				return {.saveSlot = command.slot};
 			case ScriptCommand::Kind::Quit:
 				return {.quit = true};
 		}

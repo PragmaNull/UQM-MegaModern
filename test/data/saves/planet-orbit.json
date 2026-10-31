@@ -146,7 +146,7 @@
     },
     "ShipFacing": 10,
     "ip_planet": 3,
-    "in_orbit": 2,
+    "in_orbit": 1,
     "velocity": {
       "TravelAngle": 0,
       "vector": {

@@ -38,6 +38,19 @@ TEST(InputScriptTest, ParsesCommands)
 	EXPECT_EQ(commands[8].kind, ScriptCommand::Kind::Quit);
 }
 
+TEST(InputScriptTest, ParsesSaveGame)
+{
+	InputScript script {parseOrFail("savegame 3\n")};
+	ASSERT_EQ(script.commands().size(), 1u);
+	EXPECT_EQ(script.commands()[0].kind, ScriptCommand::Kind::SaveGame);
+	EXPECT_EQ(script.commands()[0].slot, 3);
+	EXPECT_EQ(script.update(0).saveSlot, uqstl::optional<uint16_t> {3});
+
+	uqstl::string error {};
+	EXPECT_FALSE(InputScript::parse("savegame\n", error));
+	EXPECT_EQ(error, "line 1: expected a save slot number");
+}
+
 TEST(InputScriptTest, ReportsInvalidLines)
 {
 	uqstl::string error {};

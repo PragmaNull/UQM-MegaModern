@@ -37,6 +37,7 @@
 #include "core/string/StringUtils.h"
 #include "comm.h"
 #include "master.h"
+#include "restart.h"
 
 #include <ctype.h>
 
@@ -2109,6 +2110,17 @@ bool GameOptions(void)
 
 	if (LastActivity == CHECK_LOAD)
 	{ // Selected LOAD from main menu
+		if (const char* path {TakePlaySave()})
+		{
+			const bool loaded {LoadGameFile(path)};
+			if (loaded)
+			{
+				uqm::log::info("Loaded the save file '{}'.", path);
+			}
+			uqm::currentActivity() |= loaded ? CHECK_LOAD : CHECK_ABORT;
+			return false;
+		}
+
 		bool success;
 
 		DrawMenuStateStrings(PM_SAVE_GAME, LOAD_GAME);

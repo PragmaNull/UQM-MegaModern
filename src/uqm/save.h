@@ -58,6 +58,8 @@ extern ACTIVITY NextActivity;
 extern bool LoadGame(uint16_t which_game, SUMMARY_DESC* summary_desc);
 // Loads a game from the text of a save file. 'file' names the save in error messages.
 bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_DESC* summary_desc);
+// Loads a game from a save file at any path.
+bool LoadGameFile(const char* path);
 uqstl::string saveFileName(uint16_t which_game);
 
 extern void SaveProblem(void);

@@ -80,6 +80,7 @@ struct OptionsStruct : SettingsRegistry
 	uqstl::string graphicsBackend {}; // SDL renderer backend hint passed to TFB_InitGraphics.
 	uqstl::string inputScript {};	  // File of scripted menu key presses, for testing.
 	uqstl::string checkSave {};		  // Save file to load and save again, for testing.
+	uqstl::string playSave {};		  // Save file to play without the main menu, for testing.
 
 	// Commandline and user config options
 	Setting<Vec2u> resolution {

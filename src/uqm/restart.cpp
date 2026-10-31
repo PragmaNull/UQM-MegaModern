@@ -873,46 +873,79 @@ TryStartGame(void)
 	return true;
 }
 
+// True while the save of --play-save waits to load.
+static bool s_playSavePending {};
+
+// Starts a game that loads the save of --play-save, the first time only. Returns false if there is no such save.
+static bool
+StartPlaySave(void)
+{
+	static bool s_playSaveStarted {};
+	if (s_playSaveStarted || uqm::UQMOptions::read().playSave.empty())
+	{
+		return false;
+	}
+	s_playSaveStarted = true;
+	s_playSavePending = true;
+	// The same activity as LOAD in the main menu.
+	LastActivity = CHECK_LOAD;
+	uqm::currentActivity() = IN_INTERPLANETARY;
+	return true;
+}
+
+const char* TakePlaySave(void)
+{
+	if (!s_playSavePending)
+	{
+		return nullptr;
+	}
+	s_playSavePending = false;
+	return uqm::UQMOptions::read().playSave.c_str();
+}
+
 bool StartGame(void)
 {
-	do
+	if (!StartPlaySave())
 	{
-		while (!TryStartGame())
+		do
 		{
-			if (uqm::currentActivity() == (ACTIVITY)~0)
-			{ // timed out
-				uqm::currentActivity() = 0;
+			while (!TryStartGame())
+			{
+				if (uqm::currentActivity() == (ACTIVITY)~0)
+				{ // timed out
+					uqm::currentActivity() = 0;
 
-				if (optRequiresRestart || optRequiresReload)
-				{
-					optRequiresRestart = optRequiresReload = false;
-				}
-				else
-				{
-					SplashScreen(0);
-					if (uqm::UQMOptions::read().whichIntro == uqm::EmulationMode::Console3DO)
+					if (optRequiresRestart || optRequiresReload)
 					{
-						Drumall();
+						optRequiresRestart = optRequiresReload = false;
 					}
-					Credits(false);
+					else
+					{
+						SplashScreen(0);
+						if (uqm::UQMOptions::read().whichIntro == uqm::EmulationMode::Console3DO)
+						{
+							Drumall();
+						}
+						Credits(false);
+					}
+				}
+
+				if (uqm::currentActivity() & CHECK_ABORT)
+				{
+					return (false); // quit
 				}
 			}
 
-			if (uqm::currentActivity() & CHECK_ABORT)
-			{
-				return (false); // quit
+			if (LastActivity & CHECK_RESTART)
+			{ // starting a new game
+				if (!uqm::UQMOptions::read().skipIntro)
+				{
+					Introduction();
+				}
 			}
-		}
 
-		if (LastActivity & CHECK_RESTART)
-		{ // starting a new game
-			if (!uqm::UQMOptions::read().skipIntro)
-			{
-				Introduction();
-			}
-		}
-
-	} while (uqm::currentActivity() & CHECK_ABORT);
+		} while (uqm::currentActivity() & CHECK_ABORT);
+	}
 
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "StartGame called for {} mode with seed {} shipseed {}.\n",

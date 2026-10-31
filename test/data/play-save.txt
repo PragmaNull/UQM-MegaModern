@@ -1,0 +1,6 @@
+# Plays the save of --play-save for a few seconds, saves it to slot 0, and quits.
+# The SaveRoundTrip check then reads the save that the game made.
+wait 8000
+savegame 0
+wait 2000
+quit
