@@ -221,15 +221,6 @@ typedef struct BuildCharDesc
 	uqm::UniChar index;
 } BuildCharDesc;
 
-static int
-compareBCDIndex(const void* arg1, const void* arg2)
-{
-	const BuildCharDesc* bcd1 = (const BuildCharDesc*)arg1;
-	const BuildCharDesc* bcd2 = (const BuildCharDesc*)arg2;
-
-	return (int)bcd1->index - (int)bcd2->index;
-}
-
 void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 {
 	uint16_t numDirEntries;
@@ -354,7 +345,9 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 #endif
 
 	// sort on the character index
-	qsort(bcds.data(), numBCDs, sizeof(BuildCharDesc), compareBCDIndex);
+	uqstl::sort(bcds.begin(), bcds.begin() + numBCDs, [](const BuildCharDesc& a, const BuildCharDesc& b) {
+		return a.index < b.index;
+	});
 
 	{
 		size_t startBCD = 0;

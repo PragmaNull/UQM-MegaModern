@@ -457,37 +457,6 @@ DoModifyRoster(MENU_STATE* pMS)
 	return true;
 }
 
-static int
-compShipPos(const void* ptr1, const void* ptr2)
-{
-	const GFXPOINT* pt1 = (const GFXPOINT*)ptr1;
-	const GFXPOINT* pt2 = (const GFXPOINT*)ptr2;
-
-	// Ships on the left in the lower half
-	if (pt1->x < pt2->x)
-	{
-		return -1;
-	}
-	else if (pt1->x > pt2->x)
-	{
-		return 1;
-	}
-
-	// and ordered on Y
-	if (pt1->y < pt2->y)
-	{
-		return -1;
-	}
-	else if (pt1->y > pt2->y)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
 bool RosterMenu(void)
 {
 	MENU_STATE MenuState;
@@ -507,8 +476,10 @@ bool RosterMenu(void)
 	// Get the escort positions we will use and sort on X then Y
 	assert(sizeof(RosterState.shipPos) == sizeof(ship_pos));
 	memcpy(RosterState.shipPos, ship_pos, sizeof(ship_pos));
-	qsort(RosterState.shipPos, RosterState.count,
-		  sizeof(RosterState.shipPos[0]), compShipPos);
+	uqstl::sort(RosterState.shipPos, RosterState.shipPos + RosterState.count, [](const GFXPOINT& a, const GFXPOINT& b) {
+		// Ships on the left in the lower half, and ordered on Y
+		return a.x != b.x ? a.x < b.x : a.y < b.y;
+	});
 
 	SetContext(StatusContext);
 	selectSupportShip(&RosterState, MenuState.CurState);

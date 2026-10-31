@@ -1,4 +1,4 @@
-// Bit and byte helpers: powers of two, and splitting and joining bytes, nibbles and words.
+// Byte helpers: splitting and joining bytes, nibbles and words.
 #pragma once
 #ifndef UQM_CORE_MISC_BITTRICKS_H_
 #define UQM_CORE_MISC_BITTRICKS_H_
@@ -10,14 +10,6 @@
 
 namespace uqm
 {
-
-template <typename T>
-constexpr bool isPowerOfTwo(T value) noexcept
-{
-	static_assert(uqstl::is_integral_v<T>, "Integral type required");
-
-	return value > 0 && (value & (value - 1)) == 0;
-}
 
 // An integer, or an enumeration value as the old C tables use.
 template <typename T>

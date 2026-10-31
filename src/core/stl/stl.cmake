@@ -8,6 +8,7 @@ set(uqm_src_core_stl_master_files "")
 # Local files
 set(uqm_src_core_stl_files
 	"src/core/stl/array.h"
+	"src/core/stl/bit.h"
 	"src/core/stl/atomic.h"
 	"src/core/stl/charconv.h"
 	"src/core/stl/chrono.h"

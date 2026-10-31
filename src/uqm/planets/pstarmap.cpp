@@ -2194,45 +2194,24 @@ typedef struct starsearch_state
 	int SortedStars[NUM_SOLAR_SYSTEMS];
 } STAR_SEARCH_STATE;
 
-static int
-compStarName(const void* ptr1, const void* ptr2)
+static bool
+starNameLess(int index1, int index2)
 {
-	int index1;
-	int index2;
-
-	index1 = *(const int*)ptr1;
-	index2 = *(const int*)ptr2;
-	if (star_array[index1].Postfix != star_array[index2].Postfix)
+	const STAR_DESC& star1 {star_array[index1]};
+	const STAR_DESC& star2 {star_array[index2]};
+	if (star1.Postfix != star2.Postfix)
 	{
-		return uqm::utf8StringCompare(GAME_STRING(star_array[index1].Postfix),
-									  GAME_STRING(star_array[index2].Postfix));
+		return uqm::utf8StringCompare(GAME_STRING(star1.Postfix), GAME_STRING(star2.Postfix)) < 0;
 	}
-
-	if (star_array[index1].Prefix < star_array[index2].Prefix)
-	{
-		return -1;
-	}
-
-	if (star_array[index1].Prefix > star_array[index2].Prefix)
-	{
-		return 1;
-	}
-
-	return 0;
+	return star1.Prefix < star2.Prefix;
 }
 
 static void
 SortStarsOnName(STAR_SEARCH_STATE* pSS)
 {
-	int i;
-	int* sorted = pSS->SortedStars;
-
-	for (i = 0; i < NUM_SOLAR_SYSTEMS; i++)
-	{
-		sorted[i] = i;
-	}
-
-	qsort(sorted, NUM_SOLAR_SYSTEMS, sizeof(int), compStarName);
+	int* const sorted {pSS->SortedStars};
+	uqstl::iota(sorted, sorted + NUM_SOLAR_SYSTEMS, 0);
+	uqstl::sort(sorted, sorted + NUM_SOLAR_SYSTEMS, starNameLess);
 }
 
 static void
