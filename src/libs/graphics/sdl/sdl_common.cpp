@@ -127,7 +127,10 @@ void TFB_ProcessEvents()
 	while (SDL_PollEvent(&Event))
 	{
 		/* Run through the InputEvent filter. */
-		ProcessInputEvent(&Event);
+		if (!TFB_SDL_ImGuiEvent(&Event))
+		{
+			ProcessInputEvent(&Event);
+		}
 		/* Handle graphics and exposure events. */
 		switch (Event.type)
 		{

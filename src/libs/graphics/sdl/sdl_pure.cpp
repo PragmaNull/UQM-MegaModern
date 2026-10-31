@@ -24,6 +24,7 @@
 #include "png2sdl.h"
 #include "options.h"
 #include "gpushaders.h"
+#include "libs/graphics/imgui/imguilayer.h"
 
 
 typedef struct tfb_sdl_screeninfo_s
@@ -67,6 +68,7 @@ uqstl::unique_ptr<SDL_Texture, TextureDeleter> s_fpsTexture {};
 int s_frameLogicalWidth {};
 int s_frameLogicalHeight {};
 bool s_gammaPass {};
+uqstl::unique_ptr<uqm::ImGuiLayer> s_imgui {};
 
 } // namespace
 
@@ -314,6 +316,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 			return -1;
 		}
 		s_gpuShaders = uqm::GpuShaders::create(renderer);
+		s_imgui = uqm::ImGuiLayer::create(window, renderer);
 		if (s_gpuShaders)
 		{
 			uqm::log::info("GPU shaders ready ({}, {}).", s_gpuShaders->driverName(), s_gpuShaders->formatName());
@@ -575,6 +578,7 @@ int TFB_Pure_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char
 
 void TFB_Pure_UninitGraphics(void)
 {
+	s_imgui.reset();
 	s_fpsTexture.reset();
 	s_frameTarget.reset();
 	s_gpuShaders.reset();
@@ -952,6 +956,11 @@ TFB_SDL_Postprocess(bool hd)
 		FinishGammaPass();
 	}
 
+	if (s_imgui)
+	{
+		s_imgui->render();
+	}
+
 	SDL_RenderPresent(renderer);
 }
 
@@ -1003,6 +1012,16 @@ bool TFB_SDL_ScreenShot(const char* path)
 	SDL_DestroySurface(tmp);
 
 	return successful;
+}
+
+bool TFB_SDL_ImGuiEvent(const SDL_Event* event)
+{
+	return s_imgui && s_imgui->processEvent(*event);
+}
+
+bool TFB_ImGuiVisible(void)
+{
+	return s_imgui && s_imgui->visible();
 }
 
 SDL_Window* TFB_GetSDLWindow(void)

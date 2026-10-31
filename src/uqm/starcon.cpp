@@ -217,6 +217,12 @@ SetRandomMenuMusic(void)
 extern AudioDriverType snddriver;
 extern AudioFlags soundflags;
 
+bool IsGameInProgress(void)
+{
+	const uqm::GameSession* const session {uqm::UQMGame::getInstance().session()};
+	return session != nullptr && session->kind() == uqm::SessionKind::FullGame;
+}
+
 int Starcon2Main(void* threadArg)
 {
 	{

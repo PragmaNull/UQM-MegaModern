@@ -45,12 +45,7 @@
 #include "configuration/Configuration.h"
 #include "libs/file/textfile.h"
 #include "uqm/menuwidgets.h"
-
-#if defined(DIRECTIONAL_JOY)
-#define HAVE_DIRECTIONAL_JOYSTICK true
-#else
-#define HAVE_DIRECTIONAL_JOYSTICK false
-#endif
+#include "uqm/setupsettings.h"
 
 typedef struct setup_menu_state
 {
@@ -67,7 +62,6 @@ static bool DoSetupMenu(SETUP_MENU_STATE* pInputState);
 static WIDGET *current, *next;
 static uqstl::unique_ptr<uqm::MenuWidgets> menuWidgets {};
 
-static constexpr const char* c_menuDefinitionResource {"ui.setupmenu"};
 static uqstl::optional<uqm::MenuDefinition> menuDefinition {};
 static bool mainMenuMusicChanged {};
 
@@ -161,87 +155,6 @@ static void
 rename_template(WIDGET_TEXTENTRY* self)
 {
 	uqm::strncpy_safe(uqm::input_templates[editTemplate].name, self->value);
-}
-
-// Returns the cheat value of a device or upgrade state, or nullptr if there is no such state.
-static uqm::CheatAction*
-find_cheat_state(uqstl::string_view key)
-{
-	const auto indexed {[key](uqstl::string_view prefix, size_t count) -> uqstl::optional<size_t> {
-		size_t index {};
-		if (!key.starts_with(prefix) || uqm::parseStr(key.substr(prefix.size()), index) != uqstl::errc {} || index >= count)
-		{
-			return uqstl::nullopt;
-		}
-		return index;
-	}};
-	if (const auto device {indexed("device.", uqstl::size(optDeviceArray))})
-	{
-		return &optDeviceArray[*device];
-	}
-	if (const auto upgrade {indexed("upgrade.", uqstl::size(optUpgradeArray))})
-	{
-		return &optUpgradeArray[*upgrade];
-	}
-	return nullptr;
-}
-
-// Sets the window size and the display flags from the settings.
-static void
-apply_graphics_from_settings(void)
-{
-	const uqm::OptionsStruct& options {uqm::UQMOptions::read()};
-
-	const uqm::GfxFlags newFlags {(g_gfxFlags & ~uqm::c_displayFlagsMask) | uqm::displayFlags(options)};
-
-	uqm::GfxDriver newDriver {GraphicsDriver};
-
-	const int blowup {*options.loresBlowupScale};
-	if (blowup == 0)
-	{
-		SavedWidth = RES_SCALE(320);
-		SavedHeight = RES_SCALE(DOS_BOOL(240, 200));
-	}
-	else if (blowup < 6)
-	{
-		SavedWidth = 320 * (1 + blowup);
-		SavedHeight = DOS_BOOL(240, 200) * (1 + blowup);
-	}
-	else
-	{
-		SavedWidth = inBounds(static_cast<int>(options.resolution.value.x), 320, 1920);
-		SavedHeight = inBounds(static_cast<int>(options.resolution.value.y), 200, 1440);
-	}
-
-	int newWidth {SavedWidth};
-	int newHeight {SavedHeight};
-	if (*options.keepAspectRatio)
-	{
-		const float threshold {0.75f};
-		const float ratio {(float)newHeight / (float)newWidth};
-		if (ratio > threshold) // screen is narrower than 4:3
-		{
-			newWidth = newHeight / threshold;
-		}
-		else if (ratio < threshold) // screen is wider than 4:3
-		{
-			newHeight = newWidth * threshold;
-		}
-	}
-
-	if (newWidth != WindowWidth || newHeight != WindowHeight || newFlags != g_gfxFlags || newDriver != GraphicsDriver)
-	{
-		// Exclusive fullscreen needs a second reinit after a size change.
-		const bool exclusive {testFlag(newFlags, uqm::GfxFlags::ExclusiveFullscreen)};
-		const bool resized {newWidth != WindowWidth || newHeight != WindowHeight};
-		if (exclusive && resized)
-		{
-			TFB_DrawScreen_ReinitVideo(newDriver, newFlags & ~uqm::GfxFlags::ExclusiveFullscreen, newWidth, newHeight);
-			FlushInput();
-		}
-		TFB_DrawScreen_ReinitVideo(newDriver, newFlags, newWidth, newHeight);
-	}
-	FlushInput();
 }
 
 #define MENU_FRAME_RATE (GameTicksPerSecond / 20)
@@ -612,32 +525,10 @@ open_menu(uqstl::string_view id)
 static void
 read_menu_definition(void)
 {
-	const char* path {res_GetString(c_menuDefinitionResource)};
-	if (path == nullptr)
-	{
-		uqm::log::critical("PANIC: The resource '{}' is not defined.", c_menuDefinitionResource);
-		exit(EXIT_FAILURE);
-	}
-	const auto json {uqm::readTextFile(uqm::contentDir(), path)};
-	if (!json)
-	{
-		uqm::log::critical("PANIC: Could not read the setup menu definition '{}'.", path);
-		exit(EXIT_FAILURE);
-	}
-
-	menuDefinition = uqm::menuDefinitionFromJson(*json);
+	menuDefinition = uqm::readSetupMenuDefinition();
 	if (!menuDefinition)
 	{
-		uqm::log::critical("PANIC: The setup menu definition '{}' is not valid.", path);
-		exit(EXIT_FAILURE);
-	}
-	for (const uqstl::string& error : uqm::validateMenuDefinition(*menuDefinition, uqm::UQMOptions::edit()))
-	{
-		uqm::log::error("{}", error);
-	}
-	if (menuDefinition->find("main") == nullptr)
-	{
-		uqm::log::critical("PANIC: The setup menu definition has no 'main' menu.");
+		uqm::log::critical("PANIC: Could not read the setup menu definition.");
 		exit(EXIT_FAILURE);
 	}
 }
@@ -716,83 +607,23 @@ init_widgets(void)
 	init_shared_widgets();
 
 	uqm::MenuWidgets::Hooks hooks {};
-	hooks.isAddonAvailable = [](uqstl::string_view addon) {
-		// The window type addons depend on the selected graphics mode.
-		const bool hd {*uqm::UQMOptions::read().resolutionFactor != 0};
-		if (addon == "dos-mode")
-		{
-			return uqm::isAddonAvailable(DOS_MODE(hd));
-		}
-		if (addon == "3do-mode")
-		{
-			return uqm::isAddonAvailable(THREEDO_MODE(hd));
-		}
-		if (addon == "directional-joystick")
-		{
-			return HAVE_DIRECTIONAL_JOYSTICK;
-		}
-		return uqm::isAddonAvailable(uqstl::string {addon}.c_str());
-	};
+	hooks.isAddonAvailable = uqm::isMenuAddonAvailable;
 	hooks.addonUnavailable = [] {
 		DoPopupWindow(GAME_STRING(MAINMENU_STRING_BASE + 36));
 		Widget_SetFont(PlyrFont);
 	};
 	hooks.settingChanged = [](const uqm::SettingBase& setting) {
-		optRequiresReload = optRequiresReload || setting.requiresReload();
-		optRequiresRestart = optRequiresRestart || setting.requiresRestart();
-		const uqm::OptionsStruct& options {uqm::UQMOptions::read()};
+		if (uqm::applySettingChange(setting))
+		{
+			menuWidgets->refresh();
+		}
 		if (setting.key() == "audio.mainMenuMusic")
 		{
 			mainMenuMusicChanged = true;
 		}
-		else if (setting.key() == "audio.musicVolume")
-		{
-			musicVolumeScale = *options.musicVolumeScale;
-			SetMusicVolume(musicVolume);
-		}
-		else if (setting.key() == "audio.sfxVolume")
-		{
-			sfxVolumeScale = *options.sfxVolumeScale;
-		}
 		else if (setting.key() == "audio.speechVolume")
 		{
-			speechVolumeScale = *options.speechVolumeScale;
-			SetSpeechVolume(speechVolumeScale);
 			TestSpeechSound(SetAbsSoundIndex(testSounds, speechVolumeScale >= 1.0f));
-		}
-		else if (setting.key() == "seed.type" || setting.key() == "seed.value")
-		{
-			const bool primeSeed {*options.seedType == uqm::SeedType::None || *options.seedType == uqm::SeedType::Prime};
-			if (primeSeed && *options.customSeed != PrimeA)
-			{
-				uqm::UQMOptions::edit().customSeed = PrimeA;
-				menuWidgets->refresh();
-			}
-			g_seedType = *options.seedType;
-		}
-		else if (setting.key() == "graphics.loresBlowupScale" || setting.key() == "graphics.resolution")
-		{
-			auto& edit {uqm::UQMOptions::edit()};
-			if (setting.key() == "graphics.resolution")
-			{
-				edit.loresBlowupScale = 6;
-			}
-			apply_graphics_from_settings();
-			edit.resolution = uqm::Vec2u {static_cast<uint32_t>(SavedWidth), static_cast<uint32_t>(SavedHeight)};
-			menuWidgets->refresh();
-		}
-		else if (setting.key() == "graphics.windowMode" || setting.key() == "graphics.scaler" || setting.key() == "graphics.scanlines"
-				 || setting.key() == "graphics.showFps" || setting.key() == "graphics.keepAspectRatio")
-		{
-			apply_graphics_from_settings();
-		}
-		else if (setting.key() == "controls.player1Template")
-		{
-			PlayerControlTemplates[0] = static_cast<ControlTemplate>(*options.player1Control);
-		}
-		else if (setting.key() == "controls.player2Template")
-		{
-			PlayerControlTemplates[1] = static_cast<ControlTemplate>(*options.player2Control);
 		}
 	};
 	hooks.optionLabel = [](uqstl::string_view list, size_t index) -> const char* {
@@ -807,7 +638,7 @@ init_widgets(void)
 		{
 			return editTemplate;
 		}
-		if (const uqm::CheatAction* cheat {find_cheat_state(key)})
+		if (const uqm::CheatAction* cheat {uqm::findCheatState(key)})
 		{
 			return static_cast<int>(*cheat);
 		}
@@ -819,7 +650,7 @@ init_widgets(void)
 			editTemplate = value;
 			populate_editkeys(value);
 		}
-		else if (uqm::CheatAction * cheat {find_cheat_state(key)})
+		else if (uqm::CheatAction * cheat {uqm::findCheatState(key)})
 		{
 			*cheat = static_cast<uqm::CheatAction>(value);
 		}

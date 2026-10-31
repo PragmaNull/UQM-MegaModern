@@ -101,6 +101,11 @@ void CloseStateFile(GAME_STATE_FILE* fp)
 	// Erm, Ok, it's closed! Honest!
 }
 
+bool IsStateFileOpen(int stateFile)
+{
+	return stateFile >= 0 && stateFile < NUM_STATE_FILES && uqm::gameState().stateFile(stateFile).open_count > 0;
+}
+
 void DeleteStateFile(int stateFile)
 {
 	GAME_STATE_FILE* fp;

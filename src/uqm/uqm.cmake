@@ -7,6 +7,8 @@ set(uqm_src_uqm_master_files "")
 # Sub-directories
 include("src/uqm/comm/comm.cmake")
 list(APPEND uqm_src_uqm_master_files ${uqm_src_uqm_comm_master_files})
+include("src/uqm/imgui/imgui.cmake")
+list(APPEND uqm_src_uqm_master_files ${uqm_src_uqm_imgui_master_files})
 include("src/uqm/lua/lua.cmake")
 list(APPEND uqm_src_uqm_master_files ${uqm_src_uqm_lua_master_files})
 include("src/uqm/planets/planets.cmake")
@@ -129,6 +131,8 @@ set(uqm_src_uqm_files
 	"src/uqm/setup.h"
 	"src/uqm/setupmenu.cpp"
 	"src/uqm/setupmenu.h"
+	"src/uqm/setupsettings.cpp"
+	"src/uqm/setupsettings.h"
 	"src/uqm/ship.cpp"
 	"src/uqm/ship.h"
 	"src/uqm/shipcont.h"
