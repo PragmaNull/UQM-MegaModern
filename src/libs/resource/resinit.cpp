@@ -219,6 +219,10 @@ void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, cons
 
 bool ConvertLegacyResourceIndex(const uqm::io::Directory& dir, const char* oldName, const char* newName)
 {
+	if (dir.exists(newName))
+	{
+		return false;
+	}
 	const auto text {uqm::readTextFile(dir, oldName)};
 	if (!text)
 	{

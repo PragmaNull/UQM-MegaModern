@@ -72,8 +72,8 @@ public:
 	[[nodiscard]] uqstl::vector<EVENT> eventList() const;
 	// True if the clock date is before the date.
 	[[nodiscard]] bool isBefore(uint16_t year, uint16_t month, uint16_t day) const noexcept;
-	// Removes the first event of today from the queue and gives its function index.
-	// Returns false if no event is due today.
+	// Removes the first event of today or before from the queue and gives its function index.
+	// Returns false if no event is due.
 	[[nodiscard]] bool takeDueEvent(uint8_t& funcIndex);
 
 	[[nodiscard]] QUEUE& events() noexcept

@@ -177,6 +177,8 @@ void MoveGameClockToNextEvent(bool skipHyperspaceEncounters)
 		{
 			MoveGameClockDays(1);
 		}
+		// An event for today that was added after the events of today ran.
+		processClockDayEvents();
 		if (!skipHyperspaceEncounters || event->func_index != HYPERSPACE_ENCOUNTER_EVENT)
 		{
 			return;

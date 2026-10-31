@@ -233,7 +233,7 @@ bool GameClock::takeDueEvent(uint8_t& funcIndex)
 		return false;
 	}
 	EVENT* const eventPtr {lockEvent(m_events, event)};
-	const bool due {eventPtr->day_index == m_day && eventPtr->month_index == m_month && eventPtr->year_index == m_year};
+	const bool due {!dateIsBefore(m_year, m_month, m_day, eventPtr->year_index, eventPtr->month_index, eventPtr->day_index)};
 	funcIndex = eventPtr->func_index;
 	UnlockLink(&m_events, event);
 	if (!due)

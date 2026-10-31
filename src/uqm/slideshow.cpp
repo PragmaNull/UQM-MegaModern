@@ -212,8 +212,8 @@ uqstl::optional<SlideCommand> readCommand(yyjson_val* obj)
 			command.lastIndex = reader.number("to", command.index, UINT16_MAX);
 			break;
 		case SlideOp::Animate:
-			command.index = reader.number("first", 0, UINT16_MAX);
-			command.lastIndex = reader.number("last", 0, UINT16_MAX);
+			command.index = reader.number("first", 0, UINT16_MAX - 1);
+			command.lastIndex = reader.number("last", command.index + 1, UINT16_MAX);
 			command.loops = reader.number("loops", 0);
 			command.ms = reader.number("ms", 0, INT32_MAX);
 			command.fps = reader.number("fps", 1);

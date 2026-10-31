@@ -70,7 +70,7 @@ uqstl::optional<CreditsBlock> readBlock(yyjson_val* obj)
 	yyjson_arr_foreach(lines, index, max, value)
 	{
 		auto line {readLine(value)};
-		if (!line)
+		if (!line || line->size() > block.columns.size())
 		{
 			return uqstl::nullopt;
 		}

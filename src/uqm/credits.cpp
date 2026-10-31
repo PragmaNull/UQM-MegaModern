@@ -118,8 +118,6 @@ Credits_MakeTransFrame(int w, int h, Color TransColor)
 	return f;
 }
 
-#define MAX_TEXT_LINES 50
-
 static FRAME
 Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 						Color BackColor, Color ForeColor)
@@ -127,7 +125,7 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	FRAME f;
 	GFXCONTEXT OldContext;
 	FRAME OldFrame;
-	TEXT TextLines[MAX_TEXT_LINES];
+	TEXT TextLines[uqm::c_creditsMaxLines];
 	int i, rows, cnt;
 	FONT_SIZE_DEF* fdef;
 	int16_t leading;
@@ -156,18 +154,26 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	const uqm::CreditsBlock& block {CreditsBlocks[*istr]};
 	*istr += dir;
 
-	// one TEXT for each cell; the baseline holds the column and the row
+	// one TEXT for each cell; the baseline holds the column and the row.
+	// The first cell of each line comes first, then the other cells while there is space.
 	rows = static_cast<int>(block.lines.size());
 	cnt = 0;
+	const auto addCell {[&](int row, size_t column) {
+		TextLines[cnt].pStr = block.lines[row][column].c_str();
+		TextLines[cnt].CharCount = ~0;
+		TextLines[cnt].baseline.x = static_cast<int16_t>(column);
+		TextLines[cnt].baseline.y = row + 1;
+		++cnt;
+	}};
 	for (i = 0; i < rows; ++i)
 	{
-		for (size_t icol {0}; icol < block.lines[i].size() && cnt < MAX_TEXT_LINES; ++icol)
+		addCell(i, 0);
+	}
+	for (i = 0; i < rows; ++i)
+	{
+		for (size_t icol {1}; icol < block.lines[i].size() && cnt < static_cast<int>(uqm::c_creditsMaxLines); ++icol)
 		{
-			TextLines[cnt].pStr = block.lines[i][icol].c_str();
-			TextLines[cnt].CharCount = ~0;
-			TextLines[cnt].baseline.x = static_cast<int16_t>(icol);
-			TextLines[cnt].baseline.y = i + 1;
-			++cnt;
+			addCell(i, icol);
 		}
 	}
 

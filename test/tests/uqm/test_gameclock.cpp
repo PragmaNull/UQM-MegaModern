@@ -121,6 +121,18 @@ TEST_F(GameClockTest, DueEventsComeInDateOrder)
 	EXPECT_EQ(funcIndex, 3);
 }
 
+TEST_F(GameClockTest, EventsThatWereMissedAreDue)
+{
+	EXPECT_NE(m_clock.addEvent(2, 17, START_YEAR, 5), nullptr);
+	m_clock.nextDay();
+	m_clock.nextDay();
+
+	uint8_t funcIndex {};
+	ASSERT_TRUE(m_clock.takeDueEvent(funcIndex));
+	EXPECT_EQ(funcIndex, 5);
+	EXPECT_FALSE(m_clock.takeDueEvent(funcIndex));
+}
+
 TEST_F(GameClockTest, FirstEventIsTheEarliest)
 {
 	EXPECT_FALSE(m_clock.firstEvent().has_value());

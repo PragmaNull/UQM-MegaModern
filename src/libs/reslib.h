@@ -96,7 +96,7 @@ const char* res_GetResourceType(RESOURCE res);
 // Loads a JSON resource index.
 void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix);
 // Converts the resource index 'oldName' in the old "key = TYPE:data" format to the JSON resource index 'newName', and
-// renames the old file to '<oldName>.bak'. Returns false if there is no old file or it cannot be converted.
+// renames the old file to '<oldName>.bak'. Does nothing if 'newName' exists. Returns false if it converts nothing.
 bool ConvertLegacyResourceIndex(const uqm::io::Directory& dir, const char* oldName, const char* newName);
 
 

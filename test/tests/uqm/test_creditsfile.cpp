@@ -38,6 +38,7 @@ TEST(CreditsFileTest, RejectsInvalidFiles)
 {
 	EXPECT_FALSE(creditsFromJson("not json"));
 	EXPECT_FALSE(creditsFromJson(R"({"blocks": []})"));
+	EXPECT_FALSE(creditsFromJson(R"({"version": 1, "blocks": [{"size": 13, "columns": [{"align": "left"}], "lines": [["a", "b"]]}]})"));
 	EXPECT_FALSE(creditsFromJson(R"({"version": 1, "blocks": [{"size": 0, "columns": [{"align": "left"}], "lines": ["a"]}]})"));
 	EXPECT_FALSE(creditsFromJson(R"({"version": 1, "blocks": [{"size": 13, "columns": [], "lines": ["a"]}]})"));
 	EXPECT_FALSE(creditsFromJson(R"({"version": 1, "blocks": [{"size": 13, "columns": [{"align": "up"}], "lines": ["a"]}]})"));

@@ -101,4 +101,8 @@ TEST(SlideshowTest, RejectsInvalidCommands)
 	EXPECT_TRUE(invalid(R"({"op": "movie", "fps": 0, "from": 0, "to": 1})"));
 	EXPECT_TRUE(invalid(R"({"op": "movie", "fps": 10, "from": 5, "to": 1})"));
 	EXPECT_TRUE(invalid(R"({"op": "animate", "first": 0, "last": 1, "loops": 1, "ms": 0, "fps": 0})"));
+	EXPECT_TRUE(invalid(R"({"op": "animate", "first": 5, "last": 2, "loops": 1, "ms": 0, "fps": 10})"));
+	EXPECT_TRUE(invalid(R"({"op": "animate", "first": 2, "last": 2, "loops": 1, "ms": 0, "fps": 10})"));
+	EXPECT_TRUE(invalid(R"({"op": "textColor", "color": [18446744073709551615, 0, 0]})"));
+	EXPECT_TRUE(invalid(R"({"op": "statBox", "x": 18446744073709551615, "y": 0})"));
 }

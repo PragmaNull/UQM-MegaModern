@@ -1511,6 +1511,11 @@ bool ShowPresentation(RESOURCE res)
 		return result;
 	}
 
+	if (!strcmp(resType, "STRTAB"))
+	{
+		uqm::log::warn("The slideshow '{}' is a string table. Convert it with scripts/convert_slideshows.py.", res);
+		return false;
+	}
 	uqm::log::warn("Tried to present '{}', of non-presentable type '{}'", res, resType);
 	return false;
 }
