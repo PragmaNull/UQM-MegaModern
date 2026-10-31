@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <cstdint>
 #include "libs/reslib.h"
+#include "libs/time/timelib.h"
 #include "core/stl/vector.h"
 #include "core/thread/Mutex.h"
 
@@ -55,8 +56,8 @@ typedef struct tfb_soundsource
 	TFB_SoundSample* sample;
 	audio_Object handle;
 	bool stream_should_be_playing UQM_GUARDED_BY(stream_mutex);
-	int32_t start_time UQM_GUARDED_BY(stream_mutex);  // for tracks played-time math
-	uint32_t pause_time UQM_GUARDED_BY(stream_mutex); // keep track for paused tracks
+	TimeCount start_time UQM_GUARDED_BY(stream_mutex); // for tracks played-time math
+	TimeCount pause_time UQM_GUARDED_BY(stream_mutex); // keep track for paused tracks
 	void* positional_object;
 
 	audio_Object last_q_buf UQM_GUARDED_BY(stream_mutex); // for callbacks processing
@@ -66,7 +67,7 @@ typedef struct tfb_soundsource
 	uint32_t sbuf_size UQM_GUARDED_BY(stream_mutex);
 	uint32_t sbuf_tail UQM_GUARDED_BY(stream_mutex);
 	uint32_t sbuf_head UQM_GUARDED_BY(stream_mutex);
-	uint32_t sbuf_lasttime UQM_GUARDED_BY(stream_mutex); // timestamp of the first queued buffer
+	TimeCount sbuf_lasttime UQM_GUARDED_BY(stream_mutex); // timestamp of the first queued buffer
 } TFB_SoundSource;
 
 extern TFB_SoundSource soundSource[];

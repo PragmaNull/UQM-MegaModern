@@ -148,12 +148,12 @@ void FlushCursorRect(void)
 static void
 FlashCursor(void)
 {
-	static TimeCount NextTime = 0;
+	static TimeCount NextTime {};
 	static uint32_t cycle_index = 0;
 
 	static const Color cycle_tab[] = CURSOR_COLOR_CYCLE_TABLE;
 	const size_t cycleCount = std::size(cycle_tab);
-#define BLINK_RATE (GameTicksPerSecond / 32)
+#define BLINK_RATE (c_gameSecond / 32)
 
 	if (GetTimeCounter() >= NextTime)
 	{

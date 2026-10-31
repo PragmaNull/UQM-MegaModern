@@ -279,7 +279,7 @@ void GetBuildPickFrameRect(GFXRECT* r)
 static bool
 DoPickShip(MELEE_STATE* pMS)
 {
-	uint32_t TimeIn = GetTimeCounter();
+	TimeCount TimeIn {GetTimeCounter()};
 
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
@@ -368,7 +368,7 @@ DoPickShip(MELEE_STATE* pMS)
 
 	Melee_flashSelection(pMS);
 
-	SleepThreadUntil(TimeIn + GameTicksPerSecond / 30);
+	SleepThreadUntil(TimeIn + c_gameSecond / 30);
 
 	return true;
 }

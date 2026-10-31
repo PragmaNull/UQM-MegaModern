@@ -532,7 +532,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 			 GFXRECT* pRect)
 {
 	int16_t i;
-	uint32_t TimeIn;
+	TimeCount TimeIn;
 	TEXT t1, t2;
 	GFXRECT r1, r2;
 	static const Color fade_cycle[] = SCAVENGE_TEXT_COLOR_TABLE;
@@ -570,7 +570,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 			fade_cycle[fade_in ? i : (int16_t)(NUM_FADES - i - 1)]);
 		font_DrawText(&t1);
 		font_DrawText(&t2);
-		SleepThreadUntil(TimeIn + (GameTicksPerSecond / 20));
+		SleepThreadUntil(TimeIn + (c_gameSecond / 20));
 		TimeIn = GetTimeCounter();
 	}
 	if (!fade_in)
@@ -837,7 +837,7 @@ UninitEncounter(void)
 								// Pause between erasing
 								if (Sleepy)
 								{
-									SleepThread(GameTicksPerSecond / 15);
+									SleepThread(c_gameSecond / 15);
 								}
 
 								// MAX_DEAD_DISPLAYED reached - erase
@@ -879,7 +879,7 @@ UninitEncounter(void)
 									SetContextForeGroundColor(fade_ship_cycle[j]);
 									DrawFilledStamp(&ship_s);
 
-									SleepThreadUntil(Time + (GameTicksPerSecond / 15));
+									SleepThreadUntil(Time + (c_gameSecond / 15));
 									Time = GetTimeCounter();
 								}
 							}
@@ -909,7 +909,7 @@ UninitEncounter(void)
 			DestroyDrawable(ReleaseDrawable(s.frame));
 #endif /* NEVER */
 
-			WaitForAnyButton(true, GameTicksPerSecond * 3, false);
+			WaitForAnyButton(true, c_gameSecond * 3, false);
 			if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_ESCAPE])
 			{
 				DrawFadeText(str1, str2, false, &scavenge_r);
@@ -940,7 +940,7 @@ UninitEncounter(void)
 					// "Scavenged"
 
 					DrawFadeText(str1, str2, true, &scavenge_r);
-					WaitForAnyButton(true, GameTicksPerSecond * 2, false);
+					WaitForAnyButton(true, c_gameSecond * 2, false);
 					if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_ESCAPE])
 					{
 						DrawFadeText(str1, str2, false, &scavenge_r);

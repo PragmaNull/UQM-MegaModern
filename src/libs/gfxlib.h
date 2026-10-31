@@ -24,6 +24,7 @@
 #include <fmt/base.h>
 #include "port.h"
 #include "core/misc/bittricks.h"
+#include "libs/time/timelib.h"
 #include <math.h>
 
 typedef struct Color Color;
@@ -765,8 +766,8 @@ extern DRAWABLE ReleaseDrawable(FRAME Frame);
 extern DRAWABLE GetFrameParentDrawable(FRAME Frame);
 
 extern bool SetColorMap(COLORMAPPTR ColorMapPtr);
-extern uint32_t XFormColorMap(COLORMAPPTR ColorMapPtr, int16_t TimeInterval);
-extern uint32_t FadeScreen(ScreenFadeType fadeType, int16_t TimeInterval);
+extern TimeCount XFormColorMap(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval);
+extern TimeCount FadeScreen(ScreenFadeType fadeType, TimePeriod TimeInterval);
 extern void FlushColorXForms(void);
 extern uint8_t GetColorMapTableIndex(COLORMAP map);
 #define InitColorMapResources InitStringTableResources

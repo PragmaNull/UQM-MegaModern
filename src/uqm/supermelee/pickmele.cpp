@@ -288,7 +288,7 @@ bool selectShipHuman(HumanInputContext* context, GETMELEE_STATE* gms)
 
 bool selectShipComputer(ComputerInputContext* context, GETMELEE_STATE* gms)
 {
-#define COMPUTER_SELECTION_DELAY (GameTicksPerSecond >> 1)
+#define COMPUTER_SELECTION_DELAY (c_gameSecond / 2)
 	TimeCount now = GetTimeCounter();
 	if (now < gms->player[context->playerNr].timeIn + COMPUTER_SELECTION_DELAY)
 	{
@@ -348,7 +348,7 @@ DoGetMelee(GETMELEE_STATE* gms)
 		}
 	}
 
-	SleepThread(GameTicksPerSecond / 120);
+	SleepThread(c_gameSecond / 120);
 
 #ifdef NETPLAY
 	netInput();
@@ -696,7 +696,7 @@ DrawPickMeleeFrame(uint16_t which_player)
 void MeleeGameOver(void)
 {
 	uint16_t playerI;
-	uint32_t TimeOut;
+	TimeCount TimeOut;
 	bool PressState, ButtonState;
 
 	// Show the battle result.
@@ -710,7 +710,7 @@ void MeleeGameOver(void)
 	negotiateReadyConnections(true, NetState_inSetup);
 #endif
 
-	TimeOut = GetTimeCounter() + (GameTicksPerSecond * 4);
+	TimeOut = GetTimeCounter() + (c_gameSecond * 4);
 
 	PressState = PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL];
 	do
@@ -812,20 +812,19 @@ GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 		Flash_setMergeFactors(gmstate.player[playerI].flashContext,
 							  2, 3, 2);
 		Flash_setFrameTime(gmstate.player[playerI].flashContext,
-						   GameTicksPerSecond / 16);
+						   c_gameSecond / 16);
 		Flash_setPulseBox(gmstate.player[playerI].flashContext,
 						  (bool)isPC(uqm::UQMOptions::read().whichMenu));
 #ifdef NETPLAY
 		if (testFlag(PlayerControl[playerI], PlayerControlFlags::Network))
 		{
 			Flash_setSpeed(gmstate.player[playerI].flashContext,
-						   GameTicksPerSecond / 2, 0, GameTicksPerSecond / 2, 0);
+						   c_gameSecond / 2, TimePeriod {}, c_gameSecond / 2, TimePeriod {});
 		}
 		else
 #endif
 		{
-			Flash_setSpeed(gmstate.player[playerI].flashContext,
-						   0, GameTicksPerSecond / 16, 0, GameTicksPerSecond / 16);
+			Flash_setSpeed(gmstate.player[playerI].flashContext, TimePeriod {}, c_gameSecond / 16, TimePeriod {}, c_gameSecond / 16);
 		}
 		PickMelee_ChangedSelection(&gmstate, playerI);
 		Flash_start(gmstate.player[playerI].flashContext);
@@ -933,8 +932,8 @@ bool GetInitialMeleeStarShips(HSTARSHIP* result)
 	}
 
 	// Fade in
-	SleepThreadUntil(FadeScreen(FadeAllToColor, GameTicksPerSecond / 2)
-					 + GameTicksPerSecond / 60);
+	SleepThreadUntil(FadeScreen(FadeAllToColor, c_gameSecond / 2)
+					 + c_gameSecond / 60);
 	FlushColorXForms();
 
 	playerMask = 0;

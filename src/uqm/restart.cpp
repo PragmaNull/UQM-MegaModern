@@ -82,7 +82,7 @@ void InitMenuMusic(void)
 {
 	if (uqm::UQMOptions::read().mainMenuMusic && !(menuMusic))
 	{
-		FadeMusic(MUTE_VOLUME, 0);
+		FadeMusic(MUTE_VOLUME, TimePeriod {});
 		menuMusic = loadMainMenuMusic(Rando);
 		PlayMusic(menuMusic, true, 1);
 
@@ -91,7 +91,7 @@ void InitMenuMusic(void)
 			SeekMusic(GetMusicPosition());
 		}
 
-		FadeMusic(NORMAL_VOLUME + 70, GameTicksPerSecond * 3);
+		FadeMusic(NORMAL_VOLUME + 70, c_gameSecond * 3);
 	}
 }
 
@@ -99,14 +99,14 @@ void UninitMenuMusic(void)
 {
 	if (menuMusic)
 	{
-		SleepThreadUntil(FadeMusic(MUTE_VOLUME, GameTicksPerSecond));
+		SleepThreadUntil(FadeMusic(MUTE_VOLUME, c_gameSecond));
 
 		SetMusicPosition();
 		StopMusic();
 		DestroyMusic(menuMusic);
 		menuMusic = 0;
 
-		FadeMusic(NORMAL_VOLUME, 0);
+		FadeMusic(NORMAL_VOLUME, TimePeriod {});
 	}
 }
 
@@ -195,7 +195,7 @@ static bool
 DoDiffChooser(MENU_STATE* pMS)
 {
 	static TimeCount LastInputTime;
-	static TimeCount InactTimeOut;
+	static TimePeriod InactTimeOut;
 	GFXRECT oldRect;
 	STAMP s;
 	GFXCONTEXT oldContext;
@@ -203,7 +203,7 @@ DoDiffChooser(MENU_STATE* pMS)
 	bool done = false;
 	uint8_t a = 1;
 
-	InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * GameTicksPerSecond;
+	InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * c_gameSecond;
 	LastInputTime = GetTimeCounter();
 
 	oldContext = SetContext(ScreenContext);
@@ -285,7 +285,7 @@ DoDiffChooser(MENU_STATE* pMS)
 			response = false;
 		}
 
-		SleepThread(GameTicksPerSecond / 30);
+		SleepThread(c_gameSecond / 30);
 	}
 
 	if (response)
@@ -458,7 +458,7 @@ RestartMessage(void)
 	// Got to restart -message
 	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN, MENU_SOUND_SELECT);
 	SetTransitionSource(nullptr);
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 	uqm::currentActivity() = CHECK_ABORT;
 	restartGame = true;
 	return true;
@@ -488,7 +488,7 @@ static bool
 DoRestart(MENU_STATE* pMS)
 {
 	static TimeCount LastInputTime;
-	static TimeCount InactTimeOut;
+	static TimePeriod InactTimeOut;
 	TimeCount TimeIn = GetTimeCounter();
 
 	/* Cancel any presses of the Pause key. */
@@ -523,16 +523,16 @@ DoRestart(MENU_STATE* pMS)
 		InitPulseText();
 		ResetMusicResume();
 
-		InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * GameTicksPerSecond;
+		InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * c_gameSecond;
 
 		pMS->flashContext = Flash_createOverlay(ScreenContext,
 												nullptr, nullptr);
 		Flash_setMergeFactors(pMS->flashContext, -3, 3, 16);
-		Flash_setSpeed(pMS->flashContext, (6 * GameTicksPerSecond) / 14, 0,
-					   (6 * GameTicksPerSecond) / 14, 0);
-		Flash_setFrameTime(pMS->flashContext, GameTicksPerSecond / 16);
+		Flash_setSpeed(pMS->flashContext, (6 * c_gameSecond) / 14, TimePeriod {},
+					   (6 * c_gameSecond) / 14, TimePeriod {});
+		Flash_setFrameTime(pMS->flashContext, c_gameSecond / 16);
 		Flash_setState(pMS->flashContext, FlashState_fadeIn,
-					   (3 * GameTicksPerSecond) / 16);
+					   (3 * c_gameSecond) / 16);
 		Flash_setPulseBox(pMS->flashContext, false);
 
 		DrawRestartMenu(pMS, pMS->CurState, nullptr);
@@ -541,12 +541,12 @@ DoRestart(MENU_STATE* pMS)
 		LastInputTime = GetTimeCounter();
 		pMS->Initialized = true;
 
-		SleepThreadUntil(FadeScreen(FadeAllToColor, GameTicksPerSecond / 2));
+		SleepThreadUntil(FadeScreen(FadeAllToColor, c_gameSecond / 2));
 	}
 	else if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		SleepThreadUntil(
-			FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+			FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 		return false;
 	}
 	else if (PulsedInputState.menu[KEY_MENU_SELECT])
@@ -565,7 +565,7 @@ DoRestart(MENU_STATE* pMS)
 						MENU_SOUND_SELECT);
 					SetTransitionSource(nullptr);
 					SleepThreadUntil(
-						FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+						FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 					uqm::currentActivity() = CHECK_ABORT;
 					restartGame = true;
 					break;
@@ -575,7 +575,7 @@ DoRestart(MENU_STATE* pMS)
 				{
 					Flash_pause(pMS->flashContext);
 					Flash_setState(pMS->flashContext, FlashState_fadeIn,
-								   (3 * GameTicksPerSecond) / 16);
+								   (3 * c_gameSecond) / 16);
 					if (!DoDiffChooser(pMS))
 					{
 						LastInputTime = GetTimeCounter();			// if we timed out - don't start second credit roll
@@ -604,7 +604,7 @@ DoRestart(MENU_STATE* pMS)
 			case SETUP_GAME:
 				Flash_pause(pMS->flashContext);
 				Flash_setState(pMS->flashContext, FlashState_fadeIn,
-							   (3 * GameTicksPerSecond) / 16);
+							   (3 * c_gameSecond) / 16);
 
 				SetupMenu();
 
@@ -614,7 +614,7 @@ DoRestart(MENU_STATE* pMS)
 				}
 
 				LastInputTime = GetTimeCounter();
-				InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * GameTicksPerSecond;
+				InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * c_gameSecond;
 
 				SetTransitionSource(nullptr);
 				BatchGraphics();
@@ -630,7 +630,7 @@ DoRestart(MENU_STATE* pMS)
 				return true;
 			case QUIT_GAME:
 				SleepThreadUntil(
-					FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+					FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 				uqm::currentActivity() = CHECK_ABORT;
 				break;
 		}
@@ -706,7 +706,7 @@ DoRestart(MENU_STATE* pMS)
 		}
 	}
 
-	SleepThreadUntil(TimeIn + GameTicksPerSecond / 30);
+	SleepThreadUntil(TimeIn + c_gameSecond / 30);
 
 	return true;
 }
@@ -725,8 +725,8 @@ void ShowGameEnding(void)
 	{ // player blew himself up with Utwig bomb
 		SET_GAME_STATE(UTWIG_BOMB_ON_SHIP, 0);
 
-		SleepThreadUntil(FadeScreen(FadeAllToWhite, GameTicksPerSecond / 8)
-						 + GameTicksPerSecond / 60);
+		SleepThreadUntil(FadeScreen(FadeAllToWhite, c_gameSecond / 8)
+						 + c_gameSecond / 60);
 		SetContextBackGroundColor(WHITE_COLOR);
 
 		ClearDrawable();
@@ -741,8 +741,8 @@ void ShowGameEnding(void)
 
 		DeathBySuicide = false;
 
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 8));
-		SleepThread(GameTicksPerSecond * 3);
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 8));
+		SleepThread(c_gameSecond * 3);
 	}
 	else
 	{
@@ -798,7 +798,7 @@ RestartMenu(MENU_STATE* pMS)
 	//   screen. It only makes a user wait.
 	// Kruzen: This fade is needed when going from SUPER-MELEE and LOAD menus
 	// and when Skip Intro option is enabled
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 
 	pMS->CurFrame = CaptureDrawable(LoadGraphic(RESTART_PMAP_ANIM));
 
@@ -839,7 +839,7 @@ RestartMenu(MENU_STATE* pMS)
 		return (false); // quit
 	}
 
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 	FlushColorXForms();
 
 	SeedRandomNumbers();
@@ -870,7 +870,7 @@ TryStartGame(void)
 		}
 		else if (uqm::currentActivity() == (ACTIVITY)~0)
 		{ // timed out
-			SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+			SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 			return (false);
 		}
 		else if (uqm::currentActivity() & CHECK_ABORT)

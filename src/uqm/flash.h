@@ -41,7 +41,7 @@
  * Flash_setSpeed (fc, GameTicksPerSecond, GameTicksPerSecond, GameTicksPerSecond, GameTicksPerSecond);
  * 
  * // During cross-fades, update 8 times per second.
- * Flash_setFrameTime (fc, GameTicksPerSecond / 8);
+ * Flash_setFrameTime (fc, c_gameSecond / 8);
  *
  * // We start the flashing. The default is to start from the "off" state.
  * Flash_start (fc);
@@ -158,12 +158,12 @@ struct FlashContext
 	int denom;
 	// Denominator for the merge factor.
 
-	TimeCount fadeInTime;
-	TimeCount onTime;
-	TimeCount fadeOutTime;
-	TimeCount offTime;
+	TimePeriod fadeInTime;
+	TimePeriod onTime;
+	TimePeriod fadeOutTime;
+	TimePeriod offTime;
 
-	TimeCount frameTime;
+	TimePeriod frameTime;
 
 	FlashState state;
 	TimeCount lastStateTime;
@@ -186,10 +186,10 @@ struct FlashContext
 	// animation.
 };
 
-#define Flash_DEFAULT_FADE_IN_TIME 0
-#define Flash_DEFAULT_ON_TIME (GameTicksPerSecond / 8)
-#define Flash_DEFAULT_FADE_OUT_TIME 0
-#define Flash_DEFAULT_OFF_TIME (GameTicksPerSecond / 8)
+#define Flash_DEFAULT_FADE_IN_TIME TimePeriod::zero()
+#define Flash_DEFAULT_ON_TIME (c_gameSecond / 8)
+#define Flash_DEFAULT_FADE_OUT_TIME TimePeriod::zero()
+#define Flash_DEFAULT_OFF_TIME (c_gameSecond / 8)
 
 #define Flash_DEFAULT_CACHE_SIZE 9
 #endif /* FLASH_INTERNAL */
@@ -202,17 +202,17 @@ FlashContext* Flash_createOverlay(GFXCONTEXT gfxContext,
 								  const GFXPOINT* origin, FRAME overlay);
 
 void Flash_setState(FlashContext* context, FlashState state,
-					TimeCount timeSpentInState);
+					TimePeriod timeSpentInState);
 void Flash_start(FlashContext* context);
 void Flash_terminate(FlashContext* context);
 void Flash_pause(FlashContext* context);
 void Flash_continue(FlashContext* context);
 void Flash_process(FlashContext* context);
-void Flash_setSpeed(FlashContext* context, TimeCount fadeInTime,
-					TimeCount onTime, TimeCount fadeOutTime, TimeCount offTime);
+void Flash_setSpeed(FlashContext* context, TimePeriod fadeInTime,
+					TimePeriod onTime, TimePeriod fadeOutTime, TimePeriod offTime);
 void Flash_setMergeFactors(FlashContext* context, int startNumer,
 						   int endNumer, int denom);
-void Flash_setFrameTime(FlashContext* context, TimeCount frameTime);
+void Flash_setFrameTime(FlashContext* context, TimePeriod frameTime);
 void Flash_setPulseBox(FlashContext* context, bool isPulsing);
 bool Flash_getPulseBox(FlashContext* context);
 TimeCount Flash_nextTime(FlashContext* context);

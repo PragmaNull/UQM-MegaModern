@@ -748,7 +748,7 @@ GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 
 // Ran into Fwiffo on Pluto
 #define FWIFFO_FRAGS 8
-		if (!KillLanderCrewSeq(FWIFFO_FRAGS, GameTicksPerSecond / 20))
+		if (!KillLanderCrewSeq(FWIFFO_FRAGS, c_gameSecond / 20))
 		{
 			return false; // lander probably died
 		}

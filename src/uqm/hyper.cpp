@@ -2328,7 +2328,7 @@ void HyperspaceMenu(void)
 	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 	{
 		ClearSISRect(CLEAR_SIS_RADAR);
-		WaitForNoInput(GameTicksPerSecond / 2, false);
+		WaitForNoInput(c_gameSecond / 2, false);
 	}
 
 	SetContextBackGroundColor(OldColor);

@@ -3,7 +3,6 @@
 ## General
 
 - Add unit tests for new features.
-- Change `AlarmTime` and `TimeCount` from `uint32_t` milliseconds to `std::chrono` types.
 - Add imgui.
 
 ## Cleanup of src/libs

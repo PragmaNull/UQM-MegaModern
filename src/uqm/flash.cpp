@@ -86,11 +86,11 @@ Flash_create(GFXCONTEXT gfxContext)
 	context->fadeOutTime = Flash_DEFAULT_FADE_OUT_TIME;
 	context->offTime = Flash_DEFAULT_OFF_TIME;
 
-	context->frameTime = 0;
+	context->frameTime = TimePeriod {};
 
 	context->state = FlashState_off;
-	context->lastStateTime = 0;
-	context->lastFrameTime = 0;
+	context->lastStateTime = TimeCount {};
+	context->lastFrameTime = TimeCount {};
 
 	context->started = false;
 	context->paused = false;
@@ -178,7 +178,7 @@ Flash_createOverlay(GFXCONTEXT gfxContext, const GFXPOINT* origin, FRAME overlay
 // Set the current state. 'timeSpentInState' determines how much time should
 // be considered to be already spent in this state.
 void Flash_setState(FlashContext* context, FlashState state,
-					TimeCount timeSpentInState)
+					TimePeriod timeSpentInState)
 {
 	TimeCount now;
 
@@ -249,7 +249,7 @@ void Flash_continue(FlashContext* context)
 static void
 Flash_fixState(FlashContext* context)
 {
-	TimeCount stateTime = 0;
+	TimePeriod stateTime {};
 
 	for (;;)
 	{
@@ -268,7 +268,7 @@ Flash_fixState(FlashContext* context)
 				stateTime = context->offTime;
 				break;
 		}
-		if (stateTime != 0)
+		if (stateTime != TimePeriod {})
 		{
 			break;
 		}
@@ -333,8 +333,8 @@ void Flash_process(FlashContext* context)
 	Flash_drawCurrentFrame(context);
 }
 
-void Flash_setSpeed(FlashContext* context, TimeCount fadeInTime,
-					TimeCount onTime, TimeCount fadeOutTime, TimeCount offTime)
+void Flash_setSpeed(FlashContext* context, TimePeriod fadeInTime,
+					TimePeriod onTime, TimePeriod fadeOutTime, TimePeriod offTime)
 {
 	context->fadeInTime = fadeInTime;
 	context->onTime = onTime;
@@ -380,7 +380,7 @@ void Flash_setMergeFactors(FlashContext* context, int startNumer, int endNumer,
 }
 
 // Set the time between updates of the flash area.
-void Flash_setFrameTime(FlashContext* context, TimeCount frameTime)
+void Flash_setFrameTime(FlashContext* context, TimePeriod frameTime)
 {
 	context->frameTime = frameTime;
 }
@@ -402,7 +402,7 @@ Flash_nextTime(FlashContext* context)
 {
 	if (!context->started || context->paused)
 	{
-		return (TimeCount)-1;
+		return TimeCount::max();
 	}
 
 	if (context->state == FlashState_fadeIn || context->state == FlashState_fadeOut)
@@ -726,12 +726,12 @@ Flash_prepareCacheFrame(FlashContext* context, uint16_t index)
 
 Color GetFlashPCColor(void)
 {
-	static TimeCount NextTime = 0;
+	static TimeCount NextTime {};
 	static uint32_t cycle_index = 0;
 
 	static const Color cycle_tab[] = PC_RECT_COLOR_CYCLE_TABLE;
 	const size_t cycleCount = std::size(cycle_tab);
-#define BLINK_RATE (GameTicksPerSecond / 18)
+#define BLINK_RATE (c_gameSecond / 18)
 
 	if (GetTimeCounter() >= NextTime)
 	{
@@ -877,14 +877,14 @@ Flash_drawCurrentFrame(FlashContext* context)
 
 		if (context->state == FlashState_fadeIn)
 		{
-			denom = (int)context->fadeInTime;
+			denom = static_cast<int>(context->fadeInTime.count());
 		}
 		else
 		{
-			denom = (int)context->fadeOutTime;
+			denom = static_cast<int>(context->fadeOutTime.count());
 		}
 
-		numer = (int)(now - context->lastStateTime);
+		numer = static_cast<int>((now - context->lastStateTime).count());
 
 		if (numer > denom)
 		{
@@ -893,7 +893,7 @@ Flash_drawCurrentFrame(FlashContext* context)
 
 		if (context->state == FlashState_fadeOut)
 		{
-			numer = (int)context->fadeOutTime - numer;
+			numer = static_cast<int>(context->fadeOutTime.count()) - numer;
 		}
 	}
 

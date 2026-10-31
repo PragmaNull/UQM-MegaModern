@@ -106,7 +106,7 @@ on_battle_frame(void)
 }
 
 static void
-BackgroundInitKernel(uint32_t TimeOut)
+BackgroundInitKernel(TimeCount TimeOut)
 {
 	LoadMasterShipList(TaskSwitch);
 	TaskSwitch();

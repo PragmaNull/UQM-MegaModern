@@ -307,7 +307,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 static void
 rotateStarbase(MENU_STATE* pMS, FRAME AniFrame)
 {
-	static TimeCount NextTime = 0;
+	static TimeCount NextTime {};
 	TimeCount Now = GetTimeCounter();
 
 	if (AniFrame)
@@ -321,7 +321,7 @@ rotateStarbase(MENU_STATE* pMS, FRAME AniFrame)
 	{
 		STAMP s;
 
-		NextTime = Now + (GameTicksPerSecond / 20); // Starbase animation framerate
+		NextTime = Now + (c_gameSecond / 20); // Starbase animation framerate
 
 		s.origin = pMS->flash_rect0.corner;
 		s.frame = pMS->flash_frame0;
@@ -483,7 +483,7 @@ ExitStarBase:
 
 		UnbatchGraphics();
 
-		SleepThread(GameTicksPerSecond / 30);
+		SleepThread(c_gameSecond / 30);
 	}
 
 	return (true);
@@ -493,7 +493,7 @@ static void
 DoTimePassage(void)
 {
 #define LOST_DAYS 14
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond * 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond * 2));
 	MoveGameClockDays(LOST_DAYS);
 
 	// JMS: Calculate flagship location in IP.
@@ -536,7 +536,7 @@ void VisitStarBase(void)
 		SHIP_FRAGMENT* FragPtr;
 
 		// Unallied Starbase conversation
-		SetCommIntroMode(CIM_CROSSFADE_SCREEN, 0);
+		SetCommIntroMode(CIM_CROSSFADE_SCREEN, TimePeriod {});
 		InitCommunication(COMMANDER_CONVERSATION);
 		if (!GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)
 			|| (uqm::currentActivity() & CHECK_ABORT))
@@ -563,7 +563,7 @@ void VisitStarBase(void)
 		}
 
 		// After Ilwrath battle, about-to-ally Starbase conversation
-		SetCommIntroMode(CIM_CROSSFADE_SCREEN, 0);
+		SetCommIntroMode(CIM_CROSSFADE_SCREEN, TimePeriod {});
 		InitCommunication(COMMANDER_CONVERSATION);
 		if (uqm::currentActivity() & CHECK_ABORT)
 		{
@@ -587,7 +587,7 @@ void VisitStarBase(void)
 			return; // You are now dead! Thank you! (killed by Kohr-Ah)
 		}
 
-		SetCommIntroMode(CIM_FADE_IN_SCREEN, GameTicksPerSecond * 2);
+		SetCommIntroMode(CIM_FADE_IN_SCREEN, c_gameSecond * 2);
 		InitCommunication(COMMANDER_CONVERSATION);
 		if (uqm::currentActivity() & CHECK_ABORT)
 		{
@@ -635,7 +635,7 @@ void InstallBombAtEarth(void)
 	SetContextBackGroundColor(BLACK_COLOR);
 	ClearDrawable();
 
-	SleepThreadUntil(FadeScreen(FadeAllToColor, 0));
+	SleepThreadUntil(FadeScreen(FadeAllToColor, TimePeriod {}));
 
 	SET_GAME_STATE(CHMMR_BOMB_STATE, 3); /* bomb processed */
 	uqm::currentActivity() = CHECK_LOAD; /* fake a load game */

@@ -662,7 +662,7 @@ seek_track(int32_t offset)
 
 	// Adjusting the stream start time is the only way we can arbitrarily
 	// seek the stream right now
-	soundSource[SPEECH_SOURCE].start_time = GetTimeCounter() - offset;
+	soundSource[SPEECH_SOURCE].start_time = GetTimeCounter() - TimePeriod {offset};
 
 	// Find the chunk that should be playing at this time offset
 	for (cur = chunks_head; cur && offset >= chunk_end_time(cur);
@@ -706,8 +706,7 @@ seek_track(int32_t offset)
 static int32_t
 get_current_track_pos(void) UQM_REQUIRES(soundSource[SPEECH_SOURCE].stream_mutex)
 {
-	int32_t start_time = soundSource[SPEECH_SOURCE].start_time;
-	int32_t pos = GetTimeCounter() - start_time;
+	int32_t pos = static_cast<int32_t>((GetTimeCounter() - soundSource[SPEECH_SOURCE].start_time).count());
 	if (pos < 0)
 	{
 		pos = 0;

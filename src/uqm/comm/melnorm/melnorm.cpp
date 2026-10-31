@@ -1465,7 +1465,7 @@ DoSell(RESPONSE_REF R)
 	{
 		if (PLAYER_SAID(R, sell_life_data))
 		{
-			uint32_t TimeIn;
+			TimeCount TimeIn;
 			int16_t beast_value = 0;
 			bool Sleepy = true;
 
@@ -1494,7 +1494,7 @@ DoSell(RESPONSE_REF R)
 			FlushInput();
 
 			DrawCargoStrings((uint8_t)~0, (uint8_t)~0);
-			TimeIn = GetTimeCounter() + GameTicksPerSecond / 2;
+			TimeIn = GetTimeCounter() + c_gameSecond / 2;
 			while (GetTimeCounter() < TimeIn && Sleepy)
 			{
 				UpdateDuty(true);
@@ -1528,7 +1528,7 @@ DoSell(RESPONSE_REF R)
 			}
 			else
 			{
-				TimeIn = GetTimeCounter() + GameTicksPerSecond / 2;
+				TimeIn = GetTimeCounter() + c_gameSecond / 2;
 				while (GetTimeCounter() < TimeIn && Sleepy)
 				{
 					UpdateDuty(true);
@@ -1539,7 +1539,7 @@ DoSell(RESPONSE_REF R)
 		}
 		else /* if (R == sell_rainbow_locations) */
 		{
-			uint32_t TimeIn;
+			TimeCount TimeIn;
 			bool Sleepy = true;
 			uint8_t planets;
 			int diffCase = difficultyCase(500, 200, 125);
@@ -1575,7 +1575,7 @@ DoSell(RESPONSE_REF R)
 				FlushInput();
 
 				DrawRainbowPlanet(planets);
-				TimeIn = GetTimeCounter() + GameTicksPerSecond / 2;
+				TimeIn = GetTimeCounter() + c_gameSecond / 2;
 				while (GetTimeCounter() < TimeIn && Sleepy)
 				{
 					UpdateDuty(true);
@@ -1584,7 +1584,7 @@ DoSell(RESPONSE_REF R)
 
 				DrawRainbowPlanet(planets);
 
-				TimeIn = GetTimeCounter() + GameTicksPerSecond / 10;
+				TimeIn = GetTimeCounter() + c_gameSecond / 10;
 
 				while (planets != 0 && Sleepy)
 				{
@@ -1598,7 +1598,7 @@ DoSell(RESPONSE_REF R)
 						--planets;
 						DeltaCredit(diffCase * BioCreditValue);
 						DrawRainbowPlanet(planets);
-						TimeIn = GetTimeCounter() + GameTicksPerSecond / 6;
+						TimeIn = GetTimeCounter() + c_gameSecond / 6;
 					}
 				}
 
@@ -1609,7 +1609,7 @@ DoSell(RESPONSE_REF R)
 				}
 				else
 				{
-					TimeIn = GetTimeCounter() + GameTicksPerSecond / 2;
+					TimeIn = GetTimeCounter() + c_gameSecond / 2;
 					while (GetTimeCounter() < TimeIn && Sleepy)
 					{
 						UpdateDuty(true);
@@ -1715,7 +1715,7 @@ NatureOfConversation(RESPONSE_REF R)
 
 			XFormColorMap(GetColorMapAddress(
 							  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-						  GameTicksPerSecond / 2);
+						  c_gameSecond / 2);
 
 			AlienTalkSegue((uint16_t)~0);
 		}
@@ -1788,7 +1788,7 @@ DoBluster(RESPONSE_REF R)
 
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 2)),
-					  GameTicksPerSecond / 2);
+					  c_gameSecond / 2);
 
 		SET_GAME_STATE(MELNORME_YACK_STACK2, 4);
 	}
@@ -1980,7 +1980,7 @@ DoFirstMeeting(RESPONSE_REF R)
 
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 0)),
-					  GameTicksPerSecond / 2);
+					  c_gameSecond / 2);
 	}
 	else if (PLAYER_SAID(R, we_apologize))
 	{
@@ -1990,7 +1990,7 @@ DoFirstMeeting(RESPONSE_REF R)
 
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 0)),
-					  GameTicksPerSecond / 2);
+					  c_gameSecond / 2);
 	}
 
 	temp_func = stack_func[0];
@@ -2029,7 +2029,7 @@ DoMelnormeMiffed(RESPONSE_REF R)
 
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 2)),
-					  GameTicksPerSecond / 2);
+					  c_gameSecond / 2);
 	}
 	else if (PLAYER_SAID(R, explore_relationship))
 	{
@@ -2103,7 +2103,7 @@ DoMelnormePissed(RESPONSE_REF R)
 
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 2)),
-					  GameTicksPerSecond / 2);
+					  c_gameSecond / 2);
 	}
 	else if (PLAYER_SAID(R, beg_forgiveness))
 	{
@@ -2160,7 +2160,7 @@ DoMelnormeHate(RESPONSE_REF R)
 
 	XFormColorMap(GetColorMapAddress(
 					  SetAbsColorMapIndex(CommData.AlienColorMap, 2)),
-				  GameTicksPerSecond / 2);
+				  c_gameSecond / 2);
 
 	Response(well_if_thats_the_way_you_feel, ExitConversation);
 	Response(you_hate_us_so_we_go_away, ExitConversation);

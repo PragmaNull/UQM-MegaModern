@@ -37,12 +37,6 @@ void Alarm_uninit(void)
 	s_alarms.clear();
 }
 
-static inline AlarmTime
-AlarmTime_nowMs(void)
-{
-	return GetTimeMs();
-}
-
 static Alarm*
 Alarm_add(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg)
 {
@@ -53,17 +47,15 @@ Alarm_add(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg)
 }
 
 Alarm*
-Alarm_addAbsoluteMs(uint32_t ms, AlarmCallback callback,
-					AlarmCallbackArg arg)
+Alarm_addAbsolute(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg)
 {
-	return Alarm_add(ms, callback, arg);
+	return Alarm_add(time, callback, arg);
 }
 
 Alarm*
-Alarm_addRelativeMs(uint32_t ms, AlarmCallback callback,
-					AlarmCallbackArg arg)
+Alarm_addRelative(uqstl::chrono::milliseconds delay, AlarmCallback callback, AlarmCallbackArg arg)
 {
-	return Alarm_add(AlarmTime_nowMs() + ms, callback, arg);
+	return Alarm_add(GetTimeMs() + delay, callback, arg);
 }
 
 void Alarm_remove(Alarm* alarm)
@@ -84,7 +76,7 @@ void Alarm_remove(Alarm* alarm)
 // that it called. It should not be called from multiple threads at once.
 bool Alarm_processOne(void)
 {
-	if (s_alarms.empty() || AlarmTime_nowMs() < s_alarms.begin()->first)
+	if (s_alarms.empty() || GetTimeMs() < s_alarms.begin()->first)
 	{
 		return false;
 	}
@@ -95,13 +87,8 @@ bool Alarm_processOne(void)
 	return true;
 }
 
-uint32_t
-Alarm_timeBeforeNextMs(void)
+AlarmTime
+Alarm_nextTime(void)
 {
-	if (s_alarms.empty())
-	{
-		return UINT32_MAX;
-	}
-
-	return alarmTimeToMsUint32(s_alarms.begin()->first);
+	return s_alarms.empty() ? AlarmTime::max() : s_alarms.begin()->first;
 }

@@ -30,7 +30,7 @@ namespace uqm
 {
 
 static constexpr uint32_t BattleFPS {24}; // TODO: this is also defined in battle.h as BattleFrameRateTicks. Maybe we should unify these?
-static constexpr size_t NetworkInputBufferMaxTicks {getTicksForFramerate(BattleFPS)};
+static constexpr size_t NetworkInputBufferMaxTicks {static_cast<size_t>(getTicksForFramerate(BattleFPS).count())};
 
 NetplayOptions::NetplayOptions(size_t playerCount)
 	: m_playerCount {playerCount}

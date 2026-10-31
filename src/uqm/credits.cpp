@@ -43,7 +43,7 @@
 // Maximum frame rate
 #define CREDITS_FRAME_RATE RES_SCALE(36)
 
-#define CREDITS_TIMEOUT (GameTicksPerSecond * 5)
+#define CREDITS_TIMEOUT (c_gameSecond * 5)
 
 #define TRANS_COLOR BRIGHT_BLUE_COLOR
 
@@ -421,7 +421,7 @@ processCreditsFrame(void)
 			rate = GameTicksPerSecond;
 		}
 
-		NextTime = GetTimeCounter() + rate;
+		NextTime = GetTimeCounter() + TimePeriod {rate};
 
 		// draw the credits
 		//  comm animations play with contexts so we need to make
@@ -626,7 +626,7 @@ OutTakes(void)
 
 	for (i = 0; (i < NUM_OUTTAKES) && !(uqm::currentActivity() & CHECK_ABORT); i++)
 	{
-		SetCommIntroMode(CIM_CROSSFADE_WINDOW, 0);
+		SetCommIntroMode(CIM_CROSSFADE_WINDOW, TimePeriod {});
 		InitCommunication(outtake_list[i]);
 	}
 
@@ -643,7 +643,7 @@ typedef struct
 	bool AllowCancel;
 	bool AllowSpeedChange;
 	bool CloseWhenDone;
-	uint32_t CloseTimeOut;
+	TimeCount CloseTimeOut;
 
 } CREDITS_INPUT_STATE;
 
@@ -654,7 +654,7 @@ DoCreditsInput(void* pIS)
 
 	if (CreditsRunning)
 	{ // cancel timeout if resumed (or just running)
-		pCIS->CloseTimeOut = 0;
+		pCIS->CloseTimeOut = TimeCount {};
 	}
 
 	if ((uqm::currentActivity() & CHECK_ABORT)
@@ -697,7 +697,7 @@ DoCreditsInput(void* pIS)
 
 	if (!CreditsRunning && pCIS->CloseWhenDone)
 	{ // auto-close controlled by timeout
-		if (pCIS->CloseTimeOut == 0)
+		if (pCIS->CloseTimeOut == TimeCount {})
 		{ // set timeout
 			pCIS->CloseTimeOut = GetTimeCounter() + CREDITS_TIMEOUT;
 		}
@@ -714,7 +714,7 @@ DoCreditsInput(void* pIS)
 		return false;
 	}
 
-	SleepThread(GameTicksPerSecond / CREDITS_FRAME_RATE);
+	SleepThread(c_gameSecond / CREDITS_FRAME_RATE);
 
 	return true;
 }
@@ -750,7 +750,7 @@ void Credits(bool WithOuttakes)
 	s.origin.y = 0;
 	s.frame = CreditsBack;
 	DrawStamp(&s);
-	FadeScreen(FadeAllToColor, GameTicksPerSecond / 2);
+	FadeScreen(FadeAllToColor, c_gameSecond / 2);
 
 	// set the position of outtakes comm
 	CommWndRect.corner.x = (screenRect.extent.width - CommWndRect.extent.width)
@@ -785,11 +785,11 @@ void Credits(bool WithOuttakes)
 	}
 
 	SetInputCallback(nullptr);
-	FadeMusic(0, GameTicksPerSecond / 2);
+	FadeMusic(0, c_gameSecond / 2);
 	UninitCredits();
 
 	SetContext(ScreenContext);
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 	FlushColorXForms();
 
 	if (hMusic)
@@ -797,7 +797,7 @@ void Credits(bool WithOuttakes)
 		StopMusic();
 		DestroyMusic(hMusic);
 	}
-	FadeMusic(NORMAL_VOLUME, 0);
+	FadeMusic(NORMAL_VOLUME, TimePeriod {});
 
 	FreeCredits();
 }

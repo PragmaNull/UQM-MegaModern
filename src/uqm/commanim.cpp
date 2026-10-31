@@ -172,7 +172,7 @@ ProcessColormapAnims(SEQUENCE* pSeq, uint16_t Num)
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap,
 											  ADPtr->StartIndex + pSeq->CurIndex)),
-					  pSeq->Alarm - 1);
+					  TimePeriod {pSeq->Alarm - 1});
 		pSeq->Change = false;
 	}
 }
@@ -428,7 +428,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 		uint32_t NextActiveMask;
 
 		CurTime = GetTimeCounter();
-		ElapsedTicks = CurTime - LastTime;
+		ElapsedTicks = static_cast<uint32_t>((CurTime - LastTime).count());
 		LastTime = CurTime;
 
 		if (doFullRedraw)
@@ -923,7 +923,7 @@ void DisengageFilters(void)
 	filterEnabled = false;
 }
 
-void DeltaLastTime(TimeCount diff)
+void DeltaLastTime(TimePeriod diff)
 {
 	LastTime += diff;
 }

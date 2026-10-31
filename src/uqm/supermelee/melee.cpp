@@ -1509,9 +1509,9 @@ Select(uint8_t opt)
 
 void Melee_flashSelection(MELEE_STATE* pMS)
 {
-#define FLASH_RATE (GameTicksPerSecond / 9)
-#define BLINK_RATE (GameTicksPerSecond / 16)
-	static TimeCount NextTime = 0;
+#define FLASH_RATE (c_gameSecond / 9)
+#define BLINK_RATE (c_gameSecond / 16)
+	static TimeCount NextTime {};
 	static bool select = false;
 	TimeCount Now = GetTimeCounter();
 
@@ -1789,7 +1789,7 @@ BuildPickShipPopup(MELEE_STATE* pMS)
 static bool
 DoEdit(MELEE_STATE* pMS)
 {
-	uint32_t TimeIn = GetTimeCounter();
+	TimeCount TimeIn {GetTimeCounter()};
 
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
@@ -1958,7 +1958,7 @@ DoEdit(MELEE_STATE* pMS)
 
 	Melee_flashSelection(pMS);
 
-	SleepThreadUntil(TimeIn + GameTicksPerSecond / 30);
+	SleepThreadUntil(TimeIn + c_gameSecond / 30);
 
 	return true;
 }
@@ -2054,7 +2054,7 @@ DoConfirmSettings(MELEE_STATE* pMS)
 #else
 	closeDisconnectedConnections();
 	netInput();
-	SleepThread(GameTicksPerSecond / 120);
+	SleepThread(c_gameSecond / 120);
 
 	numDone = numPlayersReady();
 	if (numDone == -1)
@@ -2199,15 +2199,15 @@ static void
 StartMelee(MELEE_STATE* pMS)
 {
 	{
-		FadeMusic(0, GameTicksPerSecond / 2);
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2)
-						 + GameTicksPerSecond / 60);
+		FadeMusic(0, c_gameSecond / 2);
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2)
+						 + c_gameSecond / 60);
 		FlushColorXForms();
 
 		SetMusicPosition();
 		StopMusic();
 	}
-	FadeMusic(NORMAL_VOLUME, 0);
+	FadeMusic(NORMAL_VOLUME, TimePeriod {});
 	if (pMS->hMusic)
 	{
 		DestroyMusic(pMS->hMusic);
@@ -2234,8 +2234,8 @@ StartMelee(MELEE_STATE* pMS)
 			return;
 		}
 
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2)
-						 + GameTicksPerSecond / 60);
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2)
+						 + c_gameSecond / 60);
 		FlushColorXForms();
 
 	} while (0 /* !(uqm::currentActivity() & CHECK_ABORT) */);
@@ -2349,7 +2349,7 @@ StartMeleeButtonPressed(MELEE_STATE* pMS)
 static bool
 DoConnectingDialog(MELEE_STATE* pMS)
 {
-	uint32_t TimeIn = GetTimeCounter();
+	TimeCount TimeIn {GetTimeCounter()};
 	uint16_t which_side = (pMS->MeleeOption == NET_TOP) ? 1 : 0;
 	NetConnection* conn;
 
@@ -2458,7 +2458,7 @@ DoConnectingDialog(MELEE_STATE* pMS)
 
 	flushPacketQueues();
 
-	SleepThreadUntil(TimeIn + GameTicksPerSecond / 30);
+	SleepThreadUntil(TimeIn + c_gameSecond / 30);
 
 	return true;
 }
@@ -2616,7 +2616,7 @@ MeleeOptionSelect(MELEE_STATE* pMS)
 
 bool DoMelee(MELEE_STATE* pMS)
 {
-	uint32_t TimeIn = GetTimeCounter();
+	TimeCount TimeIn {GetTimeCounter()};
 	bool force_select = false;
 
 	/* Cancel any presses of the Pause key. */
@@ -2650,7 +2650,7 @@ bool DoMelee(MELEE_STATE* pMS)
 
 		InitMelee(pMS);
 
-		FadeScreen(FadeAllToColor, GameTicksPerSecond / 2);
+		FadeScreen(FadeAllToColor, c_gameSecond / 2);
 		pMS->LastInputTime = GetTimeCounter();
 		return true;
 	}
@@ -2697,7 +2697,7 @@ bool DoMelee(MELEE_STATE* pMS)
 		}
 
 		if (testFlag((PlayerControl[0] & PlayerControl[1]), PlayerControlFlags::Psytron)
-			&& GetTimeCounter() - pMS->LastInputTime > GameTicksPerSecond * 10)
+			&& GetTimeCounter() - pMS->LastInputTime > c_gameSecond * 10)
 		{
 			force_select = true;
 			NewMeleeOption = START_MELEE;
@@ -2748,7 +2748,7 @@ bool DoMelee(MELEE_STATE* pMS)
 
 	Melee_flashSelection(pMS);
 
-	SleepThreadUntil(TimeIn + GameTicksPerSecond / 30);
+	SleepThreadUntil(TimeIn + c_gameSecond / 30);
 
 	return true;
 }
@@ -2829,7 +2829,7 @@ void Melee(void)
 
 		MenuState.randomContext = RandomContext_New();
 		RandomContext_SeedRandom(MenuState.randomContext,
-								 GetTimeCounter());
+								 static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count()));
 		// Using the current time still leaves the random state a bit
 		// predictable, but it is good enough.
 

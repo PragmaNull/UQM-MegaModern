@@ -370,11 +370,9 @@ GetMusicPosition()
 	return 0; // Shouldn't happen, music array completely full
 }
 
-#define FIVE_MINUTES (1000 * 300)
 
 bool OkayToResume(void)
 {
-	TimeCount TimeIn, difference;
 	uint32_t filename_hash;
 	int i;
 
@@ -402,16 +400,15 @@ bool OkayToResume(void)
 		return false;
 	}
 
-	if (!resumeMusicArray[i].last_played
+	if (resumeMusicArray[i].last_played == TimeCount {}
 		|| !resumeMusicArray[i].position)
 	{
 		return false;
 	}
 
-	TimeIn = GetTimeCounter();
-	difference = TimeIn - resumeMusicArray[i].last_played;
+	const TimePeriod difference {GetTimeCounter() - resumeMusicArray[i].last_played};
 
-	if (uqm::UQMOptions::read().musicResume == 2 || (difference < FIVE_MINUTES))
+	if (uqm::UQMOptions::read().musicResume == 2 || (difference < uqstl::chrono::minutes {5}))
 	{
 		return true;
 	}

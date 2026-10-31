@@ -722,7 +722,7 @@ Intro(void)
 		}
 		else
 		{
-			SetCommIntroMode(CIM_FADE_IN_SCREEN, GameTicksPerSecond * 2);
+			SetCommIntroMode(CIM_FADE_IN_SCREEN, c_gameSecond * 2);
 			NPCPhrase(WE_ARE_FREE);
 
 			if (NumVisits)

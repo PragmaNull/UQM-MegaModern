@@ -74,7 +74,7 @@ typedef struct
 	char Buffer[512];
 	int MovieFrame;
 	int MovieEndFrame;
-	int InterframeDelay;
+	TimePeriod InterframeDelay;
 
 	// For DOS Spins
 	GFXRECT StatBox;
@@ -117,8 +117,8 @@ commandColor(const uqm::SlideCommand& cmd)
 static bool
 DoFadeScreen(PRESENTATION_INPUT_STATE* pPIS, int msecs, uint8_t FadeType)
 {
-	pPIS->TimeOut = FadeScreen((ScreenFadeType)FadeType, msecs * GameTicksPerSecond / 1000)
-				  + GameTicksPerSecond / 10;
+	pPIS->TimeOut = FadeScreen((ScreenFadeType)FadeType, msecs * c_gameSecond / 1000)
+				  + c_gameSecond / 10;
 	pPIS->TimeOutOnSkip = false;
 	return true;
 }
@@ -294,7 +294,7 @@ DoSpinLine(LINE* l, Color front, Color back, bool* skip)
 		SetContextForeGroundColor(back);
 		DrawLine(l, RES_SCALE(1));
 		PlayMenuSound(MENU_SOUND_TEXT);
-		SleepThread(GameTicksPerSecond / 16);
+		SleepThread(c_gameSecond / 16);
 	}
 	SetContextForeGroundColor(front);
 	DrawLine(l, RES_SCALE(1));
@@ -307,7 +307,7 @@ DoSpinStatBox(GFXRECT* r, Color front, Color back, bool* skip)
 	{
 		DrawStarConBox(r, RES_SCALE(1), back, back, false, BLACK_COLOR, false, BLACK_COLOR);
 		PlayMenuSound(MENU_SOUND_TEXT);
-		SleepThread(GameTicksPerSecond / 16);
+		SleepThread(c_gameSecond / 16);
 	}
 	DrawStarConBox(r, RES_SCALE(1), front, front, false, BLACK_COLOR, false, BLACK_COLOR);
 }
@@ -339,7 +339,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 		SetContextForeGroundColor(back);
 		font_DrawText(&Text);
 		PlayMenuSound(MENU_SOUND_TEXT);
-		SleepThread(GameTicksPerSecond / 16);
+		SleepThread(c_gameSecond / 16);
 	}
 	SetContextForeGroundColor(front);
 	font_DrawText(&Text);
@@ -351,7 +351,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 			SetContextForeGroundColor(back);
 			DrawFilledRectangle(&sq);
 			PlayMenuSound(MENU_SOUND_TEXT);
-			SleepThread(GameTicksPerSecond / 16);
+			SleepThread(c_gameSecond / 16);
 		}
 		SetContextForeGroundColor(front);
 		DrawFilledRectangle(&sq);
@@ -381,7 +381,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 				DrawPoint(&c);
 			}
 			PlayMenuSound(MENU_SOUND_TEXT);
-			SleepThread(GameTicksPerSecond / 16);
+			SleepThread(c_gameSecond / 16);
 		}
 		SetContextForeGroundColor(front);
 		DrawStarConBox(&sq, RES_SCALE(1), front, front, false, BLACK_COLOR, false, BLACK_COLOR);
@@ -688,9 +688,9 @@ DoPresentation(void* pIS)
 		return false; /* abort requested - we are done */
 	}
 
-	if (pPIS->TimeOut)
+	if (pPIS->TimeOut != TimeCount {})
 	{
-		TimeCount Delay = GameTicksPerSecond / 84;
+		TimePeriod Delay {c_gameSecond / 84};
 
 		if (GetTimeCounter() >= pPIS->TimeOut)
 		{
@@ -706,14 +706,14 @@ DoPresentation(void* pIS)
 			}
 			else
 			{ /* time elapsed - continue normal ops */
-				pPIS->TimeOut = 0;
+				pPIS->TimeOut = TimeCount {};
 				return true;
 			}
 		}
 
 		if (pPIS->TimeOutOnSkip && (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_SPECIAL] || PulsedInputState.menu[KEY_MENU_RIGHT]))
 		{ /* skip requested - continue normal ops */
-			pPIS->TimeOut = 0;
+			pPIS->TimeOut = TimeCount {};
 			pPIS->MovieFrame = -1; /* abort any movie in progress */
 			return true;
 		}
@@ -807,7 +807,7 @@ DoPresentation(void* pIS)
 			case uqm::SlideOp::Wait:
 				{ /* wait */
 					Present_UnbatchGraphics(pPIS, true);
-					pPIS->TimeOut = GetTimeCounter() + cmd.ms * GameTicksPerSecond / 1000;
+					pPIS->TimeOut = GetTimeCounter() + cmd.ms * c_gameSecond / 1000;
 					pPIS->TimeOutOnSkip = true;
 					return true;
 				}
@@ -822,7 +822,7 @@ DoPresentation(void* pIS)
 							pPIS->Skip = true;
 							return true;
 						}
-						SleepThread(GameTicksPerSecond / 10);
+						SleepThread(c_gameSecond / 10);
 						UpdateInputState();
 					}
 					break;
@@ -831,7 +831,7 @@ DoPresentation(void* pIS)
 				{ /* special wait during spin */
 					if (!pPIS->Skip)
 					{
-						const TimeCount TimeOut {GetTimeCounter() + cmd.ms * GameTicksPerSecond / 1000};
+						const TimeCount TimeOut {GetTimeCounter() + cmd.ms * c_gameSecond / 1000};
 						while (GetTimeCounter() < TimeOut)
 						{
 							if (CurrentInputState.menu[KEY_MENU_CANCEL]
@@ -841,7 +841,7 @@ DoPresentation(void* pIS)
 								pPIS->Skip = true;
 								return true;
 							}
-							SleepThread(GameTicksPerSecond / 84);
+							SleepThread(c_gameSecond / 84);
 							UpdateInputState();
 						}
 					}
@@ -850,7 +850,7 @@ DoPresentation(void* pIS)
 			case uqm::SlideOp::Sync:
 				{ /* absolute time-sync */
 					Present_UnbatchGraphics(pPIS, true);
-					pPIS->LastSyncTime = pPIS->StartTime + cmd.ms * GameTicksPerSecond / 1000;
+					pPIS->LastSyncTime = pPIS->StartTime + cmd.ms * c_gameSecond / 1000;
 					pPIS->TimeOut = pPIS->LastSyncTime;
 					pPIS->TimeOutOnSkip = false;
 					return true;
@@ -863,7 +863,7 @@ DoPresentation(void* pIS)
 			case uqm::SlideOp::DeltaSync:
 				{ /* delta time-sync; from the last absolute sync */
 					Present_UnbatchGraphics(pPIS, true);
-					pPIS->TimeOut = pPIS->LastSyncTime + cmd.ms * GameTicksPerSecond / 1000;
+					pPIS->TimeOut = pPIS->LastSyncTime + cmd.ms * c_gameSecond / 1000;
 					pPIS->TimeOutOnSkip = false;
 					return true;
 				}
@@ -1294,7 +1294,7 @@ DoPresentation(void* pIS)
 
 					pPIS->MovieFrame = cmd.index;
 					pPIS->MovieEndFrame = cmd.lastIndex;
-					pPIS->InterframeDelay = GameTicksPerSecond / cmd.fps;
+					pPIS->InterframeDelay = c_gameSecond / cmd.fps;
 
 					pPIS->TimeOut = GetTimeCounter();
 					pPIS->TimeOutOnSkip = true;
@@ -1306,12 +1306,12 @@ DoPresentation(void* pIS)
 					int loops = 0;
 					uint16_t index = 0;
 					TimeCount Now, timeout, NextTime;
-					const int animation_rate = GameTicksPerSecond / cmd.fps;
+					const TimePeriod animation_rate {c_gameSecond / cmd.fps};
 
 					s.origin.x = 0;
 					s.origin.y = 0;
 
-					timeout = GetTimeCounter() + cmd.ms;
+					timeout = GetTimeCounter() + uqstl::chrono::duration_cast<TimePeriod>(uqstl::chrono::milliseconds {cmd.ms});
 					NextTime = GetTimeCounter() + animation_rate;
 
 					while (cmd.loops || cmd.ms)
@@ -1385,9 +1385,9 @@ ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 
 	if (pis.MusicRef && PlayingStream(MUSIC_SOURCE))
 	{
-		SleepThreadUntil(FadeMusic(0, GameTicksPerSecond));
+		SleepThreadUntil(FadeMusic(0, c_gameSecond));
 		StopMusic();
-		FadeMusic(NORMAL_VOLUME, 0);
+		FadeMusic(NORMAL_VOLUME, TimePeriod {});
 	}
 
 	DestroyMusic(pis.MusicRef);
@@ -1448,7 +1448,7 @@ DoVideoInput(void* pIS)
 			return false;
 		}
 
-		SleepThread(GameTicksPerSecond / 40);
+		SleepThread(c_gameSecond / 40);
 	}
 
 	return true;
@@ -1457,14 +1457,14 @@ DoVideoInput(void* pIS)
 static void
 FadeClearScreen(void)
 {
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 
 	// clear the screen with black
 	SetContext(ScreenContext);
 	SetContextBackGroundColor(BLACK_COLOR);
 	ClearDrawable();
 
-	FadeScreen(FadeAllToColor, 0);
+	FadeScreen(FadeAllToColor, TimePeriod {});
 }
 
 static bool

@@ -28,7 +28,7 @@
 // *not* on the system (or translated) timer
 // and is hard-coded to the original 24 fps
 #define CLOCK_BASE_FRAMERATE 24
-#define CLOCK_FRAME_RATE (GameTicksPerSecond / CLOCK_BASE_FRAMERATE)
+#define CLOCK_FRAME_RATE (c_gameSecond / CLOCK_BASE_FRAMERATE)
 
 typedef HLINK HEVENT;
 

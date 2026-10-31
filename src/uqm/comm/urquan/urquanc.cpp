@@ -518,7 +518,7 @@ Intro(void)
 	}
 	else if (GET_GAME_STATE(PLAYER_HYPNOTIZED))
 	{
-		SetCommIntroMode(CIM_FADE_IN_SCREEN, GameTicksPerSecond * 5);
+		SetCommIntroMode(CIM_FADE_IN_SCREEN, c_gameSecond * 5);
 		UrquanHypno((RESPONSE_REF)0);
 	}
 	else

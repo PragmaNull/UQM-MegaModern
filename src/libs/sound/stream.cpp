@@ -31,7 +31,7 @@ static uqstl::jthread s_decoderThread {};
 // Mutex protects fade structures
 static uqm::Mutex fade_mutex {};
 static TimeCount musicFadeStartTime UQM_GUARDED_BY(fade_mutex);
-static int32_t musicFadeInterval UQM_GUARDED_BY(fade_mutex);
+static TimePeriod musicFadeInterval UQM_GUARDED_BY(fade_mutex);
 static int musicFadeStartVolume UQM_GUARDED_BY(fade_mutex);
 static int musicFadeDelta UQM_GUARDED_BY(fade_mutex);
 
@@ -71,7 +71,7 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 
 	if (source == MUSIC_SOURCE)
 	{
-		soundSource[source].start_time = 0;
+		soundSource[source].start_time = TimeCount {};
 	}
 
 	soundSource[source].sample = sample;
@@ -132,8 +132,8 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 	soundSource[source].sbuf_lasttime = GetTimeCounter();
 	// Adjust the start time so it looks like the stream has been playing
 	// from the very beginning
-	soundSource[source].start_time = GetTimeCounter() - offset;
-	soundSource[source].pause_time = 0;
+	soundSource[source].start_time = GetTimeCounter() - TimePeriod {offset};
+	soundSource[source].pause_time = TimeCount {};
 	soundSource[source].stream_should_be_playing = true;
 	audio_SourcePlay(soundSource[source].handle);
 }
@@ -149,13 +149,13 @@ void StopStream(uint32_t source)
 	soundSource[source].sbuf_size = 0;
 	soundSource[source].sbuf_head = 0;
 	soundSource[source].sbuf_tail = 0;
-	soundSource[source].pause_time = 0;
+	soundSource[source].pause_time = TimeCount {};
 }
 
 void PauseStream(uint32_t source)
 {
 	soundSource[source].stream_should_be_playing = false;
-	if (!soundSource[source].pause_time)
+	if (soundSource[source].pause_time == TimeCount {})
 	{
 		soundSource[source].pause_time = GetTimeCounter();
 	}
@@ -164,13 +164,13 @@ void PauseStream(uint32_t source)
 
 void ResumeStream(uint32_t source)
 {
-	if (soundSource[source].pause_time)
+	if (soundSource[source].pause_time != TimeCount {})
 	{ // Adjust the start time so it looks like the stream has
 		// been playing all this time non-stop
 		soundSource[source].start_time += GetTimeCounter()
 										- soundSource[source].pause_time;
 	}
-	soundSource[source].pause_time = 0;
+	soundSource[source].pause_time = TimeCount {};
 	soundSource[source].stream_should_be_playing = true;
 	audio_SourcePlay(soundSource[source].handle);
 }
@@ -594,31 +594,20 @@ process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_mutex)
 static void
 processMusicFade(void)
 {
-	TimeCount Now;
-	int32_t elapsed;
-	int newVolume;
-
 	fade_mutex.lock();
 
-	if (!musicFadeInterval)
+	if (musicFadeInterval == TimePeriod {})
 	{ // there is no fade set
 		fade_mutex.unlock();
 		return;
 	}
 
-	Now = GetTimeCounter();
-	elapsed = Now - musicFadeStartTime;
-	if (elapsed > musicFadeInterval)
-	{
-		elapsed = musicFadeInterval;
-	}
-
-	newVolume = musicFadeStartVolume + (long)musicFadeDelta * elapsed / musicFadeInterval;
-	SetMusicVolume(newVolume);
+	const TimePeriod elapsed {uqstl::min(GetTimeCounter() - musicFadeStartTime, musicFadeInterval)};
+	SetMusicVolume(static_cast<int>(musicFadeStartVolume + musicFadeDelta * elapsed.count() / musicFadeInterval.count()));
 
 	if (elapsed >= musicFadeInterval)
 	{
-		musicFadeInterval = 0; // fade is over
+		musicFadeInterval = TimePeriod {}; // fade is over
 	}
 
 	fade_mutex.unlock();
@@ -776,7 +765,7 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	full_sample = channels * sample_size;
 
 	// See how far into the buffer we should be now
-	played_time = GetTimeCounter() - source->sbuf_lasttime;
+	played_time = static_cast<long>((GetTimeCounter() - source->sbuf_lasttime).count());
 	delta = played_time * decoder->frequency * full_sample / GameTicksPerSecond;
 	// align delta to sample start
 	delta = delta & ~(full_sample - 1);
@@ -872,22 +861,22 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 }
 
 // This function is normally called on the Starcon2Main thread
-bool SetMusicStreamFade(int32_t howLong, int endVolume)
+bool SetMusicStreamFade(TimePeriod howLong, int endVolume)
 {
 	bool ret = true;
 
 	fade_mutex.lock();
 
-	if (howLong < 0)
+	if (howLong < TimePeriod {})
 	{
-		howLong = 0;
+		howLong = TimePeriod {};
 	}
 
 	musicFadeStartTime = GetTimeCounter();
 	musicFadeInterval = howLong;
 	musicFadeStartVolume = musicVolume;
 	musicFadeDelta = endVolume - musicFadeStartVolume;
-	if (!musicFadeInterval)
+	if (musicFadeInterval == TimePeriod {})
 	{
 		ret = false; // reject
 	}

@@ -33,7 +33,7 @@ typedef enum
 	SURRENDERED
 } ENDGAME_SCENARIOS;
 
-extern void SplashScreen(void (*DoProcessing)(uint32_t TimeOut));
+extern void SplashScreen(void (*DoProcessing)(TimeCount TimeOut));
 extern void Introduction(void);
 extern void Victory(void);
 extern void GameOver(uint8_t DeathType);

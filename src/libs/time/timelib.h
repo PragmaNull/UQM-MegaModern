@@ -2,10 +2,9 @@
 #ifndef LIBS_TIME_TIMELIB_H_
 #define LIBS_TIME_TIMELIB_H_
 
-#include <cstdint>
+#include "core/stl/chrono.h"
 
-typedef uint32_t TimeCount;
-typedef uint32_t TimePeriod;
+#include <cstdint>
 
 /* GameTicksPerSecond is the LCM of all the fractions of a second the game uses.
  * Battle is 24 FPS, Landers are 35 FPS, most UI-level things are 15 FPS,
@@ -15,14 +14,32 @@ typedef uint32_t TimePeriod;
  * Thus, the minimum value for GameTicksPerSecond is 840. */
 constexpr uint32_t GameTicksPerSecond {840};
 
-static constexpr uint32_t getTicksForFramerate(const uint32_t desiredFps)
+// A duration in game ticks.
+using GameTicks = uqstl::chrono::duration<int64_t, uqstl::ratio<1, GameTicksPerSecond>>;
+inline constexpr GameTicks c_gameSecond {GameTicksPerSecond};
+
+static constexpr GameTicks getTicksForFramerate(const uint32_t desiredFps)
 {
-	return GameTicksPerSecond / desiredFps;
+	return c_gameSecond / desiredFps;
 }
 
-// Milliseconds since the game clock started. Wraps after about 49 days.
-uint32_t GetTimeMs(void);
 // Game ticks since the game clock started.
+struct GameTimeClock
+{
+	using duration = GameTicks;
+	using rep = duration::rep;
+	using period = duration::period;
+	using time_point = uqstl::chrono::time_point<GameTimeClock>;
+	static constexpr bool is_steady {true};
+
+	static time_point now();
+};
+
+using TimeCount = GameTimeClock::time_point;
+using TimePeriod = GameTicks;
+
+// Time since the game clock started.
+uqstl::chrono::milliseconds GetTimeMs(void);
 TimeCount GetTimeCounter(void);
 
 // Sleep without processing asynchronous operations.

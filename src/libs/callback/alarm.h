@@ -20,14 +20,10 @@
 #define LIBS_CALLBACK_ALARM_H_
 
 #include "port.h"
-#include <cstdint>
+#include "core/stl/chrono.h"
 
-typedef uint32_t AlarmTime;
-static inline uint32_t
-alarmTimeToMsUint32(AlarmTime time)
-{
-	return (uint32_t)time;
-}
+// Time since the game clock started.
+using AlarmTime = uqstl::chrono::milliseconds;
 
 typedef struct Alarm Alarm;
 typedef void* AlarmCallbackArg;
@@ -42,10 +38,11 @@ struct Alarm
 
 void Alarm_init(void);
 void Alarm_uninit(void);
-Alarm* Alarm_addAbsoluteMs(uint32_t ms, AlarmCallback callback, AlarmCallbackArg arg);
-Alarm* Alarm_addRelativeMs(uint32_t ms, AlarmCallback callback, AlarmCallbackArg arg);
+Alarm* Alarm_addAbsolute(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg);
+Alarm* Alarm_addRelative(uqstl::chrono::milliseconds delay, AlarmCallback callback, AlarmCallbackArg arg);
 void Alarm_remove(Alarm* alarm);
 bool Alarm_processOne(void);
-uint32_t Alarm_timeBeforeNextMs(void);
+// Returns the time of the next alarm, or AlarmTime::max() if there is none.
+AlarmTime Alarm_nextTime(void);
 
 #endif /* LIBS_CALLBACK_ALARM_H_ */

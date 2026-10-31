@@ -220,12 +220,12 @@ DoSellMinerals(void)
 	for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
 	{
 		uint16_t amount;
-		uint32_t TimeIn = 0;
+		TimeCount TimeIn {};
 
 		if (i == 0)
 		{
 			DrawCargoStrings((uint8_t)~0, (uint8_t)~0);
-			TimeIn = GetTimeCounter() + GameTicksPerSecond / 2;
+			TimeIn = GetTimeCounter() + c_gameSecond / 2;
 			while (GetTimeCounter() <= TimeIn)
 			{
 				if (AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
@@ -273,7 +273,7 @@ DoSellMinerals(void)
 		}
 		if (Sleepy)
 		{
-			TimeIn = GetTimeCounter() + (GameTicksPerSecond / 4);
+			TimeIn = GetTimeCounter() + (c_gameSecond / 4);
 			while (GetTimeCounter() <= TimeIn)
 			{
 				if (AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
@@ -286,7 +286,7 @@ DoSellMinerals(void)
 		}
 	}
 
-	SleepThread(GameTicksPerSecond / 2);
+	SleepThread(c_gameSecond / 2);
 
 	ClearSISRect(DRAW_SIS_DISPLAY);
 

@@ -145,7 +145,7 @@ bool DoConfirmExit(void)
 		done = false;
 
 		oldVolume = GetCurrMusicVol();
-		FadeMusic(60, GameTicksPerSecond / 2);
+		FadeMusic(60, c_gameSecond / 2);
 
 		while (!done)
 		{
@@ -175,7 +175,7 @@ bool DoConfirmExit(void)
 				DrawConfirmationWindow(response, false);
 				PlayMenuSound(MENU_SOUND_MOVE);
 			}
-			SleepThread(GameTicksPerSecond / 30);
+			SleepThread(c_gameSecond / 30);
 		};
 
 		// Restore the screen under the confirmation window
@@ -183,7 +183,7 @@ bool DoConfirmExit(void)
 		{
 			DrawStamp(&s);
 			DeltaLastTime(GetTimeCounter() - deltaT);
-			FadeMusic(oldVolume, GameTicksPerSecond / 2);
+			FadeMusic(oldVolume, c_gameSecond / 2);
 		}
 		else
 		{
@@ -230,7 +230,7 @@ static bool
 DoPopup(struct popup_state* self)
 {
 	(void)self;
-	SleepThread(GameTicksPerSecond / 20);
+	SleepThread(c_gameSecond / 20);
 	return !(PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT));
 }
 

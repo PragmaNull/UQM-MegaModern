@@ -120,7 +120,7 @@ void SetTransitionSource(const GFXRECT* pRect)
 // ScreenTransition() is synchronous (does not return until transition done)
 void ScreenTransition(uqm::EmulationMode transType, const GFXRECT* pRect)
 {
-	static constexpr TimePeriod Duration = GameTicksPerSecond * 31 / 60;
+	static constexpr TimePeriod Duration {c_gameSecond * 31 / 60};
 	TimeCount startTime;
 
 	if (transType == uqm::EmulationMode::PC)

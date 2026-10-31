@@ -267,33 +267,33 @@ MakeReport(SOUND ReadOutSounds, const char* pStr, uint16_t StrLen)
 						switch (c)
 						{
 							case ',':
-								TimeOut += GameTicksPerSecond / (4 << scale);
+								TimeOut += c_gameSecond / (4 << scale);
 								break;
 							case '.':
-								TimeOut += GameTicksPerSecond / (2 << scale);
+								TimeOut += c_gameSecond / (2 << scale);
 								break;
 							case '!':
 								if (last_c != '!' && last_c != ' ')
 								{
-									TimeOut += GameTicksPerSecond / (2 << scale);
+									TimeOut += c_gameSecond / (2 << scale);
 								}
 								else
 								{
-									TimeOut += GameTicksPerSecond / (20 << scale);
+									TimeOut += c_gameSecond / (20 << scale);
 								}
 								break;
 							case '?':
 								if (last_c != '?' && last_c != ' ')
 								{
-									TimeOut += GameTicksPerSecond / (2 << scale);
+									TimeOut += c_gameSecond / (2 << scale);
 								}
 								else
 								{
-									TimeOut += GameTicksPerSecond / (20 << scale);
+									TimeOut += c_gameSecond / (20 << scale);
 								}
 								break;
 							default:
-								TimeOut += GameTicksPerSecond / (20 << scale);
+								TimeOut += c_gameSecond / (20 << scale);
 								break;
 						}
 
@@ -301,7 +301,7 @@ MakeReport(SOUND ReadOutSounds, const char* pStr, uint16_t StrLen)
 
 						if (word_chars == 0)
 						{
-							TimeOut += GameTicksPerSecond / (20 << scale);
+							TimeOut += c_gameSecond / (20 << scale);
 						}
 
 						if (WaitForActButtonUntil(true, TimeOut, false))

@@ -219,18 +219,16 @@ void noSound_Uninit(void)
 
 void PlaybackTaskFunc(uqstl::stop_token stopToken)
 {
-	uint32_t entryTime;
-	int32_t period, delay;
 	uint32_t len = 2048;
 	uqstl::vector<uint8_t> stream(len);
-	period = (int32_t)((len / (double)nosound_freq) * GameTicksPerSecond);
+	const TimePeriod period {uqstl::chrono::duration_cast<TimePeriod>(uqstl::chrono::duration<double> {len / (double)nosound_freq})};
 
 	while (!stopToken.stop_requested())
 	{
-		entryTime = GetTimeCounter();
+		const TimeCount entryTime {GetTimeCounter()};
 		mixer_MixFake(nullptr, stream.data(), len);
-		delay = period - (GetTimeCounter() - entryTime);
-		if (delay > 0)
+		const TimePeriod delay {period - (GetTimeCounter() - entryTime)};
+		if (delay > TimePeriod {})
 		{
 			HibernateThread(delay);
 		}

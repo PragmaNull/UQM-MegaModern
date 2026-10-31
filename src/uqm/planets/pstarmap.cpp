@@ -200,7 +200,7 @@ flashCurrentLocation(GFXPOINT* where, bool force)
 	static uint8_t c = 0;
 	static int val = -2;
 	static GFXPOINT universe;
-	static TimeCount NextTime = 0;
+	static TimeCount NextTime {};
 
 	if (where)
 	{
@@ -209,7 +209,7 @@ flashCurrentLocation(GFXPOINT* where, bool force)
 
 	if (GetTimeCounter() >= NextTime)
 	{
-		NextTime = GetTimeCounter() + (GameTicksPerSecond / 16);
+		NextTime = GetTimeCounter() + (c_gameSecond / 16);
 
 		if (c == 0x00 || c == 0x1A)
 		{
@@ -1830,7 +1830,7 @@ ZoomStarMap(int16_t dir)
 			mapOrigin = cursorLoc;
 
 			DrawStarMap(0, nullptr);
-			SleepThread(GameTicksPerSecond / 8);
+			SleepThread(c_gameSecond / 8);
 		}
 	}
 	else if (dir < 0)
@@ -1849,7 +1849,7 @@ ZoomStarMap(int16_t dir)
 			--zoomLevel;
 
 			DrawStarMap(0, nullptr);
-			SleepThread(GameTicksPerSecond / 8);
+			SleepThread(c_gameSecond / 8);
 		}
 	}
 }
@@ -2179,7 +2179,7 @@ typedef struct starsearch_state
 	MENU_STATE* pMS;
 	char Text[STAR_SEARCH_BUFSIZE];
 	char LastText[STAR_SEARCH_BUFSIZE];
-	uint32_t LastChangeTime;
+	TimeCount LastChangeTime;
 	int FirstIndex;
 	int CurIndex;
 	int LastIndex;
@@ -2544,7 +2544,7 @@ OnStarNameFrame(TEXTENTRY_STATE* pTES)
 
 	flashCurrentLocation(nullptr, false);
 
-	SleepThread(GameTicksPerSecond / 30);
+	SleepThread(c_gameSecond / 30);
 
 	return true;
 }
@@ -2593,7 +2593,7 @@ DoStarSearch(MENU_STATE* pMS)
 	TextEntry3DO = (bool)is3DO(uqm::UQMOptions::read().whichFonts);
 
 	pss->pMS = pMS;
-	pss->LastChangeTime = 0;
+	pss->LastChangeTime = TimeCount {};
 	pss->Text[0] = '\0';
 	pss->LastText[0] = '\0';
 	pss->FirstIndex = -1;
@@ -2732,11 +2732,11 @@ AdvancedAutoPilot(void)
 static bool
 DoMoveCursor(MENU_STATE* pMS)
 {
-#define MIN_ACCEL_DELAY (GameTicksPerSecond / 60)
-#define MAX_ACCEL_DELAY (GameTicksPerSecond / 8)
-#define STEP_ACCEL_DELAY (GameTicksPerSecond / 120)
+#define MIN_ACCEL_DELAY (c_gameSecond / 60)
+#define MAX_ACCEL_DELAY (c_gameSecond / 8)
+#define STEP_ACCEL_DELAY (c_gameSecond / 120)
 	static char last_buf[CURSOR_INFO_BUFSIZE];
-	uint32_t TimeIn = GetTimeCounter();
+	TimeCount TimeIn {GetTimeCounter()};
 	static uint16_t moveRepeats;
 	bool isMove = false;
 
@@ -2914,7 +2914,7 @@ DoMoveCursor(MENU_STATE* pMS)
 				{
 					setStarMarked(i, "PLYR_MARKER");
 					DrawStarMap(0, nullptr);
-					SleepThread(GameTicksPerSecond / 8);
+					SleepThread(c_gameSecond / 8);
 				}
 			}
 		}
@@ -3181,7 +3181,7 @@ UpdateMap(void)
 					{ // Ignore name stacking during movement
 						VisibleChange = true;
 						RepairMap(index | IGNORE_MOVING_SOI, &last_r, &r);
-						SleepThread(GameTicksPerSecond / 24);
+						SleepThread(c_gameSecond / 24);
 					}
 				} while (delta >= 0);
 				if (VisibleChange)
@@ -3257,15 +3257,15 @@ DoneSphereMove:
 						VisibleChange = true;
 						RepairMap(index, &last_r, &r);
 						SleepThread(
-							GameTicksPerSecond / (12 + GrowthFactor / 44));
+							c_gameSecond / (12 + GrowthFactor / 44));
 					}
 					else if (str > 0 && FleetPtr->known_strength == 0)
 					{ // Flash dying race name
 						VisibleChange = true;
 						RepairMap(index | PRE_DEATH_SOI, &last_r, &r);
-						SleepThread(GameTicksPerSecond / 12);
+						SleepThread(c_gameSecond / 12);
 						RepairMap(index | DEATH_SOI, &last_r, &r);
-						SleepThread(GameTicksPerSecond / 12);
+						SleepThread(c_gameSecond / 12);
 					}
 				} while (delta >= 0);
 				if (VisibleChange

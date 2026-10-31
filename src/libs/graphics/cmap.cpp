@@ -32,9 +32,9 @@ typedef struct xform_control
 {
 	int CMapIndex; // -1 means unused
 	COLORMAPPTR CMapPtr;
-	int16_t Ticks;
-	uint32_t StartTime;
-	uint32_t EndTime;
+	TimePeriod Ticks;
+	TimeCount StartTime;
+	TimeCount EndTime;
 	Color OldCMap[NUMBER_OF_PLUTVALS];
 } XFORM_CONTROL;
 
@@ -51,7 +51,7 @@ static uqm::Mutex s_fadeLock {};
 static int fadeAmount UQM_GUARDED_BY(s_fadeLock) = FADE_NORMAL_INTENSITY;
 static int fadeDelta UQM_GUARDED_BY(s_fadeLock);
 static TimeCount fadeStartTime UQM_GUARDED_BY(s_fadeLock);
-static int32_t fadeInterval UQM_GUARDED_BY(s_fadeLock);
+static TimePeriod fadeInterval UQM_GUARDED_BY(s_fadeLock);
 
 #define SPARE_COLORMAPS 20
 
@@ -332,23 +332,16 @@ int GetFadeAmount(void)
 
 	const uqm::LockGuard lock {s_fadeLock};
 
-	if (fadeInterval)
+	if (fadeInterval != TimePeriod {})
 	{ // have a pending fade
-		TimeCount Now = GetTimeCounter();
-		int32_t elapsed;
+		const TimePeriod elapsed {uqstl::min(GetTimeCounter() - fadeStartTime, fadeInterval)};
 
-		elapsed = Now - fadeStartTime;
-		if (elapsed > fadeInterval)
-		{
-			elapsed = fadeInterval;
-		}
-
-		newAmount = fadeAmount + (long)fadeDelta * elapsed / fadeInterval;
+		newAmount = static_cast<int>(fadeAmount + fadeDelta * elapsed.count() / fadeInterval.count());
 
 		if (elapsed >= fadeInterval)
 		{ // fade is over
 			fadeAmount = newAmount;
-			fadeInterval = 0;
+			fadeInterval = TimePeriod {};
 		}
 	}
 	else
@@ -362,10 +355,10 @@ int GetFadeAmount(void)
 static void
 finishPendingFade(void) UQM_REQUIRES(s_fadeLock)
 {
-	if (fadeInterval)
+	if (fadeInterval != TimePeriod {})
 	{ // end the fade immediately
 		fadeAmount += fadeDelta;
-		fadeInterval = 0;
+		fadeInterval = TimePeriod {};
 	}
 }
 
@@ -376,8 +369,8 @@ FlushFadeXForms(void)
 	finishPendingFade();
 }
 
-uint32_t
-FadeScreen(ScreenFadeType fadeType, int16_t TimeInterval)
+TimeCount
+FadeScreen(ScreenFadeType fadeType, TimePeriod TimeInterval)
 {
 	TimeCount TimeOut;
 	int FadeEnd;
@@ -403,18 +396,18 @@ FadeScreen(ScreenFadeType fadeType, int16_t TimeInterval)
 	// Don't make users wait for fades
 	if (QuitPosted)
 	{
-		TimeInterval = 0;
+		TimeInterval = TimePeriod {};
 	}
 
 	const uqm::LockGuard lock {s_fadeLock};
 
 	finishPendingFade();
 
-	if (TimeInterval <= 0 || fadeAmount == FadeEnd)
+	if (TimeInterval <= TimePeriod {} || fadeAmount == FadeEnd)
 	{ // end the fade immediately
 		fadeAmount = FadeEnd;
 		// cancel any pending fades
-		fadeInterval = 0;
+		fadeInterval = TimePeriod {};
 		TimeOut = GetTimeCounter();
 	}
 	else
@@ -422,7 +415,7 @@ FadeScreen(ScreenFadeType fadeType, int16_t TimeInterval)
 		fadeInterval = TimeInterval;
 		fadeDelta = FadeEnd - fadeAmount;
 		fadeStartTime = GetTimeCounter();
-		TimeOut = fadeStartTime + TimeInterval + 1;
+		TimeOut = fadeStartTime + TimeInterval + TimePeriod {1};
 	}
 
 	return TimeOut;
@@ -460,7 +453,7 @@ bool XFormColorMap_step(void)
 {
 	bool Changed = false;
 	int x;
-	uint32_t Now = GetTimeCounter();
+	const TimeCount Now {GetTimeCounter()};
 
 	const uqm::LockGuard lock {XFormControl.Lock};
 
@@ -468,7 +461,7 @@ bool XFormColorMap_step(void)
 	{
 		XFORM_CONTROL* control = &XFormControl.TaskControl[x];
 		int index = control->CMapIndex;
-		int TicksLeft = control->EndTime - Now;
+		const int TicksLeft {static_cast<int>((control->EndTime - Now).count())};
 		TFB_ColorMap* curmap;
 
 		if (index < 0)
@@ -493,8 +486,7 @@ bool XFormColorMap_step(void)
 				oldClr = control->OldCMap;
 				newClr = (uint8_t*)control->CMapPtr + 2;
 
-				frac = (int)(control->Ticks - TicksLeft) * XFORM_SCALE
-					 / control->Ticks;
+				frac = static_cast<int>((control->Ticks.count() - TicksLeft) * XFORM_SCALE / control->Ticks.count());
 
 				for (i = 0; i < NUMBER_OF_PLUTVALS; ++i, ++oldClr,
 					newClr += PLUTVAL_BYTE_SIZE)
@@ -550,16 +542,16 @@ FlushPLUTXForms(void)
 	XFormControl.Highest = -1; // all gone
 }
 
-static uint32_t
-XFormPLUT(COLORMAPPTR ColorMapPtr, int16_t TimeInterval)
+static TimeCount
+XFormPLUT(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
 {
 	TFB_ColorMap* map;
 	XFORM_CONTROL* control;
 	int index;
 	int x;
 	int first_avail = -1;
-	uint32_t EndTime;
-	uint32_t Now;
+	TimeCount EndTime;
+	TimeCount Now;
 
 	Now = GetTimeCounter();
 	index = *(uint8_t*)ColorMapPtr;
@@ -604,36 +596,32 @@ XFormPLUT(COLORMAPPTR ColorMapPtr, int16_t TimeInterval)
 		if (!map)
 		{
 			uqm::log::warn("BUG: XFormPLUT(): no current map");
-			return (0);
+			return TimeCount {};
 		}
 		GetColorMapColors(control->OldCMap, map);
 	}
 
 	control->CMapIndex = index;
 	control->CMapPtr = ColorMapPtr;
-	control->Ticks = TimeInterval;
-	if (control->Ticks < 0)
-	{
-		control->Ticks = 0; /* prevent negative fade */
-	}
+	control->Ticks = uqstl::max(TimeInterval, TimePeriod {}); /* prevent negative fade */
 	control->StartTime = Now;
 	control->EndTime = EndTime = Now + control->Ticks;
 
 	return (EndTime);
 }
 
-uint32_t
-XFormColorMap(COLORMAPPTR ColorMapPtr, int16_t TimeInterval)
+TimeCount
+XFormColorMap(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
 {
 	if (!ColorMapPtr)
 	{
-		return (0);
+		return TimeCount {};
 	}
 
 	// Don't make users wait for transforms
 	if (QuitPosted)
 	{
-		TimeInterval = 0;
+		TimeInterval = TimePeriod {};
 	}
 
 	return XFormPLUT(ColorMapPtr, TimeInterval);

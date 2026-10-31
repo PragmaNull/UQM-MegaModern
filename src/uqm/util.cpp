@@ -333,9 +333,7 @@ void DrawRadarBorder(void)
 uint32_t
 SeedRandomNumbers(void)
 {
-	uint32_t cur_time;
-
-	cur_time = GetTimeCounter();
+	const auto cur_time {static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count())};
 	TFB_SeedRandom(cur_time);
 
 	return (cur_time);
@@ -461,7 +459,7 @@ bool PauseGame(void)
 	DrawPauseText(&r);
 
 	oldVolume = GetCurrMusicVol();
-	FadeMusic(60, GameTicksPerSecond / 2);
+	FadeMusic(60, c_gameSecond / 2);
 
 	FlushGraphics();
 
@@ -489,13 +487,13 @@ bool PauseGame(void)
 	DestroyDrawable(ReleaseDrawable(saveStamp.frame));
 	ClearSystemRect();
 
-	FadeMusic(oldVolume, GameTicksPerSecond / 2);
+	FadeMusic(oldVolume, c_gameSecond / 2);
 
 	SetContextClipRect(&OldRect);
 	SetContextOrigin(OldOrigin);
 	SetContext(OldContext);
 
-	WaitForNoInput(GameTicksPerSecond / 4, true);
+	WaitForNoInput(c_gameSecond / 4, true);
 
 	DeltaLastTime(GetTimeCounter() - deltaT);
 
@@ -525,11 +523,11 @@ bool WaitForAnyButtonUntil(bool newButton, TimeCount timeOut,
 
 	buttonPressed = AnyButtonPress(true);
 	while (!buttonPressed
-		   && (timeOut == WAIT_INFINITE || GetTimeCounter() < timeOut)
+		   && GetTimeCounter() < timeOut
 		   && !(uqm::currentActivity() & CHECK_ABORT)
 		   && !QuitPosted)
 	{
-		SleepThread(GameTicksPerSecond / 40);
+		SleepThread(c_gameSecond / 40);
 		buttonPressed = AnyButtonPress(true);
 	}
 
@@ -556,11 +554,11 @@ bool WaitForActButtonUntil(bool newButton, TimeCount timeOut,
 
 	buttonPressed = ActKeysPress();
 	while (!buttonPressed
-		   && (timeOut == WAIT_INFINITE || GetTimeCounter() < timeOut)
+		   && GetTimeCounter() < timeOut
 		   && !(uqm::currentActivity() & CHECK_ABORT)
 		   && !QuitPosted)
 	{
-		SleepThread(GameTicksPerSecond / 40);
+		SleepThread(c_gameSecond / 40);
 		buttonPressed = ActKeysPress();
 	}
 
@@ -574,21 +572,13 @@ bool WaitForActButtonUntil(bool newButton, TimeCount timeOut,
 
 bool WaitForAnyButton(bool newButton, TimePeriod duration, bool resetInput)
 {
-	TimeCount timeOut = duration;
-	if (duration != WAIT_INFINITE)
-	{
-		timeOut += GetTimeCounter();
-	}
+	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForAnyButtonUntil(newButton, timeOut, resetInput);
 }
 
 bool WaitForActButton(bool newButton, TimePeriod duration, bool resetInput)
 {
-	TimeCount timeOut = duration;
-	if (duration != WAIT_INFINITE)
-	{
-		timeOut += GetTimeCounter();
-	}
+	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForActButtonUntil(newButton, timeOut, resetInput);
 }
 
@@ -600,11 +590,11 @@ bool WaitForNoInputUntil(TimeCount timeOut, bool resetInput)
 
 	buttonPressed = AnyButtonPress(true);
 	while (buttonPressed
-		   && (timeOut == WAIT_INFINITE || GetTimeCounter() < timeOut)
+		   && GetTimeCounter() < timeOut
 		   && !(uqm::currentActivity() & CHECK_ABORT)
 		   && !QuitPosted)
 	{
-		SleepThread(GameTicksPerSecond / 40);
+		SleepThread(c_gameSecond / 40);
 		buttonPressed = AnyButtonPress(true);
 	}
 
@@ -618,11 +608,7 @@ bool WaitForNoInputUntil(TimeCount timeOut, bool resetInput)
 
 bool WaitForNoInput(TimePeriod duration, bool resetInput)
 {
-	TimeCount timeOut = duration;
-	if (duration != WAIT_INFINITE)
-	{
-		timeOut += GetTimeCounter();
-	}
+	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForNoInputUntil(timeOut, resetInput);
 }
 
@@ -647,12 +633,12 @@ void SleepGame(void)
 
 	while (!GameActive && !QuitPosted)
 	{
-		SleepThread(GameTicksPerSecond / 2);
+		SleepThread(c_gameSecond / 2);
 	}
 
 	uqm::log::debug("Game is waking up");
 
-	WaitForNoInput(GameTicksPerSecond / 10, true);
+	WaitForNoInput(c_gameSecond / 10, true);
 
 	ResumeMusic();
 

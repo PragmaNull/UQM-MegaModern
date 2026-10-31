@@ -57,7 +57,7 @@
 // Oscilloscope frame rate
 // Should be <= COMM_ANIM_RATE
 // XXX: was 32 picked experimentally?
-#define OSCILLOSCOPE_RATE (GameTicksPerSecond / chooseIfHd(32, 60))
+#define OSCILLOSCOPE_RATE (c_gameSecond / chooseIfHd(32, 60))
 
 // Maximum comm animation frame rate (actual execution rate)
 // A gfx frame is not always produced during an execution frame,
@@ -65,7 +65,7 @@
 // The rate was originally 120fps which allowed for more animation
 // precision which is ultimately wasted on the human eye anyway.
 // The highest known stable animation rate is 40fps, so that's what we use.
-#define COMM_ANIM_RATE (GameTicksPerSecond / 40)
+#define COMM_ANIM_RATE (c_gameSecond / 40)
 
 static GFXCONTEXT AnimContext;
 
@@ -75,7 +75,7 @@ FONT ComputerFont;
 
 static bool TalkingFinished;
 static CommIntroMode curIntroMode = CIM_DEFAULT;
-static TimeCount fadeTime;
+static TimePeriod fadeTime;
 
 // Dark mode
 bool IsDarkMode = false;
@@ -901,7 +901,7 @@ FadePlayerUI(void)
 			return;
 		}
 
-		NextTime = GetTimeCounter() + GameTicksPerSecond / 15;
+		NextTime = GetTimeCounter() + c_gameSecond / 15;
 
 		OldContext = SetContext(ScreenContext);
 
@@ -1076,7 +1076,7 @@ DoTalkSegue(TALKING_STATE* pTS)
 					freezeTalkingAnim();
 				}
 
-				TimeOut = GetTimeCounter() + delay;
+				TimeOut = GetTimeCounter() + TimePeriod {delay};
 
 				while (!awake)
 				{
@@ -1134,7 +1134,7 @@ DoTalkSegue(TALKING_STATE* pTS)
 
 	SleepThreadUntil(pTS->NextTime);
 	// Need a high enough framerate for 3DO smooth seeking
-	pTS->NextTime = GetTimeCounter() + GameTicksPerSecond / 60;
+	pTS->NextTime = GetTimeCounter() + c_gameSecond / 60;
 
 	return pTS->seeking || (curTrack && curTrack <= pTS->waitTrack);
 }
@@ -1278,7 +1278,7 @@ void AlienTalkSegue(uint16_t wait_track)
 		if (uqm::UQMOptions::read().scrTrans != uqm::EmulationMode::None && !uqm::UQMOptions::read().useSpeech)
 		{ // short pause to compensate instant fading (conditions to be adjusted)
 			// I think it is for optIPScaler
-			TimeCount timeout = GetTimeCounter() + GameTicksPerSecond / 4;
+			TimeCount timeout = GetTimeCounter() + c_gameSecond / 4;
 			while (GetTimeCounter() < timeout)
 			{
 				UpdateDuty(false);
@@ -1292,7 +1292,7 @@ void AlienTalkSegue(uint16_t wait_track)
 	TalkingFinished = TalkSegue(wait_track);
 	if (TalkingFinished && !VolasPackPresent)
 	{
-		FadeMusic(FOREGROUND_VOL, GameTicksPerSecond);
+		FadeMusic(FOREGROUND_VOL, c_gameSecond);
 	}
 }
 
@@ -1504,7 +1504,7 @@ SelectResponse(ENCOUNTER_STATE* pES)
 
 	if (!uqm::UQMOptions::read().useSpeech && uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC)
 	{ // short pause after choosing response to mimic PC behaviour
-		TimeCount timeout = GetTimeCounter() + GameTicksPerSecond / 2;
+		TimeCount timeout = GetTimeCounter() + c_gameSecond / 2;
 		RefreshResponsesSpecial(pES);
 		while (GetTimeCounter() < timeout)
 		{
@@ -1524,7 +1524,7 @@ SelectResponse(ENCOUNTER_STATE* pES)
 	FlushCustomBaseLine();
 	ReleaseTalkingAnim();
 
-	FadeMusic(BACKGROUND_VOL, GameTicksPerSecond);
+	FadeMusic(BACKGROUND_VOL, c_gameSecond);
 
 	TalkingFinished = false;
 	pES->num_responses = 0;
@@ -1556,7 +1556,7 @@ SelectConversationSummary(ENCOUNTER_STATE* pES)
 static void
 SelectReplay(ENCOUNTER_STATE* pES)
 {
-	FadeMusic(BACKGROUND_VOL, GameTicksPerSecond);
+	FadeMusic(BACKGROUND_VOL, c_gameSecond);
 	if (pES)
 	{
 		FeedbackPlayerPhrase(pES->phrase_buf);
@@ -1594,7 +1594,7 @@ PlayerResponseInput(ENCOUNTER_STATE* pES)
 			if (!(uqm::currentActivity() & CHECK_ABORT))
 			{
 				RefreshResponses(pES);
-				FadeMusic(FOREGROUND_VOL, GameTicksPerSecond);
+				FadeMusic(FOREGROUND_VOL, c_gameSecond);
 			}
 		}
 		else if (PulsedInputState.menu[KEY_MENU_UP])
@@ -1667,14 +1667,14 @@ DoLastReplay(LAST_REPLAY_STATE* pLRS)
 
 	if (PulsedInputState.menu[KEY_MENU_CANCEL] && uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
-		FadeMusic(BACKGROUND_VOL, GameTicksPerSecond);
+		FadeMusic(BACKGROUND_VOL, c_gameSecond);
 		SelectConversationSummary(nullptr);
-		pLRS->TimeOut = FadeMusic(0, GameTicksPerSecond * 2) + GameTicksPerSecond / 60;
+		pLRS->TimeOut = FadeMusic(0, c_gameSecond * 2) + c_gameSecond / 60;
 	}
 	else if (PulsedInputState.menu[KEY_MENU_LEFT])
 	{
 		SelectReplay(nullptr);
-		pLRS->TimeOut = FadeMusic(0, GameTicksPerSecond * 2) + GameTicksPerSecond / 60;
+		pLRS->TimeOut = FadeMusic(0, c_gameSecond * 2) + c_gameSecond / 60;
 	}
 
 	while (GetTimeCounter() < pLRS->NextTime)
@@ -1713,7 +1713,7 @@ DoCommunication(ENCOUNTER_STATE* pES)
 		LAST_REPLAY_STATE replayState;
 
 		memset(&replayState, 0, sizeof replayState);
-		replayState.TimeOut = FadeMusic(0, GameTicksPerSecond * 3) + GameTicksPerSecond / 60;
+		replayState.TimeOut = FadeMusic(0, c_gameSecond * 3) + c_gameSecond / 60;
 		replayState.InputFunc = DoLastReplay;
 		DoInput(&replayState, false);
 	}
@@ -1739,7 +1739,7 @@ DoCommunication(ENCOUNTER_STATE* pES)
 	StopMusic();
 	StopSound();
 	StopTrack();
-	SleepThreadUntil(FadeMusic(NORMAL_VOLUME, 0) + GameTicksPerSecond / 60);
+	SleepThreadUntil(FadeMusic(NORMAL_VOLUME, TimePeriod {}) + c_gameSecond / 60);
 
 	UninitOscilloscope();
 
@@ -2036,7 +2036,7 @@ HailAlien(void)
 	pCurInputState = 0;
 }
 
-void SetCommIntroMode(CommIntroMode newMode, TimeCount howLong)
+void SetCommIntroMode(CommIntroMode newMode, TimePeriod howLong)
 {
 	curIntroMode = newMode;
 	fadeTime = howLong;

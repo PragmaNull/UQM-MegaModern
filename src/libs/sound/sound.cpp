@@ -140,17 +140,12 @@ void SetSpeechVolume(float volume)
 	audio_Sourcef(soundSource[SPEECH_SOURCE].handle, audio_GAIN, volume);
 }
 
-uint32_t
-FadeMusic(uint8_t end_vol, int16_t TimeInterval)
+TimeCount
+FadeMusic(uint8_t end_vol, TimePeriod TimeInterval)
 {
-	if (QuitPosted) // Don't make users wait for fades
+	if (QuitPosted || TimeInterval < TimePeriod {}) // Don't make users wait for fades
 	{
-		TimeInterval = 0;
-	}
-
-	if (TimeInterval < 0)
-	{
-		TimeInterval = 0;
+		TimeInterval = TimePeriod {};
 	}
 
 	if (!SetMusicStreamFade(TimeInterval, end_vol))
@@ -160,7 +155,7 @@ FadeMusic(uint8_t end_vol, int16_t TimeInterval)
 	}
 	else
 	{
-		return GetTimeCounter() + TimeInterval + 1;
+		return GetTimeCounter() + TimeInterval + TimePeriod {1};
 	}
 }
 

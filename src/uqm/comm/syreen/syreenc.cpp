@@ -308,7 +308,7 @@ FriendlyExit(RESPONSE_REF R)
 		AlienTalkSegue(2);
 
 		CommData.AlienTextFColor = WHITE_COLOR;
-		FadeScreen(FadeAllToBlack, 0);
+		FadeScreen(FadeAllToBlack, TimePeriod {});
 
 		DrawSISFrame();
 		DrawSISMessage(nullptr);
@@ -318,7 +318,7 @@ FriendlyExit(RESPONSE_REF R)
 
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 0)),
-					  0);
+					  TimePeriod {});
 
 		BlockTalkingAnim(1, 2); // Several hours later block (New)
 
@@ -328,7 +328,7 @@ FriendlyExit(RESPONSE_REF R)
 			EnableTalkingAnim(true);
 			DisengageFilters();
 		}
-		FadeScreen(FadeAllToColor, GameTicksPerSecond / 2);
+		FadeScreen(FadeAllToColor, c_gameSecond / 2);
 		AlienTalkSegue((uint16_t)~0);
 
 		SET_GAME_STATE(PLAYER_HAD_SEX, 1);
@@ -429,7 +429,7 @@ Foreplay(RESPONSE_REF R)
 
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-					  GameTicksPerSecond);
+					  c_gameSecond);
 
 		if (IS_HD)
 		{

@@ -186,7 +186,7 @@ void RerenderPlanetSphere(void)
 		XFormColorMap(
 			GetColorMapAddress(
 				SetAbsColorMapIndex(Orbit->sphereMap, sc)),
-			0);
+			TimePeriod {});
 		XFormColorMap_step();
 	}
 
@@ -413,7 +413,7 @@ void ZoomInPlanetSphere(void)
 		GetFrameRect(Orbit->SphereFrame, &frameRect);
 	}
 	repairRect = frameRect;
-	RenderNextTime = 0;
+	RenderNextTime = TimeCount {};
 
 	for (i = 0; i <= frameCount; ++i)
 	{
@@ -421,7 +421,7 @@ void ZoomInPlanetSphere(void)
 		GFXPOINT pt;
 
 		Now = GetTimeCounter();
-		NextTime = Now + (GameTicksPerSecond / ZOOM_RATE);
+		NextTime = Now + (c_gameSecond / ZOOM_RATE);
 
 		// Use 1 + e^-2 - e^(-2x / frameCount)) function to get a
 		// decelerating zoom like the one 3DO does (supposedly)
@@ -470,7 +470,7 @@ void ZoomInPlanetSphere(void)
 	}
 }
 
-#define PLANET_ROTATION_FPS (GameTicksPerSecond / 60)
+#define PLANET_ROTATION_FPS (c_gameSecond / 60)
 
 void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 {

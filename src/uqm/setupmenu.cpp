@@ -53,7 +53,7 @@ typedef struct setup_menu_state
 
 	bool initialized;
 	int anim_frame_count;
-	uint32_t NextTime;
+	TimeCount NextTime;
 } SETUP_MENU_STATE;
 
 static SOUND testSounds;
@@ -157,7 +157,7 @@ rename_template(WIDGET_TEXTENTRY* self)
 	uqm::strncpy_safe(uqm::input_templates[editTemplate].name, self->value);
 }
 
-#define MENU_FRAME_RATE (GameTicksPerSecond / 20)
+#define MENU_FRAME_RATE (c_gameSecond / 20)
 
 static bool
 DoSetupMenu(SETUP_MENU_STATE* pInputState)
@@ -781,7 +781,7 @@ apply_settings(void)
 	const int factor {uqm::isAddonAvailable(HD_MODE) ? *uqmOptions.resolutionFactor : 0};
 	if (factor != (int)resolutionFactor)
 	{
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 		resolutionFactor = factor;
 	}
 
@@ -830,7 +830,7 @@ apply_settings(void)
 		int w = WindowWidth;
 		int h = WindowHeight;
 
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 
 		FlushGraphics();
 		UninitVideoPlayer();

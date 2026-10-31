@@ -89,7 +89,7 @@ void PlayMusicResume(MUSIC_REF MusicRef, uint8_t Volume)
 	if (OkayToResume())
 	{
 		SeekMusic(GetMusicPosition());
-		FadeMusic(Volume, GameTicksPerSecond * 2);
+		FadeMusic(Volume, c_gameSecond * 2);
 	}
 	else
 	{

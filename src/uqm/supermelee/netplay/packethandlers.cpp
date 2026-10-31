@@ -540,7 +540,7 @@ int PacketHandler_InputDelay(NetConnection* conn,
 
 	// battleStateData = (BattleStateData *) NetConnection_getStateData(conn);
 	delay = ntoh32(packet->delay);
-	if (delay > BattleFrameRateTicks)
+	if (delay > BattleFrameRateTicks.count())
 	{
 		uqm::log::error("NETPLAY: [{}]     Received absurdly large "
 						"input delay value ({}).\n",

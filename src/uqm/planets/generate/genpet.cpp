@@ -261,7 +261,7 @@ ZapToUrquanEncounter(void)
 
 		{
 #define LOST_DAYS 15
-			SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond * 2));
+			SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond * 2));
 			MoveGameClockDays(LOST_DAYS);
 		}
 

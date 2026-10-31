@@ -65,10 +65,10 @@ void TFB_UninitVideoPlayer(void)
 	// now just a stub
 }
 
-static inline int32_t
+static inline TimePeriod
 msecToTimeCount(int32_t msec)
 {
-	return msec * GameTicksPerSecond / 1000;
+	return uqstl::chrono::duration_cast<TimePeriod>(uqstl::chrono::milliseconds {msec});
 }
 
 // audio-synced video playback frame function
@@ -458,8 +458,8 @@ vp_GetCanvasLine(TFB_VideoDecoder* decoder, uint32_t line)
 static uint32_t
 vp_GetTicks(TFB_VideoDecoder* decoder)
 {
-	uint32_t ctr = GetTimeCounter();
-	return (ctr / GameTicksPerSecond) * 1000 + ((ctr % GameTicksPerSecond) * 1000) / GameTicksPerSecond;
+	return static_cast<uint32_t>(
+		uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(GetTimeCounter().time_since_epoch()).count());
 
 	(void)decoder; // gobble up compiler warning
 }
@@ -475,7 +475,7 @@ vp_SetTimer(TFB_VideoDecoder* decoder, uint32_t msecs)
 	}
 
 	// time when next frame should be displayed
-	vid->frame_time = GetTimeCounter() + msecs * GameTicksPerSecond / 1000;
+	vid->frame_time = GetTimeCounter() + msecToTimeCount(static_cast<int32_t>(msecs));
 	return true;
 }
 

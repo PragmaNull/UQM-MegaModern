@@ -63,7 +63,7 @@ void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
 	{
 		if (IS_PAD || OutfitOrShipyard == 3)
 		{
-			SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 4));
+			SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 4));
 			FlushColorXForms();
 		}
 
@@ -78,7 +78,7 @@ void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
 
 	if (is3DO(uqm::UQMOptions::read().whichIntro))
 	{
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 4));
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 4));
 	}
 	FlushColorXForms();
 
@@ -96,16 +96,16 @@ void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
 
 	if (is3DO(uqm::UQMOptions::read().whichIntro))
 	{
-		SleepThreadUntil(FadeScreen(FadeAllToColor, GameTicksPerSecond / 4));
+		SleepThreadUntil(FadeScreen(FadeAllToColor, c_gameSecond / 4));
 	}
 	FlushColorXForms();
 }
 
-void SplashScreen(void (*DoProcessing)(uint32_t TimeOut))
+void SplashScreen(void (*DoProcessing)(TimeCount TimeOut))
 {
 	STAMP s;
-	uint32_t TimeOut = 0;
-	TimeCount OverallWait = GetTimeCounter() + (GameTicksPerSecond * 3);
+	TimeCount TimeOut {};
+	TimeCount OverallWait = GetTimeCounter() + (c_gameSecond * 3);
 
 	if (!uqm::UQMOptions::read().skipIntro)
 	{
@@ -127,7 +127,7 @@ void SplashScreen(void (*DoProcessing)(uint32_t TimeOut))
 		DrawStamp(&s);
 		DestroyDrawable(ReleaseDrawable(s.frame));
 
-		TimeOut = FadeScreen(FadeAllToColor, GameTicksPerSecond / 2);
+		TimeOut = FadeScreen(FadeAllToColor, c_gameSecond / 2);
 	}
 
 	if (DoProcessing)
@@ -158,32 +158,32 @@ void SplashScreen(void (*DoProcessing)(uint32_t TimeOut))
 
 	if (!uqm::UQMOptions::read().skipIntro)
 	{
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 	}
 }
 
 void Introduction(void)
 {
 	ShowPresentation(INTROPRES_STRTAB);
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 }
 
 void Victory(void)
 {
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 
 	/* by default we do 3DO cinematics; or PC slides when 3DO files are
 	 * not present */
 	ShowPresentation(FINALPRES_STRTAB);
 
-	FadeScreen(FadeAllToBlack, 0);
+	FadeScreen(FadeAllToBlack, TimePeriod {});
 }
 
 void GameOver(uint8_t DeathType)
 {
 	if (DeathType != SUICIDE)
 	{
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 	}
 
 	switch (DeathType)
@@ -192,7 +192,7 @@ void GameOver(uint8_t DeathType)
 			ShowPresentation(DEATHMARCHPRES_STRTAB);
 			break;
 		case SUICIDE:
-			SleepThreadUntil(FadeScreen(FadeAllToWhite, GameTicksPerSecond / 2));
+			SleepThreadUntil(FadeScreen(FadeAllToWhite, c_gameSecond / 2));
 			ShowPresentation(SUICIDEPRES_STRTAB);
 			break;
 		case SURRENDERED:
@@ -203,19 +203,19 @@ void GameOver(uint8_t DeathType)
 			ShowPresentation(DEFEATEDPRES_STRTAB);
 			break;
 	}
-	FadeScreen(FadeAllToBlack, 0);
+	FadeScreen(FadeAllToBlack, TimePeriod {});
 }
 
 void Logo(void)
 {
 	ShowPresentation(LOGOPRES_STRTAB);
-	FadeScreen(FadeAllToBlack, 0);
+	FadeScreen(FadeAllToBlack, TimePeriod {});
 }
 
 void Drumall(void)
 {
 	ShowPresentation(DRUMALLPRES_STRTAB);
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 }
 
 void Reload(void)
@@ -223,7 +223,7 @@ void Reload(void)
 	ShowPresentation(RELOADPRES_STRTAB);
 
 	ReloadGameContent();
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 }
 
 void AdvanceLoadProgress(void)

@@ -18,17 +18,6 @@ Clock::time_point startTime()
 	return start;
 }
 
-TimeCount msToTicks(uint32_t ms)
-{
-	// Overflow-safe conversion.
-	return (ms / 1000) * GameTicksPerSecond + ((ms % 1000) * GameTicksPerSecond / 1000);
-}
-
-void sleepTicks(TimePeriod ticks)
-{
-	uqstl::this_thread::sleep_for(uqstl::chrono::milliseconds {static_cast<int64_t>(ticks) * 1000 / GameTicksPerSecond});
-}
-
 void sleepUntilTicks(TimeCount wakeTime)
 {
 	const TimeCount now {GetTimeCounter()};
@@ -38,26 +27,30 @@ void sleepUntilTicks(TimeCount wakeTime)
 	}
 	else
 	{
-		sleepTicks(wakeTime - now);
+		uqstl::this_thread::sleep_for(wakeTime - now);
 	}
 }
 
 } // namespace
 
-uint32_t GetTimeMs(void)
+GameTimeClock::time_point GameTimeClock::now()
 {
-	const auto elapsed {uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(Clock::now() - startTime())};
-	return static_cast<uint32_t>(elapsed.count());
+	return time_point {uqstl::chrono::duration_cast<GameTicks>(Clock::now() - startTime())};
+}
+
+uqstl::chrono::milliseconds GetTimeMs(void)
+{
+	return uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(Clock::now() - startTime());
 }
 
 TimeCount GetTimeCounter(void)
 {
-	return msToTicks(GetTimeMs());
+	return GameTimeClock::now();
 }
 
 void HibernateThread(TimePeriod timePeriod)
 {
-	sleepTicks(timePeriod);
+	uqstl::this_thread::sleep_for(timePeriod);
 }
 
 void HibernateThreadUntil(TimeCount wakeTime)
@@ -82,13 +75,9 @@ void SleepThreadUntil(TimeCount wakeTime)
 			return;
 		}
 
-		TimeCount nextTime {msToTicks(Async_timeBeforeNextMs())};
-		if (wakeTime < nextTime)
-		{
-			nextTime = wakeTime;
-		}
-
-		sleepUntilTicks(nextTime);
+		const uqstl::chrono::milliseconds next {Async_nextTime()};
+		const TimeCount nextTime {next == uqstl::chrono::milliseconds::max() ? wakeTime : TimeCount {uqstl::chrono::duration_cast<GameTicks>(next)}};
+		sleepUntilTicks(uqstl::min(wakeTime, nextTime));
 	}
 }
 

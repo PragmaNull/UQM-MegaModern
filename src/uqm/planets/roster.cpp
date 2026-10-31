@@ -121,13 +121,13 @@ static void
 flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
 {
 	static Color c = BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x00, 0x00), 0x24);
-	static TimeCount NextTime = 0;
+	static TimeCount NextTime {};
 
 	drawSupportShip(rosterState, true, saveFrame);
 
 	if (GetTimeCounter() >= NextTime)
 	{
-		NextTime = GetTimeCounter() + (GameTicksPerSecond / 15);
+		NextTime = GetTimeCounter() + (c_gameSecond / 15);
 
 		/* The commented code out code is the old code before the switch
 		 * to 24-bits colors. The current code produces very slightly

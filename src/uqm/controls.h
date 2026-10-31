@@ -166,7 +166,7 @@ bool LoadInputScript(const char* path);
 // Sets the function that the "dumpmenu" script command calls. Null when no setup menu is open.
 void SetInputScriptMenuDump(void (*dump)(void));
 extern void FlushInput(void);
-void SetMenuRepeatDelay(uint32_t min, uint32_t max, uint32_t step, bool gestalt);
+void SetMenuRepeatDelay(TimePeriod min, TimePeriod max, TimePeriod step, bool gestalt);
 void SetDefaultMenuRepeatDelay(void);
 void ResetKeyRepeat(void);
 bool PauseGame(void);
@@ -174,7 +174,7 @@ void SleepGame(void);
 bool DoConfirmExit(void);
 bool ConfirmExit(void);
 
-#define WAIT_INFINITE ((TimePeriod) - 1)
+#define WAIT_INFINITE TimePeriod::max()
 bool WaitForAnyButton(bool newButton, TimePeriod duration,
 					  bool resetInput);
 bool WaitForActButton(bool newButton, TimePeriod duration,
@@ -212,7 +212,7 @@ typedef struct textentry_state
 
 	// these are semi-private read-only
 	bool Initialized;
-	uint32_t NextTime;					// use this for input frame timing
+	TimeCount NextTime;					// use this for input frame timing
 	bool Success;						// edit confirmed or canceled
 	uqstl::vector<char> CacheStr;		// cached copy to revert immediate changes
 	STRING JoyAlphaString;				// joystick alphabet definition

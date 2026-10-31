@@ -306,14 +306,14 @@ ZexBeingEatenAlive(void)
 
 			XFormColorMap(GetColorMapAddress(
 							  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-						  GameTicksPerSecond / 4);
+						  c_gameSecond / 4);
 		}
 	}
 	else
 	{
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-					  GameTicksPerSecond / 4);
+					  c_gameSecond / 4);
 
 		if (IS_HD)
 		{

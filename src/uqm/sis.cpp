@@ -947,7 +947,7 @@ void DrawFlagshipStats(void)
 	if (!IS_DOS)
 	{
 		unsigned int energy_per_10_sec =
-			(((100 * GameTicksPerSecond * energy_regeneration) / ((1 + energy_wait) * BattleFrameRateTicks)) + 5) / 10;
+			(((100 * GameTicksPerSecond * energy_regeneration) / ((1 + energy_wait) * BattleFrameRateTicks.count())) + 5) / 10;
 		fmt::format_to_sz_n(buf, "{:2}.{:1}",
 							energy_per_10_sec / 10, energy_per_10_sec % 10);
 	}
@@ -2044,13 +2044,13 @@ AutoPilotTextLogic(void)
 void DrawAutoPilotMessage(bool Reset)
 {
 	static bool LastPilot = false;
-	static TimeCount NextTime = 0;
+	static TimeCount NextTime {};
 	static uint32_t cycle_index = 0;
 	bool OnAutoPilot;
 
 	static const Color cycle_tab[] = AUTOPILOT_COLOR_CYCLE_TABLE;
 	const size_t cycleCount = std::size(cycle_tab);
-#define BLINK_RATE (GameTicksPerSecond * 3 / 40) // 9 @ 120 ticks/second
+#define BLINK_RATE (c_gameSecond * 3 / 40) // 9 @ 120 ticks/second
 
 	if (Reset || uqm::UQMOptions::read().bubbleWarp)
 	{ // Just a reset, not drawing
@@ -2218,10 +2218,9 @@ updateFlashRect(void* arg)
 static void
 scheduleFlashAlarm(void)
 {
-	TimeCount nextTime = Flash_nextTime(flashContext[0]);
-	uint32_t nextTimeMs = (nextTime / GameTicksPerSecond) * 1000 + ((nextTime % GameTicksPerSecond) * 1000 / GameTicksPerSecond);
-	// Overflow-safe conversion.
-	flashAlarm = Alarm_addAbsoluteMs(nextTimeMs, updateFlashRect, nullptr);
+	const TimeCount nextTime {Flash_nextTime(flashContext[0])};
+	const AlarmTime alarmTime {nextTime == TimeCount::max() ? AlarmTime::max() : uqstl::chrono::duration_cast<AlarmTime>(nextTime.time_since_epoch())};
+	flashAlarm = Alarm_addAbsolute(alarmTime, updateFlashRect, nullptr);
 }
 
 void SetAdditionalRect(const GFXRECT* pRect, uint16_t number)
@@ -2317,8 +2316,8 @@ void SetFlashRect(const GFXRECT* pRect, bool pcRect)
 			{
 				flashContext[i] = Flash_createHighlight(ScreenContext, &flash_rect[i]);
 				Flash_setMergeFactors(flashContext[i], 3, 2, 2);
-				Flash_setSpeed(flashContext[i], 0, GameTicksPerSecond / 16, 0, GameTicksPerSecond / 16);
-				Flash_setFrameTime(flashContext[i], GameTicksPerSecond / 16);
+				Flash_setSpeed(flashContext[i], TimePeriod {}, c_gameSecond / 16, TimePeriod {}, c_gameSecond / 16);
+				Flash_setFrameTime(flashContext[i], c_gameSecond / 16);
 				Flash_setPulseBox(flashContext[i], pcRect);
 				Flash_start(flashContext[i]);
 				if (i == (count_r - 1))

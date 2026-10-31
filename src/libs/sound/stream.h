@@ -18,6 +18,7 @@
 #define STREAM_H
 
 #include "sndintrn.h"
+#include "libs/time/timelib.h"
 
 int InitStreamDecoder(void);
 void UninitStreamDecoder(void);
@@ -40,6 +41,6 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 						  bool wantSpeech);
 
 // returns true if the fade was accepted by stream decoder
-bool SetMusicStreamFade(int32_t howLong, int endVolume);
+bool SetMusicStreamFade(TimePeriod howLong, int endVolume);
 
 #endif

@@ -330,8 +330,8 @@ RefocusView(MELEE_STATE* pMS, uint16_t index)
 static void
 flashSelectedTeam(MELEE_STATE* pMS)
 {
-#define FLASH_RATE (GameTicksPerSecond / 9)
-	static TimeCount NextTime = 0;
+#define FLASH_RATE (c_gameSecond / 9)
+	static TimeCount NextTime {};
 	static int hilite = 0;
 	TimeCount Now = GetTimeCounter();
 
@@ -350,7 +350,7 @@ flashSelectedTeam(MELEE_STATE* pMS)
 
 bool DoLoadTeam(MELEE_STATE* pMS)
 {
-	uint32_t TimeIn = GetTimeCounter();
+	TimeCount TimeIn {GetTimeCounter()};
 
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
@@ -468,7 +468,7 @@ bool DoLoadTeam(MELEE_STATE* pMS)
 
 	flashSelectedTeam(pMS);
 
-	SleepThreadUntil(TimeIn + GameTicksPerSecond / 30);
+	SleepThreadUntil(TimeIn + c_gameSecond / 30);
 
 	return true;
 }

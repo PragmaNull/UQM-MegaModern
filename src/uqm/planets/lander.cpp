@@ -54,7 +54,7 @@
 // comparing speeds frame-by-frame and I came
 // up with 42 FPS. Can be changed later if it
 // causes any trouble.
-#define PLANET_SIDE_RATE (GameTicksPerSecond / 42)
+#define PLANET_SIDE_RATE (c_gameSecond / 42)
 
 
 // This is a derived type from INPUT_STATE_DESC.
@@ -160,7 +160,7 @@ extern PRIM_LINKS DisplayLinks;
 // How long to wait after the lander explodes, so that the full
 // gravity of the player's situation sinks in
 #define EXPLOSION_WAIT (GameTicksPerSecond * 2)
-#define EXPLOSION_WAIT_FRAMES (EXPLOSION_WAIT / PLANET_SIDE_RATE)
+#define EXPLOSION_WAIT_FRAMES (TimePeriod {EXPLOSION_WAIT} / PLANET_SIDE_RATE)
 // The actual number of frame that the explosion and wait takes is:
 //   EXPLOSION_LIFE * 3 + EXPLOSION_WAIT_FRAMES
 
@@ -1704,7 +1704,7 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 static void
 animationInterframe(TimeCount* TimeIn, uint16_t periods)
 {
-#define ANIM_FRAME_RATE (GameTicksPerSecond / 30)
+#define ANIM_FRAME_RATE (c_gameSecond / 30)
 
 	while (periods > 0)
 	{
@@ -1738,7 +1738,7 @@ AnimateLaunch(FRAME farray, bool isLanding)
 	s.frame = farray;
 
 	num_frames = GetFrameCount(s.frame);
-	NextTime = GetTimeCounter() + (GameTicksPerSecond / 22);
+	NextTime = GetTimeCounter() + (c_gameSecond / 22);
 	psNextTime = GetTimeCounter() + PLANET_SIDE_RATE;
 	while (num_frames > 0)
 	{
@@ -1756,7 +1756,7 @@ AnimateLaunch(FRAME farray, bool isLanding)
 
 		if (Now >= NextTime)
 		{
-			NextTime = Now + (GameTicksPerSecond / 22);
+			NextTime = Now + (c_gameSecond / 22);
 			num_frames--;
 
 			GetFrameRect(s.frame, &r);
@@ -2317,7 +2317,7 @@ DoPlanetSide(LanderInputState* pMS)
 #ifdef DEBUG
 	if (PulsedInputState.menu[KEY_DEBUG_2])
 	{
-		KillLanderCrewSeq(crew_left, GameTicksPerSecond / 20);
+		KillLanderCrewSeq(crew_left, c_gameSecond / 20);
 	}
 #endif
 
@@ -2609,7 +2609,7 @@ ReturnToOrbit(void)
 }
 
 static void
-IdlePlanetSide(LanderInputState* inputState, TimeCount howLong)
+IdlePlanetSide(LanderInputState* inputState, TimePeriod howLong)
 {
 #define IDLE_OFFSET
 	TimeCount TimeOut = GetTimeCounter() + howLong;
@@ -2676,7 +2676,7 @@ LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 
 	if (landing)
 	{
-		IdlePlanetSide(inputState, GameTicksPerSecond);
+		IdlePlanetSide(inputState, c_gameSecond);
 	}
 
 	// Draw the landing/takeoff lander positions
@@ -2698,7 +2698,7 @@ LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 
 	if (!landing)
 	{
-		IdlePlanetSide(inputState, GameTicksPerSecond / 2);
+		IdlePlanetSide(inputState, c_gameSecond / 2);
 	}
 }
 
@@ -2712,7 +2712,7 @@ void SetLanderTakeoff(void)
 }
 
 // Returns whether the lander is still alive at the end of the sequence
-bool KillLanderCrewSeq(uint16_t numKilled, uint32_t period)
+bool KillLanderCrewSeq(uint16_t numKilled, TimePeriod period)
 {
 	TimeCount TimeOut;
 	uint16_t i;

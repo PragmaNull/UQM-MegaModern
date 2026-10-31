@@ -383,13 +383,13 @@ computeFPS(int* fps, int* renderFps)
 	fps_counter += delta_time;
 	if (fps_counter > DCQueueTicksForFps)
 	{
-		*fps = (int)((float)GameTicksPerSecond * RenderedFrames / fps_counter);
+		*fps = static_cast<int>(RenderedFrames / uqstl::chrono::duration<double>(fps_counter).count());
 		const double renderSeconds {uqstl::chrono::duration<double>(s_renderTime).count()};
 		*renderFps = renderSeconds > 0.0 ? static_cast<int>(s_renderFrames / renderSeconds) : 0;
 		uqm::log::info("fps {:.2}, effective {}, render {}",
-					   (float)GameTicksPerSecond / delta_time, *fps, *renderFps);
+					   1.0 / uqstl::chrono::duration<double>(delta_time).count(), *fps, *renderFps);
 
-		fps_counter = 0;
+		fps_counter = TimePeriod {};
 		RenderedFrames = 0;
 		s_renderTime = {};
 		s_renderFrames = 0;

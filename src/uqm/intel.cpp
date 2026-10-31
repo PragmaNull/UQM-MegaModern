@@ -74,7 +74,7 @@ computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 		{
 			case SUPER_MELEE:
 				{
-					SleepThread(GameTicksPerSecond >> 1);
+					SleepThread(c_gameSecond / 2);
 					InputState = BATTLE_WEAPON; /* pick a random ship */
 					break;
 				}

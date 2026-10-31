@@ -192,12 +192,11 @@ void netInput(void)
 
 void netInputBlocking(uint32_t timeoutMs)
 {
-	uint32_t nextAsyncMs;
-
-	nextAsyncMs = Async_timeBeforeNextMs();
-	if (nextAsyncMs < timeoutMs)
+	const AlarmTime nextAsync {Async_nextTime()};
+	if (nextAsync != AlarmTime::max())
 	{
-		timeoutMs = nextAsyncMs;
+		const AlarmTime untilNextAsync {uqstl::max(nextAsync - GetTimeMs(), AlarmTime {})};
+		timeoutMs = uqstl::min(timeoutMs, static_cast<uint32_t>(untilNextAsync.count()));
 	}
 
 	netInputAux(timeoutMs);

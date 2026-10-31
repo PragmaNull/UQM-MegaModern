@@ -448,7 +448,7 @@ bool Battle(BattleFrameCallback* callback)
 	if (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE)
 	{
 		// In Supermelee, the RNG is already initialised.
-		TFB_SeedRandom(GetTimeCounter());
+		TFB_SeedRandom(static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count()));
 	}
 
 	BattleSong(false);
@@ -495,7 +495,7 @@ bool Battle(BattleFrameCallback* callback)
 
 		BattleSong(true);
 
-		bs.NextTime = 0;
+		bs.NextTime = TimeCount {};
 #ifdef NETPLAY
 		initBattleStateDataConnections();
 		{

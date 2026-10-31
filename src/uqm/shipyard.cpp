@@ -684,7 +684,7 @@ animatePowerLines(MENU_STATE* pMS)
 {
 	static STAMP s;
 	static COLORMAP ColorMap;
-	static TimeCount NextTime = 0;
+	static TimeCount NextTime {};
 	TimeCount Now = GetTimeCounter();
 
 	if (IS_PAD || uqm::currentActivity() & CHECK_ABORT)
@@ -702,7 +702,7 @@ animatePowerLines(MENU_STATE* pMS)
 
 	if (Now >= NextTime || pMS)
 	{
-		NextTime = Now + (GameTicksPerSecond / HANGAR_ANIM_RATE);
+		NextTime = Now + (c_gameSecond / HANGAR_ANIM_RATE);
 
 		SetColorMap(GetColorMapAddress(ColorMap));
 		DrawStamp(&s);
@@ -1315,7 +1315,7 @@ ShowCombatShip(MENU_STATE* pMS, uint16_t which_window,
 	if (num_ships)
 	{
 		bool AllDoorsFinished;
-		uint32_t TimeIn;
+		TimeCount TimeIn;
 		GFXRECT r;
 		GFXCONTEXT OldContext;
 		GFXRECT OldClipRect;
@@ -1330,7 +1330,7 @@ ShowCombatShip(MENU_STATE* pMS, uint16_t which_window,
 
 		for (j = 0; (j < SHIP_WIN_FRAMES) && !AllDoorsFinished; j++)
 		{
-			SleepThreadUntil(TimeIn + GameTicksPerSecond / RES_SCALE(24));
+			SleepThreadUntil(TimeIn + c_gameSecond / RES_SCALE(24));
 			TimeIn = GetTimeCounter();
 			if (AnyButtonPress(false))
 			{
@@ -2565,7 +2565,7 @@ DoModifyShips(MENU_STATE* pMS)
 		}
 	}
 
-	SleepThread(GameTicksPerSecond / 60);
+	SleepThread(c_gameSecond / 60);
 	// Kruzen: was 30, upped to 60 to fit new HD
 	// powerline animation. No issues detected so far
 

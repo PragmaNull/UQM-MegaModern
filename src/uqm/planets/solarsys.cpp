@@ -64,7 +64,7 @@
 //#define DEBUG_SOLARSYS
 //#define SMOOTH_SYSTEM_ZOOM  1
 
-#define IP_FRAME_RATE (GameTicksPerSecond / 30)
+#define IP_FRAME_RATE (c_gameSecond / 30)
 
 // BW: those do not depend on the resolution because numbers too small
 // cause crashes in the generation and rendering
@@ -2415,7 +2415,7 @@ InitSolarSys(void)
 			DrawOuterSystem();
 			RedrawQueue(false);
 			UnbatchGraphics();
-			FadeScreen(FadeAllToColor, GameTicksPerSecond / 2);
+			FadeScreen(FadeAllToColor, c_gameSecond / 2);
 			NewGameInit = true;
 
 			LastActivity = 0;

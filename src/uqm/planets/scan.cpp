@@ -687,11 +687,11 @@ setPlanetLoc(GFXPOINT new_pt, bool restoreOld)
 static void
 flashPlanetLocation(void)
 {
-#define FLASH_FRAME_DELAY (GameTicksPerSecond / 16)
+#define FLASH_FRAME_DELAY (c_gameSecond / 16)
 	static uint8_t c = 0x00;
 	static int val = -2;
 	static GFXPOINT prevPt;
-	static TimeCount NextTime = 0;
+	static TimeCount NextTime {};
 	bool locChanged;
 	TimeCount Now = GetTimeCounter();
 
@@ -862,7 +862,7 @@ static bool
 DoPickPlanetSide(MENU_STATE* pMS)
 {
 	PICK_PLANET_STATE* pickState = (PICK_PLANET_STATE*)pMS->privData;
-	uint32_t TimeIn = GetTimeCounter();
+	TimeCount TimeIn {GetTimeCounter()};
 	bool select, cancel;
 
 	select = PulsedInputState.menu[KEY_MENU_SELECT];
@@ -889,16 +889,16 @@ DoPickPlanetSide(MENU_STATE* pMS)
 		int16_t dx = 0;
 		int16_t dy = 0;
 		GFXPOINT new_pt;
-		static uint32_t tNext;
+		static TimeCount tNext {};
 
 		new_pt = planetLoc;
 
-		if (tNext && TimeIn >= tNext)
+		if (tNext != TimeCount {} && TimeIn >= tNext)
 		{
-			tNext = 0;
+			tNext = TimeCount {};
 		}
 
-		if (!tNext || TimeIn >= tNext)
+		if (tNext == TimeCount {} || TimeIn >= tNext)
 		{
 			if (CurrentInputState.menu[KEY_MENU_LEFT])
 			{
@@ -961,7 +961,7 @@ DoPickPlanetSide(MENU_STATE* pMS)
 
 		if (dx || dy)
 		{
-			tNext = TimeIn + GameTicksPerSecond / 40;
+			tNext = TimeIn + c_gameSecond / 40;
 		}
 	}
 
@@ -1146,11 +1146,12 @@ static void
 DrawPCScannedStuff(uint16_t scan)
 {
 	HELEMENT hElement, hNextElement;
-	TimeCount interval, now;
+	TimePeriod interval;
+	TimeCount now;
 	ELEMENT* ElementPtr;
 	STAMP s;
 
-	interval = GameTicksPerSecond / 10;
+	interval = c_gameSecond / 10;
 
 	hElement = GetHeadElement();
 	now = GetTimeCounter() + interval;
@@ -1178,13 +1179,13 @@ DrawPCScannedStuff(uint16_t scan)
 				growth = 0;
 				ElementPtr->state_flags |= APPEARING;
 				s.origin = ElementPtr->current.location;
-				now = GetTimeCounter() + 17;
+				now = GetTimeCounter() + TimePeriod {17};
 
 				while (growth < NUM_FLASH_COLORS && !AnyButtonPress(true))
 				{
 					if (GetTimeCounter() >= now)
 					{
-						now = GetTimeCounter() + 17;
+						now = GetTimeCounter() + TimePeriod {17};
 						diff = growth;
 						nodeSize = GetFrameIndex(
 									   ElementPtr->next.image.frame)
@@ -1286,9 +1287,9 @@ ScanPlanet(uint16_t scanType)
 // NUM_FLASH_COLORS for flashing blips; 1 for the final frame
 #define SCAN_LINES_OG (ORIGINAL_MAP_HEIGHT + NUM_FLASH_COLORS + 1)
 #define SCAN_LINES RES_SCALE(SCAN_LINES_OG)
-#define SCAN_LINE_WAIT (SCAN_DURATION / SCAN_LINES_OG)
+#define SCAN_LINE_WAIT (TimePeriod {SCAN_DURATION} / SCAN_LINES_OG)
 	// For taming the scan FPS on underpowered devices
-#define SCAN_LINE_FPS (GameTicksPerSecond / chooseIfHd(42, 60))
+#define SCAN_LINE_FPS (c_gameSecond / chooseIfHd(42, 60))
 
 	uint16_t startScan, endScan;
 	uint16_t scan;
@@ -1412,7 +1413,7 @@ ScanPlanet(uint16_t scanType)
 
 			if (scanType == AUTO_SCAN)
 			{ // delay between scans
-				TimeOut = GetTimeCounter() + GameTicksPerSecond;
+				TimeOut = GetTimeCounter() + c_gameSecond;
 				while (GetTimeCounter() < TimeOut
 					   && !AnyButtonPress(true))
 				{

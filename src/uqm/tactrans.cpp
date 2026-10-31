@@ -354,7 +354,7 @@ void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 			UnlockElement(hElement);
 		}
 
-#define MIN_DITTY_FRAME_COUNT ((GameTicksPerSecond * 3) / BattleFrameRateTicks)
+#define MIN_DITTY_FRAME_COUNT ((c_gameSecond * 3) / BattleFrameRateTicks)
 		// The ship will be "alive" for at least 2 more frames to make sure
 		// the elements it owns (set up for deletion above) expire first.
 		// Ditty does NOT play in the following circumstances:

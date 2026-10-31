@@ -45,8 +45,8 @@
 #include "starcon.h"
 #include "libs/graphics/gfx_common.h"
 
-#define ACCELERATION_INCREMENT (GameTicksPerSecond / 12)
-#define MENU_REPEAT_DELAY (GameTicksPerSecond >> 1)
+#define ACCELERATION_INCREMENT (c_gameSecond / 12)
+#define MENU_REPEAT_DELAY (c_gameSecond / 2)
 
 typedef struct
 {
@@ -55,20 +55,23 @@ typedef struct
 
 // These static variables are the values that are set by the controllers.
 
-typedef struct
+template <typename T>
+struct MenuAnnotations
 {
-	uint32_t key[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS];
-	uint32_t menu[NUM_MENU_KEYS];
-} MENU_ANNOTATIONS;
+	T key[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS];
+	T menu[NUM_MENU_KEYS];
+};
 
 
 ControlTemplate PlayerControlTemplates[NUM_PLAYERS];
 CONTROLLER_INPUT_STATE CurrentInputState, PulsedInputState;
 static CONTROLLER_INPUT_STATE CachedInputState, OldInputState;
-static MENU_ANNOTATIONS RepeatDelays, Times;
-static uint32_t GestaltRepeatDelay, GestaltTime;
+static MenuAnnotations<TimePeriod> RepeatDelays;
+static MenuAnnotations<TimeCount> Times;
+static TimePeriod GestaltRepeatDelay;
+static TimeCount GestaltTime;
 static bool OldGestalt, CachedGestalt;
-static uint32_t _max_accel, _min_accel, _step_accel;
+static TimePeriod _max_accel, _min_accel, _step_accel;
 static bool _gestalt_keys;
 
 static MENU_SOUND_FLAGS sound_0, sound_1;
@@ -236,7 +239,7 @@ _clear_menu_state(void)
 
 void ResetKeyRepeat(void)
 {
-	uint32_t initTime = GetTimeCounter();
+	const TimeCount initTime {GetTimeCounter()};
 	int i, j;
 	for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
 	{
@@ -256,8 +259,8 @@ void ResetKeyRepeat(void)
 }
 
 static void
-_check_for_pulse(int* current, int* cached, int* old, uint32_t* accel,
-				 uint32_t* newtime, uint32_t* oldtime)
+_check_for_pulse(int* current, int* cached, int* old, TimePeriod* accel,
+				 TimeCount* newtime, TimeCount* oldtime)
 {
 	if (*cached && *old)
 	{
@@ -292,7 +295,7 @@ _check_for_pulse(int* current, int* cached, int* old, uint32_t* accel,
  * *yet*, but it will be once the user gets to define control
  * templates on his own --McM */
 static void
-_check_gestalt(uint32_t NewTime)
+_check_gestalt(TimeCount NewTime)
 {
 	bool CurrentGestalt;
 	int i, j;
@@ -374,7 +377,7 @@ _check_gestalt(uint32_t NewTime)
 
 void UpdateInputState(void)
 {
-	uint32_t NewTime;
+	TimeCount NewTime;
 	/* First, if the game is, in fact, paused, we stall until
 	 * unpaused.  Every thread with control over game logic calls
 	 * UpdateInputState routinely, so we handle pause and exit
@@ -474,7 +477,7 @@ SetInputCallback(InputFrameCallback* callback)
 	return old;
 }
 
-void SetMenuRepeatDelay(uint32_t min, uint32_t max, uint32_t step, bool gestalt)
+void SetMenuRepeatDelay(TimePeriod min, TimePeriod max, TimePeriod step, bool gestalt)
 {
 	_min_accel = min;
 	_max_accel = max;
@@ -710,7 +713,7 @@ bool ActKeysPress(void)
 
 bool ConfirmExit(void)
 {
-	uint32_t old_max_accel, old_min_accel, old_step_accel;
+	TimePeriod old_max_accel, old_min_accel, old_step_accel;
 	bool old_gestalt_keys, result;
 
 	old_max_accel = _max_accel;

@@ -353,14 +353,14 @@ InvokeDevice(uint8_t which_device)
 				&& playerInPlanetOrbit())
 			{
 				PlayMenuSound(MENU_SOUND_INVOKED);
-				SleepThreadUntil(FadeScreen(FadeAllToWhite, GameTicksPerSecond * 1)
-								 + (GameTicksPerSecond * 2));
+				SleepThreadUntil(FadeScreen(FadeAllToWhite, c_gameSecond * 1)
+								 + (c_gameSecond * 2));
 				if (CurStarDescPtr->Index != CHMMR_DEFINED
 					|| !matchWorld(pSolarSysState,
 								   pSolarSysState->pOrbitalDesc,
 								   MATCH_PBYTE, MATCH_PLANET))
 				{
-					FadeScreen(FadeAllToColor, GameTicksPerSecond * 2);
+					FadeScreen(FadeAllToColor, c_gameSecond * 2);
 				}
 				else
 				{

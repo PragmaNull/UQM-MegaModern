@@ -36,9 +36,9 @@ typedef struct tfb_videoclip
 	GFXRECT dst_rect; // destination screen rect
 	GFXRECT src_rect; // source rect
 	MUSIC_REF hAudio;
-	uint32_t frame_time; // time when next frame should be rendered
-	TFB_Image* frame;	 // frame preped and optimized for rendering
-	uint32_t cur_frame;	 // index of frame currently displayed
+	TimeCount frame_time; // time when next frame should be rendered
+	TFB_Image* frame;	  // frame preped and optimized for rendering
+	uint32_t cur_frame;	  // index of frame currently displayed
 	bool playing;
 	bool own_audio;
 	uint32_t loop_frame; // frame index to loop from

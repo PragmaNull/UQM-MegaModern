@@ -737,7 +737,7 @@ GiveRadios(RESPONSE_REF R)
 
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 0)),
-					  GameTicksPerSecond / 2);
+					  c_gameSecond / 2);
 
 		if (altResFlags & USE_ALT_SONG)
 		{
@@ -748,7 +748,7 @@ GiveRadios(RESPONSE_REF R)
 			SetMusicVolume(MUTE_VOLUME);
 			PlayMusic(CommData.AlienSong, true, 1);
 			SeekMusic(MusicPos);
-			FadeMusic(NORMAL_VOLUME, GameTicksPerSecond);
+			FadeMusic(NORMAL_VOLUME, c_gameSecond);
 
 			altResFlags &= ~USE_ALT_SONG;
 		}

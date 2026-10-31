@@ -1701,7 +1701,7 @@ DoPickGame(MENU_STATE* pMS)
 	PICK_GAME_STATE* pickState = (PICK_GAME_STATE*)pMS->privData;
 	uint8_t NewState;
 	SUMMARY_DESC* pSD;
-	uint32_t TimeIn = GetTimeCounter();
+	TimeCount TimeIn {GetTimeCounter()};
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -1810,7 +1810,7 @@ DoPickGame(MENU_STATE* pMS)
 			RedrawPickDisplay(pickState, pMS->CurState);
 		}
 
-		SleepThreadUntil(TimeIn + GameTicksPerSecond / 30);
+		SleepThreadUntil(TimeIn + c_gameSecond / 30);
 	}
 
 	return true;
@@ -1886,7 +1886,7 @@ PickGame(bool saving, bool fromMainMenu)
 	// select the last used slot
 	MenuState.CurState = lastUsedSlot;
 
-	TimeOut = FadeMusic(0, GameTicksPerSecond / 2);
+	TimeOut = FadeMusic(0, c_gameSecond / 2);
 
 	// Deactivate any background drawing, like planet rotation
 	oldCallback = SetInputCallback(nullptr);
@@ -1903,7 +1903,7 @@ PickGame(bool saving, bool fromMainMenu)
 	SleepThreadUntil(TimeOut);
 	PauseMusic();
 	StopSound();
-	FadeMusic(NORMAL_VOLUME, 0);
+	FadeMusic(NORMAL_VOLUME, TimePeriod {});
 
 	// draw the current savegame and fade in
 	SetTransitionSource(nullptr);
@@ -1916,7 +1916,7 @@ PickGame(bool saving, bool fromMainMenu)
 	if (fromMainMenu)
 	{
 		UnbatchGraphics();
-		FadeScreen(FadeAllToColor, GameTicksPerSecond / 2);
+		FadeScreen(FadeAllToColor, c_gameSecond / 2);
 	}
 	else
 	{
@@ -2118,7 +2118,7 @@ bool GameOptions(void)
 				uqm::log::info("Loaded the save file '{}'.", path);
 			}
 			// Fades the screen in, as the load menu does.
-			FadeScreen(FadeAllToColor, 0);
+			FadeScreen(FadeAllToColor, TimePeriod {});
 			uqm::currentActivity() |= loaded ? CHECK_LOAD : CHECK_ABORT;
 			return false;
 		}

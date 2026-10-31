@@ -21,6 +21,7 @@
 
 #include <fmt/base.h>
 #include "port.h"
+#include "libs/time/timelib.h"
 #include "libs/strlib.h"
 
 #if 0 //defined(__cplusplus)
@@ -99,7 +100,7 @@ extern uint32_t PLRGetPos(void);
 extern void WaitForSoundEnd(uint16_t Channel);
 #define TFBSOUND_WAIT_ALL ((uint16_t)~0)
 
-extern uint32_t FadeMusic(uint8_t end_vol, int16_t TimeInterval);
+extern TimeCount FadeMusic(uint8_t end_vol, TimePeriod TimeInterval);
 extern uint8_t GetCurrMusicVol(void);
 
 // For music resume option
@@ -107,7 +108,7 @@ typedef struct music_position
 {
 	uint32_t filename_hash;
 	uint32_t position;
-	uint32_t last_played;
+	TimeCount last_played;
 } MUSIC_POSITION;
 
 extern void SetMusicPosition(void);
@@ -119,7 +120,7 @@ static inline void
 print_mp(const MUSIC_POSITION mp)
 {
 	fmt::print("filename_hash: {:#X}, position: {}, last_played: {}\n",
-			   mp.filename_hash, mp.position, mp.last_played);
+			   mp.filename_hash, mp.position, mp.last_played.time_since_epoch().count());
 }
 
 static inline void

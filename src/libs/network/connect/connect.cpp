@@ -224,8 +224,8 @@ setConnectTimeout(ConnectState* connectState)
 	assert(connectState->alarm == nullptr);
 
 	connectState->alarm =
-		Alarm_addRelativeMs(connectState->flags.timeout,
-							(AlarmCallback)connectTimeoutCallback, connectState);
+		Alarm_addRelative(uqstl::chrono::milliseconds {connectState->flags.timeout},
+						  (AlarmCallback)connectTimeoutCallback, connectState);
 }
 
 // Try connecting to the next address.
@@ -316,8 +316,8 @@ setConnectRetryAlarm(ConnectState* connectState)
 	assert(connectState->flags.retryDelayMs != Connect_noRetry);
 
 	connectState->alarm =
-		Alarm_addRelativeMs(connectState->flags.retryDelayMs,
-							(AlarmCallback)connectRetryCallback, connectState);
+		Alarm_addRelative(uqstl::chrono::milliseconds {connectState->flags.retryDelayMs},
+						  (AlarmCallback)connectRetryCallback, connectState);
 }
 
 static void

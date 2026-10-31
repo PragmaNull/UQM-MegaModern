@@ -307,7 +307,7 @@ ExitConversation(RESPONSE_REF R)
 
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-					  GameTicksPerSecond / 2);
+					  c_gameSecond / 2);
 
 		if (PLAYER_SAID(R, about_andro_3))
 		{

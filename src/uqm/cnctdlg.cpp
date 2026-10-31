@@ -33,13 +33,13 @@
 #define MCD_WIDTH RES_SCALE(260)
 #define MCD_HEIGHT RES_SCALE(110)
 
-#define MENU_FRAME_RATE (GameTicksPerSecond / 20)
+#define MENU_FRAME_RATE (c_gameSecond / 20)
 
 typedef struct connect_dialog_state
 {
 	bool (*InputFunc)(struct connect_dialog_state* pInputState);
 
-	uint32_t NextTime;
+	TimeCount NextTime;
 	bool Initialized;
 	int which_side;
 

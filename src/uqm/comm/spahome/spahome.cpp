@@ -676,7 +676,7 @@ AllianceOffer(RESPONSE_REF R)
 
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-					  GameTicksPerSecond / 4);
+					  c_gameSecond / 4);
 
 		SET_GAME_STATE(SPATHI_MANNER, 3);
 		SET_GAME_STATE(SPATHI_VISITS, 0);
@@ -879,7 +879,7 @@ SpathiCouncil(RESPONSE_REF R)
 
 		XFormColorMap(GetColorMapAddress(
 						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-					  GameTicksPerSecond / 4);
+					  c_gameSecond / 4);
 
 		SET_GAME_STATE(KNOW_SPATHI_PASSWORD, 1);
 		SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
