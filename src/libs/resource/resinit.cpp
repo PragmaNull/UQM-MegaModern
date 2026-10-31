@@ -30,7 +30,6 @@
 
 #include <fmt/format.h>
 #include "core/string/StringUtils.h"
-#include "libs/gfxlib.h"
 #include "libs/reslib.h"
 #include "libs/sndlib.h"
 #include "libs/vidlib.h"
@@ -192,112 +191,6 @@ DescriptorToBoolean(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	resdata->num = value != nullptr && *value;
 }
 
-static inline size_t
-skipWhiteSpace(const char* start)
-{
-	const char* ptr = start;
-	while (isspace(*ptr))
-	{
-		ptr++;
-	}
-	return (ptr - start);
-}
-
-// On success, resdata->num will be filled with a 32-bits RGBA value.
-static void
-DescriptorToColor(const char* descriptor, RESOURCE_DATA* resdata)
-{
-	// One element for each of r, g, b, a.
-
-	resdata->num = 0;
-	descriptor += skipWhiteSpace(descriptor);
-
-
-	// Color is of the form "rgb(r, g, b)", "rgba(r, g, b, a)",
-	// or "rgb15(r, g, b)".
-
-	size_t componentCount {};
-	uint32_t comps[4] {0, 0, 0, 0xFF};
-
-	uint8_t maxComponentValue {0xFF};
-	uint8_t componentBits {8};
-	uqstl::string_view descView {descriptor};
-	uqstl::string_view trailingJunk {};
-	if (const auto rgbRes {scn::scan<uint8_t, uint8_t, uint8_t>(descView, "rgb ( {} , {} , {} )")})
-	{
-		const auto [r, g, b] = rgbRes->values();
-		comps[0] = r;
-		comps[1] = g;
-		comps[2] = b;
-
-		componentCount = 3;
-
-		if (!rgbRes->range().empty())
-		{
-			trailingJunk = {rgbRes->begin(), rgbRes->end()};
-		}
-	}
-
-	else if (const auto rgbRes {scn::scan<uint8_t, uint8_t, uint8_t, uint8_t>(descView, "rgba ( {} , {} , {} , {} )")})
-	{
-		const auto [r, g, b, a] = rgbRes->values();
-		comps[0] = r;
-		comps[1] = g;
-		comps[2] = b;
-		comps[3] = a;
-
-		componentCount = 4;
-
-		if (!rgbRes->range().empty())
-		{
-			trailingJunk = {rgbRes->begin(), rgbRes->end()};
-		}
-	}
-	else if (const auto rgbRes {scn::scan<uint8_t, uint8_t, uint8_t>(descView, "rgb15 ( {} , {} , {} )")})
-	{
-		const auto [r, g, b] = rgbRes->values();
-		comps[0] = r;
-		comps[1] = g;
-		comps[2] = b;
-
-		maxComponentValue = (uint8_t {1} << 5) - 1;
-		componentBits = 5;
-		componentCount = 3;
-	}
-
-	if (componentCount > 0)
-	{
-
-		if (!trailingJunk.empty())
-		{
-			uqm::log::warn("Junk after color resource string (\"{}\").", trailingJunk);
-		}
-
-		// Check the range of the components.
-		for (size_t compI = 0; compI < componentCount; ++compI)
-		{
-			if (comps[compI] > maxComponentValue)
-			{
-				uqm::log::warn("Color component value too large; value {} clipped to max of {}.", comps[compI], maxComponentValue);
-				comps[compI] = maxComponentValue;
-			}
-		}
-
-		if (componentBits == 5)
-		{
-			resdata->num = ((CC5TO8(comps[0]) << 24) | (CC5TO8(comps[1]) << 16) | (CC5TO8(comps[2]) << 8) | comps[3]);
-		}
-		else
-		{
-			resdata->num = ((comps[0] << 24) | (comps[1] << 16) | (comps[2] << 8) | comps[3]);
-		}
-	}
-	else
-	{
-		uqm::log::error("Invalid color description string for resource. \"{}\"", descView);
-	}
-}
-
 static RESOURCE_INDEX curResourceIndex;
 
 void _set_current_index_header(RESOURCE_INDEX newResourceIndex)
@@ -322,7 +215,6 @@ InitResourceSystem(void)
 	InstallResTypeVectors("INT32", DescriptorToInt, nullptr);
 	InstallResTypeVectors("FLT32", DescriptorToFloat, nullptr);
 	InstallResTypeVectors("bool", DescriptorToBoolean, nullptr);
-	InstallResTextTypeVectors("COLOR", DescriptorToColor, nullptr);
 	InstallGraphicResTypes();
 	InstallStringTableResType();
 	InstallAudioResTypes();
@@ -527,42 +419,6 @@ void res_PutBoolean(const char* key, bool value)
 		desc = lookupResourceDesc(idx, key);
 	}
 	desc->resdata.num = value;
-}
-
-bool res_IsColor(const char* key)
-{
-	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* desc = lookupResourceDesc(idx, key);
-	return (bool)(desc && !strcmp(desc->vtable->resType, "COLOR"));
-}
-
-Color res_GetColor(const char* key)
-{
-	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* desc = lookupResourceDesc(idx, key);
-	uint32_t num;
-	if (!desc || strcmp(desc->vtable->resType, "COLOR"))
-	{
-		// TODO: Better error handling
-		return buildColorRgba(0, 0, 0, 0);
-	}
-
-	num = desc->resdata.num;
-	return buildColorRgba(num >> 24, (num >> 16) & 0xff,
-						  (desc->resdata.num >> 8) & 0xff, num & 0xff);
-}
-
-void res_PutColor(const char* key, Color value)
-{
-	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* desc = lookupResourceDesc(idx, key);
-	if (!desc || strcmp(desc->vtable->resType, "COLOR"))
-	{
-		process_resource_desc(key, "COLOR", uqstl::string {"rgb(0, 0, 0)"});
-		desc = lookupResourceDesc(idx, key);
-	}
-	desc->resdata.num =
-		(value.r << 24) | (value.g << 16) | (value.b << 8) | value.a;
 }
 
 bool res_HasKey(const char* key)

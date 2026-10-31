@@ -107,7 +107,6 @@ void LoadLegacyResourceIndex(const uqm::io::Directory& dir, const char* filename
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
-// For Color
 
 typedef STRING_TABLE DIRENTRY_REF;
 typedef STRING DIRENTRY;
@@ -144,9 +143,6 @@ bool res_IsBoolean(const char* key);
 bool res_GetBoolean(const char* key);
 void res_PutBoolean(const char* key, bool value);
 
-bool res_IsColor(const char* key);
-Color res_GetColor(const char* key);
-void res_PutColor(const char* key, Color value);
 
 bool res_Remove(const char* key);
 
