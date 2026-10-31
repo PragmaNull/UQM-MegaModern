@@ -738,9 +738,9 @@ bool SaveGame(uint16_t which_game, SUMMARY_DESC* SummPtr, const char* name)
 using MutDocPtr = uqstl::unique_ptr<yyjson_mut_doc, decltype(&yyjson_mut_doc_free)>;
 using TextPtr = uqstl::unique_ptr<char, decltype(&free)>;
 
-// Makes the save document from the game state. A snapshot leaves out the state files that are open.
+// Makes the save document from the game state.
 static MutDocPtr
-WriteGameDocument(const SUMMARY_DESC& summary, bool snapshot)
+WriteGameDocument(const SUMMARY_DESC& summary)
 {
 	STAR_DESC SD {};
 	if (CurStarDescPtr)
@@ -782,14 +782,8 @@ WriteGameDocument(const SUMMARY_DESC& summary, bool snapshot)
 	SaveEvents(doc.get(), root);
 	// Black globes in HyperSpace and QuasiSpace
 	SaveEncounters(doc.get(), root);
-	if (!snapshot || !IsStateFileOpen(STARINFO_FILE))
-	{
-		SaveStarInfo(doc.get(), root);
-	}
-	if (!snapshot || (!IsStateFileOpen(RANDGRPINFO_FILE) && !IsStateFileOpen(DEFGRPINFO_FILE)))
-	{
-		SaveGroups(doc.get(), root);
-	}
+	SaveStarInfo(doc.get(), root);
+	SaveGroups(doc.get(), root);
 	SaveStarDesc(doc.get(), root, SD);
 	return doc;
 }
@@ -807,7 +801,7 @@ uqstl::optional<uqstl::string> SaveGameJson(SUMMARY_DESC* SummPtr, const char* n
 	}
 
 	PrepareSummary(SummPtr, name);
-	const MutDocPtr doc {WriteGameDocument(*SummPtr, false)};
+	const MutDocPtr doc {WriteGameDocument(*SummPtr)};
 
 	// XXX: Restore
 	uqm::flagship().ipLocation = pt;
@@ -823,15 +817,4 @@ uqstl::optional<uqstl::string> SaveGameJson(SUMMARY_DESC* SummPtr, const char* n
 		return uqstl::nullopt;
 	}
 	return uqstl::string {text.get(), length};
-}
-
-uqstl::string GameStateJson(void)
-{
-	SUMMARY_DESC summary {};
-	PrepareSummary(&summary, "");
-	const MutDocPtr doc {WriteGameDocument(summary, true)};
-
-	size_t length {};
-	const TextPtr text {yyjson_mut_write(doc.get(), YYJSON_WRITE_ALLOW_INVALID_UNICODE, &length), &free};
-	return text ? uqstl::string {text.get(), length} : uqstl::string {};
 }
