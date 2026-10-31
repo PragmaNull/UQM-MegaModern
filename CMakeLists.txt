@@ -166,6 +166,12 @@ if (ENABLE_ASAN)
                 /Oy-
                 -O1
             )
+            # The prebuilt libraries do not have the MSVC STL container annotations of ASan.
+            target_compile_definitions(${APP_TARGET} PRIVATE _DISABLE_STL_ANNOTATION)
+            # Debug info gives ASan reports with function names. Identical constants folded together
+            # look like buffer overflows to ASan.
+            target_compile_options(${APP_TARGET} PRIVATE /Zi)
+            target_link_options(${APP_TARGET} PRIVATE /DEBUG /OPT:NOICF)
             #lld-link does not understand -sanitize=address So we must manually link the library
             # Find local Asan runtime
             explicitly_link_clang_asan_on_windows(${APP_TARGET})

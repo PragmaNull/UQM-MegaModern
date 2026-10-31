@@ -327,7 +327,7 @@ function(explicitly_link_clang_asan_on_windows target)
     endif()
 
  	set(_asan_lib "${_asan_lib_dir}/clang_rt.asan_dynamic-x86_64.lib")
-	set(_asan_thunk "${_asan_lib_dir}/clang_rt.asan_static_runtime_thunk-x86_64.lib")
+	set(_asan_thunk "${_asan_lib_dir}/clang_rt.asan_dynamic_runtime_thunk-x86_64.lib")
     set(_asan_dll "${_asan_lib_dir}/clang_rt.asan_dynamic-x86_64.dll")
 
     #target_link_directories(${target} PRIVATE "${_asan_lib_dir}")
