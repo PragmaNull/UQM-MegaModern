@@ -4,7 +4,6 @@
 
 - Add unit tests for new features.
 - Change `AlarmTime` and `TimeCount` from `uint32_t` milliseconds to `std::chrono` types.
-- Convert the comm dialogue and `.ts` (timestamp) files to single JSON files.
 - Add imgui.
 
 ## Cleanup of src/libs

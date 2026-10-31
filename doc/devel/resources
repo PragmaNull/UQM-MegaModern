@@ -39,11 +39,19 @@ BINTAB:       Indexed binary data, mostly used for palettes and
               files has been obsoleted.
 CONVERSATION: All data corresponding to an individual conversation
               tree. The resource data has three components, separated
-              by colons: the conversation text (similar to the
-              STRTAB), the directory in which voiceovers may be
-              found, and the timestamp file corresponding to those
-              voiceovers. The second and third values are optional,
-              but if either is present, both must be.
+              by colons: a JSON file with the lines of the
+              conversation, the directory in which voiceovers may be
+              found, and a JSON file with timing for those
+              voiceovers. The second and third values are optional.
+              The text file has a "conversation" name and a "lines"
+              array. Each line has an "id", and can have a "clip",
+              "text" (an array of text lines), "timing" (an array
+              of milliseconds) and "subclipTiming" (an array of
+              such arrays). The timing file has a "conversations"
+              object, which maps a conversation name and a line id
+              to "timing" and "subclipTiming". Its values replace
+              those of the text file. scripts/convert_conversations.py
+              converts the old .txt and .ts files to these files.
 SHIP:         This is an integer that specifies which ship corresponds
               to a specified resource. The mapping of SHIP integers
               to actual ship_info structures is done by the dummy.c

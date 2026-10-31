@@ -21,6 +21,11 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/reslib.h"
 #include "core/log/log.h"
+#include "core/stl/array.h"
+#include "core/stl/optional.h"
+#include "libs/file/textfile.h"
+#include <fmt/format.h>
+#include <yyjson.h>
 
 
 #define MAX_STRINGS 2048
@@ -82,351 +87,224 @@ ensureBufSize(uqstl::vector<char>& buf, size_t minSize)
 	}
 }
 
+namespace
+{
+
+using JsonDocPtr = uqstl::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)>;
+
+[[nodiscard]] JsonDocPtr readJsonFile(uqstl::string_view path)
+{
+	const uqstl::string pathText {path};
+	const auto text {uqm::readTextFile(uqm::contentDir(), pathText.c_str())};
+	if (!text)
+	{
+		uqm::log::warn("Warning: Can't open '{}'", path);
+		return {nullptr, &yyjson_doc_free};
+	}
+	yyjson_read_err error {};
+	JsonDocPtr doc {yyjson_read_opts(const_cast<char*>(text->data()), text->size(), YYJSON_READ_ALLOW_INVALID_UNICODE, nullptr, &error),
+					&yyjson_doc_free};
+	if (!doc)
+	{
+		uqm::log::warn("Warning: '{}': JSON parse error at byte {}: {}", path, error.pos, error.msg);
+	}
+	return doc;
+}
+
+[[nodiscard]] uqstl::string joinNumbers(yyjson_val* numbers)
+{
+	uqstl::string text {};
+	size_t index {};
+	size_t max {};
+	yyjson_val* number {};
+	yyjson_arr_foreach(numbers, index, max, number)
+	{
+		if (index > 0)
+		{
+			text += ',';
+		}
+		text += fmt::format("{}", yyjson_get_uint(number));
+	}
+	return text;
+}
+
+// The timing of a line as the track player reads it: the times of the pages, and after each ';' the times of a subclip.
+[[nodiscard]] uqstl::string timingText(yyjson_val* line)
+{
+	yyjson_val* const timing {yyjson_obj_get(line, "timing")};
+	yyjson_val* const subclipTiming {yyjson_obj_get(line, "subclipTiming")};
+	if (timing == nullptr && subclipTiming == nullptr)
+	{
+		return {};
+	}
+	uqstl::string text {yyjson_is_arr(timing) ? joinNumbers(timing) : uqstl::string {}};
+	size_t index {};
+	size_t max {};
+	yyjson_val* subclip {};
+	yyjson_arr_foreach(subclipTiming, index, max, subclip)
+	{
+		text += ';';
+		text += joinNumbers(subclip);
+	}
+	return text;
+}
+
+[[nodiscard]] uqstl::string joinLines(yyjson_val* lines)
+{
+	uqstl::string text {};
+	size_t index {};
+	size_t max {};
+	yyjson_val* line {};
+	yyjson_arr_foreach(lines, index, max, line)
+	{
+		if (index > 0)
+		{
+			text += '\n';
+		}
+		text += uqstl::string_view {yyjson_get_str(line), yyjson_get_len(line)};
+	}
+	return text;
+}
+
+// Sets an entry to the text and its NUL, or empties it if 'text' is nullopt.
+void setEntry(STRING_TABLE table, int index, const uqstl::optional<uqstl::string>& text)
+{
+	if (text)
+	{
+		SetStringTableEntry(table, index, text->c_str(), static_cast<int>(text->size() + 1));
+	}
+}
+
+} // namespace
+
+// Loads a conversation from "<text.json>[:<clip dir>[:<timing.json>]]". The timing file holds timing for the
+// lines of conversations by the "conversation" name of the text file, and replaces the timing in it.
 void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
 {
-	unsigned long dataLen;
-	void* result;
-	int stringI;
-	int path_len;
-	// int num_data_sets; unused
-	uint32_t opos;
+	resdata->ptr = nullptr;
 
-	uqstl::vector<char> namedata(POOL_SIZE);
-	// Contains the names (indexes) of the dialogs.
-	uint32_t nlen[MAX_STRINGS];
-	// Length of each of the names.
-	uint32_t NameOffs;
-
-	uqstl::vector<char> strdata(POOL_SIZE);
-	// Contains the dialog strings.
-	uint32_t slen[MAX_STRINGS];
-	// Length of each of the dialog strings.
-	uint32_t StringOffs;
-
-	uqstl::vector<char> clipdata(POOL_SIZE);
-	// Contains the file names of the speech files.
-	uint32_t clen[MAX_STRINGS];
-	// Length of each of the speech file names.
-	uint32_t ClipOffs;
-
-	uqstl::vector<char> ts_data {};
-	// Contains the timestamp data for synching the text with the
-	// speech.
-	uint32_t tslen[MAX_STRINGS];
-	// Length of each of the timestamp strings.
-	uint32_t TSOffs;
-
-	char CurrentLine[1024] {};
-	char paths[1024] {};
-	char* clip_path;
-	char* ts_path;
-
-	uqstl::optional<uqm::io::File> fp {};
-	uqstl::optional<uqm::io::File> timestamp_fp {};
-	uqstl::unique_ptr<uqstl::unordered_map<uqstl::string, STRING_TABLE_ENTRY_DESC*>> nameHashTable {};
-	// Hash table of string names (such as "GLAD_WHEN_YOU_COME_BACK")
-	// to a STRING.
-
-	/* Parse out the conversation components. */
-	uqm::strncpy_safe(paths, path);
-	paths[1023] = '\0';
-	clip_path = strchr(paths, ':');
-	if (clip_path == nullptr)
+	uqstl::array<uqstl::string_view, 3> parts {};
+	uqstl::string_view rest {path};
+	for (uqstl::string_view& part : parts)
 	{
-		ts_path = nullptr;
+		const size_t colon {rest.find(':')};
+		part = rest.substr(0, colon);
+		rest = colon == uqstl::string_view::npos ? uqstl::string_view {} : rest.substr(colon + 1);
 	}
-	else
-	{
-		*clip_path = '\0';
-		clip_path++;
+	const auto [textPath, clipDir, timingPath] {parts};
 
-		ts_path = strchr(clip_path, ':');
-		if (ts_path != nullptr)
-		{
-			*ts_path = '\0';
-			ts_path++;
-		}
+	const JsonDocPtr textDoc {readJsonFile(textPath)};
+	if (!textDoc)
+	{
+		return;
 	}
-
-	fp = res_OpenResFile(uqm::contentDir(), paths, uqm::io::OpenMode::Read);
-	if (!fp)
+	yyjson_val* const root {yyjson_doc_get_root(textDoc.get())};
+	yyjson_val* const lines {yyjson_obj_get(root, "lines")};
+	const size_t count {yyjson_arr_size(lines)};
+	if (count == 0)
 	{
-		uqm::log::warn("Warning: Can't open '{}'", paths);
-		resdata->ptr = nullptr;
+		uqm::log::warn("Warning: '{}' has no conversation lines.", textPath);
 		return;
 	}
 
-	dataLen = static_cast<decltype(dataLen)>(fp->size());
-	uqm::log::info("\t'{}' -- conversation phrases -- {} bytes", paths,
-				   dataLen);
-	if (clip_path)
+	JsonDocPtr timingDoc {nullptr, &yyjson_doc_free};
+	yyjson_val* timingLines {};
+	if (!timingPath.empty())
 	{
-		uqm::log::info("\t'{}' -- voice clip directory", clip_path);
-	}
-	else
-	{
-		uqm::log::info("\tNo associated voice clips");
-	}
-	if (ts_path)
-	{
-		uqm::log::info("\t'{}' -- timestamps", ts_path);
-	}
-	else
-	{
-		uqm::log::info("\tNo associated timestamp file");
-	}
-
-	if (dataLen == 0)
-	{
-		uqm::log::warn("Warning: Trying to load empty file '{}'.",
-					   path);
-		goto err;
-	}
-
-	nameHashTable = uqstl::make_unique<uqstl::unordered_map<uqstl::string, STRING_TABLE_ENTRY_DESC*>>();
-
-	path_len = clip_path ? strlen(clip_path) : 0;
-
-	if (ts_path)
-	{
-		timestamp_fp = res_OpenResFile(uqm::contentDir(), ts_path, uqm::io::OpenMode::Read);
-		if (timestamp_fp)
+		timingDoc = readJsonFile(timingPath);
+		const char* const conversation {yyjson_get_str(yyjson_obj_get(root, "conversation"))};
+		if (timingDoc && conversation != nullptr)
 		{
-			ts_data.resize(POOL_SIZE);
+			timingLines = yyjson_obj_get(yyjson_obj_get(yyjson_doc_get_root(timingDoc.get()), "conversations"), conversation);
 		}
 	}
+	uqm::log::info("\t'{}' -- conversation phrases -- {} lines", textPath, count);
 
-	opos = fp->tell();
-	stringI = -1;
-	NameOffs = 0;
-	StringOffs = 0;
-	ClipOffs = 0;
-	TSOffs = 0;
-	for (;;)
+	uqstl::vector<uqstl::optional<uqstl::string>> texts(count);
+	uqstl::vector<uqstl::string> names(count);
+	uqstl::vector<uqstl::optional<uqstl::string>> clips(count);
+	uqstl::vector<uqstl::optional<uqstl::string>> timings(count);
+	int flags {HAS_NAMEINDEX};
+	size_t index {};
+	size_t max {};
+	yyjson_val* line {};
+	yyjson_arr_foreach(lines, index, max, line)
 	{
-		int l;
-
-		if (!fp->readLine(CurrentLine))
+		const char* const id {yyjson_get_str(yyjson_obj_get(line, "id"))};
+		if (id == nullptr)
 		{
-			// EOF or read error.
-			break;
+			uqm::log::warn("Warning: '{}': line {} has no id.", textPath, index);
+			return;
 		}
-
-		if (stringI >= MAX_STRINGS - 1)
+		names[index] = id;
+		if (yyjson_val* const text {yyjson_obj_get(line, "text")})
 		{
-			// Too many strings.
-			break;
+			texts[index] = joinLines(text);
 		}
-
-		if (CurrentLine[0] == '#')
+		if (const char* const clip {yyjson_get_str(yyjson_obj_get(line, "clip"))}; clip != nullptr && *clip != '\0')
 		{
-			// String header, of the following form:
-			//     #(GLAD_WHEN_YOU_COME_BACK) commander-000.ogg
-
-			uqstl::string_view name {};
-			uqstl::string_view ts {};
-
-			uqstl::string_view currentLine {CurrentLine};
-			if (const auto openParenPos {currentLine.find('(')}; openParenPos != uqstl::string_view::npos)
-			{
-				if (const auto closeParenPos {currentLine.find(')', openParenPos + 1)}; closeParenPos != uqstl::string_view::npos)
-				{
-					name = currentLine.substr(openParenPos + 1, closeParenPos - (openParenPos + 1));
-					currentLine.remove_prefix(closeParenPos + 1);
-
-					currentLine = uqm::trim(currentLine);
-
-
-					ts = currentLine;
-				}
-			}
-
-
-			if (!name.empty())
-			{
-				if (stringI >= 0)
-				{
-					while (slen[stringI] > 1 && (strdata[StringOffs - 2] == '\n' || strdata[StringOffs - 2] == '\r'))
-					{
-						--slen[stringI];
-						--StringOffs;
-						strdata[StringOffs - 1] = '\0';
-					}
-				}
-
-				slen[++stringI] = 0;
-
-				// Store the string name.
-				l = name.size() + 1;
-				ensureBufSize(namedata, NameOffs + l);
-				uqm::strncpy_safe({&namedata[NameOffs], static_cast<uint32_t>(l)}, name);
-				NameOffs += l;
-				nlen[stringI] = l;
-
-				// now lets check for timestamp data
-				if (timestamp_fp)
-				{
-					// We have a time stamp file.
-					char TimeStampLine[1024] {};
-					char* tsptr;
-					bool ts_ok = false;
-					timestamp_fp->readLine(TimeStampLine);
-					if (TimeStampLine[0] == '#')
-					{
-						// Line is of the following form:
-						//     #(GIVE_FUEL_AGAIN) 3304,3255
-						uqstl::string_view timeStampView {TimeStampLine};
-
-						tslen[stringI] = 0;
-						if (const auto tsPos {timeStampView.find(name)}; tsPos != uqstl::string_view::npos)
-						{
-							timeStampView.remove_prefix(tsPos + name.size() + 1);
-							ts_ok = true;
-
-							timeStampView = uqm::trim(timeStampView);
-
-							if (!timeStampView.empty())
-							{
-								l = timeStampView.size() + 1;
-								ensureBufSize(ts_data, TSOffs + l);
-
-								uqm::strncpy_safe({&ts_data[TSOffs], static_cast<uint32_t>(l)}, timeStampView);
-								TSOffs += l;
-								tslen[stringI] = l;
-							}
-						}
-					}
-					if (!ts_ok)
-					{
-						// timestamp data is invalid, remove all of it
-						uqm::log::warn("Invalid timestamp data "
-									   "for '{}'.  Disabling timestamps",
-									   name);
-						ts_data.clear();
-						timestamp_fp.reset();
-						TSOffs = 0;
-					}
-				}
-				clen[stringI] = 0;
-				if (!ts.empty())
-				{
-					const uint32_t tsLen = ts.size();
-					l = path_len + tsLen + 1;
-					ensureBufSize(clipdata, ClipOffs + l);
-
-					if (clip_path)
-					{
-						uqm::strncpy_safe({&clipdata[ClipOffs], static_cast<uint32_t>(l)}, clip_path);
-					}
-					uqm::strncpy_safe({&clipdata[ClipOffs + path_len], static_cast<uint32_t>(l - path_len)}, ts);
-					ClipOffs += l;
-					clen[stringI] = l;
-				}
-			}
-		}
-		else if (stringI >= 0)
-		{
-			char* s;
-			l = strlen(CurrentLine) + 1;
-
-			ensureBufSize(strdata, StringOffs + l);
-
-			if (slen[stringI])
-			{
-				--slen[stringI];
-				--StringOffs;
-			}
-			s = &strdata[StringOffs];
-			slen[stringI] += l;
-			StringOffs += l;
-
-			uqm::strncpy_safe({s, static_cast<uint32_t>(l)}, {CurrentLine, static_cast<uint32_t>(l - 1)});
-		}
-
-		if ((int)fp->tell() - (int)opos >= (int)dataLen)
-		{
-			break;
-		}
-	}
-	if (stringI >= 0)
-	{
-		while (slen[stringI] > 1 && (strdata[StringOffs - 2] == '\n' || strdata[StringOffs - 2] == '\r'))
-		{
-			--slen[stringI];
-			--StringOffs;
-			strdata[StringOffs - 1] = '\0';
-		}
-	}
-
-
-	result = nullptr;
-	// num_data_sets = (ClipOffs ? 1 : 0) + (TSOffs ? 1 : 0) + 1; unused
-	if (++stringI)
-	{
-		int flags = 0;
-		int stringCount = stringI;
-
-		if (ClipOffs)
-		{
+			clips[index] = uqstl::string {clipDir} + clip;
 			flags |= HAS_SOUND_CLIPS;
 		}
-		if (TSOffs)
+		yyjson_val* const timingLine {yyjson_obj_get(timingLines, id)};
+		if (uqstl::string timing {timingText(timingLine != nullptr ? timingLine : line)}; !timing.empty())
 		{
+			timings[index] = uqstl::move(timing);
 			flags |= HAS_TIMESTAMP;
-		}
-		flags |= HAS_NAMEINDEX;
-
-		result = AllocStringTable(stringCount, flags);
-		if (result)
-		{
-			// Copy all the gatherered data in a STRING_TABLE
-			STRING_TABLE_DESC* lpST = (STRING_TABLE)result;
-			STRING str;
-			stringI = 0;
-
-			// Store the dialog string.
-			copy_strings_to_strtab(
-				lpST, stringI, stringCount, strdata.data(), slen);
-			stringI += stringCount;
-
-			// Store the dialog names.
-			copy_strings_to_strtab(
-				lpST, stringI, stringCount, namedata.data(), nlen);
-			stringI += stringCount;
-
-			// Store sound clip file names.
-			if (lpST->flags & HAS_SOUND_CLIPS)
-			{
-				copy_strings_to_strtab(
-					lpST, stringI, stringCount, clipdata.data(), clen);
-				stringI += stringCount;
-			}
-
-			// Store time stamp data.
-			if (lpST->flags & HAS_TIMESTAMP)
-			{
-				copy_strings_to_strtab(
-					lpST, stringI, stringCount, ts_data.data(), tslen);
-				//stringI += stringCount;
-			}
-
-			// Store the STRING in the hash table indexed by the dialog
-			// name.
-			str = &lpST->strings[stringCount];
-			for (stringI = 0; stringI < stringCount; stringI++)
-			{
-				(*nameHashTable)[(const char*)str[stringI].data] = &str[stringI];
-			}
-
-			lpST->nameIndex = nameHashTable.release();
 		}
 	}
 
-	resdata->ptr = result;
-	return;
+	{
+		size_t timingIndex {};
+		size_t timingMax {};
+		yyjson_val* timingId {};
+		yyjson_val* timingValue {};
+		yyjson_obj_foreach(timingLines, timingIndex, timingMax, timingId, timingValue)
+		{
+			if (uqstl::find(names.begin(), names.end(), yyjson_get_str(timingId)) == names.end())
+			{
+				uqm::log::warn("Warning: '{}' has timing for '{}', which '{}' does not have.", timingPath, yyjson_get_str(timingId),
+							   textPath);
+			}
+		}
+	}
 
-err:
-	resdata->ptr = nullptr;
+	STRING_TABLE table {AllocStringTable(static_cast<int>(count), flags)};
+	if (table == nullptr)
+	{
+		return;
+	}
+	const int size {static_cast<int>(count)};
+	int block {0};
+	for (int i {0}; i < size; ++i)
+	{
+		setEntry(table, block + i, texts[i]);
+		setEntry(table, block + size + i, names[i]);
+	}
+	block += 2 * size;
+	if (flags & HAS_SOUND_CLIPS)
+	{
+		for (int i {0}; i < size; ++i)
+		{
+			setEntry(table, block + i, clips[i]);
+		}
+		block += size;
+	}
+	if (flags & HAS_TIMESTAMP)
+	{
+		for (int i {0}; i < size; ++i)
+		{
+			setEntry(table, block + i, timings[i]);
+		}
+	}
+
+	auto nameIndex {uqstl::make_unique<uqstl::unordered_map<uqstl::string, STRING_TABLE_ENTRY_DESC*>>()};
+	for (int i {0}; i < size; ++i)
+	{
+		(*nameIndex)[names[i]] = &table->strings[size + i];
+	}
+	table->nameIndex = nameIndex.release();
+	resdata->ptr = table;
 }
 
 void* _GetStringData(const ResourceFile& resource)
