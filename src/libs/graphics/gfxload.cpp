@@ -30,6 +30,8 @@
 #include "libs/graphics/drawable.h"
 #include "libs/graphics/font.h"
 #include "libs/graphics/anifile.h"
+#include "libs/graphics/fontfile.h"
+#include "libs/file/textfile.h"
 #include <fmt/format.h>
 typedef struct anidata
 {
@@ -249,8 +251,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 	int dirEntryI;
 	uqstl::optional<uqm::io::Directory> fontDirHandle {};
 	FONT fontPtr = nullptr;
-	uqstl::optional<uqm::io::File> cfgFile {};
-	const char* cfg_name = "kerndat.fnt";
+	const char* cfg_name = "kerndat.fnt.json";
 
 	if (const uqstl::optional<uqm::io::FileInfo> info {dir.stat(path)}; info && !info->isDirectory())
 	{
@@ -332,80 +333,28 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 		goto err;
 	}
 
-	cfgFile = res_OpenResFile(*fontDirHandle, cfg_name, uqm::io::OpenMode::Read | uqm::io::OpenMode::Text);
-
-	if (cfgFile)
+	if (const auto text {uqm::readTextFile(*fontDirHandle, cfg_name)})
 	{
-		char CurrentLine[PATH_MAX];
-		int cel_index = 0;
-		int cel_total = 0;
-		uint32_t opos = 0;
-
 		memset(&fontPtr->KernTab, (uint8_t)~0, sizeof(fontPtr->KernTab));
-
-		cfgFile->seek(opos, uqm::io::SeekFrom::Start);
-		while (cfgFile->readLine(CurrentLine))
+		if (const auto metrics {uqm::fontMetricsFromJson(*text)})
 		{
-			++cel_total;
-			if (cel_total == MAX_UNICODE)
+			fontPtr->Leading = metrics->leading;
+			fontPtr->CharSpace = metrics->charSpace;
+			fontPtr->KernAmount = metrics->kernAmount;
+			fontPtr->VertAlign = metrics->vertAlign;
+			fontPtr->HaveFntData = true;
+			for (const uqm::FontKern& kern : metrics->kerning)
 			{
-				break;
+				if (kern.ch < MAX_UNICODE)
+				{
+					fontPtr->KernTab[kern.ch] = static_cast<uint8_t>((kern.left << 2) | kern.right);
+				}
 			}
 		}
-
-		cfgFile->seek(opos, uqm::io::SeekFrom::Start);
-		while (cfgFile->readLine(CurrentLine) && cel_index < cel_total)
+		else
 		{
-			if (cel_index > 0)
-			{
-				if (const auto result {scn::scan<int32_t, int32_t, int32_t>(CurrentLine, "{:x} {} {}")})
-				{
-					auto [KernChar, kernLBits, kernRBits] = result->values();
-					if (kernLBits > 3 || kernLBits < 0)
-					{
-						kernLBits = 3;
-					}
-					if (kernRBits > 3 || kernRBits < 0)
-					{
-						kernRBits = 3;
-					}
-
-					fontPtr->KernTab[KernChar] =
-						(kernLBits << 2) | kernRBits;
-				}
-			}
-			else
-			{
-				if (const auto result {scn::scan<uqstl::string, uint8_t, uint8_t, uint8_t, int8_t>(CurrentLine, "{} {} {} {} {}")})
-				{
-					auto [filename_str, Leading, CharSpace, KernAmount, VertAlign] = result->values();
-					uqm::strncpy_safe(fontPtr->filename, filename_str);
-					fontPtr->Leading = Leading;
-					fontPtr->CharSpace = CharSpace;
-					fontPtr->KernAmount = KernAmount;
-					fontPtr->VertAlign = VertAlign;
-
-					fontPtr->HaveFntData = true;
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			++cel_index;
-			if (cel_index == MAX_UNICODE)
-			{
-				break;
-			}
-
-			if ((int)cfgFile->tell() - (int)opos
-				>= (int)cfgFile->size())
-			{
-				break;
-			}
+			uqm::log::warn("Could not read '{}' of font '{}'.", cfg_name, path);
 		}
-		cfgFile.reset();
 	}
 
 	fontDirHandle.reset();

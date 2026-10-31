@@ -14,6 +14,10 @@ list(APPEND uqm_tests_lib_master_files
 	"../src/libs/file/paths.h"
 	"../src/libs/graphics/anifile.cpp"
 	"../src/libs/graphics/anifile.h"
+	"../src/libs/graphics/fontfile.cpp"
+	"../src/libs/graphics/fontfile.h"
+	"../src/libs/sound/soundbank.cpp"
+	"../src/libs/sound/soundbank.h"
 	"../src/libs/io/FileSystem.h"
 	"../src/libs/io/Matcher.cpp"
 	"../src/libs/io/Matcher.h"
@@ -42,9 +46,11 @@ list(APPEND uqm_tests_lib_master_files
 set(uqm_tests_lib_files
 	"tests/lib/lib.cmake"
 	"tests/lib/test_anifile.cpp"
+	"tests/lib/test_fontfile.cpp"
 	"tests/lib/test_io.cpp"
 	"tests/lib/test_paths.cpp"
 	"tests/lib/test_resindex.cpp"
+	"tests/lib/test_soundbank.cpp"
 	"tests/lib/test_Math2D.cpp"
 )
 

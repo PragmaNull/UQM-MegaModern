@@ -53,7 +53,6 @@ struct font_desc
 	uint8_t Leading;
 	FONT_PAGE* fontPages;
 	EXTENT disp;
-	char filename[PATH_MAX];
 	uint8_t CharSpace;
 	uint8_t KernAmount;
 	uint8_t KernTab[MAX_UNICODE];

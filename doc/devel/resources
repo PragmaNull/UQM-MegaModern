@@ -39,12 +39,15 @@ FONTRES:      A font. The resource data is the name of the directory
               in which the font is defined.
 MUSICRES:     A music file. The resource data is the filename of the
               relevant file in OGG or MOD format.
-SNDRES:       A set of related sounds. Points to a text file,
-              traditionally suffixed ".snd", that lists each sound
-              file in the collection, one per line. These sounds are
-              in WAV format.
-STRTAB:       An unadorned string table. The resource data is the file
-              name.
+SNDRES:       A set of related sounds. Points to a JSON file,
+              suffixed ".snd.json", whose "sounds" array lists each
+              sound file in the collection, relative to the directory
+              of the file. These sounds are in WAV format. A missing
+              sound is silent, and the other sounds keep their index.
+STRTAB:       An unadorned string table. The resource data is the name
+              of a JSON file with a "strings" array. Each string has
+              an "id", and can have "text", an array of text lines.
+              The game finds the strings by their position.
 BINTAB:       Indexed binary data, mostly used for palettes and
               topological data for planet terrain generation. The
               resource data is the file name. See the "strtab" file, but

@@ -31,6 +31,8 @@ set(uqm_src_libs_graphics_files
 	"src/libs/graphics/filegfx.cpp"
 	"src/libs/graphics/font.cpp"
 	"src/libs/graphics/font.h"
+	"src/libs/graphics/fontfile.cpp"
+	"src/libs/graphics/fontfile.h"
 	"src/libs/graphics/frame.cpp"
 	"src/libs/graphics/gfx_common.cpp"
 	"src/libs/graphics/gfx_common.h"

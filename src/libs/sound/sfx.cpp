@@ -26,6 +26,8 @@
 #include "libs/strlib.h"
 // for GetStringAddress()
 #include "libs/strings/strintrn.h"
+#include "soundbank.h"
+#include <fmt/format.h>
 // for AllocStringTable(), FreeStringTable()
 
 
@@ -154,65 +156,58 @@ void SetChannelVolume(uint16_t channel, uint16_t volume, uint8_t priority)
 	(void)priority; // ignored
 }
 
+static constexpr int32_t c_missingSoundMs {100};
+
 void* _GetSoundBankData(const ResourceFile& resource)
 {
-	uqm::io::File* const fp {&resource.file};
-	int snd_ct, n;
-	char CurrentLine[1024] {};
-	char filename[1024] {};
+	int snd_ct;
 #define MAX_FX 256
 	TFB_SoundSample* sndfx[MAX_FX];
 	STRING_TABLE Snd;
 	STRING str;
 	int i;
 
-	// The sound file names are relative to the directory of the bank.
+	uqstl::string text(resource.length, '\0');
+	text.resize(resource.file.read(uqstl::as_writable_bytes(uqstl::span {text})));
+	const auto sounds {uqm::soundBankFromJson(text)};
+	if (!sounds)
 	{
-		const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
-		n = parent.empty() ? 0 : static_cast<int>(parent.size()) + 1;
-		uqm::strncpy_safe(filename, {resource.path.data(), static_cast<uint32_t>(n)});
+		uqm::log::warn("_GetSoundBankData(): could not read '{}'", resource.path);
+		return nullptr;
 	}
 
+	// The sound file names are relative to the directory of the bank.
+	const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
 	snd_ct = 0;
-	while (fp->readLine(CurrentLine) && snd_ct < MAX_FX)
+	for (const uqstl::string& sound : *sounds)
 	{
-		TFB_SoundSample* sample;
-		TFB_SoundDecoder* decoder;
-		uint32_t decoded_bytes;
-
-		if (const auto result {scn::scan<std::string>(CurrentLine, "{}")})
+		if (snd_ct == MAX_FX)
 		{
-			const std::string parsed {result->value()};
-			uqm::strncpy_safe({&filename[n], static_cast<uint32_t>(sizeof(filename) - n)}, parsed);
+			break;
 		}
-		else
-		{
-
-			uqm::log::warn("_GetSoundBankData: bad line: '{}'",
-						   CurrentLine);
-			continue;
-		}
-
+		uqstl::string filename {parent.empty() ? sound : fmt::format("{}/{}", parent, sound)};
 		uqm::log::debug("_GetSoundBankData(): loading {}", filename);
+		if (!uqm::contentDir().exists(filename.c_str()))
+		{
+			uqm::log::warn("_GetSoundBankData(): there is no sound '{}'. The sound is silent.", filename);
+		}
 
-		decoder = SoundDecoder_Load(uqm::contentDir(), filename, 4096, 0, 0);
+		// A missing sound gets a silent decoder.
+		TFB_SoundDecoder* const decoder {SoundDecoder_Load(uqm::contentDir(), filename.data(), 4096, 0, -c_missingSoundMs)};
 		if (!decoder)
 		{
-			uqm::log::warn("_GetSoundBankData(): couldn't load {}",
-						   filename);
+			uqm::log::warn("_GetSoundBankData(): couldn't load {}", filename);
 			continue;
 		}
 
 		// SFX samples don't have decoders, everything is pre-decoded below
-		sample = TFB_CreateSoundSample(nullptr, 1, nullptr);
+		TFB_SoundSample* const sample {TFB_CreateSoundSample(nullptr, 1, nullptr)};
 
 		// Decode everything and stash it in 1 buffer
-		decoded_bytes = SoundDecoder_DecodeAll(decoder);
-		uqm::log::debug("_GetSoundBankData(): decoded bytes {}",
-						decoded_bytes);
+		const uint32_t decoded_bytes {SoundDecoder_DecodeAll(decoder)};
+		uqm::log::debug("_GetSoundBankData(): decoded bytes {}", decoded_bytes);
 
-		audio_BufferData(sample->buffer[0], decoder->format,
-						 decoder->buffer, decoded_bytes, decoder->frequency);
+		audio_BufferData(sample->buffer[0], decoder->format, decoder->buffer, decoded_bytes, decoder->frequency);
 		// just for informational purposes
 		sample->length = decoder->length;
 
