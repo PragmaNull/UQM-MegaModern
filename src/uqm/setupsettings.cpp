@@ -134,14 +134,14 @@ void applyGraphicsSettings()
 	if (*options.keepAspectRatio)
 	{
 		const float threshold {0.75f};
-		const float ratio {(float)newHeight / (float)newWidth};
+		const float ratio {static_cast<float>(newHeight) / static_cast<float>(newWidth)};
 		if (ratio > threshold) // screen is narrower than 4:3
 		{
-			newWidth = newHeight / threshold;
+			newWidth = static_cast<int>(newHeight / threshold);
 		}
 		else if (ratio < threshold) // screen is wider than 4:3
 		{
-			newHeight = newWidth * threshold;
+			newHeight = static_cast<int>(newWidth * threshold);
 		}
 	}
 

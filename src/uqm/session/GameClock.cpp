@@ -28,8 +28,8 @@ constexpr uint8_t c_startDay {17};
 }
 
 // True if the first date is before the second.
-[[nodiscard]] bool isBefore(uint16_t year, uint16_t month, uint16_t day, uint16_t otherYear, uint16_t otherMonth,
-							uint16_t otherDay)
+[[nodiscard]] bool dateIsBefore(uint16_t year, uint16_t month, uint16_t day, uint16_t otherYear, uint16_t otherMonth,
+								uint16_t otherDay)
 {
 	return year < otherYear || (year == otherYear && (month < otherMonth || (month == otherMonth && day < otherDay)));
 }
@@ -160,7 +160,7 @@ bool GameClock::resolveDate(EVENT_TYPE type, uint16_t& month, uint16_t& day, uin
 			}
 		}
 	}
-	return !isBefore(year, month, day, m_year, m_month, m_day);
+	return !dateIsBefore(year, month, day, m_year, m_month, m_day);
 }
 
 HEVENT GameClock::addEvent(uint16_t month, uint16_t day, uint16_t year, uint8_t funcIndex)
@@ -181,7 +181,7 @@ HEVENT GameClock::addEvent(uint16_t month, uint16_t day, uint16_t year, uint8_t 
 	while (event != 0)
 	{
 		EVENT* const eventPtr {lockEvent(m_events, event)};
-		const bool later {isBefore(year, month, day, eventPtr->year_index, eventPtr->month_index, eventPtr->day_index)};
+		const bool later {dateIsBefore(year, month, day, eventPtr->year_index, eventPtr->month_index, eventPtr->day_index)};
 		const HEVENT next {_GetSuccLink(eventPtr)};
 		UnlockLink(&m_events, event);
 		if (later)
@@ -192,6 +192,24 @@ HEVENT GameClock::addEvent(uint16_t month, uint16_t day, uint16_t year, uint8_t 
 	}
 	InsertQueue(&m_events, newEvent, event);
 	return newEvent;
+}
+
+uqstl::optional<EVENT> GameClock::firstEvent() const
+{
+	const HEVENT event {GetHeadLink(&m_events)};
+	if (event == nullptr)
+	{
+		return uqstl::nullopt;
+	}
+	// An EVENT starts with the LINK fields.
+	const EVENT result {*reinterpret_cast<const EVENT*>(LockLink(&m_events, event))};
+	UnlockLink(&m_events, event);
+	return result;
+}
+
+bool GameClock::isBefore(uint16_t year, uint16_t month, uint16_t day) const noexcept
+{
+	return dateIsBefore(m_year, m_month, m_day, year, month, day);
 }
 
 bool GameClock::takeDueEvent(uint8_t& funcIndex)

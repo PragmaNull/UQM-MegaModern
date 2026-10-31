@@ -163,6 +163,27 @@ void GameClockTick(void)
 	}
 }
 
+void MoveGameClockToNextEvent(bool skipHyperspaceEncounters)
+{
+	if (!GameClockRunning())
+	{
+		return;
+	}
+
+	const uqm::LockGuard lock {clock_mutex};
+	while (const auto event {gameClock().firstEvent()})
+	{
+		while (gameClock().isBefore(event->year_index, event->month_index, event->day_index))
+		{
+			MoveGameClockDays(1);
+		}
+		if (!skipHyperspaceEncounters || event->func_index != HYPERSPACE_ENCOUNTER_EVENT)
+		{
+			return;
+		}
+	}
+}
+
 void MoveGameClockDays(uint16_t days)
 {
 	// XXX: This should theoretically hold the clock_mutex, but if

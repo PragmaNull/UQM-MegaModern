@@ -26,8 +26,6 @@ namespace
 {
 
 constexpr double c_refreshSeconds {0.5};
-// "Next event" moves the clock at most this many days.
-constexpr int c_maxDaysToNextEvent {3650};
 const ImVec4 c_changedColor {1.0f, 0.85f, 0.2f, 1.0f};
 
 struct EventView
@@ -333,26 +331,7 @@ void drawClock()
 	if (ImGui::Button("Next event"))
 	{
 		changeGame([] {
-			GameClock& clock {gameState().clock()};
-			QUEUE& events {clock.events()};
-			const HEVENT first {GetHeadLink(&events)};
-			if (first == nullptr)
-			{
-				return;
-			}
-			const EVENT* const eventPtr {reinterpret_cast<const EVENT*>(LockLink(&events, first))};
-			const EventView target {eventPtr->day_index, eventPtr->month_index, eventPtr->year_index, eventPtr->func_index};
-			UnlockLink(&events, first);
-			for (int day {0}; day < c_maxDaysToNextEvent; ++day)
-			{
-				if (clock.year() > target.year
-					|| (clock.year() == target.year
-						&& (clock.month() > target.month || (clock.month() == target.month && clock.day() >= target.day))))
-				{
-					break;
-				}
-				MoveGameClockDays(1);
-			}
+			MoveGameClockToNextEvent(false);
 		});
 	}
 	ImGui::EndDisabled();

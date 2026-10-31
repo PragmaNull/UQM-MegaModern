@@ -121,6 +121,27 @@ TEST_F(GameClockTest, DueEventsComeInDateOrder)
 	EXPECT_EQ(funcIndex, 3);
 }
 
+TEST_F(GameClockTest, FirstEventIsTheEarliest)
+{
+	EXPECT_FALSE(m_clock.firstEvent().has_value());
+	EXPECT_NE(m_clock.addEvent(5, 1, START_YEAR, 4), nullptr);
+	EXPECT_NE(m_clock.addEvent(3, 9, START_YEAR, 6), nullptr);
+
+	const auto first {m_clock.firstEvent()};
+	ASSERT_TRUE(first.has_value());
+	EXPECT_EQ(first->func_index, 6);
+	EXPECT_EQ(first->month_index, 3);
+	EXPECT_EQ(first->day_index, 9);
+}
+
+TEST_F(GameClockTest, IsBeforeComparesDates)
+{
+	EXPECT_TRUE(m_clock.isBefore(START_YEAR, 2, 18));
+	EXPECT_TRUE(m_clock.isBefore(START_YEAR + 1, 1, 1));
+	EXPECT_FALSE(m_clock.isBefore(START_YEAR, 2, 17));
+	EXPECT_FALSE(m_clock.isBefore(START_YEAR, 1, 31));
+}
+
 TEST_F(GameClockTest, AddEventFailsWhenTheQueueIsFull)
 {
 	for (int i {0}; i < 8; ++i)

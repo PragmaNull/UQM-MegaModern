@@ -43,6 +43,7 @@
 #include "setup.h"
 #include "setupmenu.h"
 #include "save.h"
+#include "starcon.h"
 #include "libs/graphics/gfx_common.h"
 
 #define ACCELERATION_INCREMENT (GameTicksPerSecond / 12)
@@ -186,7 +187,11 @@ applyInputScript(void)
 	{
 		uqm::log::info("Input script: {}", *step.log);
 	}
-	if (step.saveSlot)
+	if (step.saveSlot && !IsGameInProgress())
+	{
+		uqm::log::error("Input script: no game runs, so there is no game to save.");
+	}
+	else if (step.saveSlot)
 	{
 		SUMMARY_DESC summary {};
 		if (SaveGame(*step.saveSlot, &summary, "Input script"))

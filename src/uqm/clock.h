@@ -82,6 +82,8 @@ extern HEVENT AddEvent(EVENT_TYPE type, uint16_t month_index, uint16_t day_index
 extern void EventHandler(uint8_t selector);
 extern void GameClockTick(void);
 extern void MoveGameClockDays(uint16_t days);
+// Moves the date to the first event, and runs the events on the way. Can go past the hyperspace encounter events.
+void MoveGameClockToNextEvent(bool skipHyperspaceEncounters);
 
 // The lock/unlock/running functions are for debugging use only
 // Locking will block the GameClockTick() function and thus

@@ -370,49 +370,7 @@ void debugKey4Pressed(void)
 //   supposed to be called synchronously wrt the game logic thread.
 void forwardToNextEvent(bool skipHEE)
 {
-	HEVENT hEvent;
-	EVENT* EventPtr;
-	uint16_t year, month, day;
-	// time of next event
-	bool done;
-
-	if (!GameClockRunning())
-	{
-		return;
-	}
-
-	LockGameClock();
-
-	done = !skipHEE;
-	do
-	{
-		hEvent = GetHeadEvent();
-		if (hEvent == 0)
-		{
-			return;
-		}
-		LockEvent(hEvent, &EventPtr);
-		if (EventPtr->func_index != HYPERSPACE_ENCOUNTER_EVENT)
-		{
-			done = true;
-		}
-		year = EventPtr->year_index;
-		month = EventPtr->month_index;
-		day = EventPtr->day_index;
-		UnlockEvent(hEvent);
-
-		for (;;)
-		{
-			if (uqm::gameState().clock().year() > year || (uqm::gameState().clock().year() == year && (uqm::gameState().clock().month() > month || (uqm::gameState().clock().month() == month && uqm::gameState().clock().day() >= day))))
-			{
-				break;
-			}
-
-			MoveGameClockDays(1);
-		}
-	} while (!done);
-
-	UnlockGameClock();
+	MoveGameClockToNextEvent(skipHEE);
 }
 
 const char*

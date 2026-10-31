@@ -887,7 +887,13 @@ StartPlaySave(void)
 	}
 	s_playSaveStarted = true;
 	s_playSavePending = true;
-	// The same activity as LOAD in the main menu.
+	// What the main menu does before LOAD starts a game.
+	ReinitQueue(&race_q[0]);
+	ReinitQueue(&race_q[1]);
+	FreeGameData();
+	UninitMenuMusic();
+	FlushColorXForms();
+	SeedRandomNumbers();
 	LastActivity = CHECK_LOAD;
 	uqm::currentActivity() = IN_INTERPLANETARY;
 	return true;
