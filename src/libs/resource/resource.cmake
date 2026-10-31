@@ -13,6 +13,8 @@ set(uqm_src_libs_resource_files
 	"src/libs/resource/index.h"
 	"src/libs/resource/propfile.cpp"
 	"src/libs/resource/propfile.h"
+	"src/libs/resource/resindex.cpp"
+	"src/libs/resource/resindex.h"
 	"src/libs/resource/resinit.cpp"
 	"src/libs/resource/resintrn.h"
 	"src/libs/resource/resource.cmake"

@@ -33,7 +33,14 @@ lookupResourceDesc(RESOURCE_INDEX idx, RESOURCE res)
 
 void loadResourceDesc(ResourceDesc* desc)
 {
-	desc->vtable->loadFun(desc->fname.c_str(), &desc->resdata);
+	if (desc->vtable->textLoadFun != nullptr)
+	{
+		desc->vtable->textLoadFun(resourceString(desc->arg), &desc->resdata);
+	}
+	else
+	{
+		desc->vtable->loadFun(desc->arg, &desc->resdata);
+	}
 }
 
 void* LoadResourceFromPath(const char* path, ResourceLoadFileFun* loadFun)

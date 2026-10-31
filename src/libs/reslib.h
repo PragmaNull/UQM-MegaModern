@@ -23,6 +23,7 @@
 #include "core/misc/bittricks.h"
 #include "port.h"
 #include "libs/io/FileSystem.h"
+#include "libs/resource/resindex.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -44,9 +45,10 @@ typedef union
 #define NULL_RESOURCE nullptr
 
 
-typedef void(ResourceLoadFun)(const char* pathname, RESOURCE_DATA* resdata);
+typedef void(ResourceLoadFun)(const ResourceArg& arg, RESOURCE_DATA* resdata);
+// For types whose data is a string, such as a path.
+typedef void(ResourceTextLoadFun)(const char* text, RESOURCE_DATA* resdata);
 typedef bool(ResourceFreeFun)(void* handle);
-typedef void(ResourceStringFun)(RESOURCE_DATA* handle, char* buf, unsigned int size);
 
 // A resource file for a loader to read.
 struct ResourceFile
@@ -79,7 +81,8 @@ bool DeleteResFile(const uqm::io::Directory& dir, const char* filename);
 
 RESOURCE_INDEX InitResourceSystem(void);
 void UninitResourceSystem(void);
-bool InstallResTypeVectors(const char* res_type, ResourceLoadFun* loadFun, ResourceFreeFun* freeFun, ResourceStringFun* stringFun);
+bool InstallResTypeVectors(const char* res_type, ResourceLoadFun* loadFun, ResourceFreeFun* freeFun);
+bool InstallResTextTypeVectors(const char* res_type, ResourceTextLoadFun* loadFun, ResourceFreeFun* freeFun);
 void* res_GetResource(RESOURCE res);
 void* res_DetachResource(RESOURCE res);
 void res_FreeResource(RESOURCE res);
@@ -88,8 +91,10 @@ uint32_t res_GetIntResource(RESOURCE res);
 bool res_GetBooleanResource(RESOURCE res);
 const char* res_GetResourceType(RESOURCE res);
 
+// Loads a JSON resource index.
 void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix);
-void SaveResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const char* root, bool strip_root);
+// Loads a resource index in the old "key = TYPE:data" format. All data is a string.
+void LoadLegacyResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix);
 
 
 #if 0 //defined(__cplusplus)

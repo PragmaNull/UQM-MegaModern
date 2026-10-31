@@ -784,7 +784,7 @@ Inside the directory where the content is installed, in the content/
 directory, there is a directory 'addons/'. In this directory, you can
 place add-on packages, like 3domusic, 3dovoice, remix and others, or
 create new directories with .zip files to be used in addition to the
-standard content .zip files. Each add-on must contain at least one .rmp
+standard content .zip files. Each add-on must contain at least one .rmp.json
 file to tell the game which resources the add-on provides.
 When you specify the command-line option '--addon <addon>', the .zip files
 inside the directory content/addons/<addon> will be included

@@ -52,6 +52,6 @@ STRING SetStringTableEntry(STRING_TABLE strtab, int index, const void* value, in
 
 void* _GetStringData(const ResourceFile& resource);
 void* _GetBinaryTableData(const ResourceFile& resource);
-void _GetConversationData(const char* path, RESOURCE_DATA* resdata);
+void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata);
 
 #endif /* LIBS_STRINGS_STRINTRN_H_ */

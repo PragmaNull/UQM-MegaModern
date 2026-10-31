@@ -38,8 +38,7 @@ GetScriptResData(const char* pathName, RESOURCE_DATA* resdata)
 
 bool InstallScriptResType(void)
 {
-	InstallResTypeVectors("SCRIPT", GetScriptResData, ReleaseScriptResData,
-						  nullptr);
+	InstallResTextTypeVectors("SCRIPT", GetScriptResData, ReleaseScriptResData);
 	return true;
 }
 

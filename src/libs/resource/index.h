@@ -30,16 +30,17 @@ typedef struct resource_desc ResourceDesc;
 struct resource_handlers
 {
 	const char* resType;
+	// One of loadFun and textLoadFun is set.
 	ResourceLoadFun* loadFun;
+	ResourceTextLoadFun* textLoadFun;
 	ResourceFreeFun* freeFun;
-	ResourceStringFun* toString;
 };
 
 struct resource_desc
 {
 	RESOURCE res_id;
-	// The text after the type. STRING and UNKNOWNRES values point into it.
-	uqstl::string fname;
+	// STRING values point into it.
+	ResourceArg arg;
 	ResourceHandlers* vtable;
 	RESOURCE_DATA resdata;
 	// refcount is rudimentary as nothing really frees the descriptors

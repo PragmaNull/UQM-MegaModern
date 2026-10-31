@@ -569,7 +569,7 @@ int loadIndices(const uqm::io::Directory& dir)
 {
 	uqstl::error_code error {};
 	int numLoaded {0};
-	for (const uqstl::string& name : dir.list("", uqm::io::Matcher {uqm::io::Matcher::Kind::SuffixIgnoreCase, ".rmp"}, error))
+	for (const uqstl::string& name : dir.list("", uqm::io::Matcher {uqm::io::Matcher::Kind::SuffixIgnoreCase, ".rmp.json"}, error))
 	{
 		uqm::log::debug("Loading resource index '{}'", name);
 		LoadResourceIndex(dir, name.c_str(), nullptr);

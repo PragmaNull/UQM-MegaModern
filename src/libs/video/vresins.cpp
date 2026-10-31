@@ -21,6 +21,7 @@
 #include "vidintrn.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
+#include <fmt/format.h>
 
 
 static bool
@@ -31,84 +32,29 @@ FreeLegacyVideoData(void* data)
 }
 
 static void
-GetLegacyVideoData(const char* path, RESOURCE_DATA* resdata)
+GetLegacyVideoData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 {
-	char paths[1024] {};
-	char *audio_path, *speech_path, *loop_str;
-	uint32_t LoopFrame = VID_NO_LOOP;
+	const char* const video {resourceStringField(arg, "video")};
+	if (video == nullptr)
+	{
+		uqm::log::warn("Warning: A 3DOVID resource has no video.");
+		resdata->ptr = nullptr;
+		return;
+	}
+	const char* const audio {resourceStringField(arg, "audio")};
+	const char* const speech {resourceStringField(arg, "speech")};
+	const uqstl::optional<int64_t> loop {resourceIntField(arg, "loop")};
+	const uint32_t loopFrame {loop ? static_cast<uint32_t>(*loop) : VID_NO_LOOP};
 
-	/* Parse out the video components. */
-	uqm::strncpy_safe(paths, path);
-	audio_path = strchr(paths, ':');
-	if (audio_path == nullptr)
-	{
-		speech_path = nullptr;
-		loop_str = nullptr;
-	}
-	else
-	{
-		*audio_path = '\0';
-		audio_path++;
+	uqm::log::info("\t'{}' -- video, audio '{}', speech '{}', loop frame {}", video, audio != nullptr ? audio : "", speech != nullptr ? speech : "",
+				   loop ? fmt::format("{}", loopFrame) : "none");
 
-		speech_path = strchr(audio_path, ':');
-		if (speech_path == nullptr)
-		{
-			loop_str = nullptr;
-		}
-		else
-		{
-			*speech_path = '\0';
-			speech_path++;
-
-			loop_str = strchr(speech_path, ':');
-			if (loop_str != nullptr)
-			{
-				*loop_str = '\0';
-				loop_str++;
-			}
-		}
-	}
-
-	uqm::log::info("\t'{}' -- video", paths);
-	if (audio_path)
-	{
-		uqm::log::info("\t'{}' -- audio", audio_path);
-	}
-	else
-	{
-		uqm::log::info("\tNo associated audio");
-	}
-	if (speech_path)
-	{
-		uqm::log::info("\t'{}' -- speech path", speech_path);
-	}
-	else
-	{
-		uqm::log::info("\tNo associated speech");
-	}
-	if (loop_str)
-	{
-		char* end;
-		LoopFrame = strtol(loop_str, &end, 10);
-		// We allow whitespace at the end, but nothing printable.
-		if (*end > 32)
-		{
-			uqm::log::warn("Warning: Unparsable loop frame '{}'. Disabling loop.", loop_str);
-			LoopFrame = VID_NO_LOOP;
-		}
-		uqm::log::info("\tLoop frame is {}", LoopFrame);
-	}
-	else
-	{
-		uqm::log::info("\tNo specified loop frame");
-	}
-
-	resdata->ptr = new LEGACY_VIDEO_DESC {paths, audio_path ? audio_path : "", speech_path ? speech_path : "", LoopFrame};
+	resdata->ptr = new LEGACY_VIDEO_DESC {video, audio != nullptr ? audio : "", speech != nullptr ? speech : "", loopFrame};
 }
 
 bool InstallVideoResType(void)
 {
-	InstallResTypeVectors("3DOVID", GetLegacyVideoData, FreeLegacyVideoData, nullptr);
+	InstallResTypeVectors("3DOVID", GetLegacyVideoData, FreeLegacyVideoData);
 	return true;
 }
 

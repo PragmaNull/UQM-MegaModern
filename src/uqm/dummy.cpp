@@ -144,9 +144,16 @@ CodeResToInitFunc(ShipCodeRes res)
 }
 
 static void
-GetCodeResData(const char* ship_id, RESOURCE_DATA* resdata)
+GetCodeResData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 {
-	const uint8_t which_res = atoi(ship_id);
+	const int64_t* const ship_id {uqstl::get_if<int64_t>(&arg)};
+	if (ship_id == nullptr)
+	{
+		uqm::log::warn("A SHIP resource has no number.");
+		resdata->ptr = nullptr;
+		return;
+	}
+	const auto which_res {static_cast<uint8_t>(*ship_id)};
 	RaceDescInitFunc initFunc = CodeResToInitFunc((ShipCodeRes)which_res);
 	RACE_DESC* RDPtr = (initFunc == nullptr) ? nullptr : (*initFunc)();
 	resdata->ptr = RDPtr ? new CODERES_STRUCT {*RDPtr} : nullptr;
@@ -162,7 +169,7 @@ _ReleaseCodeResData(void* data)
 bool InstallCodeResType()
 {
 	return (InstallResTypeVectors("SHIP",
-								  GetCodeResData, _ReleaseCodeResData, nullptr));
+								  GetCodeResData, _ReleaseCodeResData));
 }
 
 

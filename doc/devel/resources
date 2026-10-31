@@ -11,11 +11,24 @@ names, with the period being the separator. An example would be
 "comm.arilou.dialogue", which is conceptually grouped with all other
 resources beginning with "comm." or "comm.arilou."
 
-Resources are mapped to files via "resource map files" or RMPs. These
-files are full of key-value pairs. Each line of an RMP file matches
-this format:
+Resources are mapped to files via "resource map files" or RMPs. An RMP
+file is a JSON file with a name that ends in ".rmp.json". It gives the
+type and the data of each resource:
 
-        resource_ID = RESOURCE_TYPE:resource_data
+        {
+          "version": 1,
+          "resources": {
+            "graphics.earthmask": {"type": "GFXRES", "data": "base/planets/earthmask.ani"},
+            "ship.arilou.code": {"type": "SHIP", "data": 1}
+          }
+        }
+
+The data is a string, a number, true or false, or an object with named
+parts. The key files content/menu.key.json and content/uqm.key.json
+use the same format. The file override.cfg in the configuration
+directory uses the old format, one "resource_ID = RESOURCE_TYPE:data"
+line for each resource. scripts/convert_resource_index.py converts
+files in the old format to JSON.
 
 The currently defined resource types and their accompanying data are:
 
@@ -38,11 +51,11 @@ BINTAB:       Indexed binary data, mostly used for palettes and
               be aware that all information not regarding .ct or .xlt
               files has been obsoleted.
 CONVERSATION: All data corresponding to an individual conversation
-              tree. The resource data has three components, separated
-              by colons: a JSON file with the lines of the
-              conversation, the directory in which voiceovers may be
-              found, and a JSON file with timing for those
-              voiceovers. The second and third values are optional.
+              tree. The resource data is an object: "text" is a JSON
+              file with the lines of the conversation, "clips" is the
+              directory in which voiceovers may be found, and
+              "timing" is a JSON file with timing for those
+              voiceovers. "clips" and "timing" are optional.
               The text file has a "conversation" name and a "lines"
               array. Each line has an "id", and can have a "clip",
               "text" (an array of text lines), "timing" (an array
@@ -52,16 +65,21 @@ CONVERSATION: All data corresponding to an individual conversation
               to "timing" and "subclipTiming". Its values replace
               those of the text file. scripts/convert_conversations.py
               converts the old .txt and .ts files to these files.
-SHIP:         This is an integer that specifies which ship corresponds
+SHIP:         This is a number that specifies which ship corresponds
               to a specified resource. The mapping of SHIP integers
               to actual ship_info structures is done by the dummy.c
               routines.
 STRING:       A string. The resource data is the string itself.
-INT32:        A 32-bit integer. The resource data is the integer as a
-              string giving its representation in decimal.
-BOOLEAN:      A true/false value. Any value of the resource data that
-              is not the exact case-insensitive string "true" will be
-              treated as false.
+INT32:        A 32-bit integer. The resource data is a number.
+FLT32:        A floating point number. The resource data is a number.
+bool:         A true/false value. The resource data is true or false.
+COLOR:        A color. The resource data is a string such as
+              "rgb(255, 0, 0)", "rgba(255, 0, 0, 128)" or
+              "rgb15(31, 0, 0)".
+3DOVID:       A legacy video. The resource data is an object: "video"
+              is the video file, and the optional "audio", "speech"
+              and "loop" give the audio file, the speech file and the
+              frame at which the video loops.
 UNKNOWNRES:   A catch-all internal type for any type the system does
               not recognize. It is functionally equivalent to STRING,
               mainly so that sensible debug messages may be emitted.
@@ -93,9 +111,9 @@ pack that redefines the relevant SHIP-typed resources.)
 
 The officially supported content is kept in three indices:
 
-- content/uqm.rmp: The core content.
-- content/addons/3domusic/3domusic.rmp: 3DO music.
-- content/addons/3dovoice/3dovoice.rmp: The 3DO conversations.
+- content/uqm.rmp.json: The core content.
+- content/addons/3domusic/3domusic.rmp.json: 3DO music.
+- content/addons/3dovoice/3dovoice.rmp.json: The 3DO conversations.
 
 These latter two are treated the same as any other addons, except that
 they are guaranteed to be loaded first if selected by the

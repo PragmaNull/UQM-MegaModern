@@ -219,8 +219,8 @@ initKeyConfig(void)
 	controls.assign(static_cast<size_t>(num_templ) * num_flight * MAX_FLIGHT_ALTERNATES, VCONTROL_GESTURE {});
 
 	/* First, load in the menu keys */
-	LoadResourceIndex(uqm::contentDir(), "menu.key", "menu.");
-	LoadResourceIndex(uqm::configDir(), "override.cfg", "menu.");
+	LoadResourceIndex(uqm::contentDir(), "menu.key.json", "menu.");
+	LoadLegacyResourceIndex(uqm::configDir(), "override.cfg", "menu.");
 	for (i = 0; i < num_menu; i++)
 	{
 		if (!menu_res_names[i])
@@ -232,7 +232,7 @@ initKeyConfig(void)
 
 	if (!loadKeyConfiguration())
 	{
-		LoadResourceIndex(uqm::contentDir(), "uqm.key", "keys.");
+		LoadResourceIndex(uqm::contentDir(), "uqm.key.json", "keys.");
 	}
 
 	register_flight_controls();

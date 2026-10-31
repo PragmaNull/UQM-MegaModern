@@ -18,6 +18,8 @@ list(APPEND uqm_tests_lib_master_files
 	"../src/libs/io/Path.cpp"
 	"../src/libs/io/Path.h"
 	"../src/libs/io/Types.h"
+	"../src/libs/resource/resindex.cpp"
+	"../src/libs/resource/resindex.h"
 	"../src/libs/io/standard/DirectorySource.cpp"
 	"../src/libs/io/standard/DirectorySource.h"
 	"../src/libs/io/standard/File.cpp"
@@ -39,6 +41,7 @@ set(uqm_tests_lib_files
 	"tests/lib/lib.cmake"
 	"tests/lib/test_io.cpp"
 	"tests/lib/test_paths.cpp"
+	"tests/lib/test_resindex.cpp"
 	"tests/lib/test_Math2D.cpp"
 )
 

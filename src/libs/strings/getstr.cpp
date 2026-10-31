@@ -21,7 +21,6 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/reslib.h"
 #include "core/log/log.h"
-#include "core/stl/array.h"
 #include "core/stl/optional.h"
 #include "libs/file/textfile.h"
 #include <fmt/format.h>
@@ -177,21 +176,24 @@ void setEntry(STRING_TABLE table, int index, const uqstl::optional<uqstl::string
 
 } // namespace
 
-// Loads a conversation from "<text.json>[:<clip dir>[:<timing.json>]]". The timing file holds timing for the
-// lines of conversations by the "conversation" name of the text file, and replaces the timing in it.
-void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
+// Loads a conversation from the fields "text", "clips" and "timing": a text file, a clip directory and a timing file.
+// The timing file holds timing for the lines of conversations by the "conversation" name of the text file, and
+// replaces the timing in it.
+void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 {
 	resdata->ptr = nullptr;
 
-	uqstl::array<uqstl::string_view, 3> parts {};
-	uqstl::string_view rest {path};
-	for (uqstl::string_view& part : parts)
+	const char* const textField {resourceStringField(arg, "text")};
+	if (textField == nullptr)
 	{
-		const size_t colon {rest.find(':')};
-		part = rest.substr(0, colon);
-		rest = colon == uqstl::string_view::npos ? uqstl::string_view {} : rest.substr(colon + 1);
+		uqm::log::warn("Warning: A CONVERSATION resource has no text file.");
+		return;
 	}
-	const auto [textPath, clipDir, timingPath] {parts};
+	const char* const clipsField {resourceStringField(arg, "clips")};
+	const char* const timingField {resourceStringField(arg, "timing")};
+	const uqstl::string_view textPath {textField};
+	const uqstl::string_view clipDir {clipsField != nullptr ? clipsField : ""};
+	const uqstl::string_view timingPath {timingField != nullptr ? timingField : ""};
 
 	const JsonDocPtr textDoc {readJsonFile(textPath)};
 	if (!textDoc)

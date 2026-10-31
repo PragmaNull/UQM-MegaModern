@@ -66,63 +66,33 @@ freeResourceIndex(RESOURCE_INDEX h)
 	}
 }
 
-#define TYPESIZ 32
-
 static ResourceDesc*
-newResourceDesc(const char* res_id, const char* resval)
+newResourceDesc(const char* res_id, uqstl::string_view type, ResourceArg arg)
 {
-	const char* path;
-	int pathlen;
-	ResourceHandlers* vtable;
-	ResourceDesc *result, *handlerdesc;
 	RESOURCE_INDEX idx = _get_current_index_header();
-	char typestr[TYPESIZ] {};
-	uqstl::span<char> typestrDest {typestr};
-	path = strchr(resval, ':');
-	if (path == nullptr)
-	{
-		uqm::log::warn("Could not find type information for resource '{}'", res_id);
-		uqm::strncpy_safe(typestrDest, "sys.UNKNOWNRES");
-		path = resval;
-	}
-	else
-	{
-		const auto resValLength = static_cast<uint32_t>(uqstl::distance(resval, path));
-
-		const auto copied = uqm::strncpy_safe(typestrDest, "sys.");
-		typestrDest = typestrDest.subspan(copied);
-		uqm::strncpy_safe(typestrDest, {resval, resValLength});
-		path++;
-	}
-	pathlen = strlen(path);
-
-	handlerdesc = lookupResourceDesc(idx, typestr);
+	ResourceDesc* handlerdesc {lookupResourceDesc(idx, fmt::format("sys.{}", type).c_str())};
 	if (handlerdesc == nullptr)
 	{
-		path = resval;
-		uqm::log::warn("Illegal type '{}' for resource '{}'; treating as UNKNOWNRES", typestr, res_id);
+		uqm::log::warn("Illegal type '{}' for resource '{}'; treating as UNKNOWNRES", type, res_id);
 		handlerdesc = lookupResourceDesc(idx, "sys.UNKNOWNRES");
 	}
 
-	vtable = (ResourceHandlers*)handlerdesc->resdata.ptr;
-
-	if (vtable->loadFun == nullptr)
+	auto* const vtable {static_cast<ResourceHandlers*>(handlerdesc->resdata.ptr)};
+	if (vtable->textLoadFun != nullptr && resourceString(arg) == nullptr)
 	{
-		uqm::log::warn("Warning: Unable to load '{}'; no handler "
-					   "for type {} defined.",
-					   res_id, typestr);
+		uqm::log::warn("Warning: The data of resource '{}' is not a string.", res_id);
 		return nullptr;
 	}
 
-	result = new ResourceDesc {};
-	result->fname = uqstl::string {path, static_cast<size_t>(pathlen)};
+	auto* const result {new ResourceDesc {}};
+	result->arg = uqstl::move(arg);
 	result->vtable = vtable;
 	result->refcount = 0;
 
 	if (vtable->freeFun == nullptr)
 	{
 		/* Non-heap resources are raw values. Work those out at load time. */
-		vtable->loadFun(result->fname.c_str(), &result->resdata);
+		loadResourceDesc(result);
 	}
 	else
 	{
@@ -132,10 +102,10 @@ newResourceDesc(const char* res_id, const char* resval)
 }
 
 static void
-process_resource_desc(const char* key, const char* value)
+process_resource_desc(const char* key, uqstl::string_view type, ResourceArg arg)
 {
 	auto* map = _get_current_index_header()->map;
-	ResourceDesc* newDesc = newResourceDesc(key, value);
+	ResourceDesc* newDesc = newResourceDesc(key, type, uqstl::move(arg));
 	if (newDesc != nullptr)
 	{
 		auto [it, inserted] = map->insert({key, newDesc});
@@ -147,36 +117,79 @@ process_resource_desc(const char* key, const char* value)
 	}
 }
 
+// Adds an entry of a legacy resource index, "TYPE:data".
 static void
-UseDescriptorAsRes(const char* descriptor, RESOURCE_DATA* resdata)
+process_legacy_resource_desc(const char* key, const char* value)
 {
-	resdata->str = descriptor;
-}
-
-static void
-DescriptorToInt(const char* descriptor, RESOURCE_DATA* resdata)
-{
-	resdata->num = std::atoi(descriptor);
-}
-
-static void
-DescriptorToFloat(const char* descriptor, RESOURCE_DATA* resdata)
-{
-	resdata->fnum = static_cast<float>(std::atof(descriptor));
-}
-
-
-static void
-DescriptorToBoolean(const char* descriptor, RESOURCE_DATA* resdata)
-{
-	if (!strcasecmp(descriptor, "true"))
+	const uqstl::string_view text {value};
+	const size_t colon {text.find(':')};
+	if (colon == uqstl::string_view::npos)
 	{
-		resdata->num = true;
+		uqm::log::warn("Could not find type information for resource '{}'", key);
+		process_resource_desc(key, "UNKNOWNRES", uqstl::string {text});
+		return;
+	}
+	const uqstl::string_view type {text.substr(0, colon)};
+	const uqstl::string_view data {text.substr(colon + 1)};
+	ResourceArg arg {uqstl::string {data}};
+	if (type == "INT32" || type == "SHIP")
+	{
+		const auto number {scn::scan<int64_t>(data, "{}")};
+		arg = number ? number->value() : int64_t {0};
+	}
+	else if (type == "FLT32")
+	{
+		const auto number {scn::scan<double>(data, "{}")};
+		arg = number ? number->value() : 0.0;
+	}
+	else if (type == "bool")
+	{
+		arg = uqm::compareICase(data, "true");
+	}
+	process_resource_desc(key, type, uqstl::move(arg));
+}
+
+static void
+UseDescriptorAsRes(const ResourceArg& arg, RESOURCE_DATA* resdata)
+{
+	resdata->str = resourceString(arg);
+}
+
+static void
+UseTextAsRes(const char* text, RESOURCE_DATA* resdata)
+{
+	resdata->str = text;
+}
+
+static void
+DescriptorToInt(const ResourceArg& arg, RESOURCE_DATA* resdata)
+{
+	const int64_t* const value {uqstl::get_if<int64_t>(&arg)};
+	resdata->num = value != nullptr ? static_cast<uint32_t>(*value) : 0;
+}
+
+static void
+DescriptorToFloat(const ResourceArg& arg, RESOURCE_DATA* resdata)
+{
+	if (const double* const value {uqstl::get_if<double>(&arg)})
+	{
+		resdata->fnum = static_cast<float>(*value);
+	}
+	else if (const int64_t* const number {uqstl::get_if<int64_t>(&arg)})
+	{
+		resdata->fnum = static_cast<float>(*number);
 	}
 	else
 	{
-		resdata->num = false;
+		resdata->fnum = 0.0f;
 	}
+}
+
+static void
+DescriptorToBoolean(const ResourceArg& arg, RESOURCE_DATA* resdata)
+{
+	const bool* const value {uqstl::get_if<bool>(&arg)};
+	resdata->num = value != nullptr && *value;
 }
 
 static inline size_t
@@ -285,49 +298,6 @@ DescriptorToColor(const char* descriptor, RESOURCE_DATA* resdata)
 	}
 }
 
-static void
-RawDescriptor(RESOURCE_DATA* resdata, char* buf, unsigned int size)
-{
-	fmt::format_to_sz_n(buf, size, "{}", resdata->str);
-}
-
-static void
-IntToString(RESOURCE_DATA* resdata, char* buf, unsigned int size)
-{
-	fmt::format_to_sz_n(buf, size, "{}", resdata->num);
-}
-
-static void
-FloatToString(RESOURCE_DATA* resdata, char* buf, unsigned int size)
-{
-	fmt::format_to_sz_n(buf, size, "{}", resdata->fnum);
-}
-
-static void
-BooleanToString(RESOURCE_DATA* resdata, char* buf, unsigned int size)
-{
-	fmt::format_to_sz_n(buf, size, "{}", resdata->num ? "true" : "false");
-}
-
-static void
-ColorToString(RESOURCE_DATA* resdata, char* buf, unsigned int size)
-{
-	if ((resdata->num & 0xff) == 0xff)
-	{
-		// Opaque color, save as "rgb".
-		fmt::format_to_sz_n(buf, size, "rgb({:#02x}, {:#02x}, {:#02x})",
-							(resdata->num >> 24), (resdata->num >> 16) & 0xff,
-							(resdata->num >> 8) & 0xff);
-	}
-	else
-	{
-		// (Partially) transparent color, save as "rgba".
-		fmt::format_to_sz_n(buf, size, "rgba({:#02x}, {:#02x}, {:#02x}, {:#02x}x)",
-							(resdata->num >> 24), (resdata->num >> 16) & 0xff,
-							(resdata->num >> 8) & 0xff, resdata->num & 0xff);
-	}
-}
-
 static RESOURCE_INDEX curResourceIndex;
 
 void _set_current_index_header(RESOURCE_INDEX newResourceIndex)
@@ -347,12 +317,12 @@ InitResourceSystem(void)
 
 	_set_current_index_header(ndx);
 
-	InstallResTypeVectors("UNKNOWNRES", UseDescriptorAsRes, nullptr, nullptr);
-	InstallResTypeVectors("STRING", UseDescriptorAsRes, nullptr, RawDescriptor);
-	InstallResTypeVectors("INT32", DescriptorToInt, nullptr, IntToString);
-	InstallResTypeVectors("FLT32", DescriptorToFloat, nullptr, FloatToString);
-	InstallResTypeVectors("bool", DescriptorToBoolean, nullptr, BooleanToString);
-	InstallResTypeVectors("COLOR", DescriptorToColor, nullptr, ColorToString);
+	InstallResTypeVectors("UNKNOWNRES", UseDescriptorAsRes, nullptr);
+	InstallResTextTypeVectors("STRING", UseTextAsRes, nullptr);
+	InstallResTypeVectors("INT32", DescriptorToInt, nullptr);
+	InstallResTypeVectors("FLT32", DescriptorToFloat, nullptr);
+	InstallResTypeVectors("bool", DescriptorToBoolean, nullptr);
+	InstallResTextTypeVectors("COLOR", DescriptorToColor, nullptr);
 	InstallGraphicResTypes();
 	InstallStringTableResType();
 	InstallAudioResTypes();
@@ -372,58 +342,28 @@ _get_current_index_header(void)
 	return curResourceIndex;
 }
 
-void LoadResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const char* prefix)
+void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix)
 {
-	PropFile_from_filename(dir, rmpfile, process_resource_desc, prefix);
+	const uqstl::optional<uqstl::string> text {uqm::readTextFile(dir, filename)};
+	if (!text)
+	{
+		return;
+	}
+	const auto entries {uqm::resourceIndexFromJson(*text, prefix != nullptr ? prefix : "")};
+	if (!entries)
+	{
+		uqm::log::warn("Warning: Could not read resource index '{}'.", filename);
+		return;
+	}
+	for (const uqm::ResourceEntry& entry : *entries)
+	{
+		process_resource_desc(entry.key.c_str(), entry.type, entry.arg);
+	}
 }
 
-void SaveResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const char* root, bool strip_root)
+void LoadLegacyResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix)
 {
-#ifdef WIN32
-	constexpr uqstl::string_view newline {"\r\n"};
-#else
-	constexpr uqstl::string_view newline {"\n"};
-#endif
-	const size_t prefix_len {root ? strlen(root) : 0};
-	uqstl::string text {};
-
-	std::vector<std::string> keys;
-	for (const auto& [key, val] : *(_get_current_index_header()->map))
-	{
-		if (!root || !strncmp(root, key.c_str(), prefix_len))
-		{
-			keys.push_back(key);
-		}
-	}
-	std::sort(keys.begin(), keys.end());
-
-	for (const auto& key : keys)
-	{
-		auto* map = _get_current_index_header()->map;
-		auto mapIt = map->find(key);
-		ResourceDesc* value = (mapIt != map->end()) ? mapIt->second : nullptr;
-		if (!value)
-		{
-			uqm::log::warn("Resource {} had no value", key);
-		}
-		else if (!value->vtable)
-		{
-			uqm::log::warn("Resource {} had no type", key);
-		}
-		else if (value->vtable->toString)
-		{
-			char buf[256];
-			value->vtable->toString(&value->resdata, buf, 256);
-			buf[255] = 0;
-			const uqstl::string_view name {root && strip_root ? uqstl::string_view {key}.substr(prefix_len) : uqstl::string_view {key}};
-			fmt::format_to(uqstl::back_inserter(text), "{} = {}:{}{}", name, value->vtable->resType, buf, newline);
-		}
-	}
-
-	if (!uqm::writeTextFile(dir, rmpfile, text))
-	{
-		uqm::log::warn("Could not write resource index '{}'.", rmpfile);
-	}
+	PropFile_from_filename(dir, filename, process_legacy_resource_desc, prefix);
 }
 
 void UninitResourceSystem(void)
@@ -432,30 +372,32 @@ void UninitResourceSystem(void)
 	_set_current_index_header(nullptr);
 }
 
-bool InstallResTypeVectors(const char* resType, ResourceLoadFun* loadFun,
-						   ResourceFreeFun* freeFun, ResourceStringFun* stringFun)
+static bool
+installResourceHandlers(const char* resType, ResourceLoadFun* loadFun, ResourceTextLoadFun* textLoadFun,
+						ResourceFreeFun* freeFun)
 {
-	ResourceHandlers* handlers;
-	ResourceDesc* result;
-	char key[TYPESIZ] {};
-	int typelen;
-
-	fmt::format_to_sz_n(key, TYPESIZ, "sys.{}", resType);
-	typelen = strlen(resType);
-
-	handlers = new ResourceHandlers {};
+	auto* const handlers {new ResourceHandlers {}};
 	handlers->loadFun = loadFun;
+	handlers->textLoadFun = textLoadFun;
 	handlers->freeFun = freeFun;
-	handlers->toString = stringFun;
 	handlers->resType = resType;
 
-	result = new ResourceDesc {};
-	result->fname = resType;
+	auto* const result {new ResourceDesc {}};
 	result->vtable = nullptr;
 	result->resdata.ptr = handlers;
 
 	auto* map = _get_current_index_header()->map;
-	return map->insert({key, result}).second;
+	return map->insert({fmt::format("sys.{}", resType), result}).second;
+}
+
+bool InstallResTypeVectors(const char* resType, ResourceLoadFun* loadFun, ResourceFreeFun* freeFun)
+{
+	return installResourceHandlers(resType, loadFun, nullptr, freeFun);
+}
+
+bool InstallResTextTypeVectors(const char* resType, ResourceTextLoadFun* loadFun, ResourceFreeFun* freeFun)
+{
+	return installResourceHandlers(resType, nullptr, loadFun, freeFun);
 }
 
 /* These replace the mapres.c calls and probably should be split out at some point. */
@@ -485,15 +427,13 @@ void res_PutString(const char* key, const char* value)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
 	ResourceDesc* desc = lookupResourceDesc(idx, key);
-	int srclen, dstlen;
 	if (!desc || !desc->resdata.str || strcmp(desc->vtable->resType, "STRING"))
 	{
-		/* TODO: This is kind of roundabout. We can do better by refactoring newResourceDesc */
-		process_resource_desc(key, "STRING:undefined");
+		process_resource_desc(key, "STRING", uqstl::string {});
 		desc = lookupResourceDesc(idx, key);
 	}
-	desc->fname = value;
-	desc->resdata.str = desc->fname.c_str();
+	desc->arg = uqstl::string {value};
+	desc->resdata.str = resourceString(desc->arg);
 }
 
 bool res_IsInteger(const char* key)
@@ -540,8 +480,7 @@ void res_PutInteger(const char* key, int value)
 	ResourceDesc* desc = lookupResourceDesc(idx, key);
 	if (!desc || strcmp(desc->vtable->resType, "INT32"))
 	{
-		/* TODO: This is kind of roundabout. We can do better by refactoring newResourceDesc */
-		process_resource_desc(key, "INT32:0");
+		process_resource_desc(key, "INT32", int64_t {0});
 		desc = lookupResourceDesc(idx, key);
 	}
 	desc->resdata.num = value;
@@ -553,8 +492,7 @@ void res_PutFloat(const char* key, float value)
 	ResourceDesc* desc = lookupResourceDesc(idx, key);
 	if (!desc || strcmp(desc->vtable->resType, "FLT32"))
 	{
-		/* TODO: This is kind of roundabout. We can do better by refactoring newResourceDesc */
-		process_resource_desc(key, "FLT32:0.0");
+		process_resource_desc(key, "FLT32", 0.0);
 		desc = lookupResourceDesc(idx, key);
 	}
 	desc->resdata.fnum = value;
@@ -585,8 +523,7 @@ void res_PutBoolean(const char* key, bool value)
 	ResourceDesc* desc = lookupResourceDesc(idx, key);
 	if (!desc || strcmp(desc->vtable->resType, "bool"))
 	{
-		/* TODO: This is kind of roundabout. We can do better by refactoring newResourceDesc */
-		process_resource_desc(key, "bool:false");
+		process_resource_desc(key, "bool", false);
 		desc = lookupResourceDesc(idx, key);
 	}
 	desc->resdata.num = value;
@@ -621,9 +558,7 @@ void res_PutColor(const char* key, Color value)
 	ResourceDesc* desc = lookupResourceDesc(idx, key);
 	if (!desc || strcmp(desc->vtable->resType, "COLOR"))
 	{
-		/* TODO: This is kind of roundabout. We can do better by refactoring
-		 * newResourceDesc */
-		process_resource_desc(key, "COLOR:rgb(0, 0, 0)");
+		process_resource_desc(key, "COLOR", uqstl::string {"rgb(0, 0, 0)"});
 		desc = lookupResourceDesc(idx, key);
 	}
 	desc->resdata.num =

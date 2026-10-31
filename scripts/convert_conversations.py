@@ -10,6 +10,7 @@ timestamps in it when the same package has the text. A package that adds
 timestamps to the text of another package gets one <package>-timing.json file
 next to its .rmp file. The script then changes the .rmp lines to name the JSON
 files. With --delete it removes the .txt and .ts files that it converted.
+It reads the old .rmp files, so run it before convert_resource_index.py.
 
 Usage: convert_conversations.py CONTENT_DIR [RMP_FILE ...] [--delete]
 Without RMP_FILE, it converts uqm.rmp and every addons/*/*.rmp in CONTENT_DIR.

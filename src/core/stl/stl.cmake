@@ -38,6 +38,7 @@ set(uqm_src_core_stl_files
 	"src/core/stl/thread.h"
 	"src/core/stl/utility.h"
 	"src/core/stl/vector.h"
+	"src/core/stl/variant.h"
 )
 
 source_group("src\\core\\stl" FILES ${uqm_src_core_stl_files})

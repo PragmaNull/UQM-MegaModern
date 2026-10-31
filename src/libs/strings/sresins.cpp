@@ -39,9 +39,9 @@ ReleaseStringTableData(void* data)
 
 bool InstallStringTableResType(void)
 {
-	InstallResTypeVectors("STRTAB", GetStringTableFileData, ReleaseStringTableData, nullptr);
-	InstallResTypeVectors("BINTAB", GetBinaryTableFileData, ReleaseStringTableData, nullptr);
-	InstallResTypeVectors("CONVERSATION", _GetConversationData, ReleaseStringTableData, nullptr);
+	InstallResTextTypeVectors("STRTAB", GetStringTableFileData, ReleaseStringTableData);
+	InstallResTextTypeVectors("BINTAB", GetBinaryTableFileData, ReleaseStringTableData);
+	InstallResTypeVectors("CONVERSATION", _GetConversationData, ReleaseStringTableData);
 	return true;
 }
 
