@@ -13,6 +13,8 @@ list(APPEND uqm_src_libs_graphics_master_files ${uqm_src_libs_graphics_sdl_maste
 ############################################################
 # Local files
 set(uqm_src_libs_graphics_files
+	"src/libs/graphics/anifile.cpp"
+	"src/libs/graphics/anifile.h"
 	"src/libs/graphics/bbox.cpp"
 	"src/libs/graphics/bbox.h"
 	"src/libs/graphics/boxint.cpp"

@@ -18,7 +18,7 @@ type and the data of each resource:
         {
           "version": 1,
           "resources": {
-            "graphics.earthmask": {"type": "GFXRES", "data": "base/planets/earthmask.ani"},
+            "graphics.earthmask": {"type": "GFXRES", "data": "base/planets/earthmask.ani.json"},
             "ship.arilou.code": {"type": "SHIP", "data": 1}
           }
         }
@@ -33,7 +33,7 @@ files in the old format to JSON.
 The currently defined resource types and their accompanying data are:
 
 GFXRES:       A single animation. The resource data is the name of the
-              .ani file that defines it. See the "aniformat" file for
+              .ani.json file that defines it. See the "aniformat" file for
               details.
 FONTRES:      A font. The resource data is the name of the directory
               in which the font is defined.

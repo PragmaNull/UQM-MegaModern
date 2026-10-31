@@ -29,6 +29,8 @@
 #include "libs/graphics/tfb_draw.h"
 #include "libs/graphics/drawable.h"
 #include "libs/graphics/font.h"
+#include "libs/graphics/anifile.h"
+#include <fmt/format.h>
 typedef struct anidata
 {
 	int transparent_color;
@@ -157,127 +159,48 @@ processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
 
 void* _GetCelData(const ResourceFile& resource)
 {
-	uqm::io::File* const fp {&resource.file};
-	const uint32_t length {resource.length};
-
-	int cel_total, cel_index, n;
-	uint32_t opos;
-	char CurrentLine[1024], filename[PATH_MAX];
-	DRAWABLE Drawable;
-	uqstl::optional<uqm::io::Directory> aniDir {};
-	uqstl::optional<uqm::io::File> zippedAniFile {};
-	uqm::io::File* aniFile {fp};
-
-	opos = fp->tell();
-
+	uqstl::string text(resource.length, '\0');
+	text.resize(resource.file.read(uqstl::as_writable_bytes(uqstl::span {text})));
+	const auto frames {uqm::aniFromJson(text)};
+	if (!frames || frames->empty())
 	{
-		uint8_t buf[4] = {0, 0, 0, 0};
-		uint32_t header;
+		uqm::log::warn("Couldn't get cel data for '{}'", resource.path);
+		return nullptr;
+	}
 
-		const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
-		n = parent.empty() ? 0 : static_cast<int>(parent.size()) + 1;
-
-		fp->read(uqstl::as_writable_bytes(uqstl::span {buf}));
-		header = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
-		if (header == 0x04034b50)
+	const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
+	const auto count {static_cast<int>(frames->size())};
+	uqstl::vector<TFB_Canvas> img(frames->size());
+	uqstl::vector<AniData> ani(frames->size());
+	for (int i {0}; i < count; ++i)
+	{
+		const uqm::AniFrame& frame {(*frames)[i]};
+		ani[i] = {frame.transparentColor, frame.colormapIndex, frame.hotspotX, frame.hotspotY};
+		const uqstl::string path {parent.empty() ? frame.image : fmt::format("{}/{}", parent, frame.image)};
+		img[i] = TFB_DrawCanvas_LoadFromFile(resource.dir, path.c_str());
+		if (img[i] == nullptr)
 		{
-			// A zipped ani file holds the ani file with the same name, and its images.
-			uqstl::error_code error {};
-			aniDir = uqm::gameFileSystem().openArchive(resource.dir, resource.path, error);
-			if (aniDir)
-			{
-				zippedAniFile = aniDir->open(uqm::io::path::fileName(resource.path), uqm::io::OpenMode::Read, error);
-			}
-			if (!zippedAniFile)
-			{
-				uqm::log::warn("Couldn't open zipped '{}': {}", resource.path, error.message());
-				return nullptr;
-			}
-			aniFile = &*zippedAniFile;
-			opos = 0;
-			n = 0;
-		}
-		else
-		{
-			// unpacked ani file
-			uqm::strncpy_safe(filename, {resource.path.data(), static_cast<uint32_t>(n)});
-			aniFile = fp;
-			aniDir = resource.dir;
+			const char* const err {TFB_DrawCanvas_GetError()};
+			uqm::log::warn("_GetCelData: Unable to load image '{}' for frame {} of '{}'.{}", path, i, resource.path,
+						   err != nullptr ? fmt::format(" Gfx Driver reports: {}", err) : "");
+			// An empty frame keeps the index of each later frame.
+			img[i] = TFB_DrawCanvas_New_TrueColor(1, 1, true);
+			ani[i] = {uqm::c_aniTransparencyPng, uqm::c_aniNoColormap, 0, 0};
 		}
 	}
 
-	cel_total = 0;
-	aniFile->seek(opos, uqm::io::SeekFrom::Start);
-	while (aniFile->readLine(CurrentLine))
-	{
-		++cel_total;
-	}
-
-	uqstl::vector<TFB_Canvas> img(cel_total);
-	uqstl::vector<AniData> ani(cel_total);
-
-	cel_index = 0;
-	aniFile->seek(opos, uqm::io::SeekFrom::Start);
-	while (aniFile->readLine(CurrentLine) && cel_index < cel_total)
-	{
-		if (auto result {scn::scan<uqstl::string, int, int, int, int>(CurrentLine, "{} {} {} {} {}")})
-		{
-			const auto& [filename_str, transparent_color, colormap_index, hotspot_x, hotspot_y] = result->values();
-			uqm::strncpy_safe({&filename[n], sizeof(filename) - n}, filename_str);
-			ani[cel_index].transparent_color = transparent_color;
-			ani[cel_index].colormap_index = colormap_index;
-			ani[cel_index].hotspot_x = hotspot_x;
-			ani[cel_index].hotspot_y = hotspot_y;
-		}
-		else
-		{
-			break;
-		}
-
-		img[cel_index] = TFB_DrawCanvas_LoadFromFile(*aniDir, filename);
-		if (img[cel_index] == nullptr)
-		{
-			const char* err;
-
-			err = TFB_DrawCanvas_GetError();
-			uqm::log::warn("_GetCelData: Unable to load image!");
-			if (err != nullptr)
-			{
-				uqm::log::warn("Gfx Driver reports: {}", err);
-			}
-		}
-		else
-		{
-			++cel_index;
-		}
-
-		if ((int)aniFile->tell() - (int)opos >= (int)length)
-		{
-			break;
-		}
-	}
-
-	Drawable = nullptr;
-	if (cel_index && (Drawable = AllocDrawable(cel_index)))
-	{
-		FRAME FramePtr;
-
-		Drawable->Flags = WANT_PIXMAP;
-		Drawable->MaxIndex = cel_index - 1;
-
-		FramePtr = Drawable->Frame.data() + cel_index;
-		while (--FramePtr, cel_index--)
-		{
-			process_image(FramePtr, img.data(), ani.data(), cel_index);
-		}
-	}
-
+	DRAWABLE const Drawable {AllocDrawable(count)};
 	if (Drawable == nullptr)
 	{
-		uqm::log::warn("Couldn't get cel data for '{}'",
-					   resource.path);
+		uqm::log::warn("Couldn't get cel data for '{}'", resource.path);
+		return nullptr;
 	}
-
+	Drawable->Flags = WANT_PIXMAP;
+	Drawable->MaxIndex = count - 1;
+	for (int i {count - 1}; i >= 0; --i)
+	{
+		process_image(Drawable->Frame.data() + i, img.data(), ani.data(), i);
+	}
 	return Drawable;
 }
 
