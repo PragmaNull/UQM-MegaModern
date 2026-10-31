@@ -31,6 +31,8 @@ import re
 import sys
 from pathlib import Path
 
+from _content import content_files, write_json, write_text
+
 VERSION = 1
 MAX_UNICODE = 0xFFFF
 MAX_KERN = 3
@@ -38,16 +40,12 @@ HEADER = re.compile(r"^\s*(\S+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(-?\d+)")
 KERN = re.compile(r"^\s*([0-9a-fA-F]+)\s+(-?\d+)\s+(-?\d+)")
 
 
-def write_text(path, text):
-    path.write_bytes(text.encode("utf-8"))
-
-
 def convert_sound_bank(path):
     sounds = []
     for number, line in enumerate(path.read_text(encoding="utf-8").split("\n"), 1):
         if line.strip():
             sounds.append(line.split()[0])
-    write_text(path.with_name(path.name + ".json"), json.dumps({"version": VERSION, "sounds": sounds}, indent=2) + "\n")
+    write_json(path.with_name(path.name + ".json"), {"version": VERSION, "sounds": sounds})
 
 
 def kern_value(value, where):
@@ -87,9 +85,7 @@ def convert_font_metrics(path):
 
 
 def convert_references(content):
-    for path in sorted(content.rglob("*.rmp.json")):
-        if ".git" in path.parts:
-            continue
+    for path in content_files(content, "*.rmp.json"):
         text = path.read_bytes().decode("utf-8")
         new = re.sub(r'("type": "SNDRES",\s*"data": "[^"]+\.snd)(")', r"\1.json\2", text)
         if new != text:
@@ -104,8 +100,8 @@ def main():
     args = parser.parse_args()
 
     content = args.content.resolve()
-    banks = [path for path in sorted(content.rglob("*.snd")) if ".git" not in path.parts]
-    fonts = [path for path in sorted(content.rglob("kerndat.fnt")) if ".git" not in path.parts]
+    banks = content_files(content, "*.snd")
+    fonts = content_files(content, "kerndat.fnt")
     for path in banks:
         convert_sound_bank(path)
     converted = banks + [path for path in fonts if convert_font_metrics(path)]

@@ -2,8 +2,7 @@
 #include "anifile.h"
 
 #include "core/log/log.h"
-
-#include <yyjson.h>
+#include "libs/file/json.h"
 
 namespace uqm
 {
@@ -24,9 +23,9 @@ bool readFields(yyjson_val* obj, AniFrame& frame)
 		{
 			frame.transparentColor = c_aniTransparencyNone;
 		}
-		else if (yyjson_is_uint(transparency) && yyjson_get_uint(transparency) <= 255)
+		else if (const auto index {jsonInt<int32_t>(transparency, 0, UINT8_MAX)})
 		{
-			frame.transparentColor = static_cast<int32_t>(yyjson_get_uint(transparency));
+			frame.transparentColor = *index;
 		}
 		else
 		{
@@ -39,9 +38,9 @@ bool readFields(yyjson_val* obj, AniFrame& frame)
 		{
 			frame.colormapIndex = c_aniNoColormap;
 		}
-		else if (yyjson_is_uint(colormap) && yyjson_get_uint(colormap) <= INT32_MAX)
+		else if (const auto index {jsonInt<int32_t>(colormap, 0)})
 		{
-			frame.colormapIndex = static_cast<int32_t>(yyjson_get_uint(colormap));
+			frame.colormapIndex = *index;
 		}
 		else
 		{
@@ -50,14 +49,14 @@ bool readFields(yyjson_val* obj, AniFrame& frame)
 	}
 	if (yyjson_val* const hotspot {yyjson_obj_get(obj, "hotspot")})
 	{
-		yyjson_val* const x {yyjson_arr_get(hotspot, 0)};
-		yyjson_val* const y {yyjson_arr_get(hotspot, 1)};
-		if (yyjson_arr_size(hotspot) != 2 || !yyjson_is_int(x) || !yyjson_is_int(y))
+		const auto x {jsonInt<int32_t>(yyjson_arr_get(hotspot, 0))};
+		const auto y {jsonInt<int32_t>(yyjson_arr_get(hotspot, 1))};
+		if (yyjson_arr_size(hotspot) != 2 || !x || !y)
 		{
 			return false;
 		}
-		frame.hotspotX = static_cast<int32_t>(yyjson_get_int(x));
-		frame.hotspotY = static_cast<int32_t>(yyjson_get_int(y));
+		frame.hotspotX = *x;
+		frame.hotspotY = *y;
 	}
 	return true;
 }
@@ -66,45 +65,37 @@ bool readFields(yyjson_val* obj, AniFrame& frame)
 
 uqstl::optional<uqstl::vector<AniFrame>> aniFromJson(uqstl::string_view json)
 {
-	yyjson_read_err err {};
-	yyjson_doc* doc {yyjson_read_opts(const_cast<char*>(json.data()), json.size(), YYJSON_READ_NOFLAG, nullptr, &err)};
-	if (doc == nullptr)
+	static constexpr uqstl::string_view c_what {"Animation file"};
+	const JsonDoc doc {parseJson(json, c_what)};
+	yyjson_val* const frames {versionedMember(doc, c_aniFileVersion, "frames", YYJSON_TYPE_ARR, c_what)};
+	if (frames == nullptr)
 	{
-		uqm::log::error("Animation file: JSON parse error at byte {}: {}", err.pos, err.msg);
+		return uqstl::nullopt;
+	}
+	AniFrame defaultFrame {};
+	yyjson_val* const defaults {yyjson_obj_get(yyjson_doc_get_root(doc.get()), "defaults")};
+	if (defaults != nullptr && (!yyjson_is_obj(defaults) || !readFields(defaults, defaultFrame)))
+	{
+		uqm::log::error("{}: the defaults are not valid.", c_what);
 		return uqstl::nullopt;
 	}
 
-	uqstl::optional<uqstl::vector<AniFrame>> result {};
-	yyjson_val* const root {yyjson_doc_get_root(doc)};
-	yyjson_val* const defaults {yyjson_obj_get(root, "defaults")};
-	yyjson_val* const frames {yyjson_obj_get(root, "frames")};
-	AniFrame defaultFrame {};
-	if (yyjson_get_int(yyjson_obj_get(root, "version")) != c_aniFileVersion || !yyjson_is_arr(frames)
-		|| (defaults != nullptr && (!yyjson_is_obj(defaults) || !readFields(defaults, defaultFrame))))
+	uqstl::vector<AniFrame> result {};
+	size_t index {};
+	size_t max {};
+	yyjson_val* frameObj {};
+	yyjson_arr_foreach(frames, index, max, frameObj)
 	{
-		uqm::log::error("Animation file: the file does not have the expected structure.");
-	}
-	else
-	{
-		result.emplace();
-		size_t index {};
-		size_t max {};
-		yyjson_val* frameObj {};
-		yyjson_arr_foreach(frames, index, max, frameObj)
+		AniFrame frame {defaultFrame};
+		yyjson_val* const image {yyjson_obj_get(frameObj, "image")};
+		if (!yyjson_is_str(image) || !readFields(frameObj, frame))
 		{
-			AniFrame frame {defaultFrame};
-			yyjson_val* const image {yyjson_obj_get(frameObj, "image")};
-			if (!yyjson_is_str(image) || !readFields(frameObj, frame))
-			{
-				uqm::log::error("Animation file: frame {} is not valid.", index);
-				result.reset();
-				break;
-			}
-			frame.image.assign(yyjson_get_str(image), yyjson_get_len(image));
-			result->push_back(uqstl::move(frame));
+			uqm::log::error("{}: frame {} is not valid.", c_what, index);
+			return uqstl::nullopt;
 		}
+		frame.image = jsonString(image);
+		result.push_back(uqstl::move(frame));
 	}
-	yyjson_doc_free(doc);
 	return result;
 }
 

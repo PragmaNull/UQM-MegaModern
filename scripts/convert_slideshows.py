@@ -26,6 +26,8 @@ import re
 import sys
 from pathlib import Path
 
+from _content import content_files, list_json, write_text
+
 VERSION = 1
 MAX_FADE_IN_LINES = 15
 FADE_IN_BUFFER = 511
@@ -213,18 +215,13 @@ def convert_slideshow(path):
     return commands
 
 
-def slideshow_json(commands):
-    text = ",\n".join("    " + json.dumps(command, ensure_ascii=False) for command in commands)
-    return f'{{\n  "version": {VERSION},\n  "commands": [\n{text}\n  ]\n}}\n'
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("content", type=Path)
     args = parser.parse_args()
 
     content = args.content.resolve()
-    rmps = [path for path in sorted(content.rglob("*.rmp.json")) if ".git" not in path.parts]
+    rmps = content_files(content, "*.rmp.json")
     pending = []
     for rmp in rmps:
         for key, value in json.loads(rmp.read_text(encoding="utf-8"))["resources"].items():
@@ -239,14 +236,14 @@ def main():
         done[name] = convert_slideshow(content / name)
         pending.extend(command["file"] for command in done[name] if command["op"] == "call")
     for name, commands in done.items():
-        (content / name).write_bytes(slideshow_json(commands).encode("utf-8"))
+        write_text(content / name, list_json(VERSION, "commands", commands))
     print(f"converted {len(done)} slideshows")
 
     for rmp in rmps:
         text = rmp.read_bytes().decode("utf-8")
         new = re.sub(r'("slides\.[^"]+": \{\s*"type": )"STRTAB"', r'\1"STRING"', text)
         if new != text:
-            rmp.write_bytes(new.encode("utf-8"))
+            write_text(rmp, new)
             print(f"changed {rmp}")
 
 

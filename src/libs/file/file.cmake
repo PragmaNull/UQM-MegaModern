@@ -8,6 +8,8 @@ set(uqm_src_libs_file_master_files "")
 # Local files
 set(uqm_src_libs_file_files
 	"src/libs/file/file.cmake"
+	"src/libs/file/json.cpp"
+	"src/libs/file/json.h"
 	"src/libs/file/paths.cpp"
 	"src/libs/file/paths.h"
 	"src/libs/file/textfile.cpp"

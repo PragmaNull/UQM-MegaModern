@@ -15,7 +15,6 @@
  */
 
 #include <math.h>
-#include <scn/scan.h>
 
 #include "options.h"
 #include "sound.h"
@@ -26,9 +25,8 @@
 #include "libs/strlib.h"
 // for GetStringAddress()
 #include "libs/strings/strintrn.h"
-#include "soundbank.h"
-#include <fmt/format.h>
 // for AllocStringTable(), FreeStringTable()
+#include "soundbank.h"
 
 
 static void CheckFinishedChannels(void);
@@ -167,9 +165,8 @@ void* _GetSoundBankData(const ResourceFile& resource)
 	STRING str;
 	int i;
 
-	uqstl::string text(resource.length, '\0');
-	text.resize(resource.file.read(uqstl::as_writable_bytes(uqstl::span {text})));
-	const auto sounds {uqm::soundBankFromJson(text)};
+	const auto text {readResourceText(resource)};
+	const auto sounds {text ? uqm::soundBankFromJson(*text) : uqstl::nullopt};
 	if (!sounds)
 	{
 		uqm::log::warn("_GetSoundBankData(): could not read '{}'", resource.path);
@@ -185,12 +182,8 @@ void* _GetSoundBankData(const ResourceFile& resource)
 		{
 			break;
 		}
-		uqstl::string filename {parent.empty() ? sound : fmt::format("{}/{}", parent, sound)};
+		uqstl::string filename {uqm::io::path::join(parent, sound)};
 		uqm::log::debug("_GetSoundBankData(): loading {}", filename);
-		if (!uqm::contentDir().exists(filename.c_str()))
-		{
-			uqm::log::warn("_GetSoundBankData(): there is no sound '{}'. The sound is silent.", filename);
-		}
 
 		// A missing sound gets a silent decoder.
 		TFB_SoundDecoder* const decoder {SoundDecoder_Load(uqm::contentDir(), filename.data(), 4096, 0, -c_missingSoundMs)};
@@ -198,6 +191,10 @@ void* _GetSoundBankData(const ResourceFile& resource)
 		{
 			uqm::log::warn("_GetSoundBankData(): couldn't load {}", filename);
 			continue;
+		}
+		if (decoder->is_null)
+		{
+			uqm::log::warn("_GetSoundBankData(): there is no sound '{}'. The sound is silent.", filename);
 		}
 
 		// SFX samples don't have decoders, everything is pre-decoded below

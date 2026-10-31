@@ -10,6 +10,8 @@ list(APPEND uqm_tests_lib_master_files
 	"../src/lib/Math2D/Math2DStringUtils.cpp"
 	"../src/core/platform/platform.h"
 	"../src/core/platform/platform_win.cpp"
+	"../src/libs/file/json.cpp"
+	"../src/libs/file/json.h"
 	"../src/libs/file/paths.cpp"
 	"../src/libs/file/paths.h"
 	"../src/libs/graphics/anifile.cpp"

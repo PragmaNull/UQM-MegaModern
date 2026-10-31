@@ -28,16 +28,14 @@ import re
 import sys
 from pathlib import Path
 
+from _content import content_files, list_json, write_text
+
 VERSION = 1
 MAX_LINES = 50
 MAX_COLUMNS = 5
 ALIGN = {"L": "left", "C": "center", "R": "right"}
 FIRST_TOKENS = re.compile(r"\s*([+-]?\d+)\s+(\S+)\s*")
 COLUMN = re.compile(r"(.)(?:/([+-]?\d+))?")
-
-
-def write_text(path, text):
-    path.write_bytes(text.encode("utf-8"))
 
 
 def convert_block(entry, where):
@@ -70,20 +68,13 @@ def convert_block(entry, where):
     return block
 
 
-def credits_json(blocks):
-    text = ",\n".join("    " + json.dumps(block, ensure_ascii=False) for block in blocks)
-    return f'{{\n  "version": {VERSION},\n  "blocks": [\n{text}\n  ]\n}}\n'
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("content", type=Path)
     args = parser.parse_args()
 
     content = args.content.resolve()
-    for rmp in sorted(content.rglob("*.rmp.json")):
-        if ".git" in rmp.parts:
-            continue
+    for rmp in content_files(content, "*.rmp.json"):
         text = rmp.read_bytes().decode("utf-8")
         resource = json.loads(text)["resources"].get("credits.credits")
         if not resource or resource["type"] != "STRTAB":
@@ -91,7 +82,7 @@ def main():
         path = content / resource["data"]
         strings = json.loads(path.read_text(encoding="utf-8"))["strings"]
         blocks = [block for index, entry in enumerate(strings) if (block := convert_block(entry, f"{path}: string {index}"))]
-        write_text(path, credits_json(blocks))
+        write_text(path, list_json(VERSION, "blocks", blocks))
         print(f"converted {path}: {len(blocks)} blocks")
         new = re.sub(r'("credits\.credits": \{\s*"type": )"STRTAB"', r'\1"STRING"', text)
         write_text(rmp, new)

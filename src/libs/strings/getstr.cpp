@@ -24,7 +24,7 @@
 #include "core/stl/optional.h"
 #include "libs/file/textfile.h"
 #include <fmt/format.h>
-#include <yyjson.h>
+#include "libs/file/json.h"
 
 
 static constexpr int c_stringTableVersion {1};
@@ -63,29 +63,16 @@ SetStringTableEntry(STRING_TABLE strtab, int index, const void* value, int len)
 namespace
 {
 
-using JsonDocPtr = uqstl::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)>;
-
-[[nodiscard]] JsonDocPtr parseJson(uqstl::string& text, uqstl::string_view path)
-{
-	yyjson_read_err error {};
-	JsonDocPtr doc {yyjson_read_opts(text.data(), text.size(), YYJSON_READ_ALLOW_INVALID_UNICODE, nullptr, &error), &yyjson_doc_free};
-	if (!doc)
-	{
-		uqm::log::warn("Warning: '{}': JSON parse error at byte {}: {}", path, error.pos, error.msg);
-	}
-	return doc;
-}
-
-[[nodiscard]] JsonDocPtr readJsonFile(uqstl::string_view path)
+[[nodiscard]] uqm::JsonDoc readJsonFile(uqstl::string_view path)
 {
 	const uqstl::string pathText {path};
-	auto text {uqm::readTextFile(uqm::contentDir(), pathText.c_str())};
+	const auto text {uqm::readTextFile(uqm::contentDir(), pathText.c_str())};
 	if (!text)
 	{
 		uqm::log::warn("Warning: Can't open '{}'", path);
 		return {nullptr, &yyjson_doc_free};
 	}
-	return parseJson(*text, path);
+	return uqm::parseJson(*text, path, YYJSON_READ_ALLOW_INVALID_UNICODE);
 }
 
 [[nodiscard]] uqstl::string joinNumbers(yyjson_val* numbers)
@@ -100,7 +87,7 @@ using JsonDocPtr = uqstl::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)>;
 		{
 			text += ',';
 		}
-		text += fmt::format("{}", yyjson_get_uint(number));
+		fmt::format_to(uqstl::back_inserter(text), "{}", yyjson_get_uint(number));
 	}
 	return text;
 }
@@ -173,7 +160,7 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	const uqstl::string_view clipDir {clipsField != nullptr ? clipsField : ""};
 	const uqstl::string_view timingPath {timingField != nullptr ? timingField : ""};
 
-	const JsonDocPtr textDoc {readJsonFile(textPath)};
+	const uqm::JsonDoc textDoc {readJsonFile(textPath)};
 	if (!textDoc)
 	{
 		return;
@@ -187,7 +174,7 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 		return;
 	}
 
-	JsonDocPtr timingDoc {nullptr, &yyjson_doc_free};
+	uqm::JsonDoc timingDoc {nullptr, &yyjson_doc_free};
 	yyjson_val* timingLines {};
 	if (!timingPath.empty())
 	{
@@ -234,21 +221,6 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 		}
 	}
 
-	{
-		size_t timingIndex {};
-		size_t timingMax {};
-		yyjson_val* timingId {};
-		yyjson_val* timingValue {};
-		yyjson_obj_foreach(timingLines, timingIndex, timingMax, timingId, timingValue)
-		{
-			if (uqstl::find(names.begin(), names.end(), yyjson_get_str(timingId)) == names.end())
-			{
-				uqm::log::warn("Warning: '{}' has timing for '{}', which '{}' does not have.", timingPath, yyjson_get_str(timingId),
-							   textPath);
-			}
-		}
-	}
-
 	STRING_TABLE table {AllocStringTable(static_cast<int>(count), flags)};
 	if (table == nullptr)
 	{
@@ -256,32 +228,41 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	}
 	const int size {static_cast<int>(count)};
 	int block {0};
-	for (int i {0}; i < size; ++i)
-	{
-		setEntry(table, block + i, texts[i]);
-		setEntry(table, block + size + i, names[i]);
-	}
-	block += 2 * size;
-	if (flags & HAS_SOUND_CLIPS)
-	{
+	const auto writeBlock {[&](const auto& entries) {
 		for (int i {0}; i < size; ++i)
 		{
-			setEntry(table, block + i, clips[i]);
+			setEntry(table, block + i, entries[i]);
 		}
 		block += size;
+	}};
+	writeBlock(texts);
+	writeBlock(names);
+	if (flags & HAS_SOUND_CLIPS)
+	{
+		writeBlock(clips);
 	}
 	if (flags & HAS_TIMESTAMP)
 	{
-		for (int i {0}; i < size; ++i)
-		{
-			setEntry(table, block + i, timings[i]);
-		}
+		writeBlock(timings);
 	}
 
 	auto nameIndex {uqstl::make_unique<uqstl::unordered_map<uqstl::string, STRING_TABLE_ENTRY_DESC*>>()};
 	for (int i {0}; i < size; ++i)
 	{
-		(*nameIndex)[names[i]] = &table->strings[size + i];
+		nameIndex->emplace(uqstl::move(names[i]), &table->strings[size + i]);
+	}
+
+	size_t timingIndex {};
+	size_t timingMax {};
+	yyjson_val* timingId {};
+	yyjson_val* timingValue {};
+	yyjson_obj_foreach(timingLines, timingIndex, timingMax, timingId, timingValue)
+	{
+		if (!nameIndex->contains(yyjson_get_str(timingId)))
+		{
+			uqm::log::warn("Warning: '{}' has timing for '{}', which '{}' does not have.", timingPath, yyjson_get_str(timingId),
+						   textPath);
+		}
 	}
 	table->nameIndex = nameIndex.release();
 	resdata->ptr = table;
@@ -291,17 +272,16 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 // of text lines.
 void* _GetStringData(const ResourceFile& resource)
 {
-	uqstl::string text(resource.length, '\0');
-	text.resize(resource.file.read(uqstl::as_writable_bytes(uqstl::span {text})));
-	const JsonDocPtr doc {parseJson(text, resource.path)};
-	if (!doc)
+	const auto text {readResourceText(resource)};
+	if (!text)
 	{
+		uqm::log::warn("Warning: Can't read '{}'", resource.path);
 		return nullptr;
 	}
-	yyjson_val* const root {yyjson_doc_get_root(doc.get())};
-	yyjson_val* const strings {yyjson_obj_get(root, "strings")};
+	const uqm::JsonDoc doc {uqm::parseJson(*text, resource.path, YYJSON_READ_ALLOW_INVALID_UNICODE)};
+	yyjson_val* const strings {uqm::versionedMember(doc, c_stringTableVersion, "strings", YYJSON_TYPE_ARR, resource.path)};
 	const size_t count {yyjson_arr_size(strings)};
-	if (yyjson_get_int(yyjson_obj_get(root, "version")) != c_stringTableVersion || count == 0)
+	if (count == 0)
 	{
 		uqm::log::warn("Warning: '{}' is not a valid string table.", resource.path);
 		return nullptr;

@@ -37,7 +37,6 @@
 #include "util.h"
 #include "build.h"
 
-#include <ctype.h>
 #include "slideshow.h"
 #include "libs/file/textfile.h"
 
@@ -54,8 +53,7 @@ typedef struct
 	TimeCount TimeOut;
 	int TimeOutOnSkip;
 	const uqstl::vector<uqm::SlideCommand>* Commands;
-#define MAX_FONTS 5
-	FONT Fonts[MAX_FONTS];
+	FONT Fonts[uqm::c_slideshowMaxFonts];
 	FRAME Frame;
 	MUSIC_REF MusicRef;
 	bool Batched;
@@ -71,8 +69,7 @@ typedef struct
 	bool TextTraced;
 	GFXRECT clip_r;
 	GFXRECT tfade_r;
-#define MAX_TEXT_LINES 15
-	TEXT TextLines[MAX_TEXT_LINES];
+	TEXT TextLines[uqm::c_slideshowMaxFadeInLines];
 	uint16_t LinesCount;
 	char Buffer[512];
 	int MovieFrame;
@@ -1030,7 +1027,7 @@ DoPresentation(void* pIS)
 					uint16_t i;
 					int16_t y;
 
-					pPIS->LinesCount = static_cast<uint16_t>(uqstl::min(cmd.lines.size(), uqstl::size(pPIS->TextLines)));
+					pPIS->LinesCount = static_cast<uint16_t>(cmd.lines.size());
 					for (i = 0; i < pPIS->LinesCount; ++i)
 					{
 						pPIS->TextLines[i].pStr = cmd.lines[i].c_str();
@@ -1147,8 +1144,8 @@ DoPresentation(void* pIS)
 						}
 						s.frame = pPIS->RotatedFrame;
 					}
-					s.origin.x = cmd.hasPosition ? cmd.x << RESOLUTION_FACTOR : 0;
-					s.origin.y = cmd.hasPosition ? cmd.y << RESOLUTION_FACTOR : 0;
+					s.origin.x = cmd.x << RESOLUTION_FACTOR;
+					s.origin.y = cmd.y << RESOLUTION_FACTOR;
 					const uqm::TFBScaleMode old_mode {
 						SetGraphicScaleMode(drawSis ? uqm::TFBScaleMode::Nearest : uqm::TFBScaleMode::Bilinear)};
 					const int old_scale {SetGraphicScale(cmd.scale.value_or(GSCALE_IDENTITY))};
@@ -1396,7 +1393,7 @@ ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 	DestroyMusic(pis.MusicRef);
 	DestroyDrawable(ReleaseDrawable(pis.RotatedFrame));
 	DestroyDrawable(ReleaseDrawable(pis.Frame));
-	for (i = 0; i < MAX_FONTS; ++i)
+	for (i = 0; i < uqm::c_slideshowMaxFonts; ++i)
 	{
 		DestroyFont(pis.Fonts[i]);
 	}

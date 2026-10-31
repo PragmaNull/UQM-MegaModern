@@ -17,8 +17,6 @@
  */
 
 #include "core/stl/stl.h"
-#include <ctype.h>
-#include <stdlib.h>
 #include "core/stl/vector.h"
 
 #include "resintrn.h"
@@ -207,15 +205,15 @@ void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, cons
 	{
 		return;
 	}
-	const auto entries {uqm::resourceIndexFromJson(*text, prefix != nullptr ? prefix : "")};
+	auto entries {uqm::resourceIndexFromJson(*text, prefix != nullptr ? prefix : "")};
 	if (!entries)
 	{
 		uqm::log::warn("Warning: Could not read resource index '{}'.", filename);
 		return;
 	}
-	for (const uqm::ResourceEntry& entry : *entries)
+	for (uqm::ResourceEntry& entry : *entries)
 	{
-		process_resource_desc(entry.key.c_str(), entry.type, entry.arg);
+		process_resource_desc(entry.key.c_str(), entry.type, uqstl::move(entry.arg));
 	}
 }
 

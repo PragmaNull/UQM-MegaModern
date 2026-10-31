@@ -32,14 +32,12 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+from _content import content_files, list_json, write_text
+
 VERSION = 1
 FALLBACK = {"transparency": "png", "colormap": None, "hotspot": [0, 0]}
 LINE = re.compile(r"^\s*(\S+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)")
 REFERENCE = re.compile(r"(?<!\S)(\S+\.ani)(?=\s|$)", re.MULTILINE)
-
-
-def write_text(path, text):
-    path.write_bytes(text.encode("utf-8"))
 
 
 def frame_fields(match):
@@ -79,18 +77,14 @@ def ani_json(frames):
         value = most_common(frames, name) if frames else fallback
         if value != fallback:
             defaults[name] = value
-    lines = []
+    items = []
     for frame in frames:
-        out = {"image": frame["image"]}
+        item = {"image": frame["image"]}
         for name, fallback in FALLBACK.items():
             if frame[name] != defaults.get(name, fallback):
-                out[name] = frame[name]
-        lines.append("    " + json.dumps(out, ensure_ascii=False))
-    text = f'{{\n  "version": {VERSION},\n'
-    if defaults:
-        text += f'  "defaults": {json.dumps(defaults, ensure_ascii=False)},\n'
-    text += '  "frames": [\n' + ",\n".join(lines) + "\n  ]\n}\n"
-    return text
+                item[name] = frame[name]
+        items.append(item)
+    return list_json(VERSION, "frames", items, {"defaults": defaults} if defaults else None)
 
 
 def remove_missing_images(path, frames):
@@ -111,8 +105,8 @@ def convert_references(content, converted):
     def replace_path(reference):
         return reference + ".json" if reference.replace("\\", "/").lower() in known else reference
 
-    for path in sorted(content.rglob("*")):
-        if ".git" in path.parts or not path.is_file() or path.suffix.lower() not in (".json", ".txt"):
+    for path in content_files(content, "*"):
+        if not path.is_file() or path.suffix.lower() not in (".json", ".txt"):
             continue
         text = path.read_bytes().decode("utf-8", errors="surrogateescape")
         if ".ani" not in text:
@@ -133,7 +127,7 @@ def main():
     args = parser.parse_args()
 
     content = args.content.resolve()
-    converted = [path for path in sorted(content.rglob("*.ani")) if ".git" not in path.parts]
+    converted = content_files(content, "*.ani")
     for path in converted:
         frames = parse_ani(path)
         remove_missing_images(path, frames)

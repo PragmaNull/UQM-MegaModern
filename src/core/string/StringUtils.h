@@ -297,61 +297,6 @@ inline uqstl::string_view trim(const uqstl::string_view in, const char* trimChar
 }
 
 
-static inline constexpr uint64_t FNV1a_OffsetBasis {14695981039346656037ull};
-static inline constexpr uint64_t FNV1a_Prime {1099511628211ull};
-// FNV-1a hash function for compile-time string hashing. Not suitable for cryptographic purposes, but good for things like switch statements on strings.
-static constexpr uint64_t hashQuick64(const uqstl::string_view str) noexcept
-{
-
-	uint64_t hash = FNV1a_OffsetBasis;
-
-	for (unsigned char c : str)
-	{
-		hash ^= c;
-		hash *= FNV1a_Prime;
-	}
-
-	return hash;
-}
-
-static constexpr std::array<unsigned char, 256> makeLowercaseTable()
-{
-	std::array<unsigned char, 256> table {};
-
-	for (int i = 0; i < 256; ++i)
-	{
-		if (i >= 'A' && i <= 'Z')
-		{
-			table[i] = static_cast<unsigned char>(i + ('a' - 'A'));
-		}
-		else
-		{
-			table[i] = static_cast<unsigned char>(i);
-		}
-	}
-
-	return table;
-}
-
-static constexpr uint64_t hashQuick64CaseInsensitive(const uqstl::string_view str) noexcept
-{
-	constexpr uint64_t OffsetBasis {14695981039346656037ull};
-	constexpr uint64_t Prime {1099511628211ull};
-
-	constexpr auto AsciiToLowerTable {makeLowercaseTable()};
-
-	uint64_t hash = FNV1a_OffsetBasis;
-
-	for (unsigned char c : str)
-	{
-		hash ^= AsciiToLowerTable[static_cast<int>(c)];
-		hash *= FNV1a_Prime;
-	}
-
-	return hash;
-}
-
-
 ///////////////////////////////////////////// ENUM //////////////////////////////////////////////////
 
 template <EnumType E>

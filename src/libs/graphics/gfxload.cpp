@@ -33,17 +33,10 @@
 #include "libs/graphics/fontfile.h"
 #include "libs/file/textfile.h"
 #include <fmt/format.h>
-typedef struct anidata
-{
-	int transparent_color;
-	int colormap_index;
-	int hotspot_x;
-	int hotspot_y;
-} AniData;
 
 
 static void
-process_image(FRAME FramePtr, TFB_Canvas img[], AniData* ani, int cel_ct)
+process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int cel_ct)
 {
 	TFB_Image* tfbimg;
 	int hx, hy;
@@ -54,33 +47,32 @@ process_image(FRAME FramePtr, TFB_Canvas img[], AniData* ani, int cel_ct)
 	// handle transparency cases
 	if (TFB_DrawCanvas_IsPaletted(img[cel_ct]))
 	{ // indexed color image
-		if (ani[cel_ct].transparent_color >= 0)
+		if (ani[cel_ct].transparentColor >= 0)
 		{
 			TFB_DrawCanvas_SetTransparentIndex(img[cel_ct],
-											   ani[cel_ct].transparent_color, false);
+											   ani[cel_ct].transparentColor, false);
 		}
 	}
 	else
 	{ // special transparency cases for truecolor images
-		if (ani[cel_ct].transparent_color == 0)
+		if (ani[cel_ct].transparentColor == 0)
 		{ // make RGB=0,0,0 transparent
 			Color color = {0, 0, 0, 0};
 			TFB_DrawCanvas_SetTransparentColor(img[cel_ct], color, false);
 		}
 	}
-	if (ani[cel_ct].transparent_color == -1)
-	{ // enforce -1 to mean 'no transparency'
+	if (ani[cel_ct].transparentColor == uqm::c_aniTransparencyNone)
+	{
 		TFB_DrawCanvas_SetTransparentIndex(img[cel_ct], -1, false);
-		// set transparent_color == -2 to use PNG tRNS transparency
 	}
 
-	hx = ani[cel_ct].hotspot_x;
-	hy = ani[cel_ct].hotspot_y;
+	hx = ani[cel_ct].hotspotX;
+	hy = ani[cel_ct].hotspotY;
 
 	FramePtr->image = TFB_DrawImage_New(img[cel_ct]);
 
 	tfbimg = FramePtr->image;
-	tfbimg->colormap_index = ani[cel_ct].colormap_index;
+	tfbimg->colormap_index = ani[cel_ct].colormapIndex;
 	img[cel_ct] = tfbimg->NormalImg;
 
 	FramePtr->HotSpot = MAKE_HOT_SPOT(hx, hy);
@@ -161,9 +153,8 @@ processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
 
 void* _GetCelData(const ResourceFile& resource)
 {
-	uqstl::string text(resource.length, '\0');
-	text.resize(resource.file.read(uqstl::as_writable_bytes(uqstl::span {text})));
-	const auto frames {uqm::aniFromJson(text)};
+	const auto text {readResourceText(resource)};
+	auto frames {text ? uqm::aniFromJson(*text) : uqstl::nullopt};
 	if (!frames || frames->empty())
 	{
 		uqm::log::warn("Couldn't get cel data for '{}'", resource.path);
@@ -173,12 +164,9 @@ void* _GetCelData(const ResourceFile& resource)
 	const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
 	const auto count {static_cast<int>(frames->size())};
 	uqstl::vector<TFB_Canvas> img(frames->size());
-	uqstl::vector<AniData> ani(frames->size());
 	for (int i {0}; i < count; ++i)
 	{
-		const uqm::AniFrame& frame {(*frames)[i]};
-		ani[i] = {frame.transparentColor, frame.colormapIndex, frame.hotspotX, frame.hotspotY};
-		const uqstl::string path {parent.empty() ? frame.image : fmt::format("{}/{}", parent, frame.image)};
+		const uqstl::string path {uqm::io::path::join(parent, (*frames)[i].image)};
 		img[i] = TFB_DrawCanvas_LoadFromFile(resource.dir, path.c_str());
 		if (img[i] == nullptr)
 		{
@@ -187,7 +175,7 @@ void* _GetCelData(const ResourceFile& resource)
 						   err != nullptr ? fmt::format(" Gfx Driver reports: {}", err) : "");
 			// An empty frame keeps the index of each later frame.
 			img[i] = TFB_DrawCanvas_New_TrueColor(1, 1, true);
-			ani[i] = {uqm::c_aniTransparencyPng, uqm::c_aniNoColormap, 0, 0};
+			(*frames)[i] = uqm::AniFrame {};
 		}
 	}
 
@@ -201,7 +189,7 @@ void* _GetCelData(const ResourceFile& resource)
 	Drawable->MaxIndex = count - 1;
 	for (int i {count - 1}; i >= 0; --i)
 	{
-		process_image(Drawable->Frame.data() + i, img.data(), ani.data(), i);
+		process_image(Drawable->Frame.data() + i, img.data(), frames->data(), i);
 	}
 	return Drawable;
 }

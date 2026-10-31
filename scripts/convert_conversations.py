@@ -22,6 +22,8 @@ import re
 import sys
 from pathlib import Path
 
+from _content import write_json, write_text
+
 RESOURCE = re.compile(r"^(\s*(\S+)\s*=\s*CONVERSATION:)(\S+)(.*)$")
 HEADER = re.compile(r"#[^(]*\(([^)]*)\)(.*)")
 
@@ -78,14 +80,6 @@ def timing_fields(value):
     if len(segments) > 1:
         fields["subclipTiming"] = segments[1:]
     return fields
-
-
-def write_text(path, text):
-    path.write_bytes(text.encode("utf-8"))
-
-
-def write_json(path, data):
-    write_text(path, json.dumps(data, indent=2, ensure_ascii=False) + "\n")
 
 
 def text_json(entries, conversation, timestamps):

@@ -18,19 +18,16 @@ Without FILE, it converts uqm.rmp, menu.key, uqm.key and every addons/*/*.rmp in
 """
 
 import argparse
-import json
 import sys
 from pathlib import Path
+
+from _content import write_json
 
 VERSION = 1
 PARTS = {
     "CONVERSATION": ["text", "clips", "timing"],
     "3DOVID": ["video", "audio", "speech", "loop"],
 }
-
-
-def write_text(path, text):
-    path.write_bytes(text.encode("utf-8"))
 
 
 def parse_line(line):
@@ -77,7 +74,7 @@ def convert(path):
             type_name, text = "UNKNOWNRES", value
         resources[key] = {"type": type_name, "data": data_of(type_name, text, where)}
     out = path.with_name(path.name + ".json")
-    write_text(out, json.dumps({"version": VERSION, "resources": resources}, indent=2, ensure_ascii=False) + "\n")
+    write_json(out, {"version": VERSION, "resources": resources})
     print(f"wrote {out}")
 
 

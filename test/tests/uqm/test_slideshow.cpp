@@ -68,10 +68,10 @@ TEST(SlideshowTest, DrawPlacementIsOptional)
 	ASSERT_EQ(commands->size(), 3u);
 
 	EXPECT_EQ((*commands)[0].index, 3);
-	EXPECT_FALSE((*commands)[0].hasPosition);
+	EXPECT_EQ((*commands)[0].x, 0);
+	EXPECT_EQ((*commands)[0].y, 0);
 	EXPECT_FALSE((*commands)[0].scale);
 
-	EXPECT_TRUE((*commands)[1].hasPosition);
 	EXPECT_EQ((*commands)[1].x, 10);
 	EXPECT_EQ((*commands)[1].scale, 512);
 	EXPECT_EQ((*commands)[1].angle, 90);

@@ -2,66 +2,13 @@
 #include "slideshow.h"
 
 #include "core/log/log.h"
-#include "core/stl/limits.h"
-#include "core/stl/ranges.h"
-
-#include <yyjson.h>
+#include "libs/file/json.h"
 
 namespace uqm
 {
 
 namespace
 {
-
-struct OpName
-{
-	uqstl::string_view name;
-	SlideOp op;
-};
-
-constexpr uqstl::array c_opNames {
-	OpName {"dims",				SlideOp::Dims			 },
-	OpName {"font",				SlideOp::Font			 },
-	OpName {"ani",			   SlideOp::Ani			   },
-	OpName {"music",			 SlideOp::Music			   },
-	OpName {"ditty",			 SlideOp::Ditty			   },
-	OpName {"wait",				SlideOp::Wait			 },
-	OpName {"waitDitty",		 SlideOp::WaitDitty		   },
-	OpName {"spinWait",			SlideOp::SpinWait		 },
-	OpName {"sync",				SlideOp::Sync			 },
-	OpName {"resync",			  SlideOp::Resync			 },
-	OpName {"deltaSync",		 SlideOp::DeltaSync		   },
-	OpName {"backgroundColor",   SlideOp::BackgroundColor  },
-	OpName {"textColor",		 SlideOp::TextColor		   },
-	OpName {"textBackColor",	 SlideOp::TextBackColor	   },
-	OpName {"textFadeColor",	 SlideOp::TextFadeColor	   },
-	OpName {"textAlign",		 SlideOp::TextAlign		   },
-	OpName {"textEffect",		  SlideOp::TextEffect		 },
-	OpName {"text",				SlideOp::Text			 },
-	OpName {"textSpin",			SlideOp::TextSpin		 },
-	OpName {"spinStat",			SlideOp::SpinStat		 },
-	OpName {"textFadeIn",		  SlideOp::TextFadeIn		 },
-	OpName {"textFadeOut",	   SlideOp::TextFadeOut	   },
-	OpName {"saveBackground",	  SlideOp::SaveBackground	 },
-	OpName {"restoreBackground", SlideOp::RestoreBackground},
-	OpName {"draw",				SlideOp::Draw			 },
-	OpName {"drawSis",		   SlideOp::DrawSis		   },
-	OpName {"batch",			 SlideOp::Batch			   },
-	OpName {"unbatch",		   SlideOp::Unbatch		   },
-	OpName {"fadeToColor",	   SlideOp::FadeToColor	   },
-	OpName {"fadeToBlack",	   SlideOp::FadeToBlack	   },
-	OpName {"fadeToWhite",	   SlideOp::FadeToWhite	   },
-	OpName {"clearScreen",	   SlideOp::ClearScreen	   },
-	OpName {"call",				SlideOp::Call			 },
-	OpName {"line",				SlideOp::Line			 },
-	OpName {"lineSpin",			SlideOp::LineSpin		 },
-	OpName {"getRect",		   SlideOp::GetRect		   },
-	OpName {"statBox",		   SlideOp::StatBox		   },
-	OpName {"movie",			 SlideOp::Movie			   },
-	OpName {"animate",		   SlideOp::Animate		   },
-};
-
-inline constexpr size_t c_maxFadeInLines {15};
 
 // Reads the fields of one command. A missing or bad field clears 'm_ok'.
 class FieldReader
@@ -84,86 +31,45 @@ public:
 
 	int32_t number(const char* name, int32_t min = INT16_MIN, int32_t max = INT16_MAX)
 	{
-		yyjson_val* const value {yyjson_obj_get(m_obj, name)};
-		if (!yyjson_is_int(value) || yyjson_get_sint(value) < min || yyjson_get_sint(value) > max)
-		{
-			m_ok = false;
-			return 0;
-		}
-		return static_cast<int32_t>(yyjson_get_sint(value));
+		const auto value {jsonInt<int32_t>(yyjson_obj_get(m_obj, name), min, max)};
+		m_ok = m_ok && value.has_value();
+		return value.value_or(0);
 	}
 
 	uqstl::string text(const char* name)
 	{
 		yyjson_val* const value {yyjson_obj_get(m_obj, name)};
-		if (!yyjson_is_str(value))
-		{
-			m_ok = false;
-			return {};
-		}
-		return {yyjson_get_str(value), yyjson_get_len(value)};
+		m_ok = m_ok && yyjson_is_str(value);
+		return jsonString(value);
 	}
 
-	// Returns the index of the value of 'name' in 'choices'.
-	size_t choice(const char* name, uqstl::span<const uqstl::string_view> choices)
+	template <typename E>
+	E choice(const char* name)
 	{
-		const uqstl::string value {text(name)};
-		for (size_t i {0}; i < choices.size(); ++i)
-		{
-			if (value == choices[i])
-			{
-				return i;
-			}
-		}
-		m_ok = false;
-		return 0;
+		const auto value {enumFromJsonName<E>(text(name))};
+		m_ok = m_ok && value.has_value();
+		return value.value_or(E {});
 	}
 
 	uqstl::array<uint8_t, 3> color(const char* name)
 	{
 		yyjson_val* const value {yyjson_obj_get(m_obj, name)};
 		uqstl::array<uint8_t, 3> result {};
-		if (yyjson_arr_size(value) != result.size())
+		m_ok = m_ok && yyjson_arr_size(value) == result.size();
+		for (size_t i {0}; i < result.size() && m_ok; ++i)
 		{
-			m_ok = false;
-			return result;
-		}
-		for (size_t i {0}; i < result.size(); ++i)
-		{
-			yyjson_val* const component {yyjson_arr_get(value, i)};
-			if (!yyjson_is_uint(component) || yyjson_get_uint(component) > UINT8_MAX)
-			{
-				m_ok = false;
-				return result;
-			}
-			result[i] = static_cast<uint8_t>(yyjson_get_uint(component));
+			const auto component {jsonInt<uint8_t>(yyjson_arr_get(value, i))};
+			m_ok = component.has_value();
+			result[i] = component.value_or(0);
 		}
 		return result;
 	}
 
 	uqstl::vector<uqstl::string> lines(const char* name, size_t maxCount)
 	{
-		yyjson_val* const value {yyjson_obj_get(m_obj, name)};
-		uqstl::vector<uqstl::string> result {};
-		const size_t count {yyjson_arr_size(value)};
-		if (!yyjson_is_arr(value) || count == 0 || count > maxCount)
-		{
-			m_ok = false;
-			return result;
-		}
-		size_t index {};
-		size_t max {};
-		yyjson_val* line {};
-		yyjson_arr_foreach(value, index, max, line)
-		{
-			if (!yyjson_is_str(line))
-			{
-				m_ok = false;
-				return result;
-			}
-			result.emplace_back(yyjson_get_str(line), yyjson_get_len(line));
-		}
-		return result;
+		auto value {jsonStringArray(yyjson_obj_get(m_obj, name), maxCount)};
+		m_ok = m_ok && value && !value->empty();
+		return value.value_or(uqstl::vector<uqstl::string> {});
 	}
 
 	void fail()
@@ -179,8 +85,8 @@ private:
 // Reads the optional position, scale and angle of a draw command. A scale needs a position, and an angle needs a scale.
 void readPlacement(FieldReader& reader, SlideCommand& command)
 {
-	command.hasPosition = reader.has("x") || reader.has("y");
-	if (command.hasPosition)
+	const bool hasPosition {reader.has("x") || reader.has("y")};
+	if (hasPosition)
 	{
 		command.x = reader.number("x");
 		command.y = reader.number("y");
@@ -188,7 +94,7 @@ void readPlacement(FieldReader& reader, SlideCommand& command)
 	if (reader.has("scale"))
 	{
 		command.scale = reader.number("scale", 0, INT32_MAX);
-		if (!command.hasPosition)
+		if (!hasPosition)
 		{
 			reader.fail();
 		}
@@ -205,24 +111,18 @@ void readPlacement(FieldReader& reader, SlideCommand& command)
 
 uqstl::optional<SlideCommand> readCommand(yyjson_val* obj)
 {
-	const char* const opName {yyjson_get_str(yyjson_obj_get(obj, "op"))};
-	if (opName == nullptr)
-	{
-		return uqstl::nullopt;
-	}
-	const auto found {uqstl::ranges::find(c_opNames, uqstl::string_view {opName}, &OpName::name)};
-	if (found == c_opNames.end())
+	const auto op {enumFromJsonName<SlideOp>(jsonString(yyjson_obj_get(obj, "op")))};
+	if (!op)
 	{
 		return uqstl::nullopt;
 	}
 
 	SlideCommand command {};
-	command.op = found->op;
+	command.op = *op;
 	FieldReader reader {obj};
 	if (reader.has("resolution"))
 	{
-		static constexpr uqstl::array<uqstl::string_view, 2> c_resolutions {"sd", "hd"};
-		command.resolution = reader.choice("resolution", c_resolutions) == 0 ? SlideResolution::Sd : SlideResolution::Hd;
+		command.resolution = reader.choice<SlideResolution>("resolution");
 	}
 
 	switch (command.op)
@@ -262,15 +162,16 @@ uqstl::optional<SlideCommand> readCommand(yyjson_val* obj)
 			command.color = reader.color("color");
 			break;
 		case SlideOp::TextAlign:
-			{
-				static constexpr uqstl::array<uqstl::string_view, 3> c_aligns {"top", "middle", "bottom"};
-				command.align = static_cast<SlideTextAlign>(reader.choice("align", c_aligns));
-				break;
-			}
+			command.align = reader.choice<SlideTextAlign>("align");
+			break;
 		case SlideOp::TextEffect:
 			{
-				static constexpr uqstl::array<uqstl::string_view, 2> c_effects {"plain", "traced"};
-				command.traced = reader.choice("effect", c_effects) == 1;
+				const uqstl::string effect {reader.text("effect")};
+				command.traced = effect == "traced";
+				if (!command.traced && effect != "plain")
+				{
+					reader.fail();
+				}
 				break;
 			}
 		case SlideOp::Text:
@@ -285,7 +186,7 @@ uqstl::optional<SlideCommand> readCommand(yyjson_val* obj)
 			command.text = reader.text("text");
 			break;
 		case SlideOp::TextFadeIn:
-			command.lines = reader.lines("lines", c_maxFadeInLines);
+			command.lines = reader.lines("lines", c_slideshowMaxFadeInLines);
 			break;
 		case SlideOp::Draw:
 			command.index = reader.number("frame", 0, UINT16_MAX);
@@ -339,40 +240,27 @@ uqstl::optional<SlideCommand> readCommand(yyjson_val* obj)
 
 uqstl::optional<uqstl::vector<SlideCommand>> slideshowFromJson(uqstl::string_view json)
 {
-	yyjson_read_err err {};
-	yyjson_doc* doc {yyjson_read_opts(const_cast<char*>(json.data()), json.size(), YYJSON_READ_NOFLAG, nullptr, &err)};
-	if (doc == nullptr)
+	static constexpr uqstl::string_view c_what {"Slideshow"};
+	const JsonDoc doc {parseJson(json, c_what)};
+	yyjson_val* const commands {versionedMember(doc, c_slideshowVersion, "commands", YYJSON_TYPE_ARR, c_what)};
+	if (commands == nullptr)
 	{
-		uqm::log::error("Slideshow: JSON parse error at byte {}: {}", err.pos, err.msg);
 		return uqstl::nullopt;
 	}
-
-	uqstl::optional<uqstl::vector<SlideCommand>> result {};
-	yyjson_val* const root {yyjson_doc_get_root(doc)};
-	yyjson_val* const commands {yyjson_obj_get(root, "commands")};
-	if (yyjson_get_int(yyjson_obj_get(root, "version")) != c_slideshowVersion || !yyjson_is_arr(commands))
+	uqstl::vector<SlideCommand> result {};
+	size_t index {};
+	size_t max {};
+	yyjson_val* obj {};
+	yyjson_arr_foreach(commands, index, max, obj)
 	{
-		uqm::log::error("Slideshow: the file does not have the expected structure.");
-	}
-	else
-	{
-		result.emplace();
-		size_t index {};
-		size_t max {};
-		yyjson_val* obj {};
-		yyjson_arr_foreach(commands, index, max, obj)
+		auto command {readCommand(obj)};
+		if (!command)
 		{
-			auto command {readCommand(obj)};
-			if (!command)
-			{
-				uqm::log::error("Slideshow: command {} is not valid.", index);
-				result.reset();
-				break;
-			}
-			result->push_back(uqstl::move(*command));
+			uqm::log::error("{}: command {} is not valid.", c_what, index);
+			return uqstl::nullopt;
 		}
+		result.push_back(uqstl::move(*command));
 	}
-	yyjson_doc_free(doc);
 	return result;
 }
 

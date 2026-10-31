@@ -38,10 +38,16 @@ TEST(ContentFilesTest, AllDataFilesAreValid)
 	}
 
 	int count {};
-	for (const auto& entry : uqstl::filesystem::recursive_directory_iterator {content})
+	for (auto it {uqstl::filesystem::recursive_directory_iterator {content}}; it != uqstl::filesystem::recursive_directory_iterator {};
+		 ++it)
 	{
-		const uqstl::filesystem::path& path {entry.path()};
-		if (!entry.is_regular_file() || path.string().find(".git") != uqstl::string::npos || path.extension() != ".json")
+		const uqstl::filesystem::path& path {it->path()};
+		if (path.filename() == ".git")
+		{
+			it.disable_recursion_pending();
+			continue;
+		}
+		if (!it->is_regular_file() || path.extension() != ".json")
 		{
 			continue;
 		}

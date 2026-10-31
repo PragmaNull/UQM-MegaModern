@@ -43,6 +43,17 @@ void loadResourceDesc(ResourceDesc* desc)
 	}
 }
 
+uqstl::optional<uqstl::string> readResourceText(const ResourceFile& resource)
+{
+	uqstl::string text(resource.length, '\0');
+	text.resize(resource.file.read(uqstl::as_writable_bytes(uqstl::span {text})));
+	if (resource.file.error())
+	{
+		return uqstl::nullopt;
+	}
+	return text;
+}
+
 void* LoadResourceFromPath(const char* path, ResourceLoadFileFun* loadFun)
 {
 	void* const resdata {res_LoadResFile(uqm::contentDir(), path, loadFun)};

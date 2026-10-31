@@ -29,14 +29,12 @@ import json
 import re
 from pathlib import Path
 
+from _content import content_files, list_json, write_text
+
 VERSION = 1
 HEADER = re.compile(r"#[^(]*\((.*)\)")
 CALL = re.compile(r"^(\s*CALL\s+)(\S+\.txt)(\s*)$", re.IGNORECASE)
 STRTAB_DATA = re.compile(r'("type": "STRTAB",\s*"data": "[^"]+)\.txt(")')
-
-
-def write_text(path, text):
-    path.write_bytes(text.encode("utf-8"))
 
 
 def parse_strings(path):
@@ -67,12 +65,6 @@ def calls(strings):
                 yield match.group(2)
 
 
-def string_table_json(strings):
-    """The JSON text of a string table, with one string on each line."""
-    lines = ",\n".join("    " + json.dumps(entry, ensure_ascii=False) for entry in strings)
-    return f'{{\n  "version": {VERSION},\n  "strings": [\n{lines}\n  ]\n}}\n'
-
-
 def convert_call(line, tables):
     match = CALL.match(line)
     if match and match.group(2) in tables:
@@ -87,7 +79,7 @@ def main():
     args = parser.parse_args()
 
     content = args.content.resolve()
-    rmps = [path for path in sorted(content.rglob("*.rmp.json")) if ".git" not in path.parts]
+    rmps = content_files(content, "*.rmp.json")
     pending = []
     for rmp in rmps:
         for value in json.loads(rmp.read_text(encoding="utf-8"))["resources"].values():
@@ -107,7 +99,7 @@ def main():
             if "text" in entry:
                 entry["text"] = [convert_call(line, tables) for line in entry["text"]]
         out = (content / name).with_suffix(".json")
-        write_text(out, string_table_json(strings))
+        write_text(out, list_json(VERSION, "strings", strings))
     print(f"converted {len(tables)} string tables")
 
     for rmp in rmps:

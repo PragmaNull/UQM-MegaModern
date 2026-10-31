@@ -16,6 +16,7 @@ namespace uqm
 
 inline constexpr int c_slideshowVersion {1};
 inline constexpr int32_t c_slideshowMaxFonts {5};
+inline constexpr size_t c_slideshowMaxFadeInLines {15};
 
 enum class SlideOp : uint8_t
 {
@@ -94,7 +95,6 @@ struct SlideCommand
 	int32_t loops {};
 	int32_t filled {};
 	int32_t empty {};
-	bool hasPosition {};
 	uqstl::optional<int32_t> scale {};
 	int32_t angle {};
 	uqstl::array<uint8_t, 3> color {};
