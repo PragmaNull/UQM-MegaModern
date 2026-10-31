@@ -10,6 +10,8 @@ set(uqm_src_uqm_imgui_files
 	"src/uqm/imgui/gamestatewindow.cpp"
 	"src/uqm/imgui/gamestatewindow.h"
 	"src/uqm/imgui/gamethread.cpp"
+	"src/uqm/imgui/gamewindow.cpp"
+	"src/uqm/imgui/gamewindow.h"
 	"src/uqm/imgui/gamethread.h"
 	"src/uqm/imgui/imgui.cmake"
 	"src/uqm/imgui/settingswindow.cpp"

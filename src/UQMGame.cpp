@@ -63,6 +63,7 @@
 #include "uqm/supermelee/netplay/netplay.h"
 #endif
 #include "uqm/imgui/gamestatewindow.h"
+#include "uqm/imgui/gamewindow.h"
 #include "uqm/imgui/settingswindow.h"
 #include "uqm/setup.h"
 #include "uqm/starcon.h"
@@ -347,6 +348,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 #endif
 
 	addSettingsWindows();
+	addGameWindow();
 	addGameStateWindow();
 
 	const uqm::GfxDriver gfxDriver = uqm::GfxDriver::SDL_Pure;

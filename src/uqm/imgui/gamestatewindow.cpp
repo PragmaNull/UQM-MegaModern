@@ -297,7 +297,7 @@ void copyJson()
 void drawGameStateWindow(bool& open)
 {
 	ImGui::SetNextWindowSize(ImVec2 {520.0f, 700.0f}, ImGuiCond_FirstUseEver);
-	if (!ImGui::Begin("Game State", &open))
+	if (!ImGui::Begin("Save Data", &open))
 	{
 		ImGui::End();
 		return;
@@ -360,7 +360,7 @@ void drawGameStateWindow(bool& open)
 
 void addGameStateWindow()
 {
-	addToolWindow("Game State", drawGameStateWindow);
+	addToolWindow("Save Data", drawGameStateWindow);
 }
 
 } // namespace uqm
