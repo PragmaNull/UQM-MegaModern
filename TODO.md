@@ -59,5 +59,6 @@ Open:
 Repaired:
 
 - **HD pkunk font metrics:** `addons/mm-hd/fonts/pkunk.fon/kerndat.fnt` had only `pkunk.fon 44`, so the game ignored it. The new `kerndat.fnt.json` has the SD values multiplied by 4 (`44 4 4 24`, as for the slylandro font, which has the same SD values) and the SD kerning.
+- **DRAW SIS position:** from commit `130757f5` on, the slideshow code skipped the first number of `DRAW SIS x y scale angle`, so the ending drew the flagship at the wrong place and without its rotation. The JSON slideshows have the numbers as the original game used them. Look at the ending to make sure that it looks correct.
 - **Kern value out of range:** `base/fonts/micro.thin.fon` had a kern value of 4 for `,`. The game clamped it to 3, and the JSON file has 3.
 

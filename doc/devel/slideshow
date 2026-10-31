@@ -1,0 +1,64 @@
+A slideshow file (the "slides.*" resources, and the files of "call"
+commands) lists the commands of a cutscene:
+
+{
+  "version": 1,
+  "commands": [
+    {"comment": "Set size", "op": "dims", "width": 320, "height": 240},
+    {"op": "ani", "resolution": "sd", "file": "base/cutscene/intro/intro.ani.json"},
+    {"op": "draw", "frame": 0}
+  ]
+}
+
+"comment" is optional, and the game does not use it. "resolution" ("sd"
+or "hd") is optional: a command for the other resolution does nothing.
+Positions and sizes are in SD pixels. Times are in milliseconds.
+
+dims              width, height: size of the slideshow, centered on screen
+font              index (0 to 4), file (optional): load a font into a slot,
+                  and use the font of the slot
+ani               file: the animation file to draw frames from
+music             file: play a music file
+ditty             ship: play the ditty of a ship, "ship.<ship>.ditty"
+call              file: show another slideshow file
+wait              ms: wait, or until a key skips it
+spinWait          ms: wait during a ship spin
+waitDitty         wait until the ditty ends
+sync              ms: wait until this time from the start
+resync            make the current time the start
+deltaSync         ms: wait until this time from the last sync
+fadeToColor       ms: fade the screen in
+fadeToBlack       ms: fade the screen to black
+fadeToWhite       ms: fade the screen to white
+clearScreen       clear the screen
+backgroundColor   color [r, g, b]: background color of the context
+textColor         color [r, g, b]: color of the text
+textBackColor     color [r, g, b]: back color of the text
+textFadeColor     color [r, g, b]: color that text fades from and to
+textAlign         align ("top", "middle", "bottom"): position of faded text
+textEffect        effect ("plain", "traced")
+text              x, y, text: draw centered text
+textFadeIn        lines (1 to 15): fade in lines of text
+textFadeOut       fade out the text of the last textFadeIn
+textSpin          x, y, text: draw text of a ship spin
+spinStat          filled, empty, text: draw a stat line in the stat box
+statBox           x, y: draw the stat box of a ship spin
+lineSpin          x1, y1, x2, y2: draw a line of a ship spin
+line              x1, y1, x2, y2: draw a line
+getRect           remember the bounds of the last frame drawn; the spin
+                  commands are relative to them
+draw              frame, x, y, scale, angle: draw a frame of the animation.
+                  x and y are optional (0, 0). scale (256 = 1x) needs x and
+                  y, and angle (degrees) needs scale.
+drawSis           x, y, scale, angle: draw the flagship with its modules
+saveBackground    copy the screen to a second buffer
+restoreBackground copy the second buffer back to the screen
+batch, unbatch    batch the drawing commands between them
+movie             fps, from, to: show frames of the animation as a movie
+animate           first, last, loops, ms, fps: loop frames of the animation
+
+scripts/convert_slideshows.py converts the old string table slideshows,
+which have one command line such as "DRAW 3 10 20" in each string, to this
+format.
+
+This information is parsed in uqm/slideshow.cpp.

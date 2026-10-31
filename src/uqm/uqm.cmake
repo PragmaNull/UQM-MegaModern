@@ -142,6 +142,8 @@ set(uqm_src_uqm_files
 	"src/uqm/shipyard.cpp"
 	"src/uqm/sis.cpp"
 	"src/uqm/sis.h"
+	"src/uqm/slideshow.cpp"
+	"src/uqm/slideshow.h"
 	"src/uqm/sounds.cpp"
 	"src/uqm/sounds.h"
 	"src/uqm/starbase.cpp"
