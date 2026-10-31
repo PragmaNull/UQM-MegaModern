@@ -27,8 +27,7 @@
 #include <yyjson.h>
 
 
-#define MAX_STRINGS 2048
-#define POOL_SIZE 4096
+static constexpr int c_stringTableVersion {1};
 
 static void
 dword_convert(uint32_t* dword_array, uint16_t num_dwords)
@@ -61,53 +60,32 @@ SetStringTableEntry(STRING_TABLE strtab, int index, const void* value, int len)
 	return str;
 }
 
-static void
-copy_strings_to_strtab(STRING_TABLE_DESC* strtab, size_t firstIndex,
-					   size_t count, const char* data, const uint32_t* lens)
-{
-	size_t stringI;
-	const char* off = data;
-
-	for (stringI = 0; stringI < count; stringI++)
-	{
-		SetStringTableEntry(strtab, firstIndex + stringI,
-							off, lens[stringI]);
-		off += lens[stringI];
-	}
-}
-
-// Enlarges 'buf' to at least 'minSize' bytes.
-static void
-ensureBufSize(uqstl::vector<char>& buf, size_t minSize)
-{
-	if (buf.size() < minSize)
-	{
-		buf.resize(minSize + POOL_SIZE);
-	}
-}
-
 namespace
 {
 
 using JsonDocPtr = uqstl::unique_ptr<yyjson_doc, decltype(&yyjson_doc_free)>;
 
-[[nodiscard]] JsonDocPtr readJsonFile(uqstl::string_view path)
+[[nodiscard]] JsonDocPtr parseJson(uqstl::string& text, uqstl::string_view path)
 {
-	const uqstl::string pathText {path};
-	const auto text {uqm::readTextFile(uqm::contentDir(), pathText.c_str())};
-	if (!text)
-	{
-		uqm::log::warn("Warning: Can't open '{}'", path);
-		return {nullptr, &yyjson_doc_free};
-	}
 	yyjson_read_err error {};
-	JsonDocPtr doc {yyjson_read_opts(const_cast<char*>(text->data()), text->size(), YYJSON_READ_ALLOW_INVALID_UNICODE, nullptr, &error),
-					&yyjson_doc_free};
+	JsonDocPtr doc {yyjson_read_opts(text.data(), text.size(), YYJSON_READ_ALLOW_INVALID_UNICODE, nullptr, &error), &yyjson_doc_free};
 	if (!doc)
 	{
 		uqm::log::warn("Warning: '{}': JSON parse error at byte {}: {}", path, error.pos, error.msg);
 	}
 	return doc;
+}
+
+[[nodiscard]] JsonDocPtr readJsonFile(uqstl::string_view path)
+{
+	const uqstl::string pathText {path};
+	auto text {uqm::readTextFile(uqm::contentDir(), pathText.c_str())};
+	if (!text)
+	{
+		uqm::log::warn("Warning: Can't open '{}'", path);
+		return {nullptr, &yyjson_doc_free};
+	}
+	return parseJson(*text, path);
 }
 
 [[nodiscard]] uqstl::string joinNumbers(yyjson_val* numbers)
@@ -309,109 +287,42 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	resdata->ptr = table;
 }
 
+// Loads a string table from a JSON file with a "strings" array. Each string has an "id", and can have "text": an array
+// of text lines.
 void* _GetStringData(const ResourceFile& resource)
 {
-	uqm::io::File* const fp {&resource.file};
-	const uint32_t length {resource.length};
-	void* result;
-
-	int stringI;
-	uint32_t opos;
-	uint32_t slen[MAX_STRINGS];
-	uint32_t StringOffs;
-	char CurrentLine[1024];
-	uqstl::vector<char> strdata(POOL_SIZE);
-
-	opos = fp->tell();
-	stringI = -1;
-	StringOffs = 0;
-	for (;;)
+	uqstl::string text(resource.length, '\0');
+	text.resize(resource.file.read(uqstl::as_writable_bytes(uqstl::span {text})));
+	const JsonDocPtr doc {parseJson(text, resource.path)};
+	if (!doc)
 	{
-		int l;
-
-		if (!fp->readLine(CurrentLine))
-		{
-			// EOF or read error.
-			break;
-		}
-
-		if (stringI >= MAX_STRINGS - 1)
-		{
-			// Too many strings.
-			break;
-		}
-
-		if (CurrentLine[0] == '#')
-		{
-			char CopyLine[1024] {};
-
-			uqm::strncpy_safe(CopyLine, CurrentLine);
-			const char* const openParen = strchr(&CopyLine[1], '(');
-			const bool hasValidHeader = openParen && strchr(openParen + 1, ')');
-			if (hasValidHeader)
-			{
-				if (stringI >= 0)
-				{
-					while (slen[stringI] > 1 && (strdata[StringOffs - 2] == '\n' || strdata[StringOffs - 2] == '\r'))
-					{
-						--slen[stringI];
-						--StringOffs;
-						strdata[StringOffs - 1] = '\0';
-					}
-				}
-
-				slen[++stringI] = 0;
-			}
-		}
-		else if (stringI >= 0)
-		{
-			char* s;
-			l = strlen(CurrentLine) + 1;
-
-			ensureBufSize(strdata, StringOffs + l);
-
-			if (slen[stringI])
-			{
-				--slen[stringI];
-				--StringOffs;
-			}
-			s = &strdata[StringOffs];
-			slen[stringI] += l;
-			StringOffs += l;
-
-			uqm::strncpy_safe({s, static_cast<uint32_t>(l)}, {CurrentLine, static_cast<uint32_t>(l - 1)});
-		}
-
-		if ((int)fp->tell() - (int)opos >= (int)length)
-		{
-			break;
-		}
+		return nullptr;
 	}
-	if (stringI >= 0)
+	yyjson_val* const root {yyjson_doc_get_root(doc.get())};
+	yyjson_val* const strings {yyjson_obj_get(root, "strings")};
+	const size_t count {yyjson_arr_size(strings)};
+	if (yyjson_get_int(yyjson_obj_get(root, "version")) != c_stringTableVersion || count == 0)
 	{
-		while (slen[stringI] > 1 && (strdata[StringOffs - 2] == '\n' || strdata[StringOffs - 2] == '\r'))
-		{
-			--slen[stringI];
-			--StringOffs;
-			strdata[StringOffs - 1] = '\0';
-		}
+		uqm::log::warn("Warning: '{}' is not a valid string table.", resource.path);
+		return nullptr;
 	}
 
-	result = nullptr;
-	if (++stringI)
+	STRING_TABLE table {AllocStringTable(static_cast<int>(count), 0)};
+	if (table == nullptr)
 	{
-		int flags = 0;
-		int stringCount = stringI;
-
-		result = AllocStringTable(stringI, flags);
-		if (result)
+		return nullptr;
+	}
+	size_t index {};
+	size_t max {};
+	yyjson_val* entry {};
+	yyjson_arr_foreach(strings, index, max, entry)
+	{
+		if (yyjson_val* const lines {yyjson_obj_get(entry, "text")})
 		{
-			STRING_TABLE_DESC* lpST = (STRING_TABLE)result;
-			copy_strings_to_strtab(lpST, 0, stringCount, strdata.data(), slen);
+			setEntry(table, static_cast<int>(index), joinLines(lines));
 		}
 	}
-
-	return result;
+	return table;
 }
 
 

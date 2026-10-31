@@ -1,45 +1,35 @@
 SCRIPT CONVENTIONS
 ------------------
 
-The .txt files in the content/comm directories are unlikely to stay in
-their current form forever, as it's a rather fragile format.  However,
-in the the meantime, and for those who seek to edit the script files
-(to conform to 3DO, PC, and/or director's cut versions).
-
+Each race's conversation is a JSON file in the base/comm directories.
 This file will describe the format, and how it relates to the source
-code in the src/sc2code/comm directory.
+code in the src/uqm/comm directory.
 
-The .txt files
---------------
+The conversation files
+----------------------
 
-The text files should all have a set of records, optionally separated
-by newlines.  Each record has a header, then one or more lines of
-text.
-
-The header is a hash (#), an identifier in parentheses, and (if it's
-an alien voice) a tab, then the name of the file corresponding to that
-voice.  Alien voices have identifiers in ALL_CAPITAL_LETTERS, while
-Zelnick's lines are in_lower_case.  Often one line is broken into
-several parts - in these cases the full line is knitted together by
-the communications code (usually inserting the name of the Captain, or
-the flagship, or whatever).
+Each file has a "lines" array of records. Each record has an "id", and
+(if it's an alien voice) a "clip", the name of the file corresponding
+to that voice. "text" is an array of the lines of the record. Alien
+voices have identifiers in ALL_CAPITAL_LETTERS, while Zelnick's lines
+are in_lower_case.  Often one line is broken into several parts - in
+these cases the full line is knitted together by the communications
+code (usually inserting the name of the Captain, or the flagship, or
+whatever).
 
 A modest example:
 
-#(HAVING_FUN_WITH_ILWRATH_2)	thrad103.wav
-The exploding starships! The screaming crew!
-The direct hits, the cunning escapes!
-These are the moments we live for!
-Now we must return to the great battles!
-Farewell, Great Teacher.
+    {"id": "HAVING_FUN_WITH_ILWRATH_2", "clip": "thrad103.wav", "text": [
+      "The exploding starships! The screaming crew!",
+      "The direct hits, the cunning escapes!",
+      "These are the moments we live for!",
+      "Now we must return to the great battles!",
+      "Farewell, Great Teacher."]}
 
-Zelnick's lines must be ON ONE LINE ONLY; line breaking is handled by
-the communication code and anything after the first newline is
-IGNORED.  So don't do it while repairing his lines, and if you find
-one (a lowercase id with multiple lines following it) delete the
-newlines and make it all one line.
+Zelnick's lines must have ONE LINE ONLY; line breaking is handled by
+the communication code and anything after the first line is IGNORED.
 
-It appears that newlines may appear in the middle of speeches;
+It appears that line breaks may appear in the middle of speeches;
 however, most of the lines by aliens have pauses represented by a
 single space or tab.  It seems reasonable to duplicate this.
 
@@ -61,7 +51,7 @@ The .h files (src/sc2code/comm)
 Each race has its own directory in src/sc2code/comm, and there is a
 file marked strings.h in each directory.  This file defines a single
 enum which should list every record identifier in the appropriate
-race's .txt file over in content/comm/{race}, IN THE PRECISE ORDER
+race's conversation file over in content/base/comm/{race}, IN THE PRECISE ORDER
 THOSE RECORDS ARE GIVEN.  Due to the non-symbolic nature of C, there
 is no relation whatsoever between the identifiers in the record and in
 the enum (though it would be reasonably straightforward to generate
@@ -69,7 +59,7 @@ the strings.h files from the .txt files) The values of the enum are
 used in the {racec}.c files in the same directory.
 
 The scriptcheck utility also checks for proper correlation between the
-.h file and the associated .txt file.  It assumes that one enum value
+.h file and the associated conversation file.  It assumes that one enum value
 is listed per line, and that the general format of the file matches
 the current one.
 
