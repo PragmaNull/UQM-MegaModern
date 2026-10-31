@@ -203,10 +203,7 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 static void
 SwapStrings(STRING a, STRING b, uint16_t ia, uint16_t ib)
 {
-	char* swap = GetStringAddress(SetAbsStringTableIndex(b, ib));
-	(SetAbsStringTableIndex(b, ib))->data =
-		(SetAbsStringTableIndex(a, ia))->data;
-	(SetAbsStringTableIndex(a, ia))->data = swap;
+	uqstl::swap(SetAbsStringTableIndex(a, ia)->bytes, SetAbsStringTableIndex(b, ib)->bytes);
 }
 
 RACE_DESC*

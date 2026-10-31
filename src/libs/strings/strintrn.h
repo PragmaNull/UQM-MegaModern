@@ -22,23 +22,25 @@
 #include <stdio.h>
 #include "core/stl/map.h"
 #include "core/stl/string.h"
+#include "core/stl/vector.h"
 #include "libs/strlib.h"
 #include "libs/reslib.h"
 
 struct string_table_entry
 {
-	STRINGPTR data;
-	int length; /* Internal NULs are allowed */
-	int index;
-	struct string_table* parent;
+	// The bytes of the entry. A text entry ends with its NUL, and internal NULs are allowed. An empty entry has no bytes.
+	uqstl::string bytes {};
+	int index {};
+	struct string_table* parent {};
 };
 
 struct string_table
 {
-	unsigned short flags;
-	int size;
-	STRING_TABLE_ENTRY_DESC* strings;
-	uqstl::unordered_map<uqstl::string, STRING_TABLE_ENTRY_DESC*>* nameIndex;
+	unsigned short flags {};
+	int size {};
+	// 'size' text entries, then 'size' entries for each of the names, sound clips and timestamps that 'flags' gives.
+	uqstl::vector<STRING_TABLE_ENTRY_DESC> strings {};
+	uqstl::unordered_map<uqstl::string, STRING_TABLE_ENTRY_DESC*> nameIndex {};
 };
 
 #define HAS_SOUND_CLIPS (1 << 0)

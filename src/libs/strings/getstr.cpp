@@ -47,16 +47,7 @@ STRING
 SetStringTableEntry(STRING_TABLE strtab, int index, const void* value, int len)
 {
 	STRING str = &strtab->strings[index];
-
-	delete[] str->data;
-	str->data = nullptr;
-	str->length = 0;
-	if (len)
-	{
-		str->data = new char[len];
-		str->length = len;
-		memcpy(str->data, value, len);
-	}
+	str->bytes.assign(static_cast<const char*>(value), static_cast<size_t>(len));
 	return str;
 }
 
@@ -246,10 +237,9 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 		writeBlock(timings);
 	}
 
-	auto nameIndex {uqstl::make_unique<uqstl::unordered_map<uqstl::string, STRING_TABLE_ENTRY_DESC*>>()};
 	for (int i {0}; i < size; ++i)
 	{
-		nameIndex->emplace(uqstl::move(names[i]), &table->strings[size + i]);
+		table->nameIndex.emplace(uqstl::move(names[i]), &table->strings[size + i]);
 	}
 
 	size_t timingIndex {};
@@ -258,13 +248,12 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	yyjson_val* timingValue {};
 	yyjson_obj_foreach(timingLines, timingIndex, timingMax, timingId, timingValue)
 	{
-		if (!nameIndex->contains(yyjson_get_str(timingId)))
+		if (!table->nameIndex.contains(yyjson_get_str(timingId)))
 		{
 			uqm::log::warn("Warning: '{}' has timing for '{}', which '{}' does not have.", timingPath, yyjson_get_str(timingId),
 						   textPath);
 		}
 	}
-	table->nameIndex = nameIndex.release();
 	resdata->ptr = table;
 }
 

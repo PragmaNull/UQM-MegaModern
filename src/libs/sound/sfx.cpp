@@ -162,7 +162,6 @@ void* _GetSoundBankData(const ResourceFile& resource)
 #define MAX_FX 256
 	TFB_SoundSample* sndfx[MAX_FX];
 	STRING_TABLE Snd;
-	STRING str;
 	int i;
 
 	const auto text {readResourceText(resource)};
@@ -231,7 +230,7 @@ void* _GetSoundBankData(const ResourceFile& resource)
 	}
 
 	// Populate the STRING_TABLE with ptrs to sample
-	for (i = 0, str = Snd->strings; i < snd_ct; ++i, ++str)
+	for (i = 0; i < snd_ct; ++i)
 	{
 		// The entry holds the pointer to the sample.
 		SetStringTableEntry(Snd, i, &sndfx[i], sizeof(sndfx[0]));
@@ -253,7 +252,7 @@ bool _ReleaseSoundBankData(void* Snd)
 	for (index = 0; index < fxTab->size; ++index)
 	{
 		int i;
-		void** sptr = (void**)fxTab->strings[index].data;
+		void** sptr = (void**)fxTab->strings[index].bytes.data();
 		TFB_SoundSample* sample = (TFB_SoundSample*)*sptr;
 
 		// Check all sources and see if we are currently playing this sample
