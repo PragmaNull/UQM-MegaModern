@@ -309,7 +309,7 @@ SoundDecoder_Lookup(const char* fileext)
 }
 
 TFB_SoundDecoder*
-SoundDecoder_Load(const uqm::io::Directory& dir, char* filename,
+SoundDecoder_Load(const uqm::io::Directory& dir, const char* filename,
 				  uint32_t buffer_size, uint32_t startTime, int32_t runTime)
 // runTime < 0 specifies a default length for a nul decoder
 {

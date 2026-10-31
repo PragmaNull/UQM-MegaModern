@@ -51,8 +51,8 @@ extern void FastForward_Smooth(void);
 extern void FastReverse_Page(void);
 extern void FastForward_Page(void);
 
-extern void SpliceTrack(char* filespec, const char* textspec, char* TimeStamp, CallbackFunction cb);
-extern void SpliceMultiTrack(char* TrackNames[], char* TrackText);
+extern void SpliceTrack(const char* filespec, const char* textspec, const char* TimeStamp, CallbackFunction cb);
+extern void SpliceMultiTrack(const char* const TrackNames[], const char* TrackText);
 
 extern int GetTrackPosition(int in_units);
 

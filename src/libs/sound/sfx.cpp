@@ -249,10 +249,10 @@ bool _ReleaseSoundBankData(void* Snd)
 		return false;
 	}
 
-	for (index = 0; index < fxTab->size; ++index)
+	for (index = 0; index < static_cast<int>(fxTab->size()); ++index)
 	{
 		int i;
-		void** sptr = (void**)fxTab->strings[index].bytes.data();
+		void** sptr = (void**)fxTab->entry(index)->bytes.data();
 		TFB_SoundSample* sample = (TFB_SoundSample*)*sptr;
 
 		// Check all sources and see if we are currently playing this sample

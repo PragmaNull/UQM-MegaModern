@@ -139,7 +139,8 @@ FindStar(STAR_DESC* LastSDPtr, GFXPOINT* puniverse, int16_t xbounds,
 
 void GetClusterName(const STAR_DESC* pSD, char buf[])
 {
-	char *pBuf, *pStr;
+	char* pBuf;
+	const char* pStr;
 
 	pBuf = buf;
 	if (pSD->Prefix)

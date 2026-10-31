@@ -129,11 +129,12 @@ void ClearSISRect(uint8_t ClearFlags)
 // Draw the SIS title. This is the field at the top of the screen, on the
 // right hand side, containing the coordinates in HyperSpace, or the planet
 // name in IP.
-void DrawSISTitle(char* pStr)
+void DrawSISTitle(const char* pStr)
 {
 	TEXT t;
 	GFXCONTEXT OldContext;
 	GFXRECT r;
+	uqstl::string buf {};
 
 	t.baseline.x = RES_SCALE((RES_DESCALE(SIS_TITLE_WIDTH) >> 1));
 	t.baseline.y = SIS_TITLE_HEIGHT - RES_SCALE(2);
@@ -155,11 +156,11 @@ void DrawSISTitle(char* pStr)
 	}
 	else
 	{
-		char* buf = pStr;
+		buf = pStr;
 
 		SetContextFont(TinyFontBold);
-		replaceChar(buf, UNICHAR_SPACE, UNICHAR_TAB);
-		t.pStr = buf;
+		uqstl::ranges::replace(buf, UNICHAR_SPACE, UNICHAR_TAB);
+		t.pStr = buf.c_str();
 		t.CharCount = (uint16_t)~0;
 	}
 

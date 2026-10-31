@@ -141,7 +141,7 @@ void SoundDecoder_SwapWords(uint16_t* data, uint32_t size);
 int32_t SoundDecoder_Init(AudioFlags flags, TFB_DecoderFormats* formats);
 void SoundDecoder_Uninit(void);
 TFB_SoundDecoder* SoundDecoder_Load(const uqm::io::Directory& dir,
-									char* filename, uint32_t buffer_size, uint32_t startTime, int32_t runTime);
+									const char* filename, uint32_t buffer_size, uint32_t startTime, int32_t runTime);
 uint32_t SoundDecoder_Decode(TFB_SoundDecoder* decoder);
 uint32_t SoundDecoder_DecodeAll(TFB_SoundDecoder* decoder);
 float SoundDecoder_GetTime(TFB_SoundDecoder* decoder);

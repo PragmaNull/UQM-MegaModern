@@ -198,7 +198,7 @@ extern void ContinueFlash(void);
 #define SFR_MENU_NON ((GFXRECT*)~2L)
 extern void DrawHyperCoords(GFXPOINT puniverse);
 extern void DrawSaveInfo(SIS_STATE SisState);
-extern void DrawSISTitle(char* pStr);
+extern void DrawSISTitle(const char* pStr);
 
 // Flags for DrawSISMessageEx (may be OR'ed):
 #define DSME_NONE 0

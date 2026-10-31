@@ -1904,7 +1904,7 @@ void dumpStrings(FILE* out)
 		{"GAMESTR_COUNT", GAMESTR_COUNT, (size_t)-1}
 	};
 	size_t numCategories = std::size(categories);
-	size_t numStrings = GetStringTableCount(GameStrings);
+	size_t numStrings = GameStrings->size();
 	size_t stringI;
 	size_t categoryI = 0;
 

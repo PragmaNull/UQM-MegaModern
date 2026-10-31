@@ -18,43 +18,10 @@
 
 #include "strintrn.h"
 
-#include "core/stl/memory.h"
-
-namespace
-{
-
-// The data of an entry, or nullptr if the entry is empty.
-STRINGPTR entryData(STRING String)
-{
-	return String->bytes.empty() ? nullptr : String->bytes.data();
-}
-
-// The data of the entry in the block 'block' (0 for the text) at the index of 'String', or nullptr.
-STRINGPTR blockData(STRING String, int block)
-{
-	return entryData(&String->parent->strings[String->index + block * String->parent->size]);
-}
-
-} // namespace
-
 STRING_TABLE
 AllocStringTable(int num_entries, int flags)
 {
-	auto strtab {uqstl::make_unique<STRING_TABLE_DESC>()};
-	int multiplier {1};
-	for (const int flag : {HAS_NAMEINDEX, HAS_SOUND_CLIPS, HAS_TIMESTAMP})
-	{
-		multiplier += (flags & flag) != 0 ? 1 : 0;
-	}
-	strtab->flags = static_cast<unsigned short>(flags);
-	strtab->size = num_entries;
-	strtab->strings.resize(static_cast<size_t>(num_entries * multiplier));
-	for (int i {0}; i < num_entries * multiplier; ++i)
-	{
-		strtab->strings[i].parent = strtab.get();
-		strtab->strings[i].index = i;
-	}
-	return strtab.release();
+	return new uqm::StringTable {static_cast<size_t>(num_entries), flags};
 }
 
 void FreeStringTable(STRING_TABLE strtab)
@@ -71,178 +38,100 @@ bool DestroyStringTable(STRING_TABLE StringTable)
 STRING
 CaptureStringTable(STRING_TABLE StringTable)
 {
-	if ((StringTable != 0) && (StringTable->size > 0))
-	{
-		return StringTable->strings.data();
-	}
-
-	return nullptr;
+	return StringTable != nullptr && StringTable->size() > 0 ? StringTable->entry(0) : nullptr;
 }
 
 STRING_TABLE
 ReleaseStringTable(STRING String)
 {
-	STRING_TABLE StringTable;
-
-	StringTable = GetStringTable(String);
-
-	return (StringTable);
+	return GetStringTable(String);
 }
 
 STRING_TABLE
 GetStringTable(STRING String)
 {
-	if (String && String->parent)
-	{
-		return String->parent;
-	}
-	return nullptr;
+	return String != nullptr ? String->parent : nullptr;
 }
 
 uint16_t
 GetStringTableCount(STRING String)
 {
-	if (String && String->parent)
-	{
-		return String->parent->size;
-	}
-	return 0;
+	return String != nullptr && String->parent != nullptr ? static_cast<uint16_t>(String->parent->size()) : 0;
 }
 
 uint16_t
 GetStringTableIndex(STRING String)
 {
-	if (String)
-	{
-		return String->index;
-	}
-	return 0;
+	return String != nullptr ? static_cast<uint16_t>(String->index) : 0;
 }
 
 STRING
 SetAbsStringTableIndex(STRING String, uint16_t StringTableIndex)
 {
-	STRING_TABLE StringTablePtr;
-
-	if (!String)
+	if (String == nullptr || String->parent == nullptr)
 	{
 		return nullptr;
 	}
-
-	StringTablePtr = String->parent;
-
-	if (StringTablePtr == nullptr)
-	{
-		String = nullptr;
-	}
-	else
-	{
-		StringTableIndex = StringTableIndex % StringTablePtr->size;
-		String = &StringTablePtr->strings[StringTableIndex];
-	}
-
-	return (String);
+	return String->parent->entry(StringTableIndex % String->parent->size());
 }
 
 STRING
 SetRelStringTableIndex(STRING String, int16_t StringTableOffs)
 {
-	STRING_TABLE StringTablePtr;
-
-	if (!String)
+	if (String == nullptr || String->parent == nullptr)
 	{
 		return nullptr;
 	}
-
-	StringTablePtr = String->parent;
-
-	if (StringTablePtr == nullptr)
+	const auto size {static_cast<int>(String->parent->size())};
+	int index {(String->index + StringTableOffs) % size};
+	if (index < 0)
 	{
-		String = nullptr;
+		index += size;
 	}
-	else
-	{
-		uint16_t StringTableIndex;
-
-		while (StringTableOffs < 0)
-		{
-			StringTableOffs += StringTablePtr->size;
-		}
-		StringTableIndex = (String->index + StringTableOffs)
-						 % StringTablePtr->size;
-
-		String = &StringTablePtr->strings[StringTableIndex];
-	}
-
-	return (String);
+	return String->parent->entry(static_cast<size_t>(index));
 }
 
 uint16_t
 GetStringLength(STRING String)
 {
-	if (String == nullptr)
-	{
-		return 0;
-	}
-	return (uint16_t)uqm::utf8StringCount(String->bytes);
+	return String != nullptr ? static_cast<uint16_t>(uqm::utf8StringCount(String->bytes)) : 0;
 }
 
 uint16_t
 GetStringLengthBin(STRING String)
 {
-	if (String == nullptr)
-	{
-		return 0;
-	}
-	return static_cast<uint16_t>(String->bytes.size());
+	return String != nullptr ? static_cast<uint16_t>(String->bytes.size()) : 0;
 }
 
-STRINGPTR
+const char*
 GetStringName(STRING String)
 {
-	if (String == nullptr || String->parent == nullptr || !(String->parent->flags & HAS_NAMEINDEX))
-	{
-		return nullptr;
-	}
-	return blockData(String, 1);
+	return String != nullptr && String->parent != nullptr ? String->parent->name(String->index) : nullptr;
 }
 
-STRINGPTR
+const char*
 GetStringSoundClip(STRING String)
 {
-	if (String == nullptr || String->parent == nullptr || !(String->parent->flags & HAS_SOUND_CLIPS))
-	{
-		return nullptr;
-	}
-	return blockData(String, (String->parent->flags & HAS_NAMEINDEX) ? 2 : 1);
+	return String != nullptr && String->parent != nullptr ? String->parent->soundClip(String->index) : nullptr;
 }
 
-STRINGPTR
+const char*
 GetStringTimeStamp(STRING String)
 {
-	if (String == nullptr || String->parent == nullptr || !(String->parent->flags & HAS_TIMESTAMP))
-	{
-		return nullptr;
-	}
-	const int block {1 + ((String->parent->flags & HAS_NAMEINDEX) ? 1 : 0) + ((String->parent->flags & HAS_SOUND_CLIPS) ? 1 : 0)};
-	return blockData(String, block);
+	return String != nullptr && String->parent != nullptr ? String->parent->timestamp(String->index) : nullptr;
 }
 
 STRINGPTR
 GetStringAddress(STRING String)
 {
-	if (String == nullptr)
-	{
-		return nullptr;
-	}
-	return entryData(String);
+	return String != nullptr && !String->bytes.empty() ? String->bytes.data() : nullptr;
 }
 
 STRING
 GetStringByName(STRING_TABLE StringTable, const char* index)
 {
-	const auto it {StringTable->nameIndex.find(index)};
-	return it != StringTable->nameIndex.end() ? it->second : nullptr;
+	const auto found {StringTable->find(index)};
+	return found ? StringTable->entry(*found) : nullptr;
 }
 
 bool CheckResString(RESOURCE res)

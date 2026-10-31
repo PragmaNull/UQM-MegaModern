@@ -197,7 +197,7 @@ GetRotationalPeriod(void)
 void GetPlanetTitle(uqstl::span<char> buf)
 {
 	int val;
-	char* named = GetNamedPlanetaryBody();
+	const char* named = GetNamedPlanetaryBody();
 
 	if (named)
 	{

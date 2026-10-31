@@ -1596,7 +1596,8 @@ DrawGameSelection(PICK_GAME_STATE* pickState, uint16_t selSlot)
 	GFXRECT r;
 	TEXT t;
 	uint16_t i, curSlot;
-	char buf[256], buf2[80], *SaveName;
+	char buf[256], buf2[80];
+	const char* SaveName;
 	Color UnSelected = SAVE_UNSELECTED_COLOR;
 	Color Selected = SAVE_SELECTED_COLOR;
 

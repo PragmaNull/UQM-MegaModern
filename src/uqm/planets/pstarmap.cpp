@@ -2293,7 +2293,7 @@ FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
 	{
 		STAR_DESC* SDPtr = &star_array[pSS->SortedStars[i]];
 		char FullName[STAR_SEARCH_BUFSIZE];
-		char* ClusterName = GAME_STRING(SDPtr->Postfix);
+		const char* ClusterName = GAME_STRING(SDPtr->Postfix);
 		const char* sptr;
 		const char* dptr;
 		int dlen;

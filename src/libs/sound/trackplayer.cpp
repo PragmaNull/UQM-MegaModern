@@ -317,7 +317,7 @@ OnBufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
 // Rerturns number of timestamps parsed.
 // Stops if it encounters a ; as this is used for alternate time stamps.
 static int
-GetTimeStamps(char* TimeStamps, int32_t* time_stamps)
+GetTimeStamps(const char* TimeStamps, int32_t* time_stamps)
 {
 	int pos;
 	int num = 0;
@@ -403,7 +403,7 @@ SplitSubPages(const char* text, uqstl::string pages[], int32_t timestamp[], int 
 // track list is nullptr-terminated
 // May only be called after at least one SpliceTrack(). This is a limitation
 // for the sake of timestamps, but it does not have to be so.
-void SpliceMultiTrack(char* TrackNames[], char* TrackText)
+void SpliceMultiTrack(const char* const TrackNames[], const char* TrackText)
 {
 #define MAX_MULTI_TRACKS 20
 #define MAX_MULTI_BUFFERS 100
@@ -462,7 +462,7 @@ void SpliceMultiTrack(char* TrackNames[], char* TrackText)
 }
 
 // XXX: This code and the entire trackplayer are begging to be overhauled
-void SpliceTrack(char* TrackName, const char* TrackText, char* TimeStamp, CallbackFunction cb)
+void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeStamp, CallbackFunction cb)
 {
 	static char last_track_name[128] = "";
 	static unsigned long dec_offset = 0;

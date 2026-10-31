@@ -50,7 +50,6 @@ LoadDirEntryTable(const uqm::io::Directory& dir, const char* path, const uqm::io
 		FreeStringTable(StringTable);
 		return ((DIRENTRY_REF)0);
 	}
-	lpST->size = static_cast<int>(names.size());
 
 	int index {};
 	for (const uqstl::string& name : names)

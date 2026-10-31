@@ -721,7 +721,8 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 		   const INTERSECT_CONTROL* ElementControl, uint16_t Scan)
 {
 	uint8_t EType;
-	char ch, *pStr;
+	char ch;
+	const char* pStr;
 	uint16_t *Amount, Max, Offset;
 	bool PartialPickup;
 

@@ -461,7 +461,7 @@ extern void TransformColor(Color* c, uint16_t scan);
 extern void DrawPlanetSurfaceBorder(void);
 
 extern FRAME GetStarBackGround(bool encounter);
-extern char* GetNamedPlanetaryBody(void);
+extern const char* GetNamedPlanetaryBody(void);
 extern void GetPlanetOrMoonName(char* buf, uint16_t bufsize);
 
 extern void PlanetOrbitMenu(void);

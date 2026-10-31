@@ -435,7 +435,7 @@ DrawButtonText(STAMP stamp, uint16_t which_icon, bool HiLite)
 }
 
 static void
-DrawVerticalText(char* str, GFXPOINT point)
+DrawVerticalText(const char* str, GFXPOINT point)
 {
 	TEXT t;
 	uint16_t i;
@@ -929,7 +929,7 @@ DrawSuperMeleeTitle(void)
 	TEXT t;
 	FONT OldFont;
 	FRAME OldFontEffect;
-	char* buf = GAME_STRING(MELEE_STRING_BASE + 9);
+	const char* buf = GAME_STRING(MELEE_STRING_BASE + 9);
 
 	if (strlen(buf) == 0)
 	{

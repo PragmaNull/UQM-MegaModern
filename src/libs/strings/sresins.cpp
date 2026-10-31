@@ -59,6 +59,16 @@ LoadStringTableInstance(RESOURCE res)
 	return (STRING_TABLE)data;
 }
 
+namespace uqm
+{
+
+StringTablePtr loadStringTable(RESOURCE res)
+{
+	return StringTablePtr {LoadStringTableInstance(res)};
+}
+
+} // namespace uqm
+
 const char*
 LoadStringInstance(RESOURCE res)
 {

@@ -457,7 +457,7 @@ SaveProblemMessage(STAMP* MsgStamp)
 	  };
 	uint16_t i;
 	TEXT t;
-	char* ppStr[MAX_MSG_LINES];
+	const char* ppStr[MAX_MSG_LINES];
 
 	// TODO: This should probably just use DoPopupWindow()
 

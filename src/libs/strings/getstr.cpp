@@ -46,9 +46,8 @@ dword_convert(uint32_t* dword_array, uint16_t num_dwords)
 STRING
 SetStringTableEntry(STRING_TABLE strtab, int index, const void* value, int len)
 {
-	STRING str = &strtab->strings[index];
-	str->bytes.assign(static_cast<const char*>(value), static_cast<size_t>(len));
-	return str;
+	strtab->set(static_cast<size_t>(index), uqstl::string_view {static_cast<const char*>(value), static_cast<size_t>(len)});
+	return strtab->entry(static_cast<size_t>(index));
 }
 
 namespace
@@ -239,7 +238,7 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 
 	for (int i {0}; i < size; ++i)
 	{
-		table->nameIndex.emplace(uqstl::move(names[i]), &table->strings[size + i]);
+		table->indexName(static_cast<size_t>(i));
 	}
 
 	size_t timingIndex {};
@@ -248,7 +247,7 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	yyjson_val* timingValue {};
 	yyjson_obj_foreach(timingLines, timingIndex, timingMax, timingId, timingValue)
 	{
-		if (!table->nameIndex.contains(yyjson_get_str(timingId)))
+		if (!table->find(yyjson_get_str(timingId)))
 		{
 			uqm::log::warn("Warning: '{}' has timing for '{}', which '{}' does not have.", timingPath, yyjson_get_str(timingId),
 						   textPath);
@@ -327,7 +326,7 @@ void* _GetBinaryTableData(const ResourceFile& resource)
 			int i, size;
 			uint8_t* stringptr;
 
-			size = lpST->size;
+			size = static_cast<int>(lpST->size());
 
 			dword_convert(fileData + 1, size + 1);
 			stringptr = (uint8_t*)(fileData + 2 + size + fileData[1]);

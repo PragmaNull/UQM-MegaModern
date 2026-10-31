@@ -26,8 +26,10 @@
 
 #include <stddef.h>
 
-typedef struct string_table_entry STRING_TABLE_ENTRY_DESC;
-typedef struct string_table STRING_TABLE_DESC;
+#include "libs/strings/StringTable.h"
+
+typedef uqm::StringTableEntry STRING_TABLE_ENTRY_DESC;
+typedef uqm::StringTable STRING_TABLE_DESC;
 
 typedef STRING_TABLE_DESC* STRING_TABLE;
 typedef STRING_TABLE_ENTRY_DESC* STRING;
@@ -57,12 +59,20 @@ extern STRING SetRelStringTableIndex(STRING String, int16_t
 extern uint16_t GetStringLength(STRING String);
 extern uint16_t GetStringLengthBin(STRING String);
 extern STRINGPTR GetStringAddress(STRING String);
-extern STRINGPTR GetStringName(STRING String);
-extern STRINGPTR GetStringSoundClip(STRING String);
-extern STRINGPTR GetStringTimeStamp(STRING String);
+extern const char* GetStringName(STRING String);
+extern const char* GetStringSoundClip(STRING String);
+extern const char* GetStringTimeStamp(STRING String);
 extern STRING GetStringByName(STRING_TABLE StringTable, const char* index);
 extern bool CheckResString(RESOURCE res);
 extern const char* LoadStringInstance(RESOURCE res);
+
+namespace uqm
+{
+
+// Returns an empty pointer if the resource is not a string table.
+[[nodiscard]] StringTablePtr loadStringTable(RESOURCE res);
+
+} // namespace uqm
 
 #define UNICHAR_TAB 0x0009
 #define STR_TAB "\x09"

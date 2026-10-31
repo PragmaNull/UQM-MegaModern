@@ -34,7 +34,7 @@
 
 uint16_t RoboTrack[NUM_ROBO_TRACKS];
 
-static int NPCNumberPhrase(int number, const char* fmt, char** ptrack);
+static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack);
 
 // Scans forward until outside of the interpolation then returns the start
 // of the new section of text.
@@ -157,9 +157,9 @@ char* InterpolateChunk(uqstl::span<char> buffer, char* start)
 
 // Creates the file name of subclip # clip_number, and prints it to buffer.
 // Assumes track names end in ".ogg".
-void GetSubClip(uqstl::span<char> buffer, char* pClip, uint16_t clip_number)
+void GetSubClip(uqstl::span<char> buffer, const char* pClip, uint16_t clip_number)
 {
-	char* pStr = strstr(pClip, ".ogg");
+	const char* pStr = strstr(pClip, ".ogg");
 	if (!pStr)
 	{
 		// Fall through passing back the whole thing
@@ -174,8 +174,8 @@ void GetSubClip(uqstl::span<char> buffer, char* pClip, uint16_t clip_number)
 void NPCPhrase_cb(int index, CallbackFunction cb)
 {
 	char* pStr;
-	char* pClip;
-	char* pTimeStamp;
+	const char* pClip;
+	const char* pTimeStamp;
 	uint16_t clip_number = 0;
 	uint16_t i;
 
@@ -301,7 +301,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 			// which we will MultiSplice into the main track.
 			//char *tracks[NUM_ROBO_TRACKS + 1] =
 			//{ [0 ... NUM_ROBO_TRACKS] = nullptr };
-			char* tracks[NUM_ROBO_TRACKS + 1] = {nullptr};
+			const char* tracks[NUM_ROBO_TRACKS + 1] = {nullptr};
 			char subClips[NUM_ROBO_TRACKS][MAX_CLIPNAME] {};
 			for (i = 0; i < NUM_ROBO_TRACKS && RoboTrack[i]; i++)
 			{
@@ -312,8 +312,8 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 #ifdef DEBUG_STARSEED
 					fmt::print(stderr, "Allocating for track {}.\n", i);
 #endif
+					GetSubClip(subClips[i], pClip, clip_number);
 					tracks[i] = subClips[i];
-					GetSubClip({tracks[i], MAX_CLIPNAME}, pClip, clip_number);
 #ifdef DEBUG_STARSEED
 					fmt::print(stderr, "RoboTrack[{}] = <<{}>>.\n", i, tracks[i]);
 #endif
@@ -351,7 +351,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 void NPCPhrase_splice(int index)
 {
 	char* pStr;
-	void* pClip;
+	const char* pClip;
 
 	assert(index >= 0);
 	if (index == 0)
@@ -370,9 +370,7 @@ void NPCPhrase_splice(int index)
 	}
 	else
 	{ // Splicing in some voice
-		char* tracks[] = {nullptr, nullptr};
-
-		tracks[0] = (char*)pClip;
+		const char* tracks[] = {pClip, nullptr};
 		SpliceMultiTrack(tracks, pStr);
 	}
 }
@@ -398,14 +396,14 @@ void NPCNumber(int number, const char* fmt)
 }
 
 static int
-NPCNumberPhrase(int number, const char* fmt, char** ptrack)
+NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 {
 #define MAX_NUMBER_TRACKS 20
 	NUMBER_SPEECH speech = CommData.AlienNumberSpeech;
 	uint16_t i;
 	int queued = 0;
 	int toplevel = 0;
-	char* TrackNames[MAX_NUMBER_TRACKS];
+	const char* TrackNames[MAX_NUMBER_TRACKS];
 	char numbuf[60] {};
 	const SPEECH_DIGIT* dig = nullptr;
 

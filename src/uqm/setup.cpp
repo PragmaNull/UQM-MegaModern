@@ -78,7 +78,7 @@ FRAME BorderFrame;
 FRAME HDBorderFrame;
 FRAME CustBevelFrame;
 FRAME DefBevelFrame;
-STRING GameStrings;
+uqm::StringTablePtr GameStrings {};
 QUEUE disp_q;
 
 bool solTexturesPresent;
@@ -405,8 +405,8 @@ InitKernel(void)
 	}
 	AdvanceLoadProgress();
 
-	GameStrings = CaptureStringTable(LoadStringTable(STARCON_GAME_STRINGS));
-	if (GameStrings == 0)
+	GameStrings = uqm::loadStringTable(STARCON_GAME_STRINGS);
+	if (!GameStrings)
 	{
 		return false;
 	}

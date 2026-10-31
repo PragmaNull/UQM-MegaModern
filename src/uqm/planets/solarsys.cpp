@@ -2974,7 +2974,7 @@ void ExploreSolarSys(void)
 	pSolarSysState = 0;
 }
 
-char* GetNamedPlanetaryBody(void)
+const char* GetNamedPlanetaryBody(void)
 {
 	if (!CurStarDescPtr || !playerInSolarSystem()
 		|| !playerInInnerSystem())
@@ -3112,7 +3112,7 @@ char* GetNamedPlanetaryBody(void)
 
 void GetPlanetOrMoonName(char* buf, uint16_t bufsize)
 {
-	char* named;
+	const char* named;
 	char* tempbuf;
 	int moon, i;
 	bool name_has_suffix = false;
