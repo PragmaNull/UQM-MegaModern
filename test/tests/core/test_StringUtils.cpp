@@ -905,11 +905,11 @@ TEST_F(StringUtilsTest, TrimLeft_EmptyInput)
 	EXPECT_EQ(trimLeft(""), "");
 }
 
-TEST_F(StringUtilsTest, TrimLeft_AllWhitespace_ReturnsOriginal)
+TEST_F(StringUtilsTest, TrimLeft_AllWhitespace_ReturnsEmpty)
 {
-	// When no non-trim chars exist, the implementation returns the original view unchanged.
 	uqstl::string_view input {"   "};
-	EXPECT_EQ(trimLeft(input), "   ");
+	EXPECT_EQ(trimLeft(input), "");
+	EXPECT_EQ(trimLeft(input).data(), input.data() + input.size());
 }
 
 TEST_F(StringUtilsTest, TrimLeft_CustomTrimChars)
@@ -960,11 +960,11 @@ TEST_F(StringUtilsTest, TrimRight_EmptyInput)
 	EXPECT_EQ(trimRight(""), "");
 }
 
-TEST_F(StringUtilsTest, TrimRight_AllWhitespace_ReturnsOriginal)
+TEST_F(StringUtilsTest, TrimRight_AllWhitespace_ReturnsEmpty)
 {
-	// When no non-trim chars exist, the implementation returns the original view unchanged.
 	uqstl::string_view input {"   "};
-	EXPECT_EQ(trimRight(input), "   ");
+	EXPECT_EQ(trimRight(input), "");
+	EXPECT_EQ(trimRight(input).data(), input.data());
 }
 
 TEST_F(StringUtilsTest, TrimRight_CustomTrimChars)
@@ -1009,12 +1009,10 @@ TEST_F(StringUtilsTest, Trim_EmptyInput)
 	EXPECT_EQ(trim(""), "");
 }
 
-TEST_F(StringUtilsTest, Trim_AllWhitespace_ReturnsOriginal)
+TEST_F(StringUtilsTest, Trim_AllWhitespace_ReturnsEmpty)
 {
-	// trimLeft returns the original for all-whitespace, so trimRight has the same
-	// all-whitespace input and also returns it unchanged.
-	uqstl::string_view input {"   "};
-	EXPECT_EQ(trim(input), "   ");
+	EXPECT_EQ(trim("   "), "");
+	EXPECT_EQ(trim(" \t\r\n"), "");
 }
 
 TEST_F(StringUtilsTest, Trim_InternalWhitespacePreserved)

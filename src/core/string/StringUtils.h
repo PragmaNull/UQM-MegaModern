@@ -280,7 +280,7 @@ inline uqstl::string_view trimLeft(const uqstl::string_view in, const char* trim
 	{
 		return in.substr(firstNonSpacePos);
 	}
-	return in;
+	return in.substr(in.size());
 }
 inline uqstl::string_view trimRight(const uqstl::string_view in, const char* trimChars = " \t\r\n")
 {
@@ -288,7 +288,7 @@ inline uqstl::string_view trimRight(const uqstl::string_view in, const char* tri
 	{
 		return in.substr(0, lastNonSpacePos + 1);
 	}
-	return in;
+	return in.substr(0, 0);
 }
 
 inline uqstl::string_view trim(const uqstl::string_view in, const char* trimChars = " \t\r\n")

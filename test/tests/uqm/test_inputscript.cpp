@@ -21,7 +21,7 @@ InputScript parseOrFail(uqstl::string_view text)
 
 TEST(InputScriptTest, ParsesCommands)
 {
-	const InputScript script {parseOrFail("# comment\n\ndown 2\r\nSelect\nwait 500\ndelay 50\ndumpmenu\nlog hello world\nscreenshot\nquit\n")};
+	const InputScript script {parseOrFail("# comment\n\n \t\ndown 2\r\nSelect\nwait 500\ndelay 50\ndumpmenu\nlog hello world\nscreenshot\nquit\n")};
 	const auto commands {script.commands()};
 	ASSERT_EQ(commands.size(), 9u);
 	EXPECT_EQ(commands[0].kind, ScriptCommand::Kind::Press);
