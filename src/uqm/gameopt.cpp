@@ -2117,6 +2117,8 @@ bool GameOptions(void)
 			{
 				uqm::log::info("Loaded the save file '{}'.", path);
 			}
+			// Fades the screen in, as the load menu does.
+			FadeScreen(FadeAllToColor, 0);
 			uqm::currentActivity() |= loaded ? CHECK_LOAD : CHECK_ABORT;
 			return false;
 		}

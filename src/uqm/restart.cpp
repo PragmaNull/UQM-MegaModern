@@ -464,6 +464,26 @@ RestartMessage(void)
 	return true;
 }
 
+// The save of --play-save is loaded.
+static bool s_playSaveTaken {};
+
+// True if the main menu loads the save of --play-save.
+static bool
+HasPlaySave(void)
+{
+	return !s_playSaveTaken && !uqm::UQMOptions::read().playSave.empty();
+}
+
+const char* TakePlaySave(void)
+{
+	if (!HasPlaySave())
+	{
+		return nullptr;
+	}
+	s_playSaveTaken = true;
+	return uqm::UQMOptions::read().playSave.c_str();
+}
+
 static bool
 DoRestart(MENU_STATE* pMS)
 {
@@ -484,7 +504,7 @@ DoRestart(MENU_STATE* pMS)
 		pMS->CurState = PLAY_SUPER_MELEE;
 		PulsedInputState.menu[KEY_MENU_SELECT] = 65535;
 	}
-	else if (optLoadGame && !optSuperMelee)
+	else if ((optLoadGame || HasPlaySave()) && !optSuperMelee)
 	{
 		pMS->CurState = LOAD_SAVED_GAME;
 		PulsedInputState.menu[KEY_MENU_SELECT] = 65535;
@@ -691,9 +711,6 @@ DoRestart(MENU_STATE* pMS)
 	return true;
 }
 
-// The last game ended with the Utwig bomb.
-static bool s_suicideEnding {};
-
 void ShowGameEnding(void)
 {
 	const ACTIVITY lastActivity {uqm::currentActivity()};
@@ -701,7 +718,6 @@ void ShowGameEnding(void)
 	SetContext(ScreenContext);
 
 	uqm::currentActivity() |= CHECK_ABORT;
-	s_suicideEnding = false;
 	if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
 		&& GET_GAME_STATE(UTWIG_BOMB_ON_SHIP)
 		&& !GET_GAME_STATE(UTWIG_BOMB)
@@ -715,7 +731,6 @@ void ShowGameEnding(void)
 
 		ClearDrawable();
 		FlushColorXForms();
-		s_suicideEnding = true;
 
 		uqm::currentActivity() = IN_ENCOUNTER;
 
@@ -725,6 +740,9 @@ void ShowGameEnding(void)
 		}
 
 		DeathBySuicide = false;
+
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 8));
+		SleepThread(GameTicksPerSecond * 3);
 	}
 	else
 	{
@@ -770,8 +788,6 @@ RestartMenu(MENU_STATE* pMS)
 
 	SetContext(ScreenContext);
 
-	TimeCount TimeOut {s_suicideEnding ? GameTicksPerSecond / 8 : GameTicksPerSecond / 2};
-	s_suicideEnding = false;
 	FreeGameData();
 	uqm::currentActivity() = CHECK_ABORT;
 
@@ -781,13 +797,8 @@ RestartMenu(MENU_STATE* pMS)
 	// TODO: This fade is not always necessary, especially after a splash
 	//   screen. It only makes a user wait.
 	// Kruzen: This fade is needed when going from SUPER-MELEE and LOAD menus
-	// and when Skip Intro option is enabled, 3 second pause goes when
-	// the player used the Utwig bomb
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, TimeOut));
-	if (TimeOut == GameTicksPerSecond / 8)
-	{
-		SleepThread(GameTicksPerSecond * 3);
-	}
+	// and when Skip Intro option is enabled
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
 
 	pMS->CurFrame = CaptureDrawable(LoadGraphic(RESTART_PMAP_ANIM));
 
@@ -828,9 +839,7 @@ RestartMenu(MENU_STATE* pMS)
 		return (false); // quit
 	}
 
-	TimeOut = FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2);
-
-	SleepThreadUntil(TimeOut);
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
 	FlushColorXForms();
 
 	SeedRandomNumbers();
@@ -873,85 +882,46 @@ TryStartGame(void)
 	return true;
 }
 
-// True while the save of --play-save waits to load.
-static bool s_playSavePending {};
-
-// Starts a game that loads the save of --play-save, the first time only. Returns false if there is no such save.
-static bool
-StartPlaySave(void)
-{
-	static bool s_playSaveStarted {};
-	if (s_playSaveStarted || uqm::UQMOptions::read().playSave.empty())
-	{
-		return false;
-	}
-	s_playSaveStarted = true;
-	s_playSavePending = true;
-	// What the main menu does before LOAD starts a game.
-	ReinitQueue(&race_q[0]);
-	ReinitQueue(&race_q[1]);
-	FreeGameData();
-	UninitMenuMusic();
-	FlushColorXForms();
-	SeedRandomNumbers();
-	LastActivity = CHECK_LOAD;
-	uqm::currentActivity() = IN_INTERPLANETARY;
-	return true;
-}
-
-const char* TakePlaySave(void)
-{
-	if (!s_playSavePending)
-	{
-		return nullptr;
-	}
-	s_playSavePending = false;
-	return uqm::UQMOptions::read().playSave.c_str();
-}
-
 bool StartGame(void)
 {
-	if (!StartPlaySave())
+	do
 	{
-		do
+		while (!TryStartGame())
 		{
-			while (!TryStartGame())
+			if (uqm::currentActivity() == (ACTIVITY)~0)
+			{ // timed out
+				uqm::currentActivity() = 0;
+
+				if (optRequiresRestart || optRequiresReload)
+				{
+					optRequiresRestart = optRequiresReload = false;
+				}
+				else
+				{
+					SplashScreen(0);
+					if (uqm::UQMOptions::read().whichIntro == uqm::EmulationMode::Console3DO)
+					{
+						Drumall();
+					}
+					Credits(false);
+				}
+			}
+
+			if (uqm::currentActivity() & CHECK_ABORT)
 			{
-				if (uqm::currentActivity() == (ACTIVITY)~0)
-				{ // timed out
-					uqm::currentActivity() = 0;
-
-					if (optRequiresRestart || optRequiresReload)
-					{
-						optRequiresRestart = optRequiresReload = false;
-					}
-					else
-					{
-						SplashScreen(0);
-						if (uqm::UQMOptions::read().whichIntro == uqm::EmulationMode::Console3DO)
-						{
-							Drumall();
-						}
-						Credits(false);
-					}
-				}
-
-				if (uqm::currentActivity() & CHECK_ABORT)
-				{
-					return (false); // quit
-				}
+				return (false); // quit
 			}
+		}
 
-			if (LastActivity & CHECK_RESTART)
-			{ // starting a new game
-				if (!uqm::UQMOptions::read().skipIntro)
-				{
-					Introduction();
-				}
+		if (LastActivity & CHECK_RESTART)
+		{ // starting a new game
+			if (!uqm::UQMOptions::read().skipIntro)
+			{
+				Introduction();
 			}
+		}
 
-		} while (uqm::currentActivity() & CHECK_ABORT);
-	}
+	} while (uqm::currentActivity() & CHECK_ABORT);
 
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "StartGame called for {} mode with seed {} shipseed {}.\n",

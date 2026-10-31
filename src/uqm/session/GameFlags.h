@@ -24,6 +24,12 @@ struct GameFlagInfo
 	uqstl::string_view name;
 	// The number of bits that a save keeps for the value.
 	uint8_t bits;
+
+	// The largest value that fits in the bits.
+	[[nodiscard]] constexpr uint32_t maxValue() const noexcept
+	{
+		return bits >= 32 ? UINT32_MAX : (uint32_t {1} << bits) - 1;
+	}
 };
 
 inline constexpr GameFlagInfo c_gameFlags[] {

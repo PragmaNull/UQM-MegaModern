@@ -282,8 +282,7 @@ void SaveGameStateFlags(yyjson_mut_doc* doc, yyjson_mut_val* root, const uqm::Ga
 	{
 		const uqm::GameFlagInfo& info {uqm::c_gameFlags[index]};
 		const uint32_t value {gameState.flag(static_cast<uqm::GameFlag>(index))};
-		const uint32_t maxValue {info.bits >= 32 ? UINT32_MAX : (uint32_t {1} << info.bits) - 1};
-		if (value > maxValue)
+		if (value > info.maxValue())
 		{
 			uqm::log::error("Game state '{}' ({}) does not fit in {} bits.", info.name, value, info.bits);
 		}
@@ -399,7 +398,7 @@ PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 			{
 				SummPtr->Activity = IN_STARBASE;
 			}
-			else if (playerInPlanetOrbit())
+			else if (uqm::flagship().inOrbit != 0)
 			{
 				SummPtr->Activity = IN_PLANET_ORBIT;
 			}

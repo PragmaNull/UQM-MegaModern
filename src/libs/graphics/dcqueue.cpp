@@ -476,7 +476,13 @@ void TFB_FlushGraphics(void)
 		}
 		else if (TFB_ImGuiVisible())
 		{
-			TFB_SwapBuffers(uqm::TFBRedraw::Expose);
+			// The overlay draws at most once for each frame of a 60 Hz display.
+			static uqstl::chrono::steady_clock::time_point s_lastOverlayFrame {};
+			if (start - s_lastOverlayFrame >= uqstl::chrono::microseconds {16'667})
+			{
+				s_lastOverlayFrame = start;
+				TFB_SwapBuffers(uqm::TFBRedraw::Expose);
+			}
 			TaskSwitch();
 		}
 		else

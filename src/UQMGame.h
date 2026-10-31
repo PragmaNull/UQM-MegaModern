@@ -23,7 +23,6 @@
 #include "options/options.h"
 #include "core/log/logger.h"
 
-#include "core/stl/atomic.h"
 #include "core/stl/memory.h"
 #include "core/stl/thread.h"
 #include <cstdint>
@@ -48,7 +47,7 @@ public:
 
 	// Use the session functions on the game thread only.
 	// Makes a session and starts its game. Ends the session that runs.
-	GameSession& beginSession(SessionKind kind);
+	void beginSession(SessionKind kind);
 	// Ends the game of the session that runs, and destroys the session.
 	void endSession();
 	// The session that runs, or nullptr.
@@ -74,7 +73,7 @@ private:
 	Logger m_logger {};
 	uqstl::jthread m_gameThread {};
 	// The return value of Starcon2Main.
-	uqstl::atomic<int> m_gameExitCode {EXIT_SUCCESS};
+	int m_gameExitCode {EXIT_SUCCESS};
 	uqstl::unique_ptr<GameSession> m_session {};
 	uint16_t m_activity {};
 	uint8_t m_globalFlags {};

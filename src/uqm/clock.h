@@ -50,14 +50,9 @@ typedef enum
 
 #define AllocEvent() AllocLink(&uqm::gameState().clock().events())
 #define PutEvent(h) PutQueue(&uqm::gameState().clock().events(), (h))
-#define InsertEvent(h, i) InsertQueue(&uqm::gameState().clock().events(), (h), (i))
-#define GetHeadEvent() GetHeadLink(&uqm::gameState().clock().events())
-#define GetTailEvent() GetTailLink(&uqm::gameState().clock().events())
 #define LockEvent(h, ppe) (*(ppe) = (EVENT*)LockLink(&uqm::gameState().clock().events(), h))
 #define UnlockEvent(h) UnlockLink(&uqm::gameState().clock().events(), (h))
-#define RemoveEvent(h) RemoveQueue(&uqm::gameState().clock().events(), (h))
 #define FreeEvent(h) FreeLink(&uqm::gameState().clock().events(), (h))
-#define GetPredEvent(l) _GetPredLink(l)
 #define GetSuccEvent(l) _GetSuccLink(l)
 #define ForAllEvents(callback, arg) ForAllLinks(&uqm::gameState().clock().events(), \
 												(void (*)(LINK*, void*))(callback), (arg))

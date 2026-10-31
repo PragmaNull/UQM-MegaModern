@@ -34,7 +34,7 @@ constexpr uint8_t c_startDay {17};
 	return year < otherYear || (year == otherYear && (month < otherMonth || (month == otherMonth && day < otherDay)));
 }
 
-[[nodiscard]] EVENT* lockEvent(QUEUE& events, HEVENT event)
+[[nodiscard]] EVENT* lockEvent(const QUEUE& events, HEVENT event)
 {
 	// An EVENT starts with the LINK fields.
 	return reinterpret_cast<EVENT*>(LockLink(&events, event));
@@ -201,10 +201,23 @@ uqstl::optional<EVENT> GameClock::firstEvent() const
 	{
 		return uqstl::nullopt;
 	}
-	// An EVENT starts with the LINK fields.
-	const EVENT result {*reinterpret_cast<const EVENT*>(LockLink(&m_events, event))};
+	const EVENT result {*lockEvent(m_events, event)};
 	UnlockLink(&m_events, event);
 	return result;
+}
+
+uqstl::vector<EVENT> GameClock::eventList() const
+{
+	uqstl::vector<EVENT> events {};
+	for (HEVENT event {GetHeadLink(&m_events)}; event != nullptr;)
+	{
+		const EVENT* const eventPtr {lockEvent(m_events, event)};
+		events.push_back(*eventPtr);
+		const HEVENT next {_GetSuccLink(eventPtr)};
+		UnlockLink(&m_events, event);
+		event = next;
+	}
+	return events;
 }
 
 bool GameClock::isBefore(uint16_t year, uint16_t month, uint16_t day) const noexcept

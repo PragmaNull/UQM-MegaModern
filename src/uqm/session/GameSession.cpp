@@ -6,6 +6,7 @@
 #include "core/log/log.h"
 #include "uqm/clock.h"
 #include "uqm/gameev.h"
+#include "uqm/globdata.h"
 #include "uqm/lua/luastate.h"
 
 namespace uqm

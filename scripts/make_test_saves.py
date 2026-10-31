@@ -40,6 +40,15 @@ def stamp_random_groups(save):
     group.update({"day_index": date.day, "month_index": date.month, "year_index": date.year})
 
 
+def summary_flags(flags):
+    """The lander upgrades and the bomb state, as the summary of a save keeps them."""
+    return (flags["LANDER_SHIELDS"]
+            | flags["IMPROVED_LANDER_SPEED"] << 4
+            | flags["IMPROVED_LANDER_CARGO"] << 5
+            | flags["IMPROVED_LANDER_SHOT"] << 6
+            | (flags["CHMMR_BOMB_STATE"] >= 2) << 7)
+
+
 def set_activity(save, activity, summary_activity):
     save["globalState"]["CurrentActivity"] = activity
     save["summary"]["Activity"] = summary_activity
@@ -132,8 +141,8 @@ def late_game(save):
         flags[name] = value
     summary["MCreditLo"] = 120
     summary["MCreditHi"] = 3
-    # The summary flags and devices that the game makes from the flags above.
-    summary["Flags"] = 19
+    summary["Flags"] = summary_flags(flags)
+    # The devices that the game finds from the flags above.
     summary["DeviceList"] = [2, 3, 5, 27]
     stamp_random_groups(save)
 

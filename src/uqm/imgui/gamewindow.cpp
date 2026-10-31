@@ -10,7 +10,6 @@
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
 #include "core/string/StringUtils.h"
-#include "core/thread/Mutex.h"
 #include "libs/graphics/imgui/toolwindows.h"
 #include "uqm/clock.h"
 #include "uqm/gameev.h"
@@ -28,14 +27,6 @@ namespace
 constexpr double c_refreshSeconds {0.5};
 const ImVec4 c_changedColor {1.0f, 0.85f, 0.2f, 1.0f};
 
-struct EventView
-{
-	uint8_t day {};
-	uint8_t month {};
-	uint16_t year {};
-	uint8_t funcIndex {};
-};
-
 // A copy of the game state that the main thread can read.
 struct GameView
 {
@@ -46,39 +37,18 @@ struct GameView
 	uint16_t year {};
 	int16_t tickCount {};
 	int16_t dayInTicks {};
-	uqstl::vector<EventView> events {};
-	bool hasAutopilot {};
-	GFXPOINT autopilot {};
-	GFXPOINT ipLocation {};
-	uint16_t shipFacing {};
-	uint8_t ipPlanet {};
-	uint8_t inOrbit {};
-	int32_t logX {};
-	int32_t logY {};
-	uint32_t resUnits {};
-	uint32_t fuel {};
-	uint16_t crew {};
-	uint8_t landers {};
-	uqstl::string shipName {};
-	uqstl::string commanderName {};
+	uqstl::vector<EVENT> events {};
+	FlagshipState flagship {};
+	SIS_STATE sis {};
 };
 
-// The snapshot from the game thread.
-struct SnapshotResult
-{
-	Mutex lock {};
-	// Nullopt if no game runs.
-	uqstl::optional<GameView> view UQM_GUARDED_BY(lock) {};
-	bool done UQM_GUARDED_BY(lock) {};
-};
-
-SnapshotResult s_result {};
+// Nullopt if no game runs.
+GameThreadResult<uqstl::optional<GameView>> s_snapshot {};
 uqstl::optional<GameView> s_view {};
 // The flags of the snapshot before s_view, to find the flags that changed.
 uqstl::optional<uqstl::array<uint32_t, c_gameFlagCount>> s_previousFlags {};
-bool s_requested {};
-bool s_hasSnapshot {};
-double s_lastRequest {};
+bool s_hasResult {};
+double s_lastRequest {-c_refreshSeconds};
 char s_flagFilter[64] {};
 int s_daysToAdvance {1};
 
@@ -91,74 +61,38 @@ int s_daysToAdvance {1};
 	{
 		view.flags[index] = state.flag(static_cast<GameFlag>(index));
 	}
-
-	GameClock& clock {state.clock()};
+	const GameClock& clock {state.clock()};
 	view.day = clock.day();
 	view.month = clock.month();
 	view.year = clock.year();
 	view.tickCount = clock.tickCount();
 	view.dayInTicks = clock.dayInTicks();
-	QUEUE& events {clock.events()};
-	for (HEVENT event {GetHeadLink(&events)}; event != nullptr;)
-	{
-		// An EVENT starts with the LINK fields.
-		const EVENT* const eventPtr {reinterpret_cast<const EVENT*>(LockLink(&events, event))};
-		view.events.push_back({eventPtr->day_index, eventPtr->month_index, eventPtr->year_index, eventPtr->func_index});
-		const HEVENT next {_GetSuccLink(eventPtr)};
-		UnlockLink(&events, event);
-		event = next;
-	}
-
-	const FlagshipState& flagship {state.flagship()};
-	view.hasAutopilot = flagship.autopilot.hasTarget();
-	view.autopilot = flagship.autopilot.target();
-	view.ipLocation = flagship.ipLocation;
-	view.shipFacing = flagship.shipFacing;
-	view.ipPlanet = flagship.ipPlanet;
-	view.inOrbit = flagship.inOrbit;
-
-	const SIS_STATE& sis {state.sis()};
-	view.logX = sis.log_x;
-	view.logY = sis.log_y;
-	view.resUnits = sis.ResUnits;
-	view.fuel = sis.FuelOnBoard;
-	view.crew = sis.CrewEnlisted;
-	view.landers = sis.NumLanders;
-	view.shipName = sis.ShipName;
-	view.commanderName = sis.CommanderName;
+	view.events = clock.eventList();
+	view.flagship = state.flagship();
+	view.sis = state.sis();
 	return view;
 }
 
 void requestSnapshot()
 {
-	s_requested = true;
-	s_hasSnapshot = true;
 	s_lastRequest = ImGui::GetTime();
-	runOnGameThread([] {
-		uqstl::optional<GameView> view {};
-		if (IsGameInProgress())
+	s_snapshot.start([]() -> uqstl::optional<GameView> {
+		if (!IsGameInProgress())
 		{
-			view = takeView();
+			return uqstl::nullopt;
 		}
-		LockGuard guard {s_result.lock};
-		s_result.view = uqstl::move(view);
-		s_result.done = true;
+		return takeView();
 	});
 }
 
 void receiveSnapshot()
 {
-	uqstl::optional<GameView> view {};
+	auto result {s_snapshot.take()};
+	if (!result)
 	{
-		LockGuard guard {s_result.lock};
-		if (!s_result.done)
-		{
-			return;
-		}
-		s_result.done = false;
-		view = uqstl::move(s_result.view);
+		return;
 	}
-	s_requested = false;
+	s_hasResult = true;
 	if (s_view)
 	{
 		s_previousFlags = s_view->flags;
@@ -167,7 +101,7 @@ void receiveSnapshot()
 	{
 		s_previousFlags.reset();
 	}
-	s_view = uqstl::move(view);
+	s_view = uqstl::move(*result);
 }
 
 // Changes the game on the game thread, if a game runs, and takes a new snapshot after it.
@@ -187,11 +121,6 @@ void textDisabledWrapped(const char* text)
 	ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
 	ImGui::TextWrapped("%s", text);
 	ImGui::PopStyleColor();
-}
-
-[[nodiscard]] uint32_t maxFlagValue(const GameFlagInfo& info)
-{
-	return info.bits >= 32 ? UINT32_MAX : (uint32_t {1} << info.bits) - 1;
 }
 
 [[nodiscard]] uqstl::string activityText(ACTIVITY activity)
@@ -249,7 +178,7 @@ void drawFlagRow(size_t index)
 		&& edited != value)
 	{
 		const GameFlag flag {static_cast<GameFlag>(index)};
-		const uint32_t clamped {uqstl::min(edited, maxFlagValue(info))};
+		const uint32_t clamped {uqstl::min(edited, info.maxValue())};
 		changeGame([flag, clamped] {
 			gameState().setFlag(flag, clamped);
 		});
@@ -275,27 +204,23 @@ void drawFlags()
 	ImGui::TableHeadersRow();
 
 	const uqstl::string_view filter {s_flagFilter};
-	if (filter.empty())
+	static uqstl::vector<size_t> s_rows {};
+	s_rows.clear();
+	for (size_t index {0}; index < c_gameFlagCount; ++index)
 	{
-		ImGuiListClipper clipper {};
-		clipper.Begin(static_cast<int>(c_gameFlagCount));
-		while (clipper.Step())
+		const uqstl::string_view name {c_gameFlags[index].name};
+		if (uqstl::search(name.begin(), name.end(), filter.begin(), filter.end(), compareCharICase) != name.end())
 		{
-			for (int row {clipper.DisplayStart}; row < clipper.DisplayEnd; ++row)
-			{
-				drawFlagRow(static_cast<size_t>(row));
-			}
+			s_rows.push_back(index);
 		}
 	}
-	else
+	ImGuiListClipper clipper {};
+	clipper.Begin(static_cast<int>(s_rows.size()));
+	while (clipper.Step())
 	{
-		for (size_t index {0}; index < c_gameFlagCount; ++index)
+		for (int row {clipper.DisplayStart}; row < clipper.DisplayEnd; ++row)
 		{
-			const uqstl::string_view name {c_gameFlags[index].name};
-			if (uqstl::search(name.begin(), name.end(), filter.begin(), filter.end(), compareCharICase) != name.end())
-			{
-				drawFlagRow(index);
-			}
+			drawFlagRow(s_rows[static_cast<size_t>(row)]);
 		}
 	}
 	ImGui::EndTable();
@@ -345,13 +270,13 @@ void drawClock()
 		ImGui::TableSetupColumn("Date", ImGuiTableColumnFlags_WidthFixed, ImGui::GetFontSize() * 7.0f);
 		ImGui::TableSetupColumn("Event");
 		ImGui::TableHeadersRow();
-		for (const EventView& event : view.events)
+		for (const EVENT& event : view.events)
 		{
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
-			ImGui::Text("%04u-%02u-%02u", event.year, event.month, event.day);
+			ImGui::Text("%04u-%02u-%02u", event.year_index, event.month_index, event.day_index);
 			ImGui::TableNextColumn();
-			ImGui::TextUnformatted(eventText(event.funcIndex));
+			ImGui::TextUnformatted(eventText(event.func_index));
 		}
 		ImGui::EndTable();
 	}
@@ -374,31 +299,31 @@ void drawSisValue(const char* label, T value, ImGuiDataType type, void (*set)(SI
 void drawShip()
 {
 	const GameView& view {*s_view};
-	ImGui::Text("Ship: %s, captain %s", view.shipName.c_str(), view.commanderName.c_str());
+	ImGui::Text("Ship: %s, captain %s", view.sis.ShipName, view.sis.CommanderName);
 	ImGui::Text("Activity: %s", activityText(view.activity).c_str());
 
 	ImGui::SeparatorText("Resources");
-	drawSisValue<uint32_t>("Resource units", view.resUnits, ImGuiDataType_U32, [](SIS_STATE& sis, uint32_t value) {
+	drawSisValue<uint32_t>("Resource units", view.sis.ResUnits, ImGuiDataType_U32, [](SIS_STATE& sis, uint32_t value) {
 		sis.ResUnits = value;
 	});
-	drawSisValue<uint32_t>("Fuel (1/100 units)", view.fuel, ImGuiDataType_U32, [](SIS_STATE& sis, uint32_t value) {
+	drawSisValue<uint32_t>("Fuel (1/100 units)", view.sis.FuelOnBoard, ImGuiDataType_U32, [](SIS_STATE& sis, uint32_t value) {
 		sis.FuelOnBoard = value;
 	});
-	drawSisValue<uint16_t>("Crew", view.crew, ImGuiDataType_U16, [](SIS_STATE& sis, uint16_t value) {
+	drawSisValue<uint16_t>("Crew", view.sis.CrewEnlisted, ImGuiDataType_U16, [](SIS_STATE& sis, uint16_t value) {
 		sis.CrewEnlisted = value;
 	});
-	drawSisValue<uint8_t>("Landers", view.landers, ImGuiDataType_U8, [](SIS_STATE& sis, uint8_t value) {
+	drawSisValue<uint8_t>("Landers", view.sis.NumLanders, ImGuiDataType_U8, [](SIS_STATE& sis, uint8_t value) {
 		sis.NumLanders = value;
 	});
 	textDisabledWrapped("The status panel shows a new value when the game draws it again.");
 
 	ImGui::SeparatorText("Location");
-	ImGui::Text("Star map: %d, %d", view.logX, view.logY);
-	ImGui::Text("In the star system: %d, %d", view.ipLocation.x, view.ipLocation.y);
-	ImGui::Text("Planet: %u, orbit: %u, facing: %u", view.ipPlanet, view.inOrbit, view.shipFacing);
-	if (view.hasAutopilot)
+	ImGui::Text("Star map: %d, %d", view.sis.log_x, view.sis.log_y);
+	ImGui::Text("In the star system: %d, %d", view.flagship.ipLocation.x, view.flagship.ipLocation.y);
+	ImGui::Text("Planet: %u, orbit: %u, facing: %u", view.flagship.ipPlanet, view.flagship.inOrbit, view.flagship.shipFacing);
+	if (view.flagship.autopilot.hasTarget())
 	{
-		ImGui::Text("Autopilot: %d, %d", view.autopilot.x, view.autopilot.y);
+		ImGui::Text("Autopilot: %d, %d", view.flagship.autopilot.target().x, view.flagship.autopilot.target().y);
 		ImGui::SameLine();
 		if (ImGui::SmallButton("Clear"))
 		{
@@ -423,14 +348,14 @@ void drawGameWindow(bool& open)
 	}
 
 	receiveSnapshot();
-	if (!s_requested && (!s_hasSnapshot || ImGui::GetTime() - s_lastRequest >= c_refreshSeconds))
+	if (!s_snapshot.pending() && ImGui::GetTime() - s_lastRequest >= c_refreshSeconds)
 	{
 		requestSnapshot();
 	}
 
 	if (!s_view)
 	{
-		ImGui::TextDisabled(s_hasSnapshot && !s_requested ? "No game is in progress." : "Waiting for the game thread...");
+		ImGui::TextDisabled(s_hasResult ? "No game is in progress." : "Waiting for the game thread...");
 		ImGui::End();
 		return;
 	}

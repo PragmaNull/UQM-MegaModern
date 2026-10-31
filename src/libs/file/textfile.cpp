@@ -2,6 +2,8 @@
 #include "textfile.h"
 
 #include "core/log/log.h"
+#include "core/stl/fstream.h"
+#include "core/stl/iterator.h"
 
 #include <fmt/format.h>
 
@@ -36,6 +38,16 @@ uqstl::optional<Container> readWholeFile(const io::Directory& dir, uqgsl::czstri
 uqstl::optional<uqstl::string> readTextFile(const io::Directory& dir, uqgsl::czstring name)
 {
 	return readWholeFile<uqstl::string>(dir, name);
+}
+
+uqstl::optional<uqstl::string> readTextFile(uqgsl::czstring path)
+{
+	uqstl::ifstream file {path, uqstl::ios::binary};
+	if (!file)
+	{
+		return uqstl::nullopt;
+	}
+	return uqstl::string {uqstl::istreambuf_iterator<char> {file}, uqstl::istreambuf_iterator<char> {}};
 }
 
 uqstl::optional<uqstl::vector<uqstl::byte>> readBinaryFile(const io::Directory& dir, uqgsl::czstring name)

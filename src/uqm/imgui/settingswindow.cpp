@@ -5,11 +5,8 @@
 #include <imgui.h>
 #include "options.h"
 #include "core/log/log.h"
-#include "core/stl/functional.h"
-#include "core/stl/memory.h"
 #include "core/stl/set.h"
 #include "core/string/StringUtils.h"
-#include "core/thread/Mutex.h"
 #include "configuration/Configuration.h"
 #include "libs/graphics/imgui/toolwindows.h"
 #include "uqm/imgui/gamethread.h"
@@ -24,18 +21,16 @@ namespace
 
 constexpr int c_maxMenuDepth {4};
 
-// The menu definition, which the game thread reads.
-struct LoadedDefinition
-{
-	Mutex lock {};
-	uqstl::optional<MenuDefinition> definition UQM_GUARDED_BY(lock) {};
-	bool done UQM_GUARDED_BY(lock) {};
-};
+using SettingKeys = uqstl::set<uqstl::string, uqstl::less<>>;
 
-LoadedDefinition s_loaded {};
+// The game thread reads the menu definition. Nullopt if it cannot.
+GameThreadResult<uqstl::optional<MenuDefinition>> s_load {};
 uqstl::optional<MenuDefinition> s_definition {};
-bool s_loadRequested {};
+// The settings that the menus show.
+SettingKeys s_shownSettings {};
 bool s_loadFailed {};
+
+void collectShownSettings(const MenuDefinition& definition, const MenuDef& menu, SettingKeys& keys, int depth);
 
 void setSetting(uqstl::string key, uqstl::string text)
 {
@@ -81,21 +76,18 @@ const MenuDefinition* menuDefinition()
 	{
 		return &*s_definition;
 	}
-	if (!s_loadRequested)
+	if (auto result {s_load.take()})
 	{
-		s_loadRequested = true;
-		runOnGameThread([] {
-			auto definition {readSetupMenuDefinition()};
-			LockGuard guard {s_loaded.lock};
-			s_loaded.definition = uqstl::move(definition);
-			s_loaded.done = true;
-		});
-	}
-	LockGuard guard {s_loaded.lock};
-	if (s_loaded.done)
-	{
-		s_definition = uqstl::move(s_loaded.definition);
+		s_definition = uqstl::move(*result);
 		s_loadFailed = !s_definition;
+		if (s_definition)
+		{
+			collectShownSettings(*s_definition, *s_definition->find("main"), s_shownSettings, 0);
+		}
+	}
+	else if (!s_load.pending() && !s_loadFailed)
+	{
+		s_load.start(readSetupMenuDefinition);
 	}
 	return s_definition ? &*s_definition : nullptr;
 }
@@ -117,6 +109,10 @@ uqstl::string joinLines(uqstl::span<const uqstl::string> lines)
 
 void tooltip(uqstl::span<const uqstl::string> lines, uqstl::string_view extra = {})
 {
+	if (!ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
+	{
+		return;
+	}
 	uqstl::string text {joinLines(lines)};
 	if (!extra.empty())
 	{
@@ -301,8 +297,12 @@ void drawSetting(const SettingBase& setting)
 	{
 		drawTextField(setting, key.c_str());
 	}
-	const uqstl::string description {setting.description()};
-	ImGui::SetItemTooltip("%s\n\nDefault: %s", description.c_str(), setting.defaultText().c_str());
+	if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip))
+	{
+		const uqstl::string_view description {setting.description()};
+		ImGui::SetTooltip("%.*s\n\nDefault: %s", static_cast<int>(description.size()), description.data(),
+						  setting.defaultText().c_str());
+	}
 	applyMarker(setting);
 }
 
@@ -360,7 +360,7 @@ void drawMenu(const MenuDefinition& definition, const MenuDef& menu, int depth)
 }
 
 // Adds the settings that the items of the menu and its submenus show.
-void collectShownSettings(const MenuDefinition& definition, const MenuDef& menu, uqstl::set<uqstl::string>& keys, int depth)
+void collectShownSettings(const MenuDefinition& definition, const MenuDef& menu, SettingKeys& keys, int depth)
 {
 	for (const MenuItemDef& item : menu.items)
 	{
@@ -382,17 +382,14 @@ void collectShownSettings(const MenuDefinition& definition, const MenuDef& menu,
 	}
 }
 
-void drawOtherSettings(const MenuDefinition& definition)
+void drawOtherSettings()
 {
-	uqstl::set<uqstl::string> shown {};
-	collectShownSettings(definition, *definition.find("main"), shown, 0);
-
 	ImGui::TextWrapped("Settings that the setup menu does not show.");
 	uqstl::string_view group {};
 	for (const SettingBase* setting : UQMOptions::read().settings())
 	{
 		const uqstl::string_view key {setting->key()};
-		if (shown.contains(uqstl::string {key}))
+		if (s_shownSettings.contains(key))
 		{
 			continue;
 		}
@@ -464,7 +461,7 @@ void drawMenuWindow(uqgsl::czstring title, uqstl::string_view menuId, bool withO
 		}
 		if (withOther && ImGui::BeginTabItem("Other"))
 		{
-			drawOtherSettings(*definition);
+			drawOtherSettings();
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

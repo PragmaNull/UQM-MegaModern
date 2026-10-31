@@ -1,8 +1,5 @@
 // The state of one game, as a save file holds it.
-
-// globdata.h includes this file after it defines GAME_STATE, so the include guard comes after it.
-#include "uqm/globdata.h"
-
+#pragma once
 #ifndef UQM_SESSION_GAMESTATE_H_
 #define UQM_SESSION_GAMESTATE_H_
 
@@ -12,6 +9,7 @@
 #include "core/stl/string.h"
 #include "core/stl/array.h"
 #include "uqm/session/GameClock.h"
+#include "uqm/session/GameData.h"
 #include "uqm/session/GameFlags.h"
 #include "uqm/session/FlagshipState.h"
 #include "uqm/sis.h"

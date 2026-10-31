@@ -22,6 +22,7 @@
 #include <assert.h>
 #include "port.h"
 #include "core/misc/bittricks.h"
+#include "core/stl/utility.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -141,9 +142,7 @@ public:
 
 	friend void swap(LinkQueue& first, LinkQueue& second) noexcept
 	{
-		const QUEUE temp {first};
-		static_cast<QUEUE&>(first) = second;
-		static_cast<QUEUE&>(second) = temp;
+		uqstl::swap(static_cast<QUEUE&>(first), static_cast<QUEUE&>(second));
 	}
 };
 

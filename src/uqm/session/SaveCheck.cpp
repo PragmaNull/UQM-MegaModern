@@ -6,10 +6,9 @@
 #include <fmt/format.h>
 #include "UQMGame.h"
 #include "core/log/log.h"
-#include "core/stl/fstream.h"
 #include "core/stl/memory.h"
-#include "core/stl/sstream.h"
 #include "core/stl/vector.h"
+#include "libs/file/textfile.h"
 #include "uqm/save.h"
 #include "uqm/session/GameSession.h"
 
@@ -45,11 +44,6 @@ constexpr uqstl::string_view c_ignoredPaths[] {"/summary/res_factor"};
 void compare(yyjson_val* loaded, yyjson_val* saved, const uqstl::string& path, uqstl::vector<uqstl::string>& differences)
 {
 	if (uqstl::find(uqstl::begin(c_ignoredPaths), uqstl::end(c_ignoredPaths), path) != uqstl::end(c_ignoredPaths))
-	{
-		return;
-	}
-	// The game knows that the flagship is in orbit only after it enters the star system again.
-	if (path == "/summary/Activity" && yyjson_get_uint(loaded) == IN_PLANET_ORBIT && yyjson_get_uint(saved) == IN_INTERPLANETARY)
 	{
 		return;
 	}
@@ -139,18 +133,16 @@ void compare(yyjson_val* loaded, yyjson_val* saved, const uqstl::string& path, u
 
 bool checkSaveRoundTrip(const uqstl::string& path)
 {
-	uqstl::ifstream file {path, uqstl::ios::binary};
-	if (!file)
+	const auto text {readTextFile(path.c_str())};
+	if (!text)
 	{
 		log::error("Could not open the save file '{}'.", path);
 		return false;
 	}
-	uqstl::ostringstream text {};
-	text << file.rdbuf();
 
 	UQMGame& game {UQMGame::getInstance()};
 	game.beginSession(SessionKind::FullGame);
-	const bool same {roundTrip(path, text.str())};
+	const bool same {roundTrip(path, *text)};
 	game.endSession();
 	return same;
 }

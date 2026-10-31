@@ -107,12 +107,11 @@ UQMGame::~UQMGame()
 	s_instance = nullptr;
 }
 
-GameSession& UQMGame::beginSession(SessionKind kind)
+void UQMGame::beginSession(SessionKind kind)
 {
 	endSession();
 	m_session = uqstl::make_unique<GameSession>(kind);
 	m_session->startGame();
-	return *m_session;
 }
 
 void UQMGame::endSession()

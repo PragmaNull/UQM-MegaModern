@@ -104,7 +104,8 @@ CheatAction* findCheatState(uqstl::string_view key)
 	return nullptr;
 }
 
-void applyGraphicsSettings()
+// Sets the window size and the display flags from the settings.
+static void applyGraphicsSettings()
 {
 	const OptionsStruct& options {UQMOptions::read()};
 

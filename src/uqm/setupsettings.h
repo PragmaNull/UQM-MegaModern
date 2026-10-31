@@ -23,9 +23,6 @@ enum class CheatAction : uint8_t;
 // The cheat action of a state such as "device.3" or "upgrade.0", or nullptr if there is no such state.
 [[nodiscard]] CheatAction* findCheatState(uqstl::string_view key);
 
-// Sets the window size and the display flags from the settings.
-void applyGraphicsSettings();
-
 // Applies a changed setting to the running game. Returns true if it also changed other settings.
 bool applySettingChange(const SettingBase& setting);
 

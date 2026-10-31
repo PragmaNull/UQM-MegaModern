@@ -292,44 +292,34 @@ target_link_libraries(${APP_TARGET}
 
 # Each save file in test/data/saves must load and save again with no change.
 if (GTest_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/content")
+    set(GAME_TEST_ARGS -n "${CMAKE_CURRENT_SOURCE_DIR}/content" --musicvol 0 --sfxvol 0 --speechvol 0)
     file(GLOB SAVE_FIXTURES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/test/data/saves/*.json")
     foreach(SAVE_FIXTURE ${SAVE_FIXTURES})
         get_filename_component(SAVE_NAME "${SAVE_FIXTURE}" NAME_WE)
         # Each test has its own config dir, because the tests run at the same time.
         set(SAVE_CHECK_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/save-check/${SAVE_NAME}")
-        file(MAKE_DIRECTORY "${SAVE_CHECK_CONFIG_DIR}")
-        add_test(NAME "SaveRoundTrip.${SAVE_NAME}"
-            COMMAND ${APP_TARGET} -n "${CMAKE_CURRENT_SOURCE_DIR}/content" -C "${SAVE_CHECK_CONFIG_DIR}"
-                --check-save "${SAVE_FIXTURE}" --musicvol 0 --sfxvol 0 --speechvol 0)
-        set_tests_properties("SaveRoundTrip.${SAVE_NAME}" PROPERTIES
-            ENVIRONMENT "SDL_VIDEODRIVER=dummy;SDL_AUDIODRIVER=dummy"
-            FAIL_REGULAR_EXPRESSION "\\[error\\]|\\[critical\\]"
-            TIMEOUT 120)
-
-        # The game plays the save for a few seconds and saves it to slot 0. That save must load and save again with no change.
         set(PLAY_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/play-save/${SAVE_NAME}")
         set(PLAYED_SAVE "${PLAY_CONFIG_DIR}/save/uqmsave.00.json")
-        file(MAKE_DIRECTORY "${PLAY_CONFIG_DIR}")
-        file(WRITE "${PLAY_CONFIG_DIR}/settings.json" "{\"interface\": {\"skipIntro\": true}}")
+        file(MAKE_DIRECTORY "${SAVE_CHECK_CONFIG_DIR}" "${PLAY_CONFIG_DIR}")
+
+        add_test(NAME "SaveRoundTrip.${SAVE_NAME}"
+            COMMAND ${APP_TARGET} ${GAME_TEST_ARGS} -C "${SAVE_CHECK_CONFIG_DIR}" --check-save "${SAVE_FIXTURE}")
+        # The game plays the save for a few seconds and saves it to slot 0. That save must load and save again with no change.
         add_test(NAME "PlaySaveClean.${SAVE_NAME}" COMMAND ${CMAKE_COMMAND} -E rm -f "${PLAYED_SAVE}")
         add_test(NAME "PlaySave.${SAVE_NAME}"
-            COMMAND ${APP_TARGET} -n "${CMAKE_CURRENT_SOURCE_DIR}/content" -C "${PLAY_CONFIG_DIR}"
-                --play-save "${SAVE_FIXTURE}" --input-script "${CMAKE_CURRENT_SOURCE_DIR}/test/data/play-save.txt"
-                --musicvol 0 --sfxvol 0 --speechvol 0)
-        set_tests_properties("PlaySave.${SAVE_NAME}" PROPERTIES
-            ENVIRONMENT "SDL_VIDEODRIVER=dummy;SDL_AUDIODRIVER=dummy"
-            FAIL_REGULAR_EXPRESSION "\\[error\\]|\\[critical\\]"
-            DEPENDS "PlaySaveClean.${SAVE_NAME}"
-            FIXTURES_SETUP "PlayedSave.${SAVE_NAME}"
-            TIMEOUT 120)
+            COMMAND ${APP_TARGET} ${GAME_TEST_ARGS} -C "${PLAY_CONFIG_DIR}" --skipintro --play-save "${SAVE_FIXTURE}"
+                --input-script "${CMAKE_CURRENT_SOURCE_DIR}/test/data/play-save.txt")
         add_test(NAME "PlayedSaveRoundTrip.${SAVE_NAME}"
-            COMMAND ${APP_TARGET} -n "${CMAKE_CURRENT_SOURCE_DIR}/content" -C "${PLAY_CONFIG_DIR}"
-                --check-save "${PLAYED_SAVE}" --musicvol 0 --sfxvol 0 --speechvol 0)
-        set_tests_properties("PlayedSaveRoundTrip.${SAVE_NAME}" PROPERTIES
+            COMMAND ${APP_TARGET} ${GAME_TEST_ARGS} -C "${PLAY_CONFIG_DIR}" --check-save "${PLAYED_SAVE}")
+
+        set_tests_properties("SaveRoundTrip.${SAVE_NAME}" "PlaySave.${SAVE_NAME}" "PlayedSaveRoundTrip.${SAVE_NAME}" PROPERTIES
             ENVIRONMENT "SDL_VIDEODRIVER=dummy;SDL_AUDIODRIVER=dummy"
             FAIL_REGULAR_EXPRESSION "\\[error\\]|\\[critical\\]"
-            FIXTURES_REQUIRED "PlayedSave.${SAVE_NAME}"
             TIMEOUT 120)
+        set_tests_properties("PlaySave.${SAVE_NAME}" PROPERTIES
+            DEPENDS "PlaySaveClean.${SAVE_NAME}"
+            FIXTURES_SETUP "PlayedSave.${SAVE_NAME}")
+        set_tests_properties("PlayedSaveRoundTrip.${SAVE_NAME}" PROPERTIES FIXTURES_REQUIRED "PlayedSave.${SAVE_NAME}")
     endforeach()
 endif()
 

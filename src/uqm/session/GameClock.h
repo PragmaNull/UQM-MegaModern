@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include "core/stl/optional.h"
+#include "core/stl/vector.h"
 #include "uqm/clock.h"
 
 namespace uqm
@@ -67,6 +68,8 @@ public:
 	HEVENT addEvent(uint16_t month, uint16_t day, uint16_t year, uint8_t funcIndex);
 	// The first event in the queue, or nullopt if the queue is empty.
 	[[nodiscard]] uqstl::optional<EVENT> firstEvent() const;
+	// The events in the queue, in date order.
+	[[nodiscard]] uqstl::vector<EVENT> eventList() const;
 	// True if the clock date is before the date.
 	[[nodiscard]] bool isBefore(uint16_t year, uint16_t month, uint16_t day) const noexcept;
 	// Removes the first event of today from the queue and gives its function index.

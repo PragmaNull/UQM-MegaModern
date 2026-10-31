@@ -28,14 +28,14 @@
 
 uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> MakeStateFiles(void)
 {
-	uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> files {};
-	files[STARINFO_FILE].symname = "STARINFO";
-	files[STARINFO_FILE].size_hint = STAR_BUFSIZE;
-	files[RANDGRPINFO_FILE].symname = "RANDGRPINFO";
-	files[RANDGRPINFO_FILE].size_hint = RAND_BUFSIZE;
-	files[DEFGRPINFO_FILE].symname = "DEFGRPINFO";
-	files[DEFGRPINFO_FILE].size_hint = DEF_BUFSIZE;
-	return files;
+	// In the order STARINFO_FILE, RANDGRPINFO_FILE, DEFGRPINFO_FILE.
+	return {
+		{
+			{.symname = "STARINFO", .size_hint = STAR_BUFSIZE},
+			{.symname = "RANDGRPINFO", .size_hint = RAND_BUFSIZE},
+			{.symname = "DEFGRPINFO", .size_hint = DEF_BUFSIZE},
+		 }
+	 };
 }
 
 

@@ -38,8 +38,6 @@
 
 #include <yyjson.h>
 
-#include "core/stl/fstream.h"
-#include "core/stl/sstream.h"
 #include "core/stl/utility.h"
 
 //#define DEBUG_LOAD
@@ -816,15 +814,13 @@ bool LoadGame(uint16_t which_game, SUMMARY_DESC* SummPtr)
 
 bool LoadGameFile(const char* path)
 {
-	uqstl::ifstream file {path, uqstl::ios::binary};
-	if (!file)
+	const auto text {uqm::readTextFile(path)};
+	if (!text)
 	{
 		uqm::log::error("Could not open the save file '{}'.", path);
 		return false;
 	}
-	uqstl::ostringstream text {};
-	text << file.rdbuf();
-	return LoadGameFromJson(text.str(), path, nullptr);
+	return LoadGameFromJson(*text, path, nullptr);
 }
 
 bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_DESC* SummPtr)

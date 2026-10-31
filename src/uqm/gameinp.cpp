@@ -21,9 +21,8 @@
 #include "core/log/log.h"
 #include "uqm/inputscript.h"
 #include "core/stl/chrono.h"
-#include "core/stl/fstream.h"
+#include "libs/file/textfile.h"
 #include "core/stl/mutex.h"
-#include "core/stl/sstream.h"
 #include "battlecontrols.h"
 #include "init.h"
 #include "intel.h"
@@ -90,17 +89,15 @@ static uqstl::chrono::steady_clock::time_point inputScriptStart {};
 
 bool LoadInputScript(const char* path)
 {
-	uqstl::ifstream file {path, uqstl::ios::binary};
-	if (!file)
+	const auto text {uqm::readTextFile(path)};
+	if (!text)
 	{
 		uqm::log::error("Input script: cannot open '{}'.", path);
 		return false;
 	}
-	uqstl::stringstream text {};
-	text << file.rdbuf();
 
 	uqstl::string error {};
-	inputScript = uqm::InputScript::parse(text.str(), error);
+	inputScript = uqm::InputScript::parse(*text, error);
 	if (!inputScript)
 	{
 		uqm::log::error("Input script '{}': {}", path, error);
@@ -187,14 +184,14 @@ applyInputScript(void)
 	{
 		uqm::log::info("Input script: {}", *step.log);
 	}
-	if (step.saveSlot && !IsGameInProgress())
-	{
-		uqm::log::error("Input script: no game runs, so there is no game to save.");
-	}
-	else if (step.saveSlot)
+	if (step.saveSlot)
 	{
 		SUMMARY_DESC summary {};
-		if (SaveGame(*step.saveSlot, &summary, "Input script"))
+		if (!IsGameInProgress())
+		{
+			uqm::log::error("Input script: no game runs, so there is no game to save.");
+		}
+		else if (SaveGame(*step.saveSlot, &summary, "Input script"))
 		{
 			uqm::log::info("Input script: saved the game to slot {}.", *step.saveSlot);
 		}

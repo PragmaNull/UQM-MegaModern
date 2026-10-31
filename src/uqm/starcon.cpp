@@ -217,6 +217,16 @@ SetRandomMenuMusic(void)
 extern AudioDriverType snddriver;
 extern AudioFlags soundflags;
 
+// Releases the kernel and tells the main thread that Starcon2Main ends.
+static void
+ShutdownKernel(void)
+{
+	UninitGameKernel();
+	FreeMasterShipList();
+	FreeKernel();
+	MainExited = true;
+}
+
 bool IsGameInProgress(void)
 {
 	const uqm::GameSession* const session {uqm::UQMGame::getInstance().session()};
@@ -260,10 +270,7 @@ int Starcon2Main(void* threadArg)
 		LoadMasterShipList(TaskSwitch);
 		InitGameKernel();
 		const bool same {uqm::checkSaveRoundTrip(savePath)};
-		UninitGameKernel();
-		FreeMasterShipList();
-		FreeKernel();
-		MainExited = true;
+		ShutdownKernel();
 		return same ? EXIT_SUCCESS : EXIT_FAILURE;
 	}
 
@@ -412,11 +419,7 @@ int Starcon2Main(void* threadArg)
 		ClearPlayerInputAll();
 	}
 
-	UninitGameKernel();
-	FreeMasterShipList();
-	FreeKernel();
-
-	MainExited = true;
+	ShutdownKernel();
 
 	(void)threadArg; /* Satisfying compiler (unused parameter) */
 	return 0;

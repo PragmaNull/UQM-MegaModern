@@ -15,6 +15,8 @@ namespace uqm
 
 // Return nullopt if the file does not exist or cannot be read.
 uqstl::optional<uqstl::string> readTextFile(const io::Directory& dir, uqgsl::czstring name);
+// Reads a file at a path of the host file system, for example a path from the command line.
+uqstl::optional<uqstl::string> readTextFile(uqgsl::czstring path);
 uqstl::optional<uqstl::vector<uqstl::byte>> readBinaryFile(const io::Directory& dir, uqgsl::czstring name);
 
 // Replaces the file. Returns false on error.
