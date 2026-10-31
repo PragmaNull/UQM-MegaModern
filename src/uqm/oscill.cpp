@@ -25,6 +25,7 @@
 #include "libs/sound/sound.h"
 #include "libs/sound/trackplayer.h"
 #include "core/log/log.h"
+#include "core/stl/vector.h"
 #include "colors.h"
 #include "menustat.h"
 #include "util.h"
@@ -34,6 +35,7 @@ static FRAME scope_frame;
 static int scope_init = 0;
 static FRAME scopeWork;
 static EXTENT scopeSize;
+static uqstl::vector<uint8_t> scopeData {};
 bool oscillDisabled = false;
 
 void InitOscilloscope(FRAME scopeBg)
@@ -50,6 +52,7 @@ void InitOscilloscope(FRAME scopeBg)
 		// assume and subtract the borders
 		scopeSize.width = RES_DESCALE(size.width);
 		scopeSize.height = RES_DESCALE(size.height);
+		scopeData.resize(static_cast<size_t>(scopeSize.width));
 
 		scope_init = 1;
 	}
@@ -156,18 +159,14 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 void DrawOscilloscope(void)
 {
 	STAMP s;
-	uint8_t scope_data[128];
+	uint8_t* const scope_data {scopeData.data()};
 
 	if (oscillDisabled)
 	{
 		return;
 	}
 
-	// log_add (log_Debug, "(size_t)scopeSize.width %lu,
-	//		sizeof (scope_data) %lu", (size_t)scopeSize.width,
-	//		sizeof (scope_data));
-
-	assert((size_t)scopeSize.width <= sizeof(scope_data));
+	assert(scopeData.size() == static_cast<size_t>(scopeSize.width));
 	assert(scopeSize.height < 128);
 
 	if (GraphForegroundStream(

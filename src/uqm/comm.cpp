@@ -520,7 +520,8 @@ bool getLineWithinWidth(TEXT* pText, const char** startNext,
 		pText->CharCount = charCount;
 		TextRect(pText, &rect, nullptr);
 
-		if (rect.extent.width >= maxWidth)
+		// A first word that is too wide stays on the line.
+		if (rect.extent.width >= maxWidth && wordStart != pText->pStr)
 		{
 			pText->CharCount = oldCount;
 			*startNext = wordStart;

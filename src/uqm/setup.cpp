@@ -37,6 +37,7 @@
 #include "libs/time/timelib.h"
 #include "libs/vidlib.h"
 #include "core/log/log.h"
+#include "core/stl/vector.h"
 #include "core/misc/FatalExit.h"
 
 #include <assert.h>
@@ -236,7 +237,12 @@ bool LoadKernel(int argc, char* argv[])
 	}
 
 	/* Now load the rest of the addons, in order. */
-	uqm::prepareAddons(uqm::UQMOptions::read().addons);
+	uqstl::vector<uqstl::string> addons {uqm::UQMOptions::read().addons};
+	if (!IS_HD && uqstl::erase(addons, uqstl::string {HD_MODE}) > 0)
+	{
+		uqm::log::warn("Warning: The '{}' addon is for HD mode only. Set graphics.resolutionFactor to 2 to use it.", HD_MODE);
+	}
+	uqm::prepareAddons(addons);
 
 	{
 		COLORMAP ColorMapTab {};
