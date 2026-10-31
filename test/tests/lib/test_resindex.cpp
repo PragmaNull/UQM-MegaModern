@@ -76,3 +76,43 @@ TEST(ResourceIndexTest, RejectsInvalidFiles)
 	EXPECT_FALSE(resourceIndexFromJson(R"({"version": 2, "resources": {}})", ""));
 	EXPECT_FALSE(resourceIndexFromJson(R"({"version": 1, "resources": []})", ""));
 }
+
+TEST(ResourceIndexTest, ReadsTheLegacyFormat)
+{
+	const auto entries {resourceIndexFromLegacyText("# Menu keys\n"
+													"  up.1 = STRING:key Up   # comment\n"
+													"debug.1=STRING:key F12\n"
+													"count = INT32:42\n"
+													"on = bool:TRUE\n"
+													"bare key\n"
+													"untyped = value\n")};
+	ASSERT_EQ(entries.size(), 5u);
+	EXPECT_EQ(entries[0].key, "up.1");
+	EXPECT_EQ(entries[0].type, "STRING");
+	EXPECT_STREQ(resourceString(entries[0].arg), "key Up");
+	EXPECT_EQ(entries[1].key, "debug.1");
+	EXPECT_STREQ(resourceString(entries[1].arg), "key F12");
+	EXPECT_EQ(uqstl::get<int64_t>(entries[2].arg), 42);
+	EXPECT_TRUE(uqstl::get<bool>(entries[3].arg));
+	EXPECT_EQ(entries[4].type, "UNKNOWNRES");
+	EXPECT_STREQ(resourceString(entries[4].arg), "value");
+}
+
+TEST(ResourceIndexTest, WritesEntriesThatReadBackTheSame)
+{
+	uqstl::vector<ResourceEntry> entries {};
+	entries.push_back({"up.1", "STRING", uqstl::string {"key Up"}});
+	entries.push_back({"count", "INT32", int64_t {42}});
+	ResourceFields fields {};
+	fields.emplace("text", uqstl::string {"a.json"});
+	fields.emplace("clips", uqstl::string {"a/"});
+	entries.push_back({"dialogue", "CONVERSATION", fields});
+	const auto read {resourceIndexFromJson(resourceIndexToJson(entries), "menu.")};
+	ASSERT_TRUE(read);
+	ASSERT_EQ(read->size(), 3u);
+	EXPECT_EQ((*read)[0].key, "menu.up.1");
+	EXPECT_STREQ(resourceString((*read)[0].arg), "key Up");
+	EXPECT_EQ(uqstl::get<int64_t>((*read)[1].arg), 42);
+	EXPECT_STREQ(resourceStringField((*read)[2].arg, "text"), "a.json");
+	EXPECT_STREQ(resourceStringField((*read)[2].arg, "clips"), "a/");
+}

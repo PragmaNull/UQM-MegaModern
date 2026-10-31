@@ -42,6 +42,12 @@ inline constexpr int c_resourceIndexVersion {1};
 // Returns nullopt if 'json' is not a valid resource index. Skips entries that are not valid.
 [[nodiscard]] uqstl::optional<uqstl::vector<ResourceEntry>> resourceIndexFromJson(uqstl::string_view json, uqstl::string_view prefix);
 
+// Reads a resource index in the old format: a "key = TYPE:data" line for each resource, and '#' comments. The data of
+// INT32, SHIP, FLT32 and bool resources becomes a number or a truth value, and all other data stays a string.
+[[nodiscard]] uqstl::vector<ResourceEntry> resourceIndexFromLegacyText(uqstl::string_view text);
+
+[[nodiscard]] uqstl::string resourceIndexToJson(uqstl::span<const ResourceEntry> entries);
+
 } // namespace uqm
 
 #endif // UQM_LIBS_RESOURCE_RESINDEX_H_

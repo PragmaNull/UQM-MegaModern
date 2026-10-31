@@ -2,6 +2,11 @@
 #include "resindex.h"
 
 #include "core/log/log.h"
+#include "core/stl/charconv.h"
+#include "core/stl/ranges.h"
+#include "core/string/StringUtils.h"
+
+#include <cstdlib>
 
 #include <yyjson.h>
 
@@ -131,13 +136,151 @@ uqstl::optional<uqstl::vector<ResourceEntry>> resourceIndexFromJson(uqstl::strin
 			}
 			result->push_back({
 				uqstl::string {prefix}
-				   + uqstl::string {keyText},
-				  uqstl::string {yyjson_get_str(type), yyjson_get_len(type)},
+					+ uqstl::string {keyText},
+				uqstl::string {yyjson_get_str(type), yyjson_get_len(type)},
 				uqstl::move(*arg)
 			 });
 		}
 	}
 	yyjson_doc_free(doc);
+	return result;
+}
+
+namespace
+{
+
+// Returns 0 if 'text' does not start with a number.
+template <typename T>
+T parseNumber(uqstl::string_view text)
+{
+	text = trim(text);
+	T value {};
+	uqstl::from_chars(text.data(), text.data() + text.size(), value);
+	return value;
+}
+
+} // namespace
+
+uqstl::vector<ResourceEntry> resourceIndexFromLegacyText(uqstl::string_view text)
+{
+	uqstl::vector<ResourceEntry> entries {};
+	for (const auto lineRange : uqstl::views::split(text, '\n'))
+	{
+		uqstl::string_view line {lineRange.begin(), lineRange.end()};
+		line = line.substr(0, line.find('#'));
+		const size_t equals {line.find('=')};
+		if (trim(line).empty())
+		{
+			continue;
+		}
+		if (equals == uqstl::string_view::npos)
+		{
+			uqm::log::warn("Warning: Key without value");
+			continue;
+		}
+		const uqstl::string_view key {trim(line.substr(0, equals))};
+		const uqstl::string_view value {trim(line.substr(equals + 1))};
+		const size_t colon {value.find(':')};
+		if (colon == uqstl::string_view::npos)
+		{
+			uqm::log::warn("Could not find type information for resource '{}'", key);
+			entries.push_back({uqstl::string {key}, "UNKNOWNRES", uqstl::string {value}});
+			continue;
+		}
+
+		const uqstl::string_view type {value.substr(0, colon)};
+		const uqstl::string_view data {value.substr(colon + 1)};
+		ResourceArg arg {uqstl::string {data}};
+		if (type == "INT32" || type == "SHIP")
+		{
+			arg = parseNumber<int64_t>(data);
+		}
+		else if (type == "FLT32")
+		{
+			arg = parseNumber<double>(data);
+		}
+		else if (type == "bool")
+		{
+			arg = compareICase(data, "true");
+		}
+		entries.push_back({uqstl::string {key}, uqstl::string {type}, uqstl::move(arg)});
+	}
+	return entries;
+}
+
+namespace
+{
+
+yyjson_mut_val* scalarToJson(yyjson_mut_doc* doc, const ResourceScalar& value)
+{
+	return uqstl::visit(
+		[doc](const auto& v) -> yyjson_mut_val* {
+			using T = uqstl::decay_t<decltype(v)>;
+			if constexpr (uqstl::is_same_v<T, uqstl::string>)
+			{
+				return yyjson_mut_strncpy(doc, v.data(), v.size());
+			}
+			else if constexpr (uqstl::is_same_v<T, int64_t>)
+			{
+				return yyjson_mut_sint(doc, v);
+			}
+			else if constexpr (uqstl::is_same_v<T, double>)
+			{
+				return yyjson_mut_real(doc, v);
+			}
+			else
+			{
+				return yyjson_mut_bool(doc, v);
+			}
+		},
+		value);
+}
+
+yyjson_mut_val* argToJson(yyjson_mut_doc* doc, const ResourceArg& arg)
+{
+	return uqstl::visit(
+		[doc](const auto& v) -> yyjson_mut_val* {
+			if constexpr (uqstl::is_same_v<uqstl::decay_t<decltype(v)>, ResourceFields>)
+			{
+				yyjson_mut_val* const obj {yyjson_mut_obj(doc)};
+				for (const auto& [name, value] : v)
+				{
+					yyjson_mut_obj_add(obj, yyjson_mut_strncpy(doc, name.data(), name.size()), scalarToJson(doc, value));
+				}
+				return obj;
+			}
+			else
+			{
+				return scalarToJson(doc, ResourceScalar {v});
+			}
+		},
+		arg);
+}
+
+} // namespace
+
+uqstl::string resourceIndexToJson(uqstl::span<const ResourceEntry> entries)
+{
+	yyjson_mut_doc* const doc {yyjson_mut_doc_new(nullptr)};
+	yyjson_mut_val* const root {yyjson_mut_obj(doc)};
+	yyjson_mut_doc_set_root(doc, root);
+	yyjson_mut_obj_add_sint(doc, root, "version", c_resourceIndexVersion);
+	yyjson_mut_val* const resources {yyjson_mut_obj_add_obj(doc, root, "resources")};
+	for (const ResourceEntry& entry : entries)
+	{
+		yyjson_mut_val* const obj {yyjson_mut_obj(doc)};
+		yyjson_mut_obj_add_strncpy(doc, obj, "type", entry.type.data(), entry.type.size());
+		yyjson_mut_obj_add_val(doc, obj, "data", argToJson(doc, entry.arg));
+		yyjson_mut_obj_add(resources, yyjson_mut_strncpy(doc, entry.key.data(), entry.key.size()), obj);
+	}
+	size_t length {};
+	char* const text {yyjson_mut_write(doc, YYJSON_WRITE_PRETTY_TWO_SPACES | YYJSON_WRITE_NEWLINE_AT_END, &length)};
+	uqstl::string result {
+		text != nullptr ? uqstl::string {text, length}
+			   : uqstl::string {}
+	 };
+	free(text);
+	yyjson_mut_doc_free(doc);
 	return result;
 }
 

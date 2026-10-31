@@ -220,7 +220,8 @@ initKeyConfig(void)
 
 	/* First, load in the menu keys */
 	LoadResourceIndex(uqm::contentDir(), "menu.key.json", "menu.");
-	LoadLegacyResourceIndex(uqm::configDir(), "override.cfg", "menu.");
+	ConvertLegacyResourceIndex(uqm::configDir(), "override.cfg", "override.key.json");
+	LoadResourceIndex(uqm::configDir(), "override.key.json", "menu.");
 	for (i = 0; i < num_menu; i++)
 	{
 		if (!menu_res_names[i])

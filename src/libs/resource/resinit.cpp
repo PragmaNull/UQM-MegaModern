@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <scn/scan.h>
 #include "core/stl/stl.h"
 #include <ctype.h>
 #include <stdlib.h>
@@ -33,7 +32,6 @@
 #include "libs/reslib.h"
 #include "libs/sndlib.h"
 #include "libs/vidlib.h"
-#include "propfile.h"
 // XXX: we should not include anything from uqm/ inside libs/
 #include "uqm/coderes.h"
 
@@ -114,38 +112,6 @@ process_resource_desc(const char* key, uqstl::string_view type, ResourceArg arg)
 			(*map)[key] = newDesc;
 		}
 	}
-}
-
-// Adds an entry of a legacy resource index, "TYPE:data".
-static void
-process_legacy_resource_desc(const char* key, const char* value)
-{
-	const uqstl::string_view text {value};
-	const size_t colon {text.find(':')};
-	if (colon == uqstl::string_view::npos)
-	{
-		uqm::log::warn("Could not find type information for resource '{}'", key);
-		process_resource_desc(key, "UNKNOWNRES", uqstl::string {text});
-		return;
-	}
-	const uqstl::string_view type {text.substr(0, colon)};
-	const uqstl::string_view data {text.substr(colon + 1)};
-	ResourceArg arg {uqstl::string {data}};
-	if (type == "INT32" || type == "SHIP")
-	{
-		const auto number {scn::scan<int64_t>(data, "{}")};
-		arg = number ? number->value() : int64_t {0};
-	}
-	else if (type == "FLT32")
-	{
-		const auto number {scn::scan<double>(data, "{}")};
-		arg = number ? number->value() : 0.0;
-	}
-	else if (type == "bool")
-	{
-		arg = uqm::compareICase(data, "true");
-	}
-	process_resource_desc(key, type, uqstl::move(arg));
 }
 
 static void
@@ -253,9 +219,27 @@ void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, cons
 	}
 }
 
-void LoadLegacyResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix)
+bool ConvertLegacyResourceIndex(const uqm::io::Directory& dir, const char* oldName, const char* newName)
 {
-	PropFile_from_filename(dir, filename, process_legacy_resource_desc, prefix);
+	const auto text {uqm::readTextFile(dir, oldName)};
+	if (!text)
+	{
+		return false;
+	}
+	const uqstl::vector<uqm::ResourceEntry> entries {uqm::resourceIndexFromLegacyText(*text)};
+	if (!uqm::writeTextFile(dir, newName, uqm::resourceIndexToJson(entries)))
+	{
+		uqm::log::warn("Warning: Could not write '{}'.", newName);
+		return false;
+	}
+	const uqstl::string backupName {fmt::format("{}.bak", oldName)};
+	(void)dir.remove(backupName);
+	if (dir.rename(oldName, dir, backupName))
+	{
+		uqm::log::warn("Warning: Could not rename '{}' to '{}'.", oldName, backupName);
+	}
+	uqm::log::info("Converted '{}' to '{}'.", oldName, newName);
+	return true;
 }
 
 void UninitResourceSystem(void)

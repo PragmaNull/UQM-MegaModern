@@ -15,8 +15,9 @@ If 'doInputDebugHook' is set, the function it is set to is called from
 doInput(), which is called all throughout the game.
 By setting one of these hooks, a function can be called from the Starcon2Main
 thread, thereby eliminating threading issues that may otherwise arrise.
-The debug key can be specified in user's override.cfg by adding a line
-with a text similar to "debug.1 = STRING:key F12".
+The debug key can be specified in the user's override.key.json, which has
+the format of the resource index files, by adding an entry such as
+"debug.1": {"type": "STRING", "data": "key F12"}.
 An interactive way to access various debugging code is in the works.
 
 The most interesting debugging functionality available at the moment is

@@ -25,10 +25,12 @@ type and the data of each resource:
 
 The data is a string, a number, true or false, or an object with named
 parts. The key files content/menu.key.json and content/uqm.key.json
-use the same format. The file override.cfg in the configuration
-directory uses the old format, one "resource_ID = RESOURCE_TYPE:data"
-line for each resource. scripts/convert_resource_index.py converts
-files in the old format to JSON.
+use the same format, and so does override.key.json in the
+configuration directory, which adds or changes menu keys. The old
+format had one "resource_ID = RESOURCE_TYPE:data" line for each
+resource. scripts/convert_resource_index.py converts files in the old
+format to JSON, and the game converts an old override.cfg to
+override.key.json once.
 
 The currently defined resource types and their accompanying data are:
 
