@@ -52,6 +52,7 @@ Open:
   - `graphics.flagshipskeleton.red` in `uqm.rmp.json` and `mm-hd.rmp.json`: `fs_skeleton-red.ani.json`. Only `fs_skeleton-red.png` exists.
 - **Missing script:** `comm.robot.script` names `base/comm/robot/robot.lua`, which does not exist.
 - **Missing resource:** the starbase conversation asks for `comm.commander.lowpower.music`, which no resource map defines.
+- **Missing credits music:** `music.credits` in `uqm.rmp.json` names `base/cutscene/credits/credits.ogg`, which content commit `7eebe3d10` removed. The credits play without music unless the volasaurus remix pack is loaded.
 - **Removed comments:** JSON has no comments, so the conversions removed the commented-out entries: about 80 joystick bindings in `menu.key` and `uqm.key`, and 4 entries in the `.rmp` files. They are in the git history of the content repository.
 - **HD pkunk font:** look at a Pkunk conversation in HD to make sure that the repaired font metrics (see below) look correct.
 

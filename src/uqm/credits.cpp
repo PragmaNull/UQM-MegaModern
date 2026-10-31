@@ -17,9 +17,11 @@
  */
 
 #include <math.h>
-#include <scn/scan.h>
 
 #include "credits.h"
+#include "creditsfile.h"
+#include "libs/file/textfile.h"
+#include "core/log/log.h"
 
 #include "core/string/StringUtils.h"
 
@@ -50,7 +52,7 @@ static int CreditsRate;
 
 static bool OutTakesRunning;
 static bool CreditsRunning;
-static STRING CreditsTab;
+static uqstl::vector<uqm::CreditsBlock> CreditsBlocks {};
 static FRAME CreditsBack;
 
 // Context used for drawing to the screen
@@ -116,29 +118,7 @@ Credits_MakeTransFrame(int w, int h, Color TransColor)
 	return f;
 }
 
-static int
-ParseTextLines(TEXT* Lines, int MaxLines, char* Buffer)
-{
-	int i;
-	const char* pEnd = Buffer + strlen(Buffer);
-
-	for (i = 0; i < MaxLines && Buffer < pEnd; ++i, ++Lines)
-	{
-		char* pTerm = strchr(Buffer, '\n');
-		if (!pTerm)
-		{
-			pTerm = Buffer + strlen(Buffer);
-		}
-		*pTerm = '\0'; /* terminate string */
-		Lines->pStr = Buffer;
-		Lines->CharCount = ~0;
-		Buffer = pTerm + 1;
-	}
-	return i;
-}
-
 #define MAX_TEXT_LINES 50
-#define MAX_TEXT_COLS 5
 
 static FRAME
 Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
@@ -148,10 +128,6 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	GFXCONTEXT OldContext;
 	FRAME OldFrame;
 	TEXT TextLines[MAX_TEXT_LINES];
-	char* tableStr = nullptr;
-	int textSize {};
-	char salign[32] {};
-	int scaned;
 	int i, rows, cnt;
 	FONT_SIZE_DEF* fdef;
 	int16_t leading;
@@ -162,13 +138,14 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 		TEXT_ALIGN align;
 		int16_t basex;
 	} col_format_t;
-	col_format_t colfmt[MAX_TEXT_COLS];
+	col_format_t colfmt[uqm::c_creditsMaxColumns];
 
-	if (*istr < 0 || *istr >= GetStringTableCount(CreditsTab))
+	const auto blockCount {static_cast<int>(CreditsBlocks.size())};
+	if (*istr < 0 || *istr >= blockCount)
 	{ // check if next one is within range
 		int next_s = *istr + dir;
 
-		if (next_s < 0 || next_s >= GetStringTableCount(CreditsTab))
+		if (next_s < 0 || next_s >= blockCount)
 		{
 			return 0;
 		}
@@ -176,86 +153,33 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 		*istr = next_s;
 	}
 
-	// skip empty lines
-	while (*istr >= 0 && *istr < GetStringTableCount(CreditsTab))
+	const uqm::CreditsBlock& block {CreditsBlocks[*istr]};
+	*istr += dir;
+
+	// one TEXT for each cell; the baseline holds the column and the row
+	rows = static_cast<int>(block.lines.size());
+	cnt = 0;
+	for (i = 0; i < rows; ++i)
 	{
-		tableStr = GetStringAddress(
-			SetAbsStringTableIndex(CreditsTab, *istr));
-		*istr += dir;
-		if (tableStr && *tableStr != '\0')
+		for (size_t icol {0}; icol < block.lines[i].size() && cnt < MAX_TEXT_LINES; ++icol)
 		{
-			break;
-		}
-	}
-
-	if (!tableStr || *tableStr == '\0')
-	{
-		return 0;
-	}
-
-	uqstl::string_view strView {tableStr};
-	if (const auto result {scn::scan<int, std::string>(strView, "{} {} ")})
-	{
-		textSize = uqstl::get<0>(result->values());
-		if (textSize <= 0)
-		{
-			return 0;
-		}
-
-		uqm::strncpy_safe(salign, uqstl::get<1>(result->values()));
-		strView = {result->begin(), result->end()};
-	}
-	else
-	{
-		return 0;
-	}
-
-	char buf[2048] {};
-	uqm::strncpy_safe(buf, strView);
-	//utf8StringCopy(buf, sizeof(buf), strView.data());
-	rows = ParseTextLines(TextLines, MAX_TEXT_LINES, buf);
-	if (rows == 0)
-	{
-		return 0;
-	}
-	// parse text columns
-	for (i = 0, cnt = rows; i < rows; ++i)
-	{
-		char* nextcol;
-		int icol;
-
-		// we abuse the baseline here, but only a tiny bit
-		// every line starts at col 0
-		TextLines[i].baseline.x = 0;
-		TextLines[i].baseline.y = i + 1;
-
-		for (icol = 1, nextcol = (char*)strchr(TextLines[i].pStr, '\t');
-			 icol < MAX_TEXT_COLS && nextcol;
-			 ++icol, nextcol = strchr(nextcol, '\t'))
-		{
-			*nextcol = '\0';
-			++nextcol;
-
-			if (cnt < MAX_TEXT_LINES)
-			{
-				TextLines[cnt].pStr = nextcol;
-				TextLines[cnt].CharCount = ~0;
-				TextLines[cnt].baseline.x = icol;
-				TextLines[cnt].baseline.y = i + 1;
-				++cnt;
-			}
+			TextLines[cnt].pStr = block.lines[i][icol].c_str();
+			TextLines[cnt].CharCount = ~0;
+			TextLines[cnt].baseline.x = static_cast<int16_t>(icol);
+			TextLines[cnt].baseline.y = i + 1;
+			++cnt;
 		}
 	}
 
 	// init alignments
-	for (i = 0; i < MAX_TEXT_COLS; ++i)
+	for (auto& col : colfmt)
 	{
-		colfmt[i].align = ALIGN_LEFT;
-		colfmt[i].basex = CreditsExtent.width / 64;
+		col.align = ALIGN_LEFT;
+		col.basex = CreditsExtent.width / 64;
 	}
 
 	// find the right font
-	for (fdef = CreditsFont; fdef->size && textSize > fdef->size; ++fdef)
+	for (fdef = CreditsFont; fdef->size && block.size > fdef->size; ++fdef)
 		;
 	if (!fdef->size)
 	{
@@ -276,68 +200,27 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	// get left/right margin
 	TextRect(&t, &r, nullptr);
 
-	// parse text column alignment
+	// column alignments
+	for (size_t icol {0}; icol < block.columns.size(); ++icol)
 	{
-		uqstl::vector<uqstl::string> scolTokens;
-		uqm::tokenize(uqstl::string_view {salign}, scolTokens, ',', false);
-		for (i = 0; i < static_cast<int>(scolTokens.size()) && i < MAX_TEXT_COLS; ++i)
+		const uqm::CreditsColumn& column {block.columns[icol]};
+		const auto basex {[&](int16_t fallback) {
+			return column.x ? static_cast<int16_t>(*column.x << RESOLUTION_FACTOR) : fallback;
+		}};
+		switch (column.align)
 		{
-			char c {};
-			uqstl::optional<int> x {};
-
-			// default
-			colfmt[i].align = ALIGN_LEFT;
-			colfmt[i].basex = r.extent.width;
-
-			const uqstl::string_view scolView {scolTokens[i]};
-			if (const auto scanRes {scn::scan<char, int>(scolView, "{}/{}")})
-			{
-				c = uqstl::get<0>(scanRes->values());
-				x = uqstl::get<1>(scanRes->values()) << RESOLUTION_FACTOR;
-			}
-			else if (const auto scanRes {scn::scan<char>(scolView, "{}")})
-			{
-				c = uqstl::get<0>(scanRes->values());
-			}
-			else
-			{
-				// DOES NOT COMPUTE! :)
-				continue;
-			}
-
-
-			switch (c)
-			{
-				case 'L':
-					colfmt[i].align = ALIGN_LEFT;
-					if (x.has_value())
-					{
-						colfmt[i].basex = *x;
-					}
-					break;
-				case 'C':
-					colfmt[i].align = ALIGN_CENTER;
-					if (x.has_value())
-					{
-						colfmt[i].basex = *x;
-					}
-					else
-					{
-						colfmt[i].basex = CreditsExtent.width / 2;
-					}
-					break;
-				case 'R':
-					colfmt[i].align = ALIGN_RIGHT;
-					if (x.has_value())
-					{
-						colfmt[i].basex = *x;
-					}
-					else
-					{
-						colfmt[i].basex = CreditsExtent.width - r.extent.width;
-					}
-					break;
-			}
+			case uqm::CreditsAlign::Left:
+				colfmt[icol].align = ALIGN_LEFT;
+				colfmt[icol].basex = basex(r.extent.width);
+				break;
+			case uqm::CreditsAlign::Center:
+				colfmt[icol].align = ALIGN_CENTER;
+				colfmt[icol].basex = basex(CreditsExtent.width / 2);
+				break;
+			case uqm::CreditsAlign::Right:
+				colfmt[icol].align = ALIGN_RIGHT;
+				colfmt[icol].basex = basex(CreditsExtent.width - r.extent.width);
+				break;
 		}
 	}
 
@@ -613,7 +496,7 @@ processCreditsFrame(void)
 			}
 
 			while (totalHeight - curFrameOfs < CreditsExtent.height
-				   && next_s < GetStringTableCount(CreditsTab))
+				   && next_s < static_cast<int>(CreditsBlocks.size()))
 			{
 				CreditTextFrame* tf = &textFrames[lastFrame];
 
@@ -631,7 +514,7 @@ processCreditsFrame(void)
 		}
 		else if (direction < 0)
 		{ // backward scroll
-			int next_s = GetStringTableCount(CreditsTab) - 1;
+			int next_s = static_cast<int>(CreditsBlocks.size()) - 1;
 
 			// get next string
 			if (firstFrame != lastFrame)
@@ -668,11 +551,15 @@ LoadCredits(void)
 {
 	FONT_SIZE_DEF* fdef;
 
-	CreditsTab = CaptureStringTable(LoadStringTable(CREDITS_STRTAB));
-	if (!CreditsTab)
+	const char* const path {res_GetString(CREDITS_FILE)};
+	const auto text {uqm::readTextFile(uqm::contentDir(), path)};
+	auto blocks {text ? uqm::creditsFromJson(*text) : uqstl::nullopt};
+	if (!blocks)
 	{
+		uqm::log::warn("Could not read the credits file '{}'.", path);
 		return false;
 	}
+	CreditsBlocks = uqstl::move(*blocks);
 	CreditsBack = CaptureDrawable(LoadGraphic(CREDITS_BACK_ANIM));
 	// load fonts
 	for (fdef = CreditsFont; fdef->size; ++fdef)
@@ -688,8 +575,7 @@ FreeCredits(void)
 {
 	FONT_SIZE_DEF* fdef;
 
-	DestroyStringTable(ReleaseStringTable(CreditsTab));
-	CreditsTab = nullptr;
+	CreditsBlocks.clear();
 
 	DestroyDrawable(ReleaseDrawable(CreditsBack));
 	CreditsBack = nullptr;

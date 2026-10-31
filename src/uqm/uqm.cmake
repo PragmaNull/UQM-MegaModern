@@ -53,6 +53,8 @@ set(uqm_src_uqm_files
 	"src/uqm/corecode.h"
 	"src/uqm/credits.cpp"
 	"src/uqm/credits.h"
+	"src/uqm/creditsfile.cpp"
+	"src/uqm/creditsfile.h"
 	"src/uqm/cyborg.cpp"
 	"src/uqm/displist.cpp"
 	"src/uqm/displist.h"

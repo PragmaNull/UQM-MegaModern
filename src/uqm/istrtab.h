@@ -35,7 +35,7 @@
 #define CIMMERIAN_XLAT_TAB "planet.cimmerian.translatetable"
 #define COPPER_COLOR_TAB "planet.copper.colortable"
 #define COPPER_XLAT_TAB "planet.copper.translatetable"
-#define CREDITS_STRTAB "credits.credits"
+#define CREDITS_FILE "credits.credits"
 #define CRIMSON_COLOR_TAB "planet.crimson.colortable"
 #define CRIMSON_XLAT_TAB "planet.crimson.translatetable"
 #define CYANIC_COLOR_TAB "planet.cyanic.colortable"
