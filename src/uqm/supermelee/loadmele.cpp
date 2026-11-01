@@ -54,9 +54,8 @@ static bool FillFileView(MELEE_STATE* pMS);
 
 
 static bool
-LoadTeamImage(DIRENTRY DirEntry, MeleeTeam* team)
+LoadTeamImage(const char* fileName, MeleeTeam* team)
 {
-	const char* fileName {GetDirEntryAddress(DirEntry)};
 
 	uqstl::error_code error {};
 	uqstl::optional<uqm::io::File> stream {uqm::meleeDir().open(fileName, uqm::io::OpenMode::Read, error)};
@@ -106,16 +105,13 @@ GetFleetByIndex(MELEE_STATE* pMS, uint16_t index, MeleeTeam* result)
 
 	for (; index < pMS->load.numIndices; index++)
 	{
-		DIRENTRY entry = SetAbsDirEntryTableIndex(pMS->load.dirEntries,
-												  pMS->load.entryIndices[index]);
-		if (LoadTeamImage(entry, result))
+		const char* const fileName {pMS->load.dirEntries[pMS->load.entryIndices[index]].c_str()};
+		if (LoadTeamImage(fileName, result))
 		{
 			break; // Success
 		}
 
 		{
-			const char* fileName;
-			fileName = GetDirEntryAddress(entry);
 			uqm::log::warn("Warning: File '{}' is not a valid "
 						   "SuperMelee team.",
 						   fileName);
@@ -138,11 +134,9 @@ GetFleetIndexByFileName(MELEE_STATE* pMS, const char* fileName)
 
 	for (index = 0; index < pMS->load.numIndices; index++)
 	{
-		DIRENTRY entry = SetAbsDirEntryTableIndex(pMS->load.dirEntries,
-												  pMS->load.entryIndices[index]);
-		const char* entryName = GetDirEntryAddress(entry);
+		const char* const entryName {pMS->load.dirEntries[pMS->load.entryIndices[index]].c_str()};
 
-		if (strcasecmp((const char*)entryName, fileName) == 0)
+		if (strcasecmp(entryName, fileName) == 0)
 		{
 			return pMS->load.preBuiltCount + index;
 		}
@@ -489,11 +483,9 @@ void LoadTeamList(MELEE_STATE* pMS)
 {
 	uint16_t i;
 
-	DestroyDirEntryTable(ReleaseDirEntryTable(pMS->load.dirEntries));
-	pMS->load.dirEntries = CaptureDirEntryTable(
-		LoadDirEntryTable(uqm::meleeDir(), "", uqm::io::Matcher {uqm::io::Matcher::Kind::Suffix, ".mle"}));
+	pMS->load.dirEntries = uqm::listFiles(uqm::meleeDir(), "", uqm::io::Matcher {uqm::io::Matcher::Kind::Suffix, ".mle"});
 
-	pMS->load.numIndices = GetDirEntryTableCount(pMS->load.dirEntries);
+	pMS->load.numIndices = static_cast<uint16_t>(pMS->load.dirEntries.size());
 	pMS->load.entryIndices.assign(pMS->load.numIndices, 0);
 	for (i = 0; i < pMS->load.numIndices; i++)
 	{

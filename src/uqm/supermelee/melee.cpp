@@ -2158,8 +2158,7 @@ LoadMeleeInfo(MELEE_STATE* pMS)
 static void
 FreeMeleeInfo(MELEE_STATE* pMS)
 {
-	DestroyDirEntryTable(ReleaseDirEntryTable(pMS->load.dirEntries));
-	pMS->load.dirEntries = 0;
+	pMS->load.dirEntries.clear();
 
 	if (pMS->hMusic)
 	{

@@ -16,17 +16,18 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "libs/strings/strintrn.h"
-#include "port.h"
+#include "libs/reslib.h"
 
-DIRENTRY_REF
-LoadDirEntryTable(const uqm::io::Directory& dir, const char* path, const uqm::io::Matcher& matcher)
+namespace uqm
+{
+
+uqstl::vector<uqstl::string> listFiles(const io::Directory& dir, const char* path, const io::Matcher& matcher)
 {
 	uqstl::error_code error {};
-	const uqstl::optional<uqm::io::Directory> subdir {dir.subdir(path)};
+	const uqstl::optional<io::Directory> subdir {dir.subdir(path)};
 	if (!subdir)
 	{
-		return ((DIRENTRY_REF)0);
+		return {};
 	}
 	uqstl::vector<uqstl::string> names {subdir->list("", matcher, error)};
 	uqstl::erase_if(names, [&subdir](const uqstl::string& name) {
@@ -34,27 +35,10 @@ LoadDirEntryTable(const uqm::io::Directory& dir, const char* path, const uqm::io
 		{
 			return true;
 		}
-		const uqstl::optional<uqm::io::FileInfo> info {subdir->stat(name)};
+		const uqstl::optional<io::FileInfo> info {subdir->stat(name)};
 		return !info || info->isDirectory();
 	});
-
-	if (names.empty())
-	{
-		return ((DIRENTRY_REF)0);
-	}
-
-	STRING_TABLE StringTable {AllocStringTable(static_cast<int>(names.size()), 0)};
-	STRING_TABLE_DESC* lpST {StringTable};
-	if (lpST == 0)
-	{
-		FreeStringTable(StringTable);
-		return ((DIRENTRY_REF)0);
-	}
-
-	int index {};
-	for (const uqstl::string& name : names)
-	{
-		SetStringTableEntry(StringTable, index++, name.c_str(), static_cast<int>(name.size() + 1));
-	}
-	return StringTable;
+	return names;
 }
+
+} // namespace uqm

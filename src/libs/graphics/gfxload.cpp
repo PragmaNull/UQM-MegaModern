@@ -223,8 +223,7 @@ typedef struct BuildCharDesc
 
 void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 {
-	uint16_t numDirEntries;
-	DIRENTRY fontDir = nullptr;
+	uqstl::vector<uqstl::string> fontDir {};
 	uqstl::vector<BuildCharDesc> bcds {};
 	size_t numBCDs = 0;
 	int dirEntryI;
@@ -250,24 +249,22 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 		goto err;
 	}
 
-	fontDir = CaptureDirEntryTable(LoadDirEntryTable(*fontDirHandle, "", uqm::io::Matcher {uqm::io::Matcher::Kind::Substring, "."}));
-	if (fontDir == 0)
+	fontDir = uqm::listFiles(*fontDirHandle, "", uqm::io::Matcher {uqm::io::Matcher::Kind::Substring, "."});
+	if (fontDir.empty())
 	{
 		goto err;
 	}
-	numDirEntries = GetDirEntryTableCount(fontDir);
 
-	bcds.resize(numDirEntries);
+	bcds.resize(fontDir.size());
 
 	// Load the surfaces for all dir Entries
-	for (dirEntryI = 0; dirEntryI < numDirEntries; dirEntryI++)
+	for (dirEntryI = 0; dirEntryI < static_cast<int>(fontDir.size()); dirEntryI++)
 	{
 		unsigned int charIndex {};
 		TFB_Canvas canvas;
 		EXTENT size;
 
-		const char* char_name = GetDirEntryAddress(SetAbsDirEntryTableIndex(
-			fontDir, dirEntryI));
+		const char* char_name = fontDir[dirEntryI].c_str();
 
 		if (strcmp(char_name, cfg_name) == 0)
 		{
@@ -337,7 +334,6 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 	}
 
 	fontDirHandle.reset();
-	DestroyDirEntryTable(ReleaseDirEntryTable(fontDir));
 
 #if 0
 	if (numBCDs == 0)
@@ -430,11 +426,6 @@ err:
 	}
 
 	fontDirHandle.reset();
-
-	if (fontDir != 0)
-	{
-		DestroyDirEntryTable(ReleaseDirEntryTable(fontDir));
-	}
 
 
 	return 0;

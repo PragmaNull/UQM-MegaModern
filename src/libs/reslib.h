@@ -111,20 +111,12 @@ bool ConvertLegacyResourceIndex(const uqm::io::Directory& dir, const char* oldNa
 extern "C" {
 #endif
 
-typedef STRING_TABLE DIRENTRY_REF;
-typedef STRING DIRENTRY;
-
-extern DIRENTRY_REF LoadDirEntryTable(const uqm::io::Directory& dir, const char* path, const uqm::io::Matcher& matcher);
-#define CaptureDirEntryTable CaptureStringTable
-#define ReleaseDirEntryTable ReleaseStringTable
-#define DestroyDirEntryTable DestroyStringTable
-#define GetDirEntryTableRef GetStringTable
-#define GetDirEntryTableCount GetStringTableCount
-#define GetDirEntryTableIndex GetStringTableIndex
-#define SetAbsDirEntryTableIndex SetAbsStringTableIndex
-#define SetRelDirEntryTableIndex SetRelStringTableIndex
-#define GetDirEntryLength GetStringLengthBin
-#define GetDirEntryAddress GetStringAddress
+namespace uqm
+{
+// The names of the files in the directory 'path' of 'dir' that 'matcher' accepts. Names that start with '.' are not
+// included.
+[[nodiscard]] uqstl::vector<uqstl::string> listFiles(const io::Directory& dir, const char* path, const io::Matcher& matcher);
+} // namespace uqm
 
 /* Key-Value resources */
 

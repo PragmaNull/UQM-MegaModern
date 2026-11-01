@@ -36,7 +36,7 @@ struct melee_load_state
 	uqstl::vector<MeleeTeam*> preBuiltList;
 	uint16_t preBuiltCount;
 
-	DIRENTRY dirEntries;
+	uqstl::vector<uqstl::string> dirEntries;
 	uqstl::vector<uint16_t> entryIndices;
 	uint16_t numIndices;
 
