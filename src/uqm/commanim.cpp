@@ -169,9 +169,7 @@ ProcessColormapAnims(SEQUENCE* pSeq, uint16_t Num)
 			continue;
 		}
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap,
-											  ADPtr->StartIndex + pSeq->CurIndex)),
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, ADPtr->StartIndex + pSeq->CurIndex),
 					  TimePeriod {pSeq->Alarm - 1});
 		pSeq->Change = false;
 	}

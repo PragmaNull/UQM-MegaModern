@@ -1713,8 +1713,7 @@ NatureOfConversation(RESPONSE_REF R)
 			NPCPhrase(BUY_OR_SELL);
 			AlienTalkSegue(1);
 
-			XFormColorMap(GetColorMapAddress(
-							  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
+			XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 						  c_gameSecond / 2);
 
 			AlienTalkSegue((uint16_t)~0);
@@ -1786,8 +1785,7 @@ DoBluster(RESPONSE_REF R)
 		NPCPhrase(WERE_NOT_AFRAID);
 		AlienTalkSegue((uint16_t)~0);
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 2)),
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 					  c_gameSecond / 2);
 
 		SET_GAME_STATE(MELNORME_YACK_STACK2, 4);
@@ -1978,8 +1976,7 @@ DoFirstMeeting(RESPONSE_REF R)
 		NPCPhrase(TEST_RESULTS);
 		AlienTalkSegue((uint16_t)~0);
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 0)),
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
 					  c_gameSecond / 2);
 	}
 	else if (PLAYER_SAID(R, we_apologize))
@@ -1988,8 +1985,7 @@ DoFirstMeeting(RESPONSE_REF R)
 		NPCPhrase(APOLOGY_ACCEPTED);
 		AlienTalkSegue((uint16_t)~0);
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 0)),
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
 					  c_gameSecond / 2);
 	}
 
@@ -2027,8 +2023,7 @@ DoMelnormeMiffed(RESPONSE_REF R)
 
 		AlienTalkSegue((uint16_t)~0);
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 2)),
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 					  c_gameSecond / 2);
 	}
 	else if (PLAYER_SAID(R, explore_relationship))
@@ -2101,8 +2096,7 @@ DoMelnormePissed(RESPONSE_REF R)
 
 		AlienTalkSegue((uint16_t)~0);
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 2)),
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 					  c_gameSecond / 2);
 	}
 	else if (PLAYER_SAID(R, beg_forgiveness))
@@ -2158,8 +2152,7 @@ DoMelnormeHate(RESPONSE_REF R)
 
 	AlienTalkSegue((uint16_t)~0);
 
-	XFormColorMap(GetColorMapAddress(
-					  SetAbsColorMapIndex(CommData.AlienColorMap, 2)),
+	XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 				  c_gameSecond / 2);
 
 	Response(well_if_thats_the_way_you_feel, ExitConversation);

@@ -1263,7 +1263,7 @@ void AlienTalkSegue(uint16_t wait_track)
 		MUSIC_REF AlienSong = CommData.AlienSong;
 
 		InitSpeechGraphics();
-		SetColorMap(GetColorMapAddress(CommData.AlienColorMap));
+		SetColorMap(GetColorMapAddress(CommData.AlienColorMap, CommData.AlienColorMapIndex));
 		SetContext(AnimContext);
 		DrawAlienFrame(nullptr, 0, true);
 		UpdateSpeechGraphics();
@@ -1814,21 +1814,19 @@ void SetUpCommData(void)
 	// Loading alien colormap
 	if (altResFlags & USE_ALT_COLORMAP)
 	{
-		CommData.AlienColorMap = CaptureColorMap(
-			LoadColorMap(CommData.AltRes.AlienColorMapRes));
+		CommData.AlienColorMap = LoadColorMap(CommData.AltRes.AlienColorMapRes);
 
 		if (!CommData.AlienColorMap) // Failed to load
 		{
-			CommData.AlienColorMap = CaptureColorMap(
-				LoadColorMap(CommData.AlienColorMapRes));
+			CommData.AlienColorMap = LoadColorMap(CommData.AlienColorMapRes);
 			altResFlags &= ~USE_ALT_COLORMAP;
 		}
 	}
 	else
 	{
-		CommData.AlienColorMap = CaptureColorMap(
-			LoadColorMap(CommData.AlienColorMapRes));
+		CommData.AlienColorMap = LoadColorMap(CommData.AlienColorMapRes);
 	}
+	CommData.AlienColorMapIndex = 0;
 
 	// Loading alien song
 	if (altResFlags & USE_ALT_SONG)
@@ -1888,8 +1886,8 @@ HailAlien(void)
 	CommData.AlienFrame = CaptureDrawable(
 		LoadGraphic(CommData.AlienFrameRes));
 	CommData.AlienFont = LoadFont(CommData.AlienFontRes);
-	CommData.AlienColorMap = CaptureColorMap(
-		LoadColorMap(CommData.AlienColorMapRes));
+	CommData.AlienColorMap = LoadColorMap(CommData.AlienColorMapRes);
+	CommData.AlienColorMapIndex = 0;
 
 	SetUpCommData();
 
@@ -2006,7 +2004,7 @@ HailAlien(void)
 
 	DestroyStringTable(CommData.ConversationPhrases);
 	DestroyMusic(CommData.AlienSong);
-	DestroyColorMap(ReleaseColorMap(CommData.AlienColorMap));
+	DestroyColorMap(CommData.AlienColorMap);
 	DestroyFont(CommData.AlienFont);
 	DestroyDrawable(ReleaseDrawable(CommData.AlienFrame));
 

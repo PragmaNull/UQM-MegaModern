@@ -316,8 +316,7 @@ FriendlyExit(RESPONSE_REF R)
 		SetCommDarkMode(false);
 		RedrawSISComWindow();
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 0)),
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
 					  TimePeriod {});
 
 		BlockTalkingAnim(1, 2); // Several hours later block (New)
@@ -427,8 +426,7 @@ Foreplay(RESPONSE_REF R)
 		CommData.AlienTextFColor = BUILD_COLOR_RGBA(85, 255, 255, 0);
 		SetCommDarkMode(true);
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 					  c_gameSecond);
 
 		if (IS_HD)

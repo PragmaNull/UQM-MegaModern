@@ -381,8 +381,7 @@ GenerateTexturedMoons(SOLARSYS_STATE* system, PLANET_DESC* planet)
 			pSolarSysState->XlatTable.reset();
 			DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 			pSolarSysState->TopoFrame = 0;
-			DestroyColorMap(ReleaseColorMap(
-				pSolarSysState->OrbitalCMap));
+			DestroyColorMap(pSolarSysState->OrbitalCMap);
 			pSolarSysState->OrbitalCMap = 0;
 		}
 	}
@@ -479,7 +478,7 @@ ChangeSunColor(void)
 	// for all stars or some will look ugly.
 #define STAR_COLOR_INDEX 0xFF
 
-	c = GetColorMapColor(GetColorMapIndex(SunCMap), STAR_COLOR_INDEX);
+	c = GetColorMapColor(GetColorMapTableIndex(SunCMap, 0), STAR_COLOR_INDEX);
 	mode = MAKE_DRAW_MODE(DRAW_ALPHA, TRANSFER_ALPHA);
 	maskOffset = GetFrameCount(SunFrame) - SUN_ZOOM_SIZES;
 	sizeIter = maskOffset / SUN_ZOOM_SIZES;
@@ -501,9 +500,9 @@ void FreeIPData(void)
 	SISIPFrame = 0;
 	DestroyDrawable(ReleaseDrawable(SunFrame));
 	SunFrame = 0;
-	DestroyColorMap(ReleaseColorMap(SunCMap));
+	DestroyColorMap(SunCMap);
 	SunCMap = 0;
-	DestroyColorMap(ReleaseColorMap(OrbitalCMap));
+	DestroyColorMap(OrbitalCMap);
 	OrbitalCMap = 0;
 	DestroyDrawable(ReleaseDrawable(OrbitalFrame));
 	OrbitalFrame = 0;
@@ -528,7 +527,7 @@ void LoadIPData(void)
 			LoadGraphic(IPBKGND_MASK_PMAP_ANIM));
 		SISIPFrame = CaptureDrawable(LoadGraphic(SIS_IP_MASK));
 
-		OrbitalCMap = CaptureColorMap(LoadColorMap(ORBPLAN_COLOR_MAP));
+		OrbitalCMap = LoadColorMap(ORBPLAN_COLOR_MAP);
 		OrbitalFrame = CaptureDrawable(
 			LoadGraphic(PLANETS_MASK));
 		OrbitalShield = CaptureDrawable(
@@ -536,7 +535,7 @@ void LoadIPData(void)
 
 		NebulaFrame = LoadNebulaeFrame(CurStarDescPtr->star_pt);
 
-		SunCMap = CaptureColorMap(LoadColorMap(IPSUN_COLOR_MAP));
+		SunCMap = LoadColorMap(IPSUN_COLOR_MAP);
 		SunFrame = CaptureDrawable(LoadGraphic(SUN_MASK));
 
 		SpaceMusic = 0;
@@ -737,7 +736,7 @@ GenerateTexturedPlanets(void)
 		pSolarSysState->XlatTable.reset();
 		DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 		pSolarSysState->TopoFrame = 0;
-		DestroyColorMap(ReleaseColorMap(pSolarSysState->OrbitalCMap));
+		DestroyColorMap(pSolarSysState->OrbitalCMap);
 		pSolarSysState->OrbitalCMap = 0;
 		// End clean up
 	}
@@ -925,8 +924,7 @@ FreeSolarSys(void)
 			pSolarSysState->XlatTable.reset();
 			DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 			pSolarSysState->TopoFrame = 0;
-			DestroyColorMap(
-				ReleaseColorMap(pSolarSysState->OrbitalCMap));
+			DestroyColorMap(pSolarSysState->OrbitalCMap);
 			pSolarSysState->OrbitalCMap = 0;
 			// JMS ends.
 		}
@@ -2333,8 +2331,7 @@ InitSolarSys(void)
 			MAX_ZOOM_RADIUS);
 	}
 
-	SetColorMap(GetColorMapAddress(SetAbsColorMapIndex(
-		SunCMap, STAR_COLOR(CurStarDescPtr->Type))));
+	SetColorMap(GetColorMapAddress(SunCMap, STAR_COLOR(CurStarDescPtr->Type)));
 	if (GetFrameCount(SunFrame) > 5)
 	{
 		ChangeSunColor();
@@ -2558,8 +2555,7 @@ SetPlanetColorMap(PLANET_DESC* planet)
 {
 	uint16_t index = planet->data_index & ~WORLD_TYPE_SPECIAL;
 	assert(index < NUMBER_OF_PLANET_TYPES);
-	SetColorMap(GetColorMapAddress(SetAbsColorMapIndex(OrbitalCMap,
-													   PLANCOLOR(PlanData[index].Type))));
+	SetColorMap(GetColorMapAddress(OrbitalCMap, PLANCOLOR(PlanData[index].Type)));
 }
 
 static void

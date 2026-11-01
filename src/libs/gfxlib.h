@@ -517,11 +517,10 @@ typedef struct text
 extern "C" {
 #endif
 
-typedef STRING_TABLE COLORMAP_REF;
-typedef STRING COLORMAP;
+typedef uqm::StringTable* COLORMAP;
 // COLORMAPPTR is really a pointer to colortable entry structure
 // which is documented in doc/devel/strtab, .ct files section
-typedef void* COLORMAPPTR;
+typedef const void* COLORMAPPTR;
 
 #include "graphics/prim.h"
 
@@ -769,22 +768,12 @@ extern bool SetColorMap(COLORMAPPTR ColorMapPtr);
 extern TimeCount XFormColorMap(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval);
 extern TimeCount FadeScreen(ScreenFadeType fadeType, TimePeriod TimeInterval);
 extern void FlushColorXForms(void);
-extern uint8_t GetColorMapTableIndex(COLORMAP map);
-#define InitColorMapResources InitStringTableResources
-#define LoadColorMapFile LoadStringTableFile
+extern uint8_t GetColorMapTableIndex(COLORMAP map, size_t index);
 #define LoadColorMapInstance LoadStringTableInstance
-#define CaptureColorMap CaptureStringTable
-#define ReleaseColorMap ReleaseStringTable
 #define DestroyColorMap DestroyStringTable
-#define GetColorMapRef GetStringTable
-#define GetColorMapCount GetStringTableCount
-#define GetColorMapIndex GetColorMapTableIndex //Originally used GetStringTableIndex, but there were no macro calls and it didn't do what it's supposed to do
-#define SetAbsColorMapIndex SetAbsStringTableIndex
-#define SetRelColorMapIndex SetRelStringTableIndex
-#define GetColorMapLength GetStringLengthBin
-#define CheckColorMap CheckResString
 
-extern COLORMAPPTR GetColorMapAddress(COLORMAP);
+// The color map 'index' of 'map'. The index wraps at the number of color maps.
+extern COLORMAPPTR GetColorMapAddress(COLORMAP map, size_t index);
 
 void SetSystemRect(const GFXRECT* pRect);
 void ClearSystemRect(void);

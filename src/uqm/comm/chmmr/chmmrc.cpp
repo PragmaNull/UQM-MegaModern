@@ -698,8 +698,7 @@ Intro(void)
 				EngageFilters(&chmmr_filters);
 			}
 
-			CommData.AlienColorMap = SetAbsColorMapIndex(
-				CommData.AlienColorMap, 1);
+			CommData.AlienColorMapIndex = 1;
 
 			switch (NumVisits++)
 			{

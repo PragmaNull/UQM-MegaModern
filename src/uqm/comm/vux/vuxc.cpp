@@ -304,15 +304,13 @@ ZexBeingEatenAlive(void)
 			CommData.AlienFrame =
 				SetAbsFrameIndex(CommData.AlienFrame, 119);
 
-			XFormColorMap(GetColorMapAddress(
-							  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
+			XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 						  c_gameSecond / 4);
 		}
 	}
 	else
 	{
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 					  c_gameSecond / 4);
 
 		if (IS_HD)

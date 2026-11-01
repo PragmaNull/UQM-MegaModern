@@ -681,7 +681,8 @@ static void
 animatePowerLines(MENU_STATE* pMS)
 {
 	static STAMP s;
-	static COLORMAP ColorMap;
+	static COLORMAP ColorMap {};
+	static size_t ColorMapIndex {};
 	static TimeCount NextTime {};
 	TimeCount Now = GetTimeCounter();
 
@@ -695,17 +696,18 @@ animatePowerLines(MENU_STATE* pMS)
 		s.origin.x = 0;
 		s.origin.y = 0;
 		s.frame = SetAbsFrameIndex(pMS->ModuleFrame, 28);
-		ColorMap = SetAbsColorMapIndex(pMS->CurString, 0);
+		ColorMap = pMS->HangarColorMap;
+		ColorMapIndex = 0;
 	}
 
 	if (Now >= NextTime || pMS)
 	{
 		NextTime = Now + (c_gameSecond / HANGAR_ANIM_RATE);
 
-		SetColorMap(GetColorMapAddress(ColorMap));
+		SetColorMap(GetColorMapAddress(ColorMap, ColorMapIndex));
 		DrawStamp(&s);
 		// Advance colomap cycle
-		ColorMap = SetRelColorMapIndex(ColorMap, 1);
+		ColorMapIndex = (ColorMapIndex + 1) % ColorMap->size();
 	}
 }
 
@@ -2703,8 +2705,7 @@ bool DoShipyard(MENU_STATE* pMS)
 			pMS->ModuleFrame = CaptureDrawable(
 				LoadGraphic(SHIPYARD_PMAP_ANIM));
 
-			pMS->CurString = CaptureColorMap(
-				LoadColorMap(HANGAR_COLOR_TAB));
+			pMS->HangarColorMap = LoadColorMap(HANGAR_COLOR_TAB);
 
 			pMS->hMusic = LoadMusic(SHIPYARD_MUSIC);
 
@@ -2793,8 +2794,8 @@ ExitShipyard:
 
 		DestroyDrawable(ReleaseDrawable(pMS->ModuleFrame));
 		pMS->ModuleFrame = 0;
-		DestroyColorMap(ReleaseColorMap(pMS->CurString));
-		pMS->CurString = 0;
+		DestroyColorMap(pMS->HangarColorMap);
+		pMS->HangarColorMap = 0;
 
 		// Release Fonts
 		if (!IS_DOS)

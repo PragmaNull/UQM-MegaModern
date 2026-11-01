@@ -314,6 +314,7 @@ struct solarsys_state
 	uqm::StringTablePtr XlatTable {};
 	const void* XlatPtr;
 	COLORMAP OrbitalCMap;
+	uint16_t OrbitalCMapIndex;
 
 	SYSTEM_INFO SysInfo;
 

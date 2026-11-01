@@ -184,8 +184,7 @@ void RerenderPlanetSphere(void)
 		}
 
 		XFormColorMap(
-			GetColorMapAddress(
-				SetAbsColorMapIndex(Orbit->sphereMap, sc)),
+			GetColorMapAddress(Orbit->sphereMap, sc),
 			TimePeriod {});
 		XFormColorMap_step();
 	}

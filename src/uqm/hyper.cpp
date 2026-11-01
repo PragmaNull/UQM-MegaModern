@@ -501,9 +501,9 @@ void FreeHyperData(void)
 	DestroyDrawable(ReleaseDrawable(hyperstars[2]));
 	hyperstars[2] = 0;
 
-	DestroyColorMap(ReleaseColorMap(hypercmaps[0]));
+	DestroyColorMap(hypercmaps[0]);
 	hypercmaps[0] = 0;
-	DestroyColorMap(ReleaseColorMap(hypercmaps[1]));
+	DestroyColorMap(hypercmaps[1]);
 	hypercmaps[1] = 0;
 }
 
@@ -523,12 +523,11 @@ LoadHyperData(void)
 			LoadGraphic(AMBIENT_MASK_PMAP_ANIM));
 		hyperstars[1] = CaptureDrawable(
 			LoadGraphic(HYPERSTARS_MASK));
-		hypercmaps[0] = CaptureColorMap(LoadColorMap(HYPER_COLOR_TAB));
+		hypercmaps[0] = LoadColorMap(HYPER_COLOR_TAB);
 
 		hyperstars[2] = CaptureDrawable(
 			LoadGraphic(ARISPACE_MASK));
-		hypercmaps[1] = CaptureColorMap(
-			LoadColorMap(ARISPACE_COLOR_TAB));
+		hypercmaps[1] = LoadColorMap(ARISPACE_COLOR_TAB);
 	}
 }
 
@@ -581,13 +580,13 @@ bool LoadHyperspace(void)
 	{ // Hyperspace Color
 		SetContextBackGroundColor(
 			BUILD_COLOR(MAKE_RGB15(0x07, 0x00, 0x00), 0x2F));
-		SetColorMap(GetColorMapAddress(hypercmaps[0]));
+		SetColorMap(GetColorMapAddress(hypercmaps[0], 0));
 	}
 	else
 	{ // Quasispace Color
 		SetContextBackGroundColor(
 			BUILD_COLOR(MAKE_RGB15(0x00, 0x1A, 0x00), 0x2F));
-		SetColorMap(GetColorMapAddress(hypercmaps[1]));
+		SetColorMap(GetColorMapAddress(hypercmaps[1], 0));
 		SET_GAME_STATE(USED_BROADCASTER, 0);
 		SET_GAME_STATE(BROADCASTER_RESPONSE, 0);
 	}

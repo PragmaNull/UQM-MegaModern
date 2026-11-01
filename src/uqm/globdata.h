@@ -171,6 +171,7 @@ typedef struct
 	COLORMAP AlienColorMap;
 	MUSIC_REF AlienSong;
 	uqm::StringTable* ConversationPhrases;
+	uint16_t AlienColorMapIndex;
 } LOCDATA;
 
 enum

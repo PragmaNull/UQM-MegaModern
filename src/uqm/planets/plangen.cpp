@@ -214,7 +214,7 @@ void SetPlanetColors(COLORMAPPTR cmap)
 	uqstl::array<Color, numcolors> colors {};
 
 	c = colors.data();
-	cbase = (uint8_t*)GetColorMapAddress(pSolarSysState->OrbitalCMap);
+	cbase = (uint8_t*)GetColorMapAddress(pSolarSysState->OrbitalCMap, pSolarSysState->OrbitalCMapIndex);
 
 	for (i = 0; i < numcolors; ++i, ++c)
 	{
@@ -494,7 +494,7 @@ RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 
 static void
 RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
-				 bool SurfDef, COLORMAP scanTable)
+				 bool SurfDef, COLORMAPPTR scanColors)
 {
 	uint8_t AlgoType;
 	int16_t base, d;
@@ -533,13 +533,13 @@ RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
 	xlatDesc = (const XLAT_DESC*)pSolarSysState->XlatPtr;
 	xlat_tab = (const uint8_t*)xlatDesc->xlat_tab;
 
-	if (scanTable == nullptr)
+	if (scanColors == nullptr)
 	{
-		cbase = (uint8_t*)GetColorMapAddress(pSolarSysState->OrbitalCMap);
+		cbase = (uint8_t*)GetColorMapAddress(pSolarSysState->OrbitalCMap, pSolarSysState->OrbitalCMapIndex);
 	}
 	else
 	{
-		cbase = (uint8_t*)GetColorMapAddress(scanTable);
+		cbase = (uint8_t*)scanColors;
 	}
 
 	pSrc = pTopoData;
@@ -2156,8 +2156,8 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 		Orbit->sphereBytes = new uint8_t[GetFrameWidth(Orbit->SphereFrame) * GetFrameHeight(Orbit->SphereFrame)];
 
 		Orbit->sphereMap =
-			CaptureColorMap(LoadColorMap(DOS_SPHERE_COLOR_TAB));
-		SetColorMap(GetColorMapAddress(Orbit->sphereMap));
+			LoadColorMap(DOS_SPHERE_COLOR_TAB);
+		SetColorMap(GetColorMapAddress(Orbit->sphereMap, 0));
 	}
 }
 
@@ -2639,8 +2639,8 @@ void load_color_resources(PLANET_DESC* pPlanetDesc,
 {
 	if (LoadCustomColorTable)
 	{ // JMS: Planets with special colormaps
-		pSolarSysState->OrbitalCMap = CaptureColorMap(
-			LoadColorMap(GetAltColorMap(pPlanetDesc)));
+		pSolarSysState->OrbitalCMap = LoadColorMap(GetAltColorMap(pPlanetDesc));
+		pSolarSysState->OrbitalCMapIndex = 0;
 		if (pSolarSysState->OrbitalCMap != nullptr)
 		{ // Load successful - grab XLAT and return
 			pSolarSysState->XlatTable = uqm::loadStringTable(SPECIAL_CMAP_XLAT_TAB);
@@ -2651,20 +2651,18 @@ void load_color_resources(PLANET_DESC* pPlanetDesc,
 
 	// JMS: Normal planets
 	size_t xlatIndex {0};
-	pSolarSysState->OrbitalCMap = CaptureColorMap(
-		LoadColorMap(dosshielded ? DOS_SHIELDED_COLOR_TAB : PlanDataPtr->CMapInstance));
+	pSolarSysState->OrbitalCMap = LoadColorMap(dosshielded ? DOS_SHIELDED_COLOR_TAB : PlanDataPtr->CMapInstance);
+	pSolarSysState->OrbitalCMapIndex = 0;
 	pSolarSysState->XlatTable = uqm::loadStringTable(PlanDataPtr->XlatTabInstance);
 
 	if (PlanetInfo->SurfaceTemperature > HOT_THRESHOLD)
 	{
-		pSolarSysState->OrbitalCMap = SetAbsColorMapIndex(
-			pSolarSysState->OrbitalCMap, 2);
+		pSolarSysState->OrbitalCMapIndex = 2;
 		xlatIndex = 2;
 	}
 	else if (PlanetInfo->SurfaceTemperature > COLD_THRESHOLD)
 	{
-		pSolarSysState->OrbitalCMap = SetAbsColorMapIndex(
-			pSolarSysState->OrbitalCMap, 1);
+		pSolarSysState->OrbitalCMapIndex = 1;
 		xlatIndex = 1;
 	}
 
@@ -2795,20 +2793,18 @@ void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
 	else
 	{
 		size_t xlatIndex {0};
-		pSolarSysState->OrbitalCMap = CaptureColorMap(
-			LoadColorMap(shielded && useDosSpheres ? DOS_SHIELDED_COLOR_TAB : PlanDataPtr->CMapInstance));
+		pSolarSysState->OrbitalCMap = LoadColorMap(shielded && useDosSpheres ? DOS_SHIELDED_COLOR_TAB : PlanDataPtr->CMapInstance);
+		pSolarSysState->OrbitalCMapIndex = 0;
 		pSolarSysState->XlatTable = uqm::loadStringTable(PlanDataPtr->XlatTabInstance);
 
 		if (PlanetInfo->SurfaceTemperature > HOT_THRESHOLD)
 		{
-			pSolarSysState->OrbitalCMap = SetAbsColorMapIndex(
-				pSolarSysState->OrbitalCMap, 2);
+			pSolarSysState->OrbitalCMapIndex = 2;
 			xlatIndex = 2;
 		}
 		else if (PlanetInfo->SurfaceTemperature > COLD_THRESHOLD)
 		{
-			pSolarSysState->OrbitalCMap = SetAbsColorMapIndex(
-				pSolarSysState->OrbitalCMap, 1);
+			pSolarSysState->OrbitalCMapIndex = 1;
 			xlatIndex = 1;
 		}
 
@@ -2818,7 +2814,7 @@ void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
 		RandomContext_SeedRandom(SysGenRNG, pPlanetDesc->rand_seed);
 		generate_surface_frame(width, height, Orbit, PlanDataPtr);
 
-		DestroyColorMap(ReleaseColorMap(pSolarSysState->OrbitalCMap));
+		DestroyColorMap(pSolarSysState->OrbitalCMap);
 		pSolarSysState->OrbitalCMap = 0;
 		pSolarSysState->XlatTable.reset();
 		delete[] Orbit->lpTopoData;
@@ -2954,7 +2950,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 	if (!ForIP && useDosSpheres)
 	{
 		RenderLevelMasks(Orbit->TopoMask, Orbit->lpTopoData, SurfDef);
-		SetPlanetColors(GetColorMapAddress(Orbit->sphereMap));
+		SetPlanetColors(GetColorMapAddress(Orbit->sphereMap, 0));
 		if (Orbit->TopoMask != nullptr)
 		{
 			ExpandLevelMasks(Orbit);
@@ -3004,7 +3000,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 		{
 			COLORMAP scanTable;
 
-			scanTable = CaptureColorMap(LoadColorMap(SCAN_COLOR_TAB));
+			scanTable = LoadColorMap(SCAN_COLOR_TAB);
 
 			for (i = 0; i < NUM_SCAN_TYPES; i++)
 			{
@@ -3012,13 +3008,11 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 					CreateDrawable(WANT_PIXMAP, (int16_t)width,
 								   (int16_t)height, 1));
 
-				scanTable = SetAbsColorMapIndex(scanTable, i);
-
 				RenderTopography(pSolarSysState->ScanFrame[i],
-								 Orbit->lpTopoData, width, height, false, scanTable);
+								 Orbit->lpTopoData, width, height, false, GetColorMapAddress(scanTable, i));
 			}
 
-			DestroyColorMap(ReleaseColorMap(scanTable));
+			DestroyColorMap(scanTable);
 			scanTable = 0;
 		}
 	}

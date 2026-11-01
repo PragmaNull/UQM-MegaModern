@@ -22,7 +22,6 @@
 #include "libs/time/timelib.h"
 #include "libs/inplib.h"
 #include "libs/strlib.h"
-// for GetStringAddress()
 #include "core/log/log.h"
 #include <string.h>
 #include <stdlib.h>
@@ -636,9 +635,14 @@ void FlushColorXForms(void)
 // The type conversions are implicit and will generate errors
 // or warnings if types change imcompatibly
 COLORMAPPTR
-GetColorMapAddress(COLORMAP colormap)
+GetColorMapAddress(COLORMAP map, size_t index)
 {
-	return GetStringAddress(colormap);
+	if (map == nullptr || map->size() == 0)
+	{
+		return nullptr;
+	}
+	const uqstl::string_view bytes {map->bytes(index % map->size())};
+	return bytes.empty() ? nullptr : bytes.data();
 }
 
 static void
@@ -697,9 +701,7 @@ Color GetColorMapColor(uint16_t ColorMapIndex, uint16_t ColorIndex)
 }
 
 uint8_t
-GetColorMapTableIndex(COLORMAP map)
+GetColorMapTableIndex(COLORMAP map, size_t index)
 {
-	uint8_t* index = (uint8_t*)GetColorMapAddress(map);
-
-	return *index;
+	return *static_cast<const uint8_t*>(GetColorMapAddress(map, index));
 }

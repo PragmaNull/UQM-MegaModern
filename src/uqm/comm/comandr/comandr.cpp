@@ -158,8 +158,7 @@ static FILTER_DESC commander_filters =
 static void
 RaveParty(void)
 {
-	CommData.AlienColorMap = SetAbsColorMapIndex(CommData.AlienColorMap,
-												 (TFB_Random() % 3) + 1);
+	CommData.AlienColorMapIndex = (TFB_Random() % 3) + 1;
 
 	if (IS_HD && EXTENDED)
 	{
@@ -735,8 +734,7 @@ GiveRadios(RESPONSE_REF R)
 			FilterData.FilterArray[1].Flags = FILTER_DISABLED;
 		}
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 0)),
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
 					  c_gameSecond / 2);
 
 		if (altResFlags & USE_ALT_SONG)

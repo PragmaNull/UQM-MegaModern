@@ -305,8 +305,7 @@ ExitConversation(RESPONSE_REF R)
 			EngageFilters(&orz_filters);
 		}
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 					  c_gameSecond / 2);
 
 		if (PLAYER_SAID(R, about_andro_3))
@@ -792,8 +791,7 @@ Intro(void)
 		}
 		else
 		{
-			CommData.AlienColorMap =
-				SetAbsColorMapIndex(CommData.AlienColorMap, 1);
+			CommData.AlienColorMapIndex = 1;
 		}
 
 		NumVisits = GET_GAME_STATE(ORZ_VISITS);
