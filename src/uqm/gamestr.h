@@ -89,7 +89,6 @@ enum
 
 
 #define GAME_STRING(i) (GameStrings->text(i))
-#define GET_STRING(s, i) ((char*)GetStringAddress(SetAbsStringTableIndex((s), (i))))
 
 #define DOS_STARBASE_STRING_BASE (STARBASE_STRING_BASE + 12)
 #define TDO_STARBASE_STRING_BASE (DOS_STARBASE_STRING_BASE + NUM_PURCHASE_MODULES)
