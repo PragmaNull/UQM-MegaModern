@@ -120,8 +120,8 @@ GenerateIlwrath_generateOrbital(SOLARSYS_STATE* solarSys,
 			solarSys->PlanetSideFrame[1] =
 				CaptureDrawable(
 					LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				CaptureStringTable(LoadStringTable(RUINS_STRTAB));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		}
 	}
 

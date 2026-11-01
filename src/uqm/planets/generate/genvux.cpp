@@ -197,9 +197,8 @@ GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 				solarSys->PlanetSideFrame[1] = CaptureDrawable(
 					LoadGraphic(MAIDENS_MASK_PMAP_ANIM));
-				solarSys->SysInfo.PlanetInfo.DiscoveryString =
-					CaptureStringTable(
-						LoadStringTable(MAIDENS_STRTAB));
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MAIDENS_STRTAB);
+				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			}
 		}
 		else if (CurStarDescPtr->Index == VUX_BEAST_DEFINED)
@@ -208,9 +207,8 @@ GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 			{
 				LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 				solarSys->PlanetSideFrame[1] = 0;
-				solarSys->SysInfo.PlanetInfo.DiscoveryString =
-					CaptureStringTable(
-						LoadStringTable(BEAST_STRTAB));
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BEAST_STRTAB);
+				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			}
 		}
 		else // if (CurStarDescPtr->Index == VUX_DEFINED)
@@ -218,8 +216,8 @@ GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
 				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				CaptureStringTable(LoadStringTable(RUINS_STRTAB));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		}
 	}
 
@@ -375,11 +373,8 @@ GenerateVux_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		if (whichNode == 10)
 		{ // Picked up Zex' Beauty... Again.
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				SetRelStringTableIndex(
-					CaptureStringTable(
-						LoadStringTable(BEAST_STRTAB)),
-					1);
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BEAST_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 
 			GenerateDefault_landerReport(solarSys);
 			SetLanderTakeoff();
@@ -393,9 +388,8 @@ GenerateVux_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 				LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 				solarSys->PlanetSideFrame[1] = CaptureDrawable(
 					LoadGraphic(MAIDENS_MASK_PMAP_ANIM));
-				solarSys->SysInfo.PlanetInfo.DiscoveryString =
-					CaptureStringTable(
-						LoadStringTable(MAIDENS_STRTAB));
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MAIDENS_STRTAB);
+				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			}
 		}
 

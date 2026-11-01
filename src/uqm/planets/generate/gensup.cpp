@@ -146,14 +146,11 @@ GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
 				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				CaptureStringTable(
-					LoadStringTable(SUPOX_RUINS_STRTAB));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SUPOX_RUINS_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			if (GET_GAME_STATE(ULTRON_CONDITION))
 			{ // Already picked up the Ultron, skip the report
-				solarSys->SysInfo.PlanetInfo.DiscoveryString =
-					SetAbsStringTableIndex(
-						solarSys->SysInfo.PlanetInfo.DiscoveryString, 1);
+				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 			}
 		}
 	}

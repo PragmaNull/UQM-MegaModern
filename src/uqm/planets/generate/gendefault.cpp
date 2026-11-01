@@ -238,7 +238,7 @@ bool GenerateDefault_landerReport(SOLARSYS_STATE* solarSys)
 {
 	PLANET_INFO* planetInfo = &solarSys->SysInfo.PlanetInfo;
 
-	if (!planetInfo->DiscoveryString)
+	if (!planetInfo->DiscoveryStrings)
 	{
 		return false;
 	}
@@ -248,10 +248,9 @@ bool GenerateDefault_landerReport(SOLARSYS_STATE* solarSys)
 	// XXX: A non-cycling report is given only once and has to be deleted
 	//   in some circumstances (like the Syreen Vault). It does not
 	//   hurt to simply delete it in all cases. Nothing should rely on
-	//   the presence of DiscoveryString, but the Syreen Vault and the
+	//   the presence of DiscoveryStrings, but the Syreen Vault and the
 	//   Mycon Egg Cases rely on its absence.
-	DestroyStringTable(ReleaseStringTable(planetInfo->DiscoveryString));
-	planetInfo->DiscoveryString = 0;
+	planetInfo->DiscoveryStrings.reset();
 
 	return true;
 }
@@ -260,21 +259,16 @@ bool GenerateDefault_landerReportCycle(SOLARSYS_STATE* solarSys)
 {
 	PLANET_INFO* planetInfo = &solarSys->SysInfo.PlanetInfo;
 
-	if (!planetInfo->DiscoveryString)
+	if (!planetInfo->DiscoveryStrings)
 	{
 		return false;
 	}
 
 	runLanderReport();
-	// Advance to the next report
-	planetInfo->DiscoveryString = SetRelStringTableIndex(
-		planetInfo->DiscoveryString, 1);
-
-	// If our discovery strings have cycled, we're done
-	if (GetStringTableIndex(planetInfo->DiscoveryString) == 0)
+	// Advance to the next report. Stop after the last report.
+	if (++planetInfo->DiscoveryIndex >= planetInfo->DiscoveryStrings->size())
 	{
-		DestroyStringTable(ReleaseStringTable(planetInfo->DiscoveryString));
-		planetInfo->DiscoveryString = 0;
+		planetInfo->DiscoveryStrings.reset();
 	}
 
 	return true;

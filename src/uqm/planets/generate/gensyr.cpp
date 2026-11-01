@@ -165,8 +165,8 @@ GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(RUINS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		GenerateDefault_generateOrbital(solarSys, world);
 
@@ -195,15 +195,12 @@ GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
 		else
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				CaptureStringTable(
-					LoadStringTable(SYREEN_BASE_STRTAB));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SYREEN_BASE_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 			DoDiscoveryReport(MenuSounds);
 
-			DestroyStringTable(ReleaseStringTable(
-				solarSys->SysInfo.PlanetInfo.DiscoveryString));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString = 0;
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 			FreeLanderFont(&solarSys->SysInfo.PlanetInfo);
 
 			return true;

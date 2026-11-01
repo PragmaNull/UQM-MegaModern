@@ -614,9 +614,7 @@ void FreePlanet(void)
 
 	DestroyOrbitStruct(Orbit, MAP_HEIGHT);
 
-	DestroyStringTable(ReleaseStringTable(
-		pSolarSysState->SysInfo.PlanetInfo.DiscoveryString));
-	pSolarSysState->SysInfo.PlanetInfo.DiscoveryString = 0;
+	pSolarSysState->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 	FreeLanderFont(&pSolarSysState->SysInfo.PlanetInfo);
 
 	// Need to make sure our own CONTEXTs are not active because

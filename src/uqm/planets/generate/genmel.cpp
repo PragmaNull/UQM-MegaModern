@@ -155,15 +155,12 @@ GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
 		/* Starbase */
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(
-				LoadStringTable(PRECURSOR_BASE_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(PRECURSOR_BASE_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		DoDiscoveryReport(MenuSounds);
 
-		DestroyStringTable(ReleaseStringTable(
-			solarSys->SysInfo.PlanetInfo.DiscoveryString));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString = 0;
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 		FreeLanderFont(&solarSys->SysInfo.PlanetInfo);
 
 		return true;
@@ -174,8 +171,8 @@ GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(STELE_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(STELE_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(STELE_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);

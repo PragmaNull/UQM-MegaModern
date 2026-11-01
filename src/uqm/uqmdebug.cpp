@@ -873,14 +873,13 @@ starRecurse(STAR_DESC* star, void* arg)
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
-	SOLARSYS_STATE SolarSysState;
+	SOLARSYS_STATE SolarSysState {};
 	SOLARSYS_STATE* oldPSolarSysState = pSolarSysState;
 	STAR_DESC* oldStarDescPtr = CurStarDescPtr;
 	CurStarDescPtr = star;
 
 	RandomContext_SeedRandom(SysGenRNGDebug, GetRandomSeedForStar(star));
 
-	memset(&SolarSysState, 0, sizeof(SolarSysState));
 	SolarSysState.SunDesc[0].pPrevDesc = 0;
 	SolarSysState.SunDesc[0].rand_seed = RandomContext_Random(SysGenRNGDebug);
 	SolarSysState.SunDesc[0].data_index = STAR_TYPE(star->Type);

@@ -162,13 +162,11 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(WRECK_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(WRECK_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(WRECK_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		if (GET_GAME_STATE(PORTAL_KEY))
 		{ // Already picked it up, skip the first report
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				SetAbsStringTableIndex(
-					solarSys->SysInfo.PlanetInfo.DiscoveryString, 1);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 		}
 	}
 

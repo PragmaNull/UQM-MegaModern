@@ -99,13 +99,11 @@ GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(VAULT_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(VAULT_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(VAULT_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		if (GET_GAME_STATE(SHIP_VAULT_UNLOCKED))
 		{
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				SetAbsStringTableIndex(
-					solarSys->SysInfo.PlanetInfo.DiscoveryString, 2);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 2;
 		}
 		else if (GET_GAME_STATE(SYREEN_SHUTTLE_ON_SHIP))
 		{
@@ -153,9 +151,7 @@ GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 
 				RepairSISBorder();
 			}
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				SetAbsStringTableIndex(
-					solarSys->SysInfo.PlanetInfo.DiscoveryString, 1);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 		}
 	}
 

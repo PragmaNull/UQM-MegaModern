@@ -255,9 +255,8 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 						CaptureDrawable(
 							LoadGraphic(
 								SUN_DEVICE_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryString =
-						CaptureStringTable(
-							LoadStringTable(SUN_DEVICE_STRTAB));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SUN_DEVICE_STRTAB);
+					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 				break;
 			case EGG_CASE0_DEFINED:
@@ -283,9 +282,8 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 					solarSys->PlanetSideFrame[1] =
 						CaptureDrawable(
 							LoadGraphic(EGG_CASE_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryString =
-						CaptureStringTable(
-							LoadStringTable(EGG_CASE_STRTAB));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(EGG_CASE_STRTAB);
+					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 				break;
 		}
@@ -331,9 +329,9 @@ GenerateMycon_generateEnergy(const SOLARSYS_STATE* solarSys,
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
-		// XXX: DiscoveryString is set by generateOrbital() only when the
+		// XXX: DiscoveryStrings is set by generateOrbital() only when the
 		//   node has not been picked up yet
-		if (!solarSys->SysInfo.PlanetInfo.DiscoveryString)
+		if (!solarSys->SysInfo.PlanetInfo.DiscoveryStrings)
 		{ // already picked up
 			return 0;
 		}

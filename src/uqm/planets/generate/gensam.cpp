@@ -385,34 +385,25 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 
 				if (Index == DESTROYED_STARBASE_DEFINED)
 				{
-					solarSys->SysInfo.PlanetInfo.DiscoveryString =
-						CaptureStringTable(
-							LoadStringTable(DESTROYED_BASE_STRTAB));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(DESTROYED_BASE_STRTAB);
+					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 					// use alternate text if the player
 					// hasn't freed the Earth starbase yet
 					if (!GET_GAME_STATE(STARBASE_AVAILABLE))
 					{
-						solarSys->SysInfo.PlanetInfo.DiscoveryString =
-							SetRelStringTableIndex(
-								solarSys->SysInfo.PlanetInfo.DiscoveryString, 1);
+						solarSys->SysInfo.PlanetInfo.DiscoveryIndex += 1;
 					}
 				}
 				else
 				{
-					solarSys->SysInfo.PlanetInfo.DiscoveryString =
-						SetRelStringTableIndex(
-							CaptureStringTable(
-								LoadStringTable(URQUAN_BASE_STRTAB)),
-							(Index >= KOHRAH0_DEFINED
-							 && Index <= KOHRAH2_DEFINED));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(URQUAN_BASE_STRTAB);
+					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = Index >= KOHRAH0_DEFINED && Index <= KOHRAH2_DEFINED ? 1 : 0;
 				}
 
 				DoDiscoveryReport(MenuSounds);
 
-				DestroyStringTable(ReleaseStringTable(
-					solarSys->SysInfo.PlanetInfo.DiscoveryString));
-				solarSys->SysInfo.PlanetInfo.DiscoveryString = 0;
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 				FreeLanderFont(&solarSys->SysInfo.PlanetInfo);
 
 				return true;
@@ -426,8 +417,8 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(RUINS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);

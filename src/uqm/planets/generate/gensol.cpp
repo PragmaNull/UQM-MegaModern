@@ -314,15 +314,12 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				CaptureStringTable(
-					LoadStringTable(NOMAD_BASE_STRTAB));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(NOMAD_BASE_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 			DoDiscoveryReport(MenuSounds);
 
-			DestroyStringTable(ReleaseStringTable(
-				solarSys->SysInfo.PlanetInfo.DiscoveryString));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString = 0;
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 			FreeLanderFont(&solarSys->SysInfo.PlanetInfo);
 
 			return true;
@@ -442,9 +439,8 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 					solarSys->PlanetSideFrame[1] =
 						CaptureDrawable(
 							LoadGraphic(SPAPLUTO_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryString =
-						CaptureStringTable(
-							LoadStringTable(SPAPLUTO_STRTAB));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SPAPLUTO_STRTAB);
+					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 
 				solarSys->SysInfo.PlanetInfo.AtmoDensity = 0;
@@ -531,9 +527,8 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 					solarSys->PlanetSideFrame[1] =
 						CaptureDrawable(
 							LoadGraphic(MOONBASE_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryString =
-						CaptureStringTable(
-							LoadStringTable(MOONBASE_STRTAB));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MOONBASE_STRTAB);
+					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 60;

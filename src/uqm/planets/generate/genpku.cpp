@@ -127,14 +127,11 @@ GeneratePkunk_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
 				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				CaptureStringTable(
-					LoadStringTable(PKUNK_RUINS_STRTAB));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(PKUNK_RUINS_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			if (GET_GAME_STATE(CLEAR_SPINDLE))
 			{ // Already picked up the Clear Spindle, skip the report
-				solarSys->SysInfo.PlanetInfo.DiscoveryString =
-					SetAbsStringTableIndex(
-						solarSys->SysInfo.PlanetInfo.DiscoveryString, 1);
+				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 			}
 		}
 	}

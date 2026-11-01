@@ -295,7 +295,8 @@ struct PLANET_INFO
 	// This can be later made to support also partially scavenged biodata.
 	uint8_t PartiallyScavengedList[NUM_SCAN_TYPES][32];
 
-	STRING DiscoveryString;
+	uqm::StringTablePtr DiscoveryStrings {};
+	size_t DiscoveryIndex {};
 	FONT LanderFont;
 	FRAME LanderFontEff;
 };

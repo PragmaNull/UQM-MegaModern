@@ -256,17 +256,13 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 				solarSys->PlanetSideFrame[1] =
 					CaptureDrawable(
 						LoadGraphic(UMGAH_BCS_MASK_PMAP_ANIM));
-				solarSys->SysInfo.PlanetInfo.DiscoveryString =
-					CaptureStringTable(
-						LoadStringTable(UMGAH_BCS_STRTAB));
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(UMGAH_BCS_STRTAB);
+				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				if (!GET_GAME_STATE(SPATHI_SHIELDED_SELVES))
 				{ // The first report talks extensively about Spathi
 					// slave-shielding selves. If they never did so, the
 					// report makes no sense, so use an alternate.
-					solarSys->SysInfo.PlanetInfo.DiscoveryString =
-						SetAbsStringTableIndex(
-							solarSys->SysInfo.PlanetInfo.DiscoveryString,
-							1);
+					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 				}
 			}
 
@@ -298,8 +294,8 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 				LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 				solarSys->PlanetSideFrame[1] =
 					CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-				solarSys->SysInfo.PlanetInfo.DiscoveryString =
-					CaptureStringTable(LoadStringTable(RUINS_STRTAB));
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			}
 
 			solarSys->SysInfo.PlanetInfo.PlanetRadius = 120;
@@ -324,9 +320,8 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(
-				LoadStringTable(ALGOLITE_RUINS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ALGOLITE_RUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	if (CurStarDescPtr->Index == SPATHI_MONUMENT_DEFINED
@@ -337,9 +332,8 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(
 				LoadGraphic(MONUMENT_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(
-				LoadStringTable(SPATHI_MONUMENT_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SPATHI_MONUMENT_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);

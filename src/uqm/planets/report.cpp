@@ -394,7 +394,8 @@ void DoDiscoveryReport(SOUND ReadOutSounds)
 
 		luaUqm_comm_init(nullptr, NULL_RESOURCE);
 		uqstl::late_constructed<uqstl::string> interpolatedReport {};
-		uqstl::string_view report {GetStringAddress(pSolarSysState->SysInfo.PlanetInfo.DiscoveryString)};
+		const PLANET_INFO& planetInfo {pSolarSysState->SysInfo.PlanetInfo};
+		uqstl::string_view report {planetInfo.DiscoveryStrings->text(planetInfo.DiscoveryIndex)};
 		if (luaUqm_comm_stringNeedsInterpolate(report.data()))
 		{
 			interpolatedReport.emplace(luaUqm_comm_stringInterpolate(report));

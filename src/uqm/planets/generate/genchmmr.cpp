@@ -183,9 +183,8 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] = CaptureDrawable(
 				LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				CaptureStringTable(
-					LoadStringTable(CHMMR_HOME_STRTAB));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(CHMMR_HOME_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 			GenerateDefault_generateOrbital(solarSys, world);
 
@@ -272,29 +271,16 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 	if (CurStarDescPtr->Index == CHMMR_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
 	{
-		STRING str;
-
 		/* Starbase */
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
-		if (RaceDead(CHMMR_SHIP))
-		{
-			str = SetRelStringTableIndex(CaptureStringTable(
-											 LoadStringTable(URQUAN_BASE_STRTAB)),
-										 0);
-		}
-		else
-		{
-			str = CaptureStringTable(LoadStringTable(CHMMR_BASE_STRTAB));
-		}
-
-		solarSys->SysInfo.PlanetInfo.DiscoveryString = str;
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(
+			RaceDead(CHMMR_SHIP) ? URQUAN_BASE_STRTAB : CHMMR_BASE_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		DoDiscoveryReport(MenuSounds);
 
-		DestroyStringTable(ReleaseStringTable(
-			solarSys->SysInfo.PlanetInfo.DiscoveryString));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString = 0;
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 		FreeLanderFont(&solarSys->SysInfo.PlanetInfo);
 
 		return true;
@@ -310,14 +296,12 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(MOTHER_ARK_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(MOTHER_ARK_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MOTHER_ARK_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		if (MelnormeInfo || ChmmrStack)
 		{
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				SetRelStringTableIndex(
-					solarSys->SysInfo.PlanetInfo.DiscoveryString, 1);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex += 1;
 		}
 	}
 

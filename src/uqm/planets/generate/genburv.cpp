@@ -154,9 +154,8 @@ GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(
 				LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(
-				LoadStringTable(BURV_RUINS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BURV_RUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		if (!isDifficulty(uqm::Difficulty::Hard))
 		{
@@ -170,8 +169,8 @@ GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] = CaptureDrawable(
 			LoadGraphic(BURV_BCS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(BURV_BCS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BURV_BCS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		if (!isDifficulty(uqm::Difficulty::Hard))
 		{

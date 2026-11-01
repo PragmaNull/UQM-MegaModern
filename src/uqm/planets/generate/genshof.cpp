@@ -278,11 +278,8 @@ GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				SetRelStringTableIndex(
-					CaptureStringTable(
-						LoadStringTable(SHOFIXTI_BASE_STRTAB)),
-					Index);
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SHOFIXTI_BASE_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = Index;
 
 			DoDiscoveryReport(MenuSounds);
 
@@ -292,9 +289,7 @@ GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 												  CountEscortShips(SHOFIXTI_SHIP) == 1 ? 1 : 2));
 			}
 
-			DestroyStringTable(ReleaseStringTable(
-				solarSys->SysInfo.PlanetInfo.DiscoveryString));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString = 0;
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 			FreeLanderFont(&solarSys->SysInfo.PlanetInfo);
 			return true;
 		}

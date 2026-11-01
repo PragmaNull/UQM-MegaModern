@@ -2928,7 +2928,7 @@ void XFormIPLoc(GFXPOINT* pIn, GFXPOINT* pOut, bool ToDisplay)
 
 void ExploreSolarSys(void)
 {
-	SOLARSYS_STATE SolarSysState;
+	SOLARSYS_STATE SolarSysState {};
 
 	if (CurStarDescPtr == 0)
 	{
@@ -2948,8 +2948,6 @@ void ExploreSolarSys(void)
 	GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(CurStarDescPtr->star_pt.y);
 
 	pSolarSysState = &SolarSysState;
-
-	memset(pSolarSysState, 0, sizeof(*pSolarSysState));
 
 	SolarSysState.genFuncs = getGenerateFunctions(CurStarDescPtr->Index);
 #ifdef DEBUG_STARSEED
