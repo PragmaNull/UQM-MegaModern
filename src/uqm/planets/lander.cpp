@@ -71,7 +71,7 @@ struct LanderInputState
 
 FRAME LanderFrame[8];
 uint8_t LanderUpgradesFlag;
-static SOUND LanderSounds;
+static SOUND_REF LanderSounds;
 MUSIC_REF LanderMusic;
 static GFXCONTEXT PCLanderContext;
 static MUSIC_REF OrbitMusic[NUM_ORBIT_THEMES];
@@ -326,7 +326,7 @@ void object_animation(ELEMENT* ElementPtr)
 					SetAbsFrameIndex(pPrim->Object.Stamp.frame, 0);
 
 				PlaySound(
-					SetAbsSoundIndex(LanderSounds, LIFEFORM_CANNED),
+					GetSound(LanderSounds, LIFEFORM_CANNED),
 					NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 			}
 		}
@@ -378,8 +378,8 @@ void object_animation(ELEMENT* ElementPtr)
 				if (frame_index == (frame_amount))
 				{
 					PlaySound(
-						SetAbsSoundIndex(LanderSounds,
-										 EARTHQUAKE_DISASTER),
+						GetSound(LanderSounds,
+								 EARTHQUAKE_DISASTER),
 						NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 				}
 			}
@@ -620,7 +620,7 @@ DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 		crew_delta = crew_left;
 		s.frame = SetAbsFrameIndex(LanderFrame[0], 56);
 
-		PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_INJURED),
+		PlaySound(GetSound(LanderSounds, LANDER_INJURED),
 				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 	}
 
@@ -648,7 +648,7 @@ FillLanderHold(PLANETSIDE_DESC* pPSD, uint16_t scan, uint16_t NumRetrieved)
 	STAMP s;
 	GFXCONTEXT OldContext;
 
-	PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_PICKUP),
+	PlaySound(GetSound(LanderSounds, LANDER_PICKUP),
 			  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 
 	if (scan == BIOLOGICAL_SCAN)
@@ -745,7 +745,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 	if (*Amount >= Max)
 	{
 		// Lander full
-		PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_FULL),
+		PlaySound(GetSound(LanderSounds, LANDER_FULL),
 				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 		return false;
 	}
@@ -809,7 +809,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 		if (Scan == BIOLOGICAL_SCAN && uqm::UQMOptions::read().partialPickup)
 		{
 			// Lander full
-			PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_FULL),
+			PlaySound(GetSound(LanderSounds, LANDER_FULL),
 					  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 			return false;
 		}
@@ -897,7 +897,7 @@ ExplodeCritter(ELEMENT* ElementPtr)
 		UnlockElement(hExplosionElement);
 		InsertElement(hExplosionElement, GetHeadElement());
 
-		PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_DESTROYED),
+		PlaySound(GetSound(LanderSounds, LANDER_DESTROYED),
 				  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
 
 		ElementPtr->state_flags |= DISAPPEARING;
@@ -976,7 +976,7 @@ shotCreature(ELEMENT* ElementPtr, uint8_t value,
 	SetPrimType(pPrim, STAMPFILL_PRIM);
 	SetPrimColor(pPrim, WHITE_COLOR);
 
-	PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_HITS),
+	PlaySound(GetSound(LanderSounds, LANDER_HITS),
 			  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 }
 
@@ -1108,7 +1108,7 @@ CheckObjectCollision(uint16_t index)
 
 						if (TFB_Random() % 128 < danger_vals[dangerLevel])
 						{
-							PlaySound(SetAbsSoundIndex(
+							PlaySound(GetSound(
 										  LanderSounds, BIOLOGICAL_DISASTER),
 									  NotPositional(), nullptr,
 									  GAME_SOUND_PRIORITY);
@@ -1308,7 +1308,7 @@ AddLightning(void)
 
 		PutElement(hLightningElement);
 
-		PlaySound(SetAbsSoundIndex(LanderSounds, LIGHTNING_DISASTER),
+		PlaySound(GetSound(LanderSounds, LIGHTNING_DISASTER),
 				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 	}
 }
@@ -1400,7 +1400,7 @@ BuildObjectList(void)
 	if (uqm::lowByte(uqm::highWord(rand_val)) < pPSD->FireChance)
 	{
 		AddGroundDisaster(LAVASPOT_DISASTER);
-		PlaySound(SetAbsSoundIndex(LanderSounds, LAVASPOT_DISASTER),
+		PlaySound(GetSound(LanderSounds, LAVASPOT_DISASTER),
 				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 	}
 
@@ -1862,7 +1862,7 @@ AnimateLanderWarmup(void)
 
 	animationInterframe(&TimeIn, 2);
 
-	PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_DEPARTS),
+	PlaySound(GetSound(LanderSounds, LANDER_DEPARTS),
 			  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
 }
 
@@ -2007,7 +2007,7 @@ LanderFire(int16_t facing)
 
 	InsertElement(hWeaponElement, GetHeadElement());
 
-	PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_SHOOTS),
+	PlaySound(GetSound(LanderSounds, LANDER_SHOOTS),
 			  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 }
 
@@ -2263,7 +2263,7 @@ LanderExplosion(void)
 
 	InsertElement(hExplosionElement, GetHeadElement());
 
-	PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_DESTROYED),
+	PlaySound(GetSound(LanderSounds, LANDER_DESTROYED),
 			  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
 
 	ScatterDeposits();
@@ -2500,7 +2500,7 @@ void FreeLanderData(void)
 		OrbitMusic[i] = 0;
 	}
 
-	DestroySound(ReleaseSound(LanderSounds));
+	DestroySound(LanderSounds);
 	LanderSounds = 0;
 
 	landerFrameCount = std::size(LanderFrame);
@@ -2539,7 +2539,7 @@ void LoadLanderData(void)
 
 	LanderUpgradesFlag = 0;
 
-	LanderSounds = CaptureSound(LoadSound(LANDER_SOUNDS));
+	LanderSounds = LoadSound(LANDER_SOUNDS);
 
 	{
 		uint16_t i;
@@ -2870,7 +2870,7 @@ void PlanetSide(GFXPOINT planetLoc)
 		else
 		{
 			PSD.InTransit = true;
-			PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_RETURNS),
+			PlaySound(GetSound(LanderSounds, LANDER_RETURNS),
 					  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
 
 			LandingTakeoffSequence(&landerInputState, false);

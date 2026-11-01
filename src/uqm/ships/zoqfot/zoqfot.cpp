@@ -387,7 +387,7 @@ zoqfotpik_postprocess(ELEMENT* ElementPtr)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* STICK_OUT_TONGUE */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);

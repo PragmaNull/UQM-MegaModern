@@ -422,7 +422,7 @@ mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 		MMRNMHRM_DATA tempShipData;
 		MMRNMHRM_DATA* otherwing_desc;
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* TRANSFORM */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);
@@ -446,8 +446,7 @@ mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = RES_SCALE(LONG_RANGE_WEAPON - 1);
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~IMMEDIATE_WEAPON;
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= SEEKING_WEAPON;
-			StarShipPtr->RaceDescPtr->ship_data.ship_sounds =
-				SetAbsSoundIndex(StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2);
+			StarShipPtr->RaceDescPtr->ship_data.weapon_sound_index = 2;
 
 			StarShipPtr->cur_status_flags &=
 				~(SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED);
@@ -457,8 +456,7 @@ mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = RES_SCALE(CLOSE_RANGE_WEAPON);
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~SEEKING_WEAPON;
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= IMMEDIATE_WEAPON;
-			StarShipPtr->RaceDescPtr->ship_data.ship_sounds =
-				SetAbsSoundIndex(StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 0);
+			StarShipPtr->RaceDescPtr->ship_data.weapon_sound_index = 0;
 
 			if (StarShipPtr->cur_status_flags
 				& (SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED))

@@ -23,15 +23,42 @@
 #include "port.h"
 #include "libs/time/timelib.h"
 #include "libs/strlib.h"
+#include "core/stl/vector.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
-typedef STRING_TABLE SOUND_REF;
-typedef STRING SOUND;
-// SOUNDPTR is really a TFB_SoundSample**
-typedef void* SOUNDPTR;
+typedef struct tfb_soundsample TFB_SoundSample;
+
+namespace uqm
+{
+
+// The sound samples of a sound bank resource.
+class SoundBank
+{
+public:
+	explicit SoundBank(uqstl::vector<TFB_SoundSample*> samples);
+	// Stops the sources that play the samples, and destroys the samples.
+	~SoundBank();
+	SoundBank(const SoundBank&) = delete;
+	SoundBank& operator=(const SoundBank&) = delete;
+
+	[[nodiscard]] size_t size() const noexcept
+	{
+		return m_samples.size();
+	}
+	// The sample 'index'. The index wraps at the number of samples.
+	[[nodiscard]] TFB_SoundSample* sample(size_t index) const;
+
+private:
+	uqstl::vector<TFB_SoundSample*> m_samples {};
+};
+
+} // namespace uqm
+
+typedef uqm::SoundBank* SOUND_REF;
+typedef TFB_SoundSample* SOUND;
 
 typedef struct soundposition
 {
@@ -39,18 +66,11 @@ typedef struct soundposition
 	int x, y;
 } SoundPosition;
 
-#define InitSoundResources InitStringTableResources
-#define CaptureSound CaptureStringTable
-#define ReleaseSound ReleaseStringTable
-#define GetSoundRef GetStringTable
-#define GetSoundCount GetStringTableCount
-#define GetSoundIndex GetStringTableIndex
-#define SetAbsSoundIndex SetAbsStringTableIndex
-#define SetRelSoundIndex SetRelStringTableIndex
-
-extern SOUNDPTR GetSoundAddress(SOUND sound);
-
-typedef struct tfb_soundsample TFB_SoundSample;
+// The sound 'index' of 'bank', or nullptr if there is no bank.
+inline SOUND GetSound(SOUND_REF bank, size_t index)
+{
+	return bank != nullptr ? bank->sample(index) : nullptr;
+}
 typedef TFB_SoundSample** MUSIC_REF;
 
 extern bool InitSound(int argc, char* argv[]);

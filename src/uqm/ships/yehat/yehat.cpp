@@ -273,7 +273,7 @@ yehat_postprocess(ELEMENT* ElementPtr)
 					STAMPFILL_PRIM);
 #endif /* OLD */
 
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 /* YEHAT_SHIELD_ON */
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 							 ElementPtr);

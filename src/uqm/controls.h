@@ -22,6 +22,7 @@
 
 #include "core/misc/bittricks.h"
 #include "libs/strlib.h"
+#include "libs/sndlib.h"
 #include "core/stl/vector.h"
 #include "libs/time/timelib.h"
 
@@ -239,7 +240,7 @@ typedef struct textentry_state
 
 extern bool DoTextEntry(TEXTENTRY_STATE* pTES);
 
-extern void TestSpeechSound(STRING snd);
+extern void TestSpeechSound(SOUND snd);
 
 #if 0 //defined(__cplusplus)
 }

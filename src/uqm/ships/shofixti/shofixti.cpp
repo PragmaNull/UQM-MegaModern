@@ -356,8 +356,8 @@ shofixti_destruct_death(ELEMENT* ShipPtr)
 	// We process the explosion ourselves because it is different
 	ShipPtr->preprocess_func = destruct_preprocess;
 
-	PlaySound(SetAbsSoundIndex(StarShip->RaceDescPtr->ship_data.ship_sounds,
-							   1),
+	PlaySound(GetSound(StarShip->RaceDescPtr->ship_data.ship_sounds,
+					   1),
 			  CalcSoundPosition(ShipPtr), ShipPtr, GAME_SOUND_PRIORITY + 1);
 
 	winner = GetWinnerStarShip();

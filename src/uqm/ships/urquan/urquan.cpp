@@ -187,7 +187,7 @@ fighter_postprocess(ELEMENT* ElementPtr)
 		LockElement(Laser, &LaserPtr);
 		SetElementStarShip(LaserPtr, StarShipPtr);
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* FIGHTER_ZAP */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 					 LaserPtr);
@@ -460,7 +460,7 @@ fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 	else if (ElementPtr1->state_flags & PLAYER_SHIP)
 	{
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* FIGHTERS_RETURN */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 					 ElementPtr1);
@@ -627,7 +627,7 @@ urquan_postprocess(ELEMENT* ElementPtr)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* LAUNCH_FIGHTERS */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);

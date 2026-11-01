@@ -189,7 +189,7 @@ spawn_butt_missile(ELEMENT* ShipPtr)
 		ButtPtr->turn_wait = TRACK_WAIT;
 		SetElementStarShip(ButtPtr, StarShipPtr);
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* LAUNCH_BUTT_MISSILE */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ButtPtr);

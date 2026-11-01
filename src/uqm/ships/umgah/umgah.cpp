@@ -421,7 +421,7 @@ umgah_preprocess(ELEMENT* ElementPtr)
 		{
 			uint16_t facing;
 
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 /* ZIP_BACKWARDS */
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 						 ElementPtr);

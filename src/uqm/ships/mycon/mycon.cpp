@@ -368,7 +368,7 @@ mycon_postprocess(ELEMENT* ElementPtr)
 	{
 		int16_t add_crew;
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* GROW_NEW_CREW */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);

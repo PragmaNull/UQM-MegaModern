@@ -378,7 +378,7 @@ void ship_postprocess(ELEMENT* ElementPtr)
 					SetElementStarShip(EPtr, StarShipPtr);
 					if (!played_sfx)
 					{
-						ProcessSound(RDPtr->ship_data.ship_sounds, EPtr);
+						ProcessSound(GetSound(RDPtr->ship_data.ship_sounds, RDPtr->ship_data.weapon_sound_index), EPtr);
 						played_sfx = true;
 					}
 					UnlockElement(w);
@@ -389,7 +389,7 @@ void ship_postprocess(ELEMENT* ElementPtr)
 
 			if (!played_sfx)
 			{
-				ProcessSound(RDPtr->ship_data.ship_sounds, ElementPtr);
+				ProcessSound(GetSound(RDPtr->ship_data.ship_sounds, RDPtr->ship_data.weapon_sound_index), ElementPtr);
 			}
 		}
 
@@ -436,7 +436,7 @@ void collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			{
 				damage = TARGET_DAMAGED_FOR_6_PLUS_PT;
 			}
-			ProcessSound(SetAbsSoundIndex(GameSounds, damage), ElementPtr0);
+			ProcessSound(GetSound(GameSounds, damage), ElementPtr0);
 		}
 	}
 	(void)pPt0; /* Satisfying compiler (unused parameter) */

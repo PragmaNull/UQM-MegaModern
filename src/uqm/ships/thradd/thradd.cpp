@@ -404,7 +404,7 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 				UnlockElement(hTrailElement);
 				InsertElement(hTrailElement, GetHeadElement());
 
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 							 ElementPtr);
 			}

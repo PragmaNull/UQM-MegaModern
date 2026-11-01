@@ -49,7 +49,7 @@ LoadSoundInstance(RESOURCE res)
 		res_DetachResource(res);
 	}
 
-	return ((SOUND_REF)hData);
+	return static_cast<SOUND_REF>(hData);
 }
 
 MUSIC_REF

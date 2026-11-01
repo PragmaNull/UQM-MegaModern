@@ -22,10 +22,6 @@
 #include "libs/io/Path.h"
 #include "libs/reslib.h"
 #include "core/log/log.h"
-#include "libs/strlib.h"
-// for GetStringAddress()
-#include "libs/strings/strintrn.h"
-// for AllocStringTable(), FreeStringTable()
 #include "soundbank.h"
 
 
@@ -36,20 +32,17 @@ static const SoundPosition notPositional = {false, 0, 0};
 void PlayChannel(uint16_t channel, SOUND snd, SoundPosition pos,
 				 void* positional_object, unsigned char priority)
 {
-	SOUNDPTR snd_ptr = GetSoundAddress(snd);
-	TFB_SoundSample* sample;
+	TFB_SoundSample* const sample {snd};
 
 	StopSource(channel);
 	// all finished (stopped) channels can be cleaned up at this point
 	// since this is the only func that can initiate an sfx sound
 	CheckFinishedChannels();
 
-	if (!snd_ptr)
+	if (!sample)
 	{
 		return; // nothing to play
 	}
-
-	sample = *(TFB_SoundSample**)snd_ptr;
 
 	soundSource[channel].sample = sample;
 	soundSource[channel].positional_object = positional_object;
@@ -158,11 +151,7 @@ static constexpr int32_t c_missingSoundMs {100};
 
 void* _GetSoundBankData(const ResourceFile& resource)
 {
-	int snd_ct;
-#define MAX_FX 256
-	TFB_SoundSample* sndfx[MAX_FX];
-	STRING_TABLE Snd;
-	int i;
+	uqstl::vector<TFB_SoundSample*> samples {};
 
 	const auto text {readResourceText(resource)};
 	const auto sounds {text ? uqm::soundBankFromJson(*text) : uqstl::nullopt};
@@ -174,13 +163,8 @@ void* _GetSoundBankData(const ResourceFile& resource)
 
 	// The sound file names are relative to the directory of the bank.
 	const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
-	snd_ct = 0;
 	for (const uqstl::string& sound : *sounds)
 	{
-		if (snd_ct == MAX_FX)
-		{
-			break;
-		}
 		uqstl::string filename {uqm::io::path::join(parent, sound)};
 		uqm::log::debug("_GetSoundBankData(): loading {}", filename);
 
@@ -209,54 +193,46 @@ void* _GetSoundBankData(const ResourceFile& resource)
 
 		SoundDecoder_Free(decoder);
 
-		sndfx[snd_ct] = sample;
-		++snd_ct;
+		samples.push_back(sample);
 	}
 
-	if (!snd_ct)
+	if (samples.empty())
 	{
 		return nullptr; // no sounds decoded
 	}
 
-	Snd = AllocStringTable(snd_ct, 0);
-	if (!Snd)
-	{ // Oops, have to delete everything now
-		while (snd_ct--)
-		{
-			TFB_DestroySoundSample(sndfx[snd_ct]);
-		}
-
-		return nullptr;
-	}
-
-	// Populate the STRING_TABLE with ptrs to sample
-	for (i = 0; i < snd_ct; ++i)
-	{
-		// The entry holds the pointer to the sample.
-		SetStringTableEntry(Snd, i, &sndfx[i], sizeof(sndfx[0]));
-	}
-
-	return Snd;
+	return new uqm::SoundBank {uqstl::move(samples)};
 }
 
 bool _ReleaseSoundBankData(void* Snd)
 {
-	STRING_TABLE fxTab = (STRING_TABLE)Snd;
-	int index;
-
-	if (!fxTab)
+	if (!Snd)
 	{
 		return false;
 	}
+	delete static_cast<uqm::SoundBank*>(Snd);
+	return true;
+}
 
-	for (index = 0; index < static_cast<int>(fxTab->size()); ++index)
+bool DestroySound(SOUND_REF target)
+{
+	return _ReleaseSoundBankData(target);
+}
+
+namespace uqm
+{
+
+SoundBank::SoundBank(uqstl::vector<TFB_SoundSample*> samples)
+	: m_samples {uqstl::move(samples)}
+{
+}
+
+SoundBank::~SoundBank()
+{
+	for (TFB_SoundSample* const sample : m_samples)
 	{
-		int i;
-		void** sptr = (void**)fxTab->entry(index)->bytes.data();
-		TFB_SoundSample* sample = (TFB_SoundSample*)*sptr;
-
 		// Check all sources and see if we are currently playing this sample
-		for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+		for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 		{
 			if (soundSource[i].sample == sample)
 			{ // Playing this sample. Have to stop it.
@@ -271,23 +247,12 @@ bool _ReleaseSoundBankData(void* Snd)
 		}
 		sample->decoder = nullptr;
 		TFB_DestroySoundSample(sample);
-		// sptr will be deleted by FreeStringTable() below
 	}
-
-	FreeStringTable(fxTab);
-
-	return true;
 }
 
-bool DestroySound(SOUND_REF target)
+TFB_SoundSample* SoundBank::sample(size_t index) const
 {
-	return _ReleaseSoundBankData(target);
+	return m_samples.empty() ? nullptr : m_samples[index % m_samples.size()];
 }
 
-// The type conversions are implicit and will generate errors
-// or warnings if types change imcompatibly
-SOUNDPTR
-GetSoundAddress(SOUND sound)
-{
-	return GetStringAddress(sound);
-}
+} // namespace uqm

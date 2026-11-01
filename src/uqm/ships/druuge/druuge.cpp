@@ -307,7 +307,7 @@ druuge_preprocess(ELEMENT* ElementPtr)
 		}
 		else
 		{
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 /* BURN UP CREW */
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 						 ElementPtr);

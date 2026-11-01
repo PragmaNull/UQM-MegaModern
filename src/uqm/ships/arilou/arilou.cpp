@@ -237,7 +237,7 @@ arilou_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->next.image.frame =
 				StarShipPtr->RaceDescPtr->ship_data.special[0];
 
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 /* HYPERJUMP */
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 						 ElementPtr);

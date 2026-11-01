@@ -92,7 +92,7 @@ ClearReportArea(int16_t startx)
 }
 
 static void
-MakeReport(SOUND ReadOutSounds, const char* pStr, uint16_t StrLen)
+MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 {
 	int end_page_len;
 	char end_page_buf[200] {};
@@ -261,7 +261,7 @@ MakeReport(SOUND ReadOutSounds, const char* pStr, uint16_t StrLen)
 							scale = 2;
 						}
 
-						PlaySound(ReadOutSounds, NotPositional(), nullptr,
+						PlaySound(GetSound(ReadOutSounds, 0), NotPositional(), nullptr,
 								  GAME_SOUND_PRIORITY);
 
 						switch (c)
@@ -359,7 +359,7 @@ MakeReport(SOUND ReadOutSounds, const char* pStr, uint16_t StrLen)
 	}
 }
 
-void DoDiscoveryReport(SOUND ReadOutSounds)
+void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 {
 	GFXCONTEXT OldContext;
 	GFXCONTEXT context;

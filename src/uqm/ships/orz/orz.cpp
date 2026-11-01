@@ -453,7 +453,7 @@ LeftShip:
 					ElementPtr->life_span = 0;
 					ElementPtr->state_flags |= DISAPPEARING;
 
-					ProcessSound(SetAbsSoundIndex(
+					ProcessSound(GetSound(
 									 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 4),
 								 ElementPtr);
 					goto LeftShip;
@@ -474,7 +474,7 @@ LeftShip:
 					s.frame = SetAbsFrameIndex(ElementPtr->next.image.farray[0],
 											   GetFrameCount(ElementPtr->next.image.farray[0]) - 1);
 					ModifySilhouette(ShipPtr, &s, 0);
-					ProcessSound(SetAbsSoundIndex(
+					ProcessSound(GetSound(
 									 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 								 ElementPtr);
 				}
@@ -857,7 +857,7 @@ void marine_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				s.frame = ElementPtr0->next.image.frame;
 				ModifySilhouette(ElementPtr1, &s, 0);
 
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 							 ElementPtr1);
 			}
@@ -1059,7 +1059,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 					DeltaCrew(ShipPtr, -1);
 				}
 
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 							 SpaceMarinePtr);
 

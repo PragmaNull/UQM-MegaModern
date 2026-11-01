@@ -213,7 +213,9 @@ typedef struct
 	FRAME weapon[NUM_VIEWS];
 	FRAME special[NUM_VIEWS];
 	MUSIC_REF victory_ditty;
-	SOUND ship_sounds;
+	SOUND_REF ship_sounds;
+	// The index in ship_sounds of the sound of the primary weapon.
+	uint16_t weapon_sound_index;
 } DATA_STUFF;
 
 

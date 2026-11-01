@@ -289,7 +289,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 			}
 			else
 			{
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 /* CLOAKING_OFF */
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 							 ElementPtr);
@@ -407,7 +407,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 					 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
 		SetPrimType(lpPrim, STAMPFILL_PRIM);
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* CLOAKING_ON */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);

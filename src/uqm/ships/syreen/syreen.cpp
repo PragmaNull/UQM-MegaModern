@@ -279,7 +279,7 @@ syreen_postprocess(ELEMENT* ElementPtr)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* SYREEN_SONG */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);

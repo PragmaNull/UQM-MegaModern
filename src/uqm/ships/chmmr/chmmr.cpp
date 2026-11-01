@@ -337,7 +337,7 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 
 		LockElement(ElementPtr->hTarget, &ShipElementPtr);
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ShipElementPtr);
 

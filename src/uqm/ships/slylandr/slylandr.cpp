@@ -373,7 +373,7 @@ harvest_space_junk(ELEMENT* ElementPtr)
 					retval = true;
 
 					GetElementStarShip(ElementPtr, &StarShipPtr);
-					ProcessSound(SetAbsSoundIndex(
+					ProcessSound(GetSound(
 									 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 								 ElementPtr);
 					DeltaEnergy(ElementPtr, MAX_ENERGY);

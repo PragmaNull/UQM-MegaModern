@@ -1169,7 +1169,7 @@ void RedrawQueue(bool clear)
 	}
 	else
 	{ // sfx queue needs to be flushed when aborting
-		ProcessSound((SOUND)~0, nullptr);
+		SuppressSounds();
 		FlushSounds();
 	}
 

@@ -726,7 +726,7 @@ sentinel_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				if (EXTENDED)
 				{
 					GetElementStarShip(ElementPtr0, &StarShipPtr);
-					ProcessSound(SetAbsSoundIndex(
+					ProcessSound(GetSound(
 									 /* ENERGY DRAIN */
 									 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 								 ElementPtr0);
@@ -777,7 +777,7 @@ samatra_postprocess(ELEMENT* ElementPtr)
 			StarShipPtr->weapon_counter = WEAPON_WAIT;
 			if (EXTENDED)
 			{
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 /* COMET SPAWN */
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 0),
 							 ElementPtr);

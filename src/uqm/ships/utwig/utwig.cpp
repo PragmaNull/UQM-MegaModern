@@ -303,7 +303,7 @@ utwig_preprocess(ELEMENT* ElementPtr)
 		DeltaEnergy(ElementPtr,
 					ElementPtr->life_span - (NORMAL_LIFE + 1));
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);
 	}
@@ -323,7 +323,7 @@ utwig_preprocess(ELEMENT* ElementPtr)
 		{
 			StarShipPtr->special_counter =
 				StarShipPtr->RaceDescPtr->characteristics.special_wait;
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 						 ElementPtr);
 		}

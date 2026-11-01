@@ -19,8 +19,8 @@
 #include "units.h"
 #include "options.h"
 
-SOUND MenuSounds;
-SOUND GameSounds;
+SOUND_REF MenuSounds;
+SOUND_REF GameSounds;
 
 #define MAX_SOUNDS 8
 static uint8_t num_sounds = 0;
@@ -81,20 +81,21 @@ void PlaySound(SOUND S, SoundPosition Pos, ELEMENT* PositionalObject,
 
 void PlayMenuSound(MENU_SOUND_EFFECT S)
 {
-	PlaySoundEffect(SetAbsSoundIndex(MenuSounds, S),
+	PlaySoundEffect(GetSound(MenuSounds, S),
 					0, NotPositional(), nullptr,
 					GAME_SOUND_PRIORITY);
 }
 
+void SuppressSounds(void)
+{
+	memset(sound_buf, 0, sizeof(sound_buf));
+	memset(sound_posobj, 0, sizeof(sound_posobj));
+	num_sounds = MAX_SOUNDS;
+}
+
 void ProcessSound(SOUND Sound, ELEMENT* PositionalObject)
 {
-	if (Sound == (SOUND)~0)
-	{
-		memset(sound_buf, 0, sizeof(sound_buf));
-		memset(sound_posobj, 0, sizeof(sound_posobj));
-		num_sounds = MAX_SOUNDS;
-	}
-	else if (num_sounds < MAX_SOUNDS)
+	if (num_sounds < MAX_SOUNDS)
 	{
 		sound_buf[num_sounds] = Sound;
 		sound_posobj[num_sounds++] = PositionalObject;

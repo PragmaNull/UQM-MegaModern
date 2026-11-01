@@ -2849,7 +2849,7 @@ void Melee(void)
 
 		uqm::currentActivity() = SUPER_MELEE;
 
-		GameSounds = CaptureSound(LoadSound(GAME_SOUNDS));
+		GameSounds = LoadSound(GAME_SOUNDS);
 		LoadMeleeInfo(&MenuState);
 		if (LoadMeleeConfig(&MenuState) == -1)
 		{ // This sets the default controls on the Super Melee screen
@@ -2870,7 +2870,7 @@ void Melee(void)
 
 		WriteMeleeConfig(&MenuState);
 		FreeMeleeInfo(&MenuState);
-		DestroySound(ReleaseSound(GameSounds));
+		DestroySound(GameSounds);
 		GameSounds = 0;
 
 		UninitMeleeLoadState(&MenuState);

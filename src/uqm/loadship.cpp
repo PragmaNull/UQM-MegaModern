@@ -336,8 +336,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 
 		if (RawPtr->ship_sounds_rsc != NULL_RESOURCE)
 		{
-			RawPtr->ship_sounds = CaptureSound(
-				LoadSound(RawPtr->ship_sounds_rsc));
+			RawPtr->ship_sounds = LoadSound(RawPtr->ship_sounds_rsc);
 			if (!RawPtr->ship_sounds)
 			{
 				goto BadLoad;
@@ -380,7 +379,7 @@ void free_ship(RACE_DESC* raceDescPtr, bool FreeIconData,
 		DestroyDrawable(
 			ReleaseDrawable(shipData->captain_control.background));
 		DestroyMusic(shipData->victory_ditty);
-		DestroySound(ReleaseSound(shipData->ship_sounds));
+		DestroySound(shipData->ship_sounds);
 	}
 
 	if (FreeIconData)

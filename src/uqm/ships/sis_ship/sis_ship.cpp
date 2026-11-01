@@ -508,7 +508,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 							break;
 						}
 
-						ProcessSound(SetAbsSoundIndex(
+						ProcessSound(GetSound(
 										 /* POINT_DEFENSE_LASER */
 										 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 									 ElementPtr);

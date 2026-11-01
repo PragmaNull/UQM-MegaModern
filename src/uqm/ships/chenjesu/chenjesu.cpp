@@ -178,7 +178,7 @@ crystal_postprocess(ELEMENT* ElementPtr)
 		}
 	}
 
-	ProcessSound(SetAbsSoundIndex(
+	ProcessSound(GetSound(
 					 /* CRYSTAL_FRAGMENTS */
 					 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 				 ElementPtr);
@@ -312,7 +312,7 @@ doggy_death(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr;
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	ProcessSound(SetAbsSoundIndex(
+	ProcessSound(GetSound(
 					 /* DOGGY_DIES */
 					 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 				 ElementPtr);
@@ -341,7 +341,7 @@ doggy_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		STARSHIP* StarShipPtr;
 
 		GetElementStarShip(ElementPtr0, &StarShipPtr);
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* DOGGY_STEALS_ENERGY */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 					 ElementPtr0);
@@ -405,7 +405,7 @@ spawn_doggy(ELEMENT* ElementPtr)
 
 		SetElementStarShip(DoggyElementPtr, StarShipPtr);
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* RELEASE_DOGGY */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 4),
 					 DoggyElementPtr);

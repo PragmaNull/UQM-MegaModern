@@ -1080,11 +1080,11 @@ void EncounterBattle(void)
 
 	// PlayerControl[1] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard; // Yes, you can make Adventure mode 2-player
 
-	GameSounds = CaptureSound(LoadSound(GAME_SOUNDS));
+	GameSounds = LoadSound(GAME_SOUNDS);
 
 	Battle(nullptr);
 
-	DestroySound(ReleaseSound(GameSounds));
+	DestroySound(GameSounds);
 	GameSounds = 0;
 
 	if (uqm::currentActivity() & CHECK_ABORT)

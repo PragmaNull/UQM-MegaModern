@@ -486,7 +486,7 @@ phoenix_transition(ELEMENT* ElementPtr)
 	UnlockElement(StarShipPtr->hShip);
 }
 
-SOUND FwiffoSounds = 0;
+SOUND_REF FwiffoSounds = 0;
 
 static void
 pkunk_preprocess(ELEMENT* ElementPtr)
@@ -500,7 +500,7 @@ pkunk_preprocess(ELEMENT* ElementPtr)
 	bool Fwiffo = (StarShipPtr->captains_name_index == NAME_OFFSET + NUM_CAPTAINS_NAMES && StarShipPtr->SpeciesID == SPATHI_ID);
 	if (Fwiffo && !FwiffoSounds)
 	{
-		FwiffoSounds = CaptureSound(LoadSound("ship.spathi.sounds"));
+		FwiffoSounds = LoadSound("ship.spathi.sounds");
 	}
 
 	if (ElementPtr->state_flags & APPEARING)
@@ -548,11 +548,11 @@ pkunk_preprocess(ELEMENT* ElementPtr)
 
 			if (Fwiffo)
 			{
-				ProcessSound(SetAbsSoundIndex(FwiffoSounds, 1), ElementPtr);
+				ProcessSound(GetSound(FwiffoSounds, 1), ElementPtr);
 			}
 			else
 			{
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 							 ElementPtr);
 			}
@@ -619,9 +619,9 @@ pkunk_postprocess(ELEMENT* ElementPtr)
 		do
 		{
 			CurSound =
-				2 + ((uint16_t)TFB_Random() % (GetSoundCount(StarShipPtr->RaceDescPtr->ship_data.ship_sounds) - 2));
+				2 + ((uint16_t)TFB_Random() % (StarShipPtr->RaceDescPtr->ship_data.ship_sounds->size() - 2));
 		} while (CurSound == LastSound);
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, CurSound),
 					 ElementPtr);
 		LastSound = CurSound;
@@ -638,7 +638,7 @@ uninit_pkunk(RACE_DESC* pRaceDesc)
 	SetCustomShipData(pRaceDesc, nullptr);
 	if (FwiffoSounds)
 	{
-		DestroySound(ReleaseSound(FwiffoSounds));
+		DestroySound(FwiffoSounds);
 		FwiffoSounds = 0;
 	}
 }

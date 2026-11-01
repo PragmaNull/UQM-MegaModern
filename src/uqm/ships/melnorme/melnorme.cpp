@@ -197,7 +197,7 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 				++EPtr->turn_wait;
 				EPtr->current.image.frame = SetRelFrameIndex(
 					EPtr->current.image.frame, NUM_PUMP_ANIMS);
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 0),
 							 EPtr);
 			}
@@ -256,7 +256,7 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 								  COSINE(angle, WORLD_TO_VELOCITY(PUMPUP_SPEED_HD)),
 								  SINE(angle, WORLD_TO_VELOCITY(PUMPUP_SPEED_HD)));
 
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 						 EPtr);
 		}
@@ -586,7 +586,7 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 					ConfusionPtr->preprocess_func = confuse_preprocess_april;
 					ConfusionPtr->colorCycleIndex = 0;
 					StopAllBattleMusic();
-					ProcessSound(SetAbsSoundIndex(
+					ProcessSound(GetSound(
 						StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2), ElementPtr0);
 				}*/
 
@@ -775,7 +775,7 @@ melnorme_postprocess(ELEMENT* ElementPtr)
 			ELEMENT* CMissilePtr;
 			LockElement(Confusion, &CMissilePtr);
 
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 						 CMissilePtr);
 

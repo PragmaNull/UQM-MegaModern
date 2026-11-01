@@ -56,7 +56,7 @@ typedef struct setup_menu_state
 	TimeCount NextTime;
 } SETUP_MENU_STATE;
 
-static SOUND testSounds;
+static SOUND_REF testSounds;
 
 static bool DoSetupMenu(SETUP_MENU_STATE* pInputState);
 static WIDGET *current, *next;
@@ -623,7 +623,7 @@ init_widgets(void)
 		}
 		else if (setting.key() == "audio.speechVolume")
 		{
-			TestSpeechSound(SetAbsSoundIndex(testSounds, speechVolumeScale >= 1.0f));
+			TestSpeechSound(GetSound(testSounds, speechVolumeScale >= 1.0f));
 		}
 	};
 	hooks.optionLabel = [](uqstl::string_view list, size_t index) -> const char* {
@@ -689,7 +689,7 @@ init_widgets(void)
 		screen.num_children = count_widgets(screen.child);
 	}
 
-	testSounds = CaptureSound(LoadSound(TEST_SOUNDS));
+	testSounds = LoadSound(TEST_SOUNDS);
 }
 
 static void
@@ -708,7 +708,7 @@ clean_up_widgets(void)
 
 	if (testSounds)
 	{
-		DestroySound(ReleaseSound(testSounds));
+		DestroySound(testSounds);
 		testSounds = 0;
 	}
 }

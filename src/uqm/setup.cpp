@@ -437,7 +437,7 @@ InitKernel(void)
 		return false;
 	}
 
-	MenuSounds = CaptureSound(LoadSound(MENU_SOUNDS));
+	MenuSounds = LoadSound(MENU_SOUNDS);
 	if (MenuSounds == 0)
 	{
 		return false;

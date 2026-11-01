@@ -562,7 +562,7 @@ black_urquan_postprocess(ELEMENT* ElementPtr)
 	{
 		spawn_gas_cloud(ElementPtr);
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);
 

@@ -71,7 +71,7 @@ typedef struct
 extern MUSIC_REF LanderMusic;
 
 extern void PlanetSide(GFXPOINT planetLoc);
-extern void DoDiscoveryReport(SOUND ReadOutSounds);
+extern void DoDiscoveryReport(SOUND_REF ReadOutSounds);
 extern uint8_t SetPlanetMusic(uint8_t planet_type);
 extern void LoadLanderData(void);
 extern void FreeLanderData(void);

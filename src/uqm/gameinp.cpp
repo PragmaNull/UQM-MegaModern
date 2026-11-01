@@ -576,13 +576,7 @@ void DoInput(void* pInputState, bool resetInput)
 
 		if (MenuSounds && (soundFlags & (sound_0 | sound_1)))
 		{
-			SOUND S;
-
-			S = MenuSounds;
-			if (soundFlags & sound_1)
-			{
-				S = SetAbsSoundIndex(S, MENU_SOUND_SUCCESS);
-			}
+			const SOUND S {GetSound(MenuSounds, (soundFlags & sound_1) ? MENU_SOUND_SUCCESS : 0)};
 
 			PlaySoundEffect(S, 0, NotPositional(), nullptr, 0);
 		}
@@ -730,7 +724,7 @@ bool ConfirmExit(void)
 	return result;
 }
 
-void TestSpeechSound(STRING snd)
+void TestSpeechSound(SOUND snd)
 {
-	PlaySpeechEffect((SOUND)snd, NotPositional(), nullptr, 0);
+	PlaySpeechEffect(snd, NotPositional(), nullptr, 0);
 }

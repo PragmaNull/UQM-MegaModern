@@ -406,7 +406,7 @@ androsynth_postprocess(ELEMENT* ElementPtr)
 
 			if (StarShipPtr->cur_status_flags & ANDROSYN_COMET_TOGGLE)
 			{
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 							 ElementPtr); /* COMET_ON */
 				ElementPtr->turn_wait = 0;

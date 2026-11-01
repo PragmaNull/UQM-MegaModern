@@ -193,7 +193,7 @@ limpet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			RDPtr->cyborg_control.ManeuverabilityIndex = 0;
 
 			GetElementStarShip(ElementPtr0, &StarShipPtr);
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 /* LIMPET_AFFIXES */
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 						 ElementPtr1);
@@ -204,7 +204,7 @@ limpet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		else
 		{
 			GetElementStarShip(ElementPtr0, &StarShipPtr);
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 /* LIMPET_AFFIXES */
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 						 ElementPtr1);
@@ -330,7 +330,7 @@ vux_postprocess(ELEMENT* ElementPtr)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* LAUNCH_LIMPET */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);

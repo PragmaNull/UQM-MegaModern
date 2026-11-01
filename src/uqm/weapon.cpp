@@ -178,7 +178,7 @@ weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 			{
 				damage = TARGET_DAMAGED_FOR_6_PLUS_PT;
 			}
-			ProcessSound(SetAbsSoundIndex(GameSounds, damage),
+			ProcessSound(GetSound(GameSounds, damage),
 						 HitElementPtr);
 		}
 

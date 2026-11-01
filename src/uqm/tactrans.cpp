@@ -287,7 +287,7 @@ readyForBattleEnd(void)
 static void
 preprocess_dead_ship(ELEMENT* DeadShipPtr)
 {
-	ProcessSound((SOUND)~0, nullptr);
+	SuppressSounds();
 	(void)DeadShipPtr; // unused argument
 }
 
@@ -295,7 +295,7 @@ void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 {
 	STARSHIP* DeadStarShipPtr;
 
-	ProcessSound((SOUND)~0, nullptr);
+	SuppressSounds();
 
 	GetElementStarShip(DeadShipPtr, &DeadStarShipPtr);
 	{
@@ -739,7 +739,7 @@ void StartShipExplosion(ELEMENT* ShipPtr, bool playSound)
 
 	if (playSound)
 	{
-		PlaySound(SetAbsSoundIndex(GameSounds, SHIP_EXPLODES),
+		PlaySound(GetSound(GameSounds, SHIP_EXPLODES),
 				  CalcSoundPosition(ShipPtr), ShipPtr, GAME_SOUND_PRIORITY + 1);
 	}
 }
