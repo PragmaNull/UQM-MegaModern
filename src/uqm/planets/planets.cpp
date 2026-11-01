@@ -592,8 +592,7 @@ void FreePlanet(void)
 
 	//    FreeLanderData ();
 
-	DestroyStringTable(ReleaseStringTable(pSolarSysState->XlatRef));
-	pSolarSysState->XlatRef = 0;
+	pSolarSysState->XlatTable.reset();
 	DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 	pSolarSysState->TopoFrame = 0;
 

@@ -508,7 +508,7 @@ RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
 	const XLAT_DESC* xlatDesc;
 	const uint8_t* xlat_tab;
 
-	if (pSolarSysState->XlatRef == 0)
+	if (!pSolarSysState->XlatTable)
 	{ // There is currently nothing we can do w/o an xlat table
 		// This is still called for Earth for 4x scaled topo, but we
 		// do not need it because we cannot land on Earth.
@@ -2643,36 +2643,32 @@ void load_color_resources(PLANET_DESC* pPlanetDesc,
 			LoadColorMap(GetAltColorMap(pPlanetDesc)));
 		if (pSolarSysState->OrbitalCMap != nullptr)
 		{ // Load successful - grab XLAT and return
-			pSolarSysState->XlatRef = CaptureStringTable(
-				LoadStringTable(SPECIAL_CMAP_XLAT_TAB));
-			pSolarSysState->XlatPtr = GetStringAddress(
-				pSolarSysState->XlatRef);
+			pSolarSysState->XlatTable = uqm::loadStringTable(SPECIAL_CMAP_XLAT_TAB);
+			pSolarSysState->XlatPtr = pSolarSysState->XlatTable->bytes(0).data();
 			return;
 		} // Else just load standard color table
 	}
 
 	// JMS: Normal planets
+	size_t xlatIndex {0};
 	pSolarSysState->OrbitalCMap = CaptureColorMap(
 		LoadColorMap(dosshielded ? DOS_SHIELDED_COLOR_TAB : PlanDataPtr->CMapInstance));
-	pSolarSysState->XlatRef = CaptureStringTable(
-		LoadStringTable(PlanDataPtr->XlatTabInstance));
+	pSolarSysState->XlatTable = uqm::loadStringTable(PlanDataPtr->XlatTabInstance);
 
 	if (PlanetInfo->SurfaceTemperature > HOT_THRESHOLD)
 	{
 		pSolarSysState->OrbitalCMap = SetAbsColorMapIndex(
 			pSolarSysState->OrbitalCMap, 2);
-		pSolarSysState->XlatRef = SetAbsStringTableIndex(
-			pSolarSysState->XlatRef, 2);
+		xlatIndex = 2;
 	}
 	else if (PlanetInfo->SurfaceTemperature > COLD_THRESHOLD)
 	{
 		pSolarSysState->OrbitalCMap = SetAbsColorMapIndex(
 			pSolarSysState->OrbitalCMap, 1);
-		pSolarSysState->XlatRef = SetAbsStringTableIndex(
-			pSolarSysState->XlatRef, 1);
+		xlatIndex = 1;
 	}
 
-	pSolarSysState->XlatPtr = GetStringAddress(pSolarSysState->XlatRef);
+	pSolarSysState->XlatPtr = pSolarSysState->XlatTable->bytes(xlatIndex).data();
 }
 
 void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit,
@@ -2798,27 +2794,25 @@ void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
 	}
 	else
 	{
+		size_t xlatIndex {0};
 		pSolarSysState->OrbitalCMap = CaptureColorMap(
 			LoadColorMap(shielded && useDosSpheres ? DOS_SHIELDED_COLOR_TAB : PlanDataPtr->CMapInstance));
-		pSolarSysState->XlatRef = CaptureStringTable(
-			LoadStringTable(PlanDataPtr->XlatTabInstance));
+		pSolarSysState->XlatTable = uqm::loadStringTable(PlanDataPtr->XlatTabInstance);
 
 		if (PlanetInfo->SurfaceTemperature > HOT_THRESHOLD)
 		{
 			pSolarSysState->OrbitalCMap = SetAbsColorMapIndex(
 				pSolarSysState->OrbitalCMap, 2);
-			pSolarSysState->XlatRef = SetAbsStringTableIndex(
-				pSolarSysState->XlatRef, 2);
+			xlatIndex = 2;
 		}
 		else if (PlanetInfo->SurfaceTemperature > COLD_THRESHOLD)
 		{
 			pSolarSysState->OrbitalCMap = SetAbsColorMapIndex(
 				pSolarSysState->OrbitalCMap, 1);
-			pSolarSysState->XlatRef = SetAbsStringTableIndex(
-				pSolarSysState->XlatRef, 1);
+			xlatIndex = 1;
 		}
 
-		pSolarSysState->XlatPtr = GetStringAddress(pSolarSysState->XlatRef);
+		pSolarSysState->XlatPtr = pSolarSysState->XlatTable->bytes(xlatIndex).data();
 
 		Orbit->lpTopoData = new int8_t[width * height] {};
 		RandomContext_SeedRandom(SysGenRNG, pPlanetDesc->rand_seed);
@@ -2826,8 +2820,7 @@ void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
 
 		DestroyColorMap(ReleaseColorMap(pSolarSysState->OrbitalCMap));
 		pSolarSysState->OrbitalCMap = 0;
-		DestroyStringTable(ReleaseStringTable(pSolarSysState->XlatRef));
-		pSolarSysState->XlatRef = 0;
+		pSolarSysState->XlatTable.reset();
 		delete[] Orbit->lpTopoData;
 		Orbit->lpTopoData = nullptr;
 	}

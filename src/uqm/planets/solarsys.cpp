@@ -378,9 +378,7 @@ GenerateTexturedMoons(SOLARSYS_STATE* system, PLANET_DESC* planet)
 			pMoonDesc->orbit = pSolarSysState->Orbit;
 			PrepareNextRotationFrameForIP(pMoonDesc, 0);
 
-			DestroyStringTable(ReleaseStringTable(
-				pSolarSysState->XlatRef));
-			pSolarSysState->XlatRef = 0;
+			pSolarSysState->XlatTable.reset();
 			DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 			pSolarSysState->TopoFrame = 0;
 			DestroyColorMap(ReleaseColorMap(
@@ -739,8 +737,7 @@ GenerateTexturedPlanets(void)
 		PrepareNextRotationFrameForIP(pCurDesc, 0);
 
 		// Clean up some parasitic use of pSolarSysState
-		DestroyStringTable(ReleaseStringTable(pSolarSysState->XlatRef));
-		pSolarSysState->XlatRef = 0;
+		pSolarSysState->XlatTable.reset();
 		DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 		pSolarSysState->TopoFrame = 0;
 		DestroyColorMap(ReleaseColorMap(pSolarSysState->OrbitalCMap));
@@ -928,9 +925,7 @@ FreeSolarSys(void)
 		{
 			DestroyOrbitStruct(&pCurDesc->orbit, PLANET_DIAMETER);
 			// JMS: Not sure if these do any good...
-			DestroyStringTable(
-				ReleaseStringTable(pSolarSysState->XlatRef));
-			pSolarSysState->XlatRef = 0;
+			pSolarSysState->XlatTable.reset();
 			DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 			pSolarSysState->TopoFrame = 0;
 			DestroyColorMap(

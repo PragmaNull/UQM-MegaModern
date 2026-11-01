@@ -311,7 +311,7 @@ struct solarsys_state
 	uint8_t thrust_counter;
 	uint8_t max_ship_speed;
 
-	STRING XlatRef;
+	uqm::StringTablePtr XlatTable {};
 	const void* XlatPtr;
 	COLORMAP OrbitalCMap;
 
