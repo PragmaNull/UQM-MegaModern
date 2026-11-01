@@ -38,7 +38,7 @@ static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack);
 
 // Scans forward until outside of the interpolation then returns the start
 // of the new section of text.
-char* ScanInterpolation(char* start)
+const char* ScanInterpolation(const char* start)
 {
 	uint16_t depth = 1;
 	if (!start || start[0] != '<')
@@ -67,7 +67,7 @@ char* ScanInterpolation(char* start)
 }
 
 // Will the chunk between [end - start] require robot voicing?
-bool RoboInterpolation(char* start, char* end)
+bool RoboInterpolation(const char* start, const char* end)
 {
 	static constexpr const char* RoboPhrases[] = {
 		"getPoint",
@@ -78,7 +78,7 @@ bool RoboInterpolation(char* start, char* end)
 
 	for (const char* phrase : RoboPhrases)
 	{
-		if (char* result {strstr(start, phrase)}; result && result < end)
+		if (const char* result {strstr(start, phrase)}; result && result < end)
 		{
 			return true;
 		}
@@ -88,9 +88,9 @@ bool RoboInterpolation(char* start, char* end)
 
 // This will write to buffer the interpolated chunk, while returning a new
 // "start" value from the original string where interpolation ended.
-char* InterpolateChunk(uqstl::span<char> buffer, char* start)
+const char* InterpolateChunk(uqstl::span<char> buffer, const char* start)
 {
-	char* end = start;
+	const char* end = start;
 	char str_buf[MAX_INTERPOLATE] = "";
 	char* pStr;
 	uint16_t buffsize = 0;
@@ -173,7 +173,7 @@ void GetSubClip(uqstl::span<char> buffer, const char* pClip, uint16_t clip_numbe
 // on the Starcon2Main thread
 void NPCPhrase_cb(int index, CallbackFunction cb)
 {
-	char* pStr;
+	const char* pStr;
 	const char* pClip;
 	const char* pTimeStamp;
 	uint16_t clip_number = 0;
@@ -184,12 +184,9 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 		return;
 	}
 
-	pStr = (char*)GetStringAddress(
-		SetAbsStringTableIndex(CommData.ConversationPhrases, index - 1));
-	pClip = GetStringSoundClip(
-		SetAbsStringTableIndex(CommData.ConversationPhrases, index - 1));
-	pTimeStamp = GetStringTimeStamp(
-		SetAbsStringTableIndex(CommData.ConversationPhrases, index - 1));
+	pStr = CommData.ConversationPhrases->text(index - 1);
+	pClip = CommData.ConversationPhrases->soundClip(index - 1);
+	pTimeStamp = CommData.ConversationPhrases->timestamp(index - 1);
 
 	if (!StarSeed)
 	{
@@ -206,12 +203,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 	}
 
 	// From here on, we are doing StarSeed robo-interpolation.
-	static STRING RoboPhrases = nullptr;
-	if (!RoboPhrases)
-	{
-		RoboPhrases = CaptureStringTable(
-			LoadStringTableInstance("comm.robot.dialogue"));
-	}
+	static const uqm::StringTablePtr RoboPhrases {uqm::loadStringTable("comm.robot.dialogue")};
 	for (i = 0; RoboTrack[i] && i < NUM_ROBO_TRACKS; i++)
 	{
 		RoboTrack[i] = 0;
@@ -219,14 +211,10 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 #ifdef DEBUG_STARSEED_TRACE_TIMESTAMP
 	// This code will roll the "SENSE_KOHRAH_VICTORY" dialog and timestamps
 	// instead of the correct ones for debugging or track syncing purposes.
-	STRING Pkunk = CaptureStringTable(
-		LoadStringTableInstance("comm.pkunk.dialogue"));
-	pStr = (char*)GetStringAddress(
-		SetAbsStringTableIndex(Pkunk, 43));
-	pClip = GetStringSoundClip(
-		SetAbsStringTableIndex(Pkunk, 43));
-	pTimeStamp = GetStringTimeStamp(
-		SetAbsStringTableIndex(Pkunk, 43));
+	const uqm::StringTablePtr Pkunk {uqm::loadStringTable("comm.pkunk.dialogue")};
+	pStr = Pkunk->text(43);
+	pClip = Pkunk->soundClip(43);
+	pTimeStamp = Pkunk->timestamp(43);
 #endif
 
 	// Switch to alternate time stamps if they exist
@@ -322,9 +310,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 				else if (RoboTrack[i] > 0)
 				{
 					// Otherwise the robo-track is an index into robo-phrases
-					tracks[i] = GetStringSoundClip(
-						SetAbsStringTableIndex(RoboPhrases,
-											   RoboTrack[i] - 1));
+					tracks[i] = RoboPhrases->soundClip(RoboTrack[i] - 1);
 #ifdef DEBUG_STARSEED
 					fmt::print(stderr, "RoboTrack[{}] = <<{}>>.\n", i, tracks[i]);
 #endif
@@ -350,7 +336,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 // Special case variant: prevents page breaks.
 void NPCPhrase_splice(int index)
 {
-	char* pStr;
+	const char* pStr;
 	const char* pClip;
 
 	assert(index >= 0);
@@ -359,10 +345,8 @@ void NPCPhrase_splice(int index)
 		return;
 	}
 
-	pStr = (char*)GetStringAddress(
-		SetAbsStringTableIndex(CommData.ConversationPhrases, index - 1));
-	pClip = GetStringSoundClip(
-		SetAbsStringTableIndex(CommData.ConversationPhrases, index - 1));
+	pStr = CommData.ConversationPhrases->text(index - 1);
+	pClip = CommData.ConversationPhrases->soundClip(index - 1);
 
 	if (!pClip)
 	{ // Just appending some text
@@ -452,8 +436,7 @@ NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 			}
 			index -= 1;
 
-			*ptrack++ = GetStringSoundClip(SetAbsStringTableIndex(
-				CommData.ConversationPhrases, index));
+			*ptrack++ = CommData.ConversationPhrases->soundClip(index);
 			queued++;
 		}
 		else
@@ -471,9 +454,7 @@ NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 			{
 				if (number % name->Divider <= name->MaxRemainder)
 				{
-					*ptrack++ = GetStringSoundClip(
-						SetAbsStringTableIndex(
-							CommData.ConversationPhrases, name->StrIndex - 1));
+					*ptrack++ = CommData.ConversationPhrases->soundClip(name->StrIndex - 1);
 					queued++;
 					break;
 				}
@@ -481,8 +462,7 @@ NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 		}
 		else if (dig->CommonNameIndex != 0)
 		{
-			*ptrack++ = GetStringSoundClip(SetAbsStringTableIndex(
-				CommData.ConversationPhrases, dig->CommonNameIndex - 1));
+			*ptrack++ = CommData.ConversationPhrases->soundClip(dig->CommonNameIndex - 1);
 			queued++;
 		}
 
@@ -494,8 +474,7 @@ NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 		if (queued == 0)
 		{ // nothing queued, say "zero"
 			assert(number == 0);
-			*ptrack++ = GetStringSoundClip(SetAbsStringTableIndex(
-				CommData.ConversationPhrases, dig->StrDigits[number] - 1));
+			*ptrack++ = CommData.ConversationPhrases->soundClip(dig->StrDigits[number] - 1);
 		}
 		*ptrack++ = nullptr; // term
 
@@ -521,11 +500,7 @@ void construct_response(uqstl::span<char> buf, int R /* promoted from RESPONSE_R
 			uqm::log::critical("Error: construct_response buffer size of {} exceeded, please increase!", buf.size());
 			exit(EXIT_FAILURE);
 		}
-		STRING S;
-
-		S = SetAbsStringTableIndex(CommData.ConversationPhrases, R - 1);
-
-		uint16_t len = uqm::strncpy_safe(destBuf, (char*)GetStringAddress(S));
+		uint16_t len = uqm::strncpy_safe(destBuf, CommData.ConversationPhrases->text(R - 1));
 		destBuf = destBuf.subspan(len);
 
 		name = va_arg(vlist, char*);
@@ -676,27 +651,19 @@ init_race(CONVERSATION comm_id)
 RESPONSE_REF
 phraseIdStrToNum(const char* phraseIdStr)
 {
-	STRING phrase = GetStringByName(GetStringTable(
-										CommData.ConversationPhrases),
-									phraseIdStr);
-	if (phrase == nullptr)
+	const uqstl::optional<size_t> phrase {CommData.ConversationPhrases->find(phraseIdStr)};
+	if (!phrase)
 	{
 		return (RESPONSE_REF)-1;
 	}
 
-	return GetStringTableIndex(phrase) + 1;
+	return static_cast<RESPONSE_REF>(*phrase + 1);
 	// Index 0 is for NULL_PHRASE, hence the '+ 1"
 }
 
 const char*
 phraseIdNumToStr(RESPONSE_REF response)
 {
-	STRING phrase = SetAbsStringTableIndex(
-		CommData.ConversationPhrases, response - 1);
 	// Index 0 is for NULL_PHRASE, hence the '- 1'.
-	if (phrase == nullptr)
-	{
-		return nullptr;
-	}
-	return GetStringName(phrase);
+	return CommData.ConversationPhrases->name(response - 1);
 }

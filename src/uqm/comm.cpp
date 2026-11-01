@@ -1772,12 +1772,7 @@ void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func,
 	}
 	else
 	{
-		STRING locString;
-
-		locString = SetAbsStringTableIndex(CommData.ConversationPhrases,
-										   (uint16_t)(R - 1));
-		pEntry->response_text.pStr =
-			(char*)GetStringAddress(locString);
+		pEntry->response_text.pStr = CommData.ConversationPhrases->text(R - 1);
 
 		if (luaUqm_comm_stringNeedsInterpolate(pEntry->response_text.pStr))
 		{
@@ -1852,8 +1847,7 @@ void SetUpCommData(void)
 	}
 
 	// Load alien convo lines
-	CommData.ConversationPhrases = CaptureStringTable(
-		LoadStringTable(CommData.ConversationPhrasesRes));
+	CommData.ConversationPhrases = LoadStringTable(CommData.ConversationPhrasesRes);
 }
 
 static void
@@ -2010,7 +2004,7 @@ HailAlien(void)
 	SetContext(SpaceContext);
 	SetContextFont(OldFont);
 
-	DestroyStringTable(ReleaseStringTable(CommData.ConversationPhrases));
+	DestroyStringTable(CommData.ConversationPhrases);
 	DestroyMusic(CommData.AlienSong);
 	DestroyColorMap(ReleaseColorMap(CommData.AlienColorMap));
 	DestroyFont(CommData.AlienFont);

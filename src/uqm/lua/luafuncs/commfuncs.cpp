@@ -322,7 +322,6 @@ static int
 luaUqm_comm_getPhrase(lua_State* luaState)
 {
 	int phraseId;
-	STRING str;
 	const char* strBuf;
 
 	phraseId = testPhraseId(luaState, 1);
@@ -334,9 +333,7 @@ luaUqm_comm_getPhrase(lua_State* luaState)
 	}
 
 	// Find the string.
-	str = SetAbsStringTableIndex(CommData.ConversationPhrases,
-								 phraseId - 1);
-	strBuf = GetStringAddress(str);
+	strBuf = CommData.ConversationPhrases->text(phraseId - 1);
 
 	if (luaUqm_comm_stringNeedsInterpolate(strBuf))
 	{

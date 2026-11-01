@@ -401,7 +401,6 @@ GetSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
 
 	{
 		TEXT t;
-		STRING locString;
 
 		t.baseline.x = pRect->corner.x + (pRect->extent.width >> 1);
 		t.baseline.y = pRect->corner.y + (pRect->extent.height >> 1)
@@ -1335,7 +1334,6 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 				{
 					Color c;
 					TEXT t;
-					STRING locString;
 					char yehat_rebels[] {"+Yehat+"};
 
 					c = RaceColor(index);

@@ -53,15 +53,13 @@ ReadOneChar(joy_char_t* ch, const char* str)
 }
 
 static uqstl::vector<joy_char_t>
-LoadJoystickAlpha(STRING String, int* count)
+LoadJoystickAlpha(const char* str, int* count)
 {
-	char* str;
 	int c;
 	int i;
-	char* cur;
+	const char* cur;
 
 	*count = 0;
-	str = GetStringAddress(String);
 	if (!str)
 	{
 		return {};
@@ -221,17 +219,12 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		pTES->InsPt = uqm::skipUTF8Chars(pTES->BaseStr, pTES->CursorPos);
 
 		// load joystick alphabet
-		pTES->JoyAlphaString = CaptureStringTable(
-			LoadStringTable(JOYSTICK_ALPHA_STRTAB));
-		pTES->JoyAlpha = LoadJoystickAlpha(
-			SetAbsStringTableIndex(pTES->JoyAlphaString, 0),
-			&pTES->JoyAlphaLength);
-		pTES->JoyUpper = LoadJoystickAlpha(
-			SetAbsStringTableIndex(pTES->JoyAlphaString, 1),
-			&pTES->JoyRegLength);
-		pTES->JoyLower = LoadJoystickAlpha(
-			SetAbsStringTableIndex(pTES->JoyAlphaString, 2),
-			&lwlen);
+		{
+			const uqm::StringTablePtr joyAlpha {uqm::loadStringTable(JOYSTICK_ALPHA_STRTAB)};
+			pTES->JoyAlpha = LoadJoystickAlpha(joyAlpha->text(0), &pTES->JoyAlphaLength);
+			pTES->JoyUpper = LoadJoystickAlpha(joyAlpha->text(1), &pTES->JoyRegLength);
+			pTES->JoyLower = LoadJoystickAlpha(joyAlpha->text(2), &lwlen);
+		}
 		if (lwlen != pTES->JoyRegLength)
 		{
 			if (lwlen < pTES->JoyRegLength)
@@ -253,7 +246,6 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		pTES->JoyLower = {};
 		pTES->JoyUpper = {};
 		pTES->JoyAlpha = {};
-		DestroyStringTable(ReleaseStringTable(pTES->JoyAlphaString));
 
 		return pTES->Success;
 	}

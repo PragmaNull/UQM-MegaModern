@@ -215,7 +215,6 @@ typedef struct textentry_state
 	TimeCount NextTime;					// use this for input frame timing
 	bool Success;						// edit confirmed or canceled
 	uqstl::vector<char> CacheStr;		// cached copy to revert immediate changes
-	STRING JoyAlphaString;				// joystick alphabet definition
 	bool JoystickMode;					// true when doing joystick input
 	bool UpperRegister;					// true when entering Caps
 	uqstl::vector<joy_char_t> JoyAlpha; // joystick alphabet

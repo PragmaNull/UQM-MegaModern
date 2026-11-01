@@ -422,8 +422,6 @@ GenerateMoons(SOLARSYS_STATE* system, PLANET_DESC* planet)
 FRAME
 LoadNebulaeFrame(GFXPOINT location)
 {
-	STRING nebulaRes;
-	uint16_t nebulaCount;
 	GFXPOINT neb_seed;
 	const GFXPOINT solPoint = plot_map[SOL_DEFINED].star_pt;
 
@@ -452,11 +450,10 @@ LoadNebulaeFrame(GFXPOINT location)
 
 	char path[PATH_MAX] {};
 
-	nebulaRes = CaptureStringTable(
-		LoadStringTable(NEBULA_RESOURCES));
-	nebulaCount = GetStringTableCount(nebulaRes);
-	fmt::format_to_n(path, sizeof(path) - 1, "{}", GET_STRING(nebulaRes, neb_seed.x % nebulaCount));
-	DestroyStringTable(ReleaseStringTable(nebulaRes));
+	const uqm::StringTablePtr nebulaRes {uqm::loadStringTable(NEBULA_RESOURCES)};
+	const auto nebulaCount {static_cast<uint16_t>(nebulaRes->size())};
+	const auto nebulaIndex {static_cast<uint16_t>(neb_seed.x % nebulaCount)};
+	fmt::format_to_n(path, sizeof(path) - 1, "{}", nebulaRes->text(nebulaIndex % nebulaCount));
 
 	if ((neb_seed.y % (nebulaCount + 6)) > nebulaCount
 		&& !classicPackPresent && !inHyperSpace())

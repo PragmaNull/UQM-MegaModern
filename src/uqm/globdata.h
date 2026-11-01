@@ -170,7 +170,7 @@ typedef struct
 	FONT AlienFont;
 	COLORMAP AlienColorMap;
 	MUSIC_REF AlienSong;
-	STRING ConversationPhrases;
+	uqm::StringTable* ConversationPhrases;
 } LOCDATA;
 
 enum
