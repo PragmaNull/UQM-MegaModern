@@ -77,7 +77,7 @@ void DrawCrewFuelString(int16_t y, int16_t state)
 }
 
 static void
-DrawShipNameString(char* pStr, uint16_t CharCount, int16_t y)
+DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
 {
 	TEXT Text;
 	FONT OldFont;
@@ -304,14 +304,9 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 	if (!StarShipPtr || StarShipPtr->captains_name_index)
 	{ // Any regular ship. SIS and Sa-Matra are separate.
 		// This includes Melee menu.
-		STRING locString;
-
 		DrawCrewFuelString(y, 0);
 
-		locString = SetAbsStringTableIndex(SIPtr->race_strings, 1);
-		DrawShipNameString(
-			(char*)GetStringAddress(locString),
-			GetStringLength(locString), y);
+		DrawShipNameString(SIPtr->race_strings->text(1), (uint16_t)~0, y);
 
 		{
 			char buf[30] {};
@@ -328,11 +323,8 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 			}
 			else
 			{
-				locString = SetAbsStringTableIndex(SIPtr->race_strings,
-												   StarShipPtr->captains_name_index);
-
 				uqm::utf8StringCopy(buf, sizeof(buf),
-									(char*)GetStringAddress(locString));
+									SIPtr->race_strings->text(StarShipPtr->captains_name_index));
 
 				if (is3DO(uqm::UQMOptions::read().whichMenu))
 				{

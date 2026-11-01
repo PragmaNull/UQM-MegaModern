@@ -407,9 +407,8 @@ GetSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
 		t.baseline.y = pRect->corner.y + (pRect->extent.height >> 1)
 					 - RES_SCALE(1);
 		t.align = ALIGN_CENTER;
-		locString = SetAbsStringTableIndex(FleetPtr->race_strings, 1);
-		t.CharCount = GetStringLength(locString);
-		t.pStr = (char*)GetStringAddress(locString);
+		t.CharCount = (uint16_t)~0;
+		t.pStr = FleetPtr->race_strings->text(1);
 		TextRect(&t, pRepairRect, nullptr);
 
 		if (pRepairRect->corner.x <= 0)
@@ -1380,16 +1379,12 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 								t.CharCount = (uint16_t)strlen(t.pStr);
 								break;
 							case ANDROSYNTH_SHIP:
-								locString = SetAbsStringTableIndex(
-									FleetPtr->race_strings, 0);
-								t.pStr = (char*)GetStringAddress(locString);
-								t.CharCount = GetStringLength(locString);
+								t.pStr = FleetPtr->race_strings->text(0);
+								t.CharCount = (uint16_t)~0;
 								break;
 							default:
-								locString = SetAbsStringTableIndex(
-									FleetPtr->race_strings, 1);
-								t.CharCount = GetStringLength(locString);
-								t.pStr = (char*)GetStringAddress(locString);
+								t.CharCount = (uint16_t)~0;
+								t.pStr = FleetPtr->race_strings->text(1);
 								break;
 						}
 					}
@@ -1400,10 +1395,8 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 					}
 					else
 					{
-						locString = SetAbsStringTableIndex(
-							FleetPtr->race_strings, 1);
-						t.CharCount = GetStringLength(locString);
-						t.pStr = (char*)GetStringAddress(locString);
+						t.CharCount = (uint16_t)~0;
+						t.pStr = FleetPtr->race_strings->text(1);
 					}
 
 					TextRect(&t, &r, nullptr);
@@ -1425,12 +1418,10 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 			else if (index == race_index && race_update & (PRE_DEATH_SOI | DEATH_SOI))
 			{ // Kruzen: SoI is dead, but we need to fade nameplate
 				TEXT t;
-				STRING locString;
 				GFXRECT repair_r;
 
-				locString = SetAbsStringTableIndex(FleetPtr->race_strings, 1);
-				t.CharCount = GetStringLength(locString);
-				t.pStr = (char*)GetStringAddress(locString);
+				t.CharCount = (uint16_t)~0;
+				t.pStr = FleetPtr->race_strings->text(1);
 
 				GetSphereRect(FleetPtr, &r, &repair_r);
 

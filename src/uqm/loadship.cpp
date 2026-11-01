@@ -201,9 +201,9 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 }
 
 static void
-SwapStrings(STRING a, STRING b, uint16_t ia, uint16_t ib)
+SwapStrings(uqm::StringTable* a, uqm::StringTable* b, size_t ia, size_t ib)
 {
-	uqstl::swap(SetAbsStringTableIndex(a, ia)->bytes, SetAbsStringTableIndex(b, ib)->bytes);
+	uqstl::swap(a->entry(ia)->bytes, b->entry(ib)->bytes);
 }
 
 RACE_DESC*
@@ -264,21 +264,21 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 
 	if (RDPtrSwap->ship_info.race_strings_rsc != NULL_RESOURCE)
 	{
-		RDPtr->ship_info.race_strings = CaptureStringTable(LoadStringTable(
-			RDPtrSwap->ship_info.race_strings_rsc));
+		RDPtr->ship_info.race_strings = LoadStringTable(
+			RDPtrSwap->ship_info.race_strings_rsc);
 		if (!RDPtr->ship_info.race_strings)
 		{
 			/* goto BadLoad */
 		}
-		RDPtrSwap->ship_info.race_strings = CaptureStringTable(LoadStringTable(
-			RDPtr->ship_info.race_strings_rsc));
+		RDPtrSwap->ship_info.race_strings = LoadStringTable(
+			RDPtr->ship_info.race_strings_rsc);
 		SwapStrings(RDPtrSwap->ship_info.race_strings,
 					RDPtr->ship_info.race_strings, 4, 4);
 		SwapStrings(RDPtrSwap->ship_info.race_strings,
 					RDPtr->ship_info.race_strings,
-					GetStringTableCount(RDPtrSwap->ship_info.race_strings) - 2,
-					GetStringTableCount(RDPtr->ship_info.race_strings) - 2);
-		DestroyStringTable(ReleaseStringTable(RDPtrSwap->ship_info.race_strings));
+					RDPtrSwap->ship_info.race_strings->size() - 2,
+					RDPtr->ship_info.race_strings->size() - 2);
+		DestroyStringTable(RDPtrSwap->ship_info.race_strings);
 	}
 
 	if (LoadBattleData)
@@ -389,7 +389,7 @@ void free_ship(RACE_DESC* raceDescPtr, bool FreeIconData,
 
 		DestroyDrawable(ReleaseDrawable(shipInfo->melee_icon));
 		DestroyDrawable(ReleaseDrawable(shipInfo->icons));
-		DestroyStringTable(ReleaseStringTable(shipInfo->race_strings));
+		DestroyStringTable(shipInfo->race_strings);
 	}
 
 	DestroyCodeRes(ReleaseCodeRes(raceDescPtr->CodeRef));

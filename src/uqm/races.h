@@ -187,7 +187,7 @@ typedef struct
 	RESOURCE icons_rsc;
 	RESOURCE melee_icon_rsc;
 
-	STRING race_strings;
+	uqm::StringTable* race_strings;
 	FRAME icons;
 	FRAME melee_icon;
 } SHIP_INFO;
@@ -270,7 +270,7 @@ struct STARSHIP : SHIP_BASE
 	// In full-game: irrelevant
 	uint16_t index;
 	// original queue index
-	STRING race_strings;
+	uqm::StringTable* race_strings;
 	FRAME icons;
 
 	// Battle states
@@ -323,7 +323,7 @@ struct SHIP_FRAGMENT : SHIP_BASE
 	// XXX: energy_level and max_energy are unused. We save and load
 	//   them, but otherwise nothing needs them atm.
 
-	STRING race_strings;
+	uqm::StringTable* race_strings;
 	FRAME icons;
 	FRAME melee_icon; /* Only used by Shipyard */
 
@@ -361,7 +361,7 @@ typedef struct
 	uint8_t max_energy;
 	GFXPOINT loc; /* Location of the fleet (center) */
 
-	STRING race_strings;
+	uqm::StringTable* race_strings;
 	/* Race specific strings, see doc/devel/racestrings. */
 	FRAME icons;
 	FRAME melee_icon;

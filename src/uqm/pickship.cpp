@@ -261,13 +261,8 @@ ChangeSelection:
 				}
 				else
 				{
-					STRING locString;
-
-					locString = SetAbsStringTableIndex(
-						StarShipPtr->race_strings,
-						StarShipPtr->captains_name_index);
-					t.pStr = (char*)GetStringAddress(locString);
-					t.CharCount = GetStringLength(locString);
+					t.pStr = StarShipPtr->race_strings->text(StarShipPtr->captains_name_index);
+					t.CharCount = (uint16_t)~0;
 					crew_level = StarShipPtr->crew_level;
 					max_crew = StarShipPtr->max_crew;
 				}

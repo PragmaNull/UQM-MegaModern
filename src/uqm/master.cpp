@@ -37,7 +37,7 @@ void LoadMasterShipList(void (*YieldProcessing)(void))
 	while (num_entries--)
 	{
 		HMASTERSHIP hBuiltShip;
-		char* builtName;
+		const char* builtName;
 		HMASTERSHIP hStarShip, hNextShip;
 		MASTER_SHIP_INFO* BuiltPtr;
 		RACE_DESC* RDPtr;
@@ -70,8 +70,7 @@ void LoadMasterShipList(void (*YieldProcessing)(void))
 		BuiltPtr->Fleet = RDPtr->fleet;
 		free_ship(RDPtr, false, false);
 
-		builtName = GetStringAddress(SetAbsStringTableIndex(
-			BuiltPtr->ShipInfo.race_strings, 2));
+		builtName = BuiltPtr->ShipInfo.race_strings->text(2);
 		UnlockMasterShip(&master_q, hBuiltShip);
 
 		// Insert the ship in the master queue in the right location
@@ -79,13 +78,12 @@ void LoadMasterShipList(void (*YieldProcessing)(void))
 		for (hStarShip = GetHeadLink(&master_q);
 			 hStarShip; hStarShip = hNextShip)
 		{
-			char* curName;
+			const char* curName;
 			MASTER_SHIP_INFO* MasterPtr;
 
 			MasterPtr = LockMasterShip(&master_q, hStarShip);
 			hNextShip = _GetSuccLink(MasterPtr);
-			curName = GetStringAddress(SetAbsStringTableIndex(
-				MasterPtr->ShipInfo.race_strings, 2));
+			curName = MasterPtr->ShipInfo.race_strings->text(2);
 			UnlockMasterShip(&master_q, hStarShip);
 
 			if (strcmp(builtName, curName) < 0)
@@ -113,8 +111,7 @@ void FreeMasterShipList(void)
 
 		DestroyDrawable(ReleaseDrawable(MasterPtr->ShipInfo.melee_icon));
 		DestroyDrawable(ReleaseDrawable(MasterPtr->ShipInfo.icons));
-		DestroyStringTable(ReleaseStringTable(
-			MasterPtr->ShipInfo.race_strings));
+		DestroyStringTable(MasterPtr->ShipInfo.race_strings);
 
 		UnlockMasterShip(&master_q, hStarShip);
 	}

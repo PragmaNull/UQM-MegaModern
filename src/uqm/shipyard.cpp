@@ -340,10 +340,8 @@ GetShipStats(SHIP_STATS* ship_stats, SPECIES_ID species_id)
 	MASTER_SHIP_INFO* ShipPtr = LockMasterShip(&master_q, hMasterShip);
 
 	fmt::format_to_sz_n(ship_stats->ShipName, "{} {}",
-						(char*)GetStringAddress(SetAbsStringTableIndex(
-							ShipPtr->ShipInfo.race_strings, 2)),
-						(char*)GetStringAddress(SetAbsStringTableIndex(
-							ShipPtr->ShipInfo.race_strings, 4)));
+						ShipPtr->ShipInfo.race_strings->text(2),
+						ShipPtr->ShipInfo.race_strings->text(4));
 
 	ship_stats->ShipCost = ShipPtr->ShipInfo.ship_cost * 100;
 
@@ -362,7 +360,7 @@ GetStowedShipStats(SHIP_STATS* ship_stats, HSHIPFRAG hStowShip)
 	UnlockMasterShip(&master_q, hMasterShip);
 
 	fmt::format_to_sz_n(ship_stats->ShipName, "{}",
-						(char*)GetStringAddress(SetAbsStringTableIndex(StowShipPtr->race_strings, StowShipPtr->captains_name_index)));
+						StowShipPtr->race_strings->text(StowShipPtr->captains_name_index));
 
 	ship_stats->CrewLevel = StowShipPtr->crew_level;
 	ship_stats->MaxCrew = StowShipPtr->max_crew;
@@ -823,13 +821,9 @@ DrawShipyardShipText(GFXRECT* r, int Index)
 	HMASTERSHIP hMasterShip = FindMasterShip(FleetPtr->SpeciesID);
 	MASTER_SHIP_INFO* ShipPtr = LockMasterShip(&master_q, hMasterShip);
 	uqm::utf8StringCopy((char*)&race_name, sizeof(race_name),
-						(char*)GetStringAddress(SetAbsStringTableIndex(
-							ShipPtr->ShipInfo.race_strings,
-							GetStringTableCount(ShipPtr->ShipInfo.race_strings) - 3)));
+						ShipPtr->ShipInfo.race_strings->text(ShipPtr->ShipInfo.race_strings->size() - 3));
 	uqm::utf8StringCopy((char*)&ship_name, sizeof(ship_name),
-						(char*)GetStringAddress(SetAbsStringTableIndex(
-							ShipPtr->ShipInfo.race_strings,
-							GetStringTableCount(ShipPtr->ShipInfo.race_strings) - 2)));
+						ShipPtr->ShipInfo.race_strings->text(ShipPtr->ShipInfo.race_strings->size() - 2));
 	UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
 	UnlockMasterShip(&master_q, hMasterShip);
 
@@ -945,7 +939,7 @@ DrawRaceStrings(uint8_t NewRaceItem)
 		FLEET_INFO* FleetPtr;
 		uint16_t shipCost, shipPoints, shipCrew, maxCrew;
 		GFXRECT r;
-		STRING captain;
+		const char* captain {};
 
 		ManipulateShips(NewRaceItem);
 
@@ -957,8 +951,7 @@ DrawRaceStrings(uint8_t NewRaceItem)
 				&GLOBAL(stowed_ship_q), hStowShip);
 			NewRaceItem = StowShipPtr->race_id;
 			shipCrew = StowShipPtr->crew_level;
-			captain = SetAbsStringTableIndex(StowShipPtr->race_strings,
-											 StowShipPtr->captains_name_index);
+			captain = StowShipPtr->race_strings->text(StowShipPtr->captains_name_index);
 			UnlockShipFrag(&GLOBAL(stowed_ship_q), hStowShip);
 
 			hStarShip = GetStarShipFromIndex(
@@ -985,8 +978,8 @@ DrawRaceStrings(uint8_t NewRaceItem)
 				t.baseline.y = RADAR_Y - RES_SCALE(2)
 							 - DOS_NUM_SCL(2) - SAFE_Y;
 				t.align = ALIGN_CENTER;
-				t.pStr = (char*)GetStringAddress(captain);
-				t.CharCount = GetStringLength(captain);
+				t.pStr = captain;
+				t.CharCount = (uint16_t)~0;
 				font_DrawShadowedText(&t, WEST_SHADOW, CAPTAIN_NAME_TEXT_COLOR,
 									  SHP_SHADOW_COLOR);
 			}
@@ -1118,7 +1111,7 @@ ShowShipCrew(SHIP_FRAGMENT* StarShipPtr, const GFXRECT* pRect)
 	HFLEETINFO hTemplate;
 	FLEET_INFO* TemplatePtr;
 	uint16_t maxCrewLevel;
-	STRING captain;
+	const char* captain;
 
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
@@ -1136,8 +1129,7 @@ ShowShipCrew(SHIP_FRAGMENT* StarShipPtr, const GFXRECT* pRect)
 		EXTENDED ? TemplatePtr->max_crew : TemplatePtr->crew_level;
 	UnlockFleetInfo(&GLOBAL(avail_race_q), hTemplate);
 
-	captain = SetAbsStringTableIndex(StarShipPtr->race_strings,
-									 StarShipPtr->captains_name_index);
+	captain = StarShipPtr->race_strings->text(StarShipPtr->captains_name_index);
 
 	char buf[80] {};
 	if (StarShipPtr->crew_level == maxCrewLevel)
@@ -1185,8 +1177,8 @@ ShowShipCrew(SHIP_FRAGMENT* StarShipPtr, const GFXRECT* pRect)
 
 	r = *pRect;
 	t.baseline.y = r.corner.y + RES_SCALE(7);
-	t.pStr = (char*)GetStringAddress(captain);
-	t.CharCount = GetStringLength(captain);
+	t.pStr = captain;
+	t.CharCount = (uint16_t)~0;
 	if (!r.corner.y)
 	{
 		// Dim the top of the ship the first time you draw it

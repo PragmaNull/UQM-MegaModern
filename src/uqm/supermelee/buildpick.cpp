@@ -190,8 +190,8 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 	GetToolTipFrameRect(&r);
 
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{} {}",
-					 GET_STRING(SIPtr->race_strings, RACE_NAME_OFFSET),
-					 GET_STRING(SIPtr->race_strings, RACE_SHIP_OFFSET));
+					 SIPtr->race_strings->text(RACE_NAME_OFFSET),
+					 SIPtr->race_strings->text(RACE_SHIP_OFFSET));
 
 	Text.pStr = buf;
 	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
@@ -214,8 +214,7 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 	SetContextForeGroundColor(TOOLTIP_COLOR_DESC_FRONT);
 
 	uqm::utf8StringCopy(buf, sizeof buf,
-						GET_STRING(SIPtr->race_strings,
-								   GetStringTableCount(SIPtr->race_strings) - 1));
+						SIPtr->race_strings->text(SIPtr->race_strings->size() - 1));
 	Text.baseline.y += RES_SCALE(2);
 
 	{

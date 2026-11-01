@@ -351,10 +351,7 @@ InitCyborg(STARSHIP* StarShipPtr)
 	}
 #ifdef PRINT_MI
 	{
-		char* shipName;
-
-		shipName = GetStringAddress(
-			StarShipPtr->RaceDescPtr->ship_data.race_strings);
+		const char* shipName {StarShipPtr->RaceDescPtr->ship_data.race_strings->text(0)};
 		uqm::log::debug("MI({}) -- <{}:{}> = {}", shipName,
 						StarShipPtr->RaceDescPtr->characteristics.max_thrust * StarShipPtr->RaceDescPtr->characteristics.thrust_increment,
 						Divisor, Index);
