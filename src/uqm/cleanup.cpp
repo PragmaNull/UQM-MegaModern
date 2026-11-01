@@ -61,7 +61,7 @@ UninitKernel(void)
 {
 	UninitSpace();
 
-	DestroySound(MenuSounds);
+	delete MenuSounds;
 	DestroyFont(MicroFont);
 	GameStrings.reset();
 	DestroyDrawable(ReleaseDrawable(BorderFrame));

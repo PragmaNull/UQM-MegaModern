@@ -23,12 +23,6 @@
 #include <string.h>
 
 
-SOUND_REF
-LoadSoundFile(const char* pStr)
-{
-	return static_cast<SOUND_REF>(res_LoadResFile(uqm::contentDir(), pStr, _GetSoundBankData));
-}
-
 MUSIC_REF
 LoadMusicFile(const char* pStr)
 {

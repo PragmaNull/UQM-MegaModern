@@ -146,7 +146,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 		Orbit->sphereBytes = nullptr;
 	}
 
-	DestroyColorMap(Orbit->sphereMap);
+	delete Orbit->sphereMap;
 	Orbit->sphereMap = 0;
 
 	Orbit->scanType = 0;
@@ -608,8 +608,7 @@ void FreePlanet(void)
 		}
 	}
 
-	DestroyColorMap(pSolarSysState->OrbitalCMap);
-	pSolarSysState->OrbitalCMap = 0;
+	pSolarSysState->OrbitalCMap.reset();
 
 	DestroyOrbitStruct(Orbit, MAP_HEIGHT);
 

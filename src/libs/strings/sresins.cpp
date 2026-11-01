@@ -33,7 +33,7 @@ GetBinaryTableFileData(const char* pathname, RESOURCE_DATA* resdata)
 static bool
 ReleaseStringTableData(void* data)
 {
-	FreeStringTable(static_cast<STRING_TABLE>(data));
+	delete static_cast<uqm::StringTable*>(data);
 	return true;
 }
 
@@ -45,26 +45,17 @@ bool InstallStringTableResType(void)
 	return true;
 }
 
-STRING_TABLE
-LoadStringTableInstance(RESOURCE res)
-{
-	void* data;
-
-	data = res_GetResource(res);
-	if (data)
-	{
-		res_DetachResource(res);
-	}
-
-	return (STRING_TABLE)data;
-}
-
 namespace uqm
 {
 
 StringTablePtr loadStringTable(RESOURCE res)
 {
-	return StringTablePtr {LoadStringTableInstance(res)};
+	void* const data {res_GetResource(res)};
+	if (data)
+	{
+		res_DetachResource(res);
+	}
+	return StringTablePtr {static_cast<StringTable*>(data)};
 }
 
 } // namespace uqm

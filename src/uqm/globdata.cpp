@@ -488,7 +488,7 @@ void UninitGameStructures(void)
 		FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
 		DestroyDrawable(ReleaseDrawable(FleetPtr->melee_icon));
 		DestroyDrawable(ReleaseDrawable(FleetPtr->icons));
-		DestroyStringTable(FleetPtr->race_strings);
+		delete FleetPtr->race_strings;
 		UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
 	}
 

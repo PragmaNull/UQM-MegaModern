@@ -38,18 +38,14 @@ bool InstallAudioResTypes(void)
 	return (true);
 }
 
-SOUND_REF
-LoadSoundInstance(RESOURCE res)
+uqm::SoundBankPtr uqm::loadSoundBank(RESOURCE res)
 {
-	void* hData;
-
-	hData = res_GetResource(res);
-	if (hData)
+	void* const data {res_GetResource(res)};
+	if (data)
 	{
 		res_DetachResource(res);
 	}
-
-	return static_cast<SOUND_REF>(hData);
+	return SoundBankPtr {static_cast<SoundBank*>(data)};
 }
 
 MUSIC_REF

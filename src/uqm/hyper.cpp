@@ -501,9 +501,9 @@ void FreeHyperData(void)
 	DestroyDrawable(ReleaseDrawable(hyperstars[2]));
 	hyperstars[2] = 0;
 
-	DestroyColorMap(hypercmaps[0]);
+	delete hypercmaps[0];
 	hypercmaps[0] = 0;
-	DestroyColorMap(hypercmaps[1]);
+	delete hypercmaps[1];
 	hypercmaps[1] = 0;
 }
 
@@ -523,11 +523,11 @@ LoadHyperData(void)
 			LoadGraphic(AMBIENT_MASK_PMAP_ANIM));
 		hyperstars[1] = CaptureDrawable(
 			LoadGraphic(HYPERSTARS_MASK));
-		hypercmaps[0] = LoadColorMap(HYPER_COLOR_TAB);
+		hypercmaps[0] = uqm::loadStringTable(HYPER_COLOR_TAB).release();
 
 		hyperstars[2] = CaptureDrawable(
 			LoadGraphic(ARISPACE_MASK));
-		hypercmaps[1] = LoadColorMap(ARISPACE_COLOR_TAB);
+		hypercmaps[1] = uqm::loadStringTable(ARISPACE_COLOR_TAB).release();
 	}
 }
 

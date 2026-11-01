@@ -264,21 +264,18 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 
 	if (RDPtrSwap->ship_info.race_strings_rsc != NULL_RESOURCE)
 	{
-		RDPtr->ship_info.race_strings = LoadStringTable(
-			RDPtrSwap->ship_info.race_strings_rsc);
+		RDPtr->ship_info.race_strings = uqm::loadStringTable(
+											RDPtrSwap->ship_info.race_strings_rsc)
+											.release();
 		if (!RDPtr->ship_info.race_strings)
 		{
 			/* goto BadLoad */
 		}
-		RDPtrSwap->ship_info.race_strings = LoadStringTable(
-			RDPtr->ship_info.race_strings_rsc);
-		SwapStrings(RDPtrSwap->ship_info.race_strings,
-					RDPtr->ship_info.race_strings, 4, 4);
-		SwapStrings(RDPtrSwap->ship_info.race_strings,
-					RDPtr->ship_info.race_strings,
-					RDPtrSwap->ship_info.race_strings->size() - 2,
+		const uqm::StringTablePtr swapStrings {uqm::loadStringTable(RDPtr->ship_info.race_strings_rsc)};
+		SwapStrings(swapStrings.get(), RDPtr->ship_info.race_strings, 4, 4);
+		SwapStrings(swapStrings.get(), RDPtr->ship_info.race_strings,
+					swapStrings->size() - 2,
 					RDPtr->ship_info.race_strings->size() - 2);
-		DestroyStringTable(RDPtrSwap->ship_info.race_strings);
 	}
 
 	if (LoadBattleData)
@@ -336,7 +333,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 
 		if (RawPtr->ship_sounds_rsc != NULL_RESOURCE)
 		{
-			RawPtr->ship_sounds = LoadSound(RawPtr->ship_sounds_rsc);
+			RawPtr->ship_sounds = uqm::loadSoundBank(RawPtr->ship_sounds_rsc).release();
 			if (!RawPtr->ship_sounds)
 			{
 				goto BadLoad;
@@ -379,7 +376,7 @@ void free_ship(RACE_DESC* raceDescPtr, bool FreeIconData,
 		DestroyDrawable(
 			ReleaseDrawable(shipData->captain_control.background));
 		DestroyMusic(shipData->victory_ditty);
-		DestroySound(shipData->ship_sounds);
+		delete shipData->ship_sounds;
 	}
 
 	if (FreeIconData)
@@ -388,7 +385,7 @@ void free_ship(RACE_DESC* raceDescPtr, bool FreeIconData,
 
 		DestroyDrawable(ReleaseDrawable(shipInfo->melee_icon));
 		DestroyDrawable(ReleaseDrawable(shipInfo->icons));
-		DestroyStringTable(shipInfo->race_strings);
+		delete shipInfo->race_strings;
 	}
 
 	DestroyCodeRes(ReleaseCodeRes(raceDescPtr->CodeRef));

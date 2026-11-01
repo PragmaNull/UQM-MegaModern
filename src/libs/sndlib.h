@@ -23,6 +23,7 @@
 #include "port.h"
 #include "libs/time/timelib.h"
 #include "libs/strlib.h"
+#include "core/stl/memory.h"
 #include "core/stl/vector.h"
 
 #if 0 //defined(__cplusplus)
@@ -71,16 +72,20 @@ inline SOUND GetSound(SOUND_REF bank, size_t index)
 {
 	return bank != nullptr ? bank->sample(index) : nullptr;
 }
+
+namespace uqm
+{
+using SoundBankPtr = uqstl::unique_ptr<SoundBank>;
+// Returns an empty pointer if the resource is not a sound bank.
+[[nodiscard]] SoundBankPtr loadSoundBank(RESOURCE res);
+} // namespace uqm
 typedef TFB_SoundSample** MUSIC_REF;
 
 extern bool InitSound(int argc, char* argv[]);
 extern void UninitSound(void);
-extern SOUND_REF LoadSoundFile(const char* pStr);
 extern MUSIC_REF LoadMusicFile(const char* pStr);
 extern bool InstallAudioResTypes(void);
-extern SOUND_REF LoadSoundInstance(RESOURCE res);
 extern MUSIC_REF LoadMusicInstance(RESOURCE res);
-extern bool DestroySound(SOUND_REF SoundRef);
 extern bool DestroyMusic(MUSIC_REF MusicRef);
 
 #define MAX_CHANNELS 8

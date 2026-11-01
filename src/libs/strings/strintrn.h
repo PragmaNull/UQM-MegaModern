@@ -26,14 +26,8 @@
 #include "libs/strlib.h"
 #include "libs/reslib.h"
 
-#define HAS_SOUND_CLIPS uqm::StringTable::c_hasSoundClips
-#define HAS_TIMESTAMP uqm::StringTable::c_hasTimestamps
-#define HAS_NAMEINDEX uqm::StringTable::c_hasNames
-
-STRING_TABLE AllocStringTable(int num_entries, int flags);
-void FreeStringTable(STRING_TABLE strtab);
 // Copies 'len' bytes of 'value' into the entry. A length of 0 empties the entry.
-void SetStringTableEntry(STRING_TABLE strtab, int index, const void* value, int len);
+void SetStringTableEntry(uqm::StringTable* strtab, int index, const void* value, int len);
 
 void* _GetStringData(const ResourceFile& resource);
 void* _GetBinaryTableData(const ResourceFile& resource);

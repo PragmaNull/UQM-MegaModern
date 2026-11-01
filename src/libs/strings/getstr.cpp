@@ -43,7 +43,7 @@ dword_convert(uint32_t* dword_array, uint16_t num_dwords)
 	} while (--num_dwords);
 }
 
-void SetStringTableEntry(STRING_TABLE strtab, int index, const void* value, int len)
+void SetStringTableEntry(uqm::StringTable* strtab, int index, const void* value, int len)
 {
 	strtab->set(static_cast<size_t>(index), uqstl::string_view {static_cast<const char*>(value), static_cast<size_t>(len)});
 }
@@ -119,7 +119,7 @@ namespace
 }
 
 // Sets an entry to the text and its NUL, or empties it if 'text' is nullopt.
-void setEntry(STRING_TABLE table, int index, const uqstl::optional<uqstl::string>& text)
+void setEntry(uqm::StringTable* table, int index, const uqstl::optional<uqstl::string>& text)
 {
 	if (text)
 	{
@@ -179,7 +179,7 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	uqstl::vector<uqstl::string> names(count);
 	uqstl::vector<uqstl::optional<uqstl::string>> clips(count);
 	uqstl::vector<uqstl::optional<uqstl::string>> timings(count);
-	int flags {HAS_NAMEINDEX};
+	int flags {uqm::StringTable::c_hasNames};
 	size_t index {};
 	size_t max {};
 	yyjson_val* line {};
@@ -199,17 +199,19 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 		if (const char* const clip {yyjson_get_str(yyjson_obj_get(line, "clip"))}; clip != nullptr && *clip != '\0')
 		{
 			clips[index] = uqstl::string {clipDir} + clip;
-			flags |= HAS_SOUND_CLIPS;
+			flags |= uqm::StringTable::c_hasSoundClips;
 		}
 		yyjson_val* const timingLine {yyjson_obj_get(timingLines, id)};
 		if (uqstl::string timing {timingText(timingLine != nullptr ? timingLine : line)}; !timing.empty())
 		{
 			timings[index] = uqstl::move(timing);
-			flags |= HAS_TIMESTAMP;
+			flags |= uqm::StringTable::c_hasTimestamps;
 		}
 	}
 
-	STRING_TABLE table {AllocStringTable(static_cast<int>(count), flags)};
+	auto* const table {
+		new uqm::StringTable {count, flags}
+	   };
 	if (table == nullptr)
 	{
 		return;
@@ -225,11 +227,11 @@ void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	}};
 	writeBlock(texts);
 	writeBlock(names);
-	if (flags & HAS_SOUND_CLIPS)
+	if (flags & uqm::StringTable::c_hasSoundClips)
 	{
 		writeBlock(clips);
 	}
-	if (flags & HAS_TIMESTAMP)
+	if (flags & uqm::StringTable::c_hasTimestamps)
 	{
 		writeBlock(timings);
 	}
@@ -273,7 +275,9 @@ void* _GetStringData(const ResourceFile& resource)
 		return nullptr;
 	}
 
-	STRING_TABLE table {AllocStringTable(static_cast<int>(count), 0)};
+	auto* const table {
+		new uqm::StringTable {count, 0}
+	   };
 	if (table == nullptr)
 	{
 		return nullptr;
@@ -312,13 +316,13 @@ void* _GetBinaryTableData(const ResourceFile& resource)
 		return nullptr;
 	}
 
-	STRING_TABLE lpST {};
+	uqm::StringTable* lpST {};
 	{
 		uint32_t* fileData {data.data()};
 
 		dword_convert(fileData, 1); /* Length */
 
-		lpST = AllocStringTable(fileData[0], 0);
+		lpST = new uqm::StringTable {fileData[0], 0};
 		if (lpST)
 		{
 			int i, size;

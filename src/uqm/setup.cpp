@@ -245,15 +245,12 @@ bool LoadKernel(int argc, char* argv[])
 	uqm::prepareAddons(addons);
 
 	{
-		COLORMAP ColorMapTab {};
-
-		ColorMapTab = LoadColorMap(STARCON_COLOR_MAP);
+		const uqm::StringTablePtr ColorMapTab {uqm::loadStringTable(STARCON_COLOR_MAP)};
 		if (ColorMapTab == nullptr)
 		{
 			return false; // The most basic resource is missing
 		}
-		SetColorMap(GetColorMapAddress(ColorMapTab, 0));
-		DestroyColorMap(ColorMapTab);
+		SetColorMap(GetColorMapAddress(ColorMapTab.get(), 0));
 	}
 
 	InitPlayerInput();
@@ -437,7 +434,7 @@ InitKernel(void)
 		return false;
 	}
 
-	MenuSounds = LoadSound(MENU_SOUNDS);
+	MenuSounds = uqm::loadSoundBank(MENU_SOUNDS).release();
 	if (MenuSounds == 0)
 	{
 		return false;

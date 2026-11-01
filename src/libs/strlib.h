@@ -28,7 +28,6 @@
 
 #include "libs/strings/StringTable.h"
 
-typedef uqm::StringTable* STRING_TABLE;
 
 /* This has to go here because reslib requires the above typedefs. */
 #include "libs/reslib.h"
@@ -38,8 +37,6 @@ extern "C" {
 #endif
 
 extern bool InstallStringTableResType(void);
-extern STRING_TABLE LoadStringTableInstance(RESOURCE res);
-extern bool DestroyStringTable(STRING_TABLE StringTable);
 extern const char* LoadStringInstance(RESOURCE res);
 
 namespace uqm

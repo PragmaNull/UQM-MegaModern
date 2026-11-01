@@ -111,7 +111,7 @@ void FreeMasterShipList(void)
 
 		DestroyDrawable(ReleaseDrawable(MasterPtr->ShipInfo.melee_icon));
 		DestroyDrawable(ReleaseDrawable(MasterPtr->ShipInfo.icons));
-		DestroyStringTable(MasterPtr->ShipInfo.race_strings);
+		delete MasterPtr->ShipInfo.race_strings;
 
 		UnlockMasterShip(&master_q, hStarShip);
 	}

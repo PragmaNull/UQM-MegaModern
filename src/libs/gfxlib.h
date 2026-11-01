@@ -769,8 +769,6 @@ extern TimeCount XFormColorMap(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
 extern TimeCount FadeScreen(ScreenFadeType fadeType, TimePeriod TimeInterval);
 extern void FlushColorXForms(void);
 extern uint8_t GetColorMapTableIndex(COLORMAP map, size_t index);
-#define LoadColorMapInstance LoadStringTableInstance
-#define DestroyColorMap DestroyStringTable
 
 // The color map 'index' of 'map'. The index wraps at the number of color maps.
 extern COLORMAPPTR GetColorMapAddress(COLORMAP map, size_t index);

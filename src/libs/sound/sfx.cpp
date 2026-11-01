@@ -214,11 +214,6 @@ bool _ReleaseSoundBankData(void* Snd)
 	return true;
 }
 
-bool DestroySound(SOUND_REF target)
-{
-	return _ReleaseSoundBankData(target);
-}
-
 namespace uqm
 {
 

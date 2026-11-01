@@ -12,6 +12,13 @@
   - `PLANET_ORBIT` buffers (`SOLARSYS_STATE` is cleared with `memset`, and `PLANET_DESC` holds an orbit by value).
   - The queue tables in `displist.h`.
   - Font character data, which the draw thread deletes.
+  - String tables, color maps and sound banks that are freed with `delete`:
+    - `race_strings` in `SHIP_INFO`, `FLEET_INFO` and the other ship structs. These structs are queue elements without constructors, and `RACE_DESC` is copied by value.
+    - `ship_sounds` in `DATA_STUFF`.
+    - `AlienColorMap` and `ConversationPhrases` in `LOCDATA`. `CommData` is copied from the race templates.
+    - `HangarColorMap` in `MENU_STATE`, which is cleared with `memset`.
+    - `sphereMap` in `PLANET_ORBIT`, which is in the `PLANET_DESC` arrays.
+  - Global and static sound banks and color maps (`MenuSounds`, `GameSounds`, `LanderSounds`, `hypercmaps`, `SunCMap` and others). They can become RAII only after `exit()` no longer runs while the game thread runs (see "Exit code 127"). If they become RAII before that, their destructors can run during `exit()`, after the audio system has shut down.
 
 Keep these, because they are large and in use: `graphics`, `sound`, `video`, `input`, `io`, `resource`, `strings`, `luauqm`, `network` (`NETPLAY` is on), `callback` (netplay and `uqm/sis.cpp` use the alarms and async calls), and `math`. Do not change the RNG or `square_root`: seeded games must give the same results.
 

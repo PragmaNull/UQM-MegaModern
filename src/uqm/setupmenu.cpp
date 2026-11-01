@@ -689,7 +689,7 @@ init_widgets(void)
 		screen.num_children = count_widgets(screen.child);
 	}
 
-	testSounds = LoadSound(TEST_SOUNDS);
+	testSounds = uqm::loadSoundBank(TEST_SOUNDS).release();
 }
 
 static void
@@ -708,7 +708,7 @@ clean_up_widgets(void)
 
 	if (testSounds)
 	{
-		DestroySound(testSounds);
+		delete testSounds;
 		testSounds = 0;
 	}
 }

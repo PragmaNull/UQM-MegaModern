@@ -12,7 +12,6 @@ set(uqm_src_libs_strings_files
 	"src/libs/strings/strings.cmake"
 	"src/libs/strings/StringTable.cpp"
 	"src/libs/strings/StringTable.h"
-	"src/libs/strings/strings.cpp"
 	"src/libs/strings/strintrn.h"
 	"src/libs/strings/textalign.cpp"
 )

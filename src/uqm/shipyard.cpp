@@ -2705,7 +2705,7 @@ bool DoShipyard(MENU_STATE* pMS)
 			pMS->ModuleFrame = CaptureDrawable(
 				LoadGraphic(SHIPYARD_PMAP_ANIM));
 
-			pMS->HangarColorMap = LoadColorMap(HANGAR_COLOR_TAB);
+			pMS->HangarColorMap = uqm::loadStringTable(HANGAR_COLOR_TAB).release();
 
 			pMS->hMusic = LoadMusic(SHIPYARD_MUSIC);
 
@@ -2794,7 +2794,7 @@ ExitShipyard:
 
 		DestroyDrawable(ReleaseDrawable(pMS->ModuleFrame));
 		pMS->ModuleFrame = 0;
-		DestroyColorMap(pMS->HangarColorMap);
+		delete pMS->HangarColorMap;
 		pMS->HangarColorMap = 0;
 
 		// Release Fonts

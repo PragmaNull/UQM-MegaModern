@@ -500,7 +500,7 @@ pkunk_preprocess(ELEMENT* ElementPtr)
 	bool Fwiffo = (StarShipPtr->captains_name_index == NAME_OFFSET + NUM_CAPTAINS_NAMES && StarShipPtr->SpeciesID == SPATHI_ID);
 	if (Fwiffo && !FwiffoSounds)
 	{
-		FwiffoSounds = LoadSound("ship.spathi.sounds");
+		FwiffoSounds = uqm::loadSoundBank("ship.spathi.sounds").release();
 	}
 
 	if (ElementPtr->state_flags & APPEARING)
@@ -638,7 +638,7 @@ uninit_pkunk(RACE_DESC* pRaceDesc)
 	SetCustomShipData(pRaceDesc, nullptr);
 	if (FwiffoSounds)
 	{
-		DestroySound(FwiffoSounds);
+		delete FwiffoSounds;
 		FwiffoSounds = 0;
 	}
 }

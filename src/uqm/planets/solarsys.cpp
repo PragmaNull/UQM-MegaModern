@@ -381,8 +381,7 @@ GenerateTexturedMoons(SOLARSYS_STATE* system, PLANET_DESC* planet)
 			pSolarSysState->XlatTable.reset();
 			DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 			pSolarSysState->TopoFrame = 0;
-			DestroyColorMap(pSolarSysState->OrbitalCMap);
-			pSolarSysState->OrbitalCMap = 0;
+			pSolarSysState->OrbitalCMap.reset();
 		}
 	}
 	pSolarSysState->pOrbitalDesc = previousOrbitalDesc;
@@ -500,9 +499,9 @@ void FreeIPData(void)
 	SISIPFrame = 0;
 	DestroyDrawable(ReleaseDrawable(SunFrame));
 	SunFrame = 0;
-	DestroyColorMap(SunCMap);
+	delete SunCMap;
 	SunCMap = 0;
-	DestroyColorMap(OrbitalCMap);
+	delete OrbitalCMap;
 	OrbitalCMap = 0;
 	DestroyDrawable(ReleaseDrawable(OrbitalFrame));
 	OrbitalFrame = 0;
@@ -527,7 +526,7 @@ void LoadIPData(void)
 			LoadGraphic(IPBKGND_MASK_PMAP_ANIM));
 		SISIPFrame = CaptureDrawable(LoadGraphic(SIS_IP_MASK));
 
-		OrbitalCMap = LoadColorMap(ORBPLAN_COLOR_MAP);
+		OrbitalCMap = uqm::loadStringTable(ORBPLAN_COLOR_MAP).release();
 		OrbitalFrame = CaptureDrawable(
 			LoadGraphic(PLANETS_MASK));
 		OrbitalShield = CaptureDrawable(
@@ -535,7 +534,7 @@ void LoadIPData(void)
 
 		NebulaFrame = LoadNebulaeFrame(CurStarDescPtr->star_pt);
 
-		SunCMap = LoadColorMap(IPSUN_COLOR_MAP);
+		SunCMap = uqm::loadStringTable(IPSUN_COLOR_MAP).release();
 		SunFrame = CaptureDrawable(LoadGraphic(SUN_MASK));
 
 		SpaceMusic = 0;
@@ -736,8 +735,7 @@ GenerateTexturedPlanets(void)
 		pSolarSysState->XlatTable.reset();
 		DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 		pSolarSysState->TopoFrame = 0;
-		DestroyColorMap(pSolarSysState->OrbitalCMap);
-		pSolarSysState->OrbitalCMap = 0;
+		pSolarSysState->OrbitalCMap.reset();
 		// End clean up
 	}
 	pSolarSysState->pOrbitalDesc = previousOrbitalDesc;
@@ -924,8 +922,7 @@ FreeSolarSys(void)
 			pSolarSysState->XlatTable.reset();
 			DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 			pSolarSysState->TopoFrame = 0;
-			DestroyColorMap(pSolarSysState->OrbitalCMap);
-			pSolarSysState->OrbitalCMap = 0;
+			pSolarSysState->OrbitalCMap.reset();
 			// JMS ends.
 		}
 

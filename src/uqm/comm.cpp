@@ -1814,17 +1814,17 @@ void SetUpCommData(void)
 	// Loading alien colormap
 	if (altResFlags & USE_ALT_COLORMAP)
 	{
-		CommData.AlienColorMap = LoadColorMap(CommData.AltRes.AlienColorMapRes);
+		CommData.AlienColorMap = uqm::loadStringTable(CommData.AltRes.AlienColorMapRes).release();
 
 		if (!CommData.AlienColorMap) // Failed to load
 		{
-			CommData.AlienColorMap = LoadColorMap(CommData.AlienColorMapRes);
+			CommData.AlienColorMap = uqm::loadStringTable(CommData.AlienColorMapRes).release();
 			altResFlags &= ~USE_ALT_COLORMAP;
 		}
 	}
 	else
 	{
-		CommData.AlienColorMap = LoadColorMap(CommData.AlienColorMapRes);
+		CommData.AlienColorMap = uqm::loadStringTable(CommData.AlienColorMapRes).release();
 	}
 	CommData.AlienColorMapIndex = 0;
 
@@ -1845,7 +1845,7 @@ void SetUpCommData(void)
 	}
 
 	// Load alien convo lines
-	CommData.ConversationPhrases = LoadStringTable(CommData.ConversationPhrasesRes);
+	CommData.ConversationPhrases = uqm::loadStringTable(CommData.ConversationPhrasesRes).release();
 }
 
 static void
@@ -1886,7 +1886,7 @@ HailAlien(void)
 	CommData.AlienFrame = CaptureDrawable(
 		LoadGraphic(CommData.AlienFrameRes));
 	CommData.AlienFont = LoadFont(CommData.AlienFontRes);
-	CommData.AlienColorMap = LoadColorMap(CommData.AlienColorMapRes);
+	CommData.AlienColorMap = uqm::loadStringTable(CommData.AlienColorMapRes).release();
 	CommData.AlienColorMapIndex = 0;
 
 	SetUpCommData();
@@ -2002,9 +2002,9 @@ HailAlien(void)
 	SetContext(SpaceContext);
 	SetContextFont(OldFont);
 
-	DestroyStringTable(CommData.ConversationPhrases);
+	delete CommData.ConversationPhrases;
 	DestroyMusic(CommData.AlienSong);
-	DestroyColorMap(CommData.AlienColorMap);
+	delete CommData.AlienColorMap;
 	DestroyFont(CommData.AlienFont);
 	DestroyDrawable(ReleaseDrawable(CommData.AlienFrame));
 

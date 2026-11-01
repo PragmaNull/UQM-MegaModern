@@ -2500,7 +2500,7 @@ void FreeLanderData(void)
 		OrbitMusic[i] = 0;
 	}
 
-	DestroySound(LanderSounds);
+	delete LanderSounds;
 	LanderSounds = 0;
 
 	landerFrameCount = std::size(LanderFrame);
@@ -2539,7 +2539,7 @@ void LoadLanderData(void)
 
 	LanderUpgradesFlag = 0;
 
-	LanderSounds = LoadSound(LANDER_SOUNDS);
+	LanderSounds = uqm::loadSoundBank(LANDER_SOUNDS).release();
 
 	{
 		uint16_t i;
