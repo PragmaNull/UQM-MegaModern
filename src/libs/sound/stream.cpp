@@ -66,7 +66,7 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 	}
 	else
 	{
-		offset += (int32_t)(SoundDecoder_GetTime(decoder) * GameTicksPerSecond);
+		offset += static_cast<int32_t>(uqstl::chrono::duration_cast<GameTicks>(FloatSeconds {SoundDecoder_GetTime(decoder)}).count());
 	}
 
 	if (source == MUSIC_SOURCE)
@@ -766,7 +766,7 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 
 	// See how far into the buffer we should be now
 	played_time = static_cast<long>((GetTimeCounter() - source->sbuf_lasttime).count());
-	delta = played_time * decoder->frequency * full_sample / GameTicksPerSecond;
+	delta = played_time * decoder->frequency * full_sample / c_gameSecond.count();
 	// align delta to sample start
 	delta = delta & ~(full_sample - 1);
 

@@ -17,6 +17,8 @@ constexpr uint32_t GameTicksPerSecond {840};
 // A duration in game ticks.
 using GameTicks = uqstl::chrono::duration<int64_t, uqstl::ratio<1, GameTicksPerSecond>>;
 inline constexpr GameTicks c_gameSecond {GameTicksPerSecond};
+// A duration in seconds, as the sound decoders give it.
+using FloatSeconds = uqstl::chrono::duration<float>;
 
 static constexpr GameTicks getTicksForFramerate(const uint32_t desiredFps)
 {

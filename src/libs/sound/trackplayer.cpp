@@ -76,8 +76,8 @@ static TFB_SoundCallbacks trackCBs =
 static inline int32_t
 chunk_end_time(TFB_SoundChunk* chunk)
 {
-	return (int32_t)((chunk->start_time + chunk->decoder->length)
-					 * GameTicksPerSecond);
+	return static_cast<int32_t>(
+		uqstl::chrono::duration_cast<GameTicks>(FloatSeconds {chunk->start_time + chunk->decoder->length}).count());
 }
 
 static inline int32_t
@@ -237,7 +237,7 @@ OnStreamStart(TFB_SoundSample* sample)
 
 	// Adjust the sample to play what we want
 	sample->decoder = cur_chunk->decoder;
-	sample->offset = (int32_t)(cur_chunk->start_time * GameTicksPerSecond);
+	sample->offset = static_cast<int32_t>(uqstl::chrono::duration_cast<GameTicks>(FloatSeconds {cur_chunk->start_time}).count());
 
 	if (cur_chunk->tag_me)
 	{
@@ -681,9 +681,8 @@ seek_track(int32_t offset)
 	if (cur)
 	{
 		cur_chunk = cur;
-		SoundDecoder_Seek(cur->decoder, (uint32_t)(((float)offset / GameTicksPerSecond
-													- cur->start_time)
-												   * 1000));
+		const auto seekTime {GameTicks {offset} - FloatSeconds {cur->start_time}};
+		SoundDecoder_Seek(cur->decoder, static_cast<uint32_t>(uqstl::chrono::duration<float, uqstl::milli> {seekTime}.count()));
 		sound_sample->decoder = cur->decoder;
 
 		if (cur->tag_me)
