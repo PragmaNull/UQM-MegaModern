@@ -43,11 +43,9 @@ dword_convert(uint32_t* dword_array, uint16_t num_dwords)
 	} while (--num_dwords);
 }
 
-STRING
-SetStringTableEntry(STRING_TABLE strtab, int index, const void* value, int len)
+void SetStringTableEntry(STRING_TABLE strtab, int index, const void* value, int len)
 {
 	strtab->set(static_cast<size_t>(index), uqstl::string_view {static_cast<const char*>(value), static_cast<size_t>(len)});
-	return strtab->entry(static_cast<size_t>(index));
 }
 
 namespace

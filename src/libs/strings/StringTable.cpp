@@ -14,11 +14,6 @@ StringTable::StringTable(size_t count, int flags)
 		blocks += (flags & flag) != 0 ? 1 : 0;
 	}
 	m_entries.resize(count * blocks);
-	for (size_t i {0}; i < m_entries.size(); ++i)
-	{
-		m_entries[i].index = static_cast<int>(i);
-		m_entries[i].parent = this;
-	}
 }
 
 const char* StringTable::text(size_t index) const
@@ -28,7 +23,7 @@ const char* StringTable::text(size_t index) const
 
 uqstl::string_view StringTable::bytes(size_t index) const
 {
-	return index < m_size ? uqstl::string_view {m_entries[index].bytes} : uqstl::string_view {};
+	return index < m_size ? uqstl::string_view {m_entries[index]} : uqstl::string_view {};
 }
 
 const char* StringTable::name(size_t index) const
@@ -58,7 +53,7 @@ uqstl::optional<size_t> StringTable::find(uqstl::string_view name) const
 
 void StringTable::set(size_t index, uqstl::string_view bytes)
 {
-	m_entries[index].bytes.assign(bytes);
+	m_entries[index].assign(bytes);
 }
 
 void StringTable::indexName(size_t index)
@@ -69,13 +64,18 @@ void StringTable::indexName(size_t index)
 	}
 }
 
+void StringTable::swap(size_t index, StringTable& other, size_t otherIndex)
+{
+	m_entries[index].swap(other.m_entries[otherIndex]);
+}
+
 const char* StringTable::blockText(size_t index, int block) const
 {
 	if (index >= m_size)
 	{
 		return nullptr;
 	}
-	const uqstl::string& entryBytes {m_entries[index + block * m_size].bytes};
+	const uqstl::string& entryBytes {m_entries[index + block * m_size]};
 	return entryBytes.empty() ? nullptr : entryBytes.c_str();
 }
 

@@ -28,12 +28,7 @@
 
 #include "libs/strings/StringTable.h"
 
-typedef uqm::StringTableEntry STRING_TABLE_ENTRY_DESC;
-typedef uqm::StringTable STRING_TABLE_DESC;
-
-typedef STRING_TABLE_DESC* STRING_TABLE;
-typedef STRING_TABLE_ENTRY_DESC* STRING;
-typedef char* STRINGPTR;
+typedef uqm::StringTable* STRING_TABLE;
 
 /* This has to go here because reslib requires the above typedefs. */
 #include "libs/reslib.h"
@@ -44,26 +39,7 @@ extern "C" {
 
 extern bool InstallStringTableResType(void);
 extern STRING_TABLE LoadStringTableInstance(RESOURCE res);
-extern STRING_TABLE LoadStringTableFile(const uqm::io::Directory& dir,
-										const char* fileName);
 extern bool DestroyStringTable(STRING_TABLE StringTable);
-extern STRING CaptureStringTable(STRING_TABLE StringTable);
-extern STRING_TABLE ReleaseStringTable(STRING String);
-extern STRING_TABLE GetStringTable(STRING String);
-extern uint16_t GetStringTableCount(STRING String);
-extern uint16_t GetStringTableIndex(STRING String);
-extern STRING SetAbsStringTableIndex(STRING String, uint16_t
-														StringTableIndex);
-extern STRING SetRelStringTableIndex(STRING String, int16_t
-														StringTableOffs);
-extern uint16_t GetStringLength(STRING String);
-extern uint16_t GetStringLengthBin(STRING String);
-extern STRINGPTR GetStringAddress(STRING String);
-extern const char* GetStringName(STRING String);
-extern const char* GetStringSoundClip(STRING String);
-extern const char* GetStringTimeStamp(STRING String);
-extern STRING GetStringByName(STRING_TABLE StringTable, const char* index);
-extern bool CheckResString(RESOURCE res);
 extern const char* LoadStringInstance(RESOURCE res);
 
 namespace uqm

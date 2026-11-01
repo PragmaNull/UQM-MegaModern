@@ -15,18 +15,6 @@
 namespace uqm
 {
 
-class StringTable;
-
-// An entry of a string table. A STRING points to one.
-struct StringTableEntry
-{
-	// The bytes of the entry. A text entry ends with its NUL, and internal NULs are allowed. An empty entry has no bytes.
-	uqstl::string bytes {};
-	// The index in all the entries of the table.
-	int index {};
-	StringTable* parent {};
-};
-
 class StringTable
 {
 public:
@@ -66,12 +54,8 @@ public:
 	void set(size_t index, uqstl::string_view bytes);
 	// Makes find() give 'index' for the name that entry 'index' has.
 	void indexName(size_t index);
-
-	// The entry 'index' in all the entries, for the STRING functions.
-	[[nodiscard]] StringTableEntry* entry(size_t index)
-	{
-		return &m_entries[index];
-	}
+	// Swaps the bytes of text entry 'index' and text entry 'otherIndex' of 'other'.
+	void swap(size_t index, StringTable& other, size_t otherIndex);
 
 private:
 	// The value of text entry 'index' in the block of entries 'block', or nullptr.
@@ -79,7 +63,9 @@ private:
 
 	int m_flags {};
 	size_t m_size {};
-	uqstl::vector<StringTableEntry> m_entries {};
+	// The bytes of the entries. A text entry ends with its NUL, and internal NULs are allowed. An empty entry has no
+	// bytes.
+	uqstl::vector<uqstl::string> m_entries {};
 	struct NameHash
 	{
 		using is_transparent = void;

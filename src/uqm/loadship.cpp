@@ -203,7 +203,7 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 static void
 SwapStrings(uqm::StringTable* a, uqm::StringTable* b, size_t ia, size_t ib)
 {
-	uqstl::swap(a->entry(ia)->bytes, b->entry(ib)->bytes);
+	a->swap(ia, *b, ib);
 }
 
 RACE_DESC*
