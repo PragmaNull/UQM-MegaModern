@@ -15,6 +15,14 @@ using namespace uqm::io;
 namespace
 {
 
+// The error of 'result'. Fails the test if 'result' has a value.
+template <typename T>
+uqstl::error_code errorOf(const Result<T>& result)
+{
+	EXPECT_FALSE(result.has_value());
+	return result.has_value() ? uqstl::error_code {} : result.error();
+}
+
 uqstl::string readHostFile(const fs::path& path)
 {
 	uqstl::ifstream file {path, uqstl::ios::binary};
@@ -156,8 +164,8 @@ TEST_F(IoTest, WriteAndReadBack)
 TEST_F(IoTest, OpenMissingFileFails)
 {
 	const Mount rw {mount("/", hostDir("rw"), Access::ReadWrite)};
-	EXPECT_EQ(m_fileSystem.root().open("missing.txt", OpenMode::Read).error(), uqstl::errc::no_such_file_or_directory);
-	EXPECT_EQ(m_fileSystem.root().open("nodir/new.txt", OpenMode::Write | OpenMode::Create).error(), uqstl::errc::no_such_file_or_directory);
+	EXPECT_EQ(errorOf(m_fileSystem.root().open("missing.txt", OpenMode::Read)), uqstl::errc::no_such_file_or_directory);
+	EXPECT_EQ(errorOf(m_fileSystem.root().open("nodir/new.txt", OpenMode::Write | OpenMode::Create)), uqstl::errc::no_such_file_or_directory);
 }
 
 TEST_F(IoTest, TopMountHidesBottomMount)
@@ -239,7 +247,7 @@ TEST_F(IoTest, WritingAReadOnlyFileWithoutAWritableMountAboveFails)
 	const Mount lowerMount {mount("/", lower, Access::ReadWrite)};
 	const Mount upperMount {mount("/", upper, Access::ReadOnly)};
 
-	EXPECT_EQ(m_fileSystem.root().open("a.txt", OpenMode::Write).error(), uqstl::errc::permission_denied);
+	EXPECT_EQ(errorOf(m_fileSystem.root().open("a.txt", OpenMode::Write)), uqstl::errc::permission_denied);
 }
 
 TEST_F(IoTest, ListMergesMountsAndShowsMountPoints)
@@ -553,5 +561,5 @@ TEST_F(IoZipTest, OpenArchiveDoesNotMount)
 
 TEST_F(IoZipTest, ZipIsReadOnly)
 {
-	EXPECT_EQ(m_fileSystem.root().open("stored.txt", OpenMode::Write).error(), uqstl::errc::permission_denied);
+	EXPECT_EQ(errorOf(m_fileSystem.root().open("stored.txt", OpenMode::Write)), uqstl::errc::permission_denied);
 }

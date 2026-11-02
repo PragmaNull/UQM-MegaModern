@@ -33,7 +33,7 @@ NetResult Netplay_confirm(NetConnection* conn)
 	if (conn->stateFlags.handshake.localOk)
 	{
 		// Already confirmed
-		return netFailure(uqstl::errc::invalid_argument);
+		return uqm::failure(uqstl::errc::invalid_argument);
 	}
 
 	conn->stateFlags.handshake.localOk = true;
@@ -65,7 +65,7 @@ NetResult Netplay_cancelConfirmation(NetConnection* conn)
 	if (!conn->stateFlags.handshake.localOk)
 	{
 		// Not confirmed, or already canceling.
-		return netFailure(uqstl::errc::invalid_argument);
+		return uqm::failure(uqstl::errc::invalid_argument);
 	}
 
 	conn->stateFlags.handshake.localOk = false;

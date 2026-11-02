@@ -100,12 +100,12 @@ NetResult PacketHandler_Init(NetConnection* conn, const Packet_Init* packet)
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(conn->state == NetState_init && !conn->stateFlags.ready.remoteReady, PACKET_INIT))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (packet->protoVersion.major != NETPLAY_PROTOCOL_VERSION_MAJOR || packet->protoVersion.minor != NETPLAY_PROTOCOL_VERSION_MINOR)
@@ -114,7 +114,7 @@ NetResult PacketHandler_Init(NetConnection* conn, const Packet_Init* packet)
 		abortFeedback(conn, AbortReason_versionMismatch);
 		uqm::log::error("Protocol version {}.{} not supported.\n",
 						packet->protoVersion.major, packet->protoVersion.minor);
-		return netFailure(uqstl::errc::function_not_supported);
+		return uqm::failure(uqstl::errc::function_not_supported);
 	}
 
 	if (versionCompare(packet->uqmVersion.major, packet->uqmVersion.minor,
@@ -129,7 +129,7 @@ NetResult PacketHandler_Init(NetConnection* conn, const Packet_Init* packet)
 						packet->uqmVersion.major, packet->uqmVersion.minor,
 						packet->uqmVersion.patch, NETPLAY_MIN_UQM_VERSION_MAJOR,
 						NETPLAY_MIN_UQM_VERSION_MINOR, NETPLAY_MIN_UQM_VERSION_PATCH);
-		return netFailure(uqstl::errc::function_not_supported);
+		return uqm::failure(uqstl::errc::function_not_supported);
 	}
 
 	Netplay_remoteReady(conn);
@@ -141,7 +141,7 @@ NetResult PacketHandler_Ping(NetConnection* conn, const Packet_Ping* packet)
 {
 	if (!testNetState(conn->state > NetState_init, PACKET_PING))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	sendAck(conn, packet->id);
@@ -152,7 +152,7 @@ NetResult PacketHandler_Ack(NetConnection* conn, const Packet_Ack* packet)
 {
 	if (!testNetState(conn->state > NetState_init, PACKET_ACK))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	(void)conn;
@@ -182,12 +182,12 @@ NetResult PacketHandler_Ready(NetConnection* conn, const Packet_Ready* packet)
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(readyFlagsMeaningful(conn->state) && !conn->stateFlags.ready.remoteReady, PACKET_READY))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	Netplay_remoteReady(conn);
@@ -212,12 +212,12 @@ NetResult PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(conn->state == NetState_inSetup, PACKET_FLEET))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	player = localSide(conn, (NetplaySide)packet->side);
@@ -230,7 +230,7 @@ NetResult PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 		uqm::log::warn("Invalid fleet size. Specified size is {}, "
 					   "actual size = {}\n",
 					   numShips, (int)((len - sizeof *packet) / sizeof(FleetEntry)));
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
@@ -249,7 +249,7 @@ NetResult PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 		if (!MeleeShip_valid(ship))
 		{
 			uqm::log::warn("Invalid ship type number {} (max = {}).", static_cast<int>(ship), NUM_MELEE_SHIPS - 1);
-			return netFailure(uqstl::errc::bad_message);
+			return uqm::failure(uqstl::errc::bad_message);
 		}
 
 		if (index >= MELEE_FLEET_SIZE)
@@ -257,7 +257,7 @@ NetResult PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 			uqm::log::warn("Invalid ship position number {} "
 						   "(max = {}).\n",
 						   index, MELEE_FLEET_SIZE - 1);
-			return netFailure(uqstl::errc::bad_message);
+			return uqm::failure(uqstl::errc::bad_message);
 		}
 
 		Melee_RemoteChange_ship(battleStateData->meleeState, conn,
@@ -280,12 +280,12 @@ NetResult PacketHandler_TeamName(NetConnection* conn, const Packet_TeamName* pac
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(conn->state == NetState_inSetup, PACKET_FLEET))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
@@ -339,14 +339,14 @@ NetResult PacketHandler_Handshake0(NetConnection* conn,
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(handshakeMeaningful(conn->state)
 						  && !conn->stateFlags.handshake.remoteOk,
 					  PACKET_HANDSHAKE0))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	conn->stateFlags.handshake.remoteOk = true;
@@ -370,12 +370,12 @@ NetResult PacketHandler_Handshake1(NetConnection* conn,
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(handshakeMeaningful(conn->state) && (conn->stateFlags.handshake.localOk || conn->stateFlags.handshake.canceling), PACKET_HANDSHAKE1))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (conn->stateFlags.handshake.canceling)
@@ -415,14 +415,14 @@ NetResult PacketHandler_HandshakeCancel(NetConnection* conn,
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(handshakeMeaningful(conn->state)
 						  && conn->stateFlags.handshake.remoteOk,
 					  PACKET_HANDSHAKECANCEL))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	conn->stateFlags.handshake.remoteOk = false;
@@ -443,14 +443,14 @@ NetResult PacketHandler_HandshakeCancelAck(NetConnection* conn,
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(handshakeMeaningful(conn->state)
 						  && conn->stateFlags.handshake.canceling,
 					  PACKET_HANDSHAKECANCELACK))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	conn->stateFlags.handshake.canceling = false;
@@ -483,12 +483,12 @@ NetResult PacketHandler_SeedRandom(NetConnection* conn,
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(conn->state == NetState_preBattle && !conn->stateFlags.discriminant, PACKET_SEEDRANDOM))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
@@ -511,12 +511,12 @@ NetResult PacketHandler_InputDelay(NetConnection* conn,
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(conn->state == NetState_preBattle, PACKET_INPUTDELAY))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	// battleStateData = (BattleStateData *) NetConnection_getStateData(conn);
@@ -526,7 +526,7 @@ NetResult PacketHandler_InputDelay(NetConnection* conn,
 		uqm::log::error("NETPLAY: [{}]     Received absurdly large "
 						"input delay value ({}).\n",
 						conn->player, delay);
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 	conn->stateFlags.inputDelay = delay;
 
@@ -545,12 +545,12 @@ NetResult PacketHandler_SelectShip(NetConnection* conn,
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(conn->state == NetState_selectShip, PACKET_SELECTSHIP))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
@@ -558,7 +558,7 @@ NetResult PacketHandler_SelectShip(NetConnection* conn,
 										conn->player, uqm::convertBigEndian<uint16_t>(packet->ship));
 	if (!updateResult)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	return {};
@@ -576,19 +576,19 @@ NetResult PacketHandler_BattleInput(NetConnection* conn,
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(conn->state == NetState_inBattle || conn->state == NetState_endingBattle || conn->state == NetState_endingBattle2, PACKET_BATTLEINPUT))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	input = (BATTLE_INPUT_STATE)packet->state;
 	bib = getBattleInputBuffer(conn->player);
 	if (!BattleInputBuffer_push(bib, input))
 	{
-		return netFailure(uqstl::errc::no_buffer_space);
+		return uqm::failure(uqstl::errc::no_buffer_space);
 	}
 
 	return {};
@@ -606,13 +606,13 @@ NetResult PacketHandler_FrameCount(NetConnection* conn,
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(conn->state == NetState_endingBattle,
 					  PACKET_FRAMECOUNT))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	frameCount = (BattleFrameCounter)uqm::convertBigEndian<uint32_t>(packet->frameCount);
@@ -646,12 +646,12 @@ NetResult PacketHandler_Checksum(NetConnection* conn, const Packet_Checksum* pac
 	}
 	if (conn->stateFlags.reset.remoteReset)
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (!testNetState(NetState_battleActive(conn->state), PACKET_CHECKSUM))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 #ifdef NETPLAY_CHECKSUM
@@ -721,7 +721,7 @@ NetResult PacketHandler_Abort(NetConnection* conn, const Packet_Abort* packet)
 {
 	abortFeedback(conn, (NetplayAbortReason)packet->reason);
 
-	return netFailure(uqstl::errc::bad_message);
+	return uqm::failure(uqstl::errc::bad_message);
 	// Close connection.
 }
 
@@ -731,7 +731,7 @@ NetResult PacketHandler_Reset(NetConnection* conn, const Packet_Reset* packet)
 
 	if (!testNetState(!conn->stateFlags.reset.remoteReset, PACKET_RESET))
 	{
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	reason = (NetplayResetReason)uqm::convertBigEndian<uint16_t>(packet->reason);

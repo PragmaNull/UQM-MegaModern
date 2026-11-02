@@ -195,7 +195,7 @@ Result<uqstl::vector<uqstl::string>> DirectorySource::list(uqstl::string_view pa
 			// The name cannot be shown in the narrow character set.
 		}
 	}
-	if (error)
+	if (error && names.empty())
 	{
 		return uqstl::unexpected {error};
 	}

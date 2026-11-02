@@ -53,7 +53,7 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 	if (!validPacketType(type))
 	{
 		uqm::log::warn("Packet with invalid type {} received.\n", static_cast<int>(type));
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (packetLen < packetTypeData[type].len)
@@ -63,7 +63,7 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 					   "{}, lenfield={}.\n",
 					   packetTypeData[type].name,
 					   packetLen);
-		return netFailure(uqstl::errc::bad_message);
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (dataLen < packetLen)
@@ -140,7 +140,6 @@ uqstl::optional<size_t> dataReceived(NetConnection* conn, uqstl::span<const std:
 	const uqstl::expected<size_t, uqstl::error_code> processed {dataReceivedMulti(conn, reinterpret_cast<const uint8_t*>(data.data()), data.size())};
 	if (!processed)
 	{
-		uqm::log::warn("NETPLAY: [{}] Invalid data received: {}.", conn->player, processed.error().message());
 		return uqstl::nullopt;
 	}
 	return *processed;

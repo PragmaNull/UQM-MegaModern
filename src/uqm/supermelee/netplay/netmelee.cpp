@@ -208,7 +208,6 @@ void flushPacketQueues(void)
 	for (player = 0; player < NUM_PLAYERS; player++)
 	{
 		NetConnection* conn;
-		int flushStatus;
 
 		conn = netConnections[player];
 		if (conn == nullptr)

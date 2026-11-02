@@ -77,12 +77,6 @@ enum class Access : uint8_t
 template <typename T>
 using Result = uqstl::expected<T, uqstl::error_code>;
 
-// An error result with 'code'.
-inline uqstl::unexpected<uqstl::error_code> failure(uqstl::errc code)
-{
-	return uqstl::unexpected {uqstl::make_error_code(code)};
-}
-
 // The 'size' bytes at 'data'.
 inline uqstl::span<uqstl::byte> asBytes(void* data, size_t size)
 {
