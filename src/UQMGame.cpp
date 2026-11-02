@@ -153,9 +153,9 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	m_logger.init(options.logFile);
 
-	for (size_t i = 0; i < args.size(); ++i)
+	for (const auto& [i, arg] : uqstl::views::enumerate(args))
 	{
-		uqm::log::debug("argv[{}] = \"{}\"", i, args[i]);
+		uqm::log::debug("argv[{}] = \"{}\"", i, arg);
 	}
 
 	if (options.runMode == RunMode::Version)
@@ -273,7 +273,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	optWindowType = WindowStyle::UQM;
 	const WindowStyle windowStyle {*options.windowEmulationMode};
-	if (windowStyle != WindowStyle::UQM && isAddonAvailable(WINDOW_MODE(resolutionFactor, static_cast<int>(windowStyle))))
+	if (windowStyle != WindowStyle::UQM && isAddonAvailable(WINDOW_MODE(resolutionFactor, uqstl::to_underlying(windowStyle))))
 	{
 		optWindowType = windowStyle;
 	}
@@ -363,7 +363,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	// initAudio (snddriver, soundflags);
 	TFB_SetInputVectors(ImmediateInputState.menu, NUM_MENU_KEYS,
 						&ImmediateInputState.key[0][0], NUM_KEYS,
-						static_cast<int>(ControlTemplate::NUM));
+						uqstl::to_underlying(ControlTemplate::NUM));
 	TFB_InitInput(TFB_INPUTDRIVER_SDL, 0);
 
 	return {EXIT_SUCCESS, false};

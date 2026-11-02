@@ -207,25 +207,24 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	TextRect(&t, &r, nullptr);
 
 	// column alignments
-	for (size_t icol {0}; icol < block.columns.size(); ++icol)
+	for (auto&& [column, format] : uqstl::views::zip(block.columns, colfmt))
 	{
-		const uqm::CreditsColumn& column {block.columns[icol]};
 		const auto basex {[&](int16_t fallback) {
 			return column.x ? static_cast<int16_t>(*column.x << RESOLUTION_FACTOR) : fallback;
 		}};
 		switch (column.align)
 		{
 			case uqm::CreditsAlign::Left:
-				colfmt[icol].align = ALIGN_LEFT;
-				colfmt[icol].basex = basex(r.extent.width);
+				format.align = ALIGN_LEFT;
+				format.basex = basex(r.extent.width);
 				break;
 			case uqm::CreditsAlign::Center:
-				colfmt[icol].align = ALIGN_CENTER;
-				colfmt[icol].basex = basex(CreditsExtent.width / 2);
+				format.align = ALIGN_CENTER;
+				format.basex = basex(CreditsExtent.width / 2);
 				break;
 			case uqm::CreditsAlign::Right:
-				colfmt[icol].align = ALIGN_RIGHT;
-				colfmt[icol].basex = basex(CreditsExtent.width - r.extent.width);
+				format.align = ALIGN_RIGHT;
+				format.basex = basex(CreditsExtent.width - r.extent.width);
 				break;
 		}
 	}

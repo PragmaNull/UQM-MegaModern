@@ -126,7 +126,7 @@ void luaUqm_comm_genericUninit(void)
 
 bool luaUqm_comm_stringNeedsInterpolate(uqstl::string_view str)
 {
-	return str.find("<%") != uqstl::string_view::npos;
+	return str.contains("<%");
 }
 
 uqstl::string luaUqm_comm_stringInterpolate(uqstl::string_view str)

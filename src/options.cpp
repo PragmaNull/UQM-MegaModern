@@ -527,7 +527,7 @@ bool isAddonAvailable(uqgsl::czstring addon_name)
 		return false;
 	}
 
-	return uqstl::find(g_addonList.begin(), g_addonList.end(), crc32b(addon_name)) != g_addonList.end();
+	return uqstl::ranges::contains(g_addonList, crc32b(addon_name));
 }
 
 static void

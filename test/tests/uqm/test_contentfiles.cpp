@@ -69,11 +69,11 @@ TEST(ContentFilesTest, AllDataFilesAreValid)
 		{
 			EXPECT_TRUE(uqm::fontMetricsFromJson(text));
 		}
-		else if (text.find("\"commands\"") != uqstl::string::npos)
+		else if (text.contains("\"commands\""))
 		{
 			EXPECT_TRUE(uqm::slideshowFromJson(text));
 		}
-		else if (text.find("\"blocks\"") != uqstl::string::npos)
+		else if (text.contains("\"blocks\""))
 		{
 			EXPECT_TRUE(uqm::creditsFromJson(text));
 		}

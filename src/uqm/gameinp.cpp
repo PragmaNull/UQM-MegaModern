@@ -58,7 +58,7 @@ typedef struct
 template <typename T>
 struct MenuAnnotations
 {
-	T key[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS];
+	T key[uqstl::to_underlying(ControlTemplate::NUM)][NUM_KEYS];
 	T menu[NUM_MENU_KEYS];
 };
 
@@ -221,7 +221,7 @@ static void
 _clear_menu_state(void)
 {
 	int i, j;
-	for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
 		{
@@ -241,7 +241,7 @@ void ResetKeyRepeat(void)
 {
 	const TimeCount initTime {GetTimeCounter()};
 	int i, j;
-	for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
 		{
@@ -303,7 +303,7 @@ _check_gestalt(TimeCount NewTime)
 
 	CachedGestalt = 0;
 	CurrentGestalt = 0;
-	for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
 		{
@@ -321,7 +321,7 @@ _check_gestalt(TimeCount NewTime)
 	{
 		if (NewTime - GestaltTime < GestaltRepeatDelay)
 		{
-			for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+			for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 			{
 				for (j = 0; j < NUM_KEYS; j++)
 				{
@@ -335,7 +335,7 @@ _check_gestalt(TimeCount NewTime)
 		}
 		else
 		{
-			for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+			for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 			{
 				for (j = 0; j < NUM_KEYS; j++)
 				{
@@ -359,7 +359,7 @@ _check_gestalt(TimeCount NewTime)
 	}
 	else
 	{
-		for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+		for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 		{
 			for (j = 0; j < NUM_KEYS; j++)
 			{
@@ -416,7 +416,7 @@ void UpdateInputState(void)
 	else
 	{
 		int i, j;
-		for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+		for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 		{
 			for (j = 0; j < NUM_KEYS; j++)
 			{
@@ -666,7 +666,7 @@ bool AnyButtonPress(bool CheckSpecial)
 	int i, j;
 	(void)CheckSpecial; // Ignored
 	UpdateInputState();
-	for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
 		{

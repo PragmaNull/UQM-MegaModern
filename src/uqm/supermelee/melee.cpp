@@ -505,7 +505,7 @@ void DrawShipPickerText(STAMP stamp)
 	pt.y = r.corner.y + SP_Y_PADDING;
 
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   CONFIRM_PC + (static_cast<int>(uqm::UQMOptions::read().optControllerType.value) * 4));
+							   CONFIRM_PC + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
 	s.origin = pt;
 
 	DrawStamp(&s);
@@ -523,7 +523,7 @@ void DrawShipPickerText(STAMP stamp)
 	pt.y = r.corner.y + SP_Y_PADDING;
 
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   SPECIAL_PC + (static_cast<int>(uqm::UQMOptions::read().optControllerType.value) * 4));
+							   SPECIAL_PC + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
 
 	GetFrameRect(s.frame, &r);
 	pt.x -= r.extent.width;
@@ -575,7 +575,7 @@ DrawTeamPickerText(STAMP stamp)
 	pt.y = r.corner.y + r.extent.height - TP_PADDING;
 
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   CONFIRM_PC + (static_cast<int>(uqm::UQMOptions::read().optControllerType.value) * 4));
+							   CONFIRM_PC + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
 
 	GetFrameRect(s.frame, &r);
 	pt.y -= r.extent.height;
@@ -604,7 +604,7 @@ DrawTeamPickerText(STAMP stamp)
 		}
 
 		s.frame = SetAbsFrameIndex(MeleeFrame,
-								   CANCEL_PC + i + (static_cast<int>(uqm::UQMOptions::read().optControllerType.value) * 4));
+								   CANCEL_PC + i + (uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value) * 4));
 		s.origin.x = text_r.extent.width + t.baseline.x + TP_PADDING
 				   + RES_SCALE(1);
 		DrawStamp(&s);

@@ -3301,7 +3301,7 @@ DrawStarmapHelper(void)
 	r.corner.x = RES_SCALE(4);
 	r.corner.y = RES_SCALE(34);
 
-	frame_index = uqm::UQMOptions::read().optControllerType == uqm::ControllerType::KeyboardMouse ? 0 : 5 * static_cast<int>(uqm::UQMOptions::read().optControllerType.value);
+	frame_index = uqm::UQMOptions::read().optControllerType == uqm::ControllerType::KeyboardMouse ? 0 : 5 * uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value);
 
 	// :Maps
 	s.frame = SetAbsFrameIndex(SubmenuFrame, frame_index);

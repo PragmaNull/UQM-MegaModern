@@ -162,7 +162,7 @@ DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
 		r.extent.width = TEAM_NAME_L_BOX_WIDTH;
 		r.extent.height = TEAM_NAME_L_BOX_HEIGHT;
 
-		QuickRepair(30 + static_cast<int>(uqm::UQMOptions::read().optControllerType.value), &r);
+		QuickRepair(30 + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value), &r);
 	}
 
 	SetContextForeGroundColor(highlite ?
@@ -288,7 +288,7 @@ DrawFileStrings(MELEE_STATE* pMS)
 	SetContextFont(MicroFont);
 	BatchGraphics();
 
-	DrawMeleeIcon(30 + static_cast<int>(uqm::UQMOptions::read().optControllerType.value), false); /* The load team frame */
+	DrawMeleeIcon(30 + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value), false); /* The load team frame */
 
 	if (FillFileView(pMS))
 	{

@@ -14,7 +14,7 @@ namespace uqm
 
 static constexpr const char* c_settingsFile {"settings.json"};
 
-static_assert(c_controlTemplateCount == static_cast<int>(ControlTemplate::NUM));
+static_assert(c_controlTemplateCount == uqstl::to_underlying(ControlTemplate::NUM));
 
 bool loadUserSettings(OptionsStruct& options)
 {

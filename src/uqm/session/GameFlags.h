@@ -42,7 +42,7 @@ inline constexpr size_t c_gameFlagCount {uqstl::size(c_gameFlags)};
 
 [[nodiscard]] constexpr const GameFlagInfo& gameFlagInfo(GameFlag flag) noexcept
 {
-	return c_gameFlags[static_cast<size_t>(flag)];
+	return c_gameFlags[uqstl::to_underlying(flag)];
 }
 
 // The flag with this name, or nullopt if no flag has the name.

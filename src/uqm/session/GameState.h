@@ -52,12 +52,12 @@ public:
 
 	[[nodiscard]] uint32_t flag(GameFlag flag) const noexcept
 	{
-		return m_flagValues[static_cast<size_t>(flag)];
+		return m_flagValues[uqstl::to_underlying(flag)];
 	}
 
 	void setFlag(GameFlag flag, uint32_t value) noexcept
 	{
-		m_flagValues[static_cast<size_t>(flag)] = value;
+		m_flagValues[uqstl::to_underlying(flag)] = value;
 	}
 
 	// The value of a flag by name, such as "SHOFIXTI_VISITS". A name that is not a GameFlag can hold a value too.

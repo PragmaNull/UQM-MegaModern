@@ -43,7 +43,7 @@ void BuildBuildPickFrame(void)
 	s.origin.x = 0;
 	s.origin.y = 0;
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   BUILDPICK_FRAME_OFFSET + static_cast<int>(uqm::UQMOptions::read().optControllerType.value));
+							   BUILDPICK_FRAME_OFFSET + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
 	// 5x5 grid of ships to pick from
 	GetFrameRect(s.frame, &r);
 
@@ -117,7 +117,7 @@ void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 	s.origin.x = pRect->corner.x;
 	s.origin.y = pRect->corner.y;
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   BUILDPICK_FRAME_OFFSET + static_cast<int>(uqm::UQMOptions::read().optControllerType.value));
+							   BUILDPICK_FRAME_OFFSET + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
 
 	DrawStamp(&s);
 

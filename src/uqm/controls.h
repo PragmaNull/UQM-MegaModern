@@ -114,18 +114,18 @@ static constexpr const char* toString(ControlTemplate val)
 // The input that the main thread writes while the game thread reads it.
 struct IMMEDIATE_INPUT_STATE
 {
-	uqstl::atomic<int> key[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS];
+	uqstl::atomic<int> key[uqstl::to_underlying(ControlTemplate::NUM)][NUM_KEYS];
 	uqstl::atomic<int> menu[NUM_MENU_KEYS];
 };
 
 struct CONTROLLER_INPUT_STATE
 {
-	int key[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS];
+	int key[uqstl::to_underlying(ControlTemplate::NUM)][NUM_KEYS];
 	int menu[NUM_MENU_KEYS];
 
 	CONTROLLER_INPUT_STATE& operator=(const IMMEDIATE_INPUT_STATE& rhs)
 	{
-		for (int t = 0; t < static_cast<int>(ControlTemplate::NUM); ++t)
+		for (int t = 0; t < uqstl::to_underlying(ControlTemplate::NUM); ++t)
 		{
 			for (int k = 0; k < NUM_KEYS; ++k)
 			{

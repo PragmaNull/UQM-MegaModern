@@ -52,7 +52,7 @@ bool Matcher::matches(uqstl::string_view name) const
 		case Kind::SuffixIgnoreCase:
 			return name.size() >= m_pattern.size() && compareICase(name.substr(name.size() - m_pattern.size()), m_pattern);
 		case Kind::Substring:
-			return name.find(m_pattern) != uqstl::string_view::npos;
+			return name.contains(m_pattern);
 		case Kind::Regex:
 			return uqstl::regex_search(name.begin(), name.end(), *m_regex);
 	}

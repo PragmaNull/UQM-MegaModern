@@ -116,9 +116,9 @@ void compare(yyjson_val* loaded, yyjson_val* saved, const uqstl::string& path, u
 	}
 	uqstl::vector<uqstl::string> differences {};
 	compare(yyjson_doc_get_root(loadedDoc.get()), yyjson_doc_get_root(savedDoc.get()), {}, differences);
-	for (size_t index {0}; index < differences.size() && index < c_maxReportedDifferences; ++index)
+	for (const uqstl::string& difference : differences | uqstl::views::take(c_maxReportedDifferences))
 	{
-		log::error("{}: {}", path, differences[index]);
+		log::error("{}: {}", path, difference);
 	}
 	if (!differences.empty())
 	{

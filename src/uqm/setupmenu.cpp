@@ -672,10 +672,8 @@ init_widgets(void)
 	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
 
 	menus.assign(menuDefinition->menus.size(), WIDGET_MENU_SCREEN {});
-	for (size_t index {0}; index < menus.size(); ++index)
+	for (auto&& [menu, screen] : uqstl::views::zip(menuDefinition->menus, menus))
 	{
-		const uqm::MenuDef& menu {menuDefinition->menus[index]};
-		WIDGET_MENU_SCREEN& screen {menus[index]};
 		screen.tag = WIDGET_TYPE_MENU_SCREEN;
 		screen.handleEvent = Widget_HandleEventMenuScreen;
 		screen.receiveFocus = Widget_ReceiveFocusMenuScreen;
@@ -786,7 +784,7 @@ apply_settings(void)
 	}
 
 	uqm::WindowStyle windowStyle {*uqmOptions.windowEmulationMode};
-	if (windowStyle != uqm::WindowStyle::UQM && !uqm::isAddonAvailable(WINDOW_MODE(resolutionFactor, static_cast<int>(windowStyle))))
+	if (windowStyle != uqm::WindowStyle::UQM && !uqm::isAddonAvailable(WINDOW_MODE(resolutionFactor, uqstl::to_underlying(windowStyle))))
 	{
 		windowStyle = uqm::WindowStyle::UQM;
 		uqmOptions.windowEmulationMode = windowStyle;
