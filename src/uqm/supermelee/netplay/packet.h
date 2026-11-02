@@ -86,7 +86,7 @@ extern "C" {
  * When a handler is called, it has already been validated that the
  * a complete packet has arrived.
  */
-typedef int (*PacketHandler)(NetConnection* conn, const void* packet);
+typedef NetResult (*PacketHandler)(NetConnection* conn, const void* packet);
 
 typedef struct
 {

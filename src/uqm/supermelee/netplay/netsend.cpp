@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define PORT_WANT_ERRNO
 #define NETCONNECTION_INTERNAL
 #include "netplay.h"
 #include "port.h"
@@ -28,11 +27,10 @@
 #include "core/platform/platform.h"
 
 #include <assert.h>
-#include <errno.h>
 #include <string.h>
 
 
-int sendPacket(NetConnection* conn, Packet* packet)
+NetResult sendPacket(NetConnection* conn, Packet* packet)
 {
 	assert(NetConnection_isConnected(conn));
 
@@ -62,9 +60,7 @@ int sendPacket(NetConnection* conn, Packet* packet)
 		{
 			uqm::log::error("send() failed: {}.", error.message());
 		}
-		// The callers read errno.
-		errno = error.default_error_condition().value();
-		return -1;
+		return uqstl::unexpected {error};
 	}
 
 #ifdef NETPLAY_STATISTICS
@@ -72,5 +68,5 @@ int sendPacket(NetConnection* conn, Packet* packet)
 	NetConnection_getStatistics(conn)->packetTypeSent[packetType(packet)]++;
 #endif
 
-	return 0;
+	return {};
 }

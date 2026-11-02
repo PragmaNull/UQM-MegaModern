@@ -26,6 +26,18 @@
 #define NETPLAY_IPV4 1
 #define NETPLAY_FULL 2
 
+#include "core/stl/expected.h"
+#include "core/stl/system_error.h"
+
+// The result of a netplay operation.
+using NetResult = uqstl::expected<void, uqstl::error_code>;
+
+// An error result with 'code'.
+inline uqstl::unexpected<uqstl::error_code> netFailure(uqstl::errc code)
+{
+	return uqstl::unexpected {uqstl::make_error_code(code)};
+}
+
 #define NETPLAY_PROTOCOL_VERSION_MAJOR 0
 #define NETPLAY_PROTOCOL_VERSION_MINOR 4
 

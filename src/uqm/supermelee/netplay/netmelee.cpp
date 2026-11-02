@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define PORT_WANT_ERRNO
 #include "port.h"
 #include "netmelee.h"
 #include "libs/callback/async.h"
@@ -42,7 +41,6 @@
 #include "../../globdata.h"
 // for GLOBAL
 
-#include <errno.h>
 #include <stdlib.h>
 
 
@@ -223,8 +221,7 @@ void flushPacketQueues(void)
 			continue;
 		}
 
-		flushStatus = flushPacketQueue(conn);
-		if (flushStatus == -1 && errno != EAGAIN && errno != EWOULDBLOCK)
+		if (!flushPacketQueue(conn))
 		{
 			closePlayerNetworkConnection(player);
 		}
@@ -248,7 +245,7 @@ void confirmConnections(void)
 			continue;
 		}
 
-		Netplay_confirm(conn);
+		static_cast<void>(Netplay_confirm(conn));
 	}
 }
 
@@ -269,7 +266,7 @@ void cancelConfirmations(void)
 			continue;
 		}
 
-		Netplay_cancelConfirmation(conn);
+		static_cast<void>(Netplay_cancelConfirmation(conn));
 	}
 }
 
@@ -618,7 +615,7 @@ bool negotiateReady(NetConnection* conn, bool notifyRemote, NetState nextState)
 
 	Netplay_localReady(conn, negotiateReadyBothReadyCallback,
 					   (void*)&state, notifyRemote);
-	flushPacketQueue(conn);
+	static_cast<void>(flushPacketQueue(conn));
 	if (!state.done)
 	{
 		DoInput(&state, false);
@@ -789,7 +786,7 @@ bool waitReset(NetConnection* conn, NetState nextState)
 	if (!Netplay_isLocalReset(conn))
 	{
 		Netplay_localReset(conn, ResetReason_manualReset);
-		flushPacketQueue(conn);
+		static_cast<void>(flushPacketQueue(conn));
 	}
 
 	if (!state.done)

@@ -146,7 +146,7 @@ readyToEndCallback(NetConnection* conn, void* arg)
 	// could happen when the function triggering the call to this
 	// function is the frame update function which might update
 	// the frame counter one more time.
-	flushPacketQueue(conn);
+	static_cast<void>(flushPacketQueue(conn));
 #ifdef NETPLAY_DEBUG
 	fmt::print(stderr, "NETPLAY: [{}] ==> Sent battleFrameCount {}.\n",
 			   NetConnection_getPlayerNr(conn), battleFrameCount + 1);

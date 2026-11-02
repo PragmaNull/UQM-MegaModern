@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define PORT_WANT_ERRNO
 #define NETCONNECTION_INTERNAL
 #include "netplay.h"
 #include "port.h"
@@ -29,20 +28,18 @@
 #include "core/log/log.h"
 #include "core/platform/platform.h"
 
-#include <errno.h>
 #include <string.h>
 
 
 // Try to get a single packet from a stream of data.
-// Returns 0 if the packet was successfully processed, or
-// -1 on an error, in which case the state is unchanged.
-static ssize_t
+// Returns the length of the packet that was processed, 0 if the packet is
+// not complete, or an error, in which case the state is unchanged.
+static uqstl::expected<size_t, uqstl::error_code>
 dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 				   size_t dataLen)
 {
 	uint32_t packetLen;
 	PacketType type;
-	int result;
 
 	if (dataLen < sizeof(PacketHeader))
 	{
@@ -56,8 +53,7 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 	if (!validPacketType(type))
 	{
 		uqm::log::warn("Packet with invalid type {} received.\n", static_cast<int>(type));
-		errno = EBADMSG;
-		return -1;
+		return netFailure(uqstl::errc::bad_message);
 	}
 
 	if (packetLen < packetTypeData[type].len)
@@ -67,8 +63,7 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 					   "{}, lenfield={}.\n",
 					   packetTypeData[type].name,
 					   packetLen);
-		errno = EBADMSG;
-		return -1;
+		return netFailure(uqstl::errc::bad_message);
 	}
 
 	if (dataLen < packetLen)
@@ -100,11 +95,9 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 #endif /* NETPLAY_DEBUG_FILE */
 #endif /* NETPLAY_DEBUG */
 
-	result = packetTypeData[type].handler(conn, data);
-	if (result == -1)
+	if (NetResult result {packetTypeData[type].handler(conn, data)}; !result)
 	{
-		// An error occured. errno is set by the handler.
-		return -1;
+		return uqstl::unexpected {result.error()};
 	}
 
 	return packetLen;
@@ -112,7 +105,7 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 
 // Try to get all the packets from a stream of data.
 // Returns the number of bytes processed.
-static ssize_t
+static uqstl::expected<size_t, uqstl::error_code>
 dataReceivedMulti(NetConnection* conn, const uint8_t* data, size_t len)
 {
 	size_t processed;
@@ -120,12 +113,12 @@ dataReceivedMulti(NetConnection* conn, const uint8_t* data, size_t len)
 	processed = 0;
 	while (len > 0)
 	{
-		ssize_t packetLen = dataReceivedSingle(conn, data, len);
-		if (packetLen == -1)
+		const uqstl::expected<size_t, uqstl::error_code> single {dataReceivedSingle(conn, data, len)};
+		if (!single)
 		{
-			// Bad packet. Errno is set.
-			return -1;
+			return single;
 		}
+		const size_t packetLen {*single};
 
 		if (packetLen == 0)
 		{
@@ -144,10 +137,11 @@ dataReceivedMulti(NetConnection* conn, const uint8_t* data, size_t len)
 
 uqstl::optional<size_t> dataReceived(NetConnection* conn, uqstl::span<const std::byte> data)
 {
-	const ssize_t numProcessed {dataReceivedMulti(conn, reinterpret_cast<const uint8_t*>(data.data()), data.size())};
-	if (numProcessed == -1)
+	const uqstl::expected<size_t, uqstl::error_code> processed {dataReceivedMulti(conn, reinterpret_cast<const uint8_t*>(data.data()), data.size())};
+	if (!processed)
 	{
+		uqm::log::warn("NETPLAY: [{}] Invalid data received: {}.", conn->player, processed.error().message());
 		return uqstl::nullopt;
 	}
-	return static_cast<size_t>(numProcessed);
+	return *processed;
 }

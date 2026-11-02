@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-int sendPacket(NetConnection* conn, Packet* packet);
+NetResult sendPacket(NetConnection* conn, Packet* packet);
 
 
 #if 0 //defined(__cplusplus)

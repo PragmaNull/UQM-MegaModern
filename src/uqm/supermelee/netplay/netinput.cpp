@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define PORT_WANT_ERRNO
 #include "port.h"
 
 #include "netplay.h"
@@ -26,7 +25,6 @@
 #include "uqm/setup.h" // for PlayerControl
 #include "core/log/log.h"
 
-#include <errno.h>
 #include <stdlib.h>
 
 
@@ -116,7 +114,7 @@ void uninitBattleInputBuffers(void)
 	}
 }
 
-// On error, returns false and sets errno.
+// Returns false if the buffer is full.
 bool BattleInputBuffer_push(BattleInputBuffer* bib, BATTLE_INPUT_STATE input)
 {
 	size_t next;
@@ -125,7 +123,6 @@ bool BattleInputBuffer_push(BattleInputBuffer* bib, BATTLE_INPUT_STATE input)
 	{
 		// No more space.
 		uqm::log::error("NETPLAY:     battleInputBuffer full.\n");
-		errno = ENOBUFS;
 		return false;
 	}
 
@@ -135,13 +132,12 @@ bool BattleInputBuffer_push(BattleInputBuffer* bib, BATTLE_INPUT_STATE input)
 	return true;
 }
 
-// On error, returns false and sets errno, and *input remains unchanged.
+// Returns false if the buffer is empty. Then *input does not change.
 bool BattleInputBuffer_pop(BattleInputBuffer* bib, BATTLE_INPUT_STATE* input)
 {
 	if (bib->size == 0)
 	{
 		// Buffer is empty.
-		errno = EAGAIN;
 		return false;
 	}
 

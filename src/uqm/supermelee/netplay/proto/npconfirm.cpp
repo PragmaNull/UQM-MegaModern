@@ -25,17 +25,15 @@
 #include "../packetsenders.h"
 
 #include <assert.h>
-#include <errno.h>
 
-int Netplay_confirm(NetConnection* conn)
+NetResult Netplay_confirm(NetConnection* conn)
 {
 	assert(handshakeMeaningful(NetConnection_getState(conn)));
 
 	if (conn->stateFlags.handshake.localOk)
 	{
 		// Already confirmed
-		errno = EINVAL;
-		return -1;
+		return netFailure(uqstl::errc::invalid_argument);
 	}
 
 	conn->stateFlags.handshake.localOk = true;
@@ -57,18 +55,17 @@ int Netplay_confirm(NetConnection* conn)
 		sendHandshake0(conn);
 	}
 
-	return 0;
+	return {};
 }
 
-int Netplay_cancelConfirmation(NetConnection* conn)
+NetResult Netplay_cancelConfirmation(NetConnection* conn)
 {
 	assert(handshakeMeaningful(NetConnection_getState(conn)));
 
 	if (!conn->stateFlags.handshake.localOk)
 	{
 		// Not confirmed, or already canceling.
-		errno = EINVAL;
-		return -1;
+		return netFailure(uqstl::errc::invalid_argument);
 	}
 
 	conn->stateFlags.handshake.localOk = false;
@@ -85,5 +82,5 @@ int Netplay_cancelConfirmation(NetConnection* conn)
 		sendHandshakeCancel(conn);
 	}
 
-	return 0;
+	return {};
 }

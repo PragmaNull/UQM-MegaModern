@@ -25,9 +25,9 @@
 extern "C" {
 #endif
 
-#define DECLARE_PACKETHANDLER(type)               \
-	int PacketHandler_##type(NetConnection* conn, \
-							 const Packet_##type* packet)
+#define DECLARE_PACKETHANDLER(type)                     \
+	NetResult PacketHandler_##type(NetConnection* conn, \
+								   const Packet_##type* packet)
 
 DECLARE_PACKETHANDLER(Init);
 DECLARE_PACKETHANDLER(Ping);

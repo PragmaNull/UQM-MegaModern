@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define PORT_WANT_ERRNO
 #include "port.h"
 
 #include "netplay.h"
@@ -27,7 +26,6 @@
 // for battleFrameCount
 
 
-#include <errno.h>
 #include <stdlib.h>
 
 
