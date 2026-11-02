@@ -16,90 +16,44 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// Routines for changing the endianness of values.
-// I'm not using ntohs() etc. as those would require include files that may
-// have conflicting definitions. This is a problem on Windows, where these
-// functions are in winsock2.h, which includes windows.h, which includes
-// pretty much Microsoft's complete collection of .h files.
-
+// Converts values between the host byte order and the network byte order (big-endian).
 #ifndef LIBS_NETWORK_BYTESEX_H_
 #define LIBS_NETWORK_BYTESEX_H_
 
-#include "port.h"
-// for inline
-#include "endian_uqm.h"
-// for WORDS_BIGENDIAN
+#include "core/stl/bit.h"
+
 #include <cstdint>
 
-static inline uint16_t
-swapBytes16(uint16_t x)
+[[nodiscard]] constexpr uint16_t swapBytes16(uint16_t x)
 {
-	return (x << 8) | (x >> 8);
+	return static_cast<uint16_t>((x << 8) | (x >> 8));
 }
 
-static inline uint32_t
-swapBytes32(uint32_t x)
+[[nodiscard]] constexpr uint32_t swapBytes32(uint32_t x)
 {
-	return (x << 24)
-		 | ((x & 0x0000ff00) << 8)
-		 | ((x & 0x00ff0000) >> 8)
-		 | (x >> 24);
+	return (x << 24) | ((x & 0x0000ff00) << 8) | ((x & 0x00ff0000) >> 8) | (x >> 24);
 }
 
-#ifdef WORDS_BIGENDIAN
-// Already in network order.
-
-static inline uint16_t
-hton16(uint16_t x)
+[[nodiscard]] constexpr uint16_t hton16(uint16_t x)
 {
-	return x;
+	return uqstl::endian::native == uqstl::endian::big ? x : swapBytes16(x);
 }
 
-static inline uint32_t
-hton32(uint32_t x)
+[[nodiscard]] constexpr uint32_t hton32(uint32_t x)
 {
-	return x;
+	return uqstl::endian::native == uqstl::endian::big ? x : swapBytes32(x);
 }
 
-static inline uint16_t
-ntoh16(uint16_t x)
+[[nodiscard]] constexpr uint16_t ntoh16(uint16_t x)
 {
-	return x;
+	return hton16(x);
 }
 
-static inline uint32_t
-ntoh32(uint32_t x)
+[[nodiscard]] constexpr uint32_t ntoh32(uint32_t x)
 {
-	return x;
+	return hton32(x);
 }
 
-#else /* !defined(WORDS_BIGENDIAN) */
-// Need to swap bytes
-
-static inline uint16_t
-hton16(uint16_t x)
-{
-	return swapBytes16(x);
-}
-
-static inline uint32_t
-hton32(uint32_t x)
-{
-	return swapBytes32(x);
-}
-
-static inline uint16_t
-ntoh16(uint16_t x)
-{
-	return swapBytes16(x);
-}
-
-static inline uint32_t
-ntoh32(uint32_t x)
-{
-	return swapBytes32(x);
-}
-
-#endif /* defined(WORDS_BIGENDIAN) */
+static_assert(hton16(0x1234) == (uqstl::endian::native == uqstl::endian::big ? 0x1234 : 0x3412));
 
 #endif /* LIBS_NETWORK_BYTESEX_H_ */
