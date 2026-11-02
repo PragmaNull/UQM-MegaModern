@@ -19,6 +19,7 @@ class UrQuanMastersConan(ConanFile):
         #    raise ConanInvalidConfiguration('ASan requires Debug build')
     
     requires = (
+        'asio/1.38.2',
         'cli11/2.6.0',
         'ogg/1.3.5',
         'fmt/12.1.0',

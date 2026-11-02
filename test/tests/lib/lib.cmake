@@ -26,6 +26,15 @@ list(APPEND uqm_tests_lib_master_files
 	"../src/libs/io/Path.cpp"
 	"../src/libs/io/Path.h"
 	"../src/libs/io/Types.h"
+	"../src/libs/network/Connection.cpp"
+	"../src/libs/network/Connection.h"
+	"../src/libs/network/Connector.cpp"
+	"../src/libs/network/Connector.h"
+	"../src/libs/network/Listener.cpp"
+	"../src/libs/network/Listener.h"
+	"../src/libs/network/NetContext.cpp"
+	"../src/libs/network/NetContext.h"
+	"../src/libs/network/NetImpl.h"
 	"../src/libs/resource/resindex.cpp"
 	"../src/libs/resource/resindex.h"
 	"../src/libs/io/standard/DirectorySource.cpp"
@@ -54,6 +63,7 @@ set(uqm_tests_lib_files
 	"tests/lib/test_resindex.cpp"
 	"tests/lib/test_soundbank.cpp"
 	"tests/lib/test_Math2D.cpp"
+	"tests/lib/test_net.cpp"
 )
 
 source_group("tests\\lib" FILES ${uqm_tests_lib_files})

@@ -69,6 +69,7 @@ add_executable(${APP_TARGET} ${ALL_FILES})
 ################################################################################
 
 # REQUIRED
+find_package(asio REQUIRED)
 find_package(CLI11 REQUIRED)
 find_package(fmt REQUIRED)
 find_package(gsl-lite REQUIRED)
@@ -266,6 +267,7 @@ target_compile_features(${APP_TARGET} PRIVATE cxx_std_20)
 ################################################################################
 target_link_libraries(${APP_TARGET}
     PRIVATE
+        asio::asio
         CLI11::CLI11
         fmt::fmt
         gsl-lite::gsl-lite
