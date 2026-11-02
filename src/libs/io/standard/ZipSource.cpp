@@ -294,35 +294,36 @@ ZipSource::ZipSource(uqstl::shared_ptr<const MountSource> archive, uqstl::string
 	m_directories.emplace("", uqstl::vector<uqstl::string> {});
 }
 
-uqstl::shared_ptr<ZipSource> ZipSource::create(uqstl::shared_ptr<const MountSource> archive, uqstl::string path, uqstl::error_code& error)
+Result<uqstl::shared_ptr<ZipSource>> ZipSource::create(uqstl::shared_ptr<const MountSource> archive, uqstl::string path)
 {
 	auto source {uqstl::make_shared<ZipSource>(uqstl::move(archive), uqstl::move(path))};
-	if (!source->readCentralDirectory(error))
+	if (const Result<void> read {source->readCentralDirectory()}; !read)
 	{
-		return nullptr;
+		return uqstl::unexpected {read.error()};
 	}
 	return source;
 }
 
-bool ZipSource::readCentralDirectory(uqstl::error_code& error)
+Result<void> ZipSource::readCentralDirectory()
 {
-	const uqstl::unique_ptr<Stream> stream {m_archive->open(m_path, OpenMode::Read, error)};
-	if (stream == nullptr)
+	auto opened {m_archive->open(m_path, OpenMode::Read)};
+	if (!opened)
 	{
-		return false;
+		return uqstl::unexpected {opened.error()};
 	}
+	const uqstl::unique_ptr<Stream>& stream {*opened};
+	uqstl::error_code error {};
 
 	const uint64_t fileSize {stream->size()};
 	if (fileSize < c_endRecordSize)
 	{
-		error = badArchive();
-		return false;
+		return uqstl::unexpected {badArchive()};
 	}
 	const uint64_t searchStart {fileSize > c_endRecordSize + c_maxCommentSize ? fileSize - c_endRecordSize - c_maxCommentSize : 0};
 	uqstl::vector<uqstl::byte> tail(static_cast<size_t>(fileSize - searchStart));
 	if (!readAt(*stream, searchStart, tail, error))
 	{
-		return false;
+		return uqstl::unexpected {error};
 	}
 
 	size_t endRecord {tail.size() - c_endRecordSize + 1};
@@ -330,8 +331,7 @@ bool ZipSource::readCentralDirectory(uqstl::error_code& error)
 	{
 		if (endRecord == 0)
 		{
-			error = badArchive();
-			return false;
+			return uqstl::unexpected {badArchive()};
 		}
 		--endRecord;
 	} while (readU32(tail, endRecord) != c_endRecordSignature);
@@ -342,14 +342,13 @@ bool ZipSource::readCentralDirectory(uqstl::error_code& error)
 	if (numEntries == 0xffff || directoryOffset == 0xffffffff)
 	{
 		uqm::log::error("Zip64 archive '{}' is not supported.", m_path);
-		error = uqstl::make_error_code(uqstl::errc::not_supported);
-		return false;
+		return failure(uqstl::errc::not_supported);
 	}
 
 	uqstl::vector<uqstl::byte> directory(directorySize);
 	if (!readAt(*stream, directoryOffset, directory, error))
 	{
-		return false;
+		return uqstl::unexpected {error};
 	}
 
 	size_t offset {0};
@@ -357,8 +356,7 @@ bool ZipSource::readCentralDirectory(uqstl::error_code& error)
 	{
 		if (offset + c_centralHeaderSize > directory.size() || readU32(directory, offset) != c_centralHeaderSignature)
 		{
-			error = badArchive();
-			return false;
+			return uqstl::unexpected {badArchive()};
 		}
 		const uqstl::span<const uqstl::byte> header {uqstl::span {directory}.subspan(offset)};
 		const uint8_t host {uqstl::to_integer<uint8_t>(header[5])};
@@ -368,8 +366,7 @@ bool ZipSource::readCentralDirectory(uqstl::error_code& error)
 		const size_t entrySize {c_centralHeaderSize + nameLength + readU16(header, 30) + readU16(header, 32)};
 		if (offset + entrySize > directory.size())
 		{
-			error = badArchive();
-			return false;
+			return uqstl::unexpected {badArchive()};
 		}
 		offset += entrySize;
 
@@ -405,7 +402,7 @@ bool ZipSource::readCentralDirectory(uqstl::error_code& error)
 		const bool isDirectory {name.ends_with('/') || isDirectoryAttribute(host, readU32(header, 38))};
 		addEntry(path::normalize(name), isDirectory, entry);
 	}
-	return true;
+	return {};
 }
 
 void ZipSource::addEntry(uqstl::string name, bool isDirectory, const Entry& entry)
@@ -474,50 +471,51 @@ uqstl::optional<FileInfo> ZipSource::stat(uqstl::string_view path) const
 	return FileInfo {.type = FileType::Regular, .size = file->second.size, .modifiedTime = file->second.modifiedTime};
 }
 
-uqstl::vector<uqstl::string> ZipSource::list(uqstl::string_view path, uqstl::error_code& error) const
+Result<uqstl::vector<uqstl::string>> ZipSource::list(uqstl::string_view path) const
 {
 	const auto directory {m_directories.find(path)};
 	if (directory == m_directories.end())
 	{
-		return fail<uqstl::vector<uqstl::string>>(error, m_files.contains(path) ? uqstl::errc::not_a_directory : uqstl::errc::no_such_file_or_directory);
+		return failure(m_files.contains(path) ? uqstl::errc::not_a_directory : uqstl::errc::no_such_file_or_directory);
 	}
 	return directory->second;
 }
 
-uqstl::unique_ptr<Stream> ZipSource::open(uqstl::string_view path, OpenMode mode, uqstl::error_code& error) const
+Result<uqstl::unique_ptr<Stream>> ZipSource::open(uqstl::string_view path, OpenMode mode) const
 {
 	if (testAllBits(mode, OpenMode::Write))
 	{
-		return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::read_only_file_system);
+		return failure(uqstl::errc::read_only_file_system);
 	}
 	const auto file {m_files.find(path)};
 	if (file == m_files.end())
 	{
-		return fail<uqstl::unique_ptr<Stream>>(error, m_directories.contains(path) ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
+		return failure(m_directories.contains(path) ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
 	}
 	const Entry& entry {file->second};
 
-	uqstl::unique_ptr<Stream> archive {m_archive->open(m_path, OpenMode::Read, error)};
-	if (archive == nullptr)
+	auto opened {m_archive->open(m_path, OpenMode::Read)};
+	if (!opened)
 	{
-		return nullptr;
+		return uqstl::unexpected {opened.error()};
 	}
+	uqstl::unique_ptr<Stream> archive {uqstl::move(*opened)};
+	uqstl::error_code error {};
 	uqstl::array<uqstl::byte, c_localHeaderSize> header {};
 	if (!readAt(*archive, entry.headerOffset, header, error))
 	{
-		return nullptr;
+		return uqstl::unexpected {error};
 	}
 	if (readU32(header, 0) != c_localHeaderSignature)
 	{
-		error = badArchive();
-		return nullptr;
+		return uqstl::unexpected {badArchive()};
 	}
 	const uint64_t dataOffset {entry.headerOffset + c_localHeaderSize + readU16(header, 26) + readU16(header, 28)};
 
 	auto stream {uqstl::make_unique<ZipEntryStream>(uqstl::move(archive), dataOffset, entry)};
 	if (!stream->valid())
 	{
-		return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::not_enough_memory);
+		return failure(uqstl::errc::not_enough_memory);
 	}
 	if (!entry.deflated || entry.size > c_memoryEntryLimit)
 	{
@@ -528,7 +526,7 @@ uqstl::unique_ptr<Stream> ZipSource::open(uqstl::string_view path, OpenMode mode
 	uqstl::vector<uqstl::byte> data(static_cast<size_t>(entry.size));
 	if (stream->read(data, error) != data.size())
 	{
-		return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::illegal_byte_sequence);
+		return failure(uqstl::errc::illegal_byte_sequence);
 	}
 	return uqstl::make_unique<MemoryStream>(uqstl::move(data));
 }

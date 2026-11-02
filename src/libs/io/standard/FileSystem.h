@@ -23,12 +23,11 @@ class MountTable;
 class Directory
 {
 public:
-	// Returns nullopt and sets 'error' if the file cannot be opened.
-	[[nodiscard]] uqstl::optional<File> open(uqstl::string_view path, OpenMode mode, uqstl::error_code& error) const;
+	[[nodiscard]] Result<File> open(uqstl::string_view path, OpenMode mode) const;
 	[[nodiscard]] uqstl::optional<FileInfo> stat(uqstl::string_view path) const;
 	[[nodiscard]] bool exists(uqstl::string_view path) const;
 	// Returns the sorted names in the directory 'path' that 'matcher' accepts.
-	[[nodiscard]] uqstl::vector<uqstl::string> list(uqstl::string_view path, const Matcher& matcher, uqstl::error_code& error) const;
+	[[nodiscard]] Result<uqstl::vector<uqstl::string>> list(uqstl::string_view path, const Matcher& matcher) const;
 	// Returns nullopt if 'path' is not a directory.
 	[[nodiscard]] uqstl::optional<Directory> subdir(uqstl::string_view path) const;
 	uqstl::error_code makeDir(uqstl::string_view path) const;
@@ -90,13 +89,13 @@ public:
 	[[nodiscard]] Directory root();
 
 	// Mounts the host directory 'hostPath' at 'mountPoint'.
-	[[nodiscard]] uqstl::optional<Mount> mountDirectory(uqstl::string_view mountPoint, const uqstl::filesystem::path& hostPath, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error);
+	[[nodiscard]] Result<Mount> mountDirectory(uqstl::string_view mountPoint, const uqstl::filesystem::path& hostPath, Access access, MountPosition position, const Mount* relative);
 	// Mounts the zip archive 'archivePath' in 'directory' at 'mountPoint', read-only.
-	[[nodiscard]] uqstl::optional<Mount> mountArchive(uqstl::string_view mountPoint, const Directory& directory, uqstl::string_view archivePath, MountPosition position, const Mount* relative, uqstl::error_code& error);
+	[[nodiscard]] Result<Mount> mountArchive(uqstl::string_view mountPoint, const Directory& directory, uqstl::string_view archivePath, MountPosition position, const Mount* relative);
 	// Returns a directory over only the zip archive 'archivePath' in 'directory', without a mount in this file system.
-	[[nodiscard]] uqstl::optional<Directory> openArchive(const Directory& directory, uqstl::string_view archivePath, uqstl::error_code& error);
+	[[nodiscard]] Result<Directory> openArchive(const Directory& directory, uqstl::string_view archivePath);
 	// Mounts what 'source' currently shows at 'mountPoint'.
-	[[nodiscard]] uqstl::optional<Mount> mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error);
+	[[nodiscard]] Result<Mount> mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative);
 
 private:
 	uqstl::shared_ptr<MountTable> m_table {};

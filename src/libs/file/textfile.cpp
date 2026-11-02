@@ -17,8 +17,7 @@ namespace
 template <typename Container>
 uqstl::optional<Container> readWholeFile(const io::Directory& dir, uqgsl::czstring name)
 {
-	uqstl::error_code error {};
-	uqstl::optional<io::File> file {dir.open(name, io::OpenMode::Read, error)};
+	io::Result<io::File> file {dir.open(name, io::OpenMode::Read)};
 	if (!file)
 	{
 		return uqstl::nullopt;
@@ -57,8 +56,7 @@ uqstl::optional<uqstl::vector<uqstl::byte>> readBinaryFile(const io::Directory& 
 
 bool writeTextFile(const io::Directory& dir, uqgsl::czstring name, uqstl::string_view text)
 {
-	uqstl::error_code error {};
-	uqstl::optional<io::File> file {dir.open(name, io::OpenMode::Write | io::OpenMode::Create | io::OpenMode::Truncate, error)};
+	io::Result<io::File> file {dir.open(name, io::OpenMode::Write | io::OpenMode::Create | io::OpenMode::Truncate)};
 	if (!file)
 	{
 		return false;

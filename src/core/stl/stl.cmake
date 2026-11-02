@@ -23,6 +23,7 @@ set(uqm_src_core_stl_files
 	"src/core/stl/map.h"
 	"src/core/stl/memory.h"
 	"src/core/stl/mutex.h"
+	"src/core/stl/expected.h"
 	"src/core/stl/optional.h"
 	"src/core/stl/ranges.h"
 	"src/core/stl/regex.h"

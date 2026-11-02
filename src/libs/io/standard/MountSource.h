@@ -29,23 +29,14 @@ public:
 
 	[[nodiscard]] virtual uqstl::optional<FileInfo> stat(uqstl::string_view path) const = 0;
 	// Returns the names of the entries in the directory 'path', in no specific order.
-	[[nodiscard]] virtual uqstl::vector<uqstl::string> list(uqstl::string_view path, uqstl::error_code& error) const = 0;
-	// Returns nullptr and sets 'error' if the file cannot be opened.
-	[[nodiscard]] virtual uqstl::unique_ptr<Stream> open(uqstl::string_view path, OpenMode mode, uqstl::error_code& error) const = 0;
+	[[nodiscard]] virtual Result<uqstl::vector<uqstl::string>> list(uqstl::string_view path) const = 0;
+	[[nodiscard]] virtual Result<uqstl::unique_ptr<Stream>> open(uqstl::string_view path, OpenMode mode) const = 0;
 
 	[[nodiscard]] virtual bool canWrite() const { return false; }
 	virtual uqstl::error_code makeDir(uqstl::string_view path) const;
 	virtual uqstl::error_code remove(uqstl::string_view path) const;
 	virtual uqstl::error_code rename(uqstl::string_view from, uqstl::string_view to) const;
 };
-
-// Sets 'error' to 'code' and returns 'result'.
-template <typename T>
-T fail(uqstl::error_code& error, uqstl::errc code, T result = T {})
-{
-	error = uqstl::make_error_code(code);
-	return result;
-}
 
 inline uqstl::error_code MountSource::makeDir(uqstl::string_view /*path*/) const
 {

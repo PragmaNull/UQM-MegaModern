@@ -317,14 +317,14 @@ void prepareConfigDir(uqstl::string_view configDirOption)
 		exit(EXIT_FAILURE);
 	}
 
-	uqstl::error_code error {};
-	s_gameFiles->configMount = s_gameFiles->fileSystem.mountDirectory("/", configDirName, uqm::io::Access::ReadWrite, uqm::io::MountPosition::Top, nullptr, error);
-	if (!s_gameFiles->configMount)
+	uqm::io::Result<uqm::io::Mount> configMount {s_gameFiles->fileSystem.mountDirectory("/", configDirName, uqm::io::Access::ReadWrite, uqm::io::MountPosition::Top, nullptr)};
+	if (!configMount)
 	{
 		uqm::log::critical("Fatal error: Could not mount config dir: {}",
-						   error.message());
+						   configMount.error().message());
 		exit(EXIT_FAILURE);
 	}
+	s_gameFiles->configMount = uqstl::move(*configMount);
 	s_gameFiles->configDir = s_gameFiles->fileSystem.root();
 }
 
@@ -441,14 +441,14 @@ void prepareScrShotDir(void)
 static void
 mountContentDir(const char* contentPath)
 {
-	uqstl::error_code error {};
-	s_gameFiles->contentMount = s_gameFiles->fileSystem.mountDirectory("/", contentPath, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr, error);
-	if (!s_gameFiles->contentMount)
+	uqm::io::Result<uqm::io::Mount> contentMount {s_gameFiles->fileSystem.mountDirectory("/", contentPath, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr)};
+	if (!contentMount)
 	{
 		uqm::log::critical("Fatal error: Could not mount content dir: {}",
-						   error.message());
+						   contentMount.error().message());
 		exit(EXIT_FAILURE);
 	}
+	s_gameFiles->contentMount = uqstl::move(*contentMount);
 
 	s_gameFiles->contentDir = s_gameFiles->fileSystem.root();
 
@@ -463,15 +463,15 @@ void mountAddonDir(uqgsl::czstring addonDirName)
 	const uqm::io::Mount* addonsMount {&*s_gameFiles->contentMount};
 	if (!isEmpty(addonDirName))
 	{
-		uqstl::error_code error {};
-		s_gameFiles->addonsMount = s_gameFiles->fileSystem.mountDirectory("addons", addonDirName, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr, error);
-		if (!s_gameFiles->addonsMount)
+		uqm::io::Result<uqm::io::Mount> addonDirMount {s_gameFiles->fileSystem.mountDirectory("addons", addonDirName, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr)};
+		if (!addonDirMount)
 		{
 			uqm::log::warn("Warning: Could not mount addon directory: {}"
 						   ";\n\t'--addon' options are ignored.",
-						   error.message());
+						   addonDirMount.error().message());
 			return;
 		}
+		s_gameFiles->addonsMount = uqstl::move(*addonDirMount);
 		addonsMount = &*s_gameFiles->addonsMount;
 	}
 
@@ -489,8 +489,7 @@ void mountAddonDir(uqgsl::czstring addonDirName)
 
 	mountDirZips(*addonsDir, "addons", uqm::io::MountPosition::Below, *addonsMount);
 
-	uqstl::error_code error {};
-	uqstl::vector<uqstl::string> availableAddons {addonsDir->list("", uqm::io::Matcher {}, error)};
+	uqstl::vector<uqstl::string> availableAddons {addonsDir->list("", uqm::io::Matcher {}).value_or(uqstl::vector<uqstl::string> {})};
 	// count the actual addon dirs
 	uqstl::erase_if(availableAddons, [&addonsDir](const uqstl::string& name) {
 		const uqstl::optional<uqm::io::FileInfo> info {addonsDir->stat(name)};
@@ -533,22 +532,20 @@ bool isAddonAvailable(uqgsl::czstring addon_name)
 static void
 mountArchive(const uqm::io::Directory& dir, const uqstl::string& name, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
-	uqstl::error_code error {};
-	if (uqstl::optional<uqm::io::Mount> mount {s_gameFiles->fileSystem.mountArchive(mountPoint, dir, name, position, &relative, error)})
+	if (uqm::io::Result<uqm::io::Mount> mount {s_gameFiles->fileSystem.mountArchive(mountPoint, dir, name, position, &relative)})
 	{
 		s_gameFiles->mounts.push_back(uqstl::move(*mount));
 	}
 	else
 	{
-		uqm::log::warn("Warning: Could not mount '{}': {}.", name, error.message());
+		uqm::log::warn("Warning: Could not mount '{}': {}.", name, mount.error().message());
 	}
 }
 
 static void
 mountDirZips(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
-	uqstl::error_code error {};
-	for (const uqstl::string& name : dir.list("", packageMatcher(), error))
+	for (const uqstl::string& name : dir.list("", packageMatcher()).value_or(uqstl::vector<uqstl::string> {}))
 	{
 		mountArchive(dir, name, mountPoint, position, relative);
 	}
@@ -567,9 +564,8 @@ mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::Mou
 
 int loadIndices(const uqm::io::Directory& dir)
 {
-	uqstl::error_code error {};
 	int numLoaded {0};
-	for (const uqstl::string& name : dir.list("", uqm::io::Matcher {uqm::io::Matcher::Kind::SuffixIgnoreCase, ".rmp.json"}, error))
+	for (const uqstl::string& name : dir.list("", uqm::io::Matcher {uqm::io::Matcher::Kind::SuffixIgnoreCase, ".rmp.json"}).value_or(uqstl::vector<uqstl::string> {}))
 	{
 		uqm::log::debug("Loading resource index '{}'", name);
 		LoadResourceIndex(dir, name.c_str(), nullptr);
@@ -642,8 +638,7 @@ void prepareShadowAddons(uqstl::span<const std::string> addons)
 			uqm::log::debug("Mounting shadow content of '{}' addon", c_str(addon));
 			mountDirZips(*shadowDir, "/", uqm::io::MountPosition::Above, *s_gameFiles->contentMount);
 			// Mount non-zipped shadow content
-			uqstl::error_code error {};
-			if (uqstl::optional<uqm::io::Mount> mount {s_gameFiles->fileSystem.mountTransplant("/", *shadowDir, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Above, &*s_gameFiles->contentMount, error)})
+			if (uqm::io::Result<uqm::io::Mount> mount {s_gameFiles->fileSystem.mountTransplant("/", *shadowDir, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Above, &*s_gameFiles->contentMount)})
 			{
 				s_gameFiles->mounts.push_back(uqstl::move(*mount));
 			}
@@ -651,7 +646,7 @@ void prepareShadowAddons(uqstl::span<const std::string> addons)
 			{
 				uqm::log::warn("Warning: Could not mount shadow content"
 							   " of '{}': {}.",
-							   c_str(addon), error.message());
+							   c_str(addon), mount.error().message());
 			}
 		}
 	}

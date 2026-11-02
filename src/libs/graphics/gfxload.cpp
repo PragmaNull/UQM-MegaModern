@@ -233,11 +233,13 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 
 	if (const uqstl::optional<uqm::io::FileInfo> info {dir.stat(path)}; info && !info->isDirectory())
 	{
-		uqstl::error_code error {};
-		fontDirHandle = uqm::gameFileSystem().openArchive(dir, path, error);
-		if (!fontDirHandle)
+		if (uqm::io::Result<uqm::io::Directory> archive {uqm::gameFileSystem().openArchive(dir, path)})
 		{
-			uqm::log::warn("Could not open font archive '{}': {}", path, error.message());
+			fontDirHandle = uqstl::move(*archive);
+		}
+		else
+		{
+			uqm::log::warn("Could not open font archive '{}': {}", path, archive.error().message());
 		}
 	}
 	else

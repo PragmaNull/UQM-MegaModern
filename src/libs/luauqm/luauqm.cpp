@@ -125,8 +125,7 @@ bool luaUqm_loadScript(lua_State* luaState, const uqm::io::Directory& dir,
 {
 	uqm::log::debug("Loading script '{}'.", fileName);
 
-	uqstl::error_code error {};
-	uqstl::optional<uqm::io::File> in {dir.open(fileName, uqm::io::OpenMode::Read | uqm::io::OpenMode::Text, error)};
+	uqm::io::Result<uqm::io::File> in {dir.open(fileName, uqm::io::OpenMode::Read | uqm::io::OpenMode::Text)};
 	if (!in)
 	{
 		uqm::log::error("luaUqm_loadScript(): Unable to open script file "
@@ -176,9 +175,8 @@ void luaUqm_runLuaDir(lua_State* luaState, const uqm::io::Directory& dir,
 		return;
 	}
 
-	uqstl::error_code error {};
-	const uqstl::vector<uqstl::string> luaFiles {luaDir->list("", uqm::io::Matcher {uqm::io::Matcher::Kind::Suffix, ".lua"}, error)};
-	if (error)
+	const uqm::io::Result<uqstl::vector<uqstl::string>> luaFiles {luaDir->list("", uqm::io::Matcher {uqm::io::Matcher::Kind::Suffix, ".lua"})};
+	if (!luaFiles)
 	{
 		uqm::log::warn("Warning: Could not read Lua script directory "
 					   "'{}'.",
@@ -187,8 +185,8 @@ void luaUqm_runLuaDir(lua_State* luaState, const uqm::io::Directory& dir,
 	}
 
 	uqm::log::debug("Script directory '{}': loading {} file(s).",
-					luaDirName, luaFiles.size());
-	for (const uqstl::string& fileName : luaFiles)
+					luaDirName, luaFiles->size());
+	for (const uqstl::string& fileName : *luaFiles)
 	{
 		luaUqm_runScript(luaState, *luaDir, fileName.c_str());
 	}

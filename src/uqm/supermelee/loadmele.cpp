@@ -57,8 +57,7 @@ static bool
 LoadTeamImage(const char* fileName, MeleeTeam* team)
 {
 
-	uqstl::error_code error {};
-	uqstl::optional<uqm::io::File> stream {uqm::meleeDir().open(fileName, uqm::io::OpenMode::Read, error)};
+	uqm::io::Result<uqm::io::File> stream {uqm::meleeDir().open(fileName, uqm::io::OpenMode::Read)};
 	if (!stream)
 	{
 		return false;
@@ -508,12 +507,11 @@ bool DoSaveTeam(MELEE_STATE* pMS)
 	ConfirmSaveLoad(&MsgStamp);
 	// Show the "Saving . . ." message.
 
-	uqstl::error_code error {};
-	if (uqstl::optional<uqm::io::File> stream {uqm::meleeDir().open(file, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate, error)})
+	if (uqm::io::Result<uqm::io::File> stream {uqm::meleeDir().open(file, uqm::io::OpenMode::Write | uqm::io::OpenMode::Create | uqm::io::OpenMode::Truncate)})
 	{
 		opened = true;
 		saveOk = MeleeTeam_serialize(&pMS->meleeSetup->teams[pMS->side], *stream) == 0 && stream->flush();
-		stream.reset();
+		stream->close();
 
 		if (!saveOk)
 		{

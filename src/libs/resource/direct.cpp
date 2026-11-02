@@ -23,13 +23,12 @@ namespace uqm
 
 uqstl::vector<uqstl::string> listFiles(const io::Directory& dir, const char* path, const io::Matcher& matcher)
 {
-	uqstl::error_code error {};
 	const uqstl::optional<io::Directory> subdir {dir.subdir(path)};
 	if (!subdir)
 	{
 		return {};
 	}
-	uqstl::vector<uqstl::string> names {subdir->list("", matcher, error)};
+	uqstl::vector<uqstl::string> names {subdir->list("", matcher).value_or(uqstl::vector<uqstl::string> {})};
 	uqstl::erase_if(names, [&subdir](const uqstl::string& name) {
 		if (name.starts_with('.'))
 		{

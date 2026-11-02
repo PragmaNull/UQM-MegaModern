@@ -16,8 +16,8 @@ public:
 	explicit DirectorySource(uqstl::filesystem::path root);
 
 	[[nodiscard]] uqstl::optional<FileInfo> stat(uqstl::string_view path) const override;
-	[[nodiscard]] uqstl::vector<uqstl::string> list(uqstl::string_view path, uqstl::error_code& error) const override;
-	[[nodiscard]] uqstl::unique_ptr<Stream> open(uqstl::string_view path, OpenMode mode, uqstl::error_code& error) const override;
+	[[nodiscard]] Result<uqstl::vector<uqstl::string>> list(uqstl::string_view path) const override;
+	[[nodiscard]] Result<uqstl::unique_ptr<Stream>> open(uqstl::string_view path, OpenMode mode) const override;
 
 	[[nodiscard]] bool canWrite() const override { return true; }
 	uqstl::error_code makeDir(uqstl::string_view path) const override;
