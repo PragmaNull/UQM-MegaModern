@@ -21,13 +21,19 @@
 
 #include "core/misc/bittricks.h"
 
+#include <cmath>
+
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 #include "math/random.h"
 
-extern uint16_t square_root(uint32_t value);
+// The integer square root of 'value', rounded down.
+inline uint16_t square_root(uint32_t value)
+{
+	return static_cast<uint16_t>(std::sqrt(static_cast<double>(value)));
+}
 inline uint32_t crc32b(const char* str)
 { // Source: https://stackoverflow.com/a/21001712
 	unsigned int byte, crc, mask;

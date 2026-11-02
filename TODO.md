@@ -20,7 +20,7 @@
     - `sphereMap` in `PLANET_ORBIT`, which is in the `PLANET_DESC` arrays.
   - Global and static sound banks and color maps (`MenuSounds`, `GameSounds`, `LanderSounds`, `hypercmaps`, `SunCMap` and others). They can become RAII only after `exit()` no longer runs while the game thread runs (see "Exit code 127"). If they become RAII before that, their destructors can run during `exit()`, after the audio system has shut down.
 
-Keep these, because they are large and in use: `graphics`, `sound`, `video`, `input`, `io`, `resource`, `strings`, `luauqm`, `network` (`NETPLAY` is on), `callback` (netplay and `uqm/sis.cpp` use the alarms and async calls), and `math`. Do not change the RNG or `square_root`: seeded games must give the same results.
+Keep these, because they are large and in use: `graphics`, `sound`, `video`, `input`, `io`, `resource`, `strings`, `luauqm`, `network` (`NETPLAY` is on), `callback` (netplay and `uqm/sis.cpp` use the alarms and async calls), and `math`. Do not change the RNG: seeded games must give the same results.
 
 ## Graphics
 
