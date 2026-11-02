@@ -53,7 +53,7 @@ Alarm_addAbsolute(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg)
 }
 
 Alarm*
-Alarm_addRelative(uqstl::chrono::milliseconds delay, AlarmCallback callback, AlarmCallbackArg arg)
+Alarm_addRelative(AlarmTime delay, AlarmCallback callback, AlarmCallbackArg arg)
 {
 	return Alarm_add(GetTimeMs() + delay, callback, arg);
 }

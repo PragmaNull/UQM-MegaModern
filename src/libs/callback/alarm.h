@@ -39,7 +39,7 @@ struct Alarm
 void Alarm_init(void);
 void Alarm_uninit(void);
 Alarm* Alarm_addAbsolute(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg);
-Alarm* Alarm_addRelative(uqstl::chrono::milliseconds delay, AlarmCallback callback, AlarmCallbackArg arg);
+Alarm* Alarm_addRelative(AlarmTime delay, AlarmCallback callback, AlarmCallbackArg arg);
 void Alarm_remove(Alarm* alarm);
 bool Alarm_processOne(void);
 // Returns the time of the next alarm, or AlarmTime::max() if there is none.
