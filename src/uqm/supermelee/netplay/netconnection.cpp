@@ -21,6 +21,8 @@
 #include "netconnection.h"
 
 #include "netrcv.h"
+#include "netcontext.h"
+#include "core/log/log.h"
 
 #if defined(DEBUG) || defined(NETPLAY_DEBUG)
 #include "core/log/log.h"
@@ -38,7 +40,6 @@
 #endif
 
 
-static void closeCallback(NetDescriptor* nd);
 static void NetConnection_doClose(NetConnection* conn);
 
 #include "core/platform/platform.h"
@@ -64,7 +65,7 @@ NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
 {
 	NetConnection* conn;
 
-	conn = (NetConnection*)malloc(sizeof(NetConnection));
+	conn = new NetConnection {};
 
 #if defined(NETPLAY_DEBUG) && defined(NETPLAY_DEBUG_FILE)
 	{
@@ -118,7 +119,6 @@ NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
 	}
 #endif
 
-	conn->nd = nullptr;
 	conn->player = player;
 	conn->state = NetState_unconnected;
 	conn->options = options;
@@ -134,8 +134,6 @@ NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
 	conn->resetCallback = nullptr;
 	conn->resetCallbackArg = nullptr;
 
-	conn->readBuf = (uint8_t*)malloc(NETPLAY_READBUFSIZE);
-	conn->readEnd = conn->readBuf;
 
 	conn->stateData = nullptr;
 	conn->stateFlags.connected = false;
@@ -193,7 +191,6 @@ NetConnection_delete(NetConnection* conn)
 		NetConnectionStateData_release(conn->stateData);
 		conn->stateData = nullptr;
 	}
-	free(conn->readBuf);
 	PacketQueue_uninit(&conn->queue);
 
 #ifdef NETPLAY_DEBUG_FILE
@@ -210,7 +207,7 @@ NetConnection_delete(NetConnection* conn)
 	}
 #endif
 
-	free(conn);
+	delete conn;
 }
 
 static void
@@ -224,7 +221,7 @@ Netplay_doCloseCallback(NetConnection* conn)
 	}
 }
 
-// Auxiliary function for closing, used by both closeCallback() and
+// Auxiliary function for closing, used by both NetConnection_connectionClosed() and
 // NetConnection_close()
 static void
 NetConnection_doClose(NetConnection* conn)
@@ -239,31 +236,12 @@ NetConnection_doClose(NetConnection* conn)
 	NetConnection_setState(conn, NetState_unconnected);
 }
 
-// Called when the NetDescriptor is shut down.
-static void
-closeCallback(NetDescriptor* nd)
-{
-	NetConnection* conn = (NetConnection*)NetDescriptor_getExtra(nd);
-	if (conn == nullptr)
-	{
-		return;
-	}
-	conn->nd = nullptr;
-	NetConnection_doClose(conn);
-}
-
 // Close and release a NetConnection.
 void NetConnection_close(NetConnection* conn)
 {
-	if (conn->nd != nullptr)
-	{
-		NetDescriptor_setCloseCallback(conn->nd, nullptr);
-		// We're not interested in the close callback of the
-		// NetDescriptor anymore.
-		NetDescriptor_close(conn->nd);
-		// This would queue the close callback.
-		conn->nd = nullptr;
-	}
+	conn->listener.reset();
+	conn->connector.reset();
+	conn->connection.reset();
 	if (!conn->stateFlags.disconnected)
 	{
 		NetConnection_doClose(conn);
@@ -273,14 +251,11 @@ void NetConnection_close(NetConnection* conn)
 
 void NetConnection_doErrorCallback(NetConnection* nd, int err)
 {
-	NetConnectionError error;
-
 	if (nd->errorCallback != nullptr)
 	{
-		error.state = nd->state;
-		error.err = err;
+		const NetConnectionError error {.state = nd->state, .err = err};
+		(*nd->errorCallback)(nd, &error);
 	}
-	(*nd->errorCallback)(nd, &error);
 }
 
 void NetConnection_setStateData(NetConnection* conn,

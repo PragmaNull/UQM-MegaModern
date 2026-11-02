@@ -142,72 +142,12 @@ dataReceivedMulti(NetConnection* conn, const uint8_t* data, size_t len)
 	return processed;
 }
 
-void dataReadyCallback(NetDescriptor* nd)
+uqstl::optional<size_t> dataReceived(NetConnection* conn, uqstl::span<const std::byte> data)
 {
-	NetConnection* conn = (NetConnection*)NetDescriptor_getExtra(nd);
-	Socket* socket = NetDescriptor_getSocket(nd);
-
-	for (;;)
+	const ssize_t numProcessed {dataReceivedMulti(conn, reinterpret_cast<const uint8_t*>(data.data()), data.size())};
+	if (numProcessed == -1)
 	{
-		ssize_t numRead;
-		ssize_t numProcessed;
-
-		numRead = Socket_recv(socket, conn->readEnd,
-							  NETPLAY_READBUFSIZE - (conn->readEnd - conn->readBuf), 0);
-		if (numRead == 0)
-		{
-			// Other side closed the connection.
-			NetDescriptor_close(nd);
-			return;
-		}
-
-		if (numRead == -1)
-		{
-			if (errno == EWOULDBLOCK || errno == EAGAIN)
-			{
-				return; // No more data for now.
-			}
-			else if (errno == EINTR)
-			{
-				continue; // System call was interrupted. Retry.
-			}
-			else
-			{
-				int savedErrno = errno;
-				uqm::log::error("recv() failed: {}.\n",
-								uqm::strerror(errno));
-				NetConnection_doErrorCallback(conn, savedErrno);
-				NetDescriptor_close(nd);
-				return;
-			}
-		}
-
-		conn->readEnd += numRead;
-
-		numProcessed = dataReceivedMulti(conn, conn->readBuf,
-										 conn->readEnd - conn->readBuf);
-		if (numProcessed == -1)
-		{
-			// An error occured during processing.
-			// errno is set.
-			NetConnection_doErrorCallback(conn, errno);
-			NetDescriptor_close(nd);
-			return;
-		}
-		if (numProcessed == 0)
-		{
-			// No packets could be processed. This means we need to receive
-			// more data first.
-			return;
-		}
-
-		// Some packets have been processed.
-		// We more any rest to the front of the buffer, to make room
-		// for more data.
-		// A cyclic buffer would obviate the need for this move,
-		// but it would complicate things a lot.
-		memmove(conn->readBuf, conn->readBuf + numProcessed,
-				(conn->readEnd - conn->readBuf) - numProcessed);
-		conn->readEnd -= numProcessed;
+		return uqstl::nullopt;
 	}
+	return static_cast<size_t>(numProcessed);
 }

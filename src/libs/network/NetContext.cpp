@@ -18,7 +18,8 @@ void Context::poll(uqstl::chrono::milliseconds timeout)
 	{
 		io.restart();
 	}
-	if (io.run_one_for(timeout) > 0)
+	// run_one_for() runs nothing if the timeout is 0.
+	if (timeout <= uqstl::chrono::milliseconds::zero() || io.run_one_for(timeout) > 0)
 	{
 		io.poll();
 	}

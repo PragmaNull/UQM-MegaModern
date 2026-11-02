@@ -37,6 +37,21 @@ bool pollUntil(Context& context, const uqstl::function<bool()>& done)
 	return true;
 }
 
+// Polls the context without waiting until 'done' is true. Returns false after 5 seconds.
+bool pollWithoutWaitUntil(Context& context, const uqstl::function<bool()>& done)
+{
+	const auto deadline {uqstl::chrono::steady_clock::now() + 5s};
+	while (!done())
+	{
+		if (uqstl::chrono::steady_clock::now() > deadline)
+		{
+			return false;
+		}
+		context.poll(0ms);
+	}
+	return true;
+}
+
 // Polls the context for 'duration'.
 void pollFor(Context& context, uqstl::chrono::milliseconds duration)
 {
@@ -176,6 +191,19 @@ TEST(NetTest, ExchangesData)
 	EXPECT_FALSE(loopback.server->send(bytes("pong")));
 	EXPECT_TRUE(pollUntil(loopback.context, [&] {
 		return clientReceived == "pong";
+	}));
+}
+
+TEST(NetTest, ConnectsWithPollsThatDoNotWait)
+{
+	Context context {};
+	uqstl::optional<Connection> server {};
+	uqstl::optional<Connection> client {};
+	const Listener listener {context, ListenOptions {.ipv4Only = true}, storeConnection(server), ignoreError};
+	const Connector connector {context, loopbackOptions(listener.port()), storeConnection(client), ignoreError};
+
+	EXPECT_TRUE(pollWithoutWaitUntil(context, [&] {
+		return client && server;
 	}));
 }
 

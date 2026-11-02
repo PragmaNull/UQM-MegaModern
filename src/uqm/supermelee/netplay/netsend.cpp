@@ -26,11 +26,6 @@
 #include "packet.h"
 #include "core/log/log.h"
 #include "core/platform/platform.h"
-#include "libs/network/network.h"
-#include "libs/network/netmanager/netmanager.h"
-#include "libs/network/connect/connect.h"
-#include "libs/network/connect/listen.h"
-#include "libs/network/connect/resolve.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -39,10 +34,6 @@
 
 int sendPacket(NetConnection* conn, Packet* packet)
 {
-	ssize_t sendResult;
-	size_t len;
-	Socket* socket;
-
 	assert(NetConnection_isConnected(conn));
 
 #ifdef NETPLAY_DEBUG
@@ -63,36 +54,17 @@ int sendPacket(NetConnection* conn, Packet* packet)
 #endif /* NETPLAY_DEBUG_FILE */
 #endif /* NETPLAY_DEBUG */
 
-	socket = NetDescriptor_getSocket(conn->nd);
-
-	len = packetLength(packet);
-	while (len > 0)
+	const auto* const data {reinterpret_cast<const std::byte*>(packet)};
+	const std::error_code error {conn->connection->send(uqstl::span<const std::byte> {data, packetLength(packet)})};
+	if (error)
 	{
-		sendResult = Socket_send(socket, (void*)packet, len, 0);
-		if (sendResult >= 0)
+		if (error != std::errc::connection_reset)
 		{
-			len -= sendResult;
-			continue;
+			uqm::log::error("send() failed: {}.", error.message());
 		}
-
-		switch (errno)
-		{
-			case EINTR: // System call interrupted, retry;
-				continue;
-			case ECONNRESET:
-				{ // Connection reset by peer.
-					// keep errno
-					return -1;
-				}
-			default:
-				{
-					// Should not happen.
-					int savedErrno = errno;
-					uqm::log::error("send() failed: {}.\n", uqm::strerror(errno));
-					errno = savedErrno;
-					return -1;
-				}
-		}
+		// The callers read errno.
+		errno = error.default_error_condition().value();
+		return -1;
 	}
 
 #ifdef NETPLAY_STATISTICS

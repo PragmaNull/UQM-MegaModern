@@ -22,11 +22,7 @@
 #include "libs/callback/async.h"
 #include "libs/callback/callback.h"
 #include "core/log/log.h"
-#include "libs/network/network.h"
-#include "libs/network/netmanager/netmanager.h"
-#include "libs/network/connect/connect.h"
-#include "libs/network/connect/listen.h"
-#include "libs/network/connect/resolve.h"
+#include "netcontext.h"
 #include "netinput.h"
 #include "netmisc.h"
 #include "netsend.h"
@@ -170,7 +166,7 @@ NetMelee_getBattleState(NetConnection* conn)
 static inline void
 netInputAux(uint32_t timeoutMs)
 {
-	NetManager_process(&timeoutMs);
+	netplayContext().poll(uqstl::chrono::milliseconds {timeoutMs});
 	// This may cause more packets to be queued, hence the
 	// flushPacketQueues().
 	Async_process();

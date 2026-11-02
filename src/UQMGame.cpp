@@ -55,11 +55,7 @@
 #ifdef NETPLAY
 #include "libs/callback/callback.h"
 #include "libs/callback/alarm.h"
-#include "libs/network/network.h"
-#include "libs/network/netmanager/netmanager.h"
-#include "libs/network/connect/connect.h"
-#include "libs/network/connect/listen.h"
-#include "libs/network/connect/resolve.h"
+#include "uqm/supermelee/netplay/netcontext.h"
 #include "uqm/supermelee/netplay/netplay.h"
 #endif
 #include "uqm/imgui/gamewindow.h"
@@ -341,8 +337,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	Callback_init();
 
 #ifdef NETPLAY
-	Network_init();
-	NetManager_init();
+	initNetplayContext();
 #endif
 
 	addSettingsWindows();
@@ -428,8 +423,7 @@ void UQMGame::teardown()
 		TFB_UninitGraphics();
 
 #ifdef NETPLAY
-		NetManager_uninit();
-		Network_uninit();
+		uninitNetplayContext();
 #endif
 
 		Callback_uninit();
