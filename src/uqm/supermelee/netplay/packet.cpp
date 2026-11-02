@@ -160,7 +160,7 @@ Packet_TeamName_create(NetplaySide side, const char* name, size_t size)
 	packet = (Packet_TeamName*)Packet_create(PACKET_TEAMNAME, extraSize);
 	packet->side = (uint8_t)side;
 	packet->padding = 0;
-	memcpy(packet->name, name, size);
+	memcpy(teamName(packet), name, size);
 	memset((char*)packet + sizeof(Packet_TeamName) + size, '\0',
 		   extraSize - size);
 	// This takes care of the terminating '\0', as well as the

@@ -107,8 +107,8 @@ void sendFleet(NetConnection* conn, NetplaySide side, const MeleeShip* ships,
 
 	for (i = 0; i < shipCount; i++)
 	{
-		packet->ships[i].index = (uint8_t)i;
-		packet->ships[i].ship = (uint8_t)ships[i];
+		fleetEntries(packet)[i].index = (uint8_t)i;
+		fleetEntries(packet)[i].ship = (uint8_t)ships[i];
 	}
 
 	queuePacket(conn, (Packet*)packet);
@@ -121,8 +121,8 @@ void sendFleetShip(NetConnection* conn, NetplaySide side,
 
 	packet = Packet_Fleet_create(side, 1);
 
-	packet->ships[0].index = (uint8_t)shipIndex;
-	packet->ships[0].ship = (uint8_t)ship;
+	fleetEntries(packet)[0].index = (uint8_t)shipIndex;
+	fleetEntries(packet)[0].ship = (uint8_t)ship;
 
 	queuePacket(conn, (Packet*)packet);
 }

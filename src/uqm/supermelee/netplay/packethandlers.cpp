@@ -232,13 +232,13 @@ int PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 	player = localSide(conn, (NetplaySide)packet->side);
 
 	len = packetLength((const Packet*)packet);
-	if (sizeof packet + numShips * sizeof(packet->ships[0]) > len)
+	if (sizeof *packet + numShips * sizeof(FleetEntry) > len)
 	{
 		// There is not enough room in the packet to contain all
 		// the ships it says it contains.
 		uqm::log::warn("Invalid fleet size. Specified size is {}, "
 					   "actual size = {}\n",
-					   numShips, (int)((len - sizeof packet) / sizeof(packet->ships[0])));
+					   numShips, (int)((len - sizeof *packet) / sizeof(FleetEntry)));
 		errno = EBADMSG;
 		return -1;
 	}
@@ -253,8 +253,8 @@ int PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 
 	for (i = 0; i < numShips; i++)
 	{
-		MeleeShip ship = (MeleeShip)packet->ships[i].ship;
-		FleetShipIndex index = (FleetShipIndex)packet->ships[i].index;
+		MeleeShip ship = (MeleeShip)fleetEntries(packet)[i].ship;
+		FleetShipIndex index = (FleetShipIndex)fleetEntries(packet)[i].index;
 
 		if (!MeleeShip_valid(ship))
 		{
@@ -321,7 +321,7 @@ int PacketHandler_TeamName(NetConnection* conn, const Packet_TeamName* packet)
 		{
 			nameLen = MAX_TEAM_CHARS;
 		}
-		memcpy(buf, (const char*)packet->name, nameLen);
+		memcpy(buf, teamName(packet), nameLen);
 		buf[nameLen] = '\0';
 
 		Melee_RemoteChange_teamName(battleStateData->meleeState, conn,
