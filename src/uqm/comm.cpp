@@ -29,7 +29,6 @@
 #include "units.h"
 #include "encount.h"
 #include "starmap.h"
-#include "endian_uqm.h"
 #include "gamestr.h"
 #include "options.h"
 #include "oscill.h"

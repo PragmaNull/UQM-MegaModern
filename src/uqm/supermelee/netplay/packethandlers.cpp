@@ -208,7 +208,7 @@ int PacketHandler_Ready(NetConnection* conn, const Packet_Ready* packet)
 
 int PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 {
-	uint16_t numShips = networkOrder<uint16_t>(packet->numShips);
+	uint16_t numShips = uqm::convertBigEndian<uint16_t>(packet->numShips);
 	size_t i;
 	size_t len;
 	int player;
@@ -511,7 +511,7 @@ int PacketHandler_SeedRandom(NetConnection* conn,
 
 	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
 	updateRandomSeed(battleStateData->meleeState, conn->player,
-					 networkOrder<uint32_t>(packet->seed));
+					 uqm::convertBigEndian<uint32_t>(packet->seed));
 
 	conn->stateFlags.agreement.randomSeed = true;
 	return 0;
@@ -539,7 +539,7 @@ int PacketHandler_InputDelay(NetConnection* conn,
 	}
 
 	// battleStateData = (BattleStateData *) NetConnection_getStateData(conn);
-	delay = networkOrder<uint32_t>(packet->delay);
+	delay = uqm::convertBigEndian<uint32_t>(packet->delay);
 	if (delay > BattleFrameRateTicks.count())
 	{
 		uqm::log::error("NETPLAY: [{}]     Received absurdly large "
@@ -575,7 +575,7 @@ int PacketHandler_SelectShip(NetConnection* conn,
 
 	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
 	updateResult = updateMeleeSelection(battleStateData->getMeleeState,
-										conn->player, networkOrder<uint16_t>(packet->ship));
+										conn->player, uqm::convertBigEndian<uint16_t>(packet->ship));
 	if (!updateResult)
 	{
 		errno = EBADMSG;
@@ -639,7 +639,7 @@ int PacketHandler_FrameCount(NetConnection* conn,
 		return -1; // errno is set
 	}
 
-	frameCount = (BattleFrameCounter)networkOrder<uint32_t>(packet->frameCount);
+	frameCount = (BattleFrameCounter)uqm::convertBigEndian<uint32_t>(packet->frameCount);
 #ifdef NETPLAY_DEBUG
 	uqm::log::debug("NETPLAY: [{}] <== Received battleFrameCount {}.\n",
 					conn->player, (unsigned int)frameCount);
@@ -680,8 +680,8 @@ int PacketHandler_Checksum(NetConnection* conn, const Packet_Checksum* packet)
 	}
 
 #ifdef NETPLAY_CHECKSUM
-	frameNr = networkOrder<uint32_t>(packet->frameNr);
-	checksum = networkOrder<uint32_t>(packet->checksum);
+	frameNr = uqm::convertBigEndian<uint32_t>(packet->frameNr);
+	checksum = uqm::convertBigEndian<uint32_t>(packet->checksum);
 	interval = NetConnection_getChecksumInterval(conn);
 	delay = getBattleInputDelay();
 
@@ -759,7 +759,7 @@ int PacketHandler_Reset(NetConnection* conn, const Packet_Reset* packet)
 		return -1; // errno is set
 	}
 
-	reason = (NetplayResetReason)networkOrder<uint16_t>(packet->reason);
+	reason = (NetplayResetReason)uqm::convertBigEndian<uint16_t>(packet->reason);
 
 	Netplay_remoteReset(conn, reason);
 	return 0;

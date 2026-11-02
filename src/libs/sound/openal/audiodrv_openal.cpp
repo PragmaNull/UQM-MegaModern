@@ -148,7 +148,7 @@ openAL_Init(audio_Driver* driver, AudioFlags flags)
 	int i;
 	TFB_DecoderFormats formats =
 		{
-			MIX_IS_BIG_ENDIAN, MIX_WANT_BIG_ENDIAN,
+			uqstl::endian::native == uqstl::endian::big, uqstl::endian::native == uqstl::endian::big,
 			audio_FORMAT_MONO8, audio_FORMAT_STEREO8,
 			audio_FORMAT_MONO16, audio_FORMAT_STEREO16};
 

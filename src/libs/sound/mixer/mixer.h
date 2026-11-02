@@ -23,7 +23,6 @@
 #include "config.h"
 #include <cstdint>
 #include "core/stl/memory.h"
-#include "endian_uqm.h"
 
 /**
  * The interface heavily influenced by OpenAL
@@ -34,14 +33,6 @@
  * EXCEPTION: You may not queue the same buffer
  * on more than one source
  */
-
-#ifdef WORDS_BIGENDIAN
-#define MIX_IS_BIG_ENDIAN true
-#define MIX_WANT_BIG_ENDIAN true
-#else
-#define MIX_IS_BIG_ENDIAN false
-#define MIX_WANT_BIG_ENDIAN false
-#endif
 
 /**
  * Mixer errors (see OpenAL errors)

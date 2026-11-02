@@ -22,7 +22,6 @@
 #include <errno.h>
 #include "port.h"
 #include <cstdint>
-#include "endian_uqm.h"
 #include "decoder.h"
 #include "core/misc/bittricks.h"
 #include "libs/reslib.h"

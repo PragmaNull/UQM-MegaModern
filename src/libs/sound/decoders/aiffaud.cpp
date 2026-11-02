@@ -34,7 +34,7 @@
 #include "port.h"
 #include <cstdint>
 #include "libs/reslib.h"
-#include "endian_uqm.h"
+#include "core/misc/bittricks.h"
 #include "core/log/log.h"
 #include "aiffaud.h"
 
@@ -145,7 +145,7 @@ typedef enum
 	aifc_Sdx2,
 } aiff_CompressionType;
 
-#define MAX_CHANNELS 4
+constexpr int c_maxAiffChannels {4};
 
 typedef struct tfb_wavesounddecoder
 {
@@ -164,7 +164,7 @@ typedef struct tfb_wavesounddecoder
 	uint32_t data_size;
 	uint32_t max_pcm;
 	uint32_t cur_pcm;
-	int32_t prev_val[MAX_CHANNELS];
+	int32_t prev_val[c_maxAiffChannels];
 
 } TFB_AiffSoundDecoder;
 
@@ -238,7 +238,7 @@ read_be_16(uqm::io::File* fp, uint16_t* v)
 	{
 		return false;
 	}
-	*v = UQM_SwapBE16(*v);
+	*v = uqm::convertBigEndian<uint16_t>(*v);
 	return true;
 }
 
@@ -249,7 +249,7 @@ read_be_32(uqm::io::File* fp, uint32_t* v)
 	{
 		return false;
 	}
-	*v = UQM_SwapBE32(*v);
+	*v = uqm::convertBigEndian<uint32_t>(*v);
 	return true;
 }
 
@@ -506,7 +506,7 @@ aifa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 		}
 		aifa->comp_type = aifc_Sdx2;
 		aifa->file_block /= 2;
-		assert(aifa->fmtHdr.channels <= MAX_CHANNELS);
+		assert(aifa->fmtHdr.channels <= c_maxAiffChannels);
 		// after decompression, we will get samples in machine byte order
 		This->need_swap = (aifa_formats->big_endian
 						   != aifa_formats->want_big_endian);

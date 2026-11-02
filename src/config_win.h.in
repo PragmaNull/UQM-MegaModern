@@ -29,9 +29,6 @@
 /* Directory where screenshots will be stored */
 #define SCRSHOTDIR "%UQM_CONFIG_DIR%/screenshots/"
 
-/* Defined if words are stored with the most significant byte first */
-@WORDS_BIGENDIAN@
-
 /* Defined if your system has readdir_r of its own */
 @HAVE_READDIR_R@
 

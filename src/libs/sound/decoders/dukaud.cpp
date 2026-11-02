@@ -25,7 +25,7 @@
 #include "libs/reslib.h"
 #include "dukaud.h"
 #include "decoder.h"
-#include "endian_uqm.h"
+#include "core/misc/bittricks.h"
 #include "core/stl/stl.h"
 #include "core/string/StringUtils.h"
 
@@ -120,7 +120,7 @@ duka_readAudFrameHeader(TFB_DuckSoundDecoder* duka, uint32_t iframe,
 		duka->last_error = errno;
 		return dukae_BadFile;
 	}
-	hdr.audsize = UQM_SwapBE32(hdr.audsize);
+	hdr.audsize = uqm::convertBigEndian<uint32_t>(hdr.audsize);
 
 	if (!duka->duk->readValue(*aud))
 	{
@@ -128,16 +128,16 @@ duka_readAudFrameHeader(TFB_DuckSoundDecoder* duka, uint32_t iframe,
 		return dukae_BadFile;
 	}
 
-	aud->magic = UQM_SwapBE16(aud->magic);
+	aud->magic = uqm::convertBigEndian<uint16_t>(aud->magic);
 	if (aud->magic != 0xf77f)
 	{
 		return duka->last_error = dukae_BadFile;
 	}
 
-	aud->numsamples = UQM_SwapBE16(aud->numsamples);
-	aud->tag = UQM_SwapBE16(aud->tag);
-	aud->indices[0] = UQM_SwapBE16(aud->indices[0]);
-	aud->indices[1] = UQM_SwapBE16(aud->indices[1]);
+	aud->numsamples = uqm::convertBigEndian<uint16_t>(aud->numsamples);
+	aud->tag = uqm::convertBigEndian<uint16_t>(aud->tag);
+	aud->indices[0] = uqm::convertBigEndian<uint16_t>(aud->indices[0]);
+	aud->indices[1] = uqm::convertBigEndian<uint16_t>(aud->indices[1]);
 
 	return 0;
 }
@@ -296,7 +296,7 @@ duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 		duka->last_error = errno;
 		return dukae_BadFile;
 	}
-	hdr.audsize = UQM_SwapBE32(hdr.audsize);
+	hdr.audsize = uqm::convertBigEndian<uint32_t>(hdr.audsize);
 
 	// dump encoded data at the end of the buffer aligned on 8-byte
 	p = (duka->data.data() + duka->maxdata - ((hdr.audsize + 7) & (-8)));
@@ -308,16 +308,16 @@ duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 	aud = (DukAud_AudSubframe*)p;
 	p += sizeof(DukAud_AudSubframe);
 
-	aud->magic = UQM_SwapBE16(aud->magic);
+	aud->magic = uqm::convertBigEndian<uint16_t>(aud->magic);
 	if (aud->magic != 0xf77f)
 	{
 		return duka->last_error = dukae_BadFile;
 	}
 
-	aud->numsamples = UQM_SwapBE16(aud->numsamples);
-	aud->tag = UQM_SwapBE16(aud->tag);
-	aud->indices[0] = UQM_SwapBE16(aud->indices[0]);
-	aud->indices[1] = UQM_SwapBE16(aud->indices[1]);
+	aud->numsamples = uqm::convertBigEndian<uint16_t>(aud->numsamples);
+	aud->tag = uqm::convertBigEndian<uint16_t>(aud->tag);
+	aud->indices[0] = uqm::convertBigEndian<uint16_t>(aud->indices[0]);
+	aud->indices[1] = uqm::convertBigEndian<uint16_t>(aud->indices[1]);
 
 	duka->iframe++;
 
@@ -468,7 +468,7 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 
 	for (i = 0; i < duka->cframes; ++i)
 	{
-		duka->frames[i] = UQM_SwapBE32(duka->frames[i]);
+		duka->frames[i] = uqm::convertBigEndian<uint32_t>(duka->frames[i]);
 	}
 
 	if (duka_readAudFrameHeader(duka, 0, &aud) < 0)

@@ -23,7 +23,7 @@
 #include "port.h"
 #include <cstdint>
 #include "libs/reslib.h"
-#include "endian_uqm.h"
+#include "core/misc/bittricks.h"
 #include "core/log/log.h"
 #include "wav.h"
 
@@ -175,7 +175,7 @@ read_le_16(uqm::io::File* fp, uint16_t* v)
 	{
 		return false;
 	}
-	*v = UQM_SwapLE16(*v);
+	*v = uqm::convertLittleEndian<uint16_t>(*v);
 	return true;
 }
 
@@ -186,7 +186,7 @@ read_le_32(uqm::io::File* fp, uint32_t* v)
 	{
 		return false;
 	}
-	*v = UQM_SwapLE32(*v);
+	*v = uqm::convertLittleEndian<uint32_t>(*v);
 	return true;
 }
 

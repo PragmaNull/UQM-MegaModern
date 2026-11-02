@@ -22,6 +22,7 @@ list(APPEND uqm_tests_core_master_files
 # Local files
 set(uqm_tests_core_files
 	"tests/core/test_log_BacktraceCaptureSink.cpp"
+	"tests/core/test_bittricks.cpp"
 	"tests/core/test_StringUtils.cpp"
 	"tests/core/test_Utf8.cpp"
 	"tests/core/test_ring_buffer.cpp"

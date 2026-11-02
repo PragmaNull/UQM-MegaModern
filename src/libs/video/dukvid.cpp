@@ -23,7 +23,7 @@
 #include "dukvid.h"
 #include <stdio.h>
 #include <string.h>
-#include "endian_uqm.h"
+#include "core/misc/bittricks.h"
 #include "uqm/units.h"
 #include "core/string/StringUtils.h"
 
@@ -319,7 +319,7 @@ dukv_ReadFrames(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir)
 
 	for (i = 0; i < dukv->cframes; ++i)
 	{
-		dukv->frames[i] = UQM_SwapBE32(dukv->frames[i]);
+		dukv->frames[i] = uqm::convertBigEndian<uint32_t>(dukv->frames[i]);
 	}
 
 	return true;
@@ -368,14 +368,14 @@ dukv_ReadHeader(TFB_DuckVideoDecoder* dukv, const uqm::io::Directory& dir, int32
 		return false;
 	}
 
-	dukv->version = UQM_SwapBE32(hdr.version);
-	dukv->wb = UQM_SwapBE16(hdr.wb);
-	dukv->hb = UQM_SwapBE16(hdr.hb);
+	dukv->version = uqm::convertBigEndian<uint32_t>(hdr.version);
+	dukv->wb = uqm::convertBigEndian<uint16_t>(hdr.wb);
+	dukv->hb = uqm::convertBigEndian<uint16_t>(hdr.hb);
 
 	for (i = 0; i < 8; ++i)
 	{
-		pl[i] = (int16_t)UQM_SwapBE16(hdr.lumas[i]);
-		pc[i] = (int16_t)UQM_SwapBE16(hdr.chromas[i]);
+		pl[i] = (int16_t)uqm::convertBigEndian<uint16_t>(hdr.lumas[i]);
+		pc[i] = (int16_t)uqm::convertBigEndian<uint16_t>(hdr.chromas[i]);
 	}
 
 	dukv->decoder.w = dukv->wb * 4;
@@ -712,8 +712,8 @@ dukv_DecodeNext(THIS_PTR)
 		return 0;
 	}
 
-	vofs = UQM_SwapBE32(fh[0]);
-	vsize = UQM_SwapBE32(fh[1]);
+	vofs = uqm::convertBigEndian<uint32_t>(fh[0]);
+	vsize = uqm::convertBigEndian<uint32_t>(fh[1]);
 	if (vsize > DUCK_MAX_FRAME_SIZE)
 	{
 		dukv->last_error = dukve_OutOfBuf;
@@ -727,7 +727,7 @@ dukv_DecodeNext(THIS_PTR)
 		return 0;
 	}
 
-	ver = UQM_SwapBE16(*(uint16_t*)dukv->inbuf.data());
+	ver = uqm::convertBigEndian<uint16_t>(*(uint16_t*)dukv->inbuf.data());
 	if (ver == 0x0300)
 	{
 		dukv_DecodeFrameV3(dukv->inbuf.data() + 0x10, dukv->decbuf.data(),

@@ -31,7 +31,6 @@ set(uqm_src_files
 	"src/config_vc6.h"
 #	"src/config_win.h"
 #	"src/config_win.h.in"
-	"src/endian_uqm.h"
 	"src/main.cpp"
 	"src/options.cpp"
 	"src/options.h"

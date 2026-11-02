@@ -1,10 +1,11 @@
-// Byte helpers: splitting and joining bytes, nibbles and words.
+// Byte helpers: splitting and joining bytes, nibbles and words, and byte order conversion.
 #pragma once
 #ifndef UQM_CORE_MISC_BITTRICKS_H_
 #define UQM_CORE_MISC_BITTRICKS_H_
 
 #include "core/stl/stl.h"
 
+#include "core/stl/bit.h"
 #include "core/stl/concepts.h"
 #include <cstdint>
 
@@ -77,6 +78,20 @@ template <IntegerOrEnum L, IntegerOrEnum H>
 [[nodiscard]] constexpr uint32_t makeDword(L lo, H hi) noexcept
 {
 	return (static_cast<uint32_t>(hi) << 16) | static_cast<uint16_t>(lo);
+}
+
+// Converts 'value' between the host byte order and big-endian. The conversion is the same in both directions.
+template <uqstl::unsigned_integral T>
+[[nodiscard]] constexpr T convertBigEndian(T value) noexcept
+{
+	return uqstl::endian::native == uqstl::endian::big ? value : uqstl::byteswap(value);
+}
+
+// Converts 'value' between the host byte order and little-endian. The conversion is the same in both directions.
+template <uqstl::unsigned_integral T>
+[[nodiscard]] constexpr T convertLittleEndian(T value) noexcept
+{
+	return uqstl::endian::native == uqstl::endian::little ? value : uqstl::byteswap(value);
 }
 
 } // namespace uqm
