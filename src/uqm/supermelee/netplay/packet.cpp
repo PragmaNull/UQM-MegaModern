@@ -73,8 +73,8 @@ Packet_create(PacketType type, size_t extraSize)
 
 	len = packetTypeData[type].len + extraSize;
 	result = (Packet*)Packet_alloc(len);
-	result->header.len = hton16((uint16_t)len);
-	result->header.type = hton16((uint16_t)type);
+	result->header.len = networkOrder<uint16_t>((uint16_t)len);
+	result->header.type = networkOrder<uint16_t>((uint16_t)type);
 	return result;
 }
 
@@ -103,7 +103,7 @@ Packet_Ping_create(uint32_t id)
 {
 	Packet_Ping* packet = (Packet_Ping*)Packet_create(PACKET_PING, 0);
 
-	packet->id = hton32(id);
+	packet->id = networkOrder<uint32_t>(id);
 	return packet;
 }
 
@@ -112,7 +112,7 @@ Packet_Ack_create(uint32_t id)
 {
 	Packet_Ack* packet = (Packet_Ack*)Packet_create(PACKET_ACK, 0);
 
-	packet->id = hton32(id);
+	packet->id = networkOrder<uint32_t>(id);
 	return packet;
 }
 
@@ -139,7 +139,7 @@ Packet_Fleet_create(NetplaySide side, size_t numShips)
 	packet = (Packet_Fleet*)Packet_create(PACKET_FLEET, extraSize);
 	packet->side = (uint8_t)side;
 	packet->padding = 0;
-	packet->numShips = hton16((uint16_t)numShips);
+	packet->numShips = networkOrder<uint16_t>((uint16_t)numShips);
 	memset((char*)packet + sizeof(Packet_Fleet) + fleetSize,
 		   '\0', extraSize - fleetSize);
 
@@ -209,7 +209,7 @@ Packet_SeedRandom_create(uint32_t seed)
 	Packet_SeedRandom* packet =
 		(Packet_SeedRandom*)Packet_create(PACKET_SEEDRANDOM, 0);
 
-	packet->seed = hton32(seed);
+	packet->seed = networkOrder<uint32_t>(seed);
 	return packet;
 }
 
@@ -219,7 +219,7 @@ Packet_InputDelay_create(uint32_t delay)
 	Packet_InputDelay* packet =
 		(Packet_InputDelay*)Packet_create(PACKET_INPUTDELAY, 0);
 
-	packet->delay = hton32(delay);
+	packet->delay = networkOrder<uint32_t>(delay);
 	return packet;
 }
 
@@ -228,7 +228,7 @@ Packet_SelectShip_create(uint16_t ship)
 {
 	Packet_SelectShip* packet =
 		(Packet_SelectShip*)Packet_create(PACKET_SELECTSHIP, 0);
-	packet->ship = hton16(ship);
+	packet->ship = networkOrder<uint16_t>(ship);
 	packet->padding = 0;
 	return packet;
 }
@@ -249,7 +249,7 @@ Packet_FrameCount_create(uint32_t frameCount)
 {
 	Packet_FrameCount* packet =
 		(Packet_FrameCount*)Packet_create(PACKET_FRAMECOUNT, 0);
-	packet->frameCount = hton32(frameCount);
+	packet->frameCount = networkOrder<uint32_t>(frameCount);
 	return packet;
 }
 
@@ -258,8 +258,8 @@ Packet_Checksum_create(uint32_t frameNr, uint32_t checksum)
 {
 	Packet_Checksum* packet =
 		(Packet_Checksum*)Packet_create(PACKET_CHECKSUM, 0);
-	packet->frameNr = hton32(frameNr);
-	packet->checksum = hton32(checksum);
+	packet->frameNr = networkOrder<uint32_t>(frameNr);
+	packet->checksum = networkOrder<uint32_t>(checksum);
 	return packet;
 }
 
@@ -267,7 +267,7 @@ Packet_Abort*
 Packet_Abort_create(uint16_t reason)
 {
 	Packet_Abort* packet = (Packet_Abort*)Packet_create(PACKET_ABORT, 0);
-	packet->reason = hton16(reason);
+	packet->reason = networkOrder<uint16_t>(reason);
 	return packet;
 }
 
@@ -275,6 +275,6 @@ Packet_Reset*
 Packet_Reset_create(uint16_t reason)
 {
 	Packet_Reset* packet = (Packet_Reset*)Packet_create(PACKET_RESET, 0);
-	packet->reason = hton16(reason);
+	packet->reason = networkOrder<uint16_t>(reason);
 	return packet;
 }

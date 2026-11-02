@@ -6,7 +6,6 @@ set(uqm_src_libs_network_master_files "")
 ############################################################
 # Local files
 set(uqm_src_libs_network_files
-	"src/libs/network/bytesex.h"
 	"src/libs/network/Connection.cpp"
 	"src/libs/network/Connection.h"
 	"src/libs/network/Connector.cpp"

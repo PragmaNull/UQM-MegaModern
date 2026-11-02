@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
 project(UrQuanMastersMegaModern CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON) # Optional, but recommended for standard compliance
 
@@ -217,7 +217,7 @@ endif()
 ################################################################################
 # Compile and link options
 ################################################################################
-target_compile_features(${APP_TARGET} PRIVATE cxx_std_20)
+target_compile_features(${APP_TARGET} PRIVATE cxx_std_23)
 
 # if(MSVC)
 #     target_compile_options(${APP_TARGET} PRIVATE

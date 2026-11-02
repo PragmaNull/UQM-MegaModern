@@ -75,7 +75,15 @@ typedef enum NetplayResetReason
 #include "netconnection.h"
 
 #include <cstdint>
-#include "libs/network/bytesex.h"
+#include "core/stl/bit.h"
+#include "core/stl/concepts.h"
+
+// Converts 'value' between the host byte order and the network byte order (big-endian).
+template <uqstl::unsigned_integral T>
+[[nodiscard]] constexpr T networkOrder(T value)
+{
+	return uqstl::endian::native == uqstl::endian::big ? value : uqstl::byteswap(value);
+}
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -127,13 +135,13 @@ struct Packet
 static inline size_t
 packetLength(const Packet* packet)
 {
-	return (size_t)ntoh16(packet->header.len);
+	return (size_t)networkOrder<uint16_t>(packet->header.len);
 }
 
 static inline PacketType
 packetType(const Packet* packet)
 {
-	return (PacketType)(int)ntoh16(packet->header.type);
+	return (PacketType)(int)networkOrder<uint16_t>(packet->header.type);
 }
 
 static inline bool

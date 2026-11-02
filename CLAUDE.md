@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-UQM-MegaModern is a C++20 modernization of The Ur-Quan Masters (a port of Star Control II) combined with the HD-mod. Active effort is underway to replace legacy C patterns with modern C++ (STL abstractions, `<cstdint>` types, `enum class`, smart pointers).
+UQM-MegaModern is a C++23 modernization of The Ur-Quan Masters (a port of Star Control II) combined with the HD-mod. Active effort is underway to replace legacy C patterns with modern C++ (STL abstractions, `<cstdint>` types, `enum class`, smart pointers).
 
 ## Build Instructions
 
@@ -104,7 +104,7 @@ Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each o
 
 - **Namespaces**: `uqm::` for game code, `uqstl::` for container/algorithm aliases, `uqgsl::` for GSL-lite aliases
 - **Classes**: PascalCase; member variables prefixed `m_`; static variables prefixed `s_`
-- **C++ standard**: C++20 required
+- **C++ standard**: C++23 required
 - **Integer types**: Use `<cstdint>` types (`int32_t`, `uint8_t`, etc.) — not legacy custom types
 - **Enums**: Use `enum class` with `magic_enum` for reflection where needed
 - **String safety**: Use `uqstl::string_view` for safe string views (pass by value); use `uqgsl::czstring` when the API deals with C-style null-terminated strings; use `scn::scan` instead of `sscanf`
