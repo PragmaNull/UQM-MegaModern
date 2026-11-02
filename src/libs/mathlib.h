@@ -21,7 +21,10 @@
 
 #include "core/misc/bittricks.h"
 
+#include "core/stl/string.h"
+
 #include <cmath>
+#include <zlib.h>
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -34,26 +37,10 @@ inline uint16_t square_root(uint32_t value)
 {
 	return static_cast<uint16_t>(std::sqrt(static_cast<double>(value)));
 }
-inline uint32_t crc32b(const char* str)
-{ // Source: https://stackoverflow.com/a/21001712
-	unsigned int byte, crc, mask;
-	int i = 0, j;
-
-	crc = 0xFFFFFFFF;
-
-	while (str[i] != 0)
-	{
-		byte = str[i];
-		crc = crc ^ byte;
-
-		for (j = 7; j >= 0; j--)
-		{
-			mask = -(int)(crc & 1);
-			crc = (crc >> 1) ^ (0xEDB88320 & mask);
-		}
-		i = i + 1;
-	}
-	return ~crc;
+// The CRC-32 of 'str'.
+inline uint32_t crc32b(uqstl::string_view str)
+{
+	return static_cast<uint32_t>(crc32(0, reinterpret_cast<const Bytef*>(str.data()), static_cast<uInt>(str.size())));
 }
 
 inline static float

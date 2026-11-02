@@ -25,6 +25,7 @@
 #include <cstdint>
 #include "libs/io/FileSystem.h"
 #include "libs/sound/audiocoredefs.h"
+#include "libs/mathlib.h"
 #include "core/stl/string.h"
 #include "core/stl/vector.h"
 
@@ -150,7 +151,5 @@ void SoundDecoder_Seek(TFB_SoundDecoder* decoder, uint32_t msecs);
 void SoundDecoder_Rewind(TFB_SoundDecoder* decoder);
 void SoundDecoder_Free(TFB_SoundDecoder* decoder);
 const char* SoundDecoder_GetName(TFB_SoundDecoder* decoder);
-
-extern uint32_t crc32b(const char* str);
 
 #endif
