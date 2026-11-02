@@ -36,6 +36,8 @@ Keep these, because they are large and in use: `graphics`, `sound`, `video`, `in
 - **Threads:**
   - `TFB_SoundSource::sample` has no `UQM_GUARDED_BY`, because the sound effect channels use it without the stream lock.
   - The mixer lock order (`src_mutex`, `buf_mutex`, `act_mutex`) is only a comment. Clang can check it with `UQM_ACQUIRED_AFTER` annotations and `-Wthread-safety-beta`.
+- **Netplay battle start:** in a scripted netplay test on one computer, the host stops (its input script makes no progress) after it selects BATTLE, and the client sees the connection close. The old network code behaves the same, so the cause is not in the network classes. Not investigated yet.
+- **Netplay log message:** `TFB_Prim_Stamp: Tried to draw a nullptr frame (Stamp address = %p)` appears in netplay. The message has a printf format in an fmt string, and a frame is missing.
 - **Busy waits:** the `TaskSwitch()` loops (input rebinding, init, starcon, util, battle and others) sleep for 1 ms in each pass. Change them to waits on a condition.
 
 ## Testing

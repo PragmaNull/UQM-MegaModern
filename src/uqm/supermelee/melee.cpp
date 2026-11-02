@@ -2158,6 +2158,18 @@ LoadMeleeInfo(MELEE_STATE* pMS)
 static void
 FreeMeleeInfo(MELEE_STATE* pMS)
 {
+#ifdef NETPLAY
+	if (getNumNetConnections() > 0)
+	{
+		closeAllConnections();
+		// Draw the queued text before the fonts are destroyed.
+		FlushGraphics();
+	}
+	// Clear the input delay in case we will go into the full game later.
+	// Must be done after the net connections are closed.
+	setupInputDelay(0);
+#endif
+
 	pMS->load.dirEntries.clear();
 
 	if (pMS->hMusic)
@@ -2177,13 +2189,6 @@ FreeMeleeInfo(MELEE_STATE* pMS)
 	DestroyFont(ButtonFont);
 	DestroyDrawable(ReleaseDrawable(FontGradFrame));
 	FontGradFrame = 0;
-
-#ifdef NETPLAY
-	closeAllConnections();
-	// Clear the input delay in case we will go into the full game later.
-	// Must be done after the net connections are closed.
-	setupInputDelay(0);
-#endif
 }
 
 static void
