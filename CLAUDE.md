@@ -14,7 +14,7 @@ Root `.bat` files wrap Python scripts in `scripts/`:
 
 ```bat
 setup.bat   [-c CONFIG] [--asan] [-p PROFILE]   :: conan install, then cmake configure (Ninja)
-build.bat   [-c CONFIG] [--asan] [-t TARGET] [-j N] [--clean]
+build.bat   [-c CONFIG] [--asan] [-t TARGET] [-j N] [--clean] [--clang-tidy | --tidy-fix]
 test.bat    [-c CONFIG] [--build] [-R REGEX] [-j N]
 run.bat     [--build] [GAME ARGS...]           :: run the game with -n content
 regress.bat [--build] [-R REGEX] [-j N]         :: run the input scripts in test/scripts
@@ -23,6 +23,7 @@ shaders.bat                                     :: compile src/libs/graphics/sdl
 
 - `CONFIG`: `Release` (default), `Debug`, `RelWithDebInfo`, `MinSizeRel`. All take `-B DIR` (default `conanbuild`).
 - `build`/`test` default to the config already in `CMakeCache.txt`; `build` reconfigures if `--config`/`--asan` differ.
+- `build --clang-tidy` runs clang-tidy with the checks in `.clang-tidy` after the build. `--tidy-fix` also applies the fixes, with braced initialization and the format of `src/.clang-format`. Use a separate build dir, for example `-B conanbuild-tidy`.
 - `shaders` downloads its shader compilers to `.cache/shadertools` the first time. The generated headers are committed, so run it only after a change to a shader.
 - `setup --skip-install` runs only the cmake step. `build` runs conan install itself when the conan files for the config are missing.
 - Commands run inside conan's `conanbuild`/`conanrun` env scripts, so no VS developer prompt is needed.

@@ -121,9 +121,9 @@ target_compile_definitions(uqm_project_features
         __STDC_WANT_LIB_EXT1__=1
 )
 
-# Check lock discipline (see src/core/thread/ThreadSafety.h).
+# Check lock discipline (see src/core/thread/ThreadSafety.h). A goto that jumps past an initialization is an error.
 target_compile_options(uqm_project_features
-    INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang>>:-Wthread-safety>
+    INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang>>:-Wthread-safety -Werror=microsoft-goto>
 )
 
 target_link_libraries(${APP_TARGET} PRIVATE uqm_project_features)
