@@ -61,7 +61,8 @@ bool TextEntry3DO = false;
 
 void ConfirmSaveLoad(STAMP* MsgStamp)
 {
-	GFXRECT r, clip_r;
+	GFXRECT r;
+	GFXRECT clip_r;
 	TEXT t;
 
 	SetContextFont(StarConFont);
@@ -130,7 +131,7 @@ static void
 FeedbackSetting(uint8_t which_setting)
 {
 	char buf[128] {};
-	const char* tmpstr;
+	const char* tmpstr {};
 
 	switch (which_setting)
 	{
@@ -202,8 +203,9 @@ DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 {
 	GFXRECT r;
 	TEXT lf;
-	Color BackGround, ForeGround;
-	FONT Font;
+	Color BackGround;
+	Color ForeGround;
+	FONT Font {};
 
 	{
 		r.corner.x = RES_SCALE(2);
@@ -261,10 +263,8 @@ DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 	}
 	else
 	{ // editing state
-		uint16_t i;
 		GFXRECT text_r;
 		uint8_t char_deltas[MAX_NAME_SIZE];
-		uint8_t* pchar_deltas;
 
 		TextRect(&lf, &text_r, char_deltas);
 
@@ -283,8 +283,8 @@ DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 			DrawBorder(SIS_STAT_REPAIR_FRAME);
 		}
 
-		pchar_deltas = char_deltas;
-		for (i = CursorPos; i > 0; --i)
+		const uint8_t* pchar_deltas {char_deltas};
+		for (uint16_t i {CursorPos}; i > 0; --i)
 		{
 			text_r.corner.x += *pchar_deltas++;
 		}
@@ -354,7 +354,7 @@ DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 static bool
 OnNameChange(TEXTENTRY_STATE* pTES)
 {
-	bool nameCaptain = (bool)pTES->CbParam;
+	const bool nameCaptain = (bool)pTES->CbParam;
 	uint16_t hl = DDSHS_EDIT;
 
 	if (pTES->JoystickMode)
@@ -370,7 +370,7 @@ NameCaptainOrShip(bool nameCaptain, bool gamestart)
 {
 	char buf[MAX_NAME_SIZE] = "";
 	TEXTENTRY_STATE tes;
-	char* Setting;
+	char* Setting {};
 	uint16_t CursPos = 0;
 
 	SetContext(StatusContext);
@@ -445,8 +445,8 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 {
 	GFXRECT r;
 	TEXT lf;
-	Color BackGround, ForeGround;
-	FONT Font;
+	Color BackGround;
+	Color ForeGround;
 	char fullStr[256] {};
 	char dateStr[80] {};
 
@@ -469,7 +469,7 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 	r.corner.x = RES_SCALE(30);
 	DrawRectangle(&r, IS_HD);
 
-	Font = TinyFont;
+	FONT Font {TinyFont};
 	lf.baseline.x = r.corner.x + RES_SCALE(3);
 	lf.baseline.y = r.corner.y + RES_SCALE(8);
 
@@ -499,10 +499,9 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 	}
 	else
 	{ // editing state
-		uint16_t i, FullCursorPos;
+		uint16_t FullCursorPos {};
 		GFXRECT text_r;
 		uint8_t char_deltas[256];
-		uint8_t* pchar_deltas;
 
 		TextRect(&lf, &text_r, char_deltas);
 		if ((text_r.extent.width + RES_SCALE(2)) >= r.extent.width)
@@ -517,10 +516,10 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 		SetContextForeGroundColor(BackGround);
 		DrawFilledRectangle(&r);
 
-		pchar_deltas = char_deltas;
+		const uint8_t* pchar_deltas {char_deltas};
 
 		FullCursorPos = CursorPos + (uint16_t)uqm::utf8StringCount(dateStr);
-		for (i = FullCursorPos; i > 0; --i)
+		for (uint16_t i {FullCursorPos}; i > 0; --i)
 		{
 			text_r.corner.x += *pchar_deltas++;
 		}
@@ -567,7 +566,7 @@ static bool
 OnSaveNameChange(TEXTENTRY_STATE* pTES)
 {
 	uint16_t hl = DDSHS_EDIT;
-	uint16_t* gameIndex = (uint16_t*)pTES->CbParam;
+	const uint16_t* gameIndex = (uint16_t*)pTES->CbParam;
 
 	if (pTES->JoystickMode)
 	{
@@ -581,7 +580,7 @@ static bool
 NameSaveGame(uint16_t gameIndex, char* buf)
 {
 	TEXTENTRY_STATE tes;
-	uint16_t CursPos = (uint16_t)strlen(buf);
+	const uint16_t CursPos = (uint16_t)strlen(buf);
 	uint16_t gIndex {gameIndex};
 	GFXRECT r;
 
@@ -639,7 +638,8 @@ void SetNamingCallback(NamingCallback* callback)
 static bool
 DoSettings(MENU_STATE* pMS)
 {
-	uint8_t cur_speed, read_speed;
+	uint8_t cur_speed {};
+	uint8_t read_speed {};
 	static uint8_t i = 0;
 
 	if (uqm::currentActivity() & CHECK_ABORT)
@@ -837,15 +837,14 @@ DrawLabel(GFXPOINT pt, int16_t width, uint32_t gamestr)
 {
 	TEXT t;
 	char buf[256];
-	int16_t leading;
-	FONT OldFont;
+	int16_t leading {};
 	Color OldColor;
 
 	DrawLines(SCL_POINT(pt), RES_SCALE(width));
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf), GAME_STRING(gamestr));
 
-	OldFont = SetContextFont(LabelFont);
+	FONT OldFont {SetContextFont(LabelFont)};
 	OldColor = SetContextForeGroundColor(SUMM_TEXT_COLOR);
 
 	GetContextFontLeading(&leading);
@@ -872,11 +871,10 @@ static void
 DrawAllLabels(GFXRECT rect)
 {
 	GFXPOINT pt;
-	int16_t width;
-	uint16_t i;
+	int16_t width {};
 	Color OldColor;
 
-	for (i = 4; i <= 8; i++)
+	for (uint16_t i {4}; i <= 8; i++)
 	{
 		if (!strlen(GAME_STRING(LABEL_STRING_BASE + i)))
 		{
@@ -967,11 +965,10 @@ static void
 DrawSaveLoadText(PICK_GAME_STATE* pickState)
 {
 	GFXRECT r;
-	FONT OldFont;
 	Color OldColor;
 	TEXT text;
 	char buf[256];
-	int16_t leading;
+	int16_t leading {};
 
 #define SAVE_LOAD_Y RES_SCALE(151)
 #define SAVE_LOAD_H RES_SCALE(7)
@@ -990,7 +987,7 @@ DrawSaveLoadText(PICK_GAME_STATE* pickState)
 	SetContextForeGroundColor(BLACK_COLOR);
 	DrawFilledRectangle(&r);
 
-	OldFont = SetContextFont(SAFE_BOOL(MicroFont, LabelFont));
+	FONT OldFont {SetContextFont(SAFE_BOOL(MicroFont, LabelFont))};
 	OldColor = SetContextForeGroundColor(
 		SAFE_BOOL(SUMM_TEXT_COLOR, LOAD_SAVE_LABEL_COLOR));
 
@@ -1015,12 +1012,12 @@ DrawSaveLoadText(PICK_GAME_STATE* pickState)
 static void
 DrawSavegameCargo(SIS_STATE* sisState)
 {
-	uint16_t i;
+	uint16_t i {};
 	STAMP s;
 	TEXT t;
 	char buf[40];
 #define NUM_COLORS 9
-	static const Color cargo_color[NUM_COLORS] = CARGO_COLOR_TABLE;
+	const static Color cargo_color[NUM_COLORS] = CARGO_COLOR_TABLE;
 #define ELEMENT_ORG_Y RES_SCALE(17)
 #define ELEMENT_SPACING_Y RES_SCALE(12)
 #define ELEMENT_SPACING_X RES_SCALE(36)
@@ -1087,10 +1084,10 @@ DrawEmptySlot(void)
 	TEXT t;
 	char buf[256];
 	Color oldfg;
-	uint8_t stroke;
+	uint8_t stroke {};
 	GFXPOINT offset;
 	GFXPOINT t_baseline;
-	int16_t leading;
+	int16_t leading {};
 
 	r.corner.x = RES_SCALE(1);
 	r.corner.y = RES_SCALE(1);
@@ -1175,8 +1172,7 @@ DrawBombPodText(STAMP* s)
 {
 	TEXT t;
 	char buf[256];
-	int16_t leading;
-	FONT OldFont;
+	int16_t leading {};
 	Color OldColor;
 	GFXRECT r;
 	int16_t og_baseline_x = 0;
@@ -1187,7 +1183,7 @@ DrawBombPodText(STAMP* s)
 		return;
 	}
 
-	OldFont = SetContextFont(SquareFont);
+	FONT OldFont {SetContextFont(SquareFont)};
 	OldColor = SetContextForeGroundColor(BLACK_COLOR);
 
 	GetContextFontLeading(&leading);
@@ -1254,11 +1250,10 @@ DrawNoLimit(void)
 	GFXRECT r;
 	TEXT t;
 	Color oldfg;
-	FONT OldFont;
-	uint8_t stroke;
+	uint8_t stroke {};
 	GFXPOINT offset;
 	GFXPOINT t_baseline;
-	int16_t leading;
+	int16_t leading {};
 
 	r.corner.x = RES_SCALE(137) + SUMMARY_X_OFFS + SUMMARY_SIDE_OFFS;
 	r.corner.y = RES_SCALE(93);
@@ -1267,7 +1262,7 @@ DrawNoLimit(void)
 	SetContextForeGroundColor(BLACK_COLOR);
 	DrawFilledRectangle(&r);
 
-	OldFont = SetContextFont(LabelFont);
+	FONT OldFont {SetContextFont(LabelFont)};
 
 	GetContextFontLeading(&leading);
 
@@ -1339,11 +1334,10 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 	else
 	{
 		// Game slot used, draw information about save game.
-		uint16_t i;
+		uint16_t i {};
 		GFXRECT OldRect;
 		TEXT t;
 		uqm::LinkQueue player_built_q {};
-		GFXCONTEXT OldContext;
 		SIS_STATE SaveSS;
 		char buf[256];
 		GFXPOINT starPt;
@@ -1351,7 +1345,7 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		// Save the states because we will hack them
 		SaveSS = uqm::gameState().sis();
 
-		OldContext = SetContext(StatusContext);
+		GFXCONTEXT OldContext {SetContext(StatusContext)};
 		// Hack StatusContext so we can use standard SIS display funcs
 		GetContextClipRect(&OldRect);
 		r.corner.x = SIS_ORG_X
@@ -1389,13 +1383,11 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		s.origin.y = RES_SCALE(13);
 		for (i = 0; i < 4; ++i)
 		{
-			uint16_t j;
-
 			s.origin.x = RES_SCALE(140) + SUMMARY_X_OFFS
 					   + SUMMARY_SIDE_OFFS;
-			for (j = 0; j < 4; ++j)
+			for (uint16_t j {0}; j < 4; ++j)
 			{
-				uint16_t devIndex = (i * 4) + j;
+				const uint16_t devIndex = (i * 4) + j;
 				if (devIndex < pSD->NumDevices)
 				{
 					s.frame = SetAbsFrameIndex(MiscDataFrame, 77
@@ -1471,12 +1463,11 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 			case IN_PLANET_ORBIT:
 			case IN_STARBASE:
 				{
-					uint8_t QuasiState;
-					STAR_DESC* SDPtr;
+					uint8_t QuasiState {};
 
 					QuasiState = GET_GAME_STATE(ARILOU_SPACE_SIDE);
 					SET_GAME_STATE(ARILOU_SPACE_SIDE, 0);
-					SDPtr = FindStar(nullptr, &starPt, 1, 1);
+					const STAR_DESC* SDPtr {FindStar(nullptr, &starPt, 1, 1)};
 					SET_GAME_STATE(ARILOU_SPACE_SIDE, QuasiState);
 					if (SDPtr)
 					{
@@ -1595,11 +1586,13 @@ DrawGameSelection(PICK_GAME_STATE* pickState, uint16_t selSlot)
 {
 	GFXRECT r;
 	TEXT t;
-	uint16_t i, curSlot;
-	char buf[256], buf2[80];
-	const char* SaveName;
-	Color UnSelected = SAVE_UNSELECTED_COLOR;
-	Color Selected = SAVE_SELECTED_COLOR;
+	uint16_t i {};
+	uint16_t curSlot {};
+	char buf[256];
+	char buf2[80];
+	const char* SaveName {};
+	const Color UnSelected = SAVE_UNSELECTED_COLOR;
+	const Color Selected = SAVE_SELECTED_COLOR;
 
 	BatchGraphics();
 
@@ -1685,9 +1678,7 @@ RedrawPickDisplay(PICK_GAME_STATE* pickState, uint16_t selSlot)
 static void
 LoadGameDescriptions(SUMMARY_DESC* pSD)
 {
-	uint16_t i;
-
-	for (i = 0; i < MAX_SAVED_GAMES; ++i, ++pSD)
+	for (uint16_t i {0}; i < MAX_SAVED_GAMES; ++i, ++pSD)
 	{
 		if (!LoadGame(i, pSD))
 		{
@@ -1700,9 +1691,9 @@ static bool
 DoPickGame(MENU_STATE* pMS)
 {
 	PICK_GAME_STATE* pickState = (PICK_GAME_STATE*)pMS->privData;
-	uint8_t NewState;
-	SUMMARY_DESC* pSD;
-	TimeCount TimeIn {GetTimeCounter()};
+	uint8_t NewState {};
+	const SUMMARY_DESC* pSD {};
+	const TimeCount TimeIn {GetTimeCounter()};
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -1719,8 +1710,8 @@ DoPickGame(MENU_STATE* pMS)
 		pSD = &pickState->summary[pMS->CurState];
 		if (pickState->saving || pSD->year_index)
 		{ // valid slot
-			uint32_t LoadFuelScaled = loadFuel / FUEL_TANK_SCALE;
-			uint32_t TankCapacityScaled = GetFuelTankCapacity() / FUEL_TANK_SCALE;
+			const uint32_t LoadFuelScaled = loadFuel / FUEL_TANK_SCALE;
+			const uint32_t TankCapacityScaled = GetFuelTankCapacity() / FUEL_TANK_SCALE;
 
 			if (uqm::UQMOptions::read().infiniteRU)
 			{
@@ -1822,7 +1813,7 @@ SaveLoadGame(PICK_GAME_STATE* pickState, uint16_t gameIndex, bool* canceled_by_u
 {
 	SUMMARY_DESC* desc = pickState->summary + gameIndex;
 	STAMP saveStamp;
-	bool success;
+	bool success {};
 	GFXRECT r;
 
 	GetContextClipRect(&r);
@@ -1870,13 +1861,11 @@ SaveLoadGame(PICK_GAME_STATE* pickState, uint16_t gameIndex, bool* canceled_by_u
 static bool
 PickGame(bool saving, bool fromMainMenu)
 {
-	GFXCONTEXT OldContext;
 	MENU_STATE MenuState;
 	PICK_GAME_STATE pickState;
 	GFXRECT DlgRect;
 	STAMP DlgStamp;
 	TimeCount TimeOut;
-	InputFrameCallback* oldCallback;
 
 	memset(&pickState, 0, sizeof pickState);
 	pickState.saving = saving;
@@ -1890,11 +1879,11 @@ PickGame(bool saving, bool fromMainMenu)
 	TimeOut = FadeMusic(0, c_gameSecond / 2);
 
 	// Deactivate any background drawing, like planet rotation
-	oldCallback = SetInputCallback(nullptr);
+	InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
 
 	LoadGameDescriptions(pickState.summary);
 
-	OldContext = SetContext(SpaceContext);
+	GFXCONTEXT OldContext {SetContext(SpaceContext)};
 	// Save the current state of the screen for later restoration
 	DlgStamp = SaveContextFrame(nullptr);
 	GetContextClipRect(&DlgRect);
@@ -1986,7 +1975,7 @@ PickGame(bool saving, bool fromMainMenu)
 
 	if (!(uqm::currentActivity() & CHECK_ABORT) && (saving || (!pickState.success && !fromMainMenu)))
 	{ // Restore previous screen
-		bool InStarbase = (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0);
+		const bool InStarbase = (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0);
 
 		// Math to include the title bars in the screen transition
 		DlgRect.extent.width += DlgRect.corner.x;
@@ -2124,10 +2113,8 @@ bool GameOptions(void)
 			return false;
 		}
 
-		bool success;
-
 		DrawMenuStateStrings(PM_SAVE_GAME, LOAD_GAME);
-		success = PickGame(false, true);
+		const bool success {PickGame(false, true)};
 		if (!success)
 		{ // Selected LOAD from main menu, and canceled
 			uqm::currentActivity() |= CHECK_ABORT;

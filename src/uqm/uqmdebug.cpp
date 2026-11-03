@@ -97,18 +97,18 @@ void doInstantMove(void)
 STARSHIP*
 findPlayerShip(int16_t playerNr)
 {
-	HELEMENT hElement, hNextElement;
+	HELEMENT hNextElement {};
 
-	for (hElement = GetHeadElement(); hElement; hElement = hNextElement)
+	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr;
+		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
 
 		if ((ElementPtr->state_flags & PLAYER_SHIP) && ElementPtr->playerNr == playerNr)
 		{
-			STARSHIP* StarShipPtr;
+			STARSHIP* StarShipPtr {};
 			GetElementStarShip(ElementPtr, &StarShipPtr);
 			UnlockElement(hElement);
 			return StarShipPtr;
@@ -123,9 +123,8 @@ findPlayerShip(int16_t playerNr)
 
 void resetEnergyBattle(void)
 {
-	STARSHIP* StarShipPtr;
-	uint16_t delta;
-	GFXCONTEXT OldContext;
+	const STARSHIP* StarShipPtr {};
+	uint16_t delta {};
 
 	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
 	{
@@ -152,7 +151,7 @@ void resetEnergyBattle(void)
 
 	delta = StarShipPtr->RaceDescPtr->ship_info.max_energy - StarShipPtr->RaceDescPtr->ship_info.energy_level;
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	DeltaEnergy((ELEMENT*)StarShipPtr->hShip, delta);
 	SetContext(OldContext);
 }
@@ -161,9 +160,9 @@ void resetEnergyBattle(void)
 static void
 scuttleOpponent(void)
 {
-	STARSHIP* StarShipPtr;
-	uint16_t delta;
-	GFXCONTEXT OldContext;
+	const STARSHIP* StarShipPtr {};
+	uint16_t delta {};
+	GFXCONTEXT OldContext {};
 
 	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
 	{
@@ -203,16 +202,15 @@ scuttleOpponent(void)
 static void
 HaltShips(void)
 {
-	STARSHIP* StarShipPtr;
-	ELEMENT* ElementPtr;
-	uint8_t i;
+	const STARSHIP* StarShipPtr {};
+	ELEMENT* ElementPtr {};
 
 	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
 	{
 		return;
 	}
 
-	for (i = 0; i < 2; i++)
+	for (uint8_t i {0}; i < 2; i++)
 	{
 		StarShipPtr = findPlayerShip(i);
 

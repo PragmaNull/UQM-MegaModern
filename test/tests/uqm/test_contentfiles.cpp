@@ -16,7 +16,7 @@ namespace
 
 uqstl::string readFile(const uqstl::filesystem::path& path)
 {
-	uqstl::ifstream file {path, uqstl::ios::binary};
+	const uqstl::ifstream file {path, uqstl::ios::binary};
 	uqstl::ostringstream text {};
 	text << file.rdbuf();
 	return text.str();

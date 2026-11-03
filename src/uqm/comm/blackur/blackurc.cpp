@@ -175,7 +175,7 @@ static LOCDATA blackurq_desc =
 static void
 CombatIsInevitable(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	setSegue(Segue_hostile);
 
@@ -498,8 +498,6 @@ DieHuman(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint32_t GrpOffs;
-
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
@@ -523,7 +521,7 @@ Intro(void)
 		SET_GAME_STATE(KOHR_AH_SENSES_EVIL, 1);
 	}
 
-	GrpOffs = GET_GAME_STATE(SAMATRA_GRPOFFS);
+	const uint32_t GrpOffs {GET_GAME_STATE(SAMATRA_GRPOFFS)};
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		&& GLOBAL(BattleGroupRef)
 		&& GLOBAL(BattleGroupRef) == GrpOffs)
@@ -535,7 +533,7 @@ Intro(void)
 	}
 	else
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(KOHR_AH_VISITS);
 		if (GET_GAME_STATE(KOHR_AH_FRENZY))
@@ -600,8 +598,6 @@ post_blackurq_enc(void)
 LOCDATA*
 init_blackurq_comm(void)
 {
-	LOCDATA* retval;
-
 	blackurq_desc.init_encounter_func = Intro;
 	blackurq_desc.post_encounter_func = post_blackurq_enc;
 	blackurq_desc.uninit_encounter_func = uninit_blackurq;
@@ -621,7 +617,7 @@ init_blackurq_comm(void)
 	{
 		setSegue(Segue_peace);
 	}
-	retval = &blackurq_desc;
+	LOCDATA* retval {&blackurq_desc};
 
 	return (retval);
 }

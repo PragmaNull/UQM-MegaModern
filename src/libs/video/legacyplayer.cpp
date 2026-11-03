@@ -22,21 +22,18 @@
 LEGACY_VIDEO_REF
 PlayLegacyVideo(LEGACY_VIDEO vid)
 {
-	const char *name, *audname, *speechname;
-	uint32_t loopframe;
-	LEGACY_VIDEO_REF ref;
 	VIDEO_TYPE type;
 
 	if (!vid)
 	{
 		return nullptr;
 	}
-	name = vid->video.c_str();
-	audname = vid->audio.empty() ? nullptr : vid->audio.c_str();
-	speechname = vid->speech.empty() ? nullptr : vid->speech.c_str();
-	loopframe = vid->loop;
+	const char* name {vid->video.c_str()};
+	const char* audname {vid->audio.empty() ? nullptr : vid->audio.c_str()};
+	const char* speechname {vid->speech.empty() ? nullptr : vid->speech.c_str()};
+	const uint32_t loopframe {vid->loop};
 
-	ref = new legacy_video_ref {};
+	LEGACY_VIDEO_REF ref {new legacy_video_ref {}};
 	ref->vidref = LoadVideoFile(name);
 	if (!ref->vidref)
 	{

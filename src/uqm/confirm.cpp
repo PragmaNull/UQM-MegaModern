@@ -42,7 +42,7 @@ bool WarpFromMenu = false;
 static void
 DrawConfirmationWindow(bool answer, bool confirm)
 {
-	Color oldfg = SetContextForeGroundColor(SHADOWBOX_DARK_COLOR);
+	const Color oldfg = SetContextForeGroundColor(SHADOWBOX_DARK_COLOR);
 	FONT oldfont = SetContextFont(StarConFont);
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	GFXRECT r;
@@ -93,31 +93,29 @@ DrawConfirmationWindow(bool answer, bool confirm)
 
 bool DoConfirmExit(void)
 {
-	bool result;
-	bool FlashPaused;
+	bool result {};
 
 	if (PlayingTrack())
 	{
 		PauseTrack();
 	}
 
-	FlashPaused = PauseFlash();
+	const bool FlashPaused {PauseFlash()};
 
 	{
 		GFXRECT r;
 		STAMP s;
 		GFXRECT ctxRect;
-		GFXCONTEXT oldContext;
 		GFXRECT oldRect;
-		bool response = false, done;
+		bool response = false;
 		Color OldColor;
-		DrawMode mode, oldMode;
-		uint8_t oldVolume;
+		DrawMode mode;
+		DrawMode oldMode;
 		TimeCount deltaT;
 
 		deltaT = GetTimeCounter();
 
-		oldContext = SetContext(ScreenContext);
+		GFXCONTEXT oldContext {SetContext(ScreenContext)};
 		GetContextClipRect(&oldRect);
 		SetContextClipRect(nullptr);
 
@@ -142,9 +140,9 @@ bool DoConfirmExit(void)
 		FlushGraphics();
 
 		FlushInput();
-		done = false;
+		bool done {false};
 
-		oldVolume = GetCurrMusicVol();
+		const uint8_t oldVolume {GetCurrMusicVol()};
 		FadeMusic(60, c_gameSecond / 2);
 
 		while (!done)
@@ -240,13 +238,11 @@ void DoPopupWindow(const char* msg)
 	const char* lines[30];
 	WIDGET_LABEL label;
 	STAMP s;
-	GFXCONTEXT oldContext;
 	GFXRECT oldRect;
 	GFXRECT windowRect;
 	POPUP_STATE state;
-	MENU_SOUND_FLAGS s0, s1;
-	InputFrameCallback* oldCallback;
-	bool FlashPaused;
+	MENU_SOUND_FLAGS s0 {};
+	MENU_SOUND_FLAGS s1 {};
 
 	if (!bank)
 	{
@@ -265,9 +261,9 @@ void DoPopupWindow(const char* msg)
 	label.line_count = SplitString(msg, '\n', 30, lines, bank);
 	label.lines = lines;
 
-	FlashPaused = PauseFlash();
+	const bool FlashPaused {PauseFlash()};
 
-	oldContext = SetContext(ScreenContext);
+	GFXCONTEXT oldContext {SetContext(ScreenContext)};
 	GetContextClipRect(&oldRect);
 	SetContextClipRect(nullptr);
 
@@ -283,7 +279,7 @@ void DoPopupWindow(const char* msg)
 
 	GetMenuSounds(&s0, &s1);
 	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
-	oldCallback = SetInputCallback(nullptr);
+	InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
 
 	state.InputFunc = DoPopup;
 	DoInput(&state, true);

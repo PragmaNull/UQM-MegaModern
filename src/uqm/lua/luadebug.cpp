@@ -53,7 +53,7 @@ static void luaUqm_debug_errorCallback(void* extra,
 
 lua_State* luaUqm_debugState = nullptr;
 
-static const luaL_Reg debugLibs[] = {
+const static luaL_Reg debugLibs[] = {
 	{"comm",	 luaUqm_comm_open },
 	{"event", luaUqm_event_open},
 	{"log",	luaUqm_log_open  },
@@ -96,7 +96,7 @@ static void
 luaUqm_debug_interactive(FILE* in, FILE* out, FILE* err)
 {
 	char lineBuf[LINEBUFLEN];
-	size_t lineLen;
+	size_t lineLen {};
 	luaUqm_DebugContext debugContext;
 	memset(&debugContext, '\0', sizeof(luaUqm_DebugContext));
 	debugContext.in = in;
@@ -144,10 +144,6 @@ void luaUqm_debug_runLine(const char* exprBuf,
 						  void (*errorCallback)(void* extra, const char* format, ...),
 						  void* extra)
 {
-	int resultType;
-	const char* resultStr;
-	const char* resultTypeStr;
-
 	// Compile the string to a Lua function.
 	{
 		if (luaL_loadstring(luaUqm_debugState, exprBuf) != LUA_OK)
@@ -174,9 +170,9 @@ void luaUqm_debug_runLine(const char* exprBuf,
 	// Success. Result is on the stack.
 
 	// Convert the result to a string.
-	resultType = lua_type(luaUqm_debugState, -1);
-	resultTypeStr = lua_typename(luaUqm_debugState, resultType);
-	resultStr = lua_tolstring(luaUqm_debugState, -1, nullptr);
+	const int resultType {lua_type(luaUqm_debugState, -1)};
+	const char* resultTypeStr {lua_typename(luaUqm_debugState, resultType)};
+	const char* resultStr {lua_tolstring(luaUqm_debugState, -1, nullptr)};
 	// Memory for 'resultStr' lasts until the lua_pop().
 	if (resultStr == nullptr)
 	{
@@ -197,8 +193,8 @@ void luaUqm_debug_runLine(const char* exprBuf,
 static void
 luaUqm_debug_outputCallback(void* extra, const char* format, ...)
 {
-	va_list args;
-	luaUqm_DebugContext* debugContext = (luaUqm_DebugContext*)extra;
+	va_list args {};
+	const luaUqm_DebugContext* debugContext = (luaUqm_DebugContext*)extra;
 
 	va_start(args, format);
 	vfprintf(debugContext->out, format, args);
@@ -209,8 +205,8 @@ luaUqm_debug_outputCallback(void* extra, const char* format, ...)
 static void
 luaUqm_debug_errorCallback(void* extra, const char* format, ...)
 {
-	va_list args;
-	luaUqm_DebugContext* debugContext = (luaUqm_DebugContext*)extra;
+	va_list args {};
+	const luaUqm_DebugContext* debugContext = (luaUqm_DebugContext*)extra;
 
 	va_start(args, format);
 	vfprintf(debugContext->err, format, args);

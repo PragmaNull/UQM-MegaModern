@@ -60,7 +60,7 @@ static bool
 GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -68,14 +68,12 @@ GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		if (PrimeSeed)
 		{
-			uint16_t angle;
-
 			pSunDesc->PlanetByte = 1;
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 			pPlanet->data_index = TELLURIC_WORLD;
 			pPlanet->radius = EARTH_RADIUS * 204L / 100;
-			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
 			ComputeSpeed(pPlanet, false, 1);
@@ -114,7 +112,6 @@ GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
 	if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint16_t i;
 		uint16_t visits = 0;
 
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
@@ -127,7 +124,7 @@ GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
 		// when the player collides with a new city ruin. Ruins previously
 		// visited are marked in the upper 16 bits of ScanRetrieveMask, and
 		// the lower bits are cleared to keep the ruin nodes on the map.
-		for (i = 16; i < 32; ++i)
+		for (uint16_t i {16}; i < 32; ++i)
 		{
 			if (isNodeRetrieved(&solarSys->SysInfo.PlanetInfo,
 								ENERGY_SCAN, i))

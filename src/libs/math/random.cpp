@@ -94,7 +94,7 @@ TFB_Random(void)
 uint32_t
 TFB_SeedRandom(uint32_t new_seed)
 {
-	uint32_t old_seed;
+	uint32_t old_seed {};
 
 	/* coerce the seed to be in the range 1..M */
 	if (new_seed == 0L) /* 0 becomes 1 */
@@ -114,9 +114,10 @@ TFB_SeedRandom(uint32_t new_seed)
 // Assumes little endian
 void printBits(size_t const size, void const* const ptr)
 {
-	unsigned char* b = (unsigned char*)ptr;
-	unsigned char byte;
-	int i, j;
+	const unsigned char* b = (unsigned char*)ptr;
+	unsigned char byte {};
+	int i {};
+	int j {};
 
 	for (i = size - 1; i >= 0; i--)
 	{

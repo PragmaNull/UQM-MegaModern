@@ -326,7 +326,7 @@ extern uint16_t CalcGravity(const PLANET_INFO*);
 #define HIGH_TECTONICS 140
 #define SUPER_TECTONICS 200
 
-extern const PlanetFrame* PlanData;
+const extern PlanetFrame* PlanData;
 
 #if 0 //defined(__cplusplus)
 }

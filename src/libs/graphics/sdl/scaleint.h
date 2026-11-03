@@ -64,7 +64,7 @@ typedef enum
 	YUV_XFORM_V = 2
 } RGB_YUV_INDEX;
 
-extern const int YUV_matrix[3][3];
+const extern int YUV_matrix[3][3];
 
 // pre-computed transformations for 8 bits per channel
 extern int RGB_to_YUV[/*RGB*/ 3][/*YUV*/ 3][/*mult-res*/ 256];
@@ -120,11 +120,10 @@ SCALE_(Prefetch) (const void* p)
 static inline int
 SCALE_(GetRGBDelta)(const SDL_PixelFormatDetails* fmt, Uint32 pix1, Uint32 pix2)
 {
-	int c;
-	int delta;
+	int c {};
 
 	c = ((pix1 >> fmt->Rshift) & 0xff) - ((pix2 >> fmt->Rshift) & 0xff);
-	delta = c * c;
+	int delta {c * c};
 
 	c = ((pix1 >> fmt->Gshift) & 0xff) - ((pix2 >> fmt->Gshift) & 0xff);
 	delta += c * c;
@@ -140,11 +139,9 @@ SCALE_(GetRGBDelta)(const SDL_PixelFormatDetails* fmt, Uint32 pix1, Uint32 pix2)
 static inline int
 SCALE_(GetPixY)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
 {
-	Uint32 r, g, b;
-
-	r = (pix >> fmt->Rshift) & 0xff;
-	g = (pix >> fmt->Gshift) & 0xff;
-	b = (pix >> fmt->Bshift) & 0xff;
+	const Uint32 r {(pix >> fmt->Rshift) & 0xff};
+	const Uint32 g {(pix >> fmt->Gshift) & 0xff};
+	const Uint32 b {(pix >> fmt->Bshift) & 0xff};
 
 	return RGB_to_YUV[YUV_XFORM_R][YUV_XFORM_Y][r]
 		 + RGB_to_YUV[YUV_XFORM_G][YUV_XFORM_Y][g]
@@ -165,8 +162,10 @@ static inline bool
 SCALE_(CmpYUV)(const SDL_PixelFormatDetails* fmt, Uint32 pix1, Uint32 pix2, int toler)
 #if 1
 {
-	int dr, dg, db;
-	int delta;
+	int dr {};
+	int dg {};
+	int db {};
+	int delta {};
 
 	dr = ((pix1 >> fmt->Rshift) & 0xff) - ((pix2 >> fmt->Rshift) & 0xff) + 255;
 	dg = ((pix1 >> fmt->Gshift) & 0xff) - ((pix2 >> fmt->Gshift) & 0xff) + 255;
@@ -236,7 +235,7 @@ SCALE_(DiffYUV)(Uint32 yuv1, Uint32 yuv2)
 	// non-branching version -- assumes 2's complement integers
 	// delta math only needs 25 bits and we have 32 available;
 	// only interested in the sign bits after subtraction
-	int32_t delta, ret;
+	int32_t ret {};
 
 	if (yuv1 == yuv2)
 	{
@@ -244,7 +243,7 @@ SCALE_(DiffYUV)(Uint32 yuv1, Uint32 yuv2)
 	}
 
 	// compute Y delta
-	delta = abs(int(yuv1 & 0xff0000u) - int(yuv2 & 0xff0000u));
+	int32_t delta {abs(int(yuv1 & 0xff0000u) - int(yuv2 & 0xff0000u))};
 	ret = (SCALE_DIFFYUV_TY << 16) - delta; // save sign bit
 
 	// compute U delta
@@ -374,15 +373,13 @@ SCALE_(Blend_bilinear)(const Uint32* row0, const Uint32* row1,
 #define BL_SUM_WERR(p1, p2) \
 	(BL_PACKED_HALF(p1) + BL_PACKED_HALF(p2) + BL_HALF_ERR)
 
-	Uint32 sum1111, sum1331, sum3113;
-
 	// cache p[0] + 3*(p[1] + p[2]) + p[3] in sum1331
 	// cache p[1] + 3*(p[0] + p[3]) + p[2] in sum3113
-	sum1331 = BL_SUM(row0[1], row1[0]);
-	sum3113 = BL_SUM(row0[0], row1[1]);
+	Uint32 sum1331 {BL_SUM(row0[1], row1[0])};
+	Uint32 sum3113 {BL_SUM(row0[0], row1[1])};
 
 	// cache p[0] + p[1] + p[2] + p[3] in sum1111
-	sum1111 = BL_SUM_WERR(sum1331, sum3113);
+	const Uint32 sum1111 {BL_SUM_WERR(sum1331, sum3113)};
 
 	sum1331 = BL_SUM_WERR(sum1331, sum1111);
 	sum1331 = BL_PACKED_HALF(sum1331);

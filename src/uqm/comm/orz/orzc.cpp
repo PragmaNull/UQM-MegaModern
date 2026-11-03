@@ -328,7 +328,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 	else /* insults */
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(ORZ_PERSONAL_INFO);
 		switch (NumVisits++)
@@ -359,7 +359,7 @@ static void
 TaaloWorld(RESPONSE_REF R)
 {
 	// We can only get here when ORZ_MANNER != HOSTILE (2)
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	Manner = GET_GAME_STATE(ORZ_MANNER);
 	if (PLAYER_SAID(R, demand_to_land))
@@ -459,7 +459,7 @@ TaaloWorld(RESPONSE_REF R)
 static void
 OrzAllied(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, whats_up_ally))
 	{
@@ -586,10 +586,9 @@ OfferAlliance(RESPONSE_REF R)
 static void
 OrzNeutral(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
 	RESPONSE_REF pStr[3];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
 	if (PLAYER_SAID(R, hostile_1))
 	{
@@ -693,7 +692,7 @@ OrzNeutral(RESPONSE_REF R)
 		Response(pStr[LastStack], OrzNeutral);
 	}
 
-	for (i = 0; i < 3; ++i)
+	for (uint8_t i {0}; i < 3; ++i)
 	{
 		if (i != LastStack && pStr[i])
 		{
@@ -708,7 +707,7 @@ OrzAngry(RESPONSE_REF R)
 {
 	if (PLAYER_SAID(R, whats_up_angry))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(ORZ_GENERAL_INFO);
 		switch (NumVisits++)
@@ -764,7 +763,8 @@ OrzAngry(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits, Manner;
+	uint8_t NumVisits {};
+	uint8_t Manner {};
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -991,7 +991,7 @@ uninit_orz(void)
 static void
 post_orz_enc(void)
 {
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
 		&& (Manner = GET_GAME_STATE(ORZ_MANNER)) != 2)
@@ -1009,8 +1009,6 @@ post_orz_enc(void)
 LOCDATA*
 init_orz_comm(void)
 {
-	LOCDATA* retval;
-
 	orz_desc.init_encounter_func = Intro;
 	orz_desc.post_encounter_func = post_orz_enc;
 	orz_desc.uninit_encounter_func = uninit_orz;
@@ -1032,7 +1030,7 @@ init_orz_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &orz_desc;
+	LOCDATA* retval {&orz_desc};
 
 	return (retval);
 }

@@ -151,11 +151,9 @@ print_mp(const MUSIC_POSITION mp)
 static inline void
 print_mp_array(const MUSIC_POSITION mp_array[], const uint16_t num_items)
 {
-	uint16_t i;
-
 	//system ("cls");
 	fmt::print("--------------------\n\n");
-	for (i = num_items; i > 0; --i)
+	for (uint16_t i {num_items}; i > 0; --i)
 	{
 		fmt::print("Index {} -> ", i);
 		print_mp(mp_array[i]);

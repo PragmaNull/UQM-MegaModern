@@ -42,9 +42,7 @@ void GetCurrentVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx
 
 void GetNextVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t* pdy, uint16_t num_frames)
 {
-	uint16_t e;
-
-	e = (uint16_t)((uint16_t)velocityptr->error.width + ((uint16_t)velocityptr->fract.width * num_frames));
+	uint16_t e {(uint16_t)((uint16_t)velocityptr->error.width + ((uint16_t)velocityptr->fract.width * num_frames))};
 
 	*pdx = (velocityptr->vector.width * num_frames)
 		 + ((int16_t)((int8_t)uqm::lowByte(velocityptr->incr.width))
@@ -64,9 +62,7 @@ void GetNextVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t
 // JMS_GFX: New function to prevent overflows in hi-res.
 void GetNextVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx, int32_t* pdy, uint32_t num_frames)
 {
-	uint32_t e;
-
-	e = (uint32_t)((uint32_t)velocityptr->error.width + ((uint32_t)velocityptr->fract.width * num_frames));
+	uint32_t e {(uint32_t)((uint32_t)velocityptr->error.width + ((uint32_t)velocityptr->fract.width * num_frames))};
 
 	*pdx = ((int32_t)velocityptr->vector.width * num_frames)
 		 + ((int32_t)((int8_t)uqm::lowByte(velocityptr->incr.width))
@@ -86,8 +82,9 @@ void GetNextVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx, i
 // JMS_GFX: Preventing overflows in hi-res: The int32_t in this function's parameters was int16_t.
 void SetVelocityVector(VELOCITY_DESC* velocityptr, int32_t magnitude, uint16_t facing)
 {
-	uint16_t angle;
-	int16_t dx, dy;
+	uint16_t angle {};
+	int16_t dx {};
+	int16_t dy {};
 
 	angle = velocityptr->TravelAngle =
 		FACING_TO_ANGLE(NORMALIZE_FACING(facing));
@@ -127,7 +124,7 @@ void SetVelocityVector(VELOCITY_DESC* velocityptr, int32_t magnitude, uint16_t f
 // JMS_GFX: Preventing overflows in hi-res: The SDWORDs in this function's parameters were SIZEs.
 void SetVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy)
 {
-	uint16_t angle;
+	uint16_t angle {};
 
 	if ((angle = ARCTAN(dx, dy)) == FULL_CIRCLE)
 	{

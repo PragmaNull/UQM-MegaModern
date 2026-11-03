@@ -30,7 +30,7 @@
 // break security. Bad Lua scripts should not be able to affect anything
 // outside of UQM.
 // XXX TODO: a better sandbox: http://lua-users.org/wiki/SandBoxes
-static const luaL_Reg safeLibs[] = {
+const static luaL_Reg safeLibs[] = {
 	{"",			  luaopen_base	 },
 	//{ LUA_COLIBNAME,     luaopen_coroutine },
 	//{ LUA_DBLIBNAME,     luaopen_debug },
@@ -89,7 +89,7 @@ typedef struct
 	char* buf;
 } luaUqm_ReaderState;
 
-static const char*
+const static char*
 luaUqm_reader(lua_State* luaState, void* data, size_t* size)
 {
 	luaUqm_ReaderState* readerState = (luaUqm_ReaderState*)data;
@@ -229,7 +229,7 @@ bool luaUqm_callFunction(lua_State* luaState, const char* str)
 // from enumVals;
 void luaUqm_makeEnum(lua_State* luaState, const luaUqm_EnumValue* enumVals)
 {
-	const luaUqm_EnumValue* enumPtr;
+	const luaUqm_EnumValue* enumPtr {};
 	size_t enumCount = 0;
 
 	// Count the number of enum values.

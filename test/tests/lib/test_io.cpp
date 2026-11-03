@@ -25,7 +25,7 @@ uqstl::error_code errorOf(const Result<T>& result)
 
 uqstl::string readHostFile(const fs::path& path)
 {
-	uqstl::ifstream file {path, uqstl::ios::binary};
+	const uqstl::ifstream file {path, uqstl::ios::binary};
 	uqstl::stringstream contents {};
 	contents << file.rdbuf();
 	return contents.str();

@@ -149,7 +149,7 @@ TEST(MenuDefTest, ReadsStateChoices)
 	ASSERT_EQ(item.options.size(), 2u);
 	EXPECT_TRUE(item.options[0].value.empty());
 
-	OptionsStruct options {};
+	const OptionsStruct options {};
 	EXPECT_TRUE(validateMenuDefinition(*definition, options).empty());
 
 	// A Choice bound to a setting needs option values.
@@ -200,11 +200,11 @@ TEST(MenuDefTest, RejectsInvalidSliders)
 
 TEST(MenuDefTest, SliderValuesConvertWithScale)
 {
-	MenuItemDef volume {.kind = MenuItemKind::Slider, .scale = 100.0};
+	const MenuItemDef volume {.kind = MenuItemKind::Slider, .scale = 100.0};
 	EXPECT_EQ(sliderSettingText(volume, 50), "0.5");
 	EXPECT_EQ(sliderDisplayedValue(volume, "0.75"), 75);
 
-	MenuItemDef nebulae {.kind = MenuItemKind::Slider};
+	const MenuItemDef nebulae {.kind = MenuItemKind::Slider};
 	EXPECT_EQ(sliderSettingText(nebulae, 16), "16");
 	EXPECT_EQ(sliderDisplayedValue(nebulae, "16"), 16);
 	EXPECT_FALSE(sliderDisplayedValue(nebulae, "abc"));
@@ -224,7 +224,7 @@ TEST(MenuDefTest, ValidationChecksSliderRange)
 
 TEST(MenuDefTest, ContentMenuDefinitionIsValid)
 {
-	uqstl::ifstream file {UQM_TEST_CONTENT_DIR "/base/ui/setupmenu.json", uqstl::ios::binary};
+	const uqstl::ifstream file {UQM_TEST_CONTENT_DIR "/base/ui/setupmenu.json", uqstl::ios::binary};
 	if (!file)
 	{
 		GTEST_SKIP() << "Content is not present.";

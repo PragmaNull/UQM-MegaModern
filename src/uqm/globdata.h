@@ -83,7 +83,7 @@ typedef struct
 	// 0-9, 10-19, ..20-90, ..100-900, etc.
 	SPEECH_DIGIT Digits[MAX_SPEECH_DIGITS];
 } NUMBER_SPEECH_DESC;
-typedef const NUMBER_SPEECH_DESC* NUMBER_SPEECH;
+const typedef NUMBER_SPEECH_DESC* NUMBER_SPEECH;
 
 typedef uint32_t LDAS_FLAGS;
 #define LDASF_NONE ((LDAS_FLAGS)0)
@@ -467,14 +467,12 @@ IsHomeworldKnown(uint32_t homeworld)
 static inline void
 SetHomeworldKnown(uint32_t homeworld)
 {
-	uint32_t current;
-
 	if (IsHomeworldKnown(homeworld))
 	{
 		return;
 	}
 
-	current = GET_GAME_STATE(KNOW_HOMEWORLD);
+	uint32_t current {GET_GAME_STATE(KNOW_HOMEWORLD)};
 	current |= 1 << homeworld;
 	SET_GAME_STATE(KNOW_HOMEWORLD, current);
 }

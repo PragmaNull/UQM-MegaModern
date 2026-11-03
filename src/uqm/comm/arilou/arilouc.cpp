@@ -270,10 +270,10 @@ ExitConversation(RESPONSE_REF R)
 static void
 ArilouHome(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
+	uint8_t i {};
 	RESPONSE_REF pStr[4];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
 	if (PLAYER_SAID(R, confused_by_hello))
 	{
@@ -589,7 +589,7 @@ AngrySpaceArilou(RESPONSE_REF R)
 static void
 FriendlySpaceArilou(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, confused_by_hello))
 	{
@@ -716,7 +716,8 @@ FriendlySpaceArilou(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits, Manner;
+	uint8_t NumVisits {};
+	uint8_t Manner {};
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -727,7 +728,7 @@ Intro(void)
 	}
 	else if (!GET_GAME_STATE(MET_ARILOU))
 	{
-		RESPONSE_FUNC RespFunc;
+		RESPONSE_FUNC RespFunc {};
 
 		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 		{
@@ -878,7 +879,7 @@ uninit_arilou(void)
 static void
 post_arilou_enc(void)
 {
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
 		&& (Manner = GET_GAME_STATE(ARILOU_MANNER)) != 2)
@@ -908,8 +909,6 @@ post_arilou_enc(void)
 LOCDATA*
 init_arilou_comm(void)
 {
-	LOCDATA* retval;
-
 	arilou_desc.init_encounter_func = Intro;
 	arilou_desc.post_encounter_func = post_arilou_enc;
 	arilou_desc.uninit_encounter_func = uninit_arilou;
@@ -930,7 +929,7 @@ init_arilou_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &arilou_desc;
+	LOCDATA* retval {&arilou_desc};
 
 	return (retval);
 }

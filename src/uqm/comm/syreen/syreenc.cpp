@@ -497,7 +497,7 @@ AfterAmbush(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, whats_up_after_ambush))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SYREEN_INFO);
 		switch (NumVisits++)
@@ -640,10 +640,10 @@ SyreenShuttle(RESPONSE_REF R)
 static void
 NormalSyreen(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
+	uint8_t i {};
 	RESPONSE_REF pStr[4];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
 	if (PLAYER_SAID(R, we_here_to_help))
 	{
@@ -912,8 +912,8 @@ PlanAmbush(RESPONSE_REF R)
 			SyreenPtr->actual_strength = 300 / SPHERE_RADIUS_INCREMENT * 2;
 			SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, HOME);
 			StartSphereTracking(SYREEN_SHIP);
-			GFXPOINT loc = SeedFleetLocation(SyreenPtr, plot_map,
-											 MYCON_TRAP_DEFINED);
+			const GFXPOINT loc = SeedFleetLocation(SyreenPtr, plot_map,
+												   MYCON_TRAP_DEFINED);
 			SetRaceDest(SYREEN_SHIP, loc.x, loc.y, 15, (uint8_t)~0);
 		}
 
@@ -944,7 +944,7 @@ SyreenVault(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	SetHomeworldKnown(SYREEN_HOME);
 
@@ -1081,8 +1081,6 @@ post_syreen_enc(void)
 LOCDATA*
 init_syreen_comm(void)
 {
-	LOCDATA* retval;
-
 	syreen_desc.init_encounter_func = Intro;
 	syreen_desc.post_encounter_func = post_syreen_enc;
 	syreen_desc.uninit_encounter_func = uninit_syreen;
@@ -1096,7 +1094,7 @@ init_syreen_comm(void)
 	syreen_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	setSegue(Segue_peace);
-	retval = &syreen_desc;
+	LOCDATA* retval {&syreen_desc};
 
 	return (retval);
 }

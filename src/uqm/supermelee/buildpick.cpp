@@ -36,7 +36,6 @@ void BuildBuildPickFrame(void)
 {
 	STAMP s;
 	GFXRECT r;
-	uint16_t i;
 	GFXCONTEXT OldContext = SetContext(OffScreenContext);
 
 	// create team building ship selection box
@@ -53,7 +52,7 @@ void BuildBuildPickFrame(void)
 	SetFrameHot(s.frame, MAKE_HOT_SPOT(0, 0));
 	DrawStamp(&s);
 
-	for (i = 0; i < NUM_PICK_COLS * NUM_PICK_ROWS; ++i)
+	for (uint16_t i {0}; i < NUM_PICK_COLS * NUM_PICK_ROWS; ++i)
 	{
 		DrawPickIcon((MeleeShip)i, true);
 	}
@@ -79,7 +78,7 @@ Color GetShipFlashColor(void)
 	{
 		static uint8_t cycle_index = 0;
 
-		static const Color cycle_tab[] = SHIP_SELECT_COLOR_CYCLE_TABLE;
+		const static Color cycle_tab[] = SHIP_SELECT_COLOR_CYCLE_TABLE;
 		const size_t cycleCount = std::size(cycle_tab);
 
 		cycle_index = (cycle_index + 1) % cycleCount;
@@ -92,7 +91,6 @@ Color GetShipFlashColor(void)
 void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 {
 	GFXRECT r;
-	GFXCONTEXT OldContext;
 	GFXRECT OldRect;
 	GFXPOINT oldOrigin;
 	STAMP s;
@@ -101,7 +99,7 @@ void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 	r.corner.y = origin->y;
 	r.extent.width = r.extent.height = RES_SCALE(16);
 
-	OldContext = SetContext(SpaceContext);
+	GFXCONTEXT OldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&OldRect);
 	SetContextClipRect(&r);
 	if (IS_PAD)
@@ -182,8 +180,6 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 {
 	char buf[PATH_MAX] {};
 	TEXT Text;
-	GFXCONTEXT oldContext;
-	FONT oldFont;
 	Color oldColor;
 	GFXRECT r;
 
@@ -199,10 +195,10 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 	Text.baseline.y = r.corner.y + RES_SCALE(8) + RES_SCALE(1);
 	Text.baseline.x = r.corner.x + (r.extent.width >> 1) + RES_SCALE(1);
 
-	oldContext = SetContext(SpaceContext);
+	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	DrawTooltipBox();
 
-	oldFont = SetContextFont(StarConFont);
+	FONT oldFont {SetContextFont(StarConFont)};
 	oldColor = SetContextForeGroundColor(TOOLTIP_COLOR_NAME_BACK);
 	font_DrawText(&Text);
 
@@ -236,7 +232,10 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 
 void DrawPickFrame(MELEE_STATE* pMS)
 {
-	GFXRECT r, r0, r1, ship_r;
+	GFXRECT r;
+	GFXRECT r0;
+	GFXRECT r1;
+	GFXRECT ship_r;
 	STAMP s;
 
 	GetShipBox(&r0, 0, 0, 0),
@@ -278,7 +277,7 @@ void GetBuildPickFrameRect(GFXRECT* r)
 static bool
 DoPickShip(MELEE_STATE* pMS)
 {
-	TimeCount TimeIn {GetTimeCounter()};
+	const TimeCount TimeIn {GetTimeCounter()};
 
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;

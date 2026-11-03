@@ -150,8 +150,7 @@ DrawDevicesDisplay(DEVICES_STATE* devState)
 	TEXT t;
 	GFXRECT r;
 	STAMP s;
-	int16_t cy;
-	uint16_t i;
+	int16_t cy {};
 
 	r.corner.x = RES_SCALE(2);
 	r.corner.y = RES_SCALE(20);
@@ -185,9 +184,9 @@ DrawDevicesDisplay(DEVICES_STATE* devState)
 	cy = DEVICE_ORG_Y;
 
 	// draw device icons and print names
-	for (i = 0; i < MAX_VIS_DEVICES; ++i, cy += DEVICE_SPACING_Y)
+	for (uint16_t i {0}; i < MAX_VIS_DEVICES; ++i, cy += DEVICE_SPACING_Y)
 	{
-		uint16_t devIndex = devState->topIndex + i;
+		const uint16_t devIndex = devState->topIndex + i;
 
 		if (devIndex >= devState->count)
 		{
@@ -277,8 +276,8 @@ UseCaster(void)
 	}
 
 	{
-		bool FoundIlwrath;
-		HIPGROUP hGroup;
+		bool FoundIlwrath {};
+		HIPGROUP hGroup {};
 
 		FoundIlwrath = (CurStarDescPtr->Index == ILWRATH_DEFINED)
 					&& StartSphereTracking(ILWRATH_SHIP);
@@ -287,9 +286,8 @@ UseCaster(void)
 		if (!FoundIlwrath && (hGroup = GetHeadLink(&GLOBAL(ip_group_q))))
 		{
 			// Is an Ilwrath ship in the system?
-			IP_GROUP* GroupPtr;
 
-			GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+			const IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 			FoundIlwrath = (GroupPtr->race_id == ILWRATH_SHIP);
 			UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
 		}
@@ -329,7 +327,7 @@ UseCaster(void)
 static DeviceStatus
 InvokeDevice(uint8_t which_device)
 {
-	uint8_t val;
+	uint8_t val {};
 
 	switch (which_device)
 	{
@@ -513,7 +511,7 @@ InvokeDevice(uint8_t which_device)
 
 bool InvokeSpawner(void)
 {
-	DeviceStatus status = InvokeDevice(PORTAL_SPAWNER_DEVICE);
+	const DeviceStatus status = InvokeDevice(PORTAL_SPAWNER_DEVICE);
 	if (status == DEVICE_FAILURE)
 	{
 		PlayMenuSound(MENU_SOUND_FAILURE);
@@ -530,12 +528,15 @@ static bool
 DoManipulateDevices(MENU_STATE* pMS)
 {
 	DEVICES_STATE* devState = (DEVICES_STATE*)pMS->privData;
-	bool select, cancel, back, forward;
-	bool pagefwd, pageback;
+	bool select {};
+	bool cancel {};
+	bool forward {};
+	bool pagefwd {};
+	bool pageback {};
 
 	select = PulsedInputState.menu[KEY_MENU_SELECT];
 	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
-	back = PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_LEFT];
+	const bool back {PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_LEFT]};
 	forward = PulsedInputState.menu[KEY_MENU_DOWN]
 		   || PulsedInputState.menu[KEY_MENU_RIGHT];
 	pagefwd = PulsedInputState.menu[KEY_MENU_PAGE_DOWN];
@@ -568,11 +569,10 @@ DoManipulateDevices(MENU_STATE* pMS)
 	}
 	else
 	{
-		int16_t NewTop;
-		int16_t NewState;
+		int16_t NewTop {};
 
 		NewTop = devState->topIndex;
-		NewState = pMS->CurState;
+		int16_t NewState {pMS->CurState};
 
 		if (back)
 		{
@@ -626,15 +626,10 @@ DoManipulateDevices(MENU_STATE* pMS)
 int16_t
 InventoryDevices(uint8_t* pDeviceMap, uint16_t Size)
 {
-	uint8_t i;
-	int16_t DevicesOnBoard;
-
-	DevicesOnBoard = 0;
-	for (i = 0; i < NUM_DEVICES && Size > 0; ++i)
+	int16_t DevicesOnBoard {0};
+	for (uint8_t i {0}; i < NUM_DEVICES && Size > 0; ++i)
 	{
-		uint8_t DeviceState;
-
-		DeviceState = 0;
+		uint8_t DeviceState {0};
 		switch (i)
 		{
 			case ROSY_SPHERE_DEVICE:

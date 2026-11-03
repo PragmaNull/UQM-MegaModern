@@ -54,7 +54,7 @@ static bool InputInitialized = false;
 
 static bool in_character_mode = false;
 
-static const char* menu_res_names[] = {
+const static char* menu_res_names[] = {
 	"pause",
 	"exit",
 	"abort",
@@ -85,7 +85,7 @@ static const char* menu_res_names[] = {
 	"debug_4",
 	nullptr};
 
-static const char* flight_res_names[] = {
+const static char* flight_res_names[] = {
 	"up",
 	"down",
 	"left",
@@ -99,10 +99,9 @@ static const char* flight_res_names[] = {
 static void
 register_menu_controls(int index)
 {
-	int i;
 	char buf[40] {};
 
-	i = 1;
+	int i {1};
 	while (true)
 	{
 		VCONTROL_GESTURE g;
@@ -169,11 +168,12 @@ static bool loadKeyConfiguration()
 static void
 register_flight_controls(void)
 {
-	int i, j, k;
+	int j {};
+	int k {};
 	char buf[40] {};
 
 
-	for (i = 0; i < num_templ; i++)
+	for (int i {0}; i < num_templ; i++)
 	{
 		/* Copy in name */
 		fmt::format_to_sz_n(buf, "keys.{}.name", i + 1);
@@ -208,7 +208,7 @@ register_flight_controls(void)
 static void
 initKeyConfig(void)
 {
-	int i;
+	int i {};
 
 	if (!menu_vec || !flight_vec)
 	{
@@ -265,8 +265,7 @@ void TFB_SetInputVectors(uqstl::atomic<int>* menu, int num_menu_, uqstl::atomic<
 static void
 initJoystick(void)
 {
-	size_t base_len;
-	const char* slash;
+	const char* slash {};
 
 	if (!SDL_InitSubSystem(SDL_INIT_GAMEPAD))
 	{
@@ -277,10 +276,10 @@ initJoystick(void)
 
 	SDL_SetGamepadEventsEnabled(true);
 
-	base_len = strlen(baseContentPath);
+	const size_t base_len {strlen(baseContentPath)};
 	if (base_len > 0)
 	{
-		char last_char = baseContentPath[base_len - 1];
+		const char last_char = baseContentPath[base_len - 1];
 		slash = (last_char == '/' || last_char == '\\') ? "" : "/";
 	}
 	else
@@ -383,12 +382,11 @@ void ExitCharacterMode(void)
 uqm::UniChar
 GetNextCharacter(void)
 {
-	uqm::UniChar result;
 	if (kbdhead == kbdtail)
 	{
 		return 0;
 	}
-	result = kbdbuf[kbdhead];
+	const uqm::UniChar result {kbdbuf[kbdhead]};
 	kbdhead = (kbdhead + 1) & (KBDBUFSIZE - 1);
 	return result;
 }
@@ -456,7 +454,7 @@ void ProcessInputEvent(const SDL_Event* Event)
 
 	if (Event->type == SDL_EVENT_TEXT_INPUT)
 	{
-		int newtail;
+		int newtail {};
 		int i = 0;
 
 		while (Event->text.text[i])

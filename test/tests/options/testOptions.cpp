@@ -23,7 +23,7 @@ TEST_F(OptionsTests, OptionT_AssignConversionAndDereference)
 	EXPECT_EQ(static_cast<int>(intOpt), 0);
 
 	// assignment marks option as set and updates value
-	int assigned = (intOpt = 7);
+	const int assigned = (intOpt = 7);
 	EXPECT_EQ(assigned, 7);
 	EXPECT_TRUE(intOpt.set);
 	EXPECT_EQ(intOpt.value, 7);
@@ -31,7 +31,7 @@ TEST_F(OptionsTests, OptionT_AssignConversionAndDereference)
 	EXPECT_EQ(static_cast<int>(intOpt), 7);
 
 	// copy preserves value and set flag
-	OptionT<int> intOptCopy = intOpt;
+	const OptionT<int> intOptCopy = intOpt;
 	EXPECT_TRUE(intOptCopy.set);
 	EXPECT_EQ(intOptCopy.value, 7);
 }
@@ -82,18 +82,18 @@ TEST_F(OptionsTests, EnumToString_SeedAndEmulation)
 	EXPECT_STREQ(toString(EmulationMode::PC), "PC");
 
 	// Unknown / out of range value should return ??? string
-	EmulationMode mixed = EmulationMode::Console3DO | EmulationMode::PC;
+	const EmulationMode mixed = EmulationMode::Console3DO | EmulationMode::PC;
 	EXPECT_STREQ(toString(mixed), "???");
 }
 
 // OptionListValueT default initialization and manual initialization
 TEST_F(OptionsTests, OptionListValue_DefaultAndManual)
 {
-	OptionListValueT<int> defaultItem;
+	const OptionListValueT<int> defaultItem;
 	EXPECT_EQ(defaultItem.name, nullptr);
 	EXPECT_EQ(defaultItem.value, 0);
 
-	OptionListValueT<int> item {"test", 42};
+	const OptionListValueT<int> item {"test", 42};
 	EXPECT_STREQ(item.name, "test");
 	EXPECT_EQ(item.value, 42);
 }
@@ -128,12 +128,12 @@ TEST_F(OptionsTests, OptionT_CopyAndMovePreserveState)
 	EXPECT_EQ(original.value, SeedType::Prime);
 
 	// Copy
-	OptionT<SeedType> copy = original;
+	const OptionT<SeedType> copy = original;
 	EXPECT_TRUE(copy.set);
 	EXPECT_EQ(copy.value, SeedType::Prime);
 
 	// Move (moves the value and set flag; semantics same for trivially copyable)
-	OptionT<SeedType> moved = std::move(original);
+	const OptionT<SeedType> moved = std::move(original);
 	EXPECT_TRUE(moved.set);
 	EXPECT_EQ(moved.value, SeedType::Prime);
 }
@@ -142,7 +142,7 @@ TEST_F(OptionsTests, OptionT_CopyAndMovePreserveState)
 // We avoid calling toString for int because no suitable overload exists in current headers.
 TEST_F(OptionsTests, OptionT_ToString_UsesUqmToStringForEnums)
 {
-	OptionT<SeedType> st {SeedType::Planet};
+	const OptionT<SeedType> st {SeedType::Planet};
 	EXPECT_STREQ(st.toString(), "Planet");
 }
 
@@ -171,7 +171,7 @@ TEST_F(OptionsTests, GetOptionListValue_ExactMatchAndNonMatch)
 	//EXPECT_FALSE(partial.has_value());
 
 	// empty list - should return nullopt
-	uqstl::array<OptionListValueT<int>, 0> emptyList {{}};
+	const uqstl::array<OptionListValueT<int>, 0> emptyList {{}};
 	auto emptyRes = getOptionListValue(emptyList, "anything");
 	EXPECT_FALSE(emptyRes.has_value());
 }
@@ -189,7 +189,7 @@ TEST_F(OptionsTests, ParseOptionValue_NumericFloatBoolAndEnum)
 	EXPECT_FLOAT_EQ(*f, 3.5f);
 
 	// bool true variants
-	bool b;
+	bool b {};
 	EXPECT_EQ(uqm::parseStr("true", b), std::errc {});
 	EXPECT_TRUE(b);
 	EXPECT_EQ(uqm::parseStr("1", b), std::errc {});

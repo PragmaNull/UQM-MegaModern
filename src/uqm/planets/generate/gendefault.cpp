@@ -104,7 +104,7 @@ bool GenerateDefault_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet
 bool GenerateDefault_generateName(const SOLARSYS_STATE* solarSys,
 								  const PLANET_DESC* world)
 {
-	uint16_t i = planetIndex(solarSys, world);
+	const uint16_t i = planetIndex(solarSys, world);
 	uqm::utf8StringCopy(GLOBAL_SIS(PlanetName), sizeof(GLOBAL_SIS(PlanetName)),
 						GAME_STRING(PLANET_NUMBER_BASE + (9 + 7) + i));
 	SET_GAME_STATE(BATTLE_PLANET, world->data_index);
@@ -114,9 +114,6 @@ bool GenerateDefault_generateName(const SOLARSYS_STATE* solarSys,
 
 bool GenerateDefault_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
-	uint32_t rand_val;
-	SYSTEM_INFO* sysInfo;
-
 #ifdef DEBUG_SOLARSYS
 	if (worldIsPlanet(solarSys, world))
 	{
@@ -131,10 +128,10 @@ bool GenerateDefault_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* worl
 	}
 #endif /* DEBUG_SOLARSYS */
 
-	sysInfo = &solarSys->SysInfo;
+	SYSTEM_INFO* sysInfo {&solarSys->SysInfo};
 
 	DoPlanetaryAnalysis(sysInfo, world);
-	rand_val = RandomContext_GetSeed(SysGenRNG);
+	uint32_t rand_val {RandomContext_GetSeed(SysGenRNG)};
 
 	sysInfo->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] = rand_val;
 	GenerateLifeForms(sysInfo, GENERATE_ALL, nullptr);
@@ -277,23 +274,18 @@ bool GenerateDefault_landerReportCycle(SOLARSYS_STATE* solarSys)
 // NB. This function modifies the RNG state.
 void GeneratePlanets(SOLARSYS_STATE* solarSys)
 {
-	uint16_t i;
-	PLANET_DESC* planet;
+	uint16_t i {};
+	PLANET_DESC* planet {};
 
 	for (i = solarSys->SunDesc[0].NumPlanets,
 		planet = &solarSys->PlanetDesc[0];
 		 i; --i, ++planet)
 	{
-		uint32_t rand_val;
-		uint8_t byte_val;
-		uint8_t num_moons;
-		uint8_t type;
+		const uint32_t rand_val {RandomContext_Random(SysGenRNG)};
+		const uint8_t byte_val {uqm::lowByte(rand_val)};
 
-		rand_val = RandomContext_Random(SysGenRNG);
-		byte_val = uqm::lowByte(rand_val);
-
-		num_moons = 0;
-		type = PlanData[planet->data_index & ~PLANET_SHIELDED].Type;
+		uint8_t num_moons {0};
+		const uint8_t type {PlanData[planet->data_index & ~PLANET_SHIELDED].Type};
 		switch (PLANSIZE(type))
 		{
 			case LARGE_ROCKY_WORLD:
@@ -376,10 +368,9 @@ GenerateWorlds(uint8_t whichType)
 void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
-	uint8_t i;
+	uint8_t i {};
 #define DWARF_GASG_DIST SCALE_RADIUS(12)
-	uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+	const uint32_t rand = RandomContext_GetSeed(SysGenRNG);
 
 	for (i = 0; i < pSunDesc->NumPlanets; i++)
 	{
@@ -398,17 +389,15 @@ void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 		i += rand % (pSunDesc->NumPlanets - i);
 	}
 	pSunDesc->PlanetByte = i;
-	pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
+	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	pPlanet->data_index = GenerateWorlds(ONLY_GAS);
 
 	if (solarSys->PlanetDesc[i].radius < DWARF_GASG_DIST)
 	{
-		uint16_t angle;
-
 		pPlanet->radius =
 			RangeMinMax(DWARF_GASG_DIST, MAX_PLANET_RADIUS, rand);
-		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
@@ -418,7 +407,7 @@ void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 uint8_t
 GenerateCrystalWorld(void)
 {
-	int crystalArray[] = {
+	const int crystalArray[] = {
 		SAPPHIRE_WORLD,
 		EMERALD_WORLD,
 		RUBY_WORLD};
@@ -428,7 +417,7 @@ GenerateCrystalWorld(void)
 uint8_t
 GenerateDesolateWorld(void)
 {
-	int desolateArray[] = {
+	const int desolateArray[] = {
 		DUST_WORLD,
 		CRIMSON_WORLD,
 		UREA_WORLD};
@@ -438,7 +427,7 @@ GenerateDesolateWorld(void)
 uint8_t
 GenerateHabitableWorld(void)
 {
-	int habitableArray[] = {
+	const int habitableArray[] = {
 		PRIMORDIAL_WORLD,
 		WATER_WORLD,
 		TELLURIC_WORLD,
@@ -477,8 +466,8 @@ GenerateMinPlanets(uint8_t min)
 uint8_t
 GenerateNumberOfPlanets(uint8_t minimum)
 {
-	uint8_t roll = MAX_GEN_PLANETS - minimum;
-	uint8_t adjust = minimum + 1;
+	const uint8_t roll = MAX_GEN_PLANETS - minimum;
+	const uint8_t adjust = minimum + 1;
 	return (RandomContext_Random(SysGenRNG) % roll) + adjust;
 }
 
@@ -492,7 +481,8 @@ PlanetByteGen(PLANET_DESC* pPDesc)
 static void
 check_yehat_rebellion(void)
 {
-	HIPGROUP hGroup, hNextGroup;
+	HIPGROUP hGroup {};
+	HIPGROUP hNextGroup {};
 
 	// XXX: Is there a better way to do this? I could not find one.
 	//   When you talk to a Yehat ship (YEHAT_SHIP) and start the rebellion,

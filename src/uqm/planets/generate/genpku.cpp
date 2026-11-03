@@ -57,22 +57,19 @@ const GenerateFunctions generatePkunkFunctions = {
 static bool
 GeneratePkunk_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	solarSys->SunDesc[0].PlanetByte = 0;
-	pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
+	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	if (PrimeSeed)
 	{
-		uint16_t angle;
-
 		pPlanet->data_index = WATER_WORLD;
 		pPlanet->NumPlanets = 1;
 		pPlanet->radius = EARTH_RADIUS * 104L / 100;
-		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);

@@ -84,7 +84,8 @@ DoPickBattleShip(MENU_STATE* pMS)
 {
 	GFXRECT r {};
 	TEXT t {};
-	int dx = 0, dy = 0;
+	int dx = 0;
+	int dy = 0;
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -111,7 +112,8 @@ DoPickBattleShip(MENU_STATE* pMS)
 	}
 	else
 	{
-		int16_t new_row, new_col;
+		int16_t new_row; // NOLINT(cppcoreguidelines-init-variables)
+		int16_t new_col; // NOLINT(cppcoreguidelines-init-variables)
 		if (PulsedInputState.menu[KEY_MENU_RIGHT])
 		{
 			dx = 1;
@@ -134,10 +136,12 @@ DoPickBattleShip(MENU_STATE* pMS)
 		if (new_row != pMS->first_item.y
 			|| new_col != pMS->first_item.x)
 		{
-			uint16_t crew_level, max_crew;
-			uint16_t ship_index;
-			HSTARSHIP hBattleShip, hNextShip;
-			STARSHIP* StarShipPtr;
+			uint16_t crew_level;		 // NOLINT(cppcoreguidelines-init-variables)
+			uint16_t max_crew;			 // NOLINT(cppcoreguidelines-init-variables)
+			uint16_t ship_index;		 // NOLINT(cppcoreguidelines-init-variables)
+			HSTARSHIP hBattleShip;		 // NOLINT(cppcoreguidelines-init-variables)
+			HSTARSHIP hNextShip;		 // NOLINT(cppcoreguidelines-init-variables)
+			const STARSHIP* StarShipPtr; // NOLINT(cppcoreguidelines-init-variables)
 
 			if (new_col < 0)
 			{
@@ -335,8 +339,7 @@ static HSTARSHIP
 GetArmadaStarShip(void)
 {
 	GFXRECT pick_r;
-	GFXCONTEXT OldContext;
-	HSTARSHIP hBattleShip;
+	HSTARSHIP hBattleShip {};
 
 	if (battle_counter[1] == 0)
 	{
@@ -347,7 +350,7 @@ GetArmadaStarShip(void)
 	//    MenuSounds = CaptureSound (LoadSound (MENU_SOUNDS));
 
 	InitPickFrame();
-	OldContext = SetContext(SpaceContext);
+	GFXCONTEXT OldContext {SetContext(SpaceContext)};
 	DrawArmadaPickShip(false, &pick_r);
 
 	{
@@ -400,7 +403,7 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 	else if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 	{
 		// Let the player chose their own ship. (May be a computer player).
-		HSTARSHIP hBattleShip;
+		HSTARSHIP hBattleShip {};
 
 		if (battle_counter[0] == 0 || battle_counter[1] == 0)
 		{ // One side is out of ships. Game over.
@@ -484,15 +487,15 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 {
 #define PICK_NAME_HEIGHT RES_SCALE(6);
-	HSTARSHIP hBattleShip, hNextShip;
-	STARSHIP* StarShipPtr;
-	GFXRECT r, pick_r;
+	HSTARSHIP hBattleShip {};
+	HSTARSHIP hNextShip {};
+	const STARSHIP* StarShipPtr {};
+	GFXRECT r;
+	GFXRECT pick_r;
 	STAMP s;
 	TEXT t;
-	GFXCONTEXT OldContext;
-	FRAME OldFontEffect;
 
-	OldContext = SetContext(SpaceContext);
+	GFXCONTEXT OldContext {SetContext(SpaceContext)};
 
 	BatchGraphics();
 
@@ -528,7 +531,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 	s.origin = pick_r.corner;
 	DrawStamp(&s);
 
-	OldFontEffect = SetContextFontEffect(nullptr);
+	FRAME OldFontEffect {SetContextFontEffect(nullptr)};
 
 	t.baseline.x = pick_r.corner.x + (pick_r.extent.width >> 1);
 	t.baseline.y = pick_r.corner.y + pick_r.extent.height - RES_SCALE(5);
@@ -562,9 +565,8 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 
 		if (StarShipPtr->captains_name_index)
 		{ // Escort ship, not SIS
-			uint16_t ship_index;
 
-			ship_index = StarShipPtr->index;
+			const uint16_t ship_index {StarShipPtr->index};
 
 			s.origin.x = pick_r.corner.x
 					   + (RES_SCALE(5) + ((ICON_WIDTH + RES_SCALE(4)) * (ship_index % NUM_PICK_SHIP_COLUMNS)));

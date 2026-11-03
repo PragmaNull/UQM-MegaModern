@@ -33,16 +33,22 @@
 //		[others when platforms are added]
 void SCALE_(BiAdaptAdvFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 {
-	int x, y;
-	const int w = src->w, h = src->h;
-	int xend, yend;
-	int dsrc, ddst;
+	int x {};
+	int y {};
+	const int w = src->w;
+	const int h = src->h;
+	int xend {};
+	int yend {};
+	int dsrc {};
+	int ddst {};
 	SDL_Rect* region = r;
 	SDL_Rect limits;
 	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(dst->format);
-	const int sp = src->pitch, dp = dst->pitch;
+	const int sp = src->pitch;
+	const int dp = dst->pitch;
 	const int bpp = fmt->bytes_per_pixel;
-	const int slen = sp / bpp, dlen = dp / bpp;
+	const int slen = sp / bpp;
+	const int dlen = dp / bpp;
 	// for clarity purposes, the 'pixels' array here is transposed
 	Uint32 pixels[4][4];
 	static int resolve_coord[][2] =
@@ -113,11 +119,10 @@ void SCALE_(BiAdaptAdvFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 		for (x = region->x; x < xend; ++x, ++src_p, ++dst_p)
 		{
 			// pixel equality counter
-			int cmatch;
 
 			// most pixels will fall into 'all 4 equal'
 			// pattern, so we check it first
-			cmatch = 0;
+			int cmatch {0};
 
 			PIX(0, 0) = SCALE_GETPIX(SRC(0, 0));
 
@@ -460,9 +465,9 @@ void SCALE_(BiAdaptAdvFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 			if (PIX(0, 0) == PIX(1, 1) && PIX(1, 0) == PIX(0, 1))
 			{
 				// diagonals are equal
-				int* coord;
-				int cl, cr;
-				Uint32 clr;
+				int cl {};
+				int cr {};
+				Uint32 clr {};
 
 				// both pairs are equal, have to resolve the pixel
 				// race; we try detecting which color is
@@ -470,7 +475,7 @@ void SCALE_(BiAdaptAdvFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 				// examine 8 pixels surrounding the current quad
 
 				cl = cr = 2;
-				for (coord = resolve_coord[0]; *coord < 100; coord += 2)
+				for (const int* coord {resolve_coord[0]}; *coord < 100; coord += 2)
 				{
 					clr = PIX(coord[0], coord[1]);
 

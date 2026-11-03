@@ -61,21 +61,19 @@ static bool
 GenerateSupox_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	if (PrimeSeed)
 	{
-		uint16_t angle;
-
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 		pPlanet->data_index = WATER_WORLD;
 		pPlanet->NumPlanets = 2;
 		pPlanet->radius = EARTH_RADIUS * 152L / 100;
-		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
@@ -100,8 +98,8 @@ GenerateSupox_generateName(const SOLARSYS_STATE* solarSys,
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& GET_GAME_STATE(SUPOX_STACK1) > 2)
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),

@@ -38,14 +38,13 @@
 void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
 {
 	GFXRECT old_r;
-	GFXCONTEXT OldContext;
 
-	OldContext = SetContext(ScreenContext);
+	GFXCONTEXT OldContext {SetContext(ScreenContext)};
 
 	if (uqm::UQMOptions::read().shipSeed)
 	{
 		HMASTERSHIP hMaster = GetStarShipFromIndex(&master_q, index);
-		MASTER_SHIP_INFO* mPtr = LockMasterShip(&master_q, hMaster);
+		const MASTER_SHIP_INFO* mPtr = LockMasterShip(&master_q, hMaster);
 		index = FindMasterShipIndex(SeedShip(mPtr->SpeciesID, false));
 		UnlockMasterShip(&master_q, hMaster);
 	}
@@ -105,7 +104,7 @@ void SplashScreen(void (*DoProcessing)(TimeCount TimeOut))
 {
 	STAMP s;
 	TimeCount TimeOut {};
-	TimeCount OverallWait = GetTimeCounter() + (c_gameSecond * 3);
+	const TimeCount OverallWait = GetTimeCounter() + (c_gameSecond * 3);
 
 	if (!uqm::UQMOptions::read().skipIntro)
 	{

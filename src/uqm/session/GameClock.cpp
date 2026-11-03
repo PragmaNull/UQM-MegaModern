@@ -180,7 +180,7 @@ HEVENT GameClock::addEvent(uint16_t month, uint16_t day, uint16_t year, uint8_t 
 	HEVENT event {GetHeadLink(&m_events)};
 	while (event != 0)
 	{
-		EVENT* const eventPtr {lockEvent(m_events, event)};
+		const EVENT* const eventPtr {lockEvent(m_events, event)};
 		const bool later {dateIsBefore(year, month, day, eventPtr->year_index, eventPtr->month_index, eventPtr->day_index)};
 		const HEVENT next {_GetSuccLink(eventPtr)};
 		UnlockLink(&m_events, event);
@@ -232,7 +232,7 @@ bool GameClock::takeDueEvent(uint8_t& funcIndex)
 	{
 		return false;
 	}
-	EVENT* const eventPtr {lockEvent(m_events, event)};
+	const EVENT* const eventPtr {lockEvent(m_events, event)};
 	const bool due {!dateIsBefore(m_year, m_month, m_day, eventPtr->year_index, eventPtr->month_index, eventPtr->day_index)};
 	funcIndex = eventPtr->func_index;
 	UnlockLink(&m_events, event);

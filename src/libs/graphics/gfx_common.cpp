@@ -65,7 +65,7 @@ void LoadIntoExtraScreen(GFXRECT* r)
 
 int SetGraphicScale(int scale)
 {
-	int old_scale = gscale;
+	const int old_scale = gscale;
 	gscale = (scale ? scale : GSCALE_IDENTITY);
 	return old_scale;
 }
@@ -77,7 +77,7 @@ int GetGraphicScale(void)
 
 uqm::TFBScaleMode SetGraphicScaleMode(uqm::TFBScaleMode mode)
 {
-	uqm::TFBScaleMode old_mode = gscale_mode;
+	const uqm::TFBScaleMode old_mode = gscale_mode;
 	assert(mode >= uqm::TFBScaleMode::Nearest && mode <= uqm::TFBScaleMode::Trilinear);
 	gscale_mode = mode;
 	return old_mode;
@@ -136,7 +136,7 @@ void ScreenTransition(uqm::EmulationMode transType, const GFXRECT* pRect)
 	while (TransitionAmount < 255)
 	{
 		TimePeriod deltaT;
-		int newAmount;
+		int newAmount {};
 
 		SleepThread(getTicksForFramerate(100));
 

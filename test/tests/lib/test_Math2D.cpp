@@ -14,8 +14,8 @@ using namespace uqm;
 
 TEST(Math2D, BasicArithmeticAndCompoundAssignments)
 {
-	Vec2T<int> a {3, 4};
-	Vec2T<int> b {2, 2};
+	const Vec2T<int> a {3, 4};
+	const Vec2T<int> b {2, 2};
 
 	auto sum = a + b;
 	EXPECT_EQ(sum.x, 5);
@@ -50,9 +50,9 @@ TEST(Math2D, BasicArithmeticAndCompoundAssignments)
 
 TEST(Math2D, ComparisonAndThreeWay)
 {
-	Vec2T<int> a {1, 2};
-	Vec2T<int> b {1, 2};
-	Vec2T<int> c {2, 3};
+	const Vec2T<int> a {1, 2};
+	const Vec2T<int> b {1, 2};
+	const Vec2T<int> c {2, 3};
 
 	EXPECT_TRUE(a == b);
 	EXPECT_FALSE(a != b);
@@ -63,7 +63,7 @@ TEST(Math2D, ComparisonAndThreeWay)
 
 TEST(Math2D, ScalarMultiplication_ReturnTypesAndValues)
 {
-	Vec2T<int> vi {2, 3};
+	const Vec2T<int> vi {2, 3};
 
 	// int * unsigned -> returns Vec2<unsigned>
 	auto r1 = vi * 4u;
@@ -73,7 +73,7 @@ TEST(Math2D, ScalarMultiplication_ReturnTypesAndValues)
 	EXPECT_EQ(r1.y, static_cast<unsigned int>(12));
 
 	// float * int scalar -> returns Vec2<float> (lhs float)
-	Vec2T<float> vf {1.5f, 2.5f};
+	const Vec2T<float> vf {1.5f, 2.5f};
 	auto r2 = vf * 2;
 	using R2T = decltype(r2);
 	static_assert(std::is_same_v<R2T, Vec2T<float>>, "Expected float return type");
@@ -89,7 +89,7 @@ TEST(Math2D, ScalarMultiplication_ReturnTypesAndValues)
 
 	// When scalar is smaller type, check promotion when sizeof(T) > sizeof(N)
 	using SmallInt = short;
-	Vec2T<int> vi2 {3, 4};
+	const Vec2T<int> vi2 {3, 4};
 	auto r4 = vi2 * static_cast<SmallInt>(2);
 	// sizeof(int) > sizeof(short) -> returns Vec2<int>
 	static_assert(std::is_same_v<decltype(r4), Vec2T<int>>, "Expected Vec2<int>");
@@ -101,21 +101,21 @@ TEST(Math2D, ToStringPrimaryTemplateAndLengthError)
 {
 	// Use a type that does not have an explicit specialization declared in cpp
 	// (float/double/uint32 have explicit declarations there — avoid them).
-	Vec2T<long long> v {123, -456};
+	const Vec2T<long long> v {123, -456};
 
 	// Provide a buffer large enough
 	std::array<char, 64> buf {};
-	uqstl::span<char> span {buf.data(), buf.size()};
+	const uqstl::span<char> span {buf.data(), buf.size()};
 	const char* s = toString<long long>(v, span);
 	ASSERT_NE(s, nullptr);
-	std::string got {s};
+	const std::string got {s};
 	// expected format "123,-456" (fmt default)
 	EXPECT_NE(got.find("123"), std::string::npos);
 	EXPECT_NE(got.find("-456"), std::string::npos);
 
 	// Now test too-small buffer triggers std::length_error
 	std::array<char, 2> smallBuf {}; // intentionally tiny
-	uqstl::span<char> smallSpan {smallBuf.data(), smallBuf.size()};
+	const uqstl::span<char> smallSpan {smallBuf.data(), smallBuf.size()};
 	EXPECT_THROW(toString<long long>(v, smallSpan), std::length_error);
 }
 
@@ -208,7 +208,7 @@ TEST(Math2D, FmtFormatter_FormattingWitBraces)
 TEST(Math2D, EdgeCasesLargeValuesUnsigned)
 {
 	// large unsigned values formatting & arithmetic
-	Vec2T<uint32_t> u {std::numeric_limits<uint32_t>::max(), 0u};
+	const Vec2T<uint32_t> u {std::numeric_limits<uint32_t>::max(), 0u};
 	// scalar multiply by 1 should keep values
 	auto res = u * 1u;
 	static_assert(std::is_same_v<decltype(res), Vec2T<uint32_t>>);
@@ -216,7 +216,7 @@ TEST(Math2D, EdgeCasesLargeValuesUnsigned)
 	EXPECT_EQ(res.y, 0u);
 
 	// toString for a large signed type (primary template)
-	Vec2T<long long> big {std::numeric_limits<long long>::max(), std::numeric_limits<long long>::min()};
+	const Vec2T<long long> big {std::numeric_limits<long long>::max(), std::numeric_limits<long long>::min()};
 	std::array<char, 128> buf {};
 	EXPECT_NO_THROW({
 		auto out = toString<long long>(big, uqstl::span<char> {buf.data(), buf.size()});
@@ -226,7 +226,7 @@ TEST(Math2D, EdgeCasesLargeValuesUnsigned)
 
 TEST(Math2D, MixedSignedUnsignedBehavior)
 {
-	Vec2T<int> vi {-1, 2};
+	const Vec2T<int> vi {-1, 2};
 	// multiply by unsigned scalar -> returns Vec2<unsigned>
 	auto r = vi * 3u;
 	static_assert(std::is_same_v<decltype(r), Vec2T<unsigned int>>);

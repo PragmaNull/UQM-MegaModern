@@ -25,7 +25,7 @@ public:
 		m_pending = true;
 		runOnGameThread([this, work {uqstl::move(work)}] {
 			T result {work()};
-			LockGuard guard {m_lock};
+			const LockGuard guard {m_lock};
 			m_result = uqstl::move(result);
 		});
 	}
@@ -39,7 +39,7 @@ public:
 	// The result, or nullopt if the work has not finished.
 	[[nodiscard]] uqstl::optional<T> take()
 	{
-		LockGuard guard {m_lock};
+		const LockGuard guard {m_lock};
 		if (!m_result)
 		{
 			return uqstl::nullopt;

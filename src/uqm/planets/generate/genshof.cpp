@@ -72,7 +72,7 @@ GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
 		if (GLOBAL(BattleGroupRef) == 0
 			|| !GetGroupInfo(GLOBAL(BattleGroupRef), GROUP_INIT_IP))
 		{
-			HSHIPFRAG hStarShip;
+			HSHIPFRAG hStarShip {};
 
 			if (GLOBAL(BattleGroupRef) == 0)
 			{
@@ -146,7 +146,7 @@ static bool
 GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	uint16_t i;
+	uint16_t i {};
 
 	pSunDesc->PlanetByte = 0;
 	pSunDesc->MoonByte = 0;
@@ -234,7 +234,7 @@ GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
 
 	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		pMoonDesc->data_index = HIERARCHY_STARBASE;
@@ -251,8 +251,8 @@ GenerateShofixti_generateName(const SOLARSYS_STATE* solarSys,
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),
@@ -272,9 +272,9 @@ GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 	{
 		if (CheckAlliance(SHOFIXTI_SHIP) == GOOD_GUY)
 		{
-			bool MaxShips = (CountEscortShips(SHOFIXTI_SHIP) < ifHardDifficulty(1, 2) ? true : false);
-			bool RoomInFleet = EscortFeasibilityStudy(SHOFIXTI_SHIP);
-			uint8_t Index = !MaxShips ? 0 : (!RoomInFleet ? 1 : 2);
+			const bool MaxShips = (CountEscortShips(SHOFIXTI_SHIP) < ifHardDifficulty(1, 2) ? true : false);
+			const bool RoomInFleet = EscortFeasibilityStudy(SHOFIXTI_SHIP);
+			const uint8_t Index = !MaxShips ? 0 : (!RoomInFleet ? 1 : 2);
 
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
@@ -303,21 +303,18 @@ GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 static void
 check_old_shofixti(void)
 {
-	HIPGROUP hGroup;
-	IP_GROUP* GroupPtr;
-
 	if (!GLOBAL(BattleGroupRef))
 	{
 		return; // nothing to check
 	}
 
-	hGroup = GetHeadLink(&GLOBAL(ip_group_q));
+	HIPGROUP hGroup {GetHeadLink(&GLOBAL(ip_group_q))};
 	if (!hGroup)
 	{
 		return; // still nothing to check
 	}
 
-	GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+	IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
 	if (GroupPtr->race_id == SHOFIXTI_SHIP

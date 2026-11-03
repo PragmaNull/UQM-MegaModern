@@ -142,7 +142,7 @@ static uint8_t MadeChoice;
 static void
 DoRamble(RESPONSE_REF R)
 {
-	uint8_t Counter;
+	uint8_t Counter {};
 
 	Counter = GET_GAME_STATE(MYCON_RAMBLE);
 	switch (Counter++)
@@ -411,7 +411,7 @@ TrickMycon(RESPONSE_REF R)
 static void
 NormalMycon(RESPONSE_REF R)
 {
-	RESPONSE_FUNC RespFunc;
+	RESPONSE_FUNC RespFunc {};
 
 	if (PLAYER_SAID(R, what_about_shattered))
 	{
@@ -563,7 +563,7 @@ NormalMycon(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (GET_GAME_STATE(SUN_DEVICE))
 	{
@@ -695,8 +695,6 @@ post_mycon_enc(void)
 LOCDATA*
 init_mycon_comm(void)
 {
-	LOCDATA* retval;
-
 	mycon_desc.init_encounter_func = Intro;
 	mycon_desc.post_encounter_func = post_mycon_enc;
 	mycon_desc.uninit_encounter_func = uninit_mycon;
@@ -717,7 +715,7 @@ init_mycon_comm(void)
 	{
 		setSegue(Segue_peace);
 	}
-	retval = &mycon_desc;
+	LOCDATA* retval {&mycon_desc};
 
 	return (retval);
 }

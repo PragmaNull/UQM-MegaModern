@@ -63,9 +63,7 @@ StringTablePtr loadStringTable(RESOURCE res)
 const char*
 LoadStringInstance(RESOURCE res)
 {
-	const char* data;
-
-	data = (const char*)res_GetResource(res);
+	const char* data {(const char*)res_GetResource(res)};
 	if (data)
 	{
 		res_DetachResource(res);

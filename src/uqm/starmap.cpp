@@ -53,9 +53,11 @@ STAR_DESC*
 FindStar(STAR_DESC* LastSDPtr, GFXPOINT* puniverse, int16_t xbounds,
 		 int16_t ybounds)
 {
-	int16_t min_y, max_y;
-	int16_t lo, hi;
-	STAR_DESC* BaseSDPtr;
+	int16_t min_y {};
+	int16_t max_y {};
+	int16_t lo {};
+	int16_t hi {};
+	STAR_DESC* BaseSDPtr {};
 
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 	{
@@ -94,7 +96,7 @@ FindStar(STAR_DESC* LastSDPtr, GFXPOINT* puniverse, int16_t xbounds,
 
 	while (lo < hi)
 	{
-		int16_t mid;
+		int16_t mid {};
 
 		mid = (lo + hi) >> 1;
 		if (BaseSDPtr[mid].star_pt.y >= min_y)
@@ -110,7 +112,8 @@ FindStar(STAR_DESC* LastSDPtr, GFXPOINT* puniverse, int16_t xbounds,
 	LastSDPtr = &BaseSDPtr[lo];
 	if (ybounds < 0 || LastSDPtr->star_pt.y <= max_y)
 	{
-		int16_t min_x, max_x;
+		int16_t min_x {};
+		int16_t max_x {};
 
 		if (xbounds <= 0)
 		{
@@ -139,10 +142,9 @@ FindStar(STAR_DESC* LastSDPtr, GFXPOINT* puniverse, int16_t xbounds,
 
 void GetClusterName(const STAR_DESC* pSD, char buf[])
 {
-	char* pBuf;
-	const char* pStr;
+	const char* pStr {};
 
-	pBuf = buf;
+	char* pBuf {buf};
 	if (pSD->Prefix)
 	{
 		pStr = GAME_STRING(STAR_NUMBER_BASE + pSD->Prefix - 1);
@@ -173,9 +175,10 @@ FindNearest(STAR_DESC* starmap, GFXPOINT p, bool constellation)
 	{
 		return nullptr;
 	}
-	uint16_t index, star_id = 0;
-	uint32_t dist, min_dist = MAX_X_UNIVERSE * MAX_Y_UNIVERSE;
-	for (index = 0; index < NUM_SOLAR_SYSTEMS; index++)
+	uint16_t star_id = 0;
+	uint32_t dist {};
+	uint32_t min_dist = MAX_X_UNIVERSE * MAX_Y_UNIVERSE;
+	for (uint16_t index {0}; index < NUM_SOLAR_SYSTEMS; index++)
 	{
 		dist = (starmap[index].star_pt.x - p.x) * (starmap[index].star_pt.x - p.x) + (starmap[index].star_pt.y - p.y) * (starmap[index].star_pt.y - p.y);
 		if (dist < min_dist && (starmap[index].Prefix > 0 || !constellation))
@@ -295,8 +298,7 @@ void DefaultStarmap(STAR_DESC* starmap)
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "DefaultStarmap setting star map to original values.\n");
 #endif
-	uint16_t i;
-	for (i = 0; i < NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1 + 1; i++)
+	for (uint16_t i {0}; i < NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1 + 1; i++)
 	{
 		starmap[i] = StarmapArray[i];
 	}
@@ -316,8 +318,7 @@ void SeedStarmap(STAR_DESC* starmap)
 		fmt::print(stderr, "SeedStarmap called with nullptr starmap PTR.\n");
 		return;
 	}
-	uint16_t i;
-	uint16_t rand_val;
+	uint16_t rand_val {};
 	if (!StarGenRNG)
 	{
 		fmt::print(stderr, "****SeedStarmap creating a STAR GEN RNG****\n");
@@ -325,7 +326,7 @@ void SeedStarmap(STAR_DESC* starmap)
 	}
 	RandomContext_SeedRandom(StarGenRNG, uqm::UQMOptions::read().customSeed.value);
 
-	for (i = 0; i < NUM_SOLAR_SYSTEMS; i++)
+	for (uint16_t i {0}; i < NUM_SOLAR_SYSTEMS; i++)
 	{
 		rand_val = RandomContext_Random(StarGenRNG);
 		// 469 is the default number of dwarf stars, and 24 the number of
@@ -362,7 +363,7 @@ void SeedStarmap(STAR_DESC* starmap)
 // This is purely for debugging purposes - print out the plot name by ID
 void print_plot_id(uint16_t plot_id)
 {
-	static const char* const plot_name[] = {
+	const static char* const plot_name[] = {
 		"ARILOU_DEFINED", "SOL_DEFINED", "SHOFIXTI_DEFINED",
 		"MAIDENS_DEFINED", "START_COLONY_DEFINED", "SPATHI_DEFINED",
 		"ZOQFOT_DEFINED", "MELNORME0_DEFINED", "MELNORME1_DEFINED",
@@ -508,7 +509,7 @@ GetNextPlot(PLOT_LOCATION* plot)
 {
 	uint16_t plot_id = 0;
 	uint32_t top_weight = 0;
-	uint16_t i;
+	uint16_t i {};
 	if (!plot)
 	{
 		fmt::print(stderr, "GetNextPlot (plotmap) called with bad data PTR\n");
@@ -582,8 +583,8 @@ void ResetPlot(PLOT_LOCATION* plot)
 		fmt::print(stderr, "ResetPlot (plotmap) called with bad data PTR.\n");
 		return;
 	}
-	uint16_t i, j;
-	for (i = 0; i < NUM_PLOTS; i++)
+	uint16_t j {};
+	for (uint16_t i {0}; i < NUM_PLOTS; i++)
 	{
 		for (j = 0; j < NUM_PLOTS; j++)
 		{
@@ -599,7 +600,6 @@ void DefaultPlot(PLOT_LOCATION* plot, STAR_DESC* starmap)
 {
 #define ARILOU_SPACE_X 438	// We don't seed arilou from the map, they
 #define ARILOU_SPACE_Y 6372 // are hard code all the way.
-	uint16_t i;
 
 	if (!plot || !starmap)
 	{
@@ -611,7 +611,7 @@ void DefaultPlot(PLOT_LOCATION* plot, STAR_DESC* starmap)
 	ResetPlot(plot);
 	plot[0].star_pt = GFXPOINT {ARILOU_SPACE_X, ARILOU_SPACE_Y};
 	plot[0].star = &(starmap[NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1]);
-	for (i = 0; i < NUM_SOLAR_SYSTEMS; i++)
+	for (uint16_t i {0}; i < NUM_SOLAR_SYSTEMS; i++)
 	{
 		if (starmap[i].Index > 0)
 		{
@@ -636,13 +636,13 @@ void InitPlot(PLOT_LOCATION* plotmap)
 		fmt::print(stderr, "InitPlot (plotmap) called with bad data PTR\n");
 		return;
 	}
-	uint16_t i, j;
+	uint16_t j {};
 	ResetPlot(plotmap);
 
 	// Set up buffers around anyone with a zone of influence during the war
 	// or after the war where homeworlds inside the zone wouldn't make sense
 	// Orz are skipped, Androsynth takes care of them.
-	uint16_t home_map[23][2] = {
+	const uint16_t home_map[23][2] = {
 		{ARILOU_DEFINED,		 300 },
 		{SOL_DEFINED,		  700 },
 		{YEHAT_DEFINED,		700 },
@@ -671,7 +671,7 @@ void InitPlot(PLOT_LOCATION* plotmap)
 	   };
 	// Total 8 + 7 + 8 currently 23 homeworlds
 	// Set the homeworlds apart first (can be overwritten later)
-	for (i = 0; i < 22; i++)
+	for (uint16_t i {0}; i < 22; i++)
 	{
 		for (j = i + 1; j < 23; j++)
 		{
@@ -832,7 +832,8 @@ void InitPlot(PLOT_LOCATION* plotmap)
 // the Melnorme 1 near Sol, and Melnorme 7 near Thraddash
 void InitMelnormeRainbow(PLOT_LOCATION* plotmap)
 {
-	uint16_t i, j;
+	uint16_t i {};
+	uint16_t j {};
 	// Melnormes and Rainbow worlds all push each other pretty far away
 	// to keep them scattered nicely. We then zero out their weights so
 	// that they are picked last.  In practice 2500 (rainbow) and
@@ -896,8 +897,7 @@ void InitMelnormeRainbow(PLOT_LOCATION* plotmap)
 // in the interim.  Do need to worry about undefined plot {~0,~0}.
 bool CheckValid(PLOT_LOCATION* plot, uint16_t plot_id)
 {
-	uint16_t i;
-	uint32_t distance_sq;
+	uint32_t distance_sq {};
 	if (!plot || plot_id >= NUM_PLOTS)
 	{
 		fmt::print(stderr, "CheckValid (plotmap, plot_id) called {}.\n"
@@ -912,7 +912,7 @@ bool CheckValid(PLOT_LOCATION* plot, uint16_t plot_id)
 				   plot_id);
 		return false;
 	}
-	for (i = 0; i < NUM_PLOTS; i++)
+	for (uint16_t i {0}; i < NUM_PLOTS; i++)
 	{
 		if (i == plot_id)
 		{
@@ -1028,13 +1028,13 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 	// Specific homeworlds that work best with their correct color star (SOL)
 	if (NeedsHabitable(star->Index))
 	{
-		uint8_t star_color = STAR_COLOR(star->Type);
-		uint32_t rand_val = GetRandomSeedForStar(star);
+		const uint8_t star_color = STAR_COLOR(star->Type);
+		const uint32_t rand_val = GetRandomSeedForStar(star);
 
 		if (STAR_TYPE(star->Type) == DWARF_STAR && star_color == RED_BODY)
 		{
-			uint8_t color_array[] = {BLUE_BODY, GREEN_BODY, ORANGE_BODY,
-									 WHITE_BODY, YELLOW_BODY};
+			const uint8_t color_array[] = {BLUE_BODY, GREEN_BODY, ORANGE_BODY,
+										   WHITE_BODY, YELLOW_BODY};
 
 			star->Type = MAKE_STAR(
 				STAR_TYPE(star->Type), color_array[rand_val % 5],
@@ -1044,7 +1044,7 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 				 && (star_color == BLUE_BODY || star_color == GREEN_BODY
 					 || star_color == WHITE_BODY))
 		{
-			uint8_t color_array[] = {ORANGE_BODY, RED_BODY, YELLOW_BODY};
+			const uint8_t color_array[] = {ORANGE_BODY, RED_BODY, YELLOW_BODY};
 
 			star->Type = MAKE_STAR(
 				STAR_TYPE(star->Type), color_array[rand_val % 3],
@@ -1059,7 +1059,7 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 	// All other channels are false gods
 	if (star->Index == ILWRATH_DEFINED)
 	{
-		uint16_t newcolor = (STAR_COLOR(star->Type) + uqm::UQMOptions::read().customSeed.value) % 5;
+		const uint16_t newcolor = (STAR_COLOR(star->Type) + uqm::UQMOptions::read().customSeed.value) % 5;
 		if (uqm::UQMOptions::read().customSeed % 44 == 0 || uqm::UQMOptions::read().customSeed % 100 == 44)
 		{
 			star->Type = StarmapArray[i].Type;
@@ -1190,7 +1190,7 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 		else
 		{
 			int prefix = 0;
-			int k;
+			int k {};
 			// Re-order the stars to remove new Sol's prefix
 			for (k = 0; k < NUM_SOLAR_SYSTEMS; k++)
 			{
@@ -1203,8 +1203,8 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 			star->Prefix = 0;
 			star->Postfix = 129;
 			// Find the nearest constellation to old Sol
-			STAR_DESC* pStr = FindNearestConstellation(starmap,
-													   starmap[j].star_pt);
+			const STAR_DESC* pStr = FindNearestConstellation(starmap,
+															 starmap[j].star_pt);
 			// Find the highest Prefix
 			for (k = 0; k < NUM_SOLAR_SYSTEMS; k++)
 			{
@@ -1287,9 +1287,11 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 	// my_clock true *locally*, which is how you detect the top layer of the
 	// recursion and thus stop the clock on failure.
 	bool my_clock = false;
-	uint16_t rand_val;
-	uint16_t plot_id, star_id, i;
-	uint16_t return_id;
+	uint16_t rand_val {};
+	uint16_t plot_id {};
+	uint16_t star_id {};
+	uint16_t i {};
+	uint16_t return_id {};
 	// timelimit is in deciseconds, if loading 60 seconds, if new 2 seconds
 #ifdef DEBUG_STARSEED_TRACE_Z
 	bool tried[NUM_SOLAR_SYSTEMS] = {false};
@@ -1299,7 +1301,7 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 		tried[i] = 0;
 	}
 #endif
-	uint16_t timelimit = (uqm::currentActivity() ? 600 : 20);
+	const uint16_t timelimit = (uqm::currentActivity() ? 600 : 20);
 #ifdef DEBUG_STARSEED_TRACE
 	timelimit = (uqm::currentActivity() ? 3600 : 3600);
 #endif
@@ -1618,8 +1620,7 @@ void DefaultQuasispace(PORTAL_LOCATION* portalmap)
 		return;
 	}
 
-	uint16_t i;
-	for (i = 0; i < NUM_HYPER_VORTICES + 1; i++)
+	for (uint16_t i {0}; i < NUM_HYPER_VORTICES + 1; i++)
 	{
 		portalmap[i].star_pt = portalmap_array[i].star_pt;
 		portalmap[i].quasi_pt = portalmap_array[i].quasi_pt;
@@ -1644,9 +1645,10 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 					STAR_DESC* starmap)
 {
 	PORTAL_LOCATION swap;
-	uint16_t rand_val;
-	uint16_t i, j;
-	bool valid;
+	uint16_t rand_val {};
+	uint16_t i {};
+	uint16_t j {};
+	bool valid {};
 	if (!portalmap || !plotmap || !starmap)
 	{
 		fmt::print(stderr, "Seed Quasispace called with nullptr pointer(s).\n");
@@ -1894,8 +1896,8 @@ PlotIdStrToIndex(const char* plotIdStr)
 	fmt::print(stderr, "START PlotIdStrToIndex {}.\n", plotIdStr);
 #endif
 	PlotIdMap key = {/* .idStr = */ plotIdStr, /* .id = */ std::numeric_limits<uint16_t>::max()};
-	PlotIdMap* found = (PlotIdMap*)bsearch(&key, plotIdMap, std::size(plotIdMap),
-										   sizeof plotIdMap[0], PlotIdCompare);
+	const PlotIdMap* found = (PlotIdMap*)bsearch(&key, plotIdMap, std::size(plotIdMap),
+												 sizeof plotIdMap[0], PlotIdCompare);
 	if (found == nullptr)
 	{
 		return NUM_PLOTS + 1;

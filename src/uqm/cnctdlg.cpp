@@ -77,12 +77,10 @@ static int do_cancel(WIDGET* self, int event);
 static void
 MCD_DrawMenuScreen(WIDGET* _self, int x, int y)
 {
-	int widget_index, widget_y;
+	const WIDGET_MENU_SCREEN* self = (WIDGET_MENU_SCREEN*)_self;
 
-	WIDGET_MENU_SCREEN* self = (WIDGET_MENU_SCREEN*)_self;
-
-	widget_y = y + RES_SCALE(8);
-	for (widget_index = 0; widget_index < self->num_children; widget_index++)
+	int widget_y {y + RES_SCALE(8)};
+	for (int widget_index {0}; widget_index < self->num_children; widget_index++)
 	{
 		WIDGET* c = self->child[widget_index];
 		(*c->draw)(c, x, widget_y);
@@ -93,9 +91,10 @@ MCD_DrawMenuScreen(WIDGET* _self, int x, int y)
 static void
 MCD_DrawButton(WIDGET* _self, int x, int y)
 {
-	WIDGET_BUTTON* self = (WIDGET_BUTTON*)_self;
+	const WIDGET_BUTTON* self = (WIDGET_BUTTON*)_self;
 	Color oldtext;
-	Color inactive, selected;
+	Color inactive;
+	Color selected;
 	FONT oldfont = SetContextFont(StarConFont);
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
@@ -128,12 +127,13 @@ MCD_DrawSlider(WIDGET* _self, int x, int y)
 {
 	WIDGET_SLIDER* self = (WIDGET_SLIDER*)_self;
 	Color oldtext;
-	Color default_color, selected;
+	Color default_color;
+	Color selected;
 	FONT oldfont = SetContextFont(PlayerFont);
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
 	GFXRECT r;
-	int tick = RES_SCALE(RES_DESCALE(MCD_WIDTH) / 8);
+	const int tick = RES_SCALE(RES_DESCALE(MCD_WIDTH) / 8);
 
 	default_color = MENU_TEXT_COLOR;
 	selected = MENU_HIGHLIGHT_COLOR;
@@ -178,7 +178,9 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 {
 	WIDGET_TEXTENTRY* self = (WIDGET_TEXTENTRY*)_self;
 	Color oldtext;
-	Color inactive, default_color, selected;
+	Color inactive;
+	Color default_color;
+	Color selected;
 	FONT oldfont = SetContextFont(PlayerFont);
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
@@ -228,12 +230,11 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 	}
 	else
 	{ // editing state
-		uint16_t i;
+		uint16_t i {};
 		GFXRECT text_r;
 		uint8_t char_deltas[WIDGET_TEXTENTRY_WIDTH];
-		uint8_t* pchar_deltas;
 		GFXRECT r;
-		int16_t leading;
+		int16_t leading {};
 
 		t.baseline.x = x + (RES_SCALE(90));
 		t.align = ALIGN_LEFT;
@@ -265,7 +266,7 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 		DrawFilledRectangle(&r);
 
 		// calculate the cursor position and draw it
-		pchar_deltas = char_deltas;
+		const uint8_t* pchar_deltas {char_deltas};
 		for (i = self->cursor_pos; i > 0; --i)
 		{
 			r.corner.x += (int16_t)*pchar_deltas++;
@@ -458,7 +459,7 @@ do_cancel(WIDGET* self, int event)
 static void
 CreateWidgets(void)
 {
-	int i;
+	int i {};
 
 	done = false;
 
@@ -563,7 +564,7 @@ DrawConnectDialog(void)
 static bool
 DoMeleeConnectDialog(CONNECT_DIALOG_STATE* state)
 {
-	bool changed;
+	bool changed {};
 
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;

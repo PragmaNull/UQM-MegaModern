@@ -112,11 +112,9 @@ void UninitMenuMusic(void)
 
 void DrawToolTips(MENU_STATE* pMS, int answer)
 {
-	uint16_t i;
 	TEXT t;
 	stringbank* bank = StringBank_Create();
 	const char* lines[30];
-	int line_count;
 	GFXRECT r;
 	STAMP s;
 
@@ -135,13 +133,13 @@ void DrawToolTips(MENU_STATE* pMS, int answer)
 	SetContextForeGroundColor(BLACK_COLOR);
 
 	t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 66 + answer);
-	line_count = SplitString(t.pStr, '\n', 30, lines, bank);
+	const int line_count {SplitString(t.pStr, '\n', 30, lines, bank)};
 
 	t.baseline.x = r.corner.x
 				 + RES_SCALE(RES_DESCALE(r.extent.width) >> 1);
 	t.baseline.y = r.corner.y + RES_SCALE(10)
 				 + RES_SCALE(line_count < 2 ? 8 : (line_count > 2 ? 0 : 3));
-	for (i = 0; i < line_count; i++)
+	for (uint16_t i {0}; i < line_count; i++)
 	{
 		t.pStr = lines[i];
 		t.align = ALIGN_CENTER;
@@ -157,9 +155,7 @@ static void
 DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 {
 	STAMP s;
-	FONT oldFont;
 	TEXT t;
-	uint16_t i;
 
 	s.origin = MAKE_POINT(CHOOSER_X, CHOOSER_Y);
 	s.frame = SetRelFrameIndex(pMS->CurFrame, 2);
@@ -167,13 +163,13 @@ DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 
 	DrawToolTips(pMS, answer);
 
-	oldFont = SetContextFont(MicroFont);
+	FONT oldFont {SetContextFont(MicroFont)};
 
 	t.align = ALIGN_CENTER;
 	t.baseline.x = s.origin.x;
 	t.baseline.y = s.origin.y - RES_SCALE(20);
 
-	for (i = 0; i <= 2; i++)
+	for (uint16_t i {0}; i <= 2; i++)
 	{
 		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 56
 							 + (!i ? 1 : (i > 1 ? 2 : 0)));
@@ -198,7 +194,6 @@ DoDiffChooser(MENU_STATE* pMS)
 	static TimePeriod InactTimeOut;
 	GFXRECT oldRect;
 	STAMP s;
-	GFXCONTEXT oldContext;
 	bool response = false;
 	bool done = false;
 	uint8_t a = 1;
@@ -206,7 +201,7 @@ DoDiffChooser(MENU_STATE* pMS)
 	InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * c_gameSecond;
 	LastInputTime = GetTimeCounter();
 
-	oldContext = SetContext(ScreenContext);
+	GFXCONTEXT oldContext {SetContext(ScreenContext)};
 	GetContextClipRect(&oldRect);
 	s = SaveContextFrame(nullptr);
 
@@ -239,9 +234,7 @@ DoDiffChooser(MENU_STATE* pMS)
 		}
 		else if (PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN] || PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_RIGHT])
 		{
-			uint8_t NewState;
-
-			NewState = a;
+			uint8_t NewState {a};
 			if (PulsedInputState.menu[KEY_MENU_UP]
 				|| PulsedInputState.menu[KEY_MENU_LEFT])
 			{
@@ -322,10 +315,10 @@ FRAME TextCache[5];
 static void
 InitPulseText(void)
 {
-	FRAME frame, OldFrame;
-	int16_t leading;
+	FRAME frame {};
+	FRAME OldFrame {};
+	int16_t leading {};
 	TEXT t;
-	uint16_t i;
 
 	if (TextCache[0] != nullptr)
 	{
@@ -342,7 +335,7 @@ InitPulseText(void)
 	t.align = ALIGN_CENTER;
 	t.CharCount = (uint16_t)~0;
 
-	for (i = START_NEW_GAME; i < NUM_MENU_ELEMENTS; i++)
+	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
 	{
 		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 69 + i);
 
@@ -371,8 +364,7 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 	STAMP s;
 	TEXT t;
 	char buf[64];
-	uint16_t i;
-	int16_t leading;
+	int16_t leading {};
 
 	s.frame = pMS->CurFrame;
 	GetFrameRect(s.frame, &r);
@@ -400,7 +392,7 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 
 	SetContextForeGroundColor(MAIN_MENU_TEXT_COLOR);
 
-	for (i = START_NEW_GAME; i < NUM_MENU_ELEMENTS; i++)
+	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
 	{
 		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 69 + i);
 		font_DrawText(&t);
@@ -489,7 +481,7 @@ DoRestart(MENU_STATE* pMS)
 {
 	static TimeCount LastInputTime;
 	static TimePeriod InactTimeOut;
-	TimeCount TimeIn = GetTimeCounter();
+	const TimeCount TimeIn = GetTimeCounter();
 
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
@@ -641,9 +633,7 @@ DoRestart(MENU_STATE* pMS)
 	}
 	else if (PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN])
 	{
-		uint8_t NewState;
-
-		NewState = pMS->CurState;
+		uint8_t NewState {pMS->CurState};
 		if (PulsedInputState.menu[KEY_MENU_UP])
 		{
 			if (NewState == START_NEW_GAME)
@@ -781,8 +771,6 @@ void ShowGameEnding(void)
 static bool
 RestartMenu(MENU_STATE* pMS)
 {
-	uint16_t i;
-
 	ReinitQueue(&race_q[0]);
 	ReinitQueue(&race_q[1]);
 
@@ -818,7 +806,7 @@ RestartMenu(MENU_STATE* pMS)
 	DestroyDrawable(ReleaseDrawable(pMS->CurFrame));
 	pMS->CurFrame = 0;
 
-	for (i = START_NEW_GAME; i < NUM_MENU_ELEMENTS; i++)
+	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
 	{
 		DestroyDrawable(ReleaseDrawable(TextCache[i]));
 		TextCache[i] = 0;
@@ -940,11 +928,10 @@ bool StartGame(void)
 		// While the starseed init code should always force a
 		// reset of the starmap_array, we will do it here because
 		// paranoia is its own reward.
-		uint16_t i;
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "Initializing star_array, just in case...\n");
 #endif
-		for (i = 0; i < NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1 + 1; i++)
+		for (uint16_t i {0}; i < NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1 + 1; i++)
 		{
 			star_array[i] = StarmapArray[i];
 		}

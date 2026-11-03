@@ -132,7 +132,7 @@ void SaveShipQueue(yyjson_mut_doc* doc, yyjson_mut_val* root, const char* key, Q
 	HSHIPFRAG hStarShip {GetHeadLink(pQueue)};
 	while (num_links--)
 	{
-		SHIP_FRAGMENT* FragPtr {LockShipFrag(pQueue, hStarShip)};
+		const SHIP_FRAGMENT* FragPtr {LockShipFrag(pQueue, hStarShip)};
 		const HSHIPFRAG hNextShip {_GetSuccLink(FragPtr)};
 		addShipFragment(doc, yyjson_mut_arr_add_obj(doc, list), *FragPtr);
 		UnlockShipFrag(pQueue, hStarShip);
@@ -152,7 +152,7 @@ void SaveRaceQueue(yyjson_mut_doc* doc, yyjson_mut_val* root, QUEUE* pQueue)
 	HFLEETINFO hFleet {GetHeadLink(pQueue)};
 	while (num_links--)
 	{
-		FLEET_INFO* FleetPtr {LockFleetInfo(pQueue, hFleet)};
+		const FLEET_INFO* FleetPtr {LockFleetInfo(pQueue, hFleet)};
 		const HFLEETINFO hNextFleet {_GetSuccLink(FleetPtr)};
 
 		yyjson_mut_val* fleet {yyjson_mut_arr_add_obj(doc, list)};
@@ -188,7 +188,7 @@ void SaveGroupQueue(yyjson_mut_doc* doc, yyjson_mut_val* root, QUEUE* pQueue)
 	HIPGROUP hNextGroup {};
 	for (HIPGROUP hGroup {GetHeadLink(pQueue)}; hGroup; hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(pQueue, hGroup)};
+		const IP_GROUP* GroupPtr {LockIpGroup(pQueue, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 		addIpGroup(doc, yyjson_mut_arr_add_obj(doc, list), *GroupPtr);
 		UnlockIpGroup(pQueue, hGroup);
@@ -414,16 +414,15 @@ PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 	SummPtr->MCreditHi = GET_GAME_STATE(MELNORME_CREDIT1);
 
 	{
-		HSHIPFRAG hStarShip, hNextShip;
+		HSHIPFRAG hStarShip {};
+		HSHIPFRAG hNextShip {};
 
 		for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q)),
 			SummPtr->NumShips = 0;
 			 hStarShip; hStarShip = hNextShip,
 			++SummPtr->NumShips)
 		{
-			SHIP_FRAGMENT* StarShipPtr;
-
-			StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+			const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
 			hNextShip = _GetSuccLink(StarShipPtr);
 			SummPtr->ShipList[SummPtr->NumShips] = StarShipPtr->race_id;
 			UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
@@ -455,7 +454,7 @@ SaveProblemMessage(STAMP* MsgStamp)
 		{0, 0},
 		{0, 0}
 	  };
-	uint16_t i;
+	uint16_t i {};
 	TEXT t;
 	const char* ppStr[MAX_MSG_LINES];
 
@@ -524,9 +523,8 @@ SaveProblemMessage(STAMP* MsgStamp)
 void SaveProblem(void)
 {
 	STAMP s;
-	GFXCONTEXT OldContext;
 
-	OldContext = SetContext(SpaceContext);
+	GFXCONTEXT OldContext {SetContext(SpaceContext)};
 	SaveProblemMessage(&s);
 	FlushGraphics();
 

@@ -38,9 +38,6 @@
 static void
 process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int cel_ct)
 {
-	TFB_Image* tfbimg;
-	int hx, hy;
-
 	FramePtr->Type = ROM_DRAWABLE;
 	FramePtr->Index = cel_ct;
 
@@ -57,7 +54,7 @@ process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int ce
 	{ // special transparency cases for truecolor images
 		if (ani[cel_ct].transparentColor == 0)
 		{ // make RGB=0,0,0 transparent
-			Color color = {0, 0, 0, 0};
+			const Color color = {0, 0, 0, 0};
 			TFB_DrawCanvas_SetTransparentColor(img[cel_ct], color, false);
 		}
 	}
@@ -66,12 +63,12 @@ process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int ce
 		TFB_DrawCanvas_SetTransparentIndex(img[cel_ct], -1, false);
 	}
 
-	hx = ani[cel_ct].hotspotX;
-	hy = ani[cel_ct].hotspotY;
+	const int hx {ani[cel_ct].hotspotX};
+	const int hy {ani[cel_ct].hotspotY};
 
 	FramePtr->image = TFB_DrawImage_New(img[cel_ct]);
 
-	tfbimg = FramePtr->image;
+	TFB_Image* tfbimg {FramePtr->image};
 	tfbimg->colormap_index = ani[cel_ct].colormapIndex;
 	img[cel_ct] = tfbimg->NormalImg;
 
@@ -106,15 +103,14 @@ process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int ce
 static void
 processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
 {
-	uint8_t* newdata;
-	size_t dpitch;
+	size_t dpitch {};
 
 	TFB_DrawCanvas_GetExtent(canvas, &CharPtr->extent);
 
 	// Currently, each font char has its own separate data
 	// but that can change to common mem area
 	dpitch = CharPtr->extent.width;
-	newdata = new uint8_t[dpitch * CharPtr->extent.height];
+	uint8_t* newdata {new uint8_t[dpitch * CharPtr->extent.height]};
 	TFB_DrawCanvas_GetFontCharData(canvas, newdata, dpitch);
 
 	CharPtr->data = newdata;
@@ -179,7 +175,7 @@ void* _GetCelData(const ResourceFile& resource)
 		}
 	}
 
-	DRAWABLE const Drawable {AllocDrawable(count)};
+	const DRAWABLE Drawable {AllocDrawable(count)};
 	if (Drawable == nullptr)
 	{
 		uqm::log::warn("Couldn't get cel data for '{}'", resource.path);
@@ -226,7 +222,6 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 	uqstl::vector<uqstl::string> fontDir {};
 	uqstl::vector<BuildCharDesc> bcds {};
 	size_t numBCDs = 0;
-	int dirEntryI;
 	uqstl::optional<uqm::io::Directory> fontDirHandle {};
 	FONT fontPtr = nullptr;
 	const char* cfg_name = "kerndat.fnt.json";
@@ -260,10 +255,9 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 	bcds.resize(fontDir.size());
 
 	// Load the surfaces for all dir Entries
-	for (dirEntryI = 0; dirEntryI < static_cast<int>(fontDir.size()); dirEntryI++)
+	for (int dirEntryI {0}; dirEntryI < static_cast<int>(fontDir.size()); dirEntryI++)
 	{
 		unsigned int charIndex {};
-		TFB_Canvas canvas;
 		EXTENT size;
 
 		const char* char_name = fontDir[dirEntryI].c_str();
@@ -287,7 +281,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 			continue;
 		}
 
-		canvas = TFB_DrawCanvas_LoadFromFile(*fontDirHandle, char_name);
+		TFB_Canvas canvas {TFB_DrawCanvas_LoadFromFile(*fontDirHandle, char_name)};
 		if (canvas == nullptr)
 		{
 			continue;
@@ -349,24 +343,22 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 
 	{
 		size_t startBCD = 0;
-		uqm::UniChar pageStart;
+		uqm::UniChar pageStart {};
 		FONT_PAGE** pageEndPtr = &fontPtr->fontPages;
 		while (startBCD < numBCDs)
 		{
 			// Process one character page.
-			size_t endBCD;
 			pageStart = bcds[startBCD].index & CHARACTER_PAGE_MASK;
 
-			endBCD = startBCD;
+			size_t endBCD {startBCD};
 			while (endBCD < numBCDs && (bcds[endBCD].index & CHARACTER_PAGE_MASK) == pageStart)
 			{
 				endBCD++;
 			}
 
 			{
-				size_t bcdI;
-				int numChars = bcds[endBCD - 1].index + 1
-							 - bcds[startBCD].index;
+				const int numChars = bcds[endBCD - 1].index + 1
+								   - bcds[startBCD].index;
 				FONT_PAGE* page = AllocFontPage(numChars);
 				page->pageStart = pageStart;
 				page->firstChar = bcds[startBCD].index;
@@ -374,7 +366,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 				*pageEndPtr = page;
 				pageEndPtr = &page->next;
 
-				for (bcdI = startBCD; bcdI < endBCD; bcdI++)
+				for (size_t bcdI {startBCD}; bcdI < endBCD; bcdI++)
 				{
 					// Process one character.
 					BuildCharDesc* bcd = &bcds[bcdI];
@@ -442,15 +434,13 @@ bool _ReleaseFontData(void* handle)
 	}
 
 	{
-		FONT_PAGE* page;
-		FONT_PAGE* nextPage;
+		FONT_PAGE* nextPage {};
 
-		for (page = font->fontPages; page != nullptr; page = nextPage)
+		for (FONT_PAGE* page {font->fontPages}; page != nullptr; page = nextPage)
 		{
-			size_t charI;
-			for (charI = 0; charI < page->numChars; charI++)
+			for (size_t charI {0}; charI < page->numChars; charI++)
 			{
-				TFB_Char* c = &page->charDesc[charI];
+				const TFB_Char* c = &page->charDesc[charI];
 
 				if (c->data == nullptr)
 				{

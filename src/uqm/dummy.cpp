@@ -155,7 +155,7 @@ GetCodeResData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	}
 	const auto which_res {static_cast<uint8_t>(*ship_id)};
 	RaceDescInitFunc initFunc = CodeResToInitFunc((ShipCodeRes)which_res);
-	RACE_DESC* RDPtr = (initFunc == nullptr) ? nullptr : (*initFunc)();
+	const RACE_DESC* RDPtr = (initFunc == nullptr) ? nullptr : (*initFunc)();
 	resdata->ptr = RDPtr ? new CODERES_STRUCT {*RDPtr} : nullptr;
 }
 
@@ -175,9 +175,7 @@ bool InstallCodeResType()
 
 void* LoadCodeResInstance(RESOURCE res)
 {
-	void* hData;
-
-	hData = res_GetResource(res);
+	void* hData {res_GetResource(res)};
 	if (hData)
 	{
 		res_DetachResource(res);
@@ -196,15 +194,13 @@ bool DestroyCodeRes(void* hCode)
 
 void* CaptureCodeRes(void* hCode, void* pData, void** ppLocData)
 {
-	CODERES_STRUCT* cs;
-
 	if (hCode == nullptr)
 	{
 		uqm::log::critical("dummy.c::CaptureCodeRes() hCode==nullptr! FATAL!");
 		return (nullptr);
 	}
 
-	cs = (CODERES_STRUCT*)hCode;
+	CODERES_STRUCT* cs {(CODERES_STRUCT*)hCode};
 	*ppLocData = &cs->data;
 
 	(void)pData; /* Satisfying compiler (unused parameter) */

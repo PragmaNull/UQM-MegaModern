@@ -51,9 +51,7 @@ uqm::SoundBankPtr uqm::loadSoundBank(RESOURCE res)
 MUSIC_REF
 LoadMusicInstance(RESOURCE res)
 {
-	void* hData;
-
-	hData = res_GetResource(res);
+	void* hData {res_GetResource(res)};
 	if (hData)
 	{
 		res_DetachResource(res);

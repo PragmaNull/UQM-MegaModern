@@ -32,7 +32,7 @@ static constexpr int c_stringTableVersion {1};
 static void
 dword_convert(uint32_t* dword_array, uint16_t num_dwords)
 {
-	uint8_t* p = (uint8_t*)dword_array;
+	const uint8_t* p = (uint8_t*)dword_array;
 
 	do
 	{
@@ -325,14 +325,13 @@ void* _GetBinaryTableData(const ResourceFile& resource)
 		lpST = new uqm::StringTable {fileData[0], 0};
 		if (lpST)
 		{
-			int i, size;
-			uint8_t* stringptr;
+			int size {};
 
 			size = static_cast<int>(lpST->size());
 
 			dword_convert(fileData + 1, size + 1);
-			stringptr = (uint8_t*)(fileData + 2 + size + fileData[1]);
-			for (i = 0; i < size; i++)
+			const uint8_t* stringptr {(uint8_t*)(fileData + 2 + size + fileData[1])};
+			for (int i {0}; i < size; i++)
 			{
 				SetStringTableEntry(lpST, i, stringptr, fileData[2 + i]);
 				stringptr += fileData[2 + i];

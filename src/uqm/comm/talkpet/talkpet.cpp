@@ -370,7 +370,7 @@ MindControlStrobe(void)
 static void
 MindControl(RESPONSE_REF R)
 {
-	RESPONSE_FUNC RespFunc;
+	RESPONSE_FUNC RespFunc {};
 
 	if (PLAYER_SAID(R, what_about_powers))
 	{
@@ -451,7 +451,7 @@ PetInfo(RESPONSE_REF R)
 static void
 PetDevice(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, whats_up_onboard))
 	{
@@ -557,10 +557,9 @@ PetDevice(RESPONSE_REF R)
 static void
 CompelPlayer(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
 	RESPONSE_REF pStr[3];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
 	if (PLAYER_SAID(R, what_are_you))
 	{
@@ -648,7 +647,7 @@ CompelPlayer(RESPONSE_REF R)
 	{
 		Response(pStr[LastStack], CompelPlayer);
 	}
-	for (i = 0; i < 3; ++i)
+	for (uint8_t i {0}; i < 3; ++i)
 	{
 		if (i != LastStack && pStr[i])
 		{
@@ -767,7 +766,7 @@ PetDeal(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -948,8 +947,6 @@ post_talkpet_enc(void)
 LOCDATA*
 init_talkpet_comm(void)
 {
-	LOCDATA* retval;
-
 	talkpet_desc.init_encounter_func = Intro;
 	talkpet_desc.post_encounter_func = post_talkpet_enc;
 	talkpet_desc.uninit_encounter_func = uninit_talkpet;
@@ -971,7 +968,7 @@ init_talkpet_comm(void)
 		setSegue(Segue_hostile);
 	}
 
-	retval = &talkpet_desc;
+	LOCDATA* retval {&talkpet_desc};
 
 	return (retval);
 }

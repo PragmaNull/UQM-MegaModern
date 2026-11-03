@@ -56,7 +56,7 @@ const GenerateFunctions generateBurvixeseFunctions = {
 static bool
 GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	pSunDesc->MoonByte = 0;
@@ -66,7 +66,7 @@ GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	if (PrimeSeed)
 	{
-		uint16_t angle;
+		uint16_t angle {};
 
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
@@ -80,7 +80,7 @@ GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys)
 	}
 	else
 	{
-		uint32_t rand_val = RandomContext_Random(SysGenRNG);
+		const uint32_t rand_val = RandomContext_Random(SysGenRNG);
 
 		//pSunDesc->PlanetByte = PickClosestHabitable (solarSys);
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -112,15 +112,14 @@ GenerateBurvixese_generateMoons(SOLARSYS_STATE* solarSys,
 
 	if (matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
-		uint16_t angle;
-		uint32_t rand_val;
+		uint16_t angle {};
 
 		pMoonDesc->data_index = SELENIC_WORLD;
 		pMoonDesc->radius =
 			MIN_MOON_RADIUS + (MAX_GEN_MOONS - 1) * MOON_DELTA;
-		rand_val = RandomContext_Random(SysGenRNG);
+		const uint32_t rand_val {RandomContext_Random(SysGenRNG)};
 		angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 		pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
 		pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
@@ -134,10 +133,8 @@ static bool
 GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
 								  PLANET_DESC* world)
 {
-	uint32_t rand_val;
-
 	DoPlanetaryAnalysis(&solarSys->SysInfo, world);
-	rand_val = RandomContext_GetSeed(SysGenRNG);
+	uint32_t rand_val {RandomContext_GetSeed(SysGenRNG)};
 
 	solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] = rand_val;
 	GenerateLifeForms(&solarSys->SysInfo, GENERATE_ALL, nullptr);

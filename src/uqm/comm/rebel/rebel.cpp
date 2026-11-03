@@ -255,9 +255,7 @@ static void Rebels(RESPONSE_REF R);
 static void
 RebelInfo(RESPONSE_REF R)
 {
-	uint8_t InfoLeft;
-
-	InfoLeft = false;
+	uint8_t InfoLeft {false};
 	if (PLAYER_SAID(R, give_info_rebels))
 	{
 		NPCPhrase(WHAT_INFO);
@@ -330,7 +328,7 @@ RebelInfo(RESPONSE_REF R)
 static void
 Rebels(RESPONSE_REF R)
 {
-	uint16_t NumVisits;
+	uint16_t NumVisits {};
 
 	if (PLAYER_SAID(R, how_goes_revolution))
 	{
@@ -428,7 +426,7 @@ Rebels(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	setSegue(Segue_peace);
 	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
@@ -485,8 +483,6 @@ post_yehat_enc(void)
 LOCDATA*
 init_rebel_yehat_comm(void)
 {
-	LOCDATA* retval;
-
 	yehat_desc.init_encounter_func = Intro;
 	yehat_desc.post_encounter_func = post_yehat_enc;
 	yehat_desc.uninit_encounter_func = uninit_yehat;
@@ -503,7 +499,7 @@ init_rebel_yehat_comm(void)
 	altResFlags |= USE_ALT_SONG;
 
 	setSegue(Segue_peace);
-	retval = &yehat_desc;
+	LOCDATA* retval {&yehat_desc};
 
 	return (retval);
 }

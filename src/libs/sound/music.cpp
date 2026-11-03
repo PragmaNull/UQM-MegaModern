@@ -31,7 +31,7 @@ static MUSIC_POSITION resumeMusicArray[PATH_MAX];
 
 void PLRPlaySong(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority)
 {
-	TFB_SoundSample** pmus = MusicRef;
+	TFB_SoundSample* const* pmus = MusicRef;
 
 	if (pmus)
 	{
@@ -62,10 +62,8 @@ bool PLRPlaying(MUSIC_REF MusicRef)
 {
 	if (curMusicRef && (MusicRef == curMusicRef || MusicRef == (MUSIC_REF)~0))
 	{
-		bool playing;
-
 		soundSource[MUSIC_SOURCE].stream_mutex.lock();
-		playing = PlayingStream(MUSIC_SOURCE);
+		const bool playing {PlayingStream(MUSIC_SOURCE)};
 		soundSource[MUSIC_SOURCE].stream_mutex.unlock();
 
 		return playing;
@@ -157,7 +155,7 @@ void PLRResume(MUSIC_REF MusicRef)
 static uint32_t
 get_current_music_filename_hash(MUSIC_REF MusicRef)
 {
-	uint32_t filename_hash;
+	uint32_t filename_hash {};
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -186,7 +184,7 @@ PLRGetFilenameHash(void)
 
 void snd_PlaySpeech(MUSIC_REF SpeechRef)
 {
-	TFB_SoundSample** pmus = SpeechRef;
+	TFB_SoundSample* const* pmus = SpeechRef;
 
 	if (pmus)
 	{
@@ -220,7 +218,7 @@ bool DestroyMusic(MUSIC_REF MusicRef)
 
 void SetMusicVolume(uint16_t Volume)
 {
-	float f = (Volume / (float)MAX_VOLUME) * musicVolumeScale;
+	const float f = (Volume / (float)MAX_VOLUME) * musicVolumeScale;
 	musicVolume = Volume;
 	audio_Sourcef(soundSource[MUSIC_SOURCE].handle, audio_GAIN, f);
 }
@@ -236,24 +234,21 @@ char* CheckMusicResName(char* fileName)
 
 void* _GetMusicData(const ResourceFile& resource)
 {
-	MUSIC_REF h;
-	TFB_SoundSample* sample;
-	TFB_SoundDecoder* decoder;
 	char filename[256] {};
 
 	uqm::strncpy_safe(filename, {resource.path.data(), static_cast<uint32_t>(resource.path.size())});
 	CheckMusicResName(filename);
 
 	uqm::log::debug("_GetMusicData(): loading {}", filename);
-	decoder = SoundDecoder_Load(uqm::contentDir(), filename, 4096, 0, 0);
+	TFB_SoundDecoder* decoder {SoundDecoder_Load(uqm::contentDir(), filename, 4096, 0, 0)};
 	if (!decoder)
 	{
 		uqm::log::warn("_GetMusicData(): couldn't load {}", filename);
 		return nullptr;
 	}
 
-	sample = TFB_CreateSoundSample(decoder, 64, nullptr);
-	h = new TFB_SoundSample* {sample};
+	TFB_SoundSample* sample {TFB_CreateSoundSample(decoder, 64, nullptr)};
+	MUSIC_REF h {new TFB_SoundSample* {sample}};
 
 	uqm::log::info("    decoder: {}, rate {} format {:x}",
 				   SoundDecoder_GetName(sample->decoder),
@@ -264,15 +259,14 @@ void* _GetMusicData(const ResourceFile& resource)
 
 bool _ReleaseMusicData(void* data)
 {
-	TFB_SoundSample** pmus = (TFB_SoundSample**)data;
-	TFB_SoundSample* sample;
+	TFB_SoundSample* const* pmus = (TFB_SoundSample**)data;
 
 	if (pmus == nullptr)
 	{
 		return (false);
 	}
 
-	sample = *pmus;
+	TFB_SoundSample* sample {*pmus};
 	assert(sample != 0);
 	if (sample->decoder)
 	{
@@ -297,7 +291,6 @@ bool _ReleaseMusicData(void* data)
 void SetMusicPosition(void)
 {
 	MUSIC_POSITION temp;
-	int i;
 
 	if (!uqm::UQMOptions::read().musicResume || uqm::currentActivity() & CHECK_ABORT
 		|| !PLRPlaying((MUSIC_REF)~0))
@@ -314,7 +307,7 @@ void SetMusicPosition(void)
 	temp.position = PLRGetPos();
 	temp.last_played = GetTimeCounter();
 
-	for (i = 0; i < PATH_MAX; ++i)
+	for (int i {0}; i < PATH_MAX; ++i)
 	{
 		// print_mp_array (resumeMusicArray, 9); // For debugging purposes
 
@@ -340,21 +333,18 @@ void SetMusicPosition(void)
 uint32_t
 GetMusicPosition()
 {
-	uint32_t filename_hash;
-	int i;
-
 	if (!uqm::UQMOptions::read().musicResume || uqm::currentActivity() & CHECK_ABORT)
 	{
 		return 0;
 	}
 
-	filename_hash = PLRGetFilenameHash();
+	const uint32_t filename_hash {PLRGetFilenameHash()};
 	if (!filename_hash)
 	{
 		return 0;
 	}
 
-	for (i = 0; i < PATH_MAX; ++i)
+	for (int i {0}; i < PATH_MAX; ++i)
 	{
 		if (!resumeMusicArray[i].filename_hash)
 		{
@@ -373,15 +363,14 @@ GetMusicPosition()
 
 bool OkayToResume(void)
 {
-	uint32_t filename_hash;
-	int i;
+	int i {};
 
 	if (!uqm::UQMOptions::read().musicResume || uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
 
-	filename_hash = PLRGetFilenameHash();
+	const uint32_t filename_hash {PLRGetFilenameHash()};
 	if (!filename_hash)
 	{
 		return false;

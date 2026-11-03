@@ -59,7 +59,7 @@ void ChecksumBuffer_init(ChecksumBuffer* cb, size_t delay, size_t interval)
 	// With checksums only sent every interval frames, the buffer space
 	// needed will be 'roundUp(2*delay + 2)' spaces.
 
-	size_t bufSize = ((2 * delay + 2) + (interval - 1)) / interval;
+	const size_t bufSize = ((2 * delay + 2) + (interval - 1)) / interval;
 
 	{
 #ifdef NETPLAY_DEBUG
@@ -95,14 +95,11 @@ static ChecksumEntry*
 ChecksumBuffer_getChecksumEntry(ChecksumBuffer* cb,
 								BattleFrameCounter frameNr)
 {
-	size_t index;
-	ChecksumEntry* entry;
-
 	assert(frameNr % cb->interval == 0);
 	// We only record checksums exactly every 'interval' frames.
 
-	index = (frameNr / cb->interval) % cb->maxSize;
-	entry = &cb->checksums[index];
+	const size_t index {(frameNr / cb->interval) % cb->maxSize};
+	ChecksumEntry* entry {&cb->checksums[index]};
 
 	return entry;
 }
@@ -110,11 +107,9 @@ ChecksumBuffer_getChecksumEntry(ChecksumBuffer* cb,
 bool ChecksumBuffer_addChecksum(ChecksumBuffer* cb, BattleFrameCounter frameNr,
 								Checksum checksum)
 {
-	ChecksumEntry* entry;
-
 	assert(frameNr % cb->interval == 0);
 
-	entry = ChecksumBuffer_getChecksumEntry(cb, frameNr);
+	ChecksumEntry* entry {ChecksumBuffer_getChecksumEntry(cb, frameNr)};
 
 #ifdef NETPLAY_DEBUG
 	entry->frameNr = frameNr;
@@ -127,9 +122,7 @@ bool ChecksumBuffer_addChecksum(ChecksumBuffer* cb, BattleFrameCounter frameNr,
 bool ChecksumBuffer_getChecksum(ChecksumBuffer* cb, BattleFrameCounter frameNr,
 								Checksum* result)
 {
-	ChecksumEntry* entry;
-
-	entry = ChecksumBuffer_getChecksumEntry(cb, frameNr);
+	const ChecksumEntry* entry {ChecksumBuffer_getChecksumEntry(cb, frameNr)};
 
 #ifdef NETPLAY_DEBUG
 	if (frameNr != entry->frameNr)

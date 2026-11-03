@@ -49,9 +49,7 @@ FRAME explosion[NUM_VIEWS];
 
 bool load_animation(FRAME* pixarray, RESOURCE big_res, RESOURCE med_res, RESOURCE sml_res)
 {
-	DRAWABLE d;
-
-	d = LoadGraphic(big_res);
+	DRAWABLE d {LoadGraphic(big_res)};
 	if (!d)
 	{
 		return false;
@@ -85,12 +83,11 @@ bool load_animation(FRAME* pixarray, RESOURCE big_res, RESOURCE med_res, RESOURC
    so we need to track to make sure that we do not double-free. */
 bool free_image(FRAME* pixarray)
 {
-	bool retval;
-	uint16_t i, j;
+	uint16_t j {};
 	void* already_freed[NUM_VIEWS];
 
-	retval = true;
-	for (i = 0; i < NUM_VIEWS; ++i)
+	bool retval {true};
+	for (uint16_t i {0}; i < NUM_VIEWS; ++i)
 	{
 		if (pixarray[i] != nullptr)
 		{
@@ -201,15 +198,12 @@ void UninitSpace(void)
 static HSTARSHIP
 BuildSIS(void)
 {
-	HSTARSHIP hStarShip;
-	STARSHIP* StarShipPtr;
-
-	hStarShip = Build(&race_q[0], SIS_SHIP_ID);
+	HSTARSHIP hStarShip {Build(&race_q[0], SIS_SHIP_ID)};
 	if (!hStarShip)
 	{
 		return 0;
 	}
-	StarShipPtr = LockStarShip(&race_q[0], hStarShip);
+	STARSHIP* StarShipPtr {LockStarShip(&race_q[0], hStarShip)};
 	StarShipPtr->playerNr = RPG_PLAYER_NUM;
 	StarShipPtr->captains_name_index = 0;
 	UnlockStarShip(&race_q[0], hStarShip);
@@ -220,7 +214,7 @@ BuildSIS(void)
 int16_t
 InitShips(void)
 {
-	int16_t num_ships;
+	int16_t num_ships {};
 
 	InitSpace();
 
@@ -241,7 +235,7 @@ InitShips(void)
 	}
 	else
 	{
-		uint16_t i;
+		uint16_t i {};
 		GFXRECT r;
 
 		SetContext(SpaceContext);
@@ -258,9 +252,7 @@ InitShips(void)
 
 		SetContextBackGroundColor(BLACK_COLOR);
 		{
-			GFXCONTEXT OldContext;
-
-			OldContext = SetContext(ScreenContext);
+			GFXCONTEXT OldContext {SetContext(ScreenContext)};
 
 			SetContextBackGroundColor(BLACK_COLOR);
 			ClearDrawable();
@@ -298,14 +290,14 @@ InitShips(void)
 static uint16_t
 CountCrewElements(void)
 {
-	uint16_t result;
-	HELEMENT hElement, hNextElement;
+	HELEMENT hElement {};
+	HELEMENT hNextElement {};
 
-	result = 0;
+	uint16_t result {0};
 	for (hElement = GetHeadElement();
 		 hElement != 0; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr;
+		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
@@ -322,9 +314,9 @@ CountCrewElements(void)
 
 void UninitShips(void)
 {
-	uint16_t crew_retrieved;
-	int i;
-	HELEMENT hElement, hNextElement;
+	int i {};
+	HELEMENT hElement {};
+	HELEMENT hNextElement {};
 	STARSHIP* SPtr[NUM_PLAYERS];
 
 	StopSound();
@@ -337,19 +329,19 @@ void UninitShips(void)
 	}
 
 	// Count the crew floating in space.
-	crew_retrieved = CountCrewElements();
+	const uint16_t crew_retrieved {CountCrewElements()};
 
 	for (hElement = GetHeadElement();
 		 hElement != 0; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr;
+		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
 		if ((ElementPtr->state_flags & PLAYER_SHIP)
 			|| ElementPtr->death_func == new_ship)
 		{
-			STARSHIP* StarShipPtr;
+			STARSHIP* StarShipPtr {};
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
 

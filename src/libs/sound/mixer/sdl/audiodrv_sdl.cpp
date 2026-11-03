@@ -28,7 +28,7 @@ static SDL_AudioStream* stream {};
 // Mixed data for the audio stream. Only the audio callback uses it.
 static uqstl::vector<uint8_t> s_mixBuffer {};
 
-static const audio_Driver mixSDL_Driver =
+const static audio_Driver mixSDL_Driver =
 	{
 		mixSDL_Uninit,
 		mixSDL_GetError,
@@ -107,12 +107,11 @@ UQM_COMPILE_TIME_ASSERT(mixer_Object_fits_in_audio_Object,
 static void
 mixSDL_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 {
-	uint32_t i;
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
 		return;
 	}
-	for (i = 0; i < n; i++)
+	for (uint32_t i {0}; i < n; i++)
 	{
 		((mixer_Object*)arr)[i] = arr[i];
 	}
@@ -121,12 +120,11 @@ mixSDL_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 static void
 mixSDL_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
 {
-	uint32_t i;
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
 		return;
 	}
-	i = n;
+	uint32_t i {n};
 	while (i--)
 	{
 		arr[i] = ((mixer_Object*)arr)[i];
@@ -142,7 +140,6 @@ static void audioCallback(void* userdata, SDL_AudioStream* audioStream, int addi
 int32_t
 mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 {
-	int i;
 	SDL_AudioSpec desired {};
 	mixer_Quality quality;
 	TFB_DecoderFormats formats =
@@ -225,7 +222,7 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	uqm::log::info("Sound decoders initialized.");
 
 	*driver = mixSDL_Driver;
-	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 	{
 		audio_GenSources(1, &soundSource[i].handle);
 	}
@@ -248,11 +245,9 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 
 void mixSDL_Uninit(void)
 {
-	int i;
-
 	UninitStreamDecoder();
 
-	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 	{
 		const uqm::LockGuard lock {soundSource[i].stream_mutex};
 		if (soundSource[i].sample && soundSource[i].sample->decoder)

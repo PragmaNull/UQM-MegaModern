@@ -66,10 +66,10 @@ static bool
 GenerateMyconDefenders(uint8_t index)
 {
 #define STATE_OFFSET 29
-	uint8_t shift = index - STATE_OFFSET;
-	bool Survivors;
-	uint16_t state;
-	uint16_t i;
+	const uint8_t shift = index - STATE_OFFSET;
+	bool Survivors {};
+	uint16_t state {};
+	uint16_t i {};
 
 	if (!(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << shift))
 	{
@@ -116,7 +116,6 @@ GenerateMyconDefenders(uint8_t index)
 static bool
 GenerateMycon_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
@@ -128,20 +127,18 @@ GenerateMycon_generatePlanets(SOLARSYS_STATE* solarSys)
 		pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 	}
 
-	pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
+	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	pPlanet->data_index = SHATTERED_WORLD;
 
 	if (PrimeSeed)
 	{
-		uint16_t angle;
-
 		pPlanet->radius = EARTH_RADIUS * 80L / 100;
 		if (pPlanet->NumPlanets > 2)
 		{
 			pPlanet->NumPlanets = 2;
 		}
-		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
@@ -159,8 +156,8 @@ GenerateMycon_generateName(const SOLARSYS_STATE* solarSys,
 	if (CurStarDescPtr->Index == EGG_CASE0_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),
@@ -198,10 +195,9 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 				else
 				{
-					uint16_t i;
-					uint16_t sum = difficultyCase(3, 5, 12);
+					const uint16_t sum = difficultyCase(3, 5, 12);
 
-					for (i = 0; i < sum; ++i)
+					for (uint16_t i {0}; i < sum; ++i)
 					{
 						CloneShipFragment(MYCON_SHIP,
 										  &GLOBAL(npc_built_ship_q), 0);
@@ -225,7 +221,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 
 				{
-					bool MyconSurvivors;
+					bool MyconSurvivors {};
 
 					MyconSurvivors =
 						GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
@@ -296,7 +292,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 		&& (CurStarDescPtr->Index != EGG_CASE0_DEFINED || isDifficulty(uqm::Difficulty::Hard)))
 	{
 		PLANET_INFO* pPlanetInfo = &solarSys->SysInfo.PlanetInfo;
-		uint32_t rand = RandomContext_Random(SysGenRNG);
+		const uint32_t rand = RandomContext_Random(SysGenRNG);
 
 		pPlanetInfo->SurfaceTemperature = RangeMinMax(100, 300, rand);
 	}

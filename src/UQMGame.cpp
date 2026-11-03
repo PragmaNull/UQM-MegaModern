@@ -280,11 +280,11 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	Vec2u windowSize {*options.resolution};
 	{
-		int w = 320;
-		int h = (DOS_BOOL(240, 200));
+		const int w = 320;
+		const int h = (DOS_BOOL(240, 200));
 
-		int loresBlowup = options.loresBlowupScale.value;
-		int scaleFactor = loresBlowup + 1; // stored value starts with 0
+		const int loresBlowup = options.loresBlowupScale.value;
+		const int scaleFactor = loresBlowup + 1; // stored value starts with 0
 
 		CanvasWidth = w << resolutionFactor;
 		CanvasHeight = h << resolutionFactor;
@@ -302,8 +302,8 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 		if (options.keepAspectRatio)
 		{
-			float threshold = 0.75f;
-			float ratio = (float)SavedHeight / (float)SavedWidth;
+			const float threshold = 0.75f;
+			const float ratio = (float)SavedHeight / (float)SavedWidth;
 
 			if (ratio > threshold) // screen is narrower than 4:3
 			{

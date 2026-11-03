@@ -37,7 +37,7 @@
 
 #define THIS_PTR TFB_SoundDecoder* This
 
-static const char* ova_GetName(void);
+const static char* ova_GetName(void);
 static bool ova_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void ova_TermModule(void);
 static TFB_SoundDecoder* ova_Create(void);
@@ -79,7 +79,7 @@ typedef struct tfb_oggsounddecoder
 
 } TFB_OggSoundDecoder;
 
-static const TFB_DecoderFormats* ova_formats = nullptr;
+const static TFB_DecoderFormats* ova_formats = nullptr;
 
 static size_t
 ogg_read(void* ptr, size_t size, size_t nmemb, void* datasource)
@@ -90,7 +90,7 @@ ogg_read(void* ptr, size_t size, size_t nmemb, void* datasource)
 static int
 ogg_seek(void* datasource, ogg_int64_t offset, int whence)
 {
-	long off = (long)offset;
+	const long off = (long)offset;
 	return SeekResFile(*static_cast<uqm::io::File*>(datasource), off, whence);
 }
 
@@ -107,7 +107,7 @@ ogg_tell(void* datasource)
 	return TellResFile(*static_cast<uqm::io::File*>(datasource));
 }
 
-static const ov_callbacks ogg_callbacks =
+const static ov_callbacks ogg_callbacks =
 	{
 		ogg_read,
 		ogg_seek,
@@ -115,7 +115,7 @@ static const ov_callbacks ogg_callbacks =
 		ogg_tell,
 };
 
-static const char*
+const static char*
 ova_GetName(void)
 {
 	return "Ogg Vorbis";
@@ -152,7 +152,7 @@ static int
 ova_GetError(THIS_PTR)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
-	int ret = ova->last_error;
+	const int ret = ova->last_error;
 	ova->last_error = 0;
 	return ret;
 }
@@ -176,18 +176,15 @@ static bool
 ova_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
-	int rc;
-	uqgsl::owner<uqm::io::File*> fp {};
-	vorbis_info* vinfo;
 
-	fp = res_NewResFile(dir, filename);
+	uqgsl::owner<uqm::io::File*> fp {res_NewResFile(dir, filename)};
 	if (fp == nullptr)
 	{
 		uqm::log::warn("ova_Open(): could not open {}", filename);
 		return false;
 	}
 
-	rc = ov_open_callbacks(fp, &ova->vf, nullptr, 0, ogg_callbacks);
+	int rc {ov_open_callbacks(fp, &ova->vf, nullptr, 0, ogg_callbacks)};
 	if (rc != 0)
 	{
 		uqm::log::warn("ova_Open(): "
@@ -197,7 +194,7 @@ ova_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 		return false;
 	}
 
-	vinfo = ov_info(&ova->vf, -1);
+	const vorbis_info* vinfo {ov_info(&ova->vf, -1)};
 	if (!vinfo)
 	{
 		uqm::log::warn("ova_Open(): "
@@ -244,8 +241,8 @@ static int
 ova_Decode(THIS_PTR, void* buf, int32_t bufsize)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
-	long rc;
-	int bitstream;
+	long rc {};
+	int bitstream {};
 
 #ifdef OVCODEC_TREMOR
 	rc = ov_read(&ova->vf, buf, bufsize, &bitstream);
@@ -270,9 +267,8 @@ static uint32_t
 ova_Seek(THIS_PTR, uint32_t pcm_pos)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
-	int ret;
 
-	ret = ov_pcm_seek(&ova->vf, pcm_pos);
+	const int ret {ov_pcm_seek(&ova->vf, pcm_pos)};
 	if (ret != 0)
 	{
 		ova->last_error = ret;
@@ -287,7 +283,7 @@ ova_Seek(THIS_PTR, uint32_t pcm_pos)
 static uint32_t
 ova_GetFrame(THIS_PTR)
 {
-	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
+	const TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 	// this is the closest to a frame there is in ogg vorbis stream
 	// doesn't seem to be a func to retrive it
 #ifdef OVCODEC_TREMOR

@@ -46,13 +46,11 @@ weapon_collision_cb(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 HELEMENT
 initialize_laser(LASER_BLOCK* pLaserBlock)
 {
-	HELEMENT hLaserElement;
-
-	hLaserElement = AllocElement();
+	HELEMENT hLaserElement {AllocElement()};
 	if (hLaserElement)
 	{
 #define LASER_LIFE 1
-		ELEMENT* LaserElementPtr;
+		ELEMENT* LaserElementPtr {};
 
 		LockElement(hLaserElement, &LaserElementPtr);
 		LaserElementPtr->playerNr = pLaserBlock->sender;
@@ -89,14 +87,13 @@ initialize_laser(LASER_BLOCK* pLaserBlock)
 HELEMENT
 initialize_missile(MISSILE_BLOCK* pMissileBlock)
 {
-	HELEMENT hMissileElement;
-
-	hMissileElement = AllocElement();
+	HELEMENT hMissileElement {AllocElement()};
 	if (hMissileElement)
 	{
-		int16_t delta_x, delta_y;
-		uint16_t angle;
-		ELEMENT* MissileElementPtr;
+		int16_t delta_x {};
+		int16_t delta_y {};
+		uint16_t angle {};
+		ELEMENT* MissileElementPtr {};
 
 		LockElement(hMissileElement, &MissileElementPtr);
 		MissileElementPtr->hit_points = (uint8_t)pMissileBlock->hit_points;
@@ -137,8 +134,8 @@ HELEMENT
 weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 				 ELEMENT* HitElementPtr, GFXPOINT* pHPt)
 {
-	int16_t damage;
-	HELEMENT hBlastElement;
+	int16_t damage {};
+	HELEMENT hBlastElement {};
 
 	if (WeaponElementPtr->state_flags & COLLISION) /* if already did effect */
 	{
@@ -195,10 +192,10 @@ weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 		hBlastElement = AllocElement();
 		if (hBlastElement)
 		{
-			uint16_t blast_index;
-			int16_t blast_offs;
-			uint16_t angle, num_blast_frames;
-			ELEMENT* BlastElementPtr;
+			uint16_t blast_index {};
+			int16_t blast_offs {};
+			uint16_t num_blast_frames {};
+			ELEMENT* BlastElementPtr {};
 			extern FRAME blast[];
 
 			PutElement(hBlastElement);
@@ -210,7 +207,7 @@ weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 			BlastElementPtr->current.location.x = DISPLAY_TO_WORLD(pWPt->x);
 			BlastElementPtr->current.location.y = DISPLAY_TO_WORLD(pWPt->y);
 
-			angle = GetVelocityTravelAngle(&WeaponElementPtr->velocity);
+			const uint16_t angle {GetVelocityTravelAngle(&WeaponElementPtr->velocity)};
 			if ((blast_offs = WeaponElementPtr->blast_offset) > 0)
 			{
 				BlastElementPtr->current.location.x +=
@@ -260,14 +257,14 @@ FRAME
 ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
 				 uint8_t modify_flags)
 {
-	FRAME f;
 	GFXRECT r {};
 	GFXRECT originalRect {};
-	INTERSECT_CONTROL ShipIntersect, ObjectIntersect;
-	STARSHIP* StarShipPtr;
-	GFXCONTEXT OldContext;
+	INTERSECT_CONTROL ShipIntersect;
+	INTERSECT_CONTROL ObjectIntersect;
+	STARSHIP* StarShipPtr {};
+	GFXCONTEXT OldContext {};
 
-	f = 0;
+	FRAME f {0};
 	ObjectIntersect.IntersectStamp = *modify_stamp;
 	GetFrameRect(ObjectIntersect.IntersectStamp.frame, &originalRect);
 
@@ -332,14 +329,13 @@ ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
 int16_t
 TrackShip(ELEMENT* Tracker, uint16_t* pfacing)
 {
-	int16_t best_delta_facing, best_delta;
-	HELEMENT hShip, hNextShip;
-	ELEMENT* Trackee;
+	HELEMENT hNextShip {};
+	ELEMENT* Trackee {};
 
-	best_delta = 0;
-	best_delta_facing = -1;
+	int16_t best_delta {0};
+	int16_t best_delta_facing {-1};
 
-	hShip = Tracker->hTarget;
+	HELEMENT hShip {Tracker->hTarget};
 	if (hShip)
 	{
 		LockElement(hShip, &Trackee);
@@ -358,14 +354,16 @@ TrackShip(ELEMENT* Tracker, uint16_t* pfacing)
 				|| ((Tracker->state_flags & PLAYER_SHIP)
 					&& (Tracker->state_flags & APPEARING))))
 		{
-			STARSHIP* StarShipPtr;
+			STARSHIP* StarShipPtr; // NOLINT(cppcoreguidelines-init-variables)
 
 CheckTracking:
 			GetElementStarShip(Trackee, &StarShipPtr);
 			if (Trackee->life_span
 				&& StarShipPtr->RaceDescPtr->ship_info.crew_level)
 			{
-				int16_t delta_x, delta_y, delta_facing;
+				int16_t delta_x {};
+				int16_t delta_y {};
+				int16_t delta_facing {};
 
 				if (Tracker->state_flags & PRE_PROCESS)
 				{
@@ -413,9 +411,7 @@ CheckTracking:
 
 	if (best_delta_facing > 0)
 	{
-		uint16_t facing;
-
-		facing = *pfacing;
+		uint16_t facing {*pfacing};
 		if (best_delta_facing == ANGLE_TO_FACING(HALF_CIRCLE))
 		{
 			facing += (((uint8_t)TFB_Random() & 1) << 1) - 1;

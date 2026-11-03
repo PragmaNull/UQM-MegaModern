@@ -147,17 +147,18 @@ animate(ELEMENT* ElementPtr)
 static void
 laser_death(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	StarShipPtr->special_counter = ElementPtr->turn_wait;
 
 	if (StarShipPtr->hShip)
 	{
-		int32_t dx, dy;
-		long dist;
-		HELEMENT hIonSpots;
-		ELEMENT* ShipPtr;
+		int32_t dx {};
+		int32_t dy {};
+		long dist {};
+		HELEMENT hIonSpots {};
+		ELEMENT* ShipPtr {};
 
 		LockElement(StarShipPtr->hShip, &ShipPtr);
 
@@ -170,8 +171,8 @@ laser_death(ELEMENT* ElementPtr)
 															 * DISPLAY_TO_WORLD(CHMMR_OFFSET + RES_SCALE(10))
 			&& (hIonSpots = AllocElement()))
 		{
-			uint16_t angle, magnitude;
-			ELEMENT* IonSpotsPtr;
+			uint16_t magnitude {};
+			ELEMENT* IonSpotsPtr {};
 
 			LockElement(hIonSpots, &IonSpotsPtr);
 			IonSpotsPtr->playerNr = ElementPtr->playerNr;
@@ -180,7 +181,7 @@ laser_death(ELEMENT* ElementPtr)
 			IonSpotsPtr->turn_wait = IonSpotsPtr->next_turn = 0;
 			IonSpotsPtr->life_span = 9;
 
-			angle = ARCTAN(dx, dy);
+			const uint16_t angle {ARCTAN(dx, dy)};
 			magnitude = ((uint16_t)TFB_Random()
 						 % ((square_root(dist) + 1)
 							- DISPLAY_TO_WORLD(CHMMR_OFFSET + RES_SCALE(10))))
@@ -215,9 +216,9 @@ static uint16_t
 initialize_megawatt_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 {
 	GFXRECT r;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	LASER_BLOCK LaserBlock;
-	static const Color cycle_array[] =
+	const static Color cycle_array[] =
 		{
 			BUILD_COLOR(MAKE_RGB15_INIT(0x17, 0x00, 0x00), 0x2B),
 			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x03, 0x00), 0x7F),
@@ -244,7 +245,7 @@ initialize_megawatt_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 
 	if (LaserArray[0])
 	{
-		ELEMENT* LaserPtr;
+		ELEMENT* LaserPtr {};
 
 		LockElement(LaserArray[0], &LaserPtr);
 
@@ -263,14 +264,13 @@ static void
 chmmr_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				   uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr;
-	EVALUATE_DESC* lpEvalDesc;
+	STARSHIP* StarShipPtr {};
 
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state &= ~SPECIAL;
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	const EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (StarShipPtr->special_counter == 0
 		&& lpEvalDesc->ObjectPtr
 		&& !(StarShipPtr->ship_input_state & WEAPON)
@@ -289,14 +289,14 @@ chmmr_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static void
 chmmr_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
 	if (StarShipPtr->cur_status_flags & WEAPON)
 	{
-		HELEMENT hMuzzleFlash;
-		ELEMENT* MuzzleFlashPtr;
+		HELEMENT hMuzzleFlash {};
+		ELEMENT* MuzzleFlashPtr {};
 
 		LockElement(GetTailElement(), &MuzzleFlashPtr);
 		if (MuzzleFlashPtr != ElementPtr
@@ -332,8 +332,7 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 	if ((StarShipPtr->cur_status_flags & SPECIAL)
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
-		uint16_t facing;
-		ELEMENT* ShipElementPtr;
+		ELEMENT* ShipElementPtr {};
 
 		LockElement(ElementPtr->hTarget, &ShipElementPtr);
 
@@ -343,18 +342,20 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 
 		UnlockElement(ElementPtr->hTarget);
 
-		facing = 0;
+		uint16_t facing {0};
 		if (TrackShip(ElementPtr, &facing) >= 0)
 		{
-			ELEMENT* ShipElementPtr;
+			ELEMENT* ShipElementPtr {};
 
 			LockElement(ElementPtr->hTarget, &ShipElementPtr);
 			if (!GRAVITY_MASS(ShipElementPtr->mass_points + 1))
 			{
-				int16_t i, dx, dy;
-				uint16_t angle, magnitude;
-				STARSHIP* EnemyStarShipPtr;
-				static const int16_t shadow_offs[] =
+				int16_t dx {};
+				int16_t dy {};
+				uint16_t angle {};
+				uint16_t magnitude {};
+				STARSHIP* EnemyStarShipPtr {};
+				const static int16_t shadow_offs[] =
 					{
 						DISPLAY_TO_WORLD(8),
 						DISPLAY_TO_WORLD(8 + 9),
@@ -362,7 +363,7 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 						DISPLAY_TO_WORLD(8 + 9 + 11 + 14),
 						DISPLAY_TO_WORLD(8 + 9 + 11 + 14 + 18),
 					};
-				static const Color color_tab[] =
+				const static Color color_tab[] =
 					{
 						BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x10), 0x53),
 						BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x0E), 0x54),
@@ -370,7 +371,7 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 						BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x09), 0x56),
 						BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x07), 0x57),
 					};
-				uint32_t current_speed, max_speed;
+				uint32_t max_speed {};
 
 				// calculate tractor beam effect
 				angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
@@ -392,7 +393,7 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 				GetElementStarShip(ShipElementPtr, &EnemyStarShipPtr);
 
 				// set the effected ship's speed flags
-				current_speed = VelocitySquared(dx, dy);
+				const uint32_t current_speed {VelocitySquared(dx, dy)};
 				max_speed = VelocitySquared(WORLD_TO_VELOCITY(
 												EnemyStarShipPtr->RaceDescPtr->characteristics.max_thrust),
 											0);
@@ -409,14 +410,12 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 				}
 
 				// add tractor beam graphical effects
-				for (i = 0; i < NUM_SHADOWS; ++i)
+				for (int16_t i {0}; i < NUM_SHADOWS; ++i)
 				{
-					HELEMENT hShadow;
-
-					hShadow = AllocElement();
+					HELEMENT hShadow {AllocElement()};
 					if (hShadow)
 					{
-						ELEMENT* ShadowElementPtr;
+						ELEMENT* ShadowElementPtr {};
 
 						LockElement(hShadow, &ShadowElementPtr);
 						ShadowElementPtr->playerNr = ShipElementPtr->playerNr;
@@ -453,7 +452,7 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 static void
 satellite_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	++ElementPtr->life_span;
 
@@ -468,8 +467,9 @@ satellite_preprocess(ELEMENT* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->hShip)
 	{
-		int32_t dx, dy;
-		ELEMENT* ShipPtr;
+		int32_t dx {};
+		int32_t dy {};
+		ELEMENT* ShipPtr {};
 
 		StarShipPtr->RaceDescPtr->ship_info.ship_flags |= POINT_DEFENSE;
 
@@ -492,9 +492,7 @@ satellite_preprocess(ELEMENT* ElementPtr)
 		}
 		else
 		{
-			uint16_t angle;
-
-			angle = ARCTAN(dx, dy);
+			const uint16_t angle {ARCTAN(dx, dy)};
 			SetVelocityComponents(&ElementPtr->velocity,
 								  COSINE(angle, WORLD_TO_VELOCITY(DISPLAY_TO_WORLD(RES_SCALE(20)))),
 								  SINE(angle, WORLD_TO_VELOCITY(DISPLAY_TO_WORLD(RES_SCALE(20)))));
@@ -507,18 +505,18 @@ satellite_preprocess(ELEMENT* ElementPtr)
 static void
 spawn_point_defense(ELEMENT* ElementPtr)
 {
-	uint8_t weakest;
-	uint16_t best_dist;
-	STARSHIP* StarShipPtr;
-	HELEMENT hObject, hNextObject, hBestObject;
-	ELEMENT* ShipPtr;
-	ELEMENT* SattPtr;
-	ELEMENT* ObjectPtr;
+	uint16_t best_dist {};
+	STARSHIP* StarShipPtr {};
+	HELEMENT hObject {};
+	HELEMENT hNextObject {};
+	ELEMENT* ShipPtr {};
+	ELEMENT* SattPtr {};
+	ELEMENT* ObjectPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	hBestObject = 0;
+	HELEMENT hBestObject {0};
 	best_dist = DEFENSE_RANGE + RES_SCALE(1);
-	weakest = 255;
+	uint8_t weakest {255};
 	LockElement(StarShipPtr->hShip, &ShipPtr);
 	LockElement(ElementPtr->hTarget, &SattPtr);
 	for (hObject = GetPredElement(ElementPtr);
@@ -531,8 +529,9 @@ spawn_point_defense(ELEMENT* ElementPtr)
 			&& CollisionPossible(ObjectPtr, ShipPtr)
 			&& !OBJECT_CLOAKED(ObjectPtr))
 		{
-			int32_t delta_x, delta_y;
-			uint16_t dist;
+			int32_t delta_x {};
+			int32_t delta_y {};
+			uint16_t dist {};
 
 			delta_x = ObjectPtr->next.location.x
 					- SattPtr->next.location.x;
@@ -564,7 +563,6 @@ spawn_point_defense(ELEMENT* ElementPtr)
 	if (hBestObject)
 	{
 		LASER_BLOCK LaserBlock;
-		HELEMENT hPointDefense;
 
 		LockElement(hBestObject, &ObjectPtr);
 
@@ -579,10 +577,10 @@ spawn_point_defense(ELEMENT* ElementPtr)
 		LaserBlock.flags = IGNORE_SIMILAR;
 		LaserBlock.pixoffs = 0;
 		LaserBlock.color = BUILD_COLOR(MAKE_RGB15(0x00, 0x01, 0x1F), 0x4D);
-		hPointDefense = initialize_laser(&LaserBlock);
+		HELEMENT hPointDefense {initialize_laser(&LaserBlock)};
 		if (hPointDefense)
 		{
-			ELEMENT* PDPtr;
+			ELEMENT* PDPtr {};
 
 			LockElement(hPointDefense, &PDPtr);
 			SetElementStarShip(PDPtr, StarShipPtr);
@@ -604,7 +602,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 static void
 satellite_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	if (ElementPtr->thrust_wait || ElementPtr->life_span == 0)
 	{
@@ -612,12 +610,10 @@ satellite_postprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		HELEMENT hDefense;
-
-		hDefense = AllocElement();
+		HELEMENT hDefense {AllocElement()};
 		if (hDefense)
 		{
-			ELEMENT* DefensePtr;
+			ELEMENT* DefensePtr {};
 
 			PutElement(hDefense);
 
@@ -626,7 +622,7 @@ satellite_postprocess(ELEMENT* ElementPtr)
 			DefensePtr->state_flags = APPEARING | NONSOLID | FINITE_LIFE;
 
 			{
-				ELEMENT* SuccPtr;
+				ELEMENT* SuccPtr {};
 
 				LockElement(GetSuccElement(ElementPtr), &SuccPtr);
 				DefensePtr->hTarget = GetPredElement(SuccPtr);
@@ -656,7 +652,7 @@ satellite_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static void
 satellite_death(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~POINT_DEFENSE;
@@ -678,8 +674,8 @@ satellite_death(ELEMENT* ElementPtr)
 static void
 spawn_satellites(ELEMENT* ElementPtr)
 {
-	uint16_t i;
-	STARSHIP* StarShipPtr;
+	uint16_t i {};
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->hShip)
@@ -687,13 +683,11 @@ spawn_satellites(ELEMENT* ElementPtr)
 		LockElement(StarShipPtr->hShip, &ElementPtr);
 		for (i = 0; i < NUM_SATELLITES; ++i)
 		{
-			HELEMENT hSatellite;
-
-			hSatellite = AllocElement();
+			HELEMENT hSatellite {AllocElement()};
 			if (hSatellite)
 			{
-				uint16_t angle;
-				ELEMENT* SattPtr;
+				uint16_t angle {};
+				ELEMENT* SattPtr {};
 
 				LockElement(hSatellite, &SattPtr);
 				SattPtr->playerNr = ElementPtr->playerNr;
@@ -736,15 +730,14 @@ spawn_satellites(ELEMENT* ElementPtr)
 static void
 chmmr_preprocess(ELEMENT* ElementPtr)
 {
-	HELEMENT hSatellite;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	hSatellite = AllocElement();
+	HELEMENT hSatellite {AllocElement()};
 	if (hSatellite)
 	{
-		ELEMENT* SattPtr;
-		STARSHIP* StarShipPtr;
+		ELEMENT* SattPtr {};
+		STARSHIP* StarShipPtr {};
 
 		LockElement(hSatellite, &SattPtr);
 		SattPtr->playerNr = ElementPtr->playerNr;
@@ -769,8 +762,6 @@ chmmr_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_chmmr(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		chmmr_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -789,7 +780,7 @@ init_chmmr(void)
 	chmmr_desc.init_weapon_func = initialize_megawatt_laser;
 	chmmr_desc.cyborg_control.intelligence_func = chmmr_intelligence;
 
-	RaceDescPtr = &chmmr_desc;
+	RACE_DESC* RaceDescPtr {&chmmr_desc};
 
 	return (RaceDescPtr);
 }

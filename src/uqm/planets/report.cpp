@@ -48,7 +48,8 @@ extern FRAME SpaceJunkFrame;
 static void
 ClearReportArea(int16_t startx)
 {
-	uint16_t x, y;
+	uint16_t x {};
+	uint16_t y {};
 	GFXRECT r;
 	STAMP s;
 
@@ -94,15 +95,14 @@ ClearReportArea(int16_t startx)
 static void
 MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 {
-	int end_page_len;
+	int end_page_len {};
 	char end_page_buf[200] {};
 	uqm::UniChar last_c = 0;
-	uint16_t row_cells;
-	bool Sleepy;
-	GFXRECT r, contextRect;
+	GFXRECT r;
+	GFXRECT contextRect;
 	TEXT t;
 	Color fgcolor;
-	int16_t startx;
+	int16_t startx {};
 
 	int16_t total_lines = -1;
 	int16_t curr_line = -1;
@@ -118,13 +118,13 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 	t.align = ALIGN_LEFT;
 	t.CharCount = 1;
 	t.pStr = pStr;
-	Sleepy = true;
+	bool Sleepy {true};
 
 	FlushInput();
 
 	t.baseline.y = r.extent.height + RES_SCALE(1);
 	// Text vertical alignment
-	row_cells = 0;
+	uint16_t row_cells {0};
 	fgcolor = BUILD_COLOR(MAKE_RGB15(0x00, 0x1F, 0x00), 0xFF);
 
 	if (contextRect.extent.width < SCALED_MAP_WIDTH)
@@ -147,14 +147,11 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 
 		if (is3DO(uqm::UQMOptions::read().landerStyle))
 		{
-			const char* pCurrStr;
-			uint16_t length;
-
-			pCurrStr = t.pStr;
+			const char* pCurrStr {t.pStr};
 			total_lines = 0;
 			curr_line = 0;
 
-			for (length = StrLen; length > 0; length--)
+			for (uint16_t length {StrLen}; length > 0; length--)
 			{
 				if (uqm::getCharFromString(&pCurrStr) == '\n')
 				{
@@ -171,12 +168,10 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 
 	while (StrLen)
 	{
-		uint16_t col_cells;
-		const char* pLastStr;
-		const char* pNextStr;
-		uint16_t lf_pos;
+		const char* pNextStr {};
+		uint16_t lf_pos {};
 
-		pLastStr = t.pStr;
+		const char* pLastStr {t.pStr};
 
 		// scan for LFs in the remaining string
 		// trailing LF will be ignored
@@ -185,7 +180,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 			 --lf_pos)
 			;
 
-		col_cells = 0;
+		uint16_t col_cells {0};
 		// check if the remaining text fits on current screen
 		if (row_cells == NUM_CELL_ROWS - 1
 			&& (StrLen > NUM_CELL_COLS || lf_pos > 1))
@@ -217,9 +212,8 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 
 		do
 		{
-			uint16_t word_chars;
-			const char* pStr;
-			uqm::UniChar c;
+			const char* pStr {};
+			uqm::UniChar c {};
 
 			pStr = t.pStr;
 			pNextStr = t.pStr;
@@ -228,7 +222,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 				pStr = pNextStr;
 			}
 
-			word_chars = (uint16_t)uqm::utf8StringCount(uqstl::string_view {t.pStr, static_cast<size_t>(pStr - t.pStr)});
+			uint16_t word_chars {(uint16_t)uqm::utf8StringCount(uqstl::string_view {t.pStr, static_cast<size_t>(pStr - t.pStr)})};
 			if ((col_cells += word_chars) <= NUM_CELL_COLS)
 			{
 				TimeCount TimeOut;
@@ -361,9 +355,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 
 void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 {
-	GFXCONTEXT OldContext;
-	GFXCONTEXT context;
-	bool ownContext;
+	bool ownContext {};
 	STAMP saveStamp;
 
 #ifdef DEBUG
@@ -373,12 +365,12 @@ void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 	}
 #endif
 
-	context = GetScanContext(&ownContext);
-	OldContext = SetContext(context);
+	GFXCONTEXT context {GetScanContext(&ownContext)};
+	GFXCONTEXT OldContext {SetContext(context)};
 	saveStamp = SaveContextFrame(nullptr);
 	{
-		FONT OldFont;
-		FRAME OldFontEffect;
+		FONT OldFont {};
+		FRAME OldFontEffect {};
 
 		OldFont = SetContextFont(
 			pSolarSysState->SysInfo.PlanetInfo.LanderFont);

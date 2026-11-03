@@ -61,9 +61,7 @@ bool InstallVideoResType(void)
 LEGACY_VIDEO
 LoadLegacyVideoInstance(RESOURCE res)
 {
-	void* data;
-
-	data = res_GetResource(res);
+	void* data {res_GetResource(res)};
 	if (data)
 	{
 		res_DetachResource(res);

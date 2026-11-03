@@ -129,7 +129,7 @@ lightning_postprocess(ELEMENT* ElementPtr)
 	if (ElementPtr->turn_wait
 		&& !(ElementPtr->state_flags & COLLISION))
 	{
-		HELEMENT Lightning;
+		HELEMENT Lightning {};
 
 		initialize_lightning(ElementPtr, &Lightning);
 		if (Lightning)
@@ -143,7 +143,7 @@ static void
 lightning_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 					ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr0, &StarShipPtr);
 	if (StarShipPtr->weapon_counter > WEAPON_WAIT >> 1)
@@ -175,11 +175,11 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 
 	if (LaserArray[0])
 	{
-		int16_t delta;
-		uint16_t angle, facing;
-		uint32_t rand_val;
-		ELEMENT* LaserPtr;
-		STARSHIP* StarShipPtr;
+		int16_t delta {};
+		uint16_t angle {};
+		uint16_t facing {};
+		ELEMENT* LaserPtr {};
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -187,7 +187,7 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 		LaserPtr->postprocess_func = lightning_postprocess;
 		LaserPtr->collision_func = lightning_collision;
 
-		rand_val = TFB_Random();
+		const uint32_t rand_val {TFB_Random()};
 
 		if (!(ElementPtr->state_flags & PLAYER_SHIP))
 		{
@@ -275,8 +275,7 @@ static void
 slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					   uint16_t ConcernCounter)
 {
-	EVALUATE_DESC* lpEvalDesc;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	// no dodging in role playing game, unless you haven't
 	// visited the starbase yet or difficulty is set to Hard
@@ -285,7 +284,7 @@ slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr = 0;
 	}
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0
@@ -327,14 +326,14 @@ slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static bool
 harvest_space_junk(ELEMENT* ElementPtr)
 {
-	bool retval;
-	HELEMENT hElement, hNextElement;
+	HELEMENT hElement {};
+	HELEMENT hNextElement {};
 
-	retval = false;
+	bool retval {false};
 	for (hElement = GetHeadElement();
 		 hElement; hElement = hNextElement)
 	{
-		ELEMENT* ObjPtr;
+		ELEMENT* ObjPtr {};
 
 		LockElement(hElement, &ObjPtr);
 		hNextElement = GetSuccElement(ObjPtr);
@@ -344,7 +343,8 @@ harvest_space_junk(ELEMENT* ElementPtr)
 			&& !GRAVITY_MASS(ObjPtr->mass_points)
 			&& CollisionPossible(ObjPtr, ElementPtr))
 		{
-			int32_t dx, dy;
+			int32_t dx {};
+			int32_t dy {};
 
 			if ((dx = ObjPtr->next.location.x
 					- ElementPtr->next.location.x)
@@ -368,7 +368,7 @@ harvest_space_junk(ELEMENT* ElementPtr)
 
 				if (!retval)
 				{
-					STARSHIP* StarShipPtr;
+					STARSHIP* StarShipPtr {};
 
 					retval = true;
 
@@ -390,13 +390,13 @@ harvest_space_junk(ELEMENT* ElementPtr)
 static void
 slylandro_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->weapon_counter
 		&& StarShipPtr->weapon_counter < WEAPON_WAIT)
 	{
-		HELEMENT Lightning;
+		HELEMENT Lightning {};
 
 		initialize_lightning(ElementPtr, &Lightning);
 		if (Lightning)
@@ -419,7 +419,7 @@ slylandro_preprocess(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & (APPEARING | NONSOLID)))
 	{
-		STARSHIP* StarShipPtr;
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		if ((StarShipPtr->cur_status_flags & THRUST)
@@ -464,8 +464,6 @@ slylandro_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_slylandro(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		slylandro_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -485,7 +483,7 @@ init_slylandro(void)
 	slylandro_desc.init_weapon_func = initialize_lightning;
 	slylandro_desc.cyborg_control.intelligence_func = slylandro_intelligence;
 
-	RaceDescPtr = &slylandro_desc;
+	RACE_DESC* RaceDescPtr {&slylandro_desc};
 
 	return (RaceDescPtr);
 }

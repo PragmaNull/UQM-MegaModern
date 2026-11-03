@@ -121,21 +121,17 @@ GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys)
 static bool
 GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	uint16_t planetI;
-
 #define SOL_SEED 334241042L
 	RandomContext_SeedRandom(SysGenRNG, SOL_SEED + (StarSeed ? uqm::UQMOptions::read().customSeed : 0));
 
 	solarSys->SunDesc[0].NumPlanets = 9;
-	for (planetI = 0; planetI < 9; ++planetI)
+	for (uint16_t planetI {0}; planetI < 9; ++planetI)
 	{
-		uint32_t rand_val;
-		uint16_t word_val;
 		PLANET_DESC* pCurDesc = &solarSys->PlanetDesc[planetI];
 
 		pCurDesc->rand_seed = RandomContext_Random(SysGenRNG);
-		rand_val = pCurDesc->rand_seed;
-		word_val = uqm::lowWord(rand_val);
+		const uint32_t rand_val {pCurDesc->rand_seed};
+		const uint16_t word_val {uqm::lowWord(rand_val)};
 		pCurDesc->angle = NORMALIZE_ANGLE((uint16_t)uqm::highByte(word_val));
 
 		switch (planetI)
@@ -203,17 +199,16 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 static bool
 GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 {
-	uint16_t planetNr;
-	uint32_t rand_val;
+	uint32_t rand_val {};
 
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	planetNr = planetIndex(solarSys, planet);
+	const uint16_t planetNr {planetIndex(solarSys, planet)};
 	switch (planetNr)
 	{
 		case 2: /* moons of EARTH */
 			{
-				uint16_t angle;
+				uint16_t angle {};
 
 				/* Starbase: */
 				solarSys->MoonDesc[0].data_index = HIERARCHY_STARBASE;
@@ -278,7 +273,7 @@ static bool
 GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
 						 const PLANET_DESC* world)
 {
-	uint16_t planetNr = planetIndex(solarSys, world);
+	const uint16_t planetNr = planetIndex(solarSys, world);
 
 	uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 						sizeof(GLOBAL_SIS(PlanetName)),
@@ -292,8 +287,8 @@ GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
 static bool
 GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
-	uint32_t rand_val;
-	uint16_t planetNr;
+	uint32_t rand_val {};
+	uint16_t planetNr {};
 
 	if (matchWorld(solarSys, world, 2, 0))
 	{
@@ -506,7 +501,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 	else
 	{
 		// World is a moon.
-		uint16_t moonNr = moonIndex(solarSys, world);
+		const uint16_t moonNr = moonIndex(solarSys, world);
 
 		solarSys->SysInfo.PlanetInfo.AxialTilt = 0;
 		solarSys->SysInfo.PlanetInfo.AtmoDensity = 0;
@@ -802,15 +797,13 @@ GenerateSol_generateLife(const SOLARSYS_STATE* solarSys,
 static int
 init_probe(void)
 {
-	HIPGROUP hGroup;
+	HIPGROUP hGroup {};
 
 	if (!GET_GAME_STATE(PROBE_MESSAGE_DELIVERED)
 		&& GetGroupInfo(GLOBAL(BattleGroupRef), GROUP_INIT_IP)
 		&& (hGroup = GetHeadLink(&GLOBAL(ip_group_q))))
 	{
-		IP_GROUP* GroupPtr;
-
-		GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 		GroupPtr->task = IN_ORBIT;
 		GroupPtr->sys_loc = 2 + 1;	/* orbitting earth */
 		GroupPtr->dest_loc = 2 + 1; /* orbitting earth */
@@ -830,21 +823,18 @@ init_probe(void)
 static void
 check_probe(void)
 {
-	HIPGROUP hGroup;
-	IP_GROUP* GroupPtr;
-
 	if (!GLOBAL(BattleGroupRef))
 	{
 		return; // nothing to check
 	}
 
-	hGroup = GetHeadLink(&GLOBAL(ip_group_q));
+	HIPGROUP hGroup {GetHeadLink(&GLOBAL(ip_group_q))};
 	if (!hGroup)
 	{
 		return; // still nothing to check
 	}
 
-	GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+	IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
 	if (GroupPtr->race_id == URQUAN_DRONE_SHIP

@@ -66,7 +66,7 @@ struct TestSettings : SettingsRegistry
 
 TEST(SettingTest, RegistersInDeclarationOrder)
 {
-	TestSettings settings {};
+	const TestSettings settings {};
 	ASSERT_EQ(settings.settings().size(), 7u);
 	EXPECT_EQ(settings.settings()[0]->key(), "general.enabled");
 	EXPECT_EQ(settings.settings()[6]->key(), "graphics.flags");
@@ -277,7 +277,7 @@ TEST(SettingTest, RejectsInvalidText)
 
 TEST(SettingTest, ChecksTextWithoutChangingValue)
 {
-	TestSettings settings {};
+	const TestSettings settings {};
 	EXPECT_TRUE(settings.percent.acceptsText("75"));
 	EXPECT_FALSE(settings.percent.acceptsText("150"));
 	EXPECT_EQ(*settings.percent, 50);
@@ -300,7 +300,7 @@ TEST(OptionsSettingsTest, CoarseScanStyles)
 	EXPECT_TRUE(usesAltScanColors(CoarseScanStyle::Pictograms));
 	EXPECT_TRUE(usesAltScanColors(CoarseScanStyle::P6014Text));
 
-	OptionsStruct options {};
+	const OptionsStruct options {};
 	EXPECT_EQ(options.whichCoarseScan.valueNames(), (uqstl::vector<uqstl::string> {"Text", "Pictograms", "P6014Text", "P6014Pictograms"}));
 }
 
@@ -328,7 +328,7 @@ TEST(OptionsSettingsTest, ReloadAndRestartFlags)
 
 TEST(SettingTest, DescribesCommandLineValues)
 {
-	TestSettings settings {};
+	const TestSettings settings {};
 	EXPECT_TRUE(settings.enabled.isFlag());
 	EXPECT_FALSE(settings.percent.isFlag());
 	EXPECT_EQ(settings.percent.cliNames(), "--percent");

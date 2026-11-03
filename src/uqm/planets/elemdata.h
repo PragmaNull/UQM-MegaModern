@@ -206,7 +206,7 @@ enum
 
 #define MAX_ELEMENT_UNITS 0xF
 
-extern const uint8_t* Elements;
+const extern uint8_t* Elements;
 
 #if 0 //defined(__cplusplus)
 }

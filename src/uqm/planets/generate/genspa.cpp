@@ -72,7 +72,7 @@ static bool
 GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	if (CurStarDescPtr->Index == SPATHI_DEFINED)
 	{
@@ -87,10 +87,8 @@ GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		if (PrimeSeed)
 		{
-			uint16_t angle;
-
 			pPlanet->radius = EARTH_RADIUS * 1150L / 100;
-			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
 			pPlanet->data_index = WATER_WORLD;
@@ -147,12 +145,12 @@ GenerateSpathi_generateMoons(SOLARSYS_STATE* solarSys,
 	if (CurStarDescPtr->Index == SPATHI_DEFINED
 		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		if (PrimeSeed)
 		{
-			uint16_t angle;
+			uint16_t angle {};
 
 			pMoonDesc->data_index = PELLUCID_WORLD;
 			pMoonDesc->radius = MIN_MOON_RADIUS + MOON_DELTA;
@@ -181,8 +179,8 @@ GenerateSpathi_generateName(const SOLARSYS_STATE* solarSys,
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& IsHomeworldKnown(SPATHI_HOME))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),
@@ -198,7 +196,7 @@ static bool
 GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 							   PLANET_DESC* world)
 {
-	uint32_t rand_val;
+	uint32_t rand_val {};
 
 	if (CurStarDescPtr->Index == SPATHI_DEFINED)
 	{

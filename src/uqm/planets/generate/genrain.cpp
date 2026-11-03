@@ -68,22 +68,19 @@ static bool
 GenerateRainbowWorld_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	pSunDesc->PlanetByte = 0;
-	pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
+	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	pPlanet->data_index = RAINBOW_WORLD;
 
 	if (PrimeSeed)
 	{
-		uint16_t angle;
-
 		pPlanet->NumPlanets = 0;
 		pPlanet->radius = EARTH_RADIUS * 50L / 100;
-		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+		uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		if (angle <= QUADRANT)
 		{
 			angle += QUADRANT;
@@ -108,7 +105,7 @@ GenerateRainbowWorld_generateOrbital(SOLARSYS_STATE* solarSys,
 		&& CurStarDescPtr->Index >= RAINBOW0_DEFINED
 		&& CurStarDescPtr->Index <= RAINBOW9_DEFINED)
 	{
-		uint16_t rainbow_mask;
+		uint16_t rainbow_mask {};
 
 		rainbow_mask = uqm::makeWord(
 			GET_GAME_STATE(RAINBOW_WORLD0),
@@ -126,8 +123,11 @@ GenerateRainbowWorld_generateOrbital(SOLARSYS_STATE* solarSys,
 static void
 GenerateSlylandro(SOLARSYS_STATE* solarSys)
 {
-	HIPGROUP hGroup, hNextGroup;
-	uint8_t angle, num_groups, which_group;
+	HIPGROUP hGroup {};
+	HIPGROUP hNextGroup {};
+	uint8_t angle {};
+	uint8_t num_groups {};
+	uint8_t which_group {};
 
 	if (!GetGroupInfo(GLOBAL(BattleGroupRef), GROUP_INIT_IP))
 	{ // This code will run if we have no battle group generated
@@ -152,9 +152,7 @@ GenerateSlylandro(SOLARSYS_STATE* solarSys)
 	for (hGroup = GetHeadLink(&GLOBAL(ip_group_q));
 		 hGroup; hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr;
-
-		GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 
 		GroupPtr->task = IN_ORBIT;

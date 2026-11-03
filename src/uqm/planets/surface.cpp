@@ -34,27 +34,23 @@ static uint16_t
 CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 					NODE_INFO* info)
 {
-	uint8_t j;
-	uint16_t num_deposits;
-	const ELEMENT_ENTRY* eptr;
-
-	eptr = &SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0];
-	num_deposits = 0;
-	j = NUM_USEFUL_ELEMENTS;
+	const ELEMENT_ENTRY* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
+	uint16_t num_deposits {0};
+	uint8_t j {NUM_USEFUL_ELEMENTS};
 	do
 	{
-		uint8_t num_possible;
+		uint8_t num_possible {};
 
 		num_possible = uqm::lowByte(RandomContext_Random(SysGenRNG))
 					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
 		while (num_possible--)
 		{
-			uint16_t deposit_quality_fine;
-			uint16_t deposit_quality_gross;
+			uint16_t deposit_quality_fine {};
+			uint16_t deposit_quality_gross {};
 
 			// JMS: For making the mineral blip smaller in case it is
 			// partially scavenged.
-			int32_t temp_deposit_quality;
+			int32_t temp_deposit_quality {};
 
 			deposit_quality_fine = (uqm::lowWord(RandomContext_Random(SysGenRNG)) % 100)
 								 + (DEPOSIT_QUALITY(eptr->Density)
@@ -141,26 +137,25 @@ static uint16_t
 CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
 			  NODE_INFO* info)
 {
-	uint16_t num_life_forms;
-
-	num_life_forms = 0;
+	uint16_t num_life_forms {0};
 	if (PLANSIZE(SysInfoPtr->PlanetInfo.PlanDataPtr->Type) != GAS_GIANT)
 	{
 #define MIN_LIFE_CHANCE 10
-		int16_t life_var;
+		int16_t life_var {};
 
 		life_var = RandomContext_Random(SysGenRNG) & 1023;
 		if (life_var < SysInfoPtr->PlanetInfo.LifeChance
 			|| (SysInfoPtr->PlanetInfo.LifeChance < MIN_LIFE_CHANCE
 				&& life_var < MIN_LIFE_CHANCE))
 		{
-			uint8_t num_types;
+			uint8_t num_types {};
 
 			num_types = 1 + uqm::lowByte(RandomContext_Random(SysGenRNG)) % MAX_LIFE_VARIATION;
 			do
 			{
-				uint8_t index, num_creatures;
-				uint16_t rand_val;
+				uint8_t index {};
+				uint8_t num_creatures {};
+				uint16_t rand_val {};
 
 				rand_val = RandomContext_Random(SysGenRNG);
 				index = uqm::lowByte(rand_val) % NUM_CREATURE_TYPES;
@@ -218,7 +213,7 @@ uint16_t
 GeneratePresetLife(const SYSTEM_INFO* SysInfoPtr, const int8_t* lifeTypes,
 				   uint16_t whichLife, NODE_INFO* info)
 {
-	uint16_t i;
+	uint16_t i {};
 	NODE_INFO temp_info;
 
 	if (!info) // user not interested in info but we need space for it
@@ -253,7 +248,7 @@ GeneratePresetLife(const SYSTEM_INFO* SysInfoPtr, const int8_t* lifeTypes,
 static int16_t
 widthPick(void)
 {
-	EXTENT map_dimensions[] = {MAP_DIMENSIONS};
+	const EXTENT map_dimensions[] = {MAP_DIMENSIONS};
 
 	return map_dimensions[uqm::UQMOptions::read().planetTexture].width;
 }
@@ -261,7 +256,7 @@ widthPick(void)
 static int16_t
 heightPick(void)
 {
-	EXTENT map_dimensions[] = {MAP_DIMENSIONS};
+	const EXTENT map_dimensions[] = {MAP_DIMENSIONS};
 
 	return map_dimensions[uqm::UQMOptions::read().planetTexture].height;
 }
@@ -294,7 +289,7 @@ scaleMapHeight(int16_t value)
 
 void GenerateRandomLocation(GFXPOINT* loc)
 {
-	uint16_t rand_val;
+	uint16_t rand_val {};
 
 	rand_val = RandomContext_Random(SysGenRNG);
 
@@ -310,7 +305,7 @@ uint16_t
 GenerateRandomNodes(const SYSTEM_INFO* SysInfoPtr, uint16_t scan, uint16_t numNodes,
 					uint16_t type, uint16_t whichNode, NODE_INFO* info)
 {
-	uint16_t i;
+	uint16_t i {};
 	NODE_INFO temp_info;
 
 	if (!info) // user not interested in info but we need space for it
@@ -342,11 +337,8 @@ uint16_t
 CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 					  NODE_INFO* info, uint16_t numNodes, uint16_t type, uint8_t quality)
 {
-	uint8_t j;
-	uint16_t num_deposits;
 	bool OpenSeason = true;
 	NODE_INFO temp_info;
-	const ELEMENT_ENTRY* eptr;
 
 	if (!info) // user not interested in info but we need space for it
 	{
@@ -356,12 +348,13 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 	RandomContext_SeedRandom(SysGenRNG,
 							 SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
 
-	eptr = &SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0];
-	num_deposits = 0;
-	j = NUM_USEFUL_ELEMENTS;
+	const ELEMENT_ENTRY* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
+	uint16_t num_deposits {0};
+	uint8_t j {NUM_USEFUL_ELEMENTS};
 	do
 	{
-		uint8_t num_possible, depositQuality = 0;
+		uint8_t num_possible {};
+		uint8_t depositQuality = 0;
 
 		num_possible = uqm::lowByte(RandomContext_Random(SysGenRNG))
 					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
@@ -381,11 +374,11 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 
 		while (num_possible--)
 		{
-			uint16_t deposit_quality_fine;
-			uint16_t deposit_quality_gross;
+			uint16_t deposit_quality_fine {};
+			uint16_t deposit_quality_gross {};
 
 			// JMS: For making the mineral blip smaller in case it is partially scavenged.
-			int32_t temp_deposit_quality;
+			int32_t temp_deposit_quality {};
 
 			deposit_quality_fine = (uqm::lowWord(RandomContext_Random(SysGenRNG)) % 100)
 								 + (depositQuality
@@ -451,8 +444,8 @@ uint16_t
 CustomMineralDeposit(NODE_INFO* info, uint16_t type, uint8_t quality,
 					 GFXPOINT location)
 {
-	uint16_t deposit_quality_fine;
-	uint16_t deposit_quality_gross;
+	uint16_t deposit_quality_fine {};
+	uint16_t deposit_quality_gross {};
 
 	if (!info)
 	{

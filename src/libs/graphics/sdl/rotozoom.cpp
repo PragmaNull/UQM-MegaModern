@@ -11,6 +11,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <cmath>
 #include "sdl_common.h"
 #include "port.h"
 #include "rotozoom.h"
@@ -28,10 +29,29 @@
 
 int zoomSurfaceRGBA(SDL_Surface* src, SDL_Surface* dst, int smooth)
 {
-	int x, y, sx, sy, *sax, *say, *csax, *csay, csx, csy, ex, ey, t1, t2, sstep;
-	tColorRGBA *c00, *c01, *c10, *c11;
-	tColorRGBA *sp, *csp, *dp;
-	int dgap; //sgap unused
+	int x {};
+	int y {};
+	int sx {};
+	int sy {};
+	int* sax {};
+	int* say {};
+	int* csax {};
+	int* csay {};
+	int csx {};
+	int csy {};
+	int ex {};
+	int ey {};
+	int t1 {};
+	int t2 {};
+	int sstep {};
+	tColorRGBA* c00 {};
+	tColorRGBA* c01 {};
+	tColorRGBA* c10 {};
+	tColorRGBA* c11 {};
+	tColorRGBA* sp {};
+	tColorRGBA* csp {};
+	tColorRGBA* dp {};
+	int dgap {}; //sgap unused
 
 	/*
      * Variable setup 
@@ -218,10 +238,20 @@ int zoomSurfaceRGBA(SDL_Surface* src, SDL_Surface* dst, int smooth)
 
 static int zoomSurfaceY(SDL_Surface* src, SDL_Surface* dst)
 {
-	Uint32 sx, sy, *sax, *say, *csax, *csay, csx, csy;
-	int x, y;
-	Uint8 *sp, *dp, *csp;
-	int dgap;
+	Uint32 sx {};
+	Uint32 sy {};
+	Uint32* sax {};
+	Uint32* say {};
+	Uint32* csax {};
+	Uint32* csay {};
+	Uint32 csx {};
+	Uint32 csy {};
+	int x {};
+	int y {};
+	Uint8* sp {};
+	Uint8* dp {};
+	Uint8* csp {};
+	int dgap {};
 
 	/*
      * Variable setup 
@@ -329,10 +359,29 @@ static int zoomSurfaceY(SDL_Surface* src, SDL_Surface* dst)
 
 static void transformSurfaceRGBA(SDL_Surface* src, SDL_Surface* dst, int cx, int cy, int isin, int icos, int smooth)
 {
-	int x, y, t1, t2, dx, dy, xd, yd, sdx, sdy, ax, ay, ex, ey, sw, sh;
-	tColorRGBA c00, c01, c10, c11;
-	tColorRGBA *pc, *sp;
-	int gap;
+	int x {};
+	int y {};
+	int t1 {};
+	int t2 {};
+	int dx {};
+	int dy {};
+	int xd {};
+	int yd {};
+	int sdx {};
+	int sdy {};
+	int ax {};
+	int ay {};
+	int ex {};
+	int ey {};
+	int sw {};
+	int sh {};
+	tColorRGBA c00;
+	tColorRGBA c01;
+	tColorRGBA c10;
+	tColorRGBA c11;
+	tColorRGBA* pc {};
+	tColorRGBA* sp {};
+	int gap {};
 
 	/*
      * Variable setup 
@@ -510,9 +559,19 @@ static void transformSurfaceRGBA(SDL_Surface* src, SDL_Surface* dst, int cx, int
 
 static void transformSurfaceY(SDL_Surface* src, SDL_Surface* dst, int cx, int cy, int isin, int icos)
 {
-	int x, y, dx, dy, xd, yd, sdx, sdy, ax, ay; // sw, sh unused
-	tColorY *pc, *sp;
-	int gap;
+	int x {};
+	int y {};
+	int dx {};
+	int dy {};
+	int xd {};
+	int yd {};
+	int sdx {};
+	int sdy {};
+	int ax {};
+	int ay {}; // sw, sh unused
+	tColorY* pc {};
+	tColorY* sp {};
+	int gap {};
 	Uint32 colorkey = 0;
 
 	/*
@@ -576,9 +635,15 @@ static void transformSurfaceY(SDL_Surface* src, SDL_Surface* dst, int cx, int cy
 static void rotozoomSurfaceSizeTrig(int width, int height, double angle, double zoom, int* dstwidth, int* dstheight,
 									double* canglezoom, double* sanglezoom)
 {
-	double x, y, cx, cy, sx, sy;
-	double radangle;
-	int dstwidthhalf, dstheighthalf;
+	double x {NAN};
+	double y {NAN};
+	double cx {NAN};
+	double cy {NAN};
+	double sx {NAN};
+	double sy {NAN};
+	double radangle {NAN};
+	int dstwidthhalf {};
+	int dstheighthalf {};
 
 	/*
      * Determine destination width and height by rotating a centered source box 
@@ -605,7 +670,8 @@ static void rotozoomSurfaceSizeTrig(int width, int height, double angle, double 
 
 void rotozoomSurfaceSize(int width, int height, double angle, double zoom, int* dstwidth, int* dstheight)
 {
-	double dummy_sanglezoom, dummy_canglezoom;
+	double dummy_sanglezoom {NAN};
+	double dummy_canglezoom {NAN};
 
 	rotozoomSurfaceSizeTrig(width, height, angle, zoom, dstwidth, dstheight, &dummy_sanglezoom, &dummy_canglezoom);
 }
@@ -615,13 +681,20 @@ void rotozoomSurfaceSize(int width, int height, double angle, double zoom, int* 
 
 SDL_Surface* rotozoomSurface(SDL_Surface* src, double angle, double zoom, int smooth)
 {
-	SDL_Surface* rz_src;
-	SDL_Surface* rz_dst;
-	double zoominv;
-	double sanglezoom, canglezoom, sanglezoominv, canglezoominv;
-	int dstwidthhalf, dstwidth, dstheighthalf, dstheight;
-	int is32bit;
-	int i, src_converted;
+	SDL_Surface* rz_src {};
+	SDL_Surface* rz_dst {};
+	double zoominv {NAN};
+	double sanglezoom {NAN};
+	double canglezoom {NAN};
+	double sanglezoominv {NAN};
+	double canglezoominv {NAN};
+	int dstwidthhalf {};
+	int dstwidth {};
+	int dstheighthalf {};
+	int dstheight {};
+	int is32bit {};
+	int i {};
+	int src_converted {};
 
 	/*
      * Sanity check 
@@ -850,11 +923,17 @@ SDL_Surface* rotozoomSurface(SDL_Surface* src, double angle, double zoom, int sm
 
 int rotateSurface(SDL_Surface* src, SDL_Surface* dst, double angle, int smooth)
 {
-	double zoominv;
-	double sanglezoom, canglezoom, sanglezoominv, canglezoominv;
-	int dstwidthhalf, dstwidth, dstheighthalf, dstheight;
-	int is32bit;
-	int i;
+	double zoominv {NAN};
+	double sanglezoom {NAN};
+	double canglezoom {NAN};
+	double sanglezoominv {NAN};
+	double canglezoominv {NAN};
+	int dstwidthhalf {};
+	int dstwidth {};
+	int dstheighthalf {};
+	int dstheight {};
+	int is32bit {};
+	int i {};
 
 	/* Sanity check */
 	if (!src || !dst)
@@ -971,11 +1050,13 @@ void zoomSurfaceSize(int width, int height, double zoomx, double zoomy, int* dst
 
 SDL_Surface* zoomSurface(SDL_Surface* src, double zoomx, double zoomy, int smooth)
 {
-	SDL_Surface* rz_src;
-	SDL_Surface* rz_dst;
-	int dstwidth, dstheight;
-	int is32bit;
-	int i, src_converted;
+	SDL_Surface* rz_src {};
+	SDL_Surface* rz_dst {};
+	int dstwidth {};
+	int dstheight {};
+	int is32bit {};
+	int i {};
+	int src_converted {};
 
 	/*
      * Sanity check 

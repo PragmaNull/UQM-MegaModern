@@ -38,7 +38,7 @@ static GFXRECT savedShipFrame_r;
 static STAMP savedShipFrame;
 
 // Ship icon positions in status display around the flagship
-static const GFXPOINT ship_pos[MAX_BUILT_SHIPS] =
+const static GFXPOINT ship_pos[MAX_BUILT_SHIPS] =
 	{
 		SUPPORT_SHIP_PTS};
 
@@ -103,11 +103,10 @@ drawSupportShip(ROSTER_STATE* rosterState, bool filled, bool saveFrame)
 static void
 getSupportShipIcon(ROSTER_STATE* rosterState)
 {
-	HSHIPFRAG hShipFrag;
-	SHIP_FRAGMENT* ShipFragPtr;
+	HSHIPFRAG hShipFrag {};
 
 	rosterState->curShipFrame = nullptr;
-	ShipFragPtr = LockSupportShip(rosterState, &hShipFrag);
+	const SHIP_FRAGMENT* ShipFragPtr {LockSupportShip(rosterState, &hShipFrag)};
 	if (!ShipFragPtr)
 	{
 		return;
@@ -158,8 +157,9 @@ flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
 static SHIP_FRAGMENT*
 LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
 {
-	const GFXPOINT* pship_pos;
-	HSHIPFRAG hStarShip, hNextShip;
+	const GFXPOINT* pship_pos {};
+	HSHIPFRAG hStarShip {};
+	HSHIPFRAG hNextShip {};
 
 	// Lookup the current escort's location in the unsorted points list
 	// to find the original escort index
@@ -167,9 +167,7 @@ LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
 		pship_pos = ship_pos;
 		 hStarShip; hStarShip = hNextShip, ++pship_pos)
 	{
-		SHIP_FRAGMENT* StarShipPtr;
-
-		StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
 
 		if (pointsEqual(*pship_pos, rosterState->curShipPt))
 		{
@@ -199,12 +197,10 @@ DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
 {
 	bool ret = false;
 	char buf[40] {};
-	HFLEETINFO hTemplate;
-	HSHIPFRAG hShipFrag;
-	SHIP_FRAGMENT* StarShipPtr;
-	FLEET_INFO* TemplatePtr;
+	HFLEETINFO hTemplate {};
+	HSHIPFRAG hShipFrag {};
 
-	StarShipPtr = LockSupportShip(rosterState, &hShipFrag);
+	SHIP_FRAGMENT* StarShipPtr {LockSupportShip(rosterState, &hShipFrag)};
 	if (!StarShipPtr)
 	{
 		return false;
@@ -212,7 +208,7 @@ DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
 
 	hTemplate = GetStarShipFromIndex(&GLOBAL(avail_race_q),
 									 StarShipPtr->race_id);
-	TemplatePtr = LockFleetInfo(&GLOBAL(avail_race_q), hTemplate);
+	FLEET_INFO* TemplatePtr {LockFleetInfo(&GLOBAL(avail_race_q), hTemplate)};
 
 	StarShipPtr->crew_level += crew_delta;
 
@@ -274,7 +270,12 @@ static bool
 DoModifyRoster(MENU_STATE* pMS)
 {
 	ROSTER_STATE* rosterState = (ROSTER_STATE*)pMS->privData;
-	bool select, cancel, up, down, pgup, pgdn, horiz;
+	bool select {};
+	bool cancel {};
+	bool up {};
+	bool down {};
+	bool pgup {};
+	bool pgdn {};
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -286,7 +287,7 @@ DoModifyRoster(MENU_STATE* pMS)
 	up = PulsedInputState.menu[KEY_MENU_UP];
 	down = PulsedInputState.menu[KEY_MENU_DOWN];
 	// Left or right produces the same effect because there are 2 columns
-	horiz = PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_RIGHT];
+	const bool horiz {PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_RIGHT]};
 	pgup = PulsedInputState.menu[KEY_MENU_ZOOM_IN];
 	pgdn = PulsedInputState.menu[KEY_MENU_ZOOM_OUT];
 
@@ -312,7 +313,8 @@ DoModifyRoster(MENU_STATE* pMS)
 	}
 	else if (rosterState->modifyingCrew)
 	{
-		uint16_t loop, DoLoop = 0;
+		uint16_t loop {};
+		uint16_t DoLoop = 0;
 		bool failed = false;
 
 		if (up || pgup)
@@ -353,11 +355,10 @@ DoModifyRoster(MENU_STATE* pMS)
 	}
 	else
 	{
-		uint16_t NewState;
-		GFXPOINT* pship_pos = rosterState->shipPos;
-		uint16_t top_right = (rosterState->count + 1) >> 1;
+		const GFXPOINT* pship_pos = rosterState->shipPos;
+		const uint16_t top_right = (rosterState->count + 1) >> 1;
 
-		NewState = pMS->CurState;
+		uint16_t NewState {pMS->CurState};
 
 		if (rosterState->count < 2)
 		{

@@ -73,9 +73,7 @@ getNumNetConnections(void)
 // the callback function for each connected player.
 bool forEachConnectedPlayer(ForEachConnectionCallback callback, void* arg)
 {
-	uint16_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
 		NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
@@ -98,11 +96,9 @@ bool forEachConnectedPlayer(ForEachConnectionCallback callback, void* arg)
 
 void closeAllConnections(void)
 {
-	uint16_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		NetConnection* conn = netConnections[player];
+		const NetConnection* conn = netConnections[player];
 
 		if (conn != nullptr)
 		{
@@ -113,11 +109,9 @@ void closeAllConnections(void)
 
 void closeDisconnectedConnections(void)
 {
-	uint16_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		NetConnection* conn = netConnections[player];
+		const NetConnection* conn = netConnections[player];
 
 		if (conn != nullptr && !NetConnection_isConnected(conn))
 		{
@@ -134,7 +128,7 @@ NetMelee_getMeleeState(NetConnection* conn)
 {
 	if (NetConnection_getState(conn) > NetState_connecting)
 	{
-		BattleStateData* battleStateData =
+		const BattleStateData* battleStateData =
 			(BattleStateData*)NetConnection_getStateData(conn);
 		return battleStateData->meleeState;
 	}
@@ -149,7 +143,7 @@ NetMelee_getBattleState(NetConnection* conn)
 {
 	if (NetConnection_getState(conn) > NetState_connecting)
 	{
-		BattleStateData* battleStateData =
+		const BattleStateData* battleStateData =
 			(BattleStateData*)NetConnection_getStateData(conn);
 		return battleStateData->battleState;
 	}
@@ -203,13 +197,9 @@ void netInputBlocking(uint32_t timeoutMs)
 // Send along all pending network packets.
 void flushPacketQueues(void)
 {
-	uint16_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		NetConnection* conn;
-
-		conn = netConnections[player];
+		NetConnection* conn {netConnections[player]};
 		if (conn == nullptr)
 		{
 			continue;
@@ -229,9 +219,7 @@ void flushPacketQueues(void)
 
 void confirmConnections(void)
 {
-	uint16_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
 		NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
@@ -250,9 +238,7 @@ void confirmConnections(void)
 
 void cancelConfirmations(void)
 {
-	uint16_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
 		NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
@@ -271,9 +257,7 @@ void cancelConfirmations(void)
 
 void connectionsLocalReady(NetConnection_ReadyCallback callback, void* arg)
 {
-	uint16_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
 		NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
@@ -292,11 +276,9 @@ void connectionsLocalReady(NetConnection_ReadyCallback callback, void* arg)
 
 bool allConnected(void)
 {
-	uint16_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		NetConnection* conn = netConnections[player];
+		const NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
 		{
 			continue;
@@ -312,12 +294,10 @@ bool allConnected(void)
 
 void initBattleStateDataConnections(void)
 {
-	uint16_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		BattleStateData* battleStateData;
-		NetConnection* conn = netConnections[player];
+		BattleStateData* battleStateData {};
+		const NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
 		{
 			continue;
@@ -331,12 +311,10 @@ void initBattleStateDataConnections(void)
 
 void setBattleStateConnections(struct battlestate_struct* bs)
 {
-	uint16_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		BattleStateData* battleStateData;
-		NetConnection* conn = netConnections[player];
+		BattleStateData* battleStateData {};
+		const NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
 		{
 			continue;
@@ -352,11 +330,11 @@ BATTLE_INPUT_STATE
 networkBattleInput(NetworkInputContext* context, STARSHIP* StarShipPtr)
 {
 	BattleInputBuffer* bib = getBattleInputBuffer(context->playerNr);
-	BATTLE_INPUT_STATE result;
+	BATTLE_INPUT_STATE result {};
 
 	for (;;)
 	{
-		bool ok;
+		bool ok {};
 
 #if 0
 		// This is a useful debugging trick. By enabling this #if
@@ -380,7 +358,7 @@ networkBattleInput(NetworkInputContext* context, STARSHIP* StarShipPtr)
 		}
 
 		{
-			NetConnection* conn = netConnections[context->playerNr];
+			const NetConnection* conn = netConnections[context->playerNr];
 
 			// First try whether there is incoming data, without blocking.
 			// If there isn't any, only then give a warning, and then
@@ -427,7 +405,7 @@ deleteConnectionCallback(NetConnection* conn)
 NetConnection*
 openPlayerNetworkConnection(uint16_t player, void* extra)
 {
-	NetConnection* conn;
+	NetConnection* conn {};
 
 	assert(netConnections[player] == nullptr);
 	const auto& netplayOptions {uqm::UQMOptions::getInstance().getNetplayOptions()};
@@ -449,14 +427,13 @@ void closePlayerNetworkConnection(uint16_t player)
 
 bool setupInputDelay(size_t localInputDelay)
 {
-	uint16_t player;
 	bool haveNetworkPlayer = false;
 	// We have at least one network controlled player.
 	size_t inputDelay = 0;
 
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		NetConnection* conn = netConnections[player];
+		const NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
 		{
 			continue;
@@ -534,7 +511,7 @@ typedef struct
 static bool
 localReadyConnection(NetConnection* conn, void* arg)
 {
-	LocalReadyConnectionArg* readyArg = (LocalReadyConnectionArg*)arg;
+	const LocalReadyConnectionArg* readyArg = (LocalReadyConnectionArg*)arg;
 	Netplay_localReady(conn, readyArg->readyCallback,
 					   readyArg->readyCallbackArg, readyArg->notifyRemote);
 	return true;
@@ -630,10 +607,9 @@ bool negotiateReady(NetConnection* conn, bool notifyRemote, NetState nextState)
 //      time critical.
 bool negotiateReadyConnections(bool notifyRemote, NetState nextState)
 {
-	uint16_t player;
 	size_t numDisconnected = 0;
 
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
 		NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
@@ -807,10 +783,9 @@ out:
 // Use '(NetState) -1' for nextState to keep the current state.
 bool waitResetConnections(NetState nextState)
 {
-	uint16_t player;
 	size_t numDisconnected = 0;
 
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
 	{
 		NetConnection* conn = netConnections[player];
 		if (conn == nullptr)

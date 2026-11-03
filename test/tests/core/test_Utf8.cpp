@@ -125,7 +125,7 @@ TEST(Utf8Test, SkipChars)
 	EXPECT_EQ(skipUTF8Chars(text, 10), text + 5);
 
 	char buffer[] {"ab"};
-	char* mutableEnd {skipUTF8Chars(buffer, 1)};
+	const char* mutableEnd {skipUTF8Chars(buffer, 1)};
 	EXPECT_EQ(mutableEnd, buffer + 1);
 }
 

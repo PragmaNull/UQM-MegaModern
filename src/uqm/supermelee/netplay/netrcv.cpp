@@ -38,7 +38,7 @@ static uqstl::expected<size_t, uqstl::error_code>
 dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 				   size_t dataLen)
 {
-	uint32_t packetLen;
+	uint32_t packetLen {};
 	PacketType type;
 
 	if (dataLen < sizeof(PacketHeader))
@@ -108,9 +108,7 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 static uqstl::expected<size_t, uqstl::error_code>
 dataReceivedMulti(NetConnection* conn, const uint8_t* data, size_t len)
 {
-	size_t processed;
-
-	processed = 0;
+	size_t processed {0};
 	while (len > 0)
 	{
 		const uqstl::expected<size_t, uqstl::error_code> single {dataReceivedSingle(conn, data, len)};

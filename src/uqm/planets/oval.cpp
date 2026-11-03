@@ -28,7 +28,6 @@
 #include "planets.h"
 #include "uqm/setup.h"
 
-
 #ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif
@@ -105,9 +104,15 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 {
 	DPOINT mp; // Middle point
 	uint8_t quad_visible = 0;
-	int32_t x0, x1, y0, y1; // Coords of top left and bottom right corners of inner rect
-	double asquared, bsquared;
-	double a, b, x, y, r0, r1;
+	int32_t y1 {}; // Coords of top left and bottom right corners of inner rect
+	double asquared {NAN};
+	double bsquared {NAN};
+	double a {NAN};
+	double b {NAN};
+	double x {NAN};
+	double y {NAN};
+	double r0 {NAN};
+	double r1 {NAN};
 
 	// Step 1
 	if (DPointOnScreen(p0) && DPointOnScreen(p1))
@@ -116,10 +121,10 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 		return quad_visible;
 	}
 
-	x0 = p0->x + ((p1->x - p0->x) >> 2);
-	x1 = x0 + ((x0 - p0->x) << 1);
+	const int32_t x0 {p0->x + ((p1->x - p0->x) >> 2)};
+	const int32_t x1 {x0 + ((x0 - p0->x) << 1)};
 
-	y0 = p0->y + ((p1->y - p0->y) >> 2);
+	const int32_t y0 {p0->y + ((p1->y - p0->y) >> 2)};
 	y1 = y0 + ((y0 - p0->y) << 1);
 
 	// Step 2
@@ -137,7 +142,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 	b = (p1->y - p0->y) >> 1;
 	if (b > a)
 	{
-		double p = a;
+		const double p = a;
 		a = b;
 		b = p;
 	}
@@ -323,18 +328,17 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 
 void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 {
-	uint16_t off;
-	int16_t x, y;
-	int16_t A, B;
-	int64_t Asquared, TwoAsquared,
-		Bsquared, TwoBsquared;
-	int64_t d, dx, dy;
-	uint8_t quad_visible;
+	int16_t x {};
+	int16_t y {};
+	int16_t A {};
+	int16_t B {};
+	int64_t TwoAsquared {};
+	int64_t dy {};
 	PRIMITIVE prim[NUM_QUADS];
-	uint16_t StartPrim;
-	DPOINT p0, p1;
-	bool use_pointprim = (!scaled && num_off_pixels <= 1);
-	uint8_t render;
+	DPOINT p0;
+	DPOINT p1;
+	const bool use_pointprim = (!scaled && num_off_pixels <= 1);
+	uint8_t render {};
 
 	p0.x = pRect->corner.x;
 	p0.y = pRect->corner.y;
@@ -367,14 +371,14 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 		return;
 	}
 
-	quad_visible = CheckOvalCollision(&p0, &p1);
+	const uint8_t quad_visible {CheckOvalCollision(&p0, &p1)};
 
 	if (!quad_visible)
 	{
 		return;
 	}
 
-	StartPrim = END_OF_LIST;
+	uint16_t StartPrim {END_OF_LIST};
 	for (x = 0; x < NUM_QUADS; ++x)
 	{
 		if (quad_visible & (1 << x))
@@ -399,8 +403,8 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 	x = 0;
 	y = B;
 
-	Asquared = ((int64_t)A * A) << 1;
-	Bsquared = ((int64_t)B * B) << 1;
+	int64_t Asquared {((int64_t)A * A) << 1};
+	int64_t Bsquared {((int64_t)B * B) << 1};
 	do
 	{
 		Asquared >>= 1;
@@ -408,12 +412,12 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 		TwoAsquared = Asquared << 1;
 		dy = TwoAsquared * B;
 	} while (dy / B != TwoAsquared);
-	TwoBsquared = Bsquared << 1;
+	const int64_t TwoBsquared {Bsquared << 1};
 
-	dx = 0;
-	d = Bsquared - (dy >> 1) + (Asquared >> 2);
+	int64_t dx {0};
+	int64_t d {Bsquared - (dy >> 1) + (Asquared >> 2)};
 
-	off = 0;
+	uint16_t off {0};
 	A += pRect->corner.x;
 	B += pRect->corner.y;
 
@@ -786,15 +790,17 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 void DrawFilledOval(DRECT* pRect)
 { // Kruzen: originally there was standard rect, but drawing fuel circle in HD on max zoom causes overflow (Width ~65k)
 	// So unless we want to expand standard rect to support 4 bytes per dimension - use this
-	int16_t x, y;
-	int16_t A, B;
-	int64_t Asquared, TwoAsquared,
-		Bsquared, TwoBsquared;
-	int64_t d, dx, dy;
+	int16_t x {};
+	int16_t y {};
+	int16_t A {};
+	int16_t B {};
+	int64_t TwoAsquared {};
+	int64_t dy {};
 	PRIMITIVE prim[NUM_QUADS >> 1];
-	uint16_t StartPrim;
-	GFXPOINT first, second;
-	DPOINT p0, p1;
+	GFXPOINT first;
+	GFXPOINT second;
+	DPOINT p0;
+	DPOINT p1;
 	uint16_t lines_r = 0;
 
 	p0.x = pRect->corner.x;
@@ -828,7 +834,7 @@ void DrawFilledOval(DRECT* pRect)
 		return;
 	}
 
-	StartPrim = END_OF_LIST;
+	uint16_t StartPrim {END_OF_LIST};
 	for (x = 0; x < (NUM_QUADS >> 1); ++x)
 	{
 		SetPrimNextLink(&prim[x], StartPrim);
@@ -844,8 +850,8 @@ void DrawFilledOval(DRECT* pRect)
 	x = 0;
 	y = B;
 
-	Asquared = ((int64_t)A * A) << 1;
-	Bsquared = ((int64_t)B * B) << 1;
+	int64_t Asquared {((int64_t)A * A) << 1};
+	int64_t Bsquared {((int64_t)B * B) << 1};
 	do
 	{
 		Asquared >>= 1;
@@ -853,10 +859,10 @@ void DrawFilledOval(DRECT* pRect)
 		TwoAsquared = Asquared << 1;
 		dy = TwoAsquared * B;
 	} while (dy / B != TwoAsquared);
-	TwoBsquared = Bsquared << 1;
+	const int64_t TwoBsquared {Bsquared << 1};
 
-	dx = 0;
-	d = Bsquared - (dy >> 1) + (Asquared >> 2);
+	int64_t dx {0};
+	int64_t d {Bsquared - (dy >> 1) + (Asquared >> 2)};
 
 	A += pRect->corner.x;
 	B += pRect->corner.y;
@@ -1009,12 +1015,12 @@ void DrawEllipse(int cx, int cy, int rx, int ry, int shear, int filled, int dott
 	int s = shear;
 	int d = 0;
 	const int sRound = (shear < 0) ? -(rx / 2) : (rx / 2);
-	int64_t dex = 2 * (long)ry * ry;
+	const int64_t dex = 2 * (long)ry * ry;
 	int64_t ex = (long)ry * ry - (long)rx * dex;
-	int64_t dey = 2 * (long)rx * rx;
+	const int64_t dey = 2 * (long)rx * rx;
 	int64_t ey = (long)rx * rx;
 	int64_t e = ex + ey;
-	int64_t e2;
+	int64_t e2 {};
 
 	if (rx < 0)
 	{
@@ -1071,14 +1077,14 @@ void DrawEllipse(int cx, int cy, int rx, int ry, int shear, int filled, int dott
 void DrawRotatedEllipse(int cx, int cy, int rx, int ry, int angle_deg, int filled, int dotted)
 {
 	// based on https://zingl.github.io/Bresenham.pdf section 4.3
-	double rx2 = (double)rx * rx;
-	double ry2 = (double)ry * ry;
-	double theta = (angle_deg % 90) * M_PI / 180.0;
-	double st = sin(theta);
-	double ct = cos(theta);
-	double xd2 = rx2 * ct * ct + ry2 * st * st;
-	double xd = sqrt(xd2);
-	int shear = (int)(((rx2 - ry2) * st * ct) / xd + 0.5);
+	const double rx2 = (double)rx * rx;
+	const double ry2 = (double)ry * ry;
+	const double theta = (angle_deg % 90) * M_PI / 180.0;
+	const double st = sin(theta);
+	const double ct = cos(theta);
+	const double xd2 = rx2 * ct * ct + ry2 * st * st;
+	const double xd = sqrt(xd2);
+	const int shear = (int)(((rx2 - ry2) * st * ct) / xd + 0.5);
 
 	rx = (int)(xd + 0.5);
 	ry = (int)(sqrt((rx2 * ry2) / xd2) + 0.5);

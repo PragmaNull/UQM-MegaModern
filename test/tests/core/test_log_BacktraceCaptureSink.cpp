@@ -33,7 +33,7 @@ protected:
 // Helper to create a log_msg with given payload text.
 static spdlog::details::log_msg make_msg(const uqstl::string_view payload)
 {
-	spdlog::details::log_msg msg {spdlog::source_loc {}, "test_logger", spdlog::level::info, payload};
+	const spdlog::details::log_msg msg {spdlog::source_loc {}, "test_logger", spdlog::level::info, payload};
 	return msg;
 }
 
@@ -45,7 +45,7 @@ static std::string buf_to_string(const spdlog::memory_buf_t& buf)
 
 TEST_F(BacktraceCaptureSinkTests, DefaultConstructionEmptyBuffer)
 {
-	BacktraceCaptureSinkMock sink;
+	const BacktraceCaptureSinkMock sink;
 
 	// Initially index zero and all buffers empty
 	EXPECT_EQ(sink.getIndex(), 0u);
@@ -67,7 +67,7 @@ TEST_F(BacktraceCaptureSinkTests, SinkItStoresMessagePayloadSubstring)
 
 	// The stored buffer at logical index 0 should contain the payload string.
 	const auto& stored = sink.at(0);
-	std::string storedStr = buf_to_string(stored);
+	const std::string storedStr = buf_to_string(stored);
 	EXPECT_NE(storedStr.find("hello-world-42"), std::string::npos);
 }
 
@@ -112,7 +112,7 @@ TEST_F(BacktraceCaptureSinkTests, OverwriteWhenFullKeepsLatestBacktraceSize)
 	const size_t total = BacktraceSize + 10u;
 	for (size_t i = 0; i < total; ++i)
 	{
-		std::string s {"msg-" + std::to_string(i)};
+		const std::string s {"msg-" + std::to_string(i)};
 		auto msg = make_msg(s);
 		sink.sink_it_(msg);
 	}
@@ -126,7 +126,7 @@ TEST_F(BacktraceCaptureSinkTests, OverwriteWhenFullKeepsLatestBacktraceSize)
 
 	// Count lines
 	size_t count = 0;
-	for (char c : out)
+	for (const char c : out)
 	{
 		if (c == '\n')
 		{
@@ -176,7 +176,7 @@ TEST_F(BacktraceCaptureSinkTests, InterleavedPopulatedAndEmptyMessages)
 	// Push alternating non-empty and empty payloads up to a small number
 	for (int i = 0; i < 8; ++i)
 	{
-		std::string s {(i % 2 == 0) ? ("A-" + std::to_string(i)) : ""};
+		const std::string s {(i % 2 == 0) ? ("A-" + std::to_string(i)) : ""};
 		auto msg = make_msg(s);
 		sink.sink_it_(msg);
 	}

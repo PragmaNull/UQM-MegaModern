@@ -179,16 +179,13 @@ apply_default_bindings_to_controller(SDL_JoystickID instance_id,
 void create_joystick(SDL_JoystickID instance_id)
 {
 	const uqm::LockGuard lock {s_vcontrolLock};
-	SDL_Gamepad* gamecontroller;
-	controller_list *current, *new_controller;
-	joystick* x;
 
 	if (!SDL_IsGamepad(instance_id))
 	{
 		return;
 	}
 
-	gamecontroller = SDL_OpenGamepad(instance_id);
+	SDL_Gamepad* gamecontroller {SDL_OpenGamepad(instance_id)};
 	if (!gamecontroller)
 	{
 		uqm::log::warn("VControl: Could not initialize "
@@ -198,7 +195,7 @@ void create_joystick(SDL_JoystickID instance_id)
 	}
 
 
-	current = controller_list_head;
+	controller_list* current {controller_list_head};
 	while (current)
 	{
 		if (current->instance_id == instance_id)
@@ -231,8 +228,8 @@ void create_joystick(SDL_JoystickID instance_id)
 	controller_assignments[logical_port] = instance_id;
 	active_controller_count++;
 
-	new_controller = new controller_list {};
-	x = &new_controller->gamepad;
+	controller_list* new_controller {new controller_list {}};
+	joystick* x {&new_controller->gamepad};
 	x->numaxes = SDL_GAMEPAD_AXIS_COUNT;
 	x->numbuttons = SDL_GAMEPAD_BUTTON_COUNT;
 	x->axes.assign(x->numaxes, axis_type {nullptr, nullptr, 0});
@@ -255,9 +252,6 @@ void create_joystick(SDL_JoystickID instance_id)
 static void
 destroy_joystick(SDL_JoystickID instance_id) UQM_REQUIRES(s_vcontrolLock)
 {
-	controller_list** prev;
-	controller_list* current;
-
 	for (int i = 0; i < 2; i++)
 	{
 		if (controller_assignments[i] == instance_id)
@@ -268,18 +262,16 @@ destroy_joystick(SDL_JoystickID instance_id) UQM_REQUIRES(s_vcontrolLock)
 		}
 	}
 
-	prev = &controller_list_head;
-	current = controller_list_head;
+	controller_list** prev {&controller_list_head};
+	controller_list* current {controller_list_head};
 
 	while (current)
 	{
 		if (current->instance_id == instance_id)
 		{
-			joystick* x;
-
 			*prev = current->next;
 
-			x = &current->gamepad;
+			joystick* x {&current->gamepad};
 			if (x->stick)
 			{
 				SDL_CloseGamepad(x->stick);
@@ -305,7 +297,7 @@ destroy_joystick(SDL_JoystickID instance_id) UQM_REQUIRES(s_vcontrolLock)
 static void
 key_init(void) UQM_REQUIRES(s_vcontrolLock)
 {
-	unsigned int i;
+	unsigned int i {};
 	pool = allocate_key_chunk();
 	for (i = 0; i < KEYBOARD_INPUT_BUCKETS; i++)
 	{
@@ -328,17 +320,16 @@ key_init(void) UQM_REQUIRES(s_vcontrolLock)
 static void
 key_uninit(void) UQM_REQUIRES(s_vcontrolLock)
 {
-	unsigned int i;
 	free_key_pool(pool);
-	for (i = 0; i < KEYBOARD_INPUT_BUCKETS; i++)
+	for (unsigned int i {0}; i < KEYBOARD_INPUT_BUCKETS; i++)
 	{
 		bindings[i] = nullptr;
 	}
 	pool = nullptr;
 
 #ifdef HAVE_JOYSTICK
-	controller_list* current = controller_list_head;
-	controller_list* next;
+	const controller_list* current = controller_list_head;
+	const controller_list* next {};
 
 	while (current)
 	{
@@ -398,9 +389,9 @@ int VControl_SetJoyThreshold(int port, int threshold)
 static void
 add_binding(keybinding** newptr, uqstl::atomic<int>* target, sdl_key_t keycode) UQM_REQUIRES(s_vcontrolLock)
 {
-	keybinding* newbinding;
-	keypool* searchbase;
-	int i;
+	keybinding* newbinding {};
+	keypool* searchbase {};
+	int i {};
 
 	/* Acquire a pointer to the keybinding * that we'll be
 	 * overwriting.  Along the way, ensure we haven't already
@@ -566,7 +557,7 @@ int VControl_AddGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target)
 {
 	const uqm::LockGuard lock {s_vcontrolLock};
 	int result = -1;
-	int logical_port;
+	int logical_port {};
 	switch (g->type)
 	{
 		case VCONTROL_KEY:
@@ -940,7 +931,7 @@ void VControl_ProcessJoyAxis(int port, int axis, int value)
 		if (current->instance_id == port)
 		{
 			joystick* j = &current->gamepad;
-			int t = j->threshold;
+			const int t = j->threshold;
 
 			if (axis < 0 || axis >= j->numaxes)
 			{
@@ -1002,11 +993,10 @@ void VControl_ResetInput(void)
 	 * them out.  This will probably zero entries multiple times;
 	 * oh well, no harm done. */
 
-	keypool* base = pool;
+	const keypool* base = pool;
 	while (base != nullptr)
 	{
-		int i;
-		for (i = 0; i < POOL_CHUNK_SIZE; i++)
+		for (int i {0}; i < POOL_CHUNK_SIZE; i++)
 		{
 			if (base->pool[i].target)
 			{
@@ -1027,8 +1017,7 @@ void VControl_BeginFrame(void)
 	keypool* base = pool;
 	while (base != nullptr)
 	{
-		int i;
-		for (i = 0; i < POOL_CHUNK_SIZE; i++)
+		for (int i {0}; i < POOL_CHUNK_SIZE; i++)
 		{
 			if (base->pool[i].target)
 			{
@@ -1162,7 +1151,8 @@ typedef struct vcontrol_parse_state
 static void
 next_token(parse_state* state)
 {
-	int index, base;
+	int index {};
+	int base {};
 
 	state->token[0] = 0;
 	/* skip preceding whitespace */
@@ -1211,7 +1201,7 @@ consume(parse_state* state, const char* expected)
 static int
 consume_keyname(parse_state* state)
 {
-	int keysym = VControl_name2code(state->token);
+	const int keysym = VControl_name2code(state->token);
 	if (!keysym)
 	{
 		uqm::log::warn("VControl: Illegal key name '{}' on config "
@@ -1226,8 +1216,8 @@ consume_keyname(parse_state* state)
 static int
 consume_num(parse_state* state)
 {
-	char* end;
-	int result = strtol(state->token, &end, 10);
+	char* end {};
+	const int result = strtol(state->token, &end, 10);
 	if (*end != '\0')
 	{
 		uqm::log::warn(
@@ -1290,19 +1280,17 @@ consume_dir(parse_state* state)
 static void
 parse_joybinding(parse_state* state, VCONTROL_GESTURE* gesture)
 {
-	int sticknum;
 	consume(state, "joystick");
-	sticknum = consume_num(state);
+	const int sticknum {consume_num(state)};
 	if (!state->error)
 	{
 		if (!strcasecmp(state->token, "axis"))
 		{
-			int axisnum;
 			consume(state, "axis");
-			axisnum = consume_num(state);
+			const int axisnum {consume_num(state)};
 			if (!state->error)
 			{
-				int polarity = consume_polarity(state);
+				const int polarity = consume_polarity(state);
 				if (!state->error)
 				{
 					gesture->type = VCONTROL_JOYAXIS;
@@ -1314,9 +1302,8 @@ parse_joybinding(parse_state* state, VCONTROL_GESTURE* gesture)
 		}
 		else if (!strcasecmp(state->token, "button"))
 		{
-			int buttonnum;
 			consume(state, "button");
-			buttonnum = consume_num(state);
+			const int buttonnum {consume_num(state)};
 			if (!state->error)
 			{
 				gesture->type = VCONTROL_JOYBUTTON;
@@ -1326,12 +1313,11 @@ parse_joybinding(parse_state* state, VCONTROL_GESTURE* gesture)
 		}
 		else if (!strcasecmp(state->token, "hat"))
 		{
-			int hatnum;
 			consume(state, "hat");
-			hatnum = consume_num(state);
+			const int hatnum {consume_num(state)};
 			if (!state->error)
 			{
-				Uint8 dir = consume_dir(state);
+				const Uint8 dir = consume_dir(state);
 				if (!state->error)
 				{
 					gesture->type = VCONTROL_JOYHAT;
@@ -1355,9 +1341,8 @@ parse_gesture(parse_state* state, VCONTROL_GESTURE* gesture)
 	if (!strcasecmp(state->token, "key"))
 	{
 		/* Parse key binding */
-		int keysym;
 		consume(state, "key");
-		keysym = consume_keyname(state);
+		const int keysym {consume_keyname(state)};
 		if (!state->error)
 		{
 			gesture->type = VCONTROL_KEY;

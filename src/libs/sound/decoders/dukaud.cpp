@@ -35,7 +35,7 @@
 
 #define THIS_PTR TFB_SoundDecoder* This
 
-static const char* duka_GetName(void);
+const static char* duka_GetName(void);
 static bool duka_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void duka_TermModule(void);
 static TFB_SoundDecoder* duka_Create(void);
@@ -106,7 +106,7 @@ typedef struct
 	uint16_t indices[2]; // initial indices for channels
 } DukAud_AudSubframe;
 
-static const TFB_DecoderFormats* duka_formats = nullptr;
+const static TFB_DecoderFormats* duka_formats = nullptr;
 
 static int32_t
 duka_readAudFrameHeader(TFB_DuckSoundDecoder* duka, uint32_t iframe,
@@ -203,10 +203,9 @@ decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
 {
 	int32_t step[2];
 	int32_t index[2];
-	int32_t diff;
-	int32_t i;
-	int sign;
-	int32_t delta;
+	int32_t diff {};
+	int sign {};
+	int32_t delta {};
 	int channel_number = 0;
 
 	channels -= 1;
@@ -215,7 +214,7 @@ decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
 	step[0] = adpcm_step[index[0]];
 	step[1] = adpcm_step[index[1]];
 
-	for (i = 0; i < output_size; i++)
+	for (int32_t i {0}; i < output_size; i++)
 	{
 		delta = output[i];
 
@@ -260,15 +259,14 @@ static int32_t
 duka_decodeFrame(TFB_DuckSoundDecoder* duka, DukAud_AudSubframe* header,
 				 uint8_t* input)
 {
-	uint8_t* inend;
-	int16_t* output;
-	int16_t* outptr;
-	int32_t outputsize;
+	int16_t* output {};
+	int16_t* outptr {};
+	int32_t outputsize {};
 
 	outputsize = header->numsamples * 2 * sizeof(int16_t);
 	outptr = output = (int16_t*)(duka->data.data() + duka->cbdata);
 
-	for (inend = input + header->numsamples; input < inend; ++input)
+	for (const uint8_t* inend {input + header->numsamples}; input < inend; ++input)
 	{
 		*(outptr++) = *input >> 4;
 		*(outptr++) = *input & 0x0f;
@@ -287,8 +285,6 @@ static int32_t
 duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 {
 	DukAud_FrameHeader hdr;
-	DukAud_AudSubframe* aud;
-	uint8_t* p;
 
 	duka->duk->seek(duka->frames[duka->iframe], uqm::io::SeekFrom::Start);
 	if (!duka->duk->readValue(hdr))
@@ -299,13 +295,13 @@ duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 	hdr.audsize = uqm::convertBigEndian<uint32_t>(hdr.audsize);
 
 	// dump encoded data at the end of the buffer aligned on 8-byte
-	p = (duka->data.data() + duka->maxdata - ((hdr.audsize + 7) & (-8)));
+	uint8_t* p {(duka->data.data() + duka->maxdata - ((hdr.audsize + 7) & (-8)))};
 	if (!duka->duk->readExact(uqm::io::asBytes(p, hdr.audsize)))
 	{
 		duka->last_error = errno;
 		return dukae_BadFile;
 	}
-	aud = (DukAud_AudSubframe*)p;
+	DukAud_AudSubframe* aud {(DukAud_AudSubframe*)p};
 	p += sizeof(DukAud_AudSubframe);
 
 	aud->magic = uqm::convertBigEndian<uint16_t>(aud->magic);
@@ -327,7 +323,7 @@ duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 static int32_t
 duka_stuffBuffer(TFB_DuckSoundDecoder* duka, void* buf, int32_t bufsize)
 {
-	int32_t dataleft;
+	int32_t dataleft {};
 
 	dataleft = duka->cbdata - duka->dataofs;
 	if (dataleft > 0)
@@ -349,7 +345,7 @@ duka_stuffBuffer(TFB_DuckSoundDecoder* duka, void* buf, int32_t bufsize)
 }
 
 
-static const char*
+const static char*
 duka_GetName(void)
 {
 	return "DukAud";
@@ -386,7 +382,7 @@ static int
 duka_GetError(THIS_PTR)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
-	int ret = duka->last_error;
+	const int ret = duka->last_error;
 	duka->last_error = dukae_None;
 	return ret;
 }
@@ -411,13 +407,9 @@ static bool
 duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
-	uqgsl::owner<uqm::io::File*> duk {};
-	uqgsl::owner<uqm::io::File*> frm {};
 	DukAud_AudSubframe aud;
 	char filename[256] {};
-	uint32_t filelen;
-	size_t cread;
-	uint32_t i;
+	uint32_t filelen {};
 
 	filelen = strlen(file);
 	if (filelen > sizeof(filename) - 1)
@@ -427,7 +419,7 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 	uqstl::span<char> filenameDst {filename};
 	uqm::strncpy_safe(filenameDst, {file, filelen});
 
-	duk = res_NewResFile(dir, filename);
+	uqgsl::owner<uqm::io::File*> duk {res_NewResFile(dir, filename)};
 	if (!duk)
 	{
 		duka->last_error = errno;
@@ -437,7 +429,7 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 	// overwrite the extension with 'frm".. weird.
 	filenameDst = filenameDst.subspan(filelen - 3);
 	uqm::strncpy_safe(filenameDst, "frm");
-	frm = res_NewResFile(dir, filename);
+	uqgsl::owner<uqm::io::File*> frm {res_NewResFile(dir, filename)};
 	if (!frm)
 	{
 		duka->last_error = errno;
@@ -457,7 +449,7 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 	}
 
 	duka->frames.assign(duka->cframes, 0);
-	cread = frm->read(uqm::io::asBytes(duka->frames.data(), sizeof(uint32_t) * duka->cframes)) / sizeof(uint32_t);
+	const size_t cread {frm->read(uqm::io::asBytes(duka->frames.data(), sizeof(uint32_t) * duka->cframes)) / sizeof(uint32_t)};
 	delete frm;
 	if (cread != duka->cframes)
 	{
@@ -466,7 +458,7 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 		return false;
 	}
 
-	for (i = 0; i < duka->cframes; ++i)
+	for (uint32_t i {0}; i < duka->cframes; ++i)
 	{
 		duka->frames[i] = uqm::convertBigEndian<uint32_t>(duka->frames[i]);
 	}
@@ -513,7 +505,7 @@ static int
 duka_Decode(THIS_PTR, void* buf, int32_t bufsize)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
-	int32_t stuffed;
+	int32_t stuffed {};
 	int32_t total = 0;
 
 	if (bufsize <= 0)
@@ -545,9 +537,8 @@ static uint32_t
 duka_Seek(THIS_PTR, uint32_t pcm_pos)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
-	uint32_t iframe;
 
-	iframe = pcm_pos / duka->pcm_frame;
+	const uint32_t iframe {pcm_pos / duka->pcm_frame};
 	if (iframe < duka->cframes)
 	{
 		duka->iframe = iframe;
@@ -562,7 +553,7 @@ duka_Seek(THIS_PTR, uint32_t pcm_pos)
 static uint32_t
 duka_GetFrame(THIS_PTR)
 {
-	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
+	const TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 
 	// if there is nothing buffered return the actual current frame
 	//  otherwise return previous

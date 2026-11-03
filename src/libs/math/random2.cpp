@@ -67,7 +67,7 @@ RandomContext_Random(RandomContext* context)
 uint32_t
 RandomContext_SeedRandom(RandomContext* context, uint32_t new_seed)
 {
-	uint32_t old_seed;
+	uint32_t old_seed {};
 
 	/* coerce the seed to be in the range 1..M */
 	if (new_seed == 0) /* 0 becomes 1 */

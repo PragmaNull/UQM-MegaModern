@@ -53,10 +53,9 @@ CreateRadar(void)
 	if (RadarContext == 0)
 	{
 		GFXRECT r;
-		GFXCONTEXT OldContext;
 
 		RadarContext = CreateContext("RadarContext");
-		OldContext = SetContext(RadarContext);
+		GFXCONTEXT OldContext {SetContext(RadarContext)};
 		SetContextFGFrame(Screen);
 		r.corner.x = RADAR_X;
 		r.corner.y = RADAR_Y;
@@ -126,13 +125,13 @@ copyFleetInfo(FLEET_INFO* dst, SHIP_INFO* src, FLEET_STUFF* fleet)
 
 void LoadFleetInfo(void)
 { /* Yehat Rebels and Ur-Quan probe */
-	uint16_t num_ships = LAST_MELEE_ID - ARILOU_ID + 1 + 2;
+	const uint16_t num_ships = LAST_MELEE_ID - ARILOU_ID + 1 + 2;
 	GLOBAL(avail_race_q).reset(num_ships, sizeof(FLEET_INFO));
 	SPECIES_ID ship_ref = (SPECIES_ID)(ARILOU_ID - 1);
 	for (int i = 0; i < num_ships; ++i)
 	{
-		HFLEETINFO hFleet;
-		FLEET_INFO* FleetPtr;
+		HFLEETINFO hFleet {};
+		FLEET_INFO* FleetPtr {};
 
 		if (i < num_ships - 2)
 		{
@@ -157,11 +156,8 @@ void LoadFleetInfo(void)
 
 		if (i < num_ships - 1)
 		{
-			HMASTERSHIP hMasterShip;
-			MASTER_SHIP_INFO* MasterPtr;
-
-			hMasterShip = FindMasterShip(ship_ref);
-			MasterPtr = LockMasterShip(&master_q, hMasterShip);
+			HMASTERSHIP hMasterShip {FindMasterShip(ship_ref)};
+			MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
 			// Grab a copy of loaded icons and strings (not owned)
 			copyFleetInfo(FleetPtr, &MasterPtr->ShipInfo,
 						  &MasterPtr->Fleet);
@@ -248,7 +244,7 @@ void LoadFleetInfo(void)
 
 bool InitGameStructures(void)
 {
-	uint16_t i;
+	uint16_t i {};
 
 	// Set Seed Type, then check/start StarSeed
 	SET_GAME_STATE(SEED_TYPE, g_seedType);
@@ -429,7 +425,7 @@ bool InitGameStructures(void)
 
 	if (uqm::UQMOptions::read().headStart)
 	{
-		uint8_t SpaCrew = ifEasyDifficulty(MAX_CREW_SIZE, 1);
+		const uint8_t SpaCrew = ifEasyDifficulty(MAX_CREW_SIZE, 1);
 		AddEscortShips(SPATHI_SHIP, 1);
 		// Make the Eluder escort captained by Fwiffo alone or have a full
 		// compliment for Easy mode.
@@ -466,8 +462,6 @@ void FreeSC2Data(void)
 
 void UninitGameStructures(void)
 {
-	HFLEETINFO hStarShip;
-
 	GLOBAL(encounter_q).release();
 	GLOBAL(ip_group_q).release();
 	GLOBAL(npc_built_ship_q).release();
@@ -480,12 +474,10 @@ void UninitGameStructures(void)
 
 	// The only resources avail_race_q owns are the Ur-Quan probe's
 	// so free them now
-	hStarShip = GetTailLink(&GLOBAL(avail_race_q));
+	HFLEETINFO hStarShip {GetTailLink(&GLOBAL(avail_race_q))};
 	if (hStarShip)
 	{
-		FLEET_INFO* FleetPtr;
-
-		FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		const FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hStarShip)};
 		DestroyDrawable(ReleaseDrawable(FleetPtr->melee_icon));
 		DestroyDrawable(ReleaseDrawable(FleetPtr->icons));
 		delete FleetPtr->race_strings;
@@ -505,11 +497,11 @@ void SeedDEBUG()
 {
 #define SAMPLE_SIZE 1000
 #define START 123000
-	int32_t save = uqm::UQMOptions::read().customSeed.value;
+	const int32_t save = uqm::UQMOptions::read().customSeed.value;
 	//uint16_t histogram[100] = {[0 ... 99] = 0};
 	uint16_t histogram[100] = {0};
-	uint16_t decisec;
-	clock_t start_clock;
+	uint16_t decisec {};
+	clock_t start_clock {};
 	bool myRNG = false;
 	for (decisec = 0; decisec < 100; decisec++)
 	{
@@ -575,7 +567,7 @@ void SeedDEBUG()
 // portal_map - a quasispace portal array
 bool InitStarseed(bool newgame)
 {
-	uint16_t i;
+	uint16_t i {};
 #ifdef DEBUG_STARSEED_TRACE_V
 	SeedDEBUG();
 	fmt::print(stderr, "CurrentActivity {}\n", uqm::currentActivity());
@@ -709,7 +701,7 @@ bool InitStarseed(bool newgame)
 
 bool inFullGame(void)
 {
-	ACTIVITY act = uqm::lowByte(uqm::currentActivity());
+	const ACTIVITY act = uqm::lowByte(uqm::currentActivity());
 	return (act == IN_LAST_BATTLE || act == IN_ENCOUNTER || act == IN_HYPERSPACE || act == IN_INTERPLANETARY || act == WON_LAST_BATTLE);
 }
 
@@ -810,8 +802,7 @@ bool inQuasiSpace(void)
 int replaceChar(char* pStr, const char find, const char replace)
 {
 	int count = 0;
-	size_t i;
-	size_t len = strlen(pStr);
+	const size_t len = strlen(pStr);
 
 	if (!pStr || !find || !replace)
 	{
@@ -823,7 +814,7 @@ int replaceChar(char* pStr, const char find, const char replace)
 		return 0; // 'find' not found
 	}
 
-	for (i = 0; i < len; i++)
+	for (size_t i {0}; i < len; i++)
 	{
 		if (pStr[i] == find)
 		{

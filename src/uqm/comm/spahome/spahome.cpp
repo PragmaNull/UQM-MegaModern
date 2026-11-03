@@ -371,9 +371,7 @@ static void SpathiAllies(RESPONSE_REF R);
 static void
 SpathiInfo(RESPONSE_REF R)
 {
-	uint8_t InfoLeft;
-
-	InfoLeft = false;
+	uint8_t InfoLeft {false};
 	if (PLAYER_SAID(R, like_some_info))
 	{
 		NPCPhrase(WHAT_ABOUT);
@@ -445,7 +443,7 @@ SpathiInfo(RESPONSE_REF R)
 static void
 SpathiAllies(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (R == 0)
 	{
@@ -766,7 +764,7 @@ SpathiParty(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SPATHI_HOME_VISITS);
 		switch (NumVisits++)
@@ -973,7 +971,7 @@ SpathiPassword(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SPATHI_HOME_VISITS);
 		switch (NumVisits++)
@@ -1019,7 +1017,7 @@ SpathiPassword(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	if (IS_HD)
 	{
@@ -1098,7 +1096,7 @@ uninit_spahome(void)
 static void
 post_spahome_enc(void)
 {
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
 		&& (Manner = GET_GAME_STATE(SPATHI_MANNER)) != 2)
@@ -1115,8 +1113,6 @@ post_spahome_enc(void)
 LOCDATA*
 init_spahome_comm()
 {
-	LOCDATA* retval;
-
 	spahome_desc.init_encounter_func = Intro;
 	spahome_desc.post_encounter_func = post_spahome_enc;
 	spahome_desc.uninit_encounter_func = uninit_spahome;
@@ -1141,7 +1137,7 @@ init_spahome_comm()
 		setSegue(Segue_hostile);
 	}
 
-	retval = &spahome_desc;
+	LOCDATA* retval {&spahome_desc};
 
 	return (retval);
 }

@@ -100,7 +100,7 @@ int SeekStateFile(GAME_STATE_FILE* fp, long offset, int whence);
 static inline uint16_t
 sread_8(GAME_STATE_FILE* fp, uint8_t* v)
 {
-	uint8_t t;
+	uint8_t t {};
 	if (!v) /* read value ignored */
 	{
 		v = &t;
@@ -111,7 +111,7 @@ sread_8(GAME_STATE_FILE* fp, uint8_t* v)
 static inline uint16_t
 sread_16(GAME_STATE_FILE* fp, uint16_t* v)
 {
-	uint16_t t;
+	uint16_t t {};
 	if (!v) /* read value ignored */
 	{
 		v = &t;
@@ -122,9 +122,8 @@ sread_16(GAME_STATE_FILE* fp, uint16_t* v)
 static inline uint16_t
 sread_16s(GAME_STATE_FILE* fp, int16_t* v)
 {
-	uint16_t t;
-	uint16_t ret;
-	ret = sread_16(fp, &t);
+	uint16_t t {};
+	const uint16_t ret {sread_16(fp, &t)};
 	// unsigned to signed conversion
 	if (v)
 	{
@@ -136,7 +135,7 @@ sread_16s(GAME_STATE_FILE* fp, int16_t* v)
 static inline uint16_t
 sread_32(GAME_STATE_FILE* fp, uint32_t* v)
 {
-	uint32_t t;
+	uint32_t t {};
 	if (!v) /* read value ignored */
 	{
 		v = &t;

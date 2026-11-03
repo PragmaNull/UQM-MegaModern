@@ -179,7 +179,8 @@ static void AlliedHome(RESPONSE_REF R);
 static void
 AlliedHome(RESPONSE_REF R)
 {
-	uint8_t NumVisits, News;
+	uint8_t NumVisits {};
+	uint8_t News {};
 
 	News = GET_GAME_STATE(SUPOX_WAR_NEWS);
 	NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
@@ -295,7 +296,7 @@ AlliedHome(RESPONSE_REF R)
 static void
 BeforeKohrAh(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, whats_up_before_space))
 	{
@@ -335,7 +336,7 @@ BeforeKohrAh(RESPONSE_REF R)
 static void
 AfterKohrAh(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, whats_up_after_space))
 	{
@@ -375,10 +376,11 @@ AfterKohrAh(RESPONSE_REF R)
 static void
 NeutralSupox(RESPONSE_REF R)
 {
-	uint8_t i, LastStack, NumVisits;
+	uint8_t i {};
+	uint8_t NumVisits {};
 	RESPONSE_REF pStr[3];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
 	if (PLAYER_SAID(R, i_am))
 	{
@@ -595,7 +597,7 @@ NeutralSupox(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -756,8 +758,6 @@ post_supox_enc(void)
 LOCDATA*
 init_supox_comm(void)
 {
-	LOCDATA* retval;
-
 	supox_desc.init_encounter_func = Intro;
 	supox_desc.post_encounter_func = post_supox_enc;
 	supox_desc.uninit_encounter_func = uninit_supox;
@@ -779,7 +779,7 @@ init_supox_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &supox_desc;
+	LOCDATA* retval {&supox_desc};
 
 	return (retval);
 }

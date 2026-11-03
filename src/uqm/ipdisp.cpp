@@ -44,7 +44,7 @@ RaceIPSpeed(RACE_ID Index)
 	const int16_t defaultMap[] = {RACE_IP_SPEED};
 	const uint16_t numRaces = sizeof(defaultMap) / sizeof(uint16_t);
 	static int16_t speedMap[sizeof(defaultMap) / sizeof(uint16_t)] = {0};
-	int x;
+	int x {};
 	if (!uqm::UQMOptions::read().shipSeed && (seedStamp != -1 || speedMap[0] == 0))
 	{
 		for (x = 0; x < numRaces; x++)
@@ -60,7 +60,7 @@ RaceIPSpeed(RACE_ID Index)
 
 	if (uqm::UQMOptions::read().shipSeed && (seedStamp != uqm::UQMOptions::read().customSeed || speedMap[0] == 0))
 	{
-		HFLEETINFO hFleet;
+		HFLEETINFO hFleet {};
 		for (x = 0; x < numRaces; x++)
 		{
 			hFleet = GetSeededFleetFromIndex(x);
@@ -84,16 +84,15 @@ RaceIPSpeed(RACE_ID Index)
 
 void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 {
-	HSHIPFRAG hGroup, hNextGroup;
+	HSHIPFRAG hGroup {};
+	HSHIPFRAG hNextGroup {};
 
 	// NOTE: "Others" includes the group causing the notification too.
 
 	for (hGroup = GetHeadLink(&GLOBAL(ip_group_q));
 		 hGroup; hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr;
-
-		GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 
 		if (GroupPtr->race_id != which_race)
@@ -206,15 +205,14 @@ static void
 ip_group_preprocess(ELEMENT* ElementPtr)
 {
 #define TRACK_WAIT 5
-	uint8_t task;
-	uint8_t target_loc, group_loc, flagship_loc;
-	int16_t radius;
+	uint8_t task {};
+	uint8_t group_loc {};
 	GFXPOINT dest_pt;
-	int16_t vdx, vdy;
-	ELEMENT* EPtr;
-	IP_GROUP* GroupPtr;
+	int16_t vdx {};
+	int16_t vdy {};
+	IP_GROUP* GroupPtr {};
 
-	EPtr = ElementPtr;
+	ELEMENT* EPtr {ElementPtr};
 	EPtr->state_flags &= ~(DISAPPEARING | NONSOLID); // "I'm not quite dead"
 	++EPtr->life_span;								 // so that it will 'die' again next time
 
@@ -222,7 +220,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 	group_loc = GroupPtr->sys_loc; // save old location
 	DisplayArray[EPtr->PrimIndex].Object.Point = GroupPtr->loc;
 
-	radius = zoomRadiusForLocation(group_loc);
+	int16_t radius {zoomRadiusForLocation(group_loc)};
 	dest_pt = locationToDisplay(GroupPtr->loc, radius);
 	EPtr->current.location.x = DISPLAY_TO_WORLD(dest_pt.x)
 							 + (int16_t)(LOG_SPACE_WIDTH >> 1)
@@ -233,7 +231,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 
 	InitIntersectStartPoint(EPtr);
 
-	flagship_loc = getFlagshipLocation();
+	const uint8_t flagship_loc {getFlagshipLocation()};
 
 	if ((GET_GAME_STATE(KOHR_AH_FRENZY)
 		 && CheckAlliance((RACE_ID)GroupPtr->race_id) == DEAD_GUY)
@@ -274,7 +272,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 		EPtr->state_flags |= NONSOLID;
 	}
 
-	target_loc = GroupPtr->dest_loc;
+	uint8_t target_loc {GroupPtr->dest_loc};
 	if (!(task & (IGNORE_FLAGSHIP | REFORM_GROUP)))
 	{
 		if (target_loc == IPNL_INTERCEPT_PLAYER && task != FLEE)
@@ -348,18 +346,17 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 	if (task <= ON_STATION)
 #endif /* NEVER */
 	{
-		bool Transition, isOrbiting;
-		int16_t dx, dy;
-		int16_t delta_x, delta_y;
-		uint16_t angle;
-		FRAME suggestedFrame;
-		bool FilthyCheater =
+		int16_t delta_x {};
+		int16_t delta_y {};
+		uint16_t angle {};
+		FRAME suggestedFrame {};
+		const bool FilthyCheater =
 			(GroupPtr->race_id == URQUAN_DRONE_SHIP
 			 && (uqm::UQMOptions::read().bubbleWarp
 				 || CountSISPieces(FUSION_THRUSTER) > 6));
 
-		Transition = false;
-		isOrbiting = false;
+		bool Transition {false};
+		bool isOrbiting {false};
 		if (task == FLEE)
 		{
 			dest_pt.x = GroupPtr->loc.x << 1;
@@ -377,7 +374,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 			// ship is circling around a planet.
 			else
 			{
-				uint16_t orbit_dist;
+				uint16_t orbit_dist {};
 				GFXPOINT org;
 
 				isOrbiting = true;
@@ -398,7 +395,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 				if (GroupPtr->loc.x == dest_pt.x
 					&& GroupPtr->loc.y == dest_pt.y)
 				{
-					uint8_t next_loc;
+					uint8_t next_loc {};
 
 					GroupPtr->orbit_pos = NORMALIZE_FACING(
 						ANGLE_TO_FACING(angle));
@@ -457,7 +454,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 		else if ((vdx == 0 && vdy == 0)
 				 || angle != GetVelocityTravelAngle(&EPtr->velocity))
 		{
-			int16_t speed;
+			int16_t speed {};
 
 			if (EPtr->thrust_wait && GroupPtr->dest_loc != IPNL_INTERCEPT_PLAYER)
 			{
@@ -479,8 +476,8 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 			SetVelocityComponents(&EPtr->velocity, vdx, vdy);
 		}
 
-		dx = vdx;
-		dy = vdy;
+		int16_t dx {vdx};
+		int16_t dy {vdy};
 		if (group_loc == target_loc)
 		{
 			if (target_loc == 0)
@@ -659,7 +656,8 @@ CheckGetAway:
 			if (GetFrameIndex(EPtr->current.image.frame) == 1)
 			{ // Define direction only once and not follow player while
 				// reforming
-				int16_t delta_x, delta_y;
+				int16_t delta_x {};
+				int16_t delta_y {};
 				GFXPOINT sis_pt;
 
 				sis_pt = displayToLocation(
@@ -744,8 +742,8 @@ static void
 ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	IP_GROUP* GroupPtr;
-	void* OtherPtr;
+	IP_GROUP* GroupPtr {};
+	void* OtherPtr {};
 
 	if (uqm::currentActivity() & START_ENCOUNTER)
 	{
@@ -808,12 +806,10 @@ ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static void
 spawn_ip_group(IP_GROUP* GroupPtr)
 {
-	HELEMENT hIPSHIPElement;
-
-	hIPSHIPElement = AllocElement();
+	HELEMENT hIPSHIPElement {AllocElement()};
 	if (hIPSHIPElement)
 	{
-		ELEMENT* IPSHIPElementPtr;
+		ELEMENT* IPSHIPElementPtr {};
 
 		LockElement(hIPSHIPElement, &IPSHIPElementPtr);
 		// Must have mass_points for collisions to work
@@ -848,16 +844,15 @@ spawn_ip_group(IP_GROUP* GroupPtr)
 		}
 		if (uqm::UQMOptions::read().shipSeed)
 		{
-			FLEET_INFO* TemplatePtr = nullptr;
-			HFLEETINFO hFleet;
-			hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), GroupPtr->race_id);
+			const FLEET_INFO* TemplatePtr = nullptr;
+			HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), GroupPtr->race_id)};
 			if (hFleet)
 			{
 				TemplatePtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
 			}
 			if (TemplatePtr)
 			{
-				SPECIES_ID ship = SeedShip(TemplatePtr->SpeciesID, false);
+				const SPECIES_ID ship = SeedShip(TemplatePtr->SpeciesID, false);
 				UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
 				GroupPtr->flags = 0;
 				switch (ship)
@@ -911,10 +906,9 @@ spawn_ip_group(IP_GROUP* GroupPtr)
 		IPSHIPElementPtr->collision_func = ip_group_collision;
 
 		{
-			int16_t radius;
 			GFXPOINT pt;
 
-			radius = zoomRadiusForLocation(GroupPtr->sys_loc);
+			const int16_t radius {zoomRadiusForLocation(GroupPtr->sys_loc)};
 			pt = locationToDisplay(GroupPtr->loc, radius);
 
 			IPSHIPElementPtr->current.location.x =
@@ -947,16 +941,15 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 	if (--ElementPtr->thrust_wait == 0)
 	/* juggle list after flagship */
 	{
-		HELEMENT hSuccElement;
+		HELEMENT hSuccElement {};
 
 		if ((hSuccElement = GetSuccElement(ElementPtr))
 			&& hSuccElement != GetTailElement())
 		{
-			HELEMENT hPredElement;
-			ELEMENT* TailPtr;
+			ELEMENT* TailPtr {};
 
 			LockElement(GetTailElement(), &TailPtr);
-			hPredElement = _GetPredLink(TailPtr);
+			HELEMENT hPredElement {_GetPredLink(TailPtr)};
 			UnlockElement(GetTailElement());
 
 			RemoveElement(hSuccElement);
@@ -969,8 +962,9 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 	}
 
 	{
-		uint8_t flagship_loc, ec;
-		int16_t vdx, vdy, radius;
+		uint8_t ec {};
+		int16_t vdx {};
+		int16_t vdy {};
 		GFXPOINT pt;
 
 		GetCurrentVelocityComponents(&uqm::flagship().velocity, &vdx, &vdy);
@@ -987,8 +981,8 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 			legacySave = false;
 		}
 
-		flagship_loc = getFlagshipLocation();
-		radius = zoomRadiusForLocation(flagship_loc);
+		const uint8_t flagship_loc {getFlagshipLocation()};
+		const int16_t radius {zoomRadiusForLocation(flagship_loc)};
 		adjustDeltaVforZoom(radius, &vdx, &vdy);
 
 		pt = locationToDisplay(uqm::flagship().ipLocation, radius);
@@ -1044,12 +1038,10 @@ static void
 AdjustInitialPosition(void)
 { // Corrects SIS position - rounding error, described in
 	// EnterPlanetOrbit() in solarsys.c
-	uint8_t flagship_loc;
-	int16_t radius;
 	GFXPOINT pt;
 
-	flagship_loc = getFlagshipLocation();
-	radius = zoomRadiusForLocation(flagship_loc);
+	const uint8_t flagship_loc {getFlagshipLocation()};
+	const int16_t radius {zoomRadiusForLocation(flagship_loc)};
 
 	pt = locationToDisplay(uqm::flagship().ipLocation, radius);
 
@@ -1064,12 +1056,10 @@ AdjustInitialPosition(void)
 static void
 spawn_flag_ship(void)
 {
-	HELEMENT hFlagShipElement;
-
-	hFlagShipElement = AllocElement();
+	HELEMENT hFlagShipElement {AllocElement()};
 	if (hFlagShipElement)
 	{
-		ELEMENT* FlagShipElementPtr;
+		ELEMENT* FlagShipElementPtr {};
 
 		LockElement(hFlagShipElement, &FlagShipElementPtr);
 		FlagShipElementPtr->hit_points = 1;
@@ -1110,7 +1100,8 @@ spawn_flag_ship(void)
 
 void DoMissions(void)
 {
-	HSHIPFRAG hGroup, hNextGroup;
+	HSHIPFRAG hGroup {};
+	HSHIPFRAG hNextGroup {};
 
 	spawn_flag_ship();
 
@@ -1123,9 +1114,7 @@ void DoMissions(void)
 	for (hGroup = GetHeadLink(&GLOBAL(ip_group_q));
 		 hGroup; hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr;
-
-		GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 
 		if (GroupPtr->in_system

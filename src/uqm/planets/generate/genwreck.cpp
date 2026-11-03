@@ -56,7 +56,7 @@ static bool
 GenerateWreck_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	pSunDesc->PlanetByte = 6;
 
@@ -64,8 +64,8 @@ GenerateWreck_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		if (!StarSeed)
 		{
-			uint32_t RandVal = RandomContext_Random(SysGenRNG);
-			uint8_t PByte = pSunDesc->PlanetByte + 1;
+			const uint32_t RandVal = RandomContext_Random(SysGenRNG);
+			const uint8_t PByte = pSunDesc->PlanetByte + 1;
 			pSunDesc->NumPlanets =
 				(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);
 
@@ -103,7 +103,7 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 	{
 		if (isDifficulty(uqm::Difficulty::Hard) && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << PROBE_ENCOUNTER))
 		{
-			uint16_t sum, i;
+			uint16_t sum {};
 
 			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
 			ReinitQueue(&GLOBAL(ip_group_q));
@@ -118,7 +118,7 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 				sum = 4;
 			}
 
-			for (i = 0; i < sum; ++i)
+			for (uint16_t i {0}; i < sum; ++i)
 			{
 				CloneShipFragment(SLYLANDRO_SHIP,
 								  &GLOBAL(npc_built_ship_q), 0);
@@ -134,7 +134,7 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 
 			{
-				bool Survivors =
+				const bool Survivors =
 					GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
@@ -147,7 +147,7 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 
 				{
-					uint16_t state;
+					uint16_t state {};
 
 					state = GET_GAME_STATE(HM_ENCOUNTERS);
 

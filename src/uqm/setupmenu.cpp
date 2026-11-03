@@ -38,6 +38,7 @@
 #include "resinst.h"
 #include "nameref.h"
 #include <math.h>
+
 #include "gamestr.h"
 #include "libs/graphics/bbox.h"
 #include "libs/math/random.h"
@@ -136,11 +137,11 @@ quit_sub_menu(WIDGET* self, int event)
 static void
 populate_editkeys(int templat)
 {
-	int i, j;
+	int j {};
 
 	uqm::strncpy_safe(layoutName.value, {uqm::input_templates[templat].name, static_cast<uint32_t>(layoutName.maxlen)});
 
-	for (i = 0; i < NUM_KEYS; i++)
+	for (int i {0}; i < NUM_KEYS; i++)
 	{
 		for (j = 0; j < 2; j++)
 		{
@@ -351,8 +352,8 @@ sliderToGamma(int value)
 static void
 updateGammaBounds(bool useUpper)
 {
-	float g, x;
-	int slider;
+	float g {NAN};
+	float x {NAN};
 
 	// The slider uses an exponential curve.
 	// Calculate where on the curve the min and max gamma values are
@@ -362,7 +363,7 @@ updateGammaBounds(bool useUpper)
 	// We have 100 discrete steps through the range, so the slider may
 	// skip over a 1.0 gamma. We need to ensure that there always is
 	// a 1.0 on the slider by tweaking the range (expanding/contracting).
-	slider = gammaToSlider(1.0f);
+	const int slider {gammaToSlider(1.0f)};
 	g = sliderToGamma(slider);
 	if (g == 1.0f)
 	{
@@ -388,9 +389,9 @@ static int
 gamma_HandleEventSlider(WIDGET* _self, int event)
 {
 	WIDGET_SLIDER* self = (WIDGET_SLIDER*)_self;
-	int prevValue = self->value;
-	float gamma;
-	bool set;
+	const int prevValue = self->value;
+	float gamma {NAN};
+	bool set {};
 
 	switch (event)
 	{
@@ -471,9 +472,9 @@ gamma_DrawValue(WIDGET_SLIDER* self, int x, int y)
 static void
 rebind_control(WIDGET_CONTROLENTRY* widget)
 {
-	int templat = editTemplate;
-	int control = widget->controlindex;
-	int index = widget->highlighted;
+	const int templat = editTemplate;
+	const int control = widget->controlindex;
+	const int index = widget->highlighted;
 
 	FlushInput();
 	DrawLabelAsWindow(&pressToEdit, nullptr);
@@ -485,9 +486,9 @@ rebind_control(WIDGET_CONTROLENTRY* widget)
 static void
 clear_control(WIDGET_CONTROLENTRY* widget)
 {
-	int templat = editTemplate;
-	int control = widget->controlindex;
-	int index = widget->highlighted;
+	const int templat = editTemplate;
+	const int control = widget->controlindex;
+	const int index = widget->highlighted;
 
 	RemoveInputState(templat, control, index);
 	populate_editkeys(templat);
@@ -496,7 +497,7 @@ clear_control(WIDGET_CONTROLENTRY* widget)
 static int
 count_widgets(WIDGET** widgets)
 {
-	int count;
+	int count {};
 
 	for (count = 0; *widgets != nullptr; ++widgets, ++count)
 		;
@@ -848,8 +849,8 @@ apply_settings(void)
 
 		if (uqmOptions.keepAspectRatio)
 		{
-			float threshold = 0.75f;
-			float ratio = (float)h / (float)w;
+			const float threshold = 0.75f;
+			const float ratio = (float)h / (float)w;
 
 			if (ratio > threshold) // screen is narrower than 4:3
 			{

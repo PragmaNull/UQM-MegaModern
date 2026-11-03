@@ -37,7 +37,7 @@
 
 #define THIS_PTR TFB_SoundDecoder*
 
-static const char* bufa_GetName(void);
+const static char* bufa_GetName(void);
 static bool bufa_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void bufa_TermModule(void);
 static TFB_SoundDecoder* bufa_Create(void);
@@ -69,7 +69,7 @@ TFB_SoundDecoderFuncs bufa_DecoderVtbl =
 };
 
 
-static const char* nula_GetName(void);
+const static char* nula_GetName(void);
 static bool nula_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void nula_TermModule(void);
 static TFB_SoundDecoder* nula_Create(void);
@@ -146,7 +146,7 @@ void SoundDecoder_SwapWords(uint16_t* data, uint32_t size)
 	fsize >>= 2;
 	for (; fsize; fsize--, data += 2)
 	{
-		uint32_t v = *(uint32_t*)data;
+		const uint32_t v = *(uint32_t*)data;
 		*(uint32_t*)data = ((v & 0x00ff00ff) << 8)
 						 | ((v & 0xff00ff00) >> 8);
 	}
@@ -170,7 +170,6 @@ SoundDecoder_GetName(TFB_SoundDecoder* decoder)
 int32_t
 SoundDecoder_Init(AudioFlags flags, TFB_DecoderFormats* formats)
 {
-	TFB_RegSoundDecoder* info;
 	int32_t ret = 0;
 
 	if (!formats)
@@ -181,7 +180,7 @@ SoundDecoder_Init(AudioFlags flags, TFB_DecoderFormats* formats)
 	decoder_formats = *formats;
 
 	// init built-in decoders
-	for (info = sd_decoders; info->ext; info++)
+	for (const TFB_RegSoundDecoder* info {sd_decoders}; info->ext; info++)
 	{
 		if (!info->funcs->InitModule(flags, &decoder_formats))
 		{
@@ -199,11 +198,9 @@ SoundDecoder_Init(AudioFlags flags, TFB_DecoderFormats* formats)
 
 void SoundDecoder_Uninit(void)
 {
-	TFB_RegSoundDecoder* info;
-
 	// uninit all decoders
 	// and unregister loaded decoders
-	for (info = sd_decoders; info->used; info++)
+	for (TFB_RegSoundDecoder* info {sd_decoders}; info->used; info++)
 	{
 		if (info->ext) // check if present
 		{
@@ -221,7 +218,7 @@ void SoundDecoder_Uninit(void)
 TFB_RegSoundDecoder*
 SoundDecoder_Register(const char* fileext, TFB_SoundDecoderFuncs* decvtbl)
 {
-	TFB_RegSoundDecoder* info;
+	TFB_RegSoundDecoder* info {};
 	TFB_RegSoundDecoder* newslot = nullptr;
 
 	if (!decvtbl)
@@ -300,7 +297,7 @@ void SoundDecoder_Unregister(TFB_RegSoundDecoder* regdec)
 const TFB_SoundDecoderFuncs*
 SoundDecoder_Lookup(const char* fileext)
 {
-	TFB_RegSoundDecoder* info;
+	const TFB_RegSoundDecoder* info {};
 
 	for (info = sd_decoders; info->used && (!info->ext || strcmp(info->ext, fileext) != 0);
 		 ++info)
@@ -313,13 +310,11 @@ SoundDecoder_Load(const uqm::io::Directory& dir, const char* filename,
 				  uint32_t buffer_size, uint32_t startTime, int32_t runTime)
 // runTime < 0 specifies a default length for a nul decoder
 {
-	const char* pext;
-	TFB_RegSoundDecoder* info;
-	const TFB_SoundDecoderFuncs* funcs;
-	TFB_SoundDecoder* decoder;
-	uint32_t struct_size;
+	const TFB_RegSoundDecoder* info {};
+	const TFB_SoundDecoderFuncs* funcs {};
+	const uint32_t struct_size {};
 
-	pext = strrchr(filename, '.');
+	const char* pext {strrchr(filename, '.')};
 	if (!pext)
 	{
 		uqm::log::warn("SoundDecoder_Load(): Unknown file type ({})",
@@ -368,7 +363,7 @@ SoundDecoder_Load(const uqm::io::Directory& dir, const char* filename,
 		}
 	}
 
-	decoder = funcs->Create();
+	TFB_SoundDecoder* decoder {funcs->Create()};
 	decoder->funcs = funcs;
 	decoder->destroy = funcs->Destroy;
 	if (!decoder->funcs->Init(decoder))
@@ -444,11 +439,11 @@ SoundDecoder_Load(const uqm::io::Directory& dir, const char* filename,
 uint32_t
 SoundDecoder_Decode(TFB_SoundDecoder* decoder)
 {
-	long decoded_bytes;
-	long rc;
-	long buffer_size;
+	long decoded_bytes {};
+	long rc {};
+	long buffer_size {};
 	uint32_t max_bytes = UINT32_MAX;
-	uint8_t* buffer;
+	uint8_t* buffer {};
 
 	if (!decoder || !decoder->funcs)
 	{
@@ -540,9 +535,8 @@ SoundDecoder_Decode(TFB_SoundDecoder* decoder)
 uint32_t
 SoundDecoder_DecodeAll(TFB_SoundDecoder* decoder)
 {
-	uint32_t decoded_bytes;
-	long rc;
-	uint32_t reqbufsize;
+	uint32_t decoded_bytes {};
+	long rc {};
 
 	if (!decoder || !decoder->funcs)
 	{
@@ -550,7 +544,7 @@ SoundDecoder_DecodeAll(TFB_SoundDecoder* decoder)
 		return 0;
 	}
 
-	reqbufsize = decoder->buffer_size;
+	uint32_t reqbufsize {decoder->buffer_size};
 
 	if (decoder->looping)
 	{
@@ -626,7 +620,7 @@ void SoundDecoder_Rewind(TFB_SoundDecoder* decoder)
 // seekTime is specified in mili-seconds
 void SoundDecoder_Seek(TFB_SoundDecoder* decoder, uint32_t seekTime)
 {
-	uint32_t pcm_pos;
+	uint32_t pcm_pos {};
 
 	if (!decoder)
 	{
@@ -706,7 +700,7 @@ SoundDecoder_GetFrame(TFB_SoundDecoder* decoder)
 
 #define THIS_PTR TFB_SoundDecoder* This
 
-static const char*
+const static char*
 bufa_GetName(void)
 {
 	return "Buffer";
@@ -790,15 +784,12 @@ bufa_Close(THIS_PTR)
 static int
 bufa_Decode(THIS_PTR, void* buf, int32_t bufsize)
 {
-	uint32_t dec_pcm;
-	uint32_t dec_bytes;
-
-	dec_pcm = bufsize / This->bytes_per_samp;
+	uint32_t dec_pcm {bufsize / This->bytes_per_samp};
 	if (dec_pcm > This->buffered_max_pcm - This->buffered_cur_pcm)
 	{
 		dec_pcm = This->buffered_max_pcm - This->buffered_cur_pcm;
 	}
-	dec_bytes = dec_pcm * This->bytes_per_samp;
+	const uint32_t dec_bytes {dec_pcm * This->bytes_per_samp};
 
 	// Buffer decode is a hack
 	This->buffer = This->storage.data() + This->buffered_cur_pcm * This->bytes_per_samp;
@@ -834,7 +825,7 @@ bufa_GetFrame(THIS_PTR)
 }
 
 
-static const char*
+const static char*
 nula_GetName(void)
 {
 	return "Null";
@@ -920,17 +911,14 @@ static int
 nula_Decode(THIS_PTR, void* buf, int32_t bufsize)
 {
 	TFB_NullSoundDecoder* nula = (TFB_NullSoundDecoder*)This;
-	uint32_t max_pcm;
-	uint32_t dec_pcm;
-	uint32_t dec_bytes;
 
-	max_pcm = (uint32_t)(This->length * This->frequency);
-	dec_pcm = bufsize / This->bytes_per_samp;
+	const uint32_t max_pcm {(uint32_t)(This->length * This->frequency)};
+	uint32_t dec_pcm {bufsize / This->bytes_per_samp};
 	if (dec_pcm > max_pcm - nula->cur_pcm)
 	{
 		dec_pcm = max_pcm - nula->cur_pcm;
 	}
-	dec_bytes = dec_pcm * This->bytes_per_samp;
+	const uint32_t dec_bytes {dec_pcm * This->bytes_per_samp};
 
 	if (dec_pcm > 0)
 	{
@@ -945,9 +933,8 @@ static uint32_t
 nula_Seek(THIS_PTR, uint32_t pcm_pos)
 {
 	TFB_NullSoundDecoder* nula = (TFB_NullSoundDecoder*)This;
-	uint32_t max_pcm;
 
-	max_pcm = (uint32_t)(This->length * This->frequency);
+	const uint32_t max_pcm {(uint32_t)(This->length * This->frequency)};
 	if (pcm_pos > max_pcm)
 	{
 		pcm_pos = max_pcm;

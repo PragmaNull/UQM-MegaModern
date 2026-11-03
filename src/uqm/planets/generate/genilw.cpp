@@ -56,21 +56,19 @@ const GenerateFunctions generateIlwrathFunctions = {
 static bool
 GenerateIlwrath_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	if (PrimeSeed)
 	{
-		uint16_t angle;
-
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 		pPlanet->data_index = PRIMORDIAL_WORLD;
 		pPlanet->radius = EARTH_RADIUS * 204L / 100;
-		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);

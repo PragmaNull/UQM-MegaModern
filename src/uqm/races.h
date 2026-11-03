@@ -111,7 +111,7 @@ enum SPECIES_ID
 // TODO figure out why we need this.
 inline SPECIES_ID postIncSpeciesId_HACK(SPECIES_ID& id)
 {
-	SPECIES_ID ret {id};
+	const SPECIES_ID ret {id};
 	++reinterpret_cast<int&>(id);
 	return ret;
 }

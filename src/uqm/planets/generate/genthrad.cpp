@@ -62,13 +62,13 @@ static bool
 GenerateThraddash_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	if (PrimeSeed)
 	{
-		uint16_t angle;
+		uint16_t angle {};
 
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -162,7 +162,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 				 && (StartSphereTracking(THRADDASH_SHIP)
 					 || !(GET_GAME_STATE(KOHR_AH_FRENZY))))
 		{
-			uint16_t sum, i;
+			uint16_t sum {};
 
 			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
 			ReinitQueue(&GLOBAL(ip_group_q));
@@ -178,7 +178,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 				sum = 12;
 			}
 
-			for (i = 0; i < sum; ++i)
+			for (uint16_t i {0}; i < sum; ++i)
 			{
 				CloneShipFragment(THRADDASH_SHIP,
 								  &GLOBAL(npc_built_ship_q), 0);
@@ -194,7 +194,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 
 			{
-				bool Survivors =
+				const bool Survivors =
 					GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
@@ -207,7 +207,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 
 				{
-					uint16_t state;
+					uint16_t state {};
 
 					state = GET_GAME_STATE(HM_ENCOUNTERS);
 
@@ -290,7 +290,7 @@ GenerateThraddash_pickupEnergy(SOLARSYS_STATE* solarSys,
 				&GLOBAL(avail_race_q), THRADDASH_SHIP);
 		FLEET_INFO* ThraddPtr =
 			LockFleetInfo(&GLOBAL(avail_race_q), hThradd);
-		int16_t strength_loss;
+		int16_t strength_loss {};
 
 		assert(!GET_GAME_STATE(AQUA_HELIX) && whichNode == 0);
 

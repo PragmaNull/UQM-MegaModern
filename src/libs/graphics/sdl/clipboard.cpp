@@ -24,13 +24,11 @@
 static HBITMAP
 sdl_surface_to_bitmap(SDL_Surface* surface)
 {
-	SDL_Surface* convPtr;
 	BITMAPINFOHEADER BIH;
-	HDC hdc;
-	HBITMAP hbitmap;
+	HBITMAP hbitmap {};
 
 	// Convert to 32-bit BGRA (required for Windows DIB)
-	convPtr = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_BGRA32);
+	SDL_Surface* convPtr {SDL_ConvertSurface(surface, SDL_PIXELFORMAT_BGRA32)};
 	if (!convPtr)
 	{
 		return nullptr;
@@ -45,7 +43,7 @@ sdl_surface_to_bitmap(SDL_Surface* surface)
 	BIH.biCompression = BI_RGB;
 
 	// Create DIB section
-	hdc = GetDC(nullptr);
+	HDC hdc {GetDC(nullptr)};
 	hbitmap = CreateDIBitmap(hdc, &BIH, CBM_INIT, convPtr->pixels,
 							 (BITMAPINFO*)&BIH, DIB_RGB_COLORS);
 
@@ -58,15 +56,13 @@ sdl_surface_to_bitmap(SDL_Surface* surface)
 static int
 CopySurfaceToClipboard_Win32(SDL_Surface* surface)
 {
-	HBITMAP hbitmap;
-
 	if (!surface)
 	{
 		return -1;
 	}
 
 	// Convert surface to Windows bitmap
-	hbitmap = sdl_surface_to_bitmap(surface);
+	HBITMAP hbitmap {sdl_surface_to_bitmap(surface)};
 	if (!hbitmap)
 	{
 		return -1;

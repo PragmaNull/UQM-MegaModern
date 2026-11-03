@@ -30,14 +30,18 @@
 //		[others when platforms are added]
 void SCALE_(Nearest)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 {
-	int y;
-	const int rw = r->w, rh = r->h;
-	const int sp = src->pitch, dp = dst->pitch;
+	int y {};
+	const int rw = r->w;
+	const int rh = r->h;
+	const int sp = src->pitch;
+	const int dp = dst->pitch;
 	const int bpp = SDL_GetPixelFormatDetails(dst->format)->bytes_per_pixel;
-	const int slen = sp / bpp, dlen = dp / bpp;
-	const int dsrc = slen - rw, ddst = (dlen - rw) * 2;
+	const int slen = sp / bpp;
+	const int dlen = dp / bpp;
+	const int dsrc = slen - rw;
+	const int ddst = (dlen - rw) * 2;
 
-	Uint32* src_p = (Uint32*)src->pixels;
+	const Uint32* src_p = (Uint32*)src->pixels;
 	Uint32* dst_p = (Uint32*)dst->pixels;
 
 	// Nothing to scale
@@ -55,10 +59,9 @@ void SCALE_(Nearest)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 	// Plain C version
 	for (y = 0; y < rh; ++y)
 	{
-		int x;
-		for (x = 0; x < rw; ++x, ++src_p, dst_p += 2)
+		for (int x {0}; x < rw; ++x, ++src_p, dst_p += 2)
 		{
-			Uint32 pix = *src_p;
+			const Uint32 pix = *src_p;
 			dst_p[0] = pix;
 			dst_p[1] = pix;
 			dst_p[dlen] = pix;

@@ -56,7 +56,7 @@ getAlphaChannel(uint8_t index)
 static inline uint32_t
 randomFrameRate(SEQUENCE* pSeq)
 {
-	ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
 
 	return ADPtr->BaseFrameRate + TFB_Random() % (ADPtr->RandomFrameRate + 1);
 }
@@ -64,7 +64,7 @@ randomFrameRate(SEQUENCE* pSeq)
 static inline uint32_t
 randomRestartRate(SEQUENCE* pSeq)
 {
-	ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
 
 	return ADPtr->BaseRestartRate + TFB_Random() % (ADPtr->RandomRestartRate + 1);
 }
@@ -72,7 +72,7 @@ randomRestartRate(SEQUENCE* pSeq)
 static inline uint16_t
 randomFrameIndex(SEQUENCE* pSeq, uint16_t from)
 {
-	ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
 
 	return from + TFB_Random() % (ADPtr->NumFrames - from);
 }
@@ -80,9 +80,7 @@ randomFrameIndex(SEQUENCE* pSeq, uint16_t from)
 static void
 SetupAmbientSequences(SEQUENCE* pSeq, uint16_t Num)
 {
-	uint16_t i;
-
-	for (i = 0; i < Num; ++i, ++pSeq)
+	for (uint16_t i {0}; i < Num; ++i, ++pSeq)
 	{
 		ANIMATION_DESC* ADPtr = &CommData.AlienAmbientArray[i];
 
@@ -133,7 +131,7 @@ SetupTalkSequence(SEQUENCE* pSeq, ANIMATION_DESC* ADPtr)
 static inline bool
 animAtNeutralIndex(SEQUENCE* pSeq)
 {
-	ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
 
 	if (ADPtr->AnimFlags & CIRCULAR_ANIM)
 	{ // CIRCULAR_ANIM's neutral frame is the last
@@ -148,7 +146,7 @@ animAtNeutralIndex(SEQUENCE* pSeq)
 static inline bool
 conflictsWithTalkingAnim(SEQUENCE* pSeq)
 {
-	ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
 
 	return ADPtr->AnimFlags & CommData.AlienTalkDesc.AnimFlags & WAIT_TALKING;
 }
@@ -156,11 +154,9 @@ conflictsWithTalkingAnim(SEQUENCE* pSeq)
 static void
 ProcessColormapAnims(SEQUENCE* pSeq, uint16_t Num)
 {
-	uint16_t i;
-
-	for (i = 0; i < Num; ++i, ++pSeq)
+	for (uint16_t i {0}; i < Num; ++i, ++pSeq)
 	{
-		ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+		const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
 
 		if ((ADPtr->AnimFlags & ANIM_DISABLED)
 			|| pSeq->AnimType != COLOR_ANIM
@@ -178,8 +174,8 @@ ProcessColormapAnims(SEQUENCE* pSeq, uint16_t Num)
 static bool
 AdvanceAmbientSequence(SEQUENCE* pSeq)
 {
-	bool active;
-	ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+	bool active {};
+	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
 
 	--pSeq->FramesLeft;
 	// YOYO_ANIM does not actually end until it comes back
@@ -417,16 +413,13 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 	}
 	else
 	{
-		uint16_t i;
-		SEQUENCE* pSeq;
-		bool Change;
+		uint16_t i {};
+		bool Change {};
 		bool CanTalk = true;
 		TimeCount CurTime;
-		uint32_t ElapsedTicks;
-		uint32_t NextActiveMask;
 
 		CurTime = GetTimeCounter();
-		ElapsedTicks = static_cast<uint32_t>((CurTime - LastTime).count());
+		const uint32_t ElapsedTicks {static_cast<uint32_t>((CurTime - LastTime).count())};
 		LastTime = CurTime;
 
 		if (doFullRedraw)
@@ -437,12 +430,12 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 		}
 
 		// Process ambient animations
-		NextActiveMask = ActiveMask;
-		pSeq = Sequences + FirstAmbient;
+		uint32_t NextActiveMask {ActiveMask};
+		SEQUENCE* pSeq {Sequences + FirstAmbient};
 		for (i = 0; i < CommData.NumAnimations; ++i, ++pSeq)
 		{
-			ANIMATION_DESC* ADPtr = pSeq->ADPtr;
-			uint32_t ActiveBit = 1L << i;
+			const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+			const uint32_t ActiveBit = 1L << i;
 
 			if (ADPtr->AnimFlags & ANIM_DISABLED)
 			{
@@ -562,7 +555,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 
 		// Draw all animations
 		{
-			bool ColorChange = XFormColorMap_step();
+			const bool ColorChange = XFormColorMap_step();
 
 			if (ColorChange)
 			{
@@ -588,7 +581,7 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 		for (i = 0; i < CommData.NumAnimations; ++i, ++pSeq)
 		{
 			ANIMATION_DESC* ADPtr = pSeq->ADPtr;
-			uint32_t ActiveBit = 1L << i;
+			const uint32_t ActiveBit = 1L << i;
 
 			if (ADPtr->AnimFlags & ANIM_DISABLED)
 			{
@@ -624,14 +617,13 @@ bool ProcessCommAnimations(bool FullRedraw, bool paused)
 static void
 ApplyFilterToStamp(STAMP s)
 {
-	uint16_t i;
-
-	for (i = 0; i < FilterData.NumFilters; i++)
+	for (uint16_t i {0}; i < FilterData.NumFilters; i++)
 	{
-		DrawMode mode, oldMode;
-		Color oldColor, FGColor;
-		int16_t factor;
-		FILTER* FTPtr = &FilterData.FilterArray[i];
+		DrawMode mode;
+		DrawMode oldMode;
+		Color oldColor;
+		Color FGColor;
+		const FILTER* FTPtr = &FilterData.FilterArray[i];
 
 		if (FTPtr->Flags & FILTER_DISABLED)
 		{
@@ -644,7 +636,7 @@ ApplyFilterToStamp(STAMP s)
 
 		// Get DRAW_FACTOR from red channel of color from colormap
 		// with set index
-		factor = getAlphaChannel(FTPtr->OpacityIndex);
+		const int16_t factor {getAlphaChannel(FTPtr->OpacityIndex)};
 
 		// Image is transparent anyway
 		if (factor == 0x00 && FTPtr->Kind == DRAW_ALPHA)
@@ -665,7 +657,7 @@ ApplyFilterToStamp(STAMP s)
 
 bool DrawAlienFrame(SEQUENCE* Sequences, uint16_t Num, bool fullRedraw)
 {
-	int i;
+	int i {};
 	STAMP s;
 	bool Change = false;
 
@@ -706,7 +698,7 @@ bool DrawAlienFrame(SEQUENCE* Sequences, uint16_t Num, bool fullRedraw)
 		for (i = Num - 1; i >= 0; --i)
 		{
 			SEQUENCE* pSeq = &Sequences[i];
-			ANIMATION_DESC* ADPtr = pSeq->ADPtr;
+			const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
 
 			if ((ADPtr->AnimFlags & ANIM_DISABLED)
 				|| pSeq->AnimType != PICTURE_ANIM)
@@ -746,10 +738,12 @@ bool DrawAlienFrame(SEQUENCE* Sequences, uint16_t Num, bool fullRedraw)
 		// fullRedraw
 		for (i = 0; i < FilterData.NumFilters; i++)
 		{
-			DrawMode mode, oldMode;
-			Color oldColor, FGColor;
-			int16_t factor;
-			FILTER* FTPtr = &FilterData.FilterArray[i];
+			DrawMode mode;
+			DrawMode oldMode;
+			Color oldColor;
+			Color FGColor;
+			int16_t factor {};
+			const FILTER* FTPtr = &FilterData.FilterArray[i];
 
 			if (FTPtr->Flags & FILTER_DISABLED)
 			{
@@ -854,9 +848,8 @@ void ShutYourMouth(void)
 void SwitchSequences(bool enableAll)
 { // Kruzen: Needed for disabling animations during
 	// HD one-time transitions (i.e. orz frumple)
-	uint16_t i;
 
-	for (i = 0; i < CommData.NumAnimations; ++i)
+	for (uint16_t i {0}; i < CommData.NumAnimations; ++i)
 	{
 		// skip one-shot anim
 		if (CommData.AlienAmbientArray[i].AnimFlags & ONE_SHOT_ANIM)

@@ -65,7 +65,7 @@ static ResourceDesc*
 newResourceDesc(const char* res_id, uqstl::string_view type, ResourceArg arg)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* handlerdesc {lookupResourceDesc(idx, fmt::format("sys.{}", type).c_str())};
+	const ResourceDesc* handlerdesc {lookupResourceDesc(idx, fmt::format("sys.{}", type).c_str())};
 	if (handlerdesc == nullptr)
 	{
 		uqm::log::warn("Illegal type '{}' for resource '{}'; treating as UNKNOWNRES", type, res_id);
@@ -165,12 +165,11 @@ void _set_current_index_header(RESOURCE_INDEX newResourceIndex)
 RESOURCE_INDEX
 InitResourceSystem(void)
 {
-	RESOURCE_INDEX ndx;
 	if (curResourceIndex)
 	{
 		return curResourceIndex;
 	}
-	ndx = allocResourceIndex();
+	RESOURCE_INDEX ndx {allocResourceIndex()};
 
 	_set_current_index_header(ndx);
 
@@ -282,7 +281,7 @@ bool InstallResTextTypeVectors(const char* resType, ResourceTextLoadFun* loadFun
 bool res_IsString(const char* key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* desc = lookupResourceDesc(idx, key);
+	const ResourceDesc* desc = lookupResourceDesc(idx, key);
 	return (bool)(desc && !strcmp(desc->vtable->resType, "STRING"));
 }
 
@@ -290,7 +289,7 @@ const char*
 res_GetString(const char* key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* desc = lookupResourceDesc(idx, key);
+	const ResourceDesc* desc = lookupResourceDesc(idx, key);
 	if (!desc || !desc->resdata.str || strcmp(desc->vtable->resType, "STRING"))
 	{
 		return "";
@@ -317,14 +316,14 @@ void res_PutString(const char* key, const char* value)
 bool res_IsInteger(const char* key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* desc = lookupResourceDesc(idx, key);
+	const ResourceDesc* desc = lookupResourceDesc(idx, key);
 	return (bool)(desc && !strcmp(desc->vtable->resType, "INT32"));
 }
 
 int res_GetInteger(const char* key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* desc = lookupResourceDesc(idx, key);
+	const ResourceDesc* desc = lookupResourceDesc(idx, key);
 	if (!desc || strcmp(desc->vtable->resType, "INT32"))
 	{
 		// TODO: Better error handling
@@ -336,14 +335,14 @@ int res_GetInteger(const char* key)
 bool res_IsFloat(const char* key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* desc = lookupResourceDesc(idx, key);
+	const ResourceDesc* desc = lookupResourceDesc(idx, key);
 	return (bool)(desc && !strcmp(desc->vtable->resType, "FLT32"));
 }
 
 int res_GetFloat(const char* key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* desc = lookupResourceDesc(idx, key);
+	const ResourceDesc* desc = lookupResourceDesc(idx, key);
 	if (!desc || strcmp(desc->vtable->resType, "FLT32"))
 	{
 		// TODO: Better error handling
@@ -379,14 +378,14 @@ void res_PutFloat(const char* key, float value)
 bool res_IsBoolean(const char* key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* desc = lookupResourceDesc(idx, key);
+	const ResourceDesc* desc = lookupResourceDesc(idx, key);
 	return (bool)(desc && !strcmp(desc->vtable->resType, "bool"));
 }
 
 bool res_GetBoolean(const char* key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
-	ResourceDesc* desc = lookupResourceDesc(idx, key);
+	const ResourceDesc* desc = lookupResourceDesc(idx, key);
 	if (!desc || strcmp(desc->vtable->resType, "bool"))
 	{
 		// TODO: Better error handling
@@ -417,7 +416,7 @@ bool res_Remove(const char* key)
 {
 	auto* map = _get_current_index_header()->map;
 	auto it = map->find(key);
-	ResourceDesc* oldDesc = (it != map->end()) ? it->second : nullptr;
+	const ResourceDesc* oldDesc = (it != map->end()) ? it->second : nullptr;
 	if (oldDesc != nullptr)
 	{
 		if (oldDesc->resdata.ptr != nullptr)

@@ -50,7 +50,7 @@ static bool
 GenerateSlylandro_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -79,8 +79,8 @@ GenerateSlylandro_generateName(const SOLARSYS_STATE* solarSys,
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& GET_GAME_STATE(SLYLANDRO_HOME_VISITS))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),

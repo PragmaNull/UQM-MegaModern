@@ -90,20 +90,23 @@
 //		[others when platforms are added]
 void SCALE_(HqFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 {
-	int x, y;
-	const int w = src->w, h = src->h;
-	int xend, yend;
-	int dsrc, ddst;
+	int x {};
+	int y {};
+	const int w = src->w;
+	const int h = src->h;
 	SDL_Rect* region = r;
 	SDL_Rect limits;
 	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(dst->format);
-	const int sp = src->pitch, dp = dst->pitch;
+	const int sp = src->pitch;
+	const int dp = dst->pitch;
 	const int bpp = fmt->bytes_per_pixel;
-	const int slen = sp / bpp, dlen = dp / bpp;
-	Uint32* src_p = (Uint32*)src->pixels;
+	const int slen = sp / bpp;
+	const int dlen = dp / bpp;
+	const Uint32* src_p = (Uint32*)src->pixels;
 	Uint32* dst_p = (Uint32*)dst->pixels;
 
-	int prevline, nextline;
+	int prevline {};
+	int nextline {};
 	Uint32 pix[10];
 	Uint32 yuv[10];
 	//   +----+----+----+
@@ -131,10 +134,10 @@ void SCALE_(HqFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 	limits.h = src->h;
 	Scale_ExpandRect(region, 1, &limits);
 
-	xend = region->x + region->w;
-	yend = region->y + region->h;
-	dsrc = slen - region->w;
-	ddst = (dlen - region->w) * 2;
+	const int xend {region->x + region->w};
+	const int yend {region->y + region->h};
+	const int dsrc {slen - region->w};
+	const int ddst {(dlen - region->w) * 2};
 
 	// move ptrs to the first updated pixel
 	src_p += slen * region->y + region->x;

@@ -158,7 +158,7 @@ buildColorRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 static inline void
 IncreaseBrightness(uint8_t* ch, uint8_t value)
 {
-	int c;
+	int c {};
 	if (*ch < 128)
 	{
 		c = ((*ch * 255) >> 7);
@@ -417,8 +417,8 @@ ptDistance(GFXPOINT p1, GFXPOINT p2)
 static inline double
 calcDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-	double dx = (double)x2 - (double)x1;
-	double dy = (double)y2 - (double)y1;
+	const double dx = (double)x2 - (double)x1;
+	const double dy = (double)y2 - (double)y1;
 
 	return (sqrt(pow(dx, 2) + pow(dy, 2)));
 }
@@ -520,7 +520,7 @@ extern "C" {
 typedef uqm::StringTable* COLORMAP;
 // COLORMAPPTR is really a pointer to colortable entry structure
 // which is documented in doc/devel/strtab, .ct files section
-typedef const void* COLORMAPPTR;
+const typedef void* COLORMAPPTR;
 
 #include "graphics/prim.h"
 
@@ -708,7 +708,7 @@ extern DRAWABLE CreateDrawable(CREATE_FLAGS CreateFlags, int16_t width,
 extern bool DestroyDrawable(DRAWABLE Drawable);
 extern bool GetFrameRect(FRAME Frame, GFXRECT* pRect);
 #ifdef DEBUG
-extern const char* GetContextName(GFXCONTEXT context);
+const extern char* GetContextName(GFXCONTEXT context);
 extern GFXCONTEXT GetFirstContext(void);
 extern GFXCONTEXT GetNextContext(GFXCONTEXT context);
 extern size_t GetContextCount(void);

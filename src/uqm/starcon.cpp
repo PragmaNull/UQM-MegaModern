@@ -70,7 +70,7 @@ uqstl::atomic<bool> MainExited {false};
 static void
 checkArilouGate(void)
 {
-	uint8_t counter;
+	uint8_t counter {};
 
 	counter = GET_GAME_STATE(ARILOU_SPACE_COUNTER);
 	if (GET_GAME_STATE(ARILOU_SPACE) == OPENING)
@@ -205,7 +205,7 @@ void ProcessUtilityKeys(void)
 static void
 SetRandomMenuMusic(void)
 {
-	time_t t = time(nullptr);
+	const time_t t = time(nullptr);
 	const uqstl::tm tm {uqm::localtime(t)};
 
 	srand(t);

@@ -29,13 +29,10 @@
 static void
 Netplay_bothReady(NetConnection* conn)
 {
-	NetConnection_ReadyCallback callback;
-	void* readyArg;
-
 	assert(conn->readyCallback != nullptr);
 
-	callback = conn->readyCallback;
-	readyArg = conn->readyCallbackArg;
+	NetConnection_ReadyCallback callback {conn->readyCallback};
+	void* readyArg {conn->readyCallbackArg};
 
 	NetConnection_setReadyCallback(conn, nullptr, nullptr);
 	// Clear the readyCallback field before performing the callback,

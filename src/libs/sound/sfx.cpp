@@ -24,10 +24,9 @@
 #include "core/log/log.h"
 #include "soundbank.h"
 
-
 static void CheckFinishedChannels(void);
 
-static const SoundPosition notPositional = {false, 0, 0};
+const static SoundPosition notPositional = {false, 0, 0};
 
 void PlayChannel(uint16_t channel, SOUND snd, SoundPosition pos,
 				 void* positional_object, unsigned char priority)
@@ -64,11 +63,9 @@ void StopChannel(uint16_t channel, uint8_t Priority)
 static void
 CheckFinishedChannels(void)
 {
-	int i;
-
-	for (i = FIRST_SFX_SOURCE; i <= LAST_SFX_SOURCE; ++i)
+	for (int i {FIRST_SFX_SOURCE}; i <= LAST_SFX_SOURCE; ++i)
 	{
-		audio_IntVal state;
+		audio_IntVal state {};
 
 		audio_GetSourcei(soundSource[i].handle, audio_SOURCE_STATE,
 						 &state);
@@ -83,7 +80,7 @@ CheckFinishedChannels(void)
 
 bool ChannelPlaying(uint16_t WhichChannel)
 {
-	audio_IntVal state;
+	audio_IntVal state {};
 
 	audio_GetSourcei(soundSource[WhichChannel].handle,
 					 audio_SOURCE_STATE, &state);
@@ -112,7 +109,7 @@ void UpdateSoundPosition(uint16_t channel, SoundPosition pos)
 
 	if (pos.positional)
 	{
-		float dist;
+		float dist {NAN};
 
 		fpos[0] = pos.x / ATTENUATION;
 		fpos[1] = 0.0f;
@@ -121,7 +118,7 @@ void UpdateSoundPosition(uint16_t channel, SoundPosition pos)
 		if (dist < MIN_DISTANCE)
 		{ // object is too close to listener
 			// move it away along the same vector
-			float scale = MIN_DISTANCE / dist;
+			const float scale = MIN_DISTANCE / dist;
 			fpos[0] *= scale;
 			fpos[2] *= scale;
 		}

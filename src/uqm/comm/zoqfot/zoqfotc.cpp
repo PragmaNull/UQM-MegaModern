@@ -477,8 +477,6 @@ static void ZoqFotHome(RESPONSE_REF R);
 static void
 ZoqFotInfo(RESPONSE_REF R)
 {
-	uint8_t InfoLeft;
-
 	if (PLAYER_SAID(R, want_specific_info))
 	{
 		NPCPhrase_cb(WHAT_SPECIFIC_INFO0, &SelectAlienZOQ);
@@ -558,7 +556,7 @@ ZoqFotInfo(RESPONSE_REF R)
 		DISABLE_PHRASE(what_about_past);
 	}
 
-	InfoLeft = false;
+	uint8_t InfoLeft {false};
 	if (PHRASE_ENABLED(what_about_others))
 	{
 		Response(what_about_others, ZoqFotInfo);
@@ -595,7 +593,7 @@ ZoqFotInfo(RESPONSE_REF R)
 static void
 ZoqFotHome(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, whats_up_homeworld))
 	{
@@ -657,7 +655,7 @@ ZoqFotHome(RESPONSE_REF R)
 #define URQUAN_LOSE (1 << 2)
 #define KOHR_AH_KILL (1 << 3)
 #define KNOW_ALL (UTWIG_BUY_TIME | KOHR_AH_WIN | URQUAN_LOSE | KOHR_AH_KILL)
-		uint8_t KnowMask;
+		uint8_t KnowMask {};
 
 		NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
 		KnowMask = GET_GAME_STATE(ZOQFOT_KNOW_MASK);
@@ -702,7 +700,7 @@ ZoqFotHome(RESPONSE_REF R)
 		}
 		else
 		{
-			int16_t i;
+			int16_t i {};
 
 			i = START_YEAR + (YEARS_TO_KOHRAH_VICTORY + difficultyCase(2, 0, -1));
 			if (NumVisits)
@@ -798,7 +796,7 @@ ZoqFotHome(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	SetHomeworldKnown(ZOQFOTPIK_HOME);
 
@@ -992,8 +990,6 @@ post_zoqfot_enc(void)
 LOCDATA*
 init_zoqfot_comm(void)
 {
-	LOCDATA* retval;
-
 	zoqfot_desc.init_encounter_func = Intro;
 	zoqfot_desc.post_encounter_func = post_zoqfot_enc;
 	zoqfot_desc.uninit_encounter_func = uninit_zoqfot;
@@ -1014,7 +1010,7 @@ init_zoqfot_comm(void)
 		setSegue(Segue_hostile);
 	}
 
-	retval = &zoqfot_desc;
+	LOCDATA* retval {&zoqfot_desc};
 
 	return (retval);
 }

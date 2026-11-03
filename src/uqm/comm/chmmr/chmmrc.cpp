@@ -198,7 +198,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, proceed))
 	{
-		int i;
+		int i {};
 
 		NPCPhrase(TAKE_2_WEEKS);
 
@@ -264,7 +264,7 @@ ExitConversation(RESPONSE_REF R)
 			/* compress the layout -- move all to front */
 			for (i = NUM_MODULE_SLOTS - 1; i > 0; --i)
 			{
-				int m;
+				int m {};
 
 				/* find next unused slot */
 				for (; i > 0
@@ -488,8 +488,6 @@ static void ChmmrShielded(RESPONSE_REF R);
 static void
 ChmmrAdvice(RESPONSE_REF R)
 {
-	uint8_t AdviceLeft;
-
 	if (PLAYER_SAID(R, need_advice))
 	{
 		NPCPhrase(WHAT_ADVICE);
@@ -526,7 +524,7 @@ ChmmrAdvice(RESPONSE_REF R)
 		DISABLE_PHRASE(what_about_samatra);
 	}
 
-	AdviceLeft = 0;
+	uint8_t AdviceLeft {0};
 	if (PHRASE_ENABLED(how_defeat_urquan))
 	{
 		Response(how_defeat_urquan, ChmmrAdvice);
@@ -654,7 +652,7 @@ AfterBomb(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (GET_GAME_STATE(CHMMR_BOMB_STATE) >= 2)
 	{
@@ -783,8 +781,6 @@ post_chmmr_enc(void)
 LOCDATA*
 init_chmmr_comm(void)
 {
-	LOCDATA* retval;
-
 	chmmr_desc.init_encounter_func = Intro;
 	chmmr_desc.post_encounter_func = post_chmmr_enc;
 	chmmr_desc.uninit_encounter_func = uninit_chmmr;
@@ -805,7 +801,7 @@ init_chmmr_comm(void)
 	chmmr_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	setSegue(Segue_peace);
-	retval = &chmmr_desc;
+	LOCDATA* retval {&chmmr_desc};
 
 	return (retval);
 }

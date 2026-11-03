@@ -349,10 +349,9 @@ Zombies(RESPONSE_REF R)
 	}
 	else
 	{
-		uint8_t i, LastStack;
 		RESPONSE_REF pStr[4];
 
-		LastStack = 0;
+		uint8_t LastStack {0};
 		pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
 		if (PLAYER_SAID(R, evil_blobbies))
 		{
@@ -464,7 +463,7 @@ Zombies(RESPONSE_REF R)
 		{
 			Response(pStr[LastStack], Zombies);
 		}
-		for (i = 0; i < 4; ++i)
+		for (uint8_t i {0}; i < 4; ++i)
 		{
 			if (i != LastStack && pStr[i])
 			{
@@ -600,7 +599,7 @@ UmgahReward(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
@@ -797,8 +796,6 @@ post_umgah_enc(void)
 LOCDATA*
 init_umgah_comm(void)
 {
-	LOCDATA* retval;
-
 	umgah_desc.init_encounter_func = Intro;
 	umgah_desc.post_encounter_func = post_umgah_enc;
 	umgah_desc.uninit_encounter_func = uninit_umgah;
@@ -820,7 +817,7 @@ init_umgah_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &umgah_desc;
+	LOCDATA* retval {&umgah_desc};
 
 	return (retval);
 }

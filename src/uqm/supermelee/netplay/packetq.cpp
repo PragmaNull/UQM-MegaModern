@@ -69,14 +69,13 @@ void PacketQueue_uninit(PacketQueue* queue)
 
 void queuePacket(NetConnection* conn, Packet* packet)
 {
-	PacketQueue* queue;
-	PacketQueueLink* link;
+	PacketQueue* queue {};
 
 	assert(NetConnection_isConnected(conn));
 
 	queue = &conn->queue;
 
-	link = PacketQueueLink_alloc();
+	PacketQueueLink* link {PacketQueueLink_alloc()};
 	link->packet = packet;
 	link->next = nullptr;
 	*queue->end = link;
@@ -111,8 +110,8 @@ void queuePacket(NetConnection* conn, Packet* packet)
 static NetResult
 flushPacketQueueLinks(NetConnection* conn, PacketQueueLink** first)
 {
-	PacketQueueLink* link;
-	PacketQueueLink* next;
+	PacketQueueLink* link {};
+	PacketQueueLink* next {};
 	PacketQueue* queue = &conn->queue;
 
 	for (link = *first; link != nullptr; link = next)

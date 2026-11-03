@@ -169,21 +169,18 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 #define JET_TOP_Y_P (JET_TOP_Y + MODULE_YOFS_P)
 #define MODULE_TOP_Y_P (MODULE_TOP_Y + MODULE_YOFS_P)
 #define MODULE_TOP_X_P MODULE_TOP_X
-	GFXCONTEXT OldContext;
-	FRAME SisFrame;
-	FRAME ModuleFrame;
-	FRAME SkelFrame;
+	FRAME SisFrame {};
 	STAMP s;
 	GFXRECT r;
 	HOT_SPOT hs;
-	int slot;
-	uint16_t piece;
+	int slot {};
+	uint16_t piece {};
 	Color SisBack;
 
-	OldContext = SetContext(OffScreenContext);
+	GFXCONTEXT OldContext {SetContext(OffScreenContext)};
 
-	SkelFrame = CaptureDrawable(LoadGraphic(SISSKEL_MASK_PMAP_ANIM));
-	ModuleFrame = CaptureDrawable(LoadGraphic(SISMODS_MASK_PMAP_ANIM));
+	FRAME SkelFrame {CaptureDrawable(LoadGraphic(SISSKEL_MASK_PMAP_ANIM))};
+	FRAME ModuleFrame {CaptureDrawable(LoadGraphic(SISMODS_MASK_PMAP_ANIM))};
 
 	GetFrameRect(SkelFrame, &r);
 	SisFrame = CaptureDrawable(CreateDrawable(
@@ -234,7 +231,7 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
 			if (piece >= BOMB_MODULE_0)
 			{ // Blue glow around the bomb - mimic PC-DOS pre-rendered cutscene
-				Color oldColor = SetContextForeGroundColor(
+				const Color oldColor = SetContextForeGroundColor(
 					BUILD_COLOR_RGB(0x00, 0x00, 0x5F));
 
 				s.origin.y += RES_SCALE(2);
@@ -317,7 +314,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 		   bool* skip)
 {
 	TEXT Text;
-	uint16_t i;
+	uint16_t i {};
 	GFXRECT sq;
 	GFXPOINT c;
 	GFXRECT chd;
@@ -438,7 +435,7 @@ typedef struct
 	uint16_t width;	   // The SD pixel width of the race name
 } SHIPMAP;
 
-static const SHIPMAP ship_map[] = {
+const static SHIPMAP ship_map[] = {
 	{ARILOU_ID,		"arilou",	  "ARILOULALEELAY", " SKIFF",		  2,	 123},
 	{CHMMR_ID,	   "chmmr",		"CHMMR",			 " AVATAR",		2,   50 },
 	{EARTHLING_ID,  "earthling",	"EARTHLING",		 " CRUISER",		 130, 79 },
@@ -972,7 +969,7 @@ DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::SpinStat:
 				{ /* spin stat draw */
-					int16_t leading;
+					int16_t leading {};
 
 					uqm::strncpy_safe(pPIS->Buffer, cmd.text);
 					GetContextFontLeading(&leading);
@@ -1023,9 +1020,9 @@ DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::TextFadeIn:
 				{ /* text fade-in */
-					int16_t leading;
-					uint16_t i;
-					int16_t y;
+					int16_t leading {};
+					uint16_t i {};
+					int16_t y {};
 
 					pPIS->LinesCount = static_cast<uint16_t>(cmd.lines.size());
 					for (i = 0; i < pPIS->LinesCount; ++i)
@@ -1081,7 +1078,7 @@ DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::TextFadeOut:
 				{ /* text fade-out */
-					uint16_t i;
+					uint16_t i {};
 
 					Present_UnbatchGraphics(pPIS, true);
 
@@ -1305,7 +1302,9 @@ DoPresentation(void* pIS)
 					STAMP s;
 					int loops = 0;
 					uint16_t index = 0;
-					TimeCount Now, timeout, NextTime;
+					TimeCount Now;
+					TimeCount timeout;
+					TimeCount NextTime;
 					const TimePeriod animation_rate {c_gameSecond / cmd.fps};
 
 					s.origin.x = 0;
@@ -1359,19 +1358,16 @@ DoPresentation(void* pIS)
 static bool
 ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 {
-	GFXCONTEXT OldContext;
-	FONT OldFont;
 	GFXRECT OldRect;
 	PRESENTATION_INPUT_STATE pis;
-	int i;
 
 	memset(&pis, 0, sizeof(pis));
 	pis.Commands = &commands;
 	pis.OperIndex = 0;
 
-	OldContext = SetContext(ScreenContext);
+	GFXCONTEXT OldContext {SetContext(ScreenContext)};
 	GetContextClipRect(&OldRect);
-	OldFont = SetContextFont(nullptr);
+	FONT OldFont {SetContextFont(nullptr)};
 	SetContextBackGroundColor(BLACK_COLOR);
 
 	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
@@ -1393,7 +1389,7 @@ ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 	DestroyMusic(pis.MusicRef);
 	DestroyDrawable(ReleaseDrawable(pis.RotatedFrame));
 	DestroyDrawable(ReleaseDrawable(pis.Frame));
-	for (i = 0; i < uqm::c_slideshowMaxFonts; ++i)
+	for (int i {0}; i < uqm::c_slideshowMaxFonts; ++i)
 	{
 		DestroyFont(pis.Fonts[i]);
 	}
@@ -1408,7 +1404,7 @@ ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 static bool
 DoVideoInput(void* pIS)
 {
-	VIDEO_INPUT_STATE* pVIS = (VIDEO_INPUT_STATE*)pIS;
+	const VIDEO_INPUT_STATE* pVIS = (VIDEO_INPUT_STATE*)pIS;
 
 	if (!PlayingLegacyVideo(pVIS->CurVideo))
 	{ // Video probably finished
@@ -1471,11 +1467,10 @@ static bool
 ShowLegacyVideo(LEGACY_VIDEO vid)
 {
 	VIDEO_INPUT_STATE vis;
-	LEGACY_VIDEO_REF ref;
 
 	FadeClearScreen();
 
-	ref = PlayLegacyVideo(vid);
+	LEGACY_VIDEO_REF ref {PlayLegacyVideo(vid)};
 	if (!ref)
 	{
 		return false;
@@ -1506,7 +1501,7 @@ bool ShowPresentation(RESOURCE res)
 	else if (!strcmp(resType, "3DOVID"))
 	{
 		LEGACY_VIDEO vid = LoadLegacyVideoInstance(res);
-		bool result = ShowLegacyVideo(vid);
+		const bool result = ShowLegacyVideo(vid);
 		DestroyLegacyVideo(vid);
 		return result;
 	}

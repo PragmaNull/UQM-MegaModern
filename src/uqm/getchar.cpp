@@ -44,7 +44,7 @@ static int
 ReadOneChar(joy_char_t* ch, const char* str)
 {
 	const char* next = uqm::skipUTF8Chars(str, 1);
-	int len = next - str;
+	const int len = next - str;
 	ch->len = len;
 	memcpy(ch->enc, str, len);
 	ch->enc[len] = '\0'; // string term
@@ -55,9 +55,9 @@ ReadOneChar(joy_char_t* ch, const char* str)
 static uqstl::vector<joy_char_t>
 LoadJoystickAlpha(const char* str, int* count)
 {
-	int c;
-	int i;
-	const char* cur;
+	int c {};
+	int i {};
+	const char* cur {};
 
 	*count = 0;
 	if (!str)
@@ -70,7 +70,7 @@ LoadJoystickAlpha(const char* str, int* count)
 
 	for (i = 0, cur = str; i < c; ++i)
 	{
-		int len = ReadOneChar(&chars[i], cur);
+		const int len = ReadOneChar(&chars[i], cur);
 		cur += len;
 	}
 
@@ -82,7 +82,7 @@ static int
 JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
 			  int setsize)
 {
-	int i;
+	int i {};
 
 	for (i = 0; i < setsize && strcmp(set[i].enc, ch->enc) != 0; ++i)
 		;
@@ -100,7 +100,7 @@ static void
 JoyCharSwitchReg(joy_char_t* ch, const joy_char_t* from,
 				 const joy_char_t* to, int regsize)
 {
-	int i = JoyCharFindIn(ch, from, regsize);
+	const int i = JoyCharFindIn(ch, from, regsize);
 	if (i >= 0)
 	{
 		*ch = to[i];
@@ -149,17 +149,15 @@ FlashCursor(void)
 	static TimeCount NextTime {};
 	static uint32_t cycle_index = 0;
 
-	static const Color cycle_tab[] = CURSOR_COLOR_CYCLE_TABLE;
+	const static Color cycle_tab[] = CURSOR_COLOR_CYCLE_TABLE;
 	const size_t cycleCount = std::size(cycle_tab);
 #define BLINK_RATE (c_gameSecond / 32)
 
 	if (GetTimeCounter() >= NextTime)
 	{
-		GFXCONTEXT OldContext;
-
 		NextTime = GetTimeCounter() + BLINK_RATE;
 
-		OldContext = SetContext(curContext);
+		GFXCONTEXT OldContext {SetContext(curContext)};
 
 		if (curContext == OffScreenContext)
 		{
@@ -184,11 +182,7 @@ FlashCursor(void)
 
 bool DoTextEntry(TEXTENTRY_STATE* pTES)
 {
-	uqm::UniChar ch;
-	char* pStr;
-	char* CacheInsPt;
-	int CacheCursorPos;
-	int len;
+	int len {};
 	bool changed = false;
 
 	if (uqm::currentActivity() & CHECK_ABORT)
@@ -203,7 +197,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 
 	if (!pTES->Initialized)
 	{ // init basic vars
-		int lwlen;
+		int lwlen {};
 
 		pTES->InputFunc = DoTextEntry;
 		pTES->Success = false;
@@ -250,15 +244,15 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		return pTES->Success;
 	}
 
-	pStr = pTES->InsPt;
+	char* pStr {pTES->InsPt};
 	len = strlen(pStr);
 	// save a copy of string
-	CacheInsPt = pTES->InsPt;
-	CacheCursorPos = pTES->CursorPos;
+	char* CacheInsPt {pTES->InsPt};
+	const int CacheCursorPos {pTES->CursorPos};
 	memcpy(pTES->CacheStr.data(), pTES->BaseStr, pTES->MaxSize);
 
 	// process the pending character buffer
-	ch = GetNextCharacter();
+	uqm::UniChar ch {GetNextCharacter()};
 	if (TextEntry3DO && ch == UNICHAR_SPACE)
 	{
 		ch = UNICHAR_TAB;
@@ -270,11 +264,10 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	while (ch)
 	{
 		char chbuf[8];
-		int chsize;
 
 		pTES->JoystickMode = false;
 
-		chsize = uqm::getStringFromChar(chbuf, ch);
+		const int chsize {uqm::getStringFromChar(chbuf, ch)};
 		if (uqm::isPrintChar(ch) && chsize > 0)
 		{
 			if (pStr + len - pTES->BaseStr + chsize < pTES->MaxSize)
@@ -374,8 +367,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		joy_char_t ch;
 		joy_char_t newch;
 		joy_char_t cmpch;
-		int i;
-		bool curCharUpper;
+		bool curCharUpper {};
 
 		pTES->JoystickMode = true;
 
@@ -396,7 +388,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		JoyCharToUpper(&cmpch, &ch, pTES);
 
 		// find current char in the alphabet
-		i = JoyCharFindIn(&cmpch, pTES->JoyAlpha.data(), pTES->JoyAlphaLength);
+		int i {JoyCharFindIn(&cmpch, pTES->JoyAlpha.data(), pTES->JoyAlphaLength)};
 
 		if (PulsedInputState.menu[KEY_MENU_UP])
 		{
@@ -451,7 +443,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		{ // new char is different, put it in
 			if (len)
 			{ // change current -- this is messy with utf8
-				int l = len - ch.len;
+				const int l = len - ch.len;
 				if (pStr + l - pTES->BaseStr + newch.len < pTES->MaxSize)
 				{
 					// adjust other chars if necessary

@@ -64,7 +64,7 @@ uqstl::optional<InputScript> InputScript::parse(uqstl::string_view text, uqstl::
 	{
 		++lineNumber;
 		const size_t end {text.find('\n')};
-		uqstl::string_view line {trim(text.substr(0, end))};
+		const uqstl::string_view line {trim(text.substr(0, end))};
 		text = end == uqstl::string_view::npos ? uqstl::string_view {} : text.substr(end + 1);
 
 		if (line.empty() || line.front() == '#')

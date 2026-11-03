@@ -56,7 +56,7 @@ static int yehat_rebel_event(int arg);
 static int slylandro_ramp_up(int arg);
 static int slylandro_ramp_down(int arg);
 
-static const char* eventNames[] = {
+const static char* eventNames[] = {
 	"ARILOU_ENTRANCE_EVENT",
 	"ARILOU_EXIT_EVENT",
 	"HYPERSPACE_ENCOUNTER_EVENT",
@@ -81,7 +81,7 @@ void initEventSystem(void)
 	// Register functions which can be called from Lua through
 	// 'custom.<functionName>'. Right now, these are the event functions
 	// which have not been converted to Lua yet.
-	static const luaUqm_custom_Function eventFuncs[] = {
+	const static luaUqm_custom_Function eventFuncs[] = {
 		{"arilou_entrance_event",		  arilou_entrance_event	   },
 		{"arilou_exit_event",			  arilou_exit_event		   },
 		{"hyperspace_encounter_event",  hyperspace_encounter_event },
@@ -113,11 +113,10 @@ void uninitEventSystem(void)
 
 int eventIdStrToNum(const char* eventIdStr)
 {
-	size_t eventCount = std::size(eventNames);
-	size_t eventI;
+	const size_t eventCount = std::size(eventNames);
 
 	// Linear search; acceptable for such a small number of events.
-	for (eventI = 0; eventI < eventCount; eventI++)
+	for (size_t eventI {0}; eventI < eventCount; eventI++)
 	{
 		if (strcmp(eventIdStr, eventNames[eventI]) == 0)
 		{
@@ -130,7 +129,7 @@ int eventIdStrToNum(const char* eventIdStr)
 const char*
 eventIdNumToStr(int eventNum)
 {
-	size_t eventCount = std::size(eventNames);
+	const size_t eventCount = std::size(eventNames);
 	if (eventNum < 0 || (size_t)eventNum >= eventCount)
 	{
 		return nullptr;
@@ -150,9 +149,7 @@ void AddInitialGameEvents(void)
 
 void EventHandler(uint8_t selector)
 {
-	const char* eventIdStr;
-
-	eventIdStr = eventIdNumToStr(selector);
+	const char* eventIdStr {eventIdNumToStr(selector)};
 	if (eventIdStr == nullptr)
 	{
 		uqm::log::warn("Warning: EventHandler(): Event {} is "
@@ -167,11 +164,8 @@ void EventHandler(uint8_t selector)
 void SetRaceDest(uint8_t which_race, int16_t x, int16_t y, uint8_t days_left,
 				 uint8_t func_index)
 {
-	HFLEETINFO hFleet;
-	FLEET_INFO* FleetPtr;
-
-	hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), which_race);
-	FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), which_race)};
+	FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
 
 	FleetPtr->dest_loc.x = x;
 	FleetPtr->dest_loc.y = y;
@@ -194,9 +188,9 @@ arilou_entrance_event(int arg)
 static int
 arilou_exit_event(int arg)
 {
-	uint16_t month_index, year_index;
+	uint16_t month_index {};
 
-	year_index = uqm::gameState().clock().year();
+	uint16_t year_index {uqm::gameState().clock().year()};
 	if ((month_index = uqm::gameState().clock().month() % 12) == 0)
 	{
 		++year_index;
@@ -214,22 +208,19 @@ arilou_exit_event(int arg)
 static void
 check_race_growth(void)
 {
-	HFLEETINFO hStarShip, hNextShip;
+	HFLEETINFO hStarShip {};
+	HFLEETINFO hNextShip {};
 
 	for (hStarShip = GetHeadLink(&GLOBAL(avail_race_q));
 		 hStarShip; hStarShip = hNextShip)
 	{
-		FLEET_INFO* FleetPtr;
-
-		FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hStarShip)};
 		hNextShip = _GetSuccLink(FleetPtr);
 
 		if (FleetPtr->actual_strength
 			&& FleetPtr->actual_strength != INFINITE_RADIUS)
 		{
-			int16_t delta_strength;
-
-			delta_strength = (int8_t)FleetPtr->growth;
+			int16_t delta_strength {(int8_t)FleetPtr->growth};
 			if (FleetPtr->growth_err_term <= FleetPtr->growth_fract)
 			{
 				if (delta_strength <= 0)
@@ -307,18 +298,15 @@ kohr_ah_victorious_event(int arg)
 static int
 advance_pkunk_mission(int arg)
 {
-	HFLEETINFO hPkunk;
-	FLEET_INFO* PkunkPtr;
+	HFLEETINFO hPkunk {GetStarShipFromIndex(&GLOBAL(avail_race_q), PKUNK_SHIP)};
+	FLEET_INFO* PkunkPtr {LockFleetInfo(&GLOBAL(avail_race_q), hPkunk)};
 
-	hPkunk = GetStarShipFromIndex(&GLOBAL(avail_race_q), PKUNK_SHIP);
-	PkunkPtr = LockFleetInfo(&GLOBAL(avail_race_q), hPkunk);
-
-	GFXPOINT yehat = SeedFleetLocation(PkunkPtr, plot_map, YEHAT_DEFINED);
-	GFXPOINT pkunk = SeedFleetLocation(PkunkPtr, plot_map, 0);
+	const GFXPOINT yehat = SeedFleetLocation(PkunkPtr, plot_map, YEHAT_DEFINED);
+	const GFXPOINT pkunk = SeedFleetLocation(PkunkPtr, plot_map, 0);
 
 	if (PkunkPtr->actual_strength)
 	{
-		uint8_t MissionState;
+		uint8_t MissionState {};
 
 		MissionState = GET_GAME_STATE(PKUNK_MISSION);
 		if (PkunkPtr->days_left == 0 && MissionState)
@@ -377,12 +365,10 @@ advance_pkunk_mission(int arg)
 static int
 advance_thradd_mission(int arg)
 {
-	uint8_t MissionState;
-	HFLEETINFO hThradd;
-	FLEET_INFO* ThraddPtr;
+	uint8_t MissionState {};
 
-	hThradd = GetStarShipFromIndex(&GLOBAL(avail_race_q), THRADDASH_SHIP);
-	ThraddPtr = LockFleetInfo(&GLOBAL(avail_race_q), hThradd);
+	HFLEETINFO hThradd {GetStarShipFromIndex(&GLOBAL(avail_race_q), THRADDASH_SHIP)};
+	FLEET_INFO* ThraddPtr {LockFleetInfo(&GLOBAL(avail_race_q), hThradd)};
 
 	MissionState = GET_GAME_STATE(THRADD_MISSION);
 	if (ThraddPtr->actual_strength && MissionState < 3)
@@ -400,9 +386,8 @@ advance_thradd_mission(int arg)
 
 		if (MissionState == 1)
 		{ /* arrived at Kohr-Ah, engaging */
-			int16_t strength_loss;
 
-			strength_loss = (int16_t)(ThraddPtr->actual_strength >> 1);
+			const int16_t strength_loss {(int16_t)(ThraddPtr->actual_strength >> 1)};
 			ThraddPtr->growth = (uint8_t)(-strength_loss / 14);
 			ThraddPtr->growth_fract = (uint8_t)(((strength_loss % 14) << 8) / 14);
 			ThraddPtr->growth_err_term = 255 >> 1;
@@ -461,12 +446,11 @@ zoqfot_death_event(int arg)
 	}
 	else if (GET_GAME_STATE(ZOQFOT_DISTRESS))
 	{
-		HFLEETINFO hZoqFot;
-		FLEET_INFO* ZoqFotPtr;
+		HFLEETINFO hZoqFot {};
 
 		hZoqFot = GetStarShipFromIndex(&GLOBAL(avail_race_q),
 									   ZOQFOTPIK_SHIP);
-		ZoqFotPtr = LockFleetInfo(&GLOBAL(avail_race_q), hZoqFot);
+		FLEET_INFO* ZoqFotPtr {LockFleetInfo(&GLOBAL(avail_race_q), hZoqFot)};
 		ZoqFotPtr->actual_strength = 0;
 		ZoqFotPtr->allied_state = DEAD_GUY;
 		UnlockFleetInfo(&GLOBAL(avail_race_q), hZoqFot);
@@ -481,10 +465,8 @@ zoqfot_death_event(int arg)
 static int
 shofixti_return_event(int arg)
 {
-	HFLEETINFO hShofixti;
-	FLEET_INFO* ShofixtiPtr;
-	hShofixti = GetStarShipFromIndex(&GLOBAL(avail_race_q), SHOFIXTI_SHIP);
-	ShofixtiPtr = LockFleetInfo(&GLOBAL(avail_race_q), hShofixti);
+	HFLEETINFO hShofixti {GetStarShipFromIndex(&GLOBAL(avail_race_q), SHOFIXTI_SHIP)};
+	FLEET_INFO* ShofixtiPtr {LockFleetInfo(&GLOBAL(avail_race_q), hShofixti)};
 	if (ShofixtiPtr->actual_strength)
 	{
 		ShofixtiPtr->growth = 0;
@@ -514,30 +496,24 @@ shofixti_return_event(int arg)
 static int
 advance_utwig_supox_mission(int arg)
 {
-	uint8_t MissionState;
-	HFLEETINFO hUtwig, hSupox, hKohrAh;
-	FLEET_INFO* UtwigPtr;
-	FLEET_INFO* SupoxPtr;
-	FLEET_INFO* KohrAhPtr;
+	uint8_t MissionState {};
 
-	hUtwig = GetStarShipFromIndex(&GLOBAL(avail_race_q), UTWIG_SHIP);
-	UtwigPtr = LockFleetInfo(&GLOBAL(avail_race_q), hUtwig);
-	hSupox = GetStarShipFromIndex(&GLOBAL(avail_race_q), SUPOX_SHIP);
-	SupoxPtr = LockFleetInfo(&GLOBAL(avail_race_q), hSupox);
-	hKohrAh = GetStarShipFromIndex(&GLOBAL(avail_race_q), BLACK_URQUAN_SHIP);
-	KohrAhPtr = LockFleetInfo(&GLOBAL(avail_race_q), hKohrAh);
+	HFLEETINFO hUtwig {GetStarShipFromIndex(&GLOBAL(avail_race_q), UTWIG_SHIP)};
+	FLEET_INFO* UtwigPtr {LockFleetInfo(&GLOBAL(avail_race_q), hUtwig)};
+	HFLEETINFO hSupox {GetStarShipFromIndex(&GLOBAL(avail_race_q), SUPOX_SHIP)};
+	FLEET_INFO* SupoxPtr {LockFleetInfo(&GLOBAL(avail_race_q), hSupox)};
+	HFLEETINFO hKohrAh {GetStarShipFromIndex(&GLOBAL(avail_race_q), BLACK_URQUAN_SHIP)};
+	FLEET_INFO* KohrAhPtr {LockFleetInfo(&GLOBAL(avail_race_q), hKohrAh)};
 
 	MissionState = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
 	if (UtwigPtr->actual_strength && MissionState < 5)
 	{
 		if (MissionState == 1)
 		{
-			int16_t strength_loss;
-
 			AddEvent(RELATIVE_EVENT, 0, (160 >> 1), 0,
 					 ADVANCE_UTWIG_SUPOX_MISSION);
 
-			strength_loss = (int16_t)(UtwigPtr->actual_strength >> 1);
+			int16_t strength_loss {(int16_t)(UtwigPtr->actual_strength >> 1)};
 			UtwigPtr->growth = (uint8_t)(-strength_loss / 160);
 			UtwigPtr->growth_fract =
 				(uint8_t)(((strength_loss % 160) << 8) / 160);
@@ -572,7 +548,8 @@ advance_utwig_supox_mission(int arg)
 		}
 		else
 		{
-			GFXPOINT utwig, supox;
+			GFXPOINT utwig;
+			GFXPOINT supox;
 
 			if (MissionState == 0)
 			{
@@ -621,12 +598,12 @@ advance_utwig_supox_mission(int arg)
 static int
 kohr_ah_genocide_event(int arg)
 {
-	uint8_t Index;
-	long best_dist;
-	int16_t best_dx, best_dy;
-	HFLEETINFO hStarShip, hNextShip;
-	HFLEETINFO hBlackUrquan;
-	FLEET_INFO* BlackUrquanPtr;
+	uint8_t Index {};
+	int16_t best_dx {};
+	int16_t best_dy {};
+	HFLEETINFO hStarShip {};
+	HFLEETINFO hNextShip {};
+	HFLEETINFO hBlackUrquan {};
 
 	if (!GET_GAME_STATE(KOHR_AH_FRENZY)
 		&& uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
@@ -639,24 +616,23 @@ kohr_ah_genocide_event(int arg)
 
 	hBlackUrquan = GetStarShipFromIndex(&GLOBAL(avail_race_q),
 										BLACK_URQUAN_SHIP);
-	BlackUrquanPtr = LockFleetInfo(&GLOBAL(avail_race_q), hBlackUrquan);
+	const FLEET_INFO* BlackUrquanPtr {LockFleetInfo(&GLOBAL(avail_race_q), hBlackUrquan)};
 
-	best_dist = -1;
+	long best_dist {-1};
 	best_dx = plot_map[SOL_DEFINED].star_pt.x - BlackUrquanPtr->loc.x;
 	best_dy = plot_map[SOL_DEFINED].star_pt.y - BlackUrquanPtr->loc.y;
 	for (Index = 0, hStarShip = GetHeadLink(&GLOBAL(avail_race_q));
 		 hStarShip; ++Index, hStarShip = hNextShip)
 	{
-		FLEET_INFO* FleetPtr;
-
-		FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hStarShip)};
 		hNextShip = _GetSuccLink(FleetPtr);
 
 		if (Index != BLACK_URQUAN_SHIP
 			&& Index != URQUAN_SHIP
 			&& FleetPtr->actual_strength != INFINITE_RADIUS)
 		{
-			int16_t dx, dy;
+			int16_t dx {};
+			int16_t dy {};
 
 			dx = FleetPtr->loc.x - BlackUrquanPtr->loc.x;
 			dy = FleetPtr->loc.y - BlackUrquanPtr->loc.y;
@@ -668,9 +644,7 @@ kohr_ah_genocide_event(int arg)
 			}
 			else if (FleetPtr->actual_strength)
 			{
-				long dist;
-
-				dist = (long)dx * dx + (long)dy * dy;
+				const long dist {(long)dx * dx + (long)dy * dy};
 				if (best_dist < 0 || dist < best_dist || Index == DRUUGE_SHIP)
 				{
 					best_dist = dist;
@@ -699,7 +673,7 @@ kohr_ah_genocide_event(int arg)
 	else
 	{
 		// Moving towards new race to cleanse.
-		uint16_t speed;
+		uint16_t speed {};
 
 		if (best_dist < 0)
 		{
@@ -750,12 +724,11 @@ spathi_shield_event(int arg)
 	}
 	else
 	{
-		HFLEETINFO hSpathi;
-		FLEET_INFO* SpathiPtr;
+		HFLEETINFO hSpathi {};
 
 		hSpathi = GetStarShipFromIndex(&GLOBAL(avail_race_q),
 									   SPATHI_SHIP);
-		SpathiPtr = LockFleetInfo(&GLOBAL(avail_race_q), hSpathi);
+		FLEET_INFO* SpathiPtr {LockFleetInfo(&GLOBAL(avail_race_q), hSpathi)};
 
 		if (SpathiPtr->actual_strength)
 		{
@@ -778,17 +751,14 @@ spathi_shield_event(int arg)
 static int
 advance_ilwrath_mission(int arg)
 {
-	uint8_t ThraddState;
-	HFLEETINFO hIlwrath, hThradd;
-	FLEET_INFO* IlwrathPtr;
-	FLEET_INFO* ThraddPtr;
+	uint8_t ThraddState {};
 
-	hIlwrath = GetStarShipFromIndex(&GLOBAL(avail_race_q), ILWRATH_SHIP);
-	IlwrathPtr = LockFleetInfo(&GLOBAL(avail_race_q), hIlwrath);
-	hThradd = GetStarShipFromIndex(&GLOBAL(avail_race_q), THRADDASH_SHIP);
-	ThraddPtr = LockFleetInfo(&GLOBAL(avail_race_q), hThradd);
-	GFXPOINT thradd_home = SeedFleetLocation(ThraddPtr, plot_map, 0);
-	GFXPOINT conflict = SeedFleetLocation(IlwrathPtr, plot_map, THRADD_DEFINED);
+	HFLEETINFO hIlwrath {GetStarShipFromIndex(&GLOBAL(avail_race_q), ILWRATH_SHIP)};
+	FLEET_INFO* IlwrathPtr {LockFleetInfo(&GLOBAL(avail_race_q), hIlwrath)};
+	HFLEETINFO hThradd {GetStarShipFromIndex(&GLOBAL(avail_race_q), THRADDASH_SHIP)};
+	FLEET_INFO* ThraddPtr {LockFleetInfo(&GLOBAL(avail_race_q), hThradd)};
+	const GFXPOINT thradd_home = SeedFleetLocation(ThraddPtr, plot_map, 0);
+	const GFXPOINT conflict = SeedFleetLocation(IlwrathPtr, plot_map, THRADD_DEFINED);
 	if (GET_GAME_STATE(ILWRATH_FIGHT_THRADDASH))
 	{
 		IlwrathPtr->actual_strength = 0;
@@ -810,7 +780,7 @@ advance_ilwrath_mission(int arg)
 		else
 		{
 #define MADD_LENGTH 128
-			int16_t strength_loss;
+			int16_t strength_loss {};
 
 			if (IlwrathPtr->days_left == 0)
 			{ /* arrived for battle */
@@ -886,14 +856,11 @@ advance_ilwrath_mission(int arg)
 static int
 advance_mycon_mission(int arg)
 {
-	HFLEETINFO hMycon;
-	FLEET_INFO* MyconPtr;
+	HFLEETINFO hMycon {GetStarShipFromIndex(&GLOBAL(avail_race_q), MYCON_SHIP)};
+	FLEET_INFO* MyconPtr {LockFleetInfo(&GLOBAL(avail_race_q), hMycon)};
 
-	hMycon = GetStarShipFromIndex(&GLOBAL(avail_race_q), MYCON_SHIP);
-	MyconPtr = LockFleetInfo(&GLOBAL(avail_race_q), hMycon);
-
-	GFXPOINT home = SeedFleetLocation(MyconPtr, plot_map, 0);
-	GFXPOINT trap = SeedFleetLocation(MyconPtr, plot_map, MYCON_TRAP_DEFINED);
+	const GFXPOINT home = SeedFleetLocation(MyconPtr, plot_map, 0);
+	const GFXPOINT trap = SeedFleetLocation(MyconPtr, plot_map, MYCON_TRAP_DEFINED);
 
 	if (MyconPtr->actual_strength)
 	{
@@ -905,15 +872,14 @@ advance_mycon_mission(int arg)
 
 			if (EXTENDED)
 			{
-				HFLEETINFO hSyreen;
-				FLEET_INFO* SyreenPtr;
+				HFLEETINFO hSyreen {};
 
 				hSyreen = GetStarShipFromIndex(&GLOBAL(avail_race_q),
 											   SYREEN_SHIP);
-				SyreenPtr = LockFleetInfo(&GLOBAL(avail_race_q), hSyreen);
+				FLEET_INFO* SyreenPtr {LockFleetInfo(&GLOBAL(avail_race_q), hSyreen)};
 				if (SyreenPtr)
 				{
-					GFXPOINT syra = SeedFleetLocation(SyreenPtr, plot_map, 0);
+					const GFXPOINT syra = SeedFleetLocation(SyreenPtr, plot_map, 0);
 					SetRaceDest(SYREEN_SHIP, syra.x, syra.y, 30, (uint8_t)~0);
 					SyreenPtr->growth = 0;
 					SyreenPtr->growth_fract = 0;
@@ -931,21 +897,19 @@ advance_mycon_mission(int arg)
 		else
 		{
 			// Endure losses at Organon.
-			int16_t strength_loss;
 
 			AddEvent(RELATIVE_EVENT, 0, 14, 0, ADVANCE_MYCON_MISSION);
-			strength_loss = (int16_t)(MyconPtr->actual_strength >> 1);
+			const int16_t strength_loss {(int16_t)(MyconPtr->actual_strength >> 1)};
 			MyconPtr->growth = (uint8_t)(-strength_loss / 14);
 			MyconPtr->growth_fract = (uint8_t)(((strength_loss % 14) << 8) / 14);
 			MyconPtr->growth_err_term = 255 >> 1;
 			if (EXTENDED)
 			{
-				HFLEETINFO hSyreen;
-				FLEET_INFO* SyreenPtr;
+				HFLEETINFO hSyreen {};
 
 				hSyreen = GetStarShipFromIndex(&GLOBAL(avail_race_q),
 											   SYREEN_SHIP);
-				SyreenPtr = LockFleetInfo(&GLOBAL(avail_race_q), hSyreen);
+				FLEET_INFO* SyreenPtr {LockFleetInfo(&GLOBAL(avail_race_q), hSyreen)};
 				if (SyreenPtr)
 				{
 					// The rest?... well we took care of most of them...
@@ -976,14 +940,10 @@ arilou_umgah_check(int arg)
 static int
 yehat_rebel_event(int arg)
 {
-	HFLEETINFO hRebel, hRoyalist;
-	FLEET_INFO* RebelPtr;
-	FLEET_INFO* RoyalistPtr;
-
-	hRebel = GetStarShipFromIndex(&GLOBAL(avail_race_q), YEHAT_REBEL_SHIP);
-	RebelPtr = LockFleetInfo(&GLOBAL(avail_race_q), hRebel);
-	hRoyalist = GetStarShipFromIndex(&GLOBAL(avail_race_q), YEHAT_SHIP);
-	RoyalistPtr = LockFleetInfo(&GLOBAL(avail_race_q), hRoyalist);
+	HFLEETINFO hRebel {GetStarShipFromIndex(&GLOBAL(avail_race_q), YEHAT_REBEL_SHIP)};
+	FLEET_INFO* RebelPtr {LockFleetInfo(&GLOBAL(avail_race_q), hRebel)};
+	HFLEETINFO hRoyalist {GetStarShipFromIndex(&GLOBAL(avail_race_q), YEHAT_SHIP)};
+	FLEET_INFO* RoyalistPtr {LockFleetInfo(&GLOBAL(avail_race_q), hRoyalist)};
 	RoyalistPtr->actual_strength = RoyalistPtr->actual_strength * 2 / 3;
 	RebelPtr->actual_strength = RoyalistPtr->actual_strength;
 	RebelPtr->loc = SeedFleetLocation(RebelPtr, plot_map, YEHAT_DEFINED);
@@ -1000,7 +960,7 @@ slylandro_ramp_up(int arg)
 {
 	if (!GET_GAME_STATE(DESTRUCT_CODE_ON_SHIP))
 	{
-		uint8_t ramp_factor;
+		uint8_t ramp_factor {};
 
 		ramp_factor = GET_GAME_STATE(SLYLANDRO_MULTIPLIER);
 		if (++ramp_factor <= 4)
@@ -1017,7 +977,7 @@ slylandro_ramp_up(int arg)
 static int
 slylandro_ramp_down(int arg)
 {
-	uint8_t ramp_factor;
+	uint8_t ramp_factor {};
 
 	ramp_factor = GET_GAME_STATE(SLYLANDRO_MULTIPLIER);
 	if (--ramp_factor)

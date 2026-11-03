@@ -62,15 +62,13 @@ const GenerateFunctions generateDruugeFunctions = {
 static bool
 GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	if (PrimeSeed)
 	{
-		uint16_t angle;
-
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
@@ -81,7 +79,7 @@ GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 		pPlanet->data_index = DUST_WORLD;
 		pPlanet->radius = EARTH_RADIUS * 50L / 100;
 		pPlanet->NumPlanets = 0;
-		angle = HALF_CIRCLE - OCTANT;
+		const uint16_t angle {HALF_CIRCLE - OCTANT};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		pPlanet->rand_seed =
@@ -108,8 +106,8 @@ GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& IsHomeworldKnown(DRUUGE_HOME))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),

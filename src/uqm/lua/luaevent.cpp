@@ -37,7 +37,7 @@
 
 lua_State* luaUqm_eventState = nullptr;
 
-static const luaL_Reg eventLibs[] = {
+const static luaL_Reg eventLibs[] = {
 	{"event", luaUqm_event_open},
 	{"log",	luaUqm_log_open  },
 	{"state", luaUqm_state_open},
@@ -48,9 +48,6 @@ static const luaL_Reg eventLibs[] = {
 bool luaUqm_event_init(const luaUqm_custom_Function* customFuncs,
 					   RESOURCE scriptRes)
 {
-	char* scriptFileName;
-	bool loadOk;
-
 	assert(luaUqm_eventState == nullptr);
 
 #ifdef EVENT_DEBUG
@@ -66,14 +63,14 @@ bool luaUqm_event_init(const luaUqm_custom_Function* customFuncs,
 	lua_pop(luaUqm_eventState, 1);
 
 	// Get the name of the script.
-	scriptFileName = LoadScriptInstance(scriptRes);
+	char* scriptFileName {LoadScriptInstance(scriptRes)};
 	if (scriptFileName == nullptr)
 	{
 		return false;
 	}
 
 	// Load the script.
-	loadOk = luaUqm_loadScript(luaUqm_eventState, uqm::contentDir(), scriptFileName);
+	const bool loadOk {luaUqm_loadScript(luaUqm_eventState, uqm::contentDir(), scriptFileName)};
 	ReleaseScriptResData(scriptFileName);
 	if (!loadOk)
 	{

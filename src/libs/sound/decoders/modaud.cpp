@@ -33,7 +33,7 @@
 
 #define THIS_PTR TFB_SoundDecoder* This
 
-static const char* moda_GetName(void);
+const static char* moda_GetName(void);
 static bool moda_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void moda_TermModule(void);
 static TFB_SoundDecoder* moda_Create(void);
@@ -175,7 +175,7 @@ static MDRIVER moda_mmout_drv =
 		VC_VoiceRealVolume};
 
 
-static const TFB_DecoderFormats* moda_formats = nullptr;
+const static TFB_DecoderFormats* moda_formats = nullptr;
 
 // MikMod READER interface
 //  we provide our own so that we can do loading via libs/io
@@ -239,7 +239,7 @@ moda_delete_ioReader(MREADER* reader)
 }
 
 
-static const char*
+const static char*
 moda_GetName(void)
 {
 	return "MikMod";
@@ -310,7 +310,7 @@ static int
 moda_GetError(THIS_PTR)
 {
 	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
-	int ret = moda->last_error;
+	const int ret = moda->last_error;
 	moda->last_error = 0;
 	return ret;
 }
@@ -335,18 +335,15 @@ static bool
 moda_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
-	uqgsl::owner<uqm::io::File*> fp {};
-	MREADER* reader;
-	MODULE* mod;
 
-	fp = res_NewResFile(dir, filename);
+	uqgsl::owner<uqm::io::File*> fp {res_NewResFile(dir, filename)};
 	if (!fp)
 	{
 		moda->last_error = errno;
 		return false;
 	}
 
-	reader = moda_new_ioReader(fp);
+	MREADER* reader {moda_new_ioReader(fp)};
 	if (!reader)
 	{
 		moda->last_error = -1;
@@ -354,7 +351,7 @@ moda_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 		return false;
 	}
 
-	mod = Player_LoadGeneric(reader, 8, 0);
+	MODULE* mod {Player_LoadGeneric(reader, 8, 0)};
 
 	// can already dispose of reader and fileh
 	moda_delete_ioReader(reader);
@@ -397,8 +394,8 @@ moda_Close(THIS_PTR)
 static int
 moda_Decode(THIS_PTR, void* buf, int32_t bufsize)
 {
-	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
-	volatile ULONG* poutsize;
+	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
+	const volatile ULONG* poutsize {};
 
 	Player_Start(moda->module);
 	if (!Player_Active())
@@ -415,7 +412,7 @@ moda_Decode(THIS_PTR, void* buf, int32_t bufsize)
 static uint32_t
 moda_Seek(THIS_PTR, uint32_t pcm_pos)
 {
-	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
+	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 
 	Player_Start(moda->module);
 	Player_SetPosition(pcm_pos);
@@ -426,6 +423,6 @@ moda_Seek(THIS_PTR, uint32_t pcm_pos)
 static uint32_t
 moda_GetFrame(THIS_PTR)
 {
-	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
+	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 	return moda->module->sngpos;
 }

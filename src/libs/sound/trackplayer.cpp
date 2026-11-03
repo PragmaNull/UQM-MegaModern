@@ -134,7 +134,7 @@ void PauseTrack(void)
 // ResumeTrack should resume a paused track, and do nothing for a playing track
 void ResumeTrack(void)
 {
-	audio_IntVal state;
+	audio_IntVal state {};
 
 	if (!sound_sample)
 	{
@@ -319,17 +319,16 @@ OnBufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
 static int
 GetTimeStamps(const char* TimeStamps, int32_t* time_stamps)
 {
-	int pos;
+	int pos {};
 	int num = 0;
 
 	while (*TimeStamps && (pos = strcspn(TimeStamps, ";,\r\n")))
 	{
 		char valStr[32];
-		uint32_t val;
 
 		memcpy(valStr, TimeStamps, pos);
 		valStr[pos] = '\0';
-		val = strtoul(valStr, nullptr, 10);
+		const uint32_t val {strtoul(valStr, nullptr, 10)};
 		if (val)
 		{
 			*time_stamps = val;
@@ -352,18 +351,17 @@ static int
 SplitSubPages(const char* text, uqstl::string pages[], int32_t timestamp[], int size)
 {
 	int lead_ellips = 0;
-	uint16_t page;
+	uint16_t page {};
 
 	for (page = 0; page < size && *text != '\0'; ++page)
 	{
-		int aft_ellips;
-		int pos;
+		int pos {};
 
 		// seek to EOL or end of the string
 		pos = strcspn(text, "\r\n");
 		// XXX: this will only work when ASCII punctuation and spaces
 		//   are used exclusively
-		aft_ellips = 3 * (text[pos] != '\0' && pos > 0 && !ispunct(text[pos - 1]) && !isspace(text[pos - 1]));
+		const int aft_ellips {3 * (text[pos] != '\0' && pos > 0 && !ispunct(text[pos - 1]) && !isspace(text[pos - 1]))};
 		pages[page].clear();
 		if (lead_ellips)
 		{
@@ -408,7 +406,7 @@ void SpliceMultiTrack(const char* const TrackNames[], const char* TrackText)
 #define MAX_MULTI_TRACKS 20
 #define MAX_MULTI_BUFFERS 100
 	TFB_SoundDecoder* track_decs[MAX_MULTI_TRACKS + 1];
-	int tracks;
+	int tracks {};
 
 	if (!TrackText)
 	{
@@ -469,8 +467,8 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 #define MAX_PAGES 50
 	uqstl::string pages[MAX_PAGES];
 	int32_t time_stamps[MAX_PAGES];
-	int num_pages;
-	int page;
+	int num_pages {};
+	int page {};
 
 	if (!TrackText)
 	{
@@ -643,7 +641,7 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 static void
 seek_track(int32_t offset)
 {
-	TFB_SoundChunk* cur;
+	TFB_SoundChunk* cur {};
 	TFB_SoundChunk* last_tag = nullptr;
 
 	if (!sound_sample)
@@ -719,8 +717,6 @@ get_current_track_pos(void) UQM_REQUIRES(soundSource[SPEECH_SOURCE].stream_mutex
 
 void FastReverse_Smooth(void)
 {
-	int32_t offset;
-
 	if (!sound_sample)
 	{
 		return; // nothing is playing, so.. bye!
@@ -728,7 +724,7 @@ void FastReverse_Smooth(void)
 
 	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 
-	offset = get_current_track_pos();
+	int32_t offset {get_current_track_pos()};
 	offset -= ACCEL_SCROLL_SPEED;
 	seek_track(offset);
 
@@ -742,8 +738,6 @@ void FastReverse_Smooth(void)
 
 void FastForward_Smooth(void)
 {
-	int32_t offset;
-
 	if (!sound_sample)
 	{
 		return; // nothing is playing, so.. bye!
@@ -751,7 +745,7 @@ void FastForward_Smooth(void)
 
 	soundSource[SPEECH_SOURCE].stream_mutex.lock();
 
-	offset = get_current_track_pos();
+	int32_t offset {get_current_track_pos()};
 	offset += ACCEL_SCROLL_SPEED;
 	seek_track(offset);
 
@@ -760,15 +754,13 @@ void FastForward_Smooth(void)
 
 void FastReverse_Page(void)
 {
-	TFB_SoundChunk* prev;
-
 	if (!sound_sample)
 	{
 		return; // nothing is playing, so.. bye!
 	}
 
 	soundSource[SPEECH_SOURCE].stream_mutex.lock();
-	prev = find_prev_page(cur_sub_chunk);
+	TFB_SoundChunk* prev {find_prev_page(cur_sub_chunk)};
 	if (prev)
 	{ // Set the chunk to be played
 		cur_chunk = prev;
@@ -781,15 +773,13 @@ void FastReverse_Page(void)
 
 void FastForward_Page(void)
 {
-	TFB_SoundChunk* next;
-
 	if (!sound_sample)
 	{
 		return; // nothing is playing, so.. bye!
 	}
 
 	soundSource[SPEECH_SOURCE].stream_mutex.lock();
-	next = find_next_page(cur_sub_chunk);
+	TFB_SoundChunk* next {find_next_page(cur_sub_chunk)};
 	if (next)
 	{ // Set the chunk to be played
 		cur_chunk = next;
@@ -809,8 +799,8 @@ void FastForward_Page(void)
 // This is normally called on the ambient_anim_task thread.
 int GetTrackPosition(int in_units)
 {
-	uint32_t offset;
-	uint32_t length = tracks_length;
+	uint32_t offset {};
+	const uint32_t length = tracks_length;
 	// detach from the static one, otherwise, we can race for
 	// it and thus divide by 0
 
@@ -867,7 +857,6 @@ find_next_page(TFB_SoundChunk* cur)
 TFB_SoundChunk*
 find_prev_page(TFB_SoundChunk* cur)
 {
-	TFB_SoundChunk* prev;
 	TFB_SoundChunk* last_valid = chunks_head;
 
 	if (cur == chunks_head)
@@ -875,7 +864,7 @@ find_prev_page(TFB_SoundChunk* cur)
 		return cur; // cannot go below the first track
 	}
 
-	for (prev = chunks_head; prev && prev != cur; prev = prev->next)
+	for (TFB_SoundChunk* prev {chunks_head}; prev && prev != cur; prev = prev->next)
 	{
 		if (prev->tag_me)
 		{
@@ -943,7 +932,6 @@ uint16_t
 GetSubtitleNumber(const char* sub)
 {
 	uint16_t i = 0;
-	TFB_SoundChunk* now;
 
 	if (sub == nullptr) // If no sub - get current one
 	{
@@ -955,7 +943,7 @@ GetSubtitleNumber(const char* sub)
 		return -1;
 	}
 
-	now = chunks_head;
+	TFB_SoundChunk* now {chunks_head};
 
 	while (GetTrackSubtitleText(now) != sub && now->next != nullptr)
 	{
@@ -970,14 +958,13 @@ uint16_t
 GetSubtitleNumberByTrack(uint16_t track)
 {
 	uint16_t i = 0;
-	TFB_SoundChunk* now;
 
 	if (chunks_head == nullptr) // Fool-proof
 	{
 		return i;
 	}
 
-	now = chunks_head;
+	const TFB_SoundChunk* now {chunks_head};
 
 	while (now->next != nullptr && now->track_num != track)
 	{
@@ -998,9 +985,9 @@ GetSubtitleNumberByTrack(uint16_t track)
 uint32_t
 RecalculateDelay(uint32_t numChars, bool talk)
 {
-	uint32_t silence_length;
+	uint32_t silence_length {};
 	uint32_t talk_length = GameTicksPerSecond * numChars / MODERATE_SPEED;
-	uint8_t read_speed = speed_array[uqm::globalFlags() & READ_SPEED_MASK];
+	const uint8_t read_speed = speed_array[uqm::globalFlags() & READ_SPEED_MASK];
 
 	if (read_speed)
 	{

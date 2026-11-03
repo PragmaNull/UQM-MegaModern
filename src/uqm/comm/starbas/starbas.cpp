@@ -211,15 +211,14 @@ static uint32_t CurBulletinMask;
 static uint16_t
 DoSellMinerals(void)
 {
-	uint16_t i;
 	uint16_t total = 0;
 	bool Sleepy = true;
 
 	FlushInput();
 
-	for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
+	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
 	{
-		uint16_t amount;
+		uint16_t amount {};
 		TimeCount TimeIn {};
 
 		if (i == 0)
@@ -885,15 +884,15 @@ DefeatUrquan(RESPONSE_REF R)
 static void
 AnalyzeCondition(void)
 {
-	uint8_t i;
-	uint8_t num_thrusters = 0,
-			num_jets = 0,
-			num_guns = 0,
-			num_bays = 0,
-			num_batts = 0,
-			num_track = 0,
-			num_defense = 0;
-	bool HasMinimum;
+	uint8_t i {};
+	uint8_t num_thrusters = 0;
+	uint8_t num_jets = 0;
+	uint8_t num_guns = 0;
+	uint8_t num_bays = 0;
+	uint8_t num_batts = 0;
+	uint8_t num_track = 0;
+	uint8_t num_defense = 0;
+	bool HasMinimum {};
 
 	for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
 	{
@@ -911,7 +910,7 @@ AnalyzeCondition(void)
 	}
 	for (i = 0; i < NUM_MODULE_SLOTS; ++i)
 	{
-		uint8_t which_piece;
+		uint8_t which_piece {};
 
 		switch (which_piece = GLOBAL_SIS(ModuleSlots[i]))
 		{
@@ -994,10 +993,9 @@ AnalyzeCondition(void)
 	else
 	{
 		uint8_t num_aliens = 0;
-		uint16_t FleetStrength;
-		bool HasMaximum;
+		bool HasMaximum {};
 
-		FleetStrength = CalculateEscortsWorth();
+		const uint16_t FleetStrength {CalculateEscortsWorth()};
 		for (i = 0; i < NUM_AVAILABLE_RACES; ++i)
 		{
 			if (i != HUMAN_SHIP && CheckAlliance((RACE_ID)i) == GOOD_GUY)
@@ -1383,22 +1381,19 @@ NeedInfo(RESPONSE_REF R)
 static bool
 DiscussDevices(bool TalkAbout)
 {
-	uint16_t i, VuxBeastIndex, PhraseIndex;
 	//bool Undiscussed; unused
 
 	if (TalkAbout)
 	{
 		NPCPhrase(DEVICE_HEAD);
 	}
-	PhraseIndex = 2;
+	uint16_t PhraseIndex {2};
 
-	VuxBeastIndex = 0;
+	uint16_t VuxBeastIndex {0};
 	//Undiscussed = false; unused
-	for (i = 0; i < NUM_DEVICES; ++i)
+	for (uint16_t i {0}; i < NUM_DEVICES; ++i)
 	{
-		RESPONSE_REF pStr;
-
-		pStr = 0;
+		RESPONSE_REF pStr {0};
 		switch (i)
 		{
 			case ROSY_SPHERE_DEVICE:
@@ -1665,8 +1660,8 @@ DiscussDevices(bool TalkAbout)
 static bool
 CheckTiming(uint16_t month_index, uint16_t day_index)
 {
-	uint16_t mi, year_index;
-	uint8_t days_in_month[12] =
+	uint16_t mi {};
+	const uint8_t days_in_month[12] =
 		{
 			31,
 			28,
@@ -1683,7 +1678,7 @@ CheckTiming(uint16_t month_index, uint16_t day_index)
 		};
 
 	mi = GET_GAME_STATE(STARBASE_MONTH);
-	year_index = START_YEAR;
+	uint16_t year_index {START_YEAR};
 
 	day_index += GET_GAME_STATE(STARBASE_DAY);
 	while (day_index > days_in_month[mi - 1])
@@ -1710,10 +1705,8 @@ CheckTiming(uint16_t month_index, uint16_t day_index)
 static void
 CheckBulletins(bool Repeat)
 {
-	RESPONSE_REF pIntro;
-	uint8_t b0;
-	uint32_t BulletinMask;
-	uint16_t CrewSold = uqm::makeWord(
+	uint32_t BulletinMask {};
+	const uint16_t CrewSold = uqm::makeWord(
 		GET_GAME_STATE(CREW_SOLD_TO_DRUUGE0),
 		GET_GAME_STATE(CREW_SOLD_TO_DRUUGE1));
 
@@ -1726,14 +1719,12 @@ CheckBulletins(bool Repeat)
 		BulletinMask = GET_GAME_STATE(STARBASE_BULLETS);
 	}
 
-	pIntro = 0;
-	for (b0 = 0; b0 < 32; ++b0)
+	RESPONSE_REF pIntro {0};
+	for (uint8_t b0 {0}; b0 < 32; ++b0)
 	{
 		if (!(BulletinMask & (1L << b0)))
 		{
-			RESPONSE_REF pStr;
-
-			pStr = 0;
+			RESPONSE_REF pStr {0};
 			switch (b0)
 			{
 				case 0:
@@ -1897,7 +1888,7 @@ CheckBulletins(bool Repeat)
 					break;
 				case 26:
 					{
-						uint16_t crew_sold = CrewSold;
+						const uint16_t crew_sold = CrewSold;
 
 						if (crew_sold > MIN_SOLD)
 						{
@@ -1911,7 +1902,7 @@ CheckBulletins(bool Repeat)
 					}
 				case 27:
 					{
-						uint16_t crew_sold = CrewSold;
+						const uint16_t crew_sold = CrewSold;
 
 						if (crew_sold > MAX_SOLD)
 						{
@@ -1925,7 +1916,7 @@ CheckBulletins(bool Repeat)
 					}
 				case 28:
 					{
-						uint16_t crew_bought;
+						uint16_t crew_bought {};
 
 						crew_bought = uqm::makeWord(
 							GET_GAME_STATE(CREW_PURCHASED0),
@@ -2113,13 +2104,13 @@ SellMinerals(RESPONSE_REF R)
 	}
 	else
 	{
-		uint16_t amount[NUM_ELEMENT_CATEGORIES], Ru[NUM_ELEMENT_CATEGORIES];
-		uint16_t i, sseg;
+		uint16_t amount[NUM_ELEMENT_CATEGORIES];
+		uint16_t Ru[NUM_ELEMENT_CATEGORIES];
 		uint16_t seg = 0;
 		uint16_t count = 0;
 
 		NPCPhrase(CARGO_LIST);
-		for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
+		for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
 		{
 			if ((amount[seg] = GLOBAL_SIS(ElementAmounts[i])) != 0)
 			{
@@ -2153,7 +2144,7 @@ SellMinerals(RESPONSE_REF R)
 			NPCPhrase(LIGHT_LOAD_C1);
 		}
 
-		for (sseg = 1; sseg < seg + 1; sseg++)
+		for (uint16_t sseg {1}; sseg < seg + 1; sseg++)
 		{
 			AlienTalkSegue(sseg);
 			GLOBAL_SIS(TotalElementMass) -= amount[sseg - 1];
@@ -2196,8 +2187,6 @@ post_starbase_enc(void)
 LOCDATA*
 init_starbase_comm()
 {
-	LOCDATA* retval;
-
 	commander_desc.init_encounter_func = Intro;
 	commander_desc.post_encounter_func = post_starbase_enc;
 	commander_desc.uninit_encounter_func = uninit_starbase;
@@ -2221,7 +2210,7 @@ init_starbase_comm()
 
 	CurBulletinMask = 0;
 	setSegue(Segue_peace);
-	retval = &commander_desc;
+	LOCDATA* retval {&commander_desc};
 
 	return (retval);
 }

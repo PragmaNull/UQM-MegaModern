@@ -102,10 +102,8 @@ CallbackLink_delete(CallbackLink* link)
 static CallbackLink**
 CallbackLink_find(CallbackLink* link) UQM_REQUIRES(callbackListLock)
 {
-	CallbackLink** ptr;
-
 	//assert(CallbackList_isLocked());
-	for (ptr = &callbacks; *ptr != nullptr; ptr = &(*ptr)->next)
+	for (CallbackLink** ptr {&callbacks}; *ptr != nullptr; ptr = &(*ptr)->next)
 	{
 		if (*ptr == link)
 		{
@@ -118,11 +116,10 @@ CallbackLink_find(CallbackLink* link) UQM_REQUIRES(callbackListLock)
 bool Callback_remove(CallbackID id)
 {
 	CallbackLink* link = (CallbackLink*)id;
-	CallbackLink** linkPtr;
 
 	CallbackList_lock();
 
-	linkPtr = CallbackLink_find(link);
+	CallbackLink** linkPtr {CallbackLink_find(link)};
 	if (linkPtr == nullptr)
 	{
 		CallbackList_unlock();
@@ -162,7 +159,7 @@ CallbackLink_doCallback(CallbackLink* link)
 //     callback function called by Callback_process() itself.
 void Callback_process(void)
 {
-	CallbackLink* link;
+	CallbackLink* link {};
 
 	// We set 'callbacksProcessEnd' to callbacksEnd. Callbacks added
 	// from inside a callback function will be placed after
@@ -201,10 +198,8 @@ void Callback_process(void)
 
 bool Callback_haveMore(void)
 {
-	bool result;
-
 	CallbackList_lock();
-	result = (callbacks != nullptr);
+	const bool result {(callbacks != nullptr)};
 	CallbackList_unlock();
 
 	return result;

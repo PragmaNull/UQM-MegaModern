@@ -183,7 +183,7 @@ CombatIsInevitable(RESPONSE_REF R)
 			 || PLAYER_SAID(R, whats_up_3)
 			 || PLAYER_SAID(R, whats_up_4))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(URQUAN_INFO);
 		switch (NumVisits++)
@@ -492,8 +492,6 @@ LoserUrquan(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint32_t GrpOffs;
-
 	if (EXTENDED)
 	{
 		CommData.AlienAmbientArray[7].AnimFlags &= ~ANIM_DISABLED;
@@ -508,7 +506,7 @@ Intro(void)
 		return;
 	}
 
-	GrpOffs = GET_GAME_STATE(URQUAN_PROBE_GRPOFFS);
+	uint32_t GrpOffs {GET_GAME_STATE(URQUAN_PROBE_GRPOFFS)};
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		&& GLOBAL(BattleGroupRef)
 		&& GLOBAL(BattleGroupRef) == GrpOffs)
@@ -523,7 +521,7 @@ Intro(void)
 	}
 	else
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		if (!GET_GAME_STATE(URQUAN_SENSES_EVIL)
 			&& GET_GAME_STATE(TALKING_PET_ON_SHIP))
@@ -616,10 +614,6 @@ post_urquan_enc(void)
 LOCDATA*
 init_urquan_comm(void)
 {
-	LOCDATA* retval;
-
-	uint32_t GrpOffs;
-
 	urquan_desc.init_encounter_func = Intro;
 	urquan_desc.post_encounter_func = post_urquan_enc;
 	urquan_desc.uninit_encounter_func = uninit_urquan;
@@ -630,7 +624,7 @@ init_urquan_comm(void)
 	urquan_desc.AlienTextBaseline.y = 0;
 	urquan_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
-	GrpOffs = GET_GAME_STATE(URQUAN_PROBE_GRPOFFS);
+	const uint32_t GrpOffs {GET_GAME_STATE(URQUAN_PROBE_GRPOFFS)};
 
 	// use alternate "Probe" track if available
 	if ((uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
@@ -657,7 +651,7 @@ init_urquan_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &urquan_desc;
+	LOCDATA* retval {&urquan_desc};
 
 	return (retval);
 }

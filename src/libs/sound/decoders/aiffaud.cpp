@@ -107,7 +107,7 @@ typedef struct
 
 #define THIS_PTR TFB_SoundDecoder* This
 
-static const char* aifa_GetName(void);
+const static char* aifa_GetName(void);
 static bool aifa_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void aifa_TermModule(void);
 static TFB_SoundDecoder* aifa_Create(void);
@@ -168,13 +168,13 @@ typedef struct tfb_wavesounddecoder
 
 } TFB_AiffSoundDecoder;
 
-static const TFB_DecoderFormats* aifa_formats = nullptr;
+const static TFB_DecoderFormats* aifa_formats = nullptr;
 
 static int aifa_DecodePCM(TFB_AiffSoundDecoder*, void* buf, int32_t bufsize);
 static int aifa_DecodeSDX2(TFB_AiffSoundDecoder*, void* buf, int32_t bufsize);
 
 
-static const char*
+const static char*
 aifa_GetName(void)
 {
 	return "AIFF";
@@ -211,7 +211,7 @@ static int
 aifa_GetError(THIS_PTR)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
-	int ret = aifa->last_error;
+	const int ret = aifa->last_error;
 	aifa->last_error = 0;
 	return ret;
 }
@@ -259,10 +259,12 @@ read_be_32(uqm::io::File* fp, uint32_t* v)
 static bool
 read_be_f80(uqm::io::File* fp, int32_t* v)
 {
-	int sign, exp;
-	int shift;
-	uint16_t se;
-	uint32_t mant, mant_low;
+	int sign {};
+	int exp {};
+	int shift {};
+	uint16_t se {};
+	uint32_t mant {};
+	uint32_t mant_low {};
 	if (!read_be_16(fp, &se) || !read_be_32(fp, &mant) || !read_be_32(fp, &mant_low))
 	{
 		return false;
@@ -319,8 +321,6 @@ static int
 aifa_readCommonChunk(TFB_AiffSoundDecoder* aifa, uint32_t size,
 					 aiff_ExtCommonChunk* fmt)
 {
-	int bytes;
-
 	memset(fmt, 0, sizeof(*fmt));
 	if (size < AIFF_COMM_SIZE)
 	{
@@ -333,7 +333,7 @@ aifa_readCommonChunk(TFB_AiffSoundDecoder* aifa, uint32_t size,
 		aifa->last_error = errno;
 		return 0;
 	}
-	bytes = AIFF_COMM_SIZE;
+	int bytes {AIFF_COMM_SIZE};
 
 	if (size >= AIFF_EXT_COMM_SIZE)
 	{
@@ -366,7 +366,7 @@ aifa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 	aiff_FileHeader fileHdr;
 	aiff_ChunkHeader chunkHdr;
-	int32_t remSize;
+	int32_t remSize {};
 
 	aifa->fp = res_NewResFile(dir, filename);
 	if (!aifa->fp)
@@ -415,7 +415,7 @@ aifa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 
 		if (chunkHdr.id == aiff_CommonID)
 		{
-			int read = aifa_readCommonChunk(aifa, chunkHdr.size, &aifa->fmtHdr);
+			const int read = aifa_readCommonChunk(aifa, chunkHdr.size, &aifa->fmtHdr);
 			if (!read)
 			{
 				aifa_Close(This);
@@ -574,10 +574,7 @@ aifa_Decode(THIS_PTR, void* buf, int32_t bufsize)
 static int
 aifa_DecodePCM(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
 {
-	uint32_t dec_pcm;
-	uint32_t size;
-
-	dec_pcm = bufsize / aifa->block_align;
+	uint32_t dec_pcm {bufsize / aifa->block_align};
 	if (dec_pcm > aifa->max_pcm - aifa->cur_pcm)
 	{
 		dec_pcm = aifa->max_pcm - aifa->cur_pcm;
@@ -585,14 +582,13 @@ aifa_DecodePCM(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
 
 	dec_pcm = static_cast<decltype(dec_pcm)>(aifa->fp->read(uqm::io::asBytes(buf, aifa->file_block * dec_pcm)) / aifa->file_block);
 	aifa->cur_pcm += dec_pcm;
-	size = dec_pcm * aifa->block_align;
+	const uint32_t size {dec_pcm * aifa->block_align};
 
 	if (aifa->bits_per_sample == 8)
 	{ // AIFF files store 8-bit data as signed
 		// and we need it unsigned
 		uint8_t* ptr = (uint8_t*)buf;
-		uint32_t left;
-		for (left = size; left > 0; --left, ++ptr)
+		for (uint32_t left {size}; left > 0; --left, ++ptr)
 		{
 			*ptr += 128;
 		}
@@ -604,26 +600,22 @@ aifa_DecodePCM(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
 static int
 aifa_DecodeSDX2(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
 {
-	uint32_t dec_pcm;
-	int8_t* src;
 	int16_t* dst = (int16_t*)buf;
-	uint32_t left;
 
-	dec_pcm = bufsize / aifa->block_align;
+	uint32_t dec_pcm {bufsize / aifa->block_align};
 	if (dec_pcm > aifa->max_pcm - aifa->cur_pcm)
 	{
 		dec_pcm = aifa->max_pcm - aifa->cur_pcm;
 	}
 
-	src = (int8_t*)buf + bufsize - (dec_pcm * aifa->file_block);
+	int8_t* src {(int8_t*)buf + bufsize - (dec_pcm * aifa->file_block)};
 	dec_pcm = static_cast<decltype(dec_pcm)>(aifa->fp->read(uqm::io::asBytes(src, aifa->file_block * dec_pcm)) / aifa->file_block);
 	aifa->cur_pcm += dec_pcm;
 
-	for (left = dec_pcm; left > 0; --left)
+	for (uint32_t left {dec_pcm}; left > 0; --left)
 	{
-		int i;
 		int32_t* prev = aifa->prev_val;
-		for (i = aifa->fmtHdr.channels; i > 0; --i, ++prev, ++src, ++dst)
+		for (int i {aifa->fmtHdr.channels}; i > 0; --i, ++prev, ++src, ++dst)
 		{
 			int32_t v = (*src * abs(*src)) << 1;
 			if (*src & 1)

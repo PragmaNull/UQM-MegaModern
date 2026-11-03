@@ -31,7 +31,7 @@
 BATTLE_INPUT_STATE
 computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 {
-	BATTLE_INPUT_STATE InputState;
+	BATTLE_INPUT_STATE InputState {};
 
 	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 	{

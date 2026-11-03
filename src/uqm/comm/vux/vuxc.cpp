@@ -323,7 +323,7 @@ ZexBeingEatenAlive(void)
 static void
 CombatIsInevitable(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	setSegue(Segue_hostile);
 
@@ -455,7 +455,8 @@ CombatIsInevitable(RESPONSE_REF R)
 static void
 Menagerie(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
+	uint8_t i {};
+	uint8_t LastStack {};
 	RESPONSE_REF pStr[3];
 
 	if (PLAYER_SAID(R, i_have_beast)
@@ -520,7 +521,7 @@ Menagerie(RESPONSE_REF R)
 		pStr[0] = pStr[1] = pStr[2] = 0;
 		if (R == 0)
 		{
-			uint8_t NumVisits;
+			uint8_t NumVisits {};
 
 			NumVisits = GET_GAME_STATE(ZEX_VISITS);
 			if (GET_GAME_STATE(ZEX_STACK_3) >= 2)
@@ -712,7 +713,7 @@ NormalVux(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, whats_up_hostile))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(VUX_INFO);
 		switch (NumVisits++)
@@ -847,7 +848,7 @@ Intro(void)
 	}
 	else
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
@@ -914,8 +915,6 @@ post_vux_enc(void)
 LOCDATA*
 init_vux_comm(void)
 {
-	LOCDATA* retval;
-
 	vux_desc.init_encounter_func = Intro;
 	vux_desc.post_encounter_func = post_vux_enc;
 	vux_desc.uninit_encounter_func = uninit_vux;
@@ -948,7 +947,7 @@ init_vux_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &vux_desc;
+	LOCDATA* retval {&vux_desc};
 
 	return (retval);
 }

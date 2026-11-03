@@ -33,7 +33,7 @@
 #include "luafuncs/statefuncs.h"
 #include "core/log/log.h"
 
-static const luaL_Reg initLibs[] = {
+const static luaL_Reg initLibs[] = {
 	{"event", luaUqm_event_open},
 	{"log",	luaUqm_log_open  },
 	{"state", luaUqm_state_open},
@@ -42,15 +42,13 @@ static const luaL_Reg initLibs[] = {
 
 void luaUqm_runInitScripts(void)
 {
-	const char* scriptDir;
-
 	// Set up an environment and run the init scripts in this environment.
 	// Note that the environment will not be used after this; when a script
 	// is run for eg. communication, a new environment will be set up.
 	luaUqm_prepareEnvironment(luaUqm_globalState);
 	luaUqm_loadLibs(luaUqm_globalState, initLibs);
 
-	scriptDir = res_GetString(SCRIPT_DIR_INITGAME);
+	const char* scriptDir {res_GetString(SCRIPT_DIR_INITGAME)};
 	if (scriptDir == nullptr)
 	{
 		uqm::log::warn("Location of game initialisation scripts ('{}')"

@@ -63,9 +63,7 @@ NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
 				   NetConnection_ErrorCallback errorCallback,
 				   NetConnection_DeleteCallback deleteCallback, void* extra)
 {
-	NetConnection* conn;
-
-	conn = new NetConnection {};
+	NetConnection* conn {new NetConnection {}};
 
 #if defined(NETPLAY_DEBUG) && defined(NETPLAY_DEBUG_FILE)
 	{
@@ -153,11 +151,9 @@ NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
 
 #ifdef NETPLAY_STATISTICS
 	{
-		size_t i;
-
 		conn->statistics.packetsReceived = 0;
 		conn->statistics.packetsSent = 0;
-		for (i = 0; i < PACKET_NUM; i++)
+		for (size_t i {0}; i < PACKET_NUM; i++)
 		{
 			conn->statistics.packetTypeReceived[i] = 0;
 			conn->statistics.packetTypeSent[i] = 0;

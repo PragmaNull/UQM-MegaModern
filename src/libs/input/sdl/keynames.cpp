@@ -168,7 +168,7 @@ VControl_code2name(int code)
 	int i = 0;
 	while (1)
 	{
-		int test = keynames[i].code;
+		const int test = keynames[i].code;
 		if (test == code || !test)
 		{
 			return keynames[i].name;
@@ -183,7 +183,7 @@ int VControl_name2code(const char* name)
 	while (1)
 	{
 		const char* test = keynames[i].name;
-		int code = keynames[i].code;
+		const int code = keynames[i].code;
 		if (!strcasecmp(test, name) || !code)
 		{
 			return code;

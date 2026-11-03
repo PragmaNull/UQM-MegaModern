@@ -74,7 +74,8 @@ int TFB_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char* ren
 					 int width, int height, unsigned int* resFactor,
 					 unsigned int* windowType)
 {
-	int result, i;
+	int result {};
+	int i {};
 
 
 	/* Null out screen pointers the first time */
@@ -104,11 +105,9 @@ int TFB_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char* ren
 
 void TFB_UninitGraphics(void)
 {
-	int i;
-
 	Uninit_DrawCommandQueue();
 
-	for (i = 0; i < TFB_GFX_NUMSCREENS; i++)
+	for (int i {0}; i < TFB_GFX_NUMSCREENS; i++)
 	{
 		UnInit_Screen(&SDL_Screens[i]);
 	}
@@ -186,9 +185,11 @@ void ClearSystemRect(void)
 
 void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 {
-	static int last_fade_amount = 255, last_transition_amount = 255;
-	static int fade_amount = 255, transition_amount = 255;
-	Uint8 sfx;
+	static int last_fade_amount = 255;
+	static int last_transition_amount = 255;
+	static int fade_amount = 255;
+	static int transition_amount = 255;
+	Uint8 sfx {};
 
 	fade_amount = GetFadeAmount();
 	transition_amount = TransitionAmount;
@@ -277,8 +278,6 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 SDL_Surface*
 TFB_DisplayFormatAlpha(SDL_Surface* surface)
 {
-	SDL_Surface* newsurf;
-
 	// figure out what format to use (alpha/no alpha)
 	const SDL_PixelFormat dstformat {SDL_GetPixelFormatDetails(surface->format)->Amask ? format_conv_surf->format : SDL_Screen->format};
 
@@ -287,7 +286,7 @@ TFB_DisplayFormatAlpha(SDL_Surface* surface)
 		return surface; // no conversion needed
 	}
 
-	newsurf = SDL_ConvertSurface(surface, dstformat);
+	SDL_Surface* newsurf {SDL_ConvertSurface(surface, dstformat)};
 	// Colorkeys and surface-level alphas cannot work at the same time,
 	// so we need to disable one of them
 	if (TFB_HasColorKey(surface) && newsurf && TFB_HasColorKey(newsurf) && TFB_HasSurfaceAlphaMod(newsurf))
@@ -315,13 +314,29 @@ TFB_GetFPSCanvas(void)
 void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 					 SDL_Rect* dstrect, int blend_numer, int blend_denom)
 {
-	bool has_colorkey;
-	int x, y, x1, y1, x2, y2, dst_x2, dst_y2, nr, ng, nb;
-	int srcx, srcy, w, h;
-	Uint8 sr, sg, sb, dr, dg, db;
-	Uint32 src_pixval, dst_pixval, colorkey;
-	GetPixelFn src_getpix, dst_getpix;
-	PutPixelFn putpix;
+	bool has_colorkey {};
+	int x {};
+	int y {};
+	int dst_x2 {};
+	int dst_y2 {};
+	int nr {};
+	int ng {};
+	int nb {};
+	int srcx {};
+	int srcy {};
+	int w {};
+	int h {};
+	Uint8 sr {};
+	Uint8 sg {};
+	Uint8 sb {};
+	Uint8 dr {};
+	Uint8 dg {};
+	Uint8 db {};
+	Uint32 src_pixval {};
+	Uint32 dst_pixval {};
+	Uint32 colorkey {};
+	GetPixelFn src_getpix {}, dst_getpix {};
+	PutPixelFn putpix {};
 	SDL_Rect fulldst;
 
 	if (blend_numer == blend_denom)
@@ -345,8 +360,6 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 	// clip the source rectangle to the source surface
 	if (srcrect)
 	{
-		int maxw, maxh;
-
 		srcx = srcrect->x;
 		w = srcrect->w;
 		if (srcx < 0)
@@ -355,7 +368,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 			dstrect->x -= srcx;
 			srcx = 0;
 		}
-		maxw = src->w - srcx;
+		const int maxw {src->w - srcx};
 		if (maxw < w)
 		{
 			w = maxw;
@@ -369,7 +382,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 			dstrect->y -= srcy;
 			srcy = 0;
 		}
-		maxh = src->h - srcy;
+		const int maxh {src->h - srcy};
 		if (maxh < h)
 		{
 			h = maxh;
@@ -387,10 +400,9 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 	{
 		SDL_Rect clipRect;
 		SDL_GetSurfaceClipRect(dst, &clipRect);
-		SDL_Rect* clip = &clipRect;
-		int dx, dy;
+		const SDL_Rect* clip = &clipRect;
 
-		dx = clip->x - dstrect->x;
+		int dx {clip->x - dstrect->x};
 		if (dx > 0)
 		{
 			w -= dx;
@@ -403,7 +415,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 			w -= dx;
 		}
 
-		dy = clip->y - dstrect->y;
+		int dy {clip->y - dstrect->y};
 		if (dy > 0)
 		{
 			h -= dy;
@@ -425,10 +437,10 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 		return;
 	}
 
-	x1 = srcx;
-	y1 = srcy;
-	x2 = srcx + w;
-	y2 = srcy + h;
+	const int x1 {srcx};
+	const int y1 {srcy};
+	const int x2 {srcx + w};
+	const int y2 {srcy + h};
 
 	if (TFB_GetColorKey(src, &colorkey) < 0)
 	{
@@ -545,7 +557,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 	{
 		// modulated blit: dst = src * (blend_numer / blend_denom)
 
-		float f = blend_numer / (float)blend_denom;
+		const float f = blend_numer / (float)blend_denom;
 #if 0
 		log_add (log_Debug, "modulated blit {} {}, f {}, src {} {} {} {}"
 				" dst {} {}, srcbpp {}\n", blend_numer, blend_denom, f,
@@ -611,7 +623,7 @@ void TFB_UploadTransitionScreen(GFXRECT* pRect)
 
 int TFB_HasColorKey(SDL_Surface* surface)
 {
-	Uint32 key;
+	Uint32 key {};
 	return TFB_GetColorKey(surface, &key) == 0;
 }
 
@@ -702,7 +714,7 @@ TFB_PreQuit(void)
 int TFB_ReInitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, int width, int height,
 					   unsigned int* resFactor, unsigned int* windowType)
 {
-	int result;
+	int result {};
 	int togglefullscreen = 0;
 
 	if (!testAnyFlag(g_gfxFlags, uqm::GfxFlagsFullscreen)
@@ -735,7 +747,7 @@ bool TFB_SetGamma(float gamma)
 
 int TFB_HasSurfaceAlphaMod(SDL_Surface* surface)
 {
-	SDL_BlendMode blend_mode;
+	SDL_BlendMode blend_mode {};
 	if (!surface)
 	{
 		return 0;
@@ -749,7 +761,7 @@ int TFB_HasSurfaceAlphaMod(SDL_Surface* surface)
 
 int TFB_GetSurfaceAlphaMod(SDL_Surface* surface, Uint8* alpha)
 {
-	SDL_BlendMode blend_mode;
+	SDL_BlendMode blend_mode {};
 	if (!surface || !alpha)
 	{
 		return -1;

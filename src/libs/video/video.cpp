@@ -175,16 +175,13 @@ VidPlay(VIDEO_REF VidRef)
 VIDEO_REF
 _init_video_file(const char* pStr)
 {
-	TFB_VideoClip* vid;
-	TFB_VideoDecoder* dec;
-
-	dec = VideoDecoder_Load(uqm::contentDir(), pStr);
+	TFB_VideoDecoder* dec {VideoDecoder_Load(uqm::contentDir(), pStr)};
 	if (!dec)
 	{
 		return NULL_VIDEO_REF;
 	}
 
-	vid = new TFB_VideoClip {};
+	TFB_VideoClip* vid {new TFB_VideoClip {}};
 	vid->decoder = dec;
 	vid->length = dec->length;
 	vid->w = vid->decoder->w - IF_HD(4);

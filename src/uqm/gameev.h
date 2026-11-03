@@ -56,7 +56,7 @@ typedef enum
 } ARILOU_GATE_STATE;
 
 extern int eventIdStrToNum(const char* eventIdStr);
-extern const char* eventIdNumToStr(int eventNum);
+const extern char* eventIdNumToStr(int eventNum);
 
 extern void initEventSystem(void);
 extern void uninitEventSystem(void);

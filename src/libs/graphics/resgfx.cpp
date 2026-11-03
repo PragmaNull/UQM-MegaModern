@@ -47,9 +47,7 @@ bool InstallGraphicResTypes(void)
 /* Needs to be void * because it could be either a DRAWABLE or a FONT. */
 void* LoadGraphicInstance(RESOURCE res)
 {
-	void* hData;
-
-	hData = res_GetResource(res);
+	void* hData {res_GetResource(res)};
 	if (hData)
 	{
 		res_DetachResource(res);

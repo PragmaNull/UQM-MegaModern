@@ -31,9 +31,7 @@ TFB_SoundSource soundSource[NUM_SOUNDSOURCES];
 
 void StopSound(void)
 {
-	int i;
-
-	for (i = FIRST_SFX_SOURCE; i <= LAST_SFX_SOURCE; ++i)
+	for (int i {FIRST_SFX_SOURCE}; i <= LAST_SFX_SOURCE; ++i)
 	{
 		StopSource(i);
 	}
@@ -41,7 +39,7 @@ void StopSound(void)
 
 void CleanSource(int iSource)
 {
-	audio_IntVal processed;
+	audio_IntVal processed {};
 
 	soundSource[iSource].positional_object = nullptr;
 	audio_GetSourcei(soundSource[iSource].handle,
@@ -64,17 +62,14 @@ void StopSource(int iSource)
 
 bool SoundPlaying(void)
 {
-	int i;
-
-	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 	{
-		TFB_SoundSample* sample;
+		const TFB_SoundSample* sample {};
 		sample = soundSource[i].sample;
 		if (sample && sample->decoder)
 		{
-			bool result;
 			soundSource[i].stream_mutex.lock();
-			result = PlayingStream(i);
+			const bool result {PlayingStream(i)};
 			soundSource[i].stream_mutex.unlock();
 			if (result)
 			{
@@ -83,7 +78,7 @@ bool SoundPlaying(void)
 		}
 		else
 		{
-			audio_IntVal state;
+			audio_IntVal state {};
 			audio_GetSourcei(soundSource[i].handle, audio_SOURCE_STATE, &state);
 			if (state == audio_PLAYING)
 			{
@@ -128,8 +123,7 @@ void UninitSound(void)
 
 void SetSFXVolume(float volume)
 {
-	int i;
-	for (i = FIRST_SFX_SOURCE; i <= LAST_SFX_SOURCE; ++i)
+	for (int i {FIRST_SFX_SOURCE}; i <= LAST_SFX_SOURCE; ++i)
 	{
 		audio_Sourcef(soundSource[i].handle, audio_GAIN, volume);
 	}

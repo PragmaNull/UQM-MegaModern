@@ -104,12 +104,10 @@ int PutResFileChar(char ch, uqm::io::File& fp)
 
 int PutResFileNewline(uqm::io::File& fp)
 {
-	int retval;
-
 #ifdef WIN32
 	PutResFileChar('\r', fp);
 #endif
-	retval = PutResFileChar('\n', fp);
+	const int retval {PutResFileChar('\n', fp)};
 	return (retval);
 }
 

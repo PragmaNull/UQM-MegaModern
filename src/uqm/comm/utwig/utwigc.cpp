@@ -385,7 +385,8 @@ static void AlliedHome(RESPONSE_REF R);
 static void
 AlliedHome(RESPONSE_REF R)
 {
-	uint8_t NumVisits, News;
+	uint8_t NumVisits {};
+	uint8_t News {};
 
 	News = GET_GAME_STATE(UTWIG_WAR_NEWS);
 	NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
@@ -491,7 +492,7 @@ AlliedHome(RESPONSE_REF R)
 static void
 BeforeKohrAh(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, whats_up_before_space))
 	{
@@ -531,7 +532,7 @@ BeforeKohrAh(RESPONSE_REF R)
 static void
 AfterKohrAh(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, whats_up_after_space))
 	{
@@ -571,10 +572,10 @@ AfterKohrAh(RESPONSE_REF R)
 static void
 NeutralUtwig(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
+	uint8_t i {};
 	RESPONSE_REF pStr[4];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
 	if (PLAYER_SAID(R, we_are_vindicator))
 	{
@@ -709,10 +710,9 @@ NeutralUtwig(RESPONSE_REF R)
 static void
 BombWorld(RESPONSE_REF R)
 {
-	uint8_t LastStack;
 	RESPONSE_REF pStr[2];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = 0;
 	if (PLAYER_SAID(R, why_you_here))
 	{
@@ -834,7 +834,7 @@ BombWorld(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -1057,8 +1057,6 @@ post_utwig_enc(void)
 LOCDATA*
 init_utwig_comm(void)
 {
-	LOCDATA* retval;
-
 	utwig_desc.init_encounter_func = Intro;
 	utwig_desc.post_encounter_func = post_utwig_enc;
 	utwig_desc.uninit_encounter_func = uninit_utwig;
@@ -1087,7 +1085,7 @@ init_utwig_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &utwig_desc;
+	LOCDATA* retval {&utwig_desc};
 
 	return (retval);
 }

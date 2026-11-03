@@ -303,7 +303,7 @@ ExitConversation(RESPONSE_REF R)
 
 		if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK) && isDifficulty(uqm::Difficulty::Hard))
 		{ // absorbed before revolution
-			uint16_t state;
+			uint16_t state {};
 
 			state = GET_GAME_STATE(HM_ENCOUNTERS);
 
@@ -321,7 +321,7 @@ Royalists(RESPONSE_REF R)
 {
 	if (PLAYER_SAID(R, how_is_rebellion))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(YEHAT_ROYALIST_INFO);
 		switch (NumVisits++)
@@ -408,7 +408,7 @@ YehatHome(RESPONSE_REF R)
 
 	if (PLAYER_SAID(R, whats_up_homeworld))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(YEHAT_ROYALIST_INFO);
 		switch (NumVisits++)
@@ -479,17 +479,17 @@ YehatHome(RESPONSE_REF R)
 static void
 YehatSpace(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
+	uint8_t i {};
 	RESPONSE_REF pStr[3];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
 	if (PLAYER_SAID(R, whats_up_space_1)
 		|| PLAYER_SAID(R, whats_up_space_2)
 		|| PLAYER_SAID(R, whats_up_space_3)
 		|| PLAYER_SAID(R, whats_up_space_4))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(YEHAT_REBEL_INFO);
 		switch (NumVisits++)
@@ -631,7 +631,7 @@ YehatSpace(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -734,8 +734,6 @@ post_yehat_enc(void)
 LOCDATA*
 init_yehat_comm(void)
 {
-	LOCDATA* retval;
-
 	yehat_desc.init_encounter_func = Intro;
 	yehat_desc.post_encounter_func = post_yehat_enc;
 	yehat_desc.uninit_encounter_func = uninit_yehat;
@@ -756,7 +754,7 @@ init_yehat_comm(void)
 	{
 		setSegue(Segue_peace);
 	}
-	retval = &yehat_desc;
+	LOCDATA* retval {&yehat_desc};
 
 	return (retval);
 }

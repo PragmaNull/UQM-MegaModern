@@ -90,7 +90,7 @@ const uqm::io::Directory& gameDirectory(const uqstl::optional<uqm::io::Directory
 
 const uqm::io::Matcher& packageMatcher()
 {
-	static const uqm::io::Matcher matcher {*uqm::io::Matcher::create(uqm::io::Matcher::Kind::Regex, "\\.([zZ][iI][pP]|[uU][qQ][mM])$")};
+	const static uqm::io::Matcher matcher {*uqm::io::Matcher::create(uqm::io::Matcher::Kind::Regex, "\\.([zZ][iI][pP]|[uU][qQ][mM])$")};
 	return matcher;
 }
 } // namespace
@@ -140,7 +140,7 @@ const uqm::io::Directory& scrShotDir()
 }
 
 
-static const char* findFileInDirs(const char* locs[], int numLocs,
+const static char* findFileInDirs(const char* locs[], int numLocs,
 								  const char* file);
 static void mountContentDir(const char* contentPath);
 static void mountAddonDir(uqgsl::czstring addonDirName);
@@ -153,23 +153,17 @@ static void mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, 
 // errno will be set to 'ENOENT'.
 // Entries from 'locs' that together with 'file' are longer than
 // PATH_MAX will be ignored, except for a warning given to stderr.
-static const char* findFileInDirs(const char* locs[], int numLocs, const char* file)
+const static char* findFileInDirs(const char* locs[], int numLocs, const char* file)
 {
-	int locI;
 	char path[PATH_MAX];
-	size_t fileLen;
 
-	fileLen = strlen(file);
-	for (locI = 0; locI < numLocs; locI++)
+	const size_t fileLen {strlen(file)};
+	for (int locI {0}; locI < numLocs; locI++)
 	{
-		size_t locLen;
-		const char* loc;
-		bool needSlash;
+		const char* loc {locs[locI]};
+		const size_t locLen {strlen(loc)};
 
-		loc = locs[locI];
-		locLen = strlen(loc);
-
-		needSlash = (locLen != 0 && loc[locLen - 1] != '/');
+		const bool needSlash {(locLen != 0 && loc[locLen - 1] != '/')};
 		if (locLen + (needSlash ? 1 : 0) + fileLen + 1 >= sizeof path)
 		{
 			// This dir plus the file name is too long.
@@ -198,7 +192,7 @@ static const char* findFileInDirs(const char* locs[], int numLocs, const char* f
 void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirName, uqgsl::czstring execFile)
 {
 	const char* testFile = "version";
-	const char* loc;
+	const char* loc {};
 #ifdef __APPLE__
 	uqstl::string bundleContentDir {};
 #endif
@@ -679,7 +673,7 @@ void releaseGameFiles(void)
 
 bool setGammaCorrection(float gamma)
 {
-	bool set = TFB_SetGamma(gamma);
+	const bool set = TFB_SetGamma(gamma);
 	if (set)
 	{
 		uqm::log::info("Gamma correction set to {:.4}.", gamma);

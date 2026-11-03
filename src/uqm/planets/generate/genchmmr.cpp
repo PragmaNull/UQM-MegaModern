@@ -61,7 +61,7 @@ const GenerateFunctions generateChmmrFunctions = {
 static bool
 GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	if (CurStarDescPtr->Index == CHMMR_DEFINED)
@@ -82,8 +82,8 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 		{
 			if (!StarSeed)
 			{
-				uint32_t RandVal = RandomContext_Random(SysGenRNG);
-				uint8_t PByte = pSunDesc->PlanetByte + 1;
+				const uint32_t RandVal = RandomContext_Random(SysGenRNG);
+				const uint8_t PByte = pSunDesc->PlanetByte + 1;
 				pSunDesc->NumPlanets =
 					(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);
 
@@ -143,9 +143,8 @@ GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 	if (CurStarDescPtr->Index == CHMMR_DEFINED
 		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint16_t angle;
-		uint32_t rand_val;
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		uint16_t angle {};
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		if (!RaceDead(CHMMR_SHIP))
@@ -158,7 +157,7 @@ GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 		}
 
 		pMoonDesc->radius = MIN_MOON_RADIUS;
-		rand_val = RandomContext_Random(SysGenRNG);
+		const uint32_t rand_val {RandomContext_Random(SysGenRNG)};
 		angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 		pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
 		pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
@@ -175,8 +174,8 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 	if (CurStarDescPtr->Index == CHMMR_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		bool HardModeBS = isDifficulty(uqm::Difficulty::Hard) && !GET_GAME_STATE(KOHR_AH_FRENZY)
-					   && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << ILWRATH_ENCOUNTER);
+		const bool HardModeBS = isDifficulty(uqm::Difficulty::Hard) && !GET_GAME_STATE(KOHR_AH_FRENZY)
+							 && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << ILWRATH_ENCOUNTER);
 
 		if (RaceDead(CHMMR_SHIP))
 		{
@@ -208,8 +207,7 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 					  && StartSphereTracking(ILWRATH_SHIP))
 					 || HardModeBS))
 		{
-			bool Survivors;
-			uint16_t state;
+			uint16_t state {};
 
 			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
 			ReinitQueue(&GLOBAL(ip_group_q));
@@ -217,7 +215,7 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 
 			if (GET_GAME_STATE(ILWRATH_DECEIVED) && isDifficulty(uqm::Difficulty::Hard))
 			{
-				uint16_t lim, i;
+				uint16_t lim {};
 
 				if (StartSphereTracking(ILWRATH_SHIP))
 				{
@@ -228,7 +226,7 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 					lim = 6;
 				}
 
-				for (i = 0; i < lim; ++i)
+				for (uint16_t i {0}; i < lim; ++i)
 				{
 					CloneShipFragment(ILWRATH_SHIP,
 									  &GLOBAL(npc_built_ship_q), 0);
@@ -249,7 +247,7 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 				return true;
 			}
 
-			Survivors = GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
+			const bool Survivors {GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0};
 
 			uqm::currentActivity() &= ~START_INTERPLANETARY;
 			ReinitQueue(&GLOBAL(npc_built_ship_q));
@@ -289,9 +287,9 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 	if (EXTENDED && CurStarDescPtr->Index == MOTHER_ARK_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		bool MelnormeInfo =
+		const bool MelnormeInfo =
 			GET_GAME_STATE(MELNORME_ALIEN_INFO_STACK) >= 8;
-		bool ChmmrStack = GET_GAME_STATE(CHMMR_HOME_VISITS);
+		const bool ChmmrStack = GET_GAME_STATE(CHMMR_HOME_VISITS);
 
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =

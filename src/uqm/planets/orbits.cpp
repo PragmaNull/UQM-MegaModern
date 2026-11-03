@@ -506,12 +506,9 @@ void ComputeSpeed(PLANET_DESC* planet, bool GeneratingMoons,
 void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 				PLANET_DESC* pBaseDesc, bool TypesDefined)
 { /* Generate Planets in orbit around star */
-	uint8_t StarColor, PlanetCount, MaxPlanet;
-	bool GeneratingMoons;
-	uint16_t StarSize;
-	PLANET_DESC* pPD;
+	uint8_t MaxPlanet {};
 	uint32_t loopCounter = 0;
-	uint8_t orbitDiff;
+	uint8_t orbitDiff {};
 
 	struct
 	{
@@ -534,9 +531,9 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 		pBaseDesc = system->PlanetDesc;
 	}
 
-	pPD = pBaseDesc;
-	StarSize = system->SunDesc[0].data_index;
-	StarColor = STAR_COLOR(CurStarDescPtr->Type);
+	PLANET_DESC* pPD {pBaseDesc};
+	const uint16_t StarSize {system->SunDesc[0].data_index};
+	const uint8_t StarColor {STAR_COLOR(CurStarDescPtr->Type)};
 
 	if (NumPlanets == (uint8_t)~0)
 	{
@@ -558,8 +555,8 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 					scolor[STAR_COLOR(CurStarDescPtr->Type)],
 					stype[STAR_TYPE(CurStarDescPtr->Type)]);
 #endif /* DEBUG_ORBITS */
-	GeneratingMoons = (bool)(pBaseDesc == system->MoonDesc);
-	bool GasGiant = pPD && pPD->pPrevDesc && (pPD->pPrevDesc->data_index & ~PLANET_SHIELDED) >= FIRST_GAS_GIANT;
+	const bool GeneratingMoons {(bool)(pBaseDesc == system->MoonDesc)};
+	const bool GasGiant = pPD && pPD->pPrevDesc && (pPD->pPrevDesc->data_index & ~PLANET_SHIELDED) >= FIRST_GAS_GIANT;
 	if (GeneratingMoons)
 	{
 		MaxPlanet = (PrimeSeed || (StarSeed && !GasGiant) ? FIRST_LARGE_ROCKY_WORLD : (StarSeed ? FIRST_GAS_GIANT : LAST_LARGE_ROCKY_WORLD));
@@ -568,13 +565,14 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 	{
 		MaxPlanet = NUMBER_OF_PLANET_TYPES;
 	}
-	PlanetCount = NumPlanets;
+	const uint8_t PlanetCount {NumPlanets};
 	while (NumPlanets--)
 	{
-		uint8_t chance;
-		uint32_t rand_val, min_radius;
-		int16_t delta_r;
-		PLANET_DESC* pLocPD;
+		uint8_t chance {};
+		uint32_t rand_val {};
+		uint32_t min_radius {};
+		int16_t delta_r {};
+		const PLANET_DESC* pLocPD {};
 
 		do
 		{
@@ -693,13 +691,9 @@ RelocatePlanet:
 	}
 
 	{
-		uint8_t i;
-
-		for (i = 0; i < PlanetCount; ++i)
+		for (uint8_t i {0}; i < PlanetCount; ++i)
 		{
-			uint8_t j;
-
-			for (j = (uint8_t)(PlanetCount - 1); j > i; --j)
+			for (uint8_t j {(uint8_t)(PlanetCount - 1)}; j > i; --j)
 			{
 				if (pBaseDesc[i].radius > pBaseDesc[j].radius)
 				{
@@ -733,20 +727,19 @@ PickClosestHabitable(SOLARSYS_STATE* solarSys)
 		{0,	0	 }, // white
 		{7630, 7936}  // yellow
 	};
-	uint8_t starColor, starType, numPlanets, i;
+	uint8_t i {};
 	int16_t hRangeMin = 0;
 	int16_t hRangeMax = 0;
 	int16_t hRangeMed = 0;
 	uint8_t pByte = 0;
-	PLANET_DESC* pPD;
-	PLANET_DESC* pPlanet;
-	uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+	PLANET_DESC* pPlanet {};
+	const uint32_t rand = RandomContext_GetSeed(SysGenRNG);
 
-	numPlanets = solarSys->SunDesc[0].NumPlanets;
-	pPD = solarSys->PlanetDesc;
+	uint8_t numPlanets {solarSys->SunDesc[0].NumPlanets};
+	PLANET_DESC* pPD {solarSys->PlanetDesc};
 
-	starColor = STAR_COLOR(CurStarDescPtr->Type);
-	starType = STAR_TYPE(CurStarDescPtr->Type);
+	const uint8_t starColor {STAR_COLOR(CurStarDescPtr->Type)};
+	const uint8_t starType {STAR_TYPE(CurStarDescPtr->Type)};
 
 	if (starType == SUPER_GIANT_STAR)
 	{
@@ -808,7 +801,8 @@ PickClosestHabitable(SOLARSYS_STATE* solarSys)
 
 	if (pPlanet->radius < hRangeMin || pPlanet->radius > hRangeMax)
 	{
-		int16_t min, max;
+		int16_t min {};
+		int16_t max {};
 
 		if (pPlanet->radius < hRangeMin)
 		{
@@ -843,18 +837,14 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 		{312,  778 }  // yellow
 	};
 #define CLOSEST_RADIUS HabitableRanges[ORANGE_BODY][0]
-	PLANET_DESC* pPD;
-	uint8_t starColor;
-	int16_t i;
-	uint8_t planetByte = solarSys->SunDesc[0].PlanetByte;
-	uint8_t numPlanets = solarSys->SunDesc[0].NumPlanets;
-	int16_t habitableRangeMin, habitableRangeMax, newRadius; // , radiusDiff;
-	int16_t oldRadius;
+	int16_t i {};
+	const uint8_t planetByte = solarSys->SunDesc[0].PlanetByte;
+	const uint8_t numPlanets = solarSys->SunDesc[0].NumPlanets;
+	int16_t newRadius {}; // , radiusDiff;
 	uint32_t planetRadii[MAX_GEN_PLANETS];
-	uint32_t rand_val;
 	// static int16_t diffCheck, min_radius;
 
-	starColor = STAR_COLOR(CurStarDescPtr->Type);
+	uint8_t starColor {STAR_COLOR(CurStarDescPtr->Type)};
 	// Terrible, but efficient, hack to ensure some semblance of sanity.
 	// Eventually, we will need further code if we care about habitable homes.
 	if (StarSeed && starColor == RED_BODY)
@@ -862,11 +852,11 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 		starColor = ORANGE_BODY;
 	}
 
-	pPD = solarSys->PlanetDesc;
-	oldRadius = pPD[planetByte].radius;
+	PLANET_DESC* pPD {solarSys->PlanetDesc};
+	const int16_t oldRadius {pPD[planetByte].radius};
 
-	habitableRangeMin = HabitableRanges[starColor][0];
-	habitableRangeMax = HabitableRanges[starColor][1];
+	const int16_t habitableRangeMin {HabitableRanges[starColor][0]};
+	int16_t habitableRangeMax {HabitableRanges[starColor][1]};
 
 	// This ensures the planets are at least a certain distance apart, which
 	// mirrors UNSCALE_RADIUS logic from FillOrbits (radius / 2^6 / 5)
@@ -887,7 +877,7 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 		planetRadii[i] = pPD[i].radius;
 	}
 
-	rand_val = RandomContext_Random(SysGenRNG);
+	const uint32_t rand_val {RandomContext_Random(SysGenRNG)};
 
 	newRadius = (uqm::lowWord(rand_val) % (habitableRangeMax - habitableRangeMin) + habitableRangeMin);
 

@@ -49,18 +49,26 @@ png_read_data(png_structp ctx, png_bytep area, png_size_t size)
 SDL_Surface*
 TFB_png_to_sdl(SDL_IOStream* src)
 {
-	Sint64 start;
-	const char* error;
-	SDL_Surface* surface;
-	png_structp png_ptr;
-	png_infop info_ptr;
-	png_uint_32 width, height;
-	int bit_depth, color_type, interlace_type, num_channels;
-	Uint32 Rmask, Gmask, Bmask, Amask;
-	png_bytep* row_pointers;
-	int row, i;
+	Sint64 start {};
+	const char* error {};
+	SDL_Surface* surface {};
+	png_structp png_ptr {};
+	png_infop info_ptr {};
+	png_uint_32 width {};
+	png_uint_32 height {};
+	int bit_depth {};
+	int color_type {};
+	int interlace_type {};
+	int num_channels {};
+	Uint32 Rmask {};
+	Uint32 Gmask {};
+	Uint32 Bmask {};
+	Uint32 Amask {};
+	png_bytep* row_pointers {};
+	int row {};
+	int i {};
 	int ckey = -1;
-	png_color_16* transv;
+	png_color_16* transv {};
 
 	if (!src)
 	{
@@ -124,13 +132,14 @@ TFB_png_to_sdl(SDL_IOStream* src)
 	}
 	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
 	{
-		int num_trans;
-		Uint8* trans;
+		int num_trans {};
+		Uint8* trans {};
 		png_get_tRNS(png_ptr, info_ptr, &trans, &num_trans, &transv);
 		if (color_type == PNG_COLOR_TYPE_PALETTE)
 		{
 			/* Check if all tRNS entries are opaque except one */
-			int j, t = -1;
+			int j {};
+			int t = -1;
 			for (j = 0; j < num_trans; j++)
 			{
 				if (trans[j] == 0)
@@ -241,8 +250,8 @@ TFB_png_to_sdl(SDL_IOStream* src)
 	if (SDL_GetSurfacePalette(surface))
 	{
 		SDL_Color palette[256];
-		int png_num_palette;
-		png_colorp png_palette;
+		int png_num_palette {};
+		png_colorp png_palette {};
 		png_get_PLTE(png_ptr, info_ptr, &png_palette, &png_num_palette);
 		if (color_type == PNG_COLOR_TYPE_GRAY)
 		{
@@ -319,7 +328,7 @@ png_write_data(png_structp ctx, png_bytep area, png_size_t size)
 SDL_Surface*
 SDL_PNGFormatAlpha(SDL_Surface* src)
 {
-	SDL_Surface* surf;
+	SDL_Surface* surf {};
 	SDL_Rect rect = {0};
 
 	/* NO-OP for images < 32bpp and 32bpp images that already have Alpha channel */
@@ -341,13 +350,14 @@ SDL_PNGFormatAlpha(SDL_Surface* src)
 
 int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* dst, int freedst)
 {
-	png_structp png_ptr;
-	png_infop info_ptr;
-	png_colorp pal_ptr;
-	SDL_Palette* pal;
-	int i, colortype;
-	png_bytep* row_pointers;
-	const char* error;
+	png_structp png_ptr {};
+	png_infop info_ptr {};
+	png_colorp pal_ptr {};
+	const SDL_Palette* pal {};
+	int i {};
+	int colortype {};
+	png_bytep* row_pointers {};
+	const char* error {};
 
 	/* Initialize the data we will clean up when we're done */
 	error = nullptr;

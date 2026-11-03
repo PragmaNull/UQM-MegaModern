@@ -201,10 +201,6 @@ NetResult PacketHandler_Ready(NetConnection* conn, const Packet_Ready* packet)
 NetResult PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 {
 	uint16_t numShips = uqm::convertBigEndian<uint16_t>(packet->numShips);
-	size_t i;
-	size_t len;
-	int player;
-	BattleStateData* battleStateData;
 
 	if (conn->stateFlags.reset.localReset)
 	{
@@ -220,9 +216,9 @@ NetResult PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	player = localSide(conn, (NetplaySide)packet->side);
+	const int player {localSide(conn, (NetplaySide)packet->side)};
 
-	len = packetLength((const Packet*)packet);
+	const size_t len {packetLength((const Packet*)packet)};
 	if (sizeof *packet + numShips * sizeof(FleetEntry) > len)
 	{
 		// There is not enough room in the packet to contain all
@@ -233,7 +229,7 @@ NetResult PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
+	const BattleStateData* battleStateData {(BattleStateData*)NetConnection_getStateData(conn)};
 
 	if (conn->stateFlags.handshake.localOk)
 	{
@@ -241,7 +237,7 @@ NetResult PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 		confirmationCancelled(battleStateData->meleeState, conn->player);
 	}
 
-	for (i = 0; i < numShips; i++)
+	for (size_t i {0}; i < numShips; i++)
 	{
 		MeleeShip ship = (MeleeShip)fleetEntries(packet)[i].ship;
 		FleetShipIndex index = (FleetShipIndex)fleetEntries(packet)[i].index;
@@ -270,9 +266,8 @@ NetResult PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 
 NetResult PacketHandler_TeamName(NetConnection* conn, const Packet_TeamName* packet)
 {
-	size_t nameLen;
-	int side;
-	BattleStateData* battleStateData;
+	size_t nameLen {};
+	int side {};
 
 	if (conn->stateFlags.reset.localReset)
 	{
@@ -288,7 +283,7 @@ NetResult PacketHandler_TeamName(NetConnection* conn, const Packet_TeamName* pac
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
+	const BattleStateData* battleStateData {(BattleStateData*)NetConnection_getStateData(conn)};
 
 	if (conn->stateFlags.handshake.localOk)
 	{
@@ -384,7 +379,7 @@ NetResult PacketHandler_Handshake1(NetConnection* conn,
 	}
 	else
 	{
-		bool remoteWasOk = conn->stateFlags.handshake.remoteOk;
+		const bool remoteWasOk = conn->stateFlags.handshake.remoteOk;
 
 		conn->stateFlags.handshake.localOk = false;
 		conn->stateFlags.handshake.remoteOk = false;
@@ -475,8 +470,6 @@ NetResult PacketHandler_HandshakeCancelAck(NetConnection* conn,
 NetResult PacketHandler_SeedRandom(NetConnection* conn,
 								   const Packet_SeedRandom* packet)
 {
-	BattleStateData* battleStateData;
-
 	if (conn->stateFlags.reset.localReset)
 	{
 		return {};
@@ -491,7 +484,7 @@ NetResult PacketHandler_SeedRandom(NetConnection* conn,
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
+	const BattleStateData* battleStateData {(BattleStateData*)NetConnection_getStateData(conn)};
 	updateRandomSeed(battleStateData->meleeState, conn->player,
 					 uqm::convertBigEndian<uint32_t>(packet->seed));
 
@@ -503,7 +496,7 @@ NetResult PacketHandler_InputDelay(NetConnection* conn,
 								   const Packet_InputDelay* packet)
 {
 	//BattleStateData *battleStateData;
-	uint32_t delay;
+	uint32_t delay {};
 
 	if (conn->stateFlags.reset.localReset)
 	{
@@ -536,8 +529,7 @@ NetResult PacketHandler_InputDelay(NetConnection* conn,
 NetResult PacketHandler_SelectShip(NetConnection* conn,
 								   const Packet_SelectShip* packet)
 {
-	bool updateResult;
-	BattleStateData* battleStateData;
+	bool updateResult {};
 
 	if (conn->stateFlags.reset.localReset)
 	{
@@ -553,7 +545,7 @@ NetResult PacketHandler_SelectShip(NetConnection* conn,
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
+	const BattleStateData* battleStateData {(BattleStateData*)NetConnection_getStateData(conn)};
 	updateResult = updateMeleeSelection(battleStateData->getMeleeState,
 										conn->player, uqm::convertBigEndian<uint16_t>(packet->ship));
 	if (!updateResult)
@@ -567,9 +559,6 @@ NetResult PacketHandler_SelectShip(NetConnection* conn,
 NetResult PacketHandler_BattleInput(NetConnection* conn,
 									const Packet_BattleInput* packet)
 {
-	BATTLE_INPUT_STATE input;
-	BattleInputBuffer* bib;
-
 	if (conn->stateFlags.reset.localReset)
 	{
 		return {};
@@ -584,8 +573,8 @@ NetResult PacketHandler_BattleInput(NetConnection* conn,
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	input = (BATTLE_INPUT_STATE)packet->state;
-	bib = getBattleInputBuffer(conn->player);
+	const BATTLE_INPUT_STATE input {(BATTLE_INPUT_STATE)packet->state};
+	BattleInputBuffer* bib {getBattleInputBuffer(conn->player)};
 	if (!BattleInputBuffer_push(bib, input))
 	{
 		return uqm::failure(uqstl::errc::no_buffer_space);
@@ -597,8 +586,7 @@ NetResult PacketHandler_BattleInput(NetConnection* conn,
 NetResult PacketHandler_FrameCount(NetConnection* conn,
 								   const Packet_FrameCount* packet)
 {
-	BattleStateData* battleStateData;
-	BattleFrameCounter frameCount;
+	BattleFrameCounter frameCount {};
 
 	if (conn->stateFlags.reset.localReset)
 	{
@@ -621,7 +609,7 @@ NetResult PacketHandler_FrameCount(NetConnection* conn,
 					conn->player, (unsigned int)frameCount);
 #endif
 
-	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
+	BattleStateData* battleStateData {(BattleStateData*)NetConnection_getStateData(conn)};
 	if (frameCount > battleStateData->endFrameCount)
 	{
 		battleStateData->endFrameCount = frameCount;
@@ -634,10 +622,10 @@ NetResult PacketHandler_FrameCount(NetConnection* conn,
 NetResult PacketHandler_Checksum(NetConnection* conn, const Packet_Checksum* packet)
 {
 #ifdef NETPLAY_CHECKSUM
-	uint32_t frameNr;
-	uint32_t checksum;
-	size_t delay;
-	size_t interval;
+	uint32_t frameNr {};
+	uint32_t checksum {};
+	size_t delay {};
+	size_t interval {};
 #endif
 
 	if (conn->stateFlags.reset.localReset)

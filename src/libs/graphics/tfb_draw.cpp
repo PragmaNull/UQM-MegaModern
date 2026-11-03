@@ -20,7 +20,7 @@
 #include "core/log/log.h"
 
 
-static const HOT_SPOT NullHs = {0, 0};
+const static HOT_SPOT NullHs = {0, 0};
 
 void TFB_DrawScreen_Line(int x1, int y1, int x2, int y2, Color color,
 						 DrawMode mode, SCREEN dest, uint8_t thickness)
@@ -324,9 +324,9 @@ TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
 TFB_Image*
 TFB_DrawImage_New_Rotated(TFB_Image* img, int angle)
 {
-	TFB_Canvas dst;
+	TFB_Canvas dst {};
 	EXTENT size;
-	TFB_Image* newimg;
+	TFB_Image* newimg {};
 
 	/* sanity check */
 	if (!img->NormalImg)
@@ -352,9 +352,6 @@ TFB_DrawImage_New_Rotated(TFB_Image* img, int angle)
 
 void TFB_DrawImage_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx, int hoty)
 {
-	bool imgpal;
-	bool mmpal;
-
 	if (!img || !mmimg)
 	{
 		return;
@@ -367,8 +364,8 @@ void TFB_DrawImage_SetMipmap(TFB_Image* img, TFB_Image* mmimg, int hotx, int hot
 	// must not be paletted. This restriction is due to the current
 	// implementation of fill-stamp, which replaces the palette with
 	// fill color.
-	imgpal = TFB_DrawCanvas_IsPaletted(img->NormalImg);
-	mmpal = TFB_DrawCanvas_IsPaletted(mmimg->NormalImg);
+	const bool imgpal {TFB_DrawCanvas_IsPaletted(img->NormalImg)};
+	const bool mmpal {TFB_DrawCanvas_IsPaletted(mmimg->NormalImg)};
 	if (!mmpal || (mmpal && imgpal && img->colormap_index == mmimg->colormap_index))
 	{
 		img->MipmapImg = mmimg->NormalImg;

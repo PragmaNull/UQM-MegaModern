@@ -162,8 +162,8 @@ Synchronize_DCQ(void) UQM_REQUIRES(s_dcqMutex)
 {
 	if (!DrawCommandQueue.Batching)
 	{
-		int front = DrawCommandQueue.Front;
-		int back = DrawCommandQueue.InsertionPoint;
+		const int front = DrawCommandQueue.Front;
+		const int back = DrawCommandQueue.InsertionPoint;
 		DrawCommandQueue.Back = DrawCommandQueue.InsertionPoint;
 		if (front <= back)
 		{
@@ -401,7 +401,8 @@ static void
 drawFPSText(uqstl::string_view text, int x, int y, Color color)
 {
 	GFXRECT tr;
-	int16_t w, h;
+	int16_t w {};
+	int16_t h {};
 
 	GetFontDims(&w, &h);
 	TFB_Image* img = TFB_DrawImage_CreateForScreen(w, h, true);
@@ -451,10 +452,8 @@ RenderFPS(int fps, int renderFps)
 // Only call from main() thread!!
 void TFB_FlushGraphics(void)
 {
-	int commands_handled;
 	static int fps = 0;
 	static int renderFps = 0;
-	bool livelock_deterrence;
 	const bool showFps {testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS)};
 	const uqstl::chrono::steady_clock::time_point start {uqstl::chrono::steady_clock::now()};
 
@@ -462,8 +461,8 @@ void TFB_FlushGraphics(void)
 	{
 		static int last_fade = 255;
 		static int last_transition = 255;
-		int current_fade = GetFadeAmount();
-		int current_transition = TransitionAmount;
+		const int current_fade = GetFadeAmount();
+		const int current_transition = TransitionAmount;
 
 		if ((current_fade != 255 && current_fade != last_fade) || (current_transition != 255 && current_transition != last_transition) || (current_fade == 255 && last_fade != 255) || (current_transition == 255 && last_transition != 255))
 		{
@@ -501,8 +500,8 @@ void TFB_FlushGraphics(void)
 		computeFPS(&fps, &renderFps);
 	}
 
-	commands_handled = 0;
-	livelock_deterrence = false;
+	int commands_handled {0};
+	bool livelock_deterrence {false};
 
 	if (DCQ_FullSize() > DCQ_FORCE_BREAK_SIZE)
 	{
@@ -540,7 +539,7 @@ void TFB_FlushGraphics(void)
 		{
 			case TFB_DRAWCOMMANDTYPE_SETMIPMAP:
 				{
-					TFB_DrawCommand_SetMipmap* cmd = &DC.data.setmipmap;
+					const TFB_DrawCommand_SetMipmap* cmd = &DC.data.setmipmap;
 					TFB_DrawImage_SetMipmap(cmd->image, cmd->mipmap,
 											cmd->hotx, cmd->hoty);
 					break;
@@ -548,7 +547,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_IMAGE:
 				{
-					TFB_DrawCommand_Image* cmd = &DC.data.image;
+					const TFB_DrawCommand_Image* cmd = &DC.data.image;
 					TFB_Image* DC_image = cmd->image;
 					const int x = cmd->x;
 					const int y = cmd->y;
@@ -580,7 +579,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_FILLEDIMAGE:
 				{
-					TFB_DrawCommand_FilledImage* cmd = &DC.data.filledimage;
+					const TFB_DrawCommand_FilledImage* cmd = &DC.data.filledimage;
 					TFB_Image* DC_image = cmd->image;
 					const int x = cmd->x;
 					const int y = cmd->y;
@@ -612,7 +611,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_FONTCHAR:
 				{
-					TFB_DrawCommand_FontChar* cmd = &DC.data.fontchar;
+					const TFB_DrawCommand_FontChar* cmd = &DC.data.fontchar;
 					TFB_Char* DC_char = cmd->fontchar;
 					const int x = cmd->x;
 					const int y = cmd->y;
@@ -637,7 +636,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_LINE:
 				{
-					TFB_DrawCommand_Line* cmd = &DC.data.line;
+					const TFB_DrawCommand_Line* cmd = &DC.data.line;
 
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
 					{
@@ -672,7 +671,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_SCISSORENABLE:
 				{
-					TFB_DrawCommand_Scissor* cmd = &DC.data.scissor;
+					const TFB_DrawCommand_Scissor* cmd = &DC.data.scissor;
 
 					TFB_DrawCanvas_SetClipRect(
 						TFB_GetScreenCanvas(TFB_SCREEN_MAIN), &cmd->rect);
@@ -688,7 +687,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_COPYTOIMAGE:
 				{
-					TFB_DrawCommand_CopyToImage* cmd = &DC.data.copytoimage;
+					const TFB_DrawCommand_CopyToImage* cmd = &DC.data.copytoimage;
 					TFB_Image* DC_image = cmd->image;
 					const GFXPOINT dstPt = {0, 0};
 
@@ -707,7 +706,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_COPY:
 				{
-					TFB_DrawCommand_Copy* cmd = &DC.data.copy;
+					const TFB_DrawCommand_Copy* cmd = &DC.data.copy;
 					const GFXRECT r = cmd->rect;
 
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
@@ -740,7 +739,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_REINITVIDEO:
 				{
-					TFB_DrawCommand_ReinitVideo* cmd = &DC.data.reinitvideo;
+					const TFB_DrawCommand_ReinitVideo* cmd = &DC.data.reinitvideo;
 					const uqm::GfxDriver oldDriver = GraphicsDriver;
 					const uqm::GfxFlags oldFlags = g_gfxFlags;
 					const int oldWidth = WindowWidth;

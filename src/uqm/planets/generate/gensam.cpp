@@ -95,9 +95,9 @@ GenerateSaMatra_initNpcs(SOLARSYS_STATE* solarSys)
 static bool
 GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 {
-	bool GuardEngaged;
-	HIPGROUP hGroup;
-	HIPGROUP hNextGroup;
+	bool GuardEngaged {};
+	HIPGROUP hGroup {};
+	HIPGROUP hNextGroup {};
 
 	if (CurStarDescPtr->Index == SAMATRA_DEFINED)
 	{
@@ -110,9 +110,7 @@ GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 		for (hGroup = GetHeadLink(&GLOBAL(ip_group_q));
 			 hGroup; hGroup = hNextGroup)
 		{
-			IP_GROUP* GroupPtr;
-
-			GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+			IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 			hNextGroup = _GetSuccLink(GroupPtr);
 
 			if (GET_GAME_STATE(URQUAN_MESSED_UP))
@@ -136,7 +134,7 @@ GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 
 		if (GuardEngaged)
 		{
-			uint16_t angle;
+			uint16_t angle {};
 			GFXPOINT org;
 
 			org = planetOuterLocation(solarSys->SunDesc[0].PlanetByte);
@@ -157,7 +155,7 @@ static bool
 GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -214,7 +212,7 @@ GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 		 && CurStarDescPtr->Index <= KOHRAH2_DEFINED)
 		&& EXTENDED)
 	{
-		uint8_t i;
+		uint8_t i {};
 
 		for (i = 0; i < pSunDesc->NumPlanets; i++)
 		{
@@ -229,7 +227,7 @@ GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		if (!pPlanet->NumPlanets)
 		{
-			uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+			const uint32_t rand = RandomContext_GetSeed(SysGenRNG);
 
 			pPlanet->NumPlanets = RangeMinMax(1, 4, rand);
 		}
@@ -256,9 +254,9 @@ GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
 
 	if (matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint16_t angle;
-		uint32_t rand_val;
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		uint16_t angle {};
+		uint32_t rand_val {};
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		if (CurStarDescPtr->Index == SAMATRA_DEFINED)
@@ -339,7 +337,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 
 			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
-				bool UrquanSurvivors;
+				bool UrquanSurvivors {};
 
 				UrquanSurvivors =
 					GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
@@ -375,7 +373,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 
 		if (EXTENDED)
 		{
-			uint16_t Index = CurStarDescPtr->Index;
+			const uint16_t Index = CurStarDescPtr->Index;
 			if (((Index >= URQUAN0_DEFINED && Index <= KOHRAH2_DEFINED))
 				|| Index == DESTROYED_STARBASE_DEFINED)
 			{
@@ -429,10 +427,12 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 static void
 BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 {
-	uint8_t ship1, ship2;
-	uint8_t b0, b1;
+	uint8_t ship1 {};
+	uint8_t ship2 {};
+	uint8_t b0 {};
+	uint8_t b1 {};
 	GFXPOINT org;
-	HIPGROUP hGroup, hNextGroup;
+	HIPGROUP hNextGroup {};
 
 	GLOBAL(BattleGroupRef) = GET_GAME_STATE(SAMATRA_GRPOFFS);
 
@@ -484,19 +484,17 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 	GetGroupInfo(GLOBAL(BattleGroupRef), GROUP_INIT_IP);
 
 	org = planetOuterLocation(solarSys->SunDesc[0].PlanetByte);
-	hGroup = GetHeadLink(&GLOBAL(ip_group_q));
+	HIPGROUP hGroup {GetHeadLink(&GLOBAL(ip_group_q))};
 	for (b0 = 0, b1 = 0;
 		 b0 < NUM_URQUAN_GUARDS0;
 		 ++b0, b1 += FULL_CIRCLE / (NUM_URQUAN_GUARDS0 + NUM_URQUAN_GUARDS1))
 	{
-		IP_GROUP* GroupPtr;
-
 		if (b1 % (FULL_CIRCLE / NUM_URQUAN_GUARDS1) == 0)
 		{
 			b1 += FULL_CIRCLE / (NUM_URQUAN_GUARDS0 + NUM_URQUAN_GUARDS1);
 		}
 
-		GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 		GroupPtr->task = ON_STATION | IGNORE_FLAGSHIP;
 		GroupPtr->sys_loc = 0;
@@ -513,9 +511,7 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 		 b0 < NUM_URQUAN_GUARDS1;
 		 ++b0, b1 += FULL_CIRCLE / NUM_URQUAN_GUARDS1)
 	{
-		IP_GROUP* GroupPtr;
-
-		GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 		GroupPtr->task = ON_STATION | IGNORE_FLAGSHIP;
 		GroupPtr->sys_loc = 0;

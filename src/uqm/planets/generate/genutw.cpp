@@ -87,7 +87,7 @@ static bool
 GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	if (CurStarDescPtr->Index == UTWIG_DEFINED)
 	{
@@ -95,15 +95,13 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		if (PrimeSeed)
 		{
-			uint16_t angle;
-
 			pSunDesc->PlanetByte = 0;
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 			pPlanet->data_index = WATER_WORLD;
 			pPlanet->NumPlanets = 1;
 			pPlanet->radius = EARTH_RADIUS * 174L / 100;
-			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
 			ComputeSpeed(pPlanet, false, 1);
@@ -126,8 +124,8 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 		{
 			if (!StarSeed)
 			{
-				uint32_t RandVal = RandomContext_Random(SysGenRNG);
-				uint8_t PByte = pSunDesc->PlanetByte + 1;
+				const uint32_t RandVal = RandomContext_Random(SysGenRNG);
+				const uint8_t PByte = pSunDesc->PlanetByte + 1;
 				pSunDesc->NumPlanets =
 					(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);
 			}
@@ -177,8 +175,8 @@ GenerateUtwig_generateName(const SOLARSYS_STATE* solarSys,
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& IsHomeworldKnown(UTWIG_HOME))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),
@@ -236,14 +234,13 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 			&& !GET_GAME_STATE(BOMB_UNPROTECTED)
 			&& StartSphereTracking(DRUUGE_SHIP))
 		{
-			uint16_t i;
-			uint16_t sum = difficultyCase(4, 5, 14);
+			const uint16_t sum = difficultyCase(4, 5, 14);
 
 			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
-			for (i = 0; i < sum; ++i)
+			for (uint16_t i {0}; i < sum; ++i)
 			{
 				CloneShipFragment(DRUUGE_SHIP,
 								  &GLOBAL(npc_built_ship_q), 0);
@@ -258,7 +255,7 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 
 			{
-				bool DruugeSurvivors;
+				bool DruugeSurvivors {};
 
 				DruugeSurvivors =
 					GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;

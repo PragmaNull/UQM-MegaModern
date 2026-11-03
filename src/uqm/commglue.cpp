@@ -92,7 +92,7 @@ const char* InterpolateChunk(uqstl::span<char> buffer, const char* start)
 {
 	const char* end = start;
 	char str_buf[MAX_INTERPOLATE] = "";
-	char* pStr;
+	const char* pStr {};
 	uint16_t buffsize = 0;
 	bool done = false;
 
@@ -173,20 +173,17 @@ void GetSubClip(uqstl::span<char> buffer, const char* pClip, uint16_t clip_numbe
 // on the Starcon2Main thread
 void NPCPhrase_cb(int index, CallbackFunction cb)
 {
-	const char* pStr;
-	const char* pClip;
-	const char* pTimeStamp;
 	uint16_t clip_number = 0;
-	uint16_t i;
+	uint16_t i {};
 
 	if (index == 0)
 	{
 		return;
 	}
 
-	pStr = CommData.ConversationPhrases->text(index - 1);
-	pClip = CommData.ConversationPhrases->soundClip(index - 1);
-	pTimeStamp = CommData.ConversationPhrases->timestamp(index - 1);
+	const char* pStr {CommData.ConversationPhrases->text(index - 1)};
+	const char* pClip {CommData.ConversationPhrases->soundClip(index - 1)};
+	const char* pTimeStamp {CommData.ConversationPhrases->timestamp(index - 1)};
 
 	if (!StarSeed)
 	{
@@ -203,7 +200,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 	}
 
 	// From here on, we are doing StarSeed robo-interpolation.
-	static const uqm::StringTablePtr RoboPhrases {uqm::loadStringTable("comm.robot.dialogue")};
+	const static uqm::StringTablePtr RoboPhrases {uqm::loadStringTable("comm.robot.dialogue")};
 	for (i = 0; RoboTrack[i] && i < NUM_ROBO_TRACKS; i++)
 	{
 		RoboTrack[i] = 0;
@@ -289,7 +286,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 			// which we will MultiSplice into the main track.
 			//char *tracks[NUM_ROBO_TRACKS + 1] =
 			//{ [0 ... NUM_ROBO_TRACKS] = nullptr };
-			const char* tracks[NUM_ROBO_TRACKS + 1] = {nullptr};
+			const char* tracks[NUM_ROBO_TRACKS + 1] = {nullptr}; // NOLINT(misc-const-correctness)
 			char subClips[NUM_ROBO_TRACKS][MAX_CLIPNAME] {};
 			for (i = 0; i < NUM_ROBO_TRACKS && RoboTrack[i]; i++)
 			{
@@ -336,17 +333,14 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 // Special case variant: prevents page breaks.
 void NPCPhrase_splice(int index)
 {
-	const char* pStr;
-	const char* pClip;
-
 	assert(index >= 0);
 	if (index == 0)
 	{
 		return;
 	}
 
-	pStr = CommData.ConversationPhrases->text(index - 1);
-	pClip = CommData.ConversationPhrases->soundClip(index - 1);
+	const char* pStr {CommData.ConversationPhrases->text(index - 1)};
+	const char* pClip {CommData.ConversationPhrases->soundClip(index - 1)};
 
 	if (!pClip)
 	{ // Just appending some text
@@ -354,7 +348,7 @@ void NPCPhrase_splice(int index)
 	}
 	else
 	{ // Splicing in some voice
-		const char* tracks[] = {pClip, nullptr};
+		const char* const tracks[] = {pClip, nullptr};
 		SpliceMultiTrack(tracks, pStr);
 	}
 }
@@ -384,7 +378,6 @@ NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 {
 #define MAX_NUMBER_TRACKS 20
 	NUMBER_SPEECH speech = CommData.AlienNumberSpeech;
-	uint16_t i;
 	int queued = 0;
 	int toplevel = 0;
 	const char* TrackNames[MAX_NUMBER_TRACKS];
@@ -407,12 +400,10 @@ NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 		ptrack = TrackNames;
 	}
 
-	for (i = 0; i < speech->NumDigits; ++i)
+	for (uint16_t i {0}; i < speech->NumDigits; ++i)
 	{
-		int quot;
-
 		dig = speech->Digits + i;
-		quot = number / dig->Divider;
+		int quot {number / dig->Divider};
 
 		if (quot == 0)
 		{
@@ -426,10 +417,8 @@ NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 
 		if (dig->StrDigits)
 		{
-			uint16_t index;
-
 			assert(quot < 10);
-			index = dig->StrDigits[quot];
+			uint16_t index {dig->StrDigits[quot]};
 			if (index == 0)
 			{
 				continue;
@@ -441,16 +430,14 @@ NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 		}
 		else
 		{
-			int ctracks = NPCNumberPhrase(quot, nullptr, ptrack);
+			const int ctracks = NPCNumberPhrase(quot, nullptr, ptrack);
 			ptrack += ctracks;
 			queued += ctracks;
 		}
 
 		if (dig->Names != 0)
 		{
-			SPEECH_DIGITNAME* name;
-
-			for (name = dig->Names; name->Divider; ++name)
+			for (const SPEECH_DIGITNAME* name {dig->Names}; name->Divider; ++name)
 			{
 				if (number % name->Divider <= name->MaxRemainder)
 				{
@@ -486,9 +473,9 @@ NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 
 void construct_response(uqstl::span<char> buf, int R /* promoted from RESPONSE_REF */, ...)
 {
-	char* buf_start = buf.data();
-	char* name;
-	va_list vlist;
+	const char* buf_start = buf.data();
+	const char* name {};
+	va_list vlist {};
 
 	va_start(vlist, R);
 

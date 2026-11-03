@@ -28,7 +28,7 @@
 static uqstl::jthread s_playbackThread {};
 static uint32_t nosound_freq = 22050;
 
-static const audio_Driver noSound_Driver =
+const static audio_Driver noSound_Driver =
 	{
 		noSound_Uninit,
 		noSound_GetError,
@@ -107,12 +107,11 @@ UQM_COMPILE_TIME_ASSERT(mixer_Object_fits_in_audio_Object,
 static void
 noSound_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 {
-	uint32_t i;
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
 		return;
 	}
-	for (i = 0; i < n; i++)
+	for (uint32_t i {0}; i < n; i++)
 	{
 		((mixer_Object*)arr)[i] = arr[i];
 	}
@@ -121,12 +120,11 @@ noSound_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 static void
 noSound_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
 {
-	uint32_t i;
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
 		return;
 	}
-	i = n;
+	uint32_t i {n};
 	while (i--)
 	{
 		arr[i] = ((mixer_Object*)arr)[i];
@@ -140,7 +138,6 @@ noSound_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
 int32_t
 noSound_Init(audio_Driver* driver, AudioFlags flags)
 {
-	int i;
 	TFB_DecoderFormats formats =
 		{
 			0, 0,
@@ -169,7 +166,7 @@ noSound_Init(audio_Driver* driver, AudioFlags flags)
 	uqm::log::info("Sound decoders initialized.");
 
 	*driver = noSound_Driver;
-	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 	{
 		audio_GenSources(1, &soundSource[i].handle);
 	}
@@ -190,11 +187,9 @@ noSound_Init(audio_Driver* driver, AudioFlags flags)
 
 void noSound_Uninit(void)
 {
-	int i;
-
 	UninitStreamDecoder();
 
-	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 	{
 		const uqm::LockGuard lock {soundSource[i].stream_mutex};
 		if (soundSource[i].sample && soundSource[i].sample->decoder)
@@ -219,7 +214,7 @@ void noSound_Uninit(void)
 
 void PlaybackTaskFunc(uqstl::stop_token stopToken)
 {
-	uint32_t len = 2048;
+	const uint32_t len = 2048;
 	uqstl::vector<uint8_t> stream(len);
 	const TimePeriod period {uqstl::chrono::duration_cast<TimePeriod>(uqstl::chrono::duration<double> {len / (double)nosound_freq})};
 

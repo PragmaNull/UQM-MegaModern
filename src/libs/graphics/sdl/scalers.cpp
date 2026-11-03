@@ -73,7 +73,9 @@ Scale_PlatType_t Scale_Platform = SCALEPLAT_NULL;
 // pre-compute the RGB->YUV transformations
 void Scale_Init(void)
 {
-	int i1, i2, i3;
+	int i1 {};
+	int i2 {};
+	int i3 {};
 
 	for (i1 = 0; i1 < 3; i1++) // enum R,G,B
 	{
@@ -105,11 +107,13 @@ void Scale_Init(void)
 		{
 			for (i3 = 0; i3 < 32; ++i3)
 			{
-				int y, u, v;
+				int y {};
+				int u {};
+				int v {};
 				// adding upper bits halved for error correction
-				int r = (i1 << 3) | (i1 >> 3);
-				int g = (i2 << 3) | (i2 >> 3);
-				int b = (i3 << 3) | (i3 >> 3);
+				const int r = (i1 << 3) | (i1 >> 3);
+				const int g = (i2 << 3) | (i2 >> 3);
+				const int b = (i3 << 3) | (i3 >> 3);
 
 				y = (r * YUV_matrix[YUV_XFORM_R][YUV_XFORM_Y]
 					 + g * YUV_matrix[YUV_XFORM_G][YUV_XFORM_Y]
@@ -183,7 +187,7 @@ typedef struct
 } Scale_PlatDef_t;
 
 
-static const Scale_PlatDef_t
+const static Scale_PlatDef_t
 	Scale_PlatDefs[] =
 		{
 			// Default
@@ -194,8 +198,8 @@ static const Scale_PlatDef_t
 TFB_ScaleFunc
 Scale_PrepPlatform(uqm::GfxFlags flags, const SDL_PixelFormatDetails* fmt)
 {
-	const Scale_PlatDef_t* pdef;
-	const Scale_FuncDef_t* fdef;
+	const Scale_PlatDef_t* pdef {};
+	const Scale_FuncDef_t* fdef {};
 
 
 	Scale_Platform = SCALEPLAT_NULL;

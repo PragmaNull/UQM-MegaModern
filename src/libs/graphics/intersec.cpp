@@ -36,15 +36,27 @@ frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
 				INTERSECT_CONTROL* pControl1, GFXRECT* pr1, TIME_VALUE t0,
 				TIME_VALUE t1)
 {
-	int32_t time_error0, time_error1;
-	int32_t cycle0, cycle1;
-	int32_t dx_0, dy_0, dx_1, dy_1;
-	int32_t xincr0, yincr0, xincr1, yincr1;
-	int32_t xerror0, xerror1, yerror0, yerror1;
-	int32_t iterator, xstep0, ystep0, xstep1, ystep1;
+	int32_t time_error0 {};
+	int32_t time_error1 {};
+	int32_t cycle0 {};
+	int32_t cycle1 {};
+	int32_t xincr0 {};
+	int32_t yincr0 {};
+	int32_t xincr1 {};
+	int32_t yincr1 {};
+	int32_t xerror0 {};
+	int32_t xerror1 {};
+	int32_t yerror0 {};
+	int32_t yerror1 {};
+	int32_t xstep0 {};
+	int32_t ystep0 {};
+	int32_t xstep1 {};
+	int32_t ystep1 {};
 	GFXRECT r_intersect;
-	IMAGE_BOX IB0, IB1;
-	bool check0, check1;
+	IMAGE_BOX IB0;
+	IMAGE_BOX IB1;
+	bool check0 {};
+	bool check1 {};
 
 	IB0.FramePtr = pControl0->IntersectStamp.frame;
 	IB0.Box.corner = pr0->corner;
@@ -55,10 +67,10 @@ frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
 	IB1.Box.extent.width = GetFrameWidth(IB1.FramePtr);
 	IB1.Box.extent.height = GetFrameHeight(IB1.FramePtr);
 
-	iterator = RES_SCALE(1);
+	const int32_t iterator {RES_SCALE(1)};
 
-	dx_0 = pr0->extent.width;
-	dy_0 = pr0->extent.height;
+	int32_t dx_0 {pr0->extent.width};
+	int32_t dy_0 {pr0->extent.height};
 	if (dx_0 >= 0)
 	{
 		xincr0 = 1;
@@ -91,8 +103,8 @@ frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
 	}
 	xerror0 = yerror0 = cycle0;
 
-	dx_1 = pr1->extent.width;
-	dy_1 = pr1->extent.height;
+	int32_t dx_1 {pr1->extent.width};
+	int32_t dy_1 {pr1->extent.height};
 	if (dx_1 >= 0)
 	{
 		xincr1 = 1;
@@ -137,11 +149,10 @@ frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
 	}
 	else
 	{
-		int32_t delta;
-		uint32_t start;
-		long error;
+		int32_t delta {};
+		long error {};
 
-		start = (uint32_t)cycle0 * (uint32_t)(t0 - 1);
+		uint32_t start {(uint32_t)cycle0 * (uint32_t)(t0 - 1)};
 		time_error0 = start & ((1 << TIME_SHIFT) - 1);
 		if ((start >>= (uint32_t)TIME_SHIFT) > 0)
 		{
@@ -279,10 +290,8 @@ TIME_VALUE
 DrawablesIntersect(INTERSECT_CONTROL* pControl0,
 				   INTERSECT_CONTROL* pControl1, TIME_VALUE max_time_val)
 {
-	int32_t dy;
-	int32_t time_y_0, time_y_1;
-	GFXRECT r0, r1;
-	FRAME FramePtr0, FramePtr1;
+	GFXRECT r0;
+	GFXRECT r1;
 
 	if (!ContextActive() || max_time_val == 0)
 	{
@@ -303,7 +312,7 @@ DrawablesIntersect(INTERSECT_CONTROL* pControl0,
 	r1.extent.width = pControl1->EndPoint.x - r1.corner.x;
 	r1.extent.height = pControl1->EndPoint.y - r1.corner.y;
 
-	FramePtr0 = pControl0->IntersectStamp.frame;
+	FRAME FramePtr0 {pControl0->IntersectStamp.frame};
 	if (FramePtr0 == 0)
 	{
 		return (0);
@@ -311,7 +320,7 @@ DrawablesIntersect(INTERSECT_CONTROL* pControl0,
 	r0.corner.x -= FramePtr0->HotSpot.x;
 	r0.corner.y -= FramePtr0->HotSpot.y;
 
-	FramePtr1 = pControl1->IntersectStamp.frame;
+	FRAME FramePtr1 {pControl1->IntersectStamp.frame};
 	if (FramePtr1 == 0)
 	{
 		return (0);
@@ -319,28 +328,25 @@ DrawablesIntersect(INTERSECT_CONTROL* pControl0,
 	r1.corner.x -= FramePtr1->HotSpot.x;
 	r1.corner.y -= FramePtr1->HotSpot.y;
 
-	dy = r1.corner.y - r0.corner.y;
-	time_y_0 = dy - GetFrameHeight(FramePtr0) + 1;
-	time_y_1 = dy + GetFrameHeight(FramePtr1) - 1;
+	int32_t dy {r1.corner.y - r0.corner.y};
+	int32_t time_y_0 {dy - GetFrameHeight(FramePtr0) + 1};
+	int32_t time_y_1 {dy + GetFrameHeight(FramePtr1) - 1};
 	dy = r0.extent.height - r1.extent.height;
 
 	if ((time_y_0 <= 0 && time_y_1 >= 0)
 		|| (time_y_0 > 0 && dy >= time_y_0)
 		|| (time_y_1 < 0 && dy <= time_y_1))
 	{
-		int32_t dx;
-		int32_t time_x_0, time_x_1;
-
-		dx = r1.corner.x - r0.corner.x;
-		time_x_0 = dx - GetFrameWidth(FramePtr0) + 1;
-		time_x_1 = dx + GetFrameWidth(FramePtr1) - 1;
+		int32_t dx {r1.corner.x - r0.corner.x};
+		int32_t time_x_0 {dx - GetFrameWidth(FramePtr0) + 1};
+		int32_t time_x_1 {dx + GetFrameWidth(FramePtr1) - 1};
 		dx = r0.extent.width - r1.extent.width;
 
 		if ((time_x_0 <= 0 && time_x_1 >= 0)
 			|| (time_x_0 > 0 && dx >= time_x_0)
 			|| (time_x_1 < 0 && dx <= time_x_1))
 		{
-			TIME_VALUE intersect_time;
+			TIME_VALUE intersect_time {};
 
 			if (dx == 0 && dy == 0)
 			{
@@ -348,8 +354,10 @@ DrawablesIntersect(INTERSECT_CONTROL* pControl0,
 			}
 			else
 			{
-				int32_t t;
-				long time_beg, time_end, fract;
+				int32_t t {};
+				long time_beg {};
+				long time_end {};
+				long fract {};
 
 				if (time_y_1 < 0)
 				{
@@ -427,10 +435,8 @@ DrawablesIntersect(INTERSECT_CONTROL* pControl0,
 				}
 				else
 				{
-					long time_x, time_y;
-
-					time_x = (long)time_x_0 * (long)dy;
-					time_y = (long)time_y_0 * (long)dx;
+					long time_x {(long)time_x_0 * (long)dy};
+					long time_y {(long)time_y_0 * (long)dx};
 					time_beg = time_x < time_y ? time_y : time_x;
 
 					time_x = (long)time_x_1 * (long)dy;

@@ -110,9 +110,7 @@ static RACE_DESC probe_desc =
 RACE_DESC*
 init_probe(void)
 {
-	RACE_DESC* RaceDescPtr;
-
-	RaceDescPtr = &probe_desc;
+	RACE_DESC* RaceDescPtr {&probe_desc};
 
 	return (RaceDescPtr);
 }

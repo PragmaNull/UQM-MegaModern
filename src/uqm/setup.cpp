@@ -262,7 +262,6 @@ bool LoadKernel(int argc, char* argv[])
 bool InitContexts(void)
 {
 	GFXRECT r;
-	GFXCONTEXT oldContext;
 
 	StatusContext = CreateContext("StatusContext");
 	if (StatusContext == nullptr)
@@ -271,7 +270,7 @@ bool InitContexts(void)
 	}
 	AdvanceLoadProgress();
 
-	oldContext = SetContext(StatusContext);
+	GFXCONTEXT oldContext {SetContext(StatusContext)};
 	SetContextFGFrame(Screen);
 	r.corner.x = SPACE_WIDTH + SAFE_X;
 	r.corner.y = SAFE_Y;
@@ -306,9 +305,7 @@ bool InitContexts(void)
 static bool
 InitKernel(void)
 {
-	uint16_t counter;
-
-	for (counter = 0; counter < NUM_PLAYERS; ++counter)
+	for (uint16_t counter {0}; counter < NUM_PLAYERS; ++counter)
 	{
 		InitQueue(&race_q[counter], MAX_SHIPS_PER_SIDE, sizeof(STARSHIP));
 	}
@@ -499,8 +496,7 @@ bool SetPlayerInput(uint16_t playerI)
 
 bool SetPlayerInputAll(void)
 {
-	uint16_t playerI;
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (uint16_t playerI {0}; playerI < NUM_PLAYERS; playerI++)
 	{
 		if (!SetPlayerInput(playerI))
 		{
@@ -525,8 +521,7 @@ void ClearPlayerInput(uint16_t playerI)
 
 void ClearPlayerInputAll(void)
 {
-	uint16_t playerI;
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (uint16_t playerI {0}; playerI < NUM_PLAYERS; playerI++)
 	{
 		ClearPlayerInput(playerI);
 	}

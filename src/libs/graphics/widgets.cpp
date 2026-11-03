@@ -112,12 +112,14 @@ void DrawShadowedBox(GFXRECT* r, Color bg, Color dark, Color medium)
 // window drawn.
 void DrawLabelAsWindow(WIDGET_LABEL* label, GFXRECT* windowRect)
 {
-	Color oldfg = SetContextForeGroundColor(WIDGET_DIALOG_TEXT_COLOR);
+	const Color oldfg = SetContextForeGroundColor(WIDGET_DIALOG_TEXT_COLOR);
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	GFXRECT r;
 	TEXT t;
-	int i, win_w, win_h;
+	int i {};
+	int win_w {};
+	int win_h {};
 
 	if (cur_font)
 	{
@@ -129,7 +131,7 @@ void DrawLabelAsWindow(WIDGET_LABEL* label, GFXRECT* windowRect)
 	win_w = 0;
 	for (i = 0; i < label->line_count; i++)
 	{
-		size_t len = uqm::utf8StringCount(label->lines[i]);
+		const size_t len = uqm::utf8StringCount(label->lines[i]);
 		if (len > win_w)
 		{
 			win_w = RES_SCALE(len);
@@ -203,9 +205,8 @@ Widget_DrawToolTips(int numlines, const char** tips)
 	GFXRECT r;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	Color oldtext = SetContextForeGroundColor(WIDGET_TOOLTIP_COLOR);
+	const Color oldtext = SetContextForeGroundColor(WIDGET_TOOLTIP_COLOR);
 	TEXT t;
-	int i;
 	const char* amperBang = "&!";
 	const size_t abSize = strlen(amperBang);
 	bool warning = false;
@@ -226,7 +227,7 @@ Widget_DrawToolTips(int numlines, const char** tips)
 	t.baseline.y = r.corner.y
 				 + (r.extent.height - RES_SCALE(8) - RES_SCALE(8) * numlines);
 
-	for (i = 0; i < numlines; i++)
+	for (int i {0}; i < numlines; i++)
 	{
 		t.pStr = tips[i];
 		warning = (bool)(strncmp(amperBang, t.pStr, abSize) == 0);
@@ -258,11 +259,15 @@ Widget_DrawToolTips(int numlines, const char** tips)
 void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
 { // Main menu function that draws backgroung and all widgets
 	GFXRECT r;
-	Color title, oldtext;
+	Color title;
+	Color oldtext;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
-	int widget_index, height, widget_y, on_screen;
+	int widget_index {};
+	int height {};
+	int widget_y {};
+	int on_screen {};
 
 	WIDGET_MENU_SCREEN* self = (WIDGET_MENU_SCREEN*)_self;
 
@@ -410,13 +415,17 @@ void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
 
 void Widget_DrawChoice(WIDGET* _self, int x, int y)
 { // Choice drawer
-	WIDGET_CHOICE* self = (WIDGET_CHOICE*)_self;
+	const WIDGET_CHOICE* self = (WIDGET_CHOICE*)_self;
 	Color oldtext;
-	Color default_color, selected, enabled, disabled, canbe;
+	Color default_color;
+	Color selected;
+	Color enabled;
+	Color disabled;
+	Color canbe;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
-	int i;
+	int i {};
 
 	if (cur_font)
 	{
@@ -491,7 +500,6 @@ void Widget_DrawChoice(WIDGET* _self, int x, int y)
 
 				{ // Navigation Dots
 					GFXRECT d;
-					uint16_t c;
 
 					d.extent.width = RES_SCALE(4);
 					d.extent.height = RES_SCALE(1);
@@ -499,7 +507,7 @@ void Widget_DrawChoice(WIDGET* _self, int x, int y)
 					d.corner.x = t.baseline.x - RES_SCALE(6);
 					d.corner.y = t.baseline.y + RES_SCALE(4);
 
-					for (c = 0; c < self->numopts; c++)
+					for (uint16_t c {0}; c < self->numopts; c++)
 					{
 						d.corner.x += RES_SCALE(6);
 
@@ -530,7 +538,8 @@ void Widget_DrawButton(WIDGET* _self, int x, int y)
 { // Several buttons for navigation
 	WIDGET_BUTTON* self = (WIDGET_BUTTON*)_self;
 	Color oldtext;
-	Color inactive, selected;
+	Color inactive;
+	Color selected;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
@@ -568,12 +577,11 @@ void Widget_DrawButton(WIDGET* _self, int x, int y)
 
 void Widget_DrawLabel(WIDGET* _self, int x, int y)
 { // Special labels
-	WIDGET_LABEL* self = (WIDGET_LABEL*)_self;
-	Color oldtext = SetContextForeGroundColor(WIDGET_LABEL_COLOR);
+	const WIDGET_LABEL* self = (WIDGET_LABEL*)_self;
+	const Color oldtext = SetContextForeGroundColor(WIDGET_LABEL_COLOR);
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
-	int i;
 	GFXRECT r;
 	const char* amperScore = "&_";
 	const char* amperBang = "&!";
@@ -591,7 +599,7 @@ void Widget_DrawLabel(WIDGET* _self, int x, int y)
 	t.align = ALIGN_CENTER;
 	t.CharCount = ~0;
 
-	for (i = 0; i < self->line_count; i++)
+	for (int i {0}; i < self->line_count; i++)
 	{
 		t.pStr = self->lines[i];
 		underline = (bool)(strncmp(amperScore, t.pStr, asSize) == 0);
@@ -639,13 +647,13 @@ void Widget_DrawSlider(WIDGET* _self, int x, int y)
 { // SFX slider
 	WIDGET_SLIDER* self = (WIDGET_SLIDER*)_self;
 	Color oldtext;
-	Color default_color, selected;
+	Color default_color;
+	Color selected;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
 	GFXRECT r;
-	int tick = (CanvasWidth - x) / 8;
-	int slider_width;
+	const int tick = (CanvasWidth - x) / 8;
 
 	if (cur_font)
 	{
@@ -676,7 +684,7 @@ void Widget_DrawSlider(WIDGET* _self, int x, int y)
 	r.corner.y = t.baseline.y - RES_SCALE(4);
 	r.extent.height = RES_SCALE(2);
 	r.extent.width = 2 * tick;
-	slider_width = r.corner.x + r.extent.width;
+	const int slider_width {r.corner.x + r.extent.width};
 	DrawFilledRectangle(&r);
 
 	// Slider Indicator
@@ -733,7 +741,10 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 { // Custom seed and key layout name
 	WIDGET_TEXTENTRY* self = (WIDGET_TEXTENTRY*)_self;
 	Color oldtext;
-	Color inactive, default_color, selected, editing;
+	Color inactive;
+	Color default_color;
+	Color selected;
+	Color editing;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
@@ -792,12 +803,11 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 	}
 	else
 	{ // editing state
-		uint16_t i;
+		uint16_t i {};
 		GFXRECT text_r;
 		uint8_t char_deltas[WIDGET_TEXTENTRY_WIDTH];
-		uint8_t* pchar_deltas;
 		GFXRECT r;
-		int16_t leading;
+		int16_t leading {};
 
 		t.baseline.x = RSTEP;
 		t.align = ALIGN_LEFT;
@@ -829,7 +839,7 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 		DrawFilledRectangle(&r);
 
 		// calculate the cursor position and draw it
-		pchar_deltas = char_deltas;
+		const uint8_t* pchar_deltas {char_deltas};
 		for (i = self->cursor_pos; i > 0; --i)
 		{
 			r.corner.x += (int16_t)*pchar_deltas++;
@@ -894,11 +904,11 @@ void Widget_DrawControlEntry(WIDGET* _self, int x, int y)
 { // mappable key name in controls setup
 	WIDGET_CONTROLENTRY* self = (WIDGET_CONTROLENTRY*)_self;
 	Color oldtext;
-	Color default_color, selected;
+	Color default_color;
+	Color selected;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
-	int i, home_x, home_y;
 
 	if (cur_font)
 	{
@@ -925,10 +935,10 @@ void Widget_DrawControlEntry(WIDGET* _self, int x, int y)
 
 	t.baseline.x -= t.baseline.x;
 
-	home_x = t.baseline.x + (CanvasWidth / 3);
-	home_y = t.baseline.y;
+	const int home_x {t.baseline.x + (CanvasWidth / 3)};
+	const int home_y {t.baseline.y};
 	t.align = ALIGN_LEFT;
-	for (i = 0; i < 2; i++)
+	for (int i {0}; i < 2; i++)
 	{
 		t.baseline.x = home_x + ((i % 3) * (CanvasWidth / 3));
 		t.baseline.y = home_y + RES_SCALE(8 * (i / 3));
@@ -975,7 +985,7 @@ int Widget_HeightOneLine(WIDGET* _self)
 
 int Widget_HeightLabel(WIDGET* _self)
 {
-	WIDGET_LABEL* self = (WIDGET_LABEL*)_self;
+	const WIDGET_LABEL* self = (WIDGET_LABEL*)_self;
 	return self->line_count * RES_SCALE(8);
 }
 
@@ -1018,7 +1028,9 @@ int Widget_ReceiveFocusControlEntry(WIDGET* _self, int event)
 int Widget_ReceiveFocusMenuScreen(WIDGET* _self, int event)
 {
 	WIDGET_MENU_SCREEN* self = (WIDGET_MENU_SCREEN*)_self;
-	int x, last_x, dx;
+	int x {};
+	int last_x {};
+	int dx {};
 	for (x = 0; x < self->num_children; x++)
 	{
 		self->child[x]->parent = _self;
@@ -1089,7 +1101,7 @@ int Widget_HandleEventChoice(WIDGET* _self, int event)
 			return true;
 		case WIDGET_EVENT_SELECT:
 			{
-				int oldval = self->selected;
+				const int oldval = self->selected;
 				self->selected = self->highlighted;
 				if (self->onChange)
 				{
@@ -1137,7 +1149,9 @@ int Widget_HandleEventSlider(WIDGET* _self, int event)
 int Widget_HandleEventMenuScreen(WIDGET* _self, int event)
 {
 	WIDGET_MENU_SCREEN* self = (WIDGET_MENU_SCREEN*)_self;
-	int x, last_x, dx;
+	int x {};
+	int last_x {};
+	int dx {};
 	switch (event)
 	{
 		case WIDGET_EVENT_UP:
@@ -1158,7 +1172,7 @@ int Widget_HandleEventMenuScreen(WIDGET* _self, int event)
 	x = self->highlighted + dx;
 	while (x != last_x)
 	{
-		WIDGET* child;
+		WIDGET* child {};
 		if (x == -1)
 		{
 			x = self->num_children - 1;

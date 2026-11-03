@@ -65,14 +65,13 @@ Packet_alloc(size_t size)
 static Packet*
 Packet_create(PacketType type, size_t extraSize)
 {
-	Packet* result;
-	size_t len;
+	size_t len {};
 
 	// Alignment requirement.
 	assert(extraSize % 4 == 0);
 
 	len = packetTypeData[type].len + extraSize;
-	result = (Packet*)Packet_alloc(len);
+	Packet* result {(Packet*)Packet_alloc(len)};
 	result->header.len = uqm::convertBigEndian<uint16_t>((uint16_t)len);
 	result->header.type = uqm::convertBigEndian<uint16_t>((uint16_t)type);
 	return result;
@@ -130,13 +129,9 @@ Packet_Ready_create(void)
 Packet_Fleet*
 Packet_Fleet_create(NetplaySide side, size_t numShips)
 {
-	Packet_Fleet* packet;
-	size_t fleetSize;
-	size_t extraSize;
-
-	fleetSize = numShips * sizeof(FleetEntry);
-	extraSize = (fleetSize + 3) & ~0x03;
-	packet = (Packet_Fleet*)Packet_create(PACKET_FLEET, extraSize);
+	const size_t fleetSize {numShips * sizeof(FleetEntry)};
+	const size_t extraSize {(fleetSize + 3) & ~0x03};
+	Packet_Fleet* packet {(Packet_Fleet*)Packet_create(PACKET_FLEET, extraSize)};
 	packet->side = (uint8_t)side;
 	packet->padding = 0;
 	packet->numShips = uqm::convertBigEndian<uint16_t>((uint16_t)numShips);
@@ -152,12 +147,9 @@ Packet_Fleet_create(NetplaySide side, size_t numShips)
 Packet_TeamName*
 Packet_TeamName_create(NetplaySide side, const char* name, size_t size)
 {
-	Packet_TeamName* packet;
-	size_t extraSize;
-
-	extraSize = ((size + 1) + 3) & ~0x03;
+	const size_t extraSize {((size + 1) + 3) & ~0x03};
 	// The +1 is for the '\0'.
-	packet = (Packet_TeamName*)Packet_create(PACKET_TEAMNAME, extraSize);
+	Packet_TeamName* packet {(Packet_TeamName*)Packet_create(PACKET_TEAMNAME, extraSize)};
 	packet->side = (uint8_t)side;
 	packet->padding = 0;
 	memcpy(teamName(packet), name, size);

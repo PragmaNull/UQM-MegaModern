@@ -31,7 +31,7 @@ static uint32_t vp_GetTicks(TFB_VideoDecoder*);
 static bool vp_SetTimer(TFB_VideoDecoder*, uint32_t msecs);
 
 
-static const TFB_VideoCallbacks vp_DecoderCBs =
+const static TFB_VideoCallbacks vp_DecoderCBs =
 	{
 		vp_BeginFrame,
 		vp_EndFrame,
@@ -45,7 +45,7 @@ static void vp_AudioEnd(TFB_SoundSample* sample);
 static void vp_BufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag);
 static void vp_QueueBuffer(TFB_SoundSample* sample, audio_Object buffer);
 
-static const TFB_SoundCallbacks vp_AudioCBs =
+const static TFB_SoundCallbacks vp_AudioCBs =
 	{
 		vp_AudioStart,
 		nullptr,
@@ -79,12 +79,10 @@ processAudioSyncedFrame(VIDEO_REF vid)
 #define MAX_FRAME_LAG 8
 #define LAG_FRACTION 6
 #define SYNC_BIAS 1 / 3
-	int ret;
-	uint32_t want_frame;
-	uint32_t prev_want_frame;
-	int32_t wait_msec;
-	GFXCONTEXT oldContext;
-	TimeCount Now = GetTimeCounter();
+	int ret {};
+	uint32_t want_frame {};
+	int32_t wait_msec {};
+	const TimeCount Now = GetTimeCounter();
 
 	if (!vid->playing)
 	{
@@ -123,7 +121,7 @@ processAudioSyncedFrame(VIDEO_REF vid)
 	//  The system of timeouts and lag counts should make the video
 	//  *relatively* smooth
 	//
-	prev_want_frame = vid->cur_frame - vid->lag_cnt;
+	const uint32_t prev_want_frame {vid->cur_frame - vid->lag_cnt};
 	if (want_frame > prev_want_frame - MAX_FRAME_LAG
 		&& want_frame <= prev_want_frame + MAX_FRAME_LAG)
 	{
@@ -145,7 +143,7 @@ processAudioSyncedFrame(VIDEO_REF vid)
 
 	// draw the frame
 	// We have the cliprect precalculated and don't need the rest
-	oldContext = SetContext(nullptr);
+	GFXCONTEXT oldContext {SetContext(nullptr)};
 	TFB_DrawScreen_Image(vid->frame,
 						 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
 						 nullptr, DRAW_REPLACE_MODE, TFB_SCREEN_MAIN);
@@ -173,8 +171,8 @@ processAudioSyncedFrame(VIDEO_REF vid)
 static bool
 processMuteFrame(VIDEO_REF vid)
 {
-	int ret;
-	TimeCount Now = GetTimeCounter();
+	int ret {};
+	const TimeCount Now = GetTimeCounter();
 
 	if (!vid->playing)
 	{
@@ -192,12 +190,10 @@ processMuteFrame(VIDEO_REF vid)
 	//
 	if (Now >= vid->frame_time)
 	{
-		GFXCONTEXT oldContext;
-
 		vid->cur_frame = vid->decoder->cur_frame;
 
 		// We have the cliprect precalculated and don't need the rest
-		oldContext = SetContext(nullptr);
+		GFXCONTEXT oldContext {SetContext(nullptr)};
 		TFB_DrawScreen_Image(vid->frame,
 							 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
 							 nullptr, DRAW_REPLACE_MODE, TFB_SCREEN_MAIN);
@@ -236,7 +232,6 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 	  };
 	GFXRECT sr;
 	bool loop_music = false;
-	int ret;
 
 	if (!vid)
 	{
@@ -304,7 +299,7 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 	}
 
 	// get the first frame
-	ret = VideoDecoder_Decode(vid->decoder);
+	const int ret {VideoDecoder_Decode(vid->decoder)};
 	if (ret < 0)
 	{
 		return false;
@@ -383,7 +378,7 @@ bool TFB_ProcessVideoFrame(VIDEO_REF vid)
 uint32_t
 TFB_GetVideoPosition(VIDEO_REF vid)
 {
-	uint32_t pos;
+	uint32_t pos {};
 
 	if (!TFB_VideoPlaying(vid))
 	{
@@ -423,7 +418,7 @@ bool TFB_SeekVideo(VIDEO_REF vid, uint32_t pos)
 static void
 vp_BeginFrame(TFB_VideoDecoder* decoder)
 {
-	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
+	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
 	if (vid)
 	{
@@ -434,7 +429,7 @@ vp_BeginFrame(TFB_VideoDecoder* decoder)
 static void
 vp_EndFrame(TFB_VideoDecoder* decoder)
 {
-	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
+	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
 	if (vid)
 	{
@@ -445,7 +440,7 @@ vp_EndFrame(TFB_VideoDecoder* decoder)
 static void*
 vp_GetCanvasLine(TFB_VideoDecoder* decoder, uint32_t line)
 {
-	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
+	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
 	if (!vid)
 	{
@@ -483,12 +478,11 @@ static bool
 vp_AudioStart(TFB_SoundSample* sample)
 {
 	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData(sample);
-	TFB_SoundDecoder* decoder;
 
 	assert(sizeof(intptr_t) >= sizeof(vid));
 	assert(vid != nullptr);
 
-	decoder = TFB_GetSoundSampleDecoder(sample);
+	TFB_SoundDecoder* decoder {TFB_GetSoundSampleDecoder(sample)};
 
 	{
 		const uqm::LockGuard lock {vid->guard};
@@ -515,7 +509,7 @@ static void
 vp_BufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
 {
 	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData(sample);
-	uint32_t frame = (uint32_t)tag->data;
+	const uint32_t frame = (uint32_t)tag->data;
 
 	assert(sizeof(tag->data) >= sizeof(frame));
 	assert(vid != nullptr);

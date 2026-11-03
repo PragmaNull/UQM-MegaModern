@@ -35,8 +35,8 @@
 #include "core/log/log.h"
 #include "planets/planets.h"
 #include <math.h>
-#include "util.h"
 
+#include "util.h"
 
 static void CleanupAfterStarBase(void);
 
@@ -44,8 +44,8 @@ static void
 DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
 {
 	TEXT t;
-	uint16_t text_base_y = RES_SCALE(106 + 28);
-	uint16_t text_spacing_y = RES_SCALE(23 - 4);
+	const uint16_t text_base_y = RES_SCALE(106 + 28);
+	const uint16_t text_spacing_y = RES_SCALE(23 - 4);
 
 	SetContext(ScreenContext);
 	SetContextFont(StarConFont);
@@ -88,10 +88,10 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 	Color OldColor = UNDEFINED_COLOR;
 	// Initialisation is just to keep the compiler silent.
 	GFXRECT r;
-	STAMP Side, Top;
-	int8_t RepairSlot;
+	STAMP Side;
+	STAMP Top;
 
-	RepairSlot = 0;
+	int8_t RepairSlot {0};
 	switch (which_piece)
 	{
 		case FUSION_THRUSTER:
@@ -308,7 +308,7 @@ static void
 rotateStarbase(MENU_STATE* pMS, FRAME AniFrame)
 {
 	static TimeCount NextTime {};
-	TimeCount Now = GetTimeCounter();
+	const TimeCount Now = GetTimeCounter();
 
 	if (AniFrame)
 	{ // Setup the animation
@@ -416,7 +416,7 @@ ExitStarBase:
 		}
 		else
 		{
-			uint8_t OldState;
+			uint8_t OldState {};
 
 			if (IS_HD && !hdFuelFrame)
 			{
@@ -450,9 +450,7 @@ ExitStarBase:
 	}
 	else
 	{
-		STARBASE_STATE NewState;
-
-		NewState = pMS->CurState;
+		STARBASE_STATE NewState {pMS->CurState};
 		if (PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_UP])
 		{
 			if (NewState-- == TALK_COMMANDER)
@@ -499,7 +497,7 @@ DoTimePassage(void)
 	// JMS: Calculate flagship location in IP.
 	if (uqm::UQMOptions::read().orbitingPlanets)
 	{
-		double newAngle;
+		double newAngle {NAN};
 		GFXPOINT starbase_coords;
 
 		// Calculate the starbase position on a circle with the help of sin and cos.
@@ -518,7 +516,7 @@ DoTimePassage(void)
 void VisitStarBase(void)
 {
 	MENU_STATE MenuState;
-	GFXCONTEXT OldContext;
+	GFXCONTEXT OldContext {};
 	StatMsgMode prevMsgMode = SMM_UNDEFINED;
 
 	// XXX: This should probably be moved out to Starcon2Main()
@@ -532,8 +530,8 @@ void VisitStarBase(void)
 
 	if (!GET_GAME_STATE(STARBASE_AVAILABLE))
 	{
-		HSHIPFRAG hStarShip;
-		SHIP_FRAGMENT* FragPtr;
+		HSHIPFRAG hStarShip {};
+		SHIP_FRAGMENT* FragPtr {};
 
 		// Unallied Starbase conversation
 		SetCommIntroMode(CIM_CROSSFADE_SCREEN, TimePeriod {});
@@ -647,13 +645,11 @@ void InstallBombAtEarth(void)
 uint16_t
 WrapText(const char* pStr, uint16_t len, TEXT* tarray, int16_t field_width)
 {
-	uint16_t num_lines;
-
-	num_lines = 0;
+	uint16_t num_lines {0};
 	do
 	{
 		GFXRECT r;
-		uint16_t OldCount;
+		uint16_t OldCount {};
 
 		tarray->align = ALIGN_LEFT; /* set alignment to something */
 		tarray->pStr = pStr;

@@ -85,17 +85,15 @@ static char pm_fuel_str[128];
 static void
 DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilite, GFXRECT* r)
 {
-	uint8_t pos;
-	uint16_t i, j;
+	uint8_t pos {};
+	uint16_t j {};
 	static uint16_t rd = 0;
-	int num_items;
-	FONT OldFont;
 	TEXT t;
 	char buf[256];
 	GFXRECT rt;
 
 	pos = beg_index + NewState;
-	num_items = 1 + end_index - beg_index;
+	const int num_items {1 + end_index - beg_index};
 	r->extent.width -= RES_SCALE(1);
 
 	// Gray rectangle behind PC menu
@@ -126,7 +124,7 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 
 	DrawPCMenuFrame(r);
 
-	OldFont = SetContextFont(StarConFont);
+	FONT OldFont {SetContextFont(StarConFont)};
 	t.align = ALIGN_LEFT;
 	t.baseline.x = r->corner.x + RES_SCALE(2);
 	t.baseline.y = r->corner.y + PC_MENU_HEIGHT - RES_SCALE(1);
@@ -134,7 +132,7 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 	t.CharCount = (uint16_t)~0;
 	r->corner.x += RES_SCALE(1);
 	r->extent.width -= RES_SCALE(2);
-	for (i = beg_index; i <= end_index; i++)
+	for (uint16_t i {beg_index}; i <= end_index; i++)
 	{
 		// To compensate for the read speed menu entries
 		j = i > PM_EXIT_SETTINGS ?
@@ -276,7 +274,7 @@ FixMenuState(uint8_t BadState)
 static uint8_t
 NextMenuState(uint8_t BaseState, uint8_t CurState)
 {
-	uint8_t NextState;
+	uint8_t NextState {};
 	uint8_t AdjBase = BaseState;
 
 	if (BaseState == PM_STARMAP)
@@ -328,7 +326,7 @@ NextMenuState(uint8_t BaseState, uint8_t CurState)
 uint8_t
 PreviousMenuState(uint8_t BaseState, uint8_t CurState)
 {
-	int16_t NextState;
+	int16_t NextState {};
 	uint8_t AdjBase = BaseState;
 
 	if (BaseState == PM_STARMAP)
@@ -511,7 +509,7 @@ ConvertAlternateMenu(uint8_t BaseState, uint8_t NewState)
 bool DoMenuChooser(MENU_STATE* pMS, uint8_t BaseState)
 {
 	uint8_t NewState = pMS->CurState;
-	uint8_t OrigBase = BaseState;
+	const uint8_t OrigBase = BaseState;
 	bool useAltMenu = false;
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
@@ -666,9 +664,8 @@ static void
 Draw3DOMenuText(GFXRECT* r, int Index)
 {
 	TEXT text;
-	int16_t leading;
+	int16_t leading {};
 	GFXRECT block;
-	FONT OldFont;
 	Color OldColor;
 
 	if (IndexToText(Index) == nullptr)
@@ -676,7 +673,7 @@ Draw3DOMenuText(GFXRECT* r, int Index)
 		return;
 	}
 
-	OldFont = SetContextFont(PlayMenuFont);
+	FONT OldFont {SetContextFont(PlayMenuFont)};
 	OldColor = SetContextForeGroundColor(PM_RECT_COLOR);
 
 	GetContextFontLeading(&leading);
@@ -709,10 +706,8 @@ Draw3DOMenuText(GFXRECT* r, int Index)
 
 void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 {
-	uint8_t end_index;
 	GFXRECT r;
 	STAMP s;
-	GFXCONTEXT OldContext;
 	uint8_t hilite = 1;
 	extern FRAME PlayFrame;
 
@@ -738,7 +733,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 	{
 		NewState--;
 	}
-	end_index = GetEndMenuState(beg_index);
+	uint8_t end_index {GetEndMenuState(beg_index)};
 
 	s.frame = 0;
 	if (NewState <= end_index - beg_index)
@@ -747,7 +742,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 	}
 
 	PreUpdateFlashRect();
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	GetContextClipRect(&r);
 	s.origin.x = RADAR_X - r.corner.x;
 	s.origin.y = RADAR_Y - r.corner.y;
@@ -908,20 +903,18 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 
 void DrawMineralHelpers(void)
 {
-	GFXCONTEXT OldContext;
-	uint16_t i;
 	STAMP s;
 	TEXT t;
 	char buf[40];
 	GFXRECT r;
-	int16_t leading;
+	int16_t leading {};
 
 	if (!uqm::UQMOptions::read().submenu)
 	{
 		return;
 	}
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 
 	BatchGraphics();
 
@@ -955,7 +948,7 @@ void DrawMineralHelpers(void)
 	r.corner.x = ELEMENT_COL_0 - RES_SCALE(3);
 
 	// draw element icons and worths
-	for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
+	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
 	{
 		// draw element icon
 		DrawStamp(&s);
@@ -1085,9 +1078,8 @@ void DrawMineralHelpers(void)
 void DrawBorder(uint8_t Visible)
 {
 	STAMP s;
-	GFXCONTEXT OldContext;
 
-	OldContext = SetContext(ScreenContext);
+	GFXCONTEXT OldContext {SetContext(ScreenContext)};
 
 	s.origin.x = 0;
 	s.origin.y = 0;

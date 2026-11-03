@@ -104,13 +104,10 @@ static FONT_SIZE_DEF CreditsFont[] =
 static FRAME
 Credits_MakeTransFrame(int w, int h, Color TransColor)
 {
-	FRAME OldFrame;
-	FRAME f;
-
-	f = CaptureDrawable(CreateDrawable(WANT_PIXMAP, w, h, 1));
+	FRAME f {CaptureDrawable(CreateDrawable(WANT_PIXMAP, w, h, 1))};
 	SetFrameTransparentColor(f, TransColor);
 
-	OldFrame = SetContextFGFrame(f);
+	FRAME OldFrame {SetContextFGFrame(f)};
 	SetContextBackGroundColor(TransColor);
 	ClearDrawable();
 	SetContextFGFrame(OldFrame);
@@ -122,13 +119,12 @@ static FRAME
 Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 						Color BackColor, Color ForeColor)
 {
-	FRAME f;
-	GFXCONTEXT OldContext;
-	FRAME OldFrame;
+	FRAME f {};
+	FRAME OldFrame {};
 	TEXT TextLines[uqm::c_creditsMaxLines];
-	int i, rows, cnt;
-	FONT_SIZE_DEF* fdef;
-	int16_t leading;
+	int i {};
+	const FONT_SIZE_DEF* fdef {};
+	int16_t leading {};
 	TEXT t;
 	GFXRECT r;
 	typedef struct
@@ -141,7 +137,7 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	const auto blockCount {static_cast<int>(CreditsBlocks.size())};
 	if (*istr < 0 || *istr >= blockCount)
 	{ // check if next one is within range
-		int next_s = *istr + dir;
+		const int next_s = *istr + dir;
 
 		if (next_s < 0 || next_s >= blockCount)
 		{
@@ -156,8 +152,8 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 
 	// one TEXT for each cell; the baseline holds the column and the row.
 	// The first cell of each line comes first, then the other cells while there is space.
-	rows = static_cast<int>(block.lines.size());
-	cnt = 0;
+	const int rows {static_cast<int>(block.lines.size())};
+	int cnt {0};
 	const auto addCell {[&](int row, size_t column) {
 		TextLines[cnt].pStr = block.lines[row][column].c_str();
 		TextLines[cnt].CharCount = ~0;
@@ -198,7 +194,7 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	t.pStr = " ";
 	t.CharCount = 1;
 
-	OldContext = SetContext(TempContext);
+	GFXCONTEXT OldContext {SetContext(TempContext)};
 
 	// get font dimensions
 	SetContextFont(fdef->font);
@@ -232,7 +228,7 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	for (i = 0; i < cnt; ++i)
 	{
 		// baseline contains coords in row/col quantities
-		col_format_t* fmt = colfmt + TextLines[i].baseline.x;
+		const col_format_t* fmt = colfmt + TextLines[i].baseline.x;
 
 		TextLines[i].align = fmt->align;
 		TextLines[i].baseline.x = fmt->basex;
@@ -265,11 +261,9 @@ frameIndex(int index)
 static void
 RenderCreditsScreen(GFXCONTEXT targetContext)
 {
-	GFXCONTEXT oldContext;
 	STAMP s;
-	int i;
 
-	oldContext = SetContext(targetContext);
+	GFXCONTEXT oldContext {SetContext(targetContext)};
 	// draw background
 	s.origin.x = 0;
 	s.origin.y = 0;
@@ -278,7 +272,7 @@ RenderCreditsScreen(GFXCONTEXT targetContext)
 
 	// draw text frames
 	s.origin.y = -curFrameOfs;
-	for (i = firstFrame; i != lastFrame; i = frameIndex(i + 1))
+	for (int i {firstFrame}; i != lastFrame; i = frameIndex(i + 1))
 	{
 		GFXRECT fr;
 
@@ -301,20 +295,18 @@ static void
 InitCredits(void)
 {
 	GFXRECT ctxRect;
-	GFXCONTEXT oldContext;
-	FRAME targetFrame;
 
 	memset(textFrames, 0, sizeof textFrames);
 
 	LocalContext = CreateContext("Credits.LocalContext");
 	DrawContext = CreateContext("Credits.DrawContext");
 
-	targetFrame = GetContextFGFrame();
+	FRAME targetFrame {GetContextFGFrame()};
 	GetContextClipRect(&ctxRect);
 	CreditsExtent = ctxRect.extent;
 
 	// prep our local context
-	oldContext = SetContext(LocalContext);
+	GFXCONTEXT oldContext {SetContext(LocalContext)};
 	// Local screen copy. We draw everything to this frame, then cut
 	// the Outtakes rect out and draw this frame to the screen.
 	CreditsFrame = Credits_MakeTransFrame(CreditsExtent.width,
@@ -372,11 +364,8 @@ UninitCredits(void)
 static int
 calcDeficitHeight(void)
 {
-	int i;
-	int maxPos;
-
-	maxPos = -curFrameOfs;
-	for (i = firstFrame; i != lastFrame; i = frameIndex(i + 1))
+	int maxPos {-curFrameOfs};
+	for (int i {firstFrame}; i != lastFrame; i = frameIndex(i + 1))
 	{
 		GFXRECT fr;
 
@@ -391,17 +380,16 @@ static void
 processCreditsFrame(void)
 {
 	static TimeCount NextTime;
-	TimeCount Now = GetTimeCounter();
+	const TimeCount Now = GetTimeCounter();
 
 	if (Now >= NextTime)
 	{
 		GFXRECT fr;
-		GFXCONTEXT OldContext;
-		int rate, direction, dirstep;
-		int deficitHeight;
+		int direction {};
+		int dirstep {};
 		STAMP s;
 
-		rate = abs(CreditsRate);
+		int rate {abs(CreditsRate)};
 		if (rate != 0)
 		{
 			// scroll direction; forward or backward
@@ -429,13 +417,13 @@ processCreditsFrame(void)
 		s.origin.y = 0;
 		s.frame = CreditsFrame;
 
-		OldContext = SetContext(DrawContext);
+		GFXCONTEXT OldContext {SetContext(DrawContext)};
 		DrawStamp(&s);
 		SetContext(OldContext);
 		FlushGraphics();
 
 		// prepare next screen frame
-		deficitHeight = calcDeficitHeight();
+		const int deficitHeight {calcDeficitHeight()};
 		curFrameOfs += dirstep;
 		// cap scroll
 		if (curFrameOfs < -(CreditsExtent.height / 20))
@@ -475,11 +463,10 @@ processCreditsFrame(void)
 			}
 			else if (direction < 0)
 			{ // backward scroll
-				int index = frameIndex(lastFrame - 1);
-				int framePos;
+				const int index = frameIndex(lastFrame - 1);
 
 				GetFrameRect(textFrames[index].frame, &fr);
-				framePos = totalHeight - curFrameOfs - fr.extent.height;
+				const int framePos {totalHeight - curFrameOfs - fr.extent.height};
 				if (framePos >= CreditsExtent.height)
 				{ // past this frame already
 					lastFrame = index;
@@ -529,7 +516,7 @@ processCreditsFrame(void)
 
 			while (curFrameOfs < 0 && next_s >= 0)
 			{
-				int index = frameIndex(firstFrame - 1);
+				const int index = frameIndex(firstFrame - 1);
 				CreditTextFrame* tf = &textFrames[index];
 
 				tf->frame = Credits_RenderTextFrame(LocalContext, &next_s,
@@ -554,8 +541,6 @@ processCreditsFrame(void)
 static bool
 LoadCredits(void)
 {
-	FONT_SIZE_DEF* fdef;
-
 	const char* const path {res_GetString(CREDITS_FILE)};
 	const auto text {uqm::readTextFile(uqm::contentDir(), path)};
 	auto blocks {text ? uqm::creditsFromJson(*text) : uqstl::nullopt};
@@ -567,7 +552,7 @@ LoadCredits(void)
 	CreditsBlocks = uqstl::move(*blocks);
 	CreditsBack = CaptureDrawable(LoadGraphic(CREDITS_BACK_ANIM));
 	// load fonts
-	for (fdef = CreditsFont; fdef->size; ++fdef)
+	for (FONT_SIZE_DEF* fdef {CreditsFont}; fdef->size; ++fdef)
 	{
 		fdef->font = LoadFont(fdef->res);
 	}
@@ -578,15 +563,13 @@ LoadCredits(void)
 static void
 FreeCredits(void)
 {
-	FONT_SIZE_DEF* fdef;
-
 	CreditsBlocks.clear();
 
 	DestroyDrawable(ReleaseDrawable(CreditsBack));
 	CreditsBack = nullptr;
 
 	// free fonts
-	for (fdef = CreditsFont; fdef->size; ++fdef)
+	for (FONT_SIZE_DEF* fdef {CreditsFont}; fdef->size; ++fdef)
 	{
 		DestroyFont(fdef->font);
 		fdef->font = nullptr;
@@ -597,7 +580,7 @@ static void
 OutTakes(void)
 {
 #define NUM_OUTTAKES 15
-	static CONVERSATION outtake_list[NUM_OUTTAKES] =
+	const static CONVERSATION outtake_list[NUM_OUTTAKES] =
 		{
 			ZOQFOTPIK_CONVERSATION,
 			TALKING_PET_CONVERSATION,
@@ -615,7 +598,7 @@ OutTakes(void)
 			BLACKURQ_CONVERSATION,
 			ARILOU_CONVERSATION};
 
-	bool oldsubtitles = uqm::UQMOptions::read().subtitles.value;
+	const bool oldsubtitles = uqm::UQMOptions::read().subtitles.value;
 	int i = 0;
 
 	// Outtakes have no voice tracks, so the subtitles are always on
@@ -667,7 +650,7 @@ DoCreditsInput(void* pIS)
 			|| PulsedInputState.menu[KEY_MENU_DOWN]))
 	{ // speed adjustment
 		int newrate = CreditsRate;
-		int step = abs(CreditsRate) / 5 + 1;
+		const int step = abs(CreditsRate) / 5 + 1;
 
 		if (PulsedInputState.menu[KEY_MENU_DOWN])
 		{
@@ -726,12 +709,11 @@ on_input_frame(void)
 
 void Credits(bool WithOuttakes)
 {
-	MUSIC_REF hMusic;
 	CREDITS_INPUT_STATE cis;
 	GFXRECT screenRect;
 	STAMP s;
 
-	hMusic = LoadMusic(CREDITS_MUSIC);
+	MUSIC_REF hMusic {LoadMusic(CREDITS_MUSIC)};
 
 	SetContext(ScreenContext);
 	SetContextClipRect(nullptr);

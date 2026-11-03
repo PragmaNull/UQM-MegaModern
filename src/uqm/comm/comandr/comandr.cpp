@@ -594,9 +594,7 @@ TellProbe(RESPONSE_REF R)
 static void
 RevealSelf(RESPONSE_REF R)
 {
-	uint8_t i, stack;
-
-	stack = 0;
+	uint8_t stack {0};
 	if (PLAYER_SAID(R, we_are_vindicator))
 	{
 		NPCPhrase(THATS_IMPOSSIBLE);
@@ -650,7 +648,7 @@ RevealSelf(RESPONSE_REF R)
 		NPCPhrase(SURE_HOPE);
 	}
 
-	for (i = 0; i < 2; ++i, stack ^= 1)
+	for (uint8_t i {0}; i < 2; ++i, stack ^= 1)
 	{
 		if (stack == 1)
 		{
@@ -739,7 +737,7 @@ GiveRadios(RESPONSE_REF R)
 
 		if (altResFlags & USE_ALT_SONG)
 		{
-			uint32_t MusicPos = PLRGetPos();
+			const uint32_t MusicPos = PLRGetPos();
 			StopMusic();
 			CommData.AlienSong = LoadMusic(CommData.AlienSongRes);
 
@@ -846,8 +844,6 @@ post_commander_enc(void)
 LOCDATA*
 init_commander_comm()
 {
-	LOCDATA* retval;
-
 	commander_desc.init_encounter_func = Intro;
 	commander_desc.post_encounter_func = post_commander_enc;
 	commander_desc.uninit_encounter_func = uninit_commander;
@@ -873,7 +869,7 @@ init_commander_comm()
 	commander_desc.AlienTextBaseline.y = RES_SCALE(20);
 
 	setSegue(Segue_peace);
-	retval = &commander_desc;
+	LOCDATA* retval {&commander_desc};
 
 	return (retval);
 }

@@ -38,7 +38,7 @@
 
 lua_State* luaUqm_commState = nullptr;
 
-static const luaL_Reg commLibs[] = {
+const static luaL_Reg commLibs[] = {
 	{"comm",	 luaUqm_comm_open },
 	{"event", luaUqm_event_open},
 	{"log",	luaUqm_log_open  },
@@ -69,11 +69,10 @@ bool luaUqm_comm_init(const luaUqm_custom_Function* customFuncs,
 	if (scriptRes != NULL_RESOURCE)
 	{
 		// Load the script.
-		char* scriptFileName;
-		bool loadOk;
+		bool loadOk {};
 
 		// Get the name of the script.
-		scriptFileName = LoadScriptInstance(scriptRes);
+		char* scriptFileName {LoadScriptInstance(scriptRes)};
 		if (scriptFileName == nullptr)
 		{
 			return false;

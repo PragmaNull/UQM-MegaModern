@@ -57,14 +57,13 @@ static bool
 GenerateVault_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	pSunDesc->PlanetByte = 0;
 	pSunDesc->MoonByte = 0;
 
-	pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
+	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	if (StarSeed)
 	{
@@ -110,15 +109,13 @@ GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 			if (isDifficulty(uqm::Difficulty::Hard) && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << URQUAN_ENCOUNTER)
 				&& !(GET_GAME_STATE(KOHR_AH_FRENZY)))
 			{
-				uint16_t i;
-				bool Survivors;
-				uint16_t state;
+				uint16_t state {};
 
 				PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
 				ReinitQueue(&GLOBAL(ip_group_q));
 				assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
-				for (i = 0; i < 6; ++i)
+				for (uint16_t i {0}; i < 6; ++i)
 				{
 					CloneShipFragment(URQUAN_SHIP,
 									  &GLOBAL(npc_built_ship_q), 0);
@@ -133,7 +130,7 @@ GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 					return true;
 				}
 
-				Survivors = GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
+				const bool Survivors {GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0};
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));

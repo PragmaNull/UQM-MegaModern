@@ -37,7 +37,7 @@ extern "C" {
 #endif
 
 extern bool InstallStringTableResType(void);
-extern const char* LoadStringInstance(RESOURCE res);
+const extern char* LoadStringInstance(RESOURCE res);
 
 namespace uqm
 {

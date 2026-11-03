@@ -76,7 +76,7 @@ static uint16_t melnorme_tens_names[] =
 		ENUMERATE_EIGHTY,
 		ENUMERATE_NINETY};
 
-static const NUMBER_SPEECH_DESC melnorme_numbers_english =
+const static NUMBER_SPEECH_DESC melnorme_numbers_english =
 	{
 		5, /* NumDigits */
 		{
@@ -280,7 +280,7 @@ typedef struct
 // A table of the available technologies.
 // This should really be an associative map of TechIds to tech data records,
 // but implementing that would be excessive.
-static const TechData tech_data_table[] =
+const static TechData tech_data_table[] =
 	{
 		// Tech ID                      Tech Type,               Supplemental info
 		{TECH_MODULE_BLASTER,		  TECH_TYPE_MODULE,		BLASTER_WEAPON,											4000},
@@ -300,7 +300,7 @@ static const TechData tech_data_table[] =
 const size_t NUM_TECHNOLOGIES = std::size(tech_data_table);
 
 // Lookup function to get the data for a particular tech
-static const TechData*
+const static TechData*
 GetTechData(TechId_t techId)
 {
 	size_t i = 0;
@@ -365,7 +365,7 @@ GrantTech(TechId_t techId)
 			return;
 		case TECH_TYPE_LANDER_SHIELD:
 			{
-				uint16_t state = GET_GAME_STATE(LANDER_SHIELDS) | (1 << techData->subtype);
+				const uint16_t state = GET_GAME_STATE(LANDER_SHIELDS) | (1 << techData->subtype);
 				SET_GAME_STATE(LANDER_SHIELDS, state);
 				return;
 			}
@@ -396,13 +396,13 @@ countTech(void)
 // Many of the conversation lines in strings.h fall into groups
 // of sequential responses.  These structures allow those
 // responses to be interated through.
-static const int ok_buy_event_lines[] =
+const static int ok_buy_event_lines[] =
 	{
 		OK_BUY_EVENT_1, OK_BUY_EVENT_2, OK_BUY_EVENT_3, OK_BUY_EVENT_4,
 		OK_BUY_EVENT_5, OK_BUY_EVENT_6, OK_BUY_EVENT_7, OK_BUY_EVENT_8};
 const size_t NUM_EVENT_ITEMS = std::size(ok_buy_event_lines);
 
-static const int ok_buy_alien_race_lines[] =
+const static int ok_buy_alien_race_lines[] =
 	{
 		OK_BUY_ALIEN_RACE_1, OK_BUY_ALIEN_RACE_2, OK_BUY_ALIEN_RACE_3,
 		OK_BUY_ALIEN_RACE_4, OK_BUY_ALIEN_RACE_5, OK_BUY_ALIEN_RACE_6,
@@ -412,14 +412,14 @@ static const int ok_buy_alien_race_lines[] =
 		OK_BUY_ALIEN_RACE_16};
 const size_t NUM_ALIEN_RACE_ITEMS = std::size(ok_buy_alien_race_lines);
 
-static const int ok_buy_history_lines[] =
+const static int ok_buy_history_lines[] =
 	{
 		OK_BUY_HISTORY_1, OK_BUY_HISTORY_2, OK_BUY_HISTORY_3,
 		OK_BUY_HISTORY_4, OK_BUY_HISTORY_5, OK_BUY_HISTORY_6,
 		OK_BUY_HISTORY_7, OK_BUY_HISTORY_8, OK_BUY_HISTORY_9};
 const size_t NUM_HISTORY_ITEMS = std::size(ok_buy_history_lines);
 
-static const int hello_and_down_to_business_lines[] =
+const static int hello_and_down_to_business_lines[] =
 	{
 		HELLO_AND_DOWN_TO_BUSINESS_1, HELLO_AND_DOWN_TO_BUSINESS_2,
 		HELLO_AND_DOWN_TO_BUSINESS_3, HELLO_AND_DOWN_TO_BUSINESS_4,
@@ -428,7 +428,7 @@ static const int hello_and_down_to_business_lines[] =
 		HELLO_AND_DOWN_TO_BUSINESS_9, HELLO_AND_DOWN_TO_BUSINESS_10};
 const size_t NUM_HELLO_LINES = std::size(hello_and_down_to_business_lines);
 
-static const int rescue_lines[] =
+const static int rescue_lines[] =
 	{
 		RESCUE_EXPLANATION, RESCUE_AGAIN_1, RESCUE_AGAIN_2,
 		RESCUE_AGAIN_3, RESCUE_AGAIN_4, RESCUE_AGAIN_5};
@@ -593,9 +593,9 @@ static void DoFirstMeeting(RESPONSE_REF R);
 static uint16_t
 ShipWorth(void)
 {
-	uint8_t i;
-	int8_t crew_pods;
-	uint16_t worth;
+	uint8_t i {};
+	int8_t crew_pods {};
+	uint16_t worth {};
 
 	worth = GLOBAL_SIS(NumLanders)
 		  * GLOBAL(ModuleCost[PLANET_LANDER]);
@@ -618,9 +618,7 @@ ShipWorth(void)
 						  / CREW_POD_CAPACITY);
 	for (i = 0; i < NUM_MODULE_SLOTS; ++i)
 	{
-		uint8_t which_module;
-
-		which_module = GLOBAL_SIS(ModuleSlots[i]);
+		const uint8_t which_module {GLOBAL_SIS(ModuleSlots[i])};
 		if (which_module < BOMB_MODULE_0
 			&& (which_module != CREW_POD || ++crew_pods > 0))
 		{
@@ -677,7 +675,8 @@ GetStripModuleRef(int moduleID)
 static uint32_t
 getStripRandomSeed(void)
 {
-	uint32_t x, y;
+	uint32_t x {};
+	uint32_t y {};
 	// We truncate the location because encounters move the ship slightly in
 	// HSpace, and throw some other relatively immutable values in the mix to
 	// vary the deal when stuck at the same general location again.
@@ -694,8 +693,9 @@ getStripRandomSeed(void)
 static bool
 StripShip(uint16_t fuel_required)
 {
-	uint8_t i, which_module;
-	int8_t crew_pods;
+	uint8_t i {};
+	uint8_t which_module {};
+	int8_t crew_pods {};
 
 	SET_GAME_STATE(MELNORME_RESCUE_REFUSED, 0);
 
@@ -742,20 +742,18 @@ StripShip(uint16_t fuel_required)
 	}
 	else if (fuel_required)
 	{
-		int8_t bays;
-		uint8_t num_searches, beg_mod, end_mod;
-		uint16_t worth, total;
+		int8_t bays {};
+		uint8_t beg_mod {};
+		uint8_t end_mod {};
+		uint16_t worth {};
 		uint8_t module_count[BOMB_MODULE_0];
-		uint8_t slot;
-		uint32_t capacity;
-		RandomContext* rc;
 
 		// Bug #567
 		// In order to offer the same deal each time if it is refused, we seed
 		// the random number generator with our location, thus making the deal
 		// a repeatable pseudo-random function of where we got stuck and what,
 		// exactly, is on our ship.
-		rc = RandomContext_New();
+		RandomContext* rc {RandomContext_New()};
 		RandomContext_SeedRandom(rc, getStripRandomSeed());
 
 		SIS_copy = uqm::gameState().sis();
@@ -764,14 +762,14 @@ StripShip(uint16_t fuel_required)
 			module_count[i] = 0;
 		}
 
-		capacity = FUEL_RESERVE;
-		slot = NUM_MODULE_SLOTS - 1;
+		uint32_t capacity {FUEL_RESERVE};
+		uint8_t slot {NUM_MODULE_SLOTS - 1};
 		do
 		{
 			if (SIS_copy.ModuleSlots[slot] == FUEL_TANK
 				|| SIS_copy.ModuleSlots[slot] == HIGHEFF_FUELSYS)
 			{
-				uint16_t volume;
+				uint16_t volume {};
 
 				volume = SIS_copy.ModuleSlots[slot] == FUEL_TANK ? FUEL_TANK_CAPACITY : HEFUEL_TANK_CAPACITY;
 				capacity += volume;
@@ -798,14 +796,12 @@ StripShip(uint16_t fuel_required)
 		}
 
 		worth = fuel_required / FUEL_TANK_SCALE;
-		total = 0;
-		num_searches = 0;
+		uint16_t total {0};
+		uint8_t num_searches {0};
 		beg_mod = end_mod = (uint8_t)~0;
 		while (total < worth && ShipWorth() && ++num_searches)
 		{
-			uint32_t rand_val;
-
-			rand_val = RandomContext_Random(rc);
+			const uint32_t rand_val {RandomContext_Random(rc)};
 			switch (which_module = uqm::lowByte(uqm::lowWord(rand_val)) % (CREW_POD + 1))
 			{
 				case PLANET_LANDER:
@@ -999,8 +995,9 @@ ExitConversation(RESPONSE_REF R)
 static void
 DoRescue(RESPONSE_REF R)
 {
-	int16_t dx, dy;
-	uint16_t fuel_required;
+	int16_t dx {};
+	int16_t dy {};
+	uint16_t fuel_required {};
 
 	(void)R; // ignored
 	// JSD Replace old method for locating SOL with plot method
@@ -1070,7 +1067,7 @@ DeltaCredit(int16_t delta_credit)
 static void
 CurrentEvents(void)
 {
-	uint8_t stack = GET_GAME_STATE(MELNORME_EVENTS_INFO_STACK);
+	const uint8_t stack = GET_GAME_STATE(MELNORME_EVENTS_INFO_STACK);
 	const int phraseId = GetLineSafe(ok_buy_event_lines, stack);
 	switch (phraseId)
 	{
@@ -1088,7 +1085,7 @@ CurrentEvents(void)
 static void
 AlienRaces(void)
 {
-	uint8_t stack = GET_GAME_STATE(MELNORME_ALIEN_INFO_STACK);
+	const uint8_t stack = GET_GAME_STATE(MELNORME_ALIEN_INFO_STACK);
 	const int phraseId = GetLineSafe(ok_buy_alien_race_lines, stack);
 	// Two pieces of alien knowledge trigger state changes.
 	switch (phraseId)
@@ -1135,7 +1132,7 @@ AlienRaces(void)
 static void
 History(void)
 {
-	uint8_t stack = GET_GAME_STATE(MELNORME_HISTORY_INFO_STACK);
+	const uint8_t stack = GET_GAME_STATE(MELNORME_HISTORY_INFO_STACK);
 	const int phraseId = GetLineSafe(ok_buy_history_lines, stack);
 	NPCPhrase(phraseId);
 	SET_GAME_STATE(MELNORME_HISTORY_INFO_STACK, stack + 1);
@@ -1157,22 +1154,19 @@ static uint8_t AskedToBuy;
 static void
 DoBuy(RESPONSE_REF R)
 {
-	uint16_t credit;
-	int16_t needed_credit;
-	uint8_t slot;
-	uint32_t capacity;
-	uint8_t FuelCost = BIO_CREDIT_VALUE / 2;
+	int16_t needed_credit {};
+	const uint8_t FuelCost = BIO_CREDIT_VALUE / 2;
 
-	credit = GetAvailableCredits();
+	const uint16_t credit {GetAvailableCredits()};
 
-	capacity = FUEL_RESERVE;
-	slot = NUM_MODULE_SLOTS - 1;
+	uint32_t capacity {FUEL_RESERVE};
+	uint8_t slot {NUM_MODULE_SLOTS - 1};
 	do
 	{
 		if (GLOBAL_SIS(ModuleSlots[slot]) == FUEL_TANK
 			|| GLOBAL_SIS(ModuleSlots[slot]) == HIGHEFF_FUELSYS)
 		{
-			uint16_t volume;
+			uint16_t volume {};
 
 			volume = GLOBAL_SIS(ModuleSlots[slot]) == FUEL_TANK ? FUEL_TANK_CAPACITY : HEFUEL_TANK_CAPACITY;
 			capacity += volume;
@@ -1213,9 +1207,9 @@ DoBuy(RESPONSE_REF R)
 		}
 		else if (PLAYER_SAID(R, fill_me_up))
 		{
-			int16_t remainingCapacity = (capacity - GLOBAL_SIS(FuelOnBoard)
-										 + FUEL_TANK_SCALE - 1)
-									  / FUEL_TANK_SCALE;
+			const int16_t remainingCapacity = (capacity - GLOBAL_SIS(FuelOnBoard)
+											   + FUEL_TANK_SCALE - 1)
+											/ FUEL_TANK_SCALE;
 
 			if (credit < remainingCapacity && !uqm::UQMOptions::read().infiniteCredits)
 			{
@@ -1248,8 +1242,6 @@ DoBuy(RESPONSE_REF R)
 			if (((int)(needed_credit * FuelCost) <= (int)credit)
 				|| uqm::UQMOptions::read().infiniteCredits)
 			{
-				uint32_t f;
-
 				if (EXTENDED && PLAYER_SAID(R, fill_me_up))
 				{
 					NPCPhrase(OK_FILL_YOU_UP);
@@ -1257,7 +1249,7 @@ DoBuy(RESPONSE_REF R)
 
 				NPCPhrase(GOT_FUEL);
 
-				f = (uint32_t)needed_credit * FUEL_TANK_SCALE;
+				uint32_t f {(uint32_t)needed_credit * FUEL_TANK_SCALE};
 				while (f > 0x3FFFL)
 				{
 					DeltaSISGauges(0, 0x3FFF, 0);
@@ -1296,7 +1288,7 @@ TryFuelAgain:
 		// player has by using the technology API above.  This opens the
 		// possibility of the player acquiring tech from someplace other than
 		// the Melnorme.
-		TechSaleData* nextTech;
+		TechSaleData* nextTech {};
 
 		// If it's our first time, give an introduction.
 		if (!GET_GAME_STATE(MELNORME_TECH_PROCEDURE))
@@ -1441,11 +1433,11 @@ BuyBuyBuy:
 static void
 DoSell(RESPONSE_REF R)
 {
-	uint8_t num_new_rainbows;
-	uint16_t rainbow_mask;
-	int16_t added_credit;
+	uint8_t num_new_rainbows {};
+	uint16_t rainbow_mask {};
+	int16_t added_credit {};
 	int what_to_sell_queued = 0;
-	uint8_t BioCreditValue = ifHardDifficulty(1, BIO_CREDIT_VALUE);
+	const uint8_t BioCreditValue = ifHardDifficulty(1, BIO_CREDIT_VALUE);
 
 	rainbow_mask = uqm::makeWord(
 		GET_GAME_STATE(RAINBOW_WORLD0),
@@ -1466,7 +1458,7 @@ DoSell(RESPONSE_REF R)
 		if (PLAYER_SAID(R, sell_life_data))
 		{
 			TimeCount TimeIn;
-			int16_t beast_value = 0;
+			const int16_t beast_value = 0;
 			bool Sleepy = true;
 
 			if (EXTENDED && GET_GAME_STATE(VUX_BEAST_ON_SHIP) == 2
@@ -1541,8 +1533,7 @@ DoSell(RESPONSE_REF R)
 		{
 			TimeCount TimeIn;
 			bool Sleepy = true;
-			uint8_t planets;
-			int diffCase = difficultyCase(500, 200, 125);
+			const int diffCase = difficultyCase(500, 200, 125);
 
 			added_credit = num_new_rainbows * (diffCase * BioCreditValue);
 
@@ -1552,7 +1543,7 @@ DoSell(RESPONSE_REF R)
 			NPCNumber(added_credit, nullptr);
 			NPCPhrase(SOLD_RAINBOW_LOCATIONS3);
 
-			planets = num_new_rainbows;
+			uint8_t planets {num_new_rainbows};
 			num_new_rainbows += GET_GAME_STATE(MELNORME_RAINBOW_COUNT);
 			SET_GAME_STATE(MELNORME_RAINBOW_COUNT, num_new_rainbows);
 			num_new_rainbows = 0;
@@ -1656,9 +1647,8 @@ DoSell(RESPONSE_REF R)
 static void
 NatureOfConversation(RESPONSE_REF R)
 {
-	uint8_t num_new_rainbows;
-	uint16_t rainbow_mask;
-	uint16_t Credit;
+	uint8_t num_new_rainbows {};
+	uint16_t rainbow_mask {};
 
 	if (PLAYER_SAID(R, get_on_with_business))
 	{
@@ -1668,7 +1658,7 @@ NatureOfConversation(RESPONSE_REF R)
 
 	// Draw credits display
 	DeltaCredit(0);
-	Credit = GetAvailableCredits();
+	const uint16_t Credit {GetAvailableCredits()};
 	if (R == 0)
 	{
 		uint8_t stack = GET_GAME_STATE(MELNORME_YACK_STACK2) - 5;
@@ -1904,16 +1894,16 @@ DoFirstMeeting(RESPONSE_REF R)
 {
 	uint8_t last_stack = 0;
 	using VoidFunc = void (*)(void);
-	VoidFunc temp_func, stack_func[] =
-							{
-								yack0_respond,
-								yack1_respond,
-								yack2_respond,
-							};
+	VoidFunc temp_func {}, stack_func[] =
+							   {
+								   yack0_respond,
+								   yack1_respond,
+								   yack2_respond,
+							   };
 
 	if (R == 0)
 	{
-		uint8_t business_count;
+		uint8_t business_count {};
 
 		business_count = GET_GAME_STATE(MELNORME_BUSINESS_COUNT);
 		switch (business_count++)
@@ -2003,7 +1993,7 @@ DoMelnormeMiffed(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		uint8_t miffed_count;
+		uint8_t miffed_count {};
 
 		miffed_count = GET_GAME_STATE(MELNORME_MIFFED_COUNT);
 		switch (miffed_count++)
@@ -2076,7 +2066,7 @@ DoMelnormePissed(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		uint8_t pissed_count;
+		uint8_t pissed_count {};
 
 		pissed_count = GET_GAME_STATE(MELNORME_PISSED_COUNT);
 		switch (pissed_count++)
@@ -2131,7 +2121,7 @@ DoMelnormePissed(RESPONSE_REF R)
 static void
 DoMelnormeHate(RESPONSE_REF R)
 {
-	uint8_t hate_count;
+	uint8_t hate_count {};
 
 	(void)R; // ignored
 	hate_count = GET_GAME_STATE(MELNORME_HATE_COUNT);
@@ -2223,8 +2213,6 @@ post_melnorme_enc(void)
 LOCDATA*
 init_melnorme_comm(void)
 {
-	LOCDATA* retval;
-
 	melnorme_desc.init_encounter_func = Intro;
 	melnorme_desc.post_encounter_func = post_melnorme_enc;
 	melnorme_desc.uninit_encounter_func = uninit_melnorme;
@@ -2245,7 +2233,7 @@ init_melnorme_comm(void)
 
 	setSegue(Segue_peace);
 	AskedToBuy = false;
-	retval = &melnorme_desc;
+	LOCDATA* retval {&melnorme_desc};
 
 	return (retval);
 }

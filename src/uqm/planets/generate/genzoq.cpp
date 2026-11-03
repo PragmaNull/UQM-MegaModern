@@ -78,7 +78,7 @@ static bool
 GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
@@ -86,15 +86,13 @@ GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		if (PrimeSeed)
 		{
-			uint16_t angle;
-
 			pSunDesc->PlanetByte = 0;
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 			pPlanet->data_index = WATER_WORLD;
 			pPlanet->NumPlanets = 1;
 			pPlanet->radius = EARTH_RADIUS * 138L / 100;
-			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
 			ComputeSpeed(pPlanet, false, 1);
@@ -147,7 +145,7 @@ GenerateZoqFotPik_generateMoons(SOLARSYS_STATE* solarSys,
 		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET)
 		&& EXTENDED)
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		pMoonDesc->data_index = GenerateHabitableWorld();
@@ -247,7 +245,7 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
-		uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+		const uint32_t rand = RandomContext_GetSeed(SysGenRNG);
 		PLANET_INFO* PlanetInfo = &solarSys->SysInfo.PlanetInfo;
 
 		PlanetInfo->Weather = 1;
@@ -259,7 +257,7 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
 		&& EXTENDED && !isDifficulty(uqm::Difficulty::Hard))
 	{
-		uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+		const uint32_t rand = RandomContext_GetSeed(SysGenRNG);
 		PLANET_INFO* PlanetInfo = &solarSys->SysInfo.PlanetInfo;
 
 		PlanetInfo->Weather = 1;

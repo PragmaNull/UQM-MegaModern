@@ -127,7 +127,7 @@ static LOCDATA ilwrath_desc =
 static void
 CombatIsInevitable(RESPONSE_REF R)
 {
-	bool isGTFO = PLAYER_SAID(R, gtfo);
+	const bool isGTFO = PLAYER_SAID(R, gtfo);
 	setSegue(Segue_hostile);
 
 	if (PLAYER_SAID(R, you_are_weak))
@@ -181,7 +181,7 @@ CombatIsInevitable(RESPONSE_REF R)
 			 || PLAYER_SAID(R, whats_up_space_4)
 			 || PLAYER_SAID(R, whats_up_space_5))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(ILWRATH_INFO);
 		switch (NumVisits++)
@@ -236,9 +236,7 @@ static void IlwrathHome(RESPONSE_REF R);
 static void
 IlwrathGods(RESPONSE_REF R)
 {
-	uint8_t GodsLeft;
-
-	GodsLeft = false;
+	uint8_t GodsLeft {false};
 	if (PLAYER_SAID(R, want_info_on_gods))
 	{
 		NPCPhrase(SO_MUCH_TO_KNOW);
@@ -299,9 +297,7 @@ IlwrathGods(RESPONSE_REF R)
 static void
 IlwrathInfo(RESPONSE_REF R)
 {
-	uint8_t InfoLeft;
-
-	InfoLeft = false;
+	uint8_t InfoLeft {false};
 	if (PLAYER_SAID(R, want_info_on_ilwrath))
 	{
 		NPCPhrase(WHAT_ABOUT_ILWRATH);
@@ -380,7 +376,7 @@ IlwrathHome(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(ILWRATH_HOME_VISITS);
 		switch (NumVisits++)
@@ -422,9 +418,7 @@ static void GodsSpeak(RESPONSE_REF R);
 static void
 GodsOrder(RESPONSE_REF R)
 {
-	uint8_t OrdersLeft;
-
-	OrdersLeft = false;
+	uint8_t OrdersLeft {false};
 	if (PLAYER_SAID(R, other_divine_orders))
 	{
 		NPCPhrase(WHAT_ORDERS);
@@ -485,7 +479,7 @@ GodsOrder(RESPONSE_REF R)
 static void
 GodsSpeak(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (R == 0)
 	{
@@ -575,7 +569,7 @@ GodsSpeak(RESPONSE_REF R)
 static void
 IlwrathSpace(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (R == 0)
 	{
@@ -630,7 +624,7 @@ IlwrathSpace(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER))
 	{
@@ -760,8 +754,6 @@ post_ilwrath_enc(void)
 LOCDATA*
 init_ilwrath_comm(void)
 {
-	LOCDATA* retval;
-
 	ilwrath_desc.init_encounter_func = Intro;
 	ilwrath_desc.post_encounter_func = post_ilwrath_enc;
 	ilwrath_desc.uninit_encounter_func = uninit_ilwrath;
@@ -783,7 +775,7 @@ init_ilwrath_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &ilwrath_desc;
+	LOCDATA* retval {&ilwrath_desc};
 
 	return (retval);
 }

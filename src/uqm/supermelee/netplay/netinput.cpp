@@ -67,8 +67,7 @@ BattleInputBuffer_uninit(BattleInputBuffer* bib)
 
 void initBattleInputBuffers(void)
 {
-	size_t player;
-	int bufSize = BattleInput_inputDelay * 2 + 2;
+	const int bufSize = BattleInput_inputDelay * 2 + 2;
 
 	// The input of frame n will be processed in frame 'n + delay'.
 	//
@@ -84,7 +83,7 @@ void initBattleInputBuffers(void)
 	// Initially the buffer is filled with inputDelay zeroes,
 	// so that a party can process at least that much frames.
 
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NUM_PLAYERS; player++)
 	{
 		BattleInputBuffer* bib = &battleInputBuffers[player];
 		BattleInputBuffer_init(bib, bufSize);
@@ -92,8 +91,7 @@ void initBattleInputBuffers(void)
 		{
 			// Initially a party must be able to process at least inputDelay
 			// frames, so we fill the buffer with inputDelay zeros.
-			size_t i;
-			for (i = 0; i < BattleInput_inputDelay; i++)
+			for (size_t i {0}; i < BattleInput_inputDelay; i++)
 			{
 				BattleInputBuffer_push(bib, (BATTLE_INPUT_STATE)0);
 			}
@@ -103,13 +101,9 @@ void initBattleInputBuffers(void)
 
 void uninitBattleInputBuffers(void)
 {
-	size_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		BattleInputBuffer* bib;
-
-		bib = &battleInputBuffers[player];
+		BattleInputBuffer* bib {&battleInputBuffers[player]};
 		BattleInputBuffer_uninit(bib);
 	}
 }
@@ -117,8 +111,6 @@ void uninitBattleInputBuffers(void)
 // Returns false if the buffer is full.
 bool BattleInputBuffer_push(BattleInputBuffer* bib, BATTLE_INPUT_STATE input)
 {
-	size_t next;
-
 	if (bib->size == bib->maxSize)
 	{
 		// No more space.
@@ -126,7 +118,7 @@ bool BattleInputBuffer_push(BattleInputBuffer* bib, BATTLE_INPUT_STATE input)
 		return false;
 	}
 
-	next = (bib->first + bib->size) % bib->maxSize;
+	const size_t next {(bib->first + bib->size) % bib->maxSize};
 	bib->buf[next] = input;
 	bib->size++;
 	return true;

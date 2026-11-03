@@ -58,8 +58,8 @@ FONT ModuleFont;
 static void
 InitializeDOSLanderPos(void)
 { // Initialize the DOS lander icon positions
-	int i;
-	GFXPOINT temp[MAX_LANDERS] = {LANDER_DOS_PTS};
+	int i {};
+	const GFXPOINT temp[MAX_LANDERS] = {LANDER_DOS_PTS};
 
 	if (!IS_DOS)
 	{
@@ -170,7 +170,6 @@ DrawModuleDisplay(MODULES_STATE* modState)
 {
 	TEXT t;
 	GFXRECT r;
-	uint16_t i;
 
 	r.corner.x = RES_SCALE(2);
 	r.corner.y = RES_SCALE(20);
@@ -199,9 +198,9 @@ DrawModuleDisplay(MODULES_STATE* modState)
 	font_DrawText(&t);
 
 	// print names and costs
-	for (i = 0; i < MAX_VIS_MODULES; ++i)
+	for (uint16_t i {0}; i < MAX_VIS_MODULES; ++i)
 	{
-		uint16_t modIndex = modState->topIndex + i;
+		const uint16_t modIndex = modState->topIndex + i;
 
 		if (modIndex >= modState->count)
 		{
@@ -231,15 +230,14 @@ DrawModules(MODULES_STATE* modState, uint16_t NewItem)
 static void
 ManipulateModules(int16_t NewState)
 {
-	MODULES_STATE* modState;
-	int16_t NewTop;
+	int16_t NewTop {};
 
 	if (!DOS_MENU)
 	{
 		return;
 	}
 
-	modState = &ModuleState;
+	MODULES_STATE* modState {&ModuleState};
 	NewTop = modState->topIndex;
 
 	if (NewState > NUM_PURCHASE_MODULES)
@@ -259,11 +257,8 @@ ManipulateModules(int16_t NewState)
 int16_t
 InventoryModules(uint8_t* pModuleMap, uint16_t Size)
 {
-	uint8_t i;
-	int16_t ModulesOnBoard;
-
-	ModulesOnBoard = 0;
-	for (i = 0; i < NUM_PURCHASE_MODULES && Size > 0; ++i)
+	int16_t ModulesOnBoard {0};
+	for (uint8_t i {0}; i < NUM_PURCHASE_MODULES && Size > 0; ++i)
 	{
 		//uint8_t ActiveModule;
 
@@ -283,10 +278,9 @@ static void
 DrawModuleMenuText(GFXRECT* r, int Index)
 {
 	TEXT text;
-	int16_t leading;
+	int16_t leading {};
 	GFXRECT block;
 	char buf[256];
-	int16_t og_baseline_x;
 
 	if (IS_DOS || !strlen(GAME_STRING(TDO_STARBASE_STRING_BASE + Index)))
 	{
@@ -312,7 +306,7 @@ DrawModuleMenuText(GFXRECT* r, int Index)
 
 	text.baseline.x = r->corner.x + (r->extent.width >> 1);
 	text.baseline.y = r->corner.y + leading - RES_SCALE(1);
-	og_baseline_x = text.baseline.x;
+	const int16_t og_baseline_x {text.baseline.x};
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
 						GAME_STRING(TDO_STARBASE_STRING_BASE + Index));
@@ -341,9 +335,8 @@ DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
 {
 	GFXRECT r;
 	STAMP s;
-	GFXCONTEXT OldContext;
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	GetContextClipRect(&r);
 	s.origin.x = RADAR_X - r.corner.x;
 	s.origin.y = RADAR_Y - r.corner.y;
@@ -474,19 +467,17 @@ static void
 DrawEscapePodText(GFXRECT rect)
 {
 	TEXT text;
-	FONT OldFont;
 	Color OldColor;
-	int16_t leading;
+	int16_t leading {};
 	GFXRECT block;
 	char buf[256];
-	int16_t og_baseline_x;
 
 	if (!strlen(GAME_STRING(END_STARBASE_STRING_BASE + 1)))
 	{
 		return;
 	}
 
-	OldFont = SetContextFont(SquareFont);
+	FONT OldFont {SetContextFont(SquareFont)};
 	OldColor = SetContextForeGroundColor(BLACK_COLOR);
 
 	block = rect;
@@ -508,7 +499,7 @@ DrawEscapePodText(GFXRECT rect)
 	text.baseline.y += RES_SCALE(39);
 	text.align = ALIGN_CENTER;
 
-	og_baseline_x = text.baseline.x;
+	const int16_t og_baseline_x {text.baseline.x};
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
 						GAME_STRING(END_STARBASE_STRING_BASE + 1));
@@ -540,7 +531,6 @@ static void
 DrawNoLandersText(GFXRECT rect)
 {
 	TEXT text;
-	FONT OldFont;
 	Color OldColor;
 	GFXRECT block;
 
@@ -549,7 +539,7 @@ DrawNoLandersText(GFXRECT rect)
 		return;
 	}
 
-	OldFont = SetContextFont(SquareFont);
+	FONT OldFont {SetContextFont(SquareFont)};
 	OldColor = SetContextForeGroundColor(BLACK_COLOR);
 
 	block = rect;
@@ -601,7 +591,7 @@ DisplayLanders(MENU_STATE* pMS)
 	}
 	else
 	{
-		uint16_t i;
+		uint16_t i {};
 
 		if (!IS_DOS)
 		{
@@ -641,9 +631,11 @@ DisplayLanders(MENU_STATE* pMS)
 static bool
 DoInstallModule(MENU_STATE* pMS)
 {
-	uint8_t NewState, new_slot_piece, old_slot_piece;
-	int16_t FirstItem, LastItem;
-	bool select, cancel, motion;
+	uint8_t new_slot_piece {};
+	uint8_t old_slot_piece {};
+	int16_t LastItem {};
+	bool select {};
+	bool cancel {};
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -653,12 +645,12 @@ DoInstallModule(MENU_STATE* pMS)
 
 	select = PulsedInputState.menu[KEY_MENU_SELECT];
 	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
-	motion = PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_RIGHT] || PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN];
+	const bool motion {PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_RIGHT] || PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN]};
 
 	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
 
-	FirstItem = 0;
-	NewState = pMS->CurState;
+	int16_t FirstItem {0};
+	uint8_t NewState {pMS->CurState};
 	switch (NewState)
 	{
 		case PLANET_LANDER:
@@ -737,7 +729,7 @@ DoInstallModule(MENU_STATE* pMS)
 				else if (old_slot_piece == FUEL_TANK
 						 || old_slot_piece == HIGHEFF_FUELSYS)
 				{
-					uint32_t volume;
+					uint32_t volume {};
 
 					volume = (uint32_t)CountSISPieces(FUEL_TANK)
 							   * FUEL_TANK_CAPACITY
@@ -898,7 +890,7 @@ DoInstallModule(MENU_STATE* pMS)
 	}
 	else if (motion)
 	{
-		int16_t NewItem;
+		int16_t NewItem; // NOLINT(cppcoreguidelines-init-variables)
 
 		NewItem = NewState < EMPTY_SLOT ? pMS->CurState : pMS->delta_item;
 		do
@@ -969,7 +961,7 @@ DoInstallModule(MENU_STATE* pMS)
 		}
 		else if (NewItem != pMS->delta_item || NewState != pMS->CurState)
 		{
-			int16_t w;
+			int16_t w; // NOLINT(cppcoreguidelines-init-variables)
 
 			switch (NewState)
 			{
@@ -1279,7 +1271,7 @@ bool DoOutfit(MENU_STATE* pMS)
 		SetNamingCallback(onNamingDone);
 
 		{
-			uint16_t num_frames;
+			uint16_t num_frames {};
 			STAMP s;
 
 			if (!IS_DOS)
@@ -1321,9 +1313,7 @@ bool DoOutfit(MENU_STATE* pMS)
 			for (num_frames = 0; num_frames < NUM_DRIVE_SLOTS;
 				 ++num_frames)
 			{
-				uint8_t which_piece;
-
-				which_piece = GLOBAL_SIS(DriveSlots[num_frames]);
+				const uint8_t which_piece {GLOBAL_SIS(DriveSlots[num_frames])};
 				if (which_piece < EMPTY_SLOT)
 				{
 					DrawShipPiece(pMS->ModuleFrame, which_piece,
@@ -1333,9 +1323,7 @@ bool DoOutfit(MENU_STATE* pMS)
 			for (num_frames = 0; num_frames < NUM_JET_SLOTS;
 				 ++num_frames)
 			{
-				uint8_t which_piece;
-
-				which_piece = GLOBAL_SIS(JetSlots[num_frames]);
+				const uint8_t which_piece {GLOBAL_SIS(JetSlots[num_frames])};
 				if (which_piece < EMPTY_SLOT)
 				{
 					DrawShipPiece(pMS->ModuleFrame, which_piece,
@@ -1345,9 +1333,7 @@ bool DoOutfit(MENU_STATE* pMS)
 			for (num_frames = 0; num_frames < NUM_MODULE_SLOTS;
 				 ++num_frames)
 			{
-				uint8_t which_piece;
-
-				which_piece = GLOBAL_SIS(ModuleSlots[num_frames]);
+				const uint8_t which_piece {GLOBAL_SIS(ModuleSlots[num_frames])};
 				if (which_piece < EMPTY_SLOT)
 				{
 					DrawShipPiece(pMS->ModuleFrame, which_piece,
@@ -1358,7 +1344,7 @@ bool DoOutfit(MENU_STATE* pMS)
 			DisplayLanders(pMS);
 			if (GET_GAME_STATE(CHMMR_BOMB_STATE) < 3)
 			{
-				uint8_t ShieldFlags;
+				uint8_t ShieldFlags {};
 
 				ShieldFlags = GET_GAME_STATE(LANDER_SHIELDS);
 

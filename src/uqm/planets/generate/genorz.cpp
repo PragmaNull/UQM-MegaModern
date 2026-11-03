@@ -62,7 +62,7 @@ const GenerateFunctions generateOrzFunctions = {
 static bool
 GenerateOrz_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	if (CurStarDescPtr->Index == ORZ_DEFINED)
@@ -71,15 +71,13 @@ GenerateOrz_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		if (PrimeSeed)
 		{
-			uint16_t angle;
-
 			pSunDesc->PlanetByte = 0;
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 			pPlanet->data_index = WATER_WORLD;
 			pPlanet->radius = EARTH_RADIUS * 156L / 100;
 			pPlanet->NumPlanets = 0;
-			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
 			ComputeSpeed(pPlanet, false, 1);
@@ -102,8 +100,8 @@ GenerateOrz_generatePlanets(SOLARSYS_STATE* solarSys)
 		{
 			if (!StarSeed)
 			{
-				uint32_t RandVal = RandomContext_Random(SysGenRNG);
-				uint8_t PByte = pSunDesc->PlanetByte + 1;
+				const uint32_t RandVal = RandomContext_Random(SysGenRNG);
+				const uint8_t PByte = pSunDesc->PlanetByte + 1;
 				pSunDesc->NumPlanets =
 					(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);
 			}
@@ -152,7 +150,7 @@ GenerateOrz_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET)
 		&& EXTENDED)
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		pMoonDesc->data_index = GenerateCrystalWorld();
@@ -170,7 +168,7 @@ GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 			&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
 			&& !GET_GAME_STATE(TAALO_PROTECTOR)))
 	{
-		uint16_t i;
+		uint16_t i {};
 
 		if ((CurStarDescPtr->Index == ORZ_DEFINED
 			 || !GET_GAME_STATE(TAALO_UNPROTECTED))
@@ -205,7 +203,7 @@ GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 			}
 
 			{
-				bool OrzSurvivors;
+				bool OrzSurvivors {};
 
 				OrzSurvivors = GetHeadLink(&GLOBAL(npc_built_ship_q))
 							&& (CurStarDescPtr->Index == ORZ_DEFINED

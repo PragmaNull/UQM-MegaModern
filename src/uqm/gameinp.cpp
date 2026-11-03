@@ -220,7 +220,8 @@ applyInputScript(void)
 static void
 _clear_menu_state(void)
 {
-	int i, j;
+	int i {};
+	int j {};
 	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
@@ -240,7 +241,8 @@ _clear_menu_state(void)
 void ResetKeyRepeat(void)
 {
 	const TimeCount initTime {GetTimeCounter()};
-	int i, j;
+	int i {};
+	int j {};
 	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
@@ -297,12 +299,12 @@ _check_for_pulse(int* current, int* cached, int* old, TimePeriod* accel,
 static void
 _check_gestalt(TimeCount NewTime)
 {
-	bool CurrentGestalt;
-	int i, j;
+	int i {};
+	int j {};
 	OldGestalt = CachedGestalt;
 
 	CachedGestalt = 0;
-	CurrentGestalt = 0;
+	bool CurrentGestalt {0};
 	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
@@ -415,7 +417,8 @@ void UpdateInputState(void)
 	}
 	else
 	{
-		int i, j;
+		int i {};
+		int j {};
 		for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 		{
 			for (j = 0; j < NUM_KEYS; j++)
@@ -506,9 +509,7 @@ void FlushInput(void)
 static MENU_SOUND_FLAGS
 MenuKeysToSoundFlags(const CONTROLLER_INPUT_STATE* state)
 {
-	MENU_SOUND_FLAGS soundFlags;
-
-	soundFlags = MENU_SOUND_NONE;
+	MENU_SOUND_FLAGS soundFlags {MENU_SOUND_NONE};
 	if (state->menu[KEY_MENU_UP])
 	{
 		soundFlags |= MENU_SOUND_UP;
@@ -566,13 +567,12 @@ void DoInput(void* pInputState, bool resetInput)
 
 	do
 	{
-		MENU_SOUND_FLAGS soundFlags;
 		Async_process();
 		TaskSwitch();
 
 		UpdateInputState();
 
-		soundFlags = MenuKeysToSoundFlags(&PulsedInputState);
+		const MENU_SOUND_FLAGS soundFlags {MenuKeysToSoundFlags(&PulsedInputState)};
 
 		if (MenuSounds && (soundFlags & (sound_0 | sound_1)))
 		{
@@ -663,7 +663,8 @@ PulsedInputToBattleInput(uint16_t player)
 
 bool AnyButtonPress(bool CheckSpecial)
 {
-	int i, j;
+	int i {};
+	int j {};
 	(void)CheckSpecial; // Ignored
 	UpdateInputState();
 	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
@@ -707,17 +708,18 @@ bool ActKeysPress(void)
 
 bool ConfirmExit(void)
 {
-	TimePeriod old_max_accel, old_min_accel, old_step_accel;
-	bool old_gestalt_keys, result;
+	TimePeriod old_max_accel;
+	TimePeriod old_min_accel;
+	TimePeriod old_step_accel;
 
 	old_max_accel = _max_accel;
 	old_min_accel = _min_accel;
 	old_step_accel = _step_accel;
-	old_gestalt_keys = _gestalt_keys;
+	const bool old_gestalt_keys {_gestalt_keys};
 
 	SetDefaultMenuRepeatDelay();
 
-	result = DoConfirmExit();
+	const bool result {DoConfirmExit()};
 
 	SetMenuRepeatDelay(old_min_accel, old_max_accel, old_step_accel,
 					   old_gestalt_keys);

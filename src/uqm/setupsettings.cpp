@@ -111,7 +111,7 @@ static void applyGraphicsSettings()
 
 	const GfxFlags newFlags {(g_gfxFlags & ~c_displayFlagsMask) | displayFlags(options)};
 
-	GfxDriver newDriver {GraphicsDriver};
+	const GfxDriver newDriver {GraphicsDriver};
 
 	const int blowup {*options.loresBlowupScale};
 	if (blowup == 0)

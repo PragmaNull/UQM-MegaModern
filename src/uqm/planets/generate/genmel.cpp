@@ -87,7 +87,7 @@ GenerateMelnorme_initNpcs(SOLARSYS_STATE* solarSys)
 static bool
 GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
@@ -138,7 +138,7 @@ GenerateMelnorme_generateMoons(SOLARSYS_STATE* solarSys,
 	if (EXTENDED && CurStarDescPtr->Index == MELNORME1_DEFINED
 		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 
 		solarSys->MoonDesc[MoonByte].data_index = PRECURSOR_STARBASE;
 	}

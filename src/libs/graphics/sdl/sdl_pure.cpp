@@ -41,7 +41,7 @@ static TFB_SDL_SCREENINFO ScreenTextures[TFB_GFX_NUMSCREENS];
 
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
-static const char* rendererBackend = nullptr;
+const static char* rendererBackend = nullptr;
 
 static TFB_ScaleFunc scaler = nullptr;
 
@@ -167,7 +167,7 @@ ReInit_FPS_Screen(SDL_Surface** screen, int w, int h)
 }
 
 // Returns the name of the render driver to use, or nullptr to let SDL choose.
-static const char*
+const static char*
 FindBestRenderDriver(void)
 {
 	if (!rendererBackend || !*rendererBackend)
@@ -288,7 +288,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 							int togglefullscreen, unsigned int resFactor,
 							unsigned int windowType)
 {
-	int i;
+	int i {};
 	char caption[50] {};
 	GraphicsDriver = driver;
 	(void)togglefullscreen; /* satisfy compiler (unused parameter) */
@@ -364,7 +364,8 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 	}
 	else
 	{
-		int LastScreenWidth, LastScreenHeight;
+		int LastScreenWidth {};
+		int LastScreenHeight {};
 		SDL_RendererLogicalPresentation mode;
 		SDL_GetRenderLogicalPresentation(renderer, &LastScreenWidth, &LastScreenHeight, &mode);
 		if (LastScreenWidth != width || LastScreenHeight != height)
@@ -614,9 +615,8 @@ TFB_SDL_UploadTransitionScreen(void)
 static void
 TFB_SDL_UpdateTexture(SDL_Texture* dest, SDL_Surface* src, SDL_Rect* rect)
 {
-	char* srcBytes;
 	SDL_LockSurface(src);
-	srcBytes = (char*)src->pixels;
+	const char* srcBytes {(char*)src->pixels};
 	if (rect)
 	{
 		/* SDL screen surfaces are always 32bpp */
@@ -645,10 +645,9 @@ TFB_SDL_UpdateTexture(SDL_Texture* dest, SDL_Surface* src, SDL_Rect* rect)
 static void
 TFB_SDL_ScanLines(bool hd)
 {
-	int y;
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 64);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-	for (y = 0; y < WindowHeight; y += 2)
+	for (int y {0}; y < WindowHeight; y += 2)
 	{
 		SDL_RenderLine(renderer, 0.0f, static_cast<float>(y), static_cast<float>(WindowWidth - 1), static_cast<float>(y));
 	}
@@ -680,7 +679,8 @@ TFB_SDL_FPS(void)
 		SDL_Screen_fps_changed = false;
 	}
 
-	SDL_Rect r, t;
+	SDL_Rect r;
+	SDL_Rect t;
 	r.x = r.y = t.x = t.y = 0;
 	r.w = CanvasWidth >> FpsScreenWidthShift;
 	r.h = CanvasHeight >> FpsScreenHeightShift;
@@ -811,9 +811,10 @@ TFB_SDL_Unscaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 static void
 DrawScaledScreen(SDL_Texture* texture, Uint8 a, SDL_Rect* rect)
 {
-	SDL_FRect srcRect, dstRect;
-	SDL_FRect* pSrcRect = nullptr;
-	SDL_FRect* pDstRect = nullptr;
+	SDL_FRect srcRect;
+	SDL_FRect dstRect;
+	const SDL_FRect* pSrcRect = nullptr;
+	const SDL_FRect* pDstRect = nullptr;
 	if (a == 255)
 	{
 		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_NONE);
@@ -917,7 +918,7 @@ TFB_SDL_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect)
 		}
 		else
 		{
-			Uint8 c = a > 175 ? 175 : a;
+			const Uint8 c = a > 175 ? 175 : a;
 			SDL_SetRenderDrawBlendMode(renderer,
 									   SDL_ComposeCustomBlendMode(SDL_BLENDFACTOR_ONE,
 																  SDL_BLENDFACTOR_ONE, SDL_BLENDOPERATION_ADD,

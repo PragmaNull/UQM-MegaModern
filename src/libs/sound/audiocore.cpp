@@ -50,7 +50,7 @@ int32_t noSound_Init(audio_Driver* driver, AudioFlags flags);
 int32_t
 initAudio(AudioDriverType driver, AudioFlags flags)
 {
-	int32_t ret;
+	int32_t ret {};
 
 #ifdef HAVE_OPENAL
 	if (driver == AudioDriverType::MixSDL)

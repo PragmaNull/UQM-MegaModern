@@ -32,7 +32,7 @@ extern "C" {
 typedef struct resource_index_desc RESOURCE_INDEX_DESC;
 typedef RESOURCE_INDEX_DESC* RESOURCE_INDEX;
 
-typedef const char* RESOURCE;
+const typedef char* RESOURCE;
 
 typedef union
 {

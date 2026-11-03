@@ -67,11 +67,9 @@ void ReinitQueue(QUEUE* pq)
 	SetHeadLink(pq, NULL_HANDLE);
 	SetTailLink(pq, NULL_HANDLE);
 	{
-		uint16_t num_elements;
-
 		SetFreeList(pq, NULL_HANDLE);
 
-		num_elements = SizeQueueTab(pq);
+		uint16_t num_elements {SizeQueueTab(pq)};
 		if (num_elements)
 		{
 			do
@@ -85,14 +83,10 @@ void ReinitQueue(QUEUE* pq)
 HLINK
 AllocLink(QUEUE* pq)
 {
-	HLINK hLink;
-
-	hLink = GetFreeList(pq);
+	HLINK hLink {GetFreeList(pq)};
 	if (hLink)
 	{
-		LINK* LinkPtr;
-
-		LinkPtr = LockLink(pq, hLink);
+		const LINK* LinkPtr {LockLink(pq, hLink)};
 		SetFreeList(pq, _GetSuccLink(LinkPtr));
 		UnlockLink(pq, hLink);
 	}
@@ -106,9 +100,7 @@ AllocLink(QUEUE* pq)
 
 void FreeLink(QUEUE* pq, HLINK hLink)
 {
-	LINK* LinkPtr;
-
-	LinkPtr = LockLink(pq, hLink);
+	LINK* LinkPtr {LockLink(pq, hLink)};
 	_SetSuccLink(LinkPtr, GetFreeList(pq));
 	UnlockLink(pq, hLink);
 
@@ -117,24 +109,19 @@ void FreeLink(QUEUE* pq, HLINK hLink)
 
 void PutQueue(QUEUE* pq, HLINK hLink)
 {
-	LINK* LinkPtr;
-
 	if (GetHeadLink(pq) == 0)
 	{
 		SetHeadLink(pq, hLink);
 	}
 	else
 	{
-		HLINK hTail;
-		LINK* lpTail;
-
-		hTail = GetTailLink(pq);
-		lpTail = LockLink(pq, hTail);
+		HLINK hTail {GetTailLink(pq)};
+		LINK* lpTail {LockLink(pq, hTail)};
 		_SetSuccLink(lpTail, hLink);
 		UnlockLink(pq, hTail);
 	}
 
-	LinkPtr = LockLink(pq, hLink);
+	LINK* LinkPtr {LockLink(pq, hLink)};
 	_SetPredLink(LinkPtr, GetTailLink(pq));
 	_SetSuccLink(LinkPtr, NULL_HANDLE);
 	UnlockLink(pq, hLink);
@@ -150,11 +137,8 @@ void InsertQueue(QUEUE* pq, HLINK hLink, HLINK hRefLink)
 	}
 	else
 	{
-		LINK* LinkPtr;
-		LINK* RefLinkPtr;
-
-		LinkPtr = LockLink(pq, hLink);
-		RefLinkPtr = LockLink(pq, hRefLink);
+		LINK* LinkPtr {LockLink(pq, hLink)};
+		LINK* RefLinkPtr {LockLink(pq, hRefLink)};
 		_SetPredLink(LinkPtr, _GetPredLink(RefLinkPtr));
 		_SetPredLink(RefLinkPtr, hLink);
 		_SetSuccLink(LinkPtr, hRefLink);
@@ -165,11 +149,8 @@ void InsertQueue(QUEUE* pq, HLINK hLink, HLINK hRefLink)
 		}
 		else
 		{
-			HLINK hPredLink;
-			LINK* PredLinkPtr;
-
-			hPredLink = _GetPredLink(LinkPtr);
-			PredLinkPtr = LockLink(pq, hPredLink);
+			HLINK hPredLink {_GetPredLink(LinkPtr)};
+			LINK* PredLinkPtr {LockLink(pq, hPredLink)};
 			_SetSuccLink(PredLinkPtr, hLink);
 			UnlockLink(pq, hPredLink);
 		}
@@ -180,20 +161,15 @@ void InsertQueue(QUEUE* pq, HLINK hLink, HLINK hRefLink)
 
 void RemoveQueue(QUEUE* pq, HLINK hLink)
 {
-	LINK* LinkPtr;
-
-	LinkPtr = LockLink(pq, hLink);
+	const LINK* LinkPtr {LockLink(pq, hLink)};
 	if (GetHeadLink(pq) == hLink)
 	{
 		SetHeadLink(pq, _GetSuccLink(LinkPtr));
 	}
 	else
 	{
-		HLINK hPredLink;
-		LINK* PredLinkPtr;
-
-		hPredLink = _GetPredLink(LinkPtr);
-		PredLinkPtr = LockLink(pq, hPredLink);
+		HLINK hPredLink {_GetPredLink(LinkPtr)};
+		LINK* PredLinkPtr {LockLink(pq, hPredLink)};
 		_SetSuccLink(PredLinkPtr, _GetSuccLink(LinkPtr));
 		UnlockLink(pq, hPredLink);
 	}
@@ -203,12 +179,9 @@ void RemoveQueue(QUEUE* pq, HLINK hLink)
 	}
 	else
 	{
-		HLINK hSuccLink, hPredLink;
-		LINK* SuccLinkPtr;
-
-		hSuccLink = _GetSuccLink(LinkPtr);
-		SuccLinkPtr = LockLink(pq, hSuccLink);
-		hPredLink = _GetPredLink(LinkPtr);
+		HLINK hSuccLink {_GetSuccLink(LinkPtr)};
+		LINK* SuccLinkPtr {LockLink(pq, hSuccLink)};
+		HLINK hPredLink {_GetPredLink(LinkPtr)};
 		_SetPredLink(SuccLinkPtr, hPredLink);
 		UnlockLink(pq, hSuccLink);
 	}
@@ -218,17 +191,14 @@ void RemoveQueue(QUEUE* pq, HLINK hLink)
 uint16_t
 CountLinks(QUEUE* pq)
 {
-	uint16_t LinkCount;
-	HLINK hLink, hNextLink;
+	HLINK hNextLink {};
 
-	LinkCount = 0;
-	for (hLink = GetHeadLink(pq); hLink; hLink = hNextLink)
+	uint16_t LinkCount {0};
+	for (HLINK hLink {GetHeadLink(pq)}; hLink; hLink = hNextLink)
 	{
-		LINK* LinkPtr;
-
 		++LinkCount;
 
-		LinkPtr = LockLink(pq, hLink);
+		const LINK* LinkPtr {LockLink(pq, hLink)};
 		hNextLink = _GetSuccLink(LinkPtr);
 		UnlockLink(pq, hLink);
 	}
@@ -238,12 +208,11 @@ CountLinks(QUEUE* pq)
 
 void ForAllLinks(QUEUE* pq, void (*callback)(LINK*, void*), void* arg)
 {
-	HLINK hLink, hNextLink;
+	HLINK hNextLink {};
 
-	for (hLink = GetHeadLink(pq); hLink; hLink = hNextLink)
+	for (HLINK hLink {GetHeadLink(pq)}; hLink; hLink = hNextLink)
 	{
-		LINK* LinkPtr;
-		LinkPtr = LockLink(pq, hLink);
+		LINK* LinkPtr {LockLink(pq, hLink)};
 		hNextLink = _GetSuccLink(LinkPtr);
 		(*callback)(LinkPtr, arg);
 		UnlockLink(pq, hLink);

@@ -306,7 +306,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, bye_ally))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(THRADD_STACK_1);
 		switch (NumVisits++)
@@ -378,7 +378,7 @@ ExitConversation(RESPONSE_REF R)
 static void
 ThraddAllies(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, why_you_here_ally))
 	{
@@ -635,7 +635,7 @@ ThraddHostile(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, whats_up_hostile_2))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(THRADD_INFO);
 		switch (NumVisits++)
@@ -776,9 +776,9 @@ ThraddHostile(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 	HFLEETINFO hThradd = GetStarShipFromIndex(&GLOBAL(avail_race_q), THRADDASH_SHIP);
-	FLEET_INFO* ThraddPtr = LockFleetInfo(&GLOBAL(avail_race_q), hThradd);
+	const FLEET_INFO* ThraddPtr = LockFleetInfo(&GLOBAL(avail_race_q), hThradd);
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -809,7 +809,8 @@ Intro(void)
 	{
 		if (isDifficulty(uqm::Difficulty::Hard) && GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		{
-			RESPONSE_REF pStr0, pStr1;
+			RESPONSE_REF pStr0 {};
+			RESPONSE_REF pStr1 {};
 
 			if (GET_GAME_STATE(THRADD_MANNER))
 			{
@@ -878,7 +879,8 @@ Intro(void)
 	}
 	else if (GET_GAME_STATE(THRADD_MANNER))
 	{
-		RESPONSE_REF pStr0, pStr1;
+		RESPONSE_REF pStr0 {};
+		RESPONSE_REF pStr1 {};
 
 		NumVisits = GET_GAME_STATE(THRADD_VISITS);
 		switch (GET_GAME_STATE(THRADD_INTRO))
@@ -1067,8 +1069,6 @@ post_thradd_enc(void)
 LOCDATA*
 init_thradd_comm(void)
 {
-	LOCDATA* retval;
-
 	thradd_desc.init_encounter_func = Intro;
 	thradd_desc.post_encounter_func = post_thradd_enc;
 	thradd_desc.uninit_encounter_func = uninit_thradd;
@@ -1090,7 +1090,7 @@ init_thradd_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &thradd_desc;
+	LOCDATA* retval {&thradd_desc};
 
 	return (retval);
 }

@@ -72,7 +72,8 @@ enum ScanMenuItems
 
 void RepairBackRect(GFXRECT* pRect)
 {
-	GFXRECT new_r, old_r;
+	GFXRECT new_r;
+	GFXRECT old_r;
 
 	GetContextClipRect(&old_r);
 	new_r.corner.x = pRect->corner.x + old_r.corner.x;
@@ -196,7 +197,6 @@ GetRotationalPeriod(void)
 
 void GetPlanetTitle(uqstl::span<char> buf)
 {
-	int val;
 	const char* named = GetNamedPlanetaryBody();
 
 	if (named)
@@ -206,7 +206,7 @@ void GetPlanetTitle(uqstl::span<char> buf)
 	}
 
 	// Unnamed body, use world type
-	val = pSolarSysState->pOrbitalDesc->data_index & ~PLANET_SHIELDED;
+	const int val {pSolarSysState->pOrbitalDesc->data_index & ~PLANET_SHIELDED};
 	if (val >= FIRST_GAS_GIANT)
 	{
 		if (!EXTENDED)
@@ -238,10 +238,10 @@ HazardCase(uint8_t hazard)
 		   ((b) ? BRIGHT_RED_COLOR : SCAN_INFO_COLOR))
 	Color HazardColor;
 
-	uint16_t Temperature = GetThermalHazardRating(
+	const uint16_t Temperature = GetThermalHazardRating(
 		pSolarSysState->SysInfo.PlanetInfo.SurfaceTemperature);
-	uint16_t Weather = pSolarSysState->SysInfo.PlanetInfo.Weather + 1;
-	uint16_t Tectonics = pSolarSysState->SysInfo.PlanetInfo.Tectonics + 1;
+	const uint16_t Weather = pSolarSysState->SysInfo.PlanetInfo.Weather + 1;
+	const uint16_t Tectonics = pSolarSysState->SysInfo.PlanetInfo.Tectonics + 1;
 
 	switch (hazard)
 	{
@@ -270,7 +270,7 @@ HazardCase(uint8_t hazard)
 static void
 PrintCoarseScanPC(void)
 {
-	int32_t val;
+	int32_t val {};
 	TEXT t;
 	char buf[200] {};
 
@@ -456,7 +456,7 @@ static void
 PrintCoarseScan3DO(void)
 {
 #define SCAN_LEADING RES_SCALE(19)
-	int32_t val;
+	int32_t val {};
 	TEXT t;
 	STAMP s;
 	char buf[200] {};
@@ -612,10 +612,8 @@ PrintCoarseScan3DO(void)
 static void
 initPlanetLocationImage(void)
 {
-	FRAME cursorFrame;
-
 	// Get the cursor image
-	cursorFrame = SetAbsFrameIndex(MiscDataFrame, FLASH_INDEX);
+	FRAME cursorFrame {SetAbsFrameIndex(MiscDataFrame, FLASH_INDEX)};
 	cursorRect.extent = GetFrameBounds(cursorFrame);
 }
 
@@ -624,7 +622,7 @@ savePlanetLocationImage(void)
 {
 	GFXRECT r;
 	FRAME cursorFrame = SetAbsFrameIndex(MiscDataFrame, FLASH_INDEX);
-	HOT_SPOT hs = GetFrameHot(cursorFrame);
+	const HOT_SPOT hs = GetFrameHot(cursorFrame);
 
 	DestroyDrawable(ReleaseDrawable(eraseFrame));
 
@@ -692,8 +690,8 @@ flashPlanetLocation(void)
 	static int val = -2;
 	static GFXPOINT prevPt;
 	static TimeCount NextTime {};
-	bool locChanged;
-	TimeCount Now = GetTimeCounter();
+	bool locChanged {};
+	const TimeCount Now = GetTimeCounter();
 
 	locChanged = prevPt.x != cursorRect.corner.x
 			  || prevPt.y != cursorRect.corner.y;
@@ -738,9 +736,7 @@ flashPlanetLocation(void)
 
 void RedrawSurfaceScan(const GFXPOINT* newLoc)
 {
-	GFXCONTEXT OldContext;
-
-	OldContext = SetContext(ScanContext);
+	GFXCONTEXT OldContext {SetContext(ScanContext)};
 
 	BatchGraphics();
 	DrawPlanet(0, BLACK_COLOR);
@@ -758,7 +754,7 @@ void RedrawSurfaceScan(const GFXPOINT* newLoc)
 static uint16_t
 getLandingFuelNeeded(void)
 {
-	uint16_t fuel;
+	uint16_t fuel {};
 
 	fuel = pSolarSysState->SysInfo.PlanetInfo.SurfaceGravity << 1;
 	if (fuel > 3 * FUEL_TANK_SCALE)
@@ -772,7 +768,7 @@ getLandingFuelNeeded(void)
 static void
 spawnFwiffo(void)
 {
-	HSHIPFRAG hStarShip;
+	HSHIPFRAG hStarShip {};
 
 	EncounterGroup = 0;
 	PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
@@ -783,7 +779,7 @@ spawnFwiffo(void)
 								  &GLOBAL(npc_built_ship_q), 1);
 	if (hStarShip)
 	{
-		SHIP_FRAGMENT* StarShipPtr;
+		SHIP_FRAGMENT* StarShipPtr {};
 
 		StarShipPtr = LockShipFrag(&GLOBAL(npc_built_ship_q),
 								   hStarShip);
@@ -797,13 +793,12 @@ spawnFwiffo(void)
 static bool
 DispatchLander(void)
 {
-	InputFrameCallback* oldCallback;
-	int16_t landingFuel = getLandingFuelNeeded();
+	const int16_t landingFuel = getLandingFuelNeeded();
 
 	EraseCoarseScan();
 
 	// Deactivate planet rotation callback
-	oldCallback = SetInputCallback(nullptr);
+	InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
 
 	if (!uqm::UQMOptions::read().infiniteFuel)
 	{
@@ -862,8 +857,9 @@ static bool
 DoPickPlanetSide(MENU_STATE* pMS)
 {
 	PICK_PLANET_STATE* pickState = (PICK_PLANET_STATE*)pMS->privData;
-	TimeCount TimeIn {GetTimeCounter()};
-	bool select, cancel;
+	const TimeCount TimeIn {GetTimeCounter()};
+	bool select {};
+	bool cancel {};
 
 	select = PulsedInputState.menu[KEY_MENU_SELECT];
 	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
@@ -1010,7 +1006,7 @@ PickPlanetSide(void)
 {
 	MENU_STATE MenuState;
 	PICK_PLANET_STATE PickState;
-	uint16_t fuel = getLandingFuelNeeded();
+	const uint16_t fuel = getLandingFuelNeeded();
 	bool retval = true;
 
 	memset(&MenuState, 0, sizeof MenuState);
@@ -1064,15 +1060,15 @@ PickPlanetSide(void)
 static void
 DrawScannedStuff(uint16_t y, uint16_t scan)
 {
-	HELEMENT hElement, hNextElement;
+	HELEMENT hNextElement {};
 	Color OldColor;
 
 	OldColor = SetContextForeGroundColor(BLACK_COLOR);
 
-	for (hElement = GetHeadElement(); hElement; hElement = hNextElement)
+	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr;
-		int16_t dy;
+		ELEMENT* ElementPtr {};
+		int16_t dy {};
 		STAMP s;
 
 		LockElement(hElement, &ElementPtr);
@@ -1097,9 +1093,9 @@ DrawScannedStuff(uint16_t y, uint16_t scan)
 		}
 		else
 		{
-			uint8_t grad;
+			uint8_t grad {};
 			Color c = WHITE_COLOR;
-			uint16_t nodeSize;
+			uint16_t nodeSize {};
 
 			// mineral -- white --> turquoise?? (contrasts with red)
 			// energy -- white --> red (contrasts with white)
@@ -1145,15 +1141,15 @@ DrawScannedStuff(uint16_t y, uint16_t scan)
 static void
 DrawPCScannedStuff(uint16_t scan)
 {
-	HELEMENT hElement, hNextElement;
+	HELEMENT hNextElement {};
 	TimePeriod interval;
 	TimeCount now;
-	ELEMENT* ElementPtr;
+	ELEMENT* ElementPtr {};
 	STAMP s;
 
 	interval = c_gameSecond / 10;
 
-	hElement = GetHeadElement();
+	HELEMENT hElement {GetHeadElement()};
 	now = GetTimeCounter() + interval;
 
 	while (hElement && !AnyButtonPress(true))
@@ -1174,9 +1170,10 @@ DrawPCScannedStuff(uint16_t scan)
 			}
 			else
 			{
-				uint16_t nodeSize, growth, diff;
+				uint16_t nodeSize {};
+				uint16_t diff {};
 
-				growth = 0;
+				uint16_t growth {0};
 				ElementPtr->state_flags |= APPEARING;
 				s.origin = ElementPtr->current.location;
 				now = GetTimeCounter() + TimePeriod {17};
@@ -1291,16 +1288,16 @@ ScanPlanet(uint16_t scanType)
 	// For taming the scan FPS on underpowered devices
 #define SCAN_LINE_FPS (c_gameSecond / chooseIfHd(42, 60))
 
-	uint16_t startScan, endScan;
-	uint16_t scan;
+	uint16_t startScan {};
+	uint16_t endScan {};
 	GFXRECT r;
-	static const Color textColors[] =
+	const static Color textColors[] =
 		{
 			SCAN_MINERAL_TEXT_COLOR,
 			SCAN_ENERGY_TEXT_COLOR,
 			SCAN_BIOLOGICAL_TEXT_COLOR,
 		};
-	static const Color tintColors[] =
+	const static Color tintColors[] =
 		{
 			SCAN_MINERAL_TINT_COLOR,
 			SCAN_ENERGY_TINT_COLOR,
@@ -1325,13 +1322,14 @@ ScanPlanet(uint16_t scanType)
 
 	DrawMenuStateStrings(PM_MIN_SCAN, scanType);
 
-	for (scan = startScan; scan <= endScan; ++scan)
+	for (uint16_t scan {startScan}; scan <= endScan; ++scan)
 	{
 		TEXT t;
 		int16_t i = 0;
 		Color tintColor;
 		// Alpha value will be ignored.
-		static TimeCount TimeOut, TimeOutDraw;
+		static TimeCount TimeOut;
+		static TimeCount TimeOutDraw;
 		TimeCount Now;
 
 		t.baseline.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
@@ -1463,7 +1461,8 @@ ScanPlanet(uint16_t scanType)
 static bool
 DoScan(MENU_STATE* pMS)
 {
-	bool select, cancel;
+	bool select {};
+	bool cancel {};
 
 	select = PulsedInputState.menu[KEY_MENU_SELECT];
 	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
@@ -1481,8 +1480,6 @@ DoScan(MENU_STATE* pMS)
 	{
 		if (pMS->CurState == DISPATCH_SHUTTLE)
 		{
-			uint16_t fuel_required;
-
 			if (pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED
 				|| pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == GAS_GIANT_ATMOSPHERE)
 			{ // cannot dispatch to shielded planets or gas giants
@@ -1490,7 +1487,7 @@ DoScan(MENU_STATE* pMS)
 				return true;
 			}
 
-			fuel_required = getLandingFuelNeeded();
+			const uint16_t fuel_required {getLandingFuelNeeded()};
 			if (GLOBAL_SIS(FuelOnBoard) < fuel_required
 				|| GLOBAL_SIS(NumLanders) == 0
 				|| GLOBAL_SIS(CrewEnlisted) == 0)
@@ -1538,16 +1535,14 @@ DoScan(MENU_STATE* pMS)
 static GFXCONTEXT
 CreateScanContext(bool inSpace)
 {
-	GFXCONTEXT oldContext;
-	GFXCONTEXT context;
 	GFXRECT r;
-	int16_t x_offset;
+	int16_t x_offset {};
 
 	// ScanContext rect is relative to SpaceContext
-	oldContext = SetContext(SpaceContext);
+	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&r);
 
-	context = CreateContext("ScanContext");
+	GFXCONTEXT context {CreateContext("ScanContext")};
 	SetContext(context);
 	SetContextFGFrame(Screen);
 	x_offset = RES_DESCALE(r.extent.width - SCALED_MAP_WIDTH);
@@ -1669,8 +1664,8 @@ static void
 generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 				uint8_t* life_init_tab, uint16_t creatureType)
 {
-	uint16_t i;
-	uint32_t j;
+	uint16_t i {};
+	uint32_t j {};
 
 	if (isDifficulty(uqm::Difficulty::Hard))
 	{
@@ -1733,7 +1728,6 @@ generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 
 void GeneratePlanetSide(void)
 {
-	int16_t scan;
 	uint8_t life_init_tab[MAX_LIFE_VARIATION];
 	// life_init_tab is filled with the creature types of already
 	// selected creatures. If an entry is 0, none has been selected
@@ -1747,10 +1741,10 @@ void GeneratePlanetSide(void)
 
 	memset(life_init_tab, 0, sizeof life_init_tab);
 
-	for (scan = BIOLOGICAL_SCAN; scan >= MINERAL_SCAN; --scan)
+	for (int16_t scan {BIOLOGICAL_SCAN}; scan >= MINERAL_SCAN; --scan)
 	{
-		uint16_t num_nodes;
-		FRAME f;
+		uint16_t num_nodes {};
+		FRAME f {};
 
 		f = SetAbsFrameIndex(MiscDataFrame,
 							 NUM_SCANDOT_TRANSITIONS * (scan - ENERGY_SCAN));
@@ -1760,8 +1754,7 @@ void GeneratePlanetSide(void)
 
 		while (num_nodes--)
 		{
-			HELEMENT hNodeElement;
-			ELEMENT* NodeElementPtr;
+			ELEMENT* NodeElementPtr {};
 			NODE_INFO info;
 
 			if (isNodeRetrieved(&pSolarSysState->SysInfo.PlanetInfo,
@@ -1770,7 +1763,7 @@ void GeneratePlanetSide(void)
 				continue;
 			}
 
-			hNodeElement = AllocElement();
+			HELEMENT hNodeElement {AllocElement()};
 			if (!hNodeElement)
 			{
 				continue;
@@ -1846,7 +1839,7 @@ bool isNodeRetrieved(PLANET_INFO* planetInfo, uint8_t scanType, uint8_t nodeNr)
 uint16_t
 countNodesRetrieved(PLANET_INFO* planetInfo, uint8_t scanType)
 {
-	uint16_t count;
+	uint16_t count {};
 	uint32_t mask = planetInfo->ScanRetrieveMask[scanType];
 
 	// count the number of bits set

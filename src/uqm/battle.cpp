@@ -76,7 +76,7 @@ bool RunAwayAllowed(void)
 static void
 DoRunAway(STARSHIP* StarShipPtr)
 {
-	ELEMENT* ElementPtr;
+	ELEMENT* ElementPtr {};
 
 	LockElement(StarShipPtr->hShip, &ElementPtr);
 	if (GetPrimType(&DisplayArray[ElementPtr->PrimIndex]) == STAMP_PRIM
@@ -111,7 +111,7 @@ DoRunAway(STARSHIP* StarShipPtr)
 static void
 setupBattleInputOrder(void)
 {
-	size_t i;
+	size_t i {};
 
 #ifndef NETPLAY
 	for (i = 0; i < NUM_SIDES; i++)
@@ -119,7 +119,7 @@ setupBattleInputOrder(void)
 		battleInputOrder[i] = i;
 	}
 #else
-	int j;
+	int j {};
 
 	i = 0;
 	// First put the locally controlled players in the array.
@@ -154,27 +154,24 @@ frameInputHuman(HumanInputContext* context, STARSHIP* StarShipPtr)
 static void
 ProcessInput(void)
 {
-	bool CanRunAway;
-	size_t sideI;
-
 #ifdef NETPLAY
 	netInput();
 #endif
 
-	CanRunAway = RunAwayAllowed();
+	const bool CanRunAway {RunAwayAllowed()};
 
-	for (sideI = 0; sideI < NUM_SIDES; sideI++)
+	for (size_t sideI {0}; sideI < NUM_SIDES; sideI++)
 	{
-		HSTARSHIP hBattleShip, hNextShip;
-		size_t cur_player = battleInputOrder[sideI];
+		HSTARSHIP hBattleShip {};
+		HSTARSHIP hNextShip {};
+		const size_t cur_player = battleInputOrder[sideI];
 
 		for (hBattleShip = GetHeadLink(&race_q[cur_player]);
 			 hBattleShip != 0; hBattleShip = hNextShip)
 		{
-			BATTLE_INPUT_STATE InputState;
-			STARSHIP* StarShipPtr;
+			BATTLE_INPUT_STATE InputState {};
 
-			StarShipPtr = LockStarShip(&race_q[cur_player], hBattleShip);
+			STARSHIP* StarShipPtr {LockStarShip(&race_q[cur_player], hBattleShip)};
 			hNextShip = _GetSuccLink(StarShipPtr);
 
 			if (StarShipPtr->hShip)
@@ -304,7 +301,6 @@ DoBattle(BATTLE_STATE* bs)
 {
 	extern uint16_t nth_frame;
 	GFXRECT r;
-	uint8_t battle_speed;
 
 	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
 
@@ -312,11 +308,10 @@ DoBattle(BATTLE_STATE* bs)
 	if (getNumNetConnections() > 0 && battleFrameCount % NETPLAY_CHECKSUM_INTERVAL == 0)
 	{
 		crc_State state;
-		Checksum checksum;
 
 		crc_init(&state);
 		crc_processState(&state);
-		checksum = (Checksum)crc_finish(&state);
+		const Checksum checksum {(Checksum)crc_finish(&state)};
 
 		Netplay_NotifyAll_checksum((uint32_t)battleFrameCount,
 								   (uint32_t)checksum);
@@ -329,7 +324,7 @@ DoBattle(BATTLE_STATE* bs)
 #if defined(NETPLAY) && defined(NETPLAY_CHECKSUM)
 	if (getNumNetConnections() > 0)
 	{
-		size_t delay = getBattleInputDelay();
+		const size_t delay = getBattleInputDelay();
 
 		if (battleFrameCount >= delay
 			&& (battleFrameCount - delay) % NETPLAY_CHECKSUM_INTERVAL == 0)
@@ -375,7 +370,7 @@ DoBattle(BATTLE_STATE* bs)
 		return false;
 	}
 
-	battle_speed = uqm::highByte(nth_frame);
+	const uint8_t battle_speed {uqm::highByte(nth_frame)};
 	if (battle_speed == (uint8_t)~0)
 	{ // maximum speed, nothing rendered at all
 		Async_process();
@@ -443,8 +438,6 @@ selectAllShips(int16_t num_ships)
 
 bool Battle(BattleFrameCallback* callback)
 {
-	int16_t num_ships;
-
 	if (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE)
 	{
 		// In Supermelee, the RNG is already initialised.
@@ -453,7 +446,7 @@ bool Battle(BattleFrameCallback* callback)
 
 	BattleSong(false);
 
-	num_ships = InitShips();
+	int16_t num_ships {InitShips()};
 
 	if (instantVictory)
 	{
@@ -499,7 +492,7 @@ bool Battle(BattleFrameCallback* callback)
 #ifdef NETPLAY
 		initBattleStateDataConnections();
 		{
-			bool allOk = negotiateReadyConnections(true, NetState_inBattle);
+			const bool allOk = negotiateReadyConnections(true, NetState_inBattle);
 			if (!allOk)
 			{
 				uqm::currentActivity() |= CHECK_ABORT;

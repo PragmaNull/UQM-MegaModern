@@ -89,7 +89,7 @@ static inline uint16_t ShipIndex(SPECIES_ID SpeciesID)
 static inline void SeedShipMap(SPECIES_ID* map, int seed)
 {
 	RandomContext* ShipGenRNG = RandomContext_New();
-	uint16_t rand_val;
+	uint16_t rand_val {};
 	SPECIES_ID* cMap = map;
 	SPECIES_ID* eMap = &(map[NUM_CAPITALS]);
 	SPECIES_ID* sMap = &(map[NUM_CAPITALS + NUM_ESCORTS]);
@@ -210,9 +210,9 @@ RACE_DESC*
 load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 {
 	RACE_DESC* RDPtr = 0;
-	void* CodeRef;
+	void* CodeRef {};
 	RACE_DESC* RDPtrSwap = 0;
-	void* CodeRefSwap;
+	void* CodeRefSwap {};
 
 	if (SpeciesID >= NUM_SPECIES_ID)
 	{
@@ -381,7 +381,7 @@ void free_ship(RACE_DESC* raceDescPtr, bool FreeIconData,
 
 	if (FreeIconData)
 	{
-		SHIP_INFO* shipInfo = &raceDescPtr->ship_info;
+		const SHIP_INFO* shipInfo = &raceDescPtr->ship_info;
 
 		DestroyDrawable(ReleaseDrawable(shipInfo->melee_icon));
 		DestroyDrawable(ReleaseDrawable(shipInfo->icons));

@@ -67,16 +67,15 @@ static bool
 GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	pSunDesc->PlanetByte = 0;
-	pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
+	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	if (PrimeSeed)
 	{
-		uint16_t angle;
+		uint16_t angle {};
 
 		if (CurStarDescPtr->Index == MAIDENS_DEFINED)
 		{
@@ -304,14 +303,14 @@ GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
 	if (CurStarDescPtr->Index == MAIDENS_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		static const int8_t life[] =
+		const static int8_t life[] =
 			{
 				9, 9, 9, 9,		/* Carousel Beast */
 				14, 14, 14, 14, /* Amorphous Trandicula */
 				18, 18, 18, 18, /* Penguin Cyclops */
 				-1				/* term */
 			};
-		static const int8_t lifeEx[] =
+		const static int8_t lifeEx[] =
 			{
 				9, 9, 9, 9, 9,		/* Carousel Beast */
 				18, 18, 18, 18, 18, /* Penguin Cyclops */
@@ -327,7 +326,7 @@ GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
 	if (CurStarDescPtr->Index == VUX_BEAST_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		static const int8_t life[] =
+		const static int8_t life[] =
 			{
 				ZEX_BEAUTY,	   /* VUX Beast */
 							   // Must be the first node, see pickupLife() below
