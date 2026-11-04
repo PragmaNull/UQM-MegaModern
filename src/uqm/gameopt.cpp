@@ -128,6 +128,53 @@ enum
 	EXIT_SETTINGS_MENU,
 };
 
+// Shows the seed of the game in the message field at the top of the screen.
+static void
+DrawSeedMessage(void)
+{
+	const uqm::GameSeed& seed {uqm::currentSeed()};
+	const char* label {"Original"};
+	switch (seed.type)
+	{
+		case uqm::SeedType::Original:
+			break;
+		case uqm::SeedType::Planet:
+			label = "Planets";
+			break;
+		case uqm::SeedType::MRQ:
+			label = "MRQ";
+			break;
+		case uqm::SeedType::Starseed:
+			label = "Starseed";
+			break;
+	}
+
+	char buf[64] {};
+	if (seed.type == uqm::SeedType::Original)
+	{
+		fmt::format_to_sz_n(buf, "Seed: {}", label);
+	}
+	else
+	{
+		fmt::format_to_sz_n(buf, "Seed: {} {}{}", label, seed.value, seed.ships ? " +Ships" : "");
+	}
+	DrawSISMessage(buf);
+}
+
+// Draws the message field at the top of the screen as it is outside the game options.
+static void
+RestoreSISMessage(bool inStarbase, uint8_t outfitOrShipyard)
+{
+	if (inStarbase && outfitOrShipyard > 1)
+	{
+		DrawSISMessage(GAME_STRING(STARBASE_STRING_BASE + outfitOrShipyard));
+	}
+	else
+	{
+		DrawSISMessage(nullptr);
+	}
+}
+
 static void
 FeedbackSetting(uint8_t which_setting)
 {
@@ -1991,14 +2038,7 @@ PickGame(bool saving, bool fromMainMenu)
 		// These redraw the status of the ship after saving or aborting a load/save
 
 		// Redraws main title bar at the top-left
-		if (InStarbase && OutfitOrShipyard > 1)
-		{
-			DrawSISMessage(GAME_STRING(STARBASE_STRING_BASE + OutfitOrShipyard));
-		}
-		else
-		{
-			DrawSISMessage(nullptr);
-		}
+		RestoreSISMessage(InStarbase, OutfitOrShipyard);
 
 		OutfitOrShipyard = 0;
 
@@ -2065,6 +2105,7 @@ DoGameOptions(MENU_STATE* pMS)
 					return false;
 				}
 				DrawMenuStateStrings(PM_SAVE_GAME, pMS->CurState);
+				DrawSeedMessage();
 				SetFlashRect(SFR_MENU_3DO, false);
 				break;
 			case QUIT_GAME:
@@ -2076,11 +2117,13 @@ DoGameOptions(MENU_STATE* pMS)
 				else
 				{
 					DrawMenuStateStrings(PM_SAVE_GAME, pMS->CurState);
+					DrawSeedMessage();
 				}
 				break;
 			case SETTINGS:
 				SettingsMenu(false);
 				DrawMenuStateStrings(PM_SAVE_GAME, pMS->CurState);
+				DrawSeedMessage();
 				break;
 		}
 	}
@@ -2123,8 +2166,12 @@ bool GameOptions(void)
 		return false;
 	}
 
+	const bool inStarbase {GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0};
+	const uint8_t outfitOrShipyard {OutfitOrShipyard};
+
 	MenuState.CurState = SAVE_GAME;
 	DrawMenuStateStrings(PM_SAVE_GAME, MenuState.CurState);
+	DrawSeedMessage();
 
 	SetFlashRect(SFR_MENU_3DO, false);
 
@@ -2132,6 +2179,11 @@ bool GameOptions(void)
 	MenuState.InputFunc = DoGameOptions;
 	DoInput(&MenuState, true);
 	SetFlashRect(nullptr, false);
+
+	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
+	{
+		RestoreSISMessage(inStarbase, outfitOrShipyard);
+	}
 
 	return !(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD));
 }
