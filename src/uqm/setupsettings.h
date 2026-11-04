@@ -12,7 +12,12 @@ namespace uqm
 {
 
 class SettingBase;
+class SettingsRegistry;
 enum class CheatAction : uint8_t;
+
+// Reads the menu definition of the STRING resource 'resource' and checks it against 'settings'.
+// Returns nullopt and logs the error if it cannot be read.
+[[nodiscard]] uqstl::optional<MenuDefinition> readMenuDefinition(uqgsl::czstring resource, const SettingsRegistry& settings);
 
 // Reads the setup menu definition. Returns nullopt and logs the error if it cannot be read.
 [[nodiscard]] uqstl::optional<MenuDefinition> readSetupMenuDefinition();

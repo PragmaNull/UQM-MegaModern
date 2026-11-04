@@ -62,7 +62,7 @@
 #include "uqm/imgui/settingswindow.h"
 #include "uqm/setup.h"
 #include "uqm/starcon.h"
-#include "libs/math/random.h"
+#include "libs/math/Random.h"
 
 bool restartGame;
 

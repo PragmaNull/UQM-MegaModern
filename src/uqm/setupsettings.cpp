@@ -10,7 +10,7 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
 #include "libs/file/textfile.h"
-#include "libs/math/random.h"
+#include "libs/math/Random.h"
 #include "libs/reslib.h"
 #include "libs/sndlib.h"
 #include "libs/sound/sound.h"
@@ -32,37 +32,42 @@ constexpr const char* c_menuDefinitionResource {"ui.setupmenu"};
 
 } // namespace
 
-uqstl::optional<MenuDefinition> readSetupMenuDefinition()
+uqstl::optional<MenuDefinition> readMenuDefinition(uqgsl::czstring resource, const SettingsRegistry& settings)
 {
-	const char* path {res_GetString(c_menuDefinitionResource)};
-	if (path == nullptr)
+	const char* path {res_GetString(resource)};
+	if (path == nullptr || *path == '\0')
 	{
-		log::error("The resource '{}' is not defined.", c_menuDefinitionResource);
+		log::error("The resource '{}' is not defined.", resource);
 		return uqstl::nullopt;
 	}
 	const auto json {readTextFile(contentDir(), path)};
 	if (!json)
 	{
-		log::error("Could not read the setup menu definition '{}'.", path);
+		log::error("Could not read the menu definition '{}'.", path);
 		return uqstl::nullopt;
 	}
 
 	auto definition {menuDefinitionFromJson(*json)};
 	if (!definition)
 	{
-		log::error("The setup menu definition '{}' is not valid.", path);
+		log::error("The menu definition '{}' is not valid.", path);
 		return uqstl::nullopt;
 	}
-	for (const uqstl::string& error : validateMenuDefinition(*definition, UQMOptions::read()))
+	for (const uqstl::string& error : validateMenuDefinition(*definition, settings))
 	{
 		log::error("{}", error);
 	}
 	if (definition->find("main") == nullptr)
 	{
-		log::error("The setup menu definition has no 'main' menu.");
+		log::error("The menu definition '{}' has no 'main' menu.", path);
 		return uqstl::nullopt;
 	}
 	return definition;
+}
+
+uqstl::optional<MenuDefinition> readSetupMenuDefinition()
+{
+	return readMenuDefinition(c_menuDefinitionResource, UQMOptions::read());
 }
 
 bool isMenuAddonAvailable(uqstl::string_view addon)

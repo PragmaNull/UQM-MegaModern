@@ -27,7 +27,7 @@
 #include "uqm/lua/UQMLua.h"
 #include "uqm/settings.h"
 #include "uqm/nameref.h"
-#include "libs/math/random.h"
+#include "libs/math/Random.h"
 #include "uqm/random/UQMRandom.h"
 
 static LOCDATA commander_desc =

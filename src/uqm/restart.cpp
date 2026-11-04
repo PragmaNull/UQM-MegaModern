@@ -579,6 +579,28 @@ DoRestart(MENU_STATE* pMS)
 					}
 					Flash_continue(pMS->flashContext);
 				}
+
+				Flash_pause(pMS->flashContext);
+				Flash_setState(pMS->flashContext, FlashState_fadeIn,
+							   (3 * c_gameSecond) / 16);
+				if (const uqstl::optional<uqm::GameSeed> seed {NewGameMenu()})
+				{
+					uqm::UQMGame::getInstance().setNewGameSeed(*seed);
+				}
+				else
+				{
+					LastInputTime = GetTimeCounter();
+					SetTransitionSource(nullptr);
+					BatchGraphics();
+					DrawRestartMenuGraphic(pMS);
+					ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, nullptr);
+					Flash_UpdateOriginal(pMS->flashContext);
+					DrawRestartMenu(pMS, pMS->CurState, nullptr);
+					Flash_continue(pMS->flashContext);
+					UnbatchGraphics();
+					return true;
+				}
+
 				LastActivity = CHECK_LOAD | CHECK_RESTART;
 				uqm::currentActivity() = IN_INTERPLANETARY;
 				break;

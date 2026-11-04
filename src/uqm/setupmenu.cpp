@@ -41,11 +41,12 @@
 
 #include "gamestr.h"
 #include "libs/graphics/bbox.h"
-#include "libs/math/random.h"
+#include "libs/math/Random.h"
 #include "libs/input/input_common.h"
 #include "configuration/Configuration.h"
 #include "libs/file/textfile.h"
 #include "uqm/menuwidgets.h"
+#include "uqm/random/GameSeed.h"
 #include "uqm/setupsettings.h"
 
 typedef struct setup_menu_state
@@ -80,6 +81,36 @@ static constexpr const char* c_controlNames[NUM_KEYS] {"up", "down", "left", "ri
 
 // The control template that the Edit Controls menu shows.
 static int editTemplate {};
+
+// The setup menu edits the settings. The new game menu edits the seed of the new game.
+enum class MenuMode
+{
+	Setup,
+	NewGame,
+};
+static MenuMode menuMode {MenuMode::Setup};
+
+// The seed values that the new game menu edits. The menu does not save them.
+struct NewGameSettings final : uqm::SettingsRegistry
+{
+	uqm::Setting<uqm::SeedType> seedType {
+		*this, {.key = "seed.type", .description = "Seed type of the new game."},
+		  uqm::SeedType::Original
+	 };
+	uqm::Setting<int> customSeed {
+		*this, {.key = "seed.value", .description = "Seed of the new game."},
+		  PrimeA, uqm::settings::isSaneSeed
+	   };
+	uqm::Setting<bool> shipSeed {
+		*this, {.key = "seed.ships", .description = "Seeds the ships of the alien races."},
+			false
+	 };
+};
+static uqstl::unique_ptr<NewGameSettings> newGameSettings {};
+static bool newGameStarted {};
+static WIDGET_BUTTON randomSeedButton {};
+static const uqstl::string c_noLabel {};
+static const uqstl::vector<uqstl::string> c_noTooltip {};
 
 static FRAME setup_frame = nullptr;
 
@@ -134,6 +165,69 @@ quit_sub_menu(WIDGET* self, int event)
 	return false;
 }
 
+static int
+start_new_game(WIDGET* self, int event)
+{
+	if (event == WIDGET_EVENT_SELECT)
+	{
+		newGameStarted = true;
+		next = nullptr;
+		return true;
+	}
+	(void)self;
+	return false;
+}
+
+static int
+cancel_new_game(WIDGET* self, int event)
+{
+	if (event == WIDGET_EVENT_SELECT)
+	{
+		newGameStarted = false;
+		next = nullptr;
+		return true;
+	}
+	(void)self;
+	return false;
+}
+
+static int
+random_seed(WIDGET* self, int event)
+{
+	if (event != WIDGET_EVENT_SELECT)
+	{
+		(void)self;
+		return false;
+	}
+	if (*newGameSettings->seedType == uqm::SeedType::Original)
+	{
+		newGameSettings->seedType = uqm::SeedType::Planet;
+	}
+	newGameSettings->customSeed = uqm::randomSeedValue();
+	menuWidgets->refresh();
+	return true;
+}
+
+// Keeps the values of the new game menu valid together. The type Original has no seed value and no ship seeding.
+static void
+new_game_setting_changed(const uqm::SettingBase& setting)
+{
+	NewGameSettings& values {*newGameSettings};
+	if (setting.key() == "seed.type")
+	{
+		if (*values.seedType == uqm::SeedType::Original)
+		{
+			values.customSeed = PrimeA;
+			values.shipSeed = false;
+		}
+	}
+	else if (*values.seedType == uqm::SeedType::Original && (*values.customSeed != PrimeA || *values.shipSeed))
+	{
+		values.seedType = uqm::SeedType::Planet;
+	}
+	menuWidgets->refresh();
+}
+
 static void
 populate_editkeys(int templat)
 {
@@ -170,8 +264,11 @@ DoSetupMenu(SETUP_MENU_STATE* pInputState)
 	{
 		SetDefaultMenuRepeatDelay();
 		pInputState->NextTime = GetTimeCounter();
-		uqm::setDisplayFlags(uqm::UQMOptions::edit(), g_gfxFlags);
-		populate_gamma();
+		if (menuMode == MenuMode::Setup)
+		{
+			uqm::setDisplayFlags(uqm::UQMOptions::edit(), g_gfxFlags);
+			populate_gamma();
+		}
 		menuWidgets->refresh();
 		Widget_SetFont(PlyrFont);
 		Widget_SetWindowColors(SHADOWBOX_BACKGROUND_COLOR,
@@ -526,7 +623,7 @@ open_menu(uqstl::string_view id)
 static void
 read_menu_definition(void)
 {
-	menuDefinition = uqm::readSetupMenuDefinition();
+	menuDefinition = menuMode == MenuMode::NewGame ? uqm::readMenuDefinition("ui.newgamemenu", *newGameSettings) : uqm::readSetupMenuDefinition();
 	if (!menuDefinition)
 	{
 		uqm::log::critical("PANIC: Could not read the setup menu definition.");
@@ -538,8 +635,10 @@ read_menu_definition(void)
 static void
 init_shared_widgets(void)
 {
-	uqm::initButtonWidget(backButton, menuDefinition->back.label, menuDefinition->back.tooltip, quit_sub_menu);
-	uqm::initButtonWidget(exitButton, menuDefinition->exit.label, menuDefinition->exit.tooltip, quit_main_menu);
+	const bool newGame {menuMode == MenuMode::NewGame};
+	uqm::initButtonWidget(backButton, menuDefinition->back.label, menuDefinition->back.tooltip, newGame ? cancel_new_game : quit_sub_menu);
+	uqm::initButtonWidget(exitButton, menuDefinition->exit.label, menuDefinition->exit.tooltip, newGame ? start_new_game : quit_main_menu);
+	uqm::initButtonWidget(randomSeedButton, c_noLabel, c_noTooltip, random_seed);
 
 	static uqstl::vector<const char*> noLines {};
 	uqm::initLabelWidget(spacer, noLines);
@@ -614,6 +713,11 @@ init_widgets(void)
 		Widget_SetFont(PlyrFont);
 	};
 	hooks.settingChanged = [](const uqm::SettingBase& setting) {
+		if (menuMode == MenuMode::NewGame)
+		{
+			new_game_setting_changed(setting);
+			return;
+		}
 		if (uqm::applySettingChange(setting))
 		{
 			menuWidgets->refresh();
@@ -663,14 +767,16 @@ init_widgets(void)
 	shared.back = (WIDGET*)(&backButton);
 	shared.exit = (WIDGET*)(&exitButton);
 	shared.legacy = {
-		{"gamma",	  (WIDGET*)(&gammaSlider)},
-		{"layoutName", (WIDGET*)(&layoutName) },
+		{"gamma",	  (WIDGET*)(&gammaSlider)	 },
+		{"layoutName", (WIDGET*)(&layoutName)		 },
+		{"randomSeed", (WIDGET*)(&randomSeedButton)},
 	};
 	for (int i {0}; i < NUM_KEYS; i++)
 	{
 		shared.legacy[uqstl::string {"control."} + c_controlNames[i]] = (WIDGET*)(&controlentries[i]);
 	}
-	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
+	uqm::SettingsRegistry& settings {menuMode == MenuMode::NewGame ? static_cast<uqm::SettingsRegistry&>(*newGameSettings) : uqm::UQMOptions::edit()};
+	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(settings, shared, uqstl::move(hooks));
 
 	menus.assign(menuDefinition->menus.size(), WIDGET_MENU_SCREEN {});
 	for (auto&& [menu, screen] : uqstl::views::zip(menuDefinition->menus, menus))
@@ -898,4 +1004,38 @@ void SetupMenu(void)
 
 	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN,
 				  MENU_SOUND_SELECT);
+}
+
+uqstl::optional<uqm::GameSeed> NewGameMenu(void)
+{
+	const uqm::GameSeed defaults {uqm::newGameSeed(uqm::UQMOptions::read())};
+	newGameSettings = uqstl::make_unique<NewGameSettings>();
+	newGameSettings->seedType = defaults.type;
+	newGameSettings->customSeed = defaults.value;
+	newGameSettings->shipSeed = defaults.ships;
+	menuMode = MenuMode::NewGame;
+	newGameStarted = false;
+
+	SETUP_MENU_STATE s;
+	s.InputFunc = DoSetupMenu;
+	s.initialized = false;
+	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	init_widgets();
+
+	SetInputScriptMenuDump(dump_setup_menu);
+	DoInput(&s, true);
+	SetInputScriptMenuDump(nullptr);
+	clean_up_widgets();
+
+	uqstl::optional<uqm::GameSeed> result {};
+	if (newGameStarted && !(uqm::currentActivity() & CHECK_ABORT))
+	{
+		result = uqm::normalized({.type = *newGameSettings->seedType, .value = *newGameSettings->customSeed, .ships = *newGameSettings->shipSeed});
+	}
+	newGameSettings.reset();
+	menuMode = MenuMode::Setup;
+
+	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN,
+				  MENU_SOUND_SELECT);
+	return result;
 }
