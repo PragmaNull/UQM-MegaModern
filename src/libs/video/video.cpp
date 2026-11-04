@@ -19,7 +19,6 @@
 #include "vidintrn.h"
 #include "options.h"
 #include "vidplayer.h"
-#include "libs/memlib.h"
 #include "libs/sndlib.h"
 #include "uqm/units.h"
 
@@ -176,21 +175,17 @@ VidPlay(VIDEO_REF VidRef)
 VIDEO_REF
 _init_video_file(const char* pStr)
 {
-	TFB_VideoClip* vid;
-	TFB_VideoDecoder* dec;
-
-	dec = VideoDecoder_Load(uqm::contentDir(), pStr);
+	TFB_VideoDecoder* dec {VideoDecoder_Load(uqm::contentDir(), pStr)};
 	if (!dec)
 	{
 		return NULL_VIDEO_REF;
 	}
 
-	vid = (TFB_VideoClip*)HCalloc(sizeof(*vid));
+	TFB_VideoClip* vid {new TFB_VideoClip {}};
 	vid->decoder = dec;
 	vid->length = dec->length;
 	vid->w = vid->decoder->w - IF_HD(4);
 	vid->h = vid->decoder->h + IF_HD(7);
-	vid->guard = CREATEMUTEX("video guard", SYNC_CLASS_VIDEO);
 
 	return (VIDEO_REF)vid;
 }
@@ -206,8 +201,7 @@ bool DestroyVideo(VIDEO_REF vid)
 	TFB_StopVideo(vid);
 
 	VideoDecoder_Free(vid->decoder);
-	DestroyMutex(vid->guard);
-	HFree(vid);
+	delete vid;
 
 	return true;
 }

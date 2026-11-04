@@ -22,6 +22,7 @@
 #include "audiocore.h"
 #include "sound.h"
 #include "core/log/log.h"
+#include "core/stl/atomic.h"
 
 static audio_Driver audiodrv;
 
@@ -29,7 +30,7 @@ static audio_Driver audiodrv;
 AudioDriverType snddriver;
 AudioFlags soundflags;
 
-volatile bool audio_inited = false;
+uqstl::atomic<bool> audio_inited {false};
 
 /*
  * Declarations for driver init funcs
@@ -49,7 +50,7 @@ int32_t noSound_Init(audio_Driver* driver, AudioFlags flags);
 int32_t
 initAudio(AudioDriverType driver, AudioFlags flags)
 {
-	int32_t ret;
+	int32_t ret {};
 
 #ifdef HAVE_OPENAL
 	if (driver == AudioDriverType::MixSDL)

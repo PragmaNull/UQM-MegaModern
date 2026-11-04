@@ -21,6 +21,7 @@
 #include "resinst.h"
 
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 20
@@ -113,7 +114,7 @@ static RACE_DESC yehat_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_SPEED* MISSILE_LIFE / 3,
+			MISSILE_SPEED * MISSILE_LIFE / 3,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -127,8 +128,7 @@ static RACE_DESC yehat_desc =
 static uint16_t
 initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 {
-	int32_t offs_x, offs_y;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -144,8 +144,8 @@ initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	MissileBlock.preprocess_func = nullptr;
 	MissileBlock.blast_offs = MISSILE_OFFSET;
 
-	offs_x = -SINE(FACING_TO_ANGLE(MissileBlock.face), LAUNCH_OFFS);
-	offs_y = COSINE(FACING_TO_ANGLE(MissileBlock.face), LAUNCH_OFFS);
+	const int32_t offs_x {-SINE(FACING_TO_ANGLE(MissileBlock.face), LAUNCH_OFFS)};
+	const int32_t offs_y {COSINE(FACING_TO_ANGLE(MissileBlock.face), LAUNCH_OFFS)};
 
 	MissileBlock.cx = ShipPtr->next.location.x + offs_x;
 	MissileBlock.cy = ShipPtr->next.location.y + offs_y;
@@ -162,12 +162,10 @@ static void
 yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				   uint16_t ConcernCounter)
 {
-	int16_t ShieldStatus;
-	STARSHIP* StarShipPtr;
-	EVALUATE_DESC* lpEvalDesc;
+	STARSHIP* StarShipPtr {};
 
-	ShieldStatus = -1;
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_WEAPON_INDEX];
+	int16_t ShieldStatus {-1};
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
 	{
 		ShieldStatus = 0;
@@ -216,7 +214,7 @@ yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 						& PLAYER_SHIP) /* means IMMEDIATE WEAPON */
 					|| PlotIntercept(lpEvalDesc->ObjectPtr,
 									 ShipPtr, 2, 0))
-				&& (TFB_Random() & 3))
+				&& (uqm::random().next() & 3))
 			{
 				StarShipPtr->ship_input_state |= SPECIAL;
 			}
@@ -231,7 +229,7 @@ yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	if ((lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX])->ObjectPtr)
 	{
-		STARSHIP* EnemyStarShipPtr;
+		STARSHIP* EnemyStarShipPtr {};
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
@@ -252,7 +250,7 @@ yehat_postprocess(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & NONSOLID))
 	{
-		STARSHIP* StarShipPtr;
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		/* take care of shield effect */
@@ -266,14 +264,14 @@ yehat_postprocess(ELEMENT* ElementPtr)
 			{
 #ifdef OLD
 				SetPrimColor(
-					&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+					&DisplayArray[ElementPtr->PrimIndex],
 					BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
 				SetPrimType(
-					&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+					&DisplayArray[ElementPtr->PrimIndex],
 					STAMPFILL_PRIM);
 #endif /* OLD */
 
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 /* YEHAT_SHIELD_ON */
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 							 ElementPtr);
@@ -298,7 +296,7 @@ yehat_postprocess(ELEMENT* ElementPtr)
 					(CHANGING | PRE_PROCESS | POST_PROCESS)
 					| FINITE_LIFE | NONSOLID;
 				SetPrimType(
-					&(GLOBAL(DisplayArray))[ShipElementPtr->PrimIndex],
+					&DisplayArray[ShipElementPtr->PrimIndex],
 					STAMP_PRIM);
 
 				ShipElementPtr->life_span = 0; /* because preprocessing
@@ -327,7 +325,7 @@ yehat_preprocess(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & APPEARING))
 	{
-		STARSHIP* StarShipPtr;
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		if ((ElementPtr->life_span > NORMAL_LIFE
@@ -339,7 +337,7 @@ yehat_preprocess(ELEMENT* ElementPtr)
 		{
 #ifdef NEVER
 			SetPrimType(
-				&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+				&DisplayArray[ElementPtr->PrimIndex],
 				STAMP_PRIM);
 #endif /* NEVER */
 
@@ -377,8 +375,6 @@ yehat_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_yehat(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		yehat_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -398,7 +394,7 @@ init_yehat(void)
 	yehat_desc.init_weapon_func = initialize_standard_missiles;
 	yehat_desc.cyborg_control.intelligence_func = yehat_intelligence;
 
-	RaceDescPtr = &yehat_desc;
+	RACE_DESC* RaceDescPtr {&yehat_desc};
 
 	return (RaceDescPtr);
 }

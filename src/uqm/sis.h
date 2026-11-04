@@ -17,7 +17,7 @@
 #ifndef SIS_H_INCL__
 #define SIS_H_INCL__
 
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 #include "planets/elemdata.h" // for NUM_ELEMENT_CATEGORIES
 #include "units.h"			  // for RESOLUTION_FACTOR
@@ -146,11 +146,6 @@ enum
 		{LANDER_DOS_X - 28, LANDER_DOS_Y - 3},
 
 #define SIS_NAME_SIZE 32
-#define LEGACY_SIS_NAME_SIZE 16
-#define LEGACY_SAVE_NAME_SIZE 32
-#define LEGACY_SAVE_NAME_CHECKER "superbutcherX !"
-#define SAVE_CHECKER_SIZE SIS_NAME_SIZE
-#define LEGACY_SAVE_CHECKER_SIZE LEGACY_SIS_NAME_SIZE
 
 typedef struct
 {
@@ -203,7 +198,7 @@ extern void ContinueFlash(void);
 #define SFR_MENU_NON ((GFXRECT*)~2L)
 extern void DrawHyperCoords(GFXPOINT puniverse);
 extern void DrawSaveInfo(SIS_STATE SisState);
-extern void DrawSISTitle(char* pStr);
+extern void DrawSISTitle(const char* pStr);
 
 // Flags for DrawSISMessageEx (may be OR'ed):
 #define DSME_NONE 0

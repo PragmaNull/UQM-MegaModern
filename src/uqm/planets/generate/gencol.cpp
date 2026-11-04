@@ -24,6 +24,7 @@
 #include "../../state.h"
 #include "../../gamestr.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateColony_initNpcs(SOLARSYS_STATE* solarSys);
@@ -56,7 +57,7 @@ const GenerateFunctions generateColonyFunctions = {
 static bool
 GenerateColony_initNpcs(SOLARSYS_STATE* solarSys)
 {
-	HIPGROUP hGroup;
+	HIPGROUP hGroup {};
 
 	GLOBAL(BattleGroupRef) = GET_GAME_STATE(COLONY_GRPOFFS);
 	if (GLOBAL(BattleGroupRef) == 0)
@@ -73,10 +74,9 @@ GenerateColony_initNpcs(SOLARSYS_STATE* solarSys)
 	if (GLOBAL(BattleGroupRef)
 		&& (hGroup = GetHeadLink(&GLOBAL(ip_group_q))))
 	{
-		IP_GROUP* GroupPtr;
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte + 1;
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte + 1;
 
-		GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 		GroupPtr->task = IN_ORBIT;
 		GroupPtr->sys_loc = PlanetByte;	 /* orbitting colony */
 		GroupPtr->dest_loc = PlanetByte; /* orbitting colony */
@@ -92,20 +92,17 @@ GenerateColony_initNpcs(SOLARSYS_STATE* solarSys)
 static bool
 GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	pSunDesc->PlanetByte = 0;
-	pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
+	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	FillOrbits(solarSys, (uint8_t)~0, pPlanet, false);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
-		uint16_t angle;
-
 		pPlanet->radius = EARTH_RADIUS * 115L / 100;
-		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		pPlanet->data_index = WATER_WORLD | PLANET_SHIELDED;
@@ -117,7 +114,7 @@ GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys)
 	}
 	else
 	{
-		uint32_t rand_val = RandomContext_Random(SysGenRNG);
+		const uint32_t rand_val = SysGenRNG->next();
 
 		pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -138,7 +135,7 @@ GenerateColony_generateMoons(SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (!PrimeSeed)
+	if (!uqm::isOriginalSeed())
 	{
 		return true;
 	}
@@ -160,12 +157,12 @@ GenerateColony_generateName(const SOLARSYS_STATE* solarSys,
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		utf8StringCopy(GLOBAL_SIS(PlanetName),
-					   sizeof(GLOBAL_SIS(PlanetName)),
-					   GAME_STRING(PLANET_NUMBER_BASE + 33));
+		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
+							sizeof(GLOBAL_SIS(PlanetName)),
+							GAME_STRING(PLANET_NUMBER_BASE + 33));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}

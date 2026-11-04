@@ -28,7 +28,6 @@ extern "C" {
 
 typedef struct NetConnection NetConnection;
 typedef struct NetConnectionError NetConnectionError;
-typedef struct ConnectStateData ConnectStateData;
 #ifdef NETPLAY_STATISTICS
 typedef struct NetStatistics NetStatistics;
 #endif
@@ -66,11 +65,6 @@ struct NetConnectionError
 {
 	NetState state;
 	int err;
-	union
-	{
-		const struct ListenError* listenError;
-		const struct ConnectError* connectError;
-	} extra;
 };
 
 #ifdef NETPLAY_STATISTICS
@@ -92,7 +86,10 @@ extern "C" {
 #endif
 
 #ifdef NETCONNECTION_INTERNAL
-#include "libs/net.h"
+#include "libs/network/Connection.h"
+#include "libs/network/Connector.h"
+#include "libs/network/Listener.h"
+#include "core/stl/memory.h"
 #include "packetq.h"
 
 
@@ -153,7 +150,10 @@ typedef struct
 
 struct NetConnection
 {
-	NetDescriptor* nd;
+	uqstl::unique_ptr<uqm::net::Connection> connection;
+	// The listener or the connector while the connection is not established.
+	uqstl::unique_ptr<uqm::net::Listener> listener;
+	uqstl::unique_ptr<uqm::net::Connector> connector;
 	int player;
 	// Number of the player for this connection, as it is
 	// known locally. For the other player, it may be
@@ -193,23 +193,9 @@ struct NetConnection
 	NetConnection_ErrorCallback errorCallback;
 	NetConnection_DeleteCallback deleteCallback;
 	// Called when the NetConnection is destroyed.
-	uint8_t* readBuf;
-	uint8_t* readEnd;
 	NetConnectionStateData* stateData;
 	// State dependant information.
 	void* extra;
-};
-
-struct ConnectStateData
-{
-	NETCONNECTION_STATE_DATA_COMMON
-
-	bool isServer;
-	union
-	{
-		struct ConnectState* connectState;
-		struct ListenState* listenState;
-	} state;
 };
 
 #endif /* NETCONNECTION_INTERNAL */

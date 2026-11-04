@@ -23,7 +23,6 @@
 #include "audiodrv_openal.h"
 #include "../sndintrn.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include <stdlib.h>
 
 
@@ -34,7 +33,7 @@ ALfloat listenerPos[] = {0.0f, 0.0f, 0.0f};
 ALfloat listenerVel[] = {0.0f, 0.0f, 0.0f};
 ALfloat listenerOri[] = {0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f};
 
-static const audio_Driver openAL_Driver =
+const static audio_Driver openAL_Driver =
 	{
 		openAL_Uninit,
 		openAL_GetError,
@@ -113,12 +112,11 @@ UQM_COMPILE_TIME_ASSERT(ALuint_fits_in_audio_Object,
 static void
 openAL_ConvertObjectArrayToALuints(uint32_t n, audio_Object* arr)
 {
-	uint32_t i;
 	if (sizeof(audio_Object) == sizeof(ALuint))
 	{
 		return;
 	}
-	for (i = 0; i < n; i++)
+	for (uint32_t i {0}; i < n; i++)
 	{
 		((ALuint*)arr)[i] = arr[i];
 	}
@@ -127,12 +125,11 @@ openAL_ConvertObjectArrayToALuints(uint32_t n, audio_Object* arr)
 static void
 openAL_ConvertObjectArrayFromALuints(uint32_t n, audio_Object* arr)
 {
-	uint32_t i;
 	if (sizeof(audio_Object) == sizeof(ALuint))
 	{
 		return;
 	}
-	i = n;
+	uint32_t i {n};
 	while (i--)
 	{
 		arr[i] = ((ALuint*)arr)[i];
@@ -146,10 +143,9 @@ openAL_ConvertObjectArrayFromALuints(uint32_t n, audio_Object* arr)
 int32_t
 openAL_Init(audio_Driver* driver, AudioFlags flags)
 {
-	int i;
 	TFB_DecoderFormats formats =
 		{
-			MIX_IS_BIG_ENDIAN, MIX_WANT_BIG_ENDIAN,
+			uqstl::endian::native == uqstl::endian::big, uqstl::endian::native == uqstl::endian::big,
 			audio_FORMAT_MONO8, audio_FORMAT_STEREO8,
 			audio_FORMAT_MONO16, audio_FORMAT_STEREO16};
 
@@ -204,7 +200,7 @@ openAL_Init(audio_Driver* driver, AudioFlags flags)
 	alListenerfv(AL_VELOCITY, listenerVel);
 	alListenerfv(AL_ORIENTATION, listenerOri);
 
-	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 	{
 		float zero[3] = {0.0f, 0.0f, 0.0f};
 
@@ -213,8 +209,6 @@ openAL_Init(audio_Driver* driver, AudioFlags flags)
 		alSourcefv(soundSource[i].handle, AL_POSITION, defaultPos);
 		alSourcefv(soundSource[i].handle, AL_VELOCITY, zero);
 		alSourcefv(soundSource[i].handle, AL_DIRECTION, zero);
-
-		soundSource[i].stream_mutex = CREATEMUTEX("OpenAL stream mutex", SYNC_CLASS_AUDIO);
 	}
 
 	if (InitStreamDecoder())
@@ -239,23 +233,16 @@ openAL_Init(audio_Driver* driver, AudioFlags flags)
 
 void openAL_Uninit(void)
 {
-	int i;
-
 	UninitStreamDecoder();
 
-	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 	{
+		const uqm::LockGuard lock {soundSource[i].stream_mutex};
 		if (soundSource[i].sample && soundSource[i].sample->decoder)
 		{
 			StopStream(i);
 		}
-		if (soundSource[i].sbuffer)
-		{
-			void* sbuffer = soundSource[i].sbuffer;
-			soundSource[i].sbuffer = nullptr;
-			HFree(sbuffer);
-		}
-		DestroyMutex(soundSource[i].stream_mutex);
+		soundSource[i].sbuffer = {};
 	}
 
 	alcMakeContextCurrent(nullptr);

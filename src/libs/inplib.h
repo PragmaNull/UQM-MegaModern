@@ -20,9 +20,10 @@
 #define LIBS_INPLIB_H_
 
 #include <stddef.h>
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/io/FileSystem.h"
-#include "libs/unicode.h"
+#include "core/string/Utf8.h"
+#include "core/stl/atomic.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -42,16 +43,16 @@ extern void MoveMouse (int16_t x, int16_t y);
 extern uint8_t LocateMouse (int16_t *px, int16_t *py);
 */
 
-extern volatile int MouseButtonDown;
-extern volatile int QuitPosted;
-extern volatile int GameActive;
+extern uqstl::atomic<int> MouseButtonDown;
+extern uqstl::atomic<int> QuitPosted;
+extern uqstl::atomic<int> GameActive;
 
 /* Functions for dealing with Character Mode */
 
 void EnterCharacterMode(void);
 void ExitCharacterMode(void);
-UniChar GetNextCharacter(void);
-UniChar GetLastCharacter(void);
+uqm::UniChar GetNextCharacter(void);
+uqm::UniChar GetLastCharacter(void);
 
 /* Interrogating the current key configuration */
 

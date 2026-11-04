@@ -1,4 +1,5 @@
 //Copyright Paul Reiche, Fred Ford. 1992-2002#include "libs/time/timelib.h"
+#include "core/stl/atomic.h"
 
 /*
  *  This program is free software; you can redistribute it and/or modify
@@ -19,8 +20,10 @@
 #ifndef UQM_CONTROLS_H_
 #define UQM_CONTROLS_H_
 
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/strlib.h"
+#include "libs/sndlib.h"
+#include "core/stl/vector.h"
 #include "libs/time/timelib.h"
 
 #if 0 //defined(__cplusplus)
@@ -108,15 +111,21 @@ static constexpr const char* toString(ControlTemplate val)
 }
 
 
+// The input that the main thread writes while the game thread reads it.
+struct IMMEDIATE_INPUT_STATE
+{
+	uqstl::atomic<int> key[uqstl::to_underlying(ControlTemplate::NUM)][NUM_KEYS];
+	uqstl::atomic<int> menu[NUM_MENU_KEYS];
+};
+
 struct CONTROLLER_INPUT_STATE
 {
-	int key[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS];
+	int key[uqstl::to_underlying(ControlTemplate::NUM)][NUM_KEYS];
 	int menu[NUM_MENU_KEYS];
 
-	// TODO: need to define this because of volatile ImmediateInputState variable!? Figure this out. This is ugly
-	CONTROLLER_INPUT_STATE& operator=(const volatile CONTROLLER_INPUT_STATE& rhs)
+	CONTROLLER_INPUT_STATE& operator=(const IMMEDIATE_INPUT_STATE& rhs)
 	{
-		for (int t = 0; t < static_cast<int>(ControlTemplate::NUM); ++t)
+		for (int t = 0; t < uqstl::to_underlying(ControlTemplate::NUM); ++t)
 		{
 			for (int k = 0; k < NUM_KEYS; ++k)
 			{
@@ -148,7 +157,7 @@ BATTLE_INPUT_STATE PulsedInputToBattleInput(uint16_t player);
 
 extern CONTROLLER_INPUT_STATE CurrentInputState;
 extern CONTROLLER_INPUT_STATE PulsedInputState;
-extern volatile CONTROLLER_INPUT_STATE ImmediateInputState;
+extern IMMEDIATE_INPUT_STATE ImmediateInputState;
 extern ControlTemplate PlayerControlTemplates[];
 extern bool WarpFromMenu;
 
@@ -158,7 +167,7 @@ bool LoadInputScript(const char* path);
 // Sets the function that the "dumpmenu" script command calls. Null when no setup menu is open.
 void SetInputScriptMenuDump(void (*dump)(void));
 extern void FlushInput(void);
-void SetMenuRepeatDelay(uint32_t min, uint32_t max, uint32_t step, bool gestalt);
+void SetMenuRepeatDelay(TimePeriod min, TimePeriod max, TimePeriod step, bool gestalt);
 void SetDefaultMenuRepeatDelay(void);
 void ResetKeyRepeat(void);
 bool PauseGame(void);
@@ -166,7 +175,7 @@ void SleepGame(void);
 bool DoConfirmExit(void);
 bool ConfirmExit(void);
 
-#define WAIT_INFINITE ((TimePeriod) - 1)
+#define WAIT_INFINITE TimePeriod::max()
 bool WaitForAnyButton(bool newButton, TimePeriod duration,
 					  bool resetInput);
 bool WaitForActButton(bool newButton, TimePeriod duration,
@@ -187,10 +196,15 @@ InputFrameCallback* SetInputCallback(InputFrameCallback*);
 // pInputState must point to a struct derived from INPUT_STATE_DESC
 void DoInput(void* pInputState, bool resetInput);
 
-extern volatile bool GamePaused;
-extern volatile bool ExitRequested;
+extern uqstl::atomic<bool> GamePaused;
+extern uqstl::atomic<bool> ExitRequested;
 
-typedef struct joy_char joy_char_t;
+// A UTF-8 character in the joystick alphabet.
+typedef struct joy_char
+{
+	unsigned char len;
+	char enc[7];
+} joy_char_t;
 
 typedef struct textentry_state
 {
@@ -199,16 +213,15 @@ typedef struct textentry_state
 
 	// these are semi-private read-only
 	bool Initialized;
-	uint32_t NextTime;	   // use this for input frame timing
-	bool Success;		   // edit confirmed or canceled
-	char* CacheStr;		   // cached copy to revert immediate changes
-	STRING JoyAlphaString; // joystick alphabet definition
-	bool JoystickMode;	   // true when doing joystick input
-	bool UpperRegister;	   // true when entering Caps
-	joy_char_t* JoyAlpha;  // joystick alphabet
+	TimeCount NextTime;					// use this for input frame timing
+	bool Success;						// edit confirmed or canceled
+	uqstl::vector<char> CacheStr;		// cached copy to revert immediate changes
+	bool JoystickMode;					// true when doing joystick input
+	bool UpperRegister;					// true when entering Caps
+	uqstl::vector<joy_char_t> JoyAlpha; // joystick alphabet
 	int JoyAlphaLength;
-	joy_char_t* JoyUpper; // joystick upper register
-	joy_char_t* JoyLower; // joystick lower register
+	uqstl::vector<joy_char_t> JoyUpper; // joystick upper register
+	uqstl::vector<joy_char_t> JoyLower; // joystick lower register
 	int JoyRegLength;
 	char* InsPt; // set to current pos of insertion point
 	// these are public and must be set before calling DoTextEntry
@@ -227,7 +240,7 @@ typedef struct textentry_state
 
 extern bool DoTextEntry(TEXTENTRY_STATE* pTES);
 
-extern void TestSpeechSound(STRING snd);
+extern void TestSpeechSound(SOUND snd);
 
 #if 0 //defined(__cplusplus)
 }

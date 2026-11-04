@@ -21,17 +21,17 @@ public:
 		bool deflated {false};
 	};
 
-	// Reads the central directory of the archive at 'path' in 'archive'. Returns nullptr and sets 'error' on failure.
-	static uqstl::shared_ptr<ZipSource> create(uqstl::shared_ptr<const MountSource> archive, uqstl::string path, uqstl::error_code& error);
+	// Reads the central directory of the archive at 'path' in 'archive'.
+	static Result<uqstl::shared_ptr<ZipSource>> create(uqstl::shared_ptr<const MountSource> archive, uqstl::string path);
 
 	[[nodiscard]] uqstl::optional<FileInfo> stat(uqstl::string_view path) const override;
-	[[nodiscard]] uqstl::vector<uqstl::string> list(uqstl::string_view path, uqstl::error_code& error) const override;
-	[[nodiscard]] uqstl::unique_ptr<Stream> open(uqstl::string_view path, OpenMode mode, uqstl::error_code& error) const override;
+	[[nodiscard]] Result<uqstl::vector<uqstl::string>> list(uqstl::string_view path) const override;
+	[[nodiscard]] Result<uqstl::unique_ptr<Stream>> open(uqstl::string_view path, OpenMode mode) const override;
 
 	ZipSource(uqstl::shared_ptr<const MountSource> archive, uqstl::string path);
 
 private:
-	bool readCentralDirectory(uqstl::error_code& error);
+	Result<void> readCentralDirectory();
 	void addEntry(uqstl::string name, bool isDirectory, const Entry& entry);
 	void addDirectory(const uqstl::string& name);
 	// Adds 'name' to the list of its parent directory, which is created if needed. Returns false if the parent is a file.

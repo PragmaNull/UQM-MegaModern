@@ -19,7 +19,7 @@
 #include "settings.h"
 
 #include "globdata.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "setup.h"
 
 
@@ -29,10 +29,10 @@ static uint8_t LastPriority;
 
 void ToggleMusic(void)
 {
-	GLOBAL(glob_flags) ^= MUSIC_DISABLED;
+	uqm::globalFlags() ^= MUSIC_DISABLED;
 	if (LastPriority <= 1)
 	{
-		if (GLOBAL(glob_flags) & MUSIC_DISABLED)
+		if (uqm::globalFlags() & MUSIC_DISABLED)
 		{
 			PLRStop(LastMusicRef);
 		}
@@ -54,7 +54,7 @@ void PlayMusic(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority)
 		Priority > 1
 		||
 #endif /* NEVER */
-		!(GLOBAL(glob_flags) & MUSIC_DISABLED))
+		!(uqm::globalFlags() & MUSIC_DISABLED))
 	{
 		PLRPlaySong(MusicRef, Continuous, Priority);
 	}
@@ -89,7 +89,7 @@ void PlayMusicResume(MUSIC_REF MusicRef, uint8_t Volume)
 	if (OkayToResume())
 	{
 		SeekMusic(GetMusicPosition());
-		FadeMusic(Volume, GameTicksPerSecond * 2);
+		FadeMusic(Volume, c_gameSecond * 2);
 	}
 	else
 	{
@@ -99,13 +99,13 @@ void PlayMusicResume(MUSIC_REF MusicRef, uint8_t Volume)
 
 void ToggleSoundEffect(void)
 {
-	GLOBAL(glob_flags) ^= SOUND_DISABLED;
+	uqm::globalFlags() ^= SOUND_DISABLED;
 }
 
 void PlaySoundEffect(SOUND S, uint16_t Channel, SoundPosition Pos,
 					 void* PositionalObject, uint8_t Priority)
 {
-	if (!(GLOBAL(glob_flags) & SOUND_DISABLED))
+	if (!(uqm::globalFlags() & SOUND_DISABLED))
 	{
 		SetChannelVolume(Channel, MAX_VOLUME >> 1, Priority);
 		//SetChannelRate (Channel, GetSampleRate (S), Priority);
@@ -115,7 +115,7 @@ void PlaySoundEffect(SOUND S, uint16_t Channel, SoundPosition Pos,
 
 void PlaySpeechEffect(SOUND S, SoundPosition Pos, void* PositionalObject, uint8_t Priority)
 {
-	if (!(GLOBAL(glob_flags) & SOUND_DISABLED))
+	if (!(uqm::globalFlags() & SOUND_DISABLED))
 	{
 		PlayChannel(6, S, Pos, PositionalObject, Priority);
 	}

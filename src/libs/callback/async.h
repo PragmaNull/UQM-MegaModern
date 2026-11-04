@@ -21,7 +21,10 @@
 
 #include <cstdint>
 
+#include "libs/callback/alarm.h"
+
 void Async_process(void);
-uint32_t Async_timeBeforeNextMs(void);
+// Returns the time of the next asynchronous operation, or AlarmTime::max() if there is none.
+AlarmTime Async_nextTime(void);
 
 #endif /* LIBS_CALLBACK_ASYNC_H_ */

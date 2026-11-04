@@ -22,34 +22,15 @@
 #include <stdio.h>
 #include "core/stl/map.h"
 #include "core/stl/string.h"
+#include "core/stl/vector.h"
 #include "libs/strlib.h"
 #include "libs/reslib.h"
 
-struct string_table_entry
-{
-	STRINGPTR data;
-	int length; /* Internal NULs are allowed */
-	int index;
-	struct string_table* parent;
-};
-
-struct string_table
-{
-	unsigned short flags;
-	int size;
-	STRING_TABLE_ENTRY_DESC* strings;
-	uqstl::unordered_map<uqstl::string, STRING_TABLE_ENTRY_DESC*>* nameIndex;
-};
-
-#define HAS_SOUND_CLIPS (1 << 0)
-#define HAS_TIMESTAMP (1 << 1)
-#define HAS_NAMEINDEX (1 << 2)
-
-STRING_TABLE AllocStringTable(int num_entries, int flags);
-void FreeStringTable(STRING_TABLE strtab);
+// Copies 'len' bytes of 'value' into the entry. A length of 0 empties the entry.
+void SetStringTableEntry(uqm::StringTable* strtab, int index, const void* value, int len);
 
 void* _GetStringData(const ResourceFile& resource);
 void* _GetBinaryTableData(const ResourceFile& resource);
-void _GetConversationData(const char* path, RESOURCE_DATA* resdata);
+void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata);
 
 #endif /* LIBS_STRINGS_STRINTRN_H_ */

@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 
 
@@ -349,10 +349,9 @@ Zombies(RESPONSE_REF R)
 	}
 	else
 	{
-		uint8_t i, LastStack;
 		RESPONSE_REF pStr[4];
 
-		LastStack = 0;
+		uint8_t LastStack {0};
 		pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
 		if (PLAYER_SAID(R, evil_blobbies))
 		{
@@ -464,7 +463,7 @@ Zombies(RESPONSE_REF R)
 		{
 			Response(pStr[LastStack], Zombies);
 		}
-		for (i = 0; i < 4; ++i)
+		for (uint8_t i {0}; i < 4; ++i)
 		{
 			if (i != LastStack && pStr[i])
 			{
@@ -600,10 +599,10 @@ UmgahReward(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 		SET_GAME_STATE(BATTLE_SEGUE, 0);
@@ -781,7 +780,7 @@ Intro(void)
 static uint16_t
 uninit_umgah(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -797,13 +796,11 @@ post_umgah_enc(void)
 LOCDATA*
 init_umgah_comm(void)
 {
-	LOCDATA* retval;
-
 	umgah_desc.init_encounter_func = Intro;
 	umgah_desc.post_encounter_func = post_umgah_enc;
 	umgah_desc.uninit_encounter_func = uninit_umgah;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
@@ -812,7 +809,7 @@ init_umgah_comm(void)
 	umgah_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	if ((GET_GAME_STATE(TALKING_PET) && !GET_GAME_STATE(UMGAH_HOSTILE))
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}
@@ -820,7 +817,7 @@ init_umgah_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &umgah_desc;
+	LOCDATA* retval {&umgah_desc};
 
 	return (retval);
 }

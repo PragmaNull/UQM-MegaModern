@@ -20,6 +20,7 @@
 #include "libs/vidlib.h"
 #include "libs/video/video.h"
 #include "libs/reslib.h"
+#include "core/stl/string.h"
 
 // forward-declare
 typedef struct tfb_videodecoder TFB_VideoDecoder;
@@ -31,7 +32,9 @@ typedef struct tfb_videodecoderfunc
 	const char* (*GetName)(void);
 	bool (*InitModule)(int flags);
 	void (*TermModule)(void);
-	uint32_t (*GetStructSize)(void);
+	// Make and delete the decoder struct, which starts with a TFB_VideoDecoder.
+	TFB_VideoDecoder* (*Create)(void);
+	void (*Destroy)(TFB_VideoDecoder*);
 	int (*GetError)(THIS_PTR);
 	bool (*Init)(THIS_PTR, TFB_PixelFormat* fmt);
 	void (*Term)(THIS_PTR);
@@ -88,7 +91,7 @@ struct tfb_videodecoder
 	uint32_t cur_frame;
 
 	// semi-private
-	char* filename;
+	uqstl::string filename;
 };
 
 // return values

@@ -26,6 +26,7 @@
 #include "../../settings.h"
 #include "uqm/build.h"	 // for fwiffo
 #include "uqm/nameref.h" // for fwiffo
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 8
@@ -162,15 +163,13 @@ SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 
 	if (pRaceDesc->data) // Out with the old
 	{
-		HFree(pRaceDesc->data);
+		delete static_cast<CustomShipData_t*>(pRaceDesc->data);
 		pRaceDesc->data = nullptr;
 	}
 
 	if (data) // In with the new
 	{
-		CustomShipData_t* newData = (CustomShipData_t*)HMalloc(sizeof(*data));
-		*newData = *data;
-		pRaceDesc->data = newData;
+		pRaceDesc->data = new CustomShipData_t {*data};
 	}
 }
 
@@ -194,8 +193,7 @@ animate(ELEMENT* ElementPtr)
 static uint16_t
 initialize_bug_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 {
-	uint16_t i;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -213,7 +211,7 @@ initialize_bug_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	MissileBlock.preprocess_func = nullptr;
 	MissileBlock.blast_offs = MISSILE_OFFSET;
 
-	for (i = 0; i < 3; ++i)
+	for (uint16_t i {0}; i < 3; ++i)
 	{
 		MissileBlock.face =
 			StarShipPtr->ShipFacing
@@ -226,8 +224,9 @@ initialize_bug_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 
 		if ((MissileArray[i] = initialize_missile(&MissileBlock)))
 		{
-			int32_t dx, dy;
-			ELEMENT* MissilePtr;
+			int32_t dx {};
+			int32_t dy {};
+			ELEMENT* MissilePtr {};
 
 			LockElement(MissileArray[i], &MissilePtr);
 			GetCurrentVelocityComponentsSdword(&ShipPtr->velocity, &dx, &dy);
@@ -247,11 +246,10 @@ static void
 pkunk_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				   uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr;
-	PKUNK_DATA* PkunkData;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	PkunkData = GetCustomShipData(StarShipPtr->RaceDescPtr);
+	PKUNK_DATA* PkunkData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
 	if (PkunkData->hPhoenix && testFlag(StarShipPtr->control, PlayerControlFlags::DifficultyStandard))
 	{
 		RemoveElement(PkunkData->hPhoenix);
@@ -261,7 +259,7 @@ pkunk_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level < StarShipPtr->RaceDescPtr->ship_info.max_energy
 		&& (StarShipPtr->special_counter == 0
-			|| (uint8_t)TFB_Random() < 20))
+			|| (uint8_t)uqm::random().next() < 20))
 	{
 		StarShipPtr->ship_input_state |= SPECIAL;
 	}
@@ -277,11 +275,10 @@ static void pkunk_preprocess(ELEMENT* ElementPtr);
 static void
 new_pkunk(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
-	PKUNK_DATA* PkunkData;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	PkunkData = GetCustomShipData(StarShipPtr->RaceDescPtr);
+	const PKUNK_DATA* PkunkData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
 
 	ElementPtr->state_flags = APPEARING | PLAYER_SHIP | IGNORE_SIMILAR;
 	ElementPtr->mass_points = SHIP_MASS;
@@ -314,19 +311,19 @@ new_pkunk(ELEMENT* ElementPtr)
 	ElementPtr->thrust_wait = 0;
 	ElementPtr->life_span = NORMAL_LIFE;
 
-	StarShipPtr->ShipFacing = NORMALIZE_FACING(TFB_Random());
+	StarShipPtr->ShipFacing = NORMALIZE_FACING(uqm::random().next());
 	ElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.ship;
 	ElementPtr->current.image.frame = SetAbsFrameIndex(
 		StarShipPtr->RaceDescPtr->ship_data.ship[0],
 		StarShipPtr->ShipFacing);
-	SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex], STAMP_PRIM);
+	SetPrimType(&DisplayArray[ElementPtr->PrimIndex], STAMP_PRIM);
 
 	do
 	{
 		ElementPtr->current.location.x =
-			WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+			WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 		ElementPtr->current.location.y =
-			WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+			WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 	} while (CalculateGravity(ElementPtr)
 			 || TimeSpaceMatterConflict(ElementPtr));
 
@@ -352,12 +349,11 @@ pkunk_reincarnation_death(ELEMENT* ShipPtr)
 static void
 intercept_pkunk_death(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
-	PKUNK_DATA* PkunkData;
-	ELEMENT* ShipPtr;
+	STARSHIP* StarShipPtr {};
+	ELEMENT* ShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	PkunkData = GetCustomShipData(StarShipPtr->RaceDescPtr);
+	PKUNK_DATA* PkunkData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
 
 	if (StarShipPtr->RaceDescPtr->ship_info.crew_level != 0)
 	{ // Ship not dead yet.
@@ -390,7 +386,7 @@ intercept_pkunk_death(ELEMENT* ElementPtr)
 static void
 spawn_phoenix_trail(ELEMENT* ElementPtr)
 {
-	static const Color colorTable[] =
+	const static Color colorTable[] =
 		{
 			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x15, 0x00), 0x7a),
 			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x11, 0x00), 0x7b),
@@ -412,7 +408,7 @@ spawn_phoenix_trail(ELEMENT* ElementPtr)
 	{
 		ElementPtr->life_span = TRANSITION_LIFE;
 
-		SetPrimColor(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+		SetPrimColor(&DisplayArray[ElementPtr->PrimIndex],
 					 colorTable[ElementPtr->colorCycleIndex]);
 
 		ElementPtr->state_flags &= ~DISAPPEARING;
@@ -423,9 +419,9 @@ spawn_phoenix_trail(ELEMENT* ElementPtr)
 static void
 phoenix_transition(ELEMENT* ElementPtr)
 {
-	HELEMENT hShipImage;
-	ELEMENT* ShipImagePtr;
-	STARSHIP* StarShipPtr;
+	HELEMENT hShipImage {};
+	ELEMENT* ShipImagePtr {};
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	LockElement(StarShipPtr->hShip, &ShipImagePtr);
@@ -436,7 +432,7 @@ phoenix_transition(ELEMENT* ElementPtr)
 	}
 	else if ((hShipImage = AllocElement()))
 	{
-		uint16_t angle;
+		uint16_t angle {};
 
 		PutElement(hShipImage);
 
@@ -444,10 +440,10 @@ phoenix_transition(ELEMENT* ElementPtr)
 		ShipImagePtr->playerNr = NEUTRAL_PLAYER_NUM;
 		ShipImagePtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
 		ShipImagePtr->life_span = TRANSITION_LIFE;
-		SetPrimType(&(GLOBAL(DisplayArray))[ShipImagePtr->PrimIndex],
+		SetPrimType(&DisplayArray[ShipImagePtr->PrimIndex],
 					STAMPFILL_PRIM);
 		SetPrimColor(
-			&(GLOBAL(DisplayArray))[ShipImagePtr->PrimIndex],
+			&DisplayArray[ShipImagePtr->PrimIndex],
 			START_PHOENIX_COLOR);
 		ShipImagePtr->colorCycleIndex = 0;
 		ShipImagePtr->current.image = ElementPtr->current.image;
@@ -464,14 +460,13 @@ phoenix_transition(ELEMENT* ElementPtr)
 		}
 		else
 		{
-			int32_t temp_x, temp_y;
 			angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
 
 			// JMS_GFX: Circumventing overflows by using temp variables
 			// instead of subtracting straight from the GFXPOINT sized
 			// ShipImagePtr->current.location.
-			temp_x = (int32_t)ShipImagePtr->current.location.x - COSINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1);
-			temp_y = (int32_t)ShipImagePtr->current.location.y - SINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1);
+			const int32_t temp_x {(int32_t)ShipImagePtr->current.location.x - COSINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1)};
+			const int32_t temp_y {(int32_t)ShipImagePtr->current.location.y - SINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1)};
 
 			ShipImagePtr->current.location.x = WRAP_X(temp_x);
 			ShipImagePtr->current.location.y = WRAP_Y(temp_y);
@@ -488,28 +483,27 @@ phoenix_transition(ELEMENT* ElementPtr)
 	UnlockElement(StarShipPtr->hShip);
 }
 
-SOUND FwiffoSounds = 0;
+SOUND_REF FwiffoSounds = 0;
 
 static void
 pkunk_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
-	PKUNK_DATA* PkunkData;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	PkunkData = GetCustomShipData(StarShipPtr->RaceDescPtr);
+	PKUNK_DATA* PkunkData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
 
-	bool Fwiffo = (StarShipPtr->captains_name_index == NAME_OFFSET + NUM_CAPTAINS_NAMES && StarShipPtr->SpeciesID == SPATHI_ID);
+	const bool Fwiffo = (StarShipPtr->captains_name_index == NAME_OFFSET + NUM_CAPTAINS_NAMES && StarShipPtr->SpeciesID == SPATHI_ID);
 	if (Fwiffo && !FwiffoSounds)
 	{
-		FwiffoSounds = CaptureSound(LoadSound("ship.spathi.sounds"));
+		FwiffoSounds = uqm::loadSoundBank("ship.spathi.sounds").release();
 	}
 
 	if (ElementPtr->state_flags & APPEARING)
 	{
 		HELEMENT hPhoenix = 0;
 
-		if (TFB_Random() & 1)
+		if (uqm::random().next() & 1)
 		{
 			hPhoenix = AllocElement();
 		}
@@ -521,7 +515,7 @@ pkunk_preprocess(ELEMENT* ElementPtr)
 		// starting the death + reincarnation sequence.
 		if (hPhoenix)
 		{
-			ELEMENT* PhoenixPtr;
+			ELEMENT* PhoenixPtr {};
 
 			LockElement(hPhoenix, &PhoenixPtr);
 			PhoenixPtr->playerNr = ElementPtr->playerNr;
@@ -546,26 +540,25 @@ pkunk_preprocess(ELEMENT* ElementPtr)
 		}
 		else
 		{ // Start the reincarnation sequence
-			uint16_t angle, facing;
 
 			if (Fwiffo)
 			{
-				ProcessSound(SetAbsSoundIndex(FwiffoSounds, 1), ElementPtr);
+				ProcessSound(GetSound(FwiffoSounds, 1), ElementPtr);
 			}
 			else
 			{
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 							 ElementPtr);
 			}
 
 			ElementPtr->life_span = PHOENIX_LIFE;
-			SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+			SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
 						NO_PRIM);
 			ElementPtr->state_flags |= NONSOLID | FINITE_LIFE | CHANGING;
 
-			facing = StarShipPtr->ShipFacing;
-			for (angle = OCTANT; angle < FULL_CIRCLE; angle += QUADRANT)
+			const uint16_t facing {StarShipPtr->ShipFacing};
+			for (uint16_t angle {OCTANT}; angle < FULL_CIRCLE; angle += QUADRANT)
 			{
 				StarShipPtr->ShipFacing = NORMALIZE_FACING(
 					facing + ANGLE_TO_FACING(angle));
@@ -587,7 +580,7 @@ pkunk_preprocess(ELEMENT* ElementPtr)
 					SetEquFrameIndex(
 						ElementPtr->current.image.farray[0],
 						ElementPtr->current.image.frame);
-			SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+			SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
 						STAMP_PRIM);
 			InitIntersectStartPoint(ElementPtr);
 			InitIntersectEndPoint(ElementPtr);
@@ -606,7 +599,7 @@ static uint16_t LastSound = 0;
 static void
 pkunk_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->RaceDescPtr->characteristics.special_wait)
@@ -616,14 +609,14 @@ pkunk_postprocess(ELEMENT* ElementPtr)
 	else if ((StarShipPtr->cur_status_flags & SPECIAL)
 			 && StarShipPtr->RaceDescPtr->ship_info.energy_level < StarShipPtr->RaceDescPtr->ship_info.max_energy)
 	{
-		uint16_t CurSound;
+		uint16_t CurSound {};
 
 		do
 		{
 			CurSound =
-				2 + ((uint16_t)TFB_Random() % (GetSoundCount(StarShipPtr->RaceDescPtr->ship_data.ship_sounds) - 2));
+				2 + ((uint16_t)uqm::random().next() % (StarShipPtr->RaceDescPtr->ship_data.ship_sounds->size() - 2));
 		} while (CurSound == LastSound);
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, CurSound),
 					 ElementPtr);
 		LastSound = CurSound;
@@ -640,7 +633,7 @@ uninit_pkunk(RACE_DESC* pRaceDesc)
 	SetCustomShipData(pRaceDesc, nullptr);
 	if (FwiffoSounds)
 	{
-		DestroySound(ReleaseSound(FwiffoSounds));
+		delete FwiffoSounds;
 		FwiffoSounds = 0;
 	}
 }
@@ -649,7 +642,7 @@ RACE_DESC*
 init_pkunk(void)
 {
 	static RACE_DESC new_pkunk_desc;
-	RACE_DESC* RaceDescPtr;
+	RACE_DESC* RaceDescPtr {};
 	PKUNK_DATA empty_data;
 
 	if (IS_HD)

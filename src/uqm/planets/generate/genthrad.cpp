@@ -30,6 +30,7 @@
 #include "../../state.h"
 #include "libs/mathlib.h"
 #include "../../../options.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateThraddash_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -62,13 +63,13 @@ static bool
 GenerateThraddash_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
-		uint16_t angle;
+		uint16_t angle {};
 
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -123,7 +124,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 			CloneShipFragment(THRADDASH_SHIP, &GLOBAL(npc_built_ship_q),
 							  INFINITE_FLEET);
 
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			if (CurStarDescPtr->Index == THRADD_DEFINED)
 			{
 				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
@@ -134,12 +135,12 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 			InitCommunication(THRADD_CONVERSATION);
 
-			if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+			if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 			{
 				return true;
 			}
 
-			GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+			uqm::currentActivity() &= ~START_INTERPLANETARY;
 			ReinitQueue(&GLOBAL(npc_built_ship_q));
 			GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 
@@ -162,7 +163,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 				 && (StartSphereTracking(THRADDASH_SHIP)
 					 || !(GET_GAME_STATE(KOHR_AH_FRENZY))))
 		{
-			uint16_t sum, i;
+			uint16_t sum {};
 
 			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
 			ReinitQueue(&GLOBAL(ip_group_q));
@@ -178,26 +179,26 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 				sum = 12;
 			}
 
-			for (i = 0; i < sum; ++i)
+			for (uint16_t i {0}; i < sum; ++i)
 			{
 				CloneShipFragment(THRADDASH_SHIP,
 								  &GLOBAL(npc_built_ship_q), 0);
 			}
 
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 6);
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			InitCommunication(THRADD_CONVERSATION);
 
-			if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+			if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 			{
 				return true;
 			}
 
 			{
-				bool Survivors =
+				const bool Survivors =
 					GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
 
-				GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
 				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 
@@ -207,7 +208,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 
 				{
-					uint16_t state;
+					uint16_t state {};
 
 					state = GET_GAME_STATE(HM_ENCOUNTERS);
 
@@ -226,16 +227,16 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
 				CaptureDrawable(LoadGraphic(AQUA_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				CaptureStringTable(LoadStringTable(AQUA_STRTAB));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(AQUA_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		}
 		else if (CurStarDescPtr->Index == THRADD_DEFINED)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
 				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				CaptureStringTable(LoadStringTable(RUINS_STRTAB));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		}
 	}
 
@@ -290,7 +291,7 @@ GenerateThraddash_pickupEnergy(SOLARSYS_STATE* solarSys,
 				&GLOBAL(avail_race_q), THRADDASH_SHIP);
 		FLEET_INFO* ThraddPtr =
 			LockFleetInfo(&GLOBAL(avail_race_q), hThradd);
-		int16_t strength_loss;
+		int16_t strength_loss {};
 
 		assert(!GET_GAME_STATE(AQUA_HELIX) && whichNode == 0);
 

@@ -124,7 +124,7 @@ static RACE_DESC mycon_desc =
 static void
 plasma_preprocess(ELEMENT* ElementPtr)
 {
-	uint16_t plasma_index;
+	uint16_t plasma_index {};
 
 	if (ElementPtr->mass_points > ElementPtr->hit_points)
 	{
@@ -150,7 +150,7 @@ plasma_preprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		uint16_t facing;
+		uint16_t facing {};
 
 		facing = NORMALIZE_FACING(ANGLE_TO_FACING(
 			GetVelocityTravelAngle(&ElementPtr->velocity)));
@@ -179,7 +179,7 @@ plasma_blast_preprocess(ELEMENT* ElementPtr)
 	}
 	if (ElementPtr->hTarget)
 	{
-		ELEMENT* ShipPtr;
+		ELEMENT* ShipPtr {};
 
 		LockElement(ElementPtr->hTarget, &ShipPtr);
 		ElementPtr->next.location = ShipPtr->next.location;
@@ -193,17 +193,16 @@ static void
 plasma_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	int16_t old_mass;
-	HELEMENT hBlastElement;
+	HELEMENT hBlastElement {};
 
-	old_mass = (int16_t)ElementPtr0->mass_points;
+	const int16_t old_mass {(int16_t)ElementPtr0->mass_points};
 	if ((ElementPtr0->pParent != ElementPtr1->pParent
 		 || (ElementPtr1->state_flags & PLAYER_SHIP))
 		&& (hBlastElement =
 				weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)))
 	{
-		int16_t num_animations;
-		ELEMENT* BlastElementPtr;
+		int16_t num_animations {};
+		ELEMENT* BlastElementPtr {};
 
 		LockElement(hBlastElement, &BlastElementPtr);
 		BlastElementPtr->pParent = ElementPtr0->pParent;
@@ -213,7 +212,7 @@ plasma_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		}
 		else
 		{
-			STARSHIP* StarShipPtr;
+			STARSHIP* StarShipPtr {};
 
 			GetElementStarShip(ElementPtr1, &StarShipPtr);
 			BlastElementPtr->hTarget = StarShipPtr->hShip;
@@ -246,10 +245,9 @@ static void
 mycon_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				   uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr;
-	EVALUATE_DESC* lpEvalDesc;
+	STARSHIP* StarShipPtr {};
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_WEAPON_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
 	{
 		if ((lpEvalDesc->ObjectPtr->state_flags & FINITE_LIFE)
@@ -277,8 +275,10 @@ mycon_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		&& (lpEvalDesc->which_turn <= 16
 			|| ShipPtr->crew_level == StarShipPtr->RaceDescPtr->ship_info.max_crew))
 	{
-		uint16_t travel_facing, direction_facing;
-		int32_t delta_x, delta_y;
+		uint16_t travel_facing {};
+		uint16_t direction_facing {};
+		int32_t delta_x {};
+		int32_t delta_y {};
 
 		travel_facing = NORMALIZE_FACING(
 			ANGLE_TO_FACING(GetVelocityTravelAngle(&ShipPtr->velocity)
@@ -322,7 +322,7 @@ mycon_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static uint16_t
 initialize_plasma(ELEMENT* ShipPtr, HELEMENT PlasmaArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -344,7 +344,7 @@ initialize_plasma(ELEMENT* ShipPtr, HELEMENT PlasmaArray[])
 
 	if (PlasmaArray[0])
 	{
-		ELEMENT* PlasmaPtr;
+		ELEMENT* PlasmaPtr {};
 
 		LockElement(PlasmaArray[0], &PlasmaPtr);
 		PlasmaPtr->collision_func = plasma_collision;
@@ -358,7 +358,7 @@ initialize_plasma(ELEMENT* ShipPtr, HELEMENT PlasmaArray[])
 static void
 mycon_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SPECIAL)
@@ -366,9 +366,9 @@ mycon_postprocess(ELEMENT* ElementPtr)
 		&& ElementPtr->crew_level != StarShipPtr->RaceDescPtr->ship_info.max_crew
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
-		int16_t add_crew;
+		int16_t add_crew {};
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* GROW_NEW_CREW */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);
@@ -386,8 +386,6 @@ mycon_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_mycon(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		mycon_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -405,7 +403,7 @@ init_mycon(void)
 	mycon_desc.init_weapon_func = initialize_plasma;
 	mycon_desc.cyborg_control.intelligence_func = mycon_intelligence;
 
-	RaceDescPtr = &mycon_desc;
+	RACE_DESC* RaceDescPtr {&mycon_desc};
 
 	return (RaceDescPtr);
 }

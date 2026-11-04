@@ -21,16 +21,45 @@
 
 #include <fmt/base.h>
 #include "port.h"
+#include "libs/time/timelib.h"
 #include "libs/strlib.h"
+#include "core/stl/memory.h"
+#include "core/stl/vector.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
-typedef STRING_TABLE SOUND_REF;
-typedef STRING SOUND;
-// SOUNDPTR is really a TFB_SoundSample**
-typedef void* SOUNDPTR;
+typedef struct tfb_soundsample TFB_SoundSample;
+
+namespace uqm
+{
+
+// The sound samples of a sound bank resource.
+class SoundBank
+{
+public:
+	explicit SoundBank(uqstl::vector<TFB_SoundSample*> samples);
+	// Stops the sources that play the samples, and destroys the samples.
+	~SoundBank();
+	SoundBank(const SoundBank&) = delete;
+	SoundBank& operator=(const SoundBank&) = delete;
+
+	[[nodiscard]] size_t size() const noexcept
+	{
+		return m_samples.size();
+	}
+	// The sample 'index'. The index wraps at the number of samples.
+	[[nodiscard]] TFB_SoundSample* sample(size_t index) const;
+
+private:
+	uqstl::vector<TFB_SoundSample*> m_samples {};
+};
+
+} // namespace uqm
+
+typedef uqm::SoundBank* SOUND_REF;
+typedef TFB_SoundSample* SOUND;
 
 typedef struct soundposition
 {
@@ -38,28 +67,25 @@ typedef struct soundposition
 	int x, y;
 } SoundPosition;
 
-#define InitSoundResources InitStringTableResources
-#define CaptureSound CaptureStringTable
-#define ReleaseSound ReleaseStringTable
-#define GetSoundRef GetStringTable
-#define GetSoundCount GetStringTableCount
-#define GetSoundIndex GetStringTableIndex
-#define SetAbsSoundIndex SetAbsStringTableIndex
-#define SetRelSoundIndex SetRelStringTableIndex
+// The sound 'index' of 'bank', or nullptr if there is no bank.
+inline SOUND GetSound(SOUND_REF bank, size_t index)
+{
+	return bank != nullptr ? bank->sample(index) : nullptr;
+}
 
-extern SOUNDPTR GetSoundAddress(SOUND sound);
-
-typedef struct tfb_soundsample TFB_SoundSample;
+namespace uqm
+{
+using SoundBankPtr = uqstl::unique_ptr<SoundBank>;
+// Returns an empty pointer if the resource is not a sound bank.
+[[nodiscard]] SoundBankPtr loadSoundBank(RESOURCE res);
+} // namespace uqm
 typedef TFB_SoundSample** MUSIC_REF;
 
 extern bool InitSound(int argc, char* argv[]);
 extern void UninitSound(void);
-extern SOUND_REF LoadSoundFile(const char* pStr);
 extern MUSIC_REF LoadMusicFile(const char* pStr);
 extern bool InstallAudioResTypes(void);
-extern SOUND_REF LoadSoundInstance(RESOURCE res);
 extern MUSIC_REF LoadMusicInstance(RESOURCE res);
-extern bool DestroySound(SOUND_REF SoundRef);
 extern bool DestroyMusic(MUSIC_REF MusicRef);
 
 #define MAX_CHANNELS 8
@@ -99,7 +125,7 @@ extern uint32_t PLRGetPos(void);
 extern void WaitForSoundEnd(uint16_t Channel);
 #define TFBSOUND_WAIT_ALL ((uint16_t)~0)
 
-extern uint32_t FadeMusic(uint8_t end_vol, int16_t TimeInterval);
+extern TimeCount FadeMusic(uint8_t end_vol, TimePeriod TimeInterval);
 extern uint8_t GetCurrMusicVol(void);
 
 // For music resume option
@@ -107,7 +133,7 @@ typedef struct music_position
 {
 	uint32_t filename_hash;
 	uint32_t position;
-	uint32_t last_played;
+	TimeCount last_played;
 } MUSIC_POSITION;
 
 extern void SetMusicPosition(void);
@@ -119,17 +145,15 @@ static inline void
 print_mp(const MUSIC_POSITION mp)
 {
 	fmt::print("filename_hash: {:#X}, position: {}, last_played: {}\n",
-			   mp.filename_hash, mp.position, mp.last_played);
+			   mp.filename_hash, mp.position, mp.last_played.time_since_epoch().count());
 }
 
 static inline void
 print_mp_array(const MUSIC_POSITION mp_array[], const uint16_t num_items)
 {
-	uint16_t i;
-
 	//system ("cls");
 	fmt::print("--------------------\n\n");
-	for (i = num_items; i > 0; --i)
+	for (uint16_t i {num_items}; i > 0; --i)
 	{
 		fmt::print("Index {} -> ", i);
 		print_mp(mp_array[i]);

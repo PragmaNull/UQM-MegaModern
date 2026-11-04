@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-UQM-MegaModern is a C++20 modernization of The Ur-Quan Masters (a port of Star Control II) combined with the HD-mod. Active effort is underway to replace legacy C patterns with modern C++ (STL abstractions, `<cstdint>` types, `enum class`, smart pointers).
+UQM-MegaModern is a C++23 modernization of The Ur-Quan Masters (a port of Star Control II) combined with the HD-mod. Active effort is underway to replace legacy C patterns with modern C++ (STL abstractions, `<cstdint>` types, `enum class`, smart pointers).
 
 ## Build Instructions
 
@@ -14,14 +14,17 @@ Root `.bat` files wrap Python scripts in `scripts/`:
 
 ```bat
 setup.bat   [-c CONFIG] [--asan] [-p PROFILE]   :: conan install, then cmake configure (Ninja)
-build.bat   [-c CONFIG] [--asan] [-t TARGET] [-j N] [--clean]
+build.bat   [-c CONFIG] [--asan] [-t TARGET] [-j N] [--clean] [--clang-tidy | --tidy-fix]
 test.bat    [-c CONFIG] [--build] [-R REGEX] [-j N]
 run.bat     [--build] [GAME ARGS...]           :: run the game with -n content
 regress.bat [--build] [-R REGEX] [-j N]         :: run the input scripts in test/scripts
+shaders.bat                                     :: compile src/libs/graphics/sdl/shaders/*.hlsl to headers
 ```
 
 - `CONFIG`: `Release` (default), `Debug`, `RelWithDebInfo`, `MinSizeRel`. All take `-B DIR` (default `conanbuild`).
 - `build`/`test` default to the config already in `CMakeCache.txt`; `build` reconfigures if `--config`/`--asan` differ.
+- `build --clang-tidy` runs clang-tidy with the checks in `.clang-tidy` after the build. `--tidy-fix` also applies the fixes, with braced initialization and the format of `src/.clang-format`. Use a separate build dir, for example `-B conanbuild-tidy`.
+- `shaders` downloads its shader compilers to `.cache/shadertools` the first time. The generated headers are committed, so run it only after a change to a shader.
 - `setup --skip-install` runs only the cmake step. `build` runs conan install itself when the conan files for the config are missing.
 - Commands run inside conan's `conanbuild`/`conanrun` env scripts, so no VS developer prompt is needed.
 - Unrecognized arguments are forwarded to cmake/ctest. Scripts can also be run directly with `python scripts/<name>.py`.
@@ -41,6 +44,8 @@ cmake --build conanbuild
 ```
 
 ### With AddressSanitizer
+
+Run the ASan build with `ASAN_OPTIONS=detect_odr_violation=0`. clang-cl merges equal string literals, which ASan reports as ODR violations.
 
 ```bash
 conan install . -of conanbuild --build=missing -o enable_asan=True --profile=asan
@@ -64,6 +69,10 @@ ctest --output-on-failure --build-config Release
 
 Test sources are in `test/tests/` organized by subsystem (core, lib, options, uqm).
 
+Each save file in `test/data/saves/` is a `SaveRoundTrip.<name>` CTest test. It runs the game with `--check-save FILE`, which loads the save in a new session, saves it again in memory and fails on any changed value. `scripts/make_test_saves.py` makes the saves other than `interplanetary-sol.json` from that save. Change the script and run it again to add or change a test save.
+
+For each test save, `PlaySave.<name>` runs the game with `--play-save FILE`, which skips the main menu and loads the save in its place. The input script `test/data/play-save.txt` plays for a few seconds and saves to slot 0 with `savegame 0`. `PlayedSaveRoundTrip.<name>` then checks that save. These tests fail on an `[error]` or `[critical]` log line.
+
 Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each one with a new config dir and fails on a non-zero exit code or an `[error]` or `[critical]` log line. A `<name>.settings.json` file next to a script is copied in as the start settings. `regress.bat` runs the game muted and in a window. `run.bat` does the same with `--input-script`, unless the volume or `-f` options are given.
 
 ## Code Architecture
@@ -77,7 +86,7 @@ Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each o
 | Directory | Purpose |
 |-----------|---------|
 | `src/core/` | Foundational utilities: logging (spdlog), STL abstraction layer, string utilities, platform-specific code |
-| `src/libs/` | Engine subsystems: graphics (SDL2), sound (OpenAL/Vorbis), input, video, threading, Lua scripting, netplay |
+| `src/libs/` | Engine subsystems: graphics (SDL3), sound (OpenAL/Vorbis), input, video, threading, Lua scripting, netplay |
 | `src/uqm/` | Game logic: dialogue system, planet mechanics, ship definitions, combat (supermelee), galaxy/starmap |
 | `src/options/` | CLI and config file parsing (CLI11) |
 | `src/configuration/` | Build-time configuration headers |
@@ -96,13 +105,15 @@ Input scripts in `test/scripts/` drive the game menus. `regress.bat` runs each o
 
 - **Namespaces**: `uqm::` for game code, `uqstl::` for container/algorithm aliases, `uqgsl::` for GSL-lite aliases
 - **Classes**: PascalCase; member variables prefixed `m_`; static variables prefixed `s_`
-- **C++ standard**: C++20 required
+- **C++ standard**: C++23 required
 - **Integer types**: Use `<cstdint>` types (`int32_t`, `uint8_t`, etc.) — not legacy custom types
 - **Enums**: Use `enum class` with `magic_enum` for reflection where needed
 - **String safety**: Use `uqstl::string_view` for safe string views (pass by value); use `uqgsl::czstring` when the API deals with C-style null-terminated strings; use `scn::scan` instead of `sscanf`
 - **Comments**: Keep comments minimal. Write them in Simplified Technical English. Do not explain "why", and do not refer to other classes or files unless necessary; such comments read as notes to self. Get user approval before adding a comment longer than 3 lines. Start every new source file with a one-line comment that states its purpose.
 - **C++ Core Guidelines**: Follow the [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines) as closely as possible: RAII for all resources, no owning raw pointers, `const` by default, no C-style casts, prefer value types and the rule of zero
 - **Initialization**: Use braced initialization throughout — for variables (`int x{42};`), and for class members/locals with default constructors (`uqstl::vector<int> v{};`) even when the default constructor would be called implicitly
+- **Libraries before custom code**: Use the C++ standard library or a library that the project already links (see `conanfile.py`: utf8proc, fmt, spdlog, yyjson, scnlib, CLI11, etc.) instead of writing your own helper. Write custom code only for what no available library provides
+- **Threading**: Use the types in `src/core/thread`: `uqm::Mutex` or `uqm::RecursiveMutex` with `uqm::LockGuard`, not `std::mutex`, so that the Clang thread safety analysis can check them. Mark shared data with `UQM_GUARDED_BY` and functions that need a lock with `UQM_REQUIRES`. Start threads with `uqm::makeThread`. Use `uqstl::atomic`, not `volatile`, for flags that threads share
 
 ## Formatting
 

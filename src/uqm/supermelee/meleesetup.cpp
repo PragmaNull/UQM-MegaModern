@@ -29,9 +29,7 @@ const size_t MeleeTeam_serialSize = MELEE_FLEET_SIZE + sizeof(((MeleeTeam*)0)->n
 
 void MeleeTeam_init(MeleeTeam* team)
 {
-	FleetShipIndex slotI;
-
-	for (slotI = 0; slotI < MELEE_FLEET_SIZE; slotI++)
+	for (FleetShipIndex slotI {0}; slotI < MELEE_FLEET_SIZE; slotI++)
 	{
 		team->ships[slotI] = MELEE_NONE;
 	}
@@ -47,7 +45,7 @@ void MeleeTeam_uninit(MeleeTeam* team)
 MeleeTeam*
 MeleeTeam_new(void)
 {
-	MeleeTeam* result = (MeleeTeam*)HMalloc(sizeof(MeleeTeam));
+	auto* result {new MeleeTeam {}};
 	MeleeTeam_init(result);
 	return result;
 }
@@ -55,14 +53,12 @@ MeleeTeam_new(void)
 void MeleeTeam_delete(MeleeTeam* team)
 {
 	MeleeTeam_uninit(team);
-	HFree(team);
+	delete team;
 }
 
 int MeleeTeam_serialize(const MeleeTeam* team, uqm::io::File& stream)
 {
-	FleetShipIndex slotI;
-
-	for (slotI = 0; slotI < MELEE_FLEET_SIZE; slotI++)
+	for (FleetShipIndex slotI {0}; slotI < MELEE_FLEET_SIZE; slotI++)
 	{
 		const uqstl::byte ship {static_cast<uqstl::byte>(team->ships[slotI])};
 		if (stream.write({&ship, 1}) != 1)
@@ -80,10 +76,8 @@ int MeleeTeam_serialize(const MeleeTeam* team, uqm::io::File& stream)
 
 int MeleeTeam_deserialize(MeleeTeam* team, uqm::io::File& stream)
 {
-	FleetShipIndex slotI;
-
 	// Sanity check on the ships.
-	for (slotI = 0; slotI < MELEE_FLEET_SIZE; slotI++)
+	for (FleetShipIndex slotI {0}; slotI < MELEE_FLEET_SIZE; slotI++)
 	{
 		const int ship {stream.getChar()};
 		if (ship == uqm::io::File::c_endOfFile)
@@ -124,12 +118,11 @@ uint16_t
 MeleeTeam_getValue(const MeleeTeam* team)
 {
 	uint16_t total = 0;
-	FleetShipIndex slotI;
 
-	for (slotI = 0; slotI < MELEE_FLEET_SIZE; slotI++)
+	for (FleetShipIndex slotI {0}; slotI < MELEE_FLEET_SIZE; slotI++)
 	{
-		MeleeShip ship = team->ships[slotI];
-		uint16_t shipValue = GetShipValue(ship);
+		const MeleeShip ship = team->ships[slotI];
+		const uint16_t shipValue = GetShipValue(ship);
 		if (shipValue == (uint16_t)~0)
 		{
 			// Invalid ship.
@@ -205,9 +198,8 @@ static void
 MeleeSetup_initSentTeam(MeleeSetup* setup, size_t teamNr)
 {
 	MeleeTeam* team = &setup->sentTeams[teamNr];
-	FleetShipIndex slotI;
 
-	for (slotI = 0; slotI < MELEE_FLEET_SIZE; slotI++)
+	for (FleetShipIndex slotI {0}; slotI < MELEE_FLEET_SIZE; slotI++)
 	{
 		MeleeTeam_setShip(team, slotI, MELEE_UNSET);
 	}
@@ -225,14 +217,9 @@ MeleeSetup_initSentTeam(MeleeSetup* setup, size_t teamNr)
 MeleeSetup*
 MeleeSetup_new(void)
 {
-	size_t teamI;
-	MeleeSetup* result = (MeleeSetup*)HMalloc(sizeof(MeleeSetup));
-	if (result == nullptr)
-	{
-		return nullptr;
-	}
+	auto* result {new MeleeSetup {}};
 
-	for (teamI = 0; teamI < NUM_SIDES; teamI++)
+	for (size_t teamI {0}; teamI < NUM_SIDES; teamI++)
 	{
 		MeleeTeam_init(&result->teams[teamI]);
 		result->fleetValue[teamI] = 0;
@@ -245,15 +232,13 @@ MeleeSetup_new(void)
 
 void MeleeSetup_delete(MeleeSetup* setup)
 {
-	HFree(setup);
+	delete setup;
 }
 
 #ifdef NETPLAY
 void MeleeSetup_resetSentTeams(MeleeSetup* setup)
 {
-	size_t teamI;
-
-	for (teamI = 0; teamI < NUM_SIDES; teamI++)
+	for (size_t teamI {0}; teamI < NUM_SIDES; teamI++)
 	{
 		MeleeSetup_initSentTeam(setup, teamI);
 	}
@@ -265,7 +250,7 @@ bool MeleeSetup_setShip(MeleeSetup* setup, size_t teamNr, FleetShipIndex slotNr,
 						MeleeShip ship)
 {
 	MeleeTeam* team = &setup->teams[teamNr];
-	MeleeShip oldShip = MeleeTeam_getShip(team, slotNr);
+	const MeleeShip oldShip = MeleeTeam_getShip(team, slotNr);
 
 	if (ship == oldShip)
 	{
@@ -334,7 +319,7 @@ int MeleeSetup_deserializeTeam(MeleeSetup* setup, size_t teamNr,
 							   uqm::io::File& stream)
 {
 	MeleeTeam* team = &setup->teams[teamNr];
-	int ret = MeleeTeam_deserialize(team, stream);
+	const int ret = MeleeTeam_deserialize(team, stream);
 	if (ret == 0)
 	{
 		setup->fleetValue[teamNr] = MeleeTeam_getValue(team);
@@ -377,7 +362,7 @@ bool MeleeSetup_setSentShip(MeleeSetup* setup, size_t teamNr,
 							FleetShipIndex slotNr, MeleeShip ship)
 {
 	MeleeTeam* team = &setup->sentTeams[teamNr];
-	MeleeShip oldShip = MeleeTeam_getShip(team, slotNr);
+	const MeleeShip oldShip = MeleeTeam_getShip(team, slotNr);
 
 	if (ship == oldShip)
 	{
@@ -394,7 +379,7 @@ bool MeleeSetup_setSentShip(MeleeSetup* setup, size_t teamNr,
 bool MeleeSetup_setSentTeamName(MeleeSetup* setup, size_t teamNr,
 								const char* name)
 {
-	bool haveSentName = setup->haveSentTeamName[teamNr];
+	const bool haveSentName = setup->haveSentTeamName[teamNr];
 
 	if (name == nullptr)
 	{

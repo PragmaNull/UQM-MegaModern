@@ -68,9 +68,6 @@ GenerateZoqFotPikScout_initNpcs(SOLARSYS_STATE* solarSys)
 static bool
 GenerateZoqFotPikScout_reinitNpcs(SOLARSYS_STATE* solarSys)
 {
-	HIPGROUP hGroup;
-	IP_GROUP* GroupPtr;
-
 	GenerateDefault_reinitNpcs(solarSys);
 
 	if (!GLOBAL(BattleGroupRef))
@@ -78,13 +75,13 @@ GenerateZoqFotPikScout_reinitNpcs(SOLARSYS_STATE* solarSys)
 		return true; // nothing to check
 	}
 
-	hGroup = GetHeadLink(&GLOBAL(ip_group_q));
+	HIPGROUP hGroup {GetHeadLink(&GLOBAL(ip_group_q))};
 	if (!hGroup)
 	{
 		return true; // still nothing to check
 	}
 
-	GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+	IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
 	if (GroupPtr->race_id == ZOQFOTPIK_SHIP

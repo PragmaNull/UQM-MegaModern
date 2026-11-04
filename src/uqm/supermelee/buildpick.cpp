@@ -36,14 +36,13 @@ void BuildBuildPickFrame(void)
 {
 	STAMP s;
 	GFXRECT r;
-	uint16_t i;
 	GFXCONTEXT OldContext = SetContext(OffScreenContext);
 
 	// create team building ship selection box
 	s.origin.x = 0;
 	s.origin.y = 0;
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   BUILDPICK_FRAME_OFFSET + static_cast<int>(uqm::UQMOptions::read().optControllerType.value));
+							   BUILDPICK_FRAME_OFFSET + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
 	// 5x5 grid of ships to pick from
 	GetFrameRect(s.frame, &r);
 
@@ -53,7 +52,7 @@ void BuildBuildPickFrame(void)
 	SetFrameHot(s.frame, MAKE_HOT_SPOT(0, 0));
 	DrawStamp(&s);
 
-	for (i = 0; i < NUM_PICK_COLS * NUM_PICK_ROWS; ++i)
+	for (uint16_t i {0}; i < NUM_PICK_COLS * NUM_PICK_ROWS; ++i)
 	{
 		DrawPickIcon((MeleeShip)i, true);
 	}
@@ -79,7 +78,7 @@ Color GetShipFlashColor(void)
 	{
 		static uint8_t cycle_index = 0;
 
-		static const Color cycle_tab[] = SHIP_SELECT_COLOR_CYCLE_TABLE;
+		const static Color cycle_tab[] = SHIP_SELECT_COLOR_CYCLE_TABLE;
 		const size_t cycleCount = std::size(cycle_tab);
 
 		cycle_index = (cycle_index + 1) % cycleCount;
@@ -92,7 +91,6 @@ Color GetShipFlashColor(void)
 void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 {
 	GFXRECT r;
-	GFXCONTEXT OldContext;
 	GFXRECT OldRect;
 	GFXPOINT oldOrigin;
 	STAMP s;
@@ -101,7 +99,7 @@ void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 	r.corner.y = origin->y;
 	r.extent.width = r.extent.height = RES_SCALE(16);
 
-	OldContext = SetContext(SpaceContext);
+	GFXCONTEXT OldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&OldRect);
 	SetContextClipRect(&r);
 	if (IS_PAD)
@@ -117,7 +115,7 @@ void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 	s.origin.x = pRect->corner.x;
 	s.origin.y = pRect->corner.y;
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   BUILDPICK_FRAME_OFFSET + static_cast<int>(uqm::UQMOptions::read().optControllerType.value));
+							   BUILDPICK_FRAME_OFFSET + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
 
 	DrawStamp(&s);
 
@@ -182,27 +180,25 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 {
 	char buf[PATH_MAX] {};
 	TEXT Text;
-	GFXCONTEXT oldContext;
-	FONT oldFont;
 	Color oldColor;
 	GFXRECT r;
 
 	GetToolTipFrameRect(&r);
 
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{} {}",
-					 GET_STRING(SIPtr->race_strings, RACE_NAME_OFFSET),
-					 GET_STRING(SIPtr->race_strings, RACE_SHIP_OFFSET));
+					 SIPtr->race_strings->text(RACE_NAME_OFFSET),
+					 SIPtr->race_strings->text(RACE_SHIP_OFFSET));
 
 	Text.pStr = buf;
-	Text.CharCount = (uint16_t)utf8StringCount(buf);
+	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
 	Text.align = ALIGN_CENTER;
 	Text.baseline.y = r.corner.y + RES_SCALE(8) + RES_SCALE(1);
 	Text.baseline.x = r.corner.x + (r.extent.width >> 1) + RES_SCALE(1);
 
-	oldContext = SetContext(SpaceContext);
+	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	DrawTooltipBox();
 
-	oldFont = SetContextFont(StarConFont);
+	FONT oldFont {SetContextFont(StarConFont)};
 	oldColor = SetContextForeGroundColor(TOOLTIP_COLOR_NAME_BACK);
 	font_DrawText(&Text);
 
@@ -213,9 +209,8 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 
 	SetContextForeGroundColor(TOOLTIP_COLOR_DESC_FRONT);
 
-	utf8StringCopy(buf, sizeof buf,
-				   GET_STRING(SIPtr->race_strings,
-							  GetStringTableCount(SIPtr->race_strings) - 1));
+	uqm::utf8StringCopy(buf, sizeof buf,
+						SIPtr->race_strings->text(SIPtr->race_strings->size() - 1));
 	Text.baseline.y += RES_SCALE(2);
 
 	{
@@ -224,7 +219,7 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 		for (const auto& tok : tokens)
 		{
 			Text.pStr = (const char*)tok.c_str();
-			Text.CharCount = (uint16_t)utf8StringCount(Text.pStr);
+			Text.CharCount = (uint16_t)uqm::utf8StringCount(Text.pStr);
 			Text.baseline.y += RES_SCALE(9);
 			font_DrawText(&Text);
 		}
@@ -237,7 +232,10 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 
 void DrawPickFrame(MELEE_STATE* pMS)
 {
-	GFXRECT r, r0, r1, ship_r;
+	GFXRECT r;
+	GFXRECT r0;
+	GFXRECT r1;
+	GFXRECT ship_r;
 	STAMP s;
 
 	GetShipBox(&r0, 0, 0, 0),
@@ -279,12 +277,12 @@ void GetBuildPickFrameRect(GFXRECT* r)
 static bool
 DoPickShip(MELEE_STATE* pMS)
 {
-	uint32_t TimeIn = GetTimeCounter();
+	const TimeCount TimeIn {GetTimeCounter()};
 
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		pMS->buildPickConfirmed = false;
 		return false;
@@ -368,14 +366,14 @@ DoPickShip(MELEE_STATE* pMS)
 
 	Melee_flashSelection(pMS);
 
-	SleepThreadUntil(TimeIn + GameTicksPerSecond / 30);
+	SleepThreadUntil(TimeIn + c_gameSecond / 30);
 
 	return true;
 }
 
 // Returns true if a ship has been selected, or false if the operation has
 // been cancelled or if the general abort key was pressed (in which case
-// 'GLOBAL (CurrentActivity) & CHECK_ABORT' is true as usual.
+// 'uqm::currentActivity() & CHECK_ABORT' is true as usual.
 // If a ship was selected, pMS->currentShip is set to the selected ship.
 bool BuildPickShip(MELEE_STATE* pMS)
 {

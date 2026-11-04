@@ -129,7 +129,7 @@ static RACE_DESC syreen_desc =
 static uint16_t
 initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -156,12 +156,10 @@ spawn_crew(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->state_flags & PLAYER_SHIP)
 	{
-		HELEMENT hCrew;
-
-		hCrew = AllocElement();
+		HELEMENT hCrew {AllocElement()};
 		if (hCrew != 0)
 		{
-			ELEMENT* CrewPtr;
+			ELEMENT* CrewPtr {};
 
 			LockElement(hCrew, &CrewPtr);
 			CrewPtr->next.location = ElementPtr->next.location;
@@ -178,12 +176,13 @@ spawn_crew(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		HELEMENT hElement, hNextElement;
+		HELEMENT hElement {};
+		HELEMENT hNextElement {};
 
 		for (hElement = GetHeadElement();
 			 hElement != 0; hElement = hNextElement)
 		{
-			ELEMENT* ObjPtr;
+			ELEMENT* ObjPtr {};
 
 			LockElement(hElement, &ObjPtr);
 			hNextElement = GetSuccElement(ObjPtr);
@@ -192,15 +191,14 @@ spawn_crew(ELEMENT* ElementPtr)
 				&& !elementsOfSamePlayer(ObjPtr, ElementPtr)
 				&& ObjPtr->crew_level > 1)
 			{
-				int32_t dx, dy;
-				uint32_t d_squared;
+				uint32_t d_squared {};
 
-				dx = ObjPtr->next.location.x - ElementPtr->next.location.x;
+				int32_t dx {ObjPtr->next.location.x - ElementPtr->next.location.x};
 				if (dx < 0)
 				{
 					dx = -dx;
 				}
-				dy = ObjPtr->next.location.y - ElementPtr->next.location.y;
+				int32_t dy {ObjPtr->next.location.y - ElementPtr->next.location.y};
 				if (dy < 0)
 				{
 					dy = -dy;
@@ -213,7 +211,7 @@ spawn_crew(ELEMENT* ElementPtr)
 								  + (uint32_t)((uint16_t)dy * (uint16_t)dy))
 						   <= (uint32_t)((uint16_t)ABANDONER_RANGE * (uint16_t)ABANDONER_RANGE))
 				{
-					uint16_t crew_loss;
+					uint16_t crew_loss {};
 
 					if (!antiCheat(ElementPtr, true, uqm::GodModeFlags::NoDamage))
 					{
@@ -242,16 +240,14 @@ static void
 syreen_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					uint16_t ConcernCounter)
 {
-	EVALUATE_DESC* lpEvalDesc;
-
 	ship_intelligence(ShipPtr,
 					  ObjectsOfConcern, ConcernCounter);
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	const EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (lpEvalDesc->ObjectPtr != nullptr)
 	{
-		STARSHIP* StarShipPtr;
-		STARSHIP* EnemyStarShipPtr;
+		STARSHIP* StarShipPtr {};
+		STARSHIP* EnemyStarShipPtr {};
 
 		GetElementStarShip(ShipPtr, &StarShipPtr);
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
@@ -272,14 +268,14 @@ syreen_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static void
 syreen_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SPECIAL)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* SYREEN_SONG */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);
@@ -293,8 +289,6 @@ syreen_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_syreen(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		syreen_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -313,7 +307,7 @@ init_syreen(void)
 	syreen_desc.init_weapon_func = initialize_dagger;
 	syreen_desc.cyborg_control.intelligence_func = syreen_intelligence;
 
-	RaceDescPtr = &syreen_desc;
+	RACE_DESC* RaceDescPtr {&syreen_desc};
 
 	return (RaceDescPtr);
 }

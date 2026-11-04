@@ -16,6 +16,7 @@
 
 
 #include "uqmdebug.h"
+#include "core/stl/atomic.h"
 
 #include "build.h"
 #include "colors.h"
@@ -38,14 +39,14 @@
 #include "core/platform/platform.h"
 #include "core/string/StringUtils.h"
 #include "libs/mathlib.h"
-#include "lua/luadebug.h"
+#include "uqm/lua/UQMLua.h"
 #include "tactrans.h"
 #include "StarmapGlobalData.h"
 
 #include <stdio.h>
 #include <errno.h>
 
-void (*volatile debugHook)(void) = nullptr;
+uqstl::atomic<void (*)(void)> debugHook {nullptr};
 bool DebugKeyPressed;
 
 // Move the Flagship to the destination of the autopilot.
@@ -54,61 +55,60 @@ bool DebugKeyPressed;
 void doInstantMove(void)
 {
 	// Move to the new location:
-	if ((GLOBAL(autopilot)).x == ~0 || (GLOBAL(autopilot)).y == ~0)
+	if (!uqm::flagship().autopilot.hasTarget())
 	{
 		// If no destination has been selected, use the current location
 		// as the destination.
-		(GLOBAL(autopilot)).x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-		(GLOBAL(autopilot)).y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+		uqm::flagship().autopilot.setTarget({LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)), LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y))});
 	}
 	else
 	{
 		// A new destination has been selected.
-		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX((GLOBAL(autopilot)).x);
-		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY((GLOBAL(autopilot)).y);
+		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(uqm::flagship().autopilot.target().x);
+		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(uqm::flagship().autopilot.target().y);
 	}
 
 	// Check for a solar systems at the destination.
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 	{
 		// If there's a solar system at the destination, enter it.
-		CurStarDescPtr = FindStar(0, &(GLOBAL(autopilot)), 0, 0);
+		GFXPOINT target {uqm::flagship().autopilot.target()};
+		CurStarDescPtr = FindStar(0, &target, 0, 0);
 		if (CurStarDescPtr)
 		{
 			// Leave HyperSpace/QuasiSpace if we're there:
 			SET_GAME_STATE(USED_BROADCASTER, 0);
-			GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+			uqm::currentActivity() &= ~IN_BATTLE;
 
 			// Enter IP:
-			GLOBAL(ShipFacing) = 0;
-			GLOBAL(ip_planet) = 0;
-			GLOBAL(in_orbit) = 0;
+			uqm::flagship().shipFacing = 0;
+			uqm::flagship().ipPlanet = 0;
+			uqm::flagship().inOrbit = 0;
 			// This causes the ship position in IP to be reset.
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 		}
 	}
 
 	// Turn off the autopilot:
-	(GLOBAL(autopilot)).x = ~0;
-	(GLOBAL(autopilot)).y = ~0;
+	uqm::flagship().autopilot.clear();
 }
 
 // playerNr should be 0 or 1
 STARSHIP*
 findPlayerShip(int16_t playerNr)
 {
-	HELEMENT hElement, hNextElement;
+	HELEMENT hNextElement {};
 
-	for (hElement = GetHeadElement(); hElement; hElement = hNextElement)
+	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr;
+		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
 
 		if ((ElementPtr->state_flags & PLAYER_SHIP) && ElementPtr->playerNr == playerNr)
 		{
-			STARSHIP* StarShipPtr;
+			STARSHIP* StarShipPtr {};
 			GetElementStarShip(ElementPtr, &StarShipPtr);
 			UnlockElement(hElement);
 			return StarShipPtr;
@@ -123,11 +123,10 @@ findPlayerShip(int16_t playerNr)
 
 void resetEnergyBattle(void)
 {
-	STARSHIP* StarShipPtr;
-	uint16_t delta;
-	GFXCONTEXT OldContext;
+	const STARSHIP* StarShipPtr {};
+	uint16_t delta {};
 
-	if (!(GLOBAL(CurrentActivity) & IN_BATTLE) || inHQSpace())
+	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
 	{
 		return;
 	}
@@ -152,7 +151,7 @@ void resetEnergyBattle(void)
 
 	delta = StarShipPtr->RaceDescPtr->ship_info.max_energy - StarShipPtr->RaceDescPtr->ship_info.energy_level;
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	DeltaEnergy((ELEMENT*)StarShipPtr->hShip, delta);
 	SetContext(OldContext);
 }
@@ -161,11 +160,11 @@ void resetEnergyBattle(void)
 static void
 scuttleOpponent(void)
 {
-	STARSHIP* StarShipPtr;
-	uint16_t delta;
-	GFXCONTEXT OldContext;
+	const STARSHIP* StarShipPtr {};
+	uint16_t delta {};
+	GFXCONTEXT OldContext {};
 
-	if (!(GLOBAL(CurrentActivity) & IN_BATTLE) || inHQSpace())
+	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
 	{
 		return;
 	}
@@ -203,16 +202,15 @@ scuttleOpponent(void)
 static void
 HaltShips(void)
 {
-	STARSHIP* StarShipPtr;
-	ELEMENT* ElementPtr;
-	uint8_t i;
+	const STARSHIP* StarShipPtr {};
+	ELEMENT* ElementPtr {};
 
-	if (!(GLOBAL(CurrentActivity) & IN_BATTLE) || inHQSpace())
+	if (!(uqm::currentActivity() & IN_BATTLE) || inHQSpace())
 	{
 		return;
 	}
 
-	for (i = 0; i < 2; i++)
+	for (uint8_t i {0}; i < 2; i++)
 	{
 		StarShipPtr = findPlayerShip(i);
 
@@ -332,10 +330,6 @@ void debugKeyPressed(void)
 {
 	if (EnableDebugEvents)
 	{
-#if SDL_MAJOR_VERSION == 1
-		// Tests
-		Scale_PerfTest();
-#endif
 		// Informational:
 		dumpStrings(stdout);
 		dumpPlanetTypes(stderr);
@@ -349,7 +343,7 @@ void debugKeyPressed(void)
 		// problems.
 
 		// Interactive:
-		luaUqm_debug_run();
+		uqm::lua().runDebugConsole();
 	}
 }
 
@@ -374,49 +368,7 @@ void debugKey4Pressed(void)
 //   supposed to be called synchronously wrt the game logic thread.
 void forwardToNextEvent(bool skipHEE)
 {
-	HEVENT hEvent;
-	EVENT* EventPtr;
-	uint16_t year, month, day;
-	// time of next event
-	bool done;
-
-	if (!GameClockRunning())
-	{
-		return;
-	}
-
-	LockGameClock();
-
-	done = !skipHEE;
-	do
-	{
-		hEvent = GetHeadEvent();
-		if (hEvent == 0)
-		{
-			return;
-		}
-		LockEvent(hEvent, &EventPtr);
-		if (EventPtr->func_index != HYPERSPACE_ENCOUNTER_EVENT)
-		{
-			done = true;
-		}
-		year = EventPtr->year_index;
-		month = EventPtr->month_index;
-		day = EventPtr->day_index;
-		UnlockEvent(hEvent);
-
-		for (;;)
-		{
-			if (GLOBAL(GameClock.year_index) > year || (GLOBAL(GameClock.year_index) == year && (GLOBAL(GameClock.month_index) > month || (GLOBAL(GameClock.month_index) == month && GLOBAL(GameClock.day_index) >= day))))
-			{
-				break;
-			}
-
-			MoveGameClockDays(1);
-		}
-	} while (!done);
-
-	UnlockGameClock();
+	MoveGameClockToNextEvent(skipHEE);
 }
 
 const char*
@@ -559,7 +511,7 @@ void equipShip(void)
 	int i;
 
 	// Don't do anything unless in the full game.
-	if (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 	{
 		return;
 	}
@@ -668,7 +620,7 @@ void equipShip(void)
 	}
 
 	// Make sure everything is redrawn:
-	if (inHQSpace() || lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
+	if (inHQSpace() || uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
 	{
 		DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
 	}
@@ -904,13 +856,13 @@ void UniverseRecurse(UniverseRecurseArg* universeRecurseArg)
 
 	LockGameClock();
 	//TFB_DEBUG_HALT = 1;
-	savedActivity = GLOBAL(CurrentActivity);
+	savedActivity = uqm::currentActivity();
 	disableInteractivity = true;
 
 	forAllStars(starRecurse, (void*)universeRecurseArg);
 
 	disableInteractivity = false;
-	GLOBAL(CurrentActivity) = savedActivity;
+	uqm::currentActivity() = savedActivity;
 	UnlockGameClock();
 }
 
@@ -919,16 +871,15 @@ starRecurse(STAR_DESC* star, void* arg)
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
-	SOLARSYS_STATE SolarSysState;
+	SOLARSYS_STATE SolarSysState {};
 	SOLARSYS_STATE* oldPSolarSysState = pSolarSysState;
 	STAR_DESC* oldStarDescPtr = CurStarDescPtr;
 	CurStarDescPtr = star;
 
-	RandomContext_SeedRandom(SysGenRNGDebug, GetRandomSeedForStar(star));
+	SysGenRNGDebug->reseed(GetRandomSeedForStar(star));
 
-	memset(&SolarSysState, 0, sizeof(SolarSysState));
 	SolarSysState.SunDesc[0].pPrevDesc = 0;
-	SolarSysState.SunDesc[0].rand_seed = RandomContext_Random(SysGenRNGDebug);
+	SolarSysState.SunDesc[0].rand_seed = SysGenRNGDebug->next();
 	SolarSysState.SunDesc[0].data_index = STAR_TYPE(star->Type);
 	SolarSysState.SunDesc[0].location.x = 0;
 	SolarSysState.SunDesc[0].location.y = 0;
@@ -987,7 +938,7 @@ planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
 
 	if (universeRecurseArg->moonFunc != nullptr)
 	{
-		RandomContext_SeedRandom(SysGenRNGDebug, planet->rand_seed);
+		SysGenRNGDebug->reseed(planet->rand_seed);
 
 		(*system->genFuncs->generateMoons)(system, planet);
 
@@ -1473,7 +1424,7 @@ calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 	{
 		NODE_INFO info;
 		callGenerateForScanType(system, world, i, BIOLOGICAL_SCAN, &info);
-		result += BIO_CREDIT_VALUE * LONIBBLE(CreatureData[info.type].ValueAndHitPoints);
+		result += BIO_CREDIT_VALUE * uqm::lowNibble(CreatureData[info.type].ValueAndHitPoints);
 	}
 	return result;
 }
@@ -1519,7 +1470,7 @@ calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 	{
 		NODE_INFO info;
 		callGenerateForScanType(system, world, i, MINERAL_SCAN, &info);
-		result += highByte(info.density) * GLOBAL(ElementWorth[ElementCategory(info.type)]);
+		result += uqm::highByte(info.density) * GLOBAL(ElementWorth[ElementCategory(info.type)]);
 	}
 	return result;
 }
@@ -1544,7 +1495,7 @@ void generateMineralIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world
 	{
 		NODE_INFO info;
 		callGenerateForScanType(system, world, i, MINERAL_SCAN, &info);
-		minerals[ElementCategory(info.type)] += highByte(info.density);
+		minerals[ElementCategory(info.type)] += uqm::highByte(info.density);
 	}
 }
 
@@ -1718,8 +1669,8 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 			   bodyColorString(PLANCOLOR(planetType->Type)),
 			   worldGenAlgoString(PLANALGO(planetType->Type)),
 			   tectonicsString(planetType->BaseTectonics),
-			   atmosphereString(HINIBBLE(planetType->AtmoAndDensity)),
-			   densityString(LONIBBLE(planetType->AtmoAndDensity)));
+			   atmosphereString(uqm::highNibble(planetType->AtmoAndDensity)),
+			   densityString(uqm::lowNibble(planetType->AtmoAndDensity)));
 	for (i = 0; i < NUM_USEFUL_ELEMENTS; i++)
 	{
 		const ELEMENT_ENTRY* entry;
@@ -1886,7 +1837,7 @@ void resetCrewBattle(void)
 	uint16_t delta;
 	GFXCONTEXT OldContext;
 
-	if (!(GLOBAL(CurrentActivity) & IN_BATTLE) || (inHQSpace()))
+	if (!(uqm::currentActivity() & IN_BATTLE) || (inHQSpace()))
 	{
 		return;
 	}
@@ -1950,7 +1901,7 @@ void dumpStrings(FILE* out)
 		{"GAMESTR_COUNT", GAMESTR_COUNT, (size_t)-1}
 	};
 	size_t numCategories = std::size(categories);
-	size_t numStrings = GetStringTableCount(GameStrings);
+	size_t numStrings = GameStrings->size();
 	size_t stringI;
 	size_t categoryI = 0;
 
@@ -2227,7 +2178,7 @@ putScreen(FRAME savedFrame)
 // Must be called from the main thread.
 void debugContexts(void)
 {
-	static volatile bool inDebugContexts = false;
+	static uqstl::atomic<bool> inDebugContexts {false};
 	// Prevent this function from being called from within itself.
 
 	GFXCONTEXT orgContext;
@@ -2241,11 +2192,10 @@ void debugContexts(void)
 	FRAME savedScreen;
 
 	// Prevent this function from being called from within itself.
-	if (inDebugContexts)
+	if (inDebugContexts.exchange(true))
 	{
 		return;
 	}
-	inDebugContexts = true;
 
 	contextCount = countVisibleContexts();
 	if (contextCount == 0)

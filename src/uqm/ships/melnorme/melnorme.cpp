@@ -25,6 +25,7 @@
 #include "libs/mathlib.h"
 #include "uqm/tactrans.h" // Kruzen: for sounds on April Fools
 #include "uqm/battle.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 20
@@ -123,7 +124,7 @@ static RACE_DESC melnorme_desc =
 		 nullptr},
 		{
 			0,
-			PUMPUP_SPEED* PUMPUP_LIFE,
+			PUMPUP_SPEED * PUMPUP_LIFE,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -139,9 +140,7 @@ pump_up_preprocess(ELEMENT* ElementPtr)
 {
 	if (--ElementPtr->thrust_wait & 1)
 	{
-		uint16_t frame_index;
-
-		frame_index = GetFrameIndex(ElementPtr->current.image.frame);
+		uint16_t frame_index {GetFrameIndex(ElementPtr->current.image.frame)};
 		if (((ElementPtr->turn_wait & REVERSE_DIR)
 			 && (frame_index % NUM_PUMP_ANIMS) != 0)
 			|| (!(ElementPtr->turn_wait & REVERSE_DIR)
@@ -174,10 +173,10 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		HELEMENT hPumpUp;
-		ELEMENT* EPtr;
-		ELEMENT* ShipPtr;
-		STARSHIP* StarShipPtr;
+		HELEMENT hPumpUp {};
+		ELEMENT* EPtr {};
+		ELEMENT* ShipPtr {};
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		LockElement(StarShipPtr->hShip, &ShipPtr);
@@ -197,7 +196,7 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 				++EPtr->turn_wait;
 				EPtr->current.image.frame = SetRelFrameIndex(
 					EPtr->current.image.frame, NUM_PUMP_ANIMS);
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 0),
 							 EPtr);
 			}
@@ -217,9 +216,7 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 
 		if (EPtr->thrust_wait & 1)
 		{
-			uint16_t frame_index;
-
-			frame_index = GetFrameIndex(EPtr->current.image.frame);
+			uint16_t frame_index {GetFrameIndex(EPtr->current.image.frame)};
 			if (((EPtr->turn_wait & REVERSE_DIR)
 				 && (frame_index % NUM_PUMP_ANIMS) != 0)
 				|| (!(EPtr->turn_wait & REVERSE_DIR)
@@ -245,7 +242,7 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 		}
 		else
 		{
-			uint16_t angle;
+			uint16_t angle {};
 
 			EPtr->life_span = PUMPUP_LIFE;
 			EPtr->preprocess_func = pump_up_preprocess;
@@ -256,7 +253,7 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 								  COSINE(angle, WORLD_TO_VELOCITY(PUMPUP_SPEED_HD)),
 								  SINE(angle, WORLD_TO_VELOCITY(PUMPUP_SPEED_HD)));
 
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 						 EPtr);
 		}
@@ -264,7 +261,7 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 		UnlockElement(hPumpUp);
 		PutElement(hPumpUp);
 
-		SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+		SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
 					NO_PRIM);
 		ElementPtr->state_flags |= NONSOLID;
 	}
@@ -292,19 +289,17 @@ pump_up_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	GFXRECT r;
-	uint8_t old_thrust_wait;
-	HELEMENT hBlastElement;
 
 	GetFrameRect(ElementPtr0->next.image.frame, &r);
 
-	old_thrust_wait = ElementPtr0->thrust_wait;
+	const uint8_t old_thrust_wait {ElementPtr0->thrust_wait};
 	ElementPtr0->blast_offset = r.extent.width >> 1;
-	hBlastElement = weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
+	HELEMENT hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
 	ElementPtr0->thrust_wait = old_thrust_wait;
 
 	if (hBlastElement)
 	{
-		ELEMENT* BlastElementPtr;
+		ELEMENT* BlastElementPtr {};
 
 		LockElement(hBlastElement, &BlastElementPtr);
 
@@ -328,7 +323,7 @@ pump_up_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static uint16_t
 initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -350,7 +345,7 @@ initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 
 	if (PumpUpArray[0])
 	{
-		ELEMENT* PumpUpPtr;
+		ELEMENT* PumpUpPtr {};
 
 		LockElement(PumpUpArray[0], &PumpUpPtr);
 		PumpUpPtr->postprocess_func = pump_up_postprocess;
@@ -374,7 +369,7 @@ initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 static void
 confuse_preprocess_april(ELEMENT* ElementPtr)
 {
-	static const Color colorTable[] =
+	const static Color colorTable[] =
 		{
 			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x00, 0x00), 0x7a),
 			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x15, 0x00), 0x7a),
@@ -401,7 +396,7 @@ confuse_preprocess_april(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		ELEMENT* eptr;
+		ELEMENT* eptr {};
 
 		LockElement(ElementPtr->hTarget, &eptr);
 
@@ -409,8 +404,7 @@ confuse_preprocess_april(ELEMENT* ElementPtr)
 
 		if (ElementPtr->turn_wait)
 		{
-			HELEMENT hEffect;
-			STARSHIP* StarShipPtr;
+			STARSHIP* StarShipPtr {};
 
 			if (GetFrameIndex(ElementPtr->next.image.frame =
 								  IncFrameIndex(ElementPtr->current.image.frame))
@@ -428,9 +422,9 @@ confuse_preprocess_april(ELEMENT* ElementPtr)
 
 			if (ElementPtr->life_span > 1)
 			{
-				SetPrimType(&(GLOBAL(DisplayArray))[eptr->PrimIndex],
+				SetPrimType(&DisplayArray[eptr->PrimIndex],
 							STAMPFILL_PRIM);
-				SetPrimColor(&(GLOBAL(DisplayArray))[eptr->PrimIndex],
+				SetPrimColor(&DisplayArray[eptr->PrimIndex],
 							 colorTable[ElementPtr->colorCycleIndex]);
 				ElementPtr->colorCycleIndex++;
 
@@ -441,12 +435,12 @@ confuse_preprocess_april(ELEMENT* ElementPtr)
 			}
 			else
 			{
-				SetPrimType(&(GLOBAL(DisplayArray))[eptr->PrimIndex],
+				SetPrimType(&DisplayArray[eptr->PrimIndex],
 							STAMP_PRIM);
 				BattleSong(true);
 			}
 
-			hEffect = AllocElement();
+			HELEMENT hEffect {AllocElement()};
 			if (hEffect)
 			{
 				LockElement(hEffect, &eptr);
@@ -486,7 +480,7 @@ confuse_preprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		ELEMENT* eptr;
+		ELEMENT* eptr {};
 
 		LockElement(ElementPtr->hTarget, &eptr);
 
@@ -494,8 +488,7 @@ confuse_preprocess(ELEMENT* ElementPtr)
 
 		if (ElementPtr->turn_wait)
 		{
-			HELEMENT hEffect;
-			STARSHIP* StarShipPtr;
+			STARSHIP* StarShipPtr {};
 
 			if (GetFrameIndex(ElementPtr->next.image.frame =
 								  IncFrameIndex(ElementPtr->current.image.frame))
@@ -511,7 +504,7 @@ confuse_preprocess(ELEMENT* ElementPtr)
 				 & ~(LEFT | RIGHT | SPECIAL))
 				| ElementPtr->turn_wait;
 
-			hEffect = AllocElement();
+			HELEMENT hEffect {AllocElement()};
 			if (hEffect)
 			{
 				LockElement(hEffect, &eptr);
@@ -520,7 +513,7 @@ confuse_preprocess(ELEMENT* ElementPtr)
 				eptr->life_span = 1;
 				eptr->current = eptr->next = ElementPtr->next;
 				eptr->preprocess_func = confuse_preprocess;
-				SetPrimType(&(GLOBAL(DisplayArray))[eptr->PrimIndex],
+				SetPrimType(&DisplayArray[eptr->PrimIndex],
 							STAMP_PRIM);
 
 				GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -542,9 +535,10 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 {
 	if (ElementPtr1->state_flags & PLAYER_SHIP)
 	{
-		HELEMENT hConfusionElement, hNextElement;
-		ELEMENT* ConfusionPtr;
-		STARSHIP* StarShipPtr;
+		HELEMENT hConfusionElement {};
+		HELEMENT hNextElement {};
+		ELEMENT* ConfusionPtr {};
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr0, &StarShipPtr);
 		for (hConfusionElement = GetHeadElement();
@@ -578,7 +572,7 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				ConfusionPtr->state_flags = FINITE_LIFE | NONSOLID | CHANGING;
 				ConfusionPtr->preprocess_func = confuse_preprocess;
 				SetPrimType(
-					&(GLOBAL(DisplayArray))[ConfusionPtr->PrimIndex],
+					&DisplayArray[ConfusionPtr->PrimIndex],
 					NO_PRIM);
 
 				/*if (AprilFools)
@@ -586,7 +580,7 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 					ConfusionPtr->preprocess_func = confuse_preprocess_april;
 					ConfusionPtr->colorCycleIndex = 0;
 					StopAllBattleMusic();
-					ProcessSound(SetAbsSoundIndex(
+					ProcessSound(GetSound(
 						StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2), ElementPtr0);
 				}*/
 
@@ -600,7 +594,7 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				ConfusionPtr->life_span = 400;
 			}
 			ConfusionPtr->turn_wait =
-				(uint8_t)(1 << ((uint8_t)TFB_Random() & 1)); /* LEFT or RIGHT */
+				(uint8_t)(1 << ((uint8_t)uqm::random().next() & 1)); /* LEFT or RIGHT */
 
 			UnlockElement(hConfusionElement);
 		}
@@ -616,7 +610,7 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static uint16_t
 initialize_confusion(ELEMENT* ShipPtr, HELEMENT ConfusionArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK ConfusionBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -638,7 +632,7 @@ initialize_confusion(ELEMENT* ShipPtr, HELEMENT ConfusionArray[])
 
 	if (ConfusionArray[0])
 	{
-		ELEMENT* CMissilePtr;
+		ELEMENT* CMissilePtr {};
 
 		LockElement(ConfusionArray[0], &CMissilePtr);
 		CMissilePtr->collision_func = confusion_collision;
@@ -651,7 +645,7 @@ initialize_confusion(ELEMENT* ShipPtr, HELEMENT ConfusionArray[])
 static uint16_t
 initialize_test_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 	//ELEMENT *PumpUpPtr;
 
@@ -679,21 +673,19 @@ static void
 melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					  uint16_t ConcernCounter)
 {
-	uint8_t old_count;
-	STARSHIP* StarShipPtr;
-	EVALUATE_DESC* lpEvalDesc;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
 	StarShipPtr->RaceDescPtr->init_weapon_func = initialize_test_pump_up;
-	old_count = StarShipPtr->weapon_counter;
+	const uint8_t old_count {StarShipPtr->weapon_counter};
 
 	if (StarShipPtr->weapon_counter == WEAPON_WAIT)
 	{
 		StarShipPtr->weapon_counter = 0;
 	}
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (lpEvalDesc->ObjectPtr)
 	{
 		if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SPECIAL_ENERGY_COST
@@ -704,7 +696,7 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		}
 		else
 		{
-			STARSHIP* EnemyStarShipPtr;
+			STARSHIP* EnemyStarShipPtr {};
 
 			GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 			if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
@@ -730,9 +722,7 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	if (StarShipPtr->special_counter == 0
 		&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= SPECIAL_ENERGY_COST)
 	{
-		uint8_t old_input_state;
-
-		old_input_state = StarShipPtr->ship_input_state;
+		const uint8_t old_input_state {StarShipPtr->ship_input_state};
 
 		StarShipPtr->RaceDescPtr->init_weapon_func = initialize_confusion;
 
@@ -760,22 +750,22 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static void
 melnorme_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SPECIAL)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
-		HELEMENT Confusion;
+		HELEMENT Confusion {};
 
 		initialize_confusion(ElementPtr, &Confusion);
 		if (Confusion)
 		{
-			ELEMENT* CMissilePtr;
+			ELEMENT* CMissilePtr {};
 			LockElement(Confusion, &CMissilePtr);
 
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 						 CMissilePtr);
 
@@ -790,8 +780,6 @@ melnorme_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_melnorme(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		melnorme_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -810,7 +798,7 @@ init_melnorme(void)
 	melnorme_desc.init_weapon_func = initialize_pump_up;
 	melnorme_desc.cyborg_control.intelligence_func = melnorme_intelligence;
 
-	RaceDescPtr = &melnorme_desc;
+	RACE_DESC* RaceDescPtr {&melnorme_desc};
 
 	return (RaceDescPtr);
 }

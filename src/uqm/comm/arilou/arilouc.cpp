@@ -23,7 +23,7 @@
 
 #include "uqm/gameev.h"
 #include "uqm/races.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 
 static LOCDATA arilou_desc =
@@ -270,10 +270,10 @@ ExitConversation(RESPONSE_REF R)
 static void
 ArilouHome(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
+	uint8_t i {};
 	RESPONSE_REF pStr[4];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
 	if (PLAYER_SAID(R, confused_by_hello))
 	{
@@ -589,7 +589,7 @@ AngrySpaceArilou(RESPONSE_REF R)
 static void
 FriendlySpaceArilou(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, confused_by_hello))
 	{
@@ -716,9 +716,10 @@ FriendlySpaceArilou(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits, Manner;
+	uint8_t NumVisits {};
+	uint8_t Manner {};
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -727,7 +728,7 @@ Intro(void)
 	}
 	else if (!GET_GAME_STATE(MET_ARILOU))
 	{
-		RESPONSE_FUNC RespFunc;
+		RESPONSE_FUNC RespFunc {};
 
 		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 		{
@@ -871,14 +872,14 @@ Intro(void)
 static uint16_t
 uninit_arilou(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
 static void
 post_arilou_enc(void)
 {
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
 		&& (Manner = GET_GAME_STATE(ARILOU_MANNER)) != 2)
@@ -908,13 +909,11 @@ post_arilou_enc(void)
 LOCDATA*
 init_arilou_comm(void)
 {
-	LOCDATA* retval;
-
 	arilou_desc.init_encounter_func = Intro;
 	arilou_desc.post_encounter_func = post_arilou_enc;
 	arilou_desc.uninit_encounter_func = uninit_arilou;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	arilou_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	arilou_desc.AlienTextBaseline.y = 0;
@@ -922,7 +921,7 @@ init_arilou_comm(void)
 
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1
 		|| GET_GAME_STATE(ARILOU_MANNER) == 3
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}
@@ -930,7 +929,7 @@ init_arilou_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &arilou_desc;
+	LOCDATA* retval {&arilou_desc};
 
 	return (retval);
 }

@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define PORT_WANT_ERRNO
 #define NETCONNECTION_INTERNAL
 #include "netplay.h"
 #include "port.h"
@@ -29,20 +28,18 @@
 #include "core/log/log.h"
 #include "core/platform/platform.h"
 
-#include <errno.h>
 #include <string.h>
 
 
 // Try to get a single packet from a stream of data.
-// Returns 0 if the packet was successfully processed, or
-// -1 on an error, in which case the state is unchanged.
-static ssize_t
+// Returns the length of the packet that was processed, 0 if the packet is
+// not complete, or an error, in which case the state is unchanged.
+static uqstl::expected<size_t, uqstl::error_code>
 dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 				   size_t dataLen)
 {
-	uint32_t packetLen;
+	uint32_t packetLen {};
 	PacketType type;
-	int result;
 
 	if (dataLen < sizeof(PacketHeader))
 	{
@@ -56,8 +53,7 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 	if (!validPacketType(type))
 	{
 		uqm::log::warn("Packet with invalid type {} received.\n", static_cast<int>(type));
-		errno = EBADMSG;
-		return -1;
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (packetLen < packetTypeData[type].len)
@@ -67,8 +63,7 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 					   "{}, lenfield={}.\n",
 					   packetTypeData[type].name,
 					   packetLen);
-		errno = EBADMSG;
-		return -1;
+		return uqm::failure(uqstl::errc::bad_message);
 	}
 
 	if (dataLen < packetLen)
@@ -100,11 +95,9 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 #endif /* NETPLAY_DEBUG_FILE */
 #endif /* NETPLAY_DEBUG */
 
-	result = packetTypeData[type].handler(conn, data);
-	if (result == -1)
+	if (NetResult result {packetTypeData[type].handler(conn, data)}; !result)
 	{
-		// An error occured. errno is set by the handler.
-		return -1;
+		return uqstl::unexpected {result.error()};
 	}
 
 	return packetLen;
@@ -112,20 +105,18 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 
 // Try to get all the packets from a stream of data.
 // Returns the number of bytes processed.
-static ssize_t
+static uqstl::expected<size_t, uqstl::error_code>
 dataReceivedMulti(NetConnection* conn, const uint8_t* data, size_t len)
 {
-	size_t processed;
-
-	processed = 0;
+	size_t processed {0};
 	while (len > 0)
 	{
-		ssize_t packetLen = dataReceivedSingle(conn, data, len);
-		if (packetLen == -1)
+		const uqstl::expected<size_t, uqstl::error_code> single {dataReceivedSingle(conn, data, len)};
+		if (!single)
 		{
-			// Bad packet. Errno is set.
-			return -1;
+			return single;
 		}
+		const size_t packetLen {*single};
 
 		if (packetLen == 0)
 		{
@@ -142,72 +133,12 @@ dataReceivedMulti(NetConnection* conn, const uint8_t* data, size_t len)
 	return processed;
 }
 
-void dataReadyCallback(NetDescriptor* nd)
+uqstl::optional<size_t> dataReceived(NetConnection* conn, uqstl::span<const std::byte> data)
 {
-	NetConnection* conn = (NetConnection*)NetDescriptor_getExtra(nd);
-	Socket* socket = NetDescriptor_getSocket(nd);
-
-	for (;;)
+	const uqstl::expected<size_t, uqstl::error_code> processed {dataReceivedMulti(conn, reinterpret_cast<const uint8_t*>(data.data()), data.size())};
+	if (!processed)
 	{
-		ssize_t numRead;
-		ssize_t numProcessed;
-
-		numRead = Socket_recv(socket, conn->readEnd,
-							  NETPLAY_READBUFSIZE - (conn->readEnd - conn->readBuf), 0);
-		if (numRead == 0)
-		{
-			// Other side closed the connection.
-			NetDescriptor_close(nd);
-			return;
-		}
-
-		if (numRead == -1)
-		{
-			if (errno == EWOULDBLOCK || errno == EAGAIN)
-			{
-				return; // No more data for now.
-			}
-			else if (errno == EINTR)
-			{
-				continue; // System call was interrupted. Retry.
-			}
-			else
-			{
-				int savedErrno = errno;
-				uqm::log::error("recv() failed: {}.\n",
-								uqm::strerror(errno));
-				NetConnection_doErrorCallback(conn, savedErrno);
-				NetDescriptor_close(nd);
-				return;
-			}
-		}
-
-		conn->readEnd += numRead;
-
-		numProcessed = dataReceivedMulti(conn, conn->readBuf,
-										 conn->readEnd - conn->readBuf);
-		if (numProcessed == -1)
-		{
-			// An error occured during processing.
-			// errno is set.
-			NetConnection_doErrorCallback(conn, errno);
-			NetDescriptor_close(nd);
-			return;
-		}
-		if (numProcessed == 0)
-		{
-			// No packets could be processed. This means we need to receive
-			// more data first.
-			return;
-		}
-
-		// Some packets have been processed.
-		// We more any rest to the front of the buffer, to make room
-		// for more data.
-		// A cyclic buffer would obviate the need for this move,
-		// but it would complicate things a lot.
-		memmove(conn->readBuf, conn->readBuf + numProcessed,
-				(conn->readEnd - conn->readBuf) - numProcessed);
-		conn->readEnd -= numProcessed;
+		return uqstl::nullopt;
 	}
+	return *processed;
 }

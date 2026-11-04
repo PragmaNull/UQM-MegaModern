@@ -26,7 +26,6 @@
 #include "core/log/log.h"
 #endif
 
-#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -70,14 +69,13 @@ void PacketQueue_uninit(PacketQueue* queue)
 
 void queuePacket(NetConnection* conn, Packet* packet)
 {
-	PacketQueue* queue;
-	PacketQueueLink* link;
+	PacketQueue* queue {};
 
 	assert(NetConnection_isConnected(conn));
 
 	queue = &conn->queue;
 
-	link = PacketQueueLink_alloc();
+	PacketQueueLink* link {PacketQueueLink_alloc()};
 	link->packet = packet;
 	link->next = nullptr;
 	*queue->end = link;
@@ -109,22 +107,19 @@ void queuePacket(NetConnection* conn, Packet* packet)
 
 // If an error occurs during sending, we leave the unsent packets in
 // the queue, and let the caller decide what to do with them.
-// This function may return -1 with errno EAGAIN or EWOULDBLOCK
-// if we're waiting for the other party to act first.
-static int
+static NetResult
 flushPacketQueueLinks(NetConnection* conn, PacketQueueLink** first)
 {
-	PacketQueueLink* link;
-	PacketQueueLink* next;
+	PacketQueueLink* link {};
+	PacketQueueLink* next {};
 	PacketQueue* queue = &conn->queue;
 
 	for (link = *first; link != nullptr; link = next)
 	{
-		if (sendPacket(conn, link->packet) == -1)
+		if (NetResult sent {sendPacket(conn, link->packet)}; !sent)
 		{
-			// Errno is set.
 			*first = link;
-			return -1;
+			return sent;
 		}
 
 		next = link->next;
@@ -134,26 +129,19 @@ flushPacketQueueLinks(NetConnection* conn, PacketQueueLink** first)
 	}
 
 	*first = link;
-	return 0;
+	return {};
 }
 
-int flushPacketQueue(NetConnection* conn)
+NetResult flushPacketQueue(NetConnection* conn)
 {
-	int flushResult;
 	PacketQueue* queue = &conn->queue;
 
 	assert(NetConnection_isConnected(conn));
 
-	flushResult = flushPacketQueueLinks(conn, &queue->first);
+	NetResult flushResult {flushPacketQueueLinks(conn, &queue->first)};
 	if (queue->first == nullptr)
 	{
 		queue->end = &queue->first;
 	}
-	if (flushResult == -1)
-	{
-		// errno is set
-		return -1;
-	}
-
-	return 0;
+	return flushResult;
 }

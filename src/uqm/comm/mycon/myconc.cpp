@@ -23,7 +23,8 @@
 #include "uqm/gameev.h"
 #include "libs/mathlib.h"
 #include "uqm/races.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static LOCDATA mycon_desc =
@@ -142,7 +143,7 @@ static uint8_t MadeChoice;
 static void
 DoRamble(RESPONSE_REF R)
 {
-	uint8_t Counter;
+	uint8_t Counter {};
 
 	Counter = GET_GAME_STATE(MYCON_RAMBLE);
 	switch (Counter++)
@@ -411,7 +412,7 @@ TrickMycon(RESPONSE_REF R)
 static void
 NormalMycon(RESPONSE_REF R)
 {
-	RESPONSE_FUNC RespFunc;
+	RESPONSE_FUNC RespFunc {};
 
 	if (PLAYER_SAID(R, what_about_shattered))
 	{
@@ -427,7 +428,7 @@ NormalMycon(RESPONSE_REF R)
 		DISABLE_PHRASE(R);
 	}
 
-	if ((uint8_t)TFB_Random() < 256 * 30 / 100)
+	if ((uint8_t)uqm::random().next() < 256 * 30 / 100)
 	{
 		RespFunc = (RESPONSE_FUNC)CombatIsInevitable;
 	}
@@ -563,7 +564,7 @@ NormalMycon(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (GET_GAME_STATE(SUN_DEVICE))
 	{
@@ -682,7 +683,7 @@ Intro(void)
 static uint16_t
 uninit_mycon(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -695,13 +696,11 @@ post_mycon_enc(void)
 LOCDATA*
 init_mycon_comm(void)
 {
-	LOCDATA* retval;
-
 	mycon_desc.init_encounter_func = Intro;
 	mycon_desc.post_encounter_func = post_mycon_enc;
 	mycon_desc.uninit_encounter_func = uninit_mycon;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	mycon_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	mycon_desc.AlienTextBaseline.y = 0;
@@ -709,7 +708,7 @@ init_mycon_comm(void)
 
 	MadeChoice = 0;
 
-	if (lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
 		setSegue(Segue_hostile);
 	}
@@ -717,7 +716,7 @@ init_mycon_comm(void)
 	{
 		setSegue(Segue_peace);
 	}
-	retval = &mycon_desc;
+	LOCDATA* retval {&mycon_desc};
 
 	return (retval);
 }

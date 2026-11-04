@@ -17,7 +17,7 @@
  */
 
 #include "units.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 
 
 int32_t sinetab[] =
@@ -91,8 +91,7 @@ int32_t sinetab[] =
 uint16_t
 ARCTAN(int32_t delta_x, int32_t delta_y)
 {
-	int32_t v1, v2;
-	static uint16_t atantab[] =
+	const static uint16_t atantab[] =
 		{
 			0,
 			0,
@@ -129,8 +128,8 @@ ARCTAN(int32_t delta_x, int32_t delta_y)
 			8,
 		};
 
-	v1 = delta_x;
-	v2 = delta_y;
+	int32_t v1 {delta_x};
+	int32_t v2 {delta_y};
 	if (v1 == 0 && v2 == 0)
 	{
 		return (FULL_CIRCLE);

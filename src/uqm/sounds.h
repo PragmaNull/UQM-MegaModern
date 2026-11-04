@@ -20,7 +20,7 @@
 #define UQM_SOUNDS_H_
 
 #include "element.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/sndlib.h"
 #include "races.h"
 #include "globdata.h"
@@ -50,8 +50,8 @@ typedef enum
 	MENU_SOUND_TEXT,
 } MENU_SOUND_EFFECT;
 
-extern SOUND MenuSounds;
-extern SOUND GameSounds;
+extern SOUND_REF MenuSounds;
+extern SOUND_REF GameSounds;
 
 /* Constants for DoInput */
 typedef uint16_t MENU_SOUND_FLAGS;
@@ -79,6 +79,8 @@ extern void PlaySound(SOUND S, SoundPosition Pos,
 					  ELEMENT* PositionalObject, uint8_t Priority);
 extern void PlayMenuSound(MENU_SOUND_EFFECT S);
 extern void ProcessSound(SOUND Sound, ELEMENT* PositionalObject);
+// Removes the queued sounds, and ignores new sounds until FlushSounds().
+extern void SuppressSounds(void);
 extern SoundPosition CalcSoundPosition(ELEMENT* ElementPtr);
 extern SoundPosition NotPositional(void);
 extern void UpdateSoundPositions(void);

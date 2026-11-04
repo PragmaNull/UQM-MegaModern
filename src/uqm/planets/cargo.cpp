@@ -51,10 +51,9 @@ void ShowRemainingCapacity(void)
 {
 	GFXRECT r;
 	TEXT t;
-	GFXCONTEXT OldContext;
 	char buf[40];
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
 		SetContextFont(TinyFont);
@@ -153,8 +152,7 @@ DrawCargoDisplay(void)
 	STAMP s;
 	TEXT t;
 	GFXRECT r;
-	int16_t cy;
-	uint16_t i;
+	int16_t cy {};
 
 	r.corner.x = RES_SCALE(2);
 	r.extent.width = FIELD_WIDTH + RES_SCALE(1);
@@ -216,7 +214,7 @@ DrawCargoDisplay(void)
 	font_DrawText(&t);
 
 	// draw element icons and print amounts
-	for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i, cy += ELEMENT_SPACING_Y)
+	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i, cy += ELEMENT_SPACING_Y)
 	{
 		// erase background under an element icon
 		SetContextForeGroundColor(BLACK_COLOR);
@@ -265,9 +263,7 @@ DrawCargoDisplay(void)
 
 void DrawCargoStrings(uint8_t OldElement, uint8_t NewElement)
 {
-	GFXCONTEXT OldContext;
-
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
 		SetContextFont(TinyFont);
@@ -313,9 +309,8 @@ void DrawRainbowPlanet(uint16_t planet)
 	TEXT t;
 	GFXRECT r;
 	char buf[40];
-	GFXCONTEXT OldContext;
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 
 	r.corner.x = RES_SCALE(2);
 	r.extent.width = FIELD_WIDTH + RES_SCALE(1);
@@ -416,15 +411,16 @@ void DrawRainbowPlanet(uint16_t planet)
 static bool
 DoDiscardCargo(MENU_STATE* pMS)
 {
-	uint8_t NewState;
-	bool select, cancel, back, forward;
+	uint8_t NewState {};
+	bool select {};
+	bool cancel {};
 
 	select = PulsedInputState.menu[KEY_MENU_SELECT];
 	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
-	back = PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_LEFT];
-	forward = PulsedInputState.menu[KEY_MENU_DOWN] || PulsedInputState.menu[KEY_MENU_RIGHT];
+	const bool back {PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_LEFT]};
+	const bool forward {PulsedInputState.menu[KEY_MENU_DOWN] || PulsedInputState.menu[KEY_MENU_RIGHT]};
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}

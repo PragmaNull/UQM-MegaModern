@@ -2,8 +2,8 @@
 #include "libs/io/standard/DirectorySource.h"
 
 #include <cerrno>
-#include <chrono>
-#include <fstream>
+#include "core/stl/chrono.h"
+#include "core/stl/fstream.h"
 
 namespace uqm::io::standard
 {
@@ -180,8 +180,9 @@ uqstl::optional<FileInfo> DirectorySource::stat(uqstl::string_view path) const
 	return info;
 }
 
-uqstl::vector<uqstl::string> DirectorySource::list(uqstl::string_view path, uqstl::error_code& error) const
+Result<uqstl::vector<uqstl::string>> DirectorySource::list(uqstl::string_view path) const
 {
+	uqstl::error_code error {};
 	uqstl::vector<uqstl::string> names {};
 	for (fs::directory_iterator it {hostPath(path), error}; !error && it != fs::directory_iterator {}; it.increment(error))
 	{
@@ -194,12 +195,17 @@ uqstl::vector<uqstl::string> DirectorySource::list(uqstl::string_view path, uqst
 			// The name cannot be shown in the narrow character set.
 		}
 	}
+	if (error && names.empty())
+	{
+		return uqstl::unexpected {error};
+	}
 	return names;
 }
 
-uqstl::unique_ptr<Stream> DirectorySource::open(uqstl::string_view path, OpenMode mode, uqstl::error_code& error) const
+Result<uqstl::unique_ptr<Stream>> DirectorySource::open(uqstl::string_view path, OpenMode mode) const
 {
 	const fs::path host {hostPath(path)};
+	uqstl::error_code error {};
 	if (!testAllBits(mode, OpenMode::Write))
 	{
 		auto stream {uqstl::make_unique<DiskStream>(testAllBits(mode, OpenMode::Text))};
@@ -211,13 +217,13 @@ uqstl::unique_ptr<Stream> DirectorySource::open(uqstl::string_view path, OpenMod
 		const fs::file_status status {fs::status(host, statusError)};
 		if (!fs::exists(status))
 		{
-			error = uqstl::make_error_code(uqstl::errc::no_such_file_or_directory);
+			return failure(uqstl::errc::no_such_file_or_directory);
 		}
-		else if (fs::is_directory(status))
+		if (fs::is_directory(status))
 		{
-			error = uqstl::make_error_code(uqstl::errc::is_a_directory);
+			return failure(uqstl::errc::is_a_directory);
 		}
-		return nullptr;
+		return uqstl::unexpected {error};
 	}
 
 	uqstl::error_code statusError {};
@@ -226,22 +232,22 @@ uqstl::unique_ptr<Stream> DirectorySource::open(uqstl::string_view path, OpenMod
 
 	if (exists && fs::is_directory(status))
 	{
-		return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::is_a_directory);
+		return failure(uqstl::errc::is_a_directory);
 	}
 	if (testAllBits(mode, OpenMode::Write))
 	{
 		if (exists && testAllBits(mode, OpenMode::Create | OpenMode::Exclusive))
 		{
-			return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::file_exists);
+			return failure(uqstl::errc::file_exists);
 		}
 		if (!exists && !testAllBits(mode, OpenMode::Create))
 		{
-			return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::no_such_file_or_directory);
+			return failure(uqstl::errc::no_such_file_or_directory);
 		}
 	}
 	else if (!exists)
 	{
-		return fail<uqstl::unique_ptr<Stream>>(error, uqstl::errc::no_such_file_or_directory);
+		return failure(uqstl::errc::no_such_file_or_directory);
 	}
 
 	if (exists && testAllBits(mode, OpenMode::Write | OpenMode::Append | OpenMode::Truncate))
@@ -249,14 +255,14 @@ uqstl::unique_ptr<Stream> DirectorySource::open(uqstl::string_view path, OpenMod
 		fs::resize_file(host, 0, error);
 		if (error)
 		{
-			return nullptr;
+			return uqstl::unexpected {error};
 		}
 	}
 
 	auto stream {uqstl::make_unique<DiskStream>(testAllBits(mode, OpenMode::Text))};
 	if (!stream->open(host, openFlags(mode, exists), error))
 	{
-		return nullptr;
+		return uqstl::unexpected {error};
 	}
 	return stream;
 }

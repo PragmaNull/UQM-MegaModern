@@ -23,6 +23,7 @@
 #include "../../nameref.h"
 #include "../../resinst.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -56,7 +57,7 @@ const GenerateFunctions generateBurvixeseFunctions = {
 static bool
 GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	pSunDesc->MoonByte = 0;
@@ -64,9 +65,9 @@ GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
-		uint16_t angle;
+		uint16_t angle {};
 
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
@@ -80,7 +81,7 @@ GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys)
 	}
 	else
 	{
-		uint32_t rand_val = RandomContext_Random(SysGenRNG);
+		const uint32_t rand_val = SysGenRNG->next();
 
 		//pSunDesc->PlanetByte = PickClosestHabitable (solarSys);
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -105,23 +106,22 @@ GenerateBurvixese_generateMoons(SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (!PrimeSeed)
+	if (!uqm::isOriginalSeed())
 	{
 		return true;
 	}
 
 	if (matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
-		uint16_t angle;
-		uint32_t rand_val;
+		uint16_t angle {};
 
 		pMoonDesc->data_index = SELENIC_WORLD;
 		pMoonDesc->radius =
 			MIN_MOON_RADIUS + (MAX_GEN_MOONS - 1) * MOON_DELTA;
-		rand_val = RandomContext_Random(SysGenRNG);
-		angle = NORMALIZE_ANGLE(LOWORD(rand_val));
+		const uint32_t rand_val {SysGenRNG->next()};
+		angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 		pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
 		pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
 		ComputeSpeed(pMoonDesc, true, 1);
@@ -134,14 +134,12 @@ static bool
 GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
 								  PLANET_DESC* world)
 {
-	uint32_t rand_val;
-
 	DoPlanetaryAnalysis(&solarSys->SysInfo, world);
-	rand_val = RandomContext_GetSeed(SysGenRNG);
+	uint32_t rand_val {SysGenRNG->seed()};
 
 	solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] = rand_val;
 	GenerateLifeForms(&solarSys->SysInfo, GENERATE_ALL, nullptr);
-	rand_val = RandomContext_GetSeed(SysGenRNG);
+	rand_val = SysGenRNG->seed();
 
 	solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
 	GenerateMineralDeposits(&solarSys->SysInfo, GENERATE_ALL, nullptr);
@@ -154,9 +152,8 @@ GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(
 				LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(
-				LoadStringTable(BURV_RUINS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BURV_RUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		if (!isDifficulty(uqm::Difficulty::Hard))
 		{
@@ -170,8 +167,8 @@ GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] = CaptureDrawable(
 			LoadGraphic(BURV_BCS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(BURV_BCS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BURV_BCS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		if (!isDifficulty(uqm::Difficulty::Hard))
 		{

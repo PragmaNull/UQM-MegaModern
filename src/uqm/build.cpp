@@ -23,7 +23,7 @@
 #include "sis.h"
 #include "setup.h"
 #include "core/string/StringUtils.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/mathlib.h"
 #include "planets/planets.h"
 #include "starbase.h"
@@ -31,24 +31,22 @@
 #include "gendef.h"
 #include "save.h"
 #include <stdlib.h>
+#include "uqm/random/UQMRandom.h"
 
 
 // Allocate a new STARSHIP or SHIP_FRAGMENT and put it in the queue
 HLINK
 Build(QUEUE* pQueue, SPECIES_ID SpeciesID)
 {
-	HLINK hNewShip;
-	SHIP_BASE* ShipPtr;
-
 	assert(GetLinkSize(pQueue) == sizeof(STARSHIP) || GetLinkSize(pQueue) == sizeof(SHIP_FRAGMENT));
 
-	hNewShip = AllocLink(pQueue);
+	HLINK hNewShip {AllocLink(pQueue)};
 	if (!hNewShip)
 	{
 		return 0;
 	}
 
-	ShipPtr = (SHIP_BASE*)LockLink(pQueue, hNewShip);
+	SHIP_BASE* ShipPtr {(SHIP_BASE*)LockLink(pQueue, hNewShip)};
 	memset(ShipPtr, 0, GetLinkSize(pQueue));
 	ShipPtr->SpeciesID = SpeciesID;
 
@@ -61,14 +59,13 @@ Build(QUEUE* pQueue, SPECIES_ID SpeciesID)
 HLINK
 GetStarShipFromIndex(QUEUE* pShipQ, uint16_t Index)
 {
-	HLINK hStarShip, hNextShip;
+	HLINK hStarShip {};
+	HLINK hNextShip {};
 
 	for (hStarShip = GetHeadLink(pShipQ);
 		 Index > 0 && hStarShip; hStarShip = hNextShip, --Index)
 	{
-		LINK* StarShipPtr;
-
-		StarShipPtr = LockLink(pShipQ, hStarShip);
+		const LINK* StarShipPtr {LockLink(pShipQ, hStarShip)};
 		hNextShip = _GetSuccLink(StarShipPtr);
 		UnlockLink(pShipQ, hStarShip);
 	}
@@ -80,14 +77,13 @@ GetStarShipFromIndex(QUEUE* pShipQ, uint16_t Index)
 HLINK
 GetFleetFromSpecies(SPECIES_ID id)
 {
-	HLINK hFleet, hNextFleet;
+	HLINK hFleet {};
+	HLINK hNextFleet {};
 
 	for (hFleet = GetHeadLink(&GLOBAL(avail_race_q));
 		 hFleet; hFleet = hNextFleet)
 	{
-		FLEET_INFO* FleetPtr;
-
-		FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+		const FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
 		if (FleetPtr->SpeciesID == id)
 		{
 			UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
@@ -109,12 +105,11 @@ GetFleetFromSpecies(SPECIES_ID id)
 HFLEETINFO
 GetSeededFleetFromIndex(uint16_t Index)
 {
-	FLEET_INFO* TemplatePtr = nullptr;
-	HFLEETINFO hFleet;
+	const FLEET_INFO* TemplatePtr = nullptr;
 	SPECIES_ID ship;
-	bool loadWindow = ((uqm::UQMOptions::read().shipSeed && GLOBAL_SIS(ShipSeed) == 0) || (!uqm::UQMOptions::read().shipSeed && GLOBAL_SIS(ShipSeed) != 0) || (uqm::UQMOptions::read().customSeed != GLOBAL_SIS(Seed)));
+	const bool loadWindow = ((uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) == 0) || (!uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) != 0) || (uqm::currentSeed().value != GLOBAL_SIS(Seed)));
 
-	hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), Index);
+	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), Index)};
 	if (!hFleet)
 	{
 		return hFleet;
@@ -133,9 +128,9 @@ GetSeededFleetFromIndex(uint16_t Index)
 HSHIPFRAG
 GetEscortByStarShipIndex(uint16_t index)
 {
-	HSHIPFRAG hStarShip;
-	HSHIPFRAG hNextShip;
-	SHIP_FRAGMENT* StarShipPtr;
+	HSHIPFRAG hStarShip {};
+	HSHIPFRAG hNextShip {};
+	const SHIP_FRAGMENT* StarShipPtr {};
 
 	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q));
 		 hStarShip; hStarShip = hNextShip)
@@ -158,16 +153,14 @@ GetEscortByStarShipIndex(uint16_t index)
 SPECIES_ID
 ShipIdStrToIndex(const char* shipIdStr)
 {
-	HMASTERSHIP hStarShip;
-	HMASTERSHIP hNextShip;
+	HMASTERSHIP hStarShip {};
+	HMASTERSHIP hNextShip {};
 	SPECIES_ID result = NO_ID;
 
 	for (hStarShip = GetHeadLink(&master_q);
 		 hStarShip != 0; hStarShip = hNextShip)
 	{
-		MASTER_SHIP_INFO* MasterPtr;
-
-		MasterPtr = LockMasterShip(&master_q, hStarShip);
+		const MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hStarShip)};
 		hNextShip = _GetSuccLink(MasterPtr);
 
 		if (strcmp(shipIdStr, MasterPtr->ShipInfo.idStr) == 0)
@@ -233,9 +226,9 @@ RACE_ID
 RaceIdStrToIndex(const char* raceIdStr)
 {
 	RaceIdMap key = {/* .idStr = */ raceIdStr, /* .id = */ (RACE_ID)-1};
-	RaceIdMap* found = (RaceIdMap*)bsearch(&key, raceIdMap,
-										   std::size(raceIdMap),
-										   sizeof raceIdMap[0], RaceIdCompare);
+	const RaceIdMap* found = (RaceIdMap*)bsearch(&key, raceIdMap,
+												 std::size(raceIdMap),
+												 sizeof raceIdMap[0], RaceIdCompare);
 
 	if (found == nullptr)
 	{
@@ -253,22 +246,20 @@ RaceIdStrToIndex(const char* raceIdStr)
 uint16_t
 AddEscortShips(RACE_ID race, int16_t count)
 {
-	HFLEETINFO hFleet;
-	uint8_t which_window;
-	uint16_t i;
+	uint16_t i {};
 
-	hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), race);
+	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
 	if (!hFleet || count <= 0)
 	{
 		return 0;
 	}
 
-	which_window = 0;
+	uint8_t which_window {0};
 	for (i = 0; i < (uint16_t)count; i++)
 	{
-		HSHIPFRAG hStarShip;
-		HSHIPFRAG hOldShip;
-		SHIP_FRAGMENT* StarShipPtr;
+		HSHIPFRAG hStarShip {};
+		HSHIPFRAG hOldShip {};
+		SHIP_FRAGMENT* StarShipPtr {};
 
 		if (!STORAGE_Q)
 		{
@@ -293,10 +284,8 @@ AddEscortShips(RACE_ID race, int16_t count)
 		while ((hOldShip = GetStarShipFromIndex(
 					&GLOBAL(built_ship_q), which_window++)))
 		{
-			uint8_t win_loc;
-
 			StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hOldShip);
-			win_loc = StarShipPtr->index;
+			const uint8_t win_loc {StarShipPtr->index};
 			UnlockShipFrag(&GLOBAL(built_ship_q), hOldShip);
 			if (which_window <= win_loc)
 			{
@@ -322,14 +311,13 @@ uint16_t
 CalculateEscortsWorth(void)
 {
 	uint16_t total = 0;
-	HSHIPFRAG hStarShip, hNextShip;
+	HSHIPFRAG hStarShip {};
+	HSHIPFRAG hNextShip {};
 
 	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q));
 		 hStarShip; hStarShip = hNextShip)
 	{
-		SHIP_FRAGMENT* StarShipPtr;
-
-		StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
 		hNextShip = _GetSuccLink(StarShipPtr);
 		total += ShipCost(StarShipPtr->race_id);
 		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
@@ -339,8 +327,10 @@ CalculateEscortsWorth(void)
 
 bool ShipsReady(RACE_ID race)
 {
-	int16_t i;
-	uint16_t year, month, day = 0;
+	int16_t i {};
+	uint16_t year {};
+	uint16_t month {};
+	uint16_t day = 0;
 	switch (race)
 	{
 		case PKUNK_SHIP:
@@ -367,19 +357,20 @@ bool ShipsReady(RACE_ID race)
 		default:
 			return false;
 	}
-	return ((i = (GLOBAL(GameClock.year_index) - START_YEAR) - year) > 0) || (i == 0 && (((i = GLOBAL(GameClock.month_index) - month) > 0) || (i == 0 && GLOBAL(GameClock.day_index) > day)));
+	return ((i = (uqm::gameState().clock().year() - START_YEAR) - year) > 0) || (i == 0 && (((i = uqm::gameState().clock().month() - month) > 0) || (i == 0 && uqm::gameState().clock().day() > day)));
 }
 
 void PrepareShip(RACE_ID race)
 {
-	uint8_t mi, di, yi;
+	uint8_t di {};
+	uint8_t yi {};
 
-	mi = GLOBAL(GameClock.month_index);
-	if ((di = GLOBAL(GameClock.day_index)) > 28)
+	const uint8_t mi {uqm::gameState().clock().month()};
+	if ((di = uqm::gameState().clock().day()) > 28)
 	{
 		di = 28;
 	}
-	yi = (uint8_t)(GLOBAL(GameClock.year_index) - START_YEAR) + 1;
+	yi = (uint8_t)(uqm::gameState().clock().year() - START_YEAR) + 1;
 	switch (race)
 	{
 		case PKUNK_SHIP:
@@ -442,16 +433,13 @@ GetRaceKnownSize (RACE_ID race)
  */
 bool SetRaceAllied(RACE_ID race, bool flag)
 {
-	HFLEETINFO hFleet;
-	FLEET_INFO* FleetPtr;
-
-	hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), race);
+	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
 	if (!hFleet)
 	{
 		return false;
 	}
 
-	FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
 
 	if (FleetPtr->allied_state == DEAD_GUY)
 	{
@@ -477,16 +465,13 @@ bool SetRaceAllied(RACE_ID race, bool flag)
 uint16_t
 StartSphereTracking(RACE_ID race)
 {
-	HFLEETINFO hFleet;
-	FLEET_INFO* FleetPtr;
-
-	hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), race);
+	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
 	if (!hFleet)
 	{
 		return 0;
 	}
 
-	FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
 
 	if (FleetPtr->actual_strength == 0)
 	{
@@ -515,17 +500,15 @@ StartSphereTracking(RACE_ID race)
  */
 bool CheckSphereTracking(RACE_ID race)
 {
-	HFLEETINFO hFleet;
-	FLEET_INFO* FleetPtr;
-	uint16_t result;
+	uint16_t result {};
 
-	hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), race);
+	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
 	if (!hFleet)
 	{
 		return false;
 	}
 
-	FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	const FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
 
 	if (FleetPtr->actual_strength == 0)
 	{
@@ -544,16 +527,13 @@ bool CheckSphereTracking(RACE_ID race)
 
 bool KillRace(RACE_ID race)
 {
-	HFLEETINFO hFleet;
-	FLEET_INFO* FleetPtr;
-
-	hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), race);
+	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
 	if (!hFleet)
 	{
 		return false;
 	}
 
-	FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
 
 	FleetPtr->allied_state = DEAD_GUY;
 	FleetPtr->actual_strength = 0;
@@ -569,11 +549,11 @@ bool KillRace(RACE_ID race)
 uint16_t
 CountEscortShips(RACE_ID race)
 {
-	HFLEETINFO hFleet;
-	HSHIPFRAG hStarShip, hNextShip;
+	HSHIPFRAG hStarShip {};
+	HSHIPFRAG hNextShip {};
 	uint16_t result = 0;
 
-	hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), race);
+	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
 	if (!hFleet)
 	{
 		return 0;
@@ -582,12 +562,9 @@ CountEscortShips(RACE_ID race)
 	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q)); hStarShip;
 		 hStarShip = hNextShip)
 	{
-		uint8_t ship_type;
-		SHIP_FRAGMENT* StarShipPtr;
-
-		StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
 		hNextShip = _GetSuccLink(StarShipPtr);
-		ship_type = StarShipPtr->race_id;
+		const uint8_t ship_type {StarShipPtr->race_id};
 		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
 
 		if (ship_type == race)
@@ -615,9 +592,7 @@ bool HaveEscortShip(RACE_ID race)
 uint16_t
 EscortFeasibilityStudy(RACE_ID race)
 {
-	HFLEETINFO hFleet;
-
-	hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), race);
+	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
 	if (!hFleet)
 	{
 		return 0;
@@ -634,18 +609,14 @@ EscortFeasibilityStudy(RACE_ID race)
 uint16_t
 CheckAlliance(RACE_ID race)
 {
-	HFLEETINFO hFleet;
-	uint16_t flags;
-	FLEET_INFO* FleetPtr;
-
-	hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), race);
+	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
 	if (!hFleet)
 	{
 		return 0;
 	}
 
-	FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
-	flags = FleetPtr->allied_state;
+	const FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
+	const uint16_t flags {FleetPtr->allied_state};
 	UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
 
 	return flags;
@@ -665,7 +636,7 @@ RemoveSomeEscortShips(RACE_ID race, uint16_t count)
 {
 	QUEUE* ship_q = &GLOBAL(built_ship_q);
 	HSHIPFRAG hStarShip = GetHeadLink(ship_q);
-	HSHIPFRAG hNextShip;
+	HSHIPFRAG hNextShip {};
 
 	if (count == 0)
 	{
@@ -680,12 +651,9 @@ RemoveSomeEscortShips(RACE_ID race, uint16_t count)
 	for (hStarShip = GetHeadLink(ship_q); hStarShip;
 		 hStarShip = hNextShip)
 	{
-		bool RemoveShip;
-		SHIP_FRAGMENT* StarShipPtr;
-
-		StarShipPtr = LockShipFrag(ship_q, hStarShip);
+		const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(ship_q, hStarShip)};
 		hNextShip = _GetSuccLink(StarShipPtr);
-		RemoveShip = (StarShipPtr->race_id == race);
+		const bool RemoveShip {(StarShipPtr->race_id == race)};
 		UnlockShipFrag(ship_q, hStarShip);
 
 		if (RemoveShip)
@@ -723,16 +691,11 @@ RemoveEscortShips(RACE_ID race)
 uint16_t
 GetIndexFromStarShip(QUEUE* pShipQ, HLINK hStarShip)
 {
-	uint16_t Index;
-
-	Index = 0;
+	uint16_t Index {0};
 	while (hStarShip != GetHeadLink(pShipQ))
 	{
-		HLINK hNextShip;
-		LINK* StarShipPtr;
-
-		StarShipPtr = LockLink(pShipQ, hStarShip);
-		hNextShip = _GetPredLink(StarShipPtr);
+		const LINK* StarShipPtr {LockLink(pShipQ, hStarShip)};
+		HLINK hNextShip {_GetPredLink(StarShipPtr)};
 		UnlockLink(pShipQ, hStarShip);
 
 		hStarShip = hNextShip;
@@ -745,23 +708,22 @@ GetIndexFromStarShip(QUEUE* pShipQ, HLINK hStarShip)
 uint8_t
 NameCaptain(QUEUE* pQueue, SPECIES_ID SpeciesID)
 {
-	uint8_t name_index;
-	HLINK hStarShip;
+	uint8_t name_index {};
+	HLINK hStarShip {};
 
 	assert(GetLinkSize(pQueue) == sizeof(STARSHIP) || GetLinkSize(pQueue) == sizeof(SHIP_FRAGMENT));
 
 	do
 	{
-		HLINK hNextShip;
+		HLINK hNextShip {};
 
 		name_index = PickCaptainName();
 		for (hStarShip = GetHeadLink(pQueue); hStarShip;
 			 hStarShip = hNextShip)
 		{
-			SHIP_BASE* ShipPtr;
 			uint8_t test_name_index = -1;
 
-			ShipPtr = (SHIP_BASE*)LockLink(pQueue, hStarShip);
+			const SHIP_BASE* ShipPtr {(SHIP_BASE*)LockLink(pQueue, hStarShip)};
 			hNextShip = _GetSuccLink(ShipPtr);
 			if (ShipPtr->SpeciesID == SpeciesID)
 			{
@@ -784,18 +746,16 @@ NameCaptain(QUEUE* pQueue, SPECIES_ID SpeciesID)
 HSHIPFRAG
 CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
 {
-	HFLEETINFO hFleet;
-	HSHIPFRAG hBuiltShip;
-	FLEET_INFO* TemplatePtr;
-	uint8_t captains_name_index;
+	HFLEETINFO hFleet {};
+	uint8_t captains_name_index {};
 
 	assert(GetLinkSize(pDstQueue) == sizeof(SHIP_FRAGMENT));
 
 	// If options mismatch with SIS, it means we're in a load window.
 	// In that case we want to find the correct fleet ID for that ship.
-	if ((uqm::UQMOptions::read().shipSeed && GLOBAL_SIS(ShipSeed) == 0)
-		|| (!uqm::UQMOptions::read().shipSeed && GLOBAL_SIS(ShipSeed) != 0)
-		|| (uqm::UQMOptions::read().customSeed != GLOBAL_SIS(Seed)))
+	if ((uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) == 0)
+		|| (!uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) != 0)
+		|| (uqm::currentSeed().value != GLOBAL_SIS(Seed)))
 	{
 		hFleet = GetSeededFleetFromIndex(shipIndex);
 	}
@@ -809,7 +769,7 @@ CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
 		return 0;
 	}
 
-	TemplatePtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	const FLEET_INFO* TemplatePtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
 	if (shipIndex == SAMATRA_SHIP)
 	{
 		captains_name_index = 0;
@@ -819,12 +779,10 @@ CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
 		captains_name_index = NameCaptain(pDstQueue,
 										  TemplatePtr->SpeciesID);
 	}
-	hBuiltShip = Build(pDstQueue, TemplatePtr->SpeciesID);
+	HSHIPFRAG hBuiltShip {Build(pDstQueue, TemplatePtr->SpeciesID)};
 	if (hBuiltShip)
 	{
-		SHIP_FRAGMENT* ShipFragPtr;
-
-		ShipFragPtr = LockShipFrag(pDstQueue, hBuiltShip);
+		SHIP_FRAGMENT* ShipFragPtr {LockShipFrag(pDstQueue, hBuiltShip)};
 		ShipFragPtr->captains_name_index = captains_name_index;
 		ShipFragPtr->race_strings = TemplatePtr->race_strings;
 		ShipFragPtr->icons = TemplatePtr->icons;
@@ -853,18 +811,17 @@ CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
  * ship of race 'which_ship' */
 int SetEscortCrewComplement(RACE_ID which_ship, uint16_t crew_level, uint8_t captain)
 {
-	HFLEETINFO hFleet;
-	FLEET_INFO* TemplatePtr;
-	HSHIPFRAG hStarShip, hNextShip;
+	HSHIPFRAG hStarShip {};
+	HSHIPFRAG hNextShip {};
 	SHIP_FRAGMENT* StarShipPtr = 0;
-	int Index;
+	int Index {};
 
-	hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), which_ship);
+	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), which_ship)};
 	if (!hFleet)
 	{
 		return -1;
 	}
-	TemplatePtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	const FLEET_INFO* TemplatePtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
 
 	/* Find first ship of which_ship race */
 	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q)), Index = 0;
@@ -1008,8 +965,8 @@ static void
 upgradeSwitch(int upgrade, int val)
 {
 	int var = 0;
-	uint8_t LanderShields;
-	int ModuleCost;
+	uint8_t LanderShields {};
+	int ModuleCost {};
 
 	if (val)
 	{
@@ -1108,9 +1065,7 @@ upgradeSwitch(int upgrade, int val)
 static void
 cheatAddRemoveDevices(void)
 {
-	uint8_t i;
-
-	for (i = 0; i < std::size(optDeviceArray); i++)
+	for (uint8_t i {0}; i < std::size(optDeviceArray); i++)
 	{
 		if (optDeviceArray[i] != uqm::CheatAction::None)
 		{
@@ -1122,9 +1077,7 @@ cheatAddRemoveDevices(void)
 static void
 cheatAddRemoveUpgrades(void)
 {
-	uint8_t i;
-
-	for (i = 0; i < NUM_UPGRADES; i++)
+	for (uint8_t i {0}; i < NUM_UPGRADES; i++)
 	{
 		if (optUpgradeArray[i] != uqm::CheatAction::None)
 		{
@@ -1135,7 +1088,7 @@ cheatAddRemoveUpgrades(void)
 
 void loadGameCheats(void)
 {
-	if (EXTENDED && !StarSeed)
+	if (EXTENDED && !uqm::isStarSeed())
 	{
 		plot_map[MELNORME0_DEFINED].star->Type =
 			MAKE_STAR(SUPER_GIANT_STAR, ORANGE_BODY, -1);
@@ -1143,7 +1096,7 @@ void loadGameCheats(void)
 
 	if (uqm::UQMOptions::read().infiniteRU)
 	{
-		oldRU = GlobData.SIS_state.ResUnits;
+		oldRU = uqm::gameState().sis().ResUnits;
 	}
 	else
 	{
@@ -1162,7 +1115,7 @@ void loadGameCheats(void)
 
 	if (uqm::UQMOptions::read().infiniteFuel)
 	{
-		loadFuel = GlobData.SIS_state.FuelOnBoard;
+		loadFuel = uqm::gameState().sis().FuelOnBoard;
 		GLOBAL_SIS(FuelOnBoard) = GetFuelTankCapacity();
 	}
 	else
@@ -1187,15 +1140,15 @@ Jitter(uint16_t str, uint16_t rand_val)
 
 void JitDebug(FLEET_INFO* FleetPtr, uint16_t rand_val_x, uint16_t rand_val_y)
 {
-	static const char* const fleet_name[] =
+	const static char* const fleet_name[] =
 		{"ERROR", "Arilou", "CHMMR", "Earthling", "Orz", "Pkunk",
 		 "Shofixti", "Spathi", "Supox", "Thraddash", "Utwig", "VUX",
 		 "Yehat", "Melnorme", "Druuge", "Ilwrath", "Mycon", "Slylandro",
 		 "Umgah", "Ur Quan", "ZoqFotPik", "Syreen", "Kohr Ah",
 		 "Androsynth", "Chenjesu", "Mmrnmhrm"};
-	uint16_t str = (FleetPtr->actual_strength > 0 ?
-						FleetPtr->actual_strength :
-						WarEraStrength(FleetPtr->SpeciesID));
+	const uint16_t str = (FleetPtr->actual_strength > 0 ?
+							  FleetPtr->actual_strength :
+							  WarEraStrength(FleetPtr->SpeciesID));
 	fmt::print(stderr, "{} Fleet {}: Actual Str {}; WarEra Str {}; ",
 			   fleet_name[FleetPtr->SpeciesID > 25 ? 0 : FleetPtr->SpeciesID],
 			   (int)FleetPtr->SpeciesID,
@@ -1468,7 +1421,7 @@ Homeworld(SPECIES_ID SpeciesID)
 // For Prime seed games this just returns, as the fleet does not relocate.
 void SeedFleet(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap)
 {
-	if ((!StarSeed) || (g_seedType == uqm::SeedType::MRQ))
+	if ((!uqm::isStarSeed()) || (uqm::currentSeed().type == uqm::SeedType::MRQ))
 	{
 		return;
 	}
@@ -1521,9 +1474,10 @@ void SeedFleet(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap)
 GFXPOINT
 SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 {
-	uint16_t rand_val_x, rand_val_y;
-	uint16_t home;				// Plot ID of the homeworld for the fleet
-	uint16_t strength;			// Strength of the fleet
+	uint16_t rand_val_x {};
+	uint16_t rand_val_y {};
+	uint16_t home {};			// Plot ID of the homeworld for the fleet
+	uint16_t strength {};		// Strength of the fleet
 	GFXPOINT warpoint;			// location being visited, or offset for samatra
 	GFXPOINT location = {0, 0}; // The results of the seeding
 	bool myRNG = false;			// If you create RNG, clean up RNG
@@ -1536,7 +1490,7 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 	}
 
 	// Firstly, handle hard coded data from prime seed
-	if (!StarSeed || g_seedType == uqm::SeedType::MRQ)
+	if (!uqm::isStarSeed() || uqm::currentSeed().type == uqm::SeedType::MRQ)
 	{
 		return DefaultFleetLocation(FleetPtr->SpeciesID, visit);
 	}
@@ -1570,19 +1524,17 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "SeedFleet creating a STAR GEN RNG\n");
 #endif
-		StarGenRNG = RandomContext_New();
+		StarGenRNG.emplace();
 		myRNG = true;
 	}
-	RandomContext_SeedRandom(StarGenRNG,
-							 GetRandomSeedForStar(plotmap[home].star));
-	rand_val_x = RandomContext_Random(StarGenRNG);
-	rand_val_y = RandomContext_Random(StarGenRNG);
+	StarGenRNG->reseed(GetRandomSeedForStar(plotmap[home].star));
+	rand_val_x = StarGenRNG->next();
+	rand_val_y = StarGenRNG->next();
 	if (visit > 0 && visit != SAMATRA_DEFINED && visit < NUM_PLOTS)
 	{
-		RandomContext_SeedRandom(StarGenRNG,
-								 GetRandomSeedForStar(plotmap[visit].star));
-		rand_val_x += RandomContext_Random(StarGenRNG) % sizeof(uint16_t);
-		rand_val_y += RandomContext_Random(StarGenRNG) % sizeof(uint16_t);
+		StarGenRNG->reseed(GetRandomSeedForStar(plotmap[visit].star));
+		rand_val_x += StarGenRNG->next() % sizeof(uint16_t);
+		rand_val_y += StarGenRNG->next() % sizeof(uint16_t);
 		// If there's a conflict, this will assist in WARPATH
 		warpoint = plotmap[visit].star_pt;
 	}
@@ -1592,11 +1544,11 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 		// the SAMATRA center.  Pick a spot nearby and then jitter from there.
 		// First, imagine a coord near SAMATRA that Utwig/Supox/Thraddash can
 		// sort of share (it will bias in the general direction of home).
-		RandomContext_SeedRandom(StarGenRNG, GetRandomSeedForStar(plotmap[visit].star));
-		uint16_t rand_val_s = RandomContext_Random(StarGenRNG);
+		StarGenRNG->reseed(GetRandomSeedForStar(plotmap[visit].star));
+		const uint16_t rand_val_s = StarGenRNG->next();
 		warpoint = GFXPOINT {
-			plotmap[visit].star_pt.x + lowByte(rand_val_s) * 2 * AWAY_X(visit),
-			plotmap[visit].star_pt.y + highByte(rand_val_s) * 2 * AWAY_Y(visit)};
+			plotmap[visit].star_pt.x + uqm::lowByte(rand_val_s) * 2 * AWAY_X(visit),
+			plotmap[visit].star_pt.y + uqm::highByte(rand_val_s) * 2 * AWAY_Y(visit)};
 
 		fmt::format_to_sz_n(buf, "'Sa-Matra' center {:05.1} : {:05.1}\n",
 							(float)warpoint.x / 10, (float)warpoint.y / 10);
@@ -1844,8 +1796,7 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 #endif
 	if (StarGenRNG && myRNG)
 	{
-		RandomContext_Delete(StarGenRNG);
-		StarGenRNG = nullptr;
+		StarGenRNG.reset();
 	}
 	return (location);
 }

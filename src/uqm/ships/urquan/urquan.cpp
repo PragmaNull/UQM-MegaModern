@@ -126,7 +126,7 @@ static RACE_DESC urquan_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_SPEED* MISSILE_LIFE,
+			MISSILE_SPEED * MISSILE_LIFE,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -140,7 +140,7 @@ static RACE_DESC urquan_desc =
 static uint16_t
 initialize_fusion(ELEMENT* ShipPtr, HELEMENT FusionArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -165,8 +165,7 @@ initialize_fusion(ELEMENT* ShipPtr, HELEMENT FusionArray[])
 static void
 fighter_postprocess(ELEMENT* ElementPtr)
 {
-	HELEMENT Laser;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	LASER_BLOCK LaserBlock;
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -179,15 +178,15 @@ fighter_postprocess(ELEMENT* ElementPtr)
 	LaserBlock.flags = IGNORE_SIMILAR;
 	LaserBlock.pixoffs = FIGHTER_OFFSET;
 	LaserBlock.color = BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x0A), 0x0E);
-	Laser = initialize_laser(&LaserBlock);
+	HELEMENT Laser {initialize_laser(&LaserBlock)};
 	if (Laser)
 	{
-		ELEMENT* LaserPtr;
+		ELEMENT* LaserPtr {};
 
 		LockElement(Laser, &LaserPtr);
 		SetElementStarShip(LaserPtr, StarShipPtr);
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* FIGHTER_ZAP */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 					 LaserPtr);
@@ -217,7 +216,7 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //	{
 //		ElementPtr->life_span = ElementPtr->thrust_wait;
 //
-//		SetPrimColor (&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+//		SetPrimColor (&DisplayArray[ElementPtr->PrimIndex],
 //			colorTable[ElementPtr->colorCycleIndex]);
 //
 //		ElementPtr->state_flags &= ~DISAPPEARING;
@@ -245,8 +244,8 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //		IonElementPtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
 //		IonElementPtr->thrust_wait = ION_LIFE;
 //		IonElementPtr->life_span = IonElementPtr->thrust_wait;
-//		SetPrimType (&(GLOBAL (DisplayArray))[IonElementPtr->PrimIndex], POINT_PRIM);
-//		SetPrimColor (&(GLOBAL (DisplayArray))[IonElementPtr->PrimIndex], START_ION_COLOR);
+//		SetPrimType (&DisplayArray[IonElementPtr->PrimIndex], POINT_PRIM);
+//		SetPrimColor (&DisplayArray[IonElementPtr->PrimIndex], START_ION_COLOR);
 //		IonElementPtr->colorCycleIndex = 0;
 //		IonElementPtr->current.location = ElementPtr->current.location;
 //		IonElementPtr->current.location.x +=
@@ -270,7 +269,7 @@ fighter_postprocess(ELEMENT* ElementPtr)
 static void
 fighter_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -278,15 +277,14 @@ fighter_preprocess(ELEMENT* ElementPtr)
 	if (FIGHTER_LIFE - ElementPtr->life_span > TRACK_THRESHOLD
 		&& !(ElementPtr->state_flags & CHANGING))
 	{
-		bool Enroute;
-		uint16_t orig_facing, facing;
-		int32_t delta_x, delta_y;
-		ELEMENT* eptr;
+		uint16_t orig_facing {};
+		uint16_t facing {};
+		ELEMENT* eptr {};
 
-		Enroute = true;
+		bool Enroute {true};
 
-		delta_x = StarShipPtr->RaceDescPtr->ship_info.crew_level;
-		delta_y = ElementPtr->life_span;
+		int32_t delta_x {StarShipPtr->RaceDescPtr->ship_info.crew_level};
+		int32_t delta_y {ElementPtr->life_span};
 
 		orig_facing = facing =
 			GetFrameIndex(ElementPtr->current.image.frame);
@@ -390,26 +388,24 @@ static void
 fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr0, &StarShipPtr);
 	if (GRAVITY_MASS(ElementPtr1->mass_points))
 	{
-		HELEMENT hFighterElement;
-
-		hFighterElement = AllocElement();
+		HELEMENT hFighterElement {AllocElement()};
 		if (hFighterElement)
 		{
-			uint16_t primIndex, travel_facing;
-			int16_t delta_facing;
-			ELEMENT* FighterElementPtr;
+			uint16_t travel_facing {};
+			int16_t delta_facing {};
+			ELEMENT* FighterElementPtr {};
 
 			LockElement(hFighterElement, &FighterElementPtr);
-			primIndex = FighterElementPtr->PrimIndex;
+			const uint16_t primIndex {FighterElementPtr->PrimIndex};
 			*FighterElementPtr = *ElementPtr0;
 			FighterElementPtr->PrimIndex = primIndex;
-			(GLOBAL(DisplayArray))[primIndex] =
-				(GLOBAL(DisplayArray))[ElementPtr0->PrimIndex];
+			DisplayArray[primIndex] =
+				DisplayArray[ElementPtr0->PrimIndex];
 			FighterElementPtr->state_flags &= ~PRE_PROCESS;
 			FighterElementPtr->state_flags |= CHANGING;
 			FighterElementPtr->next = FighterElementPtr->current;
@@ -460,7 +456,7 @@ fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 	else if (ElementPtr1->state_flags & PLAYER_SHIP)
 	{
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* FIGHTERS_RETURN */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 					 ElementPtr1);
@@ -483,23 +479,23 @@ fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static void
 spawn_fighters(ELEMENT* ElementPtr)
 {
-	int16_t i;
-	uint16_t facing;
-	int32_t delta_x, delta_y;
-	HELEMENT hFighterElement;
-	STARSHIP* StarShipPtr;
+	int16_t i {};
+	uint16_t facing {};
+	HELEMENT hFighterElement {};
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	facing = StarShipPtr->ShipFacing + ANGLE_TO_FACING(HALF_CIRCLE);
-	delta_x = COSINE(FACING_TO_ANGLE(facing), DISPLAY_TO_WORLD(RES_SCALE(14)));
-	delta_y = SINE(FACING_TO_ANGLE(facing), DISPLAY_TO_WORLD(RES_SCALE(14)));
+	const int32_t delta_x {COSINE(FACING_TO_ANGLE(facing), DISPLAY_TO_WORLD(RES_SCALE(14)))};
+	const int32_t delta_y {SINE(FACING_TO_ANGLE(facing), DISPLAY_TO_WORLD(RES_SCALE(14)))};
 
 	i = ElementPtr->crew_level > 2 ? 2 : 1;
 	while (i-- && (hFighterElement = AllocElement()))
 	{
-		int32_t sx, sy;
-		uint16_t fighter_facing;
-		ELEMENT* FighterElementPtr;
+		int32_t sx {};
+		int32_t sy {};
+		uint16_t fighter_facing {};
+		ELEMENT* FighterElementPtr {};
 
 		if (!antiCheat(ElementPtr, false, uqm::GodModeFlags::NoDamage))
 		{
@@ -515,7 +511,7 @@ spawn_fighters(ELEMENT* ElementPtr)
 		FighterElementPtr->state_flags = APPEARING | FINITE_LIFE
 									   | CREW_OBJECT | IGNORE_SIMILAR;
 		FighterElementPtr->life_span = FIGHTER_LIFE;
-		SetPrimType(&(GLOBAL(DisplayArray))[FighterElementPtr->PrimIndex],
+		SetPrimType(&DisplayArray[FighterElementPtr->PrimIndex],
 					STAMP_PRIM);
 		{
 			FighterElementPtr->preprocess_func = fighter_preprocess;
@@ -560,13 +556,12 @@ static void
 urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					uint16_t ConcernCounter)
 {
-	EVALUATE_DESC* lpEvalDesc;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
 	ObjectsOfConcern[ENEMY_SHIP_INDEX].MoveState = PURSUE;
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_WEAPON_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->MoveState == ENTICE
 		&& (!(lpEvalDesc->ObjectPtr->state_flags & CREW_OBJECT)
@@ -619,7 +614,7 @@ urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static void
 urquan_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SPECIAL)
@@ -627,7 +622,7 @@ urquan_postprocess(ELEMENT* ElementPtr)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* LAUNCH_FIGHTERS */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);
@@ -640,8 +635,6 @@ urquan_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_urquan(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		urquan_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -660,7 +653,7 @@ init_urquan(void)
 	urquan_desc.init_weapon_func = initialize_fusion;
 	urquan_desc.cyborg_control.intelligence_func = urquan_intelligence;
 
-	RaceDescPtr = &urquan_desc;
+	RACE_DESC* RaceDescPtr {&urquan_desc};
 
 	return (RaceDescPtr);
 }

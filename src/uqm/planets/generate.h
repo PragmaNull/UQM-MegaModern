@@ -21,7 +21,7 @@ typedef struct GenerateFunctions GenerateFunctions;
 
 #include <cstdint>
 #include "planets.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

@@ -17,7 +17,7 @@
  */
 
 #include "oscill.h"
-
+#include <cmath>
 #include "setup.h"
 // for OffScreenContext
 #include "libs/graphics/gfx_common.h"
@@ -25,6 +25,7 @@
 #include "libs/sound/sound.h"
 #include "libs/sound/trackplayer.h"
 #include "core/log/log.h"
+#include "core/stl/vector.h"
 #include "colors.h"
 #include "menustat.h"
 #include "util.h"
@@ -34,6 +35,7 @@ static FRAME scope_frame;
 static int scope_init = 0;
 static FRAME scopeWork;
 static EXTENT scopeSize;
+static uqstl::vector<uint8_t> scopeData {};
 bool oscillDisabled = false;
 
 void InitOscilloscope(FRAME scopeBg)
@@ -41,7 +43,7 @@ void InitOscilloscope(FRAME scopeBg)
 	scope_frame = scopeBg;
 	if (!scope_init)
 	{
-		EXTENT size = GetFrameBounds(scope_frame);
+		const EXTENT size = GetFrameBounds(scope_frame);
 
 		scopeWork = CaptureDrawable(CreateDrawable(
 			WANT_PIXMAP | MAPPED_TO_DISPLAY,
@@ -50,6 +52,7 @@ void InitOscilloscope(FRAME scopeBg)
 		// assume and subtract the borders
 		scopeSize.width = RES_DESCALE(size.width);
 		scopeSize.height = RES_DESCALE(size.height);
+		scopeData.resize(static_cast<size_t>(scopeSize.width));
 
 		scope_init = 1;
 	}
@@ -71,8 +74,8 @@ ScaleHeightByVolume(uint8_t scope_data, bool toScale)
 	}
 	else
 	{
-		float scale = (float)musicVolume / NORMAL_VOLUME;
-		float res;
+		const float scale = (float)musicVolume / NORMAL_VOLUME;
+		float res {NAN};
 
 		if (scope_data >= (scopeSize.height / 2))
 		{
@@ -91,11 +94,10 @@ ScaleHeightByVolume(uint8_t scope_data, bool toScale)
 
 void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toScale)
 {
-	int i;
-	GFXCONTEXT oldContext;
+	int i {};
 	Color scopeColor;
 
-	oldContext = SetContext(OffScreenContext);
+	GFXCONTEXT oldContext {SetContext(OffScreenContext)};
 	SetContextFGFrame(scopeWork);
 	SetContextClipRect(nullptr);
 
@@ -156,18 +158,14 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 void DrawOscilloscope(void)
 {
 	STAMP s;
-	uint8_t scope_data[128];
+	uint8_t* const scope_data {scopeData.data()};
 
 	if (oscillDisabled)
 	{
 		return;
 	}
 
-	// log_add (log_Debug, "(size_t)scopeSize.width %lu,
-	//		sizeof (scope_data) %lu", (size_t)scopeSize.width,
-	//		sizeof (scope_data));
-
-	assert((size_t)scopeSize.width <= sizeof(scope_data));
+	assert(scopeData.size() == static_cast<size_t>(scopeSize.width));
 	assert(scopeSize.height < 128);
 
 	if (GraphForegroundStream(
@@ -197,9 +195,8 @@ void DrawOscilloscope(void)
 void FlattenOscilloscope(void)
 {
 	STAMP s;
-	GFXCONTEXT OldContext;
 
-	OldContext = SetContext(RadarContext);
+	GFXCONTEXT OldContext {SetContext(RadarContext)};
 
 	DrawOscilloscopeLines(&s, nullptr, false, false);
 	s.origin = MAKE_POINT(0, 0);
@@ -226,8 +223,8 @@ bool sliderDisabled = false;
 
 void InitSlider(int x, int y, int width, FRAME sliderFrame, FRAME buttonFrame)
 {
-	EXTENT sliderSize = GetFrameBounds(sliderFrame);
-	EXTENT buttonSize = GetFrameBounds(buttonFrame);
+	const EXTENT sliderSize = GetFrameBounds(sliderFrame);
+	const EXTENT buttonSize = GetFrameBounds(buttonFrame);
 
 	sliderStamp.origin.x = x;
 	sliderStamp.origin.y = y;
@@ -248,7 +245,6 @@ void SetSliderImage(FRAME f)
 
 void DrawSlider(void)
 {
-	int offs;
 	static int last_offs = -1;
 
 	if (sliderDisabled || (!usingSpeech && uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC))
@@ -256,7 +252,7 @@ void DrawSlider(void)
 		return;
 	}
 
-	offs = GetTrackPosition(sliderSpace);
+	const int offs {GetTrackPosition(sliderSpace)};
 	if (offs != last_offs || sliderChanged)
 	{
 		sliderChanged = false;

@@ -31,10 +31,11 @@
 #include "../nameref.h"
 #include "../ifontres.h"
 #include "../igfxres.h"
+#include "core/stl/optional.h"
 
 #include <ctype.h>
 #include <string.h>
-#include "../lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 
 #define COL_MULTIPLIER (isPC(uqm::UQMOptions::read().landerStyle) || IS_PAD ? 7 : 6)
@@ -47,7 +48,8 @@ extern FRAME SpaceJunkFrame;
 static void
 ClearReportArea(int16_t startx)
 {
-	uint16_t x, y;
+	uint16_t x {};
+	uint16_t y {};
 	GFXRECT r;
 	STAMP s;
 
@@ -91,17 +93,16 @@ ClearReportArea(int16_t startx)
 }
 
 static void
-MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
+MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 {
-	int end_page_len;
+	int end_page_len {};
 	char end_page_buf[200] {};
-	UniChar last_c = 0;
-	uint16_t row_cells;
-	bool Sleepy;
-	GFXRECT r, contextRect;
+	uqm::UniChar last_c = 0;
+	GFXRECT r;
+	GFXRECT contextRect;
 	TEXT t;
 	Color fgcolor;
-	int16_t startx;
+	int16_t startx {};
 
 	int16_t total_lines = -1;
 	int16_t curr_line = -1;
@@ -109,7 +110,7 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 
 	fmt::format_to_n(end_page_buf, sizeof(end_page_buf) - 1, "{}\n",
 					 GAME_STRING(static_cast<int>(SCAN_STRING_BASE) + static_cast<int>(NUM_SCAN_TYPES)));
-	end_page_len = utf8StringCount(end_page_buf);
+	end_page_len = uqm::utf8StringCount(end_page_buf);
 
 	GetFrameRect(SetAbsFrameIndex(SpaceJunkFrame, 18), &r);
 	GetContextClipRect(&contextRect);
@@ -117,13 +118,13 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 	t.align = ALIGN_LEFT;
 	t.CharCount = 1;
 	t.pStr = pStr;
-	Sleepy = true;
+	bool Sleepy {true};
 
 	FlushInput();
 
 	t.baseline.y = r.extent.height + RES_SCALE(1);
 	// Text vertical alignment
-	row_cells = 0;
+	uint16_t row_cells {0};
 	fgcolor = BUILD_COLOR(MAKE_RGB15(0x00, 0x1F, 0x00), 0xFF);
 
 	if (contextRect.extent.width < SCALED_MAP_WIDTH)
@@ -146,16 +147,13 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 
 		if (is3DO(uqm::UQMOptions::read().landerStyle))
 		{
-			const char* pCurrStr;
-			uint16_t length;
-
-			pCurrStr = t.pStr;
+			const char* pCurrStr {t.pStr};
 			total_lines = 0;
 			curr_line = 0;
 
-			for (length = StrLen; length > 0; length--)
+			for (uint16_t length {StrLen}; length > 0; length--)
 			{
-				if (getCharFromString(&pCurrStr) == '\n')
+				if (uqm::getCharFromString(&pCurrStr) == '\n')
 				{
 					total_lines++;
 				}
@@ -170,21 +168,19 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 
 	while (StrLen)
 	{
-		uint16_t col_cells;
-		const char* pLastStr;
-		const char* pNextStr;
-		uint16_t lf_pos;
+		const char* pNextStr {};
+		uint16_t lf_pos {};
 
-		pLastStr = t.pStr;
+		const char* pLastStr {t.pStr};
 
 		// scan for LFs in the remaining string
 		// trailing LF will be ignored
 		for (lf_pos = StrLen, pNextStr = t.pStr;
-			 lf_pos && getCharFromString(&pNextStr) != '\n';
+			 lf_pos && uqm::getCharFromString(&pNextStr) != '\n';
 			 --lf_pos)
 			;
 
-		col_cells = 0;
+		uint16_t col_cells {0};
 		// check if the remaining text fits on current screen
 		if (row_cells == NUM_CELL_ROWS - 1
 			&& (StrLen > NUM_CELL_COLS || lf_pos > 1))
@@ -216,18 +212,17 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 
 		do
 		{
-			uint16_t word_chars;
-			const char* pStr;
-			UniChar c;
+			const char* pStr {};
+			uqm::UniChar c {};
 
 			pStr = t.pStr;
 			pNextStr = t.pStr;
-			while (UniChar_isGraph(getCharFromString(&pNextStr)))
+			while (uqm::isGraphChar(uqm::getCharFromString(&pNextStr)))
 			{
 				pStr = pNextStr;
 			}
 
-			word_chars = (uint16_t)utf8StringCountN(t.pStr, pStr);
+			uint16_t word_chars {(uint16_t)uqm::utf8StringCount(uqstl::string_view {t.pStr, static_cast<size_t>(pStr - t.pStr)})};
 			if ((col_cells += word_chars) <= NUM_CELL_COLS)
 			{
 				TimeCount TimeOut;
@@ -240,9 +235,9 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 				while (word_chars--)
 				{
 					pNextStr = t.pStr;
-					c = getCharFromString(&pNextStr);
+					c = uqm::getCharFromString(&pNextStr);
 
-					if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+					if (uqm::currentActivity() & CHECK_ABORT)
 					{
 						return;
 					}
@@ -260,39 +255,39 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 							scale = 2;
 						}
 
-						PlaySound(ReadOutSounds, NotPositional(), nullptr,
+						PlaySound(GetSound(ReadOutSounds, 0), NotPositional(), nullptr,
 								  GAME_SOUND_PRIORITY);
 
 						switch (c)
 						{
 							case ',':
-								TimeOut += GameTicksPerSecond / (4 << scale);
+								TimeOut += c_gameSecond / (4 << scale);
 								break;
 							case '.':
-								TimeOut += GameTicksPerSecond / (2 << scale);
+								TimeOut += c_gameSecond / (2 << scale);
 								break;
 							case '!':
 								if (last_c != '!' && last_c != ' ')
 								{
-									TimeOut += GameTicksPerSecond / (2 << scale);
+									TimeOut += c_gameSecond / (2 << scale);
 								}
 								else
 								{
-									TimeOut += GameTicksPerSecond / (20 << scale);
+									TimeOut += c_gameSecond / (20 << scale);
 								}
 								break;
 							case '?':
 								if (last_c != '?' && last_c != ' ')
 								{
-									TimeOut += GameTicksPerSecond / (2 << scale);
+									TimeOut += c_gameSecond / (2 << scale);
 								}
 								else
 								{
-									TimeOut += GameTicksPerSecond / (20 << scale);
+									TimeOut += c_gameSecond / (20 << scale);
 								}
 								break;
 							default:
-								TimeOut += GameTicksPerSecond / (20 << scale);
+								TimeOut += c_gameSecond / (20 << scale);
 								break;
 						}
 
@@ -300,7 +295,7 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 
 						if (word_chars == 0)
 						{
-							TimeOut += GameTicksPerSecond / (20 << scale);
+							TimeOut += c_gameSecond / (20 << scale);
 						}
 
 						if (WaitForActButtonUntil(true, TimeOut, false))
@@ -316,7 +311,7 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 				}
 
 				++col_cells;
-				last_c = getCharFromString(&t.pStr);
+				last_c = uqm::getCharFromString(&t.pStr);
 				t.baseline.x += r.extent.width + RES_SCALE(1);
 				// Space spacing
 
@@ -358,11 +353,9 @@ MakeReport(SOUND ReadOutSounds, char* pStr, uint16_t StrLen)
 	}
 }
 
-void DoDiscoveryReport(SOUND ReadOutSounds)
+void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 {
-	GFXCONTEXT OldContext;
-	GFXCONTEXT context;
-	bool ownContext;
+	bool ownContext {};
 	STAMP saveStamp;
 
 #ifdef DEBUG
@@ -372,12 +365,12 @@ void DoDiscoveryReport(SOUND ReadOutSounds)
 	}
 #endif
 
-	context = GetScanContext(&ownContext);
-	OldContext = SetContext(context);
+	GFXCONTEXT context {GetScanContext(&ownContext)};
+	GFXCONTEXT OldContext {SetContext(context)};
 	saveStamp = SaveContextFrame(nullptr);
 	{
-		FONT OldFont;
-		FRAME OldFontEffect;
+		FONT OldFont {};
+		FRAME OldFontEffect {};
 
 		OldFont = SetContextFont(
 			pSolarSysState->SysInfo.PlanetInfo.LanderFont);
@@ -391,21 +384,18 @@ void DoDiscoveryReport(SOUND ReadOutSounds)
 			OldFontEffect = SetContextFontEffect(nullptr);
 		}
 
-		luaUqm_comm_init(nullptr, NULL_RESOURCE);
-		bool allocated = false;
-		char* StrPtr = (char*)GetStringAddress(pSolarSysState->SysInfo.PlanetInfo.DiscoveryString);
-		if (luaUqm_comm_stringNeedsInterpolate(StrPtr))
+		uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+		uqstl::late_constructed<uqstl::string> interpolatedReport {};
+		const PLANET_INFO& planetInfo {pSolarSysState->SysInfo.PlanetInfo};
+		uqstl::string_view report {planetInfo.DiscoveryStrings->text(planetInfo.DiscoveryIndex)};
+		if (uqm::UQMLua::needsInterpolate(report.data()))
 		{
-			allocated = true;
-			StrPtr = luaUqm_comm_stringInterpolate(StrPtr);
+			interpolatedReport.emplace(uqm::lua().interpolate(report));
+			report = *interpolatedReport;
 		}
-		MakeReport(ReadOutSounds, StrPtr, (uint16_t)strlen(StrPtr));
+		MakeReport(ReadOutSounds, report.data(), (uint16_t)report.size());
 
-		luaUqm_comm_uninit();
-		if (allocated)
-		{
-			HFree(StrPtr);
-		}
+		uqm::lua().endComm();
 
 		SetContextFontEffect(OldFontEffect);
 		SetContextFont(OldFont);

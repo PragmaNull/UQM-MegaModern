@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/gameev.h"
 #include "uqm/races.h"
 
@@ -296,7 +296,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, dont_want_to_fight))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SHOFIXTI_STACK4);
 		switch (NumVisits++)
@@ -457,15 +457,16 @@ Hostile(RESPONSE_REF R)
 static void
 Friendly(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
+	uint8_t i {};
 	struct
 	{
 		RESPONSE_REF pStr;
 		char* c_buf;
 	} Resp[3];
-	static char buf0[80], buf1[80];
+	static char buf0[80];
+	static char buf1[80];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	memset(Resp, 0, sizeof(Resp));
 	if (PLAYER_SAID(R, report0))
 	{
@@ -587,7 +588,7 @@ Friendly(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -605,7 +606,7 @@ Intro(void)
 	}
 	else
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SHOFIXTI_VISITS);
 		if (GET_GAME_STATE(SHOFIXTI_KIA))
@@ -667,7 +668,7 @@ Intro(void)
 static uint16_t
 uninit_shofixti(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -680,13 +681,11 @@ post_shofixti_enc(void)
 LOCDATA*
 init_shofixti_comm(void)
 {
-	LOCDATA* retval;
-
 	shofixti_desc.init_encounter_func = Intro;
 	shofixti_desc.post_encounter_func = post_shofixti_enc;
 	shofixti_desc.uninit_encounter_func = uninit_shofixti;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 	if (EXTENDED)
@@ -701,7 +700,7 @@ init_shofixti_comm(void)
 
 	setSegue(Segue_peace);
 
-	retval = &shofixti_desc;
+	LOCDATA* retval {&shofixti_desc};
 
 	return (retval);
 }

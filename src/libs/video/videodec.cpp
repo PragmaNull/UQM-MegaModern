@@ -20,7 +20,6 @@
 #include "dukvid.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
-#include "libs/memlib.h"
 #include "../../uqm/units.h"
 
 #define MAX_REG_DECODERS 31
@@ -57,8 +56,6 @@ VideoDecoder_GetName(TFB_VideoDecoder* decoder)
 bool VideoDecoder_Init(int flags, int depth, uint32_t Rmask, uint32_t Gmask,
 					   uint32_t Bmask, uint32_t Amask)
 {
-	TFB_RegVideoDecoder* info;
-
 	vd_inited = false;
 
 	if (depth < 15 || depth > 32)
@@ -89,7 +86,7 @@ bool VideoDecoder_Init(int flags, int depth, uint32_t Rmask, uint32_t Gmask,
 	// END: adapted from SDL
 
 	// init built-in decoders
-	for (info = vd_decoders; info->ext; info++)
+	for (const TFB_RegVideoDecoder* info {vd_decoders}; info->ext; info++)
 	{
 		if (!info->funcs->InitModule(flags))
 		{
@@ -107,11 +104,9 @@ bool VideoDecoder_Init(int flags, int depth, uint32_t Rmask, uint32_t Gmask,
 
 void VideoDecoder_Uninit(void)
 {
-	TFB_RegVideoDecoder* info;
-
 	// uninit all decoders
 	// and unregister loaded decoders
-	for (info = vd_decoders; info->used; info++)
+	for (TFB_RegVideoDecoder* info {vd_decoders}; info->used; info++)
 	{
 		if (info->ext) // check if present
 		{
@@ -131,7 +126,7 @@ void VideoDecoder_Uninit(void)
 TFB_RegVideoDecoder*
 VideoDecoder_Register(const char* fileext, TFB_VideoDecoderFuncs* decvtbl)
 {
-	TFB_RegVideoDecoder* info;
+	TFB_RegVideoDecoder* info {};
 	TFB_RegVideoDecoder* newslot = nullptr;
 
 	if (!decvtbl)
@@ -210,7 +205,7 @@ void VideoDecoder_Unregister(TFB_RegVideoDecoder* regdec)
 const TFB_VideoDecoderFuncs*
 VideoDecoder_Lookup(const char* fileext)
 {
-	TFB_RegVideoDecoder* info;
+	const TFB_RegVideoDecoder* info {};
 
 	for (info = vd_decoders; info->used && (!info->ext || strcmp(info->ext, fileext) != 0);
 		 ++info)
@@ -221,9 +216,7 @@ VideoDecoder_Lookup(const char* fileext)
 TFB_VideoDecoder*
 VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 {
-	const char* pext;
-	TFB_RegVideoDecoder* info;
-	TFB_VideoDecoder* decoder;
+	const TFB_RegVideoDecoder* info {};
 
 
 	if (!vd_inited)
@@ -231,7 +224,7 @@ VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 		return nullptr;
 	}
 
-	pext = strrchr(filename, '.');
+	const char* pext {strrchr(filename, '.')};
 	if (!pext)
 	{
 		uqm::log::warn("VideoDecoder_Load: Unknown file type");
@@ -248,7 +241,7 @@ VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 		return nullptr;
 	}
 
-	decoder = (TFB_VideoDecoder*)HCalloc(info->funcs->GetStructSize());
+	TFB_VideoDecoder* decoder {info->funcs->Create()};
 	decoder->funcs = info->funcs;
 	if (!decoder->funcs->Init(decoder, &vd_vidfmt))
 	{
@@ -256,13 +249,11 @@ VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 					   "Cannot init '{}' decoder, code {}",
 					   decoder->funcs->GetName(),
 					   decoder->funcs->GetError(decoder));
-		HFree(decoder);
+		decoder->funcs->Destroy(decoder);
 		return nullptr;
 	}
 
-	const uint32_t filenameLen = strlen(filename);
-	decoder->filename = (char*)HMalloc(filenameLen + 1);
-	uqm::strncpy_safe({decoder->filename, filenameLen + 1}, {filename, filenameLen});
+	decoder->filename = filename;
 	decoder->error = VIDEODECODER_OK;
 
 	if (!decoder->funcs->Open(decoder, dir, filename))
@@ -285,8 +276,6 @@ VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 // return: >0 = OK, 0 = EOF, <0 = Error
 int VideoDecoder_Decode(TFB_VideoDecoder* decoder)
 {
-	int ret;
-
 	if (!decoder)
 	{
 		return 0;
@@ -295,7 +284,7 @@ int VideoDecoder_Decode(TFB_VideoDecoder* decoder)
 	decoder->cur_frame = decoder->funcs->GetFrame(decoder);
 	decoder->pos = decoder->funcs->GetTime(decoder);
 
-	ret = decoder->funcs->DecodeNext(decoder);
+	const int ret {decoder->funcs->DecodeNext(decoder)};
 	if (ret == 0)
 	{
 		decoder->error = VIDEODECODER_EOF;
@@ -359,8 +348,7 @@ void VideoDecoder_Free(TFB_VideoDecoder* decoder)
 	decoder->funcs->Close(decoder);
 	decoder->funcs->Term(decoder);
 
-	HFree(decoder->filename);
-	HFree(decoder);
+	decoder->funcs->Destroy(decoder);
 }
 
 // BEGIN: adapted from SDL

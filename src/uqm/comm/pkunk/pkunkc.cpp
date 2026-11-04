@@ -19,7 +19,7 @@
 #include "../commall.h"
 #include "resinst.h"
 #include "strings.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "uqm/gameev.h"
 
@@ -212,7 +212,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 	else
 	{
-		uint8_t ReasonMask;
+		uint8_t ReasonMask {};
 
 		ReasonMask = GET_GAME_STATE(PKUNK_REASONS);
 		if (PLAYER_SAID(R, good_reason_1))
@@ -379,9 +379,7 @@ OfferAlliance(RESPONSE_REF R)
 static void
 AboutPkunk(RESPONSE_REF R)
 {
-	uint8_t InfoLeft;
-
-	InfoLeft = false;
+	uint8_t InfoLeft {false};
 	if (PLAYER_SAID(R, what_about_you))
 	{
 		NPCPhrase(ABOUT_US);
@@ -453,9 +451,7 @@ AboutPkunk(RESPONSE_REF R)
 static void
 AboutIlwrath(RESPONSE_REF R)
 {
-	uint8_t InfoLeft;
-
-	InfoLeft = false;
+	uint8_t InfoLeft {false};
 	if (PLAYER_SAID(R, what_about_ilwrath))
 	{
 		NPCPhrase(ABOUT_ILWRATH);
@@ -516,7 +512,7 @@ AboutIlwrath(RESPONSE_REF R)
 static void
 PkunkHome(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, no_conquest))
 	{
@@ -684,7 +680,7 @@ PkunkHome(RESPONSE_REF R)
 static void
 PkunkFriendlySpace(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, whats_up_space))
 	{
@@ -808,7 +804,7 @@ PkunkFriendlySpace(RESPONSE_REF R)
 static void
 PkunkNeutralSpace(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, form_alliance))
 	{
@@ -880,7 +876,7 @@ PkunkNeutralSpace(RESPONSE_REF R)
 static void
 PkunkMigrate(RESPONSE_REF R)
 {
-	uint8_t ReasonMask;
+	uint8_t ReasonMask {};
 	(void)R; // ignored
 
 	ReasonMask = GET_GAME_STATE(PKUNK_REASONS);
@@ -906,9 +902,10 @@ PkunkMigrate(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits, Manner;
+	uint8_t NumVisits {};
+	uint8_t Manner {};
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -976,7 +973,7 @@ Intro(void)
 			SET_GAME_STATE(CLEAR_SPINDLE_ON_SHIP, 1);
 		}
 		else if (!GET_GAME_STATE(PKUNK_SENSE_VICTOR)
-				 && GLOBAL(GameClock.year_index) > START_YEAR
+				 && uqm::gameState().clock().year() > START_YEAR
 				 && !GET_GAME_STATE(KOHR_AH_FRENZY))
 		{
 			NPCPhrase(SENSE_KOHRAH_VICTORY);
@@ -1163,14 +1160,14 @@ Intro(void)
 static uint16_t
 uninit_pkunk(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
 static void
 post_pkunk_enc(void)
 {
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
 		&& (Manner = GET_GAME_STATE(PKUNK_MANNER)) != 2)
@@ -1187,13 +1184,11 @@ post_pkunk_enc(void)
 LOCDATA*
 init_pkunk_comm(void)
 {
-	LOCDATA* retval;
-
 	pkunk_desc.init_encounter_func = Intro;
 	pkunk_desc.post_encounter_func = post_pkunk_enc;
 	pkunk_desc.uninit_encounter_func = uninit_pkunk;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
@@ -1202,7 +1197,7 @@ init_pkunk_comm(void)
 	pkunk_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	if (GET_GAME_STATE(PKUNK_MANNER) == 3
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		// Enter communications immediately.
 		setSegue(Segue_peace);
@@ -1212,7 +1207,7 @@ init_pkunk_comm(void)
 		// Ask the player whether to attack or talk.
 		setSegue(Segue_hostile);
 	}
-	retval = &pkunk_desc;
+	LOCDATA* retval {&pkunk_desc};
 
 	return (retval);
 }

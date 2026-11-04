@@ -20,7 +20,7 @@
 #define INPUT_H
 
 #include "port.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 extern void ProcessInputEvent(const SDL_Event* Event);
 

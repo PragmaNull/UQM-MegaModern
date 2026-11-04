@@ -27,7 +27,8 @@
 #include "core/log/log.h"
 #include <math.h>
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
+#include "uqm/random/UQMRandom.h"
 
 // define USE_ADDITIVE_SCAN_BLIT to use additive blittting
 // instead of transparency for the planet scans.
@@ -120,7 +121,7 @@ void DrawCurrentPlanetSphere(void)
 void DrawPlanetSphere(int x, int y, bool back)
 {
 	STAMP s;
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
 
 	BatchGraphics();
 	// Draw background on static image and not during zoom
@@ -153,9 +154,7 @@ void DrawPlanetSphere(int x, int y, bool back)
 
 void DrawDefaultPlanetSphere(void)
 {
-	GFXCONTEXT oldContext;
-
-	oldContext = SetContext(PlanetContext);
+	GFXCONTEXT oldContext {SetContext(PlanetContext)};
 	DrawPlanetSphere(
 		RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1), PLANET_ORG_Y, true);
 	SetContext(oldContext);
@@ -163,7 +162,7 @@ void DrawDefaultPlanetSphere(void)
 
 void RerenderPlanetSphere(void)
 {
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
 
 	if (uqm::UQMOptions::read().tintPlanSphere != uqm::EmulationMode::PC)
 	{
@@ -172,8 +171,7 @@ void RerenderPlanetSphere(void)
 
 	if (useDosSpheres)
 	{ // palette switch for coloring sphere into scan colors
-		uint16_t sc;
-		sc = Orbit->scanType;
+		uint16_t sc {Orbit->scanType};
 		if (sc > 2)
 		{
 			sc = 0;
@@ -184,9 +182,8 @@ void RerenderPlanetSphere(void)
 		}
 
 		XFormColorMap(
-			GetColorMapAddress(
-				SetAbsColorMapIndex(Orbit->sphereMap, sc)),
-			0);
+			GetColorMapAddress(Orbit->sphereMap, sc),
+			TimePeriod {});
 		XFormColorMap_step();
 	}
 
@@ -301,7 +298,7 @@ void PrepareNextRotationFrame(void)
 void PrepareNextRotationFrameForIP(PLANET_DESC* pPlanetDesc, int16_t frameCounter)
 {
 	PLANET_ORBIT* Orbit = &pPlanetDesc->orbit;
-	int oldPointIndex = pPlanetDesc->rotPointIndex;
+	const int oldPointIndex = pPlanetDesc->rotPointIndex;
 	// Go to next point, taking care of wraparounds
 
 	// No need to rotate planets that are off screen
@@ -378,35 +375,30 @@ void PrepareNextRotationFrameForIP(PLANET_DESC* pPlanetDesc, int16_t frameCounte
 	// to DrawStamp won't re-blit the frame unless scale has changed.
 }
 
-#if SDL_MAJOR_VERSION == 1
-#define ZOOM_RATE chooseIfHd(24, 42)
-#else
 #define ZOOM_RATE RES_SCALE(35)
-#endif
 #define ZOOM_TIME (GameTicksPerSecond * 6 / 5)
-
 
 // This takes care of zooming the planet sphere into place
 // when entering orbit
 void ZoomInPlanetSphere(void)
 {
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
 	const int base = GSCALE_IDENTITY;
-	int dx, dy;
-	int oldScale;
-	int i;
-	int frameCount;
-	int zoomCorner;
+	int oldScale {};
+	int frameCount {};
+	int zoomCorner {};
 	GFXRECT frameRect;
 	GFXRECT repairRect;
-	TimeCount NextTime, Now, RenderNextTime;
+	TimeCount NextTime;
+	TimeCount Now;
+	TimeCount RenderNextTime;
 
 	frameCount = ZOOM_TIME / (GameTicksPerSecond / ZOOM_RATE);
 
 	// Planet zoom in from a randomly chosen corner
-	zoomCorner = TFB_Random();
-	dx = 1 - (zoomCorner & 1) * 2;
-	dy = 1 - (zoomCorner & 2);
+	zoomCorner = uqm::random().next();
+	const int dx {1 - (zoomCorner & 1) * 2};
+	const int dy {1 - (zoomCorner & 2)};
 
 	if (Orbit->ObjectFrame)
 	{
@@ -417,15 +409,15 @@ void ZoomInPlanetSphere(void)
 		GetFrameRect(Orbit->SphereFrame, &frameRect);
 	}
 	repairRect = frameRect;
-	RenderNextTime = 0;
+	RenderNextTime = TimeCount {};
 
-	for (i = 0; i <= frameCount; ++i)
+	for (int i {0}; i <= frameCount; ++i)
 	{
-		double scale;
+		double scale {NAN};
 		GFXPOINT pt;
 
 		Now = GetTimeCounter();
-		NextTime = Now + (GameTicksPerSecond / ZOOM_RATE);
+		NextTime = Now + (c_gameSecond / ZOOM_RATE);
 
 		// Use 1 + e^-2 - e^(-2x / frameCount)) function to get a
 		// decelerating zoom like the one 3DO does (supposedly)
@@ -453,7 +445,7 @@ void ZoomInPlanetSphere(void)
 			RepairBackRect(&repairRect);
 		}
 
-		uqm::TFBScaleMode oldMode = SetGraphicScaleMode(uqm::TFBScaleMode::Bilinear);
+		const uqm::TFBScaleMode oldMode = SetGraphicScaleMode(uqm::TFBScaleMode::Bilinear);
 		oldScale = SetGraphicScale((int)(base * scale + 0.5));
 		DrawPlanetSphere(pt.x, pt.y, false);
 		SetGraphicScale(oldScale);
@@ -474,16 +466,14 @@ void ZoomInPlanetSphere(void)
 	}
 }
 
-#if SDL_MAJOR_VERSION == 1
-#define PLANET_ROTATION_FPS (GameTicksPerSecond / chooseIfHd(24, 42))
-#else
-#define PLANET_ROTATION_FPS (GameTicksPerSecond / 60)
-#endif
+#define PLANET_ROTATION_FPS (c_gameSecond / 60)
 
 void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 {
-	static TimeCount NextTime, OutNextTime, TimeOutClock;
-	TimeCount Now = GetTimeCounter();
+	static TimeCount NextTime;
+	static TimeCount OutNextTime;
+	static TimeCount TimeOutClock;
+	const TimeCount Now = GetTimeCounter();
 
 	if (keepRate && Now < NextTime)
 	{
@@ -518,12 +508,12 @@ void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 static void
 renderTintFrame(Color tintColor)
 {
-	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
-	GFXCONTEXT oldContext;
-	DrawMode mode, oldMode;
+	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
+	DrawMode mode;
+	DrawMode oldMode;
 	STAMP s;
 	GFXRECT r;
-	double is_red;
+	double is_red {NAN};
 
 	if (sameColor(BRIGHT_RED_COLOR, tintColor))
 	{
@@ -534,7 +524,7 @@ renderTintFrame(Color tintColor)
 		is_red = 0.5;
 	}
 
-	oldContext = SetContext(OffScreenContext);
+	GFXCONTEXT oldContext {SetContext(OffScreenContext)};
 	SetContextFGFrame(Orbit->TintFrame);
 	SetContextClipRect(nullptr);
 	// get the rect of the whole context (or our frame really)
@@ -589,7 +579,7 @@ void DrawPlanet(int tintY, Color tintColor)
 	else
 	{ // apply different scan type tints
 		FRAME tintFrame = Orbit->TintFrame;
-		int height = GetFrameHeight(tintFrame);
+		const int height = GetFrameHeight(tintFrame);
 
 		if (!sameColor(tintColor, Orbit->TintColor))
 		{
@@ -608,7 +598,7 @@ void DrawPlanet(int tintY, Color tintColor)
 			GFXRECT oldClipRect;
 			GFXRECT clipRect;
 			GFXRECT edge;
-			uint16_t i;
+			uint16_t i {};
 
 			// adjust cliprect to confine the tint
 			GetContextClipRect(&oldClipRect);

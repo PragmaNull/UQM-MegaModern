@@ -23,7 +23,7 @@
 #include "port.h"
 #include <cstdint>
 #include "libs/reslib.h"
-#include "endian_uqm.h"
+#include "core/misc/bittricks.h"
 #include "core/log/log.h"
 #include "wav.h"
 
@@ -61,10 +61,11 @@ typedef struct
 
 #define THIS_PTR TFB_SoundDecoder* This
 
-static const char* wava_GetName(void);
+const static char* wava_GetName(void);
 static bool wava_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void wava_TermModule(void);
-static uint32_t wava_GetStructSize(void);
+static TFB_SoundDecoder* wava_Create(void);
+static void wava_Destroy(TFB_SoundDecoder* decoder);
 static int wava_GetError(THIS_PTR);
 static bool wava_Init(THIS_PTR);
 static void wava_Term(THIS_PTR);
@@ -79,7 +80,8 @@ TFB_SoundDecoderFuncs wava_DecoderVtbl =
 		wava_GetName,
 		wava_InitModule,
 		wava_TermModule,
-		wava_GetStructSize,
+		wava_Create,
+		wava_Destroy,
 		wava_GetError,
 		wava_Init,
 		wava_Term,
@@ -106,10 +108,10 @@ typedef struct tfb_wavesounddecoder
 
 } TFB_WaveSoundDecoder;
 
-static const TFB_DecoderFormats* wava_formats = nullptr;
+const static TFB_DecoderFormats* wava_formats = nullptr;
 
 
-static const char*
+const static char*
 wava_GetName(void)
 {
 	return "Wave";
@@ -130,17 +132,23 @@ wava_TermModule(void)
 	// no specific module term
 }
 
-static uint32_t
-wava_GetStructSize(void)
+static TFB_SoundDecoder*
+wava_Create(void)
 {
-	return sizeof(TFB_WaveSoundDecoder);
+	return &(new TFB_WaveSoundDecoder {})->decoder;
+}
+
+static void
+wava_Destroy(TFB_SoundDecoder* decoder)
+{
+	delete reinterpret_cast<TFB_WaveSoundDecoder*>(decoder);
 }
 
 static int
 wava_GetError(THIS_PTR)
 {
 	TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*)This;
-	int ret = wava->last_error;
+	const int ret = wava->last_error;
 	wava->last_error = 0;
 	return ret;
 }
@@ -167,7 +175,7 @@ read_le_16(uqm::io::File* fp, uint16_t* v)
 	{
 		return false;
 	}
-	*v = UQM_SwapLE16(*v);
+	*v = uqm::convertLittleEndian<uint16_t>(*v);
 	return true;
 }
 
@@ -178,7 +186,7 @@ read_le_32(uqm::io::File* fp, uint32_t* v)
 	{
 		return false;
 	}
-	*v = UQM_SwapLE32(*v);
+	*v = uqm::convertLittleEndian<uint32_t>(*v);
 	return true;
 }
 
@@ -221,7 +229,7 @@ wava_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 	TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*)This;
 	wave_FileHeader fileHdr;
 	wave_ChunkHeader chunkHdr;
-	long dataLeft;
+	long dataLeft {};
 
 	wava->fp = res_NewResFile(dir, filename);
 	if (!wava->fp)
@@ -347,7 +355,7 @@ static int
 wava_Decode(THIS_PTR, void* buf, int32_t bufsize)
 {
 	TFB_WaveSoundDecoder* wava = (TFB_WaveSoundDecoder*)This;
-	uint32_t dec_pcm;
+	uint32_t dec_pcm {};
 
 	dec_pcm = bufsize / wava->fmtHdr.blockAlign;
 	if (dec_pcm > wava->max_pcm - wava->cur_pcm)

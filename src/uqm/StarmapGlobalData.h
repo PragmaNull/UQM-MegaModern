@@ -1830,10 +1830,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 	{
 		{
 			/* OOLITE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  VIOLET_BODY),			/* Color and type/size of planet */
-			LOW_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  VIOLET_BODY),			/* Color and type/size of planet */
+			LOW_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{HOLMIUM, MEDIUM_USEFUL},
 				{ERBIUM, MEDIUM_USEFUL},
@@ -1853,10 +1853,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* YTTRIC_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  VIOLET_BODY),			 /* Color and type/size of planet */
-			LOW_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, MEDIUM), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  VIOLET_BODY),			 /* Color and type/size of planet */
+			LOW_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, MEDIUM), /* Atmosphere and density */
 			{
 				{YTTERBIUM, HUGE_USEFUL},
 				{YTTRIUM, HUGE_USEFUL},
@@ -1876,10 +1876,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* QUASI_DEGENERATE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + TOPO_ALGO,
-					  GREEN_BODY),			  /* Color and type/size of planet */
-			MED_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, NOTHING), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + TOPO_ALGO,
+						  GREEN_BODY),			  /* Color and type/size of planet */
+			MED_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, NOTHING), /* Atmosphere and density */
 			{
 				{DEGENERATE_MATTER, MEDIUM_USEFUL},
 				{NOTHING, NO_DEPOSIT},
@@ -1899,10 +1899,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* LANTHANIDE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  YELLOW_BODY),			/* Color and type/size of planet */
-			HIGH_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  YELLOW_BODY),			/* Color and type/size of planet */
+			HIGH_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{LANTHANUM, MEDIUM_USEFUL},
 				{CERIUM, MEDIUM_USEFUL},
@@ -1922,10 +1922,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* TREASURE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + TOPO_ALGO,
-					  YELLOW_BODY),			 /* Color and type/size of planet */
-			NO_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(SUPER_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + TOPO_ALGO,
+						  YELLOW_BODY),			 /* Color and type/size of planet */
+			NO_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(SUPER_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{PALLADIUM, HEAVY_USEFUL},
 				{SILVER, HEAVY_USEFUL},
@@ -1945,10 +1945,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* UREA_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  YELLOW_BODY),		   /* Color and type/size of planet */
-			HIGH_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  YELLOW_BODY),		   /* Color and type/size of planet */
+			HIGH_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{AMMONIA, LIGHT_USEFUL},
 				{FORMALDEHYDE, MEDIUM_USEFUL},
@@ -1968,10 +1968,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* METAL_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  ORANGE_BODY),			/* Color and type/size of planet */
-			LOW_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  ORANGE_BODY),			/* Color and type/size of planet */
+			LOW_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{IRON, HUGE_USEFUL},
 				{NICKEL, HEAVY_USEFUL},
@@ -1991,10 +1991,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* RADIOACTIVE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  ORANGE_BODY),			 /* Color and type/size of planet */
-			NO_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(SUPER_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  ORANGE_BODY),			 /* Color and type/size of planet */
+			NO_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(SUPER_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{ASTATINE, MEDIUM_USEFUL},
 				{FRANCIUM, MEDIUM_USEFUL},
@@ -2014,10 +2014,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* OPALESCENT_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  CYAN_BODY),			 /* Color and type/size of planet */
-			LOW_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, NOTHING), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  CYAN_BODY),			 /* Color and type/size of planet */
+			LOW_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, NOTHING), /* Atmosphere and density */
 			{
 				{SAMARIUM, LIGHT_USEFUL},
 				{GADOLINIUM, LIGHT_USEFUL},
@@ -2037,10 +2037,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* CYANIC_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + TOPO_ALGO,
-					  GREEN_BODY),			 /* Color and type/size of planet */
-			NO_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LIGHT_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + TOPO_ALGO,
+						  GREEN_BODY),			 /* Color and type/size of planet */
+			NO_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LIGHT_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{CYANOACETYLENE, HUGE_USEFUL},
 				{NOTHING, NO_DEPOSIT},
@@ -2060,10 +2060,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* ACID_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  GREEN_BODY),			  /* Color and type/size of planet */
-			LOW_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  GREEN_BODY),			  /* Color and type/size of planet */
+			LOW_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{SULFURIC_ACID, HEAVY_USEFUL},
 				{HYDROCHLORIC_ACID, HEAVY_USEFUL},
@@ -2083,10 +2083,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* ALKALI_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  GREEN_BODY),			   /* Color and type/size of planet */
-			LOW_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, MEDIUM), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  GREEN_BODY),			   /* Color and type/size of planet */
+			LOW_TECTONICS,						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, MEDIUM), /* Atmosphere and density */
 			{
 				{CALCIUM, MEDIUM_USEFUL},
 				{BARIUM, MEDIUM_USEFUL},
@@ -2106,10 +2106,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* HALIDE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  GREEN_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  GREEN_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{FLUORINE, MEDIUM_USEFUL},
 				{BROMINE, MEDIUM_USEFUL},
@@ -2129,10 +2129,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* GREEN_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  GREEN_BODY),			  /* Color and type/size of planet */
-			MED_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  GREEN_BODY),			  /* Color and type/size of planet */
+			MED_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{PRASEODYMIUM, HEAVY_USEFUL},
 				{NEODYMIUM, HEAVY_USEFUL},
@@ -2152,10 +2152,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* COPPER_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + TOPO_ALGO,
-					  GREEN_BODY),			 /* Color and type/size of planet */
-			NO_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, MEDIUM), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + TOPO_ALGO,
+						  GREEN_BODY),			 /* Color and type/size of planet */
+			NO_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, MEDIUM), /* Atmosphere and density */
 			{
 				{COPPER, HUGE_USEFUL},
 				{COPPER, HUGE_USEFUL},
@@ -2175,10 +2175,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* CARBIDE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  RED_BODY),			  /* Color and type/size of planet */
-			LOW_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  RED_BODY),			  /* Color and type/size of planet */
+			LOW_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{CARBON, HEAVY_USEFUL},
 				{CARBON, HEAVY_USEFUL},
@@ -2198,10 +2198,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* ULTRAMARINE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  BLUE_BODY),			 /* Color and type/size of planet */
-			NO_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LIGHT_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  BLUE_BODY),			 /* Color and type/size of planet */
+			NO_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LIGHT_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{KRYPTON, MEDIUM_USEFUL},
 				{COBALT, MEDIUM_USEFUL},
@@ -2221,10 +2221,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* NOBLE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  BLUE_BODY),			 /* Color and type/size of planet */
-			NO_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LIGHT_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  BLUE_BODY),			 /* Color and type/size of planet */
+			NO_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LIGHT_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{NEON, LIGHT_USEFUL},
 				{RADON, LIGHT_USEFUL},
@@ -2244,10 +2244,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* AZURE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  BLUE_BODY),			/* Color and type/size of planet */
-			MED_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, MEDIUM), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  BLUE_BODY),			/* Color and type/size of planet */
+			MED_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, MEDIUM), /* Atmosphere and density */
 			{
 				{INDIUM, LIGHT_USEFUL},
 				{MOLYBDENUM, LIGHT_USEFUL},
@@ -2267,10 +2267,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* CHONDRITE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  PURPLE_BODY),				/* Color and type/size of planet */
-			HIGH_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, NOTHING), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  PURPLE_BODY),				/* Color and type/size of planet */
+			HIGH_TECTONICS,							/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, NOTHING), /* Atmosphere and density */
 			{
 				{ETHANOL, HEAVY_USEFUL},
 				{FREE_RADICALS, HEAVY_USEFUL},
@@ -2290,10 +2290,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* PURPLE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  PURPLE_BODY),		   /* Color and type/size of planet */
-			LOW_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  PURPLE_BODY),		   /* Color and type/size of planet */
+			LOW_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{RHENIUM, MEDIUM_USEFUL},
 				{CADMIUM, MEDIUM_USEFUL},
@@ -2313,10 +2313,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* SUPER_DENSE_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + TOPO_ALGO,
-					  PURPLE_BODY),			 /* Color and type/size of planet */
-			HIGH_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(SUPER_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + TOPO_ALGO,
+						  PURPLE_BODY),			 /* Color and type/size of planet */
+			HIGH_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(SUPER_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{LEAD, MEDIUM_USEFUL},
 				{OSMIUM, MEDIUM_USEFUL},
@@ -2336,10 +2336,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* PELLUCID_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  PURPLE_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  PURPLE_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{TZO_CRYSTALS, TRACE_USEFUL},
 				{NOTHING, NO_DEPOSIT},
@@ -2359,10 +2359,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* DUST_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  RED_BODY),			/* Color and type/size of planet */
-			LOW_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, MEDIUM), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  RED_BODY),			/* Color and type/size of planet */
+			LOW_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, MEDIUM), /* Atmosphere and density */
 			{
 				{BISMUTH, LIGHT_USEFUL},
 				{ALUMINUM, LIGHT_USEFUL},
@@ -2382,10 +2382,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* CRIMSON_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  RED_BODY),			  /* Color and type/size of planet */
-			NO_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  RED_BODY),			  /* Color and type/size of planet */
+			NO_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{BARIUM, LIGHT_USEFUL},
 				{BORON, LIGHT_USEFUL},
@@ -2405,10 +2405,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* CIMMERIAN_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + TOPO_ALGO,
-					  RED_BODY),			  /* Color and type/size of planet */
-			LOW_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, NOTHING), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + TOPO_ALGO,
+						  RED_BODY),			  /* Color and type/size of planet */
+			LOW_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, NOTHING), /* Atmosphere and density */
 			{
 				{METHANE, MEDIUM_USEFUL},
 				{AMMONIA, MEDIUM_USEFUL},
@@ -2428,10 +2428,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* INFRARED_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  RED_BODY),			  /* Color and type/size of planet */
-			LOW_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  RED_BODY),			  /* Color and type/size of planet */
+			LOW_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{MERCURY, HEAVY_USEFUL},
 				{NOTHING, NO_DEPOSIT},
@@ -2451,10 +2451,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* SELENIC_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + CRATERED_ALGO,
-					  WHITE_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + CRATERED_ALGO,
+						  WHITE_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{IRON, LIGHT_USEFUL},
 				{ALUMINUM, LIGHT_USEFUL},
@@ -2474,10 +2474,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* AURIC_WORLD */
-			MAKE_BYTE(SMALL_ROCKY_WORLD + TOPO_ALGO,
-					  YELLOW_BODY),			 /* Color and type/size of planet */
-			NO_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, MEDIUM), /* Atmosphere and density */
+			uqm::makeByte(SMALL_ROCKY_WORLD + TOPO_ALGO,
+						  YELLOW_BODY),			 /* Color and type/size of planet */
+			NO_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, MEDIUM), /* Atmosphere and density */
 			{
 				{GOLD, HUGE_USEFUL},
 				{GOLD, HUGE_USEFUL},
@@ -2499,10 +2499,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 
 		{
 			/* FLUORESCENT_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  VIOLET_BODY),			/* Color and type/size of planet */
-			LOW_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  VIOLET_BODY),			/* Color and type/size of planet */
+			LOW_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{TECHNETIUM, HUGE_USEFUL},
 				{NEON, HUGE_USEFUL},
@@ -2522,10 +2522,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* ULTRAVIOLET_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  VIOLET_BODY),			/* Color and type/size of planet */
-			MED_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  VIOLET_BODY),			/* Color and type/size of planet */
+			MED_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{POLONIUM, HUGE_USEFUL},
 				{GOLD, HUGE_USEFUL},
@@ -2545,10 +2545,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* PLUTONIC_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  YELLOW_BODY),			/* Color and type/size of planet */
-			LOW_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  YELLOW_BODY),			/* Color and type/size of planet */
+			LOW_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{BERYLLIUM, HUGE_USEFUL},
 				{BORON, HUGE_USEFUL},
@@ -2568,10 +2568,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* RAINBOW_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + TOPO_ALGO,
-					  YELLOW_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + TOPO_ALGO,
+						  YELLOW_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{ACTINIUM, HEAVY_USEFUL},
 				{THORIUM, HEAVY_USEFUL},
@@ -2591,10 +2591,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* SHATTERED_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  ORANGE_BODY),				/* Color and type/size of planet */
-			SUPER_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, NOTHING), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  ORANGE_BODY),				/* Color and type/size of planet */
+			SUPER_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, NOTHING), /* Atmosphere and density */
 			{
 				{PALLADIUM, HUGE_USEFUL},
 				{IRIDIUM, HUGE_USEFUL},
@@ -2614,10 +2614,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* SAPPHIRE_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + TOPO_ALGO,
-					  CYAN_BODY),			 /* Color and type/size of planet */
-			NO_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, NOTHING), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + TOPO_ALGO,
+						  CYAN_BODY),			 /* Color and type/size of planet */
+			NO_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, NOTHING), /* Atmosphere and density */
 			{
 				{REISBURG_HELICES, HUGE_USEFUL},
 				{RT_SUPER_FLUID, MEDIUM_USEFUL},
@@ -2637,10 +2637,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* ORGANIC_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + TOPO_ALGO,
-					  CYAN_BODY),			  /* Color and type/size of planet */
-			MED_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + TOPO_ALGO,
+						  CYAN_BODY),			  /* Color and type/size of planet */
+			MED_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{FREE_RADICALS, HEAVY_USEFUL},
 				{FORMALDEHYDE, HEAVY_USEFUL},
@@ -2660,10 +2660,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* XENOLITHIC_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  CYAN_BODY),			   /* Color and type/size of planet */
-			LOW_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, MEDIUM), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  CYAN_BODY),			   /* Color and type/size of planet */
+			LOW_TECTONICS,						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, MEDIUM), /* Atmosphere and density */
 			{
 				{ALUMINUM, HUGE_USEFUL},
 				{PLATINUM, LIGHT_USEFUL},
@@ -2683,10 +2683,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* REDUX_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  GREEN_BODY),			  /* Color and type/size of planet */
-			LOW_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  GREEN_BODY),			  /* Color and type/size of planet */
+			LOW_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{BROMINE, MEDIUM_USEFUL},
 				{OXYGEN, MEDIUM_USEFUL},
@@ -2706,10 +2706,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* PRIMORDIAL_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  GREEN_BODY),			  /* Color and type/size of planet */
-			SUPER_TECTONICS,				  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  GREEN_BODY),			  /* Color and type/size of planet */
+			SUPER_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{CESIUM, MEDIUM_USEFUL},
 				{BARIUM, MEDIUM_USEFUL},
@@ -2729,10 +2729,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* EMERALD_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + TOPO_ALGO,
-					  GREEN_BODY),			 /* Color and type/size of planet */
-			NO_TECTONICS,					 /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, NOTHING), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + TOPO_ALGO,
+						  GREEN_BODY),			 /* Color and type/size of planet */
+			NO_TECTONICS,						 /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, NOTHING), /* Atmosphere and density */
 			{
 				{AGUUTI_NODULES, HUGE_USEFUL},
 				{ANTIMATTER, MEDIUM_USEFUL},
@@ -2752,10 +2752,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* CHLORINE_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  GREEN_BODY),			  /* Color and type/size of planet */
-			HIGH_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  GREEN_BODY),			  /* Color and type/size of planet */
+			HIGH_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{CHLORINE, HEAVY_USEFUL},
 				{CHLORINE, HEAVY_USEFUL},
@@ -2775,10 +2775,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* MAGNETIC_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  GREEN_BODY),			  /* Color and type/size of planet */
-			HIGH_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, NOTHING), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  GREEN_BODY),			  /* Color and type/size of planet */
+			HIGH_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, NOTHING), /* Atmosphere and density */
 			{
 				{ZINC, HEAVY_USEFUL},
 				{NICKEL, MEDIUM_USEFUL},
@@ -2798,10 +2798,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* WATER_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  BLUE_BODY),			   /* Color and type/size of planet */
-			LOW_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, MEDIUM), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  BLUE_BODY),			   /* Color and type/size of planet */
+			LOW_TECTONICS,						   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, MEDIUM), /* Atmosphere and density */
 			{
 				{IRON, LIGHT_USEFUL},
 				{ALUMINUM, LIGHT_USEFUL},
@@ -2821,10 +2821,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* TELLURIC_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  BLUE_BODY),			  /* Color and type/size of planet */
-			LOW_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  BLUE_BODY),			  /* Color and type/size of planet */
+			LOW_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{IRIDIUM, MEDIUM_USEFUL},
 				{RUTHENIUM, MEDIUM_USEFUL},
@@ -2844,10 +2844,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* HYDROCARBON_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + TOPO_ALGO,
-					  BLUE_BODY),			  /* Color and type/size of planet */
-			LOW_TECTONICS,					  /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + TOPO_ALGO,
+						  BLUE_BODY),			  /* Color and type/size of planet */
+			LOW_TECTONICS,						  /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{HYDROCARBONS, HUGE_USEFUL},
 				{BISMUTH, LIGHT_USEFUL},
@@ -2867,10 +2867,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* IODINE_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  GREEN_BODY),			/* Color and type/size of planet */
-			MED_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, MEDIUM), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  GREEN_BODY),			/* Color and type/size of planet */
+			MED_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, MEDIUM), /* Atmosphere and density */
 			{
 				{IODINE, HEAVY_USEFUL},
 				{MAGNESIUM, LIGHT_USEFUL},
@@ -2890,10 +2890,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* VINYLOGOUS_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  PURPLE_BODY),				/* Color and type/size of planet */
-			LOW_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(NORMAL_DENSITY, NOTHING), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  PURPLE_BODY),				/* Color and type/size of planet */
+			LOW_TECTONICS,							/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(NORMAL_DENSITY, NOTHING), /* Atmosphere and density */
 			{
 				{TITANIUM, LIGHT_USEFUL},
 				{ARSENIC, LIGHT_USEFUL},
@@ -2913,10 +2913,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* RUBY_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + TOPO_ALGO,
-					  RED_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + TOPO_ALGO,
+						  RED_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{TZO_CRYSTALS, HUGE_USEFUL},
 				{NEUTRONIUM, MEDIUM_USEFUL},
@@ -2936,10 +2936,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* MAGMA_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + TOPO_ALGO,
-					  RED_BODY),			/* Color and type/size of planet */
-			SUPER_TECTONICS,				/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(HIGH_DENSITY, LIGHT), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + TOPO_ALGO,
+						  RED_BODY),			/* Color and type/size of planet */
+			SUPER_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(HIGH_DENSITY, LIGHT), /* Atmosphere and density */
 			{
 				{LEAD, LIGHT_USEFUL},
 				{NICKEL, LIGHT_USEFUL},
@@ -2959,10 +2959,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* MAROON_WORLD */
-			MAKE_BYTE(LARGE_ROCKY_WORLD + CRATERED_ALGO,
-					  RED_BODY),			/* Color and type/size of planet */
-			NO_TECTONICS,					/* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(LOW_DENSITY, MEDIUM), /* Atmosphere and density */
+			uqm::makeByte(LARGE_ROCKY_WORLD + CRATERED_ALGO,
+						  RED_BODY),			/* Color and type/size of planet */
+			NO_TECTONICS,						/* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(LOW_DENSITY, MEDIUM), /* Atmosphere and density */
 			{
 				{CESIUM, MEDIUM_USEFUL},
 				{SILICON, MEDIUM_USEFUL},
@@ -3001,10 +3001,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		//},
 
 		{
-			MAKE_BYTE(GAS_GIANT + GAS_GIANT_ALGO,
-					  BLUE_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(GAS_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(GAS_GIANT + GAS_GIANT_ALGO,
+						  BLUE_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(GAS_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{NOTHING, NO_DEPOSIT},
 				{NOTHING, NO_DEPOSIT},
@@ -3023,10 +3023,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		},
 		{
-			MAKE_BYTE(GAS_GIANT + GAS_GIANT_ALGO,
-					  CYAN_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(GAS_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(GAS_GIANT + GAS_GIANT_ALGO,
+						  CYAN_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(GAS_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{NOTHING, NO_DEPOSIT},
 				{NOTHING, NO_DEPOSIT},
@@ -3045,10 +3045,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		},
 		{
-			MAKE_BYTE(GAS_GIANT + GAS_GIANT_ALGO,
-					  GREEN_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(GAS_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(GAS_GIANT + GAS_GIANT_ALGO,
+						  GREEN_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(GAS_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{NOTHING, NO_DEPOSIT},
 				{NOTHING, NO_DEPOSIT},
@@ -3067,10 +3067,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		},
 		{
-			MAKE_BYTE(GAS_GIANT + GAS_GIANT_ALGO,
-					  GRAY_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(GAS_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(GAS_GIANT + GAS_GIANT_ALGO,
+						  GRAY_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(GAS_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{NOTHING, NO_DEPOSIT},
 				{NOTHING, NO_DEPOSIT},
@@ -3089,10 +3089,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		},
 		{
-			MAKE_BYTE(GAS_GIANT + GAS_GIANT_ALGO,
-					  ORANGE_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(GAS_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(GAS_GIANT + GAS_GIANT_ALGO,
+						  ORANGE_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(GAS_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{NOTHING, NO_DEPOSIT},
 				{NOTHING, NO_DEPOSIT},
@@ -3111,10 +3111,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		},
 		{
-			MAKE_BYTE(GAS_GIANT + GAS_GIANT_ALGO,
-					  PURPLE_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(GAS_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(GAS_GIANT + GAS_GIANT_ALGO,
+						  PURPLE_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(GAS_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{NOTHING, NO_DEPOSIT},
 				{NOTHING, NO_DEPOSIT},
@@ -3133,10 +3133,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		},
 		{
-			MAKE_BYTE(GAS_GIANT + GAS_GIANT_ALGO,
-					  RED_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(GAS_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(GAS_GIANT + GAS_GIANT_ALGO,
+						  RED_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(GAS_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{NOTHING, NO_DEPOSIT},
 				{NOTHING, NO_DEPOSIT},
@@ -3155,10 +3155,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 			29,
 		},
 		{
-			MAKE_BYTE(GAS_GIANT + GAS_GIANT_ALGO,
-					  VIOLET_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(GAS_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(GAS_GIANT + GAS_GIANT_ALGO,
+						  VIOLET_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(GAS_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{NOTHING, NO_DEPOSIT},
 				{NOTHING, NO_DEPOSIT},
@@ -3178,10 +3178,10 @@ static constexpr PlanetFrame PlanetsArray[NUMBER_OF_PLANET_TYPES] =
 		},
 		{
 			/* A Jupiter-like World */
-			MAKE_BYTE(GAS_GIANT + GAS_GIANT_ALGO,
-					  YELLOW_BODY),		   /* Color and type/size of planet */
-			NO_TECTONICS,				   /* Tectonics - Scaled with Earth at 82    */
-			MAKE_BYTE(GAS_DENSITY, HEAVY), /* Atmosphere and density */
+			uqm::makeByte(GAS_GIANT + GAS_GIANT_ALGO,
+						  YELLOW_BODY),		   /* Color and type/size of planet */
+			NO_TECTONICS,					   /* Tectonics - Scaled with Earth at 82    */
+			uqm::makeByte(GAS_DENSITY, HEAVY), /* Atmosphere and density */
 			{
 				{NOTHING, NO_DEPOSIT},
 				{NOTHING, NO_DEPOSIT},

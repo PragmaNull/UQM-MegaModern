@@ -20,10 +20,10 @@
 #define LIBS_RESLIB_H_
 
 //#include <stdio.h>
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "port.h"
-#include "libs/memlib.h"
 #include "libs/io/FileSystem.h"
+#include "libs/resource/resindex.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -32,7 +32,7 @@ extern "C" {
 typedef struct resource_index_desc RESOURCE_INDEX_DESC;
 typedef RESOURCE_INDEX_DESC* RESOURCE_INDEX;
 
-typedef const char* RESOURCE;
+const typedef char* RESOURCE;
 
 typedef union
 {
@@ -45,9 +45,10 @@ typedef union
 #define NULL_RESOURCE nullptr
 
 
-typedef void(ResourceLoadFun)(const char* pathname, RESOURCE_DATA* resdata);
+typedef void(ResourceLoadFun)(const ResourceArg& arg, RESOURCE_DATA* resdata);
+// For types whose data is a string, such as a path.
+typedef void(ResourceTextLoadFun)(const char* text, RESOURCE_DATA* resdata);
 typedef bool(ResourceFreeFun)(void* handle);
-typedef void(ResourceStringFun)(RESOURCE_DATA* handle, char* buf, unsigned int size);
 
 // A resource file for a loader to read.
 struct ResourceFile
@@ -58,6 +59,8 @@ struct ResourceFile
 	uqstl::string_view path;
 	uint32_t length;
 };
+// Returns the whole file as text, or nullopt on a read error.
+[[nodiscard]] uqstl::optional<uqstl::string> readResourceText(const ResourceFile& resource);
 typedef void*(ResourceLoadFileFun)(const ResourceFile& resource);
 
 void* LoadResourceFromPath(const char* pathname, ResourceLoadFileFun fn);
@@ -80,7 +83,8 @@ bool DeleteResFile(const uqm::io::Directory& dir, const char* filename);
 
 RESOURCE_INDEX InitResourceSystem(void);
 void UninitResourceSystem(void);
-bool InstallResTypeVectors(const char* res_type, ResourceLoadFun* loadFun, ResourceFreeFun* freeFun, ResourceStringFun* stringFun);
+bool InstallResTypeVectors(const char* res_type, ResourceLoadFun* loadFun, ResourceFreeFun* freeFun);
+bool InstallResTextTypeVectors(const char* res_type, ResourceTextLoadFun* loadFun, ResourceFreeFun* freeFun);
 void* res_GetResource(RESOURCE res);
 void* res_DetachResource(RESOURCE res);
 void res_FreeResource(RESOURCE res);
@@ -89,13 +93,12 @@ uint32_t res_GetIntResource(RESOURCE res);
 bool res_GetBooleanResource(RESOURCE res);
 const char* res_GetResourceType(RESOURCE res);
 
+// Loads a JSON resource index.
 void LoadResourceIndex(const uqm::io::Directory& dir, const char* filename, const char* prefix);
-void SaveResourceIndex(const uqm::io::Directory& dir, const char* rmpfile, const char* root, bool strip_root);
+// Converts the resource index 'oldName' in the old "key = TYPE:data" format to the JSON resource index 'newName', and
+// renames the old file to '<oldName>.bak'. Does nothing if 'newName' exists. Returns false if it converts nothing.
+bool ConvertLegacyResourceIndex(const uqm::io::Directory& dir, const char* oldName, const char* newName);
 
-void* GetResourceData(uqm::io::File& fp, uint32_t length);
-
-#define AllocResourceData HMalloc
-bool FreeResourceData(void*);
 
 #if 0 //defined(__cplusplus)
 }
@@ -107,22 +110,13 @@ bool FreeResourceData(void*);
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
-// For Color
 
-typedef STRING_TABLE DIRENTRY_REF;
-typedef STRING DIRENTRY;
-
-extern DIRENTRY_REF LoadDirEntryTable(const uqm::io::Directory& dir, const char* path, const uqm::io::Matcher& matcher);
-#define CaptureDirEntryTable CaptureStringTable
-#define ReleaseDirEntryTable ReleaseStringTable
-#define DestroyDirEntryTable DestroyStringTable
-#define GetDirEntryTableRef GetStringTable
-#define GetDirEntryTableCount GetStringTableCount
-#define GetDirEntryTableIndex GetStringTableIndex
-#define SetAbsDirEntryTableIndex SetAbsStringTableIndex
-#define SetRelDirEntryTableIndex SetRelStringTableIndex
-#define GetDirEntryLength GetStringLengthBin
-#define GetDirEntryAddress GetStringAddress
+namespace uqm
+{
+// The names of the files in the directory 'path' of 'dir' that 'matcher' accepts. Names that start with '.' are not
+// included.
+[[nodiscard]] uqstl::vector<uqstl::string> listFiles(const io::Directory& dir, const char* path, const io::Matcher& matcher);
+} // namespace uqm
 
 /* Key-Value resources */
 
@@ -144,9 +138,6 @@ bool res_IsBoolean(const char* key);
 bool res_GetBoolean(const char* key);
 void res_PutBoolean(const char* key, bool value);
 
-bool res_IsColor(const char* key);
-Color res_GetColor(const char* key);
-void res_PutColor(const char* key, Color value);
 
 bool res_Remove(const char* key);
 

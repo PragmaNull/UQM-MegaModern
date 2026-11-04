@@ -3,7 +3,7 @@
 #define LIB_MATH2D_MATH2DSTRINGS_H_
 
 #include <fmt/format.h>
-#include <istream>
+#include "core/stl/istream.h"
 
 #include "core/stl/stl.h"
 #include "core/string/StringUtils.h"

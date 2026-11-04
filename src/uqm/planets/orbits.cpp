@@ -18,12 +18,13 @@
 
 #include "planets.h"
 #include "../starmap.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/mathlib.h"
 #include "core/log/log.h"
 #include "../clock.h"
 #include <math.h>
 #include <stdlib.h>
+#include "uqm/random/UQMRandom.h"
 
 //#define DEBUG_ORBITS
 
@@ -506,12 +507,9 @@ void ComputeSpeed(PLANET_DESC* planet, bool GeneratingMoons,
 void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 				PLANET_DESC* pBaseDesc, bool TypesDefined)
 { /* Generate Planets in orbit around star */
-	uint8_t StarColor, PlanetCount, MaxPlanet;
-	bool GeneratingMoons;
-	uint16_t StarSize;
-	PLANET_DESC* pPD;
+	uint8_t MaxPlanet {};
 	uint32_t loopCounter = 0;
-	uint8_t orbitDiff;
+	uint8_t orbitDiff {};
 
 	struct
 	{
@@ -534,9 +532,9 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 		pBaseDesc = system->PlanetDesc;
 	}
 
-	pPD = pBaseDesc;
-	StarSize = system->SunDesc[0].data_index;
-	StarColor = STAR_COLOR(CurStarDescPtr->Type);
+	PLANET_DESC* pPD {pBaseDesc};
+	const uint16_t StarSize {system->SunDesc[0].data_index};
+	const uint8_t StarColor {STAR_COLOR(CurStarDescPtr->Type)};
 
 	if (NumPlanets == (uint8_t)~0)
 	{
@@ -546,7 +544,7 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 		//   Note that this behavior must be kept to preserve the universe.
 		do
 		{
-			NumPlanets = LOWORD(RandomContext_Random(SysGenRNG))
+			NumPlanets = uqm::lowWord(SysGenRNG->next())
 					   % (MAX_GEN_PLANETS + 1);
 		} while (NumPlanets == 0);
 		system->SunDesc[0].NumPlanets = NumPlanets;
@@ -558,27 +556,28 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 					scolor[STAR_COLOR(CurStarDescPtr->Type)],
 					stype[STAR_TYPE(CurStarDescPtr->Type)]);
 #endif /* DEBUG_ORBITS */
-	GeneratingMoons = (bool)(pBaseDesc == system->MoonDesc);
-	bool GasGiant = pPD && pPD->pPrevDesc && (pPD->pPrevDesc->data_index & ~PLANET_SHIELDED) >= FIRST_GAS_GIANT;
+	const bool GeneratingMoons {(bool)(pBaseDesc == system->MoonDesc)};
+	const bool GasGiant = pPD && pPD->pPrevDesc && (pPD->pPrevDesc->data_index & ~PLANET_SHIELDED) >= FIRST_GAS_GIANT;
 	if (GeneratingMoons)
 	{
-		MaxPlanet = (PrimeSeed || (StarSeed && !GasGiant) ? FIRST_LARGE_ROCKY_WORLD : (StarSeed ? FIRST_GAS_GIANT : LAST_LARGE_ROCKY_WORLD));
+		MaxPlanet = (uqm::isOriginalSeed() || (uqm::isStarSeed() && !GasGiant) ? FIRST_LARGE_ROCKY_WORLD : (uqm::isStarSeed() ? FIRST_GAS_GIANT : LAST_LARGE_ROCKY_WORLD));
 	}
 	else
 	{
 		MaxPlanet = NUMBER_OF_PLANET_TYPES;
 	}
-	PlanetCount = NumPlanets;
+	const uint8_t PlanetCount {NumPlanets};
 	while (NumPlanets--)
 	{
-		uint8_t chance;
-		uint32_t rand_val, min_radius;
-		int16_t delta_r;
-		PLANET_DESC* pLocPD;
+		uint8_t chance {};
+		uint32_t rand_val {};
+		uint32_t min_radius {};
+		int16_t delta_r {};
+		const PLANET_DESC* pLocPD {};
 
 		do
 		{
-			rand_val = RandomContext_Random(SysGenRNG);
+			rand_val = SysGenRNG->next();
 			if (TypesDefined)
 			{
 				rand_val = 0;
@@ -586,7 +585,7 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 			else
 			{
 				pPD->data_index =
-					(uint8_t)(highByte(LOWORD(rand_val)) % MaxPlanet);
+					(uint8_t)(uqm::highByte(uqm::lowWord(rand_val)) % MaxPlanet);
 			}
 
 
@@ -612,7 +611,7 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 					chance = YellowDistribution(pPD->data_index);
 					break;
 			}
-		} while (lowByte(LOWORD(rand_val)) >= chance);
+		} while (uqm::lowByte(uqm::lowWord(rand_val)) >= chance);
 
 		if (pPD->data_index < FIRST_GAS_GIANT)
 		{
@@ -623,11 +622,11 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 			min_radius = Suns[StarSize].MinGasGDist;
 		}
 RelocatePlanet:
-		rand_val = RandomContext_Random(SysGenRNG);
+		rand_val = SysGenRNG->next();
 		if (GeneratingMoons)
 		{
 			pPD->radius = MIN_MOON_RADIUS
-						+ ((LOWORD(rand_val) % MAX_GEN_MOONS) * MOON_DELTA);
+						+ ((uqm::lowWord(rand_val) % MAX_GEN_MOONS) * MOON_DELTA);
 			for (pLocPD = pPD - 1; pLocPD >= pBaseDesc; --pLocPD)
 			{
 				if (pPD->radius == pLocPD->radius)
@@ -640,7 +639,7 @@ RelocatePlanet:
 		else
 		{
 			pPD->radius =
-				(LOWORD(rand_val) % (MAX_PLANET_RADIUS - min_radius))
+				(uqm::lowWord(rand_val) % (MAX_PLANET_RADIUS - min_radius))
 				+ min_radius;
 			for (pLocPD = pPD - 1; pLocPD >= pBaseDesc; --pLocPD)
 			{
@@ -668,38 +667,34 @@ RelocatePlanet:
 		}
 
 
-		rand_val = RandomContext_Random(SysGenRNG);
+		rand_val = SysGenRNG->next();
 		// Initial angle & coordinates as in Vanilla UQM
 		// Still used to compute rand_seed and the position
 		// of the planet at the start of the game
-		pPD->angle = NORMALIZE_ANGLE(LOWORD(rand_val));
+		pPD->angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 		pPD->location.x = COSINE(pPD->angle, pPD->radius);
 		pPD->location.y = SINE(pPD->angle, pPD->radius);
 		if (GeneratingMoons)
 		{
-			pPD->rand_seed = MAKE_DWORD(
+			pPD->rand_seed = uqm::makeDword(
 				COSINE(pPD->angle, RES_DESCALE(pPD->radius)),
 				SINE(pPD->angle, RES_DESCALE(pPD->radius)));
 		}
 		else
 		{
-			pPD->rand_seed = MAKE_DWORD(pPD->location.x, pPD->location.y);
+			pPD->rand_seed = uqm::makeDword(pPD->location.x, pPD->location.y);
 		}
 		// Angle is kept for reference but location will be adjusted
 		// to take orbiting into account
-		ComputeSpeed(pPD, GeneratingMoons, HIWORD(rand_val));
+		ComputeSpeed(pPD, GeneratingMoons, uqm::highWord(rand_val));
 
 		++pPD;
 	}
 
 	{
-		uint8_t i;
-
-		for (i = 0; i < PlanetCount; ++i)
+		for (uint8_t i {0}; i < PlanetCount; ++i)
 		{
-			uint8_t j;
-
-			for (j = (uint8_t)(PlanetCount - 1); j > i; --j)
+			for (uint8_t j {(uint8_t)(PlanetCount - 1)}; j > i; --j)
 			{
 				if (pBaseDesc[i].radius > pBaseDesc[j].radius)
 				{
@@ -733,20 +728,19 @@ PickClosestHabitable(SOLARSYS_STATE* solarSys)
 		{0,	0	 }, // white
 		{7630, 7936}  // yellow
 	};
-	uint8_t starColor, starType, numPlanets, i;
+	uint8_t i {};
 	int16_t hRangeMin = 0;
 	int16_t hRangeMax = 0;
 	int16_t hRangeMed = 0;
 	uint8_t pByte = 0;
-	PLANET_DESC* pPD;
-	PLANET_DESC* pPlanet;
-	uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+	PLANET_DESC* pPlanet {};
+	const uint32_t rand = SysGenRNG->seed();
 
-	numPlanets = solarSys->SunDesc[0].NumPlanets;
-	pPD = solarSys->PlanetDesc;
+	uint8_t numPlanets {solarSys->SunDesc[0].NumPlanets};
+	PLANET_DESC* pPD {solarSys->PlanetDesc};
 
-	starColor = STAR_COLOR(CurStarDescPtr->Type);
-	starType = STAR_TYPE(CurStarDescPtr->Type);
+	const uint8_t starColor {STAR_COLOR(CurStarDescPtr->Type)};
+	const uint8_t starType {STAR_TYPE(CurStarDescPtr->Type)};
 
 	if (starType == SUPER_GIANT_STAR)
 	{
@@ -773,10 +767,10 @@ PickClosestHabitable(SOLARSYS_STATE* solarSys)
 			pPlanet = &pPD[numPlanets--];
 
 			pPlanet->radius = MAX_PLANET_RADIUS;
-			pPlanet->angle = NORMALIZE_ANGLE(LOWORD(rand));
+			pPlanet->angle = NORMALIZE_ANGLE(uqm::lowWord(rand));
 			pPlanet->location.x = COSINE(pPlanet->angle, pPlanet->radius);
 			pPlanet->location.y = SINE(pPlanet->angle, pPlanet->radius);
-			ComputeSpeed(pPlanet, false, HIWORD(rand));
+			ComputeSpeed(pPlanet, false, uqm::highWord(rand));
 
 			return numPlanets--;
 		}
@@ -808,7 +802,8 @@ PickClosestHabitable(SOLARSYS_STATE* solarSys)
 
 	if (pPlanet->radius < hRangeMin || pPlanet->radius > hRangeMax)
 	{
-		int16_t min, max;
+		int16_t min {};
+		int16_t max {};
 
 		if (pPlanet->radius < hRangeMin)
 		{
@@ -821,12 +816,12 @@ PickClosestHabitable(SOLARSYS_STATE* solarSys)
 			max = hRangeMax;
 		}
 
-		pPlanet->radius = RangeMinMax(min, max, rand);
+		pPlanet->radius = uqm::rangeMinMax(min, max, rand);
 
-		pPlanet->angle = NORMALIZE_ANGLE(LOWORD(rand));
+		pPlanet->angle = NORMALIZE_ANGLE(uqm::lowWord(rand));
 		pPlanet->location.x = COSINE(pPlanet->angle, pPlanet->radius);
 		pPlanet->location.y = SINE(pPlanet->angle, pPlanet->radius);
-		ComputeSpeed(pPlanet, false, HIWORD(rand));
+		ComputeSpeed(pPlanet, false, uqm::highWord(rand));
 	}
 
 	return pByte;
@@ -843,34 +838,30 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 		{312,  778 }  // yellow
 	};
 #define CLOSEST_RADIUS HabitableRanges[ORANGE_BODY][0]
-	PLANET_DESC* pPD;
-	uint8_t starColor;
-	int16_t i;
-	uint8_t planetByte = solarSys->SunDesc[0].PlanetByte;
-	uint8_t numPlanets = solarSys->SunDesc[0].NumPlanets;
-	int16_t habitableRangeMin, habitableRangeMax, newRadius; // , radiusDiff;
-	int16_t oldRadius;
+	int16_t i {};
+	const uint8_t planetByte = solarSys->SunDesc[0].PlanetByte;
+	const uint8_t numPlanets = solarSys->SunDesc[0].NumPlanets;
+	int16_t newRadius {}; // , radiusDiff;
 	uint32_t planetRadii[MAX_GEN_PLANETS];
-	uint32_t rand_val;
 	// static int16_t diffCheck, min_radius;
 
-	starColor = STAR_COLOR(CurStarDescPtr->Type);
+	uint8_t starColor {STAR_COLOR(CurStarDescPtr->Type)};
 	// Terrible, but efficient, hack to ensure some semblance of sanity.
 	// Eventually, we will need further code if we care about habitable homes.
-	if (StarSeed && starColor == RED_BODY)
+	if (uqm::isStarSeed() && starColor == RED_BODY)
 	{
 		starColor = ORANGE_BODY;
 	}
 
-	pPD = solarSys->PlanetDesc;
-	oldRadius = pPD[planetByte].radius;
+	PLANET_DESC* pPD {solarSys->PlanetDesc};
+	const int16_t oldRadius {pPD[planetByte].radius};
 
-	habitableRangeMin = HabitableRanges[starColor][0];
-	habitableRangeMax = HabitableRanges[starColor][1];
+	const int16_t habitableRangeMin {HabitableRanges[starColor][0]};
+	int16_t habitableRangeMax {HabitableRanges[starColor][1]};
 
 	// This ensures the planets are at least a certain distance apart, which
 	// mirrors UNSCALE_RADIUS logic from FillOrbits (radius / 2^6 / 5)
-	if (StarSeed && numPlanets > 1 && pPD[1].radius < habitableRangeMax + 320
+	if (uqm::isStarSeed() && numPlanets > 1 && pPD[1].radius < habitableRangeMax + 320
 		&& pPD[1].radius > habitableRangeMin + 320)
 	{
 		habitableRangeMax = pPD[1].radius - 320;
@@ -887,23 +878,23 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 		planetRadii[i] = pPD[i].radius;
 	}
 
-	rand_val = RandomContext_Random(SysGenRNG);
+	const uint32_t rand_val {SysGenRNG->next()};
 
-	newRadius = (LOWORD(rand_val) % (habitableRangeMax - habitableRangeMin) + habitableRangeMin);
+	newRadius = (uqm::lowWord(rand_val) % (habitableRangeMax - habitableRangeMin) + habitableRangeMin);
 
 	// radiusDiff = abs (oldRadius - newRadius);
 
 	planetRadii[planetByte] = newRadius;
 
-	if ((StarSeed && numPlanets == 1) || planetRadii[planetByte] < planetRadii[planetByte + 1])
+	if ((uqm::isStarSeed() && numPlanets == 1) || planetRadii[planetByte] < planetRadii[planetByte + 1])
 	{
 		pPD[planetByte].radius = planetRadii[planetByte];
-		pPD[planetByte].angle = NORMALIZE_ANGLE(LOWORD(rand_val));
+		pPD[planetByte].angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 		pPD[planetByte].location.x =
 			COSINE(pPD[planetByte].angle, pPD[planetByte].radius);
 		pPD[planetByte].location.y =
 			SINE(pPD[planetByte].angle, pPD[planetByte].radius);
-		ComputeSpeed(&pPD[planetByte], false, HIWORD(rand_val));
+		ComputeSpeed(&pPD[planetByte], false, uqm::highWord(rand_val));
 
 		return true;
 	}
@@ -922,9 +913,9 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 
 		for (i = planetByte - 1; i > -1; --i)
 		{
-			rand_val = RandomContext_Random (SysGenRNG);
+			rand_val = SysGenRNG->next();
 
-			planetRadii[i] = (LOWORD (rand_val) % (
+			planetRadii[i] = (uqm::lowWord(rand_val) % (
 				planetRadii[(i + 1)] - CLOSEST_RADIUS) + CLOSEST_RADIUS);
 		}
 
@@ -951,14 +942,14 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 		{
 			if (planetRadii[i] > CLOSEST_RADIUS)
 			{
-				rand_val = RandomContext_Random (SysGenRNG);
+				rand_val = SysGenRNG->next();
 				pPD[i].radius = planetRadii[i];
-				pPD[i].angle = NORMALIZE_ANGLE (LOWORD (rand_val));
+				pPD[i].angle = NORMALIZE_ANGLE (uqm::lowWord(rand_val));
 				pPD[i].location.x =
 					COSINE (pPD[i].angle, pPD[i].radius);
 				pPD[i].location.y =
 					SINE (pPD[i].angle, pPD[i].radius);
-				ComputeSpeed (&pPD[i], false, HIWORD (rand_val));
+				ComputeSpeed (&pPD[i], false, uqm::highWord(rand_val));
 			}
 		}
 	}*/

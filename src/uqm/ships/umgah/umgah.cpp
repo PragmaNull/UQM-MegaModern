@@ -21,6 +21,7 @@
 #include "resinst.h"
 
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 10
@@ -149,15 +150,13 @@ SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 
 	if (pRaceDesc->data) // Out with the old
 	{
-		HFree(pRaceDesc->data);
+		delete static_cast<CustomShipData_t*>(pRaceDesc->data);
 		pRaceDesc->data = nullptr;
 	}
 
 	if (data) // In with the new
 	{
-		CustomShipData_t* newData = (CustomShipData_t*)HMalloc(sizeof(*data));
-		*newData = *data;
-		pRaceDesc->data = newData;
+		pRaceDesc->data = new CustomShipData_t {*data};
 	}
 }
 
@@ -165,7 +164,7 @@ SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 static void
 cone_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	StarShipPtr->RaceDescPtr->ship_data.special[0] =
@@ -179,9 +178,7 @@ static void
 cone_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	HELEMENT hBlastElement;
-
-	hBlastElement = weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
+	HELEMENT hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
 	if (hBlastElement)
 	{
 		RemoveElement(hBlastElement);
@@ -195,12 +192,11 @@ static void
 umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				   uint16_t ConcernCounter)
 {
-	EVALUATE_DESC* lpEvalDesc;
-	STARSHIP* StarShipPtr;
-	STARSHIP* EnemyStarShipPtr;
+	STARSHIP* StarShipPtr {};
+	STARSHIP* EnemyStarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_WEAPON_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
 	{
 		if (lpEvalDesc->which_turn > 3
@@ -235,9 +231,9 @@ umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 	else
 	{
-		uint8_t this_turn;
-		int32_t delta_x, delta_y;
-		bool EnemyBehind, EnoughJuice;
+		uint8_t this_turn {};
+		bool EnemyBehind {};
+		bool EnoughJuice {};
 
 		if (lpEvalDesc->which_turn >= 0xFF + 1)
 		{
@@ -252,8 +248,8 @@ umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 								 JUMP_DIST * StarShipPtr->RaceDescPtr->ship_info.energy_level
 								 / SPECIAL_ENERGY_COST)))
 							 > this_turn);
-		delta_x = lpEvalDesc->ObjectPtr->next.location.x - ShipPtr->next.location.x;
-		delta_y = lpEvalDesc->ObjectPtr->next.location.y - ShipPtr->next.location.y;
+		const int32_t delta_x {lpEvalDesc->ObjectPtr->next.location.x - ShipPtr->next.location.x};
+		const int32_t delta_y {lpEvalDesc->ObjectPtr->next.location.y - ShipPtr->next.location.y};
 		EnemyBehind = (bool)(NORMALIZE_ANGLE(
 								 ARCTAN(delta_x, delta_y)
 								 - (FACING_TO_ANGLE(StarShipPtr->ShipFacing)
@@ -286,7 +282,7 @@ umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		}
 		else
 		{
-			bool LinedUp;
+			bool LinedUp {};
 
 			StarShipPtr->ship_input_state &= ~THRUST;
 			LinedUp = (bool)(ShipPtr->turn_wait == 0
@@ -302,7 +298,7 @@ umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				/* don't want him backing straight into ship */
 				if (this_turn <= 8 && LinedUp)
 				{
-					if (TFB_Random() & 1)
+					if (uqm::random().next() & 1)
 					{
 						StarShipPtr->ship_input_state |= LEFT;
 					}
@@ -334,8 +330,7 @@ umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static uint16_t
 initialize_cone(ELEMENT* ShipPtr, HELEMENT ConeArray[])
 {
-	STARSHIP* StarShipPtr;
-	UMGAH_DATA* UmgahData;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -355,7 +350,7 @@ initialize_cone(ELEMENT* ShipPtr, HELEMENT ConeArray[])
 
 	// This func is called every frame while the player is holding down WEAPON
 	// Don't reset the cone FRAME to the first image every time
-	UmgahData = GetCustomShipData(StarShipPtr->RaceDescPtr);
+	const UMGAH_DATA* UmgahData {GetCustomShipData(StarShipPtr->RaceDescPtr)};
 	if (!UmgahData || StarShipPtr->ShipFacing != UmgahData->prevFacing)
 	{
 		const UMGAH_DATA shipData = {StarShipPtr->ShipFacing};
@@ -373,7 +368,7 @@ initialize_cone(ELEMENT* ShipPtr, HELEMENT ConeArray[])
 
 	if (ConeArray[0])
 	{
-		ELEMENT* ConePtr;
+		ELEMENT* ConePtr {};
 
 		LockElement(ConeArray[0], &ConePtr);
 		ConePtr->collision_func = cone_collision;
@@ -392,7 +387,7 @@ initialize_cone(ELEMENT* ShipPtr, HELEMENT ConeArray[])
 static void
 umgah_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter > 0)
@@ -406,7 +401,7 @@ umgah_postprocess(ELEMENT* ElementPtr)
 static void
 umgah_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -421,9 +416,9 @@ umgah_preprocess(ELEMENT* ElementPtr)
 			&& (StarShipPtr->cur_status_flags & SPECIAL)
 			&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 		{
-			uint16_t facing;
+			uint16_t facing {};
 
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 /* ZIP_BACKWARDS */
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 						 ElementPtr);
@@ -448,8 +443,6 @@ uninit_umgah(RACE_DESC* pRaceDesc)
 RACE_DESC*
 init_umgah(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		umgah_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -469,7 +462,7 @@ init_umgah(void)
 	umgah_desc.init_weapon_func = initialize_cone;
 	umgah_desc.cyborg_control.intelligence_func = umgah_intelligence;
 
-	RaceDescPtr = &umgah_desc;
+	RACE_DESC* RaceDescPtr {&umgah_desc};
 
 	return (RaceDescPtr);
 }

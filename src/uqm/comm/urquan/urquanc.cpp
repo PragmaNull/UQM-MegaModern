@@ -19,7 +19,7 @@
 #include "../commall.h"
 #include "resinst.h"
 #include "strings.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 static LOCDATA urquan_desc =
 	{
@@ -183,7 +183,7 @@ CombatIsInevitable(RESPONSE_REF R)
 			 || PLAYER_SAID(R, whats_up_3)
 			 || PLAYER_SAID(R, whats_up_4))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(URQUAN_INFO);
 		switch (NumVisits++)
@@ -492,15 +492,13 @@ LoserUrquan(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint32_t GrpOffs;
-
 	if (EXTENDED)
 	{
 		CommData.AlienAmbientArray[7].AnimFlags &= ~ANIM_DISABLED;
 		CommData.AlienAmbientArray[8].AnimFlags &= ~CIRCULAR_ANIM;
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -508,8 +506,8 @@ Intro(void)
 		return;
 	}
 
-	GrpOffs = GET_GAME_STATE(URQUAN_PROBE_GRPOFFS);
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+	uint32_t GrpOffs {GET_GAME_STATE(URQUAN_PROBE_GRPOFFS)};
+	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		&& GLOBAL(BattleGroupRef)
 		&& GLOBAL(BattleGroupRef) == GrpOffs)
 	{
@@ -518,12 +516,12 @@ Intro(void)
 	}
 	else if (GET_GAME_STATE(PLAYER_HYPNOTIZED))
 	{
-		SetCommIntroMode(CIM_FADE_IN_SCREEN, GameTicksPerSecond * 5);
+		SetCommIntroMode(CIM_FADE_IN_SCREEN, c_gameSecond * 5);
 		UrquanHypno((RESPONSE_REF)0);
 	}
 	else
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		if (!GET_GAME_STATE(URQUAN_SENSES_EVIL)
 			&& GET_GAME_STATE(TALKING_PET_ON_SHIP))
@@ -533,7 +531,7 @@ Intro(void)
 		}
 
 		GrpOffs = GET_GAME_STATE(COLONY_GRPOFFS);
-		if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+		if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 			&& GLOBAL(BattleGroupRef)
 			&& GLOBAL(BattleGroupRef) == GrpOffs)
 		{
@@ -544,7 +542,7 @@ Intro(void)
 		}
 
 		GrpOffs = GET_GAME_STATE(SAMATRA_GRPOFFS);
-		if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+		if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 			&& GLOBAL(BattleGroupRef)
 			&& GLOBAL(BattleGroupRef) == GrpOffs)
 		{
@@ -603,7 +601,7 @@ Intro(void)
 static uint16_t
 uninit_urquan(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -616,24 +614,20 @@ post_urquan_enc(void)
 LOCDATA*
 init_urquan_comm(void)
 {
-	LOCDATA* retval;
-
-	uint32_t GrpOffs;
-
 	urquan_desc.init_encounter_func = Intro;
 	urquan_desc.post_encounter_func = post_urquan_enc;
 	urquan_desc.uninit_encounter_func = uninit_urquan;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	urquan_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	urquan_desc.AlienTextBaseline.y = 0;
 	urquan_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
-	GrpOffs = GET_GAME_STATE(URQUAN_PROBE_GRPOFFS);
+	const uint32_t GrpOffs {GET_GAME_STATE(URQUAN_PROBE_GRPOFFS)};
 
 	// use alternate "Probe" track if available
-	if ((lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+	if ((uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		 && GLOBAL(BattleGroupRef)
 		 && GLOBAL(BattleGroupRef) == GrpOffs))
 	{
@@ -646,8 +640,8 @@ init_urquan_comm(void)
 	}
 
 	if (GET_GAME_STATE(PLAYER_HYPNOTIZED)
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE
-		|| (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE
+		|| (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 			&& GLOBAL(BattleGroupRef)
 			&& GLOBAL(BattleGroupRef) == GrpOffs))
 	{
@@ -657,7 +651,7 @@ init_urquan_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &urquan_desc;
+	LOCDATA* retval {&urquan_desc};
 
 	return (retval);
 }

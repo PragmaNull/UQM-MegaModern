@@ -21,6 +21,8 @@
 
 #include "libs/graphics/tfb_draw.h"
 
+#include "core/stl/semaphore.h"
+
 enum
 {
 	TFB_DRAWCOMMANDTYPE_LINE,
@@ -123,13 +125,13 @@ typedef struct tfb_dc_delimg
 
 typedef struct tfb_dc_deldata
 {
-	void* data;
-	// data must be a result of HXalloc() call
+	// Made with new[].
+	uint8_t* data;
 } TFB_DrawCommand_DeleteData;
 
 typedef struct tfb_dc_signal
 {
-	Semaphore sem;
+	uqstl::binary_semaphore* sem;
 } TFB_DrawCommand_SendSignal;
 
 typedef struct tfb_dc_reinit_video
@@ -195,8 +197,6 @@ void TFB_DrawCommandQueue_Push(TFB_DrawCommand* Command);
 int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* Command);
 
 void TFB_DrawCommandQueue_Clear(void);
-
-extern TFB_DrawCommandQueue DrawCommandQueue;
 
 void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand);
 

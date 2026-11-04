@@ -17,7 +17,7 @@
 #ifndef UQM_LUA_LUAFUNCS_EVENTFUNCS_H_
 #define UQM_LUA_LUAFUNCS_EVENTFUNCS_H_
 
-#include "libs/scriptlib.h"
+#include "uqm/lua/UQMLua.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

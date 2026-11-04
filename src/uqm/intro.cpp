@@ -37,10 +37,10 @@
 #include "util.h"
 #include "build.h"
 
-#include <ctype.h>
-#include <scn/scan.h>
+#include "slideshow.h"
+#include "libs/file/textfile.h"
 
-static bool ShowSlidePresentation(STRING PresStr);
+static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands);
 
 typedef struct
 {
@@ -52,9 +52,8 @@ typedef struct
 	TimeCount LastSyncTime;
 	TimeCount TimeOut;
 	int TimeOutOnSkip;
-	STRING SlideShow;
-#define MAX_FONTS 5
-	FONT Fonts[MAX_FONTS];
+	const uqstl::vector<uqm::SlideCommand>* Commands;
+	FONT Fonts[uqm::c_slideshowMaxFonts];
 	FRAME Frame;
 	MUSIC_REF MusicRef;
 	bool Batched;
@@ -62,21 +61,20 @@ typedef struct
 	FRAME RotatedFrame;
 	int LastDrawKind;
 	int LastAngle;
-	uint16_t OperIndex;
+	size_t OperIndex;
 	Color TextFadeColor;
 	Color TextColor;
 	Color TextBackColor;
-	int TextVPos;
-	int TextEffect;
+	uqm::SlideTextAlign TextVPos;
+	bool TextTraced;
 	GFXRECT clip_r;
 	GFXRECT tfade_r;
-#define MAX_TEXT_LINES 15
-	TEXT TextLines[MAX_TEXT_LINES];
+	TEXT TextLines[uqm::c_slideshowMaxFadeInLines];
 	uint16_t LinesCount;
 	char Buffer[512];
 	int MovieFrame;
 	int MovieEndFrame;
-	int InterframeDelay;
+	TimePeriod InterframeDelay;
 
 	// For DOS Spins
 	GFXRECT StatBox;
@@ -110,38 +108,25 @@ typedef struct
 
 static bool DoPresentation(void* pIS);
 
-static bool
-ParseColorString(const uqstl::string_view src, Color* pColor)
+static Color
+commandColor(const uqm::SlideCommand& cmd)
 {
-	const auto clrResult {scn::scan<unsigned>(src, "{:x}")};
-	if (!clrResult)
-	{
-		return false;
-	}
-	const unsigned clr = clrResult->value();
-
-	*pColor = BUILD_COLOR_RGBA(
-		(clr >> 16) & 0xff, (clr >> 8) & 0xff, clr & 0xff, 0xff);
-	return true;
+	return BUILD_COLOR_RGBA(cmd.color[0], cmd.color[1], cmd.color[2], 0xff);
 }
 
 static bool
-DoFadeScreen(PRESENTATION_INPUT_STATE* pPIS, const uqstl::string_view src, uint8_t FadeType)
+DoFadeScreen(PRESENTATION_INPUT_STATE* pPIS, int msecs, uint8_t FadeType)
 {
-	if (const auto result {scn::scan_value<int>(src)})
-	{
-		const int msecs = result->value();
-		pPIS->TimeOut = FadeScreen((ScreenFadeType)FadeType, msecs * GameTicksPerSecond / 1000)
-					  + GameTicksPerSecond / 10;
-		pPIS->TimeOutOnSkip = false;
-	}
+	pPIS->TimeOut = FadeScreen((ScreenFadeType)FadeType, msecs * c_gameSecond / 1000)
+				  + c_gameSecond / 10;
+	pPIS->TimeOutOnSkip = false;
 	return true;
 }
 
 static void
-DrawTextEffect(TEXT* pText, Color Fore, Color Back, int Effect)
+DrawTextEffect(TEXT* pText, Color Fore, Color Back, bool traced)
 {
-	if (Effect == 'T')
+	if (traced)
 	{
 		font_DrawTracedText(pText, Fore, Back);
 	}
@@ -150,27 +135,6 @@ DrawTextEffect(TEXT* pText, Color Fore, Color Back, int Effect)
 		SetContextForeGroundColor(Fore);
 		font_DrawText(pText);
 	}
-}
-
-static uint16_t
-ParseTextLines(TEXT* Lines, uint16_t MaxLines, char* Buffer)
-{
-	uint16_t i;
-	const char* pEnd = Buffer + strlen(Buffer);
-
-	for (i = 0; i < MaxLines && Buffer < pEnd; ++i, ++Lines)
-	{
-		char* pTerm = strchr(Buffer, '\n');
-		if (!pTerm)
-		{
-			pTerm = Buffer + strlen(Buffer);
-		}
-		*pTerm = '\0'; /* terminate string */
-		Lines->pStr = Buffer;
-		Lines->CharCount = ~0;
-		Buffer = pTerm + 1;
-	}
-	return i;
 }
 
 static void
@@ -205,21 +169,18 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 #define JET_TOP_Y_P (JET_TOP_Y + MODULE_YOFS_P)
 #define MODULE_TOP_Y_P (MODULE_TOP_Y + MODULE_YOFS_P)
 #define MODULE_TOP_X_P MODULE_TOP_X
-	GFXCONTEXT OldContext;
-	FRAME SisFrame;
-	FRAME ModuleFrame;
-	FRAME SkelFrame;
+	FRAME SisFrame {};
 	STAMP s;
 	GFXRECT r;
 	HOT_SPOT hs;
-	int slot;
-	uint16_t piece;
+	int slot {};
+	uint16_t piece {};
 	Color SisBack;
 
-	OldContext = SetContext(OffScreenContext);
+	GFXCONTEXT OldContext {SetContext(OffScreenContext)};
 
-	SkelFrame = CaptureDrawable(LoadGraphic(SISSKEL_MASK_PMAP_ANIM));
-	ModuleFrame = CaptureDrawable(LoadGraphic(SISMODS_MASK_PMAP_ANIM));
+	FRAME SkelFrame {CaptureDrawable(LoadGraphic(SISSKEL_MASK_PMAP_ANIM))};
+	FRAME ModuleFrame {CaptureDrawable(LoadGraphic(SISMODS_MASK_PMAP_ANIM))};
 
 	GetFrameRect(SkelFrame, &r);
 	SisFrame = CaptureDrawable(CreateDrawable(
@@ -270,7 +231,7 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
 			if (piece >= BOMB_MODULE_0)
 			{ // Blue glow around the bomb - mimic PC-DOS pre-rendered cutscene
-				Color oldColor = SetContextForeGroundColor(
+				const Color oldColor = SetContextForeGroundColor(
 					BUILD_COLOR_RGB(0x00, 0x00, 0x5F));
 
 				s.origin.y += RES_SCALE(2);
@@ -314,7 +275,7 @@ DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool* skip)
 	TEXT Text;
 
 	Text.pStr = buf;
-	Text.CharCount = (uint16_t)utf8StringCount(buf);
+	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
 	Text.align = ALIGN_LEFT;
 	Text.baseline.y = y;
 	Text.baseline.x = x;
@@ -330,7 +291,7 @@ DoSpinLine(LINE* l, Color front, Color back, bool* skip)
 		SetContextForeGroundColor(back);
 		DrawLine(l, RES_SCALE(1));
 		PlayMenuSound(MENU_SOUND_TEXT);
-		SleepThread(GameTicksPerSecond / 16);
+		SleepThread(c_gameSecond / 16);
 	}
 	SetContextForeGroundColor(front);
 	DrawLine(l, RES_SCALE(1));
@@ -343,7 +304,7 @@ DoSpinStatBox(GFXRECT* r, Color front, Color back, bool* skip)
 	{
 		DrawStarConBox(r, RES_SCALE(1), back, back, false, BLACK_COLOR, false, BLACK_COLOR);
 		PlayMenuSound(MENU_SOUND_TEXT);
-		SleepThread(GameTicksPerSecond / 16);
+		SleepThread(c_gameSecond / 16);
 	}
 	DrawStarConBox(r, RES_SCALE(1), front, front, false, BLACK_COLOR, false, BLACK_COLOR);
 }
@@ -353,7 +314,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 		   bool* skip)
 {
 	TEXT Text;
-	uint16_t i;
+	uint16_t i {};
 	GFXRECT sq;
 	GFXPOINT c;
 	GFXRECT chd;
@@ -365,7 +326,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 	chd.extent.width = chd.extent.height = 4;
 
 	Text.pStr = buf;
-	Text.CharCount = (uint16_t)utf8StringCount(buf);
+	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
 	Text.align = ALIGN_LEFT;
 	Text.baseline.y = y;
 	Text.baseline.x = x;
@@ -375,7 +336,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 		SetContextForeGroundColor(back);
 		font_DrawText(&Text);
 		PlayMenuSound(MENU_SOUND_TEXT);
-		SleepThread(GameTicksPerSecond / 16);
+		SleepThread(c_gameSecond / 16);
 	}
 	SetContextForeGroundColor(front);
 	font_DrawText(&Text);
@@ -387,14 +348,14 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 			SetContextForeGroundColor(back);
 			DrawFilledRectangle(&sq);
 			PlayMenuSound(MENU_SOUND_TEXT);
-			SleepThread(GameTicksPerSecond / 16);
+			SleepThread(c_gameSecond / 16);
 		}
 		SetContextForeGroundColor(front);
 		DrawFilledRectangle(&sq);
 		sq.corner.x += RES_SCALE(6);
 
 		UpdateInputState();
-		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT))
 		{
 			*skip = true;
 		}
@@ -417,7 +378,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 				DrawPoint(&c);
 			}
 			PlayMenuSound(MENU_SOUND_TEXT);
-			SleepThread(GameTicksPerSecond / 16);
+			SleepThread(c_gameSecond / 16);
 		}
 		SetContextForeGroundColor(front);
 		DrawStarConBox(&sq, RES_SCALE(1), front, front, false, BLACK_COLOR, false, BLACK_COLOR);
@@ -433,7 +394,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 		sq.corner.x += RES_SCALE(6);
 
 		UpdateInputState();
-		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT))
 		{
 			*skip = true;
 		}
@@ -454,10 +415,14 @@ Present_DrawMovieFrame(PRESENTATION_INPUT_STATE* pPIS)
 static bool
 ShowPresentationFile(const char* name)
 {
-	STRING pres = CaptureStringTable(LoadStringTableFile(uqm::contentDir(), name));
-	bool result = ShowSlidePresentation(pres);
-	DestroyStringTable(ReleaseStringTable(pres));
-	return result;
+	const auto text {uqm::readTextFile(uqm::contentDir(), name)};
+	const auto commands {text ? uqm::slideshowFromJson(*text) : uqstl::nullopt};
+	if (!commands)
+	{
+		uqm::log::warn("Could not read the slideshow '{}'.", name);
+		return false;
+	}
+	return ShowSlidePresentation(*commands);
 }
 
 typedef struct
@@ -470,7 +435,7 @@ typedef struct
 	uint16_t width;	   // The SD pixel width of the race name
 } SHIPMAP;
 
-static const SHIPMAP ship_map[] = {
+const static SHIPMAP ship_map[] = {
 	{ARILOU_ID,		"arilou",	  "ARILOULALEELAY", " SKIFF",		  2,	 123},
 	{CHMMR_ID,	   "chmmr",		"CHMMR",			 " AVATAR",		2,   50 },
 	{EARTHLING_ID,  "earthling",	"EARTHLING",		 " CRUISER",		 130, 79 },
@@ -508,7 +473,7 @@ static void
 SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 {
 	//TODO Nullicious: Get rid of goto :(
-	if (!uqm::UQMOptions::read().shipSeed)
+	if (!uqm::currentSeed().ships)
 	{
 		goto SeedDittyPassThru;
 	}
@@ -550,7 +515,7 @@ SeedDittyPassThru:
 static void
 SeedLineSpin(int* x1, int* y1, int* x2, int* y2)
 {
-	if (!uqm::UQMOptions::read().shipSeed || !x1 || !x2 || !y1 || !y2 || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
+	if (!uqm::currentSeed().ships || !x1 || !x2 || !y1 || !y2 || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
 	{
 		goto SeedLineSpinPassThru;
 	}
@@ -571,7 +536,7 @@ SeedLineSpinPassThru:
 static void
 SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 {
-	if (!uqm::UQMOptions::read().shipSeed || !x || !y || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
+	if (!uqm::currentSeed().ships || !x || !y || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
 	{
 		goto SeedTextSpinPassThru;
 	}
@@ -606,7 +571,7 @@ SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 	}
 
 	linespun = true;
-	utf8StringCopy(buf, size, ship_map[raceID].race);
+	uqm::utf8StringCopy(buf, size, ship_map[raceID].race);
 	buf += strlen(ship_map[raceID].race) * sizeof(char);
 
 	switch (ship_map[shipID].sID)
@@ -689,7 +654,7 @@ SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 			if (ship_map[raceID].width > 80)
 			{
 				const char* pad = (IS_HD ? "\n   " : "\n       ");
-				utf8StringCopy(buf, size, pad);
+				uqm::utf8StringCopy(buf, size, pad);
 				buf += strlen(pad) * sizeof(char);
 			}
 			break;
@@ -697,28 +662,16 @@ SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 			break;
 	}
 
-	utf8StringCopy(buf, size, ship_map[shipID].ship);
+	uqm::utf8StringCopy(buf, size, ship_map[shipID].ship);
 	return;
 
 SeedTextSpinSkipLine:
-	utf8StringCopy(buf, size, "");
+	uqm::utf8StringCopy(buf, size, "");
 	return;
 
 SeedTextSpinPassThru:
-	utf8StringCopy(buf, size, str);
+	uqm::utf8StringCopy(buf, size, str);
 	return;
-}
-
-uqstl::string_view scanUntilNewLine(uqstl::string_view src)
-{
-	// advance past whitespace.
-	const auto start {src.find_first_not_of(" \t")};
-	if (start == uqstl::string_view::npos)
-	{
-		return {};
-	}
-	const auto end {src.find('\n', start)};
-	return src.substr(start, end);
 }
 
 static bool
@@ -727,14 +680,14 @@ DoPresentation(void* pIS)
 	PRESENTATION_INPUT_STATE* pPIS = (PRESENTATION_INPUT_STATE*)pIS;
 
 	if (PulsedInputState.menu[KEY_MENU_CANCEL]
-		|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+		|| (uqm::currentActivity() & CHECK_ABORT))
 	{
 		return false; /* abort requested - we are done */
 	}
 
-	if (pPIS->TimeOut)
+	if (pPIS->TimeOut != TimeCount {})
 	{
-		TimeCount Delay = GameTicksPerSecond / 84;
+		TimePeriod Delay {c_gameSecond / 84};
 
 		if (GetTimeCounter() >= pPIS->TimeOut)
 		{
@@ -750,14 +703,14 @@ DoPresentation(void* pIS)
 			}
 			else
 			{ /* time elapsed - continue normal ops */
-				pPIS->TimeOut = 0;
+				pPIS->TimeOut = TimeCount {};
 				return true;
 			}
 		}
 
 		if (pPIS->TimeOutOnSkip && (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_SPECIAL] || PulsedInputState.menu[KEY_MENU_RIGHT]))
 		{ /* skip requested - continue normal ops */
-			pPIS->TimeOut = 0;
+			pPIS->TimeOut = TimeCount {};
 			pPIS->MovieFrame = -1; /* abort any movie in progress */
 			return true;
 		}
@@ -766,143 +719,76 @@ DoPresentation(void* pIS)
 		return true;
 	}
 
-	while (pPIS->OperIndex < GetStringTableCount(pPIS->SlideShow))
+	while (pPIS->OperIndex < pPIS->Commands->size())
 	{
-		const char* pStr {GetStringAddress(pPIS->SlideShow)};
+		const uqm::SlideCommand& cmd {(*pPIS->Commands)[pPIS->OperIndex]};
 		pPIS->OperIndex++;
-		pPIS->SlideShow = SetRelStringTableIndex(pPIS->SlideShow, 1);
 
-		if (!pStr)
+		if ((cmd.resolution == uqm::SlideResolution::Sd && IS_HD) || (cmd.resolution == uqm::SlideResolution::Hd && !IS_HD))
 		{
 			continue;
 		}
 
-		std::string_view strView {pStr};
-		if (strView.empty())
+		switch (cmd.op)
 		{
-			continue;
-		}
-		const auto opcodeResult {scn::scan_value<std::string>(strView)};
-		if (!opcodeResult)
-		{
-			continue;
-		}
-		const std::string& opcodeStr = opcodeResult->value();
-		const auto opCodeHash {uqm::hashQuick64CaseInsensitive(opcodeStr)};
-
-		strView = {opcodeResult->range().data(), opcodeResult->range().size()};
-
-		// eat whitespace
-		if (!strView.empty())
-		{
-			strView = strView.substr(strView.find_first_not_of(" \t"));
-		}
-
-		switch (opCodeHash)
-		{
-			case uqm::hashQuick64CaseInsensitive("DIMS"):
+			case uqm::SlideOp::Dims:
 				{ /* set dimensions */
-					if (const auto result {scn::scan<int, int>(strView, "{} {}")})
-					{
-						auto [w, h] = result->values();
-						w <<= RESOLUTION_FACTOR;
-						h <<= RESOLUTION_FACTOR;
+					const int w {cmd.width << RESOLUTION_FACTOR};
+					const int h {cmd.height << RESOLUTION_FACTOR};
 
-						pPIS->clip_r.extent.width = w;
-						pPIS->clip_r.extent.height = h;
-						/* center on screen */
-						pPIS->clip_r.corner.x = (SCREEN_WIDTH - w) / 2;
-						pPIS->clip_r.corner.y = (SCREEN_HEIGHT - h) / 2;
-						SetContextClipRect(&pPIS->clip_r);
-					}
+					pPIS->clip_r.extent.width = w;
+					pPIS->clip_r.extent.height = h;
+					/* center on screen */
+					pPIS->clip_r.corner.x = (SCREEN_WIDTH - w) / 2;
+					pPIS->clip_r.corner.y = (SCREEN_HEIGHT - h) / 2;
+					SetContextClipRect(&pPIS->clip_r);
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("FONT"):
-			case uqm::hashQuick64CaseInsensitive("FONT1X"):
-			case uqm::hashQuick64CaseInsensitive("FONT4X"):
+			case uqm::SlideOp::Font:
 				{ /* set and/or load a font */
-					if (opCodeHash == uqm::hashQuick64CaseInsensitive("FONT1X") && IS_HD)
-					{
-						break;
-					}
-					if (opCodeHash == uqm::hashQuick64CaseInsensitive("FONT4X") && !IS_HD)
-					{
-						break;
-					}
+					FONT* const pFont {&pPIS->Fonts[cmd.index]};
 
-					int index;
-					FONT* pFont;
-
-					assert(sizeof(pPIS->Buffer) >= 256);
-
-					pPIS->Buffer[0] = '\0';
-					const auto indexResult {scn::scan_value<int>(strView)};
-					if (!indexResult || indexResult->value() < 0 || indexResult->value() >= MAX_FONTS)
-					{
-						uqm::log::warn("Bad FONT command '{}'", strView);
-						continue;
-					}
-					index = indexResult->value();
-					{
-						const auto next {scanUntilNewLine({indexResult->range().data(), indexResult->range().size()})};
-						uqm::strncpy_safe(pPIS->Buffer, next);
-					}
-					pFont = &pPIS->Fonts[index];
-
-					if (pPIS->Buffer[0])
+					if (!cmd.text.empty())
 					{ /* asked to load a font */
 						if (*pFont)
 						{
 							DestroyFont(*pFont);
 						}
-						*pFont = LoadFontFile(pPIS->Buffer);
+						*pFont = LoadFontFile(cmd.text.c_str());
 					}
 
 					SetContextFont(*pFont);
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("ANI"):
-			case uqm::hashQuick64CaseInsensitive("ANI1X"):
-			case uqm::hashQuick64CaseInsensitive("ANI4X"):
+			case uqm::SlideOp::Ani:
 				{ /* set ani */
-					if (opCodeHash == uqm::hashQuick64CaseInsensitive("ANI1X") && IS_HD)
-					{
-						break;
-					}
-					if (opCodeHash == uqm::hashQuick64CaseInsensitive("ANI4X") && !IS_HD)
-					{
-						break;
-					}
-
-					uqm::strncpy_safe(pPIS->Buffer, strView);
 					if (pPIS->Frame)
 					{
 						DestroyDrawable(ReleaseDrawable(pPIS->Frame));
 					}
-					pPIS->Frame = CaptureDrawable(LoadGraphicFile(pPIS->Buffer));
+					pPIS->Frame = CaptureDrawable(LoadGraphicFile(cmd.text.c_str()));
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("MUSIC"):
+			case uqm::SlideOp::Music:
 				{ /* set music */
-					uqm::strncpy_safe(pPIS->Buffer, strView);
 					if (pPIS->MusicRef)
 					{
 						StopMusic();
 						DestroyMusic(pPIS->MusicRef);
 					}
-					pPIS->MusicRef = LoadMusicFile(pPIS->Buffer);
+					pPIS->MusicRef = LoadMusicFile(cmd.text.c_str());
 					PlayMusic(pPIS->MusicRef, false, 1);
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("DITTY"):
+			case uqm::SlideOp::Ditty:
 				{ /* set ditty */
-					if (uqm::UQMOptions::read().shipSeed)
+					if (uqm::currentSeed().ships)
 					{
-						SeedDitty(pPIS->Buffer, strView);
+						SeedDitty(pPIS->Buffer, cmd.text);
 					}
 					else
 					{
-						fmt::format_to_sz_n(pPIS->Buffer, "ship.{}.ditty", strView);
+						fmt::format_to_sz_n(pPIS->Buffer, "ship.{}.ditty", cmd.text);
 					}
 
 					if (pPIS->MusicRef)
@@ -915,205 +801,215 @@ DoPresentation(void* pIS)
 					PlayMusic(pPIS->MusicRef, false, 1);
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("WAIT"):
+			case uqm::SlideOp::Wait:
 				{ /* wait */
 					Present_UnbatchGraphics(pPIS, true);
-					if (const auto result {scn::scan_value<int>(strView)})
-					{
-						const int msecs = result->value();
-						pPIS->TimeOut = GetTimeCounter()
-									  + msecs * GameTicksPerSecond / 1000;
-						pPIS->TimeOutOnSkip = true;
-						return true;
-					}
-					break;
+					pPIS->TimeOut = GetTimeCounter() + cmd.ms * c_gameSecond / 1000;
+					pPIS->TimeOutOnSkip = true;
+					return true;
 				}
-			case uqm::hashQuick64CaseInsensitive("WAITDITTY"):
+			case uqm::SlideOp::WaitDitty:
 				{ /* wait for ditty to end */
 					while (PlayingStream(MUSIC_SOURCE))
 					{
 						if (CurrentInputState.menu[KEY_MENU_CANCEL]
-							|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+							|| (uqm::currentActivity() & CHECK_ABORT))
 						{
 							StopMusic();
 							pPIS->Skip = true;
 							return true;
 						}
-						SleepThread(GameTicksPerSecond / 10);
+						SleepThread(c_gameSecond / 10);
 						UpdateInputState();
 					}
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("SPINWAIT"):
+			case uqm::SlideOp::SpinWait:
 				{ /* special wait during spin */
-					TimeCount TimeOut;
-					if (const auto result {scn::scan_value<int>(strView)}; result && !pPIS->Skip)
+					if (!pPIS->Skip)
 					{
-						const int msecs = result->value();
-						TimeOut = GetTimeCounter()
-								+ msecs * GameTicksPerSecond / 1000;
+						const TimeCount TimeOut {GetTimeCounter() + cmd.ms * c_gameSecond / 1000};
 						while (GetTimeCounter() < TimeOut)
 						{
 							if (CurrentInputState.menu[KEY_MENU_CANCEL]
-								|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+								|| (uqm::currentActivity() & CHECK_ABORT))
 							{
 								Present_BatchGraphics(pPIS);
 								pPIS->Skip = true;
 								return true;
 							}
-							SleepThread(GameTicksPerSecond / 84);
+							SleepThread(c_gameSecond / 84);
 							UpdateInputState();
 						}
 					}
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("SYNC"):
+			case uqm::SlideOp::Sync:
 				{ /* absolute time-sync */
 					Present_UnbatchGraphics(pPIS, true);
-					if (const auto result {scn::scan_value<int>(strView)})
-					{
-						const int msecs = result->value();
-						pPIS->LastSyncTime = pPIS->StartTime
-										   + msecs * GameTicksPerSecond / 1000;
-						pPIS->TimeOut = pPIS->LastSyncTime;
-						pPIS->TimeOutOnSkip = false;
-						return true;
-					}
-					break;
+					pPIS->LastSyncTime = pPIS->StartTime + cmd.ms * c_gameSecond / 1000;
+					pPIS->TimeOut = pPIS->LastSyncTime;
+					pPIS->TimeOutOnSkip = false;
+					return true;
 				}
-			case uqm::hashQuick64CaseInsensitive("RESYNC"):
+			case uqm::SlideOp::Resync:
 				{ /* flush and update absolute sync point */
 					pPIS->LastSyncTime = pPIS->StartTime = GetTimeCounter();
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("DSYNC"):
+			case uqm::SlideOp::DeltaSync:
 				{ /* delta time-sync; from the last absolute sync */
 					Present_UnbatchGraphics(pPIS, true);
-					if (const auto result {scn::scan_value<int>(strView)})
+					pPIS->TimeOut = pPIS->LastSyncTime + cmd.ms * c_gameSecond / 1000;
+					pPIS->TimeOutOnSkip = false;
+					return true;
+				}
+			case uqm::SlideOp::BackgroundColor:
+				{ /* text back color */
+					SetContextBackGroundColor(commandColor(cmd));
+					break;
+				}
+			case uqm::SlideOp::TextColor:
+				{ /* text fore color */
+					pPIS->TextColor = commandColor(cmd);
+					break;
+				}
+			case uqm::SlideOp::TextBackColor:
+				{ /* text back color */
+					pPIS->TextBackColor = commandColor(cmd);
+					break;
+				}
+			case uqm::SlideOp::TextFadeColor:
+				{ /* text fade color */
+					pPIS->TextFadeColor = commandColor(cmd);
+					break;
+				}
+			case uqm::SlideOp::TextAlign:
+				{ /* text vertical align */
+					pPIS->TextVPos = cmd.align;
+					break;
+				}
+			case uqm::SlideOp::TextEffect:
+				{ /* text effect */
+					pPIS->TextTraced = cmd.traced;
+					break;
+				}
+			case uqm::SlideOp::Text:
+				{ /* simple text draw */
+					TEXT t;
+
+					t.align = ALIGN_CENTER;
+					t.pStr = cmd.text.c_str();
+					t.CharCount = (uint16_t)~0;
+					t.baseline.x = RES_SCALE(cmd.x);
+					t.baseline.y = RES_SCALE(cmd.y);
+					DrawTextEffect(&t, pPIS->TextColor, pPIS->TextBackColor,
+								   pPIS->TextTraced);
+					break;
+				}
+			case uqm::SlideOp::TextSpin:
+				{ /* spin text draw */
+					int x {cmd.x};
+					int y {cmd.y};
+
+					if (uqm::currentSeed().ships)
 					{
-						const int msecs = result->value();
-						pPIS->TimeOut = pPIS->LastSyncTime
-									  + msecs * GameTicksPerSecond / 1000;
-						pPIS->TimeOutOnSkip = false;
-						return true;
+						SeedTextSpin(pPIS->Buffer, sizeof(pPIS->Buffer),
+									 cmd.text.c_str(), &x, &y);
+					}
+					else
+					{
+						uqm::utf8StringCopy(pPIS->Buffer, sizeof(pPIS->Buffer),
+											cmd.text.c_str());
+					}
+					x <<= RESOLUTION_FACTOR;
+					y <<= RESOLUTION_FACTOR;
+
+					if (pPIS->HaveFrame
+						&& (pPIS->GetRect.extent.width > 0
+							&& pPIS->GetRect.extent.height > 0))
+					{
+						x += pPIS->GetRect.corner.x;
+						y += pPIS->GetRect.corner.y;
+					}
+
+					SetContextForeGroundColor(pPIS->TextColor);
+					SetContextBackGroundColor(pPIS->TextBackColor);
+					if (uqm::currentSeed().ships && !strncmp(pPIS->Buffer, "SPATHI", 6))
+					{ // Manually space the SPATHI text
+						DoSpinText("SP", x,
+								   y + RES_SCALE(7),
+								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
+						DoSpinText("A", x + RES_SCALE(16),
+								   y + RES_SCALE(7),
+								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
+						DoSpinText("THI", x + RES_SCALE(25),
+								   y + RES_SCALE(7),
+								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
+						if (ship_map[shipID].sID == UR_QUAN_ID)
+						{ // All for a ship that won't occur anyway
+							x -= RES_SCALE(52);
+							y += RES_SCALE(11);
+						}
+						DoSpinText(&(pPIS->Buffer[6]), x + RES_SCALE(52),
+								   y + RES_SCALE(7),
+								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
+					}
+					else
+					{
+						DoSpinText(pPIS->Buffer, x, y + RES_SCALE(7),
+								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
+					}
+
+					if (pPIS->Skip)
+					{
+						Present_BatchGraphics(pPIS);
 					}
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("BGC"):
-				{ /* text back color */
-					Color temp;
-					ParseColorString(strView, &temp);
-					SetContextBackGroundColor(temp);
-					break;
-				}
-			case uqm::hashQuick64CaseInsensitive("TC"):
-				{ /* text fore color */
-					ParseColorString(strView, &pPIS->TextColor);
-					break;
-				}
-			case uqm::hashQuick64CaseInsensitive("TBC"):
-				{ /* text back color */
-					ParseColorString(strView, &pPIS->TextBackColor);
-					break;
-				}
-			case uqm::hashQuick64CaseInsensitive("TFC"):
-				{ /* text fade color */
-					ParseColorString(strView, &pPIS->TextFadeColor);
-					break;
-				}
-			case uqm::hashQuick64CaseInsensitive("TVA"):
-				{ /* text vertical align */
-					pPIS->TextVPos = toupper(strView.front());
-					break;
-				}
-			case uqm::hashQuick64CaseInsensitive("TE"):
-				{ /* text effect */
-					pPIS->TextEffect = toupper(strView.front());
-					break;
-				}
-			case uqm::hashQuick64CaseInsensitive("TEXT"):
-				{ /* simple text draw */
-					static_assert(sizeof(pPIS->Buffer) >= 256);
+			case uqm::SlideOp::SpinStat:
+				{ /* spin stat draw */
+					int16_t leading {};
 
-					if (const auto xyResult {scn::scan<int, int>(strView, "{} {}")})
+					uqm::strncpy_safe(pPIS->Buffer, cmd.text);
+					GetContextFontLeading(&leading);
+
+					pPIS->NumSpinStat++;
+
+					const int x {pPIS->StatBox.corner.x + RES_SCALE(3)};
+					const int y {pPIS->StatBox.corner.y + RES_SCALE(1) + (leading * pPIS->NumSpinStat)};
+
+					if (pPIS->NumSpinStat > 8)
 					{
-						const auto [x, y] = xyResult->values();
+						uqm::log::warn("SPINSTAT: Number of SPINSTAT "
+									   "entries exceeds max amount '{}'",
+									   cmd.text);
+						return false;
+					}
 
-						const auto next {scanUntilNewLine({xyResult->range().data(), xyResult->range().size()})};
-						uqm::strncpy_safe(pPIS->Buffer, next);
-
+					if (cmd.filled > 9 || (cmd.filled + cmd.empty) > 9)
+					{
+						char buf[sizeof(pPIS->Buffer) + 12];
 						TEXT t;
 
-						t.align = ALIGN_CENTER;
-						t.pStr = pPIS->Buffer;
+						uqm::log::warn("SPINSTAT: Stats exceed max "
+									   "values '{}'",
+									   cmd.text);
+						fmt::format_to_sz_n(buf, "{} Exceed max !", pPIS->Buffer);
+
+						t.align = ALIGN_LEFT;
+						t.pStr = buf;
 						t.CharCount = (uint16_t)~0;
-						t.baseline.x = RES_SCALE(x);
-						t.baseline.y = RES_SCALE(y);
-						DrawTextEffect(&t, pPIS->TextColor, pPIS->TextBackColor,
-									   pPIS->TextEffect);
+						t.baseline = MAKE_POINT(x, y);
+						DrawTextEffect(&t,
+									   BUILD_COLOR_RGBA(0xFF, 0x55, 0x55, 0xFF),
+									   pPIS->TextBackColor, pPIS->TextTraced);
 					}
-					break;
-				}
-			case uqm::hashQuick64CaseInsensitive("TEXTSPIN"):
-				{ /* spin text draw */
-					int x = 0, y = 0;
-
-					assert(sizeof(pPIS->Buffer) >= 256);
-
-					if (const auto xyResult {scn::scan<int, int>(strView, "{} {}")})
+					else
 					{
-						const auto [xi, yi] = xyResult->values();
-						x = xi;
-						y = yi;
-						const char* textStart = xyResult->range().data();
-						if (uqm::UQMOptions::read().shipSeed)
-						{
-							SeedTextSpin(pPIS->Buffer, sizeof(pPIS->Buffer),
-										 textStart, &x, &y);
-						}
-						else
-						{
-							utf8StringCopy(pPIS->Buffer, sizeof(pPIS->Buffer),
-										   textStart);
-						}
-						x <<= RESOLUTION_FACTOR;
-						y <<= RESOLUTION_FACTOR;
-
-						if (pPIS->HaveFrame
-							&& (pPIS->GetRect.extent.width > 0
-								&& pPIS->GetRect.extent.height > 0))
-						{
-							x += pPIS->GetRect.corner.x;
-							y += pPIS->GetRect.corner.y;
-						}
-
-						SetContextForeGroundColor(pPIS->TextColor);
-						SetContextBackGroundColor(pPIS->TextBackColor);
-						if (uqm::UQMOptions::read().shipSeed && !strncmp(pPIS->Buffer, "SPATHI", 6))
-						{ // Manually space the SPATHI text
-							DoSpinText("SP", x,
-									   y + RES_SCALE(7),
-									   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
-							DoSpinText("A", x + RES_SCALE(16),
-									   y + RES_SCALE(7),
-									   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
-							DoSpinText("THI", x + RES_SCALE(25),
-									   y + RES_SCALE(7),
-									   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
-							if (ship_map[shipID].sID == UR_QUAN_ID)
-							{ // All for a ship that won't occur anyway
-								x -= RES_SCALE(52);
-								y += RES_SCALE(11);
-							}
-							DoSpinText(&(pPIS->Buffer[6]), x + RES_SCALE(52),
-									   y + RES_SCALE(7),
-									   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
-						}
-						else
-						{
-							DoSpinText(pPIS->Buffer, x, y + RES_SCALE(7),
-									   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
-						}
+						DoSpinStat(pPIS->Buffer,
+								   x, y, cmd.filled, cmd.empty,
+								   pPIS->TextColor, pPIS->TextBackColor, &pPIS->Skip);
 
 						if (pPIS->Skip)
 						{
@@ -1122,87 +1018,18 @@ DoPresentation(void* pIS)
 					}
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("SPINSTAT"):
-				{ /* spin stat draw */
-					int x, y, f = 0, e = 0;
-					int16_t leading;
-
-					assert(sizeof(pPIS->Buffer) >= 256);
-
-					bool spinstatOk = false;
-					if (const auto feResult {scn::scan<int, int>(strView, "{} {}")})
-					{
-						const auto [fi, ei] = feResult->values();
-						f = fi;
-						e = ei;
-
-						const auto next {scanUntilNewLine({feResult->range().data(), feResult->range().size()})};
-						uqm::strncpy_safe(pPIS->Buffer, next);
-						spinstatOk = true;
-					}
-					if (spinstatOk)
-					{
-						GetContextFontLeading(&leading);
-
-						pPIS->NumSpinStat++;
-
-						x = pPIS->StatBox.corner.x + RES_SCALE(3);
-						y = pPIS->StatBox.corner.y + RES_SCALE(1)
-						  + (leading * pPIS->NumSpinStat);
-
-						if (pPIS->NumSpinStat > 8)
-						{
-							uqm::log::warn("SPINSTAT: Number of SPINSTAT "
-										   "entries exceeds max amount '{}'",
-										   strView);
-							return false;
-						}
-
-						if (f > 9 || (f + e) > 9)
-						{
-							char buf[sizeof(pPIS->Buffer) + 12];
-							TEXT t;
-
-							uqm::log::warn("SPINSTAT: Stats exceed max "
-										   "values '{}'",
-										   strView);
-							fmt::format_to_sz_n(buf, "{} Exceed max !", pPIS->Buffer);
-
-							t.align = ALIGN_LEFT;
-							t.pStr = buf;
-							t.CharCount = (uint16_t)~0;
-							t.baseline = MAKE_POINT(x, y);
-							DrawTextEffect(&t,
-										   BUILD_COLOR_RGBA(0xFF, 0x55, 0x55, 0xFF),
-										   pPIS->TextBackColor, pPIS->TextEffect);
-						}
-						else
-						{
-							DoSpinStat(pPIS->Buffer,
-									   x, y, f, e,
-									   pPIS->TextColor, pPIS->TextBackColor, &pPIS->Skip);
-
-							if (pPIS->Skip)
-							{
-								Present_BatchGraphics(pPIS);
-							}
-						}
-					}
-					else
-					{
-						uqm::log::warn("Bad SPINSTAT command '{}'", strView);
-					}
-					break;
-				}
-			case uqm::hashQuick64CaseInsensitive("TFI"):
+			case uqm::SlideOp::TextFadeIn:
 				{ /* text fade-in */
-					int16_t leading;
-					uint16_t i;
-					int16_t y;
+					int16_t leading {};
+					uint16_t i {};
+					int16_t y {};
 
-					uqm::strncpy_safe(pPIS->Buffer, strView);
-					pPIS->LinesCount = ParseTextLines(pPIS->TextLines,
-													  MAX_TEXT_LINES, pPIS->Buffer);
+					pPIS->LinesCount = static_cast<uint16_t>(cmd.lines.size());
+					for (i = 0; i < pPIS->LinesCount; ++i)
+					{
+						pPIS->TextLines[i].pStr = cmd.lines[i].c_str();
+						pPIS->TextLines[i].CharCount = (uint16_t)~0;
+					}
 
 					Present_UnbatchGraphics(pPIS, true);
 
@@ -1210,15 +1037,15 @@ DoPresentation(void* pIS)
 
 					switch (pPIS->TextVPos)
 					{
-						case 'T': /* top */
+						case uqm::SlideTextAlign::Top:
 							y = leading / pPIS->LinesCount + leading;
 							break;
-						case 'M': /* middle */
+						case uqm::SlideTextAlign::Middle:
 							y = (pPIS->clip_r.extent.height
 								 - pPIS->LinesCount * leading)
 							  / 2;
 							break;
-						default: /* bottom */
+						default:
 							y = pPIS->clip_r.extent.height - pPIS->LinesCount * leading;
 					}
 					pPIS->tfade_r = pPIS->clip_r;
@@ -1234,7 +1061,7 @@ DoPresentation(void* pIS)
 					for (i = 0; i < pPIS->LinesCount; ++i)
 					{
 						DrawTextEffect(pPIS->TextLines + i, pPIS->TextFadeColor,
-									   pPIS->TextFadeColor, pPIS->TextEffect);
+									   pPIS->TextFadeColor, pPIS->TextTraced);
 					}
 
 					/* do transition */
@@ -1243,15 +1070,15 @@ DoPresentation(void* pIS)
 					for (i = 0; i < pPIS->LinesCount; ++i)
 					{
 						DrawTextEffect(pPIS->TextLines + i, pPIS->TextColor,
-									   pPIS->TextBackColor, pPIS->TextEffect);
+									   pPIS->TextBackColor, pPIS->TextTraced);
 					}
 					ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, &pPIS->tfade_r);
 					UnbatchGraphics();
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("TFO"):
+			case uqm::SlideOp::TextFadeOut:
 				{ /* text fade-out */
-					uint16_t i;
+					uint16_t i {};
 
 					Present_UnbatchGraphics(pPIS, true);
 
@@ -1261,159 +1088,38 @@ DoPresentation(void* pIS)
 					for (i = 0; i < pPIS->LinesCount; ++i)
 					{
 						DrawTextEffect(pPIS->TextLines + i, pPIS->TextFadeColor,
-									   pPIS->TextFadeColor, pPIS->TextEffect);
+									   pPIS->TextFadeColor, pPIS->TextTraced);
 					}
 					ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, &pPIS->tfade_r);
 					UnbatchGraphics();
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("SAVEBG"):
+			case uqm::SlideOp::SaveBackground:
 				{ /* save background */
 					TFB_DrawScreen_Copy(&pPIS->clip_r,
 										TFB_SCREEN_MAIN, TFB_SCREEN_EXTRA);
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("RESTBG"):
+			case uqm::SlideOp::RestoreBackground:
 				{ /* restore background */
 					TFB_DrawScreen_Copy(&pPIS->clip_r,
 										TFB_SCREEN_EXTRA, TFB_SCREEN_MAIN);
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("DRAW"):
+			case uqm::SlideOp::Draw:
+			case uqm::SlideOp::DrawSis:
 				{ /* draw a graphic */
-#define PRES_DRAW_INDEX 0
-#define PRES_DRAW_SIS 1
-					int cargs = 0;
-					int draw_what = PRES_DRAW_INDEX;
-					int index = 0;
-					int x = 0, y = 0;
-					int scale = GSCALE_IDENTITY;
-					int angle = 0;
-					uqm::TFBScaleMode scale_mode {};
+					const bool drawSis {cmd.op == uqm::SlideOp::DrawSis};
+					const int angle {cmd.angle};
 					STAMP s;
 
-					if (const auto firstWordResult {scn::scan_value<std::string>(strView)})
-					{
-						uqstl::string firstWord = firstWordResult->value();
-						for (char& c : firstWord)
-						{
-							c = static_cast<char>(toupper(static_cast<unsigned char>(c)));
-						}
-
-						if (firstWord == "SIS")
-						{
-							draw_what = PRES_DRAW_SIS;
-							scale_mode = uqm::TFBScaleMode::Nearest;
-
-							const uqstl::string_view argPtr {
-								firstWordResult->range().data(), firstWordResult->range().size()};
-							if (const auto r4 {scn::scan<uqstl::string, int, int, int, int>(argPtr, "{} {} {} {} {}")})
-							{
-								const auto [_, xi, yi, si, ai] = r4->values();
-								x = xi;
-								y = yi;
-								scale = si;
-								angle = ai;
-								cargs = 5;
-							}
-							else if (const auto r3 {scn::scan<uqstl::string, int, int, int>(argPtr, "{} {} {} {}")})
-							{
-								const auto [_, xi, yi, si] = r3->values();
-								x = xi;
-								y = yi;
-								scale = si;
-								cargs = 4;
-							}
-							else if (const auto r2 {scn::scan<uqstl::string, int, int>(argPtr, "{} {} {}")})
-							{
-								const auto [_, xi, yi] = r2->values();
-								x = xi;
-								y = yi;
-								cargs = 3;
-							}
-							else if (const auto r1 {scn::scan<uqstl::string, int>(argPtr, "{} {}")})
-							{
-								x = uqstl::get<1>(r1->values());
-								cargs = 2;
-							}
-						}
-						else
-						{
-							draw_what = PRES_DRAW_INDEX;
-							scale_mode = uqm::TFBScaleMode::Bilinear;
-							if (const auto r5 {scn::scan<int, int, int, int, int>(strView, "{} {} {} {} {}")})
-							{
-								const auto [i, xi, yi, si, ai] = r5->values();
-								index = i;
-								x = xi;
-								y = yi;
-								scale = si;
-								angle = ai;
-								cargs = 5;
-							}
-							else if (const auto r4 {scn::scan<int, int, int, int>(strView, "{} {} {} {}")})
-							{
-								const auto [i, xi, yi, si] = r4->values();
-								index = i;
-								x = xi;
-								y = yi;
-								scale = si;
-								cargs = 4;
-							}
-							else if (const auto r3 {scn::scan<int, int, int>(strView, "{} {} {}")})
-							{
-								const auto [i, xi, yi] = r3->values();
-								index = i;
-								x = xi;
-								y = yi;
-								cargs = 3;
-							}
-							else if (const auto r2 {scn::scan<int, int>(strView, "{} {}")})
-							{
-								const auto [i, xi] = r2->values();
-								index = i;
-								x = xi;
-								cargs = 2;
-							}
-							else if (const auto r1 {scn::scan_value<int>(strView)})
-							{
-								index = r1->value();
-								cargs = 1;
-							}
-						}
-					}
-
-					if (cargs < 1)
-					{
-						uqm::log::warn("Bad DRAW command '{}'", strView);
-						pPIS->HaveFrame = false;
-						break;
-					}
-					if (cargs < 5)
-					{
-						angle = 0;
-					}
-					if (cargs < 4)
-					{
-						scale = GSCALE_IDENTITY;
-					}
-					if (cargs < 3)
-					{
-						x = 0;
-						y = 0;
-					}
-
-					x <<= RESOLUTION_FACTOR;
-					y <<= RESOLUTION_FACTOR;
-
-					s.frame = nullptr;
-					if (draw_what == PRES_DRAW_INDEX)
+					if (!drawSis)
 					{ /* draw stamp by index */
-						s.frame = SetAbsFrameIndex(pPIS->Frame, (uint16_t)index);
-						pPIS->CurrentFrameIndex = (uint16_t)index;
+						s.frame = SetAbsFrameIndex(pPIS->Frame, static_cast<uint16_t>(cmd.index));
+						pPIS->CurrentFrameIndex = static_cast<uint16_t>(cmd.index);
 						pPIS->HaveFrame = true;
 					}
-					else if (draw_what == PRES_DRAW_SIS)
+					else
 					{ /* draw dynamic SIS image with player's modules */
 						if (!pPIS->SisFrame)
 						{
@@ -1425,129 +1131,117 @@ DoPresentation(void* pIS)
 					if (angle != 0)
 					{
 						if (angle != pPIS->LastAngle
-							|| draw_what != pPIS->LastDrawKind)
+							|| static_cast<int>(drawSis) != pPIS->LastDrawKind)
 						{
 							DestroyDrawable(ReleaseDrawable(pPIS->RotatedFrame));
 							pPIS->RotatedFrame = CaptureDrawable(
 								RotateFrame(s.frame, -angle));
 							pPIS->LastAngle = angle;
-							pPIS->LastDrawKind = draw_what;
+							pPIS->LastDrawKind = static_cast<int>(drawSis);
 						}
 						s.frame = pPIS->RotatedFrame;
 					}
-					s.origin.x = x;
-					s.origin.y = y;
-					const uqm::TFBScaleMode old_mode = SetGraphicScaleMode(scale_mode);
-					const int old_scale = SetGraphicScale(scale);
+					s.origin.x = cmd.x << RESOLUTION_FACTOR;
+					s.origin.y = cmd.y << RESOLUTION_FACTOR;
+					const uqm::TFBScaleMode old_mode {
+						SetGraphicScaleMode(drawSis ? uqm::TFBScaleMode::Nearest : uqm::TFBScaleMode::Bilinear)};
+					const int old_scale {SetGraphicScale(cmd.scale.value_or(GSCALE_IDENTITY))};
 					DrawStamp(&s);
 					SetGraphicScale(old_scale);
 					SetGraphicScaleMode(old_mode);
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("BATCH"):
+			case uqm::SlideOp::Batch:
 				{ /* batch graphics */
 					Present_BatchGraphics(pPIS);
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("UNBATCH"):
+			case uqm::SlideOp::Unbatch:
 				{ /* unbatch graphics */
 					Present_UnbatchGraphics(pPIS, false);
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("FTC"):
+			case uqm::SlideOp::FadeToColor:
 				{ /* fade to color */
 					Present_UnbatchGraphics(pPIS, true);
-					return DoFadeScreen(pPIS, strView, FadeAllToColor);
+					return DoFadeScreen(pPIS, cmd.ms, FadeAllToColor);
 				}
-			case uqm::hashQuick64CaseInsensitive("FTB"):
+			case uqm::SlideOp::FadeToBlack:
 				{ /* fade to black */
 					Present_UnbatchGraphics(pPIS, true);
-					return DoFadeScreen(pPIS, strView, FadeAllToBlack);
+					return DoFadeScreen(pPIS, cmd.ms, FadeAllToBlack);
 				}
-			case uqm::hashQuick64CaseInsensitive("FTW"):
+			case uqm::SlideOp::FadeToWhite:
 				{ /* fade to white */
 					Present_UnbatchGraphics(pPIS, true);
-					return DoFadeScreen(pPIS, strView, FadeAllToWhite);
+					return DoFadeScreen(pPIS, cmd.ms, FadeAllToWhite);
 				}
-			case uqm::hashQuick64CaseInsensitive("CLS"):
+			case uqm::SlideOp::ClearScreen:
 				{ /* clear screen */
 					Present_UnbatchGraphics(pPIS, true);
 					ClearScreen();
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("CALL"):
+			case uqm::SlideOp::Call:
 				{ /* call another script */
 					Present_UnbatchGraphics(pPIS, true);
-					uqm::strncpy_safe(pPIS->Buffer, strView);
-					ShowPresentationFile(pPIS->Buffer);
+					ShowPresentationFile(cmd.text.c_str());
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("LINE"):
+			case uqm::SlideOp::Line:
 				{ /* draw simple line */
-					if (const auto result {scn::scan<int, int, int, int>(strView, "{} {} {} {}")})
-					{
-						const auto [x1, y1, x2, y2] = result->values();
-						LINE l;
+					LINE l;
 
-						l.first.x = RES_SCALE(x1);
-						l.first.y = RES_SCALE(y1);
-						l.second.x = RES_SCALE(x2);
-						l.second.y = RES_SCALE(y2);
+					l.first.x = RES_SCALE(cmd.x);
+					l.first.y = RES_SCALE(cmd.y);
+					l.second.x = RES_SCALE(cmd.x2);
+					l.second.y = RES_SCALE(cmd.y2);
 
-						SetContextForeGroundColor(pPIS->TextColor);
-						DrawLine(&l, 1);
-					}
-					else
-					{
-						uqm::log::warn("Bad LINE command '{}'", strView);
-					}
+					SetContextForeGroundColor(pPIS->TextColor);
+					DrawLine(&l, 1);
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("LINESPIN"):
+			case uqm::SlideOp::LineSpin:
 				{ /* draw line for spin */
-					if (const auto result {scn::scan<int, int, int, int>(strView, "{} {} {} {}")})
+					int x1 {cmd.x};
+					int y1 {cmd.y};
+					int x2 {cmd.x2};
+					int y2 {cmd.y2};
+					if (uqm::currentSeed().ships)
 					{
-						auto [x1, y1, x2, y2] = result->values();
-						if (uqm::UQMOptions::read().shipSeed)
-						{
-							SeedLineSpin(&x1, &y1, &x2, &y2);
-						}
-						LINE l;
-
-						x1 <<= RESOLUTION_FACTOR;
-						x2 <<= RESOLUTION_FACTOR;
-						y1 <<= RESOLUTION_FACTOR;
-						y2 <<= RESOLUTION_FACTOR;
-
-						if (pPIS->HaveFrame
-							&& (pPIS->GetRect.extent.width > 0
-								&& pPIS->GetRect.extent.height > 0))
-						{
-							x1 += pPIS->GetRect.corner.x;
-							x2 += pPIS->GetRect.corner.x;
-							y1 += pPIS->GetRect.corner.y;
-							y2 += pPIS->GetRect.corner.y;
-						}
-
-						l.first.x = x1;
-						l.first.y = y1;
-						l.second.x = x2;
-						l.second.y = y2;
-
-						DoSpinLine(&l, pPIS->TextColor, pPIS->TextBackColor, &pPIS->Skip);
-
-						if (pPIS->Skip)
-						{
-							Present_BatchGraphics(pPIS);
-						}
+						SeedLineSpin(&x1, &y1, &x2, &y2);
 					}
-					else
+					LINE l;
+
+					x1 <<= RESOLUTION_FACTOR;
+					x2 <<= RESOLUTION_FACTOR;
+					y1 <<= RESOLUTION_FACTOR;
+					y2 <<= RESOLUTION_FACTOR;
+
+					if (pPIS->HaveFrame
+						&& (pPIS->GetRect.extent.width > 0
+							&& pPIS->GetRect.extent.height > 0))
 					{
-						uqm::log::warn("Bad LINESPIN command '{}'", strView);
+						x1 += pPIS->GetRect.corner.x;
+						x2 += pPIS->GetRect.corner.x;
+						y1 += pPIS->GetRect.corner.y;
+						y2 += pPIS->GetRect.corner.y;
+					}
+
+					l.first.x = x1;
+					l.first.y = y1;
+					l.second.x = x2;
+					l.second.y = y2;
+
+					DoSpinLine(&l, pPIS->TextColor, pPIS->TextBackColor, &pPIS->Skip);
+
+					if (pPIS->Skip)
+					{
+						Present_BatchGraphics(pPIS);
 					}
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("GETRECT"):
+			case uqm::SlideOp::GetRect:
 				{ /* Get currently drawn FRAME rect */
 					if (pPIS->HaveFrame)
 					{
@@ -1558,166 +1252,128 @@ DoPresentation(void* pIS)
 					else
 					{
 						uqm::log::warn("Bad GETRECT command, can not use "
-									   "GETRECT without drawing a frame first '{}'",
-									   strView);
+									   "GETRECT without drawing a frame first");
 					}
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("STATBOX"):
+			case uqm::SlideOp::StatBox:
 				{ /* draw stat box for spin */
 #define STATBOX_WIDTH RES_SCALE(122)
 #define STATBOX_HEIGHT RES_SCALE(60)
-					if (const auto result {scn::scan<int, int>(strView, "{} {}")})
+					int x {cmd.x << RESOLUTION_FACTOR};
+					int y {cmd.y << RESOLUTION_FACTOR};
+					pPIS->NumSpinStat = 0;
+
+					if (pPIS->HaveFrame
+						&& (pPIS->GetRect.extent.width > 0
+							&& pPIS->GetRect.extent.height > 0))
 					{
-						auto [x, y] = result->values();
-						pPIS->NumSpinStat = 0;
-
-						x <<= RESOLUTION_FACTOR;
-						y <<= RESOLUTION_FACTOR;
-
-						if (pPIS->HaveFrame
-							&& (pPIS->GetRect.extent.width > 0
-								&& pPIS->GetRect.extent.height > 0))
-						{
-							x += pPIS->GetRect.corner.x;
-							y += pPIS->GetRect.corner.y;
-						}
-
-						pPIS->StatBox.corner = MAKE_POINT(x, y);
-						pPIS->StatBox.extent =
-							MAKE_EXTENT(STATBOX_WIDTH, STATBOX_HEIGHT);
-
-						DoSpinStatBox(&pPIS->StatBox, pPIS->TextColor,
-									  pPIS->TextBackColor, &pPIS->Skip);
-
-						if (pPIS->Skip)
-						{
-							Present_BatchGraphics(pPIS);
-						}
+						x += pPIS->GetRect.corner.x;
+						y += pPIS->GetRect.corner.y;
 					}
-					else
+
+					pPIS->StatBox.corner = MAKE_POINT(x, y);
+					pPIS->StatBox.extent =
+						MAKE_EXTENT(STATBOX_WIDTH, STATBOX_HEIGHT);
+
+					DoSpinStatBox(&pPIS->StatBox, pPIS->TextColor,
+								  pPIS->TextBackColor, &pPIS->Skip);
+
+					if (pPIS->Skip)
 					{
-						uqm::log::warn("Bad STATBOX command '{}'", strView);
+						Present_BatchGraphics(pPIS);
 					}
 					break;
 				}
-			case uqm::hashQuick64CaseInsensitive("MOVIE"):
+			case uqm::SlideOp::Movie:
 				{ /* play movie */
-					if (const auto result {scn::scan<int, int, int>(strView, "{} {} {}")})
-					{
-						const auto [fps, from, to] = result->values();
-						if (fps > 0 && from >= 0 && to >= 0 && to >= from)
-						{
-							Present_UnbatchGraphics(pPIS, true);
+					Present_UnbatchGraphics(pPIS, true);
 
-							pPIS->MovieFrame = from;
-							pPIS->MovieEndFrame = to;
-							pPIS->InterframeDelay = GameTicksPerSecond / fps;
+					pPIS->MovieFrame = cmd.index;
+					pPIS->MovieEndFrame = cmd.lastIndex;
+					pPIS->InterframeDelay = c_gameSecond / cmd.fps;
 
-							pPIS->TimeOut = GetTimeCounter();
-							pPIS->TimeOutOnSkip = true;
-							return true;
-						}
-					}
-					uqm::log::warn("Bad MOVIE command '{}'", strView);
-					break;
+					pPIS->TimeOut = GetTimeCounter();
+					pPIS->TimeOutOnSkip = true;
+					return true;
 				}
-			case uqm::hashQuick64CaseInsensitive("ANIMATE"):
+			case uqm::SlideOp::Animate:
 				{ /* basic frame animation */
-					if (const auto result {scn::scan<int, int, int, int, int>(strView, "{} {} {} {} {}")})
+					STAMP s;
+					int loops = 0;
+					uint16_t index = 0;
+					TimeCount Now;
+					TimeCount timeout;
+					TimeCount NextTime;
+					const TimePeriod animation_rate {c_gameSecond / cmd.fps};
+
+					s.origin.x = 0;
+					s.origin.y = 0;
+
+					timeout = GetTimeCounter() + uqstl::chrono::duration_cast<TimePeriod>(uqstl::chrono::milliseconds {cmd.ms});
+					NextTime = GetTimeCounter() + animation_rate;
+
+					while (cmd.loops || cmd.ms)
 					{
-						const auto [first_frame, last_frame, num_loops, milliseconds, fps] = result->values();
-						STAMP s;
-						int loops = 0;
-						uint16_t index = 0;
-						TimeCount Now, timeout, NextTime;
-						int animation_rate = GameTicksPerSecond / fps;
+						Now = GetTimeCounter();
 
-						s.origin.x = 0;
-						s.origin.y = 0;
-
-						timeout = GetTimeCounter() + milliseconds;
-						NextTime = GetTimeCounter() + animation_rate;
-
-						while (num_loops || milliseconds)
+						if (ActKeysPress())
 						{
-							Now = GetTimeCounter();
+							break;
+						}
 
-							if (ActKeysPress())
+						if (Now >= NextTime)
+						{
+							s.frame = SetAbsFrameIndex(pPIS->Frame, index);
+							DrawStamp(&s);
+							index++;
+
+							if (index == cmd.lastIndex)
+							{
+								loops++;
+								index = static_cast<uint16_t>(cmd.index);
+							}
+
+							if (cmd.loops > 0 && loops == cmd.loops)
 							{
 								break;
 							}
 
-							if (Now >= NextTime)
+							if (Now >= timeout)
 							{
-								s.frame = SetAbsFrameIndex(pPIS->Frame, index);
-								DrawStamp(&s);
-								index++;
-
-								if (index == last_frame)
-								{
-									loops++;
-									index = first_frame;
-								}
-
-								if (num_loops > 0 && loops == num_loops)
-								{
-									break;
-								}
-
-								if (Now >= timeout)
-								{
-									break;
-								}
-
-								NextTime = Now + animation_rate;
+								break;
 							}
+
+							NextTime = Now + animation_rate;
 						}
-						return true;
 					}
-					else
-					{
-						uqm::log::warn("Bad ANIMATION command '{}'", strView);
-					}
-					break;
+					return true;
 				}
-			case uqm::hashQuick64CaseInsensitive("NOOP"):
-				{ /* no operation - must be a comment in script */
-					break;
-				}
-		} // switch (opCodeHash)
+		} // switch (cmd.op)
 	}
 	/* we are all done */
 	return false;
 }
 
 static bool
-ShowSlidePresentation(STRING PresStr)
+ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 {
-	GFXCONTEXT OldContext;
-	FONT OldFont;
 	GFXRECT OldRect;
 	PRESENTATION_INPUT_STATE pis;
-	int i;
 
 	memset(&pis, 0, sizeof(pis));
-	pis.SlideShow = PresStr;
-	if (!pis.SlideShow)
-	{
-		return false;
-	}
-	pis.SlideShow = SetAbsStringTableIndex(pis.SlideShow, 0);
+	pis.Commands = &commands;
 	pis.OperIndex = 0;
 
-	OldContext = SetContext(ScreenContext);
+	GFXCONTEXT OldContext {SetContext(ScreenContext)};
 	GetContextClipRect(&OldRect);
-	OldFont = SetContextFont(nullptr);
+	FONT OldFont {SetContextFont(nullptr)};
 	SetContextBackGroundColor(BLACK_COLOR);
 
 	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
 	pis.InputFunc = DoPresentation;
 	pis.LastDrawKind = -1;
-	pis.TextVPos = 'B';
+	pis.TextVPos = uqm::SlideTextAlign::Bottom;
 	pis.MovieFrame = -1;
 	pis.StartTime = GetTimeCounter();
 	pis.LastSyncTime = pis.StartTime;
@@ -1725,15 +1381,15 @@ ShowSlidePresentation(STRING PresStr)
 
 	if (pis.MusicRef && PlayingStream(MUSIC_SOURCE))
 	{
-		SleepThreadUntil(FadeMusic(0, GameTicksPerSecond));
+		SleepThreadUntil(FadeMusic(0, c_gameSecond));
 		StopMusic();
-		FadeMusic(NORMAL_VOLUME, 0);
+		FadeMusic(NORMAL_VOLUME, TimePeriod {});
 	}
 
 	DestroyMusic(pis.MusicRef);
 	DestroyDrawable(ReleaseDrawable(pis.RotatedFrame));
 	DestroyDrawable(ReleaseDrawable(pis.Frame));
-	for (i = 0; i < MAX_FONTS; ++i)
+	for (int i {0}; i < uqm::c_slideshowMaxFonts; ++i)
 	{
 		DestroyFont(pis.Fonts[i]);
 	}
@@ -1748,7 +1404,7 @@ ShowSlidePresentation(STRING PresStr)
 static bool
 DoVideoInput(void* pIS)
 {
-	VIDEO_INPUT_STATE* pVIS = (VIDEO_INPUT_STATE*)pIS;
+	const VIDEO_INPUT_STATE* pVIS = (VIDEO_INPUT_STATE*)pIS;
 
 	if (!PlayingLegacyVideo(pVIS->CurVideo))
 	{ // Video probably finished
@@ -1758,7 +1414,7 @@ DoVideoInput(void* pIS)
 	if (PulsedInputState.menu[KEY_MENU_SELECT]
 		|| PulsedInputState.menu[KEY_MENU_CANCEL]
 		|| PulsedInputState.menu[KEY_MENU_SPECIAL]
-		|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+		|| (uqm::currentActivity() & CHECK_ABORT))
 	{ // abort movie
 		return false;
 	}
@@ -1788,7 +1444,7 @@ DoVideoInput(void* pIS)
 			return false;
 		}
 
-		SleepThread(GameTicksPerSecond / 40);
+		SleepThread(c_gameSecond / 40);
 	}
 
 	return true;
@@ -1797,25 +1453,24 @@ DoVideoInput(void* pIS)
 static void
 FadeClearScreen(void)
 {
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 
 	// clear the screen with black
 	SetContext(ScreenContext);
 	SetContextBackGroundColor(BLACK_COLOR);
 	ClearDrawable();
 
-	FadeScreen(FadeAllToColor, 0);
+	FadeScreen(FadeAllToColor, TimePeriod {});
 }
 
 static bool
 ShowLegacyVideo(LEGACY_VIDEO vid)
 {
 	VIDEO_INPUT_STATE vis;
-	LEGACY_VIDEO_REF ref;
 
 	FadeClearScreen();
 
-	ref = PlayLegacyVideo(vid);
+	LEGACY_VIDEO_REF ref {PlayLegacyVideo(vid)};
 	if (!ref)
 	{
 		return false;
@@ -1839,21 +1494,23 @@ bool ShowPresentation(RESOURCE res)
 	{
 		return false;
 	}
-	if (!strcmp(resType, "STRTAB"))
+	if (!strcmp(resType, "STRING"))
 	{
-		STRING pres = CaptureStringTable(LoadStringTable(res));
-		bool result = ShowSlidePresentation(pres);
-		DestroyStringTable(ReleaseStringTable(pres));
-		return result;
+		return ShowPresentationFile(res_GetString(res));
 	}
 	else if (!strcmp(resType, "3DOVID"))
 	{
 		LEGACY_VIDEO vid = LoadLegacyVideoInstance(res);
-		bool result = ShowLegacyVideo(vid);
+		const bool result = ShowLegacyVideo(vid);
 		DestroyLegacyVideo(vid);
 		return result;
 	}
 
+	if (!strcmp(resType, "STRTAB"))
+	{
+		uqm::log::warn("The slideshow '{}' is a string table. Convert it with scripts/convert_slideshows.py.", res);
+		return false;
+	}
 	uqm::log::warn("Tried to present '{}', of non-presentable type '{}'", res, resType);
 	return false;
 }

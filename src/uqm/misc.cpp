@@ -31,16 +31,16 @@
 #include "intel.h"
 #include "igfxres.h"
 #include "nameref.h"
+#include "uqm/random/UQMRandom.h"
 
 void spawn_planet(void)
 {
-	HELEMENT hPlanetElement;
 	GFXPOINT pt = MAKE_POINT(0, 0);
 
-	hPlanetElement = AllocElement();
+	HELEMENT hPlanetElement {AllocElement()};
 	if (hPlanetElement)
 	{
-		ELEMENT* PlanetElementPtr;
+		ELEMENT* PlanetElementPtr {};
 		extern FRAME planet[];
 
 		LockElement(hPlanetElement, &PlanetElementPtr);
@@ -55,9 +55,9 @@ void spawn_planet(void)
 			SetPrimColor(&DisplayArray[PlanetElementPtr->PrimIndex],
 						 BUILD_COLOR_RGBA(0x00, 0x00, 0x00, 0x00));
 			PlanetElementPtr->current.location.x =
-				WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+				WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 			PlanetElementPtr->current.location.y =
-				WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+				WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 			PlanetElementPtr->collision_func = nullptr;
 			PlanetElementPtr->postprocess_func = nullptr;
 			ZeroVelocityComponents(&PlanetElementPtr->velocity);
@@ -75,9 +75,9 @@ void spawn_planet(void)
 			do
 			{
 				PlanetElementPtr->current.location.x =
-					WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+					WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 				PlanetElementPtr->current.location.y =
-					WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+					WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 			} while (CalculateGravity(PlanetElementPtr)
 					 || TimeSpaceMatterConflict(PlanetElementPtr));
 		}
@@ -106,12 +106,10 @@ extern FRAME asteroid[];
 static void
 spawn_rubble(ELEMENT* AsteroidElementPtr)
 {
-	HELEMENT hRubbleElement;
-
-	hRubbleElement = AllocElement();
+	HELEMENT hRubbleElement {AllocElement()};
 	if (hRubbleElement)
 	{
-		ELEMENT* RubbleElementPtr;
+		ELEMENT* RubbleElementPtr {};
 
 		PutElement(hRubbleElement);
 		LockElement(hRubbleElement, &RubbleElementPtr);
@@ -148,9 +146,7 @@ asteroid_preprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		uint16_t frame_index;
-
-		frame_index = GetFrameIndex(ElementPtr->current.image.frame);
+		uint16_t frame_index {GetFrameIndex(ElementPtr->current.image.frame)};
 		if (ElementPtr->thrust_wait & (1 << 7))
 		{
 			--frame_index;
@@ -178,7 +174,7 @@ asteroid_preprocess(ELEMENT* ElementPtr)
 
 void spawn_asteroid(ELEMENT* ElementPtr)
 {
-	HELEMENT hAsteroidElement;
+	HELEMENT hAsteroidElement {};
 
 	if ((hAsteroidElement = AllocElement()) == 0)
 	{
@@ -191,8 +187,8 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		ELEMENT* AsteroidElementPtr;
-		uint16_t val;
+		ELEMENT* AsteroidElementPtr {};
+		uint16_t val {};
 
 		LockElement(hAsteroidElement, &AsteroidElementPtr);
 		AsteroidElementPtr->playerNr = NEUTRAL_PLAYER_NUM;
@@ -202,7 +198,7 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 			uqm::UQMOptions::read().meleeObstacles && !isNetwork() ? DISAPPEARING : APPEARING;
 		AsteroidElementPtr->life_span = NORMAL_LIFE;
 		SetPrimType(&DisplayArray[AsteroidElementPtr->PrimIndex], STAMP_PRIM);
-		if ((val = (uint16_t)TFB_Random()) & (1 << 0))
+		if ((val = (uint16_t)uqm::random().next()) & (1 << 0))
 		{
 			if (!(val & (1 << 1)))
 			{
@@ -213,12 +209,12 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 				AsteroidElementPtr->current.location.x = LOG_SPACE_WIDTH;
 			}
 			AsteroidElementPtr->current.location.y =
-				WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+				WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 		}
 		else
 		{
 			AsteroidElementPtr->current.location.x =
-				WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+				WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 			if (!(val & (1 << 1)))
 			{
 				AsteroidElementPtr->current.location.y = 0;
@@ -233,21 +229,21 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 			// Using these temporary variables because the execution order
 			// of function arguments may vary per system, which may break
 			// synchronisation on network games.
-			int16_t magnitude =
-				DISPLAY_TO_WORLD(((int16_t)TFB_Random() & 7) + 4);
-			uint16_t facing = (uint16_t)TFB_Random();
+			const int16_t magnitude =
+				DISPLAY_TO_WORLD(((int16_t)uqm::random().next() & 7) + 4);
+			const uint16_t facing = (uint16_t)uqm::random().next();
 			SetVelocityVector(&AsteroidElementPtr->velocity, magnitude,
 							  facing);
 		}
 		AsteroidElementPtr->current.image.farray = asteroid;
 		AsteroidElementPtr->current.image.frame =
 			SetAbsFrameIndex(asteroid[0],
-							 NORMALIZE_FACING(TFB_Random()));
+							 NORMALIZE_FACING(uqm::random().next()));
 		AsteroidElementPtr->turn_wait =
 			AsteroidElementPtr->thrust_wait =
-				(uint8_t)TFB_Random() & (uint8_t)((1 << 2) - 1);
+				(uint8_t)uqm::random().next() & (uint8_t)((1 << 2) - 1);
 		AsteroidElementPtr->thrust_wait |=
-			(uint8_t)TFB_Random() & (uint8_t)(1 << 7);
+			(uint8_t)uqm::random().next() & (uint8_t)(1 << 7);
 		AsteroidElementPtr->preprocess_func = asteroid_preprocess;
 		AsteroidElementPtr->death_func = spawn_rubble;
 		AsteroidElementPtr->collision_func = collision;
@@ -293,13 +289,13 @@ void do_damage(ELEMENT* ElementPtr, int16_t damage)
 	BUILD_COLOR(MAKE_RGB15(0x0A, 0x1E, 0x0A), 0x0A)
 void crew_preprocess(ELEMENT* ElementPtr)
 {
-	HELEMENT hTarget;
+	HELEMENT hTarget {};
 
 	// Switch from dark to light or vice versa:
-	Color oldColor = GetPrimColor(&DisplayArray[ElementPtr->PrimIndex]);
-	Color newColor = sameColor(oldColor, CREW_COLOR_LOW_INTENSITY) ?
-						 CREW_COLOR_HIGH_INTENSITY :
-						 CREW_COLOR_LOW_INTENSITY;
+	const Color oldColor = GetPrimColor(&DisplayArray[ElementPtr->PrimIndex]);
+	const Color newColor = sameColor(oldColor, CREW_COLOR_LOW_INTENSITY) ?
+							   CREW_COLOR_HIGH_INTENSITY :
+							   CREW_COLOR_LOW_INTENSITY;
 	SetPrimColor(&DisplayArray[ElementPtr->PrimIndex], newColor);
 
 	ElementPtr->state_flags |= CHANGING;
@@ -307,7 +303,7 @@ void crew_preprocess(ELEMENT* ElementPtr)
 	hTarget = ElementPtr->hTarget;
 	if (hTarget == 0)
 	{
-		STARSHIP* StarShipPtr;
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		if (StarShipPtr && StarShipPtr->RaceDescPtr->ship_info.crew_level)
@@ -316,9 +312,7 @@ void crew_preprocess(ELEMENT* ElementPtr)
 		}
 		else
 		{
-			uint16_t facing;
-
-			facing = 0;
+			uint16_t facing {0};
 			TrackShip(ElementPtr, &facing);
 		}
 	}
@@ -326,8 +320,8 @@ void crew_preprocess(ELEMENT* ElementPtr)
 	if (hTarget)
 	{
 #define CREW_DELTA RES_SCALE(SCALED_ONE)
-		int16_t delta;
-		ELEMENT* ShipPtr;
+		int16_t delta {};
+		ELEMENT* ShipPtr {};
 
 		LockElement(hTarget, &ShipPtr);
 		delta = ShipPtr->current.location.x
@@ -363,12 +357,12 @@ void crew_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		&& ElementPtr1->life_span >= NORMAL_LIFE
 		&& ElementPtr0->hit_points > 0)
 	{
-		STARSHIP* StarShipPtr;
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
 		if (!(StarShipPtr->RaceDescPtr->ship_info.ship_flags & CREW_IMMUNE))
 		{
-			ProcessSound(SetAbsSoundIndex(GameSounds, GRAB_CREW), ElementPtr1);
+			ProcessSound(GetSound(GameSounds, GRAB_CREW), ElementPtr1);
 			DeltaCrew(ElementPtr1, 1);
 		}
 	}
@@ -383,11 +377,12 @@ void crew_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 				 uint16_t crew_loss)
 {
-	int16_t dx, dy;
-	uint16_t direction;
+	int16_t dx {};
+	int16_t dy {};
+	uint16_t direction {};
 	GFXRECT r;
-	STARSHIP* StarShipPtr;
-	HELEMENT hCrew;
+	STARSHIP* StarShipPtr {};
+	HELEMENT hCrew {};
 	INTERSECT_CONTROL ShipIntersect;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -416,7 +411,7 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 	while (crew_loss-- && (hCrew = AllocElement()))
 	{
 #define CREW_LIFE 300
-		ELEMENT* CrewPtr;
+		ELEMENT* CrewPtr {};
 
 		DeltaCrew(ShipPtr, -1);
 
@@ -449,14 +444,13 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 		CrewPtr->hTarget = StarShipPtr->hShip;
 
 		{
-			int16_t w, h;
 			INTERSECT_CONTROL CrewIntersect;
 
 			ShipIntersect.IntersectStamp.origin =
 				ShipPtr->IntersectControl.EndPoint;
 
-			w = (int16_t)((uint16_t)TFB_Random() % r.extent.width);
-			h = (int16_t)((uint16_t)TFB_Random() % r.extent.height);
+			const int16_t w {(int16_t)((uint16_t)uqm::random().next() % r.extent.width)};
+			const int16_t h {(int16_t)((uint16_t)uqm::random().next() % r.extent.height)};
 			CrewIntersect.EndPoint = ShipIntersect.EndPoint;
 			CrewIntersect.IntersectStamp.frame = DecFrameIndex(stars_in_space);
 			if (dx == 0 && dy == 0)

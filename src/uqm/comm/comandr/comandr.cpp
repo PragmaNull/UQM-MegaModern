@@ -24,10 +24,11 @@
 #include "uqm/sis.h"
 // for DeltaSISGauges(), DrawLanders()
 #include "libs/graphics/gfx_common.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/settings.h"
 #include "uqm/nameref.h"
-#include "libs/math/random.h"
+#include "libs/math/Random.h"
+#include "uqm/random/UQMRandom.h"
 
 static LOCDATA commander_desc =
 	{
@@ -158,13 +159,12 @@ static FILTER_DESC commander_filters =
 static void
 RaveParty(void)
 {
-	CommData.AlienColorMap = SetAbsColorMapIndex(CommData.AlienColorMap,
-												 (TFB_Random() % 3) + 1);
+	CommData.AlienColorMapIndex = (uqm::random().next() % 3) + 1;
 
 	if (IS_HD && EXTENDED)
 	{
 		CommData.AlienFrame = SetAbsFrameIndex(CommData.AlienFrame,
-											   (TFB_Random() % 15) + 40);
+											   (uqm::random().next() % 15) + 40);
 		SwitchSequences(false);
 		EnableTalkingAnim(false);
 		CommData.AlienAmbientArray[3].AnimFlags &= ~ANIM_DISABLED;
@@ -595,9 +595,7 @@ TellProbe(RESPONSE_REF R)
 static void
 RevealSelf(RESPONSE_REF R)
 {
-	uint8_t i, stack;
-
-	stack = 0;
+	uint8_t stack {0};
 	if (PLAYER_SAID(R, we_are_vindicator))
 	{
 		NPCPhrase(THATS_IMPOSSIBLE);
@@ -651,7 +649,7 @@ RevealSelf(RESPONSE_REF R)
 		NPCPhrase(SURE_HOPE);
 	}
 
-	for (i = 0; i < 2; ++i, stack ^= 1)
+	for (uint8_t i {0}; i < 2; ++i, stack ^= 1)
 	{
 		if (stack == 1)
 		{
@@ -735,20 +733,19 @@ GiveRadios(RESPONSE_REF R)
 			FilterData.FilterArray[1].Flags = FILTER_DISABLED;
 		}
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 0)),
-					  GameTicksPerSecond / 2);
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
+					  c_gameSecond / 2);
 
 		if (altResFlags & USE_ALT_SONG)
 		{
-			uint32_t MusicPos = PLRGetPos();
+			const uint32_t MusicPos = PLRGetPos();
 			StopMusic();
 			CommData.AlienSong = LoadMusic(CommData.AlienSongRes);
 
 			SetMusicVolume(MUTE_VOLUME);
 			PlayMusic(CommData.AlienSong, true, 1);
 			SeekMusic(MusicPos);
-			FadeMusic(NORMAL_VOLUME, GameTicksPerSecond);
+			FadeMusic(NORMAL_VOLUME, c_gameSecond);
 
 			altResFlags &= ~USE_ALT_SONG;
 		}
@@ -835,7 +832,7 @@ Intro(void)
 static uint16_t
 uninit_commander(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -848,13 +845,11 @@ post_commander_enc(void)
 LOCDATA*
 init_commander_comm()
 {
-	LOCDATA* retval;
-
 	commander_desc.init_encounter_func = Intro;
 	commander_desc.post_encounter_func = post_commander_enc;
 	commander_desc.uninit_encounter_func = uninit_commander;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
@@ -875,7 +870,7 @@ init_commander_comm()
 	commander_desc.AlienTextBaseline.y = RES_SCALE(20);
 
 	setSegue(Segue_peace);
-	retval = &commander_desc;
+	LOCDATA* retval {&commander_desc};
 
 	return (retval);
 }

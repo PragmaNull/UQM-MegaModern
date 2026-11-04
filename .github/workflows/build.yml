@@ -89,6 +89,7 @@ jobs:
           -s compiler.runtime_type=${{ matrix.build_type }} `
           -s compiler.cppstd=20 `
           -s compiler.runtime_version=v144 `
+          -c tools.microsoft.msbuild:vs_version=18 `
           -s build_type=${{ matrix.build_type }}
     
     - name: Configure CMake

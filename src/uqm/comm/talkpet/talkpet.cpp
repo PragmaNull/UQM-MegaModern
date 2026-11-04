@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "uqm/battle.h"
 #include "uqm/sounds.h"
@@ -370,7 +370,7 @@ MindControlStrobe(void)
 static void
 MindControl(RESPONSE_REF R)
 {
-	RESPONSE_FUNC RespFunc;
+	RESPONSE_FUNC RespFunc {};
 
 	if (PLAYER_SAID(R, what_about_powers))
 	{
@@ -451,7 +451,7 @@ PetInfo(RESPONSE_REF R)
 static void
 PetDevice(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, whats_up_onboard))
 	{
@@ -557,10 +557,9 @@ PetDevice(RESPONSE_REF R)
 static void
 CompelPlayer(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
 	RESPONSE_REF pStr[3];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
 	if (PLAYER_SAID(R, what_are_you))
 	{
@@ -648,7 +647,7 @@ CompelPlayer(RESPONSE_REF R)
 	{
 		Response(pStr[LastStack], CompelPlayer);
 	}
-	for (i = 0; i < 3; ++i)
+	for (uint8_t i {0}; i < 3; ++i)
 	{
 		if (i != LastStack && pStr[i])
 		{
@@ -767,9 +766,9 @@ PetDeal(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -777,11 +776,11 @@ Intro(void)
 		return;
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 	{
 		SET_GAME_STATE(SHIP_TO_COMPEL, 0);
 		setSegue(Segue_hostile);
-		if (!(GLOBAL(glob_flags) & CYBORG_ENABLED))
+		if (!(uqm::globalFlags() & CYBORG_ENABLED))
 		{
 			NPCPhrase(HUMAN_PEP_TALK);
 		}
@@ -935,7 +934,7 @@ Intro(void)
 static uint16_t
 uninit_talkpet(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -948,13 +947,11 @@ post_talkpet_enc(void)
 LOCDATA*
 init_talkpet_comm(void)
 {
-	LOCDATA* retval;
-
 	talkpet_desc.init_encounter_func = Intro;
 	talkpet_desc.post_encounter_func = post_talkpet_enc;
 	talkpet_desc.uninit_encounter_func = uninit_talkpet;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
@@ -962,7 +959,7 @@ init_talkpet_comm(void)
 	talkpet_desc.AlienTextBaseline.y = 0;
 	talkpet_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
-	if (lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}
@@ -971,7 +968,7 @@ init_talkpet_comm(void)
 		setSegue(Segue_hostile);
 	}
 
-	retval = &talkpet_desc;
+	LOCDATA* retval {&talkpet_desc};
 
 	return (retval);
 }

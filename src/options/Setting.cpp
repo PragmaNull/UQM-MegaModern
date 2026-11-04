@@ -7,7 +7,7 @@
 
 #include <cassert>
 #include <cstdlib>
-#include <limits>
+#include "core/stl/limits.h"
 
 namespace uqm
 {

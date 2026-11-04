@@ -22,7 +22,7 @@
 
 #include "config.h"
 #include <cstdint>
-#include "endian_uqm.h"
+#include "core/stl/memory.h"
 
 /**
  * The interface heavily influenced by OpenAL
@@ -33,14 +33,6 @@
  * EXCEPTION: You may not queue the same buffer
  * on more than one source
  */
-
-#ifdef WORDS_BIGENDIAN
-#define MIX_IS_BIG_ENDIAN true
-#define MIX_WANT_BIG_ENDIAN true
-#else
-#define MIX_IS_BIG_ENDIAN false
-#define MIX_WANT_BIG_ENDIAN false
-#endif
 
 /**
  * Mixer errors (see OpenAL errors)
@@ -166,7 +158,7 @@ typedef struct _mixer_Buffer
 	uint32_t magic;
 	bool locked;
 	mixer_BufferState state;
-	uint8_t* data;
+	uqstl::unique_ptr<uint8_t[]> data;
 	uint32_t size;
 	uint32_t sampsize;
 	uint32_t high;

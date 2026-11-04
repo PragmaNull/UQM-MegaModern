@@ -32,6 +32,7 @@
 #include "../../state.h"
 #include "../../gamestr.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -72,7 +73,7 @@ static bool
 GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	if (CurStarDescPtr->Index == SPATHI_DEFINED)
 	{
@@ -85,12 +86,10 @@ GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pPlanet->NumPlanets = 1;
 
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
-			uint16_t angle;
-
 			pPlanet->radius = EARTH_RADIUS * 1150L / 100;
-			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
 			pPlanet->data_index = WATER_WORLD;
@@ -147,17 +146,17 @@ GenerateSpathi_generateMoons(SOLARSYS_STATE* solarSys,
 	if (CurStarDescPtr->Index == SPATHI_DEFINED
 		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
-			uint16_t angle;
+			uint16_t angle {};
 
 			pMoonDesc->data_index = PELLUCID_WORLD;
 			pMoonDesc->radius = MIN_MOON_RADIUS + MOON_DELTA;
 			angle = NORMALIZE_ANGLE(
-				LOWORD(RandomContext_Random(SysGenRNG)));
+				uqm::lowWord(SysGenRNG->next()));
 			pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
 			pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
 			ComputeSpeed(pMoonDesc, true, 1);
@@ -181,12 +180,12 @@ GenerateSpathi_generateName(const SOLARSYS_STATE* solarSys,
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& IsHomeworldKnown(SPATHI_HOME))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		utf8StringCopy(GLOBAL_SIS(PlanetName),
-					   sizeof(GLOBAL_SIS(PlanetName)),
-					   GAME_STRING(PLANET_NUMBER_BASE + 37));
+		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
+							sizeof(GLOBAL_SIS(PlanetName)),
+							GAME_STRING(PLANET_NUMBER_BASE + 37));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}
@@ -198,7 +197,7 @@ static bool
 GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 							   PLANET_DESC* world)
 {
-	uint32_t rand_val;
+	uint32_t rand_val {};
 
 	if (CurStarDescPtr->Index == SPATHI_DEFINED)
 	{
@@ -216,12 +215,12 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 								  INFINITE_FLEET);
 
 				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
-				GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+				uqm::currentActivity() |= START_INTERPLANETARY;
 				InitCommunication(SPATHI_CONVERSATION);
 
-				if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+				if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 				{
-					GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+					uqm::currentActivity() &= ~START_INTERPLANETARY;
 					ReinitQueue(&GLOBAL(npc_built_ship_q));
 					GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 				}
@@ -229,12 +228,12 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 
 			DoPlanetaryAnalysis(&solarSys->SysInfo, world);
-			rand_val = RandomContext_GetSeed(SysGenRNG);
+			rand_val = SysGenRNG->seed();
 
 			solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] =
 				rand_val;
 			GenerateLifeForms(&solarSys->SysInfo, GENERATE_ALL, nullptr);
-			rand_val = RandomContext_GetSeed(SysGenRNG);
+			rand_val = SysGenRNG->seed();
 
 			solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
 			GenerateMineralDeposits(
@@ -256,17 +255,13 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 				solarSys->PlanetSideFrame[1] =
 					CaptureDrawable(
 						LoadGraphic(UMGAH_BCS_MASK_PMAP_ANIM));
-				solarSys->SysInfo.PlanetInfo.DiscoveryString =
-					CaptureStringTable(
-						LoadStringTable(UMGAH_BCS_STRTAB));
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(UMGAH_BCS_STRTAB);
+				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				if (!GET_GAME_STATE(SPATHI_SHIELDED_SELVES))
 				{ // The first report talks extensively about Spathi
 					// slave-shielding selves. If they never did so, the
 					// report makes no sense, so use an alternate.
-					solarSys->SysInfo.PlanetInfo.DiscoveryString =
-						SetAbsStringTableIndex(
-							solarSys->SysInfo.PlanetInfo.DiscoveryString,
-							1);
+					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 				}
 			}
 
@@ -277,12 +272,12 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 		{
 			/* visiting Spathiwa */
 			DoPlanetaryAnalysis(&solarSys->SysInfo, world);
-			rand_val = RandomContext_GetSeed(SysGenRNG);
+			rand_val = SysGenRNG->seed();
 
 			solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
 			GenerateMineralDeposits(
 				&solarSys->SysInfo, GENERATE_ALL, nullptr);
-			rand_val = RandomContext_GetSeed(SysGenRNG);
+			rand_val = SysGenRNG->seed();
 
 			solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] =
 				rand_val;
@@ -298,8 +293,8 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 				LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 				solarSys->PlanetSideFrame[1] =
 					CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-				solarSys->SysInfo.PlanetInfo.DiscoveryString =
-					CaptureStringTable(LoadStringTable(RUINS_STRTAB));
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			}
 
 			solarSys->SysInfo.PlanetInfo.PlanetRadius = 120;
@@ -324,9 +319,8 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(
-				LoadStringTable(ALGOLITE_RUINS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ALGOLITE_RUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	if (CurStarDescPtr->Index == SPATHI_MONUMENT_DEFINED
@@ -337,9 +331,8 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(
 				LoadGraphic(MONUMENT_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(
-				LoadStringTable(SPATHI_MONUMENT_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SPATHI_MONUMENT_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);

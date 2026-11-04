@@ -50,7 +50,7 @@ struct PacketQueue
 void PacketQueue_init(PacketQueue* queue);
 void PacketQueue_uninit(PacketQueue* queue);
 void queuePacket(NetConnection* conn, Packet* packet);
-int flushPacketQueue(NetConnection* conn);
+NetResult flushPacketQueue(NetConnection* conn);
 
 
 #if 0 //defined(__cplusplus)

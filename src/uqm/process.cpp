@@ -32,7 +32,7 @@
 #include "libs/graphics/drawcmd.h"
 #include "libs/graphics/gfx_common.h"
 #include "core/log/log.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 #include "intel.h"
 
 
@@ -61,7 +61,7 @@ CALC_ZOOM_STUFF (uint16_t* idx, uint16_t* sc)
 static inline void
 CALC_ZOOM_STUFF(uint16_t* idx, uint16_t* sc)
 {
-	int i;
+	int i {};
 
 	if (zoom_out < 2 << ZOOM_SHIFT)
 	{
@@ -83,12 +83,10 @@ CALC_ZOOM_STUFF(uint16_t* idx, uint16_t* sc)
 HELEMENT
 AllocElement(void)
 {
-	HELEMENT hElement;
-
-	hElement = AllocLink(&disp_q);
+	HELEMENT hElement {AllocLink(&disp_q)};
 	if (hElement)
 	{
-		ELEMENT* ElementPtr;
+		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		memset(ElementPtr, 0, sizeof(*ElementPtr));
@@ -96,7 +94,7 @@ AllocElement(void)
 		if (ElementPtr->PrimIndex == END_OF_LIST)
 		{
 			uqm::log::error("AllocElement: Out of display prims!");
-			explode();
+			uqm::fatalExit();
 		}
 		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NO_PRIM);
 		SetPrimFlags(&DisplayArray[ElementPtr->PrimIndex], 0);
@@ -110,7 +108,7 @@ void FreeElement(HELEMENT hElement)
 {
 	if (hElement)
 	{
-		ELEMENT* ElementPtr;
+		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		FreeDisplayPrim(ElementPtr->PrimIndex);
@@ -134,7 +132,7 @@ void SetUpElement(ELEMENT* ElementPtr)
 static void
 PreProcess(ELEMENT* ElementPtr)
 {
-	ELEMENT_FLAGS state_flags;
+	ELEMENT_FLAGS state_flags {};
 
 	if (ElementPtr->life_span == 0)
 	{
@@ -176,7 +174,8 @@ PreProcess(ELEMENT* ElementPtr)
 
 		if (!(state_flags & IGNORE_VELOCITY))
 		{
-			int16_t delta_x, delta_y;
+			int16_t delta_x {};
+			int16_t delta_y {};
 
 			GetNextVelocityComponents(&ElementPtr->velocity,
 									  &delta_x, &delta_y, 1);
@@ -226,7 +225,7 @@ PostProcess(ELEMENT* ElementPtr)
 static uint16_t
 CalcReduction(int32_t dx, int32_t dy)
 {
-	uint16_t next_reduction;
+	uint16_t next_reduction {};
 
 #ifdef KDEBUG
 	uqm::log::debug("CalcReduction:");
@@ -234,15 +233,13 @@ CalcReduction(int32_t dx, int32_t dy)
 
 	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 	{
-		int32_t sdx, sdy;
-
-		if (lowByte(GLOBAL(CurrentActivity)) > IN_ENCOUNTER)
+		if (uqm::lowByte(uqm::currentActivity()) > IN_ENCOUNTER)
 		{
 			return (0);
 		}
 
-		sdx = dx;
-		sdy = dy;
+		const int32_t sdx {dx};
+		const int32_t sdy {dy};
 		for (next_reduction = MAX_VIS_REDUCTION;
 			 (dx <<= REDUCTION_SHIFT) <= TRANSITION_WIDTH
 			 && (dy <<= REDUCTION_SHIFT) <= TRANSITION_HEIGHT
@@ -269,14 +266,14 @@ CalcReduction(int32_t dx, int32_t dy)
 		}
 
 		if (next_reduction == 0
-			&& lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{
 			next_reduction += REDUCTION_SHIFT;
 		}
 	}
 	else
 	{
-		if (lowByte(GLOBAL(CurrentActivity)) > IN_ENCOUNTER)
+		if (uqm::lowByte(uqm::currentActivity()) > IN_ENCOUNTER)
 		{
 			return (1 << ZOOM_SHIFT);
 		}
@@ -311,7 +308,7 @@ CalcReduction(int32_t dx, int32_t dy)
 		}
 
 		if (next_reduction < (2 << ZOOM_SHIFT)
-			&& lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{
 			next_reduction = (2 << ZOOM_SHIFT);
 		}
@@ -328,14 +325,13 @@ static VIEW_STATE
 CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 		 int32_t* pdx, int32_t* pdy, uint16_t ships_alive)
 {
-	int32_t dx, dy;
 	VIEW_STATE view_state;
 
 #ifdef KDEBUG
 	uqm::log::debug("CalcView:");
 #endif
-	dx = ((int32_t)(LOG_SPACE_WIDTH >> 1) - pNewScrollPt->x);
-	dy = ((int32_t)(LOG_SPACE_HEIGHT >> 1) - pNewScrollPt->y);
+	int32_t dx {((int32_t)(LOG_SPACE_WIDTH >> 1) - pNewScrollPt->x)};
+	int32_t dy {((int32_t)(LOG_SPACE_HEIGHT >> 1) - pNewScrollPt->y)};
 	dx = WRAP_DELTA_X(dx);
 	dy = WRAP_DELTA_Y(dy);
 	const bool meleeScaleModeIsTFBStep {uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step};
@@ -401,7 +397,7 @@ CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 		view_state = VIEW_CHANGE;
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) <= IN_HYPERSPACE)
+	if (uqm::lowByte(uqm::currentActivity()) <= IN_HYPERSPACE)
 	{
 		MoveGalaxy(view_state, dx, dy);
 	}
@@ -420,11 +416,11 @@ static ELEMENT_FLAGS
 ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 				  TIME_VALUE min_time, ELEMENT_FLAGS process_flags)
 {
-	HELEMENT hTestElement;
+	HELEMENT hTestElement {};
 
 	while ((hTestElement = hSuccElement) != 0)
 	{
-		ELEMENT* TestElementPtr;
+		ELEMENT* TestElementPtr {};
 
 		LockElement(hTestElement, &TestElementPtr);
 		if (!(TestElementPtr->state_flags & process_flags))
@@ -441,11 +437,11 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 
 		if (CollisionPossible(TestElementPtr, ElementPtr))
 		{
-			ELEMENT_FLAGS state_flags, test_state_flags;
-			TIME_VALUE time_val;
+			ELEMENT_FLAGS state_flags {};
+			TIME_VALUE time_val {};
 
 			state_flags = ElementPtr->state_flags;
-			test_state_flags = TestElementPtr->state_flags;
+			ELEMENT_FLAGS test_state_flags {TestElementPtr->state_flags};
 			if (((state_flags | test_state_flags) & FINITE_LIFE)
 				&& (((state_flags & APPEARING)
 					 && ElementPtr->life_span > 1)
@@ -477,13 +473,10 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 
 					if (time_val == 1)
 					{
-						FRAME CurFrame, NextFrame,
-							TestCurFrame, TestNextFrame;
-
-						CurFrame = ElementPtr->current.image.frame;
-						NextFrame = ElementPtr->next.image.frame;
-						TestCurFrame = TestElementPtr->current.image.frame;
-						TestNextFrame = TestElementPtr->next.image.frame;
+						FRAME CurFrame {ElementPtr->current.image.frame};
+						FRAME NextFrame {ElementPtr->next.image.frame};
+						FRAME TestCurFrame {TestElementPtr->current.image.frame};
+						FRAME TestNextFrame {TestElementPtr->next.image.frame};
 						if (NextFrame == CurFrame
 							&& TestNextFrame == TestCurFrame)
 						{
@@ -560,7 +553,7 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 							InitIntersectFrame(ElementPtr);
 							if (state_flags & PLAYER_SHIP)
 							{
-								STARSHIP* StarShipPtr;
+								STARSHIP* StarShipPtr {};
 
 								GetElementStarShip(ElementPtr, &StarShipPtr);
 								StarShipPtr->ShipFacing =
@@ -573,7 +566,7 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 							InitIntersectFrame(TestElementPtr);
 							if (test_state_flags & PLAYER_SHIP)
 							{
-								STARSHIP* StarShipPtr;
+								STARSHIP* StarShipPtr {};
 
 								GetElementStarShip(TestElementPtr, &StarShipPtr);
 								StarShipPtr->ShipFacing =
@@ -702,11 +695,10 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 static VIEW_STATE
 PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 {
-	int16_t min_reduction, max_reduction;
-	uint16_t sides_active;
+	int16_t min_reduction {};
+	int16_t max_reduction {};
+	uint16_t sides_active {};
 	DPOINT Origin;
-	HELEMENT hElement;
-	uint16_t ships_alive;
 
 #ifdef KDEBUG
 	uqm::log::debug("PreProcess:");
@@ -726,12 +718,11 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 	Origin.x = (int32_t)(LOG_SPACE_WIDTH >> 1);
 	Origin.y = (int32_t)(LOG_SPACE_HEIGHT >> 1);
 
-	hElement = GetHeadElement();
-	ships_alive = 0;
+	HELEMENT hElement {GetHeadElement()};
+	uint16_t ships_alive {0};
 	while (hElement != 0)
 	{
-		ELEMENT* ElementPtr;
-		HELEMENT hNextElement;
+		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 
@@ -739,7 +730,7 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 		{
 			PreProcess(ElementPtr);
 		}
-		hNextElement = GetSuccElement(ElementPtr);
+		HELEMENT hNextElement {GetSuccElement(ElementPtr)};
 
 		if (CollidingElement(ElementPtr)
 			&& !(ElementPtr->state_flags & COLLISION))
@@ -750,8 +741,6 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 
 		if (ElementPtr->state_flags & PLAYER_SHIP)
 		{
-			int32_t dx, dy;
-
 			ships_alive++;
 			if (max_reduction > opt_max_zoom_out
 				&& min_reduction > opt_max_zoom_out)
@@ -760,9 +749,9 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 				Origin.y = DISPLAY_ALIGN(ElementPtr->next.location.y);
 			}
 
-			dx = DISPLAY_ALIGN(ElementPtr->next.location.x) - Origin.x;
+			int32_t dx {DISPLAY_ALIGN(ElementPtr->next.location.x) - Origin.x};
 			dx = WRAP_DELTA_X(dx);
-			dy = DISPLAY_ALIGN(ElementPtr->next.location.y) - Origin.y;
+			int32_t dy {DISPLAY_ALIGN(ElementPtr->next.location.y) - Origin.y};
 			dy = WRAP_DELTA_Y(dy);
 
 			if (sides_active <= 2 || ElementPtr->playerNr == 0)
@@ -798,7 +787,7 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 			}
 			else
 			{
-				int16_t reduction;
+				int16_t reduction {};
 
 				if (dx < 0)
 				{
@@ -846,8 +835,8 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 
 void InsertPrim(PRIM_LINKS* pLinks, uint16_t primIndex, uint16_t iPI)
 {
-	uint16_t Link;
-	PRIM_LINKS PL;
+	uint16_t Link {};
+	PRIM_LINKS PL {};
 
 	if (iPI == END_OF_LIST)
 	{
@@ -903,8 +892,7 @@ static void
 PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 {
 	DPOINT delta;
-	int16_t reduction;
-	HELEMENT hElement;
+	int16_t reduction {};
 
 #ifdef KDEBUG
 	uqm::log::debug("PostProcess:");
@@ -918,12 +906,12 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 		reduction = zoom_out << ONE_SHIFT;
 	}
 
-	hElement = GetHeadElement();
+	HELEMENT hElement {GetHeadElement()};
 	while (hElement != 0)
 	{
-		ELEMENT_FLAGS state_flags;
-		ELEMENT* ElementPtr;
-		HELEMENT hNextElement;
+		ELEMENT_FLAGS state_flags {};
+		ELEMENT* ElementPtr {};
+		HELEMENT hNextElement {};
 
 		LockElement(hElement, &ElementPtr);
 
@@ -952,12 +940,10 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 		}
 		else
 		{
-			HELEMENT hPostElement;
-
-			hPostElement = hElement;
+			HELEMENT hPostElement {hElement};
 			do
 			{
-				ELEMENT* PostElementPtr;
+				ELEMENT* PostElementPtr {};
 
 				LockElement(hPostElement, &PostElementPtr);
 				if (!(PostElementPtr->state_flags & PRE_PROCESS))
@@ -994,9 +980,7 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 		}
 		else
 		{
-			GRAPHICS_PRIM ObjType;
-
-			ObjType = GetPrimType(&DisplayArray[ElementPtr->PrimIndex]);
+			const GRAPHICS_PRIM ObjType {GetPrimType(&DisplayArray[ElementPtr->PrimIndex])};
 			if (view_state != VIEW_STABLE
 				|| (state_flags & (APPEARING | CHANGING)))
 			{
@@ -1004,10 +988,8 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 
 				if (ObjType == LINE_PRIM)
 				{
-					int32_t dx, dy;
-
-					dx = (int32_t)ElementPtr->next.location.x - (int32_t)ElementPtr->current.location.x;
-					dy = (int32_t)ElementPtr->next.location.y - (int32_t)ElementPtr->current.location.y;
+					const int32_t dx {(int32_t)ElementPtr->next.location.x - (int32_t)ElementPtr->current.location.x};
+					const int32_t dy {(int32_t)ElementPtr->next.location.y - (int32_t)ElementPtr->current.location.y};
 
 					next.x = WRAP_X((int32_t)ElementPtr->current.location.x + (int32_t)delta.x);
 					next.y = WRAP_Y((int32_t)ElementPtr->current.location.y + (int32_t)delta.y);
@@ -1032,7 +1014,8 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 						if (view_state == VIEW_CHANGE
 							|| (state_flags & (APPEARING | CHANGING)))
 						{
-							uint16_t index, scale = GSCALE_IDENTITY;
+							uint16_t index {};
+							uint16_t scale = GSCALE_IDENTITY;
 
 							if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 							{
@@ -1062,7 +1045,7 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 								//   Perhaps make mipmap part of STAMP prim?
 								if (frame && mmframe)
 								{
-									HOT_SPOT mmhs = GetFrameHot(mmframe);
+									const HOT_SPOT mmhs = GetFrameHot(mmframe);
 									TFB_DrawScreen_SetMipmap(frame->image,
 															 mmframe->image, mmhs.x, mmhs.y);
 								}
@@ -1096,7 +1079,7 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 
 void InitDisplayList(void)
 {
-	uint16_t i;
+	uint16_t i {};
 
 	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 	{
@@ -1124,7 +1107,8 @@ uint16_t nth_frame = 0;
 
 void RedrawQueue(bool clear)
 {
-	int32_t scroll_x, scroll_y;
+	int32_t scroll_x {};
+	int32_t scroll_y {};
 	VIEW_STATE view_state;
 
 	SetContext(StatusContext);
@@ -1138,12 +1122,10 @@ void RedrawQueue(bool clear)
 	}
 
 	SetContext(SpaceContext);
-	if (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE
-		|| !(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE
+		|| !(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 	{
-		uint8_t skip_frames;
-
-		skip_frames = highByte(nth_frame);
+		const uint8_t skip_frames {uqm::highByte(nth_frame)};
 		if (skip_frames != (uint8_t)~0
 			&& (skip_frames == 0 || (--nth_frame & 0x00FF) == 0))
 		{
@@ -1155,7 +1137,8 @@ void RedrawQueue(bool clear)
 
 			if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) != uqm::TFBScaleMode::Step)
 			{
-				uint16_t index, scale;
+				uint16_t index {};
+				uint16_t scale {};
 
 				CALC_ZOOM_STUFF(&index, &scale);
 				SetGraphicScale(scale);
@@ -1169,7 +1152,7 @@ void RedrawQueue(bool clear)
 	}
 	else
 	{ // sfx queue needs to be flushed when aborting
-		ProcessSound((SOUND)~0, nullptr);
+		SuppressSounds();
 		FlushSounds();
 	}
 
@@ -1180,12 +1163,12 @@ void RedrawQueue(bool clear)
 // have hTarget set to ElementPtr.
 void Untarget(ELEMENT* ElementPtr)
 {
-	HELEMENT hElement, hNextElement;
+	HELEMENT hNextElement {};
 
-	for (hElement = GetHeadElement(); hElement; hElement = hNextElement)
+	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
-		HELEMENT hTarget;
-		ELEMENT* ListPtr;
+		HELEMENT hTarget {};
+		ELEMENT* ListPtr {};
 
 		LockElement(hElement, &ListPtr);
 		hNextElement = GetSuccElement(ListPtr);
@@ -1193,7 +1176,7 @@ void Untarget(ELEMENT* ElementPtr)
 		hTarget = ListPtr->hTarget;
 		if (hTarget)
 		{
-			ELEMENT* TargetElementPtr;
+			ELEMENT* TargetElementPtr {};
 
 			LockElement(hTarget, &TargetElementPtr);
 			if (TargetElementPtr == ElementPtr)
@@ -1211,7 +1194,7 @@ void RemoveElement(HLINK hLink)
 {
 	if (uqm::UQMOptions::read().stereoSFX)
 	{
-		ELEMENT* ElementPtr;
+		ELEMENT* ElementPtr {};
 
 		LockElement(hLink, &ElementPtr);
 		if (ElementPtr != nullptr)

@@ -20,7 +20,7 @@
 #define PALETTE_H_INCL__
 
 #include "port.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include "libs/graphics/cmap.h"
 
 struct NativePalette
@@ -46,11 +46,7 @@ ColorToNative(Color color)
 	native.r = color.r;
 	native.g = color.g;
 	native.b = color.b;
-#if SDL_MAJOR_VERSION == 1
-	native.unused = 0;
-#else
 	native.a = color.a;
-#endif
 	return native;
 }
 

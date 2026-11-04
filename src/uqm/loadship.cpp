@@ -24,6 +24,7 @@
 #include "races.h"
 #include "init.h"
 #include "libs/strings/strintrn.h"
+#include "uqm/random/UQMRandom.h"
 
 static RESOURCE code_resources[] = {
 	NULL_RESOURCE,
@@ -88,26 +89,20 @@ static inline uint16_t ShipIndex(SPECIES_ID SpeciesID)
 // at once to be able to handle the load/save game preview window.
 static inline void SeedShipMap(SPECIES_ID* map, int seed)
 {
-	RandomContext* ShipGenRNG = RandomContext_New();
-	uint16_t rand_val;
+	uqm::PrimeRandom ShipGenRNG {};
+	uint16_t rand_val {};
 	SPECIES_ID* cMap = map;
 	SPECIES_ID* eMap = &(map[NUM_CAPITALS]);
 	SPECIES_ID* sMap = &(map[NUM_CAPITALS + NUM_ESCORTS]);
 	uint16_t x = 0;
-	const uqm::SeedType saveSeedType = g_seedType;
-	// Planet generation uses a different seeding math
-	if (g_seedType == uqm::SeedType::Planet)
-	{
-		g_seedType = uqm::SeedType::MRQ;
-	}
-	RandomContext_SeedRandom(ShipGenRNG, seed);
+	ShipGenRNG.reseed(seed);
 	for (x = 0; x < NUM_SHIPS; x++)
 	{
 		map[x] = NUM_SPECIES_ID;
 	}
 	for (x = 0; x < NUM_CAPITALS; x++)
 	{
-		rand_val = RandomContext_Random(ShipGenRNG) % NUM_CAPITALS;
+		rand_val = ShipGenRNG.next() % NUM_CAPITALS;
 		while (cMap[rand_val] != NUM_SPECIES_ID)
 		{
 			rand_val = (rand_val + 1) % NUM_CAPITALS;
@@ -116,7 +111,7 @@ static inline void SeedShipMap(SPECIES_ID* map, int seed)
 	}
 	for (x = 0; x < NUM_ESCORTS; x++)
 	{
-		rand_val = RandomContext_Random(ShipGenRNG) % NUM_ESCORTS;
+		rand_val = ShipGenRNG.next() % NUM_ESCORTS;
 		while (eMap[rand_val] != NUM_SPECIES_ID)
 		{
 			rand_val = (rand_val + 1) % NUM_ESCORTS;
@@ -125,19 +120,13 @@ static inline void SeedShipMap(SPECIES_ID* map, int seed)
 	}
 	for (x = 0; x < NUM_SCOUTS; x++)
 	{
-		rand_val = RandomContext_Random(ShipGenRNG) % NUM_SCOUTS;
+		rand_val = ShipGenRNG.next() % NUM_SCOUTS;
 		while (sMap[rand_val] != NUM_SPECIES_ID)
 		{
 			rand_val = (rand_val + 1) % NUM_SCOUTS;
 		}
 		sMap[rand_val] = scout[x];
 	}
-	if (ShipGenRNG)
-	{
-		RandomContext_Delete(ShipGenRNG);
-		ShipGenRNG = nullptr;
-	}
-	g_seedType = saveSeedType;
 }
 
 // Uses a ship map to map species ID to another species ID.
@@ -157,13 +146,13 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 	{
 		fmt::print(stderr, "Calling SeedShip (load window) species {}, "
 						   "Seed {}, ShipSeed {}, SIS (Seed) {}, SIS (ShipSeed) {}\n",
-				   SpeciesID, uqm::UQMOptions::read().customSeed, uqm::UQMOptions::read().shipSeed ? "on" : "off",
+				   SpeciesID, uqm::currentSeed().value, uqm::currentSeed().ships ? "on" : "off",
 				   GLOBAL_SIS(Seed), GLOBAL_SIS(ShipSeed));
 	}
 #endif
-	if (seedStamp != uqm::UQMOptions::read().customSeed)
+	if (seedStamp != uqm::currentSeed().value)
 	{
-		SeedShipMap(shipMap, seedStamp = uqm::UQMOptions::read().customSeed);
+		SeedShipMap(shipMap, seedStamp = uqm::currentSeed().value);
 	}
 	if (sisStamp != GLOBAL_SIS(Seed) && loadWindow)
 	{
@@ -173,7 +162,7 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 	target = SpeciesID;
 	if ((index = ShipIndex(SpeciesID)) < NUM_SHIPS)
 	{
-		if (!loadWindow && uqm::UQMOptions::read().shipSeed)
+		if (!loadWindow && uqm::currentSeed().ships)
 		{
 			return shipMap[index];
 		}
@@ -181,7 +170,7 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 		{
 			target = shipWindowMap[index];
 		}
-		if (!uqm::UQMOptions::read().shipSeed)
+		if (!uqm::currentSeed().ships)
 		{
 			return target;
 		}
@@ -201,21 +190,18 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 }
 
 static void
-SwapStrings(STRING a, STRING b, uint16_t ia, uint16_t ib)
+SwapStrings(uqm::StringTable* a, uqm::StringTable* b, size_t ia, size_t ib)
 {
-	char* swap = GetStringAddress(SetAbsStringTableIndex(b, ib));
-	(SetAbsStringTableIndex(b, ib))->data =
-		(SetAbsStringTableIndex(a, ia))->data;
-	(SetAbsStringTableIndex(a, ia))->data = swap;
+	a->swap(ia, *b, ib);
 }
 
 RACE_DESC*
 load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 {
 	RACE_DESC* RDPtr = 0;
-	void* CodeRef;
+	void* CodeRef {};
 	RACE_DESC* RDPtrSwap = 0;
-	void* CodeRefSwap;
+	void* CodeRefSwap {};
 
 	if (SpeciesID >= NUM_SPECIES_ID)
 	{
@@ -225,17 +211,17 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 #ifdef DEBUG_SHIPSEED
 	fmt::print(stderr, "Calling load_ship species {}, Seed {}, "
 					   "ShipSeed {}\n",
-			   SpeciesID, uqm::UQMOptions::read().customSeed,
-			   uqm::UQMOptions::read().shipSeed ? "on" : "off");
+			   SpeciesID, uqm::currentSeed().value,
+			   uqm::currentSeed().ships ? "on" : "off");
 #endif
 	CodeRef = CaptureCodeRes(LoadCodeRes(
-								 code_resources[uqm::UQMOptions::read().shipSeed ?
+								 code_resources[uqm::currentSeed().ships ?
 													SeedShip(SpeciesID, false) :
 													SpeciesID]),
-							 &GlobData, (void**)(&RDPtr));
+							 nullptr, (void**)(&RDPtr));
 	CodeRefSwap = CaptureCodeRes(LoadCodeRes(
 									 code_resources[SpeciesID]),
-								 &GlobData, (void**)(&RDPtrSwap));
+								 nullptr, (void**)(&RDPtrSwap));
 
 	if (!CodeRef || !CodeRefSwap)
 	{
@@ -267,21 +253,18 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 
 	if (RDPtrSwap->ship_info.race_strings_rsc != NULL_RESOURCE)
 	{
-		RDPtr->ship_info.race_strings = CaptureStringTable(LoadStringTable(
-			RDPtrSwap->ship_info.race_strings_rsc));
+		RDPtr->ship_info.race_strings = uqm::loadStringTable(
+											RDPtrSwap->ship_info.race_strings_rsc)
+											.release();
 		if (!RDPtr->ship_info.race_strings)
 		{
 			/* goto BadLoad */
 		}
-		RDPtrSwap->ship_info.race_strings = CaptureStringTable(LoadStringTable(
-			RDPtr->ship_info.race_strings_rsc));
-		SwapStrings(RDPtrSwap->ship_info.race_strings,
-					RDPtr->ship_info.race_strings, 4, 4);
-		SwapStrings(RDPtrSwap->ship_info.race_strings,
-					RDPtr->ship_info.race_strings,
-					GetStringTableCount(RDPtrSwap->ship_info.race_strings) - 2,
-					GetStringTableCount(RDPtr->ship_info.race_strings) - 2);
-		DestroyStringTable(ReleaseStringTable(RDPtrSwap->ship_info.race_strings));
+		const uqm::StringTablePtr swapStrings {uqm::loadStringTable(RDPtr->ship_info.race_strings_rsc)};
+		SwapStrings(swapStrings.get(), RDPtr->ship_info.race_strings, 4, 4);
+		SwapStrings(swapStrings.get(), RDPtr->ship_info.race_strings,
+					swapStrings->size() - 2,
+					RDPtr->ship_info.race_strings->size() - 2);
 	}
 
 	if (LoadBattleData)
@@ -339,8 +322,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 
 		if (RawPtr->ship_sounds_rsc != NULL_RESOURCE)
 		{
-			RawPtr->ship_sounds = CaptureSound(
-				LoadSound(RawPtr->ship_sounds_rsc));
+			RawPtr->ship_sounds = uqm::loadSoundBank(RawPtr->ship_sounds_rsc).release();
 			if (!RawPtr->ship_sounds)
 			{
 				goto BadLoad;
@@ -383,16 +365,16 @@ void free_ship(RACE_DESC* raceDescPtr, bool FreeIconData,
 		DestroyDrawable(
 			ReleaseDrawable(shipData->captain_control.background));
 		DestroyMusic(shipData->victory_ditty);
-		DestroySound(ReleaseSound(shipData->ship_sounds));
+		delete shipData->ship_sounds;
 	}
 
 	if (FreeIconData)
 	{
-		SHIP_INFO* shipInfo = &raceDescPtr->ship_info;
+		const SHIP_INFO* shipInfo = &raceDescPtr->ship_info;
 
 		DestroyDrawable(ReleaseDrawable(shipInfo->melee_icon));
 		DestroyDrawable(ReleaseDrawable(shipInfo->icons));
-		DestroyStringTable(ReleaseStringTable(shipInfo->race_strings));
+		delete shipInfo->race_strings;
 	}
 
 	DestroyCodeRes(ReleaseCodeRes(raceDescPtr->CodeRef));

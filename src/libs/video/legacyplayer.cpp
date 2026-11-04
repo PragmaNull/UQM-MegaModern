@@ -17,34 +17,27 @@
 #include "vidintrn.h"
 #include "video.h"
 #include "vidplayer.h"
-#include "libs/memlib.h"
 #include "uqm/util.h"
 
 LEGACY_VIDEO_REF
 PlayLegacyVideo(LEGACY_VIDEO vid)
 {
-	const char *name, *audname, *speechname;
-	uint32_t loopframe;
-	LEGACY_VIDEO_REF ref;
 	VIDEO_TYPE type;
 
 	if (!vid)
 	{
 		return nullptr;
 	}
-	ref = (LEGACY_VIDEO_REF)HCalloc(sizeof(*ref));
-	if (!ref)
-	{
-		return nullptr;
-	}
-	name = vid->video;
-	audname = vid->audio;
-	speechname = vid->speech;
-	loopframe = vid->loop;
+	const char* name {vid->video.c_str()};
+	const char* audname {vid->audio.empty() ? nullptr : vid->audio.c_str()};
+	const char* speechname {vid->speech.empty() ? nullptr : vid->speech.c_str()};
+	const uint32_t loopframe {vid->loop};
 
+	LEGACY_VIDEO_REF ref {new legacy_video_ref {}};
 	ref->vidref = LoadVideoFile(name);
 	if (!ref->vidref)
 	{
+		delete ref;
 		return nullptr;
 	}
 
@@ -87,7 +80,7 @@ void StopLegacyVideo(LEGACY_VIDEO_REF ref)
 		DestroyMusic(ref->audref);
 	}
 
-	HFree(ref);
+	delete ref;
 }
 
 bool PlayingLegacyVideo(LEGACY_VIDEO_REF ref)

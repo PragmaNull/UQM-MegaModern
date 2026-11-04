@@ -66,7 +66,7 @@ struct TestSettings : SettingsRegistry
 
 TEST(SettingTest, RegistersInDeclarationOrder)
 {
-	TestSettings settings {};
+	const TestSettings settings {};
 	ASSERT_EQ(settings.settings().size(), 7u);
 	EXPECT_EQ(settings.settings()[0]->key(), "general.enabled");
 	EXPECT_EQ(settings.settings()[6]->key(), "graphics.flags");
@@ -277,7 +277,7 @@ TEST(SettingTest, RejectsInvalidText)
 
 TEST(SettingTest, ChecksTextWithoutChangingValue)
 {
-	TestSettings settings {};
+	const TestSettings settings {};
 	EXPECT_TRUE(settings.percent.acceptsText("75"));
 	EXPECT_FALSE(settings.percent.acceptsText("150"));
 	EXPECT_EQ(*settings.percent, 50);
@@ -300,7 +300,7 @@ TEST(OptionsSettingsTest, CoarseScanStyles)
 	EXPECT_TRUE(usesAltScanColors(CoarseScanStyle::Pictograms));
 	EXPECT_TRUE(usesAltScanColors(CoarseScanStyle::P6014Text));
 
-	OptionsStruct options {};
+	const OptionsStruct options {};
 	EXPECT_EQ(options.whichCoarseScan.valueNames(), (uqstl::vector<uqstl::string> {"Text", "Pictograms", "P6014Text", "P6014Pictograms"}));
 }
 
@@ -317,6 +317,20 @@ TEST(OptionsSettingsTest, CoarseScanStyleAcceptsOldNames)
 	EXPECT_EQ(options.whichCoarseScan.valueText(), "Pictograms");
 }
 
+TEST(OptionsSettingsTest, SeedTypeAcceptsOldNames)
+{
+	OptionsStruct options {};
+	ASSERT_TRUE(options.fromJson(R"({"seed": {"type": "None"}})"));
+	EXPECT_EQ(*options.seedType, SeedType::Original);
+	ASSERT_TRUE(options.fromJson(R"({"seed": {"type": "Prime"}})"));
+	EXPECT_EQ(*options.seedType, SeedType::Starseed);
+
+	EXPECT_TRUE(options.seedType.parseText("None"));
+	EXPECT_EQ(*options.seedType, SeedType::Original);
+	EXPECT_EQ(options.seedType.valueText(), "Original");
+	EXPECT_EQ(options.seedType.valueNames(), (uqstl::vector<uqstl::string> {"Original", "Planet", "MRQ", "Starseed"}));
+}
+
 TEST(OptionsSettingsTest, ReloadAndRestartFlags)
 {
 	const OptionsStruct options {};
@@ -328,7 +342,7 @@ TEST(OptionsSettingsTest, ReloadAndRestartFlags)
 
 TEST(SettingTest, DescribesCommandLineValues)
 {
-	TestSettings settings {};
+	const TestSettings settings {};
 	EXPECT_TRUE(settings.enabled.isFlag());
 	EXPECT_FALSE(settings.percent.isFlag());
 	EXPECT_EQ(settings.percent.cliNames(), "--percent");

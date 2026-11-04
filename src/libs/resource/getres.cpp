@@ -20,7 +20,6 @@
 #include "options.h"
 #include "port.h"
 #include "resintrn.h"
-#include "libs/memlib.h"
 #include "core/log/log.h"
 
 // At other times, it is nullptr.
@@ -34,7 +33,25 @@ lookupResourceDesc(RESOURCE_INDEX idx, RESOURCE res)
 
 void loadResourceDesc(ResourceDesc* desc)
 {
-	desc->vtable->loadFun(desc->fname, &desc->resdata);
+	if (desc->vtable->textLoadFun != nullptr)
+	{
+		desc->vtable->textLoadFun(resourceString(desc->arg), &desc->resdata);
+	}
+	else
+	{
+		desc->vtable->loadFun(desc->arg, &desc->resdata);
+	}
+}
+
+uqstl::optional<uqstl::string> readResourceText(const ResourceFile& resource)
+{
+	uqstl::string text(resource.length, '\0');
+	text.resize(resource.file.read(uqstl::as_writable_bytes(uqstl::span {text})));
+	if (resource.file.error())
+	{
+		return uqstl::nullopt;
+	}
+	return text;
 }
 
 void* LoadResourceFromPath(const char* path, ResourceLoadFileFun* loadFun)
@@ -50,17 +67,14 @@ void* LoadResourceFromPath(const char* path, ResourceLoadFileFun* loadFun)
 const char*
 res_GetResourceType(RESOURCE res)
 {
-	RESOURCE_INDEX resourceIndex;
-	ResourceDesc* desc;
-
 	if (res == NULL_RESOURCE)
 	{
 		uqm::log::warn("Trying to get type of null resource");
 		return nullptr;
 	}
 
-	resourceIndex = _get_current_index_header();
-	desc = lookupResourceDesc(resourceIndex, res);
+	RESOURCE_INDEX resourceIndex {_get_current_index_header()};
+	const ResourceDesc* desc {lookupResourceDesc(resourceIndex, res)};
 	if (desc == nullptr)
 	{
 		uqm::log::warn("Trying to get type of undefined resource '{}'",
@@ -75,18 +89,15 @@ res_GetResourceType(RESOURCE res)
 // Get a resource by its resource ID.
 void* res_GetResource(RESOURCE res)
 {
-	RESOURCE_INDEX resourceIndex;
-	ResourceDesc* desc;
-
 	if (res == NULL_RESOURCE)
 	{
 		uqm::log::warn("Trying to get null resource");
 		return nullptr;
 	}
 
-	resourceIndex = _get_current_index_header();
+	RESOURCE_INDEX resourceIndex {_get_current_index_header()};
 
-	desc = lookupResourceDesc(resourceIndex, res);
+	ResourceDesc* desc {lookupResourceDesc(resourceIndex, res)};
 	if (desc == nullptr)
 	{
 		uqm::log::warn("Trying to get undefined resource '{}'",
@@ -110,18 +121,15 @@ void* res_GetResource(RESOURCE res)
 uint32_t
 res_GetIntResource(RESOURCE res)
 {
-	RESOURCE_INDEX resourceIndex;
-	ResourceDesc* desc;
-
 	if (res == NULL_RESOURCE)
 	{
 		uqm::log::warn("Trying to get null resource");
 		return 0;
 	}
 
-	resourceIndex = _get_current_index_header();
+	RESOURCE_INDEX resourceIndex {_get_current_index_header()};
 
-	desc = lookupResourceDesc(resourceIndex, res);
+	const ResourceDesc* desc {lookupResourceDesc(resourceIndex, res)};
 	if (desc == nullptr)
 	{
 		uqm::log::warn("Trying to get undefined resource '{}'",
@@ -140,10 +148,9 @@ bool res_GetBooleanResource(RESOURCE res)
 // NB: this function appears to be never called!
 void res_FreeResource(RESOURCE res)
 {
-	ResourceDesc* desc;
-	ResourceFreeFun* freeFun;
+	ResourceFreeFun* freeFun {};
 
-	desc = lookupResourceDesc(_get_current_index_header(), res);
+	ResourceDesc* desc {lookupResourceDesc(_get_current_index_header(), res)};
 	if (desc == nullptr)
 	{
 		uqm::log::debug("Warning: trying to free an unrecognised "
@@ -188,11 +195,9 @@ void res_FreeResource(RESOURCE res)
 // copy still exists.
 void* res_DetachResource(RESOURCE res)
 {
-	ResourceDesc* desc;
-	ResourceFreeFun* freeFun;
-	void* result;
+	ResourceFreeFun* freeFun {};
 
-	desc = lookupResourceDesc(_get_current_index_header(), res);
+	ResourceDesc* desc {lookupResourceDesc(_get_current_index_header(), res)};
 	if (desc == nullptr)
 	{
 		uqm::log::debug("Warning: trying to detach from an unrecognised "
@@ -222,15 +227,9 @@ void* res_DetachResource(RESOURCE res)
 		return nullptr;
 	}
 
-	result = desc->resdata.ptr;
+	void* result {desc->resdata.ptr};
 	desc->resdata.ptr = nullptr;
 	desc->refcount = 0;
 
 	return result;
-}
-
-bool FreeResourceData(void* data)
-{
-	HFree(data);
-	return true;
 }

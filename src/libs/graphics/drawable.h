@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include "tfb_draw.h"
+#include "core/stl/vector.h"
 
 #define ValidPrimType(pt) ((pt) < NUM_PRIMS)
 
@@ -52,7 +53,7 @@ struct drawable_desc
 {
 	CREATE_FLAGS Flags;
 	uint16_t MaxIndex;
-	FRAME_DESC* Frame;
+	uqstl::vector<FRAME_DESC> Frame;
 };
 
 #define GetFrameWidth(f) ((f)->Bounds.width)
@@ -84,6 +85,6 @@ extern FRAME _CurFramePtr;
 // ClipRect is relative to ctxOrigin
 extern void _text_blt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin);
 extern void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME repair, bool* skip);
-extern uint8_t _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swap, FONT AltFontPtr, UniChar key);
+extern uint8_t _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swap, FONT AltFontPtr, uqm::UniChar key);
 
 #endif /* LIBS_GRAPHICS_DRAWABLE_H_ */

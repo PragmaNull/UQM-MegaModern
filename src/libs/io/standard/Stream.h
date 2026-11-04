@@ -7,7 +7,7 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <system_error>
+#include "core/stl/system_error.h"
 
 namespace uqm::io::standard
 {

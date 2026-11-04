@@ -57,7 +57,7 @@ uqstl::pair<int, bool> UQMOptions::parseArgs(uqstl::span<uqgsl::zstring> args)
 	TFB_Pure_GetRendererBackends(rendererBackends);
 	uqstl::sort(rendererBackends.begin(), rendererBackends.end());
 	settingsCli.group("Graphics")
-		.add_option("--renderer", m_options.graphicsBackend, "Rendering backend to use. If not specified, SDL will choose a default for us.")
+		.add_option("--renderer", m_options.graphicsBackend, "Rendering backend to use. If not specified, SDL will choose a default for us. With GPU scaling on, vulkan, direct3d12 and metal select the gpu renderer with that GPU backend.")
 		->check(CLI::IsMember(rendererBackends, CLI::ignore_case));
 
 	CLI::App& pathGroup {settingsCli.group("Paths")};
@@ -78,6 +78,12 @@ uqstl::pair<int, bool> UQMOptions::parseArgs(uqstl::span<uqgsl::zstring> args)
 
 	settingsCli.group("Testing")
 		.add_option("--input-script", m_options.inputScript, "File of menu key presses to run, for testing. See uqm/inputscript.h.")
+		->check(CLI::ExistingFile);
+	settingsCli.group("Testing")
+		.add_option("--check-save", m_options.checkSave, "Load this save file, save it again, report the differences, and exit.")
+		->check(CLI::ExistingFile);
+	settingsCli.group("Testing")
+		.add_option("--play-save", m_options.playSave, "Skip the main menu and play this save file.")
 		->check(CLI::ExistingFile);
 
 	settingsCli.group("Cheats")

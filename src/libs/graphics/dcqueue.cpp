@@ -16,7 +16,6 @@
 
 #include "port.h"
 #include "core/string/StringUtils.h"
-#include "libs/threadlib.h"
 #include "libs/graphics/drawcmd.h"
 #include "libs/graphics/drawable.h"
 #include "libs/graphics/context.h"
@@ -25,76 +24,146 @@
 #include "libs/graphics/bbox.h"
 #include "libs/time/timelib.h"
 #include "core/log/log.h"
-#include "libs/misc.h"
-// for TFB_DEBUG_HALT
 #include "options.h"
 #include "libs/graphics/font.h"
 #include "uqm/setup.h"
 
-#ifdef DEBUG_DCQ_THREADS
-#include "../threads/sdl/sdlthreads.h"
-#endif
-static RecursiveMutex DCQ_Mutex;
+#include "core/thread/Mutex.h"
 
-CondVar RenderingCond;
+#include "core/stl/chrono.h"
+#include "core/stl/condition_variable.h"
+#include "core/stl/thread.h"
 
-TFB_DrawCommand DCQ[DCQ_MAX];
+namespace
+{
 
-TFB_DrawCommandQueue DrawCommandQueue;
+// The DCQ lock. A thread can lock it more than once.
+uqm::RecursiveMutex s_dcqMutex {};
+// The number of times that the owner has locked s_dcqMutex.
+int s_dcqDepth UQM_GUARDED_BY(s_dcqMutex) {};
+// The renderer signals this when the queue is empty.
+uqstl::condition_variable_any s_renderingDone {};
+
+void lockDcq() UQM_ACQUIRE(s_dcqMutex)
+{
+	s_dcqMutex.lock();
+	++s_dcqDepth;
+}
+
+void unlockDcq() UQM_RELEASE(s_dcqMutex)
+{
+	--s_dcqDepth;
+	s_dcqMutex.unlock();
+}
+
+// Releases all the levels of the DCQ lock while a thread waits, and then restores them.
+class DcqFullRelease
+{
+public:
+	void unlock() UQM_NO_THREAD_SAFETY_ANALYSIS
+	{
+		m_depth = s_dcqDepth;
+		s_dcqDepth = 0;
+		for (int i {}; i < m_depth; ++i)
+		{
+			s_dcqMutex.unlock();
+		}
+	}
+
+	void lock() UQM_NO_THREAD_SAFETY_ANALYSIS
+	{
+		for (int i {}; i < m_depth; ++i)
+		{
+			s_dcqMutex.lock();
+		}
+		s_dcqDepth = m_depth;
+	}
+
+private:
+	int m_depth {};
+};
+
+} // namespace
+
+static TFB_DrawCommand DCQ[DCQ_MAX] UQM_GUARDED_BY(s_dcqMutex);
+
+static TFB_DrawCommandQueue DrawCommandQueue UQM_GUARDED_BY(s_dcqMutex);
 
 static inline constexpr uint32_t DCQueueFPS {20};
 static inline constexpr auto DCQueueTicksForFps {getTicksForFramerate(DCQueueFPS)};
 int RenderedFrames = 0;
 
 
-// Wait for the queue to be emptied.
-static void
-TFB_WaitForSpace(int requested_slots)
+static bool
+DCQ_HasSpace(int slots) UQM_REQUIRES(s_dcqMutex)
 {
-	int old_depth, i;
+	return DrawCommandQueue.FullSize < DCQ_MAX - slots;
+}
+
+// Wait for the queue to be emptied. Always have the DCQ locked when calling this.
+static void
+TFB_WaitForSpace(int requested_slots) UQM_REQUIRES(s_dcqMutex)
+{
 	uqm::log::debug("DCQ overload (Size = {}, FullSize = {}, "
 					"Requested = {}).  Sleeping until renderer is done.",
 					DrawCommandQueue.Size, DrawCommandQueue.FullSize,
 					requested_slots);
-	// Restore the DCQ locking level.  I *think* this is
-	// always 1, but...
 	TFB_BatchReset();
-	old_depth = GetRecursiveMutexDepth(DCQ_Mutex);
-	for (i = 0; i < old_depth; i++)
+	DcqFullRelease release {};
+	while (!DCQ_HasSpace(requested_slots))
 	{
-		UnlockRecursiveMutex(DCQ_Mutex);
-	}
-	WaitCondVar(RenderingCond);
-	for (i = 0; i < old_depth; i++)
-	{
-		LockRecursiveMutex(DCQ_Mutex);
+		s_renderingDone.wait(release);
 	}
 	uqm::log::debug("DCQ clear (Size = {}, FullSize = {}).  Continuing.",
 					DrawCommandQueue.Size, DrawCommandQueue.FullSize);
 }
 
-void Lock_DCQ(int slots)
+// Locks the DCQ, and waits until it has space for the slots.
+static void
+lockDcqWithSpace(int slots) UQM_ACQUIRE(s_dcqMutex)
 {
-	LockRecursiveMutex(DCQ_Mutex);
-	while (DrawCommandQueue.FullSize >= DCQ_MAX - slots)
+	lockDcq();
+	if (!DCQ_HasSpace(slots))
 	{
 		TFB_WaitForSpace(slots);
 	}
 }
 
-void Unlock_DCQ(void)
+// The number of commands that the renderer can take now.
+static int
+DCQ_Size(void)
 {
-	UnlockRecursiveMutex(DCQ_Mutex);
+	const uqm::LockGuard lock {s_dcqMutex};
+	return DrawCommandQueue.Size;
+}
+
+// The number of commands in the queue, with the batched ones.
+static int
+DCQ_FullSize(void)
+{
+	const uqm::LockGuard lock {s_dcqMutex};
+	return DrawCommandQueue.FullSize;
+}
+
+// Holds the DCQ lock until Unlock_DCQ, so the analysis cannot check it.
+void Lock_DCQ(int slots) UQM_NO_THREAD_SAFETY_ANALYSIS
+{
+	lockDcqWithSpace(slots);
+}
+
+void Unlock_DCQ(void) UQM_NO_THREAD_SAFETY_ANALYSIS
+{
+	unlockDcq();
 }
 
 // Always have the DCQ locked when calling this.
 static void
-Synchronize_DCQ(void)
+Synchronize_DCQ(void) UQM_REQUIRES(s_dcqMutex)
 {
 	if (!DrawCommandQueue.Batching)
 	{
-		int front = DrawCommandQueue.Front;
-		int back = DrawCommandQueue.InsertionPoint;
+		const int front = DrawCommandQueue.Front;
+		const int back = DrawCommandQueue.InsertionPoint;
 		DrawCommandQueue.Back = DrawCommandQueue.InsertionPoint;
 		if (front <= back)
 		{
@@ -110,20 +179,20 @@ Synchronize_DCQ(void)
 
 void TFB_BatchGraphics(void)
 {
-	LockRecursiveMutex(DCQ_Mutex);
+	lockDcq();
 	DrawCommandQueue.Batching++;
-	UnlockRecursiveMutex(DCQ_Mutex);
+	unlockDcq();
 }
 
 void TFB_UnbatchGraphics(void)
 {
-	LockRecursiveMutex(DCQ_Mutex);
+	lockDcq();
 	if (DrawCommandQueue.Batching)
 	{
 		DrawCommandQueue.Batching--;
 	}
 	Synchronize_DCQ();
-	UnlockRecursiveMutex(DCQ_Mutex);
+	unlockDcq();
 }
 
 // Cancel all pending batch operations, making them unbatched.  This will
@@ -131,10 +200,10 @@ void TFB_UnbatchGraphics(void)
 // batching problems from freezing the game.
 void TFB_BatchReset(void)
 {
-	LockRecursiveMutex(DCQ_Mutex);
+	lockDcq();
 	DrawCommandQueue.Batching = 0;
 	Synchronize_DCQ();
-	UnlockRecursiveMutex(DCQ_Mutex);
+	unlockDcq();
 }
 
 
@@ -142,55 +211,40 @@ void TFB_BatchReset(void)
 
 void Init_DrawCommandQueue(void)
 {
+	lockDcq();
 	DrawCommandQueue.Back = 0;
 	DrawCommandQueue.Front = 0;
 	DrawCommandQueue.InsertionPoint = 0;
 	DrawCommandQueue.Batching = 0;
 	DrawCommandQueue.FullSize = 0;
 	DrawCommandQueue.Size = 0;
+	unlockDcq();
 
 	TFB_BBox_Init(CanvasWidth, CanvasHeight);
-
-	DCQ_Mutex = CREATERECURSIVEMUTEX("DCQ",
-									 SYNC_CLASS_TOPLEVEL | SYNC_CLASS_VIDEO);
-
-	RenderingCond = CREATECONDVAR("DCQ empty",
-								  SYNC_CLASS_TOPLEVEL | SYNC_CLASS_VIDEO);
 }
 
 void Uninit_DrawCommandQueue(void)
 {
-	if (RenderingCond)
-	{
-		DestroyCondVar(RenderingCond);
-		RenderingCond = 0;
-	}
-
-	if (DCQ_Mutex)
-	{
-		DestroyRecursiveMutex(DCQ_Mutex);
-		DCQ_Mutex = 0;
-	}
 }
 
 void TFB_DrawCommandQueue_Push(TFB_DrawCommand* Command)
 {
-	Lock_DCQ(1);
+	lockDcqWithSpace(1);
 	DCQ[DrawCommandQueue.InsertionPoint] = *Command;
 	DrawCommandQueue.InsertionPoint = (DrawCommandQueue.InsertionPoint + 1)
 									% DCQ_MAX;
 	DrawCommandQueue.FullSize++;
 	Synchronize_DCQ();
-	Unlock_DCQ();
+	unlockDcq();
 }
 
 int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
 {
-	LockRecursiveMutex(DCQ_Mutex);
+	lockDcq();
 
 	if (DrawCommandQueue.Size == 0)
 	{
-		Unlock_DCQ();
+		unlockDcq();
 		return (0);
 	}
 
@@ -199,7 +253,7 @@ int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
 		uqm::log::debug("Augh!  Assertion failure in DCQ!  "
 						"Front == Back, Size != DCQ_MAX");
 		DrawCommandQueue.Size = 0;
-		Unlock_DCQ();
+		unlockDcq();
 		return (0);
 	}
 
@@ -208,29 +262,28 @@ int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
 
 	DrawCommandQueue.Size--;
 	DrawCommandQueue.FullSize--;
-	UnlockRecursiveMutex(DCQ_Mutex);
+	unlockDcq();
 
 	return 1;
 }
 
 void TFB_DrawCommandQueue_Clear()
 {
-	LockRecursiveMutex(DCQ_Mutex);
+	lockDcq();
 	DrawCommandQueue.Size = 0;
 	DrawCommandQueue.Front = 0;
 	DrawCommandQueue.Back = 0;
 	DrawCommandQueue.Batching = 0;
 	DrawCommandQueue.FullSize = 0;
 	DrawCommandQueue.InsertionPoint = 0;
-	UnlockRecursiveMutex(DCQ_Mutex);
+	unlockDcq();
 }
 
 static void
 checkExclusiveThread(TFB_DrawCommand* DrawCommand)
 {
 #ifdef DEBUG_DCQ_THREADS
-	static uint32_t exclusiveThreadId;
-	//extern uint32_t SDL_ThreadID(void);
+	static uqstl::thread::id exclusiveThreadId {};
 
 	// Only one thread is currently allowed to enqueue commands
 	// This is not a technical limitation but rather a semantical one atm.
@@ -240,13 +293,13 @@ checkExclusiveThread(TFB_DrawCommand* DrawCommand)
 		return;
 	}
 
-	if (!exclusiveThreadId)
+	if (exclusiveThreadId == uqstl::thread::id {})
 	{
-		exclusiveThreadId = SDL_ThreadID();
+		exclusiveThreadId = uqstl::this_thread::get_id();
 	}
 	else
 	{
-		assert(SDL_ThreadID() == exclusiveThreadId);
+		assert(uqstl::this_thread::get_id() == exclusiveThreadId);
 	}
 #else
 	(void)DrawCommand; // suppress unused warning
@@ -301,8 +354,22 @@ void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand)
 	TFB_DrawCommandQueue_Push(DrawCommand);
 }
 
+// Time spent on rendering, and the frames rendered in that time, since the last FPS update.
+static uqstl::chrono::steady_clock::duration s_renderTime {};
+static int s_renderFrames {};
+
+// Adds the time since start to the render time, for one rendered frame.
 static void
-computeFPS(int* fps)
+addRenderTime(uqstl::chrono::steady_clock::time_point start)
+{
+	s_renderTime += uqstl::chrono::steady_clock::now() - start;
+	++s_renderFrames;
+}
+
+// fps is the rate of the frames that the game draws. renderFps is the rate
+// that the rendering could reach if it did not wait for the game.
+static void
+computeFPS(int* fps, int* renderFps)
 {
 	static TimeCount last_time;
 	static TimePeriod fps_counter;
@@ -316,66 +383,65 @@ computeFPS(int* fps)
 	fps_counter += delta_time;
 	if (fps_counter > DCQueueTicksForFps)
 	{
-		*fps = (int)((float)DCQueueTicksForFps * RenderedFrames / fps_counter);
-		uqm::log::info("fps {:.2}, effective {}",
-					   (float)DCQueueTicksForFps / delta_time, *fps);
+		*fps = static_cast<int>(RenderedFrames / uqstl::chrono::duration<double>(fps_counter).count());
+		const double renderSeconds {uqstl::chrono::duration<double>(s_renderTime).count()};
+		*renderFps = renderSeconds > 0.0 ? static_cast<int>(s_renderFrames / renderSeconds) : 0;
+		uqm::log::info("fps {:.2}, effective {}, render {}",
+					   1.0 / uqstl::chrono::duration<double>(delta_time).count(), *fps, *renderFps);
 
-		fps_counter = 0;
+		fps_counter = TimePeriod {};
 		RenderedFrames = 0;
+		s_renderTime = {};
+		s_renderFrames = 0;
 	}
 }
 
+// Draws text on the FPS canvas. The text starts at x.
 static void
-RenderFPS(int* fps)
+drawFPSText(uqstl::string_view text, int x, int y, Color color)
+{
+	GFXRECT tr;
+	int16_t w {};
+	int16_t h {};
+
+	GetFontDims(&w, &h);
+	TFB_Image* img = TFB_DrawImage_CreateForScreen(w, h, true);
+	tr.corner.x = tr.corner.y = 0;
+	tr.extent.width = w;
+	tr.extent.height = h;
+	TFB_DrawImage_Rect(&tr, color, DRAW_REPLACE_MODE, img);
+
+	for (const char c : text)
+	{
+		TFB_Char* ch = GetFrameForFPS(static_cast<unsigned char>(c));
+		if (ch && ch->disp.width)
+		{
+			TFB_DrawCanvas_FontChar(ch, img, x, y, MAKE_DRAW_MODE(DRAW_ALPHA, 0xff), TFB_GetFPSCanvas());
+			x += ch->disp.width + GetFontCharSpace();
+		}
+		else
+		{
+			x += w / 2;
+		}
+	}
+	TFB_DrawImage_Delete(img);
+}
+
+static void
+RenderFPS(int fps, int renderFps)
 {
 	static int prevFPS = 0;
-	if (GoodToGoFPS() && (prevFPS != *fps))
+	static int prevRenderFPS = 0;
+	if (GoodToGoFPS() && (prevFPS != fps || prevRenderFPS != renderFps))
 	{
-		GFXRECT tr;
-		int16_t w, h;
-		int i;
-		int max;
-		int step = 6;
-		TFB_Char* ch;
-		TFB_Image* img;
-
-		prevFPS = *fps;
+		prevFPS = fps;
+		prevRenderFPS = renderFps;
 
 		TFB_ClearFPSCanvas();
 
-		int x = 14 << resolutionFactor;
-		int y = 7 << resolutionFactor;
-
-		char buf[8] {};
-		const auto fmtResult = fmt::format_to_sz_n(buf, "{}", *fps);
-
-		max = fmtResult.size; //(uint16_t) utf8StringCount(buf);
-
-		GetFontDims(&w, &h);
-		img = TFB_DrawImage_CreateForScreen(w, h, true);
-		tr.corner.x = tr.corner.y = 0;
-		tr.extent.width = w;
-		tr.extent.height = h;
-		TFB_DrawImage_Rect(&tr, BUILD_COLOR_RGBA(0x00, 0xFF, 0x00, 0xFF), DRAW_REPLACE_MODE, img);
-
-		for (i = max - 1; i >= 0; i--)
-		{
-			ch = GetFrameForFPS(buf[i]);
-			if (ch)
-			{
-				TFB_DrawCanvas_FontChar(ch, img, x, y, MAKE_DRAW_MODE(DRAW_ALPHA, 0xff), TFB_GetFPSCanvas());
-				if ((i > 0) && (buf[i - 1] == '1'))
-				{
-					step = 5;
-				}
-				else
-				{
-					step = 6;
-				}
-				x -= step << resolutionFactor;
-			}
-		}
-		TFB_DrawImage_Delete(img);
+		const int x = 2 << resolutionFactor;
+		drawFPSText(fmt::format("CPU: {}", fps), x, 7 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0x00, 0xFF));
+		drawFPSText(fmt::format("GPU: {}", renderFps), x, 16 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0xFF, 0xFF));
 	}
 }
 
@@ -386,23 +452,37 @@ RenderFPS(int* fps)
 // Only call from main() thread!!
 void TFB_FlushGraphics(void)
 {
-	int commands_handled;
 	static int fps = 0;
-	bool livelock_deterrence;
+	static int renderFps = 0;
+	const bool showFps {testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS)};
+	const uqstl::chrono::steady_clock::time_point start {uqstl::chrono::steady_clock::now()};
 
-	// This is technically a locking violation on DrawCommandQueue.Size,
-	// but it is likely to not be very destructive.
-	if (DrawCommandQueue.Size == 0)
+	if (DCQ_Size() == 0)
 	{
 		static int last_fade = 255;
 		static int last_transition = 255;
-		int current_fade = GetFadeAmount();
-		int current_transition = TransitionAmount;
+		const int current_fade = GetFadeAmount();
+		const int current_transition = TransitionAmount;
 
 		if ((current_fade != 255 && current_fade != last_fade) || (current_transition != 255 && current_transition != last_transition) || (current_fade == 255 && last_fade != 255) || (current_transition == 255 && last_transition != 255))
 		{
 			TFB_SwapBuffers(uqm::TFBRedraw::Fading);
 			// if fading, redraw every frame
+			if (showFps)
+			{
+				addRenderTime(start);
+			}
+		}
+		else if (TFB_ImGuiVisible())
+		{
+			// The overlay draws at most once for each frame of a 60 Hz display.
+			static uqstl::chrono::steady_clock::time_point s_lastOverlayFrame {};
+			if (start - s_lastOverlayFrame >= uqstl::chrono::microseconds {16'667})
+			{
+				s_lastOverlayFrame = start;
+				TFB_SwapBuffers(uqm::TFBRedraw::Expose);
+			}
+			TaskSwitch();
 		}
 		else
 		{
@@ -411,24 +491,24 @@ void TFB_FlushGraphics(void)
 
 		last_fade = current_fade;
 		last_transition = current_transition;
-		BroadcastCondVar(RenderingCond);
+		s_renderingDone.notify_all();
 		return;
 	}
 
-	if (testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS))
+	if (showFps)
 	{
-		computeFPS(&fps);
+		computeFPS(&fps, &renderFps);
 	}
 
-	commands_handled = 0;
-	livelock_deterrence = false;
+	int commands_handled {0};
+	bool livelock_deterrence {false};
 
-	if (DrawCommandQueue.FullSize > DCQ_FORCE_BREAK_SIZE)
+	if (DCQ_FullSize() > DCQ_FORCE_BREAK_SIZE)
 	{
 		TFB_BatchReset();
 	}
 
-	if (DrawCommandQueue.Size > DCQ_FORCE_SLOWDOWN_SIZE)
+	if (DCQ_Size() > DCQ_FORCE_SLOWDOWN_SIZE)
 	{
 		Lock_DCQ(-1);
 		livelock_deterrence = true;
@@ -447,7 +527,7 @@ void TFB_FlushGraphics(void)
 		}
 
 		++commands_handled;
-		if (!livelock_deterrence && commands_handled + DrawCommandQueue.Size > DCQ_LIVELOCK_MAX)
+		if (!livelock_deterrence && commands_handled + DCQ_Size() > DCQ_LIVELOCK_MAX)
 		{
 			// log_add (log_Debug, "Initiating livelock deterrence!");
 			livelock_deterrence = true;
@@ -459,7 +539,7 @@ void TFB_FlushGraphics(void)
 		{
 			case TFB_DRAWCOMMANDTYPE_SETMIPMAP:
 				{
-					TFB_DrawCommand_SetMipmap* cmd = &DC.data.setmipmap;
+					const TFB_DrawCommand_SetMipmap* cmd = &DC.data.setmipmap;
 					TFB_DrawImage_SetMipmap(cmd->image, cmd->mipmap,
 											cmd->hotx, cmd->hoty);
 					break;
@@ -467,7 +547,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_IMAGE:
 				{
-					TFB_DrawCommand_Image* cmd = &DC.data.image;
+					const TFB_DrawCommand_Image* cmd = &DC.data.image;
 					TFB_Image* DC_image = cmd->image;
 					const int x = cmd->x;
 					const int y = cmd->y;
@@ -479,7 +559,7 @@ void TFB_FlushGraphics(void)
 
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
 					{
-						LockMutex(DC_image->mutex);
+						const uqm::LockGuard imageLock {DC_image->mutex};
 						if (cmd->scale)
 						{
 							TFB_BBox_RegisterCanvas(DC_image->ScaledImg,
@@ -492,7 +572,6 @@ void TFB_FlushGraphics(void)
 													x - DC_image->NormalHs.x,
 													y - DC_image->NormalHs.y);
 						}
-						UnlockMutex(DC_image->mutex);
 					}
 
 					break;
@@ -500,7 +579,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_FILLEDIMAGE:
 				{
-					TFB_DrawCommand_FilledImage* cmd = &DC.data.filledimage;
+					const TFB_DrawCommand_FilledImage* cmd = &DC.data.filledimage;
 					TFB_Image* DC_image = cmd->image;
 					const int x = cmd->x;
 					const int y = cmd->y;
@@ -512,7 +591,7 @@ void TFB_FlushGraphics(void)
 
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
 					{
-						LockMutex(DC_image->mutex);
+						const uqm::LockGuard imageLock {DC_image->mutex};
 						if (cmd->scale)
 						{
 							TFB_BBox_RegisterCanvas(DC_image->ScaledImg,
@@ -525,7 +604,6 @@ void TFB_FlushGraphics(void)
 													x - DC_image->NormalHs.x,
 													y - DC_image->NormalHs.y);
 						}
-						UnlockMutex(DC_image->mutex);
 					}
 
 					break;
@@ -533,7 +611,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_FONTCHAR:
 				{
-					TFB_DrawCommand_FontChar* cmd = &DC.data.fontchar;
+					const TFB_DrawCommand_FontChar* cmd = &DC.data.fontchar;
 					TFB_Char* DC_char = cmd->fontchar;
 					const int x = cmd->x;
 					const int y = cmd->y;
@@ -558,7 +636,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_LINE:
 				{
-					TFB_DrawCommand_Line* cmd = &DC.data.line;
+					const TFB_DrawCommand_Line* cmd = &DC.data.line;
 
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
 					{
@@ -593,7 +671,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_SCISSORENABLE:
 				{
-					TFB_DrawCommand_Scissor* cmd = &DC.data.scissor;
+					const TFB_DrawCommand_Scissor* cmd = &DC.data.scissor;
 
 					TFB_DrawCanvas_SetClipRect(
 						TFB_GetScreenCanvas(TFB_SCREEN_MAIN), &cmd->rect);
@@ -609,7 +687,7 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_COPYTOIMAGE:
 				{
-					TFB_DrawCommand_CopyToImage* cmd = &DC.data.copytoimage;
+					const TFB_DrawCommand_CopyToImage* cmd = &DC.data.copytoimage;
 					TFB_Image* DC_image = cmd->image;
 					const GFXPOINT dstPt = {0, 0};
 
@@ -619,17 +697,16 @@ void TFB_FlushGraphics(void)
 										"image ptr");
 						break;
 					}
-					LockMutex(DC_image->mutex);
+					const uqm::LockGuard imageLock {DC_image->mutex};
 					TFB_DrawCanvas_CopyRect(
 						TFB_GetScreenCanvas(cmd->srcBuffer), &cmd->rect,
 						DC_image->NormalImg, dstPt);
-					UnlockMutex(DC_image->mutex);
 					break;
 				}
 
 			case TFB_DRAWCOMMANDTYPE_COPY:
 				{
-					TFB_DrawCommand_Copy* cmd = &DC.data.copy;
+					const TFB_DrawCommand_Copy* cmd = &DC.data.copy;
 					const GFXRECT r = cmd->rect;
 
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
@@ -652,18 +729,17 @@ void TFB_FlushGraphics(void)
 
 			case TFB_DRAWCOMMANDTYPE_DELETEDATA:
 				{
-					void* data = DC.data.deletedata.data;
-					HFree(data);
+					delete[] DC.data.deletedata.data;
 					break;
 				}
 
 			case TFB_DRAWCOMMANDTYPE_SENDSIGNAL:
-				ClearSemaphore(DC.data.sendsignal.sem);
+				DC.data.sendsignal.sem->release();
 				break;
 
 			case TFB_DRAWCOMMANDTYPE_REINITVIDEO:
 				{
-					TFB_DrawCommand_ReinitVideo* cmd = &DC.data.reinitvideo;
+					const TFB_DrawCommand_ReinitVideo* cmd = &DC.data.reinitvideo;
 					const uqm::GfxDriver oldDriver = GraphicsDriver;
 					const uqm::GfxFlags oldFlags = g_gfxFlags;
 					const int oldWidth = WindowWidth;
@@ -703,14 +779,18 @@ void TFB_FlushGraphics(void)
 		Unlock_DCQ();
 	}
 
-	if (testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS))
+	if (showFps)
 	{
-		RenderFPS(&fps);
+		RenderFPS(fps, renderFps);
 	}
 
 	TFB_SwapBuffers(uqm::TFBRedraw::No);
 	RenderedFrames++;
-	BroadcastCondVar(RenderingCond);
+	if (showFps)
+	{
+		addRenderTime(start);
+	}
+	s_renderingDone.notify_all();
 }
 
 void TFB_PurgeDanglingGraphics(void)
@@ -737,8 +817,7 @@ void TFB_PurgeDanglingGraphics(void)
 				}
 			case TFB_DRAWCOMMANDTYPE_DELETEDATA:
 				{
-					void* data = DC.data.deletedata.data;
-					HFree(data);
+					delete[] DC.data.deletedata.data;
 					break;
 				}
 			case TFB_DRAWCOMMANDTYPE_IMAGE:
@@ -752,7 +831,7 @@ void TFB_PurgeDanglingGraphics(void)
 				}
 			case TFB_DRAWCOMMANDTYPE_SENDSIGNAL:
 				{
-					ClearSemaphore(DC.data.sendsignal.sem);
+					DC.data.sendsignal.sem->release();
 					break;
 				}
 		}

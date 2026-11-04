@@ -25,6 +25,8 @@ set(uqm_src_libs_sound_files
 	"src/libs/sound/sndintrn.h"
 	"src/libs/sound/sound.cmake"
 	"src/libs/sound/sound.cpp"
+	"src/libs/sound/soundbank.cpp"
+	"src/libs/sound/soundbank.h"
 	"src/libs/sound/sound.h"
 	"src/libs/sound/stream.cpp"
 	"src/libs/sound/stream.h"

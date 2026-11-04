@@ -33,31 +33,25 @@ GetMusicFileData(const char* pathname, RESOURCE_DATA* resdata)
 
 bool InstallAudioResTypes(void)
 {
-	InstallResTypeVectors("SNDRES", GetSoundBankFileData, _ReleaseSoundBankData, nullptr);
-	InstallResTypeVectors("MUSICRES", GetMusicFileData, _ReleaseMusicData, nullptr);
+	InstallResTextTypeVectors("SNDRES", GetSoundBankFileData, _ReleaseSoundBankData);
+	InstallResTextTypeVectors("MUSICRES", GetMusicFileData, _ReleaseMusicData);
 	return (true);
 }
 
-SOUND_REF
-LoadSoundInstance(RESOURCE res)
+uqm::SoundBankPtr uqm::loadSoundBank(RESOURCE res)
 {
-	void* hData;
-
-	hData = res_GetResource(res);
-	if (hData)
+	void* const data {res_GetResource(res)};
+	if (data)
 	{
 		res_DetachResource(res);
 	}
-
-	return ((SOUND_REF)hData);
+	return SoundBankPtr {static_cast<SoundBank*>(data)};
 }
 
 MUSIC_REF
 LoadMusicInstance(RESOURCE res)
 {
-	void* hData;
-
-	hData = res_GetResource(res);
+	void* hData {res_GetResource(res)};
 	if (hData)
 	{
 		res_DetachResource(res);

@@ -28,6 +28,7 @@
 #include "../../starmap.h"
 #include "libs/mathlib.h"
 #include "../../build.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -60,22 +61,20 @@ static bool
 GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED)
 	{
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
-			uint16_t angle;
-
 			pSunDesc->PlanetByte = 1;
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 			pPlanet->data_index = TELLURIC_WORLD;
 			pPlanet->radius = EARTH_RADIUS * 204L / 100;
-			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
 			ComputeSpeed(pPlanet, false, 1);
@@ -93,7 +92,7 @@ GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		pSunDesc->PlanetByte = 0;
 
-		if (!PrimeSeed)
+		if (!uqm::isOriginalSeed())
 		{
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -114,21 +113,19 @@ GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
 	if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint16_t i;
 		uint16_t visits = 0;
 
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(
-				LoadStringTable(ANDROSYNTH_RUINS_STRTAB));
-		// Androsynth ruins are a special case. The DiscoveryString contains
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ANDROSYNTH_RUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
+		// Androsynth ruins are a special case. The DiscoveryStrings contains
 		// several lander reports which form a story. Each report is given
 		// when the player collides with a new city ruin. Ruins previously
 		// visited are marked in the upper 16 bits of ScanRetrieveMask, and
 		// the lower bits are cleared to keep the ruin nodes on the map.
-		for (i = 16; i < 32; ++i)
+		for (uint16_t i {16}; i < 32; ++i)
 		{
 			if (isNodeRetrieved(&solarSys->SysInfo.PlanetInfo,
 								ENERGY_SCAN, i))
@@ -136,18 +133,13 @@ GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
 				++visits;
 			}
 		}
-		if (visits >= GetStringTableCount(
-				solarSys->SysInfo.PlanetInfo.DiscoveryString))
+		if (visits >= solarSys->SysInfo.PlanetInfo.DiscoveryStrings->size())
 		{ // All the reports were already given
-			DestroyStringTable(ReleaseStringTable(
-				solarSys->SysInfo.PlanetInfo.DiscoveryString));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString = 0;
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 		}
 		else
 		{ // Advance the report sequence to the first unread
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				SetRelStringTableIndex(
-					solarSys->SysInfo.PlanetInfo.DiscoveryString, visits);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex += visits;
 		}
 	}
 
@@ -159,16 +151,15 @@ GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(
 				LoadGraphic(EXCAVATION_SITE_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(
-				LoadStringTable(EXCAVATION_SITE_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(EXCAVATION_SITE_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED && PrimeSeed)
+		if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED && uqm::isOriginalSeed())
 		{
 			solarSys->SysInfo.PlanetInfo.AtmoDensity =
 				EARTH_ATMOSPHERE * 144 / 100;

@@ -26,17 +26,18 @@
 
 bool CalculateGravity(ELEMENT* ElementPtr)
 {
-	bool retval, HasGravity;
-	HELEMENT hTestElement, hSuccElement;
+	bool HasGravity {};
+	HELEMENT hTestElement {};
+	HELEMENT hSuccElement {};
 
-	retval = false;
+	bool retval {false};
 	HasGravity = (bool)(CollidingElement(ElementPtr)
 						&& GRAVITY_MASS(ElementPtr->mass_points + 1));
 	for (hTestElement = GetHeadElement();
 		 hTestElement != 0; hTestElement = hSuccElement)
 	{
-		bool TestHasGravity;
-		ELEMENT* TestElementPtr;
+		bool TestHasGravity {};
+		ELEMENT* TestElementPtr {};
 
 		LockElement(hTestElement, &TestElementPtr);
 		if (TestElementPtr != ElementPtr
@@ -45,8 +46,10 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 					GRAVITY_MASS(TestElementPtr->mass_points + 1))
 				   != HasGravity)
 		{
-			uint16_t abs_dx, abs_dy;
-			int16_t dx, dy;
+			uint16_t abs_dx {};
+			uint16_t abs_dy {};
+			int16_t dx {};
+			int16_t dy {};
 
 			if (!(ElementPtr->state_flags & PRE_PROCESS))
 			{
@@ -91,7 +94,7 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 			if (abs_dx <= GRAVITY_THRESHOLD
 				&& abs_dy <= GRAVITY_THRESHOLD)
 			{
-				uint32_t dist_squared;
+				uint32_t dist_squared {};
 
 				dist_squared = (uint32_t)(abs_dx * abs_dx)
 							 + (uint32_t)(abs_dy * abs_dy);
@@ -135,15 +138,13 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 					}
 					else
 					{
-						uint16_t angle;
-
-						angle = ARCTAN(dx, dy);
+						const uint16_t angle {ARCTAN(dx, dy)};
 						DeltaVelocityComponents(&TestElementPtr->velocity,
 												COSINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))),
 												SINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))));
 						if (TestElementPtr->state_flags & PLAYER_SHIP)
 						{
-							STARSHIP* StarShipPtr;
+							STARSHIP* StarShipPtr {};
 
 							GetElementStarShip(TestElementPtr, &StarShipPtr);
 							StarShipPtr->cur_status_flags &= ~SHIP_AT_MAX_SPEED;
@@ -163,7 +164,8 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 
 bool TimeSpaceMatterConflict(ELEMENT* ElementPtr)
 {
-	HELEMENT hTestElement, hSuccElement;
+	HELEMENT hTestElement {};
+	HELEMENT hSuccElement {};
 	INTERSECT_CONTROL ElementControl;
 
 	ElementControl.IntersectStamp.origin.x =
@@ -177,7 +179,7 @@ bool TimeSpaceMatterConflict(ELEMENT* ElementPtr)
 	for (hTestElement = GetHeadElement();
 		 hTestElement != 0; hTestElement = hSuccElement)
 	{
-		ELEMENT* TestElementPtr;
+		ELEMENT* TestElementPtr {};
 
 		LockElement(hTestElement, &TestElementPtr);
 		hSuccElement = GetSuccElement(TestElementPtr);

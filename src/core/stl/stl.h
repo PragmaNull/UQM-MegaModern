@@ -16,7 +16,11 @@ namespace uqgsl = gsl_lite;
 #include <numeric>
 #include <span>
 
-namespace uqstl = std;
+// The standard library, plus aliases that the project adds in its own headers.
+namespace uqstl
+{
+using namespace std;
+} // namespace uqstl
 
 #else
 static_assert(false, "EASTL is not supported yet. If you want to add support for it, submit a PR!");

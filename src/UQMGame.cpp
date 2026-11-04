@@ -17,6 +17,7 @@
  */
 
 #include "UQMGame.h"
+#include "uqm/session/GameSession.h"
 
 #include "core/log/log.h"
 #include "options/options.h"
@@ -32,12 +33,6 @@
 #include <unistd.h>
 #endif
 
-#ifdef HAVE_GETOPT_LONG
-#include <getopt.h>
-#else
-#include "getopt/getopt.h"
-#endif
-
 #include <stdarg.h>
 #include <errno.h>
 #include "libs/graphics/gfx_common.h"
@@ -45,16 +40,14 @@
 #include "libs/sound/sound.h"
 #include "libs/input/input_common.h"
 #include "libs/inplib.h"
-#include "libs/tasklib.h"
-#include "libs/scriptlib.h"
+#include "core/thread/Thread.h"
+#include "libs/time/timelib.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/controls.h"
 #include "uqm/battle.h"
 // For BattleFrameRateTicks
-#include "libs/file.h"
 #include <cstdint>
 #include "port.h"
-#include "libs/memlib.h"
-#include "libs/platform.h"
 #include "core/log/log.h"
 #include "options.h"
 #include "uqmversion.h"
@@ -62,17 +55,19 @@
 #ifdef NETPLAY
 #include "libs/callback/callback.h"
 #include "libs/callback/alarm.h"
-#include "libs/net.h"
+#include "uqm/supermelee/netplay/netcontext.h"
 #include "uqm/supermelee/netplay/netplay.h"
 #endif
+#include "uqm/imgui/gamewindow.h"
+#include "uqm/imgui/settingswindow.h"
 #include "uqm/setup.h"
 #include "uqm/starcon.h"
-#include "libs/math/random.h"
+#include "libs/math/Random.h"
 
 bool restartGame;
 
 #if defined(GFXMODULE_SDL)
-#include <SDL.h>
+#include <SDL3/SDL.h>
 // Including this is actually necessary on OSX.
 #endif
 
@@ -89,6 +84,7 @@ bool restartGame;
 #include <spdlog/version.h>
 #include <vorbis/codec.h>
 #include <zlib.h>
+#include "uqm/random/UQMRandom.h"
 
 
 namespace uqm
@@ -106,6 +102,27 @@ UQMGame::~UQMGame()
 {
 	assert(s_instance == this);
 	s_instance = nullptr;
+}
+
+UQMLua& lua()
+{
+	return UQMGame::getInstance().lua();
+}
+
+void UQMGame::beginSession(SessionKind kind)
+{
+	endSession();
+	m_session = uqstl::make_unique<GameSession>(kind);
+	m_session->startGame();
+}
+
+void UQMGame::endSession()
+{
+	if (m_session)
+	{
+		m_session->endGame();
+		m_session.reset();
+	}
 }
 
 UQMGame& UQMGame::getInstance()
@@ -142,9 +159,9 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	m_logger.init(options.logFile);
 
-	for (size_t i = 0; i < args.size(); ++i)
+	for (const auto& [i, arg] : uqstl::views::enumerate(args))
 	{
-		uqm::log::debug("argv[{}] = \"{}\"", i, args[i]);
+		uqm::log::debug("argv[{}] = \"{}\"", i, arg);
 	}
 
 	if (options.runMode == RunMode::Version)
@@ -194,12 +211,11 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	// Library versions.
 	uqm::log::info("{:-^40}", "Library versions");
 	uqm::log::info("\tSDL (compiled): {}.{}.{}",
-				   SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+				   SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_MICRO_VERSION);
 	{
-		SDL_version sdlRuntime {};
-		SDL_GetVersion(&sdlRuntime);
+		const int sdlRuntime {SDL_GetVersion()};
 		uqm::log::info("\tSDL (runtime):  {}.{}.{}",
-					   sdlRuntime.major, sdlRuntime.minor, sdlRuntime.patch);
+					   SDL_VERSIONNUM_MAJOR(sdlRuntime), SDL_VERSIONNUM_MINOR(sdlRuntime), SDL_VERSIONNUM_MICRO(sdlRuntime));
 	}
 	uqm::log::info("\tfmt:           {}.{}.{}",
 				   FMT_VERSION / 10000, (FMT_VERSION % 10000) / 100, FMT_VERSION % 100);
@@ -229,8 +245,6 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	}
 
 	TFB_PreInit();
-	mem_init();
-	InitThreadSystem();
 	//log_initThreads();
 	initIO();
 	prepareConfigDir(options.configDir);
@@ -242,11 +256,8 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	applyUserSettings(m_options.edit());
 
 
-	/* TODO: Once threading is gone, these become local variables
-	   again.  In the meantime, they must be global so that
-	   initAudio (in StarCon2Main) can see them.  initAudio needed
-	   to be moved there because calling AssignTask in the main
-	   thread doesn't work */
+	/* TODO: These must be global so that initAudio (in StarCon2Main)
+	   can see them. */
 	snddriver = options.soundDriver.value;
 	// clear existing quality flag before applying the option value.
 	soundflags &= ~AudioQualityFlagMask;
@@ -256,7 +267,6 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	sfxVolumeScale = options.sfxVolumeScale.value;
 	speechVolumeScale = options.speechVolumeScale.value;
 
-	g_seedType = options.seedType.value;
 	optRequiresReload = false;
 	optRequiresRestart = false;
 
@@ -268,18 +278,18 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	optWindowType = WindowStyle::UQM;
 	const WindowStyle windowStyle {*options.windowEmulationMode};
-	if (windowStyle != WindowStyle::UQM && isAddonAvailable(WINDOW_MODE(resolutionFactor, static_cast<int>(windowStyle))))
+	if (windowStyle != WindowStyle::UQM && isAddonAvailable(WINDOW_MODE(resolutionFactor, uqstl::to_underlying(windowStyle))))
 	{
 		optWindowType = windowStyle;
 	}
 
 	Vec2u windowSize {*options.resolution};
 	{
-		int w = 320;
-		int h = (DOS_BOOL(240, 200));
+		const int w = 320;
+		const int h = (DOS_BOOL(240, 200));
 
-		int loresBlowup = options.loresBlowupScale.value;
-		int scaleFactor = loresBlowup + 1; // stored value starts with 0
+		const int loresBlowup = options.loresBlowupScale.value;
+		const int scaleFactor = loresBlowup + 1; // stored value starts with 0
 
 		CanvasWidth = w << resolutionFactor;
 		CanvasHeight = h << resolutionFactor;
@@ -297,8 +307,8 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 		if (options.keepAspectRatio)
 		{
-			float threshold = 0.75f;
-			float ratio = (float)SavedHeight / (float)SavedWidth;
+			const float threshold = 0.75f;
+			const float ratio = (float)SavedHeight / (float)SavedWidth;
 
 			if (ratio > threshold) // screen is narrower than 4:3
 			{
@@ -325,26 +335,20 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	initTempDir ();
 #endif
 
-	InitTimeSystem();
-	InitTaskSystem();
 
-	luaUqm_init();
+	m_lua = uqstl::make_unique<UQMLua>();
 
 	Alarm_init();
 	Callback_init();
 
 #ifdef NETPLAY
-	Network_init();
-	NetManager_init();
+	initNetplayContext();
 #endif
 
-#if SDL_MAJOR_VERSION == 1
-	const uqm::GfxDriver gfxDriver = options.opengl.value ?
-										 uqm::GfxDriver::SDL_OpenGL :
-										 uqm::GfxDriver::SDL_Pure;
-#else
+	addSettingsWindows();
+	addGameWindow();
+
 	const uqm::GfxDriver gfxDriver = uqm::GfxDriver::SDL_Pure;
-#endif
 	const uqm::GfxFlags gfxFlags {uqm::displayFlags(options)};
 	unsigned int windowType {static_cast<unsigned int>(optWindowType)};
 	TFB_InitGraphics(gfxDriver, gfxFlags, options.graphicsBackend.c_str(),
@@ -361,16 +365,10 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	InitColorMaps();
 	init_communication();
-	/* TODO: Once threading is gone, restore initAudio here.
-	   initAudio calls AssignTask, which currently blocks on
-	   ProcessThreadLifecycles... */
 	// initAudio (snddriver, soundflags);
-	// Make sure that the compiler treats multidim arrays the way we expect
-	assert(sizeof(int[static_cast<int>(ControlTemplate::NUM) * NUM_KEYS]) == sizeof(int[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS]));
-
-	TFB_SetInputVectors((int*)ImmediateInputState.menu, NUM_MENU_KEYS,
-						(int*)ImmediateInputState.key, NUM_KEYS,
-						static_cast<int>(ControlTemplate::NUM));
+	TFB_SetInputVectors(ImmediateInputState.menu, NUM_MENU_KEYS,
+						&ImmediateInputState.key[0][0], NUM_KEYS,
+						uqstl::to_underlying(ControlTemplate::NUM));
 	TFB_InitInput(TFB_INPUTDRIVER_SDL, 0);
 
 	return {EXIT_SUCCESS, false};
@@ -378,7 +376,9 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 int UQMGame::run()
 {
-	STARTTHREAD(Starcon2Main, nullptr, 1024, "Starcon2Main");
+	m_gameThread = makeThread("Starcon2Main", [this](uqstl::stop_token) {
+		m_gameExitCode = Starcon2Main(nullptr);
+	});
 
 	for (int i = 0; i < 2000 && !MainExited;)
 	{
@@ -394,11 +394,21 @@ int UQMGame::run()
 
 		TFB_ProcessEvents();
 		ProcessUtilityKeys();
-		ProcessThreadLifecycles();
 		TFB_FlushGraphics();
 	}
 
-	return EXIT_SUCCESS;
+	// A game thread that did not stop ends with the process.
+	if (MainExited)
+	{
+		m_gameThread.join();
+	}
+	else
+	{
+		m_gameThread.detach();
+		return EXIT_SUCCESS;
+	}
+
+	return m_gameExitCode;
 }
 
 void UQMGame::teardown()
@@ -418,23 +428,18 @@ void UQMGame::teardown()
 		TFB_UninitGraphics();
 
 #ifdef NETPLAY
-		NetManager_uninit();
-		Network_uninit();
+		uninitNetplayContext();
 #endif
 
 		Callback_uninit();
 		Alarm_uninit();
 
-		luaUqm_uninit();
+		m_lua.reset();
 
-		CleanupTaskSystem();
-		UnInitTimeSystem();
 #if 0
 		unInitTempDir ();
 #endif
 		uninitIO();
-		UnInitThreadSystem();
-		mem_uninit();
 	}
 }
 

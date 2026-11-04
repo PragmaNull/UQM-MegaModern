@@ -29,7 +29,7 @@
 #include "planets/planets.h"
 // for NUMBER_OF_PLANET_TYPES, PLANET_SHIELDED
 
-static const char* planet_types[] = {
+const static char* planet_types[] = {
 	"oolite", "yttric", "quasidegenerate", "lanthanide", "treasure",
 	"urea", "metal", "radioactive", "opalescent", "cyanic",
 	"acid", "alkali", "halide", "green", "copper",
@@ -43,7 +43,7 @@ static const char* planet_types[] = {
 	"bluegas", "cyangas", "greengas", "greygas", "orangegas",
 	"purplegas", "redgas", "violetgas", "yellowgas"};
 
-static const char* planet_sizes[] = {
+const static char* planet_sizes[] = {
 	"large", "medium", "small"};
 
 FRAME planet[NUM_VIEWS];
@@ -51,11 +51,11 @@ static char buffer[80] {};
 
 void load_gravity_well(uint8_t selector)
 {
-	uint16_t i;
+	uint16_t i {};
 
 	if (selector == SA_MATRA)
 	{
-		if (EXTENDED && lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE)
+		if (EXTENDED && uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
 		{
 			planet[0] = CaptureDrawable(
 				LoadGraphic(SCENERY_MASK_PMAP_ANIM));
@@ -69,7 +69,7 @@ void load_gravity_well(uint8_t selector)
 	}
 	else
 	{
-		const char* ptype;
+		const char* ptype {};
 		if (selector & PLANET_SHIELDED)
 		{
 			ptype = "slaveshield";
@@ -90,9 +90,7 @@ void load_gravity_well(uint8_t selector)
 
 void free_gravity_well(void)
 {
-	uint16_t i;
-
-	for (i = 0; i < NUM_VIEWS; ++i)
+	for (uint16_t i {0}; i < NUM_VIEWS; ++i)
 	{
 		DestroyDrawable(ReleaseDrawable(planet[i]));
 		planet[i] = 0;

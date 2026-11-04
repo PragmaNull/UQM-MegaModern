@@ -337,7 +337,7 @@ uqstl::optional<MenuDefinition> menuDefinitionFromJson(uqstl::string_view json)
 	uqstl::optional<MenuDefinition> result {};
 	yyjson_val* root {yyjson_doc_get_root(doc)};
 	yyjson_val* menus {yyjson_obj_get(root, "menus")};
-	yyjson_val* titleVal {yyjson_obj_get(root, "title")};
+	const yyjson_val* titleVal {yyjson_obj_get(root, "title")};
 	const auto title {titleVal == nullptr ? uqstl::string {} : getString(root, "title")};
 	auto back {readButton(yyjson_obj_get(root, "back"))};
 	auto exit {readButton(yyjson_obj_get(root, "exit"))};

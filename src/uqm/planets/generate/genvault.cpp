@@ -26,6 +26,7 @@
 #include "../../build.h"
 #include "libs/mathlib.h"
 #include "../../comm.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateVault_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -57,27 +58,26 @@ static bool
 GenerateVault_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	pSunDesc->PlanetByte = 0;
 	pSunDesc->MoonByte = 0;
 
-	pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
+	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
-	if (StarSeed)
+	if (uqm::isStarSeed())
 	{
 		pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 		pPlanet->NumPlanets =
-			RandomContext_GetSeed(SysGenRNG) % 5 == 0 ? 2 : 1;
+			SysGenRNG->seed() % 5 == 0 ? 2 : 1;
 
 		pSunDesc->MoonByte = PlanetByteGen(pPlanet);
 	}
 
-	if (!PrimeSeed)
+	if (!uqm::isOriginalSeed())
 	{
 		pPlanet->data_index = GenerateWorlds(LARGE_ROCKY);
 
@@ -99,45 +99,41 @@ GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(VAULT_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(VAULT_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(VAULT_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		if (GET_GAME_STATE(SHIP_VAULT_UNLOCKED))
 		{
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				SetAbsStringTableIndex(
-					solarSys->SysInfo.PlanetInfo.DiscoveryString, 2);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 2;
 		}
 		else if (GET_GAME_STATE(SYREEN_SHUTTLE_ON_SHIP))
 		{
 			if (isDifficulty(uqm::Difficulty::Hard) && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << URQUAN_ENCOUNTER)
 				&& !(GET_GAME_STATE(KOHR_AH_FRENZY)))
 			{
-				uint16_t i;
-				bool Survivors;
-				uint16_t state;
+				uint16_t state {};
 
 				PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
 				ReinitQueue(&GLOBAL(ip_group_q));
 				assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
-				for (i = 0; i < 6; ++i)
+				for (uint16_t i {0}; i < 6; ++i)
 				{
 					CloneShipFragment(URQUAN_SHIP,
 									  &GLOBAL(npc_built_ship_q), 0);
 				}
 
 				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 6);
-				GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+				uqm::currentActivity() |= START_INTERPLANETARY;
 				InitCommunication(URQUAN_CONVERSATION);
 
-				if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+				if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 				{
 					return true;
 				}
 
-				Survivors = GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
+				const bool Survivors {GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0};
 
-				GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
 				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 
@@ -153,9 +149,7 @@ GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 
 				RepairSISBorder();
 			}
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				SetAbsStringTableIndex(
-					solarSys->SysInfo.PlanetInfo.DiscoveryString, 1);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 		}
 	}
 

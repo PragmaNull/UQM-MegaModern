@@ -19,7 +19,7 @@
 #ifndef UQM_CLOCK_H_
 #define UQM_CLOCK_H_
 
-#include "libs/tasklib.h"
+#include "libs/time/timelib.h"
 #include "displist.h"
 
 #define START_YEAR 2155
@@ -28,17 +28,7 @@
 // *not* on the system (or translated) timer
 // and is hard-coded to the original 24 fps
 #define CLOCK_BASE_FRAMERATE 24
-#define CLOCK_FRAME_RATE (GameTicksPerSecond / CLOCK_BASE_FRAMERATE)
-
-typedef struct
-{
-	uint8_t day_index, month_index;
-	uint16_t year_index;
-	int16_t tick_count, day_in_ticks;
-
-	QUEUE event_q;
-	/* Queue element is EVENT */
-} CLOCK_STATE;
+#define CLOCK_FRAME_RATE (c_gameSecond / CLOCK_BASE_FRAMERATE)
 
 typedef HLINK HEVENT;
 
@@ -58,18 +48,13 @@ typedef enum
 	RELATIVE_EVENT
 } EVENT_TYPE;
 
-#define AllocEvent() AllocLink(&GLOBAL(GameClock.event_q))
-#define PutEvent(h) PutQueue(&GLOBAL(GameClock.event_q), (h))
-#define InsertEvent(h, i) InsertQueue(&GLOBAL(GameClock.event_q), (h), (i))
-#define GetHeadEvent() GetHeadLink(&GLOBAL(GameClock.event_q))
-#define GetTailEvent() GetTailLink(&GLOBAL(GameClock.event_q))
-#define LockEvent(h, ppe) (*(ppe) = (EVENT*)LockLink(&GLOBAL(GameClock.event_q), h))
-#define UnlockEvent(h) UnlockLink(&GLOBAL(GameClock.event_q), (h))
-#define RemoveEvent(h) RemoveQueue(&GLOBAL(GameClock.event_q), (h))
-#define FreeEvent(h) FreeLink(&GLOBAL(GameClock.event_q), (h))
-#define GetPredEvent(l) _GetPredLink(l)
+#define AllocEvent() AllocLink(&uqm::gameState().clock().events())
+#define PutEvent(h) PutQueue(&uqm::gameState().clock().events(), (h))
+#define LockEvent(h, ppe) (*(ppe) = (EVENT*)LockLink(&uqm::gameState().clock().events(), h))
+#define UnlockEvent(h) UnlockLink(&uqm::gameState().clock().events(), (h))
+#define FreeEvent(h) FreeLink(&uqm::gameState().clock().events(), (h))
 #define GetSuccEvent(l) _GetSuccLink(l)
-#define ForAllEvents(callback, arg) ForAllLinks(&GLOBAL(GameClock.event_q), \
+#define ForAllEvents(callback, arg) ForAllLinks(&uqm::gameState().clock().events(), \
 												(void (*)(LINK*, void*))(callback), (arg))
 
 // Rates are in seconds per game day
@@ -92,6 +77,8 @@ extern HEVENT AddEvent(EVENT_TYPE type, uint16_t month_index, uint16_t day_index
 extern void EventHandler(uint8_t selector);
 extern void GameClockTick(void);
 extern void MoveGameClockDays(uint16_t days);
+// Moves the date to the first event, and runs the events on the way. Can go past the hyperspace encounter events.
+void MoveGameClockToNextEvent(bool skipHyperspaceEncounters);
 
 // The lock/unlock/running functions are for debugging use only
 // Locking will block the GameClockTick() function and thus

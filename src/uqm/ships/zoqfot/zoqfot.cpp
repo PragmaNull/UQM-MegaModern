@@ -21,6 +21,7 @@
 #include "resinst.h"
 
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 10
@@ -144,12 +145,13 @@ spit_preprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		uint16_t index, angle, speed;
+		uint16_t index {};
+		uint16_t speed {};
 
-		angle = GetVelocityTravelAngle(&ElementPtr->velocity);
+		uint16_t angle {GetVelocityTravelAngle(&ElementPtr->velocity)};
 		if ((index = GetFrameIndex(ElementPtr->next.image.frame)) == 1)
 		{
-			angle = angle + (((uint16_t)TFB_Random() % 3) - 1);
+			angle = angle + (((uint16_t)uqm::random().next() % 3) - 1);
 		}
 		else
 		{
@@ -172,7 +174,7 @@ spit_preprocess(ELEMENT* ElementPtr)
 static uint16_t
 initialize_spit(ELEMENT* ShipPtr, HELEMENT SpitArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -196,7 +198,7 @@ initialize_spit(ELEMENT* ShipPtr, HELEMENT SpitArray[])
 
 	if (IS_HD && SpitArray[0])
 	{
-		ELEMENT* SpitPtr;
+		ELEMENT* SpitPtr {};
 
 		LockElement(SpitArray[0], &SpitPtr);
 		SpitPtr->IntersectControl.IntersectStamp.frame =
@@ -222,7 +224,7 @@ static void
 tongue_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr0, &StarShipPtr);
 	if (StarShipPtr->special_counter == StarShipPtr->RaceDescPtr->characteristics.special_wait)
@@ -238,9 +240,8 @@ tongue_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static void
 spawn_tongue(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK TongueBlock;
-	HELEMENT Tongue;
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	TongueBlock.cx = ElementPtr->next.location.x;
@@ -256,10 +257,10 @@ spawn_tongue(ELEMENT* ElementPtr)
 	TongueBlock.life = 1;
 	TongueBlock.preprocess_func = 0;
 	TongueBlock.blast_offs = TONGUE_OFFSET;
-	Tongue = initialize_missile(&TongueBlock);
+	HELEMENT Tongue {initialize_missile(&TongueBlock)};
 	if (Tongue)
 	{
-		ELEMENT* TonguePtr;
+		ELEMENT* TonguePtr {};
 
 		LockElement(Tongue, &TonguePtr);
 		TonguePtr->postprocess_func = tongue_postprocess;
@@ -270,15 +271,14 @@ spawn_tongue(ELEMENT* ElementPtr)
 		}
 		else
 		{
-			uint16_t angle;
+			uint16_t angle {};
 			GFXRECT r;
-			int32_t x_offs, y_offs;
 
 			TonguePtr->turn_wait = ElementPtr->turn_wait - 1;
 
 			GetFrameRect(TonguePtr->current.image.frame, &r);
-			x_offs = DISPLAY_TO_WORLD(r.extent.width >> 1);
-			y_offs = DISPLAY_TO_WORLD(r.extent.height >> 1);
+			const int32_t x_offs {DISPLAY_TO_WORLD(r.extent.width >> 1)};
+			const int32_t y_offs {DISPLAY_TO_WORLD(r.extent.height >> 1)};
 
 			angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
 			if (angle > HALF_CIRCLE && angle < FULL_CIRCLE)
@@ -309,19 +309,16 @@ static void
 zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					   uint16_t ConcernCounter)
 {
-	bool GiveTongueJob;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	GiveTongueJob = false;
+	bool GiveTongueJob {false};
 	if (StarShipPtr->special_counter == 0)
 	{
-		EVALUATE_DESC* lpEnemyEvalDesc;
-
 		StarShipPtr->ship_input_state &= ~SPECIAL;
 
-		lpEnemyEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+		EVALUATE_DESC* lpEnemyEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 		if (lpEnemyEvalDesc->ObjectPtr
 			&& lpEnemyEvalDesc->which_turn <= 4
 #ifdef NEVER
@@ -329,7 +326,8 @@ zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 #endif /* NEVER */
 		)
 		{
-			int32_t delta_x, delta_y;
+			int32_t delta_x {};
+			int32_t delta_y {};
 
 			GiveTongueJob = true;
 
@@ -380,14 +378,14 @@ zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static void
 zoqfotpik_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SPECIAL)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* STICK_OUT_TONGUE */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);
@@ -405,8 +403,6 @@ zoqfotpik_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_zoqfotpik(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		zoqfotpik_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -424,7 +420,7 @@ init_zoqfotpik(void)
 	zoqfotpik_desc.init_weapon_func = initialize_spit;
 	zoqfotpik_desc.cyborg_control.intelligence_func = zoqfotpik_intelligence;
 
-	RaceDescPtr = &zoqfotpik_desc;
+	RACE_DESC* RaceDescPtr {&zoqfotpik_desc};
 
 	return (RaceDescPtr);
 }

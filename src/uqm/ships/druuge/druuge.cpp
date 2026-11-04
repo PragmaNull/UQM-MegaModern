@@ -134,9 +134,10 @@ cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		&& ElementPtr1->crew_level
 		&& !GRAVITY_MASS(ElementPtr1->mass_points + 1))
 	{
-		uint16_t angle;
-		int16_t cur_delta_x, cur_delta_y;
-		STARSHIP* StarShipPtr;
+		uint16_t angle {};
+		int16_t cur_delta_x {};
+		int16_t cur_delta_y {};
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
 		StarShipPtr->cur_status_flags &=
@@ -164,7 +165,7 @@ cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static uint16_t
 initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -186,7 +187,7 @@ initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
 
 	if (CannonArray[0])
 	{
-		ELEMENT* CannonPtr;
+		ELEMENT* CannonPtr {};
 
 		LockElement(CannonArray[0], &CannonPtr);
 		CannonPtr->collision_func = cannon_collision;
@@ -201,13 +202,12 @@ druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					uint16_t ConcernCounter)
 {
 	uint16_t ship_flags = 0;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	STARSHIP* EnemyStarShipPtr = nullptr;
-	EVALUATE_DESC* lpEvalDesc;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (StarShipPtr->cur_status_flags & SHIP_BEYOND_MAX_SPEED)
 	{
 		lpEvalDesc->MoveState = ENTICE;
@@ -260,15 +260,16 @@ druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static void
 druuge_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	/* if just fired cannon */
 	if ((StarShipPtr->cur_status_flags & WEAPON)
 		&& StarShipPtr->weapon_counter == StarShipPtr->RaceDescPtr->characteristics.weapon_wait)
 	{
-		uint16_t angle;
-		int32_t cur_delta_x, cur_delta_y;
+		uint16_t angle {};
+		int32_t cur_delta_x {};
+		int32_t cur_delta_y {};
 
 		StarShipPtr->cur_status_flags &= ~SHIP_AT_MAX_SPEED;
 
@@ -293,7 +294,7 @@ druuge_postprocess(ELEMENT* ElementPtr)
 static void
 druuge_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->cur_status_flags & SPECIAL)
@@ -307,7 +308,7 @@ druuge_preprocess(ELEMENT* ElementPtr)
 		}
 		else
 		{
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 /* BURN UP CREW */
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 						 ElementPtr);
@@ -324,8 +325,6 @@ druuge_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_druuge(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		druuge_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -344,7 +343,7 @@ init_druuge(void)
 	druuge_desc.init_weapon_func = initialize_cannon;
 	druuge_desc.cyborg_control.intelligence_func = druuge_intelligence;
 
-	RaceDescPtr = &druuge_desc;
+	RACE_DESC* RaceDescPtr {&druuge_desc};
 
 	return (RaceDescPtr);
 }

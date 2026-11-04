@@ -22,6 +22,7 @@
 
 #include "uqm/globdata.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 20
@@ -129,8 +130,7 @@ static RACE_DESC utwig_desc =
 static uint16_t
 initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 {
-	uint16_t i;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -146,11 +146,15 @@ initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 	MissileBlock.blast_offs = MISSILE_OFFSET;
 	MissileBlock.pixoffs = 0;
 
-	for (i = 0; i < 3; ++i)
+	for (uint16_t i {0}; i < 3; ++i)
 	{
-		uint16_t angle;
-		int16_t sin0 = 0, cos0 = 0;
-		int16_t sin1sin0, cos1sin0, cos1cos0, sin1cos0;
+		uint16_t angle {};
+		int16_t sin0 = 0;
+		int16_t cos0 = 0;
+		int16_t sin1sin0 {};
+		int16_t cos1sin0 {};
+		int16_t cos1cos0 {};
+		int16_t sin1cos0 {};
 
 		switch (i)
 		{
@@ -193,13 +197,12 @@ static void
 utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				   uint16_t ConcernCounter)
 {
-	int16_t ShieldStatus;
-	STARSHIP* StarShipPtr;
-	EVALUATE_DESC* lpEvalDesc;
+	int16_t ShieldStatus {};
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_WEAPON_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level == 0)
 	{
 		ShieldStatus = 0;
@@ -247,7 +250,7 @@ utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 						& PLAYER_SHIP) /* means IMMEDIATE WEAPON */
 					|| PlotIntercept(lpEvalDesc->ObjectPtr,
 									 ShipPtr, 2, 0))
-				&& (TFB_Random() & 3))
+				&& (uqm::random().next() & 3))
 			{
 				StarShipPtr->ship_input_state |= SPECIAL;
 				StarShipPtr->ship_input_state &= ~WEAPON;
@@ -260,7 +263,7 @@ utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level
 		&& (lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX])->ObjectPtr)
 	{
-		STARSHIP* EnemyStarShipPtr;
+		STARSHIP* EnemyStarShipPtr {};
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
@@ -289,8 +292,7 @@ utwig_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static void
 utwig_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
-	PRIMITIVE* lpPrim;
+	STARSHIP* StarShipPtr {};
 
 	if (ElementPtr->state_flags & APPEARING)
 	{
@@ -303,7 +305,7 @@ utwig_preprocess(ELEMENT* ElementPtr)
 		DeltaEnergy(ElementPtr,
 					ElementPtr->life_span - (NORMAL_LIFE + 1));
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);
 	}
@@ -323,13 +325,13 @@ utwig_preprocess(ELEMENT* ElementPtr)
 		{
 			StarShipPtr->special_counter =
 				StarShipPtr->RaceDescPtr->characteristics.special_wait;
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 						 ElementPtr);
 		}
 	}
 
-	lpPrim = &(GLOBAL(DisplayArray))[ElementPtr->PrimIndex];
+	PRIMITIVE* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	if (StarShipPtr->special_counter == 0)
 	{
 		// The shield is off.
@@ -348,7 +350,7 @@ utwig_preprocess(ELEMENT* ElementPtr)
 		 * The current behaviour is the same as the old behavior,
 		 * but I am not sure that the old behavior was intended. - SvdB
 		 */
-		static const Color colorTable[] =
+		const static Color colorTable[] =
 			{
 				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x15, 0x00), 0x7a),
 				//BUILD_COLOR (MAKE_RGB15_INIT (0x1F, 0x11, 0x00), 0x7b),
@@ -389,8 +391,6 @@ utwig_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_utwig(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		utwig_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -408,7 +408,7 @@ init_utwig(void)
 	utwig_desc.init_weapon_func = initialize_lance;
 	utwig_desc.cyborg_control.intelligence_func = utwig_intelligence;
 
-	RaceDescPtr = &utwig_desc;
+	RACE_DESC* RaceDescPtr {&utwig_desc};
 
 	return (RaceDescPtr);
 }

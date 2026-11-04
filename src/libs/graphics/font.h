@@ -19,7 +19,7 @@
 #ifndef LIBS_GRAPHICS_FONT_H_
 #define LIBS_GRAPHICS_FONT_H_
 
-#include "libs/memlib.h"
+#include "core/stl/vector.h"
 
 #define MAX_DELTAS 100
 #define MAX_UNICODE 0xFFFF
@@ -27,26 +27,25 @@
 typedef struct FontPage
 {
 	struct FontPage* next;
-	UniChar pageStart;
+	uqm::UniChar pageStart;
 #define CHARACTER_PAGE_MASK 0xfffff800
-	UniChar firstChar;
+	uqm::UniChar firstChar;
 	size_t numChars;
-	TFB_Char* charDesc;
+	uqstl::vector<TFB_Char> charDesc;
 } FONT_PAGE;
 
 static inline FONT_PAGE*
 AllocFontPage(int numChars)
 {
-	FONT_PAGE* result = (FONT_PAGE*)HMalloc(sizeof(FONT_PAGE));
-	result->charDesc = (TFB_Char*)HCalloc(numChars * sizeof *result->charDesc);
+	auto* result {new FONT_PAGE {}};
+	result->charDesc.assign(numChars, TFB_Char {});
 	return result;
 }
 
 static inline void
 FreeFontPage(FONT_PAGE* page)
 {
-	HFree(page->charDesc);
-	HFree(page);
+	delete page;
 }
 
 struct font_desc
@@ -54,7 +53,6 @@ struct font_desc
 	uint8_t Leading;
 	FONT_PAGE* fontPages;
 	EXTENT disp;
-	char filename[PATH_MAX];
 	uint8_t CharSpace;
 	uint8_t KernAmount;
 	uint8_t KernTab[MAX_UNICODE];
@@ -66,7 +64,6 @@ struct font_desc
 
 #define FONT_PRIORITY DEFAULT_MEM_PRIORITY
 
-#define AllocFont(size) (FONT) HCalloc(sizeof(FONT_DESC) + (size))
 #define FreeFont _ReleaseFontData
 
 extern FONT _CurFontPtr;
@@ -74,8 +71,9 @@ extern FONT _CurFontPtr;
 // A font is a directory of glyph images, or a zip archive of them.
 extern void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path);
 extern bool _ReleaseFontData(void* handle);
-extern TFB_Char* GetFrameForFPS(UniChar ch);
+extern TFB_Char* GetFrameForFPS(uqm::UniChar ch);
 extern void GetFontDims(int16_t* w, int16_t* h);
+extern int GetFontCharSpace(void);
 extern bool GoodToGoFPS(void);
 
 #endif /* LIBS_GRAPHICS_FONT_H_ */

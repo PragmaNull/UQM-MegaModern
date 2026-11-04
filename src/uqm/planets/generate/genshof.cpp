@@ -27,6 +27,7 @@
 #include "../../gamestr.h"
 #include "../lander.h"
 #include "../planets.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys);
@@ -72,7 +73,7 @@ GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
 		if (GLOBAL(BattleGroupRef) == 0
 			|| !GetGroupInfo(GLOBAL(BattleGroupRef), GROUP_INIT_IP))
 		{
-			HSHIPFRAG hStarShip;
+			HSHIPFRAG hStarShip {};
 
 			if (GLOBAL(BattleGroupRef) == 0)
 			{
@@ -146,12 +147,12 @@ static bool
 GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	uint16_t i;
+	uint16_t i {};
 
 	pSunDesc->PlanetByte = 0;
 	pSunDesc->MoonByte = 0;
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 #define NUM_PLANETS 6
 		pSunDesc->NumPlanets = NUM_PLANETS;
@@ -174,7 +175,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 	}
 	else
 	{
-		uint32_t rand_val = RandomContext_Random(SysGenRNG);
+		uint32_t rand_val = SysGenRNG->next();
 		uint8_t planet = 0;
 
 		pSunDesc->NumPlanets = GenerateMinPlanets(2);
@@ -185,7 +186,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		FillOrbits(solarSys, NUMPLANETS_PDESC, nullptr, false);
 
-		if (StarSeed)
+		if (uqm::isStarSeed())
 		{
 			pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 		}
@@ -202,7 +203,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 		}
 		for (i = 0; i < pSunDesc->NumPlanets / 2; ++i)
 		{
-			uint8_t offset = lowByte(rand_val) % (pSunDesc->NumPlanets - i);
+			uint8_t offset = uqm::lowByte(rand_val) % (pSunDesc->NumPlanets - i);
 
 			while (solarSys->PlanetDesc[planet].data_index == SELENIC_WORLD || offset > 0)
 			{
@@ -234,7 +235,7 @@ GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
 
 	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		pMoonDesc->data_index = HIERARCHY_STARBASE;
@@ -251,12 +252,12 @@ GenerateShofixti_generateName(const SOLARSYS_STATE* solarSys,
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		utf8StringCopy(GLOBAL_SIS(PlanetName),
-					   sizeof(GLOBAL_SIS(PlanetName)),
-					   GAME_STRING(PLANET_NUMBER_BASE + 35));
+		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
+							sizeof(GLOBAL_SIS(PlanetName)),
+							GAME_STRING(PLANET_NUMBER_BASE + 35));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}
@@ -272,17 +273,14 @@ GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 	{
 		if (CheckAlliance(SHOFIXTI_SHIP) == GOOD_GUY)
 		{
-			bool MaxShips = (CountEscortShips(SHOFIXTI_SHIP) < ifHardDifficulty(1, 2) ? true : false);
-			bool RoomInFleet = EscortFeasibilityStudy(SHOFIXTI_SHIP);
-			uint8_t Index = !MaxShips ? 0 : (!RoomInFleet ? 1 : 2);
+			const bool MaxShips = (CountEscortShips(SHOFIXTI_SHIP) < ifHardDifficulty(1, 2) ? true : false);
+			const bool RoomInFleet = EscortFeasibilityStudy(SHOFIXTI_SHIP);
+			const uint8_t Index = !MaxShips ? 0 : (!RoomInFleet ? 1 : 2);
 
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				SetRelStringTableIndex(
-					CaptureStringTable(
-						LoadStringTable(SHOFIXTI_BASE_STRTAB)),
-					Index);
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SHOFIXTI_BASE_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = Index;
 
 			DoDiscoveryReport(MenuSounds);
 
@@ -292,9 +290,7 @@ GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 												  CountEscortShips(SHOFIXTI_SHIP) == 1 ? 1 : 2));
 			}
 
-			DestroyStringTable(ReleaseStringTable(
-				solarSys->SysInfo.PlanetInfo.DiscoveryString));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString = 0;
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 			FreeLanderFont(&solarSys->SysInfo.PlanetInfo);
 			return true;
 		}
@@ -308,21 +304,18 @@ GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 static void
 check_old_shofixti(void)
 {
-	HIPGROUP hGroup;
-	IP_GROUP* GroupPtr;
-
 	if (!GLOBAL(BattleGroupRef))
 	{
 		return; // nothing to check
 	}
 
-	hGroup = GetHeadLink(&GLOBAL(ip_group_q));
+	HIPGROUP hGroup {GetHeadLink(&GLOBAL(ip_group_q))};
 	if (!hGroup)
 	{
 		return; // still nothing to check
 	}
 
-	GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+	IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
 	if (GroupPtr->race_id == SHOFIXTI_SHIP

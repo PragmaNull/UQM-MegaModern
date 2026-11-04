@@ -17,11 +17,11 @@
  */
 
 #include "libs/graphics/cmap.h"
-#include "libs/threadlib.h"
+
+#include "core/thread/Mutex.h"
 #include "libs/time/timelib.h"
 #include "libs/inplib.h"
 #include "libs/strlib.h"
-// for GetStringAddress()
 #include "core/log/log.h"
 #include <string.h>
 #include <stdlib.h>
@@ -31,67 +31,60 @@ typedef struct xform_control
 {
 	int CMapIndex; // -1 means unused
 	COLORMAPPTR CMapPtr;
-	int16_t Ticks;
-	uint32_t StartTime;
-	uint32_t EndTime;
+	TimePeriod Ticks;
+	TimeCount StartTime;
+	TimeCount EndTime;
 	Color OldCMap[NUMBER_OF_PLUTVALS];
 } XFORM_CONTROL;
 
 #define MAX_XFORMS 16
 static struct
 {
-	XFORM_CONTROL TaskControl[MAX_XFORMS];
-	volatile int Highest;
+	uqm::Mutex Lock;
+	XFORM_CONTROL TaskControl[MAX_XFORMS] UQM_GUARDED_BY(Lock);
+	int Highest UQM_GUARDED_BY(Lock);
 	// 'pending' is Highest >= 0
-	Mutex Lock;
 } XFormControl;
 
-static int fadeAmount = FADE_NORMAL_INTENSITY;
-static int fadeDelta;
-static TimeCount fadeStartTime;
-static int32_t fadeInterval;
-static Mutex fadeLock;
+static uqm::Mutex s_fadeLock {};
+static int fadeAmount UQM_GUARDED_BY(s_fadeLock) = FADE_NORMAL_INTENSITY;
+static int fadeDelta UQM_GUARDED_BY(s_fadeLock);
+static TimeCount fadeStartTime UQM_GUARDED_BY(s_fadeLock);
+static TimePeriod fadeInterval UQM_GUARDED_BY(s_fadeLock);
 
 #define SPARE_COLORMAPS 20
 
 // Colormaps are rapidly replaced in some parts of the game, so
 // it pays to have some spares on hand
-static TFB_ColorMap* poolhead;
-static int poolcount;
+static uqm::Mutex s_mapLock {};
+static TFB_ColorMap* poolhead UQM_GUARDED_BY(s_mapLock);
+static int poolcount UQM_GUARDED_BY(s_mapLock);
 
-static TFB_ColorMap* colormaps[MAX_COLORMAPS];
-static int mapcount;
-static Mutex maplock;
+static TFB_ColorMap* colormaps[MAX_COLORMAPS] UQM_GUARDED_BY(s_mapLock);
+static int mapcount UQM_GUARDED_BY(s_mapLock);
 
 
-static void release_colormap(TFB_ColorMap* map);
+static void release_colormap(TFB_ColorMap* map) UQM_REQUIRES(s_mapLock);
 static void delete_colormap(TFB_ColorMap* map);
 
 
 void InitColorMaps(void)
 {
-	int i;
-
-	// init colormaps
-	maplock = CREATEMUTEX("Colormaps Lock", SYNC_CLASS_TOPLEVEL | SYNC_CLASS_VIDEO);
-
 	// init xform control
+	const uqm::LockGuard lock {XFormControl.Lock};
 	XFormControl.Highest = -1;
-	XFormControl.Lock = CREATEMUTEX("Transform Lock", SYNC_CLASS_TOPLEVEL | SYNC_CLASS_VIDEO);
-	for (i = 0; i < MAX_XFORMS; ++i)
+	for (int i {0}; i < MAX_XFORMS; ++i)
 	{
 		XFormControl.TaskControl[i].CMapIndex = -1;
 	}
-
-	fadeLock = CREATEMUTEX("Fade Lock", SYNC_CLASS_TOPLEVEL | SYNC_CLASS_VIDEO);
 }
 
 void UninitColorMaps(void)
 {
-	int i;
-	TFB_ColorMap* next;
+	TFB_ColorMap* next {};
 
-	for (i = 0; i < MAX_COLORMAPS; ++i)
+	const uqm::LockGuard lock {s_mapLock};
+	for (int i {0}; i < MAX_COLORMAPS; ++i)
 	{
 		TFB_ColorMap* map = colormaps[i];
 		if (!map)
@@ -108,20 +101,13 @@ void UninitColorMaps(void)
 		next = poolhead->next;
 		delete_colormap(poolhead);
 	}
-
-	DestroyMutex(fadeLock);
-	// uninit xform control
-	DestroyMutex(XFormControl.Lock);
-
-	// uninit colormaps
-	DestroyMutex(maplock);
 }
 
 static inline TFB_ColorMap*
-alloc_colormap(void)
+alloc_colormap(void) UQM_REQUIRES(s_mapLock)
 // returns an addrefed object
 {
-	TFB_ColorMap* map;
+	TFB_ColorMap* map {};
 
 	if (poolhead)
 	{ // have some spares
@@ -131,13 +117,8 @@ alloc_colormap(void)
 	}
 	else
 	{ // no spares, need a new one
-		map = (TFB_ColorMap*)HMalloc(sizeof(*map));
+		map = new TFB_ColorMap {};
 		map->palette = AllocNativePalette();
-		if (!map->palette)
-		{
-			HFree(map);
-			return nullptr;
-		}
 	}
 	map->next = nullptr;
 	map->index = -1;
@@ -148,12 +129,10 @@ alloc_colormap(void)
 }
 
 static TFB_ColorMap*
-clone_colormap(TFB_ColorMap* from, int index)
+clone_colormap(TFB_ColorMap* from, int index) UQM_REQUIRES(s_mapLock)
 // returns an addrefed object
 {
-	TFB_ColorMap* map;
-
-	map = alloc_colormap();
+	TFB_ColorMap* map {alloc_colormap()};
 	if (!map)
 	{
 		uqm::log::warn("FATAL: clone_colormap(): "
@@ -177,11 +156,11 @@ static void
 delete_colormap(TFB_ColorMap* map)
 {
 	FreeNativePalette(map->palette);
-	HFree(map);
+	delete map;
 }
 
 static inline void
-free_colormap(TFB_ColorMap* map)
+free_colormap(TFB_ColorMap* map) UQM_REQUIRES(s_mapLock)
 {
 	if (!map)
 	{
@@ -202,11 +181,9 @@ free_colormap(TFB_ColorMap* map)
 }
 
 static inline TFB_ColorMap*
-get_colormap(int index)
+get_colormap(int index) UQM_REQUIRES(s_mapLock)
 {
-	TFB_ColorMap* map;
-
-	map = colormaps[index];
+	TFB_ColorMap* map {colormaps[index]};
 	if (!map)
 	{
 		uqm::log::critical("BUG: get_colormap(): map not present");
@@ -240,33 +217,25 @@ release_colormap(TFB_ColorMap* map)
 
 void TFB_ReturnColorMap(TFB_ColorMap* map)
 {
-	LockMutex(maplock);
+	const uqm::LockGuard lock {s_mapLock};
 	release_colormap(map);
-	UnlockMutex(maplock);
 }
 
 TFB_ColorMap*
 TFB_GetColorMap(int index)
 {
-	TFB_ColorMap* map;
-
-	LockMutex(maplock);
-	map = get_colormap(index);
-	UnlockMutex(maplock);
-
-	return map;
+	const uqm::LockGuard lock {s_mapLock};
+	return get_colormap(index);
 }
 
 void GetColorMapColors(Color* colors, TFB_ColorMap* map)
 {
-	int i;
-
 	if (!map)
 	{
 		return;
 	}
 
-	for (i = 0; i < NUMBER_OF_PLUTVALS; ++i)
+	for (int i {0}; i < NUMBER_OF_PLUTVALS; ++i)
 	{
 		colors[i] = GetNativePaletteColor(map->palette, i);
 	}
@@ -274,18 +243,15 @@ void GetColorMapColors(Color* colors, TFB_ColorMap* map)
 
 bool SetColorMap(COLORMAPPTR map)
 {
-	int start, end;
-	int total_size;
-	uint8_t* colors = (uint8_t*)map;
-	TFB_ColorMap** mpp;
+	const uint8_t* colors = (uint8_t*)map;
 
 	if (!map)
 	{
 		return true;
 	}
 
-	start = *colors++;
-	end = *colors++;
+	int start {*colors++};
+	int end {*colors++};
 	if (start > end)
 	{
 		uqm::log::warn("ERROR: SetColorMap(): "
@@ -308,9 +274,9 @@ bool SetColorMap(COLORMAPPTR map)
 		end = MAX_COLORMAPS - 1;
 	}
 
-	total_size = end + 1;
+	const int total_size {end + 1};
 
-	LockMutex(maplock);
+	const uqm::LockGuard lock {s_mapLock};
 
 	if (total_size > mapcount)
 	{
@@ -318,16 +284,12 @@ bool SetColorMap(COLORMAPPTR map)
 	}
 
 	// parse the supplied PLUTs into our colormaps
-	for (mpp = colormaps + start; start <= end; ++start, ++mpp)
+	for (TFB_ColorMap** mpp {colormaps + start}; start <= end; ++start, ++mpp)
 	{
-		int i;
-		TFB_ColorMap* newmap;
-		TFB_ColorMap* oldmap;
+		TFB_ColorMap* oldmap {*mpp};
+		TFB_ColorMap* newmap {clone_colormap(oldmap, start)};
 
-		oldmap = *mpp;
-		newmap = clone_colormap(oldmap, start);
-
-		for (i = 0; i < NUMBER_OF_PLUTVALS; ++i, colors += PLUTVAL_BYTE_SIZE)
+		for (int i {0}; i < NUMBER_OF_PLUTVALS; ++i, colors += PLUTVAL_BYTE_SIZE)
 		{
 			Color color;
 
@@ -342,8 +304,6 @@ bool SetColorMap(COLORMAPPTR map)
 		release_colormap(oldmap);
 	}
 
-	UnlockMutex(maplock);
-
 	return true;
 }
 
@@ -351,27 +311,20 @@ bool SetColorMap(COLORMAPPTR map)
 
 int GetFadeAmount(void)
 {
-	int newAmount;
+	int newAmount {};
 
-	LockMutex(fadeLock);
+	const uqm::LockGuard lock {s_fadeLock};
 
-	if (fadeInterval)
+	if (fadeInterval != TimePeriod {})
 	{ // have a pending fade
-		TimeCount Now = GetTimeCounter();
-		int32_t elapsed;
+		const TimePeriod elapsed {uqstl::min(GetTimeCounter() - fadeStartTime, fadeInterval)};
 
-		elapsed = Now - fadeStartTime;
-		if (elapsed > fadeInterval)
-		{
-			elapsed = fadeInterval;
-		}
-
-		newAmount = fadeAmount + (long)fadeDelta * elapsed / fadeInterval;
+		newAmount = static_cast<int>(fadeAmount + fadeDelta * elapsed.count() / fadeInterval.count());
 
 		if (elapsed >= fadeInterval)
 		{ // fade is over
 			fadeAmount = newAmount;
-			fadeInterval = 0;
+			fadeInterval = TimePeriod {};
 		}
 	}
 	else
@@ -379,34 +332,31 @@ int GetFadeAmount(void)
 		newAmount = fadeAmount;
 	}
 
-	UnlockMutex(fadeLock);
-
 	return newAmount;
 }
 
 static void
-finishPendingFade(void)
+finishPendingFade(void) UQM_REQUIRES(s_fadeLock)
 {
-	if (fadeInterval)
+	if (fadeInterval != TimePeriod {})
 	{ // end the fade immediately
 		fadeAmount += fadeDelta;
-		fadeInterval = 0;
+		fadeInterval = TimePeriod {};
 	}
 }
 
 static void
 FlushFadeXForms(void)
 {
-	LockMutex(fadeLock);
+	const uqm::LockGuard lock {s_fadeLock};
 	finishPendingFade();
-	UnlockMutex(fadeLock);
 }
 
-uint32_t
-FadeScreen(ScreenFadeType fadeType, int16_t TimeInterval)
+TimeCount
+FadeScreen(ScreenFadeType fadeType, TimePeriod TimeInterval)
 {
 	TimeCount TimeOut;
-	int FadeEnd;
+	int FadeEnd {};
 
 	switch (fadeType)
 	{
@@ -429,18 +379,18 @@ FadeScreen(ScreenFadeType fadeType, int16_t TimeInterval)
 	// Don't make users wait for fades
 	if (QuitPosted)
 	{
-		TimeInterval = 0;
+		TimeInterval = TimePeriod {};
 	}
 
-	LockMutex(fadeLock);
+	const uqm::LockGuard lock {s_fadeLock};
 
 	finishPendingFade();
 
-	if (TimeInterval <= 0 || fadeAmount == FadeEnd)
+	if (TimeInterval <= TimePeriod {} || fadeAmount == FadeEnd)
 	{ // end the fade immediately
 		fadeAmount = FadeEnd;
 		// cancel any pending fades
-		fadeInterval = 0;
+		fadeInterval = TimePeriod {};
 		TimeOut = GetTimeCounter();
 	}
 	else
@@ -448,10 +398,8 @@ FadeScreen(ScreenFadeType fadeType, int16_t TimeInterval)
 		fadeInterval = TimeInterval;
 		fadeDelta = FadeEnd - fadeAmount;
 		fadeStartTime = GetTimeCounter();
-		TimeOut = fadeStartTime + TimeInterval + 1;
+		TimeOut = fadeStartTime + TimeInterval + TimePeriod {1};
 	}
-
-	UnlockMutex(fadeLock);
 
 	return TimeOut;
 }
@@ -459,7 +407,7 @@ FadeScreen(ScreenFadeType fadeType, int16_t TimeInterval)
 /* Colormap Transforms */
 
 static void
-finish_colormap_xform(int which)
+finish_colormap_xform(int which) UQM_REQUIRES(XFormControl.Lock) UQM_EXCLUDES(s_mapLock)
 {
 	SetColorMap(XFormControl.TaskControl[which].CMapPtr);
 	XFormControl.TaskControl[which].CMapIndex = -1;
@@ -487,71 +435,63 @@ blendChan(uint8_t c1, uint8_t c2, int weight, int scale)
 bool XFormColorMap_step(void)
 {
 	bool Changed = false;
-	int x;
-	uint32_t Now = GetTimeCounter();
+	const TimeCount Now {GetTimeCounter()};
 
-	LockMutex(XFormControl.Lock);
+	const uqm::LockGuard lock {XFormControl.Lock};
 
-	for (x = 0; x <= XFormControl.Highest; ++x)
+	for (int x {0}; x <= XFormControl.Highest; ++x)
 	{
 		XFORM_CONTROL* control = &XFormControl.TaskControl[x];
-		int index = control->CMapIndex;
-		int TicksLeft = control->EndTime - Now;
-		TFB_ColorMap* curmap;
+		const int index = control->CMapIndex;
+		const int TicksLeft {static_cast<int>((control->EndTime - Now).count())};
+		TFB_ColorMap* curmap {};
 
 		if (index < 0)
 		{
 			continue; // unused slot
 		}
 
-		LockMutex(maplock);
+		{
+			const uqm::LockGuard mapLock {s_mapLock};
+			curmap = colormaps[index];
+			if (curmap && TicksLeft > 0)
+			{
+#define XFORM_SCALE 0x10000
+				TFB_ColorMap* newmap = nullptr;
+				int i {};
 
-		curmap = colormaps[index];
+				newmap = clone_colormap(curmap, index);
+
+				const Color* oldClr {control->OldCMap};
+				const uint8_t* newClr {(uint8_t*)control->CMapPtr + 2};
+
+				const int frac {static_cast<int>((control->Ticks.count() - TicksLeft) * XFORM_SCALE / control->Ticks.count())};
+
+				for (i = 0; i < NUMBER_OF_PLUTVALS; ++i, ++oldClr,
+					newClr += PLUTVAL_BYTE_SIZE)
+				{
+					Color color;
+
+					color.a = 0xff;
+					color.r = blendChan(oldClr->r, newClr[PLUTVAL_RED],
+										frac, XFORM_SCALE);
+					color.g = blendChan(oldClr->g, newClr[PLUTVAL_GREEN],
+										frac, XFORM_SCALE);
+					color.b = blendChan(oldClr->b, newClr[PLUTVAL_BLUE],
+										frac, XFORM_SCALE);
+					SetNativePaletteColor(newmap->palette, i, color);
+				}
+
+				colormaps[index] = newmap;
+				release_colormap(curmap);
+			}
+		}
 		if (!curmap)
 		{
-			UnlockMutex(maplock);
 			uqm::log::error("BUG: XFormColorMap_step(): no current map");
 			finish_colormap_xform(x);
 			continue;
 		}
-
-		if (TicksLeft > 0)
-		{
-#define XFORM_SCALE 0x10000
-			TFB_ColorMap* newmap = nullptr;
-			uint8_t* newClr;
-			Color* oldClr;
-			int frac;
-			int i;
-
-			newmap = clone_colormap(curmap, index);
-
-			oldClr = control->OldCMap;
-			newClr = (uint8_t*)control->CMapPtr + 2;
-
-			frac = (int)(control->Ticks - TicksLeft) * XFORM_SCALE
-				 / control->Ticks;
-
-			for (i = 0; i < NUMBER_OF_PLUTVALS; ++i, ++oldClr,
-				newClr += PLUTVAL_BYTE_SIZE)
-			{
-				Color color;
-
-				color.a = 0xff;
-				color.r = blendChan(oldClr->r, newClr[PLUTVAL_RED],
-									frac, XFORM_SCALE);
-				color.g = blendChan(oldClr->g, newClr[PLUTVAL_GREEN],
-									frac, XFORM_SCALE);
-				color.b = blendChan(oldClr->b, newClr[PLUTVAL_BLUE],
-									frac, XFORM_SCALE);
-				SetNativePaletteColor(newmap->palette, i, color);
-			}
-
-			colormaps[index] = newmap;
-			release_colormap(curmap);
-		}
-
-		UnlockMutex(maplock);
 
 		if (TicksLeft <= 0)
 		{ // asked for immediate xform or already done
@@ -561,19 +501,15 @@ bool XFormColorMap_step(void)
 		Changed = true;
 	}
 
-	UnlockMutex(XFormControl.Lock);
-
 	return Changed;
 }
 
 static void
 FlushPLUTXForms(void)
 {
-	int i;
+	const uqm::LockGuard lock {XFormControl.Lock};
 
-	LockMutex(XFormControl.Lock);
-
-	for (i = 0; i <= XFormControl.Highest; ++i)
+	for (int i {0}; i <= XFormControl.Highest; ++i)
 	{
 		if (XFormControl.TaskControl[i].CMapIndex >= 0)
 		{
@@ -581,25 +517,21 @@ FlushPLUTXForms(void)
 		}
 	}
 	XFormControl.Highest = -1; // all gone
-
-	UnlockMutex(XFormControl.Lock);
 }
 
-static uint32_t
-XFormPLUT(COLORMAPPTR ColorMapPtr, int16_t TimeInterval)
+static TimeCount
+XFormPLUT(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
 {
-	TFB_ColorMap* map;
-	XFORM_CONTROL* control;
-	int index;
-	int x;
+	TFB_ColorMap* map {};
+	int x {};
 	int first_avail = -1;
-	uint32_t EndTime;
-	uint32_t Now;
+	TimeCount EndTime;
+	TimeCount Now;
 
 	Now = GetTimeCounter();
-	index = *(uint8_t*)ColorMapPtr;
+	const int index {*(uint8_t*)ColorMapPtr};
 
-	LockMutex(XFormControl.Lock);
+	const uqm::LockGuard lock {XFormControl.Lock};
 	// Find an available slot, or reuse if required
 	for (x = 0; x <= XFormControl.Highest
 				&& index != XFormControl.TaskControl[x].CMapIndex;
@@ -626,52 +558,45 @@ XFormPLUT(COLORMAPPTR ColorMapPtr, int16_t TimeInterval)
 		finish_colormap_xform(x);
 	}
 	// take next unused one
-	control = &XFormControl.TaskControl[x];
+	XFORM_CONTROL* control {&XFormControl.TaskControl[x]};
 	if (x > XFormControl.Highest)
 	{
 		XFormControl.Highest = x;
 	}
 
 	// make a copy of the current map
-	LockMutex(maplock);
-	map = colormaps[index];
-	if (!map)
 	{
-		UnlockMutex(maplock);
-		UnlockMutex(XFormControl.Lock);
-		uqm::log::warn("BUG: XFormPLUT(): no current map");
-		return (0);
+		const uqm::LockGuard mapLock {s_mapLock};
+		map = colormaps[index];
+		if (!map)
+		{
+			uqm::log::warn("BUG: XFormPLUT(): no current map");
+			return TimeCount {};
+		}
+		GetColorMapColors(control->OldCMap, map);
 	}
-	GetColorMapColors(control->OldCMap, map);
-	UnlockMutex(maplock);
 
 	control->CMapIndex = index;
 	control->CMapPtr = ColorMapPtr;
-	control->Ticks = TimeInterval;
-	if (control->Ticks < 0)
-	{
-		control->Ticks = 0; /* prevent negative fade */
-	}
+	control->Ticks = uqstl::max(TimeInterval, TimePeriod {}); /* prevent negative fade */
 	control->StartTime = Now;
 	control->EndTime = EndTime = Now + control->Ticks;
-
-	UnlockMutex(XFormControl.Lock);
 
 	return (EndTime);
 }
 
-uint32_t
-XFormColorMap(COLORMAPPTR ColorMapPtr, int16_t TimeInterval)
+TimeCount
+XFormColorMap(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval)
 {
 	if (!ColorMapPtr)
 	{
-		return (0);
+		return TimeCount {};
 	}
 
 	// Don't make users wait for transforms
 	if (QuitPosted)
 	{
-		TimeInterval = 0;
+		TimeInterval = TimePeriod {};
 	}
 
 	return XFormPLUT(ColorMapPtr, TimeInterval);
@@ -686,23 +611,26 @@ void FlushColorXForms(void)
 // The type conversions are implicit and will generate errors
 // or warnings if types change imcompatibly
 COLORMAPPTR
-GetColorMapAddress(COLORMAP colormap)
+GetColorMapAddress(COLORMAP map, size_t index)
 {
-	return GetStringAddress(colormap);
+	if (map == nullptr || map->size() == 0)
+	{
+		return nullptr;
+	}
+	const uqstl::string_view bytes {map->bytes(index % map->size())};
+	return bytes.empty() ? nullptr : bytes.data();
 }
 
 static void
 DoTransformColorMap(Color* colors, COLORMAPPTR ColorMapPtr, uint16_t from,
 					uint16_t to)
 { // New fancy func to change colors of current colormap
-	TFB_ColorMap* map;
-	int p_index = *(uint8_t*)ColorMapPtr;
-	LockMutex(maplock);
+	const int p_index = *(uint8_t*)ColorMapPtr;
+	const uqm::LockGuard lock {s_mapLock};
 
-	map = colormaps[p_index];
+	TFB_ColorMap* map {colormaps[p_index]};
 	if (!map)
 	{
-		UnlockMutex(maplock);
 		uqm::log::error("BUG: XFormColorMap_step(): no current map");
 		return;
 	}
@@ -710,13 +638,11 @@ DoTransformColorMap(Color* colors, COLORMAPPTR ColorMapPtr, uint16_t from,
 	{
 		TFB_ColorMap* newmap = nullptr;
 		uint8_t* newPtr = (uint8_t*)ColorMapPtr + 2;
-		Color* c;
-		int i;
 
 		newmap = clone_colormap(map, p_index);
-		c = colors;
+		const Color* c {colors};
 
-		for (i = from; i < to; ++i, ++c, newPtr += PLUTVAL_BYTE_SIZE)
+		for (int i {from}; i < to; ++i, ++c, newPtr += PLUTVAL_BYTE_SIZE)
 		{
 			newPtr[PLUTVAL_RED] = c->r;
 			newPtr[PLUTVAL_GREEN] = c->g;
@@ -727,7 +653,6 @@ DoTransformColorMap(Color* colors, COLORMAPPTR ColorMapPtr, uint16_t from,
 		colormaps[p_index] = newmap;
 		release_colormap(map);
 	}
-	UnlockMutex(maplock);
 }
 
 void SetColorMapColors(Color* colors, COLORMAPPTR ColorMapPtr, uint16_t from,
@@ -743,14 +668,13 @@ void SetColorMapColors(Color* colors, COLORMAPPTR ColorMapPtr, uint16_t from,
 
 Color GetColorMapColor(uint16_t ColorMapIndex, uint16_t ColorIndex)
 {
+	const uqm::LockGuard lock {s_mapLock};
 	return GetNativePaletteColor(colormaps[ColorMapIndex]->palette,
 								 ColorIndex);
 }
 
 uint8_t
-GetColorMapTableIndex(COLORMAP map)
+GetColorMapTableIndex(COLORMAP map, size_t index)
 {
-	uint8_t* index = (uint8_t*)GetColorMapAddress(map);
-
-	return *index;
+	return *static_cast<const uint8_t*>(GetColorMapAddress(map, index));
 }

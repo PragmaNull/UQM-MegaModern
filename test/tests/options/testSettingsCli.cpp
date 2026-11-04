@@ -6,7 +6,7 @@
 
 #include <CLI/CLI.hpp>
 
-#include <map>
+#include "core/stl/map.h"
 
 namespace uqm
 {
@@ -32,7 +32,7 @@ uqstl::vector<CliName> allCliNames()
 		while (!names.empty())
 		{
 			const size_t comma {names.find(',')};
-			uqstl::string name {names.substr(0, comma)};
+			const uqstl::string name {names.substr(0, comma)};
 			const size_t brace {name.find('{')};
 			const bool negated {brace != uqstl::string::npos && name.substr(brace) == "{false}"};
 			result.push_back({uqstl::string {setting->key()}, name.substr(0, brace), negated});

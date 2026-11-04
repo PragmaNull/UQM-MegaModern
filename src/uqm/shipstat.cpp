@@ -77,12 +77,11 @@ void DrawCrewFuelString(int16_t y, int16_t state)
 }
 
 static void
-DrawShipNameString(char* pStr, uint16_t CharCount, int16_t y)
+DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
 {
 	TEXT Text;
-	FONT OldFont;
 
-	OldFont = SetContextFont(StarConFont);
+	FONT OldFont {SetContextFont(StarConFont)};
 
 	Text.pStr = pStr;
 	Text.CharCount = CharCount;
@@ -156,7 +155,6 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 	GFXRECT r;
 	int16_t y = 0; // default, for Melee menu
 	STAMP Stamp;
-	GFXCONTEXT OldContext;
 	GFXRECT oldClipRect;
 	GFXPOINT oldOrigin = {0, 0};
 
@@ -176,7 +174,7 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 		}
 	}
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	if (pClipRect)
 	{
 		GetContextClipRect(&oldClipRect);
@@ -205,7 +203,7 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 	DrawStamp(&Stamp);
 
 	{
-		int16_t crew_height, energy_height;
+		int16_t crew_height {}, energy_height {};
 
 #define MIN(a, b) (((a) <= (b)) ? (a) : (b))
 		if (!IS_HD)
@@ -304,21 +302,15 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 	if (!StarShipPtr || StarShipPtr->captains_name_index)
 	{ // Any regular ship. SIS and Sa-Matra are separate.
 		// This includes Melee menu.
-		STRING locString;
-
 		DrawCrewFuelString(y, 0);
 
-		locString = SetAbsStringTableIndex(SIPtr->race_strings, 1);
-		DrawShipNameString(
-			(char*)GetStringAddress(locString),
-			GetStringLength(locString), y);
+		DrawShipNameString(SIPtr->race_strings->text(1), (uint16_t)~0, y);
 
 		{
 			char buf[30] {};
 			TEXT Text;
-			FONT OldFont;
 
-			OldFont = SetContextFont(MENU_BOOL(TinyFontBold, TinyFont));
+			FONT OldFont {SetContextFont(MENU_BOOL(TinyFontBold, TinyFont))};
 
 			if (!StarShipPtr)
 			{ // In Melee menu
@@ -328,11 +320,8 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 			}
 			else
 			{
-				locString = SetAbsStringTableIndex(SIPtr->race_strings,
-												   StarShipPtr->captains_name_index);
-
-				utf8StringCopy(buf, sizeof(buf),
-							   (char*)GetStringAddress(locString));
+				uqm::utf8StringCopy(buf, sizeof(buf),
+									SIPtr->race_strings->text(StarShipPtr->captains_name_index));
 
 				if (is3DO(uqm::UQMOptions::read().whichMenu))
 				{
@@ -340,7 +329,7 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 				}
 
 				Text.pStr = buf;
-				Text.CharCount = (uint16_t)utf8StringCount(buf);
+				Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
 			}
 			Text.align = ALIGN_CENTER;
 
@@ -361,10 +350,10 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 	}
 
 	{
-		int16_t crew_delta, energy_delta;
+		int16_t crew_delta {};
 
 		crew_delta = SIPtr->crew_level;
-		energy_delta = SIPtr->energy_level;
+		const int16_t energy_delta {SIPtr->energy_level};
 		// DeltaStatistics() below will add specified values to these
 		SIPtr->crew_level = 0;
 		SIPtr->energy_level = 0;
@@ -387,7 +376,7 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
 					 int16_t crew_delta, int16_t energy_delta)
 {
-	int16_t x, y;
+	int16_t y {};
 	GFXRECT r;
 
 	if (crew_delta == 0 && energy_delta == 0)
@@ -395,7 +384,7 @@ void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
 		return;
 	}
 
-	x = 0;
+	const int16_t x {0};
 	// Y coordinates for the crew and energy rectangles
 	y = GAUGE_YOFFS + y_offs;
 
@@ -404,8 +393,10 @@ void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
 
 	if (crew_delta != 0)
 	{
-		uint16_t oldNumBlocks, newNumBlocks, blockI;
-		uint16_t newCrewLevel;
+		uint16_t oldNumBlocks {};
+		uint16_t newNumBlocks {};
+		uint16_t blockI {};
+		uint16_t newCrewLevel {};
 
 #define MIN(a, b) (((a) <= (b)) ? (a) : (b))
 		oldNumBlocks = MIN(ShipInfoPtr->crew_level, MAX_CREW_SIZE);

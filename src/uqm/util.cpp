@@ -35,6 +35,7 @@
 #include "comm.h"
 // JSD added to reference plot_map for SOL.
 #include "starmap.h"
+#include "uqm/random/UQMRandom.h"
 
 void DrawStarConBox(GFXRECT* pRect, int16_t BorderWidth, Color TopLeftColor,
 					Color BottomRightColor, bool FillInterior, Color InteriorColor,
@@ -159,7 +160,7 @@ void DrawStarConBox(GFXRECT* pRect, int16_t BorderWidth, Color TopLeftColor,
 void DrawRenderedBox(GFXRECT* r, bool filled, Color fill_color, int type,
 					 int custom)
 {
-	int i;
+	int i {};
 	STAMP stamp;
 	int16_t columns = r->extent.width;
 	int16_t rows = r->extent.height;
@@ -173,7 +174,7 @@ void DrawRenderedBox(GFXRECT* r, bool filled, Color fill_color, int type,
 
 	if (filled)
 	{
-		Color OldColor = SetContextForeGroundColor(fill_color);
+		const Color OldColor = SetContextForeGroundColor(fill_color);
 
 		if (type == SPECIAL_BEVEL)
 		{
@@ -250,8 +251,7 @@ void DrawRenderedBox(GFXRECT* r, bool filled, Color fill_color, int type,
 void DrawBorderPadding(uint32_t videoWidth)
 {
 	GFXRECT r;
-	GFXCONTEXT OldContext;
-	uint16_t safe_x =
+	const uint16_t safe_x =
 		(videoWidth && videoWidth < 280 ? SAFE_NEG(4) * 2 : SAFE_X);
 
 	if (!safe_x)
@@ -259,7 +259,7 @@ void DrawBorderPadding(uint32_t videoWidth)
 		return;
 	}
 
-	OldContext = SetContext(ScreenContext);
+	GFXCONTEXT OldContext {SetContext(ScreenContext)};
 
 	if (videoWidth)
 	{
@@ -301,14 +301,13 @@ void DrawBorderPadding(uint32_t videoWidth)
 void DrawRadarBorder(void)
 {
 	GFXRECT r;
-	GFXCONTEXT OldContext;
 
 	if (IS_PAD)
 	{
 		return;
 	}
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 
 	r.corner.x = RES_SCALE(4) - RES_SCALE(1);
 	r.corner.y = RADAR_Y - RES_SCALE(1);
@@ -333,10 +332,8 @@ void DrawRadarBorder(void)
 uint32_t
 SeedRandomNumbers(void)
 {
-	uint32_t cur_time;
-
-	cur_time = GetTimeCounter();
-	TFB_SeedRandom(cur_time);
+	const auto cur_time {static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count())};
+	uqm::random().reseed(cur_time);
 
 	return (cur_time);
 }
@@ -365,7 +362,6 @@ static void
 DrawPauseText(GFXRECT* rect)
 {
 	TEXT text;
-	FONT OldFont;
 	Color OldColor;
 	GFXRECT block;
 
@@ -374,7 +370,7 @@ DrawPauseText(GFXRECT* rect)
 		return;
 	}
 
-	OldFont = SetContextFont(DOS_BOOL(LabelFont, StarConFont));
+	FONT OldFont {SetContextFont(DOS_BOOL(LabelFont, StarConFont))};
 	OldColor = SetContextForeGroundColor(
 		BUILD_SHADE_RGBA(DOS_BOOL(0x74, 0x6B)));
 
@@ -408,24 +404,23 @@ bool PauseGame(void)
 {
 	GFXRECT r;
 	STAMP s;
-	GFXCONTEXT OldContext;
 	STAMP saveStamp;
 	GFXRECT ctxRect;
 	GFXPOINT OldOrigin;
 	GFXRECT OldRect;
 	Color OldColor;
-	DrawMode mode, oldMode;
-	uint8_t oldVolume;
+	DrawMode mode;
+	DrawMode oldMode;
 	TimeCount deltaT;
 
 	if (ActivityFrame == 0
-		|| (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_PAUSE))
+		|| (uqm::currentActivity() & (CHECK_ABORT | CHECK_PAUSE))
 		|| (LastActivity & (CHECK_LOAD | CHECK_RESTART)))
 	{
 		return (false);
 	}
 
-	GLOBAL(CurrentActivity) |= CHECK_PAUSE;
+	uqm::currentActivity() |= CHECK_PAUSE;
 
 	if (PlayingTrack())
 	{
@@ -434,7 +429,7 @@ bool PauseGame(void)
 
 	deltaT = GetTimeCounter();
 
-	OldContext = SetContext(ScreenContext);
+	GFXCONTEXT OldContext {SetContext(ScreenContext)};
 	OldOrigin = SetContextOrigin(MAKE_POINT(0, 0));
 	GetContextClipRect(&OldRect);
 	SetContextClipRect(nullptr);
@@ -460,8 +455,8 @@ bool PauseGame(void)
 	DrawStamp(&s);
 	DrawPauseText(&r);
 
-	oldVolume = GetCurrMusicVol();
-	FadeMusic(60, GameTicksPerSecond / 2);
+	const uint8_t oldVolume {GetCurrMusicVol()};
+	FadeMusic(60, c_gameSecond / 2);
 
 	FlushGraphics();
 
@@ -489,13 +484,13 @@ bool PauseGame(void)
 	DestroyDrawable(ReleaseDrawable(saveStamp.frame));
 	ClearSystemRect();
 
-	FadeMusic(oldVolume, GameTicksPerSecond / 2);
+	FadeMusic(oldVolume, c_gameSecond / 2);
 
 	SetContextClipRect(&OldRect);
 	SetContextOrigin(OldOrigin);
 	SetContext(OldContext);
 
-	WaitForNoInput(GameTicksPerSecond / 4, true);
+	WaitForNoInput(c_gameSecond / 4, true);
 
 	DeltaLastTime(GetTimeCounter() - deltaT);
 
@@ -506,7 +501,7 @@ bool PauseGame(void)
 
 
 	TaskSwitch();
-	GLOBAL(CurrentActivity) &= ~CHECK_PAUSE;
+	uqm::currentActivity() &= ~CHECK_PAUSE;
 	return (true);
 }
 
@@ -516,20 +511,18 @@ bool PauseGame(void)
 bool WaitForAnyButtonUntil(bool newButton, TimeCount timeOut,
 						   bool resetInput)
 {
-	bool buttonPressed;
-
 	if (newButton && !WaitForNoInputUntil(timeOut, false))
 	{
 		return false;
 	}
 
-	buttonPressed = AnyButtonPress(true);
+	bool buttonPressed {AnyButtonPress(true)};
 	while (!buttonPressed
-		   && (timeOut == WAIT_INFINITE || GetTimeCounter() < timeOut)
-		   && !(GLOBAL(CurrentActivity) & CHECK_ABORT)
+		   && GetTimeCounter() < timeOut
+		   && !(uqm::currentActivity() & CHECK_ABORT)
 		   && !QuitPosted)
 	{
-		SleepThread(GameTicksPerSecond / 40);
+		SleepThread(c_gameSecond / 40);
 		buttonPressed = AnyButtonPress(true);
 	}
 
@@ -547,20 +540,18 @@ bool WaitForAnyButtonUntil(bool newButton, TimeCount timeOut,
 bool WaitForActButtonUntil(bool newButton, TimeCount timeOut,
 						   bool resetInput)
 {
-	bool buttonPressed;
-
 	if (newButton && !WaitForNoInputUntil(timeOut, false))
 	{
 		return false;
 	}
 
-	buttonPressed = ActKeysPress();
+	bool buttonPressed {ActKeysPress()};
 	while (!buttonPressed
-		   && (timeOut == WAIT_INFINITE || GetTimeCounter() < timeOut)
-		   && !(GLOBAL(CurrentActivity) & CHECK_ABORT)
+		   && GetTimeCounter() < timeOut
+		   && !(uqm::currentActivity() & CHECK_ABORT)
 		   && !QuitPosted)
 	{
-		SleepThread(GameTicksPerSecond / 40);
+		SleepThread(c_gameSecond / 40);
 		buttonPressed = ActKeysPress();
 	}
 
@@ -574,21 +565,13 @@ bool WaitForActButtonUntil(bool newButton, TimeCount timeOut,
 
 bool WaitForAnyButton(bool newButton, TimePeriod duration, bool resetInput)
 {
-	TimeCount timeOut = duration;
-	if (duration != WAIT_INFINITE)
-	{
-		timeOut += GetTimeCounter();
-	}
+	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForAnyButtonUntil(newButton, timeOut, resetInput);
 }
 
 bool WaitForActButton(bool newButton, TimePeriod duration, bool resetInput)
 {
-	TimeCount timeOut = duration;
-	if (duration != WAIT_INFINITE)
-	{
-		timeOut += GetTimeCounter();
-	}
+	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForActButtonUntil(newButton, timeOut, resetInput);
 }
 
@@ -596,15 +579,13 @@ bool WaitForActButton(bool newButton, TimePeriod duration, bool resetInput)
 //    false if timed out or game aborted
 bool WaitForNoInputUntil(TimeCount timeOut, bool resetInput)
 {
-	bool buttonPressed;
-
-	buttonPressed = AnyButtonPress(true);
+	bool buttonPressed {AnyButtonPress(true)};
 	while (buttonPressed
-		   && (timeOut == WAIT_INFINITE || GetTimeCounter() < timeOut)
-		   && !(GLOBAL(CurrentActivity) & CHECK_ABORT)
+		   && GetTimeCounter() < timeOut
+		   && !(uqm::currentActivity() & CHECK_ABORT)
 		   && !QuitPosted)
 	{
-		SleepThread(GameTicksPerSecond / 40);
+		SleepThread(c_gameSecond / 40);
 		buttonPressed = AnyButtonPress(true);
 	}
 
@@ -618,11 +599,7 @@ bool WaitForNoInputUntil(TimeCount timeOut, bool resetInput)
 
 bool WaitForNoInput(TimePeriod duration, bool resetInput)
 {
-	TimeCount timeOut = duration;
-	if (duration != WAIT_INFINITE)
-	{
-		timeOut += GetTimeCounter();
-	}
+	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForNoInputUntil(timeOut, resetInput);
 }
 
@@ -647,12 +624,12 @@ void SleepGame(void)
 
 	while (!GameActive && !QuitPosted)
 	{
-		SleepThread(GameTicksPerSecond / 2);
+		SleepThread(c_gameSecond / 2);
 	}
 
 	uqm::log::debug("Game is waking up");
 
-	WaitForNoInput(GameTicksPerSecond / 10, true);
+	WaitForNoInput(c_gameSecond / 10, true);
 
 	ResumeMusic();
 
@@ -671,7 +648,6 @@ uint32_t
 get_fuel_to_sol(void)
 {
 	GFXPOINT pt;
-	uint32_t f;
 
 	pt.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
 	pt.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
@@ -682,7 +658,7 @@ get_fuel_to_sol(void)
 	pt.x -= plot_map[SOL_DEFINED].star_pt.x;
 	pt.y -= plot_map[SOL_DEFINED].star_pt.y;
 
-	f = (uint32_t)((long)pt.x * pt.x + (long)pt.y * pt.y);
+	const uint32_t f {(uint32_t)((long)pt.x * pt.x + (long)pt.y * pt.y)};
 	if (f == 0 || GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1)
 	{
 		return 0;

@@ -31,12 +31,12 @@
 #include "setup.h"
 #include "sounds.h"
 #include "libs/graphics/gfx_common.h"
-#include "libs/tasklib.h"
+#include "libs/time/timelib.h"
 #include "core/log/log.h"
 #include "planets/planets.h"
 #include <math.h>
-#include "util.h"
 
+#include "util.h"
 
 static void CleanupAfterStarBase(void);
 
@@ -44,8 +44,8 @@ static void
 DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
 {
 	TEXT t;
-	uint16_t text_base_y = RES_SCALE(106 + 28);
-	uint16_t text_spacing_y = RES_SCALE(23 - 4);
+	const uint16_t text_base_y = RES_SCALE(106 + 28);
+	const uint16_t text_spacing_y = RES_SCALE(23 - 4);
 
 	SetContext(ScreenContext);
 	SetContextFont(StarConFont);
@@ -88,10 +88,10 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 	Color OldColor = UNDEFINED_COLOR;
 	// Initialisation is just to keep the compiler silent.
 	GFXRECT r;
-	STAMP Side, Top;
-	int8_t RepairSlot;
+	STAMP Side;
+	STAMP Top;
 
-	RepairSlot = 0;
+	int8_t RepairSlot {0};
 	switch (which_piece)
 	{
 		case FUSION_THRUSTER:
@@ -307,8 +307,8 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 static void
 rotateStarbase(MENU_STATE* pMS, FRAME AniFrame)
 {
-	static TimeCount NextTime = 0;
-	TimeCount Now = GetTimeCounter();
+	static TimeCount NextTime {};
+	const TimeCount Now = GetTimeCounter();
 
 	if (AniFrame)
 	{ // Setup the animation
@@ -321,7 +321,7 @@ rotateStarbase(MENU_STATE* pMS, FRAME AniFrame)
 	{
 		STAMP s;
 
-		NextTime = Now + (GameTicksPerSecond / 20); // Starbase animation framerate
+		NextTime = Now + (c_gameSecond / 20); // Starbase animation framerate
 
 		s.origin = pMS->flash_rect0.corner;
 		s.frame = pMS->flash_frame0;
@@ -340,7 +340,7 @@ bool DoStarBase(MENU_STATE* pMS)
 {
 	// XXX: This function is full of hacks and otherwise strange code
 
-	if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+	if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 	{
 		pMS->CurState = DEPART_BASE;
 		goto ExitStarBase;
@@ -398,7 +398,7 @@ ExitStarBase:
 
 		if (pMS->CurState == DEPART_BASE)
 		{
-			if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
 				SET_GAME_STATE(STARBASE_VISITED, 0);
 			}
@@ -416,7 +416,7 @@ ExitStarBase:
 		}
 		else
 		{
-			uint8_t OldState;
+			uint8_t OldState {};
 
 			if (IS_HD && !hdFuelFrame)
 			{
@@ -450,9 +450,7 @@ ExitStarBase:
 	}
 	else
 	{
-		STARBASE_STATE NewState;
-
-		NewState = pMS->CurState;
+		STARBASE_STATE NewState {pMS->CurState};
 		if (PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_UP])
 		{
 			if (NewState-- == TALK_COMMANDER)
@@ -483,7 +481,7 @@ ExitStarBase:
 
 		UnbatchGraphics();
 
-		SleepThread(GameTicksPerSecond / 30);
+		SleepThread(c_gameSecond / 30);
 	}
 
 	return (true);
@@ -493,13 +491,13 @@ static void
 DoTimePassage(void)
 {
 #define LOST_DAYS 14
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond * 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond * 2));
 	MoveGameClockDays(LOST_DAYS);
 
 	// JMS: Calculate flagship location in IP.
 	if (uqm::UQMOptions::read().orbitingPlanets)
 	{
-		double newAngle;
+		double newAngle {NAN};
 		GFXPOINT starbase_coords;
 
 		// Calculate the starbase position on a circle with the help of sin and cos.
@@ -510,15 +508,15 @@ DoTimePassage(void)
 		//log_add (log_Debug, "startangle:{} angle:{}, radius:{}, speed:{}, days:{} X:{}, y:{}", 10, newAngle, MIN_MOON_RADIUS, FULL_CIRCLE / 11.46, daysElapsed(), starbase_coords.x, starbase_coords.y);
 
 		// Translate the coordinates on a circle to an ellipse and update the ship's graphics' coordinates on the screen.
-		GLOBAL(ShipStamp.origin.x) = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1) + starbase_coords.x;
-		GLOBAL(ShipStamp.origin.y) = RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1) + (starbase_coords.y >> 1);
+		uqm::flagship().shipStamp.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1) + starbase_coords.x;
+		uqm::flagship().shipStamp.origin.y = RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1) + (starbase_coords.y >> 1);
 	}
 }
 
 void VisitStarBase(void)
 {
 	MENU_STATE MenuState;
-	GFXCONTEXT OldContext;
+	GFXCONTEXT OldContext {};
 	StatMsgMode prevMsgMode = SMM_UNDEFINED;
 
 	// XXX: This should probably be moved out to Starcon2Main()
@@ -532,14 +530,14 @@ void VisitStarBase(void)
 
 	if (!GET_GAME_STATE(STARBASE_AVAILABLE))
 	{
-		HSHIPFRAG hStarShip;
-		SHIP_FRAGMENT* FragPtr;
+		HSHIPFRAG hStarShip {};
+		SHIP_FRAGMENT* FragPtr {};
 
 		// Unallied Starbase conversation
-		SetCommIntroMode(CIM_CROSSFADE_SCREEN, 0);
+		SetCommIntroMode(CIM_CROSSFADE_SCREEN, TimePeriod {});
 		InitCommunication(COMMANDER_CONVERSATION);
 		if (!GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)
-			|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+			|| (uqm::currentActivity() & CHECK_ABORT))
 		{
 			CleanupAfterStarBase();
 			return;
@@ -557,15 +555,15 @@ void VisitStarBase(void)
 
 		InitCommunication(ILWRATH_CONVERSATION);
 		if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
-			|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+			|| (uqm::currentActivity() & CHECK_ABORT))
 		{
 			return; // Killed by Ilwrath
 		}
 
 		// After Ilwrath battle, about-to-ally Starbase conversation
-		SetCommIntroMode(CIM_CROSSFADE_SCREEN, 0);
+		SetCommIntroMode(CIM_CROSSFADE_SCREEN, TimePeriod {});
 		InitCommunication(COMMANDER_CONVERSATION);
-		if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+		if (uqm::currentActivity() & CHECK_ABORT)
 		{
 			return;
 		}
@@ -587,9 +585,9 @@ void VisitStarBase(void)
 			return; // You are now dead! Thank you! (killed by Kohr-Ah)
 		}
 
-		SetCommIntroMode(CIM_FADE_IN_SCREEN, GameTicksPerSecond * 2);
+		SetCommIntroMode(CIM_FADE_IN_SCREEN, c_gameSecond * 2);
 		InitCommunication(COMMANDER_CONVERSATION);
-		if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+		if (uqm::currentActivity() & CHECK_ABORT)
 		{
 			return;
 		}
@@ -612,13 +610,13 @@ void VisitStarBase(void)
 static void
 CleanupAfterStarBase(void)
 {
-	if (!(GLOBAL(CurrentActivity) & (CHECK_LOAD | CHECK_ABORT)))
+	if (!(uqm::currentActivity() & (CHECK_LOAD | CHECK_ABORT)))
 	{
 		// Mark as not in Starbase anymore
 		SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 0);
 		// Fake a load so Starcon2Main takes us to IP
-		GLOBAL(CurrentActivity) = CHECK_LOAD;
-		NextActivity = MAKE_WORD(IN_INTERPLANETARY, 0)
+		uqm::currentActivity() = CHECK_LOAD;
+		NextActivity = uqm::makeWord(IN_INTERPLANETARY, 0)
 					 | START_INTERPLANETARY;
 	}
 }
@@ -627,19 +625,19 @@ void InstallBombAtEarth(void)
 {
 	DoTimePassage();
 
-	GLOBAL(ShipStamp.origin.x) = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
-	GLOBAL(ShipStamp.origin.y) = RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1);
+	uqm::flagship().shipStamp.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
+	uqm::flagship().shipStamp.origin.y = RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1);
 
 	SetContext(ScreenContext);
 	SetTransitionSource(nullptr);
 	SetContextBackGroundColor(BLACK_COLOR);
 	ClearDrawable();
 
-	SleepThreadUntil(FadeScreen(FadeAllToColor, 0));
+	SleepThreadUntil(FadeScreen(FadeAllToColor, TimePeriod {}));
 
-	SET_GAME_STATE(CHMMR_BOMB_STATE, 3);  /* bomb processed */
-	GLOBAL(CurrentActivity) = CHECK_LOAD; /* fake a load game */
-	NextActivity = MAKE_WORD(IN_INTERPLANETARY, 0) | START_INTERPLANETARY;
+	SET_GAME_STATE(CHMMR_BOMB_STATE, 3); /* bomb processed */
+	uqm::currentActivity() = CHECK_LOAD; /* fake a load game */
+	NextActivity = uqm::makeWord(IN_INTERPLANETARY, 0) | START_INTERPLANETARY;
 	CurStarDescPtr = 0; /* force SolarSys reload */
 }
 
@@ -647,13 +645,11 @@ void InstallBombAtEarth(void)
 uint16_t
 WrapText(const char* pStr, uint16_t len, TEXT* tarray, int16_t field_width)
 {
-	uint16_t num_lines;
-
-	num_lines = 0;
+	uint16_t num_lines {0};
 	do
 	{
 		GFXRECT r;
-		uint16_t OldCount;
+		uint16_t OldCount {};
 
 		tarray->align = ALIGN_LEFT; /* set alignment to something */
 		tarray->pStr = pStr;

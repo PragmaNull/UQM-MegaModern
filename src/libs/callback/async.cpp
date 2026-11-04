@@ -46,14 +46,13 @@ void Async_process(void)
 // Returns the next time that some asynchronous callback is
 // to be called. Note that all values lower than the current time
 // should be considered as 'somewhere in the past'.
-uint32_t
-Async_timeBeforeNextMs(void)
+AlarmTime Async_nextTime(void)
 {
 	if (Callback_haveMore())
 	{
 		// Any time before the current time is ok, though we reserve 0 so
 		// that the caller may use it as a special value in its own code.
-		return 1;
+		return AlarmTime {1};
 	}
-	return Alarm_timeBeforeNextMs();
+	return Alarm_nextTime();
 }

@@ -41,18 +41,16 @@ FONT _CurFontPtr;
 GFXCONTEXT
 SetContext(GFXCONTEXT Context)
 {
-	GFXCONTEXT LastContext;
-
-	LastContext = _pCurContext;
+	GFXCONTEXT LastContext {_pCurContext};
 	if (Context != LastContext)
 	{
 		if (LastContext)
 		{
 			UnsetContextFlags(
-				MAKE_WORD(0, GRAPHICS_ACTIVE | DRAWABLE_ACTIVE));
+				uqm::makeWord(0, GRAPHICS_ACTIVE | DRAWABLE_ACTIVE));
 			SetContextFlags(
-				MAKE_WORD(0, _GraphicsStatusFlags
-								 & (GRAPHICS_ACTIVE | DRAWABLE_ACTIVE)));
+				uqm::makeWord(0, _GraphicsStatusFlags
+									 & (GRAPHICS_ACTIVE | DRAWABLE_ACTIVE)));
 
 			DeactivateContext();
 		}
@@ -63,7 +61,7 @@ SetContext(GFXCONTEXT Context)
 			ActivateContext();
 
 			_GraphicsStatusFlags &= ~(GRAPHICS_ACTIVE | DRAWABLE_ACTIVE);
-			_GraphicsStatusFlags |= highByte(_get_context_flags());
+			_GraphicsStatusFlags |= uqm::highByte(_get_context_flags());
 
 			SetPrimColor(&_locPrim, _get_context_fg_color());
 
@@ -83,9 +81,7 @@ GFXCONTEXT
 CreateContextAux(void)
 #endif /* !defined(DEBUG) */
 {
-	GFXCONTEXT NewContext;
-
-	NewContext = (GFXCONTEXT)AllocContext();
+	GFXCONTEXT NewContext {new CONTEXT_DESC {}};
 	if (NewContext)
 	{
 		/* initialize context */
@@ -126,8 +122,6 @@ FindContextPtr(GFXCONTEXT context)
 
 bool DestroyContext(GFXCONTEXT ContextRef)
 {
-	TFB_Image* img;
-
 	if (ContextRef == 0)
 	{
 		return (false);
@@ -150,13 +144,13 @@ bool DestroyContext(GFXCONTEXT ContextRef)
 	}
 #endif /* DEBUG */
 
-	img = ContextRef->FontBacking;
+	TFB_Image* img {ContextRef->FontBacking};
 	if (img)
 	{
 		TFB_DrawImage_Delete(img);
 	}
 
-	FreeContext(ContextRef);
+	delete ContextRef;
 	return true;
 }
 
@@ -317,14 +311,12 @@ SetContextOrigin(GFXPOINT orgOffset)
 FRAME
 SetContextFontEffect(FRAME EffectFrame)
 {
-	FRAME LastEffect;
-
 	if (!ContextActive())
 	{
 		return (nullptr);
 	}
 
-	LastEffect = _get_context_fonteff();
+	FRAME LastEffect {_get_context_fonteff()};
 	if (EffectFrame != LastEffect)
 	{
 		SwitchContextFontEffect(EffectFrame);
@@ -344,8 +336,8 @@ SetContextFontEffect(FRAME EffectFrame)
 
 void FixContextFontEffect(void)
 {
-	int16_t w, h;
-	TFB_Image* img;
+	int16_t w {};
+	int16_t h {};
 
 	if (!ContextActive() || (_get_context_font_backing() != 0 && !(_get_context_fbk_flags() & FBK_DIRTY)))
 	{
@@ -357,7 +349,7 @@ void FixContextFontEffect(void)
 		return;
 	}
 
-	img = _pCurContext->FontBacking;
+	TFB_Image* img {_pCurContext->FontBacking};
 	if (img)
 	{
 		TFB_DrawScreen_DeleteImage(img);
@@ -378,7 +370,7 @@ void FixContextFontEffect(void)
 			{0, 0},
 			{w, h}
 		  };
-		Color color = _get_context_fg_color();
+		const Color color = _get_context_fg_color();
 
 		TFB_DrawImage_Rect(&r, color, DRAW_REPLACE_MODE, img);
 	}

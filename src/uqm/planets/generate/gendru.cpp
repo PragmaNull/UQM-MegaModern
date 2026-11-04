@@ -29,6 +29,7 @@
 #include "libs/mathlib.h"
 
 #include <string.h>
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -62,15 +63,13 @@ const GenerateFunctions generateDruugeFunctions = {
 static bool
 GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
-		uint16_t angle;
-
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
@@ -81,11 +80,11 @@ GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 		pPlanet->data_index = DUST_WORLD;
 		pPlanet->radius = EARTH_RADIUS * 50L / 100;
 		pPlanet->NumPlanets = 0;
-		angle = HALF_CIRCLE - OCTANT;
+		const uint16_t angle {HALF_CIRCLE - OCTANT};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		pPlanet->rand_seed =
-			MAKE_DWORD(pPlanet->location.x, pPlanet->location.y);
+			uqm::makeDword(pPlanet->location.x, pPlanet->location.y);
 		ComputeSpeed(pPlanet, false, 1);
 	}
 	else
@@ -108,12 +107,12 @@ GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& IsHomeworldKnown(DRUUGE_HOME))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		utf8StringCopy(GLOBAL_SIS(PlanetName),
-					   sizeof(GLOBAL_SIS(PlanetName)),
-					   GAME_STRING(PLANET_NUMBER_BASE + 41));
+		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
+							sizeof(GLOBAL_SIS(PlanetName)),
+							GAME_STRING(PLANET_NUMBER_BASE + 41));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}
@@ -137,12 +136,12 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 			CloneShipFragment(DRUUGE_SHIP,
 							  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
 
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 			InitCommunication(DRUUGE_CONVERSATION);
-			if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
-				GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
 				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 			}
@@ -153,14 +152,11 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
 				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				CaptureStringTable(
-					LoadStringTable(DRUUGE_RUINS_STRTAB));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(DRUUGE_RUINS_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			if (GET_GAME_STATE(ROSY_SPHERE))
 			{ // Already picked up Rosy Sphere, skip the report
-				solarSys->SysInfo.PlanetInfo.DiscoveryString =
-					SetAbsStringTableIndex(
-						solarSys->SysInfo.PlanetInfo.DiscoveryString, 1);
+				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 			}
 		}
 	}

@@ -26,13 +26,12 @@
 
 #include "port.h"
 #include "libs/graphics/gfx_common.h"
-#include "libs/file.h"
+#include "libs/file/paths.h"
 #include "config.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/strlib.h"
 #include "core/log/log.h"
 #include "libs/reslib.h"
-#include "libs/memlib.h"
 #include "uqm/starmap.h"
 #include "uqm/planets/scan.h"
 #include <cstdint>
@@ -91,7 +90,7 @@ const uqm::io::Directory& gameDirectory(const uqstl::optional<uqm::io::Directory
 
 const uqm::io::Matcher& packageMatcher()
 {
-	static const uqm::io::Matcher matcher {*uqm::io::Matcher::create(uqm::io::Matcher::Kind::Regex, "\\.([zZ][iI][pP]|[uU][qQ][mM])$")};
+	const static uqm::io::Matcher matcher {*uqm::io::Matcher::create(uqm::io::Matcher::Kind::Regex, "\\.([zZ][iI][pP]|[uU][qQ][mM])$")};
 	return matcher;
 }
 } // namespace
@@ -141,7 +140,7 @@ const uqm::io::Directory& scrShotDir()
 }
 
 
-static const char* findFileInDirs(const char* locs[], int numLocs,
+const static char* findFileInDirs(const char* locs[], int numLocs,
 								  const char* file);
 static void mountContentDir(const char* contentPath);
 static void mountAddonDir(uqgsl::czstring addonDirName);
@@ -154,23 +153,17 @@ static void mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, 
 // errno will be set to 'ENOENT'.
 // Entries from 'locs' that together with 'file' are longer than
 // PATH_MAX will be ignored, except for a warning given to stderr.
-static const char* findFileInDirs(const char* locs[], int numLocs, const char* file)
+const static char* findFileInDirs(const char* locs[], int numLocs, const char* file)
 {
-	int locI;
 	char path[PATH_MAX];
-	size_t fileLen;
 
-	fileLen = strlen(file);
-	for (locI = 0; locI < numLocs; locI++)
+	const size_t fileLen {strlen(file)};
+	for (int locI {0}; locI < numLocs; locI++)
 	{
-		size_t locLen;
-		const char* loc;
-		bool needSlash;
+		const char* loc {locs[locI]};
+		const size_t locLen {strlen(loc)};
 
-		loc = locs[locI];
-		locLen = strlen(loc);
-
-		needSlash = (locLen != 0 && loc[locLen - 1] != '/');
+		const bool needSlash {(locLen != 0 && loc[locLen - 1] != '/')};
 		if (locLen + (needSlash ? 1 : 0) + fileLen + 1 >= sizeof path)
 		{
 			// This dir plus the file name is too long.
@@ -181,7 +174,7 @@ static const char* findFileInDirs(const char* locs[], int numLocs, const char* f
 		}
 
 		fmt::format_to_sz_n(path, "{}{}{}", loc, needSlash ? "/" : "", file);
-		if (fileExists(path))
+		if (uqm::fileExists(path))
 		{
 			return loc;
 		}
@@ -199,14 +192,15 @@ static const char* findFileInDirs(const char* locs[], int numLocs, const char* f
 void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirName, uqgsl::czstring execFile)
 {
 	const char* testFile = "version";
-	const char* loc;
+	const char* loc {};
+#ifdef __APPLE__
+	uqstl::string bundleContentDir {};
+#endif
 
 	if (isEmpty(contentDirName))
 	{
-		char buf[PATH_MAX];
-
-		if (expandPath(buf, PATH_MAX - 13, CONTENTDIR, EP_ALL_SYSTEM)
-			== -1)
+		const uqstl::optional<uqstl::string> expandedContentDir {uqm::expandPath(CONTENTDIR)};
+		if (!expandedContentDir)
 		{
 			uqm::log::critical("Fatal error: Invalid path to "
 							   "content files.");
@@ -215,8 +209,8 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 
 		// Try the default content locations.
 		const char* locs[] = {
-			CONTENTDIR, /* defined in config.h */
-			buf,		/* expanded CONTENTDIR */
+			CONTENTDIR,					 /* defined in config.h */
+			expandedContentDir->c_str(), /* expanded CONTENTDIR */
 			"content",
 		};
 		loc = findFileInDirs(locs, std::size(locs), testFile);
@@ -227,18 +221,9 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 		 * by looking relative to the location of the uqm executable. */
 		if (loc == nullptr)
 		{
-			char* tempDir = (char*)HMalloc(PATH_MAX);
-			char* execFileDup;
-
-			/* dirname can modify its argument, so we need a local
-			 * mutable copy of it. */
-			const uint32_t execFileLen = strlen(execFile);
-			execFileDup = (char*)HMalloc(execFileLen + 1);
-			uqm::strncpy_safe({execFileDup, execFileLen + 1}, {execFile, execFileLen});
-			fmt::format_to_sz_n(tempDir, PATH_MAX, "{}/../Resources/content", dirname(execFileDup));
-			loc = findFileInDirs((const char**)&tempDir, 1, testFile);
-			HFree(execFileDup);
-			HFree(tempDir);
+			bundleContentDir = (uqstl::filesystem::path {execFile}.parent_path() / "../Resources/content").generic_string();
+			const char* bundleDirs[] {bundleContentDir.c_str()};
+			loc = findFileInDirs(bundleDirs, 1, testFile);
 		}
 #endif
 	}
@@ -253,15 +238,15 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 		exit(EXIT_FAILURE);
 	}
 
-	if (expandPath(baseContentPath, sizeof baseContentPath, loc,
-				   EP_ALL_SYSTEM)
-		== -1)
+	const uqstl::optional<uqstl::string> expandedBase {uqm::expandPath(loc)};
+	if (!expandedBase || expandedBase->size() >= sizeof baseContentPath)
 	{
 		uqm::log::critical("Fatal error: Could not expand path to content "
 						   "directory: {}",
-						   uqm::strerror(errno));
+						   loc);
 		exit(EXIT_FAILURE);
 	}
+	uqm::strncpy_safe(baseContentPath, *expandedBase);
 
 	uqm::log::debug("Using '{}' as base content dir.", baseContentPath);
 	mountContentDir(baseContentPath);
@@ -299,13 +284,7 @@ uqstl::string resolveConfigDir(uqstl::string_view configDirOption)
 		configDirPath = CONFIGDIR;
 	}
 
-	char buf[PATH_MAX];
-	if (expandPath(buf, PATH_MAX - 13, configDirPath.c_str(), EP_ALL_SYSTEM)
-		== -1)
-	{
-		return {};
-	}
-	return buf;
+	return uqm::expandPath(configDirPath).value_or(uqstl::string {});
 }
 
 void prepareConfigDir(uqstl::string_view configDirOption)
@@ -327,33 +306,32 @@ void prepareConfigDir(uqstl::string_view configDirOption)
 	uqm::setEnvironmentValue("UQM_CONFIG_DIR", configDirName, true);
 
 	// Create the path upto the config dir, if not already existing.
-	if (mkdirhier(configDirName) == -1)
+	if (!uqm::createDirectories(configDirName))
 	{
 		exit(EXIT_FAILURE);
 	}
 
-	uqstl::error_code error {};
-	s_gameFiles->configMount = s_gameFiles->fileSystem.mountDirectory("/", configDirName, uqm::io::Access::ReadWrite, uqm::io::MountPosition::Top, nullptr, error);
-	if (!s_gameFiles->configMount)
+	uqm::io::Result<uqm::io::Mount> configMount {s_gameFiles->fileSystem.mountDirectory("/", configDirName, uqm::io::Access::ReadWrite, uqm::io::MountPosition::Top, nullptr)};
+	if (!configMount)
 	{
 		uqm::log::critical("Fatal error: Could not mount config dir: {}",
-						   error.message());
+						   configMount.error().message());
 		exit(EXIT_FAILURE);
 	}
+	s_gameFiles->configMount = uqstl::move(*configMount);
 	s_gameFiles->configDir = s_gameFiles->fileSystem.root();
 }
 
 void prepareSaveDir(void)
 {
-	char buf[PATH_MAX] {};
-
 	uqstl::string saveDirName = uqm::getEnvironmentValue("UQM_SAVE_DIR");
 	if (saveDirName.empty())
 	{
 		saveDirName = SAVEDIR;
 	}
 
-	if (expandPath(buf, PATH_MAX - 13, saveDirName.c_str(), EP_ALL_SYSTEM) == -1)
+	const uqstl::optional<uqstl::string> expanded {uqm::expandPath(saveDirName)};
+	if (!expanded)
 	{
 		// Doesn't have to be fatal, but might mess up things when saving
 		// config files.
@@ -361,11 +339,11 @@ void prepareSaveDir(void)
 		exit(EXIT_FAILURE);
 	}
 
-	saveDirName = buf;
+	saveDirName = *expanded;
 	uqm::setEnvironmentValue("UQM_SAVE_DIR", saveDirName.c_str(), true);
 
 	// Create the path upto the save dir, if not already existing.
-	if (mkdirhier(saveDirName.c_str()) == -1)
+	if (!uqm::createDirectories(saveDirName.c_str()))
 	{
 		exit(EXIT_FAILURE);
 	}
@@ -384,15 +362,14 @@ void prepareSaveDir(void)
 
 void prepareMeleeDir(void)
 {
-	char buf[PATH_MAX] {};
-
 	uqstl::string meleeDirName = uqm::getEnvironmentValue("UQM_MELEE_DIR");
 	if (meleeDirName.empty())
 	{
 		meleeDirName = MELEEDIR;
 	}
 
-	if (expandPath(buf, PATH_MAX - 13, meleeDirName.c_str(), EP_ALL_SYSTEM) == -1)
+	const uqstl::optional<uqstl::string> expanded {uqm::expandPath(meleeDirName)};
+	if (!expanded)
 	{
 		// Doesn't have to be fatal, but might mess up things when saving
 		// config files.
@@ -400,11 +377,11 @@ void prepareMeleeDir(void)
 		exit(EXIT_FAILURE);
 	}
 
-	meleeDirName = buf;
+	meleeDirName = *expanded;
 	uqm::setEnvironmentValue("UQM_MELEE_DIR", meleeDirName.c_str(), true);
 
 	// Create the path upto the save dir, if not already existing.
-	if (mkdirhier(meleeDirName.c_str()) == -1)
+	if (!uqm::createDirectories(meleeDirName.c_str()))
 	{
 		exit(EXIT_FAILURE);
 	}
@@ -421,15 +398,14 @@ void prepareMeleeDir(void)
 
 void prepareScrShotDir(void)
 {
-	char buf[PATH_MAX] {};
-
 	uqstl::string shotDirName = uqm::getEnvironmentValue("UQM_SCR_SHOT_DIR");
 	if (shotDirName.empty())
 	{
 		shotDirName = SCRSHOTDIR;
 	}
 
-	if (expandPath(buf, PATH_MAX - 13, shotDirName.c_str(), EP_ALL_SYSTEM) == -1)
+	const uqstl::optional<uqstl::string> expanded {uqm::expandPath(shotDirName)};
+	if (!expanded)
 	{
 		// Doesn't have to be fatal, but might mess up things when saving
 		// config files.
@@ -437,11 +413,11 @@ void prepareScrShotDir(void)
 		exit(EXIT_FAILURE);
 	}
 
-	shotDirName = buf;
+	shotDirName = *expanded;
 	uqm::setEnvironmentValue("UQM_SCR_SHOT_DIR", shotDirName.c_str(), true);
 
 	// Create the path upto the save dir, if not already existing.
-	if (mkdirhier(shotDirName.c_str()) == -1)
+	if (!uqm::createDirectories(shotDirName.c_str()))
 	{
 		exit(EXIT_FAILURE);
 	}
@@ -459,14 +435,14 @@ void prepareScrShotDir(void)
 static void
 mountContentDir(const char* contentPath)
 {
-	uqstl::error_code error {};
-	s_gameFiles->contentMount = s_gameFiles->fileSystem.mountDirectory("/", contentPath, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr, error);
-	if (!s_gameFiles->contentMount)
+	uqm::io::Result<uqm::io::Mount> contentMount {s_gameFiles->fileSystem.mountDirectory("/", contentPath, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr)};
+	if (!contentMount)
 	{
 		uqm::log::critical("Fatal error: Could not mount content dir: {}",
-						   error.message());
+						   contentMount.error().message());
 		exit(EXIT_FAILURE);
 	}
+	s_gameFiles->contentMount = uqstl::move(*contentMount);
 
 	s_gameFiles->contentDir = s_gameFiles->fileSystem.root();
 
@@ -481,15 +457,15 @@ void mountAddonDir(uqgsl::czstring addonDirName)
 	const uqm::io::Mount* addonsMount {&*s_gameFiles->contentMount};
 	if (!isEmpty(addonDirName))
 	{
-		uqstl::error_code error {};
-		s_gameFiles->addonsMount = s_gameFiles->fileSystem.mountDirectory("addons", addonDirName, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr, error);
-		if (!s_gameFiles->addonsMount)
+		uqm::io::Result<uqm::io::Mount> addonDirMount {s_gameFiles->fileSystem.mountDirectory("addons", addonDirName, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr)};
+		if (!addonDirMount)
 		{
 			uqm::log::warn("Warning: Could not mount addon directory: {}"
 						   ";\n\t'--addon' options are ignored.",
-						   error.message());
+						   addonDirMount.error().message());
 			return;
 		}
+		s_gameFiles->addonsMount = uqstl::move(*addonDirMount);
 		addonsMount = &*s_gameFiles->addonsMount;
 	}
 
@@ -507,8 +483,7 @@ void mountAddonDir(uqgsl::czstring addonDirName)
 
 	mountDirZips(*addonsDir, "addons", uqm::io::MountPosition::Below, *addonsMount);
 
-	uqstl::error_code error {};
-	uqstl::vector<uqstl::string> availableAddons {addonsDir->list("", uqm::io::Matcher {}, error)};
+	uqstl::vector<uqstl::string> availableAddons {addonsDir->list("", uqm::io::Matcher {}).value_or(uqstl::vector<uqstl::string> {})};
 	// count the actual addon dirs
 	uqstl::erase_if(availableAddons, [&addonsDir](const uqstl::string& name) {
 		const uqstl::optional<uqm::io::FileInfo> info {addonsDir->stat(name)};
@@ -545,28 +520,26 @@ bool isAddonAvailable(uqgsl::czstring addon_name)
 		return false;
 	}
 
-	return uqstl::find(g_addonList.begin(), g_addonList.end(), crc32b(addon_name)) != g_addonList.end();
+	return uqstl::ranges::contains(g_addonList, crc32b(addon_name));
 }
 
 static void
 mountArchive(const uqm::io::Directory& dir, const uqstl::string& name, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
-	uqstl::error_code error {};
-	if (uqstl::optional<uqm::io::Mount> mount {s_gameFiles->fileSystem.mountArchive(mountPoint, dir, name, position, &relative, error)})
+	if (uqm::io::Result<uqm::io::Mount> mount {s_gameFiles->fileSystem.mountArchive(mountPoint, dir, name, position, &relative)})
 	{
 		s_gameFiles->mounts.push_back(uqstl::move(*mount));
 	}
 	else
 	{
-		uqm::log::warn("Warning: Could not mount '{}': {}.", name, error.message());
+		uqm::log::warn("Warning: Could not mount '{}': {}.", name, mount.error().message());
 	}
 }
 
 static void
 mountDirZips(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
-	uqstl::error_code error {};
-	for (const uqstl::string& name : dir.list("", packageMatcher(), error))
+	for (const uqstl::string& name : dir.list("", packageMatcher()).value_or(uqstl::vector<uqstl::string> {}))
 	{
 		mountArchive(dir, name, mountPoint, position, relative);
 	}
@@ -585,9 +558,8 @@ mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::Mou
 
 int loadIndices(const uqm::io::Directory& dir)
 {
-	uqstl::error_code error {};
 	int numLoaded {0};
-	for (const uqstl::string& name : dir.list("", uqm::io::Matcher {uqm::io::Matcher::Kind::SuffixIgnoreCase, ".rmp"}, error))
+	for (const uqstl::string& name : dir.list("", uqm::io::Matcher {uqm::io::Matcher::Kind::SuffixIgnoreCase, ".rmp.json"}).value_or(uqstl::vector<uqstl::string> {}))
 	{
 		uqm::log::debug("Loading resource index '{}'", name);
 		LoadResourceIndex(dir, name.c_str(), nullptr);
@@ -660,8 +632,7 @@ void prepareShadowAddons(uqstl::span<const std::string> addons)
 			uqm::log::debug("Mounting shadow content of '{}' addon", c_str(addon));
 			mountDirZips(*shadowDir, "/", uqm::io::MountPosition::Above, *s_gameFiles->contentMount);
 			// Mount non-zipped shadow content
-			uqstl::error_code error {};
-			if (uqstl::optional<uqm::io::Mount> mount {s_gameFiles->fileSystem.mountTransplant("/", *shadowDir, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Above, &*s_gameFiles->contentMount, error)})
+			if (uqm::io::Result<uqm::io::Mount> mount {s_gameFiles->fileSystem.mountTransplant("/", *shadowDir, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Above, &*s_gameFiles->contentMount)})
 			{
 				s_gameFiles->mounts.push_back(uqstl::move(*mount));
 			}
@@ -669,7 +640,7 @@ void prepareShadowAddons(uqstl::span<const std::string> addons)
 			{
 				uqm::log::warn("Warning: Could not mount shadow content"
 							   " of '{}': {}.",
-							   c_str(addon), error.message());
+							   c_str(addon), mount.error().message());
 			}
 		}
 	}
@@ -702,7 +673,7 @@ void releaseGameFiles(void)
 
 bool setGammaCorrection(float gamma)
 {
-	bool set = TFB_SetGamma(gamma);
+	const bool set = TFB_SetGamma(gamma);
 	if (set)
 	{
 		uqm::log::info("Gamma correction set to {:.4}.", gamma);

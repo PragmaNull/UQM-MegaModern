@@ -33,7 +33,7 @@
 #include "state.h"
 #include "flash.h"
 #include "libs/graphics/gfx_common.h"
-#include "libs/tasklib.h"
+#include "libs/time/timelib.h"
 #include "libs/callback/alarm.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
@@ -47,16 +47,15 @@
 
 static StatMsgMode curMsgMode = SMM_DEFAULT;
 
-static const char* describeWeapon(uint8_t moduleType);
+const static char* describeWeapon(uint8_t moduleType);
 
 FRAME hdFuelFrame;
 
 void RepairSISBorder(void)
 {
 	GFXRECT r;
-	GFXCONTEXT OldContext;
 
-	OldContext = SetContext(ScreenContext);
+	GFXCONTEXT OldContext {SetContext(ScreenContext)};
 
 	BatchGraphics();
 
@@ -91,9 +90,8 @@ void ClearSISRect(uint8_t ClearFlags)
 {
 	//GFXRECT r; Unused
 	Color OldColor;
-	GFXCONTEXT OldContext;
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	OldColor = SetContextForeGroundColor(
 		BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x0A), 0x08));
 
@@ -129,11 +127,11 @@ void ClearSISRect(uint8_t ClearFlags)
 // Draw the SIS title. This is the field at the top of the screen, on the
 // right hand side, containing the coordinates in HyperSpace, or the planet
 // name in IP.
-void DrawSISTitle(char* pStr)
+void DrawSISTitle(const char* pStr)
 {
 	TEXT t;
-	GFXCONTEXT OldContext;
 	GFXRECT r;
+	uqstl::string buf {};
 
 	t.baseline.x = RES_SCALE((RES_DESCALE(SIS_TITLE_WIDTH) >> 1));
 	t.baseline.y = SIS_TITLE_HEIGHT - RES_SCALE(2);
@@ -141,7 +139,7 @@ void DrawSISTitle(char* pStr)
 	t.pStr = pStr;
 	t.CharCount = (uint16_t)~0;
 
-	OldContext = SetContext(OffScreenContext);
+	GFXCONTEXT OldContext {SetContext(OffScreenContext)};
 	r.corner.x = SIS_ORG_X + SIS_SCREEN_WIDTH - SIS_TITLE_BOX_WIDTH
 			   + RES_SCALE(1);
 	r.corner.y = SIS_ORG_Y - SIS_TITLE_HEIGHT;
@@ -155,11 +153,11 @@ void DrawSISTitle(char* pStr)
 	}
 	else
 	{
-		char* buf = pStr;
+		buf = pStr;
 
 		SetContextFont(TinyFontBold);
-		replaceChar(buf, UNICHAR_SPACE, UNICHAR_TAB);
-		t.pStr = buf;
+		uqstl::ranges::replace(buf, UNICHAR_SPACE, UNICHAR_TAB);
+		t.pStr = buf.c_str();
 		t.CharCount = (uint16_t)~0;
 	}
 
@@ -205,9 +203,9 @@ void DrawSaveInfo(SIS_STATE SisState)
 
 	if (SisState.SaveVersion > 0)
 	{
-		utf8StringCopy(TempVer, sizeof(TempVer),
-					   GAME_STRING(SAVEGAME_STRING_BASE + 4
-								   + SisState.SaveVersion));
+		uqm::utf8StringCopy(TempVer, sizeof(TempVer),
+							GAME_STRING(SAVEGAME_STRING_BASE + 4
+										+ SisState.SaveVersion));
 	}
 
 	DrawSISMessage(TempVer);
@@ -218,7 +216,7 @@ void DrawSaveInfo(SIS_STATE SisState)
 	{
 		if (SisState.Nomad != uqm::NomadMode::Off)
 		{
-			static const char* NomadModeSuffix[] {"", "-", "+"};
+			const static char* const NomadModeSuffix[] {"", "-", "+"};
 
 			fmt::format_to_sz_n(TempNom, "{}{}",
 								GAME_STRING(MAINMENU_STRING_BASE + 60),
@@ -227,13 +225,13 @@ void DrawSaveInfo(SIS_STATE SisState)
 
 		if (SisState.Extended)
 		{
-			utf8StringCopy(TempExt, sizeof(TempExt),
-						   GAME_STRING(MAINMENU_STRING_BASE + 59));
+			uqm::utf8StringCopy(TempExt, sizeof(TempExt),
+								GAME_STRING(MAINMENU_STRING_BASE + 59));
 		}
 
-		utf8StringCopy(TempDiff, sizeof(TempDiff),
-					   GAME_STRING(MAINMENU_STRING_BASE + 56
-								   + static_cast<int>(SisState.Difficulty)));
+		uqm::utf8StringCopy(TempDiff, sizeof(TempDiff),
+							GAME_STRING(MAINMENU_STRING_BASE + 56
+										+ static_cast<int>(SisState.Difficulty)));
 
 		fmt::format_to_sz_n(buf, "{} {}{}{}",
 							GAME_STRING(MAINMENU_STRING_BASE + 55), // Difficulty:
@@ -256,11 +254,10 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 					  uint16_t flags)
 {
 	char buf[256];
-	GFXCONTEXT OldContext;
 	TEXT t;
 	GFXRECT r;
 
-	OldContext = SetContext(OffScreenContext);
+	GFXCONTEXT OldContext {SetContext(OffScreenContext)};
 	// prepare the context
 	r.corner.x = SIS_ORG_X + RES_SCALE(1);
 	r.corner.y = SIS_ORG_Y - SIS_MESSAGE_HEIGHT;
@@ -274,7 +271,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 
 	if (pStr == 0)
 	{
-		switch (lowByte(GLOBAL(CurrentActivity)))
+		switch (uqm::lowByte(uqm::currentActivity()))
 		{
 			default:
 			case IN_ENCOUNTER:
@@ -293,7 +290,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 				}
 				else
 				{
-					GFXPOINT Log = MAKE_POINT(
+					const GFXPOINT Log = MAKE_POINT(
 						LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)),
 						LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y)));
 
@@ -304,7 +301,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 						&& (Log.x == ARILOU_HOME_X
 							&& Log.y == ARILOU_HOME_Y))
 					{
-						utf8StringCopy(
+						uqm::utf8StringCopy(
 							GLOBAL_SIS(PlanetName),
 							sizeof GLOBAL_SIS(PlanetName),
 							GAME_STRING(STAR_STRING_BASE + 148));
@@ -336,7 +333,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		{
 			char buf[100];
 
-			utf8StringCopy(buf, sizeof(buf), pStr);
+			uqm::utf8StringCopy(buf, sizeof(buf), pStr);
 			replaceChar(buf, UNICHAR_SPACE, UNICHAR_TAB);
 
 			t.pStr = buf;
@@ -359,12 +356,12 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 	}
 	else
 	{ // editing state
-		int i;
+		int i {};
 		GFXRECT text_r;
 		// XXX: 128 is currently safe, but it would be better to specify
 		//   the size to TextRect()
 		uint8_t char_deltas[128];
-		uint8_t* pchar_deltas;
+		const uint8_t* pchar_deltas {};
 
 		t.baseline.x = RES_SCALE(3);
 		t.align = ALIGN_LEFT;
@@ -471,7 +468,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 			{
 				t.baseline.x += (int16_t)*pchar_deltas++;
 			}
-			t.pStr = skipUTF8Chars(t.pStr, ExPos);
+			t.pStr = uqm::skipUTF8Chars(t.pStr, ExPos);
 			t.CharCount = (uint16_t)~0;
 			font_DrawText(&t);
 		}
@@ -535,9 +532,8 @@ void DrawStatusMessage(const char* pStr)
 	GFXRECT ctxRect;
 	TEXT t;
 	char buf[128];
-	GFXCONTEXT OldContext;
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	GetContextClipRect(&ctxRect);
 	// XXX: Technically, this does not need OffScreenContext. The only
 	// reason it is used is to avoid preserving StatusContext settings.
@@ -568,7 +564,7 @@ void DrawStatusMessage(const char* pStr)
 			}
 			else
 			{
-				fmt::format_to_sz_n(buf, "{} {}", MAKE_WORD(GET_GAME_STATE(MELNORME_CREDIT0), GET_GAME_STATE(MELNORME_CREDIT1)), GAME_STRING(STATUS_STRING_BASE + 0)); // "Cr"
+				fmt::format_to_sz_n(buf, "{} {}", uqm::makeWord(GET_GAME_STATE(MELNORME_CREDIT0), GET_GAME_STATE(MELNORME_CREDIT1)), GAME_STRING(STATUS_STRING_BASE + 0)); // "Cr"
 			}
 		}
 		else if (curMsgMode == SMM_RES_UNITS)
@@ -590,9 +586,9 @@ void DrawStatusMessage(const char* pStr)
 		else
 		{ // Just a date
 			DateToString(buf, sizeof buf,
-						 GLOBAL(GameClock.month_index),
-						 GLOBAL(GameClock.day_index),
-						 GLOBAL(GameClock.year_index));
+						 uqm::gameState().clock().month(),
+						 uqm::gameState().clock().day(),
+						 uqm::gameState().clock().year());
 		}
 		pStr = buf;
 	}
@@ -628,7 +624,7 @@ void DrawStatusMessage(const char* pStr)
 
 		SetContextFont(TinyFontBold);
 
-		utf8StringCopy(buf, sizeof(buf), pStr);
+		uqm::utf8StringCopy(buf, sizeof(buf), pStr);
 		replaceChar(buf, UNICHAR_SPACE, UNICHAR_TAB);
 
 		t.pStr = buf;
@@ -647,7 +643,7 @@ void DrawStatusMessage(const char* pStr)
 StatMsgMode
 SetStatusMessageMode(StatMsgMode newMode)
 {
-	StatMsgMode oldMode = curMsgMode;
+	const StatMsgMode oldMode = curMsgMode;
 	curMsgMode = newMode;
 	return oldMode;
 }
@@ -656,11 +652,10 @@ void DrawCaptainsName(bool NewGame)
 {
 	GFXRECT r;
 	TEXT t;
-	GFXCONTEXT OldContext;
-	FONT OldFont;
+	FONT OldFont {};
 	Color OldColor;
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
 		OldFont = SetContextFont(TinyFont);
@@ -698,15 +693,15 @@ void DrawCaptainsName(bool NewGame)
 
 void DrawFlagshipName(bool InStatusArea, bool NewGame)
 {
-	GFXRECT r, rHD;
+	GFXRECT r;
+	GFXRECT rHD;
 	TEXT t;
-	FONT OldFont;
+	FONT OldFont {};
 	Color OldColor;
-	GFXCONTEXT OldContext;
-	FRAME OldFontEffect;
+	GFXCONTEXT OldContext {};
 	char buf[250];
 
-	OldFontEffect = SetContextFontEffect(nullptr);
+	FRAME OldFontEffect {SetContextFontEffect(nullptr)};
 	OldColor = SetContextForeGroundColor(FLAGSHIP_NAME_BACKGROUND_COLOR);
 
 	if (InStatusArea)
@@ -736,7 +731,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 		t.pStr = buf;
 		fmt::format_to_sz_n(buf, "{} {}",
 							GAME_STRING(NAMING_STRING_BASE + 1), GLOBAL_SIS(ShipName));
-		utf8StringCopy(buf, sizeof buf, uqm::toUpperUtf8(buf).c_str());
+		uqm::utf8StringCopy(buf, sizeof buf, uqm::toUpperUtf8(buf).c_str());
 
 		if (IS_HD)
 		{
@@ -783,18 +778,21 @@ void DrawFlagshipStats(void)
 {
 	GFXRECT r;
 	TEXT t;
-	FONT OldFont;
+	FONT OldFont {};
 	Color OldColor;
-	FRAME OldFontEffect;
-	GFXCONTEXT OldContext;
+	FRAME OldFontEffect {};
+	GFXCONTEXT OldContext {};
 	char buf[128];
-	int16_t leading;
-	uint8_t i;
-	uint8_t energy_regeneration, energy_wait, turn_wait;
-	uint8_t num_dynamos, num_shivas;
-	uint16_t max_thrust;
-	uint32_t fuel;
-	int16_t base_y;
+	int16_t leading {};
+	uint8_t i {};
+	uint8_t energy_regeneration {};
+	uint8_t energy_wait {};
+	uint8_t turn_wait {};
+	uint8_t num_dynamos {};
+	uint8_t num_shivas {};
+	uint16_t max_thrust {};
+	uint32_t fuel {};
+	int16_t base_y {};
 
 	if (is3DO(uqm::UQMOptions::read().whichFonts) || IS_PAD)
 	{
@@ -946,8 +944,8 @@ void DrawFlagshipStats(void)
 	t.baseline.y += leading;
 	if (!IS_DOS)
 	{
-		unsigned int energy_per_10_sec =
-			(((100 * GameTicksPerSecond * energy_regeneration) / ((1 + energy_wait) * BattleFrameRateTicks)) + 5) / 10;
+		const unsigned int energy_per_10_sec =
+			(((100 * GameTicksPerSecond * energy_regeneration) / ((1 + energy_wait) * BattleFrameRateTicks.count())) + 5) / 10;
 		fmt::format_to_sz_n(buf, "{:2}.{:1}",
 							energy_per_10_sec / 10, energy_per_10_sec % 10);
 	}
@@ -967,7 +965,7 @@ void DrawFlagshipStats(void)
 	SetContext(OldContext);
 }
 
-static const char*
+const static char*
 describeWeapon(uint8_t moduleType)
 {
 	switch (moduleType)
@@ -992,18 +990,16 @@ describeWeapon(uint8_t moduleType)
 
 void DrawLanders(void)
 {
-	uint8_t i;
-	int16_t width;
+	int16_t width {};
 	GFXRECT r;
 	STAMP s;
-	GFXCONTEXT OldContext;
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 
 	s.frame = IncFrameIndex(FlagStatFrame);
 	GetFrameRect(s.frame, &r);
 
-	i = GLOBAL_SIS(NumLanders);
+	uint8_t i {GLOBAL_SIS(NumLanders)};
 	r.corner.x = (STATUS_WIDTH >> 1) - r.corner.x;
 	s.origin.x = r.corner.x
 			   - RES_SCALE(
@@ -1029,11 +1025,9 @@ void DrawLanders(void)
 // Draw the storage bays, below the picture of the flagship.
 void DrawStorageBays(bool Refresh)
 {
-	uint8_t i;
 	GFXRECT r;
-	GFXCONTEXT OldContext;
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 
 	r.extent.width = RES_SCALE(2);
 	r.extent.height = RES_SCALE(4);
@@ -1048,10 +1042,10 @@ void DrawStorageBays(bool Refresh)
 		r.extent.width = RES_SCALE(2);
 	}
 
-	i = (uint8_t)CountSISPieces(STORAGE_BAY);
+	uint8_t i {(uint8_t)CountSISPieces(STORAGE_BAY)};
 	if (i)
 	{
-		uint16_t j;
+		uint16_t j {};
 
 		r.corner.x = (STATUS_WIDTH >> 1)
 				   - RES_SCALE(
@@ -1162,7 +1156,7 @@ Draw_SIS(void)
 {
 	TEXT t;
 	GFXRECT r;
-	bool flat = (bool)is3DO(uqm::UQMOptions::read().whichFonts);
+	const bool flat = (bool)is3DO(uqm::UQMOptions::read().whichFonts);
 
 	GetGaugeRect(&r, false);
 	t.baseline.x = (STATUS_WIDTH >> 1);
@@ -1215,13 +1209,12 @@ static void
 DrawThrusters(void)
 {
 	STAMP s;
-	uint16_t i;
 
 	s.origin.x = RES_SCALE(1);
 	s.origin.y = 0;
-	for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
+	for (uint16_t i {0}; i < NUM_DRIVE_SLOTS; ++i)
 	{
-		uint8_t which_piece = GLOBAL_SIS(DriveSlots[i]);
+		const uint8_t which_piece = GLOBAL_SIS(DriveSlots[i]);
 		if (which_piece < EMPTY_SLOT)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 0);
@@ -1238,13 +1231,12 @@ static void
 DrawTurningJets(void)
 {
 	STAMP s;
-	uint16_t i;
 
 	s.origin.x = RES_SCALE(1);
 	s.origin.y = 0;
-	for (i = 0; i < NUM_JET_SLOTS; ++i)
+	for (uint16_t i {0}; i < NUM_JET_SLOTS; ++i)
 	{
-		uint8_t which_piece = GLOBAL_SIS(JetSlots[i]);
+		const uint8_t which_piece = GLOBAL_SIS(JetSlots[i]);
 		if (which_piece < EMPTY_SLOT)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 1);
@@ -1261,14 +1253,13 @@ static void
 DrawModules(void)
 {
 	STAMP s;
-	uint16_t i;
 
 	// This properly centers the modules.
 	s.origin.x = RES_SCALE(1);
 	s.origin.y = RES_SCALE(1);
-	for (i = 0; i < NUM_MODULE_SLOTS; ++i)
+	for (uint16_t i {0}; i < NUM_MODULE_SLOTS; ++i)
 	{
-		uint8_t which_piece = GLOBAL_SIS(ModuleSlots[i]);
+		const uint8_t which_piece = GLOBAL_SIS(ModuleSlots[i]);
 		if (which_piece < EMPTY_SLOT)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 2);
@@ -1282,9 +1273,9 @@ DrawModules(void)
 static void
 DrawSupportShips(void)
 {
-	HSHIPFRAG hStarShip;
-	HSHIPFRAG hNextShip;
-	const GFXPOINT* pship_pos;
+	HSHIPFRAG hStarShip {};
+	HSHIPFRAG hNextShip {};
+	const GFXPOINT* pship_pos {};
 	const GFXPOINT ship_pos[MAX_BUILT_SHIPS] =
 		{
 			SUPPORT_SHIP_PTS};
@@ -1293,10 +1284,9 @@ DrawSupportShips(void)
 		pship_pos = ship_pos;
 		 hStarShip; hStarShip = hNextShip, ++pship_pos)
 	{
-		SHIP_FRAGMENT* StarShipPtr;
 		STAMP s;
 
-		StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
 		hNextShip = _GetSuccLink(StarShipPtr);
 
 		s.origin = MAKE_POINT(
@@ -1318,7 +1308,7 @@ DeltaSISGauges_crewDelta(int16_t crew_delta)
 
 	if (crew_delta != UNDEFINED_DELTA)
 	{
-		uint16_t CrewCapacity;
+		uint16_t CrewCapacity {};
 
 		if (crew_delta < 0
 			&& GLOBAL_SIS(CrewEnlisted) <= (uint16_t)-crew_delta)
@@ -1362,8 +1352,7 @@ DeltaSISGauges_crewDelta(int16_t crew_delta)
 static void
 DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 {
-	uint32_t OldCoarseFuel;
-	uint32_t NewCoarseFuel;
+	uint32_t OldCoarseFuel {};
 
 	if (fuel_delta == 0)
 	{
@@ -1385,7 +1374,7 @@ DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 		}
 		else
 		{
-			uint32_t FuelCapacity = GetFuelTankCapacity();
+			const uint32_t FuelCapacity = GetFuelTankCapacity();
 			GLOBAL_SIS(FuelOnBoard) += fuel_delta;
 			if (GLOBAL_SIS(FuelOnBoard) > FuelCapacity)
 			{
@@ -1394,7 +1383,7 @@ DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 		}
 	}
 
-	NewCoarseFuel = (GLOBAL_SIS(FuelOnBoard) / (!uqm::UQMOptions::read().wholeFuel ? FUEL_TANK_SCALE : 1));
+	const uint32_t NewCoarseFuel {(GLOBAL_SIS(FuelOnBoard) / (!uqm::UQMOptions::read().wholeFuel ? FUEL_TANK_SCALE : 1))};
 	if (NewCoarseFuel != OldCoarseFuel)
 	{
 		TEXT t;
@@ -1480,14 +1469,12 @@ isUndefinedDelta(int16_t size, int32_t sdword, int integer)
 
 void DeltaSISGauges(int16_t crew_delta, int32_t fuel_delta, int resunit_delta)
 {
-	GFXCONTEXT OldContext;
-
 	if (crew_delta == 0 && fuel_delta == 0 && resunit_delta == 0)
 	{
 		return;
 	}
 
-	OldContext = SetContext(StatusContext);
+	GFXCONTEXT OldContext {SetContext(StatusContext)};
 
 	BatchGraphics();
 	if (isUndefinedDelta(crew_delta, fuel_delta, resunit_delta))
@@ -1542,7 +1529,6 @@ void DeltaSISGauges(int16_t crew_delta, int32_t fuel_delta, int resunit_delta)
 	SetContext(OldContext);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////
 // Crew
 ////////////////////////////////////////////////////////////////////////////
@@ -1571,11 +1557,10 @@ uint16_t
 GetCrewPodCapacity(void)
 {
 	uint16_t capacity = 0;
-	uint16_t slotI;
 
-	for (slotI = 0; slotI < NUM_MODULE_SLOTS; slotI++)
+	for (uint16_t slotI {0}; slotI < NUM_MODULE_SLOTS; slotI++)
 	{
-		uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
 		capacity += GetModuleCrewCapacity(moduleType);
 	}
 
@@ -1589,14 +1574,13 @@ GetCrewPodCapacity(void)
 static bool
 GetCrewPodForCrewMember(uint16_t crewNr, uint16_t* slotNr, uint16_t* seatNr)
 {
-	uint16_t slotI;
 	uint16_t capacity = 0;
 
-	slotI = NUM_MODULE_SLOTS;
+	uint16_t slotI {NUM_MODULE_SLOTS};
 	while (slotI--)
 	{
-		uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
-		uint16_t moduleCapacity = GetModuleCrewCapacity(moduleType);
+		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint16_t moduleCapacity = GetModuleCrewCapacity(moduleType);
 
 		if (crewNr < capacity + moduleCapacity)
 		{
@@ -1617,16 +1601,15 @@ GetCrewPodForCrewMember(uint16_t crewNr, uint16_t* slotNr, uint16_t* seatNr)
 uint16_t
 GetCPodCapacity(GFXPOINT* ppt)
 {
-	uint16_t crewCount;
-	uint16_t slotNr;
-	uint16_t seatNr;
+	uint16_t slotNr {};
+	uint16_t seatNr {};
 
-	uint16_t rowNr;
-	uint16_t colNr;
+	uint16_t rowNr {};
+	uint16_t colNr {};
 
-	static const Color crewRows[] = PC_CREW_COLOR_TABLE;
+	const static Color crewRows[] = PC_CREW_COLOR_TABLE;
 
-	crewCount = GetCrewCount();
+	const uint16_t crewCount {GetCrewCount()};
 	if (!GetCrewPodForCrewMember(crewCount, &slotNr, &seatNr))
 	{
 		// Crew does not fit. *ppt is unchanged.
@@ -1651,7 +1634,6 @@ GetCPodCapacity(GFXPOINT* ppt)
 
 	return GetCrewPodCapacity();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 // Storage bays
@@ -1681,11 +1663,10 @@ uint16_t
 GetStorageBayCapacity(void)
 {
 	uint16_t capacity = 0;
-	uint16_t slotI;
 
-	for (slotI = 0; slotI < NUM_MODULE_SLOTS; slotI++)
+	for (uint16_t slotI {0}; slotI < NUM_MODULE_SLOTS; slotI++)
 	{
-		uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
 		capacity += GetModuleStorageCapacity(moduleType);
 	}
 
@@ -1699,14 +1680,13 @@ GetStorageBayCapacity(void)
 static bool
 GetStorageCellForMineralUnit(uint16_t unitNr, uint16_t* slotNr, uint16_t* cellNr)
 {
-	uint16_t slotI;
 	uint16_t capacity = 0;
 
-	slotI = NUM_MODULE_SLOTS;
+	uint16_t slotI {NUM_MODULE_SLOTS};
 	while (slotI--)
 	{
-		uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
-		uint16_t moduleCapacity = GetModuleStorageCapacity(moduleType);
+		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint16_t moduleCapacity = GetModuleStorageCapacity(moduleType);
 
 		if (unitNr <= capacity + moduleCapacity)
 		{
@@ -1727,16 +1707,15 @@ GetStorageCellForMineralUnit(uint16_t unitNr, uint16_t* slotNr, uint16_t* cellNr
 uint16_t
 GetSBayCapacity(GFXPOINT* ppt)
 {
-	uint16_t massCount;
-	uint16_t slotNr;
-	uint16_t cellNr;
+	uint16_t slotNr {};
+	uint16_t cellNr {};
 
-	uint16_t rowNr;
+	uint16_t rowNr {};
 	// uint16_t colNr; Unused
 
-	static const Color colorBars[] = STORAGE_BAY_COLOR_TABLE;
+	const static Color colorBars[] = STORAGE_BAY_COLOR_TABLE;
 
-	massCount = GetElementMass();
+	const uint16_t massCount {GetElementMass()};
 	if (!GetStorageCellForMineralUnit(massCount, &slotNr, &cellNr))
 	{
 		// Mineral does not fit. *ppt is unchanged.
@@ -1761,7 +1740,6 @@ GetSBayCapacity(GFXPOINT* ppt)
 
 	return GetStorageBayCapacity();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 // Fuel tanks
@@ -1796,11 +1774,10 @@ uint32_t
 GetFuelTankCapacity(void)
 {
 	uint32_t capacity = FUEL_RESERVE;
-	uint16_t slotI;
 
-	for (slotI = 0; slotI < NUM_MODULE_SLOTS; slotI++)
+	for (uint16_t slotI {0}; slotI < NUM_MODULE_SLOTS; slotI++)
 	{
-		uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
 		capacity += GetModuleFuelCapacity(moduleType);
 	}
 
@@ -1815,15 +1792,14 @@ GetFuelTankCapacity(void)
 static bool
 GetFuelTankForFuelUnit(uint32_t unitNr, uint16_t* slotNr, uint32_t* compartmentNr)
 {
-	uint16_t slotI;
 	uint32_t capacity = FUEL_RESERVE;
 
 	assert(unitNr >= FUEL_RESERVE);
 
-	slotI = NUM_MODULE_SLOTS;
+	uint16_t slotI {NUM_MODULE_SLOTS};
 	while (slotI--)
 	{
-		uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
 
 		capacity += GetModuleFuelCapacity(moduleType);
 		if (unitNr < capacity)
@@ -1842,17 +1818,14 @@ GetFuelTankForFuelUnit(uint32_t unitNr, uint16_t* slotNr, uint32_t* compartmentN
 static uint32_t
 GetFTankScreenPos(GFXPOINT* ppt)
 {
-	uint32_t fuelAmount;
-	uint16_t slotNr;
-	uint32_t compartmentNr;
-	uint8_t moduleType;
-	uint32_t volume;
+	uint16_t slotNr {};
+	uint32_t compartmentNr {};
 
-	uint32_t rowNr;
+	uint32_t rowNr {};
 
-	static const Color fuelColors[] = FUEL_COLOR_TABLE;
+	const static Color fuelColors[] = FUEL_COLOR_TABLE;
 
-	fuelAmount = GetFuelTotal();
+	const uint32_t fuelAmount {GetFuelTotal()};
 	if (fuelAmount < FUEL_RESERVE)
 	{
 		// Fuel is in the SIS reserve, not in a fuel tank.
@@ -1866,8 +1839,8 @@ GetFTankScreenPos(GFXPOINT* ppt)
 		return 0;
 	}
 
-	moduleType = GLOBAL_SIS(ModuleSlots[slotNr]);
-	volume = GetModuleFuelCapacity(moduleType);
+	const uint8_t moduleType {GLOBAL_SIS(ModuleSlots[slotNr])};
+	const uint32_t volume {GetModuleFuelCapacity(moduleType)};
 
 	rowNr = ((volume - compartmentNr) * MAX_FUEL_BARS
 			 / HEFUEL_TANK_CAPACITY);
@@ -1890,15 +1863,14 @@ GetFTankScreenPos(GFXPOINT* ppt)
 	return volume;
 }
 
-
 ///////////////////////////////////////////////////////////////////////////
 
 uint16_t
 CountSISPieces(uint8_t piece_type)
 {
-	uint16_t i, num_pieces;
+	uint16_t i {};
 
-	num_pieces = 0;
+	uint16_t num_pieces {0};
 	if (piece_type == FUSION_THRUSTER)
 	{
 		for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
@@ -1943,8 +1915,7 @@ AutoPilotTextLogic(void)
 	GFXPOINT Falayalaralfali;
 	GFXPOINT destination;
 	GFXPOINT current_position;
-	STAR_DESC* StarPointer;
-	double target_distance;
+	double target_distance {NAN};
 	TEXT temp;
 	GFXRECT r;
 
@@ -1969,9 +1940,9 @@ AutoPilotTextLogic(void)
 	Falayalaralfali.y = ARILOU_HOME_Y;
 	current_position.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
 	current_position.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
-	destination = GLOBAL(autopilot);
+	destination = uqm::flagship().autopilot.target();
 	target_distance = ptDistance(current_position, destination) / 10;
-	StarPointer = FindStar(nullptr, &destination, 1, 1);
+	const STAR_DESC* StarPointer {FindStar(nullptr, &destination, 1, 1)};
 
 	if (inQuasiSpace() && (!pointsEqual(destination, Falayalaralfali) || (pointsEqual(destination, Falayalaralfali) && !(GET_GAME_STATE(KNOW_QS_PORTAL) & (1 << 15)))))
 	{
@@ -2044,13 +2015,13 @@ AutoPilotTextLogic(void)
 void DrawAutoPilotMessage(bool Reset)
 {
 	static bool LastPilot = false;
-	static TimeCount NextTime = 0;
+	static TimeCount NextTime {};
 	static uint32_t cycle_index = 0;
-	bool OnAutoPilot;
+	bool OnAutoPilot {};
 
-	static const Color cycle_tab[] = AUTOPILOT_COLOR_CYCLE_TABLE;
+	const static Color cycle_tab[] = AUTOPILOT_COLOR_CYCLE_TABLE;
 	const size_t cycleCount = std::size(cycle_tab);
-#define BLINK_RATE (GameTicksPerSecond * 3 / 40) // 9 @ 120 ticks/second
+#define BLINK_RATE (c_gameSecond * 3 / 40) // 9 @ 120 ticks/second
 
 	if (Reset || uqm::UQMOptions::read().bubbleWarp)
 	{ // Just a reset, not drawing
@@ -2058,8 +2029,7 @@ void DrawAutoPilotMessage(bool Reset)
 		return;
 	}
 
-	OnAutoPilot = (GLOBAL(autopilot.x) != ~0
-				   && GLOBAL(autopilot.y) != ~0)
+	OnAutoPilot = (uqm::flagship().autopilot.hasTarget())
 			   || GLOBAL_SIS(FuelOnBoard) == 0;
 
 	if (OnAutoPilot || LastPilot)
@@ -2076,12 +2046,10 @@ void DrawAutoPilotMessage(bool Reset)
 		}
 		else if (GetTimeCounter() >= NextTime)
 		{
-			if (!(GLOBAL(CurrentActivity) & CHECK_ABORT)
+			if (!(uqm::currentActivity() & CHECK_ABORT)
 				&& GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
 			{
-				GFXCONTEXT OldContext;
-
-				OldContext = SetContext(OffScreenContext);
+				GFXCONTEXT OldContext {SetContext(OffScreenContext)};
 				SetContextForeGroundColor(cycle_tab[cycle_index]);
 
 				AutoPilotTextLogic();
@@ -2102,8 +2070,8 @@ void DrawFuelInFTanks(bool isOutfit)
 {
 	GFXRECT r;
 	const uint32_t FuelVolume = GLOBAL_SIS(FuelOnBoard);
-	uint32_t capacity = GetFuelTankCapacity();
-	uint32_t volume;
+	const uint32_t capacity = GetFuelTankCapacity();
+	uint32_t volume {};
 	Color c;
 
 	if (isOutfit)
@@ -2201,14 +2169,12 @@ static void scheduleFlashAlarm(void);
 static void
 updateFlashRect(void* arg)
 {
-	uint16_t i;
-
 	if (flashContext[0] == nullptr)
 	{
 		return;
 	}
 
-	for (i = 0; i < count_r; i++)
+	for (uint16_t i {0}; i < count_r; i++)
 	{
 		Flash_process(flashContext[i]);
 	}
@@ -2219,10 +2185,9 @@ updateFlashRect(void* arg)
 static void
 scheduleFlashAlarm(void)
 {
-	TimeCount nextTime = Flash_nextTime(flashContext[0]);
-	uint32_t nextTimeMs = (nextTime / GameTicksPerSecond) * 1000 + ((nextTime % GameTicksPerSecond) * 1000 / GameTicksPerSecond);
-	// Overflow-safe conversion.
-	flashAlarm = Alarm_addAbsoluteMs(nextTimeMs, updateFlashRect, nullptr);
+	const TimeCount nextTime {Flash_nextTime(flashContext[0])};
+	const AlarmTime alarmTime {nextTime == TimeCount::max() ? AlarmTime::max() : uqstl::chrono::duration_cast<AlarmTime>(nextTime.time_since_epoch())};
+	flashAlarm = Alarm_addAbsolute(alarmTime, updateFlashRect, nullptr);
 }
 
 void SetAdditionalRect(const GFXRECT* pRect, uint16_t number)
@@ -2249,9 +2214,8 @@ void SetAdditionalRect(const GFXRECT* pRect, uint16_t number)
 
 void DumpAdditionalRect(void)
 { // Dump all additional rects
-	uint16_t i;
 
-	for (i = count_r; i > 0; i--)
+	for (uint16_t i {count_r}; i > 0; i--)
 	{
 		if (flashContext[i] != nullptr)
 		{
@@ -2269,7 +2233,7 @@ void SetFlashRect(const GFXRECT* pRect, bool pcRect)
 		{0, 0}
 	  };
 	GFXRECT temp_r;
-	uint16_t i;
+	uint16_t i {};
 
 	if (pRect != SFR_MENU_3DO && pRect != SFR_MENU_ANY
 		&& pRect != SFR_MENU_NON)
@@ -2318,8 +2282,8 @@ void SetFlashRect(const GFXRECT* pRect, bool pcRect)
 			{
 				flashContext[i] = Flash_createHighlight(ScreenContext, &flash_rect[i]);
 				Flash_setMergeFactors(flashContext[i], 3, 2, 2);
-				Flash_setSpeed(flashContext[i], 0, GameTicksPerSecond / 16, 0, GameTicksPerSecond / 16);
-				Flash_setFrameTime(flashContext[i], GameTicksPerSecond / 16);
+				Flash_setSpeed(flashContext[i], TimePeriod {}, c_gameSecond / 16, TimePeriod {}, c_gameSecond / 16);
+				Flash_setFrameTime(flashContext[i], c_gameSecond / 16);
 				Flash_setPulseBox(flashContext[i], pcRect);
 				Flash_start(flashContext[i]);
 				if (i == (count_r - 1))
@@ -2360,7 +2324,7 @@ uint16_t updateFlashRectRecursion = 0;
 
 void PreUpdateFlashRect(void)
 {
-	uint16_t i;
+	uint16_t i {};
 
 	if (flashAlarm)
 	{
@@ -2378,7 +2342,7 @@ void PreUpdateFlashRect(void)
 
 void PostUpdateFlashRect(void)
 {
-	uint16_t i;
+	uint16_t i {};
 
 	if (flashAlarm)
 	{
@@ -2397,8 +2361,6 @@ void PostUpdateFlashRect(void)
 // Stop flashing if flashing is active.
 bool PauseFlash(void)
 {
-	uint8_t i;
-
 	if (flashContext[0] != nullptr)
 	{
 		if (flashPaused)
@@ -2410,7 +2372,7 @@ bool PauseFlash(void)
 		flashAlarm = 0;
 		flashPaused = true;
 	}
-	for (i = 0; i < count_r; i++)
+	for (uint8_t i {0}; i < count_r; i++)
 	{
 		if (flashContext[i] != nullptr && Flash_getPulseBox(flashContext[i]))
 		{
@@ -2424,7 +2386,7 @@ bool PauseFlash(void)
 // Continue flashing after PauseFlash (), if flashing was active.
 void ContinueFlash(void)
 {
-	uint8_t i;
+	uint8_t i {};
 
 	if (flashPaused)
 	{

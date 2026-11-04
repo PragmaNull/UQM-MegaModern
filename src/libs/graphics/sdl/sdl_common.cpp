@@ -16,13 +16,13 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <filesystem>
+#include "core/stl/filesystem.h"
 #include <fmt/chrono.h>
 #include <fmt/format.h>
+#include "core/stl/atomic.h"
 
 #include "libs/graphics/gfx_defs.h"
 #include "sdl_common.h"
-#include "opengl.h"
 #include "pure.h"
 #include "primitives.h"
 #include "options.h"
@@ -37,7 +37,6 @@
 #include "libs/graphics/bbox.h"
 #include "port.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include "libs/vidlib.h"
 #include "uqm/units.h"
 #include "uqm/globdata.h"
@@ -49,24 +48,21 @@ SDL_Surface* TransitionScreen;
 
 SDL_Surface* SDL_Screens[TFB_GFX_NUMSCREENS];
 SDL_Surface* SDL_Screen_fps;
+bool SDL_Screen_fps_changed {};
 
 SDL_Surface* format_conv_surf = nullptr;
 
 SDL_Rect* pTransitionClipRect = nullptr;
 
-#if SDL_MAJOR_VERSION == 1
-static SDL_Rect TransitionClipRect;
-const SDL_VideoInfo* SDL_screen_info;
-#endif
 
-static volatile bool abortFlag = false;
+static uqstl::atomic<bool> abortFlag {false};
 
 uqm::GfxFlags g_gfxFlags {uqm::GfxFlags::None};
 
 TFB_GRAPHICS_BACKEND* graphics_backend = nullptr;
 
-volatile int QuitPosted = 0;
-volatile int GameActive = 1; // Track the SDL_ACTIVEEVENT state SDL_APPACTIVE
+uqstl::atomic<int> QuitPosted {0};
+uqstl::atomic<int> GameActive {1}; // Track the SDL_ACTIVEEVENT state SDL_APPACTIVE
 
 static inline bool
 IsWholeScreen(GFXRECT* r)
@@ -78,7 +74,8 @@ int TFB_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char* ren
 					 int width, int height, unsigned int* resFactor,
 					 unsigned int* windowType)
 {
-	int result, i;
+	int result {};
+	int i {};
 
 
 	/* Null out screen pointers the first time */
@@ -89,78 +86,14 @@ int TFB_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char* ren
 
 	g_gfxFlags = flags;
 
-#if SDL_MAJOR_VERSION == 1
-	// JMS_GFX: Let's read the size of the desktop so we can scale the
-	// fullscreen game according to it.
-	SDL_screen_info = SDL_GetVideoInfo();
 
-	// JMS_GFX: Upon starting the game, let's find out the resolution
-	// of the desktop.
-	if (fs_height == 0)
-	{
-		int curr_h = SDL_screen_info->current_h;
-		int curr_w = SDL_screen_info->current_w;
+	result = TFB_Pure_InitGraphics(driver, flags, renderer, width,
+								   height, *resFactor, *windowType);
 
-		// JMS_GFX: This makes it sure on certain HD 16:9 monitors
-		// that a bogus stretched 1600x1200 mode isn't used.
-		if ((curr_w == 1920 && curr_h == 1080) || (curr_h == (curr_w / 16) * 10))
-		{ // MB: fix for 16:10 resolutions
-			fs_height = curr_h;
-			fs_width = curr_w;
-		}
-		else if (curr_h > (curr_w / 4) * 3)
-		{ // MB: for monitors using 5:4 modes
-			fs_width = curr_w;
-			fs_height = (curr_w / 4) * 3;
-		}
-		else
-		{
-			fs_height = curr_h;
-			fs_width = (4 * fs_height) / 3;
-		}
-
-		// MB: Sanitising resolution factor:
-		if (fs_height <= 600 && *resFactor == HD)
-		{ // ie. probably netbook or otherwise
-			*resFactor = 0;
-		}
-
-		uqm::log::debug("fs_height {}, fs_width {}, current_w {}", fs_height, fs_width, SDL_screen_info->current_w);
-	}
-#endif
-
-	if (driver == uqm::GfxDriver::SDL_OpenGL)
-	{
-#ifdef HAVE_OPENGL
-		result = TFB_GL_InitGraphics(driver, flags, width, height,
-									 *resFactor, *windowType);
-#else
-		driver = uqm::GfxDriver::SDL_Pure;
-		uqm::log::warn("OpenGL support not compiled in,"
-					   " so using pure SDL driver");
-		result = TFB_Pure_InitGraphics(driver, flags, renderer, width,
-									   height, *resFactor, *windowType);
-#endif
-	}
-	else
-	{
-		result = TFB_Pure_InitGraphics(driver, flags, renderer, width,
-									   height, *resFactor, *windowType);
-	}
-
-#if SDL_MAJOR_VERSION == 1
-	char caption[200] {};
-	/* Other versions do this when setting up the window */
-	fmt::format_to_n(caption, sizeof(caption) - 1, "The Ur-Quan Masters v{}.{}.{} {}",
-					 UQM_MAJOR_VERSION, UQM_MINOR_VERSION,
-					 UQM_PATCH_VERSION,
-					 (*resFactor ? "HD " UQM_EXTRA_VERSION : UQM_EXTRA_VERSION));
-	SDL_WM_SetCaption(caption, nullptr);
-#endif
 
 	if (testAnyFlag(flags, uqm::GfxFlagsFullscreen))
 	{
-		SDL_ShowCursor(SDL_DISABLE);
+		SDL_HideCursor();
 	}
 
 	Init_DrawCommandQueue();
@@ -172,11 +105,9 @@ int TFB_InitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, const char* ren
 
 void TFB_UninitGraphics(void)
 {
-	int i;
-
 	Uninit_DrawCommandQueue();
 
-	for (i = 0; i < TFB_GFX_NUMSCREENS; i++)
+	for (int i {0}; i < TFB_GFX_NUMSCREENS; i++)
 	{
 		UnInit_Screen(&SDL_Screens[i]);
 	}
@@ -184,9 +115,6 @@ void TFB_UninitGraphics(void)
 	UnInit_Screen(&SDL_Screen_fps);
 
 	TFB_Pure_UninitGraphics();
-#ifdef HAVE_OPENGL
-	TFB_GL_UninitGraphics();
-#endif
 
 	UnInit_Screen(&format_conv_surf);
 }
@@ -195,10 +123,13 @@ void TFB_ProcessEvents()
 {
 	SDL_Event Event;
 
-	while (SDL_PollEvent(&Event) > 0)
+	while (SDL_PollEvent(&Event))
 	{
 		/* Run through the InputEvent filter. */
-		ProcessInputEvent(&Event);
+		if (!TFB_SDL_ImGuiEvent(&Event))
+		{
+			ProcessInputEvent(&Event);
+		}
 		/* Handle graphics and exposure events. */
 		switch (Event.type)
 		{
@@ -217,22 +148,18 @@ void TFB_ProcessEvents()
 				// TODO
 				break;
 #endif
-			case SDL_QUIT:
+			case SDL_EVENT_QUIT:
 				QuitPosted = 1;
 				break;
-#if SDL_MAJOR_VERSION == 1
-			case SDL_VIDEOEXPOSE: /* Screen needs to be redrawn */
-				TFB_SwapBuffers(TFBRedraw::Expose);
+			case SDL_EVENT_WINDOW_EXPOSED:
+				/* Screen needs to be redrawn */
+				TFB_SwapBuffers(uqm::TFBRedraw::Expose);
 				break;
-#else
-			case SDL_WINDOWEVENT:
-				if (Event.window.event == SDL_WINDOWEVENT_EXPOSED)
-				{
-					/* Screen needs to be redrawn */
-					TFB_SwapBuffers(uqm::TFBRedraw::Expose);
-				}
+			case SDL_EVENT_RENDER_TARGETS_RESET:
+			case SDL_EVENT_RENDER_DEVICE_RESET:
+				// The textures lost their contents, so upload all of the screen again.
+				TFB_SwapBuffers(uqm::TFBRedraw::Yes);
 				break;
-#endif
 			default:
 				break;
 		}
@@ -258,9 +185,11 @@ void ClearSystemRect(void)
 
 void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 {
-	static int last_fade_amount = 255, last_transition_amount = 255;
-	static int fade_amount = 255, transition_amount = 255;
-	Uint8 sfx;
+	static int last_fade_amount = 255;
+	static int last_transition_amount = 255;
+	static int fade_amount = 255;
+	static int transition_amount = 255;
+	Uint8 sfx {};
 
 	fade_amount = GetFadeAmount();
 	transition_amount = TransitionAmount;
@@ -296,17 +225,7 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 
 	if (fade_amount != 255)
 	{
-#if SDL_MAJOR_VERSION == 1
-		if (fade_amount < 255)
-		{
-			graphics_backend->color(0, 0, 0, 255 - fade_amount, nullptr);
-		}
-		else
-		{
-			graphics_backend->color(255, 255, 255,
-									fade_amount - 255, nullptr);
-		}
-#elif defined(__APPLE__)
+#if defined(__APPLE__)
 		if (fade_amount < 255)
 		{
 			graphics_backend->color(0, 0, 0, 255 - fade_amount, nullptr);
@@ -345,7 +264,7 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 #endif
 	}
 
-	// After Pause/F10 exit rework we don't need it in both SDL1 and SDL2
+	// After the Pause/F10 exit rework we don't need it
 	// TODO: delete systembox
 	/*if (system_box_active)
 	{
@@ -359,26 +278,15 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 SDL_Surface*
 TFB_DisplayFormatAlpha(SDL_Surface* surface)
 {
-	SDL_Surface* newsurf;
-	SDL_PixelFormat* dstfmt;
-	const SDL_PixelFormat* srcfmt = surface->format;
-
 	// figure out what format to use (alpha/no alpha)
-	if (surface->format->Amask)
-	{
-		dstfmt = format_conv_surf->format;
-	}
-	else
-	{
-		dstfmt = SDL_Screen->format;
-	}
+	const SDL_PixelFormat dstformat {SDL_GetPixelFormatDetails(surface->format)->Amask ? format_conv_surf->format : SDL_Screen->format};
 
-	if (srcfmt->BytesPerPixel == dstfmt->BytesPerPixel && srcfmt->Rmask == dstfmt->Rmask && srcfmt->Gmask == dstfmt->Gmask && srcfmt->Bmask == dstfmt->Bmask && srcfmt->Amask == dstfmt->Amask)
+	if (surface->format == dstformat)
 	{
 		return surface; // no conversion needed
 	}
 
-	newsurf = SDL_ConvertSurface(surface, dstfmt, surface->flags);
+	SDL_Surface* newsurf {SDL_ConvertSurface(surface, dstformat)};
 	// Colorkeys and surface-level alphas cannot work at the same time,
 	// so we need to disable one of them
 	if (TFB_HasColorKey(surface) && newsurf && TFB_HasColorKey(newsurf) && TFB_HasSurfaceAlphaMod(newsurf))
@@ -406,13 +314,29 @@ TFB_GetFPSCanvas(void)
 void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 					 SDL_Rect* dstrect, int blend_numer, int blend_denom)
 {
-	bool has_colorkey;
-	int x, y, x1, y1, x2, y2, dst_x2, dst_y2, nr, ng, nb;
-	int srcx, srcy, w, h;
-	Uint8 sr, sg, sb, dr, dg, db;
-	Uint32 src_pixval, dst_pixval, colorkey;
-	GetPixelFn src_getpix, dst_getpix;
-	PutPixelFn putpix;
+	bool has_colorkey {};
+	int x {};
+	int y {};
+	int dst_x2 {};
+	int dst_y2 {};
+	int nr {};
+	int ng {};
+	int nb {};
+	int srcx {};
+	int srcy {};
+	int w {};
+	int h {};
+	Uint8 sr {};
+	Uint8 sg {};
+	Uint8 sb {};
+	Uint8 dr {};
+	Uint8 dg {};
+	Uint8 db {};
+	Uint32 src_pixval {};
+	Uint32 dst_pixval {};
+	Uint32 colorkey {};
+	GetPixelFn src_getpix {}, dst_getpix {};
+	PutPixelFn putpix {};
 	SDL_Rect fulldst;
 
 	if (blend_numer == blend_denom)
@@ -436,8 +360,6 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 	// clip the source rectangle to the source surface
 	if (srcrect)
 	{
-		int maxw, maxh;
-
 		srcx = srcrect->x;
 		w = srcrect->w;
 		if (srcx < 0)
@@ -446,7 +368,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 			dstrect->x -= srcx;
 			srcx = 0;
 		}
-		maxw = src->w - srcx;
+		const int maxw {src->w - srcx};
 		if (maxw < w)
 		{
 			w = maxw;
@@ -460,7 +382,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 			dstrect->y -= srcy;
 			srcy = 0;
 		}
-		maxh = src->h - srcy;
+		const int maxh {src->h - srcy};
 		if (maxh < h)
 		{
 			h = maxh;
@@ -476,10 +398,11 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 
 	// clip the destination rectangle against the clip rectangle
 	{
-		SDL_Rect* clip = &dst->clip_rect;
-		int dx, dy;
+		SDL_Rect clipRect;
+		SDL_GetSurfaceClipRect(dst, &clipRect);
+		const SDL_Rect* clip = &clipRect;
 
-		dx = clip->x - dstrect->x;
+		int dx {clip->x - dstrect->x};
 		if (dx > 0)
 		{
 			w -= dx;
@@ -492,7 +415,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 			w -= dx;
 		}
 
-		dy = clip->y - dstrect->y;
+		int dy {clip->y - dstrect->y};
 		if (dy > 0)
 		{
 			h -= dy;
@@ -514,10 +437,10 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 		return;
 	}
 
-	x1 = srcx;
-	y1 = srcy;
-	x2 = srcx + w;
-	y2 = srcy + h;
+	const int x1 {srcx};
+	const int y1 {srcy};
+	const int x2 {srcx + w};
+	const int y2 {srcy + h};
 
 	if (TFB_GetColorKey(src, &colorkey) < 0)
 	{
@@ -539,7 +462,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 #if 0
 		log_add (log_Debug, "additive blit {} {}, src {} {} {} {} dst {} {},"
 				" srcbpp {}", blend_numer, blend_denom, x1, y1, x2, y2,
-				dstrect->x, dstrect->y, src->format->BitsPerPixel);
+				dstrect->x, dstrect->y, SDL_GetPixelFormatDetails(src->format)->bits_per_pixel);
 #endif
 		for (y = y1; y < y2; ++y)
 		{
@@ -556,8 +479,8 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 
 				dst_pixval = dst_getpix(dst, dst_x2, dst_y2);
 
-				SDL_GetRGB(src_pixval, src->format, &sr, &sg, &sb);
-				SDL_GetRGB(dst_pixval, dst->format, &dr, &dg, &db);
+				SDL_GetRGB(src_pixval, SDL_GetPixelFormatDetails(src->format), SDL_GetSurfacePalette(src), &sr, &sg, &sb);
+				SDL_GetRGB(dst_pixval, SDL_GetPixelFormatDetails(dst->format), SDL_GetSurfacePalette(dst), &dr, &dg, &db);
 
 				nr = sr + dr;
 				ng = sg + dg;
@@ -577,7 +500,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 				}
 
 				putpix(dst, dst_x2, dst_y2,
-					   SDL_MapRGB(dst->format, nr, ng, nb));
+					   SDL_MapSurfaceRGB(dst, nr, ng, nb));
 			}
 		}
 	}
@@ -588,7 +511,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 		log_add (log_Debug, "subtractive blit {} {}, src {} {} {} {}"
 				" dst {} {}, srcbpp {}", blend_numer, blend_denom,
 					x1, y1, x2, y2, dstrect->x, dstrect->y,
-					src->format->BitsPerPixel);
+					SDL_GetPixelFormatDetails(src->format)->bits_per_pixel);
 #endif
 		for (y = y1; y < y2; ++y)
 		{
@@ -605,8 +528,8 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 
 				dst_pixval = dst_getpix(dst, dst_x2, dst_y2);
 
-				SDL_GetRGB(src_pixval, src->format, &sr, &sg, &sb);
-				SDL_GetRGB(dst_pixval, dst->format, &dr, &dg, &db);
+				SDL_GetRGB(src_pixval, SDL_GetPixelFormatDetails(src->format), SDL_GetSurfacePalette(src), &sr, &sg, &sb);
+				SDL_GetRGB(dst_pixval, SDL_GetPixelFormatDetails(dst->format), SDL_GetSurfacePalette(dst), &dr, &dg, &db);
 
 				nr = sr - dr;
 				ng = sg - dg;
@@ -626,7 +549,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 				}
 
 				putpix(dst, dst_x2, dst_y2,
-					   SDL_MapRGB(dst->format, nr, ng, nb));
+					   SDL_MapSurfaceRGB(dst, nr, ng, nb));
 			}
 		}
 	}
@@ -634,12 +557,12 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 	{
 		// modulated blit: dst = src * (blend_numer / blend_denom)
 
-		float f = blend_numer / (float)blend_denom;
+		const float f = blend_numer / (float)blend_denom;
 #if 0
 		log_add (log_Debug, "modulated blit {} {}, f {}, src {} {} {} {}"
 				" dst {} {}, srcbpp {}\n", blend_numer, blend_denom, f,
 				x1, y1, x2, y2, dstrect->x, dstrect->y,
-				src->format->BitsPerPixel);
+				SDL_GetPixelFormatDetails(src->format)->bits_per_pixel);
 #endif
 		for (y = y1; y < y2; ++y)
 		{
@@ -654,7 +577,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 					continue;
 				}
 
-				SDL_GetRGB(src_pixval, src->format, &sr, &sg, &sb);
+				SDL_GetRGB(src_pixval, SDL_GetPixelFormatDetails(src->format), SDL_GetSurfacePalette(src), &sr, &sg, &sb);
 
 				nr = (int)(sr * f);
 				ng = (int)(sg * f);
@@ -674,7 +597,7 @@ void TFB_BlitSurface(SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst,
 				}
 
 				putpix(dst, dst_x2, dst_y2,
-					   SDL_MapRGB(dst->format, nr, ng, nb));
+					   SDL_MapSurfaceRGB(dst, nr, ng, nb));
 			}
 		}
 	}
@@ -687,7 +610,7 @@ void UnInit_Screen(SDL_Surface** screen)
 		return;
 	}
 
-	SDL_FreeSurface(*screen);
+	SDL_DestroySurface(*screen);
 	*screen = nullptr;
 }
 
@@ -695,28 +618,29 @@ void TFB_UploadTransitionScreen(GFXRECT* pRect)
 {
 	graphics_backend->uploadTransitionScreen();
 
-#if SDL_MAJOR_VERSION == 1
-	if (pRect && !IsWholeScreen(pRect))
-	{
-		TransitionClipRect.x = pRect->corner.x;
-		TransitionClipRect.y = pRect->corner.y;
-		TransitionClipRect.w = pRect->extent.width;
-		TransitionClipRect.h = pRect->extent.height;
-		pTransitionClipRect = &TransitionClipRect;
-	}
-	else
-	{
-		pTransitionClipRect = nullptr;
-	}
-#else
 	(void)pRect; /*satisfy compiler (unused parameter)*/
-#endif
 }
 
 int TFB_HasColorKey(SDL_Surface* surface)
 {
-	Uint32 key;
+	Uint32 key {};
 	return TFB_GetColorKey(surface, &key) == 0;
+}
+
+SDL_Surface* TFB_CreateSurface(int width, int height, SDL_PixelFormat format)
+{
+	SDL_Surface* surface {SDL_CreateSurface(width, height, format)};
+	if (surface && SDL_ISPIXELFORMAT_INDEXED(format) && !SDL_CreateSurfacePalette(surface))
+	{
+		SDL_DestroySurface(surface);
+		return nullptr;
+	}
+	return surface;
+}
+
+SDL_Surface* TFB_CreateSurface(int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+{
+	return TFB_CreateSurface(width, height, SDL_GetPixelFormatForMasks(depth, Rmask, Gmask, Bmask, Amask));
 }
 
 void TFB_ScreenShot(void)
@@ -746,20 +670,171 @@ void TFB_ScreenShot(void)
 
 void TFB_ClearFPSCanvas(void)
 {
-	SDL_FillRect(SDL_Screen_fps, nullptr, 0x00000000);
+	SDL_FillSurfaceRect(SDL_Screen_fps, nullptr, 0x00000000);
+	SDL_Screen_fps_changed = true;
 }
 
 void TFB_GetScreenSize(int16_t* width, int16_t* height)
 {
 	SDL_Rect bounds;
 
-#if SDL_MAJOR_VERSION == 1
-	*width = 1920;
-	*height = 1440;
-#else
-	TFB_SDL2_GetDisplaySize(&bounds);
+	TFB_SDL_GetDisplaySize(&bounds);
 
 	*width = bounds.w;
 	*height = bounds.h;
-#endif
+}
+
+static void TFB_PreQuit(void);
+
+void TFB_PreInit(void)
+{
+	const int linked {SDL_GetVersion()};
+	uqm::log::info("Initializing base SDL functionality.");
+	uqm::log::info("Using SDL version {}.{}.{} (compiled with {}.{}.{})",
+				   SDL_VERSIONNUM_MAJOR(linked), SDL_VERSIONNUM_MINOR(linked), SDL_VERSIONNUM_MICRO(linked),
+				   SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_MICRO_VERSION);
+
+	if (!SDL_Init(SDL_INIT_VIDEO))
+	{
+		uqm::log::critical("Could not initialize SDL: {}.", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+
+	atexit(TFB_PreQuit);
+}
+
+static void
+TFB_PreQuit(void)
+{
+	// Release the renderer and its GPU objects while SDL still runs.
+	TFB_Pure_UninitGraphics();
+	SDL_Quit();
+}
+
+int TFB_ReInitGraphics(uqm::GfxDriver driver, uqm::GfxFlags flags, int width, int height,
+					   unsigned int* resFactor, unsigned int* windowType)
+{
+	int result {};
+	int togglefullscreen = 0;
+
+	if (!testAnyFlag(g_gfxFlags, uqm::GfxFlagsFullscreen)
+		&& driver == GraphicsDriver && width == WindowWidth && height == WindowHeight)
+	{
+		togglefullscreen = 1;
+	}
+
+	g_gfxFlags = flags;
+
+	result = TFB_Pure_ConfigureVideo(uqm::GfxDriver::SDL_Pure, flags,
+									 width, height, togglefullscreen, *resFactor, *windowType);
+
+	if (testAnyFlag(flags, uqm::GfxFlagsFullscreen))
+	{
+		SDL_HideCursor();
+	}
+	else
+	{
+		SDL_ShowCursor();
+	}
+
+	return result;
+}
+
+bool TFB_SetGamma(float gamma)
+{
+	return TFB_SDL_GammaCorrection(gamma);
+}
+
+int TFB_HasSurfaceAlphaMod(SDL_Surface* surface)
+{
+	SDL_BlendMode blend_mode {};
+	if (!surface)
+	{
+		return 0;
+	}
+	if (!SDL_GetSurfaceBlendMode(surface, &blend_mode))
+	{
+		return 0;
+	}
+	return blend_mode == SDL_BLENDMODE_BLEND;
+}
+
+int TFB_GetSurfaceAlphaMod(SDL_Surface* surface, Uint8* alpha)
+{
+	SDL_BlendMode blend_mode {};
+	if (!surface || !alpha)
+	{
+		return -1;
+	}
+	if (SDL_GetSurfaceBlendMode(surface, &blend_mode))
+	{
+		if (blend_mode == SDL_BLENDMODE_BLEND)
+		{
+			return SDL_GetSurfaceAlphaMod(surface, alpha) ? 0 : -1;
+		}
+	}
+	*alpha = 255;
+	return 0;
+}
+
+int TFB_SetSurfaceAlphaMod(SDL_Surface* surface, Uint8 alpha)
+{
+	if (!surface)
+	{
+		return -1;
+	}
+	return SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND) && SDL_SetSurfaceAlphaMod(surface, alpha) ? 0 : -1;
+}
+
+int TFB_DisableSurfaceAlphaMod(SDL_Surface* surface)
+{
+	if (!surface)
+	{
+		return -1;
+	}
+	SDL_SetSurfaceAlphaMod(surface, 255);
+	return SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE) ? 0 : -1;
+}
+
+int TFB_GetColorKey(SDL_Surface* surface, Uint32* key)
+{
+	if (!surface || !key)
+	{
+		return -1;
+	}
+	return SDL_GetSurfaceColorKey(surface, key) ? 0 : -1;
+}
+
+int TFB_SetColorKey(SDL_Surface* surface, Uint32 key, int rleaccel)
+{
+	if (!surface)
+	{
+		return -1;
+	}
+	SDL_SetSurfaceRLE(surface, rleaccel != 0);
+	return SDL_SetSurfaceColorKey(surface, true, key) ? 0 : -1;
+}
+
+int TFB_DisableColorKey(SDL_Surface* surface)
+{
+	if (!surface)
+	{
+		return -1;
+	}
+	return SDL_SetSurfaceColorKey(surface, false, 0) ? 0 : -1;
+}
+
+int TFB_SetColors(SDL_Surface* surface, SDL_Color* colors, int firstcolor, int ncolors)
+{
+	SDL_Palette* palette {surface ? SDL_GetSurfacePalette(surface) : nullptr};
+	if (!colors || !palette)
+	{
+		return 0;
+	}
+	return SDL_SetPaletteColors(palette, colors, firstcolor, ncolors) ? 1 : 0;
+}
+
+int TFB_SupportsHardwareScaling(void)
+{
+	return 1;
 }

@@ -30,17 +30,20 @@
 uqstl::optional<uqm::io::File>
 res_OpenResFile(const uqm::io::Directory& dir, const char* filename, uqm::io::OpenMode mode)
 {
-	uqstl::error_code error {};
-	return dir.open(filename, mode, error);
+	uqm::io::Result<uqm::io::File> file {dir.open(filename, mode)};
+	if (!file)
+	{
+		return uqstl::nullopt;
+	}
+	return uqstl::move(*file);
 }
 
 uqgsl::owner<uqm::io::File*> res_NewResFile(const uqm::io::Directory& dir, const char* filename)
 {
-	uqstl::error_code error {};
-	uqstl::optional<uqm::io::File> file {dir.open(filename, uqm::io::OpenMode::Read, error)};
+	uqm::io::Result<uqm::io::File> file {dir.open(filename, uqm::io::OpenMode::Read)};
 	if (!file)
 	{
-		errno = error.default_error_condition().value();
+		errno = file.error().default_error_condition().value();
 		return nullptr;
 	}
 	return new uqm::io::File {uqstl::move(*file)};
@@ -48,8 +51,7 @@ uqgsl::owner<uqm::io::File*> res_NewResFile(const uqm::io::Directory& dir, const
 
 void* res_LoadResFile(const uqm::io::Directory& dir, const char* filename, ResourceLoadFileFun* loadFun)
 {
-	uqstl::error_code error {};
-	uqstl::optional<uqm::io::File> file {dir.open(filename, uqm::io::OpenMode::Read, error)};
+	uqm::io::Result<uqm::io::File> file {dir.open(filename, uqm::io::OpenMode::Read)};
 	if (!file)
 	{
 		return nullptr;
@@ -102,12 +104,10 @@ int PutResFileChar(char ch, uqm::io::File& fp)
 
 int PutResFileNewline(uqm::io::File& fp)
 {
-	int retval;
-
 #ifdef WIN32
 	PutResFileChar('\r', fp);
 #endif
-	retval = PutResFileChar('\n', fp);
+	const int retval {PutResFileChar('\n', fp)};
 	return (retval);
 }
 

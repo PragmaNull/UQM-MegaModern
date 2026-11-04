@@ -23,6 +23,7 @@
 #include "libs/mathlib.h"
 #include "uqm/globdata.h"
 #include <math.h>
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 6
@@ -124,11 +125,11 @@ static RACE_DESC arilou_desc =
 static uint16_t
 initialize_autoaim_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 {
-	uint16_t orig_facing;
-	int16_t delta_facing;
-	STARSHIP* StarShipPtr;
+	uint16_t orig_facing {};
+	int16_t delta_facing {};
+	STARSHIP* StarShipPtr {};
 	LASER_BLOCK LaserBlock;
-	uint16_t LaserRange = chooseIfHd(LASER_RANGE, LASER_RANGE_HD);
+	const uint16_t LaserRange = chooseIfHd(LASER_RANGE, LASER_RANGE_HD);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	LaserBlock.face = orig_facing = StarShipPtr->ShipFacing;
@@ -155,7 +156,7 @@ static void
 arilou_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state |= THRUST;
@@ -165,15 +166,13 @@ arilou_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	if (StarShipPtr->special_counter == 0)
 	{
-		EVALUATE_DESC* lpEvalDesc;
-
 		StarShipPtr->ship_input_state &= ~SPECIAL;
 
-		lpEvalDesc = &ObjectsOfConcern[ENEMY_WEAPON_INDEX];
+		const EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 		if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 6)
 		{
-			bool IsTrackingWeapon;
-			STARSHIP* EnemyStarShipPtr;
+			bool IsTrackingWeapon {};
+			STARSHIP* EnemyStarShipPtr {};
 
 			GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 			if (((EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
@@ -193,7 +192,7 @@ arilou_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			if (((lpEvalDesc->ObjectPtr->state_flags & PLAYER_SHIP)															  /* means IMMEDIATE WEAPON */
 				 || (IsTrackingWeapon && (lpEvalDesc->which_turn == 1 || (lpEvalDesc->ObjectPtr->state_flags & CREW_OBJECT))) /* FIGHTERS!!! */
 				 || PlotIntercept(lpEvalDesc->ObjectPtr, ShipPtr, 3, 0))
-				&& !(TFB_Random() & 3))
+				&& !(uqm::random().next() & 3))
 			{
 				StarShipPtr->ship_input_state &= ~(LEFT | RIGHT | THRUST | WEAPON);
 				StarShipPtr->ship_input_state |= SPECIAL;
@@ -209,7 +208,7 @@ arilou_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static void
 arilou_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (!(ElementPtr->state_flags & NONSOLID))
@@ -237,7 +236,7 @@ arilou_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->next.image.frame =
 				StarShipPtr->RaceDescPtr->ship_data.special[0];
 
-			ProcessSound(SetAbsSoundIndex(
+			ProcessSound(GetSound(
 							 /* HYPERJUMP */
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 						 ElementPtr);
@@ -247,7 +246,7 @@ arilou_preprocess(ELEMENT* ElementPtr)
 	}
 	else if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
 	{
-		uint16_t life_span;
+		uint16_t life_span {};
 
 		StarShipPtr->cur_status_flags =
 			(StarShipPtr->cur_status_flags
@@ -291,17 +290,18 @@ arilou_preprocess(ELEMENT* ElementPtr)
 			}
 			else
 			{ // JMS: Reduce the odds of teleporting into Sa-Matra.
-				if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+				if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 				{
 					int32_t dist = 0;
-					int32_t dx, dy;
+					int32_t dx {};
+					int32_t dy {};
 
 					do
 					{
 						ElementPtr->next.location.x =
-							WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+							WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 						ElementPtr->next.location.y =
-							WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+							WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 
 						dx = ((int32_t)ElementPtr->next.location.x - (LOG_SPACE_WIDTH >> 1));
 						dy = ((int32_t)ElementPtr->next.location.y - (LOG_SPACE_HEIGHT >> 1));
@@ -312,9 +312,9 @@ arilou_preprocess(ELEMENT* ElementPtr)
 				else
 				{
 					ElementPtr->next.location.x =
-						WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+						WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 					ElementPtr->next.location.y =
-						WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+						WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 				}
 			}
 		}
@@ -326,8 +326,6 @@ arilou_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_arilou(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		arilou_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -345,7 +343,7 @@ init_arilou(void)
 	arilou_desc.init_weapon_func = initialize_autoaim_laser;
 	arilou_desc.cyborg_control.intelligence_func = arilou_intelligence;
 
-	RaceDescPtr = &arilou_desc;
+	RACE_DESC* RaceDescPtr {&arilou_desc};
 
 	return (RaceDescPtr);
 }

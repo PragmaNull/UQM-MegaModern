@@ -87,13 +87,13 @@ TEST_F(StringUtilsTest, IsEmptyVariants)
 
 TEST_F(StringUtilsTest, CStrTemplates)
 {
-	uqstl::string s = "abc";
+	const uqstl::string s = "abc";
 	EXPECT_STREQ(c_str(s), "abc");
 
 	const char* c = "xyz";
 	EXPECT_STREQ(c_str<const char*>(c), "xyz");
 
-	uqstl::string_view sv = "hello";
+	const uqstl::string_view sv = "hello";
 	EXPECT_STREQ(c_str(sv), "hello");
 }
 
@@ -231,9 +231,9 @@ TEST_F(StringUtilsTest, FormatEnumNames)
 TEST_F(StringUtilsTest, StrncpySafe_BasicCopy)
 {
 	uqstl::array<char, 10> dest {};
-	uqstl::string_view src = "hello";
+	const uqstl::string_view src = "hello";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 5);
 	EXPECT_STREQ(dest.data(), "hello");
@@ -243,9 +243,9 @@ TEST_F(StringUtilsTest, StrncpySafe_BasicCopy)
 TEST_F(StringUtilsTest, StrncpySafe_ExactFit)
 {
 	uqstl::array<char, 6> dest {}; // exactly "hello" + '\0'
-	uqstl::string_view src = "hello";
+	const uqstl::string_view src = "hello";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 5);
 	EXPECT_STREQ(dest.data(), "hello");
@@ -255,9 +255,9 @@ TEST_F(StringUtilsTest, StrncpySafe_ExactFit)
 TEST_F(StringUtilsTest, StrncpySafe_Truncation)
 {
 	uqstl::array<char, 6> dest {}; // can hold 5 chars + '\0'
-	uqstl::string_view src = "hello world";
+	const uqstl::string_view src = "hello world";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 5);
 	EXPECT_STREQ(dest.data(), "hello");
@@ -268,9 +268,9 @@ TEST_F(StringUtilsTest, StrncpySafe_EmptySource)
 {
 	uqstl::array<char, 10> dest {};
 	dest.fill('x'); // fill with non-null
-	uqstl::string_view src = "";
+	const uqstl::string_view src = "";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 0);
 	EXPECT_EQ(dest[0], '\0'); // empy source should still null-terminate
@@ -279,9 +279,9 @@ TEST_F(StringUtilsTest, StrncpySafe_EmptySource)
 TEST_F(StringUtilsTest, StrncpySafe_EmptyDestination)
 {
 	uqstl::array<char, 0> dest {};
-	uqstl::string_view src = "hello";
+	const uqstl::string_view src = "hello";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 0);
 }
@@ -289,9 +289,9 @@ TEST_F(StringUtilsTest, StrncpySafe_EmptyDestination)
 TEST_F(StringUtilsTest, StrncpySafe_SingleCharBuffer)
 {
 	uqstl::array<char, 1> dest {};
-	uqstl::string_view src = "hello";
+	const uqstl::string_view src = "hello";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 0);
 	EXPECT_EQ(dest[0], '\0');
@@ -300,9 +300,9 @@ TEST_F(StringUtilsTest, StrncpySafe_SingleCharBuffer)
 TEST_F(StringUtilsTest, StrncpySafe_TwoCharBuffer)
 {
 	uqstl::array<char, 2> dest {};
-	uqstl::string_view src = "hello";
+	const uqstl::string_view src = "hello";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 1);
 	EXPECT_EQ(dest[0], 'h');
@@ -312,9 +312,9 @@ TEST_F(StringUtilsTest, StrncpySafe_TwoCharBuffer)
 TEST_F(StringUtilsTest, StrncpySafe_SourceLongerThanDest)
 {
 	uqstl::array<char, 5> dest {};
-	uqstl::string_view src = "abcdefghijklmnop";
+	const uqstl::string_view src = "abcdefghijklmnop";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 4);
 	EXPECT_STREQ(dest.data(), "abcd");
@@ -325,9 +325,9 @@ TEST_F(StringUtilsTest, StrncpySafe_SourceShorterThanDest)
 {
 	uqstl::array<char, 20> dest {};
 	dest.fill('x'); // fill with non-null to verify proper termination
-	uqstl::string_view src = "hi";
+	const uqstl::string_view src = "hi";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 2);
 	EXPECT_STREQ(dest.data(), "hi");
@@ -339,9 +339,9 @@ TEST_F(StringUtilsTest, StrncpySafe_SourceShorterThanDest)
 TEST_F(StringUtilsTest, StrncpySafe_SpecialCharacters)
 {
 	uqstl::array<char, 20> dest {};
-	uqstl::string_view src = "line1\nline2\ttab";
+	const uqstl::string_view src = "line1\nline2\ttab";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, src.size());
 	EXPECT_STREQ(dest.data(), "line1\nline2\ttab");
@@ -351,10 +351,10 @@ TEST_F(StringUtilsTest, StrncpySafe_NullTerminatorInSource)
 {
 	// string_view can contain embedded nulls
 	const char srcData[] = {'a', 'b', '\0', 'c', 'd'};
-	uqstl::string_view src(srcData, 5);
+	const uqstl::string_view src(srcData, 5);
 	uqstl::array<char, 10> dest {};
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 2);
 	// The copied data includes the embedded null
@@ -366,9 +366,9 @@ TEST_F(StringUtilsTest, StrncpySafe_NullTerminatorInSource)
 TEST_F(StringUtilsTest, StrncpySafe_MaxSizeString)
 {
 	uqstl::array<char, 100> dest {};
-	uqstl::string longSrc(99, 'a'); // 99 'a' characters
+	const uqstl::string longSrc(99, 'a'); // 99 'a' characters
 
-	size_t copied = strncpy_safe(dest, longSrc);
+	const size_t copied = strncpy_safe(dest, longSrc);
 
 	EXPECT_EQ(copied, 99);
 	EXPECT_EQ(dest[99], '\0');
@@ -378,14 +378,14 @@ TEST_F(StringUtilsTest, StrncpySafe_MaxSizeString)
 TEST_F(StringUtilsTest, StrncpySafe_OverwriteExistingData)
 {
 	uqstl::array<char, 10> dest {};
-	uqstl::string_view src1 = "hello";
-	uqstl::string_view src2 = "hi";
+	const uqstl::string_view src1 = "hello";
+	const uqstl::string_view src2 = "hi";
 
 	strncpy_safe(dest, src1);
 	EXPECT_STREQ(dest.data(), "hello");
 
 	// Overwrite with shorter string
-	size_t copied = strncpy_safe(dest, src2);
+	const size_t copied = strncpy_safe(dest, src2);
 
 	EXPECT_EQ(copied, 2);
 	EXPECT_STREQ(dest.data(), "hi");
@@ -397,9 +397,9 @@ TEST_F(StringUtilsTest, StrncpySafe_WithCStyleString)
 {
 	uqstl::array<char, 10> dest {};
 	const char* cstr = "test";
-	uqstl::string_view src(cstr);
+	const uqstl::string_view src(cstr);
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 4);
 	EXPECT_STREQ(dest.data(), "test");
@@ -408,10 +408,10 @@ TEST_F(StringUtilsTest, StrncpySafe_WithCStyleString)
 TEST_F(StringUtilsTest, StrncpySafe_WithStdString)
 {
 	uqstl::array<char, 10> dest {};
-	uqstl::string stdstr = "example";
-	uqstl::string_view src(stdstr);
+	const uqstl::string stdstr = "example";
+	const uqstl::string_view src(stdstr);
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 7);
 	EXPECT_STREQ(dest.data(), "example");
@@ -422,17 +422,17 @@ TEST_F(StringUtilsTest, StrncpySafe_ReturnValue)
 	uqstl::array<char, 5> dest {};
 
 	// When truncated, returns number actually copied (not including null)
-	size_t copied1 = strncpy_safe(dest, "abcdefgh");
+	const size_t copied1 = strncpy_safe(dest, "abcdefgh");
 	EXPECT_EQ(copied1, 4);
 
 	// When not truncated, returns source size
 	dest.fill(0);
-	size_t copied2 = strncpy_safe(dest, "abc");
+	const size_t copied2 = strncpy_safe(dest, "abc");
 	EXPECT_EQ(copied2, 3);
 
 	// Empty source
 	dest.fill(0);
-	size_t copied3 = strncpy_safe(dest, "");
+	const size_t copied3 = strncpy_safe(dest, "");
 	EXPECT_EQ(copied3, 0);
 }
 
@@ -440,9 +440,9 @@ TEST_F(StringUtilsTest, StrncpySafe_BoundaryConditions)
 {
 	// Test SIZE_MAX scenario (unlikely but important for safety)
 	uqstl::array<char, 3> dest {};
-	uqstl::string_view src = "ab";
+	const uqstl::string_view src = "ab";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 2);
 	EXPECT_STREQ(dest.data(), "ab");
@@ -452,9 +452,9 @@ TEST_F(StringUtilsTest, StrncpySafe_BoundaryConditions)
 TEST_F(StringUtilsTest, StrncpySafe_SpanFromVector)
 {
 	uqstl::vector<char> dest(10);
-	uqstl::string_view src = "vector";
+	const uqstl::string_view src = "vector";
 
-	size_t copied = strncpy_safe(uqstl::span<char>(dest), src);
+	const size_t copied = strncpy_safe(uqstl::span<char>(dest), src);
 
 	EXPECT_EQ(copied, 6);
 	EXPECT_STREQ(dest.data(), "vector");
@@ -463,9 +463,9 @@ TEST_F(StringUtilsTest, StrncpySafe_SpanFromVector)
 TEST_F(StringUtilsTest, StrncpySafe_AllWhitespace)
 {
 	uqstl::array<char, 10> dest {};
-	uqstl::string_view src = "   \t\n  ";
+	const uqstl::string_view src = "   \t\n  ";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, src.size());
 	EXPECT_STREQ(dest.data(), "   \t\n  ");
@@ -474,9 +474,9 @@ TEST_F(StringUtilsTest, StrncpySafe_AllWhitespace)
 TEST_F(StringUtilsTest, StrncpySafe_NumericStrings)
 {
 	uqstl::array<char, 15> dest {};
-	uqstl::string_view src = "1234567890";
+	const uqstl::string_view src = "1234567890";
 
-	size_t copied = strncpy_safe(dest, src);
+	const size_t copied = strncpy_safe(dest, src);
 
 	EXPECT_EQ(copied, 10);
 	EXPECT_STREQ(dest.data(), "1234567890");
@@ -485,136 +485,17 @@ TEST_F(StringUtilsTest, StrncpySafe_NumericStrings)
 TEST_F(StringUtilsTest, StrncpySafe_Appending)
 {
 	uqstl::array<char, 15> dest {};
-	uqstl::string_view src = "1234567890";
+	const uqstl::string_view src = "1234567890";
 
 	std::span<char> destSpan(dest);
-	size_t copied = strncpy_safe(destSpan, src.substr(0,5));
+	const size_t copied = strncpy_safe(destSpan, src.substr(0, 5));
 	EXPECT_EQ(copied, 5);
 	EXPECT_STREQ(dest.data(), "12345");
 
 	destSpan = destSpan.subspan(5);
-	size_t copied2 = strncpy_safe(destSpan, src.substr(5));
+	const size_t copied2 = strncpy_safe(destSpan, src.substr(5));
 	EXPECT_EQ(copied2, 5);
 	EXPECT_STREQ(dest.data(), "1234567890");
-}
-
-// ─── hashQuick64 ────────────────────────────────────────────────────────────
-
-TEST_F(StringUtilsTest, HashQuick64_EmptyStringEqualsOffsetBasis)
-{
-	// FNV-1a: empty input leaves the hash equal to the offset basis
-	constexpr uint64_t OffsetBasis = 14695981039346656037ull;
-	EXPECT_EQ(hashQuick64(""), OffsetBasis);
-}
-
-TEST_F(StringUtilsTest, HashQuick64_SingleChar)
-{
-	// Manual FNV-1a step for one byte: (OffsetBasis ^ byte) * Prime
-	constexpr uint64_t OffsetBasis = 14695981039346656037ull;
-	constexpr uint64_t Prime       = 1099511628211ull;
-	constexpr uint64_t expected    = (OffsetBasis ^ uint64_t{'a'}) * Prime;
-	EXPECT_EQ(hashQuick64("a"), expected);
-}
-
-TEST_F(StringUtilsTest, HashQuick64_Deterministic)
-{
-	EXPECT_EQ(hashQuick64("hello world"), hashQuick64("hello world"));
-	EXPECT_EQ(hashQuick64(""),            hashQuick64(""));
-}
-
-TEST_F(StringUtilsTest, HashQuick64_DifferentStringsProduceDifferentHashes)
-{
-	EXPECT_NE(hashQuick64("hello"), hashQuick64("world"));
-	EXPECT_NE(hashQuick64("abc"),   hashQuick64("abd"));
-	EXPECT_NE(hashQuick64("a"),     hashQuick64("b"));
-}
-
-TEST_F(StringUtilsTest, HashQuick64_OrderSensitive)
-{
-	// "ab" and "ba" must differ — XOR-then-multiply is order-dependent
-	EXPECT_NE(hashQuick64("ab"), hashQuick64("ba"));
-}
-
-TEST_F(StringUtilsTest, HashQuick64_CaseSensitive)
-{
-	EXPECT_NE(hashQuick64("abc"),   hashQuick64("ABC"));
-	EXPECT_NE(hashQuick64("Hello"), hashQuick64("hello"));
-}
-
-TEST_F(StringUtilsTest, HashQuick64_AcceptsStringView)
-{
-	uqstl::string_view sv = "hello";
-	EXPECT_EQ(hashQuick64(sv), hashQuick64("hello"));
-}
-
-TEST_F(StringUtilsTest, HashQuick64_ConstexprEvaluation)
-{
-	static_assert(hashQuick64("") == 14695981039346656037ull,
-		"Empty string should equal FNV-1a offset basis");
-	static_assert(hashQuick64("abc") != hashQuick64("ABC"),
-		"hashQuick64 must be case-sensitive");
-	static_assert(hashQuick64("hello") == hashQuick64("hello"),
-		"hashQuick64 must be deterministic");
-}
-
-// ─── hashQuick64CaseInsensitive ─────────────────────────────────────────────
-
-TEST_F(StringUtilsTest, HashQuick64CI_EmptyStringEqualsOffsetBasis)
-{
-	constexpr uint64_t OffsetBasis = 14695981039346656037ull;
-	EXPECT_EQ(hashQuick64CaseInsensitive(""), OffsetBasis);
-}
-
-TEST_F(StringUtilsTest, HashQuick64CI_SingleCharCaseEquivalence)
-{
-	EXPECT_EQ(hashQuick64CaseInsensitive("a"), hashQuick64CaseInsensitive("A"));
-	EXPECT_EQ(hashQuick64CaseInsensitive("z"), hashQuick64CaseInsensitive("Z"));
-}
-
-TEST_F(StringUtilsTest, HashQuick64CI_CaseEquivalence)
-{
-	EXPECT_EQ(hashQuick64CaseInsensitive("abc"),         hashQuick64CaseInsensitive("ABC"));
-	EXPECT_EQ(hashQuick64CaseInsensitive("abc"),         hashQuick64CaseInsensitive("AbC"));
-	EXPECT_EQ(hashQuick64CaseInsensitive("hello world"), hashQuick64CaseInsensitive("HELLO WORLD"));
-	EXPECT_EQ(hashQuick64CaseInsensitive("Hello"),       hashQuick64CaseInsensitive("hElLo"));
-}
-
-TEST_F(StringUtilsTest, HashQuick64CI_MatchesHashQuick64ForLowercaseInput)
-{
-	// tolower on already-lowercase chars is a no-op, so results must match
-	EXPECT_EQ(hashQuick64CaseInsensitive("abc"),         hashQuick64("abc"));
-	EXPECT_EQ(hashQuick64CaseInsensitive("hello world"), hashQuick64("hello world"));
-	EXPECT_EQ(hashQuick64CaseInsensitive(""),            hashQuick64(""));
-}
-
-TEST_F(StringUtilsTest, HashQuick64CI_NonAlphaCharsUnchangedByTolower)
-{
-	// Digits and punctuation are unaffected by tolower — results match hashQuick64
-	EXPECT_EQ(hashQuick64CaseInsensitive("123"), hashQuick64("123"));
-	EXPECT_EQ(hashQuick64CaseInsensitive("!@#"), hashQuick64("!@#"));
-}
-
-TEST_F(StringUtilsTest, HashQuick64CI_DiffersFromHashQuick64ForUppercaseInput)
-{
-	// Uppercase input folds to lowercase, so it must differ from the case-sensitive hash
-	EXPECT_NE(hashQuick64CaseInsensitive("ABC"),   hashQuick64("ABC"));
-	EXPECT_NE(hashQuick64CaseInsensitive("HELLO"), hashQuick64("HELLO"));
-}
-
-TEST_F(StringUtilsTest, HashQuick64CI_DifferentStringsStillHashDifferently)
-{
-	EXPECT_NE(hashQuick64CaseInsensitive("abc"), hashQuick64CaseInsensitive("def"));
-	EXPECT_NE(hashQuick64CaseInsensitive("ABC"), hashQuick64CaseInsensitive("DEF"));
-}
-
-TEST_F(StringUtilsTest, HashQuick64CI_ConstexprEvaluation)
-{
-	static_assert(hashQuick64CaseInsensitive("") == 14695981039346656037ull,
-		"Empty string should equal FNV-1a offset basis");
-	static_assert(hashQuick64CaseInsensitive("abc") == hashQuick64CaseInsensitive("ABC"),
-		"hashQuick64CaseInsensitive must be case-insensitive");
-	static_assert(hashQuick64CaseInsensitive("abc") == hashQuick64("abc"),
-		"Lowercase input must match case-sensitive hash");
 }
 
 // ─── tokenize (includeEmpty = true) ─────────────────────────────────────────
@@ -706,7 +587,7 @@ TEST_F(StringUtilsTest, Tokenize_CharDelim_WhitespaceDelimiter)
 
 TEST_F(StringUtilsTest, Tokenize_CharDelim_TokensAreViewsIntoOriginal)
 {
-	uqstl::string_view input = "one,two,three";
+	const uqstl::string_view input = "one,two,three";
 	uqstl::vector<uqstl::string_view> out;
 	tokenize(input, out, ',', true);
 	ASSERT_EQ(out.size(), 3u);
@@ -905,11 +786,11 @@ TEST_F(StringUtilsTest, TrimLeft_EmptyInput)
 	EXPECT_EQ(trimLeft(""), "");
 }
 
-TEST_F(StringUtilsTest, TrimLeft_AllWhitespace_ReturnsOriginal)
+TEST_F(StringUtilsTest, TrimLeft_AllWhitespace_ReturnsEmpty)
 {
-	// When no non-trim chars exist, the implementation returns the original view unchanged.
-	uqstl::string_view input {"   "};
-	EXPECT_EQ(trimLeft(input), "   ");
+	const uqstl::string_view input {"   "};
+	EXPECT_EQ(trimLeft(input), "");
+	EXPECT_EQ(trimLeft(input).data(), input.data() + input.size());
 }
 
 TEST_F(StringUtilsTest, TrimLeft_CustomTrimChars)
@@ -920,8 +801,8 @@ TEST_F(StringUtilsTest, TrimLeft_CustomTrimChars)
 
 TEST_F(StringUtilsTest, TrimLeft_ReturnsViewIntoOriginal)
 {
-	uqstl::string_view input {"   hello"};
-	uqstl::string_view result {trimLeft(input)};
+	const uqstl::string_view input {"   hello"};
+	const uqstl::string_view result {trimLeft(input)};
 	EXPECT_EQ(result.data(), input.data() + 3);
 	EXPECT_EQ(result.size(), 5u);
 }
@@ -960,11 +841,11 @@ TEST_F(StringUtilsTest, TrimRight_EmptyInput)
 	EXPECT_EQ(trimRight(""), "");
 }
 
-TEST_F(StringUtilsTest, TrimRight_AllWhitespace_ReturnsOriginal)
+TEST_F(StringUtilsTest, TrimRight_AllWhitespace_ReturnsEmpty)
 {
-	// When no non-trim chars exist, the implementation returns the original view unchanged.
-	uqstl::string_view input {"   "};
-	EXPECT_EQ(trimRight(input), "   ");
+	const uqstl::string_view input {"   "};
+	EXPECT_EQ(trimRight(input), "");
+	EXPECT_EQ(trimRight(input).data(), input.data());
 }
 
 TEST_F(StringUtilsTest, TrimRight_CustomTrimChars)
@@ -975,8 +856,8 @@ TEST_F(StringUtilsTest, TrimRight_CustomTrimChars)
 
 TEST_F(StringUtilsTest, TrimRight_ReturnsViewIntoOriginal)
 {
-	uqstl::string_view input {"hello   "};
-	uqstl::string_view result {trimRight(input)};
+	const uqstl::string_view input {"hello   "};
+	const uqstl::string_view result {trimRight(input)};
 	EXPECT_EQ(result.data(), input.data());
 	EXPECT_EQ(result.size(), 5u);
 }
@@ -1009,12 +890,10 @@ TEST_F(StringUtilsTest, Trim_EmptyInput)
 	EXPECT_EQ(trim(""), "");
 }
 
-TEST_F(StringUtilsTest, Trim_AllWhitespace_ReturnsOriginal)
+TEST_F(StringUtilsTest, Trim_AllWhitespace_ReturnsEmpty)
 {
-	// trimLeft returns the original for all-whitespace, so trimRight has the same
-	// all-whitespace input and also returns it unchanged.
-	uqstl::string_view input {"   "};
-	EXPECT_EQ(trim(input), "   ");
+	EXPECT_EQ(trim("   "), "");
+	EXPECT_EQ(trim(" \t\r\n"), "");
 }
 
 TEST_F(StringUtilsTest, Trim_InternalWhitespacePreserved)
@@ -1031,8 +910,8 @@ TEST_F(StringUtilsTest, Trim_CustomTrimChars)
 
 TEST_F(StringUtilsTest, Trim_ReturnsViewIntoOriginal)
 {
-	uqstl::string_view input {"  hello  "};
-	uqstl::string_view result {trim(input)};
+	const uqstl::string_view input {"  hello  "};
+	const uqstl::string_view result {trim(input)};
 	EXPECT_EQ(result.data(), input.data() + 2);
 	EXPECT_EQ(result.size(), 5u);
 }

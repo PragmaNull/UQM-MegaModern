@@ -68,7 +68,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 
 	if (Orbit->lpTopoData)
 	{
-		HFree(Orbit->lpTopoData);
+		delete[] Orbit->lpTopoData;
 		Orbit->lpTopoData = nullptr;
 	}
 
@@ -85,25 +85,24 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 
 	if (Orbit->TopoColors)
 	{
-		HFree(Orbit->TopoColors);
+		delete[] Orbit->TopoColors;
 		Orbit->TopoColors = nullptr;
 	}
 
 	if (Orbit->ScanColors)
 	{
-		uint16_t i;
-		for (i = 0; i < NUM_SCAN_TYPES; i++)
+		for (uint16_t i {0}; i < NUM_SCAN_TYPES; i++)
 		{
-			HFree(Orbit->ScanColors[i]);
+			delete[] Orbit->ScanColors[i];
 			Orbit->ScanColors[i] = nullptr;
 		}
-		HFree(Orbit->ScanColors);
+		delete[] Orbit->ScanColors;
 		Orbit->ScanColors = nullptr;
 	}
 
 	if (Orbit->ScratchArray)
 	{
-		HFree(Orbit->ScratchArray);
+		delete[] Orbit->ScratchArray;
 		Orbit->ScratchArray = nullptr;
 	}
 
@@ -115,25 +114,23 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 
 	if (Orbit->light_diff)
 	{
-		uint16_t j;
-		for (j = 0; j < height; j++)
+		for (uint16_t j {0}; j < height; j++)
 		{
-			HFree(Orbit->light_diff[j]);
+			delete[] Orbit->light_diff[j];
 			Orbit->light_diff[j] = nullptr;
 		}
-		HFree(Orbit->light_diff);
+		delete[] Orbit->light_diff;
 		Orbit->light_diff = nullptr;
 	}
 
 	if (Orbit->map_rotate)
 	{
-		uint16_t k;
-		for (k = 0; k < height; k++)
+		for (uint16_t k {0}; k < height; k++)
 		{
-			HFree(Orbit->map_rotate[k]);
+			delete[] Orbit->map_rotate[k];
 			Orbit->map_rotate[k] = nullptr;
 		}
-		HFree(Orbit->map_rotate);
+		delete[] Orbit->map_rotate;
 		Orbit->map_rotate = nullptr;
 	}
 
@@ -142,11 +139,11 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 
 	if (Orbit->sphereBytes)
 	{
-		HFree(Orbit->sphereBytes);
+		delete[] Orbit->sphereBytes;
 		Orbit->sphereBytes = nullptr;
 	}
 
-	DestroyColorMap(ReleaseColorMap(Orbit->sphereMap));
+	delete Orbit->sphereMap;
 	Orbit->sphereMap = 0;
 
 	Orbit->scanType = 0;
@@ -156,7 +153,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 
 	if (Orbit->ShadeColors)
 	{
-		HFree(Orbit->ShadeColors);
+		delete[] Orbit->ShadeColors;
 		Orbit->ShadeColors = nullptr;
 	}
 }
@@ -165,13 +162,12 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 static void
 CreatePlanetContext(void)
 {
-	GFXCONTEXT oldContext;
 	GFXRECT r;
 
 	assert(PlanetContext == nullptr);
 
 	// PlanetContext rect is relative to SpaceContext
-	oldContext = SetContext(SpaceContext);
+	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&r);
 
 	PlanetContext = CreateContext("PlanetContext");
@@ -195,12 +191,13 @@ DestroyPlanetContext(void)
 
 void DrawScannedObjects(bool Reversed)
 {
-	HELEMENT hElement, hNextElement;
+	HELEMENT hElement {};
+	HELEMENT hNextElement {};
 
 	for (hElement = Reversed ? GetTailElement() : GetHeadElement();
 		 hElement; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr;
+		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = Reversed ?
@@ -222,12 +219,11 @@ void DrawScannedObjects(bool Reversed)
 
 void DrawPlanetSurfaceBorder(void)
 {
-	GFXCONTEXT oldContext;
 	GFXRECT oldClipRect;
 	GFXRECT clipRect;
 	GFXRECT r;
 
-	oldContext = SetContext(SpaceContext);
+	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&oldClipRect);
 
 	// Expand the context clip-rect so that we can tweak the existing border
@@ -326,13 +322,11 @@ static void
 DrawEnterOrbitText(GFXRECT rect)
 {
 	TEXT text;
-	FONT OldFont;
-	FRAME OldFontEffect;
-	int16_t leading;
+	FRAME OldFontEffect {};
+	int16_t leading {};
 	char buf[256];
-	int16_t og_baseline_x;
 
-	OldFont = SetContextFont(MicroFont);
+	FONT OldFont {SetContextFont(MicroFont)};
 	OldFontEffect = SetContextFontEffect(
 		SetAbsFrameIndex(FontGradFrame, 12));
 
@@ -343,10 +337,10 @@ DrawEnterOrbitText(GFXRECT rect)
 	text.baseline.y += RES_SCALE(4) + leading - RES_SCALE(4);
 	text.align = ALIGN_CENTER;
 
-	og_baseline_x = text.baseline.x;
+	const int16_t og_baseline_x {text.baseline.x};
 
-	utf8StringCopy((char*)buf, sizeof(buf),
-				   GAME_STRING(NAVIGATION_STRING_BASE + 8));
+	uqm::utf8StringCopy((char*)buf, sizeof(buf),
+						GAME_STRING(NAVIGATION_STRING_BASE + 8));
 
 	text.align = ALIGN_CENTER;
 	{
@@ -377,7 +371,7 @@ void DrawOrbitMapGraphic(void)
 
 	if (uqm::UQMOptions::read().sphereType != 1)
 	{
-		bool HaveString =
+		const bool HaveString =
 			strlen(GAME_STRING(NAVIGATION_STRING_BASE + 8)) > 0;
 
 		s.frame = SetAbsFrameIndex(CaptureDrawable(
@@ -514,8 +508,7 @@ DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 // with its own bitmap (currently only for Earth)
 void LoadPlanet(FRAME SurfDefFrame)
 {
-	bool WaitMode = !(LastActivity & CHECK_LOAD);
-	PLANET_DESC* pPlanetDesc;
+	const bool WaitMode = !(LastActivity & CHECK_LOAD);
 	TimeCount sleep;
 
 #ifdef DEBUG
@@ -531,8 +524,8 @@ void LoadPlanet(FRAME SurfDefFrame)
 
 	StopMusic();
 
-	sleep = GetTimeCounter() + (GameTicksPerSecond * 6 / 5);
-	pPlanetDesc = pSolarSysState->pOrbitalDesc;
+	sleep = GetTimeCounter() + (c_gameSecond * 6 / 5);
+	PLANET_DESC* pPlanetDesc {pSolarSysState->pOrbitalDesc};
 
 	if (WaitMode)
 	{
@@ -574,7 +567,6 @@ void LoadPlanet(FRAME SurfDefFrame)
 
 void FreePlanet(void)
 {
-	uint16_t i;
 	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
 
 	UninitSphereRotation();
@@ -583,7 +575,7 @@ void FreePlanet(void)
 
 	StopMusic();
 
-	for (i = 0; i < std::size(pSolarSysState->PlanetSideFrame); ++i)
+	for (uint16_t i {0}; i < std::size(pSolarSysState->PlanetSideFrame); ++i)
 	{
 		DestroyDrawable(
 			ReleaseDrawable(pSolarSysState->PlanetSideFrame[i]));
@@ -592,16 +584,13 @@ void FreePlanet(void)
 
 	//    FreeLanderData ();
 
-	DestroyStringTable(ReleaseStringTable(pSolarSysState->XlatRef));
-	pSolarSysState->XlatRef = 0;
+	pSolarSysState->XlatTable.reset();
 	DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 	pSolarSysState->TopoFrame = 0;
 
 	if (uqm::UQMOptions::read().scanStyle == uqm::EmulationMode::PC)
 	{
-		uint16_t k;
-
-		for (k = 0; k < NUM_SCAN_TYPES; k++)
+		for (uint16_t k {0}; k < NUM_SCAN_TYPES; k++)
 		{
 			DestroyDrawable(
 				ReleaseDrawable(pSolarSysState->ScanFrame[k]));
@@ -609,14 +598,11 @@ void FreePlanet(void)
 		}
 	}
 
-	DestroyColorMap(ReleaseColorMap(pSolarSysState->OrbitalCMap));
-	pSolarSysState->OrbitalCMap = 0;
+	pSolarSysState->OrbitalCMap.reset();
 
 	DestroyOrbitStruct(Orbit, MAP_HEIGHT);
 
-	DestroyStringTable(ReleaseStringTable(
-		pSolarSysState->SysInfo.PlanetInfo.DiscoveryString));
-	pSolarSysState->SysInfo.PlanetInfo.DiscoveryString = 0;
+	pSolarSysState->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 	FreeLanderFont(&pSolarSysState->SysInfo.PlanetInfo);
 
 	// Need to make sure our own CONTEXTs are not active because
@@ -648,16 +634,15 @@ static bool
 DoPlanetOrbit(MENU_STATE* pMS)
 {
 	bool select = (bool)PulsedInputState.menu[KEY_MENU_SELECT];
-	bool handled;
 
-	if ((GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
 	{
 		return false;
 	}
 
 	// XXX: pMS actually refers to pSolarSysState->MenuState
-	handled = DoMenuChooser(pMS, PM_SCAN);
+	const bool handled {DoMenuChooser(pMS, PM_SCAN)};
 	if (handled)
 	{
 		return true;
@@ -674,14 +659,14 @@ DoPlanetOrbit(MENU_STATE* pMS)
 	{
 		case SCAN:
 			ScanSystem();
-			if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
+			if (uqm::currentActivity() & START_ENCOUNTER)
 			{ // Found Fwiffo on Pluto
 				return false;
 			}
 			break;
 		case EQUIP_DEVICE:
 			select = DevicesMenu();
-			if (GLOBAL(CurrentActivity) & START_ENCOUNTER)
+			if (uqm::currentActivity() & START_ENCOUNTER)
 			{ // Invoked Talking Pet, a Caster or Sun Device over Chmmr,
 				// or a Caster for Ilwrath
 				// Going into conversation
@@ -702,16 +687,13 @@ DoPlanetOrbit(MENU_STATE* pMS)
 			break;
 		case STARMAP:
 			{
-				bool AutoPilotSet;
-				InputFrameCallback* oldCallback;
-
 				// Deactivate planet rotation
-				oldCallback = SetInputCallback(nullptr);
+				InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
 
 				RepairSISBorder();
 
-				AutoPilotSet = StarMap();
-				if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+				const bool AutoPilotSet {StarMap()};
+				if (uqm::currentActivity() & CHECK_ABORT)
 				{
 					return false;
 				}
@@ -730,7 +712,7 @@ DoPlanetOrbit(MENU_STATE* pMS)
 			return false;
 	}
 
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		if (select)
 		{ // 3DO menu jumps to NAVIGATE after a successful submenu run
@@ -752,7 +734,7 @@ DoPlanetOrbit(MENU_STATE* pMS)
 static void
 on_input_frame(void)
 {
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		RotatePlanetSphere(true, nullptr);
 	}
@@ -761,7 +743,6 @@ on_input_frame(void)
 void PlanetOrbitMenu(void)
 {
 	MENU_STATE MenuState;
-	InputFrameCallback* oldCallback;
 
 	memset(&MenuState, 0, sizeof MenuState);
 
@@ -769,7 +750,7 @@ void PlanetOrbitMenu(void)
 
 	MenuState.CurState = SCAN;
 	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
-	oldCallback = SetInputCallback(on_input_frame);
+	InputFrameCallback* oldCallback {SetInputCallback(on_input_frame)};
 
 	MenuState.InputFunc = DoPlanetOrbit;
 	DoInput(&MenuState, true);
@@ -777,7 +758,7 @@ void PlanetOrbitMenu(void)
 	SetInputCallback(oldCallback);
 
 	SetFlashRect(nullptr, false);
-	if (!(GLOBAL(CurrentActivity) & CHECK_LOAD))
+	if (!(uqm::currentActivity() & CHECK_LOAD))
 	{
 		DrawMenuStateStrings(PM_STARMAP, -NAVIGATION);
 	}

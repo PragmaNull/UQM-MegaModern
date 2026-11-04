@@ -23,7 +23,8 @@
 
 #include <fmt/base.h>
 #include "port.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
+#include "libs/time/timelib.h"
 #include <math.h>
 
 typedef struct Color Color;
@@ -157,7 +158,7 @@ buildColorRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 static inline void
 IncreaseBrightness(uint8_t* ch, uint8_t value)
 {
-	int c;
+	int c {};
 	if (*ch < 128)
 	{
 		c = ((*ch * 255) >> 7);
@@ -416,8 +417,8 @@ ptDistance(GFXPOINT p1, GFXPOINT p2)
 static inline double
 calcDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
-	double dx = (double)x2 - (double)x1;
-	double dy = (double)y2 - (double)y1;
+	const double dx = (double)x2 - (double)x1;
+	const double dy = (double)y2 - (double)y1;
 
 	return (sqrt(pow(dx, 2) + pow(dy, 2)));
 }
@@ -516,11 +517,10 @@ typedef struct text
 extern "C" {
 #endif
 
-typedef STRING_TABLE COLORMAP_REF;
-typedef STRING COLORMAP;
+typedef uqm::StringTable* COLORMAP;
 // COLORMAPPTR is really a pointer to colortable entry structure
 // which is documented in doc/devel/strtab, .ct files section
-typedef void* COLORMAPPTR;
+const typedef void* COLORMAPPTR;
 
 #include "graphics/prim.h"
 
@@ -681,9 +681,9 @@ extern GFXRECT font_GetTextRect(TEXT* pText);
 extern void font_DrawText(TEXT* pText);
 extern void font_DrawText_Fade(TEXT* lpText, FRAME repair, bool* skip);
 extern void font_DrawTracedText(TEXT* pText, Color text, Color trace);
-extern uint8_t font_DrawTextAlt(TEXT* lpText, uint8_t swap, FONT AltFontPtr, UniChar key);
+extern uint8_t font_DrawTextAlt(TEXT* lpText, uint8_t swap, FONT AltFontPtr, uqm::UniChar key);
 extern void font_DrawTracedTextAlt(TEXT* pText, Color text, Color trace, FONT AltFontPtr,
-								   UniChar key);
+								   uqm::UniChar key);
 extern void font_DrawShadowedText(TEXT* pText, uint8_t direction,
 								  Color text_color, Color shadow_color);
 extern void DrawBatch(PRIMITIVE* pBasePrim, PRIM_LINKS PrimLinks,
@@ -708,7 +708,7 @@ extern DRAWABLE CreateDrawable(CREATE_FLAGS CreateFlags, int16_t width,
 extern bool DestroyDrawable(DRAWABLE Drawable);
 extern bool GetFrameRect(FRAME Frame, GFXRECT* pRect);
 #ifdef DEBUG
-extern const char* GetContextName(GFXCONTEXT context);
+const extern char* GetContextName(GFXCONTEXT context);
 extern GFXCONTEXT GetFirstContext(void);
 extern GFXCONTEXT GetNextContext(GFXCONTEXT context);
 extern size_t GetContextCount(void);
@@ -726,7 +726,7 @@ extern FONT SetContextFont(FONT Font);
 extern bool DestroyFont(FONT FontRef);
 // The returned pRect is relative to the context drawing origin
 extern bool TextRect(TEXT* pText, GFXRECT* pRect, uint8_t* pdelta);
-extern bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap, UniChar key, FONT AltFontPtr);
+extern bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap, uqm::UniChar key, FONT AltFontPtr);
 extern bool GetContextFontLeading(int16_t* pheight);
 extern bool GetContextFontDispHeight(int16_t* pheight);
 extern bool GetContextFontDispWidth(int16_t* pwidth);
@@ -765,25 +765,13 @@ extern DRAWABLE ReleaseDrawable(FRAME Frame);
 extern DRAWABLE GetFrameParentDrawable(FRAME Frame);
 
 extern bool SetColorMap(COLORMAPPTR ColorMapPtr);
-extern uint32_t XFormColorMap(COLORMAPPTR ColorMapPtr, int16_t TimeInterval);
-extern uint32_t FadeScreen(ScreenFadeType fadeType, int16_t TimeInterval);
+extern TimeCount XFormColorMap(COLORMAPPTR ColorMapPtr, TimePeriod TimeInterval);
+extern TimeCount FadeScreen(ScreenFadeType fadeType, TimePeriod TimeInterval);
 extern void FlushColorXForms(void);
-extern uint8_t GetColorMapTableIndex(COLORMAP map);
-#define InitColorMapResources InitStringTableResources
-#define LoadColorMapFile LoadStringTableFile
-#define LoadColorMapInstance LoadStringTableInstance
-#define CaptureColorMap CaptureStringTable
-#define ReleaseColorMap ReleaseStringTable
-#define DestroyColorMap DestroyStringTable
-#define GetColorMapRef GetStringTable
-#define GetColorMapCount GetStringTableCount
-#define GetColorMapIndex GetColorMapTableIndex //Originally used GetStringTableIndex, but there were no macro calls and it didn't do what it's supposed to do
-#define SetAbsColorMapIndex SetAbsStringTableIndex
-#define SetRelColorMapIndex SetRelStringTableIndex
-#define GetColorMapLength GetStringLengthBin
-#define CheckColorMap CheckResString
+extern uint8_t GetColorMapTableIndex(COLORMAP map, size_t index);
 
-extern COLORMAPPTR GetColorMapAddress(COLORMAP);
+// The color map 'index' of 'map'. The index wraps at the number of color maps.
+extern COLORMAPPTR GetColorMapAddress(COLORMAP map, size_t index);
 
 void SetSystemRect(const GFXRECT* pRect);
 void ClearSystemRect(void);

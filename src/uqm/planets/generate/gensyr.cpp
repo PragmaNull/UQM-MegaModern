@@ -30,6 +30,7 @@
 #include "../../starmap.h"
 #include "../../state.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 static bool GenerateSyreen_generatePlanets(SOLARSYS_STATE* solarSys);
 static bool GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,
@@ -65,13 +66,13 @@ static bool
 GenerateSyreen_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	pSunDesc->MoonByte = 0;
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -108,7 +109,7 @@ GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,
 
 	if (matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		if (!RaceDead(SYREEN_SHIP))
@@ -120,7 +121,7 @@ GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,
 			pMoonDesc->data_index = DESTROYED_STARBASE;
 		}
 
-		if (PrimeSeed || StarSeed)
+		if (uqm::isOriginalSeed() || uqm::isStarSeed())
 		{
 			pMoonDesc->radius = MIN_MOON_RADIUS;
 			pMoonDesc->location.x = COSINE(QUADRANT, pMoonDesc->radius);
@@ -142,12 +143,12 @@ GenerateSyreen_generateName(const SOLARSYS_STATE* solarSys,
 		&& (GET_GAME_STATE(SYREEN_HOME_VISITS)
 			|| GET_GAME_STATE(SYREEN_KNOW_ABOUT_MYCON)))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		utf8StringCopy(GLOBAL_SIS(PlanetName),
-					   sizeof(GLOBAL_SIS(PlanetName)),
-					   GAME_STRING(PLANET_NUMBER_BASE + 39));
+		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
+							sizeof(GLOBAL_SIS(PlanetName)),
+							GAME_STRING(PLANET_NUMBER_BASE + 39));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}
@@ -165,8 +166,8 @@ GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(RUINS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		GenerateDefault_generateOrbital(solarSys, world);
 
@@ -195,15 +196,12 @@ GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
 		else
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
-			solarSys->SysInfo.PlanetInfo.DiscoveryString =
-				CaptureStringTable(
-					LoadStringTable(SYREEN_BASE_STRTAB));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SYREEN_BASE_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 			DoDiscoveryReport(MenuSounds);
 
-			DestroyStringTable(ReleaseStringTable(
-				solarSys->SysInfo.PlanetInfo.DiscoveryString));
-			solarSys->SysInfo.PlanetInfo.DiscoveryString = 0;
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 			FreeLanderFont(&solarSys->SysInfo.PlanetInfo);
 
 			return true;

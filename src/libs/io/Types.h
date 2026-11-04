@@ -4,6 +4,8 @@
 #define UQM_LIBS_IO_TYPES_H_
 
 #include "core/stl/stl.h"
+#include "core/stl/expected.h"
+#include "core/stl/system_error.h"
 #include "core/types/enum.h"
 
 #include <cstdint>
@@ -70,6 +72,10 @@ enum class Access : uint8_t
 	ReadOnly,
 	ReadWrite,
 };
+
+// A value, or the error that prevented it.
+template <typename T>
+using Result = uqstl::expected<T, uqstl::error_code>;
 
 // The 'size' bytes at 'data'.
 inline uqstl::span<uqstl::byte> asBytes(void* data, size_t size)

@@ -27,9 +27,8 @@
 #include "globdata.h"
 #include "races.h"
 
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -37,7 +36,7 @@
 
 typedef struct
 {
-	RACE_DESC data _ALIGNED_ANY;
+	RACE_DESC data;
 } CODERES_STRUCT;
 
 typedef enum
@@ -145,52 +144,38 @@ CodeResToInitFunc(ShipCodeRes res)
 }
 
 static void
-GetCodeResData(const char* ship_id, RESOURCE_DATA* resdata)
+GetCodeResData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 {
-	uint8_t which_res;
-	void* hData;
-
-	which_res = atoi(ship_id);
-	hData = HMalloc(sizeof(CODERES_STRUCT));
-	if (hData)
+	const int64_t* const ship_id {uqstl::get_if<int64_t>(&arg)};
+	if (ship_id == nullptr)
 	{
-		RaceDescInitFunc initFunc = CodeResToInitFunc((ShipCodeRes)which_res);
-		RACE_DESC* RDPtr = (initFunc == nullptr) ? nullptr : (*initFunc)();
-		if (RDPtr == 0)
-		{
-			HFree(hData);
-			hData = 0;
-		}
-		else
-		{
-			CODERES_STRUCT* cs;
-
-			cs = (CODERES_STRUCT*)hData;
-			cs->data = *RDPtr; // Structure assignment.
-		}
+		uqm::log::warn("A SHIP resource has no number.");
+		resdata->ptr = nullptr;
+		return;
 	}
-	resdata->ptr = hData;
+	const auto which_res {static_cast<uint8_t>(*ship_id)};
+	RaceDescInitFunc initFunc = CodeResToInitFunc((ShipCodeRes)which_res);
+	const RACE_DESC* RDPtr = (initFunc == nullptr) ? nullptr : (*initFunc)();
+	resdata->ptr = RDPtr ? new CODERES_STRUCT {*RDPtr} : nullptr;
 }
 
 static bool
 _ReleaseCodeResData(void* data)
 {
-	HFree(data);
+	delete static_cast<CODERES_STRUCT*>(data);
 	return true;
 }
 
 bool InstallCodeResType()
 {
 	return (InstallResTypeVectors("SHIP",
-								  GetCodeResData, _ReleaseCodeResData, nullptr));
+								  GetCodeResData, _ReleaseCodeResData));
 }
 
 
 void* LoadCodeResInstance(RESOURCE res)
 {
-	void* hData;
-
-	hData = res_GetResource(res);
+	void* hData {res_GetResource(res)};
 	if (hData)
 	{
 		res_DetachResource(res);
@@ -202,22 +187,20 @@ void* LoadCodeResInstance(RESOURCE res)
 
 bool DestroyCodeRes(void* hCode)
 {
-	HFree(hCode);
+	delete static_cast<CODERES_STRUCT*>(hCode);
 	return true;
 }
 
 
 void* CaptureCodeRes(void* hCode, void* pData, void** ppLocData)
 {
-	CODERES_STRUCT* cs;
-
 	if (hCode == nullptr)
 	{
 		uqm::log::critical("dummy.c::CaptureCodeRes() hCode==nullptr! FATAL!");
 		return (nullptr);
 	}
 
-	cs = (CODERES_STRUCT*)hCode;
+	CODERES_STRUCT* cs {(CODERES_STRUCT*)hCode};
 	*ppLocData = &cs->data;
 
 	(void)pData; /* Satisfying compiler (unused parameter) */

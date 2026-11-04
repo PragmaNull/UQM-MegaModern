@@ -7,13 +7,13 @@
 #include <EASTL/ring_buffer.h>
 #else
 
-#include <array>
+#include "core/stl/array.h"
 #include <cstddef>
-#include <iterator>
-#include <stdexcept>
-#include <type_traits>
+#include "core/stl/iterator.h"
+#include "core/stl/stdexcept.h"
+#include "core/stl/stl.h"
 
-#include "core/misc/bittricks.h"
+#include "core/stl/bit.h"
 
 namespace std
 {
@@ -26,7 +26,7 @@ class ring_buffer
 
 	[[nodiscard]] static constexpr size_t wrapIndex(const size_t n) noexcept
 	{
-		if constexpr (uqm::isPowerOfTwo(N))
+		if constexpr (uqstl::has_single_bit(N))
 		{
 			return n & Pow2SizeMask;
 		}

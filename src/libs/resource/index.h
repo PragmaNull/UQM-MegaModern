@@ -23,22 +23,24 @@ typedef struct resource_handlers ResourceHandlers;
 typedef struct resource_desc ResourceDesc;
 
 #include <stdio.h>
-#include <string>
+#include "core/stl/string.h"
 #include "core/stl/map.h"
 #include "libs/reslib.h"
 
 struct resource_handlers
 {
 	const char* resType;
+	// One of loadFun and textLoadFun is set.
 	ResourceLoadFun* loadFun;
+	ResourceTextLoadFun* textLoadFun;
 	ResourceFreeFun* freeFun;
-	ResourceStringFun* toString;
 };
 
 struct resource_desc
 {
 	RESOURCE res_id;
-	char* fname;
+	// STRING values point into it.
+	ResourceArg arg;
 	ResourceHandlers* vtable;
 	RESOURCE_DATA resdata;
 	// refcount is rudimentary as nothing really frees the descriptors

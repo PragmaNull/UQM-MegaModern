@@ -26,58 +26,50 @@
 #include "libs/reslib.h"
 #include "libs/io/Path.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include "libs/graphics/tfb_draw.h"
 #include "libs/graphics/drawable.h"
 #include "libs/graphics/font.h"
-typedef struct anidata
-{
-	int transparent_color;
-	int colormap_index;
-	int hotspot_x;
-	int hotspot_y;
-} AniData;
+#include "libs/graphics/anifile.h"
+#include "libs/graphics/fontfile.h"
+#include "libs/file/textfile.h"
+#include <fmt/format.h>
 
 
 static void
-process_image(FRAME FramePtr, TFB_Canvas img[], AniData* ani, int cel_ct)
+process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int cel_ct)
 {
-	TFB_Image* tfbimg;
-	int hx, hy;
-
 	FramePtr->Type = ROM_DRAWABLE;
 	FramePtr->Index = cel_ct;
 
 	// handle transparency cases
 	if (TFB_DrawCanvas_IsPaletted(img[cel_ct]))
 	{ // indexed color image
-		if (ani[cel_ct].transparent_color >= 0)
+		if (ani[cel_ct].transparentColor >= 0)
 		{
 			TFB_DrawCanvas_SetTransparentIndex(img[cel_ct],
-											   ani[cel_ct].transparent_color, false);
+											   ani[cel_ct].transparentColor, false);
 		}
 	}
 	else
 	{ // special transparency cases for truecolor images
-		if (ani[cel_ct].transparent_color == 0)
+		if (ani[cel_ct].transparentColor == 0)
 		{ // make RGB=0,0,0 transparent
-			Color color = {0, 0, 0, 0};
+			const Color color = {0, 0, 0, 0};
 			TFB_DrawCanvas_SetTransparentColor(img[cel_ct], color, false);
 		}
 	}
-	if (ani[cel_ct].transparent_color == -1)
-	{ // enforce -1 to mean 'no transparency'
+	if (ani[cel_ct].transparentColor == uqm::c_aniTransparencyNone)
+	{
 		TFB_DrawCanvas_SetTransparentIndex(img[cel_ct], -1, false);
-		// set transparent_color == -2 to use PNG tRNS transparency
 	}
 
-	hx = ani[cel_ct].hotspot_x;
-	hy = ani[cel_ct].hotspot_y;
+	const int hx {ani[cel_ct].hotspotX};
+	const int hy {ani[cel_ct].hotspotY};
 
 	FramePtr->image = TFB_DrawImage_New(img[cel_ct]);
 
-	tfbimg = FramePtr->image;
-	tfbimg->colormap_index = ani[cel_ct].colormap_index;
+	TFB_Image* tfbimg {FramePtr->image};
+	tfbimg->colormap_index = ani[cel_ct].colormapIndex;
 	img[cel_ct] = tfbimg->NormalImg;
 
 	FramePtr->HotSpot = MAKE_HOT_SPOT(hx, hy);
@@ -111,15 +103,14 @@ process_image(FRAME FramePtr, TFB_Canvas img[], AniData* ani, int cel_ct)
 static void
 processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
 {
-	uint8_t* newdata;
-	size_t dpitch;
+	size_t dpitch {};
 
 	TFB_DrawCanvas_GetExtent(canvas, &CharPtr->extent);
 
 	// Currently, each font char has its own separate data
 	// but that can change to common mem area
 	dpitch = CharPtr->extent.width;
-	newdata = (uint8_t*)HMalloc(dpitch * CharPtr->extent.height * sizeof(uint8_t));
+	uint8_t* newdata {new uint8_t[dpitch * CharPtr->extent.height]};
 	TFB_DrawCanvas_GetFontCharData(canvas, newdata, dpitch);
 
 	CharPtr->data = newdata;
@@ -158,183 +149,64 @@ processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
 
 void* _GetCelData(const ResourceFile& resource)
 {
-	uqm::io::File* const fp {&resource.file};
-	const uint32_t length {resource.length};
-
-	int cel_total, cel_index, n;
-	uint32_t opos;
-	char CurrentLine[1024], filename[PATH_MAX];
-	TFB_Canvas* img;
-	AniData* ani;
-	DRAWABLE Drawable;
-	uqstl::optional<uqm::io::Directory> aniDir {};
-	uqstl::optional<uqm::io::File> zippedAniFile {};
-	uqm::io::File* aniFile {fp};
-
-	opos = fp->tell();
-
+	const auto text {readResourceText(resource)};
+	auto frames {text ? uqm::aniFromJson(*text) : uqstl::nullopt};
+	if (!frames || frames->empty())
 	{
-		uint8_t buf[4] = {0, 0, 0, 0};
-		uint32_t header;
-
-		const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
-		n = parent.empty() ? 0 : static_cast<int>(parent.size()) + 1;
-
-		fp->read(uqstl::as_writable_bytes(uqstl::span {buf}));
-		header = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
-		if (header == 0x04034b50)
-		{
-			// A zipped ani file holds the ani file with the same name, and its images.
-			uqstl::error_code error {};
-			aniDir = uqm::gameFileSystem().openArchive(resource.dir, resource.path, error);
-			if (aniDir)
-			{
-				zippedAniFile = aniDir->open(uqm::io::path::fileName(resource.path), uqm::io::OpenMode::Read, error);
-			}
-			if (!zippedAniFile)
-			{
-				uqm::log::warn("Couldn't open zipped '{}': {}", resource.path, error.message());
-				return nullptr;
-			}
-			aniFile = &*zippedAniFile;
-			opos = 0;
-			n = 0;
-		}
-		else
-		{
-			// unpacked ani file
-			uqm::strncpy_safe(filename, {resource.path.data(), static_cast<uint32_t>(n)});
-			aniFile = fp;
-			aniDir = resource.dir;
-		}
-	}
-
-	cel_total = 0;
-	aniFile->seek(opos, uqm::io::SeekFrom::Start);
-	while (aniFile->readLine(CurrentLine))
-	{
-		++cel_total;
-	}
-
-	img = (TFB_Canvas*)HMalloc(sizeof(TFB_Canvas) * cel_total);
-	ani = (AniData*)HMalloc(sizeof(AniData) * cel_total);
-	if (!img || !ani)
-	{
-		uqm::log::warn("Couldn't allocate space for '{}'", resource.path);
-		HFree(img);
-		HFree(ani);
+		uqm::log::warn("Couldn't get cel data for '{}'", resource.path);
 		return nullptr;
 	}
 
-	cel_index = 0;
-	aniFile->seek(opos, uqm::io::SeekFrom::Start);
-	while (aniFile->readLine(CurrentLine) && cel_index < cel_total)
+	const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
+	const auto count {static_cast<int>(frames->size())};
+	uqstl::vector<TFB_Canvas> img(frames->size());
+	for (int i {0}; i < count; ++i)
 	{
-		if (auto result {scn::scan<uqstl::string, int, int, int, int>(CurrentLine, "{} {} {} {} {}")})
+		const uqstl::string path {uqm::io::path::join(parent, (*frames)[i].image)};
+		img[i] = TFB_DrawCanvas_LoadFromFile(resource.dir, path.c_str());
+		if (img[i] == nullptr)
 		{
-			const auto& [filename_str, transparent_color, colormap_index, hotspot_x, hotspot_y] = result->values();
-			uqm::strncpy_safe({&filename[n], sizeof(filename) - n}, filename_str);
-			ani[cel_index].transparent_color = transparent_color;
-			ani[cel_index].colormap_index = colormap_index;
-			ani[cel_index].hotspot_x = hotspot_x;
-			ani[cel_index].hotspot_y = hotspot_y;
-		}
-		else
-		{
-			break;
-		}
-
-		img[cel_index] = TFB_DrawCanvas_LoadFromFile(*aniDir, filename);
-		if (img[cel_index] == nullptr)
-		{
-			const char* err;
-
-			err = TFB_DrawCanvas_GetError();
-			uqm::log::warn("_GetCelData: Unable to load image!");
-			if (err != nullptr)
-			{
-				uqm::log::warn("Gfx Driver reports: {}", err);
-			}
-		}
-		else
-		{
-			++cel_index;
-		}
-
-		if ((int)aniFile->tell() - (int)opos >= (int)length)
-		{
-			break;
+			const char* const err {TFB_DrawCanvas_GetError()};
+			uqm::log::warn("_GetCelData: Unable to load image '{}' for frame {} of '{}'.{}", path, i, resource.path,
+						   err != nullptr ? fmt::format(" Gfx Driver reports: {}", err) : "");
+			// An empty frame keeps the index of each later frame.
+			img[i] = TFB_DrawCanvas_New_TrueColor(1, 1, true);
+			(*frames)[i] = uqm::AniFrame {};
 		}
 	}
 
-	Drawable = nullptr;
-	if (cel_index && (Drawable = AllocDrawable(cel_index)))
-	{
-		if (!Drawable)
-		{
-			while (cel_index--)
-			{
-				TFB_DrawCanvas_Delete(img[cel_index]);
-			}
-
-			HFree(Drawable);
-			Drawable = nullptr;
-		}
-		else
-		{
-			FRAME FramePtr;
-
-			Drawable->Flags = WANT_PIXMAP;
-			Drawable->MaxIndex = cel_index - 1;
-
-			FramePtr = &Drawable->Frame[cel_index];
-			while (--FramePtr, cel_index--)
-			{
-				process_image(FramePtr, img, ani, cel_index);
-			}
-		}
-	}
-
+	const DRAWABLE Drawable {AllocDrawable(count)};
 	if (Drawable == nullptr)
 	{
-		uqm::log::warn("Couldn't get cel data for '{}'",
-					   resource.path);
+		uqm::log::warn("Couldn't get cel data for '{}'", resource.path);
+		return nullptr;
 	}
-
-	HFree(img);
-	HFree(ani);
+	Drawable->Flags = WANT_PIXMAP;
+	Drawable->MaxIndex = count - 1;
+	for (int i {count - 1}; i >= 0; --i)
+	{
+		process_image(Drawable->Frame.data() + i, img.data(), frames->data(), i);
+	}
 	return Drawable;
 }
 
 bool _ReleaseCelData(void* handle)
 {
-	DRAWABLE DrawablePtr;
-	int cel_ct;
-	FRAME FramePtr = nullptr;
-
-	if ((DrawablePtr = (DRAWABLE)handle) == 0)
+	auto* DrawablePtr {static_cast<DRAWABLE>(handle)};
+	if (DrawablePtr == nullptr)
 	{
 		return (false);
 	}
 
-	cel_ct = DrawablePtr->MaxIndex + 1;
-	FramePtr = DrawablePtr->Frame;
-
-	HFree(handle);
-	if (FramePtr)
+	for (FRAME_DESC& frame : DrawablePtr->Frame)
 	{
-		int i;
-		for (i = 0; i < cel_ct; i++)
+		if (TFB_Image * img {frame.image})
 		{
-			TFB_Image* img = FramePtr[i].image;
-			if (img)
-			{
-				FramePtr[i].image = nullptr;
-				TFB_DrawScreen_DeleteImage(img);
-			}
+			frame.image = nullptr;
+			TFB_DrawScreen_DeleteImage(img);
 		}
-		HFree(FramePtr);
 	}
+	delete DrawablePtr;
 
 	return (true);
 }
@@ -342,37 +214,27 @@ bool _ReleaseCelData(void* handle)
 typedef struct BuildCharDesc
 {
 	TFB_Canvas canvas;
-	UniChar index;
+	uqm::UniChar index;
 } BuildCharDesc;
-
-static int
-compareBCDIndex(const void* arg1, const void* arg2)
-{
-	const BuildCharDesc* bcd1 = (const BuildCharDesc*)arg1;
-	const BuildCharDesc* bcd2 = (const BuildCharDesc*)arg2;
-
-	return (int)bcd1->index - (int)bcd2->index;
-}
 
 void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 {
-	uint16_t numDirEntries;
-	DIRENTRY fontDir = nullptr;
-	BuildCharDesc* bcds = nullptr;
+	uqstl::vector<uqstl::string> fontDir {};
+	uqstl::vector<BuildCharDesc> bcds {};
 	size_t numBCDs = 0;
-	int dirEntryI;
 	uqstl::optional<uqm::io::Directory> fontDirHandle {};
 	FONT fontPtr = nullptr;
-	uqstl::optional<uqm::io::File> cfgFile {};
-	const char* cfg_name = "kerndat.fnt";
+	const char* cfg_name = "kerndat.fnt.json";
 
 	if (const uqstl::optional<uqm::io::FileInfo> info {dir.stat(path)}; info && !info->isDirectory())
 	{
-		uqstl::error_code error {};
-		fontDirHandle = uqm::gameFileSystem().openArchive(dir, path, error);
-		if (!fontDirHandle)
+		if (uqm::io::Result<uqm::io::Directory> archive {uqm::gameFileSystem().openArchive(dir, path)})
 		{
-			uqm::log::warn("Could not open font archive '{}': {}", path, error.message());
+			fontDirHandle = uqstl::move(*archive);
+		}
+		else
+		{
+			uqm::log::warn("Could not open font archive '{}': {}", path, archive.error().message());
 		}
 	}
 	else
@@ -384,28 +246,21 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 		goto err;
 	}
 
-	fontDir = CaptureDirEntryTable(LoadDirEntryTable(*fontDirHandle, "", uqm::io::Matcher {uqm::io::Matcher::Kind::Substring, "."}));
-	if (fontDir == 0)
+	fontDir = uqm::listFiles(*fontDirHandle, "", uqm::io::Matcher {uqm::io::Matcher::Kind::Substring, "."});
+	if (fontDir.empty())
 	{
 		goto err;
 	}
-	numDirEntries = GetDirEntryTableCount(fontDir);
 
-	bcds = (BuildCharDesc*)HMalloc(numDirEntries * sizeof(BuildCharDesc));
-	if (bcds == nullptr)
-	{
-		goto err;
-	}
+	bcds.resize(fontDir.size());
 
 	// Load the surfaces for all dir Entries
-	for (dirEntryI = 0; dirEntryI < numDirEntries; dirEntryI++)
+	for (int dirEntryI {0}; dirEntryI < static_cast<int>(fontDir.size()); dirEntryI++)
 	{
 		unsigned int charIndex {};
-		TFB_Canvas canvas;
 		EXTENT size;
 
-		const char* char_name = GetDirEntryAddress(SetAbsDirEntryTableIndex(
-			fontDir, dirEntryI));
+		const char* char_name = fontDir[dirEntryI].c_str();
 
 		if (strcmp(char_name, cfg_name) == 0)
 		{
@@ -426,7 +281,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 			continue;
 		}
 
-		canvas = TFB_DrawCanvas_LoadFromFile(*fontDirHandle, char_name);
+		TFB_Canvas canvas {TFB_DrawCanvas_LoadFromFile(*fontDirHandle, char_name)};
 		if (canvas == nullptr)
 		{
 			continue;
@@ -444,90 +299,37 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 		numBCDs++;
 	}
 
-	fontPtr = AllocFont(0);
+	fontPtr = new FONT_DESC {};
 	if (fontPtr == nullptr)
 	{
 		goto err;
 	}
 
-	cfgFile = res_OpenResFile(*fontDirHandle, cfg_name, uqm::io::OpenMode::Read | uqm::io::OpenMode::Text);
-
-	if (cfgFile)
+	if (const auto text {uqm::readTextFile(*fontDirHandle, cfg_name)})
 	{
-		char CurrentLine[PATH_MAX];
-		int cel_index = 0;
-		int cel_total = 0;
-		uint32_t opos = 0;
-
 		memset(&fontPtr->KernTab, (uint8_t)~0, sizeof(fontPtr->KernTab));
-
-		cfgFile->seek(opos, uqm::io::SeekFrom::Start);
-		while (cfgFile->readLine(CurrentLine))
+		if (const auto metrics {uqm::fontMetricsFromJson(*text)})
 		{
-			++cel_total;
-			if (cel_total == MAX_UNICODE)
+			fontPtr->Leading = metrics->leading;
+			fontPtr->CharSpace = metrics->charSpace;
+			fontPtr->KernAmount = metrics->kernAmount;
+			fontPtr->VertAlign = metrics->vertAlign;
+			fontPtr->HaveFntData = true;
+			for (const uqm::FontKern& kern : metrics->kerning)
 			{
-				break;
+				if (kern.ch < MAX_UNICODE)
+				{
+					fontPtr->KernTab[kern.ch] = static_cast<uint8_t>((kern.left << 2) | kern.right);
+				}
 			}
 		}
-
-		cfgFile->seek(opos, uqm::io::SeekFrom::Start);
-		while (cfgFile->readLine(CurrentLine) && cel_index < cel_total)
+		else
 		{
-			if (cel_index > 0)
-			{
-				if (const auto result {scn::scan<int32_t, int32_t, int32_t>(CurrentLine, "{:x} {} {}")})
-				{
-					auto [KernChar, kernLBits, kernRBits] = result->values();
-					if (kernLBits > 3 || kernLBits < 0)
-					{
-						kernLBits = 3;
-					}
-					if (kernRBits > 3 || kernRBits < 0)
-					{
-						kernRBits = 3;
-					}
-
-					fontPtr->KernTab[KernChar] =
-						(kernLBits << 2) | kernRBits;
-				}
-			}
-			else
-			{
-				if (const auto result {scn::scan<uqstl::string, uint8_t, uint8_t, uint8_t, int8_t>(CurrentLine, "{} {} {} {} {}")})
-				{
-					auto [filename_str, Leading, CharSpace, KernAmount, VertAlign] = result->values();
-					uqm::strncpy_safe(fontPtr->filename, filename_str);
-					fontPtr->Leading = Leading;
-					fontPtr->CharSpace = CharSpace;
-					fontPtr->KernAmount = KernAmount;
-					fontPtr->VertAlign = VertAlign;
-
-					fontPtr->HaveFntData = true;
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			++cel_index;
-			if (cel_index == MAX_UNICODE)
-			{
-				break;
-			}
-
-			if ((int)cfgFile->tell() - (int)opos
-				>= (int)cfgFile->size())
-			{
-				break;
-			}
+			uqm::log::warn("Could not read '{}' of font '{}'.", cfg_name, path);
 		}
-		cfgFile.reset();
 	}
 
 	fontDirHandle.reset();
-	DestroyDirEntryTable(ReleaseDirEntryTable(fontDir));
 
 #if 0
 	if (numBCDs == 0)
@@ -535,28 +337,28 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 #endif
 
 	// sort on the character index
-	qsort(bcds, numBCDs, sizeof(BuildCharDesc), compareBCDIndex);
+	uqstl::sort(bcds.begin(), bcds.begin() + numBCDs, [](const BuildCharDesc& a, const BuildCharDesc& b) {
+		return a.index < b.index;
+	});
 
 	{
 		size_t startBCD = 0;
-		UniChar pageStart;
+		uqm::UniChar pageStart {};
 		FONT_PAGE** pageEndPtr = &fontPtr->fontPages;
 		while (startBCD < numBCDs)
 		{
 			// Process one character page.
-			size_t endBCD;
 			pageStart = bcds[startBCD].index & CHARACTER_PAGE_MASK;
 
-			endBCD = startBCD;
+			size_t endBCD {startBCD};
 			while (endBCD < numBCDs && (bcds[endBCD].index & CHARACTER_PAGE_MASK) == pageStart)
 			{
 				endBCD++;
 			}
 
 			{
-				size_t bcdI;
-				int numChars = bcds[endBCD - 1].index + 1
-							 - bcds[startBCD].index;
+				const int numChars = bcds[endBCD - 1].index + 1
+								   - bcds[startBCD].index;
 				FONT_PAGE* page = AllocFontPage(numChars);
 				page->pageStart = pageStart;
 				page->firstChar = bcds[startBCD].index;
@@ -564,7 +366,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 				*pageEndPtr = page;
 				pageEndPtr = &page->next;
 
-				for (bcdI = startBCD; bcdI < endBCD; bcdI++)
+				for (size_t bcdI {startBCD}; bcdI < endBCD; bcdI++)
 				{
 					// Process one character.
 					BuildCharDesc* bcd = &bcds[bcdI];
@@ -607,32 +409,17 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 		fontPtr->CharSpace = RES_SCALE(1);
 	}
 
-	HFree(bcds);
-
 	return fontPtr;
 
 err:
-	if (fontPtr != 0)
-	{
-		HFree(fontPtr);
-	}
+	delete fontPtr;
 
-	if (bcds != nullptr)
+	for (size_t bcdI {}; bcdI < numBCDs; bcdI++)
 	{
-		size_t bcdI;
-		for (bcdI = 0; bcdI < numBCDs; bcdI++)
-		{
-			TFB_DrawCanvas_Delete(bcds[bcdI].canvas);
-		}
-		HFree(bcds);
+		TFB_DrawCanvas_Delete(bcds[bcdI].canvas);
 	}
 
 	fontDirHandle.reset();
-
-	if (fontDir != 0)
-	{
-		DestroyDirEntryTable(ReleaseDirEntryTable(fontDir));
-	}
 
 
 	return 0;
@@ -647,15 +434,13 @@ bool _ReleaseFontData(void* handle)
 	}
 
 	{
-		FONT_PAGE* page;
-		FONT_PAGE* nextPage;
+		FONT_PAGE* nextPage {};
 
-		for (page = font->fontPages; page != nullptr; page = nextPage)
+		for (FONT_PAGE* page {font->fontPages}; page != nullptr; page = nextPage)
 		{
-			size_t charI;
-			for (charI = 0; charI < page->numChars; charI++)
+			for (size_t charI {0}; charI < page->numChars; charI++)
 			{
-				TFB_Char* c = &page->charDesc[charI];
+				const TFB_Char* c = &page->charDesc[charI];
 
 				if (c->data == nullptr)
 				{
@@ -672,7 +457,7 @@ bool _ReleaseFontData(void* handle)
 		}
 	}
 
-	HFree(font);
+	delete font;
 
 	return true;
 }

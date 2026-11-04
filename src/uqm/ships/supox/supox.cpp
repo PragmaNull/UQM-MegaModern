@@ -21,6 +21,7 @@
 #include "resinst.h"
 
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 12
@@ -128,27 +129,26 @@ static void
 supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				   uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr;
-	EVALUATE_DESC* lpEvalDesc;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (StarShipPtr->special_counter || lpEvalDesc->ObjectPtr == 0)
 	{
 		StarShipPtr->ship_input_state &= ~SPECIAL;
 	}
 	else
 	{
-		bool LinedUp;
-		uint16_t direction_angle;
-		int32_t delta_x, delta_y;
+		bool LinedUp {};
+		int32_t delta_x {};
+		int32_t delta_y {};
 
 		delta_x = lpEvalDesc->ObjectPtr->next.location.x
 				- ShipPtr->next.location.x;
 		delta_y = lpEvalDesc->ObjectPtr->next.location.y
 				- ShipPtr->next.location.y;
-		direction_angle = ARCTAN(delta_x, delta_y);
+		const uint16_t direction_angle {ARCTAN(delta_x, delta_y)};
 
 		LinedUp = (bool)(NORMALIZE_ANGLE(NORMALIZE_ANGLE(direction_angle
 														 - FACING_TO_ANGLE(StarShipPtr->ShipFacing))
@@ -195,7 +195,7 @@ supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		StarShipPtr->ship_input_state |= SPECIAL;
 		if (!(StarShipPtr->cur_status_flags & (LEFT | RIGHT)))
 		{
-			StarShipPtr->ship_input_state |= 1 << ((uint8_t)TFB_Random() & 1);
+			StarShipPtr->ship_input_state |= 1 << ((uint8_t)uqm::random().next() & 1);
 		}
 		else
 		{
@@ -208,7 +208,7 @@ supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static uint16_t
 initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -232,7 +232,7 @@ initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 static void
 supox_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SPECIAL)
@@ -241,9 +241,7 @@ supox_preprocess(ELEMENT* ElementPtr)
 */
 	)
 	{
-		int16_t add_facing;
-
-		add_facing = 0;
+		int16_t add_facing {0};
 		if (StarShipPtr->cur_status_flags & THRUST)
 		{
 			if (ElementPtr->thrust_wait == 0)
@@ -288,13 +286,10 @@ supox_preprocess(ELEMENT* ElementPtr)
 
 		if (add_facing)
 		{
-			uint16_t facing;
-			STATUS_FLAGS thrust_status;
-
-			facing = StarShipPtr->ShipFacing;
+			const uint16_t facing {StarShipPtr->ShipFacing};
 			StarShipPtr->ShipFacing = NORMALIZE_FACING(
 				facing + add_facing);
-			thrust_status = inertial_thrust(ElementPtr);
+			const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
 			StarShipPtr->cur_status_flags &=
 				~(SHIP_AT_MAX_SPEED
 				  | SHIP_BEYOND_MAX_SPEED
@@ -308,8 +303,6 @@ supox_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_supox(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		supox_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -328,7 +321,7 @@ init_supox(void)
 	supox_desc.init_weapon_func = initialize_horn;
 	supox_desc.cyborg_control.intelligence_func = supox_intelligence;
 
-	RaceDescPtr = &supox_desc;
+	RACE_DESC* RaceDescPtr {&supox_desc};
 
 	return (RaceDescPtr);
 }

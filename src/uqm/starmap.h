@@ -17,8 +17,10 @@
 #ifndef STARMAP_H_INCL_
 #define STARMAP_H_INCL_
 
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "planets/planets.h"
+#include "uqm/session/GameState.h"
+#include "uqm/random/UQMRandom.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -29,11 +31,11 @@ extern "C" {
 #define NUM_SOLAR_SYSTEMS 502
 #define NUM_HYPER_VORTICES 15
 
-extern STAR_DESC* CurStarDescPtr;
+#define CurStarDescPtr (uqm::gameState().currentStar())
 // star_array is now a static buffer we will copy the starmap_array into, and
 // then manipulate from there, so that original starmap is never altered.
 extern STAR_DESC star_array[];
-extern const GFXPOINT* constel_array;
+const extern GFXPOINT* constel_array;
 
 // Global plot_map stores star_pt (coords) used while seeding into starmap
 // Once seeded the plot_map will contain STAR_DESC pointers to the
@@ -47,7 +49,7 @@ extern PLOT_LOCATION plot_map[NUM_PLOTS];
 extern PORTAL_LOCATION portal_map[NUM_HYPER_VORTICES + 1];
 
 // A globally available seed for seeding the starmap and the plots it contains.
-extern RandomContext* StarGenRNG;
+extern uqstl::optional<uqm::UQMRandom> StarGenRNG;
 
 extern STAR_DESC* FindStar(STAR_DESC* pLastStar, GFXPOINT* puniverse,
 						   int16_t xbounds, int16_t ybounds);

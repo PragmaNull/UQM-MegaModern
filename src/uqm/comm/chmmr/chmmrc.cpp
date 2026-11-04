@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "uqm/hyper.h"
 // for SOL_X/SOL_Y
@@ -198,7 +198,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, proceed))
 	{
-		int i;
+		int i {};
 
 		NPCPhrase(TAKE_2_WEEKS);
 
@@ -229,13 +229,13 @@ ExitConversation(RESPONSE_REF R)
 		// GLOBAL_SIS (log_y) = UNIVERSE_TO_LOGY (SOL_Y);
 		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(plot_map[SOL_DEFINED].star_pt.x);
 		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(plot_map[SOL_DEFINED].star_pt.y);
-		GLOBAL(ShipFacing) = 1;
+		uqm::flagship().shipFacing = 1;
 		/* At Earth or at Starbase */
-		GLOBAL(ip_planet) = EARTH_INDEX + 1;
-		GLOBAL(in_orbit) = 0;
+		uqm::flagship().ipPlanet = EARTH_INDEX + 1;
+		uqm::flagship().inOrbit = 0;
 		/* XXX : this should be unhardcoded eventually */
-		GLOBAL(ip_location.x) = EARTH_OUTER_X;
-		GLOBAL(ip_location.y) = EARTH_OUTER_Y;
+		uqm::flagship().ipLocation.x = EARTH_OUTER_X;
+		uqm::flagship().ipLocation.y = EARTH_OUTER_Y;
 
 		if (GET_GAME_STATE(STARBASE_AVAILABLE))
 		{ /* Normal game mode - you are transported to Starbase */
@@ -255,8 +255,8 @@ ExitConversation(RESPONSE_REF R)
 			/* XXX : this should be unhardcoded eventually */
 			/* transport to Starbase */
 			/* note: if uqm::UQMOptions::read().orbitingPlanets is enabled, this will be corrected in DoTimePassage */
-			GLOBAL(ShipStamp.origin.x) = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1) + COSINE(HALF_CIRCLE + QUADRANT, MIN_MOON_RADIUS);
-			GLOBAL(ShipStamp.origin.y) = RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1) + SINE(HALF_CIRCLE + QUADRANT, MIN_MOON_RADIUS >> 1);
+			uqm::flagship().shipStamp.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1) + COSINE(HALF_CIRCLE + QUADRANT, MIN_MOON_RADIUS);
+			uqm::flagship().shipStamp.origin.y = RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1) + SINE(HALF_CIRCLE + QUADRANT, MIN_MOON_RADIUS >> 1);
 		}
 		else
 		{ /* 'Beating Game Differently' mode - never visited Starbase,
@@ -264,7 +264,7 @@ ExitConversation(RESPONSE_REF R)
 			/* compress the layout -- move all to front */
 			for (i = NUM_MODULE_SLOTS - 1; i > 0; --i)
 			{
-				int m;
+				int m {};
 
 				/* find next unused slot */
 				for (; i > 0
@@ -488,8 +488,6 @@ static void ChmmrShielded(RESPONSE_REF R);
 static void
 ChmmrAdvice(RESPONSE_REF R)
 {
-	uint8_t AdviceLeft;
-
 	if (PLAYER_SAID(R, need_advice))
 	{
 		NPCPhrase(WHAT_ADVICE);
@@ -526,7 +524,7 @@ ChmmrAdvice(RESPONSE_REF R)
 		DISABLE_PHRASE(what_about_samatra);
 	}
 
-	AdviceLeft = 0;
+	uint8_t AdviceLeft {0};
 	if (PHRASE_ENABLED(how_defeat_urquan))
 	{
 		Response(how_defeat_urquan, ChmmrAdvice);
@@ -654,7 +652,7 @@ AfterBomb(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (GET_GAME_STATE(CHMMR_BOMB_STATE) >= 2)
 	{
@@ -698,8 +696,7 @@ Intro(void)
 				EngageFilters(&chmmr_filters);
 			}
 
-			CommData.AlienColorMap = SetAbsColorMapIndex(
-				CommData.AlienColorMap, 1);
+			CommData.AlienColorMapIndex = 1;
 
 			switch (NumVisits++)
 			{
@@ -722,7 +719,7 @@ Intro(void)
 		}
 		else
 		{
-			SetCommIntroMode(CIM_FADE_IN_SCREEN, GameTicksPerSecond * 2);
+			SetCommIntroMode(CIM_FADE_IN_SCREEN, c_gameSecond * 2);
 			NPCPhrase(WE_ARE_FREE);
 
 			if (NumVisits)
@@ -771,7 +768,7 @@ Intro(void)
 static uint16_t
 uninit_chmmr(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -784,13 +781,11 @@ post_chmmr_enc(void)
 LOCDATA*
 init_chmmr_comm(void)
 {
-	LOCDATA* retval;
-
 	chmmr_desc.init_encounter_func = Intro;
 	chmmr_desc.post_encounter_func = post_chmmr_enc;
 	chmmr_desc.uninit_encounter_func = uninit_chmmr;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
@@ -806,7 +801,7 @@ init_chmmr_comm(void)
 	chmmr_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	setSegue(Segue_peace);
-	retval = &chmmr_desc;
+	LOCDATA* retval {&chmmr_desc};
 
 	return (retval);
 }

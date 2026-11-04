@@ -26,8 +26,8 @@
 extern "C" {
 #endif
 
-int Netplay_confirm(NetConnection* conn);
-int Netplay_cancelConfirmation(NetConnection* conn);
+NetResult Netplay_confirm(NetConnection* conn);
+NetResult Netplay_cancelConfirmation(NetConnection* conn);
 
 #if 0 //defined(__cplusplus)
 }

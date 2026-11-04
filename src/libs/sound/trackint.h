@@ -18,15 +18,17 @@
 #define TRACKINT_H
 
 #include "libs/callback/callback.h"
+#include "core/stl/optional.h"
+#include "core/stl/string.h"
 
 struct tfb_soundchunk
 {
-	TFB_SoundDecoder* decoder; // decoder for this chunk
-	float start_time;		   // relative time from track start
-	int tag_me;				   // set for chunks with subtitles
-	uint32_t track_num;		   // logical track #, comm code needs this
-	char* text;				   // subtitle text
-	CallbackFunction callback; // comm callback, executed on chunk start
+	TFB_SoundDecoder* decoder;			 // decoder for this chunk
+	float start_time;					 // relative time from track start
+	int tag_me;							 // set for chunks with subtitles
+	uint32_t track_num;					 // logical track #, comm code needs this
+	uqstl::optional<uqstl::string> text; // subtitle text
+	CallbackFunction callback;			 // comm callback, executed on chunk start
 	struct tfb_soundchunk* next;
 };
 

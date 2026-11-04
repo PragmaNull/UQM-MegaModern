@@ -17,13 +17,14 @@
 #include "clock.h"
 #include "planets/planets.h"
 #include "races.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
+#include "core/stl/atomic.h"
 
 #include <stdio.h>
 
 // If a function is assigned to this, it will be called from the
 // Starcon2Main thread, in the main game loop.
-extern void (*volatile debugHook)(void);
+extern uqstl::atomic<void (*)(void)> debugHook;
 
 // Prevents repeated debug key presses for certain functions
 extern bool DebugKeyPressed;

@@ -7,10 +7,16 @@ set(uqm_src_uqm_master_files "")
 # Sub-directories
 include("src/uqm/comm/comm.cmake")
 list(APPEND uqm_src_uqm_master_files ${uqm_src_uqm_comm_master_files})
+include("src/uqm/imgui/imgui.cmake")
+list(APPEND uqm_src_uqm_master_files ${uqm_src_uqm_imgui_master_files})
 include("src/uqm/lua/lua.cmake")
 list(APPEND uqm_src_uqm_master_files ${uqm_src_uqm_lua_master_files})
 include("src/uqm/planets/planets.cmake")
 list(APPEND uqm_src_uqm_master_files ${uqm_src_uqm_planets_master_files})
+include("src/uqm/random/random.cmake")
+list(APPEND uqm_src_uqm_master_files ${uqm_src_uqm_random_master_files})
+include("src/uqm/session/session.cmake")
+list(APPEND uqm_src_uqm_master_files ${uqm_src_uqm_session_master_files})
 include("src/uqm/ships/ships.cmake")
 list(APPEND uqm_src_uqm_master_files ${uqm_src_uqm_ships_master_files})
 include("src/uqm/supermelee/supermelee.cmake")
@@ -49,9 +55,9 @@ set(uqm_src_uqm_files
 	"src/uqm/corecode.h"
 	"src/uqm/credits.cpp"
 	"src/uqm/credits.h"
+	"src/uqm/creditsfile.cpp"
+	"src/uqm/creditsfile.h"
 	"src/uqm/cyborg.cpp"
-#	"src/uqm/demo.cpp"
-	"src/uqm/demo.h"
 	"src/uqm/displist.cpp"
 	"src/uqm/displist.h"
 	"src/uqm/dummy.cpp"
@@ -99,7 +105,6 @@ set(uqm_src_uqm_files
 	"src/uqm/isndres.h"
 	"src/uqm/istrtab.h"
 	"src/uqm/load.cpp"
-	"src/uqm/load_legacy.cpp"
 	"src/uqm/loadship.cpp"
 	"src/uqm/master.cpp"
 	"src/uqm/master.h"
@@ -130,6 +135,8 @@ set(uqm_src_uqm_files
 	"src/uqm/setup.h"
 	"src/uqm/setupmenu.cpp"
 	"src/uqm/setupmenu.h"
+	"src/uqm/setupsettings.cpp"
+	"src/uqm/setupsettings.h"
 	"src/uqm/ship.cpp"
 	"src/uqm/ship.h"
 	"src/uqm/shipcont.h"
@@ -137,6 +144,8 @@ set(uqm_src_uqm_files
 	"src/uqm/shipyard.cpp"
 	"src/uqm/sis.cpp"
 	"src/uqm/sis.h"
+	"src/uqm/slideshow.cpp"
+	"src/uqm/slideshow.h"
 	"src/uqm/sounds.cpp"
 	"src/uqm/sounds.h"
 	"src/uqm/starbase.cpp"

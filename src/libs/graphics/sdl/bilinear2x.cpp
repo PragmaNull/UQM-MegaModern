@@ -17,7 +17,6 @@
 // Core algorithm of the Bilinear screen scaler
 //  Template
 //    When this file is built standalone is produces a plain C version
-//    Also #included by 2xscalers_mmx.c for an MMX version
 
 #include "libs/graphics/sdl/sdl_common.h"
 #include <cstdint>
@@ -29,21 +28,21 @@
 // Bilinear scaling to 2x
 // The name expands to either
 //		Scale_BilinearFilter (for plain C) or
-//		Scale_MMX_BilinearFilter (for MMX)
-//		Scale_SSE_BilinearFilter (for SSE)
 //		[others when platforms are added]
 void SCALE_(BilinearFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 {
-	int x, y;
-	const int w = src->w, h = src->h;
-	int xend, yend;
-	int dsrc, ddst;
+	int x {};
+	int y {};
+	const int w = src->w;
+	const int h = src->h;
 	SDL_Rect* region = r;
 	SDL_Rect limits;
-	SDL_PixelFormat* fmt = dst->format;
-	const int pitch = src->pitch, dp = dst->pitch;
-	const int bpp = fmt->BytesPerPixel;
-	const int len = pitch / bpp, dlen = dp / bpp;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(dst->format);
+	const int pitch = src->pitch;
+	const int dp = dst->pitch;
+	const int bpp = fmt->bytes_per_pixel;
+	const int len = pitch / bpp;
+	const int dlen = dp / bpp;
 	Uint32 p[4]; // influential pixels array
 	Uint32* srow0 = (Uint32*)src->pixels;
 	Uint32* dst_p = (Uint32*)dst->pixels;
@@ -59,10 +58,10 @@ void SCALE_(BilinearFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 	limits.h = h;
 	Scale_ExpandRect(region, 1, &limits);
 
-	xend = region->x + region->w;
-	yend = region->y + region->h;
-	dsrc = len - region->w;
-	ddst = (dlen - region->w) * 2;
+	const int xend {region->x + region->w};
+	const int yend {region->y + region->h};
+	const int dsrc {len - region->w};
+	const int ddst {(dlen - region->w) * 2};
 
 	// move ptrs to the first updated pixel
 	srow0 += len * region->y + region->x;
@@ -70,7 +69,7 @@ void SCALE_(BilinearFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 
 	for (y = region->y; y < yend; ++y, dst_p += ddst, srow0 += dsrc)
 	{
-		Uint32* srow1;
+		const Uint32* srow1 {};
 
 		SCALE_(Prefetch)(srow0 + 16);
 		SCALE_(Prefetch)(srow0 + 32);

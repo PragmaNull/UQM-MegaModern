@@ -19,7 +19,7 @@
 
 #include <cstdint>
 #include "../planets.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -73,7 +73,7 @@ extern uint8_t GenerateMinPlanets(uint8_t min);
 extern uint8_t GenerateNumberOfPlanets(uint8_t minimum);
 extern uint8_t PlanetByteGen(PLANET_DESC* pPDesc);
 
-extern const GenerateFunctions generateDefaultFunctions;
+const extern GenerateFunctions generateDefaultFunctions;
 
 typedef enum
 {

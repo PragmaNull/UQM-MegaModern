@@ -21,6 +21,8 @@ set(uqm_src_uqm_supermelee_netplay_files
 	"src/uqm/supermelee/netplay/nc_connect.ci"
 	"src/uqm/supermelee/netplay/netconnection.cpp"
 	"src/uqm/supermelee/netplay/netconnection.h"
+	"src/uqm/supermelee/netplay/netcontext.cpp"
+	"src/uqm/supermelee/netplay/netcontext.h"
 	"src/uqm/supermelee/netplay/netinput.cpp"
 	"src/uqm/supermelee/netplay/netinput.h"
 	"src/uqm/supermelee/netplay/netmelee.cpp"

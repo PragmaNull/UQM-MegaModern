@@ -20,20 +20,15 @@
 #include "audiodrv_sdl.h"
 #include "../../sndintrn.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include <stdlib.h>
+#include "core/stl/vector.h"
 
 
-/* SDL2 wants to talk to a specific device. We'll let SDL1 use the same
- * function names and just throw the device argument away. */
-#if SDL_MAJOR_VERSION > 1
-static SDL_AudioDeviceID dev;
-#else
-#define SDL_CloseAudioDevice(x) SDL_CloseAudio()
-#define SDL_PauseAudioDevice(x, y) SDL_PauseAudio(y)
-#endif
+static SDL_AudioStream* stream {};
+// Mixed data for the audio stream. Only the audio callback uses it.
+static uqstl::vector<uint8_t> s_mixBuffer {};
 
-static const audio_Driver mixSDL_Driver =
+const static audio_Driver mixSDL_Driver =
 	{
 		mixSDL_Uninit,
 		mixSDL_GetError,
@@ -112,12 +107,11 @@ UQM_COMPILE_TIME_ASSERT(mixer_Object_fits_in_audio_Object,
 static void
 mixSDL_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 {
-	uint32_t i;
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
 		return;
 	}
-	for (i = 0; i < n; i++)
+	for (uint32_t i {0}; i < n; i++)
 	{
 		((mixer_Object*)arr)[i] = arr[i];
 	}
@@ -126,19 +120,18 @@ mixSDL_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 static void
 mixSDL_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
 {
-	uint32_t i;
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
 		return;
 	}
-	i = n;
+	uint32_t i {n};
 	while (i--)
 	{
 		arr[i] = ((mixer_Object*)arr)[i];
 	}
 }
 
-static void audioCallback(void* userdata, Uint8* stream, int len);
+static void audioCallback(void* userdata, SDL_AudioStream* audioStream, int additionalAmount, int totalAmount);
 
 /*
  * Initialization
@@ -147,17 +140,16 @@ static void audioCallback(void* userdata, Uint8* stream, int len);
 int32_t
 mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 {
-	int i;
-	SDL_AudioSpec desired, obtained;
+	SDL_AudioSpec desired {};
 	mixer_Quality quality;
 	TFB_DecoderFormats formats =
 		{
-			MIX_IS_BIG_ENDIAN, MIX_WANT_BIG_ENDIAN,
+			uqstl::endian::native == uqstl::endian::big, uqstl::endian::native == uqstl::endian::big,
 			audio_FORMAT_MONO8, audio_FORMAT_STEREO8,
 			audio_FORMAT_MONO16, audio_FORMAT_STEREO16};
 
 	uqm::log::info("Initializing SDL audio subsystem.");
-	if ((SDL_InitSubSystem(SDL_INIT_AUDIO)) == -1)
+	if (!SDL_InitSubSystem(SDL_INIT_AUDIO))
 	{
 		uqm::log::error("Couldn't initialize audio subsystem: {}",
 						SDL_GetError());
@@ -169,96 +161,50 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	{
 		quality = MIX_QUALITY_HIGH;
 		desired.freq = 44100;
-		desired.samples = 4096;
 	}
 	else if (testFlag(flags, AudioFlags::QualityLow))
 	{
 		quality = MIX_QUALITY_LOW;
-#ifdef __SYMBIAN32__
-		desired.freq = 11025;
-		desired.samples = 4096;
-#else
 		desired.freq = 22050;
-		desired.samples = 2048;
-#endif
 	}
 	else
 	{
 		quality = MIX_QUALITY_DEFAULT;
 		desired.freq = 44100;
-		desired.samples = 4096;
 	}
 
-	desired.format = AUDIO_S16SYS;
+	desired.format = SDL_AUDIO_S16;
 	desired.channels = 2;
-	desired.callback = audioCallback;
 
 	uqm::log::info("Opening SDL audio device.");
-#if SDL_MAJOR_VERSION > 1
-	dev = SDL_OpenAudioDevice(nullptr, 0, &desired, &obtained,
-							  SDL_AUDIO_ALLOW_FREQUENCY_CHANGE | SDL_AUDIO_ALLOW_CHANNELS_CHANGE
-#ifdef SDL_AUDIO_ALLOW_SAMPLES_CHANGE
-								  | SDL_AUDIO_ALLOW_SAMPLES_CHANGE
-#endif
-	);
-	if (dev != 0 && obtained.channels != 1 && obtained.channels != 2)
-	{
-		// try again without SDL_AUDIO_ALLOW_CHANNELS_CHANGE
-		// in case the device only supports >2 channels for some reason
-		dev = SDL_OpenAudioDevice(nullptr, 0, &desired, &obtained,
-								  SDL_AUDIO_ALLOW_FREQUENCY_CHANGE
-#ifdef SDL_AUDIO_ALLOW_SAMPLES_CHANGE
-									  | SDL_AUDIO_ALLOW_SAMPLES_CHANGE
-#endif
-		);
-	}
-	if (dev == 0)
-#else
-	if (SDL_OpenAudio(&desired, &obtained) < 0)
-#endif
+	// The stream converts the mixer output to the format of the device.
+	stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &desired, audioCallback, nullptr);
+	if (!stream)
 	{
 		uqm::log::error("Unable to open audio device: {}",
 						SDL_GetError());
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return -1;
 	}
-	if (obtained.format != desired.format || (obtained.channels != 1 && obtained.channels != 2))
-	{
-		uqm::log::error("Unable to obtain desired audio format.");
-#if SDL_MAJOR_VERSION > 1
-		SDL_CloseAudioDevice(dev);
-#else
-		SDL_CloseAudio();
-#endif
-		SDL_QuitSubSystem(SDL_INIT_AUDIO);
-		return -1;
-	}
 
 	{
-#if SDL_MAJOR_VERSION == 1
-		char devicename[256];
-		SDL_AudioDriverName(devicename, sizeof(devicename));
-#else
-		const char* devicename = SDL_GetCurrentAudioDriver();
-#endif
+		SDL_AudioSpec deviceSpec {};
+		int deviceSamples {};
+		SDL_GetAudioDeviceFormat(SDL_GetAudioStreamDevice(stream), &deviceSpec, &deviceSamples);
 		uqm::log::info("    using {} at {} Hz 16 bit {}, "
-					   "{} samples audio buffer",
-					   devicename, obtained.freq,
-					   obtained.channels > 1 ? "stereo" : "mono",
-					   obtained.samples);
+					   "{} samples audio buffer (device: {} Hz, {} channels)",
+					   SDL_GetCurrentAudioDriver(), desired.freq,
+					   desired.channels > 1 ? "stereo" : "mono",
+					   deviceSamples, deviceSpec.freq, deviceSpec.channels);
 	}
 
 	uqm::log::info("Initializing mixer.");
-	if (!mixer_Init(obtained.freq, MIX_FORMAT_MAKE(2, obtained.channels),
+	if (!mixer_Init(desired.freq, MIX_FORMAT_MAKE(2, desired.channels),
 					quality, MIX_NOFLAGS))
 	{
 		uqm::log::error("Mixer initialization failed: {:x}",
 						mixer_GetError());
-#if SDL_MAJOR_VERSION > 1
-		SDL_CloseAudioDevice(dev);
-#else
-		SDL_CloseAudio();
-#endif
+		SDL_DestroyAudioStream(stream);
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return -1;
 	}
@@ -268,11 +214,7 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	if (SoundDecoder_Init(flags, &formats))
 	{
 		uqm::log::error("Sound decoders initialization failed.");
-#if SDL_MAJOR_VERSION > 1
-		SDL_CloseAudioDevice(dev);
-#else
-		SDL_CloseAudio();
-#endif
+		SDL_DestroyAudioStream(stream);
 		mixer_Uninit();
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return -1;
@@ -280,74 +222,60 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	uqm::log::info("Sound decoders initialized.");
 
 	*driver = mixSDL_Driver;
-	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 	{
 		audio_GenSources(1, &soundSource[i].handle);
-		soundSource[i].stream_mutex = CREATEMUTEX("MixSDL stream mutex", SYNC_CLASS_AUDIO);
 	}
 
 	if (InitStreamDecoder())
 	{
 		uqm::log::error("Stream decoder initialization failed.");
 		// TODO: cleanup source mutexes [or is it "muti"? :) ]
-#if SDL_MAJOR_VERSION > 1
-		SDL_CloseAudioDevice(dev);
-#else
-		SDL_CloseAudio();
-#endif
+		SDL_DestroyAudioStream(stream);
 		SoundDecoder_Uninit();
 		mixer_Uninit();
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return -1;
 	}
 
-#if SDL_MAJOR_VERSION > 1
-	SDL_PauseAudioDevice(dev, 0);
-#else
-	SDL_PauseAudio(0);
-#endif
+	SDL_ResumeAudioStreamDevice(stream);
 
 	return 0;
 }
 
 void mixSDL_Uninit(void)
 {
-	int i;
-
 	UninitStreamDecoder();
 
-	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 	{
+		const uqm::LockGuard lock {soundSource[i].stream_mutex};
 		if (soundSource[i].sample && soundSource[i].sample->decoder)
 		{
 			StopStream(i);
 		}
-		if (soundSource[i].sbuffer)
-		{
-			void* sbuffer = soundSource[i].sbuffer;
-			soundSource[i].sbuffer = nullptr;
-			HFree(sbuffer);
-		}
-		DestroyMutex(soundSource[i].stream_mutex);
-		soundSource[i].stream_mutex = 0;
+		soundSource[i].sbuffer = {};
 
 		mixSDL_DeleteSources(1, &soundSource[i].handle);
 	}
 
-#if SDL_MAJOR_VERSION > 1
-	SDL_CloseAudioDevice(dev);
-#else
-	SDL_CloseAudio();
-#endif
+	SDL_DestroyAudioStream(stream);
 	mixer_Uninit();
 	SoundDecoder_Uninit();
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
 static void
-audioCallback(void* userdata, Uint8* stream, int len)
+audioCallback(void* userdata, SDL_AudioStream* audioStream, int additionalAmount, int totalAmount)
 {
-	mixer_MixChannels(userdata, stream, len);
+	(void)totalAmount;
+	if (additionalAmount <= 0)
+	{
+		return;
+	}
+	s_mixBuffer.resize(additionalAmount);
+	mixer_MixChannels(userdata, s_mixBuffer.data(), additionalAmount);
+	SDL_PutAudioStreamData(audioStream, s_mixBuffer.data(), additionalAmount);
 }
 
 /*

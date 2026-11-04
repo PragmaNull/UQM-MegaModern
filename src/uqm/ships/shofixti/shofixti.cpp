@@ -121,7 +121,7 @@ static RACE_DESC shofixti_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_SPEED* MISSILE_LIFE,
+			MISSILE_SPEED * MISSILE_LIFE,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -136,7 +136,7 @@ static uint16_t
 initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 {
 
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -162,11 +162,10 @@ static void
 destruct_preprocess(ELEMENT* ElementPtr)
 {
 #define DESTRUCT_SWITCH ((NUM_EXPLOSION_FRAMES * 3) - 3)
-	PRIMITIVE* lpPrim;
 
 	// ship_death() set the ship element's life_span to
 	// (NUM_EXPLOSION_FRAMES * 3)
-	lpPrim = &(GLOBAL(DisplayArray))[ElementPtr->PrimIndex];
+	PRIMITIVE* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	ElementPtr->state_flags |= CHANGING;
 	if (ElementPtr->life_span > DESTRUCT_SWITCH)
 	{
@@ -188,7 +187,7 @@ destruct_preprocess(ELEMENT* ElementPtr)
 	{
 		// Stamp-fill the explosion element with cycling colors for the
 		// remainder of the glory explosion frames.
-		Color color = GetPrimColor(lpPrim);
+		const Color color = GetPrimColor(lpPrim);
 
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
@@ -219,8 +218,6 @@ destruct_preprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		HELEMENT hDestruct;
-
 		SetPrimType(lpPrim, NO_PRIM);
 		// The ship's own element will not be drawn anymore but will remain
 		// alive all through the glory explosion.
@@ -230,11 +227,11 @@ destruct_preprocess(ELEMENT* ElementPtr)
 		// XXX: Why? Why not keep using the ship's element?
 		//   Is it because of conflicting state_flags, hit_points or
 		//   mass_points?
-		hDestruct = AllocElement();
+		HELEMENT hDestruct {AllocElement()};
 		if (hDestruct)
 		{
-			ELEMENT* DestructPtr;
-			STARSHIP* StarShipPtr;
+			ELEMENT* DestructPtr {};
+			STARSHIP* StarShipPtr {};
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -245,9 +242,9 @@ destruct_preprocess(ELEMENT* ElementPtr)
 			DestructPtr->mass_points = 0;
 			DestructPtr->playerNr = NEUTRAL_PLAYER_NUM;
 			DestructPtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
-			SetPrimType(&(GLOBAL(DisplayArray))[DestructPtr->PrimIndex],
+			SetPrimType(&DisplayArray[DestructPtr->PrimIndex],
 						STAMPFILL_PRIM);
-			SetPrimColor(&(GLOBAL(DisplayArray))[DestructPtr->PrimIndex],
+			SetPrimColor(&DisplayArray[DestructPtr->PrimIndex],
 						 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
 			DestructPtr->current.image.farray =
 				StarShipPtr->RaceDescPtr->ship_data.special;
@@ -268,6 +265,7 @@ destruct_preprocess(ELEMENT* ElementPtr)
 /* In order to detect any Orz Marines that have boarded the ship
    when it self-destructs, we'll need to see some Orz functions */
 #include "../orz/orz.h"
+#include "uqm/random/UQMRandom.h"
 #define ORZ_MARINE(ptr) (ptr->preprocess_func == intruder_preprocess && ptr->collision_func == marine_collision)
 
 static void
@@ -276,13 +274,12 @@ self_destruct_kill_objects(ELEMENT* ElementPtr)
 	// This is called during PostProcessQueue(), close to or at the end,
 	// for the temporary destruct element to apply the effects of glory
 	// explosion. The effects are not seen until the next frame.
-	HELEMENT hElement, hNextElement;
+	HELEMENT hNextElement {};
 
-	for (hElement = GetHeadElement(); hElement != 0; hElement = hNextElement)
+	for (HELEMENT hElement {GetHeadElement()}; hElement != 0; hElement = hNextElement)
 	{
-		ELEMENT* ObjPtr;
-		int32_t delta_x, delta_y;
-		uint32_t dist;
+		ELEMENT* ObjPtr {};
+		uint32_t dist {};
 
 		LockElement(hElement, &ObjPtr);
 		hNextElement = GetSuccElement(ObjPtr);
@@ -293,12 +290,12 @@ self_destruct_kill_objects(ELEMENT* ElementPtr)
 			continue;
 		}
 
-		delta_x = ObjPtr->next.location.x - ElementPtr->next.location.x;
+		int32_t delta_x {ObjPtr->next.location.x - ElementPtr->next.location.x};
 		if (delta_x < 0)
 		{
 			delta_x = -delta_x;
 		}
-		delta_y = ObjPtr->next.location.y - ElementPtr->next.location.y;
+		int32_t delta_y {ObjPtr->next.location.y - ElementPtr->next.location.y};
 		if (delta_y < 0)
 		{
 			delta_y = -delta_y;
@@ -309,7 +306,7 @@ self_destruct_kill_objects(ELEMENT* ElementPtr)
 		if (delta_x <= DESTRUCT_RANGE && delta_y <= DESTRUCT_RANGE
 			&& (int)dist <= DESTRUCT_RANGE * DESTRUCT_RANGE)
 		{
-			int destruction = 1 + MAX_DESTRUCTION * (DESTRUCT_RANGE - square_root(dist)) / DESTRUCT_RANGE;
+			const int destruction = 1 + MAX_DESTRUCTION * (DESTRUCT_RANGE - square_root(dist)) / DESTRUCT_RANGE;
 
 			// XXX: Why not simply call do_damage()?
 			if (ObjPtr->state_flags & PLAYER_SHIP)
@@ -345,8 +342,7 @@ self_destruct_kill_objects(ELEMENT* ElementPtr)
 static void
 shofixti_destruct_death(ELEMENT* ShipPtr)
 {
-	STARSHIP* StarShip;
-	STARSHIP* winner;
+	STARSHIP* StarShip {};
 
 	GetElementStarShip(ShipPtr, &StarShip);
 
@@ -356,11 +352,11 @@ shofixti_destruct_death(ELEMENT* ShipPtr)
 	// We process the explosion ourselves because it is different
 	ShipPtr->preprocess_func = destruct_preprocess;
 
-	PlaySound(SetAbsSoundIndex(StarShip->RaceDescPtr->ship_data.ship_sounds,
-							   1),
+	PlaySound(GetSound(StarShip->RaceDescPtr->ship_data.ship_sounds,
+					   1),
 			  CalcSoundPosition(ShipPtr), ShipPtr, GAME_SOUND_PRIORITY + 1);
 
-	winner = GetWinnerStarShip();
+	STARSHIP* winner {GetWinnerStarShip()};
 	if (winner == nullptr)
 	{ // No winner determined yet
 		winner = FindAliveStarShip(ShipPtr);
@@ -382,8 +378,7 @@ shofixti_destruct_death(ELEMENT* ShipPtr)
 static void
 self_destruct(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
-	HELEMENT hDestruct;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -392,10 +387,10 @@ self_destruct(ELEMENT* ElementPtr)
 	// It will be the last element (or one of the last) for which the
 	// death_func() will be called from PostProcessQueue() in this frame.
 	// XXX: Why at the end? Why not just do it now?
-	hDestruct = AllocElement();
+	HELEMENT hDestruct {AllocElement()};
 	if (hDestruct)
 	{
-		ELEMENT* DestructPtr;
+		ELEMENT* DestructPtr {};
 
 		LockElement(hDestruct, &DestructPtr);
 		DestructPtr->playerNr = ElementPtr->playerNr;
@@ -427,7 +422,7 @@ static void
 shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					  uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
@@ -443,11 +438,8 @@ shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 	else
 	{
-		EVALUATE_DESC* lpWeaponEvalDesc;
-		EVALUATE_DESC* lpShipEvalDesc;
-
-		lpWeaponEvalDesc = &ObjectsOfConcern[ENEMY_WEAPON_INDEX];
-		lpShipEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+		const EVALUATE_DESC* lpWeaponEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
+		const EVALUATE_DESC* lpShipEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 		if (StarShipPtr->RaceDescPtr->ship_data.special[0]
 			&& (StarShipPtr->RaceDescPtr->ship_data.captain_control.special_offset < 4
 				|| (lpShipEvalDesc->ObjectPtr != nullptr
@@ -458,7 +450,7 @@ shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 						 && ShipPtr->crew_level == 1)
 						|| (PlotIntercept(lpWeaponEvalDesc->ObjectPtr, ShipPtr, 2, 0)
 							&& lpWeaponEvalDesc->ObjectPtr->mass_points >= ShipPtr->crew_level
-							&& (TFB_Random() & 1))))))
+							&& (uqm::random().next() & 1))))))
 		{
 			StarShipPtr->ship_input_state |= SPECIAL;
 		}
@@ -468,7 +460,7 @@ shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static void
 shofixti_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags
@@ -490,7 +482,7 @@ shofixti_preprocess(ELEMENT* ElementPtr)
 static void
 shofixti_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->RaceDescPtr->ship_data.captain_control.special_offset == 5)
@@ -503,7 +495,7 @@ shofixti_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_shofixti(void)
 {
-	RACE_DESC* RaceDescPtr;
+	RACE_DESC* RaceDescPtr {};
 	// The caller of this func will copy the struct
 	static RACE_DESC new_shofixti_desc;
 
@@ -527,13 +519,13 @@ init_shofixti(void)
 	shofixti_desc.cyborg_control.intelligence_func = shofixti_intelligence;
 
 	new_shofixti_desc = shofixti_desc;
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
+	if (uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
 		&& CurStarDescPtr && CurStarDescPtr->Index == SHOFIXTI_DEFINED
 		&& !GET_GAME_STATE(SHOFIXTI_RECRUITED))
 	{
 		// Tanaka/Katana flies in a damaged ship.
 		// This is determined by being at the homeworld & not allied
-		uint16_t i;
+		uint16_t i {};
 
 		new_shofixti_desc.ship_data.ship_rsc[0] = OLDSHOF_BIG_MASK_PMAP_ANIM;
 		new_shofixti_desc.ship_data.ship_rsc[1] = OLDSHOF_MED_MASK_PMAP_ANIM;
@@ -576,7 +568,7 @@ init_shofixti(void)
 				}
 				else
 				{
-					uint16_t num_thrusts;
+					uint16_t num_thrusts {};
 
 					num_thrusts = new_shofixti_desc.characteristics.max_thrust / new_shofixti_desc.characteristics.thrust_increment;
 					new_shofixti_desc.characteristics.thrust_increment -= RES_SCALE(1);

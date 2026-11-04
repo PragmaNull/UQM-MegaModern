@@ -30,34 +30,40 @@ GetBinaryTableFileData(const char* pathname, RESOURCE_DATA* resdata)
 	resdata->ptr = LoadResourceFromPath(pathname, _GetBinaryTableData);
 }
 
-bool InstallStringTableResType(void)
+static bool
+ReleaseStringTableData(void* data)
 {
-	InstallResTypeVectors("STRTAB", GetStringTableFileData, FreeResourceData, nullptr);
-	InstallResTypeVectors("BINTAB", GetBinaryTableFileData, FreeResourceData, nullptr);
-	InstallResTypeVectors("CONVERSATION", _GetConversationData, FreeResourceData, nullptr);
+	delete static_cast<uqm::StringTable*>(data);
 	return true;
 }
 
-STRING_TABLE
-LoadStringTableInstance(RESOURCE res)
+bool InstallStringTableResType(void)
 {
-	void* data;
+	InstallResTextTypeVectors("STRTAB", GetStringTableFileData, ReleaseStringTableData);
+	InstallResTextTypeVectors("BINTAB", GetBinaryTableFileData, ReleaseStringTableData);
+	InstallResTypeVectors("CONVERSATION", _GetConversationData, ReleaseStringTableData);
+	return true;
+}
 
-	data = res_GetResource(res);
+namespace uqm
+{
+
+StringTablePtr loadStringTable(RESOURCE res)
+{
+	void* const data {res_GetResource(res)};
 	if (data)
 	{
 		res_DetachResource(res);
 	}
-
-	return (STRING_TABLE)data;
+	return StringTablePtr {static_cast<StringTable*>(data)};
 }
+
+} // namespace uqm
 
 const char*
 LoadStringInstance(RESOURCE res)
 {
-	const char* data;
-
-	data = (const char*)res_GetResource(res);
+	const char* data {(const char*)res_GetResource(res)};
 	if (data)
 	{
 		res_DetachResource(res);

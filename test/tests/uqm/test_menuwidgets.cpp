@@ -5,8 +5,8 @@
 #include "options/options.h"
 #include "uqm/menuwidgets.h"
 
-#include <fstream>
-#include <sstream>
+#include "core/stl/fstream.h"
+#include "core/stl/sstream.h"
 
 // Widget callbacks from the graphics library. These tests do not draw or handle input.
 int Widget_HandleEventChoice(WIDGET*, int)
@@ -165,7 +165,7 @@ constexpr size_t c_end {8};
 
 TEST_F(MenuWidgetsTest, BuildsWidgetsInOrder)
 {
-	WIDGET** list {build()};
+	WIDGET* const* list {build()};
 	EXPECT_EQ(list[c_heading]->tag, WIDGET_TYPE_LABEL);
 	EXPECT_EQ(list[c_spacer], &spacer);
 	EXPECT_EQ(list[c_back], &back);
@@ -273,7 +273,7 @@ TEST_F(MenuWidgetsTest, TextShowsAndSetsTheSetting)
 		options, MenuWidgets::SharedWidgets {&spacer, &back},
 		uqstl::move(hooks)
 	  };
-	WIDGET** list {builder.build(textMenu->menus[0])};
+	WIDGET* const* list {builder.build(textMenu->menus[0])};
 	ASSERT_EQ(list[0]->tag, WIDGET_TYPE_TEXTENTRY);
 	auto& widget {*reinterpret_cast<WIDGET_TEXTENTRY*>(list[0])};
 	EXPECT_STREQ(widget.category, "Seed");
@@ -331,9 +331,9 @@ TEST_F(MenuWidgetsTest, MenuButtonOpensTheTarget)
 		return id == "audio";
 	};
 	WIDGET exit {};
-	MenuWidgets::SharedWidgets shared {&spacer, &back, &exit};
+	const MenuWidgets::SharedWidgets shared {&spacer, &back, &exit};
 	MenuWidgets builder {options, shared, uqstl::move(hooks)};
-	WIDGET** list {builder.build(buttonMenu->menus[0])};
+	WIDGET* const* list {builder.build(buttonMenu->menus[0])};
 	ASSERT_EQ(list[0]->tag, WIDGET_TYPE_BUTTON);
 	const auto& button {*reinterpret_cast<WIDGET_BUTTON*>(list[0])};
 	EXPECT_STREQ(button.name, "Sound");
@@ -368,7 +368,7 @@ TEST_F(MenuWidgetsTest, LegacyItemsUseTheGivenWidget)
 	MenuWidgets::SharedWidgets shared {&spacer, &back};
 	shared.legacy["windowType"] = &windowType;
 	MenuWidgets builder {options, shared, {}};
-	WIDGET** list {builder.build(legacyMenu->menus[0])};
+	WIDGET* const* list {builder.build(legacyMenu->menus[0])};
 	EXPECT_EQ(list[0], &windowType);
 	EXPECT_EQ(list[1], &back);
 	EXPECT_EQ(list[2], nullptr);
@@ -447,14 +447,14 @@ TEST_F(MenuWidgetsTest, ItemsNeedTheirAddons)
 		options, MenuWidgets::SharedWidgets {&spacer, &back},
 		uqstl::move(hooks)
 	  };
-	WIDGET** list {builder.build(addonMenu->menus[0])};
+	WIDGET* const* list {builder.build(addonMenu->menus[0])};
 	EXPECT_EQ(list[0], &back);
 	EXPECT_EQ(list[1], nullptr);
 }
 
 TEST_F(MenuWidgetsTest, ContentMenusBuild)
 {
-	uqstl::ifstream file {UQM_TEST_CONTENT_DIR "/base/ui/setupmenu.json", uqstl::ios::binary};
+	const uqstl::ifstream file {UQM_TEST_CONTENT_DIR "/base/ui/setupmenu.json", uqstl::ios::binary};
 	if (!file)
 	{
 		GTEST_SKIP() << "Content is not present.";
@@ -486,7 +486,7 @@ TEST_F(MenuWidgetsTest, ContentMenusBuild)
 	MenuWidgets builder {options, shared, uqstl::move(hooks)};
 	for (const MenuDef& menu : content->menus)
 	{
-		WIDGET** list {builder.build(menu)};
+		WIDGET* const* list {builder.build(menu)};
 		size_t count {};
 		while (list[count] != nullptr)
 		{

@@ -17,7 +17,7 @@
 #define UQM_BATTLE_H_
 
 #include "options.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/time/timelib.h"
 
 #if defined(NETPLAY)
@@ -39,7 +39,7 @@ typedef struct battlestate_struct
 {
 	bool (*InputFunc)(struct battlestate_struct* pInputState);
 	bool first_time;
-	uint32_t NextTime;
+	TimeCount NextTime;
 	BattleFrameCallback* frame_cb;
 } BATTLE_STATE;
 
@@ -57,7 +57,7 @@ uint16_t GetPlayerOrder(uint16_t i);
 bool Battle(BattleFrameCallback*);
 
 static constexpr uint32_t BattleFPS {24}; // TODO: this is also defined in netoptions.cpp as BattleFPS. Maybe we should unify these?
-static constexpr uint32_t BattleFrameRateTicks {getTicksForFramerate(BattleFPS)};
+static constexpr TimePeriod BattleFrameRateTicks {getTicksForFramerate(BattleFPS)};
 
 extern void BattleSong(bool DoPlay);
 extern void FreeBattleSong(void);

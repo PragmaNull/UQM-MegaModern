@@ -29,6 +29,7 @@
 #include "core/log/log.h"
 
 #include <ctype.h>
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateMelnorme_initNpcs(SOLARSYS_STATE* solarSys);
@@ -87,7 +88,7 @@ GenerateMelnorme_initNpcs(SOLARSYS_STATE* solarSys)
 static bool
 GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
@@ -104,7 +105,7 @@ GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 			pPlanet->NumPlanets++;
 		}
 
-		if (!PrimeSeed)
+		if (!uqm::isOriginalSeed())
 		{
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -117,7 +118,7 @@ GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		pSunDesc->PlanetByte = 3;
 
-		if (!PrimeSeed)
+		if (!uqm::isOriginalSeed())
 		{
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -138,7 +139,7 @@ GenerateMelnorme_generateMoons(SOLARSYS_STATE* solarSys,
 	if (EXTENDED && CurStarDescPtr->Index == MELNORME1_DEFINED
 		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 
 		solarSys->MoonDesc[MoonByte].data_index = PRECURSOR_STARBASE;
 	}
@@ -155,15 +156,12 @@ GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
 		/* Starbase */
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(
-				LoadStringTable(PRECURSOR_BASE_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(PRECURSOR_BASE_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		DoDiscoveryReport(MenuSounds);
 
-		DestroyStringTable(ReleaseStringTable(
-			solarSys->SysInfo.PlanetInfo.DiscoveryString));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString = 0;
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 		FreeLanderFont(&solarSys->SysInfo.PlanetInfo);
 
 		return true;
@@ -174,8 +172,8 @@ GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(STELE_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(STELE_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(STELE_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);

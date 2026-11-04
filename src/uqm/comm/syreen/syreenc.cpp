@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 #include "uqm/gameev.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "uqm/setup.h"
 
@@ -308,7 +308,7 @@ FriendlyExit(RESPONSE_REF R)
 		AlienTalkSegue(2);
 
 		CommData.AlienTextFColor = WHITE_COLOR;
-		FadeScreen(FadeAllToBlack, 0);
+		FadeScreen(FadeAllToBlack, TimePeriod {});
 
 		DrawSISFrame();
 		DrawSISMessage(nullptr);
@@ -316,9 +316,8 @@ FriendlyExit(RESPONSE_REF R)
 		SetCommDarkMode(false);
 		RedrawSISComWindow();
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 0)),
-					  0);
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
+					  TimePeriod {});
 
 		BlockTalkingAnim(1, 2); // Several hours later block (New)
 
@@ -328,7 +327,7 @@ FriendlyExit(RESPONSE_REF R)
 			EnableTalkingAnim(true);
 			DisengageFilters();
 		}
-		FadeScreen(FadeAllToColor, GameTicksPerSecond / 2);
+		FadeScreen(FadeAllToColor, c_gameSecond / 2);
 		AlienTalkSegue((uint16_t)~0);
 
 		SET_GAME_STATE(PLAYER_HAD_SEX, 1);
@@ -427,9 +426,8 @@ Foreplay(RESPONSE_REF R)
 		CommData.AlienTextFColor = BUILD_COLOR_RGBA(85, 255, 255, 0);
 		SetCommDarkMode(true);
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-					  GameTicksPerSecond);
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
+					  c_gameSecond);
 
 		if (IS_HD)
 		{
@@ -499,7 +497,7 @@ AfterAmbush(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, whats_up_after_ambush))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SYREEN_INFO);
 		switch (NumVisits++)
@@ -642,10 +640,10 @@ SyreenShuttle(RESPONSE_REF R)
 static void
 NormalSyreen(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
+	uint8_t i {};
 	RESPONSE_REF pStr[4];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
 	if (PLAYER_SAID(R, we_here_to_help))
 	{
@@ -914,8 +912,8 @@ PlanAmbush(RESPONSE_REF R)
 			SyreenPtr->actual_strength = 300 / SPHERE_RADIUS_INCREMENT * 2;
 			SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, HOME);
 			StartSphereTracking(SYREEN_SHIP);
-			GFXPOINT loc = SeedFleetLocation(SyreenPtr, plot_map,
-											 MYCON_TRAP_DEFINED);
+			const GFXPOINT loc = SeedFleetLocation(SyreenPtr, plot_map,
+												   MYCON_TRAP_DEFINED);
 			SetRaceDest(SYREEN_SHIP, loc.x, loc.y, 15, (uint8_t)~0);
 		}
 
@@ -946,11 +944,11 @@ SyreenVault(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	SetHomeworldKnown(SYREEN_HOME);
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -1070,7 +1068,7 @@ static uint16_t
 uninit_syreen(void)
 {
 	FlushCustomBaseLine();
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -1083,13 +1081,11 @@ post_syreen_enc(void)
 LOCDATA*
 init_syreen_comm(void)
 {
-	LOCDATA* retval;
-
 	syreen_desc.init_encounter_func = Intro;
 	syreen_desc.post_encounter_func = post_syreen_enc;
 	syreen_desc.uninit_encounter_func = uninit_syreen;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
@@ -1098,7 +1094,7 @@ init_syreen_comm(void)
 	syreen_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	setSegue(Segue_peace);
-	retval = &syreen_desc;
+	LOCDATA* retval {&syreen_desc};
 
 	return (retval);
 }

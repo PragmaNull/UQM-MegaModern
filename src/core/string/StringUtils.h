@@ -5,9 +5,9 @@
 
 #define __STDC_WANT_LIB_EXT1__ 1
 
-#include <algorithm>
-#include <ranges>
-#include <charconv>
+#include "core/stl/stl.h"
+#include "core/stl/ranges.h"
+#include "core/stl/charconv.h"
 #include <cctype>
 #include <fmt/format.h>
 #include "core/stl/string.h"
@@ -280,7 +280,7 @@ inline uqstl::string_view trimLeft(const uqstl::string_view in, const char* trim
 	{
 		return in.substr(firstNonSpacePos);
 	}
-	return in;
+	return in.substr(in.size());
 }
 inline uqstl::string_view trimRight(const uqstl::string_view in, const char* trimChars = " \t\r\n")
 {
@@ -288,67 +288,12 @@ inline uqstl::string_view trimRight(const uqstl::string_view in, const char* tri
 	{
 		return in.substr(0, lastNonSpacePos + 1);
 	}
-	return in;
+	return in.substr(0, 0);
 }
 
 inline uqstl::string_view trim(const uqstl::string_view in, const char* trimChars = " \t\r\n")
 {
 	return trimRight(trimLeft(in, trimChars), trimChars);
-}
-
-
-static inline constexpr uint64_t FNV1a_OffsetBasis {14695981039346656037ull};
-static inline constexpr uint64_t FNV1a_Prime {1099511628211ull};
-// FNV-1a hash function for compile-time string hashing. Not suitable for cryptographic purposes, but good for things like switch statements on strings.
-static constexpr uint64_t hashQuick64(const uqstl::string_view str) noexcept
-{
-
-	uint64_t hash = FNV1a_OffsetBasis;
-
-	for (unsigned char c : str)
-	{
-		hash ^= c;
-		hash *= FNV1a_Prime;
-	}
-
-	return hash;
-}
-
-static constexpr std::array<unsigned char, 256> makeLowercaseTable()
-{
-	std::array<unsigned char, 256> table {};
-
-	for (int i = 0; i < 256; ++i)
-	{
-		if (i >= 'A' && i <= 'Z')
-		{
-			table[i] = static_cast<unsigned char>(i + ('a' - 'A'));
-		}
-		else
-		{
-			table[i] = static_cast<unsigned char>(i);
-		}
-	}
-
-	return table;
-}
-
-static constexpr uint64_t hashQuick64CaseInsensitive(const uqstl::string_view str) noexcept
-{
-	constexpr uint64_t OffsetBasis {14695981039346656037ull};
-	constexpr uint64_t Prime {1099511628211ull};
-
-	constexpr auto AsciiToLowerTable {makeLowercaseTable()};
-
-	uint64_t hash = FNV1a_OffsetBasis;
-
-	for (unsigned char c : str)
-	{
-		hash ^= AsciiToLowerTable[static_cast<int>(c)];
-		hash *= FNV1a_Prime;
-	}
-
-	return hash;
 }
 
 

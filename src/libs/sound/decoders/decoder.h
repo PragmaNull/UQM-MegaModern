@@ -25,6 +25,9 @@
 #include <cstdint>
 #include "libs/io/FileSystem.h"
 #include "libs/sound/audiocoredefs.h"
+#include "libs/mathlib.h"
+#include "core/stl/string.h"
+#include "core/stl/vector.h"
 
 #ifndef OVCODEC_NONE
 #ifdef _MSC_VER
@@ -62,7 +65,9 @@ typedef struct tfb_sounddecoderfunc
 	const char* (*GetName)(void);
 	bool (*InitModule)(AudioFlags flags, const TFB_DecoderFormats*);
 	void (*TermModule)(void);
-	uint32_t (*GetStructSize)(void);
+	// Make and delete the decoder struct, which starts with a TFB_SoundDecoder.
+	TFB_SoundDecoder* (*Create)(void);
+	void (*Destroy)(TFB_SoundDecoder*);
 	int (*GetError)(THIS_PTR);
 	bool (*Init)(THIS_PTR);
 	void (*Term)(THIS_PTR);
@@ -91,6 +96,8 @@ struct tfb_sounddecoder
 	bool need_swap;
 
 	// public R/O, set by wrapper
+	// The decoded data. 'buffer' points into 'storage'.
+	uqstl::vector<uint8_t> storage;
 	void* buffer;
 	uint32_t buffer_size;
 	int32_t error;
@@ -100,7 +107,12 @@ struct tfb_sounddecoder
 	bool looping;
 
 	// semi-private
-	char* filename;
+	uqstl::string filename;
+	// Deletes the decoder. The functions can change to the buffer decoder after creation.
+	void (*destroy)(TFB_SoundDecoder*);
+	// The read position in 'storage' after the decoder switched to the buffer decoder.
+	uint32_t buffered_max_pcm;
+	uint32_t buffered_cur_pcm;
 	uint32_t pos;
 	uint32_t start_sample;
 	uint32_t end_sample;
@@ -130,7 +142,7 @@ void SoundDecoder_SwapWords(uint16_t* data, uint32_t size);
 int32_t SoundDecoder_Init(AudioFlags flags, TFB_DecoderFormats* formats);
 void SoundDecoder_Uninit(void);
 TFB_SoundDecoder* SoundDecoder_Load(const uqm::io::Directory& dir,
-									char* filename, uint32_t buffer_size, uint32_t startTime, int32_t runTime);
+									const char* filename, uint32_t buffer_size, uint32_t startTime, int32_t runTime);
 uint32_t SoundDecoder_Decode(TFB_SoundDecoder* decoder);
 uint32_t SoundDecoder_DecodeAll(TFB_SoundDecoder* decoder);
 float SoundDecoder_GetTime(TFB_SoundDecoder* decoder);
@@ -139,7 +151,5 @@ void SoundDecoder_Seek(TFB_SoundDecoder* decoder, uint32_t msecs);
 void SoundDecoder_Rewind(TFB_SoundDecoder* decoder);
 void SoundDecoder_Free(TFB_SoundDecoder* decoder);
 const char* SoundDecoder_GetName(TFB_SoundDecoder* decoder);
-
-extern uint32_t crc32b(const char* str);
 
 #endif

@@ -17,9 +17,11 @@
  */
 
 #include <math.h>
-#include <scn/scan.h>
 
 #include "credits.h"
+#include "creditsfile.h"
+#include "libs/file/textfile.h"
+#include "core/log/log.h"
 
 #include "core/string/StringUtils.h"
 
@@ -41,7 +43,7 @@
 // Maximum frame rate
 #define CREDITS_FRAME_RATE RES_SCALE(36)
 
-#define CREDITS_TIMEOUT (GameTicksPerSecond * 5)
+#define CREDITS_TIMEOUT (c_gameSecond * 5)
 
 #define TRANS_COLOR BRIGHT_BLUE_COLOR
 
@@ -50,7 +52,7 @@ static int CreditsRate;
 
 static bool OutTakesRunning;
 static bool CreditsRunning;
-static STRING CreditsTab;
+static uqstl::vector<uqm::CreditsBlock> CreditsBlocks {};
 static FRAME CreditsBack;
 
 // Context used for drawing to the screen
@@ -102,13 +104,10 @@ static FONT_SIZE_DEF CreditsFont[] =
 static FRAME
 Credits_MakeTransFrame(int w, int h, Color TransColor)
 {
-	FRAME OldFrame;
-	FRAME f;
-
-	f = CaptureDrawable(CreateDrawable(WANT_PIXMAP, w, h, 1));
+	FRAME f {CaptureDrawable(CreateDrawable(WANT_PIXMAP, w, h, 1))};
 	SetFrameTransparentColor(f, TransColor);
 
-	OldFrame = SetContextFGFrame(f);
+	FRAME OldFrame {SetContextFGFrame(f)};
 	SetContextBackGroundColor(TransColor);
 	ClearDrawable();
 	SetContextFGFrame(OldFrame);
@@ -116,45 +115,16 @@ Credits_MakeTransFrame(int w, int h, Color TransColor)
 	return f;
 }
 
-static int
-ParseTextLines(TEXT* Lines, int MaxLines, char* Buffer)
-{
-	int i;
-	const char* pEnd = Buffer + strlen(Buffer);
-
-	for (i = 0; i < MaxLines && Buffer < pEnd; ++i, ++Lines)
-	{
-		char* pTerm = strchr(Buffer, '\n');
-		if (!pTerm)
-		{
-			pTerm = Buffer + strlen(Buffer);
-		}
-		*pTerm = '\0'; /* terminate string */
-		Lines->pStr = Buffer;
-		Lines->CharCount = ~0;
-		Buffer = pTerm + 1;
-	}
-	return i;
-}
-
-#define MAX_TEXT_LINES 50
-#define MAX_TEXT_COLS 5
-
 static FRAME
 Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 						Color BackColor, Color ForeColor)
 {
-	FRAME f;
-	GFXCONTEXT OldContext;
-	FRAME OldFrame;
-	TEXT TextLines[MAX_TEXT_LINES];
-	char* tableStr = nullptr;
-	int textSize {};
-	char salign[32] {};
-	int scaned;
-	int i, rows, cnt;
-	FONT_SIZE_DEF* fdef;
-	int16_t leading;
+	FRAME f {};
+	FRAME OldFrame {};
+	TEXT TextLines[uqm::c_creditsMaxLines];
+	int i {};
+	const FONT_SIZE_DEF* fdef {};
+	int16_t leading {};
 	TEXT t;
 	GFXRECT r;
 	typedef struct
@@ -162,13 +132,14 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 		TEXT_ALIGN align;
 		int16_t basex;
 	} col_format_t;
-	col_format_t colfmt[MAX_TEXT_COLS];
+	col_format_t colfmt[uqm::c_creditsMaxColumns];
 
-	if (*istr < 0 || *istr >= GetStringTableCount(CreditsTab))
+	const auto blockCount {static_cast<int>(CreditsBlocks.size())};
+	if (*istr < 0 || *istr >= blockCount)
 	{ // check if next one is within range
-		int next_s = *istr + dir;
+		const int next_s = *istr + dir;
 
-		if (next_s < 0 || next_s >= GetStringTableCount(CreditsTab))
+		if (next_s < 0 || next_s >= blockCount)
 		{
 			return 0;
 		}
@@ -176,86 +147,41 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 		*istr = next_s;
 	}
 
-	// skip empty lines
-	while (*istr >= 0 && *istr < GetStringTableCount(CreditsTab))
+	const uqm::CreditsBlock& block {CreditsBlocks[*istr]};
+	*istr += dir;
+
+	// one TEXT for each cell; the baseline holds the column and the row.
+	// The first cell of each line comes first, then the other cells while there is space.
+	const int rows {static_cast<int>(block.lines.size())};
+	int cnt {0};
+	const auto addCell {[&](int row, size_t column) {
+		TextLines[cnt].pStr = block.lines[row][column].c_str();
+		TextLines[cnt].CharCount = ~0;
+		TextLines[cnt].baseline.x = static_cast<int16_t>(column);
+		TextLines[cnt].baseline.y = row + 1;
+		++cnt;
+	}};
+	for (i = 0; i < rows; ++i)
 	{
-		tableStr = GetStringAddress(
-			SetAbsStringTableIndex(CreditsTab, *istr));
-		*istr += dir;
-		if (tableStr && *tableStr != '\0')
+		addCell(i, 0);
+	}
+	for (i = 0; i < rows; ++i)
+	{
+		for (size_t icol {1}; icol < block.lines[i].size() && cnt < static_cast<int>(uqm::c_creditsMaxLines); ++icol)
 		{
-			break;
-		}
-	}
-
-	if (!tableStr || *tableStr == '\0')
-	{
-		return 0;
-	}
-
-	uqstl::string_view strView {tableStr};
-	if (const auto result {scn::scan<int, std::string>(strView, "{} {} ")})
-	{
-		textSize = uqstl::get<0>(result->values());
-		if (textSize <= 0)
-		{
-			return 0;
-		}
-
-		uqm::strncpy_safe(salign, uqstl::get<1>(result->values()));
-		strView = {result->begin(), result->end()};
-	}
-	else
-	{
-		return 0;
-	}
-
-	char buf[2048] {};
-	uqm::strncpy_safe(buf, strView);
-	//utf8StringCopy(buf, sizeof(buf), strView.data());
-	rows = ParseTextLines(TextLines, MAX_TEXT_LINES, buf);
-	if (rows == 0)
-	{
-		return 0;
-	}
-	// parse text columns
-	for (i = 0, cnt = rows; i < rows; ++i)
-	{
-		char* nextcol;
-		int icol;
-
-		// we abuse the baseline here, but only a tiny bit
-		// every line starts at col 0
-		TextLines[i].baseline.x = 0;
-		TextLines[i].baseline.y = i + 1;
-
-		for (icol = 1, nextcol = (char*)strchr(TextLines[i].pStr, '\t');
-			 icol < MAX_TEXT_COLS && nextcol;
-			 ++icol, nextcol = strchr(nextcol, '\t'))
-		{
-			*nextcol = '\0';
-			++nextcol;
-
-			if (cnt < MAX_TEXT_LINES)
-			{
-				TextLines[cnt].pStr = nextcol;
-				TextLines[cnt].CharCount = ~0;
-				TextLines[cnt].baseline.x = icol;
-				TextLines[cnt].baseline.y = i + 1;
-				++cnt;
-			}
+			addCell(i, icol);
 		}
 	}
 
 	// init alignments
-	for (i = 0; i < MAX_TEXT_COLS; ++i)
+	for (auto& col : colfmt)
 	{
-		colfmt[i].align = ALIGN_LEFT;
-		colfmt[i].basex = CreditsExtent.width / 64;
+		col.align = ALIGN_LEFT;
+		col.basex = CreditsExtent.width / 64;
 	}
 
 	// find the right font
-	for (fdef = CreditsFont; fdef->size && textSize > fdef->size; ++fdef)
+	for (fdef = CreditsFont; fdef->size && block.size > fdef->size; ++fdef)
 		;
 	if (!fdef->size)
 	{
@@ -268,7 +194,7 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	t.pStr = " ";
 	t.CharCount = 1;
 
-	OldContext = SetContext(TempContext);
+	GFXCONTEXT OldContext {SetContext(TempContext)};
 
 	// get font dimensions
 	SetContextFont(fdef->font);
@@ -276,75 +202,33 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	// get left/right margin
 	TextRect(&t, &r, nullptr);
 
-	// parse text column alignment
+	// column alignments
+	for (auto&& [column, format] : uqstl::views::zip(block.columns, colfmt))
 	{
-		uqstl::vector<uqstl::string> scolTokens;
-		uqm::tokenize(uqstl::string_view {salign}, scolTokens, ',', false);
-		for (i = 0; i < static_cast<int>(scolTokens.size()) && i < MAX_TEXT_COLS; ++i)
+		const auto basex {[&](int16_t fallback) {
+			return column.x ? static_cast<int16_t>(*column.x << RESOLUTION_FACTOR) : fallback;
+		}};
+		switch (column.align)
 		{
-			char c {};
-			uqstl::optional<int> x {};
-
-			// default
-			colfmt[i].align = ALIGN_LEFT;
-			colfmt[i].basex = r.extent.width;
-
-			const uqstl::string_view scolView {scolTokens[i]};
-			if (const auto scanRes {scn::scan<char, int>(scolView, "{}/{}")})
-			{
-				c = uqstl::get<0>(scanRes->values());
-				x = uqstl::get<1>(scanRes->values()) << RESOLUTION_FACTOR;
-			}
-			else if (const auto scanRes {scn::scan<char>(scolView, "{}")})
-			{
-				c = uqstl::get<0>(scanRes->values());
-			}
-			else
-			{
-				// DOES NOT COMPUTE! :)
-				continue;
-			}
-
-
-			switch (c)
-			{
-				case 'L':
-					colfmt[i].align = ALIGN_LEFT;
-					if (x.has_value())
-					{
-						colfmt[i].basex = *x;
-					}
-					break;
-				case 'C':
-					colfmt[i].align = ALIGN_CENTER;
-					if (x.has_value())
-					{
-						colfmt[i].basex = *x;
-					}
-					else
-					{
-						colfmt[i].basex = CreditsExtent.width / 2;
-					}
-					break;
-				case 'R':
-					colfmt[i].align = ALIGN_RIGHT;
-					if (x.has_value())
-					{
-						colfmt[i].basex = *x;
-					}
-					else
-					{
-						colfmt[i].basex = CreditsExtent.width - r.extent.width;
-					}
-					break;
-			}
+			case uqm::CreditsAlign::Left:
+				format.align = ALIGN_LEFT;
+				format.basex = basex(r.extent.width);
+				break;
+			case uqm::CreditsAlign::Center:
+				format.align = ALIGN_CENTER;
+				format.basex = basex(CreditsExtent.width / 2);
+				break;
+			case uqm::CreditsAlign::Right:
+				format.align = ALIGN_RIGHT;
+				format.basex = basex(CreditsExtent.width - r.extent.width);
+				break;
 		}
 	}
 
 	for (i = 0; i < cnt; ++i)
 	{
 		// baseline contains coords in row/col quantities
-		col_format_t* fmt = colfmt + TextLines[i].baseline.x;
+		const col_format_t* fmt = colfmt + TextLines[i].baseline.x;
 
 		TextLines[i].align = fmt->align;
 		TextLines[i].baseline.x = fmt->basex;
@@ -377,11 +261,9 @@ frameIndex(int index)
 static void
 RenderCreditsScreen(GFXCONTEXT targetContext)
 {
-	GFXCONTEXT oldContext;
 	STAMP s;
-	int i;
 
-	oldContext = SetContext(targetContext);
+	GFXCONTEXT oldContext {SetContext(targetContext)};
 	// draw background
 	s.origin.x = 0;
 	s.origin.y = 0;
@@ -390,7 +272,7 @@ RenderCreditsScreen(GFXCONTEXT targetContext)
 
 	// draw text frames
 	s.origin.y = -curFrameOfs;
-	for (i = firstFrame; i != lastFrame; i = frameIndex(i + 1))
+	for (int i {firstFrame}; i != lastFrame; i = frameIndex(i + 1))
 	{
 		GFXRECT fr;
 
@@ -413,20 +295,18 @@ static void
 InitCredits(void)
 {
 	GFXRECT ctxRect;
-	GFXCONTEXT oldContext;
-	FRAME targetFrame;
 
 	memset(textFrames, 0, sizeof textFrames);
 
 	LocalContext = CreateContext("Credits.LocalContext");
 	DrawContext = CreateContext("Credits.DrawContext");
 
-	targetFrame = GetContextFGFrame();
+	FRAME targetFrame {GetContextFGFrame()};
 	GetContextClipRect(&ctxRect);
 	CreditsExtent = ctxRect.extent;
 
 	// prep our local context
-	oldContext = SetContext(LocalContext);
+	GFXCONTEXT oldContext {SetContext(LocalContext)};
 	// Local screen copy. We draw everything to this frame, then cut
 	// the Outtakes rect out and draw this frame to the screen.
 	CreditsFrame = Credits_MakeTransFrame(CreditsExtent.width,
@@ -484,11 +364,8 @@ UninitCredits(void)
 static int
 calcDeficitHeight(void)
 {
-	int i;
-	int maxPos;
-
-	maxPos = -curFrameOfs;
-	for (i = firstFrame; i != lastFrame; i = frameIndex(i + 1))
+	int maxPos {-curFrameOfs};
+	for (int i {firstFrame}; i != lastFrame; i = frameIndex(i + 1))
 	{
 		GFXRECT fr;
 
@@ -503,17 +380,16 @@ static void
 processCreditsFrame(void)
 {
 	static TimeCount NextTime;
-	TimeCount Now = GetTimeCounter();
+	const TimeCount Now = GetTimeCounter();
 
 	if (Now >= NextTime)
 	{
 		GFXRECT fr;
-		GFXCONTEXT OldContext;
-		int rate, direction, dirstep;
-		int deficitHeight;
+		int direction {};
+		int dirstep {};
 		STAMP s;
 
-		rate = abs(CreditsRate);
+		int rate {abs(CreditsRate)};
 		if (rate != 0)
 		{
 			// scroll direction; forward or backward
@@ -532,7 +408,7 @@ processCreditsFrame(void)
 			rate = GameTicksPerSecond;
 		}
 
-		NextTime = GetTimeCounter() + rate;
+		NextTime = GetTimeCounter() + TimePeriod {rate};
 
 		// draw the credits
 		//  comm animations play with contexts so we need to make
@@ -541,13 +417,13 @@ processCreditsFrame(void)
 		s.origin.y = 0;
 		s.frame = CreditsFrame;
 
-		OldContext = SetContext(DrawContext);
+		GFXCONTEXT OldContext {SetContext(DrawContext)};
 		DrawStamp(&s);
 		SetContext(OldContext);
 		FlushGraphics();
 
 		// prepare next screen frame
-		deficitHeight = calcDeficitHeight();
+		const int deficitHeight {calcDeficitHeight()};
 		curFrameOfs += dirstep;
 		// cap scroll
 		if (curFrameOfs < -(CreditsExtent.height / 20))
@@ -587,11 +463,10 @@ processCreditsFrame(void)
 			}
 			else if (direction < 0)
 			{ // backward scroll
-				int index = frameIndex(lastFrame - 1);
-				int framePos;
+				const int index = frameIndex(lastFrame - 1);
 
 				GetFrameRect(textFrames[index].frame, &fr);
-				framePos = totalHeight - curFrameOfs - fr.extent.height;
+				const int framePos {totalHeight - curFrameOfs - fr.extent.height};
 				if (framePos >= CreditsExtent.height)
 				{ // past this frame already
 					lastFrame = index;
@@ -613,7 +488,7 @@ processCreditsFrame(void)
 			}
 
 			while (totalHeight - curFrameOfs < CreditsExtent.height
-				   && next_s < GetStringTableCount(CreditsTab))
+				   && next_s < static_cast<int>(CreditsBlocks.size()))
 			{
 				CreditTextFrame* tf = &textFrames[lastFrame];
 
@@ -631,7 +506,7 @@ processCreditsFrame(void)
 		}
 		else if (direction < 0)
 		{ // backward scroll
-			int next_s = GetStringTableCount(CreditsTab) - 1;
+			int next_s = static_cast<int>(CreditsBlocks.size()) - 1;
 
 			// get next string
 			if (firstFrame != lastFrame)
@@ -641,7 +516,7 @@ processCreditsFrame(void)
 
 			while (curFrameOfs < 0 && next_s >= 0)
 			{
-				int index = frameIndex(firstFrame - 1);
+				const int index = frameIndex(firstFrame - 1);
 				CreditTextFrame* tf = &textFrames[index];
 
 				tf->frame = Credits_RenderTextFrame(LocalContext, &next_s,
@@ -666,16 +541,18 @@ processCreditsFrame(void)
 static bool
 LoadCredits(void)
 {
-	FONT_SIZE_DEF* fdef;
-
-	CreditsTab = CaptureStringTable(LoadStringTable(CREDITS_STRTAB));
-	if (!CreditsTab)
+	const char* const path {res_GetString(CREDITS_FILE)};
+	const auto text {uqm::readTextFile(uqm::contentDir(), path)};
+	auto blocks {text ? uqm::creditsFromJson(*text) : uqstl::nullopt};
+	if (!blocks)
 	{
+		uqm::log::warn("Could not read the credits file '{}'.", path);
 		return false;
 	}
+	CreditsBlocks = uqstl::move(*blocks);
 	CreditsBack = CaptureDrawable(LoadGraphic(CREDITS_BACK_ANIM));
 	// load fonts
-	for (fdef = CreditsFont; fdef->size; ++fdef)
+	for (FONT_SIZE_DEF* fdef {CreditsFont}; fdef->size; ++fdef)
 	{
 		fdef->font = LoadFont(fdef->res);
 	}
@@ -686,16 +563,13 @@ LoadCredits(void)
 static void
 FreeCredits(void)
 {
-	FONT_SIZE_DEF* fdef;
-
-	DestroyStringTable(ReleaseStringTable(CreditsTab));
-	CreditsTab = nullptr;
+	CreditsBlocks.clear();
 
 	DestroyDrawable(ReleaseDrawable(CreditsBack));
 	CreditsBack = nullptr;
 
 	// free fonts
-	for (fdef = CreditsFont; fdef->size; ++fdef)
+	for (FONT_SIZE_DEF* fdef {CreditsFont}; fdef->size; ++fdef)
 	{
 		DestroyFont(fdef->font);
 		fdef->font = nullptr;
@@ -706,7 +580,7 @@ static void
 OutTakes(void)
 {
 #define NUM_OUTTAKES 15
-	static CONVERSATION outtake_list[NUM_OUTTAKES] =
+	const static CONVERSATION outtake_list[NUM_OUTTAKES] =
 		{
 			ZOQFOTPIK_CONVERSATION,
 			TALKING_PET_CONVERSATION,
@@ -724,7 +598,7 @@ OutTakes(void)
 			BLACKURQ_CONVERSATION,
 			ARILOU_CONVERSATION};
 
-	bool oldsubtitles = uqm::UQMOptions::read().subtitles.value;
+	const bool oldsubtitles = uqm::UQMOptions::read().subtitles.value;
 	int i = 0;
 
 	// Outtakes have no voice tracks, so the subtitles are always on
@@ -732,9 +606,9 @@ OutTakes(void)
 	sliderDisabled = true;
 	oscillDisabled = true;
 
-	for (i = 0; (i < NUM_OUTTAKES) && !(GLOBAL(CurrentActivity) & CHECK_ABORT); i++)
+	for (i = 0; (i < NUM_OUTTAKES) && !(uqm::currentActivity() & CHECK_ABORT); i++)
 	{
-		SetCommIntroMode(CIM_CROSSFADE_WINDOW, 0);
+		SetCommIntroMode(CIM_CROSSFADE_WINDOW, TimePeriod {});
 		InitCommunication(outtake_list[i]);
 	}
 
@@ -751,7 +625,7 @@ typedef struct
 	bool AllowCancel;
 	bool AllowSpeedChange;
 	bool CloseWhenDone;
-	uint32_t CloseTimeOut;
+	TimeCount CloseTimeOut;
 
 } CREDITS_INPUT_STATE;
 
@@ -762,10 +636,10 @@ DoCreditsInput(void* pIS)
 
 	if (CreditsRunning)
 	{ // cancel timeout if resumed (or just running)
-		pCIS->CloseTimeOut = 0;
+		pCIS->CloseTimeOut = TimeCount {};
 	}
 
-	if ((GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if ((uqm::currentActivity() & CHECK_ABORT)
 		|| (pCIS->AllowCancel && (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL])))
 	{ // aborted
 		return false;
@@ -776,7 +650,7 @@ DoCreditsInput(void* pIS)
 			|| PulsedInputState.menu[KEY_MENU_DOWN]))
 	{ // speed adjustment
 		int newrate = CreditsRate;
-		int step = abs(CreditsRate) / 5 + 1;
+		const int step = abs(CreditsRate) / 5 + 1;
 
 		if (PulsedInputState.menu[KEY_MENU_DOWN])
 		{
@@ -805,7 +679,7 @@ DoCreditsInput(void* pIS)
 
 	if (!CreditsRunning && pCIS->CloseWhenDone)
 	{ // auto-close controlled by timeout
-		if (pCIS->CloseTimeOut == 0)
+		if (pCIS->CloseTimeOut == TimeCount {})
 		{ // set timeout
 			pCIS->CloseTimeOut = GetTimeCounter() + CREDITS_TIMEOUT;
 		}
@@ -822,7 +696,7 @@ DoCreditsInput(void* pIS)
 		return false;
 	}
 
-	SleepThread(GameTicksPerSecond / CREDITS_FRAME_RATE);
+	SleepThread(c_gameSecond / CREDITS_FRAME_RATE);
 
 	return true;
 }
@@ -835,12 +709,11 @@ on_input_frame(void)
 
 void Credits(bool WithOuttakes)
 {
-	MUSIC_REF hMusic;
 	CREDITS_INPUT_STATE cis;
 	GFXRECT screenRect;
 	STAMP s;
 
-	hMusic = LoadMusic(CREDITS_MUSIC);
+	MUSIC_REF hMusic {LoadMusic(CREDITS_MUSIC)};
 
 	SetContext(ScreenContext);
 	SetContextClipRect(nullptr);
@@ -858,7 +731,7 @@ void Credits(bool WithOuttakes)
 	s.origin.y = 0;
 	s.frame = CreditsBack;
 	DrawStamp(&s);
-	FadeScreen(FadeAllToColor, GameTicksPerSecond / 2);
+	FadeScreen(FadeAllToColor, c_gameSecond / 2);
 
 	// set the position of outtakes comm
 	CommWndRect.corner.x = (screenRect.extent.width - CommWndRect.extent.width)
@@ -875,7 +748,7 @@ void Credits(bool WithOuttakes)
 		OutTakesRunning = false;
 	}
 
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		if (hMusic)
 		{
@@ -893,11 +766,11 @@ void Credits(bool WithOuttakes)
 	}
 
 	SetInputCallback(nullptr);
-	FadeMusic(0, GameTicksPerSecond / 2);
+	FadeMusic(0, c_gameSecond / 2);
 	UninitCredits();
 
 	SetContext(ScreenContext);
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 	FlushColorXForms();
 
 	if (hMusic)
@@ -905,7 +778,7 @@ void Credits(bool WithOuttakes)
 		StopMusic();
 		DestroyMusic(hMusic);
 	}
-	FadeMusic(NORMAL_VOLUME, 0);
+	FadeMusic(NORMAL_VOLUME, TimePeriod {});
 
 	FreeCredits();
 }

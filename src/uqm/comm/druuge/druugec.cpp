@@ -25,7 +25,7 @@
 #include "uqm/sis.h"
 // for DeltaSISGauges()
 #include "uqm/planets/generate/gendefault.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 
 static LOCDATA druuge_desc =
@@ -215,9 +215,9 @@ ExitConversation(RESPONSE_REF R)
 		{
 			if (SlaveryCount)
 			{
-				uint16_t PreviousSlaves;
+				uint16_t PreviousSlaves {};
 
-				PreviousSlaves = MAKE_WORD(
+				PreviousSlaves = uqm::makeWord(
 					GET_GAME_STATE(CREW_SOLD_TO_DRUUGE0),
 					GET_GAME_STATE(CREW_SOLD_TO_DRUUGE1));
 				SlaveryCount += PreviousSlaves;
@@ -237,8 +237,8 @@ ExitConversation(RESPONSE_REF R)
 					GLOBAL(CrewCost) += 7;
 				}
 
-				SET_GAME_STATE(CREW_SOLD_TO_DRUUGE0, lowByte(SlaveryCount));
-				SET_GAME_STATE(CREW_SOLD_TO_DRUUGE1, highByte(SlaveryCount));
+				SET_GAME_STATE(CREW_SOLD_TO_DRUUGE0, uqm::lowByte(SlaveryCount));
+				SET_GAME_STATE(CREW_SOLD_TO_DRUUGE1, uqm::highByte(SlaveryCount));
 			}
 
 			switch (GET_GAME_STATE(DRUUGE_HOME_VISITS))
@@ -430,7 +430,7 @@ DoTransaction(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, sell_fragments))
 	{
-		uint8_t num_frags;
+		uint8_t num_frags {};
 
 		if (GET_GAME_STATE(EGG_CASE0_ON_SHIP))
 		{
@@ -464,12 +464,11 @@ DoTransaction(RESPONSE_REF R)
 	}
 	else
 	{
-		uint8_t trade_gas;
-		uint8_t ship_slots, ships_to_trade;
+		uint8_t ship_slots {};
 
 		if (isDifficulty(uqm::Difficulty::Hard) && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << READY_TO_BARGAIN))
 		{
-			uint16_t state;
+			uint16_t state {};
 
 			state = GET_GAME_STATE(HM_ENCOUNTERS);
 
@@ -478,8 +477,8 @@ DoTransaction(RESPONSE_REF R)
 			SET_GAME_STATE(HM_ENCOUNTERS, state);
 		}
 
-		trade_gas = 0;
-		ships_to_trade = 0;
+		uint8_t trade_gas {0};
+		uint8_t ships_to_trade {0};
 		ship_slots = EscortFeasibilityStudy(DRUUGE_SHIP);
 		if (PLAYER_SAID(R, sell_maidens))
 		{
@@ -530,26 +529,25 @@ DoTransaction(RESPONSE_REF R)
 
 		if (trade_gas)
 		{
-			uint8_t slot;
-			uint16_t f, HardLimit = 500;
-			uint32_t capacity, FuelOnBoard;
+			const uint16_t HardLimit = 500;
+			uint32_t FuelOnBoard {};
 
 			FuelOnBoard = GLOBAL_SIS(FuelOnBoard);
-			capacity = FUEL_RESERVE;
-			slot = NUM_MODULE_SLOTS - 1;
+			uint32_t capacity {FUEL_RESERVE};
+			uint8_t slot {NUM_MODULE_SLOTS - 1};
 			do
 			{
 				if (GLOBAL_SIS(ModuleSlots[slot]) == FUEL_TANK
 					|| GLOBAL_SIS(ModuleSlots[slot]) == HIGHEFF_FUELSYS)
 				{
-					uint16_t volume;
+					uint16_t volume {};
 
 					volume = GLOBAL_SIS(ModuleSlots[slot]) == FUEL_TANK ? FUEL_TANK_CAPACITY : HEFUEL_TANK_CAPACITY;
 					capacity += volume;
 				}
 			} while (slot--);
 			capacity -= FuelOnBoard;
-			f = (uint16_t)((capacity + (FUEL_TANK_SCALE >> 1)) / FUEL_TANK_SCALE);
+			uint16_t f {(uint16_t)((capacity + (FUEL_TANK_SCALE >> 1)) / FUEL_TANK_SCALE)};
 
 			if (isDifficulty(uqm::Difficulty::Hard) && f > HardLimit)
 			{
@@ -596,7 +594,7 @@ DoTransaction(RESPONSE_REF R)
 static void
 Sell(RESPONSE_REF R)
 {
-	RESPONSE_FUNC RespFunc;
+	RESPONSE_FUNC RespFunc {};
 
 	if (PLAYER_SAID(R, want_to_sell))
 	{
@@ -701,7 +699,7 @@ TradeWorld(RESPONSE_REF R)
 {
 	if (PLAYER_SAID(R, whats_up_at_trade_world))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(DRUUGE_HOME_INFO);
 		switch (NumVisits++)
@@ -790,7 +788,7 @@ Space(RESPONSE_REF R)
 {
 	if (PLAYER_SAID(R, whats_up_in_space))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(DRUUGE_SPACE_INFO);
 		switch (NumVisits++)
@@ -824,9 +822,9 @@ Space(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -976,9 +974,7 @@ Intro(void)
 		{
 			for (NumVisits = 0; NumVisits < NUM_MODULE_SLOTS; ++NumVisits)
 			{
-				uint8_t which_module;
-
-				which_module = GLOBAL_SIS(ModuleSlots[NumVisits]);
+				const uint8_t which_module {GLOBAL_SIS(ModuleSlots[NumVisits])};
 				if (which_module >= GUN_WEAPON
 					&& which_module <= CANNON_WEAPON)
 				{
@@ -1030,7 +1026,7 @@ Intro(void)
 static uint16_t
 uninit_druuge(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -1052,8 +1048,6 @@ post_druuge_enc(void)
 LOCDATA*
 init_druuge_comm(void)
 {
-	LOCDATA* retval;
-
 	SlaveryCount = 0;
 	AttemptedSalvage = false;
 
@@ -1061,7 +1055,7 @@ init_druuge_comm(void)
 	druuge_desc.post_encounter_func = post_druuge_enc;
 	druuge_desc.uninit_encounter_func = uninit_druuge;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	druuge_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	druuge_desc.AlienTextBaseline.y = RES_SCALE(64);
@@ -1069,7 +1063,7 @@ init_druuge_comm(void)
 
 	if ((GET_GAME_STATE(DRUUGE_MANNER) == 0
 		 && (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}
@@ -1077,7 +1071,7 @@ init_druuge_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &druuge_desc;
+	LOCDATA* retval {&druuge_desc};
 
 	return (retval);
 }

@@ -19,8 +19,8 @@
 #include "units.h"
 #include "options.h"
 
-SOUND MenuSounds;
-SOUND GameSounds;
+SOUND_REF MenuSounds;
+SOUND_REF GameSounds;
 
 #define MAX_SOUNDS 8
 static uint8_t num_sounds = 0;
@@ -30,9 +30,9 @@ static ELEMENT* sound_posobj[MAX_SOUNDS];
 void PlaySound(SOUND S, SoundPosition Pos, ELEMENT* PositionalObject,
 			   uint8_t Priority)
 {
-	uint8_t chan, c;
+	uint8_t chan {};
 	static uint8_t lru_channel[NUM_FX_CHANNELS] = {0, 1, 2, 3};
-	static SOUND channel[NUM_FX_CHANNELS] = {0, 0, 0, 0};
+	static SOUND channel[NUM_FX_CHANNELS] = {0, 0, 0, 0}; // NOLINT(misc-const-correctness)
 
 	if (S == 0)
 	{
@@ -65,7 +65,7 @@ void PlaySound(SOUND S, SoundPosition Pos, ELEMENT* PositionalObject,
 
 	channel[chan] = S;
 
-	for (c = 0; c < NUM_FX_CHANNELS - 1; ++c)
+	for (uint8_t c {0}; c < NUM_FX_CHANNELS - 1; ++c)
 	{
 		if (lru_channel[c] == chan)
 		{
@@ -81,20 +81,21 @@ void PlaySound(SOUND S, SoundPosition Pos, ELEMENT* PositionalObject,
 
 void PlayMenuSound(MENU_SOUND_EFFECT S)
 {
-	PlaySoundEffect(SetAbsSoundIndex(MenuSounds, S),
+	PlaySoundEffect(GetSound(MenuSounds, S),
 					0, NotPositional(), nullptr,
 					GAME_SOUND_PRIORITY);
 }
 
+void SuppressSounds(void)
+{
+	memset(sound_buf, 0, sizeof(sound_buf));
+	memset(sound_posobj, 0, sizeof(sound_posobj));
+	num_sounds = MAX_SOUNDS;
+}
+
 void ProcessSound(SOUND Sound, ELEMENT* PositionalObject)
 {
-	if (Sound == (SOUND)~0)
-	{
-		memset(sound_buf, 0, sizeof(sound_buf));
-		memset(sound_posobj, 0, sizeof(sound_posobj));
-		num_sounds = MAX_SOUNDS;
-	}
-	else if (num_sounds < MAX_SOUNDS)
+	if (num_sounds < MAX_SOUNDS)
 	{
 		sound_buf[num_sounds] = Sound;
 		sound_posobj[num_sounds++] = PositionalObject;
@@ -113,9 +114,7 @@ CalcSoundPosition(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		GRAPHICS_PRIM objtype;
-
-		objtype = GetPrimType(&DisplayArray[ElementPtr->PrimIndex]);
+		const GRAPHICS_PRIM objtype {GetPrimType(&DisplayArray[ElementPtr->PrimIndex])};
 		if (objtype == LINE_PRIM)
 		{
 			pos.x = DisplayArray[ElementPtr->PrimIndex].Object.Line.first.x;
@@ -146,17 +145,14 @@ NotPositional(void)
 /* Updates positional sound effects */
 void UpdateSoundPositions(void)
 {
-	uint16_t i;
-
-	for (i = FIRST_SFX_CHANNEL; i <= LAST_SFX_CHANNEL; ++i)
+	for (uint16_t i {FIRST_SFX_CHANNEL}; i <= LAST_SFX_CHANNEL; ++i)
 	{
-		ELEMENT* posobj;
 		if (!ChannelPlaying(i))
 		{
 			continue;
 		}
 
-		posobj = (ELEMENT*)GetPositionalObject(i);
+		ELEMENT* posobj {(ELEMENT*)GetPositionalObject(i)};
 		if (posobj != nullptr)
 		{
 			SoundPosition pos;
@@ -173,14 +169,11 @@ void FlushSounds(void)
 {
 	if (num_sounds > 0)
 	{
-		SOUND* pSound;
-		ELEMENT** pSoundPosObj;
-
-		pSound = sound_buf;
-		pSoundPosObj = sound_posobj;
+		const SOUND* pSound {sound_buf};
+		ELEMENT* const* pSoundPosObj {sound_posobj};
 		do
 		{
-			SoundPosition pos = CalcSoundPosition(*pSoundPosObj);
+			const SoundPosition pos = CalcSoundPosition(*pSoundPosObj);
 			PlaySound(*pSound++, pos, *pSoundPosObj++,
 					  GAME_SOUND_PRIORITY);
 		} while (--num_sounds);
@@ -189,7 +182,7 @@ void FlushSounds(void)
 
 void RemoveSoundsForObject(ELEMENT* PosObj)
 {
-	int i;
+	int i {};
 
 	for (i = FIRST_SFX_CHANNEL; i <= LAST_SFX_CHANNEL; ++i)
 	{

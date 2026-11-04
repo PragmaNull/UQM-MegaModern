@@ -9,8 +9,6 @@ include("src/configuration/configuration.cmake")
 list(APPEND uqm_src_master_files ${uqm_src_configuration_master_files})
 include("src/core/core.cmake")
 list(APPEND uqm_src_master_files ${uqm_src_core_master_files})
-include("src/getopt/getopt.cmake")
-list(APPEND uqm_src_master_files ${uqm_src_getopt_master_files})
 include("src/lib/lib.cmake")
 list(APPEND uqm_src_master_files ${uqm_src_lib_master_files})
 include("src/libs/libs.cmake")
@@ -33,7 +31,6 @@ set(uqm_src_files
 	"src/config_vc6.h"
 #	"src/config_win.h"
 #	"src/config_win.h.in"
-	"src/endian_uqm.h"
 	"src/main.cpp"
 	"src/options.cpp"
 	"src/options.h"

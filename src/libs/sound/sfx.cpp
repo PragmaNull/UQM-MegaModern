@@ -15,7 +15,6 @@
  */
 
 #include <math.h>
-#include <scn/scan.h>
 
 #include "options.h"
 #include "sound.h"
@@ -23,34 +22,26 @@
 #include "libs/io/Path.h"
 #include "libs/reslib.h"
 #include "core/log/log.h"
-#include "libs/strlib.h"
-// for GetStringAddress()
-#include "libs/strings/strintrn.h"
-// for AllocStringTable(), FreeStringTable()
-#include "libs/memlib.h"
-
+#include "soundbank.h"
 
 static void CheckFinishedChannels(void);
 
-static const SoundPosition notPositional = {false, 0, 0};
+const static SoundPosition notPositional = {false, 0, 0};
 
 void PlayChannel(uint16_t channel, SOUND snd, SoundPosition pos,
 				 void* positional_object, unsigned char priority)
 {
-	SOUNDPTR snd_ptr = GetSoundAddress(snd);
-	TFB_SoundSample* sample;
+	TFB_SoundSample* const sample {snd};
 
 	StopSource(channel);
 	// all finished (stopped) channels can be cleaned up at this point
 	// since this is the only func that can initiate an sfx sound
 	CheckFinishedChannels();
 
-	if (!snd_ptr)
+	if (!sample)
 	{
 		return; // nothing to play
 	}
-
-	sample = *(TFB_SoundSample**)snd_ptr;
 
 	soundSource[channel].sample = sample;
 	soundSource[channel].positional_object = positional_object;
@@ -72,11 +63,9 @@ void StopChannel(uint16_t channel, uint8_t Priority)
 static void
 CheckFinishedChannels(void)
 {
-	int i;
-
-	for (i = FIRST_SFX_SOURCE; i <= LAST_SFX_SOURCE; ++i)
+	for (int i {FIRST_SFX_SOURCE}; i <= LAST_SFX_SOURCE; ++i)
 	{
-		audio_IntVal state;
+		audio_IntVal state {};
 
 		audio_GetSourcei(soundSource[i].handle, audio_SOURCE_STATE,
 						 &state);
@@ -91,7 +80,7 @@ CheckFinishedChannels(void)
 
 bool ChannelPlaying(uint16_t WhichChannel)
 {
-	audio_IntVal state;
+	audio_IntVal state {};
 
 	audio_GetSourcei(soundSource[WhichChannel].handle,
 					 audio_SOURCE_STATE, &state);
@@ -120,7 +109,7 @@ void UpdateSoundPosition(uint16_t channel, SoundPosition pos)
 
 	if (pos.positional)
 	{
-		float dist;
+		float dist {NAN};
 
 		fpos[0] = pos.x / ATTENUATION;
 		fpos[1] = 0.0f;
@@ -129,7 +118,7 @@ void UpdateSoundPosition(uint16_t channel, SoundPosition pos)
 		if (dist < MIN_DISTANCE)
 		{ // object is too close to listener
 			// move it away along the same vector
-			float scale = MIN_DISTANCE / dist;
+			const float scale = MIN_DISTANCE / dist;
 			fpos[0] *= scale;
 			fpos[2] *= scale;
 		}
@@ -155,120 +144,87 @@ void SetChannelVolume(uint16_t channel, uint16_t volume, uint8_t priority)
 	(void)priority; // ignored
 }
 
+static constexpr int32_t c_missingSoundMs {100};
+
 void* _GetSoundBankData(const ResourceFile& resource)
 {
-	uqm::io::File* const fp {&resource.file};
-	int snd_ct, n;
-	char CurrentLine[1024] {};
-	char filename[1024] {};
-#define MAX_FX 256
-	TFB_SoundSample* sndfx[MAX_FX];
-	STRING_TABLE Snd;
-	STRING str;
-	int i;
+	uqstl::vector<TFB_SoundSample*> samples {};
 
-	// The sound file names are relative to the directory of the bank.
+	const auto text {readResourceText(resource)};
+	const auto sounds {text ? uqm::soundBankFromJson(*text) : uqstl::nullopt};
+	if (!sounds)
 	{
-		const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
-		n = parent.empty() ? 0 : static_cast<int>(parent.size()) + 1;
-		uqm::strncpy_safe(filename, {resource.path.data(), static_cast<uint32_t>(n)});
+		uqm::log::warn("_GetSoundBankData(): could not read '{}'", resource.path);
+		return nullptr;
 	}
 
-	snd_ct = 0;
-	while (fp->readLine(CurrentLine) && snd_ct < MAX_FX)
+	// The sound file names are relative to the directory of the bank.
+	const uqstl::string_view parent {uqm::io::path::parent(resource.path)};
+	for (const uqstl::string& sound : *sounds)
 	{
-		TFB_SoundSample* sample;
-		TFB_SoundDecoder* decoder;
-		uint32_t decoded_bytes;
-
-		if (const auto result {scn::scan<std::string>(CurrentLine, "{}")})
-		{
-			const std::string parsed {result->value()};
-			uqm::strncpy_safe({&filename[n], static_cast<uint32_t>(sizeof(filename) - n)}, parsed);
-		}
-		else
-		{
-
-			uqm::log::warn("_GetSoundBankData: bad line: '{}'",
-						   CurrentLine);
-			continue;
-		}
-
+		uqstl::string filename {uqm::io::path::join(parent, sound)};
 		uqm::log::debug("_GetSoundBankData(): loading {}", filename);
 
-		decoder = SoundDecoder_Load(uqm::contentDir(), filename, 4096, 0, 0);
+		// A missing sound gets a silent decoder.
+		TFB_SoundDecoder* const decoder {SoundDecoder_Load(uqm::contentDir(), filename.data(), 4096, 0, -c_missingSoundMs)};
 		if (!decoder)
 		{
-			uqm::log::warn("_GetSoundBankData(): couldn't load {}",
-						   filename);
+			uqm::log::warn("_GetSoundBankData(): couldn't load {}", filename);
 			continue;
+		}
+		if (decoder->is_null)
+		{
+			uqm::log::warn("_GetSoundBankData(): there is no sound '{}'. The sound is silent.", filename);
 		}
 
 		// SFX samples don't have decoders, everything is pre-decoded below
-		sample = TFB_CreateSoundSample(nullptr, 1, nullptr);
+		TFB_SoundSample* const sample {TFB_CreateSoundSample(nullptr, 1, nullptr)};
 
 		// Decode everything and stash it in 1 buffer
-		decoded_bytes = SoundDecoder_DecodeAll(decoder);
-		uqm::log::debug("_GetSoundBankData(): decoded bytes {}",
-						decoded_bytes);
+		const uint32_t decoded_bytes {SoundDecoder_DecodeAll(decoder)};
+		uqm::log::debug("_GetSoundBankData(): decoded bytes {}", decoded_bytes);
 
-		audio_BufferData(sample->buffer[0], decoder->format,
-						 decoder->buffer, decoded_bytes, decoder->frequency);
+		audio_BufferData(sample->buffer[0], decoder->format, decoder->buffer, decoded_bytes, decoder->frequency);
 		// just for informational purposes
 		sample->length = decoder->length;
 
 		SoundDecoder_Free(decoder);
 
-		sndfx[snd_ct] = sample;
-		++snd_ct;
+		samples.push_back(sample);
 	}
 
-	if (!snd_ct)
+	if (samples.empty())
 	{
 		return nullptr; // no sounds decoded
 	}
 
-	Snd = AllocStringTable(snd_ct, 0);
-	if (!Snd)
-	{ // Oops, have to delete everything now
-		while (snd_ct--)
-		{
-			TFB_DestroySoundSample(sndfx[snd_ct]);
-		}
-
-		return nullptr;
-	}
-
-	// Populate the STRING_TABLE with ptrs to sample
-	for (i = 0, str = Snd->strings; i < snd_ct; ++i, ++str)
-	{
-		TFB_SoundSample** target = (TFB_SoundSample**)HMalloc(sizeof(sndfx[0]));
-		*target = sndfx[i];
-		str->data = (STRINGPTR)target;
-		str->length = sizeof(sndfx[0]);
-	}
-
-	return Snd;
+	return new uqm::SoundBank {uqstl::move(samples)};
 }
 
 bool _ReleaseSoundBankData(void* Snd)
 {
-	STRING_TABLE fxTab = (STRING_TABLE)Snd;
-	int index;
-
-	if (!fxTab)
+	if (!Snd)
 	{
 		return false;
 	}
+	delete static_cast<uqm::SoundBank*>(Snd);
+	return true;
+}
 
-	for (index = 0; index < fxTab->size; ++index)
+namespace uqm
+{
+
+SoundBank::SoundBank(uqstl::vector<TFB_SoundSample*> samples)
+	: m_samples {uqstl::move(samples)}
+{
+}
+
+SoundBank::~SoundBank()
+{
+	for (TFB_SoundSample* const sample : m_samples)
 	{
-		int i;
-		void** sptr = (void**)fxTab->strings[index].data;
-		TFB_SoundSample* sample = (TFB_SoundSample*)*sptr;
-
 		// Check all sources and see if we are currently playing this sample
-		for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+		for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 		{
 			if (soundSource[i].sample == sample)
 			{ // Playing this sample. Have to stop it.
@@ -283,23 +239,12 @@ bool _ReleaseSoundBankData(void* Snd)
 		}
 		sample->decoder = nullptr;
 		TFB_DestroySoundSample(sample);
-		// sptr will be deleted by FreeStringTable() below
 	}
-
-	FreeStringTable(fxTab);
-
-	return true;
 }
 
-bool DestroySound(SOUND_REF target)
+TFB_SoundSample* SoundBank::sample(size_t index) const
 {
-	return _ReleaseSoundBankData(target);
+	return m_samples.empty() ? nullptr : m_samples[index % m_samples.size()];
 }
 
-// The type conversions are implicit and will generate errors
-// or warnings if types change imcompatibly
-SOUNDPTR
-GetSoundAddress(SOUND sound)
-{
-	return GetStringAddress(sound);
-}
+} // namespace uqm

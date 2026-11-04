@@ -18,6 +18,8 @@
 
 #include "genall.h"
 #include "../planets.h"
+#include "uqm/random/UQMRandom.h"
+#include "uqm/globdata.h"
 
 
 static bool GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -46,21 +48,19 @@ static bool
 GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
-		uint16_t angle;
-
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 		pPlanet->data_index = TELLURIC_WORLD;
 		pPlanet->NumPlanets = 1;
 		pPlanet->radius = EARTH_RADIUS * 203L / 100;
-		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
@@ -83,7 +83,7 @@ GenerateTrap_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
 			solarSys->SysInfo.PlanetInfo.AtmoDensity =
 				EARTH_ATMOSPHERE * 2;

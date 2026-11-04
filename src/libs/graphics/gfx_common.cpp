@@ -20,10 +20,9 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/drawcmd.h"
 #include "libs/time/timelib.h"
-#include "libs/misc.h"
-// for TFB_DEBUG_HALT
+#include "core/stl/atomic.h"
 #include "options.h"
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 int fs_height = 0;
 int fs_width = 0;
@@ -49,7 +48,7 @@ int ScreenColorDepth;
 uqm::GfxDriver GraphicsDriver;
 int TFB_DEBUG_HALT = 0;
 
-volatile int TransitionAmount = 255;
+uqstl::atomic<int> TransitionAmount {255};
 
 static int gscale = GSCALE_IDENTITY;
 static uqm::TFBScaleMode gscale_mode = uqm::TFBScaleMode::Nearest;
@@ -66,7 +65,7 @@ void LoadIntoExtraScreen(GFXRECT* r)
 
 int SetGraphicScale(int scale)
 {
-	int old_scale = gscale;
+	const int old_scale = gscale;
 	gscale = (scale ? scale : GSCALE_IDENTITY);
 	return old_scale;
 }
@@ -78,7 +77,7 @@ int GetGraphicScale(void)
 
 uqm::TFBScaleMode SetGraphicScaleMode(uqm::TFBScaleMode mode)
 {
-	uqm::TFBScaleMode old_mode = gscale_mode;
+	const uqm::TFBScaleMode old_mode = gscale_mode;
 	assert(mode >= uqm::TFBScaleMode::Nearest && mode <= uqm::TFBScaleMode::Trilinear);
 	gscale_mode = mode;
 	return old_mode;
@@ -111,74 +110,17 @@ void FlushGraphics(void)
 	TFB_DrawScreen_WaitForSignal();
 }
 
-#if SDL_MAJOR_VERSION == 1
-static void
-ExpandRect(GFXRECT* rect, int expansion)
-{
-	if (rect->corner.x - expansion >= 0)
-	{
-		rect->extent.width += expansion;
-		rect->corner.x -= expansion;
-	}
-	else
-	{
-		rect->extent.width += rect->corner.x;
-		rect->corner.x = 0;
-	}
-
-	if (rect->corner.y - expansion >= 0)
-	{
-		rect->extent.height += expansion;
-		rect->corner.y -= expansion;
-	}
-	else
-	{
-		rect->extent.height += rect->corner.y;
-		rect->corner.y = 0;
-	}
-
-	if (rect->corner.x + rect->extent.width + expansion <= CanvasWidth)
-	{
-		rect->extent.width += expansion;
-	}
-	else
-	{
-		rect->extent.width = CanvasWidth - rect->corner.x;
-	}
-
-	if (rect->corner.y + rect->extent.height + expansion <= CanvasHeight)
-	{
-		rect->extent.height += expansion;
-	}
-	else
-	{
-		rect->extent.height = CanvasHeight - rect->corner.y;
-	}
-}
-#endif // SDL_MAJOR_VERSION
 
 void SetTransitionSource(const GFXRECT* pRect)
 {
-#if SDL_MAJOR_VERSION == 1
-	GFXRECT ActualRect;
-
-	if (pRect)
-	{ /* expand the rect to accomodate scalers in OpenGL mode */
-		ActualRect = *pRect;
-		pRect = &ActualRect;
-		ExpandRect(&ActualRect, 2);
-	}
-	TFB_DrawScreen_Copy(pRect, TFB_SCREEN_MAIN, TFB_SCREEN_TRANSITION);
-#else /* If we want custom resolutions, we have to make all transitions full screen*/
 	TFB_DrawScreen_Copy(nullptr, TFB_SCREEN_MAIN, TFB_SCREEN_TRANSITION);
 	(void)pRect; /* Satisfying compiler (unused parameter) */
-#endif
 }
 
 // ScreenTransition() is synchronous (does not return until transition done)
 void ScreenTransition(uqm::EmulationMode transType, const GFXRECT* pRect)
 {
-	static constexpr TimePeriod Duration = GameTicksPerSecond * 31 / 60;
+	static constexpr TimePeriod Duration {c_gameSecond * 31 / 60};
 	TimeCount startTime;
 
 	if (transType == uqm::EmulationMode::PC)
@@ -194,7 +136,7 @@ void ScreenTransition(uqm::EmulationMode transType, const GFXRECT* pRect)
 	while (TransitionAmount < 255)
 	{
 		TimePeriod deltaT;
-		int newAmount;
+		int newAmount {};
 
 		SleepThread(getTicksForFramerate(100));
 

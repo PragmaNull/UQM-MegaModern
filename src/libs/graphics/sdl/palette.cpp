@@ -17,18 +17,17 @@
  */
 
 #include "palette.h"
-#include "libs/memlib.h"
 #include "core/log/log.h"
 
 NativePalette*
 AllocNativePalette(void)
 {
-	return (NativePalette*)HCalloc(sizeof(NativePalette));
+	return new NativePalette {};
 }
 
 void FreeNativePalette(NativePalette* palette)
 {
-	HFree(palette);
+	delete palette;
 }
 
 void SetNativePaletteColor(NativePalette* palette, int index, Color color)

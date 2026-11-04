@@ -43,7 +43,7 @@ void Logger::init(uqstl::string_view logfile)
 	try
 	{
 		spdlog::init_thread_pool(8192, 1);
-		spdlog::sink_ptr stdoutSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+		const spdlog::sink_ptr stdoutSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 #if defined(DEBUG)
 		stdoutSink->set_level(spdlog::level::debug);
 #else
@@ -51,8 +51,8 @@ void Logger::init(uqstl::string_view logfile)
 #endif
 		stdoutSink->set_pattern("[%^%l%$] %v");
 
-		spdlog::filename_t logFileName {logfile};
-		spdlog::sink_ptr fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logFileName, true);
+		const spdlog::filename_t logFileName {logfile};
+		const spdlog::sink_ptr fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logFileName, true);
 		fileSink->set_level(spdlog::level::trace);
 		fileSink->set_pattern("[%Y-%b-%d %T.%e] [%l] %v");
 

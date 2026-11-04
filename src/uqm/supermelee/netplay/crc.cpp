@@ -79,7 +79,7 @@ void crc_init(crc_State* state)
 
 void crc_processBytes(crc_State* state, uint8_t* buf, size_t bufLen)
 {
-	uint8_t* end = buf + bufLen;
+	const uint8_t* end = buf + bufLen;
 	uint32_t newCrc = state->crc;
 
 	while (buf < end)

@@ -46,9 +46,10 @@
 #include "core/string/Utf8.h"
 #include "libs/mathlib.h"
 #include "libs/inplib.h"
-#include "libs/misc.h"
+#include "core/misc/FatalExit.h"
 #include "planets/solarsys.h"
 #include "starbase.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static void DrawFadeText(const char* str1, const char* str2,
@@ -59,7 +60,7 @@ static bool
 DoSelectAction(MENU_STATE* pMS)
 {
 	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		pMS->CurState = ATTACK + 1;
 		return (false);
@@ -76,7 +77,7 @@ DoSelectAction(MENU_STATE* pMS)
 			case HAIL:
 			case ATTACK:
 				DrawMenuStateStrings(PM_CONVERSE, pMS->CurState);
-				if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+				if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 				{
 					pMS->CurState = HAIL;
 				}
@@ -113,9 +114,7 @@ GetShipFragQueueForPlayer(uint16_t playerNr)
 
 void SetBattlePlanet(void)
 {
-	uint8_t selector;
-
-	selector = (uint8_t)((uint16_t)TFB_Random() % NUMBER_OF_PLANET_TYPES);
+	uint8_t selector {(uint8_t)((uint16_t)uqm::random().next() % NUMBER_OF_PLANET_TYPES)};
 
 	if (EXTENDED && (selector == RAINBOW_WORLD || selector == SHATTERED_WORLD))
 	{ // No rainbow or shattered worlds in hyperspace
@@ -136,10 +135,11 @@ void SetBattlePlanet(void)
 // Called by comm code to intialize battle fleets during encounter
 void BuildBattle(uint16_t which_player)
 {
-	QUEUE* pQueue;
-	HSHIPFRAG hStarShip, hNextShip;
-	HSTARSHIP hBuiltShip;
-	STARSHIP* BuiltShipPtr;
+	const QUEUE* pQueue {};
+	HSHIPFRAG hStarShip {};
+	HSHIPFRAG hNextShip {};
+	HSTARSHIP hBuiltShip {};
+	STARSHIP* BuiltShipPtr {};
 
 	EncounterRace = -1;
 
@@ -152,7 +152,7 @@ void BuildBattle(uint16_t which_player)
 	if (which_player != RPG_PLAYER_NUM)
 	{ // This function is called first for the NPC character
 		// and this is when a centerpiece is loaded
-		switch (lowByte(GLOBAL(CurrentActivity)))
+		switch (uqm::lowByte(uqm::currentActivity()))
 		{
 			case IN_LAST_BATTLE:
 				load_gravity_well(SA_MATRA);
@@ -179,15 +179,15 @@ void BuildBattle(uint16_t which_player)
 						// colliding with IP group in inner system still
 						// uses main planet for gravity well
 
-						uint8_t selector = pSolarSysState->MoonDesc[moonIndex(
-																		pSolarSysState, pSolarSysState->pOrbitalDesc)]
-											   .data_index;
+						const uint8_t selector = pSolarSysState->MoonDesc[moonIndex(
+																			  pSolarSysState, pSolarSysState->pOrbitalDesc)]
+													 .data_index;
 
 						if (selector == SA_MATRA)
 						{
-							utf8StringCopy(GLOBAL_SIS(PlanetName),
-										   sizeof(GLOBAL_SIS(PlanetName)),
-										   GAME_STRING(PLANET_NUMBER_BASE + 32));
+							uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
+												sizeof(GLOBAL_SIS(PlanetName)),
+												GAME_STRING(PLANET_NUMBER_BASE + 32));
 							DrawSISTitle(
 								GAME_STRING(PLANET_NUMBER_BASE + 32));
 						}
@@ -210,9 +210,7 @@ void BuildBattle(uint16_t which_player)
 	for (hStarShip = GetHeadLink(pQueue);
 		 hStarShip != 0; hStarShip = hNextShip)
 	{
-		SHIP_FRAGMENT* FragPtr;
-
-		FragPtr = LockShipFrag(pQueue, hStarShip);
+		const SHIP_FRAGMENT* FragPtr {LockShipFrag(pQueue, hStarShip)};
 		hNextShip = _GetSuccLink(FragPtr);
 
 		hBuiltShip = Build(&race_q[which_player],
@@ -267,20 +265,15 @@ void BuildBattle(uint16_t which_player)
 
 bool FleetIsInfinite(uint16_t playerNr)
 {
-	QUEUE* pQueue;
-	HSHIPFRAG hShipFrag;
-	SHIP_FRAGMENT* FragPtr;
-	bool ret;
-
-	pQueue = GetShipFragQueueForPlayer(playerNr);
-	hShipFrag = GetHeadLink(pQueue);
+	const QUEUE* pQueue {GetShipFragQueueForPlayer(playerNr)};
+	HSHIPFRAG hShipFrag {GetHeadLink(pQueue)};
 	if (!hShipFrag)
 	{ // Ship queue is empty in SuperMelee or for RPG player w/o escorts
 		return false;
 	}
 
-	FragPtr = LockShipFrag(pQueue, hShipFrag);
-	ret = (FragPtr->crew_level == INFINITE_FLEET);
+	const SHIP_FRAGMENT* FragPtr {LockShipFrag(pQueue, hShipFrag)};
+	const bool ret {(FragPtr->crew_level == INFINITE_FLEET)};
 	UnlockShipFrag(pQueue, hShipFrag);
 
 	return ret;
@@ -288,15 +281,15 @@ bool FleetIsInfinite(uint16_t playerNr)
 
 void UpdateShipFragCrew(STARSHIP* StarShipPtr)
 {
-	QUEUE* frag_q;
-	HSHIPFRAG hShipFrag, hNextFrag;
-	SHIP_FRAGMENT* frag;
-	QUEUE* ship_q;
-	HSTARSHIP hStarShip, hNextShip;
-	STARSHIP* ship;
+	HSHIPFRAG hShipFrag {};
+	HSHIPFRAG hNextFrag {};
+	SHIP_FRAGMENT* frag {};
+	HSTARSHIP hStarShip {};
+	HSTARSHIP hNextShip {};
+	const STARSHIP* ship {};
 
-	frag_q = GetShipFragQueueForPlayer(StarShipPtr->playerNr);
-	ship_q = &race_q[StarShipPtr->playerNr];
+	const QUEUE* frag_q {GetShipFragQueueForPlayer(StarShipPtr->playerNr)};
+	const QUEUE* ship_q {&race_q[StarShipPtr->playerNr]};
 
 	// Find a SHIP_FRAGMENT that corresponds to the given STARSHIP
 	// The ships and fragments are in the same order in two queues
@@ -336,20 +329,18 @@ void UpdateShipFragCrew(STARSHIP* StarShipPtr)
 uint16_t
 InitEncounter(void)
 {
-	uint16_t i;
-	FRAME SegueFrame;
+	uint16_t i {};
 	STAMP s;
 	TEXT t;
 	extern FRAME planet[];
-	MUSIC_REF MR;
 
 
 	SetContext(SpaceContext);
 	SetContextFont(MicroFont);
 
-	MR = LoadMusic(REDALERT_MUSIC);
+	MUSIC_REF MR {LoadMusic(REDALERT_MUSIC)};
 	PlayMusic(MR, false, 1);
-	SegueFrame = GetStarBackGround(true);
+	FRAME SegueFrame {GetStarBackGround(true)};
 	WaitForSoundEnd(TFBSOUND_WAIT_ALL);
 	StopMusic();
 	DestroyMusic(MR);
@@ -407,11 +398,12 @@ InitEncounter(void)
 	s.frame = planet[0];
 	DrawStamp(&s);
 
-	if (lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
 	{
 #define NUM_DISPLAY_PTS (std::size(display_pt))
-		HSHIPFRAG hStarShip, hNextShip;
-		GFXPOINT display_pt[] =
+		HSHIPFRAG hStarShip {};
+		HSHIPFRAG hNextShip {};
+		const GFXPOINT display_pt[] =
 			{
 				{10,	 51 },
 				{-10, 51 },
@@ -429,9 +421,8 @@ InitEncounter(void)
 			 hStarShip && i < 60; hStarShip = hNextShip, ++i)
 		{
 			GFXRECT r;
-			SHIP_FRAGMENT* FragPtr;
 
-			FragPtr = LockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
+			const SHIP_FRAGMENT* FragPtr {LockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip)};
 			if (FragPtr->crew_level != INFINITE_FLEET)
 			{
 				hNextShip = _GetSuccLink(FragPtr);
@@ -444,7 +435,7 @@ InitEncounter(void)
 			s.origin = display_pt[i % NUM_DISPLAY_PTS];
 			if (i >= NUM_DISPLAY_PTS)
 			{
-				uint16_t angle, radius;
+				uint16_t radius {};
 
 				radius = square_root((long)s.origin.x * s.origin.x
 									 + (long)s.origin.y * s.origin.y)
@@ -452,7 +443,7 @@ InitEncounter(void)
 
 				radius <<= RESOLUTION_FACTOR;
 
-				angle = ARCTAN(s.origin.x, s.origin.y);
+				const uint16_t angle {ARCTAN(s.origin.x, s.origin.y)};
 				s.origin.x = (COSINE(angle, radius));
 				s.origin.y = (SINE(angle, radius));
 			}
@@ -531,11 +522,12 @@ static void
 DrawFadeText(const char* str1, const char* str2, bool fade_in,
 			 GFXRECT* pRect)
 {
-	int16_t i;
-	uint32_t TimeIn;
-	TEXT t1, t2;
-	GFXRECT r1, r2;
-	static const Color fade_cycle[] = SCAVENGE_TEXT_COLOR_TABLE;
+	TimeCount TimeIn;
+	TEXT t1;
+	TEXT t2;
+	GFXRECT r1;
+	GFXRECT r2;
+	const static Color fade_cycle[] = SCAVENGE_TEXT_COLOR_TABLE;
 #define NUM_FADES (std::size(fade_cycle))
 
 	t1.baseline.x = pRect->corner.x + RES_SCALE(100);
@@ -553,7 +545,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 	FlushInput();
 	TimeIn = GetTimeCounter();
 
-	for (i = 0; i < (int16_t)NUM_FADES; ++i)
+	for (int16_t i {0}; i < (int16_t)NUM_FADES; ++i)
 	{
 		if (AnyButtonPress(true))
 		{
@@ -570,7 +562,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 			fade_cycle[fade_in ? i : (int16_t)(NUM_FADES - i - 1)]);
 		font_DrawText(&t1);
 		font_DrawText(&t2);
-		SleepThreadUntil(TimeIn + (GameTicksPerSecond / 20));
+		SleepThreadUntil(TimeIn + (c_gameSecond / 20));
 		TimeIn = GetTimeCounter();
 	}
 	if (!fade_in)
@@ -605,16 +597,14 @@ ClearRectBack(GFXRECT* pRect)
 uint16_t
 UninitEncounter(void)
 {
-	uint16_t ships_killed;
-
-	ships_killed = 0;
+	uint16_t ships_killed {0};
 
 	free_gravity_well();
 
-	if ((GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
-		|| lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		goto ExitUninitEncounter;
 	}
@@ -626,8 +616,9 @@ UninitEncounter(void)
 	}
 	else
 	{
-		bool Sleepy;
-		int16_t VictoryState, i;
+		bool Sleepy {};
+		int16_t VictoryState {};
+		int16_t i {};
 		uint16_t RecycleAmount = 0;
 		GFXRECT r;
 		GFXRECT scavenge_r = {
@@ -640,9 +631,8 @@ UninitEncounter(void)
 		const char* str2 = nullptr;
 		StatMsgMode prevMsgMode = SMM_UNDEFINED;
 		char buf[80] {};
-		HSHIPFRAG hStarShip;
-		SHIP_FRAGMENT* FragPtr;
-		static const Color fade_ship_cycle[] = SCAVENGE_SCREEN_COLOR_TABLE;
+		const SHIP_FRAGMENT* FragPtr {};
+		const static Color fade_ship_cycle[] = SCAVENGE_SCREEN_COLOR_TABLE;
 #define NUM_SHIP_FADES (std::size(fade_ship_cycle))
 
 		SET_GAME_STATE(BATTLE_SEGUE, 0);
@@ -653,7 +643,7 @@ UninitEncounter(void)
 						   0 :
 						   1;
 
-		hStarShip = GetHeadLink(&GLOBAL(npc_built_ship_q));
+		HSHIPFRAG hStarShip {GetHeadLink(&GLOBAL(npc_built_ship_q))};
 		FragPtr = LockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
 		EncounterRace = FragPtr->race_id;
 		if (GetStarShipFromIndex(&GLOBAL(avail_race_q), EncounterRace) == 0)
@@ -674,8 +664,8 @@ UninitEncounter(void)
 		Sleepy = true;
 		for (i = 0; i < NUM_SIDES; ++i)
 		{
-			QUEUE* pQueue;
-			HSHIPFRAG hNextShip;
+			QUEUE* pQueue {};
+			HSHIPFRAG hNextShip {};
 
 			if (i == 0)
 			{
@@ -693,9 +683,9 @@ UninitEncounter(void)
 					DrawSISMessage(nullptr);
 					if (inHQSpace())
 					{
-						DrawHyperCoords(GLOBAL(ShipStamp.origin));
+						DrawHyperCoords(uqm::flagship().shipStamp.origin);
 					}
-					else if (GLOBAL(ip_planet) == 0)
+					else if (uqm::flagship().ipPlanet == 0)
 					{
 						DrawHyperCoords(CurStarDescPtr->star_pt);
 					}
@@ -731,7 +721,7 @@ UninitEncounter(void)
 						if (VictoryState)
 						{
 #define MAX_DEAD_DISPLAYED 5
-							uint16_t j;
+							uint16_t j {};
 
 							if (ships_killed == 1)
 							{
@@ -747,8 +737,8 @@ UninitEncounter(void)
 
 								SetContextFont(isPC(uqm::UQMOptions::read().whichFonts) ? TinyFont : TinyFontBold);
 
-								utf8StringCopy(buf, sizeof buf,
-											   uqm::toUpperUtf8(GetStringAddress(FragPtr->race_strings)).c_str());
+								uqm::utf8StringCopy(buf, sizeof buf,
+													uqm::toUpperUtf8(FragPtr->race_strings->text(0)).c_str());
 
 								t.baseline.x = scavenge_r.corner.x + RES_SCALE(100);
 								t.baseline.y = scavenge_r.corner.y + RES_SCALE(68);
@@ -823,7 +813,7 @@ UninitEncounter(void)
 							}
 							else
 							{
-								GFXRECT textRect = font_GetTextRect(&t);
+								const GFXRECT textRect = font_GetTextRect(&t);
 								SetContextForeGroundColor(BLACK_COLOR);
 
 								r.corner.x =
@@ -837,7 +827,7 @@ UninitEncounter(void)
 								// Pause between erasing
 								if (Sleepy)
 								{
-									SleepThread(GameTicksPerSecond / 15);
+									SleepThread(c_gameSecond / 15);
 								}
 
 								// MAX_DEAD_DISPLAYED reached - erase
@@ -855,7 +845,7 @@ UninitEncounter(void)
 								TimeCount Time = GetTimeCounter();
 								for (j = 0; j < NUM_SHIP_FADES; ++j)
 								{
-									Sleepy = (bool)!AnyButtonPress(true) && !(GLOBAL(CurrentActivity) & CHECK_ABORT);
+									Sleepy = (bool)!AnyButtonPress(true) && !(uqm::currentActivity() & CHECK_ABORT);
 
 									if (IS_HD)
 									{ // Back of the current ship
@@ -879,7 +869,7 @@ UninitEncounter(void)
 									SetContextForeGroundColor(fade_ship_cycle[j]);
 									DrawFilledStamp(&ship_s);
 
-									SleepThreadUntil(Time + (GameTicksPerSecond / 15));
+									SleepThreadUntil(Time + (c_gameSecond / 15));
 									Time = GetTimeCounter();
 								}
 							}
@@ -909,7 +899,7 @@ UninitEncounter(void)
 			DestroyDrawable(ReleaseDrawable(s.frame));
 #endif /* NEVER */
 
-			WaitForAnyButton(true, GameTicksPerSecond * 3, false);
+			WaitForAnyButton(true, c_gameSecond * 3, false);
 			if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_ESCAPE])
 			{
 				DrawFadeText(str1, str2, false, &scavenge_r);
@@ -940,7 +930,7 @@ UninitEncounter(void)
 					// "Scavenged"
 
 					DrawFadeText(str1, str2, true, &scavenge_r);
-					WaitForAnyButton(true, GameTicksPerSecond * 2, false);
+					WaitForAnyButton(true, c_gameSecond * 2, false);
 					if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_ESCAPE])
 					{
 						DrawFadeText(str1, str2, false, &scavenge_r);
@@ -964,10 +954,9 @@ UninitEncounter(void)
 		if (uqm::UQMOptions::read().slaughterMode && CheckSphereTracking((RACE_ID)EncounterRace)
 			&& ships_killed)
 		{
-			HFLEETINFO hEncounter;
-			FLEET_INFO* EncounterPtr;
+			HFLEETINFO hEncounter {};
+			FLEET_INFO* EncounterPtr {};
 			bool isBanned = false;
-			uint8_t j;
 			const uint8_t bannedShip[7] =
 				{
 					PKUNK_SHIP,
@@ -978,7 +967,7 @@ UninitEncounter(void)
 					ILWRATH_SHIP,
 					SLYLANDRO_SHIP};
 
-			for (j = 0; j < std::size(bannedShip); j++)
+			for (uint8_t j {0}; j < std::size(bannedShip); j++)
 			{
 				if (bannedShip[j] == EncounterRace)
 				{
@@ -1022,21 +1011,20 @@ ExitUninitEncounter:
 
 void EncounterBattle(void)
 {
-	ACTIVITY OldActivity;
 	extern uint16_t nth_frame;
 	InputContext* savedPlayerInput = nullptr;
 
 
 	SET_GAME_STATE(BATTLE_SEGUE, 1);
 
-	OldActivity = GLOBAL(CurrentActivity);
-	if (lowByte(OldActivity) == IN_LAST_BATTLE)
+	const ACTIVITY OldActivity {uqm::currentActivity()};
+	if (uqm::lowByte(OldActivity) == IN_LAST_BATTLE)
 	{
-		GLOBAL(CurrentActivity) = MAKE_WORD(IN_LAST_BATTLE, 0);
+		uqm::currentActivity() = uqm::makeWord(IN_LAST_BATTLE, 0);
 	}
 	else
 	{
-		GLOBAL(CurrentActivity) = MAKE_WORD(IN_ENCOUNTER, 0);
+		uqm::currentActivity() = uqm::makeWord(IN_ENCOUNTER, 0);
 	}
 
 	//    FreeSC2Data ();
@@ -1044,11 +1032,11 @@ void EncounterBattle(void)
 	WaitForSoundEnd(TFBSOUND_WAIT_ALL);
 	//    DestroySound (ReleaseSound (MenuSounds));
 
-	if (GLOBAL(glob_flags) & CYBORG_ENABLED)
+	if (uqm::globalFlags() & CYBORG_ENABLED)
 	{
-		uint8_t cur_speed;
+		uint8_t cur_speed {};
 
-		cur_speed = (uint8_t)(GLOBAL(glob_flags) & COMBAT_SPEED_MASK)
+		cur_speed = (uint8_t)(uqm::globalFlags() & COMBAT_SPEED_MASK)
 				 >> COMBAT_SPEED_SHIFT;
 		if (cur_speed == 1)
 		{
@@ -1062,14 +1050,14 @@ void EncounterBattle(void)
 		{
 			cur_speed = (uint8_t)~0; /* maximum speed - no rendering */
 		}
-		nth_frame = MAKE_WORD(1, cur_speed);
+		nth_frame = uqm::makeWord(1, cur_speed);
 		PlayerControl[0] = PlayerControlFlags::Cyborg | PlayerControlFlags::DifficultyAwesome;
 		savedPlayerInput = PlayerInput[0];
 		PlayerInput[0] = nullptr;
 		if (!SetPlayerInput(0))
 		{
 			uqm::log::critical("Could not set cyborg player input.");
-			explode(); // Does not return;
+			uqm::fatalExit(); // Does not return;
 		}
 	}
 
@@ -1080,21 +1068,21 @@ void EncounterBattle(void)
 
 	// PlayerControl[1] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard; // Yes, you can make Adventure mode 2-player
 
-	GameSounds = CaptureSound(LoadSound(GAME_SOUNDS));
+	GameSounds = uqm::loadSoundBank(GAME_SOUNDS).release();
 
 	Battle(nullptr);
 
-	DestroySound(ReleaseSound(GameSounds));
+	delete GameSounds;
 	GameSounds = 0;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
 	}
 
-	if (GLOBAL(glob_flags) & CYBORG_ENABLED)
+	if (uqm::globalFlags() & CYBORG_ENABLED)
 	{
-		nth_frame = MAKE_WORD(0, 0);
+		nth_frame = uqm::makeWord(0, 0);
 		PlayerControl[0] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
 		ClearPlayerInput(0);
 		PlayerInput[0] = savedPlayerInput;
@@ -1106,5 +1094,5 @@ void EncounterBattle(void)
 	//    MenuSounds = CaptureSound (LoadSound (MENU_SOUNDS));
 	//    LoadSC2Data ();
 
-	GLOBAL(CurrentActivity) = OldActivity;
+	uqm::currentActivity() = OldActivity;
 }

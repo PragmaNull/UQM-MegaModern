@@ -18,14 +18,11 @@
 #define LIBS_INPUT_SDL_VCONTROL_H_
 
 #include "port.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include "core/stl/stl.h"
+#include "core/stl/atomic.h"
 
-#if SDL_MAJOR_VERSION == 1
-typedef SDLKey sdl_key_t;
-#else
 typedef SDL_Keycode sdl_key_t;
-#endif
 
 /* Initialization routines */
 void VControl_Init(void);
@@ -67,27 +64,21 @@ typedef struct
 } VCONTROL_GESTURE;
 
 /* Control of bindings */
-int VControl_AddGestureBinding(VCONTROL_GESTURE* g, int* target);
-void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, int* target);
+int VControl_AddGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target);
+void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target);
 
-int VControl_AddKeyBinding(sdl_key_t symbol, int* target);
-void VControl_RemoveKeyBinding(sdl_key_t symbol, int* target);
+int VControl_AddKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target);
+void VControl_RemoveKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target);
 
-void create_joystick(int device_index);
+void create_joystick(SDL_JoystickID instance_id);
 
 int VControl_AddJoyAxisBinding(int port, int axis, int polarity,
-							   int* target);
+							   uqstl::atomic<int>* target);
 void VControl_RemoveJoyAxisBinding(int port, int axis, int polarity,
-								   int* target);
+								   uqstl::atomic<int>* target);
 int VControl_SetJoyThreshold(int port, int threshold);
-int VControl_AddJoyButtonBinding(int port, int button, int* target);
-void VControl_RemoveJoyButtonBinding(int port, int button, int* target);
-#if SDL_MAJOR_VERSION == 1
-int VControl_AddJoyHatBinding(int port, int which, Uint8 dir,
-							  int* target);
-void VControl_RemoveJoyHatBinding(int port, int which, Uint8 dir,
-								  int* target);
-#endif // SDL_MAJOR_VERSION
+int VControl_AddJoyButtonBinding(int port, int button, uqstl::atomic<int>* target);
+void VControl_RemoveJoyButtonBinding(int port, int button, uqstl::atomic<int>* target);
 
 void VControl_RemoveAllBindings(void);
 
@@ -103,9 +94,6 @@ void VControl_ProcessKeyUp(sdl_key_t symbol);
 void VControl_ProcessJoyButtonDown(int port, int button);
 void VControl_ProcessJoyButtonUp(int port, int button);
 void VControl_ProcessJoyAxis(int port, int axis, int value);
-#if SDL_MAJOR_VERSION == 1
-void VControl_ProcessJoyHat(int port, int which, Uint8 value);
-#endif // SDL_MAJOR_VERSION
 
 /* Force the input into the blank state.  For preventing "sticky" keys. */
 void VControl_ResetInput(void);

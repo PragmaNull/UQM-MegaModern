@@ -29,7 +29,6 @@
 #include "units.h"
 #include "encount.h"
 #include "starmap.h"
-#include "endian_uqm.h"
 #include "gamestr.h"
 #include "options.h"
 #include "oscill.h"
@@ -39,7 +38,7 @@
 #include "sounds.h"
 #include "nameref.h"
 #include "uqmdebug.h"
-#include "lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/inplib.h"
 #include "libs/sound/sound.h"
@@ -57,7 +56,7 @@
 // Oscilloscope frame rate
 // Should be <= COMM_ANIM_RATE
 // XXX: was 32 picked experimentally?
-#define OSCILLOSCOPE_RATE (GameTicksPerSecond / chooseIfHd(32, 60))
+#define OSCILLOSCOPE_RATE (c_gameSecond / chooseIfHd(32, 60))
 
 // Maximum comm animation frame rate (actual execution rate)
 // A gfx frame is not always produced during an execution frame,
@@ -65,7 +64,7 @@
 // The rate was originally 120fps which allowed for more animation
 // precision which is ultimately wasted on the human eye anyway.
 // The highest known stable animation rate is 40fps, so that's what we use.
-#define COMM_ANIM_RATE (GameTicksPerSecond / 40)
+#define COMM_ANIM_RATE (c_gameSecond / 40)
 
 static GFXCONTEXT AnimContext;
 
@@ -75,7 +74,7 @@ FONT ComputerFont;
 
 static bool TalkingFinished;
 static CommIntroMode curIntroMode = CIM_DEFAULT;
-static TimeCount fadeTime;
+static TimePeriod fadeTime;
 
 // Dark mode
 bool IsDarkMode = false;
@@ -88,7 +87,8 @@ typedef struct response_entry
 	RESPONSE_REF response_ref;
 	TEXT response_text;
 	RESPONSE_FUNC response_func;
-	char* allocedResponse;
+	// The response text after Lua interpolation, if it needed that.
+	uqstl::string allocedResponse;
 } RESPONSE_ENTRY;
 
 typedef struct encounter_state
@@ -128,7 +128,7 @@ static ENCOUNTER_STATE* pCurInputState;
 static bool clear_subtitles;
 static bool next_page = false;
 static TEXT SubtitleText;
-static const char* last_subtitle;
+const static char* last_subtitle;
 
 static GFXCONTEXT TextCacheContext;
 static FRAME TextCacheFrame;
@@ -153,10 +153,10 @@ static bool PauseSubtitles(bool force);
 static int
 _count_lines(TEXT* pText)
 {
-	int16_t text_width;
-	const char* pStr;
+	int16_t text_width {};
+	const char* pStr {};
 	int numLines = 0;
-	bool eol;
+	bool eol {};
 
 	text_width = CommData.AlienTextWidth;
 	SetContextFont(CommData.AlienFont);
@@ -180,15 +180,15 @@ _count_lines(TEXT* pText)
 static int16_t
 add_text(int status, TEXT* pTextIn)
 {
-	uint16_t maxchars, numchars;
+	uint16_t numchars {};
 	TEXT locText;
-	TEXT* pText;
-	int16_t leading;
-	const char* pStr;
-	int16_t text_width;
+	TEXT* pText {};
+	int16_t leading {};
+	const char* pStr {};
+	int16_t text_width {};
 	int num_lines = 0;
 	static int16_t last_baseline;
-	bool eol;
+	bool eol {};
 	GFXCONTEXT OldContext = nullptr;
 	GFXRECT arrow;
 
@@ -196,7 +196,7 @@ add_text(int status, TEXT* pTextIn)
 
 	GetFrameRect(SetAbsFrameIndex(ActivityFrame, 6), &arrow);
 
-	maxchars = (uint16_t)~0;
+	uint16_t maxchars {(uint16_t)~0};
 	if (status == 1)
 	{
 		if (last_subtitle == pTextIn->pStr)
@@ -473,25 +473,19 @@ void ReleaseTalkingAnim(void)
 bool getLineWithinWidth(TEXT* pText, const char** startNext,
 						int16_t maxWidth, uint16_t maxChars)
 {
-	bool eol;
 	// The end of the line of text has been reached.
-	bool done;
 	// We cannot add any more words.
 	GFXRECT rect;
-	uint16_t oldCount;
-	const char* ptr;
-	const char* wordStart;
-	UniChar ch;
-	uint16_t charCount;
+	const char* wordStart {};
 
 	//GetContextClipRect (&rect);
 
-	eol = false;
-	done = false;
-	oldCount = 1;
-	charCount = 0;
-	ch = '\0';
-	ptr = pText->pStr;
+	bool eol {false};
+	bool done {false};
+	uint16_t oldCount {1};
+	uint16_t charCount {0};
+	uqm::UniChar ch {'\0'};
+	const char* ptr {pText->pStr};
 	for (;;)
 	{
 		wordStart = ptr;
@@ -505,7 +499,7 @@ bool getLineWithinWidth(TEXT* pText, const char** startNext,
 				done = true;
 				break;
 			}
-			ch = getCharFromString(&ptr);
+			ch = uqm::getCharFromString(&ptr);
 			eol = ch == '\0' || ch == '\n' || ch == '\r';
 			done = eol || charCount >= maxChars;
 			if (done || ch == ' ')
@@ -519,7 +513,8 @@ bool getLineWithinWidth(TEXT* pText, const char** startNext,
 		pText->CharCount = charCount;
 		TextRect(pText, &rect, nullptr);
 
-		if (rect.extent.width >= maxWidth)
+		// A first word that is too wide stays on the line.
+		if (rect.extent.width >= maxWidth && wordStart != pText->pStr)
 		{
 			pText->CharCount = oldCount;
 			*startNext = wordStart;
@@ -574,9 +569,9 @@ void DrawCommBorder(GFXRECT r)
 static void
 DrawSISComWindow(void)
 {
-	GFXCONTEXT OldContext;
+	GFXCONTEXT OldContext {};
 
-	if (lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
 		GFXRECT r;
 
@@ -618,9 +613,9 @@ void uninit_communication(void)
 static void
 RefreshResponsesSpecial(ENCOUNTER_STATE* pES)
 { // PC style repsonses
-	int16_t y;
-	uint8_t response;
-	int16_t leading;
+	int16_t y {};
+	uint8_t response {};
+	int16_t leading {};
 
 	SetContext(SpaceContext);
 	GetContextFontLeading(&leading);
@@ -652,9 +647,9 @@ RefreshResponsesSpecial(ENCOUNTER_STATE* pES)
 static void
 RefreshResponses(ENCOUNTER_STATE* pES)
 {
-	int16_t y;
-	uint8_t response;
-	int16_t leading;
+	int16_t y {};
+	uint8_t response {};
+	int16_t leading {};
 	STAMP s;
 
 
@@ -767,7 +762,6 @@ static void
 UpdateSpeechGraphics(void)
 {
 	static TimeCount NextTime;
-	GFXCONTEXT OldContext;
 
 	if (GetTimeCounter() < NextTime)
 	{
@@ -776,7 +770,7 @@ UpdateSpeechGraphics(void)
 
 	NextTime = GetTimeCounter() + OSCILLOSCOPE_RATE;
 
-	OldContext = SetContext(RadarContext);
+	GFXCONTEXT OldContext {SetContext(RadarContext)};
 	DrawOscilloscope();
 	SetContext(SpaceContext);
 	DrawSlider();
@@ -787,8 +781,6 @@ static void
 UpdateAnimations(bool paused)
 {
 	static TimeCount NextTime;
-	GFXCONTEXT OldContext;
-	bool change;
 
 	if (GetTimeCounter() < NextTime)
 	{
@@ -797,10 +789,10 @@ UpdateAnimations(bool paused)
 
 	NextTime = GetTimeCounter() + COMM_ANIM_RATE;
 
-	OldContext = SetContext(AnimContext);
+	GFXCONTEXT OldContext {SetContext(AnimContext)};
 	BatchGraphics();
 	// Advance and draw ambient, transit and talk animations
-	change = ProcessCommAnimations(clear_subtitles, paused);
+	const bool change {ProcessCommAnimations(clear_subtitles, paused)};
 	if (change || clear_subtitles)
 	{
 		RedrawSubtitles();
@@ -880,13 +872,11 @@ FadePlayerUI(void)
 	else
 	{
 		static TimeCount NextTime;
-		GFXCONTEXT OldContext;
-		uint8_t i;
 
 		// emulating as close as possible PC-DOS text glow
-		static const Color DarkModeFGTextColor[] = DARKMODE_FG_TABLE;
+		const static Color DarkModeFGTextColor[] = DARKMODE_FG_TABLE;
 		// it was not instantanious, but also looked like fading shenanigans
-		static const Color DarkModeBGTextColor[] = DARKMODE_BG_TABLE;
+		const static Color DarkModeBGTextColor[] = DARKMODE_BG_TABLE;
 
 		if (fadeIndex > 50)
 		{
@@ -899,9 +889,9 @@ FadePlayerUI(void)
 			return;
 		}
 
-		NextTime = GetTimeCounter() + GameTicksPerSecond / 15;
+		NextTime = GetTimeCounter() + c_gameSecond / 15;
 
-		OldContext = SetContext(ScreenContext);
+		GFXCONTEXT OldContext {SetContext(ScreenContext)};
 
 		SetContextForeGroundColor(
 			BUILD_COLOR_RGBA(
@@ -909,7 +899,7 @@ FadePlayerUI(void)
 
 		BatchGraphics();
 
-		for (i = 0; i < (std::size(DarkModeRect) - 1); i++)
+		for (uint8_t i {0}; i < (std::size(DarkModeRect) - 1); i++)
 		{
 			DrawFilledRectangle(&DarkModeRect[i]);
 		}
@@ -960,15 +950,15 @@ DoTalkSegue(TALKING_STATE* pTS)
 {
 	bool left = false;
 	bool right = false;
-	uint16_t curTrack;
+	uint16_t curTrack {};
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		pTS->ended = true;
 		return false;
 	}
 
-	if (uqm::UQMOptions::read().useSpeech || uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::Console3DO || (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE))
+	if (uqm::UQMOptions::read().useSpeech || uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::Console3DO || (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE))
 	{
 		if (PulsedInputState.menu[KEY_MENU_CANCEL])
 		{
@@ -988,10 +978,6 @@ DoTalkSegue(TALKING_STATE* pTS)
 			right = CurrentInputState.menu[KEY_MENU_RIGHT] != 0;
 		}
 
-#if DEMO_MODE || CREATE_JOURNAL
-		left = false;
-		right = false;
-#endif
 		curTrack = PlayingTrack();
 
 		if (right)
@@ -1061,14 +1047,14 @@ DoTalkSegue(TALKING_STATE* pTS)
 		else if (PauseSubtitles(next_page))
 		{
 			/* I would like to NOT count ellipses but whatever */
-			uint32_t delay = RecalculateDelay(strlen(SubtitleText.pStr), false);
-			uint8_t read_speed = speed_array[GLOBAL(glob_flags) & READ_SPEED_MASK];
+			const uint32_t delay = RecalculateDelay(strlen(SubtitleText.pStr), false);
+			const uint8_t read_speed = speed_array[uqm::globalFlags() & READ_SPEED_MASK];
 
 			if (delay > 0 || read_speed == VERY_SLOW)
 			{
 				bool awake = false;
-				bool block = (!wantTalkingAnim() || IsDarkMode
-							  || !haveTalkingAnim());
+				const bool block = (!wantTalkingAnim() || IsDarkMode
+									|| !haveTalkingAnim());
 				TimeCount TimeOut;
 
 				PauseTrack();
@@ -1078,7 +1064,7 @@ DoTalkSegue(TALKING_STATE* pTS)
 					freezeTalkingAnim();
 				}
 
-				TimeOut = GetTimeCounter() + delay;
+				TimeOut = GetTimeCounter() + TimePeriod {delay};
 
 				while (!awake)
 				{
@@ -1093,7 +1079,7 @@ DoTalkSegue(TALKING_STATE* pTS)
 
 					if (PulsedInputState.menu[KEY_MENU_CANCEL]
 						|| PulsedInputState.menu[KEY_MENU_RIGHT]
-						|| (GLOBAL(CurrentActivity) & CHECK_ABORT))
+						|| (uqm::currentActivity() & CHECK_ABORT))
 					{
 						awake = true;
 					}
@@ -1136,7 +1122,7 @@ DoTalkSegue(TALKING_STATE* pTS)
 
 	SleepThreadUntil(pTS->NextTime);
 	// Need a high enough framerate for 3DO smooth seeking
-	pTS->NextTime = GetTimeCounter() + GameTicksPerSecond / 60;
+	pTS->NextTime = GetTimeCounter() + c_gameSecond / 60;
 
 	return pTS->seeking || (curTrack && curTrack <= pTS->waitTrack);
 }
@@ -1201,7 +1187,7 @@ TalkSegue(uint16_t wait_track)
 		setStopTalkingAnim();
 	}
 
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{ // Wait until the animation task stops "talking"
 		while (runningTalkingAnim())
 		{
@@ -1255,7 +1241,7 @@ CommIntroTransition(void)
 void AlienTalkSegue(uint16_t wait_track)
 {
 	// this skips any talk segues that follow an aborted one
-	if ((GLOBAL(CurrentActivity) & CHECK_ABORT) || TalkingFinished)
+	if ((uqm::currentActivity() & CHECK_ABORT) || TalkingFinished)
 	{
 		return;
 	}
@@ -1265,7 +1251,7 @@ void AlienTalkSegue(uint16_t wait_track)
 		MUSIC_REF AlienSong = CommData.AlienSong;
 
 		InitSpeechGraphics();
-		SetColorMap(GetColorMapAddress(CommData.AlienColorMap));
+		SetColorMap(GetColorMapAddress(CommData.AlienColorMap, CommData.AlienColorMapIndex));
 		SetContext(AnimContext);
 		DrawAlienFrame(nullptr, 0, true);
 		UpdateSpeechGraphics();
@@ -1280,7 +1266,7 @@ void AlienTalkSegue(uint16_t wait_track)
 		if (uqm::UQMOptions::read().scrTrans != uqm::EmulationMode::None && !uqm::UQMOptions::read().useSpeech)
 		{ // short pause to compensate instant fading (conditions to be adjusted)
 			// I think it is for optIPScaler
-			TimeCount timeout = GetTimeCounter() + GameTicksPerSecond / 4;
+			const TimeCount timeout = GetTimeCounter() + c_gameSecond / 4;
 			while (GetTimeCounter() < timeout)
 			{
 				UpdateDuty(false);
@@ -1294,7 +1280,7 @@ void AlienTalkSegue(uint16_t wait_track)
 	TalkingFinished = TalkSegue(wait_track);
 	if (TalkingFinished && !VolasPackPresent)
 	{
-		FadeMusic(FOREGROUND_VOL, GameTicksPerSecond);
+		FadeMusic(FOREGROUND_VOL, c_gameSecond);
 	}
 }
 
@@ -1316,7 +1302,8 @@ static void
 remove_char_from_string(char* str, const char c)
 { // MB: Hack for removing '$' characters from Orz dialogue when viewing
 	// summary conversation - Used by DoConvSummary below
-	char *pr = str, *pw = str;
+	char* pr = str;
+	char* pw = str;
 
 	while (*pr)
 	{
@@ -1341,7 +1328,7 @@ DoConvSummary(SUMMARY_STATE* pSS)
 		pSS->Initialized = true;
 		DoInput(pSS, false);
 	}
-	else if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	else if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false; // bail out
 	}
@@ -1362,7 +1349,7 @@ DoConvSummary(SUMMARY_STATE* pSS)
 	{ // print the next page
 		GFXRECT r;
 		TEXT t;
-		int row;
+		int row {};
 
 		r.corner.x = 0;
 		r.corner.y = 0;
@@ -1487,16 +1474,9 @@ DoConvSummary(SUMMARY_STATE* pSS)
 static void
 ClearResponses(ENCOUNTER_STATE* pES)
 {
-	size_t responseI;
-
-	for (responseI = 0; responseI < MAX_RESPONSES; responseI++)
+	for (size_t responseI {0}; responseI < MAX_RESPONSES; responseI++)
 	{
-		RESPONSE_ENTRY* response = &pES->response_list[responseI];
-		if (response->allocedResponse != nullptr)
-		{
-			HFree(response->allocedResponse);
-			response->allocedResponse = nullptr;
-		}
+		pES->response_list[responseI].allocedResponse.clear();
 	}
 }
 
@@ -1504,14 +1484,14 @@ ClearResponses(ENCOUNTER_STATE* pES)
 static void
 SelectResponse(ENCOUNTER_STATE* pES)
 {
-	TEXT* response_text =
+	const TEXT* response_text =
 		&pES->response_list[pES->cur_response].response_text;
-	utf8StringCopy(pES->phrase_buf, sizeof pES->phrase_buf,
-				   response_text->pStr);
+	uqm::utf8StringCopy(pES->phrase_buf, sizeof pES->phrase_buf,
+						response_text->pStr);
 
 	if (!uqm::UQMOptions::read().useSpeech && uqm::UQMOptions::read().smoothScroll == uqm::EmulationMode::PC)
 	{ // short pause after choosing response to mimic PC behaviour
-		TimeCount timeout = GetTimeCounter() + GameTicksPerSecond / 2;
+		const TimeCount timeout = GetTimeCounter() + c_gameSecond / 2;
 		RefreshResponsesSpecial(pES);
 		while (GetTimeCounter() < timeout)
 		{
@@ -1531,7 +1511,7 @@ SelectResponse(ENCOUNTER_STATE* pES)
 	FlushCustomBaseLine();
 	ReleaseTalkingAnim();
 
-	FadeMusic(BACKGROUND_VOL, GameTicksPerSecond);
+	FadeMusic(BACKGROUND_VOL, c_gameSecond);
 
 	TalkingFinished = false;
 	pES->num_responses = 0;
@@ -1563,7 +1543,7 @@ SelectConversationSummary(ENCOUNTER_STATE* pES)
 static void
 SelectReplay(ENCOUNTER_STATE* pES)
 {
-	FadeMusic(BACKGROUND_VOL, GameTicksPerSecond);
+	FadeMusic(BACKGROUND_VOL, c_gameSecond);
 	if (pES)
 	{
 		FeedbackPlayerPhrase(pES->phrase_buf);
@@ -1575,7 +1555,7 @@ SelectReplay(ENCOUNTER_STATE* pES)
 static void
 PlayerResponseInput(ENCOUNTER_STATE* pES)
 {
-	uint8_t response;
+	uint8_t response {};
 
 	if (pES->top_response == (uint8_t)~0)
 	{
@@ -1587,7 +1567,7 @@ PlayerResponseInput(ENCOUNTER_STATE* pES)
 	{
 		SelectResponse(pES);
 	}
-	else if (PulsedInputState.menu[KEY_MENU_CANCEL] && lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE && !IsDarkMode)
+	else if (PulsedInputState.menu[KEY_MENU_CANCEL] && uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE && !IsDarkMode)
 	{
 		SelectConversationSummary(pES);
 	}
@@ -1598,10 +1578,10 @@ PlayerResponseInput(ENCOUNTER_STATE* pES)
 		{
 			SelectReplay(pES);
 
-			if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+			if (!(uqm::currentActivity() & CHECK_ABORT))
 			{
 				RefreshResponses(pES);
-				FadeMusic(FOREGROUND_VOL, GameTicksPerSecond);
+				FadeMusic(FOREGROUND_VOL, c_gameSecond);
 			}
 		}
 		else if (PulsedInputState.menu[KEY_MENU_UP])
@@ -1616,7 +1596,7 @@ PlayerResponseInput(ENCOUNTER_STATE* pES)
 
 		if (response != pES->cur_response)
 		{
-			int16_t y;
+			int16_t y {};
 
 			BatchGraphics();
 			add_text(-2,
@@ -1662,7 +1642,7 @@ typedef struct last_replay_state
 static bool
 DoLastReplay(LAST_REPLAY_STATE* pLRS)
 {
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -1672,16 +1652,16 @@ DoLastReplay(LAST_REPLAY_STATE* pLRS)
 		return false; // timed out and done
 	}
 
-	if (PulsedInputState.menu[KEY_MENU_CANCEL] && lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE)
+	if (PulsedInputState.menu[KEY_MENU_CANCEL] && uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
-		FadeMusic(BACKGROUND_VOL, GameTicksPerSecond);
+		FadeMusic(BACKGROUND_VOL, c_gameSecond);
 		SelectConversationSummary(nullptr);
-		pLRS->TimeOut = FadeMusic(0, GameTicksPerSecond * 2) + GameTicksPerSecond / 60;
+		pLRS->TimeOut = FadeMusic(0, c_gameSecond * 2) + c_gameSecond / 60;
 	}
 	else if (PulsedInputState.menu[KEY_MENU_LEFT])
 	{
 		SelectReplay(nullptr);
-		pLRS->TimeOut = FadeMusic(0, GameTicksPerSecond * 2) + GameTicksPerSecond / 60;
+		pLRS->TimeOut = FadeMusic(0, c_gameSecond * 2) + c_gameSecond / 60;
 	}
 
 	while (GetTimeCounter() < pLRS->NextTime)
@@ -1709,7 +1689,7 @@ DoCommunication(ENCOUNTER_STATE* pES)
 		return true;
 	}
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		UninitOscilloscope();
 	}
@@ -1720,7 +1700,7 @@ DoCommunication(ENCOUNTER_STATE* pES)
 		LAST_REPLAY_STATE replayState;
 
 		memset(&replayState, 0, sizeof replayState);
-		replayState.TimeOut = FadeMusic(0, GameTicksPerSecond * 3) + GameTicksPerSecond / 60;
+		replayState.TimeOut = FadeMusic(0, c_gameSecond * 3) + c_gameSecond / 60;
 		replayState.InputFunc = DoLastReplay;
 		DoInput(&replayState, false);
 	}
@@ -1746,7 +1726,7 @@ DoCommunication(ENCOUNTER_STATE* pES)
 	StopMusic();
 	StopSound();
 	StopTrack();
-	SleepThreadUntil(FadeMusic(NORMAL_VOLUME, 0) + GameTicksPerSecond / 60);
+	SleepThreadUntil(FadeMusic(NORMAL_VOLUME, TimePeriod {}) + c_gameSecond / 60);
 
 	UninitOscilloscope();
 
@@ -1757,9 +1737,8 @@ void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func,
 					  char* ConstructStr)
 {
 	ENCOUNTER_STATE* pES = pCurInputState;
-	RESPONSE_ENTRY* pEntry;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return;
 	}
@@ -1770,7 +1749,7 @@ void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func,
 		pES->top_response = (uint8_t)~0;
 	}
 
-	pEntry = &pES->response_list[pES->num_responses];
+	RESPONSE_ENTRY* pEntry {&pES->response_list[pES->num_responses]};
 	pEntry->response_ref = R;
 	pEntry->response_text.pStr = ConstructStr;
 	if (pEntry->response_text.pStr)
@@ -1779,18 +1758,13 @@ void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func,
 	}
 	else
 	{
-		STRING locString;
+		pEntry->response_text.pStr = CommData.ConversationPhrases->text(R - 1);
 
-		locString = SetAbsStringTableIndex(CommData.ConversationPhrases,
-										   (uint16_t)(R - 1));
-		pEntry->response_text.pStr =
-			(char*)GetStringAddress(locString);
-
-		if (luaUqm_comm_stringNeedsInterpolate(pEntry->response_text.pStr))
+		if (uqm::UQMLua::needsInterpolate(pEntry->response_text.pStr))
 		{
-			pEntry->allocedResponse = luaUqm_comm_stringInterpolate(
+			pEntry->allocedResponse = uqm::lua().interpolate(
 				pEntry->response_text.pStr);
-			pEntry->response_text.pStr = pEntry->allocedResponse;
+			pEntry->response_text.pStr = pEntry->allocedResponse.c_str();
 		}
 
 		pEntry->response_text.CharCount = (uint16_t)~0;
@@ -1826,21 +1800,19 @@ void SetUpCommData(void)
 	// Loading alien colormap
 	if (altResFlags & USE_ALT_COLORMAP)
 	{
-		CommData.AlienColorMap = CaptureColorMap(
-			LoadColorMap(CommData.AltRes.AlienColorMapRes));
+		CommData.AlienColorMap = uqm::loadStringTable(CommData.AltRes.AlienColorMapRes).release();
 
 		if (!CommData.AlienColorMap) // Failed to load
 		{
-			CommData.AlienColorMap = CaptureColorMap(
-				LoadColorMap(CommData.AlienColorMapRes));
+			CommData.AlienColorMap = uqm::loadStringTable(CommData.AlienColorMapRes).release();
 			altResFlags &= ~USE_ALT_COLORMAP;
 		}
 	}
 	else
 	{
-		CommData.AlienColorMap = CaptureColorMap(
-			LoadColorMap(CommData.AlienColorMapRes));
+		CommData.AlienColorMap = uqm::loadStringTable(CommData.AlienColorMapRes).release();
 	}
+	CommData.AlienColorMapIndex = 0;
 
 	// Loading alien song
 	if (altResFlags & USE_ALT_SONG)
@@ -1859,19 +1831,17 @@ void SetUpCommData(void)
 	}
 
 	// Load alien convo lines
-	CommData.ConversationPhrases = CaptureStringTable(
-		LoadStringTable(CommData.ConversationPhrasesRes));
+	CommData.ConversationPhrases = uqm::loadStringTable(CommData.ConversationPhrasesRes).release();
 }
 
 static void
 HailAlien(void)
 {
-	ENCOUNTER_STATE ES;
-	FONT PlayerFont, OldFont;
+	ENCOUNTER_STATE ES {};
+	FONT PlayerFont {};
 	Color TextBack;
 
 	pCurInputState = &ES;
-	memset(pCurInputState, 0, sizeof(*pCurInputState));
 
 	TalkingFinished = false;
 
@@ -1902,8 +1872,8 @@ HailAlien(void)
 	CommData.AlienFrame = CaptureDrawable(
 		LoadGraphic(CommData.AlienFrameRes));
 	CommData.AlienFont = LoadFont(CommData.AlienFontRes);
-	CommData.AlienColorMap = CaptureColorMap(
-		LoadColorMap(CommData.AlienColorMapRes));
+	CommData.AlienColorMap = uqm::loadStringTable(CommData.AlienColorMapRes).release();
+	CommData.AlienColorMapIndex = 0;
 
 	SetUpCommData();
 
@@ -1930,7 +1900,7 @@ HailAlien(void)
 	ES.phrase_buf[0] = '\0';
 
 	SetContext(SpaceContext);
-	OldFont = SetContextFont(PlayerFont);
+	FONT OldFont {SetContextFont(PlayerFont)};
 
 	{
 		GFXRECT r;
@@ -1946,7 +1916,7 @@ HailAlien(void)
 
 		SetTransitionSource(nullptr);
 		BatchGraphics();
-		if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 		{
 			// set the position of outtakes comm
 			CommWndRect.corner.x = ((SCREEN_WIDTH - CommWndRect.extent.width) / 2);
@@ -1956,8 +1926,8 @@ HailAlien(void)
 		}
 		else
 		{
-			GFXPOINT Log = MAKE_POINT(LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)),
-									  LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y)));
+			const GFXPOINT Log = MAKE_POINT(LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)),
+											LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y)));
 
 			r.corner.x = SIS_ORG_X;
 			r.corner.y = SIS_ORG_Y;
@@ -1982,7 +1952,7 @@ HailAlien(void)
 
 				if (inHQSpace())
 				{
-					DrawHyperCoords(GLOBAL(ShipStamp.origin));
+					DrawHyperCoords(uqm::flagship().shipStamp.origin);
 					if (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1
 						&& GET_GAME_STATE(ARILOU_HOME_VISITS)
 						&& (Log.x == ARILOU_HOME_X && Log.y == ARILOU_HOME_Y))
@@ -1990,7 +1960,7 @@ HailAlien(void)
 						DrawSISMessage(GLOBAL_SIS(PlanetName));
 					}
 				}
-				else if (GLOBAL(ip_planet) == 0)
+				else if (uqm::flagship().ipPlanet == 0)
 				{
 					DrawHyperCoords(CurStarDescPtr->star_pt);
 				}
@@ -2008,7 +1978,7 @@ HailAlien(void)
 	LastActivity |= CHECK_LOAD; /* prevent spurious input */
 	(*CommData.init_encounter_func)();
 	DoInput(&ES, false);
-	if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 	{
 		(*CommData.post_encounter_func)();
 	}
@@ -2018,9 +1988,9 @@ HailAlien(void)
 	SetContext(SpaceContext);
 	SetContextFont(OldFont);
 
-	DestroyStringTable(ReleaseStringTable(CommData.ConversationPhrases));
+	delete CommData.ConversationPhrases;
 	DestroyMusic(CommData.AlienSong);
-	DestroyColorMap(ReleaseColorMap(CommData.AlienColorMap));
+	delete CommData.AlienColorMap;
 	DestroyFont(CommData.AlienFont);
 	DestroyDrawable(ReleaseDrawable(CommData.AlienFrame));
 
@@ -2044,7 +2014,7 @@ HailAlien(void)
 	pCurInputState = 0;
 }
 
-void SetCommIntroMode(CommIntroMode newMode, TimeCount howLong)
+void SetCommIntroMode(CommIntroMode newMode, TimePeriod howLong)
 {
 	curIntroMode = newMode;
 	fadeTime = howLong;
@@ -2053,8 +2023,8 @@ void SetCommIntroMode(CommIntroMode newMode, TimeCount howLong)
 uint16_t
 InitCommunication(CONVERSATION which_comm)
 {
-	uint16_t status;
-	LOCDATA* LocDataPtr;
+	uint16_t status {};
+	const LOCDATA* LocDataPtr {};
 
 #ifdef DEBUG
 	if (disableInteractivity)
@@ -2069,7 +2039,7 @@ InitCommunication(CONVERSATION which_comm)
 		LastActivity &= ~CHECK_LOAD;
 		if (which_comm != COMMANDER_CONVERSATION)
 		{
-			if (lowByte(LastActivity) == 0)
+			if (uqm::lowByte(LastActivity) == 0)
 			{
 				DrawSISFrame();
 			}
@@ -2081,15 +2051,15 @@ InitCommunication(CONVERSATION which_comm)
 			DrawSISMessage(nullptr);
 			if (inHQSpace())
 			{
-				DrawHyperCoords(GLOBAL(ShipStamp.origin));
+				DrawHyperCoords(uqm::flagship().shipStamp.origin);
 			}
-			else if (GLOBAL(ip_planet) == 0)
+			else if (uqm::flagship().ipPlanet == 0)
 			{
 				DrawHyperCoords(CurStarDescPtr->star_pt);
 			}
 			else
 			{ // to fix moon suffix on load
-				if (pSolarSysState && lowByte(GLOBAL(CurrentActivity)) != IN_LAST_BATTLE
+				if (pSolarSysState && uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE
 					&& worldIsMoon(pSolarSysState, pSolarSysState->pOrbitalDesc))
 				{
 					if (!(GetNamedPlanetaryBody()) && isPC(uqm::UQMOptions::read().whichFonts)
@@ -2122,7 +2092,7 @@ InitCommunication(CONVERSATION which_comm)
 		}
 		else
 		{
-			uint16_t commToShip[] = {
+			const uint16_t commToShip[] = {
 				RACE_SHIP_FOR_COMM};
 			status = commToShip[which_comm];
 			if (status >= YEHAT_REBEL_SHIP)
@@ -2136,7 +2106,7 @@ InitCommunication(CONVERSATION which_comm)
 		if (which_comm == ORZ_CONVERSATION
 			|| (which_comm == TALKING_PET_CONVERSATION
 				&& (!GET_GAME_STATE(TALKING_PET_ON_SHIP)
-					|| lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE))
+					|| uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE))
 			|| (which_comm != CHMMR_CONVERSATION
 				&& which_comm != SYREEN_CONVERSATION)) //&& CheckAlliance (status) == BAD_GUY))
 		{
@@ -2175,7 +2145,7 @@ InitCommunication(CONVERSATION which_comm)
 	}
 	else if (LocDataPtr)
 	{ // only when comm initied successfully
-		if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+		if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 		{
 			(*CommData.post_encounter_func)(); // process states
 		}
@@ -2184,13 +2154,13 @@ InitCommunication(CONVERSATION which_comm)
 	}
 
 	status = 0;
-	if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 	{
 		// The Sa-Matra battle is skipped when Cyborg is enabled.
 		// Most likely because the Cyborg is too dumb to know what
 		// to do in this battle.
-		if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE
-			&& (GLOBAL(glob_flags) & CYBORG_ENABLED))
+		if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
+			&& (uqm::globalFlags() & CYBORG_ENABLED))
 		{
 			ReinitQueue(&GLOBAL(npc_built_ship_q));
 		}
@@ -2223,30 +2193,31 @@ InitCommunication(CONVERSATION which_comm)
 
 void RaceCommunication(void)
 {
-	uint16_t i, status;
-	HSHIPFRAG hStarShip;
-	SHIP_FRAGMENT* FragPtr;
+	uint16_t i {};
+	uint16_t status {};
+	HSHIPFRAG hStarShip {};
+	const SHIP_FRAGMENT* FragPtr {};
 	HENCOUNTER hEncounter = 0;
-	CONVERSATION RaceComm[] =
+	const CONVERSATION RaceComm[] =
 		{
 			RACE_COMMUNICATION};
 
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 	{
 		/* Going into talking pet conversation */
 		ReinitQueue(&GLOBAL(npc_built_ship_q));
 		CloneShipFragment(SAMATRA_SHIP, &GLOBAL(npc_built_ship_q), 0);
 		InitCommunication(TALKING_PET_CONVERSATION);
-		if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+		if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 			&& GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
 		{
-			GLOBAL(CurrentActivity) = WON_LAST_BATTLE;
+			uqm::currentActivity() = WON_LAST_BATTLE;
 		}
 		return;
 	}
 	else if (NextActivity & CHECK_LOAD)
 	{
-		uint8_t ec;
+		uint8_t ec {};
 
 		ec = GET_GAME_STATE(ESCAPE_COUNTER);
 
@@ -2269,12 +2240,12 @@ void RaceCommunication(void)
 		}
 		if (GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
 		{
-			NextActivity = GLOBAL(CurrentActivity) & ~START_ENCOUNTER;
-			if (lowByte(NextActivity) == IN_INTERPLANETARY)
+			NextActivity = uqm::currentActivity() & ~START_ENCOUNTER;
+			if (uqm::lowByte(NextActivity) == IN_INTERPLANETARY)
 			{
 				NextActivity |= START_INTERPLANETARY;
 			}
-			GLOBAL(CurrentActivity) |= CHECK_LOAD; /* fake a load game */
+			uqm::currentActivity() |= CHECK_LOAD; /* fake a load game */
 		}
 
 		SET_GAME_STATE(ESCAPE_COUNTER, ec);
@@ -2291,7 +2262,7 @@ void RaceCommunication(void)
 		else
 		{
 			/* Encounter with a black globe in HS, prepare enemy ship list */
-			ENCOUNTER* EncounterPtr;
+			ENCOUNTER* EncounterPtr {};
 
 			// The encounter globe that the flagship collided with is moved
 			// to the head of the queue in hyper.c:cleanup_hyperspace()
@@ -2321,7 +2292,7 @@ void RaceCommunication(void)
 
 	status = InitCommunication(RaceComm[i]);
 
-	if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+	if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 	{
 		return;
 	}
@@ -2331,7 +2302,7 @@ void RaceCommunication(void)
 		ReinitQueue(&GLOBAL(npc_built_ship_q));
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
+	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
 	{
 		/* if used destruct code in interplanetary */
 		if (i == SLYLANDRO_SHIP && status == 0)
@@ -2342,8 +2313,8 @@ void RaceCommunication(void)
 	else if (hEncounter)
 	{
 		/* Update HSpace encounter info, ships lefts, etc. */
-		uint8_t i, NumShips;
-		ENCOUNTER* EncounterPtr;
+		uint8_t NumShips {};
+		ENCOUNTER* EncounterPtr {};
 
 		LockEncounter(hEncounter, &EncounterPtr);
 
@@ -2355,15 +2326,11 @@ void RaceCommunication(void)
 			EncounterPtr->flags |= ONE_SHOT_ENCOUNTER;
 		}
 
-		for (i = 0; i < NumShips; ++i)
+		for (uint8_t i {0}; i < NumShips; ++i)
 		{
-			HSHIPFRAG hStarShip;
-			SHIP_FRAGMENT* FragPtr;
-			BRIEF_SHIP_INFO* BSIPtr;
-
-			hStarShip = GetStarShipFromIndex(&GLOBAL(npc_built_ship_q), i);
-			FragPtr = LockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
-			BSIPtr = &EncounterPtr->ShipList[i];
+			HSHIPFRAG hStarShip {GetStarShipFromIndex(&GLOBAL(npc_built_ship_q), i)};
+			const SHIP_FRAGMENT* FragPtr {LockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip)};
+			BRIEF_SHIP_INFO* BSIPtr {&EncounterPtr->ShipList[i]};
 			BSIPtr->race_id = FragPtr->race_id;
 			BSIPtr->crew_level = FragPtr->crew_level;
 			BSIPtr->max_crew = FragPtr->max_crew;
@@ -2412,10 +2379,9 @@ ClearSubtitles(void)
 static bool
 PauseSubtitles(bool force)
 {
-	const char* pStr;
 	static uint16_t num = 0;
 
-	pStr = GetTrackSubtitle();
+	const char* pStr {GetTrackSubtitle()};
 
 	if (GetSubtitleNumber(pStr) == 0 || SubtitleText.pStr == nullptr)
 	{
@@ -2436,10 +2402,9 @@ PauseSubtitles(bool force)
 static void
 CheckSubtitles(bool really)
 {
-	const char* pStr;
 	GFXPOINT baseline;
 	TEXT_ALIGN align;
-	uint16_t num;
+	uint16_t num {};
 
 	if (!really)
 	{ // New check - blocks subtitle change on switching tracks so any code
@@ -2448,7 +2413,7 @@ CheckSubtitles(bool really)
 		return;
 	}
 
-	pStr = GetTrackSubtitle();
+	const char* pStr {GetTrackSubtitle()};
 	baseline = CommData.AlienTextBaseline;
 	align = CommData.AlienTextAlign;
 
@@ -2513,9 +2478,9 @@ void RedrawSISComWindow(void)
 
 void SetCustomBaseLine(uint16_t sentence, GFXPOINT bl, TEXT_ALIGN align)
 { // Add custom baseline to the list
-	CUSTOM_BASELINE *cur, *sPtr;
+	CUSTOM_BASELINE* sPtr {};
 
-	cur = (CUSTOM_BASELINE*)HCalloc(sizeof(*cur));
+	CUSTOM_BASELINE* cur {new CUSTOM_BASELINE {}};
 	cur->index = sentence;
 	cur->baseline.x = RES_SCALE(bl.x);
 	cur->baseline.y = RES_SCALE(bl.y);
@@ -2538,18 +2503,18 @@ void SetCustomBaseLine(uint16_t sentence, GFXPOINT bl, TEXT_ALIGN align)
 
 void FlushCustomBaseLine(void)
 { // Free List, called at SelectResponce and Race uninit func (syreen.c for now)
-	CUSTOM_BASELINE *cur, *next;
+	CUSTOM_BASELINE* next {};
 
 	if (head_node == nullptr)
 	{
 		return;
 	}
 
-	cur = head_node;
+	CUSTOM_BASELINE* cur {head_node};
 	while (cur != nullptr)
 	{
 		next = cur->next;
-		HFree(cur);
+		delete cur;
 		cur = next;
 	}
 	head_node = nullptr;

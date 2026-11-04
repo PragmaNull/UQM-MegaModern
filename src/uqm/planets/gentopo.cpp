@@ -25,7 +25,9 @@
 void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray, GFXRECT* pRect,
 					 int16_t depth_delta)
 {
-	int16_t width, height, delta_y;
+	int16_t width {};
+	int16_t height {};
+	int16_t delta_y {};
 	struct
 	{
 		int16_t x_top, x_bot;
@@ -38,24 +40,22 @@ void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray, GFXRECT* pRect
 	delta_y = (height - 1) << 1;
 	do
 	{
-		int16_t d;
-		uint16_t h, w1, w2;
-		uint32_t rand_val;
-		int8_t* lpDst;
+		int16_t d {};
+		uint16_t h {};
 
-		if ((RandomContext_Random(SysGenRNG) & 1) == 0)
+		if ((SysGenRNG->next() & 1) == 0)
 		{
 			depth_delta = -depth_delta;
 		}
 
-		rand_val = RandomContext_Random(SysGenRNG);
+		const uint32_t rand_val {SysGenRNG->next()};
 
-		w1 = LOWORD(rand_val);
-		w2 = HIWORD(rand_val);
+		uint16_t w1 {uqm::lowWord(rand_val)};
+		uint16_t w2 {uqm::highWord(rand_val)};
 
-		LineDDA0.x_top = (lowByte(w1) % ORIGINAL_MAP_WIDTH)
+		LineDDA0.x_top = (uqm::lowByte(w1) % ORIGINAL_MAP_WIDTH)
 					   * width / ORIGINAL_MAP_WIDTH;
-		LineDDA0.x_bot = (highByte(w1) % ORIGINAL_MAP_WIDTH)
+		LineDDA0.x_bot = (uqm::highByte(w1) % ORIGINAL_MAP_WIDTH)
 					   * width / ORIGINAL_MAP_WIDTH;
 		// LineDDA0.x_top = w1 % width; // JMS_GFX: Replaced previous lines with
 		// these: uint8_t is too small for 640x480 sized maps.
@@ -84,10 +84,10 @@ void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray, GFXRECT* pRect
 			LineDDA0.error_term = -(delta_y >> 1);
 		}
 
-		LineDDA1.x_top = (lowByte(w2) % (ORIGINAL_MAP_WIDTH - 1))
+		LineDDA1.x_top = (uqm::lowByte(w2) % (ORIGINAL_MAP_WIDTH - 1))
 						   * width / ORIGINAL_MAP_WIDTH
 					   + LineDDA0.x_top + 1;
-		LineDDA1.x_bot = (highByte(w2) % (ORIGINAL_MAP_WIDTH - 1))
+		LineDDA1.x_bot = (uqm::highByte(w2) % (ORIGINAL_MAP_WIDTH - 1))
 						   * width / ORIGINAL_MAP_WIDTH
 					   + LineDDA0.x_bot + 1;
 		LineDDA1.delta_x = (LineDDA1.x_bot - LineDDA1.x_top) << 1;
@@ -109,11 +109,11 @@ void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray, GFXRECT* pRect
 			LineDDA1.error_term = -(delta_y >> 1);
 		}
 
-		lpDst = &DepthArray[LineDDA0.x_top];
+		int8_t* lpDst {&DepthArray[LineDDA0.x_top]};
 		h = height;
 		do
 		{
-			uint16_t w;
+			uint16_t w {};
 
 			w1 = LineDDA1.x_top - LineDDA0.x_top;
 			w2 = width - w1;

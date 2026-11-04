@@ -51,13 +51,12 @@ void TFB_Prim_Point(GFXPOINT* p, Color color, DrawMode mode, GFXPOINT ctxOrigin,
 void TFB_Prim_Rect(GFXRECT* r, Color color, DrawMode mode, GFXPOINT ctxOrigin, bool scaled)
 {
 	GFXRECT arm;
-	int gscale;
-	uint8_t scale = !scaled ? 1 : 4;
+	const uint8_t scale = !scaled ? 1 : 4;
 
 	// XXX: Rect prim scaling is currently unused
 	//   We scale the rect size just to be consistent with stamp prim,
 	//   which does same. The caller must scale the origin!
-	gscale = GetGraphicScale();
+	const int gscale {GetGraphicScale()};
 	arm = *r;
 	arm.extent.width = r->extent.width;
 	arm.extent.height = scale;
@@ -82,7 +81,6 @@ void TFB_Prim_Rect(GFXRECT* r, Color color, DrawMode mode, GFXPOINT ctxOrigin, b
 void TFB_Prim_FillRect(GFXRECT* r, Color color, DrawMode mode, GFXPOINT ctxOrigin)
 {
 	GFXRECT rect;
-	int gscale;
 
 	rect.corner.x = r->corner.x + ctxOrigin.x;
 	rect.corner.y = r->corner.y + ctxOrigin.y;
@@ -92,7 +90,7 @@ void TFB_Prim_FillRect(GFXRECT* r, Color color, DrawMode mode, GFXPOINT ctxOrigi
 	// XXX: Rect prim scaling is currently unused
 	//   We scale the rect size just to be consistent with stamp prim,
 	//   which does same. The caller must scale the origin!
-	gscale = GetGraphicScale();
+	const int gscale {GetGraphicScale()};
 	if (gscale != GSCALE_IDENTITY)
 	{ // rounding error correction here
 		rect.extent.width = (rect.extent.width * gscale
@@ -116,13 +114,11 @@ void TFB_Prim_FillRect(GFXRECT* r, Color color, DrawMode mode, GFXPOINT ctxOrigi
 void TFB_Prim_Line(LINE* line, Color color, DrawMode mode, GFXPOINT ctxOrigin,
 				   uint8_t thickness)
 {
-	int x1, y1, x2, y2;
-
 	// The caller must scale the origins!
-	x1 = line->first.x + ctxOrigin.x;
-	y1 = line->first.y + ctxOrigin.y;
-	x2 = line->second.x + ctxOrigin.x;
-	y2 = line->second.y + ctxOrigin.y;
+	const int x1 {line->first.x + ctxOrigin.x};
+	const int y1 {line->first.y + ctxOrigin.y};
+	const int x2 {line->second.x + ctxOrigin.x};
+	const int y2 {line->second.y + ctxOrigin.y};
 
 	if (_CurFramePtr->Type == SCREEN_DRAWABLE)
 	{
@@ -136,13 +132,12 @@ void TFB_Prim_Line(LINE* line, Color color, DrawMode mode, GFXPOINT ctxOrigin,
 
 void TFB_Prim_Stamp(STAMP* stmp, DrawMode mode, GFXPOINT ctxOrigin, bool unscaled)
 {
-	int x, y;
-	FRAME SrcFramePtr;
-	TFB_Image* img;
+	int x {};
+	int y {};
 	TFB_ColorMap* cmap = nullptr;
-	int scaleMode;
+	int scaleMode {};
 
-	SrcFramePtr = stmp->frame;
+	FRAME SrcFramePtr {stmp->frame};
 	if (!SrcFramePtr)
 	{
 		uqm::log::warn("TFB_Prim_Stamp: Tried to draw a nullptr frame"
@@ -150,7 +145,7 @@ void TFB_Prim_Stamp(STAMP* stmp, DrawMode mode, GFXPOINT ctxOrigin, bool unscale
 					   (void*)stmp);
 		return;
 	}
-	img = SrcFramePtr->image;
+	TFB_Image* img {SrcFramePtr->image};
 
 	if (!img)
 	{
@@ -158,20 +153,20 @@ void TFB_Prim_Stamp(STAMP* stmp, DrawMode mode, GFXPOINT ctxOrigin, bool unscale
 		return;
 	}
 
-	LockMutex(img->mutex);
-
-	img->NormalHs = SrcFramePtr->HotSpot;
-	// We scale the image size here, but the caller must scale the origin!
-	x = stmp->origin.x + ctxOrigin.x;
-	y = stmp->origin.y + ctxOrigin.y;
-
-	if (TFB_DrawCanvas_IsPaletted(img->NormalImg) && img->colormap_index != -1)
 	{
-		// returned cmap is addrefed, must release later
-		cmap = TFB_GetColorMap(img->colormap_index);
-	}
+		const uqm::LockGuard imageLock {img->mutex};
 
-	UnlockMutex(img->mutex);
+		img->NormalHs = SrcFramePtr->HotSpot;
+		// We scale the image size here, but the caller must scale the origin!
+		x = stmp->origin.x + ctxOrigin.x;
+		y = stmp->origin.y + ctxOrigin.y;
+
+		if (TFB_DrawCanvas_IsPaletted(img->NormalImg) && img->colormap_index != -1)
+		{
+			// returned cmap is addrefed, must release later
+			cmap = TFB_GetColorMap(img->colormap_index);
+		}
+	}
 
 	if (unscaled)
 	{
@@ -196,12 +191,11 @@ void TFB_Prim_Stamp(STAMP* stmp, DrawMode mode, GFXPOINT ctxOrigin, bool unscale
 
 void TFB_Prim_StampFill(STAMP* stmp, Color color, DrawMode mode, GFXPOINT ctxOrigin, bool unscaled)
 {
-	int x, y;
-	FRAME SrcFramePtr;
-	TFB_Image* img;
-	int scaleMode;
+	int x {};
+	int y {};
+	int scaleMode {};
 
-	SrcFramePtr = stmp->frame;
+	FRAME SrcFramePtr {stmp->frame};
 	if (!SrcFramePtr)
 	{
 		uqm::log::warn("TFB_Prim_StampFill: Tried to draw a nullptr frame"
@@ -209,7 +203,7 @@ void TFB_Prim_StampFill(STAMP* stmp, Color color, DrawMode mode, GFXPOINT ctxOri
 					   (void*)stmp);
 		return;
 	}
-	img = SrcFramePtr->image;
+	TFB_Image* img {SrcFramePtr->image};
 
 	if (!img)
 	{
@@ -217,14 +211,14 @@ void TFB_Prim_StampFill(STAMP* stmp, Color color, DrawMode mode, GFXPOINT ctxOri
 		return;
 	}
 
-	LockMutex(img->mutex);
+	{
+		const uqm::LockGuard imageLock {img->mutex};
 
-	img->NormalHs = SrcFramePtr->HotSpot;
-	// We scale the image size here, but the caller must scale the origin!
-	x = stmp->origin.x + ctxOrigin.x;
-	y = stmp->origin.y + ctxOrigin.y;
-
-	UnlockMutex(img->mutex);
+		img->NormalHs = SrcFramePtr->HotSpot;
+		// We scale the image size here, but the caller must scale the origin!
+		x = stmp->origin.x + ctxOrigin.x;
+		y = stmp->origin.y + ctxOrigin.y;
+	}
 
 	if (unscaled)
 	{
@@ -250,7 +244,8 @@ void TFB_Prim_StampFill(STAMP* stmp, Color color, DrawMode mode, GFXPOINT ctxOri
 void TFB_Prim_FontChar(GFXPOINT charOrigin, TFB_Char* fontChar, TFB_Image* backing,
 					   DrawMode mode, GFXPOINT ctxOrigin)
 {
-	int x, y;
+	int x {};
+	int y {};
 
 	// Text prim does not scale
 	x = charOrigin.x + ctxOrigin.x;
@@ -272,8 +267,7 @@ void TFB_Prim_FontChar(GFXPOINT charOrigin, TFB_Char* fontChar, TFB_Image* backi
 
 void TFB_Prim_MaskFrame(FRAME layer, FRAME base, DrawMode mode, Color* fill)
 {
-	TFB_Image* img;
-	TFB_Image* bas;
+	TFB_Image* img {};
 
 	if (!base)
 	{
@@ -295,7 +289,7 @@ void TFB_Prim_MaskFrame(FRAME layer, FRAME base, DrawMode mode, Color* fill)
 		}
 	}
 
-	bas = base->image;
+	TFB_Image* bas {base->image};
 
 	if (!bas)
 	{

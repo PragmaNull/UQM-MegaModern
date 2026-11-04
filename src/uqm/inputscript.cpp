@@ -64,7 +64,7 @@ uqstl::optional<InputScript> InputScript::parse(uqstl::string_view text, uqstl::
 	{
 		++lineNumber;
 		const size_t end {text.find('\n')};
-		uqstl::string_view line {trim(text.substr(0, end))};
+		const uqstl::string_view line {trim(text.substr(0, end))};
 		text = end == uqstl::string_view::npos ? uqstl::string_view {} : text.substr(end + 1);
 
 		if (line.empty() || line.front() == '#')
@@ -98,6 +98,15 @@ uqstl::optional<InputScript> InputScript::parse(uqstl::string_view text, uqstl::
 		else if (compareICase(word, "log"))
 		{
 			script.m_commands.push_back({.kind = ScriptCommand::Kind::Log, .text = uqstl::string {argument}});
+		}
+		else if (compareICase(word, "savegame"))
+		{
+			const auto slot {parseCount(argument)};
+			if (!slot || *slot > UINT16_MAX)
+			{
+				return fail("expected a save slot number");
+			}
+			script.m_commands.push_back({.kind = ScriptCommand::Kind::SaveGame, .slot = static_cast<uint16_t>(*slot)});
 		}
 		else if (compareICase(word, "quit"))
 		{
@@ -156,6 +165,9 @@ InputScript::Step InputScript::update(uint32_t now)
 				return {.dumpMenu = true};
 			case ScriptCommand::Kind::Log:
 				return {.log = command.text};
+			case ScriptCommand::Kind::SaveGame:
+				m_waitUntil = now + m_delay;
+				return {.saveSlot = command.slot};
 			case ScriptCommand::Kind::Quit:
 				return {.quit = true};
 		}

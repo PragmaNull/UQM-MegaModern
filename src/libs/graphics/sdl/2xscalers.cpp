@@ -44,19 +44,25 @@ const Scale_FuncDef_t
 // Biadapt scaling to 2x
 void SCALE_(BiAdaptFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 {
-	int x, y;
-	const int w = src->w, h = src->h;
-	int xend, yend;
-	int dsrc, ddst;
+	int x {};
+	int y {};
+	const int w = src->w;
+	const int h = src->h;
+	int xend {};
+	int yend {};
+	int dsrc {};
+	int ddst {};
 	SDL_Rect* region = r;
 	SDL_Rect limits;
-	SDL_PixelFormat* fmt = dst->format;
-	const int sp = src->pitch, dp = dst->pitch;
-	const int bpp = fmt->BytesPerPixel;
-	const int slen = sp / bpp, dlen = dp / bpp;
+	const SDL_PixelFormatDetails* fmt = SDL_GetPixelFormatDetails(dst->format);
+	const int sp = src->pitch;
+	const int dp = dst->pitch;
+	const int bpp = fmt->bytes_per_pixel;
+	const int slen = sp / bpp;
+	const int dlen = dp / bpp;
 	Uint32* src_p = (Uint32*)src->pixels;
 	Uint32* dst_p = (Uint32*)dst->pixels;
-	Uint32 pixval_tl, pixval_tr, pixval_bl, pixval_br;
+	Uint32 pixval_tl {}, pixval_tr {}, pixval_bl {}, pixval_br {};
 
 // these macros are for clarity; they make the current pixel (0,0)
 // and allow to access pixels in all directions
@@ -155,8 +161,9 @@ void SCALE_(BiAdaptFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 
 			if (pixval_tl == pixval_br && pixval_tr == pixval_bl)
 			{
-				int cl, cr;
-				Uint32 clr;
+				int cl {};
+				int cr {};
+				Uint32 clr {};
 
 				if (pixval_tl == pixval_tr)
 				{

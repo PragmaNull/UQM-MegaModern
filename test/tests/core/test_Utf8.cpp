@@ -81,4 +81,95 @@ TEST(Utf8Test, ToWideChar_EmptyOrInvalid)
 }
 #endif
 
+TEST(Utf8Test, GetCharFromString_DecodesAndAdvances)
+{
+	const char* text {"a\xc3\xa4\xe2\x82\xac\xf0\x9f\x9a\x80"}; // a ä € U+1F680
+	const char* ptr {text};
+	EXPECT_EQ(getCharFromString(&ptr), UniChar {'a'});
+	EXPECT_EQ(getCharFromString(&ptr), UniChar {0xe4});
+	EXPECT_EQ(getCharFromString(&ptr), UniChar {0x20ac});
+	EXPECT_EQ(getCharFromString(&ptr), UniChar {0x1f680});
+	EXPECT_EQ(ptr, text + 10);
+	EXPECT_EQ(getCharFromString(&ptr), UniChar {0});
+	EXPECT_EQ(ptr, text + 11);
+}
+
+TEST(Utf8Test, GetCharFromString_SkipsBadSequence)
+{
+	const char* text {"\xc3(\x80\x80z"};
+	const char* ptr {text};
+	EXPECT_EQ(getCharFromString(&ptr), UniChar {0});
+	EXPECT_EQ(*ptr, '(');
+
+	const char* overlong {"\xc0\x80x"};
+	ptr = overlong;
+	EXPECT_EQ(getCharFromString(&ptr), UniChar {0});
+	EXPECT_EQ(*ptr, 'x');
+}
+
+TEST(Utf8Test, CountAndPosition)
+{
+	EXPECT_EQ(utf8StringCount("k\xc3\xa4se"), 4u);
+	EXPECT_EQ(utf8StringCount(""), 0u);
+	EXPECT_EQ(utf8StringCount(uqstl::string_view {"abcdef", 3}), 3u);
+	EXPECT_EQ(utf8CharCount("|12|x|", '|'), 3u);
+	EXPECT_EQ(utf8StringPos("k\xc3\xa4se", 's'), 2);
+	EXPECT_EQ(utf8StringPos("abc", 'z'), -1);
+	EXPECT_EQ(utf8StringPos("abc", 0), 3);
+}
+
+TEST(Utf8Test, SkipChars)
+{
+	const char* text {"\xc3\xa4\xc3\xb6x"};
+	EXPECT_EQ(skipUTF8Chars(text, 2), text + 4);
+	EXPECT_EQ(skipUTF8Chars(text, 10), text + 5);
+
+	char buffer[] {"ab"};
+	const char* mutableEnd {skipUTF8Chars(buffer, 1)};
+	EXPECT_EQ(mutableEnd, buffer + 1);
+}
+
+TEST(Utf8Test, CopyDoesNotSplitCharacters)
+{
+	char buffer[4] {};
+	EXPECT_EQ(utf8StringCopy(buffer, sizeof(buffer), "ab\xc3\xa4"), buffer);
+	EXPECT_STREQ(buffer, "ab");
+
+	EXPECT_EQ(utf8StringCopy(buffer, sizeof(buffer), "abc"), buffer);
+	EXPECT_STREQ(buffer, "abc");
+
+	EXPECT_EQ(utf8StringCopy(buffer, 0, "abc"), nullptr);
+}
+
+TEST(Utf8Test, GetStringFromChar_Encodes)
+{
+	char out[4] {};
+	EXPECT_EQ(getStringFromChar(out, 0x20ac), 3);
+	EXPECT_EQ(uqstl::string_view(out, 3), "\xe2\x82\xac");
+	EXPECT_EQ(getStringFromChar(uqstl::span {out, 1}, 0x20ac), -3);
+	EXPECT_EQ(getStringFromChar(out, 0x110000), 0);
+}
+
+TEST(Utf8Test, CharClasses)
+{
+	EXPECT_TRUE(isGraphChar('a'));
+	EXPECT_FALSE(isGraphChar(' '));
+	EXPECT_TRUE(isPrintChar(' '));
+	EXPECT_FALSE(isGraphChar(0xe000));
+	EXPECT_EQ(toUpperChar('a'), UniChar {'A'});
+	EXPECT_EQ(toUpperChar(0x20ac), UniChar {0x20ac});
+	EXPECT_EQ(toUpperChar(0xe4), UniChar {0xc4});	  // a with diaeresis
+	EXPECT_EQ(toUpperChar(0x0436), UniChar {0x0416}); // Cyrillic zhe
+	EXPECT_FALSE(isGraphChar(0x200b));				  // zero width space (format)
+}
+
+TEST(Utf8Test, GetCharFromString_RejectsSurrogates)
+{
+	const char* text {"\xed\xa0\x80x"}; // U+D800
+	const char* ptr {text};
+	EXPECT_EQ(getCharFromString(&ptr), UniChar {0});
+	EXPECT_EQ(*ptr, 'x');
+	EXPECT_EQ(getStringFromChar(uqstl::span<char> {}, 0xd800), 0);
+}
+
 } // namespace uqm

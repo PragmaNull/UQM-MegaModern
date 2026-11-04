@@ -1,0 +1,33 @@
+# Starts a new game from the New Game seed menu with the type Planets and a random seed.
+# Starts with newgame-seed.settings.json, so the difficulty chooser does not show.
+# Expect "New Game Seed Type: Planet" and a random "New Game Seed" in the log.
+wait 4000
+cancel
+wait 3000
+cancel
+wait 3000
+# New Game is the first item of the main menu.
+select
+wait 2000
+log new game menu
+dumpmenu
+# Starmap Seeding: Original to Planets.
+right
+# Random Seed is the fourth item.
+down 3
+select
+log new game menu after random seed
+dumpmenu
+# Start Game follows Random Seed. The spacer cannot be selected.
+down 1
+log start game
+select
+# Skip the introduction.
+wait 6000
+cancel
+wait 3000
+cancel
+wait 3000
+cancel
+wait 8000
+quit

@@ -92,11 +92,8 @@ Netplay_connectionReset(NetConnection* conn, NetplayResetReason reason,
 static void
 Netplay_doConnectionResetCallback(NetConnection* conn)
 {
-	NetConnection_ResetCallback callback;
-	void* resetArg;
-
-	callback = conn->resetCallback;
-	resetArg = conn->resetCallbackArg;
+	NetConnection_ResetCallback callback {conn->resetCallback};
+	void* resetArg {conn->resetCallbackArg};
 
 	NetConnection_setResetCallback(conn, nullptr, nullptr);
 	// Clear the resetCallback field before performing the callback,

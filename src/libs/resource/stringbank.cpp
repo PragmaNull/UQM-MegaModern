@@ -60,7 +60,7 @@ void StringBank_Free(stringbank* bank)
 const char*
 StringBank_AddString(stringbank* bank, const char* str)
 {
-	unsigned int len = strlen(str) + 1;
+	const unsigned int len = strlen(str) + 1;
 	stringbank* x = bank;
 	if (len > STRBANK_CHUNK_SIZE)
 	{
@@ -68,7 +68,7 @@ StringBank_AddString(stringbank* bank, const char* str)
 	}
 	while (x)
 	{
-		unsigned int remaining = STRBANK_CHUNK_SIZE - x->len;
+		const unsigned int remaining = STRBANK_CHUNK_SIZE - x->len;
 		if (len < remaining)
 		{
 			char* result = x->data + x->len;
@@ -88,7 +88,7 @@ StringBank_AddString(stringbank* bank, const char* str)
 const char*
 StringBank_AddOrFindString(stringbank* bank, const char* str)
 {
-	unsigned int len = strlen(str) + 1;
+	const unsigned int len = strlen(str) + 1;
 	stringbank* x = bank;
 	if (len > STRBANK_CHUNK_SIZE)
 	{
@@ -120,7 +120,7 @@ static char buffer[STRBANK_CHUNK_SIZE];
 const char*
 StringBank_AddSubstring(stringbank* bank, const char* str, unsigned int n)
 {
-	unsigned int len = strlen(str);
+	const unsigned int len = strlen(str);
 	if (n > len)
 	{
 		return StringBank_AddString(bank, str);
@@ -136,7 +136,7 @@ StringBank_AddSubstring(stringbank* bank, const char* str, unsigned int n)
 const char*
 StringBank_AddOrFindSubstring(stringbank* bank, const char* str, unsigned int n)
 {
-	unsigned int len = strlen(str);
+	const unsigned int len = strlen(str);
 	if (n > len)
 	{
 		return StringBank_AddOrFindString(bank, str);
@@ -151,15 +151,14 @@ StringBank_AddOrFindSubstring(stringbank* bank, const char* str, unsigned int n)
 
 int SplitString(const char* s, char splitchar, int n, const char** result, stringbank* bank)
 {
-	int i;
+	int i {};
 	const char* index = s;
 
 	for (i = 0; i < n - 1; i++)
 	{
-		const char* next;
-		int len;
+		int len {};
 
-		next = strchr(index, splitchar);
+		const char* next {strchr(index, splitchar)};
 		if (!next)
 		{
 			break;

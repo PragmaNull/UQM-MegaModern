@@ -20,7 +20,6 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 #include "libs/sndlib.h"
 #include "uqm/units.h"
 
@@ -32,7 +31,7 @@ static uint32_t vp_GetTicks(TFB_VideoDecoder*);
 static bool vp_SetTimer(TFB_VideoDecoder*, uint32_t msecs);
 
 
-static const TFB_VideoCallbacks vp_DecoderCBs =
+const static TFB_VideoCallbacks vp_DecoderCBs =
 	{
 		vp_BeginFrame,
 		vp_EndFrame,
@@ -46,7 +45,7 @@ static void vp_AudioEnd(TFB_SoundSample* sample);
 static void vp_BufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag);
 static void vp_QueueBuffer(TFB_SoundSample* sample, audio_Object buffer);
 
-static const TFB_SoundCallbacks vp_AudioCBs =
+const static TFB_SoundCallbacks vp_AudioCBs =
 	{
 		vp_AudioStart,
 		nullptr,
@@ -66,10 +65,10 @@ void TFB_UninitVideoPlayer(void)
 	// now just a stub
 }
 
-static inline int32_t
+static inline TimePeriod
 msecToTimeCount(int32_t msec)
 {
-	return msec * GameTicksPerSecond / 1000;
+	return uqstl::chrono::duration_cast<TimePeriod>(uqstl::chrono::milliseconds {msec});
 }
 
 // audio-synced video playback frame function
@@ -80,12 +79,10 @@ processAudioSyncedFrame(VIDEO_REF vid)
 #define MAX_FRAME_LAG 8
 #define LAG_FRACTION 6
 #define SYNC_BIAS 1 / 3
-	int ret;
-	uint32_t want_frame;
-	uint32_t prev_want_frame;
-	int32_t wait_msec;
-	GFXCONTEXT oldContext;
-	TimeCount Now = GetTimeCounter();
+	int ret {};
+	uint32_t want_frame {};
+	int32_t wait_msec {};
+	const TimeCount Now = GetTimeCounter();
 
 	if (!vid->playing)
 	{
@@ -97,9 +94,10 @@ processAudioSyncedFrame(VIDEO_REF vid)
 		return true; // not time yet
 	}
 
-	LockMutex(vid->guard);
-	want_frame = vid->want_frame;
-	UnlockMutex(vid->guard);
+	{
+		const uqm::LockGuard lock {vid->guard};
+		want_frame = vid->want_frame;
+	}
 
 	if (want_frame >= vid->decoder->frame_count)
 	{
@@ -123,7 +121,7 @@ processAudioSyncedFrame(VIDEO_REF vid)
 	//  The system of timeouts and lag counts should make the video
 	//  *relatively* smooth
 	//
-	prev_want_frame = vid->cur_frame - vid->lag_cnt;
+	const uint32_t prev_want_frame {vid->cur_frame - vid->lag_cnt};
 	if (want_frame > prev_want_frame - MAX_FRAME_LAG
 		&& want_frame <= prev_want_frame + MAX_FRAME_LAG)
 	{
@@ -145,7 +143,7 @@ processAudioSyncedFrame(VIDEO_REF vid)
 
 	// draw the frame
 	// We have the cliprect precalculated and don't need the rest
-	oldContext = SetContext(nullptr);
+	GFXCONTEXT oldContext {SetContext(nullptr)};
 	TFB_DrawScreen_Image(vid->frame,
 						 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
 						 nullptr, DRAW_REPLACE_MODE, TFB_SCREEN_MAIN);
@@ -173,8 +171,8 @@ processAudioSyncedFrame(VIDEO_REF vid)
 static bool
 processMuteFrame(VIDEO_REF vid)
 {
-	int ret;
-	TimeCount Now = GetTimeCounter();
+	int ret {};
+	const TimeCount Now = GetTimeCounter();
 
 	if (!vid->playing)
 	{
@@ -192,12 +190,10 @@ processMuteFrame(VIDEO_REF vid)
 	//
 	if (Now >= vid->frame_time)
 	{
-		GFXCONTEXT oldContext;
-
 		vid->cur_frame = vid->decoder->cur_frame;
 
 		// We have the cliprect precalculated and don't need the rest
-		oldContext = SetContext(nullptr);
+		GFXCONTEXT oldContext {SetContext(nullptr)};
 		TFB_DrawScreen_Image(vid->frame,
 							 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
 							 nullptr, DRAW_REPLACE_MODE, TFB_SCREEN_MAIN);
@@ -223,20 +219,19 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 {
 	GFXRECT scrn_r;
 	GFXRECT clip_r = {
-		{0,			 0			 },
+		{0,			   0			  },
 		{(int16_t)vid->w, (int16_t)vid->h}
 	  };
 	GFXRECT vid_r = {
-		{0,				  0				  },
+		{0,					0					},
 		{(int16_t)CanvasWidth, (int16_t)CanvasHeight}
 	 };
 	GFXRECT dr = {
-		{(int16_t)x,	   (int16_t)y	   },
+		{(int16_t)x,		 (int16_t)y	   },
 		{(int16_t)vid->w, (int16_t)vid->h}
 	  };
 	GFXRECT sr;
 	bool loop_music = false;
-	int ret;
 
 	if (!vid)
 	{
@@ -279,11 +274,14 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 
 	vid->frame = TFB_DrawImage_CreateForScreen(vid->w, vid->h, false);
 	vid->cur_frame = -1;
-	vid->want_frame = -1;
+	{
+		const uqm::LockGuard lock {vid->guard};
+		vid->want_frame = -1;
+	}
 
 	if (!vid->hAudio)
 	{
-		vid->hAudio = LoadMusicFile(vid->decoder->filename);
+		vid->hAudio = LoadMusicFile(vid->decoder->filename.c_str());
 		vid->own_audio = true;
 	}
 
@@ -301,7 +299,7 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 	}
 
 	// get the first frame
-	ret = VideoDecoder_Decode(vid->decoder);
+	const int ret {VideoDecoder_Decode(vid->decoder)};
 	if (ret < 0)
 	{
 		return false;
@@ -380,16 +378,17 @@ bool TFB_ProcessVideoFrame(VIDEO_REF vid)
 uint32_t
 TFB_GetVideoPosition(VIDEO_REF vid)
 {
-	uint32_t pos;
+	uint32_t pos {};
 
 	if (!TFB_VideoPlaying(vid))
 	{
 		return 0;
 	}
 
-	LockMutex(vid->guard);
-	pos = (uint32_t)(vid->decoder->pos * 1000);
-	UnlockMutex(vid->guard);
+	{
+		const uqm::LockGuard lock {vid->guard};
+		pos = (uint32_t)(vid->decoder->pos * 1000);
+	}
 
 	return pos;
 }
@@ -419,7 +418,7 @@ bool TFB_SeekVideo(VIDEO_REF vid, uint32_t pos)
 static void
 vp_BeginFrame(TFB_VideoDecoder* decoder)
 {
-	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
+	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
 	if (vid)
 	{
@@ -430,7 +429,7 @@ vp_BeginFrame(TFB_VideoDecoder* decoder)
 static void
 vp_EndFrame(TFB_VideoDecoder* decoder)
 {
-	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
+	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
 	if (vid)
 	{
@@ -441,7 +440,7 @@ vp_EndFrame(TFB_VideoDecoder* decoder)
 static void*
 vp_GetCanvasLine(TFB_VideoDecoder* decoder, uint32_t line)
 {
-	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
+	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
 	if (!vid)
 	{
@@ -454,8 +453,8 @@ vp_GetCanvasLine(TFB_VideoDecoder* decoder, uint32_t line)
 static uint32_t
 vp_GetTicks(TFB_VideoDecoder* decoder)
 {
-	uint32_t ctr = GetTimeCounter();
-	return (ctr / GameTicksPerSecond) * 1000 + ((ctr % GameTicksPerSecond) * 1000) / GameTicksPerSecond;
+	return static_cast<uint32_t>(
+		uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(GetTimeCounter().time_since_epoch()).count());
 
 	(void)decoder; // gobble up compiler warning
 }
@@ -471,7 +470,7 @@ vp_SetTimer(TFB_VideoDecoder* decoder, uint32_t msecs)
 	}
 
 	// time when next frame should be displayed
-	vid->frame_time = GetTimeCounter() + msecs * GameTicksPerSecond / 1000;
+	vid->frame_time = GetTimeCounter() + msecToTimeCount(static_cast<int32_t>(msecs));
 	return true;
 }
 
@@ -479,16 +478,16 @@ static bool
 vp_AudioStart(TFB_SoundSample* sample)
 {
 	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData(sample);
-	TFB_SoundDecoder* decoder;
 
 	assert(sizeof(intptr_t) >= sizeof(vid));
 	assert(vid != nullptr);
 
-	decoder = TFB_GetSoundSampleDecoder(sample);
+	TFB_SoundDecoder* decoder {TFB_GetSoundSampleDecoder(sample)};
 
-	LockMutex(vid->guard);
-	vid->want_frame = SoundDecoder_GetFrame(decoder);
-	UnlockMutex(vid->guard);
+	{
+		const uqm::LockGuard lock {vid->guard};
+		vid->want_frame = SoundDecoder_GetFrame(decoder);
+	}
 
 	return true;
 }
@@ -500,23 +499,25 @@ vp_AudioEnd(TFB_SoundSample* sample)
 
 	assert(vid != nullptr);
 
-	LockMutex(vid->guard);
-	vid->want_frame = vid->decoder->frame_count; // end it
-	UnlockMutex(vid->guard);
+	{
+		const uqm::LockGuard lock {vid->guard};
+		vid->want_frame = vid->decoder->frame_count; // end it
+	}
 }
 
 static void
 vp_BufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
 {
 	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData(sample);
-	uint32_t frame = (uint32_t)tag->data;
+	const uint32_t frame = (uint32_t)tag->data;
 
 	assert(sizeof(tag->data) >= sizeof(frame));
 	assert(vid != nullptr);
 
-	LockMutex(vid->guard);
-	vid->want_frame = frame; // let it go!
-	UnlockMutex(vid->guard);
+	{
+		const uqm::LockGuard lock {vid->guard};
+		vid->want_frame = frame; // let it go!
+	}
 }
 
 static void

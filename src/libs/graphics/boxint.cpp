@@ -26,16 +26,15 @@
 INTERSECT_CODE
 BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 {
-	INTERSECT_CODE intersect_code;
-	int16_t x1;
-	int16_t w1, w2, delta;
+	int16_t x1 {};
+	int16_t delta {};
 
-	intersect_code = INTERSECT_NOCLIP;
+	INTERSECT_CODE intersect_code {INTERSECT_NOCLIP};
 
 	x1 = pr1->corner.x - pr2->corner.x;
 
-	w1 = pr1->extent.width;
-	w2 = pr2->extent.width;
+	int16_t w1 {pr1->extent.width};
+	int16_t w2 {pr2->extent.width};
 	if ((delta = w2 - x1) <= w1)
 	{
 		if (delta != w1)
@@ -59,12 +58,11 @@ BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 	if (w1 > 0)
 	{
 #define h2 w2
-		int16_t y1;
-		int16_t h1;
+		int16_t y1 {};
 
 		y1 = pr1->corner.y - pr2->corner.y;
 
-		h1 = pr1->extent.height;
+		int16_t h1 {pr1->extent.height};
 		h2 = pr2->extent.height;
 		if ((delta = h2 - y1) <= h1)
 		{

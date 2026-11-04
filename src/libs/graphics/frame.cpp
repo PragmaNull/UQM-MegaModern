@@ -94,7 +94,7 @@ static void
 ClearBackGround(GFXRECT* pClipRect)
 {
 	GFXRECT clearRect;
-	Color color = _get_context_bg_color();
+	const Color color = _get_context_bg_color();
 	clearRect.corner.x = 0;
 	clearRect.corner.y = 0;
 	clearRect.extent = pClipRect->extent;
@@ -110,9 +110,8 @@ void DrawBatch(PRIMITIVE* lpBasePrim, PRIM_LINKS PrimLinks,
 
 	if (GraphicsSystemActive() && GetContextValidRect(&ValidRect, &origin))
 	{
-		uint16_t CurIndex;
-		PRIMITIVE* lpPrim;
-		DrawMode mode = _get_context_draw_mode();
+		PRIMITIVE* lpPrim {};
+		const DrawMode mode = _get_context_draw_mode();
 
 		BatchGraphics();
 
@@ -121,26 +120,23 @@ void DrawBatch(PRIMITIVE* lpBasePrim, PRIM_LINKS PrimLinks,
 			ClearBackGround(&ValidRect);
 		}
 
-		CurIndex = GetPredLink(PrimLinks);
+		uint16_t CurIndex {GetPredLink(PrimLinks)};
 
 		for (; CurIndex != END_OF_LIST;
 			 CurIndex = GetSuccLink(GetPrimLinks(lpPrim)))
 		{
-			GRAPHICS_PRIM PrimType;
-			PRIMITIVE* lpWorkPrim;
 			GFXRECT ClipRect;
 			Color color;
-			uint8_t flags;
 
 			lpPrim = &lpBasePrim[CurIndex];
-			PrimType = GetPrimType(lpPrim);
+			const GRAPHICS_PRIM PrimType {GetPrimType(lpPrim)};
 			if (!ValidPrimType(PrimType))
 			{
 				continue;
 			}
-			flags = GetPrimFlags(lpPrim);
+			const uint8_t flags {GetPrimFlags(lpPrim)};
 
-			lpWorkPrim = lpPrim;
+			PRIMITIVE* lpWorkPrim {lpPrim};
 
 			switch (PrimType)
 			{
@@ -243,8 +239,8 @@ void DrawPoint(GFXPOINT* lpPoint)
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
-		Color color = GetPrimColor(&_locPrim);
-		DrawMode mode = _get_context_draw_mode();
+		const Color color = GetPrimColor(&_locPrim);
+		const DrawMode mode = _get_context_draw_mode();
 		TFB_Prim_Point(lpPoint, color, mode, origin, false);
 	}
 }
@@ -261,8 +257,8 @@ void DrawRectangle(GFXRECT* lpRect, bool scaled)
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
-		Color color = GetPrimColor(&_locPrim);
-		DrawMode mode = _get_context_draw_mode();
+		const Color color = GetPrimColor(&_locPrim);
+		const DrawMode mode = _get_context_draw_mode();
 		TFB_Prim_Rect(lpRect, color, mode, origin, scaled);
 	}
 }
@@ -282,8 +278,8 @@ void DrawFilledRectangle(GFXRECT* lpRect)
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
-		Color color = GetPrimColor(&_locPrim);
-		DrawMode mode = _get_context_draw_mode();
+		const Color color = GetPrimColor(&_locPrim);
+		const DrawMode mode = _get_context_draw_mode();
 		TFB_Prim_FillRect(lpRect, color, mode, origin);
 	}
 }
@@ -303,8 +299,8 @@ void DrawLine(LINE* lpLine, uint8_t thickness)
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
-		Color color = GetPrimColor(&_locPrim);
-		DrawMode mode = _get_context_draw_mode();
+		const Color color = GetPrimColor(&_locPrim);
+		const DrawMode mode = _get_context_draw_mode();
 		TFB_Prim_Line(lpLine, color, mode, origin, thickness);
 	}
 }
@@ -324,7 +320,7 @@ void DrawStamp(STAMP* stmp)
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
-		DrawMode mode = _get_context_draw_mode();
+		const DrawMode mode = _get_context_draw_mode();
 		TFB_Prim_Stamp(stmp, mode, origin, false);
 	}
 }
@@ -335,8 +331,8 @@ void DrawFilledStamp(STAMP* stmp)
 
 	if (GraphicsSystemActive() && GetContextValidRect(nullptr, &origin))
 	{
-		Color color = GetPrimColor(&_locPrim);
-		DrawMode mode = _get_context_draw_mode();
+		const Color color = GetPrimColor(&_locPrim);
+		const DrawMode mode = _get_context_draw_mode();
 		TFB_Prim_StampFill(stmp, color, mode, origin, false);
 	}
 }

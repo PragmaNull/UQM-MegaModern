@@ -20,7 +20,7 @@
 #include "commglue.h"
 #include "globdata.h"
 #include "units.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 // for CONVERSATION
 
@@ -159,7 +159,7 @@ typedef enum
 
 	CIM_DEFAULT = CIM_CROSSFADE_SPACE,
 } CommIntroMode;
-extern void SetCommIntroMode(CommIntroMode, TimeCount howLong);
+extern void SetCommIntroMode(CommIntroMode, TimePeriod howLong);
 
 extern void EnableTalkingAnim(bool enable);
 extern void SetCommDarkMode(bool state);
@@ -169,7 +169,7 @@ extern void FlushCustomBaseLine(void);
 extern void BlockTalkingAnim(uint16_t trackStart, uint16_t trackEnd);
 extern void UpdateDuty(bool talk);
 
-extern void DeltaLastTime(TimeCount diff);
+extern void DeltaLastTime(TimePeriod diff);
 
 extern bool cwLock;
 

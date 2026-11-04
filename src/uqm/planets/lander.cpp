@@ -39,6 +39,7 @@
 #include "options.h"
 #include "uqm/menustat.h"
 #include "../util.h"
+#include "uqm/random/UQMRandom.h"
 
 //define SPIN_ON_LAUNCH to let the planet spin while
 // the lander animation is playing
@@ -54,7 +55,7 @@
 // comparing speeds frame-by-frame and I came
 // up with 42 FPS. Can be changed later if it
 // causes any trouble.
-#define PLANET_SIDE_RATE (GameTicksPerSecond / 42)
+#define PLANET_SIDE_RATE (c_gameSecond / 42)
 
 
 // This is a derived type from INPUT_STATE_DESC.
@@ -71,83 +72,83 @@ struct LanderInputState
 
 FRAME LanderFrame[8];
 uint8_t LanderUpgradesFlag;
-static SOUND LanderSounds;
+static SOUND_REF LanderSounds;
 MUSIC_REF LanderMusic;
 static GFXCONTEXT PCLanderContext;
 static MUSIC_REF OrbitMusic[NUM_ORBIT_THEMES];
 
 LIFEFORM_DESC CreatureData[] =
 	{
-		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 MAKE_BYTE(1, 1) },
+		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 uqm::makeByte(1, 1) },
 		// Roto-Dendron
-		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 MAKE_BYTE(6, 1) },
+		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 uqm::makeByte(6, 1) },
 		// Macrocillia
-		{SPEED_MOTIONLESS | DANGER_WEAK,									 MAKE_BYTE(3, 1) },
+		{SPEED_MOTIONLESS | DANGER_WEAK,									 uqm::makeByte(3, 1) },
 		// Splort Wort
-		{SPEED_MOTIONLESS | DANGER_NORMAL,								   MAKE_BYTE(5, 3) },
+		{SPEED_MOTIONLESS | DANGER_NORMAL,								   uqm::makeByte(5, 3) },
 		// Whackin' Bush
-		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 MAKE_BYTE(2, 10)},
+		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 uqm::makeByte(2, 10)},
 		// Slot Machine Tree
 		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_HARMLESS,
-		 MAKE_BYTE(1,																	2) },
+		 uqm::makeByte(1,																	2) },
 		// Neon Worm
 		{BEHAVIOR_FLEE | AWARENESS_MEDIUM | SPEED_SLOW | DANGER_HARMLESS,
-		 MAKE_BYTE(8,																	5) },
+		 uqm::makeByte(8,																	5) },
 		// Stiletto Urchin
 		{BEHAVIOR_HUNT | AWARENESS_LOW | SPEED_SLOW | DANGER_WEAK,
-		 MAKE_BYTE(2,																	2) },
+		 uqm::makeByte(2,																	2) },
 		// Deluxe Blob
 		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_NORMAL,
-		 MAKE_BYTE(3,																	8) },
+		 uqm::makeByte(3,																	8) },
 		// Glowing Medusa
 		{BEHAVIOR_HUNT | AWARENESS_MEDIUM | SPEED_SLOW | DANGER_MONSTROUS,
-		 MAKE_BYTE(10,																   15)},
+		 uqm::makeByte(10,																   15)},
 		// Carousel Beast
 		{BEHAVIOR_HUNT | AWARENESS_MEDIUM | SPEED_MEDIUM | DANGER_WEAK,
-		 MAKE_BYTE(3,																	3) },
+		 uqm::makeByte(3,																	3) },
 		// Mysterious Bees
 		{BEHAVIOR_FLEE | AWARENESS_MEDIUM | SPEED_MEDIUM | DANGER_HARMLESS,
-		 MAKE_BYTE(2,																	1) },
+		 uqm::makeByte(2,																	1) },
 		// Hopping Blobby
 		{BEHAVIOR_UNPREDICTABLE | SPEED_MEDIUM | DANGER_WEAK,
-		 MAKE_BYTE(2,																	2) },
+		 uqm::makeByte(2,																	2) },
 		// Blood Monkey
 		{BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_MEDIUM | DANGER_NORMAL,
-		 MAKE_BYTE(4,																	6) },
+		 uqm::makeByte(4,																	6) },
 		// Yompin Yiminy
 		{BEHAVIOR_UNPREDICTABLE | SPEED_MEDIUM | DANGER_MONSTROUS,
-		 MAKE_BYTE(9,																	12)},
+		 uqm::makeByte(9,																	12)},
 		// Amorphous Trandicula
 		{BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_FAST | DANGER_WEAK,
-		 MAKE_BYTE(3,																	1) },
+		 uqm::makeByte(3,																	1) },
 		// Crazy Weasel
 		{BEHAVIOR_FLEE | AWARENESS_HIGH | SPEED_FAST | DANGER_HARMLESS,
-		 MAKE_BYTE(1,																	1) },
+		 uqm::makeByte(1,																	1) },
 		// Merry Whumpet
 		{BEHAVIOR_HUNT | AWARENESS_LOW | SPEED_FAST | DANGER_NORMAL,
-		 MAKE_BYTE(7,																	8) },
+		 uqm::makeByte(7,																	8) },
 		// Fungal Squid
 		{BEHAVIOR_FLEE | AWARENESS_HIGH | SPEED_FAST | DANGER_WEAK,
-		 MAKE_BYTE(15,																   2) },
+		 uqm::makeByte(15,																   2) },
 		// Penguin Cyclops
 		{BEHAVIOR_FLEE | AWARENESS_LOW | SPEED_FAST | DANGER_WEAK,
-		 MAKE_BYTE(1,																	1) },
+		 uqm::makeByte(1,																	1) },
 		// Chicken
-		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_WEAK,					MAKE_BYTE(6, 2) },
+		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_WEAK,					uqm::makeByte(6, 2) },
 		// Bubble Vine
 		{BEHAVIOR_FLEE | AWARENESS_HIGH | SPEED_SLOW | DANGER_WEAK,
-		 MAKE_BYTE(4,																	2) },
+		 uqm::makeByte(4,																	2) },
 		// Bug-Eyed Bait
-		{SPEED_MOTIONLESS | DANGER_WEAK,									 MAKE_BYTE(8, 5) },
+		{SPEED_MOTIONLESS | DANGER_WEAK,									 uqm::makeByte(8, 5) },
 		// Goo Burger
 
-		{SPEED_MOTIONLESS | DANGER_MONSTROUS,								  MAKE_BYTE(1, 1) },
+		{SPEED_MOTIONLESS | DANGER_MONSTROUS,								  uqm::makeByte(1, 1) },
 		// Evil One
 		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_HARMLESS,
-		 MAKE_BYTE(1,																	1) }, // ? was 0, 1
-						   // Brainbox Bulldozers
+		 uqm::makeByte(1,																	1) }, // ? was 0, 1
+							   // Brainbox Bulldozers
 		{BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_FAST | DANGER_MONSTROUS,
-		 MAKE_BYTE(15,																   15)},
+		 uqm::makeByte(15,																   15)},
 		// Zex's Beauty
 };
 
@@ -160,7 +161,7 @@ extern PRIM_LINKS DisplayLinks;
 // How long to wait after the lander explodes, so that the full
 // gravity of the player's situation sinks in
 #define EXPLOSION_WAIT (GameTicksPerSecond * 2)
-#define EXPLOSION_WAIT_FRAMES (EXPLOSION_WAIT / PLANET_SIDE_RATE)
+#define EXPLOSION_WAIT_FRAMES (TimePeriod {EXPLOSION_WAIT} / PLANET_SIDE_RATE)
 // The actual number of frame that the explosion and wait takes is:
 //   EXPLOSION_LIFE * 3 + EXPLOSION_WAIT_FRAMES
 
@@ -203,15 +204,13 @@ EXTENT MapSurface;
 GFXCONTEXT
 CreatePCLanderContext(void)
 {
-	GFXCONTEXT oldContext;
-	GFXCONTEXT context;
 	GFXRECT r;
 
 	// PCLanderContext rect is relative to SpaceContext
-	oldContext = SetContext(SpaceContext);
+	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&r);
 
-	context = CreateContext("PCLanderContext");
+	GFXCONTEXT context {CreateContext("PCLanderContext")};
 	SetContext(context);
 	SetContextFGFrame(Screen);
 	r.corner.x += (r.extent.width - MAP_WIDTH)
@@ -262,7 +261,7 @@ void DestroyPCLanderContext(void)
 static Color
 DamageColorCycle(Color c, uint16_t i)
 {
-	static const Color damage_tab[DAMAGE_CYCLE + 1] =
+	const static Color damage_tab[DAMAGE_CYCLE + 1] =
 		LANDER_DAMAGE_COLOR_TABLE;
 
 	if (i)
@@ -305,10 +304,10 @@ static HELEMENT AddGroundDisaster(uint16_t which_disaster);
 
 void object_animation(ELEMENT* ElementPtr)
 {
-	uint16_t frame_index, angle;
-	PRIMITIVE* pPrim;
+	uint16_t frame_index {};
+	uint16_t angle {};
 
-	pPrim = &DisplayArray[ElementPtr->PrimIndex];
+	PRIMITIVE* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	if (GetPrimType(pPrim) == STAMPFILL_PRIM
 		&& !((ElementPtr->state_flags & FINITE_LIFE)
 			 && ElementPtr->mass_points == EARTHQUAKE_DISASTER))
@@ -326,7 +325,7 @@ void object_animation(ELEMENT* ElementPtr)
 					SetAbsFrameIndex(pPrim->Object.Stamp.frame, 0);
 
 				PlaySound(
-					SetAbsSoundIndex(LanderSounds, LIFEFORM_CANNED),
+					GetSound(LanderSounds, LIFEFORM_CANNED),
 					NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 			}
 		}
@@ -335,13 +334,13 @@ void object_animation(ELEMENT* ElementPtr)
 	}
 
 	frame_index = GetFrameIndex(pPrim->Object.Stamp.frame) + 1;
-	if (LONIBBLE(ElementPtr->turn_wait))
+	if (uqm::lowNibble(ElementPtr->turn_wait))
 	{
 		--ElementPtr->turn_wait;
 	}
 	else
 	{
-		ElementPtr->turn_wait += HINIBBLE(ElementPtr->turn_wait);
+		ElementPtr->turn_wait += uqm::highNibble(ElementPtr->turn_wait);
 
 		pPrim->Object.Stamp.frame =
 			IncFrameIndex(pPrim->Object.Stamp.frame);
@@ -361,7 +360,7 @@ void object_animation(ELEMENT* ElementPtr)
 			else if (ElementPtr->mass_points == EARTHQUAKE_DISASTER)
 			{
 				//int16_t s; unused
-				int16_t frame_amount = 13;
+				const int16_t frame_amount = 13;
 
 
 				// XXX: Was 0x8000 the background flag on 3DO?
@@ -378,23 +377,23 @@ void object_animation(ELEMENT* ElementPtr)
 				if (frame_index == (frame_amount))
 				{
 					PlaySound(
-						SetAbsSoundIndex(LanderSounds,
-										 EARTHQUAKE_DISASTER),
+						GetSound(LanderSounds,
+								 EARTHQUAKE_DISASTER),
 						NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 				}
 			}
 
 			if (ElementPtr->mass_points == LAVASPOT_DISASTER
 				&& frame_index == 5
-				&& TFB_Random() % 100 < 90)
+				&& uqm::random().next() % 100 < 90)
 			{
-				HELEMENT hLavaElement;
+				HELEMENT hLavaElement {};
 
 				/* Change lava-spot direction of travel */
 				hLavaElement = AddGroundDisaster(LAVASPOT_DISASTER);
 				if (hLavaElement)
 				{
-					ELEMENT* LavaElementPtr;
+					ELEMENT* LavaElementPtr {};
 
 					angle = FACING_TO_ANGLE(ElementPtr->facing);
 					LockElement(hLavaElement, &LavaElementPtr);
@@ -424,22 +423,22 @@ void object_animation(ELEMENT* ElementPtr)
 							SCALED_MAP_WIDTH << MAG_SHIFT;
 					}
 					LavaElementPtr->facing = NORMALIZE_FACING(
-						ElementPtr->facing + (TFB_Random() % 3 - 1));
+						ElementPtr->facing + (uqm::random().next() % 3 - 1));
 					UnlockElement(hLavaElement);
 				}
 			}
 		}
 		else if (!(frame_index & 3) && ElementPtr->hit_points)
 		{
-			uint8_t index;
-			uint16_t speed;
+			uint8_t index {};
+			uint16_t speed {};
 
 			index = ElementPtr->mass_points & ~CREATURE_AWARE;
 			speed = CreatureData[index].Attributes & SPEED_MASK;
 			if (speed)
 			{
-				int16_t dx, dy;
-				uint16_t old_angle;
+				int16_t dx {};
+				int16_t dy {};
 
 				dx = curLanderLoc.x - ElementPtr->next.location.x;
 				if (dx < 0 && dx < -(SCALED_MAP_WIDTH << (MAG_SHIFT - 1)))
@@ -469,7 +468,7 @@ void object_animation(ELEMENT* ElementPtr)
 				}
 				else if (!(ElementPtr->mass_points & CREATURE_AWARE))
 				{
-					uint8_t DetectPercent;
+					uint8_t DetectPercent {};
 
 					DetectPercent = (((uint8_t)(CreatureData[index].Attributes
 												& AWARENESS_MASK)
@@ -486,7 +485,7 @@ void object_animation(ELEMENT* ElementPtr)
 					// as repeating 'random(x / 30)' 30 times
 					// doesn't generally have the same result as
 					// repeating 'random(x / 35)' 25 times. - SvdB
-					if (TFB_Random() % 100 < DetectPercent)
+					if (uqm::random().next() % 100 < DetectPercent)
 					{
 						ElementPtr->thrust_wait = 0;
 						ElementPtr->mass_points |= CREATURE_AWARE;
@@ -499,7 +498,7 @@ void object_animation(ELEMENT* ElementPtr)
 					ElementPtr->thrust_wait = 0;
 				}
 
-				old_angle = GetVelocityTravelAngle(&ElementPtr->velocity);
+				const uint16_t old_angle {GetVelocityTravelAngle(&ElementPtr->velocity)};
 				if (ElementPtr->thrust_wait)
 				{
 					--ElementPtr->thrust_wait;
@@ -510,12 +509,12 @@ void object_animation(ELEMENT* ElementPtr)
 							 & BEHAVIOR_MASK)
 								== BEHAVIOR_UNPREDICTABLE)
 				{
-					uint16_t rand_val;
+					uint16_t rand_val {};
 
-					rand_val = TFB_Random();
-					angle = NORMALIZE_ANGLE(lowByte(rand_val));
+					rand_val = uqm::random().next();
+					angle = NORMALIZE_ANGLE(uqm::lowByte(rand_val));
 					ElementPtr->thrust_wait =
-						(highByte(rand_val) >> 2) + 10;
+						(uqm::highByte(rand_val) >> 2) + 10;
 				}
 				else if ((CreatureData[index].Attributes
 						  & BEHAVIOR_MASK)
@@ -535,7 +534,7 @@ void object_animation(ELEMENT* ElementPtr)
 						}
 						else
 						{
-							angle = ((TFB_Random() & 1)
+							angle = ((uqm::random().next() & 1)
 									 * HALF_CIRCLE)
 								  - QUADRANT;
 						}
@@ -579,7 +578,7 @@ static void
 DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 {
 	STAMP s;
-	GFXCONTEXT OldContext;
+	GFXCONTEXT OldContext {};
 
 	if (crew_delta > 0)
 	{
@@ -598,7 +597,7 @@ DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 
 		shieldHit = GET_GAME_STATE(LANDER_SHIELDS);
 		shieldHit &= 1 << which_disaster;
-		if (!shieldHit || TFB_Random() % 100 >= 95)
+		if (!shieldHit || uqm::random().next() % 100 >= 95)
 		{ // No shield, or it did not help
 			if (!testFlag(uqm::UQMOptions::read().optGodModes, uqm::GodModeFlags::NoDamage))
 			{
@@ -620,7 +619,7 @@ DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 		crew_delta = crew_left;
 		s.frame = SetAbsFrameIndex(LanderFrame[0], 56);
 
-		PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_INJURED),
+		PlaySound(GetSound(LanderSounds, LANDER_INJURED),
 				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 	}
 
@@ -644,11 +643,12 @@ DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 static void
 FillLanderHold(PLANETSIDE_DESC* pPSD, uint16_t scan, uint16_t NumRetrieved)
 {
-	uint16_t start_count, tmpholdint;
+	uint16_t start_count {};
+	uint16_t tmpholdint {};
 	STAMP s;
-	GFXCONTEXT OldContext;
+	GFXCONTEXT OldContext {};
 
-	PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_PICKUP),
+	PlaySound(GetSound(LanderSounds, LANDER_PICKUP),
 			  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 
 	if (scan == BIOLOGICAL_SCAN)
@@ -720,15 +720,13 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 		   ELEMENT* ElementPtr, const INTERSECT_CONTROL* LanderControl,
 		   const INTERSECT_CONTROL* ElementControl, uint16_t Scan)
 {
-	uint8_t EType;
-	char ch, *pStr;
-	uint16_t *Amount, Max, Offset;
-	bool PartialPickup;
+	char ch {};
+	uint16_t Max {};
 
-	Amount = &pPSD->BiologicalLevel;
+	uint16_t* Amount {&pPSD->BiologicalLevel};
 	Max = MAX_SCROUNGED;
-	EType = ElementPtr->thrust_wait;
-	Offset = BIOLOGICAL_STRING_BASE;
+	uint8_t EType {ElementPtr->thrust_wait};
+	uint16_t Offset {BIOLOGICAL_STRING_BASE};
 
 	if (Scan != BIOLOGICAL_SCAN)
 	{
@@ -739,20 +737,20 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 	}
 
 	// JMS: The rest of partially scavenged minerals stay on the surface.
-	PartialPickup = false;
+	bool PartialPickup {false};
 
 	if (*Amount >= Max)
 	{
 		// Lander full
-		PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_FULL),
+		PlaySound(GetSound(LanderSounds, LANDER_FULL),
 				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 		return false;
 	}
 
 	if (*Amount + NumRetrieved > Max)
 	{
-		int16_t which_node;
-		uint16_t oldsize = ElementPtr->mass_points;
+		int16_t which_node {};
+		const uint16_t oldsize = ElementPtr->mass_points;
 
 		// Deposit could only be picked up partially.
 		NumRetrieved = (uint16_t)(Max - *Amount);
@@ -764,7 +762,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 
 			// JMS: This makes the mineral deposit subtraction keep
 			// in effect even after leaving & re-entering the planet.
-			which_node = highByte(ElementPtr->scan_node) - 1;
+			which_node = uqm::highByte(ElementPtr->scan_node) - 1;
 			pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[MINERAL_SCAN][which_node] =
 				NumRetrieved;
 
@@ -808,7 +806,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 		if (Scan == BIOLOGICAL_SCAN && uqm::UQMOptions::read().partialPickup)
 		{
 			// Lander full
-			PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_FULL),
+			PlaySound(GetSound(LanderSounds, LANDER_FULL),
 					  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 			return false;
 		}
@@ -818,7 +816,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 
 	if (Scan != BIOLOGICAL_SCAN)
 	{
-		uint8_t NumNodesGrabbed = pPSD->NodeData.NumNodesGrabbed;
+		const uint8_t NumNodesGrabbed = pPSD->NodeData.NumNodesGrabbed;
 
 		pPSD->ElementAmounts[ElementCategory(EType)] += NumRetrieved;
 
@@ -830,7 +828,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 	pPSD->NumFrames = NUM_TEXT_FRAMES;
 	const auto fmtResult = fmt::format_to_n(pPSD->AmountBuf, sizeof(pPSD->AmountBuf) - 1, "{}", NumRetrieved);
 	*fmtResult.out = '\0';
-	pStr = GAME_STRING(EType + Offset);
+	const char* pStr {GAME_STRING(EType + Offset)};
 
 	pPSD->MineralText[0].baseline.x = (MapSurface.width >> 1)
 									+ (ElementControl->EndPoint.x - LanderControl->EndPoint.x);
@@ -850,8 +848,8 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 	{
 		// Name contains a space. Print over
 		// two lines.
-		pPSD->MineralText[1].CharCount = (uint16_t)utf8StringCountN(
-			pPSD->MineralText[1].pStr, pStr - 1);
+		pPSD->MineralText[1].CharCount = (uint16_t)uqm::utf8StringCount(
+			uqstl::string_view {pPSD->MineralText[1].pStr, static_cast<size_t>(pStr - 1 - pPSD->MineralText[1].pStr)});
 		pPSD->MineralText[2].pStr = pStr;
 		pPSD->MineralText[2].CharCount = (uint16_t)~0;
 	}
@@ -863,13 +861,12 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 static void
 ExplodeCritter(ELEMENT* ElementPtr)
 {
-	HELEMENT hExplosionElement;
-	int16_t temp_which_node;
+	int16_t temp_which_node {};
 
-	hExplosionElement = AllocElement();
+	HELEMENT hExplosionElement {AllocElement()};
 	if (hExplosionElement)
 	{
-		ELEMENT* ExplosionElementPtr;
+		ELEMENT* ExplosionElementPtr {};
 		LockElement(hExplosionElement, &ExplosionElementPtr);
 
 		ExplosionElementPtr->mass_points = DEATH_EXPLOSION;
@@ -877,9 +874,9 @@ ExplodeCritter(ELEMENT* ElementPtr)
 		ExplosionElementPtr->playerNr = PS_NON_PLAYER;
 		ExplosionElementPtr->next.location = ElementPtr->next.location;
 		ExplosionElementPtr->preprocess_func = object_animation;
-		ExplosionElementPtr->turn_wait = MAKE_BYTE(2, 2);
+		ExplosionElementPtr->turn_wait = uqm::makeByte(2, 2);
 		ExplosionElementPtr->life_span = EXPLOSION_LIFE
-									   * (LONIBBLE(ExplosionElementPtr->turn_wait));
+									   * (uqm::lowNibble(ExplosionElementPtr->turn_wait));
 
 		SetPrimType(&DisplayArray[ExplosionElementPtr->PrimIndex],
 					STAMP_PRIM);
@@ -896,7 +893,7 @@ ExplodeCritter(ELEMENT* ElementPtr)
 		UnlockElement(hExplosionElement);
 		InsertElement(hExplosionElement, GetHeadElement());
 
-		PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_DESTROYED),
+		PlaySound(GetSound(LanderSounds, LANDER_DESTROYED),
 				  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
 
 		ElementPtr->state_flags |= DISAPPEARING;
@@ -907,7 +904,7 @@ ExplodeCritter(ELEMENT* ElementPtr)
 		// JMS: This marks the exploded critter "collected". (even though
 		// there was no biodata to collect). This ensures the critter isn't
 		// resurrected when visiting the planet next time.
-		temp_which_node = highByte(ElementPtr->scan_node) - 1;
+		temp_which_node = uqm::highByte(ElementPtr->scan_node) - 1;
 		pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask[BIOLOGICAL_SCAN] |=
 			(1L << temp_which_node);
 		// Mark this bio blip's state as "collected".
@@ -960,7 +957,7 @@ shotCreature(ELEMENT* ElementPtr, uint8_t value,
 				 .Attributes
 			 & SPEED_MASK)
 	{
-		uint16_t angle;
+		uint16_t angle {};
 
 		angle = FACING_TO_ANGLE(GetFrameIndex(
 									LanderControl->IntersectStamp.frame)
@@ -975,7 +972,7 @@ shotCreature(ELEMENT* ElementPtr, uint8_t value,
 	SetPrimType(pPrim, STAMPFILL_PRIM);
 	SetPrimColor(pPrim, WHITE_COLOR);
 
-	PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_HITS),
+	PlaySound(GetSound(LanderSounds, LANDER_HITS),
 			  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 }
 
@@ -990,9 +987,9 @@ static void
 CheckObjectCollision(uint16_t index)
 {
 	INTERSECT_CONTROL LanderControl;
-	DRAWABLE LanderHandle;
-	PRIMITIVE* pPrim;
-	PRIMITIVE* pLanderPrim;
+	DRAWABLE LanderHandle {};
+	PRIMITIVE* pPrim {};
+	const PRIMITIVE* pLanderPrim {};
 	PLANETSIDE_DESC* pPSD = planetSideDesc;
 
 	if (index != END_OF_LIST)
@@ -1017,7 +1014,8 @@ CheckObjectCollision(uint16_t index)
 	for (; index != END_OF_LIST; index = GetPredLink(GetPrimLinks(pPrim)))
 	{
 		INTERSECT_CONTROL ElementControl;
-		HELEMENT hElement, hNextElement;
+		HELEMENT hElement {};
+		HELEMENT hNextElement {};
 
 		pPrim = &DisplayArray[index];
 		ElementControl.IntersectStamp = pPrim->Object.Stamp;
@@ -1039,7 +1037,7 @@ CheckObjectCollision(uint16_t index)
 		for (hElement = GetHeadElement(); hElement;
 			 hElement = hNextElement)
 		{
-			ELEMENT* ElementPtr;
+			ELEMENT* ElementPtr {};
 
 			LockElement(hElement, &ElementPtr);
 			hNextElement = GetSuccElement(ElementPtr);
@@ -1059,10 +1057,10 @@ CheckObjectCollision(uint16_t index)
 			}
 
 			{
-				uint16_t scan, NumRetrieved;
-				int16_t which_node;
+				uint16_t NumRetrieved {};
+				int16_t which_node {};
 
-				scan = lowByte(ElementPtr->scan_node);
+				uint16_t scan {uqm::lowByte(ElementPtr->scan_node)};
 				if (pLanderPrim == 0)
 				{
 					/* Collision of lander with another object */
@@ -1079,7 +1077,7 @@ CheckObjectCollision(uint16_t index)
 						{
 							case EARTHQUAKE_DISASTER:
 							case LAVASPOT_DISASTER:
-								if (TFB_Random() % 100 < 25)
+								if (uqm::random().next() % 100 < 25)
 								{
 									DeltaLanderCrew(-1, scan);
 								}
@@ -1097,17 +1095,17 @@ CheckObjectCollision(uint16_t index)
 					else if (scan == BIOLOGICAL_SCAN
 							 && ElementPtr->hit_points)
 					{
-						uint8_t danger_vals[] =
+						const uint8_t danger_vals[] =
 							{
 								0, 6, 13, 26};
-						int creatureIndex = ElementPtr->mass_points
-										  & ~CREATURE_AWARE;
-						int dangerLevel =
+						const int creatureIndex = ElementPtr->mass_points
+												& ~CREATURE_AWARE;
+						const int dangerLevel =
 							(CreatureData[creatureIndex].Attributes & DANGER_MASK) >> DANGER_SHIFT;
 
-						if (TFB_Random() % 128 < danger_vals[dangerLevel])
+						if (uqm::random().next() % 128 < danger_vals[dangerLevel])
 						{
-							PlaySound(SetAbsSoundIndex(
+							PlaySound(GetSound(
 										  LanderSounds, BIOLOGICAL_DISASTER),
 									  NotPositional(), nullptr,
 									  GAME_SOUND_PRIORITY);
@@ -1127,7 +1125,7 @@ CheckObjectCollision(uint16_t index)
 				}
 				else
 				{
-					uint8_t value;
+					uint8_t value {};
 
 					if (scan == ENERGY_SCAN)
 					{
@@ -1137,9 +1135,9 @@ CheckObjectCollision(uint16_t index)
 					}
 
 					if (scan == BIOLOGICAL_SCAN
-						&& (value = LONIBBLE(CreatureData[ElementPtr->mass_points
-														  & ~CREATURE_AWARE]
-												 .ValueAndHitPoints)))
+						&& (value = uqm::lowNibble(CreatureData[ElementPtr->mass_points
+																& ~CREATURE_AWARE]
+													   .ValueAndHitPoints)))
 					{
 						// Collision of a stun bolt with a viable creature
 						shotCreature(ElementPtr, value, &LanderControl,
@@ -1169,7 +1167,7 @@ CheckObjectCollision(uint16_t index)
 					}
 				}
 
-				which_node = highByte(ElementPtr->scan_node) - 1;
+				which_node = uqm::highByte(ElementPtr->scan_node) - 1;
 				if (callPickupForScanType(pSolarSysState,
 										  pSolarSysState->pOrbitalDesc, which_node, scan))
 				{ // Node retrieved, remove from the surface
@@ -1187,16 +1185,14 @@ CheckObjectCollision(uint16_t index)
 static void
 lightning_process(ELEMENT* ElementPtr)
 {
-	PRIMITIVE* pPrim;
-
-	pPrim = &DisplayArray[ElementPtr->PrimIndex];
-	if (LONIBBLE(ElementPtr->turn_wait))
+	PRIMITIVE* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
+	if (uqm::lowNibble(ElementPtr->turn_wait))
 	{
 		--ElementPtr->turn_wait;
 	}
 	else
 	{
-		uint16_t num_frames;
+		uint16_t num_frames {};
 
 		num_frames = GetFrameCount(pPrim->Object.Stamp.frame) - 7;
 		if (GetFrameIndex(pPrim->Object.Stamp.frame) >= num_frames)
@@ -1208,9 +1204,9 @@ lightning_process(ELEMENT* ElementPtr)
 		}
 		else
 		{
-			int16_t s;
+			int16_t s {};
 #define NUM_CYCLES 8
-			static const Color color_tab[NUM_CYCLES] =
+			const static Color color_tab[NUM_CYCLES] =
 				LIGHTNING_COLOR_TABLE;
 
 			s = ElementPtr->life_span;
@@ -1223,7 +1219,7 @@ lightning_process(ELEMENT* ElementPtr)
 			if (ElementPtr->mass_points == LIGHTNING_DISASTER)
 			{
 				/* This one always strikes the lander and can hurt */
-				if (crew_left && TFB_Random() % 100 < 10
+				if (crew_left && uqm::random().next() % 100 < 10
 					&& !planetSideDesc->InTransit)
 				{
 					lander_flags |= KILL_CREW;
@@ -1234,10 +1230,10 @@ lightning_process(ELEMENT* ElementPtr)
 
 			pPrim->Object.Stamp.frame =
 				SetAbsFrameIndex(pPrim->Object.Stamp.frame,
-								 TFB_Random() % num_frames);
+								 uqm::random().next() % num_frames);
 		}
 
-		ElementPtr->turn_wait += HINIBBLE(ElementPtr->turn_wait);
+		ElementPtr->turn_wait += uqm::highNibble(ElementPtr->turn_wait);
 	}
 
 	if (GetSuccLink(DisplayLinks) != ElementPtr->PrimIndex)
@@ -1249,20 +1245,18 @@ lightning_process(ELEMENT* ElementPtr)
 static void
 AddLightning(void)
 {
-	HELEMENT hLightningElement;
-
-	hLightningElement = AllocElement();
+	HELEMENT hLightningElement {AllocElement()};
 	if (hLightningElement)
 	{
-		uint32_t rand_val;
-		ELEMENT* LightningElementPtr;
+		uint32_t rand_val {};
+		ELEMENT* LightningElementPtr {};
 
 		LockElement(hLightningElement, &LightningElementPtr);
 
 		LightningElementPtr->playerNr = PS_NON_PLAYER;
 		LightningElementPtr->state_flags = FINITE_LIFE;
 		LightningElementPtr->preprocess_func = lightning_process;
-		if (TFB_Random() % 100 >= 25)
+		if (uqm::random().next() % 100 >= 25)
 		{
 			LightningElementPtr->mass_points = 0; /* harmless */
 		}
@@ -1271,17 +1265,17 @@ AddLightning(void)
 			LightningElementPtr->mass_points = LIGHTNING_DISASTER;
 		}
 
-		rand_val = TFB_Random();
-		LightningElementPtr->life_span = 10 + (HIWORD(rand_val) % 10) + 1;
+		rand_val = uqm::random().next();
+		LightningElementPtr->life_span = 10 + (uqm::highWord(rand_val) % 10) + 1;
 		LightningElementPtr->next.location.x = (curLanderLoc.x
 												+ ((SCALED_MAP_WIDTH << MAG_SHIFT)
 												   - ((SURFACE_WIDTH >> 1) - 6))
-												+ (chooseIfHd(static_cast<uint32_t>(lowByte(rand_val)), rand_val)
+												+ (chooseIfHd(static_cast<uint32_t>(uqm::lowByte(rand_val)), rand_val)
 												   % (SURFACE_WIDTH - RES_SCALE(12))))
 											 % (SCALED_MAP_WIDTH << MAG_SHIFT);
 		LightningElementPtr->next.location.y = (curLanderLoc.y
 												+ ((MAP_HEIGHT << MAG_SHIFT) - ((SURFACE_HEIGHT >> 1) - 6))
-												+ (chooseIfHd(static_cast<uint32_t>(highByte(rand_val)), rand_val)
+												+ (chooseIfHd(static_cast<uint32_t>(uqm::highByte(rand_val)), rand_val)
 												   % (SURFACE_HEIGHT - RES_SCALE(12))))
 											 % (MAP_HEIGHT << MAG_SHIFT);
 
@@ -1307,7 +1301,7 @@ AddLightning(void)
 
 		PutElement(hLightningElement);
 
-		PlaySound(SetAbsSoundIndex(LanderSounds, LIGHTNING_DISASTER),
+		PlaySound(GetSound(LanderSounds, LIGHTNING_DISASTER),
 				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 	}
 }
@@ -1315,32 +1309,28 @@ AddLightning(void)
 static HELEMENT
 AddGroundDisaster(uint16_t which_disaster)
 {
-	HELEMENT hGroundDisasterElement;
-
-	hGroundDisasterElement = AllocElement();
+	HELEMENT hGroundDisasterElement {AllocElement()};
 	if (hGroundDisasterElement)
 	{
-		uint32_t rand_val;
-		ELEMENT* GroundDisasterElementPtr;
-		PRIMITIVE* pPrim;
+		ELEMENT* GroundDisasterElementPtr {};
 
 		LockElement(hGroundDisasterElement, &GroundDisasterElementPtr);
 
-		pPrim = &DisplayArray[GroundDisasterElementPtr->PrimIndex];
+		PRIMITIVE* pPrim {&DisplayArray[GroundDisasterElementPtr->PrimIndex]};
 		GroundDisasterElementPtr->mass_points = which_disaster;
 		GroundDisasterElementPtr->playerNr = PS_NON_PLAYER;
 		GroundDisasterElementPtr->state_flags = FINITE_LIFE;
 		GroundDisasterElementPtr->preprocess_func = object_animation;
 
-		rand_val = TFB_Random();
+		const uint32_t rand_val {uqm::random().next()};
 		GroundDisasterElementPtr->next.location.x = (curLanderLoc.x
 													 + ((SCALED_MAP_WIDTH << MAG_SHIFT)
 														- (SURFACE_WIDTH * 3 / 8))
-													 + (LOWORD(rand_val) % (SURFACE_WIDTH * 3 / 4)))
+													 + (uqm::lowWord(rand_val) % (SURFACE_WIDTH * 3 / 4)))
 												  % (SCALED_MAP_WIDTH << MAG_SHIFT);
 		GroundDisasterElementPtr->next.location.y = (curLanderLoc.y
 													 + ((MAP_HEIGHT << MAG_SHIFT) - (SURFACE_HEIGHT * 3 / 8))
-													 + (HIWORD(rand_val) % (SURFACE_HEIGHT * 3 / 4)))
+													 + (uqm::highWord(rand_val) % (SURFACE_HEIGHT * 3 / 4)))
 												  % (MAP_HEIGHT << MAG_SHIFT);
 
 
@@ -1356,19 +1346,19 @@ AddGroundDisaster(uint16_t which_disaster)
 			}
 
 			pPrim->Object.Stamp.frame = LanderFrame[1];
-			GroundDisasterElementPtr->turn_wait = MAKE_BYTE(2, 2);
+			GroundDisasterElementPtr->turn_wait = uqm::makeByte(2, 2);
 		}
 		else /* if (which_disaster == LAVASPOT_DISASTER) */
 		{
 			SetPrimType(pPrim, STAMP_PRIM);
 			GroundDisasterElementPtr->facing =
-				NORMALIZE_FACING(TFB_Random());
+				NORMALIZE_FACING(uqm::random().next());
 			pPrim->Object.Stamp.frame = LanderFrame[3];
-			GroundDisasterElementPtr->turn_wait = MAKE_BYTE(0, 0);
+			GroundDisasterElementPtr->turn_wait = uqm::makeByte(0, 0);
 		}
 		GroundDisasterElementPtr->life_span =
 			GetFrameCount(pPrim->Object.Stamp.frame)
-				* (LONIBBLE(GroundDisasterElementPtr->turn_wait) + 1)
+				* (uqm::lowNibble(GroundDisasterElementPtr->turn_wait) + 1)
 			- 1;
 
 		UnlockElement(hGroundDisasterElement);
@@ -1386,29 +1376,29 @@ AddGroundDisaster(uint16_t which_disaster)
 static void
 BuildObjectList(void)
 {
-	uint32_t rand_val;
 	GFXPOINT org;
-	HELEMENT hElement, hNextElement;
-	PLANETSIDE_DESC* pPSD = planetSideDesc;
+	HELEMENT hElement {};
+	HELEMENT hNextElement {};
+	const PLANETSIDE_DESC* pPSD = planetSideDesc;
 
 	DisplayLinks = MakeLinks(END_OF_LIST, END_OF_LIST);
 
 	lander_flags &= ~KILL_CREW;
 
-	rand_val = TFB_Random();
-	if (lowByte(HIWORD(rand_val)) < pPSD->FireChance)
+	const uint32_t rand_val {uqm::random().next()};
+	if (uqm::lowByte(uqm::highWord(rand_val)) < pPSD->FireChance)
 	{
 		AddGroundDisaster(LAVASPOT_DISASTER);
-		PlaySound(SetAbsSoundIndex(LanderSounds, LAVASPOT_DISASTER),
+		PlaySound(GetSound(LanderSounds, LAVASPOT_DISASTER),
 				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 	}
 
-	if (highByte(LOWORD(rand_val)) < pPSD->TectonicsChance)
+	if (uqm::highByte(uqm::lowWord(rand_val)) < pPSD->TectonicsChance)
 	{
 		AddGroundDisaster(EARTHQUAKE_DISASTER);
 	}
 
-	if (lowByte(LOWORD(rand_val)) < pPSD->WeatherChance)
+	if (uqm::lowByte(uqm::lowWord(rand_val)) < pPSD->WeatherChance)
 	{
 		AddLightning();
 	}
@@ -1417,8 +1407,9 @@ BuildObjectList(void)
 	for (hElement = GetHeadElement();
 		 hElement; hElement = hNextElement)
 	{
-		int16_t dx, dy;
-		ELEMENT* ElementPtr;
+		int16_t dx {};
+		int16_t dy {};
+		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 
@@ -1484,9 +1475,7 @@ BuildObjectList(void)
 		}
 
 		{
-			PRIMITIVE* pPrim;
-
-			pPrim = &DisplayArray[ElementPtr->PrimIndex];
+			PRIMITIVE* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
 			pPrim->Object.Stamp.origin.x =
 				ElementPtr->next.location.x
 				- org.x + (MapSurface.width >> 1);
@@ -1528,8 +1517,10 @@ static void
 ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 {
 	GFXPOINT new_pt;
-	STAMP lander_s, shadow_s, shield_s;
-	GFXCONTEXT OldContext;
+	STAMP lander_s;
+	STAMP shadow_s;
+	STAMP shield_s;
+	GFXCONTEXT OldContext {};
 
 	new_pt.y = curLanderLoc.y + dy;
 	if (new_pt.y < 0)
@@ -1537,14 +1528,14 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 		new_pt.y = 0;
 		dy = new_pt.y - curLanderLoc.y;
 		dx = 0;
-		ZeroVelocityComponents(&GLOBAL(velocity));
+		ZeroVelocityComponents(&uqm::flagship().velocity);
 	}
 	else if (new_pt.y > (MAP_HEIGHT << MAG_SHIFT) - 1)
 	{
 		new_pt.y = (MAP_HEIGHT << MAG_SHIFT) - 1;
 		dy = new_pt.y - curLanderLoc.y;
 		dx = 0;
-		ZeroVelocityComponents(&GLOBAL(velocity));
+		ZeroVelocityComponents(&uqm::flagship().velocity);
 	}
 
 	new_pt.x = curLanderLoc.x + dx;
@@ -1704,7 +1695,7 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 static void
 animationInterframe(TimeCount* TimeIn, uint16_t periods)
 {
-#define ANIM_FRAME_RATE (GameTicksPerSecond / 30)
+#define ANIM_FRAME_RATE (c_gameSecond / 30)
 
 	while (periods > 0)
 	{
@@ -1723,8 +1714,8 @@ AnimateLaunch(FRAME farray, bool isLanding)
 {
 	GFXRECT r;
 	STAMP s;
-	uint16_t num_frames;
-	static TimeCount NextTime, psNextTime;
+	static TimeCount NextTime;
+	static TimeCount psNextTime;
 	TimeCount Now;
 
 	SetContext(PlanetContext);
@@ -1737,8 +1728,8 @@ AnimateLaunch(FRAME farray, bool isLanding)
 	s.origin.y = 0;
 	s.frame = farray;
 
-	num_frames = GetFrameCount(s.frame);
-	NextTime = GetTimeCounter() + (GameTicksPerSecond / 22);
+	uint16_t num_frames {GetFrameCount(s.frame)};
+	NextTime = GetTimeCounter() + (c_gameSecond / 22);
 	psNextTime = GetTimeCounter() + PLANET_SIDE_RATE;
 	while (num_frames > 0)
 	{
@@ -1756,7 +1747,7 @@ AnimateLaunch(FRAME farray, bool isLanding)
 
 		if (Now >= NextTime)
 		{
-			NextTime = Now + (GameTicksPerSecond / 22);
+			NextTime = Now + (c_gameSecond / 22);
 			num_frames--;
 
 			GetFrameRect(s.frame, &r);
@@ -1778,7 +1769,7 @@ AnimateLaunch(FRAME farray, bool isLanding)
 static void
 AnimateLanderWarmup(void)
 {
-	int16_t num_crew;
+	int16_t num_crew {};
 	STAMP s;
 	//GFXCONTEXT OldContext; unused
 	TimeCount TimeIn = GetTimeCounter();
@@ -1861,7 +1852,7 @@ AnimateLanderWarmup(void)
 
 	animationInterframe(&TimeIn, 2);
 
-	PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_DEPARTS),
+	PlaySound(GetSound(LanderSounds, LANDER_DEPARTS),
 			  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
 }
 
@@ -1871,7 +1862,7 @@ InitPlanetSide(GFXPOINT pt)
 	// Adjust landing location by a random jitter.
 #define RANDOM_MISS RES_SCALE(64)
 	// Jitter the X landing point.
-	pt.x -= RANDOM_MISS - TFB_Random() % (RANDOM_MISS << 1);
+	pt.x -= RANDOM_MISS - uqm::random().next() % (RANDOM_MISS << 1);
 	if (pt.x < 0)
 	{
 		pt.x += (SCALED_MAP_WIDTH << MAG_SHIFT);
@@ -1882,7 +1873,7 @@ InitPlanetSide(GFXPOINT pt)
 	}
 
 	// Jitter the Y landing point.
-	pt.y -= RANDOM_MISS - TFB_Random() % (RANDOM_MISS << 1);
+	pt.y -= RANDOM_MISS - uqm::random().next() % (RANDOM_MISS << 1);
 	if (pt.y < 0)
 	{
 		pt.y = 0;
@@ -1960,12 +1951,12 @@ static void
 LanderFire(int16_t facing)
 {
 #define SHUTTLE_FIRE_WAIT (isPC(uqm::UQMOptions::read().landerStyle) ? 10 : 14)
-	HELEMENT hWeaponElement;
-	int16_t wdx, wdy;
-	ELEMENT* WeaponElementPtr;
-	uint16_t angle;
+	int16_t wdx {};
+	int16_t wdy {};
+	ELEMENT* WeaponElementPtr {};
+	uint16_t angle {};
 
-	hWeaponElement = AllocElement();
+	HELEMENT hWeaponElement {AllocElement()};
 	if (hWeaponElement == nullptr)
 	{
 		return;
@@ -1988,7 +1979,7 @@ LanderFire(int16_t facing)
 	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_UP]
 		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_THRUST])
 	{
-		GetCurrentVelocityComponents(&GLOBAL(velocity), &wdx, &wdy);
+		GetCurrentVelocityComponents(&uqm::flagship().velocity, &wdx, &wdy);
 	}
 	else
 	{
@@ -2006,18 +1997,17 @@ LanderFire(int16_t facing)
 
 	InsertElement(hWeaponElement, GetHeadElement());
 
-	PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_SHOOTS),
+	PlaySound(GetSound(LanderSounds, LANDER_SHOOTS),
 			  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
 }
 
 static void
 put_node(ELEMENT* ElementPtr)
 {
-	HELEMENT hNodeElement;
-	ELEMENT* NodeElementPtr;
+	ELEMENT* NodeElementPtr {};
 	NODE_INFO info;
 
-	hNodeElement = AllocElement();
+	HELEMENT hNodeElement {AllocElement()};
 	if (!hNodeElement)
 	{
 		return;
@@ -2039,7 +2029,7 @@ put_node(ELEMENT* ElementPtr)
 	LockElement(hNodeElement, &NodeElementPtr);
 
 	NodeElementPtr->scan_node =
-		MAKE_WORD(MINERAL_SCAN, ElementPtr->cycle + 1);
+		uqm::makeWord(MINERAL_SCAN, ElementPtr->cycle + 1);
 	NodeElementPtr->playerNr = PS_NON_PLAYER;
 	NodeElementPtr->current.location = info.loc_pt;
 
@@ -2049,7 +2039,7 @@ put_node(ELEMENT* ElementPtr)
 
 	// JMS: Partially scavenged energy blips won't return
 	// anymore to original size after leaving planet.
-	NodeElementPtr->mass_points = highByte(info.density)
+	NodeElementPtr->mass_points = uqm::highByte(info.density)
 								- pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[MINERAL_SCAN][ElementPtr->cycle];
 
 	NodeElementPtr->current.image.frame = SetAbsFrameIndex(
@@ -2057,7 +2047,7 @@ put_node(ELEMENT* ElementPtr)
 						   + ElementCategory(info.type) * 5);
 	NodeElementPtr->next.image.frame = SetRelFrameIndex(
 		NodeElementPtr->current.image.frame,
-		lowByte(info.density) + 1);
+		uqm::lowByte(info.density) + 1);
 
 	DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame =
 		IncFrameIndex(NodeElementPtr->next.image.frame);
@@ -2091,12 +2081,11 @@ spawn_node(ELEMENT* ElementPtr)
 
 	if (ElementPtr->life_span > 0)
 	{
-		HELEMENT hNodeElement;
-		ELEMENT* NodeElementPtr;
-		int16_t arc;
-		uint16_t half_dist = ElementPtr->life_span >> 1;
+		ELEMENT* NodeElementPtr {};
+		int16_t arc {};
+		const uint16_t half_dist = ElementPtr->life_span >> 1;
 
-		hNodeElement = AllocElement();
+		HELEMENT hNodeElement {AllocElement()};
 		if (!hNodeElement)
 		{
 			return;
@@ -2133,19 +2122,19 @@ spawn_node(ELEMENT* ElementPtr)
 static void
 LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amount)
 {
-	uint16_t dist, angle;
-	uint16_t deposit_quality_fine, deposit_quality_gross;
-	HELEMENT hNodeElement;
-	ELEMENT* NodeElementPtr;
+	uint16_t dist {};
+	uint16_t deposit_quality_fine {};
+	uint16_t deposit_quality_gross {};
+	ELEMENT* NodeElementPtr {};
 
-	hNodeElement = AllocElement();
+	HELEMENT hNodeElement {AllocElement()};
 	if (hNodeElement == nullptr)
 	{
 		return;
 	}
 
-	angle = (uint16_t)TFB_Random();
-	dist = ((uint16_t)TFB_Random() % 8) + 4;
+	const uint16_t angle {(uint16_t)uqm::random().next()};
+	dist = ((uint16_t)uqm::random().next() % 8) + 4;
 
 	deposit_quality_fine = amount * 10;
 	if (deposit_quality_fine < 150)
@@ -2181,7 +2170,7 @@ LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amount)
 
 	NodeElementPtr->next.image.frame = SetRelFrameIndex(
 		NodeElementPtr->current.image.frame,
-		lowByte(MAKE_WORD(deposit_quality_gross, amount)) + 1);
+		uqm::lowByte(uqm::makeWord(deposit_quality_gross, amount)) + 1);
 	DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame =
 		IncFrameIndex(NodeElementPtr->next.image.frame);
 
@@ -2195,9 +2184,9 @@ LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amount)
 static void
 ScatterDeposits(void)
 {
-	uint16_t i, numDeposits;
-	uint8_t NumNodesGrabbed;
-	PLANETSIDE_DESC* pPSD = planetSideDesc;
+	uint16_t numDeposits {};
+	uint8_t NumNodesGrabbed {};
+	const PLANETSIDE_DESC* pPSD = planetSideDesc;
 
 	if (!uqm::UQMOptions::read().scatterElements)
 	{
@@ -2214,10 +2203,10 @@ ScatterDeposits(void)
 	numDeposits = callGenerateForScanType(pSolarSysState,
 										  pSolarSysState->pOrbitalDesc, GENERATE_ALL, MINERAL_SCAN, nullptr);
 
-	for (i = numDeposits; i < (numDeposits + NumNodesGrabbed); i++)
+	for (uint16_t i {numDeposits}; i < (numDeposits + NumNodesGrabbed); i++)
 	{
-		uint8_t affix = i - numDeposits;
-		double penalty = (double)RangeMinMax(25, 75, TFB_Random()) / 100;
+		const uint8_t affix = i - numDeposits;
+		const double penalty = (double)uqm::rangeMinMax(25, 75, uqm::random().next()) / 100;
 
 		if (pPSD->NodeData.NodeAmounts[affix] * penalty < 1)
 		{
@@ -2232,10 +2221,9 @@ ScatterDeposits(void)
 static bool
 LanderExplosion(void)
 {
-	HELEMENT hExplosionElement;
-	ELEMENT* ExplosionElementPtr;
+	ELEMENT* ExplosionElementPtr {};
 
-	hExplosionElement = AllocElement();
+	HELEMENT hExplosionElement {AllocElement()};
 	if (!hExplosionElement)
 	{
 		return false;
@@ -2249,9 +2237,9 @@ LanderExplosion(void)
 	ExplosionElementPtr->next.location = curLanderLoc;
 	ExplosionElementPtr->preprocess_func = object_animation;
 	// Animation advances every 3rd frame
-	ExplosionElementPtr->turn_wait = MAKE_BYTE(2, 2);
+	ExplosionElementPtr->turn_wait = uqm::makeByte(2, 2);
 	ExplosionElementPtr->life_span = EXPLOSION_LIFE
-								   * (LONIBBLE(ExplosionElementPtr->turn_wait) + 1);
+								   * (uqm::lowNibble(ExplosionElementPtr->turn_wait) + 1);
 
 	SetPrimType(&DisplayArray[ExplosionElementPtr->PrimIndex],
 				STAMP_PRIM);
@@ -2262,7 +2250,7 @@ LanderExplosion(void)
 
 	InsertElement(hExplosionElement, GetHeadElement());
 
-	PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_DESTROYED),
+	PlaySound(GetSound(LanderSounds, LANDER_DESTROYED),
 			  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
 
 	ScatterDeposits();
@@ -2277,15 +2265,15 @@ DoPlanetSide(LanderInputState* pMS)
 	int16_t dy = 0;
 
 #define SHUTTLE_TURN_WAIT (isPC(uqm::UQMOptions::read().landerStyle) ? 1 : 3)
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return (false);
 	}
 
 	if (!pMS->Initialized)
 	{
-		uint16_t landerSpeedNumer;
-		uint16_t angle;
+		uint16_t landerSpeedNumer {};
+		uint16_t angle {};
 
 		pMS->Initialized = true;
 
@@ -2301,7 +2289,7 @@ DoPlanetSide(LanderInputState* pMS)
 		landerSpeedNumer = WORLD_TO_VELOCITY(RES_SCALE(48));
 #endif
 
-		SetVelocityComponents(&GLOBAL(velocity),
+		SetVelocityComponents(&uqm::flagship().velocity,
 							  COSINE(angle, landerSpeedNumer) / LANDER_SPEED_DENOM,
 							  SINE(angle, landerSpeedNumer) / LANDER_SPEED_DENOM);
 
@@ -2317,7 +2305,7 @@ DoPlanetSide(LanderInputState* pMS)
 #ifdef DEBUG
 	if (PulsedInputState.menu[KEY_DEBUG_2])
 	{
-		KillLanderCrewSeq(crew_left, GameTicksPerSecond / 20);
+		KillLanderCrewSeq(crew_left, c_gameSecond / 20);
 	}
 #endif
 
@@ -2358,8 +2346,8 @@ DoPlanetSide(LanderInputState* pMS)
 			}
 			else if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_LEFT] || CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_RIGHT])
 			{
-				uint16_t landerSpeedNumer;
-				uint16_t angle;
+				uint16_t landerSpeedNumer {};
+				uint16_t angle {};
 
 				if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_LEFT])
 				{
@@ -2382,7 +2370,7 @@ DoPlanetSide(LanderInputState* pMS)
 				landerSpeedNumer = WORLD_TO_VELOCITY(RES_SCALE(48));
 #endif
 
-				SetVelocityComponents(&GLOBAL(velocity),
+				SetVelocityComponents(&uqm::flagship().velocity,
 									  COSINE(angle, landerSpeedNumer)
 										  / LANDER_SPEED_DENOM,
 									  SINE(angle, landerSpeedNumer)
@@ -2394,7 +2382,7 @@ DoPlanetSide(LanderInputState* pMS)
 				|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_UP])
 			{
 				GetNextVelocityComponents(
-					&GLOBAL(velocity), &dx, &dy, 1);
+					&uqm::flagship().velocity, &dx, &dy, 1);
 			}
 			else
 			{
@@ -2423,7 +2411,7 @@ DoPlanetSide(LanderInputState* pMS)
 	if (isDifficulty(uqm::Difficulty::Hard))
 	{
 		static TimeCount TimeOutClock;
-		TimeCount Now = GetTimeCounter();
+		const TimeCount Now = GetTimeCounter();
 
 		if (Now >= TimeOutClock)
 		{
@@ -2441,7 +2429,7 @@ DoPlanetSide(LanderInputState* pMS)
 
 void MaskLanderGraphics(void)
 {
-	uint8_t currFlagState;
+	uint8_t currFlagState {};
 
 	if (!uqm::UQMOptions::read().showUpgrades)
 	{
@@ -2452,11 +2440,11 @@ void MaskLanderGraphics(void)
 
 	if (currFlagState != LanderUpgradesFlag)
 	{
-		uint16_t i, j;
+		uint16_t i {};
 		FRAME mods = CaptureDrawable(LoadGraphic(LANDER_MODS_PMAP_ANIM));
-		FRAME lander;
-		FRAME mask;
-		DrawMode mode = MAKE_DRAW_MODE(DRAW_REPLACE, DRAW_FACTOR_1);
+		FRAME lander {};
+		FRAME mask {};
+		const DrawMode mode = MAKE_DRAW_MODE(DRAW_REPLACE, DRAW_FACTOR_1);
 
 		// Reload landersprites for remasking
 		DestroyDrawable(ReleaseDrawable(LanderFrame[0]));
@@ -2465,7 +2453,7 @@ void MaskLanderGraphics(void)
 
 		LanderUpgradesFlag = currFlagState;
 
-		for (j = 0; j < 3; j++)
+		for (uint16_t j {0}; j < 3; j++)
 		{
 			if (currFlagState & (1 << j))
 			{
@@ -2485,8 +2473,7 @@ void MaskLanderGraphics(void)
 
 void FreeLanderData(void)
 {
-	uint16_t i;
-	uint16_t landerFrameCount;
+	uint16_t i {};
 
 	if (LanderFrame[0] == nullptr)
 	{
@@ -2499,10 +2486,10 @@ void FreeLanderData(void)
 		OrbitMusic[i] = 0;
 	}
 
-	DestroySound(ReleaseSound(LanderSounds));
+	delete LanderSounds;
 	LanderSounds = 0;
 
-	landerFrameCount = std::size(LanderFrame);
+	const uint16_t landerFrameCount {std::size(LanderFrame)};
 	for (i = 0; i < landerFrameCount; ++i)
 	{
 		DestroyDrawable(ReleaseDrawable(LanderFrame[i]));
@@ -2538,12 +2525,10 @@ void LoadLanderData(void)
 
 	LanderUpgradesFlag = 0;
 
-	LanderSounds = CaptureSound(LoadSound(LANDER_SOUNDS));
+	LanderSounds = uqm::loadSoundBank(LANDER_SOUNDS).release();
 
 	{
-		uint16_t i;
-
-		for (i = 0; i < num_orbit_themes(); ++i)
+		for (uint16_t i {0}; i < num_orbit_themes(); ++i)
 		{
 			OrbitMusic[i] = load_orbit_theme(i);
 		}
@@ -2553,7 +2538,7 @@ void LoadLanderData(void)
 uint8_t
 SetPlanetMusic(uint8_t planet_type)
 {
-	uint8_t OrbitNum = planet_type % num_orbit_themes();
+	const uint8_t OrbitNum = planet_type % num_orbit_themes();
 	LanderMusic = OrbitMusic[OrbitNum];
 
 	return !(uqm::UQMOptions::read().use3doMusic || uqm::UQMOptions::read().useRemixMusic || uqm::UQMOptions::read().volasMusic) ? 0 : OrbitNum;
@@ -2562,7 +2547,7 @@ SetPlanetMusic(uint8_t planet_type)
 static void
 ReturnToOrbit(void)
 {
-	GFXCONTEXT OldContext;
+	GFXCONTEXT OldContext {};
 	GFXRECT r;
 
 	if (is3DO(uqm::UQMOptions::read().landerStyle))
@@ -2609,10 +2594,10 @@ ReturnToOrbit(void)
 }
 
 static void
-IdlePlanetSide(LanderInputState* inputState, TimeCount howLong)
+IdlePlanetSide(LanderInputState* inputState, TimePeriod howLong)
 {
 #define IDLE_OFFSET
-	TimeCount TimeOut = GetTimeCounter() + howLong;
+	const TimeCount TimeOut = GetTimeCounter() + howLong;
 
 	while (GetTimeCounter() < TimeOut)
 	{
@@ -2632,18 +2617,16 @@ LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 // RES_SCALE (10) to clear the lander off of the screen
 #define DISTANCE_COVERED (MapSurface.height / 2 + RES_SCALE(10))
 	int landingOfs[MAX_OFFSETS];
-	int start;
-	int end;
-	int delta;
-	int index;
-	int max_offsets;
+	int start {};
+	int end {};
+	int index {};
 	int landingOfsHD[MAX_OFFSETS_HD];
 
 	// Produce smooth acceleration deltas from a simple 1..x progression
-	delta = 0;
+	int delta {0};
 	// JMS_GFX: In HD graphics we run out of default offsets. -> Use larger
 	// offset value.
-	max_offsets = chooseIfHd(MAX_OFFSETS, MAX_OFFSETS_HD);
+	const int max_offsets {chooseIfHd(MAX_OFFSETS, MAX_OFFSETS_HD)};
 
 	for (index = 0; index < max_offsets && delta < DISTANCE_COVERED;
 		 ++index)
@@ -2676,7 +2659,7 @@ LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 
 	if (landing)
 	{
-		IdlePlanetSide(inputState, GameTicksPerSecond);
+		IdlePlanetSide(inputState, c_gameSecond);
 	}
 
 	// Draw the landing/takeoff lander positions
@@ -2698,7 +2681,7 @@ LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 
 	if (!landing)
 	{
-		IdlePlanetSide(inputState, GameTicksPerSecond / 2);
+		IdlePlanetSide(inputState, c_gameSecond / 2);
 	}
 }
 
@@ -2712,13 +2695,12 @@ void SetLanderTakeoff(void)
 }
 
 // Returns whether the lander is still alive at the end of the sequence
-bool KillLanderCrewSeq(uint16_t numKilled, uint32_t period)
+bool KillLanderCrewSeq(uint16_t numKilled, TimePeriod period)
 {
 	TimeCount TimeOut;
-	uint16_t i;
 
 	TimeOut = GetTimeCounter();
-	for (i = 0; i < numKilled && crew_left; ++i)
+	for (uint16_t i {0}; i < numKilled && crew_left; ++i)
 	{
 		TimeOut += period;
 		DeltaLanderCrew(-1, LANDER_INJURED);
@@ -2734,12 +2716,11 @@ bool KillLanderCrewSeq(uint16_t numKilled, uint32_t period)
 unsigned
 GetThermalHazardRating(int temp)
 {
-	static const int tempBreakpoints[] =
+	const static int tempBreakpoints[] =
 		{50, 100, 150, 250, 350, 550, 800};
 	const size_t numBreakpoints = std::size(tempBreakpoints);
-	unsigned i;
 
-	for (i = 0; i < numBreakpoints; ++i)
+	for (unsigned i {0}; i < numBreakpoints; ++i)
 	{
 		if (temp < tempBreakpoints[i])
 		{
@@ -2757,7 +2738,7 @@ GetHazardChance(int hazardType, unsigned HazardRating)
 {
 	uint8_t TectonicsChanceTab[] = {0, 0, 1 * 3, 2 * 3, 4 * 3, 8 * 3, 16 * 3, 32 * 3};
 	uint8_t WeatherChanceTab[] = {0, 0, 1 * 3, 2 * 3, 3 * 3, 6 * 3, 12 * 3, 24 * 3};
-	uint8_t FireChanceTab[] = {0, 0, 1 * 3, 2 * 3, 4 * 3, 12 * 3, 24 * 3, 48 * 3};
+	const uint8_t FireChanceTab[] = {0, 0, 1 * 3, 2 * 3, 4 * 3, 12 * 3, 24 * 3, 48 * 3};
 
 	if (EXTENDED)
 	{
@@ -2780,7 +2761,7 @@ GetHazardChance(int hazardType, unsigned HazardRating)
 
 void PlanetSide(GFXPOINT planetLoc)
 {
-	int16_t index;
+	int16_t index {};
 	LanderInputState landerInputState;
 	PLANETSIDE_DESC PSD;
 
@@ -2833,7 +2814,7 @@ void PlanetSide(GFXPOINT planetLoc)
 		BUILD_COLOR(MAKE_RGB15(0x1F, 0x03, 0x00), 0x7F);
 	planetSideDesc = &PSD;
 
-	index = NORMALIZE_FACING(TFB_Random());
+	index = NORMALIZE_FACING(uqm::random().next());
 	LanderFrame[0] = SetAbsFrameIndex(LanderFrame[0], index);
 	crew_left = 0;
 	damage_index = 0;
@@ -2854,7 +2835,7 @@ void PlanetSide(GFXPOINT planetLoc)
 
 	DoInput(&landerInputState, false);
 
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		if (crew_left == 0)
 		{
@@ -2869,7 +2850,7 @@ void PlanetSide(GFXPOINT planetLoc)
 		else
 		{
 			PSD.InTransit = true;
-			PlaySound(SetAbsSoundIndex(LanderSounds, LANDER_RETURNS),
+			PlaySound(GetSound(LanderSounds, LANDER_RETURNS),
 					  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
 
 			LandingTakeoffSequence(&landerInputState, false);
@@ -2886,7 +2867,7 @@ void PlanetSide(GFXPOINT planetLoc)
 			}
 			else
 			{ // Get the crew from landers back but not draw anything
-				uint16_t CrewCapacity = GetCrewPodCapacity();
+				const uint16_t CrewCapacity = GetCrewPodCapacity();
 				GLOBAL_SIS(CrewEnlisted) += crew_left;
 				if (GLOBAL_SIS(CrewEnlisted) > CrewCapacity)
 				{
@@ -2922,12 +2903,13 @@ void PlanetSide(GFXPOINT planetLoc)
 	planetSideDesc = nullptr;
 
 	{
-		HELEMENT hElement, hNextElement;
+		HELEMENT hElement {};
+		HELEMENT hNextElement {};
 
 		for (hElement = GetHeadElement();
 			 hElement; hElement = hNextElement)
 		{
-			ELEMENT* ElementPtr;
+			ELEMENT* ElementPtr {};
 
 			LockElement(hElement, &ElementPtr);
 			hNextElement = _GetSuccLink(ElementPtr);
@@ -2944,7 +2926,7 @@ void PlanetSide(GFXPOINT planetLoc)
 		}
 	}
 
-	ZeroVelocityComponents(&GLOBAL(velocity));
+	ZeroVelocityComponents(&uqm::flagship().velocity);
 	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
 }
 
@@ -2954,7 +2936,6 @@ DrawMinDatText(void)
 	TEXT text;
 	GFXRECT rect;
 	Color OldColor;
-	FONT OldFont;
 
 	if (!strlen(GAME_STRING(STATUS_STRING_BASE + 20)) || !strlen(GAME_STRING(STATUS_STRING_BASE + 21)))
 	{
@@ -2968,7 +2949,7 @@ DrawMinDatText(void)
 	rect.extent.height = RES_SCALE(6);
 	DrawFilledRectangle(&rect);
 
-	OldFont = SetContextFont(TinyFontBold);
+	FONT OldFont {SetContextFont(TinyFontBold)};
 	SetContextForeGroundColor(LAND_STAT_MIN_COLOR);
 	text.align = ALIGN_LEFT;
 	text.baseline.x = rect.corner.x + RES_SCALE(1);
@@ -3006,8 +2987,9 @@ void InitLander(uint8_t LanderFlags)
 
 	if (GLOBAL_SIS(NumLanders) || LanderFlags)
 	{
-		uint8_t ShieldFlags, capacity_shift;
-		uint16_t free_space;
+		uint8_t ShieldFlags {};
+		uint8_t capacity_shift {};
+		uint16_t free_space {};
 		STAMP s;
 
 		s.origin.x = 0; /* set up powered-down lander */
@@ -3122,8 +3104,9 @@ void InitPCLander(bool Loading)
 			 && pSolarSysState->pOrbitalDesc->data_index <= LAST_GAS_GIANT))
 	{ // Do not draw lander graphics if it's impossible to land (shielded
 		// and gas giant) This mimics PC behaviour.
-		uint8_t ShieldFlags, capacity_shift;
-		uint16_t free_space;
+		uint8_t ShieldFlags {};
+		uint8_t capacity_shift {};
+		uint16_t free_space {};
 		STAMP s;
 
 		s.frame = SetAbsFrameIndex(LanderFrame[7], 32);
@@ -3137,7 +3120,7 @@ void InitPCLander(bool Loading)
 				   - GLOBAL_SIS(TotalElementMass);
 		if ((int)free_space < (int)(MAX_SCROUNGED << capacity_shift))
 		{
-			uint16_t i, inc;
+			uint16_t inc {};
 
 			inc = MAX_HOLD_BARS - ((free_space >> capacity_shift) * MAX_HOLD_BARS / MAX_SCROUNGED) + 1;
 
@@ -3148,7 +3131,7 @@ void InitPCLander(bool Loading)
 
 			r.extent = MAKE_EXTENT(RES_SCALE(1), RES_SCALE(1));
 
-			for (i = 0; i < inc; i++)
+			for (uint16_t i {0}; i < inc; i++)
 			{
 				if (i % 2 == 0)
 				{ // Draw grey boxes every 2nd iteration

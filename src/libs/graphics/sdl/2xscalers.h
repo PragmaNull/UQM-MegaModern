@@ -24,7 +24,7 @@ void Scale_BiAdaptAdvFilter(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r);
 void Scale_TriScanFilter(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r);
 void Scale_HqFilter(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r);
 
-extern const Scale_FuncDef_t Scale_C_Functions[];
+const extern Scale_FuncDef_t Scale_C_Functions[];
 
 
 #endif /* LIBS_GRAPHICS_SDL_2XSCALERS_H_ */

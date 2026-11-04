@@ -4,10 +4,10 @@
 
 #include <gtest/gtest.h>
 
-#include <atomic>
-#include <chrono>
-#include <fstream>
-#include <sstream>
+#include "core/stl/atomic.h"
+#include "core/stl/chrono.h"
+#include "core/stl/fstream.h"
+#include "core/stl/sstream.h"
 
 namespace fs = uqstl::filesystem;
 using namespace uqm::io;
@@ -15,9 +15,17 @@ using namespace uqm::io;
 namespace
 {
 
+// The error of 'result'. Fails the test if 'result' has a value.
+template <typename T>
+uqstl::error_code errorOf(const Result<T>& result)
+{
+	EXPECT_FALSE(result.has_value());
+	return result.has_value() ? uqstl::error_code {} : result.error();
+}
+
 uqstl::string readHostFile(const fs::path& path)
 {
-	uqstl::ifstream file {path, uqstl::ios::binary};
+	const uqstl::ifstream file {path, uqstl::ios::binary};
 	uqstl::stringstream contents {};
 	contents << file.rdbuf();
 	return contents.str();
@@ -51,11 +59,10 @@ size_t writeText(File& file, uqstl::string_view text)
 
 uqstl::string readText(const Directory& dir, uqstl::string_view path)
 {
-	uqstl::error_code error {};
-	uqstl::optional<File> file {dir.open(path, OpenMode::Read, error)};
+	Result<File> file {dir.open(path, OpenMode::Read)};
 	if (!file)
 	{
-		return "<" + error.message() + ">";
+		return "<" + file.error().message() + ">";
 	}
 	return readAll(*file);
 }
@@ -86,9 +93,8 @@ protected:
 
 	Mount mount(uqstl::string_view mountPoint, const fs::path& host, Access access, MountPosition position = MountPosition::Top, const Mount* relative = nullptr)
 	{
-		uqstl::error_code error {};
-		uqstl::optional<Mount> result {m_fileSystem.mountDirectory(mountPoint, host, access, position, relative, error)};
-		EXPECT_TRUE(result.has_value()) << error.message();
+		Result<Mount> result {m_fileSystem.mountDirectory(mountPoint, host, access, position, relative)};
+		EXPECT_TRUE(result.has_value()) << result.error().message();
 		return result ? uqstl::move(*result) : Mount {};
 	}
 
@@ -141,10 +147,9 @@ TEST_F(IoTest, WriteAndReadBack)
 	const Mount rw {mount("/", host, Access::ReadWrite)};
 	const Directory root {m_fileSystem.root()};
 
-	uqstl::error_code error {};
 	{
-		uqstl::optional<File> file {root.open("hello.txt", OpenMode::Write | OpenMode::Create | OpenMode::Truncate, error)};
-		ASSERT_TRUE(file.has_value()) << error.message();
+		Result<File> file {root.open("hello.txt", OpenMode::Write | OpenMode::Create | OpenMode::Truncate)};
+		ASSERT_TRUE(file.has_value()) << file.error().message();
 		EXPECT_EQ(writeText(*file, "hello"), 5u);
 	}
 	EXPECT_EQ(readHostFile(host / "hello.txt"), "hello");
@@ -159,10 +164,8 @@ TEST_F(IoTest, WriteAndReadBack)
 TEST_F(IoTest, OpenMissingFileFails)
 {
 	const Mount rw {mount("/", hostDir("rw"), Access::ReadWrite)};
-	uqstl::error_code error {};
-	EXPECT_FALSE(m_fileSystem.root().open("missing.txt", OpenMode::Read, error).has_value());
-	EXPECT_EQ(error, uqstl::errc::no_such_file_or_directory);
-	EXPECT_FALSE(m_fileSystem.root().open("nodir/new.txt", OpenMode::Write | OpenMode::Create, error).has_value());
+	EXPECT_EQ(errorOf(m_fileSystem.root().open("missing.txt", OpenMode::Read)), uqstl::errc::no_such_file_or_directory);
+	EXPECT_EQ(errorOf(m_fileSystem.root().open("nodir/new.txt", OpenMode::Write | OpenMode::Create)), uqstl::errc::no_such_file_or_directory);
 }
 
 TEST_F(IoTest, TopMountHidesBottomMount)
@@ -208,9 +211,8 @@ TEST_F(IoTest, NewFilesGoToTheWritableMount)
 	const Mount configMount {mount("/", config, Access::ReadWrite)};
 	const Mount contentMount {mount("/", content, Access::ReadOnly)};
 
-	uqstl::error_code error {};
-	uqstl::optional<File> file {m_fileSystem.root().open("save/game.sav", OpenMode::Write | OpenMode::Create, error)};
-	ASSERT_TRUE(file.has_value()) << error.message();
+	Result<File> file {m_fileSystem.root().open("save/game.sav", OpenMode::Write | OpenMode::Create)};
+	ASSERT_TRUE(file.has_value()) << file.error().message();
 	writeText(*file, "data");
 	file->close();
 	EXPECT_EQ(readHostFile(config / "save" / "game.sav"), "data");
@@ -226,9 +228,8 @@ TEST_F(IoTest, WritingAReadOnlyFileCopiesItUp)
 	const Mount lowerMount {mount("/", lower, Access::ReadOnly)};
 	const Mount upperMount {mount("/", upper, Access::ReadWrite)};
 
-	uqstl::error_code error {};
-	uqstl::optional<File> file {m_fileSystem.root().open("dir/a.txt", OpenMode::Read | OpenMode::Write, error)};
-	ASSERT_TRUE(file.has_value()) << error.message();
+	Result<File> file {m_fileSystem.root().open("dir/a.txt", OpenMode::Read | OpenMode::Write)};
+	ASSERT_TRUE(file.has_value()) << file.error().message();
 	ASSERT_TRUE(file->seek(0, SeekFrom::End));
 	writeText(*file, "d");
 	file->close();
@@ -246,9 +247,7 @@ TEST_F(IoTest, WritingAReadOnlyFileWithoutAWritableMountAboveFails)
 	const Mount lowerMount {mount("/", lower, Access::ReadWrite)};
 	const Mount upperMount {mount("/", upper, Access::ReadOnly)};
 
-	uqstl::error_code error {};
-	EXPECT_FALSE(m_fileSystem.root().open("a.txt", OpenMode::Write, error).has_value());
-	EXPECT_EQ(error, uqstl::errc::permission_denied);
+	EXPECT_EQ(errorOf(m_fileSystem.root().open("a.txt", OpenMode::Write)), uqstl::errc::permission_denied);
 }
 
 TEST_F(IoTest, ListMergesMountsAndShowsMountPoints)
@@ -265,10 +264,9 @@ TEST_F(IoTest, ListMergesMountsAndShowsMountPoints)
 	const Mount upperMount {mount("/", upper, Access::ReadOnly)};
 	const Mount addonsMount {mount("packs/addons", addons, Access::ReadOnly)};
 
-	uqstl::error_code error {};
 	const Directory root {m_fileSystem.root()};
-	EXPECT_EQ(root.list("", Matcher {}, error), (uqstl::vector<uqstl::string> {"a.txt", "b.txt", "c.rmp", "packs"}));
-	EXPECT_EQ(root.list("", *Matcher::create(Matcher::Kind::Regex, "\\.[rR][mM][pP]$"), error), (uqstl::vector<uqstl::string> {"c.rmp"}));
+	EXPECT_EQ(root.list("", Matcher {}).value(), (uqstl::vector<uqstl::string> {"a.txt", "b.txt", "c.rmp", "packs"}));
+	EXPECT_EQ(root.list("", *Matcher::create(Matcher::Kind::Regex, "\\.[rR][mM][pP]$")).value(), (uqstl::vector<uqstl::string> {"c.rmp"}));
 	EXPECT_TRUE(root.stat("packs").value().isDirectory());
 	EXPECT_TRUE(root.subdir("packs/addons").has_value());
 }
@@ -310,9 +308,8 @@ TEST_F(IoTest, TransplantShowsADirectoryAtAnotherMountPoint)
 	const uqstl::optional<Directory> shadow {m_fileSystem.root().subdir("addons/mod/shadow")};
 	ASSERT_TRUE(shadow.has_value());
 
-	uqstl::error_code error {};
-	uqstl::optional<Mount> transplant {m_fileSystem.mountTransplant("/", *shadow, Access::ReadOnly, MountPosition::Above, &contentMount, error)};
-	ASSERT_TRUE(transplant.has_value()) << error.message();
+	Result<Mount> transplant {m_fileSystem.mountTransplant("/", *shadow, Access::ReadOnly, MountPosition::Above, &contentMount)};
+	ASSERT_TRUE(transplant.has_value()) << transplant.error().message();
 	EXPECT_EQ(readText(m_fileSystem.root(), "base.txt"), "shadow");
 
 	transplant->unmount();
@@ -365,23 +362,22 @@ TEST_F(IoTest, AppendModes)
 	writeHostFile(host / "old.txt", "abc");
 	const Mount rw {mount("/", host, Access::ReadWrite)};
 	const Directory root {m_fileSystem.root()};
-	uqstl::error_code error {};
 
 	{
-		uqstl::optional<File> file {root.open("new.txt", OpenMode::Read | OpenMode::Write | OpenMode::Create | OpenMode::Append, error)};
-		ASSERT_TRUE(file.has_value()) << error.message();
+		Result<File> file {root.open("new.txt", OpenMode::Read | OpenMode::Write | OpenMode::Create | OpenMode::Append)};
+		ASSERT_TRUE(file.has_value()) << file.error().message();
 		writeText(*file, "x");
 	}
 	EXPECT_EQ(readHostFile(host / "new.txt"), "x");
 	{
-		uqstl::optional<File> file {root.open("old.txt", OpenMode::Write | OpenMode::Append, error)};
-		ASSERT_TRUE(file.has_value()) << error.message();
+		Result<File> file {root.open("old.txt", OpenMode::Write | OpenMode::Append)};
+		ASSERT_TRUE(file.has_value()) << file.error().message();
 		writeText(*file, "d");
 	}
 	EXPECT_EQ(readHostFile(host / "old.txt"), "abcd");
 	{
-		uqstl::optional<File> file {root.open("old.txt", OpenMode::Write | OpenMode::Append | OpenMode::Truncate, error)};
-		ASSERT_TRUE(file.has_value()) << error.message();
+		Result<File> file {root.open("old.txt", OpenMode::Write | OpenMode::Append | OpenMode::Truncate)};
+		ASSERT_TRUE(file.has_value()) << file.error().message();
 		writeText(*file, "e");
 	}
 	EXPECT_EQ(readHostFile(host / "old.txt"), "e");
@@ -393,9 +389,8 @@ TEST_F(IoTest, SeekInsideTheReadBuffer)
 	writeHostFile(host / "abc.txt", "abcdef");
 	const Mount rw {mount("/", host, Access::ReadOnly)};
 
-	uqstl::error_code error {};
-	uqstl::optional<File> file {m_fileSystem.root().open("abc.txt", OpenMode::Read, error)};
-	ASSERT_TRUE(file.has_value()) << error.message();
+	Result<File> file {m_fileSystem.root().open("abc.txt", OpenMode::Read)};
+	ASSERT_TRUE(file.has_value()) << file.error().message();
 	EXPECT_EQ(file->getChar(), 'a');
 	EXPECT_EQ(file->getChar(), 'b');
 	EXPECT_EQ(file->getChar(), 'c');
@@ -413,9 +408,8 @@ TEST_F(IoTest, TextModeTellIsTheFilePosition)
 	writeHostFile(host / "lines.txt", "a\r\nb\r\n");
 	const Mount rw {mount("/", host, Access::ReadOnly)};
 
-	uqstl::error_code error {};
-	uqstl::optional<File> file {m_fileSystem.root().open("lines.txt", OpenMode::Read | OpenMode::Text, error)};
-	ASSERT_TRUE(file.has_value()) << error.message();
+	Result<File> file {m_fileSystem.root().open("lines.txt", OpenMode::Read | OpenMode::Text)};
+	ASSERT_TRUE(file.has_value()) << file.error().message();
 	uqstl::array<char, 16> line {};
 	ASSERT_TRUE(file->readLine(line));
 	EXPECT_EQ(file->tell(), 3u);
@@ -432,8 +426,7 @@ TEST_F(IoTest, HandlesCanOutliveTheFileSystem)
 	Mount mount {};
 	{
 		FileSystem fileSystem {};
-		uqstl::error_code error {};
-		mount = fileSystem.mountDirectory("/", host, Access::ReadOnly, MountPosition::Top, nullptr, error).value();
+		mount = fileSystem.mountDirectory("/", host, Access::ReadOnly, MountPosition::Top, nullptr).value();
 		directory = fileSystem.root();
 	}
 	EXPECT_EQ(readText(*directory, "a.txt"), "a");
@@ -450,8 +443,7 @@ TEST_F(IoTest, FileCharacterAccessAndMove)
 	writeHostFile(host / "a.txt", "xy");
 	const Mount rw {mount("/", host, Access::ReadOnly)};
 
-	uqstl::error_code error {};
-	uqstl::optional<File> file {m_fileSystem.root().open("a.txt", OpenMode::Read, error)};
+	Result<File> file {m_fileSystem.root().open("a.txt", OpenMode::Read)};
 	ASSERT_TRUE(file.has_value());
 	EXPECT_EQ(file->getChar(), 'x');
 	EXPECT_TRUE(file->unget());
@@ -488,9 +480,8 @@ protected:
 
 		const uqstl::optional<Directory> packages {m_fileSystem.root().subdir("packages")};
 		ASSERT_TRUE(packages.has_value());
-		uqstl::error_code error {};
-		uqstl::optional<Mount> zip {m_fileSystem.mountArchive("/", *packages, "sample.uqm", MountPosition::Below, &m_content, error)};
-		ASSERT_TRUE(zip.has_value()) << error.message();
+		Result<Mount> zip {m_fileSystem.mountArchive("/", *packages, "sample.uqm", MountPosition::Below, &m_content)};
+		ASSERT_TRUE(zip.has_value()) << zip.error().message();
 		m_zip = uqstl::move(*zip);
 	}
 
@@ -527,17 +518,15 @@ TEST_F(IoZipTest, ReadsStoredAndDeflatedEntries)
 
 TEST_F(IoZipTest, ListsEntries)
 {
-	uqstl::error_code error {};
-	EXPECT_EQ(m_fileSystem.root().list("", Matcher {}, error), (uqstl::vector<uqstl::string> {"deflated.txt", "dir", "emptydir", "packages", "stored.txt"}));
-	EXPECT_EQ(m_fileSystem.root().list("dir", Matcher {}, error), (uqstl::vector<uqstl::string> {"nested.txt"}));
+	EXPECT_EQ(m_fileSystem.root().list("", Matcher {}).value(), (uqstl::vector<uqstl::string> {"deflated.txt", "dir", "emptydir", "packages", "stored.txt"}));
+	EXPECT_EQ(m_fileSystem.root().list("dir", Matcher {}).value(), (uqstl::vector<uqstl::string> {"nested.txt"}));
 }
 
 TEST_F(IoZipTest, SeeksInDeflatedEntry)
 {
 	const uqstl::string expected {deflatedContents()};
-	uqstl::error_code error {};
-	uqstl::optional<File> file {m_fileSystem.root().open("deflated.txt", OpenMode::Read, error)};
-	ASSERT_TRUE(file.has_value()) << error.message();
+	Result<File> file {m_fileSystem.root().open("deflated.txt", OpenMode::Read)};
+	ASSERT_TRUE(file.has_value()) << file.error().message();
 
 	uqstl::array<uqstl::byte, 8> buffer {};
 	const auto readAt {[&](int64_t offset, SeekFrom from) {
@@ -563,9 +552,8 @@ TEST_F(IoZipTest, OpenArchiveDoesNotMount)
 	const uqstl::optional<Directory> packages {m_fileSystem.root().subdir("packages")};
 	ASSERT_TRUE(packages.has_value());
 
-	uqstl::error_code error {};
-	const uqstl::optional<Directory> archive {m_fileSystem.openArchive(*packages, "sample.uqm", error)};
-	ASSERT_TRUE(archive.has_value()) << error.message();
+	const Result<Directory> archive {m_fileSystem.openArchive(*packages, "sample.uqm")};
+	ASSERT_TRUE(archive.has_value()) << archive.error().message();
 	EXPECT_EQ(readText(*archive, "dir/nested.txt"), "nested\n");
 	EXPECT_FALSE(m_fileSystem.root().exists("stored.txt"));
 	EXPECT_TRUE(m_fileSystem.root().exists("packages/sample.uqm"));
@@ -573,6 +561,5 @@ TEST_F(IoZipTest, OpenArchiveDoesNotMount)
 
 TEST_F(IoZipTest, ZipIsReadOnly)
 {
-	uqstl::error_code error {};
-	EXPECT_FALSE(m_fileSystem.root().open("stored.txt", OpenMode::Write, error).has_value());
+	EXPECT_EQ(errorOf(m_fileSystem.root().open("stored.txt", OpenMode::Write)), uqstl::errc::permission_denied);
 }

@@ -20,31 +20,29 @@
 // for abs()
 #include "sound.h"
 #include "sndintrn.h"
-#include "libs/tasklib.h"
 #include "libs/time/timelib.h"
-#include "libs/threadlib.h"
+#include "core/thread/Mutex.h"
+#include "core/thread/Thread.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
 
 
-static Task decoderTask;
+static uqstl::jthread s_decoderThread {};
 
-static TimeCount musicFadeStartTime;
-static int32_t musicFadeInterval;
-static int musicFadeStartVolume;
-static int musicFadeDelta;
 // Mutex protects fade structures
-static Mutex fade_mutex;
+static uqm::Mutex fade_mutex {};
+static TimeCount musicFadeStartTime UQM_GUARDED_BY(fade_mutex);
+static TimePeriod musicFadeInterval UQM_GUARDED_BY(fade_mutex);
+static int musicFadeStartVolume UQM_GUARDED_BY(fade_mutex);
+static int musicFadeDelta UQM_GUARDED_BY(fade_mutex);
 
-static void add_scope_data(TFB_SoundSource* source, uint32_t bytes);
+static void add_scope_data(TFB_SoundSource* source, uint32_t bytes) UQM_REQUIRES(source->stream_mutex);
 
 
 void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool scope,
 				bool rewind)
 {
-	uint32_t i;
-	int32_t offset;
-	TFB_SoundDecoder* decoder;
+	int32_t offset {};
+	TFB_SoundDecoder* decoder {};
 
 	if (!sample)
 	{
@@ -57,11 +55,7 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 		return; // callback failed
 	}
 
-	if (sample->buffer_tag)
-	{
-		memset(sample->buffer_tag, 0,
-			   sample->num_buffers * sizeof(sample->buffer_tag[0]));
-	}
+	uqstl::ranges::fill(sample->buffer_tag, TFB_SoundTag {});
 
 	decoder = sample->decoder;
 	offset = sample->offset;
@@ -71,12 +65,12 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 	}
 	else
 	{
-		offset += (int32_t)(SoundDecoder_GetTime(decoder) * GameTicksPerSecond);
+		offset += static_cast<int32_t>(uqstl::chrono::duration_cast<GameTicks>(FloatSeconds {SoundDecoder_GetTime(decoder)}).count());
 	}
 
 	if (source == MUSIC_SOURCE)
 	{
-		soundSource[source].start_time = 0;
+		soundSource[source].start_time = TimeCount {};
 	}
 
 	soundSource[source].sample = sample;
@@ -87,14 +81,12 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 	{ // Prealloc the scope buffer in advance so that we do not
 		// realloc it a zillion times
 		soundSource[source].sbuf_size = sample->num_buffers * decoder->buffer_size + PAD_SCOPE_BYTES;
-		soundSource[source].sbuffer = HCalloc(soundSource[source].sbuf_size);
+		soundSource[source].sbuffer.assign(soundSource[source].sbuf_size, 0);
 	}
 
-	for (i = 0; i < sample->num_buffers; ++i)
+	for (uint32_t i {0}; i < sample->num_buffers; ++i)
 	{
-		uint32_t decoded_bytes;
-
-		decoded_bytes = SoundDecoder_Decode(decoder);
+		const uint32_t decoded_bytes {SoundDecoder_Decode(decoder)};
 #if 0		
 		log_add (log_Debug, "PlayStream(): source:{} filename:{} start:{} "
 				"position:{} bytes:{}\n",
@@ -137,8 +129,8 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 	soundSource[source].sbuf_lasttime = GetTimeCounter();
 	// Adjust the start time so it looks like the stream has been playing
 	// from the very beginning
-	soundSource[source].start_time = GetTimeCounter() - offset;
-	soundSource[source].pause_time = 0;
+	soundSource[source].start_time = GetTimeCounter() - TimePeriod {offset};
+	soundSource[source].pause_time = TimeCount {};
 	soundSource[source].stream_should_be_playing = true;
 	audio_SourcePlay(soundSource[source].handle);
 }
@@ -150,22 +142,17 @@ void StopStream(uint32_t source)
 	soundSource[source].stream_should_be_playing = false;
 	soundSource[source].sample = nullptr;
 
-	if (soundSource[source].sbuffer)
-	{
-		void* sbuffer = soundSource[source].sbuffer;
-		soundSource[source].sbuffer = nullptr;
-		HFree(sbuffer);
-	}
+	soundSource[source].sbuffer = {};
 	soundSource[source].sbuf_size = 0;
 	soundSource[source].sbuf_head = 0;
 	soundSource[source].sbuf_tail = 0;
-	soundSource[source].pause_time = 0;
+	soundSource[source].pause_time = TimeCount {};
 }
 
 void PauseStream(uint32_t source)
 {
 	soundSource[source].stream_should_be_playing = false;
-	if (!soundSource[source].pause_time)
+	if (soundSource[source].pause_time == TimeCount {})
 	{
 		soundSource[source].pause_time = GetTimeCounter();
 	}
@@ -174,13 +161,13 @@ void PauseStream(uint32_t source)
 
 void ResumeStream(uint32_t source)
 {
-	if (soundSource[source].pause_time)
+	if (soundSource[source].pause_time != TimeCount {})
 	{ // Adjust the start time so it looks like the stream has
 		// been playing all this time non-stop
 		soundSource[source].start_time += GetTimeCounter()
 										- soundSource[source].pause_time;
 	}
-	soundSource[source].pause_time = 0;
+	soundSource[source].pause_time = TimeCount {};
 	soundSource[source].stream_should_be_playing = true;
 	audio_SourcePlay(soundSource[source].handle);
 }
@@ -188,15 +175,14 @@ void ResumeStream(uint32_t source)
 void SeekStream(uint32_t source, uint32_t pos)
 {
 	TFB_SoundSample* sample = soundSource[source].sample;
-	bool looping;
-	bool scope;
+	bool looping {};
 
 	if (!sample)
 	{
 		return;
 	}
 	looping = sample->decoder->looping;
-	scope = soundSource[source].sbuffer != nullptr;
+	const bool scope {!soundSource[source].sbuffer.empty()};
 
 	StopSource(source);
 	SoundDecoder_Seek(sample->decoder, pos);
@@ -206,7 +192,7 @@ void SeekStream(uint32_t source, uint32_t pos)
 uint32_t
 GetStreamFrame(uint32_t source)
 {
-	TFB_SoundSample* sample = soundSource[source].sample;
+	const TFB_SoundSample* sample = soundSource[source].sample;
 
 	if (!sample)
 	{
@@ -219,7 +205,7 @@ GetStreamFrame(uint32_t source)
 uint16_t
 GetNumTrackerPos(uint32_t source)
 {
-	TFB_SoundSample* sample = soundSource[source].sample;
+	const TFB_SoundSample* sample = soundSource[source].sample;
 
 	if (!sample)
 	{
@@ -231,22 +217,21 @@ GetNumTrackerPos(uint32_t source)
 
 bool IsTracker(uint32_t source)
 {
-	TFB_SoundSample* sample = soundSource[source].sample;
-	const char* filetype;
+	const TFB_SoundSample* sample = soundSource[source].sample;
 
 	if (!sample)
 	{
 		return false;
 	}
 
-	filetype = SoundDecoder_GetName(sample->decoder);
+	const char* filetype {SoundDecoder_GetName(sample->decoder)};
 
 	return (bool)(strcmp(filetype, "MikMod") == 0);
 }
 
 float GetStreamLength(uint32_t source)
 {
-	TFB_SoundSample* sample = soundSource[source].sample;
+	const TFB_SoundSample* sample = soundSource[source].sample;
 
 	if (!sample)
 	{
@@ -259,7 +244,7 @@ float GetStreamLength(uint32_t source)
 uint32_t
 GetStreamTime(uint32_t source)
 {
-	TFB_SoundSample* sample = soundSource[source].sample;
+	const TFB_SoundSample* sample = soundSource[source].sample;
 
 	if (!sample)
 	{
@@ -271,7 +256,8 @@ GetStreamTime(uint32_t source)
 
 bool PlayingStream(uint32_t source)
 {
-	return (bool)soundSource[source].stream_should_be_playing;
+	const uqm::LockGuard lock {soundSource[source].stream_mutex};
+	return soundSource[source].stream_should_be_playing;
 }
 
 
@@ -279,13 +265,11 @@ TFB_SoundSample*
 TFB_CreateSoundSample(TFB_SoundDecoder* decoder, uint32_t num_buffers,
 					  const TFB_SoundCallbacks* pcbs /* can be nullptr */)
 {
-	TFB_SoundSample* sample;
-
-	sample = (TFB_SoundSample*)HCalloc(sizeof(*sample));
+	auto* sample {new TFB_SoundSample {}};
 	sample->decoder = decoder;
 	sample->num_buffers = num_buffers;
-	sample->buffer = (audio_Object*)HCalloc(sizeof(audio_Object) * num_buffers);
-	audio_GenBuffers(num_buffers, sample->buffer);
+	sample->buffer.assign(num_buffers, 0);
+	audio_GenBuffers(num_buffers, sample->buffer.data());
 	if (pcbs)
 	{
 		sample->callbacks = *pcbs;
@@ -297,13 +281,8 @@ TFB_CreateSoundSample(TFB_SoundDecoder* decoder, uint32_t num_buffers,
 // Deletes all TFB_SoundSample data structures, except decoder
 void TFB_DestroySoundSample(TFB_SoundSample* sample)
 {
-	if (sample->buffer)
-	{
-		audio_DeleteBuffers(sample->num_buffers, sample->buffer);
-		HFree(sample->buffer);
-	}
-	HFree(sample->buffer_tag);
-	HFree(sample);
+	audio_DeleteBuffers(sample->num_buffers, sample->buffer.data());
+	delete sample;
 }
 
 void TFB_SetSoundSampleData(TFB_SoundSample* sample, void* data)
@@ -338,9 +317,9 @@ TFB_GetSoundSampleDecoder(TFB_SoundSample* sample)
 TFB_SoundTag*
 TFB_FindTaggedBuffer(TFB_SoundSample* sample, audio_Object buffer)
 {
-	uint32_t buf_num;
+	uint32_t buf_num {};
 
-	if (!sample->buffer_tag)
+	if (sample->buffer_tag.empty())
 	{
 		return nullptr; // do not have any tags
 	}
@@ -357,11 +336,11 @@ TFB_FindTaggedBuffer(TFB_SoundSample* sample, audio_Object buffer)
 
 bool TFB_TagBuffer(TFB_SoundSample* sample, audio_Object buffer, intptr_t data)
 {
-	uint32_t buf_num;
+	uint32_t buf_num {};
 
-	if (!sample->buffer_tag)
+	if (sample->buffer_tag.empty())
 	{
-		sample->buffer_tag = (TFB_SoundTag*)HCalloc(sizeof(TFB_SoundTag) * sample->num_buffers);
+		sample->buffer_tag.assign(sample->num_buffers, TFB_SoundTag {});
 	}
 
 	for (buf_num = 0;
@@ -388,9 +367,9 @@ void TFB_ClearBufferTag(TFB_SoundTag* ptag)
 }
 
 static void
-remove_scope_data(TFB_SoundSource* source, audio_Object buffer)
+remove_scope_data(TFB_SoundSource* source, audio_Object buffer) UQM_REQUIRES(source->stream_mutex)
 {
-	audio_IntVal buf_size;
+	audio_IntVal buf_size {};
 
 	audio_GetBufferi(buffer, audio_SIZE, &buf_size);
 	source->sbuf_head += buf_size;
@@ -403,10 +382,10 @@ remove_scope_data(TFB_SoundSource* source, audio_Object buffer)
 static void
 add_scope_data(TFB_SoundSource* source, uint32_t bytes)
 {
-	uint8_t* sbuffer = (uint8_t*)source->sbuffer;
-	uint8_t* dec_buf = (uint8_t*)source->sample->decoder->buffer;
-	uint32_t tail_bytes;
-	uint32_t wrap_bytes;
+	uint8_t* sbuffer = source->sbuffer.data();
+	const uint8_t* dec_buf = (uint8_t*)source->sample->decoder->buffer;
+	uint32_t tail_bytes {};
+	uint32_t wrap_bytes {};
 
 	if (source->sbuf_tail + bytes > source->sbuf_size)
 	{ // does not fit at the tail, have to split it up
@@ -442,20 +421,20 @@ add_scope_data(TFB_SoundSource* source, uint32_t bytes)
 }
 
 static void
-process_stream(TFB_SoundSource* source)
+process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_mutex)
 {
 	TFB_SoundSample* sample = source->sample;
 	TFB_SoundDecoder* decoder = sample->decoder;
 	bool end_chunk_failed = false;
-	audio_IntVal processed;
-	audio_IntVal queued;
+	audio_IntVal processed {};
+	audio_IntVal queued {};
 
 	audio_GetSourcei(source->handle, audio_BUFFERS_PROCESSED, &processed);
 	audio_GetSourcei(source->handle, audio_BUFFERS_QUEUED, &queued);
 
 	if (processed == 0)
 	{ // Nothing was played
-		audio_IntVal state;
+		audio_IntVal state {};
 
 		audio_GetSourcei(source->handle, audio_SOURCE_STATE, &state);
 		if (state != audio_PLAYING)
@@ -485,9 +464,8 @@ process_stream(TFB_SoundSource* source)
 	// Unqueue processed buffers and replace them with new ones
 	for (; processed > 0; --processed)
 	{
-		uint32_t error;
-		audio_Object buffer;
-		uint32_t decoded_bytes;
+		uint32_t error {};
+		audio_Object buffer {};
 
 		audio_GetError(); // clear error state
 
@@ -512,7 +490,7 @@ process_stream(TFB_SoundSource* source)
 			}
 		}
 
-		if (source->sbuffer)
+		if (!source->sbuffer.empty())
 		{
 			remove_scope_data(source, buffer);
 		}
@@ -552,7 +530,7 @@ process_stream(TFB_SoundSource* source)
 		}
 
 		// Now replace the unqueued buffer with a new one
-		decoded_bytes = SoundDecoder_Decode(decoder);
+		uint32_t decoded_bytes {SoundDecoder_Decode(decoder)};
 		if (decoder->error == SOUNDDECODER_ERROR)
 		{
 			uqm::log::warn("StreamDecoderTaskFunc(): "
@@ -600,7 +578,7 @@ process_stream(TFB_SoundSource* source)
 			sample->callbacks.OnQueueBuffer(sample, buffer);
 		}
 
-		if (source->sbuffer)
+		if (!source->sbuffer.empty())
 		{
 			add_scope_data(source, decoded_bytes);
 		}
@@ -610,44 +588,32 @@ process_stream(TFB_SoundSource* source)
 static void
 processMusicFade(void)
 {
-	TimeCount Now;
-	int32_t elapsed;
-	int newVolume;
+	fade_mutex.lock();
 
-	LockMutex(fade_mutex);
-
-	if (!musicFadeInterval)
+	if (musicFadeInterval == TimePeriod {})
 	{ // there is no fade set
-		UnlockMutex(fade_mutex);
+		fade_mutex.unlock();
 		return;
 	}
 
-	Now = GetTimeCounter();
-	elapsed = Now - musicFadeStartTime;
-	if (elapsed > musicFadeInterval)
-	{
-		elapsed = musicFadeInterval;
-	}
-
-	newVolume = musicFadeStartVolume + (long)musicFadeDelta * elapsed / musicFadeInterval;
-	SetMusicVolume(newVolume);
+	const TimePeriod elapsed {uqstl::min(GetTimeCounter() - musicFadeStartTime, musicFadeInterval)};
+	SetMusicVolume(static_cast<int>(musicFadeStartVolume + musicFadeDelta * elapsed.count() / musicFadeInterval.count()));
 
 	if (elapsed >= musicFadeInterval)
 	{
-		musicFadeInterval = 0; // fade is over
+		musicFadeInterval = TimePeriod {}; // fade is over
 	}
 
-	UnlockMutex(fade_mutex);
+	fade_mutex.unlock();
 }
 
-static int
-StreamDecoderTaskFunc(void* data)
+static void
+StreamDecoderTaskFunc(uqstl::stop_token stopToken)
 {
-	Task task = (Task)data;
-	int active_streams;
-	int i;
+	int active_streams {};
+	int i {};
 
-	while (!Task_ReadState(task, TASK_EXIT))
+	while (!stopToken.stop_requested())
 	{
 		active_streams = 0;
 
@@ -657,18 +623,18 @@ StreamDecoderTaskFunc(void* data)
 		{
 			TFB_SoundSource* source = &soundSource[i];
 
-			LockMutex(source->stream_mutex);
+			source->stream_mutex.lock();
 
 			if (!source->sample || !source->sample->decoder || !source->stream_should_be_playing || source->sample->decoder->error == SOUNDDECODER_ERROR)
 			{
-				UnlockMutex(source->stream_mutex);
+				source->stream_mutex.unlock();
 				continue;
 			}
 
 			process_stream(source);
 			active_streams++;
 
-			UnlockMutex(source->stream_mutex);
+			source->stream_mutex.unlock();
 		}
 
 		if (active_streams == 0)
@@ -680,9 +646,6 @@ StreamDecoderTaskFunc(void* data)
 			TaskSwitch();
 		}
 	}
-
-	FinishTask(task);
-	return 0;
 }
 
 static inline int32_t
@@ -706,19 +669,12 @@ readSoundSample(void* ptr, int sample_size)
 int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 						  bool wantSpeech)
 {
-	int source_num;
-	TFB_SoundSource* source;
-	TFB_SoundDecoder* decoder;
-	int channels;
-	int sample_size;
-	int full_sample;
-	int step;
-	long played_time;
-	long delta;
-	uint8_t* sbuffer;
-	unsigned long pos;
-	int scale;
-	int32_t i;
+	TFB_SoundDecoder* decoder {};
+	int channels {};
+	int sample_size {};
+	int step {};
+	long delta {};
+	uint8_t* sbuffer {};
 	// AGC variables
 #define DEF_PAGE_MAX 28000
 #define AGC_PAGE_COUNT 16
@@ -747,16 +703,13 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	static int frame_sum;
 	static int frames;
 	static int avg_amp = DEF_PAGE_MAX; // running amplitude (sort of) average
-	int target_amp;
-	int max_a;
 #define VAD_MIN_ENERGY 100
-	long energy;
 
 
 	// Prefer speech to music
-	source_num = SPEECH_SOURCE;
-	source = &soundSource[source_num];
-	LockMutex(source->stream_mutex);
+	int source_num {SPEECH_SOURCE};
+	TFB_SoundSource* source {&soundSource[source_num]};
+	source->stream_mutex.lock();
 	if (wantSpeech && (!source->sample || !source->sample->decoder || !source->sample->decoder->is_null))
 	{ // Use speech waveform, since it's available
 		// Step is picked experimentally. Using step of 1 sample at 11025Hz,
@@ -766,38 +719,38 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	}
 	else
 	{ // We do not have speech -- use music waveform
-		UnlockMutex(source->stream_mutex);
+		source->stream_mutex.unlock();
 
 		source_num = MUSIC_SOURCE;
 		source = &soundSource[source_num];
-		LockMutex(source->stream_mutex);
+		source->stream_mutex.lock();
 
 		// Step is picked experimentally. Using step of 4 samples at 11025Hz.
 		// It looks better this way.
 		step = 4;
 	}
 
-	if (!PlayingStream(source_num) || !source->sample
-		|| !source->sample->decoder || !source->sbuffer
+	if (!source->stream_should_be_playing || !source->sample
+		|| !source->sample->decoder || source->sbuffer.empty()
 		|| source->sbuf_size == 0)
 	{ // We don't have data to return, oh well.
-		UnlockMutex(source->stream_mutex);
+		source->stream_mutex.unlock();
 		return 0;
 	}
 	decoder = source->sample->decoder;
 
 	if (!audio_GetFormatInfo(decoder->format, &channels, &sample_size))
 	{
-		UnlockMutex(source->stream_mutex);
+		source->stream_mutex.unlock();
 		uqm::log::debug("GraphForegroundStream(): uknown format {}",
 						(unsigned)decoder->format);
 		return 0;
 	}
-	full_sample = channels * sample_size;
+	const int full_sample {channels * sample_size};
 
 	// See how far into the buffer we should be now
-	played_time = GetTimeCounter() - source->sbuf_lasttime;
-	delta = played_time * decoder->frequency * full_sample / GameTicksPerSecond;
+	const long played_time {static_cast<long>((GetTimeCounter() - source->sbuf_lasttime).count())};
+	delta = played_time * decoder->frequency * full_sample / c_gameSecond.count();
 	// align delta to sample start
 	delta = delta & ~(full_sample - 1);
 
@@ -821,31 +774,28 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	}
 	step *= full_sample;
 
-	sbuffer = (uint8_t*)source->sbuffer;
-	pos = source->sbuf_head + delta;
+	sbuffer = source->sbuffer.data();
+	unsigned long pos {source->sbuf_head + delta};
 
 	// We are not basing the scaling factor on signal energy, because we
 	// want it to *look* pretty instead of sounding nice and even
-	target_amp = (height >> 1) >> 1;
-	scale = avg_amp / target_amp;
+	const int target_amp {(height >> 1) >> 1};
+	const int scale {avg_amp / target_amp};
 
-	max_a = 0;
-	energy = 0;
-	for (i = 0; i < width; ++i, pos += step)
+	int max_a {0};
+	long energy {0};
+	for (int32_t i {0}; i < width; ++i, pos += step)
 	{
-		int32_t s;
-		int t;
-
 		pos %= source->sbuf_size;
 
-		s = readSoundSample(sbuffer + pos, sample_size);
+		int32_t s {readSoundSample(sbuffer + pos, sample_size)};
 		if (channels > 1)
 		{
 			s += readSoundSample(sbuffer + pos + sample_size, sample_size);
 		}
 
 		energy += (s * s) / 0x10000;
-		t = abs(s);
+		const int t {abs(s)};
 		if (t > max_a)
 		{
 			max_a = t;
@@ -887,65 +837,43 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 		}
 	}
 
-	UnlockMutex(source->stream_mutex);
+	source->stream_mutex.unlock();
 	return 1;
 }
 
 // This function is normally called on the Starcon2Main thread
-bool SetMusicStreamFade(int32_t howLong, int endVolume)
+bool SetMusicStreamFade(TimePeriod howLong, int endVolume)
 {
 	bool ret = true;
 
-	LockMutex(fade_mutex);
+	fade_mutex.lock();
 
-	if (howLong < 0)
+	if (howLong < TimePeriod {})
 	{
-		howLong = 0;
+		howLong = TimePeriod {};
 	}
 
 	musicFadeStartTime = GetTimeCounter();
 	musicFadeInterval = howLong;
 	musicFadeStartVolume = musicVolume;
 	musicFadeDelta = endVolume - musicFadeStartVolume;
-	if (!musicFadeInterval)
+	if (musicFadeInterval == TimePeriod {})
 	{
 		ret = false; // reject
 	}
 
-	UnlockMutex(fade_mutex);
+	fade_mutex.unlock();
 
 	return ret;
 }
 
 int InitStreamDecoder(void)
 {
-	fade_mutex = CREATEMUTEX("Stream fade mutex", SYNC_CLASS_AUDIO);
-	if (!fade_mutex)
-	{
-		return -1;
-	}
-
-	decoderTask = AssignTask(StreamDecoderTaskFunc, 1024,
-							 "audio stream decoder");
-	if (!decoderTask)
-	{
-		return -1;
-	}
-
+	s_decoderThread = uqm::makeThread("audio stream decoder", StreamDecoderTaskFunc);
 	return 0;
 }
 
 void UninitStreamDecoder(void)
 {
-	if (decoderTask)
-	{
-		ConcludeTask(decoderTask);
-		decoderTask = nullptr;
-	}
-
-	if (fade_mutex)
-	{
-		DestroyMutex(fade_mutex);
-		fade_mutex = nullptr;
-	}
+	s_decoderThread = {};
 }

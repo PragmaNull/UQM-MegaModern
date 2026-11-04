@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/gameev.h"
 #include "uqm/build.h"
 
@@ -250,8 +250,6 @@ static void HomeWorld(RESPONSE_REF R);
 static void
 HumanInfo(RESPONSE_REF R)
 {
-	uint8_t InfoLeft;
-
 	if (PLAYER_SAID(R, happy_to_tell_more))
 	{
 		NPCPhrase(TELL_MORE);
@@ -293,7 +291,7 @@ HumanInfo(RESPONSE_REF R)
 		SET_GAME_STATE(SLYLANDRO_KNOW_GATHER, 1);
 	}
 
-	InfoLeft = false;
+	uint8_t InfoLeft {false};
 	if (GET_GAME_STATE(SLYLANDRO_KNOW_URQUAN) == 1)
 	{
 		InfoLeft = true;
@@ -330,8 +328,6 @@ HumanInfo(RESPONSE_REF R)
 static void
 SlylandroInfo(RESPONSE_REF R)
 {
-	uint8_t InfoLeft;
-
 	if (PLAYER_SAID(R, like_more_about_you))
 	{
 		NPCPhrase(SURE_KNOW_WHAT);
@@ -361,7 +357,7 @@ SlylandroInfo(RESPONSE_REF R)
 		DISABLE_PHRASE(what_about_biology);
 	}
 
-	InfoLeft = false;
+	uint8_t InfoLeft {false};
 	if (PHRASE_ENABLED(what_about_home))
 	{
 		InfoLeft = true;
@@ -480,10 +476,9 @@ static void ProbeInfo(RESPONSE_REF R);
 static void
 ProbeFunction(RESPONSE_REF R)
 {
-	uint8_t LastStack;
 	RESPONSE_REF pStr[2];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = 0;
 	if (PLAYER_SAID(R, talk_more_probe_attack))
 	{
@@ -620,10 +615,11 @@ ProbeFunction(RESPONSE_REF R)
 static void
 ProbeInfo(RESPONSE_REF R)
 {
-	uint8_t i, LastStack, InfoLeft;
+	uint8_t i {};
+	uint8_t InfoLeft {};
 	RESPONSE_REF pStr[3];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
 	if (PLAYER_SAID(R, what_are_probes))
 	{
@@ -744,10 +740,10 @@ ProbeInfo(RESPONSE_REF R)
 static void
 HomeWorld(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
+	uint8_t i {};
 	RESPONSE_REF pStr[3];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
 	if (PLAYER_SAID(R, we_are_us))
 	{
@@ -943,7 +939,7 @@ HomeWorld(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 
 	if (IS_HD)
@@ -990,7 +986,7 @@ Intro(void)
 static uint16_t
 uninit_slylandro(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -1003,13 +999,11 @@ post_slylandro_enc(void)
 LOCDATA*
 init_slylandro_comm(void)
 {
-	LOCDATA* retval;
-
 	slylandro_desc.init_encounter_func = Intro;
 	slylandro_desc.post_encounter_func = post_slylandro_enc;
 	slylandro_desc.uninit_encounter_func = uninit_slylandro;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
@@ -1019,7 +1013,7 @@ init_slylandro_comm(void)
 	slylandro_desc.AlienTextWidth = SIS_TEXT_WIDTH;
 
 	setSegue(Segue_peace);
-	retval = &slylandro_desc;
+	LOCDATA* retval {&slylandro_desc};
 
 	return (retval);
 }

@@ -17,19 +17,19 @@
 #ifndef PNG2SDL_H_
 #define PNG2SDL_H_
 
-#include "SDL.h"
-#include "SDL_video.h"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_video.h>
 
 
-SDL_Surface* TFB_png_to_sdl(SDL_RWops* src);
+SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src);
 
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 #define SDL_SavePNG(surface, file) \
-	TFB_sdl_to_png(surface, SDL_RWFromFile(file, "wb"), 1)
-extern int TFB_sdl_to_png(SDL_Surface* surface, SDL_RWops* rw, int freedst);
+	TFB_sdl_to_png(surface, SDL_IOFromFile(file, "wb"), 1)
+extern int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* rw, int freedst);
 extern SDL_Surface* SDL_PNGFormatAlpha(SDL_Surface* src);
 
 #if 0 //defined(__cplusplus)
@@ -56,19 +56,19 @@ extern SDL_Surface* SDL_PNGFormatAlpha(SDL_Surface* src);
 #ifndef PNG2SDL_H_
 #define PNG2SDL_H_
 
-#include "SDL.h"
-#include "SDL_video.h"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_video.h>
 
 
-SDL_Surface* TFB_png_to_sdl(SDL_RWops* src);
+SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src);
 
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
 #define SDL_SavePNG(surface, file) \
-	TFB_sdl_to_png(surface, SDL_RWFromFile(file, "wb"), 1)
-extern int TFB_sdl_to_png(SDL_Surface* surface, SDL_RWops* rw, int freedst);
+	TFB_sdl_to_png(surface, SDL_IOFromFile(file, "wb"), 1)
+extern int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* rw, int freedst);
 extern SDL_Surface* SDL_PNGFormatAlpha(SDL_Surface* src);
 
 #if 0 //defined(__cplusplus)

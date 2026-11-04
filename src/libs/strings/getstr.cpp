@@ -21,681 +21,323 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/reslib.h"
 #include "core/log/log.h"
-#include "libs/memlib.h"
+#include "core/stl/optional.h"
+#include "libs/file/textfile.h"
+#include <fmt/format.h>
+#include "libs/file/json.h"
 
 
-#define MAX_STRINGS 2048
-#define POOL_SIZE 4096
+static constexpr int c_stringTableVersion {1};
 
 static void
 dword_convert(uint32_t* dword_array, uint16_t num_dwords)
 {
-	uint8_t* p = (uint8_t*)dword_array;
+	const uint8_t* p = (uint8_t*)dword_array;
 
 	do
 	{
-		*dword_array++ = MAKE_DWORD(
-			MAKE_WORD(p[3], p[2]),
-			MAKE_WORD(p[1], p[0]));
+		*dword_array++ = uqm::makeDword(
+			uqm::makeWord(p[3], p[2]),
+			uqm::makeWord(p[1], p[0]));
 		p += 4;
 	} while (--num_dwords);
 }
 
-static STRING
-set_strtab_entry(STRING_TABLE_DESC* strtab, int index, const char* value,
-				 int len)
+void SetStringTableEntry(uqm::StringTable* strtab, int index, const void* value, int len)
 {
-	STRING str = &strtab->strings[index];
-
-	if (str->data)
-	{
-		HFree(str->data);
-		str->data = nullptr;
-		str->length = 0;
-	}
-	if (len)
-	{
-		str->data = (STRINGPTR)HMalloc(len);
-		str->length = len;
-		memcpy(str->data, value, len);
-	}
-	return str;
+	strtab->set(static_cast<size_t>(index), uqstl::string_view {static_cast<const char*>(value), static_cast<size_t>(len)});
 }
 
-static void
-copy_strings_to_strtab(STRING_TABLE_DESC* strtab, size_t firstIndex,
-					   size_t count, const char* data, const uint32_t* lens)
+namespace
 {
-	size_t stringI;
-	const char* off = data;
 
-	for (stringI = 0; stringI < count; stringI++)
+[[nodiscard]] uqm::JsonDoc readJsonFile(uqstl::string_view path)
+{
+	const uqstl::string pathText {path};
+	const auto text {uqm::readTextFile(uqm::contentDir(), pathText.c_str())};
+	if (!text)
 	{
-		set_strtab_entry(strtab, firstIndex + stringI,
-						 off, lens[stringI]);
-		off += lens[stringI];
+		uqm::log::warn("Warning: Can't open '{}'", path);
+		return {nullptr, &yyjson_doc_free};
 	}
+	return uqm::parseJson(*text, path, YYJSON_READ_ALLOW_INVALID_UNICODE);
 }
 
-// Check whether a buffer has a certain minimum size, and enlarge it
-// if necessary.
-// buf: pointer to the pointer to the buffer. May be nullptr.
-// curSize: pointer to the current size (multiple of 'increment')
-// minSize: required minimum size
-// increment: size to increment the buffer with if necessary
-// On success, *buf and *curSize are updated. On failure, they are
-// unchanged.
-// returns false if and only if the buffer needs to be enlarged but
-// memory allocation failed.
-static bool
-ensureBufSize(char** buf, size_t* curSize, size_t minSize, size_t increment)
+[[nodiscard]] uqstl::string joinNumbers(yyjson_val* numbers)
 {
-	char* newBuf;
-	size_t newSize;
-
-	if (minSize <= *curSize)
+	uqstl::string text {};
+	size_t index {};
+	size_t max {};
+	yyjson_val* number {};
+	yyjson_arr_foreach(numbers, index, max, number)
 	{
-		// Buffer is large enough as it is.
-		return true;
-	}
-
-	newSize = ((minSize + (increment - 1)) / increment) * increment;
-	// Smallest multiple of 'increment' larger or equal to minSize.
-	newBuf = (char*)HRealloc(*buf, newSize);
-	if (newBuf == nullptr)
-	{
-		return false;
-	}
-
-	// Success
-	*buf = newBuf;
-	*curSize = newSize;
-	return true;
-}
-
-void _GetConversationData(const char* path, RESOURCE_DATA* resdata)
-{
-	unsigned long dataLen;
-	void* result;
-	int stringI;
-	int path_len;
-	// int num_data_sets; unused
-	uint32_t opos;
-
-	char* namedata = nullptr;
-	// Contains the names (indexes) of the dialogs.
-	uint32_t nlen[MAX_STRINGS];
-	// Length of each of the names.
-	uint32_t NameOffs;
-	size_t tot_name_size;
-
-	char* strdata = nullptr;
-	// Contains the dialog strings.
-	uint32_t slen[MAX_STRINGS];
-	// Length of each of the dialog strings.
-	uint32_t StringOffs;
-	size_t tot_string_size;
-
-	char* clipdata = nullptr;
-	// Contains the file names of the speech files.
-	uint32_t clen[MAX_STRINGS];
-	// Length of each of the speech file names.
-	uint32_t ClipOffs;
-	size_t tot_clip_size;
-
-	char* ts_data = nullptr;
-	// Contains the timestamp data for synching the text with the
-	// speech.
-	uint32_t tslen[MAX_STRINGS];
-	// Length of each of the timestamp strings.
-	uint32_t TSOffs;
-	size_t tot_ts_size = 0;
-
-	char CurrentLine[1024] {};
-	char paths[1024] {};
-	char* clip_path;
-	char* ts_path;
-
-	uqstl::optional<uqm::io::File> fp {};
-	uqstl::optional<uqm::io::File> timestamp_fp {};
-	std::unordered_map<std::string, STRING_TABLE_ENTRY_DESC*>* nameHashTable = nullptr;
-	// Hash table of string names (such as "GLAD_WHEN_YOU_COME_BACK")
-	// to a STRING.
-
-	/* Parse out the conversation components. */
-	uqm::strncpy_safe(paths, path);
-	paths[1023] = '\0';
-	clip_path = strchr(paths, ':');
-	if (clip_path == nullptr)
-	{
-		ts_path = nullptr;
-	}
-	else
-	{
-		*clip_path = '\0';
-		clip_path++;
-
-		ts_path = strchr(clip_path, ':');
-		if (ts_path != nullptr)
+		if (index > 0)
 		{
-			*ts_path = '\0';
-			ts_path++;
+			text += ',';
 		}
+		fmt::format_to(uqstl::back_inserter(text), "{}", yyjson_get_uint(number));
 	}
+	return text;
+}
 
-	fp = res_OpenResFile(uqm::contentDir(), paths, uqm::io::OpenMode::Read);
-	if (!fp)
+// The timing of a line as the track player reads it: the times of the pages, and after each ';' the times of a subclip.
+[[nodiscard]] uqstl::string timingText(yyjson_val* line)
+{
+	yyjson_val* const timing {yyjson_obj_get(line, "timing")};
+	yyjson_val* const subclipTiming {yyjson_obj_get(line, "subclipTiming")};
+	if (timing == nullptr && subclipTiming == nullptr)
 	{
-		uqm::log::warn("Warning: Can't open '{}'", paths);
-		resdata->ptr = nullptr;
+		return {};
+	}
+	uqstl::string text {yyjson_is_arr(timing) ? joinNumbers(timing) : uqstl::string {}};
+	size_t index {};
+	size_t max {};
+	yyjson_val* subclip {};
+	yyjson_arr_foreach(subclipTiming, index, max, subclip)
+	{
+		text += ';';
+		text += joinNumbers(subclip);
+	}
+	return text;
+}
+
+[[nodiscard]] uqstl::string joinLines(yyjson_val* lines)
+{
+	uqstl::string text {};
+	size_t index {};
+	size_t max {};
+	yyjson_val* line {};
+	yyjson_arr_foreach(lines, index, max, line)
+	{
+		if (index > 0)
+		{
+			text += '\n';
+		}
+		text += uqstl::string_view {yyjson_get_str(line), yyjson_get_len(line)};
+	}
+	return text;
+}
+
+// Sets an entry to the text and its NUL, or empties it if 'text' is nullopt.
+void setEntry(uqm::StringTable* table, int index, const uqstl::optional<uqstl::string>& text)
+{
+	if (text)
+	{
+		SetStringTableEntry(table, index, text->c_str(), static_cast<int>(text->size() + 1));
+	}
+}
+
+} // namespace
+
+// Loads a conversation from the fields "text", "clips" and "timing": a text file, a clip directory and a timing file.
+// The timing file holds timing for the lines of conversations by the "conversation" name of the text file, and
+// replaces the timing in it.
+void _GetConversationData(const ResourceArg& arg, RESOURCE_DATA* resdata)
+{
+	resdata->ptr = nullptr;
+
+	const char* const textField {resourceStringField(arg, "text")};
+	if (textField == nullptr)
+	{
+		uqm::log::warn("Warning: A CONVERSATION resource has no text file.");
+		return;
+	}
+	const char* const clipsField {resourceStringField(arg, "clips")};
+	const char* const timingField {resourceStringField(arg, "timing")};
+	const uqstl::string_view textPath {textField};
+	const uqstl::string_view clipDir {clipsField != nullptr ? clipsField : ""};
+	const uqstl::string_view timingPath {timingField != nullptr ? timingField : ""};
+
+	const uqm::JsonDoc textDoc {readJsonFile(textPath)};
+	if (!textDoc)
+	{
+		return;
+	}
+	yyjson_val* const root {yyjson_doc_get_root(textDoc.get())};
+	yyjson_val* const lines {yyjson_obj_get(root, "lines")};
+	const size_t count {yyjson_arr_size(lines)};
+	if (count == 0)
+	{
+		uqm::log::warn("Warning: '{}' has no conversation lines.", textPath);
 		return;
 	}
 
-	dataLen = static_cast<decltype(dataLen)>(fp->size());
-	uqm::log::info("\t'{}' -- conversation phrases -- {} bytes", paths,
-				   dataLen);
-	if (clip_path)
+	uqm::JsonDoc timingDoc {nullptr, &yyjson_doc_free};
+	yyjson_val* timingLines {};
+	if (!timingPath.empty())
 	{
-		uqm::log::info("\t'{}' -- voice clip directory", clip_path);
-	}
-	else
-	{
-		uqm::log::info("\tNo associated voice clips");
-	}
-	if (ts_path)
-	{
-		uqm::log::info("\t'{}' -- timestamps", ts_path);
-	}
-	else
-	{
-		uqm::log::info("\tNo associated timestamp file");
-	}
-
-	if (dataLen == 0)
-	{
-		uqm::log::warn("Warning: Trying to load empty file '{}'.",
-					   path);
-		goto err;
-	}
-
-	tot_string_size = POOL_SIZE;
-	strdata = (char*)HMalloc(tot_string_size);
-	if (strdata == 0)
-	{
-		goto err;
-	}
-
-	tot_name_size = POOL_SIZE;
-	namedata = (char*)HMalloc(tot_name_size);
-	if (namedata == 0)
-	{
-		goto err;
-	}
-
-	tot_clip_size = POOL_SIZE;
-	clipdata = (char*)HMalloc(tot_clip_size);
-	if (clipdata == 0)
-	{
-		goto err;
-	}
-	ts_data = nullptr;
-
-	nameHashTable = new std::unordered_map<std::string, STRING_TABLE_ENTRY_DESC*>();
-	if (nameHashTable == nullptr)
-	{
-		goto err;
-	}
-
-	path_len = clip_path ? strlen(clip_path) : 0;
-
-	if (ts_path)
-	{
-		timestamp_fp = res_OpenResFile(uqm::contentDir(), ts_path, uqm::io::OpenMode::Read);
-		if (timestamp_fp)
+		timingDoc = readJsonFile(timingPath);
+		const char* const conversation {yyjson_get_str(yyjson_obj_get(root, "conversation"))};
+		if (timingDoc && conversation != nullptr)
 		{
-			tot_ts_size = POOL_SIZE;
-			ts_data = (char*)HMalloc(tot_ts_size);
-			if (ts_data == 0)
-			{
-				goto err;
-			}
+			timingLines = yyjson_obj_get(yyjson_obj_get(yyjson_doc_get_root(timingDoc.get()), "conversations"), conversation);
+		}
+	}
+	uqm::log::info("\t'{}' -- conversation phrases -- {} lines", textPath, count);
+
+	uqstl::vector<uqstl::optional<uqstl::string>> texts(count);
+	uqstl::vector<uqstl::string> names(count);
+	uqstl::vector<uqstl::optional<uqstl::string>> clips(count);
+	uqstl::vector<uqstl::optional<uqstl::string>> timings(count);
+	int flags {uqm::StringTable::c_hasNames};
+	size_t index {};
+	size_t max {};
+	yyjson_val* line {};
+	yyjson_arr_foreach(lines, index, max, line)
+	{
+		const char* const id {yyjson_get_str(yyjson_obj_get(line, "id"))};
+		if (id == nullptr)
+		{
+			uqm::log::warn("Warning: '{}': line {} has no id.", textPath, index);
+			return;
+		}
+		names[index] = id;
+		if (yyjson_val* const text {yyjson_obj_get(line, "text")})
+		{
+			texts[index] = joinLines(text);
+		}
+		if (const char* const clip {yyjson_get_str(yyjson_obj_get(line, "clip"))}; clip != nullptr && *clip != '\0')
+		{
+			clips[index] = uqstl::string {clipDir} + clip;
+			flags |= uqm::StringTable::c_hasSoundClips;
+		}
+		yyjson_val* const timingLine {yyjson_obj_get(timingLines, id)};
+		if (uqstl::string timing {timingText(timingLine != nullptr ? timingLine : line)}; !timing.empty())
+		{
+			timings[index] = uqstl::move(timing);
+			flags |= uqm::StringTable::c_hasTimestamps;
 		}
 	}
 
-	opos = fp->tell();
-	stringI = -1;
-	NameOffs = 0;
-	StringOffs = 0;
-	ClipOffs = 0;
-	TSOffs = 0;
-	for (;;)
+	auto* const table {
+		new uqm::StringTable {count, flags}
+	   };
+	if (table == nullptr)
 	{
-		int l;
-
-		if (!fp->readLine(CurrentLine))
-		{
-			// EOF or read error.
-			break;
-		}
-
-		if (stringI >= MAX_STRINGS - 1)
-		{
-			// Too many strings.
-			break;
-		}
-
-		if (CurrentLine[0] == '#')
-		{
-			// String header, of the following form:
-			//     #(GLAD_WHEN_YOU_COME_BACK) commander-000.ogg
-
-			uqstl::string_view name {};
-			uqstl::string_view ts {};
-
-			uqstl::string_view currentLine {CurrentLine};
-			if (const auto openParenPos {currentLine.find('(')}; openParenPos != uqstl::string_view::npos)
-			{
-				if (const auto closeParenPos {currentLine.find(')', openParenPos + 1)}; closeParenPos != uqstl::string_view::npos)
-				{
-					name = currentLine.substr(openParenPos + 1, closeParenPos - (openParenPos + 1));
-					currentLine.remove_prefix(closeParenPos + 1);
-
-					currentLine = uqm::trim(currentLine);
-
-
-					ts = currentLine;
-				}
-			}
-
-
-			if (!name.empty())
-			{
-				if (stringI >= 0)
-				{
-					while (slen[stringI] > 1 && (strdata[StringOffs - 2] == '\n' || strdata[StringOffs - 2] == '\r'))
-					{
-						--slen[stringI];
-						--StringOffs;
-						strdata[StringOffs - 1] = '\0';
-					}
-				}
-
-				slen[++stringI] = 0;
-
-				// Store the string name.
-				l = name.size() + 1;
-				if (!ensureBufSize(&namedata, &tot_name_size,
-								   NameOffs + l, POOL_SIZE))
-				{
-					goto err;
-				}
-				uqm::strncpy_safe({&namedata[NameOffs], static_cast<uint32_t>(l)}, name);
-				NameOffs += l;
-				nlen[stringI] = l;
-
-				// now lets check for timestamp data
-				if (timestamp_fp)
-				{
-					// We have a time stamp file.
-					char TimeStampLine[1024] {};
-					char* tsptr;
-					bool ts_ok = false;
-					timestamp_fp->readLine(TimeStampLine);
-					if (TimeStampLine[0] == '#')
-					{
-						// Line is of the following form:
-						//     #(GIVE_FUEL_AGAIN) 3304,3255
-						uqstl::string_view timeStampView {TimeStampLine};
-
-						tslen[stringI] = 0;
-						if (const auto tsPos {timeStampView.find(name)}; tsPos != uqstl::string_view::npos)
-						{
-							timeStampView.remove_prefix(tsPos + name.size() + 1);
-							ts_ok = true;
-
-							timeStampView = uqm::trim(timeStampView);
-
-							if (!timeStampView.empty())
-							{
-								l = timeStampView.size() + 1;
-								if (!ensureBufSize(&ts_data, &tot_ts_size, TSOffs + l,
-												   POOL_SIZE))
-								{
-									goto err;
-								}
-
-								uqm::strncpy_safe({&ts_data[TSOffs], static_cast<uint32_t>(l)}, timeStampView);
-								TSOffs += l;
-								tslen[stringI] = l;
-							}
-						}
-					}
-					if (!ts_ok)
-					{
-						// timestamp data is invalid, remove all of it
-						uqm::log::warn("Invalid timestamp data "
-									   "for '{}'.  Disabling timestamps",
-									   name);
-						HFree(ts_data);
-						ts_data = nullptr;
-						timestamp_fp.reset();
-						TSOffs = 0;
-					}
-				}
-				clen[stringI] = 0;
-				if (!ts.empty())
-				{
-					const uint32_t tsLen = ts.size();
-					l = path_len + tsLen + 1;
-					if (!ensureBufSize(&clipdata, &tot_clip_size,
-									   ClipOffs + l, POOL_SIZE))
-					{
-						goto err;
-					}
-
-					if (clip_path)
-					{
-						uqm::strncpy_safe({&clipdata[ClipOffs], static_cast<uint32_t>(l)}, clip_path);
-					}
-					uqm::strncpy_safe({&clipdata[ClipOffs + path_len], static_cast<uint32_t>(l - path_len)}, ts);
-					ClipOffs += l;
-					clen[stringI] = l;
-				}
-			}
-		}
-		else if (stringI >= 0)
-		{
-			char* s;
-			l = strlen(CurrentLine) + 1;
-
-			if (!ensureBufSize(&strdata, &tot_string_size, StringOffs + l,
-							   POOL_SIZE))
-			{
-				goto err;
-			}
-
-			if (slen[stringI])
-			{
-				--slen[stringI];
-				--StringOffs;
-			}
-			s = &strdata[StringOffs];
-			slen[stringI] += l;
-			StringOffs += l;
-
-			uqm::strncpy_safe({s, static_cast<uint32_t>(l)}, {CurrentLine, static_cast<uint32_t>(l - 1)});
-		}
-
-		if ((int)fp->tell() - (int)opos >= (int)dataLen)
-		{
-			break;
-		}
+		return;
 	}
-	if (stringI >= 0)
-	{
-		while (slen[stringI] > 1 && (strdata[StringOffs - 2] == '\n' || strdata[StringOffs - 2] == '\r'))
+	const int size {static_cast<int>(count)};
+	int block {0};
+	const auto writeBlock {[&](const auto& entries) {
+		for (int i {0}; i < size; ++i)
 		{
-			--slen[stringI];
-			--StringOffs;
-			strdata[StringOffs - 1] = '\0';
+			setEntry(table, block + i, entries[i]);
 		}
+		block += size;
+	}};
+	writeBlock(texts);
+	writeBlock(names);
+	if (flags & uqm::StringTable::c_hasSoundClips)
+	{
+		writeBlock(clips);
+	}
+	if (flags & uqm::StringTable::c_hasTimestamps)
+	{
+		writeBlock(timings);
 	}
 
-
-	result = nullptr;
-	// num_data_sets = (ClipOffs ? 1 : 0) + (TSOffs ? 1 : 0) + 1; unused
-	if (++stringI)
+	for (int i {0}; i < size; ++i)
 	{
-		int flags = 0;
-		int stringCount = stringI;
+		table->indexName(static_cast<size_t>(i));
+	}
 
-		if (ClipOffs)
+	size_t timingIndex {};
+	size_t timingMax {};
+	yyjson_val* timingId {};
+	yyjson_val* timingValue {};
+	yyjson_obj_foreach(timingLines, timingIndex, timingMax, timingId, timingValue)
+	{
+		if (!table->find(yyjson_get_str(timingId)))
 		{
-			flags |= HAS_SOUND_CLIPS;
-		}
-		if (TSOffs)
-		{
-			flags |= HAS_TIMESTAMP;
-		}
-		flags |= HAS_NAMEINDEX;
-
-		result = AllocStringTable(stringCount, flags);
-		if (result)
-		{
-			// Copy all the gatherered data in a STRING_TABLE
-			STRING_TABLE_DESC* lpST = (STRING_TABLE)result;
-			STRING str;
-			stringI = 0;
-
-			// Store the dialog string.
-			copy_strings_to_strtab(
-				lpST, stringI, stringCount, strdata, slen);
-			stringI += stringCount;
-
-			// Store the dialog names.
-			copy_strings_to_strtab(
-				lpST, stringI, stringCount, namedata, nlen);
-			stringI += stringCount;
-
-			// Store sound clip file names.
-			if (lpST->flags & HAS_SOUND_CLIPS)
-			{
-				copy_strings_to_strtab(
-					lpST, stringI, stringCount, clipdata, clen);
-				stringI += stringCount;
-			}
-
-			// Store time stamp data.
-			if (lpST->flags & HAS_TIMESTAMP)
-			{
-				copy_strings_to_strtab(
-					lpST, stringI, stringCount, ts_data, tslen);
-				//stringI += stringCount;
-			}
-
-			// Store the STRING in the hash table indexed by the dialog
-			// name.
-			str = &lpST->strings[stringCount];
-			for (stringI = 0; stringI < stringCount; stringI++)
-			{
-				(*nameHashTable)[(const char*)str[stringI].data] = &str[stringI];
-			}
-
-			lpST->nameIndex = nameHashTable;
+			uqm::log::warn("Warning: '{}' has timing for '{}', which '{}' does not have.", timingPath, yyjson_get_str(timingId),
+						   textPath);
 		}
 	}
-	HFree(strdata);
-	if (clipdata != nullptr)
-	{
-		HFree(clipdata);
-	}
-	if (ts_data != nullptr)
-	{
-		HFree(ts_data);
-	}
-
-	resdata->ptr = result;
-	return;
-
-err:
-	if (nameHashTable != nullptr)
-	{
-		delete nameHashTable;
-	}
-	if (ts_data != nullptr)
-	{
-		HFree(ts_data);
-	}
-	if (clipdata != nullptr)
-	{
-		HFree(clipdata);
-	}
-	if (strdata != nullptr)
-	{
-		HFree(strdata);
-	}
-	resdata->ptr = nullptr;
+	resdata->ptr = table;
 }
 
+// Loads a string table from a JSON file with a "strings" array. Each string has an "id", and can have "text": an array
+// of text lines.
 void* _GetStringData(const ResourceFile& resource)
 {
-	uqm::io::File* const fp {&resource.file};
-	const uint32_t length {resource.length};
-	void* result;
-
-	int stringI;
-	uint32_t opos;
-	uint32_t slen[MAX_STRINGS];
-	uint32_t StringOffs;
-	size_t tot_string_size;
-	char CurrentLine[1024];
-	char* strdata = nullptr;
-
-	tot_string_size = POOL_SIZE;
-	strdata = (char*)HMalloc(tot_string_size);
-	if (strdata == 0)
+	const auto text {readResourceText(resource)};
+	if (!text)
 	{
-		goto err;
+		uqm::log::warn("Warning: Can't read '{}'", resource.path);
+		return nullptr;
+	}
+	const uqm::JsonDoc doc {uqm::parseJson(*text, resource.path, YYJSON_READ_ALLOW_INVALID_UNICODE)};
+	yyjson_val* const strings {uqm::versionedMember(doc, c_stringTableVersion, "strings", YYJSON_TYPE_ARR, resource.path)};
+	const size_t count {yyjson_arr_size(strings)};
+	if (count == 0)
+	{
+		uqm::log::warn("Warning: '{}' is not a valid string table.", resource.path);
+		return nullptr;
 	}
 
-	opos = fp->tell();
-	stringI = -1;
-	StringOffs = 0;
-	for (;;)
+	auto* const table {
+		new uqm::StringTable {count, 0}
+	   };
+	if (table == nullptr)
 	{
-		int l;
-
-		if (!fp->readLine(CurrentLine))
+		return nullptr;
+	}
+	size_t index {};
+	size_t max {};
+	yyjson_val* entry {};
+	yyjson_arr_foreach(strings, index, max, entry)
+	{
+		if (yyjson_val* const lines {yyjson_obj_get(entry, "text")})
 		{
-			// EOF or read error.
-			break;
-		}
-
-		if (stringI >= MAX_STRINGS - 1)
-		{
-			// Too many strings.
-			break;
-		}
-
-		if (CurrentLine[0] == '#')
-		{
-			char CopyLine[1024] {};
-
-			uqm::strncpy_safe(CopyLine, CurrentLine);
-			const char* const openParen = strchr(&CopyLine[1], '(');
-			const bool hasValidHeader = openParen && strchr(openParen + 1, ')');
-			if (hasValidHeader)
-			{
-				if (stringI >= 0)
-				{
-					while (slen[stringI] > 1 && (strdata[StringOffs - 2] == '\n' || strdata[StringOffs - 2] == '\r'))
-					{
-						--slen[stringI];
-						--StringOffs;
-						strdata[StringOffs - 1] = '\0';
-					}
-				}
-
-				slen[++stringI] = 0;
-			}
-		}
-		else if (stringI >= 0)
-		{
-			char* s;
-			l = strlen(CurrentLine) + 1;
-
-			if (!ensureBufSize(&strdata, &tot_string_size, StringOffs + l,
-							   POOL_SIZE))
-			{
-				goto err;
-			}
-
-			if (slen[stringI])
-			{
-				--slen[stringI];
-				--StringOffs;
-			}
-			s = &strdata[StringOffs];
-			slen[stringI] += l;
-			StringOffs += l;
-
-			uqm::strncpy_safe({s, static_cast<uint32_t>(l)}, {CurrentLine, static_cast<uint32_t>(l - 1)});
-		}
-
-		if ((int)fp->tell() - (int)opos >= (int)length)
-		{
-			break;
+			setEntry(table, static_cast<int>(index), joinLines(lines));
 		}
 	}
-	if (stringI >= 0)
-	{
-		while (slen[stringI] > 1 && (strdata[StringOffs - 2] == '\n' || strdata[StringOffs - 2] == '\r'))
-		{
-			--slen[stringI];
-			--StringOffs;
-			strdata[StringOffs - 1] = '\0';
-		}
-	}
-
-	result = nullptr;
-	if (++stringI)
-	{
-		int flags = 0;
-		int stringCount = stringI;
-
-		result = AllocStringTable(stringI, flags);
-		if (result)
-		{
-			STRING_TABLE_DESC* lpST = (STRING_TABLE)result;
-			copy_strings_to_strtab(lpST, 0, stringCount, strdata, slen);
-		}
-	}
-	HFree(strdata);
-
-	return result;
-
-err:
-	if (strdata != nullptr)
-	{
-		HFree(strdata);
-	}
-	return 0;
+	return table;
 }
 
 
 void* _GetBinaryTableData(const ResourceFile& resource)
 {
-	void* result;
-	result = GetResourceData(resource.file, resource.length);
-
-	if (result)
+	// The data has a length prefix. ~0 means uncompressed data; compressed data is not supported.
+	uint32_t compLen {};
+	if (!resource.file.readValue(compLen))
 	{
-		uint32_t* fileData;
-		STRING_TABLE lpST;
+		return nullptr;
+	}
+	if (compLen != ~uint32_t {0})
+	{
+		uqm::log::warn("LZ-compressed binary data not supported");
+		return nullptr;
+	}
+	const uint32_t length {resource.length - static_cast<uint32_t>(sizeof(uint32_t))};
+	uqstl::vector<uint32_t> data((length + 3) / 4, 0);
+	if (!resource.file.readExact(uqm::io::asBytes(data.data(), length)))
+	{
+		return nullptr;
+	}
 
-		fileData = (uint32_t*)result;
+	uqm::StringTable* lpST {};
+	{
+		uint32_t* fileData {data.data()};
 
 		dword_convert(fileData, 1); /* Length */
 
-		lpST = AllocStringTable(fileData[0], 0);
+		lpST = new uqm::StringTable {fileData[0], 0};
 		if (lpST)
 		{
-			int i, size;
-			uint8_t* stringptr;
+			int size {};
 
-			size = lpST->size;
+			size = static_cast<int>(lpST->size());
 
 			dword_convert(fileData + 1, size + 1);
-			stringptr = (uint8_t*)(fileData + 2 + size + fileData[1]);
-			for (i = 0; i < size; i++)
+			const uint8_t* stringptr {(uint8_t*)(fileData + 2 + size + fileData[1])};
+			for (int i {0}; i < size; i++)
 			{
-				set_strtab_entry(lpST, i, (char*)stringptr, fileData[2 + i]);
+				SetStringTableEntry(lpST, i, stringptr, fileData[2 + i]);
 				stringptr += fileData[2 + i];
 			}
 		}
-		HFree(result);
-		result = lpST;
 	}
 
-	return result;
+	return lpST;
 }

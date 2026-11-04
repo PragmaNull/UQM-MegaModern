@@ -21,7 +21,7 @@
 #ifndef LIBS_SOUND_MIXER_MIXERINT_H_
 #define LIBS_SOUND_MIXER_MIXERINT_H_
 
-#include <type_traits>
+#include "core/stl/stl.h"
 #include "port.h"
 #include <cstdint>
 

@@ -20,6 +20,7 @@
 #define UQM_PLANETS_PLANETS_H_
 
 #include "libs/mathlib.h"
+#include "libs/sndlib.h"
 #include "options.h"
 
 #define END_INTERPLANETARY START_INTERPLANETARY
@@ -112,9 +113,9 @@ enum
 	(ORIG_SIS_SCREEN_HEIGHT - SC2_MAP_HEIGHT \
 	 - RES_DESCALE(MAP_BORDER_HEIGHT))
 
-#define PC_ROTATION_RATE (GameTicksPerSecond / RES_SCALE(12))
-#define THREEDO_ROTATION_RATE (GameTicksPerSecond * 6 / RES_SCALE(SC2_MAP_WIDTH))
-#define UQM_ROTATION_RATE (GameTicksPerSecond * 12 / MAP_WIDTH)
+#define PC_ROTATION_RATE (c_gameSecond / RES_SCALE(12))
+#define THREEDO_ROTATION_RATE (c_gameSecond * 6 / RES_SCALE(SC2_MAP_WIDTH))
+#define UQM_ROTATION_RATE (c_gameSecond * 12 / MAP_WIDTH)
 
 #define PLANET_ROTATION_RATE(a) (!a ? PC_ROTATION_RATE : \
 									  (a == 1 ? THREEDO_ROTATION_RATE : UQM_ROTATION_RATE))
@@ -149,6 +150,7 @@ typedef struct portal_location PORTAL_LOCATION;
 #include "plandata.h"
 #include "sundata.h"
 #include "../gendef.h" //JSD need gendef.h unless we move plots & starmap to starmap
+#include "uqm/random/UQMRandom.h"
 
 typedef struct
 {
@@ -311,9 +313,10 @@ struct solarsys_state
 	uint8_t thrust_counter;
 	uint8_t max_ship_speed;
 
-	STRING XlatRef;
+	uqm::StringTablePtr XlatTable {};
 	const void* XlatPtr;
-	COLORMAP OrbitalCMap;
+	uqm::StringTablePtr OrbitalCMap {};
+	uint16_t OrbitalCMapIndex;
 
 	SYSTEM_INFO SysInfo;
 
@@ -374,8 +377,8 @@ extern bool use3DOSpheres;
 
 // Random context used for all solar system, planets, and surfaces
 // generation
-extern RandomContext* SysGenRNG;
-extern RandomContext* SysGenRNGDebug;
+extern uqstl::optional<uqm::UQMRandom> SysGenRNG;
+extern uqm::UQMRandom* SysGenRNGDebug;
 
 bool playerInSolarSystem(void);
 bool playerInPlanetOrbit(void);
@@ -461,7 +464,7 @@ extern void TransformColor(Color* c, uint16_t scan);
 extern void DrawPlanetSurfaceBorder(void);
 
 extern FRAME GetStarBackGround(bool encounter);
-extern char* GetNamedPlanetaryBody(void);
+const extern char* GetNamedPlanetaryBody(void);
 extern void GetPlanetOrMoonName(char* buf, uint16_t bufsize);
 
 extern void PlanetOrbitMenu(void);

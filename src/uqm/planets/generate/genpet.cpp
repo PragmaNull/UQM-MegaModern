@@ -29,6 +29,7 @@
 #include "../../state.h"
 #include "libs/mathlib.h"
 #include "../../../options.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateTalkingPet_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -62,21 +63,19 @@ const GenerateFunctions generateTalkingPetFunctions = {
 static bool
 GenerateTalkingPet_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
-		uint16_t angle;
-
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 		pPlanet->data_index = TELLURIC_WORLD;
 		pPlanet->radius = EARTH_RADIUS * 204L / 100;
-		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
@@ -108,7 +107,7 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 
 		if (StartSphereTracking(UMGAH_SHIP))
 		{
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 			if (!GET_GAME_STATE(UMGAH_ZOMBIE_BLOBBIES))
 			{
@@ -118,9 +117,7 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 			else
 			{
-				uint16_t i;
-
-				for (i = 0; i < 10; ++i)
+				for (uint16_t i {0}; i < 10; ++i)
 				{
 					CloneShipFragment(UMGAH_SHIP,
 									  &GLOBAL(npc_built_ship_q), 0);
@@ -129,14 +126,14 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 		}
 
-		if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+		if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 		{
-			bool UmgahSurvivors;
+			bool UmgahSurvivors {};
 
 			UmgahSurvivors = GetHeadLink(
 								 &GLOBAL(npc_built_ship_q))
 						  != 0;
-			GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+			uqm::currentActivity() &= ~START_INTERPLANETARY;
 
 			if (GET_GAME_STATE(PLAYER_HYPNOTIZED))
 			{
@@ -167,8 +164,8 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(RUINS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);
@@ -211,16 +208,15 @@ GenerateTalkingPet_pickupEnergy(SOLARSYS_STATE* solarSys,
 static void
 ZapToUrquanEncounter(void)
 {
-	HENCOUNTER hEncounter;
+	HENCOUNTER hEncounter {};
 
 	if ((hEncounter = AllocEncounter())
 		|| (hEncounter = GetHeadEncounter()))
 	{
-		int16_t dx, dy;
-		ENCOUNTER* EncounterPtr;
-		HFLEETINFO hStarShip;
-		FLEET_INFO* TemplatePtr;
-		BRIEF_SHIP_INFO* BSIPtr;
+		int16_t dx {};
+		int16_t dy {};
+		ENCOUNTER* EncounterPtr {};
+		HFLEETINFO hStarShip {};
 
 		LockEncounter(hEncounter, &EncounterPtr);
 
@@ -234,13 +230,13 @@ ZapToUrquanEncounter(void)
 
 		hStarShip = GetStarShipFromIndex(
 			&GLOBAL(avail_race_q), URQUAN_SHIP);
-		TemplatePtr = LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		const FLEET_INFO* TemplatePtr {LockFleetInfo(&GLOBAL(avail_race_q), hStarShip)};
 		EncounterPtr->origin = TemplatePtr->loc;
 		EncounterPtr->radius = TemplatePtr->actual_strength;
 		EncounterPtr->race_id = URQUAN_SHIP;
 		EncounterPtr->num_ships = 1;
 		EncounterPtr->flags = ONE_SHOT_ENCOUNTER;
-		BSIPtr = &EncounterPtr->ShipList[0];
+		BRIEF_SHIP_INFO* BSIPtr {&EncounterPtr->ShipList[0]};
 		BSIPtr->race_id = URQUAN_SHIP;
 		BSIPtr->crew_level = TemplatePtr->crew_level;
 		BSIPtr->max_crew = TemplatePtr->max_crew;
@@ -261,12 +257,12 @@ ZapToUrquanEncounter(void)
 
 		{
 #define LOST_DAYS 15
-			SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond * 2));
+			SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond * 2));
 			MoveGameClockDays(LOST_DAYS);
 		}
 
-		GLOBAL(CurrentActivity) =
-			MAKE_WORD(IN_HYPERSPACE, 0) | START_ENCOUNTER;
+		uqm::currentActivity() =
+			uqm::makeWord(IN_HYPERSPACE, 0) | START_ENCOUNTER;
 		SetBattlePlanet();
 
 		dx = CurStarDescPtr->star_pt.x - EncounterPtr->loc_pt.x;
@@ -281,14 +277,14 @@ ZapToUrquanEncounter(void)
 
 		if (GLOBAL_SIS(FuelOnBoard) < 5 * FUEL_TANK_SCALE)
 		{
-			dx = ((5 + ((uint16_t)TFB_Random() % 5)) * FUEL_TANK_SCALE)
+			dx = ((5 + ((uint16_t)uqm::random().next() % 5)) * FUEL_TANK_SCALE)
 			   - (int16_t)GLOBAL_SIS(FuelOnBoard);
 			DeltaSISGauges(0, dx, 0);
 		}
 		DrawSISMessage(nullptr);
 		// DrawHyperCoords (EncounterPtr->loc_pt);
-		GLOBAL(ShipStamp.origin) = EncounterPtr->loc_pt;
-		GLOBAL(ShipFacing) = 6;
+		uqm::flagship().shipStamp.origin = EncounterPtr->loc_pt;
+		uqm::flagship().shipFacing = 6;
 
 
 		UnlockEncounter(hEncounter);

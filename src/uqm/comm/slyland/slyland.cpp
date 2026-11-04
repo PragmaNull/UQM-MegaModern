@@ -69,7 +69,7 @@ static uint16_t probe_tens_names[] =
 		ENUMERATE_NINETY,
 };
 
-static const NUMBER_SPEECH_DESC probe_numbers_english =
+const static NUMBER_SPEECH_DESC probe_numbers_english =
 	{
 		5, /* NumDigits */
 		{
@@ -252,9 +252,7 @@ static RESPONSE_REF threat,
 static void
 sayCoord(int coord)
 {
-	int ac;
-
-	ac = abs(coord);
+	const int ac {abs(coord)};
 
 	NPCPhrase_splice(coord < 0 ? COORD_MINUS : COORD_PLUS);
 	NPCNumber(ac / 10, "{:03}");
@@ -359,7 +357,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	}
 	else
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		if (PLAYER_SAID(R, threat))
 		{
@@ -419,7 +417,8 @@ CombatIsInevitable(RESPONSE_REF R)
 					break;
 				case 3:
 					{
-						int16_t dx, dy;
+						int16_t dx {};
+						int16_t dy {};
 
 						// Probe's coordinate system is +/-{Y,X} relative to home
 						// If homeworld X or Y are < 5000, we will flip the sign
@@ -494,10 +493,8 @@ Intro(void)
 {
 	if (isDifficulty(uqm::Difficulty::Hard) && GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		uint16_t i;
-
 		NPCPhrase(COORD_POINT);
-		for (i = 0; i < 16; i++)
+		for (uint16_t i {0}; i < 16; i++)
 		{
 			NPCNumber(random_ramble[i], "{} ");
 		}
@@ -511,7 +508,7 @@ Intro(void)
 	}
 	else
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_VISITS);
 		switch (NumVisits++)
@@ -563,8 +560,6 @@ post_slyland_enc(void)
 LOCDATA*
 init_slyland_comm(void)
 {
-	LOCDATA* retval;
-
 	slylandro_desc.init_encounter_func = Intro;
 	slylandro_desc.post_encounter_func = post_slyland_enc;
 	slylandro_desc.uninit_encounter_func = uninit_slyland;
@@ -575,7 +570,7 @@ init_slyland_comm(void)
 	slylandro_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	setSegue(Segue_hostile);
-	retval = &slylandro_desc;
+	LOCDATA* retval {&slylandro_desc};
 
 	return (retval);
 }

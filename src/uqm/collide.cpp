@@ -28,10 +28,19 @@
 
 void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 {
-	int16_t speed;
-	int16_t dx0, dy0, dx1, dy1, dx_rel, dy_rel;
-	int16_t TravelAngle0, TravelAngle1, ImpactAngle0, ImpactAngle1;
-	int16_t RelTravelAngle, Directness;
+	int16_t speed {};
+	int16_t dx0 {};
+	int16_t dy0 {};
+	int16_t dx1 {};
+	int16_t dy1 {};
+	int16_t dx_rel {};
+	int16_t dy_rel {};
+	int16_t TravelAngle0 {};
+	int16_t TravelAngle1 {};
+	int16_t ImpactAngle0 {};
+	int16_t ImpactAngle1 {};
+	int16_t RelTravelAngle {};
+	int16_t Directness {};
 
 	dx_rel = ElementPtr0->next.location.x
 		   - ElementPtr1->next.location.x;
@@ -91,8 +100,9 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 	}
 
 	{
-		int16_t mass0, mass1;
-		long scalar;
+		int16_t mass0 {};
+		int16_t mass1 {};
+		long scalar {};
 
 		mass0 = ElementPtr0->mass_points /* << 2 */;
 		mass1 = ElementPtr1->mass_points /* << 2 */;
@@ -102,7 +112,7 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 		{
 			if (ElementPtr0->state_flags & PLAYER_SHIP)
 			{
-				STARSHIP* StarShipPtr;
+				STARSHIP* StarShipPtr {};
 
 				GetElementStarShip(ElementPtr0, &StarShipPtr);
 				StarShipPtr->cur_status_flags &=
@@ -149,7 +159,7 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 		{
 			if (ElementPtr1->state_flags & PLAYER_SHIP)
 			{
-				STARSHIP* StarShipPtr;
+				STARSHIP* StarShipPtr {};
 
 				GetElementStarShip(ElementPtr1, &StarShipPtr);
 				StarShipPtr->cur_status_flags &=

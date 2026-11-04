@@ -36,7 +36,7 @@ typedef struct menu_state
 
 	uint8_t CurState;
 	FRAME CurFrame;
-	STRING CurString;
+	COLORMAP HangarColorMap;
 	GFXPOINT first_item;
 	int16_t delta_item;
 

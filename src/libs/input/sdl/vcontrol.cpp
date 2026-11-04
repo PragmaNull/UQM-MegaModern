@@ -15,29 +15,28 @@
  */
 
 #include "port.h"
-#include "SDL.h"
+#include <SDL3/SDL.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include "vcontrol.h"
-#include "libs/memlib.h"
 #include "keynames.h"
 #include "core/log/log.h"
 #include "libs/reslib.h"
 #include "core/string/StringUtils.h"
+#include "core/thread/Mutex.h"
 
 /* How many binding slots are allocated at once. */
 #define POOL_CHUNK_SIZE 64
 
-/* Total number of key input buckets. SDL1 keys are a simple enum,
- * but SDL2 scatters key symbols through the entire 32-bit space,
- * so we do not rely on being able to declare an array with one
- * entry per key. */
+/* Total number of key input buckets. SDL scatters key symbols through
+ * the entire 32-bit space, so we do not rely on being able to declare
+ * an array with one entry per key. */
 #define KEYBOARD_INPUT_BUCKETS 512
 
 typedef struct vcontrol_keybinding
 {
-	int* target;
+	uqstl::atomic<int>* target;
 	sdl_key_t keycode;
 	struct vcontrol_keypool* parent;
 	struct vcontrol_keybinding* next;
@@ -49,6 +48,9 @@ typedef struct vcontrol_keypool
 	int remaining;
 	struct vcontrol_keypool* next;
 } keypool;
+
+// The main thread handles input events while the game thread can change the bindings.
+static uqm::RecursiveMutex s_vcontrolLock {};
 
 #ifdef HAVE_JOYSTICK
 
@@ -66,25 +68,13 @@ typedef struct vcontrol_joystick_hat
 
 typedef struct vcontrol_joystick
 {
-#if SDL_MAJOR_VERSION > 1
-	SDL_GameController* stick;
-#else
-	SDL_Joystick* stick;
-#endif
+	SDL_Gamepad* stick;
 	int numaxes, numbuttons;
 	int threshold;
-	axis_type* axes;
-	keybinding** buttons;
-	int numhats;
-	hat_type* hats;
+	uqstl::vector<axis_type> axes;
+	uqstl::vector<keybinding*> buttons;
 } joystick;
 
-#if SDL_MAJOR_VERSION == 1
-static joystick* joysticks;
-static unsigned int joycount;
-#endif // SDL_MAJOR_VERSION
-
-#if SDL_MAJOR_VERSION > 1
 
 typedef struct vcontrol_controller_list
 {
@@ -93,9 +83,9 @@ typedef struct vcontrol_controller_list
 	SDL_JoystickID instance_id;
 } controller_list;
 
-static controller_list* controller_list_head = nullptr;
-static int controller_assignments[2] = {-1, -1};
-static int active_controller_count = 0;
+static controller_list* controller_list_head UQM_GUARDED_BY(s_vcontrolLock) = nullptr;
+static int controller_assignments[2] UQM_GUARDED_BY(s_vcontrolLock) = {-1, -1};
+static int active_controller_count UQM_GUARDED_BY(s_vcontrolLock) = 0;
 
 typedef struct
 {
@@ -103,41 +93,34 @@ typedef struct
 	int axis;
 	int polarity;
 	int button;
-	int* target;
+	uqstl::atomic<int>* target;
 	int logical_port;
 } default_binding;
 
-static default_binding* default_bindings = nullptr;
-static int default_binding_count = 0;
-static int default_binding_capacity = 0;
+static uqstl::vector<default_binding> default_bindings UQM_GUARDED_BY(s_vcontrolLock) {};
 
-#endif // SDL_MAJOR_VERSION
 #endif /* HAVE_JOYSTICK */
 
-static keybinding* bindings[KEYBOARD_INPUT_BUCKETS];
+static keybinding* bindings[KEYBOARD_INPUT_BUCKETS] UQM_GUARDED_BY(s_vcontrolLock);
 
-static keypool* pool;
+static keypool* pool UQM_GUARDED_BY(s_vcontrolLock);
 
 /* Last interesting event */
-static int event_ready;
-static SDL_Event last_interesting;
+static int event_ready UQM_GUARDED_BY(s_vcontrolLock);
+static SDL_Event last_interesting UQM_GUARDED_BY(s_vcontrolLock);
 
 static keypool*
-allocate_key_chunk(void)
+allocate_key_chunk(void) UQM_REQUIRES(s_vcontrolLock)
 {
-	keypool* x = (keypool*)HMalloc(sizeof(keypool));
-	if (x)
+	auto* x {new keypool {}};
+	x->remaining = POOL_CHUNK_SIZE;
+	x->next = nullptr;
+	for (int i {}; i < POOL_CHUNK_SIZE; i++)
 	{
-		int i;
-		x->remaining = POOL_CHUNK_SIZE;
-		x->next = nullptr;
-		for (i = 0; i < POOL_CHUNK_SIZE; i++)
-		{
-			x->pool[i].target = nullptr;
-			x->pool[i].keycode = SDLK_UNKNOWN;
-			x->pool[i].next = nullptr;
-			x->pool[i].parent = x;
-		}
+		x->pool[i].target = nullptr;
+		x->pool[i].keycode = SDLK_UNKNOWN;
+		x->pool[i].next = nullptr;
+		x->pool[i].parent = x;
 	}
 	return x;
 }
@@ -145,61 +128,30 @@ allocate_key_chunk(void)
 static void
 free_key_pool(keypool* x)
 {
-	if (x)
+	while (x)
 	{
-		free_key_pool(x->next);
-		HFree(x);
+		keypool* next {x->next};
+		delete x;
+		x = next;
 	}
 }
 
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION > 1
 
 static void
 store_default_binding(int is_axis_binding, int axis, int polarity,
-					  int button, int* target, int logical_port)
+					  int button, uqstl::atomic<int>* target, int logical_port) UQM_REQUIRES(s_vcontrolLock)
 {
-	default_binding *new_bindings, *binding;
-	int new_capacity;
-
-	if (default_binding_count >= default_binding_capacity)
-	{
-		new_capacity = default_binding_capacity == 0 ? 16 : default_binding_capacity * 2;
-		new_bindings = (default_binding*)HRealloc(default_bindings,
-												  sizeof(default_binding) * new_capacity);
-
-		if (!new_bindings)
-		{
-			return;
-		}
-
-		default_bindings = new_bindings;
-		default_binding_capacity = new_capacity;
-	}
-
-	binding = &default_bindings[default_binding_count++];
-	binding->is_axis_binding = is_axis_binding;
-	binding->axis = axis;
-	binding->polarity = polarity;
-	binding->button = button;
-	binding->target = target;
-	binding->logical_port = logical_port;
+	default_bindings.push_back(default_binding {is_axis_binding, axis, polarity, button, target, logical_port});
 }
 
 static void
 apply_default_bindings_to_controller(SDL_JoystickID instance_id,
-									 int logical_port)
+									 int logical_port) UQM_REQUIRES(s_vcontrolLock)
 {
-	default_binding* binding;
-
-	if (!default_bindings)
+	for (const default_binding& entry : default_bindings)
 	{
-		return;
-	}
-
-	for (int i = 0; i < default_binding_count; i++)
-	{
-		binding = &default_bindings[i];
+		const default_binding* binding {&entry};
 
 		if (binding->logical_port != logical_port)
 		{
@@ -220,78 +172,41 @@ apply_default_bindings_to_controller(SDL_JoystickID instance_id,
 
 	uqm::log::debug("Applied {} bindings for logical port {} "
 					"(instance {})",
-					default_binding_count, logical_port,
+					default_bindings.size(), logical_port,
 					instance_id);
 }
 
-void create_joystick(int device_index)
+void create_joystick(SDL_JoystickID instance_id)
 {
-	SDL_GameController* gamecontroller;
-	SDL_Joystick* gamepad;
-	SDL_JoystickID instance_id;
-	controller_list *current, *new_controller;
-	joystick* x;
+	const uqm::LockGuard lock {s_vcontrolLock};
 
-	if (!SDL_IsGameController(device_index))
+	if (!SDL_IsGamepad(instance_id))
 	{
 		return;
 	}
 
-	gamecontroller = SDL_GameControllerOpen(device_index);
+	SDL_Gamepad* gamecontroller {SDL_OpenGamepad(instance_id)};
 	if (!gamecontroller)
 	{
 		uqm::log::warn("VControl: Could not initialize "
 					   "controller #{}",
-					   device_index);
+					   instance_id);
 		return;
 	}
 
-	gamepad = SDL_GameControllerGetJoystick(gamecontroller);
-	instance_id = SDL_JoystickInstanceID(gamepad);
 
-	current = controller_list_head;
+	controller_list* current {controller_list_head};
 	while (current)
 	{
 		if (current->instance_id == instance_id)
 		{
 			uqm::log::warn("Controller instance {} already in list",
 						   instance_id);
-			SDL_GameControllerClose(gamecontroller);
+			SDL_CloseGamepad(gamecontroller);
 			return;
 		}
 		current = current->next;
 	}
-
-	new_controller = (controller_list*)HMalloc(sizeof(controller_list));
-	if (!new_controller)
-	{
-		uqm::log::warn(
-			"Failed to allocate memory for new controller");
-		SDL_GameControllerClose(gamecontroller);
-		return;
-	}
-
-	x = &new_controller->gamepad;
-	x->numaxes = SDL_CONTROLLER_AXIS_MAX;
-	x->numbuttons = SDL_CONTROLLER_BUTTON_MAX;
-	x->axes = (axis_type*)HMalloc(sizeof(axis_type) * x->numaxes);
-	x->buttons = (keybinding**)HMalloc(sizeof(keybinding*) * x->numbuttons);
-
-	for (int j = 0; j < x->numaxes; j++)
-	{
-		x->axes[j].neg = x->axes[j].pos = nullptr;
-		x->axes[j].polarity = 0;
-	}
-	for (int j = 0; j < x->numbuttons; j++)
-	{
-		x->buttons[j] = nullptr;
-	}
-	x->stick = gamecontroller;
-	x->threshold = 10000;
-
-	new_controller->instance_id = instance_id;
-	new_controller->next = controller_list_head;
-	controller_list_head = new_controller;
 
 	int logical_port = -1;
 	for (int i = 0; i < 2; i++)
@@ -299,8 +214,6 @@ void create_joystick(int device_index)
 		if (controller_assignments[i] == -1)
 		{
 			logical_port = i;
-			controller_assignments[i] = instance_id;
-			active_controller_count++;
 			break;
 		}
 	}
@@ -309,27 +222,36 @@ void create_joystick(int device_index)
 	{
 		uqm::log::info("Maximum of 2 controllers already connected, "
 					   "ignoring additional controller");
-		SDL_GameControllerClose(gamecontroller);
-		HFree(x->axes);
-		HFree(x->buttons);
-		HFree(new_controller);
+		SDL_CloseGamepad(gamecontroller);
 		return;
 	}
+	controller_assignments[logical_port] = instance_id;
+	active_controller_count++;
 
-	uqm::log::info("VControl opened controller {} (logical port {}): "
+	controller_list* new_controller {new controller_list {}};
+	joystick* x {&new_controller->gamepad};
+	x->numaxes = SDL_GAMEPAD_AXIS_COUNT;
+	x->numbuttons = SDL_GAMEPAD_BUTTON_COUNT;
+	x->axes.assign(x->numaxes, axis_type {nullptr, nullptr, 0});
+	x->buttons.assign(x->numbuttons, nullptr);
+	x->stick = gamecontroller;
+	x->threshold = 10000;
+
+	new_controller->instance_id = instance_id;
+	new_controller->next = controller_list_head;
+	controller_list_head = new_controller;
+
+	const char* name {SDL_GetGamepadName(gamecontroller)};
+	uqm::log::info("VControl opened controller (logical port {}): "
 				   "{} (instance {})",
-				   device_index, logical_port,
-				   SDL_GameControllerName(gamecontroller), instance_id);
+				   logical_port, name ? name : "", instance_id);
 
 	apply_default_bindings_to_controller(instance_id, logical_port);
 }
 
 static void
-destroy_joystick(SDL_JoystickID instance_id)
+destroy_joystick(SDL_JoystickID instance_id) UQM_REQUIRES(s_vcontrolLock)
 {
-	controller_list** prev;
-	controller_list* current;
-
 	for (int i = 0; i < 2; i++)
 	{
 		if (controller_assignments[i] == instance_id)
@@ -340,27 +262,23 @@ destroy_joystick(SDL_JoystickID instance_id)
 		}
 	}
 
-	prev = &controller_list_head;
-	current = controller_list_head;
+	controller_list** prev {&controller_list_head};
+	controller_list* current {controller_list_head};
 
 	while (current)
 	{
 		if (current->instance_id == instance_id)
 		{
-			joystick* x;
-
 			*prev = current->next;
 
-			x = &current->gamepad;
+			joystick* x {&current->gamepad};
 			if (x->stick)
 			{
-				SDL_GameControllerClose(x->stick);
+				SDL_CloseGamepad(x->stick);
 				x->stick = nullptr;
 			}
 
-			HFree(x->axes);
-			HFree(x->buttons);
-			HFree(current);
+			delete current;
 
 			uqm::log::info(
 				"Controller instance {} removed", instance_id);
@@ -374,94 +292,12 @@ destroy_joystick(SDL_JoystickID instance_id)
 				   instance_id);
 }
 
-#else
-
-void create_joystick(int index)
-{
-	SDL_Joystick* stick;
-	int axes, buttons, hats;
-	if ((unsigned int)index >= joycount)
-	{
-		uqm::log::warn("VControl warning: Tried to open a "
-					   "non-existent joystick!");
-		return;
-	}
-	if (joysticks[index].stick)
-	{
-		// Joystick is already created.  Return.
-		return;
-	}
-	stick = SDL_JoystickOpen(index);
-	if (stick)
-	{
-		joystick* x = &joysticks[index];
-		int j;
-#if SDL_MAJOR_VERSION == 1
-		uqm::log::info("VControl opened joystick: {}",
-					   SDL_JoystickName(index));
-#else
-		uqm::log::info("VControl opened joystick: {}",
-					   SDL_JoystickName(stick));
-#endif
-		axes = SDL_JoystickNumAxes(stick);
-		buttons = SDL_JoystickNumButtons(stick);
-		hats = SDL_JoystickNumHats(stick);
-		uqm::log::info("{} axes, {} buttons, {} hats.", axes, buttons,
-					   hats);
-		x->numaxes = axes;
-		x->numbuttons = buttons;
-		x->numhats = hats;
-		x->axes = HMalloc(sizeof(axis_type) * axes);
-		x->buttons = HMalloc(sizeof(keybinding*) * buttons);
-		x->hats = HMalloc(sizeof(hat_type) * hats);
-		for (j = 0; j < axes; j++)
-		{
-			x->axes[j].neg = x->axes[j].pos = nullptr;
-		}
-		for (j = 0; j < hats; j++)
-		{
-			x->hats[j].left = x->hats[j].right = nullptr;
-			x->hats[j].up = x->hats[j].down = nullptr;
-			x->hats[j].last = SDL_HAT_CENTERED;
-		}
-		for (j = 0; j < buttons; j++)
-		{
-			x->buttons[j] = nullptr;
-		}
-		x->stick = stick;
-	}
-	else
-	{
-		uqm::log::warn(
-			"VControl: Could not initialize joystick #{}", index);
-	}
-}
-
-static void
-destroy_joystick(int index)
-{
-	SDL_Joystick* stick = joysticks[index].stick;
-	if (stick)
-	{
-		SDL_JoystickClose(stick);
-		joysticks[index].stick = nullptr;
-		HFree(joysticks[index].axes);
-		HFree(joysticks[index].buttons);
-		HFree(joysticks[index].hats);
-		joysticks[index].numaxes = joysticks[index].numbuttons = 0;
-		joysticks[index].axes = nullptr;
-		joysticks[index].buttons = nullptr;
-		joysticks[index].hats = nullptr;
-	}
-}
-
-#endif // SDL_MAJOR_VERSION
 #endif /* HAVE_JOYSTICK */
 
 static void
-key_init(void)
+key_init(void) UQM_REQUIRES(s_vcontrolLock)
 {
-	unsigned int i;
+	unsigned int i {};
 	pool = allocate_key_chunk();
 	for (i = 0; i < KEYBOARD_INPUT_BUCKETS; i++)
 	{
@@ -469,62 +305,31 @@ key_init(void)
 	}
 
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION > 1
 	for (i = 0; i < 2; i++)
 	{
 		controller_assignments[i] = -1;
 	}
 	active_controller_count = 0;
 	controller_list_head = nullptr;
-	default_bindings = nullptr;
-	default_binding_count = 0;
-	default_binding_capacity = 0;
+	default_bindings.clear();
 #else
-	/* Prepare for possible joystick controls.  We don't actually
-	   GRAB joysticks unless we're asked to make a joystick
-	   binding, though. */
-	joycount = SDL_NumJoysticks();
-	if (joycount)
-	{
-		joysticks = HMalloc(sizeof(joystick) * joycount);
-		for (i = 0; i < joycount; i++)
-		{
-			joysticks[i].stick = nullptr;
-			joysticks[i].numaxes = joysticks[i].numbuttons = 0;
-			joysticks[i].axes = nullptr;
-			joysticks[i].buttons = nullptr;
-			joysticks[i].threshold = 10000;
-		}
-	}
-	else
-	{
-		joysticks = nullptr;
-	}
-#endif // SDL_MAJOR_VERSION
-#else
-#if SDL_MAJOR_VERSION > 1
 	active_controller_count = 0;
-#else
-	joycount = 0;
-#endif // SDL_MAJOR_VERSION
 #endif /* HAVE_JOYSTICK */
 }
 
 static void
-key_uninit(void)
+key_uninit(void) UQM_REQUIRES(s_vcontrolLock)
 {
-	unsigned int i;
 	free_key_pool(pool);
-	for (i = 0; i < KEYBOARD_INPUT_BUCKETS; i++)
+	for (unsigned int i {0}; i < KEYBOARD_INPUT_BUCKETS; i++)
 	{
 		bindings[i] = nullptr;
 	}
 	pool = nullptr;
 
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION > 1
-	controller_list* current = controller_list_head;
-	controller_list* next;
+	const controller_list* current = controller_list_head;
+	const controller_list* next {};
 
 	while (current)
 	{
@@ -535,42 +340,26 @@ key_uninit(void)
 	controller_list_head = nullptr;
 	active_controller_count = 0;
 
-	// Free binding tracking
-	HFree(default_bindings);
-	default_bindings = nullptr;
-	default_binding_count = 0;
-	default_binding_capacity = 0;
-#else
-	// SDL1: Original array-based cleanup
-	for (i = 0; i < joycount; i++)
-	{
-		destroy_joystick(i);
-	}
-	HFree(joysticks);
-#endif // SDL_MAJOR_VERSION
+	default_bindings.clear();
 #endif /* HAVE_JOYSTICK */
 }
 
 void VControl_Init(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	key_init();
 }
 
 void VControl_Uninit(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	key_uninit();
 }
 
 int VControl_SetJoyThreshold(int port, int threshold)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
-	if (port >= 0 && (unsigned int)port < joycount)
-	{
-		joysticks[port].threshold = threshold;
-		return 0;
-	}
-#else
 	if (port >= 0)
 	{
 		controller_list* current = controller_list_head;
@@ -585,7 +374,6 @@ int VControl_SetJoyThreshold(int port, int threshold)
 		}
 		return 0;
 	}
-#endif
 	else
 #else
 	(void)port;
@@ -599,11 +387,11 @@ int VControl_SetJoyThreshold(int port, int threshold)
 }
 
 static void
-add_binding(keybinding** newptr, int* target, sdl_key_t keycode)
+add_binding(keybinding** newptr, uqstl::atomic<int>* target, sdl_key_t keycode) UQM_REQUIRES(s_vcontrolLock)
 {
-	keybinding* newbinding;
-	keypool* searchbase;
-	int i;
+	keybinding* newbinding {};
+	keypool* searchbase {};
+	int i {};
 
 	/* Acquire a pointer to the keybinding * that we'll be
 	 * overwriting.  Along the way, ensure we haven't already
@@ -661,7 +449,7 @@ add_binding(keybinding** newptr, int* target, sdl_key_t keycode)
 }
 
 static void
-remove_binding(keybinding** ptr, int* target, sdl_key_t keycode)
+remove_binding(keybinding** ptr, uqstl::atomic<int>* target, sdl_key_t keycode)
 {
 	if (!(*ptr))
 	{
@@ -696,6 +484,17 @@ remove_binding(keybinding** ptr, int* target, sdl_key_t keycode)
 	}
 }
 
+// Replaces the value of the target with func(value), also if another thread changes it.
+template <typename Func>
+static void
+updateTarget(uqstl::atomic<int>& target, Func func)
+{
+	int value {target.load()};
+	while (!target.compare_exchange_weak(value, func(value)))
+	{
+	}
+}
+
 static void
 activate(keybinding* i, sdl_key_t keycode)
 {
@@ -703,7 +502,9 @@ activate(keybinding* i, sdl_key_t keycode)
 	{
 		if (i->keycode == keycode)
 		{
-			*(i->target) = (*(i->target) + 1) | VCONTROL_STARTBIT;
+			updateTarget(*i->target, [](int v) {
+				return (v + 1) | VCONTROL_STARTBIT;
+			});
 		}
 		i = i->next;
 	}
@@ -714,10 +515,11 @@ deactivate(keybinding* i, sdl_key_t keycode)
 {
 	while (i != nullptr)
 	{
-		int v = *(i->target) & VCONTROL_MASK;
-		if ((i->keycode == keycode) && (v > 0))
+		if (i->keycode == keycode)
 		{
-			*(i->target) = (v - 1) | (*(i->target) & VCONTROL_STARTBIT);
+			updateTarget(*i->target, [](int v) {
+				return (v & VCONTROL_MASK) > 0 ? ((v & VCONTROL_MASK) - 1) | (v & VCONTROL_STARTBIT) : v;
+			});
 		}
 		i = i->next;
 	}
@@ -728,42 +530,22 @@ event2gesture(SDL_Event* e, VCONTROL_GESTURE* g)
 {
 	switch (e->type)
 	{
-		case SDL_KEYDOWN:
+		case SDL_EVENT_KEY_DOWN:
 			g->type = VCONTROL_KEY;
-			g->gesture.key = e->key.keysym.sym;
+			g->gesture.key = e->key.key;
 			break;
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION > 1
-		case SDL_CONTROLLERAXISMOTION:
+		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
 			g->type = VCONTROL_JOYAXIS;
-			g->gesture.axis.port = e->caxis.which;
-			g->gesture.axis.index = e->caxis.axis;
-			g->gesture.axis.polarity = (e->caxis.value < 0) ? -1 : 1;
+			g->gesture.axis.port = e->gaxis.which;
+			g->gesture.axis.index = e->gaxis.axis;
+			g->gesture.axis.polarity = (e->gaxis.value < 0) ? -1 : 1;
 			break;
-		case SDL_CONTROLLERBUTTONDOWN:
+		case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
 			g->type = VCONTROL_JOYBUTTON;
-			g->gesture.button.port = e->cbutton.which;
-			g->gesture.button.index = e->cbutton.button;
+			g->gesture.button.port = e->gbutton.which;
+			g->gesture.button.index = e->gbutton.button;
 			break;
-#else
-		case SDL_JOYAXISMOTION:
-			g->type = VCONTROL_JOYAXIS;
-			g->gesture.axis.port = e->jaxis.which;
-			g->gesture.axis.index = e->jaxis.axis;
-			g->gesture.axis.polarity = (e->jaxis.value < 0) ? -1 : 1;
-			break;
-		case SDL_JOYBUTTONDOWN:
-			g->type = VCONTROL_JOYBUTTON;
-			g->gesture.button.port = e->jbutton.which;
-			g->gesture.button.index = e->jbutton.button;
-			break;
-		case SDL_JOYHATMOTION:
-			g->type = VCONTROL_JOYHAT;
-			g->gesture.hat.port = e->jhat.which;
-			g->gesture.hat.index = e->jhat.hat;
-			g->gesture.hat.dir = e->jhat.value;
-			break;
-#endif // SDL_MAJOR_VERSION
 #endif /* HAVE_JOYSTICK */
 		default:
 			g->type = VCONTROL_NONE;
@@ -771,10 +553,11 @@ event2gesture(SDL_Event* e, VCONTROL_GESTURE* g)
 	}
 }
 
-int VControl_AddGestureBinding(VCONTROL_GESTURE* g, int* target)
+int VControl_AddGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	int result = -1;
-	int logical_port;
+	int logical_port {};
 	switch (g->type)
 	{
 		case VCONTROL_KEY:
@@ -783,11 +566,6 @@ int VControl_AddGestureBinding(VCONTROL_GESTURE* g, int* target)
 
 		case VCONTROL_JOYAXIS:
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
-			result = VControl_AddJoyAxisBinding(g->gesture.axis.port,
-												g->gesture.axis.index,
-												(g->gesture.axis.polarity < 0) ? -1 : 1, target);
-#else
 			logical_port = g->gesture.axis.port;
 
 			store_default_binding(1, g->gesture.axis.index,
@@ -805,23 +583,10 @@ int VControl_AddGestureBinding(VCONTROL_GESTURE* g, int* target)
 			{
 				result = 0;
 			}
-#endif
 			break;
-#endif
-#if SDL_MAJOR_VERSION == 1
-		case VCONTROL_JOYHAT:
-#ifdef HAVE_JOYSTICK
-			result = VControl_AddJoyHatBinding(g->gesture.hat.port,
-											   g->gesture.hat.index, g->gesture.hat.dir, target);
-			break;
-#endif
 #endif
 		case VCONTROL_JOYBUTTON:
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
-			result = VControl_AddJoyButtonBinding(g->gesture.button.port,
-												  g->gesture.button.index, target);
-#else
 			logical_port = g->gesture.button.port;
 
 			store_default_binding(0, -1, 0,
@@ -838,7 +603,6 @@ int VControl_AddGestureBinding(VCONTROL_GESTURE* g, int* target)
 			{
 				result = 0;
 			}
-#endif
 			break;
 #endif /* HAVE_JOYSTICK */
 		case VCONTROL_NONE:
@@ -854,8 +618,9 @@ int VControl_AddGestureBinding(VCONTROL_GESTURE* g, int* target)
 	return result;
 }
 
-void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, int* target)
+void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	switch (g->type)
 	{
 		case VCONTROL_KEY:
@@ -864,34 +629,15 @@ void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, int* target)
 
 		case VCONTROL_JOYAXIS:
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
 			VControl_RemoveJoyAxisBinding(g->gesture.axis.port,
 										  g->gesture.axis.index,
 										  (g->gesture.axis.polarity < 0) ? -1 : 1, target);
-#else
-			VControl_RemoveJoyAxisBinding(g->gesture.axis.port,
-										  g->gesture.axis.index,
-										  (g->gesture.axis.polarity < 0) ? -1 : 1, target);
-#endif
 			break;
 #endif /* HAVE_JOYSTICK */
-#if SDL_MAJOR_VERSION == 1
-		case VCONTROL_JOYHAT:
-#ifdef HAVE_JOYSTICK
-			VControl_RemoveJoyHatBinding(g->gesture.hat.port,
-										 g->gesture.hat.index, g->gesture.hat.dir, target);
-			break;
-#endif /* HAVE_JOYSTICK */
-#endif
 		case VCONTROL_JOYBUTTON:
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
 			VControl_RemoveJoyButtonBinding(g->gesture.button.port,
 											g->gesture.button.index, target);
-#else
-			VControl_RemoveJoyButtonBinding(g->gesture.button.port,
-											g->gesture.button.index, target);
-#endif
 			break;
 #endif /* HAVE_JOYSTICK */
 		case VCONTROL_NONE:
@@ -903,57 +649,25 @@ void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, int* target)
 	}
 }
 
-int VControl_AddKeyBinding(sdl_key_t symbol, int* target)
+int VControl_AddKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	add_binding(&bindings[symbol % KEYBOARD_INPUT_BUCKETS], target,
 				symbol);
 	return 0;
 }
 
-void VControl_RemoveKeyBinding(sdl_key_t symbol, int* target)
+void VControl_RemoveKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	remove_binding(&bindings[symbol % KEYBOARD_INPUT_BUCKETS], target,
 				   symbol);
 }
 
-int VControl_AddJoyAxisBinding(int port, int axis, int polarity, int* target)
+int VControl_AddJoyAxisBinding(int port, int axis, int polarity, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
-	if (port >= 0 && (unsigned int)port < joycount)
-	{
-		joystick* j = &joysticks[port];
-		if (!(j->stick))
-		{
-			create_joystick(port);
-		}
-		if ((axis >= 0) && (axis < j->numaxes))
-		{
-			if (polarity < 0)
-			{
-				add_binding(&joysticks[port].axes[axis].neg, target,
-							SDLK_UNKNOWN);
-			}
-			else if (polarity > 0)
-			{
-				add_binding(&joysticks[port].axes[axis].pos, target,
-							SDLK_UNKNOWN);
-			}
-			else
-			{
-				uqm::log::debug("VControl: Attempted to bind to "
-								"polarity zero");
-				return -1;
-			}
-		}
-		else
-		{
-			// log_add (log_Debug, "VControl: Attempted to bind to "
-			//	"illegal axis {}", axis);
-			return -1;
-		}
-	}
-#else
 	if (port >= 0)
 	{
 		controller_list* current = controller_list_head;
@@ -992,7 +706,6 @@ int VControl_AddJoyAxisBinding(int port, int axis, int polarity, int* target)
 			current = current->next;
 		}
 	}
-#endif
 	else
 #else
 	(void)port;
@@ -1009,43 +722,10 @@ int VControl_AddJoyAxisBinding(int port, int axis, int polarity, int* target)
 }
 
 void VControl_RemoveJoyAxisBinding(int port, int axis,
-								   int polarity, int* target)
+								   int polarity, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
-	if (port >= 0 && (unsigned int)port < joycount)
-	{
-		joystick* j = &joysticks[port];
-		if (!(j->stick))
-		{
-			create_joystick(port);
-		}
-		if ((axis >= 0) && (axis < j->numaxes))
-		{
-			if (polarity < 0)
-			{
-				remove_binding(&joysticks[port].axes[axis].neg, target,
-							   SDLK_UNKNOWN);
-			}
-			else if (polarity > 0)
-			{
-				remove_binding(&joysticks[port].axes[axis].pos, target,
-							   SDLK_UNKNOWN);
-			}
-			else
-			{
-				uqm::log::debug("VControl: Attempted to unbind from "
-								"polarity zero");
-			}
-		}
-		else
-		{
-			uqm::log::debug("VControl: Attempted to unbind from "
-							"illegal axis {}",
-							axis);
-		}
-	}
-#else
 	if (port >= 0)
 	{
 		controller_list* current = controller_list_head;
@@ -1083,7 +763,6 @@ void VControl_RemoveJoyAxisBinding(int port, int axis,
 			current = current->next;
 		}
 	}
-#endif
 	else
 #else
 	(void)port;
@@ -1098,31 +777,10 @@ void VControl_RemoveJoyAxisBinding(int port, int axis,
 	}
 }
 
-int VControl_AddJoyButtonBinding(int port, int button, int* target)
+int VControl_AddJoyButtonBinding(int port, int button, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
-	if (port >= 0 && (unsigned int)port < joycount)
-	{
-		joystick* j = &joysticks[port];
-		if (!(j->stick))
-		{
-			create_joystick(port);
-		}
-		if ((button >= 0) && (button < j->numbuttons))
-		{
-			add_binding(&joysticks[port].buttons[button], target,
-						SDLK_UNKNOWN);
-			return 0;
-		}
-		else
-		{
-			// log_add (log_Debug, "VControl: Attempted to bind to "
-			//	"illegal button {}", button);
-			return -1;
-		}
-	}
-#else
 	if (port >= 0)
 	{
 		controller_list* current = controller_list_head;
@@ -1148,7 +806,6 @@ int VControl_AddJoyButtonBinding(int port, int button, int* target)
 		}
 		return 0;
 	}
-#endif
 	else
 #else
 	(void)port;
@@ -1163,30 +820,10 @@ int VControl_AddJoyButtonBinding(int port, int button, int* target)
 	}
 }
 
-void VControl_RemoveJoyButtonBinding(int port, int button, int* target)
+void VControl_RemoveJoyButtonBinding(int port, int button, uqstl::atomic<int>* target)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
-	if (port >= 0 && (unsigned int)port < joycount)
-	{
-		joystick* j = &joysticks[port];
-		if (!(j->stick))
-		{
-			create_joystick(port);
-		}
-		if ((button >= 0) && (button < j->numbuttons))
-		{
-			remove_binding(&joysticks[port].buttons[button], target,
-						   SDLK_UNKNOWN);
-		}
-		else
-		{
-			uqm::log::debug("VControl: Attempted to unbind from "
-							"illegal button {}",
-							button);
-		}
-	}
-#else
 	if (port >= 0)
 	{
 		controller_list* current = controller_list_head;
@@ -1211,7 +848,6 @@ void VControl_RemoveJoyButtonBinding(int port, int button, int* target)
 			current = current->next;
 		}
 	}
-#endif
 	else
 #else
 	(void)port;
@@ -1225,155 +861,30 @@ void VControl_RemoveJoyButtonBinding(int port, int button, int* target)
 	}
 }
 
-#if SDL_MAJOR_VERSION == 1
-
-int VControl_AddJoyHatBinding(int port, int which, Uint8 dir, int* target)
-{
-#ifdef HAVE_JOYSTICK
-	if (port >= 0 && (unsigned int)port < joycount)
-	{
-		joystick* j = &joysticks[port];
-		if (!(j->stick))
-		{
-			create_joystick(port);
-		}
-		if ((which >= 0) && (which < j->numhats))
-		{
-			if (dir == SDL_HAT_LEFT)
-			{
-				add_binding(&joysticks[port].hats[which].left, target,
-							SDLK_UNKNOWN);
-			}
-			else if (dir == SDL_HAT_RIGHT)
-			{
-				add_binding(&joysticks[port].hats[which].right, target,
-							SDLK_UNKNOWN);
-			}
-			else if (dir == SDL_HAT_UP)
-			{
-				add_binding(&joysticks[port].hats[which].up, target,
-							SDLK_UNKNOWN);
-			}
-			else if (dir == SDL_HAT_DOWN)
-			{
-				add_binding(&joysticks[port].hats[which].down, target,
-							SDLK_UNKNOWN);
-			}
-			else
-			{
-				// log_add (log_Debug, "VControl: Attempted to bind to "
-				//	"illegal direction");
-				return -1;
-			}
-			return 0;
-		}
-		else
-		{
-			// log_add (log_Debug, "VControl: Attempted to bind to "
-			//	"illegal hat {}", which);
-			return -1;
-		}
-	}
-	else
-#else
-	(void)port;
-	(void)which;
-	(void)dir;
-	(void)target;
-#endif /* HAVE_JOYSTICK */
-	{
-		// log_add (log_Debug, "VControl: Attempted to bind to illegal "
-		//	"port {}", port);
-		return -1;
-	}
-}
-
-void VControl_RemoveJoyHatBinding(int port, int which, Uint8 dir, int* target)
-{
-#ifdef HAVE_JOYSTICK
-	if (port >= 0 && (unsigned int)port < joycount)
-	{
-		joystick* j = &joysticks[port];
-		if (!(j->stick))
-		{
-			create_joystick(port);
-		}
-		if ((which >= 0) && (which < j->numhats))
-		{
-			if (dir == SDL_HAT_LEFT)
-			{
-				remove_binding(&joysticks[port].hats[which].left, target,
-							   SDLK_UNKNOWN);
-			}
-			else if (dir == SDL_HAT_RIGHT)
-			{
-				remove_binding(&joysticks[port].hats[which].right, target,
-							   SDLK_UNKNOWN);
-			}
-			else if (dir == SDL_HAT_UP)
-			{
-				remove_binding(&joysticks[port].hats[which].up, target,
-							   SDLK_UNKNOWN);
-			}
-			else if (dir == SDL_HAT_DOWN)
-			{
-				remove_binding(&joysticks[port].hats[which].down, target,
-							   SDLK_UNKNOWN);
-			}
-			else
-			{
-				uqm::log::debug("VControl: Attempted to unbind from "
-								"illegal direction");
-			}
-		}
-		else
-		{
-			uqm::log::debug("VControl: Attempted to unbind from "
-							"illegal hat {}",
-							which);
-		}
-	}
-	else
-#else
-	(void)port;
-	(void)which;
-	(void)dir;
-	(void)target;
-#endif /* HAVE_JOYSTICK */
-	{
-		uqm::log::debug(
-			"VControl: Attempted to unbind from illegal port {}", port);
-	}
-}
-
-#endif // SDL_MAJOR_VERSION
 
 void VControl_RemoveAllBindings(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	key_uninit();
 	key_init();
 }
 
 void VControl_ProcessKeyDown(sdl_key_t symbol)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	activate(bindings[symbol % KEYBOARD_INPUT_BUCKETS], symbol);
 }
 
 void VControl_ProcessKeyUp(sdl_key_t symbol)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	deactivate(bindings[symbol % KEYBOARD_INPUT_BUCKETS], symbol);
 }
 
 void VControl_ProcessJoyButtonDown(int port, int button)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
-	if (!joysticks[port].stick)
-	{
-		return;
-	}
-	activate(joysticks[port].buttons[button], SDLK_UNKNOWN);
-#else
 	controller_list* current = controller_list_head;
 	while (current)
 	{
@@ -1384,7 +895,6 @@ void VControl_ProcessJoyButtonDown(int port, int button)
 		}
 		current = current->next;
 	}
-#endif
 #else
 	(void)port;
 	(void)button;
@@ -1393,14 +903,8 @@ void VControl_ProcessJoyButtonDown(int port, int button)
 
 void VControl_ProcessJoyButtonUp(int port, int button)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
-	if (!joysticks[port].stick)
-	{
-		return;
-	}
-	deactivate(joysticks[port].buttons[button], SDLK_UNKNOWN);
-#else
 	controller_list* current = controller_list_head;
 	while (current)
 	{
@@ -1411,7 +915,6 @@ void VControl_ProcessJoyButtonUp(int port, int button)
 		}
 		current = current->next;
 	}
-#endif
 #else
 	(void)port;
 	(void)button;
@@ -1420,58 +923,15 @@ void VControl_ProcessJoyButtonUp(int port, int button)
 
 void VControl_ProcessJoyAxis(int port, int axis, int value)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION == 1
-	int t;
-	if (!joysticks[port].stick)
-	{
-		return;
-	}
-	t = joysticks[port].threshold;
-	if (value > t)
-	{
-		if (joysticks[port].axes[axis].polarity != 1)
-		{
-			if (joysticks[port].axes[axis].polarity == -1)
-			{
-				deactivate(joysticks[port].axes[axis].neg, SDLK_UNKNOWN);
-			}
-			joysticks[port].axes[axis].polarity = 1;
-			activate(joysticks[port].axes[axis].pos, SDLK_UNKNOWN);
-		}
-	}
-	else if (value < -t)
-	{
-		if (joysticks[port].axes[axis].polarity != -1)
-		{
-			if (joysticks[port].axes[axis].polarity == 1)
-			{
-				deactivate(joysticks[port].axes[axis].pos, SDLK_UNKNOWN);
-			}
-			joysticks[port].axes[axis].polarity = -1;
-			activate(joysticks[port].axes[axis].neg, SDLK_UNKNOWN);
-		}
-	}
-	else
-	{
-		if (joysticks[port].axes[axis].polarity == -1)
-		{
-			deactivate(joysticks[port].axes[axis].neg, SDLK_UNKNOWN);
-		}
-		else if (joysticks[port].axes[axis].polarity == 1)
-		{
-			deactivate(joysticks[port].axes[axis].pos, SDLK_UNKNOWN);
-		}
-		joysticks[port].axes[axis].polarity = 0;
-	}
-#else
 	controller_list* current = controller_list_head;
 	while (current)
 	{
 		if (current->instance_id == port)
 		{
 			joystick* j = &current->gamepad;
-			int t = j->threshold;
+			const int t = j->threshold;
 
 			if (axis < 0 || axis >= j->numaxes)
 			{
@@ -1518,7 +978,6 @@ void VControl_ProcessJoyAxis(int port, int axis, int value)
 		}
 		current = current->next;
 	}
-#endif
 #else
 	(void)port;
 	(void)axis;
@@ -1526,70 +985,18 @@ void VControl_ProcessJoyAxis(int port, int axis, int value)
 #endif /* HAVE_JOYSTICK */
 }
 
-#if SDL_MAJOR_VERSION == 1
-
-void VControl_ProcessJoyHat(int port, int which, Uint8 value)
-{
-#ifdef HAVE_JOYSTICK
-	Uint8 old;
-	if (!joysticks[port].stick)
-	{
-		return;
-	}
-	old = joysticks[port].hats[which].last;
-	if (!(old & SDL_HAT_LEFT) && (value & SDL_HAT_LEFT))
-	{
-		activate(joysticks[port].hats[which].left, SDLK_UNKNOWN);
-	}
-	if (!(old & SDL_HAT_RIGHT) && (value & SDL_HAT_RIGHT))
-	{
-		activate(joysticks[port].hats[which].right, SDLK_UNKNOWN);
-	}
-	if (!(old & SDL_HAT_UP) && (value & SDL_HAT_UP))
-	{
-		activate(joysticks[port].hats[which].up, SDLK_UNKNOWN);
-	}
-	if (!(old & SDL_HAT_DOWN) && (value & SDL_HAT_DOWN))
-	{
-		activate(joysticks[port].hats[which].down, SDLK_UNKNOWN);
-	}
-	if ((old & SDL_HAT_LEFT) && !(value & SDL_HAT_LEFT))
-	{
-		deactivate(joysticks[port].hats[which].left, SDLK_UNKNOWN);
-	}
-	if ((old & SDL_HAT_RIGHT) && !(value & SDL_HAT_RIGHT))
-	{
-		deactivate(joysticks[port].hats[which].right, SDLK_UNKNOWN);
-	}
-	if ((old & SDL_HAT_UP) && !(value & SDL_HAT_UP))
-	{
-		deactivate(joysticks[port].hats[which].up, SDLK_UNKNOWN);
-	}
-	if ((old & SDL_HAT_DOWN) && !(value & SDL_HAT_DOWN))
-	{
-		deactivate(joysticks[port].hats[which].down, SDLK_UNKNOWN);
-	}
-	joysticks[port].hats[which].last = value;
-#else
-	(void)port;
-	(void)which;
-	(void)value;
-#endif /* HAVE_JOYSTICK */
-}
-
-#endif // SDL_MAJOR_VERSION
 
 void VControl_ResetInput(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	/* Step through every valid entry in the binding pool and zero
 	 * them out.  This will probably zero entries multiple times;
 	 * oh well, no harm done. */
 
-	keypool* base = pool;
+	const keypool* base = pool;
 	while (base != nullptr)
 	{
-		int i;
-		for (i = 0; i < POOL_CHUNK_SIZE; i++)
+		for (int i {0}; i < POOL_CHUNK_SIZE; i++)
 		{
 			if (base->pool[i].target)
 			{
@@ -1602,6 +1009,7 @@ void VControl_ResetInput(void)
 
 void VControl_BeginFrame(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	/* Step through every valid entry in the binding pool and zero
 	 * out the frame-start bit.  This will probably zero entries
 	 * multiple times; oh well, no harm done. */
@@ -1609,12 +1017,11 @@ void VControl_BeginFrame(void)
 	keypool* base = pool;
 	while (base != nullptr)
 	{
-		int i;
-		for (i = 0; i < POOL_CHUNK_SIZE; i++)
+		for (int i {0}; i < POOL_CHUNK_SIZE; i++)
 		{
 			if (base->pool[i].target)
 			{
-				*(base->pool[i].target) &= VCONTROL_MASK;
+				base->pool[i].target->fetch_and(VCONTROL_MASK);
 			}
 		}
 		base = base->next;
@@ -1623,79 +1030,50 @@ void VControl_BeginFrame(void)
 
 void VControl_HandleEvent(const SDL_Event* e)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	switch (e->type)
 	{
-		case SDL_KEYDOWN:
-#if SDL_MAJOR_VERSION > 1
+		case SDL_EVENT_KEY_DOWN:
 			if (!e->key.repeat)
-#endif
 			{
-				VControl_ProcessKeyDown(e->key.keysym.sym);
+				VControl_ProcessKeyDown(e->key.key);
 				last_interesting = *e;
 				event_ready = 1;
 			}
 			break;
-		case SDL_KEYUP:
-			VControl_ProcessKeyUp(e->key.keysym.sym);
+		case SDL_EVENT_KEY_UP:
+			VControl_ProcessKeyUp(e->key.key);
 			break;
 
 #ifdef HAVE_JOYSTICK
-#if SDL_MAJOR_VERSION > 1
-		case SDL_CONTROLLERAXISMOTION:
-			VControl_ProcessJoyAxis(e->caxis.which, e->caxis.axis,
-									e->caxis.value);
-			if ((e->caxis.value > 15000) || (e->caxis.value < -15000))
+		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
+			VControl_ProcessJoyAxis(e->gaxis.which, e->gaxis.axis,
+									e->gaxis.value);
+			if ((e->gaxis.value > 15000) || (e->gaxis.value < -15000))
 			{
 				last_interesting = *e;
 				event_ready = 1;
 			}
 			break;
-		case SDL_CONTROLLERBUTTONDOWN:
-			VControl_ProcessJoyButtonDown(e->cbutton.which,
-										  e->cbutton.button);
+		case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+			VControl_ProcessJoyButtonDown(e->gbutton.which,
+										  e->gbutton.button);
 			last_interesting = *e;
 			event_ready = 1;
 			break;
-		case SDL_CONTROLLERBUTTONUP:
-			VControl_ProcessJoyButtonUp(e->cbutton.which,
-										e->cbutton.button);
+		case SDL_EVENT_GAMEPAD_BUTTON_UP:
+			VControl_ProcessJoyButtonUp(e->gbutton.which,
+										e->gbutton.button);
 			break;
-		case SDL_CONTROLLERDEVICEADDED:
-			create_joystick(e->cdevice.which);
+		case SDL_EVENT_GAMEPAD_ADDED:
+			create_joystick(e->gdevice.which);
 			break;
-		case SDL_CONTROLLERDEVICEREMOVED:
-			destroy_joystick(e->cdevice.which);
+		case SDL_EVENT_GAMEPAD_REMOVED:
+			destroy_joystick(e->gdevice.which);
 			break;
-		case SDL_CONTROLLERDEVICEREMAPPED:
+		case SDL_EVENT_GAMEPAD_REMAPPED:
 			uqm::log::info("Controller mapping updated");
 			break;
-#else
-		case SDL_JOYAXISMOTION:
-			VControl_ProcessJoyAxis(
-				e->jaxis.which, e->jaxis.axis, e->jaxis.value);
-			if ((e->jaxis.value > 15000) || (e->jaxis.value < -15000))
-			{
-				last_interesting = *e;
-				event_ready = 1;
-			}
-			break;
-		case SDL_JOYHATMOTION:
-			VControl_ProcessJoyHat(
-				e->jhat.which, e->jhat.hat, e->jhat.value);
-			last_interesting = *e;
-			event_ready = 1;
-			break;
-		case SDL_JOYBUTTONDOWN:
-			VControl_ProcessJoyButtonDown(
-				e->jbutton.which, e->jbutton.button);
-			last_interesting = *e;
-			event_ready = 1;
-			break;
-		case SDL_JOYBUTTONUP:
-			VControl_ProcessJoyButtonUp(
-				e->jbutton.which, e->jbutton.button);
-			break;
-#endif // SDL_MAJOR_VERSION
 #endif /* HAVE_JOYSTICK */
 
 		default:
@@ -1707,11 +1085,13 @@ void VControl_HandleEvent(const SDL_Event* e)
 
 void VControl_ClearGesture(void)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	event_ready = 0;
 }
 
 int VControl_GetLastGesture(VCONTROL_GESTURE* g)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	if (event_ready && g != nullptr)
 	{
 		event2gesture(&last_interesting, g);
@@ -1771,7 +1151,8 @@ typedef struct vcontrol_parse_state
 static void
 next_token(parse_state* state)
 {
-	int index, base;
+	int index {};
+	int base {};
 
 	state->token[0] = 0;
 	/* skip preceding whitespace */
@@ -1820,7 +1201,7 @@ consume(parse_state* state, const char* expected)
 static int
 consume_keyname(parse_state* state)
 {
-	int keysym = VControl_name2code(state->token);
+	const int keysym = VControl_name2code(state->token);
 	if (!keysym)
 	{
 		uqm::log::warn("VControl: Illegal key name '{}' on config "
@@ -1835,8 +1216,8 @@ consume_keyname(parse_state* state)
 static int
 consume_num(parse_state* state)
 {
-	char* end;
-	int result = strtol(state->token, &end, 10);
+	char* end {};
+	const int result = strtol(state->token, &end, 10);
 	if (*end != '\0')
 	{
 		uqm::log::warn(
@@ -1899,19 +1280,17 @@ consume_dir(parse_state* state)
 static void
 parse_joybinding(parse_state* state, VCONTROL_GESTURE* gesture)
 {
-	int sticknum;
 	consume(state, "joystick");
-	sticknum = consume_num(state);
+	const int sticknum {consume_num(state)};
 	if (!state->error)
 	{
 		if (!strcasecmp(state->token, "axis"))
 		{
-			int axisnum;
 			consume(state, "axis");
-			axisnum = consume_num(state);
+			const int axisnum {consume_num(state)};
 			if (!state->error)
 			{
-				int polarity = consume_polarity(state);
+				const int polarity = consume_polarity(state);
 				if (!state->error)
 				{
 					gesture->type = VCONTROL_JOYAXIS;
@@ -1923,9 +1302,8 @@ parse_joybinding(parse_state* state, VCONTROL_GESTURE* gesture)
 		}
 		else if (!strcasecmp(state->token, "button"))
 		{
-			int buttonnum;
 			consume(state, "button");
-			buttonnum = consume_num(state);
+			const int buttonnum {consume_num(state)};
 			if (!state->error)
 			{
 				gesture->type = VCONTROL_JOYBUTTON;
@@ -1935,12 +1313,11 @@ parse_joybinding(parse_state* state, VCONTROL_GESTURE* gesture)
 		}
 		else if (!strcasecmp(state->token, "hat"))
 		{
-			int hatnum;
 			consume(state, "hat");
-			hatnum = consume_num(state);
+			const int hatnum {consume_num(state)};
 			if (!state->error)
 			{
-				Uint8 dir = consume_dir(state);
+				const Uint8 dir = consume_dir(state);
 				if (!state->error)
 				{
 					gesture->type = VCONTROL_JOYHAT;
@@ -1964,9 +1341,8 @@ parse_gesture(parse_state* state, VCONTROL_GESTURE* gesture)
 	if (!strcasecmp(state->token, "key"))
 	{
 		/* Parse key binding */
-		int keysym;
 		consume(state, "key");
-		keysym = consume_keyname(state);
+		const int keysym {consume_keyname(state)};
 		if (!state->error)
 		{
 			gesture->type = VCONTROL_KEY;
@@ -1985,6 +1361,7 @@ parse_gesture(parse_state* state, VCONTROL_GESTURE* gesture)
 
 void VControl_ParseGesture(VCONTROL_GESTURE* g, const char* spec)
 {
+	const uqm::LockGuard lock {s_vcontrolLock};
 	parse_state ps {};
 
 	uqm::strncpy_safe(ps.line, spec);
@@ -2017,15 +1394,6 @@ size_t VControl_DumpGesture(uqstl::span<char> buf, VCONTROL_GESTURE* g)
 									   g->gesture.button.port, g->gesture.button.index)
 				.size;
 
-#if SDL_MAJOR_VERSION == 1
-		case VCONTROL_JOYHAT:
-			return fmt::format_to_sz_n(buf, "joystick {} hat {} {}",
-									   g->gesture.hat.port, g->gesture.hat.index,
-									   (g->gesture.hat.dir == SDL_HAT_UP) ? "up" :
-																			((g->gesture.hat.dir == SDL_HAT_DOWN) ? "down" :
-																													((g->gesture.hat.dir == SDL_HAT_LEFT) ? "left" : "right")))
-				.size;
-#endif // SDL_MAJOR_VERSION
 		default:
 			buf[0] = '\0';
 			return 0;

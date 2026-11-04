@@ -1,8 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <vector>
-#include <algorithm>
-#include <type_traits>
+#include "core/stl/vector.h"
+#include "core/stl/stl.h"
 
 #include "core/stl/ring_buffer.h"
 
@@ -135,7 +134,7 @@ TEST_F(RingBufferTest, WrapAroundBehavior)
 	{
 		got.push_back(*it);
 	}
-	std::vector<int> expect = {3, 4, 5, 6, 7};
+	const std::vector<int> expect = {3, 4, 5, 6, 7};
 	EXPECT_EQ(got, expect);
 	EXPECT_EQ(rb.front(), 3);
 	EXPECT_EQ(rb.back(), 7);
@@ -167,7 +166,7 @@ TEST_F(RingBufferTest, IteratorsAndPostIncrement)
 	{
 		vals.push_back(val);
 	}
-	std::vector<int> expected = {10, 20, 30};
+	const std::vector<int> expected = {10, 20, 30};
 	EXPECT_EQ(vals, expected);
 }
 
@@ -183,7 +182,7 @@ TEST_F(RingBufferTest, ConstIteratorAndConstAccess)
 	{
 		vals.push_back(*it);
 	}
-	std::vector<int> expected = {7, 8};
+	const std::vector<int> expected = {7, 8};
 	EXPECT_EQ(vals, expected);
 
 	// const front/back access
@@ -293,7 +292,7 @@ TEST_F(RingBufferTest, MoveOnlyElementSupport)
 		got.push_back(it->v);
 	}
 	// should be 6,7,8
-	std::vector<int> expect = {6, 7, 8};
+	const std::vector<int> expect = {6, 7, 8};
 	EXPECT_EQ(got, expect);
 }
 
@@ -393,7 +392,7 @@ TEST_F(RingBufferTest, EmplaceConstructsPairAndOverwrites)
 		{
 			got.push_back(*it);
 		}
-		std::vector<IntPair> expected {
+		const std::vector<IntPair> expected {
 			{3, 4 },
 			{5, 6 },
 			{7, 8 },
@@ -428,7 +427,7 @@ TEST_F(RingBufferTest, EmplaceWithUserType)
 		{
 			got.push_back(*it);
 		}
-		std::vector<EmplaceFriendly> expect {
+		const std::vector<EmplaceFriendly> expect {
 			{33, 44},
 			{55, 66},
 			{77, 88}

@@ -22,7 +22,6 @@
 
 #include "config.h"
 #include "libs/sound/sound.h"
-#include "endian_uqm.h"
 
 #if defined(__APPLE__)
 #include <OpenAL/al.h>
@@ -35,14 +34,6 @@
 #endif
 #endif
 
-/* This is just a simple endianness setup for decoders */
-#ifdef WORDS_BIGENDIAN
-#define MIX_IS_BIG_ENDIAN true
-#define MIX_WANT_BIG_ENDIAN true
-#else
-#define MIX_IS_BIG_ENDIAN false
-#define MIX_WANT_BIG_ENDIAN false
-#endif
 
 
 /* General */

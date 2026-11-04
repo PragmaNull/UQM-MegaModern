@@ -4,8 +4,8 @@
 #include "libs/io/Path.h"
 #include "libs/io/standard/ZipSource.h"
 
-#include <mutex>
-#include <set>
+#include "core/stl/mutex.h"
+#include "core/stl/set.h"
 
 namespace uqm::io::standard
 {
@@ -51,19 +51,19 @@ Directory MountTable::root()
 	return Directory {shared_from_this(), {}};
 }
 
-uqstl::optional<Mount> MountTable::mountSource(uqstl::string_view mountPoint, uqstl::shared_ptr<const MountSource> source, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error)
+Result<Mount> MountTable::mountSource(uqstl::string_view mountPoint, uqstl::shared_ptr<const MountSource> source, Access access, MountPosition position, const Mount* relative)
 {
 	uqstl::vector<MountEntry> entries {};
 	entries.push_back({.mountPoint = path::normalize(mountPoint), .source = uqstl::move(source), .access = access});
 	const uqstl::unique_lock lock {m_mutex};
-	return insertLocked(uqstl::move(entries), position, relative, error);
+	return insertLocked(uqstl::move(entries), position, relative);
 }
 
-uqstl::shared_ptr<const MountSource> MountTable::openZip(const Directory& directory, uqstl::string_view archivePath, uqstl::error_code& error) const
+Result<uqstl::shared_ptr<const MountSource>> MountTable::openZip(const Directory& directory, uqstl::string_view archivePath) const
 {
 	if (directory.m_table.get() != this)
 	{
-		return fail<uqstl::shared_ptr<const MountSource>>(error, uqstl::errc::invalid_argument);
+		return failure(uqstl::errc::invalid_argument);
 	}
 	uqstl::shared_ptr<const MountSource> archive {};
 	uqstl::string sourcePath {};
@@ -72,41 +72,35 @@ uqstl::shared_ptr<const MountSource> MountTable::openZip(const Directory& direct
 		const uqstl::optional<Found> found {findLocked(path::join(directory.path(), archivePath))};
 		if (!found || found->info.isDirectory())
 		{
-			return fail<uqstl::shared_ptr<const MountSource>>(error, found ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
+			return failure(found ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
 		}
 		archive = m_mounts[found->index].source;
 		sourcePath = found->sourcePath;
 	}
-	return ZipSource::create(uqstl::move(archive), uqstl::move(sourcePath), error);
+	return ZipSource::create(uqstl::move(archive), uqstl::move(sourcePath));
 }
 
-uqstl::optional<Mount> MountTable::mountArchive(uqstl::string_view mountPoint, const Directory& directory, uqstl::string_view archivePath, MountPosition position, const Mount* relative, uqstl::error_code& error)
+Result<Mount> MountTable::mountArchive(uqstl::string_view mountPoint, const Directory& directory, uqstl::string_view archivePath, MountPosition position, const Mount* relative)
 {
-	uqstl::shared_ptr<const MountSource> zip {openZip(directory, archivePath, error)};
-	if (zip == nullptr)
-	{
-		return uqstl::nullopt;
-	}
-	return mountSource(mountPoint, uqstl::move(zip), Access::ReadOnly, position, relative, error);
+	return openZip(directory, archivePath).and_then([&](uqstl::shared_ptr<const MountSource> zip) {
+		return mountSource(mountPoint, uqstl::move(zip), Access::ReadOnly, position, relative);
+	});
 }
 
-uqstl::optional<Directory> MountTable::openArchive(const Directory& directory, uqstl::string_view archivePath, uqstl::error_code& error)
+Result<Directory> MountTable::openArchive(const Directory& directory, uqstl::string_view archivePath)
 {
-	uqstl::shared_ptr<const MountSource> zip {openZip(directory, archivePath, error)};
-	if (zip == nullptr)
-	{
-		return uqstl::nullopt;
-	}
-	auto table {uqstl::make_shared<MountTable>()};
-	table->m_mounts.push_back({.id = table->m_nextId++, .source = uqstl::move(zip), .access = Access::ReadOnly});
-	return table->root();
+	return openZip(directory, archivePath).transform([](uqstl::shared_ptr<const MountSource> zip) {
+		auto table {uqstl::make_shared<MountTable>()};
+		table->m_mounts.push_back({.id = table->m_nextId++, .source = uqstl::move(zip), .access = Access::ReadOnly});
+		return table->root();
+	});
 }
 
-uqstl::optional<Mount> MountTable::mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error)
+Result<Mount> MountTable::mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative)
 {
 	if (source.m_table.get() != this)
 	{
-		return fail<uqstl::optional<Mount>>(error, uqstl::errc::invalid_argument);
+		return failure(uqstl::errc::invalid_argument);
 	}
 	const uqstl::string target {path::normalize(mountPoint)};
 	const uqstl::string& sourceDir {source.path()};
@@ -126,13 +120,17 @@ uqstl::optional<Mount> MountTable::mountTransplant(uqstl::string_view mountPoint
 	}
 	if (entries.empty())
 	{
-		return fail<uqstl::optional<Mount>>(error, uqstl::errc::no_such_file_or_directory);
+		return failure(uqstl::errc::no_such_file_or_directory);
 	}
-	return insertLocked(uqstl::move(entries), position, relative, error);
+	return insertLocked(uqstl::move(entries), position, relative);
 }
 
-uqstl::optional<File> MountTable::open(const uqstl::string& path, OpenMode mode, uqstl::error_code& error) const
+Result<File> MountTable::open(const uqstl::string& path, OpenMode mode) const
 {
+	const auto toFile {[](uqstl::unique_ptr<Stream> stream) {
+		return File {uqstl::move(stream)};
+	}};
+
 	const uqstl::shared_lock lock {m_mutex};
 	if (!testAllBits(mode, OpenMode::Write))
 	{
@@ -142,42 +140,31 @@ uqstl::optional<File> MountTable::open(const uqstl::string& path, OpenMode mode,
 			{
 				continue;
 			}
-			uqstl::error_code openError {};
-			if (uqstl::unique_ptr<Stream> stream {mount.source->open(mount.sourcePathFor(path), mode, openError)})
+			Result<uqstl::unique_ptr<Stream>> stream {mount.source->open(mount.sourcePathFor(path), mode)};
+			if (stream || stream.error() != uqstl::errc::no_such_file_or_directory)
 			{
-				return File {uqstl::move(stream)};
-			}
-			if (openError != uqstl::errc::no_such_file_or_directory)
-			{
-				error = openError;
-				return uqstl::nullopt;
+				return uqstl::move(stream).transform(toFile);
 			}
 		}
-		return fail<uqstl::optional<File>>(error, isMountAncestorLocked(path) ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
+		return failure(isMountAncestorLocked(path) ? uqstl::errc::is_a_directory : uqstl::errc::no_such_file_or_directory);
 	}
 
 	const uqstl::optional<Found> found {findLocked(path)};
 
-	const auto openIn {[&](const MountEntry& mount, const uqstl::string& sourcePath, OpenMode openMode) -> uqstl::optional<File> {
-		uqstl::unique_ptr<Stream> stream {mount.source->open(sourcePath, openMode, error)};
-		if (stream == nullptr)
-		{
-			return uqstl::nullopt;
-		}
-		return File {uqstl::move(stream)};
+	const auto openIn {[&](const MountEntry& mount, const uqstl::string& sourcePath, OpenMode openMode) {
+		return mount.source->open(sourcePath, openMode).transform(toFile);
 	}};
 
-	using Result = uqstl::optional<File>;
 	if (found && found->info.isDirectory())
 	{
-		return fail<Result>(error, uqstl::errc::is_a_directory);
+		return failure(uqstl::errc::is_a_directory);
 	}
 
 	if (found)
 	{
 		if (testAllBits(mode, OpenMode::Create | OpenMode::Exclusive))
 		{
-			return fail<Result>(error, uqstl::errc::file_exists);
+			return failure(uqstl::errc::file_exists);
 		}
 		const MountEntry& mount {m_mounts[found->index]};
 		if (mount.isWritable())
@@ -186,23 +173,26 @@ uqstl::optional<File> MountTable::open(const uqstl::string& path, OpenMode mode,
 		}
 
 		// Copy the file to a writable mount above it.
-		const uqstl::optional<WriteTarget> target {writeTargetLocked(path, found->index, uqstl::errc::permission_denied, error)};
+		const Result<WriteTarget> target {writeTargetLocked(path, found->index, uqstl::errc::permission_denied)};
 		if (!target)
 		{
-			return uqstl::nullopt;
+			return uqstl::unexpected {target.error()};
 		}
 		if (!testAllBits(mode, OpenMode::Truncate))
 		{
-			const uqstl::unique_ptr<Stream> from {mount.source->open(found->sourcePath, OpenMode::Read, error)};
-			const uqstl::unique_ptr<Stream> to {from == nullptr ? nullptr : target->mount->source->open(target->sourcePath, OpenMode::Write | OpenMode::Create | OpenMode::Truncate, error)};
-			if (to == nullptr)
+			const Result<uqstl::unique_ptr<Stream>> from {mount.source->open(found->sourcePath, OpenMode::Read)};
+			if (!from)
 			{
-				return uqstl::nullopt;
+				return uqstl::unexpected {from.error()};
 			}
-			error = copyStream(*from, *to);
-			if (error)
+			const Result<uqstl::unique_ptr<Stream>> to {target->mount->source->open(target->sourcePath, OpenMode::Write | OpenMode::Create | OpenMode::Truncate)};
+			if (!to)
 			{
-				return uqstl::nullopt;
+				return uqstl::unexpected {to.error()};
+			}
+			if (const uqstl::error_code error {copyStream(**from, **to)})
+			{
+				return uqstl::unexpected {error};
 			}
 		}
 		return openIn(*target->mount, target->sourcePath, mode | OpenMode::Create);
@@ -210,19 +200,16 @@ uqstl::optional<File> MountTable::open(const uqstl::string& path, OpenMode mode,
 
 	if (!testAllBits(mode, OpenMode::Create))
 	{
-		return fail<Result>(error, uqstl::errc::no_such_file_or_directory);
+		return failure(uqstl::errc::no_such_file_or_directory);
 	}
 	const uqstl::optional<FileInfo> parent {statLocked(uqstl::string {path::parent(path)})};
 	if (!parent || !parent->isDirectory())
 	{
-		return fail<Result>(error, uqstl::errc::no_such_file_or_directory);
+		return failure(uqstl::errc::no_such_file_or_directory);
 	}
-	const uqstl::optional<WriteTarget> target {writeTargetLocked(path, m_mounts.size(), uqstl::errc::read_only_file_system, error)};
-	if (!target)
-	{
-		return uqstl::nullopt;
-	}
-	return openIn(*target->mount, target->sourcePath, mode);
+	return writeTargetLocked(path, m_mounts.size(), uqstl::errc::read_only_file_system).and_then([&](const WriteTarget& target) {
+		return openIn(*target.mount, target.sourcePath, mode);
+	});
 }
 
 uqstl::optional<FileInfo> MountTable::stat(const uqstl::string& path) const
@@ -231,13 +218,13 @@ uqstl::optional<FileInfo> MountTable::stat(const uqstl::string& path) const
 	return statLocked(path);
 }
 
-uqstl::vector<uqstl::string> MountTable::list(const uqstl::string& path, const Matcher& matcher, uqstl::error_code& error) const
+Result<uqstl::vector<uqstl::string>> MountTable::list(const uqstl::string& path, const Matcher& matcher) const
 {
 	const uqstl::shared_lock lock {m_mutex};
 	const uqstl::optional<FileInfo> info {statLocked(path)};
 	if (!info || !info->isDirectory())
 	{
-		return fail<uqstl::vector<uqstl::string>>(error, info ? uqstl::errc::not_a_directory : uqstl::errc::no_such_file_or_directory);
+		return failure(info ? uqstl::errc::not_a_directory : uqstl::errc::no_such_file_or_directory);
 	}
 
 	uqstl::set<uqstl::string, uqstl::less<>> names {};
@@ -258,8 +245,8 @@ uqstl::vector<uqstl::string> MountTable::list(const uqstl::string& path, const M
 			// A file hides the directories in the mounts below it.
 			break;
 		}
-		uqstl::error_code listError {};
-		for (uqstl::string& name : mount.source->list(sourcePath, listError))
+		// A mount that cannot be listed adds no names.
+		for (uqstl::string& name : mount.source->list(sourcePath).value_or(uqstl::vector<uqstl::string> {}))
 		{
 			names.insert(uqstl::move(name));
 		}
@@ -296,11 +283,10 @@ uqstl::error_code MountTable::makeDir(const uqstl::string& path) const
 	{
 		return uqstl::make_error_code(uqstl::errc::no_such_file_or_directory);
 	}
-	uqstl::error_code error {};
-	const uqstl::optional<WriteTarget> target {writeTargetLocked(path, m_mounts.size(), uqstl::errc::read_only_file_system, error)};
+	const Result<WriteTarget> target {writeTargetLocked(path, m_mounts.size(), uqstl::errc::read_only_file_system)};
 	if (!target)
 	{
-		return error;
+		return target.error();
 	}
 	return target->mount->source->makeDir(target->sourcePath);
 }
@@ -450,23 +436,22 @@ uqstl::error_code MountTable::makeParentsLocked(const MountEntry& mount, uqstl::
 	return {};
 }
 
-uqstl::optional<MountTable::WriteTarget> MountTable::writeTargetLocked(const uqstl::string& path, size_t below, uqstl::errc noMount, uqstl::error_code& error) const
+Result<MountTable::WriteTarget> MountTable::writeTargetLocked(const uqstl::string& path, size_t below, uqstl::errc noMount) const
 {
 	const uqstl::optional<size_t> index {writableMountLocked(path, below)};
 	if (!index)
 	{
-		return fail<uqstl::optional<WriteTarget>>(error, noMount);
+		return failure(noMount);
 	}
 	WriteTarget target {.mount = &m_mounts[*index], .sourcePath = m_mounts[*index].sourcePathFor(path)};
-	error = makeParentsLocked(*target.mount, target.sourcePath);
-	if (error)
+	if (const uqstl::error_code error {makeParentsLocked(*target.mount, target.sourcePath)})
 	{
-		return uqstl::nullopt;
+		return uqstl::unexpected {error};
 	}
 	return target;
 }
 
-uqstl::optional<Mount> MountTable::insertLocked(uqstl::vector<MountEntry> entries, MountPosition position, const Mount* relative, uqstl::error_code& error)
+Result<Mount> MountTable::insertLocked(uqstl::vector<MountEntry> entries, MountPosition position, const Mount* relative)
 {
 	size_t index {0};
 	switch (position)
@@ -481,7 +466,7 @@ uqstl::optional<Mount> MountTable::insertLocked(uqstl::vector<MountEntry> entrie
 			{
 				if (relative == nullptr || relative->m_table.lock().get() != this)
 				{
-					return fail<uqstl::optional<Mount>>(error, uqstl::errc::invalid_argument);
+					return failure(uqstl::errc::invalid_argument);
 				}
 				const uint64_t relativeId {relative->m_id};
 				const auto matches {[relativeId](const MountEntry& mount) {
@@ -490,7 +475,7 @@ uqstl::optional<Mount> MountTable::insertLocked(uqstl::vector<MountEntry> entrie
 				const auto first {uqstl::find_if(m_mounts.begin(), m_mounts.end(), matches)};
 				if (first == m_mounts.end())
 				{
-					return fail<uqstl::optional<Mount>>(error, uqstl::errc::invalid_argument);
+					return failure(uqstl::errc::invalid_argument);
 				}
 				const auto last {uqstl::find_if(m_mounts.rbegin(), m_mounts.rend(), matches)};
 				index = position == MountPosition::Above ? static_cast<size_t>(first - m_mounts.begin()) : static_cast<size_t>(m_mounts.rend() - last);

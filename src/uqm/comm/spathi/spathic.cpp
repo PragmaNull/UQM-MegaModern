@@ -21,7 +21,7 @@
 #include "strings.h"
 
 #include "uqm/build.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 
 static LOCDATA spathi_desc =
@@ -177,7 +177,7 @@ static LOCDATA spathi_desc =
 static void
 ExitConversation(RESPONSE_REF Response)
 {
-	uint8_t SpaCrew = ifEasyDifficulty(MAX_CREW_SIZE, 1);
+	const uint8_t SpaCrew = ifEasyDifficulty(MAX_CREW_SIZE, 1);
 	setSegue(Segue_peace);
 
 	if (PLAYER_SAID(Response, bye_ally_space))
@@ -539,7 +539,7 @@ SpathiAllies(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
 		switch (NumVisits++)
@@ -607,7 +607,7 @@ SpathiFriendly(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
 		switch (NumVisits++)
@@ -651,11 +651,10 @@ static void SpathiNeutral(RESPONSE_REF R);
 static void
 SpathiBefriend(RESPONSE_REF R)
 {
-	uint8_t InfoLeft, LastStack;
 	RESPONSE_REF pStr[2];
 
-	InfoLeft = false;
-	LastStack = 0;
+	uint8_t InfoLeft {false};
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = 0;
 	if (PLAYER_SAID(R, come_in_peace))
 	{
@@ -791,7 +790,7 @@ SpathiNeutral(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
 		switch (NumVisits++)
@@ -846,7 +845,7 @@ SpathiNeutral(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	Manner = GET_GAME_STATE(SPATHI_MANNER);
 	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1)
@@ -877,7 +876,7 @@ Intro(void)
 	}
 	else if (Manner == 1)
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
 		switch (NumVisits++)
@@ -914,14 +913,14 @@ Intro(void)
 static uint16_t
 uninit_spathi(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
 static void
 post_spathi_enc(void)
 {
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1)
 	{
@@ -946,13 +945,11 @@ post_spathi_enc(void)
 LOCDATA*
 init_spathi_comm(void)
 {
-	LOCDATA* retval;
-
 	spathi_desc.init_encounter_func = Intro;
 	spathi_desc.post_encounter_func = post_spathi_enc;
 	spathi_desc.uninit_encounter_func = uninit_spathi;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	spathi_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	spathi_desc.AlienTextBaseline.y = 0;
@@ -966,7 +963,7 @@ init_spathi_comm(void)
 
 	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1
 		|| GET_GAME_STATE(SPATHI_MANNER) == 3
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}
@@ -974,7 +971,7 @@ init_spathi_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &spathi_desc;
+	LOCDATA* retval {&spathi_desc};
 
 	return (retval);
 }

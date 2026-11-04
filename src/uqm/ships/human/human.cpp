@@ -131,9 +131,7 @@ RACE_DESC human_desc =
 static void
 nuke_preprocess(ELEMENT* ElementPtr)
 {
-	uint16_t facing;
-
-	facing = GetFrameIndex(ElementPtr->next.image.frame);
+	uint16_t facing {GetFrameIndex(ElementPtr->next.image.frame)};
 	if (ElementPtr->turn_wait > 0)
 	{
 		--ElementPtr->turn_wait;
@@ -152,7 +150,7 @@ nuke_preprocess(ELEMENT* ElementPtr)
 	}
 
 	{
-		int32_t speed;
+		int32_t speed {};
 
 		if ((speed = MISSILE_SPEED + ((MISSILE_LIFE - ElementPtr->life_span) * THRUST_SCALE)) > MAX_MISSILE_SPEED)
 		{
@@ -166,17 +164,15 @@ nuke_preprocess(ELEMENT* ElementPtr)
 static void
 spawn_point_defense(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (ElementPtr->state_flags & PLAYER_SHIP)
 	{
-		HELEMENT hDefense;
-
-		hDefense = AllocElement();
+		HELEMENT hDefense {AllocElement()};
 		if (hDefense)
 		{
-			ELEMENT* DefensePtr;
+			ELEMENT* DefensePtr {};
 
 			LockElement(hDefense, &DefensePtr);
 			DefensePtr->playerNr = ElementPtr->playerNr;
@@ -192,22 +188,22 @@ spawn_point_defense(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		bool PaidFor;
-		HELEMENT hObject, hNextObject;
-		ELEMENT* ShipPtr;
+		HELEMENT hNextObject {};
+		ELEMENT* ShipPtr {};
 
-		PaidFor = false;
+		bool PaidFor {false};
 
 		LockElement(StarShipPtr->hShip, &ShipPtr);
-		for (hObject = GetTailElement(); hObject; hObject = hNextObject)
+		for (HELEMENT hObject {GetTailElement()}; hObject; hObject = hNextObject)
 		{
-			ELEMENT* ObjectPtr;
+			ELEMENT* ObjectPtr {};
 
 			LockElement(hObject, &ObjectPtr);
 			hNextObject = GetPredElement(ObjectPtr);
 			if (ObjectPtr != ShipPtr && CollidingElement(ObjectPtr) && !OBJECT_CLOAKED(ObjectPtr))
 			{
-				int16_t delta_x, delta_y;
+				int16_t delta_x {};
+				int16_t delta_y {};
 
 				delta_x = ObjectPtr->next.location.x - ShipPtr->next.location.x;
 				delta_y = ObjectPtr->next.location.y - ShipPtr->next.location.y;
@@ -223,7 +219,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 				delta_y = WORLD_TO_DISPLAY(delta_y);
 				if ((uint16_t)delta_x <= LASER_RANGE && (uint16_t)delta_y <= LASER_RANGE && (uint16_t)delta_x * (uint16_t)delta_x + (uint16_t)delta_y * (uint16_t)delta_y <= LASER_RANGE * LASER_RANGE)
 				{
-					HELEMENT hPointDefense;
+					HELEMENT hPointDefense {};
 					LASER_BLOCK LaserBlock;
 
 					if (!PaidFor)
@@ -233,7 +229,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 							break;
 						}
 
-						ProcessSound(SetAbsSoundIndex(
+						ProcessSound(GetSound(
 										 /* POINT_DEFENSE_LASER */
 										 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 									 ElementPtr);
@@ -256,7 +252,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 					hPointDefense = initialize_laser(&LaserBlock);
 					if (hPointDefense)
 					{
-						ELEMENT* PDPtr;
+						ELEMENT* PDPtr {};
 
 						LockElement(hPointDefense, &PDPtr);
 						SetElementStarShip(PDPtr, StarShipPtr);
@@ -276,7 +272,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 static uint16_t
 initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -297,7 +293,7 @@ initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
 
 	if (NukeArray[0])
 	{
-		ELEMENT* NukePtr;
+		ELEMENT* NukePtr {};
 
 		LockElement(NukeArray[0], &NukePtr);
 		NukePtr->turn_wait = TRACK_WAIT;
@@ -311,7 +307,7 @@ static void
 human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				   uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0
@@ -345,7 +341,7 @@ human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static void
 human_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SPECIAL)
@@ -358,8 +354,6 @@ human_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_human(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		human_desc.characteristics.max_thrust = MAX_THRUST_HD;
@@ -377,7 +371,7 @@ init_human(void)
 	human_desc.init_weapon_func = initialize_nuke;
 	human_desc.cyborg_control.intelligence_func = human_intelligence;
 
-	RaceDescPtr = &human_desc;
+	RACE_DESC* RaceDescPtr {&human_desc};
 
 	return (RaceDescPtr);
 }

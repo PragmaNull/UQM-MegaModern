@@ -27,6 +27,7 @@
 #include "../../starmap.h"
 #include "../../state.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateZoqFotPik_initNpcs(SOLARSYS_STATE* solarSys);
@@ -78,23 +79,21 @@ static bool
 GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	if (CurStarDescPtr->Index == ZOQFOT_DEFINED)
 	{
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
-			uint16_t angle;
-
 			pSunDesc->PlanetByte = 0;
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 			pPlanet->data_index = WATER_WORLD;
 			pPlanet->NumPlanets = 1;
 			pPlanet->radius = EARTH_RADIUS * 138L / 100;
-			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
 			ComputeSpeed(pPlanet, false, 1);
@@ -119,7 +118,7 @@ GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 			pSunDesc->MoonByte = 0;
 			pPlanet->data_index = GenerateGasGiantWorld();
 
-			if (!PrimeSeed)
+			if (!uqm::isOriginalSeed())
 			{ // preserving the integrity of the universe
 				while (pPlanet->NumPlanets == 0)
 				{
@@ -147,7 +146,7 @@ GenerateZoqFotPik_generateMoons(SOLARSYS_STATE* solarSys,
 		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET)
 		&& EXTENDED)
 	{
-		uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
+		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
 		pMoonDesc->data_index = GenerateHabitableWorld();
@@ -174,18 +173,18 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 				CloneShipFragment(BLACK_URQUAN_SHIP,
 								  &GLOBAL(npc_built_ship_q), 0);
 
-				GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+				uqm::currentActivity() |= START_INTERPLANETARY;
 				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 				InitCommunication(BLACKURQ_CONVERSATION);
 
-				if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+				if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 				{
 					return true;
 				}
 
 				if (GetHeadLink(&GLOBAL(npc_built_ship_q)))
 				{
-					GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+					uqm::currentActivity() &= ~START_INTERPLANETARY;
 					ReinitQueue(&GLOBAL(npc_built_ship_q));
 					GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 					return true;
@@ -195,13 +194,13 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 			CloneShipFragment(ZOQFOTPIK_SHIP,
 							  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
 
-			GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+			uqm::currentActivity() |= START_INTERPLANETARY;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 			InitCommunication(ZOQFOTPIK_CONVERSATION);
 
-			if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
-				GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
 				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 			}
@@ -212,8 +211,8 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(RUINS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	if (((CurStarDescPtr->Index == ZOQ_COLONY0_DEFINED
@@ -225,8 +224,8 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(ZFPRUINS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ZFPRUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	if (CurStarDescPtr->Index == ZOQ_COLONY2_DEFINED
@@ -236,8 +235,8 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryString =
-			CaptureStringTable(LoadStringTable(ZFPRUINS_STRTAB));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ZFPRUINS_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);
@@ -247,24 +246,24 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
-		uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+		const uint32_t rand = SysGenRNG->seed();
 		PLANET_INFO* PlanetInfo = &solarSys->SysInfo.PlanetInfo;
 
 		PlanetInfo->Weather = 1;
 		PlanetInfo->Tectonics = 1;
-		PlanetInfo->SurfaceTemperature = RangeMinMax(-10, 40, rand);
+		PlanetInfo->SurfaceTemperature = uqm::rangeMinMax(-10, 40, rand);
 	}
 
 	if (CurStarDescPtr->Index == ZOQ_COLONY2_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
 		&& EXTENDED && !isDifficulty(uqm::Difficulty::Hard))
 	{
-		uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+		const uint32_t rand = SysGenRNG->seed();
 		PLANET_INFO* PlanetInfo = &solarSys->SysInfo.PlanetInfo;
 
 		PlanetInfo->Weather = 1;
 		PlanetInfo->Tectonics = 1;
-		PlanetInfo->SurfaceTemperature = RangeMinMax(-10, 40, rand);
+		PlanetInfo->SurfaceTemperature = uqm::rangeMinMax(-10, 40, rand);
 	}
 
 	return true;

@@ -10,7 +10,6 @@
 
 #include "lib/Math2D/Math2D.h"
 #include "libs/math/randomdefs.h" // TODO: only used for the PrimeA constant and SeedType. Find a better way to share that perhaps?
-#include "libs/platform.h"
 
 namespace uqm
 {
@@ -80,16 +79,10 @@ struct OptionsStruct : SettingsRegistry
 
 	uqstl::string graphicsBackend {}; // SDL renderer backend hint passed to TFB_InitGraphics.
 	uqstl::string inputScript {};	  // File of scripted menu key presses, for testing.
+	uqstl::string checkSave {};		  // Save file to load and save again, for testing.
+	uqstl::string playSave {};		  // Save file to play without the main menu, for testing.
 
 	// Commandline and user config options
-	Setting<bool> opengl {
-		*this, {.key = "graphics.useOpenGL", .description = "Force OpenGL renderer on SDL1 builds; ignored on SDL2.", .cli = "-o,-x{false},--opengl,--nogl{false}"},
-		 false
-	  };
-	Setting<bool> alwaysOpenGL {
-		*this, {.key = "graphics.alwaysOpenGL", .description = "Use OpenGL even at native resolutions."},
-		  false
-	   };
 	Setting<Vec2u> resolution {
 		*this, {.key = "graphics.resolution", .description = "Window/framebuffer pixel dimensions when not using a blowup scaler."},
 		 Vec2u {640,							 480																					}
@@ -118,6 +111,10 @@ struct OptionsStruct : SettingsRegistry
 		*this, {.key = "graphics.gamma", .description = "Gamma correction value, a value of 1.0 means no change.", .cli = "-g,--gamma"},
 		 1.0f, settings::isValidGamma
 	 };
+	Setting<bool> gpuScaling {
+		*this, {.key = "graphics.gpuScaling", .description = "Run the scalers and gamma correction as GPU shaders when the GPU renderer is available.", .cli = "--gpuscaling,--nogpuscaling{false}", .requiresRestart = true},
+		   true
+	   };
 	Setting<AudioDriverType> soundDriver {
 		*this, {.key = "audio.driver", .description = "Backend used for audio output (MixSDL, OpenAL, or silence).", .cli = "--sound,--sounddriver", .requiresRestart = true},
 		   AudioDriverType::MixSDL
@@ -271,13 +268,13 @@ struct OptionsStruct : SettingsRegistry
 		 false
 	  };
 	Setting<SeedType> seedType {
-		*this, {.key = "seed.type", .description = "Seed type for solar system generation. Default is \"None\", which is the same seed used in the original game. Changing this will change the layout of the entire star map.", .cli = "--seedtype"},
-		   SeedType::None
-	 };
+		*this, {.key = "seed.type", .description = "Seed type for solar system generation. Default is \"Original\", the star map of the original game. Changing this will change the layout of the entire star map.", .cli = "--seedtype"},
+			SeedType::Original
+	  };
 	Setting<int> customSeed {
-		*this, {.key = "seed.value", .description = "Allows you to customize the internal seed used to generate the solar systems in-game.", .cli = "--customseed"},
-		 PrimeA, settings::isSaneSeed
-	 };
+		*this, {.key = "seed.value", .description = "The seed of new games. Ignored for the seed type \"Original\".", .cli = "--customseed"},
+		  PrimeA, settings::isSaneSeed
+	  };
 	Setting<bool> shipSeed {
 		*this, {.key = "seed.ships", .description = "Seeds the ships assigned to each race. Uses --customseed value.", .cli = "--shipseed"},
 		 false

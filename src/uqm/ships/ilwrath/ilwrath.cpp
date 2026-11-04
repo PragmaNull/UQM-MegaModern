@@ -154,10 +154,9 @@ static void
 ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					 uint16_t ConcernCounter)
 {
-	EVALUATE_DESC* lpEvalDesc;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	lpEvalDesc->MoveState = PURSUE;
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 10)
 	{
@@ -182,7 +181,7 @@ ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		StarShipPtr->ship_input_state |= WEAPON;
 	}
 	else if (StarShipPtr->special_counter == 0
-			 && (lowByte(GLOBAL(CurrentActivity)) != IN_ENCOUNTER
+			 && (uqm::lowByte(uqm::currentActivity()) != IN_ENCOUNTER
 				 || !GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)))
 	{
 		StarShipPtr->ship_input_state &= ~SPECIAL;
@@ -197,7 +196,7 @@ ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static uint16_t
 initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -219,8 +218,9 @@ initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
 
 	if (FlameArray[0])
 	{
-		int32_t dx, dy;
-		ELEMENT* FlamePtr;
+		int32_t dx {};
+		int32_t dy {};
+		ELEMENT* FlamePtr {};
 
 		LockElement(FlameArray[0], &FlamePtr);
 		GetCurrentVelocityComponentsSdword(&ShipPtr->velocity, &dx, &dy);
@@ -239,17 +239,15 @@ initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
 static void
 ilwrath_preprocess(ELEMENT* ElementPtr)
 {
-	STATUS_FLAGS status_flags;
-	STARSHIP* StarShipPtr;
-	PRIMITIVE* lpPrim;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	status_flags = StarShipPtr->cur_status_flags;
-	lpPrim = &(GLOBAL(DisplayArray))[ElementPtr->PrimIndex];
+	STATUS_FLAGS status_flags {StarShipPtr->cur_status_flags};
+	PRIMITIVE* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	if (GetPrimType(lpPrim) == STAMPFILL_PRIM)
 	{
 		Color color;
-		bool weapon_discharge;
+		bool weapon_discharge {};
 
 		color = GetPrimColor(lpPrim);
 		weapon_discharge = ((status_flags & WEAPON)
@@ -289,7 +287,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 			}
 			else
 			{
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 /* CLOAKING_OFF */
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 							 ElementPtr);
@@ -297,13 +295,14 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 							 BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x14), 0x01));
 				if (weapon_discharge)
 				{
-					uint16_t facing;
-
-					facing = StarShipPtr->ShipFacing;
+					uint16_t facing {StarShipPtr->ShipFacing};
 					if (TrackShip(ElementPtr, &facing) >= 0)
 					{
-						ELEMENT* eptr;
-						int16_t dx0, dy0, dx1, dy1;
+						ELEMENT* eptr {};
+						int16_t dx0 {};
+						int16_t dy0 {};
+						int16_t dx1 {};
+						int16_t dy1 {};
 						VELOCITY_DESC v;
 
 						LockElement(ElementPtr->hTarget, &eptr);
@@ -407,7 +406,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 					 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
 		SetPrimType(lpPrim, STAMPFILL_PRIM);
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* CLOAKING_ON */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);
@@ -421,8 +420,6 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_ilwrath(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		ilwrath_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -441,7 +438,7 @@ init_ilwrath(void)
 	ilwrath_desc.init_weapon_func = initialize_flame;
 	ilwrath_desc.cyborg_control.intelligence_func = ilwrath_intelligence;
 
-	RaceDescPtr = &ilwrath_desc;
+	RACE_DESC* RaceDescPtr {&ilwrath_desc};
 
 	return (RaceDescPtr);
 }

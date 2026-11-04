@@ -17,7 +17,7 @@
 #ifndef UQM_GAMEEV_H_
 #define UQM_GAMEEV_H_
 
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 
 #if 0 //defined(__cplusplus)
@@ -56,7 +56,7 @@ typedef enum
 } ARILOU_GATE_STATE;
 
 extern int eventIdStrToNum(const char* eventIdStr);
-extern const char* eventIdNumToStr(int eventNum);
+const extern char* eventIdNumToStr(int eventNum);
 
 extern void initEventSystem(void);
 extern void uninitEventSystem(void);

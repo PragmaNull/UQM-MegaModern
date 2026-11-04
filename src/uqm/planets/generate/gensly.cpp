@@ -20,6 +20,7 @@
 #include "../planets.h"
 #include "../../comm.h"
 #include "../../gamestr.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateSlylandro_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -50,11 +51,11 @@ static bool
 GenerateSlylandro_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
+	PLANET_DESC* pPlanet {};
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 		pSunDesc->PlanetByte = 3;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -79,12 +80,12 @@ GenerateSlylandro_generateName(const SOLARSYS_STATE* solarSys,
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& GET_GAME_STATE(SLYLANDRO_HOME_VISITS))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		utf8StringCopy(GLOBAL_SIS(PlanetName),
-					   sizeof(GLOBAL_SIS(PlanetName)),
-					   GAME_STRING(PLANET_NUMBER_BASE + 36));
+		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
+							sizeof(GLOBAL_SIS(PlanetName)),
+							GAME_STRING(PLANET_NUMBER_BASE + 36));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}

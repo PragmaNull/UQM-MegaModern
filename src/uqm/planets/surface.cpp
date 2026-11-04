@@ -20,6 +20,7 @@
 #include "planets.h"
 #include "libs/mathlib.h"
 #include "core/log/log.h"
+#include "uqm/globdata.h"
 
 
 //#define DEBUG_SURFACE
@@ -34,29 +35,25 @@ static uint16_t
 CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 					NODE_INFO* info)
 {
-	uint8_t j;
-	uint16_t num_deposits;
-	const ELEMENT_ENTRY* eptr;
-
-	eptr = &SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0];
-	num_deposits = 0;
-	j = NUM_USEFUL_ELEMENTS;
+	const ELEMENT_ENTRY* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
+	uint16_t num_deposits {0};
+	uint8_t j {NUM_USEFUL_ELEMENTS};
 	do
 	{
-		uint8_t num_possible;
+		uint8_t num_possible {};
 
-		num_possible = lowByte(RandomContext_Random(SysGenRNG))
+		num_possible = uqm::lowByte(SysGenRNG->next())
 					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
 		while (num_possible--)
 		{
-			uint16_t deposit_quality_fine;
-			uint16_t deposit_quality_gross;
+			uint16_t deposit_quality_fine {};
+			uint16_t deposit_quality_gross {};
 
 			// JMS: For making the mineral blip smaller in case it is
 			// partially scavenged.
-			int32_t temp_deposit_quality;
+			int32_t temp_deposit_quality {};
 
-			deposit_quality_fine = (LOWORD(RandomContext_Random(SysGenRNG)) % 100)
+			deposit_quality_fine = (uqm::lowWord(SysGenRNG->next()) % 100)
 								 + (DEPOSIT_QUALITY(eptr->Density)
 									+ SysInfoPtr->StarSize)
 									   * 50;
@@ -99,7 +96,7 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 
 			GenerateRandomLocation(&info->loc_pt);
 
-			info->density = MAKE_WORD(
+			info->density = uqm::makeWord(
 				deposit_quality_gross, deposit_quality_fine / 10 + 1);
 			info->type = eptr->ElementType;
 #ifdef DEBUG_SURFACE
@@ -132,8 +129,7 @@ GenerateMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t whichDeposit,
 	{
 		info = &temp_info;
 	}
-	RandomContext_SeedRandom(SysGenRNG,
-							 SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
 	return CalcMineralDeposits(SysInfoPtr, whichDeposit, info);
 }
 
@@ -141,30 +137,29 @@ static uint16_t
 CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
 			  NODE_INFO* info)
 {
-	uint16_t num_life_forms;
-
-	num_life_forms = 0;
+	uint16_t num_life_forms {0};
 	if (PLANSIZE(SysInfoPtr->PlanetInfo.PlanDataPtr->Type) != GAS_GIANT)
 	{
 #define MIN_LIFE_CHANCE 10
-		int16_t life_var;
+		int16_t life_var {};
 
-		life_var = RandomContext_Random(SysGenRNG) & 1023;
+		life_var = SysGenRNG->next() & 1023;
 		if (life_var < SysInfoPtr->PlanetInfo.LifeChance
 			|| (SysInfoPtr->PlanetInfo.LifeChance < MIN_LIFE_CHANCE
 				&& life_var < MIN_LIFE_CHANCE))
 		{
-			uint8_t num_types;
+			uint8_t num_types {};
 
-			num_types = 1 + lowByte(RandomContext_Random(SysGenRNG)) % MAX_LIFE_VARIATION;
+			num_types = 1 + uqm::lowByte(SysGenRNG->next()) % MAX_LIFE_VARIATION;
 			do
 			{
-				uint8_t index, num_creatures;
-				uint16_t rand_val;
+				uint8_t index {};
+				uint8_t num_creatures {};
+				uint16_t rand_val {};
 
-				rand_val = RandomContext_Random(SysGenRNG);
-				index = lowByte(rand_val) % NUM_CREATURE_TYPES;
-				num_creatures = 1 + highByte(rand_val) % 10;
+				rand_val = SysGenRNG->next();
+				index = uqm::lowByte(rand_val) % NUM_CREATURE_TYPES;
+				num_creatures = 1 + uqm::highByte(rand_val) % 10;
 				do
 				{
 					GenerateRandomLocation(&info->loc_pt);
@@ -204,8 +199,7 @@ GenerateLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t whichLife,
 	{
 		info = &temp_info;
 	}
-	RandomContext_SeedRandom(SysGenRNG,
-							 SysInfoPtr->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN]);
 	return CalcLifeForms(SysInfoPtr, whichLife, info);
 }
 
@@ -218,7 +212,7 @@ uint16_t
 GeneratePresetLife(const SYSTEM_INFO* SysInfoPtr, const int8_t* lifeTypes,
 				   uint16_t whichLife, NODE_INFO* info)
 {
-	uint16_t i;
+	uint16_t i {};
 	NODE_INFO temp_info;
 
 	if (!info) // user not interested in info but we need space for it
@@ -230,8 +224,7 @@ GeneratePresetLife(const SYSTEM_INFO* SysInfoPtr, const int8_t* lifeTypes,
 	// kept this way to preserve the universe. That is done by preserving
 	// the order and number of Random() calls.
 
-	RandomContext_SeedRandom(SysGenRNG,
-							 SysInfoPtr->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN]);
 
 	for (i = 0; lifeTypes[i] >= 0; ++i)
 	{
@@ -253,7 +246,7 @@ GeneratePresetLife(const SYSTEM_INFO* SysInfoPtr, const int8_t* lifeTypes,
 static int16_t
 widthPick(void)
 {
-	EXTENT map_dimensions[] = {MAP_DIMENSIONS};
+	const EXTENT map_dimensions[] = {MAP_DIMENSIONS};
 
 	return map_dimensions[uqm::UQMOptions::read().planetTexture].width;
 }
@@ -261,7 +254,7 @@ widthPick(void)
 static int16_t
 heightPick(void)
 {
-	EXTENT map_dimensions[] = {MAP_DIMENSIONS};
+	const EXTENT map_dimensions[] = {MAP_DIMENSIONS};
 
 	return map_dimensions[uqm::UQMOptions::read().planetTexture].height;
 }
@@ -294,12 +287,12 @@ scaleMapHeight(int16_t value)
 
 void GenerateRandomLocation(GFXPOINT* loc)
 {
-	uint16_t rand_val;
+	uint16_t rand_val {};
 
-	rand_val = RandomContext_Random(SysGenRNG);
+	rand_val = SysGenRNG->next();
 
-	loc->x = scaleMapWidth(8 + lowByte(rand_val) % (widthPick() - (8 << 1)));
-	loc->y = scaleMapHeight(8 + highByte(rand_val) % (heightPick() - (8 << 1)));
+	loc->x = scaleMapWidth(8 + uqm::lowByte(rand_val) % (widthPick() - (8 << 1)));
+	loc->y = scaleMapHeight(8 + uqm::highByte(rand_val) % (heightPick() - (8 << 1)));
 }
 
 // Returns:
@@ -310,7 +303,7 @@ uint16_t
 GenerateRandomNodes(const SYSTEM_INFO* SysInfoPtr, uint16_t scan, uint16_t numNodes,
 					uint16_t type, uint16_t whichNode, NODE_INFO* info)
 {
-	uint16_t i;
+	uint16_t i {};
 	NODE_INFO temp_info;
 
 	if (!info) // user not interested in info but we need space for it
@@ -318,8 +311,7 @@ GenerateRandomNodes(const SYSTEM_INFO* SysInfoPtr, uint16_t scan, uint16_t numNo
 		info = &temp_info;
 	}
 
-	RandomContext_SeedRandom(SysGenRNG,
-							 SysInfoPtr->PlanetInfo.ScanSeed[scan]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[scan]);
 
 	for (i = 0; i < numNodes; ++i)
 	{
@@ -342,28 +334,25 @@ uint16_t
 CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 					  NODE_INFO* info, uint16_t numNodes, uint16_t type, uint8_t quality)
 {
-	uint8_t j;
-	uint16_t num_deposits;
 	bool OpenSeason = true;
 	NODE_INFO temp_info;
-	const ELEMENT_ENTRY* eptr;
 
 	if (!info) // user not interested in info but we need space for it
 	{
 		info = &temp_info;
 	}
 
-	RandomContext_SeedRandom(SysGenRNG,
-							 SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
 
-	eptr = &SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0];
-	num_deposits = 0;
-	j = NUM_USEFUL_ELEMENTS;
+	const ELEMENT_ENTRY* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
+	uint16_t num_deposits {0};
+	uint8_t j {NUM_USEFUL_ELEMENTS};
 	do
 	{
-		uint8_t num_possible, depositQuality = 0;
+		uint8_t num_possible {};
+		uint8_t depositQuality = 0;
 
-		num_possible = lowByte(RandomContext_Random(SysGenRNG))
+		num_possible = uqm::lowByte(SysGenRNG->next())
 					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
 
 		if (num_possible == 0 && OpenSeason)
@@ -381,13 +370,13 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 
 		while (num_possible--)
 		{
-			uint16_t deposit_quality_fine;
-			uint16_t deposit_quality_gross;
+			uint16_t deposit_quality_fine {};
+			uint16_t deposit_quality_gross {};
 
 			// JMS: For making the mineral blip smaller in case it is partially scavenged.
-			int32_t temp_deposit_quality;
+			int32_t temp_deposit_quality {};
 
-			deposit_quality_fine = (LOWORD(RandomContext_Random(SysGenRNG)) % 100)
+			deposit_quality_fine = (uqm::lowWord(SysGenRNG->next()) % 100)
 								 + (depositQuality
 									+ SysInfoPtr->StarSize)
 									   * 50;
@@ -428,7 +417,7 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 
 			GenerateRandomLocation(&info->loc_pt);
 
-			info->density = MAKE_WORD(
+			info->density = uqm::makeWord(
 				deposit_quality_gross, deposit_quality_fine / 10 + 1);
 #ifdef DEBUG_SURFACE
 			uqm::log::debug("\t\t{} units of %Fs",
@@ -451,8 +440,8 @@ uint16_t
 CustomMineralDeposit(NODE_INFO* info, uint16_t type, uint8_t quality,
 					 GFXPOINT location)
 {
-	uint16_t deposit_quality_fine;
-	uint16_t deposit_quality_gross;
+	uint16_t deposit_quality_fine {};
+	uint16_t deposit_quality_gross {};
 
 	if (!info)
 	{
@@ -478,7 +467,7 @@ CustomMineralDeposit(NODE_INFO* info, uint16_t type, uint8_t quality,
 
 	info->loc_pt = location;
 
-	info->density = MAKE_WORD(deposit_quality_gross, quality);
+	info->density = uqm::makeWord(deposit_quality_gross, quality);
 
 	return 1;
 }

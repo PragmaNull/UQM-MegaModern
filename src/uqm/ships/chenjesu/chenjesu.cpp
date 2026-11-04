@@ -22,6 +22,7 @@
 
 #include "uqm/globdata.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 36
@@ -141,7 +142,7 @@ static RACE_DESC chenjesu_desc =
 static void
 crystal_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -164,12 +165,10 @@ crystal_postprocess(ELEMENT* ElementPtr)
 		 MissileBlock.face +=
 		 (ANGLE_TO_FACING(FULL_CIRCLE) / NUM_FRAGMENTS))
 	{
-		HELEMENT hFragment;
-
-		hFragment = initialize_missile(&MissileBlock);
+		HELEMENT hFragment {initialize_missile(&MissileBlock)};
 		if (hFragment)
 		{
-			ELEMENT* FragPtr;
+			ELEMENT* FragPtr {};
 
 			LockElement(hFragment, &FragPtr);
 			SetElementStarShip(FragPtr, StarShipPtr);
@@ -178,7 +177,7 @@ crystal_postprocess(ELEMENT* ElementPtr)
 		}
 	}
 
-	ProcessSound(SetAbsSoundIndex(
+	ProcessSound(GetSound(
 					 /* CRYSTAL_FRAGMENTS */
 					 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 				 ElementPtr);
@@ -187,7 +186,7 @@ crystal_postprocess(ELEMENT* ElementPtr)
 static void
 crystal_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->cur_status_flags & WEAPON)
@@ -223,13 +222,13 @@ static void
 crystal_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	HELEMENT hBlastElement;
+	HELEMENT hBlastElement {};
 
 	hBlastElement =
 		weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 	if (hBlastElement)
 	{
-		ELEMENT* BlastElementPtr;
+		ELEMENT* BlastElementPtr {};
 
 		LockElement(hBlastElement, &BlastElementPtr);
 		BlastElementPtr->current.location = ElementPtr1->current.location;
@@ -252,7 +251,7 @@ crystal_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static void
 doggy_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	++StarShipPtr->special_counter;
@@ -262,19 +261,20 @@ doggy_preprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		uint16_t facing, orig_facing;
-		int16_t delta_facing;
+		uint16_t facing {};
+		uint16_t orig_facing {};
+		int16_t delta_facing {};
 
 		facing = orig_facing =
 			NORMALIZE_FACING(ANGLE_TO_FACING(
 				GetVelocityTravelAngle(&ElementPtr->velocity)));
 		if ((delta_facing = TrackShip(ElementPtr, &facing)) < 0)
 		{
-			facing = NORMALIZE_FACING(TFB_Random());
+			facing = NORMALIZE_FACING(uqm::random().next());
 		}
 		else
 		{
-			ELEMENT* ShipPtr;
+			ELEMENT* ShipPtr {};
 
 			LockElement(ElementPtr->hTarget, &ShipPtr);
 			facing = NORMALIZE_FACING(ANGLE_TO_FACING(
@@ -309,10 +309,10 @@ doggy_preprocess(ELEMENT* ElementPtr)
 static void
 doggy_death(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	ProcessSound(SetAbsSoundIndex(
+	ProcessSound(GetSound(
 					 /* DOGGY_DIES */
 					 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 				 ElementPtr);
@@ -338,10 +338,10 @@ doggy_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	if ((ElementPtr1->state_flags & PLAYER_SHIP)
 		&& !elementsOfSamePlayer(ElementPtr0, ElementPtr1))
 	{
-		STARSHIP* StarShipPtr;
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr0, &StarShipPtr);
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* DOGGY_STEALS_ENERGY */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 					 ElementPtr0);
@@ -364,13 +364,13 @@ doggy_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static void
 spawn_doggy(ELEMENT* ElementPtr)
 {
-	HELEMENT hDoggyElement;
+	HELEMENT hDoggyElement {};
 
 	if ((hDoggyElement = AllocElement()) != 0)
 	{
-		uint16_t angle;
-		ELEMENT* DoggyElementPtr;
-		STARSHIP* StarShipPtr;
+		uint16_t angle {};
+		ELEMENT* DoggyElementPtr {};
+		STARSHIP* StarShipPtr {};
 
 		ElementPtr->state_flags |= DEFY_PHYSICS;
 
@@ -382,7 +382,7 @@ spawn_doggy(ELEMENT* ElementPtr)
 		DoggyElementPtr->playerNr = ElementPtr->playerNr;
 		DoggyElementPtr->state_flags = APPEARING;
 		DoggyElementPtr->life_span = NORMAL_LIFE;
-		SetPrimType(&(GLOBAL(DisplayArray))[DoggyElementPtr->PrimIndex],
+		SetPrimType(&DisplayArray[DoggyElementPtr->PrimIndex],
 					STAMP_PRIM);
 		{
 			DoggyElementPtr->preprocess_func = doggy_preprocess;
@@ -405,7 +405,7 @@ spawn_doggy(ELEMENT* ElementPtr)
 
 		SetElementStarShip(DoggyElementPtr, StarShipPtr);
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* RELEASE_DOGGY */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 4),
 					 DoggyElementPtr);
@@ -418,18 +418,17 @@ static void
 chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					  uint16_t ConcernCounter)
 {
-	EVALUATE_DESC* lpEvalDesc;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	static uint32_t old_dist[NUM_SIDES] = {(uint32_t)~0, (uint32_t)~0};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state &= ~SPECIAL;
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (lpEvalDesc->ObjectPtr)
 	{
-		STARSHIP* EnemyStarShipPtr;
+		STARSHIP* EnemyStarShipPtr {};
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if ((lpEvalDesc->which_turn <= 16
@@ -460,8 +459,9 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	if (lpEvalDesc->ObjectPtr)
 	{
-		HELEMENT h, hNext;
-		ELEMENT* CrystalPtr;
+		HELEMENT h {};
+		HELEMENT hNext {};
+		ELEMENT* CrystalPtr {};
 
 		h = (StarShipPtr->old_status_flags & WEAPON) ?
 				GetTailElement() :
@@ -478,7 +478,7 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			{
 				if (ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr)
 				{
-					uint16_t which_turn;
+					uint16_t which_turn {};
 					bool crystal_would_miss = false;
 
 					if (!IS_HD || lpEvalDesc != &ObjectsOfConcern[ENEMY_SHIP_INDEX])
@@ -496,10 +496,9 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					else
 					{
 						uint32_t curr_dist = 0;
-						int32_t dx, dy;
 
-						dx = CrystalPtr->next.location.x - ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr->next.location.x;
-						dy = CrystalPtr->next.location.y - ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr->next.location.y;
+						const int32_t dx {CrystalPtr->next.location.x - ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr->next.location.x};
+						const int32_t dy {CrystalPtr->next.location.y - ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr->next.location.y};
 
 						curr_dist = square_root((long)dx * dx + (long)dy * dy);
 
@@ -558,20 +557,18 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			{
 				if (IS_HD)
 				{
-					uint16_t num_weapons;
 					ELEMENT Ship;
 					HELEMENT Weapon[6];
-					HELEMENT *WeaponPtr, w;
-					ELEMENT* EPtr;
-					STARSHIP* StarShipPtr2;
+					ELEMENT* EPtr {};
+					STARSHIP* StarShipPtr2 {};
 
 					Ship = *ShipPtr;
 					GetElementStarShip(&Ship, &StarShipPtr2);
-					num_weapons = (*StarShipPtr->RaceDescPtr->init_weapon_func)(ShipPtr, Weapon);
+					const uint16_t num_weapons {(*StarShipPtr->RaceDescPtr->init_weapon_func)(ShipPtr, Weapon)};
 					(void)num_weapons;
-					WeaponPtr = &Weapon[0];
+					HELEMENT* WeaponPtr {&Weapon[0]};
 
-					w = *WeaponPtr;
+					HELEMENT w {*WeaponPtr};
 					if (w)
 					{
 						LockElement(w, &EPtr);
@@ -616,7 +613,7 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static uint16_t
 initialize_crystal(ELEMENT* ShipPtr, HELEMENT CrystalArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -638,7 +635,7 @@ initialize_crystal(ELEMENT* ShipPtr, HELEMENT CrystalArray[])
 
 	if (CrystalArray[0])
 	{
-		ELEMENT* CrystalPtr;
+		ELEMENT* CrystalPtr {};
 
 		LockElement(CrystalArray[0], &CrystalPtr);
 		CrystalPtr->collision_func = crystal_collision;
@@ -651,7 +648,7 @@ initialize_crystal(ELEMENT* ShipPtr, HELEMENT CrystalArray[])
 static void
 chenjesu_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SPECIAL)
@@ -669,7 +666,7 @@ chenjesu_postprocess(ELEMENT* ElementPtr)
 static void
 chenjesu_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter > 1) /* only when STANDARD
@@ -689,8 +686,6 @@ chenjesu_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_chenjesu(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		chenjesu_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -709,7 +704,7 @@ init_chenjesu(void)
 	chenjesu_desc.init_weapon_func = initialize_crystal;
 	chenjesu_desc.cyborg_control.intelligence_func = chenjesu_intelligence;
 
-	RaceDescPtr = &chenjesu_desc;
+	RACE_DESC* RaceDescPtr {&chenjesu_desc};
 
 	return (RaceDescPtr);
 }

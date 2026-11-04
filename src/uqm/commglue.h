@@ -32,13 +32,8 @@ extern LOCDATA CommData;
 extern char shared_phrase_buf[2048];
 
 #define PLAYER_SAID(r, i) ((r) == (i))
-#define PHRASE_ENABLED(p)                                               \
-	(*(char*)GetStringAddress(                                          \
-		 SetAbsStringTableIndex(CommData.ConversationPhrases, (p) - 1)) \
-	 != '\0')
-#define DISABLE_PHRASE(p)      \
-	(*(char*)GetStringAddress( \
-		 SetAbsStringTableIndex(CommData.ConversationPhrases, (p) - 1)) = '\0')
+#define PHRASE_ENABLED(p) (*CommData.ConversationPhrases->text((p) - 1) != '\0')
+#define DISABLE_PHRASE(p) (CommData.ConversationPhrases->set((p) - 1, uqstl::string_view {"", 1}))
 
 #define Response(i, a) \
 	DoResponsePhrase(i, (RESPONSE_FUNC)a, 0)

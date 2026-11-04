@@ -16,7 +16,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define PORT_WANT_ERRNO
 #include "port.h"
 
 #include "netplay.h"
@@ -26,7 +25,6 @@
 #include "uqm/setup.h" // for PlayerControl
 #include "core/log/log.h"
 
-#include <errno.h>
 #include <stdlib.h>
 
 
@@ -69,8 +67,7 @@ BattleInputBuffer_uninit(BattleInputBuffer* bib)
 
 void initBattleInputBuffers(void)
 {
-	size_t player;
-	int bufSize = BattleInput_inputDelay * 2 + 2;
+	const int bufSize = BattleInput_inputDelay * 2 + 2;
 
 	// The input of frame n will be processed in frame 'n + delay'.
 	//
@@ -86,7 +83,7 @@ void initBattleInputBuffers(void)
 	// Initially the buffer is filled with inputDelay zeroes,
 	// so that a party can process at least that much frames.
 
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NUM_PLAYERS; player++)
 	{
 		BattleInputBuffer* bib = &battleInputBuffers[player];
 		BattleInputBuffer_init(bib, bufSize);
@@ -94,8 +91,7 @@ void initBattleInputBuffers(void)
 		{
 			// Initially a party must be able to process at least inputDelay
 			// frames, so we fill the buffer with inputDelay zeros.
-			size_t i;
-			for (i = 0; i < BattleInput_inputDelay; i++)
+			for (size_t i {0}; i < BattleInput_inputDelay; i++)
 			{
 				BattleInputBuffer_push(bib, (BATTLE_INPUT_STATE)0);
 			}
@@ -105,43 +101,35 @@ void initBattleInputBuffers(void)
 
 void uninitBattleInputBuffers(void)
 {
-	size_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		BattleInputBuffer* bib;
-
-		bib = &battleInputBuffers[player];
+		BattleInputBuffer* bib {&battleInputBuffers[player]};
 		BattleInputBuffer_uninit(bib);
 	}
 }
 
-// On error, returns false and sets errno.
+// Returns false if the buffer is full.
 bool BattleInputBuffer_push(BattleInputBuffer* bib, BATTLE_INPUT_STATE input)
 {
-	size_t next;
-
 	if (bib->size == bib->maxSize)
 	{
 		// No more space.
 		uqm::log::error("NETPLAY:     battleInputBuffer full.\n");
-		errno = ENOBUFS;
 		return false;
 	}
 
-	next = (bib->first + bib->size) % bib->maxSize;
+	const size_t next {(bib->first + bib->size) % bib->maxSize};
 	bib->buf[next] = input;
 	bib->size++;
 	return true;
 }
 
-// On error, returns false and sets errno, and *input remains unchanged.
+// Returns false if the buffer is empty. Then *input does not change.
 bool BattleInputBuffer_pop(BattleInputBuffer* bib, BATTLE_INPUT_STATE* input)
 {
 	if (bib->size == 0)
 	{
 		// Buffer is empty.
-		errno = EAGAIN;
 		return false;
 	}
 

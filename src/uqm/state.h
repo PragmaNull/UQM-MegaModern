@@ -20,8 +20,11 @@
 #define UQM_STATE_H_
 
 #include "port.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
+#include "core/stl/array.h"
+#include "core/stl/vector.h"
 #include <assert.h>
+#include <cstdint>
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -51,7 +54,22 @@ extern uint32_t PutGroupInfo(uint32_t offset, uint8_t which_group);
 extern void BuildGroups(void);
 extern void findRaceSOI(void);
 
-typedef struct GAME_STATE_FILE GAME_STATE_FILE;
+// A file in memory that holds a part of the game state.
+struct GAME_STATE_FILE
+{
+	const char* symname {};
+	uint32_t size_hint {};
+	int open_count {};
+	uqstl::vector<uint8_t> data {};
+	uint32_t used {};
+	uint32_t size {};
+	uint32_t ptr {};
+};
+
+inline constexpr int NUM_STATE_FILES {3};
+
+// Returns the state files of a new game, empty.
+[[nodiscard]] uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> MakeStateFiles(void);
 
 #define STARINFO_FILE 0
 //"starinfo.dat"
@@ -82,7 +100,7 @@ int SeekStateFile(GAME_STATE_FILE* fp, long offset, int whence);
 static inline uint16_t
 sread_8(GAME_STATE_FILE* fp, uint8_t* v)
 {
-	uint8_t t;
+	uint8_t t {};
 	if (!v) /* read value ignored */
 	{
 		v = &t;
@@ -93,7 +111,7 @@ sread_8(GAME_STATE_FILE* fp, uint8_t* v)
 static inline uint16_t
 sread_16(GAME_STATE_FILE* fp, uint16_t* v)
 {
-	uint16_t t;
+	uint16_t t {};
 	if (!v) /* read value ignored */
 	{
 		v = &t;
@@ -104,9 +122,8 @@ sread_16(GAME_STATE_FILE* fp, uint16_t* v)
 static inline uint16_t
 sread_16s(GAME_STATE_FILE* fp, int16_t* v)
 {
-	uint16_t t;
-	uint16_t ret;
-	ret = sread_16(fp, &t);
+	uint16_t t {};
+	const uint16_t ret {sread_16(fp, &t)};
 	// unsigned to signed conversion
 	if (v)
 	{
@@ -118,7 +135,7 @@ sread_16s(GAME_STATE_FILE* fp, int16_t* v)
 static inline uint16_t
 sread_32(GAME_STATE_FILE* fp, uint32_t* v)
 {
-	uint32_t t;
+	uint32_t t {};
 	if (!v) /* read value ignored */
 	{
 		v = &t;

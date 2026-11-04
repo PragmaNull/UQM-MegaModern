@@ -1,0 +1,17 @@
+# clang-tidy checks: const correctness and variable initialization. See build.py --clang-tidy and --tidy-fix.
+Checks: >
+  -*,
+  misc-const-correctness,
+  cppcoreguidelines-init-variables,
+  readability-isolate-declaration
+HeaderFilterRegex: '.*[/\\](src|test)[/\\].*'
+ExcludeHeaderFilterRegex: '.*[/\\]\.conan2[/\\].*'
+# Format the fixes with .clang-format, which puts const on the left.
+FormatStyle: file
+CheckOptions:
+  misc-const-correctness.AnalyzeValues: true
+  misc-const-correctness.AnalyzeReferences: true
+  misc-const-correctness.AnalyzePointers: false
+  misc-const-correctness.WarnPointersAsValues: false
+  misc-const-correctness.TransformPointersAsValues: false
+  cppcoreguidelines-init-variables.MathHeader: '<cmath>'

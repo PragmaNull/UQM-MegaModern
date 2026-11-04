@@ -23,6 +23,7 @@
 #include <cstdint>
 #include "videodec.h"
 #include "libs/sound/sound.h"
+#include "core/thread/Mutex.h"
 
 
 typedef struct tfb_videoclip
@@ -35,17 +36,17 @@ typedef struct tfb_videoclip
 	GFXRECT dst_rect; // destination screen rect
 	GFXRECT src_rect; // source rect
 	MUSIC_REF hAudio;
-	uint32_t frame_time; // time when next frame should be rendered
-	TFB_Image* frame;	 // frame preped and optimized for rendering
-	uint32_t cur_frame;	 // index of frame currently displayed
+	TimeCount frame_time; // time when next frame should be rendered
+	TFB_Image* frame;	  // frame preped and optimized for rendering
+	uint32_t cur_frame;	  // index of frame currently displayed
 	bool playing;
 	bool own_audio;
 	uint32_t loop_frame; // frame index to loop from
 	uint32_t loop_to;	 // frame index to loop to
 
-	Mutex guard;
-	uint32_t want_frame; // audio-signaled desired frame index
-	int lag_cnt;		 // N of frames video is behind or ahead of audio
+	uqm::Mutex guard;
+	uint32_t want_frame UQM_GUARDED_BY(guard); // audio-signaled desired frame index
+	int lag_cnt;							   // N of frames video is behind or ahead of audio
 
 	void* data; // user-defined data
 

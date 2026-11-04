@@ -24,6 +24,7 @@
 #include "uqm/colors.h"
 #include "uqm/globdata.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 16
@@ -126,7 +127,7 @@ static RACE_DESC orz_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_SPEED* MISSILE_LIFE,
+			MISSILE_SPEED * MISSILE_LIFE,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -150,8 +151,8 @@ howitzer_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static uint16_t
 initialize_turret_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 {
-	ELEMENT* TurretPtr;
-	STARSHIP* StarShipPtr;
+	ELEMENT* TurretPtr {};
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -193,7 +194,7 @@ initialize_turret_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 
 	if (MissileArray[0])
 	{
-		ELEMENT* HowitzerPtr;
+		ELEMENT* HowitzerPtr {};
 
 		LockElement(MissileArray[0], &HowitzerPtr);
 		HowitzerPtr->collision_func = howitzer_collision;
@@ -206,10 +207,11 @@ initialize_turret_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 static uint8_t
 count_marines(STARSHIP* StarShipPtr, bool FindSpot)
 {
-	uint8_t num_marines, id_use[MAX_MARINES];
-	HELEMENT hElement, hNextElement;
+	uint8_t id_use[MAX_MARINES];
+	HELEMENT hElement {};
+	HELEMENT hNextElement {};
 
-	num_marines = MAX_MARINES;
+	uint8_t num_marines {MAX_MARINES};
 	while (num_marines--)
 	{
 		id_use[num_marines] = 0;
@@ -218,7 +220,7 @@ count_marines(STARSHIP* StarShipPtr, bool FindSpot)
 	num_marines = 0;
 	for (hElement = GetTailElement(); hElement; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr;
+		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetPredElement(ElementPtr);
@@ -256,9 +258,8 @@ static void
 orz_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				 uint16_t ConcernCounter)
 {
-	ELEMENT* TurretPtr;
-	STARSHIP* StarShipPtr;
-	EVALUATE_DESC* lpEvalDesc;
+	ELEMENT* TurretPtr {};
+	STARSHIP* StarShipPtr {};
 
 	LockElement(GetSuccElement(ShipPtr), &TurretPtr);
 
@@ -267,14 +268,14 @@ orz_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	--TurretPtr->turn_wait;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	const EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (lpEvalDesc->ObjectPtr == 0)
 	{
 		StarShipPtr->ship_input_state &= ~SPECIAL;
 	}
 	else if (StarShipPtr->special_counter != 1)
 	{
-		STARSHIP* EnemyStarShipPtr;
+		STARSHIP* EnemyStarShipPtr {};
 
 		if (ShipPtr->turn_wait == 0
 			&& lpEvalDesc->MoveState == ENTICE
@@ -300,8 +301,8 @@ orz_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			&& !(StarShipPtr->ship_input_state & (LEFT | RIGHT | WEAPON))
 			&& TurretPtr->turn_wait == 0)
 		{
-			int16_t delta_facing;
-			uint16_t facing; //, orig_facing;
+			int16_t delta_facing {};
+			uint16_t facing {}; //, orig_facing;
 
 			facing = NORMALIZE_FACING(StarShipPtr->ShipFacing
 									  + TurretPtr->thrust_wait);
@@ -310,7 +311,7 @@ orz_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				StarShipPtr->ship_input_state |= SPECIAL;
 				if (delta_facing == ANGLE_TO_FACING(HALF_CIRCLE))
 				{
-					delta_facing += (((uint8_t)TFB_Random() & 1) << 1) - 1;
+					delta_facing += (((uint8_t)uqm::random().next() & 1) << 1) - 1;
 				}
 
 				if (delta_facing < ANGLE_TO_FACING(HALF_CIRCLE))
@@ -350,7 +351,7 @@ ion_preprocess(ELEMENT* ElementPtr)
 	 * entries. It then used some if statements to skip over these.
 	 * The current behaviour is the same as the old behavior.
 	 */
-	static const Color colorTable[] =
+	const static Color colorTable[] =
 		{
 			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x15, 0x00), 0x7a),
 			//BUILD_COLOR (MAKE_RGB15_INIT (0x1F, 0x11, 0x00), 0x7b),
@@ -373,7 +374,7 @@ ion_preprocess(ELEMENT* ElementPtr)
 	{
 		ElementPtr->life_span = ElementPtr->thrust_wait;
 
-		SetPrimColor(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+		SetPrimColor(&DisplayArray[ElementPtr->PrimIndex],
 					 colorTable[ElementPtr->colorCycleIndex]);
 
 		ElementPtr->state_flags &= ~DISAPPEARING;
@@ -385,9 +386,10 @@ static void marine_preprocess(ELEMENT* ElementPtr);
 
 void intruder_preprocess(ELEMENT* ElementPtr)
 {
-	HELEMENT hElement, hNextElement;
-	ELEMENT* ShipPtr;
-	STARSHIP* StarShipPtr;
+	HELEMENT hElement {};
+	HELEMENT hNextElement {};
+	ELEMENT* ShipPtr {};
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	LockElement(StarShipPtr->hShip, &ShipPtr);
@@ -443,17 +445,15 @@ LeftShip:
 			}
 			else if (ElementPtr->thrust_wait == 0)
 			{
-				uint8_t randval;
-
 				ElementPtr->thrust_wait = MARINE_WAIT;
 
-				randval = (uint8_t)TFB_Random();
+				const uint8_t randval {(uint8_t)uqm::random().next()};
 				if (randval < (0x0100 / 16))
 				{
 					ElementPtr->life_span = 0;
 					ElementPtr->state_flags |= DISAPPEARING;
 
-					ProcessSound(SetAbsSoundIndex(
+					ProcessSound(GetSound(
 									 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 4),
 								 ElementPtr);
 					goto LeftShip;
@@ -474,7 +474,7 @@ LeftShip:
 					s.frame = SetAbsFrameIndex(ElementPtr->next.image.farray[0],
 											   GetFrameCount(ElementPtr->next.image.farray[0]) - 1);
 					ModifySilhouette(ShipPtr, &s, 0);
-					ProcessSound(SetAbsSoundIndex(
+					ProcessSound(GetSound(
 									 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 								 ElementPtr);
 				}
@@ -491,7 +491,7 @@ LeftShip:
 	{
 		ElementPtr->state_flags &= ~NONSOLID;
 		ElementPtr->state_flags |= CHANGING | CREW_OBJECT;
-		SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+		SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
 					STAMP_PRIM);
 
 		ElementPtr->current.image.frame =
@@ -500,7 +500,7 @@ LeftShip:
 					StarShipPtr->RaceDescPtr->ship_data.special[0], 21);
 		ElementPtr->thrust_wait = 0;
 		ElementPtr->turn_wait =
-			MAKE_BYTE(0, NORMALIZE_FACING((uint8_t)TFB_Random()));
+			uqm::makeByte(0, NORMALIZE_FACING((uint8_t)uqm::random().next()));
 		ElementPtr->preprocess_func = marine_preprocess;
 	}
 }
@@ -510,13 +510,11 @@ static void
 spawn_marine_ion_trail(ELEMENT* ElementPtr, STARSHIP* StarShipPtr,
 					   uint16_t facing)
 {
-	HELEMENT hIonElement;
-
-	hIonElement = AllocElement();
+	HELEMENT hIonElement {AllocElement()};
 	if (hIonElement)
 	{
-		uint16_t angle;
-		ELEMENT* IonElementPtr;
+		uint16_t angle {};
+		ELEMENT* IonElementPtr {};
 
 		angle = FACING_TO_ANGLE(facing) + HALF_CIRCLE;
 
@@ -529,9 +527,9 @@ spawn_marine_ion_trail(ELEMENT* ElementPtr, STARSHIP* StarShipPtr,
 		// When the element "dies", in the death_func
 		// 'cycle_ion_trail', it is given new life a number of
 		// times, by setting life_span to thrust_wait.
-		SetPrimType(&(GLOBAL(DisplayArray))[IonElementPtr->PrimIndex],
+		SetPrimType(&DisplayArray[IonElementPtr->PrimIndex],
 					POINT_PRIM); // Actual marine ion trail
-		SetPrimColor(&(GLOBAL(DisplayArray))[IonElementPtr->PrimIndex],
+		SetPrimColor(&DisplayArray[IonElementPtr->PrimIndex],
 					 START_ION_COLOR);
 		IonElementPtr->colorCycleIndex = 0;
 		IonElementPtr->current.location = ElementPtr->current.location;
@@ -560,8 +558,8 @@ spawn_marine_ion_trail(ELEMENT* ElementPtr, STARSHIP* StarShipPtr,
 static void
 marine_preprocess(ELEMENT* ElementPtr)
 {
-	ELEMENT* ShipPtr;
-	STARSHIP* StarShipPtr;
+	ELEMENT* ShipPtr {};
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	LockElement(StarShipPtr->hShip, &ShipPtr);
@@ -575,22 +573,25 @@ marine_preprocess(ELEMENT* ElementPtr)
 	}
 	UnlockElement(StarShipPtr->hShip);
 
-	if (LONIBBLE(ElementPtr->turn_wait))
+	if (uqm::lowNibble(ElementPtr->turn_wait))
 	{
 		--ElementPtr->turn_wait;
 	}
 	else
 	{
-		uint16_t facing, pfacing = 0;
-		int32_t delta_x, delta_y, delta_facing;
-		HELEMENT hObject, hNextObject, hTarget;
-		ELEMENT* ObjectPtr;
+		uint16_t pfacing = 0;
+		int32_t delta_x {};
+		int32_t delta_y {};
+		int32_t delta_facing {};
+		HELEMENT hObject {};
+		HELEMENT hNextObject {};
+		ELEMENT* ObjectPtr {};
 
 		// XXX: thrust_wait is abused to store marine speed and
 		//   gravity well flags
 		ElementPtr->thrust_wait &= ~(SHIP_IN_GRAVITY_WELL >> 6);
 
-		hTarget = 0;
+		HELEMENT hTarget {0};
 		for (hObject = GetHeadElement();
 			 hObject; hObject = hNextObject)
 		{
@@ -640,7 +641,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 			UnlockElement(hObject);
 		}
 
-		facing = HINIBBLE(ElementPtr->turn_wait);
+		uint16_t facing {uqm::highNibble(ElementPtr->turn_wait)};
 		if (hTarget == 0)
 		{
 			delta_facing = -1;
@@ -667,7 +668,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 				{
 					if (delta_facing == ANGLE_TO_FACING(OCTANT))
 					{
-						facing += (((int16_t)TFB_Random() & 1) << 1) - 1;
+						facing += (((int16_t)uqm::random().next() & 1) << 1) - 1;
 					}
 					else if (delta_facing < ANGLE_TO_FACING(OCTANT))
 					{
@@ -681,7 +682,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 			}
 			else
 			{
-				uint32_t num_frames;
+				uint32_t num_frames {};
 				VELOCITY_DESC ShipVelocity;
 
 				if (elementsOfSamePlayer(ObjectPtr, ElementPtr)
@@ -719,7 +720,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 				{
 					if (delta_facing == ANGLE_TO_FACING(HALF_CIRCLE))
 					{
-						facing += (((uint8_t)TFB_Random() & 1) << 1) - 1;
+						facing += (((uint8_t)uqm::random().next() & 1) << 1) - 1;
 					}
 					else if (delta_facing < ANGLE_TO_FACING(HALF_CIRCLE))
 					{
@@ -734,25 +735,21 @@ marine_preprocess(ELEMENT* ElementPtr)
 			UnlockElement(hTarget);
 		}
 
-		ElementPtr->turn_wait = MAKE_BYTE(0, NORMALIZE_FACING(facing));
+		ElementPtr->turn_wait = uqm::makeByte(0, NORMALIZE_FACING(facing));
 		if (delta_facing == 0
 			|| ((ElementPtr->thrust_wait & (SHIP_BEYOND_MAX_SPEED >> 6))
 				&& !(ElementPtr->thrust_wait & (SHIP_IN_GRAVITY_WELL >> 6))))
 		{
-			STATUS_FLAGS thrust_status;
-			uint16_t OldFacing;
-			STATUS_FLAGS OldStatus;
-			uint16_t OldIncrement, OldThrust;
-			STARSHIP* StarShipPtr;
+			STARSHIP* StarShipPtr {};
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
 
 			// XXX: Hack: abusing the primary STARSHIP struct in order
 			//   to call inertial_thrust() for a marine
-			OldFacing = StarShipPtr->ShipFacing;
-			OldStatus = StarShipPtr->cur_status_flags;
-			OldIncrement = StarShipPtr->RaceDescPtr->characteristics.thrust_increment;
-			OldThrust = StarShipPtr->RaceDescPtr->characteristics.max_thrust;
+			const uint16_t OldFacing {StarShipPtr->ShipFacing};
+			const STATUS_FLAGS OldStatus {StarShipPtr->cur_status_flags};
+			const uint16_t OldIncrement {StarShipPtr->RaceDescPtr->characteristics.thrust_increment};
+			const uint16_t OldThrust {StarShipPtr->RaceDescPtr->characteristics.max_thrust};
 
 			StarShipPtr->ShipFacing = facing;
 			// XXX: thrust_wait is abused to store marine speed and
@@ -763,7 +760,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 			StarShipPtr->RaceDescPtr->characteristics.max_thrust =
 				MARINE_MAX_THRUST;
 
-			thrust_status = inertial_thrust(ElementPtr);
+			const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
 
 			StarShipPtr->RaceDescPtr->characteristics.max_thrust = OldThrust;
 			StarShipPtr->RaceDescPtr->characteristics.thrust_increment =
@@ -796,7 +793,7 @@ void marine_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		if (!elementsOfSamePlayer(ElementPtr0, ElementPtr1))
 		{
 			ElementPtr0->turn_wait =
-				MAKE_BYTE(5, HINIBBLE(ElementPtr0->turn_wait));
+				uqm::makeByte(5, uqm::highNibble(ElementPtr0->turn_wait));
 			ElementPtr0->thrust_wait &=
 				~((SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED) >> 6);
 			ElementPtr0->state_flags |= COLLISION;
@@ -826,12 +823,12 @@ void marine_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			else if ((ElementPtr0->state_flags & IGNORE_SIMILAR)
 					 && ElementPtr1->crew_level
 #ifdef NEVER
-					 && (uint8_t)TFB_Random() <= (0x0100 / 3)
+					 && (uint8_t)uqm::random().next() <= (0x0100 / 3)
 #endif /* NEVER */
 			)
 			{
 				STAMP s;
-				STARSHIP* StarShipPtr;
+				STARSHIP* StarShipPtr {};
 
 				GetElementStarShip(ElementPtr0, &StarShipPtr);
 
@@ -850,14 +847,14 @@ void marine_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 					22 + ElementPtr0->turn_wait);
 				ElementPtr0->state_flags |= NONSOLID;
 				ElementPtr0->state_flags &= ~CREW_OBJECT;
-				SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr0->PrimIndex], NO_PRIM);
+				SetPrimType(&DisplayArray[ElementPtr0->PrimIndex], NO_PRIM);
 				ElementPtr0->preprocess_func = intruder_preprocess;
 				s.origin.x = RES_SCALE(16 + (ElementPtr0->turn_wait & 3) * 9);
 				s.origin.y = RES_SCALE(14 + (ElementPtr0->turn_wait >> 2) * 11);
 				s.frame = ElementPtr0->next.image.frame;
 				ModifySilhouette(ElementPtr1, &s, 0);
 
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 							 ElementPtr1);
 			}
@@ -891,22 +888,22 @@ turret_postprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->life_span == 0)
 	{
-		STARSHIP* StarShipPtr;
+		STARSHIP* StarShipPtr {};
 
-		SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex], NO_PRIM);
+		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NO_PRIM);
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		if (StarShipPtr->hShip)
 		{
-			uint16_t facing;
-			HELEMENT hTurret, hSpaceMarine;
-			ELEMENT* ShipPtr;
+			uint16_t facing {};
+			HELEMENT hSpaceMarine {};
+			ELEMENT* ShipPtr {};
 
 			LockElement(StarShipPtr->hShip, &ShipPtr);
-			hTurret = AllocElement();
+			HELEMENT hTurret {AllocElement()};
 			if (hTurret)
 			{
-				ELEMENT* TurretPtr;
+				ELEMENT* TurretPtr {};
 
 				LockElement(hTurret, &TurretPtr);
 				TurretPtr->playerNr = ElementPtr->playerNr;
@@ -949,14 +946,14 @@ turret_postprocess(ELEMENT* ElementPtr)
 				facing = FACING_TO_ANGLE(facing);
 				if (StarShipPtr->cur_status_flags & WEAPON)
 				{
-					HELEMENT hTurretEffect;
-					ELEMENT* TurretEffectPtr;
+					HELEMENT hTurretEffect {};
+					ELEMENT* TurretEffectPtr {};
 
 					LockElement(GetTailElement(), &TurretEffectPtr);
 					if (TurretEffectPtr != ElementPtr
 						&& elementsOfSamePlayer(TurretEffectPtr, ElementPtr)
 						&& (TurretEffectPtr->state_flags & APPEARING)
-						&& GetPrimType(&(GLOBAL(DisplayArray))[TurretEffectPtr->PrimIndex]) == STAMP_PRIM
+						&& GetPrimType(&DisplayArray[TurretEffectPtr->PrimIndex]) == STAMP_PRIM
 						&& (hTurretEffect = AllocElement()))
 					{
 						TurretPtr->current.location.x -=
@@ -989,7 +986,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 
 						SetElementStarShip(TurretEffectPtr, StarShipPtr);
 
-						SetPrimType(&(GLOBAL(DisplayArray))[TurretEffectPtr->PrimIndex], STAMP_PRIM);
+						SetPrimType(&DisplayArray[TurretEffectPtr->PrimIndex], STAMP_PRIM);
 
 						UnlockElement(hTurretEffect);
 						PutElement(hTurretEffect);
@@ -998,10 +995,10 @@ turret_postprocess(ELEMENT* ElementPtr)
 				}
 				TurretPtr->next = TurretPtr->current;
 
-				SetPrimType(&(GLOBAL(DisplayArray))[TurretPtr->PrimIndex],
-							GetPrimType(&(GLOBAL(DisplayArray))[ShipPtr->PrimIndex]));
-				SetPrimColor(&(GLOBAL(DisplayArray))[TurretPtr->PrimIndex],
-							 GetPrimColor(&(GLOBAL(DisplayArray))[ShipPtr->PrimIndex]));
+				SetPrimType(&DisplayArray[TurretPtr->PrimIndex],
+							GetPrimType(&DisplayArray[ShipPtr->PrimIndex]));
+				SetPrimColor(&DisplayArray[TurretPtr->PrimIndex],
+							 GetPrimColor(&DisplayArray[ShipPtr->PrimIndex]));
 
 				TurretPtr->postprocess_func = ElementPtr->postprocess_func;
 
@@ -1019,7 +1016,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 				&& TrackShip(ShipPtr, &facing) >= 0
 				&& (hSpaceMarine = AllocElement()))
 			{
-				ELEMENT* SpaceMarinePtr;
+				ELEMENT* SpaceMarinePtr {};
 
 				LockElement(hSpaceMarine, &SpaceMarinePtr);
 				SpaceMarinePtr->playerNr = ElementPtr->playerNr;
@@ -1042,14 +1039,14 @@ turret_postprocess(ELEMENT* ElementPtr)
 					StarShipPtr->RaceDescPtr->ship_data.special[0], 20);
 
 				SpaceMarinePtr->turn_wait =
-					MAKE_BYTE(0, NORMALIZE_FACING(
-									 ANGLE_TO_FACING(facing + HALF_CIRCLE)));
+					uqm::makeByte(0, NORMALIZE_FACING(
+										 ANGLE_TO_FACING(facing + HALF_CIRCLE)));
 				SpaceMarinePtr->preprocess_func = marine_preprocess;
 				SpaceMarinePtr->collision_func = marine_collision;
 
 				SetElementStarShip(SpaceMarinePtr, StarShipPtr);
 
-				SetPrimType(&(GLOBAL(DisplayArray))[SpaceMarinePtr->PrimIndex], STAMP_PRIM);
+				SetPrimType(&DisplayArray[SpaceMarinePtr->PrimIndex], STAMP_PRIM);
 
 				UnlockElement(hSpaceMarine);
 				PutElement(hSpaceMarine);
@@ -1059,7 +1056,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 					DeltaCrew(ShipPtr, -1);
 				}
 
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 							 SpaceMarinePtr);
 
@@ -1075,7 +1072,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 static void
 orz_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (!(ElementPtr->state_flags & APPEARING))
@@ -1098,12 +1095,10 @@ orz_preprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		HELEMENT hTurret;
-
-		hTurret = AllocElement();
+		HELEMENT hTurret {AllocElement()};
 		if (hTurret)
 		{
-			ELEMENT* TurretPtr;
+			ELEMENT* TurretPtr {};
 
 			LockElement(hTurret, &TurretPtr);
 			TurretPtr->playerNr = ElementPtr->playerNr;
@@ -1128,8 +1123,6 @@ orz_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_orz(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		orz_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -1147,7 +1140,7 @@ init_orz(void)
 	orz_desc.init_weapon_func = initialize_turret_missile;
 	orz_desc.cyborg_control.intelligence_func = orz_intelligence;
 
-	RaceDescPtr = &orz_desc;
+	RACE_DESC* RaceDescPtr {&orz_desc};
 
 	return (RaceDescPtr);
 }

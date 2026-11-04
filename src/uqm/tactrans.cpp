@@ -42,6 +42,7 @@
 #include "sounds.h"
 #include "libs/mathlib.h"
 #include "intel.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static void cleanup_dead_ship(ELEMENT* ElementPtr);
@@ -54,12 +55,12 @@ static STARSHIP* winnerStarShip;
 
 bool OpponentAlive(STARSHIP* TestStarShipPtr)
 {
-	HELEMENT hElement, hSuccElement;
+	HELEMENT hSuccElement {};
 
-	for (hElement = GetHeadElement(); hElement; hElement = hSuccElement)
+	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hSuccElement)
 	{
-		ELEMENT* ElementPtr;
-		STARSHIP* StarShipPtr;
+		ELEMENT* ElementPtr {};
+		STARSHIP* StarShipPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		hSuccElement = GetSuccElement(ElementPtr);
@@ -125,8 +126,7 @@ readyToEndCallback(NetConnection* conn, void* arg)
 	// ending frame count will at least be 1 greater than the current
 	// frame count.
 
-	BattleStateData* battleStateData;
-	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
+	BattleStateData* battleStateData {(BattleStateData*)NetConnection_getStateData(conn)};
 
 #ifdef NETPLAY_DEBUG
 	fmt::print(stderr, "Both sides are ready to end the battle; starting "
@@ -146,7 +146,7 @@ readyToEndCallback(NetConnection* conn, void* arg)
 	// could happen when the function triggering the call to this
 	// function is the frame update function which might update
 	// the frame counter one more time.
-	flushPacketQueue(conn);
+	static_cast<void>(flushPacketQueue(conn));
 #ifdef NETPLAY_DEBUG
 	fmt::print(stderr, "NETPLAY: [{}] ==> Sent battleFrameCount {}.\n",
 			   NetConnection_getPlayerNr(conn), battleFrameCount + 1);
@@ -175,8 +175,7 @@ readyToEndCallback(NetConnection* conn, void* arg)
 static bool
 readyForBattleEndPlayer(NetConnection* conn)
 {
-	BattleStateData* battleStateData;
-	battleStateData = (BattleStateData*)NetConnection_getStateData(conn);
+	const BattleStateData* battleStateData {(BattleStateData*)NetConnection_getStateData(conn)};
 
 	if (NetConnection_getState(conn) == NetState_interBattle || NetConnection_getState(conn) == NetState_inSetup)
 	{
@@ -262,22 +261,15 @@ static inline bool
 readyForBattleEnd(void)
 {
 #ifndef NETPLAY
-#if DEMO_MODE
-	// In Demo mode, the saved journal should be replayed with frame
-	// accuracy. PLRPlaying () isn't consistent enough.
-	return true;
-#else  /* !DEMO_MODE */
 	return !DittyPlaying();
-#endif /* !DEMO_MODE */
 #else  /* defined (NETPLAY) */
-	int playerI;
 
 	if (DittyPlaying())
 	{
 		return false;
 	}
 
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (int playerI {0}; playerI < NUM_PLAYERS; playerI++)
 	{
 		if (!PlayerInput[playerI]->handlers->battleEndReady(
 				PlayerInput[playerI]))
@@ -293,22 +285,23 @@ readyForBattleEnd(void)
 static void
 preprocess_dead_ship(ELEMENT* DeadShipPtr)
 {
-	ProcessSound((SOUND)~0, nullptr);
+	SuppressSounds();
 	(void)DeadShipPtr; // unused argument
 }
 
 void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 {
-	STARSHIP* DeadStarShipPtr;
+	STARSHIP* DeadStarShipPtr {};
 
-	ProcessSound((SOUND)~0, nullptr);
+	SuppressSounds();
 
 	GetElementStarShip(DeadShipPtr, &DeadStarShipPtr);
 	{
 		// Ship explosion has finished, or ship has just warped out
 		// if DeadStarShipPtr->crew_level != 0
-		bool MusicStarted;
-		HELEMENT hElement, hSuccElement;
+		bool MusicStarted {};
+		HELEMENT hElement {};
+		HELEMENT hSuccElement {};
 
 		/* Record crew left after the battle */
 		DeadStarShipPtr->crew_level =
@@ -318,8 +311,8 @@ void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 
 		for (hElement = GetHeadElement(); hElement; hElement = hSuccElement)
 		{
-			ELEMENT* ElementPtr;
-			STARSHIP* StarShipPtr;
+			ELEMENT* ElementPtr {};
+			STARSHIP* StarShipPtr {};
 
 			LockElement(hElement, &ElementPtr);
 			hSuccElement = GetSuccElement(ElementPtr);
@@ -360,7 +353,7 @@ void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 			UnlockElement(hElement);
 		}
 
-#define MIN_DITTY_FRAME_COUNT ((GameTicksPerSecond * 3) / BattleFrameRateTicks)
+#define MIN_DITTY_FRAME_COUNT ((c_gameSecond * 3) / BattleFrameRateTicks)
 		// The ship will be "alive" for at least 2 more frames to make sure
 		// the elements it owns (set up for deletion above) expire first.
 		// Ditty does NOT play in the following circumstances:
@@ -403,7 +396,7 @@ setMinShipLifeSpan(ELEMENT* ship, uint16_t life_span)
 static void
 setMinStarShipLifeSpan(STARSHIP* starShip, uint16_t life_span)
 {
-	ELEMENT* ship;
+	ELEMENT* ship {};
 
 	LockElement(starShip->hShip, &ship);
 	setMinShipLifeSpan(ship, life_span);
@@ -413,7 +406,7 @@ setMinStarShipLifeSpan(STARSHIP* starShip, uint16_t life_span)
 static void
 checkOtherShipLifeSpan(ELEMENT* deadShip)
 {
-	STARSHIP* deadStarShip;
+	STARSHIP* deadStarShip {};
 
 	GetElementStarShip(deadShip, &deadStarShip);
 
@@ -426,14 +419,14 @@ checkOtherShipLifeSpan(ELEMENT* deadShip)
 	}
 	else if (winnerStarShip == nullptr)
 	{ // Both died at the same time, or the loser has already expired
-		HELEMENT hElement, hNextElement;
+		HELEMENT hNextElement {};
 
 		// Find the other dead ship(s) and keep them alive for at least as
 		// long as this ship.
-		for (hElement = GetHeadElement(); hElement; hElement = hNextElement)
+		for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 		{
-			ELEMENT* element;
-			STARSHIP* starShip;
+			ELEMENT* element {};
+			STARSHIP* starShip {};
 
 			LockElement(hElement, &element);
 			hNextElement = GetSuccElement(element);
@@ -453,7 +446,7 @@ checkOtherShipLifeSpan(ELEMENT* deadShip)
 // This function is called when dead ship element's life_span reaches 0
 void new_ship(ELEMENT* DeadShipPtr)
 {
-	STARSHIP* DeadStarShipPtr;
+	STARSHIP* DeadStarShipPtr {};
 
 	GetElementStarShip(DeadShipPtr, &DeadStarShipPtr);
 
@@ -477,14 +470,12 @@ void new_ship(ELEMENT* DeadShipPtr)
 	winnerStarShip = nullptr;
 
 	{
-		bool RestartMusic;
-
 		StopDitty();
 		StopMusic();
 		StopSound();
 
 		SetElementStarShip(DeadShipPtr, 0);
-		RestartMusic = OpponentAlive(DeadStarShipPtr);
+		const bool RestartMusic {OpponentAlive(DeadStarShipPtr)};
 
 		free_ship(DeadStarShipPtr->RaceDescPtr, true, true);
 		DeadStarShipPtr->RaceDescPtr = 0;
@@ -496,7 +487,7 @@ void new_ship(ELEMENT* DeadShipPtr)
 #ifdef NETPLAY
 		initBattleStateDataConnections();
 		{
-			bool allOk =
+			const bool allOk =
 				negotiateReadyConnections(true, NetState_interBattle);
 			// We are already in NetState_interBattle, but all
 			// sides just need to pass this checkpoint before
@@ -504,7 +495,7 @@ void new_ship(ELEMENT* DeadShipPtr)
 			if (!allOk)
 			{
 				// Some network connection has been reset.
-				GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+				uqm::currentActivity() &= ~IN_BATTLE;
 				BatchGraphics();
 				return;
 			}
@@ -522,12 +513,12 @@ void new_ship(ELEMENT* DeadShipPtr)
 		{
 #ifdef NETPLAY
 			{
-				bool allOk =
+				const bool allOk =
 					negotiateReadyConnections(true, NetState_inBattle);
 				if (!allOk)
 				{
 					// Some network connection has been reset.
-					GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+					uqm::currentActivity() &= ~IN_BATTLE;
 					BatchGraphics();
 					return;
 				}
@@ -541,13 +532,13 @@ void new_ship(ELEMENT* DeadShipPtr)
 		else if (battle_counter[0] == 0 || battle_counter[1] == 0)
 		{
 			// One player is out of ships. The battle is over.
-			GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+			uqm::currentActivity() &= ~IN_BATTLE;
 		}
 #ifdef NETPLAY
 		else
 		{
 			// Battle has been aborted.
-			GLOBAL(CurrentActivity) |= CHECK_ABORT;
+			uqm::currentActivity() |= CHECK_ABORT;
 		}
 #endif
 		BatchGraphics();
@@ -557,7 +548,7 @@ void new_ship(ELEMENT* DeadShipPtr)
 static void
 explosion_preprocess(ELEMENT* ShipPtr)
 {
-	uint8_t i;
+	uint8_t i {};
 
 	i = (NUM_EXPLOSION_FRAMES * 3) - ShipPtr->life_span;
 	switch (i)
@@ -593,14 +584,12 @@ explosion_preprocess(ELEMENT* ShipPtr)
 
 	do
 	{
-		HELEMENT hElement;
-
-		hElement = AllocElement();
+		HELEMENT hElement {AllocElement()};
 		if (hElement)
 		{
-			uint16_t angle, dist;
-			uint32_t rand_val;
-			ELEMENT* ElementPtr;
+			uint16_t angle {};
+			uint16_t dist {};
+			ELEMENT* ElementPtr {};
 			extern FRAME explosion[];
 
 			PutElement(hElement);
@@ -611,10 +600,10 @@ explosion_preprocess(ELEMENT* ShipPtr)
 			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], STAMP_PRIM);
 			ElementPtr->current.image.farray = explosion;
 			ElementPtr->current.image.frame = explosion[0];
-			rand_val = TFB_Random();
-			angle = lowByte(HIWORD(rand_val));
-			dist = DISPLAY_TO_WORLD(RES_SCALE(lowByte(LOWORD(rand_val)) % 8));
-			if (highByte(LOWORD(rand_val)) < 256 * 1 / 3)
+			uint32_t rand_val {uqm::random().next()};
+			angle = uqm::lowByte(uqm::highWord(rand_val));
+			dist = DISPLAY_TO_WORLD(RES_SCALE(uqm::lowByte(uqm::lowWord(rand_val)) % 8));
+			if (uqm::highByte(uqm::lowWord(rand_val)) < 256 * 1 / 3)
 			{
 				dist += DISPLAY_TO_WORLD(RES_SCALE(8));
 			}
@@ -623,10 +612,10 @@ explosion_preprocess(ELEMENT* ShipPtr)
 			ElementPtr->current.location.y =
 				ShipPtr->current.location.y + SINE(angle, dist);
 			ElementPtr->preprocess_func = animation_preprocess;
-			rand_val = TFB_Random();
-			angle = lowByte(LOWORD(rand_val));
+			rand_val = uqm::random().next();
+			angle = uqm::lowByte(uqm::lowWord(rand_val));
 			dist = WORLD_TO_VELOCITY(
-				DISPLAY_TO_WORLD(RES_SCALE(highByte(LOWORD(rand_val)) % 5)));
+				DISPLAY_TO_WORLD(RES_SCALE(uqm::highByte(uqm::lowWord(rand_val)) % 5)));
 			SetVelocityComponents(&ElementPtr->velocity,
 								  COSINE(angle, dist), SINE(angle, dist));
 			UnlockElement(hElement);
@@ -644,12 +633,12 @@ STARSHIP*
 FindAliveStarShip(ELEMENT* deadShip)
 {
 	STARSHIP* aliveShip = nullptr;
-	HELEMENT hElement, hNextElement;
+	HELEMENT hNextElement {};
 
 	// Find the remaining ship, if any, and see if it is still alive.
-	for (hElement = GetHeadElement(); hElement; hElement = hNextElement)
+	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr;
+		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
 		if ((ElementPtr->state_flags & PLAYER_SHIP)
@@ -702,7 +691,7 @@ void SetWinnerStarShip(STARSHIP* winner)
 
 void RecordShipDeath(ELEMENT* deadShip)
 {
-	STARSHIP* deadStarShip;
+	STARSHIP* deadStarShip {};
 
 	GetElementStarShip(deadShip, &deadStarShip);
 	assert(deadStarShip != nullptr);
@@ -715,7 +704,7 @@ void RecordShipDeath(ELEMENT* deadShip)
 		battle_counter[deadStarShip->playerNr]--;
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 	{
 		MeleeShipDeath(deadStarShip);
 	}
@@ -723,7 +712,7 @@ void RecordShipDeath(ELEMENT* deadShip)
 
 void StartShipExplosion(ELEMENT* ShipPtr, bool playSound)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
@@ -745,15 +734,14 @@ void StartShipExplosion(ELEMENT* ShipPtr, bool playSound)
 
 	if (playSound)
 	{
-		PlaySound(SetAbsSoundIndex(GameSounds, SHIP_EXPLODES),
+		PlaySound(GetSound(GameSounds, SHIP_EXPLODES),
 				  CalcSoundPosition(ShipPtr), ShipPtr, GAME_SOUND_PRIORITY + 1);
 	}
 }
 
 void ship_death(ELEMENT* ShipPtr)
 {
-	STARSHIP* StarShipPtr;
-	STARSHIP* winner;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
@@ -767,7 +755,7 @@ void ship_death(ELEMENT* ShipPtr)
 
 	StartShipExplosion(ShipPtr, true);
 
-	winner = FindAliveStarShip(ShipPtr);
+	STARSHIP* winner {FindAliveStarShip(ShipPtr)};
 	SetWinnerStarShip(winner);
 	RecordShipDeath(ShipPtr);
 }
@@ -779,7 +767,7 @@ void ship_death(ELEMENT* ShipPtr)
 static void
 cycle_ion_trail(ELEMENT* ElementPtr)
 {
-	static const Color colorTab[] =
+	const static Color colorTab[] =
 		{
 			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x15, 0x00), 0x7a),
 			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x11, 0x00), 0x7b),
@@ -814,18 +802,16 @@ cycle_ion_trail(ELEMENT* ElementPtr)
 
 void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 {
-	HELEMENT hIonElement;
-
 	assert(ElementPtr->state_flags & PLAYER_SHIP);
 
-	hIonElement = AllocElement();
+	HELEMENT hIonElement {AllocElement()};
 	if (hIonElement)
 	{
 #define ION_LIFE 1
-		uint16_t angle;
+		uint16_t angle {};
 		GFXRECT r;
-		ELEMENT* IonElementPtr;
-		STARSHIP* StarShipPtr;
+		ELEMENT* IonElementPtr {};
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HALF_CIRCLE;
@@ -924,9 +910,9 @@ void ship_transition(ELEMENT* ElementPtr)
 	}
 
 	{
-		HELEMENT hShipImage;
-		ELEMENT* ShipImagePtr;
-		STARSHIP* StarShipPtr;
+		HELEMENT hShipImage {};
+		ELEMENT* ShipImagePtr {};
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		LockElement(StarShipPtr->hShip, &ShipImagePtr);
@@ -939,7 +925,7 @@ void ship_transition(ELEMENT* ElementPtr)
 		{
 #define TRANSITION_SPEED DISPLAY_TO_WORLD(RES_SCALE(40))
 #define TRANSITION_LIFE 1
-			uint16_t angle;
+			uint16_t angle {};
 
 			PutElement(hShipImage);
 
@@ -973,8 +959,8 @@ void ship_transition(ELEMENT* ElementPtr)
 				// JMS_GFX: Circumventing overflows by using temp variables
 				// instead of subtracting straight from the GFXPOINT sized
 				// ShipImagePtr->current.location.
-				int32_t temp_x = (int32_t)ShipImagePtr->current.location.x - COSINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1);
-				int32_t temp_y = (int32_t)ShipImagePtr->current.location.y - SINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1);
+				const int32_t temp_x = (int32_t)ShipImagePtr->current.location.x - COSINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1);
+				const int32_t temp_y = (int32_t)ShipImagePtr->current.location.y - SINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1);
 
 				ShipImagePtr->current.location.x = WRAP_X(temp_x);
 				ShipImagePtr->current.location.y = WRAP_Y(temp_y);
@@ -992,11 +978,11 @@ void ship_transition(ELEMENT* ElementPtr)
 
 void flee_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	if (--ElementPtr->turn_wait == 0)
 	{
-		static const Color colorTab[] =
+		const static Color colorTab[] =
 			{
 				BUILD_COLOR(MAKE_RGB15_INIT(0x0A, 0x00, 0x00), 0x2E),
 				BUILD_COLOR(MAKE_RGB15_INIT(0x0E, 0x00, 0x00), 0x2D),

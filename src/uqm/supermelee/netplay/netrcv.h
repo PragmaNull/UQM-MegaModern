@@ -19,13 +19,18 @@
 #ifndef UQM_SUPERMELEE_NETPLAY_NETRCV_H_
 #define UQM_SUPERMELEE_NETPLAY_NETRCV_H_
 
-#include "libs/net.h"
+#include "netconnection.h"
+
+#include "core/stl/optional.h"
+
+#include <cstddef>
 
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
-void dataReadyCallback(NetDescriptor* nd);
+// Processes the complete packets in 'data'. Returns the number of bytes that it processed, or nullopt on an error.
+uqstl::optional<size_t> dataReceived(NetConnection* conn, uqstl::span<const std::byte> data);
 
 #if 0 //defined(__cplusplus)
 }

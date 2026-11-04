@@ -45,9 +45,7 @@ ReleaseDrawable(FRAME FramePtr)
 {
 	if (FramePtr != 0)
 	{
-		DRAWABLE Drawable;
-
-		Drawable = GetFrameParentDrawable(FramePtr);
+		DRAWABLE Drawable {GetFrameParentDrawable(FramePtr)};
 
 		return (Drawable);
 	}
@@ -58,14 +56,12 @@ ReleaseDrawable(FRAME FramePtr)
 uint16_t
 GetFrameCount(FRAME FramePtr)
 {
-	DRAWABLE_DESC* DrawablePtr;
-
 	if (FramePtr == 0)
 	{
 		return (0);
 	}
 
-	DrawablePtr = GetFrameParentDrawable(FramePtr);
+	const DRAWABLE_DESC* DrawablePtr {GetFrameParentDrawable(FramePtr)};
 	return DrawablePtr->MaxIndex + 1;
 }
 
@@ -85,9 +81,7 @@ SetAbsFrameIndex(FRAME FramePtr, uint16_t FrameIndex)
 {
 	if (FramePtr != 0)
 	{
-		DRAWABLE_DESC* DrawablePtr;
-
-		DrawablePtr = GetFrameParentDrawable(FramePtr);
+		DRAWABLE_DESC* DrawablePtr {GetFrameParentDrawable(FramePtr)};
 
 		FrameIndex = FrameIndex % (DrawablePtr->MaxIndex + 1);
 		FramePtr = &DrawablePtr->Frame[FrameIndex];
@@ -100,10 +94,9 @@ SetRelFrameIndex(FRAME FramePtr, int16_t FrameOffs)
 {
 	if (FramePtr != 0)
 	{
-		uint16_t num_frames;
-		DRAWABLE_DESC* DrawablePtr;
+		uint16_t num_frames {};
 
-		DrawablePtr = GetFrameParentDrawable(FramePtr);
+		DRAWABLE_DESC* DrawablePtr {GetFrameParentDrawable(FramePtr)};
 		num_frames = DrawablePtr->MaxIndex + 1;
 		if (FrameOffs < 0)
 		{
@@ -121,14 +114,12 @@ SetRelFrameIndex(FRAME FramePtr, int16_t FrameOffs)
 FRAME
 SetEquFrameIndex(FRAME DstFramePtr, FRAME SrcFramePtr)
 {
-	uint16_t Index;
-
 	if (!DstFramePtr || !SrcFramePtr)
 	{
 		return 0;
 	}
 
-	Index = GetFrameIndex(SrcFramePtr);
+	const uint16_t Index {GetFrameIndex(SrcFramePtr)};
 #ifdef DEBUG
 	{
 		DRAWABLE_DESC* DrawablePtr = GetFrameParentDrawable(DstFramePtr);
@@ -148,21 +139,19 @@ SetEquFrameIndex(FRAME DstFramePtr, FRAME SrcFramePtr)
 FRAME
 IncFrameIndex(FRAME FramePtr)
 {
-	DRAWABLE_DESC* DrawablePtr;
-
 	if (FramePtr == 0)
 	{
 		return (0);
 	}
 
-	DrawablePtr = GetFrameParentDrawable(FramePtr);
+	DRAWABLE_DESC* DrawablePtr {GetFrameParentDrawable(FramePtr)};
 	if (FramePtr->Index < DrawablePtr->MaxIndex)
 	{
 		return ++FramePtr;
 	}
 	else
 	{
-		return DrawablePtr->Frame;
+		return DrawablePtr->Frame.data();
 	}
 }
 
@@ -180,9 +169,7 @@ DecFrameIndex(FRAME FramePtr)
 	}
 	else
 	{
-		DRAWABLE_DESC* DrawablePtr;
-
-		DrawablePtr = GetFrameParentDrawable(FramePtr);
+		DRAWABLE_DESC* DrawablePtr {GetFrameParentDrawable(FramePtr)};
 		return &DrawablePtr->Frame[DrawablePtr->MaxIndex];
 	}
 }

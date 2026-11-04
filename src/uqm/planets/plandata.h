@@ -105,7 +105,7 @@ enum
 
 #define PLANSIZE(type) ((uint8_t)((type) & PLAN_SIZE_MASK))
 #define PLANALGO(type) ((uint8_t)((type) & PLAN_ALGO_MASK))
-#define PLANCOLOR(type) HINIBBLE(type)
+#define PLANCOLOR(type) uqm::highNibble(type)
 
 #define THIN_ATMOSPHERE 10
 #define NORMAL_ATMOSPHERE 75
@@ -295,7 +295,8 @@ struct PLANET_INFO
 	// This can be later made to support also partially scavenged biodata.
 	uint8_t PartiallyScavengedList[NUM_SCAN_TYPES][32];
 
-	STRING DiscoveryString;
+	uqm::StringTablePtr DiscoveryStrings {};
+	size_t DiscoveryIndex {};
 	FONT LanderFont;
 	FRAME LanderFontEff;
 };
@@ -325,7 +326,7 @@ extern uint16_t CalcGravity(const PLANET_INFO*);
 #define HIGH_TECTONICS 140
 #define SUPER_TECTONICS 200
 
-extern const PlanetFrame* PlanData;
+const extern PlanetFrame* PlanData;
 
 #if 0 //defined(__cplusplus)
 }

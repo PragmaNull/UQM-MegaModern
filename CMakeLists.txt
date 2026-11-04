@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
 project(UrQuanMastersMegaModern CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON) # Optional, but recommended for standard compliance
 
@@ -43,7 +43,7 @@ set(APP_TARGET UrQuanMasters)
 
 set(Doc_files
 "README.md"
-"TODO.txt"
+"TODO.md"
 )
 source_group("Doc" FILES ${Doc_files})
 
@@ -69,9 +69,11 @@ add_executable(${APP_TARGET} ${ALL_FILES})
 ################################################################################
 
 # REQUIRED
+find_package(asio REQUIRED)
 find_package(CLI11 REQUIRED)
 find_package(fmt REQUIRED)
 find_package(gsl-lite REQUIRED)
+find_package(imgui REQUIRED)
 find_package(lua REQUIRED)
 find_package(libmikmod REQUIRED)
 find_package(magic_enum REQUIRED)
@@ -80,12 +82,20 @@ find_package(Ogg REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(PNG REQUIRED)
 find_package(scn REQUIRED)
-find_package(SDL2 REQUIRED)
+find_package(SDL3 REQUIRED CONFIG)
 find_package(spdlog REQUIRED)
 find_package(utf8proc REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(yyjson REQUIRED)
 find_package(ZLIB REQUIRED)
+
+# The imgui package has its backends only as sources, so build them here.
+add_library(imgui_backends STATIC
+    "${IMGUI_BACKENDS_DIR}/imgui_impl_sdl3.cpp"
+    "${IMGUI_BACKENDS_DIR}/imgui_impl_sdlrenderer3.cpp"
+)
+target_include_directories(imgui_backends PUBLIC "${IMGUI_BACKENDS_DIR}")
+target_link_libraries(imgui_backends PUBLIC imgui::imgui SDL3::SDL3)
 
 #OPTIONAL
 find_package(GTest QUIET)
@@ -104,13 +114,16 @@ endif()
 target_compile_definitions(uqm_project_features
     INTERFACE 
         WITH_MAGIC_ENUM
-        THREADLIB_SDL
         GFXMODULE_SDL
         HAVE_OPENAL
         HAVE_JOYSTICK
         NETPLAY
-        USE_PLATFORM_ACCEL
         __STDC_WANT_LIB_EXT1__=1
+)
+
+# Check lock discipline (see src/core/thread/ThreadSafety.h). A goto that jumps past an initialization is an error.
+target_compile_options(uqm_project_features
+    INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang>>:-Wthread-safety -Werror=microsoft-goto>
 )
 
 target_link_libraries(${APP_TARGET} PRIVATE uqm_project_features)
@@ -163,6 +176,12 @@ if (ENABLE_ASAN)
                 /Oy-
                 -O1
             )
+            # The prebuilt libraries do not have the MSVC STL container annotations of ASan.
+            target_compile_definitions(${APP_TARGET} PRIVATE _DISABLE_STL_ANNOTATION)
+            # Debug info gives ASan reports with function names. Identical constants folded together
+            # look like buffer overflows to ASan.
+            target_compile_options(${APP_TARGET} PRIVATE /Zi)
+            target_link_options(${APP_TARGET} PRIVATE /DEBUG /OPT:NOICF)
             #lld-link does not understand -sanitize=address So we must manually link the library
             # Find local Asan runtime
             explicitly_link_clang_asan_on_windows(${APP_TARGET})
@@ -198,7 +217,7 @@ endif()
 ################################################################################
 # Compile and link options
 ################################################################################
-target_compile_features(${APP_TARGET} PRIVATE cxx_std_20)
+target_compile_features(${APP_TARGET} PRIVATE cxx_std_23)
 
 # if(MSVC)
 #     target_compile_options(${APP_TARGET} PRIVATE
@@ -248,9 +267,11 @@ target_compile_features(${APP_TARGET} PRIVATE cxx_std_20)
 ################################################################################
 target_link_libraries(${APP_TARGET}
     PRIVATE
+        asio::asio
         CLI11::CLI11
         fmt::fmt
         gsl-lite::gsl-lite
+        imgui_backends
         lua::lua
         libmikmod::libmikmod
         magic_enum::magic_enum
@@ -259,7 +280,7 @@ target_link_libraries(${APP_TARGET}
         OpenAL::OpenAL
         PNG::PNG
         scn::scn
-        SDL2::SDL2main 
+        SDL3::SDL3
         spdlog::spdlog
         utf8proc::utf8proc
         vorbis::vorbis 
@@ -269,7 +290,40 @@ target_link_libraries(${APP_TARGET}
         $<$<CONFIG:Release>:user32>
 )
 
-#print_library_properties(SDL2::SDL2main)
+#print_library_properties(SDL3::SDL3)
+
+# Each save file in test/data/saves must load and save again with no change.
+if (GTest_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/content")
+    set(GAME_TEST_ARGS -n "${CMAKE_CURRENT_SOURCE_DIR}/content" --musicvol 0 --sfxvol 0 --speechvol 0)
+    file(GLOB SAVE_FIXTURES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/test/data/saves/*.json")
+    foreach(SAVE_FIXTURE ${SAVE_FIXTURES})
+        get_filename_component(SAVE_NAME "${SAVE_FIXTURE}" NAME_WE)
+        # Each test has its own config dir, because the tests run at the same time.
+        set(SAVE_CHECK_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/save-check/${SAVE_NAME}")
+        set(PLAY_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/play-save/${SAVE_NAME}")
+        set(PLAYED_SAVE "${PLAY_CONFIG_DIR}/save/uqmsave.00.json")
+        file(MAKE_DIRECTORY "${SAVE_CHECK_CONFIG_DIR}" "${PLAY_CONFIG_DIR}")
+
+        add_test(NAME "SaveRoundTrip.${SAVE_NAME}"
+            COMMAND ${APP_TARGET} ${GAME_TEST_ARGS} -C "${SAVE_CHECK_CONFIG_DIR}" --check-save "${SAVE_FIXTURE}")
+        # The game plays the save for a few seconds and saves it to slot 0. That save must load and save again with no change.
+        add_test(NAME "PlaySaveClean.${SAVE_NAME}" COMMAND ${CMAKE_COMMAND} -E rm -f "${PLAYED_SAVE}")
+        add_test(NAME "PlaySave.${SAVE_NAME}"
+            COMMAND ${APP_TARGET} ${GAME_TEST_ARGS} -C "${PLAY_CONFIG_DIR}" --skipintro --play-save "${SAVE_FIXTURE}"
+                --input-script "${CMAKE_CURRENT_SOURCE_DIR}/test/data/play-save.txt")
+        add_test(NAME "PlayedSaveRoundTrip.${SAVE_NAME}"
+            COMMAND ${APP_TARGET} ${GAME_TEST_ARGS} -C "${PLAY_CONFIG_DIR}" --check-save "${PLAYED_SAVE}")
+
+        set_tests_properties("SaveRoundTrip.${SAVE_NAME}" "PlaySave.${SAVE_NAME}" "PlayedSaveRoundTrip.${SAVE_NAME}" PROPERTIES
+            ENVIRONMENT "SDL_VIDEODRIVER=dummy;SDL_AUDIODRIVER=dummy"
+            FAIL_REGULAR_EXPRESSION "\\[error\\]|\\[critical\\]"
+            TIMEOUT 120)
+        set_tests_properties("PlaySave.${SAVE_NAME}" PROPERTIES
+            DEPENDS "PlaySaveClean.${SAVE_NAME}"
+            FIXTURES_SETUP "PlayedSave.${SAVE_NAME}")
+        set_tests_properties("PlayedSaveRoundTrip.${SAVE_NAME}" PROPERTIES FIXTURES_REQUIRED "PlayedSave.${SAVE_NAME}")
+    endforeach()
+endif()
 
 # Copy runtime DLLs as needed.
 add_custom_command(TARGET ${APP_TARGET} POST_BUILD

@@ -21,9 +21,9 @@ uqstl::string Directory::resolve(uqstl::string_view path) const
 	return path::join(m_path, path);
 }
 
-uqstl::optional<File> Directory::open(uqstl::string_view path, OpenMode mode, uqstl::error_code& error) const
+Result<File> Directory::open(uqstl::string_view path, OpenMode mode) const
 {
-	return m_table->open(resolve(path), mode, error);
+	return m_table->open(resolve(path), mode);
 }
 
 uqstl::optional<FileInfo> Directory::stat(uqstl::string_view path) const
@@ -36,9 +36,9 @@ bool Directory::exists(uqstl::string_view path) const
 	return stat(path).has_value();
 }
 
-uqstl::vector<uqstl::string> Directory::list(uqstl::string_view path, const Matcher& matcher, uqstl::error_code& error) const
+Result<uqstl::vector<uqstl::string>> Directory::list(uqstl::string_view path, const Matcher& matcher) const
 {
-	return m_table->list(resolve(path), matcher, error);
+	return m_table->list(resolve(path), matcher);
 }
 
 uqstl::optional<Directory> Directory::subdir(uqstl::string_view path) const
@@ -118,30 +118,29 @@ Directory FileSystem::root()
 	return m_table->root();
 }
 
-uqstl::optional<Mount> FileSystem::mountDirectory(uqstl::string_view mountPoint, const uqstl::filesystem::path& hostPath, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error)
+Result<Mount> FileSystem::mountDirectory(uqstl::string_view mountPoint, const uqstl::filesystem::path& hostPath, Access access, MountPosition position, const Mount* relative)
 {
 	uqstl::error_code statusError {};
 	if (!uqstl::filesystem::is_directory(hostPath, statusError))
 	{
-		error = statusError ? statusError : uqstl::make_error_code(uqstl::errc::not_a_directory);
-		return uqstl::nullopt;
+		return statusError ? uqstl::unexpected {statusError} : failure(uqstl::errc::not_a_directory);
 	}
-	return m_table->mountSource(mountPoint, uqstl::make_shared<DirectorySource>(hostPath), access, position, relative, error);
+	return m_table->mountSource(mountPoint, uqstl::make_shared<DirectorySource>(hostPath), access, position, relative);
 }
 
-uqstl::optional<Mount> FileSystem::mountArchive(uqstl::string_view mountPoint, const Directory& directory, uqstl::string_view archivePath, MountPosition position, const Mount* relative, uqstl::error_code& error)
+Result<Mount> FileSystem::mountArchive(uqstl::string_view mountPoint, const Directory& directory, uqstl::string_view archivePath, MountPosition position, const Mount* relative)
 {
-	return m_table->mountArchive(mountPoint, directory, archivePath, position, relative, error);
+	return m_table->mountArchive(mountPoint, directory, archivePath, position, relative);
 }
 
-uqstl::optional<Directory> FileSystem::openArchive(const Directory& directory, uqstl::string_view archivePath, uqstl::error_code& error)
+Result<Directory> FileSystem::openArchive(const Directory& directory, uqstl::string_view archivePath)
 {
-	return m_table->openArchive(directory, archivePath, error);
+	return m_table->openArchive(directory, archivePath);
 }
 
-uqstl::optional<Mount> FileSystem::mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative, uqstl::error_code& error)
+Result<Mount> FileSystem::mountTransplant(uqstl::string_view mountPoint, const Directory& source, Access access, MountPosition position, const Mount* relative)
 {
-	return m_table->mountTransplant(mountPoint, source, access, position, relative, error);
+	return m_table->mountTransplant(mountPoint, source, access, position, relative);
 }
 
 } // namespace uqm::io::standard

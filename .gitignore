@@ -329,3 +329,6 @@ build/msvs2008/UrQuanMasters\.vcproj\.DESKTOP-TCJIFU9\.seros\.user
 
 # Windows folder settings
 desktop.ini
+
+# Downloaded shader compilers
+.cache/

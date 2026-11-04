@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "core/stl/atomic.h"
 
 #include "libs/gfxlib.h"
 #include "libs/graphics/gfx_defs.h"
@@ -41,6 +42,8 @@ void TFB_UploadTransitionScreen(GFXRECT* pRect);
 int TFB_SupportsHardwareScaling(void);
 // This function should not be called directly
 void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw);
+// True if the ImGui overlay shows, and the screen must update each frame.
+bool TFB_ImGuiVisible(void);
 
 #define GSCALE_IDENTITY 256
 
@@ -63,9 +66,11 @@ void TFB_GetScreenSize(int16_t* width, int16_t* height);
 
 // The flag variable itself
 extern uqm::GfxFlags g_gfxFlags;
+// Set to stop all drawing, for debugging.
+extern int TFB_DEBUG_HALT;
 
 // TODO: there should be accessor functions for these
-extern volatile int TransitionAmount;
+extern uqstl::atomic<int> TransitionAmount;
 
 extern float FrameRate;
 extern int FrameRateTickBase;

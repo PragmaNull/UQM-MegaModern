@@ -38,27 +38,16 @@
 #include "resinst.h"
 #include "nameref.h"
 #include <math.h>
+
 #include "gamestr.h"
 #include "libs/graphics/bbox.h"
-#include "libs/math/random.h"
+#include "libs/math/Random.h"
 #include "libs/input/input_common.h"
 #include "configuration/Configuration.h"
 #include "libs/file/textfile.h"
 #include "uqm/menuwidgets.h"
-
-#include "SDL_version.h"
-
-#if defined(HAVE_OPENGL)
-#define HAVE_OPENGL_RENDERER true
-#else
-#define HAVE_OPENGL_RENDERER false
-#endif
-
-#if defined(DIRECTIONAL_JOY)
-#define HAVE_DIRECTIONAL_JOYSTICK true
-#else
-#define HAVE_DIRECTIONAL_JOYSTICK false
-#endif
+#include "uqm/random/GameSeed.h"
+#include "uqm/setupsettings.h"
 
 typedef struct setup_menu_state
 {
@@ -66,16 +55,15 @@ typedef struct setup_menu_state
 
 	bool initialized;
 	int anim_frame_count;
-	uint32_t NextTime;
+	TimeCount NextTime;
 } SETUP_MENU_STATE;
 
-static SOUND testSounds;
+static SOUND_REF testSounds;
 
 static bool DoSetupMenu(SETUP_MENU_STATE* pInputState);
 static WIDGET *current, *next;
 static uqstl::unique_ptr<uqm::MenuWidgets> menuWidgets {};
 
-static constexpr const char* c_menuDefinitionResource {"ui.setupmenu"};
 static uqstl::optional<uqm::MenuDefinition> menuDefinition {};
 static bool mainMenuMusicChanged {};
 
@@ -93,6 +81,36 @@ static constexpr const char* c_controlNames[NUM_KEYS] {"up", "down", "left", "ri
 
 // The control template that the Edit Controls menu shows.
 static int editTemplate {};
+
+// The setup menu edits the settings. The new game menu edits the seed of the new game.
+enum class MenuMode
+{
+	Setup,
+	NewGame,
+};
+static MenuMode menuMode {MenuMode::Setup};
+
+// The seed values that the new game menu edits. The menu does not save them.
+struct NewGameSettings final : uqm::SettingsRegistry
+{
+	uqm::Setting<uqm::SeedType> seedType {
+		*this, {.key = "seed.type", .description = "Seed type of the new game."},
+		  uqm::SeedType::Original
+	 };
+	uqm::Setting<int> customSeed {
+		*this, {.key = "seed.value", .description = "Seed of the new game."},
+		  PrimeA, uqm::settings::isSaneSeed
+	   };
+	uqm::Setting<bool> shipSeed {
+		*this, {.key = "seed.ships", .description = "Seeds the ships of the alien races."},
+			false
+	 };
+};
+static uqstl::unique_ptr<NewGameSettings> newGameSettings {};
+static bool newGameStarted {};
+static WIDGET_BUTTON randomSeedButton {};
+static const uqstl::string c_noLabel {};
+static const uqstl::vector<uqstl::string> c_noTooltip {};
 
 static FRAME setup_frame = nullptr;
 
@@ -147,14 +165,77 @@ quit_sub_menu(WIDGET* self, int event)
 	return false;
 }
 
+static int
+start_new_game(WIDGET* self, int event)
+{
+	if (event == WIDGET_EVENT_SELECT)
+	{
+		newGameStarted = true;
+		next = nullptr;
+		return true;
+	}
+	(void)self;
+	return false;
+}
+
+static int
+cancel_new_game(WIDGET* self, int event)
+{
+	if (event == WIDGET_EVENT_SELECT)
+	{
+		newGameStarted = false;
+		next = nullptr;
+		return true;
+	}
+	(void)self;
+	return false;
+}
+
+static int
+random_seed(WIDGET* self, int event)
+{
+	if (event != WIDGET_EVENT_SELECT)
+	{
+		(void)self;
+		return false;
+	}
+	if (*newGameSettings->seedType == uqm::SeedType::Original)
+	{
+		newGameSettings->seedType = uqm::SeedType::Planet;
+	}
+	newGameSettings->customSeed = uqm::randomSeedValue();
+	menuWidgets->refresh();
+	return true;
+}
+
+// Keeps the values of the new game menu valid together. The type Original has no seed value and no ship seeding.
+static void
+new_game_setting_changed(const uqm::SettingBase& setting)
+{
+	NewGameSettings& values {*newGameSettings};
+	if (setting.key() == "seed.type")
+	{
+		if (*values.seedType == uqm::SeedType::Original)
+		{
+			values.customSeed = PrimeA;
+			values.shipSeed = false;
+		}
+	}
+	else if (*values.seedType == uqm::SeedType::Original && (*values.customSeed != PrimeA || *values.shipSeed))
+	{
+		values.seedType = uqm::SeedType::Planet;
+	}
+	menuWidgets->refresh();
+}
+
 static void
 populate_editkeys(int templat)
 {
-	int i, j;
+	int j {};
 
 	uqm::strncpy_safe(layoutName.value, {uqm::input_templates[templat].name, static_cast<uint32_t>(layoutName.maxlen)});
 
-	for (i = 0; i < NUM_KEYS; i++)
+	for (int i {0}; i < NUM_KEYS; i++)
 	{
 		for (j = 0; j < 2; j++)
 		{
@@ -171,91 +252,7 @@ rename_template(WIDGET_TEXTENTRY* self)
 	uqm::strncpy_safe(uqm::input_templates[editTemplate].name, self->value);
 }
 
-// Returns the cheat value of a device or upgrade state, or nullptr if there is no such state.
-static uqm::CheatAction*
-find_cheat_state(uqstl::string_view key)
-{
-	const auto indexed {[key](uqstl::string_view prefix, size_t count) -> uqstl::optional<size_t> {
-		size_t index {};
-		if (!key.starts_with(prefix) || uqm::parseStr(key.substr(prefix.size()), index) != uqstl::errc {} || index >= count)
-		{
-			return uqstl::nullopt;
-		}
-		return index;
-	}};
-	if (const auto device {indexed("device.", uqstl::size(optDeviceArray))})
-	{
-		return &optDeviceArray[*device];
-	}
-	if (const auto upgrade {indexed("upgrade.", uqstl::size(optUpgradeArray))})
-	{
-		return &optUpgradeArray[*upgrade];
-	}
-	return nullptr;
-}
-
-// Sets the window size and the display flags from the settings.
-static void
-apply_graphics_from_settings(void)
-{
-	const uqm::OptionsStruct& options {uqm::UQMOptions::read()};
-
-	const uqm::GfxFlags newFlags {(g_gfxFlags & ~uqm::c_displayFlagsMask) | uqm::displayFlags(options)};
-
-	uqm::GfxDriver newDriver {GraphicsDriver};
-#if SDL_MAJOR_VERSION == 1 && defined(HAVE_OPENGL)
-	newDriver = *options.alwaysOpenGL ? uqm::GfxDriver::SDL_OpenGL : uqm::GfxDriver::SDL_Pure;
-#endif
-
-	const int blowup {*options.loresBlowupScale};
-	if (blowup == 0)
-	{
-		SavedWidth = RES_SCALE(320);
-		SavedHeight = RES_SCALE(DOS_BOOL(240, 200));
-	}
-	else if (blowup < 6)
-	{
-		SavedWidth = 320 * (1 + blowup);
-		SavedHeight = DOS_BOOL(240, 200) * (1 + blowup);
-	}
-	else
-	{
-		SavedWidth = inBounds(static_cast<int>(options.resolution.value.x), 320, 1920);
-		SavedHeight = inBounds(static_cast<int>(options.resolution.value.y), 200, 1440);
-	}
-
-	int newWidth {SavedWidth};
-	int newHeight {SavedHeight};
-	if (*options.keepAspectRatio)
-	{
-		const float threshold {0.75f};
-		const float ratio {(float)newHeight / (float)newWidth};
-		if (ratio > threshold) // screen is narrower than 4:3
-		{
-			newWidth = newHeight / threshold;
-		}
-		else if (ratio < threshold) // screen is wider than 4:3
-		{
-			newHeight = newWidth * threshold;
-		}
-	}
-
-	if (newWidth != WindowWidth || newHeight != WindowHeight || newFlags != g_gfxFlags || newDriver != GraphicsDriver)
-	{
-		// Exclusive fullscreen needs a second reinit after a size change.
-		const bool exclusive {testFlag(newFlags, uqm::GfxFlags::ExclusiveFullscreen)};
-		const bool resized {newWidth != WindowWidth || newHeight != WindowHeight};
-		if (exclusive && resized)
-		{
-			TFB_DrawScreen_ReinitVideo(newDriver, newFlags & ~uqm::GfxFlags::ExclusiveFullscreen, newWidth, newHeight);
-			FlushInput();
-		}
-		TFB_DrawScreen_ReinitVideo(newDriver, newFlags, newWidth, newHeight);
-	}
-	FlushInput();
-}
-
-#define MENU_FRAME_RATE (GameTicksPerSecond / 20)
+#define MENU_FRAME_RATE (c_gameSecond / 20)
 
 static bool
 DoSetupMenu(SETUP_MENU_STATE* pInputState)
@@ -267,8 +264,11 @@ DoSetupMenu(SETUP_MENU_STATE* pInputState)
 	{
 		SetDefaultMenuRepeatDelay();
 		pInputState->NextTime = GetTimeCounter();
-		uqm::setDisplayFlags(uqm::UQMOptions::edit(), g_gfxFlags);
-		populate_gamma();
+		if (menuMode == MenuMode::Setup)
+		{
+			uqm::setDisplayFlags(uqm::UQMOptions::edit(), g_gfxFlags);
+			populate_gamma();
+		}
 		menuWidgets->refresh();
 		Widget_SetFont(PlyrFont);
 		Widget_SetWindowColors(SHADOWBOX_BACKGROUND_COLOR,
@@ -327,7 +327,7 @@ DoSetupMenu(SETUP_MENU_STATE* pInputState)
 
 	SleepThreadUntil(pInputState->NextTime + MENU_FRAME_RATE);
 	pInputState->NextTime = GetTimeCounter();
-	return !((GLOBAL(CurrentActivity) & CHECK_ABORT) || (next == nullptr));
+	return !((uqm::currentActivity() & CHECK_ABORT) || (next == nullptr));
 }
 
 static void
@@ -378,12 +378,12 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 	char revert_buf[256];
 
 	// position cursor at the end of text
-	widget->cursor_pos = utf8StringCount(widget->value);
+	widget->cursor_pos = uqm::utf8StringCount(widget->value);
 	widget->state = WTE_EDITING;
 	redraw_menu();
 
 	// make a backup copy for revert on cancel
-	utf8StringCopy(revert_buf, sizeof(revert_buf), widget->value);
+	uqm::utf8StringCopy(revert_buf, sizeof(revert_buf), widget->value);
 
 	// text entry setup
 	tes.Initialized = false;
@@ -398,7 +398,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_SELECT);
 	if (!DoTextEntry(&tes))
 	{ // editing failed (canceled) -- revert the changes
-		utf8StringCopy(widget->value, widget->maxlen, revert_buf);
+		uqm::utf8StringCopy(widget->value, widget->maxlen, revert_buf);
 	}
 	else
 	{
@@ -449,8 +449,8 @@ sliderToGamma(int value)
 static void
 updateGammaBounds(bool useUpper)
 {
-	float g, x;
-	int slider;
+	float g {NAN};
+	float x {NAN};
 
 	// The slider uses an exponential curve.
 	// Calculate where on the curve the min and max gamma values are
@@ -460,7 +460,7 @@ updateGammaBounds(bool useUpper)
 	// We have 100 discrete steps through the range, so the slider may
 	// skip over a 1.0 gamma. We need to ensure that there always is
 	// a 1.0 on the slider by tweaking the range (expanding/contracting).
-	slider = gammaToSlider(1.0f);
+	const int slider {gammaToSlider(1.0f)};
 	g = sliderToGamma(slider);
 	if (g == 1.0f)
 	{
@@ -486,9 +486,9 @@ static int
 gamma_HandleEventSlider(WIDGET* _self, int event)
 {
 	WIDGET_SLIDER* self = (WIDGET_SLIDER*)_self;
-	int prevValue = self->value;
-	float gamma;
-	bool set;
+	const int prevValue = self->value;
+	float gamma {NAN};
+	bool set {};
 
 	switch (event)
 	{
@@ -569,9 +569,9 @@ gamma_DrawValue(WIDGET_SLIDER* self, int x, int y)
 static void
 rebind_control(WIDGET_CONTROLENTRY* widget)
 {
-	int templat = editTemplate;
-	int control = widget->controlindex;
-	int index = widget->highlighted;
+	const int templat = editTemplate;
+	const int control = widget->controlindex;
+	const int index = widget->highlighted;
 
 	FlushInput();
 	DrawLabelAsWindow(&pressToEdit, nullptr);
@@ -583,9 +583,9 @@ rebind_control(WIDGET_CONTROLENTRY* widget)
 static void
 clear_control(WIDGET_CONTROLENTRY* widget)
 {
-	int templat = editTemplate;
-	int control = widget->controlindex;
-	int index = widget->highlighted;
+	const int templat = editTemplate;
+	const int control = widget->controlindex;
+	const int index = widget->highlighted;
 
 	RemoveInputState(templat, control, index);
 	populate_editkeys(templat);
@@ -594,7 +594,7 @@ clear_control(WIDGET_CONTROLENTRY* widget)
 static int
 count_widgets(WIDGET** widgets)
 {
-	int count;
+	int count {};
 
 	for (count = 0; *widgets != nullptr; ++widgets, ++count)
 		;
@@ -623,32 +623,10 @@ open_menu(uqstl::string_view id)
 static void
 read_menu_definition(void)
 {
-	const char* path {res_GetString(c_menuDefinitionResource)};
-	if (path == nullptr)
-	{
-		uqm::log::critical("PANIC: The resource '{}' is not defined.", c_menuDefinitionResource);
-		exit(EXIT_FAILURE);
-	}
-	const auto json {uqm::readTextFile(uqm::contentDir(), path)};
-	if (!json)
-	{
-		uqm::log::critical("PANIC: Could not read the setup menu definition '{}'.", path);
-		exit(EXIT_FAILURE);
-	}
-
-	menuDefinition = uqm::menuDefinitionFromJson(*json);
+	menuDefinition = menuMode == MenuMode::NewGame ? uqm::readMenuDefinition("ui.newgamemenu", *newGameSettings) : uqm::readSetupMenuDefinition();
 	if (!menuDefinition)
 	{
-		uqm::log::critical("PANIC: The setup menu definition '{}' is not valid.", path);
-		exit(EXIT_FAILURE);
-	}
-	for (const uqstl::string& error : uqm::validateMenuDefinition(*menuDefinition, uqm::UQMOptions::edit()))
-	{
-		uqm::log::error("{}", error);
-	}
-	if (menuDefinition->find("main") == nullptr)
-	{
-		uqm::log::critical("PANIC: The setup menu definition has no 'main' menu.");
+		uqm::log::critical("PANIC: Could not read the setup menu definition.");
 		exit(EXIT_FAILURE);
 	}
 }
@@ -657,8 +635,10 @@ read_menu_definition(void)
 static void
 init_shared_widgets(void)
 {
-	uqm::initButtonWidget(backButton, menuDefinition->back.label, menuDefinition->back.tooltip, quit_sub_menu);
-	uqm::initButtonWidget(exitButton, menuDefinition->exit.label, menuDefinition->exit.tooltip, quit_main_menu);
+	const bool newGame {menuMode == MenuMode::NewGame};
+	uqm::initButtonWidget(backButton, menuDefinition->back.label, menuDefinition->back.tooltip, newGame ? cancel_new_game : quit_sub_menu);
+	uqm::initButtonWidget(exitButton, menuDefinition->exit.label, menuDefinition->exit.tooltip, newGame ? start_new_game : quit_main_menu);
+	uqm::initButtonWidget(randomSeedButton, c_noLabel, c_noTooltip, random_seed);
 
 	static uqstl::vector<const char*> noLines {};
 	uqm::initLabelWidget(spacer, noLines);
@@ -727,92 +707,28 @@ init_widgets(void)
 	init_shared_widgets();
 
 	uqm::MenuWidgets::Hooks hooks {};
-	hooks.isAddonAvailable = [](uqstl::string_view addon) {
-		// The window type addons depend on the selected graphics mode.
-		const bool hd {*uqm::UQMOptions::read().resolutionFactor != 0};
-		if (addon == "dos-mode")
-		{
-			return uqm::isAddonAvailable(DOS_MODE(hd));
-		}
-		if (addon == "3do-mode")
-		{
-			return uqm::isAddonAvailable(THREEDO_MODE(hd));
-		}
-		if (addon == "opengl-renderer")
-		{
-			return SDL_MAJOR_VERSION == 1 && HAVE_OPENGL_RENDERER;
-		}
-		if (addon == "directional-joystick")
-		{
-			return HAVE_DIRECTIONAL_JOYSTICK;
-		}
-		return uqm::isAddonAvailable(uqstl::string {addon}.c_str());
-	};
+	hooks.isAddonAvailable = uqm::isMenuAddonAvailable;
 	hooks.addonUnavailable = [] {
 		DoPopupWindow(GAME_STRING(MAINMENU_STRING_BASE + 36));
 		Widget_SetFont(PlyrFont);
 	};
 	hooks.settingChanged = [](const uqm::SettingBase& setting) {
-		optRequiresReload = optRequiresReload || setting.requiresReload();
-		optRequiresRestart = optRequiresRestart || setting.requiresRestart();
-		const uqm::OptionsStruct& options {uqm::UQMOptions::read()};
+		if (menuMode == MenuMode::NewGame)
+		{
+			new_game_setting_changed(setting);
+			return;
+		}
+		if (uqm::applySettingChange(setting))
+		{
+			menuWidgets->refresh();
+		}
 		if (setting.key() == "audio.mainMenuMusic")
 		{
 			mainMenuMusicChanged = true;
 		}
-		else if (setting.key() == "audio.musicVolume")
-		{
-			musicVolumeScale = *options.musicVolumeScale;
-			SetMusicVolume(musicVolume);
-		}
-		else if (setting.key() == "audio.sfxVolume")
-		{
-			sfxVolumeScale = *options.sfxVolumeScale;
-		}
 		else if (setting.key() == "audio.speechVolume")
 		{
-			speechVolumeScale = *options.speechVolumeScale;
-			SetSpeechVolume(speechVolumeScale);
-			TestSpeechSound(SetAbsSoundIndex(testSounds, speechVolumeScale >= 1.0f));
-		}
-		else if (setting.key() == "seed.type" || setting.key() == "seed.value")
-		{
-			const bool primeSeed {*options.seedType == uqm::SeedType::None || *options.seedType == uqm::SeedType::Prime};
-			if (primeSeed && *options.customSeed != PrimeA)
-			{
-				uqm::UQMOptions::edit().customSeed = PrimeA;
-				menuWidgets->refresh();
-			}
-			g_seedType = *options.seedType;
-		}
-		else if (setting.key() == "graphics.loresBlowupScale" || setting.key() == "graphics.resolution")
-		{
-			auto& edit {uqm::UQMOptions::edit()};
-			if (setting.key() == "graphics.resolution")
-			{
-				edit.loresBlowupScale = 6;
-			}
-			apply_graphics_from_settings();
-			edit.resolution = uqm::Vec2u {static_cast<uint32_t>(SavedWidth), static_cast<uint32_t>(SavedHeight)};
-			menuWidgets->refresh();
-		}
-		else if (setting.key() == "graphics.alwaysOpenGL")
-		{
-			uqm::UQMOptions::edit().opengl = *options.alwaysOpenGL;
-			apply_graphics_from_settings();
-		}
-		else if (setting.key() == "graphics.windowMode" || setting.key() == "graphics.scaler" || setting.key() == "graphics.scanlines"
-				 || setting.key() == "graphics.showFps" || setting.key() == "graphics.keepAspectRatio")
-		{
-			apply_graphics_from_settings();
-		}
-		else if (setting.key() == "controls.player1Template")
-		{
-			PlayerControlTemplates[0] = static_cast<ControlTemplate>(*options.player1Control);
-		}
-		else if (setting.key() == "controls.player2Template")
-		{
-			PlayerControlTemplates[1] = static_cast<ControlTemplate>(*options.player2Control);
+			TestSpeechSound(GetSound(testSounds, speechVolumeScale >= 1.0f));
 		}
 	};
 	hooks.optionLabel = [](uqstl::string_view list, size_t index) -> const char* {
@@ -827,7 +743,7 @@ init_widgets(void)
 		{
 			return editTemplate;
 		}
-		if (const uqm::CheatAction* cheat {find_cheat_state(key)})
+		if (const uqm::CheatAction* cheat {uqm::findCheatState(key)})
 		{
 			return static_cast<int>(*cheat);
 		}
@@ -839,7 +755,7 @@ init_widgets(void)
 			editTemplate = value;
 			populate_editkeys(value);
 		}
-		else if (uqm::CheatAction * cheat {find_cheat_state(key)})
+		else if (uqm::CheatAction * cheat {uqm::findCheatState(key)})
 		{
 			*cheat = static_cast<uqm::CheatAction>(value);
 		}
@@ -851,20 +767,20 @@ init_widgets(void)
 	shared.back = (WIDGET*)(&backButton);
 	shared.exit = (WIDGET*)(&exitButton);
 	shared.legacy = {
-		{"gamma",	  (WIDGET*)(&gammaSlider)},
-		{"layoutName", (WIDGET*)(&layoutName) },
+		{"gamma",	  (WIDGET*)(&gammaSlider)	 },
+		{"layoutName", (WIDGET*)(&layoutName)		 },
+		{"randomSeed", (WIDGET*)(&randomSeedButton)},
 	};
 	for (int i {0}; i < NUM_KEYS; i++)
 	{
 		shared.legacy[uqstl::string {"control."} + c_controlNames[i]] = (WIDGET*)(&controlentries[i]);
 	}
-	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(uqm::UQMOptions::edit(), shared, uqstl::move(hooks));
+	uqm::SettingsRegistry& settings {menuMode == MenuMode::NewGame ? static_cast<uqm::SettingsRegistry&>(*newGameSettings) : uqm::UQMOptions::edit()};
+	menuWidgets = uqstl::make_unique<uqm::MenuWidgets>(settings, shared, uqstl::move(hooks));
 
 	menus.assign(menuDefinition->menus.size(), WIDGET_MENU_SCREEN {});
-	for (size_t index {0}; index < menus.size(); ++index)
+	for (auto&& [menu, screen] : uqstl::views::zip(menuDefinition->menus, menus))
 	{
-		const uqm::MenuDef& menu {menuDefinition->menus[index]};
-		WIDGET_MENU_SCREEN& screen {menus[index]};
 		screen.tag = WIDGET_TYPE_MENU_SCREEN;
 		screen.handleEvent = Widget_HandleEventMenuScreen;
 		screen.receiveFocus = Widget_ReceiveFocusMenuScreen;
@@ -878,7 +794,7 @@ init_widgets(void)
 		screen.num_children = count_widgets(screen.child);
 	}
 
-	testSounds = CaptureSound(LoadSound(TEST_SOUNDS));
+	testSounds = uqm::loadSoundBank(TEST_SOUNDS).release();
 }
 
 static void
@@ -897,7 +813,7 @@ clean_up_widgets(void)
 
 	if (testSounds)
 	{
-		DestroySound(ReleaseSound(testSounds));
+		delete testSounds;
 		testSounds = 0;
 	}
 }
@@ -970,12 +886,12 @@ apply_settings(void)
 	const int factor {uqm::isAddonAvailable(HD_MODE) ? *uqmOptions.resolutionFactor : 0};
 	if (factor != (int)resolutionFactor)
 	{
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 		resolutionFactor = factor;
 	}
 
 	uqm::WindowStyle windowStyle {*uqmOptions.windowEmulationMode};
-	if (windowStyle != uqm::WindowStyle::UQM && !uqm::isAddonAvailable(WINDOW_MODE(resolutionFactor, static_cast<int>(windowStyle))))
+	if (windowStyle != uqm::WindowStyle::UQM && !uqm::isAddonAvailable(WINDOW_MODE(resolutionFactor, uqstl::to_underlying(windowStyle))))
 	{
 		windowStyle = uqm::WindowStyle::UQM;
 		uqmOptions.windowEmulationMode = windowStyle;
@@ -1019,7 +935,7 @@ apply_settings(void)
 		int w = WindowWidth;
 		int h = WindowHeight;
 
-		SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 
 		FlushGraphics();
 		UninitVideoPlayer();
@@ -1039,8 +955,8 @@ apply_settings(void)
 
 		if (uqmOptions.keepAspectRatio)
 		{
-			float threshold = 0.75f;
-			float ratio = (float)h / (float)w;
+			const float threshold = 0.75f;
+			const float ratio = (float)h / (float)w;
 
 			if (ratio > threshold) // screen is narrower than 4:3
 			{
@@ -1082,10 +998,44 @@ void SetupMenu(void)
 	SetInputScriptMenuDump(dump_setup_menu);
 	DoInput(&s, true);
 	SetInputScriptMenuDump(nullptr);
-	GLOBAL(CurrentActivity) &= ~CHECK_ABORT;
+	uqm::currentActivity() &= ~CHECK_ABORT;
 	apply_settings();
 	clean_up_widgets();
 
 	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN,
 				  MENU_SOUND_SELECT);
+}
+
+uqstl::optional<uqm::GameSeed> NewGameMenu(void)
+{
+	const uqm::GameSeed defaults {uqm::newGameSeed(uqm::UQMOptions::read())};
+	newGameSettings = uqstl::make_unique<NewGameSettings>();
+	newGameSettings->seedType = defaults.type;
+	newGameSettings->customSeed = defaults.value;
+	newGameSettings->shipSeed = defaults.ships;
+	menuMode = MenuMode::NewGame;
+	newGameStarted = false;
+
+	SETUP_MENU_STATE s;
+	s.InputFunc = DoSetupMenu;
+	s.initialized = false;
+	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	init_widgets();
+
+	SetInputScriptMenuDump(dump_setup_menu);
+	DoInput(&s, true);
+	SetInputScriptMenuDump(nullptr);
+	clean_up_widgets();
+
+	uqstl::optional<uqm::GameSeed> result {};
+	if (newGameStarted && !(uqm::currentActivity() & CHECK_ABORT))
+	{
+		result = uqm::normalized({.type = *newGameSettings->seedType, .value = *newGameSettings->customSeed, .ships = *newGameSettings->shipSeed});
+	}
+	newGameSettings.reset();
+	menuMode = MenuMode::Setup;
+
+	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN,
+				  MENU_SOUND_SELECT);
+	return result;
 }

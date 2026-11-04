@@ -30,6 +30,7 @@
 #include "netmelee.h"
 #include "core/log/log.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 ChecksumBuffer localChecksumBuffer;
 
@@ -135,16 +136,15 @@ void crc_processELEMENT(crc_State* state, const ELEMENT* val)
 
 void crc_processDispQueue(crc_State* state)
 {
-	HELEMENT element;
-	HELEMENT nextElement;
+	HELEMENT nextElement {};
 
 #ifdef DUMP_CRC_OPS
 	size_t i = 0;
 	crc_log("START crc_processDispQueue().");
 #endif
-	for (element = GetHeadElement(); element != 0; element = nextElement)
+	for (HELEMENT element {GetHeadElement()}; element != 0; element = nextElement)
 	{
-		ELEMENT* elementPtr;
+		ELEMENT* elementPtr {};
 
 #ifdef DUMP_CRC_OPS
 		crc_log("===== disp_q[{}]:", i);
@@ -166,16 +166,14 @@ void crc_processDispQueue(crc_State* state)
 
 void crc_processRNG(crc_State* state)
 {
-	uint32_t seed;
-
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processRNG().");
 #endif
 
-	seed = TFB_SeedRandom(0);
+	const uint32_t seed {uqm::random().reseed(0)};
 	// This modifies the seed too.
 	crc_processDWORD(state, seed);
-	TFB_SeedRandom(seed);
+	uqm::random().reseed(seed);
 	// Restore the old seed.
 
 #ifdef DUMP_CRC_OPS
@@ -202,20 +200,15 @@ void crc_processState(crc_State* state)
 
 void initChecksumBuffers(void)
 {
-	size_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		NetConnection* conn;
-		ChecksumBuffer* cb;
-
-		conn = netConnections[player];
+		NetConnection* conn {netConnections[player]};
 		if (conn == nullptr)
 		{
 			continue;
 		}
 
-		cb = NetConnection_getChecksumBuffer(conn);
+		ChecksumBuffer* cb {NetConnection_getChecksumBuffer(conn)};
 		ChecksumBuffer_init(cb, getBattleInputDelay(),
 							NETPLAY_CHECKSUM_INTERVAL);
 	}
@@ -226,20 +219,15 @@ void initChecksumBuffers(void)
 
 void uninitChecksumBuffers(void)
 {
-	size_t player;
-
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		NetConnection* conn;
-		ChecksumBuffer* cb;
-
-		conn = netConnections[player];
+		NetConnection* conn {netConnections[player]};
 		if (conn == nullptr)
 		{
 			continue;
 		}
 
-		cb = NetConnection_getChecksumBuffer(conn);
+		ChecksumBuffer* cb {NetConnection_getChecksumBuffer(conn)};
 
 		ChecksumBuffer_uninit(cb);
 	}
@@ -257,19 +245,16 @@ void addLocalChecksum(BattleFrameCounter frameNr, Checksum checksum)
 void addRemoteChecksum(NetConnection* conn, BattleFrameCounter frameNr,
 					   Checksum checksum)
 {
-	ChecksumBuffer* cb;
-
 	assert(frameNr <= battleFrameCount + getBattleInputDelay() + 1);
 	assert(frameNr + getBattleInputDelay() >= battleFrameCount);
 
-	cb = NetConnection_getChecksumBuffer(conn);
+	ChecksumBuffer* cb {NetConnection_getChecksumBuffer(conn)};
 	ChecksumBuffer_addChecksum(cb, frameNr, checksum);
 }
 
 bool verifyChecksums(BattleFrameCounter frameNr)
 {
-	Checksum localChecksum;
-	size_t player;
+	Checksum localChecksum {};
 
 	if (!ChecksumBuffer_getChecksum(&localChecksumBuffer, frameNr,
 									&localChecksum))
@@ -280,19 +265,17 @@ bool verifyChecksums(BattleFrameCounter frameNr)
 		return false;
 	}
 
-	for (player = 0; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NUM_PLAYERS; player++)
 	{
-		NetConnection* conn;
-		ChecksumBuffer* cb;
-		Checksum remoteChecksum;
+		Checksum remoteChecksum {};
 
-		conn = netConnections[player];
+		NetConnection* conn {netConnections[player]};
 		if (conn == nullptr)
 		{
 			continue;
 		}
 
-		cb = NetConnection_getChecksumBuffer(conn);
+		ChecksumBuffer* cb {NetConnection_getChecksumBuffer(conn)};
 
 		if (!ChecksumBuffer_getChecksum(cb, frameNr, &remoteChecksum))
 		{

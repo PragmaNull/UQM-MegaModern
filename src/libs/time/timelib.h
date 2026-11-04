@@ -1,31 +1,10 @@
-/*
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */
-#pragma once
-
+// The game clock in game ticks and milliseconds, and the sleep functions that use it.
 #ifndef LIBS_TIME_TIMELIB_H_
 #define LIBS_TIME_TIMELIB_H_
 
-#define TIMELIB SDL
+#include "core/stl/chrono.h"
 
-#include <chrono>
-#include "libs/compiler.h"
-
-
-typedef uint32_t TimeCount;
-typedef uint32_t TimePeriod;
+#include <cstdint>
 
 /* GameTicksPerSecond is the LCM of all the fractions of a second the game uses.
  * Battle is 24 FPS, Landers are 35 FPS, most UI-level things are 15 FPS,
@@ -33,18 +12,47 @@ typedef uint32_t TimePeriod;
  * (also Comm Oscilloscope is 32 FPS, but it does not require a stable
  * timer and currently runs within the Comm ambient anim paradigm anyway)
  * Thus, the minimum value for GameTicksPerSecond is 840. */
-#if TIMELIB == SDL
 constexpr uint32_t GameTicksPerSecond {840};
-static constexpr uint32_t getTicksForFramerate(const uint32_t desiredFps)
+
+// A duration in game ticks.
+using GameTicks = uqstl::chrono::duration<int64_t, uqstl::ratio<1, GameTicksPerSecond>>;
+inline constexpr GameTicks c_gameSecond {GameTicksPerSecond};
+// A duration in seconds, as the sound decoders give it.
+using FloatSeconds = uqstl::chrono::duration<float>;
+
+static constexpr GameTicks getTicksForFramerate(const uint32_t desiredFps)
 {
-	return GameTicksPerSecond / desiredFps;
+	return c_gameSecond / desiredFps;
 }
-#endif
 
+// Game ticks since the game clock started.
+struct GameTimeClock
+{
+	using duration = GameTicks;
+	using rep = duration::rep;
+	using period = duration::period;
+	using time_point = uqstl::chrono::time_point<GameTimeClock>;
+	static constexpr bool is_steady {true};
 
-extern void InitTimeSystem(void);
-extern void UnInitTimeSystem(void);
-extern TimeCount GetTimeCounter(void);
+	static time_point now();
+};
 
+using TimeCount = GameTimeClock::time_point;
+using TimePeriod = GameTicks;
+
+// Time since the game clock started.
+uqstl::chrono::milliseconds GetTimeMs(void);
+TimeCount GetTimeCounter(void);
+
+// Sleep without processing asynchronous operations.
+void HibernateThread(TimePeriod timePeriod);
+void HibernateThreadUntil(TimeCount wakeTime);
+
+// Sleep, and process asynchronous operations until the wake time.
+void SleepThread(TimePeriod timePeriod);
+void SleepThreadUntil(TimeCount wakeTime);
+
+// Sleeps for a short time, so that busy-wait loops do not use all of a CPU core.
+void TaskSwitch(void);
 
 #endif /* LIBS_TIME_TIMELIB_H_ */

@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 #include "uqm/races.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 static LOCDATA vux_desc =
 	{
@@ -304,16 +304,14 @@ ZexBeingEatenAlive(void)
 			CommData.AlienFrame =
 				SetAbsFrameIndex(CommData.AlienFrame, 119);
 
-			XFormColorMap(GetColorMapAddress(
-							  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-						  GameTicksPerSecond / 4);
+			XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
+						  c_gameSecond / 4);
 		}
 	}
 	else
 	{
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-					  GameTicksPerSecond / 4);
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
+					  c_gameSecond / 4);
 
 		if (IS_HD)
 		{
@@ -325,7 +323,7 @@ ZexBeingEatenAlive(void)
 static void
 CombatIsInevitable(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	setSegue(Segue_hostile);
 
@@ -457,7 +455,8 @@ CombatIsInevitable(RESPONSE_REF R)
 static void
 Menagerie(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
+	uint8_t i {};
+	uint8_t LastStack {};
 	RESPONSE_REF pStr[3];
 
 	if (PLAYER_SAID(R, i_have_beast)
@@ -522,7 +521,7 @@ Menagerie(RESPONSE_REF R)
 		pStr[0] = pStr[1] = pStr[2] = 0;
 		if (R == 0)
 		{
-			uint8_t NumVisits;
+			uint8_t NumVisits {};
 
 			NumVisits = GET_GAME_STATE(ZEX_VISITS);
 			if (GET_GAME_STATE(ZEX_STACK_3) >= 2)
@@ -714,7 +713,7 @@ NormalVux(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, whats_up_hostile))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(VUX_INFO);
 		switch (NumVisits++)
@@ -835,7 +834,7 @@ Intro(void)
 		CommData.AlienAmbientArray[17].AnimFlags &= ~ANIM_DISABLED;
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -849,7 +848,7 @@ Intro(void)
 	}
 	else
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
@@ -903,7 +902,7 @@ Intro(void)
 static uint16_t
 uninit_vux(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -916,13 +915,11 @@ post_vux_enc(void)
 LOCDATA*
 init_vux_comm(void)
 {
-	LOCDATA* retval;
-
 	vux_desc.init_encounter_func = Intro;
 	vux_desc.post_encounter_func = post_vux_enc;
 	vux_desc.uninit_encounter_func = uninit_vux;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	vux_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1)
 								 + (SIS_TEXT_WIDTH >> 2) - SAFE_NUM_SCL(4);
@@ -942,7 +939,7 @@ init_vux_comm(void)
 	}
 
 	if ((GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}
@@ -950,7 +947,7 @@ init_vux_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &vux_desc;
+	LOCDATA* retval {&vux_desc};
 
 	return (retval);
 }

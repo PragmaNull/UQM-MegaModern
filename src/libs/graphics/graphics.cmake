@@ -5,17 +5,20 @@ set(uqm_src_libs_graphics_master_files "")
 
 ############################################################
 # Sub-directories
+include("src/libs/graphics/imgui/imgui.cmake")
+list(APPEND uqm_src_libs_graphics_master_files ${uqm_src_libs_graphics_imgui_master_files})
 include("src/libs/graphics/sdl/sdl.cmake")
 list(APPEND uqm_src_libs_graphics_master_files ${uqm_src_libs_graphics_sdl_master_files})
 
 ############################################################
 # Local files
 set(uqm_src_libs_graphics_files
+	"src/libs/graphics/anifile.cpp"
+	"src/libs/graphics/anifile.h"
 	"src/libs/graphics/bbox.cpp"
 	"src/libs/graphics/bbox.h"
 	"src/libs/graphics/boxint.cpp"
 	"src/libs/graphics/clipline.cpp"
-#	"src/libs/graphics/cmap.c"
 	"src/libs/graphics/cmap.cpp"
 	"src/libs/graphics/cmap.h"
 	"src/libs/graphics/context.cpp"
@@ -28,6 +31,8 @@ set(uqm_src_libs_graphics_files
 	"src/libs/graphics/filegfx.cpp"
 	"src/libs/graphics/font.cpp"
 	"src/libs/graphics/font.h"
+	"src/libs/graphics/fontfile.cpp"
+	"src/libs/graphics/fontfile.h"
 	"src/libs/graphics/frame.cpp"
 	"src/libs/graphics/gfx_common.cpp"
 	"src/libs/graphics/gfx_common.h"

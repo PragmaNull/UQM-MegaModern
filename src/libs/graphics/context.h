@@ -20,7 +20,6 @@
 #define LIBS_GRAPHICS_CONTEXT_H_
 
 #include "tfb_draw.h"
-#include "libs/memlib.h"
 
 typedef uint16_t FBK_FLAGS;
 #define FBK_DIRTY (1 << 0)
@@ -49,8 +48,6 @@ struct context_desc
 #endif
 };
 
-#define AllocContext() HCalloc(sizeof(CONTEXT_DESC))
-#define FreeContext HFree
 
 extern GFXCONTEXT _pCurContext;
 extern PRIMITIVE _locPrim;

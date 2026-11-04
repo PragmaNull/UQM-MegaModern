@@ -20,7 +20,7 @@
 #include "../yehat/resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 
 
@@ -255,9 +255,7 @@ static void Rebels(RESPONSE_REF R);
 static void
 RebelInfo(RESPONSE_REF R)
 {
-	uint8_t InfoLeft;
-
-	InfoLeft = false;
+	uint8_t InfoLeft {false};
 	if (PLAYER_SAID(R, give_info_rebels))
 	{
 		NPCPhrase(WHAT_INFO);
@@ -330,7 +328,7 @@ RebelInfo(RESPONSE_REF R)
 static void
 Rebels(RESPONSE_REF R)
 {
-	uint16_t NumVisits;
+	uint16_t NumVisits {};
 
 	if (PLAYER_SAID(R, how_goes_revolution))
 	{
@@ -428,10 +426,10 @@ Rebels(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	setSegue(Segue_peace);
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 	{
 		NPCPhrase(YEHAT_CAVALRY);
 		AlienTalkSegue((uint16_t)~0);
@@ -472,7 +470,7 @@ Intro(void)
 static uint16_t
 uninit_yehat(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -485,15 +483,13 @@ post_yehat_enc(void)
 LOCDATA*
 init_rebel_yehat_comm(void)
 {
-	LOCDATA* retval;
-
 	yehat_desc.init_encounter_func = Intro;
 	yehat_desc.post_encounter_func = post_yehat_enc;
 	yehat_desc.uninit_encounter_func = uninit_yehat;
 
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	yehat_desc.AlienTextBaseline.x = SIS_SCREEN_WIDTH * 2 / 3;
 	yehat_desc.AlienTextBaseline.y = RES_SCALE(107 * 2 / 3);
@@ -503,7 +499,7 @@ init_rebel_yehat_comm(void)
 	altResFlags |= USE_ALT_SONG;
 
 	setSegue(Segue_peace);
-	retval = &yehat_desc;
+	LOCDATA* retval {&yehat_desc};
 
 	return (retval);
 }

@@ -31,14 +31,14 @@
 #include "resinst.h"
 #include "sounds.h"
 #include "fmv.h"
-#include "libs/compiler.h"
-#include "libs/file.h"
+#include "core/misc/bittricks.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/sound/sound.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 #include "libs/vidlib.h"
 #include "core/log/log.h"
-#include "libs/misc.h"
+#include "core/stl/vector.h"
+#include "core/misc/FatalExit.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -78,7 +78,7 @@ FRAME BorderFrame;
 FRAME HDBorderFrame;
 FRAME CustBevelFrame;
 FRAME DefBevelFrame;
-STRING GameStrings;
+uqm::StringTablePtr GameStrings {};
 QUEUE disp_q;
 
 bool solTexturesPresent;
@@ -105,9 +105,6 @@ InitPlayerInput(void)
 
 void UninitPlayerInput(void)
 {
-#if DEMO_MODE
-	DestroyInputDevice(ReleaseInputDevice(DemoInput));
-#endif /* DEMO_MODE */
 }
 
 bool LoadKernel(int argc, char* argv[])
@@ -240,22 +237,24 @@ bool LoadKernel(int argc, char* argv[])
 	}
 
 	/* Now load the rest of the addons, in order. */
-	uqm::prepareAddons(uqm::UQMOptions::read().addons);
+	uqstl::vector<uqstl::string> addons {uqm::UQMOptions::read().addons};
+	if (!IS_HD && uqstl::erase(addons, uqstl::string {HD_MODE}) > 0)
+	{
+		uqm::log::warn("Warning: The '{}' addon is for HD mode only. Set graphics.resolutionFactor to 2 to use it.", HD_MODE);
+	}
+	uqm::prepareAddons(addons);
 
 	{
-		COLORMAP ColorMapTab {};
-
-		ColorMapTab = CaptureColorMap(LoadColorMap(STARCON_COLOR_MAP));
+		const uqm::StringTablePtr ColorMapTab {uqm::loadStringTable(STARCON_COLOR_MAP)};
 		if (ColorMapTab == nullptr)
 		{
 			return false; // The most basic resource is missing
 		}
-		SetColorMap(GetColorMapAddress(ColorMapTab));
-		DestroyColorMap(ReleaseColorMap(ColorMapTab));
+		SetColorMap(GetColorMapAddress(ColorMapTab.get(), 0));
 	}
 
 	InitPlayerInput();
-	GLOBAL(CurrentActivity) = (ACTIVITY)~0;
+	uqm::currentActivity() = (ACTIVITY)~0;
 
 	return true;
 }
@@ -263,7 +262,6 @@ bool LoadKernel(int argc, char* argv[])
 bool InitContexts(void)
 {
 	GFXRECT r;
-	GFXCONTEXT oldContext;
 
 	StatusContext = CreateContext("StatusContext");
 	if (StatusContext == nullptr)
@@ -272,7 +270,7 @@ bool InitContexts(void)
 	}
 	AdvanceLoadProgress();
 
-	oldContext = SetContext(StatusContext);
+	GFXCONTEXT oldContext {SetContext(StatusContext)};
 	SetContextFGFrame(Screen);
 	r.corner.x = SPACE_WIDTH + SAFE_X;
 	r.corner.y = SAFE_Y;
@@ -307,9 +305,7 @@ bool InitContexts(void)
 static bool
 InitKernel(void)
 {
-	uint16_t counter;
-
-	for (counter = 0; counter < NUM_PLAYERS; ++counter)
+	for (uint16_t counter {0}; counter < NUM_PLAYERS; ++counter)
 	{
 		InitQueue(&race_q[counter], MAX_SHIPS_PER_SIDE, sizeof(STARSHIP));
 	}
@@ -403,8 +399,8 @@ InitKernel(void)
 	}
 	AdvanceLoadProgress();
 
-	GameStrings = CaptureStringTable(LoadStringTable(STARCON_GAME_STRINGS));
-	if (GameStrings == 0)
+	GameStrings = uqm::loadStringTable(STARCON_GAME_STRINGS);
+	if (!GameStrings)
 	{
 		return false;
 	}
@@ -435,7 +431,7 @@ InitKernel(void)
 		return false;
 	}
 
-	MenuSounds = CaptureSound(LoadSound(MENU_SOUNDS));
+	MenuSounds = uqm::loadSoundBank(MENU_SOUNDS).release();
 	if (MenuSounds == 0)
 	{
 		return false;
@@ -492,7 +488,7 @@ bool SetPlayerInput(uint16_t playerI)
 	{
 		uqm::log::critical(
 			"Invalid control method {} ,in SetPlayerInput().", extractedControls);
-		explode(); /* Does not return */
+		uqm::fatalExit(); /* Does not return */
 	}
 
 	return PlayerInput[playerI] != nullptr;
@@ -500,8 +496,7 @@ bool SetPlayerInput(uint16_t playerI)
 
 bool SetPlayerInputAll(void)
 {
-	uint16_t playerI;
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (uint16_t playerI {0}; playerI < NUM_PLAYERS; playerI++)
 	{
 		if (!SetPlayerInput(playerI))
 		{
@@ -526,8 +521,7 @@ void ClearPlayerInput(uint16_t playerI)
 
 void ClearPlayerInputAll(void)
 {
-	uint16_t playerI;
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (uint16_t playerI {0}; playerI < NUM_PLAYERS; playerI++)
 	{
 		ClearPlayerInput(playerI);
 	}

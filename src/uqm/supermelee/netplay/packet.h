@@ -75,7 +75,7 @@ typedef enum NetplayResetReason
 #include "netconnection.h"
 
 #include <cstdint>
-#include "libs/network/bytesex.h"
+#include "core/misc/bittricks.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -86,7 +86,7 @@ extern "C" {
  * When a handler is called, it has already been validated that the
  * a complete packet has arrived.
  */
-typedef int (*PacketHandler)(NetConnection* conn, const void* packet);
+typedef NetResult (*PacketHandler)(NetConnection* conn, const void* packet);
 
 typedef struct
 {
@@ -127,13 +127,13 @@ struct Packet
 static inline size_t
 packetLength(const Packet* packet)
 {
-	return (size_t)ntoh16(packet->header.len);
+	return (size_t)uqm::convertBigEndian<uint16_t>(packet->header.len);
 }
 
 static inline PacketType
 packetType(const Packet* packet)
 {
-	return (PacketType)(int)ntoh16(packet->header.type);
+	return (PacketType)(int)uqm::convertBigEndian<uint16_t>(packet->header.type);
 }
 
 static inline bool
@@ -215,21 +215,46 @@ typedef struct
 	uint8_t side;
 	uint8_t padding;
 	uint16_t numShips;
-	FleetEntry* ships;
+	// The fleet entries follow the structure. See fleetEntries().
 	// Be sure to add padding to this structure to make it a multiple of
 	// 4 bytes in length.
 } Packet_Fleet;
+
+static_assert(sizeof(Packet_Fleet) == 8, "The size of the packet header is part of the protocol.");
+
+// The fleet entries that follow the structure.
+inline FleetEntry* fleetEntries(Packet_Fleet* packet)
+{
+	return reinterpret_cast<FleetEntry*>(packet + 1);
+}
+
+inline const FleetEntry* fleetEntries(const Packet_Fleet* packet)
+{
+	return reinterpret_cast<const FleetEntry*>(packet + 1);
+}
 
 typedef struct
 {
 	PacketHeader header;
 	uint8_t side;
 	uint8_t padding;
-	uint8_t* name;
-	// '\0' terminated.
+	// The '\0'-terminated name follows the structure. See teamName().
 	// Be sure to add padding to this structure to make it a multiple of
 	// 4 bytes in length.
 } Packet_TeamName;
+
+static_assert(sizeof(Packet_TeamName) == 6, "The size of the packet header is part of the protocol.");
+
+// The team name that follows the structure.
+inline uint8_t* teamName(Packet_TeamName* packet)
+{
+	return reinterpret_cast<uint8_t*>(packet + 1);
+}
+
+inline const uint8_t* teamName(const Packet_TeamName* packet)
+{
+	return reinterpret_cast<const uint8_t*>(packet + 1);
+}
 
 typedef struct
 {

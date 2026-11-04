@@ -10,7 +10,6 @@ confirm.c      Asks for confirmation on exit.
 credits.c      Shows the credits after a victory.
 cyborg.c       Handles combat AI.
 debug.c        Debugging functions.
-demo.c         Code for demo mode and game journal.
 displist.c     Generic doubly linked list, which can keep its own pool
                of preallocated link structures.
                This generic list is used in various places throughout
@@ -84,7 +83,6 @@ clock.h
 coderes.h
 collide.h
 commglue.h
-demo.h
 displist.h
 element.h
 encount.h

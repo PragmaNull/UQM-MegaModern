@@ -19,19 +19,15 @@
 #ifndef LIBS_STRLIB_H_
 #define LIBS_STRLIB_H_
 
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "port.h"
 #include "libs/io/FileSystem.h"
-#include "libs/unicode.h"
+#include "core/string/Utf8.h"
 
 #include <stddef.h>
 
-typedef struct string_table_entry STRING_TABLE_ENTRY_DESC;
-typedef struct string_table STRING_TABLE_DESC;
+#include "libs/strings/StringTable.h"
 
-typedef STRING_TABLE_DESC* STRING_TABLE;
-typedef STRING_TABLE_ENTRY_DESC* STRING;
-typedef char* STRINGPTR;
 
 /* This has to go here because reslib requires the above typedefs. */
 #include "libs/reslib.h"
@@ -41,28 +37,15 @@ extern "C" {
 #endif
 
 extern bool InstallStringTableResType(void);
-extern STRING_TABLE LoadStringTableInstance(RESOURCE res);
-extern STRING_TABLE LoadStringTableFile(const uqm::io::Directory& dir,
-										const char* fileName);
-extern bool DestroyStringTable(STRING_TABLE StringTable);
-extern STRING CaptureStringTable(STRING_TABLE StringTable);
-extern STRING_TABLE ReleaseStringTable(STRING String);
-extern STRING_TABLE GetStringTable(STRING String);
-extern uint16_t GetStringTableCount(STRING String);
-extern uint16_t GetStringTableIndex(STRING String);
-extern STRING SetAbsStringTableIndex(STRING String, uint16_t
-														StringTableIndex);
-extern STRING SetRelStringTableIndex(STRING String, int16_t
-														StringTableOffs);
-extern uint16_t GetStringLength(STRING String);
-extern uint16_t GetStringLengthBin(STRING String);
-extern STRINGPTR GetStringAddress(STRING String);
-extern STRINGPTR GetStringName(STRING String);
-extern STRINGPTR GetStringSoundClip(STRING String);
-extern STRINGPTR GetStringTimeStamp(STRING String);
-extern STRING GetStringByName(STRING_TABLE StringTable, const char* index);
-extern bool CheckResString(RESOURCE res);
-extern const char* LoadStringInstance(RESOURCE res);
+const extern char* LoadStringInstance(RESOURCE res);
+
+namespace uqm
+{
+
+// Returns an empty pointer if the resource is not a string table.
+[[nodiscard]] StringTablePtr loadStringTable(RESOURCE res);
+
+} // namespace uqm
 
 #define UNICHAR_TAB 0x0009
 #define STR_TAB "\x09"
@@ -95,6 +78,11 @@ extern const char* LoadStringInstance(RESOURCE res);
 
 
 #define STR_NULL "null"
+
+// Skip the alignment marker "|n|" or the padding marker ":n:" at the start of 'str',
+// and add n (scaled to the resolution) to the offset.
+const char* AlignText(const char* str, int16_t* loc_x);
+const char* AddPadd(const char* str, int16_t* padding);
 
 #if 0 //defined(__cplusplus)
 }

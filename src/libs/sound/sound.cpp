@@ -18,9 +18,8 @@
 
 #include "sound.h"
 #include "sndintrn.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/inplib.h"
-#include "libs/memlib.h"
 
 
 int musicVolume = NORMAL_VOLUME;
@@ -32,9 +31,7 @@ TFB_SoundSource soundSource[NUM_SOUNDSOURCES];
 
 void StopSound(void)
 {
-	int i;
-
-	for (i = FIRST_SFX_SOURCE; i <= LAST_SFX_SOURCE; ++i)
+	for (int i {FIRST_SFX_SOURCE}; i <= LAST_SFX_SOURCE; ++i)
 	{
 		StopSource(i);
 	}
@@ -42,34 +39,16 @@ void StopSound(void)
 
 void CleanSource(int iSource)
 {
-#define MAX_STACK_BUFFERS 64
-	audio_IntVal processed;
+	audio_IntVal processed {};
 
 	soundSource[iSource].positional_object = nullptr;
 	audio_GetSourcei(soundSource[iSource].handle,
 					 audio_BUFFERS_PROCESSED, &processed);
 	if (processed != 0)
 	{
-		audio_Object stack_bufs[MAX_STACK_BUFFERS];
-		audio_Object* bufs;
-
-		if (processed > MAX_STACK_BUFFERS)
-		{
-			bufs = (audio_Object*)HMalloc(
-				sizeof(audio_Object) * processed);
-		}
-		else
-		{
-			bufs = stack_bufs;
-		}
-
+		uqstl::vector<audio_Object> bufs(processed);
 		audio_SourceUnqueueBuffers(soundSource[iSource].handle,
-								   processed, bufs);
-
-		if (processed > MAX_STACK_BUFFERS)
-		{
-			HFree(bufs);
-		}
+								   processed, bufs.data());
 	}
 	// set the source state to 'initial'
 	audio_SourceRewind(soundSource[iSource].handle);
@@ -83,18 +62,15 @@ void StopSource(int iSource)
 
 bool SoundPlaying(void)
 {
-	int i;
-
-	for (i = 0; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
 	{
-		TFB_SoundSample* sample;
+		const TFB_SoundSample* sample {};
 		sample = soundSource[i].sample;
 		if (sample && sample->decoder)
 		{
-			bool result;
-			LockMutex(soundSource[i].stream_mutex);
-			result = PlayingStream(i);
-			UnlockMutex(soundSource[i].stream_mutex);
+			soundSource[i].stream_mutex.lock();
+			const bool result {PlayingStream(i)};
+			soundSource[i].stream_mutex.unlock();
 			if (result)
 			{
 				return true;
@@ -102,7 +78,7 @@ bool SoundPlaying(void)
 		}
 		else
 		{
-			audio_IntVal state;
+			audio_IntVal state {};
 			audio_GetSourcei(soundSource[i].handle, audio_SOURCE_STATE, &state);
 			if (state == audio_PLAYING)
 			{
@@ -147,8 +123,7 @@ void UninitSound(void)
 
 void SetSFXVolume(float volume)
 {
-	int i;
-	for (i = FIRST_SFX_SOURCE; i <= LAST_SFX_SOURCE; ++i)
+	for (int i {FIRST_SFX_SOURCE}; i <= LAST_SFX_SOURCE; ++i)
 	{
 		audio_Sourcef(soundSource[i].handle, audio_GAIN, volume);
 	}
@@ -159,17 +134,12 @@ void SetSpeechVolume(float volume)
 	audio_Sourcef(soundSource[SPEECH_SOURCE].handle, audio_GAIN, volume);
 }
 
-uint32_t
-FadeMusic(uint8_t end_vol, int16_t TimeInterval)
+TimeCount
+FadeMusic(uint8_t end_vol, TimePeriod TimeInterval)
 {
-	if (QuitPosted) // Don't make users wait for fades
+	if (QuitPosted || TimeInterval < TimePeriod {}) // Don't make users wait for fades
 	{
-		TimeInterval = 0;
-	}
-
-	if (TimeInterval < 0)
-	{
-		TimeInterval = 0;
+		TimeInterval = TimePeriod {};
 	}
 
 	if (!SetMusicStreamFade(TimeInterval, end_vol))
@@ -179,7 +149,7 @@ FadeMusic(uint8_t end_vol, int16_t TimeInterval)
 	}
 	else
 	{
-		return GetTimeCounter() + TimeInterval + 1;
+		return GetTimeCounter() + TimeInterval + TimePeriod {1};
 	}
 }
 

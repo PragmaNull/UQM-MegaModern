@@ -11,49 +11,77 @@ names, with the period being the separator. An example would be
 "comm.arilou.dialogue", which is conceptually grouped with all other
 resources beginning with "comm." or "comm.arilou."
 
-Resources are mapped to files via "resource map files" or RMPs. These
-files are full of key-value pairs. Each line of an RMP file matches
-this format:
+Resources are mapped to files via "resource map files" or RMPs. An RMP
+file is a JSON file with a name that ends in ".rmp.json". It gives the
+type and the data of each resource:
 
-        resource_ID = RESOURCE_TYPE:resource_data
+        {
+          "version": 1,
+          "resources": {
+            "graphics.earthmask": {"type": "GFXRES", "data": "base/planets/earthmask.ani.json"},
+            "ship.arilou.code": {"type": "SHIP", "data": 1}
+          }
+        }
+
+The data is a string, a number, true or false, or an object with named
+parts. The key files content/menu.key.json and content/uqm.key.json
+use the same format, and so does override.key.json in the
+configuration directory, which adds or changes menu keys. The old
+format had one "resource_ID = RESOURCE_TYPE:data" line for each
+resource. scripts/convert_resource_index.py converts files in the old
+format to JSON, and the game converts an old override.cfg to
+override.key.json once.
 
 The currently defined resource types and their accompanying data are:
 
 GFXRES:       A single animation. The resource data is the name of the
-              .ani file that defines it. See the "aniformat" file for
+              .ani.json file that defines it. See the "aniformat" file for
               details.
 FONTRES:      A font. The resource data is the name of the directory
               in which the font is defined.
 MUSICRES:     A music file. The resource data is the filename of the
               relevant file in OGG or MOD format.
-SNDRES:       A set of related sounds. Points to a text file,
-              traditionally suffixed ".snd", that lists each sound
-              file in the collection, one per line. These sounds are
-              in WAV format.
-STRTAB:       An unadorned string table. The resource data is the file
-              name.
+SNDRES:       A set of related sounds. Points to a JSON file,
+              suffixed ".snd.json", whose "sounds" array lists each
+              sound file in the collection, relative to the directory
+              of the file. These sounds are in WAV format. A missing
+              sound is silent, and the other sounds keep their index.
+STRTAB:       An unadorned string table. The resource data is the name
+              of a JSON file with a "strings" array. Each string has
+              an "id", and can have "text", an array of text lines.
+              The game finds the strings by their position.
 BINTAB:       Indexed binary data, mostly used for palettes and
               topological data for planet terrain generation. The
               resource data is the file name. See the "strtab" file, but
               be aware that all information not regarding .ct or .xlt
               files has been obsoleted.
 CONVERSATION: All data corresponding to an individual conversation
-              tree. The resource data has three components, separated
-              by colons: the conversation text (similar to the
-              STRTAB), the directory in which voiceovers may be
-              found, and the timestamp file corresponding to those
-              voiceovers. The second and third values are optional,
-              but if either is present, both must be.
-SHIP:         This is an integer that specifies which ship corresponds
+              tree. The resource data is an object: "text" is a JSON
+              file with the lines of the conversation, "clips" is the
+              directory in which voiceovers may be found, and
+              "timing" is a JSON file with timing for those
+              voiceovers. "clips" and "timing" are optional.
+              The text file has a "conversation" name and a "lines"
+              array. Each line has an "id", and can have a "clip",
+              "text" (an array of text lines), "timing" (an array
+              of milliseconds) and "subclipTiming" (an array of
+              such arrays). The timing file has a "conversations"
+              object, which maps a conversation name and a line id
+              to "timing" and "subclipTiming". Its values replace
+              those of the text file. scripts/convert_conversations.py
+              converts the old .txt and .ts files to these files.
+SHIP:         This is a number that specifies which ship corresponds
               to a specified resource. The mapping of SHIP integers
               to actual ship_info structures is done by the dummy.c
               routines.
 STRING:       A string. The resource data is the string itself.
-INT32:        A 32-bit integer. The resource data is the integer as a
-              string giving its representation in decimal.
-BOOLEAN:      A true/false value. Any value of the resource data that
-              is not the exact case-insensitive string "true" will be
-              treated as false.
+INT32:        A 32-bit integer. The resource data is a number.
+FLT32:        A floating point number. The resource data is a number.
+bool:         A true/false value. The resource data is true or false.
+3DOVID:       A legacy video. The resource data is an object: "video"
+              is the video file, and the optional "audio", "speech"
+              and "loop" give the audio file, the speech file and the
+              frame at which the video loops.
 UNKNOWNRES:   A catch-all internal type for any type the system does
               not recognize. It is functionally equivalent to STRING,
               mainly so that sensible debug messages may be emitted.
@@ -85,9 +113,9 @@ pack that redefines the relevant SHIP-typed resources.)
 
 The officially supported content is kept in three indices:
 
-- content/uqm.rmp: The core content.
-- content/addons/3domusic/3domusic.rmp: 3DO music.
-- content/addons/3dovoice/3dovoice.rmp: The 3DO conversations.
+- content/uqm.rmp.json: The core content.
+- content/addons/3domusic/3domusic.rmp.json: 3DO music.
+- content/addons/3dovoice/3dovoice.rmp.json: The 3DO conversations.
 
 These latter two are treated the same as any other addons, except that
 they are guaranteed to be loaded first if selected by the

@@ -15,7 +15,7 @@
  */
 
 #include "core/log/log.h"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 #ifdef _WIN32
 
@@ -24,25 +24,11 @@
 static HBITMAP
 sdl_surface_to_bitmap(SDL_Surface* surface)
 {
-	SDL_PixelFormat format;
-	SDL_Surface* convPtr;
 	BITMAPINFOHEADER BIH;
-	HDC hdc;
-	HBITMAP hbitmap;
+	HBITMAP hbitmap {};
 
 	// Convert to 32-bit BGRA (required for Windows DIB)
-#if SDL_MAJOR_VERSION > 1
-	format.format = SDL_PIXELFORMAT_BGRA32;
-#endif /* SDL_MAJOR_VERSION > 1 */
-	format.palette = nullptr;
-	format.BitsPerPixel = 32;
-	format.BytesPerPixel = 4;
-	format.Rmask = 0x00FF0000;
-	format.Gmask = 0x0000FF00;
-	format.Bmask = 0x000000FF;
-	format.Amask = 0xFF000000;
-
-	convPtr = SDL_ConvertSurface(surface, &format, 0);
+	SDL_Surface* convPtr {SDL_ConvertSurface(surface, SDL_PIXELFORMAT_BGRA32)};
 	if (!convPtr)
 	{
 		return nullptr;
@@ -57,12 +43,12 @@ sdl_surface_to_bitmap(SDL_Surface* surface)
 	BIH.biCompression = BI_RGB;
 
 	// Create DIB section
-	hdc = GetDC(nullptr);
+	HDC hdc {GetDC(nullptr)};
 	hbitmap = CreateDIBitmap(hdc, &BIH, CBM_INIT, convPtr->pixels,
 							 (BITMAPINFO*)&BIH, DIB_RGB_COLORS);
 
 	ReleaseDC(nullptr, hdc);
-	SDL_FreeSurface(convPtr);
+	SDL_DestroySurface(convPtr);
 
 	return hbitmap;
 }
@@ -70,15 +56,13 @@ sdl_surface_to_bitmap(SDL_Surface* surface)
 static int
 CopySurfaceToClipboard_Win32(SDL_Surface* surface)
 {
-	HBITMAP hbitmap;
-
 	if (!surface)
 	{
 		return -1;
 	}
 
 	// Convert surface to Windows bitmap
-	hbitmap = sdl_surface_to_bitmap(surface);
+	HBITMAP hbitmap {sdl_surface_to_bitmap(surface)};
 	if (!hbitmap)
 	{
 		return -1;
@@ -107,6 +91,6 @@ int CopySurfaceToClipboard(SDL_Surface* surface)
 #else
 	uqm::log::warn("Clipboard functionality is not implemented on "
 				   "this platform.");
-	return SDL_FALSE;
+	return false;
 #endif
 }

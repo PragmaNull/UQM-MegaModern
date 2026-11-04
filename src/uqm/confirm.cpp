@@ -42,7 +42,7 @@ bool WarpFromMenu = false;
 static void
 DrawConfirmationWindow(bool answer, bool confirm)
 {
-	Color oldfg = SetContextForeGroundColor(SHADOWBOX_DARK_COLOR);
+	const Color oldfg = SetContextForeGroundColor(SHADOWBOX_DARK_COLOR);
 	FONT oldfont = SetContextFont(StarConFont);
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	GFXRECT r;
@@ -93,31 +93,29 @@ DrawConfirmationWindow(bool answer, bool confirm)
 
 bool DoConfirmExit(void)
 {
-	bool result;
-	bool FlashPaused;
+	bool result {};
 
 	if (PlayingTrack())
 	{
 		PauseTrack();
 	}
 
-	FlashPaused = PauseFlash();
+	const bool FlashPaused {PauseFlash()};
 
 	{
 		GFXRECT r;
 		STAMP s;
 		GFXRECT ctxRect;
-		GFXCONTEXT oldContext;
 		GFXRECT oldRect;
-		bool response = false, done;
+		bool response = false;
 		Color OldColor;
-		DrawMode mode, oldMode;
-		uint8_t oldVolume;
+		DrawMode mode;
+		DrawMode oldMode;
 		TimeCount deltaT;
 
 		deltaT = GetTimeCounter();
 
-		oldContext = SetContext(ScreenContext);
+		GFXCONTEXT oldContext {SetContext(ScreenContext)};
 		GetContextClipRect(&oldRect);
 		SetContextClipRect(nullptr);
 
@@ -142,10 +140,10 @@ bool DoConfirmExit(void)
 		FlushGraphics();
 
 		FlushInput();
-		done = false;
+		bool done {false};
 
-		oldVolume = GetCurrMusicVol();
-		FadeMusic(60, GameTicksPerSecond / 2);
+		const uint8_t oldVolume {GetCurrMusicVol()};
+		FadeMusic(60, c_gameSecond / 2);
 
 		while (!done)
 		{
@@ -153,7 +151,7 @@ bool DoConfirmExit(void)
 			ExitRequested = false;
 			GamePaused = false;
 			UpdateInputState();
-			if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+			if (uqm::currentActivity() & CHECK_ABORT)
 			{ // something else triggered an exit
 				done = true;
 				response = true;
@@ -175,7 +173,7 @@ bool DoConfirmExit(void)
 				DrawConfirmationWindow(response, false);
 				PlayMenuSound(MENU_SOUND_MOVE);
 			}
-			SleepThread(GameTicksPerSecond / 30);
+			SleepThread(c_gameSecond / 30);
 		};
 
 		// Restore the screen under the confirmation window
@@ -183,7 +181,7 @@ bool DoConfirmExit(void)
 		{
 			DrawStamp(&s);
 			DeltaLastTime(GetTimeCounter() - deltaT);
-			FadeMusic(oldVolume, GameTicksPerSecond / 2);
+			FadeMusic(oldVolume, c_gameSecond / 2);
 		}
 		else
 		{
@@ -191,10 +189,10 @@ bool DoConfirmExit(void)
 		}
 		DestroyDrawable(ReleaseDrawable(s.frame));
 		ClearSystemRect();
-		if (response || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if (response || (uqm::currentActivity() & CHECK_ABORT))
 		{
 			result = true;
-			GLOBAL(CurrentActivity) |= CHECK_ABORT;
+			uqm::currentActivity() |= CHECK_ABORT;
 		}
 		else
 		{
@@ -230,8 +228,8 @@ static bool
 DoPopup(struct popup_state* self)
 {
 	(void)self;
-	SleepThread(GameTicksPerSecond / 20);
-	return !(PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL] || (GLOBAL(CurrentActivity) & CHECK_ABORT));
+	SleepThread(c_gameSecond / 20);
+	return !(PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT));
 }
 
 void DoPopupWindow(const char* msg)
@@ -240,13 +238,11 @@ void DoPopupWindow(const char* msg)
 	const char* lines[30];
 	WIDGET_LABEL label;
 	STAMP s;
-	GFXCONTEXT oldContext;
 	GFXRECT oldRect;
 	GFXRECT windowRect;
 	POPUP_STATE state;
-	MENU_SOUND_FLAGS s0, s1;
-	InputFrameCallback* oldCallback;
-	bool FlashPaused;
+	MENU_SOUND_FLAGS s0 {};
+	MENU_SOUND_FLAGS s1 {};
 
 	if (!bank)
 	{
@@ -265,9 +261,9 @@ void DoPopupWindow(const char* msg)
 	label.line_count = SplitString(msg, '\n', 30, lines, bank);
 	label.lines = lines;
 
-	FlashPaused = PauseFlash();
+	const bool FlashPaused {PauseFlash()};
 
-	oldContext = SetContext(ScreenContext);
+	GFXCONTEXT oldContext {SetContext(ScreenContext)};
 	GetContextClipRect(&oldRect);
 	SetContextClipRect(nullptr);
 
@@ -283,7 +279,7 @@ void DoPopupWindow(const char* msg)
 
 	GetMenuSounds(&s0, &s1);
 	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
-	oldCallback = SetInputCallback(nullptr);
+	InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
 
 	state.InputFunc = DoPopup;
 	DoInput(&state, true);

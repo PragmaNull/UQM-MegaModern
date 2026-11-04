@@ -21,20 +21,15 @@
 
 #include <assert.h>
 #include "port.h"
-#include "libs/compiler.h"
-#include "libs/memlib.h"
+#include "core/misc/bittricks.h"
+#include "core/stl/utility.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
-// Note that we MUST use the QUEUE_TABLE variant at this time, because
-// certain gameplay elements depend on it. Namely, the maximum number
-// of HyperSpace encounter globes chasing the player is defined by the
-// allocated size of the encounter_q. If switched to non-table variant,
-// the max number of encounters will be virtually unlimited the way the
-// code works now.
-#define QUEUE_TABLE
+// Each queue has a fixed table of elements. The size of encounter_q sets
+// the maximum number of HyperSpace encounter globes.
 
 typedef void* QUEUE_HANDLE;
 
@@ -53,17 +48,12 @@ typedef struct /* queue */
 {
 	HLINK head;
 	HLINK tail;
-#ifdef QUEUE_TABLE
 	uint8_t* pq_tab;
 	HLINK free_list;
-#endif
 	uint16_t object_size;
-#ifdef QUEUE_TABLE
 	uint8_t num_objects;
-#endif /* QUEUE_TABLE */
 } QUEUE;
 
-#ifdef QUEUE_TABLE
 
 extern HLINK AllocLink(QUEUE* pq);
 extern void FreeLink(QUEUE* pq, HLINK hLink);
@@ -90,18 +80,12 @@ UnlockLink(const QUEUE* pq, HLINK h)
 #define GetFreeList(pq) (pq)->free_list
 #define SetFreeList(pq, h) (pq)->free_list = (h)
 #define AllocQueueTab(pq, n) \
-	((pq)->pq_tab = (uint8_t*)HMalloc(((uint16_t)(pq)->object_size * (uint16_t)((pq)->num_objects = (uint8_t)(n)))))
-#define FreeQueueTab(pq) \
-	HFree((pq)->pq_tab); \
+	((pq)->pq_tab = new uint8_t[(uint16_t)(pq)->object_size * (uint16_t)((pq)->num_objects = (uint8_t)(n))])
+#define FreeQueueTab(pq)   \
+	delete[] (pq)->pq_tab; \
 	(pq)->pq_tab = nullptr
 #define SizeQueueTab(pq) (uint16_t)((pq)->num_objects)
 #define GetLinkAddr(pq, i) (HLINK)((pq)->pq_tab + ((pq)->object_size * ((i) - 1)))
-#else /* !QUEUE_TABLE */
-#define AllocLink(pq) (HLINK) HMalloc((pq)->object_size)
-#define LockLink(pq, h) ((LINK*)(h))
-#define UnlockLink(pq, h) ((void)(h))
-#define FreeLink(pq, h) HFree(h)
-#endif /* QUEUE_TABLE */
 
 #define SetLinkSize(pq, s) ((pq)->object_size = (uint16_t)(s))
 #define GetLinkSize(pq) (uint16_t)((pq)->object_size)
@@ -122,6 +106,47 @@ extern void InsertQueue(QUEUE* pq, HLINK hLink, HLINK hRefLink);
 extern void RemoveQueue(QUEUE* pq, HLINK hLink);
 extern uint16_t CountLinks(QUEUE* pq);
 void ForAllLinks(QUEUE* pq, void (*callback)(LINK*, void*), void* arg);
+
+namespace uqm
+{
+
+// A QUEUE that owns its table of links. Code that takes a QUEUE* can use it.
+class LinkQueue : public QUEUE
+{
+public:
+	LinkQueue() noexcept
+		: QUEUE {}
+	{
+	}
+
+	~LinkQueue()
+	{
+		release();
+	}
+
+	LinkQueue(const LinkQueue&) = delete;
+	LinkQueue& operator=(const LinkQueue&) = delete;
+
+	// Makes an empty table for 'capacity' links of 'linkSize' bytes. Releases the old table.
+	bool reset(uint16_t capacity, OBJ_SIZE linkSize)
+	{
+		release();
+		return InitQueue(this, capacity, linkSize);
+	}
+
+	// Releases the table. The queue has no links after this.
+	void release() noexcept
+	{
+		UninitQueue(this);
+	}
+
+	friend void swap(LinkQueue& first, LinkQueue& second) noexcept
+	{
+		uqstl::swap(static_cast<QUEUE&>(first), static_cast<QUEUE&>(second));
+	}
+};
+
+} // namespace uqm
 
 #if 0 //defined(__cplusplus)
 }

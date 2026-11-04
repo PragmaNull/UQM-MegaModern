@@ -23,8 +23,19 @@
 #include "options/options.h"
 #include "core/log/logger.h"
 
+#include "core/stl/memory.h"
+#include "core/stl/thread.h"
+#include "core/stl/optional.h"
+#include "core/stl/utility.h"
+#include "uqm/random/GameSeed.h"
+#include <cstdint>
+
 namespace uqm
 {
+
+class GameSession;
+class UQMLua;
+enum class SessionKind;
 
 class UQMGame
 {
@@ -38,9 +49,58 @@ public:
 	[[nodiscard]] int run();
 	void teardown();
 
+	// Use the session functions on the game thread only.
+	// Makes a session and starts its game. Ends the session that runs.
+	void beginSession(SessionKind kind);
+	// Ends the game of the session that runs, and destroys the session.
+	void endSession();
+	// The session that runs, or nullptr.
+	[[nodiscard]] GameSession* session() noexcept
+	{
+		return m_session.get();
+	}
+
+	// The Lua support. It exists between setup() and teardown().
+	[[nodiscard]] UQMLua& lua() noexcept
+	{
+		return *m_lua;
+	}
+
+	// The seed that the next new game uses instead of the seed from the settings.
+	void setNewGameSeed(const GameSeed& seed) noexcept
+	{
+		m_newGameSeed = seed;
+	}
+
+	// Returns the seed from setNewGameSeed() once, then nullopt.
+	[[nodiscard]] uqstl::optional<GameSeed> takeNewGameSeed() noexcept
+	{
+		return uqstl::exchange(m_newGameSeed, uqstl::nullopt);
+	}
+
+	// What the game program does now. It stays between sessions.
+	[[nodiscard]] uint16_t& activity() noexcept
+	{
+		return m_activity;
+	}
+
+	// The in-game options of glob_flags. They stay between sessions.
+	[[nodiscard]] uint8_t& globalFlags() noexcept
+	{
+		return m_globalFlags;
+	}
+
 private:
 	UQMOptions m_options {};
 	Logger m_logger {};
+	uqstl::jthread m_gameThread {};
+	// The return value of Starcon2Main.
+	int m_gameExitCode {EXIT_SUCCESS};
+	uqstl::unique_ptr<UQMLua> m_lua {};
+	uqstl::unique_ptr<GameSession> m_session {};
+	uint16_t m_activity {};
+	uint8_t m_globalFlags {};
+	uqstl::optional<GameSeed> m_newGameSeed {};
 
 	static UQMGame* s_instance;
 };

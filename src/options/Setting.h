@@ -10,7 +10,7 @@
 #include "options/OptionTypes.h"
 
 #include <fmt/format.h>
-#include <optional>
+#include "core/stl/optional.h"
 
 struct yyjson_val;
 struct yyjson_mut_doc;
@@ -256,7 +256,7 @@ struct TextCodec<E>
 			return fmt::format("{}", static_cast<int64_t>(value));
 		}
 		const uqstl::string displayName {toString(value)};
-		return displayName.find(' ') == uqstl::string::npos ? displayName : uqstl::string {enumName};
+		return !displayName.contains(' ') ? displayName : uqstl::string {enumName};
 	}
 
 	static uqstl::vector<uqstl::string> names()

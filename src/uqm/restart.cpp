@@ -50,6 +50,8 @@
 #include "StarmapGlobalData.h"
 
 #include "libs/resource/stringbank.h"
+#include "UQMGame.h"
+#include "uqm/session/GameSession.h"
 // for StringBank_Create() & SplitString()
 
 enum
@@ -80,7 +82,7 @@ void InitMenuMusic(void)
 {
 	if (uqm::UQMOptions::read().mainMenuMusic && !(menuMusic))
 	{
-		FadeMusic(MUTE_VOLUME, 0);
+		FadeMusic(MUTE_VOLUME, TimePeriod {});
 		menuMusic = loadMainMenuMusic(Rando);
 		PlayMusic(menuMusic, true, 1);
 
@@ -89,7 +91,7 @@ void InitMenuMusic(void)
 			SeekMusic(GetMusicPosition());
 		}
 
-		FadeMusic(NORMAL_VOLUME + 70, GameTicksPerSecond * 3);
+		FadeMusic(NORMAL_VOLUME + 70, c_gameSecond * 3);
 	}
 }
 
@@ -97,24 +99,22 @@ void UninitMenuMusic(void)
 {
 	if (menuMusic)
 	{
-		SleepThreadUntil(FadeMusic(MUTE_VOLUME, GameTicksPerSecond));
+		SleepThreadUntil(FadeMusic(MUTE_VOLUME, c_gameSecond));
 
 		SetMusicPosition();
 		StopMusic();
 		DestroyMusic(menuMusic);
 		menuMusic = 0;
 
-		FadeMusic(NORMAL_VOLUME, 0);
+		FadeMusic(NORMAL_VOLUME, TimePeriod {});
 	}
 }
 
 void DrawToolTips(MENU_STATE* pMS, int answer)
 {
-	uint16_t i;
 	TEXT t;
 	stringbank* bank = StringBank_Create();
 	const char* lines[30];
-	int line_count;
 	GFXRECT r;
 	STAMP s;
 
@@ -133,13 +133,13 @@ void DrawToolTips(MENU_STATE* pMS, int answer)
 	SetContextForeGroundColor(BLACK_COLOR);
 
 	t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 66 + answer);
-	line_count = SplitString(t.pStr, '\n', 30, lines, bank);
+	const int line_count {SplitString(t.pStr, '\n', 30, lines, bank)};
 
 	t.baseline.x = r.corner.x
 				 + RES_SCALE(RES_DESCALE(r.extent.width) >> 1);
 	t.baseline.y = r.corner.y + RES_SCALE(10)
 				 + RES_SCALE(line_count < 2 ? 8 : (line_count > 2 ? 0 : 3));
-	for (i = 0; i < line_count; i++)
+	for (uint16_t i {0}; i < line_count; i++)
 	{
 		t.pStr = lines[i];
 		t.align = ALIGN_CENTER;
@@ -155,9 +155,7 @@ static void
 DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 {
 	STAMP s;
-	FONT oldFont;
 	TEXT t;
-	uint16_t i;
 
 	s.origin = MAKE_POINT(CHOOSER_X, CHOOSER_Y);
 	s.frame = SetRelFrameIndex(pMS->CurFrame, 2);
@@ -165,17 +163,17 @@ DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 
 	DrawToolTips(pMS, answer);
 
-	oldFont = SetContextFont(MicroFont);
+	FONT oldFont {SetContextFont(MicroFont)};
 
 	t.align = ALIGN_CENTER;
 	t.baseline.x = s.origin.x;
 	t.baseline.y = s.origin.y - RES_SCALE(20);
 
-	for (i = 0; i <= 2; i++)
+	for (uint16_t i {0}; i <= 2; i++)
 	{
 		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 56
 							 + (!i ? 1 : (i > 1 ? 2 : 0)));
-		t.CharCount = (uint16_t)utf8StringCount(t.pStr);
+		t.CharCount = (uint16_t)uqm::utf8StringCount(t.pStr);
 
 		SetContextForeGroundColor(
 			i == answer ?
@@ -193,18 +191,17 @@ static bool
 DoDiffChooser(MENU_STATE* pMS)
 {
 	static TimeCount LastInputTime;
-	static TimeCount InactTimeOut;
+	static TimePeriod InactTimeOut;
 	GFXRECT oldRect;
 	STAMP s;
-	GFXCONTEXT oldContext;
 	bool response = false;
 	bool done = false;
 	uint8_t a = 1;
 
-	InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * GameTicksPerSecond;
+	InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * c_gameSecond;
 	LastInputTime = GetTimeCounter();
 
-	oldContext = SetContext(ScreenContext);
+	GFXCONTEXT oldContext {SetContext(ScreenContext)};
 	GetContextClipRect(&oldRect);
 	s = SaveContextFrame(nullptr);
 
@@ -217,7 +214,7 @@ DoDiffChooser(MENU_STATE* pMS)
 	{
 		UpdateInputState();
 
-		if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+		if (uqm::currentActivity() & CHECK_ABORT)
 		{
 			return false;
 		}
@@ -237,9 +234,7 @@ DoDiffChooser(MENU_STATE* pMS)
 		}
 		else if (PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN] || PulsedInputState.menu[KEY_MENU_LEFT] || PulsedInputState.menu[KEY_MENU_RIGHT])
 		{
-			uint8_t NewState;
-
-			NewState = a;
+			uint8_t NewState {a};
 			if (PulsedInputState.menu[KEY_MENU_UP]
 				|| PulsedInputState.menu[KEY_MENU_LEFT])
 			{
@@ -278,12 +273,12 @@ DoDiffChooser(MENU_STATE* pMS)
 		}
 		else if (GetTimeCounter() - LastInputTime > InactTimeOut)
 		{ // timed out
-			GLOBAL(CurrentActivity) = (ACTIVITY)~0;
+			uqm::currentActivity() = (ACTIVITY)~0;
 			done = true;
 			response = false;
 		}
 
-		SleepThread(GameTicksPerSecond / 30);
+		SleepThread(c_gameSecond / 30);
 	}
 
 	if (response)
@@ -320,10 +315,10 @@ FRAME TextCache[5];
 static void
 InitPulseText(void)
 {
-	FRAME frame, OldFrame;
-	int16_t leading;
+	FRAME frame {};
+	FRAME OldFrame {};
+	int16_t leading {};
 	TEXT t;
-	uint16_t i;
 
 	if (TextCache[0] != nullptr)
 	{
@@ -340,7 +335,7 @@ InitPulseText(void)
 	t.align = ALIGN_CENTER;
 	t.CharCount = (uint16_t)~0;
 
-	for (i = START_NEW_GAME; i < NUM_MENU_ELEMENTS; i++)
+	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
 	{
 		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 69 + i);
 
@@ -369,8 +364,7 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 	STAMP s;
 	TEXT t;
 	char buf[64];
-	uint16_t i;
-	int16_t leading;
+	int16_t leading {};
 
 	s.frame = pMS->CurFrame;
 	GetFrameRect(s.frame, &r);
@@ -398,7 +392,7 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 
 	SetContextForeGroundColor(MAIN_MENU_TEXT_COLOR);
 
-	for (i = START_NEW_GAME; i < NUM_MENU_ELEMENTS; i++)
+	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
 	{
 		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 69 + i);
 		font_DrawText(&t);
@@ -456,18 +450,38 @@ RestartMessage(void)
 	// Got to restart -message
 	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN, MENU_SOUND_SELECT);
 	SetTransitionSource(nullptr);
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
-	GLOBAL(CurrentActivity) = CHECK_ABORT;
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+	uqm::currentActivity() = CHECK_ABORT;
 	restartGame = true;
 	return true;
+}
+
+// The save of --play-save is loaded.
+static bool s_playSaveTaken {};
+
+// True if the main menu loads the save of --play-save.
+static bool
+HasPlaySave(void)
+{
+	return !s_playSaveTaken && !uqm::UQMOptions::read().playSave.empty();
+}
+
+const char* TakePlaySave(void)
+{
+	if (!HasPlaySave())
+	{
+		return nullptr;
+	}
+	s_playSaveTaken = true;
+	return uqm::UQMOptions::read().playSave.c_str();
 }
 
 static bool
 DoRestart(MENU_STATE* pMS)
 {
 	static TimeCount LastInputTime;
-	static TimeCount InactTimeOut;
-	TimeCount TimeIn = GetTimeCounter();
+	static TimePeriod InactTimeOut;
+	const TimeCount TimeIn = GetTimeCounter();
 
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
@@ -482,13 +496,13 @@ DoRestart(MENU_STATE* pMS)
 		pMS->CurState = PLAY_SUPER_MELEE;
 		PulsedInputState.menu[KEY_MENU_SELECT] = 65535;
 	}
-	else if (optLoadGame && !optSuperMelee)
+	else if ((optLoadGame || HasPlaySave()) && !optSuperMelee)
 	{
 		pMS->CurState = LOAD_SAVED_GAME;
 		PulsedInputState.menu[KEY_MENU_SELECT] = 65535;
 	}
 
-	if (pMS->Initialized && !(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (pMS->Initialized && !(uqm::currentActivity() & CHECK_ABORT))
 	{
 		Flash_process(pMS->flashContext);
 	}
@@ -501,16 +515,16 @@ DoRestart(MENU_STATE* pMS)
 		InitPulseText();
 		ResetMusicResume();
 
-		InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * GameTicksPerSecond;
+		InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * c_gameSecond;
 
 		pMS->flashContext = Flash_createOverlay(ScreenContext,
 												nullptr, nullptr);
 		Flash_setMergeFactors(pMS->flashContext, -3, 3, 16);
-		Flash_setSpeed(pMS->flashContext, (6 * GameTicksPerSecond) / 14, 0,
-					   (6 * GameTicksPerSecond) / 14, 0);
-		Flash_setFrameTime(pMS->flashContext, GameTicksPerSecond / 16);
+		Flash_setSpeed(pMS->flashContext, (6 * c_gameSecond) / 14, TimePeriod {},
+					   (6 * c_gameSecond) / 14, TimePeriod {});
+		Flash_setFrameTime(pMS->flashContext, c_gameSecond / 16);
 		Flash_setState(pMS->flashContext, FlashState_fadeIn,
-					   (3 * GameTicksPerSecond) / 16);
+					   (3 * c_gameSecond) / 16);
 		Flash_setPulseBox(pMS->flashContext, false);
 
 		DrawRestartMenu(pMS, pMS->CurState, nullptr);
@@ -519,12 +533,12 @@ DoRestart(MENU_STATE* pMS)
 		LastInputTime = GetTimeCounter();
 		pMS->Initialized = true;
 
-		SleepThreadUntil(FadeScreen(FadeAllToColor, GameTicksPerSecond / 2));
+		SleepThreadUntil(FadeScreen(FadeAllToColor, c_gameSecond / 2));
 	}
-	else if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	else if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		SleepThreadUntil(
-			FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+			FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 		return false;
 	}
 	else if (PulsedInputState.menu[KEY_MENU_SELECT])
@@ -543,8 +557,8 @@ DoRestart(MENU_STATE* pMS)
 						MENU_SOUND_SELECT);
 					SetTransitionSource(nullptr);
 					SleepThreadUntil(
-						FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
-					GLOBAL(CurrentActivity) = CHECK_ABORT;
+						FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+					uqm::currentActivity() = CHECK_ABORT;
 					restartGame = true;
 					break;
 				}
@@ -553,11 +567,11 @@ DoRestart(MENU_STATE* pMS)
 				{
 					Flash_pause(pMS->flashContext);
 					Flash_setState(pMS->flashContext, FlashState_fadeIn,
-								   (3 * GameTicksPerSecond) / 16);
+								   (3 * c_gameSecond) / 16);
 					if (!DoDiffChooser(pMS))
 					{
-						LastInputTime = GetTimeCounter();			 // if we timed out - don't start second credit roll
-						if (GLOBAL(CurrentActivity) != (ACTIVITY)~0) // just declined
+						LastInputTime = GetTimeCounter();			// if we timed out - don't start second credit roll
+						if (uqm::currentActivity() != (ACTIVITY)~0) // just declined
 						{
 							Flash_continue(pMS->flashContext);
 						}
@@ -565,24 +579,45 @@ DoRestart(MENU_STATE* pMS)
 					}
 					Flash_continue(pMS->flashContext);
 				}
+
+				Flash_pause(pMS->flashContext);
+				Flash_setState(pMS->flashContext, FlashState_fadeIn,
+							   (3 * c_gameSecond) / 16);
+				if (const uqstl::optional<uqm::GameSeed> seed {NewGameMenu()})
+				{
+					uqm::UQMGame::getInstance().setNewGameSeed(*seed);
+				}
+				else
+				{
+					LastInputTime = GetTimeCounter();
+					SetTransitionSource(nullptr);
+					BatchGraphics();
+					DrawRestartMenuGraphic(pMS);
+					ScreenTransition(uqm::EmulationMode::PC | uqm::EmulationMode::Console3DO, nullptr);
+					Flash_UpdateOriginal(pMS->flashContext);
+					DrawRestartMenu(pMS, pMS->CurState, nullptr);
+					Flash_continue(pMS->flashContext);
+					UnbatchGraphics();
+					return true;
+				}
+
 				LastActivity = CHECK_LOAD | CHECK_RESTART;
-				GLOBAL(CurrentActivity) = IN_INTERPLANETARY;
+				uqm::currentActivity() = IN_INTERPLANETARY;
 				break;
 			case LOAD_SAVED_GAME:
 				LastActivity = CHECK_LOAD;
-				GLOBAL(CurrentActivity) = IN_INTERPLANETARY;
+				uqm::currentActivity() = IN_INTERPLANETARY;
 				optLoadGame = false;
 				break;
 			case PLAY_SUPER_MELEE:
-				uqm::UQMOptions::edit().shipSeed = false;
 				ReloadMasterShipList(nullptr);
-				GLOBAL(CurrentActivity) = SUPER_MELEE;
+				uqm::currentActivity() = SUPER_MELEE;
 				optSuperMelee = false;
 				break;
 			case SETUP_GAME:
 				Flash_pause(pMS->flashContext);
 				Flash_setState(pMS->flashContext, FlashState_fadeIn,
-							   (3 * GameTicksPerSecond) / 16);
+							   (3 * c_gameSecond) / 16);
 
 				SetupMenu();
 
@@ -592,7 +627,7 @@ DoRestart(MENU_STATE* pMS)
 				}
 
 				LastInputTime = GetTimeCounter();
-				InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * GameTicksPerSecond;
+				InactTimeOut = (uqm::UQMOptions::read().mainMenuMusic ? 60 : 20) * c_gameSecond;
 
 				SetTransitionSource(nullptr);
 				BatchGraphics();
@@ -608,8 +643,8 @@ DoRestart(MENU_STATE* pMS)
 				return true;
 			case QUIT_GAME:
 				SleepThreadUntil(
-					FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
-				GLOBAL(CurrentActivity) = CHECK_ABORT;
+					FadeScreen(FadeAllToBlack, c_gameSecond / 2));
+				uqm::currentActivity() = CHECK_ABORT;
 				break;
 		}
 
@@ -619,9 +654,7 @@ DoRestart(MENU_STATE* pMS)
 	}
 	else if (PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN])
 	{
-		uint8_t NewState;
-
-		NewState = pMS->CurState;
+		uint8_t NewState {pMS->CurState};
 		if (PulsedInputState.menu[KEY_MENU_UP])
 		{
 			if (NewState == START_NEW_GAME)
@@ -679,28 +712,23 @@ DoRestart(MENU_STATE* pMS)
 	{ // No input received, check if timed out
 		if (GetTimeCounter() - LastInputTime > InactTimeOut)
 		{
-			GLOBAL(CurrentActivity) = (ACTIVITY)~0;
+			uqm::currentActivity() = (ACTIVITY)~0;
 			return false;
 		}
 	}
 
-	SleepThreadUntil(TimeIn + GameTicksPerSecond / 30);
+	SleepThreadUntil(TimeIn + c_gameSecond / 30);
 
 	return true;
 }
 
-static bool
-RestartMenu(MENU_STATE* pMS)
+void ShowGameEnding(void)
 {
-	TimeCount TimeOut;
-	uint16_t i;
-
-	ReinitQueue(&race_q[0]);
-	ReinitQueue(&race_q[1]);
+	const ACTIVITY lastActivity {uqm::currentActivity()};
 
 	SetContext(ScreenContext);
 
-	GLOBAL(CurrentActivity) |= CHECK_ABORT;
+	uqm::currentActivity() |= CHECK_ABORT;
 	if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
 		&& GET_GAME_STATE(UTWIG_BOMB_ON_SHIP)
 		&& !GET_GAME_STATE(UTWIG_BOMB)
@@ -708,15 +736,14 @@ RestartMenu(MENU_STATE* pMS)
 	{ // player blew himself up with Utwig bomb
 		SET_GAME_STATE(UTWIG_BOMB_ON_SHIP, 0);
 
-		SleepThreadUntil(FadeScreen(FadeAllToWhite, GameTicksPerSecond / 8)
-						 + GameTicksPerSecond / 60);
+		SleepThreadUntil(FadeScreen(FadeAllToWhite, c_gameSecond / 8)
+						 + c_gameSecond / 60);
 		SetContextBackGroundColor(WHITE_COLOR);
 
 		ClearDrawable();
 		FlushColorXForms();
-		TimeOut = GameTicksPerSecond / 8;
 
-		GLOBAL(CurrentActivity) = IN_ENCOUNTER;
+		uqm::currentActivity() = IN_ENCOUNTER;
 
 		if (uqm::UQMOptions::read().gameOver)
 		{
@@ -725,16 +752,14 @@ RestartMenu(MENU_STATE* pMS)
 
 		DeathBySuicide = false;
 
-		FreeGameData();
-		GLOBAL(CurrentActivity) = CHECK_ABORT;
+		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 8));
+		SleepThread(c_gameSecond * 3);
 	}
 	else
 	{
-		TimeOut = GameTicksPerSecond / 2;
-
 		if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
 		{
-			GLOBAL(CurrentActivity) = IN_ENCOUNTER;
+			uqm::currentActivity() = IN_ENCOUNTER;
 
 			if (DeathByMelee)
 			{
@@ -754,16 +779,26 @@ RestartMenu(MENU_STATE* pMS)
 			}
 		}
 
-		if (lowByte(LastActivity) == WON_LAST_BATTLE)
+		if (uqm::lowByte(lastActivity) == WON_LAST_BATTLE)
 		{
-			GLOBAL(CurrentActivity) = WON_LAST_BATTLE;
+			uqm::currentActivity() = WON_LAST_BATTLE;
 			Victory();
 			Credits(true);
 		}
-
-		FreeGameData();
-		GLOBAL(CurrentActivity) = CHECK_ABORT;
 	}
+	uqm::currentActivity() = CHECK_ABORT;
+}
+
+static bool
+RestartMenu(MENU_STATE* pMS)
+{
+	ReinitQueue(&race_q[0]);
+	ReinitQueue(&race_q[1]);
+
+	SetContext(ScreenContext);
+
+	FreeGameData();
+	uqm::currentActivity() = CHECK_ABORT;
 
 	LastActivity = 0;
 	NextActivity = 0;
@@ -771,18 +806,13 @@ RestartMenu(MENU_STATE* pMS)
 	// TODO: This fade is not always necessary, especially after a splash
 	//   screen. It only makes a user wait.
 	// Kruzen: This fade is needed when going from SUPER-MELEE and LOAD menus
-	// and when Skip Intro option is enabled, 3 second pause goes when
-	// the player used the Utwig bomb
-	SleepThreadUntil(FadeScreen(FadeAllToBlack, TimeOut));
-	if (TimeOut == GameTicksPerSecond / 8)
-	{
-		SleepThread(GameTicksPerSecond * 3);
-	}
+	// and when Skip Intro option is enabled
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 
 	pMS->CurFrame = CaptureDrawable(LoadGraphic(RESTART_PMAP_ANIM));
 
 	DrawRestartMenuGraphic(pMS);
-	GLOBAL(CurrentActivity) &= ~CHECK_ABORT;
+	uqm::currentActivity() &= ~CHECK_ABORT;
 	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN, MENU_SOUND_SELECT);
 	SetDefaultMenuRepeatDelay();
 	DoInput(pMS, true);
@@ -797,7 +827,7 @@ RestartMenu(MENU_STATE* pMS)
 	DestroyDrawable(ReleaseDrawable(pMS->CurFrame));
 	pMS->CurFrame = 0;
 
-	for (i = START_NEW_GAME; i < NUM_MENU_ELEMENTS; i++)
+	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
 	{
 		DestroyDrawable(ReleaseDrawable(TextCache[i]));
 		TextCache[i] = 0;
@@ -808,24 +838,20 @@ RestartMenu(MENU_STATE* pMS)
 		Reload();
 	}
 
-	if (GLOBAL(CurrentActivity) == (ACTIVITY)~0)
+	if (uqm::currentActivity() == (ACTIVITY)~0)
 	{
 		return (false); // timed out
 	}
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return (false); // quit
 	}
 
-	TimeOut = FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2);
-
-	SleepThreadUntil(TimeOut);
+	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 	FlushColorXForms();
 
-	SeedRandomNumbers();
-
-	return (lowByte(GLOBAL(CurrentActivity)) != SUPER_MELEE);
+	return (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE);
 }
 
 static bool
@@ -833,26 +859,28 @@ TryStartGame(void)
 {
 	MENU_STATE MenuState;
 
-	LastActivity = GLOBAL(CurrentActivity);
-	GLOBAL(CurrentActivity) = 0;
+	LastActivity = uqm::currentActivity();
+	uqm::currentActivity() = 0;
 
 	memset(&MenuState, 0, sizeof(MenuState));
 	MenuState.InputFunc = DoRestart;
 
 	while (!RestartMenu(&MenuState))
 	{ // spin until a game is started or loaded
-		if (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE && !(GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE && !(uqm::currentActivity() & CHECK_ABORT))
 		{
 			FreeGameData();
+			uqm::UQMGame::getInstance().beginSession(uqm::SessionKind::SuperMelee);
 			Melee();
+			uqm::UQMGame::getInstance().endSession();
 			MenuState.Initialized = false;
 		}
-		else if (GLOBAL(CurrentActivity) == (ACTIVITY)~0)
+		else if (uqm::currentActivity() == (ACTIVITY)~0)
 		{ // timed out
-			SleepThreadUntil(FadeScreen(FadeAllToBlack, GameTicksPerSecond / 2));
+			SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 			return (false);
 		}
-		else if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+		else if (uqm::currentActivity() & CHECK_ABORT)
 		{ // quit
 			return (false);
 		}
@@ -867,9 +895,9 @@ bool StartGame(void)
 	{
 		while (!TryStartGame())
 		{
-			if (GLOBAL(CurrentActivity) == (ACTIVITY)~0)
+			if (uqm::currentActivity() == (ACTIVITY)~0)
 			{ // timed out
-				GLOBAL(CurrentActivity) = 0;
+				uqm::currentActivity() = 0;
 
 				if (optRequiresRestart || optRequiresReload)
 				{
@@ -886,7 +914,7 @@ bool StartGame(void)
 				}
 			}
 
-			if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+			if (uqm::currentActivity() & CHECK_ABORT)
 			{
 				return (false); // quit
 			}
@@ -900,7 +928,7 @@ bool StartGame(void)
 			}
 		}
 
-	} while (GLOBAL(CurrentActivity) & CHECK_ABORT);
+	} while (uqm::currentActivity() & CHECK_ABORT);
 
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "StartGame called for {} mode with seed {} shipseed {}.\n",
@@ -919,11 +947,10 @@ bool StartGame(void)
 		// While the starseed init code should always force a
 		// reset of the starmap_array, we will do it here because
 		// paranoia is its own reward.
-		uint16_t i;
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "Initializing star_array, just in case...\n");
 #endif
-		for (i = 0; i < NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1 + 1; i++)
+		for (uint16_t i {0}; i < NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1 + 1; i++)
 		{
 			star_array[i] = StarmapArray[i];
 		}

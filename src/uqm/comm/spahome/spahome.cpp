@@ -20,7 +20,7 @@
 #include "../spathi/resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "uqm/gameev.h"
 
@@ -371,9 +371,7 @@ static void SpathiAllies(RESPONSE_REF R);
 static void
 SpathiInfo(RESPONSE_REF R)
 {
-	uint8_t InfoLeft;
-
-	InfoLeft = false;
+	uint8_t InfoLeft {false};
 	if (PLAYER_SAID(R, like_some_info))
 	{
 		NPCPhrase(WHAT_ABOUT);
@@ -445,7 +443,7 @@ SpathiInfo(RESPONSE_REF R)
 static void
 SpathiAllies(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (R == 0)
 	{
@@ -674,9 +672,8 @@ AllianceOffer(RESPONSE_REF R)
 	{
 		NPCPhrase(JUST_MISUNDERSTANDING);
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-					  GameTicksPerSecond / 4);
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
+					  c_gameSecond / 4);
 
 		SET_GAME_STATE(SPATHI_MANNER, 3);
 		SET_GAME_STATE(SPATHI_VISITS, 0);
@@ -767,7 +764,7 @@ SpathiParty(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SPATHI_HOME_VISITS);
 		switch (NumVisits++)
@@ -877,9 +874,8 @@ SpathiCouncil(RESPONSE_REF R)
 	{
 		NPCPhrase(YES_GOOD_PASSWORD);
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-					  GameTicksPerSecond / 4);
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
+					  c_gameSecond / 4);
 
 		SET_GAME_STATE(KNOW_SPATHI_PASSWORD, 1);
 		SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
@@ -975,7 +971,7 @@ SpathiPassword(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(SPATHI_HOME_VISITS);
 		switch (NumVisits++)
@@ -1021,7 +1017,7 @@ SpathiPassword(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	if (IS_HD)
 	{
@@ -1044,15 +1040,13 @@ Intro(void)
 	}
 	else if (CheckAlliance(SPATHI_SHIP) == GOOD_GUY)
 	{
-		CommData.AlienColorMap =
-			SetAbsColorMapIndex(CommData.AlienColorMap, 1);
+		CommData.AlienColorMapIndex = 1;
 
 		SpathiAllies((RESPONSE_REF)0);
 	}
 	else if (GET_GAME_STATE(SPATHI_PARTY))
 	{
-		CommData.AlienColorMap =
-			SetAbsColorMapIndex(CommData.AlienColorMap, 1);
+		CommData.AlienColorMapIndex = 1;
 
 		SpathiParty((RESPONSE_REF)0);
 	}
@@ -1060,8 +1054,7 @@ Intro(void)
 	{
 		if (GET_GAME_STATE(LIED_ABOUT_CREATURES) < 2)
 		{
-			CommData.AlienColorMap =
-				SetAbsColorMapIndex(CommData.AlienColorMap, 1);
+			CommData.AlienColorMapIndex = 1;
 
 			SpathiQuest((RESPONSE_REF)0);
 		}
@@ -1075,8 +1068,7 @@ Intro(void)
 	}
 	else if (GET_GAME_STATE(KNOW_SPATHI_QUEST))
 	{
-		CommData.AlienColorMap =
-			SetAbsColorMapIndex(CommData.AlienColorMap, 1);
+		CommData.AlienColorMapIndex = 1;
 
 		LearnQuest((RESPONSE_REF)0);
 	}
@@ -1084,8 +1076,7 @@ Intro(void)
 			 && (GET_GAME_STATE(FOUND_PLUTO_SPATHI)
 				 || GET_GAME_STATE(SPATHI_HOME_VISITS) != 7))
 	{
-		CommData.AlienColorMap =
-			SetAbsColorMapIndex(CommData.AlienColorMap, 1);
+		CommData.AlienColorMapIndex = 1;
 
 		SpathiCouncil((RESPONSE_REF)0);
 	}
@@ -1098,14 +1089,14 @@ Intro(void)
 static uint16_t
 uninit_spahome(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
 static void
 post_spahome_enc(void)
 {
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
 		&& (Manner = GET_GAME_STATE(SPATHI_MANNER)) != 2)
@@ -1122,13 +1113,11 @@ post_spahome_enc(void)
 LOCDATA*
 init_spahome_comm()
 {
-	LOCDATA* retval;
-
 	spahome_desc.init_encounter_func = Intro;
 	spahome_desc.post_encounter_func = post_spahome_enc;
 	spahome_desc.uninit_encounter_func = uninit_spahome;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
@@ -1148,7 +1137,7 @@ init_spahome_comm()
 		setSegue(Segue_hostile);
 	}
 
-	retval = &spahome_desc;
+	LOCDATA* retval {&spahome_desc};
 
 	return (retval);
 }

@@ -20,7 +20,7 @@
 #include "../comandr/resinst.h"
 #include "strings.h"
 #include "options.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "uqm/setup.h"
 #include "uqm/shipcont.h"
@@ -32,6 +32,7 @@
 #include "uqm/oscill.h"
 #include "uqm/nameref.h"
 #include "uqm/controls.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static void TellMission(RESPONSE_REF R);
@@ -211,24 +212,23 @@ static uint32_t CurBulletinMask;
 static uint16_t
 DoSellMinerals(void)
 {
-	uint16_t i;
 	uint16_t total = 0;
 	bool Sleepy = true;
 
 	FlushInput();
 
-	for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
+	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
 	{
-		uint16_t amount;
-		uint32_t TimeIn = 0;
+		uint16_t amount {};
+		TimeCount TimeIn {};
 
 		if (i == 0)
 		{
 			DrawCargoStrings((uint8_t)~0, (uint8_t)~0);
-			TimeIn = GetTimeCounter() + GameTicksPerSecond / 2;
+			TimeIn = GetTimeCounter() + c_gameSecond / 2;
 			while (GetTimeCounter() <= TimeIn)
 			{
-				if (AnyButtonPress(true) || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+				if (AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
 				{
 					Sleepy = false;
 					break;
@@ -251,7 +251,7 @@ DoSellMinerals(void)
 			total += amount * GLOBAL(ElementWorth[i]);
 			do
 			{
-				if (!Sleepy || AnyButtonPress(true) || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+				if (!Sleepy || AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
 				{
 					Sleepy = false;
 					GLOBAL_SIS(ElementAmounts[i]) = 0;
@@ -273,10 +273,10 @@ DoSellMinerals(void)
 		}
 		if (Sleepy)
 		{
-			TimeIn = GetTimeCounter() + (GameTicksPerSecond / 4);
+			TimeIn = GetTimeCounter() + (c_gameSecond / 4);
 			while (GetTimeCounter() <= TimeIn)
 			{
-				if (AnyButtonPress(true) || (GLOBAL(CurrentActivity) & CHECK_ABORT))
+				if (AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
 				{
 					Sleepy = false;
 					break;
@@ -286,7 +286,7 @@ DoSellMinerals(void)
 		}
 	}
 
-	SleepThread(GameTicksPerSecond / 2);
+	SleepThread(c_gameSecond / 2);
 
 	ClearSISRect(DRAW_SIS_DISPLAY);
 
@@ -411,7 +411,7 @@ ByeBye(RESPONSE_REF R)
 	{
 		RESPONSE_REF pStr = 0;
 
-		switch ((uint8_t)TFB_Random() & 7)
+		switch ((uint8_t)uqm::random().next() & 7)
 		{
 			case 0:
 				pStr = NORMAL_GOODBYE_A;
@@ -885,15 +885,15 @@ DefeatUrquan(RESPONSE_REF R)
 static void
 AnalyzeCondition(void)
 {
-	uint8_t i;
-	uint8_t num_thrusters = 0,
-			num_jets = 0,
-			num_guns = 0,
-			num_bays = 0,
-			num_batts = 0,
-			num_track = 0,
-			num_defense = 0;
-	bool HasMinimum;
+	uint8_t i {};
+	uint8_t num_thrusters = 0;
+	uint8_t num_jets = 0;
+	uint8_t num_guns = 0;
+	uint8_t num_bays = 0;
+	uint8_t num_batts = 0;
+	uint8_t num_track = 0;
+	uint8_t num_defense = 0;
+	bool HasMinimum {};
 
 	for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
 	{
@@ -911,7 +911,7 @@ AnalyzeCondition(void)
 	}
 	for (i = 0; i < NUM_MODULE_SLOTS; ++i)
 	{
-		uint8_t which_piece;
+		uint8_t which_piece {};
 
 		switch (which_piece = GLOBAL_SIS(ModuleSlots[i]))
 		{
@@ -994,10 +994,9 @@ AnalyzeCondition(void)
 	else
 	{
 		uint8_t num_aliens = 0;
-		uint16_t FleetStrength;
-		bool HasMaximum;
+		bool HasMaximum {};
 
-		FleetStrength = CalculateEscortsWorth();
+		const uint16_t FleetStrength {CalculateEscortsWorth()};
 		for (i = 0; i < NUM_AVAILABLE_RACES; ++i)
 		{
 			if (i != HUMAN_SHIP && CheckAlliance((RACE_ID)i) == GOOD_GUY)
@@ -1383,22 +1382,19 @@ NeedInfo(RESPONSE_REF R)
 static bool
 DiscussDevices(bool TalkAbout)
 {
-	uint16_t i, VuxBeastIndex, PhraseIndex;
 	//bool Undiscussed; unused
 
 	if (TalkAbout)
 	{
 		NPCPhrase(DEVICE_HEAD);
 	}
-	PhraseIndex = 2;
+	uint16_t PhraseIndex {2};
 
-	VuxBeastIndex = 0;
+	uint16_t VuxBeastIndex {0};
 	//Undiscussed = false; unused
-	for (i = 0; i < NUM_DEVICES; ++i)
+	for (uint16_t i {0}; i < NUM_DEVICES; ++i)
 	{
-		RESPONSE_REF pStr;
-
-		pStr = 0;
+		RESPONSE_REF pStr {0};
 		switch (i)
 		{
 			case ROSY_SPHERE_DEVICE:
@@ -1665,8 +1661,8 @@ DiscussDevices(bool TalkAbout)
 static bool
 CheckTiming(uint16_t month_index, uint16_t day_index)
 {
-	uint16_t mi, year_index;
-	uint8_t days_in_month[12] =
+	uint16_t mi {};
+	const uint8_t days_in_month[12] =
 		{
 			31,
 			28,
@@ -1683,7 +1679,7 @@ CheckTiming(uint16_t month_index, uint16_t day_index)
 		};
 
 	mi = GET_GAME_STATE(STARBASE_MONTH);
-	year_index = START_YEAR;
+	uint16_t year_index {START_YEAR};
 
 	day_index += GET_GAME_STATE(STARBASE_DAY);
 	while (day_index > days_in_month[mi - 1])
@@ -1700,20 +1696,18 @@ CheckTiming(uint16_t month_index, uint16_t day_index)
 	year_index += (month_index - 1) / 12;
 	month_index = ((month_index - 1) % 12) + 1;
 
-	return (year_index < GLOBAL(GameClock.year_index)
-			|| (year_index == GLOBAL(GameClock.year_index)
-				&& (month_index < GLOBAL(GameClock.month_index)
-					|| (month_index == GLOBAL(GameClock.month_index)
-						&& day_index < GLOBAL(GameClock.day_index)))));
+	return (year_index < uqm::gameState().clock().year()
+			|| (year_index == uqm::gameState().clock().year()
+				&& (month_index < uqm::gameState().clock().month()
+					|| (month_index == uqm::gameState().clock().month()
+						&& day_index < uqm::gameState().clock().day()))));
 }
 
 static void
 CheckBulletins(bool Repeat)
 {
-	RESPONSE_REF pIntro;
-	uint8_t b0;
-	uint32_t BulletinMask;
-	uint16_t CrewSold = MAKE_WORD(
+	uint32_t BulletinMask {};
+	const uint16_t CrewSold = uqm::makeWord(
 		GET_GAME_STATE(CREW_SOLD_TO_DRUUGE0),
 		GET_GAME_STATE(CREW_SOLD_TO_DRUUGE1));
 
@@ -1726,14 +1720,12 @@ CheckBulletins(bool Repeat)
 		BulletinMask = GET_GAME_STATE(STARBASE_BULLETS);
 	}
 
-	pIntro = 0;
-	for (b0 = 0; b0 < 32; ++b0)
+	RESPONSE_REF pIntro {0};
+	for (uint8_t b0 {0}; b0 < 32; ++b0)
 	{
 		if (!(BulletinMask & (1L << b0)))
 		{
-			RESPONSE_REF pStr;
-
-			pStr = 0;
+			RESPONSE_REF pStr {0};
 			switch (b0)
 			{
 				case 0:
@@ -1897,7 +1889,7 @@ CheckBulletins(bool Repeat)
 					break;
 				case 26:
 					{
-						uint16_t crew_sold = CrewSold;
+						const uint16_t crew_sold = CrewSold;
 
 						if (crew_sold > MIN_SOLD)
 						{
@@ -1911,7 +1903,7 @@ CheckBulletins(bool Repeat)
 					}
 				case 27:
 					{
-						uint16_t crew_sold = CrewSold;
+						const uint16_t crew_sold = CrewSold;
 
 						if (crew_sold > MAX_SOLD)
 						{
@@ -1925,9 +1917,9 @@ CheckBulletins(bool Repeat)
 					}
 				case 28:
 					{
-						uint16_t crew_bought;
+						uint16_t crew_bought {};
 
-						crew_bought = MAKE_WORD(
+						crew_bought = uqm::makeWord(
 							GET_GAME_STATE(CREW_PURCHASED0),
 							GET_GAME_STATE(CREW_PURCHASED1));
 						if (crew_bought >= CREW_EXPENSE_THRESHOLD)
@@ -1960,7 +1952,7 @@ CheckBulletins(bool Repeat)
 				}
 				else
 				{
-					switch ((uint8_t)TFB_Random() % 7)
+					switch ((uint8_t)uqm::random().next() % 7)
 					{
 						case 0:
 							pIntro = BEFORE_WE_GO_ON_1;
@@ -2030,9 +2022,9 @@ NormalStarbase(RESPONSE_REF R)
 				oldRU = 2500;
 			}
 			SET_GAME_STATE(STARBASE_MONTH,
-						   GLOBAL(GameClock.month_index));
+						   uqm::gameState().clock().month());
 			SET_GAME_STATE(STARBASE_DAY,
-						   GLOBAL(GameClock.day_index));
+						   uqm::gameState().clock().day());
 		}
 		else if (GET_GAME_STATE(STARBASE_VISITED))
 		{
@@ -2043,7 +2035,7 @@ NormalStarbase(RESPONSE_REF R)
 			// XXX TODO: This can be simplified now.
 			RESPONSE_REF pStr = 0;
 
-			switch ((uint8_t)TFB_Random() & 7)
+			switch ((uint8_t)uqm::random().next() & 7)
 			{
 				case 0:
 					pStr = NORMAL_HELLO_A;
@@ -2113,13 +2105,13 @@ SellMinerals(RESPONSE_REF R)
 	}
 	else
 	{
-		uint16_t amount[NUM_ELEMENT_CATEGORIES], Ru[NUM_ELEMENT_CATEGORIES];
-		uint16_t i, sseg;
+		uint16_t amount[NUM_ELEMENT_CATEGORIES];
+		uint16_t Ru[NUM_ELEMENT_CATEGORIES];
 		uint16_t seg = 0;
 		uint16_t count = 0;
 
 		NPCPhrase(CARGO_LIST);
-		for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
+		for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
 		{
 			if ((amount[seg] = GLOBAL_SIS(ElementAmounts[i])) != 0)
 			{
@@ -2153,7 +2145,7 @@ SellMinerals(RESPONSE_REF R)
 			NPCPhrase(LIGHT_LOAD_C1);
 		}
 
-		for (sseg = 1; sseg < seg + 1; sseg++)
+		for (uint16_t sseg {1}; sseg < seg + 1; sseg++)
 		{
 			AlienTalkSegue(sseg);
 			GLOBAL_SIS(TotalElementMass) -= amount[sseg - 1];
@@ -2179,7 +2171,7 @@ Intro(void)
 static uint16_t
 uninit_starbase(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -2196,13 +2188,11 @@ post_starbase_enc(void)
 LOCDATA*
 init_starbase_comm()
 {
-	LOCDATA* retval;
-
 	commander_desc.init_encounter_func = Intro;
 	commander_desc.post_encounter_func = post_starbase_enc;
 	commander_desc.uninit_encounter_func = uninit_starbase;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
@@ -2221,7 +2211,7 @@ init_starbase_comm()
 
 	CurBulletinMask = 0;
 	setSegue(Segue_peace);
-	retval = &commander_desc;
+	LOCDATA* retval {&commander_desc};
 
 	return (retval);
 }

@@ -31,6 +31,7 @@
 #include "../../state.h"
 #include "../../gamestr.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateMycon_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -66,10 +67,10 @@ static bool
 GenerateMyconDefenders(uint8_t index)
 {
 #define STATE_OFFSET 29
-	uint8_t shift = index - STATE_OFFSET;
-	bool Survivors;
-	uint16_t state;
-	uint16_t i;
+	const uint8_t shift = index - STATE_OFFSET;
+	bool Survivors {};
+	uint16_t state {};
+	uint16_t i {};
 
 	if (!(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << shift))
 	{
@@ -84,17 +85,17 @@ GenerateMyconDefenders(uint8_t index)
 							  &GLOBAL(npc_built_ship_q), 0);
 		}
 
-		GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+		uqm::currentActivity() |= START_INTERPLANETARY;
 		InitCommunication(MYCON_CONVERSATION);
 
-		if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+		if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 		{
 			return true;
 		}
 
 		Survivors = GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
 
-		GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+		uqm::currentActivity() &= ~START_INTERPLANETARY;
 		ReinitQueue(&GLOBAL(npc_built_ship_q));
 		GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 
@@ -116,32 +117,29 @@ GenerateMyconDefenders(uint8_t index)
 static bool
 GenerateMycon_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-	PLANET_DESC* pPlanet;
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
 
 	pSunDesc->PlanetByte = 0;
 
-	if (!PrimeSeed)
+	if (!uqm::isOriginalSeed())
 	{
 		pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 	}
 
-	pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
+	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	pPlanet->data_index = SHATTERED_WORLD;
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
-		uint16_t angle;
-
 		pPlanet->radius = EARTH_RADIUS * 80L / 100;
 		if (pPlanet->NumPlanets > 2)
 		{
 			pPlanet->NumPlanets = 2;
 		}
-		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
@@ -159,12 +157,12 @@ GenerateMycon_generateName(const SOLARSYS_STATE* solarSys,
 	if (CurStarDescPtr->Index == EGG_CASE0_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
-		PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
+		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
+		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		utf8StringCopy(GLOBAL_SIS(PlanetName),
-					   sizeof(GLOBAL_SIS(PlanetName)),
-					   GAME_STRING(PLANET_NUMBER_BASE + 42));
+		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
+							sizeof(GLOBAL_SIS(PlanetName)),
+							GAME_STRING(PLANET_NUMBER_BASE + 42));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}
@@ -198,17 +196,16 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 				else
 				{
-					uint16_t i;
-					uint16_t sum = difficultyCase(3, 5, 12);
+					const uint16_t sum = difficultyCase(3, 5, 12);
 
-					for (i = 0; i < sum; ++i)
+					for (uint16_t i {0}; i < sum; ++i)
 					{
 						CloneShipFragment(MYCON_SHIP,
 										  &GLOBAL(npc_built_ship_q), 0);
 					}
 				}
 
-				GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+				uqm::currentActivity() |= START_INTERPLANETARY;
 				if (CurStarDescPtr->Index == MYCON_DEFINED)
 				{
 					SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
@@ -219,18 +216,18 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 				InitCommunication(MYCON_CONVERSATION);
 
-				if (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
+				if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 				{
 					return true;
 				}
 
 				{
-					bool MyconSurvivors;
+					bool MyconSurvivors {};
 
 					MyconSurvivors =
 						GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
 
-					GLOBAL(CurrentActivity) &= ~START_INTERPLANETARY;
+					uqm::currentActivity() &= ~START_INTERPLANETARY;
 					ReinitQueue(&GLOBAL(npc_built_ship_q));
 					GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
 
@@ -255,9 +252,8 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 						CaptureDrawable(
 							LoadGraphic(
 								SUN_DEVICE_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryString =
-						CaptureStringTable(
-							LoadStringTable(SUN_DEVICE_STRTAB));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SUN_DEVICE_STRTAB);
+					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 				break;
 			case EGG_CASE0_DEFINED:
@@ -283,9 +279,8 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 					solarSys->PlanetSideFrame[1] =
 						CaptureDrawable(
 							LoadGraphic(EGG_CASE_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryString =
-						CaptureStringTable(
-							LoadStringTable(EGG_CASE_STRTAB));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(EGG_CASE_STRTAB);
+					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 				break;
 		}
@@ -294,13 +289,13 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 	GenerateDefault_generateOrbital(solarSys, world);
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& !PrimeSeed
+		&& !uqm::isOriginalSeed()
 		&& (CurStarDescPtr->Index != EGG_CASE0_DEFINED || isDifficulty(uqm::Difficulty::Hard)))
 	{
 		PLANET_INFO* pPlanetInfo = &solarSys->SysInfo.PlanetInfo;
-		uint32_t rand = RandomContext_Random(SysGenRNG);
+		const uint32_t rand = SysGenRNG->next();
 
-		pPlanetInfo->SurfaceTemperature = RangeMinMax(100, 300, rand);
+		pPlanetInfo->SurfaceTemperature = uqm::rangeMinMax(100, 300, rand);
 	}
 
 	return true;
@@ -331,9 +326,9 @@ GenerateMycon_generateEnergy(const SOLARSYS_STATE* solarSys,
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
-		// XXX: DiscoveryString is set by generateOrbital() only when the
+		// XXX: DiscoveryStrings is set by generateOrbital() only when the
 		//   node has not been picked up yet
-		if (!solarSys->SysInfo.PlanetInfo.DiscoveryString)
+		if (!solarSys->SysInfo.PlanetInfo.DiscoveryStrings)
 		{ // already picked up
 			return 0;
 		}

@@ -40,13 +40,14 @@
 #include "setup.h"
 #include "settings.h"
 #include "sounds.h"
-#include "libs/async.h"
+#include "libs/callback/async.h"
 #include "libs/graphics/gfx_common.h"
 #include "core/log/log.h"
 #include "libs/mathlib.h"
 #include "globdata.h"
 #include "libs/input/sdl/vcontrol.h"
 #include "hyper.h"
+#include "uqm/random/UQMRandom.h"
 // for EraseRadar()
 
 
@@ -66,8 +67,8 @@ BattleFrameCounter battleFrameCount;
 
 bool RunAwayAllowed(void)
 {
-	return ((lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER
-			 || lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+	return ((uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
+			 || uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 			&& (getNomadMode() == uqm::NomadMode::Easy
 				|| GET_GAME_STATE(STARBASE_AVAILABLE))
 			&& (isDifficulty(uqm::Difficulty::Easy) || !GET_GAME_STATE(BOMB_CARRIER)));
@@ -76,7 +77,7 @@ bool RunAwayAllowed(void)
 static void
 DoRunAway(STARSHIP* StarShipPtr)
 {
-	ELEMENT* ElementPtr;
+	ELEMENT* ElementPtr {};
 
 	LockElement(StarShipPtr->hShip, &ElementPtr);
 	if (GetPrimType(&DisplayArray[ElementPtr->PrimIndex]) == STAMP_PRIM
@@ -111,7 +112,7 @@ DoRunAway(STARSHIP* StarShipPtr)
 static void
 setupBattleInputOrder(void)
 {
-	size_t i;
+	size_t i {};
 
 #ifndef NETPLAY
 	for (i = 0; i < NUM_SIDES; i++)
@@ -119,7 +120,7 @@ setupBattleInputOrder(void)
 		battleInputOrder[i] = i;
 	}
 #else
-	int j;
+	int j {};
 
 	i = 0;
 	// First put the locally controlled players in the array.
@@ -154,27 +155,24 @@ frameInputHuman(HumanInputContext* context, STARSHIP* StarShipPtr)
 static void
 ProcessInput(void)
 {
-	bool CanRunAway;
-	size_t sideI;
-
 #ifdef NETPLAY
 	netInput();
 #endif
 
-	CanRunAway = RunAwayAllowed();
+	const bool CanRunAway {RunAwayAllowed()};
 
-	for (sideI = 0; sideI < NUM_SIDES; sideI++)
+	for (size_t sideI {0}; sideI < NUM_SIDES; sideI++)
 	{
-		HSTARSHIP hBattleShip, hNextShip;
-		size_t cur_player = battleInputOrder[sideI];
+		HSTARSHIP hBattleShip {};
+		HSTARSHIP hNextShip {};
+		const size_t cur_player = battleInputOrder[sideI];
 
 		for (hBattleShip = GetHeadLink(&race_q[cur_player]);
 			 hBattleShip != 0; hBattleShip = hNextShip)
 		{
-			BATTLE_INPUT_STATE InputState;
-			STARSHIP* StarShipPtr;
+			BATTLE_INPUT_STATE InputState {};
 
-			StarShipPtr = LockStarShip(&race_q[cur_player], hBattleShip);
+			STARSHIP* StarShipPtr {LockStarShip(&race_q[cur_player], hBattleShip)};
 			hNextShip = _GetSuccLink(StarShipPtr);
 
 			if (StarShipPtr->hShip)
@@ -186,9 +184,6 @@ ProcessInput(void)
 				InputState = PlayerInput[cur_player]->handlers->frameInput(
 					PlayerInput[cur_player], StarShipPtr);
 
-#if CREATE_JOURNAL
-				JournalInput(InputState);
-#endif /* CREATE_JOURNAL */
 #ifdef NETPLAY
 				if (!testFlag(PlayerControl[cur_player], PlayerControlFlags::Network))
 				{
@@ -247,15 +242,11 @@ ProcessInput(void)
 	flushPacketQueues();
 #endif
 
-	if (GLOBAL(CurrentActivity) & (CHECK_LOAD | CHECK_ABORT))
+	if (uqm::currentActivity() & (CHECK_LOAD | CHECK_ABORT))
 	{
-		GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+		uqm::currentActivity() &= ~IN_BATTLE;
 	}
 }
-
-#if DEMO_MODE || CREATE_JOURNAL
-uint32_t BattleSeed;
-#endif /* DEMO_MODE */
 
 static MUSIC_REF BattleRef;
 uint8_t inHSpace = 0;
@@ -276,7 +267,7 @@ void BattleSong(bool DoPlay)
 		}
 		else
 		{
-			if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE)
+			if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 			{
 				BattleRef = LoadMusic(BATTLE_MUSIC_SAMATRA);
 
@@ -311,7 +302,6 @@ DoBattle(BATTLE_STATE* bs)
 {
 	extern uint16_t nth_frame;
 	GFXRECT r;
-	uint8_t battle_speed;
 
 	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
 
@@ -319,11 +309,10 @@ DoBattle(BATTLE_STATE* bs)
 	if (getNumNetConnections() > 0 && battleFrameCount % NETPLAY_CHECKSUM_INTERVAL == 0)
 	{
 		crc_State state;
-		Checksum checksum;
 
 		crc_init(&state);
 		crc_processState(&state);
-		checksum = (Checksum)crc_finish(&state);
+		const Checksum checksum {(Checksum)crc_finish(&state)};
 
 		Netplay_NotifyAll_checksum((uint32_t)battleFrameCount,
 								   (uint32_t)checksum);
@@ -336,16 +325,16 @@ DoBattle(BATTLE_STATE* bs)
 #if defined(NETPLAY) && defined(NETPLAY_CHECKSUM)
 	if (getNumNetConnections() > 0)
 	{
-		size_t delay = getBattleInputDelay();
+		const size_t delay = getBattleInputDelay();
 
 		if (battleFrameCount >= delay
 			&& (battleFrameCount - delay) % NETPLAY_CHECKSUM_INTERVAL == 0)
 		{
-			if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+			if (!(uqm::currentActivity() & CHECK_ABORT))
 			{
 				if (!verifyChecksums(battleFrameCount - delay))
 				{
-					GLOBAL(CurrentActivity) |= CHECK_ABORT;
+					uqm::currentActivity() |= CHECK_ABORT;
 					resetConnections(ResetReason_syncLoss);
 				}
 			}
@@ -377,12 +366,12 @@ DoBattle(BATTLE_STATE* bs)
 		ScreenTransition(uqm::UQMOptions::read().scrTrans, &r);
 	}
 	UnbatchGraphics();
-	if ((!(GLOBAL(CurrentActivity) & IN_BATTLE)) || (GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+	if ((!(uqm::currentActivity() & IN_BATTLE)) || (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 	{
 		return false;
 	}
 
-	battle_speed = highByte(nth_frame);
+	const uint8_t battle_speed {uqm::highByte(nth_frame)};
 	if (battle_speed == (uint8_t)~0)
 	{ // maximum speed, nothing rendered at all
 		Async_process();
@@ -395,7 +384,7 @@ DoBattle(BATTLE_STATE* bs)
 		bs->NextTime = GetTimeCounter();
 	}
 
-	if ((GLOBAL(CurrentActivity) & IN_BATTLE) == 0)
+	if ((uqm::currentActivity() & IN_BATTLE) == 0)
 	{
 		return false;
 	}
@@ -450,26 +439,15 @@ selectAllShips(int16_t num_ships)
 
 bool Battle(BattleFrameCallback* callback)
 {
-	int16_t num_ships;
-
-#if !(DEMO_MODE || CREATE_JOURNAL)
-	if (lowByte(GLOBAL(CurrentActivity)) != SUPER_MELEE)
+	if (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE)
 	{
 		// In Supermelee, the RNG is already initialised.
-		TFB_SeedRandom(GetTimeCounter());
+		uqm::random().reseed(static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count()));
 	}
-#else  /* DEMO_MODE */
-	if (BattleSeed == 0)
-	{
-		BattleSeed = TFB_Random();
-	}
-	TFB_SeedRandom(BattleSeed);
-	BattleSeed = TFB_Random(); /* get next battle seed */
-#endif /* DEMO_MODE */
 
 	BattleSong(false);
 
-	num_ships = InitShips();
+	int16_t num_ships {InitShips()};
 
 	if (instantVictory)
 	{
@@ -483,7 +461,7 @@ bool Battle(BattleFrameCallback* callback)
 	{
 		BATTLE_STATE bs;
 
-		GLOBAL(CurrentActivity) |= IN_BATTLE;
+		uqm::currentActivity() |= IN_BATTLE;
 		battle_counter[0] = CountLinks(&race_q[0]);
 		battle_counter[1] = CountLinks(&race_q[1]);
 
@@ -505,20 +483,20 @@ bool Battle(BattleFrameCallback* callback)
 
 		if (!selectAllShips(num_ships))
 		{
-			GLOBAL(CurrentActivity) |= CHECK_ABORT;
+			uqm::currentActivity() |= CHECK_ABORT;
 			goto AbortBattle;
 		}
 
 		BattleSong(true);
 
-		bs.NextTime = 0;
+		bs.NextTime = TimeCount {};
 #ifdef NETPLAY
 		initBattleStateDataConnections();
 		{
-			bool allOk = negotiateReadyConnections(true, NetState_inBattle);
+			const bool allOk = negotiateReadyConnections(true, NetState_inBattle);
 			if (!allOk)
 			{
-				GLOBAL(CurrentActivity) |= CHECK_ABORT;
+				uqm::currentActivity() |= CHECK_ABORT;
 				goto AbortBattle;
 			}
 		}
@@ -535,9 +513,9 @@ bool Battle(BattleFrameCallback* callback)
 		DoInput(&bs, false);
 
 AbortBattle:
-		if (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE)
+		if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 		{
-			if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+			if (uqm::currentActivity() & CHECK_ABORT)
 			{
 				// Do not return to the main menu when a game is aborted,
 				// (just to the supermelee menu).
@@ -548,7 +526,7 @@ AbortBattle:
 				// it will generate a warning in debug mode.
 #endif
 
-				GLOBAL(CurrentActivity) &= ~CHECK_ABORT;
+				uqm::currentActivity() &= ~CHECK_ABORT;
 			}
 			else
 			{

@@ -31,14 +31,14 @@
 #include "state.h"
 #include "grpinfo.h"
 #include "gamestr.h"
-#include "libs/scriptlib.h"
 #include "core/log/log.h"
 #include "options.h"
 #include <assert.h>
 #include <stdlib.h>
 #include "uqmdebug.h"
 
-#include <time.h> //required to use 'srand(time(nullptr))'
+#include "UQMGame.h"
+#include "uqm/random/UQMRandom.h"
 
 #define OOPS_ALL 0 // Set a plot ID to stamp it to all empty starsystems
 static void CreateRadar(void);
@@ -46,327 +46,6 @@ static void CreateRadar(void);
 GFXCONTEXT RadarContext;
 FRAME PlayFrame;
 
-GLOBDATA GlobData;
-
-
-// Pre: 0 <= bits <= 32
-// This function is necessary because expressions such as '(1 << bits) - 1'
-// or '~(~0 << bits)' may shift by 32 bits, which is undefined (for 32 bits
-// integers). This is not a hypothetical issue; 'uint8_t numBits = 32;
-// printf("{}\n", (1 << numBits));' will return 1 on x86 when compiled with
-// gcc (4.4.3).
-static inline uint32_t
-bitmask32(uint8_t bits)
-{
-	return (bits >= 32) ? 0xffffffff : ((1U << bits) - 1);
-}
-
-// Pre: 0 <= bits <= 32
-// This function is necessary because shifting by 32 bits is undefined (for
-// 32 bits integers). This is not a hypothetical issue; 'uint8_t numBits =
-// 32; printf("{}\n", (1 << numBits));' will return 1 on x86 when compiled
-// with gcc (4.4.3).
-static inline uint32_t
-shl32(uint32_t value, uint8_t shift)
-{
-	return (shift >= 32) ? 0 : (value << shift);
-}
-
-// Returns the total number of bits which are needed to store a game state
-// according to 'bm'.
-size_t
-totalBitsForGameState(const GameStateBitMap* bm, int rev)
-{
-	size_t totalBits = 0;
-	const GameStateBitMap* bmPtr;
-
-	for (bmPtr = bm; bmPtr; bmPtr++)
-	{
-		if (bmPtr->name != nullptr)
-		{
-			totalBits += bmPtr->numBits;
-		}
-		else if (bmPtr->numBits == 0)
-		{
-			break;
-		}
-		else if (rev >= 0 && bmPtr->numBits > rev)
-		{
-			break;
-		}
-	}
-
-	return totalBits;
-}
-
-// Returns the game state revision number that requires the specified
-// number of 'bytes' according to 'bm', or -1 if no match
-int getGameStateRevByBytes(const GameStateBitMap* bm, int bytes)
-{
-	int rev = 0;
-	size_t totalBits = 0;
-	const GameStateBitMap* bmPtr;
-
-	for (bmPtr = bm; bmPtr; bmPtr++)
-	{
-		if (bmPtr->name != nullptr)
-		{
-			totalBits += bmPtr->numBits;
-		}
-		else if (bmPtr->numBits == 0)
-		{
-			break;
-		}
-		else if ((int)((totalBits + 7) >> 3) >= bytes)
-		{
-			break;
-		}
-		else
-		{
-			rev = bmPtr->numBits;
-		}
-	}
-
-	if ((int)((totalBits + 7) >> 3) != bytes)
-	{
-		rev = -1;
-	}
-
-	return rev;
-}
-
-// Write 'valueBitCount' bits from 'value' into the buffer pointed to
-// by '*bufPtrPtr'.
-// '*restBitsPtr' is used to store the bits in which do not make up
-// a byte yet. The number of bits stored is kept in '*restBitCount'.
-static inline void
-serialiseBits(uint8_t** bufPtrPtr, uint32_t* restBitsPtr, size_t* restBitCount,
-			  uint8_t value, size_t valueBitCount)
-{
-	uint8_t valueBitMask;
-
-	assert(*restBitCount < 8);
-	assert(valueBitCount <= 8);
-
-	valueBitMask = (1 << valueBitCount) - 1;
-
-	// Add the bits from 'value' to the working 'buffer' (*restBits).
-	*restBitsPtr |= (value & valueBitMask) << *restBitCount;
-	*restBitCount += valueBitCount;
-
-	// Write out restBits (possibly partialy), if we have enough bits to
-	// make a byte.
-	if (*restBitCount >= 8)
-	{
-		**bufPtrPtr = *restBitsPtr & 0xff;
-		*restBitsPtr >>= 8;
-		(*bufPtrPtr)++;
-		*restBitCount -= 8;
-	}
-}
-
-// Serialise the current game state into a newly allocated buffer,
-// according to the GameStateBitMap 'bm'.
-// Only the (integer) values from 'bm' are saved, in the specified order.
-// This function fills in '*buf' with the newly allocated buffer, and
-// '*numBytes' with its size. The caller becomes the owner of '*buf' and
-// is responsible for freeing it.
-bool serialiseGameState(const GameStateBitMap* bm, uint8_t** buf,
-						size_t* numBytes)
-{
-	size_t totalBits;
-	size_t totalBytes;
-	const GameStateBitMap* bmPtr;
-	uint8_t* result;
-	uint8_t* bufPtr;
-
-	uint32_t restBits = 0;
-	// Bits which have not yet been stored because they did not
-	// form an entire byte.
-	size_t restBitCount = 0;
-
-	// Determine the total number of bits/bytes required.
-	totalBits = totalBitsForGameState(bm, -1);
-	totalBytes = (totalBits + 7) / 8;
-
-	// Allocate memory for the serialised data.
-	result = (uint8_t*)HMalloc(totalBytes);
-	if (result == nullptr)
-	{
-		return false;
-	}
-
-	bufPtr = result;
-	for (bmPtr = bm; bmPtr; bmPtr++)
-	{
-		if (bmPtr->name != nullptr)
-		{
-			uint32_t value = getGameStateUint(bmPtr->name);
-			uint8_t numBits = bmPtr->numBits;
-
-#ifdef STATE_DEBUG
-			uqm::log::debug("Saving: GameState[\'{}\'] = {}",
-							bmPtr->name, value);
-#endif /* STATE_DEBUG */
-
-			if (value > bitmask32(numBits))
-			{
-				uqm::log::error("Error: serialiseGameState(): the "
-								"value of the property '{}' ({}) does not fit in "
-								"the reserved number of bits ({}).",
-								bmPtr->name, value, numBits);
-			}
-
-			// Store multi-byte values with the least significant byte 1st.
-			while (numBits >= 8)
-			{
-				serialiseBits(&bufPtr, &restBits, &restBitCount,
-							  value & 0xff, 8);
-				value >>= 8;
-				numBits -= 8;
-			}
-			if (numBits > 0)
-			{
-				serialiseBits(&bufPtr, &restBits, &restBitCount, value,
-							  numBits);
-			}
-		}
-		else if (bmPtr->numBits == 0)
-		{
-			break;
-		}
-	}
-
-	// Pad the end up to a byte.
-	if (restBitCount > 0)
-	{
-		serialiseBits(&bufPtr, &restBits, &restBitCount, 0,
-					  8 - restBitCount);
-	}
-
-	*buf = result;
-	*numBytes = totalBytes;
-	return true;
-}
-
-// Read 'numBits' bits from '*bytePtr', starting at the bit offset
-// '*bitPtr'. The result is returned.
-// '*bitPtr' and '*bytePtr' are updated by this function.
-static inline uint32_t
-deserialiseBits(const uint8_t** bytePtr, uint8_t* bitPtr, size_t numBits)
-{
-	assert(*bitPtr < 8);
-	assert(numBits <= 8);
-
-	if (numBits <= (size_t)(8 - *bitPtr))
-	{
-		// Can get the entire value from one byte.
-		// We want bits *bitPtr through (excluding) *bitPtr+numBits
-		uint32_t result =
-			((*bytePtr)[0] >> *bitPtr) & bitmask32((uint8_t)numBits);
-
-		// Update the pointers.
-		if (numBits == (size_t)(8 - *bitPtr))
-		{
-			// The entire (rest of the) byte is read. Go to the next byte.
-			(*bytePtr)++;
-			*bitPtr = 0;
-		}
-		else
-		{
-			// There are still unread bits in the byte.
-			*bitPtr += (uint8_t)numBits;
-		}
-		return result;
-	}
-	else
-	{
-		// The result comes from two bytes.
-		// We get the *bitPtr most significant bits from [0], as the least
-		// significant bits of the result, and the (numBits - *bitPtr)
-		// least significant bits from [1], as the most significant bits of
-		// the result.
-		uint32_t result = (((*bytePtr)[0] >> *bitPtr)
-						   | ((*bytePtr)[1] << (8 - *bitPtr)))
-						& bitmask32((uint8_t)numBits);
-		(*bytePtr)++;
-		*bitPtr += (uint8_t)numBits - 8;
-		return result;
-	}
-}
-
-// Deserialise the current game state from the bit array in 'buf', which
-// has size 'numBytes', according to the GameStateBitMap 'bm'.
-bool deserialiseGameState(const GameStateBitMap* bm,
-						  const uint8_t* buf, size_t numBytes, int rev)
-{
-	size_t totalBits;
-	const GameStateBitMap* bmPtr;
-
-	const uint8_t* bytePtr = buf;
-	uint8_t bitPtr = 0;
-	// Number of bits already processed from the byte pointed at by
-	// bytePtr.
-	bool matchRev = true;
-
-	// Sanity check: determine the number of bits required, and check
-	// whether 'numBytes' is large enough.
-	totalBits = totalBitsForGameState(bm, rev);
-	if (numBytes * 8 < totalBits)
-	{
-		uqm::log::error("Warning: deserialiseGameState(): Corrupt "
-						"save game: state: less bytes available than expected.");
-		return false;
-	}
-
-	for (bmPtr = bm; bmPtr; bmPtr++)
-	{
-		if (bmPtr->name != nullptr)
-		{
-			uint32_t value = 0;
-			uint8_t numBits = bmPtr->numBits;
-			uint8_t bitsLeft = numBits;
-
-			if (matchRev)
-			{
-				// Multi-byte values are stored with the least significant
-				// byte first.
-				while (bitsLeft >= 8)
-				{
-					uint32_t bits = deserialiseBits(&bytePtr, &bitPtr, 8);
-					value |= shl32(bits, numBits - bitsLeft);
-					bitsLeft -= 8;
-				}
-				if (bitsLeft > 0)
-				{
-					value |= shl32(
-						deserialiseBits(&bytePtr, &bitPtr, bitsLeft),
-						numBits - bitsLeft);
-				}
-
-#ifdef STATE_DEBUG
-				uqm::log::debug("Loading: GameState[\'{}\'] = {}",
-								bmPtr->name, value);
-#endif /* STATE_DEBUG */
-			}
-
-			setGameStateUint(bmPtr->name, value);
-		}
-		else if (bmPtr->numBits == 0)
-		{
-			break;
-		}
-		else if (bmPtr->numBits > rev)
-		{
-			matchRev = false;
-		}
-	}
-#ifdef STATE_DEBUG
-	fflush(stderr);
-#endif /* STATE_DEBUG */
-
-	return true;
-}
 
 static void
 CreateRadar(void)
@@ -374,10 +53,9 @@ CreateRadar(void)
 	if (RadarContext == 0)
 	{
 		GFXRECT r;
-		GFXCONTEXT OldContext;
 
 		RadarContext = CreateContext("RadarContext");
-		OldContext = SetContext(RadarContext);
+		GFXCONTEXT OldContext {SetContext(RadarContext)};
 		SetContextFGFrame(Screen);
 		r.corner.x = RADAR_X;
 		r.corner.y = RADAR_Y;
@@ -421,8 +99,8 @@ bool LoadSC2Data(void)
 
 	if (inHQSpace())
 	{
-		GLOBAL(ShipStamp.origin.x) =
-			GLOBAL(ShipStamp.origin.y) = -1;
+		uqm::flagship().shipStamp.origin.x =
+			uqm::flagship().shipStamp.origin.y = -1;
 	}
 
 	return true;
@@ -447,13 +125,13 @@ copyFleetInfo(FLEET_INFO* dst, SHIP_INFO* src, FLEET_STUFF* fleet)
 
 void LoadFleetInfo(void)
 { /* Yehat Rebels and Ur-Quan probe */
-	uint16_t num_ships = LAST_MELEE_ID - ARILOU_ID + 1 + 2;
-	InitQueue(&GLOBAL(avail_race_q), num_ships, sizeof(FLEET_INFO));
+	const uint16_t num_ships = LAST_MELEE_ID - ARILOU_ID + 1 + 2;
+	GLOBAL(avail_race_q).reset(num_ships, sizeof(FLEET_INFO));
 	SPECIES_ID ship_ref = (SPECIES_ID)(ARILOU_ID - 1);
 	for (int i = 0; i < num_ships; ++i)
 	{
-		HFLEETINFO hFleet;
-		FLEET_INFO* FleetPtr;
+		HFLEETINFO hFleet {};
+		FLEET_INFO* FleetPtr {};
 
 		if (i < num_ships - 2)
 		{
@@ -478,11 +156,8 @@ void LoadFleetInfo(void)
 
 		if (i < num_ships - 1)
 		{
-			HMASTERSHIP hMasterShip;
-			MASTER_SHIP_INFO* MasterPtr;
-
-			hMasterShip = FindMasterShip(ship_ref);
-			MasterPtr = LockMasterShip(&master_q, hMasterShip);
+			HMASTERSHIP hMasterShip {FindMasterShip(ship_ref)};
+			MASTER_SHIP_INFO* MasterPtr {LockMasterShip(&master_q, hMasterShip)};
 			// Grab a copy of loaded icons and strings (not owned)
 			copyFleetInfo(FleetPtr, &MasterPtr->ShipInfo,
 						  &MasterPtr->Fleet);
@@ -569,26 +244,14 @@ void LoadFleetInfo(void)
 
 bool InitGameStructures(void)
 {
-	uint16_t i;
+	uint16_t i {};
 
-	InitGlobData();
-	// Set Seed Type, then check/start StarSeed
-	SET_GAME_STATE(SEED_TYPE, g_seedType);
 	GLOBAL_SIS(Difficulty) = uqm::UQMOptions::read().optDifficulty;
 	GLOBAL_SIS(Extended) = uqm::UQMOptions::read().extended;
 	GLOBAL_SIS(Nomad) = uqm::UQMOptions::read().nomad;
-	if (PrimeSeed)
-	{
-		uqm::UQMOptions::edit().shipSeed = false;
-		uqm::UQMOptions::edit().customSeed.value = PrimeA;
-	}
-	if (isDifficulty(uqm::Difficulty::Hard) && !PrimeSeed && !StarSeed)
-	{
-		srand(time(nullptr));
-		uqm::UQMOptions::edit().customSeed.value = (rand() % ((MAX_SEED - MIN_SEED) + MIN_SEED));
-	}
-	GLOBAL_SIS(Seed) = uqm::UQMOptions::read().customSeed.value;
-	GLOBAL_SIS(ShipSeed) = (uqm::UQMOptions::read().shipSeed ? 1 : 0);
+	// Set the seed, then check/start StarSeed
+	const uqstl::optional<uqm::GameSeed> chosenSeed {uqm::UQMGame::getInstance().takeNewGameSeed()};
+	uqm::gameState().setSeed(chosenSeed ? uqm::normalized(*chosenSeed) : uqm::newGameSeed(uqm::UQMOptions::read()));
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "Starting a NEW game with seed type {}, {}\n",
 			   optSeedType,
@@ -600,14 +263,13 @@ bool InitGameStructures(void)
 #endif
 	// During NEW game we want to time more aggressively and reseed
 	// if it takes too long to create a map with a seed.
-	// The new seed will be saved to SIS and uqm::UQMOptions::read().customSeed
+	// The new seed will be saved to the game seed.
 	// If non-starseed, this will give us a default plot map,
 	// so we still need this.
 	if (!InitStarseed(true))
 	{
 		return (false);
 	}
-	GLOBAL_SIS(Seed) = uqm::UQMOptions::read().customSeed; // In case Starseed rolls the seed
 
 	PlayFrame = CaptureDrawable(LoadGraphic(PLAYMENU_ANIM));
 
@@ -621,7 +283,7 @@ bool InitGameStructures(void)
 	InitPlanetInfo();
 	InitGroupInfo(true);
 
-	GLOBAL(glob_flags) = NUM_READ_SPEEDS >> 1;
+	uqm::globalFlags() = NUM_READ_SPEEDS >> 1;
 
 	GLOBAL(ElementWorth[COMMON]) = 1;
 	GLOBAL_SIS(ElementAmounts[COMMON]) = 0;
@@ -650,8 +312,8 @@ bool InitGameStructures(void)
 			break;
 		case uqm::Difficulty::Hard:
 			GLOBAL(ElementWorth[EXOTIC]) = 16;
-			SET_GAME_STATE(CREW_PURCHASED0, lowByte<uint8_t>(100));
-			SET_GAME_STATE(CREW_PURCHASED1, highByte<uint8_t>(100));
+			SET_GAME_STATE(CREW_PURCHASED0, uqm::lowByte<uint8_t>(100));
+			SET_GAME_STATE(CREW_PURCHASED1, uqm::highByte<uint8_t>(100));
 			break;
 		case uqm::Difficulty::Normal:
 		case uqm::Difficulty::ChooseYourOwn:
@@ -717,17 +379,13 @@ bool InitGameStructures(void)
 
 	loadGameCheats();
 
-	InitQueue(&GLOBAL(stowed_ship_q),
-			  MAX_STOWED_SHIPS, sizeof(SHIP_FRAGMENT));
-	InitQueue(&GLOBAL(built_ship_q),
-			  MAX_BUILT_SHIPS, sizeof(SHIP_FRAGMENT));
-	InitQueue(&GLOBAL(npc_built_ship_q), MAX_SHIPS_PER_SIDE,
-			  sizeof(SHIP_FRAGMENT));
-	InitQueue(&GLOBAL(ip_group_q), MAX_BATTLE_GROUPS,
-			  sizeof(IP_GROUP));
-	InitQueue(&GLOBAL(encounter_q), MAX_ENCOUNTERS, sizeof(ENCOUNTER));
+	GLOBAL(stowed_ship_q).reset(MAX_STOWED_SHIPS, sizeof(SHIP_FRAGMENT));
+	GLOBAL(built_ship_q).reset(MAX_BUILT_SHIPS, sizeof(SHIP_FRAGMENT));
+	GLOBAL(npc_built_ship_q).reset(MAX_SHIPS_PER_SIDE, sizeof(SHIP_FRAGMENT));
+	GLOBAL(ip_group_q).reset(MAX_BATTLE_GROUPS, sizeof(IP_GROUP));
+	GLOBAL(encounter_q).reset(MAX_ENCOUNTERS, sizeof(ENCOUNTER));
 
-	GLOBAL(CurrentActivity) = IN_INTERPLANETARY | START_INTERPLANETARY;
+	uqm::currentActivity() = IN_INTERPLANETARY | START_INTERPLANETARY;
 
 	GLOBAL_SIS(ResUnits) = ifEasyDifficulty(2500, 0);
 	GLOBAL(CrewCost) = 3;
@@ -743,19 +401,19 @@ bool InitGameStructures(void)
 
 	GLOBAL_SIS(NumLanders) = ifEasyDifficulty(2, 1);
 
-	utf8StringCopy(GLOBAL_SIS(ShipName),
-				   sizeof(GLOBAL_SIS(ShipName)),
-				   GAME_STRING(NAMING_STRING_BASE + 6)); // UNNAMED
-	utf8StringCopy(GLOBAL_SIS(CommanderName),
-				   sizeof(GLOBAL_SIS(CommanderName)),
-				   GAME_STRING(NAMING_STRING_BASE + 6)); // UNNAMED
+	uqm::utf8StringCopy(GLOBAL_SIS(ShipName),
+						sizeof(GLOBAL_SIS(ShipName)),
+						GAME_STRING(NAMING_STRING_BASE + 6)); // UNNAMED
+	uqm::utf8StringCopy(GLOBAL_SIS(CommanderName),
+						sizeof(GLOBAL_SIS(CommanderName)),
+						GAME_STRING(NAMING_STRING_BASE + 6)); // UNNAMED
 
 	SetRaceAllied(HUMAN_SHIP, true);
 	CloneShipFragment(HUMAN_SHIP, &GLOBAL(built_ship_q), 0);
 
 	if (uqm::UQMOptions::read().headStart)
 	{
-		uint8_t SpaCrew = ifEasyDifficulty(MAX_CREW_SIZE, 1);
+		const uint8_t SpaCrew = ifEasyDifficulty(MAX_CREW_SIZE, 1);
 		AddEscortShips(SPATHI_SHIP, 1);
 		// Make the Eluder escort captained by Fwiffo alone or have a full
 		// compliment for Easy mode.
@@ -767,8 +425,7 @@ bool InitGameStructures(void)
 	GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(plot_map[SOL_DEFINED].star_pt.x);
 	GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(plot_map[SOL_DEFINED].star_pt.y);
 	CurStarDescPtr = 0;
-	GLOBAL(autopilot.x) = ~0;
-	GLOBAL(autopilot.y) = ~0;
+	uqm::flagship().autopilot.clear();
 
 	ZeroLastLoc();
 	ZeroAdvancedAutoPilot();
@@ -793,13 +450,11 @@ void FreeSC2Data(void)
 
 void UninitGameStructures(void)
 {
-	HFLEETINFO hStarShip;
-
-	UninitQueue(&GLOBAL(encounter_q));
-	UninitQueue(&GLOBAL(ip_group_q));
-	UninitQueue(&GLOBAL(npc_built_ship_q));
-	UninitQueue(&GLOBAL(built_ship_q));
-	UninitQueue(&GLOBAL(stowed_ship_q));
+	GLOBAL(encounter_q).release();
+	GLOBAL(ip_group_q).release();
+	GLOBAL(npc_built_ship_q).release();
+	GLOBAL(built_ship_q).release();
+	GLOBAL(stowed_ship_q).release();
 	UninitGroupInfo();
 	UninitPlanetInfo();
 
@@ -807,33 +462,20 @@ void UninitGameStructures(void)
 
 	// The only resources avail_race_q owns are the Ur-Quan probe's
 	// so free them now
-	hStarShip = GetTailLink(&GLOBAL(avail_race_q));
+	HFLEETINFO hStarShip {GetTailLink(&GLOBAL(avail_race_q))};
 	if (hStarShip)
 	{
-		FLEET_INFO* FleetPtr;
-
-		FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		const FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hStarShip)};
 		DestroyDrawable(ReleaseDrawable(FleetPtr->melee_icon));
 		DestroyDrawable(ReleaseDrawable(FleetPtr->icons));
-		DestroyStringTable(ReleaseStringTable(FleetPtr->race_strings));
+		delete FleetPtr->race_strings;
 		UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
 	}
 
-	UninitQueue(&GLOBAL(avail_race_q));
+	GLOBAL(avail_race_q).release();
 
 	DestroyDrawable(ReleaseDrawable(PlayFrame));
 	PlayFrame = 0;
-}
-
-void InitGlobData(void)
-{
-	uint16_t i;
-
-	i = GLOBAL(glob_flags);
-	memset(&GlobData, 0, sizeof(GlobData));
-	GLOBAL(glob_flags) = (uint8_t)i;
-
-	GLOBAL(DisplayArray) = DisplayArray;
 }
 
 
@@ -843,11 +485,12 @@ void SeedDEBUG()
 {
 #define SAMPLE_SIZE 1000
 #define START 123000
-	int32_t save = uqm::UQMOptions::read().customSeed.value;
+	const uqm::GameSeed save {uqm::currentSeed()};
+	uqm::GameSeed sample {save};
 	//uint16_t histogram[100] = {[0 ... 99] = 0};
 	uint16_t histogram[100] = {0};
-	uint16_t decisec;
-	clock_t start_clock;
+	uint16_t decisec {};
+	clock_t start_clock {};
 	bool myRNG = false;
 	for (decisec = 0; decisec < 100; decisec++)
 	{
@@ -857,22 +500,22 @@ void SeedDEBUG()
 	if (!StarGenRNG)
 	{
 		fmt::print(stderr, "****Seed Debug Creating a STAR GEN RNG****\n");
-		StarGenRNG = RandomContext_New();
+		StarGenRNG.emplace();
 		myRNG = true;
 	}
-	RandomContext_SeedRandom(StarGenRNG, 123456);
-	for (uqm::UQMOptions::edit().customSeed.value = START; uqm::UQMOptions::read().customSeed < (START + SAMPLE_SIZE);
-		 uqm::UQMOptions::edit().customSeed = uqm::UQMOptions::read().customSeed.value + 1)
+	StarGenRNG->reseed(123456);
+	for (sample.value = START; sample.value < (START + SAMPLE_SIZE); ++sample.value)
 	{
+		uqm::gameState().setSeed(sample);
 		start_clock = clock();
-		fmt::print(stderr, "\n\n\nStarting seed {}... ", uqm::UQMOptions::read().customSeed.value);
+		fmt::print(stderr, "\n\n\nStarting seed {}... ", uqm::currentSeed().value);
 		InitPlot(plot_map);
-		fmt::print(stderr, "seeding stars {}... ", uqm::UQMOptions::read().customSeed.value);
+		fmt::print(stderr, "seeding stars {}... ", uqm::currentSeed().value);
 		SeedStarmap(star_array);
-		fmt::print(stderr, "seeding plots {}... ", uqm::UQMOptions::read().customSeed.value);
+		fmt::print(stderr, "seeding plots {}... ", uqm::currentSeed().value);
 		if (SeedPlot(plot_map, star_array) < NUM_PLOTS)
 		{
-			fmt::print(stderr, "Failed to seed {}. ", uqm::UQMOptions::read().customSeed.value);
+			fmt::print(stderr, "Failed to seed {}. ", uqm::currentSeed().value);
 			decisec = 98;
 		}
 		else
@@ -895,11 +538,10 @@ void SeedDEBUG()
 		}
 		fmt::print(stderr, "%3d ", histogram[decisec]);
 	}
-	uqm::UQMOptions::edit().customSeed.value = save;
+	uqm::gameState().setSeed(save);
 	if (StarGenRNG && myRNG)
 	{
-		RandomContext_Delete(StarGenRNG);
-		StarGenRNG = nullptr;
+		StarGenRNG.reset();
 	}
 }
 
@@ -913,10 +555,10 @@ void SeedDEBUG()
 // portal_map - a quasispace portal array
 bool InitStarseed(bool newgame)
 {
-	uint16_t i;
+	uint16_t i {};
 #ifdef DEBUG_STARSEED_TRACE_V
 	SeedDEBUG();
-	fmt::print(stderr, "CurrentActivity {}\n", GLOBAL(CurrentActivity));
+	fmt::print(stderr, "CurrentActivity {}\n", uqm::currentActivity());
 #endif
 	DefaultStarmap(star_array);
 	if (!StarGenRNG)
@@ -924,24 +566,20 @@ bool InitStarseed(bool newgame)
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "Init Starseed creating a STAR GEN RNG.\n");
 #endif
-		StarGenRNG = RandomContext_New();
-		RandomContext_SeedRandom(StarGenRNG, uqm::UQMOptions::read().customSeed.value);
+		StarGenRNG.emplace();
+		StarGenRNG->reseed(uqm::currentSeed().value);
 	}
-	if (!StarSeed)
+	if (!uqm::isStarSeed())
 	{
 		// Here we will split off, provide default plotmap, return
 		// This makes it easier to integrate seemlessly old vs new
 		DefaultPlot(plot_map, star_array);
 		DefaultQuasispace(portal_map);
 		// Done with StarGenRNG for now; will create later if moving fleets
-		if (StarGenRNG)
-		{
-			RandomContext_Delete(StarGenRNG);
-		}
-		StarGenRNG = nullptr;
+		StarGenRNG.reset();
 		return true;
 	}
-	if (g_seedType == uqm::SeedType::MRQ)
+	if (uqm::currentSeed().type == uqm::SeedType::MRQ)
 	{
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "Setting MQR shuffle.\n");
@@ -957,9 +595,9 @@ bool InitStarseed(bool newgame)
 		InitPlot(plot_map);
 	}
 	fmt::print(stderr, "Starting map generation using seed {}.\n",
-			   uqm::UQMOptions::read().customSeed.value);
+			   uqm::currentSeed().value);
 	SeedStarmap(star_array);
-	if (GLOBAL(CurrentActivity) || !newgame)
+	if (uqm::currentActivity() || !newgame)
 	{
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "*+*+* LOADING *+*+*\n");
@@ -967,21 +605,13 @@ bool InitStarseed(bool newgame)
 		if (SeedPlot(plot_map, star_array) != NUM_PLOTS)
 		{
 			fmt::print(stderr, "Seed Plot Failed.\n");
-			if (StarGenRNG)
-			{
-				RandomContext_Delete(StarGenRNG);
-			}
-			StarGenRNG = nullptr;
+			StarGenRNG.reset();
 			return false;
 		}
 		if (!SeedQuasispace(portal_map, plot_map, star_array))
 		{
 			fmt::print(stderr, "Seed Quasisapce Failed.\n");
-			if (StarGenRNG)
-			{
-				RandomContext_Delete(StarGenRNG);
-			}
-			StarGenRNG = nullptr;
+			StarGenRNG.reset();
 			return false;
 		}
 	}
@@ -996,28 +626,22 @@ bool InitStarseed(bool newgame)
 		// seed's stars and this seed's plot.  Boo.
 		while (SeedPlot(plot_map, star_array) != NUM_PLOTS && i < 100)
 		{
-			fmt::print(stderr, "Seed {} failed ({}).\n", uqm::UQMOptions::read().customSeed.value, ++i);
-			uqm::UQMOptions::edit().customSeed.value = uqm::UQMOptions::read().customSeed.value + 1;
+			fmt::print(stderr, "Seed {} failed ({}).\n", uqm::currentSeed().value, ++i);
+			uqm::GameSeed nextSeed {uqm::currentSeed()};
+			++nextSeed.value;
+			uqm::gameState().setSeed(nextSeed);
 			SeedStarmap(star_array);
 		}
 		if (i >= 100)
 		{
 			fmt::print(stderr, "Seed Plot Failed.\n");
-			if (StarGenRNG)
-			{
-				RandomContext_Delete(StarGenRNG);
-			}
-			StarGenRNG = nullptr;
+			StarGenRNG.reset();
 			return false;
 		}
 		if (!SeedQuasispace(portal_map, plot_map, star_array))
 		{
 			fmt::print(stderr, "Seed Quasisapce Failed.\n");
-			if (StarGenRNG)
-			{
-				RandomContext_Delete(StarGenRNG);
-			}
-			StarGenRNG = nullptr;
+			StarGenRNG.reset();
 			return false;
 		}
 	}
@@ -1031,29 +655,23 @@ bool InitStarseed(bool newgame)
 			}
 		}
 	}
-	// In case the seed changed above, reset SIS
-	GLOBAL_SIS(Seed) = uqm::UQMOptions::read().customSeed.value;
 #ifdef DEBUG_STARSEED
-	fmt::print(stderr, "Done seeding {}.\n", uqm::UQMOptions::read().customSeed.value);
+	fmt::print(stderr, "Done seeding {}.\n", uqm::currentSeed().value);
 #endif
 	// Done with StarGenRNG for now; will create later if moving fleets
-	if (StarGenRNG)
-	{
-		RandomContext_Delete(StarGenRNG);
-	}
-	StarGenRNG = nullptr;
+	StarGenRNG.reset();
 	return (true);
 }
 
 bool inFullGame(void)
 {
-	ACTIVITY act = lowByte(GLOBAL(CurrentActivity));
+	const ACTIVITY act = uqm::lowByte(uqm::currentActivity());
 	return (act == IN_LAST_BATTLE || act == IN_ENCOUNTER || act == IN_HYPERSPACE || act == IN_INTERPLANETARY || act == WON_LAST_BATTLE);
 }
 
 bool inSuperMelee(void)
 {
-	return (lowByte(GLOBAL(CurrentActivity)) == SUPER_MELEE);
+	return (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE);
 	// TODO: && !inMainMenu ()
 }
 
@@ -1062,7 +680,7 @@ bool
 inBattle (void)
 {
 	// TODO: IN_BATTLE is also set while in HyperSpace/QuasiSpace.
-	return ((GLOBAL (CurrentActivity) & IN_BATTLE) != 0);
+	return ((uqm::currentActivity() & IN_BATTLE) != 0);
 }
 #endif
 
@@ -1081,7 +699,7 @@ bool
 inSolarSystem (void)
 {
 	assert (inFullGame ());
-	return (lowByte (GLOBAL (CurrentActivity)) == IN_INTERPLANETARY);
+	return (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY);
 }
 
 // Pre: inFullGame()
@@ -1099,7 +717,7 @@ inOrbit (void)
 bool inHQSpace(void)
 {
 	//assert (inFullGame ());
-	return (lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE);
+	return (uqm::lowByte(uqm::currentActivity()) == IN_HYPERSPACE);
 	// IN_HYPERSPACE is also set for QuasiSpace
 }
 
@@ -1108,7 +726,7 @@ bool inHQSpace(void)
 bool inHyperSpace(void)
 {
 	//assert (inFullGame ());
-	return (lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1);
+	return (uqm::lowByte(uqm::currentActivity()) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1);
 	// IN_HYPERSPACE is also set for QuasiSpace
 }
 
@@ -1117,7 +735,7 @@ bool inHyperSpace(void)
 bool inQuasiSpace(void)
 {
 	//assert (inFullGame ());
-	return (lowByte(GLOBAL(CurrentActivity)) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1);
+	return (uqm::lowByte(uqm::currentActivity()) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1);
 	// IN_HYPERSPACE is also set for QuasiSpace
 }
 
@@ -1148,20 +766,19 @@ bool inQuasiSpace(void)
 int replaceChar(char* pStr, const char find, const char replace)
 {
 	int count = 0;
-	size_t i;
-	size_t len = strlen(pStr);
+	const size_t len = strlen(pStr);
 
 	if (!pStr || !find || !replace)
 	{
 		return -1; // pStr, find, or replace is nullptr
 	}
 
-	if (utf8StringPos(pStr, find) == -1)
+	if (uqm::utf8StringPos(pStr, find) == -1)
 	{
 		return 0; // 'find' not found
 	}
 
-	for (i = 0; i < len; i++)
+	for (size_t i {0}; i < len; i++)
 	{
 		if (pStr[i] == find)
 		{

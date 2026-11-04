@@ -20,8 +20,7 @@
 #include "eventfuncs.h"
 #include "uqm/clock.h"
 #include "uqm/gameev.h"
-#include "uqm/lua/luastate.h"
-#include "libs/scriptlib.h"
+#include "uqm/lua/UQMLua.h"
 #include "core/log/log.h"
 
 
@@ -30,7 +29,7 @@ static int luaUqm_event_addRelative(lua_State* luaState);
 static int luaUqm_event_register(lua_State* luaState);
 static int luaUqm_event_unregister(lua_State* luaState);
 
-static const luaL_Reg eventFuncs[] = {
+const static luaL_Reg eventFuncs[] = {
 	{"addAbsolute", luaUqm_event_addAbsolute},
 	{"addRelative", luaUqm_event_addRelative},
 	{"register",	 luaUqm_event_register	  },
@@ -53,10 +52,9 @@ int luaUqm_event_open(lua_State* luaState)
 static bool
 isEventRegistered(lua_State* luaState, int argn)
 {
-	bool result;
 	argn = lua_absindex(luaState, argn);
 
-	luaUqm_getEventTable(luaState);
+	uqm::UQMLua::pushEventTable(luaState);
 	lua_pushvalue(luaState, argn);
 	// [-2] -> table eventTable
 	// [-1] -> string eventIdStr
@@ -64,7 +62,7 @@ isEventRegistered(lua_State* luaState, int argn)
 
 	// [-2] -> table eventTable
 	// [-1] -> function eventFun
-	result = !lua_isnil(luaState, -1);
+	const bool result {!lua_isnil(luaState, -1)};
 
 	// [-2] -> table eventTable
 	// [-1] -> function eventFun
@@ -88,8 +86,6 @@ addEvent(lua_State* luaState, EVENT_TYPE type)
 	const auto month = luaL_checkinteger(luaState, 2);
 	const auto day = luaL_checkinteger(luaState, 3);
 	const char* eventIdStr = luaL_checkstring(luaState, 4);
-	int eventNum;
-	HEVENT event;
 
 	if (!isEventRegistered(luaState, 4))
 	{
@@ -101,7 +97,7 @@ addEvent(lua_State* luaState, EVENT_TYPE type)
 		return 1;
 	}
 
-	eventNum = eventIdStrToNum(eventIdStr);
+	const int eventNum {eventIdStrToNum(eventIdStr)};
 	if (eventNum == -1)
 	{
 		uqm::log::warn("[script] event.{}(): Event '{}' is "
@@ -113,7 +109,7 @@ addEvent(lua_State* luaState, EVENT_TYPE type)
 		return 1;
 	}
 
-	event = AddEvent(type, month, day, year, eventNum);
+	HEVENT event {AddEvent(type, month, day, year, eventNum)};
 	lua_pushinteger(luaState, (event == nullptr) ? -1 : 0);
 	return 1;
 }
@@ -161,7 +157,7 @@ luaUqm_event_register(lua_State* luaState)
 		return 0;
 	}
 
-	luaUqm_getEventTable(luaState);
+	uqm::UQMLua::pushEventTable(luaState);
 	lua_pushvalue(luaState, 1);
 	lua_pushvalue(luaState, 2);
 	// [-3] -> table eventTable
@@ -189,7 +185,7 @@ luaUqm_event_unregister(lua_State* luaState)
 		return 0;
 	}
 
-	luaUqm_getEventTable(luaState);
+	uqm::UQMLua::pushEventTable(luaState);
 	lua_pushvalue(luaState, 1);
 	lua_pushnil(luaState);
 	// [-3] -> table eventTable

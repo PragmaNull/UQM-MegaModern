@@ -22,7 +22,9 @@
 #include <stdio.h>
 #include <cstdint>
 #include "libs/reslib.h"
-#include "libs/memlib.h"
+#include "libs/time/timelib.h"
+#include "core/stl/vector.h"
+#include "core/thread/Mutex.h"
 
 #define PAD_SCOPE_BYTES 256
 
@@ -32,9 +34,6 @@ extern bool _ReleaseMusicData(void* handle);
 extern void* _GetSoundBankData(const ResourceFile& resource);
 extern bool _ReleaseSoundBankData(void* handle);
 
-#define AllocMusicData HMalloc
-#define FreeMusicData HFree
-
 extern char* CheckMusicResName(char* filename);
 
 // audio data
@@ -42,9 +41,9 @@ struct tfb_soundsample
 {
 	TFB_SoundDecoder* decoder; // decoder to read from
 	float length;			   // total length of decoder chain in seconds
-	audio_Object* buffer;
+	uqstl::vector<audio_Object> buffer;
 	uint32_t num_buffers;
-	TFB_SoundTag* buffer_tag;
+	uqstl::vector<TFB_SoundTag> buffer_tag;
 	int32_t offset;				  // initial offset
 	void* data;					  // user-defined data
 	TFB_SoundCallbacks callbacks; // user-defined callbacks
@@ -53,22 +52,22 @@ struct tfb_soundsample
 // equivalent to channel in legacy sound code
 typedef struct tfb_soundsource
 {
+	uqm::RecursiveMutex stream_mutex;
 	TFB_SoundSample* sample;
 	audio_Object handle;
-	bool stream_should_be_playing;
-	Mutex stream_mutex;
-	int32_t start_time;	 // for tracks played-time math
-	uint32_t pause_time; // keep track for paused tracks
+	bool stream_should_be_playing UQM_GUARDED_BY(stream_mutex);
+	TimeCount start_time UQM_GUARDED_BY(stream_mutex); // for tracks played-time math
+	TimeCount pause_time UQM_GUARDED_BY(stream_mutex); // keep track for paused tracks
 	void* positional_object;
 
-	audio_Object last_q_buf; // for callbacks processing
+	audio_Object last_q_buf UQM_GUARDED_BY(stream_mutex); // for callbacks processing
 
 	// Cyclic waveform buffer for oscilloscope
-	void* sbuffer;
-	uint32_t sbuf_size;
-	uint32_t sbuf_tail;
-	uint32_t sbuf_head;
-	uint32_t sbuf_lasttime; // timestamp of the first queued buffer
+	uqstl::vector<uint8_t> sbuffer UQM_GUARDED_BY(stream_mutex);
+	uint32_t sbuf_size UQM_GUARDED_BY(stream_mutex);
+	uint32_t sbuf_tail UQM_GUARDED_BY(stream_mutex);
+	uint32_t sbuf_head UQM_GUARDED_BY(stream_mutex);
+	TimeCount sbuf_lasttime UQM_GUARDED_BY(stream_mutex); // timestamp of the first queued buffer
 } TFB_SoundSource;
 
 extern TFB_SoundSource soundSource[];

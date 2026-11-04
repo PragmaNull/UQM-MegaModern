@@ -20,13 +20,13 @@
 #include "controls.h"
 #include "core/log/log.h"
 #include "uqm/inputscript.h"
-#include <chrono>
-#include <fstream>
-#include <mutex>
-#include <sstream>
+#include "core/stl/chrono.h"
+#include "libs/file/textfile.h"
+#include "core/stl/mutex.h"
 #include "battlecontrols.h"
 #include "init.h"
 #include "intel.h"
+#include "core/stl/atomic.h"
 // For computer_intelligence
 #ifdef NETPLAY
 #include "supermelee/netplay/netmelee.h"
@@ -35,17 +35,18 @@
 #include "sounds.h"
 #include "tactrans.h"
 #include "uqmdebug.h"
-#include "libs/async.h"
+#include "libs/callback/async.h"
 #include "libs/inplib.h"
 #include "libs/time/timelib.h"
-#include "libs/threadlib.h"
 #include "libs/input/sdl/vcontrol.h"
 #include "setup.h"
 #include "setupmenu.h"
+#include "save.h"
+#include "starcon.h"
 #include "libs/graphics/gfx_common.h"
 
-#define ACCELERATION_INCREMENT (GameTicksPerSecond / 12)
-#define MENU_REPEAT_DELAY (GameTicksPerSecond >> 1)
+#define ACCELERATION_INCREMENT (c_gameSecond / 12)
+#define MENU_REPEAT_DELAY (c_gameSecond / 2)
 
 typedef struct
 {
@@ -54,29 +55,32 @@ typedef struct
 
 // These static variables are the values that are set by the controllers.
 
-typedef struct
+template <typename T>
+struct MenuAnnotations
 {
-	uint32_t key[static_cast<int>(ControlTemplate::NUM)][NUM_KEYS];
-	uint32_t menu[NUM_MENU_KEYS];
-} MENU_ANNOTATIONS;
+	T key[uqstl::to_underlying(ControlTemplate::NUM)][NUM_KEYS];
+	T menu[NUM_MENU_KEYS];
+};
 
 
 ControlTemplate PlayerControlTemplates[NUM_PLAYERS];
 CONTROLLER_INPUT_STATE CurrentInputState, PulsedInputState;
 static CONTROLLER_INPUT_STATE CachedInputState, OldInputState;
-static MENU_ANNOTATIONS RepeatDelays, Times;
-static uint32_t GestaltRepeatDelay, GestaltTime;
+static MenuAnnotations<TimePeriod> RepeatDelays;
+static MenuAnnotations<TimeCount> Times;
+static TimePeriod GestaltRepeatDelay;
+static TimeCount GestaltTime;
 static bool OldGestalt, CachedGestalt;
-static uint32_t _max_accel, _min_accel, _step_accel;
+static TimePeriod _max_accel, _min_accel, _step_accel;
 static bool _gestalt_keys;
 
 static MENU_SOUND_FLAGS sound_0, sound_1;
 
-volatile CONTROLLER_INPUT_STATE ImmediateInputState;
+IMMEDIATE_INPUT_STATE ImmediateInputState {};
 
-volatile bool ExitRequested;
-volatile bool GamePaused;
-volatile bool OnScreenKeyboardLocked;
+uqstl::atomic<bool> ExitRequested {};
+uqstl::atomic<bool> GamePaused {};
+uqstl::atomic<bool> OnScreenKeyboardLocked {};
 
 static InputFrameCallback* inputCallback;
 
@@ -88,17 +92,15 @@ static uqstl::chrono::steady_clock::time_point inputScriptStart {};
 
 bool LoadInputScript(const char* path)
 {
-	uqstl::ifstream file {path, uqstl::ios::binary};
-	if (!file)
+	const auto text {uqm::readTextFile(path)};
+	if (!text)
 	{
 		uqm::log::error("Input script: cannot open '{}'.", path);
 		return false;
 	}
-	uqstl::stringstream text {};
-	text << file.rdbuf();
 
 	uqstl::string error {};
-	inputScript = uqm::InputScript::parse(text.str(), error);
+	inputScript = uqm::InputScript::parse(*text, error);
 	if (!inputScript)
 	{
 		uqm::log::error("Input script '{}': {}", path, error);
@@ -185,12 +187,28 @@ applyInputScript(void)
 	{
 		uqm::log::info("Input script: {}", *step.log);
 	}
+	if (step.saveSlot)
+	{
+		SUMMARY_DESC summary {};
+		if (!IsGameInProgress())
+		{
+			uqm::log::error("Input script: no game runs, so there is no game to save.");
+		}
+		else if (SaveGame(*step.saveSlot, &summary, "Input script"))
+		{
+			uqm::log::info("Input script: saved the game to slot {}.", *step.saveSlot);
+		}
+		else
+		{
+			uqm::log::error("Input script: could not save the game to slot {}.", *step.saveSlot);
+		}
+	}
 	if (step.quit)
 	{
 		uqm::log::info("Input script: quit.");
 		uqm::log::default_logger()->flush();
-		// The main thread exits on the abort key.
-		ImmediateInputState.menu[KEY_ABORT] = 1;
+		// The main thread stops the game thread and then exits, as when the window closes.
+		QuitPosted = 1;
 	}
 	if (inputScript->finished() && !inputScriptFinishedLogged)
 	{
@@ -202,8 +220,9 @@ applyInputScript(void)
 static void
 _clear_menu_state(void)
 {
-	int i, j;
-	for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+	int i {};
+	int j {};
+	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
 		{
@@ -221,9 +240,10 @@ _clear_menu_state(void)
 
 void ResetKeyRepeat(void)
 {
-	uint32_t initTime = GetTimeCounter();
-	int i, j;
-	for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+	const TimeCount initTime {GetTimeCounter()};
+	int i {};
+	int j {};
+	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
 		{
@@ -241,8 +261,8 @@ void ResetKeyRepeat(void)
 }
 
 static void
-_check_for_pulse(int* current, int* cached, int* old, uint32_t* accel,
-				 uint32_t* newtime, uint32_t* oldtime)
+_check_for_pulse(int* current, int* cached, int* old, TimePeriod* accel,
+				 TimeCount* newtime, TimeCount* oldtime)
 {
 	if (*cached && *old)
 	{
@@ -277,15 +297,15 @@ _check_for_pulse(int* current, int* cached, int* old, uint32_t* accel,
  * *yet*, but it will be once the user gets to define control
  * templates on his own --McM */
 static void
-_check_gestalt(uint32_t NewTime)
+_check_gestalt(TimeCount NewTime)
 {
-	bool CurrentGestalt;
-	int i, j;
+	int i {};
+	int j {};
 	OldGestalt = CachedGestalt;
 
 	CachedGestalt = 0;
-	CurrentGestalt = 0;
-	for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+	bool CurrentGestalt {0};
+	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
 		{
@@ -303,7 +323,7 @@ _check_gestalt(uint32_t NewTime)
 	{
 		if (NewTime - GestaltTime < GestaltRepeatDelay)
 		{
-			for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+			for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 			{
 				for (j = 0; j < NUM_KEYS; j++)
 				{
@@ -317,7 +337,7 @@ _check_gestalt(uint32_t NewTime)
 		}
 		else
 		{
-			for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+			for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 			{
 				for (j = 0; j < NUM_KEYS; j++)
 				{
@@ -341,7 +361,7 @@ _check_gestalt(uint32_t NewTime)
 	}
 	else
 	{
-		for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+		for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 		{
 			for (j = 0; j < NUM_KEYS; j++)
 			{
@@ -359,7 +379,7 @@ _check_gestalt(uint32_t NewTime)
 
 void UpdateInputState(void)
 {
-	uint32_t NewTime;
+	TimeCount NewTime;
 	/* First, if the game is, in fact, paused, we stall until
 	 * unpaused.  Every thread with control over game logic calls
 	 * UpdateInputState routinely, so we handle pause and exit
@@ -397,8 +417,9 @@ void UpdateInputState(void)
 	}
 	else
 	{
-		int i, j;
-		for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+		int i {};
+		int j {};
+		for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 		{
 			for (j = 0; j < NUM_KEYS; j++)
 			{
@@ -459,7 +480,7 @@ SetInputCallback(InputFrameCallback* callback)
 	return old;
 }
 
-void SetMenuRepeatDelay(uint32_t min, uint32_t max, uint32_t step, bool gestalt)
+void SetMenuRepeatDelay(TimePeriod min, TimePeriod max, TimePeriod step, bool gestalt)
 {
 	_min_accel = min;
 	_max_accel = max;
@@ -488,9 +509,7 @@ void FlushInput(void)
 static MENU_SOUND_FLAGS
 MenuKeysToSoundFlags(const CONTROLLER_INPUT_STATE* state)
 {
-	MENU_SOUND_FLAGS soundFlags;
-
-	soundFlags = MENU_SOUND_NONE;
+	MENU_SOUND_FLAGS soundFlags {MENU_SOUND_NONE};
 	if (state->menu[KEY_MENU_UP])
 	{
 		soundFlags |= MENU_SOUND_UP;
@@ -548,32 +567,16 @@ void DoInput(void* pInputState, bool resetInput)
 
 	do
 	{
-		MENU_SOUND_FLAGS soundFlags;
 		Async_process();
 		TaskSwitch();
 
 		UpdateInputState();
 
-#if DEMO_MODE || CREATE_JOURNAL
-		if (ArrowInput != DemoInput)
-#endif
-		{
-#if CREATE_JOURNAL
-			JournalInput(InputState);
-#endif /* CREATE_JOURNAL */
-		}
-
-		soundFlags = MenuKeysToSoundFlags(&PulsedInputState);
+		const MENU_SOUND_FLAGS soundFlags {MenuKeysToSoundFlags(&PulsedInputState)};
 
 		if (MenuSounds && (soundFlags & (sound_0 | sound_1)))
 		{
-			SOUND S;
-
-			S = MenuSounds;
-			if (soundFlags & sound_1)
-			{
-				S = SetAbsSoundIndex(S, MENU_SOUND_SUCCESS);
-			}
+			const SOUND S {GetSound(MenuSounds, (soundFlags & sound_1) ? MENU_SOUND_SUCCESS : 0)};
 
 			PlaySoundEffect(S, 0, NotPositional(), nullptr, 0);
 		}
@@ -660,10 +663,11 @@ PulsedInputToBattleInput(uint16_t player)
 
 bool AnyButtonPress(bool CheckSpecial)
 {
-	int i, j;
+	int i {};
+	int j {};
 	(void)CheckSpecial; // Ignored
 	UpdateInputState();
-	for (i = 0; i < static_cast<int>(ControlTemplate::NUM); i++)
+	for (i = 0; i < uqstl::to_underlying(ControlTemplate::NUM); i++)
 	{
 		for (j = 0; j < NUM_KEYS; j++)
 		{
@@ -704,24 +708,25 @@ bool ActKeysPress(void)
 
 bool ConfirmExit(void)
 {
-	uint32_t old_max_accel, old_min_accel, old_step_accel;
-	bool old_gestalt_keys, result;
+	TimePeriod old_max_accel;
+	TimePeriod old_min_accel;
+	TimePeriod old_step_accel;
 
 	old_max_accel = _max_accel;
 	old_min_accel = _min_accel;
 	old_step_accel = _step_accel;
-	old_gestalt_keys = _gestalt_keys;
+	const bool old_gestalt_keys {_gestalt_keys};
 
 	SetDefaultMenuRepeatDelay();
 
-	result = DoConfirmExit();
+	const bool result {DoConfirmExit()};
 
 	SetMenuRepeatDelay(old_min_accel, old_max_accel, old_step_accel,
 					   old_gestalt_keys);
 	return result;
 }
 
-void TestSpeechSound(STRING snd)
+void TestSpeechSound(SOUND snd)
 {
-	PlaySpeechEffect((SOUND)snd, NotPositional(), nullptr, 0);
+	PlaySpeechEffect(snd, NotPositional(), nullptr, 0);
 }

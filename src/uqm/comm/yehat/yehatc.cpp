@@ -20,12 +20,13 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "uqm/gameev.h"
 #include "libs/mathlib.h"
 
 #include "uqm/planets/generate/gendefault.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static LOCDATA yehat_desc =
@@ -263,7 +264,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, bye_space))
 	{
-		if ((uint8_t)TFB_Random() & 1)
+		if ((uint8_t)uqm::random().next() & 1)
 		{
 			NPCPhrase(GOODBYE_AND_DIE_SPACE);
 		}
@@ -303,7 +304,7 @@ ExitConversation(RESPONSE_REF R)
 
 		if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK) && isDifficulty(uqm::Difficulty::Hard))
 		{ // absorbed before revolution
-			uint16_t state;
+			uint16_t state {};
 
 			state = GET_GAME_STATE(HM_ENCOUNTERS);
 
@@ -321,7 +322,7 @@ Royalists(RESPONSE_REF R)
 {
 	if (PLAYER_SAID(R, how_is_rebellion))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(YEHAT_ROYALIST_INFO);
 		switch (NumVisits++)
@@ -408,7 +409,7 @@ YehatHome(RESPONSE_REF R)
 
 	if (PLAYER_SAID(R, whats_up_homeworld))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(YEHAT_ROYALIST_INFO);
 		switch (NumVisits++)
@@ -479,17 +480,17 @@ YehatHome(RESPONSE_REF R)
 static void
 YehatSpace(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
+	uint8_t i {};
 	RESPONSE_REF pStr[3];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
 	if (PLAYER_SAID(R, whats_up_space_1)
 		|| PLAYER_SAID(R, whats_up_space_2)
 		|| PLAYER_SAID(R, whats_up_space_3)
 		|| PLAYER_SAID(R, whats_up_space_4))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(YEHAT_REBEL_INFO);
 		switch (NumVisits++)
@@ -631,9 +632,9 @@ YehatSpace(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -721,7 +722,7 @@ Intro(void)
 static uint16_t
 uninit_yehat(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -734,13 +735,11 @@ post_yehat_enc(void)
 LOCDATA*
 init_yehat_comm(void)
 {
-	LOCDATA* retval;
-
 	yehat_desc.init_encounter_func = Intro;
 	yehat_desc.post_encounter_func = post_yehat_enc;
 	yehat_desc.uninit_encounter_func = uninit_yehat;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
@@ -748,7 +747,7 @@ init_yehat_comm(void)
 	yehat_desc.AlienTextBaseline.y = RES_SCALE(107 * 2 / 3);
 	yehat_desc.AlienTextWidth = (SIS_TEXT_WIDTH - RES_SCALE(16)) * 2 / 3;
 
-	if (lowByte(GLOBAL(CurrentActivity)) != WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
 		setSegue(Segue_hostile);
 	}
@@ -756,7 +755,7 @@ init_yehat_comm(void)
 	{
 		setSegue(Segue_peace);
 	}
-	retval = &yehat_desc;
+	LOCDATA* retval {&yehat_desc};
 
 	return (retval);
 }

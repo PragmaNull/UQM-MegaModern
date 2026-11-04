@@ -163,15 +163,13 @@ SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 
 	if (pRaceDesc->data) // Out with the old
 	{
-		HFree(pRaceDesc->data);
+		delete static_cast<CustomShipData_t*>(pRaceDesc->data);
 		pRaceDesc->data = nullptr;
 	}
 
 	if (data) // In with the new
 	{
-		CustomShipData_t* newData = (CustomShipData_t*)HMalloc(sizeof(*data));
-		*newData = *data;
-		pRaceDesc->data = newData;
+		pRaceDesc->data = new CustomShipData_t {*data};
 	}
 }
 
@@ -184,9 +182,7 @@ missile_preprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		uint16_t facing;
-
-		facing = GetFrameIndex(ElementPtr->next.image.frame);
+		uint16_t facing {GetFrameIndex(ElementPtr->next.image.frame)};
 		if (TrackShip(ElementPtr, &facing) > 0)
 		{
 			ElementPtr->next.image.frame =
@@ -206,16 +202,15 @@ static void
 mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					  uint16_t ConcernCounter)
 {
-	bool CanTransform;
-	EVALUATE_DESC* lpEvalDesc;
-	STARSHIP* StarShipPtr;
+	bool CanTransform {};
+	STARSHIP* StarShipPtr {};
 	STARSHIP* EnemyStarShipPtr = nullptr;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	CanTransform = (bool)(StarShipPtr->special_counter == 0
 						  && StarShipPtr->RaceDescPtr->ship_info.energy_level >= StarShipPtr->RaceDescPtr->characteristics.special_energy_cost);
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	const EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (lpEvalDesc->ObjectPtr)
 	{
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
@@ -228,8 +223,10 @@ mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		&& lpEvalDesc->ObjectPtr
 		&& !(StarShipPtr->ship_input_state & WEAPON))
 	{
-		int32_t delta_x, delta_y;
-		uint16_t travel_angle, direction_angle;
+		int32_t delta_x {};
+		int32_t delta_y {};
+		uint16_t travel_angle {};
+		uint16_t direction_angle {};
 
 		GetCurrentVelocityComponentsSdword(&lpEvalDesc->ObjectPtr->velocity,
 										   &delta_x, &delta_y);
@@ -263,7 +260,8 @@ mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		}
 		else
 		{
-			int32_t ship_delta_x, ship_delta_y;
+			int32_t ship_delta_x {};
+			int32_t ship_delta_y {};
 
 			GetCurrentVelocityComponentsSdword(&ShipPtr->velocity,
 											   &ship_delta_x, &ship_delta_y);
@@ -318,22 +316,25 @@ twin_laser_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static uint16_t
 initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 {
-	int16_t cx, cy;
-	uint16_t facing, angle;
-	int32_t offs_x, offs_y;
-	STARSHIP* StarShipPtr;
+	int16_t cx {};
+	int16_t cy {};
+	uint16_t angle {};
+	int32_t offs_x {};
+	int32_t offs_y {};
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	facing = StarShipPtr->ShipFacing;
+	const uint16_t facing {StarShipPtr->ShipFacing};
 	angle = FACING_TO_ANGLE(facing);
 	cx = ShipPtr->next.location.x + COSINE(angle, CENTER_OFFS);
 	cy = ShipPtr->next.location.y + SINE(angle, CENTER_OFFS);
 
 	if (ShipPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.ship)
 	{
-		int16_t ex, ey;
+		int16_t ex {};
+		int16_t ey {};
 		LASER_BLOCK LaserBlock;
-		ELEMENT* LaserPtr;
+		ELEMENT* LaserPtr {};
 
 		LaserBlock.sender = ShipPtr->playerNr;
 		LaserBlock.flags = 0;
@@ -371,7 +372,7 @@ initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 	else
 	{
 		MISSILE_BLOCK TorpBlock;
-		ELEMENT* TorpPtr;
+		ELEMENT* TorpPtr {};
 
 		TorpBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 		TorpBlock.sender = ShipPtr->playerNr;
@@ -415,16 +416,16 @@ initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 static void
 mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	/* take care of transform effect */
 	if (ElementPtr->next.image.farray != ElementPtr->current.image.farray)
 	{
 		MMRNMHRM_DATA tempShipData;
-		MMRNMHRM_DATA* otherwing_desc;
+		const MMRNMHRM_DATA* otherwing_desc {};
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* TRANSFORM */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);
@@ -448,8 +449,7 @@ mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = RES_SCALE(LONG_RANGE_WEAPON - 1);
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~IMMEDIATE_WEAPON;
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= SEEKING_WEAPON;
-			StarShipPtr->RaceDescPtr->ship_data.ship_sounds =
-				SetAbsSoundIndex(StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2);
+			StarShipPtr->RaceDescPtr->ship_data.weapon_sound_index = 2;
 
 			StarShipPtr->cur_status_flags &=
 				~(SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED);
@@ -459,8 +459,7 @@ mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = RES_SCALE(CLOSE_RANGE_WEAPON);
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~SEEKING_WEAPON;
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= IMMEDIATE_WEAPON;
-			StarShipPtr->RaceDescPtr->ship_data.ship_sounds =
-				SetAbsSoundIndex(StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 0);
+			StarShipPtr->RaceDescPtr->ship_data.weapon_sound_index = 0;
 
 			if (StarShipPtr->cur_status_flags
 				& (SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED))
@@ -475,7 +474,7 @@ mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 static void
 mmrnmhrm_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -519,8 +518,6 @@ uninit_mmrnmhrm(RACE_DESC* pRaceDesc)
 RACE_DESC*
 init_mmrnmhrm(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	// The caller of this func will copy the struct
 	static RACE_DESC new_mmrnmhrm_desc;
 	MMRNMHRM_DATA otherwing_desc;
@@ -560,7 +557,7 @@ init_mmrnmhrm(void)
 
 	SetCustomShipData(&new_mmrnmhrm_desc, &otherwing_desc);
 
-	RaceDescPtr = &new_mmrnmhrm_desc;
+	RACE_DESC* RaceDescPtr {&new_mmrnmhrm_desc};
 
 	return (RaceDescPtr);
 }

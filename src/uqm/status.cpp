@@ -159,14 +159,12 @@ DrawCaptainWindowAnimation(CAPTAIN_STUFF* CSPtr, int16_t y,
 
 	if (redraw_flag & LEFT)
 	{
-		uint8_t i;
-
 		Stamp.frame = SetRelFrameIndex(CSPtr->turn, 1);
 		DrawStamp(&Stamp);
 		Stamp.frame = IncFrameIndex(Stamp.frame);
 		DrawStamp(&Stamp);
 
-		for (i = 0; i < CSPtr->tl_offset; i++)
+		for (uint8_t i {0}; i < CSPtr->tl_offset; i++)
 		{
 			Stamp.frame = IncFrameIndex(Stamp.frame);
 			DrawStamp(&Stamp);
@@ -174,14 +172,12 @@ DrawCaptainWindowAnimation(CAPTAIN_STUFF* CSPtr, int16_t y,
 	}
 	else if (redraw_flag & RIGHT)
 	{
-		uint8_t i;
-
 		Stamp.frame = SetRelFrameIndex(CSPtr->turn, 3);
 		DrawStamp(&Stamp);
 		Stamp.frame = DecFrameIndex(Stamp.frame);
 		DrawStamp(&Stamp);
 
-		for (i = 0; i < CSPtr->tr_offset; i++)
+		for (uint8_t i {0}; i < CSPtr->tr_offset; i++)
 		{
 			Stamp.frame = DecFrameIndex(Stamp.frame);
 			DrawStamp(&Stamp);
@@ -335,15 +331,12 @@ void DrawBattleCrewAmount(SHIP_INFO* ShipInfoPtr, int16_t y_offs)
 
 void DrawCaptainsWindow(STARSHIP* StarShipPtr)
 {
-	int16_t y;
-	int16_t y_offs;
+	int16_t y {};
 	GFXRECT r;
 	STAMP s;
-	FRAME Frame;
-	RACE_DESC* RDPtr;
 
-	RDPtr = StarShipPtr->RaceDescPtr;
-	Frame = RDPtr->ship_data.captain_control.background;
+	RACE_DESC* RDPtr {StarShipPtr->RaceDescPtr};
+	FRAME Frame {RDPtr->ship_data.captain_control.background};
 	if (Frame)
 	{
 		Frame = SetAbsFrameIndex(Frame, 0);
@@ -362,7 +355,7 @@ void DrawCaptainsWindow(STARSHIP* StarShipPtr)
 
 	// Grey area under and around captain's window.
 	assert(StarShipPtr->playerNr >= 0);
-	y_offs = status_y_offsets[StarShipPtr->playerNr];
+	int16_t y_offs {status_y_offsets[StarShipPtr->playerNr]};
 
 	r.corner.x = CAPTAIN_XOFFS - RES_SCALE(2);
 	r.corner.y = y_offs + SHIP_INFO_HEIGHT;
@@ -480,11 +473,9 @@ void DrawCaptainsWindow(STARSHIP* StarShipPtr)
 
 bool DeltaEnergy(ELEMENT* ElementPtr, int16_t energy_delta)
 {
-	bool retval;
-	STARSHIP* StarShipPtr;
-	SHIP_INFO* ShipInfoPtr;
+	STARSHIP* StarShipPtr {};
 
-	retval = true;
+	bool retval {true};
 
 	if (antiCheat(ElementPtr, false, uqm::GodModeFlags::InfiniteBattery))
 	{
@@ -492,7 +483,7 @@ bool DeltaEnergy(ELEMENT* ElementPtr, int16_t energy_delta)
 	}
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	ShipInfoPtr = &StarShipPtr->RaceDescPtr->ship_info;
+	SHIP_INFO* ShipInfoPtr {&StarShipPtr->RaceDescPtr->ship_info};
 	if (energy_delta >= 0)
 	{
 		if ((uint8_t)(ShipInfoPtr->energy_level + (uint8_t)energy_delta) > ShipInfoPtr->max_energy)
@@ -528,11 +519,11 @@ bool DeltaEnergy(ELEMENT* ElementPtr, int16_t energy_delta)
 
 bool DeltaCrew(ELEMENT* ElementPtr, int16_t crew_delta)
 {
-	bool retval;
-	STARSHIP* StarShipPtr;
-	SHIP_INFO* ShipInfoPtr;
+	bool retval {};
+	STARSHIP* StarShipPtr {};
+	SHIP_INFO* ShipInfoPtr {};
 
-	if (lowByte(GLOBAL(CurrentActivity)) == IN_LAST_BATTLE
+	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
 		&& ElementPtr->playerNr == NPC_PLAYER_NUM)
 	{
 		return (true); /* Samatra can't be crew-modified */
@@ -572,21 +563,21 @@ bool DeltaCrew(ELEMENT* ElementPtr, int16_t crew_delta)
 
 void PreProcessStatus(ELEMENT* ShipPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->captains_name_index
 		|| StarShipPtr->playerNr == RPG_PLAYER_NUM)
 	{ // All except Sa-Matra, no captain's window there
-		STATUS_FLAGS old_status_flags, cur_status_flags;
-		CAPTAIN_STUFF* CSPtr;
+		STATUS_FLAGS old_status_flags {};
+		STATUS_FLAGS cur_status_flags {};
 		uint8_t redraw_flags = 0;
 
 		cur_status_flags = StarShipPtr->cur_status_flags;
 		old_status_flags = StarShipPtr->old_status_flags;
 		old_status_flags ^= cur_status_flags;
 
-		CSPtr = &StarShipPtr->RaceDescPtr->ship_data.captain_control;
+		CAPTAIN_STUFF* CSPtr {&StarShipPtr->RaceDescPtr->ship_data.captain_control};
 		old_status_flags &= (LEFT | RIGHT | THRUST | WEAPON | SPECIAL);
 		if (old_status_flags || animIsInTransition(CSPtr))
 		{
@@ -603,20 +594,20 @@ void PreProcessStatus(ELEMENT* ShipPtr)
 
 void PostProcessStatus(ELEMENT* ShipPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->captains_name_index
 		|| StarShipPtr->playerNr == RPG_PLAYER_NUM)
 	{ // All except Sa-Matra, no captain's window there
-		int16_t y;
-		STATUS_FLAGS cur_status_flags, old_status_flags;
+		STATUS_FLAGS cur_status_flags {};
+		STATUS_FLAGS old_status_flags {};
 
 
 		cur_status_flags = StarShipPtr->cur_status_flags;
 
 		assert(StarShipPtr->playerNr >= 0);
-		y = status_y_offsets[StarShipPtr->playerNr];
+		const int16_t y {status_y_offsets[StarShipPtr->playerNr]};
 
 		if (ShipPtr->crew_level == 0)
 		{
@@ -627,7 +618,8 @@ void PostProcessStatus(ELEMENT* ShipPtr)
 			{ // Kruzen: FINITE_LIFE check was added in case if crew-level == 0
 				// Is triggered by the ship itself (shofixti glory device) and
 				// avoiding drawing black area
-				uint8_t i, j;
+				uint8_t i {};
+				uint8_t j {};
 				Color c;
 				GFXRECT r;
 
@@ -636,8 +628,7 @@ void PostProcessStatus(ELEMENT* ShipPtr)
 				if (cur_status_flags & SHOFIXTI_EXPLOSION && i == 0)
 				{ // Special case: Instead of first orange rectangle we will draw the last
 					// frame from captain avatars (used for shofixti glory device)
-					CAPTAIN_STUFF* CSPtr;
-					CSPtr = &StarShipPtr->RaceDescPtr->ship_data.captain_control;
+					const CAPTAIN_STUFF* CSPtr {&StarShipPtr->RaceDescPtr->ship_data.captain_control};
 
 					cur_status_flags &= ~SHOFIXTI_EXPLOSION;
 					DrawCaptainWindowFrame(DecFrameIndex(CSPtr->background), y);
@@ -646,7 +637,7 @@ void PostProcessStatus(ELEMENT* ShipPtr)
 				{
 					if (i <= 4)
 					{
-						static const Color flash_tab0[] =
+						const static Color flash_tab0[] =
 							{
 								BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x2D),
 								BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x19, 0x19), 0x24),
@@ -667,7 +658,7 @@ void PostProcessStatus(ELEMENT* ShipPtr)
 						i -= 5;
 						if (i <= 14)
 						{
-							static const Color flash_tab1[] =
+							const static Color flash_tab1[] =
 								{
 									BUILD_COLOR(MAKE_RGB15_INIT(0x1E, 0x1F, 0x12), 0x70),
 									BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x1F, 0x0A), 0x0E),
@@ -758,7 +749,7 @@ void PostProcessStatus(ELEMENT* ShipPtr)
 							}
 							else
 							{
-								static const Color flash_tab2[] =
+								const static Color flash_tab2[] =
 									{
 										BUILD_COLOR(MAKE_RGB15_INIT(0x17, 0x00, 0x00), 0x2B),
 										BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x2D),

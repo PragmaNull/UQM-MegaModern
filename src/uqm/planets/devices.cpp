@@ -136,10 +136,10 @@ DrawDevice(uint16_t device, uint16_t pos, bool selected)
 								  DEVICES_NAME_COLOR);
 	t.baseline.y = r.corner.y + TEXT_BASELINE;
 	t.pStr = GAME_STRING(device + DEVICE_STRING_BASE + 1);
-	t.CharCount = utf8StringPos(t.pStr, ' ');
+	t.CharCount = uqm::utf8StringPos(t.pStr, ' ');
 	font_DrawText(&t);
 	t.baseline.y += TEXT_SPACING_Y;
-	t.pStr = skipUTF8Chars(t.pStr, t.CharCount + 1);
+	t.pStr = uqm::skipUTF8Chars(t.pStr, t.CharCount + 1);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 }
@@ -150,8 +150,7 @@ DrawDevicesDisplay(DEVICES_STATE* devState)
 	TEXT t;
 	GFXRECT r;
 	STAMP s;
-	int16_t cy;
-	uint16_t i;
+	int16_t cy {};
 
 	r.corner.x = RES_SCALE(2);
 	r.corner.y = RES_SCALE(20);
@@ -185,9 +184,9 @@ DrawDevicesDisplay(DEVICES_STATE* devState)
 	cy = DEVICE_ORG_Y;
 
 	// draw device icons and print names
-	for (i = 0; i < MAX_VIS_DEVICES; ++i, cy += DEVICE_SPACING_Y)
+	for (uint16_t i {0}; i < MAX_VIS_DEVICES; ++i, cy += DEVICE_SPACING_Y)
 	{
-		uint16_t devIndex = devState->topIndex + i;
+		const uint16_t devIndex = devState->topIndex + i;
 
 		if (devIndex >= devState->count)
 		{
@@ -250,7 +249,7 @@ UseCaster(void)
 		return false;
 	}
 
-	if (lowByte(GLOBAL(CurrentActivity)) != IN_INTERPLANETARY
+	if (uqm::lowByte(uqm::currentActivity()) != IN_INTERPLANETARY
 		|| !playerInSolarSystem())
 	{
 		return false;
@@ -264,7 +263,7 @@ UseCaster(void)
 	{
 		// In orbit around the Chenjesu/Mmrnmhrm home planet.
 		NextActivity |= CHECK_LOAD; /* fake a load game */
-		GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+		uqm::currentActivity() |= START_ENCOUNTER;
 
 		EncounterGroup = 0;
 		PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
@@ -277,8 +276,8 @@ UseCaster(void)
 	}
 
 	{
-		bool FoundIlwrath;
-		HIPGROUP hGroup;
+		bool FoundIlwrath {};
+		HIPGROUP hGroup {};
 
 		FoundIlwrath = (CurStarDescPtr->Index == ILWRATH_DEFINED)
 					&& StartSphereTracking(ILWRATH_SHIP);
@@ -287,9 +286,8 @@ UseCaster(void)
 		if (!FoundIlwrath && (hGroup = GetHeadLink(&GLOBAL(ip_group_q))))
 		{
 			// Is an Ilwrath ship in the system?
-			IP_GROUP* GroupPtr;
 
-			GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+			const IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 			FoundIlwrath = (GroupPtr->race_id == ILWRATH_SHIP);
 			UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
 		}
@@ -297,7 +295,7 @@ UseCaster(void)
 		if (FoundIlwrath)
 		{
 			NextActivity |= CHECK_LOAD; /* fake a load game */
-			GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+			uqm::currentActivity() |= START_ENCOUNTER;
 
 			EncounterGroup = 0;
 			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
@@ -329,7 +327,7 @@ UseCaster(void)
 static DeviceStatus
 InvokeDevice(uint8_t which_device)
 {
-	uint8_t val;
+	uint8_t val {};
 
 	switch (which_device)
 	{
@@ -349,25 +347,25 @@ InvokeDevice(uint8_t which_device)
 		case GLOWING_ROD_DEVICE:
 			break;
 		case SUN_EFFICIENCY_DEVICE:
-			if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY
+			if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 				&& playerInPlanetOrbit())
 			{
 				PlayMenuSound(MENU_SOUND_INVOKED);
-				SleepThreadUntil(FadeScreen(FadeAllToWhite, GameTicksPerSecond * 1)
-								 + (GameTicksPerSecond * 2));
+				SleepThreadUntil(FadeScreen(FadeAllToWhite, c_gameSecond * 1)
+								 + (c_gameSecond * 2));
 				if (CurStarDescPtr->Index != CHMMR_DEFINED
 					|| !matchWorld(pSolarSysState,
 								   pSolarSysState->pOrbitalDesc,
 								   MATCH_PBYTE, MATCH_PLANET))
 				{
-					FadeScreen(FadeAllToColor, GameTicksPerSecond * 2);
+					FadeScreen(FadeAllToColor, c_gameSecond * 2);
 				}
 				else
 				{
 					SET_GAME_STATE(CHMMR_EMERGING, 1);
 
 					EncounterGroup = 0;
-					GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+					uqm::currentActivity() |= START_ENCOUNTER;
 
 					PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
 					ReinitQueue(&GLOBAL(ip_group_q));
@@ -381,7 +379,7 @@ InvokeDevice(uint8_t which_device)
 			break;
 		case UTWIG_BOMB_DEVICE:
 			SET_GAME_STATE(UTWIG_BOMB, 0);
-			GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+			uqm::currentActivity() &= ~IN_BATTLE;
 			GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
 			DeathBySuicide = true;
 			return DEVICE_SUCCESS;
@@ -397,7 +395,7 @@ InvokeDevice(uint8_t which_device)
 			break;
 		case TALKING_PET_DEVICE:
 			NextActivity |= CHECK_LOAD; /* fake a load game */
-			GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+			uqm::currentActivity() |= START_ENCOUNTER;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 0);
 			if (inHQSpace())
 			{
@@ -405,7 +403,7 @@ InvokeDevice(uint8_t which_device)
 				{
 					SET_GAME_STATE(SHIP_TO_COMPEL, 1);
 				}
-				GLOBAL(CurrentActivity) &= ~IN_BATTLE;
+				uqm::currentActivity() &= ~IN_BATTLE;
 
 				SaveSisHyperState();
 			}
@@ -513,7 +511,7 @@ InvokeDevice(uint8_t which_device)
 
 bool InvokeSpawner(void)
 {
-	DeviceStatus status = InvokeDevice(PORTAL_SPAWNER_DEVICE);
+	const DeviceStatus status = InvokeDevice(PORTAL_SPAWNER_DEVICE);
 	if (status == DEVICE_FAILURE)
 	{
 		PlayMenuSound(MENU_SOUND_FAILURE);
@@ -530,18 +528,21 @@ static bool
 DoManipulateDevices(MENU_STATE* pMS)
 {
 	DEVICES_STATE* devState = (DEVICES_STATE*)pMS->privData;
-	bool select, cancel, back, forward;
-	bool pagefwd, pageback;
+	bool select {};
+	bool cancel {};
+	bool forward {};
+	bool pagefwd {};
+	bool pageback {};
 
 	select = PulsedInputState.menu[KEY_MENU_SELECT];
 	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
-	back = PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_LEFT];
+	const bool back {PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_LEFT]};
 	forward = PulsedInputState.menu[KEY_MENU_DOWN]
 		   || PulsedInputState.menu[KEY_MENU_RIGHT];
 	pagefwd = PulsedInputState.menu[KEY_MENU_PAGE_DOWN];
 	pageback = PulsedInputState.menu[KEY_MENU_PAGE_UP];
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -568,11 +569,10 @@ DoManipulateDevices(MENU_STATE* pMS)
 	}
 	else
 	{
-		int16_t NewTop;
-		int16_t NewState;
+		int16_t NewTop {};
 
 		NewTop = devState->topIndex;
-		NewState = pMS->CurState;
+		int16_t NewState {pMS->CurState};
 
 		if (back)
 		{
@@ -626,15 +626,10 @@ DoManipulateDevices(MENU_STATE* pMS)
 int16_t
 InventoryDevices(uint8_t* pDeviceMap, uint16_t Size)
 {
-	uint8_t i;
-	int16_t DevicesOnBoard;
-
-	DevicesOnBoard = 0;
-	for (i = 0; i < NUM_DEVICES && Size > 0; ++i)
+	int16_t DevicesOnBoard {0};
+	for (uint8_t i {0}; i < NUM_DEVICES && Size > 0; ++i)
 	{
-		uint8_t DeviceState;
-
-		DeviceState = 0;
+		uint8_t DeviceState {0};
 		switch (i)
 		{
 			case ROSY_SPHERE_DEVICE:
@@ -761,12 +756,12 @@ bool DevicesMenu(void)
 	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
 
 	if (GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0
-		&& !(GLOBAL(CurrentActivity) & CHECK_ABORT))
+		&& !(uqm::currentActivity() & CHECK_ABORT))
 	{
 		ClearSISRect(DRAW_SIS_DISPLAY);
 
 		if (!GET_GAME_STATE(PORTAL_COUNTER)
-			&& !(GLOBAL(CurrentActivity) & START_ENCOUNTER)
+			&& !(uqm::currentActivity() & START_ENCOUNTER)
 			&& GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
 		{
 			return true;

@@ -19,6 +19,12 @@
 #ifndef UQM_SETUPMENU_H_
 #define UQM_SETUPMENU_H_
 
+#include "core/stl/optional.h"
+#include "uqm/random/GameSeed.h"
+
 void SetupMenu(void);
+
+// Shows the seed choices of a new game. Returns nullopt if the player goes back to the main menu.
+uqstl::optional<uqm::GameSeed> NewGameMenu(void);
 
 #endif // UQM_SETUPMENU_H_

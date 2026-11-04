@@ -139,9 +139,7 @@ butt_missile_preprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		uint16_t facing;
-
-		facing = GetFrameIndex(ElementPtr->next.image.frame);
+		uint16_t facing {GetFrameIndex(ElementPtr->next.image.frame)};
 		if (TrackShip(ElementPtr, &facing) > 0)
 		{
 			ElementPtr->next.image.frame =
@@ -160,8 +158,7 @@ butt_missile_preprocess(ELEMENT* ElementPtr)
 static void
 spawn_butt_missile(ELEMENT* ShipPtr)
 {
-	HELEMENT ButtMissile;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK ButtMissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -180,16 +177,16 @@ spawn_butt_missile(ELEMENT* ShipPtr)
 	ButtMissileBlock.life = DISCRIMINATOR_LIFE;
 	ButtMissileBlock.preprocess_func = butt_missile_preprocess;
 	ButtMissileBlock.blast_offs = DISCRIMINATOR_OFFSET;
-	ButtMissile = initialize_missile(&ButtMissileBlock);
+	HELEMENT ButtMissile {initialize_missile(&ButtMissileBlock)};
 	if (ButtMissile)
 	{
-		ELEMENT* ButtPtr;
+		ELEMENT* ButtPtr {};
 
 		LockElement(ButtMissile, &ButtPtr);
 		ButtPtr->turn_wait = TRACK_WAIT;
 		SetElementStarShip(ButtPtr, StarShipPtr);
 
-		ProcessSound(SetAbsSoundIndex(
+		ProcessSound(GetSound(
 						 /* LAUNCH_BUTT_MISSILE */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ButtPtr);
@@ -203,21 +200,22 @@ static void
 spathi_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					uint16_t ConcernCounter)
 {
-	STARSHIP* StarShipPtr;
-	EVALUATE_DESC* lpEvalDesc;
+	STARSHIP* StarShipPtr {};
 
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	StarShipPtr->ship_input_state &= ~SPECIAL;
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	const EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (StarShipPtr->special_counter == 0
 		&& lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->which_turn <= 24)
 	{
-		uint16_t travel_facing, direction_facing;
-		int32_t delta_x, delta_y;
+		uint16_t travel_facing {};
+		uint16_t direction_facing {};
+		int32_t delta_x {};
+		int32_t delta_y {};
 
 		travel_facing = NORMALIZE_FACING(
 			ANGLE_TO_FACING(GetVelocityTravelAngle(&ShipPtr->velocity)
@@ -253,7 +251,7 @@ spathi_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static uint16_t
 initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -278,7 +276,7 @@ initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 static void
 spathi_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SPECIAL)
@@ -295,8 +293,6 @@ spathi_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_spathi(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		spathi_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -314,7 +310,7 @@ init_spathi(void)
 	spathi_desc.init_weapon_func = initialize_standard_missile;
 	spathi_desc.cyborg_control.intelligence_func = spathi_intelligence;
 
-	RaceDescPtr = &spathi_desc;
+	RACE_DESC* RaceDescPtr {&spathi_desc};
 
 	return (RaceDescPtr);
 }

@@ -21,39 +21,32 @@
 #include <string.h>
 #include "input.h"
 #include "../inpintrn.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 #include "libs/input/sdl/vcontrol.h"
 #include "libs/input/sdl/keynames.h"
-#include "libs/memlib.h"
-#include "libs/file.h"
 #include "core/log/log.h"
 #include "libs/reslib.h"
 #include "options.h"
 #include "core/string/StringUtils.h"
 #include "libs/file/textfile.h"
 #include "libs/input/keyconfig.h"
+#include "libs/graphics/sdl/pure.h"
+#include "core/stl/atomic.h"
 
 #define KBDBUFSIZE (1 << 8)
 static int kbdhead = 0, kbdtail = 0;
-static UniChar kbdbuf[KBDBUFSIZE];
-static UniChar lastchar;
+static uqm::UniChar kbdbuf[KBDBUFSIZE];
+static uqm::UniChar lastchar;
 
-#if SDL_MAJOR_VERSION == 1
-static int num_keys = 0;
-static int* kbdstate = nullptr;
-// Holds all SDL keys +1 for holding invalid values
-#else  // Later versions of SDL use the text input API instead
 static bool set_character_mode = false;
 // Records whether the UI thread has caught up with game thread
 // on this setting
-#endif // SDL_MAJOR_VERSION
 
-static volatile int* menu_vec;
+static uqstl::atomic<int>* menu_vec;
 static int num_menu;
 // The last vector element is the character repeat "key"
-// This is only used in SDL1 input but it's mostly harmless everywhere else
 #define KEY_MENU_ANY (num_menu - 1)
-static volatile int* flight_vec;
+static uqstl::atomic<int>* flight_vec;
 static int num_templ;
 static int num_flight;
 
@@ -61,7 +54,7 @@ static bool InputInitialized = false;
 
 static bool in_character_mode = false;
 
-static const char* menu_res_names[] = {
+const static char* menu_res_names[] = {
 	"pause",
 	"exit",
 	"abort",
@@ -92,7 +85,7 @@ static const char* menu_res_names[] = {
 	"debug_4",
 	nullptr};
 
-static const char* flight_res_names[] = {
+const static char* flight_res_names[] = {
 	"up",
 	"down",
 	"left",
@@ -106,10 +99,9 @@ static const char* flight_res_names[] = {
 static void
 register_menu_controls(int index)
 {
-	int i;
 	char buf[40] {};
 
-	i = 1;
+	int i {1};
 	while (true)
 	{
 		VCONTROL_GESTURE g;
@@ -121,12 +113,12 @@ register_menu_controls(int index)
 			break;
 		}
 		VControl_ParseGesture(&g, res_GetString(buf));
-		VControl_AddGestureBinding(&g, (int*)&menu_vec[index]);
+		VControl_AddGestureBinding(&g, &menu_vec[index]);
 		i++;
 	}
 }
 
-static VCONTROL_GESTURE* controls;
+static uqstl::vector<VCONTROL_GESTURE> controls {};
 
 static constexpr const char* c_keyConfigFile {"keys.json"};
 
@@ -171,16 +163,17 @@ static bool loadKeyConfiguration()
 	return true;
 }
 #define CONTROL_PTR(i, j, k) \
-	(controls + ((i) * num_flight + (j)) * MAX_FLIGHT_ALTERNATES + (k))
+	(controls.data() + ((i) * num_flight + (j)) * MAX_FLIGHT_ALTERNATES + (k))
 
 static void
 register_flight_controls(void)
 {
-	int i, j, k;
+	int j {};
+	int k {};
 	char buf[40] {};
 
 
-	for (i = 0; i < num_templ; i++)
+	for (int i {0}; i < num_templ; i++)
 	{
 		/* Copy in name */
 		fmt::format_to_sz_n(buf, "keys.{}.name", i + 1);
@@ -206,7 +199,7 @@ register_flight_controls(void)
 				}
 				VControl_ParseGesture(g, res_GetString(buf));
 				VControl_AddGestureBinding(g,
-										   (int*)(flight_vec + i * num_flight + j));
+										   (flight_vec + i * num_flight + j));
 			}
 		}
 	}
@@ -215,7 +208,7 @@ register_flight_controls(void)
 static void
 initKeyConfig(void)
 {
-	int i;
+	int i {};
 
 	if (!menu_vec || !flight_vec)
 	{
@@ -223,12 +216,12 @@ initKeyConfig(void)
 		exit(EXIT_FAILURE);
 	}
 
-	controls = (VCONTROL_GESTURE*)HCalloc(sizeof(*controls) * num_templ * num_flight
-										  * MAX_FLIGHT_ALTERNATES);
+	controls.assign(static_cast<size_t>(num_templ) * num_flight * MAX_FLIGHT_ALTERNATES, VCONTROL_GESTURE {});
 
 	/* First, load in the menu keys */
-	LoadResourceIndex(uqm::contentDir(), "menu.key", "menu.");
-	LoadResourceIndex(uqm::configDir(), "override.cfg", "menu.");
+	LoadResourceIndex(uqm::contentDir(), "menu.key.json", "menu.");
+	ConvertLegacyResourceIndex(uqm::configDir(), "override.cfg", "override.key.json");
+	LoadResourceIndex(uqm::configDir(), "override.key.json", "menu.");
 	for (i = 0; i < num_menu; i++)
 	{
 		if (!menu_res_names[i])
@@ -240,7 +233,7 @@ initKeyConfig(void)
 
 	if (!loadKeyConfiguration())
 	{
-		LoadResourceIndex(uqm::contentDir(), "uqm.key", "keys.");
+		LoadResourceIndex(uqm::contentDir(), "uqm.key.json", "keys.");
 	}
 
 	register_flight_controls();
@@ -251,13 +244,9 @@ initKeyConfig(void)
 static void
 resetKeyboardState(void)
 {
-#if SDL_MAJOR_VERSION == 1
-	memset(kbdstate, 0, sizeof(int) * num_keys);
-	menu_vec[KEY_MENU_ANY] = 0;
-#endif // SDL_MAJOR_VERSION
 }
 
-void TFB_SetInputVectors(int menu[], int num_menu_, int flight[], int num_flight_, int num_templ_)
+void TFB_SetInputVectors(uqstl::atomic<int>* menu, int num_menu_, uqstl::atomic<int>* flight, int num_flight_, int num_templ_)
 {
 	if (num_menu_ < 0 || num_templ_ < 0 || num_flight_ < 0)
 	{
@@ -276,33 +265,21 @@ void TFB_SetInputVectors(int menu[], int num_menu_, int flight[], int num_flight
 static void
 initJoystick(void)
 {
-	int nJoysticks;
+	const char* slash {};
 
-#if SDL_MAJOR_VERSION > 1
-	char* mapping_db;
-	int len;
-	size_t base_len;
-	const char* slash;
-#endif
-
-#if SDL_MAJOR_VERSION > 1
-	if ((SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER)) == -1)
-#else
-	if ((SDL_InitSubSystem(SDL_INIT_JOYSTICK)) == -1)
-#endif
+	if (!SDL_InitSubSystem(SDL_INIT_GAMEPAD))
 	{
 		uqm::log::critical("Couldn't initialize joystick subsystem: {}",
 						   SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
 
-#if SDL_MAJOR_VERSION > 1
-	SDL_GameControllerEventState(SDL_ENABLE);
+	SDL_SetGamepadEventsEnabled(true);
 
-	base_len = strlen(baseContentPath);
+	const size_t base_len {strlen(baseContentPath)};
 	if (base_len > 0)
 	{
-		char last_char = baseContentPath[base_len - 1];
+		const char last_char = baseContentPath[base_len - 1];
 		slash = (last_char == '/' || last_char == '\\') ? "" : "/";
 	}
 	else
@@ -311,14 +288,9 @@ initJoystick(void)
 	}
 
 	static constexpr const char* DbFilenameFormat {"{}{}gamecontrollerdb.txt"};
-	len = fmt::formatted_size(DbFilenameFormat, baseContentPath, slash);
+	const uqstl::string mapping_db {fmt::format(DbFilenameFormat, baseContentPath, slash)};
 
-	mapping_db = (char*)HMalloc(len + 1);
-
-	fmt::format_to_sz_n(mapping_db, len + 1, DbFilenameFormat,
-						baseContentPath, slash);
-
-	if (SDL_GameControllerAddMappingsFromFile(mapping_db) == -1)
+	if (SDL_AddGamepadMappingsFromFile(mapping_db.c_str()) == -1)
 	{
 		uqm::log::warn("Could not load controller mappings "
 					   "from {}: {}",
@@ -330,41 +302,32 @@ initJoystick(void)
 						mapping_db);
 	}
 
-	HFree(mapping_db);
-#endif
-	nJoysticks = SDL_NumJoysticks();
+	int nJoysticks {};
+	SDL_JoystickID* const joysticks {SDL_GetJoysticks(&nJoysticks)};
 	uqm::log::info("{} joysticks were found.", nJoysticks);
 
 	if (nJoysticks > 0)
 	{
-		int i;
 		uqm::log::info("The names of the joysticks are:");
-		for (i = 0; i < nJoysticks; i++)
+		for (int i {}; i < nJoysticks; i++)
 		{
-#if SDL_MAJOR_VERSION > 1
-			if (SDL_IsGameController(i))
+			if (SDL_IsGamepad(joysticks[i]))
 			{
-				uqm::log::info("    {} (controller)",
-							   SDL_GameControllerNameForIndex(i));
+				const char* name {SDL_GetGamepadNameForID(joysticks[i])};
+				uqm::log::info("    {} (controller)", name ? name : "");
 			}
 			else
 			{
-				uqm::log::info("    {} (joystick)",
-							   SDL_JoystickNameForIndex(i));
+				const char* name {SDL_GetJoystickNameForID(joysticks[i])};
+				uqm::log::info("    {} (joystick)", name ? name : "");
 			}
-#else
-			uqm::log::info("    {}", SDL_JoystickName(i));
-#endif
 		}
-#if SDL_MAJOR_VERSION == 1
-		SDL_JoystickEventState(SDL_ENABLE);
-#else
-		for (int i = 0; i < nJoysticks; i++)
+		for (int i {}; i < nJoysticks; i++)
 		{
-			create_joystick(i);
+			create_joystick(joysticks[i]);
 		}
-#endif
 	}
+	SDL_free(joysticks);
 }
 
 #endif /* HAVE_JOYSTICK */
@@ -374,13 +337,6 @@ int TFB_InitInput(int driver, int flags)
 	(void)driver;
 	(void)flags;
 
-#if SDL_MAJOR_VERSION == 1
-	int signed_num_keys;
-	SDL_EnableUNICODE(1);
-	(void)SDL_GetKeyState(&signed_num_keys);
-	(void)SDL_GetKeyState(&num_keys);
-	kbdstate = (int*)HMalloc(sizeof(int) * (num_keys + 1));
-#endif
 
 #ifdef HAVE_JOYSTICK
 	initJoystick();
@@ -403,12 +359,8 @@ int TFB_InitInput(int driver, int flags)
 void TFB_UninitInput(void)
 {
 	VControl_Uninit();
-	HFree(controls);
-#if SDL_MAJOR_VERSION == 1
-	HFree(kbdstate);
-#else
-	SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
-#endif
+	controls = {};
+	SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
 }
 
 void EnterCharacterMode(void)
@@ -427,26 +379,25 @@ void ExitCharacterMode(void)
 	VControl_ResetInput();
 }
 
-UniChar
+uqm::UniChar
 GetNextCharacter(void)
 {
-	UniChar result;
 	if (kbdhead == kbdtail)
 	{
 		return 0;
 	}
-	result = kbdbuf[kbdhead];
+	const uqm::UniChar result {kbdbuf[kbdhead]};
 	kbdhead = (kbdhead + 1) & (KBDBUFSIZE - 1);
 	return result;
 }
 
-UniChar
+uqm::UniChar
 GetLastCharacter(void)
 {
 	return lastchar;
 }
 
-volatile int MouseButtonDown = 0;
+uqstl::atomic<int> MouseButtonDown {0};
 
 #if 0
 static void
@@ -454,10 +405,10 @@ ProcessMouseEvent (const SDL_Event *e)
 {
 	switch (e->type)
 	{
-	case SDL_MOUSEBUTTONDOWN:
+	case SDL_EVENT_MOUSE_BUTTON_DOWN:
 		MouseButtonDown = 1;
 		break;
-	case SDL_MOUSEBUTTONUP:
+	case SDL_EVENT_MOUSE_BUTTON_UP:
 		MouseButtonDown = 0;
 		break;
 	default:
@@ -466,94 +417,14 @@ ProcessMouseEvent (const SDL_Event *e)
 }
 #endif
 
-#if SDL_MAJOR_VERSION == 1
 
 static inline int
 is_numpad_char_event(const SDL_Event* Event)
 {
-	return in_character_mode && (Event->type == SDL_KEYDOWN || Event->type == SDL_KEYUP) && Event->key.keysym.unicode > 0 && /* Printable char */
-		   Event->key.keysym.sym >= SDLK_KP0 &&																				 /* Keypad key */
-		   Event->key.keysym.sym <= SDLK_KP_PERIOD;
-}
-
-void ProcessInputEvent(const SDL_Event* Event)
-{
-	if (!InputInitialized)
-	{
-		return;
-	}
-
-	// ProcessMouseEvent (Event);
-
-	// In character mode with NumLock on, numpad chars bypass VControl
-	// so that menu arrow events are not produced
-	if (!is_numpad_char_event(Event))
-	{
-		VControl_HandleEvent(Event);
-	}
-
-	if (Event->type == SDL_KEYDOWN || Event->type == SDL_KEYUP)
-	{ // process character input event, if any
-		// keysym.sym is an SDLKey type which is an enum and can be signed
-		// or unsigned on different platforms; we'll use a guaranteed type
-		int k = Event->key.keysym.sym;
-		UniChar map_key = Event->key.keysym.unicode;
-
-		if (k < 0 || k > num_keys)
-		{
-			k = num_keys; // for unknown keys
-		}
-
-		if (Event->type == SDL_KEYDOWN)
-		{
-			int newtail;
-
-			// dont care about the non-printable, non-char
-			if (!map_key)
-			{
-				return;
-			}
-
-			kbdstate[k]++;
-
-			newtail = (kbdtail + 1) & (KBDBUFSIZE - 1);
-			// ignore the char if the buffer is full
-			if (newtail != kbdhead)
-			{
-				kbdbuf[kbdtail] = map_key;
-				kbdtail = newtail;
-				lastchar = map_key;
-				menu_vec[KEY_MENU_ANY]++;
-			}
-		}
-		else if (Event->type == SDL_KEYUP)
-		{
-			if (kbdstate[k] == 0)
-			{ // something is fishy -- better to reset the
-				// repeatable state to avoid big problems
-				menu_vec[KEY_MENU_ANY] = 0;
-			}
-			else
-			{
-				kbdstate[k]--;
-				if (menu_vec[KEY_MENU_ANY] > 0)
-				{
-					menu_vec[KEY_MENU_ANY]--;
-				}
-			}
-		}
-	}
-}
-
-#else
-
-static inline int
-is_numpad_char_event(const SDL_Event* Event)
-{
-	return in_character_mode && (Event->type == SDL_KEYDOWN || Event->type == SDL_KEYUP) && (Event->key.keysym.mod & KMOD_NUM) && /* Numlock on */
-		   Event->key.keysym.sym >= SDLK_KP_1 &&																				  /* Keypad key */
-		   Event->key.keysym.sym <= SDLK_KP_PERIOD;
-	// Note that in the SDL2 enumeration 0 comes after 9 and before period
+	return in_character_mode && (Event->type == SDL_EVENT_KEY_DOWN || Event->type == SDL_EVENT_KEY_UP) && (Event->key.mod & SDL_KMOD_NUM) && /* Numlock on */
+		   Event->key.key >= SDLK_KP_1 &&																									 /* Keypad key */
+		   Event->key.key <= SDLK_KP_PERIOD;
+	// Note that in the SDL enumeration 0 comes after 9 and before period
 }
 
 void ProcessInputEvent(const SDL_Event* Event)
@@ -566,13 +437,13 @@ void ProcessInputEvent(const SDL_Event* Event)
 	if (in_character_mode && !set_character_mode)
 	{
 		set_character_mode = true;
-		SDL_StartTextInput();
+		SDL_StartTextInput(TFB_GetSDLWindow());
 	}
 
 	if (!in_character_mode && set_character_mode)
 	{
 		set_character_mode = false;
-		SDL_StopTextInput();
+		SDL_StopTextInput(TFB_GetSDLWindow());
 	}
 
 	/* "Block" numpad input when NUM_LOCK is on */
@@ -581,14 +452,14 @@ void ProcessInputEvent(const SDL_Event* Event)
 		VControl_HandleEvent(Event);
 	}
 
-	if (Event->type == SDL_TEXTINPUT)
+	if (Event->type == SDL_EVENT_TEXT_INPUT)
 	{
-		int newtail;
+		int newtail {};
 		int i = 0;
 
 		while (Event->text.text[i])
 		{
-			UniChar map_key = Event->text.text[i++];
+			uqm::UniChar map_key = Event->text.text[i++];
 			map_key &= 0xFF; /* Interpret as unsigned byte */
 
 			/* Decode any UTF-8 keys */
@@ -608,10 +479,10 @@ void ProcessInputEvent(const SDL_Event* Event)
 			}
 			else if (map_key >= 0xF0)
 			{
-				/* Out of the BMP, won't fit in a UniChar */
+				/* Out of the BMP, won't fit in a uqm::UniChar */
 				/* Use the replacement character instead */
 				map_key = 0xFFFD;
-				while ((UniChar)Event->text.text[i] > 0x7F)
+				while ((uqm::UniChar)Event->text.text[i] > 0x7F)
 				{
 					++i;
 				}
@@ -639,7 +510,6 @@ void ProcessInputEvent(const SDL_Event* Event)
 	}
 }
 
-#endif // SDL_MAJOR_VERSION
 
 void TFB_ResetControls(void)
 {
@@ -655,29 +525,27 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 {
 	VCONTROL_GESTURE* g = CONTROL_PTR(templat, control, index);
 
-#if SDL_MAJOR_VERSION > 1
-	const char xbx_buttons[SDL_CONTROLLER_BUTTON_MAX][16] =
+	const char xbx_buttons[SDL_GAMEPAD_BUTTON_COUNT][16] =
 		{
 			"A", "B", "X", "Y", "Back", "Guide", "Start",
 			"LStick", "RStick", "LShoulder", "RShoulder",
 			"DUp", "DDown", "DLeft", "DRight", "Misc"};
 
-	const char ds4_buttons[SDL_CONTROLLER_BUTTON_MAX][16] =
+	const char ds4_buttons[SDL_GAMEPAD_BUTTON_COUNT][16] =
 		{
 			STR_CROSS, STR_CIRCLE, STR_SQUARE, STR_TRIANGLE,
 			"Share", "PS", "Options", "L3", "R3", "L1", "R1",
 			"DUp", "DDown", "DLeft", "DRight", "TouchPad"};
 
-	const char xbx_axes[SDL_CONTROLLER_AXIS_MAX][16] =
+	const char xbx_axes[SDL_GAMEPAD_AXIS_COUNT][16] =
 		{
 			"LStick H", "LStick V", "RStick H", "RStick V",
 			"LTrigger", "RTrigger"};
 
-	const char ds4_axes[SDL_CONTROLLER_AXIS_MAX][16] =
+	const char ds4_axes[SDL_GAMEPAD_AXIS_COUNT][16] =
 		{
 			"LStick H", "LStick V", "RStick H", "RStick V",
 			"L2", "R2"};
-#endif
 
 	if (templat >= num_templ || control >= num_flight
 		|| index >= MAX_FLIGHT_ALTERNATES)
@@ -697,7 +565,6 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 		case VCONTROL_JOYBUTTON:
 			switch (uqm::UQMOptions::read().optControllerType)
 			{
-#if SDL_MAJOR_VERSION > 1
 				case uqm::ControllerType::XBox:
 					fmt::format_to_sz_n(buffer, maxlen, "[J{} {}]",
 										g->gesture.button.port,
@@ -708,7 +575,6 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 										g->gesture.button.port,
 										ds4_buttons[g->gesture.button.index]);
 					break;
-#endif
 				case uqm::ControllerType::KeyboardMouse:
 				default:
 					fmt::format_to_sz_n(buffer, maxlen, "[J{} B{}]",
@@ -720,7 +586,6 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 		case VCONTROL_JOYAXIS:
 			switch (uqm::UQMOptions::read().optControllerType)
 			{
-#if SDL_MAJOR_VERSION > 1
 				case uqm::ControllerType::XBox:
 					fmt::format_to_sz_n(buffer, maxlen, "[J{} {}{}]",
 										g->gesture.axis.port,
@@ -733,7 +598,6 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 										ds4_axes[g->gesture.axis.index],
 										g->gesture.axis.polarity > 0 ? '+' : '-');
 					break;
-#endif
 				case uqm::ControllerType::KeyboardMouse:
 				default:
 					fmt::format_to_sz_n(buffer, maxlen, "[J{} A{} {}]",
@@ -744,12 +608,6 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 			}
 
 			break;
-#if SDL_MAJOR_VERSION == 1
-		case VCONTROL_JOYHAT:
-			fmt::format_to_sz_n(buffer, maxlen, "[J{} H{} {}]", g->gesture.hat.port,
-								g->gesture.hat.index, g->gesture.hat.dir);
-			break;
-#endif
 		default:
 			/* Something we don't handle yet */
 			buffer[0] = 0;
@@ -771,7 +629,7 @@ void RemoveInputState(int templat, int control, int index)
 	}
 
 	VControl_RemoveGestureBinding(g,
-								  (int*)(flight_vec + templat * num_flight + control));
+								  (flight_vec + templat * num_flight + control));
 	g->type = VCONTROL_NONE;
 
 	fmt::format_to_sz_n(keybuf, "keys.{}.{}.{}", templat + 1,
@@ -806,7 +664,7 @@ void RebindInputState(int templat, int control, int index)
 
 	/* And now, add the new binding. */
 	VControl_AddGestureBinding(&g,
-							   (int*)(flight_vec + templat * num_flight + control));
+							   (flight_vec + templat * num_flight + control));
 	*CONTROL_PTR(templat, control, index) = g;
 	fmt::format_to_sz_n(keybuf, "keys.{}.{}.{}", templat + 1,
 						flight_res_names[control], index + 1);

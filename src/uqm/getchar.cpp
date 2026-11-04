@@ -19,7 +19,6 @@
 #include "port.h"
 #include "controls.h"
 #include "libs/inplib.h"
-#include "libs/memlib.h"
 #include "core/log/log.h"
 #include "globdata.h"
 #include "options.h"
@@ -40,18 +39,12 @@ static bool block = false;
 // TODO: This may be better done with UniChar at the cost of a tiny bit
 //   of overhead to convert UniChar back to UTF8 string. This overhead
 //   will probably be offset by removal of looped string-compare overhead ;)
-struct joy_char
-{
-	unsigned char len;
-	char enc[7];
-	// 1+7 is a nice round number
-};
 
 static int
 ReadOneChar(joy_char_t* ch, const char* str)
 {
-	char* next = skipUTF8Chars(str, 1);
-	int len = next - str;
+	const char* next = uqm::skipUTF8Chars(str, 1);
+	const int len = next - str;
 	ch->len = len;
 	memcpy(ch->enc, str, len);
 	ch->enc[len] = '\0'; // string term
@@ -59,32 +52,25 @@ ReadOneChar(joy_char_t* ch, const char* str)
 	return len;
 }
 
-static joy_char_t*
-LoadJoystickAlpha(STRING String, int* count)
+static uqstl::vector<joy_char_t>
+LoadJoystickAlpha(const char* str, int* count)
 {
-	char* str;
-	int c;
-	int i;
-	joy_char_t* chars;
-	char* cur;
+	int c {};
+	int i {};
+	const char* cur {};
 
 	*count = 0;
-	str = GetStringAddress(String);
 	if (!str)
 	{
-		return 0;
+		return {};
 	}
 
-	c = utf8StringCount(str);
-	chars = (joy_char_t*)HMalloc(c * sizeof(*chars));
-	if (!chars)
-	{
-		return 0;
-	}
+	c = uqm::utf8StringCount(str);
+	uqstl::vector<joy_char_t> chars(c);
 
 	for (i = 0, cur = str; i < c; ++i)
 	{
-		int len = ReadOneChar(chars + i, cur);
+		const int len = ReadOneChar(&chars[i], cur);
 		cur += len;
 	}
 
@@ -96,7 +82,7 @@ static int
 JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
 			  int setsize)
 {
-	int i;
+	int i {};
 
 	for (i = 0; i < setsize && strcmp(set[i].enc, ch->enc) != 0; ++i)
 		;
@@ -107,14 +93,14 @@ JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
 static int
 JoyCharIsLower(const joy_char_t* ch, TEXTENTRY_STATE* pTES)
 {
-	return 0 <= JoyCharFindIn(ch, pTES->JoyLower, pTES->JoyRegLength);
+	return 0 <= JoyCharFindIn(ch, pTES->JoyLower.data(), pTES->JoyRegLength);
 }
 
 static void
 JoyCharSwitchReg(joy_char_t* ch, const joy_char_t* from,
 				 const joy_char_t* to, int regsize)
 {
-	int i = JoyCharFindIn(ch, from, regsize);
+	const int i = JoyCharFindIn(ch, from, regsize);
 	if (i >= 0)
 	{
 		*ch = to[i];
@@ -126,7 +112,7 @@ JoyCharToUpper(joy_char_t* outch, const joy_char_t* ch,
 			   TEXTENTRY_STATE* pTES)
 {
 	*outch = *ch;
-	JoyCharSwitchReg(outch, pTES->JoyLower, pTES->JoyUpper,
+	JoyCharSwitchReg(outch, pTES->JoyLower.data(), pTES->JoyUpper.data(),
 					 pTES->JoyRegLength);
 }
 
@@ -135,7 +121,7 @@ JoyCharToLower(joy_char_t* outch, const joy_char_t* ch,
 			   TEXTENTRY_STATE* pTES)
 {
 	*outch = *ch;
-	JoyCharSwitchReg(outch, pTES->JoyUpper, pTES->JoyLower,
+	JoyCharSwitchReg(outch, pTES->JoyUpper.data(), pTES->JoyLower.data(),
 					 pTES->JoyRegLength);
 }
 
@@ -160,20 +146,18 @@ void FlushCursorRect(void)
 static void
 FlashCursor(void)
 {
-	static TimeCount NextTime = 0;
+	static TimeCount NextTime {};
 	static uint32_t cycle_index = 0;
 
-	static const Color cycle_tab[] = CURSOR_COLOR_CYCLE_TABLE;
+	const static Color cycle_tab[] = CURSOR_COLOR_CYCLE_TABLE;
 	const size_t cycleCount = std::size(cycle_tab);
-#define BLINK_RATE (GameTicksPerSecond / 32)
+#define BLINK_RATE (c_gameSecond / 32)
 
 	if (GetTimeCounter() >= NextTime)
 	{
-		GFXCONTEXT OldContext;
-
 		NextTime = GetTimeCounter() + BLINK_RATE;
 
-		OldContext = SetContext(curContext);
+		GFXCONTEXT OldContext {SetContext(curContext)};
 
 		if (curContext == OffScreenContext)
 		{
@@ -198,14 +182,10 @@ FlashCursor(void)
 
 bool DoTextEntry(TEXTENTRY_STATE* pTES)
 {
-	UniChar ch;
-	char* pStr;
-	char* CacheInsPt;
-	int CacheCursorPos;
-	int len;
+	int len {};
 	bool changed = false;
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return (false);
 	}
@@ -217,7 +197,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 
 	if (!pTES->Initialized)
 	{ // init basic vars
-		int lwlen;
+		int lwlen {};
 
 		pTES->InputFunc = DoTextEntry;
 		pTES->Success = false;
@@ -226,24 +206,19 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		pTES->UpperRegister = false;
 
 		// init insertion point
-		if ((size_t)pTES->CursorPos > utf8StringCount(pTES->BaseStr))
+		if ((size_t)pTES->CursorPos > uqm::utf8StringCount(pTES->BaseStr))
 		{
-			pTES->CursorPos = utf8StringCount(pTES->BaseStr);
+			pTES->CursorPos = uqm::utf8StringCount(pTES->BaseStr);
 		}
-		pTES->InsPt = skipUTF8Chars(pTES->BaseStr, pTES->CursorPos);
+		pTES->InsPt = uqm::skipUTF8Chars(pTES->BaseStr, pTES->CursorPos);
 
 		// load joystick alphabet
-		pTES->JoyAlphaString = CaptureStringTable(
-			LoadStringTable(JOYSTICK_ALPHA_STRTAB));
-		pTES->JoyAlpha = LoadJoystickAlpha(
-			SetAbsStringTableIndex(pTES->JoyAlphaString, 0),
-			&pTES->JoyAlphaLength);
-		pTES->JoyUpper = LoadJoystickAlpha(
-			SetAbsStringTableIndex(pTES->JoyAlphaString, 1),
-			&pTES->JoyRegLength);
-		pTES->JoyLower = LoadJoystickAlpha(
-			SetAbsStringTableIndex(pTES->JoyAlphaString, 2),
-			&lwlen);
+		{
+			const uqm::StringTablePtr joyAlpha {uqm::loadStringTable(JOYSTICK_ALPHA_STRTAB)};
+			pTES->JoyAlpha = LoadJoystickAlpha(joyAlpha->text(0), &pTES->JoyAlphaLength);
+			pTES->JoyUpper = LoadJoystickAlpha(joyAlpha->text(1), &pTES->JoyRegLength);
+			pTES->JoyLower = LoadJoystickAlpha(joyAlpha->text(2), &lwlen);
+		}
 		if (lwlen != pTES->JoyRegLength)
 		{
 			if (lwlen < pTES->JoyRegLength)
@@ -255,42 +230,29 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 						   pTES->JoyRegLength);
 		}
 
-		pTES->CacheStr = (char*)HMalloc(pTES->MaxSize * sizeof(*pTES->CacheStr));
+		pTES->CacheStr.assign(pTES->MaxSize, '\0');
 
 		EnterCharacterMode();
 		DoInput(pTES, true);
 		ExitCharacterMode();
 
-		if (pTES->CacheStr)
-		{
-			HFree(pTES->CacheStr);
-		}
-		if (pTES->JoyLower)
-		{
-			HFree(pTES->JoyLower);
-		}
-		if (pTES->JoyUpper)
-		{
-			HFree(pTES->JoyUpper);
-		}
-		if (pTES->JoyAlpha)
-		{
-			HFree(pTES->JoyAlpha);
-		}
-		DestroyStringTable(ReleaseStringTable(pTES->JoyAlphaString));
+		pTES->CacheStr = {};
+		pTES->JoyLower = {};
+		pTES->JoyUpper = {};
+		pTES->JoyAlpha = {};
 
 		return pTES->Success;
 	}
 
-	pStr = pTES->InsPt;
+	char* pStr {pTES->InsPt};
 	len = strlen(pStr);
 	// save a copy of string
-	CacheInsPt = pTES->InsPt;
-	CacheCursorPos = pTES->CursorPos;
-	memcpy(pTES->CacheStr, pTES->BaseStr, pTES->MaxSize);
+	char* CacheInsPt {pTES->InsPt};
+	const int CacheCursorPos {pTES->CursorPos};
+	memcpy(pTES->CacheStr.data(), pTES->BaseStr, pTES->MaxSize);
 
 	// process the pending character buffer
-	ch = GetNextCharacter();
+	uqm::UniChar ch {GetNextCharacter()};
 	if (TextEntry3DO && ch == UNICHAR_SPACE)
 	{
 		ch = UNICHAR_TAB;
@@ -302,12 +264,11 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	while (ch)
 	{
 		char chbuf[8];
-		int chsize;
 
 		pTES->JoystickMode = false;
 
-		chsize = getStringFromChar(chbuf, sizeof(chbuf), ch);
-		if (UniChar_isPrint(ch) && chsize > 0)
+		const int chsize {uqm::getStringFromChar(chbuf, ch)};
+		if (uqm::isPrintChar(ch) && chsize > 0)
 		{
 			if (pStr + len - pTES->BaseStr + chsize < pTES->MaxSize)
 			{ // insert character, when fits
@@ -345,8 +306,8 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	{
 		if (pStr > pTES->BaseStr)
 		{
-			char* prev = skipUTF8Chars(pTES->BaseStr,
-									   pTES->CursorPos - 1);
+			char* prev = uqm::skipUTF8Chars(pTES->BaseStr,
+											pTES->CursorPos - 1);
 
 			memmove(prev, pStr, len + 1);
 			pStr = prev;
@@ -358,8 +319,8 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	{
 		if (pStr > pTES->BaseStr)
 		{
-			char* prev = skipUTF8Chars(pTES->BaseStr,
-									   pTES->CursorPos - 1);
+			char* prev = uqm::skipUTF8Chars(pTES->BaseStr,
+											pTES->CursorPos - 1);
 
 			pStr = prev;
 			len += (prev - pStr);
@@ -394,20 +355,19 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	{
 		if (len > 0)
 		{
-			pTES->CursorPos += utf8StringCount(pStr);
+			pTES->CursorPos += uqm::utf8StringCount(pStr);
 			pStr += len;
 			len = 0;
 			changed = true;
 		}
 	}
 
-	if (pTES->JoyAlpha && (PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN] || PulsedInputState.menu[KEY_MENU_PAGE_UP] || PulsedInputState.menu[KEY_MENU_PAGE_DOWN]))
+	if (!pTES->JoyAlpha.empty() && (PulsedInputState.menu[KEY_MENU_UP] || PulsedInputState.menu[KEY_MENU_DOWN] || PulsedInputState.menu[KEY_MENU_PAGE_UP] || PulsedInputState.menu[KEY_MENU_PAGE_DOWN]))
 	{ // do joystick text
 		joy_char_t ch;
 		joy_char_t newch;
 		joy_char_t cmpch;
-		int i;
-		bool curCharUpper;
+		bool curCharUpper {};
 
 		pTES->JoystickMode = true;
 
@@ -428,7 +388,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		JoyCharToUpper(&cmpch, &ch, pTES);
 
 		// find current char in the alphabet
-		i = JoyCharFindIn(&cmpch, pTES->JoyAlpha, pTES->JoyAlphaLength);
+		int i {JoyCharFindIn(&cmpch, pTES->JoyAlpha.data(), pTES->JoyAlphaLength)};
 
 		if (PulsedInputState.menu[KEY_MENU_UP])
 		{
@@ -483,7 +443,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 		{ // new char is different, put it in
 			if (len)
 			{ // change current -- this is messy with utf8
-				int l = len - ch.len;
+				const int l = len - ch.len;
 				if (pStr + l - pTES->BaseStr + newch.len < pTES->MaxSize)
 				{
 					// adjust other chars if necessary
@@ -531,7 +491,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 	{
 		if (!pTES->ChangeCallback(pTES))
 		{ // changes not accepted - revert
-			memcpy(pTES->BaseStr, pTES->CacheStr, pTES->MaxSize);
+			memcpy(pTES->BaseStr, pTES->CacheStr.data(), pTES->MaxSize);
 			pTES->InsPt = CacheInsPt;
 			pTES->CursorPos = CacheCursorPos;
 

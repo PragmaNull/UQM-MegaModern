@@ -51,6 +51,7 @@ target_compile_definitions(UQM_Tests
 
 # ---- Link libraries --------------------------------------------------------
 
+find_package(asio REQUIRED)
 find_package(fmt REQUIRED)
 find_package(gsl-lite REQUIRED)
 find_package(GTest REQUIRED)
@@ -67,6 +68,7 @@ target_link_libraries(UQM_Tests
     PRIVATE
         GTest::gtest
         GTest::gtest_main
+        asio::asio
         lua::lua
         magic_enum::magic_enum
         fmt::fmt

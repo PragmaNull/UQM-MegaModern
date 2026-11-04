@@ -37,8 +37,7 @@
 #include "flash.h"
 
 #include "core/log/log.h"
-#include "libs/memlib.h"
-#include "libs/threadlib.h"
+#include "libs/time/timelib.h"
 
 #include "colors.h"
 #include "globdata.h"
@@ -72,7 +71,7 @@ static GFXCONTEXT workGfxContext;
 static FlashContext*
 Flash_create(GFXCONTEXT gfxContext)
 {
-	FlashContext* context = (FlashContext*)HMalloc(sizeof(FlashContext));
+	auto* context {new FlashContext {}};
 
 	context->gfxContext = gfxContext;
 
@@ -87,16 +86,15 @@ Flash_create(GFXCONTEXT gfxContext)
 	context->fadeOutTime = Flash_DEFAULT_FADE_OUT_TIME;
 	context->offTime = Flash_DEFAULT_OFF_TIME;
 
-	context->frameTime = 0;
+	context->frameTime = TimePeriod {};
 
 	context->state = FlashState_off;
-	context->lastStateTime = 0;
-	context->lastFrameTime = 0;
+	context->lastStateTime = TimeCount {};
+	context->lastFrameTime = TimeCount {};
 
 	context->started = false;
 	context->paused = false;
 
-	context->cache = 0;
 	context->cacheSize = Flash_DEFAULT_CACHE_SIZE;
 
 	context->lastFrameIndex = (uint16_t)-1;
@@ -180,7 +178,7 @@ Flash_createOverlay(GFXCONTEXT gfxContext, const GFXPOINT* origin, FRAME overlay
 // Set the current state. 'timeSpentInState' determines how much time should
 // be considered to be already spent in this state.
 void Flash_setState(FlashContext* context, FlashState state,
-					TimeCount timeSpentInState)
+					TimePeriod timeSpentInState)
 {
 	TimeCount now;
 
@@ -224,17 +222,16 @@ void Flash_terminate(FlashContext* context)
 	if (context->started)
 	{
 		// Restore the flash rectangle IF not quiting:
-		if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if (!(uqm::currentActivity() & CHECK_ABORT))
 		{
 			Flash_drawFrame(context, context->original, false);
 		}
 
 		Flash_clearCache(context);
-		HFree(context->cache);
 		DestroyDrawable(ReleaseDrawable(context->original));
 	}
 
-	HFree(context);
+	delete context;
 }
 
 void Flash_pause(FlashContext* context)
@@ -252,7 +249,7 @@ void Flash_continue(FlashContext* context)
 static void
 Flash_fixState(FlashContext* context)
 {
-	TimeCount stateTime = 0;
+	TimePeriod stateTime {};
 
 	for (;;)
 	{
@@ -271,7 +268,7 @@ Flash_fixState(FlashContext* context)
 				stateTime = context->offTime;
 				break;
 		}
-		if (stateTime != 0)
+		if (stateTime != TimePeriod {})
 		{
 			break;
 		}
@@ -336,8 +333,8 @@ void Flash_process(FlashContext* context)
 	Flash_drawCurrentFrame(context);
 }
 
-void Flash_setSpeed(FlashContext* context, TimeCount fadeInTime,
-					TimeCount onTime, TimeCount fadeOutTime, TimeCount offTime)
+void Flash_setSpeed(FlashContext* context, TimePeriod fadeInTime,
+					TimePeriod onTime, TimePeriod fadeOutTime, TimePeriod offTime)
 {
 	context->fadeInTime = fadeInTime;
 	context->onTime = onTime;
@@ -383,7 +380,7 @@ void Flash_setMergeFactors(FlashContext* context, int startNumer, int endNumer,
 }
 
 // Set the time between updates of the flash area.
-void Flash_setFrameTime(FlashContext* context, TimeCount frameTime)
+void Flash_setFrameTime(FlashContext* context, TimePeriod frameTime)
 {
 	context->frameTime = frameTime;
 }
@@ -405,7 +402,7 @@ Flash_nextTime(FlashContext* context)
 {
 	if (!context->started || context->paused)
 	{
-		return (TimeCount)-1;
+		return TimeCount::max();
 	}
 
 	if (context->state == FlashState_fadeIn || context->state == FlashState_fadeOut)
@@ -432,8 +429,6 @@ Flash_nextTime(FlashContext* context)
 static void
 Flash_clearCache(FlashContext* context)
 {
-	uint16_t i;
-
 #ifdef BEGIN_AND_END_FRAME_EXCEPTIONS
 	if (context->type == FlashType_transition || context->type == FlashType_overlay)
 	{
@@ -449,7 +444,7 @@ Flash_clearCache(FlashContext* context)
 	}
 #endif /* BEGIN_AND_END_FRMAE_EXCEPTIONS */
 
-	for (i = 0; i < context->cacheSize; i++)
+	for (uint16_t i {0}; i < context->cacheSize; i++)
 	{
 		if (context->cache[i] != (FRAME)0)
 		{
@@ -541,24 +536,17 @@ void Flash_postUpdate(FlashContext* context)
 static void
 Flash_initCache(FlashContext* context)
 {
-	uint16_t i;
-
-	context->cache = (FRAME*)HMalloc(context->cacheSize * sizeof(FRAME));
-	for (i = 0; i < context->cacheSize; i++)
-	{
-		context->cache[i] = (FRAME)0;
-	}
+	context->cache.assign(context->cacheSize, nullptr);
 }
 
 void Flash_setCacheSize(FlashContext* context, uint16_t size)
 {
 	assert(size == 0 || size >= 2);
 
-	if (context->cache != nullptr)
+	if (!context->cache.empty())
 	{
 		Flash_clearCache(context);
-		HFree(context->cache);
-		context->cache = nullptr;
+		context->cache = {};
 	}
 
 	context->cacheSize = size;
@@ -578,14 +566,12 @@ Flash_getCacheSize(const FlashContext* context)
 static void
 Flash_grabOriginal(FlashContext* context)
 {
-	GFXCONTEXT oldGfxContext;
-
 	if (context->original != (FRAME)0)
 	{
 		DestroyDrawable(ReleaseDrawable(context->original));
 	}
 
-	oldGfxContext = SetContext(context->gfxContext);
+	GFXCONTEXT oldGfxContext {SetContext(context->gfxContext)};
 	context->original = CaptureDrawable(CopyContextRect(&context->rect));
 	SetContext(oldGfxContext);
 	FlushGraphics();
@@ -621,17 +607,16 @@ Flash_blendFraction(FlashContext* context, int numer, int denom,
 static void
 Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int denom)
 {
-	GFXCONTEXT oldGfxContext;
 	STAMP s;
-	int blendedNumer;
-	int blendedDenom;
+	int blendedNumer {};
+	int blendedDenom {};
 
 	s.origin.x = 0;
 	s.origin.y = 0;
 
 	Flash_blendFraction(context, numer, denom, &blendedNumer, &blendedDenom);
 
-	oldGfxContext = SetContext(workGfxContext);
+	GFXCONTEXT oldGfxContext {SetContext(workGfxContext)};
 	SetContextFGFrame(dest);
 
 	switch (context->type)
@@ -650,8 +635,8 @@ Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int denom)
 			}
 		case FlashType_transition:
 			{
-				FRAME first;
-				FRAME final;
+				FRAME first {};
+				FRAME final {};
 
 				first = context->u.transition.first;
 				if (first == (FRAME)0)
@@ -736,12 +721,12 @@ Flash_prepareCacheFrame(FlashContext* context, uint16_t index)
 
 Color GetFlashPCColor(void)
 {
-	static TimeCount NextTime = 0;
+	static TimeCount NextTime {};
 	static uint32_t cycle_index = 0;
 
-	static const Color cycle_tab[] = PC_RECT_COLOR_CYCLE_TABLE;
+	const static Color cycle_tab[] = PC_RECT_COLOR_CYCLE_TABLE;
 	const size_t cycleCount = std::size(cycle_tab);
-#define BLINK_RATE (GameTicksPerSecond / 18)
+#define BLINK_RATE (c_gameSecond / 18)
 
 	if (GetTimeCounter() >= NextTime)
 	{
@@ -756,10 +741,9 @@ Color GetFlashPCColor(void)
 static void
 Flash_drawFrame(FlashContext* context, FRAME frame, bool pcRect)
 {
-	GFXCONTEXT oldGfxContext;
 	STAMP stamp;
 
-	oldGfxContext = SetContext(context->gfxContext);
+	GFXCONTEXT oldGfxContext {SetContext(context->gfxContext)};
 
 	if (!pcRect)
 	{
@@ -769,7 +753,7 @@ Flash_drawFrame(FlashContext* context, FRAME frame, bool pcRect)
 	}
 	else if (!context->paused)
 	{
-		Color color = GetFlashPCColor();
+		const Color color = GetFlashPCColor();
 		DrawStarConBox(
 			&context->rect, RES_SCALE(1), color, color, false,
 			TRANSPARENT, false, TRANSPARENT);
@@ -781,14 +765,12 @@ Flash_drawFrame(FlashContext* context, FRAME frame, bool pcRect)
 static void
 Flash_drawCacheFrame(FlashContext* context, uint16_t index)
 {
-	FRAME frame;
-
 	if (context->lastFrameIndex == index)
 	{
 		return;
 	}
 
-	frame = context->cache[index];
+	FRAME frame {context->cache[index]};
 
 	Flash_drawFrame(context, frame, context->isPulsing);
 
@@ -841,7 +823,7 @@ Flash_drawUncachedFrame(FlashContext* context, int numer, int denom)
 
 	{
 		// Painting to the screen; we need a temporary frame to draw to.
-		FRAME work;
+		FRAME work {};
 
 		work = CaptureDrawable(CreateDrawable(WANT_PIXMAP,
 											  context->rect.extent.width, context->rect.extent.height, 1));
@@ -855,7 +837,7 @@ Flash_drawUncachedFrame(FlashContext* context, int numer, int denom)
 static inline void
 Flash_drawCachedFrame(FlashContext* context, int numer, int denom)
 {
-	uint16_t cachePos;
+	uint16_t cachePos {};
 
 	cachePos = ((context->cacheSize - 1) * numer + (denom / 2)) / denom;
 	Flash_prepareCacheFrame(context, cachePos);
@@ -865,10 +847,10 @@ Flash_drawCachedFrame(FlashContext* context, int numer, int denom)
 static void
 Flash_drawCurrentFrame(FlashContext* context)
 {
-	int numer;
-	int denom;
+	int numer {};
+	int denom {};
 
-	/*if (GLOBAL (CurrentActivity) & CHECK_ABORT)
+	/*if (uqm::currentActivity() & CHECK_ABORT)
 		pcRectBool = false;*/
 
 	if (context->state == FlashState_off)
@@ -883,18 +865,18 @@ Flash_drawCurrentFrame(FlashContext* context)
 	}
 	else
 	{
-		TimeCount now = GetTimeCounter();
+		const TimeCount now = GetTimeCounter();
 
 		if (context->state == FlashState_fadeIn)
 		{
-			denom = (int)context->fadeInTime;
+			denom = static_cast<int>(context->fadeInTime.count());
 		}
 		else
 		{
-			denom = (int)context->fadeOutTime;
+			denom = static_cast<int>(context->fadeOutTime.count());
 		}
 
-		numer = (int)(now - context->lastStateTime);
+		numer = static_cast<int>((now - context->lastStateTime).count());
 
 		if (numer > denom)
 		{
@@ -903,7 +885,7 @@ Flash_drawCurrentFrame(FlashContext* context)
 
 		if (context->state == FlashState_fadeOut)
 		{
-			numer = (int)context->fadeOutTime - numer;
+			numer = static_cast<int>(context->fadeOutTime.count()) - numer;
 		}
 	}
 

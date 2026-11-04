@@ -20,7 +20,7 @@
 #define UQM_PLANETS_LANDER_H_
 
 #include "elemdata.h"
-#include "libs/compiler.h"
+#include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 #include "libs/sndlib.h"
 #include "libs/time/timelib.h"
@@ -71,7 +71,7 @@ typedef struct
 extern MUSIC_REF LanderMusic;
 
 extern void PlanetSide(GFXPOINT planetLoc);
-extern void DoDiscoveryReport(SOUND ReadOutSounds);
+extern void DoDiscoveryReport(SOUND_REF ReadOutSounds);
 extern uint8_t SetPlanetMusic(uint8_t planet_type);
 extern void LoadLanderData(void);
 extern void FreeLanderData(void);
@@ -81,7 +81,7 @@ extern void MaskLanderGraphics(void);
 extern void object_animation(ELEMENT* ElementPtr);
 
 extern void SetLanderTakeoff(void);
-extern bool KillLanderCrewSeq(uint16_t numKilled, uint32_t period);
+extern bool KillLanderCrewSeq(uint16_t numKilled, TimePeriod period);
 
 extern unsigned GetThermalHazardRating(int temp);
 

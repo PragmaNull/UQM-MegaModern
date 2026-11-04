@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "../../nameref.h"
 //JMS_GFX: For LoadGraphic
@@ -305,9 +305,8 @@ ExitConversation(RESPONSE_REF R)
 			EngageFilters(&orz_filters);
 		}
 
-		XFormColorMap(GetColorMapAddress(
-						  SetAbsColorMapIndex(CommData.AlienColorMap, 1)),
-					  GameTicksPerSecond / 2);
+		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
+					  c_gameSecond / 2);
 
 		if (PLAYER_SAID(R, about_andro_3))
 		{
@@ -329,7 +328,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 	else /* insults */
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(ORZ_PERSONAL_INFO);
 		switch (NumVisits++)
@@ -360,7 +359,7 @@ static void
 TaaloWorld(RESPONSE_REF R)
 {
 	// We can only get here when ORZ_MANNER != HOSTILE (2)
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	Manner = GET_GAME_STATE(ORZ_MANNER);
 	if (PLAYER_SAID(R, demand_to_land))
@@ -460,7 +459,7 @@ TaaloWorld(RESPONSE_REF R)
 static void
 OrzAllied(RESPONSE_REF R)
 {
-	uint8_t NumVisits;
+	uint8_t NumVisits {};
 
 	if (PLAYER_SAID(R, whats_up_ally))
 	{
@@ -587,10 +586,9 @@ OfferAlliance(RESPONSE_REF R)
 static void
 OrzNeutral(RESPONSE_REF R)
 {
-	uint8_t i, LastStack;
 	RESPONSE_REF pStr[3];
 
-	LastStack = 0;
+	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
 	if (PLAYER_SAID(R, hostile_1))
 	{
@@ -694,7 +692,7 @@ OrzNeutral(RESPONSE_REF R)
 		Response(pStr[LastStack], OrzNeutral);
 	}
 
-	for (i = 0; i < 3; ++i)
+	for (uint8_t i {0}; i < 3; ++i)
 	{
 		if (i != LastStack && pStr[i])
 		{
@@ -709,7 +707,7 @@ OrzAngry(RESPONSE_REF R)
 {
 	if (PLAYER_SAID(R, whats_up_angry))
 	{
-		uint8_t NumVisits;
+		uint8_t NumVisits {};
 
 		NumVisits = GET_GAME_STATE(ORZ_GENERAL_INFO);
 		switch (NumVisits++)
@@ -765,9 +763,10 @@ OrzAngry(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	uint8_t NumVisits, Manner;
+	uint8_t NumVisits {};
+	uint8_t Manner {};
 
-	if (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
 
@@ -792,8 +791,7 @@ Intro(void)
 		}
 		else
 		{
-			CommData.AlienColorMap =
-				SetAbsColorMapIndex(CommData.AlienColorMap, 1);
+			CommData.AlienColorMapIndex = 1;
 		}
 
 		NumVisits = GET_GAME_STATE(ORZ_VISITS);
@@ -986,14 +984,14 @@ Intro(void)
 static uint16_t
 uninit_orz(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
 static void
 post_orz_enc(void)
 {
-	uint8_t Manner;
+	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
 		&& (Manner = GET_GAME_STATE(ORZ_MANNER)) != 2)
@@ -1011,13 +1009,11 @@ post_orz_enc(void)
 LOCDATA*
 init_orz_comm(void)
 {
-	LOCDATA* retval;
-
 	orz_desc.init_encounter_func = Intro;
 	orz_desc.post_encounter_func = post_orz_enc;
 	orz_desc.uninit_encounter_func = uninit_orz;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
@@ -1026,7 +1022,7 @@ init_orz_comm(void)
 	orz_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
 
 	if (GET_GAME_STATE(ORZ_MANNER) == 3
-		|| lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE)
+		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);
 	}
@@ -1034,7 +1030,7 @@ init_orz_comm(void)
 	{
 		setSegue(Segue_hostile);
 	}
-	retval = &orz_desc;
+	LOCDATA* retval {&orz_desc};
 
 	return (retval);
 }

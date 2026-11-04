@@ -45,6 +45,7 @@
 #include "libs/graphics/drawable.h"
 #include "libs/inplib.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 extern FRAME SpaceJunkFrame;
 
@@ -72,7 +73,8 @@ enum ScanMenuItems
 
 void RepairBackRect(GFXRECT* pRect)
 {
-	GFXRECT new_r, old_r;
+	GFXRECT new_r;
+	GFXRECT old_r;
 
 	GetContextClipRect(&old_r);
 	new_r.corner.x = pRect->corner.x + old_r.corner.x;
@@ -196,17 +198,16 @@ GetRotationalPeriod(void)
 
 void GetPlanetTitle(uqstl::span<char> buf)
 {
-	int val;
-	char* named = GetNamedPlanetaryBody();
+	const char* named = GetNamedPlanetaryBody();
 
 	if (named)
 	{
-		utf8StringCopy(buf.data(), buf.size(), named);
+		uqm::utf8StringCopy(buf.data(), buf.size(), named);
 		return;
 	}
 
 	// Unnamed body, use world type
-	val = pSolarSysState->pOrbitalDesc->data_index & ~PLANET_SHIELDED;
+	const int val {pSolarSysState->pOrbitalDesc->data_index & ~PLANET_SHIELDED};
 	if (val >= FIRST_GAS_GIANT)
 	{
 		if (!EXTENDED)
@@ -238,10 +239,10 @@ HazardCase(uint8_t hazard)
 		   ((b) ? BRIGHT_RED_COLOR : SCAN_INFO_COLOR))
 	Color HazardColor;
 
-	uint16_t Temperature = GetThermalHazardRating(
+	const uint16_t Temperature = GetThermalHazardRating(
 		pSolarSysState->SysInfo.PlanetInfo.SurfaceTemperature);
-	uint16_t Weather = pSolarSysState->SysInfo.PlanetInfo.Weather + 1;
-	uint16_t Tectonics = pSolarSysState->SysInfo.PlanetInfo.Tectonics + 1;
+	const uint16_t Weather = pSolarSysState->SysInfo.PlanetInfo.Weather + 1;
+	const uint16_t Tectonics = pSolarSysState->SysInfo.PlanetInfo.Tectonics + 1;
 
 	switch (hazard)
 	{
@@ -270,7 +271,7 @@ HazardCase(uint8_t hazard)
 static void
 PrintCoarseScanPC(void)
 {
-	int32_t val;
+	int32_t val {};
 	TEXT t;
 	char buf[200] {};
 
@@ -304,7 +305,7 @@ PrintCoarseScanPC(void)
 	t.baseline.y = SCAN_BASELINE_Y_PC;
 	t.align = ALIGN_LEFT;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(0));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(0));
 	PrintScanTitlePC(&t, buf, LEFT_SIDE_BASELINE_X_PC); // "Orbit: "
 
 	val = ((pSolarSysState->SysInfo.PlanetInfo.PlanetToSunDist * 100L
@@ -314,17 +315,17 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(2));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(2));
 	PrintScanTitlePC(&t, buf, LEFT_SIDE_BASELINE_X_PC); // "Atmo: "
 
 	if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity
 		== GAS_GIANT_ATMOSPHERE)
 	{
-		utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(3)); // "Super Thick"
+		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(3)); // "Super Thick"
 	}
 	else if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == 0)
 	{
-		utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(4)); // "Vacuum"
+		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(4)); // "Vacuum"
 	}
 	else
 	{
@@ -336,7 +337,7 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(6));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(6));
 	PrintScanTitlePC(&t, buf, LEFT_SIDE_BASELINE_X_PC); // "Temp: "
 
 	fmt::format_to_sz_n(buf, "{}{} c",
@@ -351,12 +352,12 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(7));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(7));
 	PrintScanTitlePC(&t, buf, LEFT_SIDE_BASELINE_X_PC); // "Weather: "
 
 	if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == 0)
 	{
-		utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(8)); // "None"
+		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(8)); // "None"
 	}
 	else
 	{
@@ -372,12 +373,12 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(10));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(10));
 	PrintScanTitlePC(&t, buf, LEFT_SIDE_BASELINE_X_PC); // "Tectonics: "
 
 	if (PLANSIZE(pSolarSysState->SysInfo.PlanetInfo.PlanDataPtr->Type) == GAS_GIANT)
 	{
-		utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(8)); // "None"
+		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(8)); // "None"
 	}
 	else
 	{
@@ -394,7 +395,7 @@ PrintCoarseScanPC(void)
 
 	t.baseline.y = SCAN_BASELINE_Y_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(11));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(11));
 	PrintScanTitlePC(&t, buf, RIGHT_SIDE_BASELINE_X_PC); // "Mass: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.PlanetRadius;
@@ -410,7 +411,7 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(13));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(13));
 	PrintScanTitlePC(&t, buf, RIGHT_SIDE_BASELINE_X_PC); // "Radius: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.PlanetRadius;
@@ -418,7 +419,7 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(14));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(14));
 	PrintScanTitlePC(&t, buf, RIGHT_SIDE_BASELINE_X_PC); // "Gravity: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.SurfaceGravity;
@@ -430,7 +431,7 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(16));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(16));
 	PrintScanTitlePC(&t, buf, RIGHT_SIDE_BASELINE_X_PC); // "Day: "
 
 	val = GetRotationalPeriod();
@@ -438,7 +439,7 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING_PC;
 
-	utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(18));
+	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(18));
 	PrintScanTitlePC(&t, buf, RIGHT_SIDE_BASELINE_X_PC); // "Tilt: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.AxialTilt;
@@ -456,7 +457,7 @@ static void
 PrintCoarseScan3DO(void)
 {
 #define SCAN_LEADING RES_SCALE(19)
-	int32_t val;
+	int32_t val {};
 	TEXT t;
 	STAMP s;
 	char buf[200] {};
@@ -612,10 +613,8 @@ PrintCoarseScan3DO(void)
 static void
 initPlanetLocationImage(void)
 {
-	FRAME cursorFrame;
-
 	// Get the cursor image
-	cursorFrame = SetAbsFrameIndex(MiscDataFrame, FLASH_INDEX);
+	FRAME cursorFrame {SetAbsFrameIndex(MiscDataFrame, FLASH_INDEX)};
 	cursorRect.extent = GetFrameBounds(cursorFrame);
 }
 
@@ -624,7 +623,7 @@ savePlanetLocationImage(void)
 {
 	GFXRECT r;
 	FRAME cursorFrame = SetAbsFrameIndex(MiscDataFrame, FLASH_INDEX);
-	HOT_SPOT hs = GetFrameHot(cursorFrame);
+	const HOT_SPOT hs = GetFrameHot(cursorFrame);
 
 	DestroyDrawable(ReleaseDrawable(eraseFrame));
 
@@ -687,13 +686,13 @@ setPlanetLoc(GFXPOINT new_pt, bool restoreOld)
 static void
 flashPlanetLocation(void)
 {
-#define FLASH_FRAME_DELAY (GameTicksPerSecond / 16)
+#define FLASH_FRAME_DELAY (c_gameSecond / 16)
 	static uint8_t c = 0x00;
 	static int val = -2;
 	static GFXPOINT prevPt;
-	static TimeCount NextTime = 0;
-	bool locChanged;
-	TimeCount Now = GetTimeCounter();
+	static TimeCount NextTime {};
+	bool locChanged {};
+	const TimeCount Now = GetTimeCounter();
 
 	locChanged = prevPt.x != cursorRect.corner.x
 			  || prevPt.y != cursorRect.corner.y;
@@ -738,9 +737,7 @@ flashPlanetLocation(void)
 
 void RedrawSurfaceScan(const GFXPOINT* newLoc)
 {
-	GFXCONTEXT OldContext;
-
-	OldContext = SetContext(ScanContext);
+	GFXCONTEXT OldContext {SetContext(ScanContext)};
 
 	BatchGraphics();
 	DrawPlanet(0, BLACK_COLOR);
@@ -758,7 +755,7 @@ void RedrawSurfaceScan(const GFXPOINT* newLoc)
 static uint16_t
 getLandingFuelNeeded(void)
 {
-	uint16_t fuel;
+	uint16_t fuel {};
 
 	fuel = pSolarSysState->SysInfo.PlanetInfo.SurfaceGravity << 1;
 	if (fuel > 3 * FUEL_TANK_SCALE)
@@ -772,7 +769,7 @@ getLandingFuelNeeded(void)
 static void
 spawnFwiffo(void)
 {
-	HSHIPFRAG hStarShip;
+	HSHIPFRAG hStarShip {};
 
 	EncounterGroup = 0;
 	PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
@@ -783,7 +780,7 @@ spawnFwiffo(void)
 								  &GLOBAL(npc_built_ship_q), 1);
 	if (hStarShip)
 	{
-		SHIP_FRAGMENT* StarShipPtr;
+		SHIP_FRAGMENT* StarShipPtr {};
 
 		StarShipPtr = LockShipFrag(&GLOBAL(npc_built_ship_q),
 								   hStarShip);
@@ -797,13 +794,12 @@ spawnFwiffo(void)
 static bool
 DispatchLander(void)
 {
-	InputFrameCallback* oldCallback;
-	int16_t landingFuel = getLandingFuelNeeded();
+	const int16_t landingFuel = getLandingFuelNeeded();
 
 	EraseCoarseScan();
 
 	// Deactivate planet rotation callback
-	oldCallback = SetInputCallback(nullptr);
+	InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
 
 	if (!uqm::UQMOptions::read().infiniteFuel)
 	{
@@ -820,7 +816,7 @@ DispatchLander(void)
 	drawPlanetCursor(false);
 
 	PlanetSide(planetLoc);
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -831,7 +827,7 @@ DispatchLander(void)
 		spawnFwiffo();
 
 		NextActivity |= CHECK_LOAD; /* fake a load game */
-		GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+		uqm::currentActivity() |= START_ENCOUNTER;
 		SaveSolarSysLocation();
 
 		return false;
@@ -862,13 +858,14 @@ static bool
 DoPickPlanetSide(MENU_STATE* pMS)
 {
 	PICK_PLANET_STATE* pickState = (PICK_PLANET_STATE*)pMS->privData;
-	uint32_t TimeIn = GetTimeCounter();
-	bool select, cancel;
+	const TimeCount TimeIn {GetTimeCounter()};
+	bool select {};
+	bool cancel {};
 
 	select = PulsedInputState.menu[KEY_MENU_SELECT];
 	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		pickState->success = false;
 		return false;
@@ -889,16 +886,16 @@ DoPickPlanetSide(MENU_STATE* pMS)
 		int16_t dx = 0;
 		int16_t dy = 0;
 		GFXPOINT new_pt;
-		static uint32_t tNext;
+		static TimeCount tNext {};
 
 		new_pt = planetLoc;
 
-		if (tNext && TimeIn >= tNext)
+		if (tNext != TimeCount {} && TimeIn >= tNext)
 		{
-			tNext = 0;
+			tNext = TimeCount {};
 		}
 
-		if (!tNext || TimeIn >= tNext)
+		if (tNext == TimeCount {} || TimeIn >= tNext)
 		{
 			if (CurrentInputState.menu[KEY_MENU_LEFT])
 			{
@@ -961,7 +958,7 @@ DoPickPlanetSide(MENU_STATE* pMS)
 
 		if (dx || dy)
 		{
-			tNext = TimeIn + GameTicksPerSecond / 40;
+			tNext = TimeIn + c_gameSecond / 40;
 		}
 	}
 
@@ -1010,7 +1007,7 @@ PickPlanetSide(void)
 {
 	MENU_STATE MenuState;
 	PICK_PLANET_STATE PickState;
-	uint16_t fuel = getLandingFuelNeeded();
+	const uint16_t fuel = getLandingFuelNeeded();
 	bool retval = true;
 
 	memset(&MenuState, 0, sizeof MenuState);
@@ -1064,22 +1061,22 @@ PickPlanetSide(void)
 static void
 DrawScannedStuff(uint16_t y, uint16_t scan)
 {
-	HELEMENT hElement, hNextElement;
+	HELEMENT hNextElement {};
 	Color OldColor;
 
 	OldColor = SetContextForeGroundColor(BLACK_COLOR);
 
-	for (hElement = GetHeadElement(); hElement; hElement = hNextElement)
+	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
-		ELEMENT* ElementPtr;
-		int16_t dy;
+		ELEMENT* ElementPtr {};
+		int16_t dy {};
 		STAMP s;
 
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
 
 		dy = y - ElementPtr->current.location.y;
-		if (lowByte(ElementPtr->scan_node) != scan || dy < 0)
+		if (uqm::lowByte(ElementPtr->scan_node) != scan || dy < 0)
 		{ // node of wrong type, or not time for it yet
 			UnlockElement(hElement);
 			continue;
@@ -1097,9 +1094,9 @@ DrawScannedStuff(uint16_t y, uint16_t scan)
 		}
 		else
 		{
-			uint8_t grad;
+			uint8_t grad {};
 			Color c = WHITE_COLOR;
-			uint16_t nodeSize;
+			uint16_t nodeSize {};
 
 			// mineral -- white --> turquoise?? (contrasts with red)
 			// energy -- white --> red (contrasts with white)
@@ -1145,19 +1142,20 @@ DrawScannedStuff(uint16_t y, uint16_t scan)
 static void
 DrawPCScannedStuff(uint16_t scan)
 {
-	HELEMENT hElement, hNextElement;
-	TimeCount interval, now;
-	ELEMENT* ElementPtr;
+	HELEMENT hNextElement {};
+	TimePeriod interval;
+	TimeCount now;
+	ELEMENT* ElementPtr {};
 	STAMP s;
 
-	interval = GameTicksPerSecond / 10;
+	interval = c_gameSecond / 10;
 
-	hElement = GetHeadElement();
+	HELEMENT hElement {GetHeadElement()};
 	now = GetTimeCounter() + interval;
 
 	while (hElement && !AnyButtonPress(true))
 	{
-		if ((GLOBAL(CurrentActivity) & CHECK_ABORT))
+		if ((uqm::currentActivity() & CHECK_ABORT))
 		{
 			return;
 		}
@@ -1166,25 +1164,26 @@ DrawPCScannedStuff(uint16_t scan)
 		{
 			LockElement(hElement, &ElementPtr);
 			hNextElement = GetSuccElement(ElementPtr);
-			if (lowByte(ElementPtr->scan_node) != scan)
+			if (uqm::lowByte(ElementPtr->scan_node) != scan)
 			{ // node of wrong type, or not time for it yet
 				UnlockElement(hElement);
 				hElement = hNextElement;
 			}
 			else
 			{
-				uint16_t nodeSize, growth, diff;
+				uint16_t nodeSize {};
+				uint16_t diff {};
 
-				growth = 0;
+				uint16_t growth {0};
 				ElementPtr->state_flags |= APPEARING;
 				s.origin = ElementPtr->current.location;
-				now = GetTimeCounter() + 17;
+				now = GetTimeCounter() + TimePeriod {17};
 
 				while (growth < NUM_FLASH_COLORS && !AnyButtonPress(true))
 				{
 					if (GetTimeCounter() >= now)
 					{
-						now = GetTimeCounter() + 17;
+						now = GetTimeCounter() + TimePeriod {17};
 						diff = growth;
 						nodeSize = GetFrameIndex(
 									   ElementPtr->next.image.frame)
@@ -1222,7 +1221,7 @@ DrawPCScannedStuff(uint16_t scan)
 		{
 			LockElement(hElement, &ElementPtr);
 			hNextElement = GetSuccElement(ElementPtr);
-			if (lowByte(ElementPtr->scan_node) != scan)
+			if (uqm::lowByte(ElementPtr->scan_node) != scan)
 			{ // node of wrong type, or not time for it yet
 				UnlockElement(hElement);
 				hElement = hNextElement;
@@ -1286,20 +1285,20 @@ ScanPlanet(uint16_t scanType)
 // NUM_FLASH_COLORS for flashing blips; 1 for the final frame
 #define SCAN_LINES_OG (ORIGINAL_MAP_HEIGHT + NUM_FLASH_COLORS + 1)
 #define SCAN_LINES RES_SCALE(SCAN_LINES_OG)
-#define SCAN_LINE_WAIT (SCAN_DURATION / SCAN_LINES_OG)
+#define SCAN_LINE_WAIT (TimePeriod {SCAN_DURATION} / SCAN_LINES_OG)
 	// For taming the scan FPS on underpowered devices
-#define SCAN_LINE_FPS (GameTicksPerSecond / chooseIfHd(42, 60))
+#define SCAN_LINE_FPS (c_gameSecond / chooseIfHd(42, 60))
 
-	uint16_t startScan, endScan;
-	uint16_t scan;
+	uint16_t startScan {};
+	uint16_t endScan {};
 	GFXRECT r;
-	static const Color textColors[] =
+	const static Color textColors[] =
 		{
 			SCAN_MINERAL_TEXT_COLOR,
 			SCAN_ENERGY_TEXT_COLOR,
 			SCAN_BIOLOGICAL_TEXT_COLOR,
 		};
-	static const Color tintColors[] =
+	const static Color tintColors[] =
 		{
 			SCAN_MINERAL_TINT_COLOR,
 			SCAN_ENERGY_TINT_COLOR,
@@ -1317,20 +1316,21 @@ ScanPlanet(uint16_t scanType)
 		endScan = scanType;
 	}
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return;
 	}
 
 	DrawMenuStateStrings(PM_MIN_SCAN, scanType);
 
-	for (scan = startScan; scan <= endScan; ++scan)
+	for (uint16_t scan {startScan}; scan <= endScan; ++scan)
 	{
 		TEXT t;
 		int16_t i = 0;
 		Color tintColor;
 		// Alpha value will be ignored.
-		static TimeCount TimeOut, TimeOutDraw;
+		static TimeCount TimeOut;
+		static TimeCount TimeOutDraw;
 		TimeCount Now;
 
 		t.baseline.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
@@ -1370,7 +1370,7 @@ ScanPlanet(uint16_t scanType)
 		{
 			while (i < SCAN_LINES)
 			{
-				if ((GLOBAL(CurrentActivity) & CHECK_ABORT))
+				if ((uqm::currentActivity() & CHECK_ABORT))
 				{
 					return;
 				}
@@ -1405,14 +1405,14 @@ ScanPlanet(uint16_t scanType)
 			DrawPCScanTint(scan);	  // palette-swap topo and Sphere map
 			DrawPCScannedStuff(scan); // PC-style node pop-in
 
-			if ((GLOBAL(CurrentActivity) & CHECK_ABORT))
+			if ((uqm::currentActivity() & CHECK_ABORT))
 			{
 				return;
 			}
 
 			if (scanType == AUTO_SCAN)
 			{ // delay between scans
-				TimeOut = GetTimeCounter() + GameTicksPerSecond;
+				TimeOut = GetTimeCounter() + c_gameSecond;
 				while (GetTimeCounter() < TimeOut
 					   && !AnyButtonPress(true))
 				{
@@ -1462,12 +1462,13 @@ ScanPlanet(uint16_t scanType)
 static bool
 DoScan(MENU_STATE* pMS)
 {
-	bool select, cancel;
+	bool select {};
+	bool cancel {};
 
 	select = PulsedInputState.menu[KEY_MENU_SELECT];
 	cancel = PulsedInputState.menu[KEY_MENU_CANCEL];
 
-	if (GLOBAL(CurrentActivity) & CHECK_ABORT)
+	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return false;
 	}
@@ -1480,8 +1481,6 @@ DoScan(MENU_STATE* pMS)
 	{
 		if (pMS->CurState == DISPATCH_SHUTTLE)
 		{
-			uint16_t fuel_required;
-
 			if (pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED
 				|| pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == GAS_GIANT_ATMOSPHERE)
 			{ // cannot dispatch to shielded planets or gas giants
@@ -1489,7 +1488,7 @@ DoScan(MENU_STATE* pMS)
 				return true;
 			}
 
-			fuel_required = getLandingFuelNeeded();
+			const uint16_t fuel_required {getLandingFuelNeeded()};
 			if (GLOBAL_SIS(FuelOnBoard) < fuel_required
 				|| GLOBAL_SIS(NumLanders) == 0
 				|| GLOBAL_SIS(CrewEnlisted) == 0)
@@ -1537,16 +1536,14 @@ DoScan(MENU_STATE* pMS)
 static GFXCONTEXT
 CreateScanContext(bool inSpace)
 {
-	GFXCONTEXT oldContext;
-	GFXCONTEXT context;
 	GFXRECT r;
-	int16_t x_offset;
+	int16_t x_offset {};
 
 	// ScanContext rect is relative to SpaceContext
-	oldContext = SetContext(SpaceContext);
+	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&r);
 
-	context = CreateContext("ScanContext");
+	GFXCONTEXT context {CreateContext("ScanContext")};
 	SetContext(context);
 	SetContextFGFrame(Screen);
 	x_offset = RES_DESCALE(r.extent.width - SCALED_MAP_WIDTH);
@@ -1650,7 +1647,7 @@ void ScanSystem(void)
 	SetFlashRect(nullptr, false);
 
 	// cleanup scan graphics
-	if (!(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
 		BatchGraphics();
 		SetContext(ScanContext);
@@ -1668,14 +1665,14 @@ static void
 generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 				uint8_t* life_init_tab, uint16_t creatureType)
 {
-	uint16_t i;
-	uint32_t j;
+	uint16_t i {};
+	uint32_t j {};
 
 	if (isDifficulty(uqm::Difficulty::Hard))
 	{
 		CreatureData[EVIL_ONE].Attributes =
 			BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_SLOW | DANGER_MONSTROUS;
-		CreatureData[EVIL_ONE].ValueAndHitPoints = MAKE_BYTE(5, 5);
+		CreatureData[EVIL_ONE].ValueAndHitPoints = uqm::makeByte(5, 5);
 		// CreatureData[ZEX_BEAUTY].Attributes =
 		//		BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_FAST |
 		//			DANGER_MONSTROUS;
@@ -1685,21 +1682,21 @@ generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 	{
 		CreatureData[ZEX_BEAUTY].Attributes =
 			BEHAVIOR_HUNT | AWARENESS_LOW | SPEED_SLOW | DANGER_MONSTROUS;
-		CreatureData[ZEX_BEAUTY].ValueAndHitPoints = MAKE_BYTE(15, 8);
+		CreatureData[ZEX_BEAUTY].ValueAndHitPoints = uqm::makeByte(15, 8);
 	}
 
-	// NOTE: TFB_Random() calls here are NOT part of the deterministic
+	// NOTE: uqm::random().next() calls here are NOT part of the deterministic
 	// planet generation PRNG flow.
 	if (CreatureData[creatureType].Attributes & SPEED_MASK)
 	{
 		// Place moving creatures at a random location.
-		i = TFB_Random();
-		j = (uint32_t)TFB_Random();
+		i = uqm::random().next();
+		j = (uint32_t)uqm::random().next();
 
 		NodeElementPtr->current.location.x =
-			((chooseIfHd(static_cast<uint16_t>(lowByte(i)), LOWORD(j)) % (SCALED_MAP_WIDTH - (8 << 1))) + 8);
+			((chooseIfHd(static_cast<uint16_t>(uqm::lowByte(i)), uqm::lowWord(j)) % (SCALED_MAP_WIDTH - (8 << 1))) + 8);
 		NodeElementPtr->current.location.y =
-			(chooseIfHd(static_cast<uint16_t>(highByte(i)), HIWORD(j)) % (MAP_HEIGHT - (8 << 1))) + 8;
+			(chooseIfHd(static_cast<uint16_t>(uqm::highByte(i)), uqm::highWord(j)) % (MAP_HEIGHT - (8 << 1))) + 8;
 	}
 
 	if (system->PlanetSideFrame[0] == 0)
@@ -1724,15 +1721,14 @@ generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 	}
 
 	NodeElementPtr->mass_points = (uint8_t)creatureType;
-	NodeElementPtr->hit_points = HINIBBLE(
+	NodeElementPtr->hit_points = uqm::highNibble(
 		CreatureData[creatureType].ValueAndHitPoints);
 	DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame = SetAbsFrameIndex(
-		system->PlanetSideFrame[i + 3], (uint16_t)TFB_Random());
+		system->PlanetSideFrame[i + 3], (uint16_t)uqm::random().next());
 }
 
 void GeneratePlanetSide(void)
 {
-	int16_t scan;
 	uint8_t life_init_tab[MAX_LIFE_VARIATION];
 	// life_init_tab is filled with the creature types of already
 	// selected creatures. If an entry is 0, none has been selected
@@ -1746,10 +1742,10 @@ void GeneratePlanetSide(void)
 
 	memset(life_init_tab, 0, sizeof life_init_tab);
 
-	for (scan = BIOLOGICAL_SCAN; scan >= MINERAL_SCAN; --scan)
+	for (int16_t scan {BIOLOGICAL_SCAN}; scan >= MINERAL_SCAN; --scan)
 	{
-		uint16_t num_nodes;
-		FRAME f;
+		uint16_t num_nodes {};
+		FRAME f {};
 
 		f = SetAbsFrameIndex(MiscDataFrame,
 							 NUM_SCANDOT_TRANSITIONS * (scan - ENERGY_SCAN));
@@ -1759,8 +1755,7 @@ void GeneratePlanetSide(void)
 
 		while (num_nodes--)
 		{
-			HELEMENT hNodeElement;
-			ELEMENT* NodeElementPtr;
+			ELEMENT* NodeElementPtr {};
 			NODE_INFO info;
 
 			if (isNodeRetrieved(&pSolarSysState->SysInfo.PlanetInfo,
@@ -1769,7 +1764,7 @@ void GeneratePlanetSide(void)
 				continue;
 			}
 
-			hNodeElement = AllocElement();
+			HELEMENT hNodeElement {AllocElement()};
 			if (!hNodeElement)
 			{
 				continue;
@@ -1781,7 +1776,7 @@ void GeneratePlanetSide(void)
 									pSolarSysState->pOrbitalDesc, num_nodes,
 									scan, &info);
 
-			NodeElementPtr->scan_node = MAKE_WORD(scan, num_nodes + 1);
+			NodeElementPtr->scan_node = uqm::makeWord(scan, num_nodes + 1);
 			NodeElementPtr->playerNr = PS_NON_PLAYER;
 			NodeElementPtr->current.location.x = info.loc_pt.x;
 			NodeElementPtr->current.location.y = info.loc_pt.y;
@@ -1794,7 +1789,7 @@ void GeneratePlanetSide(void)
 
 				// JMS: Partially scavenged energy blips won't return
 				// anymore to original size after leaving planet.
-				NodeElementPtr->mass_points = highByte(info.density)
+				NodeElementPtr->mass_points = uqm::highByte(info.density)
 											- pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[scan][num_nodes];
 
 				NodeElementPtr->current.image.frame = SetAbsFrameIndex(
@@ -1802,7 +1797,7 @@ void GeneratePlanetSide(void)
 									   + ElementCategory(info.type) * 5);
 				NodeElementPtr->next.image.frame = SetRelFrameIndex(
 					NodeElementPtr->current.image.frame,
-					lowByte(info.density) + 1);
+					uqm::lowByte(info.density) + 1);
 				DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame =
 					IncFrameIndex(NodeElementPtr->next.image.frame);
 			}
@@ -1811,7 +1806,7 @@ void GeneratePlanetSide(void)
 				NodeElementPtr->current.image.frame = f;
 				NodeElementPtr->next.image.frame = SetRelFrameIndex(
 					f, NUM_SCANDOT_TRANSITIONS - 1);
-				NodeElementPtr->turn_wait = MAKE_BYTE(4, 4);
+				NodeElementPtr->turn_wait = uqm::makeByte(4, 4);
 				NodeElementPtr->preprocess_func = object_animation;
 				if (scan == ENERGY_SCAN)
 				{
@@ -1845,7 +1840,7 @@ bool isNodeRetrieved(PLANET_INFO* planetInfo, uint8_t scanType, uint8_t nodeNr)
 uint16_t
 countNodesRetrieved(PLANET_INFO* planetInfo, uint8_t scanType)
 {
-	uint16_t count;
+	uint16_t count {};
 	uint32_t mask = planetInfo->ScanRetrieveMask[scanType];
 
 	// count the number of bits set

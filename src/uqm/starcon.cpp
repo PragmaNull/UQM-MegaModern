@@ -17,6 +17,7 @@
  */
 
 #include <stdlib.h>
+#include "core/stl/atomic.h"
 
 #include "comm.h"
 #include "battle.h"
@@ -39,15 +40,13 @@
 #include "planets/planets.h"
 // for ExploreSolarSys()
 #include "uqmdebug.h"
-#include "uqm/lua/luastate.h"
-#include "libs/tasklib.h"
+#include "libs/time/timelib.h"
 #include "core/log/log.h"
 #include "core/platform/platform.h"
 #include "libs/gfxlib.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
-#include "libs/misc.h"
-#include "libs/scriptlib.h"
+#include "core/misc/FatalExit.h"
 #include "build.h"
 #include "uqmversion.h"
 #include "options.h"
@@ -58,19 +57,19 @@
 #include "cons_res.h"
 #include <time.h> //required to use 'srand(time(nullptr))'
 #include "sounds.h"
+#include "UQMGame.h"
+#include "uqm/session/GameSession.h"
+#include "uqm/session/SaveCheck.h"
+#include "uqm/random/UQMRandom.h"
 
-volatile int MainExited = false;
-#ifdef DEBUG_SLEEP
-uint32_t mainThreadId;
-extern uint32_t SDL_ThreadID(void);
-#endif
+uqstl::atomic<bool> MainExited {false};
 
 // Open or close the periodically occuring QuasiSpace portal.
 // It changes the appearant portal size when necessary.
 static void
 checkArilouGate(void)
 {
-	uint8_t counter;
+	uint8_t counter {};
 
 	counter = GET_GAME_STATE(ARILOU_SPACE_COUNTER);
 	if (GET_GAME_STATE(ARILOU_SPACE) == OPENING)
@@ -97,7 +96,7 @@ on_battle_frame(void)
 	GameClockTick();
 	checkArilouGate();
 
-	if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 	{
 		SeedUniverse();
 	}
@@ -106,13 +105,13 @@ on_battle_frame(void)
 }
 
 static void
-BackgroundInitKernel(uint32_t TimeOut)
+BackgroundInitKernel(TimeCount TimeOut)
 {
 	LoadMasterShipList(TaskSwitch);
 	TaskSwitch();
 	InitGameKernel();
 
-	while ((GetTimeCounter() <= TimeOut) && !(GLOBAL(CurrentActivity) & CHECK_ABORT))
+	while ((GetTimeCounter() <= TimeOut) && !(uqm::currentActivity() & CHECK_ABORT))
 	{
 		UpdateInputState();
 		TaskSwitch();
@@ -123,7 +122,7 @@ BackgroundInitKernel(uint32_t TimeOut)
 void SignalStopMainThread(void)
 {
 	GamePaused = false;
-	GLOBAL(CurrentActivity) |= CHECK_ABORT;
+	uqm::currentActivity() |= CHECK_ABORT;
 	TaskSwitch();
 }
 
@@ -205,7 +204,7 @@ void ProcessUtilityKeys(void)
 static void
 SetRandomMenuMusic(void)
 {
-	time_t t = time(nullptr);
+	const time_t t = time(nullptr);
 	const uqstl::tm tm {uqm::localtime(t)};
 
 	srand(t);
@@ -217,35 +216,24 @@ SetRandomMenuMusic(void)
 extern AudioDriverType snddriver;
 extern AudioFlags soundflags;
 
+// Releases the kernel and tells the main thread that Starcon2Main ends.
+static void
+ShutdownKernel(void)
+{
+	UninitGameKernel();
+	FreeMasterShipList();
+	FreeKernel();
+	MainExited = true;
+}
+
+bool IsGameInProgress(void)
+{
+	const uqm::GameSession* const session {uqm::UQMGame::getInstance().session()};
+	return session != nullptr && session->kind() == uqm::SessionKind::FullGame;
+}
+
 int Starcon2Main(void* threadArg)
 {
-#ifdef DEBUG_SLEEP
-	mainThreadId = SDL_ThreadID();
-#endif
-
-#if CREATE_JOURNAL
-	{
-		int ac = argc;
-		char** av = argv;
-
-		while (--ac > 0)
-		{
-			++av;
-			if ((*av)[0] == '-')
-			{
-				switch ((*av)[1])
-				{
-#if CREATE_JOURNAL
-					case 'j':
-						++create_journal;
-						break;
-#endif //CREATE_JOURNAL
-				}
-			}
-		}
-	}
-#endif // CREATE_JOURNAL
-
 	{
 		/* TODO: Put initAudio back in main where it belongs once threading
 		 *       is gone.
@@ -276,8 +264,16 @@ int Starcon2Main(void* threadArg)
 	}
 	uqm::log::info("We've loaded the Kernel");
 
-	GLOBAL(CurrentActivity) = 0;
-	luaUqm_initState();
+	if (const uqstl::string& savePath {uqm::UQMOptions::read().checkSave}; !savePath.empty())
+	{
+		LoadMasterShipList(TaskSwitch);
+		InitGameKernel();
+		const bool same {uqm::checkSaveRoundTrip(savePath)};
+		ShutdownKernel();
+		return same ? EXIT_SUCCESS : EXIT_FAILURE;
+	}
+
+	uqm::currentActivity() = 0;
 	// show logo then splash and init the kernel in the meantime
 	if (!uqm::UQMOptions::read().skipIntro)
 	{
@@ -289,27 +285,22 @@ int Starcon2Main(void* threadArg)
 
 	SplashScreen(BackgroundInitKernel);
 
-	uqm::log::info("Set Seed Type: {}", toString(g_seedType));
+	uqm::log::info("Set Seed Type: {}", toString(uqm::UQMOptions::read().seedType.value));
 	uqm::log::info("Set Seed: {}", uqm::UQMOptions::read().customSeed.value);
 	uqm::log::info("Set Difficulty: {:s}", uqm::UQMOptions::read().optDifficulty.value);
 	uqm::log::info("Set Extended: {}", BOOL_STR(uqm::UQMOptions::read().extended));
 	uqm::log::info("Set Nomad: {:s}", uqm::UQMOptions::read().nomad.value);
 
-	//	OpenJournal ();
 	while (StartGame())
 	{
 		// Initialise a new game
 		if (!SetPlayerInputAll())
 		{
 			uqm::log::critical("Could not set player input.");
-			explode(); // Does not return;
+			uqm::fatalExit(); // Does not return;
 		}
 
-		luaUqm_reinitState();
-		InitGameStructures();
-		InitGameClock();
-		initEventSystem();
-		AddInitialGameEvents();
+		uqm::UQMGame::getInstance().beginSession(uqm::SessionKind::FullGame);
 
 		// Reset Debug Key
 		DebugKeyPressed = false;
@@ -317,7 +308,7 @@ int Starcon2Main(void* threadArg)
 		// Debug info when starting a new game
 		if (LastActivity == (CHECK_LOAD | CHECK_RESTART))
 		{
-			uqm::log::info("New Game Seed Type: {}", toString(g_seedType));
+			uqm::log::info("New Game Seed Type: {}", toString(uqm::currentSeed().type));
 			uqm::log::info("New Game Seed: {}", GLOBAL_SIS(Seed));
 			uqm::log::info("New Game Difficulty: {:s}", getDifficulty());
 			uqm::log::info("New Game Extended: {}",
@@ -327,30 +318,27 @@ int Starcon2Main(void* threadArg)
 
 		do
 		{
-			if (debugHook != nullptr)
+			// No further debugHook calls unless the called
+			// function resets debugHook.
+			if (void (*saveDebugHook)(void) {debugHook.exchange(nullptr)})
 			{
-				void (*saveDebugHook)(void);
-				saveDebugHook = debugHook;
-				debugHook = nullptr;
-				// No further debugHook calls unless the called
-				// function resets debugHook.
 				(*saveDebugHook)();
 				continue;
 			}
 
 			SetStatusMessageMode(SMM_DEFAULT);
 
-			if (!((GLOBAL(CurrentActivity) | NextActivity) & CHECK_LOAD))
+			if (!((uqm::currentActivity() | NextActivity) & CHECK_LOAD))
 			{
-				ZeroVelocityComponents(&GLOBAL(velocity));
+				ZeroVelocityComponents(&uqm::flagship().velocity);
 			}
 			// not going into talking pet conversation
-			else if (GLOBAL(CurrentActivity) & CHECK_LOAD)
+			else if (uqm::currentActivity() & CHECK_LOAD)
 			{
-				GLOBAL(CurrentActivity) = NextActivity;
+				uqm::currentActivity() = NextActivity;
 			}
 
-			if ((GLOBAL(CurrentActivity) & START_ENCOUNTER)
+			if ((uqm::currentActivity() & START_ENCOUNTER)
 				|| GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
 			{
 				if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 2
@@ -361,27 +349,27 @@ int Starcon2Main(void* threadArg)
 				else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
 						 || GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
 				{
-					GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+					uqm::currentActivity() |= START_ENCOUNTER;
 					VisitStarBase();
 				}
 				else
 				{
-					GLOBAL(CurrentActivity) |= START_ENCOUNTER;
+					uqm::currentActivity() |= START_ENCOUNTER;
 					RaceCommunication();
 				}
 
-				if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD)))
+				if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 				{
-					GLOBAL(CurrentActivity) &= ~START_ENCOUNTER;
-					if (lowByte(GLOBAL(CurrentActivity)) == IN_INTERPLANETARY)
+					uqm::currentActivity() &= ~START_ENCOUNTER;
+					if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
 					{
-						GLOBAL(CurrentActivity) |= START_INTERPLANETARY;
+						uqm::currentActivity() |= START_INTERPLANETARY;
 					}
 				}
 			}
-			else if (GLOBAL(CurrentActivity) & START_INTERPLANETARY)
+			else if (uqm::currentActivity() & START_INTERPLANETARY)
 			{
-				GLOBAL(CurrentActivity) = MAKE_WORD(IN_INTERPLANETARY, 0);
+				uqm::currentActivity() = uqm::makeWord(IN_INTERPLANETARY, 0);
 
 				DrawAutoPilotMessage(true);
 				SetGameClockRate(INTERPLANETARY_CLOCK_RATE);
@@ -390,7 +378,7 @@ int Starcon2Main(void* threadArg)
 			else
 			{
 				// Entering HyperSpace or QuasiSpace.
-				GLOBAL(CurrentActivity) = MAKE_WORD(IN_HYPERSPACE, 0);
+				uqm::currentActivity() = uqm::makeWord(IN_HYPERSPACE, 0);
 
 				DrawAutoPilotMessage(true);
 				SetGameClockRate(HYPERSPACE_CLOCK_RATE);
@@ -399,10 +387,10 @@ int Starcon2Main(void* threadArg)
 
 			SetFlashRect(nullptr, false);
 
-			LastActivity = GLOBAL(CurrentActivity);
+			LastActivity = uqm::currentActivity();
 
-			if (!(GLOBAL(CurrentActivity) & (CHECK_ABORT | CHECK_LOAD))
-				&& (lowByte(GLOBAL(CurrentActivity)) == WON_LAST_BATTLE
+			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
+				&& (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE
 					// if died for some reason
 					|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0))
 			{
@@ -414,30 +402,23 @@ int Starcon2Main(void* threadArg)
 						GameOver(DEATH_MARCH);
 					}
 				}
-				else if (GLOBAL(CurrentActivity) & CHECK_RESTART)
+				else if (uqm::currentActivity() & CHECK_RESTART)
 				{
 					// surrendered to Ur-Quan
 					DeathBySurrender = true;
-					GLOBAL(CurrentActivity) &= ~CHECK_RESTART;
+					uqm::currentActivity() &= ~CHECK_RESTART;
 				}
 				break;
 			}
-		} while (!(GLOBAL(CurrentActivity) & CHECK_ABORT));
+		} while (!(uqm::currentActivity() & CHECK_ABORT));
 
 		StopSound();
-		uninitEventSystem();
-		UninitGameClock();
-		UninitGameStructures();
+		ShowGameEnding();
+		uqm::UQMGame::getInstance().endSession();
 		ClearPlayerInputAll();
 	}
-	//	CloseJournal ();
-	luaUqm_uninitState();
 
-	UninitGameKernel();
-	FreeMasterShipList();
-	FreeKernel();
-
-	MainExited = true;
+	ShutdownKernel();
 
 	(void)threadArg; /* Satisfying compiler (unused parameter) */
 	return 0;

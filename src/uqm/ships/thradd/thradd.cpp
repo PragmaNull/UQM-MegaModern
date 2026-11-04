@@ -140,13 +140,13 @@ thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					   uint16_t ConcernCounter)
 {
 
-	STARSHIP* StarShipPtr;
-	EVALUATE_DESC* lpEvalDesc;
+	STARSHIP* StarShipPtr {};
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (lpEvalDesc->ObjectPtr)
 	{
-		int32_t dx, dy;
+		int32_t dx {};
+		int32_t dy {};
 
 		GetCurrentVelocityComponentsSdword(
 			&lpEvalDesc->ObjectPtr->velocity, &dx, &dy);
@@ -199,14 +199,14 @@ thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			}
 			else if (lpEvalDesc->MoveState == ENTICE)
 			{
-				uint16_t direction_angle;
-				int32_t delta_x, delta_y;
+				int32_t delta_x {};
+				int32_t delta_y {};
 
 				delta_x = lpEvalDesc->ObjectPtr->next.location.x
 						- ShipPtr->next.location.x;
 				delta_y = lpEvalDesc->ObjectPtr->next.location.y
 						- ShipPtr->next.location.y;
-				direction_angle = ARCTAN(delta_x, delta_y);
+				const uint16_t direction_angle {ARCTAN(delta_x, delta_y)};
 
 				if ((lpEvalDesc->which_turn > 24
 					 && !(StarShipPtr->ship_input_state & (LEFT | RIGHT)))
@@ -245,7 +245,7 @@ flame_napalm_preprocess(ELEMENT* ElementPtr)
 	{
 		ElementPtr->state_flags &= ~NONSOLID;
 		ElementPtr->state_flags |= APPEARING;
-		SetPrimType(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex],
+		SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
 					STAMP_PRIM);
 
 		InitIntersectStartPoint(ElementPtr);
@@ -284,7 +284,7 @@ flame_napalm_preprocess(ELEMENT* ElementPtr)
 static uint16_t
 initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -309,7 +309,7 @@ initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 static void
 thraddash_preprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (!(StarShipPtr->cur_status_flags & SPECIAL))
@@ -322,9 +322,9 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 	}
 	else if (DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
-		uint16_t max_thrust, thrust_increment;
-		STATUS_FLAGS thrust_status;
-		HELEMENT hTrailElement;
+		uint16_t max_thrust {};
+		uint16_t thrust_increment {};
+		HELEMENT hTrailElement {};
 
 		if (!(StarShipPtr->old_status_flags & SPECIAL))
 		{
@@ -345,7 +345,7 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 		StarShipPtr->RaceDescPtr->characteristics.max_thrust =
 			SPECIAL_MAX_THRUST;
 
-		thrust_status = inertial_thrust(ElementPtr);
+		const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
 		StarShipPtr->cur_status_flags &=
 			~(SHIP_AT_MAX_SPEED
 			  | SHIP_BEYOND_MAX_SPEED
@@ -379,7 +379,7 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 			hTrailElement = initialize_missile(&MissileBlock);
 			if (hTrailElement)
 			{
-				ELEMENT* TrailElementPtr;
+				ELEMENT* TrailElementPtr {};
 
 				LockElement(hTrailElement, &TrailElementPtr);
 				SetElementStarShip(TrailElementPtr, StarShipPtr);
@@ -391,7 +391,7 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 
 				TrailElementPtr->state_flags |= NONSOLID;
 				SetPrimType(
-					&(GLOBAL(DisplayArray))[TrailElementPtr->PrimIndex],
+					&DisplayArray[TrailElementPtr->PrimIndex],
 					NO_PRIM);
 
 				/* normally done during preprocess, but because
@@ -404,7 +404,7 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 				UnlockElement(hTrailElement);
 				InsertElement(hTrailElement, GetHeadElement());
 
-				ProcessSound(SetAbsSoundIndex(
+				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 							 ElementPtr);
 			}
@@ -415,8 +415,6 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_thraddash(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		thraddash_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -435,7 +433,7 @@ init_thraddash(void)
 	thraddash_desc.init_weapon_func = initialize_horn;
 	thraddash_desc.cyborg_control.intelligence_func = thraddash_intelligence;
 
-	RaceDescPtr = &thraddash_desc;
+	RACE_DESC* RaceDescPtr {&thraddash_desc};
 
 	return (RaceDescPtr);
 }

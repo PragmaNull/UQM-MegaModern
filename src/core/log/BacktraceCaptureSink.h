@@ -5,7 +5,7 @@
 #include <spdlog/async.h>
 #include <spdlog/sinks/base_sink.h>
 
-#include "core/misc/bittricks.h"
+#include "core/stl/bit.h"
 #include "core/stl/stl.h"
 
 namespace uqm
@@ -38,7 +38,7 @@ protected:
 
 	size_t logicalToBufferIndex(const size_t logical) const
 	{
-		if constexpr (isPowerOfTwo(BacktraceSize))
+		if constexpr (uqstl::has_single_bit(BacktraceSize))
 		{
 			return logical & (BacktraceSize - 1);
 		}

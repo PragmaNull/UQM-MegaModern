@@ -104,9 +104,9 @@ bool GenerateDefault_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet
 bool GenerateDefault_generateName(const SOLARSYS_STATE* solarSys,
 								  const PLANET_DESC* world)
 {
-	uint16_t i = planetIndex(solarSys, world);
-	utf8StringCopy(GLOBAL_SIS(PlanetName), sizeof(GLOBAL_SIS(PlanetName)),
-				   GAME_STRING(PLANET_NUMBER_BASE + (9 + 7) + i));
+	const uint16_t i = planetIndex(solarSys, world);
+	uqm::utf8StringCopy(GLOBAL_SIS(PlanetName), sizeof(GLOBAL_SIS(PlanetName)),
+						GAME_STRING(PLANET_NUMBER_BASE + (9 + 7) + i));
 	SET_GAME_STATE(BATTLE_PLANET, world->data_index);
 
 	return true;
@@ -114,9 +114,6 @@ bool GenerateDefault_generateName(const SOLARSYS_STATE* solarSys,
 
 bool GenerateDefault_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
-	uint32_t rand_val;
-	SYSTEM_INFO* sysInfo;
-
 #ifdef DEBUG_SOLARSYS
 	if (worldIsPlanet(solarSys, world))
 	{
@@ -131,14 +128,14 @@ bool GenerateDefault_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* worl
 	}
 #endif /* DEBUG_SOLARSYS */
 
-	sysInfo = &solarSys->SysInfo;
+	SYSTEM_INFO* sysInfo {&solarSys->SysInfo};
 
 	DoPlanetaryAnalysis(sysInfo, world);
-	rand_val = RandomContext_GetSeed(SysGenRNG);
+	uint32_t rand_val {SysGenRNG->seed()};
 
 	sysInfo->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] = rand_val;
 	GenerateLifeForms(sysInfo, GENERATE_ALL, nullptr);
-	rand_val = RandomContext_GetSeed(SysGenRNG);
+	rand_val = SysGenRNG->seed();
 
 	sysInfo->PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
 	GenerateMineralDeposits(sysInfo, GENERATE_ALL, nullptr);
@@ -238,7 +235,7 @@ bool GenerateDefault_landerReport(SOLARSYS_STATE* solarSys)
 {
 	PLANET_INFO* planetInfo = &solarSys->SysInfo.PlanetInfo;
 
-	if (!planetInfo->DiscoveryString)
+	if (!planetInfo->DiscoveryStrings)
 	{
 		return false;
 	}
@@ -248,10 +245,9 @@ bool GenerateDefault_landerReport(SOLARSYS_STATE* solarSys)
 	// XXX: A non-cycling report is given only once and has to be deleted
 	//   in some circumstances (like the Syreen Vault). It does not
 	//   hurt to simply delete it in all cases. Nothing should rely on
-	//   the presence of DiscoveryString, but the Syreen Vault and the
+	//   the presence of DiscoveryStrings, but the Syreen Vault and the
 	//   Mycon Egg Cases rely on its absence.
-	DestroyStringTable(ReleaseStringTable(planetInfo->DiscoveryString));
-	planetInfo->DiscoveryString = 0;
+	planetInfo->DiscoveryStrings.reset();
 
 	return true;
 }
@@ -260,21 +256,16 @@ bool GenerateDefault_landerReportCycle(SOLARSYS_STATE* solarSys)
 {
 	PLANET_INFO* planetInfo = &solarSys->SysInfo.PlanetInfo;
 
-	if (!planetInfo->DiscoveryString)
+	if (!planetInfo->DiscoveryStrings)
 	{
 		return false;
 	}
 
 	runLanderReport();
-	// Advance to the next report
-	planetInfo->DiscoveryString = SetRelStringTableIndex(
-		planetInfo->DiscoveryString, 1);
-
-	// If our discovery strings have cycled, we're done
-	if (GetStringTableIndex(planetInfo->DiscoveryString) == 0)
+	// Advance to the next report. Stop after the last report.
+	if (++planetInfo->DiscoveryIndex >= planetInfo->DiscoveryStrings->size())
 	{
-		DestroyStringTable(ReleaseStringTable(planetInfo->DiscoveryString));
-		planetInfo->DiscoveryString = 0;
+		planetInfo->DiscoveryStrings.reset();
 	}
 
 	return true;
@@ -283,23 +274,18 @@ bool GenerateDefault_landerReportCycle(SOLARSYS_STATE* solarSys)
 // NB. This function modifies the RNG state.
 void GeneratePlanets(SOLARSYS_STATE* solarSys)
 {
-	uint16_t i;
-	PLANET_DESC* planet;
+	uint16_t i {};
+	PLANET_DESC* planet {};
 
 	for (i = solarSys->SunDesc[0].NumPlanets,
 		planet = &solarSys->PlanetDesc[0];
 		 i; --i, ++planet)
 	{
-		uint32_t rand_val;
-		uint8_t byte_val;
-		uint8_t num_moons;
-		uint8_t type;
+		const uint32_t rand_val {SysGenRNG->next()};
+		const uint8_t byte_val {uqm::lowByte(rand_val)};
 
-		rand_val = RandomContext_Random(SysGenRNG);
-		byte_val = lowByte(rand_val);
-
-		num_moons = 0;
-		type = PlanData[planet->data_index & ~PLANET_SHIELDED].Type;
+		uint8_t num_moons {0};
+		const uint8_t type {PlanData[planet->data_index & ~PLANET_SHIELDED].Type};
 		switch (PLANSIZE(type))
 		{
 			case LARGE_ROCKY_WORLD:
@@ -342,11 +328,11 @@ GenerateWorlds(uint8_t whichType)
 
 	if (whichType & SMALL_ROCKY)
 	{
-		planet = FIRST_SMALL_ROCKY_WORLD + RandomContext_Random(SysGenRNG) % NUMBER_OF_SMALL_ROCKY_WORLDS;
+		planet = FIRST_SMALL_ROCKY_WORLD + SysGenRNG->next() % NUMBER_OF_SMALL_ROCKY_WORLDS;
 	}
 	else if (whichType & LARGE_ROCKY)
 	{
-		planet = FIRST_LARGE_ROCKY_WORLD + RandomContext_Random(SysGenRNG) % (NUMBER_OF_LARGE_ROCKY_WORLDS - 2);
+		planet = FIRST_LARGE_ROCKY_WORLD + SysGenRNG->next() % (NUMBER_OF_LARGE_ROCKY_WORLDS - 2);
 		// Skip over rainbow_world and shattered_world, which are adjacent.
 		if (planet >= RAINBOW_WORLD)
 		{
@@ -355,7 +341,7 @@ GenerateWorlds(uint8_t whichType)
 	}
 	else if (whichType & ALL_ROCKY)
 	{
-		planet = FIRST_ROCKY_WORLD + RandomContext_Random(SysGenRNG) % (NUMBER_OF_ROCKY_WORLDS - 2);
+		planet = FIRST_ROCKY_WORLD + SysGenRNG->next() % (NUMBER_OF_ROCKY_WORLDS - 2);
 		// Skip over rainbow_world and shattered_world, which are adjacent.
 		if (planet >= RAINBOW_WORLD)
 		{
@@ -364,7 +350,7 @@ GenerateWorlds(uint8_t whichType)
 	}
 	else if (whichType & ONLY_LARGE)
 	{
-		planet = FIRST_LARGE_ROCKY_WORLD + RandomContext_Random(SysGenRNG) % (NUMBER_OF_LARGE_ROCKY_WORLDS + NUMBER_OF_GAS_GIANTS - 2);
+		planet = FIRST_LARGE_ROCKY_WORLD + SysGenRNG->next() % (NUMBER_OF_LARGE_ROCKY_WORLDS + NUMBER_OF_GAS_GIANTS - 2);
 		// Skip over rainbow_world and shattered_world, which are adjacent.
 		if (planet >= RAINBOW_WORLD)
 		{
@@ -373,7 +359,7 @@ GenerateWorlds(uint8_t whichType)
 	}
 	else if (whichType & ONLY_GAS)
 	{
-		planet = FIRST_GAS_GIANT + RandomContext_Random(SysGenRNG) % NUMBER_OF_GAS_GIANTS;
+		planet = FIRST_GAS_GIANT + SysGenRNG->next() % NUMBER_OF_GAS_GIANTS;
 	}
 
 	return planet;
@@ -382,10 +368,9 @@ GenerateWorlds(uint8_t whichType)
 void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
-	PLANET_DESC* pPlanet;
-	uint8_t i;
+	uint8_t i {};
 #define DWARF_GASG_DIST SCALE_RADIUS(12)
-	uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+	const uint32_t rand = SysGenRNG->seed();
 
 	for (i = 0; i < pSunDesc->NumPlanets; i++)
 	{
@@ -404,17 +389,15 @@ void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 		i += rand % (pSunDesc->NumPlanets - i);
 	}
 	pSunDesc->PlanetByte = i;
-	pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
+	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
 	pPlanet->data_index = GenerateWorlds(ONLY_GAS);
 
 	if (solarSys->PlanetDesc[i].radius < DWARF_GASG_DIST)
 	{
-		uint16_t angle;
-
 		pPlanet->radius =
-			RangeMinMax(DWARF_GASG_DIST, MAX_PLANET_RADIUS, rand);
-		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
+			uqm::rangeMinMax(DWARF_GASG_DIST, MAX_PLANET_RADIUS, rand);
+		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
@@ -424,38 +407,38 @@ void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 uint8_t
 GenerateCrystalWorld(void)
 {
-	int crystalArray[] = {
+	const int crystalArray[] = {
 		SAPPHIRE_WORLD,
 		EMERALD_WORLD,
 		RUBY_WORLD};
-	return crystalArray[RandomContext_Random(SysGenRNG) % 3];
+	return crystalArray[SysGenRNG->next() % 3];
 }
 
 uint8_t
 GenerateDesolateWorld(void)
 {
-	int desolateArray[] = {
+	const int desolateArray[] = {
 		DUST_WORLD,
 		CRIMSON_WORLD,
 		UREA_WORLD};
-	return desolateArray[RandomContext_Random(SysGenRNG) % 3];
+	return desolateArray[SysGenRNG->next() % 3];
 }
 
 uint8_t
 GenerateHabitableWorld(void)
 {
-	int habitableArray[] = {
+	const int habitableArray[] = {
 		PRIMORDIAL_WORLD,
 		WATER_WORLD,
 		TELLURIC_WORLD,
 		REDUX_WORLD};
-	return habitableArray[RandomContext_Random(SysGenRNG) % 4];
+	return habitableArray[SysGenRNG->next() % 4];
 }
 
 uint8_t
 GenerateGasGiantWorld(void)
 {
-	return FIRST_GAS_GIANT + RandomContext_Random(SysGenRNG) % NUMBER_OF_GAS_GIANTS;
+	return FIRST_GAS_GIANT + SysGenRNG->next() % NUMBER_OF_GAS_GIANTS;
 }
 
 // input: 1 <= min <= max
@@ -475,7 +458,7 @@ GenerateMinPlanets(uint8_t min)
 		min = MAX_GEN_PLANETS;
 	}
 
-	return RandomContext_Random(SysGenRNG) % (max - min) + min;
+	return SysGenRNG->next() % (max - min) + min;
 }
 
 // input: 0 <= minimum < MAX_GEN_PLANETS
@@ -483,22 +466,23 @@ GenerateMinPlanets(uint8_t min)
 uint8_t
 GenerateNumberOfPlanets(uint8_t minimum)
 {
-	uint8_t roll = MAX_GEN_PLANETS - minimum;
-	uint8_t adjust = minimum + 1;
-	return (RandomContext_Random(SysGenRNG) % roll) + adjust;
+	const uint8_t roll = MAX_GEN_PLANETS - minimum;
+	const uint8_t adjust = minimum + 1;
+	return (SysGenRNG->next() % roll) + adjust;
 }
 
-// "RandomContext_Random PlanetByte Generator"
+// "Random PlanetByte Generator"
 uint8_t
 PlanetByteGen(PLANET_DESC* pPDesc)
 {
-	return RandomContext_Random(SysGenRNG) % pPDesc->NumPlanets;
+	return SysGenRNG->next() % pPDesc->NumPlanets;
 }
 
 static void
 check_yehat_rebellion(void)
 {
-	HIPGROUP hGroup, hNextGroup;
+	HIPGROUP hGroup {};
+	HIPGROUP hNextGroup {};
 
 	// XXX: Is there a better way to do this? I could not find one.
 	//   When you talk to a Yehat ship (YEHAT_SHIP) and start the rebellion,

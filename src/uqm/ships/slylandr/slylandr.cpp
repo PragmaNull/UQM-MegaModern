@@ -22,6 +22,7 @@
 
 #include "uqm/globdata.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 12
@@ -129,7 +130,7 @@ lightning_postprocess(ELEMENT* ElementPtr)
 	if (ElementPtr->turn_wait
 		&& !(ElementPtr->state_flags & COLLISION))
 	{
-		HELEMENT Lightning;
+		HELEMENT Lightning {};
 
 		initialize_lightning(ElementPtr, &Lightning);
 		if (Lightning)
@@ -143,7 +144,7 @@ static void
 lightning_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 					ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr0, &StarShipPtr);
 	if (StarShipPtr->weapon_counter > WEAPON_WAIT >> 1)
@@ -175,11 +176,11 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 
 	if (LaserArray[0])
 	{
-		int16_t delta;
-		uint16_t angle, facing;
-		uint32_t rand_val;
-		ELEMENT* LaserPtr;
-		STARSHIP* StarShipPtr;
+		int16_t delta {};
+		uint16_t angle {};
+		uint16_t facing {};
+		ELEMENT* LaserPtr {};
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 
@@ -187,7 +188,7 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 		LaserPtr->postprocess_func = lightning_postprocess;
 		LaserPtr->collision_func = lightning_collision;
 
-		rand_val = TFB_Random();
+		const uint32_t rand_val {uqm::random().next()};
 
 		if (!(ElementPtr->state_flags & PLAYER_SHIP))
 		{
@@ -197,8 +198,8 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 
 			LaserPtr->turn_wait = ElementPtr->turn_wait - 1;
 
-			SetPrimColor(&(GLOBAL(DisplayArray))[LaserPtr->PrimIndex],
-						 GetPrimColor(&(GLOBAL(DisplayArray))[ElementPtr->PrimIndex]));
+			SetPrimColor(&DisplayArray[LaserPtr->PrimIndex],
+						 GetPrimColor(&DisplayArray[ElementPtr->PrimIndex]));
 		}
 		else
 		{
@@ -218,26 +219,26 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 				LaserPtr->turn_wait = WEAPON_WAIT - LaserPtr->turn_wait;
 			}
 
-			switch (highByte(LOWORD(rand_val)) & 3)
+			switch (uqm::highByte(uqm::lowWord(rand_val)) & 3)
 			{
 				case 0:
 					SetPrimColor(
-						&(GLOBAL(DisplayArray))[LaserPtr->PrimIndex],
+						&DisplayArray[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
 					break;
 				case 1:
 					SetPrimColor(
-						&(GLOBAL(DisplayArray))[LaserPtr->PrimIndex],
+						&DisplayArray[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x16, 0x17, 0x1F), 0x42));
 					break;
 				case 2:
 					SetPrimColor(
-						&(GLOBAL(DisplayArray))[LaserPtr->PrimIndex],
+						&DisplayArray[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x06, 0x07, 0x1F), 0x4A));
 					break;
 				case 3:
 					SetPrimColor(
-						&(GLOBAL(DisplayArray))[LaserPtr->PrimIndex],
+						&DisplayArray[LaserPtr->PrimIndex],
 						BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x18), 0x50));
 					break;
 			}
@@ -245,22 +246,22 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 
 		if (delta == -1 || delta == ANGLE_TO_FACING(HALF_CIRCLE))
 		{
-			angle += LOWORD(rand_val);
+			angle += uqm::lowWord(rand_val);
 		}
 		else if (delta == 0)
 		{
-			angle += LOWORD(rand_val) & 1 ? -1 : 1;
+			angle += uqm::lowWord(rand_val) & 1 ? -1 : 1;
 		}
 		else if (delta < ANGLE_TO_FACING(HALF_CIRCLE))
 		{
-			angle += LOWORD(rand_val) & (QUADRANT - 1);
+			angle += uqm::lowWord(rand_val) & (QUADRANT - 1);
 		}
 		else
 		{
-			angle -= LOWORD(rand_val) & (QUADRANT - 1);
+			angle -= uqm::lowWord(rand_val) & (QUADRANT - 1);
 		}
 		delta = WORLD_TO_VELOCITY(
-			DISPLAY_TO_WORLD((HIWORD(rand_val) & (LASER_LENGTH - 1)) + 4));
+			DISPLAY_TO_WORLD((uqm::highWord(rand_val) & (LASER_LENGTH - 1)) + 4));
 		SetVelocityComponents(&LaserPtr->velocity,
 							  COSINE(angle, delta), SINE(angle, delta));
 
@@ -275,17 +276,16 @@ static void
 slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					   uint16_t ConcernCounter)
 {
-	EVALUATE_DESC* lpEvalDesc;
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	// no dodging in role playing game, unless you haven't
 	// visited the starbase yet or difficulty is set to Hard
-	if ((lowByte(GLOBAL(CurrentActivity)) == IN_ENCOUNTER) && GET_GAME_STATE(STARBASE_AVAILABLE) && !isDifficulty(uqm::Difficulty::Hard))
+	if ((uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER) && GET_GAME_STATE(STARBASE_AVAILABLE) && !isDifficulty(uqm::Difficulty::Hard))
 	{
 		ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr = 0;
 	}
 
-	lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
+	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0
@@ -327,14 +327,14 @@ slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 static bool
 harvest_space_junk(ELEMENT* ElementPtr)
 {
-	bool retval;
-	HELEMENT hElement, hNextElement;
+	HELEMENT hElement {};
+	HELEMENT hNextElement {};
 
-	retval = false;
+	bool retval {false};
 	for (hElement = GetHeadElement();
 		 hElement; hElement = hNextElement)
 	{
-		ELEMENT* ObjPtr;
+		ELEMENT* ObjPtr {};
 
 		LockElement(hElement, &ObjPtr);
 		hNextElement = GetSuccElement(ObjPtr);
@@ -344,7 +344,8 @@ harvest_space_junk(ELEMENT* ElementPtr)
 			&& !GRAVITY_MASS(ObjPtr->mass_points)
 			&& CollisionPossible(ObjPtr, ElementPtr))
 		{
-			int32_t dx, dy;
+			int32_t dx {};
+			int32_t dy {};
 
 			if ((dx = ObjPtr->next.location.x
 					- ElementPtr->next.location.x)
@@ -368,12 +369,12 @@ harvest_space_junk(ELEMENT* ElementPtr)
 
 				if (!retval)
 				{
-					STARSHIP* StarShipPtr;
+					STARSHIP* StarShipPtr {};
 
 					retval = true;
 
 					GetElementStarShip(ElementPtr, &StarShipPtr);
-					ProcessSound(SetAbsSoundIndex(
+					ProcessSound(GetSound(
 									 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 								 ElementPtr);
 					DeltaEnergy(ElementPtr, MAX_ENERGY);
@@ -390,13 +391,13 @@ harvest_space_junk(ELEMENT* ElementPtr)
 static void
 slylandro_postprocess(ELEMENT* ElementPtr)
 {
-	STARSHIP* StarShipPtr;
+	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->weapon_counter
 		&& StarShipPtr->weapon_counter < WEAPON_WAIT)
 	{
-		HELEMENT Lightning;
+		HELEMENT Lightning {};
 
 		initialize_lightning(ElementPtr, &Lightning);
 		if (Lightning)
@@ -419,7 +420,7 @@ slylandro_preprocess(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & (APPEARING | NONSOLID)))
 	{
-		STARSHIP* StarShipPtr;
+		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		if ((StarShipPtr->cur_status_flags & THRUST)
@@ -464,8 +465,6 @@ slylandro_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_slylandro(void)
 {
-	RACE_DESC* RaceDescPtr;
-
 	if (IS_HD)
 	{
 		slylandro_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
@@ -485,7 +484,7 @@ init_slylandro(void)
 	slylandro_desc.init_weapon_func = initialize_lightning;
 	slylandro_desc.cyborg_control.intelligence_func = slylandro_intelligence;
 
-	RaceDescPtr = &slylandro_desc;
+	RACE_DESC* RaceDescPtr {&slylandro_desc};
 
 	return (RaceDescPtr);
 }

@@ -18,7 +18,7 @@
 
 #define LUAUQM_INTERNAL
 #include "customfuncs.h"
-#include "libs/scriptlib.h"
+#include "uqm/lua/UQMLua.h"
 #include "core/log/log.h"
 
 
@@ -27,9 +27,8 @@
 static int
 luaFunctionWrapper(lua_State* luaState)
 {
-	int arg;
-	int result;
-	int isNum;
+	int arg {};
+	int isNum {};
 	int (*fun)(int) = (int(__cdecl*)(int))lua_topointer(luaState, lua_upvalueindex(1));
 
 	if (lua_gettop(luaState) == 0)
@@ -48,7 +47,7 @@ luaFunctionWrapper(lua_State* luaState)
 		}
 	}
 
-	result = (*fun)(arg);
+	const int result {(*fun)(arg)};
 	lua_pushinteger(luaState, result);
 	return 1;
 }
@@ -73,7 +72,7 @@ int luaUqm_custom_init(lua_State* luaState,
 {
 	// Count the number of functions.
 	size_t funCount = 0;
-	const luaUqm_custom_Function* ptr;
+	const luaUqm_custom_Function* ptr {};
 
 	for (ptr = funs; ptr->name != nullptr; ptr++)
 	{
