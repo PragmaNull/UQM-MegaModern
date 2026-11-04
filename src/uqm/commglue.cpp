@@ -22,7 +22,7 @@
 #include "battle.h"
 // For instantVictory
 #include "races.h"
-#include "lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
 
@@ -127,7 +127,7 @@ const char* InterpolateChunk(uqstl::span<char> buffer, const char* start)
 		}
 
 		uqm::strncpy_safe(str_buf, {start, end});
-		const uqstl::string interpolated {luaUqm_comm_stringInterpolate(str_buf)};
+		const uqstl::string interpolated {uqm::lua().interpolate(str_buf)};
 		buffsize += (uint16_t)interpolated.size();
 		if (buffsize > MAX_INTERPOLATE)
 		{
@@ -187,9 +187,9 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 
 	if (!StarSeed)
 	{
-		if (luaUqm_comm_stringNeedsInterpolate(pStr))
+		if (uqm::UQMLua::needsInterpolate(pStr))
 		{
-			const uqstl::string interpolated {luaUqm_comm_stringInterpolate(pStr)};
+			const uqstl::string interpolated {uqm::lua().interpolate(pStr)};
 			SpliceTrack(pClip, interpolated.c_str(), pTimeStamp, cb);
 		}
 		else

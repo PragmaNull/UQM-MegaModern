@@ -20,7 +20,7 @@
 #include "../yehat/resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 
 
@@ -470,7 +470,7 @@ Intro(void)
 static uint16_t
 uninit_yehat(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -489,7 +489,7 @@ init_rebel_yehat_comm(void)
 
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	yehat_desc.AlienTextBaseline.x = SIS_SCREEN_WIDTH * 2 / 3;
 	yehat_desc.AlienTextBaseline.y = RES_SCALE(107 * 2 / 3);

@@ -21,7 +21,7 @@
 #include "strings.h"
 
 #include "uqm/build.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 
 static LOCDATA spathi_desc =
@@ -913,7 +913,7 @@ Intro(void)
 static uint16_t
 uninit_spathi(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -949,7 +949,7 @@ init_spathi_comm(void)
 	spathi_desc.post_encounter_func = post_spathi_enc;
 	spathi_desc.uninit_encounter_func = uninit_spathi;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	spathi_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	spathi_desc.AlienTextBaseline.y = 0;

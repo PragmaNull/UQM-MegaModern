@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 #include "uqm/races.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 static LOCDATA vux_desc =
 	{
@@ -902,7 +902,7 @@ Intro(void)
 static uint16_t
 uninit_vux(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -919,7 +919,7 @@ init_vux_comm(void)
 	vux_desc.post_encounter_func = post_vux_enc;
 	vux_desc.uninit_encounter_func = uninit_vux;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	vux_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1)
 								 + (SIS_TEXT_WIDTH >> 2) - SAFE_NUM_SCL(4);

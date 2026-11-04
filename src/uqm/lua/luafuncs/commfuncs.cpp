@@ -27,11 +27,11 @@
 
 #define LUAUQM_INTERNAL
 #include "commfuncs.h"
-#include "libs/luauqm/luauqm.h"
+#include "uqm/lua/UQMLua.h"
+#include "core/stl/array.h"
 #include "core/log/log.h"
 #include "core/string/StringUtils.h"
 
-#include "uqm/lua/luacomm.h"
 #include "uqm/commglue.h"
 #include "uqm/battle.h"
 // For instantVictory
@@ -85,19 +85,18 @@ const static luaL_Reg commFuncs[] = {
 	{nullptr,			  nullptr					  },
 };
 
-const static luaUqm_EnumValue segueEnum[] = {
-	{/* .name = */ "peace",	/* .value = */ Segue_peace  },
-	{/* .name = */ "hostile", /* .value = */ Segue_hostile},
-	{/* .name = */ "victory", /* .value = */ Segue_victory},
-	{/* .name = */ "defeat",	 /* .value = */ Segue_defeat },
-	{/* .name = */ nullptr,	/* .value = */ 0			},
+constexpr uqstl::array SegueEnum {
+	uqm::UQMLua::EnumValue {"peace",	 Segue_peace	},
+	uqm::UQMLua::EnumValue {"hostile", Segue_hostile},
+	uqm::UQMLua::EnumValue {"victory", Segue_victory},
+	uqm::UQMLua::EnumValue {"defeat",  Segue_defeat },
 };
 
 int luaUqm_comm_open(lua_State* luaState)
 {
 	luaL_newlib(luaState, commFuncs);
 
-	luaUqm_makeEnum(luaState, segueEnum);
+	uqm::UQMLua::makeEnum(luaState, SegueEnum);
 	// [-2] -> table commTable
 	// [-1] -> table segueEnum
 	lua_setfield(luaState, -2, "segue");
@@ -213,14 +212,15 @@ pushResponseCallback(lua_State* luaState, RESPONSE_REF response)
 static void
 npcPhraseCallback(CallbackArg extra)
 {
-	pushNpcPhraseCallback(luaUqm_commState);
-	if (lua_pcall(luaUqm_commState, 0, 0, 0) != 0)
+	lua_State* const luaState {uqm::lua().commState()};
+	pushNpcPhraseCallback(luaState);
+	if (lua_pcall(luaState, 0, 0, 0) != 0)
 	{
 		// An error occurred. We continue nonetheless.
 		uqm::log::error("[script] An error occurred during a "
 						"doNpcPhrase() callback: {}",
-						lua_tostring(luaUqm_commState, -1));
-		lua_pop(luaUqm_commState, 1);
+						lua_tostring(luaState, -1));
+		lua_pop(luaState, 1);
 	}
 	(void)extra;
 }
@@ -230,15 +230,16 @@ npcPhraseCallback(CallbackArg extra)
 static void
 responseCallback(RESPONSE_REF response)
 {
-	pushResponseCallback(luaUqm_commState, response);
-	pushPhraseId(luaUqm_commState, response);
-	if (lua_pcall(luaUqm_commState, 1, 0, 0) != 0)
+	lua_State* const luaState {uqm::lua().commState()};
+	pushResponseCallback(luaState, response);
+	pushPhraseId(luaState, response);
+	if (lua_pcall(luaState, 1, 0, 0) != 0)
 	{
 		// An error occurred. We continue nonetheless.
 		uqm::log::error("[script] An error occurred during an "
 						"addResponse() callback: {}",
-						lua_tostring(luaUqm_commState, -1));
-		lua_pop(luaUqm_commState, 1);
+						lua_tostring(luaState, -1));
+		lua_pop(luaState, 1);
 	}
 }
 
@@ -332,9 +333,9 @@ luaUqm_comm_getPhrase(lua_State* luaState)
 	// Find the string.
 	const char* strBuf {CommData.ConversationPhrases->text(phraseId - 1)};
 
-	if (luaUqm_comm_stringNeedsInterpolate(strBuf))
+	if (uqm::UQMLua::needsInterpolate(strBuf))
 	{
-		const uqstl::string interpolated {luaUqm_comm_stringInterpolate(strBuf)};
+		const uqstl::string interpolated {uqm::lua().interpolate(strBuf)};
 		lua_pushlstring(luaState, interpolated.data(), interpolated.size());
 	}
 	else

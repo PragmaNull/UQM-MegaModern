@@ -35,6 +35,7 @@
 #include "master.h"
 #include "libs/file/textfile.h"
 #include "core/string/StringUtils.h"
+#include "uqm/lua/UQMLua.h"
 
 #include <yyjson.h>
 
@@ -874,9 +875,9 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	ReinitQueue(&GLOBAL(stowed_ship_q));
 
 	uninitEventSystem();
-	luaUqm_uninitState();
+	uqm::lua().closeState();
 	uqm::gameState().clearFlags();
-	luaUqm_initState();
+	uqm::lua().openState();
 	initEventSystem();
 
 	const ACTIVITY Activity {uqm::currentActivity()};

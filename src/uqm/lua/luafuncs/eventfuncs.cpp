@@ -20,8 +20,7 @@
 #include "eventfuncs.h"
 #include "uqm/clock.h"
 #include "uqm/gameev.h"
-#include "uqm/lua/luastate.h"
-#include "libs/luauqm/luauqm.h"
+#include "uqm/lua/UQMLua.h"
 #include "core/log/log.h"
 
 
@@ -55,7 +54,7 @@ isEventRegistered(lua_State* luaState, int argn)
 {
 	argn = lua_absindex(luaState, argn);
 
-	luaUqm_getEventTable(luaState);
+	uqm::UQMLua::pushEventTable(luaState);
 	lua_pushvalue(luaState, argn);
 	// [-2] -> table eventTable
 	// [-1] -> string eventIdStr
@@ -158,7 +157,7 @@ luaUqm_event_register(lua_State* luaState)
 		return 0;
 	}
 
-	luaUqm_getEventTable(luaState);
+	uqm::UQMLua::pushEventTable(luaState);
 	lua_pushvalue(luaState, 1);
 	lua_pushvalue(luaState, 2);
 	// [-3] -> table eventTable
@@ -186,7 +185,7 @@ luaUqm_event_unregister(lua_State* luaState)
 		return 0;
 	}
 
-	luaUqm_getEventTable(luaState);
+	uqm::UQMLua::pushEventTable(luaState);
 	lua_pushvalue(luaState, 1);
 	lua_pushnil(luaState);
 	// [-3] -> table eventTable

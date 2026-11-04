@@ -25,7 +25,7 @@
 #include "libs/inplib.h"
 #include "libs/mathlib.h"
 #include "core/log/log.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/hyper.h"
 // for SOL_X/SOL_Y
 #include "uqm/planets/planets.h"
@@ -2196,7 +2196,7 @@ Intro(void)
 static uint16_t
 uninit_melnorme(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return 0;
 }
 
@@ -2217,7 +2217,7 @@ init_melnorme_comm(void)
 	melnorme_desc.post_encounter_func = post_melnorme_enc;
 	melnorme_desc.uninit_encounter_func = uninit_melnorme;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

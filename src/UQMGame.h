@@ -31,6 +31,7 @@ namespace uqm
 {
 
 class GameSession;
+class UQMLua;
 enum class SessionKind;
 
 class UQMGame
@@ -56,6 +57,12 @@ public:
 		return m_session.get();
 	}
 
+	// The Lua support. It exists between setup() and teardown().
+	[[nodiscard]] UQMLua& lua() noexcept
+	{
+		return *m_lua;
+	}
+
 	// What the game program does now. It stays between sessions.
 	[[nodiscard]] uint16_t& activity() noexcept
 	{
@@ -74,6 +81,7 @@ private:
 	uqstl::jthread m_gameThread {};
 	// The return value of Starcon2Main.
 	int m_gameExitCode {EXIT_SUCCESS};
+	uqstl::unique_ptr<UQMLua> m_lua {};
 	uqstl::unique_ptr<GameSession> m_session {};
 	uint16_t m_activity {};
 	uint8_t m_globalFlags {};

@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/gameev.h"
 #include "uqm/build.h"
 
@@ -986,7 +986,7 @@ Intro(void)
 static uint16_t
 uninit_slylandro(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -1003,7 +1003,7 @@ init_slylandro_comm(void)
 	slylandro_desc.post_encounter_func = post_slylandro_enc;
 	slylandro_desc.uninit_encounter_func = uninit_slylandro;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

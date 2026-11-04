@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 
 
@@ -745,7 +745,7 @@ Intro(void)
 static uint16_t
 uninit_supox(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -762,7 +762,7 @@ init_supox_comm(void)
 	supox_desc.post_encounter_func = post_supox_enc;
 	supox_desc.uninit_encounter_func = uninit_supox;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

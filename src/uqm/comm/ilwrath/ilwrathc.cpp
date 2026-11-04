@@ -23,7 +23,7 @@
 #include "uqm/gameev.h"
 #include "uqm/build.h"
 #include "uqm/races.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 
 static LOCDATA ilwrath_desc =
@@ -741,7 +741,7 @@ Intro(void)
 static uint16_t
 uninit_ilwrath(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -758,7 +758,7 @@ init_ilwrath_comm(void)
 	ilwrath_desc.post_encounter_func = post_ilwrath_enc;
 	ilwrath_desc.uninit_encounter_func = uninit_ilwrath;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	ilwrath_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	ilwrath_desc.AlienTextBaseline.y = RES_SCALE(64);

@@ -25,7 +25,7 @@
 #include "uqm/sis.h"
 // for DeltaSISGauges()
 #include "uqm/planets/generate/gendefault.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 
 static LOCDATA druuge_desc =
@@ -1026,7 +1026,7 @@ Intro(void)
 static uint16_t
 uninit_druuge(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -1055,7 +1055,7 @@ init_druuge_comm(void)
 	druuge_desc.post_encounter_func = post_druuge_enc;
 	druuge_desc.uninit_encounter_func = uninit_druuge;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	druuge_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	druuge_desc.AlienTextBaseline.y = RES_SCALE(64);

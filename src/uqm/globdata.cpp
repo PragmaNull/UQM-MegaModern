@@ -31,7 +31,6 @@
 #include "state.h"
 #include "grpinfo.h"
 #include "gamestr.h"
-#include "libs/luauqm/luauqm.h"
 #include "core/log/log.h"
 #include "options.h"
 #include <assert.h>

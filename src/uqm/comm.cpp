@@ -38,7 +38,7 @@
 #include "sounds.h"
 #include "nameref.h"
 #include "uqmdebug.h"
-#include "lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/inplib.h"
 #include "libs/sound/sound.h"
@@ -1760,9 +1760,9 @@ void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func,
 	{
 		pEntry->response_text.pStr = CommData.ConversationPhrases->text(R - 1);
 
-		if (luaUqm_comm_stringNeedsInterpolate(pEntry->response_text.pStr))
+		if (uqm::UQMLua::needsInterpolate(pEntry->response_text.pStr))
 		{
-			pEntry->allocedResponse = luaUqm_comm_stringInterpolate(
+			pEntry->allocedResponse = uqm::lua().interpolate(
 				pEntry->response_text.pStr);
 			pEntry->response_text.pStr = pEntry->allocedResponse.c_str();
 		}

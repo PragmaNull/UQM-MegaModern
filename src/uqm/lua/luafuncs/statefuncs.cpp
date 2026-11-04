@@ -18,12 +18,11 @@
 
 #define LUAUQM_INTERNAL
 #include "statefuncs.h"
-#include "libs/luauqm/luauqm.h"
+#include "uqm/lua/UQMLua.h"
 #include "core/log/log.h"
 
 #include "uqm/build.h"
 #include "uqm/globdata.h"
-#include "uqm/lua/luastate.h"
 
 
 static int luaUqm_state_clock_getDate(lua_State* luaState);
@@ -565,7 +564,7 @@ luaUqm_state_prop_set(lua_State* luaState)
 static int
 luaUqm_state_misc_alignText(lua_State* luaState)
 {
-	luaUqm_delta._int = luaL_checkinteger(luaState, 1);
+	luaL_checkinteger(luaState, 1);
 	lua_pushstring(luaState, "");
 
 	return 1;

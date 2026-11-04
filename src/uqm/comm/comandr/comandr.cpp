@@ -24,7 +24,7 @@
 #include "uqm/sis.h"
 // for DeltaSISGauges(), DrawLanders()
 #include "libs/graphics/gfx_common.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/settings.h"
 #include "uqm/nameref.h"
 #include "libs/math/random.h"
@@ -831,7 +831,7 @@ Intro(void)
 static uint16_t
 uninit_commander(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -848,7 +848,7 @@ init_commander_comm()
 	commander_desc.post_encounter_func = post_commander_enc;
 	commander_desc.uninit_encounter_func = uninit_commander;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

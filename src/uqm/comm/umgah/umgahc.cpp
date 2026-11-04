@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 
 
@@ -780,7 +780,7 @@ Intro(void)
 static uint16_t
 uninit_umgah(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -800,7 +800,7 @@ init_umgah_comm(void)
 	umgah_desc.post_encounter_func = post_umgah_enc;
 	umgah_desc.uninit_encounter_func = uninit_umgah;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

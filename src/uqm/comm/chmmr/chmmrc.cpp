@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "uqm/hyper.h"
 // for SOL_X/SOL_Y
@@ -768,7 +768,7 @@ Intro(void)
 static uint16_t
 uninit_chmmr(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -785,7 +785,7 @@ init_chmmr_comm(void)
 	chmmr_desc.post_encounter_func = post_chmmr_enc;
 	chmmr_desc.uninit_encounter_func = uninit_chmmr;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

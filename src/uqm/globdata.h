@@ -27,7 +27,6 @@
 #include "sis.h"
 #include "velocity.h"
 #include "commanim.h"
-#include "lua/luastate.h"
 
 // general numbers-speech generator info
 // should accomodate most common base-10 languages

@@ -40,7 +40,6 @@
 #include "planets/planets.h"
 // for ExploreSolarSys()
 #include "uqmdebug.h"
-#include "uqm/lua/luastate.h"
 #include "libs/time/timelib.h"
 #include "core/log/log.h"
 #include "core/platform/platform.h"
@@ -48,7 +47,6 @@
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"
 #include "core/misc/FatalExit.h"
-#include "libs/luauqm/luauqm.h"
 #include "build.h"
 #include "uqmversion.h"
 #include "options.h"

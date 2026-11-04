@@ -27,7 +27,7 @@ typedef struct luaUqm_custom_Function luaUqm_custom_Function;
 }
 #endif
 
-#include "libs/luauqm/luauqm.h"
+#include "uqm/lua/UQMLua.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

@@ -20,7 +20,7 @@
 #include "resinst.h"
 #include "strings.h"
 
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "uqm/gameev.h"
 
@@ -977,7 +977,7 @@ Intro(void)
 static uint16_t
 uninit_zoqfot(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -994,7 +994,7 @@ init_zoqfot_comm(void)
 	zoqfot_desc.post_encounter_func = post_zoqfot_enc;
 	zoqfot_desc.uninit_encounter_func = uninit_zoqfot;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

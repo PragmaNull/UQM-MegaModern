@@ -39,7 +39,7 @@
 #include "core/platform/platform.h"
 #include "core/string/StringUtils.h"
 #include "libs/mathlib.h"
-#include "lua/luadebug.h"
+#include "uqm/lua/UQMLua.h"
 #include "tactrans.h"
 #include "StarmapGlobalData.h"
 
@@ -343,7 +343,7 @@ void debugKeyPressed(void)
 		// problems.
 
 		// Interactive:
-		luaUqm_debug_run();
+		uqm::lua().runDebugConsole();
 	}
 }
 

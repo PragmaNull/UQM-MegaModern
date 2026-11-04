@@ -24,7 +24,8 @@
 #include "globdata.h"
 #include "hyper.h"
 #include "resinst.h"
-#include "lua/luaevent.h"
+#include "uqm/lua/UQMLua.h"
+#include "lua/luafuncs/customfuncs.h"
 #include "lua/luafuncs/customfuncs.h"
 #include "core/misc/bittricks.h"
 #include "core/log/log.h"
@@ -103,12 +104,12 @@ void initEventSystem(void)
 		{nullptr,					   nullptr					 }
 	  };
 
-	luaUqm_event_init(eventFuncs, EVENT_SCRIPT);
+	uqm::lua().beginEvents(eventFuncs, EVENT_SCRIPT);
 }
 
 void uninitEventSystem(void)
 {
-	luaUqm_event_uninit();
+	uqm::lua().endEvents();
 }
 
 int eventIdStrToNum(const char* eventIdStr)
@@ -158,7 +159,7 @@ void EventHandler(uint8_t selector)
 		return;
 	}
 
-	luaUqm_event_callEvent(eventIdStr);
+	uqm::lua().callEvent(eventIdStr);
 }
 
 void SetRaceDest(uint8_t which_race, int16_t x, int16_t y, uint8_t days_left,

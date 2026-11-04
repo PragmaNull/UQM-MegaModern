@@ -17,7 +17,7 @@
 #ifndef UQM_LUA_LUAFUNCS_STATEFUNCS_H_
 #define UQM_LUA_LUAFUNCS_STATEFUNCS_H_
 
-#include "libs/luauqm/luauqm.h"
+#include "uqm/lua/UQMLua.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {

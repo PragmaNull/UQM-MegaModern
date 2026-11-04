@@ -42,7 +42,7 @@
 #include "libs/inplib.h"
 #include "core/thread/Thread.h"
 #include "libs/time/timelib.h"
-#include "libs/luauqm/luauqm.h"
+#include "uqm/lua/UQMLua.h"
 #include "uqm/controls.h"
 #include "uqm/battle.h"
 // For BattleFrameRateTicks
@@ -101,6 +101,11 @@ UQMGame::~UQMGame()
 {
 	assert(s_instance == this);
 	s_instance = nullptr;
+}
+
+UQMLua& lua()
+{
+	return UQMGame::getInstance().lua();
 }
 
 void UQMGame::beginSession(SessionKind kind)
@@ -331,7 +336,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 #endif
 
 
-	luaUqm_init();
+	m_lua = uqstl::make_unique<UQMLua>();
 
 	Alarm_init();
 	Callback_init();
@@ -429,7 +434,7 @@ void UQMGame::teardown()
 		Callback_uninit();
 		Alarm_uninit();
 
-		luaUqm_uninit();
+		m_lua.reset();
 
 #if 0
 		unInitTempDir ();

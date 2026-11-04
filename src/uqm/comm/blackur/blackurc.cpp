@@ -19,7 +19,7 @@
 #include "../commall.h"
 #include "resinst.h"
 #include "strings.h"
-#include "uqm/lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 static LOCDATA blackurq_desc =
 	{
@@ -585,7 +585,7 @@ Intro(void)
 static uint16_t
 uninit_blackurq(void)
 {
-	luaUqm_comm_uninit();
+	uqm::lua().endComm();
 	return (0);
 }
 
@@ -602,7 +602,7 @@ init_blackurq_comm(void)
 	blackurq_desc.post_encounter_func = post_blackurq_enc;
 	blackurq_desc.uninit_encounter_func = uninit_blackurq;
 
-	luaUqm_comm_init(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 
 	blackurq_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	blackurq_desc.AlienTextBaseline.y = 0;

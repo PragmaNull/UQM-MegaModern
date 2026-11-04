@@ -7,7 +7,7 @@
 #include "uqm/clock.h"
 #include "uqm/gameev.h"
 #include "uqm/globdata.h"
-#include "uqm/lua/luastate.h"
+#include "uqm/lua/UQMLua.h"
 
 namespace uqm
 {
@@ -23,7 +23,7 @@ void GameSession::startGame()
 	{
 		return;
 	}
-	luaUqm_initState();
+	lua().openState();
 	InitGameStructures();
 	InitGameClock();
 	initEventSystem();
@@ -39,7 +39,7 @@ void GameSession::endGame()
 	uninitEventSystem();
 	UninitGameClock();
 	UninitGameStructures();
-	luaUqm_uninitState();
+	lua().closeState();
 }
 
 GameState& gameState()

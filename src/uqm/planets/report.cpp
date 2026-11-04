@@ -35,7 +35,7 @@
 
 #include <ctype.h>
 #include <string.h>
-#include "../lua/luacomm.h"
+#include "uqm/lua/UQMLua.h"
 
 
 #define COL_MULTIPLIER (isPC(uqm::UQMOptions::read().landerStyle) || IS_PAD ? 7 : 6)
@@ -384,18 +384,18 @@ void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 			OldFontEffect = SetContextFontEffect(nullptr);
 		}
 
-		luaUqm_comm_init(nullptr, NULL_RESOURCE);
+		uqm::lua().beginComm(nullptr, NULL_RESOURCE);
 		uqstl::late_constructed<uqstl::string> interpolatedReport {};
 		const PLANET_INFO& planetInfo {pSolarSysState->SysInfo.PlanetInfo};
 		uqstl::string_view report {planetInfo.DiscoveryStrings->text(planetInfo.DiscoveryIndex)};
-		if (luaUqm_comm_stringNeedsInterpolate(report.data()))
+		if (uqm::UQMLua::needsInterpolate(report.data()))
 		{
-			interpolatedReport.emplace(luaUqm_comm_stringInterpolate(report));
+			interpolatedReport.emplace(uqm::lua().interpolate(report));
 			report = *interpolatedReport;
 		}
 		MakeReport(ReadOutSounds, report.data(), (uint16_t)report.size());
 
-		luaUqm_comm_uninit();
+		uqm::lua().endComm();
 
 		SetContextFontEffect(OldFontEffect);
 		SetContextFont(OldFont);
