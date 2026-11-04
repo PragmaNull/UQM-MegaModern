@@ -1967,7 +1967,7 @@ PickGame(bool saving, bool fromMainMenu)
 		uqm::log::info(saving ? "Saving > " : "Loading > ");
 		uqm::log::info("Name: {}", pSD->SaveName);
 		uqm::log::info("Slot: {}", MenuState.CurState);
-		uqm::log::info("Seed Type: {}", toString(g_seedType));
+		uqm::log::info("Seed Type: {}", toString(uqm::currentSeed().type));
 		uqm::log::info("Seed: {}", GLOBAL_SIS(Seed));
 		uqm::log::info("Difficulty: {:s}", getDifficulty());
 		uqm::log::info("Extended: {}", BOOL_STR(EXTENDED));

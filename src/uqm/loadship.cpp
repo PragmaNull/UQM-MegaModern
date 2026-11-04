@@ -89,18 +89,12 @@ static inline uint16_t ShipIndex(SPECIES_ID SpeciesID)
 // at once to be able to handle the load/save game preview window.
 static inline void SeedShipMap(SPECIES_ID* map, int seed)
 {
-	uqm::UQMRandom ShipGenRNG {};
+	uqm::PrimeRandom ShipGenRNG {};
 	uint16_t rand_val {};
 	SPECIES_ID* cMap = map;
 	SPECIES_ID* eMap = &(map[NUM_CAPITALS]);
 	SPECIES_ID* sMap = &(map[NUM_CAPITALS + NUM_ESCORTS]);
 	uint16_t x = 0;
-	const uqm::SeedType saveSeedType = g_seedType;
-	// Planet generation uses a different seeding math
-	if (g_seedType == uqm::SeedType::Planet)
-	{
-		g_seedType = uqm::SeedType::MRQ;
-	}
 	ShipGenRNG.reseed(seed);
 	for (x = 0; x < NUM_SHIPS; x++)
 	{
@@ -133,7 +127,6 @@ static inline void SeedShipMap(SPECIES_ID* map, int seed)
 		}
 		sMap[rand_val] = scout[x];
 	}
-	g_seedType = saveSeedType;
 }
 
 // Uses a ship map to map species ID to another species ID.
@@ -153,13 +146,13 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 	{
 		fmt::print(stderr, "Calling SeedShip (load window) species {}, "
 						   "Seed {}, ShipSeed {}, SIS (Seed) {}, SIS (ShipSeed) {}\n",
-				   SpeciesID, uqm::UQMOptions::read().customSeed, uqm::UQMOptions::read().shipSeed ? "on" : "off",
+				   SpeciesID, uqm::currentSeed().value, uqm::currentSeed().ships ? "on" : "off",
 				   GLOBAL_SIS(Seed), GLOBAL_SIS(ShipSeed));
 	}
 #endif
-	if (seedStamp != uqm::UQMOptions::read().customSeed)
+	if (seedStamp != uqm::currentSeed().value)
 	{
-		SeedShipMap(shipMap, seedStamp = uqm::UQMOptions::read().customSeed);
+		SeedShipMap(shipMap, seedStamp = uqm::currentSeed().value);
 	}
 	if (sisStamp != GLOBAL_SIS(Seed) && loadWindow)
 	{
@@ -169,7 +162,7 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 	target = SpeciesID;
 	if ((index = ShipIndex(SpeciesID)) < NUM_SHIPS)
 	{
-		if (!loadWindow && uqm::UQMOptions::read().shipSeed)
+		if (!loadWindow && uqm::currentSeed().ships)
 		{
 			return shipMap[index];
 		}
@@ -177,7 +170,7 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 		{
 			target = shipWindowMap[index];
 		}
-		if (!uqm::UQMOptions::read().shipSeed)
+		if (!uqm::currentSeed().ships)
 		{
 			return target;
 		}
@@ -218,11 +211,11 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 #ifdef DEBUG_SHIPSEED
 	fmt::print(stderr, "Calling load_ship species {}, Seed {}, "
 					   "ShipSeed {}\n",
-			   SpeciesID, uqm::UQMOptions::read().customSeed,
-			   uqm::UQMOptions::read().shipSeed ? "on" : "off");
+			   SpeciesID, uqm::currentSeed().value,
+			   uqm::currentSeed().ships ? "on" : "off");
 #endif
 	CodeRef = CaptureCodeRes(LoadCodeRes(
-								 code_resources[uqm::UQMOptions::read().shipSeed ?
+								 code_resources[uqm::currentSeed().ships ?
 													SeedShip(SpeciesID, false) :
 													SpeciesID]),
 							 nullptr, (void**)(&RDPtr));

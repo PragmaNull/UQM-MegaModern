@@ -863,8 +863,7 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	uqm::gameState().sis() = loc_sd.SS;
 	legacySave = loc_sd.SS.SaveVersion > 0;
 
-	uqm::UQMOptions::edit().customSeed = GLOBAL_SIS(Seed);
-	uqm::UQMOptions::edit().shipSeed = (GLOBAL_SIS(ShipSeed) != 0);
+	uqm::gameState().setSeed({.type = uqm::SeedType::Original, .value = GLOBAL_SIS(Seed), .ships = GLOBAL_SIS(ShipSeed) != 0});
 	ReloadMasterShipList(nullptr);
 	LoadFleetInfo();
 
@@ -920,21 +919,23 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	// Reset Debug Key
 	DebugKeyPressed = false;
 	// Set the SeedType flag and then start Starseed
-	g_seedType = (uqm::SeedType)GET_GAME_STATE(SEED_TYPE);
-	// Assuming load from older version, optSeedType should be 0 (none)
-	// If the seed is also 0 it's a really old save file and prime seed
-	// Otherwise if the seed isn't prime, optSeedType goes to 1 (planet)
-	if (g_seedType == uqm::SeedType::Prime)
+	uqm::GameSeed loadedSeed {uqm::currentSeed()};
+	loadedSeed.type = static_cast<uqm::SeedType>(GET_GAME_STATE(SEED_TYPE));
+	// Assuming load from older version, the seed type should be Original.
+	// If the seed is also 0 it's a really old save file and prime seed.
+	// Otherwise if the seed isn't prime, the seed type goes to Planet.
+	if (loadedSeed.type == uqm::SeedType::Original)
 	{
-		if (uqm::UQMOptions::read().customSeed == 0)
+		if (loadedSeed.value == 0)
 		{
-			GLOBAL_SIS(Seed) = uqm::UQMOptions::edit().customSeed = PrimeA;
+			loadedSeed.value = PrimeA;
 		}
-		else if (uqm::UQMOptions::read().customSeed != PrimeA)
+		else if (loadedSeed.value != PrimeA)
 		{
-			SET_GAME_STATE(SEED_TYPE, g_seedType = uqm::SeedType::Planet);
+			loadedSeed.type = uqm::SeedType::Planet;
 		}
 	}
+	uqm::gameState().setSeed(loadedSeed);
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "Loading game with seed type {}, {}\n",
 			   optSeedType,

@@ -588,7 +588,6 @@ DoRestart(MENU_STATE* pMS)
 				optLoadGame = false;
 				break;
 			case PLAY_SUPER_MELEE:
-				uqm::UQMOptions::edit().shipSeed = false;
 				ReloadMasterShipList(nullptr);
 				uqm::currentActivity() = SUPER_MELEE;
 				optSuperMelee = false;

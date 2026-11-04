@@ -99,7 +99,7 @@ GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	FillOrbits(solarSys, (uint8_t)~0, pPlanet, false);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 		pPlanet->radius = EARTH_RADIUS * 115L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
@@ -135,7 +135,7 @@ GenerateColony_generateMoons(SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (!PrimeSeed)
+	if (!uqm::isOriginalSeed())
 	{
 		return true;
 	}

@@ -317,6 +317,20 @@ TEST(OptionsSettingsTest, CoarseScanStyleAcceptsOldNames)
 	EXPECT_EQ(options.whichCoarseScan.valueText(), "Pictograms");
 }
 
+TEST(OptionsSettingsTest, SeedTypeAcceptsOldNames)
+{
+	OptionsStruct options {};
+	ASSERT_TRUE(options.fromJson(R"({"seed": {"type": "None"}})"));
+	EXPECT_EQ(*options.seedType, SeedType::Original);
+	ASSERT_TRUE(options.fromJson(R"({"seed": {"type": "Prime"}})"));
+	EXPECT_EQ(*options.seedType, SeedType::Starseed);
+
+	EXPECT_TRUE(options.seedType.parseText("None"));
+	EXPECT_EQ(*options.seedType, SeedType::Original);
+	EXPECT_EQ(options.seedType.valueText(), "Original");
+	EXPECT_EQ(options.seedType.valueNames(), (uqstl::vector<uqstl::string> {"Original", "Planet", "MRQ", "Starseed"}));
+}
+
 TEST(OptionsSettingsTest, ReloadAndRestartFlags)
 {
 	const OptionsStruct options {};

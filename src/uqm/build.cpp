@@ -107,7 +107,7 @@ GetSeededFleetFromIndex(uint16_t Index)
 {
 	const FLEET_INFO* TemplatePtr = nullptr;
 	SPECIES_ID ship;
-	const bool loadWindow = ((uqm::UQMOptions::read().shipSeed && GLOBAL_SIS(ShipSeed) == 0) || (!uqm::UQMOptions::read().shipSeed && GLOBAL_SIS(ShipSeed) != 0) || (uqm::UQMOptions::read().customSeed != GLOBAL_SIS(Seed)));
+	const bool loadWindow = ((uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) == 0) || (!uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) != 0) || (uqm::currentSeed().value != GLOBAL_SIS(Seed)));
 
 	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), Index)};
 	if (!hFleet)
@@ -753,9 +753,9 @@ CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
 
 	// If options mismatch with SIS, it means we're in a load window.
 	// In that case we want to find the correct fleet ID for that ship.
-	if ((uqm::UQMOptions::read().shipSeed && GLOBAL_SIS(ShipSeed) == 0)
-		|| (!uqm::UQMOptions::read().shipSeed && GLOBAL_SIS(ShipSeed) != 0)
-		|| (uqm::UQMOptions::read().customSeed != GLOBAL_SIS(Seed)))
+	if ((uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) == 0)
+		|| (!uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) != 0)
+		|| (uqm::currentSeed().value != GLOBAL_SIS(Seed)))
 	{
 		hFleet = GetSeededFleetFromIndex(shipIndex);
 	}
@@ -1088,7 +1088,7 @@ cheatAddRemoveUpgrades(void)
 
 void loadGameCheats(void)
 {
-	if (EXTENDED && !StarSeed)
+	if (EXTENDED && !uqm::isStarSeed())
 	{
 		plot_map[MELNORME0_DEFINED].star->Type =
 			MAKE_STAR(SUPER_GIANT_STAR, ORANGE_BODY, -1);
@@ -1421,7 +1421,7 @@ Homeworld(SPECIES_ID SpeciesID)
 // For Prime seed games this just returns, as the fleet does not relocate.
 void SeedFleet(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap)
 {
-	if ((!StarSeed) || (g_seedType == uqm::SeedType::MRQ))
+	if ((!uqm::isStarSeed()) || (uqm::currentSeed().type == uqm::SeedType::MRQ))
 	{
 		return;
 	}
@@ -1490,7 +1490,7 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 	}
 
 	// Firstly, handle hard coded data from prime seed
-	if (!StarSeed || g_seedType == uqm::SeedType::MRQ)
+	if (!uqm::isStarSeed() || uqm::currentSeed().type == uqm::SeedType::MRQ)
 	{
 		return DefaultFleetLocation(FleetPtr->SpeciesID, visit);
 	}

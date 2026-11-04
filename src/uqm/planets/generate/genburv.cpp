@@ -65,7 +65,7 @@ GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 		uint16_t angle {};
 
@@ -106,7 +106,7 @@ GenerateBurvixese_generateMoons(SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (!PrimeSeed)
+	if (!uqm::isOriginalSeed())
 	{
 		return true;
 	}

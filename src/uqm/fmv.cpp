@@ -41,7 +41,7 @@ void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
 
 	GFXCONTEXT OldContext {SetContext(ScreenContext)};
 
-	if (uqm::UQMOptions::read().shipSeed)
+	if (uqm::currentSeed().ships)
 	{
 		HMASTERSHIP hMaster = GetStarShipFromIndex(&master_q, index);
 		const MASTER_SHIP_INFO* mPtr = LockMasterShip(&master_q, hMaster);

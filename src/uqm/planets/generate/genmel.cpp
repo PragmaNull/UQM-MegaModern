@@ -105,7 +105,7 @@ GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 			pPlanet->NumPlanets++;
 		}
 
-		if (!PrimeSeed)
+		if (!uqm::isOriginalSeed())
 		{
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -118,7 +118,7 @@ GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		pSunDesc->PlanetByte = 3;
 
-		if (!PrimeSeed)
+		if (!uqm::isOriginalSeed())
 		{
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];

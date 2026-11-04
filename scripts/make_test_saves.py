@@ -147,6 +147,19 @@ def late_game(save):
     stamp_random_groups(save)
 
 
+# SeedType values from options/OptionDefs.h.
+STARSEED = 3
+
+
+def starseed_hyperspace(save):
+    """A Starseed game with a custom seed and seeded ships, in hyperspace."""
+    hyperspace(save)
+    save["gameState"]["SEED_TYPE"] = STARSEED
+    sis = save["summary"]["sis"]
+    sis["Seed"] = 123456
+    sis["ShipSeed"] = 1
+
+
 VARIANTS = {
     "hyperspace": hyperspace,
     "quasispace": quasispace,
@@ -155,6 +168,7 @@ VARIANTS = {
     "interplanetary-groups": interplanetary_groups,
     "planet-orbit": planet_orbit,
     "late-game": late_game,
+    "starseed-hyperspace": starseed_hyperspace,
 }
 
 

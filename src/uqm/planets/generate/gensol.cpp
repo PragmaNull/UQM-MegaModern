@@ -123,7 +123,7 @@ static bool
 GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 #define SOL_SEED 334241042L
-	SysGenRNG->reseed(SOL_SEED + (StarSeed ? uqm::UQMOptions::read().customSeed : 0));
+	SysGenRNG->reseed(SOL_SEED + (uqm::isStarSeed() ? uqm::currentSeed().value : 0));
 
 	solarSys->SunDesc[0].NumPlanets = 9;
 	for (uint16_t planetI {0}; planetI < 9; ++planetI)
@@ -183,7 +183,7 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 				pCurDesc->data_index = PELLUCID_WORLD;
 				pCurDesc->radius = EARTH_RADIUS * 1550L /* 3937L */ / 100;
 				pCurDesc->NumPlanets = EXTENDED;
-				if (PrimeSeed)
+				if (uqm::isOriginalSeed())
 				{
 					pCurDesc->angle = FULL_CIRCLE - OCTANT;
 				}
@@ -669,7 +669,7 @@ GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
 		return CustomMineralDeposits(&solarSys->SysInfo, whichNode, info,
 									 5, CHARON_DUST, LIGHT);
 	}
-	else if (!PrimeSeed && matchWorld(solarSys, world, 0, MATCH_PLANET))
+	else if (!uqm::isOriginalSeed() && matchWorld(solarSys, world, 0, MATCH_PLANET))
 	{
 		/* Mercury */
 		return CustomMineralDeposits(&solarSys->SysInfo, whichNode, info,

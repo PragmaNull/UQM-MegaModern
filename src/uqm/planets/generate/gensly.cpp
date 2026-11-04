@@ -55,7 +55,7 @@ GenerateSlylandro_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 		pSunDesc->PlanetByte = 3;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];

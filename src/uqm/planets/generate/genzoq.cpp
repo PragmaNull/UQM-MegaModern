@@ -85,7 +85,7 @@ GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	if (CurStarDescPtr->Index == ZOQFOT_DEFINED)
 	{
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
 			pSunDesc->PlanetByte = 0;
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -118,7 +118,7 @@ GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 			pSunDesc->MoonByte = 0;
 			pPlanet->data_index = GenerateGasGiantWorld();
 
-			if (!PrimeSeed)
+			if (!uqm::isOriginalSeed())
 			{ // preserving the integrity of the universe
 				while (pPlanet->NumPlanets == 0)
 				{

@@ -72,7 +72,7 @@ GenerateSyreen_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -121,7 +121,7 @@ GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,
 			pMoonDesc->data_index = DESTROYED_STARBASE;
 		}
 
-		if (PrimeSeed || StarSeed)
+		if (uqm::isOriginalSeed() || uqm::isStarSeed())
 		{
 			pMoonDesc->radius = MIN_MOON_RADIUS;
 			pMoonDesc->location.x = COSINE(QUADRANT, pMoonDesc->radius);

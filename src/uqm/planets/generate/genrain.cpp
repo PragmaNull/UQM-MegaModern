@@ -77,7 +77,7 @@ GenerateRainbowWorld_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	pPlanet->data_index = RAINBOW_WORLD;
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 		pPlanet->NumPlanets = 0;
 		pPlanet->radius = EARTH_RADIUS * 50L / 100;

@@ -267,7 +267,6 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	sfxVolumeScale = options.sfxVolumeScale.value;
 	speechVolumeScale = options.speechVolumeScale.value;
 
-	g_seedType = options.seedType.value;
 	optRequiresReload = false;
 	optRequiresRestart = false;
 

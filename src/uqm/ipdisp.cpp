@@ -46,7 +46,7 @@ RaceIPSpeed(RACE_ID Index)
 	const uint16_t numRaces = sizeof(defaultMap) / sizeof(uint16_t);
 	static int16_t speedMap[sizeof(defaultMap) / sizeof(uint16_t)] = {0};
 	int x {};
-	if (!uqm::UQMOptions::read().shipSeed && (seedStamp != -1 || speedMap[0] == 0))
+	if (!uqm::currentSeed().ships && (seedStamp != -1 || speedMap[0] == 0))
 	{
 		for (x = 0; x < numRaces; x++)
 		{
@@ -59,7 +59,7 @@ RaceIPSpeed(RACE_ID Index)
 		}
 	}
 
-	if (uqm::UQMOptions::read().shipSeed && (seedStamp != uqm::UQMOptions::read().customSeed || speedMap[0] == 0))
+	if (uqm::currentSeed().ships && (seedStamp != uqm::currentSeed().value || speedMap[0] == 0))
 	{
 		HFLEETINFO hFleet {};
 		for (x = 0; x < numRaces; x++)
@@ -327,7 +327,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 
 	task &= ~IGNORE_FLAGSHIP;
 	// Make sure we have images for the xform and ywing
-	if (uqm::UQMOptions::read().shipSeed)
+	if (uqm::currentSeed().ships)
 	{
 		if (!Xform)
 		{
@@ -843,7 +843,7 @@ spawn_ip_group(IP_GROUP* GroupPtr)
 		{
 			GroupPtr->flags |= IS_PROBE;
 		}
-		if (uqm::UQMOptions::read().shipSeed)
+		if (uqm::currentSeed().ships)
 		{
 			const FLEET_INFO* TemplatePtr = nullptr;
 			HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), GroupPtr->race_id)};

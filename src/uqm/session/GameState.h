@@ -12,6 +12,7 @@
 #include "uqm/session/GameData.h"
 #include "uqm/session/GameFlags.h"
 #include "uqm/session/FlagshipState.h"
+#include "uqm/random/GameSeed.h"
 #include "uqm/sis.h"
 #include "uqm/state.h"
 #include <cstdint>
@@ -67,6 +68,20 @@ public:
 	// Sets all flags to 0, and removes the names that are not GameFlags.
 	void clearFlags() noexcept;
 
+	// The seed of the game. setSeed() also sets the values that a save keeps.
+	[[nodiscard]] const GameSeed& seed() const noexcept
+	{
+		return m_seed;
+	}
+
+	void setSeed(const GameSeed& seed) noexcept
+	{
+		m_seed = seed;
+		m_sis.Seed = seed.value;
+		m_sis.ShipSeed = seed.ships ? 1 : 0;
+		setFlag(GameFlag::SEED_TYPE, static_cast<uint32_t>(seed.type));
+	}
+
 	// The star system that the flagship is in or last visited, or nullptr. It points into star_array.
 	[[nodiscard]] star_desc*& currentStar() noexcept
 	{
@@ -82,6 +97,7 @@ private:
 	uqstl::array<uint32_t, c_gameFlagCount> m_flagValues {};
 	uqstl::map<uqstl::string, uint32_t, uqstl::less<>> m_otherFlags {};
 	star_desc* m_currentStar {};
+	GameSeed m_seed {};
 };
 
 // The state of the current session. Use on the game thread only.

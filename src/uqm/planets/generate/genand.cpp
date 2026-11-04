@@ -67,7 +67,7 @@ GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED)
 	{
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
 			pSunDesc->PlanetByte = 1;
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -92,7 +92,7 @@ GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		pSunDesc->PlanetByte = 0;
 
-		if (!PrimeSeed)
+		if (!uqm::isOriginalSeed())
 		{
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -159,7 +159,7 @@ GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED && PrimeSeed)
+		if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED && uqm::isOriginalSeed())
 		{
 			solarSys->SysInfo.PlanetInfo.AtmoDensity =
 				EARTH_ATMOSPHERE * 144 / 100;

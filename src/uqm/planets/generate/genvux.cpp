@@ -74,7 +74,7 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 	pSunDesc->PlanetByte = 0;
 	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 		uint16_t angle {};
 
@@ -124,7 +124,7 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 	}
 	else
 	{
-		if (StarSeed)
+		if (uqm::isStarSeed())
 		{
 			pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -351,7 +351,7 @@ GenerateVux_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	{
 		if (whichNode == 0)
 		{ // Picked up Zex' Beauty
-			if (GET_GAME_STATE(VUX_BEAST) && StarSeed)
+			if (GET_GAME_STATE(VUX_BEAST) && uqm::isStarSeed())
 			{
 				return true; // no need to core, just pick it up
 			}

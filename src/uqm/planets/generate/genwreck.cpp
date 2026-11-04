@@ -61,9 +61,9 @@ GenerateWreck_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	pSunDesc->PlanetByte = 6;
 
-	if (!PrimeSeed)
+	if (!uqm::isOriginalSeed())
 	{
-		if (!StarSeed)
+		if (!uqm::isStarSeed())
 		{
 			const uint32_t RandVal = SysGenRNG->next();
 			const uint8_t PByte = pSunDesc->PlanetByte + 1;
@@ -79,7 +79,7 @@ GenerateWreck_generatePlanets(SOLARSYS_STATE* solarSys)
 			GenerateDefault_generatePlanets(solarSys);
 		}
 
-		if (StarSeed)
+		if (uqm::isStarSeed())
 		{
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 		}

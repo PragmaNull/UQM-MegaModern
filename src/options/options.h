@@ -268,13 +268,13 @@ struct OptionsStruct : SettingsRegistry
 		 false
 	  };
 	Setting<SeedType> seedType {
-		*this, {.key = "seed.type", .description = "Seed type for solar system generation. Default is \"None\", which is the same seed used in the original game. Changing this will change the layout of the entire star map.", .cli = "--seedtype"},
-		   SeedType::None
-	 };
+		*this, {.key = "seed.type", .description = "Seed type for solar system generation. Default is \"Original\", the star map of the original game. Changing this will change the layout of the entire star map.", .cli = "--seedtype"},
+			SeedType::Original
+	  };
 	Setting<int> customSeed {
-		*this, {.key = "seed.value", .description = "Allows you to customize the internal seed used to generate the solar systems in-game.", .cli = "--customseed"},
-		 PrimeA, settings::isSaneSeed
-	 };
+		*this, {.key = "seed.value", .description = "The seed of new games. Ignored for the seed type \"Original\".", .cli = "--customseed"},
+		  PrimeA, settings::isSaneSeed
+	  };
 	Setting<bool> shipSeed {
 		*this, {.key = "seed.ships", .description = "Seeds the ships assigned to each race. Uses --customseed value.", .cli = "--shipseed"},
 		 false

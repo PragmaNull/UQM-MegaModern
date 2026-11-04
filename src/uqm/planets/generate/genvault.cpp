@@ -66,7 +66,7 @@ GenerateVault_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
-	if (StarSeed)
+	if (uqm::isStarSeed())
 	{
 		pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -77,7 +77,7 @@ GenerateVault_generatePlanets(SOLARSYS_STATE* solarSys)
 		pSunDesc->MoonByte = PlanetByteGen(pPlanet);
 	}
 
-	if (!PrimeSeed)
+	if (!uqm::isOriginalSeed())
 	{
 		pPlanet->data_index = GenerateWorlds(LARGE_ROCKY);
 

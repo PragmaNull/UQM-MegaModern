@@ -4,16 +4,9 @@
 #define UQM_RANDOM_UQMRANDOM_H_
 
 #include "libs/math/Random.h"
-#include "options/OptionDefs.h"
-#include "uqm/session/GameState.h"
+#include "uqm/random/GameSeed.h"
 
 #include <cstdint>
-
-// The seed type of the running game.
-extern uqm::SeedType g_seedType;
-
-#define PrimeSeed (g_seedType == uqm::SeedType::Prime)
-#define StarSeed (g_seedType > uqm::SeedType::Planet)
 
 namespace uqm
 {
@@ -23,16 +16,13 @@ class UQMRandom final : public Random<UQMRandom>
 public:
 	using Random::Random;
 
-	// The planet seed of the game if the seed type is Planet and the seed is sane, else PrimeA.
+	// The seed value of the game if the seed type is Planet and the value is sane, else PrimeA.
 	[[nodiscard]] static uint32_t multiplier() noexcept
 	{
-		if (g_seedType == SeedType::Planet)
+		const GameSeed& seed {currentSeed()};
+		if (seed.type == SeedType::Planet && SANE_SEED(seed.value))
 		{
-			const int32_t planetSeed {gameState().sis().Seed};
-			if (SANE_SEED(planetSeed))
-			{
-				return static_cast<uint32_t>(planetSeed);
-			}
+			return static_cast<uint32_t>(seed.value);
 		}
 		return PrimeA;
 	}

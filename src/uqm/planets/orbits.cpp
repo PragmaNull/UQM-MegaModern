@@ -560,7 +560,7 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 	const bool GasGiant = pPD && pPD->pPrevDesc && (pPD->pPrevDesc->data_index & ~PLANET_SHIELDED) >= FIRST_GAS_GIANT;
 	if (GeneratingMoons)
 	{
-		MaxPlanet = (PrimeSeed || (StarSeed && !GasGiant) ? FIRST_LARGE_ROCKY_WORLD : (StarSeed ? FIRST_GAS_GIANT : LAST_LARGE_ROCKY_WORLD));
+		MaxPlanet = (uqm::isOriginalSeed() || (uqm::isStarSeed() && !GasGiant) ? FIRST_LARGE_ROCKY_WORLD : (uqm::isStarSeed() ? FIRST_GAS_GIANT : LAST_LARGE_ROCKY_WORLD));
 	}
 	else
 	{
@@ -848,7 +848,7 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 	uint8_t starColor {STAR_COLOR(CurStarDescPtr->Type)};
 	// Terrible, but efficient, hack to ensure some semblance of sanity.
 	// Eventually, we will need further code if we care about habitable homes.
-	if (StarSeed && starColor == RED_BODY)
+	if (uqm::isStarSeed() && starColor == RED_BODY)
 	{
 		starColor = ORANGE_BODY;
 	}
@@ -861,7 +861,7 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 
 	// This ensures the planets are at least a certain distance apart, which
 	// mirrors UNSCALE_RADIUS logic from FillOrbits (radius / 2^6 / 5)
-	if (StarSeed && numPlanets > 1 && pPD[1].radius < habitableRangeMax + 320
+	if (uqm::isStarSeed() && numPlanets > 1 && pPD[1].radius < habitableRangeMax + 320
 		&& pPD[1].radius > habitableRangeMin + 320)
 	{
 		habitableRangeMax = pPD[1].radius - 320;
@@ -886,7 +886,7 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 
 	planetRadii[planetByte] = newRadius;
 
-	if ((StarSeed && numPlanets == 1) || planetRadii[planetByte] < planetRadii[planetByte + 1])
+	if ((uqm::isStarSeed() && numPlanets == 1) || planetRadii[planetByte] < planetRadii[planetByte + 1])
 	{
 		pPD[planetByte].radius = planetRadii[planetByte];
 		pPD[planetByte].angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));

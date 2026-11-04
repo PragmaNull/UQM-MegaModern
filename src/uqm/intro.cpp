@@ -473,7 +473,7 @@ static void
 SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 {
 	//TODO Nullicious: Get rid of goto :(
-	if (!uqm::UQMOptions::read().shipSeed)
+	if (!uqm::currentSeed().ships)
 	{
 		goto SeedDittyPassThru;
 	}
@@ -515,7 +515,7 @@ SeedDittyPassThru:
 static void
 SeedLineSpin(int* x1, int* y1, int* x2, int* y2)
 {
-	if (!uqm::UQMOptions::read().shipSeed || !x1 || !x2 || !y1 || !y2 || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
+	if (!uqm::currentSeed().ships || !x1 || !x2 || !y1 || !y2 || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
 	{
 		goto SeedLineSpinPassThru;
 	}
@@ -536,7 +536,7 @@ SeedLineSpinPassThru:
 static void
 SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 {
-	if (!uqm::UQMOptions::read().shipSeed || !x || !y || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
+	if (!uqm::currentSeed().ships || !x || !y || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
 	{
 		goto SeedTextSpinPassThru;
 	}
@@ -782,7 +782,7 @@ DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::Ditty:
 				{ /* set ditty */
-					if (uqm::UQMOptions::read().shipSeed)
+					if (uqm::currentSeed().ships)
 					{
 						SeedDitty(pPIS->Buffer, cmd.text);
 					}
@@ -912,7 +912,7 @@ DoPresentation(void* pIS)
 					int x {cmd.x};
 					int y {cmd.y};
 
-					if (uqm::UQMOptions::read().shipSeed)
+					if (uqm::currentSeed().ships)
 					{
 						SeedTextSpin(pPIS->Buffer, sizeof(pPIS->Buffer),
 									 cmd.text.c_str(), &x, &y);
@@ -935,7 +935,7 @@ DoPresentation(void* pIS)
 
 					SetContextForeGroundColor(pPIS->TextColor);
 					SetContextBackGroundColor(pPIS->TextBackColor);
-					if (uqm::UQMOptions::read().shipSeed && !strncmp(pPIS->Buffer, "SPATHI", 6))
+					if (uqm::currentSeed().ships && !strncmp(pPIS->Buffer, "SPATHI", 6))
 					{ // Manually space the SPATHI text
 						DoSpinText("SP", x,
 								   y + RES_SCALE(7),
@@ -1207,7 +1207,7 @@ DoPresentation(void* pIS)
 					int y1 {cmd.y};
 					int x2 {cmd.x2};
 					int y2 {cmd.y2};
-					if (uqm::UQMOptions::read().shipSeed)
+					if (uqm::currentSeed().ships)
 					{
 						SeedLineSpin(&x1, &y1, &x2, &y2);
 					}

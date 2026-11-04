@@ -87,7 +87,7 @@ void LoadMasterShipList(void (*YieldProcessing)(void))
 		InsertQueue(&master_q, hBuiltShip, hStarShip);
 		AdvanceLoadProgress();
 	}
-	master_ship_seed = uqm::UQMOptions::read().shipSeed ? uqm::UQMOptions::read().customSeed : -1;
+	master_ship_seed = uqm::currentSeed().ships ? uqm::currentSeed().value : -1;
 }
 
 void FreeMasterShipList(void)
@@ -113,12 +113,12 @@ void FreeMasterShipList(void)
 
 void ReloadMasterShipList(void (*YieldProcessing)(void))
 {
-	if ((uqm::UQMOptions::read().shipSeed && master_ship_seed != uqm::UQMOptions::read().customSeed)
-		|| (!uqm::UQMOptions::read().shipSeed && master_ship_seed != -1))
+	if ((uqm::currentSeed().ships && master_ship_seed != uqm::currentSeed().value)
+		|| (!uqm::currentSeed().ships && master_ship_seed != -1))
 	{
 		FreeMasterShipList();
 		LoadMasterShipList(YieldProcessing);
-		master_ship_seed = uqm::UQMOptions::read().shipSeed ? uqm::UQMOptions::read().customSeed : -1;
+		master_ship_seed = uqm::currentSeed().ships ? uqm::currentSeed().value : -1;
 	}
 }
 

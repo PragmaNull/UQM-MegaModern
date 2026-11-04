@@ -189,9 +189,7 @@ bool applySettingChange(const SettingBase& setting)
 	}
 	else if (key == "seed.type" || key == "seed.value")
 	{
-		g_seedType = *options.seedType;
-		const bool primeSeed {*options.seedType == SeedType::None || *options.seedType == SeedType::Prime};
-		if (primeSeed && *options.customSeed != PrimeA)
+		if (*options.seedType == SeedType::Original && *options.customSeed != PrimeA)
 		{
 			UQMOptions::edit().customSeed = PrimeA;
 			return true;

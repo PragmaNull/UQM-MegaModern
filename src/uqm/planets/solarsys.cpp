@@ -429,7 +429,7 @@ LoadNebulaeFrame(GFXPOINT location)
 		return nullptr;
 	}
 
-	if (!PrimeSeed)
+	if (!uqm::isOriginalSeed())
 	{
 		uint32_t rand_val {};
 
@@ -636,12 +636,12 @@ GetRandomSeedForStar(const STAR_DESC* star)
 	fmt::print(stderr, "Get Random Seed For Star. %05.1f : %05.1f "
 					   "[{}] (seed {}) = {}.  Plot ID {} ({}).\n",
 			   (float)star->star_pt.x / 10, (float)star->star_pt.y / 10,
-			   uqm::makeDword(star->star_pt.x, star->star_pt.y), uqm::UQMOptions::read().customSeed,
+			   uqm::makeDword(star->star_pt.x, star->star_pt.y), uqm::currentSeed().value,
 			   uqm::makeDword(star->star_pt.x, star->star_pt.y)
-				   + (StarSeed ? uqm::UQMOptions::read().customSeed : 0),
+				   + (uqm::isStarSeed() ? uqm::currentSeed().value : 0),
 			   star->Index, starPresenceString(star->Index));
 #endif
-	return uqm::makeDword(star->star_pt.x, star->star_pt.y) + (StarSeed ? uqm::UQMOptions::read().customSeed : 0);
+	return uqm::makeDword(star->star_pt.x, star->star_pt.y) + (uqm::isStarSeed() ? uqm::currentSeed().value : 0);
 }
 
 uint32_t

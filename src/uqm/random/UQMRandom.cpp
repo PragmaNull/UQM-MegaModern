@@ -5,8 +5,6 @@
 #include "core/log/log.h"
 #include "uqm/session/GameSession.h"
 
-uqm::SeedType g_seedType {};
-
 namespace uqm
 {
 

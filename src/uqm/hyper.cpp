@@ -76,7 +76,7 @@ RaceHyperSpeed(RACE_ID Index)
 	const uint16_t numRaces = sizeof(defaultMap) / sizeof(int);
 	static int16_t speedMap[numRaces] = {0}; // set urquan drone to 0.
 	int x {};
-	if (!uqm::UQMOptions::read().shipSeed && (seedStamp != -1 || speedMap[0] == 0))
+	if (!uqm::currentSeed().ships && (seedStamp != -1 || speedMap[0] == 0))
 	{
 		for (x = 0; x < numRaces; x++)
 		{
@@ -89,7 +89,7 @@ RaceHyperSpeed(RACE_ID Index)
 		}
 	}
 
-	if (uqm::UQMOptions::read().shipSeed && (seedStamp != uqm::UQMOptions::read().customSeed || speedMap[0] == 0))
+	if (uqm::currentSeed().ships && (seedStamp != uqm::currentSeed().value || speedMap[0] == 0))
 	{
 		HFLEETINFO hFleet {};
 		for (x = 0; x < numRaces; x++)

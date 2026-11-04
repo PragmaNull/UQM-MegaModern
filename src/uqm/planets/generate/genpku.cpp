@@ -65,7 +65,7 @@ GeneratePkunk_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 		pPlanet->data_index = WATER_WORLD;
 		pPlanet->NumPlanets = 1;
@@ -77,7 +77,7 @@ GeneratePkunk_generatePlanets(SOLARSYS_STATE* solarSys)
 	}
 	else
 	{
-		if (StarSeed)
+		if (uqm::isStarSeed())
 		{
 			pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];

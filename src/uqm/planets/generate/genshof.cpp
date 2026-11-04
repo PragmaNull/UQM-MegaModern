@@ -152,7 +152,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 	pSunDesc->PlanetByte = 0;
 	pSunDesc->MoonByte = 0;
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 #define NUM_PLANETS 6
 		pSunDesc->NumPlanets = NUM_PLANETS;
@@ -186,7 +186,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		FillOrbits(solarSys, NUMPLANETS_PDESC, nullptr, false);
 
-		if (StarSeed)
+		if (uqm::isStarSeed())
 		{
 			pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 		}

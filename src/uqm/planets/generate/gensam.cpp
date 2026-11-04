@@ -167,7 +167,7 @@ GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
 			pPlanet->NumPlanets = 1;
 		}
@@ -196,7 +196,7 @@ GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 		pPlanet->data_index = GenerateHabitableWorld();
 
 		if (!GET_GAME_STATE(KOHR_AH_FRENZY)
-			&& (RaceDead(ARILOU_SHIP) || StarSeed))
+			&& (RaceDead(ARILOU_SHIP) || uqm::isStarSeed()))
 		{
 			pPlanet->data_index |= PLANET_SHIELDED;
 		}
@@ -264,7 +264,7 @@ GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
 		{
 			pMoonDesc->data_index = SA_MATRA;
 
-			if (PrimeSeed)
+			if (uqm::isOriginalSeed())
 			{
 				pMoonDesc->radius = MIN_MOON_RADIUS + (2 * MOON_DELTA);
 				rand_val = SysGenRNG->next();

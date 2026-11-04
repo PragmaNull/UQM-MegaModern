@@ -418,7 +418,7 @@ static int
 luaUqm_comm_getPoint(lua_State* luaState)
 {
 	const char* prime_text = luaL_checkstring(luaState, 1);
-	if (!StarSeed)
+	if (!uqm::isStarSeed())
 	{
 		lua_pushstring(luaState, prime_text);
 		return 1;
@@ -482,7 +482,7 @@ static int
 luaUqm_comm_getStarName(lua_State* luaState)
 {
 	const char* prime_text = luaL_checkstring(luaState, 1);
-	if (!StarSeed)
+	if (!uqm::isStarSeed())
 	{
 		lua_pushstring(luaState, prime_text);
 		return 1;
@@ -523,7 +523,7 @@ static int
 luaUqm_comm_getConstellation(lua_State* luaState)
 {
 	const char* prime_text = luaL_checkstring(luaState, 1);
-	if (!StarSeed)
+	if (!uqm::isStarSeed())
 	{
 		lua_pushstring(luaState, prime_text);
 		return 1;
@@ -558,7 +558,7 @@ static int
 luaUqm_comm_getColor(lua_State* luaState)
 {
 	const char* prime_text = luaL_checkstring(luaState, 1);
-	if (!StarSeed)
+	if (!uqm::isStarSeed())
 	{
 		lua_pushstring(luaState, prime_text);
 		return 1;
@@ -633,7 +633,7 @@ static int
 luaUqm_comm_swapIfSeeded(lua_State* luaState)
 {
 	const char* prime_text = luaL_checkstring(luaState, 1);
-	if (!StarSeed)
+	if (!uqm::isStarSeed())
 	{
 		lua_pushstring(luaState, prime_text);
 		return 1;

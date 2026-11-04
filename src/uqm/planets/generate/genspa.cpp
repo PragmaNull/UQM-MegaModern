@@ -86,7 +86,7 @@ GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pPlanet->NumPlanets = 1;
 
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
 			pPlanet->radius = EARTH_RADIUS * 1150L / 100;
 			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
@@ -149,7 +149,7 @@ GenerateSpathi_generateMoons(SOLARSYS_STATE* solarSys,
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
 			uint16_t angle {};
 

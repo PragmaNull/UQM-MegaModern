@@ -70,7 +70,7 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 		pSunDesc->PlanetByte = 1;
 		pSunDesc->MoonByte = 0;
 
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
 			GenerateDefault_generatePlanets(solarSys);
 
@@ -81,7 +81,7 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 		}
 		else
 		{
-			if (!StarSeed)
+			if (!uqm::isStarSeed())
 			{
 				const uint32_t RandVal = SysGenRNG->next();
 				const uint8_t PByte = pSunDesc->PlanetByte + 1;
@@ -120,7 +120,7 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pSunDesc->PlanetByte = 3;
 
-		if (!PrimeSeed)
+		if (!uqm::isOriginalSeed())
 		{
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 		}

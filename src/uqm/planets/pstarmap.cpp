@@ -871,91 +871,91 @@ bool isHomeworld(uint8_t Index)
 	{
 		case CHMMR_DEFINED:
 			if (IsHomeworldKnown(CHMMR_HOME)
-				&& (CheckAlliance(CHMMR_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(CHMMR_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case ORZ_DEFINED:
 			if (IsHomeworldKnown(ORZ_HOME)
-				&& (CheckAlliance(ORZ_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(ORZ_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case PKUNK_DEFINED:
 			if (IsHomeworldKnown(PKUNK_HOME)
-				&& (CheckAlliance(PKUNK_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(PKUNK_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case SHOFIXTI_DEFINED:
 			if (IsHomeworldKnown(SHOFIXTI_HOME)
-				&& (CheckAlliance(SHOFIXTI_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(SHOFIXTI_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case SPATHI_DEFINED:
 			if (IsHomeworldKnown(SPATHI_HOME)
-				&& (CheckAlliance(SPATHI_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(SPATHI_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case SUPOX_DEFINED:
 			if (IsHomeworldKnown(SUPOX_HOME)
-				&& (CheckAlliance(SUPOX_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(SUPOX_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case THRADD_DEFINED:
 			if (IsHomeworldKnown(THRADDASH_HOME)
-				&& (CheckAlliance(THRADDASH_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(THRADDASH_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case UTWIG_DEFINED:
 			if (IsHomeworldKnown(UTWIG_HOME)
-				&& (CheckAlliance(UTWIG_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(UTWIG_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case VUX_DEFINED:
 			if (IsHomeworldKnown(VUX_HOME)
-				&& (CheckAlliance(VUX_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(VUX_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case YEHAT_DEFINED:
 			if (IsHomeworldKnown(YEHAT_HOME)
-				&& (CheckAlliance(YEHAT_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(YEHAT_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case DRUUGE_DEFINED:
 			if (IsHomeworldKnown(DRUUGE_HOME)
-				&& (CheckAlliance(DRUUGE_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(DRUUGE_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case ILWRATH_DEFINED:
 			if (IsHomeworldKnown(ILWRATH_HOME)
-				&& (CheckAlliance(ILWRATH_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(ILWRATH_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case MYCON_DEFINED:
 			if (IsHomeworldKnown(MYCON_HOME)
-				&& (CheckAlliance(MYCON_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(MYCON_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
@@ -968,28 +968,28 @@ bool isHomeworld(uint8_t Index)
 			break;
 		case UMGAH_DEFINED:
 			if (IsHomeworldKnown(UMGAH_HOME)
-				&& (CheckAlliance(UMGAH_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(UMGAH_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case ZOQFOT_DEFINED:
 			if (IsHomeworldKnown(ZOQFOTPIK_HOME)
-				&& (CheckAlliance(ZOQFOTPIK_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(ZOQFOTPIK_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case SYREEN_DEFINED:
 			if (IsHomeworldKnown(SYREEN_HOME)
-				&& (CheckAlliance(SYREEN_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(SYREEN_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}
 			break;
 		case ANDROSYNTH_DEFINED:
 			if (IsHomeworldKnown(ANDROSYNTH_HOME)
-				&& (CheckAlliance(ANDROSYNTH_SHIP) != DEAD_GUY || StarSeed))
+				&& (CheckAlliance(ANDROSYNTH_SHIP) != DEAD_GUY || uqm::isStarSeed()))
 			{
 				raceBool = true;
 			}

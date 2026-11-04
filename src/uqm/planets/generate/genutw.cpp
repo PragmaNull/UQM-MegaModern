@@ -94,7 +94,7 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		GenerateDefault_generatePlanets(solarSys);
 
-		if (PrimeSeed)
+		if (uqm::isOriginalSeed())
 		{
 			pSunDesc->PlanetByte = 0;
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -121,9 +121,9 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 		pSunDesc->PlanetByte = 5;
 		pSunDesc->MoonByte = 1;
 
-		if (!PrimeSeed)
+		if (!uqm::isOriginalSeed())
 		{
-			if (!StarSeed)
+			if (!uqm::isStarSeed())
 			{
 				const uint32_t RandVal = SysGenRNG->next();
 				const uint8_t PByte = pSunDesc->PlanetByte + 1;
@@ -138,14 +138,14 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 			FillOrbits(solarSys, pSunDesc->NumPlanets,
 					   solarSys->PlanetDesc, false);
 
-			if (StarSeed)
+			if (uqm::isStarSeed())
 			{
 				GenerateGasGiantRanged(solarSys);
 			}
 
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-			if (!StarSeed)
+			if (!uqm::isStarSeed())
 			{
 				pPlanet->data_index = GenerateWorlds(ONLY_GAS);
 			}

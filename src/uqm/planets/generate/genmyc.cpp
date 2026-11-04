@@ -123,7 +123,7 @@ GenerateMycon_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	pSunDesc->PlanetByte = 0;
 
-	if (!PrimeSeed)
+	if (!uqm::isOriginalSeed())
 	{
 		pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 	}
@@ -132,7 +132,7 @@ GenerateMycon_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	pPlanet->data_index = SHATTERED_WORLD;
 
-	if (PrimeSeed)
+	if (uqm::isOriginalSeed())
 	{
 		pPlanet->radius = EARTH_RADIUS * 80L / 100;
 		if (pPlanet->NumPlanets > 2)
@@ -289,7 +289,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 	GenerateDefault_generateOrbital(solarSys, world);
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& !PrimeSeed
+		&& !uqm::isOriginalSeed()
 		&& (CurStarDescPtr->Index != EGG_CASE0_DEFINED || isDifficulty(uqm::Difficulty::Hard)))
 	{
 		PLANET_INFO* pPlanetInfo = &solarSys->SysInfo.PlanetInfo;

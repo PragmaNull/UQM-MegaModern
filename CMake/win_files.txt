@@ -664,6 +664,8 @@ src/uqm/process.cpp
 src/uqm/process.h
 src/uqm/races.h
 src/uqm/resinst.h
+src/uqm/random/GameSeed.cpp
+src/uqm/random/GameSeed.h
 src/uqm/random/UQMRandom.cpp
 src/uqm/random/UQMRandom.h
 src/uqm/restart.cpp

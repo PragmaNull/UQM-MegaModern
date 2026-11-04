@@ -285,7 +285,7 @@ int Starcon2Main(void* threadArg)
 
 	SplashScreen(BackgroundInitKernel);
 
-	uqm::log::info("Set Seed Type: {}", toString(g_seedType));
+	uqm::log::info("Set Seed Type: {}", toString(uqm::UQMOptions::read().seedType.value));
 	uqm::log::info("Set Seed: {}", uqm::UQMOptions::read().customSeed.value);
 	uqm::log::info("Set Difficulty: {:s}", uqm::UQMOptions::read().optDifficulty.value);
 	uqm::log::info("Set Extended: {}", BOOL_STR(uqm::UQMOptions::read().extended));
@@ -308,7 +308,7 @@ int Starcon2Main(void* threadArg)
 		// Debug info when starting a new game
 		if (LastActivity == (CHECK_LOAD | CHECK_RESTART))
 		{
-			uqm::log::info("New Game Seed Type: {}", toString(g_seedType));
+			uqm::log::info("New Game Seed Type: {}", toString(uqm::currentSeed().type));
 			uqm::log::info("New Game Seed: {}", GLOBAL_SIS(Seed));
 			uqm::log::info("New Game Difficulty: {:s}", getDifficulty());
 			uqm::log::info("New Game Extended: {}",

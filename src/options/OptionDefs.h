@@ -15,13 +15,17 @@ namespace uqm
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+// What the seed of a game generates. A save keeps the number.
 enum class SeedType
 {
-	None = 0,
+	// The star map and plot of the original game.
+	Original = 0,
+	// Planets and solar systems.
 	Planet = 1,
+	// Also the Melnorme, Rainbow World and Quasispace locations.
 	MRQ = 2,
-	Prime = 3,
-	StarSeed = 4
+	// Also all plot locations.
+	Starseed = 3,
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -290,6 +294,21 @@ template <>
 	if (compareICase(name, "3DO") || compareICase(name, "Console3DO"))
 	{
 		return CoarseScanStyle::Pictograms;
+	}
+	return uqstl::nullopt;
+}
+
+// Settings before the rename used "None" for Original and "Prime" for Starseed.
+template <>
+[[nodiscard]] inline uqstl::optional<SeedType> fromOldEnumName(uqstl::string_view name)
+{
+	if (compareICase(name, "None"))
+	{
+		return SeedType::Original;
+	}
+	if (compareICase(name, "Prime"))
+	{
+		return SeedType::Starseed;
 	}
 	return uqstl::nullopt;
 }

@@ -25,6 +25,9 @@
 
 #include "core/stl/memory.h"
 #include "core/stl/thread.h"
+#include "core/stl/optional.h"
+#include "core/stl/utility.h"
+#include "uqm/random/GameSeed.h"
 #include <cstdint>
 
 namespace uqm
@@ -63,6 +66,18 @@ public:
 		return *m_lua;
 	}
 
+	// The seed that the next new game uses instead of the seed from the settings.
+	void setNewGameSeed(const GameSeed& seed) noexcept
+	{
+		m_newGameSeed = seed;
+	}
+
+	// Returns the seed from setNewGameSeed() once, then nullopt.
+	[[nodiscard]] uqstl::optional<GameSeed> takeNewGameSeed() noexcept
+	{
+		return uqstl::exchange(m_newGameSeed, uqstl::nullopt);
+	}
+
 	// What the game program does now. It stays between sessions.
 	[[nodiscard]] uint16_t& activity() noexcept
 	{
@@ -85,6 +100,7 @@ private:
 	uqstl::unique_ptr<GameSession> m_session {};
 	uint16_t m_activity {};
 	uint8_t m_globalFlags {};
+	uqstl::optional<GameSeed> m_newGameSeed {};
 
 	static UQMGame* s_instance;
 };

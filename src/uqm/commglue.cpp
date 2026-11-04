@@ -186,7 +186,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 	const char* pClip {CommData.ConversationPhrases->soundClip(index - 1)};
 	const char* pTimeStamp {CommData.ConversationPhrases->timestamp(index - 1)};
 
-	if (!StarSeed)
+	if (!uqm::isStarSeed())
 	{
 		if (uqm::UQMLua::needsInterpolate(pStr))
 		{

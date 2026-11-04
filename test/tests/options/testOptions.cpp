@@ -75,9 +75,9 @@ TEST_F(OptionsTests, OptionT_DefaultCtorDoesNotSetFlag)
 // Enum toString functions for SeedType and EmulationMode
 TEST_F(OptionsTests, EnumToString_SeedAndEmulation)
 {
-	EXPECT_STREQ(toString(SeedType::None), "None");
+	EXPECT_STREQ(toString(SeedType::Original), "Original");
 	EXPECT_STREQ(toString(SeedType::Planet), "Planet");
-	EXPECT_STREQ(toString(SeedType::Prime), "Prime");
+	EXPECT_STREQ(toString(SeedType::Starseed), "Starseed");
 	EXPECT_STREQ(toString(EmulationMode::Console3DO), "3DO");
 	EXPECT_STREQ(toString(EmulationMode::PC), "PC");
 
@@ -123,19 +123,19 @@ TEST_F(OptionsTests, OptionT_CopyAndMovePreserveState)
 {
 	OptionT<SeedType> original(SeedType::MRQ);
 	EXPECT_FALSE(original.set); // constructor should not set
-	original = SeedType::Prime;
+	original = SeedType::Starseed;
 	EXPECT_TRUE(original.set);
-	EXPECT_EQ(original.value, SeedType::Prime);
+	EXPECT_EQ(original.value, SeedType::Starseed);
 
 	// Copy
 	const OptionT<SeedType> copy = original;
 	EXPECT_TRUE(copy.set);
-	EXPECT_EQ(copy.value, SeedType::Prime);
+	EXPECT_EQ(copy.value, SeedType::Starseed);
 
 	// Move (moves the value and set flag; semantics same for trivially copyable)
 	const OptionT<SeedType> moved = std::move(original);
 	EXPECT_TRUE(moved.set);
-	EXPECT_EQ(moved.value, SeedType::Prime);
+	EXPECT_EQ(moved.value, SeedType::Starseed);
 }
 
 // Validate that OptionT<T>::toString is usable for types that have uqm::toString overloads (SeedType tested above).
@@ -214,10 +214,10 @@ TEST_F(OptionsTests, ParseOptionValue_NumericFloatBoolAndEnum)
 	ASSERT_TRUE(mb.has_value());
 	EXPECT_FALSE(*mb);
 
-	// enum underlying integer parsing -> SeedType::Prime == 3
+	// enum underlying integer parsing -> SeedType::Starseed == 3
 	auto seed = parseOptionValue<SeedType>("3", "seed-test");
 	ASSERT_TRUE(seed.has_value());
-	EXPECT_EQ(*seed, SeedType::Prime);
+	EXPECT_EQ(*seed, SeedType::Starseed);
 }
 
 TEST_F(OptionsTests, ParseOptionValue_InvalidInputsThrow)
