@@ -30,6 +30,7 @@
 #include "hyper.h"	// JSD: For arilou_home in the portal map
 #include <stdlib.h> // bsearch needs this or it cores!
 #include <time.h>	// For the clock.
+#include "uqm/random/UQMRandom.h"
 
 // The "starmap_array" variable (from StarmapGlobalData) is only used to intialize
 // the "star_array" global variable.  This is now intentionally a copy
@@ -43,7 +44,7 @@ STAR_DESC star_array[NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 3] {};
 //		{{~0, ~0}, 0, 0, 0, 0}};
 const GFXPOINT* constel_array;
 // JSD Give my own starseed
-RandomContext* StarGenRNG;
+uqstl::optional<uqm::UQMRandom> StarGenRNG {};
 PORTAL_LOCATION portal_map[NUM_HYPER_VORTICES + 1] {};
 //PORTAL_LOCATION portal_map[NUM_HYPER_VORTICES+1] =
 //		{[0 ... (NUM_HYPER_VORTICES)] = {{0, 0}, {0, 0}, nullptr}};
@@ -322,13 +323,13 @@ void SeedStarmap(STAR_DESC* starmap)
 	if (!StarGenRNG)
 	{
 		fmt::print(stderr, "****SeedStarmap creating a STAR GEN RNG****\n");
-		StarGenRNG = RandomContext_New();
+		StarGenRNG.emplace();
 	}
-	RandomContext_SeedRandom(StarGenRNG, uqm::UQMOptions::read().customSeed.value);
+	StarGenRNG->reseed(uqm::UQMOptions::read().customSeed.value);
 
 	for (uint16_t i {0}; i < NUM_SOLAR_SYSTEMS; i++)
 	{
-		rand_val = RandomContext_Random(StarGenRNG);
+		rand_val = StarGenRNG->next();
 		// 469 is the default number of dwarf stars, and 24 the number of
 		// giant. Super giant is handled elsewhere.
 		starmap[i].Type = MAKE_STAR(uqm::lowByte(rand_val) % (469 + 24) >= 24 ? DWARF_STAR : GIANT_STAR,
@@ -1309,7 +1310,7 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 	if (!StarGenRNG)
 	{
 		fmt::print(stderr, "****SeedPlot creating a STAR GEN RNG****\n");
-		StarGenRNG = RandomContext_New();
+		StarGenRNG.emplace();
 	}
 	if (!timer_running)
 	{
@@ -1324,7 +1325,7 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 		next_plot = ~0;
 		my_clock = true;
 		timer = clock();
-		RandomContext_SeedRandom(StarGenRNG, uqm::UQMOptions::read().customSeed.value);
+		StarGenRNG->reseed(uqm::UQMOptions::read().customSeed.value);
 		// nullptr out all the plot pointers so that it "places" pregens
 		// in order to properly Plotify () the pregens.  ARILOU don't need.
 		for (i = 1; i < NUM_PLOTS; i++)
@@ -1379,7 +1380,7 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 		return NUM_PLOTS + 1;
 	}
 
-	rand_val = RandomContext_Random(StarGenRNG);
+	rand_val = StarGenRNG->next();
 	// choose a plot by weight
 	if ((plot_id = GetNextPlot(plotmap)) == NUM_PLOTS)
 	{
@@ -1657,9 +1658,9 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 	if (!StarGenRNG)
 	{
 		fmt::print(stderr, "****SeedQuasispace creating a STAR GEN RNG****\n");
-		StarGenRNG = RandomContext_New();
+		StarGenRNG.emplace();
 	}
-	RandomContext_SeedRandom(StarGenRNG, uqm::UQMOptions::read().customSeed.value);
+	StarGenRNG->reseed(uqm::UQMOptions::read().customSeed.value);
 	// NUM_HYPER_VORTICES is the Arilou Homeworld, but no reason to move it
 	for (i = 0; i < NUM_HYPER_VORTICES; i++)
 	{
@@ -1669,7 +1670,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 			// Place a portal near, but not too near, SOL first.
 			if (i == 0)
 			{
-				rand_val = RandomContext_Random(StarGenRNG);
+				rand_val = StarGenRNG->next();
 				// I know this seems arbitrary but rand(256) * 9 gives a value
 				// between 0 and 2295.  Half of that is below 1147, the other
 				// half above.
@@ -1694,7 +1695,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 			// Place a portal, make sure it is MIN_PORTAL from the others
 			else
 			{
-				rand_val = RandomContext_Random(StarGenRNG);
+				rand_val = StarGenRNG->next();
 				// Squeeze gently at the sides to prevent being close to
 				// map edges.  This should give a value between
 				// 189 [0] and 9810 [255].
@@ -1755,7 +1756,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 		while (!valid)
 		{
 			valid = true;
-			rand_val = RandomContext_Random(StarGenRNG);
+			rand_val = StarGenRNG->next();
 			portalmap[i].quasi_pt = GFXPOINT {(uqm::lowByte(rand_val) * 51 / 256 - 25) * VORTEX_SCALE + 5000,
 											  (uqm::highByte(rand_val) * 51 / 256 - 25) * VORTEX_SCALE + 5000};
 			for (j = 0; j < i; j++)

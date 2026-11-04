@@ -31,6 +31,7 @@
 #include "gendef.h"
 #include "save.h"
 #include <stdlib.h>
+#include "uqm/random/UQMRandom.h"
 
 
 // Allocate a new STARSHIP or SHIP_FRAGMENT and put it in the queue
@@ -1523,19 +1524,17 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "SeedFleet creating a STAR GEN RNG\n");
 #endif
-		StarGenRNG = RandomContext_New();
+		StarGenRNG.emplace();
 		myRNG = true;
 	}
-	RandomContext_SeedRandom(StarGenRNG,
-							 GetRandomSeedForStar(plotmap[home].star));
-	rand_val_x = RandomContext_Random(StarGenRNG);
-	rand_val_y = RandomContext_Random(StarGenRNG);
+	StarGenRNG->reseed(GetRandomSeedForStar(plotmap[home].star));
+	rand_val_x = StarGenRNG->next();
+	rand_val_y = StarGenRNG->next();
 	if (visit > 0 && visit != SAMATRA_DEFINED && visit < NUM_PLOTS)
 	{
-		RandomContext_SeedRandom(StarGenRNG,
-								 GetRandomSeedForStar(plotmap[visit].star));
-		rand_val_x += RandomContext_Random(StarGenRNG) % sizeof(uint16_t);
-		rand_val_y += RandomContext_Random(StarGenRNG) % sizeof(uint16_t);
+		StarGenRNG->reseed(GetRandomSeedForStar(plotmap[visit].star));
+		rand_val_x += StarGenRNG->next() % sizeof(uint16_t);
+		rand_val_y += StarGenRNG->next() % sizeof(uint16_t);
 		// If there's a conflict, this will assist in WARPATH
 		warpoint = plotmap[visit].star_pt;
 	}
@@ -1545,8 +1544,8 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 		// the SAMATRA center.  Pick a spot nearby and then jitter from there.
 		// First, imagine a coord near SAMATRA that Utwig/Supox/Thraddash can
 		// sort of share (it will bias in the general direction of home).
-		RandomContext_SeedRandom(StarGenRNG, GetRandomSeedForStar(plotmap[visit].star));
-		const uint16_t rand_val_s = RandomContext_Random(StarGenRNG);
+		StarGenRNG->reseed(GetRandomSeedForStar(plotmap[visit].star));
+		const uint16_t rand_val_s = StarGenRNG->next();
 		warpoint = GFXPOINT {
 			plotmap[visit].star_pt.x + uqm::lowByte(rand_val_s) * 2 * AWAY_X(visit),
 			plotmap[visit].star_pt.y + uqm::highByte(rand_val_s) * 2 * AWAY_Y(visit)};
@@ -1797,8 +1796,7 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 #endif
 	if (StarGenRNG && myRNG)
 	{
-		RandomContext_Delete(StarGenRNG);
-		StarGenRNG = nullptr;
+		StarGenRNG.reset();
 	}
 	return (location);
 }

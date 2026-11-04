@@ -64,6 +64,7 @@ set(uqm_tests_lib_files
 	"tests/lib/test_soundbank.cpp"
 	"tests/lib/test_Math2D.cpp"
 	"tests/lib/test_net.cpp"
+	"tests/lib/test_Random.cpp"
 )
 
 source_group("tests\\lib" FILES ${uqm_tests_lib_files})

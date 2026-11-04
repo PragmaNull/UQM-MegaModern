@@ -43,7 +43,7 @@
 #include "../pickmele.h"
 // for various update functions.
 #include "libs/mathlib.h"
-// for TFB_SeedRandom
+#include "uqm/random/UQMRandom.h"
 
 
 static bool

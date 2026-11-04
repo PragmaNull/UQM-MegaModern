@@ -26,6 +26,7 @@
 #include "../../build.h"
 #include "libs/mathlib.h"
 #include "../../comm.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateVault_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -71,7 +72,7 @@ GenerateVault_generatePlanets(SOLARSYS_STATE* solarSys)
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 		pPlanet->NumPlanets =
-			RandomContext_GetSeed(SysGenRNG) % 5 == 0 ? 2 : 1;
+			SysGenRNG->seed() % 5 == 0 ? 2 : 1;
 
 		pSunDesc->MoonByte = PlanetByteGen(pPlanet);
 	}

@@ -27,6 +27,7 @@
 #include "../../gamestr.h"
 #include "../lander.h"
 #include "../planets.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys);
@@ -174,7 +175,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 	}
 	else
 	{
-		uint32_t rand_val = RandomContext_Random(SysGenRNG);
+		uint32_t rand_val = SysGenRNG->next();
 		uint8_t planet = 0;
 
 		pSunDesc->NumPlanets = GenerateMinPlanets(2);

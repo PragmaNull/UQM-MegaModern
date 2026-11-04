@@ -26,6 +26,7 @@
 // For BattleFrameRateTicks
 #include "libs/mathlib.h"
 #include "libs/time/timelib.h"
+#include "uqm/random/UQMRandom.h"
 
 #define num_generators characteristics.max_thrust
 
@@ -272,7 +273,7 @@ spawn_comet(ELEMENT* ElementPtr)
 			if (ElementPtr->state_flags & PLAYER_SHIP)
 			{
 				CometPtr->turn_wait = 0;
-				facing = (uint16_t)TFB_Random();
+				facing = (uint16_t)uqm::random().next();
 				SetVelocityVector(&CometPtr->velocity,
 								  COMET_SPEED, facing);
 			}
@@ -518,7 +519,7 @@ sentinel_preprocess(ELEMENT* ElementPtr)
 		else
 		{
 			ElementPtr->state_flags &= ~NONSOLID;
-			facing = (uint16_t)TFB_Random();
+			facing = (uint16_t)uqm::random().next();
 			SetVelocityVector(&ElementPtr->velocity,
 							  SENTINEL_SPEED, facing);
 		}
@@ -892,7 +893,7 @@ samatra_preprocess(ELEMENT* ElementPtr)
 				GeneratorPtr->current.image.frame =
 					SetAbsFrameIndex(
 						StarShipPtr->RaceDescPtr->ship_data.special[0],
-						(uint8_t)TFB_Random() % 10);
+						(uint8_t)uqm::random().next() % 10);
 
 				GeneratorPtr->preprocess_func = generator_preprocess;
 				GeneratorPtr->collision_func = generator_collision;

@@ -24,6 +24,7 @@
 #include "../../state.h"
 #include "../../gamestr.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateColony_initNpcs(SOLARSYS_STATE* solarSys);
@@ -113,7 +114,7 @@ GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys)
 	}
 	else
 	{
-		const uint32_t rand_val = RandomContext_Random(SysGenRNG);
+		const uint32_t rand_val = SysGenRNG->next();
 
 		pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];

@@ -32,6 +32,7 @@
 #include "uqm/oscill.h"
 #include "uqm/nameref.h"
 #include "uqm/controls.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static void TellMission(RESPONSE_REF R);
@@ -410,7 +411,7 @@ ByeBye(RESPONSE_REF R)
 	{
 		RESPONSE_REF pStr = 0;
 
-		switch ((uint8_t)TFB_Random() & 7)
+		switch ((uint8_t)uqm::random().next() & 7)
 		{
 			case 0:
 				pStr = NORMAL_GOODBYE_A;
@@ -1951,7 +1952,7 @@ CheckBulletins(bool Repeat)
 				}
 				else
 				{
-					switch ((uint8_t)TFB_Random() % 7)
+					switch ((uint8_t)uqm::random().next() % 7)
 					{
 						case 0:
 							pIntro = BEFORE_WE_GO_ON_1;
@@ -2034,7 +2035,7 @@ NormalStarbase(RESPONSE_REF R)
 			// XXX TODO: This can be simplified now.
 			RESPONSE_REF pStr = 0;
 
-			switch ((uint8_t)TFB_Random() & 7)
+			switch ((uint8_t)uqm::random().next() & 7)
 			{
 				case 0:
 					pStr = NORMAL_HELLO_A;

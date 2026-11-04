@@ -24,6 +24,7 @@
 #include "races.h"
 #include "init.h"
 #include "libs/strings/strintrn.h"
+#include "uqm/random/UQMRandom.h"
 
 static RESOURCE code_resources[] = {
 	NULL_RESOURCE,
@@ -88,7 +89,7 @@ static inline uint16_t ShipIndex(SPECIES_ID SpeciesID)
 // at once to be able to handle the load/save game preview window.
 static inline void SeedShipMap(SPECIES_ID* map, int seed)
 {
-	RandomContext* ShipGenRNG = RandomContext_New();
+	uqm::UQMRandom ShipGenRNG {};
 	uint16_t rand_val {};
 	SPECIES_ID* cMap = map;
 	SPECIES_ID* eMap = &(map[NUM_CAPITALS]);
@@ -100,14 +101,14 @@ static inline void SeedShipMap(SPECIES_ID* map, int seed)
 	{
 		g_seedType = uqm::SeedType::MRQ;
 	}
-	RandomContext_SeedRandom(ShipGenRNG, seed);
+	ShipGenRNG.reseed(seed);
 	for (x = 0; x < NUM_SHIPS; x++)
 	{
 		map[x] = NUM_SPECIES_ID;
 	}
 	for (x = 0; x < NUM_CAPITALS; x++)
 	{
-		rand_val = RandomContext_Random(ShipGenRNG) % NUM_CAPITALS;
+		rand_val = ShipGenRNG.next() % NUM_CAPITALS;
 		while (cMap[rand_val] != NUM_SPECIES_ID)
 		{
 			rand_val = (rand_val + 1) % NUM_CAPITALS;
@@ -116,7 +117,7 @@ static inline void SeedShipMap(SPECIES_ID* map, int seed)
 	}
 	for (x = 0; x < NUM_ESCORTS; x++)
 	{
-		rand_val = RandomContext_Random(ShipGenRNG) % NUM_ESCORTS;
+		rand_val = ShipGenRNG.next() % NUM_ESCORTS;
 		while (eMap[rand_val] != NUM_SPECIES_ID)
 		{
 			rand_val = (rand_val + 1) % NUM_ESCORTS;
@@ -125,17 +126,12 @@ static inline void SeedShipMap(SPECIES_ID* map, int seed)
 	}
 	for (x = 0; x < NUM_SCOUTS; x++)
 	{
-		rand_val = RandomContext_Random(ShipGenRNG) % NUM_SCOUTS;
+		rand_val = ShipGenRNG.next() % NUM_SCOUTS;
 		while (sMap[rand_val] != NUM_SPECIES_ID)
 		{
 			rand_val = (rand_val + 1) % NUM_SCOUTS;
 		}
 		sMap[rand_val] = scout[x];
-	}
-	if (ShipGenRNG)
-	{
-		RandomContext_Delete(ShipGenRNG);
-		ShipGenRNG = nullptr;
 	}
 	g_seedType = saveSeedType;
 }

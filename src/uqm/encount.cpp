@@ -49,6 +49,7 @@
 #include "core/misc/FatalExit.h"
 #include "planets/solarsys.h"
 #include "starbase.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static void DrawFadeText(const char* str1, const char* str2,
@@ -113,7 +114,7 @@ GetShipFragQueueForPlayer(uint16_t playerNr)
 
 void SetBattlePlanet(void)
 {
-	uint8_t selector {(uint8_t)((uint16_t)TFB_Random() % NUMBER_OF_PLANET_TYPES)};
+	uint8_t selector {(uint8_t)((uint16_t)uqm::random().next() % NUMBER_OF_PLANET_TYPES)};
 
 	if (EXTENDED && (selector == RAINBOW_WORLD || selector == SHATTERED_WORLD))
 	{ // No rainbow or shattered worlds in hyperspace

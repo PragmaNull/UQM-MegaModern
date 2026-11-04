@@ -30,6 +30,7 @@
 #include "../../state.h"
 #include "libs/mathlib.h"
 #include "../../../options.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateThraddash_generatePlanets(SOLARSYS_STATE* solarSys);

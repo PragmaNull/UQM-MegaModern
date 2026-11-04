@@ -35,6 +35,7 @@
 #include "comm.h"
 // JSD added to reference plot_map for SOL.
 #include "starmap.h"
+#include "uqm/random/UQMRandom.h"
 
 void DrawStarConBox(GFXRECT* pRect, int16_t BorderWidth, Color TopLeftColor,
 					Color BottomRightColor, bool FillInterior, Color InteriorColor,
@@ -332,7 +333,7 @@ uint32_t
 SeedRandomNumbers(void)
 {
 	const auto cur_time {static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count())};
-	TFB_SeedRandom(cur_time);
+	uqm::random().reseed(cur_time);
 
 	return (cur_time);
 }

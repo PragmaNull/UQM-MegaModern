@@ -22,6 +22,7 @@
 
 #include "uqm/globdata.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 36
@@ -269,7 +270,7 @@ doggy_preprocess(ELEMENT* ElementPtr)
 				GetVelocityTravelAngle(&ElementPtr->velocity)));
 		if ((delta_facing = TrackShip(ElementPtr, &facing)) < 0)
 		{
-			facing = NORMALIZE_FACING(TFB_Random());
+			facing = NORMALIZE_FACING(uqm::random().next());
 		}
 		else
 		{

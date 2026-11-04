@@ -265,6 +265,7 @@ destruct_preprocess(ELEMENT* ElementPtr)
 /* In order to detect any Orz Marines that have boarded the ship
    when it self-destructs, we'll need to see some Orz functions */
 #include "../orz/orz.h"
+#include "uqm/random/UQMRandom.h"
 #define ORZ_MARINE(ptr) (ptr->preprocess_func == intruder_preprocess && ptr->collision_func == marine_collision)
 
 static void
@@ -449,7 +450,7 @@ shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 						 && ShipPtr->crew_level == 1)
 						|| (PlotIntercept(lpWeaponEvalDesc->ObjectPtr, ShipPtr, 2, 0)
 							&& lpWeaponEvalDesc->ObjectPtr->mass_points >= ShipPtr->crew_level
-							&& (TFB_Random() & 1))))))
+							&& (uqm::random().next() & 1))))))
 		{
 			StarShipPtr->ship_input_state |= SPECIAL;
 		}

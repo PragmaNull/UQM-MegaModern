@@ -1,0 +1,29 @@
+// The random number generator of the game.
+#include "uqm/random/UQMRandom.h"
+
+#include "UQMGame.h"
+#include "core/log/log.h"
+#include "uqm/session/GameSession.h"
+
+uqm::SeedType g_seedType {};
+
+namespace uqm
+{
+
+UQMRandom& random()
+{
+	if (GameSession* const session {UQMGame::getInstance().session()})
+	{
+		return session->random();
+	}
+	static UQMRandom s_noSession {};
+	static bool s_reported {};
+	if (!s_reported)
+	{
+		s_reported = true;
+		log::error("The random number generator was used while no game session runs.");
+	}
+	return s_noSession;
+}
+
+} // namespace uqm

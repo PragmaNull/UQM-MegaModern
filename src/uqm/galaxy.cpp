@@ -31,6 +31,7 @@
 #include "core/log/log.h"
 #include "igfxres.h"
 #include "nameref.h"
+#include "uqm/random/UQMRandom.h"
 
 extern uint16_t zoom_out;
 extern PRIM_LINKS DisplayLinks;
@@ -268,8 +269,8 @@ void InitGalaxy(void)
 			++factor;
 		}
 
-		ppt->x = (int32_t)((uint16_t)TFB_Random() % SPACE_WIDTH) << factor;
-		ppt->y = (int32_t)((uint16_t)TFB_Random() % SPACE_HEIGHT) << factor;
+		ppt->x = (int32_t)((uint16_t)uqm::random().next() % SPACE_WIDTH) << factor;
+		ppt->y = (int32_t)((uint16_t)uqm::random().next() % SPACE_HEIGHT) << factor;
 
 		if (i < BIG_STAR_COUNT + MED_STAR_COUNT)
 		{
@@ -388,7 +389,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 					{
 						pprim->Object.Stamp.frame = SetAbsFrameIndex(
 							stars_in_space,
-							(uint16_t)(TFB_Random() & 31)
+							(uint16_t)(uqm::random().next() & 31)
 								+ star_frame_ofs[iss]);
 
 						if (IS_HD && inQuasiSpace())

@@ -21,6 +21,7 @@
 #include "resinst.h"
 
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 12
@@ -194,7 +195,7 @@ supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		StarShipPtr->ship_input_state |= SPECIAL;
 		if (!(StarShipPtr->cur_status_flags & (LEFT | RIGHT)))
 		{
-			StarShipPtr->ship_input_state |= 1 << ((uint8_t)TFB_Random() & 1);
+			StarShipPtr->ship_input_state |= 1 << ((uint8_t)uqm::random().next() & 1);
 		}
 		else
 		{

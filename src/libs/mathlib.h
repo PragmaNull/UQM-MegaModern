@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-#include "math/random.h"
+#include "math/Random.h"
 
 // The integer square root of 'value', rounded down.
 inline uint16_t square_root(uint32_t value)

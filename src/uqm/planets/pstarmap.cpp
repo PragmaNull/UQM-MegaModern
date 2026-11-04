@@ -53,6 +53,7 @@
 #include "../build.h"
 // For StartSphereTracking()
 #include "uqm/setupmenu.h"
+#include "uqm/random/UQMRandom.h"
 
 typedef enum
 {

@@ -20,6 +20,7 @@
 #include "core/misc/bittricks.h"
 #include "planets/planets.h"
 #include "uqm/session/GameState.h"
+#include "uqm/random/UQMRandom.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -48,7 +49,7 @@ extern PLOT_LOCATION plot_map[NUM_PLOTS];
 extern PORTAL_LOCATION portal_map[NUM_HYPER_VORTICES + 1];
 
 // A globally available seed for seeding the starmap and the plots it contains.
-extern RandomContext* StarGenRNG;
+extern uqstl::optional<uqm::UQMRandom> StarGenRNG;
 
 extern STAR_DESC* FindStar(STAR_DESC* pLastStar, GFXPOINT* puniverse,
 						   int16_t xbounds, int16_t ybounds);

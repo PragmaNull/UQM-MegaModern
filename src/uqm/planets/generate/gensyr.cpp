@@ -30,6 +30,7 @@
 #include "../../starmap.h"
 #include "../../state.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 static bool GenerateSyreen_generatePlanets(SOLARSYS_STATE* solarSys);
 static bool GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,

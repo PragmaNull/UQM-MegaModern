@@ -32,6 +32,7 @@
 #include "options.h"
 #include "../../setup.h"
 #include <math.h>
+#include "uqm/random/UQMRandom.h"
 
 static bool GenerateSol_initNpcs(SOLARSYS_STATE* solarSys);
 static bool GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys);
@@ -122,14 +123,14 @@ static bool
 GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 #define SOL_SEED 334241042L
-	RandomContext_SeedRandom(SysGenRNG, SOL_SEED + (StarSeed ? uqm::UQMOptions::read().customSeed : 0));
+	SysGenRNG->reseed(SOL_SEED + (StarSeed ? uqm::UQMOptions::read().customSeed : 0));
 
 	solarSys->SunDesc[0].NumPlanets = 9;
 	for (uint16_t planetI {0}; planetI < 9; ++planetI)
 	{
 		PLANET_DESC* pCurDesc = &solarSys->PlanetDesc[planetI];
 
-		pCurDesc->rand_seed = RandomContext_Random(SysGenRNG);
+		pCurDesc->rand_seed = SysGenRNG->next();
 		const uint32_t rand_val {pCurDesc->rand_seed};
 		const uint16_t word_val {uqm::lowWord(rand_val)};
 		pCurDesc->angle = NORMALIZE_ANGLE((uint16_t)uqm::highByte(word_val));
@@ -224,7 +225,7 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 				solarSys->MoonDesc[1].data_index = SELENIC_WORLD;
 				solarSys->MoonDesc[1].radius = MIN_MOON_RADIUS
 											 + (4 - 1) * MOON_DELTA;
-				rand_val = RandomContext_Random(SysGenRNG);
+				rand_val = SysGenRNG->next();
 				angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 				solarSys->MoonDesc[1].location.x =
 					COSINE(angle, solarSys->MoonDesc[1].radius);
@@ -322,11 +323,11 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 	}
 
 	DoPlanetaryAnalysis(&solarSys->SysInfo, world);
-	rand_val = RandomContext_GetSeed(SysGenRNG);
+	rand_val = SysGenRNG->seed();
 
 	solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
 	GenerateMineralDeposits(&solarSys->SysInfo, GENERATE_ALL, nullptr);
-	rand_val = RandomContext_GetSeed(SysGenRNG);
+	rand_val = SysGenRNG->seed();
 
 	planetNr = planetIndex(solarSys, world);
 	if (worldIsPlanet(solarSys, world))

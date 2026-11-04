@@ -21,6 +21,7 @@
 #include "resinst.h"
 
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 10
@@ -297,7 +298,7 @@ umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				/* don't want him backing straight into ship */
 				if (this_turn <= 8 && LinedUp)
 				{
-					if (TFB_Random() & 1)
+					if (uqm::random().next() & 1)
 					{
 						StarShipPtr->ship_input_state |= LEFT;
 					}

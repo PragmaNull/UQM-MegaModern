@@ -25,6 +25,7 @@
 #include "../../nameref.h"
 #include "../../state.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateYehat_generatePlanets(SOLARSYS_STATE* solarSys);

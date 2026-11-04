@@ -36,6 +36,7 @@
 #include "uqm/oscill.h"
 #include "uqm/controls.h"
 #include "uqm/races.h"
+#include "uqm/random/UQMRandom.h"
 
 static uint16_t melnorme_digit_names[] =
 	{
@@ -753,8 +754,8 @@ StripShip(uint16_t fuel_required)
 		// the random number generator with our location, thus making the deal
 		// a repeatable pseudo-random function of where we got stuck and what,
 		// exactly, is on our ship.
-		RandomContext* rc {RandomContext_New()};
-		RandomContext_SeedRandom(rc, getStripRandomSeed());
+		uqm::UQMRandom rc {};
+		rc.reseed(getStripRandomSeed());
 
 		SIS_copy = uqm::gameState().sis();
 		for (i = PLANET_LANDER; i < BOMB_MODULE_0; ++i)
@@ -801,7 +802,7 @@ StripShip(uint16_t fuel_required)
 		beg_mod = end_mod = (uint8_t)~0;
 		while (total < worth && ShipWorth() && ++num_searches)
 		{
-			const uint32_t rand_val {RandomContext_Random(rc)};
+			const uint32_t rand_val {rc.next()};
 			switch (which_module = uqm::lowByte(uqm::lowWord(rand_val)) % (CREW_POD + 1))
 			{
 				case PLANET_LANDER:
@@ -867,7 +868,6 @@ StripShip(uint16_t fuel_required)
 			++module_count[which_module];
 			total += GLOBAL(ModuleCost[which_module]);
 		}
-		RandomContext_Delete(rc);
 
 		if (total == 0)
 		{

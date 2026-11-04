@@ -23,6 +23,7 @@
 #include "displist.h"
 #include "core/misc/bittricks.h"
 #include "starmap.h"
+#include "uqm/random/UQMRandom.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -33,8 +34,8 @@ extern "C" {
 #define NAME_OFFSET (NUM_RACE_LABELS + NUM_CLASS_LABELS)
 #define NUM_CAPTAINS_NAMES 16
 
-#define PickCaptainName() (((uint16_t)TFB_Random()      \
-							& (NUM_CAPTAINS_NAMES - 1)) \
+#define PickCaptainName() (((uint16_t)uqm::random().next() \
+							& (NUM_CAPTAINS_NAMES - 1))    \
 						   + NAME_OFFSET)
 
 extern HLINK Build(QUEUE* pQueue, SPECIES_ID SpeciesID);

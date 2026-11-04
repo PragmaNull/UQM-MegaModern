@@ -40,6 +40,7 @@
 #include "restart.h"
 
 #include <ctype.h>
+#include "uqm/random/UQMRandom.h"
 
 extern FRAME PlayFrame;
 

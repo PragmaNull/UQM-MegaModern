@@ -29,6 +29,7 @@
 #include "../../state.h"
 #include "libs/mathlib.h"
 #include "../../../options.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateTalkingPet_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -276,7 +277,7 @@ ZapToUrquanEncounter(void)
 
 		if (GLOBAL_SIS(FuelOnBoard) < 5 * FUEL_TANK_SCALE)
 		{
-			dx = ((5 + ((uint16_t)TFB_Random() % 5)) * FUEL_TANK_SCALE)
+			dx = ((5 + ((uint16_t)uqm::random().next() % 5)) * FUEL_TANK_SCALE)
 			   - (int16_t)GLOBAL_SIS(FuelOnBoard);
 			DeltaSISGauges(0, dx, 0);
 		}

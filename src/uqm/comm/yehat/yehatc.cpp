@@ -26,6 +26,7 @@
 #include "libs/mathlib.h"
 
 #include "uqm/planets/generate/gendefault.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static LOCDATA yehat_desc =
@@ -263,7 +264,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, bye_space))
 	{
-		if ((uint8_t)TFB_Random() & 1)
+		if ((uint8_t)uqm::random().next() & 1)
 		{
 			NPCPhrase(GOODBYE_AND_DIE_SPACE);
 		}

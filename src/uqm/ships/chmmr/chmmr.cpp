@@ -23,6 +23,7 @@
 #include "uqm/colors.h"
 #include "uqm/globdata.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW MAX_CREW_SIZE
@@ -166,7 +167,7 @@ laser_death(ELEMENT* ElementPtr)
 		   - ShipPtr->current.location.x;
 		dy = ElementPtr->current.location.y
 		   - ShipPtr->current.location.y;
-		if (((uint8_t)TFB_Random() & 0x07)
+		if (((uint8_t)uqm::random().next() & 0x07)
 			&& (dist = (long)dx * dx + (long)dy * dy) >= (long)DISPLAY_TO_WORLD(CHMMR_OFFSET + RES_SCALE(10))
 															 * DISPLAY_TO_WORLD(CHMMR_OFFSET + RES_SCALE(10))
 			&& (hIonSpots = AllocElement()))
@@ -182,7 +183,7 @@ laser_death(ELEMENT* ElementPtr)
 			IonSpotsPtr->life_span = 9;
 
 			const uint16_t angle {ARCTAN(dx, dy)};
-			magnitude = ((uint16_t)TFB_Random()
+			magnitude = ((uint16_t)uqm::random().next()
 						 % ((square_root(dist) + 1)
 							- DISPLAY_TO_WORLD(CHMMR_OFFSET + RES_SCALE(10))))
 					  + DISPLAY_TO_WORLD(CHMMR_OFFSET + RES_SCALE(10));
@@ -708,7 +709,7 @@ spawn_satellites(ELEMENT* ElementPtr)
 					StarShipPtr->RaceDescPtr->ship_data.special;
 				SattPtr->current.image.frame = SetAbsFrameIndex(
 					StarShipPtr->RaceDescPtr->ship_data.special[0],
-					(uint16_t)TFB_Random() & 0x07);
+					(uint16_t)uqm::random().next() & 0x07);
 
 				SattPtr->preprocess_func = satellite_preprocess;
 				SattPtr->postprocess_func = satellite_postprocess;

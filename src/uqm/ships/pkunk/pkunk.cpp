@@ -26,6 +26,7 @@
 #include "../../settings.h"
 #include "uqm/build.h"	 // for fwiffo
 #include "uqm/nameref.h" // for fwiffo
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 8
@@ -258,7 +259,7 @@ pkunk_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level < StarShipPtr->RaceDescPtr->ship_info.max_energy
 		&& (StarShipPtr->special_counter == 0
-			|| (uint8_t)TFB_Random() < 20))
+			|| (uint8_t)uqm::random().next() < 20))
 	{
 		StarShipPtr->ship_input_state |= SPECIAL;
 	}
@@ -310,7 +311,7 @@ new_pkunk(ELEMENT* ElementPtr)
 	ElementPtr->thrust_wait = 0;
 	ElementPtr->life_span = NORMAL_LIFE;
 
-	StarShipPtr->ShipFacing = NORMALIZE_FACING(TFB_Random());
+	StarShipPtr->ShipFacing = NORMALIZE_FACING(uqm::random().next());
 	ElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.ship;
 	ElementPtr->current.image.frame = SetAbsFrameIndex(
 		StarShipPtr->RaceDescPtr->ship_data.ship[0],
@@ -320,9 +321,9 @@ new_pkunk(ELEMENT* ElementPtr)
 	do
 	{
 		ElementPtr->current.location.x =
-			WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+			WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 		ElementPtr->current.location.y =
-			WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+			WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 	} while (CalculateGravity(ElementPtr)
 			 || TimeSpaceMatterConflict(ElementPtr));
 
@@ -502,7 +503,7 @@ pkunk_preprocess(ELEMENT* ElementPtr)
 	{
 		HELEMENT hPhoenix = 0;
 
-		if (TFB_Random() & 1)
+		if (uqm::random().next() & 1)
 		{
 			hPhoenix = AllocElement();
 		}
@@ -613,7 +614,7 @@ pkunk_postprocess(ELEMENT* ElementPtr)
 		do
 		{
 			CurSound =
-				2 + ((uint16_t)TFB_Random() % (StarShipPtr->RaceDescPtr->ship_data.ship_sounds->size() - 2));
+				2 + ((uint16_t)uqm::random().next() % (StarShipPtr->RaceDescPtr->ship_data.ship_sounds->size() - 2));
 		} while (CurSound == LastSound);
 		ProcessSound(GetSound(
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, CurSound),

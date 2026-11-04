@@ -29,6 +29,7 @@
 #include "../../setup.h"
 #include "../../state.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateOrz_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -100,7 +101,7 @@ GenerateOrz_generatePlanets(SOLARSYS_STATE* solarSys)
 		{
 			if (!StarSeed)
 			{
-				const uint32_t RandVal = RandomContext_Random(SysGenRNG);
+				const uint32_t RandVal = SysGenRNG->next();
 				const uint8_t PByte = pSunDesc->PlanetByte + 1;
 				pSunDesc->NumPlanets =
 					(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);

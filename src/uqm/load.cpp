@@ -40,6 +40,7 @@
 #include <yyjson.h>
 
 #include "core/stl/utility.h"
+#include "uqm/random/UQMRandom.h"
 
 //#define DEBUG_LOAD
 

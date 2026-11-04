@@ -22,6 +22,7 @@
 #include "../../units.h"
 
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 20
@@ -205,7 +206,7 @@ bubble_preprocess(ELEMENT* ElementPtr)
 			IncFrameIndex(ElementPtr->current.image.frame);
 		ElementPtr->state_flags |= CHANGING;
 
-		thrust_wait = (uint8_t)((uint16_t)TFB_Random() & 3);
+		thrust_wait = (uint8_t)((uint16_t)uqm::random().next() & 3);
 	}
 
 	if (turn_wait > 0)
@@ -221,15 +222,15 @@ bubble_preprocess(ELEMENT* ElementPtr)
 			GetVelocityTravelAngle(&ElementPtr->velocity)));
 		if ((delta_facing = TrackShip(ElementPtr, &facing)) == -1)
 		{
-			facing = (uint16_t)TFB_Random();
+			facing = (uint16_t)uqm::random().next();
 		}
 		else if (delta_facing <= ANGLE_TO_FACING(HALF_CIRCLE))
 		{
-			facing += (uint16_t)TFB_Random() & (ANGLE_TO_FACING(HALF_CIRCLE) - 1);
+			facing += (uint16_t)uqm::random().next() & (ANGLE_TO_FACING(HALF_CIRCLE) - 1);
 		}
 		else
 		{
-			facing -= (uint16_t)TFB_Random() & (ANGLE_TO_FACING(HALF_CIRCLE) - 1);
+			facing -= (uint16_t)uqm::random().next() & (ANGLE_TO_FACING(HALF_CIRCLE) - 1);
 		}
 		SetVelocityVector(&ElementPtr->velocity,
 						  MISSILE_SPEED, facing);

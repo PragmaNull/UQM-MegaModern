@@ -32,6 +32,7 @@
 #include "nameref.h"
 #include "ships/slylandr/resinst.h"
 #include "setup.h"
+#include "uqm/random/UQMRandom.h"
 
 bool legacySave;
 uint8_t GTFO = 0;
@@ -119,9 +120,9 @@ void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 				// XXX: orbit_pos was abused to store the previous
 				//   group destination, before the intercept task.
 				GroupPtr->dest_loc = GroupPtr->orbit_pos;
-				GroupPtr->orbit_pos = NORMALIZE_FACING(TFB_Random());
+				GroupPtr->orbit_pos = NORMALIZE_FACING(uqm::random().next());
 #ifdef OLD
-				GroupPtr->dest_loc = (uint8_t)(((uint16_t)TFB_Random()
+				GroupPtr->dest_loc = (uint8_t)(((uint16_t)uqm::random().next()
 												% pSolarSysState->SunDesc[0].NumPlanets)
 											   + 1);
 #endif /* OLD */
@@ -137,7 +138,7 @@ void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 				}
 				else
 				{
-					GroupPtr->group_counter = ((uint16_t)TFB_Random()
+					GroupPtr->group_counter = ((uint16_t)uqm::random().next()
 											   % MAX_REVOLUTIONS)
 										   << FACING_SHIFT;
 				}
@@ -259,7 +260,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 		}
 		else
 		{
-			GroupPtr->group_counter = ((uint16_t)TFB_Random()
+			GroupPtr->group_counter = ((uint16_t)uqm::random().next()
 									   % MAX_REVOLUTIONS)
 								   << FACING_SHIFT;
 		}
@@ -409,7 +410,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 						--GroupPtr->group_counter;
 					}
 					else if (task == EXPLORE
-							 && (next_loc = (uint8_t)(((uint16_t)TFB_Random()
+							 && (next_loc = (uint8_t)(((uint16_t)uqm::random().next()
 													   % pSolarSysState->SunDesc[0].NumPlanets)
 													  + 1))
 									!= target_loc)
@@ -563,7 +564,7 @@ CheckGetAway:
 						GroupPtr->orbit_pos = NORMALIZE_FACING(
 							ANGLE_TO_FACING(angle + HALF_CIRCLE));
 						GroupPtr->group_counter =
-							((uint16_t)TFB_Random() % MAX_REVOLUTIONS)
+							((uint16_t)uqm::random().next() % MAX_REVOLUTIONS)
 							<< FACING_SHIFT;
 					}
 					// The group enters inner system exactly on the edge of
@@ -899,7 +900,7 @@ spawn_ip_group(IP_GROUP* GroupPtr)
 				CaptureDrawable(
 					LoadGraphic(SLYLANDRO_SML_MASK_PMAP_ANIM));
 			IPSHIPElementPtr->current.image.frame = SetAbsFrameIndex(
-				GroupPtr->melee_icon, (TFB_Random() % (15 - 1) + 1));
+				GroupPtr->melee_icon, (uqm::random().next() % (15 - 1) + 1));
 			// randomize initial sprite
 		}
 		IPSHIPElementPtr->death_func = ip_group_preprocess;

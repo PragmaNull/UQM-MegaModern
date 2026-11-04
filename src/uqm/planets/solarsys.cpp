@@ -59,6 +59,7 @@
 #include <time.h>
 
 #include <SDL3/SDL_version.h>
+#include "uqm/random/UQMRandom.h"
 
 //#define DEBUG_STARSEED
 //#define DEBUG_SOLARSYS
@@ -130,8 +131,8 @@ static uint16_t PBodySize[7] = {0, 3, 4, 7, 11, 15, 29};
 // from nuking SpaceJunkFrame in SetPlanetOldFrame()
 #define UNDEFINED_OFFSET ((uint8_t)~0)
 
-RandomContext* SysGenRNG;
-RandomContext* SysGenRNGDebug;
+uqstl::optional<uqm::UQMRandom> SysGenRNG {};
+uqm::UQMRandom* SysGenRNGDebug {};
 
 #define DISPLAY_TO_LOC (DISPLAY_FACTOR >> 1)
 #define DISPLAY_TO_LOC_US (DISPLAY_FACTOR_US >> 1)
@@ -393,7 +394,7 @@ GenerateMoons(SOLARSYS_STATE* system, PLANET_DESC* planet)
 	//uint16_t facing; ununsed
 	PLANET_DESC* pMoonDesc {};
 
-	RandomContext_SeedRandom(SysGenRNG, planet->rand_seed);
+	SysGenRNG->reseed(planet->rand_seed);
 
 	//facing = NORMALIZE_FACING (ANGLE_TO_FACING (
 	//		ARCTAN (planet->location.x, planet->location.y))); unused
@@ -432,7 +433,7 @@ LoadNebulaeFrame(GFXPOINT location)
 	{
 		uint32_t rand_val {};
 
-		rand_val = RandomContext_FastRandom(
+		rand_val = uqm::UQMRandom::step(
 			uqm::makeDword(location.y, location.x));
 
 		neb_seed.x = uqm::lowWord(rand_val);
@@ -514,8 +515,7 @@ void FreeIPData(void)
 	DestroyMusic(SpaceMusic);
 	SpaceMusic = 0;
 
-	RandomContext_Delete(SysGenRNG);
-	SysGenRNG = nullptr;
+	SysGenRNG.reset();
 }
 
 void LoadIPData(void)
@@ -542,8 +542,8 @@ void LoadIPData(void)
 
 	if (!SysGenRNG)
 	{
-		SysGenRNG = RandomContext_New();
-		SysGenRNGDebug = SysGenRNG;
+		SysGenRNG.emplace();
+		SysGenRNGDebug = &*SysGenRNG;
 	}
 }
 
@@ -763,15 +763,14 @@ LoadSolarSys(void)
 		}
 	}
 
-	RandomContext_SeedRandom(SysGenRNG,
-							 GetRandomSeedForStar(CurStarDescPtr));
+	SysGenRNG->reseed(GetRandomSeedForStar(CurStarDescPtr));
 
 	SunFrame = SetAbsFrameIndex(SunFrame,
 								STAR_TYPE(CurStarDescPtr->Type) * STAR_INDEX_MULTIPLIER);
 
 	PLANET_DESC* pCurDesc {&pSolarSysState->SunDesc[0]};
 	pCurDesc->pPrevDesc = 0;
-	pCurDesc->rand_seed = RandomContext_Random(SysGenRNG);
+	pCurDesc->rand_seed = SysGenRNG->next();
 	pCurDesc->data_index = STAR_TYPE(CurStarDescPtr->Type);
 	pCurDesc->location.x = 0;
 	pCurDesc->location.y = 0;
@@ -2739,7 +2738,7 @@ GetStarBackFround(void)
 
 static void
 DrawBackgroundStars(uint8_t num_pieces, uint8_t num_drawn, uint8_t start_index,
-					RandomContext* SysRNG, FRAME junk)
+					uqm::UQMRandom& SysRNG, FRAME junk)
 {
 	STAMP s;
 	uint16_t j {};
@@ -2750,7 +2749,7 @@ DrawBackgroundStars(uint8_t num_pieces, uint8_t num_drawn, uint8_t start_index,
 	{
 		for (j = 0; j < num_drawn; ++j)
 		{
-			rand_val = RandomContext_Random(SysRNG);
+			rand_val = SysRNG.next();
 			s.origin.x = scaleSISWidth(uqm::lowWord(rand_val) % widthPick());
 			s.origin.y = scaleSISHeight(uqm::highWord(rand_val) % heightPick());
 			DrawStamp(&s);
@@ -2780,7 +2779,7 @@ DrawNebula(FRAME nebula)
 }
 
 static FRAME
-CreateStarBackGround(RandomContext* SysRNG, FRAME nebula, FRAME junk)
+CreateStarBackGround(uqm::UQMRandom& SysRNG, FRAME nebula, FRAME junk)
 {
 	uint8_t num_brt_drawn {};
 	uint8_t start_index {};
@@ -2825,9 +2824,8 @@ GetStarBackGround(bool encounter)
 
 	if (!encounter)
 	{ // Casually entering any solar system
-		RandomContext_SeedRandom(SysGenRNG,
-								 GetRandomSeedForStar(CurStarDescPtr));
-		return CreateStarBackGround(SysGenRNG, NebulaFrame,
+		SysGenRNG->reseed(GetRandomSeedForStar(CurStarDescPtr));
+		return CreateStarBackGround(*SysGenRNG, NebulaFrame,
 									SpaceJunkFrame);
 	}
 
@@ -2841,7 +2839,7 @@ GetStarBackGround(bool encounter)
 	// Generate new independant frame, START_ENCOUNTER unloads all solarsys
 	// resources so we have to load them again temporary
 
-	RandomContext* SysRNG {RandomContext_New()};
+	uqm::UQMRandom SysRNG {};
 	FRAME junk {CaptureDrawable(LoadGraphic(IPBKGND_MASK_PMAP_ANIM))};
 
 	if (CurStarDescPtr)
@@ -2855,7 +2853,7 @@ GetStarBackGround(bool encounter)
 			LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y)));
 	}
 
-	RandomContext_SeedRandom(SysRNG, GetRandomSeedForVar(location));
+	SysRNG.reseed(GetRandomSeedForVar(location));
 
 	FRAME nebula {LoadNebulaeFrame(location)};
 	FRAME result {CreateStarBackGround(SysRNG, nebula, junk)};
@@ -2864,8 +2862,6 @@ GetStarBackGround(bool encounter)
 	junk = 0;
 	DestroyDrawable(ReleaseDrawable(nebula));
 	nebula = 0;
-	RandomContext_Delete(SysRNG);
-	SysRNG = 0;
 
 	return result;
 }

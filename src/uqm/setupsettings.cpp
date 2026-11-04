@@ -14,6 +14,7 @@
 #include "libs/reslib.h"
 #include "libs/sndlib.h"
 #include "libs/sound/sound.h"
+#include "uqm/random/UQMRandom.h"
 
 #if defined(DIRECTIONAL_JOY)
 #define HAVE_DIRECTIONAL_JOYSTICK true

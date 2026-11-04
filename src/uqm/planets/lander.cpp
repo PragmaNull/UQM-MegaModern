@@ -39,6 +39,7 @@
 #include "options.h"
 #include "uqm/menustat.h"
 #include "../util.h"
+#include "uqm/random/UQMRandom.h"
 
 //define SPIN_ON_LAUNCH to let the planet spin while
 // the lander animation is playing
@@ -384,7 +385,7 @@ void object_animation(ELEMENT* ElementPtr)
 
 			if (ElementPtr->mass_points == LAVASPOT_DISASTER
 				&& frame_index == 5
-				&& TFB_Random() % 100 < 90)
+				&& uqm::random().next() % 100 < 90)
 			{
 				HELEMENT hLavaElement {};
 
@@ -422,7 +423,7 @@ void object_animation(ELEMENT* ElementPtr)
 							SCALED_MAP_WIDTH << MAG_SHIFT;
 					}
 					LavaElementPtr->facing = NORMALIZE_FACING(
-						ElementPtr->facing + (TFB_Random() % 3 - 1));
+						ElementPtr->facing + (uqm::random().next() % 3 - 1));
 					UnlockElement(hLavaElement);
 				}
 			}
@@ -484,7 +485,7 @@ void object_animation(ELEMENT* ElementPtr)
 					// as repeating 'random(x / 30)' 30 times
 					// doesn't generally have the same result as
 					// repeating 'random(x / 35)' 25 times. - SvdB
-					if (TFB_Random() % 100 < DetectPercent)
+					if (uqm::random().next() % 100 < DetectPercent)
 					{
 						ElementPtr->thrust_wait = 0;
 						ElementPtr->mass_points |= CREATURE_AWARE;
@@ -510,7 +511,7 @@ void object_animation(ELEMENT* ElementPtr)
 				{
 					uint16_t rand_val {};
 
-					rand_val = TFB_Random();
+					rand_val = uqm::random().next();
 					angle = NORMALIZE_ANGLE(uqm::lowByte(rand_val));
 					ElementPtr->thrust_wait =
 						(uqm::highByte(rand_val) >> 2) + 10;
@@ -533,7 +534,7 @@ void object_animation(ELEMENT* ElementPtr)
 						}
 						else
 						{
-							angle = ((TFB_Random() & 1)
+							angle = ((uqm::random().next() & 1)
 									 * HALF_CIRCLE)
 								  - QUADRANT;
 						}
@@ -596,7 +597,7 @@ DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 
 		shieldHit = GET_GAME_STATE(LANDER_SHIELDS);
 		shieldHit &= 1 << which_disaster;
-		if (!shieldHit || TFB_Random() % 100 >= 95)
+		if (!shieldHit || uqm::random().next() % 100 >= 95)
 		{ // No shield, or it did not help
 			if (!testFlag(uqm::UQMOptions::read().optGodModes, uqm::GodModeFlags::NoDamage))
 			{
@@ -1076,7 +1077,7 @@ CheckObjectCollision(uint16_t index)
 						{
 							case EARTHQUAKE_DISASTER:
 							case LAVASPOT_DISASTER:
-								if (TFB_Random() % 100 < 25)
+								if (uqm::random().next() % 100 < 25)
 								{
 									DeltaLanderCrew(-1, scan);
 								}
@@ -1102,7 +1103,7 @@ CheckObjectCollision(uint16_t index)
 						const int dangerLevel =
 							(CreatureData[creatureIndex].Attributes & DANGER_MASK) >> DANGER_SHIFT;
 
-						if (TFB_Random() % 128 < danger_vals[dangerLevel])
+						if (uqm::random().next() % 128 < danger_vals[dangerLevel])
 						{
 							PlaySound(GetSound(
 										  LanderSounds, BIOLOGICAL_DISASTER),
@@ -1218,7 +1219,7 @@ lightning_process(ELEMENT* ElementPtr)
 			if (ElementPtr->mass_points == LIGHTNING_DISASTER)
 			{
 				/* This one always strikes the lander and can hurt */
-				if (crew_left && TFB_Random() % 100 < 10
+				if (crew_left && uqm::random().next() % 100 < 10
 					&& !planetSideDesc->InTransit)
 				{
 					lander_flags |= KILL_CREW;
@@ -1229,7 +1230,7 @@ lightning_process(ELEMENT* ElementPtr)
 
 			pPrim->Object.Stamp.frame =
 				SetAbsFrameIndex(pPrim->Object.Stamp.frame,
-								 TFB_Random() % num_frames);
+								 uqm::random().next() % num_frames);
 		}
 
 		ElementPtr->turn_wait += uqm::highNibble(ElementPtr->turn_wait);
@@ -1255,7 +1256,7 @@ AddLightning(void)
 		LightningElementPtr->playerNr = PS_NON_PLAYER;
 		LightningElementPtr->state_flags = FINITE_LIFE;
 		LightningElementPtr->preprocess_func = lightning_process;
-		if (TFB_Random() % 100 >= 25)
+		if (uqm::random().next() % 100 >= 25)
 		{
 			LightningElementPtr->mass_points = 0; /* harmless */
 		}
@@ -1264,7 +1265,7 @@ AddLightning(void)
 			LightningElementPtr->mass_points = LIGHTNING_DISASTER;
 		}
 
-		rand_val = TFB_Random();
+		rand_val = uqm::random().next();
 		LightningElementPtr->life_span = 10 + (uqm::highWord(rand_val) % 10) + 1;
 		LightningElementPtr->next.location.x = (curLanderLoc.x
 												+ ((SCALED_MAP_WIDTH << MAG_SHIFT)
@@ -1321,7 +1322,7 @@ AddGroundDisaster(uint16_t which_disaster)
 		GroundDisasterElementPtr->state_flags = FINITE_LIFE;
 		GroundDisasterElementPtr->preprocess_func = object_animation;
 
-		const uint32_t rand_val {TFB_Random()};
+		const uint32_t rand_val {uqm::random().next()};
 		GroundDisasterElementPtr->next.location.x = (curLanderLoc.x
 													 + ((SCALED_MAP_WIDTH << MAG_SHIFT)
 														- (SURFACE_WIDTH * 3 / 8))
@@ -1351,7 +1352,7 @@ AddGroundDisaster(uint16_t which_disaster)
 		{
 			SetPrimType(pPrim, STAMP_PRIM);
 			GroundDisasterElementPtr->facing =
-				NORMALIZE_FACING(TFB_Random());
+				NORMALIZE_FACING(uqm::random().next());
 			pPrim->Object.Stamp.frame = LanderFrame[3];
 			GroundDisasterElementPtr->turn_wait = uqm::makeByte(0, 0);
 		}
@@ -1384,7 +1385,7 @@ BuildObjectList(void)
 
 	lander_flags &= ~KILL_CREW;
 
-	const uint32_t rand_val {TFB_Random()};
+	const uint32_t rand_val {uqm::random().next()};
 	if (uqm::lowByte(uqm::highWord(rand_val)) < pPSD->FireChance)
 	{
 		AddGroundDisaster(LAVASPOT_DISASTER);
@@ -1861,7 +1862,7 @@ InitPlanetSide(GFXPOINT pt)
 	// Adjust landing location by a random jitter.
 #define RANDOM_MISS RES_SCALE(64)
 	// Jitter the X landing point.
-	pt.x -= RANDOM_MISS - TFB_Random() % (RANDOM_MISS << 1);
+	pt.x -= RANDOM_MISS - uqm::random().next() % (RANDOM_MISS << 1);
 	if (pt.x < 0)
 	{
 		pt.x += (SCALED_MAP_WIDTH << MAG_SHIFT);
@@ -1872,7 +1873,7 @@ InitPlanetSide(GFXPOINT pt)
 	}
 
 	// Jitter the Y landing point.
-	pt.y -= RANDOM_MISS - TFB_Random() % (RANDOM_MISS << 1);
+	pt.y -= RANDOM_MISS - uqm::random().next() % (RANDOM_MISS << 1);
 	if (pt.y < 0)
 	{
 		pt.y = 0;
@@ -2132,8 +2133,8 @@ LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amount)
 		return;
 	}
 
-	const uint16_t angle {(uint16_t)TFB_Random()};
-	dist = ((uint16_t)TFB_Random() % 8) + 4;
+	const uint16_t angle {(uint16_t)uqm::random().next()};
+	dist = ((uint16_t)uqm::random().next() % 8) + 4;
 
 	deposit_quality_fine = amount * 10;
 	if (deposit_quality_fine < 150)
@@ -2205,7 +2206,7 @@ ScatterDeposits(void)
 	for (uint16_t i {numDeposits}; i < (numDeposits + NumNodesGrabbed); i++)
 	{
 		const uint8_t affix = i - numDeposits;
-		const double penalty = (double)RangeMinMax(25, 75, TFB_Random()) / 100;
+		const double penalty = (double)uqm::rangeMinMax(25, 75, uqm::random().next()) / 100;
 
 		if (pPSD->NodeData.NodeAmounts[affix] * penalty < 1)
 		{
@@ -2813,7 +2814,7 @@ void PlanetSide(GFXPOINT planetLoc)
 		BUILD_COLOR(MAKE_RGB15(0x1F, 0x03, 0x00), 0x7F);
 	planetSideDesc = &PSD;
 
-	index = NORMALIZE_FACING(TFB_Random());
+	index = NORMALIZE_FACING(uqm::random().next());
 	LanderFrame[0] = SetAbsFrameIndex(LanderFrame[0], index);
 	crew_left = 0;
 	damage_index = 0;

@@ -1560,7 +1560,7 @@ DitherMap(int8_t* DepthArray, uint16_t width, uint16_t height)
 		// Use up the random value byte by byte
 		if ((i & 3) == 0)
 		{
-			rand_val = RandomContext_Random(SysGenRNG);
+			rand_val = SysGenRNG->next();
 		}
 		else
 		{
@@ -1794,7 +1794,7 @@ MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 
 			intersect = false;
 
-			rand_val = RandomContext_Random(SysGenRNG);
+			rand_val = SysGenRNG->next();
 			loword = uqm::lowWord(rand_val);
 			hiword = uqm::highWord(rand_val);
 			switch (uqm::highByte(hiword) & 31)
@@ -1824,7 +1824,7 @@ MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 				pstorm_r->extent.height += 4;
 			}
 
-			rand_val = RandomContext_Random(SysGenRNG);
+			rand_val = SysGenRNG->next();
 			loword = uqm::lowWord(rand_val);
 			hiword = uqm::highWord(rand_val);
 
@@ -1929,7 +1929,7 @@ MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t dep
 	band_error = num_bands >> 1;
 	int8_t* lpDst {DepthArray};
 
-	band_delta = ((uqm::lowWord(RandomContext_Random(SysGenRNG))
+	band_delta = ((uqm::lowWord(SysGenRNG->next())
 				   & (NUM_BAND_COLORS - 1))
 				  << RANGE_SHIFT)
 			   + (1 << (RANGE_SHIFT - 1));
@@ -1938,7 +1938,7 @@ MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t dep
 	{
 		int16_t cur_y {};
 
-		rand_val = RandomContext_Random(SysGenRNG);
+		rand_val = SysGenRNG->next();
 		loword = uqm::lowWord(rand_val);
 		hiword = uqm::highWord(rand_val);
 
@@ -1986,7 +1986,7 @@ MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t dep
 				   & (((1 << RANGE_SHIFT) * NUM_BAND_COLORS) - 1);
 	}
 
-	MakeStorms(4 + (RandomContext_Random(SysGenRNG) & 3) + 1,
+	MakeStorms(4 + (SysGenRNG->next() & 3) + 1,
 			   DepthArray, pRect->extent.width, pRect->extent.height);
 
 	DitherMap(DepthArray, pRect->extent.width, pRect->extent.height);
@@ -2699,7 +2699,7 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 			{
 				GFXRECT crater_r;
 
-				uint16_t loword {uqm::lowWord(RandomContext_Random(SysGenRNG))};
+				uint16_t loword {uqm::lowWord(SysGenRNG->next())};
 				switch (uqm::highByte(loword) & 31)
 				{
 					case 0:
@@ -2725,7 +2725,7 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 						break;
 				}
 
-				loword = uqm::lowWord(RandomContext_Random(SysGenRNG));
+				loword = uqm::lowWord(SysGenRNG->next());
 				crater_r.extent.height = crater_r.extent.width;
 				crater_r.corner.x = uqm::highByte(loword)
 								  % (ORIGINAL_MAP_WIDTH
@@ -2810,7 +2810,7 @@ void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
 		pSolarSysState->XlatPtr = pSolarSysState->XlatTable->bytes(xlatIndex).data();
 
 		Orbit->lpTopoData = new int8_t[width * height] {};
-		RandomContext_SeedRandom(SysGenRNG, pPlanetDesc->rand_seed);
+		SysGenRNG->reseed(pPlanetDesc->rand_seed);
 		generate_surface_frame(width, height, Orbit, PlanDataPtr);
 
 		pSolarSysState->OrbitalCMap.reset();
@@ -2857,7 +2857,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 		use3DOSpheres = false;
 	}
 
-	RandomContext_SeedRandom(SysGenRNG, pPlanetDesc->rand_seed);
+	SysGenRNG->reseed(pPlanetDesc->rand_seed);
 
 	TopoContext = CreateContext("Plangen.TopoContext");
 	GFXCONTEXT OldContext {SetContext(TopoContext)};

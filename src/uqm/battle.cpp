@@ -47,6 +47,7 @@
 #include "globdata.h"
 #include "libs/input/sdl/vcontrol.h"
 #include "hyper.h"
+#include "uqm/random/UQMRandom.h"
 // for EraseRadar()
 
 
@@ -441,7 +442,7 @@ bool Battle(BattleFrameCallback* callback)
 	if (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE)
 	{
 		// In Supermelee, the RNG is already initialised.
-		TFB_SeedRandom(static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count()));
+		uqm::random().reseed(static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count()));
 	}
 
 	BattleSong(false);

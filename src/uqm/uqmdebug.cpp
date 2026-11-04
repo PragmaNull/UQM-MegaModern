@@ -876,10 +876,10 @@ starRecurse(STAR_DESC* star, void* arg)
 	STAR_DESC* oldStarDescPtr = CurStarDescPtr;
 	CurStarDescPtr = star;
 
-	RandomContext_SeedRandom(SysGenRNGDebug, GetRandomSeedForStar(star));
+	SysGenRNGDebug->reseed(GetRandomSeedForStar(star));
 
 	SolarSysState.SunDesc[0].pPrevDesc = 0;
-	SolarSysState.SunDesc[0].rand_seed = RandomContext_Random(SysGenRNGDebug);
+	SolarSysState.SunDesc[0].rand_seed = SysGenRNGDebug->next();
 	SolarSysState.SunDesc[0].data_index = STAR_TYPE(star->Type);
 	SolarSysState.SunDesc[0].location.x = 0;
 	SolarSysState.SunDesc[0].location.y = 0;
@@ -938,7 +938,7 @@ planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
 
 	if (universeRecurseArg->moonFunc != nullptr)
 	{
-		RandomContext_SeedRandom(SysGenRNGDebug, planet->rand_seed);
+		SysGenRNGDebug->reseed(planet->rand_seed);
 
 		(*system->genFuncs->generateMoons)(system, planet);
 

@@ -26,6 +26,7 @@
 
 #include "libs/mathlib.h"
 #include "core/log/log.h"
+#include "uqm/random/UQMRandom.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -294,7 +295,7 @@ void BuildGroups(void)
 					i = 70 - (uint16_t)((uint32_t)square_root(d_squared) * 60L / encounter_radius);
 				}
 
-				const uint32_t rand_val {TFB_Random()};
+				const uint32_t rand_val {uqm::random().next()};
 				if ((int)(uqm::lowWord(rand_val) % 100) < (int)i
 					&& (BestPercent == 0
 						|| (uqm::highWord(rand_val) % (i + BestPercent)) < i))
@@ -324,7 +325,7 @@ FoundHome:
 				RACE_ENCOUNTER_MAKEUP};
 
 		uint8_t which_group {0};
-		num_groups = ((uint16_t)TFB_Random() % (BestPercent >> 1)) + 1;
+		num_groups = ((uint16_t)uqm::random().next() % (BestPercent >> 1)) + 1;
 		if (num_groups > MAX_BATTLE_GROUPS)
 		{
 			num_groups = MAX_BATTLE_GROUPS;
@@ -341,7 +342,7 @@ FoundHome:
 				 --Index)
 			{
 				if (Index <= uqm::lowNibble(EncounterMakeup[BestIndex])
-					|| (uint16_t)TFB_Random() % 100 < 50)
+					|| (uint16_t)uqm::random().next() % 100 < 50)
 				{
 					CloneShipFragment((RACE_ID)BestIndex,
 									  &GLOBAL(npc_built_ship_q), 0);
@@ -704,7 +705,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 			GroupPtr->group_id = which_group;
 			GroupPtr->in_system = 1;
 
-			rand_val = TFB_Random();
+			rand_val = uqm::random().next();
 			task = (uint8_t)(uqm::lowByte(uqm::lowWord(rand_val)) % ON_STATION);
 			if (task == FLEE)
 			{
@@ -723,13 +724,13 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 				group_loc = (uint8_t)((uqm::highByte(uqm::lowWord(rand_val)) % group_loc) + 1);
 			}
 			GroupPtr->dest_loc = group_loc;
-			rand_val = TFB_Random();
+			rand_val = uqm::random().next();
 			GroupPtr->loc.x = (uqm::lowWord(rand_val) % 10000) - 5000;
 			GroupPtr->loc.y = (uqm::highWord(rand_val) % 10000) - 5000;
 			GroupPtr->group_counter = 0;
 			if (task == EXPLORE)
 			{
-				GroupPtr->group_counter = ((uint16_t)TFB_Random() % MAX_REVOLUTIONS) << FACING_SHIFT;
+				GroupPtr->group_counter = ((uint16_t)uqm::random().next() % MAX_REVOLUTIONS) << FACING_SHIFT;
 			}
 			else if (task == ON_STATION)
 			{

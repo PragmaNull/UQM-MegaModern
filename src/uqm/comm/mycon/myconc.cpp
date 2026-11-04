@@ -24,6 +24,7 @@
 #include "libs/mathlib.h"
 #include "uqm/races.h"
 #include "uqm/lua/UQMLua.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static LOCDATA mycon_desc =
@@ -427,7 +428,7 @@ NormalMycon(RESPONSE_REF R)
 		DISABLE_PHRASE(R);
 	}
 
-	if ((uint8_t)TFB_Random() < 256 * 30 / 100)
+	if ((uint8_t)uqm::random().next() < 256 * 30 / 100)
 	{
 		RespFunc = (RESPONSE_FUNC)CombatIsInevitable;
 	}

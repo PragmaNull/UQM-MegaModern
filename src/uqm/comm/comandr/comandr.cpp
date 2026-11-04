@@ -28,6 +28,7 @@
 #include "uqm/settings.h"
 #include "uqm/nameref.h"
 #include "libs/math/random.h"
+#include "uqm/random/UQMRandom.h"
 
 static LOCDATA commander_desc =
 	{
@@ -158,12 +159,12 @@ static FILTER_DESC commander_filters =
 static void
 RaveParty(void)
 {
-	CommData.AlienColorMapIndex = (TFB_Random() % 3) + 1;
+	CommData.AlienColorMapIndex = (uqm::random().next() % 3) + 1;
 
 	if (IS_HD && EXTENDED)
 	{
 		CommData.AlienFrame = SetAbsFrameIndex(CommData.AlienFrame,
-											   (TFB_Random() % 15) + 40);
+											   (uqm::random().next() % 15) + 40);
 		SwitchSequences(false);
 		EnableTalkingAnim(false);
 		CommData.AlienAmbientArray[3].AnimFlags &= ~ANIM_DISABLED;

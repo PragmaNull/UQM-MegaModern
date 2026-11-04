@@ -29,6 +29,7 @@
 #include "libs/mathlib.h"
 
 #include <string.h>
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys);

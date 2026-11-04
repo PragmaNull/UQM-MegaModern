@@ -38,6 +38,7 @@
 #include "uqmdebug.h"
 
 #include <time.h> //required to use 'srand(time(nullptr))'
+#include "uqm/random/UQMRandom.h"
 
 #define OOPS_ALL 0 // Set a plot ID to stamp it to all empty starsystems
 static void CreateRadar(void);
@@ -510,10 +511,10 @@ void SeedDEBUG()
 	if (!StarGenRNG)
 	{
 		fmt::print(stderr, "****Seed Debug Creating a STAR GEN RNG****\n");
-		StarGenRNG = RandomContext_New();
+		StarGenRNG.emplace();
 		myRNG = true;
 	}
-	RandomContext_SeedRandom(StarGenRNG, 123456);
+	StarGenRNG->reseed(123456);
 	for (uqm::UQMOptions::edit().customSeed.value = START; uqm::UQMOptions::read().customSeed < (START + SAMPLE_SIZE);
 		 uqm::UQMOptions::edit().customSeed = uqm::UQMOptions::read().customSeed.value + 1)
 	{
@@ -551,8 +552,7 @@ void SeedDEBUG()
 	uqm::UQMOptions::edit().customSeed.value = save;
 	if (StarGenRNG && myRNG)
 	{
-		RandomContext_Delete(StarGenRNG);
-		StarGenRNG = nullptr;
+		StarGenRNG.reset();
 	}
 }
 
@@ -577,8 +577,8 @@ bool InitStarseed(bool newgame)
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "Init Starseed creating a STAR GEN RNG.\n");
 #endif
-		StarGenRNG = RandomContext_New();
-		RandomContext_SeedRandom(StarGenRNG, uqm::UQMOptions::read().customSeed.value);
+		StarGenRNG.emplace();
+		StarGenRNG->reseed(uqm::UQMOptions::read().customSeed.value);
 	}
 	if (!StarSeed)
 	{
@@ -587,11 +587,7 @@ bool InitStarseed(bool newgame)
 		DefaultPlot(plot_map, star_array);
 		DefaultQuasispace(portal_map);
 		// Done with StarGenRNG for now; will create later if moving fleets
-		if (StarGenRNG)
-		{
-			RandomContext_Delete(StarGenRNG);
-		}
-		StarGenRNG = nullptr;
+		StarGenRNG.reset();
 		return true;
 	}
 	if (g_seedType == uqm::SeedType::MRQ)
@@ -620,21 +616,13 @@ bool InitStarseed(bool newgame)
 		if (SeedPlot(plot_map, star_array) != NUM_PLOTS)
 		{
 			fmt::print(stderr, "Seed Plot Failed.\n");
-			if (StarGenRNG)
-			{
-				RandomContext_Delete(StarGenRNG);
-			}
-			StarGenRNG = nullptr;
+			StarGenRNG.reset();
 			return false;
 		}
 		if (!SeedQuasispace(portal_map, plot_map, star_array))
 		{
 			fmt::print(stderr, "Seed Quasisapce Failed.\n");
-			if (StarGenRNG)
-			{
-				RandomContext_Delete(StarGenRNG);
-			}
-			StarGenRNG = nullptr;
+			StarGenRNG.reset();
 			return false;
 		}
 	}
@@ -656,21 +644,13 @@ bool InitStarseed(bool newgame)
 		if (i >= 100)
 		{
 			fmt::print(stderr, "Seed Plot Failed.\n");
-			if (StarGenRNG)
-			{
-				RandomContext_Delete(StarGenRNG);
-			}
-			StarGenRNG = nullptr;
+			StarGenRNG.reset();
 			return false;
 		}
 		if (!SeedQuasispace(portal_map, plot_map, star_array))
 		{
 			fmt::print(stderr, "Seed Quasisapce Failed.\n");
-			if (StarGenRNG)
-			{
-				RandomContext_Delete(StarGenRNG);
-			}
-			StarGenRNG = nullptr;
+			StarGenRNG.reset();
 			return false;
 		}
 	}
@@ -690,11 +670,7 @@ bool InitStarseed(bool newgame)
 	fmt::print(stderr, "Done seeding {}.\n", uqm::UQMOptions::read().customSeed.value);
 #endif
 	// Done with StarGenRNG for now; will create later if moving fleets
-	if (StarGenRNG)
-	{
-		RandomContext_Delete(StarGenRNG);
-	}
-	StarGenRNG = nullptr;
+	StarGenRNG.reset();
 	return (true);
 }
 

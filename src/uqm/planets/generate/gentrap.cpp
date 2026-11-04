@@ -18,6 +18,8 @@
 
 #include "genall.h"
 #include "../planets.h"
+#include "uqm/random/UQMRandom.h"
+#include "uqm/globdata.h"
 
 
 static bool GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys);

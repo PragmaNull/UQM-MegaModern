@@ -23,6 +23,7 @@
 #include "../../setupmenu.h"
 #include "uqm/globdata.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 20
@@ -198,7 +199,7 @@ limpet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 						 ElementPtr1);
 			s.frame = SetAbsFrameIndex(
-				StarShipPtr->RaceDescPtr->ship_data.weapon[0], (uint16_t)TFB_Random());
+				StarShipPtr->RaceDescPtr->ship_data.weapon[0], (uint16_t)uqm::random().next());
 			ModifySilhouette(ElementPtr1, &s, MODIFY_IMAGE);
 		}
 		else
@@ -369,9 +370,9 @@ vux_preprocess(ELEMENT* ElementPtr)
 				// instead of subtracting straight from the GFXPOINT sized
 				// ShipImagePtr->current.location.
 				int32_t temp_x =
-					((int32_t)OtherShipPtr->current.location.x - (MAXX_ENTRY_DIST >> 1)) + ((uint16_t)TFB_Random() % MAXX_ENTRY_DIST);
+					((int32_t)OtherShipPtr->current.location.x - (MAXX_ENTRY_DIST >> 1)) + ((uint16_t)uqm::random().next() % MAXX_ENTRY_DIST);
 				int32_t temp_y =
-					((int32_t)OtherShipPtr->current.location.y - (MAXY_ENTRY_DIST >> 1)) + ((uint16_t)TFB_Random() % MAXY_ENTRY_DIST);
+					((int32_t)OtherShipPtr->current.location.y - (MAXY_ENTRY_DIST >> 1)) + ((uint16_t)uqm::random().next() % MAXY_ENTRY_DIST);
 
 				temp_x += temp_x > 0 ? SA_MATRA_EXTRA_DIST : -SA_MATRA_EXTRA_DIST;
 				temp_y += temp_y > 0 ? SA_MATRA_EXTRA_DIST : -SA_MATRA_EXTRA_DIST;

@@ -27,6 +27,7 @@
 #include "libs/graphics/cmap.h"
 #include "libs/graphics/drawable.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static TimeCount LastTime;
@@ -58,7 +59,7 @@ randomFrameRate(SEQUENCE* pSeq)
 {
 	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
 
-	return ADPtr->BaseFrameRate + TFB_Random() % (ADPtr->RandomFrameRate + 1);
+	return ADPtr->BaseFrameRate + uqm::random().next() % (ADPtr->RandomFrameRate + 1);
 }
 
 static inline uint32_t
@@ -66,7 +67,7 @@ randomRestartRate(SEQUENCE* pSeq)
 {
 	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
 
-	return ADPtr->BaseRestartRate + TFB_Random() % (ADPtr->RandomRestartRate + 1);
+	return ADPtr->BaseRestartRate + uqm::random().next() % (ADPtr->RandomRestartRate + 1);
 }
 
 static inline uint16_t
@@ -74,7 +75,7 @@ randomFrameIndex(SEQUENCE* pSeq, uint16_t from)
 {
 	const ANIMATION_DESC* ADPtr = pSeq->ADPtr;
 
-	return from + TFB_Random() % (ADPtr->NumFrames - from);
+	return from + uqm::random().next() % (ADPtr->NumFrames - from);
 }
 
 static void
@@ -100,7 +101,7 @@ SetupAmbientSequences(SEQUENCE* pSeq, uint16_t Num)
 		// Default: first frame is neutral
 		if (ADPtr->AnimFlags & RANDOM_ANIM)
 		{ // Set a random frame/colormap
-			pSeq->NextIndex = TFB_Random() % ADPtr->NumFrames;
+			pSeq->NextIndex = uqm::random().next() % ADPtr->NumFrames;
 		}
 		else if (ADPtr->AnimFlags & YOYO_ANIM)
 		{ // Skip the first frame/colormap (it's neutral)

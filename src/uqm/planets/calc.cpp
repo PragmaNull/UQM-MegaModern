@@ -49,7 +49,7 @@ enum
 static uint16_t
 CalcFromBase(uint16_t base, uint16_t variance)
 {
-	return base + uqm::lowWord(RandomContext_Random(SysGenRNG)) % variance;
+	return base + uqm::lowWord(SysGenRNG->next()) % variance;
 }
 
 static inline uint16_t
@@ -224,7 +224,7 @@ CalcRotation(PLANET_INFO* PlanetInfoPtr)
 	{
 		return ((uint16_t)CalcFromBase(80, 80));
 	}
-	else if (uqm::lowByte(RandomContext_Random(SysGenRNG)) % 10 == 0)
+	else if (uqm::lowByte(SysGenRNG->next()) % 10 == 0)
 	{
 		return ((uint16_t)CalcFromBase((uint16_t)50 * EARTH_HOURS, (uint16_t)200 * EARTH_HOURS));
 	}
@@ -244,7 +244,7 @@ CalcTilt(void)
 	uint8_t i {NUM_TOSSES};
 	do /* Using added Randomom values to give bell curve */
 	{
-		tilt += uqm::lowWord(RandomContext_Random(SysGenRNG))
+		tilt += uqm::lowWord(SysGenRNG->next())
 			  % ((TILT_RANGE / NUM_TOSSES) + 1);
 	} while (--i);
 
@@ -444,7 +444,7 @@ void DoPlanetaryAnalysis(SYSTEM_INFO* SysInfoPtr, PLANET_DESC* pPlanetDesc)
 	assert((pPlanetDesc->data_index & ~WORLD_TYPE_SPECIAL)
 		   < NUMBER_OF_PLANET_TYPES);
 
-	RandomContext_SeedRandom(SysGenRNG, pPlanetDesc->rand_seed);
+	SysGenRNG->reseed(pPlanetDesc->rand_seed);
 
 	CalcSysInfo(SysInfoPtr);
 
@@ -513,7 +513,7 @@ void DoPlanetaryAnalysis(SYSTEM_INFO* SysInfoPtr, PLANET_DESC* pPlanetDesc)
 		}
 		SysInfoPtr->PlanetInfo.PlanetDensity +=
 			(SysInfoPtr->PlanetInfo.PlanetDensity / 20)
-			- (uqm::lowWord(RandomContext_Random(SysGenRNG))
+			- (uqm::lowWord(SysGenRNG->next())
 			   % (SysInfoPtr->PlanetInfo.PlanetDensity / 10));
 
 		switch (PLANSIZE(SysInfoPtr->PlanetInfo.PlanDataPtr->Type))

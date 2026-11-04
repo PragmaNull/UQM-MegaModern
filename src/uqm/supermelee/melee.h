@@ -92,7 +92,6 @@ struct melee_state
 	// to add to the fleet, or whether the operation has been
 	// cancelled. If a ship was selected, it is set in
 	// currentShip.
-	RandomContext* randomContext;
 	/* RNG state for all local random decisions, i.e. those
 			 * decisions that are not shared among network parties. */
 	TimeCount LastInputTime;

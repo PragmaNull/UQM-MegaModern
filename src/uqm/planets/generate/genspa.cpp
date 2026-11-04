@@ -32,6 +32,7 @@
 #include "../../state.h"
 #include "../../gamestr.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -155,7 +156,7 @@ GenerateSpathi_generateMoons(SOLARSYS_STATE* solarSys,
 			pMoonDesc->data_index = PELLUCID_WORLD;
 			pMoonDesc->radius = MIN_MOON_RADIUS + MOON_DELTA;
 			angle = NORMALIZE_ANGLE(
-				uqm::lowWord(RandomContext_Random(SysGenRNG)));
+				uqm::lowWord(SysGenRNG->next()));
 			pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
 			pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
 			ComputeSpeed(pMoonDesc, true, 1);
@@ -227,12 +228,12 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 
 			DoPlanetaryAnalysis(&solarSys->SysInfo, world);
-			rand_val = RandomContext_GetSeed(SysGenRNG);
+			rand_val = SysGenRNG->seed();
 
 			solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] =
 				rand_val;
 			GenerateLifeForms(&solarSys->SysInfo, GENERATE_ALL, nullptr);
-			rand_val = RandomContext_GetSeed(SysGenRNG);
+			rand_val = SysGenRNG->seed();
 
 			solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
 			GenerateMineralDeposits(
@@ -271,12 +272,12 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 		{
 			/* visiting Spathiwa */
 			DoPlanetaryAnalysis(&solarSys->SysInfo, world);
-			rand_val = RandomContext_GetSeed(SysGenRNG);
+			rand_val = SysGenRNG->seed();
 
 			solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
 			GenerateMineralDeposits(
 				&solarSys->SysInfo, GENERATE_ALL, nullptr);
-			rand_val = RandomContext_GetSeed(SysGenRNG);
+			rand_val = SysGenRNG->seed();
 
 			solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] =
 				rand_val;

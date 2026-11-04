@@ -25,6 +25,7 @@
 #include "libs/mathlib.h"
 #include "uqm/tactrans.h" // Kruzen: for sounds on April Fools
 #include "uqm/battle.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 20
@@ -593,7 +594,7 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				ConfusionPtr->life_span = 400;
 			}
 			ConfusionPtr->turn_wait =
-				(uint8_t)(1 << ((uint8_t)TFB_Random() & 1)); /* LEFT or RIGHT */
+				(uint8_t)(1 << ((uint8_t)uqm::random().next() & 1)); /* LEFT or RIGHT */
 
 			UnlockElement(hConfusionElement);
 		}

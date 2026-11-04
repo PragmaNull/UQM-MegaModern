@@ -43,12 +43,12 @@ void DeltaTopography(uint16_t num_iterations, int8_t* DepthArray, GFXRECT* pRect
 		int16_t d {};
 		uint16_t h {};
 
-		if ((RandomContext_Random(SysGenRNG) & 1) == 0)
+		if ((SysGenRNG->next() & 1) == 0)
 		{
 			depth_delta = -depth_delta;
 		}
 
-		const uint32_t rand_val {RandomContext_Random(SysGenRNG)};
+		const uint32_t rand_val {SysGenRNG->next()};
 
 		uint16_t w1 {uqm::lowWord(rand_val)};
 		uint16_t w2 {uqm::highWord(rand_val)};

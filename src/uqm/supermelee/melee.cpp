@@ -58,7 +58,7 @@
 // for NUMBER_OF_PLANET_TYPES
 #include "libs/gfxlib.h"
 #include "libs/mathlib.h"
-// for TFB_Random()
+#include "uqm/random/UQMRandom.h"
 #include "libs/reslib.h"
 #include "core/log/log.h"
 #include "libs/file/textfile.h"
@@ -2190,7 +2190,7 @@ StartMelee(MELEE_STATE* pMS)
 
 		WaitForSoundEnd(TFBSOUND_WAIT_ALL);
 
-		load_gravity_well((uint8_t)((uint16_t)TFB_Random() % NUMBER_OF_PLANET_TYPES));
+		load_gravity_well((uint8_t)((uint16_t)uqm::random().next() % NUMBER_OF_PLANET_TYPES));
 		Battle(nullptr);
 		free_gravity_well();
 		ClearPlayerInputAll();
@@ -2783,12 +2783,6 @@ void Melee(void)
 
 		MenuState.meleeSetup = MeleeSetup_new();
 
-		MenuState.randomContext = RandomContext_New();
-		RandomContext_SeedRandom(MenuState.randomContext,
-								 static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count()));
-		// Using the current time still leaves the random state a bit
-		// predictable, but it is good enough.
-
 #ifdef NETPLAY
 		{
 			for (uint16_t player {0}; player < NUM_PLAYERS; player++)
@@ -2830,7 +2824,6 @@ void Melee(void)
 
 		UninitMeleeLoadState(&MenuState);
 
-		RandomContext_Delete(MenuState.randomContext);
 
 		MeleeSetup_delete(MenuState.meleeSetup);
 
@@ -2841,7 +2834,7 @@ void Melee(void)
 #ifdef NETPLAY
 void updateRandomSeed(MELEE_STATE* pMS, uint16_t side, uint32_t seed)
 {
-	TFB_SeedRandom(seed);
+	uqm::random().reseed(seed);
 	(void)pMS;
 	(void)side;
 }

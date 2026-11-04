@@ -35,6 +35,7 @@
 #include "sounds.h"
 #include "libs/mathlib.h"
 #include "util.h"
+#include "uqm/random/UQMRandom.h"
 
 
 void animation_preprocess(ELEMENT* ElementPtr)
@@ -517,7 +518,7 @@ spawn_ship(STARSHIP* StarShipPtr)
 		}
 		else
 		{
-			StarShipPtr->ShipFacing = NORMALIZE_FACING(TFB_Random());
+			StarShipPtr->ShipFacing = NORMALIZE_FACING(uqm::random().next());
 			if (inHQSpace())
 			{ // Only one ship is ever spawned in HyperSpace -- flagship
 				uint16_t facing = uqm::flagship().shipFacing;
@@ -561,9 +562,9 @@ spawn_ship(STARSHIP* StarShipPtr)
 			do
 			{
 				ShipElementPtr->current.location.x =
-					WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+					WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 				ShipElementPtr->current.location.y =
-					WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+					WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 			} while (CalculateGravity(ShipElementPtr)
 					 || TimeSpaceMatterConflict(ShipElementPtr));
 		}

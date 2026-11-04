@@ -20,6 +20,7 @@
 #include "../planets.h"
 #include "../../comm.h"
 #include "../../gamestr.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateSlylandro_generatePlanets(SOLARSYS_STATE* solarSys);

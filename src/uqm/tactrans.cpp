@@ -42,6 +42,7 @@
 #include "sounds.h"
 #include "libs/mathlib.h"
 #include "intel.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static void cleanup_dead_ship(ELEMENT* ElementPtr);
@@ -599,7 +600,7 @@ explosion_preprocess(ELEMENT* ShipPtr)
 			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], STAMP_PRIM);
 			ElementPtr->current.image.farray = explosion;
 			ElementPtr->current.image.frame = explosion[0];
-			uint32_t rand_val {TFB_Random()};
+			uint32_t rand_val {uqm::random().next()};
 			angle = uqm::lowByte(uqm::highWord(rand_val));
 			dist = DISPLAY_TO_WORLD(RES_SCALE(uqm::lowByte(uqm::lowWord(rand_val)) % 8));
 			if (uqm::highByte(uqm::lowWord(rand_val)) < 256 * 1 / 3)
@@ -611,7 +612,7 @@ explosion_preprocess(ELEMENT* ShipPtr)
 			ElementPtr->current.location.y =
 				ShipPtr->current.location.y + SINE(angle, dist);
 			ElementPtr->preprocess_func = animation_preprocess;
-			rand_val = TFB_Random();
+			rand_val = uqm::random().next();
 			angle = uqm::lowByte(uqm::lowWord(rand_val));
 			dist = WORLD_TO_VELOCITY(
 				DISPLAY_TO_WORLD(RES_SCALE(uqm::highByte(uqm::lowWord(rand_val)) % 5)));

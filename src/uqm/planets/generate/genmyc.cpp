@@ -31,6 +31,7 @@
 #include "../../state.h"
 #include "../../gamestr.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateMycon_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -292,9 +293,9 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 		&& (CurStarDescPtr->Index != EGG_CASE0_DEFINED || isDifficulty(uqm::Difficulty::Hard)))
 	{
 		PLANET_INFO* pPlanetInfo = &solarSys->SysInfo.PlanetInfo;
-		const uint32_t rand = RandomContext_Random(SysGenRNG);
+		const uint32_t rand = SysGenRNG->next();
 
-		pPlanetInfo->SurfaceTemperature = RangeMinMax(100, 300, rand);
+		pPlanetInfo->SurfaceTemperature = uqm::rangeMinMax(100, 300, rand);
 	}
 
 	return true;

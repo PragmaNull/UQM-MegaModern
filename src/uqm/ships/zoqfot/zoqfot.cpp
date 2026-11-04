@@ -21,6 +21,7 @@
 #include "resinst.h"
 
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 10
@@ -150,7 +151,7 @@ spit_preprocess(ELEMENT* ElementPtr)
 		uint16_t angle {GetVelocityTravelAngle(&ElementPtr->velocity)};
 		if ((index = GetFrameIndex(ElementPtr->next.image.frame)) == 1)
 		{
-			angle = angle + (((uint16_t)TFB_Random() % 3) - 1);
+			angle = angle + (((uint16_t)uqm::random().next() % 3) - 1);
 		}
 		else
 		{

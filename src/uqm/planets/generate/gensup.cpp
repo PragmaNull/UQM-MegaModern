@@ -27,6 +27,7 @@
 #include "../../state.h"
 #include "../../gamestr.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateSupox_generatePlanets(SOLARSYS_STATE* solarSys);

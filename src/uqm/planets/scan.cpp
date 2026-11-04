@@ -45,6 +45,7 @@
 #include "libs/graphics/drawable.h"
 #include "libs/inplib.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 extern FRAME SpaceJunkFrame;
 
@@ -1684,13 +1685,13 @@ generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 		CreatureData[ZEX_BEAUTY].ValueAndHitPoints = uqm::makeByte(15, 8);
 	}
 
-	// NOTE: TFB_Random() calls here are NOT part of the deterministic
+	// NOTE: uqm::random().next() calls here are NOT part of the deterministic
 	// planet generation PRNG flow.
 	if (CreatureData[creatureType].Attributes & SPEED_MASK)
 	{
 		// Place moving creatures at a random location.
-		i = TFB_Random();
-		j = (uint32_t)TFB_Random();
+		i = uqm::random().next();
+		j = (uint32_t)uqm::random().next();
 
 		NodeElementPtr->current.location.x =
 			((chooseIfHd(static_cast<uint16_t>(uqm::lowByte(i)), uqm::lowWord(j)) % (SCALED_MAP_WIDTH - (8 << 1))) + 8);
@@ -1723,7 +1724,7 @@ generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 	NodeElementPtr->hit_points = uqm::highNibble(
 		CreatureData[creatureType].ValueAndHitPoints);
 	DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame = SetAbsFrameIndex(
-		system->PlanetSideFrame[i + 3], (uint16_t)TFB_Random());
+		system->PlanetSideFrame[i + 3], (uint16_t)uqm::random().next());
 }
 
 void GeneratePlanetSide(void)

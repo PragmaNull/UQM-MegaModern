@@ -31,6 +31,7 @@
 #include "intel.h"
 #include "igfxres.h"
 #include "nameref.h"
+#include "uqm/random/UQMRandom.h"
 
 void spawn_planet(void)
 {
@@ -54,9 +55,9 @@ void spawn_planet(void)
 			SetPrimColor(&DisplayArray[PlanetElementPtr->PrimIndex],
 						 BUILD_COLOR_RGBA(0x00, 0x00, 0x00, 0x00));
 			PlanetElementPtr->current.location.x =
-				WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+				WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 			PlanetElementPtr->current.location.y =
-				WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+				WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 			PlanetElementPtr->collision_func = nullptr;
 			PlanetElementPtr->postprocess_func = nullptr;
 			ZeroVelocityComponents(&PlanetElementPtr->velocity);
@@ -74,9 +75,9 @@ void spawn_planet(void)
 			do
 			{
 				PlanetElementPtr->current.location.x =
-					WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+					WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 				PlanetElementPtr->current.location.y =
-					WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+					WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 			} while (CalculateGravity(PlanetElementPtr)
 					 || TimeSpaceMatterConflict(PlanetElementPtr));
 		}
@@ -197,7 +198,7 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 			uqm::UQMOptions::read().meleeObstacles && !isNetwork() ? DISAPPEARING : APPEARING;
 		AsteroidElementPtr->life_span = NORMAL_LIFE;
 		SetPrimType(&DisplayArray[AsteroidElementPtr->PrimIndex], STAMP_PRIM);
-		if ((val = (uint16_t)TFB_Random()) & (1 << 0))
+		if ((val = (uint16_t)uqm::random().next()) & (1 << 0))
 		{
 			if (!(val & (1 << 1)))
 			{
@@ -208,12 +209,12 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 				AsteroidElementPtr->current.location.x = LOG_SPACE_WIDTH;
 			}
 			AsteroidElementPtr->current.location.y =
-				WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+				WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 		}
 		else
 		{
 			AsteroidElementPtr->current.location.x =
-				WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+				WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 			if (!(val & (1 << 1)))
 			{
 				AsteroidElementPtr->current.location.y = 0;
@@ -229,20 +230,20 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 			// of function arguments may vary per system, which may break
 			// synchronisation on network games.
 			const int16_t magnitude =
-				DISPLAY_TO_WORLD(((int16_t)TFB_Random() & 7) + 4);
-			const uint16_t facing = (uint16_t)TFB_Random();
+				DISPLAY_TO_WORLD(((int16_t)uqm::random().next() & 7) + 4);
+			const uint16_t facing = (uint16_t)uqm::random().next();
 			SetVelocityVector(&AsteroidElementPtr->velocity, magnitude,
 							  facing);
 		}
 		AsteroidElementPtr->current.image.farray = asteroid;
 		AsteroidElementPtr->current.image.frame =
 			SetAbsFrameIndex(asteroid[0],
-							 NORMALIZE_FACING(TFB_Random()));
+							 NORMALIZE_FACING(uqm::random().next()));
 		AsteroidElementPtr->turn_wait =
 			AsteroidElementPtr->thrust_wait =
-				(uint8_t)TFB_Random() & (uint8_t)((1 << 2) - 1);
+				(uint8_t)uqm::random().next() & (uint8_t)((1 << 2) - 1);
 		AsteroidElementPtr->thrust_wait |=
-			(uint8_t)TFB_Random() & (uint8_t)(1 << 7);
+			(uint8_t)uqm::random().next() & (uint8_t)(1 << 7);
 		AsteroidElementPtr->preprocess_func = asteroid_preprocess;
 		AsteroidElementPtr->death_func = spawn_rubble;
 		AsteroidElementPtr->collision_func = collision;
@@ -448,8 +449,8 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 			ShipIntersect.IntersectStamp.origin =
 				ShipPtr->IntersectControl.EndPoint;
 
-			const int16_t w {(int16_t)((uint16_t)TFB_Random() % r.extent.width)};
-			const int16_t h {(int16_t)((uint16_t)TFB_Random() % r.extent.height)};
+			const int16_t w {(int16_t)((uint16_t)uqm::random().next() % r.extent.width)};
+			const int16_t h {(int16_t)((uint16_t)uqm::random().next() % r.extent.height)};
 			CrewIntersect.EndPoint = ShipIntersect.EndPoint;
 			CrewIntersect.IntersectStamp.frame = DecFrameIndex(stars_in_space);
 			if (dx == 0 && dy == 0)

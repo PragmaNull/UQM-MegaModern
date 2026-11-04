@@ -84,6 +84,7 @@ bool restartGame;
 #include <spdlog/version.h>
 #include <vorbis/codec.h>
 #include <zlib.h>
+#include "uqm/random/UQMRandom.h"
 
 
 namespace uqm

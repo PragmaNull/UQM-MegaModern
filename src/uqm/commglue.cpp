@@ -31,6 +31,7 @@
 #include <stddef.h>
 #include <assert.h>
 #include "libs/math/random.h"
+#include "uqm/random/UQMRandom.h"
 
 uint16_t RoboTrack[NUM_ROBO_TRACKS];
 

@@ -27,6 +27,7 @@
 #include "../../starmap.h"
 #include "../../state.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateZoqFotPik_initNpcs(SOLARSYS_STATE* solarSys);
@@ -245,24 +246,24 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
-		const uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+		const uint32_t rand = SysGenRNG->seed();
 		PLANET_INFO* PlanetInfo = &solarSys->SysInfo.PlanetInfo;
 
 		PlanetInfo->Weather = 1;
 		PlanetInfo->Tectonics = 1;
-		PlanetInfo->SurfaceTemperature = RangeMinMax(-10, 40, rand);
+		PlanetInfo->SurfaceTemperature = uqm::rangeMinMax(-10, 40, rand);
 	}
 
 	if (CurStarDescPtr->Index == ZOQ_COLONY2_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
 		&& EXTENDED && !isDifficulty(uqm::Difficulty::Hard))
 	{
-		const uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+		const uint32_t rand = SysGenRNG->seed();
 		PLANET_INFO* PlanetInfo = &solarSys->SysInfo.PlanetInfo;
 
 		PlanetInfo->Weather = 1;
 		PlanetInfo->Tectonics = 1;
-		PlanetInfo->SurfaceTemperature = RangeMinMax(-10, 40, rand);
+		PlanetInfo->SurfaceTemperature = uqm::rangeMinMax(-10, 40, rand);
 	}
 
 	return true;

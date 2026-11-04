@@ -39,6 +39,7 @@
 #include "uqm/starmap.h" // for plot map, etc.
 #include "uqm/gamestr.h" // for GAME_STRING
 #include <ctype.h>		 // for islower, isupper, toupper
+#include "uqm/random/UQMRandom.h"
 
 
 extern uint16_t RoboTrack[];

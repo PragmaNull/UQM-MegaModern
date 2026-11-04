@@ -22,6 +22,7 @@
 
 #include "uqm/globdata.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 20
@@ -249,7 +250,7 @@ utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 						& PLAYER_SHIP) /* means IMMEDIATE WEAPON */
 					|| PlotIntercept(lpEvalDesc->ObjectPtr,
 									 ShipPtr, 2, 0))
-				&& (TFB_Random() & 3))
+				&& (uqm::random().next() & 3))
 			{
 				StarShipPtr->ship_input_state |= SPECIAL;
 				StarShipPtr->ship_input_state &= ~WEAPON;

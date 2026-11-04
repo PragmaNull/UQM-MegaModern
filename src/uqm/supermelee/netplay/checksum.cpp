@@ -30,6 +30,7 @@
 #include "netmelee.h"
 #include "core/log/log.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 ChecksumBuffer localChecksumBuffer;
 
@@ -169,10 +170,10 @@ void crc_processRNG(crc_State* state)
 	crc_log("START crc_processRNG().");
 #endif
 
-	const uint32_t seed {TFB_SeedRandom(0)};
+	const uint32_t seed {uqm::random().reseed(0)};
 	// This modifies the seed too.
 	crc_processDWORD(state, seed);
-	TFB_SeedRandom(seed);
+	uqm::random().reseed(seed);
 	// Restore the old seed.
 
 #ifdef DUMP_CRC_OPS

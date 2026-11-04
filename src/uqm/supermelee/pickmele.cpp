@@ -40,6 +40,7 @@
 #include "libs/callback/async.h"
 #include "core/log/log.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 #define NUM_PICKMELEE_ROWS 2
@@ -759,7 +760,7 @@ GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 	gmstate.Initialized = false;
 	for (uint16_t i {0}; i < NUM_PLAYERS; ++i)
 	{
-		// We have to use TFB_Random() results in specific order
+		// We have to use uqm::random().next() results in specific order
 		playerI = GetPlayerOrder(i);
 		gmstate.player[playerI].selecting =
 			(playerMask & (1 << playerI)) != 0;
@@ -769,7 +770,7 @@ GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 		// wants a random ship, to keep it simple to keep network parties
 		// synchronised.
 		gmstate.player[playerI].randomIndex =
-			(uint16_t)TFB_Random() % gmstate.player[playerI].ships_left;
+			(uint16_t)uqm::random().next() % gmstate.player[playerI].ships_left;
 		gmstate.player[playerI].done = false;
 
 		if (!gmstate.player[playerI].selecting)

@@ -24,6 +24,7 @@
 #include "uqm/colors.h"
 #include "uqm/globdata.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 16
@@ -310,7 +311,7 @@ orz_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				StarShipPtr->ship_input_state |= SPECIAL;
 				if (delta_facing == ANGLE_TO_FACING(HALF_CIRCLE))
 				{
-					delta_facing += (((uint8_t)TFB_Random() & 1) << 1) - 1;
+					delta_facing += (((uint8_t)uqm::random().next() & 1) << 1) - 1;
 				}
 
 				if (delta_facing < ANGLE_TO_FACING(HALF_CIRCLE))
@@ -446,7 +447,7 @@ LeftShip:
 			{
 				ElementPtr->thrust_wait = MARINE_WAIT;
 
-				const uint8_t randval {(uint8_t)TFB_Random()};
+				const uint8_t randval {(uint8_t)uqm::random().next()};
 				if (randval < (0x0100 / 16))
 				{
 					ElementPtr->life_span = 0;
@@ -499,7 +500,7 @@ LeftShip:
 					StarShipPtr->RaceDescPtr->ship_data.special[0], 21);
 		ElementPtr->thrust_wait = 0;
 		ElementPtr->turn_wait =
-			uqm::makeByte(0, NORMALIZE_FACING((uint8_t)TFB_Random()));
+			uqm::makeByte(0, NORMALIZE_FACING((uint8_t)uqm::random().next()));
 		ElementPtr->preprocess_func = marine_preprocess;
 	}
 }
@@ -667,7 +668,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 				{
 					if (delta_facing == ANGLE_TO_FACING(OCTANT))
 					{
-						facing += (((int16_t)TFB_Random() & 1) << 1) - 1;
+						facing += (((int16_t)uqm::random().next() & 1) << 1) - 1;
 					}
 					else if (delta_facing < ANGLE_TO_FACING(OCTANT))
 					{
@@ -719,7 +720,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 				{
 					if (delta_facing == ANGLE_TO_FACING(HALF_CIRCLE))
 					{
-						facing += (((uint8_t)TFB_Random() & 1) << 1) - 1;
+						facing += (((uint8_t)uqm::random().next() & 1) << 1) - 1;
 					}
 					else if (delta_facing < ANGLE_TO_FACING(HALF_CIRCLE))
 					{
@@ -822,7 +823,7 @@ void marine_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			else if ((ElementPtr0->state_flags & IGNORE_SIMILAR)
 					 && ElementPtr1->crew_level
 #ifdef NEVER
-					 && (uint8_t)TFB_Random() <= (0x0100 / 3)
+					 && (uint8_t)uqm::random().next() <= (0x0100 / 3)
 #endif /* NEVER */
 			)
 			{

@@ -23,6 +23,7 @@
 #include "libs/mathlib.h"
 #include "uqm/globdata.h"
 #include <math.h>
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 6
@@ -191,7 +192,7 @@ arilou_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			if (((lpEvalDesc->ObjectPtr->state_flags & PLAYER_SHIP)															  /* means IMMEDIATE WEAPON */
 				 || (IsTrackingWeapon && (lpEvalDesc->which_turn == 1 || (lpEvalDesc->ObjectPtr->state_flags & CREW_OBJECT))) /* FIGHTERS!!! */
 				 || PlotIntercept(lpEvalDesc->ObjectPtr, ShipPtr, 3, 0))
-				&& !(TFB_Random() & 3))
+				&& !(uqm::random().next() & 3))
 			{
 				StarShipPtr->ship_input_state &= ~(LEFT | RIGHT | THRUST | WEAPON);
 				StarShipPtr->ship_input_state |= SPECIAL;
@@ -298,9 +299,9 @@ arilou_preprocess(ELEMENT* ElementPtr)
 					do
 					{
 						ElementPtr->next.location.x =
-							WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+							WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 						ElementPtr->next.location.y =
-							WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+							WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 
 						dx = ((int32_t)ElementPtr->next.location.x - (LOG_SPACE_WIDTH >> 1));
 						dy = ((int32_t)ElementPtr->next.location.y - (LOG_SPACE_HEIGHT >> 1));
@@ -311,9 +312,9 @@ arilou_preprocess(ELEMENT* ElementPtr)
 				else
 				{
 					ElementPtr->next.location.x =
-						WRAP_X(DISPLAY_ALIGN_X(TFB_Random()));
+						WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 					ElementPtr->next.location.y =
-						WRAP_Y(DISPLAY_ALIGN_Y(TFB_Random()));
+						WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
 				}
 			}
 		}

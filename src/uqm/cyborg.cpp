@@ -26,6 +26,7 @@
 #include "units.h"
 #include "libs/mathlib.h"
 #include "core/log/log.h"
+#include "uqm/random/UQMRandom.h"
 
 //#define DEBUG_CYBORG
 
@@ -570,7 +571,7 @@ bool TurnShip(ELEMENT* ShipPtr, uint16_t angle)
 		if (ship_delta_facing == ANGLE_TO_FACING(HALF_CIRCLE))
 		{
 			ship_delta_facing =
-				NORMALIZE_FACING(ship_delta_facing + (TFB_Random() & 1 ? ANGLE_TO_FACING(OCTANT >> 1) : -ANGLE_TO_FACING(OCTANT >> 1)));
+				NORMALIZE_FACING(ship_delta_facing + (uqm::random().next() & 1 ? ANGLE_TO_FACING(OCTANT >> 1) : -ANGLE_TO_FACING(OCTANT >> 1)));
 		}
 
 		if (ship_delta_facing < ANGLE_TO_FACING(HALF_CIRCLE))
@@ -887,7 +888,7 @@ void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 				- EvalDescPtr->facing);
 			if ((desired_turn_angle & (HALF_CIRCLE - 1)) == 0)
 			{
-				desired_thrust_angle = TFB_Random() & 1 ? RIGHT : LEFT;
+				desired_thrust_angle = uqm::random().next() & 1 ? RIGHT : LEFT;
 			}
 			else
 			{

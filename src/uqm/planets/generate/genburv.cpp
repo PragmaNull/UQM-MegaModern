@@ -23,6 +23,7 @@
 #include "../../nameref.h"
 #include "../../resinst.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys);
@@ -80,7 +81,7 @@ GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys)
 	}
 	else
 	{
-		const uint32_t rand_val = RandomContext_Random(SysGenRNG);
+		const uint32_t rand_val = SysGenRNG->next();
 
 		//pSunDesc->PlanetByte = PickClosestHabitable (solarSys);
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -119,7 +120,7 @@ GenerateBurvixese_generateMoons(SOLARSYS_STATE* solarSys,
 		pMoonDesc->data_index = SELENIC_WORLD;
 		pMoonDesc->radius =
 			MIN_MOON_RADIUS + (MAX_GEN_MOONS - 1) * MOON_DELTA;
-		const uint32_t rand_val {RandomContext_Random(SysGenRNG)};
+		const uint32_t rand_val {SysGenRNG->next()};
 		angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 		pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
 		pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
@@ -134,11 +135,11 @@ GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
 								  PLANET_DESC* world)
 {
 	DoPlanetaryAnalysis(&solarSys->SysInfo, world);
-	uint32_t rand_val {RandomContext_GetSeed(SysGenRNG)};
+	uint32_t rand_val {SysGenRNG->seed()};
 
 	solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] = rand_val;
 	GenerateLifeForms(&solarSys->SysInfo, GENERATE_ALL, nullptr);
-	rand_val = RandomContext_GetSeed(SysGenRNG);
+	rand_val = SysGenRNG->seed();
 
 	solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
 	GenerateMineralDeposits(&solarSys->SysInfo, GENERATE_ALL, nullptr);

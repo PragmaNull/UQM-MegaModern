@@ -20,6 +20,7 @@
 #define UQM_PLANETS_PLANETS_H_
 
 #include "libs/mathlib.h"
+#include "libs/sndlib.h"
 #include "options.h"
 
 #define END_INTERPLANETARY START_INTERPLANETARY
@@ -149,6 +150,7 @@ typedef struct portal_location PORTAL_LOCATION;
 #include "plandata.h"
 #include "sundata.h"
 #include "../gendef.h" //JSD need gendef.h unless we move plots & starmap to starmap
+#include "uqm/random/UQMRandom.h"
 
 typedef struct
 {
@@ -375,8 +377,8 @@ extern bool use3DOSpheres;
 
 // Random context used for all solar system, planets, and surfaces
 // generation
-extern RandomContext* SysGenRNG;
-extern RandomContext* SysGenRNGDebug;
+extern uqstl::optional<uqm::UQMRandom> SysGenRNG;
+extern uqm::UQMRandom* SysGenRNGDebug;
 
 bool playerInSolarSystem(void);
 bool playerInPlanetOrbit(void);

@@ -45,6 +45,7 @@
 #include "libs/mathlib.h"
 #include "core/log/log.h"
 #include "util.h"
+#include "uqm/random/UQMRandom.h"
 
 #define XOFFS ((RADAR_SCAN_WIDTH + (UNIT_SCREEN_WIDTH << 2)) >> 1)
 #define YOFFS ((RADAR_SCAN_HEIGHT + (UNIT_SCREEN_HEIGHT << 2)) >> 1)
@@ -463,7 +464,7 @@ void check_hyperspace_encounter(void)
 			if ((uint16_t)dx < encounter_radius
 				&& (uint16_t)dy < encounter_radius
 				&& (uint32_t)dx * dx + (uint32_t)dy * dy < (uint32_t)encounter_radius * encounter_radius
-				&& ((uint16_t)TFB_Random() % 100) < percent)
+				&& ((uint16_t)uqm::random().next() % 100) < percent)
 			{
 				// Ship spawned for encounter.
 				hEncounter = AllocEncounter();
@@ -1180,7 +1181,7 @@ AddAmbientElement(void)
 						 HYPER_TO_QUASI_COLOR);
 		}
 
-		const uint32_t rand_val {TFB_Random()};
+		const uint32_t rand_val {uqm::random().next()};
 		dy = uqm::lowWord(rand_val);
 
 		if (!IS_HD)
@@ -1401,7 +1402,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 		uint16_t NumShips {uqm::lowNibble(EncounterMakeup[Type])};
 		for (i = uqm::highNibble(EncounterMakeup[Type]) - NumShips; i; --i)
 		{
-			if ((uint16_t)TFB_Random() % 100 < 50)
+			if ((uint16_t)uqm::random().next() % 100 < 50)
 			{
 				++NumShips;
 			}
@@ -1429,7 +1430,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 
 		do
 		{
-			const uint32_t rand_val {TFB_Random()};
+			const uint32_t rand_val {uqm::random().next()};
 
 			enc_pt.x = puniverse->x
 					 + (uqm::lowWord(rand_val) % (XOFFS << 1)) - XOFFS;
@@ -1492,7 +1493,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 			{
 				ElementPtr->preprocess_func = encounter_animation;
 				ElementPtr->current.image.frame = SetAbsFrameIndex(
-					ElementPtr->current.image.farray[0], BASE_VORTEX_FRAME_INDEX + (TFB_Random() % 31));
+					ElementPtr->current.image.farray[0], BASE_VORTEX_FRAME_INDEX + (uqm::random().next() % 31));
 			}
 			else
 			{
@@ -2202,7 +2203,7 @@ void SeedUniverse(void)
 
 	SetContext(StatusContext);
 
-	if (!(uqm::lowWord(TFB_Random()) & 7))
+	if (!(uqm::lowWord(uqm::random().next()) & 7))
 	{
 		AddAmbientElement();
 	}

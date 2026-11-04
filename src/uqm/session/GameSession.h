@@ -3,6 +3,7 @@
 #ifndef UQM_SESSION_GAMESESSION_H_
 #define UQM_SESSION_GAMESESSION_H_
 
+#include "uqm/random/UQMRandom.h"
 #include "uqm/session/GameState.h"
 
 namespace uqm
@@ -31,6 +32,12 @@ public:
 		return m_state;
 	}
 
+	// The random number generator. The session seeds it from the time.
+	[[nodiscard]] UQMRandom& random() noexcept
+	{
+		return m_random;
+	}
+
 	// Sets up the game systems. The session must be the current session.
 	void startGame();
 	// Releases the game systems. The session must be the current session.
@@ -39,6 +46,7 @@ public:
 private:
 	SessionKind m_kind;
 	GameState m_state {};
+	UQMRandom m_random {};
 };
 
 } // namespace uqm

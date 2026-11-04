@@ -29,6 +29,7 @@
 #include "core/log/log.h"
 
 #include <ctype.h>
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateMelnorme_initNpcs(SOLARSYS_STATE* solarSys);

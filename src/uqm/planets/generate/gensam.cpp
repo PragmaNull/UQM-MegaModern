@@ -32,6 +32,7 @@
 #include "../../starmap.h"
 #include "../../state.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateSaMatra_initNpcs(SOLARSYS_STATE* solarSys);
@@ -227,9 +228,9 @@ GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		if (!pPlanet->NumPlanets)
 		{
-			const uint32_t rand = RandomContext_GetSeed(SysGenRNG);
+			const uint32_t rand = SysGenRNG->seed();
 
-			pPlanet->NumPlanets = RangeMinMax(1, 4, rand);
+			pPlanet->NumPlanets = uqm::rangeMinMax(1, 4, rand);
 		}
 
 		if (pPlanet->NumPlanets > 1)
@@ -266,7 +267,7 @@ GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
 			if (PrimeSeed)
 			{
 				pMoonDesc->radius = MIN_MOON_RADIUS + (2 * MOON_DELTA);
-				rand_val = RandomContext_Random(SysGenRNG);
+				rand_val = SysGenRNG->next();
 				angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 				pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
 				pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);

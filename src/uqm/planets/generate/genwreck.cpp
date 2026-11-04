@@ -26,6 +26,7 @@
 #include "../../build.h"
 #include "libs/mathlib.h"
 #include "../../comm.h"
+#include "uqm/random/UQMRandom.h"
 
 static bool GenerateWreck_generatePlanets(SOLARSYS_STATE* solarSys);
 static bool GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
@@ -64,7 +65,7 @@ GenerateWreck_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		if (!StarSeed)
 		{
-			const uint32_t RandVal = RandomContext_Random(SysGenRNG);
+			const uint32_t RandVal = SysGenRNG->next();
 			const uint8_t PByte = pSunDesc->PlanetByte + 1;
 			pSunDesc->NumPlanets =
 				(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);

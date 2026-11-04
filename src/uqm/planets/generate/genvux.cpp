@@ -31,6 +31,7 @@
 #include "../../sounds.h"
 #include "../../state.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys);

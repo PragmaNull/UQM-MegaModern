@@ -239,14 +239,12 @@ src/libs/lua/lvm.h
 src/libs/lua/lzio.cpp
 src/libs/lua/lzio.h
 src/libs/math/mthintrn.h
-src/libs/math/random.cpp
-src/libs/math/random.h
+src/libs/math/Random.h
 src/libs/math/randomdefs.h
 src/libs/math/sqrt.cpp
 src/libs/mathlib.h
 src/libs/md5.h
 src/libs/md5/md5.cpp
-src/libs/math/random2.cpp
 src/libs/md5/md5.h
 src/libs/memlib.h
 src/libs/memory/w_memlib.cpp
@@ -666,6 +664,8 @@ src/uqm/process.cpp
 src/uqm/process.h
 src/uqm/races.h
 src/uqm/resinst.h
+src/uqm/random/UQMRandom.cpp
+src/uqm/random/UQMRandom.h
 src/uqm/restart.cpp
 src/uqm/restart.h
 src/uqm/save.cpp

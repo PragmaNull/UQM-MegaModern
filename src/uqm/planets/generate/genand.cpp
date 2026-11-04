@@ -28,6 +28,7 @@
 #include "../../starmap.h"
 #include "libs/mathlib.h"
 #include "../../build.h"
+#include "uqm/random/UQMRandom.h"
 
 
 static bool GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys);

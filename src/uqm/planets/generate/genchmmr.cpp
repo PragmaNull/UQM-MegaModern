@@ -29,6 +29,7 @@
 #include "../../starmap.h"
 #include "../../state.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 static bool GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys);
 static bool GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys,
@@ -82,7 +83,7 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 		{
 			if (!StarSeed)
 			{
-				const uint32_t RandVal = RandomContext_Random(SysGenRNG);
+				const uint32_t RandVal = SysGenRNG->next();
 				const uint8_t PByte = pSunDesc->PlanetByte + 1;
 				pSunDesc->NumPlanets =
 					(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);
@@ -157,7 +158,7 @@ GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 		}
 
 		pMoonDesc->radius = MIN_MOON_RADIUS;
-		const uint32_t rand_val {RandomContext_Random(SysGenRNG)};
+		const uint32_t rand_val {SysGenRNG->next()};
 		angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 		pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
 		pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);

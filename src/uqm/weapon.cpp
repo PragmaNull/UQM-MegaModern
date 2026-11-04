@@ -32,6 +32,7 @@
 #include "libs/mathlib.h"
 
 #include <stdio.h>
+#include "uqm/random/UQMRandom.h"
 
 // A wrapper function for weapon_collision that discards the return value.
 // This makes its signature match ElementCollisionFunc.
@@ -285,10 +286,10 @@ ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
 		ShipIntersect.EndPoint = ShipIntersect.IntersectStamp.origin;
 		do
 		{
-			ObjectIntersect.IntersectStamp.origin.x = ((uint16_t)TFB_Random()
+			ObjectIntersect.IntersectStamp.origin.x = ((uint16_t)uqm::random().next()
 													   % (r.extent.width - originalRect.extent.width))
 													+ ((originalRect.extent.width - r.extent.width) >> 1);
-			ObjectIntersect.IntersectStamp.origin.y = ((uint16_t)TFB_Random()
+			ObjectIntersect.IntersectStamp.origin.y = ((uint16_t)uqm::random().next()
 													   % (r.extent.height - originalRect.extent.height))
 													+ ((originalRect.extent.height - r.extent.height) >> 1);
 			ObjectIntersect.EndPoint = ObjectIntersect.IntersectStamp.origin;
@@ -414,7 +415,7 @@ CheckTracking:
 		uint16_t facing {*pfacing};
 		if (best_delta_facing == ANGLE_TO_FACING(HALF_CIRCLE))
 		{
-			facing += (((uint8_t)TFB_Random() & 1) << 1) - 1;
+			facing += (((uint8_t)uqm::random().next() & 1) << 1) - 1;
 		}
 		else if (best_delta_facing < ANGLE_TO_FACING(HALF_CIRCLE))
 		{

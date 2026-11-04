@@ -60,6 +60,7 @@
 #include "UQMGame.h"
 #include "uqm/session/GameSession.h"
 #include "uqm/session/SaveCheck.h"
+#include "uqm/random/UQMRandom.h"
 
 uqstl::atomic<bool> MainExited {false};
 

@@ -28,6 +28,7 @@
 #include <math.h>
 
 #include <SDL3/SDL.h>
+#include "uqm/random/UQMRandom.h"
 
 // define USE_ADDITIVE_SCAN_BLIT to use additive blittting
 // instead of transparency for the planet scans.
@@ -395,7 +396,7 @@ void ZoomInPlanetSphere(void)
 	frameCount = ZOOM_TIME / (GameTicksPerSecond / ZOOM_RATE);
 
 	// Planet zoom in from a randomly chosen corner
-	zoomCorner = TFB_Random();
+	zoomCorner = uqm::random().next();
 	const int dx {1 - (zoomCorner & 1) * 2};
 	const int dy {1 - (zoomCorner & 2)};
 

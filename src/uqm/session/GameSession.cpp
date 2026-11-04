@@ -7,6 +7,7 @@
 #include "uqm/clock.h"
 #include "uqm/gameev.h"
 #include "uqm/globdata.h"
+#include "libs/time/timelib.h"
 #include "uqm/lua/UQMLua.h"
 
 namespace uqm
@@ -15,6 +16,7 @@ namespace uqm
 GameSession::GameSession(SessionKind kind)
 	: m_kind {kind}
 {
+	m_random.reseed(static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count()));
 }
 
 void GameSession::startGame()

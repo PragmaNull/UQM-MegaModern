@@ -830,8 +830,6 @@ RestartMenu(MENU_STATE* pMS)
 	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 	FlushColorXForms();
 
-	SeedRandomNumbers();
-
 	return (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE);
 }
 

@@ -20,6 +20,7 @@
 #include "planets.h"
 #include "libs/mathlib.h"
 #include "core/log/log.h"
+#include "uqm/globdata.h"
 
 
 //#define DEBUG_SURFACE
@@ -41,7 +42,7 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 	{
 		uint8_t num_possible {};
 
-		num_possible = uqm::lowByte(RandomContext_Random(SysGenRNG))
+		num_possible = uqm::lowByte(SysGenRNG->next())
 					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
 		while (num_possible--)
 		{
@@ -52,7 +53,7 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 			// partially scavenged.
 			int32_t temp_deposit_quality {};
 
-			deposit_quality_fine = (uqm::lowWord(RandomContext_Random(SysGenRNG)) % 100)
+			deposit_quality_fine = (uqm::lowWord(SysGenRNG->next()) % 100)
 								 + (DEPOSIT_QUALITY(eptr->Density)
 									+ SysInfoPtr->StarSize)
 									   * 50;
@@ -128,8 +129,7 @@ GenerateMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t whichDeposit,
 	{
 		info = &temp_info;
 	}
-	RandomContext_SeedRandom(SysGenRNG,
-							 SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
 	return CalcMineralDeposits(SysInfoPtr, whichDeposit, info);
 }
 
@@ -143,21 +143,21 @@ CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
 #define MIN_LIFE_CHANCE 10
 		int16_t life_var {};
 
-		life_var = RandomContext_Random(SysGenRNG) & 1023;
+		life_var = SysGenRNG->next() & 1023;
 		if (life_var < SysInfoPtr->PlanetInfo.LifeChance
 			|| (SysInfoPtr->PlanetInfo.LifeChance < MIN_LIFE_CHANCE
 				&& life_var < MIN_LIFE_CHANCE))
 		{
 			uint8_t num_types {};
 
-			num_types = 1 + uqm::lowByte(RandomContext_Random(SysGenRNG)) % MAX_LIFE_VARIATION;
+			num_types = 1 + uqm::lowByte(SysGenRNG->next()) % MAX_LIFE_VARIATION;
 			do
 			{
 				uint8_t index {};
 				uint8_t num_creatures {};
 				uint16_t rand_val {};
 
-				rand_val = RandomContext_Random(SysGenRNG);
+				rand_val = SysGenRNG->next();
 				index = uqm::lowByte(rand_val) % NUM_CREATURE_TYPES;
 				num_creatures = 1 + uqm::highByte(rand_val) % 10;
 				do
@@ -199,8 +199,7 @@ GenerateLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t whichLife,
 	{
 		info = &temp_info;
 	}
-	RandomContext_SeedRandom(SysGenRNG,
-							 SysInfoPtr->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN]);
 	return CalcLifeForms(SysInfoPtr, whichLife, info);
 }
 
@@ -225,8 +224,7 @@ GeneratePresetLife(const SYSTEM_INFO* SysInfoPtr, const int8_t* lifeTypes,
 	// kept this way to preserve the universe. That is done by preserving
 	// the order and number of Random() calls.
 
-	RandomContext_SeedRandom(SysGenRNG,
-							 SysInfoPtr->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN]);
 
 	for (i = 0; lifeTypes[i] >= 0; ++i)
 	{
@@ -291,7 +289,7 @@ void GenerateRandomLocation(GFXPOINT* loc)
 {
 	uint16_t rand_val {};
 
-	rand_val = RandomContext_Random(SysGenRNG);
+	rand_val = SysGenRNG->next();
 
 	loc->x = scaleMapWidth(8 + uqm::lowByte(rand_val) % (widthPick() - (8 << 1)));
 	loc->y = scaleMapHeight(8 + uqm::highByte(rand_val) % (heightPick() - (8 << 1)));
@@ -313,8 +311,7 @@ GenerateRandomNodes(const SYSTEM_INFO* SysInfoPtr, uint16_t scan, uint16_t numNo
 		info = &temp_info;
 	}
 
-	RandomContext_SeedRandom(SysGenRNG,
-							 SysInfoPtr->PlanetInfo.ScanSeed[scan]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[scan]);
 
 	for (i = 0; i < numNodes; ++i)
 	{
@@ -345,8 +342,7 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 		info = &temp_info;
 	}
 
-	RandomContext_SeedRandom(SysGenRNG,
-							 SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
+	SysGenRNG->reseed(SysInfoPtr->PlanetInfo.ScanSeed[MINERAL_SCAN]);
 
 	const ELEMENT_ENTRY* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
 	uint16_t num_deposits {0};
@@ -356,7 +352,7 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 		uint8_t num_possible {};
 		uint8_t depositQuality = 0;
 
-		num_possible = uqm::lowByte(RandomContext_Random(SysGenRNG))
+		num_possible = uqm::lowByte(SysGenRNG->next())
 					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
 
 		if (num_possible == 0 && OpenSeason)
@@ -380,7 +376,7 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 			// JMS: For making the mineral blip smaller in case it is partially scavenged.
 			int32_t temp_deposit_quality {};
 
-			deposit_quality_fine = (uqm::lowWord(RandomContext_Random(SysGenRNG)) % 100)
+			deposit_quality_fine = (uqm::lowWord(SysGenRNG->next()) % 100)
 								 + (depositQuality
 									+ SysInfoPtr->StarSize)
 									   * 50;

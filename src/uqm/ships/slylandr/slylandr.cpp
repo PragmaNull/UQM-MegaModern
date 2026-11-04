@@ -22,6 +22,7 @@
 
 #include "uqm/globdata.h"
 #include "libs/mathlib.h"
+#include "uqm/random/UQMRandom.h"
 
 // Core characteristics
 #define MAX_CREW 12
@@ -187,7 +188,7 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 		LaserPtr->postprocess_func = lightning_postprocess;
 		LaserPtr->collision_func = lightning_collision;
 
-		const uint32_t rand_val {TFB_Random()};
+		const uint32_t rand_val {uqm::random().next()};
 
 		if (!(ElementPtr->state_flags & PLAYER_SHIP))
 		{
