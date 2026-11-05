@@ -246,20 +246,7 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
 					  uint32_t size, uint32_t freq);
 
 
-/* Make sure the prop-value type is of suitable size
- * it must be able to store both int and void*
- * Adapted from SDL
- * This will generate "negative subscript or subscript is too large"
- * error during compile, if the actual size of a type is wrong
- */
-#define MIX_COMPILE_TIME_ASSERT(name, x) \
-	typedef int mixer_dummy_##name[(x) * 2 - 1]
-
-MIX_COMPILE_TIME_ASSERT(mixer_Object,
-						sizeof(mixer_Object) >= sizeof(void*));
-MIX_COMPILE_TIME_ASSERT(mixer_IntVal,
-						sizeof(mixer_IntVal) >= sizeof(mixer_Object));
-
-#undef MIX_COMPILE_TIME_ASSERT
+static_assert(sizeof(mixer_Object) >= sizeof(void*), "mixer_Object must be able to hold a pointer");
+static_assert(sizeof(mixer_IntVal) >= sizeof(mixer_Object), "mixer_IntVal must be able to hold a mixer_Object");
 
 #endif /* LIBS_SOUND_MIXER_MIXER_H_ */

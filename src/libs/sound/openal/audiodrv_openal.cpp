@@ -96,17 +96,7 @@ const static audio_Driver openAL_Driver =
 		openAL_BufferData
 };
 
-/* Adapted from SDL
- * This will generate "negative subscript or subscript is too large"
- * error during compile, if the size of a type is wrong
- */
-#define UQM_COMPILE_TIME_ASSERT(name, x) \
-	typedef int UQM_dummy_##name[(x) * 2 - 1]
-
-UQM_COMPILE_TIME_ASSERT(ALuint_fits_in_audio_Object,
-						sizeof(ALuint) <= sizeof(audio_Object));
-
-#undef UQM_COMPILE_TIME_ASSERT
+static_assert(sizeof(ALuint) <= sizeof(audio_Object), "ALuint must fit in audio_Object");
 
 // Converts an array of n audio_Objects to an array of ALuints, in place.
 static void
