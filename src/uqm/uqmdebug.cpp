@@ -1017,10 +1017,8 @@ void dumpUniverse(FILE* out)
 // Must be called from the Starcon2Main thread.
 void dumpUniverseToFile(void)
 {
-	FILE* out;
-
 #define UNIVERSE_DUMP_FILE "PlanetInfo"
-	out = fopen(UNIVERSE_DUMP_FILE, "w");
+	const uqm::FilePtr out {uqm::openFile(UNIVERSE_DUMP_FILE, "w")};
 	if (out == nullptr)
 	{
 		fmt::print(stderr, "Error: Could not open file '{}' for "
@@ -1029,9 +1027,7 @@ void dumpUniverseToFile(void)
 		return;
 	}
 
-	dumpUniverse(out);
-
-	fclose(out);
+	dumpUniverse(out.get());
 
 	fmt::print(stdout, "*** Star dump complete. The game may be in an "
 					   "undefined state.");
@@ -1348,7 +1344,6 @@ void printWorld(const PLANET_DESC* world)
 {
 	PLANET_INFO* info;
 	char buf[200] {};
-	FILE* fp = fopen("planetLog.txt", "a");
 	GFXPOINT universe = CurStarDescPtr->star_pt;
 
 	if (world->data_index == HIERARCHY_STARBASE
@@ -1358,6 +1353,13 @@ void printWorld(const PLANET_DESC* world)
 	{
 		return;
 	}
+
+	const uqm::FilePtr file {uqm::openFile("planetLog.txt", "a")};
+	if (file == nullptr)
+	{
+		return;
+	}
+	FILE* const fp {file.get()};
 
 	fmt::print(fp, "Coords:     {:03}.{:01} : {:03}.{:01}\n",
 			   universe.x / 10, universe.x % 10,
@@ -1391,7 +1393,6 @@ void printWorld(const PLANET_DESC* world)
 	{ // Slave-shielded planet
 		fmt::print(fp, "LifeChance: {}\n", info->LifeChance);
 		fmt::print(fp, "____________________________________\n\n");
-		fclose(fp);
 		return;
 	}
 	else
@@ -1403,8 +1404,6 @@ void printWorld(const PLANET_DESC* world)
 			   calculateBioValue(pSolarSysState, world),
 			   calculateMineralValue(pSolarSysState, world));
 	fmt::print(fp, "____________________________________\n\n");
-
-	fclose(fp);
 }
 
 uint16_t
@@ -1529,10 +1528,8 @@ void tallyResources(FILE* out)
 // Must be called from the Starcon2Main thread.
 void tallyResourcesToFile(void)
 {
-	FILE* out;
-
 #define RESOURCE_TALLY_FILE "ResourceTally"
-	out = fopen(RESOURCE_TALLY_FILE, "w");
+	const uqm::FilePtr out {uqm::openFile(RESOURCE_TALLY_FILE, "w")};
 	if (out == nullptr)
 	{
 		fmt::print(stderr, "Error: Could not open file '{}' for "
@@ -1541,9 +1538,7 @@ void tallyResourcesToFile(void)
 		return;
 	}
 
-	tallyResources(out);
-
-	fclose(out);
+	tallyResources(out.get());
 
 	fmt::print(stdout, "*** Resource tally complete. The game may be in an "
 					   "undefined state.\n");
@@ -2135,7 +2130,7 @@ waitForKey(struct wait_state* self)
 		return false;
 	}
 
-	SleepThread(GameTicksPerSecond / 20);
+	SleepThread(c_gameSecond / 20);
 
 	(void)self;
 	return true;
