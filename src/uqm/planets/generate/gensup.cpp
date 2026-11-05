@@ -120,8 +120,8 @@ GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
 	{
 		if (StartSphereTracking(SUPOX_SHIP))
 		{
-			NotifyOthers(SUPOX_SHIP, IPNL_ALL_CLEAR);
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			NotifyOthers(SUPOX_SHIP, IpnlAllClear);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -136,7 +136,7 @@ GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 			return true;
 		}
@@ -144,8 +144,8 @@ GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
-				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SUPOX_RUINS_STRTAB);
+				CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SupoxRuinsStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			if (GET_GAME_STATE(ULTRON_CONDITION))
 			{ // Already picked up the Ultron, skip the report

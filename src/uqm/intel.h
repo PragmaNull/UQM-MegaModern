@@ -82,7 +82,7 @@ antiCheatImpl(const ELEMENT* element, const bool swapPlayers, const uqm::GodMode
 static inline bool
 antiCheat(ELEMENT* ElementPtr, bool SwapBool, uqm::GodModeFlags godModeType)
 {
-	return antiCheatImpl(ElementPtr, SwapBool, godModeType, {PlayerControl, NUM_PLAYERS}, uqm::UQMOptions::read().optGodModes);
+	return antiCheatImpl(ElementPtr, SwapBool, godModeType, {PlayerControl, NumPlayers}, uqm::UQMOptions::read().optGodModes);
 }
 
 static inline bool
@@ -107,7 +107,7 @@ antiCheatAltImpl(const uqm::GodModeFlags testFlags, const uqstl::span<PlayerCont
 static inline bool
 antiCheatAlt(uqm::GodModeFlags godModeFlags)
 {
-	return antiCheatAltImpl(godModeFlags, {PlayerControl, NUM_PLAYERS}, uqm::UQMOptions::read().optGodModes);
+	return antiCheatAltImpl(godModeFlags, {PlayerControl, NumPlayers}, uqm::UQMOptions::read().optGodModes);
 }
 
 static inline bool

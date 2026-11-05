@@ -89,8 +89,8 @@ enum
 #define MIN_PLANET_RADIUS SCALE_RADIUS(4)
 #define MAX_PLANET_RADIUS SCALE_RADIUS(124)
 
-#define DISPLAY_FACTOR RES_SCALE((ORIG_SIS_SCREEN_WIDTH >> 1) - 8)
-#define DISPLAY_FACTOR_US ((ORIG_SIS_SCREEN_WIDTH >> 1) - 8)
+#define DISPLAY_FACTOR RES_SCALE((OrigSisScreenWidth() >> 1) - 8)
+#define DISPLAY_FACTOR_US ((OrigSisScreenWidth() >> 1) - 8)
 
 #define NUM_SCANDOT_TRANSITIONS 4
 
@@ -106,11 +106,11 @@ enum
 #define MAP_BORDER_HEIGHT RES_SCALE(5)
 
 //#define SCAN_SCREEN_HEIGHT \//
-//		(SIS_SCREEN_HEIGHT - MAP_HEIGHT - MAP_BORDER_HEIGHT)
+//		(SisScreenHeight() - MAP_HEIGHT - MAP_BORDER_HEIGHT)
 
-// Unscaled so that the math generates a proper output for HD
-#define SCAN_SCREEN_HEIGHT                   \
-	(ORIG_SIS_SCREEN_HEIGHT - SC2_MAP_HEIGHT \
+// Unscaled so that the math generates a proper output for HdResolutionFactor
+#define SCAN_SCREEN_HEIGHT                  \
+	(OrigSisScreenHeight() - SC2_MAP_HEIGHT \
 	 - RES_DESCALE(MAP_BORDER_HEIGHT))
 
 #define PC_ROTATION_RATE (c_gameSecond / RES_SCALE(12))
@@ -122,7 +122,7 @@ enum
 
 #define USE_DOS_SPHERES RES_SCALE(useDosSpheres ? 2 : 0)
 
-#define PLANET_ORG_X RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1)
+#define PLANET_ORG_X RES_SCALE(OrigSisScreenWidth() >> 1)
 #define PLANET_ORG_Y \
 	RES_SCALE(SCAN_SCREEN_HEIGHT >> 1) - USE_DOS_SPHERES
 

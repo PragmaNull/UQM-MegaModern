@@ -99,8 +99,8 @@ MCD_DrawButton(WIDGET* _self, int x, int y)
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
 
-	selected = MENU_HIGHLIGHT_COLOR;
-	inactive = MENU_TEXT_COLOR;
+	selected = MenuHighlightColor;
+	inactive = MenuTextColor;
 
 	t.baseline.x = RES_SCALE(160);
 	t.baseline.y = y;
@@ -135,8 +135,8 @@ MCD_DrawSlider(WIDGET* _self, int x, int y)
 	GFXRECT r;
 	const int tick = RES_SCALE(RES_DESCALE(MCD_WIDTH) / 8);
 
-	default_color = MENU_TEXT_COLOR;
-	selected = MENU_HIGHLIGHT_COLOR;
+	default_color = MenuTextColor;
+	selected = MenuHighlightColor;
 
 	t.baseline.x = x;
 	t.baseline.y = y;
@@ -185,9 +185,9 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
 
-	default_color = MENU_TEXT_COLOR;
-	selected = MENU_HIGHLIGHT_COLOR;
-	inactive = MENU_TEXT_COLOR;
+	default_color = MenuTextColor;
+	selected = MenuHighlightColor;
+	inactive = MenuTextColor;
 
 	BatchGraphics();
 
@@ -311,7 +311,7 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 		}
 		// position cursor within input field rect
 		r.corner.x += RES_SCALE(1);
-		SetContextForeGroundColor(MENU_CURSOR_COLOR);
+		SetContextForeGroundColor(MenuCursorColor);
 		DrawFilledRectangle(&r);
 
 		SetContextForeGroundColor(inactive);
@@ -385,7 +385,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 	tes.ChangeCallback = OnTextEntryChange;
 	tes.FrameCallback = OnTextEntryFrame;
 
-	// SetMenuSounds (0, MENU_SOUND_SELECT);
+	// SetMenuSounds (0, MenuSoundSelect);
 	if (!DoTextEntry(&tes))
 	{ // editing failed (canceled) -- revert the changes
 		uqm::utf8StringCopy(widget->value, widget->maxlen, revert_buf);
@@ -550,12 +550,12 @@ DrawConnectDialog(void)
 
 	r.extent.width = MCD_WIDTH;
 	r.extent.height = MCD_HEIGHT;
-	r.corner.x = (SCREEN_WIDTH - r.extent.width) >> 1;
-	r.corner.y = (SCREEN_HEIGHT - r.extent.height) >> 1;
+	r.corner.x = (CanvasWidth - r.extent.width) >> 1;
+	r.corner.y = (CanvasHeight - r.extent.height) >> 1;
 
 
-	DrawShadowedBox(&r, SHADOWBOX_BACKGROUND_COLOR,
-					SHADOWBOX_DARK_COLOR, SHADOWBOX_MEDIUM_COLOR);
+	DrawShadowedBox(&r, ShadowboxBackgroundColor,
+					ShadowboxDarkColor, ShadowboxMediumColor);
 
 	menu.draw((WIDGET*)&menu,
 			  r.corner.x + RES_SCALE(10), r.corner.y + RES_SCALE(10));
@@ -628,7 +628,7 @@ bool MeleeConnectDialog(int side)
 {
 	CONNECT_DIALOG_STATE state;
 
-	PlayerFont = LoadFont(PLAYER_FONT);
+	PlayerFont = LoadFont(PlayerFontRes);
 
 	state.Initialized = false;
 	state.which_side = side;

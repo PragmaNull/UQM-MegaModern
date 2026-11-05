@@ -55,8 +55,8 @@ extern HELEMENT weapon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 extern int16_t TrackShip(ELEMENT* Tracker, uint16_t* pfacing);
 extern void Untarget(ELEMENT* ElementPtr);
 
-#define MODIFY_IMAGE (1 << 0)
-#define MODIFY_SWAP (1 << 1)
+inline constexpr auto ModifyImage {(1 << 0)};
+inline constexpr auto ModifySwap {(1 << 1)};
 
 extern FRAME ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
 							  uint8_t modify_flags);

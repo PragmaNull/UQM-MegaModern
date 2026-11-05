@@ -25,7 +25,7 @@
 #include "uqm/hyper.h"
 // for SOL_X/SOL_Y
 #include "../../nameref.h"
-// JMS_GFX: For LoadGraphic
+// JMS_GFX: For LoadGraphic()
 #include "../../planets/planets.h"
 // For MIN_MOON_RADIUS
 // JSD it needs starmap.h to find SOL
@@ -40,11 +40,11 @@ static LOCDATA chmmr_desc =
 		nullptr, /* uninit_encounter_func */
 		CHMMR_PMAP_ANIM, /* AlienFrame */
 		CHMMR_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		CHMMR_COLOR_MAP, /* AlienColorMap */
@@ -59,9 +59,9 @@ static LOCDATA chmmr_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				12,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				12,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -69,9 +69,9 @@ static LOCDATA chmmr_desc =
 				0,						/* BlockMask */
 			},
 								{
-				17,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				17,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -79,9 +79,9 @@ static LOCDATA chmmr_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				22,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -89,9 +89,9 @@ static LOCDATA chmmr_desc =
 				0,						/* BlockMask */
 			},
 								{
-				27,		   /* StartIndex */
-				20,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				27,		  /* StartIndex */
+				20,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -99,9 +99,9 @@ static LOCDATA chmmr_desc =
 				0,						/* BlockMask */
 			},
 								{
-				47,		   /* StartIndex */
-				14,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				47,		  /* StartIndex */
+				14,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -109,9 +109,9 @@ static LOCDATA chmmr_desc =
 				0,						/* BlockMask */
 			},
 								{
-				61,		   /* StartIndex */
-				24,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				61,		  /* StartIndex */
+				24,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -234,12 +234,12 @@ ExitConversation(RESPONSE_REF R)
 		uqm::flagship().ipPlanet = EARTH_INDEX + 1;
 		uqm::flagship().inOrbit = 0;
 		/* XXX : this should be unhardcoded eventually */
-		uqm::flagship().ipLocation.x = EARTH_OUTER_X;
-		uqm::flagship().ipLocation.y = EARTH_OUTER_Y;
+		uqm::flagship().ipLocation.x = EarthOuterX;
+		uqm::flagship().ipLocation.y = EarthOuterY;
 
 		if (GET_GAME_STATE(STARBASE_AVAILABLE))
 		{ /* Normal game mode - you are transported to Starbase */
-			GLOBAL_SIS(FuelOnBoard) = FUEL_RESERVE;
+			GLOBAL_SIS(FuelOnBoard) = FuelReserve;
 			GLOBAL_SIS(CrewEnlisted) = 0;
 			GLOBAL_SIS(TotalElementMass) = 0;
 			GLOBAL(ModuleCost[STORAGE_BAY]) = 0; /* disable Storage Bay */
@@ -247,28 +247,28 @@ ExitConversation(RESPONSE_REF R)
 			{
 				GLOBAL_SIS(ElementAmounts[i]) = 0;
 			}
-			for (i = NUM_BOMB_MODULES; i < NUM_MODULE_SLOTS; ++i)
+			for (i = NumBombModules; i < NumModuleSlots; ++i)
 			{
-				GLOBAL_SIS(ModuleSlots[i]) = EMPTY_SLOT + 2;
+				GLOBAL_SIS(ModuleSlots[i]) = EmptySlot + 2;
 			}
 
 			/* XXX : this should be unhardcoded eventually */
 			/* transport to Starbase */
 			/* note: if uqm::UQMOptions::read().orbitingPlanets is enabled, this will be corrected in DoTimePassage */
-			uqm::flagship().shipStamp.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1) + COSINE(HALF_CIRCLE + QUADRANT, MIN_MOON_RADIUS);
-			uqm::flagship().shipStamp.origin.y = RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1) + SINE(HALF_CIRCLE + QUADRANT, MIN_MOON_RADIUS >> 1);
+			uqm::flagship().shipStamp.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1) + COSINE(HalfCircle + Quadrant, MIN_MOON_RADIUS);
+			uqm::flagship().shipStamp.origin.y = RES_SCALE(OrigSisScreenHeight() >> 1) + SINE(HalfCircle + Quadrant, MIN_MOON_RADIUS >> 1);
 		}
 		else
 		{ /* 'Beating Game Differently' mode - never visited Starbase,
 			 * so you are transported to Earth */
 			/* compress the layout -- move all to front */
-			for (i = NUM_MODULE_SLOTS - 1; i > 0; --i)
+			for (i = NumModuleSlots - 1; i > 0; --i)
 			{
 				int m {};
 
 				/* find next unused slot */
 				for (; i > 0
-					   && GLOBAL_SIS(ModuleSlots[i]) != EMPTY_SLOT + 2;
+					   && GLOBAL_SIS(ModuleSlots[i]) != EmptySlot + 2;
 					 --i)
 					;
 				if (i == 0)
@@ -277,7 +277,7 @@ ExitConversation(RESPONSE_REF R)
 				}
 				/* find next module to move */
 				for (m = i - 1; m >= 0
-								&& GLOBAL_SIS(ModuleSlots[m]) == EMPTY_SLOT + 2;
+								&& GLOBAL_SIS(ModuleSlots[m]) == EmptySlot + 2;
 					 --m)
 					;
 				if (m < 0)
@@ -287,16 +287,16 @@ ExitConversation(RESPONSE_REF R)
 
 				/* move the module */
 				GLOBAL_SIS(ModuleSlots[i]) = GLOBAL_SIS(ModuleSlots[m]);
-				GLOBAL_SIS(ModuleSlots[m]) = EMPTY_SLOT + 2;
+				GLOBAL_SIS(ModuleSlots[m]) = EmptySlot + 2;
 			}
 		}
 
 		/* install Chmmr-supplied modules */
-		for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
+		for (i = 0; i < NumDriveSlots; ++i)
 		{
 			GLOBAL_SIS(DriveSlots[i]) = FUSION_THRUSTER;
 		}
-		for (i = 0; i < NUM_JET_SLOTS; ++i)
+		for (i = 0; i < NumJetSlots; ++i)
 		{
 			GLOBAL_SIS(JetSlots[i]) = TURNING_JETS;
 		}
@@ -690,8 +690,8 @@ Intro(void)
 		NumVisits = GET_GAME_STATE(CHMMR_HOME_VISITS);
 		if (!GET_GAME_STATE(CHMMR_EMERGING))
 		{
-			// Run filter for HD
-			if (IS_HD)
+			// Run filter for HdResolutionFactor
+			if (IsHd())
 			{
 				EngageFilters(&chmmr_filters);
 			}
@@ -741,7 +741,7 @@ Intro(void)
 			// Setup a Chmmr sphere-of-influence, now that they're out
 			// of their shell.  EncounterPercent for the Chmmr is 0,
 			// so this is purely decorative.
-			if (EXTENDED)
+			if (IsExtended())
 			{
 				HFLEETINFO hChmmr = GetStarShipFromIndex(
 					&GLOBAL(avail_race_q), CHMMR_SHIP);
@@ -751,7 +751,7 @@ Intro(void)
 				if (ChmmrPtr)
 				{
 					ChmmrPtr->actual_strength =
-						986 / SPHERE_RADIUS_INCREMENT * 2;
+						986 / SphereRadiusIncrement * 2;
 					ChmmrPtr->loc = SeedFleetLocation(ChmmrPtr, plot_map,
 													  HOME);
 					StartSphereTracking(CHMMR_SHIP);
@@ -793,12 +793,12 @@ init_chmmr_comm(void)
 	if (GET_GAME_STATE(CHMMR_UNLEASHED)
 		|| GET_GAME_STATE(CHMMR_EMERGING))
 	{
-		altResFlags |= USE_ALT_SONG;
+		altResFlags |= UseAltSong;
 	}
 
-	chmmr_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	chmmr_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	chmmr_desc.AlienTextBaseline.y = 0;
-	chmmr_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	chmmr_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	setSegue(Segue_peace);
 	LOCDATA* retval {&chmmr_desc};

@@ -30,11 +30,11 @@ static LOCDATA vux_desc =
 		nullptr, /* uninit_encounter_func */
 		VUX_PMAP_ANIM, /* AlienFrame */
 		VUX_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* (SIS_TEXT_WIDTH - 16) >> 1, */  /* AlienTextWidth */
+		/* (SisTextWidth() - 16) >> 1, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		VUX_COLOR_MAP, /* AlienColorMap */
@@ -49,9 +49,9 @@ static LOCDATA vux_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				12,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				12,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -59,9 +59,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				15,			 /* StartIndex */
-				5,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				15,			/* StartIndex */
+				5,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -69,9 +69,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				20,			   /* StartIndex */
-				14,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				20,			  /* StartIndex */
+				14,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -79,9 +79,9 @@ static LOCDATA vux_desc =
 				0, /* BlockMask */
 			},
 								{
-				34,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				34,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -89,9 +89,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				41,			 /* StartIndex */
-				6,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				41,			/* StartIndex */
+				6,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -99,9 +99,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				47,			   /* StartIndex */
-				11,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				47,			  /* StartIndex */
+				11,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -109,9 +109,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				58,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				58,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -119,9 +119,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				61,			 /* StartIndex */
-				4,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				61,			/* StartIndex */
+				4,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -129,9 +129,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				65,			 /* StartIndex */
-				4,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				65,			/* StartIndex */
+				4,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -139,9 +139,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				69,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				69,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -149,9 +149,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				71,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				71,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -159,9 +159,9 @@ static LOCDATA vux_desc =
 				0,						/* BlockMask */
 			},
 								{
-				74,		   /* StartIndex */
-				6,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				74,		  /* StartIndex */
+				6,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -169,9 +169,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				80,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				80,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -179,9 +179,9 @@ static LOCDATA vux_desc =
 				(1 << 14),				 /* BlockMask */
 			},
 								{
-				85,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				85,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -189,9 +189,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				90,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				90,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -199,9 +199,9 @@ static LOCDATA vux_desc =
 				(1 << 12),				 /* BlockMask */
 			},
 								{
-				95,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				95,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 5,
@@ -209,9 +209,9 @@ static LOCDATA vux_desc =
 				0,						/* BlockMask */
 			},
 								{
-				99,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				99,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 5,
@@ -219,9 +219,9 @@ static LOCDATA vux_desc =
 				0,						/* BlockMask */
 			},
 								{
-				103,						   /* StartIndex */
-				16,							   /* NumFrames */
-				CIRCULAR_ANIM | ANIM_DISABLED, /* AnimFlags */
+				103,						 /* StartIndex */
+				16,							 /* NumFrames */
+				CircularAnim | AnimDisabled, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -231,8 +231,8 @@ static LOCDATA vux_desc =
 								{
 				119, /* StartIndex */
 				8,	 /* NumFrames */
-				CIRCULAR_ANIM | ONE_SHOT_ANIM
-					| WAIT_TALKING | ANIM_DISABLED, /* AnimFlags */
+				CircularAnim | OneShotAnim
+					| WaitTalking | AnimDisabled, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				0,
@@ -277,11 +277,11 @@ static FILTER_DESC vux_filters =
 		{
 								  /* Filter array */
 			{
-				0,				  /* Color index */
-				1,				  /* Opacity index */
-				-1,				  /* Frame index */
-				DRAW_ALPHA,		  /* DrawKind*/
-				SWITCH_OFF_ANIMS, /* Flags */
+				0,				/* Color index */
+				1,				/* Opacity index */
+				-1,				/* Frame index */
+				DRAW_ALPHA,		/* DrawKind*/
+				SwitchOffAnims, /* Flags */
 			},
 								  }
 };
@@ -289,9 +289,9 @@ static FILTER_DESC vux_filters =
 static void
 ZexBeingEatenAlive(void)
 {
-	if (altResFlags & USE_ALT_FRAME)
+	if (altResFlags & UseAltFrame)
 	{ // make sure we're using the correct set of frames
-		if (IS_HD)
+		if (IsHd())
 		{
 			CommData.AlienFrame =
 				SetAbsFrameIndex(CommData.AlienFrame, 126);
@@ -313,7 +313,7 @@ ZexBeingEatenAlive(void)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 					  c_gameSecond / 4);
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			EngageFilters(&vux_filters);
 		}
@@ -829,9 +829,9 @@ NormalVux(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	if (altResFlags & USE_ALT_FRAME)
+	if (altResFlags & UseAltFrame)
 	{
-		CommData.AlienAmbientArray[17].AnimFlags &= ~ANIM_DISABLED;
+		CommData.AlienAmbientArray[17].AnimFlags &= ~AnimDisabled;
 	}
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
@@ -921,20 +921,20 @@ init_vux_comm(void)
 
 	uqm::lua().beginComm(nullptr, NullResource);
 
-	vux_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1)
-								 + (SIS_TEXT_WIDTH >> 2) - SAFE_NUM_SCL(4);
+	vux_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1)
+								 + (SisTextWidth() >> 2) - SAFE_NUM_SCL(4);
 	vux_desc.AlienTextBaseline.y = 0;
-	vux_desc.AlienTextWidth = ((SIS_TEXT_WIDTH - RES_SCALE(16)) >> 1)
-							+ SAFE_X;
+	vux_desc.AlienTextWidth = ((SisTextWidth() - RES_SCALE(16)) >> 1)
+							+ SafeX();
 
 	// use alternate "ZEX" track and frame if available
 	if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		altResFlags |= USE_ALT_SONG;
+		altResFlags |= UseAltSong;
 
-		if (EXTENDED)
+		if (IsExtended())
 		{
-			altResFlags |= USE_ALT_FRAME;
+			altResFlags |= UseAltFrame;
 		}
 	}
 

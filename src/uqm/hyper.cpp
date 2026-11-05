@@ -47,9 +47,9 @@
 #include "util.h"
 #include "uqm/random/UQMRandom.h"
 
-#define XOFFS ((RADAR_SCAN_WIDTH + (UNIT_SCREEN_WIDTH << 2)) >> 1)
-#define YOFFS ((RADAR_SCAN_HEIGHT + (UNIT_SCREEN_HEIGHT << 2)) >> 1)
-#define ANIMATED_HYPERSPACE (IS_HD && uqm::UQMOptions::read().hyperStars)
+#define XOFFS ((RadarScanWidth() + (UnitScreenWidth() << 2)) >> 1)
+#define YOFFS ((RadarScanHeight() + (UnitScreenHeight() << 2)) >> 1)
+#define ANIMATED_HYPERSPACE (IsHd() && uqm::UQMOptions::read().hyperStars)
 
 static FRAME hyperstars[3];
 static COLORMAP hypercmaps[2];
@@ -238,10 +238,10 @@ void MoveSIS(int32_t* pdx, int32_t* pdy)
 		new_dx += (int16_t)GLOBAL_SIS(log_x);
 		GLOBAL_SIS(log_x) = 0;
 	}
-	else if (GLOBAL_SIS(log_x) > MAX_X_LOGICAL)
+	else if (GLOBAL_SIS(log_x) > MaxXLogical())
 	{
-		new_dx += (int16_t)(GLOBAL_SIS(log_x) - MAX_X_LOGICAL);
-		GLOBAL_SIS(log_x) = MAX_X_LOGICAL;
+		new_dx += (int16_t)(GLOBAL_SIS(log_x) - MaxXLogical());
+		GLOBAL_SIS(log_x) = MaxXLogical();
 	}
 
 	int32_t new_dy {*pdy};
@@ -251,10 +251,10 @@ void MoveSIS(int32_t* pdx, int32_t* pdy)
 		new_dy += (int16_t)GLOBAL_SIS(log_y);
 		GLOBAL_SIS(log_y) = 0;
 	}
-	else if (GLOBAL_SIS(log_y) > MAX_Y_LOGICAL)
+	else if (GLOBAL_SIS(log_y) > MaxYLogical())
 	{
-		new_dy += (int16_t)(GLOBAL_SIS(log_y) - MAX_Y_LOGICAL);
-		GLOBAL_SIS(log_y) = MAX_Y_LOGICAL;
+		new_dy += (int16_t)(GLOBAL_SIS(log_y) - MaxYLogical());
+		GLOBAL_SIS(log_y) = MaxYLogical();
 	}
 
 	if (new_dx != *pdx || new_dy != *pdy)
@@ -272,15 +272,15 @@ void MoveSIS(int32_t* pdx, int32_t* pdy)
 
 			LockElement(hElement, &ElementPtr);
 
-			if (!(ElementPtr->state_flags & PLAYER_SHIP))
+			if (!(ElementPtr->state_flags & PlayerShip))
 			{
 				hNextElement = GetPredElement(ElementPtr);
 			}
 			else
 			{
-				ElementPtr->next.location.x = (LOG_SPACE_WIDTH >> 1)
+				ElementPtr->next.location.x = (LogSpaceWidth() >> 1)
 											- new_dx;
-				ElementPtr->next.location.y = (LOG_SPACE_HEIGHT >> 1)
+				ElementPtr->next.location.y = (LogSpaceHeight() >> 1)
 											- new_dy;
 				hNextElement = 0;
 			}
@@ -310,7 +310,7 @@ void MoveSIS(int32_t* pdx, int32_t* pdy)
 
 		// These macros are also used in the fuel estimate on the starmap.
 		adj_dx = LOGX_TO_UNIVERSE(16 * hyper_dx);
-		adj_dy = MAX_Y_UNIVERSE - LOGY_TO_UNIVERSE(16 * hyper_dy);
+		adj_dy = MaxYUniverse - LOGY_TO_UNIVERSE(16 * hyper_dy);
 
 		hyper_dist = square_root(adj_dx * adj_dx + adj_dy * adj_dy)
 				   + hyper_extra;
@@ -374,15 +374,15 @@ void check_hyperspace_encounter(void)
 			if (encounter_radius != INFINITE_RADIUS)
 			{
 				encounter_radius =
-					(encounter_radius * SPHERE_RADIUS_INCREMENT) >> 1;
+					(encounter_radius * SphereRadiusIncrement) >> 1;
 
-				if (EXTENDED && GET_GAME_STATE(KOHR_AH_FRENZY)
+				if (IsExtended() && GET_GAME_STATE(KOHR_AH_FRENZY)
 					&& Type == BLACK_URQUAN_SHIP
 					&& GET_GAME_STATE(USED_BROADCASTER))
 				{
-					encounter_radius = (MAX_X_UNIVERSE + 1) << 1;
+					encounter_radius = (MaxXUniverse + 1) << 1;
 					percent = 100;
-					encounter_flags = ONE_SHOT_ENCOUNTER;
+					encounter_flags = OneShotEncounter;
 
 					SET_GAME_STATE(BROADCASTER_RESPONSE, 1);
 				}
@@ -391,10 +391,10 @@ void check_hyperspace_encounter(void)
 			{
 				HENCOUNTER hNextEncounter {};
 
-				encounter_radius = (MAX_X_UNIVERSE + 1) << 1;
+				encounter_radius = (MaxXUniverse + 1) << 1;
 				if (Type == SLYLANDRO_SHIP)
 				{
-					encounter_flags = ONE_SHOT_ENCOUNTER;
+					encounter_flags = OneShotEncounter;
 					if (!GET_GAME_STATE(STARBASE_AVAILABLE))
 					{
 						percent = 100;
@@ -410,8 +410,8 @@ void check_hyperspace_encounter(void)
 					}
 				}
 
-				if ((EXTENDED && !GET_GAME_STATE(KOHR_AH_FRENZY))
-					|| !EXTENDED)
+				if ((IsExtended() && !GET_GAME_STATE(KOHR_AH_FRENZY))
+					|| !IsExtended())
 				{
 					if (Type == MELNORME_SHIP
 						&& (GLOBAL_SIS(FuelOnBoard) == 0
@@ -426,7 +426,7 @@ void check_hyperspace_encounter(void)
 						{
 							percent = 100;
 						}
-						encounter_flags = ONE_SHOT_ENCOUNTER;
+						encounter_flags = OneShotEncounter;
 					}
 				}
 
@@ -506,11 +506,11 @@ void FreeHyperData(void)
 }
 
 #define ARISPACE_MASK (ANIMATED_HYPERSPACE ?        \
-						   ARIANIM_MASK_PMAP_ANIM : \
-						   ARISPACE_MASK_PMAP_ANIM)
+						   ArianimMaskPmapAnimRes : \
+						   ArispaceMaskPmapAnimRes)
 #define HYPERSTARS_MASK (ANIMATED_HYPERSPACE ?          \
-							 HYPERANIM_MASK_PMAP_ANIM : \
-							 HYPERSTARS_MASK_PMAP_ANIM)
+							 HyperanimMaskPmapAnimRes : \
+							 HyperstarsMaskPmapAnimRes)
 
 static void
 LoadHyperData(void)
@@ -518,14 +518,14 @@ LoadHyperData(void)
 	if (hyperstars[0] == 0)
 	{
 		hyperstars[0] = CaptureDrawable(
-			LoadGraphic(AMBIENT_MASK_PMAP_ANIM));
+			LoadGraphic(AmbientMaskPmapAnimRes));
 		hyperstars[1] = CaptureDrawable(
 			LoadGraphic(HYPERSTARS_MASK));
-		hypercmaps[0] = uqm::loadStringTable(HYPER_COLOR_TAB).release();
+		hypercmaps[0] = uqm::loadStringTable(HyperColorTabRes).release();
 
 		hyperstars[2] = CaptureDrawable(
 			LoadGraphic(ARISPACE_MASK));
-		hypercmaps[1] = uqm::loadStringTable(ARISPACE_COLOR_TAB).release();
+		hypercmaps[1] = uqm::loadStringTable(ArispaceColorTabRes).release();
 	}
 }
 
@@ -536,8 +536,8 @@ bool LoadHyperspace(void)
 	hyper_extra = 0;
 	fuel_ticks = 1;
 
-	uqm::flagship().shipStamp.origin.x = -MAX_X_UNIVERSE;
-	uqm::flagship().shipStamp.origin.y = -MAX_Y_UNIVERSE;
+	uqm::flagship().shipStamp.origin.x = -MaxXUniverse;
+	uqm::flagship().shipStamp.origin.y = -MaxYUniverse;
 
 	LoadHyperData();
 	{
@@ -558,7 +558,7 @@ bool LoadHyperspace(void)
 		}
 		else
 		{
-			ClearSISRect(DRAW_SIS_DISPLAY);
+			ClearSISRect(DrawSisDisplay);
 			RepairSISBorder();
 		}
 	}
@@ -594,7 +594,7 @@ bool LoadHyperspace(void)
 void EraseRadar(void)
 {
 	BatchGraphics();
-	ClearSISRect(CLEAR_SIS_RADAR);
+	ClearSISRect(ClearSisRadar);
 	SeedUniverse();
 	UnbatchGraphics();
 }
@@ -607,7 +607,7 @@ bool FreeHyperspace(void)
 		stars_in_space = F;
 	}
 	// Kruzen: To load correct set of frames until we'll use 1 with space filters
-	//if (IS_HD)
+	//if (IsHd())
 	//	ReloadHyperSpace ();
 
 	//FreeHyperData ();
@@ -622,9 +622,9 @@ ElementToUniverse(ELEMENT* ElementPtr, GFXPOINT* pPt)
 	int32_t log_y {};
 
 	log_x = GLOBAL_SIS(log_x)
-		  + (ElementPtr->next.location.x - (LOG_SPACE_WIDTH >> 1));
+		  + (ElementPtr->next.location.x - (LogSpaceWidth() >> 1));
 	log_y = GLOBAL_SIS(log_y)
-		  + (ElementPtr->next.location.y - (LOG_SPACE_HEIGHT >> 1));
+		  + (ElementPtr->next.location.y - (LogSpaceHeight() >> 1));
 	pPt->x = LOGX_TO_UNIVERSE(log_x);
 	pPt->y = LOGY_TO_UNIVERSE(log_y);
 }
@@ -691,12 +691,12 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 		uqm::flagship().autopilot.clear();
 
 		ElementToUniverse(ElementPtr, &pt);
-		CurStarDescPtr = FindStar(nullptr, &pt, 5, 5);
+		CurStarDescPtr() = FindStar(nullptr, &pt, 5, 5);
 
 		// JMS: Debugging helpers
 		/*{
 			STAR_DESC *SDPtr, *SDPtr2;
-			SDPtr = CurStarDescPtr;
+			SDPtr = CurStarDescPtr();
 			SDPtr2 = FindStar (nullptr, &pt, 500, 500);
 			uqm::log::debug( "SDPtr.x {}, SDPtr.y {} SDPtr2.x {}, "
 					"SDPtr2.y {}, pt.x {} pt.y {}", 
@@ -704,8 +704,8 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 					SDPtr2->star_pt.y, pt.x, pt.y);
 		}*/
 
-		if (CurStarDescPtr->star_pt.x == ARILOU_HOME_X
-			&& CurStarDescPtr->star_pt.y == ARILOU_HOME_Y)
+		if (CurStarDescPtr()->star_pt.x == ArilouHomeX
+			&& CurStarDescPtr()->star_pt.y == ArilouHomeY)
 		{
 			// Meet the Arilou.
 			uqm::currentActivity() |= START_ENCOUNTER;
@@ -723,7 +723,7 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 			//const GFXPOINT portal_pt[] =
 			//		QUASISPACE_PORTALS_HYPERSPACE_ENDPOINTS;
 
-			index = CurStarDescPtr - &star_array[NUM_SOLAR_SYSTEMS + 1];
+			index = CurStarDescPtr() - &star_array[NumSolarSystems + 1];
 			//GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(portal_pt[index].x);
 			//GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(portal_pt[index].y);
 			GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(portal_map[index].star_pt.x);
@@ -751,14 +751,14 @@ ArilouSpaceTransition(void)
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 	{
 		// From HyperSpace to QuasiSpace.
-		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(QUASI_SPACE_X);
-		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(QUASI_SPACE_Y);
+		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(QuasiSpaceX);
+		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(QuasiSpaceY);
 		if (GET_GAME_STATE(PORTAL_COUNTER) == 0)
 		{
 			// Periodically appearing portal.
 			SET_GAME_STATE(ARILOU_SPACE_SIDE, 3);
 
-			if (EXTENDED)
+			if (IsExtended())
 			{
 				ZeroLastLoc();
 			}
@@ -774,7 +774,7 @@ ArilouSpaceTransition(void)
 	{
 		// From QuasiSpace to HyperSpace through the periodically appearing
 		// portal.
-		if (!EXTENDED || (EXTENDED && !ValidPoint(LoadLastLoc())))
+		if (!IsExtended() || (IsExtended() && !ValidPoint(LoadLastLoc())))
 		{
 			// JSD Converting hard coded ARILOU portal to plot based
 			//GLOBAL_SIS (log_x) = UNIVERSE_TO_LOGX (ARILOU_SPACE_X);
@@ -782,7 +782,7 @@ ArilouSpaceTransition(void)
 			GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(plot_map[ARILOU_DEFINED].star_pt.x);
 			GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(plot_map[ARILOU_DEFINED].star_pt.y);
 		}
-		else if (EXTENDED && ValidPoint(LoadLastLoc()))
+		else if (IsExtended() && ValidPoint(LoadLastLoc()))
 		{
 			GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(LoadLastLoc().x);
 			GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(LoadLastLoc().y);
@@ -818,14 +818,14 @@ unhyper_transition(ELEMENT* ElementPtr)
 		SetElementStarShip(ElementPtr, StarShipPtr);
 	}
 
-	ElementPtr->state_flags |= CHANGING;
+	ElementPtr->state_flags |= Changing;
 
 	uint16_t frame_index {GetFrameIndex(ElementPtr->current.image.frame)};
 	if (frame_index == 0)
 	{
-		frame_index += ANGLE_TO_FACING(FULL_CIRCLE);
+		frame_index += ANGLE_TO_FACING(FullCircle);
 	}
-	else if (frame_index < ANGLE_TO_FACING(FULL_CIRCLE))
+	else if (frame_index < ANGLE_TO_FACING(FullCircle))
 	{
 		frame_index = NORMALIZE_FACING(frame_index + 1);
 	}
@@ -850,7 +850,7 @@ unhyper_transition(ELEMENT* ElementPtr)
 		}
 
 		ZeroVelocityComponents(&ElementPtr->velocity);
-		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NO_PRIM);
+		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NoPrim);
 		return;
 	}
 	ElementPtr->next.image.frame =
@@ -872,15 +872,15 @@ init_transition(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 	dy = WORLD_TO_VELOCITY(ElementPtr0->next.location.y
 						   - ElementPtr1->next.location.y);
 
-	ElementPtr1->state_flags |= NONSOLID;
+	ElementPtr1->state_flags |= Nonsolid;
 	ElementPtr1->preprocess_func = unhyper_transition;
 	ElementPtr1->postprocess_func = nullptr;
 	ElementPtr1->turn_wait = (uint8_t)which_transition;
 
 	GetElementStarShip(ElementPtr1, &StarShipPtr);
 	num_turns = GetFrameCount(ElementPtr1->next.image.frame)
-			  - ANGLE_TO_FACING(FULL_CIRCLE)
-			  + NORMALIZE_FACING(ANGLE_TO_FACING(FULL_CIRCLE)
+			  - ANGLE_TO_FACING(FullCircle)
+			  + NORMALIZE_FACING(ANGLE_TO_FACING(FullCircle)
 								 - StarShipPtr->ShipFacing);
 	if (num_turns == 0)
 	{
@@ -928,7 +928,7 @@ void DoAdvancedAutoPilot(void)
 
 bool hyper_transition(ELEMENT* ElementPtr)
 {
-	if (ElementPtr->state_flags & APPEARING)
+	if (ElementPtr->state_flags & Appearing)
 	{
 		if (LastActivity & CHECK_LOAD)
 		{
@@ -937,7 +937,7 @@ bool hyper_transition(ELEMENT* ElementPtr)
 			ElementPtr->current = ElementPtr->next;
 			SetUpElement(ElementPtr);
 
-			ElementPtr->state_flags |= DEFY_PHYSICS;
+			ElementPtr->state_flags |= DefyPhysics;
 
 			return false;
 		}
@@ -946,7 +946,7 @@ bool hyper_transition(ELEMENT* ElementPtr)
 			ElementPtr->preprocess_func =
 				(void (*)(struct element* ElementPtr))hyper_transition;
 			ElementPtr->postprocess_func = nullptr;
-			ElementPtr->state_flags |= NONSOLID;
+			ElementPtr->state_flags |= Nonsolid;
 			ElementPtr->next.image.frame =
 				SetAbsFrameIndex(ElementPtr->current.image.frame,
 								 GetFrameCount(ElementPtr->current.image.frame) - 1);
@@ -977,11 +977,11 @@ bool hyper_transition(ELEMENT* ElementPtr)
 		}
 
 		uint16_t frame_index {GetFrameIndex(ElementPtr->current.image.frame)};
-		if (frame_index-- <= ANGLE_TO_FACING(FULL_CIRCLE))
+		if (frame_index-- <= ANGLE_TO_FACING(FullCircle))
 		{
 			STARSHIP* StarShipPtr {};
 
-			if (frame_index == ANGLE_TO_FACING(FULL_CIRCLE) - 1)
+			if (frame_index == ANGLE_TO_FACING(FullCircle) - 1)
 			{
 				frame_index = 0;
 			}
@@ -995,21 +995,21 @@ bool hyper_transition(ELEMENT* ElementPtr)
 			{
 				ElementPtr->preprocess_func = ship_preprocess;
 				ElementPtr->postprocess_func = ship_postprocess;
-				ElementPtr->state_flags &= ~NONSOLID;
+				ElementPtr->state_flags &= ~Nonsolid;
 			}
 		}
 
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 		ElementPtr->next.image.frame =
 			SetAbsFrameIndex(ElementPtr->current.image.frame,
 							 frame_index);
 
-		if (!(ElementPtr->state_flags & NONSOLID))
+		if (!(ElementPtr->state_flags & Nonsolid))
 		{
 			ElementPtr->current = ElementPtr->next;
 			SetUpElement(ElementPtr);
 
-			ElementPtr->state_flags |= DEFY_PHYSICS;
+			ElementPtr->state_flags |= DefyPhysics;
 
 			if (uqm::UQMOptions::read().advancedAutoPilot)
 			{
@@ -1025,7 +1025,7 @@ static void
 hyper_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	if ((ElementPtr1->state_flags & PLAYER_SHIP)
+	if ((ElementPtr1->state_flags & PlayerShip)
 		&& GET_GAME_STATE(PORTAL_COUNTER) == 0)
 	{
 		int16_t dx {};
@@ -1039,20 +1039,20 @@ hyper_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
 		GetCurrentVelocityComponents(&ElementPtr1->velocity, &dx, &dy);
-		if (SDPtr == CurStarDescPtr
-			|| (ElementPtr1->state_flags & APPEARING)
-			|| !(dx || dy || (StarShipPtr->cur_status_flags & (LEFT | RIGHT | THRUST | WEAPON | SPECIAL))))
+		if (SDPtr == CurStarDescPtr()
+			|| (ElementPtr1->state_flags & Appearing)
+			|| !(dx || dy || (StarShipPtr->cur_status_flags & (LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag))))
 		{
-			CurStarDescPtr = SDPtr;
-			ElementPtr0->state_flags |= DEFY_PHYSICS | COLLISION;
+			CurStarDescPtr() = SDPtr;
+			ElementPtr0->state_flags |= DefyPhysics | Collision;
 		}
 		else if ((uqm::currentActivity() & IN_BATTLE)
 				 && (!uqm::flagship().autopilot.hasTarget()
 					 || (uqm::flagship().autopilot.target().x == SDPtr->star_pt.x
 						 && uqm::flagship().autopilot.target().y == SDPtr->star_pt.y)))
 		{
-			CurStarDescPtr = SDPtr;
-			ElementPtr0->state_flags |= COLLISION;
+			CurStarDescPtr() = SDPtr;
+			ElementPtr0->state_flags |= Collision;
 
 			init_transition(ElementPtr0, ElementPtr1,
 							INTERPLANETARY_TRANSITION);
@@ -1065,17 +1065,17 @@ hyper_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 static void
 hyper_death(ELEMENT* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & DEFY_PHYSICS)
+	if (!(ElementPtr->state_flags & DefyPhysics)
 		&& (uqm::currentActivity() & IN_BATTLE))
 	{
-		CurStarDescPtr = 0;
+		CurStarDescPtr() = 0;
 	}
 }
 
 static void
 arilou_space_death(ELEMENT* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & DEFY_PHYSICS)
+	if (!(ElementPtr->state_flags & DefyPhysics)
 		|| GET_GAME_STATE(ARILOU_SPACE_COUNTER) == 0)
 	{
 		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
@@ -1095,7 +1095,7 @@ arilou_space_collision(ELEMENT* ElementPtr0,
 {
 	uint16_t which_side {};
 
-	if (!(ElementPtr1->state_flags & PLAYER_SHIP))
+	if (!(ElementPtr1->state_flags & PlayerShip))
 	{
 		return;
 	}
@@ -1103,7 +1103,7 @@ arilou_space_collision(ELEMENT* ElementPtr0,
 	which_side = GET_GAME_STATE(ARILOU_SPACE_SIDE);
 	if (which_side == 0 || which_side == 3)
 	{
-		if (ElementPtr1->state_flags & DEFY_PHYSICS)
+		if (ElementPtr1->state_flags & DefyPhysics)
 		{
 			SET_GAME_STATE(ARILOU_SPACE_SIDE, which_side ^ 1);
 		}
@@ -1114,7 +1114,7 @@ arilou_space_collision(ELEMENT* ElementPtr0,
 		}
 	}
 
-	ElementPtr0->state_flags |= DEFY_PHYSICS | COLLISION;
+	ElementPtr0->state_flags |= DefyPhysics | Collision;
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
@@ -1128,8 +1128,8 @@ AllocHyperElement(const GFXPOINT* elem_pt)
 		ELEMENT* HyperSpaceElementPtr {};
 
 		LockElement(hHyperSpaceElement, &HyperSpaceElementPtr);
-		HyperSpaceElementPtr->playerNr = NEUTRAL_PLAYER_NUM;
-		HyperSpaceElementPtr->state_flags = CHANGING | FINITE_LIFE;
+		HyperSpaceElementPtr->playerNr = NeutralPlayerNum;
+		HyperSpaceElementPtr->state_flags = Changing | FiniteLife;
 		HyperSpaceElementPtr->life_span = 1;
 		HyperSpaceElementPtr->mass_points = 1;
 
@@ -1138,11 +1138,11 @@ AllocHyperElement(const GFXPOINT* elem_pt)
 			long ly {};
 
 			lx = UNIVERSE_TO_LOGX(elem_pt->x)
-			   + (LOG_SPACE_WIDTH >> 1) - GLOBAL_SIS(log_x);
+			   + (LogSpaceWidth() >> 1) - GLOBAL_SIS(log_x);
 			HyperSpaceElementPtr->current.location.x = WRAP_X(lx);
 
 			ly = UNIVERSE_TO_LOGY(elem_pt->y)
-			   + (LOG_SPACE_HEIGHT >> 1) - GLOBAL_SIS(log_y);
+			   + (LogSpaceHeight() >> 1) - GLOBAL_SIS(log_y);
 			HyperSpaceElementPtr->current.location.y = WRAP_Y(ly);
 		}
 
@@ -1168,14 +1168,14 @@ AddAmbientElement(void)
 		ELEMENT* HyperSpaceElementPtr {};
 
 		LockElement(hHyperSpaceElement, &HyperSpaceElementPtr);
-		HyperSpaceElementPtr->playerNr = NEUTRAL_PLAYER_NUM;
+		HyperSpaceElementPtr->playerNr = NeutralPlayerNum;
 		HyperSpaceElementPtr->state_flags =
-			APPEARING | FINITE_LIFE | NONSOLID;
+			Appearing | FiniteLife | Nonsolid;
 		SetPrimType(&DisplayArray[HyperSpaceElementPtr->PrimIndex],
 					STAMP_PRIM);
 		HyperSpaceElementPtr->preprocess_func = animation_preprocess;
 
-		if (IS_HD && inQuasiSpace())
+		if (IsHd() && inQuasiSpace())
 		{
 			SetPrimFlags(&DisplayArray[HyperSpaceElementPtr->PrimIndex],
 						 HyperToQuasiColor);
@@ -1184,22 +1184,22 @@ AddAmbientElement(void)
 		const uint32_t rand_val {uqm::random().next()};
 		dy = uqm::lowWord(rand_val);
 
-		if (!IS_HD)
+		if (!IsHd())
 		{
-			dx = (int16_t)(uqm::lowByte(dy) % SPACE_WIDTH) - (SPACE_WIDTH >> 1);
-			dy = (int16_t)(uqm::highByte(dy) % SPACE_HEIGHT) - (SPACE_HEIGHT >> 1);
+			dx = (int16_t)(uqm::lowByte(dy) % SpaceWidth()) - (SpaceWidth() >> 1);
+			dy = (int16_t)(uqm::highByte(dy) % SpaceHeight()) - (SpaceHeight() >> 1);
 		}
 		else
 		{
-			dx = (int16_t)((uqm::highWord(rand_val)) % SPACE_WIDTH)
-			   - (SPACE_WIDTH >> 1);
-			dy = (int16_t)(dy % SPACE_HEIGHT) - (SPACE_HEIGHT >> 1);
+			dx = (int16_t)((uqm::highWord(rand_val)) % SpaceWidth())
+			   - (SpaceWidth() >> 1);
+			dy = (int16_t)(dy % SpaceHeight()) - (SpaceHeight() >> 1);
 		}
 
 		HyperSpaceElementPtr->current.location.x =
-			(LOG_SPACE_WIDTH >> 1) + DISPLAY_TO_WORLD(dx);
+			(LogSpaceWidth() >> 1) + DISPLAY_TO_WORLD(dx);
 		HyperSpaceElementPtr->current.location.y =
-			(LOG_SPACE_HEIGHT >> 1) + DISPLAY_TO_WORLD(dy);
+			(LogSpaceHeight() >> 1) + DISPLAY_TO_WORLD(dy);
 		HyperSpaceElementPtr->current.image.farray = &stars_in_space;
 
 		if (uqm::highWord(rand_val) & 7)
@@ -1248,7 +1248,7 @@ encounter_animation(ELEMENT* ElementPtr)
 static void
 encounter_transition(ELEMENT* ElementPtr)
 {
-	ElementPtr->state_flags &= ~DISAPPEARING;
+	ElementPtr->state_flags &= ~Disappearing;
 	ElementPtr->life_span = 1;
 	if (ElementPtr->turn_wait)
 	{
@@ -1289,21 +1289,21 @@ getSisElement(void)
 {
 	HELEMENT hShip {};
 
-	HSTARSHIP hSis {GetHeadLink(&race_q[RPG_PLAYER_NUM])};
+	HSTARSHIP hSis {GetHeadLink(&race_q[RpgPlayerNum])};
 	if (!hSis)
 	{
 		return nullptr;
 	}
 
-	const STARSHIP* StarShipPtr {LockStarShip(&race_q[RPG_PLAYER_NUM], hSis)};
+	const STARSHIP* StarShipPtr {LockStarShip(&race_q[RpgPlayerNum], hSis)};
 	hShip = StarShipPtr->hShip;
-	UnlockStarShip(&race_q[RPG_PLAYER_NUM], hSis);
+	UnlockStarShip(&race_q[RpgPlayerNum], hSis);
 
 #ifdef DEBUG
 	{
 		ELEMENT* ElementPtr;
 		LockElement(hShip, &ElementPtr);
-		assert(ElementPtr->state_flags & PLAYER_SHIP);
+		assert(ElementPtr->state_flags & PlayerShip);
 		UnlockElement(hShip);
 	}
 #endif
@@ -1318,7 +1318,7 @@ encounter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	HENCOUNTER hEncounter {};
 	HENCOUNTER hNextEncounter {};
 
-	if (!(ElementPtr1->state_flags & PLAYER_SHIP)
+	if (!(ElementPtr1->state_flags & PlayerShip)
 		|| !(uqm::currentActivity() & IN_BATTLE))
 	{
 		return;
@@ -1339,7 +1339,7 @@ encounter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			ELEMENT* ElementPtr {};
 
 			LockElement(EncounterPtr->hElement, &ElementPtr);
-			ElementPtr->state_flags |= NONSOLID | IGNORE_SIMILAR;
+			ElementPtr->state_flags |= Nonsolid | IgnoreSimilar;
 			UnlockElement(EncounterPtr->hElement);
 		}
 		UnlockEncounter(hEncounter);
@@ -1366,12 +1366,12 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 		return 0;
 	}
 
-	if (EncounterPtr->flags & ENCOUNTER_REFORMING)
+	if (EncounterPtr->flags & EncounterReforming)
 	{
-		EncounterPtr->flags &= ~ENCOUNTER_REFORMING;
+		EncounterPtr->flags &= ~EncounterReforming;
 
 		EncounterPtr->transition_state = 100 + TR_COMPENSATION;
-		if ((EncounterPtr->flags & ONE_SHOT_ENCOUNTER)
+		if ((EncounterPtr->flags & OneShotEncounter)
 			|| EncounterPtr->num_ships == 0)
 		{
 			return 0;
@@ -1408,9 +1408,9 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 			}
 		}
 
-		if (NumShips > MAX_HYPER_SHIPS)
+		if (NumShips > MaxHyperShips)
 		{
-			NumShips = MAX_HYPER_SHIPS;
+			NumShips = MaxHyperShips;
 		}
 
 		EncounterPtr->num_ships = NumShips;
@@ -1438,9 +1438,9 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 			{
 				enc_pt.x = 0;
 			}
-			else if (enc_pt.x > MAX_X_UNIVERSE)
+			else if (enc_pt.x > MaxXUniverse)
 			{
-				enc_pt.x = MAX_X_UNIVERSE;
+				enc_pt.x = MaxXUniverse;
 			}
 			enc_pt.y = puniverse->y
 					 + (uqm::highWord(rand_val) % (YOFFS << 1)) - YOFFS;
@@ -1448,9 +1448,9 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 			{
 				enc_pt.y = 0;
 			}
-			else if (enc_pt.y > MAX_Y_UNIVERSE)
+			else if (enc_pt.y > MaxYUniverse)
 			{
-				enc_pt.y = MAX_Y_UNIVERSE;
+				enc_pt.y = MaxYUniverse;
 			}
 
 			dx = enc_pt.x - EncounterPtr->origin.x;
@@ -1511,8 +1511,8 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 
 		ElementPtr->IntersectControl.IntersectStamp.frame =
 			DecFrameIndex(stars_in_space);
-		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NO_PRIM);
-		ElementPtr->state_flags |= NONSOLID | IGNORE_VELOCITY;
+		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NoPrim);
+		ElementPtr->state_flags |= Nonsolid | IgnoreVelocity;
 
 		UnlockElement(hElement);
 
@@ -1538,7 +1538,7 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x00, 0x10, 0x00), 0x6B));
 
-	sx = ux - (RADAR_SCAN_WIDTH >> 1);
+	sx = ux - (RadarScanWidth() >> 1);
 	if (sx < 0)
 	{
 		sx = 0;
@@ -1547,13 +1547,13 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 	{
 		sx -= sx % GRID_OFFSET;
 	}
-	ex = ux + (RADAR_SCAN_WIDTH >> 1);
-	if (ex > MAX_X_UNIVERSE + 1)
+	ex = ux + (RadarScanWidth() >> 1);
+	if (ex > MaxXUniverse + 1)
 	{
-		ex = MAX_X_UNIVERSE + 1;
+		ex = MaxXUniverse + 1;
 	}
 
-	sy = uy - (RADAR_SCAN_HEIGHT >> 1);
+	sy = uy - (RadarScanHeight() >> 1);
 	if (sy < 0)
 	{
 		sy = 0;
@@ -1562,37 +1562,37 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 	{
 		sy -= sy % GRID_OFFSET;
 	}
-	ey = uy + (RADAR_SCAN_HEIGHT >> 1);
-	if (ey > MAX_Y_UNIVERSE + 1)
+	ey = uy + (RadarScanHeight() >> 1);
+	if (ey > MaxYUniverse + 1)
 	{
-		ey = MAX_Y_UNIVERSE + 1;
+		ey = MaxYUniverse + 1;
 	}
 
-	r.corner.y = (int16_t)((long)(MAX_Y_UNIVERSE - ey)
-						   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+	r.corner.y = (int16_t)((long)(MaxYUniverse - ey)
+						   * RadarHeight() / RadarScanHeight())
 			   - oy;
 	r.extent.width = RES_SCALE(1);
-	r.extent.height = ((int16_t)((long)(MAX_Y_UNIVERSE - sy)
-								 * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+	r.extent.height = ((int16_t)((long)(MaxYUniverse - sy)
+								 * RadarHeight() / RadarScanHeight())
 					   - oy)
 					- r.corner.y
 					+ RES_SCALE(1);
 	for (ux = sx; ux <= ex; ux += GRID_OFFSET)
 	{
-		r.corner.x = (int16_t)((long)ux * RADAR_WIDTH / RADAR_SCAN_WIDTH)
+		r.corner.x = (int16_t)((long)ux * RadarWidth() / RadarScanWidth())
 				   - ox;
 		DrawFilledRectangle(&r);
 	}
 
-	r.corner.x = (int16_t)((long)sx * RADAR_WIDTH / RADAR_SCAN_WIDTH) - ox;
-	r.extent.width = ((int16_t)((long)ex * RADAR_WIDTH / RADAR_SCAN_WIDTH)
+	r.corner.x = (int16_t)((long)sx * RadarWidth() / RadarScanWidth()) - ox;
+	r.extent.width = ((int16_t)((long)ex * RadarWidth() / RadarScanWidth())
 					  - ox)
 				   - r.corner.x + RES_SCALE(1);
 	r.extent.height = RES_SCALE(1);
 	for (uy = sy; uy <= ey; uy += GRID_OFFSET)
 	{
-		r.corner.y = (int16_t)((long)(MAX_Y_UNIVERSE - uy)
-							   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+		r.corner.y = (int16_t)((long)(MaxYUniverse - uy)
+							   * RadarHeight() / RadarScanHeight())
 				   - oy;
 		DrawFilledRectangle(&r);
 	}
@@ -1663,7 +1663,7 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 			{
 #define ENCOUNTER_TRACK_WAIT 3
 				int16_t speed {RaceHyperSpeed((RACE_ID)EncounterPtr->race_id)};
-				if (delta_facing < ANGLE_TO_FACING(HALF_CIRCLE))
+				if (delta_facing < ANGLE_TO_FACING(HalfCircle))
 				{
 					--cur_facing;
 				}
@@ -1672,10 +1672,10 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 					++cur_facing;
 				}
 				if (NORMALIZE_FACING(delta_facing
-									 + ANGLE_TO_FACING(OCTANT))
-					> ANGLE_TO_FACING(QUADRANT))
+									 + ANGLE_TO_FACING(Octant))
+					> ANGLE_TO_FACING(Quadrant))
 				{
-					if (delta_facing < ANGLE_TO_FACING(HALF_CIRCLE))
+					if (delta_facing < ANGLE_TO_FACING(HalfCircle))
 					{
 						--cur_facing;
 					}
@@ -1716,7 +1716,7 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 			|| (uint32_t)delta_x * delta_x + (uint32_t)delta_y * delta_y >= (uint32_t)encounter_radius * encounter_radius)
 		{
 			// Encounter globe traveled outside the SoI and now disappears
-			ElementPtr->state_flags |= NONSOLID;
+			ElementPtr->state_flags |= Nonsolid;
 			ElementPtr->life_span = 0;
 
 			if (EncounterPtr->transition_state == 0)
@@ -1743,18 +1743,18 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 
 	ex = EncounterPtr->loc_pt.x;
 	ey = EncounterPtr->loc_pt.y;
-	if (ex - puniverse->x >= -UNIT_SCREEN_WIDTH
-		&& ex - puniverse->x <= UNIT_SCREEN_WIDTH
-		&& ey - puniverse->y >= -UNIT_SCREEN_HEIGHT
-		&& ey - puniverse->y <= UNIT_SCREEN_HEIGHT)
+	if (ex - puniverse->x >= -UnitScreenWidth()
+		&& ex - puniverse->x <= UnitScreenWidth()
+		&& ey - puniverse->y >= -UnitScreenHeight()
+		&& ey - puniverse->y <= UnitScreenHeight())
 	{
 		ElementPtr->next.location.x =
 			(int16_t)(EncounterPtr->log_x - GLOBAL_SIS(log_x))
-			+ (LOG_SPACE_WIDTH >> 1);
+			+ (LogSpaceWidth() >> 1);
 		ElementPtr->next.location.y =
 			(int16_t)(EncounterPtr->log_y - GLOBAL_SIS(log_y))
-			+ (LOG_SPACE_HEIGHT >> 1);
-		if ((ElementPtr->state_flags & NONSOLID)
+			+ (LogSpaceHeight() >> 1);
+		if ((ElementPtr->state_flags & Nonsolid)
 			&& EncounterPtr->transition_state == 0)
 		{
 			ElementPtr->current.location = ElementPtr->next.location;
@@ -1763,13 +1763,13 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 			if (ElementPtr->death_func == 0)
 			{
 				InitIntersectStartPoint(ElementPtr);
-				ElementPtr->state_flags &= ~NONSOLID;
+				ElementPtr->state_flags &= ~Nonsolid;
 			}
 		}
 	}
 	else
 	{
-		ElementPtr->state_flags |= NONSOLID;
+		ElementPtr->state_flags |= Nonsolid;
 		if (ex - puniverse->x < -XOFFS || ex - puniverse->x > XOFFS
 			|| ey - puniverse->y < -YOFFS || ey - puniverse->y > YOFFS)
 		{
@@ -1779,15 +1779,15 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 			return false;
 		}
 
-		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NO_PRIM);
+		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NoPrim);
 	}
 
 	UnlockElement(EncounterPtr->hElement);
 
-	stamp->origin.x = (int16_t)((long)ex * RADAR_WIDTH / RADAR_SCAN_WIDTH)
+	stamp->origin.x = (int16_t)((long)ex * RadarWidth() / RadarScanWidth())
 					- ox;
-	stamp->origin.y = (int16_t)((long)(MAX_Y_UNIVERSE - ey) * RADAR_HEIGHT
-								/ RADAR_SCAN_HEIGHT)
+	stamp->origin.y = (int16_t)((long)(MaxYUniverse - ey) * RadarHeight()
+								/ RadarScanHeight())
 					- oy;
 	DrawStamp(stamp);
 
@@ -1830,17 +1830,17 @@ GetMaskColor(uint8_t startype)
 	switch (startype)
 	{
 		case RED_BODY:
-			return RED_STAR_COLOR;
+			return RedStarColor;
 		case ORANGE_BODY:
-			return ORANGE_STAR_COLOR;
+			return OrangeStarColor;
 		case YELLOW_BODY:
-			return YELLOW_STAR_COLOR;
+			return YellowStarColor;
 		case GREEN_BODY:
-			return GREEN_STAR_COLOR;
+			return GreenStarColor;
 		case BLUE_BODY:
-			return BLUE_STAR_COLOR;
+			return BlueStarColor;
 		default:
-			return WHITE_COLOR;
+			return WhiteColor;
 	}
 }
 
@@ -1876,18 +1876,18 @@ void SeedUniverse(void)
 	SetContext(RadarContext);
 	BatchGraphics();
 
-	ox = (int16_t)((long)universe.x * RADAR_WIDTH / RADAR_SCAN_WIDTH)
-	   - (RADAR_WIDTH >> 1);
-	oy = (int16_t)((long)(MAX_Y_UNIVERSE - universe.y)
-				   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
-	   - (RADAR_HEIGHT >> 1);
+	ox = (int16_t)((long)universe.x * RadarWidth() / RadarScanWidth())
+	   - (RadarWidth() >> 1);
+	oy = (int16_t)((long)(MaxYUniverse - universe.y)
+				   * RadarHeight() / RadarScanHeight())
+	   - (RadarHeight() >> 1);
 
 	ex = (int16_t)((long)uqm::flagship().shipStamp.origin.x
-				   * RADAR_WIDTH / RADAR_SCAN_WIDTH)
-	   - (RADAR_WIDTH >> 1);
-	ey = (int16_t)((long)(MAX_Y_UNIVERSE - uqm::flagship().shipStamp.origin.y)
-				   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
-	   - (RADAR_HEIGHT >> 1);
+				   * RadarWidth() / RadarScanWidth())
+	   - (RadarWidth() >> 1);
+	ey = (int16_t)((long)(MaxYUniverse - uqm::flagship().shipStamp.origin.y)
+				   * RadarHeight() / RadarScanHeight())
+	   - (RadarHeight() >> 1);
 
 	arilouSpaceCounter = GET_GAME_STATE(ARILOU_SPACE_COUNTER);
 	arilouSpaceSide = GET_GAME_STATE(ARILOU_SPACE_SIDE);
@@ -1903,16 +1903,16 @@ void SeedUniverse(void)
 				ex = SDPtr->star_pt.x;
 				ey = SDPtr->star_pt.y;
 				uint8_t star_type {STAR_TYPE(SDPtr->Type)};
-				if (arilouSpaceSide >= 2 && ex == ARILOU_HOME_X && ey == ARILOU_HOME_Y)
+				if (arilouSpaceSide >= 2 && ex == ArilouHomeX && ey == ArilouHomeY)
 				{
 					star_type = SUPER_GIANT_STAR;
 				}
 
-				s.origin.x = (int16_t)((long)ex * RADAR_WIDTH
-									   / RADAR_SCAN_WIDTH)
+				s.origin.x = (int16_t)((long)ex * RadarWidth()
+									   / RadarScanWidth())
 						   - ox;
-				s.origin.y = (int16_t)((long)(MAX_Y_UNIVERSE - ey)
-									   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+				s.origin.y = (int16_t)((long)(MaxYUniverse - ey)
+									   * RadarHeight() / RadarScanHeight())
 						   - oy;
 				s.frame = SetRelFrameIndex(blip_frame,
 										   star_type + 2);
@@ -1990,8 +1990,8 @@ void SeedUniverse(void)
 			else
 			{
 				// The player is in QuasiSpace
-				SD[i].star_pt.x = QUASI_SPACE_X;
-				SD[i].star_pt.y = QUASI_SPACE_Y;
+				SD[i].star_pt.x = QuasiSpaceX;
+				SD[i].star_pt.y = QuasiSpaceY;
 			}
 			++i;
 		}
@@ -2010,10 +2010,10 @@ void SeedUniverse(void)
 
 			ex = SD[i].star_pt.x;
 			ey = SD[i].star_pt.y;
-			s.origin.x = (int16_t)((long)ex * RADAR_WIDTH / RADAR_SCAN_WIDTH)
+			s.origin.x = (int16_t)((long)ex * RadarWidth() / RadarScanWidth())
 					   - ox;
-			s.origin.y = (int16_t)((long)(MAX_Y_UNIVERSE - ey)
-								   * RADAR_HEIGHT / RADAR_SCAN_HEIGHT)
+			s.origin.y = (int16_t)((long)(MaxYUniverse - ey)
+								   * RadarHeight() / RadarScanHeight())
 					   - oy;
 			s.frame = SetAbsFrameIndex(stars_in_space, 95);
 			DrawStamp(&s);
@@ -2029,8 +2029,8 @@ void SeedUniverse(void)
 				ey = -ey;
 			}
 
-			if (ex > (XOFFS / NUM_RADAR_SCREENS)
-				|| ey > (YOFFS / NUM_RADAR_SCREENS))
+			if (ex > (XOFFS / NumRadarScreens)
+				|| ey > (YOFFS / NumRadarScreens))
 			{
 				continue;
 			}
@@ -2122,7 +2122,7 @@ void SeedUniverse(void)
 			img_log.width = frameRect.extent.width << 1;
 			img_log.height = frameRect.extent.height << 1;
 
-			if ((lx + img_log.width) < -HS_WEST_EDGE || (lx - img_log.width) > HS_EAST_EDGE || (ly + img_log.height) < -HS_NORTH_EDGE || (ly - img_log.height) > HS_SOUTH_EDGE)
+			if ((lx + img_log.width) < -HsWestEdge() || (lx - img_log.width) > HsEastEdge() || (ly + img_log.height) < -HsNorthEdge() || (ly - img_log.height) > HsSouthEdge())
 			{
 				continue;
 			}
@@ -2152,7 +2152,7 @@ void SeedUniverse(void)
 				SetPrimFlags(&DisplayArray[*PrimIndex], HsStarmask);
 
 				HyperSpaceElementPtr->state_flags =
-					APPEARING | FINITE_LIFE | NONSOLID;
+					Appearing | FiniteLife | Nonsolid;
 
 				UnlockElement(hHyperSpaceElement);
 
@@ -2174,7 +2174,7 @@ void SeedUniverse(void)
 
 			SetUpElement(HyperSpaceElementPtr);
 
-			if (SDPtr == CurStarDescPtr
+			if (SDPtr == CurStarDescPtr()
 				&& GET_GAME_STATE(PORTAL_COUNTER) == 0)
 			{
 				HyperSpaceElementPtr->death_func = hyper_death;
@@ -2192,8 +2192,8 @@ void SeedUniverse(void)
 		ProcessEncounters(&universe, ox, oy);
 	}
 
-	s.origin.x = RADAR_WIDTH >> 1;
-	s.origin.y = RADAR_HEIGHT >> 1;
+	s.origin.x = RadarWidth() >> 1;
+	s.origin.y = RadarHeight() >> 1;
 	s.frame = blip_frame;
 	DrawStamp(&s);
 
@@ -2284,7 +2284,7 @@ DoHyperspaceMenu(MENU_STATE* pMS)
 			}
 			DrawMenuStateStrings(PM_STARMAP, pMS->CurState);
 		}
-		SetFlashRect(SFR_MENU_3DO, false);
+		SetFlashRect(SfrMenu3do(), false);
 	}
 
 	return true;
@@ -2298,7 +2298,7 @@ void HyperspaceMenu(void)
 	UnbatchGraphics();
 
 	GFXCONTEXT OldContext {SetContext(SpaceContext)};
-	OldColor = SetContextBackGroundColor(BLACK_COLOR);
+	OldColor = SetContextBackGroundColor(BlackColor);
 
 
 	memset(&MenuState, 0, sizeof(MenuState));
@@ -2307,9 +2307,9 @@ void HyperspaceMenu(void)
 	MenuState.CurState = STARMAP;
 
 	DrawMenuStateStrings(PM_STARMAP, STARMAP);
-	SetFlashRect(SFR_MENU_3DO, false);
+	SetFlashRect(SfrMenu3do(), false);
 
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	DoInput(&MenuState, true);
 
 	SetFlashRect(nullptr, false);
@@ -2318,7 +2318,7 @@ void HyperspaceMenu(void)
 
 	if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 	{
-		ClearSISRect(CLEAR_SIS_RADAR);
+		ClearSISRect(ClearSisRadar);
 		WaitForNoInput(c_gameSecond / 2, false);
 	}
 
@@ -2343,7 +2343,7 @@ void SaveSisHyperState(void)
 	{ // Happens when saving a game from Hyperspace encounter screen
 		return;
 	}
-	//if (ElementPtr->state_flags & PLAYER_SHIP)
+	//if (ElementPtr->state_flags & PlayerShip)
 	LockElement(hSisElement, &ElementPtr);
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	// XXX: Solar system reentry test depends on ShipFacing != 0

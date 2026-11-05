@@ -47,11 +47,11 @@ static LOCDATA commander_desc =
 		nullptr, /* uninit_encounter_func */
 		COMMANDER_PMAP_ANIM, /* AlienFrame */
 		COMMANDER_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH, */  /* AlienTextWidth */
+		/* SisTextWidth(), */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
 		COMMANDER_COLOR_MAP, /* AlienColorMap */
@@ -67,9 +67,9 @@ static LOCDATA commander_desc =
 								/* AlienAmbientArray (ambient animations) */
 			{
 				/* Blink */
-				1,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				1,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				0,
@@ -78,9 +78,9 @@ static LOCDATA commander_desc =
 			},
 								{
 				/* Running light */
-				10,			   /* StartIndex */
-				30,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				10,			  /* StartIndex */
+				30,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 2,
@@ -89,9 +89,9 @@ static LOCDATA commander_desc =
 			},
 								{
 				/* Arc welder 0 */
-				40,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				40,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -100,9 +100,9 @@ static LOCDATA commander_desc =
 			},
 								{
 				/* Arc welder 1 */
-				47,			   /* StartIndex */
-				8,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				47,			  /* StartIndex */
+				8,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -111,9 +111,9 @@ static LOCDATA commander_desc =
 			},
 								{
 				/* Arc welder 2 */
-				55,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				55,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -122,9 +122,9 @@ static LOCDATA commander_desc =
 			},
 								{
 				/* Arc welder 3 */
-				61,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				61,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -133,9 +133,9 @@ static LOCDATA commander_desc =
 			},
 								{
 				/* Arc welder 4 */
-				67,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				67,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -144,9 +144,9 @@ static LOCDATA commander_desc =
 			},
 								{
 				/* Arc welder 5 */
-				74,			   /* StartIndex */
-				11,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				74,			  /* StartIndex */
+				11,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -155,9 +155,9 @@ static LOCDATA commander_desc =
 			},
 								{
 				/* Arc welder 6 */
-				85,			   /* StartIndex */
-				10,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				85,			  /* StartIndex */
+				10,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				0,
@@ -288,7 +288,7 @@ DoSellMinerals(void)
 
 	SleepThread(c_gameSecond / 2);
 
-	ClearSISRect(DRAW_SIS_DISPLAY);
+	ClearSISRect(DrawSisDisplay);
 
 	return total;
 }
@@ -895,21 +895,21 @@ AnalyzeCondition(void)
 	uint8_t num_defense = 0;
 	bool HasMinimum {};
 
-	for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
+	for (i = 0; i < NumDriveSlots; ++i)
 	{
-		if (GLOBAL_SIS(DriveSlots[i]) < EMPTY_SLOT)
+		if (GLOBAL_SIS(DriveSlots[i]) < EmptySlot)
 		{
 			++num_thrusters;
 		}
 	}
-	for (i = 0; i < NUM_JET_SLOTS; ++i)
+	for (i = 0; i < NumJetSlots; ++i)
 	{
-		if (GLOBAL_SIS(JetSlots[i]) < EMPTY_SLOT)
+		if (GLOBAL_SIS(JetSlots[i]) < EmptySlot)
 		{
 			++num_jets;
 		}
 	}
-	for (i = 0; i < NUM_MODULE_SLOTS; ++i)
+	for (i = 0; i < NumModuleSlots; ++i)
 	{
 		uint8_t which_piece {};
 
@@ -941,8 +941,8 @@ AnalyzeCondition(void)
 	}
 
 	HasMinimum = (num_thrusters >= 7 && num_jets >= 5
-				  && GLOBAL_SIS(CrewEnlisted) >= CREW_POD_CAPACITY
-				  && GLOBAL_SIS(FuelOnBoard) >= FUEL_TANK_CAPACITY
+				  && GLOBAL_SIS(CrewEnlisted) >= CrewPodCapacity
+				  && GLOBAL_SIS(FuelOnBoard) >= FuelTankCapacity
 				  && num_bays >= 1 && GLOBAL_SIS(NumLanders)
 				  && num_batts >= 1 && num_guns >= 2);
 	NPCPhrase(LETS_SEE);
@@ -961,11 +961,11 @@ AnalyzeCondition(void)
 		{
 			NPCPhrase(NEED_GUNS_1);
 		}
-		if (GLOBAL_SIS(CrewEnlisted) < CREW_POD_CAPACITY)
+		if (GLOBAL_SIS(CrewEnlisted) < CrewPodCapacity)
 		{
 			NPCPhrase(NEED_CREW_1);
 		}
-		if (GLOBAL_SIS(FuelOnBoard) < FUEL_TANK_CAPACITY)
+		if (GLOBAL_SIS(FuelOnBoard) < FuelTankCapacity)
 		{
 			NPCPhrase(NEED_FUEL_1);
 		}
@@ -1005,10 +1005,10 @@ AnalyzeCondition(void)
 			}
 		}
 
-		HasMaximum = (num_thrusters == NUM_DRIVE_SLOTS
-					  && num_jets == NUM_JET_SLOTS
-					  && GLOBAL_SIS(CrewEnlisted) >= CREW_POD_CAPACITY * 3
-					  && GLOBAL_SIS(FuelOnBoard) >= FUEL_TANK_CAPACITY * 3
+		HasMaximum = (num_thrusters == NumDriveSlots
+					  && num_jets == NumJetSlots
+					  && GLOBAL_SIS(CrewEnlisted) >= CrewPodCapacity * 3
+					  && GLOBAL_SIS(FuelOnBoard) >= FuelTankCapacity * 3
 					  && GLOBAL_SIS(NumLanders) >= 3
 					  && num_batts >= 4 && num_guns >= 7 && num_defense >= 2);
 		if (!HasMaximum && GET_GAME_STATE(CHMMR_BOMB_STATE) < 2)
@@ -1064,11 +1064,11 @@ AnalyzeCondition(void)
 				if (!HasMaximum)
 				{
 					NPCPhrase(IMPROVE_2);
-					if (num_thrusters < NUM_DRIVE_SLOTS)
+					if (num_thrusters < NumDriveSlots)
 					{
 						NPCPhrase(NEED_THRUSTERS_2);
 					}
-					if (num_jets < NUM_JET_SLOTS)
+					if (num_jets < NumJetSlots)
 					{
 						NPCPhrase(NEED_TURN_2);
 					}
@@ -1076,11 +1076,11 @@ AnalyzeCondition(void)
 					{
 						NPCPhrase(NEED_GUNS_2);
 					}
-					if (GLOBAL_SIS(CrewEnlisted) < CREW_POD_CAPACITY * 3)
+					if (GLOBAL_SIS(CrewEnlisted) < CrewPodCapacity * 3)
 					{
 						NPCPhrase(NEED_CREW_2);
 					}
-					if (GLOBAL_SIS(FuelOnBoard) < FUEL_TANK_CAPACITY * 3)
+					if (GLOBAL_SIS(FuelOnBoard) < FuelTankCapacity * 3)
 					{
 						NPCPhrase(NEED_FUEL_2);
 					}
@@ -1679,7 +1679,7 @@ CheckTiming(uint16_t month_index, uint16_t day_index)
 		};
 
 	mi = GET_GAME_STATE(STARBASE_MONTH);
-	uint16_t year_index {START_YEAR};
+	uint16_t year_index {StartYear};
 
 	day_index += GET_GAME_STATE(STARBASE_DAY);
 	while (day_index > days_in_month[mi - 1])
@@ -1891,7 +1891,7 @@ CheckBulletins(bool Repeat)
 					{
 						const uint16_t crew_sold = CrewSold;
 
-						if (crew_sold > MIN_SOLD)
+						if (crew_sold > MinSold())
 						{
 							BulletinMask |= 1L << b0;
 						}
@@ -1905,11 +1905,11 @@ CheckBulletins(bool Repeat)
 					{
 						const uint16_t crew_sold = CrewSold;
 
-						if (crew_sold > MAX_SOLD)
+						if (crew_sold > MaxSold())
 						{
 							BulletinMask |= 1L << b0;
 						}
-						else if (crew_sold > MIN_SOLD)
+						else if (crew_sold > MinSold())
 						{
 							pStr = STARBASE_BULLETIN_28;
 						}
@@ -1922,14 +1922,14 @@ CheckBulletins(bool Repeat)
 						crew_bought = uqm::makeWord(
 							GET_GAME_STATE(CREW_PURCHASED0),
 							GET_GAME_STATE(CREW_PURCHASED1));
-						if (crew_bought >= CREW_EXPENSE_THRESHOLD)
+						if (crew_bought >= CrewExpenseThreshold)
 						{
 							pStr = STARBASE_BULLETIN_29;
 						}
 						break;
 					}
 				case 29:
-					if (CrewSold > MAX_SOLD)
+					if (CrewSold > MaxSold())
 					{
 						pStr = STARBASE_BULLETIN_30;
 					}
@@ -2150,7 +2150,7 @@ SellMinerals(RESPONSE_REF R)
 			AlienTalkSegue(sseg);
 			GLOBAL_SIS(TotalElementMass) -= amount[sseg - 1];
 			DeltaSISGauges(0, 0, Ru[sseg - 1]);
-			ClearSISRect(DRAW_SIS_DISPLAY);
+			ClearSISRect(DrawSisDisplay);
 		}
 	}
 
@@ -2160,7 +2160,7 @@ SellMinerals(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	if (IS_HD) // To smooth out HD blink animation
+	if (IsHd()) // To smooth out HdResolutionFactor blink animation
 	{
 		CommData.AlienAmbientArray[0].BaseFrameRate = GameTicksPerSecond / 40;
 	}
@@ -2202,11 +2202,11 @@ init_starbase_comm()
 	commander_desc.AlienTextBaseline.y = RES_SCALE(20);
 
 	// use alternate Starbase track if available
-	altResFlags |= USE_ALT_SONG;
+	altResFlags |= UseAltSong;
 
 	if (is3DO(uqm::UQMOptions::read().flagshipColor))
 	{
-		altResFlags |= USE_ALT_FRAME;
+		altResFlags |= UseAltFrame;
 	}
 
 	CurBulletinMask = 0;

@@ -126,7 +126,7 @@ WrapStarBlock(int16_t plane, int32_t dx, int32_t dy)
 		const uint16_t first {i};
 
 		dy = -dy;
-		offs_y = (LOG_SPACE_HEIGHT << plane) - dy;
+		offs_y = (LogSpaceHeight() << plane) - dy;
 
 		while (ppt->y < dy)
 		{
@@ -186,7 +186,7 @@ WrapStarBlock(int16_t plane, int32_t dx, int32_t dy)
 
 		if (dy > 0)
 		{
-			offs_y = (LOG_SPACE_HEIGHT << plane) - dy;
+			offs_y = (LogSpaceHeight() << plane) - dy;
 
 			while (ppt->y >= offs_y)
 			{
@@ -246,16 +246,16 @@ void InitGalaxy(void)
 {
 	uint16_t i {};
 	DPOINT* ppt {};
-	const bool useScenery = (EXTENDED && GET_GAME_STATE(URQUAN_PROTECTING_SAMATRA)
+	const bool useScenery = (IsExtended() && GET_GAME_STATE(URQUAN_PROTECTING_SAMATRA)
 							 && uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE
 							 && uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE);
 
 	uqm::log::debug("InitGalaxy(): transition_width = {}, "
 					"transition_height = {}",
-					TRANSITION_WIDTH, TRANSITION_HEIGHT);
+					TransitionWidth(), TransitionHeight());
 
 	PRIM_LINKS Links {uqm::makeDword(EndOfList, EndOfList)};
-	uint16_t factor {ONE_SHIFT + MAX_REDUCTION + (BACKGROUND_SHIFT - 3)};
+	uint16_t factor {OneShift + MaxReduction + (BackgroundShift - 3)};
 	num_sceneries = 0;
 	for (i = 0, ppt = log_star_array; i < NUM_STARS; ++i, ++ppt)
 	{
@@ -269,8 +269,8 @@ void InitGalaxy(void)
 			++factor;
 		}
 
-		ppt->x = (int32_t)((uint16_t)uqm::random().next() % SPACE_WIDTH) << factor;
-		ppt->y = (int32_t)((uint16_t)uqm::random().next() % SPACE_HEIGHT) << factor;
+		ppt->x = (int32_t)((uint16_t)uqm::random().next() % SpaceWidth()) << factor;
+		ppt->y = (int32_t)((uint16_t)uqm::random().next() % SpaceHeight()) << factor;
 
 		if (i < BIG_STAR_COUNT + MED_STAR_COUNT)
 		{
@@ -291,8 +291,8 @@ void InitGalaxy(void)
 		}
 		else
 		{
-			if (IS_HD)
-			{ // In HD the smallest stars are images
+			if (IsHd())
+			{ // In HdResolutionFactor the smallest stars are images
 				SetPrimType(&DisplayArray[p], STAMP_PRIM);
 				if (uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE)
 				{
@@ -353,8 +353,8 @@ CmpMovePoints(const GFXPOINT* pt1, const DPOINT* pt2, int32_t dx, int32_t dy,
 	}
 	else
 	{
-		return (int)pt1->x != (int)(((pt2->x - dx) << ZOOM_SHIFT) / reduction)
-			|| (int)pt1->y != (int)(((pt2->y - dy) << ZOOM_SHIFT) / reduction);
+		return (int)pt1->x != (int)(((pt2->x - dx) << ZoomShift) / reduction)
+			|| (int)pt1->y != (int)(((pt2->y - dy) << ZoomShift) / reduction);
 	}
 }
 
@@ -392,7 +392,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 							(uint16_t)(uqm::random().next() & 31)
 								+ star_frame_ofs[iss]);
 
-						if (IS_HD && inQuasiSpace())
+						if (IsHd() && inQuasiSpace())
 						{
 							SetPrimFlags(pprim, HyperToQuasiColor);
 						}
@@ -410,11 +410,11 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 				}
 				else
 				{
-					if (reduction == (1 << (ZOOM_SHIFT + 2)))
+					if (reduction == (1 << (ZoomShift + 2)))
 					{
 						scale = 2;
 					}
-					else if (reduction < (1 << (ZOOM_SHIFT + 2)) && reduction >= (1 << (ZOOM_SHIFT + 1)))
+					else if (reduction < (1 << (ZoomShift + 2)) && reduction >= (1 << (ZoomShift + 1)))
 					{
 						scale = 1;
 					}
@@ -424,7 +424,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 					}
 				}
 
-				if (!IS_HD)
+				if (!IsHd())
 				{
 					star_frame[0] = IncFrameIndex(stars_in_space);
 					star_frame[1] = stars_in_space;
@@ -445,7 +445,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 					else
 					{ /* on 3DO, the closest stars are pixels when zoomed out */
 						star_object[1] = POINT_PRIM;
-						if (reduction > (1 << ZOOM_SHIFT))
+						if (reduction > (1 << ZoomShift))
 						{
 							star_object[0] = POINT_PRIM;
 						}
@@ -526,39 +526,39 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 			dy = SpaceOrg.y;
 			if (meleeScaleModeIsStep)
 			{
-				reduction += ONE_SHIFT;
+				reduction += OneShift;
 			}
 			else
 			{
-				reduction <<= ONE_SHIFT;
+				reduction <<= OneShift;
 			}
 		}
 		else
 		{
-			dx = (int16_t)(LOG_SPACE_WIDTH >> 1)
-			   - (LOG_SPACE_WIDTH >> ((MAX_REDUCTION + 1)
-									  - MAX_VIS_REDUCTION));
-			dy = (int16_t)(LOG_SPACE_HEIGHT >> 1)
-			   - (LOG_SPACE_HEIGHT >> ((MAX_REDUCTION + 1)
-									   - MAX_VIS_REDUCTION));
+			dx = (int16_t)(LogSpaceWidth() >> 1)
+			   - (LogSpaceWidth() >> ((MaxReduction + 1)
+									  - MaxVisReduction));
+			dy = (int16_t)(LogSpaceHeight() >> 1)
+			   - (LogSpaceHeight() >> ((MaxReduction + 1)
+									   - MaxVisReduction));
 			if (meleeScaleModeIsStep)
 			{
-				reduction = MAX_VIS_REDUCTION + ONE_SHIFT;
+				reduction = MaxVisReduction + OneShift;
 			}
 			else
 			{
-				reduction = MAX_ZOOM_OUT << ONE_SHIFT;
+				reduction = MaxZoomOut << OneShift;
 			}
 		}
 
 		ppt = log_star_array;
-		for (iss = 0, pprim = DisplayArray, wrap_around = LOG_SPACE_WIDTH;
+		for (iss = 0, pprim = DisplayArray, wrap_around = LogSpaceWidth();
 			 iss < 3 && (view_state == VIEW_CHANGE || CmpMovePoints(&pprim->Object.Point, ppt, dx, dy, reduction));
 			 ++iss, wrap_around <<= 1, dx <<= 1, dy <<= 1)
 		{
 			for (i = star_counts[iss]; i > 0; --i, ++pprim, ++ppt)
 			{
-				// ppt->x &= (LOG_SPACE_WIDTH - 1);
+				// ppt->x &= (LogSpaceWidth() - 1);
 				ppt->x = WRAP_VAL(ppt->x, wrap_around);
 				if (meleeScaleModeIsStep)
 				{
@@ -567,9 +567,9 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 				}
 				else
 				{
-					pprim->Object.Point.x = ((ppt->x - dx) << ZOOM_SHIFT)
+					pprim->Object.Point.x = ((ppt->x - dx) << ZoomShift)
 										  / reduction;
-					pprim->Object.Point.y = ((ppt->y - dy) << ZOOM_SHIFT)
+					pprim->Object.Point.y = ((ppt->y - dy) << ZoomShift)
 										  / reduction;
 				}
 			}

@@ -269,7 +269,7 @@ typedef struct rect
 } GFXRECT;
 
 // Kruzen: Thanks to JMS, using this to draw ovals
-// Overflows happen in HD with Starmap and max zoom (Fuel circles)
+// Overflows happen in HdResolutionFactor with Starmap and max zoom (Fuel circles)
 typedef struct drect
 {
 	DPOINT corner;

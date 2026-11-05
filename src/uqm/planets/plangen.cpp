@@ -105,9 +105,9 @@ typedef struct
 
 const static Color tintColors[] =
 	{
-		SCAN_MINERAL_TINT_COLOR,
-		SCAN_ENERGY_TINT_COLOR,
-		SCAN_BIOLOGICAL_TINT_COLOR,
+		ScanMineralTintColor,
+		ScanEnergyTintColor,
+		ScanBiologicalTintColor,
 };
 
 uint8_t
@@ -264,43 +264,43 @@ GetAltColorMap(PLANET_DESC* pPlanetDesc)
 	switch (pPlanetDesc->data_index)
 	{
 		case METAL_WORLD: /* MERCURY */
-			return MERCURY_COLOR_TAB;
+			return MercuryColorTabRes;
 		case PRIMORDIAL_WORLD: /* VENUS */
-			return VENUS_COLOR_TAB;
+			return VenusColorTabRes;
 		case DUST_WORLD: /* MARS */
-			return MARS_COLOR_TAB;
+			return MarsColorTabRes;
 		case PELLUCID_WORLD: /* PLUTO & CALLISTO */
 			{
 				if (worldIsPlanet(pSolarSysState, pPlanetDesc))
 				{
-					return PLUTO_COLOR_TAB;
+					return PlutoColorTabRes;
 				}
 				else
 				{
-					return CALLISTO_COLOR_TAB;
+					return CallistoColorTabRes;
 				}
 			}
 		case SELENIC_WORLD: /* LUNA & CHARON */
 			{
 				if (planetIndex(pSolarSysState, pPlanetDesc) == 2)
 				{
-					return LUNA_COLOR_TAB;
+					return LunaColorTabRes;
 				}
 				else
 				{
-					return CHARON_COLOR_TAB;
+					return CharonColorTabRes;
 				}
 			}
 		case RADIOACTIVE_WORLD: /* IO */
-			return IO_COLOR_TAB;
+			return IoColorTabRes;
 		case HALIDE_WORLD: /* EUROPA */
-			return EUROPA_COLOR_TAB;
+			return EuropaColorTabRes;
 		case CYANIC_WORLD: /* GANYMEDE */
-			return GANYMEDE_COLOR_TAB;
+			return GanymedeColorTabRes;
 		case ALKALI_WORLD: /* TITAN */
-			return TITAN_COLOR_TAB;
+			return TitanColorTabRes;
 		case VINYLOGOUS_WORLD: /* TRITON */
-			return TRITON_COLOR_TAB;
+			return TritonColorTabRes;
 		default:
 			return nullptr;
 	}
@@ -1032,7 +1032,7 @@ SaveBackFrame(uint16_t radius)
 	const uint16_t shieldradius = SHIELD_RADIUS * radius / RADIUS;
 	const uint16_t shielddiam = (shieldradius << 1) + 1;
 
-	r.corner = MAKE_POINT((RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1))
+	r.corner = MAKE_POINT((RES_SCALE(OrigSisScreenWidth() >> 1))
 							  - (shieldradius + 1),
 						  PLANET_ORG_Y - (shieldradius + 1));
 	r.extent.height = r.extent.width = shielddiam;
@@ -2085,7 +2085,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 			Orbit->TintFrame = 0;
 		}
 
-		Orbit->TintColor = BLACK_COLOR;
+		Orbit->TintColor = BlackColor;
 
 		Orbit->TopoColors = nullptr;
 		Orbit->ScanColors = nullptr;
@@ -2143,7 +2143,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 		if (use3DOSpheres)
 		{
 			Orbit->Shade =
-				CaptureDrawable(LoadGraphic(PLANET_MASK_SHADE));
+				CaptureDrawable(LoadGraphic(PlanetMaskShadeRes));
 
 			Orbit->ShadeColors = new Color[GetFrameWidth(Orbit->Shade) * GetFrameHeight(Orbit->Shade)];
 		}
@@ -2151,7 +2151,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 	else
 	{ // DOS sphere
 		Orbit->SphereFrame =
-			CaptureDrawable(LoadGraphic(DOS_PLANET_MASK_ANIM));
+			CaptureDrawable(LoadGraphic(DosPlanetMaskAnimRes));
 
 		Orbit->TopoMask = CaptureDrawable(CreateDrawable(
 			WantPixmap, (int16_t)width, (int16_t)height, 1));
@@ -2159,7 +2159,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 		Orbit->sphereBytes = new uint8_t[GetFrameWidth(Orbit->SphereFrame) * GetFrameHeight(Orbit->SphereFrame)];
 
 		Orbit->sphereMap =
-			uqm::loadStringTable(DOS_SPHERE_COLOR_TAB).release();
+			uqm::loadStringTable(DosSphereColorTabRes).release();
 		SetColorMap(GetColorMapAddress(Orbit->sphereMap, 0));
 	}
 }
@@ -2643,7 +2643,7 @@ void load_color_resources(PLANET_DESC* pPlanetDesc,
 		pSolarSysState->OrbitalCMapIndex = 0;
 		if (pSolarSysState->OrbitalCMap != nullptr)
 		{ // Load successful - grab XLAT and return
-			pSolarSysState->XlatTable = uqm::loadStringTable(SPECIAL_CMAP_XLAT_TAB);
+			pSolarSysState->XlatTable = uqm::loadStringTable(SpecialCmapXlatTabRes);
 			pSolarSysState->XlatPtr = pSolarSysState->XlatTable->bytes(0).data();
 			return;
 		} // Else just load standard color table
@@ -2651,7 +2651,7 @@ void load_color_resources(PLANET_DESC* pPlanetDesc,
 
 	// JMS: Normal planets
 	size_t xlatIndex {0};
-	pSolarSysState->OrbitalCMap = uqm::loadStringTable(dosshielded ? DOS_SHIELDED_COLOR_TAB : PlanDataPtr->CMapInstance);
+	pSolarSysState->OrbitalCMap = uqm::loadStringTable(dosshielded ? DosShieldedColorTabRes : PlanDataPtr->CMapInstance);
 	pSolarSysState->OrbitalCMapIndex = 0;
 	pSolarSysState->XlatTable = uqm::loadStringTable(PlanDataPtr->XlatTabInstance);
 
@@ -2792,7 +2792,7 @@ void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
 	else
 	{
 		size_t xlatIndex {0};
-		pSolarSysState->OrbitalCMap = uqm::loadStringTable(shielded && useDosSpheres ? DOS_SHIELDED_COLOR_TAB : PlanDataPtr->CMapInstance);
+		pSolarSysState->OrbitalCMap = uqm::loadStringTable(shielded && useDosSpheres ? DosShieldedColorTabRes : PlanDataPtr->CMapInstance);
 		pSolarSysState->OrbitalCMapIndex = 0;
 		pSolarSysState->XlatTable = uqm::loadStringTable(PlanDataPtr->XlatTabInstance);
 
@@ -2834,7 +2834,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 	uint16_t radius {};
 	bool ForIP {};
 	const bool customTexture =
-		solTexturesPresent && CurStarDescPtr->Index == SOL_DEFINED;
+		solTexturesPresent && CurStarDescPtr()->Index == SOL_DEFINED;
 
 	if (!width && !height)
 	{
@@ -2993,7 +2993,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 		}
 		else
 		{
-			const uqm::StringTablePtr scanTable {uqm::loadStringTable(SCAN_COLOR_TAB)};
+			const uqm::StringTablePtr scanTable {uqm::loadStringTable(ScanColorTabRes)};
 
 			for (i = 0; i < NUM_SCAN_TYPES; i++)
 			{
@@ -3012,7 +3012,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 	{ // produce 4x scaled topo image for Planetside
 		// for the planets that we can land on
 
-		if (isPC(uqm::UQMOptions::read().landerStyle) && !IS_HD && !SurfDefFrame)
+		if (isPC(uqm::UQMOptions::read().landerStyle) && !IsHd() && !SurfDefFrame)
 		{ // crispy PC-DOS landscape
 			Orbit->TopoZoomFrame = CaptureDrawable(
 				RescaleFrame(
@@ -3130,8 +3130,8 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 		Orbit->ObjectFrame =
 			((uqm::UQMOptions::read().sphereType < 2 && !ForIP) ?
 				 (useDosSpheres ?
-					  CaptureDrawable(LoadGraphic(DOS_SHIELD_MASK_ANIM)) :
-					  CaptureDrawable(LoadGraphic(TDO_SHIELD_MASK_ANIM))) :
+					  CaptureDrawable(LoadGraphic(DosShieldMaskAnimRes)) :
+					  CaptureDrawable(LoadGraphic(TdoShieldMaskAnimRes))) :
 				 CreateShieldMask(radius));
 
 		// Create background frame if we have nebula on

@@ -34,11 +34,11 @@ static LOCDATA ilwrath_desc =
 		nullptr, /* uninit_encounter_func */
 		ILWRATH_PMAP_ANIM, /* AlienFrame */
 		ILWRATH_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
 		ILWRATH_COLOR_MAP, /* AlienColorMap */
@@ -53,9 +53,9 @@ static LOCDATA ilwrath_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				6,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				6,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -63,9 +63,9 @@ static LOCDATA ilwrath_desc =
 				0,						/* BlockMask */
 			},
 								{
-				11,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				11,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -73,9 +73,9 @@ static LOCDATA ilwrath_desc =
 				0,						/* BlockMask */
 			},
 								{
-				16,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				16,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -83,9 +83,9 @@ static LOCDATA ilwrath_desc =
 				0,						/* BlockMask */
 			},
 								{
-				21,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				21,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -670,7 +670,7 @@ Intro(void)
 		}
 		else
 		{
-			if (EXTENDED)
+			if (IsExtended())
 			{
 				NumVisits = GET_GAME_STATE(ILWRATH_GODS_SPOKEN);
 
@@ -760,9 +760,9 @@ init_ilwrath_comm(void)
 
 	uqm::lua().beginComm(nullptr, NullResource);
 
-	ilwrath_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	ilwrath_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	ilwrath_desc.AlienTextBaseline.y = RES_SCALE(64);
-	ilwrath_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	ilwrath_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	if (GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)
 		|| (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA)

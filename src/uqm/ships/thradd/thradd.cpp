@@ -59,7 +59,7 @@
 #define NUM_NAPALM_FADES 6
 #define STATIONARY_SPEED WORLD_TO_VELOCITY(DISPLAY_TO_WORLD(RES_SCALE(4)))
 
-// HD
+// HdResolutionFactor
 #define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
 
 
@@ -67,7 +67,7 @@ static RACE_DESC thraddash_desc =
 	{
 		{/* SHIP_INFO */
 		 "torch",
-		 FIRES_FORE,
+		 FiresFore,
 		 10, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -77,7 +77,7 @@ static RACE_DESC thraddash_desc =
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			833 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			833 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				2535,
@@ -165,21 +165,21 @@ thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 		if (ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
 			&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == ENTICE)
 		{
-			if ((StarShipPtr->ship_input_state & THRUST)
+			if ((StarShipPtr->ship_input_state & ThrustFlag)
 				|| (ShipPtr->turn_wait == 0
-					&& !(StarShipPtr->ship_input_state & (LEFT | RIGHT)))
+					&& !(StarShipPtr->ship_input_state & (LeftFlag | RightFlag)))
 				|| NORMALIZE_FACING(ANGLE_TO_FACING(
 										GetVelocityTravelAngle(
 											&ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr->velocity)
-										+ HALF_CIRCLE + OCTANT)
+										+ HalfCircle + Octant)
 									- StarShipPtr->ShipFacing)
-					   > ANGLE_TO_FACING(QUADRANT))
+					   > ANGLE_TO_FACING(Quadrant))
 			{
-				StarShipPtr->ship_input_state |= SPECIAL;
+				StarShipPtr->ship_input_state |= SpecialFlag;
 			}
 		}
 		else if (lpEvalDesc->ObjectPtr)
@@ -189,12 +189,12 @@ thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				if (StarShipPtr->RaceDescPtr->ship_info.energy_level >= WEAPON_ENERGY_COST
 																			+ SPECIAL_ENERGY_COST
 					&& ShipPtr->turn_wait == 0
-					&& !(StarShipPtr->ship_input_state & (LEFT | RIGHT))
-					&& (!(StarShipPtr->cur_status_flags & SPECIAL)
+					&& !(StarShipPtr->ship_input_state & (LeftFlag | RightFlag))
+					&& (!(StarShipPtr->cur_status_flags & SpecialFlag)
 						|| !(StarShipPtr->cur_status_flags
-							 & (SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED))))
+							 & (ShipAtMaxSpeed | ShipBeyondMaxSpeed))))
 				{
-					StarShipPtr->ship_input_state |= SPECIAL;
+					StarShipPtr->ship_input_state |= SpecialFlag;
 				}
 			}
 			else if (lpEvalDesc->MoveState == ENTICE)
@@ -209,29 +209,29 @@ thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				const uint16_t direction_angle {ARCTAN(delta_x, delta_y)};
 
 				if ((lpEvalDesc->which_turn > 24
-					 && !(StarShipPtr->ship_input_state & (LEFT | RIGHT)))
+					 && !(StarShipPtr->ship_input_state & (LeftFlag | RightFlag)))
 					|| (lpEvalDesc->which_turn <= 16
 						&& NORMALIZE_ANGLE(direction_angle
-										   - (FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HALF_CIRCLE)
-										   + QUADRANT)
-							   <= HALF_CIRCLE
+										   - (FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HalfCircle)
+										   + Quadrant)
+							   <= HalfCircle
 						&& (lpEvalDesc->which_turn < 12
 							|| NORMALIZE_ANGLE(direction_angle
 											   - (GetVelocityTravelAngle(
 													  &lpEvalDesc->ObjectPtr->velocity)
-												  + HALF_CIRCLE)
-											   + (OCTANT + 2))
-								   <= ((OCTANT + 2) << 1))))
+												  + HalfCircle)
+											   + (Octant + 2))
+								   <= ((Octant + 2) << 1))))
 				{
-					StarShipPtr->ship_input_state |= SPECIAL;
+					StarShipPtr->ship_input_state |= SpecialFlag;
 				}
 			}
 		}
 
-		if ((StarShipPtr->ship_input_state & SPECIAL)
+		if ((StarShipPtr->ship_input_state & SpecialFlag)
 			&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= SPECIAL_ENERGY_COST)
 		{
-			StarShipPtr->ship_input_state &= ~THRUST;
+			StarShipPtr->ship_input_state &= ~ThrustFlag;
 		}
 	}
 }
@@ -241,10 +241,10 @@ flame_napalm_preprocess(ELEMENT* ElementPtr)
 {
 	ZeroVelocityComponents(&ElementPtr->velocity);
 
-	if (ElementPtr->state_flags & NONSOLID)
+	if (ElementPtr->state_flags & Nonsolid)
 	{
-		ElementPtr->state_flags &= ~NONSOLID;
-		ElementPtr->state_flags |= APPEARING;
+		ElementPtr->state_flags &= ~Nonsolid;
+		ElementPtr->state_flags |= Appearing;
 		SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
 					STAMP_PRIM);
 
@@ -277,7 +277,7 @@ flame_napalm_preprocess(ELEMENT* ElementPtr)
 		/* turn_wait is abused here to store the speed of the decay
 		 * animation. */
 		ElementPtr->turn_wait = NAPALM_DECAY_RATE;
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 	}
 }
 
@@ -293,7 +293,7 @@ initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = THRADDASH_OFFSET;
 	MissileBlock.speed = MISSILE_SPEED_HD;
 	MissileBlock.hit_points = MISSILE_HITS;
@@ -312,12 +312,12 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (!(StarShipPtr->cur_status_flags & SPECIAL))
+	if (!(StarShipPtr->cur_status_flags & SpecialFlag))
 	{
-		if ((StarShipPtr->old_status_flags & SPECIAL)
-			&& (StarShipPtr->cur_status_flags & SHIP_AT_MAX_SPEED))
+		if ((StarShipPtr->old_status_flags & SpecialFlag)
+			&& (StarShipPtr->cur_status_flags & ShipAtMaxSpeed))
 		{
-			StarShipPtr->cur_status_flags |= SHIP_BEYOND_MAX_SPEED;
+			StarShipPtr->cur_status_flags |= ShipBeyondMaxSpeed;
 		}
 	}
 	else if (DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
@@ -326,10 +326,10 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 		uint16_t thrust_increment {};
 		HELEMENT hTrailElement {};
 
-		if (!(StarShipPtr->old_status_flags & SPECIAL))
+		if (!(StarShipPtr->old_status_flags & SpecialFlag))
 		{
 			StarShipPtr->cur_status_flags &=
-				~(SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED);
+				~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
 		}
 
 		if (ElementPtr->thrust_wait == 0)
@@ -347,9 +347,9 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 
 		const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
 		StarShipPtr->cur_status_flags &=
-			~(SHIP_AT_MAX_SPEED
-			  | SHIP_BEYOND_MAX_SPEED
-			  | SHIP_IN_GRAVITY_WELL);
+			~(ShipAtMaxSpeed
+			  | ShipBeyondMaxSpeed
+			  | ShipInGravityWell);
 		StarShipPtr->cur_status_flags |= thrust_status;
 
 		StarShipPtr->RaceDescPtr->characteristics.thrust_increment =
@@ -367,7 +367,7 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 									 StarShipPtr->RaceDescPtr->ship_data.special[0])
 							   - 1;
 			MissileBlock.sender = ElementPtr->playerNr;
-			MissileBlock.flags = IGNORE_SIMILAR;
+			MissileBlock.flags = IgnoreSimilar;
 			MissileBlock.pixoffs = 0;
 			MissileBlock.speed = 0;
 			MissileBlock.hit_points = NAPALM_HITS;
@@ -389,17 +389,17 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 				 * animation */
 				TrailElementPtr->turn_wait = NAPALM_DECAY_RATE;
 
-				TrailElementPtr->state_flags |= NONSOLID;
+				TrailElementPtr->state_flags |= Nonsolid;
 				SetPrimType(
 					&DisplayArray[TrailElementPtr->PrimIndex],
-					NO_PRIM);
+					NoPrim);
 
 				/* normally done during preprocess, but because
 						 * object is being inserted at head rather than
 						 * appended after tail it may never get preprocessed.
 						 */
 				TrailElementPtr->next = TrailElementPtr->current;
-				TrailElementPtr->state_flags |= PRE_PROCESS;
+				TrailElementPtr->state_flags |= PreProcessFlag;
 
 				UnlockElement(hTrailElement);
 				InsertElement(hTrailElement, GetHeadElement());
@@ -415,7 +415,7 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_thraddash(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		thraddash_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		thraddash_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);

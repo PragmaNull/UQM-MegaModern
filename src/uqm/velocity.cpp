@@ -22,7 +22,7 @@
 #include "core/misc/bittricks.h"
 #include "core/log/log.h"
 
-#define VELOCITY_REMAINDER(v) ((v) & (VELOCITY_SCALE - 1))
+#define VELOCITY_REMAINDER(v) ((v) & (VelocityScale - 1))
 
 void GetCurrentVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t* pdy)
 {
@@ -46,7 +46,7 @@ void GetNextVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t
 
 	*pdx = (velocityptr->vector.width * num_frames)
 		 + ((int16_t)((int8_t)uqm::lowByte(velocityptr->incr.width))
-			* (e >> VELOCITY_SHIFT));
+			* (e >> VelocityShift));
 
 	velocityptr->error.width = VELOCITY_REMAINDER(e);
 
@@ -54,7 +54,7 @@ void GetNextVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t
 
 	*pdy = (velocityptr->vector.height * num_frames)
 		 + ((int16_t)((int8_t)uqm::lowByte(velocityptr->incr.height))
-			* (e >> VELOCITY_SHIFT));
+			* (e >> VelocityShift));
 
 	velocityptr->error.height = VELOCITY_REMAINDER(e);
 }
@@ -66,7 +66,7 @@ void GetNextVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx, i
 
 	*pdx = ((int32_t)velocityptr->vector.width * num_frames)
 		 + ((int32_t)((int8_t)uqm::lowByte(velocityptr->incr.width))
-			* (e >> VELOCITY_SHIFT));
+			* (e >> VelocityShift));
 
 	velocityptr->error.width = (uint16_t)(VELOCITY_REMAINDER(e));
 
@@ -74,7 +74,7 @@ void GetNextVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx, i
 
 	*pdy = ((int32_t)velocityptr->vector.height * num_frames)
 		 + ((int32_t)((int8_t)uqm::lowByte(velocityptr->incr.height))
-			* (e >> VELOCITY_SHIFT));
+			* (e >> VelocityShift));
 
 	velocityptr->error.height = (uint16_t)(VELOCITY_REMAINDER(e));
 }
@@ -126,7 +126,7 @@ void SetVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy)
 {
 	uint16_t angle {};
 
-	if ((angle = ARCTAN(dx, dy)) == FULL_CIRCLE)
+	if ((angle = ARCTAN(dx, dy)) == FullCircle)
 	{
 		ZeroVelocityComponents(velocityptr);
 	}

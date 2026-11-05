@@ -33,11 +33,11 @@ static LOCDATA spahome_desc =
 		nullptr, /* uninit_encounter_func */
 		SPATHI_HOME_PMAP_ANIM, /* AlienFrame */
 		SPATHI_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		SPATHI_HOME_COLOR_MAP, /* AlienColorMap */
@@ -52,9 +52,9 @@ static LOCDATA spahome_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				1,			   /* StartIndex */
-				3,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				1,			  /* StartIndex */
+				3,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -62,9 +62,9 @@ static LOCDATA spahome_desc =
 				0,						/* BlockMask */
 			},
 								{
-				4,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				4,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -72,9 +72,9 @@ static LOCDATA spahome_desc =
 				0,						/* BlockMask */
 			},
 								{
-				9,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				9,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -84,15 +84,15 @@ static LOCDATA spahome_desc =
 								{
 				13,							/* StartIndex */
 				6,							/* NumFrames */
-				CIRCULAR_ANIM,				/* AnimFlags */
+				CircularAnim,				/* AnimFlags */
 				GameTicksPerSecond / 20, 0, /* FrameRate */
 				GameTicksPerSecond / 20, 0, /* RestartRate */
 				(1 << 4) | (1 << 5)			/* BlockMask */
 			},
 								{
-				19,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				19,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -100,9 +100,9 @@ static LOCDATA spahome_desc =
 				(1 << 3) | (1 << 5),	/* BlockMask */
 			},
 								{
-				22,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				22,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -111,9 +111,9 @@ static LOCDATA spahome_desc =
 					| (1 << 10), /* BlockMask */
 			},
 								{
-				26,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				26,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -121,9 +121,9 @@ static LOCDATA spahome_desc =
 				(1 << 10),				/* BlockMask */
 			},
 								{
-				29,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				29,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -131,9 +131,9 @@ static LOCDATA spahome_desc =
 				0,						/* BlockMask */
 			},
 								{
-				32,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				32,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -141,9 +141,9 @@ static LOCDATA spahome_desc =
 				(1 << 9) | (1 << 10), /* BlockMask */
 			},
 								{
-				39,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				39,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -151,9 +151,9 @@ static LOCDATA spahome_desc =
 				(1 << 8) | (1 << 10),	/* BlockMask */
 			},
 								{
-				42,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				42,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -163,9 +163,9 @@ static LOCDATA spahome_desc =
 					| (1 << 11) | (1 << 5), /* BlockMask */
 			},
 								{
-				46,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				46,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -173,9 +173,9 @@ static LOCDATA spahome_desc =
 				(1 << 2) | (1 << 10),	 /* BlockMask */
 			},
 								{
-				50,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				50,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -183,9 +183,9 @@ static LOCDATA spahome_desc =
 				(1 << 13), /* BlockMask */
 			},
 								{
-				56,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				56,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -230,11 +230,11 @@ static FILTER_DESC spahome_filters =
 		{
 								  /* Filter array */
 			{
-				0,								/* Color index */
-				1,								/* Opacity index */
-				-1,								/* Frame index */
-				DRAW_ALPHA,						/* DrawKind*/
-				SWITCH_ON_ANIMS | TURN_OFF_OFT, /* Flags */
+				0,							/* Color index */
+				1,							/* Opacity index */
+				-1,							/* Frame index */
+				DRAW_ALPHA,					/* DrawKind*/
+				SwitchOnAnims | TurnOffOft, /* Flags */
 			},
 								  }
 };
@@ -1019,7 +1019,7 @@ Intro(void)
 {
 	uint8_t Manner {};
 
-	if (IS_HD)
+	if (IsHd())
 	{
 		SwitchSequences(false);
 		EngageFilters(&spahome_filters);
@@ -1121,12 +1121,12 @@ init_spahome_comm()
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	spahome_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	spahome_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	spahome_desc.AlienTextBaseline.y = 0;
-	spahome_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	spahome_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	// use alternate "Safe Ones" track if available
-	altResFlags |= USE_ALT_SONG;
+	altResFlags |= UseAltSong;
 
 	if (GET_GAME_STATE(SPATHI_MANNER) == 3)
 	{

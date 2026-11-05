@@ -106,7 +106,7 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 		{
 			uint16_t sum {};
 
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -140,7 +140,7 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 
 				if (Survivors)
 				{
@@ -162,8 +162,8 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 		}
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(WRECK_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(WRECK_STRTAB);
+			CaptureDrawable(LoadGraphic(WreckMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(WreckStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		if (GET_GAME_STATE(PORTAL_KEY))
 		{ // Already picked it up, skip the first report

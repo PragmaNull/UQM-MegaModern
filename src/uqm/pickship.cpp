@@ -47,7 +47,7 @@ GFXPOINT frameOrigin;
 
 void InitPickFrame(void)
 {
-	PickFrame = CaptureDrawable(LoadGraphic(SC2_PICK_PMAP_ANIM));
+	PickFrame = CaptureDrawable(LoadGraphic(Sc2PickPmapAnimRes));
 	PickFrame = SetAbsFrameIndex(PickFrame, isPC(uqm::UQMOptions::read().flagshipColor) ? 0 : 2);
 }
 
@@ -93,7 +93,7 @@ DoPickBattleShip(MENU_STATE* pMS)
 		return (false);
 	}
 
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
+	SetMenuSounds(MenuSoundNone, MenuSoundNone);
 
 	if (!pMS->Initialized)
 	{
@@ -226,13 +226,13 @@ ChangeSelection:
 
 			pMS->CurFrame = (FRAME)hBattleShip;
 
-			SetContextForeGroundColor(BLACK_COLOR);
+			SetContextForeGroundColor(BlackColor);
 			r.corner.x = pMS->flash_rect1.corner.x + RES_SCALE(6) - RES_SCALE(1);
 			r.corner.y = pMS->flash_rect1.corner.y + RES_SCALE(5) - RES_SCALE(1);
 			r.extent.width = ((ICON_WIDTH + RES_SCALE(4)) * 3) - RES_SCALE(4);
 			r.extent.height = RES_SCALE(7);
 
-			if (IS_HD)
+			if (IsHd())
 			{
 				RepairPickFrame(&r, 0);
 			}
@@ -274,7 +274,7 @@ ChangeSelection:
 
 				// Code to make use of the PC version's font gradient
 				/*if (isPC (uqm::UQMOptions::read().whichFonts))
-					SetContextForeGroundColor (WHITE_COLOR);
+					SetContextForeGroundColor (WhiteColor);
 				else
 					SetContextForeGroundColor (
 						BuildColor (MakeRgb15 (0x14, 0x0A, 0x00), 0x0C));*/
@@ -283,14 +283,14 @@ ChangeSelection:
 					BuildColor(MakeRgb15(0x14, 0x0A, 0x00), 0x0C));
 
 				font_DrawText(&t);
-				SetContextForeGroundColor(BLACK_COLOR);
+				SetContextForeGroundColor(BlackColor);
 			}
 
 			r.corner.x += (ICON_WIDTH + RES_SCALE(4))
 							* ((NUM_PICK_SHIP_COLUMNS >> 1) + 1)
 						+ FLAGSHIP_WIDTH - ICON_WIDTH;
 
-			if (IS_HD)
+			if (IsHd())
 			{
 				RepairPickFrame(&r, 0);
 			}
@@ -317,7 +317,7 @@ ChangeSelection:
 
 				// Code to make use of the PC version's font gradient
 				/*if (isPC (uqm::UQMOptions::read().whichFonts))
-					SetContextForeGroundColor (WHITE_COLOR);
+					SetContextForeGroundColor (WhiteColor);
 				else
 					SetContextForeGroundColor (
 							BuildColor (MakeRgb15 (0x00, 0x14, 0x00), 0x02));*/
@@ -347,7 +347,7 @@ GetArmadaStarShip(void)
 		return 0;
 	}
 
-	//    MenuSounds = CaptureSound (LoadSound (MENU_SOUNDS));
+	//    MenuSounds = CaptureSound (LoadSound (MenuSoundsRes));
 
 	InitPickFrame();
 	GFXCONTEXT OldContext {SetContext(SpaceContext)};
@@ -364,7 +364,7 @@ GetArmadaStarShip(void)
 		MenuState.flash_rect1.corner = pick_r.corner;
 		MenuState.flash_rect1.extent.width = 0;
 
-		SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+		SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 		DoInput(&MenuState, false);
 
 		SetFlashRect(nullptr, false);
@@ -376,7 +376,7 @@ GetArmadaStarShip(void)
 	{
 		if (hBattleShip == GetTailLink(&race_q[0]))
 		{ // Player chose SIS. There will be no more choices.
-			battle_counter[RPG_PLAYER_NUM] = 1;
+			battle_counter[RpgPlayerNum] = 1;
 		}
 
 		WaitForSoundEnd(0);
@@ -396,7 +396,7 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 {
 	if (inHQSpace())
 	{
-		assert(which_player == RPG_PLAYER_NUM);
+		assert(which_player == RpgPlayerNum);
 		// SIS for the Hyperspace flight
 		return GetHeadLink(&race_q[which_player]);
 	}
@@ -420,7 +420,7 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 	else
 	{
 		// Full game.
-		if (which_player == RPG_PLAYER_NUM)
+		if (which_player == RpgPlayerNum)
 		{ // Human player in a full game.
 			if (LastStarShipPtr == 0 && battle_counter[which_player] == 1)
 			{ // First time picking a ship and player has no escorts
@@ -433,7 +433,7 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 			}
 			else if (LastStarShipPtr != 0)
 			{ // last ship was the flagship
-#define RUN_AWAY_FUEL_COST (5 * FUEL_TANK_SCALE)
+#define RUN_AWAY_FUEL_COST (5 * FuelTankScale)
 				if (LastStarShipPtr->crew_level == 0)
 				{ // Died in the line of duty
 					GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
@@ -579,7 +579,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 			s.frame = StarShipPtr->icons;
 			r.corner = s.origin;
 
-			SetContextForeGroundColor(BLACK_COLOR);
+			SetContextForeGroundColor(BlackColor);
 			DrawFilledRectangle(&r);
 
 			if ((StarShipPtr->SpeciesID != NO_ID) || (StarShipPtr->crew_level == 0))

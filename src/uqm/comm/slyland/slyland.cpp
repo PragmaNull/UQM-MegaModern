@@ -123,11 +123,11 @@ static LOCDATA slylandro_desc =
 		nullptr, /* uninit_encounter_func */
 		SLYLAND_PMAP_ANIM, /* AlienFrame */
 		SLYLAND_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		SLYLAND_COLOR_MAP, /* AlienColorMap */
@@ -144,7 +144,7 @@ static LOCDATA slylandro_desc =
 			{
 				1,							/* StartIndex */
 				9,							/* NumFrames */
-				CIRCULAR_ANIM,				/* AnimFlags */
+				CircularAnim,				/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 3)					/* BlockMask */
@@ -152,7 +152,7 @@ static LOCDATA slylandro_desc =
 								{
 				10,							/* StartIndex */
 				8,							/* NumFrames */
-				CIRCULAR_ANIM,				/* AnimFlags */
+				CircularAnim,				/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 4)					/* BlockMask */
@@ -160,7 +160,7 @@ static LOCDATA slylandro_desc =
 								{
 				18,							/* StartIndex */
 				8,							/* NumFrames */
-				CIRCULAR_ANIM,				/* AnimFlags */
+				CircularAnim,				/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 5)					/* BlockMask */
@@ -168,7 +168,7 @@ static LOCDATA slylandro_desc =
 								{
 				26,							/* StartIndex */
 				8,							/* NumFrames */
-				CIRCULAR_ANIM,				/* AnimFlags */
+				CircularAnim,				/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 0)					/* BlockMask */
@@ -176,7 +176,7 @@ static LOCDATA slylandro_desc =
 								{
 				34,							/* StartIndex */
 				8,							/* NumFrames */
-				CIRCULAR_ANIM,				/* AnimFlags */
+				CircularAnim,				/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 1)					/* BlockMask */
@@ -184,7 +184,7 @@ static LOCDATA slylandro_desc =
 								{
 				42,							/* StartIndex */
 				9,							/* NumFrames */
-				CIRCULAR_ANIM,				/* AnimFlags */
+				CircularAnim,				/* AnimFlags */
 				GameTicksPerSecond / 40, 0, /* FrameRate */
 				0, GameTicksPerSecond * 3,	/* RestartRate */
 				(1 << 2)					/* BlockMask */
@@ -565,9 +565,9 @@ init_slyland_comm(void)
 	slylandro_desc.uninit_encounter_func = uninit_slyland;
 
 	slylandro_desc.AlienTextBaseline.x =
-		TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+		TextXOffs() + (SisTextWidth() >> 1);
 	slylandro_desc.AlienTextBaseline.y = 0;
-	slylandro_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	slylandro_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	setSegue(Segue_hostile);
 	LOCDATA* retval {&slylandro_desc};

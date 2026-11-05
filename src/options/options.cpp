@@ -18,7 +18,7 @@ UQMOptions* UQMOptions::s_instance {nullptr};
 UQMOptions::UQMOptions()
 	: m_options {}
 #ifdef NETPLAY
-	, m_netplayOptions {NUM_PLAYERS}
+	, m_netplayOptions {NumPlayers}
 #endif
 {
 	assert(s_instance == nullptr);

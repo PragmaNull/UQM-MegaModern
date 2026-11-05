@@ -35,11 +35,11 @@ static LOCDATA mycon_desc =
 		nullptr, /* uninit_encounter_func */
 		MYCON_PMAP_ANIM, /* AlienFrame */
 		MYCON_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		MYCON_COLOR_MAP, /* AlienColorMap */
@@ -54,9 +54,9 @@ static LOCDATA mycon_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				12,			   /* StartIndex */
-				10,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				12,			  /* StartIndex */
+				10,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 80,
@@ -71,15 +71,15 @@ static LOCDATA mycon_desc =
 			//   // so these animations are now merged together
 			//		18, /* StartIndex */
 			//		4, /* NumFrames */
-			//		CIRCULAR_ANIM, /* AnimFlags */
+			//		CircularAnim, /* AnimFlags */
 			//		GameTicksPerSecond * 3 / 40, 0, /* FrameRate */
 			//		GameTicksPerSecond * 3 / 40, 0, /* RestartRate */
 			//		(1 << 0), /* BlockMask */
 			//	},
 			{
-				22,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				22,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -87,9 +87,9 @@ static LOCDATA mycon_desc =
 				0, /* BlockMask */
 			},
 								{
-				28,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				28,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -97,9 +97,9 @@ static LOCDATA mycon_desc =
 				0, /* BlockMask */
 			},
 								{
-				33,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				33,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -702,9 +702,9 @@ init_mycon_comm(void)
 
 	uqm::lua().beginComm(nullptr, NullResource);
 
-	mycon_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	mycon_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	mycon_desc.AlienTextBaseline.y = 0;
-	mycon_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	mycon_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	MadeChoice = 0;
 

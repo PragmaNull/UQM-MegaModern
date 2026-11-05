@@ -33,11 +33,11 @@ static LOCDATA thradd_desc =
 		nullptr, /* uninit_encounter_func */
 		THRADD_PMAP_ANIM, /* AlienFrame */
 		THRADD_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		THRADD_COLOR_MAP, /* AlienColorMap */
@@ -52,9 +52,9 @@ static LOCDATA thradd_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				8,			 /* StartIndex */
-				4,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				8,			/* StartIndex */
+				4,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -62,9 +62,9 @@ static LOCDATA thradd_desc =
 				(1 << 4),				 /* BlockMask */
 			},
 								{
-				12,			   /* StartIndex */
-				9,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				12,			  /* StartIndex */
+				9,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -72,9 +72,9 @@ static LOCDATA thradd_desc =
 				0,						/* BlockMask */
 			},
 								{
-				21,			 /* StartIndex */
-				6,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				21,			/* StartIndex */
+				6,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -82,9 +82,9 @@ static LOCDATA thradd_desc =
 				0,						/* BlockMask */
 			},
 								{
-				27,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				27,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -94,8 +94,8 @@ static LOCDATA thradd_desc =
 								{
 				30, /* StartIndex */
 				12, /* NumFrames */
-				CIRCULAR_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				CircularAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -103,9 +103,9 @@ static LOCDATA thradd_desc =
 				(1 << 0) | (1 << 3) | (1 << 5),
 			},
 								{
-				42,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				42,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond,
@@ -113,9 +113,9 @@ static LOCDATA thradd_desc =
 				(1 << 4) | (1 << 6),	/* BlockMask */
 			},
 								{
-				47,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				47,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond,
@@ -123,9 +123,9 @@ static LOCDATA thradd_desc =
 				(1 << 5),				/* BlockMask */
 			},
 								{
-				52,			 /* StartIndex */
-				4,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				52,			/* StartIndex */
+				4,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -788,7 +788,7 @@ Intro(void)
 		return;
 	}
 
-	if (GET_GAME_STATE(AQUA_HELIX) && !(EXTENDED && ThraddPtr->allied_state == GOOD_GUY))
+	if (GET_GAME_STATE(AQUA_HELIX) && !(IsExtended() && ThraddPtr->allied_state == GOOD_GUY))
 	{
 		NumVisits = GET_GAME_STATE(HELIX_VISITS);
 		switch (NumVisits++)
@@ -1077,9 +1077,9 @@ init_thradd_comm(void)
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	thradd_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	thradd_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	thradd_desc.AlienTextBaseline.y = 0;
-	thradd_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	thradd_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	if (GET_GAME_STATE(THRADD_MANNER)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)

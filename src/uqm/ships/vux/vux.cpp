@@ -59,15 +59,15 @@
 #define MAXX_ENTRY_DIST DISPLAY_TO_WORLD((LASER_BASE + VUX_OFFSET + WARP_OFFSET) << 1)
 #define MAXY_ENTRY_DIST DISPLAY_TO_WORLD((LASER_BASE + VUX_OFFSET + WARP_OFFSET) << 1)
 /* Originally, the warp distance was:
-		 * DISPLAY_TO_WORLD (SPACE_HEIGHT << 1)
-		 * where SPACE_HEIGHT = SCREEN_HEIGHT
+		 * DISPLAY_TO_WORLD (SpaceHeight() << 1)
+		 * where SpaceHeight() = CanvasHeight
 		 * But in reality this should be relative to the laser-range. */
 
 static RACE_DESC vux_desc =
 	{
 		{/* SHIP_INFO */
 		 "intruder",
-		 FIRES_FORE | SEEKING_SPECIAL | IMMEDIATE_WEAPON,
+		 FiresFore | SeekingSpecial | ImmediateWeapon,
 		 12, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -77,7 +77,7 @@ static RACE_DESC vux_desc =
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			900 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			900 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				4412,
@@ -124,7 +124,7 @@ static RACE_DESC vux_desc =
 		 nullptr},
 		{
 			0,
-			CLOSE_RANGE_WEAPON,
+			CloseRangeWeapon,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -153,14 +153,14 @@ limpet_preprocess(ELEMENT* ElementPtr)
 	ElementPtr->next.image.frame =
 		IncFrameIndex(ElementPtr->next.image.frame);
 
-	ElementPtr->state_flags |= CHANGING;
+	ElementPtr->state_flags |= Changing;
 }
 
 static void
 limpet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	if (ElementPtr1->state_flags & PLAYER_SHIP)
+	if (ElementPtr1->state_flags & PlayerShip)
 	{
 		STAMP s;
 		STARSHIP* StarShipPtr {};
@@ -200,7 +200,7 @@ limpet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 						 ElementPtr1);
 			s.frame = SetAbsFrameIndex(
 				StarShipPtr->RaceDescPtr->ship_data.weapon[0], (uint16_t)uqm::random().next());
-			ModifySilhouette(ElementPtr1, &s, MODIFY_IMAGE);
+			ModifySilhouette(ElementPtr1, &s, ModifyImage);
 		}
 		else
 		{
@@ -214,7 +214,7 @@ limpet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 
 	ElementPtr0->hit_points = 0;
 	ElementPtr0->life_span = 0;
-	ElementPtr0->state_flags |= COLLISION | DISAPPEARING;
+	ElementPtr0->state_flags |= Collision | Disappearing;
 
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
@@ -228,10 +228,10 @@ spawn_limpets(ELEMENT* ElementPtr)
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
-	MissileBlock.face = StarShipPtr->ShipFacing + HALF_CIRCLE;
+	MissileBlock.face = StarShipPtr->ShipFacing + HalfCircle;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ElementPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = LIMPET_OFFSET;
 	MissileBlock.speed = LIMPET_SPEED;
 	MissileBlock.hit_points = LIMPET_HITS;
@@ -269,7 +269,7 @@ initialize_horrific_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 	LaserBlock.ex = COSINE(FACING_TO_ANGLE(LaserBlock.face), LASER_RANGE);
 	LaserBlock.ey = SINE(FACING_TO_ANGLE(LaserBlock.face), LASER_RANGE);
 	LaserBlock.sender = ShipPtr->playerNr;
-	LaserBlock.flags = IGNORE_SIMILAR;
+	LaserBlock.flags = IgnoreSimilar;
 	LaserBlock.pixoffs = VUX_OFFSET;
 	LaserBlock.color = BuildColor(MakeRgb15(0x0A, 0x1F, 0x0A), 0x0A);
 	LaserArray[0] = initialize_laser(&LaserBlock);
@@ -289,9 +289,9 @@ vux_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState == ENTICE)
 	{
 		if ((ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr->state_flags
-			 & FINITE_LIFE)
+			 & FiniteLife)
 			&& !(ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr->state_flags
-				 & CREW_OBJECT))
+				 & CrewObject))
 		{
 			ObjectsOfConcern[ENEMY_WEAPON_INDEX].MoveState = AVOID;
 		}
@@ -308,14 +308,14 @@ vux_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	if (StarShipPtr->special_counter == 0
 		&& lpEvalDesc->ObjectPtr != 0
 		&& lpEvalDesc->which_turn <= 12
-		&& (StarShipPtr->ship_input_state & (LEFT | RIGHT))
+		&& (StarShipPtr->ship_input_state & (LeftFlag | RightFlag))
 		&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= (uint8_t)(StarShipPtr->RaceDescPtr->ship_info.max_energy >> 1))
 	{
-		StarShipPtr->ship_input_state |= SPECIAL;
+		StarShipPtr->ship_input_state |= SpecialFlag;
 	}
 	else
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 	}
 }
 
@@ -325,7 +325,7 @@ vux_postprocess(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
@@ -343,7 +343,7 @@ vux_postprocess(ELEMENT* ElementPtr)
 static void
 vux_preprocess(ELEMENT* ElementPtr)
 {
-	if (ElementPtr->state_flags & APPEARING)
+	if (ElementPtr->state_flags & Appearing)
 	{
 		STARSHIP* StarShipPtr {};
 
@@ -410,17 +410,17 @@ vux_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_vux(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		vux_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		vux_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		vux_desc.cyborg_control.WeaponRange = CLOSE_RANGE_WEAPON_HD;
+		vux_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else
 	{
 		vux_desc.characteristics.max_thrust = MAX_THRUST;
 		vux_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		vux_desc.cyborg_control.WeaponRange = CLOSE_RANGE_WEAPON;
+		vux_desc.cyborg_control.WeaponRange = CloseRangeWeapon;
 	}
 
 	vux_desc.preprocess_func = vux_preprocess;

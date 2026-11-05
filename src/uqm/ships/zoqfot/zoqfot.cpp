@@ -57,7 +57,7 @@
 #define TONGUE_DAMAGE 12
 #define TONGUE_OFFSET RES_SCALE(4)
 
-// HD
+// HdResolutionFactor
 #define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
 #define MISSILE_RANGE_HD (MISSILE_SPEED_HD * MISSILE_LIFE)
 
@@ -65,7 +65,7 @@ static RACE_DESC zoqfotpik_desc =
 	{
 		{/* SHIP_INFO */
 		 "stinger",
-		 FIRES_FORE,
+		 FiresFore,
 		 6, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -75,7 +75,7 @@ static RACE_DESC zoqfotpik_desc =
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			320 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			320 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				3761,
@@ -167,7 +167,7 @@ spit_preprocess(ELEMENT* ElementPtr)
 
 		/* turn_wait is abused here to control the animation speed. */
 		ElementPtr->turn_wait = SPIT_WAIT;
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 	}
 }
 
@@ -184,7 +184,7 @@ initialize_spit(ELEMENT* ShipPtr, HELEMENT SpitArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = ZOQFOTPIK_OFFSET;
 	MissileBlock.speed = DISPLAY_TO_WORLD(
 							 RES_SCALE(GetFrameCount(StarShipPtr->RaceDescPtr->ship_data.weapon[0])))
@@ -196,7 +196,7 @@ initialize_spit(ELEMENT* ShipPtr, HELEMENT SpitArray[])
 	MissileBlock.blast_offs = MISSILE_OFFSET;
 	SpitArray[0] = initialize_missile(&MissileBlock);
 
-	if (IS_HD && SpitArray[0])
+	if (IsHd() && SpitArray[0])
 	{
 		ELEMENT* SpitPtr {};
 
@@ -234,7 +234,7 @@ tongue_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 
 	StarShipPtr->special_counter -= ElementPtr0->turn_wait;
 	ElementPtr0->turn_wait = 0;
-	ElementPtr0->state_flags |= NONSOLID;
+	ElementPtr0->state_flags |= Nonsolid;
 }
 
 static void
@@ -249,7 +249,7 @@ spawn_tongue(ELEMENT* ElementPtr)
 	TongueBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
 	TongueBlock.face = TongueBlock.index = StarShipPtr->ShipFacing;
 	TongueBlock.sender = ElementPtr->playerNr;
-	TongueBlock.flags = IGNORE_SIMILAR;
+	TongueBlock.flags = IgnoreSimilar;
 	TongueBlock.pixoffs = 0;
 	TongueBlock.speed = TONGUE_SPEED;
 	TongueBlock.hit_points = TONGUE_HITS;
@@ -265,7 +265,7 @@ spawn_tongue(ELEMENT* ElementPtr)
 		LockElement(Tongue, &TonguePtr);
 		TonguePtr->postprocess_func = tongue_postprocess;
 		TonguePtr->collision_func = tongue_collision;
-		if (ElementPtr->state_flags & PLAYER_SHIP)
+		if (ElementPtr->state_flags & PlayerShip)
 		{
 			TonguePtr->turn_wait = StarShipPtr->special_counter;
 		}
@@ -281,19 +281,19 @@ spawn_tongue(ELEMENT* ElementPtr)
 			const int32_t y_offs {DISPLAY_TO_WORLD(r.extent.height >> 1)};
 
 			angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
-			if (angle > HALF_CIRCLE && angle < FULL_CIRCLE)
+			if (angle > HalfCircle && angle < FullCircle)
 			{
 				TonguePtr->current.location.x -= x_offs;
 			}
-			else if (angle > 0 && angle < HALF_CIRCLE)
+			else if (angle > 0 && angle < HalfCircle)
 			{
 				TonguePtr->current.location.x += x_offs;
 			}
-			if (angle < QUADRANT || angle > FULL_CIRCLE - QUADRANT)
+			if (angle < Quadrant || angle > FullCircle - Quadrant)
 			{
 				TonguePtr->current.location.y -= y_offs;
 			}
-			else if (angle > QUADRANT && angle < FULL_CIRCLE - QUADRANT)
+			else if (angle > Quadrant && angle < FullCircle - Quadrant)
 			{
 				TonguePtr->current.location.y += y_offs;
 			}
@@ -316,7 +316,7 @@ zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	bool GiveTongueJob {false};
 	if (StarShipPtr->special_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 
 		EVALUATE_DESC* lpEnemyEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 		if (lpEnemyEvalDesc->ObjectPtr
@@ -338,7 +338,7 @@ zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					- ShipPtr->next.location.y;
 			if (StarShipPtr->ShipFacing == NORMALIZE_FACING(ANGLE_TO_FACING(ARCTAN(delta_x, delta_y))))
 			{
-				StarShipPtr->ship_input_state |= SPECIAL;
+				StarShipPtr->ship_input_state |= SpecialFlag;
 			}
 		}
 	}
@@ -349,7 +349,7 @@ zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	if (StarShipPtr->weapon_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~WEAPON;
+		StarShipPtr->ship_input_state &= ~WeaponFlag;
 		if (!GiveTongueJob)
 		{
 			ObjectsOfConcern += ConcernCounter;
@@ -367,7 +367,7 @@ zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					&& ship_weapons(ShipPtr,
 									ObjectsOfConcern->ObjectPtr, DISPLAY_TO_WORLD(RES_SCALE(20))))
 				{
-					StarShipPtr->ship_input_state |= WEAPON;
+					StarShipPtr->ship_input_state |= WeaponFlag;
 					break;
 				}
 			}
@@ -381,7 +381,7 @@ zoqfotpik_postprocess(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
@@ -403,7 +403,7 @@ zoqfotpik_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_zoqfotpik(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		zoqfotpik_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		zoqfotpik_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);

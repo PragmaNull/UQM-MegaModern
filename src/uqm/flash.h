@@ -186,12 +186,12 @@ struct FlashContext
 	// animation.
 };
 
-#define Flash_DEFAULT_FADE_IN_TIME TimePeriod::zero()
-#define Flash_DEFAULT_ON_TIME (c_gameSecond / 8)
-#define Flash_DEFAULT_FADE_OUT_TIME TimePeriod::zero()
-#define Flash_DEFAULT_OFF_TIME (c_gameSecond / 8)
+inline constexpr auto FlashDefaultFadeInTime {TimePeriod::zero()};
+inline constexpr auto FlashDefaultOnTime {(c_gameSecond / 8)};
+inline constexpr auto FlashDefaultFadeOutTime {TimePeriod::zero()};
+inline constexpr auto FlashDefaultOffTime {(c_gameSecond / 8)};
 
-#define Flash_DEFAULT_CACHE_SIZE 9
+inline constexpr auto FlashDefaultCacheSize {9};
 #endif /* FLASH_INTERNAL */
 
 

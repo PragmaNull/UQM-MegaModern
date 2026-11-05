@@ -38,7 +38,7 @@
 #include "uqm/lua/UQMLua.h"
 
 
-#define COL_MULTIPLIER (isPC(uqm::UQMOptions::read().landerStyle) || IS_PAD ? 7 : 6)
+#define COL_MULTIPLIER (isPC(uqm::UQMOptions::read().landerStyle) || IsPad() ? 7 : 6)
 #define NUM_CELL_COLS (UQM_MAP_WIDTH / COL_MULTIPLIER)
 #define NUM_CELL_ROWS (SC2_MAP_HEIGHT / 6)
 #define MAX_CELL_COLS 40 // Why is this is never used???
@@ -64,7 +64,7 @@ ClearReportArea(int16_t startx)
 	GetFrameRect(s.frame, &r);
 	BatchGraphics();
 
-	SetContextBackGroundColor(BLACK_COLOR);
+	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x00, 0x07, 0x00), 0x57));
@@ -256,7 +256,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 						}
 
 						PlaySound(GetSound(ReadOutSounds, 0), NotPositional(), nullptr,
-								  GAME_SOUND_PRIORITY);
+								  GameSoundPriority);
 
 						switch (c)
 						{
@@ -332,7 +332,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 				UnbatchGraphics();
 			}
 
-			if (!WaitForActButton(true, WAIT_INFINITE, false))
+			if (!WaitForActButton(true, WaitInfinite, false))
 			{
 				break;
 			}
@@ -411,5 +411,5 @@ void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 
 	DestroyDrawable(ReleaseDrawable(saveStamp.frame));
 
-	WaitForNoInput(WAIT_INFINITE, true);
+	WaitForNoInput(WaitInfinite, true);
 }

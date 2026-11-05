@@ -50,14 +50,14 @@
 #define SPECIAL_WAIT 0
 /* Unused except to initialize supox_desc.special_wait */
 
-// HD
+// HdResolutionFactor
 #define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
 
 static RACE_DESC supox_desc =
 	{
 		{/* SHIP_INFO */
 		 "blade",
-		 FIRES_FORE,
+		 FiresFore,
 		 16, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -67,7 +67,7 @@ static RACE_DESC supox_desc =
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			333 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			333 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				7468,
@@ -136,7 +136,7 @@ supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (StarShipPtr->special_counter || lpEvalDesc->ObjectPtr == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 	}
 	else
 	{
@@ -152,26 +152,26 @@ supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 		LinedUp = (bool)(NORMALIZE_ANGLE(NORMALIZE_ANGLE(direction_angle
 														 - FACING_TO_ANGLE(StarShipPtr->ShipFacing))
-										 + QUADRANT)
-						 <= HALF_CIRCLE);
+										 + Quadrant)
+						 <= HalfCircle);
 
 		if (!LinedUp
 			|| lpEvalDesc->which_turn > 20
 			|| NORMALIZE_ANGLE(
 				   lpEvalDesc->facing
 				   - (FACING_TO_ANGLE(StarShipPtr->ShipFacing)
-					  + HALF_CIRCLE)
-				   + OCTANT)
-				   > QUADRANT)
+					  + HalfCircle)
+				   + Octant)
+				   > Quadrant)
 		{
-			StarShipPtr->ship_input_state &= ~SPECIAL;
+			StarShipPtr->ship_input_state &= ~SpecialFlag;
 		}
 		else if (LinedUp && lpEvalDesc->which_turn <= 12)
 		{
-			StarShipPtr->ship_input_state |= SPECIAL;
+			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
 
-		if (StarShipPtr->ship_input_state & SPECIAL)
+		if (StarShipPtr->ship_input_state & SpecialFlag)
 		{
 			lpEvalDesc->MoveState = PURSUE;
 		}
@@ -180,9 +180,9 @@ supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	ship_intelligence(ShipPtr,
 					  ObjectsOfConcern, ConcernCounter);
 
-	if (StarShipPtr->ship_input_state & SPECIAL)
+	if (StarShipPtr->ship_input_state & SpecialFlag)
 	{
-		StarShipPtr->ship_input_state |= THRUST | WEAPON;
+		StarShipPtr->ship_input_state |= ThrustFlag | WeaponFlag;
 	}
 
 	lpEvalDesc = &ObjectsOfConcern[ENEMY_WEAPON_INDEX];
@@ -191,16 +191,16 @@ supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		&& lpEvalDesc->MoveState == AVOID
 		&& ShipPtr->turn_wait == 0)
 	{
-		StarShipPtr->ship_input_state &= ~THRUST;
-		StarShipPtr->ship_input_state |= SPECIAL;
-		if (!(StarShipPtr->cur_status_flags & (LEFT | RIGHT)))
+		StarShipPtr->ship_input_state &= ~ThrustFlag;
+		StarShipPtr->ship_input_state |= SpecialFlag;
+		if (!(StarShipPtr->cur_status_flags & (LeftFlag | RightFlag)))
 		{
 			StarShipPtr->ship_input_state |= 1 << ((uint8_t)uqm::random().next() & 1);
 		}
 		else
 		{
 			StarShipPtr->ship_input_state |=
-				StarShipPtr->cur_status_flags & (LEFT | RIGHT);
+				StarShipPtr->cur_status_flags & (LeftFlag | RightFlag);
 		}
 	}
 }
@@ -217,7 +217,7 @@ initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = SUPOX_OFFSET;
 	MissileBlock.speed = MISSILE_SPEED_HD;
 	MissileBlock.hit_points = MISSILE_HITS;
@@ -235,23 +235,23 @@ supox_preprocess(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		/*
 			&& DeltaEnergy (ElementPtr, -SPECIAL_ENERGY_COST)
 */
 	)
 	{
 		int16_t add_facing {0};
-		if (StarShipPtr->cur_status_flags & THRUST)
+		if (StarShipPtr->cur_status_flags & ThrustFlag)
 		{
 			if (ElementPtr->thrust_wait == 0)
 			{
 				++ElementPtr->thrust_wait;
 			}
 
-			add_facing = ANGLE_TO_FACING(HALF_CIRCLE);
+			add_facing = ANGLE_TO_FACING(HalfCircle);
 		}
-		if (StarShipPtr->cur_status_flags & LEFT)
+		if (StarShipPtr->cur_status_flags & LeftFlag)
 		{
 			if (ElementPtr->turn_wait == 0)
 			{
@@ -260,14 +260,14 @@ supox_preprocess(ELEMENT* ElementPtr)
 
 			if (add_facing)
 			{
-				add_facing += ANGLE_TO_FACING(OCTANT);
+				add_facing += ANGLE_TO_FACING(Octant);
 			}
 			else
 			{
-				add_facing = -ANGLE_TO_FACING(QUADRANT);
+				add_facing = -ANGLE_TO_FACING(Quadrant);
 			}
 		}
-		else if (StarShipPtr->cur_status_flags & RIGHT)
+		else if (StarShipPtr->cur_status_flags & RightFlag)
 		{
 			if (ElementPtr->turn_wait == 0)
 			{
@@ -276,11 +276,11 @@ supox_preprocess(ELEMENT* ElementPtr)
 
 			if (add_facing)
 			{
-				add_facing -= ANGLE_TO_FACING(OCTANT);
+				add_facing -= ANGLE_TO_FACING(Octant);
 			}
 			else
 			{
-				add_facing = ANGLE_TO_FACING(QUADRANT);
+				add_facing = ANGLE_TO_FACING(Quadrant);
 			}
 		}
 
@@ -291,9 +291,9 @@ supox_preprocess(ELEMENT* ElementPtr)
 				facing + add_facing);
 			const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
 			StarShipPtr->cur_status_flags &=
-				~(SHIP_AT_MAX_SPEED
-				  | SHIP_BEYOND_MAX_SPEED
-				  | SHIP_IN_GRAVITY_WELL);
+				~(ShipAtMaxSpeed
+				  | ShipBeyondMaxSpeed
+				  | ShipInGravityWell);
 			StarShipPtr->cur_status_flags |= thrust_status;
 			StarShipPtr->ShipFacing = facing;
 		}
@@ -303,7 +303,7 @@ supox_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_supox(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		supox_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		supox_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);

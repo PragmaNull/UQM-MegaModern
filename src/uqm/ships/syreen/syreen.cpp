@@ -24,7 +24,7 @@
 #include "libs/mathlib.h"
 
 // Core characteristics
-#define SYREEN_MAX_CREW_SIZE MAX_CREW_SIZE
+#define SYREEN_MAX_CREW_SIZE MaxCrewSize
 #define MAX_CREW 12
 #define MAX_ENERGY 16
 #define ENERGY_REGENERATION 1
@@ -48,17 +48,17 @@
 // Syreen song
 #define SPECIAL_ENERGY_COST 5
 #define SPECIAL_WAIT 20
-#define ABANDONER_RANGE RES_SCALE(208) /* originally SPACE_HEIGHT */
+#define ABANDONER_RANGE RES_SCALE(208) /* originally SpaceHeight() */
 #define MAX_ABANDONERS 8
 
-// HD
+// HdResolutionFactor
 #define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
 
 static RACE_DESC syreen_desc =
 	{
 		{/* SHIP_INFO */
 		 "penetrator",
-		 FIRES_FORE,
+		 FiresFore,
 		 13, /* Super Melee cost */
 		 MAX_CREW, SYREEN_MAX_CREW_SIZE,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -138,7 +138,7 @@ initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = SYREEN_OFFSET;
 	MissileBlock.speed = MISSILE_SPEED_HD;
 	MissileBlock.hit_points = MISSILE_HITS;
@@ -154,7 +154,7 @@ initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
 static void
 spawn_crew(ELEMENT* ElementPtr)
 {
-	if (ElementPtr->state_flags & PLAYER_SHIP)
+	if (ElementPtr->state_flags & PlayerShip)
 	{
 		HELEMENT hCrew {AllocElement()};
 		if (hCrew != 0)
@@ -164,7 +164,7 @@ spawn_crew(ELEMENT* ElementPtr)
 			LockElement(hCrew, &CrewPtr);
 			CrewPtr->next.location = ElementPtr->next.location;
 			CrewPtr->playerNr = ElementPtr->playerNr;
-			CrewPtr->state_flags = APPEARING | NONSOLID | FINITE_LIFE;
+			CrewPtr->state_flags = Appearing | Nonsolid | FiniteLife;
 			CrewPtr->life_span = 0;
 			CrewPtr->death_func = spawn_crew;
 			CrewPtr->pParent = ElementPtr->pParent;
@@ -187,7 +187,7 @@ spawn_crew(ELEMENT* ElementPtr)
 			LockElement(hElement, &ObjPtr);
 			hNextElement = GetSuccElement(ObjPtr);
 
-			if ((ObjPtr->state_flags & PLAYER_SHIP)
+			if ((ObjPtr->state_flags & PlayerShip)
 				&& !elementsOfSamePlayer(ObjPtr, ElementPtr)
 				&& ObjPtr->crew_level > 1)
 			{
@@ -251,16 +251,16 @@ syreen_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 		GetElementStarShip(ShipPtr, &StarShipPtr);
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
-		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & CREW_IMMUNE)
+		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & CrewImmune)
 			&& StarShipPtr->special_counter == 0
 			&& lpEvalDesc->ObjectPtr->crew_level > 1
 			&& lpEvalDesc->which_turn <= 14)
 		{
-			StarShipPtr->ship_input_state |= SPECIAL;
+			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
 		else
 		{
-			StarShipPtr->ship_input_state &= ~SPECIAL;
+			StarShipPtr->ship_input_state &= ~SpecialFlag;
 		}
 	}
 }
@@ -271,7 +271,7 @@ syreen_postprocess(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
@@ -289,7 +289,7 @@ syreen_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_syreen(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		syreen_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		syreen_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);

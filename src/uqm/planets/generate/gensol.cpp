@@ -85,7 +85,7 @@ GenerateSol_initNpcs(SOLARSYS_STATE* solarSys)
 	{
 		CloneShipFragment(URQUAN_DRONE_SHIP,
 						  &GLOBAL(npc_built_ship_q), 0);
-		GLOBAL(BattleGroupRef) = PutGroupInfo(GROUPS_ADD_NEW, 1);
+		GLOBAL(BattleGroupRef) = PutGroupInfo(GroupsAddNew, 1);
 		ReinitQueue(&GLOBAL(npc_built_ship_q));
 		SET_GAME_STATE(URQUAN_PROBE_GRPOFFS, GLOBAL(BattleGroupRef));
 	}
@@ -147,7 +147,7 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 				pCurDesc->radius = EARTH_RADIUS * 72L / 100;
 				pCurDesc->NumPlanets = 0;
 				pCurDesc->angle =
-					NORMALIZE_ANGLE(FULL_CIRCLE - pCurDesc->angle);
+					NORMALIZE_ANGLE(FullCircle - pCurDesc->angle);
 				break;
 			case 2: /* EARTH */
 				pCurDesc->data_index = WATER_WORLD | PLANET_SHIELDED;
@@ -182,14 +182,14 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 			case 8: /* PLUTO */
 				pCurDesc->data_index = PELLUCID_WORLD;
 				pCurDesc->radius = EARTH_RADIUS * 1550L /* 3937L */ / 100;
-				pCurDesc->NumPlanets = EXTENDED;
+				pCurDesc->NumPlanets = IsExtended();
 				if (uqm::isOriginalSeed())
 				{
-					pCurDesc->angle = FULL_CIRCLE - OCTANT;
+					pCurDesc->angle = FullCircle - Octant;
 				}
 				break;
 		}
-		pCurDesc->orb_speed = FULL_CIRCLE / (365.25 * pow((float)pCurDesc->radius / EARTH_RADIUS, 1.5));
+		pCurDesc->orb_speed = FullCircle / (365.25 * pow((float)pCurDesc->radius / EARTH_RADIUS, 1.5));
 		pCurDesc->location.x = COSINE(pCurDesc->angle, pCurDesc->radius);
 		pCurDesc->location.y = SINE(pCurDesc->angle, pCurDesc->radius);
 	}
@@ -214,12 +214,12 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 				/* Starbase: */
 				solarSys->MoonDesc[0].data_index = HIERARCHY_STARBASE;
 				solarSys->MoonDesc[0].radius = MIN_MOON_RADIUS;
-				angle = HALF_CIRCLE + QUADRANT;
+				angle = HalfCircle + Quadrant;
 				solarSys->MoonDesc[0].location.x =
 					COSINE(angle, solarSys->MoonDesc[0].radius);
 				solarSys->MoonDesc[0].location.y =
 					SINE(angle, solarSys->MoonDesc[0].radius);
-				solarSys->MoonDesc[0].orb_speed = FULL_CIRCLE / 11.46;
+				solarSys->MoonDesc[0].orb_speed = FullCircle / 11.46;
 
 				/* Luna: */
 				solarSys->MoonDesc[1].data_index = SELENIC_WORLD;
@@ -231,38 +231,38 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 					COSINE(angle, solarSys->MoonDesc[1].radius);
 				solarSys->MoonDesc[1].location.y =
 					SINE(angle, solarSys->MoonDesc[1].radius);
-				solarSys->MoonDesc[1].orb_speed = FULL_CIRCLE / 27.32;
+				solarSys->MoonDesc[1].orb_speed = FullCircle / 27.32;
 				break;
 			}
 		case 4: /* moons of JUPITER */
 			solarSys->MoonDesc[0].data_index = RADIOACTIVE_WORLD;
-			solarSys->MoonDesc[0].orb_speed = FULL_CIRCLE / 1.75;
+			solarSys->MoonDesc[0].orb_speed = FullCircle / 1.75;
 			/* Io */
 			solarSys->MoonDesc[1].data_index = HALIDE_WORLD;
-			solarSys->MoonDesc[1].orb_speed = FULL_CIRCLE / 3.5;
+			solarSys->MoonDesc[1].orb_speed = FullCircle / 3.5;
 			/* Europa */
 			solarSys->MoonDesc[2].data_index = CYANIC_WORLD;
-			solarSys->MoonDesc[2].orb_speed = FULL_CIRCLE / 7.16;
+			solarSys->MoonDesc[2].orb_speed = FullCircle / 7.16;
 			/* Ganymede */
 			solarSys->MoonDesc[3].data_index = PELLUCID_WORLD;
-			solarSys->MoonDesc[3].orb_speed = FULL_CIRCLE / 16.7;
+			solarSys->MoonDesc[3].orb_speed = FullCircle / 16.7;
 			/* Callisto */
 			break;
 		case 5: /* moons of SATURN */
 			solarSys->MoonDesc[0].data_index = ALKALI_WORLD;
 			/*solarSys->MoonDesc[0].radius = MIN_MOON_RADIUS
 					+ (MAX_GEN_MOONS - 1) * MOON_DELTA;*/
-			solarSys->MoonDesc[0].orb_speed = FULL_CIRCLE / 15.22;
+			solarSys->MoonDesc[0].orb_speed = FullCircle / 15.22;
 			/* Titan */
 			break;
 		case 7: /* moons of NEPTUNE */
 			solarSys->MoonDesc[0].data_index = VINYLOGOUS_WORLD;
-			solarSys->MoonDesc[0].orb_speed = FULL_CIRCLE / -5.87;
+			solarSys->MoonDesc[0].orb_speed = FullCircle / -5.87;
 			/* Triton */
 			break;
 		case 8: /* moons of Pluto */
 			solarSys->MoonDesc[0].data_index = SELENIC_WORLD;
-			solarSys->MoonDesc[0].orb_speed = FULL_CIRCLE / 6.38;
+			solarSys->MoonDesc[0].orb_speed = FullCircle / 6.38;
 			/* Charon */
 			break;
 	}
@@ -296,7 +296,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		if (getNomadMode() == uqm::NomadMode::Off)
 		{
 			/* Starbase */
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -310,7 +310,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(NOMAD_BASE_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(NomadBaseStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 			DoDiscoveryReport(MenuSounds);
@@ -434,8 +434,8 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 					LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 					solarSys->PlanetSideFrame[1] =
 						CaptureDrawable(
-							LoadGraphic(SPAPLUTO_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SPAPLUTO_STRTAB);
+							LoadGraphic(SpaplutoMaskPmapAnimRes));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SpaplutoStrtabRes);
 					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 
@@ -463,37 +463,37 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				switch (planetNr)
 				{
 					case 0: // MERCURY
-						maskAnim = MERCURY_MASK_ANIM;
+						maskAnim = MercuryMaskAnimRes;
 						break;
 					case 1: // VENUS
-						maskAnim = VENUS_MASK_ANIM;
+						maskAnim = VenusMaskAnimRes;
 						break;
 					case 2: // EARTH
-						maskAnim = EARTH_MASK_ANIM;
+						maskAnim = EarthMaskAnimRes;
 						break;
 					case 3: // MARS
-						maskAnim = MARS_MASK_ANIM;
+						maskAnim = MarsMaskAnimRes;
 						break;
 					case 4: // JUPITER
-						maskAnim = JUPITER_MASK_ANIM;
+						maskAnim = JupiterMaskAnimRes;
 						break;
 					case 5: // SATURN
-						maskAnim = SATURN_MASK_ANIM;
+						maskAnim = SaturnMaskAnimRes;
 						break;
 					case 6: // URANUS
-						maskAnim = URANUS_MASK_ANIM;
+						maskAnim = UranusMaskAnimRes;
 						break;
 					case 7: // NEPTUNE
-						maskAnim = NEPTUNE_MASK_ANIM;
+						maskAnim = NeptuneMaskAnimRes;
 						break;
 					case 8: // PLUTO
-						maskAnim = PLUTO_MASK_ANIM;
+						maskAnim = PlutoMaskAnimRes;
 						break;
 				}
 			}
 			else if (planetNr == 2)
 			{
-				maskAnim = EARTH_MASK_ANIM;
+				maskAnim = EarthMaskAnimRes;
 			}
 
 			LoadPlanet(CaptureDrawable(LoadGraphic(maskAnim)));
@@ -522,8 +522,8 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 					LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 					solarSys->PlanetSideFrame[1] =
 						CaptureDrawable(
-							LoadGraphic(MOONBASE_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MOONBASE_STRTAB);
+							LoadGraphic(MoonbaseMaskPmapAnimRes));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MoonbaseStrtabRes);
 					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 
@@ -621,34 +621,34 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 					case 2: // moon of EARTH: LUNA
 						if (moonNr == 1)
 						{
-							maskAnim = LUNA_MASK_ANIM;
+							maskAnim = LunaMaskAnimRes;
 						}
 						break;
 					case 4: // moons of JUPITER
 						switch (moonNr)
 						{
 							case 0: // IO
-								maskAnim = IO_MASK_ANIM;
+								maskAnim = IoMaskAnimRes;
 								break;
 							case 1: // EUROPA
-								maskAnim = EUROPA_MASK_ANIM;
+								maskAnim = EuropaMaskAnimRes;
 								break;
 							case 2: // GANYMEDE
-								maskAnim = GANYMEDE_MASK_ANIM;
+								maskAnim = GanymedeMaskAnimRes;
 								break;
 							case 3: // CALLISTO
-								maskAnim = CALLISTO_MASK_ANIM;
+								maskAnim = CallistoMaskAnimRes;
 								break;
 						}
 						break;
 					case 5: // moon of SATURN: TITAN
-						maskAnim = TITAN_MASK_ANIM;
+						maskAnim = TitanMaskAnimRes;
 						break;
 					case 7: // moon of NEPTUNE : TRITON
-						maskAnim = TRITON_MASK_ANIM;
+						maskAnim = TritonMaskAnimRes;
 						break;
 					case 8: // moon of PLUTO: CHARON
-						maskAnim = CHARON_MASK_ANIM;
+						maskAnim = CharonMaskAnimRes;
 						break;
 				}
 			}
@@ -663,7 +663,7 @@ static uint16_t
 GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
 							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (EXTENDED && matchWorld(solarSys, world, 8, 0))
+	if (IsExtended() && matchWorld(solarSys, world, 8, 0))
 	{
 		/* Pluto's Moon, Charon */
 		return CustomMineralDeposits(&solarSys->SysInfo, whichNode, info,
@@ -801,7 +801,7 @@ init_probe(void)
 	HIPGROUP hGroup {};
 
 	if (!GET_GAME_STATE(PROBE_MESSAGE_DELIVERED)
-		&& GetGroupInfo(GLOBAL(BattleGroupRef), GROUP_INIT_IP)
+		&& GetGroupInfo(GLOBAL(BattleGroupRef), GroupInitIp)
 		&& (hGroup = GetHeadLink(&GLOBAL(ip_group_q))))
 	{
 		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};

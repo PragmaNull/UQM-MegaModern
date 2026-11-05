@@ -271,7 +271,7 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 		graphics_backend->screen (TFB_SCREEN_MAIN, 255, &system_box);
 	}*/
 
-	graphics_backend->postprocess(IS_HD);
+	graphics_backend->postprocess(IsHd());
 }
 
 /* Probably ought to clean this away at some point. */

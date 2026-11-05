@@ -25,7 +25,7 @@
 #include <string.h>
 #include <memory.h>
 #include "core/stl/atomic.h"
-// for uqm::globalFlags() & READ_SPEED_MASK
+// for uqm::globalFlags() & ReadSpeedMask
 #include "uqm/globdata.h"
 // for usingSpeech bool
 #include "uqm/setup.h"
@@ -987,7 +987,7 @@ RecalculateDelay(uint32_t numChars, bool talk)
 {
 	uint32_t silence_length {};
 	uint32_t talk_length = GameTicksPerSecond * numChars / ModerateSpeed;
-	const uint8_t read_speed = speed_array[uqm::globalFlags() & READ_SPEED_MASK];
+	const uint8_t read_speed = speed_array[uqm::globalFlags() & ReadSpeedMask];
 
 	if (read_speed)
 	{

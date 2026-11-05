@@ -118,7 +118,7 @@ void DrawStarConBox(GFXRECT* pRect, int16_t BorderWidth, Color TopLeftColor,
 
 	if (CreateCorners)
 	{
-		if (sameColor(TRANSPARENT, CornerColor)
+		if (sameColor(Transparent, CornerColor)
 			&& AreTheyShades(TopLeftColor, BottomRightColor))
 		{
 			SetContextForeGroundColor(
@@ -252,7 +252,7 @@ void DrawBorderPadding(uint32_t videoWidth)
 {
 	GFXRECT r;
 	const uint16_t safe_x =
-		(videoWidth && videoWidth < 280 ? SAFE_NEG(4) * 2 : SAFE_X);
+		(videoWidth && videoWidth < 280 ? SAFE_NEG(4) * 2 : SafeX());
 
 	if (!safe_x)
 	{
@@ -267,13 +267,13 @@ void DrawBorderPadding(uint32_t videoWidth)
 	}
 	else
 	{
-		SetContextForeGroundColor(BLACK_COLOR);
+		SetContextForeGroundColor(BlackColor);
 	}
 
 	// Top bar
 	r.corner = MAKE_POINT(0, 0);
 	r.extent.width = CanvasWidth;
-	r.extent.height = SAFE_Y;
+	r.extent.height = SafeY();
 	DrawFilledRectangle(&r);
 
 	// Right bar
@@ -284,9 +284,9 @@ void DrawBorderPadding(uint32_t videoWidth)
 
 	// Bottom bar
 	r.corner.x = 0;
-	r.corner.y = CanvasHeight - SAFE_Y;
+	r.corner.y = CanvasHeight - SafeY();
 	r.extent.width = CanvasWidth;
-	r.extent.height = SAFE_Y;
+	r.extent.height = SafeY();
 	DrawFilledRectangle(&r);
 
 	// Left bar
@@ -302,7 +302,7 @@ void DrawRadarBorder(void)
 {
 	GFXRECT r;
 
-	if (IS_PAD)
+	if (IsPad())
 	{
 		return;
 	}
@@ -310,20 +310,20 @@ void DrawRadarBorder(void)
 	GFXCONTEXT OldContext {SetContext(StatusContext)};
 
 	r.corner.x = RES_SCALE(4) - RES_SCALE(1);
-	r.corner.y = RADAR_Y - RES_SCALE(1);
-	r.extent.width = RADAR_WIDTH + RES_SCALE(2);
-	r.extent.height = RADAR_HEIGHT + RES_SCALE(2);
+	r.corner.y = RadarY() - RES_SCALE(1);
+	r.extent.width = RadarWidth() + RES_SCALE(2);
+	r.extent.height = RadarHeight() + RES_SCALE(2);
 
-	if (IS_HD || uqm::UQMOptions::read().customBorder)
+	if (IsHd() || uqm::UQMOptions::read().customBorder)
 	{
-		DrawRenderedBox(&r, false, NULL_COLOR, THIN_INNER_BEVEL,
+		DrawRenderedBox(&r, false, NullColor, THIN_INNER_BEVEL,
 						uqm::UQMOptions::read().customBorder);
 	}
 	else
 	{
-		DrawStarConBox(&r, RES_SCALE(1), ALT_SHADOWBOX_TOP_LEFT,
-					   ALT_SHADOWBOX_BOTTOM_RIGHT, false, TRANSPARENT, false,
-					   TRANSPARENT);
+		DrawStarConBox(&r, RES_SCALE(1), AltShadowboxTopLeft,
+					   AltShadowboxBottomRight, false, Transparent, false,
+					   Transparent);
 	}
 
 	SetContext(OldContext);
@@ -383,7 +383,7 @@ DrawPauseText(GFXRECT* rect)
 	DrawFilledRectangle(&block);
 
 	SetContextForeGroundColor(
-		DOS_BOOL(SHADOWBOX_DARK_COLOR, WHITE_COLOR));
+		DOS_BOOL(ShadowboxDarkColor, WhiteColor));
 
 	text.baseline = rect->corner;
 	text.baseline.x += rect->extent.width >> 1;
@@ -565,13 +565,13 @@ bool WaitForActButtonUntil(bool newButton, TimeCount timeOut,
 
 bool WaitForAnyButton(bool newButton, TimePeriod duration, bool resetInput)
 {
-	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
+	const TimeCount timeOut {duration == WaitInfinite ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForAnyButtonUntil(newButton, timeOut, resetInput);
 }
 
 bool WaitForActButton(bool newButton, TimePeriod duration, bool resetInput)
 {
-	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
+	const TimeCount timeOut {duration == WaitInfinite ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForActButtonUntil(newButton, timeOut, resetInput);
 }
 
@@ -599,7 +599,7 @@ bool WaitForNoInputUntil(TimeCount timeOut, bool resetInput)
 
 bool WaitForNoInput(TimePeriod duration, bool resetInput)
 {
-	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
+	const TimeCount timeOut {duration == WaitInfinite ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForNoInputUntil(timeOut, resetInput);
 }
 
@@ -665,7 +665,7 @@ get_fuel_to_sol(void)
 	}
 	else
 	{
-		return (square_root(f) + (FUEL_TANK_SCALE / 20));
+		return (square_root(f) + (FuelTankScale / 20));
 	}
 }
 
@@ -676,14 +676,14 @@ void DrawFlagStatDisplay(const char* str)
 
 	r.corner.x = RES_SCALE(2);
 	r.corner.y = RES_SCALE(20);
-	r.extent.width = FIELD_WIDTH + RES_SCALE(1);
+	r.extent.width = FieldWidth() + RES_SCALE(1);
 	r.extent.height = (RES_SCALE(129) - r.corner.y);
 
-	if (!uqm::UQMOptions::read().customBorder && !IS_HD)
+	if (!uqm::UQMOptions::read().customBorder && !IsHd())
 	{
 		DrawStarConBox(&r, RES_SCALE(1),
-					   SHADOWBOX_MEDIUM_COLOR, SHADOWBOX_DARK_COLOR,
-					   true, MODULE_BACK_COLOR, false, TRANSPARENT);
+					   ShadowboxMediumColor, ShadowboxDarkColor,
+					   true, ModuleBackColor, false, Transparent);
 	}
 	else
 	{
@@ -692,18 +692,18 @@ void DrawFlagStatDisplay(const char* str)
 
 	// print the "str" title
 	SetContextFont(StarConFont);
-	t.baseline.x = (STATUS_WIDTH >> 1) - RES_SCALE(1);
+	t.baseline.x = (StatusWidth() >> 1) - RES_SCALE(1);
 	t.baseline.y = r.corner.y + RES_SCALE(7);
 	t.align = ALIGN_CENTER;
 	t.pStr = str;
 	t.CharCount = (uint16_t)~0;
-	SetContextForeGroundColor(MODULE_SELECTED_COLOR);
+	SetContextForeGroundColor(ModuleSelectedColor);
 	font_DrawText(&t);
 }
 
 void formatFuelValue(uint32_t coarseFuel, uqstl::span<char> buf)
 {
-	double dblFuelOnBoard = (double)coarseFuel / FUEL_TANK_SCALE;
+	double dblFuelOnBoard = (double)coarseFuel / FuelTankScale;
 
 	if (!uqm::UQMOptions::read().infiniteFuel)
 	{

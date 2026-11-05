@@ -21,24 +21,24 @@
 
 #include "element.h"
 #include "units.h"
-// for UNIT_SCREEN_WIDTH/HEIGHT
+// for UnitScreenWidth()/HEIGHT
 
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
 
-#define NUM_RADAR_SCREENS 12
+inline constexpr auto NumRadarScreens {12};
 
-#define RADAR_SCAN_WIDTH RES_DESCALE(UNIT_SCREEN_WIDTH* NUM_RADAR_SCREENS)
-#define RADAR_SCAN_HEIGHT RES_DESCALE(UNIT_SCREEN_HEIGHT* NUM_RADAR_SCREENS)
+inline auto RadarScanWidth() { return RES_DESCALE(UnitScreenWidth() * NumRadarScreens); }
+inline auto RadarScanHeight() { return RES_DESCALE(UnitScreenHeight() * NumRadarScreens); }
 
 // QuasiSpace coordinates of the two-way portal
-#define QUASI_SPACE_X 5000
-#define QUASI_SPACE_Y 5000
+inline constexpr auto QuasiSpaceX {5000};
+inline constexpr auto QuasiSpaceY {5000};
 
 // QuasiSpace coordinates of the Arilou home world
-#define ARILOU_HOME_X 6134 // (QUASI_SPACE_X + ((RADAR_SCAN_WIDTH >> 1) * 3))
-#define ARILOU_HOME_Y 5900 // (QUASI_SPACE_Y + ((RADAR_SCAN_HEIGHT >> 1) * 3))
+inline constexpr auto ArilouHomeX {6134}; // (QUASI_SPACE_X + ((RADAR_SCAN_WIDTH >> 1) * 3))
+inline constexpr auto ArilouHomeY {5900}; // (QUASI_SPACE_Y + ((RADAR_SCAN_HEIGHT >> 1) * 3))
 
 extern bool LoadHyperspace(void);
 extern bool FreeHyperspace(void);

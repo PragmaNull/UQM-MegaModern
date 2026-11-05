@@ -57,14 +57,14 @@
 // Full game: Tanaka/Katana's damaged ships
 #define NUM_LIMPETS 3
 
-// HD
+// HdResolutionFactor
 #define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
 
 static RACE_DESC shofixti_desc =
 	{
 		{/* SHIP_INFO */
 		 "scout",
-		 FIRES_FORE,
+		 FiresFore,
 		 5, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -145,7 +145,7 @@ initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = SHOFIXTI_OFFSET;
 	MissileBlock.speed = MISSILE_SPEED_HD;
 	MissileBlock.hit_points = MISSILE_HITS;
@@ -161,12 +161,12 @@ initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 static void
 destruct_preprocess(ELEMENT* ElementPtr)
 {
-#define DESTRUCT_SWITCH ((NUM_EXPLOSION_FRAMES * 3) - 3)
+#define DESTRUCT_SWITCH ((NumExplosionFrames * 3) - 3)
 
 	// ship_death() set the ship element's life_span to
-	// (NUM_EXPLOSION_FRAMES * 3)
+	// (NumExplosionFrames * 3)
 	PRIMITIVE* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
-	ElementPtr->state_flags |= CHANGING;
+	ElementPtr->state_flags |= Changing;
 	if (ElementPtr->life_span > DESTRUCT_SWITCH)
 	{
 		// First, stamp-fill the ship's own element with changing colors
@@ -218,7 +218,7 @@ destruct_preprocess(ELEMENT* ElementPtr)
 	}
 	else
 	{
-		SetPrimType(lpPrim, NO_PRIM);
+		SetPrimType(lpPrim, NoPrim);
 		// The ship's own element will not be drawn anymore but will remain
 		// alive all through the glory explosion.
 		ElementPtr->preprocess_func = nullptr;
@@ -240,8 +240,8 @@ destruct_preprocess(ELEMENT* ElementPtr)
 			SetElementStarShip(DestructPtr, StarShipPtr);
 			DestructPtr->hit_points = 0;
 			DestructPtr->mass_points = 0;
-			DestructPtr->playerNr = NEUTRAL_PLAYER_NUM;
-			DestructPtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
+			DestructPtr->playerNr = NeutralPlayerNum;
+			DestructPtr->state_flags = Appearing | FiniteLife | Nonsolid;
 			SetPrimType(&DisplayArray[DestructPtr->PrimIndex],
 						STAMPFILL_PRIM);
 			SetPrimColor(&DisplayArray[DestructPtr->PrimIndex],
@@ -309,7 +309,7 @@ self_destruct_kill_objects(ELEMENT* ElementPtr)
 			const int destruction = 1 + MAX_DESTRUCTION * (DESTRUCT_RANGE - square_root(dist)) / DESTRUCT_RANGE;
 
 			// XXX: Why not simply call do_damage()?
-			if (ObjPtr->state_flags & PLAYER_SHIP)
+			if (ObjPtr->state_flags & PlayerShip)
 			{
 				if (!antiCheat(ElementPtr, true, uqm::GodModeFlags::NoDamage))
 				{
@@ -354,7 +354,7 @@ shofixti_destruct_death(ELEMENT* ShipPtr)
 
 	PlaySound(GetSound(StarShip->RaceDescPtr->ship_data.ship_sounds,
 					   1),
-			  CalcSoundPosition(ShipPtr), ShipPtr, GAME_SOUND_PRIORITY + 1);
+			  CalcSoundPosition(ShipPtr), ShipPtr, GameSoundPriority + 1);
 
 	STARSHIP* winner {GetWinnerStarShip()};
 	if (winner == nullptr)
@@ -370,7 +370,7 @@ shofixti_destruct_death(ELEMENT* ShipPtr)
 	{ // This ship is the winner
 		// It may have self-destructed before the ditty started playing,
 		// and in that case, there should be no ditty
-		StarShip->cur_status_flags &= ~PLAY_VICTORY_DITTY;
+		StarShip->cur_status_flags &= ~PlayVictoryDitty;
 	}
 	RecordShipDeath(ShipPtr);
 }
@@ -394,7 +394,7 @@ self_destruct(ELEMENT* ElementPtr)
 
 		LockElement(hDestruct, &DestructPtr);
 		DestructPtr->playerNr = ElementPtr->playerNr;
-		DestructPtr->state_flags = APPEARING | NONSOLID | FINITE_LIFE;
+		DestructPtr->state_flags = Appearing | Nonsolid | FiniteLife;
 		DestructPtr->next.location = ElementPtr->next.location;
 		DestructPtr->life_span = 0;
 		DestructPtr->pParent = ElementPtr->pParent;
@@ -411,7 +411,7 @@ self_destruct(ELEMENT* ElementPtr)
 	DeltaCrew(ElementPtr, -(int)ElementPtr->crew_level);
 	ZeroVelocityComponents(&ElementPtr->velocity);
 
-	ElementPtr->state_flags |= NONSOLID;
+	ElementPtr->state_flags |= Nonsolid;
 	ElementPtr->life_span = 0;
 	// The ship is now dead. It's death_func, i.e. shofixti_destruct_death(),
 	// will be called the next frame.
@@ -432,9 +432,9 @@ shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		return;
 	}
 
-	if (StarShipPtr->ship_input_state & SPECIAL)
+	if (StarShipPtr->ship_input_state & SpecialFlag)
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 	}
 	else
 	{
@@ -445,14 +445,14 @@ shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				|| (lpShipEvalDesc->ObjectPtr != nullptr
 					&& lpShipEvalDesc->which_turn <= 4)
 				|| (lpWeaponEvalDesc->ObjectPtr != nullptr
-					/* means IMMEDIATE WEAPON */
-					&& (((lpWeaponEvalDesc->ObjectPtr->state_flags & PLAYER_SHIP)
+					/* means IMMEDIATE WeaponFlag */
+					&& (((lpWeaponEvalDesc->ObjectPtr->state_flags & PlayerShip)
 						 && ShipPtr->crew_level == 1)
 						|| (PlotIntercept(lpWeaponEvalDesc->ObjectPtr, ShipPtr, 2, 0)
 							&& lpWeaponEvalDesc->ObjectPtr->mass_points >= ShipPtr->crew_level
 							&& (uqm::random().next() & 1))))))
 		{
-			StarShipPtr->ship_input_state |= SPECIAL;
+			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
 	}
 }
@@ -465,8 +465,8 @@ shofixti_preprocess(ELEMENT* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags
 		 ^ StarShipPtr->old_status_flags)
-			& SPECIAL
-		&& !(StarShipPtr->cur_status_flags & SPECIAL))
+			& SpecialFlag
+		&& !(StarShipPtr->cur_status_flags & SpecialFlag))
 	{
 		if (!(StarShipPtr->RaceDescPtr->ship_data.captain_control.special_offset & 1))
 		{
@@ -488,7 +488,7 @@ shofixti_postprocess(ELEMENT* ElementPtr)
 	if (StarShipPtr->RaceDescPtr->ship_data.captain_control.special_offset == 5)
 	{
 		self_destruct(ElementPtr);
-		StarShipPtr->cur_status_flags |= SHOFIXTI_EXPLOSION;
+		StarShipPtr->cur_status_flags |= ShofixtiExplosion;
 	}
 }
 
@@ -499,7 +499,7 @@ init_shofixti(void)
 	// The caller of this func will copy the struct
 	static RACE_DESC new_shofixti_desc;
 
-	if (IS_HD)
+	if (IsHd())
 	{
 		shofixti_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		shofixti_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
@@ -520,7 +520,7 @@ init_shofixti(void)
 
 	new_shofixti_desc = shofixti_desc;
 	if (uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
-		&& CurStarDescPtr && CurStarDescPtr->Index == SHOFIXTI_DEFINED
+		&& CurStarDescPtr() && CurStarDescPtr()->Index == SHOFIXTI_DEFINED
 		&& !GET_GAME_STATE(SHOFIXTI_RECRUITED))
 	{
 		// Tanaka/Katana flies in a damaged ship.

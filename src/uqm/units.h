@@ -20,7 +20,7 @@
 #define UQM_UNITS_H_
 
 #include "libs/gfxlib.h"
-//#include "options.h"
+#include "../options.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -31,189 +31,181 @@ extern int CanvasHeight;
 extern unsigned int resolutionFactor;
 
 /* Most basic resolution units. */
-#define HD 2
-#define SCREEN_WIDTH CanvasWidth
-#define SCREEN_HEIGHT CanvasHeight
-#define RESOLUTION_FACTOR resolutionFactor
-#define IS_HD (RESOLUTION_FACTOR != HD ? false : true)
-#define RES_SCALE(a) ((a) << RESOLUTION_FACTOR)
-#define RES_DESCALE(a) ((a) >> RESOLUTION_FACTOR)
-//#define chooseIfHd(a,b) (!IS_HD ? (a) : (b))
+inline constexpr auto HdResolutionFactor {2};
+
+
+inline auto IsHd() { return (resolutionFactor != HdResolutionFactor ? false : true); }
+#define RES_SCALE(a) ((a) << resolutionFactor)
+#define RES_DESCALE(a) ((a) >> resolutionFactor)
+//#define chooseIfHd(a,b) (!IsHd() ? (a) : (b))
 template <typename T, std::enable_if_t<std::is_fundamental_v<std::remove_reference_t<T>>, bool> = true>
 static inline constexpr auto chooseIfHd(const T a, const T b) -> T
 {
-	return !IS_HD ? a : b;
+	return !IsHd() ? a : b;
 }
 template <typename T, std::enable_if_t<!std::is_fundamental_v<std::remove_reference_t<T>>, bool> = false>
 static inline constexpr auto chooseIfHd(const T& a, const T& b) -> const T&
 {
-	return !IS_HD ? a : b;
+	return !IsHd() ? a : b;
 }
-#define NRES_BOOL(a) (!IS_HD ? (a) : 0)
-#define RES_DBL(a) (chooseIfHd((a), (a) * RESOLUTION_FACTOR))
+#define NRES_BOOL(a) (!IsHd() ? (a) : 0)
+#define RES_DBL(a) (chooseIfHd((a), (a) * resolutionFactor))
 #define RES_TRP(a) (chooseIfHd((a), (a) * 3))
 #define IF_HD(a) (chooseIfHd(0, (a)))
 
 #define RES_RBSHIFT(a, b) (RES_SCALE(RES_DESCALE((a)) >> (b)))
 #define RES_RECENTER(a) (RES_RBSHIFT((a), 1))
 
-#define IS_DOS (optWindowType == uqm::WindowStyle::DOS)
-#define DOS_BOOL(a, b) (IS_DOS ? (b) : (a))
+inline auto IsDos() { return (optWindowType == uqm::WindowStyle::DOS); }
+#define DOS_BOOL(a, b) (IsDos() ? (b) : (a))
 // Returns the 2nd input in DOS mode, the 1st input otherwise
-#define DOS_BOOL_SCL(a, b) (RES_SCALE(IS_DOS ? (b) : (a)))
-// Same as DOS_BOOL but scaled to HD
+#define DOS_BOOL_SCL(a, b) (RES_SCALE(IsDos() ? (b) : (a)))
+// Same as DOS_BOOL but scaled to HdResolutionFactor
 #define DOS_NUM(a) (DOS_BOOL(0, (a)))
 // Returns the input number if DOS mode is active
 #define DOS_NUM_SCL(a) (RES_SCALE(DOS_NUM((a))))
-// Same as DOS_NUM but scales it to HD
+// Same as DOS_NUM but scales it to HdResolutionFactor
 #define NDOS_NUM(a) (DOS_BOOL((a), 0))
 // Returns the input number if DOS mode is not active
 #define NDOS_NUM_SCL(a) (RES_SCALE(NDOS_NUM((a))))
-// Same as NDOS_NUM but scales it to HD
+// Same as NDOS_NUM but scales it to HdResolutionFactor
 
-#define IS_PAD (optWindowType == uqm::WindowStyle::Console3DO)
-#define SAFE_BOOL(a, b) (IS_PAD ? (b) : (a))
+inline auto IsPad() { return (optWindowType == uqm::WindowStyle::Console3DO); }
+#define SAFE_BOOL(a, b) (IsPad() ? (b) : (a))
 // Returns the 2nd input in 3DO mode, the 1st input otherwise
 #define SAFE_BOOL_SCL(a, b) (RES_SCALE(SAFE_BOOL((a), (b))))
-// Same as SAFE_BOOL but scaled to HD
+// Same as SAFE_BOOL but scaled to HdResolutionFactor
 #define SAFE_NUM(a) (SAFE_BOOL(0, (a)))
 // Returns the input number if 3DO mode is active
 #define SAFE_NUM_SCL(a) (RES_SCALE(SAFE_NUM((a))))
-// Same as SAFE_NUM but scaled it to HD
+// Same as SAFE_NUM but scaled it to HdResolutionFactor
 #define NSAFE_NUM(a) (SAFE_BOOL((a), 0))
 // Returns the input number if 3DO mode is not active
 #define NSAFE_NUM_SCL(a) (RES_SCALE(NSAFE_NUM((a))))
-// Same as NSAFE_NUM but scaled it to HD
+// Same as NSAFE_NUM but scaled it to HdResolutionFactor
 
-#define MODE_CASE(a, b, c) (IS_DOS ? (a) : (IS_PAD ? (b) : (c)))
+#define MODE_CASE(a, b, c) (IsDos() ? (a) : (IsPad() ? (b) : (c)))
 #define MODE_CASE_SCL(a, b, c) RES_SCALE(MODE_CASE((a), (b), (c)))
 
 // Margins
-#define SAFE_X (SAFE_NUM_SCL(16))
+inline auto SafeX() { return (SAFE_NUM_SCL(16)); }
 // Left and right screen margin used for 3DO mode
-#define SAFE_Y SAFE_X
+inline auto SafeY() { return SafeX(); }
 // Top and bottom screen margin used for 3DO mode
 
-#define SAFE_NEG(a) (SAFE_NUM(SAFE_X - RES_SCALE((a))))
-// Returns SAFE_X minus the input number, scaled to HD
-#define SAFE_POS(a) (SAFE_NUM(SAFE_X + RES_SCALE((a))))
-// Returns SAFE_X plus the input number, scaled to HD
+#define SAFE_NEG(a) (SAFE_NUM(SafeX() - RES_SCALE((a))))
+// Returns SafeX() minus the input number, scaled to HdResolutionFactor
+#define SAFE_POS(a) (SAFE_NUM(SafeX() + RES_SCALE((a))))
+// Returns SafeX() plus the input number, scaled to HdResolutionFactor
 
-#define SIS_ORG_X (RES_SCALE(6) + SAFE_POS(1))
-#define SIS_ORG_Y (RES_SCALE(9) + SAFE_POS(1))
+inline auto SisOrgX() { return (RES_SCALE(6) + SAFE_POS(1)); }
+inline auto SisOrgY() { return (RES_SCALE(9) + SAFE_POS(1)); }
 
 /* Status bar & play area sizes. */
-#define STATUS_WIDTH RES_SCALE(64)
+inline auto StatusWidth() { return RES_SCALE(64); }
 /* Width of the status "window" (the right part of the screen) */
-#define STATUS_HEIGHT SCREEN_HEIGHT
+inline auto StatusHeight() { return CanvasHeight; }
 /* Height of the status "window" (the right part of the screen) */
-#define SPACE_WIDTH (SCREEN_WIDTH - STATUS_WIDTH - (SAFE_X * 2))
+inline auto SpaceWidth() { return (CanvasWidth - StatusWidth() - (SafeX() * 2)); }
 /* Width of the space "window" (the left part of the screen) */
-#define SPACE_HEIGHT (SCREEN_HEIGHT - (SAFE_Y * 2))
+inline auto SpaceHeight() { return (CanvasHeight - (SafeY() * 2)); }
 /* Height of the space "window" (the left part of the screen) */
-#define SIS_SCREEN_WIDTH (SPACE_WIDTH - (RES_SCALE(13) + SAFE_NUM_SCL(1)))
+inline auto SisScreenWidth() { return (SpaceWidth() - (RES_SCALE(13) + SAFE_NUM_SCL(1))); }
 /* Width of the usable part of the space "window" */
-#define SIS_SCREEN_HEIGHT (SPACE_HEIGHT - RES_SCALE(13))
+inline auto SisScreenHeight() { return (SpaceHeight() - RES_SCALE(13)); }
 /* Height of the usable part of the space "window" */
 
-#define ORIG_SIS_SCREEN_WIDTH (RES_DESCALE(SIS_SCREEN_WIDTH))
-#define ORIG_SIS_SCREEN_HEIGHT (RES_DESCALE(SIS_SCREEN_HEIGHT))
-#define DOS_SIS_SCREEN_WIDTH (243)
-#define DOS_SIS_SCREEN_HEIGHT (187)
-#define THREEDO_SIS_SCREEN_WIDTH (210)
-#define THREEDO_SIS_SCREEN_HEIGHT (195)
-#define UQM_SIS_SCREEN_WIDTH (242)
-#define UQM_SIS_SCREEN_HEIGHT (227)
-#define HDMOD_SIS_SCREEN_WIDTH (1074)
-#define HDMOD_SIS_SCREEN_HEIGHT (924)
+inline auto OrigSisScreenWidth() { return (RES_DESCALE(SisScreenWidth())); }
+inline auto OrigSisScreenHeight() { return (RES_DESCALE(SisScreenHeight())); }
+inline constexpr auto DosSisScreenWidth {(243)};
+inline constexpr auto DosSisScreenHeight {(187)};
+inline constexpr auto ThreedoSisScreenWidth {(210)};
+inline constexpr auto ThreedoSisScreenHeight {(195)};
+inline constexpr auto UqmSisScreenWidth {(242)};
+inline constexpr auto UqmSisScreenHeight {(227)};
+inline constexpr auto HdmodSisScreenWidth {(1074)};
+inline constexpr auto HdmodSisScreenHeight {(924)};
 
-#define SIS_SCREEN_DIMENSIONS                                  \
-	{DOS_SIS_SCREEN_WIDTH, DOS_SIS_SCREEN_HEIGHT},             \
-		{THREEDO_SIS_SCREEN_WIDTH, THREEDO_SIS_SCREEN_HEIGHT}, \
-		{UQM_SIS_SCREEN_WIDTH, UQM_SIS_SCREEN_HEIGHT},         \
-		{HDMOD_SIS_SCREEN_WIDTH, HDMOD_SIS_SCREEN_HEIGHT},
+#define SIS_SCREEN_DIMENSIONS                            \
+	{DosSisScreenWidth, DosSisScreenHeight},             \
+		{ThreedoSisScreenWidth, ThreedoSisScreenHeight}, \
+		{UqmSisScreenWidth, UqmSisScreenHeight},         \
+		{HdmodSisScreenWidth, HdmodSisScreenHeight},
 
 /* Radar. */
-#define RADAR_X (RES_SCALE(4) + (SPACE_WIDTH + SAFE_X))
-#define RADAR_WIDTH (STATUS_WIDTH - RES_SCALE(8))
-#define RADAR_HEIGHT RES_SCALE(53)
-#define RADAR_Y (SIS_ORG_Y + SIS_SCREEN_HEIGHT - RADAR_HEIGHT)
+inline auto RadarX() { return (RES_SCALE(4) + (SpaceWidth() + SafeX())); }
+inline auto RadarWidth() { return (StatusWidth() - RES_SCALE(8)); }
+inline auto RadarHeight() { return RES_SCALE(53); }
+inline auto RadarY() { return (SisOrgY() + SisScreenHeight() - RadarHeight()); }
 
 /* Blue boxes which display messages and the green date box. */
-#define SIS_TITLE_BOX_WIDTH RES_SCALE(57)
-#define SIS_TITLE_WIDTH (SIS_TITLE_BOX_WIDTH - RES_SCALE(2))
-#define SIS_TITLE_HEIGHT RES_SCALE(8)
-#define SIS_SPACER_BOX_WIDTH RES_SCALE(12)
+inline auto SisTitleBoxWidth() { return RES_SCALE(57); }
+inline auto SisTitleWidth() { return (SisTitleBoxWidth() - RES_SCALE(2)); }
+inline auto SisTitleHeight() { return RES_SCALE(8); }
+inline auto SisSpacerBoxWidth() { return RES_SCALE(12); }
 
-#define SIS_MESSAGE_BOX_WIDTH (SIS_SCREEN_WIDTH - SIS_TITLE_BOX_WIDTH - SIS_SPACER_BOX_WIDTH)
-#define SIS_MESSAGE_WIDTH (SIS_MESSAGE_BOX_WIDTH - RES_SCALE(2))
-#define SIS_MESSAGE_HEIGHT SIS_TITLE_HEIGHT
+inline auto SisMessageBoxWidth() { return (SisScreenWidth() - SisTitleBoxWidth() - SisSpacerBoxWidth()); }
+inline auto SisMessageWidth() { return (SisMessageBoxWidth() - RES_SCALE(2)); }
+inline auto SisMessageHeight() { return SisTitleHeight(); }
 
-#define STATUS_MESSAGE_WIDTH (STATUS_WIDTH - RES_SCALE(4))
-#define STATUS_MESSAGE_HEIGHT RES_SCALE(7)
+inline auto StatusMessageWidth() { return (StatusWidth() - RES_SCALE(4)); }
+inline auto StatusMessageHeight() { return RES_SCALE(7); }
 
-#define SHIP_NAME_WIDTH (STATUS_WIDTH - RES_SCALE(4))
-#define SHIP_NAME_HEIGHT RES_SCALE(7)
+inline auto ShipNameWidth() { return (StatusWidth() - RES_SCALE(4)); }
+inline auto ShipNameHeight() { return RES_SCALE(7); }
 
 /* A lot of other shit. */
-#define MAX_REDUCTION 3
-#define MAX_VIS_REDUCTION 2
-#define REDUCTION_SHIFT 1
-#define NUM_VIEWS (MAX_VIS_REDUCTION + 1)
+inline constexpr auto MaxReduction {3};
+inline constexpr auto MaxVisReduction {2};
+inline constexpr auto ReductionShift {1};
+inline constexpr auto NumViews {(MaxVisReduction + 1)};
 
-#define ZOOM_SHIFT 8
-#define MAX_ZOOM_OUT (1 << (ZOOM_SHIFT + MAX_REDUCTION - 1))
+inline constexpr auto ZoomShift {8};
+inline constexpr auto MaxZoomOut {(1 << (ZoomShift + MaxReduction - 1))};
 
-#define ONE_SHIFT 2
-#define BACKGROUND_SHIFT 3
-#define SCALED_ONE (1 << ONE_SHIFT)
-#define DISPLAY_TO_WORLD(x) ((x) << ONE_SHIFT)
-#define WORLD_TO_DISPLAY(x) ((x) >> ONE_SHIFT)
+inline constexpr auto OneShift {2};
+inline constexpr auto BackgroundShift {3};
+inline constexpr auto ScaledOne {(1 << OneShift)};
+#define DISPLAY_TO_WORLD(x) ((x) << OneShift)
+#define WORLD_TO_DISPLAY(x) ((x) >> OneShift)
 
-#define LOG_SPACE_WIDTH (DISPLAY_TO_WORLD(SPACE_WIDTH) << MAX_REDUCTION)
-#define LOG_SPACE_HEIGHT (DISPLAY_TO_WORLD(SPACE_HEIGHT) << MAX_REDUCTION)
-#define TRANSITION_WIDTH (DISPLAY_TO_WORLD(SPACE_WIDTH) << MAX_VIS_REDUCTION)
-#define TRANSITION_HEIGHT (DISPLAY_TO_WORLD(SPACE_HEIGHT) << MAX_VIS_REDUCTION)
+inline auto LogSpaceWidth() { return (DISPLAY_TO_WORLD(SpaceWidth()) << MaxReduction); }
+inline auto LogSpaceHeight() { return (DISPLAY_TO_WORLD(SpaceHeight()) << MaxReduction); }
+inline auto TransitionWidth() { return (DISPLAY_TO_WORLD(SpaceWidth()) << MaxVisReduction); }
+inline auto TransitionHeight() { return (DISPLAY_TO_WORLD(SpaceHeight()) << MaxVisReduction); }
 
 // JMS_GFX: Changed from int16_t to int32_t and from uint16_t to uint32_t
-#define DISPLAY_ALIGN(x) ((int32_t)(x) & ~(SCALED_ONE - 1))
-#define DISPLAY_ALIGN_X(x) ((int32_t)((uint32_t)(x) % LOG_SPACE_WIDTH) & ~(SCALED_ONE - 1))
-#define DISPLAY_ALIGN_Y(y) ((int32_t)((uint32_t)(y) % LOG_SPACE_HEIGHT) & ~(SCALED_ONE - 1))
+#define DISPLAY_ALIGN(x) ((int32_t)(x) & ~(ScaledOne - 1))
+#define DISPLAY_ALIGN_X(x) ((int32_t)((uint32_t)(x) % LogSpaceWidth()) & ~(ScaledOne - 1))
+#define DISPLAY_ALIGN_Y(y) ((int32_t)((uint32_t)(y) % LogSpaceHeight()) & ~(ScaledOne - 1))
 
-#define MAX_X_UNIVERSE 9999
-#define MAX_Y_UNIVERSE 9999
+inline constexpr auto MaxXUniverse {9999};
+inline constexpr auto MaxYUniverse {9999};
 // Due to the added rounding error correction, the maximum logical X and Y
 // in Hyperspace cannot go past 999.94999, otherwise the values will be
 // rounded up to 1000.0. We do not want that so we subtract half a unit.
-#define MAX_X_LOGICAL                                                  \
-	(UNIVERSE_TO_LOGX(MAX_X_UNIVERSE + 1) - (UNIVERSE_TO_LOGX(1) >> 1) \
-	 - 1L)
 // The Y axis is inverted with respect to the screen Y axis.
-// (MAX_Y_UNIVERSE - 1) is really 1 for our purposes.
-#define MAX_Y_LOGICAL                                                   \
-	(UNIVERSE_TO_LOGY(-1) - (UNIVERSE_TO_LOGY(MAX_Y_UNIVERSE - 1) >> 1) \
-	 - 1L)
+// (MaxYUniverse - 1) is really 1 for our purposes.
 
-#define SPHERE_RADIUS_INCREMENT 11
+inline constexpr auto SphereRadiusIncrement {11};
 
-#define MAX_FLEET_STRENGTH (254 * SPHERE_RADIUS_INCREMENT)
+inline constexpr auto MaxFleetStrength {(254 * SphereRadiusIncrement)};
 
 // XXX: These corrected for the weird screen aspect ratio on DOS
 //   In part because of them, hyperflight is slower vertically
-#define UNIT_SCREEN_WIDTH RES_SCALE(63)
-#define UNIT_SCREEN_HEIGHT RES_SCALE(50)
+inline auto UnitScreenWidth() { return RES_SCALE(63); }
+inline auto UnitScreenHeight() { return RES_SCALE(50); }
 
 // These are for determining the HyperSpace boundaries
 // for culling HyperStars when they move off screen
-#define SIS_WORLD_WIDTH DISPLAY_TO_WORLD(SIS_SCREEN_WIDTH)
-#define SIS_WORLD_HEIGHT DISPLAY_TO_WORLD(SIS_SCREEN_HEIGHT)
-#define UNIT_SCR_DIFF \
-	DISPLAY_TO_WORLD(UNIT_SCREEN_WIDTH - UNIT_SCREEN_HEIGHT + 1)
+inline auto SisWorldWidth() { return DISPLAY_TO_WORLD(SisScreenWidth()); }
+inline auto SisWorldHeight() { return DISPLAY_TO_WORLD(SisScreenHeight()); }
+inline auto UnitScrDiff() { return DISPLAY_TO_WORLD(UnitScreenWidth() - UnitScreenHeight() + 1); }
 
-#define HS_WEST_EDGE ((SIS_WORLD_WIDTH + UNIT_SCR_DIFF) >> 1)
-#define HS_EAST_EDGE ((SIS_WORLD_WIDTH - UNIT_SCR_DIFF) >> 1)
-#define HS_NORTH_EDGE ((SIS_WORLD_HEIGHT + UNIT_SCR_DIFF) >> 1)
-#define HS_SOUTH_EDGE ((SIS_WORLD_HEIGHT - UNIT_SCR_DIFF) >> 1)
+inline auto HsWestEdge() { return ((SisWorldWidth() + UnitScrDiff()) >> 1); }
+inline auto HsEastEdge() { return ((SisWorldWidth() - UnitScrDiff()) >> 1); }
+inline auto HsNorthEdge() { return ((SisWorldHeight() + UnitScrDiff()) >> 1); }
+inline auto HsSouthEdge() { return ((SisWorldHeight() - UnitScrDiff()) >> 1); }
 
 // Bug #945: Simplified, these set the speed of SIS in Hyperspace and
 //   Quasispace. The ratio between UNIVERSE_UNITS_ and LOG_UNITS_ is
@@ -223,67 +215,70 @@ static inline constexpr auto chooseIfHd(const T& a, const T& b) -> const T&
 //   on the screen resolution when it should not.
 //   Using the new math will break old savegames.
 
-#define UNIVERSE_UNITS_X (((MAX_X_UNIVERSE + 1) >> 4))
-#define UNIVERSE_UNITS_Y (((MAX_Y_UNIVERSE + 1) >> 4))
-#define LOG_UNITS_X ((int32_t)(UNIVERSE_UNITS_X * RES_SCALE(16)))
-#define LOG_UNITS_Y ((int32_t)(UNIVERSE_UNITS_Y * RES_SCALE(16)))
+inline constexpr auto UniverseUnitsX {(((MaxXUniverse + 1) >> 4))};
+inline constexpr auto UniverseUnitsY {(((MaxYUniverse + 1) >> 4))};
+inline auto LogUnitsX() { return ((int32_t)(UniverseUnitsX * RES_SCALE(16))); }
+inline auto LogUnitsY() { return ((int32_t)(UniverseUnitsY * RES_SCALE(16))); }
 
 #define ROUNDING_ERROR(div) ((div) >> 1)
 
 static inline int32_t
 logxToUniverse(int32_t lx)
 {
-	return (int32_t)((lx * UNIVERSE_UNITS_X + ROUNDING_ERROR(LOG_UNITS_X))
-					 / LOG_UNITS_X);
+	return (int32_t)((lx * UniverseUnitsX + ROUNDING_ERROR(LogUnitsX()))
+					 / LogUnitsX());
 }
 #define LOGX_TO_UNIVERSE(lx) \
 	logxToUniverse(lx)
 static inline int32_t
 logyToUniverse(int32_t ly)
 {
-	return (int32_t)(MAX_Y_UNIVERSE - ((ly * UNIVERSE_UNITS_Y + ROUNDING_ERROR(LOG_UNITS_Y)) / LOG_UNITS_Y));
+	return (int32_t)(MaxYUniverse - ((ly * UniverseUnitsY + ROUNDING_ERROR(LogUnitsY())) / LogUnitsY()));
 }
 #define LOGY_TO_UNIVERSE(ly) \
 	logyToUniverse(ly)
 static inline int32_t
 universeToLogx(int16_t ux)
 {
-	return (ux * LOG_UNITS_X + ROUNDING_ERROR(UNIVERSE_UNITS_X))
-		 / UNIVERSE_UNITS_X;
+	return (ux * LogUnitsX() + ROUNDING_ERROR(UniverseUnitsX))
+		 / UniverseUnitsX;
 }
 #define UNIVERSE_TO_LOGX(ux) \
 	universeToLogx(ux)
 static inline int32_t
 universeToLogy(int16_t uy)
 {
-	return ((MAX_Y_UNIVERSE - uy) * LOG_UNITS_Y
-			+ ROUNDING_ERROR(UNIVERSE_UNITS_Y))
-		 / UNIVERSE_UNITS_Y;
+	return ((MaxYUniverse - uy) * LogUnitsY()
+			+ ROUNDING_ERROR(UniverseUnitsY))
+		 / UniverseUnitsY;
 }
 #define UNIVERSE_TO_LOGY(uy) \
 	universeToLogy(uy)
 
+inline auto MaxXLogical() { return (UNIVERSE_TO_LOGX(MaxXUniverse + 1) - (UNIVERSE_TO_LOGX(1) >> 1) - 1L); }
+inline auto MaxYLogical() { return (UNIVERSE_TO_LOGY(-1) - (UNIVERSE_TO_LOGY(MaxYUniverse - 1) >> 1) - 1L); }
+
 // Original (and now broken) Hyperspace speed factors
 // Now being utilized to load Vanilla saves properly
-#define SECTOR_WIDTH 195
-#define SECTOR_HEIGHT 25
+inline constexpr auto SectorWidth {195};
+inline constexpr auto SectorHeight {25};
 
-#define OLD_LOG_UNITS_X ((int32_t)(8192 >> 4) * SECTOR_WIDTH)
-#define OLD_LOG_UNITS_Y ((int32_t)(7680 >> 4) * SECTOR_HEIGHT)
-#define OLD_UNIVERSE_UNITS_X (((MAX_X_UNIVERSE + 1) >> 4) * 10)
-#define OLD_UNIVERSE_UNITS_Y (((MAX_Y_UNIVERSE + 1) >> 4))
+inline constexpr auto OldLogUnitsX {((int32_t)(8192 >> 4) * SectorWidth)};
+inline constexpr auto OldLogUnitsY {((int32_t)(7680 >> 4) * SectorHeight)};
+inline constexpr auto OldUniverseUnitsX {(((MaxXUniverse + 1) >> 4) * 10)};
+inline constexpr auto OldUniverseUnitsY {(((MaxYUniverse + 1) >> 4))};
 
 static inline int32_t
 oldLogxToUniverse(int32_t lx)
 {
-	return (int32_t)((lx * OLD_UNIVERSE_UNITS_X + ROUNDING_ERROR(OLD_LOG_UNITS_X))
-					 / OLD_LOG_UNITS_X);
+	return (int32_t)((lx * OldUniverseUnitsX + ROUNDING_ERROR(OldLogUnitsX))
+					 / OldLogUnitsX);
 }
 
 static inline int32_t
 oldLogyToUniverse(int32_t ly)
 {
-	return (int32_t)(MAX_Y_UNIVERSE - ((ly * OLD_UNIVERSE_UNITS_Y + ROUNDING_ERROR(OLD_LOG_UNITS_Y)) / OLD_LOG_UNITS_Y));
+	return (int32_t)(MaxYUniverse - ((ly * OldUniverseUnitsY + ROUNDING_ERROR(OldLogUnitsY)) / OldLogUnitsY));
 }
 
 static inline int32_t
@@ -300,50 +295,50 @@ inBounds(int32_t val, int32_t min, int32_t max)
 	return val;
 }
 
-#define CIRCLE_SHIFT 6
-#define FULL_CIRCLE (1 << CIRCLE_SHIFT)
-#define OCTANT_SHIFT (CIRCLE_SHIFT - 3) /* (1 << 3) == 8 */
-#define HALF_CIRCLE (FULL_CIRCLE >> 1)
-#define QUADRANT (FULL_CIRCLE >> 2)
-#define OCTANT (FULL_CIRCLE >> 3)
+inline constexpr auto CircleShift {6};
+inline constexpr auto FullCircle {(1 << CircleShift)};
 
-#define FACING_SHIFT 4
+inline constexpr auto HalfCircle {(FullCircle >> 1)};
+inline constexpr auto Quadrant {(FullCircle >> 2)};
+inline constexpr auto Octant {(FullCircle >> 3)};
 
-#define ANGLE_TO_FACING(a) (((a) + (1 << (CIRCLE_SHIFT - FACING_SHIFT - 1))) \
-							>> (CIRCLE_SHIFT - FACING_SHIFT))
-#define FACING_TO_ANGLE(f) ((f) << (CIRCLE_SHIFT - FACING_SHIFT))
+inline constexpr auto FacingShift {4};
 
-#define NORMALIZE_ANGLE(a) ((uint32_t)((a) & (FULL_CIRCLE - 1)))
-#define NORMALIZE_FACING(f) ((uint32_t)((f) & ((1 << FACING_SHIFT) - 1)))
+#define ANGLE_TO_FACING(a) (((a) + (1 << (CircleShift - FacingShift - 1))) \
+							>> (CircleShift - FacingShift))
+#define FACING_TO_ANGLE(f) ((f) << (CircleShift - FacingShift))
 
-#define DEGREES_TO_ANGLE(d) NORMALIZE_ANGLE((((d) % 360) * FULL_CIRCLE \
-											 + HALF_CIRCLE)            \
+#define NORMALIZE_ANGLE(a) ((uint32_t)((a) & (FullCircle - 1)))
+#define NORMALIZE_FACING(f) ((uint32_t)((f) & ((1 << FacingShift) - 1)))
+
+#define DEGREES_TO_ANGLE(d) NORMALIZE_ANGLE((((d) % 360) * FullCircle \
+											 + HalfCircle)            \
 											/ 360)
-#define ANGLE_TO_DEGREES(d) (NORMALIZE_ANGLE(d) * 360 / FULL_CIRCLE)
+#define ANGLE_TO_DEGREES(d) (NORMALIZE_ANGLE(d) * 360 / FullCircle)
 
-#define SIN_SHIFT 14
-#define SIN_SCALE (1 << SIN_SHIFT)
-#define INT_ADJUST(x) ((x) << SIN_SHIFT)
-#define FLT_ADJUST(x) (int16_t)((x) * SIN_SCALE)
-#define UNADJUST(x) (int16_t)((x) >> SIN_SHIFT)
+inline constexpr auto SinShift {14};
+inline constexpr auto SinScale {(1 << SinShift)};
+#define INT_ADJUST(x) ((x) << SinShift)
+#define FLT_ADJUST(x) (int16_t)((x) * SinScale)
+#define UNADJUST(x) (int16_t)((x) >> SinShift)
 #define ROUND(x, y) ((x) + ((x) >= 0 ? ((y) >> 1) : -((y) >> 1)))
 
 extern int32_t sinetab[];
 #define SINVAL(a) sinetab[NORMALIZE_ANGLE(a)]
-#define COSVAL(a) SINVAL((a) + QUADRANT)
-#define SINE(a, m) ((int32_t)((((long)SINVAL(a)) * (long)(m)) >> SIN_SHIFT))
-#define COSINE(a, m) SINE((a) + QUADRANT, m)
+#define COSVAL(a) SINVAL((a) + Quadrant)
+#define SINE(a, m) ((int32_t)((((long)SINVAL(a)) * (long)(m)) >> SinShift))
+#define COSINE(a, m) SINE((a) + Quadrant, m)
 extern uint16_t ARCTAN(int32_t delta_x, int32_t delta_y);
 
 #define WRAP_VAL(v, w) ((uint32_t)((v) < 0 ? ((v) + (w)) : ((v) >= (w) ? ((v) - (w)) : (v))))
-#define WRAP_X(x) WRAP_VAL(x, LOG_SPACE_WIDTH)
-#define WRAP_Y(y) WRAP_VAL(y, LOG_SPACE_HEIGHT)
+#define WRAP_X(x) WRAP_VAL(x, LogSpaceWidth())
+#define WRAP_Y(y) WRAP_VAL(y, LogSpaceHeight())
 #define WRAP_DELTA_X(dx) ((dx) < 0 ?                                                                \
-							  ((-(dx) <= LOG_SPACE_WIDTH >> 1) ? (dx) : (LOG_SPACE_WIDTH + (dx))) : \
-							  (((dx) <= LOG_SPACE_WIDTH >> 1) ? (dx) : ((dx) - LOG_SPACE_WIDTH)))
+							  ((-(dx) <= LogSpaceWidth() >> 1) ? (dx) : (LogSpaceWidth() + (dx))) : \
+							  (((dx) <= LogSpaceWidth() >> 1) ? (dx) : ((dx) - LogSpaceWidth())))
 #define WRAP_DELTA_Y(dy) ((dy) < 0 ?                                                                  \
-							  ((-(dy) <= LOG_SPACE_HEIGHT >> 1) ? (dy) : (LOG_SPACE_HEIGHT + (dy))) : \
-							  (((dy) <= LOG_SPACE_HEIGHT >> 1) ? (dy) : ((dy) - LOG_SPACE_HEIGHT)))
+							  ((-(dy) <= LogSpaceHeight() >> 1) ? (dy) : (LogSpaceHeight() + (dy))) : \
+							  (((dy) <= LogSpaceHeight() >> 1) ? (dy) : ((dy) - LogSpaceHeight())))
 
 #if 0 //defined(__cplusplus)
 }

@@ -75,7 +75,7 @@ GenerateMyconDefenders(uint8_t index)
 	if (!(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << shift))
 	{
 
-		PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+		PutGroupInfo(GroupsRandom, GroupSaveIp);
 		ReinitQueue(&GLOBAL(ip_group_q));
 		assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -97,7 +97,7 @@ GenerateMyconDefenders(uint8_t index)
 
 		uqm::currentActivity() &= ~START_INTERPLANETARY;
 		ReinitQueue(&GLOBAL(npc_built_ship_q));
-		GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+		GetGroupInfo(GroupsRandom, GroupLoadIp);
 
 		if (Survivors)
 		{
@@ -154,7 +154,7 @@ GenerateMycon_generateName(const SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (CurStarDescPtr->Index == EGG_CASE0_DEFINED
+	if (CurStarDescPtr()->Index == EGG_CASE0_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
@@ -176,19 +176,19 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 {
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		if ((CurStarDescPtr->Index == MYCON_DEFINED
-			 || CurStarDescPtr->Index == SUN_DEVICE_DEFINED)
+		if ((CurStarDescPtr()->Index == MYCON_DEFINED
+			 || CurStarDescPtr()->Index == SUN_DEVICE_DEFINED)
 			&& StartSphereTracking(MYCON_SHIP))
 		{
-			if (CurStarDescPtr->Index == MYCON_DEFINED
+			if (CurStarDescPtr()->Index == MYCON_DEFINED
 				|| !GET_GAME_STATE(SUN_DEVICE_UNGUARDED))
 			{
-				NotifyOthers(MYCON_SHIP, IPNL_ALL_CLEAR);
-				PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+				NotifyOthers(MYCON_SHIP, IpnlAllClear);
+				PutGroupInfo(GroupsRandom, GroupSaveIp);
 				ReinitQueue(&GLOBAL(ip_group_q));
 				assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
-				if (CurStarDescPtr->Index == MYCON_DEFINED
+				if (CurStarDescPtr()->Index == MYCON_DEFINED
 					|| !GET_GAME_STATE(MYCON_FELL_FOR_AMBUSH))
 				{
 					CloneShipFragment(MYCON_SHIP,
@@ -206,7 +206,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 
 				uqm::currentActivity() |= START_INTERPLANETARY;
-				if (CurStarDescPtr->Index == MYCON_DEFINED)
+				if (CurStarDescPtr()->Index == MYCON_DEFINED)
 				{
 					SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 				}
@@ -229,7 +229,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 
 					uqm::currentActivity() &= ~START_INTERPLANETARY;
 					ReinitQueue(&GLOBAL(npc_built_ship_q));
-					GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+					GetGroupInfo(GroupsRandom, GroupLoadIp);
 
 					if (MyconSurvivors)
 					{
@@ -242,7 +242,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 		}
 
-		switch (CurStarDescPtr->Index)
+		switch (CurStarDescPtr()->Index)
 		{
 			case SUN_DEVICE_DEFINED:
 				if (!GET_GAME_STATE(SUN_DEVICE))
@@ -251,8 +251,8 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 					solarSys->PlanetSideFrame[1] =
 						CaptureDrawable(
 							LoadGraphic(
-								SUN_DEVICE_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SUN_DEVICE_STRTAB);
+								SunDeviceMaskPmapAnimRes));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SunDeviceStrtabRes);
 					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 				break;
@@ -266,7 +266,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 
 				if (isDifficulty(uqm::Difficulty::Hard) && StartSphereTracking(MYCON_SHIP))
 				{
-					if (GenerateMyconDefenders(CurStarDescPtr->Index))
+					if (GenerateMyconDefenders(CurStarDescPtr()->Index))
 					{
 						return true;
 					}
@@ -278,8 +278,8 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 					LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 					solarSys->PlanetSideFrame[1] =
 						CaptureDrawable(
-							LoadGraphic(EGG_CASE_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(EGG_CASE_STRTAB);
+							LoadGraphic(EggCaseMaskPmapAnimRes));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(EggCaseStrtabRes);
 					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 				break;
@@ -290,7 +290,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& !uqm::isOriginalSeed()
-		&& (CurStarDescPtr->Index != EGG_CASE0_DEFINED || isDifficulty(uqm::Difficulty::Hard)))
+		&& (CurStarDescPtr()->Index != EGG_CASE0_DEFINED || isDifficulty(uqm::Difficulty::Hard)))
 	{
 		PLANET_INFO* pPlanetInfo = &solarSys->SysInfo.PlanetInfo;
 		const uint32_t rand = SysGenRNG->next();
@@ -305,7 +305,7 @@ static uint16_t
 GenerateMycon_generateEnergy(const SOLARSYS_STATE* solarSys,
 							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (CurStarDescPtr->Index == SUN_DEVICE_DEFINED
+	if (CurStarDescPtr()->Index == SUN_DEVICE_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		// This check is redundant since the retrieval bit will keep the
@@ -319,9 +319,9 @@ GenerateMycon_generateEnergy(const SOLARSYS_STATE* solarSys,
 			solarSys, whichNode, info);
 	}
 
-	if ((CurStarDescPtr->Index == EGG_CASE0_DEFINED
-		 || CurStarDescPtr->Index == EGG_CASE1_DEFINED
-		 || CurStarDescPtr->Index == EGG_CASE2_DEFINED)
+	if ((CurStarDescPtr()->Index == EGG_CASE0_DEFINED
+		 || CurStarDescPtr()->Index == EGG_CASE1_DEFINED
+		 || CurStarDescPtr()->Index == EGG_CASE2_DEFINED)
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		// This check is redundant since the retrieval bit will keep the
@@ -344,7 +344,7 @@ static bool
 GenerateMycon_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						   uint16_t whichNode)
 {
-	if (CurStarDescPtr->Index == SUN_DEVICE_DEFINED
+	if (CurStarDescPtr()->Index == SUN_DEVICE_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		assert(!GET_GAME_STATE(SUN_DEVICE) && whichNode == 0);
@@ -359,9 +359,9 @@ GenerateMycon_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		return true; // picked up
 	}
 
-	if ((CurStarDescPtr->Index == EGG_CASE0_DEFINED
-		 || CurStarDescPtr->Index == EGG_CASE1_DEFINED
-		 || CurStarDescPtr->Index == EGG_CASE2_DEFINED)
+	if ((CurStarDescPtr()->Index == EGG_CASE0_DEFINED
+		 || CurStarDescPtr()->Index == EGG_CASE1_DEFINED
+		 || CurStarDescPtr()->Index == EGG_CASE2_DEFINED)
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		assert(whichNode == 0);
@@ -369,7 +369,7 @@ GenerateMycon_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		GenerateDefault_landerReport(solarSys);
 		SetLanderTakeoff();
 
-		switch (CurStarDescPtr->Index)
+		switch (CurStarDescPtr()->Index)
 		{
 			case EGG_CASE0_DEFINED:
 				SET_GAME_STATE(EGG_CASE0_ON_SHIP, 1);

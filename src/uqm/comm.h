@@ -20,6 +20,7 @@
 #include "commglue.h"
 #include "globdata.h"
 #include "units.h"
+#include "setup.h"
 #include "core/misc/bittricks.h"
 #include "libs/gfxlib.h"
 // for CONVERSATION
@@ -30,8 +31,8 @@ extern "C" {
 
 #ifdef COMM_INTERNAL
 
-#define SLIDER_Y (RES_SCALE(107))
-#define SLIDER_HEIGHT RES_SCALE((!usingSpeech && isPC(uqm::UQMOptions::read().smoothScroll)) ? 4 : DOS_BOOL(15, 4))
+inline auto SliderY() { return (RES_SCALE(107)); }
+inline auto SliderHeight() { return RES_SCALE((!usingSpeech && isPC(uqm::UQMOptions::read().smoothScroll)) ? 4 : DOS_BOOL(15, 4)); }
 
 #include "commanim.h"
 
@@ -53,89 +54,89 @@ haveTransitionAnim(void)
 static inline bool
 wantTalkingAnim(void)
 {
-	return !(CommData.AlienTalkDesc.AnimFlags & PAUSE_TALKING);
+	return !(CommData.AlienTalkDesc.AnimFlags & PauseTalking);
 }
 
 static inline void
 setRunTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags |= WAIT_TALKING;
+	CommData.AlienTalkDesc.AnimFlags |= WaitTalking;
 }
 
 static inline void
 clearRunTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags &= ~WAIT_TALKING;
+	CommData.AlienTalkDesc.AnimFlags &= ~WaitTalking;
 }
 
 static inline bool
 runningTalkingAnim(void)
 {
-	return (CommData.AlienTalkDesc.AnimFlags & WAIT_TALKING);
+	return (CommData.AlienTalkDesc.AnimFlags & WaitTalking);
 }
 
 static inline void
 setRunIntroAnim(void)
 {
-	CommData.AlienTransitionDesc.AnimFlags |= TALK_INTRO;
+	CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
 }
 
 static inline bool
 runningIntroAnim(void)
 {
-	return (CommData.AlienTransitionDesc.AnimFlags & TALK_INTRO);
+	return (CommData.AlienTransitionDesc.AnimFlags & TalkIntro);
 }
 
 static inline void
 setStopTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags |= TALK_DONE;
+	CommData.AlienTalkDesc.AnimFlags |= TalkDone;
 }
 
 static inline void
 clearStopTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags &= ~TALK_DONE;
+	CommData.AlienTalkDesc.AnimFlags &= ~TalkDone;
 }
 
 static inline void
 restartStopTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags &= TALK_DONE;
+	CommData.AlienTalkDesc.AnimFlags &= TalkDone;
 }
 
 static inline bool
 signaledStopTalkingAnim(void)
 {
-	return CommData.AlienTalkDesc.AnimFlags & TALK_DONE;
+	return CommData.AlienTalkDesc.AnimFlags & TalkDone;
 }
 
 static inline void
 freezeTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags |= FREEZE_TALKING;
+	CommData.AlienTalkDesc.AnimFlags |= FreezeTalking;
 }
 
 static inline void
 unFreezeTalkingAnim(void)
 {
-	CommData.AlienTalkDesc.AnimFlags &= ~FREEZE_TALKING;
+	CommData.AlienTalkDesc.AnimFlags &= ~FreezeTalking;
 }
 
 static inline bool
 signaledFreezeTalkingAnim(void)
 {
-	return CommData.AlienTalkDesc.AnimFlags & FREEZE_TALKING;
+	return CommData.AlienTalkDesc.AnimFlags & FreezeTalking;
 }
 
 #endif
 
-#define TEXT_X_OFFS RES_SCALE(1)
-#define TEXT_Y_OFFS RES_SCALE(1)
-#define SIS_TEXT_WIDTH (SIS_SCREEN_WIDTH - (TEXT_X_OFFS << 1))
+inline auto TextXOffs() { return RES_SCALE(1); }
 
-#define BACKGROUND_VOL (usingSpeech && !VolasPackPresent ? (NormalVolume / 2) : NormalVolume)
-#define FOREGROUND_VOL NormalVolume
+inline auto SisTextWidth() { return (SisScreenWidth() - (TextXOffs() << 1)); }
+
+inline auto BackgroundVol() { return (usingSpeech && !VolasPackPresent ? (NormalVolume / 2) : NormalVolume); }
+
 
 extern void init_communication(void);
 extern void uninit_communication(void);
@@ -143,7 +144,7 @@ extern void uninit_communication(void);
 extern uint16_t InitCommunication(CONVERSATION which_comm);
 extern void RaceCommunication(void);
 
-#define WAIT_TRACK_ALL ((uint16_t)~0)
+inline constexpr auto WaitTrackAll {((uint16_t)~0)};
 extern void AlienTalkSegue(uint16_t wait_track);
 bool getLineWithinWidth(TEXT* pText, const char** startNext,
 						int16_t maxWidth, uint16_t maxChars);
@@ -173,10 +174,10 @@ extern void DeltaLastTime(TimePeriod diff);
 
 extern bool cwLock;
 
-#define USE_ALT_FRAME (1 << 0)
-#define USE_ALT_COLORMAP (1 << 1)
-#define USE_ALT_SONG (1 << 2)
-#define USE_ALT_ALL (USE_ALT_FRAME | USE_ALT_COLORMAP | USE_ALT_SONG)
+inline constexpr auto UseAltFrame {(1 << 0)};
+inline constexpr auto UseAltColormap {(1 << 1)};
+inline constexpr auto UseAltSong {(1 << 2)};
+inline constexpr auto UseAltAll {(UseAltFrame | UseAltColormap | UseAltSong)};
 extern uint8_t altResFlags;
 
 #if 0 //defined(__cplusplus)

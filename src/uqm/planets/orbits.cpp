@@ -486,7 +486,7 @@ void ComputeSpeed(PLANET_DESC* planet, bool GeneratingMoons,
 	if (GeneratingMoons)
 	{
 		planet->orb_speed =
-			FULL_CIRCLE / (29 * pow((double)planet->radius / (MIN_MOON_RADIUS + (MAX_GEN_MOONS - 1) * MOON_DELTA), 1.5));
+			FullCircle / (29 * pow((double)planet->radius / (MIN_MOON_RADIUS + (MAX_GEN_MOONS - 1) * MOON_DELTA), 1.5));
 		if ((planet->pPrevDesc->data_index & ~PLANET_SHIELDED)
 			>= FIRST_GAS_GIANT)
 		{
@@ -500,7 +500,7 @@ void ComputeSpeed(PLANET_DESC* planet, bool GeneratingMoons,
 	else
 	{
 		planet->orb_speed =
-			FULL_CIRCLE / (ONE_YEAR * pow((double)planet->radius / EARTH_RADIUS, 1.5));
+			FullCircle / (ONE_YEAR * pow((double)planet->radius / EARTH_RADIUS, 1.5));
 	}
 }
 
@@ -534,7 +534,7 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 
 	PLANET_DESC* pPD {pBaseDesc};
 	const uint16_t StarSize {system->SunDesc[0].data_index};
-	const uint8_t StarColor {STAR_COLOR(CurStarDescPtr->Type)};
+	const uint8_t StarColor {STAR_COLOR(CurStarDescPtr()->Type)};
 
 	if (NumPlanets == (uint8_t)~0)
 	{
@@ -551,10 +551,10 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 	}
 
 #ifdef DEBUG_ORBITS
-	GetClusterName(CurStarDescPtr, buf);
+	GetClusterName(CurStarDescPtr(), buf);
 	uqm::log::debug("cluster name = {}  color = %c type = %c", buf,
-					scolor[STAR_COLOR(CurStarDescPtr->Type)],
-					stype[STAR_TYPE(CurStarDescPtr->Type)]);
+					scolor[STAR_COLOR(CurStarDescPtr()->Type)],
+					stype[STAR_TYPE(CurStarDescPtr()->Type)]);
 #endif /* DEBUG_ORBITS */
 	const bool GeneratingMoons {(bool)(pBaseDesc == system->MoonDesc)};
 	const bool GasGiant = pPD && pPD->pPrevDesc && (pPD->pPrevDesc->data_index & ~PLANET_SHIELDED) >= FIRST_GAS_GIANT;
@@ -739,8 +739,8 @@ PickClosestHabitable(SOLARSYS_STATE* solarSys)
 	uint8_t numPlanets {solarSys->SunDesc[0].NumPlanets};
 	PLANET_DESC* pPD {solarSys->PlanetDesc};
 
-	const uint8_t starColor {STAR_COLOR(CurStarDescPtr->Type)};
-	const uint8_t starType {STAR_TYPE(CurStarDescPtr->Type)};
+	const uint8_t starColor {STAR_COLOR(CurStarDescPtr()->Type)};
+	const uint8_t starType {STAR_TYPE(CurStarDescPtr()->Type)};
 
 	if (starType == SUPER_GIANT_STAR)
 	{
@@ -845,7 +845,7 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 	uint32_t planetRadii[MAX_GEN_PLANETS];
 	// static int16_t diffCheck, min_radius;
 
-	uint8_t starColor {STAR_COLOR(CurStarDescPtr->Type)};
+	uint8_t starColor {STAR_COLOR(CurStarDescPtr()->Type)};
 	// Terrible, but efficient, hack to ensure some semblance of sanity.
 	// Eventually, we will need further code if we care about habitable homes.
 	if (uqm::isStarSeed() && starColor == RED_BODY)

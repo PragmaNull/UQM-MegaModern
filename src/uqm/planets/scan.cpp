@@ -101,7 +101,7 @@ EraseCoarseScan(void)
 static void
 PrintScanTitleText(TEXT* t)
 {
-	SetContextForeGroundColor(uqm::usesAltScanColors(uqm::UQMOptions::read().whichCoarseScan) ? SCAN_PC_TITLE_COLOR_6014 : SCAN_PC_TITLE_COLOR);
+	SetContextForeGroundColor(uqm::usesAltScanColors(uqm::UQMOptions::read().whichCoarseScan) ? ScanPcTitleColor6014 : ScanPcTitleColor);
 
 	if (!uqm::UQMOptions::read().nebulae)
 	{
@@ -109,10 +109,10 @@ PrintScanTitleText(TEXT* t)
 	}
 	else
 	{
-		font_DrawTracedText(t, (uqm::usesAltScanColors(uqm::UQMOptions::read().whichCoarseScan) ? SCAN_PC_TITLE_COLOR_6014 : GetContextForeGroundColor()), OUTLINE_COLOR);
+		font_DrawTracedText(t, (uqm::usesAltScanColors(uqm::UQMOptions::read().whichCoarseScan) ? ScanPcTitleColor6014 : GetContextForeGroundColor()), OutlineColor);
 	}
 
-	SetContextForeGroundColor(SCAN_INFO_COLOR);
+	SetContextForeGroundColor(ScanInfoColor);
 }
 
 static void
@@ -146,7 +146,7 @@ PrintScanText(TEXT* t)
 	else
 	{
 		font_DrawTracedText(t, GetContextForeGroundColor(),
-							OUTLINE_COLOR);
+							OutlineColor);
 	}
 }
 
@@ -210,7 +210,7 @@ void GetPlanetTitle(uqstl::span<char> buf)
 	const int val {pSolarSysState->pOrbitalDesc->data_index & ~PLANET_SHIELDED};
 	if (val >= FIRST_GAS_GIANT)
 	{
-		if (!EXTENDED)
+		if (!IsExtended())
 		{
 			const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{}", GAME_STRING(SCAN_STRING_BASE + 4 + 51));
 			*fmtResult.out = '\0';
@@ -234,9 +234,9 @@ void GetPlanetTitle(uqstl::span<char> buf)
 static void
 HazardCase(uint8_t hazard)
 {
-#define HAZARD_CASE(a, b)      \
-	((a) ? DULL_YELLOW_COLOR : \
-		   ((b) ? BRIGHT_RED_COLOR : SCAN_INFO_COLOR))
+#define HAZARD_CASE(a, b)    \
+	((a) ? DullYellowColor : \
+		   ((b) ? BrightRedColor : ScanInfoColor))
 	Color HazardColor;
 
 	const uint16_t Temperature = GetThermalHazardRating(
@@ -259,7 +259,7 @@ HazardCase(uint8_t hazard)
 									  Tectonics > 5);
 			break;
 		default:
-			HazardColor = SCAN_INFO_COLOR;
+			HazardColor = ScanInfoColor;
 			break;
 	}
 
@@ -280,14 +280,14 @@ PrintCoarseScanPC(void)
 	SetContext(PlanetContext);
 
 	t.align = ALIGN_CENTER;
-	t.baseline.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
+	t.baseline.x = RES_SCALE(OrigSisScreenWidth() >> 1);
 	t.baseline.y = SCAN_TITLE_Y;
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 
 	SetContextForeGroundColor(uqm::usesAltScanColors(uqm::UQMOptions::read().whichCoarseScan) ?
-								  SCAN_INFO_COLOR :
-								  SCAN_PC_TITLE_COLOR);
+								  ScanInfoColor :
+								  ScanPcTitleColor);
 	SetContextFont(MicroFont);
 
 	BatchGraphics();
@@ -296,7 +296,7 @@ PrintCoarseScanPC(void)
 	SetContextFont(SAFE_BOOL(TinyFont, TinyFontCond));
 
 #define LEFT_SIDE_BASELINE_X_PC RES_SCALE(2)
-#define RIGHT_SIDE_BASELINE_X_PC (SIS_SCREEN_WIDTH - RES_SCALE(73) + SAFE_X)
+#define RIGHT_SIDE_BASELINE_X_PC (SisScreenWidth() - RES_SCALE(73) + SafeX())
 #define SCAN_BASELINE_Y_PC (PLANET_ORG_Y - RES_SCALE(13))
 #define SCAN_LEADING_PC RES_SCALE(10)
 
@@ -475,11 +475,11 @@ PrintCoarseScan3DO(void)
 	BatchGraphics();
 
 	t.align = ALIGN_CENTER;
-	t.baseline.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
+	t.baseline.x = RES_SCALE(OrigSisScreenWidth() >> 1);
 	t.baseline.y = SCAN_TITLE_Y;
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
-	SetContextForeGroundColor(SCAN_INFO_COLOR);
+	SetContextForeGroundColor(ScanInfoColor);
 	SetContextFont(MicroFont);
 	PrintScanText(&t);
 
@@ -574,7 +574,7 @@ PrintCoarseScan3DO(void)
 
 	if (uqm::UQMOptions::read().hazardColors)
 	{
-		SetContextForeGroundColor(SCAN_INFO_COLOR);
+		SetContextForeGroundColor(ScanInfoColor);
 	}
 
 	PrintScanText(&t);
@@ -740,7 +740,7 @@ void RedrawSurfaceScan(const GFXPOINT* newLoc)
 	GFXCONTEXT OldContext {SetContext(ScanContext)};
 
 	BatchGraphics();
-	DrawPlanet(0, BLACK_COLOR);
+	DrawPlanet(0, BlackColor);
 	DrawScannedObjects(true);
 	if (newLoc)
 	{
@@ -758,9 +758,9 @@ getLandingFuelNeeded(void)
 	uint16_t fuel {};
 
 	fuel = pSolarSysState->SysInfo.PlanetInfo.SurfaceGravity << 1;
-	if (fuel > 3 * FUEL_TANK_SCALE)
+	if (fuel > 3 * FuelTankScale)
 	{
-		fuel = 3 * FUEL_TANK_SCALE;
+		fuel = 3 * FuelTankScale;
 	}
 
 	return fuel;
@@ -772,7 +772,7 @@ spawnFwiffo(void)
 	HSHIPFRAG hStarShip {};
 
 	EncounterGroup = 0;
-	PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+	PutGroupInfo(GroupsRandom, GroupSaveIp);
 	ReinitQueue(&GLOBAL(ip_group_q));
 	assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -785,7 +785,7 @@ spawnFwiffo(void)
 		StarShipPtr = LockShipFrag(&GLOBAL(npc_built_ship_q),
 								   hStarShip);
 		// Name Fwiffo
-		StarShipPtr->captains_name_index = NAME_OFFSET + NUM_CAPTAINS_NAMES;
+		StarShipPtr->captains_name_index = NameOffset + NumCaptainsNames;
 		UnlockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
 	}
 }
@@ -808,7 +808,7 @@ DispatchLander(void)
 		DrawMineralHelpers();
 		if (!uqm::UQMOptions::read().submenu)
 		{
-			DeltaSISGauges(0, UNDEFINED_DELTA, 0);
+			DeltaSISGauges(0, UndefinedDelta, 0);
 		}
 	}
 
@@ -981,13 +981,13 @@ drawLandingFuelUsage(uint16_t fuel)
 		old_status_message_mode = SetStatusMessageMode(SMM_ALERT);
 	}
 	else if (((int32_t)(GLOBAL_SIS(FuelOnBoard)) - fuel)
-			 <= (int32_t)(get_fuel_to_sol() + (5 * FUEL_TANK_SCALE)))
+			 <= (int32_t)(get_fuel_to_sol() + (5 * FuelTankScale)))
 	{ // We will have enough fuel to get to Sol if we dispatch the lander
 		// but will have less than 5 to spare
 		old_status_message_mode = SetStatusMessageMode(SMM_WARNING);
 	}
 
-	fmt::format_to_n(buf, sizeof(buf) - 1, "{}{:1.1}", GAME_STRING(NAVIGATION_STRING_BASE + 5), (float)fuel / FUEL_TANK_SCALE);
+	fmt::format_to_n(buf, sizeof(buf) - 1, "{}{:1.1}", GAME_STRING(NAVIGATION_STRING_BASE + 5), (float)fuel / FuelTankScale);
 	DrawStatusMessage(buf);
 
 	if (old_status_message_mode != SMM_UNDEFINED)
@@ -1015,12 +1015,12 @@ PickPlanetSide(void)
 
 	if (is3DO(uqm::UQMOptions::read().landerStyle))
 	{
-		ClearSISRect(CLEAR_SIS_RADAR);
+		ClearSISRect(ClearSisRadar);
 	}
 
 	SetContext(ScanContext);
 	BatchGraphics();
-	DrawPlanet(0, BLACK_COLOR);
+	DrawPlanet(0, BlackColor);
 	DrawScannedObjects(false);
 	UnbatchGraphics();
 
@@ -1035,7 +1035,7 @@ PickPlanetSide(void)
 		DrawRadarBorder();
 	}
 
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundNone, MenuSoundSelect);
 
 	PickState.success = false;
 	MenuState.InputFunc = DoPickPlanetSide;
@@ -1051,7 +1051,7 @@ PickPlanetSide(void)
 		restorePlanetLocationImage();
 	}
 
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	return retval;
 }
@@ -1064,7 +1064,7 @@ DrawScannedStuff(uint16_t y, uint16_t scan)
 	HELEMENT hNextElement {};
 	Color OldColor;
 
-	OldColor = SetContextForeGroundColor(BLACK_COLOR);
+	OldColor = SetContextForeGroundColor(BlackColor);
 
 	for (HELEMENT hElement {GetHeadElement()}; hElement; hElement = hNextElement)
 	{
@@ -1083,7 +1083,7 @@ DrawScannedStuff(uint16_t y, uint16_t scan)
 		}
 
 		// XXX: flag this as 'found' scanned object
-		ElementPtr->state_flags |= APPEARING;
+		ElementPtr->state_flags |= Appearing;
 
 		s.origin = ElementPtr->current.location;
 
@@ -1095,7 +1095,7 @@ DrawScannedStuff(uint16_t y, uint16_t scan)
 		else
 		{
 			uint8_t grad {};
-			Color c = WHITE_COLOR;
+			Color c = WhiteColor;
 			uint16_t nodeSize {};
 
 			// mineral -- white --> turquoise?? (contrasts with red)
@@ -1175,7 +1175,7 @@ DrawPCScannedStuff(uint16_t scan)
 				uint16_t diff {};
 
 				uint16_t growth {0};
-				ElementPtr->state_flags |= APPEARING;
+				ElementPtr->state_flags |= Appearing;
 				s.origin = ElementPtr->current.location;
 				now = GetTimeCounter() + TimePeriod {17};
 
@@ -1228,7 +1228,7 @@ DrawPCScannedStuff(uint16_t scan)
 			}
 			else
 			{
-				ElementPtr->state_flags |= APPEARING;
+				ElementPtr->state_flags |= Appearing;
 				UnlockElement(hElement);
 				hElement = hNextElement;
 			}
@@ -1294,15 +1294,15 @@ ScanPlanet(uint16_t scanType)
 	GFXRECT r;
 	const static Color textColors[] =
 		{
-			SCAN_MINERAL_TEXT_COLOR,
-			SCAN_ENERGY_TEXT_COLOR,
-			SCAN_BIOLOGICAL_TEXT_COLOR,
+			ScanMineralTextColor,
+			ScanEnergyTextColor,
+			ScanBiologicalTextColor,
 		};
 	const static Color tintColors[] =
 		{
-			SCAN_MINERAL_TINT_COLOR,
-			SCAN_ENERGY_TINT_COLOR,
-			SCAN_BIOLOGICAL_TINT_COLOR,
+			ScanMineralTintColor,
+			ScanEnergyTintColor,
+			ScanBiologicalTintColor,
 		};
 
 	if (scanType == AUTO_SCAN)
@@ -1333,8 +1333,8 @@ ScanPlanet(uint16_t scanType)
 		static TimeCount TimeOutDraw;
 		TimeCount Now;
 
-		t.baseline.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
-		t.baseline.y = SIS_SCREEN_HEIGHT - MAP_HEIGHT - RES_SCALE(7);
+		t.baseline.x = RES_SCALE(OrigSisScreenWidth() >> 1);
+		t.baseline.y = SisScreenHeight() - MAP_HEIGHT - RES_SCALE(7);
 		t.align = ALIGN_CENTER;
 		t.CharCount = (uint16_t)~0;
 
@@ -1343,7 +1343,7 @@ ScanPlanet(uint16_t scanType)
 		SetContext(PlanetContext);
 		r.corner.x = 0;
 		r.corner.y = t.baseline.y - RES_SCALE(10);
-		r.extent.width = SIS_SCREEN_WIDTH;
+		r.extent.width = SisScreenWidth();
 		r.extent.height = t.baseline.y - r.corner.y + RES_SCALE(1);
 		RepairBackRect(&r);
 
@@ -1356,7 +1356,7 @@ ScanPlanet(uint16_t scanType)
 		// Draw a virgin surface
 		if (uqm::UQMOptions::read().scanStyle != uqm::EmulationMode::PC)
 		{
-			DrawPlanet(0, BLACK_COLOR);
+			DrawPlanet(0, BlackColor);
 		}
 
 		tintColor = tintColors[scan];
@@ -1451,7 +1451,7 @@ ScanPlanet(uint16_t scanType)
 
 	if (scanType == AUTO_SCAN || uqm::UQMOptions::read().scanStyle == uqm::EmulationMode::PC)
 	{ // clear the last scan
-		DrawPlanet(0, BLACK_COLOR);
+		DrawPlanet(0, BlackColor);
 		DrawDefaultPlanetSphere();
 		DrawScannedObjects(false);
 	}
@@ -1506,7 +1506,7 @@ DoScan(MENU_STATE* pMS)
 			}
 
 			DrawMenuStateStrings(PM_MIN_SCAN, pMS->CurState);
-			SetFlashRect(SFR_MENU_3DO, false);
+			SetFlashRect(SfrMenu3do(), false);
 
 			return true;
 		}
@@ -1627,7 +1627,7 @@ void ScanSystem(void)
 
 	DrawMenuStateStrings(PM_MIN_SCAN, MenuState.CurState);
 
-	SetFlashRect(SFR_MENU_3DO, false);
+	SetFlashRect(SfrMenu3do(), false);
 
 	if (uqm::usesPictograms(uqm::UQMOptions::read().whichCoarseScan))
 	{
@@ -1638,7 +1638,7 @@ void ScanSystem(void)
 		PrintCoarseScanPC();
 	}
 
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	MenuState.InputFunc = DoScan;
 
@@ -1651,7 +1651,7 @@ void ScanSystem(void)
 	{
 		BatchGraphics();
 		SetContext(ScanContext);
-		DrawPlanet(0, BLACK_COLOR);
+		DrawPlanet(0, BlackColor);
 
 		EraseCoarseScan();
 		UnbatchGraphics();
@@ -1702,7 +1702,7 @@ generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
 	if (system->PlanetSideFrame[0] == 0)
 	{
 		system->PlanetSideFrame[0] =
-			CaptureDrawable(LoadGraphic(CANNISTER_MASK_PMAP_ANIM));
+			CaptureDrawable(LoadGraphic(CannisterMaskPmapAnimRes));
 	}
 
 	for (i = 0; i < MAX_LIFE_VARIATION

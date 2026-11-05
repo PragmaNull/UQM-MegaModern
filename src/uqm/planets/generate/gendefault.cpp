@@ -50,7 +50,7 @@ const GenerateFunctions generateDefaultFunctions = {
 
 bool GenerateDefault_initNpcs(SOLARSYS_STATE* solarSys)
 {
-	if (!GetGroupInfo(GLOBAL(BattleGroupRef), GROUP_INIT_IP))
+	if (!GetGroupInfo(GLOBAL(BattleGroupRef), GroupInitIp))
 	{
 		GLOBAL(BattleGroupRef) = 0;
 		BuildGroups();
@@ -67,7 +67,7 @@ bool GenerateDefault_initNpcs(SOLARSYS_STATE* solarSys)
 
 bool GenerateDefault_reinitNpcs(SOLARSYS_STATE* solarSys)
 {
-	GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+	GetGroupInfo(GroupsRandom, GroupLoadIp);
 	// This is not a great place to do the Yehat rebellion check, but
 	// since you can start the rebellion in any star system (not just
 	// the Homeworld), I could not find a better place for it.
@@ -80,7 +80,7 @@ bool GenerateDefault_reinitNpcs(SOLARSYS_STATE* solarSys)
 
 bool GenerateDefault_uninitNpcs(SOLARSYS_STATE* solarSys)
 {
-	PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+	PutGroupInfo(GroupsRandom, GroupSaveIp);
 	ReinitQueue(&GLOBAL(npc_built_ship_q));
 	ReinitQueue(&GLOBAL(ip_group_q));
 

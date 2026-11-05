@@ -60,7 +60,7 @@ static RACE_DESC androsynth_desc =
 	{
 		{/* SHIP_INFO */
 		 "guardian",
-		 FIRES_FORE | SEEKING_WEAPON,
+		 FiresFore | SeekingWeapon,
 		 15, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -120,7 +120,7 @@ static RACE_DESC androsynth_desc =
 		{
 			/* INTEL_STUFF */
 			0,
-			LONG_RANGE_WEAPON >> 2,
+			LongRangeWeapon >> 2,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -185,7 +185,7 @@ blazer_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	ElementPtr0->life_span = old_life;
 	ElementPtr0->crew_level = old_crew_level;
 
-	ElementPtr0->state_flags &= ~(DISAPPEARING | NONSOLID);
+	ElementPtr0->state_flags &= ~(Disappearing | Nonsolid);
 	collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 }
 
@@ -204,7 +204,7 @@ bubble_preprocess(ELEMENT* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 
 		thrust_wait = (uint8_t)((uint16_t)uqm::random().next() & 3);
 	}
@@ -224,13 +224,13 @@ bubble_preprocess(ELEMENT* ElementPtr)
 		{
 			facing = (uint16_t)uqm::random().next();
 		}
-		else if (delta_facing <= ANGLE_TO_FACING(HALF_CIRCLE))
+		else if (delta_facing <= ANGLE_TO_FACING(HalfCircle))
 		{
-			facing += (uint16_t)uqm::random().next() & (ANGLE_TO_FACING(HALF_CIRCLE) - 1);
+			facing += (uint16_t)uqm::random().next() & (ANGLE_TO_FACING(HalfCircle) - 1);
 		}
 		else
 		{
-			facing -= (uint16_t)uqm::random().next() & (ANGLE_TO_FACING(HALF_CIRCLE) - 1);
+			facing -= (uint16_t)uqm::random().next() & (ANGLE_TO_FACING(HalfCircle) - 1);
 		}
 		SetVelocityVector(&ElementPtr->velocity,
 						  MISSILE_SPEED, facing);
@@ -253,7 +253,7 @@ initialize_bubble(ELEMENT* ShipPtr, HELEMENT BubbleArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = ANDROSYNTH_OFFSET;
 	MissileBlock.speed = MISSILE_SPEED;
 	MissileBlock.hit_points = MISSILE_HITS;
@@ -290,8 +290,8 @@ androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		ObjectsOfConcern[CREW_OBJECT_INDEX].ObjectPtr = 0;
 		if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
 		{
-			if ((lpEvalDesc->ObjectPtr->state_flags & FINITE_LIFE)
-				&& !(lpEvalDesc->ObjectPtr->state_flags & CREW_OBJECT))
+			if ((lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
+				&& !(lpEvalDesc->ObjectPtr->state_flags & CrewObject))
 			{
 				lpEvalDesc->MoveState = AVOID;
 			}
@@ -314,10 +314,10 @@ androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			if (lpEvalDesc->which_turn <= 16
 				&& (StarShipPtr->special_counter > 0
 					|| StarShipPtr->RaceDescPtr->ship_info.energy_level < MAX_ENERGY / 3
-					|| ((WEAPON_RANGE(&pEnemyStarShip->RaceDescPtr->cyborg_control) <= RES_SCALE(CLOSE_RANGE_WEAPON)
+					|| ((WEAPON_RANGE(&pEnemyStarShip->RaceDescPtr->cyborg_control) <= RES_SCALE(CloseRangeWeapon)
 						 && lpEvalDesc->ObjectPtr->crew_level > BLAZER_DAMAGE)
 						|| (lpEvalDesc->ObjectPtr->crew_level > (BLAZER_DAMAGE * 3)
-							&& MANEUVERABILITY(&pEnemyStarShip->RaceDescPtr->cyborg_control) > RESOLUTION_COMPENSATED(SLOW_SHIP)))))
+							&& MANEUVERABILITY(&pEnemyStarShip->RaceDescPtr->cyborg_control) > RESOLUTION_COMPENSATED(SlowShip)))))
 			{
 				lpEvalDesc->MoveState = ENTICE;
 			}
@@ -327,29 +327,29 @@ androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 		if (StarShipPtr->special_counter == 0)
 		{
-			StarShipPtr->ship_input_state &= ~SPECIAL;
+			StarShipPtr->ship_input_state &= ~SpecialFlag;
 			if ((ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
 				 && ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 4)
 				|| (lpEvalDesc->ObjectPtr
 					&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= MAX_ENERGY / 3
 					&& (WEAPON_RANGE(&pEnemyStarShip->RaceDescPtr->cyborg_control) >= WEAPON_RANGE(&StarShipPtr->RaceDescPtr->cyborg_control) << 1
 						|| (lpEvalDesc->which_turn < 16
-							&& (WEAPON_RANGE(&pEnemyStarShip->RaceDescPtr->cyborg_control) > RES_SCALE(CLOSE_RANGE_WEAPON)
+							&& (WEAPON_RANGE(&pEnemyStarShip->RaceDescPtr->cyborg_control) > RES_SCALE(CloseRangeWeapon)
 								|| lpEvalDesc->ObjectPtr->crew_level <= BLAZER_DAMAGE)
 							&& (lpEvalDesc->ObjectPtr->crew_level <= (BLAZER_DAMAGE * 3)
-								|| MANEUVERABILITY(&pEnemyStarShip->RaceDescPtr->cyborg_control) <= RESOLUTION_COMPENSATED(SLOW_SHIP))))))
+								|| MANEUVERABILITY(&pEnemyStarShip->RaceDescPtr->cyborg_control) <= RESOLUTION_COMPENSATED(SlowShip))))))
 			{
-				StarShipPtr->ship_input_state |= SPECIAL;
+				StarShipPtr->ship_input_state |= SpecialFlag;
 			}
 		}
 
-		if (!(StarShipPtr->ship_input_state & SPECIAL)
+		if (!(StarShipPtr->ship_input_state & SpecialFlag)
 			&& StarShipPtr->weapon_counter == 0
 			&& lpEvalDesc->ObjectPtr)
 		{
 			if (lpEvalDesc->which_turn <= 4)
 			{
-				StarShipPtr->ship_input_state |= WEAPON;
+				StarShipPtr->ship_input_state |= WeaponFlag;
 			}
 			else if (lpEvalDesc->MoveState != PURSUE
 					 && lpEvalDesc->which_turn <= 12)
@@ -374,10 +374,10 @@ androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				const uint16_t direction_facing {ARCTAN(delta_x, delta_y)};
 
 				if (NORMALIZE_ANGLE(travel_facing
-									- direction_facing + OCTANT)
-					<= QUADRANT)
+									- direction_facing + Octant)
+					<= Quadrant)
 				{
-					StarShipPtr->ship_input_state |= WEAPON;
+					StarShipPtr->ship_input_state |= WeaponFlag;
 				}
 			}
 		}
@@ -393,14 +393,14 @@ androsynth_postprocess(ELEMENT* ElementPtr)
 	/* take care of blazer effect */
 	if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
 	{
-		if ((StarShipPtr->cur_status_flags & ANDROSYN_COMET_TOGGLE)
+		if ((StarShipPtr->cur_status_flags & AndrosynCometToggle)
 			|| StarShipPtr->RaceDescPtr->ship_info.energy_level == 0)
 		{
 			StarShipPtr->RaceDescPtr->characteristics.energy_regeneration =
 				(uint8_t)BLAZER_DEGENERATION;
 			StarShipPtr->energy_counter = ENERGY_WAIT;
 
-			if (StarShipPtr->cur_status_flags & ANDROSYN_COMET_TOGGLE)
+			if (StarShipPtr->cur_status_flags & AndrosynCometToggle)
 			{
 				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
@@ -411,7 +411,7 @@ androsynth_postprocess(ELEMENT* ElementPtr)
 					StarShipPtr->RaceDescPtr->characteristics.turn_wait;
 				ElementPtr->mass_points = BLAZER_MASS;
 				StarShipPtr->RaceDescPtr->characteristics.turn_wait = BLAZER_TURN_WAIT;
-				StarShipPtr->cur_status_flags &= ~ANDROSYN_COMET_TOGGLE;
+				StarShipPtr->cur_status_flags &= ~AndrosynCometToggle;
 
 				/* Save the current collision func because we were not the
 				 * ones who set it */
@@ -437,13 +437,13 @@ androsynth_postprocess(ELEMENT* ElementPtr)
 			StarShipPtr->energy_counter = 1;
 		}
 	}
-	else if ((StarShipPtr->cur_status_flags & SPECIAL) && (StarShipPtr->cur_status_flags & ANDROSYN_COMET_TOGGLE))
+	else if ((StarShipPtr->cur_status_flags & SpecialFlag) && (StarShipPtr->cur_status_flags & AndrosynCometToggle))
 	/* Kruzen: If we failed to transform into
 				 * comet due to collision failed in Process() -
 				 * remove the special flag.
 				 */
 	{
-		StarShipPtr->cur_status_flags &= ~ANDROSYN_COMET_TOGGLE;
+		StarShipPtr->cur_status_flags &= ~AndrosynCometToggle;
 	}
 }
 
@@ -458,29 +458,29 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 	cur_status_flags = StarShipPtr->cur_status_flags;
 	if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.ship)
 	{
-		if (cur_status_flags & SPECIAL)
+		if (cur_status_flags & SpecialFlag)
 		{
 			if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SPECIAL_ENERGY_COST)
 			{
-				cur_status_flags |= LOW_ON_ENERGY; /* so text will flash */
+				cur_status_flags |= LowOnEnergy; /* so text will flash */
 			}
 			else
 			{
-				cur_status_flags &= ~WEAPON;
+				cur_status_flags &= ~WeaponFlag;
 
 				ElementPtr->next.image.farray =
 					StarShipPtr->RaceDescPtr->ship_data.special;
 				ElementPtr->next.image.frame =
 					SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.special[0],
 									 ElementPtr->next.image.frame);
-				ElementPtr->state_flags |= CHANGING;
-				cur_status_flags |= ANDROSYN_COMET_TOGGLE;
+				ElementPtr->state_flags |= Changing;
+				cur_status_flags |= AndrosynCometToggle;
 			}
 		}
 	}
 	else
 	{
-		cur_status_flags &= ~(THRUST | WEAPON);
+		cur_status_flags &= ~(ThrustFlag | WeaponFlag);
 
 		/* protection against vux */
 		if (StarShipPtr->RaceDescPtr->characteristics.turn_wait > BLAZER_TURN_WAIT)
@@ -494,8 +494,8 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 		if (StarShipPtr->RaceDescPtr->ship_info.energy_level == 0)
 		{
 			ZeroVelocityComponents(&ElementPtr->velocity);
-			cur_status_flags &= ~(LEFT | RIGHT
-								  | SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED);
+			cur_status_flags &= ~(LeftFlag | RightFlag
+								  | ShipAtMaxSpeed | ShipBeyondMaxSpeed);
 
 			StarShipPtr->RaceDescPtr->characteristics.turn_wait =
 				StarShipPtr->RaceDescPtr->characteristics.special_wait;
@@ -508,11 +508,11 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->next.image.frame =
 				SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.ship[0],
 								 ElementPtr->next.image.frame);
-			ElementPtr->state_flags |= CHANGING;
+			ElementPtr->state_flags |= Changing;
 		}
 		else
 		{
-			cur_status_flags |= SPECIAL;
+			cur_status_flags |= SpecialFlag;
 
 			if (ElementPtr->thrust_wait)
 			{
@@ -522,9 +522,9 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 			{
 				uint16_t facing {StarShipPtr->ShipFacing};
 				if (ElementPtr->turn_wait == 0
-					&& (cur_status_flags & (LEFT | RIGHT)))
+					&& (cur_status_flags & (LeftFlag | RightFlag)))
 				{
-					if (cur_status_flags & LEFT)
+					if (cur_status_flags & LeftFlag)
 					{
 						--facing;
 					}
@@ -536,7 +536,7 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 
 				SetVelocityVector(&ElementPtr->velocity,
 								  BLAZER_THRUST, NORMALIZE_FACING(facing));
-				cur_status_flags |= SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED;
+				cur_status_flags |= ShipAtMaxSpeed | ShipBeyondMaxSpeed;
 			}
 		}
 	}
@@ -553,11 +553,11 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_androsynth(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		androsynth_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		androsynth_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		androsynth_desc.cyborg_control.WeaponRange = LONG_RANGE_WEAPON_HD >> 2;
+		androsynth_desc.cyborg_control.WeaponRange = LongRangeWeaponHd >> 2;
 	}
 	else
 	{
@@ -565,7 +565,7 @@ init_androsynth(void)
 		androsynth_desc.characteristics.thrust_increment =
 			THRUST_INCREMENT;
 		androsynth_desc.cyborg_control.WeaponRange =
-			LONG_RANGE_WEAPON >> 2;
+			LongRangeWeapon >> 2;
 	}
 
 	androsynth_desc.preprocess_func = androsynth_preprocess;

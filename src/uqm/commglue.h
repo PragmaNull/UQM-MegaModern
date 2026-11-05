@@ -134,9 +134,9 @@ extern LOCDATA* init_zoqfot_comm(void);
 
 extern LOCDATA* init_umgah_comm(void);
 
-#define MAX_INTERPOLATE 8192 // the max length we can robo-interpolate
-#define MAX_CLIPNAME 128	 // e.g. "pkunk-004c.ogg"
-#define NUM_ROBO_TRACKS 11	 // Need 11 for getPoint (8 digits, 2 points, 1 by)
+inline constexpr auto MaxInterpolate {8192}; // the max length we can robo-interpolate
+inline constexpr auto MaxClipname {128};	 // e.g. "pkunk-004c.ogg"
+inline constexpr auto NumRoboTracks {11};	 // Need 11 for getPoint (8 digits, 2 points, 1 by)
 
 enum
 {

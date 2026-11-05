@@ -100,8 +100,8 @@ GeneratePkunk_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 	{
 		if (StartSphereTracking(PKUNK_SHIP))
 		{
-			NotifyOthers(PKUNK_SHIP, IPNL_ALL_CLEAR);
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			NotifyOthers(PKUNK_SHIP, IpnlAllClear);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -116,7 +116,7 @@ GeneratePkunk_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 			return true;
 		}
@@ -124,8 +124,8 @@ GeneratePkunk_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
-				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(PKUNK_RUINS_STRTAB);
+				CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(PkunkRuinsStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			if (GET_GAME_STATE(CLEAR_SPINDLE))
 			{ // Already picked up the Clear Spindle, skip the report

@@ -23,7 +23,7 @@
 #include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "../../nameref.h"
-//JMS_GFX: For LoadGraphic
+//JMS_GFX: For LoadGraphic()
 
 #include "uqm/setup.h"
 // for GraphicsLock
@@ -37,11 +37,11 @@ static LOCDATA orz_desc =
 		nullptr, /* uninit_encounter_func */
 		ORZ_PMAP_ANIM, /* AlienFrame */
 		ORZ_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		ORZ_COLOR_MAP, /* AlienColorMap */
@@ -56,9 +56,9 @@ static LOCDATA orz_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				4,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				4,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -66,9 +66,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				10,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				10,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -76,9 +76,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				15,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				15,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 10, /* FrameRate */
 				GameTicksPerSecond,
@@ -86,9 +86,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				17,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				17,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 10, /* FrameRate */
 				GameTicksPerSecond,
@@ -96,9 +96,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				20,		   /* StartIndex */
-				2,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				20,		  /* StartIndex */
+				2,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -106,9 +106,9 @@ static LOCDATA orz_desc =
 				(1 << 7),				/* BlockMask */
 			},
 								{
-				22,			   /* StartIndex */
-				8,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				22,			  /* StartIndex */
+				8,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -116,9 +116,9 @@ static LOCDATA orz_desc =
 				(1 << 6),				/* BlockMask */
 			},
 								{
-				30,			   /* StartIndex */
-				3,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				30,			  /* StartIndex */
+				3,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -126,9 +126,9 @@ static LOCDATA orz_desc =
 				(1 << 5),				/* BlockMask */
 			},
 								{
-				33,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				33,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -136,9 +136,9 @@ static LOCDATA orz_desc =
 				(1 << 4),				/* BlockMask */
 			},
 								{
-				36,			   /* StartIndex */
-				25,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				36,			  /* StartIndex */
+				25,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 60,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -146,9 +146,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				61,			   /* StartIndex */
-				15,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				61,			  /* StartIndex */
+				15,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 60,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -156,9 +156,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				76,			   /* StartIndex */
-				17,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				76,			  /* StartIndex */
+				17,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 60,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -166,9 +166,9 @@ static LOCDATA orz_desc =
 				(1 << 12),				/* BlockMask */
 			},
 								{
-				93,			   /* StartIndex */
-				25,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				93,			  /* StartIndex */
+				25,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 60,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -176,9 +176,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				118,		   /* StartIndex */
-				11,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				118,		  /* StartIndex */
+				11,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 60,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -299,8 +299,8 @@ ExitConversation(RESPONSE_REF R)
 	else if (PLAYER_SAID(R, about_andro_3)
 			 || PLAYER_SAID(R, must_know_about_androsyn))
 	{
-		// Run filter for HD
-		if (IS_HD)
+		// Run filter for HdResolutionFactor
+		if (IsHd())
 		{
 			EngageFilters(&orz_filters);
 		}
@@ -783,7 +783,7 @@ Intro(void)
 	if (Manner == 2)
 	{
 		// JMS_GFX: Use separate red angry graphics in hires instead of colormap transform.
-		if (IS_HD)
+		if (IsHd())
 		{
 			CommData.AlienFrameRes = ORZ_ANGRY_PMAP_ANIM;
 			CommData.AlienFrame = CaptureDrawable(
@@ -1017,9 +1017,9 @@ init_orz_comm(void)
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	orz_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	orz_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	orz_desc.AlienTextBaseline.y = 0;
-	orz_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	orz_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	if (GET_GAME_STATE(ORZ_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)

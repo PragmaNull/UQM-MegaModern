@@ -94,8 +94,8 @@ GenerateYehat_generateOrbital(SOLARSYS_STATE* solarSys,
 	{
 		if (StartSphereTracking(YEHAT_SHIP))
 		{
-			NotifyOthers(YEHAT_SHIP, IPNL_ALL_CLEAR);
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			NotifyOthers(YEHAT_SHIP, IpnlAllClear);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -110,7 +110,7 @@ GenerateYehat_generateOrbital(SOLARSYS_STATE* solarSys,
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 
 			return true;
@@ -118,8 +118,8 @@ GenerateYehat_generateOrbital(SOLARSYS_STATE* solarSys,
 
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+			CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RuinsStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 

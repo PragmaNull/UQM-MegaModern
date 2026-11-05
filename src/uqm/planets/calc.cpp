@@ -62,7 +62,7 @@ static void
 CalcSysInfo(SYSTEM_INFO* SysInfoPtr)
 {
 	SysInfoPtr->StarSize = pSolarSysState->SunDesc[0].data_index;
-	switch (STAR_COLOR(CurStarDescPtr->Type))
+	switch (STAR_COLOR(CurStarDescPtr()->Type))
 	{
 		case BLUE_BODY:
 			SysInfoPtr->StarIntensity = BLUE_SUN_INTENSITY;
@@ -84,7 +84,7 @@ CalcSysInfo(SYSTEM_INFO* SysInfoPtr)
 			break;
 	}
 
-	switch (STAR_TYPE(CurStarDescPtr->Type))
+	switch (STAR_TYPE(CurStarDescPtr()->Type))
 	{
 		case DWARF_STAR:
 			SysInfoPtr->StarEnergy =

@@ -148,7 +148,7 @@ static void
 DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
 			   bool drawShips, bool highlite)
 {
-	if (IS_HD)
+	if (IsHd())
 	{ // Draw the background of the text
 		GFXRECT r;
 
@@ -343,8 +343,8 @@ bool DoLoadTeam(MELEE_STATE* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN | MENU_SOUND_PAGE,
-				  MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundUp | MenuSoundDown | MenuSoundPage,
+				  MenuSoundSelect);
 
 	if (!pMS->Initialized)
 	{

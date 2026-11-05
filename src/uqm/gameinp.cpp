@@ -63,7 +63,7 @@ struct MenuAnnotations
 };
 
 
-ControlTemplate PlayerControlTemplates[NUM_PLAYERS];
+ControlTemplate PlayerControlTemplates[NumPlayers];
 CONTROLLER_INPUT_STATE CurrentInputState, PulsedInputState;
 static CONTROLLER_INPUT_STATE CachedInputState, OldInputState;
 static MenuAnnotations<TimePeriod> RepeatDelays;
@@ -509,50 +509,50 @@ void FlushInput(void)
 static MENU_SOUND_FLAGS
 MenuKeysToSoundFlags(const CONTROLLER_INPUT_STATE* state)
 {
-	MENU_SOUND_FLAGS soundFlags {MENU_SOUND_NONE};
+	MENU_SOUND_FLAGS soundFlags {MenuSoundNone};
 	if (state->menu[KEY_MENU_UP])
 	{
-		soundFlags |= MENU_SOUND_UP;
+		soundFlags |= MenuSoundUp;
 	}
 	if (state->menu[KEY_MENU_DOWN])
 	{
-		soundFlags |= MENU_SOUND_DOWN;
+		soundFlags |= MenuSoundDown;
 	}
 	if (state->menu[KEY_MENU_LEFT])
 	{
-		soundFlags |= MENU_SOUND_LEFT;
+		soundFlags |= MenuSoundLeft;
 	}
 	if (state->menu[KEY_MENU_RIGHT])
 	{
-		soundFlags |= MENU_SOUND_RIGHT;
+		soundFlags |= MenuSoundRight;
 	}
 	if (state->menu[KEY_MENU_SELECT])
 	{
-		soundFlags |= MENU_SOUND_SELECT;
+		soundFlags |= MenuSoundSelect;
 	}
 	if (state->menu[KEY_MENU_CANCEL])
 	{
-		soundFlags |= MENU_SOUND_CANCEL;
+		soundFlags |= MenuSoundCancel;
 	}
 	if (state->menu[KEY_MENU_SPECIAL])
 	{
-		soundFlags |= MENU_SOUND_SPECIAL;
+		soundFlags |= MenuSoundSpecial;
 	}
 	if (state->menu[KEY_MENU_PAGE_UP])
 	{
-		soundFlags |= MENU_SOUND_PAGEUP;
+		soundFlags |= MenuSoundPageup;
 	}
 	if (state->menu[KEY_MENU_PAGE_DOWN])
 	{
-		soundFlags |= MENU_SOUND_PAGEDOWN;
+		soundFlags |= MenuSoundPagedown;
 	}
 	if (state->menu[KEY_MENU_DELETE])
 	{
-		soundFlags |= MENU_SOUND_DELETE;
+		soundFlags |= MenuSoundDelete;
 	}
 	if (state->menu[KEY_MENU_BACKSPACE])
 	{
-		soundFlags |= MENU_SOUND_DELETE;
+		soundFlags |= MenuSoundDelete;
 	}
 
 	return soundFlags;
@@ -613,35 +613,35 @@ ControlInputToBattleInput(const int* keyState)
 
 	if (keyState[KEY_UP])
 	{
-		InputState |= BATTLE_THRUST;
+		InputState |= BattleThrust;
 	}
 	if (keyState[KEY_LEFT])
 	{
-		InputState |= BATTLE_LEFT;
+		InputState |= BattleLeft;
 	}
 	if (keyState[KEY_RIGHT])
 	{
-		InputState |= BATTLE_RIGHT;
+		InputState |= BattleRight;
 	}
 	if (keyState[KEY_WEAPON])
 	{
-		InputState |= BATTLE_WEAPON;
+		InputState |= BattleWeapon;
 	}
 	if (keyState[KEY_SPECIAL])
 	{
-		InputState |= BATTLE_SPECIAL;
+		InputState |= BattleSpecial;
 	}
 	if (keyState[KEY_ESCAPE])
 	{
-		InputState |= BATTLE_ESCAPE;
+		InputState |= BattleEscape;
 	}
 	if (keyState[KEY_DOWN])
 	{
-		InputState |= BATTLE_DOWN;
+		InputState |= BattleDown;
 	}
 	if (keyState[KEY_THRUST])
 	{
-		InputState |= BATTLE_THRUST_ALT;
+		InputState |= BattleThrustAlt;
 	}
 
 	return InputState;

@@ -71,8 +71,8 @@ enum
 	HARD_DIFF
 };
 
-#define CHOOSER_X (SCREEN_WIDTH >> 1)
-#define CHOOSER_Y ((SCREEN_HEIGHT >> 1) - RES_SCALE(12))
+#define CHOOSER_X (CanvasWidth >> 1)
+#define CHOOSER_Y ((CanvasHeight >> 1) - RES_SCALE(12))
 
 // Kruzen: Having this ref separated gains more control
 // We can load and free it whenever we want and not rely on menu volume
@@ -130,7 +130,7 @@ void DrawToolTips(MENU_STATE* pMS, int answer)
 	s.origin = r.corner;
 	DrawStamp(&s);
 
-	SetContextForeGroundColor(BLACK_COLOR);
+	SetContextForeGroundColor(BlackColor);
 
 	t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 66 + answer);
 	const int line_count {SplitString(t.pStr, '\n', 30, lines, bank)};
@@ -177,8 +177,8 @@ DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 
 		SetContextForeGroundColor(
 			i == answer ?
-				(confirm ? MENU_BACKGROUND_COLOR : MENU_HIGHLIGHT_COLOR) :
-				BLACK_COLOR);
+				(confirm ? MenuBackgroundColor : MenuHighlightColor) :
+				BlackColor);
 		font_DrawText(&t);
 
 		t.baseline.y += RES_SCALE(23);
@@ -307,7 +307,7 @@ DoDiffChooser(MENU_STATE* pMS)
 	return response;
 }
 
-#define MAIN_TEXT_X (SCREEN_WIDTH >> 1)
+#define MAIN_TEXT_X (CanvasWidth >> 1)
 #define MAIN_TEXT_Y (RES_SCALE(42) - DOS_NUM_SCL(20))
 
 FRAME TextCache[5];
@@ -326,8 +326,8 @@ InitPulseText(void)
 	}
 
 	SetContextFont(SlabFont);
-	SetContextBackGroundColor(BLACK_COLOR);
-	SetContextForeGroundColor(WHITE_COLOR);
+	SetContextBackGroundColor(BlackColor);
+	SetContextForeGroundColor(WhiteColor);
 	GetContextFontLeading(&leading);
 
 	t.baseline.x = MAIN_TEXT_X;
@@ -339,9 +339,9 @@ InitPulseText(void)
 	{
 		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 69 + i);
 
-		frame = CaptureDrawable(CreateDrawable(WantPixmap, SCREEN_WIDTH,
-											   SCREEN_HEIGHT, 1));
-		SetFrameTransparentColor(frame, BLACK_COLOR);
+		frame = CaptureDrawable(CreateDrawable(WantPixmap, CanvasWidth,
+											   CanvasHeight, 1));
+		SetFrameTransparentColor(frame, BlackColor);
 		OldFrame = SetContextFGFrame(frame);
 		ClearDrawable();
 		SetContextFGFrame(OldFrame);
@@ -368,10 +368,10 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 
 	s.frame = pMS->CurFrame;
 	GetFrameRect(s.frame, &r);
-	s.origin.x = (SCREEN_WIDTH - r.extent.width) >> 1;
-	s.origin.y = (SCREEN_HEIGHT - r.extent.height) >> 1;
+	s.origin.x = (CanvasWidth - r.extent.width) >> 1;
+	s.origin.y = (CanvasHeight - r.extent.height) >> 1;
 
-	SetContextBackGroundColor(BLACK_COLOR);
+	SetContextBackGroundColor(BlackColor);
 	BatchGraphics();
 
 	ClearDrawable();
@@ -390,7 +390,7 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 	t.align = ALIGN_CENTER;
 	t.CharCount = (uint16_t)~0;
 
-	SetContextForeGroundColor(MAIN_MENU_TEXT_COLOR);
+	SetContextForeGroundColor(MainMenuTextColor);
 
 	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
 	{
@@ -401,13 +401,13 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 
 	// Put the version number in the bottom right corner.
 	SetContextFont(TinyFont);
-	SetContextForeGroundColor(WHITE_COLOR);
+	SetContextForeGroundColor(WhiteColor);
 	fmt::format_to_sz_n(buf, "v{}.{}.{} {}",
 						UQM_MAJOR_VERSION, UQM_MINOR_VERSION, UQM_PATCH_VERSION,
 						chooseIfHd<const char*>(UQM_EXTRA_VERSION, "HD " UQM_EXTRA_VERSION));
 	t.pStr = buf;
-	t.baseline.x = SCREEN_WIDTH - RES_SCALE(2);
-	t.baseline.y = SCREEN_HEIGHT - RES_SCALE(2);
+	t.baseline.x = CanvasWidth - RES_SCALE(2);
+	t.baseline.y = CanvasHeight - RES_SCALE(2);
 	t.align = ALIGN_RIGHT;
 	font_DrawText(&t);
 
@@ -418,7 +418,7 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 							GAME_STRING(MAINMENU_STRING_BASE + 61),
 							GAME_STRING(MAINMENU_STRING_BASE + 62 + Rando));
 		t.baseline.x = RES_SCALE(2);
-		t.baseline.y = SCREEN_HEIGHT - RES_SCALE(2);
+		t.baseline.y = CanvasHeight - RES_SCALE(2);
 		t.align = ALIGN_LEFT;
 		font_DrawText(&t);
 	}
@@ -448,7 +448,7 @@ RestartMessage(void)
 	SetFlashRect(nullptr, false);
 	DoPopupWindow(GAME_STRING(MAINMENU_STRING_BASE + 35));
 	// Got to restart -message
-	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundUp | MenuSoundDown, MenuSoundSelect);
 	SetTransitionSource(nullptr);
 	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 	uqm::currentActivity() = CHECK_ABORT;
@@ -553,8 +553,8 @@ DoRestart(MENU_STATE* pMS)
 						GAME_STRING(MAINMENU_STRING_BASE + 65));
 					// Got to restart -message
 					SetMenuSounds(
-						MENU_SOUND_UP | MENU_SOUND_DOWN,
-						MENU_SOUND_SELECT);
+						MenuSoundUp | MenuSoundDown,
+						MenuSoundSelect);
 					SetTransitionSource(nullptr);
 					SleepThreadUntil(
 						FadeScreen(FadeAllToBlack, c_gameSecond / 2));
@@ -696,7 +696,7 @@ DoRestart(MENU_STATE* pMS)
 	//	Flash_pause (pMS->flashContext);
 	//	DoPopupWindow (GAME_STRING (MAINMENU_STRING_BASE + 54));
 	//			// Mouse not supported message
-	//	SetMenuSounds (MENU_SOUND_UP | MENU_SOUND_DOWN, MENU_SOUND_SELECT);
+	//	SetMenuSounds (MenuSoundUp | MenuSoundDown, MenuSoundSelect);
 
 	//	SetTransitionSource (nullptr);
 	//	BatchGraphics ();
@@ -738,7 +738,7 @@ void ShowGameEnding(void)
 
 		SleepThreadUntil(FadeScreen(FadeAllToWhite, c_gameSecond / 8)
 						 + c_gameSecond / 60);
-		SetContextBackGroundColor(WHITE_COLOR);
+		SetContextBackGroundColor(WhiteColor);
 
 		ClearDrawable();
 		FlushColorXForms();
@@ -809,11 +809,11 @@ RestartMenu(MENU_STATE* pMS)
 	// and when Skip Intro option is enabled
 	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 
-	pMS->CurFrame = CaptureDrawable(LoadGraphic(RESTART_PMAP_ANIM));
+	pMS->CurFrame = CaptureDrawable(LoadGraphic(RestartPmapAnimRes));
 
 	DrawRestartMenuGraphic(pMS);
 	uqm::currentActivity() &= ~CHECK_ABORT;
-	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundUp | MenuSoundDown, MenuSoundSelect);
 	SetDefaultMenuRepeatDelay();
 	DoInput(pMS, true);
 
@@ -940,7 +940,7 @@ bool StartGame(void)
 		// the same throughout the code but can be reset as needed.
 		//
 		// As a reminder, the array has three extra entries beyond
-		// NUM_SOLAR_SYSTEMS and NUM_HYPER_VORTICES due to Arilou
+		// NumSolarSystems and NumHyperVortices due to Arilou
 		// Quasispace home and the two endpoint dummy systems used by
 		// FindStar as a boundary.
 		//
@@ -950,7 +950,7 @@ bool StartGame(void)
 #ifdef DEBUG_STARSEED
 		fmt::print(stderr, "Initializing star_array, just in case...\n");
 #endif
-		for (uint16_t i {0}; i < NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1 + 1; i++)
+		for (uint16_t i {0}; i < NumSolarSystems + 1 + NumHyperVortices + 1 + 1; i++)
 		{
 			star_array[i] = StarmapArray[i];
 		}

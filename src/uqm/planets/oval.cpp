@@ -43,20 +43,20 @@ PointOnScreen(int32_t x, int32_t y)
 {
 	int32_t extend = 0;
 
-	if (IS_HD)
+	if (IsHd())
 	{
 		extend = 5;
 	}
 
-	return ((x + extend) >= 0 && x <= SIS_SCREEN_WIDTH
-			&& (y + extend) >= 0 && y <= SIS_SCREEN_HEIGHT);
+	return ((x + extend) >= 0 && x <= SisScreenWidth()
+			&& (y + extend) >= 0 && y <= SisScreenHeight());
 }
 
 static bool
 DPointOnScreen(DPOINT* p)
 {
-	return (p->x >= 0 && p->x <= SIS_SCREEN_WIDTH
-			&& p->y >= 0 && p->y <= SIS_SCREEN_HEIGHT);
+	return (p->x >= 0 && p->x <= SisScreenWidth()
+			&& p->y >= 0 && p->y <= SisScreenHeight());
 }
 
 static void
@@ -64,7 +64,7 @@ TruncateDPoint(DPOINT* p)
 {
 	if (p->x > 32767)
 	{
-		p->x = SIS_SCREEN_WIDTH;
+		p->x = SisScreenWidth();
 	}
 	if (p->x < -32768)
 	{
@@ -72,7 +72,7 @@ TruncateDPoint(DPOINT* p)
 	}
 	if (p->y > 32767)
 	{
-		p->y = SIS_SCREEN_HEIGHT;
+		p->y = SisScreenHeight();
 	}
 	if (p->y < -32768)
 	{
@@ -121,7 +121,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 	y1 = y0 + ((y0 - p0->y) << 1);
 
 	// Step 2
-	if (x0 < 0 && y0 < 0 && x1 > SIS_SCREEN_WIDTH && y1 > SIS_SCREEN_HEIGHT)
+	if (x0 < 0 && y0 < 0 && x1 > SisScreenWidth() && y1 > SisScreenHeight())
 	{
 		return quad_visible;
 	}
@@ -143,7 +143,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 	bsquared = b * b;
 
 	// Step 4
-	if (!(mp.x > SIS_SCREEN_WIDTH || p1->x < 0 || p0->y > SIS_SCREEN_HEIGHT || mp.y < 0 || (x1 > SIS_SCREEN_WIDTH && y0 < 0)))
+	if (!(mp.x > SisScreenWidth() || p1->x < 0 || p0->y > SisScreenHeight() || mp.y < 0 || (x1 > SisScreenWidth() && y0 < 0)))
 	{
 		// Step 5
 		if (PointOnScreen(mp.x, p0->y) || PointOnScreen(p1->x, mp.y))
@@ -153,12 +153,12 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 		else
 		{
 			// Step 6
-			x = (double)(SIS_SCREEN_WIDTH - mp.x);
+			x = (double)(SisScreenWidth() - mp.x);
 			y = (double)(0 - mp.y);
 			r0 = ((x * x) / asquared) + ((y * y) / bsquared);
 
 			x = (double)(uqstl::max(0, mp.x) - mp.x);
-			y = (double)(uqstl::min(SIS_SCREEN_HEIGHT, mp.y) - mp.y);
+			y = (double)(uqstl::min(SisScreenHeight(), mp.y) - mp.y);
 			r1 = ((x * x) / asquared) + ((y * y) / bsquared);
 
 			if (r0 >= 1.0f && r1 <= 1.0f)
@@ -169,7 +169,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 	}
 
 	// Step 4
-	if (!(p0->x > SIS_SCREEN_WIDTH || mp.x < 0 || p0->y > SIS_SCREEN_HEIGHT || mp.y < 0 || (x0 < 0 && y0 < 0)))
+	if (!(p0->x > SisScreenWidth() || mp.x < 0 || p0->y > SisScreenHeight() || mp.y < 0 || (x0 < 0 && y0 < 0)))
 	{
 		// Step 5
 		if (PointOnScreen(p0->x, mp.y) || PointOnScreen(mp.x, p0->y))
@@ -183,8 +183,8 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 			y = (double)(0 - mp.y);
 			r0 = ((x * x) / asquared) + ((y * y) / bsquared);
 
-			x = (double)(uqstl::min(SIS_SCREEN_WIDTH, mp.x) - mp.x);
-			y = (double)(uqstl::min(SIS_SCREEN_HEIGHT, mp.y) - mp.y);
+			x = (double)(uqstl::min(SisScreenWidth(), mp.x) - mp.x);
+			y = (double)(uqstl::min(SisScreenHeight(), mp.y) - mp.y);
 			r1 = ((x * x) / asquared) + ((y * y) / bsquared);
 
 			if (r0 >= 1.0f && r1 <= 1.0f)
@@ -195,7 +195,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 	}
 
 	// Step 4
-	if (!(p0->x > SIS_SCREEN_WIDTH || mp.x < 0 || mp.y > SIS_SCREEN_HEIGHT || p1->y < 0 || (x0 < 0 && y1 > SIS_SCREEN_HEIGHT)))
+	if (!(p0->x > SisScreenWidth() || mp.x < 0 || mp.y > SisScreenHeight() || p1->y < 0 || (x0 < 0 && y1 > SisScreenHeight())))
 	{
 		// Step 5
 		if (PointOnScreen(p0->x, mp.y) || PointOnScreen(mp.x, p1->y))
@@ -206,10 +206,10 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 		{
 			// Step 6
 			x = (double)(0 - mp.x);
-			y = (double)(SIS_SCREEN_HEIGHT - mp.y);
+			y = (double)(SisScreenHeight() - mp.y);
 			r0 = ((x * x) / asquared) + ((y * y) / bsquared);
 
-			x = (double)(uqstl::min(SIS_SCREEN_WIDTH, mp.x) - mp.x);
+			x = (double)(uqstl::min(SisScreenWidth(), mp.x) - mp.x);
 			y = (double)(uqstl::max(0, mp.y) - mp.y);
 			r1 = ((x * x) / asquared) + ((y * y) / bsquared);
 
@@ -221,7 +221,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 	}
 
 	// Step 4
-	if (!(mp.x > SIS_SCREEN_WIDTH || p1->x < 0 || mp.y > SIS_SCREEN_HEIGHT || p1->y < 0 || (x1 > SIS_SCREEN_WIDTH && y1 > SIS_SCREEN_HEIGHT)))
+	if (!(mp.x > SisScreenWidth() || p1->x < 0 || mp.y > SisScreenHeight() || p1->y < 0 || (x1 > SisScreenWidth() && y1 > SisScreenHeight())))
 	{
 		// Step 5
 		if (PointOnScreen(mp.x, p1->y) || PointOnScreen(p1->x, mp.y))
@@ -231,8 +231,8 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 		else
 		{
 			// Step 6
-			x = (double)(SIS_SCREEN_WIDTH - mp.x);
-			y = (double)(SIS_SCREEN_HEIGHT - mp.y);
+			x = (double)(SisScreenWidth() - mp.x);
+			y = (double)(SisScreenHeight() - mp.y);
 			r0 = ((x * x) / asquared) + ((y * y) / bsquared);
 
 			x = (double)(uqstl::max(0, mp.x) - mp.x);
@@ -258,8 +258,8 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //	uint8_t quad_visible = 0;
 //
 //	ClipRect.corner.x = ClipRect.corner.y = 0;
-//	ClipRect.extent.width = SIS_SCREEN_WIDTH;
-//	ClipRect.extent.height = SIS_SCREEN_HEIGHT;
+//	ClipRect.extent.width = SisScreenWidth();
+//	ClipRect.extent.height = SisScreenHeight();
 //
 //	mp.x = (ch_one->x + ch_two->x) >> 1;
 //	mp.y = (ch_one->y + ch_two->y) >> 1;
@@ -781,7 +781,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 }
 
 void DrawFilledOval(DRECT* pRect)
-{ // Kruzen: originally there was standard rect, but drawing fuel circle in HD on max zoom causes overflow (Width ~65k)
+{ // Kruzen: originally there was standard rect, but drawing fuel circle in HdResolutionFactor on max zoom causes overflow (Width ~65k)
 	// So unless we want to expand standard rect to support 4 bytes per dimension - use this
 	int16_t x {};
 	int16_t y {};
@@ -867,9 +867,9 @@ void DrawFilledOval(DRECT* pRect)
 			lines_r = 0;
 
 			first.x = uqstl::max(A - x, 0);
-			second.x = uqstl::min(A - x + (x << 1) + 1, SIS_SCREEN_WIDTH);
+			second.x = uqstl::min(A - x + (x << 1) + 1, SisScreenWidth());
 			first.y = second.y = B - y;
-			if (((B - y) >= 0 && (B - y) <= SIS_SCREEN_HEIGHT))
+			if (((B - y) >= 0 && (B - y) <= SisScreenHeight()))
 			{
 				SetPrimType(&prim[0], LINE_PRIM);
 				prim[0].Object.Line.first = first;
@@ -882,7 +882,7 @@ void DrawFilledOval(DRECT* pRect)
 			}
 
 			first.y = second.y = B + y;
-			if (((B + y) >= 0 && (B + y) <= SIS_SCREEN_HEIGHT))
+			if (((B + y) >= 0 && (B + y) <= SisScreenHeight()))
 			{
 				SetPrimType(&prim[1], LINE_PRIM);
 				prim[1].Object.Line.first = first;
@@ -916,9 +916,9 @@ void DrawFilledOval(DRECT* pRect)
 		// Changed to line and added a skip if offscreen
 		lines_r = 0;
 		first.x = uqstl::max(A - x, 0);
-		second.x = uqstl::min(A - x + (x << 1) + 1, SIS_SCREEN_WIDTH);
+		second.x = uqstl::min(A - x + (x << 1) + 1, SisScreenWidth());
 		first.y = second.y = B - y;
-		if (((B - y) >= 0 && (B - y) <= SIS_SCREEN_HEIGHT))
+		if (((B - y) >= 0 && (B - y) <= SisScreenHeight()))
 		{
 			SetPrimType(&prim[0], LINE_PRIM);
 			prim[0].Object.Line.first = first;
@@ -931,7 +931,7 @@ void DrawFilledOval(DRECT* pRect)
 		}
 
 		first.y = second.y = B + y;
-		if (((B + y) >= 0 && (B + y) <= SIS_SCREEN_HEIGHT))
+		if (((B + y) >= 0 && (B + y) <= SisScreenHeight()))
 		{
 			SetPrimType(&prim[1], LINE_PRIM);
 			prim[1].Object.Line.first = first;

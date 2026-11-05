@@ -34,11 +34,11 @@ static LOCDATA arilou_desc =
 		nullptr, /* uninit_encounter_func */
 		ARILOU_PMAP_ANIM, /* AlienFrame */
 		ARILOU_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		ARILOU_COLOR_MAP, /* AlienColorMap */
@@ -55,44 +55,44 @@ static LOCDATA arilou_desc =
 			{
 				4,											/* StartIndex */
 				9,											/* NumFrames */
-				CIRCULAR_ANIM,								/* AnimFlags */
+				CircularAnim,								/* AnimFlags */
 				GameTicksPerSecond / 30, 0,					/* FrameRate */
 				GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 1) | (1L << 16)},
 								{13,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 0) | (1L << 16)},
 								{22,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1L << 16)},
 								{31,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 4)},
 								{40,										 /* StartIndex */
 			 10,										 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 3)},
 								{50,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 7)},
 								{
-				59,			   /* StartIndex */
-				8,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				59,			  /* StartIndex */
+				8,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -101,26 +101,26 @@ static LOCDATA arilou_desc =
 			},
 								{67,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 5)},
 								{76,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 9)},
 								{85,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 8)},
 								{
-				94,			   /* StartIndex */
-				9,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				94,			  /* StartIndex */
+				9,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -129,14 +129,14 @@ static LOCDATA arilou_desc =
 			},
 								{103,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 13)},
 								{
-				112,		   /* StartIndex */
-				9,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				112,		  /* StartIndex */
+				9,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -145,33 +145,33 @@ static LOCDATA arilou_desc =
 			},
 								{121,										 /* StartIndex */
 			 8,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 11)},
 								{129,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1L << 15)},
 								{138,										 /* StartIndex */
 			 8,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 14)},
 								{146,										 /* StartIndex */
 			 9,											 /* NumFrames */
-			 CIRCULAR_ANIM,								 /* AnimFlags */
+			 CircularAnim,								 /* AnimFlags */
 			 GameTicksPerSecond / 30, 0,				 /* FrameRate */
 			 GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 			 (1 << 0) | (1 << 1) | (1 << 2)},
 								{
 				/* Hands moving (right up) */
-				155,						  /* StartIndex */
-				2,							  /* NumFrames */
-				CIRCULAR_ANIM | WAIT_TALKING, /* AnimFlags */
+				155,						/* StartIndex */
+				2,							/* NumFrames */
+				CircularAnim | WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -180,9 +180,9 @@ static LOCDATA arilou_desc =
 			},
 								{
 				/* Hands moving (left up) */
-				157,						  /* StartIndex */
-				2,							  /* NumFrames */
-				CIRCULAR_ANIM | WAIT_TALKING, /* AnimFlags */
+				157,						/* StartIndex */
+				2,							/* NumFrames */
+				CircularAnim | WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -191,9 +191,9 @@ static LOCDATA arilou_desc =
 			},
 								{
 				/* Stars flashing next to the head */
-				159,		   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				159,		  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -915,9 +915,9 @@ init_arilou_comm(void)
 
 	uqm::lua().beginComm(nullptr, NullResource);
 
-	arilou_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	arilou_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	arilou_desc.AlienTextBaseline.y = 0;
-	arilou_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	arilou_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1
 		|| GET_GAME_STATE(ARILOU_MANNER) == 3

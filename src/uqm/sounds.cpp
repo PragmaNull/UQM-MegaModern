@@ -83,7 +83,7 @@ void PlayMenuSound(MENU_SOUND_EFFECT S)
 {
 	PlaySoundEffect(GetSound(MenuSounds, S),
 					0, NotPositional(), nullptr,
-					GAME_SOUND_PRIORITY);
+					GameSoundPriority);
 }
 
 void SuppressSounds(void)
@@ -126,8 +126,8 @@ CalcSoundPosition(ELEMENT* ElementPtr)
 			pos.y = DisplayArray[ElementPtr->PrimIndex].Object.Point.y;
 		}
 
-		pos.x -= (SPACE_WIDTH >> 1);
-		pos.y -= (SPACE_HEIGHT >> 1);
+		pos.x -= (SpaceWidth() >> 1);
+		pos.y -= (SpaceHeight() >> 1);
 		pos.x = RES_DESCALE(pos.x);
 		pos.y = RES_DESCALE(pos.y);
 		pos.positional = true;
@@ -175,7 +175,7 @@ void FlushSounds(void)
 		{
 			const SoundPosition pos = CalcSoundPosition(*pSoundPosObj);
 			PlaySound(*pSound++, pos, *pSoundPosObj++,
-					  GAME_SOUND_PRIORITY);
+					  GameSoundPriority);
 		} while (--num_sounds);
 	}
 }

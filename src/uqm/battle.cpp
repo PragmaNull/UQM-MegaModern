@@ -51,11 +51,11 @@
 // for EraseRadar()
 
 
-uint8_t battle_counter[NUM_SIDES];
+uint8_t battle_counter[NumSides];
 // The number of ships still available for battle to each side.
 // A ship that has warped out is no longer available.
 bool instantVictory;
-size_t battleInputOrder[NUM_SIDES];
+size_t battleInputOrder[NumSides];
 // Indices of the sides in the order their input is processed.
 // Network sides are last so that the sides will never be waiting
 // on eachother, and games with a 0 frame delay are theoretically
@@ -81,10 +81,10 @@ DoRunAway(STARSHIP* StarShipPtr)
 
 	LockElement(StarShipPtr->hShip, &ElementPtr);
 	if (GetPrimType(&DisplayArray[ElementPtr->PrimIndex]) == STAMP_PRIM
-		&& ElementPtr->life_span == NORMAL_LIFE
-		&& !(ElementPtr->state_flags & FINITE_LIFE)
-		&& ElementPtr->mass_points != MAX_SHIP_MASS * 10
-		&& !(ElementPtr->state_flags & APPEARING))
+		&& ElementPtr->life_span == NormalLife
+		&& !(ElementPtr->state_flags & FiniteLife)
+		&& ElementPtr->mass_points != MaxShipMass * 10
+		&& !(ElementPtr->state_flags & Appearing))
 	{
 		battle_counter[0]--;
 
@@ -92,10 +92,10 @@ DoRunAway(STARSHIP* StarShipPtr)
 		ElementPtr->thrust_wait = 4;
 		ElementPtr->colorCycleIndex = 0;
 		ElementPtr->preprocess_func = flee_preprocess;
-		ElementPtr->mass_points = MAX_SHIP_MASS * 10;
+		ElementPtr->mass_points = MaxShipMass * 10;
 		ZeroVelocityComponents(&ElementPtr->velocity);
 		StarShipPtr->cur_status_flags &=
-			~(SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED);
+			~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
 
 		SetPrimColor(&DisplayArray[ElementPtr->PrimIndex],
 					 BuildColor(MakeRgb15(0x0B, 0x00, 0x00), 0x2E));
@@ -115,7 +115,7 @@ setupBattleInputOrder(void)
 	size_t i {};
 
 #ifndef NETPLAY
-	for (i = 0; i < NUM_SIDES; i++)
+	for (i = 0; i < NumSides; i++)
 	{
 		battleInputOrder[i] = i;
 	}
@@ -124,7 +124,7 @@ setupBattleInputOrder(void)
 
 	i = 0;
 	// First put the locally controlled players in the array.
-	for (j = 0; j < NUM_SIDES; j++)
+	for (j = 0; j < NumSides; j++)
 	{
 		if (!testFlag(PlayerControl[j], PlayerControlFlags::Network))
 		{
@@ -134,7 +134,7 @@ setupBattleInputOrder(void)
 	}
 
 	// Next put the network controlled players in the array.
-	for (j = 0; j < NUM_SIDES; j++)
+	for (j = 0; j < NumSides; j++)
 	{
 		if (testFlag(PlayerControl[j], PlayerControlFlags::Network))
 		{
@@ -161,7 +161,7 @@ ProcessInput(void)
 
 	const bool CanRunAway {RunAwayAllowed()};
 
-	for (size_t sideI {0}; sideI < NUM_SIDES; sideI++)
+	for (size_t sideI {0}; sideI < NumSides; sideI++)
 	{
 		HSTARSHIP hBattleShip {};
 		HSTARSHIP hNextShip {};
@@ -201,32 +201,32 @@ ProcessInput(void)
 				StarShipPtr->ship_input_state = 0;
 				if (StarShipPtr->RaceDescPtr->ship_info.crew_level)
 				{
-					if (InputState & BATTLE_LEFT)
+					if (InputState & BattleLeft)
 					{
-						StarShipPtr->ship_input_state |= LEFT;
+						StarShipPtr->ship_input_state |= LeftFlag;
 					}
-					else if (InputState & BATTLE_RIGHT)
+					else if (InputState & BattleRight)
 					{
-						StarShipPtr->ship_input_state |= RIGHT;
+						StarShipPtr->ship_input_state |= RightFlag;
 					}
-					if (InputState & BATTLE_THRUST)
+					if (InputState & BattleThrust)
 					{
-						StarShipPtr->ship_input_state |= THRUST;
+						StarShipPtr->ship_input_state |= ThrustFlag;
 					}
-					if (InputState & BATTLE_THRUST_ALT)
+					if (InputState & BattleThrustAlt)
 					{
-						StarShipPtr->ship_input_state |= THRUST;
+						StarShipPtr->ship_input_state |= ThrustFlag;
 					}
-					if (InputState & BATTLE_WEAPON)
+					if (InputState & BattleWeapon)
 					{
-						StarShipPtr->ship_input_state |= WEAPON;
+						StarShipPtr->ship_input_state |= WeaponFlag;
 					}
-					if (InputState & BATTLE_SPECIAL)
+					if (InputState & BattleSpecial)
 					{
-						StarShipPtr->ship_input_state |= SPECIAL;
+						StarShipPtr->ship_input_state |= SpecialFlag;
 					}
 
-					if (CanRunAway && cur_player == 0 && ((InputState & BATTLE_ESCAPE) || WarpFromMenu))
+					if (CanRunAway && cur_player == 0 && ((InputState & BattleEscape) || WarpFromMenu))
 					{
 						WarpFromMenu = false;
 						DoRunAway(StarShipPtr);
@@ -257,28 +257,28 @@ void BattleSong(bool DoPlay)
 	{
 		if (inHyperSpace())
 		{
-			BattleRef = LoadMusic(HYPERSPACE_MUSIC);
+			BattleRef = LoadMusicInstance(HyperspaceMusicRes);
 			inHSpace = 1;
 		}
 		else if (inQuasiSpace())
 		{
-			BattleRef = LoadMusic(QUASISPACE_MUSIC);
+			BattleRef = LoadMusicInstance(QuasispaceMusicRes);
 			inHSpace = 2;
 		}
 		else
 		{
 			if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 			{
-				BattleRef = LoadMusic(BATTLE_MUSIC_SAMATRA);
+				BattleRef = LoadMusicInstance(BattleMusicSamatraRes);
 
 				if (BattleRef == 0)
 				{
-					BattleRef = LoadMusic(BATTLE_MUSIC);
+					BattleRef = LoadMusicInstance(BattleMusicRes);
 				}
 			}
 			else
 			{
-				BattleRef = LoadMusic(BATTLE_MUSIC);
+				BattleRef = LoadMusicInstance(BattleMusicRes);
 			}
 
 			inHSpace = 0;
@@ -303,7 +303,7 @@ DoBattle(BATTLE_STATE* bs)
 	extern uint16_t nth_frame;
 	GFXRECT r;
 
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
+	SetMenuSounds(MenuSoundNone, MenuSoundNone);
 
 #if defined(NETPLAY) && defined(NETPLAY_CHECKSUM)
 	if (getNumNetConnections() > 0 && battleFrameCount % NETPLAY_CHECKSUM_INTERVAL == 0)
@@ -344,10 +344,10 @@ DoBattle(BATTLE_STATE* bs)
 
 	if (bs->first_time)
 	{
-		r.corner.x = SIS_ORG_X;
-		r.corner.y = SIS_ORG_Y;
-		r.extent.width = SIS_SCREEN_WIDTH;
-		r.extent.height = SIS_SCREEN_HEIGHT;
+		r.corner.x = SisOrgX();
+		r.corner.y = SisOrgY();
+		r.extent.width = SisScreenWidth();
+		r.extent.height = SisScreenHeight();
 		SetTransitionSource(&r);
 	}
 	BatchGraphics();

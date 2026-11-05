@@ -28,63 +28,63 @@ extern "C" {
 // the image to the state it was in before the animation began. Which
 // frame is neutral depends on the animation type.
 // Animation types:
-#define RANDOM_ANIM (1 << 0)
+inline constexpr auto RandomAnim {(1 << 0)};
 // The next index is randomly chosen.
 // The first frame is neutral
-#define CIRCULAR_ANIM (1 << 1)
+inline constexpr auto CircularAnim {(1 << 1)};
 // After the last index has been reached, the animation starts over.
 // The last frame is neutral. This complicates the animation task.
-#define YOYO_ANIM (1 << 2)
+inline constexpr auto YoyoAnim {(1 << 2)};
 // After the last index has been reached, the order that the
 // animation frames are used is reversed.
 // The first frame is neutral
-#define ANIM_MASK (RANDOM_ANIM | CIRCULAR_ANIM | YOYO_ANIM)
+inline constexpr auto AnimMask {(RandomAnim | CircularAnim | YoyoAnim)};
 // Mask of all animation types.
 // Static frames do not have any of these flags set.
 
-#define WAIT_TALKING (1 << 3)
+inline constexpr auto WaitTalking {(1 << 3)};
 // This is set in AlienTalkDesc when the talking animation is active
 // or should be active.
 // In AlienAmbientArray, this is set for those ambient animations
 // which can not be active while the talking animation is active.
 // Such animations stop at the end of the current animation cycle
 // when the talking animation activates.
-#define PAUSE_TALKING (1 << 4)
+inline constexpr auto PauseTalking {(1 << 4)};
 // Set in AlienTalkDesc when we do not want the talking animation
-#define TALK_INTRO (1 << 5)
+inline constexpr auto TalkIntro {(1 << 5)};
 // In AlienTransitionDesc: indicates a transition to talking state
-#define TALK_DONE (1 << 6)
+inline constexpr auto TalkDone {(1 << 6)};
 // In AlienTransitionDesc: indicates a transition to silent state
 // In AlienTalkDesc: signals the end of talking animation
-#define WHEN_TALKING (1L << 7)	// JMS
-#define ANIM_DISABLED (1L << 8) // BW (needed for news anchor and animated background)
 
-#define FREEZE_TALKING (1 << 9)
-// Kr (needed for blocking animations that are WAIT_TALKING even
+inline constexpr auto AnimDisabled {(1L << 8)}; // BW (needed for news anchor and animated background)
+
+inline constexpr auto FreezeTalking {(1 << 9)};
+// Kr (needed for blocking animations that are WaitTalking even
 // if talking itself is stopped. Used only in PS-DOS style scrolling)
 
-#define RESTART_ALL_AFTER (1 << 10)
-#define STOP_ALL_AFTER (1 << 11)
-// Kruzen: Needed for ONE_SHOT_ANIM in HD to define - should we restart
+inline constexpr auto RestartAllAfter {(1 << 10)};
+inline constexpr auto StopAllAfter {(1 << 11)};
+// Kruzen: Needed for OneShotAnim in HdResolutionFactor to define - should we restart
 // other ambient animations or no
 
-#define IMMUME_TO_RESTART (1 << 12)
-#define IMMUME_TO_STOP (1 << 13)
+inline constexpr auto ImmumeToRestart {(1 << 12)};
+inline constexpr auto ImmumeToStop {(1 << 13)};
 // Kruzen: Some animations needed to be handled individually
 
-#define ALPHA_MASK_ANIM (1 << 14)
+inline constexpr auto AlphaMaskAnim {(1 << 14)};
 // Kruzen: New type of animations: Draw transparent frames
 // on top of all (sets fullRedraw to true
 
-#define TRIGGER_FULL_REDRAW (1 << 15)
+inline constexpr auto TriggerFullRedraw {(1 << 15)};
 // When animation plays - it triggers full redraw
 
-#define FAST_STOP_AT_TALK_START (TALK_DONE) // JMS: If there's a very loooong animation, it can be forced to stop when talking with this.
+
 // (otherwise there'll be nasty, unwanted pauses in the conversation.)
 
-#define COLORXFORM_ANIM PAUSE_TALKING
+inline constexpr auto ColorxformAnim {PauseTalking};
 
-#define ONE_SHOT_ANIM TALK_INTRO
+inline constexpr auto OneShotAnim {TalkIntro};
 // Set in AlienAmbientArray for animations that should be
 // disabled after they run once.
 
@@ -99,8 +99,8 @@ typedef struct
 	// Number of frames in the animation.
 
 	uint16_t AnimFlags;
-	// One of RANDOM_ANIM, CIRCULAR_ANIM, or YOYO_ANIM
-	// plus flags (WAIT_TALKING, ANIM_DISABLED)
+	// One of RandomAnim, CircularAnim, or YoyoAnim
+	// plus flags (WaitTalking, AnimDisabled)
 	// JMS: Changed from uint8_t to uint16_t to house more possible flags
 
 	uint16_t BaseFrameRate;
@@ -120,7 +120,7 @@ typedef struct
 	// due to the image overlap conflicts.
 } ANIMATION_DESC;
 
-#define MAX_ANIMATIONS 30 // JMS: Was 20
+inline constexpr auto MaxAnimations {30}; // JMS: Was 20
 
 
 #ifdef COMM_INTERNAL
@@ -156,31 +156,31 @@ struct SEQUENCE
 
 typedef struct SEQUENCE SEQUENCE;
 
-// Kruzen: HD filters that are layered on top
+// Kruzen: HdResolutionFactor filters that are layered on top
 // and all stuff needed.
-// Because this basically imitates color xform in HD
+// Because this basically imitates color xform in HdResolutionFactor
 // in truecolor format - all color transformations
 // are hadled by the same algorithms as in SD.
 // We just need to take current color and draw whatever
 // nessessary.
 // Although new .ct need to be created
 
-#define COMM_COLORMAP_INDEX 10
-#define MAX_FILTERS 3 // Could be more, but for now more that enough
+inline constexpr auto CommColormapIndex {10};
+inline constexpr auto MaxFilters {3}; // Could be more, but for now more that enough
 
-#define TURN_OFF_OFT (1 << 0)  // on full transparency
-#define TURN_OFF_OFO (1 << 1)  // on full opacity
-#define FRAMED_FILTER (1 << 2) // filter draws frame and nothing else
-#define FILTER_DISABLED (1 << 3)
-#define SWITCH_OFF_ANIMS (1 << 4)
-#define SWITCH_ON_ANIMS (1 << 5)
+inline constexpr auto TurnOffOft {(1 << 0)};   // on full transparency
+inline constexpr auto TurnOffOfo {(1 << 1)};   // on full opacity
+inline constexpr auto FramedFilter {(1 << 2)}; // filter draws frame and nothing else
+inline constexpr auto FilterDisabled {(1 << 3)};
+inline constexpr auto SwitchOffAnims {(1 << 4)};
+inline constexpr auto SwitchOnAnims {(1 << 5)};
 
 typedef struct
 {
 	uint8_t ColorIndex;
 	// Index of filter color in color
 	// table with index 10 aka alienrace.ct
-	// Can be used as frame offset for FRAMED_FILTER
+	// Can be used as frame offset for FramedFilter
 
 	uint8_t OpacityIndex;
 	// Index of opacity color in color
@@ -202,7 +202,7 @@ typedef struct
 {
 	uint8_t NumFilters;
 
-	FILTER FilterArray[MAX_FILTERS];
+	FILTER FilterArray[MaxFilters];
 
 } FILTER_DESC;
 

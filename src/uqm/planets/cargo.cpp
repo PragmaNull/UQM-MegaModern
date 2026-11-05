@@ -79,10 +79,10 @@ void ShowRemainingCapacity(void)
 
 	BatchGraphics();
 	// erase previous free amount
-	SetContextForeGroundColor(CARGO_BACK_COLOR);
+	SetContextForeGroundColor(CargoBackColor);
 	DrawFilledRectangle(&r);
 	// print the new free amount
-	SetContextForeGroundColor(CARGO_WORTH_COLOR);
+	SetContextForeGroundColor(CargoWorthColor);
 	font_DrawText(&t);
 	UnbatchGraphics();
 
@@ -111,8 +111,8 @@ DrawElementAmount(uint16_t element, bool selected)
 
 	// draw line background
 	SetContextForeGroundColor(selected ?
-								  CARGO_SELECTED_BACK_COLOR :
-								  CARGO_BACK_COLOR);
+								  CargoSelectedBackColor :
+								  CargoBackColor);
 	DrawFilledRectangle(&r);
 
 	t.align = ALIGN_RIGHT;
@@ -127,8 +127,8 @@ DrawElementAmount(uint16_t element, bool selected)
 	{ // Element
 		// print element's worth
 		SetContextForeGroundColor(selected ?
-									  CARGO_SELECTED_WORTH_COLOR :
-									  CARGO_WORTH_COLOR);
+									  CargoSelectedWorthColor :
+									  CargoWorthColor);
 		t.baseline.x = ELEMENT_COL_1;
 		fmt::format_to_sz_n(buf, "{}", GLOBAL(ElementWorth[element]));
 		t.CharCount = (uint16_t)~0;
@@ -139,8 +139,8 @@ DrawElementAmount(uint16_t element, bool selected)
 
 	// print the element/bio amount
 	SetContextForeGroundColor(selected ?
-								  CARGO_SELECTED_AMOUNT_COLOR :
-								  CARGO_AMOUNT_COLOR);
+								  CargoSelectedAmountColor :
+								  CargoAmountColor);
 	t.baseline.x = ELEMENT_COL_2;
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
@@ -155,17 +155,17 @@ DrawCargoDisplay(void)
 	int16_t cy {};
 
 	r.corner.x = RES_SCALE(2);
-	r.extent.width = FIELD_WIDTH + RES_SCALE(1);
+	r.extent.width = FieldWidth() + RES_SCALE(1);
 	r.corner.y = RES_SCALE(20);
 	// XXX: Shouldn't the height be 1 less? This draws the bottom border
 	//   1 pixel too low. Or if not, why do we need another box anyway?
 	r.extent.height = (RES_SCALE(129) - r.corner.y);
 
-	if (!uqm::UQMOptions::read().customBorder && !IS_HD)
+	if (!uqm::UQMOptions::read().customBorder && !IsHd())
 	{
 		DrawStarConBox(&r, RES_SCALE(1),
-					   SHADOWBOX_MEDIUM_COLOR, SHADOWBOX_DARK_COLOR,
-					   true, CARGO_BACK_COLOR, false, TRANSPARENT);
+					   ShadowboxMediumColor, ShadowboxDarkColor,
+					   true, CargoBackColor, false, Transparent);
 	}
 	else
 	{
@@ -174,12 +174,12 @@ DrawCargoDisplay(void)
 
 	// draw the "CARGO" title
 	SetContextFont(StarConFont);
-	t.baseline.x = (STATUS_WIDTH >> 1) - RES_SCALE(1);
+	t.baseline.x = (StatusWidth() >> 1) - RES_SCALE(1);
 	t.baseline.y = RES_SCALE(27);
 	t.align = ALIGN_CENTER;
 	t.pStr = GAME_STRING(CARGO_STRING_BASE);
 	t.CharCount = (uint16_t)~0;
-	SetContextForeGroundColor(CARGO_SELECTED_AMOUNT_COLOR);
+	SetContextForeGroundColor(CargoSelectedAmountColor);
 	font_DrawText(&t);
 
 	if (isPC(uqm::UQMOptions::read().whichFonts))
@@ -204,7 +204,7 @@ DrawCargoDisplay(void)
 	t.baseline.y = cy - RES_SCALE(1);
 	t.CharCount = (uint16_t)~0;
 
-	SetContextForeGroundColor(CARGO_WORTH_COLOR);
+	SetContextForeGroundColor(CargoWorthColor);
 	t.baseline.x = ELEMENT_COL_1;
 	t.pStr = "$";
 	font_DrawText(&t);
@@ -217,7 +217,7 @@ DrawCargoDisplay(void)
 	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i, cy += ELEMENT_SPACING_Y)
 	{
 		// erase background under an element icon
-		SetContextForeGroundColor(BLACK_COLOR);
+		SetContextForeGroundColor(BlackColor);
 		r.corner.y = cy;
 		DrawFilledRectangle(&r);
 
@@ -230,7 +230,7 @@ DrawCargoDisplay(void)
 	}
 
 	// erase background under the Bio icon
-	SetContextForeGroundColor(BLACK_COLOR);
+	SetContextForeGroundColor(BlackColor);
 	r.corner.y = BIO_ORG_Y;
 	DrawFilledRectangle(&r);
 
@@ -245,9 +245,9 @@ DrawCargoDisplay(void)
 	// draw the line over the Bio amount
 	r.corner.x = RES_SCALE(4);
 	r.corner.y = BIO_ORG_Y - RES_SCALE(2);
-	r.extent.width = FIELD_WIDTH - RES_SCALE(3);
+	r.extent.width = FieldWidth() - RES_SCALE(3);
 	r.extent.height = RES_SCALE(1);
-	SetContextForeGroundColor(CARGO_SELECTED_BACK_COLOR);
+	SetContextForeGroundColor(CargoSelectedBackColor);
 	DrawFilledRectangle(&r);
 
 	// print "Free"
@@ -313,17 +313,17 @@ void DrawRainbowPlanet(uint16_t planet)
 	GFXCONTEXT OldContext {SetContext(StatusContext)};
 
 	r.corner.x = RES_SCALE(2);
-	r.extent.width = FIELD_WIDTH + RES_SCALE(1);
+	r.extent.width = FieldWidth() + RES_SCALE(1);
 	r.corner.y = RES_SCALE(20);
 	r.extent.height = (RES_SCALE(129) - r.corner.y);
 
 	BatchGraphics();
 
-	if (!uqm::UQMOptions::read().customBorder && !IS_HD)
+	if (!uqm::UQMOptions::read().customBorder && !IsHd())
 	{
 		DrawStarConBox(&r, RES_SCALE(1),
-					   SHADOWBOX_MEDIUM_COLOR, SHADOWBOX_DARK_COLOR,
-					   true, CARGO_BACK_COLOR, false, TRANSPARENT);
+					   ShadowboxMediumColor, ShadowboxDarkColor,
+					   true, CargoBackColor, false, Transparent);
 	}
 	else
 	{
@@ -332,12 +332,12 @@ void DrawRainbowPlanet(uint16_t planet)
 
 	// draw the "DATALOG" title
 	SetContextFont(StarConFont);
-	t.baseline.x = (STATUS_WIDTH >> 1) - RES_SCALE(1);
+	t.baseline.x = (StatusWidth() >> 1) - RES_SCALE(1);
 	t.baseline.y = RES_SCALE(27);
 	t.align = ALIGN_CENTER;
 	t.pStr = GAME_STRING(CARGO_STRING_BASE + 10); // datalog
 	t.CharCount = (uint16_t)~0;
-	SetContextForeGroundColor(CARGO_SELECTED_AMOUNT_COLOR);
+	SetContextForeGroundColor(CargoSelectedAmountColor);
 	font_DrawText(&t);
 
 	// rainbow world icon
@@ -348,9 +348,9 @@ void DrawRainbowPlanet(uint16_t planet)
 
 	// number of worlds
 	SetContextForeGroundColor(planet != 0 ?
-								  PCMENU_SELECTION_BACKGROUND_COLOR :
-								  CARGO_BACK_COLOR);
-	r.corner.x = (STATUS_WIDTH >> 1) - RES_SCALE(6);
+								  PcmenuSelectionBackgroundColor :
+								  CargoBackColor);
+	r.corner.x = (StatusWidth() >> 1) - RES_SCALE(6);
 	r.extent.width = RES_SCALE(12);
 	r.extent.height = ELEMENT_SPACING_Y - RES_SCALE(2);
 	r.corner.y = s.origin.y - s.frame->HotSpot.y + s.frame->Bounds.height
@@ -359,11 +359,11 @@ void DrawRainbowPlanet(uint16_t planet)
 	t.pStr = buf;
 	fmt::format_to_sz_n(buf, "{}", planet);
 	t.CharCount = (uint16_t)~0;
-	t.baseline.x = (STATUS_WIDTH >> 1);
+	t.baseline.x = (StatusWidth() >> 1);
 	t.baseline.y = r.corner.y + TEXT_BASELINE;
 	SetContextForeGroundColor(planet != 0 ?
-								  PCMENU_SELECTION_TEXT_COLOR :
-								  PCMENU_TEXT_COLOR);
+								  PcmenuSelectionTextColor :
+								  PcmenuTextColor);
 	if (isPC(uqm::UQMOptions::read().whichFonts))
 	{
 		SetContextFont(TinyFont);
@@ -375,11 +375,11 @@ void DrawRainbowPlanet(uint16_t planet)
 	font_DrawText(&t);
 
 	// decoration text rect
-	r.corner.x = (STATUS_WIDTH >> 1) - RES_SCALE(20);
+	r.corner.x = (StatusWidth() >> 1) - RES_SCALE(20);
 	r.extent.width = RES_SCALE(40);
 	r.extent.height *= 2;
 	r.corner.y += RES_SCALE(22);
-	SetContextForeGroundColor(CARGO_BACK_COLOR);
+	SetContextForeGroundColor(CargoBackColor);
 	DrawFilledRectangle(&r);
 
 	// decoration text
@@ -388,7 +388,7 @@ void DrawRainbowPlanet(uint16_t planet)
 		t.pStr = GAME_STRING(CARGO_STRING_BASE + 11); // complete
 		t.CharCount = (uint16_t)~0;
 		t.baseline.y += RES_SCALE(25);
-		SetContextForeGroundColor(PCMENU_TEXT_COLOR);
+		SetContextForeGroundColor(PcmenuTextColor);
 		font_DrawText(&t);
 	}
 	else
@@ -396,7 +396,7 @@ void DrawRainbowPlanet(uint16_t planet)
 		t.pStr = GAME_STRING(CARGO_STRING_BASE + 12); // Uploading
 		t.CharCount = (uint16_t)~0;
 		t.baseline.y += RES_SCALE(22);
-		SetContextForeGroundColor(PCMENU_TEXT_COLOR);
+		SetContextForeGroundColor(PcmenuTextColor);
 		font_DrawText(&t);
 		t.pStr = GAME_STRING(CARGO_STRING_BASE + 13); // data
 		t.CharCount = (uint16_t)~0;
@@ -490,11 +490,11 @@ void CargoMenu(void)
 		DrawMenuStateStrings(PM_ALT_CARGO, 0);
 	}
 
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	MenuState.InputFunc = DoDiscardCargo;
 	DoInput(&MenuState, true);
 
 	// erase the cargo display
-	ClearSISRect(DRAW_SIS_DISPLAY);
+	ClearSISRect(DrawSisDisplay);
 }

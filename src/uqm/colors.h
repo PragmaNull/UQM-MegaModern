@@ -16,283 +16,160 @@
 #ifndef UQM_COLORS_H_
 #define UQM_COLORS_H_
 
+#include "libs/gfxlib.h"
+
 // To be used as an indicator that the actual value of the color does not
 // matter, for instance in structure initialisations for fields which
 // are irrelevant in the context.
-#define UNDEFINED_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)
+inline constexpr auto UndefinedColor {BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)};
 
 #if 0
-#define DEFAULT_COLOR_00 \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)
-#define DEFAULT_COLOR_01 \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
-#define DEFAULT_COLOR_02 \
-	BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)
-#define DEFAULT_COLOR_03 \
-	BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)
-#define DEFAULT_COLOR_04 \
-	BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x04)
-#define DEFAULT_COLOR_05 \
-	BuildColor(MakeRgb15(0x14, 0x00, 0x14), 0x05)
-#define DEFAULT_COLOR_06 \
-	BuildColor(MakeRgb15(0x14, 0x14, 0x00), 0x06)
-#define DEFAULT_COLOR_07 \
-	BuildColor(MakeRgb15(0x14, 0x14, 0x14), 0x07)
-#define DEFAULT_COLOR_08 \
-	BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08)
-#define DEFAULT_COLOR_09 \
-	BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)
-#define DEFAULT_COLOR_0A \
-	BuildColor(MakeRgb15(0x0A, 0x1F, 0x0A), 0x0A)
-#define DEFAULT_COLOR_0B \
-	BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)
-#define DEFAULT_COLOR_0C \
-	BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x0C)
-#define DEFAULT_COLOR_0D \
-	BuildColor(MakeRgb15(0x1F, 0x0A, 0x1F), 0x0D)
-#define DEFAULT_COLOR_0E \
-	BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x0E)
-#define DEFAULT_COLOR_0F \
-	BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)
+
+
 #endif
 
-#define NULL_COLOR \
-	BuildColorRgba(0, 0, 0, 0)
-#define BLACK_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)
-#define LTGRAY_COLOR \
-	BuildColor(MakeRgb15(0x14, 0x14, 0x14), 0x07)
-#define MLTGRAY_COLOR \
-	BuildColor(MakeRgb15(0x0F, 0x0F, 0x0F), 0x00)
-#define DKGRAY_COLOR \
-	BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08)
-#define MDKGRAY_COLOR \
-	BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F)
-#define VDKGRAY_COLOR \
-	BuildColor(MakeRgb15(0x06, 0x06, 0x06), 0x00)
-#define WHITE_COLOR \
-	BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)
-#define BRIGHT_RED_COLOR \
-	BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x04)
-#define BRIGHT_GREEN_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0x02)
-#define BRIGHT_BLUE_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x1F), 0x01)
+inline constexpr auto NullColor {BuildColorRgba(0, 0, 0, 0)};
+inline constexpr auto BlackColor {BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)};
+inline constexpr auto LtgrayColor {BuildColor(MakeRgb15(0x14, 0x14, 0x14), 0x07)};
+
+inline constexpr auto DkgrayColor {BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08)};
+inline constexpr auto MdkgrayColor {BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F)};
+inline constexpr auto VdkgrayColor {BuildColor(MakeRgb15(0x06, 0x06, 0x06), 0x00)};
+inline constexpr auto WhiteColor {BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)};
+inline constexpr auto BrightRedColor {BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x04)};
+inline constexpr auto BrightGreenColor {BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0x02)};
+inline constexpr auto BrightBlueColor {BuildColor(MakeRgb15(0x00, 0x00, 0x1F), 0x01)};
 
 /* uqm-hd */
-#define BRIGHT_YELLOW_COLOR \
-	BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x01)
-#define DULL_YELLOW_COLOR \
-	BuildColor(MakeRgb15(0x0F, 0x0F, 0x00), 0x01)
+inline constexpr auto BrightYellowColor {BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x01)};
+inline constexpr auto DullYellowColor {BuildColor(MakeRgb15(0x0F, 0x0F, 0x00), 0x01)};
 /* end uqm-hd */
 
-#define STARMAP_FUEL_RANGE_COLOR \
-	BuildColor(MakeRgb15(0x04, 0x04, 0x04), 0x22)
-#define STARMAP_SECONDARY_RANGE_COLOR \
-	BuildColor(MakeRgb15(0x05, 0x05, 0x05), 0x22)
+inline constexpr auto StarmapFuelRangeColor {BuildColor(MakeRgb15(0x04, 0x04, 0x04), 0x22)};
+inline constexpr auto StarmapSecondaryRangeColor {BuildColor(MakeRgb15(0x05, 0x05, 0x05), 0x22)};
 
-#define NORMAL_ILLUMINATED_COLOR \
-	WHITE_COLOR
-#define NORMAL_SHADOWED_COLOR \
-	DKGRAY_COLOR
-#define HIGHLIGHT_ILLUMINATED_COLOR \
-	BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x0C)
-#define HIGHLIGHT_SHADOWED_COLOR \
-	BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x04)
-#define MENU_BACKGROUND_COLOR \
-	LTGRAY_COLOR
-#define MENU_FOREGROUND_COLOR \
-	DKGRAY_COLOR
-#define MENU_TEXT_COLOR \
-	VDKGRAY_COLOR
-#define MENU_HIGHLIGHT_COLOR \
-	BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x0E)
-#define MENU_CURSOR_COLOR \
-	WHITE_COLOR
 
-#define STATUS_ILLUMINATED_COLOR \
-	WHITE_COLOR
-#define STATUS_SHADOWED_COLOR \
-	DKGRAY_COLOR
-#define STATUS_SHAPE_COLOR \
-	BLACK_COLOR
-#define STATUS_SHAPE_OUTLINE_COLOR \
-	WHITE_COLOR
+inline constexpr auto MenuBackgroundColor {LtgrayColor};
+inline constexpr auto MenuForegroundColor {DkgrayColor};
+inline constexpr auto MenuTextColor {VdkgrayColor};
+inline constexpr auto MenuHighlightColor {BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x0E)};
+inline constexpr auto MenuCursorColor {WhiteColor};
 
-#define CONTROL_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
 
-#define ALLIANCE_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
-#define HIERARCHY_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x04)
-#define ALLIANCE_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)
-#define HIERARCHY_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E)
-#define ALLIANCE_BOX_HIGHLIGHT_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
-#define HIERARCHY_BOX_HIGHLIGHT_COLOR \
-	HIERARCHY_BACKGROUND_COLOR
-
-#define MESSAGE_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
-#define MESSAGE_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E)
+inline constexpr auto HierarchyBackgroundColor {BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x04)};
 
 
 // Not highlighted dialog options in comm.
-#define COMM_PLAYER_TEXT_NORMAL_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)
+inline constexpr auto CommPlayerTextNormalColor {BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)};
 
 // Currently highlighted dialog option in comm.
-#define COMM_PLAYER_TEXT_HIGHLIGHT_COLOR \
-	BuildColor(MakeRgb15(0x1A, 0x1A, 0x1A), 0x12)
+inline constexpr auto CommPlayerTextHighlightColor {BuildColor(MakeRgb15(0x1A, 0x1A, 0x1A), 0x12)};
 
 // Background color of the area containing the player's dialog options.
-#define COMM_PLAYER_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
+inline constexpr auto CommPlayerBackgroundColor {BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)};
 
 // "(In response to your statement)"
-#define COMM_RESPONSE_INTRO_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x0A, 0x0C, 0x1F), 0x48)
+inline constexpr auto CommResponseIntroTextColor {BuildColor(MakeRgb15(0x0A, 0x0C, 0x1F), 0x48)};
 
 // Your dialog option after choosing it.
-#define COMM_FEEDBACK_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x12, 0x14, 0x4F), 0x44)
+inline constexpr auto CommFeedbackTextColor {BuildColor(MakeRgb15(0x12, 0x14, 0x4F), 0x44)};
 
 // The background when reviewing the conversation history.
-#define COMM_HISTORY_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x05, 0x00), 0x00)
+inline constexpr auto CommHistoryBackgroundColor {BuildColor(MakeRgb15(0x00, 0x05, 0x00), 0x00)};
 
 // The text when reviewing the conversation history.
-#define COMM_HISTORY_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x10, 0x00), 0x6B)
+inline constexpr auto CommHistoryTextColor {BuildColor(MakeRgb15(0x00, 0x10, 0x00), 0x6B)};
 
 // The text "MORE" when reviewing the conversation history.
-#define COMM_MORE_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x17, 0x00), 0x00)
+inline constexpr auto CommMoreTextColor {BuildColor(MakeRgb15(0x00, 0x17, 0x00), 0x00)};
 
 // Default colors for System Dialog Boxes (DrawShadowedBox)
-#define SHADOWBOX_BACKGROUND_COLOR \
-	MENU_BACKGROUND_COLOR
+inline constexpr auto ShadowboxBackgroundColor {MenuBackgroundColor};
 
-#define SHADOWBOX_MEDIUM_COLOR \
-	BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x19)
+inline constexpr auto ShadowboxMediumColor {BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x19)};
 
-#define SHADOWBOX_DARK_COLOR \
-	BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F)
+inline constexpr auto ShadowboxDarkColor {BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F)};
 
 // Alternate Shadowed Box colors
 
-#define ALT_SHADOWBOX_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x0E, 0x0E, 0x0E), 0x00)
+inline constexpr auto AltShadowboxBackgroundColor {BuildColor(MakeRgb15(0x0E, 0x0E, 0x0E), 0x00)};
 
-#define ALT_SHADOWBOX_TOP_LEFT \
-	ALT_SHADOWBOX_BACKGROUND_COLOR
+inline constexpr auto AltShadowboxTopLeft {AltShadowboxBackgroundColor};
 
-#define ALT_SHADOWBOX_BOTTOM_RIGHT \
-	VDKGRAY_COLOR
-
-#define ALT_SHADOWBOX_CORNERS \
-	MDKGRAY_COLOR
+inline constexpr auto AltShadowboxBottomRight {VdkgrayColor};
 
 
 // === SIS ===
 
 // Left border of the "SIS" view (the part in which your ship flies).
-#define SIS_LEFT_BORDER_COLOR \
-	BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x19)
+inline constexpr auto SisLeftBorderColor {BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x19)};
 
 // Right and bottom border of the "SIS" view.
-#define SIS_BOTTOM_RIGHT_BORDER_COLOR \
-	BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F)
+inline constexpr auto SisBottomRightBorderColor {BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F)};
 
 // Text color of the string "CAPTAIN", when using PC fonts.
-#define PC_CAPTAIN_STRING_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x02, 0x04, 0x1E), 0x38)
+inline constexpr auto PcCaptainStringTextColor {BuildColor(MakeRgb15(0x02, 0x04, 0x1E), 0x38)};
 
 // Text color of the string "CAPTAIN", when using PC fonts.
-#define THREEDO_CAPTAIN_STRING_TEXT_COLOR \
-	BuildColorRgb(0x48, 0x98, 0xC0)
+inline constexpr auto ThreedoCaptainStringTextColor {BuildColorRgb(0x48, 0x98, 0xC0)};
 
 // Background color of the string "CAPTAIN", when using PC fonts.
-#define PC_CAPTAIN_STRING_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
+inline constexpr auto PcCaptainStringBackgroundColor {BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)};
 
 // Text color of the captain's name.
-#define CAPTAIN_NAME_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x16, 0x0B, 0x1F), 0x38)
+inline constexpr auto CaptainNameTextColor {BuildColor(MakeRgb15(0x16, 0x0B, 0x1F), 0x38)};
 
 // Background color of the captain's name.
-#define CAPTAIN_NAME_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
+inline constexpr auto CaptainNameBackgroundColor {BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)};
 
 // Text color of the flagship's name, when using 3DO fonts.
-#define THREEDO_FLAGSHIP_NAME_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x14, 0x0A, 0x00), 0x0C)
+inline constexpr auto ThreedoFlagshipNameTextColor {BuildColor(MakeRgb15(0x14, 0x0A, 0x00), 0x0C)};
 
 // Background color of the flagship's name.
-#define FLAGSHIP_NAME_BACKGROUND_COLOR \
-	BLACK_COLOR
+inline constexpr auto FlagshipNameBackgroundColor {BlackColor};
 
 // Text color for the message area (at the top of the screen, on the left
 // hand side, containing the name of the solar system.
-#define SIS_MESSAGE_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x1B, 0x00, 0x1B), 0x33)
+inline constexpr auto SisMessageTextColor {BuildColor(MakeRgb15(0x1B, 0x00, 0x1B), 0x33)};
 
 // Color of autocompleted text after the current cursor position,
 // when editing in the title area.
-#define SIS_MESSAGE_EXTRA_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x12, 0x00, 0x12), 0x33)
+inline constexpr auto SisMessageExtraTextColor {BuildColor(MakeRgb15(0x12, 0x00, 0x12), 0x33)};
 
 // Background color for the message area.
-#define SIS_MESSAGE_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
+inline constexpr auto SisMessageBackgroundColor {BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)};
 
 // Cursor color when editing in the message area.
-#define SIS_MESSAGE_CURSOR_COLOR \
-	BLACK_COLOR
+inline constexpr auto SisMessageCursorColor {BlackColor};
 
-#define SIS_MESSAGE_TOP_LEFT_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x0E), 0x54)
+inline constexpr auto SisMessageTopLeftColor {BuildColor(MakeRgb15(0x00, 0x00, 0x0E), 0x54)};
 
-#define SIS_MESSAGE_BOTTOM_RIGHT_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x01, 0x1C), 0x4E)
+inline constexpr auto SisMessageBottomRightColor {BuildColor(MakeRgb15(0x00, 0x01, 0x1C), 0x4E)};
 
 // Text color of the title (at the top of the screen, on the right
 // hand side, containing the coordinates in HyperSpace, or the planet name
 // in IP.
-#define SIS_TITLE_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x1B, 0x00, 0x1B), 0x33)
+inline constexpr auto SisTitleTextColor {BuildColor(MakeRgb15(0x1B, 0x00, 0x1B), 0x33)};
 
 // Background color of the title.
-#define SIS_TITLE_BACKGROUND_COLOR \
-	SIS_MESSAGE_BACKGROUND_COLOR
+inline constexpr auto SisTitleBackgroundColor {SisMessageBackgroundColor};
 
-#define SIS_TITLE_TOP_LEFT_COLOR \
-	SIS_MESSAGE_TOP_LEFT_COLOR
+inline constexpr auto SisTitleTopLeftColor {SisMessageTopLeftColor};
 
-#define SIS_TITLE_BOTTOM_RIGHT_COLOR \
-	SIS_MESSAGE_BOTTOM_RIGHT_COLOR
+inline constexpr auto SisTitleBottomRightColor {SisMessageBottomRightColor};
 
 // Text color of the status message, below the flagship overview, containing
 // the date, RU, etc.
-#define STATUS_MESSAGE_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x10, 0x00), 0x6B)
+inline constexpr auto StatusMessageTextColor {BuildColor(MakeRgb15(0x00, 0x10, 0x00), 0x6B)};
 
 // Text color for the status message when it's displaying a warning (yellow).
-#define STATUS_MESSAGE_WARNING_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x10, 0x10, 0x00), 0x6B)
+inline constexpr auto StatusMessageWarningTextColor {BuildColor(MakeRgb15(0x10, 0x10, 0x00), 0x6B)};
 
 // Text color for the status message then it's displaying an alert (red).
-#define STATUS_MESSAGE_ALERT_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x10, 0x00, 0x00), 0x6B)
+inline constexpr auto StatusMessageAlertTextColor {BuildColor(MakeRgb15(0x10, 0x00, 0x00), 0x6B)};
 
 // Background color of the status message.
-#define STATUS_MESSAGE_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x08, 0x00), 0x6E)
+inline constexpr auto StatusMessageBackgroundColor {BuildColor(MakeRgb15(0x00, 0x08, 0x00), 0x6E)};
 
 //	== Scavenge screen ==
 
@@ -455,8 +332,7 @@
 
 // Colors for the crew in the crew pods as they are filled up,
 // when viewed from the shipyard, when using 3DO fonts.
-#define THREEDO_CREW_COLOR \
-	BuildColor(MakeRgb15(0x05, 0x10, 0x05), 0x65)
+inline constexpr auto ThreedoCrewColor {BuildColor(MakeRgb15(0x05, 0x10, 0x05), 0x65)};
 
 // Colors for the minerals in the storage bays as they are filled up,
 // when viewed from the shipyard.
@@ -476,30 +352,22 @@
 
 // Color of the storage bay indicator, as shown beneath the flagship,
 // for the parts which are full.
-#define STORAGE_BAY_FULL_COLOR \
-	BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08)
+inline constexpr auto StorageBayFullColor {BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08)};
 
 // Color of the storage bay indicator, as shown beneath the flagship,
 // for the parts which are empty.
-#define STORAGE_BAY_EMPTY_COLOR \
-	BuildColor(MakeRgb15(0x06, 0x06, 0x06), 0x20)
+inline constexpr auto StorageBayEmptyColor {BuildColor(MakeRgb15(0x06, 0x06, 0x06), 0x20)};
 
 // Colors of the oscilloscope lines
-#define SCOPE_COLOR_3DO \
-	BuildColorRgba(0x83, 0x4A, 0xFF, 0xFF)
-#define SCOPE_COLOR_PC \
-	BuildColorRgba(0x79, 0x00, 0xCE, 0xFF)
+inline constexpr auto ScopeColor3do {BuildColorRgba(0x83, 0x4A, 0xFF, 0xFF)};
+inline constexpr auto ScopeColorPc {BuildColorRgba(0x79, 0x00, 0xCE, 0xFF)};
 
 // Flagship blueprint color
-#define BLUEPRINT_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x16), 0x01)
+inline constexpr auto BlueprintColor {BuildColor(MakeRgb15(0x00, 0x00, 0x16), 0x01)};
 
-#define FULL_CREW_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x16, 0x00), 0x01)
-#define HALF_CREW_COLOR \
-	BuildColor(MakeRgb15(0x16, 0x16, 0x00), 0x01)
-#define LOW_CREW_COLOR \
-	BuildColor(MakeRgb15(0x16, 0x00, 0x00), 0x01)
+inline constexpr auto FullCrewColor {BuildColor(MakeRgb15(0x00, 0x16, 0x00), 0x01)};
+inline constexpr auto HalfCrewColor {BuildColor(MakeRgb15(0x16, 0x16, 0x00), 0x01)};
+inline constexpr auto LowCrewColor {BuildColor(MakeRgb15(0x16, 0x00, 0x00), 0x01)};
 
 // Colors for the Lander damage cycle
 #define LANDER_DAMAGE_COLOR_TABLE                      \
@@ -529,160 +397,125 @@
 // === PC Menus ===
 
 // Background color of the PC-style menus.
-#define PCMENU_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x15), 0x00)
+inline constexpr auto PcmenuBackgroundColor {BuildColor(MakeRgb15(0x00, 0x00, 0x15), 0x00)};
 
 // Color of the top and left segments of the border around PC-style menus.
-#define PCMENU_TOP_LEFT_BORDER_COLOR \
-	BuildColor(MakeRgb15(0x0F, 0x0F, 0x0F), 0x00)
+inline constexpr auto PcmenuTopLeftBorderColor {BuildColor(MakeRgb15(0x0F, 0x0F, 0x0F), 0x00)};
 
 // Color of the bottom and right segments of the border around PC-style menus.
-#define PCMENU_BOTTOM_RIGHT_BORDER_COLOR \
-	BuildColor(MakeRgb15(0x06, 0x06, 0x06), 0x00)
+inline constexpr auto PcmenuBottomRightBorderColor {BuildColor(MakeRgb15(0x06, 0x06, 0x06), 0x00)};
 
 // Text color of an unselected menu item.
-#define PCMENU_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x15, 0x15), 0x00)
+inline constexpr auto PcmenuTextColor {BuildColor(MakeRgb15(0x00, 0x15, 0x15), 0x00)};
 
 // Text color of an selected menu item.
-#define PCMENU_SELECTION_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)
+inline constexpr auto PcmenuSelectionTextColor {BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)};
 
 // Background color of a selected menu item.
-#define PCMENU_SELECTION_BACKGROUND_COLOR \
-	BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)
+inline constexpr auto PcmenuSelectionBackgroundColor {BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)};
 
 // === 3DO menus ===
-#define THREEDOMENU_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0x00)
+inline constexpr auto ThreedomenuTextColor {BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0x00)};
 
 
 // === Credits ===
 
-#define CREDITS_TEXT_COLOR \
-	WHITE_COLOR
+inline constexpr auto CreditsTextColor {WhiteColor};
 
 // === Main Menu ===
 
-#define MAIN_MENU_TEXT_COLOR \
-	BuildColorRgb(0x00, 0x73, 0x00)
+inline constexpr auto MainMenuTextColor {BuildColorRgb(0x00, 0x73, 0x00)};
 
 // === Cargo menu ===
 
-#define CARGO_BACK_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
+inline constexpr auto CargoBackColor {BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)};
 
-#define CARGO_WORTH_COLOR \
-	BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)
+inline constexpr auto CargoWorthColor {BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)};
 
-#define CARGO_AMOUNT_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)
+inline constexpr auto CargoAmountColor {BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)};
 
-#define CARGO_SELECTED_BACK_COLOR \
-	BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)
+inline constexpr auto CargoSelectedBackColor {BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)};
 
-#define CARGO_SELECTED_WORTH_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)
+inline constexpr auto CargoSelectedWorthColor {BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)};
 
-#define CARGO_SELECTED_AMOUNT_COLOR \
-	BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)
+inline constexpr auto CargoSelectedAmountColor {BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)};
 
 
 // === Devices menu ===
 
-#define DEVICES_BACK_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
+inline constexpr auto DevicesBackColor {BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)};
 
-#define DEVICES_NAME_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)
+inline constexpr auto DevicesNameColor {BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)};
 
-#define DEVICES_SELECTED_BACK_COLOR \
-	BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)
+inline constexpr auto DevicesSelectedBackColor {BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)};
 
-#define DEVICES_SELECTED_NAME_COLOR \
-	BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)
+inline constexpr auto DevicesSelectedNameColor {BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)};
 
 // === Modules Menu ===
 
-#define MODULE_BACK_COLOR BuildColorRgba(0x00, 0x00, 0xAA, 0xFF)
+inline constexpr auto ModuleBackColor {BuildColorRgba(0x00, 0x00, 0xAA, 0xFF)};
 
-#define MODULE_PRICE_COLOR BuildColorRgba(0x55, 0x55, 0xFF, 0xFF)
+inline constexpr auto ModulePriceColor {BuildColorRgba(0x55, 0x55, 0xFF, 0xFF)};
 
-#define MODULE_SELECTED_BACK_COLOR MODULE_PRICE_COLOR
+inline constexpr auto ModuleSelectedBackColor {ModulePriceColor};
 
-#define MODULE_NAME_COLOR BuildColorRgba(0x00, 0xAA, 0xAA, 0xFF)
+inline constexpr auto ModuleNameColor {BuildColorRgba(0x00, 0xAA, 0xAA, 0xFF)};
 
-#define MODULE_SELECTED_COLOR BuildColorRgba(0x55, 0xFF, 0xFF, 0xFF)
+inline constexpr auto ModuleSelectedColor {BuildColorRgba(0x55, 0xFF, 0xFF, 0xFF)};
 
 // === Roster menu ===
 
-#define ROSTER_MODIFY_SHIP_COLOR \
-	WHITE_COLOR
+inline constexpr auto RosterModifyShipColor {WhiteColor};
 
 // === No Room For Landers & Escape Pod text ===
 
-#define LANDER_POD_TEXT_COLOR \
-	BuildColorRgb(0x00, 0xF8, 0x00)
+inline constexpr auto LanderPodTextColor {BuildColorRgb(0x00, 0xF8, 0x00)};
 
 // === Scan menu and general ===
 
-#define SCAN_PC_TITLE_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x15), 0x3B)
+inline constexpr auto ScanPcTitleColor {BuildColor(MakeRgb15(0x00, 0x00, 0x15), 0x3B)};
 
-#define SCAN_INFO_COLOR \
-	BuildColor(MakeRgb15(0x0F, 0x00, 0x19), 0x3B)
+inline constexpr auto ScanInfoColor {BuildColor(MakeRgb15(0x0F, 0x00, 0x19), 0x3B)};
 
-#define SCAN_MINERAL_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C)
+inline constexpr auto ScanMineralTextColor {BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C)};
 
-#define SCAN_ENERGY_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x0C, 0x0C, 0x0C), 0x1C)
+inline constexpr auto ScanEnergyTextColor {BuildColor(MakeRgb15(0x0C, 0x0C, 0x0C), 0x1C)};
 
-#define SCAN_BIOLOGICAL_TEXT_COLOR \
-	BuildColor(MakeRgb15(0x00, 0x0E, 0x00), 0x6C)
+inline constexpr auto ScanBiologicalTextColor {BuildColor(MakeRgb15(0x00, 0x0E, 0x00), 0x6C)};
 
-#define SCAN_MINERAL_TINT_COLOR \
-	BRIGHT_RED_COLOR_INIT
 
-#define SCAN_ENERGY_TINT_COLOR \
-	WHITE_COLOR_INIT
+inline constexpr auto ScanPcTitleColor6014 {BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x3B)};
 
-#define SCAN_BIOLOGICAL_TINT_COLOR \
-	BRIGHT_GREEN_COLOR_INIT
-
-#define SCAN_PC_TITLE_COLOR_6014 \
-	BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x3B)
-
-#define OUTLINE_COLOR (BuildColorRgba(0x00, 0x00, 0x00, 0x66))
+inline constexpr auto OutlineColor {(BuildColorRgba(0x00, 0x00, 0x00, 0x66))};
 
 // === Super-Melee ToolTips ===
 
-#define TOOLTIP_COLOR_NAME_BACK BuildShadeRgba(0x2F)
-#define TOOLTIP_COLOR_NAME_FRONT BuildShadeRgba(0xC7)
-#define TOOLTIP_COLOR_DESC_FRONT BuildShadeRgba(0x81)
+inline constexpr auto TooltipColorNameBack {BuildShadeRgba(0x2F)};
+inline constexpr auto TooltipColorNameFront {BuildShadeRgba(0xC7)};
+inline constexpr auto TooltipColorDescFront {BuildShadeRgba(0x81)};
 
 // === Load/Save Menu ===
 
-#define SAVE_UNSELECTED_COLOR BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
-#define SAVE_SELECTED_COLOR BuildColor(MakeRgb15(0x1B, 0x00, 0x1B), 0x33)
+inline constexpr auto SaveUnselectedColor {BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)};
+inline constexpr auto SaveSelectedColor {BuildColor(MakeRgb15(0x1B, 0x00, 0x1B), 0x33)};
 
-#define SUMM_TEXT_COLOR BuildColorRgba(0xBA, 0x00, 0xBA, 0xFF)
-#define SUMM_VALUE_COLOR BuildColor(MakeRgb15(0x10, 0x00, 0x10), 0x01)
-#define LOAD_SAVE_LABEL_COLOR BuildColorRgba(0x7B, 0x83, 0xDE, 0xFF)
-#define BOMB_POD_TEXT_COLOR BuildColorRgba(0x00, 0xE0, 0x00, 0xFF)
+inline constexpr auto SummTextColor {BuildColorRgba(0xBA, 0x00, 0xBA, 0xFF)};
+inline constexpr auto SummValueColor {BuildColor(MakeRgb15(0x10, 0x00, 0x10), 0x01)};
+inline constexpr auto LoadSaveLabelColor {BuildColorRgba(0x7B, 0x83, 0xDE, 0xFF)};
+inline constexpr auto BombPodTextColor {BuildColorRgba(0x00, 0xE0, 0x00, 0xFF)};
 
-#define LABEL_LINE_TOP_COLOR BuildColorRgba(0x06, 0x0C, 0xBA, 0xFF)
-#define LABEL_LINE_MID_COLOR BuildColorRgba(0x05, 0x0A, 0x9B, 0xFF)
-#define LABEL_LINE_BOT_COLOR BuildColorRgba(0x03, 0x06, 0x5D, 0xFF)
+inline constexpr auto LabelLineTopColor {BuildColorRgba(0x06, 0x0C, 0xBA, 0xFF)};
+inline constexpr auto LabelLineMidColor {BuildColorRgba(0x05, 0x0A, 0x9B, 0xFF)};
+inline constexpr auto LabelLineBotColor {BuildColorRgba(0x03, 0x06, 0x5D, 0xFF)};
 
-#define NO_LIMIT_STROKE_3_COLOR BuildColorRgba(0x02, 0x04, 0x3E, 0xFF)
-#define NO_LIMIT_STROKE_2_COLOR BuildColorRgba(0x03, 0x06, 0x5D, 0xFF)
-#define NO_LIMIT_STROKE_1_COLOR BuildColorRgba(0x04, 0x08, 0x7C, 0xFF)
-#define NO_LIMIT_TEXT_COLOR BuildColorRgba(0x08, 0x10, 0xF8, 0xFF)
+inline constexpr auto NoLimitStroke3Color {BuildColorRgba(0x02, 0x04, 0x3E, 0xFF)};
+inline constexpr auto NoLimitStroke2Color {BuildColorRgba(0x03, 0x06, 0x5D, 0xFF)};
+inline constexpr auto NoLimitStroke1Color {BuildColorRgba(0x04, 0x08, 0x7C, 0xFF)};
+inline constexpr auto NoLimitTextColor {BuildColorRgba(0x08, 0x10, 0xF8, 0xFF)};
 
-#define EMPTY_SLOT_STROKE_3_COLOR BuildColorRgba(0x1F, 0x00, 0x1F, 0xFF)
-#define EMPTY_SLOT_STROKE_2_COLOR BuildColorRgba(0x3E, 0x00, 0x3E, 0xFF)
-#define EMPTY_SLOT_STROKE_1_COLOR BuildColorRgba(0x5D, 0x00, 0x5D, 0xFF)
+inline constexpr auto EmptySlotStroke3Color {BuildColorRgba(0x1F, 0x00, 0x1F, 0xFF)};
+inline constexpr auto EmptySlotStroke2Color {BuildColorRgba(0x3E, 0x00, 0x3E, 0xFF)};
+inline constexpr auto EmptySlotStroke1Color {BuildColorRgba(0x5D, 0x00, 0x5D, 0xFF)};
 
 #define CARGO_COLOR_TABLE                              \
 	{                                                  \
@@ -698,52 +531,43 @@
 	}
 
 // === Hyperspace Star Colors ===
-#define BLUE_STAR_COLOR \
-	BuildColorRgb(0x48, 0x60, 0xF0)
-#define GREEN_STAR_COLOR \
-	BuildColorRgb(0x00, 0xC8, 0x00)
-#define ORANGE_STAR_COLOR \
-	BuildColorRgb(0xFF, 0x8A, 0x00)
-#define RED_STAR_COLOR \
-	BuildColorRgb(0xF8, 0x20, 0x20)
-#define YELLOW_STAR_COLOR \
-	BuildColorRgb(0xDE, 0xC8, 0x10)
+inline constexpr auto BlueStarColor {BuildColorRgb(0x48, 0x60, 0xF0)};
+inline constexpr auto GreenStarColor {BuildColorRgb(0x00, 0xC8, 0x00)};
+inline constexpr auto OrangeStarColor {BuildColorRgb(0xFF, 0x8A, 0x00)};
+inline constexpr auto RedStarColor {BuildColorRgb(0xF8, 0x20, 0x20)};
+inline constexpr auto YellowStarColor {BuildColorRgb(0xDE, 0xC8, 0x10)};
 
 // === Play Menu ===
 
-#define PM_RECT_COLOR DKGRAY_COLOR
-#define PM_TEXT_COLOR BuildShadeRgba(0x74)
-#define PM_SHADOW_COLOR BuildShadeRgba(0x31)
+inline constexpr auto PmRectColor {DkgrayColor};
+inline constexpr auto PmTextColor {BuildShadeRgba(0x74)};
+inline constexpr auto PmShadowColor {BuildShadeRgba(0x31)};
 
-#define MDL_RECT_COLOR PM_RECT_COLOR
-#define MDL_TEXT_COLOR PM_TEXT_COLOR
-#define MDL_SHADOW_COLOR BuildShadeRgba(0x2E)
+inline constexpr auto MdlRectColor {PmRectColor};
+inline constexpr auto MdlTextColor {PmTextColor};
+inline constexpr auto MdlShadowColor {BuildShadeRgba(0x2E)};
 
-#define SHP_RECT_COLOR PM_RECT_COLOR
-#define SHP_TEXT_COLOR BuildShadeRgba(0x78)
-#define SHP_SHADOW_COLOR BuildShadeRgba(0x4B)
+inline constexpr auto ShpRectColor {PmRectColor};
+inline constexpr auto ShpTextColor {BuildShadeRgba(0x78)};
+inline constexpr auto ShpShadowColor {BuildShadeRgba(0x4B)};
 
 // === Lander Status ===
 
-#define LAND_STAT_MIN_COLOR BuildColorRgb(0x7C, 0x00, 0x00)
-#define LAND_STAT_DAT_COLOR BuildColorRgb(0x00, 0x00, 0x90)
+inline constexpr auto LandStatMinColor {BuildColorRgb(0x7C, 0x00, 0x00)};
+inline constexpr auto LandStatDatColor {BuildColorRgb(0x00, 0x00, 0x90)};
 
 // Temporary, until we can use C'99 features:
-#define BLACK_COLOR_INIT \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)
-#define WHITE_COLOR_INIT \
-	BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)
-#define BRIGHT_RED_COLOR_INIT \
-	BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x04)
-#define BRIGHT_GREEN_COLOR_INIT \
-	BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0x02)
-#define BRIGHT_BLUE_COLOR_INIT \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x1F), 0x01)
-#define UNDEFINED_COLOR_INIT \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)
+inline constexpr auto BlackColorInit {BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)};
+inline constexpr auto WhiteColorInit {BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)};
+inline constexpr auto BrightRedColorInit {BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x04)};
+inline constexpr auto BrightGreenColorInit {BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0x02)};
+
+inline constexpr auto UndefinedColorInit {BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)};
+inline constexpr auto ScanMineralTintColor {BrightRedColorInit};
+inline constexpr auto ScanEnergyTintColor {WhiteColorInit};
+inline constexpr auto ScanBiologicalTintColor {BrightGreenColorInit};
 
 // Transparent
-#define TRANSPARENT \
-	BuildColorRgba(0x50, 0x50, 0x50, 0x00)
+inline constexpr auto Transparent {BuildColorRgba(0x50, 0x50, 0x50, 0x00)};
 
 #endif /* UQM_COLORS_H_ */

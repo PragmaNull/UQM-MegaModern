@@ -40,7 +40,7 @@
 #include "libs/strlib.h"
 #include "../../options.h"
 #include "libs/graphics/gfx_common.h"
-// for scaling down devices in HD
+// for scaling down devices in HdResolutionFactor
 
 
 // If DEBUG_DEVICES is defined, the device list shown in the game will
@@ -58,7 +58,7 @@
 #define DEVICE_COL_1 RES_SCALE(40)
 
 #define DEVICE_SEL_ORG_X (DEVICE_COL_0 + DEVICE_ICON_WIDTH)
-#define DEVICE_SEL_WIDTH (FIELD_WIDTH + RES_SCALE(2) - DEVICE_SEL_ORG_X)
+#define DEVICE_SEL_WIDTH (FieldWidth() + RES_SCALE(2) - DEVICE_SEL_ORG_X)
 
 #define ICON_OFS_Y RES_SCALE(1)
 #define NAME_OFS_Y RES_SCALE(2)
@@ -93,10 +93,10 @@ EraseDevicesBackground (void)
 	GFXRECT r;
 
 	r.corner.x = RES_SCALE (3); 
-	r.extent.width = FIELD_WIDTH - RES_SCALE (1); 
+	r.extent.width = FieldWidth() - RES_SCALE (1); 
 	r.corner.y = DEVICE_ORG_Y;
 	r.extent.height = MAX_VIS_DEVICES * DEVICE_SPACING_Y;
-	SetContextForeGroundColor (DEVICES_BACK_COLOR);
+	SetContextForeGroundColor (DevicesBackColor);
 	DrawFilledRectangle (&r);
 }
 #endif
@@ -117,8 +117,8 @@ DrawDevice(uint16_t device, uint16_t pos, bool selected)
 	// draw line background
 	r.corner.y = DEVICE_ORG_Y + pos * DEVICE_SPACING_Y + NAME_OFS_Y;
 	SetContextForeGroundColor(selected ?
-								  DEVICES_SELECTED_BACK_COLOR :
-								  DEVICES_BACK_COLOR);
+								  DevicesSelectedBackColor :
+								  DevicesBackColor);
 	DrawFilledRectangle(&r);
 
 	if (isPC(uqm::UQMOptions::read().whichFonts))
@@ -132,8 +132,8 @@ DrawDevice(uint16_t device, uint16_t pos, bool selected)
 
 	// print device name
 	SetContextForeGroundColor(selected ?
-								  DEVICES_SELECTED_NAME_COLOR :
-								  DEVICES_NAME_COLOR);
+								  DevicesSelectedNameColor :
+								  DevicesNameColor);
 	t.baseline.y = r.corner.y + TEXT_BASELINE;
 	t.pStr = GAME_STRING(device + DEVICE_STRING_BASE + 1);
 	t.CharCount = uqm::utf8StringPos(t.pStr, ' ');
@@ -154,16 +154,16 @@ DrawDevicesDisplay(DEVICES_STATE* devState)
 
 	r.corner.x = RES_SCALE(2);
 	r.corner.y = RES_SCALE(20);
-	r.extent.width = FIELD_WIDTH + RES_SCALE(1);
+	r.extent.width = FieldWidth() + RES_SCALE(1);
 	// XXX: Shouldn't the height be 1 less? This draws the bottom border
 	//   1 pixel too low. Or if not, why do we need another box anyway?
 	r.extent.height = (RES_SCALE(129) - r.corner.y);
 
-	if (!uqm::UQMOptions::read().customBorder && !IS_HD)
+	if (!uqm::UQMOptions::read().customBorder && !IsHd())
 	{
 		DrawStarConBox(&r, RES_SCALE(1),
-					   SHADOWBOX_MEDIUM_COLOR, SHADOWBOX_DARK_COLOR,
-					   true, DEVICES_BACK_COLOR, false, TRANSPARENT);
+					   ShadowboxMediumColor, ShadowboxDarkColor,
+					   true, DevicesBackColor, false, Transparent);
 	}
 	else
 	{
@@ -172,12 +172,12 @@ DrawDevicesDisplay(DEVICES_STATE* devState)
 
 	// print the "DEVICES" title
 	SetContextFont(StarConFont);
-	t.baseline.x = (STATUS_WIDTH >> 1) - RES_SCALE(1);
+	t.baseline.x = (StatusWidth() >> 1) - RES_SCALE(1);
 	t.baseline.y = r.corner.y + RES_SCALE(7);
 	t.align = ALIGN_CENTER;
 	t.pStr = GAME_STRING(DEVICE_STRING_BASE);
 	t.CharCount = (uint16_t)~0;
-	SetContextForeGroundColor(DEVICES_SELECTED_NAME_COLOR);
+	SetContextForeGroundColor(DevicesSelectedNameColor);
 	font_DrawText(&t);
 
 	s.origin.x = DEVICE_COL_0;
@@ -258,7 +258,7 @@ UseCaster(void)
 	if (playerInPlanetOrbit()
 		&& matchWorld(pSolarSysState, pSolarSysState->pOrbitalDesc,
 					  MATCH_PBYTE, MATCH_PLANET)
-		&& CurStarDescPtr->Index == CHMMR_DEFINED
+		&& CurStarDescPtr()->Index == CHMMR_DEFINED
 		&& !GET_GAME_STATE(CHMMR_UNLEASHED))
 	{
 		// In orbit around the Chenjesu/Mmrnmhrm home planet.
@@ -266,7 +266,7 @@ UseCaster(void)
 		uqm::currentActivity() |= START_ENCOUNTER;
 
 		EncounterGroup = 0;
-		PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+		PutGroupInfo(GroupsRandom, GroupSaveIp);
 		ReinitQueue(&GLOBAL(ip_group_q));
 		assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -279,7 +279,7 @@ UseCaster(void)
 		bool FoundIlwrath {};
 		HIPGROUP hGroup {};
 
-		FoundIlwrath = (CurStarDescPtr->Index == ILWRATH_DEFINED)
+		FoundIlwrath = (CurStarDescPtr()->Index == ILWRATH_DEFINED)
 					&& StartSphereTracking(ILWRATH_SHIP);
 		// In the Ilwrath home system and they are alive?
 
@@ -298,11 +298,11 @@ UseCaster(void)
 			uqm::currentActivity() |= START_ENCOUNTER;
 
 			EncounterGroup = 0;
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
-			if (CurStarDescPtr->Index == ILWRATH_DEFINED)
+			if (CurStarDescPtr()->Index == ILWRATH_DEFINED)
 			{
 				// Ilwrath home system.
 				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 4);
@@ -353,7 +353,7 @@ InvokeDevice(uint8_t which_device)
 				PlayMenuSound(MENU_SOUND_INVOKED);
 				SleepThreadUntil(FadeScreen(FadeAllToWhite, c_gameSecond * 1)
 								 + (c_gameSecond * 2));
-				if (CurStarDescPtr->Index != CHMMR_DEFINED
+				if (CurStarDescPtr()->Index != CHMMR_DEFINED
 					|| !matchWorld(pSolarSysState,
 								   pSolarSysState->pOrbitalDesc,
 								   MATCH_PBYTE, MATCH_PLANET))
@@ -367,7 +367,7 @@ InvokeDevice(uint8_t which_device)
 					EncounterGroup = 0;
 					uqm::currentActivity() |= START_ENCOUNTER;
 
-					PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+					PutGroupInfo(GroupsRandom, GroupSaveIp);
 					ReinitQueue(&GLOBAL(ip_group_q));
 					assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -414,12 +414,12 @@ InvokeDevice(uint8_t which_device)
 				{
 					SET_GAME_STATE(SHIP_TO_COMPEL, 1);
 
-					PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+					PutGroupInfo(GroupsRandom, GroupSaveIp);
 					ReinitQueue(&GLOBAL(ip_group_q));
 					assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 				}
 
-				if (CurStarDescPtr->Index == SAMATRA_DEFINED)
+				if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
 				{
 					SET_GAME_STATE(READY_TO_CONFUSE_URQUAN, 1);
 				}
@@ -473,22 +473,22 @@ InvokeDevice(uint8_t which_device)
 		case PORTAL_SPAWNER_DEVICE:
 			{
 #define MAX_ZFP_SHIPS DIF_CASE(4, 4, 2)
-				const uint32_t portalFuelCost {difficultyCase<uint32_t>(5, 10, 20) * FUEL_TANK_SCALE};
+				const uint32_t portalFuelCost {difficultyCase<uint32_t>(5, 10, 20) * FuelTankScale};
 
-				if ((inHyperSpace() || (EXTENDED && inHQSpace()))
+				if ((inHyperSpace() || (IsExtended() && inHQSpace()))
 					&& GLOBAL_SIS(FuelOnBoard) >= portalFuelCost)
 				{
 					/* No DeltaSISGauges because the flagship picture
 				 * is currently obscured.
 				 */
 					if (!uqm::UQMOptions::read().infiniteFuel
-						|| (EXTENDED && !uqm::UQMOptions::read().infiniteFuel
+						|| (IsExtended() && !uqm::UQMOptions::read().infiniteFuel
 							&& inHyperSpace()))
 					{
 						GLOBAL_SIS(FuelOnBoard) -= portalFuelCost;
 					}
 
-					if (EXTENDED && inHyperSpace())
+					if (IsExtended() && inHyperSpace())
 					{
 						SaveLastLoc(MAKE_POINT(
 							LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)),
@@ -742,8 +742,8 @@ bool DevicesMenu(void)
 
 	DrawDevices(&DevicesState, (uint16_t)~0, MenuState.CurState);
 
-	SetMenuSounds(MENU_SOUND_ARROWS | MENU_SOUND_PAGE,
-				  MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows | MenuSoundPage,
+				  MenuSoundSelect);
 
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
@@ -753,12 +753,12 @@ bool DevicesMenu(void)
 	MenuState.InputFunc = DoManipulateDevices;
 	DoInput(&MenuState, true);
 
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	if (GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0
 		&& !(uqm::currentActivity() & CHECK_ABORT))
 	{
-		ClearSISRect(DRAW_SIS_DISPLAY);
+		ClearSISRect(DrawSisDisplay);
 
 		if (!GET_GAME_STATE(PORTAL_COUNTER)
 			&& !(uqm::currentActivity() & START_ENCOUNTER)

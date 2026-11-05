@@ -81,7 +81,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 	DestroyDrawable(ReleaseDrawable(Orbit->TintFrame));
 	Orbit->TintFrame = 0;
 
-	Orbit->TintColor = BLACK_COLOR;
+	Orbit->TintColor = BlackColor;
 
 	if (Orbit->TopoColors)
 	{
@@ -204,7 +204,7 @@ void DrawScannedObjects(bool Reversed)
 						   GetPredElement(ElementPtr) :
 						   GetSuccElement(ElementPtr);
 
-		if (ElementPtr->state_flags & APPEARING)
+		if (ElementPtr->state_flags & Appearing)
 		{
 			STAMP s;
 
@@ -244,7 +244,7 @@ void DrawPlanetSurfaceBorder(void)
 	r.extent.height = MAP_BORDER_HEIGHT - RES_SCALE(2);
 	DrawFilledRectangle(&r);
 
-	SetContextForeGroundColor(SIS_BOTTOM_RIGHT_BORDER_COLOR);
+	SetContextForeGroundColor(SisBottomRightBorderColor);
 
 	// Border top shadow line
 	r.extent.width -= RES_SCALE(1);
@@ -262,7 +262,7 @@ void DrawPlanetSurfaceBorder(void)
 	r.corner.x = clipRect.extent.width - RES_SCALE(1);
 	DrawFilledRectangle(&r);
 
-	SetContextForeGroundColor(SIS_LEFT_BORDER_COLOR);
+	SetContextForeGroundColor(SisLeftBorderColor);
 
 	// Left shadow line
 	r.corner.x -= MAP_WIDTH + RES_SCALE(1);
@@ -276,11 +276,11 @@ void DrawPlanetSurfaceBorder(void)
 	if (isPC(uqm::UQMOptions::read().landerStyle))
 	{
 		r.corner.x = RES_SCALE(UQM_MAP_WIDTH - SC2_MAP_WIDTH)
-				   - SIS_ORG_X + RES_SCALE(1) + SAFE_POS(1);
+				   - SisOrgX() + RES_SCALE(1) + SAFE_POS(1);
 		r.corner.y = clipRect.extent.height - MAP_HEIGHT - RES_SCALE(1);
 		r.extent.width = RES_SCALE(1);
 		r.extent.height = MAP_HEIGHT;
-		SetContextForeGroundColor(SIS_BOTTOM_RIGHT_BORDER_COLOR);
+		SetContextForeGroundColor(SisBottomRightBorderColor);
 		DrawFilledRectangle(&r);
 		r.corner.x += RES_SCALE(1);
 		r.extent.width = RES_SCALE(4);
@@ -293,7 +293,7 @@ void DrawPlanetSurfaceBorder(void)
 		r.extent.width = RES_SCALE(1);
 		r.corner.y += RES_SCALE(1);
 		r.extent.height -= RES_SCALE(2);
-		SetContextForeGroundColor(SIS_LEFT_BORDER_COLOR);
+		SetContextForeGroundColor(SisLeftBorderColor);
 		DrawFilledRectangle(&r);
 
 		DrawBorder(LANDER_DOS_FRAME);
@@ -375,10 +375,10 @@ void DrawOrbitMapGraphic(void)
 			strlen(GAME_STRING(NAVIGATION_STRING_BASE + 8)) > 0;
 
 		s.frame = SetAbsFrameIndex(CaptureDrawable(
-									   LoadGraphic(ORBENTER_PMAP_ANIM)),
+									   LoadGraphic(OrbenterPmapAnimRes)),
 								   HaveString);
 
-		s.origin.x = -SAFE_X;
+		s.origin.x = -SafeX();
 		s.origin.y = 0;
 
 		if (isPC(uqm::UQMOptions::read().landerStyle))
@@ -403,7 +403,7 @@ void DrawOrbitMapGraphic(void)
 	}
 	else
 	{
-		DrawPlanet(0, BLACK_COLOR);
+		DrawPlanet(0, BlackColor);
 		DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 		pSolarSysState->TopoFrame = 0;
 	}
@@ -419,7 +419,7 @@ void DrawOrbitMapGraphic(void)
 		pPlanetDesc = pSolarSysState->pOrbitalDesc;
 		GeneratePlanetSurface (
 			pPlanetDesc, nullptr, PlanetScale, PlanetScale);
-		ss.origin.x = RES_SCALE (ORIG_SIS_SCREEN_WIDTH >> 1);
+		ss.origin.x = RES_SCALE (OrigSisScreenWidth() >> 1);
 		ss.origin.y = RES_SCALE (191);
 
 		ss.frame = chooseIfHd (Orbit->SphereFrame, CaptureDrawable (
@@ -480,7 +480,7 @@ DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 	if (Mode != DRAW_ORBITAL_WAIT)
 	{
 		SetContext(GetScanContext(nullptr));
-		DrawPlanet(0, BLACK_COLOR);
+		DrawPlanet(0, BlackColor);
 		if (isPC(uqm::UQMOptions::read().landerStyle))
 		{
 			InitPCLander(false);
@@ -617,9 +617,9 @@ void FreePlanet(void)
 
 void LoadStdLanderFont(PLANET_INFO* info)
 {
-	info->LanderFont = LoadFont(LANDER_FONT);
+	info->LanderFont = LoadFont(LanderFontRes);
 	info->LanderFontEff = CaptureDrawable(
-		LoadGraphic(LANDER_FONTEFF_PMAP_ANIM));
+		LoadGraphic(LanderFonteffPmapAnimRes));
 }
 
 void FreeLanderFont(PLANET_INFO* info)
@@ -725,7 +725,7 @@ DoPlanetOrbit(MENU_STATE* pMS)
 				DrawMenuStateStrings(PM_SCAN, pMS->CurState);
 			}
 		}
-		SetFlashRect(SFR_MENU_3DO, false);
+		SetFlashRect(SfrMenu3do(), false);
 	}
 
 	return true;
@@ -746,10 +746,10 @@ void PlanetOrbitMenu(void)
 
 	memset(&MenuState, 0, sizeof MenuState);
 
-	SetFlashRect(SFR_MENU_3DO, false);
+	SetFlashRect(SfrMenu3do(), false);
 
 	MenuState.CurState = SCAN;
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	InputFrameCallback* oldCallback {SetInputCallback(on_input_frame)};
 
 	MenuState.InputFunc = DoPlanetOrbit;

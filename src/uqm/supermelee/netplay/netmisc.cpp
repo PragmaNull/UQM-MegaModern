@@ -124,7 +124,7 @@ NetMelee_enterState_inSetup(NetConnection* conn, void* arg)
 
 	// Send our team to the remote side.
 	// XXX This only works with 2 players atm.
-	assert(NUM_PLAYERS == 2);
+	assert(NumPlayers == 2);
 	Melee_bootstrapSyncTeam(meleeState, player);
 
 	flushPacketQueues();

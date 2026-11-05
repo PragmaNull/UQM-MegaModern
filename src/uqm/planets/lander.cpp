@@ -75,7 +75,7 @@ uint8_t LanderUpgradesFlag;
 static SOUND_REF LanderSounds;
 MUSIC_REF LanderMusic;
 static GFXCONTEXT PCLanderContext;
-static MUSIC_REF OrbitMusic[NUM_ORBIT_THEMES];
+static MUSIC_REF OrbitMusic[NumOrbitThemes];
 
 LIFEFORM_DESC CreatureData[] =
 	{
@@ -168,8 +168,8 @@ extern PRIM_LINKS DisplayLinks;
 #define DEATH_EXPLOSION 0
 
 // TODO: redefine these in terms of GFXCONTEXT width/height
-#define SURFACE_WIDTH SIS_SCREEN_WIDTH
-#define SURFACE_HEIGHT (SIS_SCREEN_HEIGHT - MAP_HEIGHT - MAP_BORDER_HEIGHT)
+#define SURFACE_WIDTH SisScreenWidth()
+#define SURFACE_HEIGHT (SisScreenHeight() - MAP_HEIGHT - MAP_BORDER_HEIGHT)
 
 #define REPAIR_LANDER (1 << 7)
 #define REPAIR_TRANSITION (1 << 6)
@@ -214,9 +214,9 @@ CreatePCLanderContext(void)
 	SetContext(context);
 	SetContextFGFrame(Screen);
 	r.corner.x += (r.extent.width - MAP_WIDTH)
-				+ (SAFE_X * 2 + SAFE_NUM_SCL(1));
+				+ (SafeX() * 2 + SAFE_NUM_SCL(1));
 	r.corner.y += r.extent.height - MAP_HEIGHT;
-	r.extent.width = RES_SCALE(UQM_MAP_WIDTH - SC2_MAP_WIDTH) - SIS_ORG_X
+	r.extent.width = RES_SCALE(UQM_MAP_WIDTH - SC2_MAP_WIDTH) - SisOrgX()
 				   + SAFE_POS(1);
 	r.extent.height = MAP_HEIGHT;
 	SetContextClipRect(&r);
@@ -309,13 +309,13 @@ void object_animation(ELEMENT* ElementPtr)
 
 	PRIMITIVE* pPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	if (GetPrimType(pPrim) == STAMPFILL_PRIM
-		&& !((ElementPtr->state_flags & FINITE_LIFE)
+		&& !((ElementPtr->state_flags & FiniteLife)
 			 && ElementPtr->mass_points == EARTHQUAKE_DISASTER))
 	{
 		Color c;
 
 		c = DamageColorCycle(GetPrimColor(pPrim), 0);
-		if (sameColor(c, WHITE_COLOR))
+		if (sameColor(c, WhiteColor))
 		{
 			SetPrimType(pPrim, STAMP_PRIM);
 			if (ElementPtr->hit_points == 0)
@@ -326,7 +326,7 @@ void object_animation(ELEMENT* ElementPtr)
 
 				PlaySound(
 					GetSound(LanderSounds, LIFEFORM_CANNED),
-					NotPositional(), nullptr, GAME_SOUND_PRIORITY);
+					NotPositional(), nullptr, GameSoundPriority);
 			}
 		}
 
@@ -345,7 +345,7 @@ void object_animation(ELEMENT* ElementPtr)
 		pPrim->Object.Stamp.frame =
 			IncFrameIndex(pPrim->Object.Stamp.frame);
 
-		if (ElementPtr->state_flags & FINITE_LIFE)
+		if (ElementPtr->state_flags & FiniteLife)
 		{
 			/* A natural disaster */
 			if (ElementPtr->mass_points == DEATH_EXPLOSION)
@@ -373,13 +373,13 @@ void object_animation(ELEMENT* ElementPtr)
 						BuildColor (
 							0x8000 | MakeRgb15 (0x1F, 0x1F, 0x1F), s));*/
 
-				SetPrimColor(pPrim, WHITE_COLOR);
+				SetPrimColor(pPrim, WhiteColor);
 				if (frame_index == (frame_amount))
 				{
 					PlaySound(
 						GetSound(LanderSounds,
 								 EARTHQUAKE_DISASTER),
-						NotPositional(), nullptr, GAME_SOUND_PRIORITY);
+						NotPositional(), nullptr, GameSoundPriority);
 				}
 			}
 
@@ -523,24 +523,24 @@ void object_animation(ELEMENT* ElementPtr)
 					if (ElementPtr->next.location.y == 0
 						|| ElementPtr->next.location.y == (MAP_HEIGHT << MAG_SHIFT) - 1)
 					{
-						if (angle & (HALF_CIRCLE - 1))
+						if (angle & (HalfCircle - 1))
 						{
-							angle = HALF_CIRCLE - angle;
+							angle = HalfCircle - angle;
 						}
-						else if (old_angle == QUADRANT
-								 || old_angle == (FULL_CIRCLE - QUADRANT))
+						else if (old_angle == Quadrant
+								 || old_angle == (FullCircle - Quadrant))
 						{
 							angle = old_angle;
 						}
 						else
 						{
 							angle = ((uqm::random().next() & 1)
-									 * HALF_CIRCLE)
-								  - QUADRANT;
+									 * HalfCircle)
+								  - Quadrant;
 						}
 						ElementPtr->thrust_wait = 5;
 					}
-					angle = NORMALIZE_ANGLE(angle + HALF_CIRCLE);
+					angle = NORMALIZE_ANGLE(angle + HalfCircle);
 				}
 
 				switch (speed)
@@ -563,7 +563,7 @@ void object_animation(ELEMENT* ElementPtr)
 		}
 	}
 
-	if ((ElementPtr->state_flags & FINITE_LIFE)
+	if ((ElementPtr->state_flags & FiniteLife)
 		&& ElementPtr->mass_points == DEATH_EXPLOSION
 		&& GetSuccLink(DisplayLinks) != ElementPtr->PrimIndex)
 	{
@@ -620,7 +620,7 @@ DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 		s.frame = SetAbsFrameIndex(LanderFrame[0], 56);
 
 		PlaySound(GetSound(LanderSounds, LANDER_INJURED),
-				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
+				  NotPositional(), nullptr, GameSoundPriority);
 	}
 
 	if (is3DO(uqm::UQMOptions::read().landerStyle))
@@ -649,7 +649,7 @@ FillLanderHold(PLANETSIDE_DESC* pPSD, uint16_t scan, uint16_t NumRetrieved)
 	GFXCONTEXT OldContext {};
 
 	PlaySound(GetSound(LanderSounds, LANDER_PICKUP),
-			  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
+			  NotPositional(), nullptr, GameSoundPriority);
 
 	if (scan == BIOLOGICAL_SCAN)
 	{
@@ -743,7 +743,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 	{
 		// Lander full
 		PlaySound(GetSound(LanderSounds, LANDER_FULL),
-				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
+				  NotPositional(), nullptr, GameSoundPriority);
 		return false;
 	}
 
@@ -792,7 +792,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 
 				// Notify the engine that the scan screen gfx should be
 				// updated.
-				ElementPtr->state_flags |= CHANGING;
+				ElementPtr->state_flags |= Changing;
 				SET_GAME_STATE(PLANETARY_CHANGE, 1);
 
 				// Change the surface screen gfx.
@@ -807,7 +807,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 		{
 			// Lander full
 			PlaySound(GetSound(LanderSounds, LANDER_FULL),
-					  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
+					  NotPositional(), nullptr, GameSoundPriority);
 			return false;
 		}
 	}
@@ -870,7 +870,7 @@ ExplodeCritter(ELEMENT* ElementPtr)
 		LockElement(hExplosionElement, &ExplosionElementPtr);
 
 		ExplosionElementPtr->mass_points = DEATH_EXPLOSION;
-		ExplosionElementPtr->state_flags = FINITE_LIFE;
+		ExplosionElementPtr->state_flags = FiniteLife;
 		ExplosionElementPtr->playerNr = PS_NON_PLAYER;
 		ExplosionElementPtr->next.location = ElementPtr->next.location;
 		ExplosionElementPtr->preprocess_func = object_animation;
@@ -894,9 +894,9 @@ ExplodeCritter(ELEMENT* ElementPtr)
 		InsertElement(hExplosionElement, GetHeadElement());
 
 		PlaySound(GetSound(LanderSounds, LANDER_DESTROYED),
-				  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
+				  NotPositional(), nullptr, GameSoundPriority + 1);
 
-		ElementPtr->state_flags |= DISAPPEARING;
+		ElementPtr->state_flags |= Disappearing;
 		// JMS: Delete the critter frame
 		ElementPtr->mass_points = 0;
 		// JMS: Make sure critter/explosion doesn't give biodata.
@@ -961,7 +961,7 @@ shotCreature(ELEMENT* ElementPtr, uint8_t value,
 
 		angle = FACING_TO_ANGLE(GetFrameIndex(
 									LanderControl->IntersectStamp.frame)
-								- ANGLE_TO_FACING(FULL_CIRCLE));
+								- ANGLE_TO_FACING(FullCircle));
 		DeltaVelocityComponents(&ElementPtr->velocity,
 								COSINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))),
 								SINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))));
@@ -970,10 +970,10 @@ shotCreature(ELEMENT* ElementPtr, uint8_t value,
 	}
 
 	SetPrimType(pPrim, STAMPFILL_PRIM);
-	SetPrimColor(pPrim, WHITE_COLOR);
+	SetPrimColor(pPrim, WhiteColor);
 
 	PlaySound(GetSound(LanderSounds, LANDER_HITS),
-			  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
+			  NotPositional(), nullptr, GameSoundPriority);
 }
 
 static void
@@ -1044,7 +1044,7 @@ CheckObjectCollision(uint16_t index)
 
 			if (&DisplayArray[ElementPtr->PrimIndex] == pLanderPrim)
 			{
-				ElementPtr->state_flags |= DISAPPEARING;
+				ElementPtr->state_flags |= Disappearing;
 				UnlockElement(hElement);
 				continue;
 			}
@@ -1069,7 +1069,7 @@ CheckObjectCollision(uint16_t index)
 						break;
 					}
 
-					if (ElementPtr->state_flags & FINITE_LIFE)
+					if (ElementPtr->state_flags & FiniteLife)
 					{
 						/* A natural disaster */
 						scan = ElementPtr->mass_points;
@@ -1108,7 +1108,7 @@ CheckObjectCollision(uint16_t index)
 							PlaySound(GetSound(
 										  LanderSounds, BIOLOGICAL_DISASTER),
 									  NotPositional(), nullptr,
-									  GAME_SOUND_PRIORITY);
+									  GameSoundPriority);
 							DeltaLanderCrew(-1, BIOLOGICAL_DISASTER);
 						}
 						UnlockElement(hElement);
@@ -1117,7 +1117,7 @@ CheckObjectCollision(uint16_t index)
 
 					NumRetrieved = ElementPtr->mass_points;
 				}
-				else if (ElementPtr->state_flags & FINITE_LIFE)
+				else if (ElementPtr->state_flags & FiniteLife)
 				{
 					/* Collision of a stun bolt with a natural disaster */
 					UnlockElement(hElement);
@@ -1174,7 +1174,7 @@ CheckObjectCollision(uint16_t index)
 					setNodeRetrieved(&pSolarSysState->SysInfo.PlanetInfo,
 									 scan, which_node);
 					SET_GAME_STATE(PLANETARY_CHANGE, 1);
-					ElementPtr->state_flags |= DISAPPEARING;
+					ElementPtr->state_flags |= Disappearing;
 				}
 				UnlockElement(hElement);
 			}
@@ -1254,7 +1254,7 @@ AddLightning(void)
 		LockElement(hLightningElement, &LightningElementPtr);
 
 		LightningElementPtr->playerNr = PS_NON_PLAYER;
-		LightningElementPtr->state_flags = FINITE_LIFE;
+		LightningElementPtr->state_flags = FiniteLife;
 		LightningElementPtr->preprocess_func = lightning_process;
 		if (uqm::random().next() % 100 >= 25)
 		{
@@ -1281,12 +1281,12 @@ AddLightning(void)
 
 		LightningElementPtr->cycle = LightningElementPtr->life_span;
 
-		if (!IS_HD)
+		if (!IsHd())
 		{
 			SetPrimType(&DisplayArray[LightningElementPtr->PrimIndex],
 						STAMPFILL_PRIM);
 			SetPrimColor(&DisplayArray[LightningElementPtr->PrimIndex],
-						 WHITE_COLOR);
+						 WhiteColor);
 		}
 		else
 		{
@@ -1302,7 +1302,7 @@ AddLightning(void)
 		PutElement(hLightningElement);
 
 		PlaySound(GetSound(LanderSounds, LIGHTNING_DISASTER),
-				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
+				  NotPositional(), nullptr, GameSoundPriority);
 	}
 }
 
@@ -1319,7 +1319,7 @@ AddGroundDisaster(uint16_t which_disaster)
 		PRIMITIVE* pPrim {&DisplayArray[GroundDisasterElementPtr->PrimIndex]};
 		GroundDisasterElementPtr->mass_points = which_disaster;
 		GroundDisasterElementPtr->playerNr = PS_NON_PLAYER;
-		GroundDisasterElementPtr->state_flags = FINITE_LIFE;
+		GroundDisasterElementPtr->state_flags = FiniteLife;
 		GroundDisasterElementPtr->preprocess_func = object_animation;
 
 		const uint32_t rand_val {uqm::random().next()};
@@ -1336,7 +1336,7 @@ AddGroundDisaster(uint16_t which_disaster)
 
 		if (which_disaster == EARTHQUAKE_DISASTER)
 		{
-			if (!IS_HD)
+			if (!IsHd())
 			{
 				SetPrimType(pPrim, STAMPFILL_PRIM);
 			}
@@ -1390,7 +1390,7 @@ BuildObjectList(void)
 	{
 		AddGroundDisaster(LAVASPOT_DISASTER);
 		PlaySound(GetSound(LanderSounds, LAVASPOT_DISASTER),
-				  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
+				  NotPositional(), nullptr, GameSoundPriority);
 	}
 
 	if (uqm::highByte(uqm::lowWord(rand_val)) < pPSD->TectonicsChance)
@@ -1414,7 +1414,7 @@ BuildObjectList(void)
 		LockElement(hElement, &ElementPtr);
 
 		if (ElementPtr->life_span == 0
-			|| (ElementPtr->state_flags & DISAPPEARING))
+			|| (ElementPtr->state_flags & Disappearing))
 		{
 			hNextElement = GetSuccElement(ElementPtr);
 			UnlockElement(hElement);
@@ -1422,7 +1422,7 @@ BuildObjectList(void)
 			FreeElement(hElement);
 			continue;
 		}
-		else if (ElementPtr->state_flags & FINITE_LIFE)
+		else if (ElementPtr->state_flags & FiniteLife)
 		{
 			--ElementPtr->life_span;
 		}
@@ -1464,8 +1464,8 @@ BuildObjectList(void)
 					SCALED_MAP_WIDTH << MAG_SHIFT;
 			}
 
-			// XXX: APPEARING flag is set by scan.c for scanned blips
-			if (ElementPtr->state_flags & APPEARING)
+			// XXX: Appearing flag is set by scan.c for scanned blips
+			if (ElementPtr->state_flags & Appearing)
 			{ // Update the location of a moving object on the scan map
 				ElementPtr->current.location.x =
 					ElementPtr->next.location.x >> MAG_SHIFT;
@@ -1596,7 +1596,7 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 							  - (MapSurface.height >> 1); //2;
 			shadow_s.origin.y = lander_s.origin.y;
 			shadow_s.frame = lander_s.frame;
-			SetContextForeGroundColor(BLACK_COLOR);
+			SetContextForeGroundColor(BlackColor);
 			DrawFilledStamp(&shadow_s);
 		}
 
@@ -1629,7 +1629,7 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 		{ // Direct hit, no shield
 			--damage_index;
 			SetContextForeGroundColor(
-				DamageColorCycle(BLACK_COLOR, damage_index));
+				DamageColorCycle(BlackColor, damage_index));
 			DrawFilledStamp(&lander_s);
 		}
 	}
@@ -1650,7 +1650,7 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 
 			if (isPC(uqm::UQMOptions::read().landerStyle))
 			{
-				pPSD->MineralText[0].baseline.x = RADAR_WIDTH >> 1;
+				pPSD->MineralText[0].baseline.x = RadarWidth() >> 1;
 				pPSD->MineralText[0].baseline.y = RES_SCALE(8);
 				// original value
 			}
@@ -1788,7 +1788,7 @@ AnimateLanderWarmup(void)
 
 	s.frame = SetAbsFrameIndex(
 		is3DO(uqm::UQMOptions::read().landerStyle) ? LanderFrame[0] : LanderFrame[7],
-		(ANGLE_TO_FACING(FULL_CIRCLE) << 1) + 1);
+		(ANGLE_TO_FACING(FullCircle) << 1) + 1);
 
 	DrawStamp(&s);
 
@@ -1805,7 +1805,7 @@ AnimateLanderWarmup(void)
 		DrawMineralHelpers();
 		if (!uqm::UQMOptions::read().submenu)
 		{
-			DeltaSISGauges(UNDEFINED_DELTA, 0, 0);
+			DeltaSISGauges(UndefinedDelta, 0, 0);
 		}
 
 		DeltaLanderCrew(1, 0);
@@ -1820,7 +1820,7 @@ AnimateLanderWarmup(void)
 	else
 	{
 		s.frame = SetAbsFrameIndex(s.frame,
-								   (ANGLE_TO_FACING(FULL_CIRCLE) << 1) + 2);
+								   (ANGLE_TO_FACING(FullCircle) << 1) + 2);
 	}
 	DrawStamp(&s);
 
@@ -1833,7 +1833,7 @@ AnimateLanderWarmup(void)
 	else
 	{
 		s.frame = SetAbsFrameIndex(s.frame,
-								   (ANGLE_TO_FACING(FULL_CIRCLE) << 1) + 3);
+								   (ANGLE_TO_FACING(FullCircle) << 1) + 3);
 		DrawStamp(&s);
 
 		animationInterframe(&TimeIn, 2);
@@ -1853,7 +1853,7 @@ AnimateLanderWarmup(void)
 	animationInterframe(&TimeIn, 2);
 
 	PlaySound(GetSound(LanderSounds, LANDER_DEPARTS),
-			  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
+			  NotPositional(), nullptr, GameSoundPriority + 1);
 }
 
 static void
@@ -1886,9 +1886,9 @@ InitPlanetSide(GFXPOINT pt)
 	if (isPC(uqm::UQMOptions::read().landerStyle))
 	{
 		SetContext(RadarContext);
-		SetContextBackGroundColor(BLACK_COLOR);
-		ClearSISRect(CLEAR_SIS_RADAR);
-		MapSurface = MAKE_EXTENT(RADAR_WIDTH, RADAR_HEIGHT);
+		SetContextBackGroundColor(BlackColor);
+		ClearSISRect(ClearSisRadar);
+		MapSurface = MAKE_EXTENT(RadarWidth(), RadarHeight());
 
 		DrawMineralHelpers();
 	}
@@ -1967,14 +1967,14 @@ LanderFire(int16_t facing)
 	WeaponElementPtr->playerNr = PS_HUMAN_PLAYER;
 	WeaponElementPtr->mass_points = 1;
 	WeaponElementPtr->life_span = 12;
-	WeaponElementPtr->state_flags = FINITE_LIFE;
+	WeaponElementPtr->state_flags = FiniteLife;
 	WeaponElementPtr->next.location = curLanderLoc;
 
 	SetPrimType(&DisplayArray[WeaponElementPtr->PrimIndex], STAMP_PRIM);
 	DisplayArray[WeaponElementPtr->PrimIndex].Object.Stamp.frame =
 		SetAbsFrameIndex(LanderFrame[0],
 						 /* shot images immediately follow the lander images */
-						 facing + ANGLE_TO_FACING(FULL_CIRCLE));
+						 facing + ANGLE_TO_FACING(FullCircle));
 
 	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_UP]
 		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_THRUST])
@@ -1998,7 +1998,7 @@ LanderFire(int16_t facing)
 	InsertElement(hWeaponElement, GetHeadElement());
 
 	PlaySound(GetSound(LanderSounds, LANDER_SHOOTS),
-			  NotPositional(), nullptr, GAME_SOUND_PRIORITY);
+			  NotPositional(), nullptr, GameSoundPriority);
 }
 
 static void
@@ -2057,7 +2057,7 @@ put_node(ELEMENT* ElementPtr)
 	NodeElementPtr->next.location.y =
 		NodeElementPtr->current.location.y << MAG_SHIFT;
 
-	NodeElementPtr->state_flags |= APPEARING;
+	NodeElementPtr->state_flags |= Appearing;
 	SET_GAME_STATE(PLANETARY_CHANGE, 1);
 
 	UnlockElement(hNodeElement);
@@ -2100,7 +2100,7 @@ spawn_node(ELEMENT* ElementPtr)
 		NodeElementPtr->playerNr = PS_NON_PLAYER;
 		NodeElementPtr->mass_points = 1;
 		NodeElementPtr->life_span = 1;
-		NodeElementPtr->state_flags = FINITE_LIFE | NONSOLID;
+		NodeElementPtr->state_flags = FiniteLife | Nonsolid;
 		NodeElementPtr->next.location.x = ElementPtr->next.location.x;
 		NodeElementPtr->next.location.y = ElementPtr->next.location.y - arc;
 
@@ -2155,7 +2155,7 @@ LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amount)
 	NodeElementPtr->playerNr = PS_NON_PLAYER;
 	NodeElementPtr->mass_points = 1;
 	NodeElementPtr->life_span = dist;
-	NodeElementPtr->state_flags = FINITE_LIFE | NONSOLID | APPEARING;
+	NodeElementPtr->state_flags = FiniteLife | Nonsolid | Appearing;
 	NodeElementPtr->next.location = curLanderLoc;
 	NodeElementPtr->cycle = which_node;
 	NodeElementPtr->turn_wait = type;
@@ -2163,7 +2163,7 @@ LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amount)
 	NodeElementPtr->preprocess_func = spawn_node;
 
 	SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex], STAMPFILL_PRIM);
-	SetPrimColor(&DisplayArray[NodeElementPtr->PrimIndex], BLACK_COLOR);
+	SetPrimColor(&DisplayArray[NodeElementPtr->PrimIndex], BlackColor);
 	NodeElementPtr->current.image.frame = SetAbsFrameIndex(
 		MiscDataFrame, (NUM_SCANDOT_TRANSITIONS * 2)
 						   + ElementCategory(type) * 5);
@@ -2233,7 +2233,7 @@ LanderExplosion(void)
 
 	ExplosionElementPtr->playerNr = PS_HUMAN_PLAYER;
 	ExplosionElementPtr->mass_points = DEATH_EXPLOSION;
-	ExplosionElementPtr->state_flags = FINITE_LIFE;
+	ExplosionElementPtr->state_flags = FiniteLife;
 	ExplosionElementPtr->next.location = curLanderLoc;
 	ExplosionElementPtr->preprocess_func = object_animation;
 	// Animation advances every 3rd frame
@@ -2251,7 +2251,7 @@ LanderExplosion(void)
 	InsertElement(hExplosionElement, GetHeadElement());
 
 	PlaySound(GetSound(LanderSounds, LANDER_DESTROYED),
-			  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
+			  NotPositional(), nullptr, GameSoundPriority + 1);
 
 	ScatterDeposits();
 
@@ -2416,7 +2416,7 @@ DoPlanetSide(LanderInputState* pMS)
 		if (Now >= TimeOutClock)
 		{
 			GameClockTick();
-			TimeOutClock = Now + CLOCK_FRAME_RATE;
+			TimeOutClock = Now + ClockFrameRate;
 		}
 	}
 
@@ -2441,7 +2441,7 @@ void MaskLanderGraphics(void)
 	if (currFlagState != LanderUpgradesFlag)
 	{
 		uint16_t i {};
-		FRAME mods = CaptureDrawable(LoadGraphic(LANDER_MODS_PMAP_ANIM));
+		FRAME mods = CaptureDrawable(LoadGraphic(LanderModsPmapAnimRes));
 		FRAME lander {};
 		FRAME mask {};
 		const DrawMode mode = MAKE_DRAW_MODE(DRAW_REPLACE, DrawFactor1);
@@ -2449,7 +2449,7 @@ void MaskLanderGraphics(void)
 		// Reload landersprites for remasking
 		DestroyDrawable(ReleaseDrawable(LanderFrame[0]));
 		LanderFrame[0] =
-			CaptureDrawable(LoadGraphic(LANDER_MASK_PMAP_ANIM));
+			CaptureDrawable(LoadGraphic(LanderMaskPmapAnimRes));
 
 		LanderUpgradesFlag = currFlagState;
 
@@ -2480,7 +2480,7 @@ void FreeLanderData(void)
 		return;
 	}
 
-	for (i = 0; i < NUM_ORBIT_THEMES; ++i)
+	for (i = 0; i < NumOrbitThemes; ++i)
 	{
 		DestroyMusic(OrbitMusic[i]);
 		OrbitMusic[i] = 0;
@@ -2507,25 +2507,25 @@ void LoadLanderData(void)
 	}
 
 	LanderFrame[0] =
-		CaptureDrawable(LoadGraphic(LANDER_MASK_PMAP_ANIM));
+		CaptureDrawable(LoadGraphic(LanderMaskPmapAnimRes));
 	LanderFrame[1] =
-		CaptureDrawable(LoadGraphic(QUAKE_MASK_PMAP_ANIM));
+		CaptureDrawable(LoadGraphic(QuakeMaskPmapAnimRes));
 	LanderFrame[2] =
-		CaptureDrawable(LoadGraphic(LIGHTNING_MASK_ANIM));
+		CaptureDrawable(LoadGraphic(LightningMaskAnimRes));
 	LanderFrame[3] =
-		CaptureDrawable(LoadGraphic(LAVA_MASK_PMAP_ANIM));
+		CaptureDrawable(LoadGraphic(LavaMaskPmapAnimRes));
 	LanderFrame[4] =
-		CaptureDrawable(LoadGraphic(LANDER_SHIELD_MASK_ANIM));
+		CaptureDrawable(LoadGraphic(LanderShieldMaskAnimRes));
 	LanderFrame[5] =
-		CaptureDrawable(LoadGraphic(LANDER_LAUNCH_MASK_PMAP_ANIM));
+		CaptureDrawable(LoadGraphic(LanderLaunchMaskPmapAnimRes));
 	LanderFrame[6] =
-		CaptureDrawable(LoadGraphic(LANDER_RETURN_MASK_PMAP_ANIM));
+		CaptureDrawable(LoadGraphic(LanderReturnMaskPmapAnimRes));
 	LanderFrame[7] =
-		CaptureDrawable(LoadGraphic(LANDER_PC_MASK_PMAP_ANIM));
+		CaptureDrawable(LoadGraphic(LanderPcMaskPmapAnimRes));
 
 	LanderUpgradesFlag = 0;
 
-	LanderSounds = uqm::loadSoundBank(LANDER_SOUNDS).release();
+	LanderSounds = uqm::loadSoundBank(LanderSoundsRes).release();
 
 	{
 		for (uint16_t i {0}; i < num_orbit_themes(); ++i)
@@ -2624,7 +2624,7 @@ LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 
 	// Produce smooth acceleration deltas from a simple 1..x progression
 	int delta {0};
-	// JMS_GFX: In HD graphics we run out of default offsets. -> Use larger
+	// JMS_GFX: In HdResolutionFactor graphics we run out of default offsets. -> Use larger
 	// offset value.
 	const int max_offsets {chooseIfHd(MAX_OFFSETS, MAX_OFFSETS_HD)};
 
@@ -2633,7 +2633,7 @@ LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 	{
 		delta += index + 1;
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			landingOfsHD[index] = -delta;
 		}
@@ -2666,7 +2666,7 @@ LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 	for (index = start; index != end; index += delta)
 	{
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			ScrollPlanetSide(0, 0, landingOfsHD[index]);
 		}
@@ -2740,7 +2740,7 @@ GetHazardChance(int hazardType, unsigned HazardRating)
 	uint8_t WeatherChanceTab[] = {0, 0, 1 * 3, 2 * 3, 3 * 3, 6 * 3, 12 * 3, 24 * 3};
 	const uint8_t FireChanceTab[] = {0, 0, 1 * 3, 2 * 3, 4 * 3, 12 * 3, 24 * 3, 48 * 3};
 
-	if (EXTENDED)
+	if (IsExtended())
 	{
 		TectonicsChanceTab[1] = 1;
 		WeatherChanceTab[1] = 1;
@@ -2831,7 +2831,7 @@ void PlanetSide(GFXPOINT planetLoc)
 
 	landerInputState.Initialized = false;
 	landerInputState.InputFunc = DoPlanetSide;
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
+	SetMenuSounds(MenuSoundNone, MenuSoundNone);
 
 	DoInput(&landerInputState, false);
 
@@ -2851,7 +2851,7 @@ void PlanetSide(GFXPOINT planetLoc)
 		{
 			PSD.InTransit = true;
 			PlaySound(GetSound(LanderSounds, LANDER_RETURNS),
-					  NotPositional(), nullptr, GAME_SOUND_PRIORITY + 1);
+					  NotPositional(), nullptr, GameSoundPriority + 1);
 
 			LandingTakeoffSequence(&landerInputState, false);
 
@@ -2913,7 +2913,7 @@ void PlanetSide(GFXPOINT planetLoc)
 
 			LockElement(hElement, &ElementPtr);
 			hNextElement = _GetSuccLink(ElementPtr);
-			if (ElementPtr->state_flags & FINITE_LIFE)
+			if (ElementPtr->state_flags & FiniteLife)
 			{
 				UnlockElement(hElement);
 
@@ -2927,7 +2927,7 @@ void PlanetSide(GFXPOINT planetLoc)
 	}
 
 	ZeroVelocityComponents(&uqm::flagship().velocity);
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 }
 
 static void
@@ -2942,15 +2942,15 @@ DrawMinDatText(void)
 		return;
 	}
 
-	OldColor = SetContextForeGroundColor(BLACK_COLOR);
+	OldColor = SetContextForeGroundColor(BlackColor);
 	rect.corner.x = RES_SCALE(5);
-	rect.corner.y = RADAR_HEIGHT - RES_SCALE(7);
+	rect.corner.y = RadarHeight() - RES_SCALE(7);
 	rect.extent.width = RES_SCALE(46);
 	rect.extent.height = RES_SCALE(6);
 	DrawFilledRectangle(&rect);
 
 	FONT OldFont {SetContextFont(TinyFontBold)};
-	SetContextForeGroundColor(LAND_STAT_MIN_COLOR);
+	SetContextForeGroundColor(LandStatMinColor);
 	text.align = ALIGN_LEFT;
 	text.baseline.x = rect.corner.x + RES_SCALE(1);
 	text.baseline.y = rect.corner.y + rect.extent.height;
@@ -2959,7 +2959,7 @@ DrawMinDatText(void)
 
 	font_DrawText(&text);
 
-	SetContextForeGroundColor(LAND_STAT_DAT_COLOR);
+	SetContextForeGroundColor(LandStatDatColor);
 	text.align = ALIGN_RIGHT;
 	text.baseline.x = rect.corner.x + rect.extent.width - RES_SCALE(1);
 	text.pStr = GAME_STRING(STATUS_STRING_BASE + 21); // DAT
@@ -2980,9 +2980,9 @@ void InitLander(uint8_t LanderFlags)
 
 	r.corner.x = 0;
 	r.corner.y = 0;
-	r.extent.width = RADAR_WIDTH;
-	r.extent.height = RADAR_HEIGHT;
-	SetContextForeGroundColor(BLACK_COLOR);
+	r.extent.width = RadarWidth();
+	r.extent.height = RadarHeight();
+	SetContextForeGroundColor(BlackColor);
 	DrawFilledRectangle(&r);
 
 	if (GLOBAL_SIS(NumLanders) || LanderFlags)
@@ -3017,7 +3017,7 @@ void InitLander(uint8_t LanderFlags)
 			else
 			{
 				s.frame = SetAbsFrameIndex(s.frame,
-										   (ANGLE_TO_FACING(FULL_CIRCLE) << 1) + 3);
+										   (ANGLE_TO_FACING(FullCircle) << 1) + 3);
 				DrawStamp(&s);
 				s.frame = IncFrameIndex(s.frame);
 			}
@@ -3039,7 +3039,7 @@ void InitLander(uint8_t LanderFlags)
 			else
 			{
 				s.frame = SetAbsFrameIndex(s.frame,
-										   (ANGLE_TO_FACING(FULL_CIRCLE) << 1) + 2);
+										   (ANGLE_TO_FACING(FullCircle) << 1) + 2);
 			}
 			DrawStamp(&s);
 		}
@@ -3055,7 +3055,7 @@ void InitLander(uint8_t LanderFlags)
 						  - ((free_space >> capacity_shift)
 							 * MAX_HOLD_BARS / MAX_SCROUNGED)
 						  + 2);
-			SetContextForeGroundColor(BLACK_COLOR);
+			SetContextForeGroundColor(BlackColor);
 			DrawFilledRectangle(&r);
 		}
 
@@ -3092,7 +3092,7 @@ void InitPCLander(bool Loading)
 
 	GetContextClipRect(&r);
 	r.corner = MAKE_POINT(0, 0);
-	SetContextForeGroundColor(BLACK_COLOR);
+	SetContextForeGroundColor(BlackColor);
 
 	BatchGraphics();
 
@@ -3126,7 +3126,7 @@ void InitPCLander(bool Loading)
 
 			r.corner = MAKE_POINT(RES_SCALE(1), 0);
 			r.extent = MAKE_EXTENT(RES_SCALE(2), RES_SCALE(inc));
-			SetContextForeGroundColor(BLACK_COLOR);
+			SetContextForeGroundColor(BlackColor);
 			DrawFilledRectangle(&r);
 
 			r.extent = MAKE_EXTENT(RES_SCALE(1), RES_SCALE(1));
@@ -3136,10 +3136,10 @@ void InitPCLander(bool Loading)
 				if (i % 2 == 0)
 				{ // Draw grey boxes every 2nd iteration
 					r.corner.y += RES_SCALE(1);
-					SetContextForeGroundColor(VDKGRAY_COLOR);
+					SetContextForeGroundColor(VdkgrayColor);
 					DrawFilledRectangle(&r);
 					r.corner.x += RES_SCALE(1);
-					SetContextForeGroundColor(BLACK_COLOR);
+					SetContextForeGroundColor(BlackColor);
 					DrawFilledRectangle(&r);
 					r.corner.x -= RES_SCALE(1);
 					r.corner.y += RES_SCALE(1);

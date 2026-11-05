@@ -214,12 +214,12 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 			   SpeciesID, uqm::currentSeed().value,
 			   uqm::currentSeed().ships ? "on" : "off");
 #endif
-	CodeRef = CaptureCodeRes(LoadCodeRes(
+	CodeRef = CaptureCodeRes(LoadCodeResInstance(
 								 code_resources[uqm::currentSeed().ships ?
 													SeedShip(SpeciesID, false) :
 													SpeciesID]),
 							 nullptr, (void**)(&RDPtr));
-	CodeRefSwap = CaptureCodeRes(LoadCodeRes(
+	CodeRefSwap = CaptureCodeRes(LoadCodeResInstance(
 									 code_resources[SpeciesID]),
 								 nullptr, (void**)(&RDPtrSwap));
 
@@ -313,7 +313,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 		if (RDPtrSwap->ship_data.victory_ditty_rsc != NullResource)
 		{
 			RawPtr->victory_ditty =
-				LoadMusic(RDPtrSwap->ship_data.victory_ditty_rsc);
+				LoadMusicInstance(RDPtrSwap->ship_data.victory_ditty_rsc);
 			if (!RawPtr->victory_ditty)
 			{
 				goto BadLoad;

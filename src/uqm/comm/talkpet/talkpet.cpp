@@ -37,11 +37,11 @@ static LOCDATA talkpet_desc =
 		nullptr, /* uninit_encounter_func */
 		TALKING_PET_PMAP_ANIM, /* AlienFrame */
 		TALKING_PET_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		TALKING_PET_COLOR_MAP, /* AlienColorMap */
@@ -58,8 +58,8 @@ static LOCDATA talkpet_desc =
 			{
 				7, /* StartIndex */
 				3, /* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -69,8 +69,8 @@ static LOCDATA talkpet_desc =
 								{
 				10, /* StartIndex */
 				3,	/* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -78,9 +78,9 @@ static LOCDATA talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				13,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				13,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -88,9 +88,9 @@ static LOCDATA talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				16,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				16,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -101,16 +101,16 @@ static LOCDATA talkpet_desc =
 				/* Blink right eye */
 				18,											/* StartIndex */
 				3,											/* NumFrames */
-				YOYO_ANIM,									/* AnimFlags */
+				YoyoAnim,									/* AnimFlags */
 				GameTicksPerSecond / 20, 0,					/* FrameRate */
 				GameTicksPerSecond, GameTicksPerSecond * 3, /* RestartRate */
 				(1 << 13)									/* BlockMask */
 			},
 								{
 				/* Blink left eye */
-				21,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				21,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -118,9 +118,9 @@ static LOCDATA talkpet_desc =
 				(1 << 12) | (1 << 14),	/* BlockMask */
 			},
 								{
-				24,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				24,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -128,9 +128,9 @@ static LOCDATA talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				26,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				26,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -138,9 +138,9 @@ static LOCDATA talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				28,			 /* StartIndex */
-				4,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				28,			/* StartIndex */
+				4,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -148,9 +148,9 @@ static LOCDATA talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				32,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				32,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -158,9 +158,9 @@ static LOCDATA talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				35,			 /* StartIndex */
-				5,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				35,			/* StartIndex */
+				5,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -168,9 +168,9 @@ static LOCDATA talkpet_desc =
 				0,						/* BlockMask */
 			},
 								{
-				40,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				40,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -180,8 +180,8 @@ static LOCDATA talkpet_desc =
 								{
 				42, /* StartIndex */
 				6,	/* NumFrames */
-				CIRCULAR_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				CircularAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -190,9 +190,9 @@ static LOCDATA talkpet_desc =
 			},
 								{
 				/* Right eyebrow */
-				48,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				48,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -201,9 +201,9 @@ static LOCDATA talkpet_desc =
 			},
 								{
 				/* Left eyebrow */
-				50,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				50,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -211,9 +211,9 @@ static LOCDATA talkpet_desc =
 				(1 << 5),				/* BlockMask */
 			},
 								{
-				52,							/* StartIndex */
-				2,							/* NumFrames */
-				RANDOM_ANIM | WAIT_TALKING, /* AnimFlags */
+				52,						  /* StartIndex */
+				2,						  /* NumFrames */
+				RandomAnim | WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -224,8 +224,8 @@ static LOCDATA talkpet_desc =
 				/* Mind control strobe (on-demand) */
 				1,				 /* StartIndex */
 				NUM_STROBES * 2, /* NumFrames */
-				CIRCULAR_ANIM | COLORXFORM_ANIM | ONE_SHOT_ANIM
-					| ANIM_DISABLED, /* AnimFlags */
+				CircularAnim | ColorxformAnim | OneShotAnim
+					| AnimDisabled, /* AnimFlags */
 				GameTicksPerSecond / (STROBE_RATE * 2),
 				0, /* FrameRate */
 				0,
@@ -359,9 +359,9 @@ static void
 MindControlStrobe(void)
 {
 	// Enable the one-shot strobe animation
-	CommData.AlienAmbientArray[16].AnimFlags &= ~ANIM_DISABLED;
+	CommData.AlienAmbientArray[16].AnimFlags &= ~AnimDisabled;
 
-	if (IS_HD)
+	if (IsHd())
 	{
 		EngageFilters(&talkpet_filters);
 	}
@@ -780,7 +780,7 @@ Intro(void)
 	{
 		SET_GAME_STATE(SHIP_TO_COMPEL, 0);
 		setSegue(Segue_hostile);
-		if (!(uqm::globalFlags() & CYBORG_ENABLED))
+		if (!(uqm::globalFlags() & CyborgEnabled))
 		{
 			NPCPhrase(HUMAN_PEP_TALK);
 		}
@@ -955,9 +955,9 @@ init_talkpet_comm(void)
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	talkpet_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	talkpet_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	talkpet_desc.AlienTextBaseline.y = 0;
-	talkpet_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	talkpet_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	if (uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
 	{

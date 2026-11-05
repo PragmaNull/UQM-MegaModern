@@ -487,7 +487,7 @@ renderpixel_desaturate(SDL_Surface* surface, int x, int y, Uint32 pixel,
 	*p = PACK_PIXEL_RGB(fmt, r, g, b);
 }
 
-/* Kruzen: special instant blend to transform HD hyperspace ambience to quasispace one */
+/* Kruzen: special instant blend to transform HdResolutionFactor hyperspace ambience to quasispace one */
 static void
 renderpixel_hypertoquasi(SDL_Surface* surface, int x, int y, Uint32 pixel,
 						 int factor)

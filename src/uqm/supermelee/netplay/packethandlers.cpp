@@ -33,7 +33,7 @@
 #include "../../controls.h"
 // for BATTLE_INPUT_STATE
 #include "../../init.h"
-// for NUM_PLAYERS
+// for NumPlayers
 #include "../../globdata.h"
 // for GLOBAL
 #include "../melee.h"

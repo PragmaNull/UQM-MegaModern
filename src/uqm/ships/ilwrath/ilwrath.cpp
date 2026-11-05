@@ -56,7 +56,7 @@ static RACE_DESC ilwrath_desc =
 	{
 		{/* SHIP_INFO */
 		 "avenger",
-		 FIRES_FORE,
+		 FiresFore,
 		 10, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -66,7 +66,7 @@ static RACE_DESC ilwrath_desc =
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			1410 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			1410 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				48,
@@ -113,7 +113,7 @@ static RACE_DESC ilwrath_desc =
 		 nullptr},
 		{
 			0,
-			CLOSE_RANGE_WEAPON,
+			CloseRangeWeapon,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -135,7 +135,7 @@ flame_preprocess(ELEMENT* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 
 		ElementPtr->turn_wait = ElementPtr->next_turn;
 	}
@@ -146,8 +146,8 @@ flame_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
-	ElementPtr0->state_flags &= ~DISAPPEARING;
-	ElementPtr0->state_flags |= NONSOLID;
+	ElementPtr0->state_flags &= ~Disappearing;
+	ElementPtr0->state_flags |= Nonsolid;
 }
 
 static void
@@ -172,23 +172,23 @@ ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			|| (lpEvalDesc->which_turn <= 10
 				&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 10)))
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 		if (OBJECT_CLOAKED(ShipPtr))
 		{
-			StarShipPtr->ship_input_state &= ~LEFT | RIGHT;
-			StarShipPtr->ship_input_state |= THRUST;
+			StarShipPtr->ship_input_state &= ~LeftFlag | RightFlag;
+			StarShipPtr->ship_input_state |= ThrustFlag;
 		}
-		StarShipPtr->ship_input_state |= WEAPON;
+		StarShipPtr->ship_input_state |= WeaponFlag;
 	}
 	else if (StarShipPtr->special_counter == 0
 			 && (uqm::lowByte(uqm::currentActivity()) != IN_ENCOUNTER
 				 || !GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)))
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 		if (!OBJECT_CLOAKED(ShipPtr)
-			&& !(StarShipPtr->ship_input_state & WEAPON))
+			&& !(StarShipPtr->ship_input_state & WeaponFlag))
 		{
-			StarShipPtr->ship_input_state |= SPECIAL;
+			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
 	}
 }
@@ -206,7 +206,7 @@ initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = ILWRATH_OFFSET;
 	MissileBlock.speed = MISSILE_SPEED;
 	MissileBlock.hit_points = MISSILE_HITS;
@@ -250,11 +250,11 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 		bool weapon_discharge {};
 
 		color = GetPrimColor(lpPrim);
-		weapon_discharge = ((status_flags & WEAPON)
+		weapon_discharge = ((status_flags & WeaponFlag)
 							&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= WEAPON_ENERGY_COST);
 		if (weapon_discharge
 			|| (StarShipPtr->special_counter == 0
-				&& ((status_flags & SPECIAL) || !sameColor(color, BLACK_COLOR))))
+				&& ((status_flags & SpecialFlag) || !sameColor(color, BlackColor))))
 		{
 			if (sameColor(color,
 						  BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)))
@@ -321,7 +321,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 								ANGLE_TO_FACING(ARCTAN(dx0, dy0)));
 #ifdef NOTYET
 						if (ElementPtr->thrust_wait == 0
-							&& (StarShipPtr->cur_status_flags & THRUST))
+							&& (StarShipPtr->cur_status_flags & ThrustFlag))
 						{
 							uint16_t last_facing;
 
@@ -358,16 +358,16 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 				}
 			}
 
-			ElementPtr->state_flags |= CHANGING;
-			status_flags &= ~SPECIAL;
+			ElementPtr->state_flags |= Changing;
+			status_flags &= ~SpecialFlag;
 			StarShipPtr->special_counter = 0;
 		}
-		else if (!sameColor(color, BLACK_COLOR))
+		else if (!sameColor(color, BlackColor))
 		{
 			if (sameColor(color,
 						  BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)))
 			{
-				SetPrimColor(lpPrim, BLACK_COLOR);
+				SetPrimColor(lpPrim, BlackColor);
 				Untarget(ElementPtr);
 			}
 			else if (sameColor(color,
@@ -394,11 +394,11 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 							 BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B));
 			}
 
-			ElementPtr->state_flags |= CHANGING;
+			ElementPtr->state_flags |= Changing;
 		}
 	}
 
-	if ((status_flags & SPECIAL)
+	if ((status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
@@ -413,25 +413,25 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 		StarShipPtr->special_counter =
 			StarShipPtr->RaceDescPtr->characteristics.special_wait;
 
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 	}
 }
 
 RACE_DESC*
 init_ilwrath(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		ilwrath_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		ilwrath_desc.characteristics.thrust_increment =
 			RES_SCALE(THRUST_INCREMENT);
-		ilwrath_desc.cyborg_control.WeaponRange = CLOSE_RANGE_WEAPON_HD;
+		ilwrath_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else
 	{
 		ilwrath_desc.characteristics.max_thrust = MAX_THRUST;
 		ilwrath_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		ilwrath_desc.cyborg_control.WeaponRange = CLOSE_RANGE_WEAPON;
+		ilwrath_desc.cyborg_control.WeaponRange = CloseRangeWeapon;
 	}
 
 	ilwrath_desc.preprocess_func = ilwrath_preprocess;

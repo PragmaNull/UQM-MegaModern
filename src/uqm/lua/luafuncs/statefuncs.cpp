@@ -457,9 +457,9 @@ luaUqm_state_sis_addLanders(lua_State* luaState)
 	{
 		newCount = 0;
 	}
-	else if (newCount > MAX_LANDERS)
+	else if (newCount > MaxLanders)
 	{
-		newCount = MAX_LANDERS;
+		newCount = MaxLanders;
 	}
 
 	if (newCount != oldCount)

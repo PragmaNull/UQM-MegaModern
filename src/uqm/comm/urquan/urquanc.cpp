@@ -29,11 +29,11 @@ static LOCDATA urquan_desc =
 		nullptr, /* uninit_encounter_func */
 		URQUAN_PMAP_ANIM, /* AlienFrame */
 		URQUAN_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		URQUAN_COLOR_MAP, /* AlienColorMap */
@@ -48,9 +48,9 @@ static LOCDATA urquan_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				7,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				7,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -58,9 +58,9 @@ static LOCDATA urquan_desc =
 				0, /* BlockMask */
 			},
 								{
-				13,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				13,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -68,9 +68,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				16,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				16,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -78,9 +78,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				19,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				19,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -88,9 +88,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				22,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -98,9 +98,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				29,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				29,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -108,9 +108,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				36,			   /* StartIndex */
-				8,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				36,			  /* StartIndex */
+				8,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -118,9 +118,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				44,							   /* StartIndex */
-				5,							   /* NumFrames */
-				CIRCULAR_ANIM | ANIM_DISABLED, /* AnimFlags */
+				44,							 /* StartIndex */
+				5,							 /* NumFrames */
+				CircularAnim | AnimDisabled, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -128,9 +128,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				49,							   /* StartIndex */
-				1,							   /* NumFrames */
-				CIRCULAR_ANIM | ANIM_DISABLED, /* AnimFlags */
+				49,							 /* StartIndex */
+				1,							 /* NumFrames */
+				CircularAnim | AnimDisabled, /* AnimFlags */
 				0,
 				0, /* FrameRate */
 				0,
@@ -492,10 +492,10 @@ LoserUrquan(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	if (EXTENDED)
+	if (IsExtended())
 	{
-		CommData.AlienAmbientArray[7].AnimFlags &= ~ANIM_DISABLED;
-		CommData.AlienAmbientArray[8].AnimFlags &= ~CIRCULAR_ANIM;
+		CommData.AlienAmbientArray[7].AnimFlags &= ~AnimDisabled;
+		CommData.AlienAmbientArray[8].AnimFlags &= ~CircularAnim;
 	}
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
@@ -620,9 +620,9 @@ init_urquan_comm(void)
 
 	uqm::lua().beginComm(nullptr, NullResource);
 
-	urquan_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	urquan_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	urquan_desc.AlienTextBaseline.y = 0;
-	urquan_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	urquan_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	const uint32_t GrpOffs {GET_GAME_STATE(URQUAN_PROBE_GRPOFFS)};
 
@@ -631,12 +631,12 @@ init_urquan_comm(void)
 		 && GLOBAL(BattleGroupRef)
 		 && GLOBAL(BattleGroupRef) == GrpOffs))
 	{
-		altResFlags |= USE_ALT_SONG;
+		altResFlags |= UseAltSong;
 	}
 
-	if (EXTENDED)
+	if (IsExtended())
 	{
-		altResFlags |= USE_ALT_COLORMAP;
+		altResFlags |= UseAltColormap;
 	}
 
 	if (GET_GAME_STATE(PLAYER_HYPNOTIZED)

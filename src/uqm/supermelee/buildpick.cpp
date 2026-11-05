@@ -72,7 +72,7 @@ Color GetShipFlashColor(void)
 {
 	if (is3DO(uqm::UQMOptions::read().whichMenu))
 	{
-		return BLACK_COLOR;
+		return BlackColor;
 	}
 	else
 	{
@@ -87,7 +87,7 @@ Color GetShipFlashColor(void)
 	}
 }
 
-// Draw part of the frame underneath the ship (removes artifacts in HD)
+// Draw part of the frame underneath the ship (removes artifacts in HdResolutionFactor)
 void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 {
 	GFXRECT r;
@@ -102,7 +102,7 @@ void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 	GFXCONTEXT OldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&OldRect);
 	SetContextClipRect(&r);
-	if (IS_PAD)
+	if (IsPad())
 	{
 		oldOrigin = SetContextOrigin(MAKE_POINT(r.corner.x, r.corner.y));
 	}
@@ -137,8 +137,8 @@ void DrawPickIcon(MeleeShip ship, bool DrawErase)
 
 	s.frame = GetShipIconsFromIndex(ship);
 
-	// Draw a rectangle below ship to remove artifacts in HD
-	if (IS_HD)
+	// Draw a rectangle below ship to remove artifacts in HdResolutionFactor
+	if (IsHd())
 	{
 		RepairBuildPickFrame(&r, &s.origin);
 	}
@@ -199,15 +199,15 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 	DrawTooltipBox();
 
 	FONT oldFont {SetContextFont(StarConFont)};
-	oldColor = SetContextForeGroundColor(TOOLTIP_COLOR_NAME_BACK);
+	oldColor = SetContextForeGroundColor(TooltipColorNameBack);
 	font_DrawText(&Text);
 
-	SetContextForeGroundColor(TOOLTIP_COLOR_NAME_FRONT);
+	SetContextForeGroundColor(TooltipColorNameFront);
 	Text.baseline.x -= RES_SCALE(1);
 	Text.baseline.y -= RES_SCALE(1);
 	font_DrawText(&Text);
 
-	SetContextForeGroundColor(TOOLTIP_COLOR_DESC_FRONT);
+	SetContextForeGroundColor(TooltipColorDescFront);
 
 	uqm::utf8StringCopy(buf, sizeof buf,
 						SIPtr->race_strings->text(SIPtr->race_strings->size() - 1));
@@ -288,7 +288,7 @@ DoPickShip(MELEE_STATE* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	if (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL])
 	{

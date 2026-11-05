@@ -71,7 +71,7 @@ GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
 	{
 		GLOBAL(BattleGroupRef) = GET_GAME_STATE(SHOFIXTI_GRPOFFS);
 		if (GLOBAL(BattleGroupRef) == 0
-			|| !GetGroupInfo(GLOBAL(BattleGroupRef), GROUP_INIT_IP))
+			|| !GetGroupInfo(GLOBAL(BattleGroupRef), GroupInitIp))
 		{
 			HSHIPFRAG hStarShip {};
 
@@ -88,7 +88,7 @@ GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
 					&GLOBAL(npc_built_ship_q), hStarShip);
 				/* Name Tanaka or Katana (+1) */
 				FragPtr->captains_name_index =
-					NAME_OFFSET + NUM_CAPTAINS_NAMES + (GET_GAME_STATE(SHOFIXTI_KIA) & 1);
+					NameOffset + NumCaptainsNames + (GET_GAME_STATE(SHOFIXTI_KIA) & 1);
 				UnlockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
 			}
 
@@ -279,7 +279,7 @@ GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SHOFIXTI_BASE_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ShofixtiBaseStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = Index;
 
 			DoDiscoveryReport(MenuSounds);

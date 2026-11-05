@@ -22,13 +22,13 @@
 #include "libs/time/timelib.h"
 #include "displist.h"
 
-#define START_YEAR 2155
+inline constexpr auto StartYear {2155};
 
 // the running of the game-clock is based on game framerates
 // *not* on the system (or translated) timer
 // and is hard-coded to the original 24 fps
-#define CLOCK_BASE_FRAMERATE 24
-#define CLOCK_FRAME_RATE (c_gameSecond / CLOCK_BASE_FRAMERATE)
+inline constexpr auto ClockBaseFramerate {24};
+inline constexpr auto ClockFrameRate {(c_gameSecond / ClockBaseFramerate)};
 
 typedef HLINK HEVENT;
 
@@ -58,12 +58,12 @@ typedef enum
 												(void (*)(LINK*, void*))(callback), (arg))
 
 // Rates are in seconds per game day
-#define HYPERSPACE_CLOCK_RATE 5
+inline constexpr auto HyperspaceClockRate {5};
 // XXX: the IP rate is based on 24 ticks/second (see SetGameClockRate),
 //   however, IP runs at 30 fps right now. So in reality, the IP clock
 //   rate is closer to 23 seconds per game day. The clock is faster, but
 //   the flagship also moves faster.
-#define INTERPLANETARY_CLOCK_RATE 30
+inline constexpr auto InterplanetaryClockRate {30};
 
 extern bool InitGameClock(void);
 extern bool UninitGameClock(void);

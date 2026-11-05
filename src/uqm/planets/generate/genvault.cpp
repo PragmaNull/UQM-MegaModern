@@ -98,8 +98,8 @@ GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(VAULT_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(VAULT_STRTAB);
+			CaptureDrawable(LoadGraphic(VaultMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(VaultStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		if (GET_GAME_STATE(SHIP_VAULT_UNLOCKED))
 		{
@@ -112,7 +112,7 @@ GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 			{
 				uint16_t state {};
 
-				PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+				PutGroupInfo(GroupsRandom, GroupSaveIp);
 				ReinitQueue(&GLOBAL(ip_group_q));
 				assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -135,7 +135,7 @@ GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 
 				if (Survivors)
 				{

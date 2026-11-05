@@ -47,13 +47,13 @@
 #define SPECIAL_ENERGY_COST 0
 #define SPECIAL_WAIT 20
 #define HARVEST_RANGE RES_SCALE(208 * 3 / 8)
-/* Was originally (SPACE_HEIGHT * 3 / 8) */
+/* Was originally (SpaceHeight() * 3 / 8) */
 
 static RACE_DESC slylandro_desc =
 	{
 		{/* SHIP_INFO */
 		 "probe",
-		 SEEKING_WEAPON | CREW_IMMUNE,
+		 SeekingWeapon | CrewImmune,
 		 17, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -110,7 +110,7 @@ static RACE_DESC slylandro_desc =
 		 nullptr},
 		{
 			0,
-			CLOSE_RANGE_WEAPON << 1,
+			CloseRangeWeapon << 1,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -128,7 +128,7 @@ static void
 lightning_postprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait
-		&& !(ElementPtr->state_flags & COLLISION))
+		&& !(ElementPtr->state_flags & Collision))
 	{
 		HELEMENT Lightning {};
 
@@ -169,7 +169,7 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 	LaserBlock.ey = 0;
 
 	LaserBlock.sender = ElementPtr->playerNr;
-	LaserBlock.flags = IGNORE_SIMILAR;
+	LaserBlock.flags = IgnoreSimilar;
 	LaserBlock.face = 0;
 	LaserBlock.pixoffs = 0;
 	LaserArray[0] = initialize_laser(&LaserBlock);
@@ -190,7 +190,7 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 
 		const uint32_t rand_val {uqm::random().next()};
 
-		if (!(ElementPtr->state_flags & PLAYER_SHIP))
+		if (!(ElementPtr->state_flags & PlayerShip))
 		{
 			angle = GetVelocityTravelAngle(&ElementPtr->velocity);
 			facing = NORMALIZE_FACING(ANGLE_TO_FACING(angle));
@@ -244,7 +244,7 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 			}
 		}
 
-		if (delta == -1 || delta == ANGLE_TO_FACING(HALF_CIRCLE))
+		if (delta == -1 || delta == ANGLE_TO_FACING(HalfCircle))
 		{
 			angle += uqm::lowWord(rand_val);
 		}
@@ -252,13 +252,13 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 		{
 			angle += uqm::lowWord(rand_val) & 1 ? -1 : 1;
 		}
-		else if (delta < ANGLE_TO_FACING(HALF_CIRCLE))
+		else if (delta < ANGLE_TO_FACING(HalfCircle))
 		{
-			angle += uqm::lowWord(rand_val) & (QUADRANT - 1);
+			angle += uqm::lowWord(rand_val) & (Quadrant - 1);
 		}
 		else
 		{
-			angle -= uqm::lowWord(rand_val) & (QUADRANT - 1);
+			angle -= uqm::lowWord(rand_val) & (Quadrant - 1);
 		}
 		delta = WORLD_TO_VELOCITY(
 			DISPLAY_TO_WORLD((uqm::highWord(rand_val) & (LASER_LENGTH - 1)) + 4));
@@ -306,20 +306,20 @@ slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 14)
 	{
-		StarShipPtr->ship_input_state |= WEAPON;
+		StarShipPtr->ship_input_state |= WeaponFlag;
 	}
 	else
 	{
-		StarShipPtr->ship_input_state &= ~WEAPON;
+		StarShipPtr->ship_input_state &= ~WeaponFlag;
 	}
 
-	StarShipPtr->ship_input_state &= ~SPECIAL;
+	StarShipPtr->ship_input_state &= ~SpecialFlag;
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level < StarShipPtr->RaceDescPtr->ship_info.max_energy)
 	{
 		lpEvalDesc = &ObjectsOfConcern[FIRST_EMPTY_INDEX];
 		if (lpEvalDesc->ObjectPtr && lpEvalDesc->which_turn <= 14)
 		{
-			StarShipPtr->ship_input_state |= SPECIAL;
+			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
 	}
 }
@@ -339,8 +339,8 @@ harvest_space_junk(ELEMENT* ElementPtr)
 		LockElement(hElement, &ObjPtr);
 		hNextElement = GetSuccElement(ObjPtr);
 
-		if (!(ObjPtr->state_flags & (APPEARING | PLAYER_SHIP | FINITE_LIFE))
-			&& ObjPtr->playerNr == NEUTRAL_PLAYER_NUM
+		if (!(ObjPtr->state_flags & (Appearing | PlayerShip | FiniteLife))
+			&& ObjPtr->playerNr == NeutralPlayerNum
 			&& !GRAVITY_MASS(ObjPtr->mass_points)
 			&& CollisionPossible(ObjPtr, ElementPtr))
 		{
@@ -365,7 +365,7 @@ harvest_space_junk(ELEMENT* ElementPtr)
 				&& dx * dx + dy * dy <= HARVEST_RANGE * HARVEST_RANGE)
 			{
 				ObjPtr->life_span = 0;
-				ObjPtr->state_flags |= NONSOLID;
+				ObjPtr->state_flags |= Nonsolid;
 
 				if (!retval)
 				{
@@ -407,7 +407,7 @@ slylandro_postprocess(ELEMENT* ElementPtr)
 	}
 
 	if (StarShipPtr->special_counter == 0
-		&& (StarShipPtr->cur_status_flags & SPECIAL)
+		&& (StarShipPtr->cur_status_flags & SpecialFlag)
 		&& harvest_space_junk(ElementPtr))
 	{
 		StarShipPtr->special_counter =
@@ -418,26 +418,26 @@ slylandro_postprocess(ELEMENT* ElementPtr)
 static void
 slylandro_preprocess(ELEMENT* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & (APPEARING | NONSOLID)))
+	if (!(ElementPtr->state_flags & (Appearing | Nonsolid)))
 	{
 		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
-		if ((StarShipPtr->cur_status_flags & THRUST)
-			&& !(StarShipPtr->old_status_flags & THRUST))
+		if ((StarShipPtr->cur_status_flags & ThrustFlag)
+			&& !(StarShipPtr->old_status_flags & ThrustFlag))
 		{
-			StarShipPtr->ShipFacing += ANGLE_TO_FACING(HALF_CIRCLE);
+			StarShipPtr->ShipFacing += ANGLE_TO_FACING(HalfCircle);
 		}
 
 		if (ElementPtr->turn_wait == 0)
 		{
 			ElementPtr->turn_wait +=
 				StarShipPtr->RaceDescPtr->characteristics.turn_wait + 1;
-			if (StarShipPtr->cur_status_flags & LEFT)
+			if (StarShipPtr->cur_status_flags & LeftFlag)
 			{
 				--StarShipPtr->ShipFacing;
 			}
-			else if (StarShipPtr->cur_status_flags & RIGHT)
+			else if (StarShipPtr->cur_status_flags & RightFlag)
 			{
 				++StarShipPtr->ShipFacing;
 			}
@@ -453,30 +453,30 @@ slylandro_preprocess(ELEMENT* ElementPtr)
 			SetVelocityVector(&ElementPtr->velocity,
 							  StarShipPtr->RaceDescPtr->characteristics.max_thrust,
 							  StarShipPtr->ShipFacing);
-			StarShipPtr->cur_status_flags |= SHIP_AT_MAX_SPEED;
-			StarShipPtr->cur_status_flags &= ~SHIP_IN_GRAVITY_WELL;
+			StarShipPtr->cur_status_flags |= ShipAtMaxSpeed;
+			StarShipPtr->cur_status_flags &= ~ShipInGravityWell;
 		}
 
 		ElementPtr->next.image.frame = IncFrameIndex(ElementPtr->next.image.frame);
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 	}
 }
 
 RACE_DESC*
 init_slylandro(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		slylandro_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		slylandro_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		slylandro_desc.cyborg_control.WeaponRange = CLOSE_RANGE_WEAPON_HD << 1;
+		slylandro_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd << 1;
 	}
 	else
 	{
 		slylandro_desc.characteristics.max_thrust = MAX_THRUST;
 		slylandro_desc.characteristics.thrust_increment = THRUST_INCREMENT;
 		slylandro_desc.cyborg_control.WeaponRange =
-			CLOSE_RANGE_WEAPON << 1;
+			CloseRangeWeapon << 1;
 	}
 
 	slylandro_desc.preprocess_func = slylandro_preprocess;

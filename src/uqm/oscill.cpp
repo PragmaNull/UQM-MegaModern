@@ -110,8 +110,8 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 
 	// Set oscilloscope line color
 	scopeColor = uqm::UQMOptions::read().scopeStyle != uqm::EmulationMode::PC ?
-					 SCOPE_COLOR_3DO :
-					 SCOPE_COLOR_PC;
+					 ScopeColor3do :
+					 ScopeColorPc;
 
 	if (nonStop)
 	{ // Dim the oscilloscope lines for Non-Stop option

@@ -149,7 +149,7 @@ void ProcessUtilityKeys(void)
 			flags ^= uqm::GfxFlags::Fullscreen;
 		}
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			flags ^= uqm::GfxFlags::Scale_Bilinear;
 		}
@@ -208,7 +208,7 @@ SetRandomMenuMusic(void)
 	const uqstl::tm tm {uqm::localtime(t)};
 
 	srand(t);
-	Rando = (rand() % NUM_MM_THEMES);
+	Rando = (rand() % NumMmThemes);
 	optMaskOfDeceit = tm.tm_mon == 3 && tm.tm_mday == 1;
 }
 
@@ -372,7 +372,7 @@ int Starcon2Main(void* threadArg)
 				uqm::currentActivity() = uqm::makeWord(IN_INTERPLANETARY, 0);
 
 				DrawAutoPilotMessage(true);
-				SetGameClockRate(INTERPLANETARY_CLOCK_RATE);
+				SetGameClockRate(InterplanetaryClockRate);
 				ExploreSolarSys();
 			}
 			else
@@ -381,7 +381,7 @@ int Starcon2Main(void* threadArg)
 				uqm::currentActivity() = uqm::makeWord(IN_HYPERSPACE, 0);
 
 				DrawAutoPilotMessage(true);
-				SetGameClockRate(HYPERSPACE_CLOCK_RATE);
+				SetGameClockRate(HyperspaceClockRate);
 				Battle(&on_battle_frame);
 			}
 

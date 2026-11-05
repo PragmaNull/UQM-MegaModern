@@ -33,45 +33,44 @@ typedef HLINK HSTARSHIP;
 #include "libs/reslib.h"
 
 
-// TODO: remove RACES_PER_PLAYER remnant of SC1
-#define RACES_PER_PLAYER 7
-#define MAX_SHIPS_PER_SIDE 14
+// TODO: remove RacesPerPlayer remnant of SC1
+
+inline constexpr auto MaxShipsPerSide {14};
 
 /* SHIP_INFO.ship_flags - ship specific flags */
 /* bits 0 and 1 are now available */
-#define SEEKING_WEAPON (1 << 2)
-#define SEEKING_SPECIAL (1 << 3)
-#define POINT_DEFENSE (1 << 4)
+inline constexpr auto SeekingWeapon {(1 << 2)};
+inline constexpr auto SeekingSpecial {(1 << 3)};
+inline constexpr auto PointDefense {(1 << 4)};
 /* Ship has some point-defense capabilities */
-#define IMMEDIATE_WEAPON (1 << 5)
-#define CREW_IMMUNE (1 << 6)
-#define FIRES_FORE (1 << 7)
-#define FIRES_RIGHT (1 << 8)
-#define FIRES_AFT (1 << 9)
-#define FIRES_LEFT (1 << 10)
-#define SHIELD_DEFENSE (1 << 11)
-#define DONT_CHASE (1 << 12)
-#define PLAYER_CAPTAIN (1 << 13)
+inline constexpr auto ImmediateWeapon {(1 << 5)};
+inline constexpr auto CrewImmune {(1 << 6)};
+inline constexpr auto FiresFore {(1 << 7)};
+inline constexpr auto FiresRight {(1 << 8)};
+inline constexpr auto FiresAft {(1 << 9)};
+inline constexpr auto FiresLeft {(1 << 10)};
+inline constexpr auto ShieldDefense {(1 << 11)};
+inline constexpr auto DontChase {(1 << 12)};
+inline constexpr auto PlayerCaptain {(1 << 13)};
 /* The protagonist himself is on board. He gets a different color. */
-#define LIGHT_POINT_DEFENSE (1 << 14)
-#define HEAVY_POINT_DEFENSE (1 << 15)
+
 
 typedef uint16_t STATUS_FLAGS;
 
 /* STATUS_FLAGS - heat of battle specific flags */
-#define LEFT (1 << 0)
-#define RIGHT (1 << 1)
-#define THRUST (1 << 2)
-#define WEAPON (1 << 3)
-#define SPECIAL (1 << 4)
-#define LOW_ON_ENERGY (1 << 5)
-#define SHIP_BEYOND_MAX_SPEED (1 << 6)
-#define SHIP_AT_MAX_SPEED (1 << 7)
-#define SHIP_IN_GRAVITY_WELL (1 << 8)
-#define PLAY_VICTORY_DITTY (1 << 9)
+inline constexpr auto LeftFlag {(1 << 0)};
+inline constexpr auto RightFlag {(1 << 1)};
+inline constexpr auto ThrustFlag {(1 << 2)};
+inline constexpr auto WeaponFlag {(1 << 3)};
+inline constexpr auto SpecialFlag {(1 << 4)};
+inline constexpr auto LowOnEnergy {(1 << 5)};
+inline constexpr auto ShipBeyondMaxSpeed {(1 << 6)};
+inline constexpr auto ShipAtMaxSpeed {(1 << 7)};
+inline constexpr auto ShipInGravityWell {(1 << 8)};
+inline constexpr auto PlayVictoryDitty {(1 << 9)};
 
-#define SHOFIXTI_EXPLOSION (1 << 10)
-#define ANDROSYN_COMET_TOGGLE (1 << 11)
+inline constexpr auto ShofixtiExplosion {(1 << 10)};
+inline constexpr auto AndrosynCometToggle {(1 << 11)};
 
 /* These track the old resource package orderings for the ship resource indices */
 enum SPECIES_ID
@@ -202,16 +201,16 @@ typedef struct
 
 typedef struct
 {
-	RESOURCE ship_rsc[NUM_VIEWS];
-	RESOURCE weapon_rsc[NUM_VIEWS];
-	RESOURCE special_rsc[NUM_VIEWS];
+	RESOURCE ship_rsc[NumViews];
+	RESOURCE weapon_rsc[NumViews];
+	RESOURCE special_rsc[NumViews];
 	CAPTAIN_STUFF captain_control;
 	RESOURCE victory_ditty_rsc;
 	RESOURCE ship_sounds_rsc;
 
-	FRAME ship[NUM_VIEWS];
-	FRAME weapon[NUM_VIEWS];
-	FRAME special[NUM_VIEWS];
+	FRAME ship[NumViews];
+	FRAME weapon[NumViews];
+	FRAME special[NumViews];
 	MUSIC_REF victory_ditty;
 	SOUND_REF ship_sounds;
 	// The index in ship_sounds of the sound of the primary weapon.
@@ -295,8 +294,8 @@ struct STARSHIP : SHIP_BASE
 	PlayerControlFlags control {PlayerControlFlags::None};
 };
 
-#define RPG_PLAYER_NUM 0
-#define NPC_PLAYER_NUM 1
+inline constexpr auto RpgPlayerNum {0};
+inline constexpr auto NpcPlayerNum {1};
 
 static inline STARSHIP*
 LockStarShip(const QUEUE* pq, HSTARSHIP h)
@@ -673,7 +672,7 @@ typedef enum
 		ILWRATH_DEFINED, /* ILWRATH_SHIP */      \
 		MYCON_DEFINED,	 /* MYCON_SHIP */        \
 		0,				 /* SLYLANDRO_SHIP */    \
-		UMGAH_DEFINED,	 /* UMGAH_SHIP */        \
+		UmgahDefined,	 /* UMGAH_SHIP */        \
 		0,				 /* URQUAN_SHIP */       \
 		ZOQFOT_DEFINED,	 /* ZOQFOTPIK_SHIP */    \
 		SYREEN_DEFINED,	 /* SYREEN_SHIP */       \

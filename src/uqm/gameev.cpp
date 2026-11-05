@@ -104,7 +104,7 @@ void initEventSystem(void)
 		{nullptr,					   nullptr					 }
 	  };
 
-	uqm::lua().beginEvents(eventFuncs, EVENT_SCRIPT);
+	uqm::lua().beginEvents(eventFuncs, EventScriptRes);
 }
 
 void uninitEventSystem(void)
@@ -141,9 +141,9 @@ eventIdNumToStr(int eventNum)
 void AddInitialGameEvents(void)
 {
 	AddEvent(RELATIVE_EVENT, 0, 1, 0, HYPERSPACE_ENCOUNTER_EVENT);
-	AddEvent(ABSOLUTE_EVENT, 3, 17, START_YEAR, ARILOU_ENTRANCE_EVENT);
+	AddEvent(ABSOLUTE_EVENT, 3, 17, StartYear, ARILOU_ENTRANCE_EVENT);
 	AddEvent(RELATIVE_EVENT, 0, 0,
-			 YEARS_TO_KOHRAH_VICTORY + difficultyCase(2, 0, -1),
+			 YearsToKohrahVictory() + difficultyCase(2, 0, -1),
 			 KOHR_AH_VICTORIOUS_EVENT);
 	AddEvent(RELATIVE_EVENT, 0, 0, 0, SLYLANDRO_RAMP_UP);
 }
@@ -241,9 +241,9 @@ check_race_growth(void)
 				delta_strength = 0;
 				FleetPtr->allied_state = DEAD_GUY;
 			}
-			else if (delta_strength > MAX_FLEET_STRENGTH)
+			else if (delta_strength > MaxFleetStrength)
 			{
-				delta_strength = MAX_FLEET_STRENGTH;
+				delta_strength = MaxFleetStrength;
 			}
 
 			FleetPtr->actual_strength = (uint16_t)delta_strength;
@@ -421,8 +421,8 @@ static int
 zoqfot_distress_event(int arg)
 {
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-		&& CurStarDescPtr
-		&& CurStarDescPtr->Index == ZOQFOT_DEFINED)
+		&& CurStarDescPtr()
+		&& CurStarDescPtr()->Index == ZOQFOT_DEFINED)
 	{
 		AddEvent(RELATIVE_EVENT, 0, 7, 0, ZOQFOT_DISTRESS_EVENT);
 	}
@@ -440,8 +440,8 @@ static int
 zoqfot_death_event(int arg)
 {
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-		&& CurStarDescPtr
-		&& CurStarDescPtr->Index == ZOQFOT_DEFINED)
+		&& CurStarDescPtr()
+		&& CurStarDescPtr()->Index == ZOQFOT_DEFINED)
 	{
 		AddEvent(RELATIVE_EVENT, 0, 7, 0, ZOQFOT_DEATH_EVENT);
 	}
@@ -475,9 +475,9 @@ shofixti_return_event(int arg)
 		(void)arg;
 		return 0;
 	}
-	if (EXTENDED)
+	if (IsExtended())
 	{
-		ShofixtiPtr->actual_strength = 150 / SPHERE_RADIUS_INCREMENT * 2;
+		ShofixtiPtr->actual_strength = 150 / SphereRadiusIncrement * 2;
 		ShofixtiPtr->loc = SeedFleetLocation(ShofixtiPtr, plot_map, HOME);
 		StartSphereTracking(SHOFIXTI_SHIP);
 		ShofixtiPtr->growth = 1;
@@ -529,7 +529,7 @@ advance_utwig_supox_mission(int arg)
 				SupoxPtr->growth_err_term = 255 >> 1;
 			}
 
-			if (EXTENDED)
+			if (IsExtended())
 			{
 				strength_loss = (int16_t)(KohrAhPtr->actual_strength >> 5);
 				KohrAhPtr->growth = (uint8_t)(-strength_loss / 160);
@@ -569,7 +569,7 @@ advance_utwig_supox_mission(int arg)
 				SupoxPtr->growth = 0;
 				SupoxPtr->growth_fract = 0;
 
-				if (EXTENDED)
+				if (IsExtended())
 				{
 					KohrAhPtr->growth = 0;
 					KohrAhPtr->growth_fract = 0;
@@ -608,8 +608,8 @@ kohr_ah_genocide_event(int arg)
 
 	if (!GET_GAME_STATE(KOHR_AH_FRENZY)
 		&& uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-		&& CurStarDescPtr
-		&& CurStarDescPtr->Index == SAMATRA_DEFINED)
+		&& CurStarDescPtr()
+		&& CurStarDescPtr()->Index == SAMATRA_DEFINED)
 	{
 		AddEvent(RELATIVE_EVENT, 0, 7, 0, KOHR_AH_GENOCIDE_EVENT);
 		return 0;
@@ -718,8 +718,8 @@ static int
 spathi_shield_event(int arg)
 {
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-		&& CurStarDescPtr
-		&& CurStarDescPtr->Index == SPATHI_DEFINED)
+		&& CurStarDescPtr()
+		&& CurStarDescPtr()->Index == SPATHI_DEFINED)
 	{
 		AddEvent(RELATIVE_EVENT, 0, 7, 0, SPATHI_SHIELD_EVENT);
 	}
@@ -764,7 +764,7 @@ advance_ilwrath_mission(int arg)
 	{
 		IlwrathPtr->actual_strength = 0;
 		IlwrathPtr->allied_state = DEAD_GUY;
-		if ((EXTENDED && ThraddPtr->allied_state != GOOD_GUY) || !EXTENDED)
+		if ((IsExtended() && ThraddPtr->allied_state != GOOD_GUY) || !IsExtended())
 		{
 			ThraddPtr->actual_strength = 0;
 			ThraddPtr->allied_state = DEAD_GUY;
@@ -795,7 +795,7 @@ advance_ilwrath_mission(int arg)
 							(conflict.y + thradd_home.y) / 2,
 							MADD_LENGTH - 1, ADVANCE_ILWRATH_MISSION);
 
-				if (EXTENDED && ThraddPtr->allied_state == GOOD_GUY)
+				if (IsExtended() && ThraddPtr->allied_state == GOOD_GUY)
 				{
 					strength_loss = (int16_t)(ThraddPtr->actual_strength * 0.25); // Smarterer math
 				}
@@ -808,7 +808,7 @@ advance_ilwrath_mission(int arg)
 				ThraddPtr->growth_fract =
 					(uint8_t)(((strength_loss % MADD_LENGTH) << 8) / MADD_LENGTH);
 
-				if ((EXTENDED && ThraddPtr->allied_state != GOOD_GUY) || !EXTENDED)
+				if ((IsExtended() && ThraddPtr->allied_state != GOOD_GUY) || !IsExtended())
 				{
 					SET_GAME_STATE(THRADD_VISITS, 0);
 					if (ThraddPtr->allied_state == GOOD_GUY)
@@ -835,7 +835,7 @@ advance_ilwrath_mission(int arg)
 		}
 	}
 
-	if (EXTENDED && ThraddPtr->allied_state == GOOD_GUY && !IlwrathPtr->actual_strength)
+	if (IsExtended() && ThraddPtr->allied_state == GOOD_GUY && !IlwrathPtr->actual_strength)
 	{
 		ThraddPtr->growth = 0;
 		ThraddPtr->growth_fract = 0;
@@ -871,7 +871,7 @@ advance_mycon_mission(int arg)
 			SET_GAME_STATE(MYCON_KNOW_AMBUSH, 1);
 			SetRaceDest(MYCON_SHIP, home.x, home.y, 30, (uint8_t)~0);
 
-			if (EXTENDED)
+			if (IsExtended())
 			{
 				HFLEETINFO hSyreen {};
 
@@ -904,7 +904,7 @@ advance_mycon_mission(int arg)
 			MyconPtr->growth = (uint8_t)(-strength_loss / 14);
 			MyconPtr->growth_fract = (uint8_t)(((strength_loss % 14) << 8) / 14);
 			MyconPtr->growth_err_term = 255 >> 1;
-			if (EXTENDED)
+			if (IsExtended())
 			{
 				HFLEETINFO hSyreen {};
 

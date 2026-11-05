@@ -4,23 +4,21 @@
 
 #include <cstdint>
 #include "core/types/enum.h"
+#include "uqm/units.h"
 
 
-#define CLOSE_RANGE_WEAPON DISPLAY_TO_WORLD(50)
-#define LONG_RANGE_WEAPON DISPLAY_TO_WORLD(1000)
-#define FAST_SHIP 150
-#define MEDIUM_SHIP 45
-#define SLOW_SHIP 25
+inline constexpr auto CloseRangeWeapon {DISPLAY_TO_WORLD(50)};
+inline constexpr auto LongRangeWeapon {DISPLAY_TO_WORLD(1000)};
+inline constexpr auto FastShip {150};
+inline constexpr auto MediumShip {45};
+inline constexpr auto SlowShip {25};
 
 
-#define CLOSE_RANGE_WEAPON_HD DISPLAY_TO_WORLD(200)
-#define LONG_RANGE_WEAPON_HD DISPLAY_TO_WORLD(4000)
+inline constexpr auto CloseRangeWeaponHd {DISPLAY_TO_WORLD(200)};
+inline constexpr auto LongRangeWeaponHd {DISPLAY_TO_WORLD(4000)};
 
 // JMS_GFX: Multiplied by 4*4=16 because of the way the ManeuverabilityIndex
 // is calculated in InitCyborg () (cyborg.c).
-#define FAST_SHIP_HD 2400
-#define MEDIUM_SHIP_HD 720
-#define SLOW_SHIP_HD 400
 
 
 enum

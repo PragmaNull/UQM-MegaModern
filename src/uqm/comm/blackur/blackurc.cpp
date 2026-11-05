@@ -29,11 +29,11 @@ static LOCDATA blackurq_desc =
 		nullptr, /* uninit_encounter_func */
 		BLACKURQ_PMAP_ANIM, /* AlienFrame */
 		BLACKURQ_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		BLACKURQ_COLOR_MAP, /* AlienColorMap */
@@ -48,9 +48,9 @@ static LOCDATA blackurq_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				7,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				7,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -58,9 +58,9 @@ static LOCDATA blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				13,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				13,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -69,9 +69,9 @@ static LOCDATA blackurq_desc =
 			},
 								{
 				// New eye animation
-				42,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				42,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -79,9 +79,9 @@ static LOCDATA blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				20,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				20,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -89,9 +89,9 @@ static LOCDATA blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				23,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				23,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -99,9 +99,9 @@ static LOCDATA blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				26,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				26,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -109,9 +109,9 @@ static LOCDATA blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				29,			 /* StartIndex */
-				4,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				29,			/* StartIndex */
+				4,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -120,9 +120,9 @@ static LOCDATA blackurq_desc =
 			},
 								{
 				// "Left" extremity
-				33,							  /* StartIndex */
-				5,							  /* NumFrames */
-				CIRCULAR_ANIM | WAIT_TALKING, /* AnimFlags */
+				33,							/* StartIndex */
+				5,							/* NumFrames */
+				CircularAnim | WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -131,9 +131,9 @@ static LOCDATA blackurq_desc =
 			},
 								{
 				// "Right" extremeity
-				38,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				38,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -604,9 +604,9 @@ init_blackurq_comm(void)
 
 	uqm::lua().beginComm(nullptr, NullResource);
 
-	blackurq_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	blackurq_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	blackurq_desc.AlienTextBaseline.y = 0;
-	blackurq_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	blackurq_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	if (!GET_GAME_STATE(KOHR_AH_KILLED_ALL)
 		&& uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)

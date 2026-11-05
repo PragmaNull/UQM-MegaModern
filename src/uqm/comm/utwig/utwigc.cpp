@@ -33,11 +33,11 @@ static LOCDATA utwig_desc =
 		nullptr, /* uninit_encounter_func */
 		UTWIG_PMAP_ANIM, /* AlienFrame */
 		UTWIG_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
 		UTWIG_COLOR_MAP, /* AlienColorMap */
@@ -52,9 +52,9 @@ static LOCDATA utwig_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				4,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				4,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond,
@@ -62,9 +62,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				7,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				7,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -74,8 +74,8 @@ static LOCDATA utwig_desc =
 								{
 				11, /* StartIndex */
 				2,	/* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -83,9 +83,9 @@ static LOCDATA utwig_desc =
 				(1 << 1),				/* BlockMask */
 			},
 								{
-				13,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				13,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond / 12,
@@ -93,9 +93,9 @@ static LOCDATA utwig_desc =
 				0, /* BlockMask */
 			},
 								{
-				18,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				18,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -103,9 +103,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				20,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				20,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -113,9 +113,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				22,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -123,9 +123,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				25,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				25,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -133,9 +133,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				27,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				27,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -143,9 +143,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				30,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				30,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -153,9 +153,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				32,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				32,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -163,9 +163,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				34,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				34,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -173,9 +173,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				36,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				36,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -183,9 +183,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				38,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				38,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -193,9 +193,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				40,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				40,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -203,9 +203,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				42,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				42,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -482,7 +482,7 @@ AlliedHome(RESPONSE_REF R)
 	{
 		Response(how_is_ultron, AlliedHome);
 	}
-	if (EXTENDED && ShipsReady(UTWIG_SHIP))
+	if (IsExtended() && ShipsReady(UTWIG_SHIP))
 	{
 		Response(can_you_help, ExitConversation);
 	}
@@ -1065,14 +1065,14 @@ init_utwig_comm(void)
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	utwig_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	utwig_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	utwig_desc.AlienTextBaseline.y = RES_SCALE(64);
-	utwig_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	utwig_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	// use alternate 'Happy Utwig!' track
 	if (GET_GAME_STATE(UTWIG_HAVE_ULTRON))
 	{
-		altResFlags |= USE_ALT_SONG;
+		altResFlags |= UseAltSong;
 	}
 
 

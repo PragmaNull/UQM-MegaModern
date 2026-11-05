@@ -97,7 +97,7 @@ void TFB_DrawCanvas_Line(int x1, int y1, int x2, int y2, Color color,
 		SDL_UnlockSurface(dst);
 	}
 	else
-	{ // Lines for HD with Anti-aliasing (WIP)
+	{ // Lines for HdResolutionFactor with Anti-aliasing (WIP)
 		if (x1 == x2 || y1 == y2)
 		{ // Vertical/horizontal
 			SDL_Rect sr;
@@ -427,7 +427,7 @@ TFB_DrawCanvas_Fill(SDL_Surface* src, Uint32 fillcolor, SDL_Surface* dst)
 	}
 	else
 	{ // We don't know what is that - just draw the color dammit
-		// Added by Kruzen during HD filter optimization
+		// Added by Kruzen during HdResolutionFactor filter optimization
 		// Before it couldn't draw some filled stamps because they didn't
 		// have any transparencies and supposedly nothing from existing
 		// before DrawFilledStamp usages cannot reach that

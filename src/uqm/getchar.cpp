@@ -163,10 +163,10 @@ FlashCursor(void)
 		{
 			GFXRECT r;
 
-			r.corner.x = SIS_ORG_X + RES_SCALE(1);
-			r.corner.y = SIS_ORG_Y - SIS_MESSAGE_HEIGHT;
-			r.extent.width = SIS_MESSAGE_WIDTH;
-			r.extent.height = SIS_MESSAGE_HEIGHT - RES_SCALE(1);
+			r.corner.x = SisOrgX() + RES_SCALE(1);
+			r.corner.y = SisOrgY() - SisMessageHeight();
+			r.extent.width = SisMessageWidth();
+			r.extent.height = SisMessageHeight() - RES_SCALE(1);
 			SetContextFGFrame(Screen);
 			SetContextClipRect(&r);
 		}
@@ -214,7 +214,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 
 		// load joystick alphabet
 		{
-			const uqm::StringTablePtr joyAlpha {uqm::loadStringTable(JOYSTICK_ALPHA_STRTAB)};
+			const uqm::StringTablePtr joyAlpha {uqm::loadStringTable(JoystickAlphaStrtabRes)};
 			pTES->JoyAlpha = LoadJoystickAlpha(joyAlpha->text(0), &pTES->JoyAlphaLength);
 			pTES->JoyUpper = LoadJoystickAlpha(joyAlpha->text(1), &pTES->JoyRegLength);
 			pTES->JoyLower = LoadJoystickAlpha(joyAlpha->text(2), &lwlen);

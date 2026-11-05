@@ -21,10 +21,9 @@
 
 #include "libs/reslib.h"
 
-#define LoadCodeRes LoadCodeResInstance
-#define LoadGraphic (DRAWABLE) LoadGraphicInstance
-#define LoadFont (FONT) LoadGraphicInstance
-#define LoadString LoadStringInstance
-#define LoadMusic LoadMusicInstance
+
+inline DRAWABLE LoadGraphic(RESOURCE res) { return static_cast<DRAWABLE>(LoadGraphicInstance(res)); }
+inline FONT LoadFont(RESOURCE res) { return static_cast<FONT>(LoadGraphicInstance(res)); }
+
 
 #endif /* UQM_NAMEREF_H_ */

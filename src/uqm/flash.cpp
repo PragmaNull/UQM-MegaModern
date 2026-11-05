@@ -81,10 +81,10 @@ Flash_create(GFXCONTEXT gfxContext)
 	context->endNumer = 1;
 	context->denom = 1;
 
-	context->fadeInTime = Flash_DEFAULT_FADE_IN_TIME;
-	context->onTime = Flash_DEFAULT_ON_TIME;
-	context->fadeOutTime = Flash_DEFAULT_FADE_OUT_TIME;
-	context->offTime = Flash_DEFAULT_OFF_TIME;
+	context->fadeInTime = FlashDefaultFadeInTime;
+	context->onTime = FlashDefaultOnTime;
+	context->fadeOutTime = FlashDefaultFadeOutTime;
+	context->offTime = FlashDefaultOffTime;
 
 	context->frameTime = TimePeriod {};
 
@@ -95,7 +95,7 @@ Flash_create(GFXCONTEXT gfxContext)
 	context->started = false;
 	context->paused = false;
 
-	context->cacheSize = Flash_DEFAULT_CACHE_SIZE;
+	context->cacheSize = FlashDefaultCacheSize;
 
 	context->lastFrameIndex = (uint16_t)-1;
 
@@ -756,7 +756,7 @@ Flash_drawFrame(FlashContext* context, FRAME frame, bool pcRect)
 		const Color color = GetFlashPCColor();
 		DrawStarConBox(
 			&context->rect, RES_SCALE(1), color, color, false,
-			TRANSPARENT, false, TRANSPARENT);
+			Transparent, false, Transparent);
 	}
 
 	SetContext(oldGfxContext);

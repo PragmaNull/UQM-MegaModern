@@ -55,20 +55,20 @@ extern SOUND_REF GameSounds;
 
 /* Constants for DoInput */
 typedef uint16_t MENU_SOUND_FLAGS;
-#define MENU_SOUND_UP ((MENU_SOUND_FLAGS)(1 << 0))
-#define MENU_SOUND_DOWN ((MENU_SOUND_FLAGS)(1 << 1))
-#define MENU_SOUND_LEFT ((MENU_SOUND_FLAGS)(1 << 2))
-#define MENU_SOUND_RIGHT ((MENU_SOUND_FLAGS)(1 << 3))
-#define MENU_SOUND_SELECT ((MENU_SOUND_FLAGS)(1 << 4))
-#define MENU_SOUND_CANCEL ((MENU_SOUND_FLAGS)(1 << 5))
-#define MENU_SOUND_SPECIAL ((MENU_SOUND_FLAGS)(1 << 6))
-#define MENU_SOUND_PAGEUP ((MENU_SOUND_FLAGS)(1 << 7))
-#define MENU_SOUND_PAGEDOWN ((MENU_SOUND_FLAGS)(1 << 8))
-#define MENU_SOUND_DELETE ((MENU_SOUND_FLAGS)(1 << 9))
-#define MENU_SOUND_ARROWS (MENU_SOUND_UP | MENU_SOUND_DOWN | MENU_SOUND_LEFT | MENU_SOUND_RIGHT)
-#define MENU_SOUND_PAGE (MENU_SOUND_PAGEUP | MENU_SOUND_PAGEDOWN)
-#define MENU_SOUND_ACTION (MENU_SOUND_SELECT | MENU_SOUND_CANCEL)
-#define MENU_SOUND_NONE ((MENU_SOUND_FLAGS)0)
+inline constexpr auto MenuSoundUp {((MENU_SOUND_FLAGS)(1 << 0))};
+inline constexpr auto MenuSoundDown {((MENU_SOUND_FLAGS)(1 << 1))};
+inline constexpr auto MenuSoundLeft {((MENU_SOUND_FLAGS)(1 << 2))};
+inline constexpr auto MenuSoundRight {((MENU_SOUND_FLAGS)(1 << 3))};
+inline constexpr auto MenuSoundSelect {((MENU_SOUND_FLAGS)(1 << 4))};
+inline constexpr auto MenuSoundCancel {((MENU_SOUND_FLAGS)(1 << 5))};
+inline constexpr auto MenuSoundSpecial {((MENU_SOUND_FLAGS)(1 << 6))};
+inline constexpr auto MenuSoundPageup {((MENU_SOUND_FLAGS)(1 << 7))};
+inline constexpr auto MenuSoundPagedown {((MENU_SOUND_FLAGS)(1 << 8))};
+inline constexpr auto MenuSoundDelete {((MENU_SOUND_FLAGS)(1 << 9))};
+inline constexpr auto MenuSoundArrows {(MenuSoundUp | MenuSoundDown | MenuSoundLeft | MenuSoundRight)};
+inline constexpr auto MenuSoundPage {(MenuSoundPageup | MenuSoundPagedown)};
+inline constexpr auto MenuSoundAction {(MenuSoundSelect | MenuSoundCancel)};
+inline constexpr auto MenuSoundNone {((MENU_SOUND_FLAGS)0)};
 
 extern void SetMenuSounds(MENU_SOUND_FLAGS sound_0,
 						  MENU_SOUND_FLAGS sound_1);

@@ -64,7 +64,7 @@ GenerateColony_initNpcs(SOLARSYS_STATE* solarSys)
 	{
 		CloneShipFragment(URQUAN_SHIP,
 						  &GLOBAL(npc_built_ship_q), 0);
-		GLOBAL(BattleGroupRef) = PutGroupInfo(GROUPS_ADD_NEW, 1);
+		GLOBAL(BattleGroupRef) = PutGroupInfo(GroupsAddNew, 1);
 		ReinitQueue(&GLOBAL(npc_built_ship_q));
 		SET_GAME_STATE(COLONY_GRPOFFS, GLOBAL(BattleGroupRef));
 	}
@@ -107,7 +107,7 @@ GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys)
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		pPlanet->data_index = WATER_WORLD | PLANET_SHIELDED;
 		ComputeSpeed(pPlanet, false, 1);
-		if (EXTENDED)
+		if (IsExtended())
 		{
 			pPlanet->NumPlanets = 1;
 		}
@@ -140,7 +140,7 @@ GenerateColony_generateMoons(SOLARSYS_STATE* solarSys,
 		return true;
 	}
 
-	if (EXTENDED
+	if (IsExtended()
 		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
 		solarSys->MoonDesc[0].data_index = SELENIC_WORLD;

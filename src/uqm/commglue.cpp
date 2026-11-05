@@ -33,7 +33,7 @@
 #include "libs/math/Random.h"
 #include "uqm/random/UQMRandom.h"
 
-uint16_t RoboTrack[NUM_ROBO_TRACKS];
+uint16_t RoboTrack[NumRoboTracks];
 
 static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack);
 
@@ -92,7 +92,7 @@ bool RoboInterpolation(const char* start, const char* end)
 const char* InterpolateChunk(uqstl::span<char> buffer, const char* start)
 {
 	const char* end = start;
-	char str_buf[MAX_INTERPOLATE] = "";
+	char str_buf[MaxInterpolate] = "";
 	const char* pStr {};
 	uint16_t buffsize = 0;
 	bool done = false;
@@ -103,7 +103,7 @@ const char* InterpolateChunk(uqstl::span<char> buffer, const char* start)
 		if (end != start)
 		{
 			buffsize += end - start;
-			if (buffsize > MAX_INTERPOLATE)
+			if (buffsize > MaxInterpolate)
 			{
 				fmt::print(stderr, "String too long to interpolate.\n");
 				return nullptr;
@@ -130,7 +130,7 @@ const char* InterpolateChunk(uqstl::span<char> buffer, const char* start)
 		uqm::strncpy_safe(str_buf, {start, end});
 		const uqstl::string interpolated {uqm::lua().interpolate(str_buf)};
 		buffsize += (uint16_t)interpolated.size();
-		if (buffsize > MAX_INTERPOLATE)
+		if (buffsize > MaxInterpolate)
 		{
 			fmt::print(stderr, "String too long to interpolate.\n");
 			return nullptr;
@@ -147,7 +147,7 @@ const char* InterpolateChunk(uqstl::span<char> buffer, const char* start)
 	// Otherwise we're done with interpolation, write the remainder
 	// to buffer and return
 	buffsize += (uint16_t)strlen(start);
-	if (buffsize > MAX_INTERPOLATE)
+	if (buffsize > MaxInterpolate)
 	{
 		fmt::print(stderr, "String too long to interpolate.\n");
 		return nullptr;
@@ -202,7 +202,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 
 	// From here on, we are doing StarSeed robo-interpolation.
 	const static uqm::StringTablePtr RoboPhrases {uqm::loadStringTable("comm.robot.dialogue")};
-	for (i = 0; RoboTrack[i] && i < NUM_ROBO_TRACKS; i++)
+	for (i = 0; RoboTrack[i] && i < NumRoboTracks; i++)
 	{
 		RoboTrack[i] = 0;
 	}
@@ -233,13 +233,13 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 	do
 	{
 		// Get fresh buffers every loop
-		char str_buf[MAX_INTERPOLATE] = "";
-		char clip_buf[MAX_CLIPNAME] = "";
+		char str_buf[MaxInterpolate] = "";
+		char clip_buf[MaxClipname] = "";
 #if 0
 		// Gotta test and make sure we don't need this intensity
-			for (i = 0; i < MAX_INTERPOLATE; i++)
+			for (i = 0; i < MaxInterpolate; i++)
 				str_buf[i] = '\0';
-			for (i = 0; i < MAX_CLIPNAME; i++)
+			for (i = 0; i < MaxClipname; i++)
 				clip_buf[i] = '\0';
 #endif
 		// InterpolateChunk returns a pointer to the start of the next
@@ -285,11 +285,11 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 		{
 			// This requires one or more robo-tracks or swap-if subclips
 			// which we will MultiSplice into the main track.
-			//char *tracks[NUM_ROBO_TRACKS + 1] =
-			//{ [0 ... NUM_ROBO_TRACKS] = nullptr };
-			const char* tracks[NUM_ROBO_TRACKS + 1] = {nullptr}; // NOLINT(misc-const-correctness)
-			char subClips[NUM_ROBO_TRACKS][MAX_CLIPNAME] {};
-			for (i = 0; i < NUM_ROBO_TRACKS && RoboTrack[i]; i++)
+			//char *tracks[NumRoboTracks + 1] =
+			//{ [0 ... NumRoboTracks] = nullptr };
+			const char* tracks[NumRoboTracks + 1] = {nullptr}; // NOLINT(misc-const-correctness)
+			char subClips[NumRoboTracks][MaxClipname] {};
+			for (i = 0; i < NumRoboTracks && RoboTrack[i]; i++)
 			{
 				if (RoboTrack[i] == (uint16_t)~0)
 				{
@@ -322,7 +322,7 @@ void NPCPhrase_cb(int index, CallbackFunction cb)
 			fmt::print(stderr, "Splice Multitrack string <<{}>>.\n", str_buf);
 #endif
 			SpliceMultiTrack(tracks, str_buf);
-			for (i = 0; i < NUM_ROBO_TRACKS && RoboTrack[i]; i++)
+			for (i = 0; i < NumRoboTracks && RoboTrack[i]; i++)
 			{
 				tracks[i] = nullptr;
 				RoboTrack[i] = 0;

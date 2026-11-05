@@ -271,8 +271,8 @@ DoSetupMenu(SETUP_MENU_STATE* pInputState)
 		}
 		menuWidgets->refresh();
 		Widget_SetFont(PlyrFont);
-		Widget_SetWindowColors(SHADOWBOX_BACKGROUND_COLOR,
-							   SHADOWBOX_DARK_COLOR, SHADOWBOX_MEDIUM_COLOR);
+		Widget_SetWindowColors(ShadowboxBackgroundColor,
+							   ShadowboxDarkColor, ShadowboxMediumColor);
 
 		current = nullptr;
 		next = find_menu("main");
@@ -395,7 +395,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 	tes.ChangeCallback = OnTextEntryChange;
 	tes.FrameCallback = OnTextEntryFrame;
 
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundNone, MenuSoundSelect);
 	if (!DoTextEntry(&tes))
 	{ // editing failed (canceled) -- revert the changes
 		uqm::utf8StringCopy(widget->value, widget->maxlen, revert_buf);
@@ -407,7 +407,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 			(*(widget->onChange))(widget);
 		}
 	}
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	widget->state = WTE_NORMAL;
 	redraw_menu();
@@ -699,7 +699,7 @@ init_widgets(void)
 	if (setup_frame == nullptr || optRequiresReload)
 	{
 		// Load the different menus depending on the resolution factor.
-		setup_frame = CaptureDrawable(LoadGraphic(MENUBKG_PMAP_ANIM));
+		setup_frame = CaptureDrawable(LoadGraphic(MenubkgPmapAnimRes));
 		LoadArrows();
 	}
 
@@ -794,7 +794,7 @@ init_widgets(void)
 		screen.num_children = count_widgets(screen.child);
 	}
 
-	testSounds = uqm::loadSoundBank(TEST_SOUNDS).release();
+	testSounds = uqm::loadSoundBank(TestSoundsRes).release();
 }
 
 static void
@@ -942,7 +942,7 @@ apply_settings(void)
 
 		ResetOffset();
 
-		RESOLUTION_FACTOR = resolutionFactor;
+		resolutionFactor = resolutionFactor;
 		CanvasWidth = 320 << resolutionFactor;
 		CanvasHeight = DOS_BOOL(240, 200) << resolutionFactor;
 
@@ -992,7 +992,7 @@ void SetupMenu(void)
 
 	s.InputFunc = DoSetupMenu;
 	s.initialized = false;
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	init_widgets();
 
 	SetInputScriptMenuDump(dump_setup_menu);
@@ -1002,8 +1002,8 @@ void SetupMenu(void)
 	apply_settings();
 	clean_up_widgets();
 
-	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN,
-				  MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundUp | MenuSoundDown,
+				  MenuSoundSelect);
 }
 
 uqstl::optional<uqm::GameSeed> NewGameMenu(void)
@@ -1019,7 +1019,7 @@ uqstl::optional<uqm::GameSeed> NewGameMenu(void)
 	SETUP_MENU_STATE s;
 	s.InputFunc = DoSetupMenu;
 	s.initialized = false;
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	init_widgets();
 
 	SetInputScriptMenuDump(dump_setup_menu);
@@ -1035,7 +1035,7 @@ uqstl::optional<uqm::GameSeed> NewGameMenu(void)
 	newGameSettings.reset();
 	menuMode = MenuMode::Setup;
 
-	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN,
-				  MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundUp | MenuSoundDown,
+				  MenuSoundSelect);
 	return result;
 }

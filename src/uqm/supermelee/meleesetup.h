@@ -52,14 +52,14 @@ struct MeleeTeam
 #ifdef MELEESETUP_INTERNAL
 struct MeleeSetup
 {
-	MeleeTeam teams[NUM_SIDES];
-	uint16_t fleetValue[NUM_SIDES];
+	MeleeTeam teams[NumSides];
+	uint16_t fleetValue[NumSides];
 #ifdef NETPLAY
-	MeleeTeam sentTeams[NUM_SIDES];
+	MeleeTeam sentTeams[NumSides];
 	// The last sent (parts of) teams.
 	// Used in the Update protocol. See doc/devel/netplay/protocol
 	// XXX: this may actually be deallocated when the battle starts.
-	bool haveSentTeamName[NUM_SIDES];
+	bool haveSentTeamName[NumSides];
 	// Whether we have sent a team name this 'turn'.
 	// Used in the Update protocol. See doc/devel/netplay/protocol
 	// (also for the term 'turn').

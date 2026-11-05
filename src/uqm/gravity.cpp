@@ -51,7 +51,7 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 			int16_t dx {};
 			int16_t dy {};
 
-			if (!(ElementPtr->state_flags & PRE_PROCESS))
+			if (!(ElementPtr->state_flags & PreProcessFlag))
 			{
 				dx = ElementPtr->current.location.x
 				   - TestElementPtr->current.location.x;
@@ -66,7 +66,7 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 				   - TestElementPtr->next.location.y;
 			}
 #ifdef DEBUG_GRAVITY
-			if (TestElementPtr->state_flags & PLAYER_SHIP)
+			if (TestElementPtr->state_flags & PlayerShip)
 			{
 				uqm::log::debug("CalculateGravity:");
 				uqm::log::debug("\tdx = {}, dy = {}", dx, dy);
@@ -75,7 +75,7 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 			dx = WRAP_DELTA_X(dx);
 			dy = WRAP_DELTA_Y(dy);
 #ifdef DEBUG_GRAVITY
-			if (TestElementPtr->state_flags & PLAYER_SHIP)
+			if (TestElementPtr->state_flags & PlayerShip)
 			{
 				uqm::log::debug("\twrap_dx = {}, wrap_dy = {}", dx, dy);
 			}
@@ -85,21 +85,21 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 			abs_dx = WORLD_TO_DISPLAY(abs_dx);
 			abs_dy = WORLD_TO_DISPLAY(abs_dy);
 #ifdef DEBUG_GRAVITY
-			if (TestElementPtr->state_flags & PLAYER_SHIP)
+			if (TestElementPtr->state_flags & PlayerShip)
 			{
 				uqm::log::debug("\tdisplay_dx = {}, display_dy = {}",
 								abs_dx, abs_dy);
 			}
 #endif /* DEBUG_GRAVITY */
-			if (abs_dx <= GRAVITY_THRESHOLD
-				&& abs_dy <= GRAVITY_THRESHOLD)
+			if (abs_dx <= GravityThreshold()
+				&& abs_dy <= GravityThreshold())
 			{
 				uint32_t dist_squared {};
 
 				dist_squared = (uint32_t)(abs_dx * abs_dx)
 							 + (uint32_t)(abs_dy * abs_dy);
-				if (dist_squared <= (uint32_t)(GRAVITY_THRESHOLD
-											   * GRAVITY_THRESHOLD))
+				if (dist_squared <= (uint32_t)(GravityThreshold()
+											   * GravityThreshold()))
 				{
 #ifdef NEVER
 					uint16_t magnitude;
@@ -108,8 +108,8 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 					dist_squared += (uint32_t)abs_dx * (DIFUSE_GRAVITY << 1)
 								  + (uint32_t)abs_dy * (DIFUSE_GRAVITY << 1)
 								  + ((uint32_t)(DIFUSE_GRAVITY * DIFUSE_GRAVITY) << 1);
-					if ((magnitude = (uint16_t)((uint32_t)(GRAVITY_THRESHOLD
-														   * GRAVITY_THRESHOLD)
+					if ((magnitude = (uint16_t)((uint32_t)(GravityThreshold()
+														   * GravityThreshold())
 												/ dist_squared))
 						== 0)
 					{
@@ -125,7 +125,7 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 #endif /* NEVER */
 
 #ifdef DEBUG_GRAVITY
-					if (TestElementPtr->state_flags & PLAYER_SHIP)
+					if (TestElementPtr->state_flags & PlayerShip)
 					{
 						uqm::log::debug("dist_squared = {}", dist_squared);
 					}
@@ -142,13 +142,13 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 						DeltaVelocityComponents(&TestElementPtr->velocity,
 												COSINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))),
 												SINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))));
-						if (TestElementPtr->state_flags & PLAYER_SHIP)
+						if (TestElementPtr->state_flags & PlayerShip)
 						{
 							STARSHIP* StarShipPtr {};
 
 							GetElementStarShip(TestElementPtr, &StarShipPtr);
-							StarShipPtr->cur_status_flags &= ~SHIP_AT_MAX_SPEED;
-							StarShipPtr->cur_status_flags |= SHIP_IN_GRAVITY_WELL;
+							StarShipPtr->cur_status_flags &= ~ShipAtMaxSpeed;
+							StarShipPtr->cur_status_flags |= ShipInGravityWell;
 						}
 					}
 				}
@@ -186,7 +186,7 @@ bool TimeSpaceMatterConflict(ELEMENT* ElementPtr)
 		if (TestElementPtr != ElementPtr
 			&& (CollidingElement(TestElementPtr)
 				/* ship in transition */
-				|| (TestElementPtr->state_flags & PLAYER_SHIP)))
+				|| (TestElementPtr->state_flags & PlayerShip)))
 		{
 			INTERSECT_CONTROL TestElementControl;
 

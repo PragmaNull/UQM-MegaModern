@@ -54,7 +54,7 @@ GenerateZoqFotPikScout_initNpcs(SOLARSYS_STATE* solarSys)
 		{
 			CloneShipFragment(ZOQFOTPIK_SHIP,
 							  &GLOBAL(npc_built_ship_q), 0);
-			GLOBAL(BattleGroupRef) = PutGroupInfo(GROUPS_ADD_NEW, 1);
+			GLOBAL(BattleGroupRef) = PutGroupInfo(GroupsAddNew, 1);
 			ReinitQueue(&GLOBAL(npc_built_ship_q));
 			SET_GAME_STATE(ZOQFOT_GRPOFFS, GLOBAL(BattleGroupRef));
 		}

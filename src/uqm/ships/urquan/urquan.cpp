@@ -27,8 +27,8 @@
 #include <stdlib.h>
 
 // Core characteristics
-#define MAX_CREW MAX_CREW_SIZE
-#define MAX_ENERGY MAX_ENERGY_SIZE
+#define MAX_CREW MaxCrewSize
+#define MAX_ENERGY MaxEnergySize
 #define ENERGY_REGENERATION 1
 #define ENERGY_WAIT 4
 #define MAX_THRUST 30
@@ -62,14 +62,14 @@
 #define ION_LIFE 1
 #define START_ION_COLOR BuildColorRgba(0xfc, 0xb8, 0xfc, 0xff)
 
-// HD
+// HdResolutionFactor
 #define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
 
 static RACE_DESC urquan_desc =
 	{
 		{/* SHIP_INFO */
 		 "dreadnought",
-		 FIRES_FORE | SEEKING_SPECIAL,
+		 FiresFore | SeekingSpecial,
 		 30, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -79,7 +79,7 @@ static RACE_DESC urquan_desc =
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			2666 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			2666 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				5750,
@@ -149,7 +149,7 @@ initialize_fusion(ELEMENT* ShipPtr, HELEMENT FusionArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = URQUAN_OFFSET;
 	MissileBlock.speed = MISSILE_SPEED_HD;
 	MissileBlock.hit_points = MISSILE_HITS;
@@ -175,7 +175,7 @@ fighter_postprocess(ELEMENT* ElementPtr)
 	LaserBlock.ex = COSINE(FACING_TO_ANGLE(LaserBlock.face), FIGHTER_LASER_RANGE);
 	LaserBlock.ey = SINE(FACING_TO_ANGLE(LaserBlock.face), FIGHTER_LASER_RANGE);
 	LaserBlock.sender = ElementPtr->playerNr;
-	LaserBlock.flags = IGNORE_SIMILAR;
+	LaserBlock.flags = IgnoreSimilar;
 	LaserBlock.pixoffs = FIGHTER_OFFSET;
 	LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E);
 	HELEMENT Laser {initialize_laser(&LaserBlock)};
@@ -219,8 +219,8 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //		SetPrimColor (&DisplayArray[ElementPtr->PrimIndex],
 //			colorTable[ElementPtr->colorCycleIndex]);
 //
-//		ElementPtr->state_flags &= ~DISAPPEARING;
-//		ElementPtr->state_flags |= CHANGING;
+//		ElementPtr->state_flags &= ~Disappearing;
+//		ElementPtr->state_flags |= Changing;
 //	}
 //}
 
@@ -236,12 +236,12 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //		uint16_t angle;
 //		ELEMENT *IonElementPtr;
 //
-//		angle = FACING_TO_ANGLE (facing) + HALF_CIRCLE;
+//		angle = FACING_TO_ANGLE (facing) + HalfCircle;
 //
 //		InsertElement (hIonElement, GetHeadElement ());
 //		LockElement (hIonElement, &IonElementPtr);
-//		IonElementPtr->playerNr = NEUTRAL_PLAYER_NUM;
-//		IonElementPtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
+//		IonElementPtr->playerNr = NeutralPlayerNum;
+//		IonElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
 //		IonElementPtr->thrust_wait = ION_LIFE;
 //		IonElementPtr->life_span = IonElementPtr->thrust_wait;
 //		SetPrimType (&DisplayArray[IonElementPtr->PrimIndex], POINT_PRIM);
@@ -259,7 +259,7 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //		{
 //			IonElementPtr->next = IonElementPtr->current;
 //			--IonElementPtr->life_span;
-//			IonElementPtr->state_flags |= PRE_PROCESS;
+//			IonElementPtr->state_flags |= PreProcessFlag;
 //		}
 //
 //		UnlockElement (hIonElement);
@@ -275,7 +275,7 @@ fighter_preprocess(ELEMENT* ElementPtr)
 
 	++StarShipPtr->RaceDescPtr->characteristics.special_wait;
 	if (FIGHTER_LIFE - ElementPtr->life_span > TRACK_THRESHOLD
-		&& !(ElementPtr->state_flags & CHANGING))
+		&& !(ElementPtr->state_flags & Changing))
 	{
 		uint16_t orig_facing {};
 		uint16_t facing {};
@@ -292,7 +292,7 @@ fighter_preprocess(ELEMENT* ElementPtr)
 			 || TrackShip(ElementPtr, &facing) >= 0)
 			&& (delta_x == 0 || delta_y >= ONE_WAY_FLIGHT))
 		{
-			ElementPtr->state_flags |= IGNORE_SIMILAR;
+			ElementPtr->state_flags |= IgnoreSimilar;
 		}
 		else if (delta_x)
 		{
@@ -318,7 +318,7 @@ fighter_preprocess(ELEMENT* ElementPtr)
 			}
 			if (delta_x <= LASER_RANGE && delta_y <= LASER_RANGE)
 #endif /* NEVER */
-				ElementPtr->state_flags &= ~IGNORE_SIMILAR;
+				ElementPtr->state_flags &= ~IgnoreSimilar;
 
 			Enroute = false;
 		}
@@ -353,7 +353,7 @@ fighter_preprocess(ELEMENT* ElementPtr)
 			if (Enroute)
 			{
 				facing = GetFrameIndex(eptr->current.image.frame);
-				if (ElementPtr->turn_wait & LEFT)
+				if (ElementPtr->turn_wait & LeftFlag)
 				{
 					delta_x += COSINE(FACING_TO_ANGLE(facing - 4),
 									  DISPLAY_TO_WORLD(RES_SCALE(30)));
@@ -371,7 +371,7 @@ fighter_preprocess(ELEMENT* ElementPtr)
 					ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)));
 			}
 		}
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 
 		if (facing != orig_facing)
 		{
@@ -406,8 +406,8 @@ fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			FighterElementPtr->PrimIndex = primIndex;
 			DisplayArray[primIndex] =
 				DisplayArray[ElementPtr0->PrimIndex];
-			FighterElementPtr->state_flags &= ~PRE_PROCESS;
-			FighterElementPtr->state_flags |= CHANGING;
+			FighterElementPtr->state_flags &= ~PreProcessFlag;
+			FighterElementPtr->state_flags |= Changing;
 			FighterElementPtr->next = FighterElementPtr->current;
 			travel_facing = GetVelocityTravelAngle(
 				&FighterElementPtr->velocity);
@@ -416,22 +416,22 @@ fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				- travel_facing);
 			if (delta_facing == 0)
 			{
-				if (FighterElementPtr->turn_wait & LEFT)
+				if (FighterElementPtr->turn_wait & LeftFlag)
 				{
-					travel_facing -= QUADRANT;
+					travel_facing -= Quadrant;
 				}
 				else
 				{
-					travel_facing += QUADRANT;
+					travel_facing += Quadrant;
 				}
 			}
-			else if (delta_facing <= HALF_CIRCLE)
+			else if (delta_facing <= HalfCircle)
 			{
-				travel_facing -= QUADRANT;
+				travel_facing -= Quadrant;
 			}
 			else
 			{
-				travel_facing += QUADRANT;
+				travel_facing += Quadrant;
 			}
 
 			travel_facing = NORMALIZE_FACING(ANGLE_TO_FACING(
@@ -446,31 +446,31 @@ fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			PutElement(hFighterElement);
 		}
 
-		ElementPtr0->state_flags |= DISAPPEARING | COLLISION;
+		ElementPtr0->state_flags |= Disappearing | Collision;
 	}
 	else if (ElementPtr0->pParent != ElementPtr1->pParent)
 	{
 		ElementPtr0->blast_offset = 0;
 		weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
-		ElementPtr0->state_flags |= DISAPPEARING | COLLISION;
+		ElementPtr0->state_flags |= Disappearing | Collision;
 	}
-	else if (ElementPtr1->state_flags & PLAYER_SHIP)
+	else if (ElementPtr1->state_flags & PlayerShip)
 	{
 		ProcessSound(GetSound(
 						 /* FIGHTERS_RETURN */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 					 ElementPtr1);
 		DeltaCrew(ElementPtr1, 1);
-		ElementPtr0->state_flags |= DISAPPEARING | COLLISION;
+		ElementPtr0->state_flags |= Disappearing | Collision;
 	}
 
-	if (ElementPtr0->state_flags & DISAPPEARING)
+	if (ElementPtr0->state_flags & Disappearing)
 	{
-		ElementPtr0->state_flags &= ~DISAPPEARING;
+		ElementPtr0->state_flags &= ~Disappearing;
 
 		ElementPtr0->hit_points = 0;
 		ElementPtr0->life_span = 0;
-		ElementPtr0->state_flags |= NONSOLID;
+		ElementPtr0->state_flags |= Nonsolid;
 
 		--StarShipPtr->RaceDescPtr->characteristics.special_wait;
 	}
@@ -485,7 +485,7 @@ spawn_fighters(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	facing = StarShipPtr->ShipFacing + ANGLE_TO_FACING(HALF_CIRCLE);
+	facing = StarShipPtr->ShipFacing + ANGLE_TO_FACING(HalfCircle);
 	const int32_t delta_x {COSINE(FACING_TO_ANGLE(facing), DISPLAY_TO_WORLD(RES_SCALE(14)))};
 	const int32_t delta_y {SINE(FACING_TO_ANGLE(facing), DISPLAY_TO_WORLD(RES_SCALE(14)))};
 
@@ -508,8 +508,8 @@ spawn_fighters(ELEMENT* ElementPtr)
 		FighterElementPtr->mass_points = FIGHTER_MASS;
 		FighterElementPtr->thrust_wait = TRACK_THRESHOLD + 1;
 		FighterElementPtr->playerNr = ElementPtr->playerNr;
-		FighterElementPtr->state_flags = APPEARING | FINITE_LIFE
-									   | CREW_OBJECT | IGNORE_SIMILAR;
+		FighterElementPtr->state_flags = Appearing | FiniteLife
+									   | CrewObject | IgnoreSimilar;
 		FighterElementPtr->life_span = FIGHTER_LIFE;
 		SetPrimType(&DisplayArray[FighterElementPtr->PrimIndex],
 					STAMP_PRIM);
@@ -523,14 +523,14 @@ spawn_fighters(ELEMENT* ElementPtr)
 		FighterElementPtr->current.location = ElementPtr->next.location;
 		if (i == 1)
 		{
-			FighterElementPtr->turn_wait = LEFT;
+			FighterElementPtr->turn_wait = LeftFlag;
 			fighter_facing = NORMALIZE_FACING(facing + 2);
 			FighterElementPtr->current.location.x += delta_x - delta_y;
 			FighterElementPtr->current.location.y += delta_y + delta_x;
 		}
 		else
 		{
-			FighterElementPtr->turn_wait = RIGHT;
+			FighterElementPtr->turn_wait = RightFlag;
 			fighter_facing = NORMALIZE_FACING(facing - 2);
 			FighterElementPtr->current.location.x += delta_x + delta_y;
 			FighterElementPtr->current.location.y += delta_y - delta_x;
@@ -564,9 +564,9 @@ urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->MoveState == ENTICE
-		&& (!(lpEvalDesc->ObjectPtr->state_flags & CREW_OBJECT)
+		&& (!(lpEvalDesc->ObjectPtr->state_flags & CrewObject)
 			|| lpEvalDesc->which_turn <= 8)
-		&& (!(lpEvalDesc->ObjectPtr->state_flags & FINITE_LIFE)
+		&& (!(lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
 			|| (lpEvalDesc->ObjectPtr->mass_points >= 4
 				&& lpEvalDesc->which_turn == 2
 				&& ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn > 16)))
@@ -589,22 +589,22 @@ urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			&& lpEvalDesc->ObjectPtr
 			&& StarShipPtr->RaceDescPtr->ship_info.crew_level > (StarShipPtr->RaceDescPtr->ship_info.max_crew >> 2)
 			&& !(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-				 & POINT_DEFENSE)
+				 & PointDefense)
 			&& (StarShipPtr->RaceDescPtr->characteristics.special_wait < 6
 				|| (MANEUVERABILITY(
 						&EnemyStarShipPtr->RaceDescPtr->cyborg_control)
-						<= RESOLUTION_COMPENSATED(SLOW_SHIP)
-					&& !(EnemyStarShipPtr->cur_status_flags & SHIP_BEYOND_MAX_SPEED))
+						<= RESOLUTION_COMPENSATED(SlowShip)
+					&& !(EnemyStarShipPtr->cur_status_flags & ShipBeyondMaxSpeed))
 				|| (lpEvalDesc->which_turn <= 12
-					&& (StarShipPtr->ship_input_state & (LEFT | RIGHT))
+					&& (StarShipPtr->ship_input_state & (LeftFlag | RightFlag))
 					&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= (uint8_t)(StarShipPtr->RaceDescPtr->ship_info.max_energy >> 1)))
 			&& !OBJECT_CLOAKED(lpEvalDesc->ObjectPtr))
 		{
-			StarShipPtr->ship_input_state |= SPECIAL;
+			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
 		else
 		{
-			StarShipPtr->ship_input_state &= ~SPECIAL;
+			StarShipPtr->ship_input_state &= ~SpecialFlag;
 		}
 	}
 
@@ -617,7 +617,7 @@ urquan_postprocess(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& ElementPtr->crew_level > 1
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
@@ -635,7 +635,7 @@ urquan_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_urquan(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		urquan_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		urquan_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);

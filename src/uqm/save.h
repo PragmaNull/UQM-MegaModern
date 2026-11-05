@@ -32,8 +32,8 @@ extern "C" {
 //   room for 16 below, which is not really a problem since this
 //   is only used for displaying savegame summaries. There is also
 //   room for only 16 devices on screen.
-#define MAX_EXCLUSIVE_DEVICES 16
-#define SAVE_NAME_SIZE 64
+inline constexpr auto MaxExclusiveDevices {16};
+inline constexpr auto SaveNameSize {64};
 
 constexpr uint32_t c_saveFormatVersion {1};
 
@@ -46,9 +46,9 @@ typedef struct
 	uint16_t year_index;
 	uint8_t MCreditLo, MCreditHi;
 	uint8_t NumShips, NumDevices;
-	uint8_t ShipList[MAX_BUILT_SHIPS];
-	uint8_t DeviceList[MAX_EXCLUSIVE_DEVICES];
-	char SaveName[SAVE_NAME_SIZE];
+	uint8_t ShipList[MaxBuiltShips];
+	uint8_t DeviceList[MaxExclusiveDevices];
+	char SaveName[SaveNameSize];
 	uint8_t res_factor;
 } SUMMARY_DESC;
 

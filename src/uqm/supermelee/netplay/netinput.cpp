@@ -22,13 +22,13 @@
 #include "netinput.h"
 
 #include "uqm/inteldefs.h" // for PlayerControlFlags
-#include "uqm/setup.h" // for PlayerControl
+#include "uqm/setup.h"	   // for PlayerControl
 #include "core/log/log.h"
 
 #include <stdlib.h>
 
 
-static BattleInputBuffer battleInputBuffers[NUM_PLAYERS];
+static BattleInputBuffer battleInputBuffers[NumPlayers];
 static size_t BattleInput_inputDelay;
 
 // Call before initBattleInputBuffers()
@@ -83,7 +83,7 @@ void initBattleInputBuffers(void)
 	// Initially the buffer is filled with inputDelay zeroes,
 	// so that a party can process at least that much frames.
 
-	for (size_t player {0}; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NumPlayers; player++)
 	{
 		BattleInputBuffer* bib = &battleInputBuffers[player];
 		BattleInputBuffer_init(bib, bufSize);
@@ -101,7 +101,7 @@ void initBattleInputBuffers(void)
 
 void uninitBattleInputBuffers(void)
 {
-	for (size_t player {0}; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NumPlayers; player++)
 	{
 		BattleInputBuffer* bib {&battleInputBuffers[player]};
 		BattleInputBuffer_uninit(bib);

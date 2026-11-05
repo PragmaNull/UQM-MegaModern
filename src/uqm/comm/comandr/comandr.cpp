@@ -38,11 +38,11 @@ static LOCDATA commander_desc =
 		nullptr, /* uninit_encounter_func */
 		COMMANDER_PMAP_ANIM, /* AlienFrame */
 		COMMANDER_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH, */  /* AlienTextWidth */
+		/* SisTextWidth(), */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
 		COMMANDER_COLOR_MAP, /* AlienColorMap */
@@ -58,9 +58,9 @@ static LOCDATA commander_desc =
 								/* AlienAmbientArray (ambient animations) */
 			{
 				/* Blink */
-				1,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				1,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				0,
@@ -69,9 +69,9 @@ static LOCDATA commander_desc =
 			},
 								{
 				/* Running light */
-				10,			   /* StartIndex */
-				30,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				10,			  /* StartIndex */
+				30,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 2,
@@ -82,8 +82,8 @@ static LOCDATA commander_desc =
 				/* SD "rave party" */
 				1, /* StartIndex */
 				3, /* NumFrames */
-				RANDOM_ANIM | COLORXFORM_ANIM
-					| ANIM_DISABLED, /* AnimFlags */
+				RandomAnim | ColorxformAnim
+					| AnimDisabled, /* AnimFlags */
 				0,
 				GameTicksPerSecond / 30, /* FrameRate */
 				0,
@@ -91,11 +91,11 @@ static LOCDATA commander_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				/* HD static distortion */
+				/* HdResolutionFactor static distortion */
 				40, /* StartIndex */
 				16, /* NumFrames */
-				RANDOM_ANIM | ANIM_DISABLED
-					| IMMUME_TO_RESTART, /* AnimFlags */
+				RandomAnim | AnimDisabled
+					| ImmumeToRestart, /* AnimFlags */
 				0,
 				GameTicksPerSecond / 5, /* FrameRate */
 				0,
@@ -140,18 +140,18 @@ static FILTER_DESC commander_filters =
 		{
 								  /* Filter array */
 			{
-				0,				 /* Color index */
-				1,				 /* Opacity index */
-				56,				 /* Frame index */
-				DRAW_MULTIPLY,	 /* DrawKind*/
-				FILTER_DISABLED, /* Flags */
+				0,				/* Color index */
+				1,				/* Opacity index */
+				56,				/* Frame index */
+				DRAW_MULTIPLY,	/* DrawKind*/
+				FilterDisabled, /* Flags */
 			},
 								  {
 				2,			  /* Color index */
 				3,			  /* Opacity index */
 				56,			  /* Frame index */
 				DRAW_OVERLAY, /* DrawKind*/
-				TURN_OFF_OFT, /* Flags */
+				TurnOffOft,	  /* Flags */
 			},
 								  }
 };
@@ -161,19 +161,19 @@ RaveParty(void)
 {
 	CommData.AlienColorMapIndex = (uqm::random().next() % 3) + 1;
 
-	if (IS_HD && EXTENDED)
+	if (IsHd() && IsExtended())
 	{
 		CommData.AlienFrame = SetAbsFrameIndex(CommData.AlienFrame,
 											   (uqm::random().next() % 15) + 40);
 		SwitchSequences(false);
 		EnableTalkingAnim(false);
-		CommData.AlienAmbientArray[3].AnimFlags &= ~ANIM_DISABLED;
+		CommData.AlienAmbientArray[3].AnimFlags &= ~AnimDisabled;
 	}
 	else
 	{
-		CommData.AlienAmbientArray[2].AnimFlags &= ~ANIM_DISABLED;
+		CommData.AlienAmbientArray[2].AnimFlags &= ~AnimDisabled;
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			EngageFilters(&commander_filters);
 		}
@@ -341,14 +341,14 @@ NoRadioactives(RESPONSE_REF R)
 		else if (PLAYER_SAID(R, need_fuel_mercury) || PLAYER_SAID(R, need_fuel_luna))
 		{
 			NPCPhrase(GIVE_FUEL);
-			DeltaSISGauges(0, 5 * FUEL_TANK_SCALE, 0);
+			DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
 			SET_GAME_STATE(GIVEN_FUEL_BEFORE, 1);
 		}
 		else if (PLAYER_SAID(R, need_fuel_again))
 		{
 			NPCPhrase(GIVE_FUEL_AGAIN);
-			DeltaSISGauges(0, 5 * FUEL_TANK_SCALE, 0);
+			DeltaSISGauges(0, 5 * FuelTankScale, 0);
 		}
 
 		if (GLOBAL_SIS(ElementAmounts[RADIOACTIVE]))
@@ -369,7 +369,7 @@ NoRadioactives(RESPONSE_REF R)
 					Response(i_lost_my_lander, NoRadioactives);
 				}
 			}
-			if (GLOBAL_SIS(FuelOnBoard) < 2 * FUEL_TANK_SCALE)
+			if (GLOBAL_SIS(FuelOnBoard) < 2 * FuelTankScale)
 			{
 				if (GET_GAME_STATE(GIVEN_FUEL_BEFORE))
 				{
@@ -412,14 +412,14 @@ AskAfterRadios(RESPONSE_REF R)
 	else if (PLAYER_SAID(R, need_fuel_mercury) || PLAYER_SAID(R, need_fuel_luna))
 	{
 		NPCPhrase(GIVE_FUEL);
-		DeltaSISGauges(0, 5 * FUEL_TANK_SCALE, 0);
+		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
 		SET_GAME_STATE(GIVEN_FUEL_BEFORE, 1);
 	}
 	else if (PLAYER_SAID(R, need_fuel_again))
 	{
 		NPCPhrase(GIVE_FUEL_AGAIN);
-		DeltaSISGauges(0, 5 * FUEL_TANK_SCALE, 0);
+		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 	}
 	else if (PLAYER_SAID(R, where_get_radios))
 	{
@@ -441,7 +441,7 @@ AskAfterRadios(RESPONSE_REF R)
 				Response(i_lost_my_lander, AskAfterRadios);
 			}
 		}
-		if (GLOBAL_SIS(FuelOnBoard) < 2 * FUEL_TANK_SCALE)
+		if (GLOBAL_SIS(FuelOnBoard) < 2 * FuelTankScale)
 		{
 			if (GET_GAME_STATE(GIVEN_FUEL_BEFORE))
 			{
@@ -513,14 +513,14 @@ TellMoonBase(RESPONSE_REF R)
 	else if (PLAYER_SAID(R, need_fuel_mercury) || PLAYER_SAID(R, need_fuel_luna))
 	{
 		NPCPhrase(GIVE_FUEL);
-		DeltaSISGauges(0, 5 * FUEL_TANK_SCALE, 0);
+		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
 		SET_GAME_STATE(GIVEN_FUEL_BEFORE, 1);
 	}
 	else if (PLAYER_SAID(R, need_fuel_again))
 	{
 		NPCPhrase(GIVE_FUEL_AGAIN);
-		DeltaSISGauges(0, 5 * FUEL_TANK_SCALE, 0);
+		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 	}
 	else if (PLAYER_SAID(R, we_are_here_to_help))
 	{
@@ -549,7 +549,7 @@ TellMoonBase(RESPONSE_REF R)
 			Response(i_lost_my_lander, TellMoonBase);
 		}
 	}
-	if (GLOBAL_SIS(FuelOnBoard) < 2 * FUEL_TANK_SCALE)
+	if (GLOBAL_SIS(FuelOnBoard) < 2 * FuelTankScale)
 	{
 		if (GET_GAME_STATE(GIVEN_FUEL_BEFORE))
 		{
@@ -710,44 +710,44 @@ GiveRadios(RESPONSE_REF R)
 		NPCPhrase(FUEL_UP1);
 		AlienTalkSegue(1);
 
-		CommData.AlienAmbientArray[2].AnimFlags |= ANIM_DISABLED;
+		CommData.AlienAmbientArray[2].AnimFlags |= AnimDisabled;
 
-		if (IS_HD && EXTENDED)
+		if (IsHd() && IsExtended())
 		{ // Disable noisy static animation in hi-res.
 			CommData.AlienFrame =
 				SetAbsFrameIndex(CommData.AlienFrame, 0);
 
-			CommData.AlienAmbientArray[0].AnimFlags &= ~ANIM_DISABLED;
-			CommData.AlienAmbientArray[1].AnimFlags &= ~ANIM_DISABLED;
-			CommData.AlienAmbientArray[3].AnimFlags |= ANIM_DISABLED;
+			CommData.AlienAmbientArray[0].AnimFlags &= ~AnimDisabled;
+			CommData.AlienAmbientArray[1].AnimFlags &= ~AnimDisabled;
+			CommData.AlienAmbientArray[3].AnimFlags |= AnimDisabled;
 			EnableTalkingAnim(true);
 
 			EngageFilters(&commander_filters);
-			FilterData.FilterArray[0].Flags = TURN_OFF_OFT;
-			FilterData.FilterArray[1].Flags |= FILTER_DISABLED;
+			FilterData.FilterArray[0].Flags = TurnOffOft;
+			FilterData.FilterArray[1].Flags |= FilterDisabled;
 		}
 
-		if (IS_HD && !EXTENDED)
+		if (IsHd() && !IsExtended())
 		{
-			FilterData.FilterArray[0].Flags = TURN_OFF_OFT;
-			FilterData.FilterArray[1].Flags = FILTER_DISABLED;
+			FilterData.FilterArray[0].Flags = TurnOffOft;
+			FilterData.FilterArray[1].Flags = FilterDisabled;
 		}
 
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
 					  c_gameSecond / 2);
 
-		if (altResFlags & USE_ALT_SONG)
+		if (altResFlags & UseAltSong)
 		{
 			const uint32_t MusicPos = PLRGetPos();
 			StopMusic();
-			CommData.AlienSong = LoadMusic(CommData.AlienSongRes);
+			CommData.AlienSong = LoadMusicInstance(CommData.AlienSongRes);
 
 			SetMusicVolume(MuteVolume);
 			PlayMusic(CommData.AlienSong, true, 1);
 			SeekMusic(MusicPos);
 			FadeMusic(NormalVolume, c_gameSecond);
 
-			altResFlags &= ~USE_ALT_SONG;
+			altResFlags &= ~UseAltSong;
 		}
 
 		AlienTalkSegue((uint16_t)~0);
@@ -774,7 +774,7 @@ GiveRadios(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	if (IS_HD) // To smooth out HD blink animation
+	if (IsHd()) // To smooth out HdResolutionFactor blink animation
 	{
 		CommData.AlienAmbientArray[0].BaseFrameRate = GameTicksPerSecond / 40;
 	}
@@ -855,12 +855,12 @@ init_commander_comm()
 
 	if (!GET_GAME_STATE(RADIOACTIVES_PROVIDED))
 	{
-		altResFlags |= USE_ALT_SONG;
+		altResFlags |= UseAltSong;
 	}
 
-	if (IS_HD)
+	if (IsHd())
 	{
-		altResFlags |= USE_ALT_FRAME;
+		altResFlags |= UseAltFrame;
 	}
 
 

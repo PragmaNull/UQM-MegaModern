@@ -70,7 +70,7 @@ static RACE_DESC mmrnmhrm_desc =
 	{
 		{/* SHIP_INFO */
 		 "xform",
-		 FIRES_FORE | IMMEDIATE_WEAPON,
+		 FiresFore | ImmediateWeapon,
 		 19, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -127,7 +127,7 @@ static RACE_DESC mmrnmhrm_desc =
 		 nullptr},
 		{
 			0,
-			CLOSE_RANGE_WEAPON,
+			CloseRangeWeapon,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -188,7 +188,7 @@ missile_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->next.image.frame =
 				SetAbsFrameIndex(ElementPtr->next.image.frame,
 								 facing);
-			ElementPtr->state_flags |= CHANGING;
+			ElementPtr->state_flags |= Changing;
 
 			SetVelocityVector(&ElementPtr->velocity,
 							  MISSILE_SPEED, facing);
@@ -218,10 +218,10 @@ mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
-	StarShipPtr->ship_input_state &= ~SPECIAL;
+	StarShipPtr->ship_input_state &= ~SpecialFlag;
 	if (CanTransform
 		&& lpEvalDesc->ObjectPtr
-		&& !(StarShipPtr->ship_input_state & WEAPON))
+		&& !(StarShipPtr->ship_input_state & WeaponFlag))
 	{
 		int32_t delta_x {};
 		int32_t delta_y {};
@@ -249,12 +249,12 @@ mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		{
 			if (lpEvalDesc->which_turn > 8)
 			{
-				if (MANEUVERABILITY(&EnemyStarShipPtr->RaceDescPtr->cyborg_control) <= RESOLUTION_COMPENSATED(SLOW_SHIP)
+				if (MANEUVERABILITY(&EnemyStarShipPtr->RaceDescPtr->cyborg_control) <= RESOLUTION_COMPENSATED(SlowShip)
 					|| NORMALIZE_ANGLE(
-						   direction_angle - travel_angle + QUADRANT)
-						   > HALF_CIRCLE)
+						   direction_angle - travel_angle + Quadrant)
+						   > HalfCircle)
 				{
-					StarShipPtr->ship_input_state |= SPECIAL;
+					StarShipPtr->ship_input_state |= SpecialFlag;
 				}
 			}
 		}
@@ -272,32 +272,32 @@ mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			{
 				if (lpEvalDesc->which_turn <= 8
 					|| NORMALIZE_ANGLE(
-						   direction_angle - travel_angle + OCTANT)
-						   <= QUADRANT)
+						   direction_angle - travel_angle + Octant)
+						   <= Quadrant)
 				{
-					StarShipPtr->ship_input_state |= SPECIAL;
+					StarShipPtr->ship_input_state |= SpecialFlag;
 				}
 			}
 			else if (lpEvalDesc->which_turn > 32
 					 && NORMALIZE_ANGLE(
-							direction_angle - travel_angle + QUADRANT)
-							> HALF_CIRCLE)
+							direction_angle - travel_angle + Quadrant)
+							> HalfCircle)
 			{
-				StarShipPtr->ship_input_state |= SPECIAL;
+				StarShipPtr->ship_input_state |= SpecialFlag;
 			}
 		}
 	}
 
 	if (ShipPtr->current.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
 	{
-		if (!(StarShipPtr->ship_input_state & SPECIAL)
+		if (!(StarShipPtr->ship_input_state & SpecialFlag)
 			&& lpEvalDesc->ObjectPtr)
 		{
-			StarShipPtr->ship_input_state |= WEAPON;
+			StarShipPtr->ship_input_state |= WeaponFlag;
 		}
 		else
 		{
-			StarShipPtr->ship_input_state &= ~WEAPON;
+			StarShipPtr->ship_input_state &= ~WeaponFlag;
 		}
 	}
 }
@@ -306,7 +306,7 @@ static void
 twin_laser_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 					 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	if (!(ElementPtr1->state_flags & PLAYER_SHIP)
+	if (!(ElementPtr1->state_flags & PlayerShip)
 		|| !elementsOfSamePlayer(ElementPtr0, ElementPtr1))
 	{
 		weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
@@ -376,7 +376,7 @@ initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 
 		TorpBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 		TorpBlock.sender = ShipPtr->playerNr;
-		TorpBlock.flags = IGNORE_SIMILAR;
+		TorpBlock.flags = IgnoreSimilar;
 		TorpBlock.pixoffs = 0;
 		TorpBlock.speed = MISSILE_SPEED;
 		TorpBlock.hit_points = MISSILE_HITS;
@@ -446,26 +446,26 @@ mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 
 		if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
 		{
-			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = RES_SCALE(LONG_RANGE_WEAPON - 1);
-			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~IMMEDIATE_WEAPON;
-			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= SEEKING_WEAPON;
+			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = RES_SCALE(LongRangeWeapon - 1);
+			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~ImmediateWeapon;
+			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= SeekingWeapon;
 			StarShipPtr->RaceDescPtr->ship_data.weapon_sound_index = 2;
 
 			StarShipPtr->cur_status_flags &=
-				~(SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED);
+				~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
 		}
 		else
 		{
-			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = RES_SCALE(CLOSE_RANGE_WEAPON);
-			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~SEEKING_WEAPON;
-			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= IMMEDIATE_WEAPON;
+			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = RES_SCALE(CloseRangeWeapon);
+			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~SeekingWeapon;
+			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= ImmediateWeapon;
 			StarShipPtr->RaceDescPtr->ship_data.weapon_sound_index = 0;
 
 			if (StarShipPtr->cur_status_flags
-				& (SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED))
+				& (ShipAtMaxSpeed | ShipBeyondMaxSpeed))
 			{
 				StarShipPtr->cur_status_flags |=
-					SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED;
+					ShipAtMaxSpeed | ShipBeyondMaxSpeed;
 			}
 		}
 	}
@@ -478,9 +478,9 @@ mmrnmhrm_preprocess(ELEMENT* ElementPtr)
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
-	if (!(ElementPtr->state_flags & APPEARING))
+	if (!(ElementPtr->state_flags & Appearing))
 	{
-		if ((StarShipPtr->cur_status_flags & SPECIAL)
+		if ((StarShipPtr->cur_status_flags & SpecialFlag)
 			&& StarShipPtr->special_counter == 0)
 		{
 			/* Either we transform or text will flash */
@@ -500,7 +500,7 @@ mmrnmhrm_preprocess(ELEMENT* ElementPtr)
 				ElementPtr->next.image.frame =
 					SetEquFrameIndex(ElementPtr->next.image.farray[0],
 									 ElementPtr->next.image.frame);
-				ElementPtr->state_flags |= CHANGING;
+				ElementPtr->state_flags |= Changing;
 
 				StarShipPtr->special_counter =
 					StarShipPtr->RaceDescPtr->characteristics.special_wait;
@@ -522,17 +522,17 @@ init_mmrnmhrm(void)
 	static RACE_DESC new_mmrnmhrm_desc;
 	MMRNMHRM_DATA otherwing_desc;
 
-	if (IS_HD)
+	if (IsHd())
 	{
 		mmrnmhrm_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		mmrnmhrm_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		mmrnmhrm_desc.cyborg_control.WeaponRange = CLOSE_RANGE_WEAPON_HD;
+		mmrnmhrm_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else
 	{
 		mmrnmhrm_desc.characteristics.max_thrust = MAX_THRUST;
 		mmrnmhrm_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		mmrnmhrm_desc.cyborg_control.WeaponRange = CLOSE_RANGE_WEAPON;
+		mmrnmhrm_desc.cyborg_control.WeaponRange = CloseRangeWeapon;
 	}
 
 	mmrnmhrm_desc.uninit_func = uninit_mmrnmhrm;

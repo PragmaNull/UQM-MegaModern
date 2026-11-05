@@ -7,7 +7,7 @@
 
 // hack.. but I don't want to have to include uqm/setup.cpp as well
 
-//uqm::BYTE m_playerControl[NUM_PLAYERS] {};
+//uqm::BYTE m_playerControl[NumPlayers] {};
 
 namespace uqm
 {
@@ -41,9 +41,8 @@ protected:
 	}
 
 	ELEMENT m_testElement {};
-	PlayerControlFlags m_playerControl[NUM_PLAYERS] {};
+	PlayerControlFlags m_playerControl[NumPlayers] {};
 	GodModeFlags m_godModes {};
-
 };
 
 // ============================================================================
@@ -382,7 +381,7 @@ TEST_F(AntiCheatTest, EdgeCase_NeutralPlayerNumber)
 	m_playerControl[0] = ComputerControlFlags;
 	m_playerControl[1] = PlayerControlFlags::Human;
 	m_godModes = GodModeFlags::InfiniteBattery;
-	m_testElement.playerNr = NEUTRAL_PLAYER_NUM;
+	m_testElement.playerNr = NeutralPlayerNum;
 
 	// Act & Assert: Neutral elements should not get cheats
 	EXPECT_FALSE(antiCheatImpl(&m_testElement, false, GodModeFlags::InfiniteBattery, m_playerControl, m_godModes));

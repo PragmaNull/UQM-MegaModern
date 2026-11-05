@@ -65,7 +65,7 @@ GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED)
+	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED)
 	{
 		if (uqm::isOriginalSeed())
 		{
@@ -88,7 +88,7 @@ GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
 		}
 	}
 
-	if (CurStarDescPtr->Index == EXCAVATION_SITE_DEFINED)
+	if (CurStarDescPtr()->Index == EXCAVATION_SITE_DEFINED)
 	{
 		pSunDesc->PlanetByte = 0;
 
@@ -110,15 +110,15 @@ static bool
 GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
 								   PLANET_DESC* world)
 {
-	if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED
+	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		uint16_t visits = 0;
 
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ANDROSYNTH_RUINS_STRTAB);
+			CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(AndrosynthRuinsStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		// Androsynth ruins are a special case. The DiscoveryStrings contains
 		// several lander reports which form a story. Each report is given
@@ -143,15 +143,15 @@ GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
 		}
 	}
 
-	if (CurStarDescPtr->Index == EXCAVATION_SITE_DEFINED
+	if (CurStarDescPtr()->Index == EXCAVATION_SITE_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(
-				LoadGraphic(EXCAVATION_SITE_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(EXCAVATION_SITE_STRTAB);
+				LoadGraphic(ExcavationSiteMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ExcavationSiteStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
@@ -159,7 +159,7 @@ GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED && uqm::isOriginalSeed())
+		if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED && uqm::isOriginalSeed())
 		{
 			solarSys->SysInfo.PlanetInfo.AtmoDensity =
 				EARTH_ATMOSPHERE * 144 / 100;
@@ -179,7 +179,7 @@ static bool
 GenerateAndrosynth_pickupEnergy(SOLARSYS_STATE* solarSys,
 								PLANET_DESC* world, uint16_t whichNode)
 {
-	if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		PLANET_INFO* planetInfo = &solarSys->SysInfo.PlanetInfo;
 
@@ -206,9 +206,9 @@ GenerateAndrosynth_pickupEnergy(SOLARSYS_STATE* solarSys,
 		return false; // do not remove the node from the surface
 	}
 
-	if (CurStarDescPtr->Index == EXCAVATION_SITE_DEFINED
+	if (CurStarDescPtr()->Index == EXCAVATION_SITE_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		GenerateDefault_landerReportCycle(solarSys);
 
@@ -222,14 +222,14 @@ static uint16_t
 GenerateAndrosynth_generateEnergy(const SOLARSYS_STATE* solarSys,
 								  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (CurStarDescPtr->Index == ANDROSYNTH_DEFINED && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
 
-	if (CurStarDescPtr->Index == EXCAVATION_SITE_DEFINED
+	if (CurStarDescPtr()->Index == EXCAVATION_SITE_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		return GenerateDefault_generateArtifact(
 			solarSys, whichNode, info);

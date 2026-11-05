@@ -45,7 +45,7 @@
 
 #define CREDITS_TIMEOUT (c_gameSecond * 5)
 
-#define TRANS_COLOR BRIGHT_BLUE_COLOR
+#define TRANS_COLOR BrightBlueColor
 
 // Positive or negative scroll rate in pixel lines per second
 static int CreditsRate;
@@ -94,10 +94,10 @@ typedef struct
 
 static FONT_SIZE_DEF CreditsFont[] =
 	{
-		{13, PT13AA_FONT, 0},
-		{17, PT17AA_FONT, 0},
-		{45, PT45AA_FONT, 0},
-		{0,	0,		   0},
+		{13, Pt13aaFontRes, 0},
+		{17, Pt17aaFontRes, 0},
+		{45, Pt45aaFontRes, 0},
+		{0,	0,			   0},
 };
 
 
@@ -206,7 +206,7 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	for (auto&& [column, format] : uqstl::views::zip(block.columns, colfmt))
 	{
 		const auto basex {[&](int16_t fallback) {
-			return column.x ? static_cast<int16_t>(*column.x << RESOLUTION_FACTOR) : fallback;
+			return column.x ? static_cast<int16_t>(*column.x << resolutionFactor) : fallback;
 		}};
 		switch (column.align)
 		{
@@ -493,7 +493,7 @@ processCreditsFrame(void)
 				CreditTextFrame* tf = &textFrames[lastFrame];
 
 				tf->frame = Credits_RenderTextFrame(LocalContext, &next_s,
-													direction, BLACK_COLOR, CREDITS_TEXT_COLOR);
+													direction, BlackColor, CreditsTextColor);
 				tf->strIndex = next_s - 1;
 				if (tf->frame)
 				{
@@ -520,7 +520,7 @@ processCreditsFrame(void)
 				CreditTextFrame* tf = &textFrames[index];
 
 				tf->frame = Credits_RenderTextFrame(LocalContext, &next_s,
-													direction, BLACK_COLOR, CREDITS_TEXT_COLOR);
+													direction, BlackColor, CreditsTextColor);
 				tf->strIndex = next_s + 1;
 				if (tf->frame)
 				{
@@ -541,7 +541,7 @@ processCreditsFrame(void)
 static bool
 LoadCredits(void)
 {
-	const char* const path {res_GetString(CREDITS_FILE)};
+	const char* const path {res_GetString(CreditsFileRes)};
 	const auto text {uqm::readTextFile(uqm::contentDir(), path)};
 	auto blocks {text ? uqm::creditsFromJson(*text) : uqstl::nullopt};
 	if (!blocks)
@@ -550,7 +550,7 @@ LoadCredits(void)
 		return false;
 	}
 	CreditsBlocks = uqstl::move(*blocks);
-	CreditsBack = CaptureDrawable(LoadGraphic(CREDITS_BACK_ANIM));
+	CreditsBack = CaptureDrawable(LoadGraphic(CreditsBackAnimRes));
 	// load fonts
 	for (FONT_SIZE_DEF* fdef {CreditsFont}; fdef->size; ++fdef)
 	{
@@ -713,12 +713,12 @@ void Credits(bool WithOuttakes)
 	GFXRECT screenRect;
 	STAMP s;
 
-	MUSIC_REF hMusic {LoadMusic(CREDITS_MUSIC)};
+	MUSIC_REF hMusic {LoadMusicInstance(CreditsMusicRes)};
 
 	SetContext(ScreenContext);
 	SetContextClipRect(nullptr);
 	GetContextClipRect(&screenRect);
-	SetContextBackGroundColor(BLACK_COLOR);
+	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
 
 	if (!LoadCredits())
@@ -761,7 +761,7 @@ void Credits(bool WithOuttakes)
 		cis.AllowCancel = !WithOuttakes;
 		cis.CloseWhenDone = !WithOuttakes;
 		cis.AllowSpeedChange = true;
-		SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
+		SetMenuSounds(MenuSoundNone, MenuSoundNone);
 		DoInput(&cis, true);
 	}
 

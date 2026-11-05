@@ -55,7 +55,7 @@ inline constexpr auto EndOfList {((uint16_t)0xFFFF)};
 
 /* Primitive flags */
 inline constexpr auto UnscaledStamp {(1 << 0)};		// Stamp will not be scaled via smooth scaler
-inline constexpr auto HyperToQuasiColor {(1 << 1)}; // Stamp be rendered with quasispace filter (for ambience in HD only)
+inline constexpr auto HyperToQuasiColor {(1 << 1)}; // Stamp be rendered with quasispace filter (for ambience in HdResolutionFactor only)
 inline constexpr auto HsStarmask {(1 << 2)};
 
 constexpr auto GetPredLink(auto l) { return uqm::lowWord(l); }

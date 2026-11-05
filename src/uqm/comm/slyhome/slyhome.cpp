@@ -33,11 +33,11 @@ static LOCDATA slylandro_desc =
 		nullptr, /* uninit_encounter_func */
 		SLYLANDRO_PMAP_ANIM, /* AlienFrame */
 		SLYLANDRO_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH, */  /* AlienTextWidth */
+		/* SisTextWidth(), */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		SLYLANDRO_COLOR_MAP, /* AlienColorMap */
@@ -52,9 +52,9 @@ static LOCDATA slylandro_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				0,											   /* StartIndex */
-				5,											   /* NumFrames */
-				RANDOM_ANIM | COLORXFORM_ANIM | ANIM_DISABLED, /* AnimFlags */
+				0,											/* StartIndex */
+				5,											/* NumFrames */
+				RandomAnim | ColorxformAnim | AnimDisabled, /* AnimFlags */
 				GameTicksPerSecond / 8,
 				GameTicksPerSecond * 5 / 8, /* FrameRate */
 				GameTicksPerSecond / 8,
@@ -62,9 +62,9 @@ static LOCDATA slylandro_desc =
 				0,							/* BlockMask */
 			},
 								{
-				1,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				1,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -72,9 +72,9 @@ static LOCDATA slylandro_desc =
 				0,						/* BlockMask */
 			},
 								{
-				6,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				6,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -82,9 +82,9 @@ static LOCDATA slylandro_desc =
 				0,						/* BlockMask */
 			},
 								{
-				11,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				11,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -92,9 +92,9 @@ static LOCDATA slylandro_desc =
 				0,						/* BlockMask */
 			},
 								{
-				16,		   /* StartIndex */
-				6,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				16,		  /* StartIndex */
+				6,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -102,9 +102,9 @@ static LOCDATA slylandro_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,			   /* StartIndex */
-				8,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				22,			  /* StartIndex */
+				8,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -112,9 +112,9 @@ static LOCDATA slylandro_desc =
 				0, /* BlockMask */
 			},
 								{
-				30,			   /* StartIndex */
-				9,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				30,			  /* StartIndex */
+				9,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -122,9 +122,9 @@ static LOCDATA slylandro_desc =
 				(1 << 8) | (1 << 9),	/* BlockMask */
 			},
 								{
-				39,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				39,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -132,9 +132,9 @@ static LOCDATA slylandro_desc =
 				0,						/* BlockMask */
 			},
 								{
-				43,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				43,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -142,9 +142,9 @@ static LOCDATA slylandro_desc =
 				(1 << 6),				/* BlockMask */
 			},
 								{
-				48,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				48,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -152,9 +152,9 @@ static LOCDATA slylandro_desc =
 				(1 << 6),				/* BlockMask */
 			},
 								{
-				54,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				54,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -162,9 +162,9 @@ static LOCDATA slylandro_desc =
 				(1 << 12),				/* BlockMask */
 			},
 								{
-				60,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				60,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -172,9 +172,9 @@ static LOCDATA slylandro_desc =
 				(1 << 12),				/* BlockMask */
 			},
 								{
-				67,			   /* StartIndex */
-				8,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				67,			  /* StartIndex */
+				8,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -942,12 +942,12 @@ Intro(void)
 	uint8_t NumVisits {};
 
 
-	if (IS_HD)
+	if (IsHd())
 	{
 		EngageFilters(&slyhome_filters);
 	}
 
-	CommData.AlienAmbientArray[0].AnimFlags &= ~ANIM_DISABLED;
+	CommData.AlienAmbientArray[0].AnimFlags &= ~AnimDisabled;
 
 	if (GET_GAME_STATE(SLYLANDRO_KNOW_BROKEN)
 		&& (NumVisits = GET_GAME_STATE(RECALL_VISITS)) == 0)
@@ -1008,9 +1008,9 @@ init_slylandro_comm(void)
 	// generalised in the future.
 
 	slylandro_desc.AlienTextBaseline.x =
-		TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+		TextXOffs() + (SisTextWidth() >> 1);
 	slylandro_desc.AlienTextBaseline.y = 0;
-	slylandro_desc.AlienTextWidth = SIS_TEXT_WIDTH;
+	slylandro_desc.AlienTextWidth = SisTextWidth();
 
 	setSegue(Segue_peace);
 	LOCDATA* retval {&slylandro_desc};

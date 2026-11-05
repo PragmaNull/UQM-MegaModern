@@ -71,7 +71,7 @@ const GenerateFunctions generateSaMatraFunctions = {
 static bool
 GenerateSaMatra_initNpcs(SOLARSYS_STATE* solarSys)
 {
-	if (CurStarDescPtr->Index == SAMATRA_DEFINED)
+	if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
 	{
 		if (!GET_GAME_STATE(URQUAN_MESSED_UP))
 		{
@@ -79,7 +79,7 @@ GenerateSaMatra_initNpcs(SOLARSYS_STATE* solarSys)
 		}
 		else
 		{ // Exorcise Ur-Quan ghosts upon system reentry
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			// wipe out the group
 		}
 	}
@@ -100,9 +100,9 @@ GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 	HIPGROUP hGroup {};
 	HIPGROUP hNextGroup {};
 
-	if (CurStarDescPtr->Index == SAMATRA_DEFINED)
+	if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
 	{
-		GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+		GetGroupInfo(GroupsRandom, GroupLoadIp);
 		EncounterGroup = 0;
 		EncounterRace = -1;
 		// Do not want guards to chase the player
@@ -160,7 +160,7 @@ GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (CurStarDescPtr->Index == SAMATRA_DEFINED)
+	if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
 	{
 		pSunDesc->PlanetByte = 4;
 		pSunDesc->MoonByte = 0;
@@ -187,8 +187,8 @@ GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 		}
 	}
 
-	if (CurStarDescPtr->Index == DESTROYED_STARBASE_DEFINED
-		&& EXTENDED)
+	if (CurStarDescPtr()->Index == DESTROYED_STARBASE_DEFINED
+		&& IsExtended())
 	{
 		pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -209,9 +209,9 @@ GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 		pSunDesc->MoonByte = PlanetByteGen(pPlanet);
 	}
 
-	if ((CurStarDescPtr->Index >= URQUAN0_DEFINED
-		 && CurStarDescPtr->Index <= KOHRAH2_DEFINED)
-		&& EXTENDED)
+	if ((CurStarDescPtr()->Index >= URQUAN0_DEFINED
+		 && CurStarDescPtr()->Index <= KOHRAH2_DEFINED)
+		&& IsExtended())
 	{
 		uint8_t i {};
 
@@ -260,7 +260,7 @@ GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
 
-		if (CurStarDescPtr->Index == SAMATRA_DEFINED)
+		if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
 		{
 			pMoonDesc->data_index = SA_MATRA;
 
@@ -275,10 +275,10 @@ GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
 			}
 		}
 
-		if ((CurStarDescPtr->Index == DESTROYED_STARBASE_DEFINED
-			 || ((CurStarDescPtr->Index >= URQUAN0_DEFINED)
-				 && CurStarDescPtr->Index <= KOHRAH2_DEFINED))
-			&& EXTENDED)
+		if ((CurStarDescPtr()->Index == DESTROYED_STARBASE_DEFINED
+			 || ((CurStarDescPtr()->Index >= URQUAN0_DEFINED)
+				 && CurStarDescPtr()->Index <= KOHRAH2_DEFINED))
+			&& IsExtended())
 		{
 			pMoonDesc->data_index = DESTROYED_STARBASE;
 		}
@@ -294,15 +294,15 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 	/* Samatra */
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
 	{
-		if (CurStarDescPtr->Index == SAMATRA_DEFINED)
+		if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
 		{
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
 			if (!GET_GAME_STATE(URQUAN_MESSED_UP))
 			{
-				CloneShipFragment((EXTENDED
+				CloneShipFragment((IsExtended()
 										   && GET_GAME_STATE(KOHR_AH_FRENZY) ?
 									   BLACK_URQUAN_SHIP :
 									   URQUAN_SHIP),
@@ -314,7 +314,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 
 				for (uint8_t i = 0; i < urQuanRemants; ++i)
 				{
-					CloneShipFragment((EXTENDED
+					CloneShipFragment((IsExtended()
 											   && GET_GAME_STATE(KOHR_AH_FRENZY) ?
 										   BLACK_URQUAN_SHIP :
 										   URQUAN_SHIP),
@@ -327,7 +327,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 			uqm::currentActivity() |= START_INTERPLANETARY;
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 			SET_GAME_STATE(URQUAN_PROTECTING_SAMATRA, 1);
-			if (EXTENDED && GET_GAME_STATE(KOHR_AH_FRENZY))
+			if (IsExtended() && GET_GAME_STATE(KOHR_AH_FRENZY))
 			{
 				InitCommunication(BLACKURQ_CONVERSATION);
 			}
@@ -345,7 +345,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 				if (UrquanSurvivors)
 				{
 					SET_GAME_STATE(URQUAN_PROTECTING_SAMATRA, 0);
@@ -372,9 +372,9 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 			return true;
 		}
 
-		if (EXTENDED)
+		if (IsExtended())
 		{
-			const uint16_t Index = CurStarDescPtr->Index;
+			const uint16_t Index = CurStarDescPtr()->Index;
 			if (((Index >= URQUAN0_DEFINED && Index <= KOHRAH2_DEFINED))
 				|| Index == DESTROYED_STARBASE_DEFINED)
 			{
@@ -384,7 +384,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 
 				if (Index == DESTROYED_STARBASE_DEFINED)
 				{
-					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(DESTROYED_BASE_STRTAB);
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(DestroyedBaseStrtabRes);
 					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 					// use alternate text if the player
@@ -396,7 +396,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 				}
 				else
 				{
-					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(URQUAN_BASE_STRTAB);
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(UrquanBaseStrtabRes);
 					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = Index >= KOHRAH0_DEFINED && Index <= KOHRAH2_DEFINED ? 1 : 0;
 				}
 
@@ -409,14 +409,14 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 		}
 	}
-	else if (CurStarDescPtr->Index == DESTROYED_STARBASE_DEFINED
+	else if (CurStarDescPtr()->Index == DESTROYED_STARBASE_DEFINED
 			 && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-			 && EXTENDED)
+			 && IsExtended())
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+			CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RuinsStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
@@ -445,19 +445,19 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 	else
 	{
 		ship1 = BLACK_URQUAN_SHIP;
-		ship2 = (!EXTENDED ? URQUAN_SHIP : BLACK_URQUAN_SHIP);
+		ship2 = (!IsExtended() ? URQUAN_SHIP : BLACK_URQUAN_SHIP);
 	}
 
 	assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
-	for (b0 = 0; b0 < MAX_SHIPS_PER_SIDE; ++b0)
+	for (b0 = 0; b0 < MaxShipsPerSide; ++b0)
 	{
 		CloneShipFragment((RACE_ID)ship1, &GLOBAL(npc_built_ship_q), 0);
 	}
 
 	if (GLOBAL(BattleGroupRef) == 0)
 	{
-		GLOBAL(BattleGroupRef) = PutGroupInfo(GROUPS_ADD_NEW, 1);
+		GLOBAL(BattleGroupRef) = PutGroupInfo(GroupsAddNew, 1);
 		SET_GAME_STATE(SAMATRA_GRPOFFS, GLOBAL(BattleGroupRef));
 	}
 
@@ -468,7 +468,7 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 	}
 
 	ReinitQueue(&GLOBAL(npc_built_ship_q));
-	for (b0 = 0; b0 < MAX_SHIPS_PER_SIDE; ++b0)
+	for (b0 = 0; b0 < MaxShipsPerSide; ++b0)
 	{
 		CloneShipFragment((RACE_ID)ship2, &GLOBAL(npc_built_ship_q), 0);
 	}
@@ -482,17 +482,17 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 
 	ReinitQueue(&GLOBAL(npc_built_ship_q));
 
-	GetGroupInfo(GLOBAL(BattleGroupRef), GROUP_INIT_IP);
+	GetGroupInfo(GLOBAL(BattleGroupRef), GroupInitIp);
 
 	org = planetOuterLocation(solarSys->SunDesc[0].PlanetByte);
 	HIPGROUP hGroup {GetHeadLink(&GLOBAL(ip_group_q))};
 	for (b0 = 0, b1 = 0;
 		 b0 < NUM_URQUAN_GUARDS0;
-		 ++b0, b1 += FULL_CIRCLE / (NUM_URQUAN_GUARDS0 + NUM_URQUAN_GUARDS1))
+		 ++b0, b1 += FullCircle / (NUM_URQUAN_GUARDS0 + NUM_URQUAN_GUARDS1))
 	{
-		if (b1 % (FULL_CIRCLE / NUM_URQUAN_GUARDS1) == 0)
+		if (b1 % (FullCircle / NUM_URQUAN_GUARDS1) == 0)
 		{
-			b1 += FULL_CIRCLE / (NUM_URQUAN_GUARDS0 + NUM_URQUAN_GUARDS1);
+			b1 += FullCircle / (NUM_URQUAN_GUARDS0 + NUM_URQUAN_GUARDS1);
 		}
 
 		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
@@ -502,15 +502,15 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 		GroupPtr->dest_loc = solarSys->SunDesc[0].PlanetByte + 1;
 		GroupPtr->orbit_pos = NORMALIZE_FACING(ANGLE_TO_FACING(b1));
 		GroupPtr->group_counter = 0;
-		GroupPtr->loc.x = org.x + COSINE(b1, STATION_RADIUS);
-		GroupPtr->loc.y = org.y + SINE(b1, STATION_RADIUS);
+		GroupPtr->loc.x = org.x + COSINE(b1, StationRadius);
+		GroupPtr->loc.y = org.y + SINE(b1, StationRadius);
 		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
 		hGroup = hNextGroup;
 	}
 
 	for (b0 = 0, b1 = 0;
 		 b0 < NUM_URQUAN_GUARDS1;
-		 ++b0, b1 += FULL_CIRCLE / NUM_URQUAN_GUARDS1)
+		 ++b0, b1 += FullCircle / NUM_URQUAN_GUARDS1)
 	{
 		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
@@ -519,8 +519,8 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 		GroupPtr->dest_loc = solarSys->SunDesc[0].PlanetByte + 1;
 		GroupPtr->orbit_pos = NORMALIZE_FACING(ANGLE_TO_FACING(b1));
 		GroupPtr->group_counter = 0;
-		GroupPtr->loc.x = org.x + COSINE(b1, STATION_RADIUS);
-		GroupPtr->loc.y = org.y + SINE(b1, STATION_RADIUS);
+		GroupPtr->loc.x = org.x + COSINE(b1, StationRadius);
+		GroupPtr->loc.y = org.y + SINE(b1, StationRadius);
 		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
 		hGroup = hNextGroup;
 	}
@@ -532,8 +532,8 @@ static uint16_t
 GenerateSaMatra_generateEnergy(const SOLARSYS_STATE* solarSys,
 							   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (EXTENDED
-		&& CurStarDescPtr->Index == DESTROYED_STARBASE_DEFINED
+	if (IsExtended()
+		&& CurStarDescPtr()->Index == DESTROYED_STARBASE_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
@@ -546,8 +546,8 @@ static bool
 GenerateSaMatra_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 							 uint16_t whichNode)
 {
-	if (EXTENDED
-		&& CurStarDescPtr->Index == DESTROYED_STARBASE_DEFINED
+	if (IsExtended()
+		&& CurStarDescPtr()->Index == DESTROYED_STARBASE_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		GenerateDefault_landerReportCycle(solarSys);

@@ -80,7 +80,7 @@ GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 		pPlanet->data_index = DUST_WORLD;
 		pPlanet->radius = EARTH_RADIUS * 50L / 100;
 		pPlanet->NumPlanets = 0;
-		const uint16_t angle {HALF_CIRCLE - OCTANT};
+		const uint16_t angle {HalfCircle - Octant};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
 		pPlanet->rand_seed =
@@ -128,8 +128,8 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 	{
 		if (StartSphereTracking(DRUUGE_SHIP))
 		{
-			NotifyOthers(DRUUGE_SHIP, IPNL_ALL_CLEAR);
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			NotifyOthers(DRUUGE_SHIP, IpnlAllClear);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -143,7 +143,7 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 			return true;
 		}
@@ -151,8 +151,8 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
-				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(DRUUGE_RUINS_STRTAB);
+				CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(DruugeRuinsStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			if (GET_GAME_STATE(ROSY_SPHERE))
 			{ // Already picked up Rosy Sphere, skip the report

@@ -25,17 +25,17 @@
 #include "uqm/gameev.h"
 
 
-#define ZOQ_FG_COLOR WHITE_COLOR
-#define ZOQ_BG_COLOR BLACK_COLOR
-#define ZOQ_BASE_X (TEXT_X_OFFS + ((SIS_TEXT_WIDTH >> 1) >> 1))
+#define ZOQ_FG_COLOR WhiteColor
+#define ZOQ_BG_COLOR BlackColor
+#define ZOQ_BASE_X (TextXOffs() + ((SisTextWidth() >> 1) >> 1))
 #define ZOQ_BASE_Y RES_SCALE(24)
 #define ZOQ_TALK_INDEX 18
 #define ZOQ_TALK_FRAMES 5
 #define FOT_TO_ZOQ 23
 
-#define PIK_FG_COLOR WHITE_COLOR
-#define PIK_BG_COLOR BLACK_COLOR
-#define PIK_BASE_X (SIS_SCREEN_WIDTH - (TEXT_X_OFFS + ((SIS_TEXT_WIDTH >> 1) >> 1)))
+#define PIK_FG_COLOR WhiteColor
+#define PIK_BG_COLOR BlackColor
+#define PIK_BASE_X (SisScreenWidth() - (TextXOffs() + ((SisTextWidth() >> 1) >> 1)))
 #define PIK_BASE_Y RES_SCALE(24)
 #define PIK_TALK_INDEX 29
 #define PIK_TALK_FRAMES 2
@@ -49,8 +49,8 @@ static LOCDATA zoqfot_desc =
 		nullptr, /* uninit_encounter_func */
 		ZOQFOTPIK_PMAP_ANIM, /* AlienFrame */
 		ZOQFOTPIK_FONT, /* AlienFont */
-		UNDEFINED_COLOR_INIT, /* AlienTextFColor */
-		UNDEFINED_COLOR_INIT, /* AlienTextBColor */
+		UndefinedColorInit, /* AlienTextFColor */
+		UndefinedColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0, /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
@@ -68,10 +68,10 @@ static LOCDATA zoqfot_desc =
 								/* AlienAmbientArray (ambient animations) */
 			{
 				/* Eye blink */
-				1,		  /* StartIndex */
-				4,		  /* NumFrames */
-				YOYO_ANIM /* AnimFlags */
-					| WAIT_TALKING,
+				1,		 /* StartIndex */
+				4,		 /* NumFrames */
+				YoyoAnim /* AnimFlags */
+					| WaitTalking,
 				GameTicksPerSecond / 24,
 				0, /* FrameRate */
 				0,
@@ -80,9 +80,9 @@ static LOCDATA zoqfot_desc =
 			},
 								{
 				/* Blow smoke */
-				5,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				5,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 120,
 				0, /* FrameRate */
 				GameTicksPerSecond * 2,
@@ -91,9 +91,9 @@ static LOCDATA zoqfot_desc =
 			},
 								{
 				/* Gulp */
-				10,			   /* StartIndex */
-				8,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				10,			  /* StartIndex */
+				8,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				0,
@@ -150,14 +150,14 @@ SelectAlienZOQ(CallbackArg arg)
 		// Transition to neutral state first if Pik was talking
 		if (LastAlien != FOT_ALIEN)
 		{
-			CommData.AlienTransitionDesc.AnimFlags |= TALK_DONE;
+			CommData.AlienTransitionDesc.AnimFlags |= TalkDone;
 		}
 		LastAlien = ZOQ_ALIEN;
-		CommData.AlienTransitionDesc.AnimFlags |= TALK_INTRO;
+		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
 		CommData.AlienTransitionDesc.StartIndex = FOT_TO_ZOQ;
 		CommData.AlienTalkDesc.StartIndex = ZOQ_TALK_INDEX;
 		CommData.AlienTalkDesc.NumFrames = ZOQ_TALK_FRAMES;
-		CommData.AlienAmbientArray[1].AnimFlags &= ~WAIT_TALKING;
+		CommData.AlienAmbientArray[1].AnimFlags &= ~WaitTalking;
 
 		CommData.AlienTextBaseline.x = (int16_t)ZOQ_BASE_X;
 		CommData.AlienTextBaseline.y = ZOQ_BASE_Y;
@@ -177,14 +177,14 @@ SelectAlienPIK(CallbackArg arg)
 		// Transition to neutral state first if Zoq was talking
 		if (LastAlien != FOT_ALIEN)
 		{
-			CommData.AlienTransitionDesc.AnimFlags |= TALK_DONE;
+			CommData.AlienTransitionDesc.AnimFlags |= TalkDone;
 		}
 		LastAlien = PIK_ALIEN;
-		CommData.AlienTransitionDesc.AnimFlags |= TALK_INTRO;
+		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
 		CommData.AlienTransitionDesc.StartIndex = FOT_TO_PIK;
 		CommData.AlienTalkDesc.StartIndex = PIK_TALK_INDEX;
 		CommData.AlienTalkDesc.NumFrames = PIK_TALK_FRAMES;
-		CommData.AlienAmbientArray[1].AnimFlags |= WAIT_TALKING;
+		CommData.AlienAmbientArray[1].AnimFlags |= WaitTalking;
 
 		CommData.AlienTextBaseline.x = (int16_t)PIK_BASE_X;
 		CommData.AlienTextBaseline.y = PIK_BASE_Y;
@@ -702,7 +702,7 @@ ZoqFotHome(RESPONSE_REF R)
 		{
 			int16_t i {};
 
-			i = START_YEAR + (YEARS_TO_KOHRAH_VICTORY + difficultyCase(2, 0, -1));
+			i = StartYear + (YearsToKohrahVictory() + difficultyCase(2, 0, -1));
 			if (NumVisits)
 			{
 				++i;
@@ -998,7 +998,7 @@ init_zoqfot_comm(void)
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	zoqfot_desc.AlienTextWidth = (SIS_TEXT_WIDTH >> 1) - TEXT_X_OFFS;
+	zoqfot_desc.AlienTextWidth = (SisTextWidth() >> 1) - TextXOffs();
 
 	if (CheckAlliance(ZOQFOTPIK_SHIP) == GOOD_GUY
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)

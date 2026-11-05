@@ -74,7 +74,7 @@ GenerateThraddash_generatePlanets(SOLARSYS_STATE* solarSys)
 		pSunDesc->PlanetByte = 0;
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		if (CurStarDescPtr->Index == AQUA_HELIX_DEFINED)
+		if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED)
 		{
 			pPlanet->data_index = PRIMORDIAL_WORLD;
 			pPlanet->radius = EARTH_RADIUS * 65L / 100;
@@ -82,7 +82,7 @@ GenerateThraddash_generatePlanets(SOLARSYS_STATE* solarSys)
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
 		}
-		else /* CurStarDescPtr->Index == THRADD_DEFINED */
+		else /* CurStarDescPtr()->Index == THRADD_DEFINED */
 		{
 			pPlanet->data_index = WATER_WORLD;
 			pPlanet->NumPlanets = 0;
@@ -112,12 +112,12 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		if (StartSphereTracking(THRADDASH_SHIP)
-			&& (CurStarDescPtr->Index == THRADD_DEFINED
+			&& (CurStarDescPtr()->Index == THRADD_DEFINED
 				|| (!GET_GAME_STATE(HELIX_UNPROTECTED)
 					&& (uint8_t)(GET_GAME_STATE(THRADD_MISSION) - 1) >= 3)))
 		{
-			NotifyOthers(THRADDASH_SHIP, IPNL_ALL_CLEAR);
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			NotifyOthers(THRADDASH_SHIP, IpnlAllClear);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -125,7 +125,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 							  INFINITE_FLEET);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
-			if (CurStarDescPtr->Index == THRADD_DEFINED)
+			if (CurStarDescPtr()->Index == THRADD_DEFINED)
 			{
 				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 			}
@@ -142,9 +142,9 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 
 			uqm::currentActivity() &= ~START_INTERPLANETARY;
 			ReinitQueue(&GLOBAL(npc_built_ship_q));
-			GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+			GetGroupInfo(GroupsRandom, GroupLoadIp);
 
-			if (CurStarDescPtr->Index == THRADD_DEFINED
+			if (CurStarDescPtr()->Index == THRADD_DEFINED
 				|| (!GET_GAME_STATE(HELIX_UNPROTECTED)
 					&& (uint8_t)(GET_GAME_STATE(THRADD_MISSION) - 1) >= 3))
 			{
@@ -156,7 +156,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 			// them at helix world
 		}
 		else if (isDifficulty(uqm::Difficulty::Hard)
-				 && CurStarDescPtr->Index == AQUA_HELIX_DEFINED
+				 && CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
 				 && !GET_GAME_STATE(HELIX_UNPROTECTED)
 				 && !(GET_GAME_STATE(HM_ENCOUNTERS)
 					  & 1 << THRADDASH_ENCOUNTER)
@@ -165,7 +165,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 		{
 			uint16_t sum {};
 
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -200,7 +200,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 
 				if (Survivors && !GET_GAME_STATE(HELIX_UNPROTECTED))
 				{
@@ -221,21 +221,21 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 		}
 
-		if (CurStarDescPtr->Index == AQUA_HELIX_DEFINED
+		if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
 			&& !GET_GAME_STATE(AQUA_HELIX))
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
-				CaptureDrawable(LoadGraphic(AQUA_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(AQUA_STRTAB);
+				CaptureDrawable(LoadGraphic(AquaMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(AquaStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		}
-		else if (CurStarDescPtr->Index == THRADD_DEFINED)
+		else if (CurStarDescPtr()->Index == THRADD_DEFINED)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
-				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+				CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RuinsStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		}
 	}
@@ -248,13 +248,13 @@ static uint16_t
 GenerateThraddash_generateEnergy(const SOLARSYS_STATE* solarSys,
 								 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (CurStarDescPtr->Index == THRADD_DEFINED
+	if (CurStarDescPtr()->Index == THRADD_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
 
-	if (CurStarDescPtr->Index == AQUA_HELIX_DEFINED
+	if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		// This check is redundant since the retrieval bit will keep the
@@ -275,7 +275,7 @@ static bool
 GenerateThraddash_pickupEnergy(SOLARSYS_STATE* solarSys,
 							   PLANET_DESC* world, uint16_t whichNode)
 {
-	if (CurStarDescPtr->Index == THRADD_DEFINED
+	if (CurStarDescPtr()->Index == THRADD_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		// Standard ruins report
@@ -283,7 +283,7 @@ GenerateThraddash_pickupEnergy(SOLARSYS_STATE* solarSys,
 		return false;
 	}
 
-	if (CurStarDescPtr->Index == AQUA_HELIX_DEFINED
+	if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		HFLEETINFO hThradd =
@@ -302,7 +302,7 @@ GenerateThraddash_pickupEnergy(SOLARSYS_STATE* solarSys,
 		SET_GAME_STATE(AQUA_HELIX, 1);
 		SET_GAME_STATE(AQUA_HELIX_ON_SHIP, 1);
 		SET_GAME_STATE(HELIX_UNPROTECTED, 1);
-		if (EXTENDED && ThraddPtr->allied_state == GOOD_GUY
+		if (IsExtended() && ThraddPtr->allied_state == GOOD_GUY
 			&& GET_GAME_STATE(ILWRATH_FIGHT_THRADDASH))
 		{
 			SetRaceAllied(THRADDASH_SHIP, false);

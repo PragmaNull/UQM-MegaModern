@@ -100,8 +100,8 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 			|| !GET_GAME_STATE(TALKING_PET)
 			|| StartSphereTracking(UMGAH_SHIP)))
 	{
-		NotifyOthers(UMGAH_SHIP, IPNL_ALL_CLEAR);
-		PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+		NotifyOthers(UMGAH_SHIP, IpnlAllClear);
+		PutGroupInfo(GroupsRandom, GroupSaveIp);
 		ReinitQueue(&GLOBAL(ip_group_q));
 		assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -153,7 +153,7 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 
 			ReinitQueue(&GLOBAL(npc_built_ship_q));
-			GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+			GetGroupInfo(GroupsRandom, GroupLoadIp);
 		}
 
 		return true;
@@ -163,8 +163,8 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+			CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RuinsStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
@@ -235,7 +235,7 @@ ZapToUrquanEncounter(void)
 		EncounterPtr->radius = TemplatePtr->actual_strength;
 		EncounterPtr->race_id = URQUAN_SHIP;
 		EncounterPtr->num_ships = 1;
-		EncounterPtr->flags = ONE_SHOT_ENCOUNTER;
+		EncounterPtr->flags = OneShotEncounter;
 		BRIEF_SHIP_INFO* BSIPtr {&EncounterPtr->ShipList[0]};
 		BSIPtr->race_id = URQUAN_SHIP;
 		BSIPtr->crew_level = TemplatePtr->crew_level;
@@ -265,19 +265,19 @@ ZapToUrquanEncounter(void)
 			uqm::makeWord(IN_HYPERSPACE, 0) | START_ENCOUNTER;
 		SetBattlePlanet();
 
-		dx = CurStarDescPtr->star_pt.x - EncounterPtr->loc_pt.x;
-		dy = CurStarDescPtr->star_pt.y - EncounterPtr->loc_pt.y;
+		dx = CurStarDescPtr()->star_pt.x - EncounterPtr->loc_pt.x;
+		dy = CurStarDescPtr()->star_pt.y - EncounterPtr->loc_pt.y;
 		dx = (int16_t)square_root((long)dx * dx + (long)dy * dy)
-		   + (FUEL_TANK_SCALE >> 1);
+		   + (FuelTankScale >> 1);
 
 		if (!uqm::UQMOptions::read().infiniteFuel)
 		{
 			DeltaSISGauges(0, -dx, 0);
 		}
 
-		if (GLOBAL_SIS(FuelOnBoard) < 5 * FUEL_TANK_SCALE)
+		if (GLOBAL_SIS(FuelOnBoard) < 5 * FuelTankScale)
 		{
-			dx = ((5 + ((uint16_t)uqm::random().next() % 5)) * FUEL_TANK_SCALE)
+			dx = ((5 + ((uint16_t)uqm::random().next() % 5)) * FuelTankScale)
 			   - (int16_t)GLOBAL_SIS(FuelOnBoard);
 			DeltaSISGauges(0, dx, 0);
 		}

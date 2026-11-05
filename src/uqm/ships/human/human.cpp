@@ -60,7 +60,7 @@ RACE_DESC human_desc =
 	{
 		{/* SHIP_INFO */
 		 "cruiser",
-		 FIRES_FORE | SEEKING_WEAPON | POINT_DEFENSE,
+		 FiresFore | SeekingWeapon | PointDefense,
 		 11, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -117,7 +117,7 @@ RACE_DESC human_desc =
 		 nullptr},
 		{
 			0,
-			LONG_RANGE_WEAPON,
+			LongRangeWeapon,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -143,7 +143,7 @@ nuke_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->next.image.frame =
 				SetAbsFrameIndex(ElementPtr->next.image.frame,
 								 facing);
-			ElementPtr->state_flags |= CHANGING;
+			ElementPtr->state_flags |= Changing;
 		}
 
 		ElementPtr->turn_wait = TRACK_WAIT;
@@ -167,7 +167,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (ElementPtr->state_flags & PLAYER_SHIP)
+	if (ElementPtr->state_flags & PlayerShip)
 	{
 		HELEMENT hDefense {AllocElement()};
 		if (hDefense)
@@ -176,7 +176,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 
 			LockElement(hDefense, &DefensePtr);
 			DefensePtr->playerNr = ElementPtr->playerNr;
-			DefensePtr->state_flags = APPEARING | NONSOLID | FINITE_LIFE;
+			DefensePtr->state_flags = Appearing | Nonsolid | FiniteLife;
 			DefensePtr->death_func = spawn_point_defense;
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -246,7 +246,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 					LaserBlock.ey = ObjectPtr->next.location.y
 								  - ShipPtr->next.location.y;
 					LaserBlock.sender = ShipPtr->playerNr;
-					LaserBlock.flags = IGNORE_SIMILAR;
+					LaserBlock.flags = IgnoreSimilar;
 					LaserBlock.pixoffs = 0;
 					LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F);
 					hPointDefense = initialize_laser(&LaserBlock);
@@ -316,11 +316,11 @@ human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			|| (ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr != nullptr
 				&& ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn <= 4)))
 	{
-		StarShipPtr->ship_input_state |= SPECIAL;
+		StarShipPtr->ship_input_state |= SpecialFlag;
 	}
 	else
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 	}
 	ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr = nullptr;
 
@@ -330,10 +330,10 @@ human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	if (StarShipPtr->weapon_counter == 0)
 	{
 		if (ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr
-			&& (!(StarShipPtr->ship_input_state & (LEFT | RIGHT /* | THRUST */))
+			&& (!(StarShipPtr->ship_input_state & (LeftFlag | RightFlag /* | ThrustFlag */))
 				|| ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn <= 12))
 		{
-			StarShipPtr->ship_input_state |= WEAPON;
+			StarShipPtr->ship_input_state |= WeaponFlag;
 		}
 	}
 }
@@ -344,7 +344,7 @@ human_postprocess(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0)
 	{
 		spawn_point_defense(ElementPtr);
@@ -354,17 +354,17 @@ human_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_human(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		human_desc.characteristics.max_thrust = MAX_THRUST_HD;
 		human_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		human_desc.cyborg_control.WeaponRange = LONG_RANGE_WEAPON_HD;
+		human_desc.cyborg_control.WeaponRange = LongRangeWeaponHd;
 	}
 	else
 	{
 		human_desc.characteristics.max_thrust = MAX_THRUST;
 		human_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		human_desc.cyborg_control.WeaponRange = LONG_RANGE_WEAPON;
+		human_desc.cyborg_control.WeaponRange = LongRangeWeapon;
 	}
 
 	human_desc.postprocess_func = human_postprocess;

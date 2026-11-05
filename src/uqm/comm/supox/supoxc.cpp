@@ -32,11 +32,11 @@ static LOCDATA supox_desc =
 		nullptr, /* uninit_encounter_func */
 		SUPOX_PMAP_ANIM, /* AlienFrame */
 		SUPOX_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		SUPOX_COLOR_MAP, /* AlienColorMap */
@@ -53,8 +53,8 @@ static LOCDATA supox_desc =
 			{
 				4, /* StartIndex */
 				5, /* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 10, /* FrameRate */
 				GameTicksPerSecond,
@@ -62,9 +62,9 @@ static LOCDATA supox_desc =
 				0,						/* BlockMask */
 			},
 								{
-				9,			   /* StartIndex */
-				10,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				9,			  /* StartIndex */
+				10,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -72,9 +72,9 @@ static LOCDATA supox_desc =
 				0,						/* BlockMask */
 			},
 								{
-				19,			   /* StartIndex */
-				10,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				19,			  /* StartIndex */
+				10,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -82,9 +82,9 @@ static LOCDATA supox_desc =
 				0,						/* BlockMask */
 			},
 								{
-				29,			   /* StartIndex */
-				13,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				29,			  /* StartIndex */
+				13,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -249,7 +249,7 @@ AlliedHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(how_is_ultron);
 	}
-	else if (EXTENDED && PLAYER_SAID(R, give_info))
+	else if (IsExtended() && PLAYER_SAID(R, give_info))
 	{
 		NPCPhrase(GOOD_HINTS);
 
@@ -282,11 +282,11 @@ AlliedHome(RESPONSE_REF R)
 	{
 		Response(how_is_ultron, AlliedHome);
 	}
-	if (EXTENDED && PHRASE_ENABLED(give_info))
+	if (IsExtended() && PHRASE_ENABLED(give_info))
 	{
 		Response(give_info, AlliedHome);
 	}
-	if (EXTENDED && ShipsReady(SUPOX_SHIP))
+	if (IsExtended() && ShipsReady(SUPOX_SHIP))
 	{
 		Response(can_you_help, ExitConversation);
 	}
@@ -457,7 +457,7 @@ NeutralSupox(RESPONSE_REF R)
 		SET_GAME_STATE(SUPOX_WAR_NEWS, 0);
 		SET_GAME_STATE(ULTRON_CONDITION, 1);
 
-		Response(what_do_i_do_now, (EXTENDED ? NeutralSupox : ExitConversation));
+		Response(what_do_i_do_now, (IsExtended() ? NeutralSupox : ExitConversation));
 		Response(thanks_now_we_eat_you, ExitConversation);
 
 		return;
@@ -488,7 +488,7 @@ NeutralSupox(RESPONSE_REF R)
 	{
 		NPCPhrase(ANCIENT_RHYME);
 
-		if (EXTENDED)
+		if (IsExtended())
 		{
 			StartSphereTracking(DRUUGE_SHIP);
 		}
@@ -587,7 +587,7 @@ NeutralSupox(RESPONSE_REF R)
 				break;
 		}
 	}
-	if (EXTENDED && NumVisits && PHRASE_ENABLED(give_info))
+	if (IsExtended() && NumVisits && PHRASE_ENABLED(give_info))
 	{
 		Response(give_info, NeutralSupox);
 	}
@@ -766,9 +766,9 @@ init_supox_comm(void)
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	supox_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	supox_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	supox_desc.AlienTextBaseline.y = 0;
-	supox_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	supox_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	if (!GET_GAME_STATE(SUPOX_HOSTILE)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)

@@ -77,7 +77,7 @@ struct getmelee_struct
 #ifdef NETPLAY
 		bool remoteSelected;
 #endif
-	} player[NUM_PLAYERS];
+	} player[NumPlayers];
 };
 
 bool setShipSelected(GETMELEE_STATE* gms, uint16_t playerI, uint16_t choice,

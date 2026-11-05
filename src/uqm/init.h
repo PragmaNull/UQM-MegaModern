@@ -25,11 +25,11 @@
 extern "C" {
 #endif
 
-#define NUM_PLAYERS 2
-#define NUM_SIDES 2
+inline constexpr auto NumPlayers {2};
+inline constexpr auto NumSides {2};
 
 extern FRAME stars_in_space;
-extern FRAME stars_misc[NUM_VIEWS];
+extern FRAME stars_misc[NumViews];
 extern FRAME scenery;
 
 extern bool InitSpace(void);

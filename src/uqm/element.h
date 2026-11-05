@@ -29,48 +29,48 @@ extern "C" {
 #endif
 
 
-#define NORMAL_LIFE 1
+inline constexpr auto NormalLife {1};
 
 typedef HLINK HELEMENT;
 
 // Bits for ELEMENT_FLAGS:
 // bits 0 and 1 are now available
-#define PLAYER_SHIP (1 << 2)
+inline constexpr auto PlayerShip {(1 << 2)};
 // The ELEMENT is a player controlable ship, and not some bullet,
 // crew, asteroid, fighter, etc. This does not mean that the ship
 // is actually controlled by a human; it may be a computer.
 
-#define APPEARING (1 << 3)
-#define DISAPPEARING (1 << 4)
-#define CHANGING (1 << 5)
+inline constexpr auto Appearing {(1 << 3)};
+inline constexpr auto Disappearing {(1 << 4)};
+inline constexpr auto Changing {(1 << 5)};
 // The element's graphical representation has changed.
 
-#define NONSOLID (1 << 6)
-#define COLLISION (1 << 7)
-#define IGNORE_SIMILAR (1 << 8)
-#define DEFY_PHYSICS (1 << 9)
+inline constexpr auto Nonsolid {(1 << 6)};
+inline constexpr auto Collision {(1 << 7)};
+inline constexpr auto IgnoreSimilar {(1 << 8)};
+inline constexpr auto DefyPhysics {(1 << 9)};
 
-#define FINITE_LIFE (1 << 10)
+inline constexpr auto FiniteLife {(1 << 10)};
 
-#define PRE_PROCESS (1 << 11)
+inline constexpr auto PreProcessFlag {(1 << 11)};
 // PreProcess() is to be called for the ELEMENT.
-#define POST_PROCESS (1 << 12)
+inline constexpr auto PostProcessFlag {(1 << 12)};
 
-#define IGNORE_VELOCITY (1 << 13)
-#define CREW_OBJECT (1 << 14)
-#define BACKGROUND_OBJECT (1 << 15)
-// The BACKGROUND_OBJECT flag existed originally but wasn't used.
+inline constexpr auto IgnoreVelocity {(1 << 13)};
+inline constexpr auto CrewObject {(1 << 14)};
+inline constexpr auto BackgroundObject {(1 << 15)};
+// The BackgroundObject flag existed originally but wasn't used.
 // It can now be used for objects that never influence the state
 // of other elements; elements that have this flag set are not
 // included in the checksum used for netplay games.
 // It can be used for graphical mods that don't impede netplay.
 
 
-#define HYPERJUMP_LIFE 15
+inline constexpr auto HyperjumpLife {15};
 
-#define NUM_EXPLOSION_FRAMES 12
+inline constexpr auto NumExplosionFrames {12};
 
-#define GAME_SOUND_PRIORITY 2
+inline constexpr auto GameSoundPriority {2};
 
 typedef enum
 {
@@ -81,7 +81,7 @@ typedef enum
 
 typedef uint16_t ELEMENT_FLAGS;
 
-#define NO_PRIM NUM_PRIMS
+inline constexpr auto NoPrim {NUM_PRIMS};
 
 typedef struct state
 {
@@ -167,7 +167,7 @@ struct element
 	HELEMENT hTarget;
 };
 
-#define NEUTRAL_PLAYER_NUM -1
+inline constexpr auto NeutralPlayerNum {-1};
 
 static inline bool
 elementsOfSamePlayer(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
@@ -178,11 +178,11 @@ elementsOfSamePlayer(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 extern QUEUE disp_q;
 // The maximum number of elements is chosen to provide a slight margin.
 // Currently, it is maximum *known used* in Melee + 30
-#define MAX_DISPLAY_ELEMENTS 150
+inline constexpr auto MaxDisplayElements {150};
 
-#define MAX_DISPLAY_PRIMS 330
+inline constexpr auto MaxDisplayPrims {330};
 extern uint16_t DisplayFreeList;
-extern PRIMITIVE DisplayArray[MAX_DISPLAY_PRIMS];
+extern PRIMITIVE DisplayArray[MaxDisplayPrims];
 
 #define AllocDisplayPrim() \
 	DisplayFreeList;       \
@@ -202,17 +202,17 @@ extern PRIMITIVE DisplayArray[MAX_DISPLAY_PRIMS];
 		(e)->pParent = (STARSHIP*)psd; \
 	} while (0)
 
-#define MAX_CREW_SIZE 42
-#define MAX_ENERGY_SIZE 42
-#define MAX_SHIP_MASS 10
-#define GRAVITY_MASS(m) ((m) > MAX_SHIP_MASS * 10)
-#define GRAVITY_THRESHOLD (uint16_t)RES_SCALE(255)
+inline constexpr auto MaxCrewSize {42};
+inline constexpr auto MaxEnergySize {42};
+inline constexpr auto MaxShipMass {10};
+#define GRAVITY_MASS(m) ((m) > MaxShipMass * 10)
+inline auto GravityThreshold() { return (uint16_t)RES_SCALE(255); }
 
 #define OBJECT_CLOAKED(eptr)                                             \
 	(GetPrimType(&DisplayArray[(eptr)->PrimIndex]) >= NUM_PRIMS          \
 	 || (GetPrimType(&DisplayArray[(eptr)->PrimIndex]) == STAMPFILL_PRIM \
-		 && sameColor(GetPrimColor(&DisplayArray[(eptr)->PrimIndex]), BLACK_COLOR)))
-#define UNDEFINED_LEVEL 0
+		 && sameColor(GetPrimColor(&DisplayArray[(eptr)->PrimIndex]), BlackColor)))
+
 
 extern HELEMENT AllocElement(void);
 extern void FreeElement(HELEMENT hElement);

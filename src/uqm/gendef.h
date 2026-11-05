@@ -96,7 +96,7 @@ enum
 	HOME = NUM_PLOTS + 1
 };
 
-#define UMGAH_DEFINED TALKING_PET_DEFINED
+inline constexpr auto UmgahDefined {TALKING_PET_DEFINED};
 
 #if 0 //defined(__cplusplus)
 }

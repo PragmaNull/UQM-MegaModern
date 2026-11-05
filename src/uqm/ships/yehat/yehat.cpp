@@ -50,14 +50,14 @@
 #define SPECIAL_WAIT 2
 #define SHIELD_LIFE 10
 
-// HD
+// HdResolutionFactor
 #define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
 
 static RACE_DESC yehat_desc =
 	{
 		{/* SHIP_INFO */
 		 "terminator",
-		 FIRES_FORE | SHIELD_DEFENSE,
+		 FiresFore | ShieldDefense,
 		 23, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -67,7 +67,7 @@ static RACE_DESC yehat_desc =
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			750 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			750 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				4970,
@@ -135,7 +135,7 @@ initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = YEHAT_OFFSET;
 	MissileBlock.speed = MISSILE_SPEED_HD;
 	MissileBlock.hit_points = MISSILE_HITS;
@@ -169,14 +169,14 @@ yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
 	{
 		ShieldStatus = 0;
-		if (!(lpEvalDesc->ObjectPtr->state_flags & (FINITE_LIFE | CREW_OBJECT)))
+		if (!(lpEvalDesc->ObjectPtr->state_flags & (FiniteLife | CrewObject)))
 		{
 			lpEvalDesc->MoveState = PURSUE;
 		}
 		else if (lpEvalDesc->ObjectPtr->mass_points
-				 || (lpEvalDesc->ObjectPtr->state_flags & CREW_OBJECT))
+				 || (lpEvalDesc->ObjectPtr->state_flags & CrewObject))
 		{
-			if (!(lpEvalDesc->ObjectPtr->state_flags & FINITE_LIFE))
+			if (!(lpEvalDesc->ObjectPtr->state_flags & FiniteLife))
 			{
 				lpEvalDesc->which_turn <<= 1;
 			}
@@ -203,24 +203,24 @@ yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 		if (ShieldStatus)
 		{
-			if (ShipPtr->life_span <= NORMAL_LIFE + 1
+			if (ShipPtr->life_span <= NormalLife + 1
 				&& (ShieldStatus > 0 || lpEvalDesc->ObjectPtr)
 				&& lpEvalDesc->which_turn <= 2
 				&& (ShieldStatus > 0
 					|| (lpEvalDesc->ObjectPtr->state_flags
-						& PLAYER_SHIP) /* means IMMEDIATE WEAPON */
+						& PlayerShip) /* means IMMEDIATE WeaponFlag */
 					|| PlotIntercept(lpEvalDesc->ObjectPtr,
 									 ShipPtr, 2, 0))
 				&& (uqm::random().next() & 3))
 			{
-				StarShipPtr->ship_input_state |= SPECIAL;
+				StarShipPtr->ship_input_state |= SpecialFlag;
 			}
 
 			if (lpEvalDesc->ObjectPtr
-				&& !(lpEvalDesc->ObjectPtr->state_flags & CREW_OBJECT))
+				&& !(lpEvalDesc->ObjectPtr->state_flags & CrewObject))
 			{
 				lpEvalDesc->ObjectPtr = 0;
 			}
@@ -233,7 +233,7 @@ yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-			  & IMMEDIATE_WEAPON))
+			  & ImmediateWeapon))
 		{
 			lpEvalDesc->MoveState = PURSUE;
 		}
@@ -241,14 +241,14 @@ yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 	/*
 	if (StarShipPtr->RaceDescPtr->ship_info.energy_level <= SPECIAL_ENERGY_COST)
-		StarShipPtr->ship_input_state &= ~WEAPON;
+		StarShipPtr->ship_input_state &= ~WeaponFlag;
 */
 }
 
 static void
 yehat_postprocess(ELEMENT* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & NONSOLID))
+	if (!(ElementPtr->state_flags & Nonsolid))
 	{
 		STARSHIP* StarShipPtr {};
 
@@ -256,7 +256,7 @@ yehat_postprocess(ELEMENT* ElementPtr)
 		/* take care of shield effect */
 		if (StarShipPtr->special_counter > 0)
 		{
-			if (ElementPtr->life_span == NORMAL_LIFE)
+			if (ElementPtr->life_span == NormalLife)
 			{
 				StarShipPtr->special_counter = 0;
 			}
@@ -280,7 +280,7 @@ yehat_postprocess(ELEMENT* ElementPtr)
 		}
 
 #ifdef OLD
-		if (ElementPtr->life_span > NORMAL_LIFE)
+		if (ElementPtr->life_span > NormalLife)
 		{
 			HELEMENT hShipElement;
 
@@ -292,9 +292,9 @@ yehat_postprocess(ELEMENT* ElementPtr)
 				LockElement(hShipElement, &ShipElementPtr);
 				ShipElementPtr->playerNr = ElementPtr->playerNr;
 				ShipElementPtr->state_flags =
-					/* in place of APPEARING */
-					(CHANGING | PRE_PROCESS | POST_PROCESS)
-					| FINITE_LIFE | NONSOLID;
+					/* in place of Appearing */
+					(Changing | PreProcessFlag | PostProcessFlag)
+					| FiniteLife | Nonsolid;
 				SetPrimType(
 					&DisplayArray[ShipElementPtr->PrimIndex],
 					STAMP_PRIM);
@@ -323,15 +323,15 @@ yehat_postprocess(ELEMENT* ElementPtr)
 static void
 yehat_preprocess(ELEMENT* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & APPEARING))
+	if (!(ElementPtr->state_flags & Appearing))
 	{
 		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
-		if ((ElementPtr->life_span > NORMAL_LIFE
+		if ((ElementPtr->life_span > NormalLife
 			 /* take care of shield effect */
-			 && --ElementPtr->life_span == NORMAL_LIFE)
-			|| (ElementPtr->life_span == NORMAL_LIFE
+			 && --ElementPtr->life_span == NormalLife)
+			|| (ElementPtr->life_span == NormalLife
 				&& ElementPtr->next.image.farray
 					   == StarShipPtr->RaceDescPtr->ship_data.special))
 		{
@@ -345,10 +345,10 @@ yehat_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->next.image.frame =
 				SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.ship[0],
 								 ElementPtr->next.image.frame);
-			ElementPtr->state_flags |= CHANGING;
+			ElementPtr->state_flags |= Changing;
 		}
 
-		if ((StarShipPtr->cur_status_flags & SPECIAL)
+		if ((StarShipPtr->cur_status_flags & SpecialFlag)
 			&& StarShipPtr->special_counter == 0)
 		{
 			if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SPECIAL_ENERGY_COST)
@@ -357,13 +357,13 @@ yehat_preprocess(ELEMENT* ElementPtr)
 			}
 			else
 			{
-				ElementPtr->life_span = SHIELD_LIFE + NORMAL_LIFE;
+				ElementPtr->life_span = SHIELD_LIFE + NormalLife;
 
 				ElementPtr->next.image.farray = StarShipPtr->RaceDescPtr->ship_data.special;
 				ElementPtr->next.image.frame =
 					SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.special[0],
 									 ElementPtr->next.image.frame);
-				ElementPtr->state_flags |= CHANGING;
+				ElementPtr->state_flags |= Changing;
 
 				StarShipPtr->special_counter =
 					StarShipPtr->RaceDescPtr->characteristics.special_wait;
@@ -375,7 +375,7 @@ yehat_preprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_yehat(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		yehat_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		yehat_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);

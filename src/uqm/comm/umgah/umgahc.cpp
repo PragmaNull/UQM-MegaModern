@@ -32,11 +32,11 @@ static LOCDATA umgah_desc =
 		nullptr, /* uninit_encounter_func */
 		UMGAH_PMAP_ANIM, /* AlienFrame */
 		UMGAH_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		UMGAH_COLOR_MAP, /* AlienColorMap */
@@ -51,9 +51,9 @@ static LOCDATA umgah_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				5,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				5,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -61,9 +61,9 @@ static LOCDATA umgah_desc =
 				(1 << 5),
 			},
 								{
-				8,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				8,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -71,9 +71,9 @@ static LOCDATA umgah_desc =
 				(1 << 6),
 			},
 								{
-				11,		   /* StartIndex */
-				2,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				11,		  /* StartIndex */
+				2,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -81,9 +81,9 @@ static LOCDATA umgah_desc =
 				(1 << 7),
 			},
 								{
-				13,		   /* StartIndex */
-				2,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				13,		  /* StartIndex */
+				2,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -91,9 +91,9 @@ static LOCDATA umgah_desc =
 				(1 << 8),
 			},
 								{
-				15,		   /* StartIndex */
-				2,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				15,		  /* StartIndex */
+				2,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -101,9 +101,9 @@ static LOCDATA umgah_desc =
 				(1 << 9),
 			},
 								{
-				17,			   /* StartIndex */
-				3,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				17,			  /* StartIndex */
+				3,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 60,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -111,9 +111,9 @@ static LOCDATA umgah_desc =
 				(1 << 0),
 			},
 								{
-				20,			   /* StartIndex */
-				3,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				20,			  /* StartIndex */
+				3,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 60,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -121,9 +121,9 @@ static LOCDATA umgah_desc =
 				(1 << 1),
 			},
 								{
-				23,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				23,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 60,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -131,9 +131,9 @@ static LOCDATA umgah_desc =
 				(1 << 2),
 			},
 								{
-				25,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				25,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 60,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -141,9 +141,9 @@ static LOCDATA umgah_desc =
 				(1 << 3),
 			},
 								{
-				27,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				27,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 60,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -151,9 +151,9 @@ static LOCDATA umgah_desc =
 				(1 << 4),
 			},
 								{
-				29,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				29,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -161,9 +161,9 @@ static LOCDATA umgah_desc =
 				0,						/* BlockMask */
 			},
 								{
-				32,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				32,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -171,9 +171,9 @@ static LOCDATA umgah_desc =
 				0,						/* BlockMask */
 			},
 								{
-				35,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				35,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -181,9 +181,9 @@ static LOCDATA umgah_desc =
 				0,						/* BlockMask */
 			},
 								{
-				40,		   /* StartIndex */
-				6,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				40,		  /* StartIndex */
+				6,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -191,9 +191,9 @@ static LOCDATA umgah_desc =
 				0, /* BlockMask */
 			},
 								{
-				46,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				46,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 5,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -201,9 +201,9 @@ static LOCDATA umgah_desc =
 				(1 << 15),				/* BlockMask */
 			},
 								{
-				48,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				48,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 5,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -534,7 +534,7 @@ UmgahReward(RESPONSE_REF R)
 	{
 		NPCPhrase(THANKS);
 
-		GLOBAL_SIS(TotalBioMass) += 1000 / BIO_CREDIT_VALUE;
+		GLOBAL_SIS(TotalBioMass) += 1000 / BioCreditValueDefault;
 		DISABLE_PHRASE(owe_me_big_time);
 		DISABLE_PHRASE(our_largesse);
 	}
@@ -542,7 +542,7 @@ UmgahReward(RESPONSE_REF R)
 	{
 		NPCPhrase(GIVE_LIFEDATA);
 
-		GLOBAL_SIS(TotalBioMass) += 1000 / BIO_CREDIT_VALUE;
+		GLOBAL_SIS(TotalBioMass) += 1000 / BioCreditValueDefault;
 		DISABLE_PHRASE(our_largesse);
 		DISABLE_PHRASE(owe_me_big_time);
 	}
@@ -804,9 +804,9 @@ init_umgah_comm(void)
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	umgah_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	umgah_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	umgah_desc.AlienTextBaseline.y = 0;
-	umgah_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	umgah_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	if ((GET_GAME_STATE(TALKING_PET) && !GET_GAME_STATE(UMGAH_HOSTILE))
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)

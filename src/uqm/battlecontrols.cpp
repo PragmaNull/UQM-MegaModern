@@ -21,12 +21,12 @@
 #include "tactrans.h"
 // For battleEndReady*
 #include "init.h"
-// For NUM_PLAYERS
+// For NumPlayers
 #ifdef NETPLAY
 #include "supermelee/netplay/netmelee.h"
 #endif /* NETPLAY */
 
-InputContext* PlayerInput[NUM_PLAYERS];
+InputContext* PlayerInput[NumPlayers];
 
 template <typename Context>
 static void

@@ -30,17 +30,17 @@
 WIDGET* widget_focus = nullptr;
 
 /* Some basic color defines */
-static constexpr auto WidgetActiveColor {MENU_HIGHLIGHT_COLOR};
+static constexpr auto WidgetActiveColor {MenuHighlightColor};
 static constexpr auto WidgetInactiveColor {BuildColor(MakeRgb15(0x18, 0x18, 0x1F), 0x00)};
 
-static constexpr auto WidgetInactiveSelectedColor {WHITE_COLOR};
-static constexpr auto WidgetCursorColor {BLACK_COLOR};
+static constexpr auto WidgetInactiveSelectedColor {WhiteColor};
+static constexpr auto WidgetCursorColor {BlackColor};
 
 static constexpr auto WidgetDialogTextColor {WidgetCursorColor};
 static constexpr auto WidgetBonusColor {BuildColorRgba(0xDF, 0x6A, 0x13, 0xFF)};
 
 static constexpr auto WidgetEnabledColor {BuildColor(MakeRgb15(0x00, 0x18, 0x00), 0x00)};
-static constexpr auto WidgetDisabledColor {PCMENU_TOP_LEFT_BORDER_COLOR};
+static constexpr auto WidgetDisabledColor {PcmenuTopLeftBorderColor};
 static constexpr auto WidgetTooltipColor {BuildColor(MakeRgb15(0xD2, 0xB4, 0x8C), 0x00)};
 static constexpr auto WidgetLabelColor {BuildColorRgba(0x00, 0x77, 0x77, 0xFF)};
 static constexpr auto WidgetWarningColor {BuildColorRgba(0xB1, 0x27, 0x47, 0xFF)};
@@ -48,9 +48,9 @@ static constexpr auto WidgetWarningColor {BuildColorRgba(0xB1, 0x27, 0x47, 0xFF)
 static auto Onscreen() { return DOS_BOOL(13, 10); }
 // The pos from the page edge where we need to start scrolling
 static constexpr auto ScrollOffset {3};
-static auto ScreenCenter() { return RES_SCALE(RES_DESCALE(SCREEN_WIDTH) / 2); }
-static auto Lstep() { return RES_SCALE(RES_DESCALE(SCREEN_WIDTH) / 2 - 7); }
-static auto Rstep() { return RES_SCALE(RES_DESCALE(SCREEN_WIDTH) / 2 + 7); }
+static auto ScreenCenter() { return RES_SCALE(RES_DESCALE(CanvasWidth) / 2); }
+static auto Lstep() { return RES_SCALE(RES_DESCALE(CanvasWidth) / 2 - 7); }
+static auto Rstep() { return RES_SCALE(RES_DESCALE(CanvasWidth) / 2 + 7); }
 
 static Color win_bg_clr =
 	BuildColor(MakeRgb15(0x18, 0x18, 0x1F), 0x00);
@@ -76,7 +76,7 @@ void LoadArrows(void)
 	if (arrow_frame == nullptr || optRequiresReload)
 	{
 		// Load the different arrows depending on the resolution factor.
-		arrow_frame = CaptureDrawable(LoadGraphic(MENUARR_PMAP_ANIM));
+		arrow_frame = CaptureDrawable(LoadGraphic(MenuarrPmapAnimRes));
 	}
 }
 
@@ -92,7 +92,7 @@ void ReleaseArrows(void)
 void DrawShadowedBox(GFXRECT* r, Color bg, Color dark, Color medium)
 { // Dialog box
 	DrawStarConBox(r, RES_SCALE(2), dark, medium, true, bg, true,
-				   TRANSPARENT);
+				   Transparent);
 }
 
 // windowRect, if not nullptr, will be filled with the dimensions of the

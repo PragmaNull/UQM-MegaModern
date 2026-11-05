@@ -32,11 +32,11 @@ static LOCDATA spathi_desc =
 		nullptr, /* uninit_encounter_func */
 		SPATHI_PMAP_ANIM, /* AlienFrame */
 		SPATHI_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		SPATHI_COLOR_MAP, /* AlienColorMap */
@@ -51,9 +51,9 @@ static LOCDATA spathi_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				1,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				1,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				0,
@@ -61,9 +61,9 @@ static LOCDATA spathi_desc =
 				(1 << 1),			/* BlockMask */
 			},
 								{
-				7,			   /* StartIndex */
-				9,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				7,			  /* StartIndex */
+				9,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -71,9 +71,9 @@ static LOCDATA spathi_desc =
 				(1 << 0), /* BlockMask */
 			},
 								{
-				16,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				16,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -82,14 +82,14 @@ static LOCDATA spathi_desc =
 			},
 								{20,											   /* StartIndex */
 			 4,												   /* NumFrames */
-			 YOYO_ANIM,										   /* AnimFlags */
+			 YoyoAnim,										   /* AnimFlags */
 			 GameTicksPerSecond / 15, GameTicksPerSecond / 15, /* FrameRate */
 			 GameTicksPerSecond / 15, GameTicksPerSecond / 15, /* FrameRate */
 			 (1 << 5)},
 								{
-				24,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				24,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -99,9 +99,9 @@ static LOCDATA spathi_desc =
 
 
 								{
-				34,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				34,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -109,9 +109,9 @@ static LOCDATA spathi_desc =
 				(1 << 3),				/* BlockMask */
 			},
 								{
-				38,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				38,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -119,9 +119,9 @@ static LOCDATA spathi_desc =
 				0,						/* BlockMask */
 			},
 								{
-				41,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				41,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -177,7 +177,7 @@ static LOCDATA spathi_desc =
 static void
 ExitConversation(RESPONSE_REF Response)
 {
-	const uint8_t SpaCrew = ifEasyDifficulty(MAX_CREW_SIZE, 1);
+	const uint8_t SpaCrew = ifEasyDifficulty(MaxCrewSize, 1);
 	setSegue(Segue_peace);
 
 	if (PLAYER_SAID(Response, bye_ally_space))
@@ -245,7 +245,7 @@ ExitConversation(RESPONSE_REF Response)
 			AddEscortShips(SPATHI_SHIP, 1);
 			/* Make the Eluder escort captained by Fwiffo alone */
 			SetEscortCrewComplement(SPATHI_SHIP, SpaCrew,
-									NAME_OFFSET + NUM_CAPTAINS_NAMES);
+									NameOffset + NumCaptainsNames);
 		}
 	}
 	else if (PLAYER_SAID(Response, join_us_nomad))
@@ -951,14 +951,14 @@ init_spathi_comm(void)
 
 	uqm::lua().beginComm(nullptr, NullResource);
 
-	spathi_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	spathi_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	spathi_desc.AlienTextBaseline.y = 0;
-	spathi_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	spathi_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	// use alternate Fwiffo track if available
 	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1)
 	{
-		altResFlags |= USE_ALT_SONG;
+		altResFlags |= UseAltSong;
 	}
 
 	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1

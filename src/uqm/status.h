@@ -20,6 +20,10 @@
 #define UQM_STATUS_H_INCL_
 
 #include "races.h"
+#include "options/options.h"
+#include "globdata.h"
+
+inline auto ShipInfoHeight() { return RES_SCALE(65); }
 #include "core/misc/bittricks.h"
 
 #if 0 //defined(__cplusplus)
@@ -29,28 +33,27 @@ extern "C" {
 #define MENU_BOOL(a, b) (isPC(uqm::UQMOptions::read().whichMenu) ? (b) : (a))
 #define FONT_BOOL(a, b) (isPC(uqm::UQMOptions::read().whichFonts) ? (b) : (a))
 
-#define CREW_XOFFS RES_SCALE(4)
-#define ENERGY_XOFFS RES_SCALE(52)
-#define GAUGE_YOFFS (SHIP_INFO_HEIGHT - RES_SCALE(10))
-#define UNIT_WIDTH RES_SCALE(2)
-#define UNIT_HEIGHT RES_SCALE(1)
-#define STAT_WIDTH (UNIT_WIDTH * 2 + RES_SCALE(3))
-//(RES_SCALE (1) + UNIT_WIDTH + RES_SCALE (1) + UNIT_WIDTH + RES_SCALE (1))
+inline auto CrewXoffs() { return RES_SCALE(4); }
+inline auto EnergyXoffs() { return RES_SCALE(52); }
+inline auto GaugeYoffs() { return (ShipInfoHeight() - RES_SCALE(10)); }
+inline auto UnitWidth() { return RES_SCALE(2); }
+inline auto UnitHeight() { return RES_SCALE(1); }
+inline auto StatWidth() { return (UnitWidth() * 2 + RES_SCALE(3)); }
+//(RES_SCALE (1) + UnitWidth() + RES_SCALE (1) + UnitWidth() + RES_SCALE (1))
 
-#define SHIP_INFO_HEIGHT RES_SCALE(65)
-#define CAPTAIN_WIDTH RES_SCALE(55)
-#define CAPTAIN_HEIGHT RES_SCALE(30)
-#define CAPTAIN_XOFFS RES_SCALE(RES_DESCALE(STATUS_WIDTH - CAPTAIN_WIDTH) >> 1)
-#define CAPTAIN_YOFFS (SHIP_INFO_HEIGHT + RES_SCALE(MENU_BOOL(DOS_BOOL(4, 1), 1)))
+inline auto CaptainWidth() { return RES_SCALE(55); }
+inline auto CaptainHeight() { return RES_SCALE(30); }
+inline auto CaptainXoffs() { return RES_SCALE(RES_DESCALE(StatusWidth() - CaptainWidth()) >> 1); }
+inline auto CaptainYoffs() { return (ShipInfoHeight() + RES_SCALE(MENU_BOOL(DOS_BOOL(4, 1), 1))); }
 
-#define SHIP_STATUS_HEIGHT ((STATUS_HEIGHT >> 1) - SAFE_X)
-#define BAD_GUY_YOFFS 0
-#define GOOD_GUY_YOFFS SHIP_STATUS_HEIGHT
+inline auto ShipStatusHeight() { return ((StatusHeight() >> 1) - SafeX()); }
+inline constexpr auto BadGuyYoffs {0};
+inline auto GoodGuyYoffs() { return ShipStatusHeight(); }
 
-#define STARCON_TEXT_HEIGHT RES_SCALE(7)
-#define TINY_TEXT_HEIGHT RES_SCALE(9)
-#define BATTLE_CREW_X RES_SCALE(8)
-#define BATTLE_CREW_Y (RES_SCALE(64) - SAFE_Y)
+inline auto StarconTextHeight() { return RES_SCALE(7); }
+inline auto TinyTextHeight() { return RES_SCALE(9); }
+inline auto BattleCrewX() { return RES_SCALE(8); }
+inline auto BattleCrewY() { return (RES_SCALE(64) - SafeY()); }
 
 extern int16_t status_y_offsets[];
 

@@ -66,12 +66,12 @@ VelocitySquared(int16_t dx, int16_t dy)
 	return (uint32_t)((long)dx * dx + (long)dy * dy);
 }
 
-#define VELOCITY_SHIFT 5
-#define VELOCITY_SCALE (1 << VELOCITY_SHIFT)
+inline constexpr auto VelocityShift {5};
+inline constexpr auto VelocityScale {(1 << VelocityShift)};
 
 
-#define VELOCITY_TO_WORLD(v) ((v) >> VELOCITY_SHIFT)
-#define WORLD_TO_VELOCITY(l) ((l) << VELOCITY_SHIFT)
+#define VELOCITY_TO_WORLD(v) ((v) >> VelocityShift)
+#define WORLD_TO_VELOCITY(l) ((l) << VelocityShift)
 
 #if 0 //defined(__cplusplus)
 }

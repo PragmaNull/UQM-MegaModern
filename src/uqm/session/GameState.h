@@ -45,7 +45,7 @@ public:
 		return m_flagship;
 	}
 
-	// One of the files STARINFO_FILE, RANDGRPINFO_FILE and DEFGRPINFO_FILE.
+	// One of the files StarinfoFile, RandgrpinfoFile and DefgrpinfoFile.
 	[[nodiscard]] GAME_STATE_FILE& stateFile(int index) noexcept
 	{
 		return m_stateFiles[index];

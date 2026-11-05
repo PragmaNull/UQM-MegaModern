@@ -49,7 +49,7 @@ void DrawCurrentPlanetSphere(void)
 	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
 	GFXCONTEXT oldContext = SetContext(PlanetContext);
 
-	s.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
+	s.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1);
 	s.origin.y = PLANET_ORG_Y;
 
 	{ // re-render current frame
@@ -127,7 +127,7 @@ void DrawPlanetSphere(int x, int y, bool back)
 	// Draw background on static image and not during zoom
 	if (Orbit->BackFrame && back)
 	{
-		s.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
+		s.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1);
 		s.origin.y = PLANET_ORG_Y;
 		s.frame = Orbit->BackFrame;
 		DrawStamp(&s);
@@ -156,7 +156,7 @@ void DrawDefaultPlanetSphere(void)
 {
 	GFXCONTEXT oldContext {SetContext(PlanetContext)};
 	DrawPlanetSphere(
-		RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1), PLANET_ORG_Y, true);
+		RES_SCALE(OrigSisScreenWidth() >> 1), PLANET_ORG_Y, true);
 	SetContext(oldContext);
 }
 
@@ -431,9 +431,9 @@ void ZoomInPlanetSphere(void)
 		}
 
 		// start from beyond the screen
-		pt.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1)
+		pt.x = RES_SCALE(OrigSisScreenWidth() >> 1)
 			 + (int)(dx * (1.0 - scale)
-						 * RES_SCALE(ORIG_SIS_SCREEN_WIDTH * 6 / 10)
+						 * RES_SCALE(OrigSisScreenWidth() * 6 / 10)
 					 + 0.5);
 		pt.y = PLANET_ORG_Y + (int)(dy * (1.0 - scale) * (RES_SCALE(SCAN_SCREEN_HEIGHT) * 6 / 10) + 0.5);
 
@@ -483,7 +483,7 @@ void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 	if (isDifficulty(uqm::Difficulty::Hard) && Now >= TimeOutClock)
 	{
 		GameClockTick();
-		TimeOutClock = Now + CLOCK_FRAME_RATE;
+		TimeOutClock = Now + ClockFrameRate;
 	}
 
 	if (Now >= NextTime)
@@ -515,7 +515,7 @@ renderTintFrame(Color tintColor)
 	GFXRECT r;
 	double is_red {NAN};
 
-	if (sameColor(BRIGHT_RED_COLOR, tintColor))
+	if (sameColor(BrightRedColor, tintColor))
 	{
 		is_red = 0.75;
 	}
@@ -571,7 +571,7 @@ void DrawPlanet(int tintY, Color tintColor)
 	s.origin.y = 0;
 
 	BatchGraphics();
-	if (sameColor(tintColor, BLACK_COLOR))
+	if (sameColor(tintColor, BlackColor))
 	{ // no tint -- just draw the surface
 		s.frame = pSolarSysState->TopoFrame;
 		DrawStamp(&s);
@@ -622,7 +622,7 @@ void DrawPlanet(int tintY, Color tintColor)
 				edge.corner.y--;
 			}
 
-			tintColor = BLACK_COLOR;
+			tintColor = BlackColor;
 			edge.corner.y = clipRect.extent.height + 1;
 
 			for (i = 0x40; i > 0; i -= 8)
@@ -630,7 +630,7 @@ void DrawPlanet(int tintY, Color tintColor)
 				tintColor.a = i;
 				SetContextForeGroundColor(tintColor);
 				DrawFilledRectangle(&edge);
-				if (!IS_HD)
+				if (!IsHd())
 				{
 					break;
 				}

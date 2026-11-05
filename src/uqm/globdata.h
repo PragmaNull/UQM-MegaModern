@@ -20,6 +20,7 @@
 #define UQM_GLOBDATA_H_
 
 #include "options/OptionTypes.h"
+#include "options/options.h"
 #include "clock.h"
 #include "libs/gfxlib.h"
 #include "libs/reslib.h"
@@ -71,7 +72,7 @@ typedef struct
 } SPEECH_DIGIT;
 
 // this accomodates up to "billions" in english
-#define MAX_SPEECH_DIGITS 7
+inline constexpr auto MaxSpeechDigits {7};
 
 typedef struct
 {
@@ -80,13 +81,12 @@ typedef struct
 	// slots for each digit in numbers
 	// teens is exception
 	// 0-9, 10-19, ..20-90, ..100-900, etc.
-	SPEECH_DIGIT Digits[MAX_SPEECH_DIGITS];
+	SPEECH_DIGIT Digits[MaxSpeechDigits];
 } NUMBER_SPEECH_DESC;
 const typedef NUMBER_SPEECH_DESC* NUMBER_SPEECH;
 
 typedef uint32_t LDAS_FLAGS;
-#define LDASF_NONE ((LDAS_FLAGS)0)
-#define LDASF_USE_ALTERNATE ((LDAS_FLAGS)(1 << 0))
+
 
 // BW: had to move that from commglue.h to here because now LOCDATA features it
 typedef enum
@@ -153,12 +153,12 @@ typedef struct
 	RESOURCE ConversationPhrasesRes;
 
 	uint16_t NumAnimations;
-	ANIMATION_DESC AlienAmbientArray[MAX_ANIMATIONS];
+	ANIMATION_DESC AlienAmbientArray[MaxAnimations];
 
 	// Transition animation to/from talking state;
-	// the first frame is neutral (sort of like YOYO_ANIM)
+	// the first frame is neutral (sort of like YoyoAnim)
 	ANIMATION_DESC AlienTransitionDesc;
-	// Talking animation, like RANDOM_ANIM, except random frames
+	// Talking animation, like RandomAnim, except random frames
 	// always alternate with a neutral frame;
 	// the first frame is neutral
 	ANIMATION_DESC AlienTalkDesc;
@@ -207,19 +207,19 @@ enum
 	NUM_DEVICES
 };
 
-#define YEARS_TO_KOHRAH_VICTORY (uqm::UQMOptions::read().deCleansing ? 100 : 4)
+inline auto YearsToKohrahVictory() { return (uqm::UQMOptions::read().deCleansing ? 100 : 4); }
 
 
 // Values for GAME_STATE.glob_flags:
-#define READ_SPEED_MASK ((1 << 3) - 1)
-#define NUM_READ_SPEEDS 5
-#define COMBAT_SPEED_SHIFT 6
-#define COMBAT_SPEED_MASK (((1 << 2) - 1) << COMBAT_SPEED_SHIFT)
-#define NUM_COMBAT_SPEEDS 4
+inline constexpr auto ReadSpeedMask {((1 << 3) - 1)};
+inline constexpr auto NumReadSpeeds {5};
+inline constexpr auto CombatSpeedShift {6};
+inline constexpr auto CombatSpeedMask {(((1 << 2) - 1) << CombatSpeedShift)};
+inline constexpr auto NumCombatSpeeds {4};
 
-#define MUSIC_DISABLED (1 << 3)
-#define SOUND_DISABLED (1 << 4)
-#define CYBORG_ENABLED (1 << 5)
+inline constexpr auto MusicDisabled {(1 << 3)};
+inline constexpr auto SoundDisabled {(1 << 4)};
+inline constexpr auto CyborgEnabled {(1 << 5)};
 
 enum
 {
@@ -260,11 +260,11 @@ namespace uqm
 #define GLOBAL(f) uqm::gameState().game().f
 #define GLOBAL_SIS(f) uqm::gameState().sis().f
 
-#define MAX_ENCOUNTERS 16
-#define MAX_BATTLE_GROUPS 32
+inline constexpr auto MaxEncounters {16};
+inline constexpr auto MaxBattleGroups {32};
 
 /* DEFGRP enumeration. These identify scripted TrueSpace encounters
- * more consistently than offsets into the DEFGRPINFO_FILE state
+ * more consistently than offsets into the DefgrpinfoFile state
  * file. */
 enum
 {
@@ -367,14 +367,14 @@ inline T ifHardDifficulty(T trueVal, T falseVal) { return isDifficulty(uqm::Diff
 //																				   "CYO"))
 
 // Extended
-#define EXTENDED (GLOBAL_SIS(Extended) ? true : false)
-#define EXT_CASE(a, b) (!EXTENDED ? (a) : (b))
+inline auto IsExtended() { return (GLOBAL_SIS(Extended) ? true : false); }
+#define EXT_CASE(a, b) (!IsExtended() ? (a) : (b))
 
 // Nomad
 static inline uqm::NomadMode getNomadMode() { return GLOBAL_SIS(Nomad); }
 
 // Storage Queue
-#define STORAGE_Q (uqm::UQMOptions::read().shipStore || isDifficulty(uqm::Difficulty::Hard) || uqm::UQMOptions::read().fleetPointSys)
+inline auto StorageQ() { return (uqm::UQMOptions::read().shipStore || isDifficulty(uqm::Difficulty::Hard) || uqm::UQMOptions::read().fleetPointSys); }
 
 // The stored value for no location. The location states are 16 bits; they hold int16_t coordinates.
 constexpr uint16_t c_noLocation {0xffff};
@@ -445,12 +445,12 @@ ZeroAdvancedAutoPilot(void)
 #define BOOL_STR(a) ((a) ? "True" : "False")
 
 // Earth Coordinates
-#define EARTH_OUTER_X -725
-#define EARTH_OUTER_Y 597
+inline constexpr auto EarthOuterX {-725};
+inline constexpr auto EarthOuterY {597};
 
 // Druuge Crew Values
-#define MIN_SOLD difficultyCase(200, 100, 10)
-#define MAX_SOLD difficultyCase(500, 250, 25)
+inline auto MinSold() { return difficultyCase(200, 100, 10); }
+inline auto MaxSold() { return difficultyCase(500, 250, 25); }
 
 static inline bool
 IsHomeworldKnown(uint32_t homeworld)

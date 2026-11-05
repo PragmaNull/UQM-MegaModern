@@ -29,7 +29,7 @@
 
 // Core characteristics
 #define MAX_CREW 20
-#define MAX_ENERGY MAX_ENERGY_SIZE
+#define MAX_ENERGY MaxEnergySize
 #define ENERGY_REGENERATION 1
 #define ENERGY_WAIT 4
 #define MAX_THRUST 36
@@ -60,14 +60,14 @@
 #define CMISSILE_DAMAGE 0
 #define CMISSILE_OFFSET RES_SCALE(4)
 
-// HD
+// HdResolutionFactor
 #define PUMPUP_SPEED_HD RES_SCALE(PUMPUP_SPEED)
 
 static RACE_DESC melnorme_desc =
 	{
 		{/* SHIP_INFO */
 		 "trader",
-		 FIRES_FORE,
+		 FiresFore,
 		 18, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -80,8 +80,8 @@ static RACE_DESC melnorme_desc =
 			INFINITE_RADIUS, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
-				MAX_X_UNIVERSE >> 1,
-				MAX_Y_UNIVERSE >> 1,
+				MaxXUniverse >> 1,
+				MaxYUniverse >> 1,
 			},
 		 },
 		{
@@ -158,7 +158,7 @@ pump_up_preprocess(ELEMENT* ElementPtr)
 		ElementPtr->next.image.frame = SetAbsFrameIndex(
 			ElementPtr->current.image.frame, frame_index);
 
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 	}
 }
 
@@ -167,7 +167,7 @@ static uint16_t initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[]);
 static void
 pump_up_postprocess(ELEMENT* ElementPtr)
 {
-	if (ElementPtr->state_flags & APPEARING)
+	if (ElementPtr->state_flags & Appearing)
 	{
 		ZeroVelocityComponents(&ElementPtr->velocity);
 	}
@@ -236,7 +236,7 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 		}
 
 		if (StarShipPtr->cur_status_flags & StarShipPtr->old_status_flags
-			& WEAPON)
+			& WeaponFlag)
 		{
 			StarShipPtr->weapon_counter = WEAPON_WAIT;
 		}
@@ -262,8 +262,8 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 		PutElement(hPumpUp);
 
 		SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
-					NO_PRIM);
-		ElementPtr->state_flags |= NONSOLID;
+					NoPrim);
+		ElementPtr->state_flags |= Nonsolid;
 	}
 }
 
@@ -278,7 +278,7 @@ animate(ELEMENT* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 
 		ElementPtr->turn_wait = ElementPtr->next_turn;
 	}
@@ -333,7 +333,7 @@ initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = MELNORME_OFFSET;
 	MissileBlock.speed = DISPLAY_TO_WORLD(MELNORME_OFFSET);
 	MissileBlock.hit_points = PUMPUP_DAMAGE;
@@ -382,17 +382,17 @@ confuse_preprocess_april(ELEMENT* ElementPtr)
 		};
 	const size_t colorTabCount = std::size(colorTable);
 
-	if (!(ElementPtr->state_flags & NONSOLID))
+	if (!(ElementPtr->state_flags & Nonsolid))
 	{
 		ElementPtr->next.image.frame = SetAbsFrameIndex(
 			ElementPtr->current.image.frame,
 			(GetFrameIndex(ElementPtr->current.image.frame) + 1) & 7);
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 	}
 	else if (ElementPtr->hTarget == 0)
 	{
 		ElementPtr->life_span = 0;
-		ElementPtr->state_flags |= DISAPPEARING;
+		ElementPtr->state_flags |= Disappearing;
 	}
 	else
 	{
@@ -417,7 +417,7 @@ confuse_preprocess_april(ELEMENT* ElementPtr)
 			GetElementStarShip(eptr, &StarShipPtr);
 			StarShipPtr->ship_input_state =
 				(StarShipPtr->ship_input_state
-				 & ~(LEFT | RIGHT | SPECIAL))
+				 & ~(LeftFlag | RightFlag | SpecialFlag))
 				| ElementPtr->turn_wait;
 
 			if (ElementPtr->life_span > 1)
@@ -445,7 +445,7 @@ confuse_preprocess_april(ELEMENT* ElementPtr)
 			{
 				LockElement(hEffect, &eptr);
 				eptr->playerNr = ElementPtr->playerNr;
-				eptr->state_flags = FINITE_LIFE | NONSOLID | CHANGING;
+				eptr->state_flags = FiniteLife | Nonsolid | Changing;
 				eptr->life_span = 1;
 				eptr->current = eptr->next = ElementPtr->next;
 				eptr->preprocess_func = confuse_preprocess_april;
@@ -466,17 +466,17 @@ confuse_preprocess_april(ELEMENT* ElementPtr)
 static void
 confuse_preprocess(ELEMENT* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & NONSOLID))
+	if (!(ElementPtr->state_flags & Nonsolid))
 	{
 		ElementPtr->next.image.frame = SetAbsFrameIndex(
 			ElementPtr->current.image.frame,
 			(GetFrameIndex(ElementPtr->current.image.frame) + 1) & 7);
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 	}
 	else if (ElementPtr->hTarget == 0)
 	{
 		ElementPtr->life_span = 0;
-		ElementPtr->state_flags |= DISAPPEARING;
+		ElementPtr->state_flags |= Disappearing;
 	}
 	else
 	{
@@ -501,7 +501,7 @@ confuse_preprocess(ELEMENT* ElementPtr)
 			GetElementStarShip(eptr, &StarShipPtr);
 			StarShipPtr->ship_input_state =
 				(StarShipPtr->ship_input_state
-				 & ~(LEFT | RIGHT | SPECIAL))
+				 & ~(LeftFlag | RightFlag | SpecialFlag))
 				| ElementPtr->turn_wait;
 
 			HELEMENT hEffect {AllocElement()};
@@ -509,7 +509,7 @@ confuse_preprocess(ELEMENT* ElementPtr)
 			{
 				LockElement(hEffect, &eptr);
 				eptr->playerNr = ElementPtr->playerNr;
-				eptr->state_flags = FINITE_LIFE | NONSOLID | CHANGING;
+				eptr->state_flags = FiniteLife | Nonsolid | Changing;
 				eptr->life_span = 1;
 				eptr->current = eptr->next = ElementPtr->next;
 				eptr->preprocess_func = confuse_preprocess;
@@ -533,7 +533,7 @@ static void
 confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 					ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	if (ElementPtr1->state_flags & PLAYER_SHIP)
+	if (ElementPtr1->state_flags & PlayerShip)
 	{
 		HELEMENT hConfusionElement {};
 		HELEMENT hNextElement {};
@@ -547,7 +547,7 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			LockElement(hConfusionElement, &ConfusionPtr);
 			if (elementsOfSamePlayer(ConfusionPtr, ElementPtr0)
 				&& ConfusionPtr->current.image.farray == StarShipPtr->RaceDescPtr->ship_data.special
-				&& (ConfusionPtr->state_flags & NONSOLID))
+				&& (ConfusionPtr->state_flags & Nonsolid))
 			{
 				UnlockElement(hConfusionElement);
 				break;
@@ -569,11 +569,11 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 					ConfusionPtr->current.image.frame, 8);
 				ConfusionPtr->next = ConfusionPtr->current;
 				ConfusionPtr->playerNr = ElementPtr0->playerNr;
-				ConfusionPtr->state_flags = FINITE_LIFE | NONSOLID | CHANGING;
+				ConfusionPtr->state_flags = FiniteLife | Nonsolid | Changing;
 				ConfusionPtr->preprocess_func = confuse_preprocess;
 				SetPrimType(
 					&DisplayArray[ConfusionPtr->PrimIndex],
-					NO_PRIM);
+					NoPrim);
 
 				/*if (AprilFools)
 				{
@@ -594,14 +594,14 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				ConfusionPtr->life_span = 400;
 			}
 			ConfusionPtr->turn_wait =
-				(uint8_t)(1 << ((uint8_t)uqm::random().next() & 1)); /* LEFT or RIGHT */
+				(uint8_t)(1 << ((uint8_t)uqm::random().next() & 1)); /* LeftFlag or RightFlag */
 
 			UnlockElement(hConfusionElement);
 		}
 
 		ElementPtr0->hit_points = 0;
 		ElementPtr0->life_span = 0;
-		ElementPtr0->state_flags |= DISAPPEARING | COLLISION | NONSOLID;
+		ElementPtr0->state_flags |= Disappearing | Collision | Nonsolid;
 	}
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
@@ -620,7 +620,7 @@ initialize_confusion(ELEMENT* ShipPtr, HELEMENT ConfusionArray[])
 	ConfusionBlock.index = 0;
 	ConfusionBlock.face = StarShipPtr->ShipFacing;
 	ConfusionBlock.sender = ShipPtr->playerNr;
-	ConfusionBlock.flags = IGNORE_SIMILAR;
+	ConfusionBlock.flags = IgnoreSimilar;
 	ConfusionBlock.pixoffs = MELNORME_OFFSET;
 	ConfusionBlock.speed = CMISSILE_SPEED;
 	ConfusionBlock.hit_points = CMISSILE_HITS;
@@ -656,7 +656,7 @@ initialize_test_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = MELNORME_OFFSET;
 	MissileBlock.speed = PUMPUP_SPEED_HD;
 	MissileBlock.hit_points = PUMPUP_DAMAGE;
@@ -690,7 +690,7 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	{
 		if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SPECIAL_ENERGY_COST
 																   + WEAPON_ENERGY_COST
-			&& !(StarShipPtr->old_status_flags & WEAPON))
+			&& !(StarShipPtr->old_status_flags & WeaponFlag))
 		{
 			lpEvalDesc->MoveState = ENTICE;
 		}
@@ -700,7 +700,7 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 			GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 			if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-				  & IMMEDIATE_WEAPON))
+				  & ImmediateWeapon))
 			{
 				lpEvalDesc->MoveState = PURSUE;
 			}
@@ -713,12 +713,12 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			|| ((StarShipPtr->special_counter
 				 || StarShipPtr->RaceDescPtr->ship_info.energy_level >= SPECIAL_ENERGY_COST
 																			+ WEAPON_ENERGY_COST)
-				&& !(StarShipPtr->ship_input_state & WEAPON))))
+				&& !(StarShipPtr->ship_input_state & WeaponFlag))))
 	{
-		StarShipPtr->ship_input_state ^= WEAPON;
+		StarShipPtr->ship_input_state ^= WeaponFlag;
 	}
 
-	StarShipPtr->ship_input_state &= ~SPECIAL;
+	StarShipPtr->ship_input_state &= ~SpecialFlag;
 	if (StarShipPtr->special_counter == 0
 		&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= SPECIAL_ENERGY_COST)
 	{
@@ -732,14 +732,14 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		--ShipPtr->thrust_wait;
 		--ShipPtr->turn_wait;
 
-		if (StarShipPtr->ship_input_state & WEAPON)
+		if (StarShipPtr->ship_input_state & WeaponFlag)
 		{
-			StarShipPtr->ship_input_state &= ~WEAPON;
-			StarShipPtr->ship_input_state |= SPECIAL;
+			StarShipPtr->ship_input_state &= ~WeaponFlag;
+			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
 
 		StarShipPtr->ship_input_state = (unsigned char)(old_input_state
-														| (StarShipPtr->ship_input_state & SPECIAL));
+														| (StarShipPtr->ship_input_state & SpecialFlag));
 	}
 
 	StarShipPtr->weapon_counter = old_count;
@@ -753,7 +753,7 @@ melnorme_postprocess(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
@@ -780,7 +780,7 @@ melnorme_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_melnorme(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		melnorme_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		melnorme_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);

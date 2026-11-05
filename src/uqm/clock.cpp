@@ -117,7 +117,7 @@ bool GameClockRunning(void)
 
 void SetGameClockRate(uint16_t seconds_per_day)
 {
-	int16_t new_day_in_ticks = (int16_t)(seconds_per_day * CLOCK_BASE_FRAMERATE);
+	int16_t new_day_in_ticks = (int16_t)(seconds_per_day * ClockBaseFramerate);
 	if (uqm::UQMOptions::read().timeDilationPct != 100) [[unlikely]]
 	{
 		new_day_in_ticks = static_cast<int16_t>(new_day_in_ticks * (uqm::UQMOptions::read().timeDilationPct / 100.f));

@@ -26,7 +26,7 @@
 #if 0 //defined(__cplusplus)
 extern "C" {
 #endif
-// for NUM_PLAYERS
+// for NumPlayers
 
 typedef struct BattleInputBuffer
 {

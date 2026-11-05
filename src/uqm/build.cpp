@@ -261,7 +261,7 @@ AddEscortShips(RACE_ID race, int16_t count)
 		HSHIPFRAG hOldShip {};
 		SHIP_FRAGMENT* StarShipPtr {};
 
-		if (!STORAGE_Q)
+		if (!StorageQ())
 		{
 			hStarShip = CloneShipFragment(race, &GLOBAL(built_ship_q), 0);
 		}
@@ -300,7 +300,7 @@ AddEscortShips(RACE_ID race, int16_t count)
 		InsertQueue(&GLOBAL(built_ship_q), hStarShip, hOldShip);
 	}
 
-	DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
+	DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 	return i;
 }
 
@@ -357,7 +357,7 @@ bool ShipsReady(RACE_ID race)
 		default:
 			return false;
 	}
-	return ((i = (uqm::gameState().clock().year() - START_YEAR) - year) > 0) || (i == 0 && (((i = uqm::gameState().clock().month() - month) > 0) || (i == 0 && uqm::gameState().clock().day() > day)));
+	return ((i = (uqm::gameState().clock().year() - StartYear) - year) > 0) || (i == 0 && (((i = uqm::gameState().clock().month() - month) > 0) || (i == 0 && uqm::gameState().clock().day() > day)));
 }
 
 void PrepareShip(RACE_ID race)
@@ -370,7 +370,7 @@ void PrepareShip(RACE_ID race)
 	{
 		di = 28;
 	}
-	yi = (uint8_t)(uqm::gameState().clock().year() - START_YEAR) + 1;
+	yi = (uint8_t)(uqm::gameState().clock().year() - StartYear) + 1;
 	switch (race)
 	{
 		case PKUNK_SHIP:
@@ -598,7 +598,7 @@ EscortFeasibilityStudy(RACE_ID race)
 		return 0;
 	}
 
-	return (MAX_BUILT_SHIPS - CountLinks(&GLOBAL(built_ship_q)) + (STORAGE_Q ? MAX_STOWED_SHIPS - CountLinks(&GLOBAL(stowed_ship_q)) : 0));
+	return (MaxBuiltShips - CountLinks(&GLOBAL(built_ship_q)) + (StorageQ() ? MaxStowedShips - CountLinks(&GLOBAL(stowed_ship_q)) : 0));
 }
 
 /*
@@ -642,7 +642,7 @@ RemoveSomeEscortShips(RACE_ID race, uint16_t count)
 	{
 		return 0;
 	}
-	if (!hStarShip && count > MAX_BUILT_SHIPS)
+	if (!hStarShip && count > MaxBuiltShips)
 	{
 		ship_q = &GLOBAL(stowed_ship_q);
 		hStarShip = GetHeadLink(ship_q);
@@ -666,7 +666,7 @@ RemoveSomeEscortShips(RACE_ID race, uint16_t count)
 				break;
 			}
 		}
-		if (count > MAX_BUILT_SHIPS && !hNextShip && ship_q == &GLOBAL(built_ship_q))
+		if (count > MaxBuiltShips && !hNextShip && ship_q == &GLOBAL(built_ship_q))
 		{
 			ship_q = &GLOBAL(stowed_ship_q);
 			hNextShip = GetHeadLink(ship_q);
@@ -674,7 +674,7 @@ RemoveSomeEscortShips(RACE_ID race, uint16_t count)
 	}
 
 	// Update the display.
-	DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
+	DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 
 	return count;
 }
@@ -1034,27 +1034,27 @@ upgradeSwitch(int upgrade, int val)
 			SET_GAME_STATE(LANDER_SHIELDS, LanderShields);
 			break;
 		case 7:
-			ModuleCost = var ? 4000 / MODULE_COST_SCALE : 0;
+			ModuleCost = var ? 4000 / ModuleCostScale : 0;
 			GLOBAL(ModuleCost[ANTIMISSILE_DEFENSE]) = ModuleCost;
 			break;
 		case 8:
-			ModuleCost = var ? 4000 / MODULE_COST_SCALE : 0;
+			ModuleCost = var ? 4000 / ModuleCostScale : 0;
 			GLOBAL(ModuleCost[BLASTER_WEAPON]) = ModuleCost;
 			break;
 		case 9:
-			ModuleCost = var ? 1000 / MODULE_COST_SCALE : 0;
+			ModuleCost = var ? 1000 / ModuleCostScale : 0;
 			GLOBAL(ModuleCost[HIGHEFF_FUELSYS]) = ModuleCost;
 			break;
 		case 10:
-			ModuleCost = var ? 5000 / MODULE_COST_SCALE : 0;
+			ModuleCost = var ? 5000 / ModuleCostScale : 0;
 			GLOBAL(ModuleCost[TRACKING_SYSTEM]) = ModuleCost;
 			break;
 		case 11:
-			ModuleCost = var ? 6000 / MODULE_COST_SCALE : 0;
+			ModuleCost = var ? 6000 / ModuleCostScale : 0;
 			GLOBAL(ModuleCost[CANNON_WEAPON]) = ModuleCost;
 			break;
 		case 12:
-			ModuleCost = var ? 4000 / MODULE_COST_SCALE : 0;
+			ModuleCost = var ? 4000 / ModuleCostScale : 0;
 			GLOBAL(ModuleCost[SHIVA_FURNACE]) = ModuleCost;
 			break;
 		default: // Shouldn't happen, do nothing
@@ -1088,7 +1088,7 @@ cheatAddRemoveUpgrades(void)
 
 void loadGameCheats(void)
 {
-	if (EXTENDED && !uqm::isStarSeed())
+	if (IsExtended() && !uqm::isStarSeed())
 	{
 		plot_map[MELNORME0_DEFINED].star->Type =
 			MAKE_STAR(SUPER_GIANT_STAR, ORANGE_BODY, -1);
@@ -1135,7 +1135,7 @@ void loadGameCheats(void)
 uint16_t
 Jitter(uint16_t str, uint16_t rand_val)
 {
-	return (str * (SPHERE_RADIUS_INCREMENT / 2) * (255 - (uint16_t)sqrt(rand_val)) / 256) * 2 / 3;
+	return (str * (SphereRadiusIncrement / 2) * (255 - (uint16_t)sqrt(rand_val)) / 256) * 2 / 3;
 }
 
 void JitDebug(FLEET_INFO* FleetPtr, uint16_t rand_val_x, uint16_t rand_val_y)
@@ -1152,8 +1152,8 @@ void JitDebug(FLEET_INFO* FleetPtr, uint16_t rand_val_x, uint16_t rand_val_y)
 	fmt::print(stderr, "{} Fleet {}: Actual Str {}; WarEra Str {}; ",
 			   fleet_name[FleetPtr->SpeciesID > 25 ? 0 : FleetPtr->SpeciesID],
 			   (int)FleetPtr->SpeciesID,
-			   FleetPtr->actual_strength * SPHERE_RADIUS_INCREMENT / 2,
-			   WarEraStrength(FleetPtr->SpeciesID) * SPHERE_RADIUS_INCREMENT / 2);
+			   FleetPtr->actual_strength * SphereRadiusIncrement / 2,
+			   WarEraStrength(FleetPtr->SpeciesID) * SphereRadiusIncrement / 2);
 	fmt::print(stderr, "Rand X {} ({}); Rand Y {} ({})\n",
 			   rand_val_x, (255 - (uint16_t)sqrt(rand_val_x)),
 			   rand_val_y, (255 - (uint16_t)sqrt(rand_val_y)));
@@ -1319,33 +1319,33 @@ WarEraStrength(SPECIES_ID SpeciesID)
 	switch (SpeciesID)
 	{
 		case EARTHLING_ID:
-			return 460 / SPHERE_RADIUS_INCREMENT * 2;
+			return 460 / SphereRadiusIncrement * 2;
 		case PKUNK_ID:
-			return 350 / SPHERE_RADIUS_INCREMENT * 2;
+			return 350 / SphereRadiusIncrement * 2;
 		case SHOFIXTI_ID:
-			return 329 / SPHERE_RADIUS_INCREMENT * 2;
+			return 329 / SphereRadiusIncrement * 2;
 		case SPATHI_ID:
-			return 1007 / SPHERE_RADIUS_INCREMENT * 2;
+			return 1007 / SphereRadiusIncrement * 2;
 		case THRADDASH_ID:
-			return 723 / SPHERE_RADIUS_INCREMENT * 2;
+			return 723 / SphereRadiusIncrement * 2;
 		case VUX_ID:
-			return 572 / SPHERE_RADIUS_INCREMENT * 2;
+			return 572 / SphereRadiusIncrement * 2;
 		case YEHAT_ID:
-			return 1029 / SPHERE_RADIUS_INCREMENT * 2;
+			return 1029 / SphereRadiusIncrement * 2;
 		case DRUUGE_ID:
-			return 745 / SPHERE_RADIUS_INCREMENT * 2;
+			return 745 / SphereRadiusIncrement * 2;
 		case ILWRATH_ID:
-			return 470 / SPHERE_RADIUS_INCREMENT * 2;
+			return 470 / SphereRadiusIncrement * 2;
 		case MYCON_ID:
-			return 591 / SPHERE_RADIUS_INCREMENT * 2;
+			return 591 / SphereRadiusIncrement * 2;
 		case UMGAH_ID:
-			return 506 / SPHERE_RADIUS_INCREMENT * 2;
+			return 506 / SphereRadiusIncrement * 2;
 		case ANDROSYNTH_ID:
-			return 504 / SPHERE_RADIUS_INCREMENT * 2;
+			return 504 / SphereRadiusIncrement * 2;
 		case CHENJESU_ID:
-			return 657 / SPHERE_RADIUS_INCREMENT * 2;
+			return 657 / SphereRadiusIncrement * 2;
 		case MMRNMHRM_ID:
-			return 482 / SPHERE_RADIUS_INCREMENT * 2;
+			return 482 / SphereRadiusIncrement * 2;
 		default:
 			return 0;
 	}
@@ -1737,8 +1737,8 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 			break;
 		case ZOQFOTPIK_ID:		 // ZoqFot jitter is inverted (str - jit) away from
 			location = GFXPOINT {// KA/UQ zone, then /2, gives 16% - 50% jit
-								 plotmap[home].star_pt.x + AWAY_X(SAMATRA_DEFINED) * (FleetPtr->actual_strength * SPHERE_RADIUS_INCREMENT / 2 - Jitter(strength, rand_val_x)) / 2,
-								 plotmap[home].star_pt.y + AWAY_Y(SAMATRA_DEFINED) * (FleetPtr->actual_strength * SPHERE_RADIUS_INCREMENT / 2 - Jitter(strength, rand_val_y)) / 2};
+								 plotmap[home].star_pt.x + AWAY_X(SAMATRA_DEFINED) * (FleetPtr->actual_strength * SphereRadiusIncrement / 2 - Jitter(strength, rand_val_x)) / 2,
+								 plotmap[home].star_pt.y + AWAY_Y(SAMATRA_DEFINED) * (FleetPtr->actual_strength * SphereRadiusIncrement / 2 - Jitter(strength, rand_val_y)) / 2};
 			break;
 		case SYREEN_ID:
 			if (visit == MYCON_TRAP_DEFINED)
@@ -1774,17 +1774,17 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 	{
 		location.x = 0;
 	}
-	if (location.x >= MAX_X_UNIVERSE)
+	if (location.x >= MaxXUniverse)
 	{
-		location.x = MAX_X_UNIVERSE - 1;
+		location.x = MaxXUniverse - 1;
 	}
 	if (location.y < 0)
 	{
 		location.y = 0;
 	}
-	if (location.y >= MAX_Y_UNIVERSE)
+	if (location.y >= MaxYUniverse)
 	{
-		location.y = MAX_Y_UNIVERSE - 1;
+		location.y = MaxYUniverse - 1;
 	}
 
 #ifdef DEBUG_STARSEED

@@ -33,11 +33,11 @@ static LOCDATA syreen_desc =
 		nullptr, /* uninit_encounter_func */
 		SYREEN_PMAP_ANIM, /* AlienFrame */
 		SYREEN_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		SYREEN_COLOR_MAP, /* AlienColorMap */
@@ -52,9 +52,9 @@ static LOCDATA syreen_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				5,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				5,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -62,9 +62,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				7,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				7,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -72,9 +72,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				9,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				9,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -82,9 +82,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				11,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				11,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -92,9 +92,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				13,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				13,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -102,9 +102,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				15,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				15,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -112,9 +112,9 @@ static LOCDATA syreen_desc =
 				(1 << 12),				/* BlockMask */
 			},
 								{
-				17,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				17,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -122,9 +122,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				19,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				19,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -132,9 +132,9 @@ static LOCDATA syreen_desc =
 				(1 << 13),
 			},
 								{
-				21,			 /* StartIndex */
-				6,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				21,			/* StartIndex */
+				6,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -142,9 +142,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				27,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				27,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -152,9 +152,9 @@ static LOCDATA syreen_desc =
 				(1 << 14),				/* BlockMask */
 			},
 								{
-				31,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				31,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -162,9 +162,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				37,			 /* StartIndex */
-				4,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				37,			/* StartIndex */
+				4,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -172,9 +172,9 @@ static LOCDATA syreen_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				41,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				41,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -184,8 +184,8 @@ static LOCDATA syreen_desc =
 								{
 				44, /* StartIndex */
 				4,	/* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 6,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -195,8 +195,8 @@ static LOCDATA syreen_desc =
 								{
 				48, /* StartIndex */
 				3,	/* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -245,8 +245,8 @@ static FILTER_DESC syreen_filters =
 				1,	/* Opacity index */
 				-1, /* Frame index */
 				DRAW_ALPHA,
-				/* DrawKind*/	  //maybe try multiply?
-				SWITCH_OFF_ANIMS, /* Flags */
+				/* DrawKind*/	//maybe try multiply?
+				SwitchOffAnims, /* Flags */
 			},
 								  }
 };
@@ -307,7 +307,7 @@ FriendlyExit(RESPONSE_REF R)
 
 		AlienTalkSegue(2);
 
-		CommData.AlienTextFColor = WHITE_COLOR;
+		CommData.AlienTextFColor = WhiteColor;
 		FadeScreen(FadeAllToBlack, TimePeriod {});
 
 		DrawSISFrame();
@@ -321,7 +321,7 @@ FriendlyExit(RESPONSE_REF R)
 
 		BlockTalkingAnim(1, 2); // Several hours later block (New)
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			SwitchSequences(true);
 			EnableTalkingAnim(true);
@@ -429,16 +429,16 @@ Foreplay(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 					  c_gameSecond);
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			EngageFilters(&syreen_filters);
 		}
 
-		/*if (!EXTENDED)
+		/*if (!IsExtended())
 			{
 				CommData.AlienFrame = SetAbsFrameIndex
 					(CommData.AlienFrame, 63);
-				CommData.AlienTalkDesc.AnimFlags |= PAUSE_TALKING;
+				CommData.AlienTalkDesc.AnimFlags |= PauseTalking;
 				RunOneTimeSequence(16, 0);
 		}*/
 		// For future ideas maybe
@@ -900,7 +900,7 @@ PlanAmbush(RESPONSE_REF R)
 
 	// Send ambush fleet to Organon.  EncounterPercent for the
 	// Syreen is 0, so this is purely decorative.
-	if (EXTENDED)
+	if (IsExtended())
 	{
 		HFLEETINFO hSyreen =
 			GetStarShipFromIndex(&GLOBAL(avail_race_q), SYREEN_SHIP);
@@ -909,7 +909,7 @@ PlanAmbush(RESPONSE_REF R)
 
 		if (SyreenPtr)
 		{
-			SyreenPtr->actual_strength = 300 / SPHERE_RADIUS_INCREMENT * 2;
+			SyreenPtr->actual_strength = 300 / SphereRadiusIncrement * 2;
 			SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, HOME);
 			StartSphereTracking(SYREEN_SHIP);
 			const GFXPOINT loc = SeedFleetLocation(SyreenPtr, plot_map,
@@ -1089,9 +1089,9 @@ init_syreen_comm(void)
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	syreen_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	syreen_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	syreen_desc.AlienTextBaseline.y = 0;
-	syreen_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	syreen_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	setSegue(Segue_peace);
 	LOCDATA* retval {&syreen_desc};

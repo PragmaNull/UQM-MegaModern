@@ -43,7 +43,7 @@ void ReadGroupHeader(GAME_STATE_FILE* fp, GROUP_HEADER* pGH)
 	sread_8(fp, nullptr); /* padding */
 	sread_16(fp, &pGH->star_index);
 	sread_16(fp, &pGH->year_index);
-	sread_a32(fp, pGH->GroupOffset, NUM_SAVED_BATTLE_GROUPS + 1);
+	sread_a32(fp, pGH->GroupOffset, NumSavedBattleGroups + 1);
 }
 
 void WriteGroupHeader(GAME_STATE_FILE* fp, const GROUP_HEADER* pGH)
@@ -54,7 +54,7 @@ void WriteGroupHeader(GAME_STATE_FILE* fp, const GROUP_HEADER* pGH)
 	swrite_8(fp, 0); /* padding */
 	swrite_16(fp, pGH->star_index);
 	swrite_16(fp, pGH->year_index);
-	swrite_a32(fp, pGH->GroupOffset, NUM_SAVED_BATTLE_GROUPS + 1);
+	swrite_a32(fp, pGH->GroupOffset, NumSavedBattleGroups + 1);
 }
 
 void ReadShipFragment(GAME_STATE_FILE* fp, SHIP_FRAGMENT* FragPtr)
@@ -139,9 +139,9 @@ void WriteIpGroup(GAME_STATE_FILE* fp, const IP_GROUP* GroupPtr)
 
 void InitGroupInfo(bool FirstTime)
 {
-	assert(NUM_SAVED_BATTLE_GROUPS >= MAX_BATTLE_GROUPS);
+	assert(NumSavedBattleGroups >= MaxBattleGroups);
 
-	GAME_STATE_FILE* fp {OpenStateFile(RANDGRPINFO_FILE, "wb")};
+	GAME_STATE_FILE* fp {OpenStateFile(RandgrpinfoFile, "wb")};
 	if (fp)
 	{
 		GROUP_HEADER GH;
@@ -152,7 +152,7 @@ void InitGroupInfo(bool FirstTime)
 		CloseStateFile(fp);
 	}
 
-	if (FirstTime && (fp = OpenStateFile(DEFGRPINFO_FILE, "wb")))
+	if (FirstTime && (fp = OpenStateFile(DefgrpinfoFile, "wb")))
 	{
 		// Group headers cannot start with offset 0 in 'defined' group
 		// info file, so bump it (because offset 0 is reserved to
@@ -164,8 +164,8 @@ void InitGroupInfo(bool FirstTime)
 
 void UninitGroupInfo(void)
 {
-	DeleteStateFile(DEFGRPINFO_FILE);
-	DeleteStateFile(RANDGRPINFO_FILE);
+	DeleteStateFile(DefgrpinfoFile);
+	DeleteStateFile(RandgrpinfoFile);
 }
 
 HIPGROUP
@@ -213,7 +213,7 @@ void BuildGroups(void)
 
 	/* make Ur-Quan encounters impossible at the ZFP homeworld,
 	 * like their dialog claims */
-	if (EXTENDED && CurStarDescPtr->Index == ZOQFOT_DEFINED)
+	if (IsExtended() && CurStarDescPtr()->Index == ZOQFOT_DEFINED)
 	{
 		EncounterPercent[URQUAN_SHIP] = EncounterPercent[BLACK_URQUAN_SHIP] = 0;
 	}
@@ -231,7 +231,7 @@ void BuildGroups(void)
 		HomeWorld[SUPOX_SHIP] = 0;
 	}
 
-	universe = CurStarDescPtr->star_pt;
+	universe = CurStarDescPtr()->star_pt;
 	for (hFleet = GetHeadLink(&GLOBAL(avail_race_q)), Index = 0;
 		 hFleet; hFleet = hNextFleet, ++Index)
 	{
@@ -249,7 +249,7 @@ void BuildGroups(void)
 			uint32_t d_squared {};
 
 			const uint8_t race_enc {HomeWorld[Index]};
-			if (race_enc && CurStarDescPtr->Index == race_enc)
+			if (race_enc && CurStarDescPtr()->Index == race_enc)
 			{ // In general, there are always ships at the Homeworld for
 				// the races specified in HomeWorld[] array.
 				BestIndex = Index;
@@ -266,12 +266,12 @@ void BuildGroups(void)
 
 			if (encounter_radius == INFINITE_RADIUS)
 			{
-				encounter_radius = (MAX_X_UNIVERSE + 1) << 1;
+				encounter_radius = (MaxXUniverse + 1) << 1;
 			}
 			else
 			{
 				encounter_radius =
-					(encounter_radius * SPHERE_RADIUS_INCREMENT) >> 1;
+					(encounter_radius * SphereRadiusIncrement) >> 1;
 			}
 			dx = universe.x - FleetPtr->loc.x;
 			if (dx < 0)
@@ -326,13 +326,13 @@ FoundHome:
 
 		uint8_t which_group {0};
 		num_groups = ((uint16_t)uqm::random().next() % (BestPercent >> 1)) + 1;
-		if (num_groups > MAX_BATTLE_GROUPS)
+		if (num_groups > MaxBattleGroups)
 		{
-			num_groups = MAX_BATTLE_GROUPS;
+			num_groups = MaxBattleGroups;
 		}
 		else if (num_groups < 5
 				 && (Index = HomeWorld[BestIndex])
-				 && CurStarDescPtr->Index == Index)
+				 && CurStarDescPtr()->Index == Index)
 		{
 			num_groups = 5;
 		}
@@ -349,17 +349,17 @@ FoundHome:
 				}
 			}
 
-			PutGroupInfo(GROUPS_RANDOM, ++which_group);
+			PutGroupInfo(GroupsRandom, ++which_group);
 			ReinitQueue(&GLOBAL(npc_built_ship_q));
 		} while (--num_groups);
 	}
 
-	GetGroupInfo(GROUPS_RANDOM, GROUP_INIT_IP);
+	GetGroupInfo(GroupsRandom, GroupInitIp);
 }
 
 void findRaceSOI(void)
 {
-	const GFXPOINT universe = CurStarDescPtr->star_pt;
+	const GFXPOINT universe = CurStarDescPtr()->star_pt;
 	HFLEETINFO hFleet {};
 	HFLEETINFO hNextFleet {};
 	uint8_t Index {};
@@ -395,7 +395,7 @@ void findRaceSOI(void)
 		SpeciesID = FleetPtr->SpeciesID;
 		RaceID = (RACE_ID)(SpeciesID - 1);
 
-		if (HomeWorld[Index] && CurStarDescPtr->Index == HomeWorld[Index]
+		if (HomeWorld[Index] && CurStarDescPtr()->Index == HomeWorld[Index]
 			&& !RaceDead(RaceID)
 			&& (uqm::UQMOptions::read().spaceMusic == uqm::SphereOfInfluenceMusic::RaceBeforeDiscovery
 				|| (uqm::UQMOptions::read().spaceMusic == uqm::SphereOfInfluenceMusic::RaceAfterDiscovery && (CheckSphereTracking(RaceID) || IsHomeworldKnown(SpeciesToHomeID(SpeciesID))))))
@@ -415,12 +415,12 @@ void findRaceSOI(void)
 
 			if (FleetPtr->actual_strength == INFINITE_RADIUS)
 			{
-				encounter_radius = (MAX_X_UNIVERSE + 1) << 1;
+				encounter_radius = (MaxXUniverse + 1) << 1;
 			}
 			else
 			{
 				encounter_radius = (FleetPtr->actual_strength
-									* SPHERE_RADIUS_INCREMENT)
+									* SphereRadiusIncrement)
 								>> 1;
 			}
 
@@ -473,7 +473,7 @@ static void
 FlushGroupInfo(GROUP_HEADER* pGH, uint32_t offset, uint8_t which_group,
 			   GAME_STATE_FILE* fp)
 {
-	if (which_group == GROUP_LIST)
+	if (which_group == GroupList)
 	{
 		HIPGROUP hGroup {};
 		HIPGROUP hNextGroup {};
@@ -504,9 +504,9 @@ FlushGroupInfo(GROUP_HEADER* pGH, uint32_t offset, uint8_t which_group,
 
 			if (!in_system)
 			{
-				// The following 'if' is needed because GROUP_LIST is only
-				// ever flushed to RANDGRPINFO_FILE, but the current group
-				// may need to be updated in the DEFGRPINFO_FILE as well.
+				// The following 'if' is needed because GroupList is only
+				// ever flushed to RandgrpinfoFile, but the current group
+				// may need to be updated in the DefgrpinfoFile as well.
 				// In that case, PutGroupInfo() will update the correct file.
 				if (GLOBAL(BattleGroupRef))
 				{
@@ -514,9 +514,9 @@ FlushGroupInfo(GROUP_HEADER* pGH, uint32_t offset, uint8_t which_group,
 				}
 				else
 				{
-					FlushGroupInfo(pGH, GROUPS_RANDOM, group_id, fp);
+					FlushGroupInfo(pGH, GroupsRandom, group_id, fp);
 				}
-				// This will also wipe the group out in the RANDGRPINFO_FILE
+				// This will also wipe the group out in the RandgrpinfoFile
 				pGH->GroupOffset[group_id] = 0;
 				RemoveQueue(&GLOBAL(ip_group_q), hGroup);
 				FreeIpGroup(&GLOBAL(ip_group_q), hGroup);
@@ -539,7 +539,7 @@ FlushGroupInfo(GROUP_HEADER* pGH, uint32_t offset, uint8_t which_group,
 					pGH->NumGroups, pGH->star_index);
 #endif /* DEBUG_GROUPS */
 
-	if (which_group == GROUP_LIST)
+	if (which_group == GroupList)
 	{
 		/* Write out ip_group_q as group 0 */
 		HIPGROUP hNextGroup {};
@@ -612,13 +612,13 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 	GAME_STATE_FILE* fp {};
 	GROUP_HEADER GH;
 
-	if (offset != GROUPS_RANDOM && which_group != GROUP_LIST)
+	if (offset != GroupsRandom && which_group != GroupList)
 	{
-		fp = OpenStateFile(DEFGRPINFO_FILE, "r+b");
+		fp = OpenStateFile(DefgrpinfoFile, "r+b");
 	}
 	else
 	{
-		fp = OpenStateFile(RANDGRPINFO_FILE, "r+b");
+		fp = OpenStateFile(RandgrpinfoFile, "r+b");
 	}
 
 	if (!fp)
@@ -633,7 +633,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 					which_group, GH.GroupOffset[which_group], GH.NumGroups);
 #endif /* DEBUG_GROUPS */
 
-	if (which_group == GROUP_INIT_IP)
+	if (which_group == GroupInitIp)
 	{
 		uint16_t month_index {};
 		uint16_t day_index {};
@@ -642,7 +642,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 		ReinitQueue(&GLOBAL(ip_group_q));
 #ifdef DEBUG_GROUPS
 		uqm::log::debug("{} == {}", GH.star_index,
-						(uint16_t)(CurStarDescPtr - star_array));
+						(uint16_t)(CurStarDescPtr() - star_array));
 #endif /* DEBUG_GROUPS */
 
 		/* Check if the requested groups are valid for this star system
@@ -650,13 +650,13 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 		day_index = GH.day_index;
 		month_index = GH.month_index;
 		year_index = GH.year_index;
-		if (offset == GROUPS_RANDOM
-			&& (GH.star_index != (uint16_t)(CurStarDescPtr - star_array)
+		if (offset == GroupsRandom
+			&& (GH.star_index != (uint16_t)(CurStarDescPtr() - star_array)
 				|| !ValidateEvent(ABSOLUTE_EVENT, &month_index, &day_index,
 								  &year_index)))
 		{
 #ifdef DEBUG_GROUPS
-			if (GH.star_index == CurStarDescPtr - star_array)
+			if (GH.star_index == CurStarDescPtr() - star_array)
 			{
 				uqm::log::debug("GetGroupInfo: battle groups out of "
 								"date {}/{}/{}!",
@@ -667,7 +667,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 
 			CloseStateFile(fp);
 			/* Erase random groups (out of date) */
-			fp = OpenStateFile(RANDGRPINFO_FILE, "wb");
+			fp = OpenStateFile(RandgrpinfoFile, "wb");
 			memset(&GH, 0, sizeof(GH));
 			GH.star_index = (uint16_t)~0;
 			WriteGroupHeader(fp, &GH);
@@ -730,7 +730,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 			GroupPtr->group_counter = 0;
 			if (task == EXPLORE)
 			{
-				GroupPtr->group_counter = ((uint16_t)uqm::random().next() % MAX_REVOLUTIONS) << FACING_SHIFT;
+				GroupPtr->group_counter = ((uint16_t)uqm::random().next() % MaxRevolutions) << FacingShift;
 			}
 			else if (task == ON_STATION)
 			{
@@ -739,8 +739,8 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 
 				org = planetOuterLocation(group_loc - 1);
 				angle = FACING_TO_ANGLE(GroupPtr->orbit_pos + 1);
-				GroupPtr->loc.x = org.x + COSINE(angle, STATION_RADIUS);
-				GroupPtr->loc.y = org.y + SINE(angle, STATION_RADIUS);
+				GroupPtr->loc.x = org.x + COSINE(angle, StationRadius);
+				GroupPtr->loc.y = org.y + SINE(angle, StationRadius);
 				group_loc = 0;
 			}
 
@@ -763,7 +763,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 			UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
 		}
 
-		if (offset != GROUPS_RANDOM)
+		if (offset != GroupsRandom)
 		{
 			InitGroupInfo(false); /* Wipe out random battle groups */
 		}
@@ -786,7 +786,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 	}
 
 
-	if (which_group == GROUP_LIST)
+	if (which_group == GroupList)
 	{
 		uint8_t NumGroups {};
 
@@ -801,9 +801,9 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 
 		if (LastEncGroup)
 		{
-			// The following 'if' is needed because GROUP_LIST is only
-			// ever read from RANDGRPINFO_FILE, but the LastEncGroup
-			// may need to be updated in the DEFGRPINFO_FILE as well.
+			// The following 'if' is needed because GroupList is only
+			// ever read from RandgrpinfoFile, but the LastEncGroup
+			// may need to be updated in the DefgrpinfoFile as well.
 			// In that case, PutGroupInfo() will update the correct file.
 			if (GLOBAL(BattleGroupRef))
 			{
@@ -872,18 +872,18 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 		//   harder in the future, as special care will have to be taken
 		//   when loading a game into an encounter.
 		LastEncGroup = which_group;
-		// The following 'if' is needed because GROUP_LIST is only
-		// ever written to RANDGRPINFO_FILE, but the group we are reading
-		// may be in the DEFGRPINFO_FILE as well.
+		// The following 'if' is needed because GroupList is only
+		// ever written to RandgrpinfoFile, but the group we are reading
+		// may be in the DefgrpinfoFile as well.
 		// In that case, PutGroupInfo() will update the correct file.
 		// Always calling PutGroupInfo() here would also be acceptable now.
-		if (offset != GROUPS_RANDOM)
+		if (offset != GroupsRandom)
 		{
-			PutGroupInfo(GROUPS_RANDOM, GROUP_LIST);
+			PutGroupInfo(GroupsRandom, GroupList);
 		}
 		else
 		{
-			FlushGroupInfo(&GH, GROUPS_RANDOM, GROUP_LIST, fp);
+			FlushGroupInfo(&GH, GroupsRandom, GroupList, fp);
 		}
 		ReinitQueue(&GLOBAL(ip_group_q));
 
@@ -924,13 +924,13 @@ PutGroupInfo(uint32_t offset, uint8_t which_group)
 	GAME_STATE_FILE* fp {};
 	GROUP_HEADER GH;
 
-	if (offset != GROUPS_RANDOM && which_group != GROUP_LIST)
+	if (offset != GroupsRandom && which_group != GroupList)
 	{
-		fp = OpenStateFile(DEFGRPINFO_FILE, "r+b");
+		fp = OpenStateFile(DefgrpinfoFile, "r+b");
 	}
 	else
 	{
-		fp = OpenStateFile(RANDGRPINFO_FILE, "r+b");
+		fp = OpenStateFile(RandgrpinfoFile, "r+b");
 	}
 
 	if (!fp)
@@ -938,7 +938,7 @@ PutGroupInfo(uint32_t offset, uint8_t which_group)
 		return offset;
 	}
 
-	if (offset == GROUPS_ADD_NEW)
+	if (offset == GroupsAddNew)
 	{
 		offset = LengthStateFile(fp);
 		SeekStateFile(fp, offset, SEEK_SET);
@@ -948,17 +948,17 @@ PutGroupInfo(uint32_t offset, uint8_t which_group)
 	}
 
 	// XXX: This is a bit dangerous. The assumption here is that we are
-	//   only called to write GROUP_LIST in the GROUPS_RANDOM context,
+	//   only called to write GroupList in the GroupsRandom context,
 	//   which is true right now and in which case we would seek to 0 anyway.
 	//   The latter also makes guarding the seek with
 	//   'if (which_group != GROUP_LIST)' moot.
-	if (which_group != GROUP_LIST)
+	if (which_group != GroupList)
 	{
 		SeekStateFile(fp, offset, SEEK_SET);
-		if (which_group == GROUP_SAVE_IP)
+		if (which_group == GroupSaveIp)
 		{
 			LastEncGroup = 0;
-			which_group = GROUP_LIST;
+			which_group = GroupList;
 		}
 	}
 	ReadGroupHeader(fp, &GH);
@@ -984,7 +984,7 @@ PutGroupInfo(uint32_t offset, uint8_t which_group)
 		GH.month_index = (uint8_t)month_index;
 		GH.year_index = year_index;
 	}
-	GH.star_index = CurStarDescPtr - star_array;
+	GH.star_index = CurStarDescPtr() - star_array;
 
 #ifdef DEBUG_GROUPS
 	uqm::log::debug("PutGroupInfo({}): {} out of {} -- {}/{}/{}",

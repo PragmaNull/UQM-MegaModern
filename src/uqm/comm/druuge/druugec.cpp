@@ -36,11 +36,11 @@ static LOCDATA druuge_desc =
 		nullptr, /* uninit_encounter_func */
 		DRUUGE_PMAP_ANIM, /* AlienFrame */
 		DRUUGE_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
 		DRUUGE_COLOR_MAP, /* AlienColorMap */
@@ -57,9 +57,9 @@ static LOCDATA druuge_desc =
 
 			{
 				// Biggest flame
-				5,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				5,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -68,9 +68,9 @@ static LOCDATA druuge_desc =
 			},
 								{
 				// Flame on the right
-				9,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				9,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -79,9 +79,9 @@ static LOCDATA druuge_desc =
 			},
 								{
 				// Smallest flame (behind the biggest flame)
-				13,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				13,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -90,9 +90,9 @@ static LOCDATA druuge_desc =
 			},
 								{
 				// Flashing eyes
-				19,			   /* StartIndex */
-				3,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				19,			  /* StartIndex */
+				3,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -100,9 +100,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				22,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -110,9 +110,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				25,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				25,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -120,9 +120,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				28,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				28,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -130,9 +130,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				31,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				31,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -140,9 +140,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				33,							  /* StartIndex */
-				7,							  /* NumFrames */
-				CIRCULAR_ANIM | WAIT_TALKING, /* AnimFlags */
+				33,							/* StartIndex */
+				7,							/* NumFrames */
+				CircularAnim | WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond * 7,
@@ -150,9 +150,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				40,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				40,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 10,
@@ -160,9 +160,9 @@ static LOCDATA druuge_desc =
 				0, /* BlockMask */
 			},
 								{
-				44,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				44,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 5,
 				0, /* FrameRate */
 				GameTicksPerSecond / 5,
@@ -221,9 +221,9 @@ ExitConversation(RESPONSE_REF R)
 					GET_GAME_STATE(CREW_SOLD_TO_DRUUGE0),
 					GET_GAME_STATE(CREW_SOLD_TO_DRUUGE1));
 				SlaveryCount += PreviousSlaves;
-				if (SlaveryCount > MAX_SOLD && PreviousSlaves <= MAX_SOLD)
+				if (SlaveryCount > MaxSold() && PreviousSlaves <= MaxSold())
 				{
-					if (PreviousSlaves > MIN_SOLD)
+					if (PreviousSlaves > MinSold())
 					{
 						GLOBAL(CrewCost) += (22 - 7);
 					}
@@ -232,7 +232,7 @@ ExitConversation(RESPONSE_REF R)
 						GLOBAL(CrewCost) += 22;
 					}
 				}
-				else if (SlaveryCount > MIN_SOLD && PreviousSlaves <= MIN_SOLD)
+				else if (SlaveryCount > MinSold() && PreviousSlaves <= MinSold())
 				{
 					GLOBAL(CrewCost) += 7;
 				}
@@ -370,7 +370,7 @@ Buy(RESPONSE_REF R)
 		else
 		{
 			DeltaSISGauges(-FUEL_CREW_COST,
-						   FUEL_CREW_COST * FUEL_TANK_SCALE, 0);
+						   FUEL_CREW_COST * FuelTankScale, 0);
 			SlaveryCount += FUEL_CREW_COST;
 
 			NPCPhrase(BOUGHT_FUEL);
@@ -533,8 +533,8 @@ DoTransaction(RESPONSE_REF R)
 			uint32_t FuelOnBoard {};
 
 			FuelOnBoard = GLOBAL_SIS(FuelOnBoard);
-			uint32_t capacity {FUEL_RESERVE};
-			uint8_t slot {NUM_MODULE_SLOTS - 1};
+			uint32_t capacity {FuelReserve};
+			uint8_t slot {NumModuleSlots - 1};
 			do
 			{
 				if (GLOBAL_SIS(ModuleSlots[slot]) == FUEL_TANK
@@ -542,17 +542,17 @@ DoTransaction(RESPONSE_REF R)
 				{
 					uint16_t volume {};
 
-					volume = GLOBAL_SIS(ModuleSlots[slot]) == FUEL_TANK ? FUEL_TANK_CAPACITY : HEFUEL_TANK_CAPACITY;
+					volume = GLOBAL_SIS(ModuleSlots[slot]) == FUEL_TANK ? FuelTankCapacity : HefuelTankCapacity;
 					capacity += volume;
 				}
 			} while (slot--);
 			capacity -= FuelOnBoard;
-			uint16_t f {(uint16_t)((capacity + (FUEL_TANK_SCALE >> 1)) / FUEL_TANK_SCALE)};
+			uint16_t f {(uint16_t)((capacity + (FuelTankScale >> 1)) / FuelTankScale)};
 
 			if (isDifficulty(uqm::Difficulty::Hard) && f > HardLimit)
 			{
 				f -= (f - HardLimit);
-				capacity = (f * FUEL_TANK_SCALE) - FuelOnBoard;
+				capacity = (f * FuelTankScale) - FuelOnBoard;
 			}
 
 			while (capacity > 0x3FFFL)
@@ -972,7 +972,7 @@ Intro(void)
 		NumVisits = 0;
 		if (GetHeadLink(&GLOBAL(built_ship_q)) == 0)
 		{
-			for (NumVisits = 0; NumVisits < NUM_MODULE_SLOTS; ++NumVisits)
+			for (NumVisits = 0; NumVisits < NumModuleSlots; ++NumVisits)
 			{
 				const uint8_t which_module {GLOBAL_SIS(ModuleSlots[NumVisits])};
 				if (which_module >= GUN_WEAPON
@@ -1057,9 +1057,9 @@ init_druuge_comm(void)
 
 	uqm::lua().beginComm(nullptr, NullResource);
 
-	druuge_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	druuge_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	druuge_desc.AlienTextBaseline.y = RES_SCALE(64);
-	druuge_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	druuge_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	if ((GET_GAME_STATE(DRUUGE_MANNER) == 0
 		 && (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))

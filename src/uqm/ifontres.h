@@ -2,22 +2,24 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define LANDER_FONT "font.lander"
-#define MICRO_FONT "font.micro"
-#define MICRO_THIN_FONT "font.micro.thin"
-#define PLAYER_FONT "font.player"
-#define PT13AA_FONT "credits.font.pt13"
-#define PT17AA_FONT "credits.font.pt17"
-#define PT45AA_FONT "credits.font.pt45"
-#define STARCON_FONT "font.starcon"
-#define TINY_FONT "font.tiny"
-#define TINY_FONT_BOLD "font.tiny.bold"
-#define TINY_FONT_COND "font.tiny.condensed"
-#define COMPUTER_FONT "comm.computer.font"
-#define LABEL_FONT "font.label"
-#define SQUARE_FONT "font.square"
-#define SLAB_FONT "font.slab"
-#define MELEE_TITLE_FONT "font.melee.title"
-#define BUTTON_FONT "font.button"
-#define PLAYMENU_FONT "font.playmenu"
-#define MODULE_FONT "font.module"
+#pragma once
+
+inline constexpr uqgsl::czstring LanderFontRes {"font.lander"};
+inline constexpr uqgsl::czstring MicroFontRes {"font.micro"};
+inline constexpr uqgsl::czstring MicroThinFontRes {"font.micro.thin"};
+inline constexpr uqgsl::czstring PlayerFontRes {"font.player"};
+inline constexpr uqgsl::czstring Pt13aaFontRes {"credits.font.pt13"};
+inline constexpr uqgsl::czstring Pt17aaFontRes {"credits.font.pt17"};
+inline constexpr uqgsl::czstring Pt45aaFontRes {"credits.font.pt45"};
+inline constexpr uqgsl::czstring StarconFontRes {"font.starcon"};
+inline constexpr uqgsl::czstring TinyFontRes {"font.tiny"};
+inline constexpr uqgsl::czstring TinyFontBoldRes {"font.tiny.bold"};
+inline constexpr uqgsl::czstring TinyFontCondRes {"font.tiny.condensed"};
+inline constexpr uqgsl::czstring ComputerFontRes {"comm.computer.font"};
+inline constexpr uqgsl::czstring LabelFontRes {"font.label"};
+inline constexpr uqgsl::czstring SquareFontRes {"font.square"};
+inline constexpr uqgsl::czstring SlabFontRes {"font.slab"};
+inline constexpr uqgsl::czstring MeleeTitleFontRes {"font.melee.title"};
+inline constexpr uqgsl::czstring ButtonFontRes {"font.button"};
+inline constexpr uqgsl::czstring PlaymenuFontRes {"font.playmenu"};
+inline constexpr uqgsl::czstring ModuleFontRes {"font.module"};

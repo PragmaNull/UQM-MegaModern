@@ -83,7 +83,7 @@ GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (CurStarDescPtr->Index == ZOQFOT_DEFINED)
+	if (CurStarDescPtr()->Index == ZOQFOT_DEFINED)
 	{
 		if (uqm::isOriginalSeed())
 		{
@@ -106,13 +106,13 @@ GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 			pPlanet->data_index = GenerateHabitableWorld();
 		}
 	}
-	else if (EXTENDED)
+	else if (IsExtended())
 	{
 		pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		if (CurStarDescPtr->Index == ZOQ_COLONY2_DEFINED)
+		if (CurStarDescPtr()->Index == ZOQ_COLONY2_DEFINED)
 		{
 			pPlanet->NumPlanets = 1;
 			pSunDesc->MoonByte = 0;
@@ -142,9 +142,9 @@ GenerateZoqFotPik_generateMoons(SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (CurStarDescPtr->Index == ZOQ_COLONY2_DEFINED
+	if (CurStarDescPtr()->Index == ZOQ_COLONY2_DEFINED
 		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET)
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
@@ -159,12 +159,12 @@ static bool
 GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 								  PLANET_DESC* world)
 {
-	if (CurStarDescPtr->Index == ZOQFOT_DEFINED
+	if (CurStarDescPtr()->Index == ZOQFOT_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		if (StartSphereTracking(ZOQFOTPIK_SHIP))
 		{
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -186,7 +186,7 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 				{
 					uqm::currentActivity() &= ~START_INTERPLANETARY;
 					ReinitQueue(&GLOBAL(npc_built_ship_q));
-					GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+					GetGroupInfo(GroupsRandom, GroupLoadIp);
 					return true;
 				}
 			}
@@ -202,7 +202,7 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 
 			return true;
@@ -210,39 +210,39 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+			CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RuinsStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
-	if (((CurStarDescPtr->Index == ZOQ_COLONY0_DEFINED
-		  || CurStarDescPtr->Index == ZOQ_COLONY1_DEFINED
-		  || CurStarDescPtr->Index == ZOQ_COLONY3_DEFINED)
+	if (((CurStarDescPtr()->Index == ZOQ_COLONY0_DEFINED
+		  || CurStarDescPtr()->Index == ZOQ_COLONY1_DEFINED
+		  || CurStarDescPtr()->Index == ZOQ_COLONY3_DEFINED)
 		 && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ZFPRUINS_STRTAB);
+			CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ZfpruinsStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
-	if (CurStarDescPtr->Index == ZOQ_COLONY2_DEFINED
+	if (CurStarDescPtr()->Index == ZOQ_COLONY2_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ZFPRUINS_STRTAB);
+			CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ZfpruinsStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);
 
-	if ((CurStarDescPtr->Index == ZOQFOT_DEFINED || EXTENDED)
-		&& CurStarDescPtr->Index != ZOQ_COLONY2_DEFINED
+	if ((CurStarDescPtr()->Index == ZOQFOT_DEFINED || IsExtended())
+		&& CurStarDescPtr()->Index != ZOQ_COLONY2_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
@@ -254,9 +254,9 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 		PlanetInfo->SurfaceTemperature = uqm::rangeMinMax(-10, 40, rand);
 	}
 
-	if (CurStarDescPtr->Index == ZOQ_COLONY2_DEFINED
+	if (CurStarDescPtr()->Index == ZOQ_COLONY2_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
-		&& EXTENDED && !isDifficulty(uqm::Difficulty::Hard))
+		&& IsExtended() && !isDifficulty(uqm::Difficulty::Hard))
 	{
 		const uint32_t rand = SysGenRNG->seed();
 		PLANET_INFO* PlanetInfo = &solarSys->SysInfo.PlanetInfo;
@@ -277,16 +277,16 @@ GenerateZoqFotPik_generateEnergy(const SOLARSYS_STATE* solarSys,
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		if (CurStarDescPtr->Index == ZOQFOT_DEFINED)
+		if (CurStarDescPtr()->Index == ZOQFOT_DEFINED)
 		{
 			return GenerateDefault_generateRuins(
 				solarSys, whichNode, info);
 		}
 
-		if ((CurStarDescPtr->Index == ZOQ_COLONY0_DEFINED
-			 || CurStarDescPtr->Index == ZOQ_COLONY1_DEFINED
-			 || CurStarDescPtr->Index == ZOQ_COLONY3_DEFINED)
-			&& EXTENDED)
+		if ((CurStarDescPtr()->Index == ZOQ_COLONY0_DEFINED
+			 || CurStarDescPtr()->Index == ZOQ_COLONY1_DEFINED
+			 || CurStarDescPtr()->Index == ZOQ_COLONY3_DEFINED)
+			&& IsExtended())
 		{
 			return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN,
 									   NUM_RUINS, 0, whichNode, info);
@@ -294,8 +294,8 @@ GenerateZoqFotPik_generateEnergy(const SOLARSYS_STATE* solarSys,
 	}
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
-		&& CurStarDescPtr->Index == ZOQ_COLONY2_DEFINED
-		&& EXTENDED)
+		&& CurStarDescPtr()->Index == ZOQ_COLONY2_DEFINED
+		&& IsExtended())
 	{
 		return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN,
 								   NUM_RUINS, 0, whichNode, info);
@@ -309,7 +309,7 @@ GenerateZoqFotPik_pickupEnergy(SOLARSYS_STATE* solarSys,
 							   PLANET_DESC* world, uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& CurStarDescPtr->Index != ZOQ_COLONY2_DEFINED)
+		&& CurStarDescPtr()->Index != ZOQ_COLONY2_DEFINED)
 	{
 		// Standard ruins report
 		GenerateDefault_landerReportCycle(solarSys);
@@ -317,7 +317,7 @@ GenerateZoqFotPik_pickupEnergy(SOLARSYS_STATE* solarSys,
 		return false;
 	}
 
-	if (CurStarDescPtr->Index == ZOQ_COLONY2_DEFINED
+	if (CurStarDescPtr()->Index == ZOQ_COLONY2_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
 	{
 		GenerateDefault_landerReportCycle(solarSys);

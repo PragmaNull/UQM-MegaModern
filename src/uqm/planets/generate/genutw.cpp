@@ -65,7 +65,7 @@ const GenerateFunctions generateUtwigFunctions = {
 static bool
 GenerateUtwig_initNpcs(SOLARSYS_STATE* solarSys)
 {
-	if (CurStarDescPtr->Index == BOMB_DEFINED
+	if (CurStarDescPtr()->Index == BOMB_DEFINED
 		&& !GET_GAME_STATE(UTWIG_BOMB))
 	{
 		ReinitQueue(&GLOBAL(ip_group_q));
@@ -90,7 +90,7 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
 
-	if (CurStarDescPtr->Index == UTWIG_DEFINED)
+	if (CurStarDescPtr()->Index == UTWIG_DEFINED)
 	{
 		GenerateDefault_generatePlanets(solarSys);
 
@@ -116,7 +116,7 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 		}
 	}
 
-	if (CurStarDescPtr->Index == BOMB_DEFINED)
+	if (CurStarDescPtr()->Index == BOMB_DEFINED)
 	{
 		pSunDesc->PlanetByte = 5;
 		pSunDesc->MoonByte = 1;
@@ -172,7 +172,7 @@ GenerateUtwig_generateName(const SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (CurStarDescPtr->Index == UTWIG_DEFINED
+	if (CurStarDescPtr()->Index == UTWIG_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& IsHomeworldKnown(UTWIG_HOME))
 	{
@@ -193,18 +193,18 @@ static bool
 GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 							  PLANET_DESC* world)
 {
-	if ((CurStarDescPtr->Index == UTWIG_DEFINED
+	if ((CurStarDescPtr()->Index == UTWIG_DEFINED
 		 && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
-		|| (CurStarDescPtr->Index == BOMB_DEFINED
+		|| (CurStarDescPtr()->Index == BOMB_DEFINED
 			&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
 			&& !GET_GAME_STATE(UTWIG_BOMB)))
 	{
-		if ((CurStarDescPtr->Index == UTWIG_DEFINED
+		if ((CurStarDescPtr()->Index == UTWIG_DEFINED
 			 || !GET_GAME_STATE(UTWIG_HAVE_ULTRON))
 			&& StartSphereTracking(UTWIG_SHIP))
 		{
-			NotifyOthers(UTWIG_SHIP, IPNL_ALL_CLEAR);
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			NotifyOthers(UTWIG_SHIP, IpnlAllClear);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -212,7 +212,7 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 							  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
-			if (CurStarDescPtr->Index == UTWIG_DEFINED)
+			if (CurStarDescPtr()->Index == UTWIG_DEFINED)
 			{
 				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 			}
@@ -226,18 +226,18 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 			return true;
 		}
 
-		if (CurStarDescPtr->Index == BOMB_DEFINED
+		if (CurStarDescPtr()->Index == BOMB_DEFINED
 			&& !GET_GAME_STATE(BOMB_UNPROTECTED)
 			&& StartSphereTracking(DRUUGE_SHIP))
 		{
 			const uint16_t sum = difficultyCase(4, 5, 14);
 
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
 			ReinitQueue(&GLOBAL(ip_group_q));
 			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -263,7 +263,7 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
 				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 
 				if (DruugeSurvivors)
 				{
@@ -275,27 +275,27 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 		}
 
-		if (CurStarDescPtr->Index == BOMB_DEFINED)
+		if (CurStarDescPtr()->Index == BOMB_DEFINED)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
-				CaptureDrawable(LoadGraphic(BOMB_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BOMB_STRTAB);
+				CaptureDrawable(LoadGraphic(BombMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BombStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		}
 		else
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
-				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+				CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RuinsStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		}
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);
 
-	if (CurStarDescPtr->Index == UTWIG_DEFINED
+	if (CurStarDescPtr()->Index == UTWIG_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
@@ -310,13 +310,13 @@ static uint16_t
 GenerateUtwig_generateEnergy(const SOLARSYS_STATE* solarSys,
 							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (CurStarDescPtr->Index == UTWIG_DEFINED
+	if (CurStarDescPtr()->Index == UTWIG_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
 
-	if (CurStarDescPtr->Index == BOMB_DEFINED
+	if (CurStarDescPtr()->Index == BOMB_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
 	{
 		// This check is redundant since the retrieval bit will keep the
@@ -337,7 +337,7 @@ static bool
 GenerateUtwig_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						   uint16_t whichNode)
 {
-	if (CurStarDescPtr->Index == UTWIG_DEFINED
+	if (CurStarDescPtr()->Index == UTWIG_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		// Standard ruins report
@@ -345,7 +345,7 @@ GenerateUtwig_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		return false;
 	}
 
-	if (CurStarDescPtr->Index == BOMB_DEFINED
+	if (CurStarDescPtr()->Index == BOMB_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
 	{
 		assert(!GET_GAME_STATE(UTWIG_BOMB) && whichNode == 0);

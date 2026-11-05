@@ -118,11 +118,11 @@ enum
 #define INFO_ORIGIN_X RES_SCALE(4)
 #define INFO_WIDTH RES_SCALE(58)
 #define TEAM_INFO_ORIGIN_Y RES_SCALE(3)
-#define TEAM_INFO_HEIGHT (SHIP_INFO_HEIGHT + RES_SCALE(75))
+#define TEAM_INFO_HEIGHT (ShipInfoHeight() + RES_SCALE(75))
 #define MODE_INFO_ORIGIN_Y (TEAM_INFO_HEIGHT + RES_SCALE(6))
-#define MODE_INFO_HEIGHT ((STATUS_HEIGHT - RES_SCALE(3)) - MODE_INFO_ORIGIN_Y)
-#define RACE_INFO_ORIGIN_Y (SHIP_INFO_HEIGHT + RES_SCALE(6))
-#define RACE_INFO_HEIGHT ((STATUS_HEIGHT - RES_SCALE(3)) - RACE_INFO_ORIGIN_Y)
+#define MODE_INFO_HEIGHT ((StatusHeight() - RES_SCALE(3)) - MODE_INFO_ORIGIN_Y)
+#define RACE_INFO_ORIGIN_Y (ShipInfoHeight() + RES_SCALE(6))
+#define RACE_INFO_HEIGHT ((StatusHeight() - RES_SCALE(3)) - RACE_INFO_ORIGIN_Y)
 
 #define MELEE_STATUS_X_OFFS (RES_SCALE(1))
 #define MELEE_STATUS_Y_OFFS RES_SCALE(201)
@@ -155,11 +155,11 @@ enum
 #define LIST_INFO_BACKGROUND_COLOR \
 	BuildColor(MakeRgb15(0x14, 0x00, 0x14), 0x05)
 #define LIST_INFO_TITLE_COLOR \
-	WHITE_COLOR
+	WhiteColor
 #define LIST_INFO_TEXT_COLOR \
 	LT_GRAY_COLOR
 #define LIST_INFO_CURENTRY_TEXT_COLOR \
-	WHITE_COLOR
+	WhiteColor
 #define HI_LIST_INFO_TEXT_COLOR \
 	BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x04)
 #define HI_LIST_INFO_BACKGROUND_COLOR \
@@ -176,7 +176,7 @@ enum
 #define TEAM_NAME_EDIT_RECT_COLOR \
 	BuildColor(MakeRgb15(0x14, 0x00, 0x14), 0x05)
 #define TEAM_NAME_EDIT_CURS_COLOR \
-	WHITE_COLOR
+	WhiteColor
 
 #define SHIPBOX_TOPLEFT_COLOR_NORMAL \
 	BuildColor(MakeRgb15(0x00, 0x00, 0x09), 0x56)
@@ -383,7 +383,7 @@ DrawBattleText(STAMP stamp, uint16_t which_icon, bool HiLite)
 	t.CharCount = (uint16_t)~0;
 	t.pStr = AlignText((const char*)buf, &t.baseline.x);
 
-	font_DrawTracedText(&t, TRANSPARENT,
+	font_DrawTracedText(&t, Transparent,
 						HiLite ? BATTLE_TRACE_HL_COLOR : BATTLE_TRACE_COLOR);
 
 	OldFontEffect = SetContextFontEffect(
@@ -755,8 +755,8 @@ DrawShipBox(uint16_t side, FleetShipIndex index, MeleeShip ship, bool HiLite)
 	GetShipBox(&r, side, row, col);
 
 	BatchGraphics();
-	if (IS_HD)
-	{ // Draw prerendered rectangles in HD
+	if (IsHd())
+	{ // Draw prerendered rectangles in HdResolutionFactor
 		STAMP s;
 #define HD_SHIPBOX_START_INDEX (GetFrameCount(MeleeFrame) - 4)
 
@@ -773,7 +773,7 @@ DrawShipBox(uint16_t side, FleetShipIndex index, MeleeShip ship, bool HiLite)
 						   SHIPBOX_TOPLEFT_COLOR_HILITE,
 						   SHIPBOX_BOTTOMRIGHT_COLOR_HILITE,
 						   FilledSlot, SHIPBOX_INTERIOR_COLOR_HILITE, false,
-						   TRANSPARENT);
+						   Transparent);
 		}
 		else
 		{
@@ -781,7 +781,7 @@ DrawShipBox(uint16_t side, FleetShipIndex index, MeleeShip ship, bool HiLite)
 						   SHIPBOX_TOPLEFT_COLOR_NORMAL,
 						   SHIPBOX_BOTTOMRIGHT_COLOR_NORMAL,
 						   FilledSlot, SHIPBOX_INTERIOR_COLOR_NORMAL, false,
-						   TRANSPARENT);
+						   Transparent);
 		}
 	}
 
@@ -859,7 +859,7 @@ DrawControls(uint16_t which_side, bool HiLite)
 static void
 DrawTeams(void)
 {
-	for (uint16_t side {0}; side < NUM_SIDES; side++)
+	for (uint16_t side {0}; side < NumSides; side++)
 	{
 		DrawControls(side, false);
 
@@ -895,7 +895,7 @@ void QuickRepair(uint16_t whichFrame, GFXRECT* pRect)
 	GetContextClipRect(&OldRect);
 	SetContextClipRect(&r);
 
-	if (IS_PAD)
+	if (IsPad())
 	{
 		oldOrigin = SetContextOrigin(MAKE_POINT(r.corner.x, r.corner.y));
 	}
@@ -924,11 +924,11 @@ DrawSuperMeleeTitle(void)
 		return;
 	}
 
-	FONT OldFont {SetContextFont(LoadFont(MELEE_TITLE_FONT))};
+	FONT OldFont {SetContextFont(LoadFont(MeleeTitleFontRes))};
 	OldFontEffect = SetContextFontEffect(
 		SetAbsFrameIndex(FontGradFrame, 7));
 
-	t.baseline.x = (SCREEN_WIDTH >> 1) - (SAFE_NEG(1));
+	t.baseline.x = (CanvasWidth >> 1) - (SAFE_NEG(1));
 	t.baseline.y = RES_SCALE(4);
 	t.align = ALIGN_CENTER;
 	t.pStr = AlignText((const char*)buf, &t.baseline.x);
@@ -946,8 +946,8 @@ void RepairMeleeFrame(const GFXRECT* pRect)
 	GFXRECT OldRect;
 	GFXPOINT oldOrigin;
 
-	r.corner.x = pRect->corner.x + SAFE_X;
-	r.corner.y = pRect->corner.y + SAFE_Y;
+	r.corner.x = pRect->corner.x + SafeX();
+	r.corner.y = pRect->corner.y + SafeY();
 	r.extent = pRect->extent;
 	if (r.corner.y & 1)
 	{
@@ -959,8 +959,8 @@ void RepairMeleeFrame(const GFXRECT* pRect)
 	GetContextClipRect(&OldRect);
 	SetContextClipRect(&r);
 	// Offset the origin so that we draw the correct gfx in the cliprect
-	oldOrigin = SetContextOrigin(MAKE_POINT(-r.corner.x + SAFE_X,
-											-r.corner.y + SAFE_Y));
+	oldOrigin = SetContextOrigin(MAKE_POINT(-r.corner.x + SafeX(),
+											-r.corner.y + SafeY()));
 	BatchGraphics();
 
 	DrawMeleeIcon(MELEE_BACKGROUND, false); // Entire melee background
@@ -968,8 +968,8 @@ void RepairMeleeFrame(const GFXRECT* pRect)
 	DrawTeams();
 
 	if (pRect->corner.x == 0 && pRect->corner.y == 0
-		&& pRect->extent.width == SCREEN_WIDTH
-		&& pRect->extent.height == SCREEN_HEIGHT)
+		&& pRect->extent.width == CanvasWidth
+		&& pRect->extent.height == CanvasHeight)
 	{ // Only draw these on a full screen redraw
 
 		DrawSuperMeleeTitle();
@@ -1007,8 +1007,8 @@ RedrawMeleeFrame(void)
 
 	r.corner.x = 0;
 	r.corner.y = 0;
-	r.extent.width = SCREEN_WIDTH;
-	r.extent.height = SCREEN_HEIGHT;
+	r.extent.width = CanvasWidth;
+	r.extent.height = CanvasHeight;
 
 	RepairMeleeFrame(&r);
 }
@@ -1194,7 +1194,7 @@ DrawTeamString(MELEE_STATE* pMS, uint16_t side, uint16_t HiLiteState,
 
 		SetCursorRect(&text_r, SpaceContext);
 
-		SetContextForeGroundColor(DOS_BOOL(BLACK_COLOR,
+		SetContextForeGroundColor(DOS_BOOL(BlackColor,
 										   TEAM_NAME_EDIT_TEXT_COLOR_DOS));
 		font_DrawText(&lfText);
 	}
@@ -1284,7 +1284,7 @@ DrawMeleeStatusMessage(const char* message)
 static void
 UpdateMeleeStatusMessage(ssize_t player)
 {
-	assert(player == -1 || (player >= 0 && player < NUM_PLAYERS));
+	assert(player == -1 || (player >= 0 && player < NumPlayers));
 
 	if (player == -1)
 	{
@@ -1393,7 +1393,7 @@ Deselect(uint8_t opt)
 				else if (pMeleeState->CurIndex == MELEE_STATE_INDEX_DONE)
 				{
 					// Not currently editing the team name.
-					if (IS_HD)
+					if (IsHd())
 					{
 						DrawTeamStringsBackGround(pMeleeState->side);
 					}
@@ -1470,7 +1470,7 @@ Select(uint8_t opt)
 				else if (pMeleeState->CurIndex == MELEE_STATE_INDEX_DONE)
 				{
 					// Not currently editing the team name.
-					if (IS_HD)
+					if (IsHd())
 					{
 						DrawTeamStringsBackGround(pMeleeState->side);
 					}
@@ -1522,12 +1522,12 @@ InitMelee(MELEE_STATE* pMS)
 	SetContext(SpaceContext);
 	SetContextFGFrame(Screen);
 	SetContextClipRect(nullptr);
-	SetContextBackGroundColor(BLACK_COLOR);
+	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
-	r.corner.x = SAFE_X;
-	r.corner.y = SAFE_Y;
-	r.extent.width = SCREEN_WIDTH - (SAFE_X << 1);
-	r.extent.height = SCREEN_HEIGHT - (SAFE_Y << 1);
+	r.corner.x = SafeX();
+	r.corner.y = SafeY();
+	r.extent.width = CanvasWidth - (SafeX() << 1);
+	r.extent.height = CanvasHeight - (SafeY() << 1);
 	SetContextClipRect(&r);
 
 	r.corner.x = r.corner.y = 0;
@@ -1546,7 +1546,7 @@ void DrawMeleeShipStrings(MELEE_STATE* pMS, MeleeShip NewStarShip)
 	r = OldRect;
 	r.corner.x -= NSAFE_NUM_SCL(3);
 	r.corner.y += RES_SCALE(76);
-	r.extent.height = SHIP_INFO_HEIGHT;
+	r.extent.height = ShipInfoHeight();
 	SetContextClipRect(&r);
 	BatchGraphics();
 
@@ -1562,9 +1562,9 @@ void DrawMeleeShipStrings(MELEE_STATE* pMS, MeleeShip NewStarShip)
 		r.corner.y = RES_SCALE(4);
 		r.extent.width = RES_SCALE(57);
 		r.extent.height = RES_SCALE(60);
-		SetContextForeGroundColor(BLACK_COLOR);
-		DrawRectangle(&r, IS_HD);
-		t.baseline.x = STATUS_WIDTH >> 1;
+		SetContextForeGroundColor(BlackColor);
+		DrawRectangle(&r, IsHd());
+		t.baseline.x = StatusWidth() >> 1;
 		t.baseline.y = RES_SCALE(32);
 		t.align = ALIGN_CENTER;
 		if (pMS->row < NUM_MELEE_ROWS)
@@ -1583,7 +1583,7 @@ void DrawMeleeShipStrings(MELEE_STATE* pMS, MeleeShip NewStarShip)
 			font_DrawText(&t);
 			t.pStr = GAME_STRING(MELEE_STRING_BASE + 3); // "Name"
 		}
-		t.baseline.y += TINY_TEXT_HEIGHT;
+		t.baseline.y += TinyTextHeight();
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 	}
@@ -1770,7 +1770,7 @@ DoEdit(MELEE_STATE* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT | MENU_SOUND_DELETE);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect | MenuSoundDelete);
 	if (!pMS->Initialized)
 	{
 		UpdateCurrentShip(pMS);
@@ -1940,7 +1940,7 @@ static ssize_t
 numPlayersReady(void)
 {
 	size_t numDone {0};
-	for (size_t player {0}; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NumPlayers; player++)
 	{
 		if (!testFlag(PlayerControl[player], PlayerControlFlags::Network))
 		{
@@ -2031,7 +2031,7 @@ DoConfirmSettings(MELEE_STATE* pMS)
 		pMS->InputFunc = DoMelee;
 		return true;
 	}
-	else if (numDone != NUM_SIDES)
+	else if (numDone != NumSides)
 	{
 		// Still waiting for some confirmation.
 		return true;
@@ -2044,7 +2044,7 @@ DoConfirmSettings(MELEE_STATE* pMS)
 
 	// Synchronise the RNGs:
 	{
-		for (uint16_t player {0}; player < NUM_PLAYERS; player++)
+		for (uint16_t player {0}; player < NumPlayers; player++)
 		{
 			if (!testFlag(PlayerControl[player], PlayerControlFlags::Network))
 			{
@@ -2105,12 +2105,12 @@ static void
 LoadMeleeInfo(MELEE_STATE* pMS)
 {
 	BuildPickMeleeFrame();
-	MeleeFrame = CaptureDrawable(LoadGraphic(MELEE_SCREEN_PMAP_ANIM));
+	MeleeFrame = CaptureDrawable(LoadGraphic(MeleeScreenPmapAnimRes));
 	BuildBuildPickFrame();
-	MicroThinFont = LoadFont(MICRO_THIN_FONT);
-	ButtonFont = LoadFont(BUTTON_FONT);
+	MicroThinFont = LoadFont(MicroThinFontRes);
+	ButtonFont = LoadFont(ButtonFontRes);
 	FontGradFrame = CaptureDrawable(
-		LoadGraphic(FONTGRAD_PMAP_ANIM));
+		LoadGraphic(FontgradPmapAnimRes));
 
 	InitSpace();
 
@@ -2243,7 +2243,7 @@ StartMeleeButtonPressed(MELEE_STATE* pMS)
 
 		// We collect all error conditions, instead of only reporting
 		// the first one.
-		for (uint16_t player {0}; player < NUM_PLAYERS; player++)
+		for (uint16_t player {0}; player < NumPlayers; player++)
 		{
 			if (!testFlag(PlayerControl[player], PlayerControlFlags::Network))
 			{
@@ -2295,7 +2295,7 @@ StartMeleeButtonPressed(MELEE_STATE* pMS)
 			return;
 		}
 
-		if (numPlayersReady() != NUM_PLAYERS)
+		if (numPlayersReady() != NumPlayers)
 		{
 			DrawMeleeStatusMessage(GAME_STRING(NETMELEE_STRING_BASE + 7));
 		}
@@ -2324,7 +2324,7 @@ DoConnectingDialog(MELEE_STATE* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
+	SetMenuSounds(MenuSoundNone, MenuSoundNone);
 	if (!pMS->Initialized)
 	{
 		GFXRECT r;
@@ -2344,14 +2344,14 @@ DoConnectingDialog(MELEE_STATE* pMS)
 
 		/* Draw the dialog box here */
 		oldfont = SetContextFont(StarConFont);
-		oldcolor = SetContextForeGroundColor(BLACK_COLOR);
+		oldcolor = SetContextForeGroundColor(BlackColor);
 		BatchGraphics();
 		r.extent.width = RES_SCALE(200);
 		r.extent.height = RES_SCALE(30);
-		r.corner.x = (SCREEN_WIDTH - r.extent.width) >> 1;
-		r.corner.y = (SCREEN_HEIGHT - r.extent.height) >> 1;
-		DrawShadowedBox(&r, SHADOWBOX_BACKGROUND_COLOR,
-						SHADOWBOX_DARK_COLOR, SHADOWBOX_MEDIUM_COLOR);
+		r.corner.x = (CanvasWidth - r.extent.width) >> 1;
+		r.corner.y = (CanvasHeight - r.extent.height) >> 1;
+		DrawShadowedBox(&r, ShadowboxBackgroundColor,
+						ShadowboxDarkColor, ShadowboxMediumColor);
 
 		if (NetConnection_getPeerOptions(conn)->isServer)
 		{
@@ -2364,7 +2364,7 @@ DoConnectingDialog(MELEE_STATE* pMS)
 			/* "Awaiting outgoing connection */
 		}
 		t.baseline.y = r.corner.y + RES_SCALE(10);
-		t.baseline.x = SCREEN_WIDTH >> 1;
+		t.baseline.x = CanvasWidth >> 1;
 		t.align = ALIGN_CENTER;
 		t.CharCount = ~0;
 		font_DrawText(&t);
@@ -2430,7 +2430,7 @@ DoConnectingDialog(MELEE_STATE* pMS)
 static void
 check_for_disconnects(MELEE_STATE* pMS)
 {
-	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NumPlayers; player++)
 	{
 		if (!testFlag(PlayerControl[player], PlayerControlFlags::Network))
 		{
@@ -2585,7 +2585,7 @@ bool DoMelee(MELEE_STATE* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	if (!pMS->Initialized)
 	{
 		if (pMS->hMusic)
@@ -2601,7 +2601,7 @@ bool DoMelee(MELEE_STATE* pMS)
 
 		if (uqm::UQMOptions::read().mainMenuMusic)
 		{
-			pMS->hMusic = LoadMusic(MELEE_MUSIC);
+			pMS->hMusic = LoadMusicInstance(MeleeMusicRes);
 
 			PlayMusicResume(pMS->hMusic, NormalVolume);
 		}
@@ -2721,13 +2721,13 @@ LoadMeleeConfig(MELEE_STATE* pMS)
 	}
 
 	const auto sides {uqm::meleeConfigFromJson(*json)};
-	if (!sides || sides->size() != NUM_SIDES)
+	if (!sides || sides->size() != NumSides)
 	{
 		uqm::moveToBadFile(uqm::configDir(), c_meleeConfigFile);
 		return -1;
 	}
 
-	for (uint16_t side = 0; side < NUM_SIDES; side++)
+	for (uint16_t side = 0; side < NumSides; side++)
 	{
 		const uqm::MeleeSideConfig& config {(*sides)[side]};
 
@@ -2751,8 +2751,8 @@ LoadMeleeConfig(MELEE_STATE* pMS)
 static int
 WriteMeleeConfig(MELEE_STATE* pMS)
 {
-	uqstl::vector<uqm::MeleeSideConfig> sides(NUM_SIDES);
-	for (uint16_t side = 0; side < NUM_SIDES; side++)
+	uqstl::vector<uqm::MeleeSideConfig> sides(NumSides);
+	for (uint16_t side = 0; side < NumSides; side++)
 	{
 		uqm::MeleeSideConfig& config {sides[side]};
 		config.control = PlayerControl[side];
@@ -2785,7 +2785,7 @@ void Melee(void)
 
 #ifdef NETPLAY
 		{
-			for (uint16_t player {0}; player < NUM_PLAYERS; player++)
+			for (uint16_t player {0}; player < NumPlayers; player++)
 			{
 				netConnections[player] = nullptr;
 			}
@@ -2798,7 +2798,7 @@ void Melee(void)
 
 		uqm::currentActivity() = SUPER_MELEE;
 
-		GameSounds = uqm::loadSoundBank(GAME_SOUNDS).release();
+		GameSounds = uqm::loadSoundBank(GameSoundsRes).release();
 		LoadMeleeInfo(&MenuState);
 		if (LoadMeleeConfig(&MenuState) == -1)
 		{ // This sets the default controls on the Super Melee screen
@@ -2811,7 +2811,7 @@ void Melee(void)
 		}
 
 		MenuState.side = 0;
-		SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+		SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 		DoInput(&MenuState, true);
 
 		StopMusic();

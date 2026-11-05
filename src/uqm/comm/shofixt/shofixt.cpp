@@ -33,11 +33,11 @@ static LOCDATA shofixti_desc =
 		nullptr, /* uninit_encounter_func */
 		SHOFIXTI_PMAP_ANIM, /* AlienFrame */
 		SHOFIXTI_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH, */  /* AlienTextWidth */
+		/* SisTextWidth(), */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		SHOFIXTI_COLOR_MAP, /* AlienColorMap */
@@ -52,9 +52,9 @@ static LOCDATA shofixti_desc =
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				5,			   /* StartIndex */
-				15,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				5,			  /* StartIndex */
+				15,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -62,9 +62,9 @@ static LOCDATA shofixti_desc =
 				0, /* BlockMask */
 			},
 								{
-				20,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				20,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				(GameTicksPerSecond >> 1),
@@ -72,9 +72,9 @@ static LOCDATA shofixti_desc =
 				0,							   /* BlockMask */
 			},
 								{
-				23,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				23,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				(GameTicksPerSecond >> 1),
@@ -82,9 +82,9 @@ static LOCDATA shofixti_desc =
 				0,							   /* BlockMask */
 			},
 								{
-				26,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				26,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -92,9 +92,9 @@ static LOCDATA shofixti_desc =
 				0,						/* BlockMask */
 			},
 								{
-				29,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				29,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -103,9 +103,9 @@ static LOCDATA shofixti_desc =
 			},
 
 								{
-				33,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				33,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -113,9 +113,9 @@ static LOCDATA shofixti_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				39,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				39,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -123,9 +123,9 @@ static LOCDATA shofixti_desc =
 				(1 << 7),				 /* BlockMask */
 			},
 								{
-				46,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				46,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -133,9 +133,9 @@ static LOCDATA shofixti_desc =
 				(1 << 6),				 /* BlockMask */
 			},
 								{
-				52,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				52,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -143,9 +143,9 @@ static LOCDATA shofixti_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				56,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				56,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -153,9 +153,9 @@ static LOCDATA shofixti_desc =
 				(1 << 10),				 /* BlockMask */
 			},
 								{
-				63,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				63,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -688,15 +688,15 @@ init_shofixti_comm(void)
 	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
-	if (EXTENDED)
+	if (IsExtended())
 	{
-		altResFlags |= USE_ALT_FRAME;
+		altResFlags |= UseAltFrame;
 	}
 
 	shofixti_desc.AlienTextBaseline.x =
-		TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+		TextXOffs() + (SisTextWidth() >> 1);
 	shofixti_desc.AlienTextBaseline.y = 0;
-	shofixti_desc.AlienTextWidth = SIS_TEXT_WIDTH;
+	shofixti_desc.AlienTextWidth = SisTextWidth();
 
 	setSegue(Segue_peace);
 

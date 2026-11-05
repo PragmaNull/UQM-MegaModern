@@ -73,8 +73,8 @@ void doInstantMove(void)
 	{
 		// If there's a solar system at the destination, enter it.
 		GFXPOINT target {uqm::flagship().autopilot.target()};
-		CurStarDescPtr = FindStar(0, &target, 0, 0);
-		if (CurStarDescPtr)
+		CurStarDescPtr() = FindStar(0, &target, 0, 0);
+		if (CurStarDescPtr())
 		{
 			// Leave HyperSpace/QuasiSpace if we're there:
 			SET_GAME_STATE(USED_BROADCASTER, 0);
@@ -106,7 +106,7 @@ findPlayerShip(int16_t playerNr)
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
 
-		if ((ElementPtr->state_flags & PLAYER_SHIP) && ElementPtr->playerNr == playerNr)
+		if ((ElementPtr->state_flags & PlayerShip) && ElementPtr->playerNr == playerNr)
 		{
 			STARSHIP* StarShipPtr {};
 			GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -133,11 +133,11 @@ void resetEnergyBattle(void)
 
 	if (testFlag(PlayerControl[1], PlayerControlFlags::Human))
 	{
-		StarShipPtr = findPlayerShip(NPC_PLAYER_NUM);
+		StarShipPtr = findPlayerShip(NpcPlayerNum);
 	}
 	else if (testFlag(PlayerControl[0], PlayerControlFlags::Human))
 	{
-		StarShipPtr = findPlayerShip(RPG_PLAYER_NUM);
+		StarShipPtr = findPlayerShip(RpgPlayerNum);
 	}
 	else
 	{
@@ -171,11 +171,11 @@ scuttleOpponent(void)
 
 	if (testFlag(PlayerControl[1], PlayerControlFlags::Human))
 	{
-		StarShipPtr = findPlayerShip(RPG_PLAYER_NUM);
+		StarShipPtr = findPlayerShip(RpgPlayerNum);
 	}
 	else if (testFlag(PlayerControl[0], PlayerControlFlags::Human))
 	{
-		StarShipPtr = findPlayerShip(NPC_PLAYER_NUM);
+		StarShipPtr = findPlayerShip(NpcPlayerNum);
 	}
 	else
 	{
@@ -517,13 +517,13 @@ void equipShip(void)
 	}
 
 	// Thrusters:
-	for (i = 0; i < NUM_DRIVE_SLOTS; i++)
+	for (i = 0; i < NumDriveSlots; i++)
 	{
 		GLOBAL_SIS(DriveSlots[i]) = FUSION_THRUSTER;
 	}
 
 	// Turning jets:
-	for (i = 0; i < NUM_JET_SLOTS; i++)
+	for (i = 0; i < NumJetSlots; i++)
 	{
 		GLOBAL_SIS(JetSlots[i]) = TURNING_JETS;
 	}
@@ -560,12 +560,12 @@ void equipShip(void)
 		GLOBAL_SIS(ModuleSlots[i++]) = CANNON_WEAPON;
 
 		// Landers:
-		GLOBAL_SIS(NumLanders) = MAX_LANDERS;
+		GLOBAL_SIS(NumLanders) = MaxLanders;
 	}
 	else
 	{
 		// The Precursor bomb has been installed.
-		i = NUM_BOMB_MODULES;
+		i = NumBombModules;
 		GLOBAL_SIS(ModuleSlots[i++]) = HIGHEFF_FUELSYS;
 		GLOBAL_SIS(ModuleSlots[i++]) = CREW_POD;
 		GLOBAL_SIS(ModuleSlots[i++]) = DYNAMO_UNIT;
@@ -574,23 +574,23 @@ void equipShip(void)
 		GLOBAL_SIS(ModuleSlots[i++]) = TRACKING_SYSTEM;
 	}
 
-	assert(i <= NUM_MODULE_SLOTS);
+	assert(i <= NumModuleSlots);
 
 	// Fill the fuel and crew compartments to the maximum.
-	GLOBAL_SIS(FuelOnBoard) = FUEL_RESERVE;
+	GLOBAL_SIS(FuelOnBoard) = FuelReserve;
 	GLOBAL_SIS(CrewEnlisted) = 0;
-	for (i = 0; i < NUM_MODULE_SLOTS; i++)
+	for (i = 0; i < NumModuleSlots; i++)
 	{
 		switch (GLOBAL_SIS(ModuleSlots[i]))
 		{
 			case CREW_POD:
-				GLOBAL_SIS(CrewEnlisted) += CREW_POD_CAPACITY;
+				GLOBAL_SIS(CrewEnlisted) += CrewPodCapacity;
 				break;
 			case FUEL_TANK:
-				GLOBAL_SIS(FuelOnBoard) += FUEL_TANK_CAPACITY;
+				GLOBAL_SIS(FuelOnBoard) += FuelTankCapacity;
 				break;
 			case HIGHEFF_FUELSYS:
-				GLOBAL_SIS(FuelOnBoard) += HEFUEL_TANK_CAPACITY;
+				GLOBAL_SIS(FuelOnBoard) += HefuelTankCapacity;
 				break;
 		}
 	}
@@ -599,22 +599,22 @@ void equipShip(void)
 	if (pSolarSysState != nullptr)
 	{
 		// Thrusters:
-		pSolarSysState->max_ship_speed = 5 * IP_SHIP_THRUST_INCREMENT;
-		for (i = 0; i < NUM_DRIVE_SLOTS; i++)
+		pSolarSysState->max_ship_speed = 5 * IpShipThrustIncrement;
+		for (i = 0; i < NumDriveSlots; i++)
 		{
 			if (GLOBAL_SIS(DriveSlots[i] == FUSION_THRUSTER))
 			{
-				pSolarSysState->max_ship_speed += IP_SHIP_THRUST_INCREMENT;
+				pSolarSysState->max_ship_speed += IpShipThrustIncrement;
 			}
 		}
 
 		// Turning jets:
-		pSolarSysState->turn_wait = IP_SHIP_TURN_WAIT;
-		for (i = 0; i < NUM_JET_SLOTS; i++)
+		pSolarSysState->turn_wait = IpShipTurnWait;
+		for (i = 0; i < NumJetSlots; i++)
 		{
 			if (GLOBAL_SIS(JetSlots[i]) == TURNING_JETS)
 			{
-				pSolarSysState->turn_wait -= IP_SHIP_TURN_DECREMENT;
+				pSolarSysState->turn_wait -= IpShipTurnDecrement;
 			}
 		}
 	}
@@ -622,7 +622,7 @@ void equipShip(void)
 	// Make sure everything is redrawn:
 	if (inHQSpace() || uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
 	{
-		DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
+		DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 	}
 }
 
@@ -679,7 +679,7 @@ void clearEscorts(void)
 		FreeShipFrag(&GLOBAL(built_ship_q), hStarShip);
 	}
 
-	DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
+	DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -700,7 +700,7 @@ findFlagshipElement (void)
 	{
 		LockElement (hElement, &ElementPtr);
 
-		if ((ElementPtr->state_flags & PLAYER_SHIP) != 0)
+		if ((ElementPtr->state_flags & PlayerShip) != 0)
 		{
 			UnlockElement (hElement);
 			return hElement;
@@ -749,7 +749,7 @@ void showSpheres(bool Animated)
 		}
 	}
 
-	if (EXTENDED)
+	if (IsExtended())
 	{
 		HFLEETINFO hSyreen = GetStarShipFromIndex(
 			&GLOBAL(avail_race_q), SYREEN_SHIP);
@@ -760,11 +760,11 @@ void showSpheres(bool Animated)
 		FLEET_INFO* ChmmrPtr = LockFleetInfo(
 			&GLOBAL(avail_race_q), hChmmr);
 
-		SyreenPtr->actual_strength = 300 / SPHERE_RADIUS_INCREMENT * 2;
+		SyreenPtr->actual_strength = 300 / SphereRadiusIncrement * 2;
 		SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, HOME);
 		StartSphereTracking(SYREEN_SHIP);
 
-		ChmmrPtr->actual_strength = 986 / SPHERE_RADIUS_INCREMENT * 2;
+		ChmmrPtr->actual_strength = 986 / SphereRadiusIncrement * 2;
 		ChmmrPtr->loc = SeedFleetLocation(ChmmrPtr, plot_map, HOME);
 		StartSphereTracking(CHMMR_SHIP);
 
@@ -803,7 +803,7 @@ void forAllStars(void (*callback)(STAR_DESC*, void*), void* arg)
 {
 	int i;
 
-	for (i = 0; i < NUM_SOLAR_SYSTEMS; i++)
+	for (i = 0; i < NumSolarSystems; i++)
 	{
 		callback(&star_array[i], arg);
 	}
@@ -813,7 +813,7 @@ void forAllPlanets(STAR_DESC* star, SOLARSYS_STATE* system, void (*callback)(STA
 {
 	uint16_t i;
 
-	assert(CurStarDescPtr == star);
+	assert(CurStarDescPtr() == star);
 	assert(pSolarSysState == system);
 
 	for (i = 0; i < system->SunDesc[0].NumPlanets; i++)
@@ -873,8 +873,8 @@ starRecurse(STAR_DESC* star, void* arg)
 
 	SOLARSYS_STATE SolarSysState {};
 	SOLARSYS_STATE* oldPSolarSysState = pSolarSysState;
-	STAR_DESC* oldStarDescPtr = CurStarDescPtr;
-	CurStarDescPtr = star;
+	STAR_DESC* oldStarDescPtr = CurStarDescPtr();
+	CurStarDescPtr() = star;
 
 	SysGenRNGDebug->reseed(GetRandomSeedForStar(star));
 
@@ -910,7 +910,7 @@ starRecurse(STAR_DESC* star, void* arg)
 	}
 
 	pSolarSysState = oldPSolarSysState;
-	CurStarDescPtr = oldStarDescPtr;
+	CurStarDescPtr() = oldStarDescPtr;
 }
 
 static void
@@ -919,7 +919,7 @@ planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
-	assert(CurStarDescPtr == star);
+	assert(CurStarDescPtr() == star);
 	assert(pSolarSysState == system);
 
 	planet->pPrevDesc = &system->SunDesc[0];
@@ -965,7 +965,7 @@ moonRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
-	assert(CurStarDescPtr == star);
+	assert(CurStarDescPtr() == star);
 	assert(pSolarSysState == system);
 
 	moon->pPrevDesc = planet;
@@ -1344,7 +1344,7 @@ void printWorld(const PLANET_DESC* world)
 {
 	PLANET_INFO* info;
 	char buf[200] {};
-	GFXPOINT universe = CurStarDescPtr->star_pt;
+	GFXPOINT universe = CurStarDescPtr()->star_pt;
 
 	if (world->data_index == HIERARCHY_STARBASE
 		|| world->data_index == SA_MATRA
@@ -1365,7 +1365,7 @@ void printWorld(const PLANET_DESC* world)
 			   universe.x / 10, universe.x % 10,
 			   universe.y / 10, universe.y % 10);
 
-	GetClusterName(CurStarDescPtr, buf);
+	GetClusterName(CurStarDescPtr(), buf);
 
 	fmt::print(fp, "Star:       {}\n", buf);
 
@@ -1423,7 +1423,7 @@ calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 	{
 		NODE_INFO info;
 		callGenerateForScanType(system, world, i, BIOLOGICAL_SCAN, &info);
-		result += BIO_CREDIT_VALUE * uqm::lowNibble(CreatureData[info.type].ValueAndHitPoints);
+		result += BioCreditValueDefault * uqm::lowNibble(CreatureData[info.type].ValueAndHitPoints);
 	}
 	return result;
 }
@@ -1837,7 +1837,7 @@ void resetCrewBattle(void)
 		return;
 	}
 
-	StarShipPtr = findPlayerShip(RPG_PLAYER_NUM);
+	StarShipPtr = findPlayerShip(RpgPlayerNum);
 	if (StarShipPtr == nullptr || StarShipPtr->RaceDescPtr == nullptr)
 	{
 		return;
@@ -1856,44 +1856,37 @@ void resetCrewBattle(void)
 // gamestrings.txt.
 void dumpStrings(FILE* out)
 {
-#define STRINGIZE(a) #a
-#define MAKE_STRING_CATEGORY(prefix)                           \
-	{                                                          \
-		/* .name  = */ STRINGIZE(prefix ## _BASE),               \
-								 /* .base  = */ prefix##_BASE, \
-								 /* .count = */ prefix##_COUNT \
-	}
 	struct
 	{
 		const char* name;
 		size_t base;
 		size_t count;
 	} categories[] = {
-		{"0",			  0,			 0		  },
-		MAKE_STRING_CATEGORY(STAR_STRING),
-		MAKE_STRING_CATEGORY(DEVICE_STRING),
-		MAKE_STRING_CATEGORY(CARGO_STRING),
-		MAKE_STRING_CATEGORY(ELEMENTS_STRING),
-		MAKE_STRING_CATEGORY(SCAN_STRING),
-		MAKE_STRING_CATEGORY(STAR_NUMBER),
-		MAKE_STRING_CATEGORY(PLANET_NUMBER),
-		MAKE_STRING_CATEGORY(MONTHS_STRING),
-		MAKE_STRING_CATEGORY(FEEDBACK_STRING),
-		MAKE_STRING_CATEGORY(STARBASE_STRING),
-		MAKE_STRING_CATEGORY(ENCOUNTER_STRING),
-		MAKE_STRING_CATEGORY(NAVIGATION_STRING),
-		MAKE_STRING_CATEGORY(NAMING_STRING),
-		MAKE_STRING_CATEGORY(MELEE_STRING),
-		MAKE_STRING_CATEGORY(SAVEGAME_STRING),
-		MAKE_STRING_CATEGORY(OPTION_STRING),
-		MAKE_STRING_CATEGORY(QUITMENU_STRING),
-		MAKE_STRING_CATEGORY(STATUS_STRING),
-		MAKE_STRING_CATEGORY(FLAGSHIP_STRING),
-		MAKE_STRING_CATEGORY(ORBITSCAN_STRING),
-		MAKE_STRING_CATEGORY(MAINMENU_STRING),
-		MAKE_STRING_CATEGORY(NETMELEE_STRING),
-		MAKE_STRING_CATEGORY(BIOLOGICAL_STRING),
-		{"GAMESTR_COUNT", GAMESTR_COUNT, (size_t)-1}
+		{"0",					  0,					  0					},
+		{"STAR_STRING_BASE",		 STAR_STRING_BASE,	   StarStringCount	  },
+		{"DEVICE_STRING_BASE",	   DEVICE_STRING_BASE,	   DeviceStringCount	},
+		{"CARGO_STRING_BASE",	  CARGO_STRING_BASE,		 CargoStringCount	 },
+		{"ELEMENTS_STRING_BASE",	 ELEMENTS_STRING_BASE,   ElementsStringCount  },
+		{"SCAN_STRING_BASE",		 SCAN_STRING_BASE,	   ScanStringCount	  },
+		{"STAR_NUMBER_BASE",		 STAR_NUMBER_BASE,	   StarNumberCount	  },
+		{"PLANET_NUMBER_BASE",	   PLANET_NUMBER_BASE,	   PlanetNumberCount	},
+		{"MONTHS_STRING_BASE",	   MONTHS_STRING_BASE,	   MonthsStringCount	},
+		{"FEEDBACK_STRING_BASE",	 FEEDBACK_STRING_BASE,   FeedbackStringCount  },
+		{"STARBASE_STRING_BASE",	 STARBASE_STRING_BASE,   StarbaseStringCount  },
+		{"ENCOUNTER_STRING_BASE",  ENCOUNTER_STRING_BASE,	 EncounterStringCount },
+		{"NAVIGATION_STRING_BASE", NAVIGATION_STRING_BASE, NavigationStringCount},
+		{"NAMING_STRING_BASE",	   NAMING_STRING_BASE,	   NamingStringCount	},
+		{"MELEE_STRING_BASE",	  MELEE_STRING_BASE,		 MeleeStringCount	 },
+		{"SAVEGAME_STRING_BASE",	 SAVEGAME_STRING_BASE,   SavegameStringCount  },
+		{"OPTION_STRING_BASE",	   OPTION_STRING_BASE,	   OptionStringCount	},
+		{"QUITMENU_STRING_BASE",	 QUITMENU_STRING_BASE,   QuitmenuStringCount  },
+		{"STATUS_STRING_BASE",	   STATUS_STRING_BASE,	   StatusStringCount	},
+		{"FLAGSHIP_STRING_BASE",	 FLAGSHIP_STRING_BASE,   FlagshipStringCount  },
+		{"ORBITSCAN_STRING_BASE",  ORBITSCAN_STRING_BASE,	 OrbitscanStringCount },
+		{"MAINMENU_STRING_BASE",	 MAINMENU_STRING_BASE,   MainmenuStringCount  },
+		{"NETMELEE_STRING_BASE",	 NETMELEE_STRING_BASE,   NetmeleeStringCount  },
+		{"BIOLOGICAL_STRING_BASE", BIOLOGICAL_STRING_BASE, BiologicalStringCount},
+		{"GAMESTR_COUNT",		  GAMESTR_COUNT,			 (size_t)-1		   }
 	};
 	size_t numCategories = std::size(categories);
 	size_t numStrings = GameStrings->size();

@@ -132,7 +132,7 @@ ARCTAN(int32_t delta_x, int32_t delta_y)
 	int32_t v2 {delta_y};
 	if (v1 == 0 && v2 == 0)
 	{
-		return (FULL_CIRCLE);
+		return (FullCircle);
 	}
 
 	if (v1 < 0)
@@ -145,21 +145,21 @@ ARCTAN(int32_t delta_x, int32_t delta_y)
 	}
 	if (v1 > v2)
 	{
-		v1 = QUADRANT
-		   - atantab[(((uint32_t)v2 << (CIRCLE_SHIFT - 1)) + (v1 >> 1)) / v1];
+		v1 = Quadrant
+		   - atantab[(((uint32_t)v2 << (CircleShift - 1)) + (v1 >> 1)) / v1];
 	}
 	else
 	{
-		v1 = atantab[(((uint32_t)v1 << (CIRCLE_SHIFT - 1)) + (v2 >> 1)) / v2];
+		v1 = atantab[(((uint32_t)v1 << (CircleShift - 1)) + (v2 >> 1)) / v2];
 	}
 
 	if (delta_x < 0)
 	{
-		v1 = FULL_CIRCLE - v1;
+		v1 = FullCircle - v1;
 	}
 	if (delta_y > 0)
 	{
-		v1 = HALF_CIRCLE - v1;
+		v1 = HalfCircle - v1;
 	}
 
 	return (NORMALIZE_ANGLE(v1));

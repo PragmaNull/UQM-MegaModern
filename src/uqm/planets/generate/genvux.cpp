@@ -78,7 +78,7 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		uint16_t angle {};
 
-		if (CurStarDescPtr->Index == MAIDENS_DEFINED)
+		if (CurStarDescPtr()->Index == MAIDENS_DEFINED)
 		{
 			GenerateDefault_generatePlanets(solarSys);
 			// XXX: this is the second time that this function is
@@ -92,14 +92,14 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 		}
 		else
 		{
-			if (CurStarDescPtr->Index == VUX_DEFINED)
+			if (CurStarDescPtr()->Index == VUX_DEFINED)
 			{
 				pPlanet->data_index = REDUX_WORLD;
 				pPlanet->NumPlanets = 1;
 				pPlanet->radius = EARTH_RADIUS * 42L / 100;
-				angle = HALF_CIRCLE + OCTANT;
+				angle = HalfCircle + Octant;
 			}
-			else /* if (CurStarDescPtr->Index == VUX_BEAST_DEFINED) */
+			else /* if (CurStarDescPtr()->Index == VUX_BEAST_DEFINED) */
 			{
 				memmove(&solarSys->PlanetDesc[1],
 						&solarSys->PlanetDesc[0],
@@ -107,7 +107,7 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 							* pSunDesc->NumPlanets);
 				++pSunDesc->NumPlanets;
 
-				angle = HALF_CIRCLE - OCTANT;
+				angle = HalfCircle - Octant;
 				pPlanet->data_index = WATER_WORLD;
 				pPlanet->radius = EARTH_RADIUS * 110L / 100;
 				pPlanet->NumPlanets = 0;
@@ -144,19 +144,19 @@ static bool
 GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
 	if ((matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		 && (CurStarDescPtr->Index == VUX_DEFINED
-			 || (CurStarDescPtr->Index == MAIDENS_DEFINED
+		 && (CurStarDescPtr()->Index == VUX_DEFINED
+			 || (CurStarDescPtr()->Index == MAIDENS_DEFINED
 				 && !GET_GAME_STATE(ZEX_IS_DEAD))))
 		&& StartSphereTracking(VUX_SHIP))
 	{
-		NotifyOthers(VUX_SHIP, IPNL_ALL_CLEAR);
-		PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+		NotifyOthers(VUX_SHIP, IpnlAllClear);
+		PutGroupInfo(GroupsRandom, GroupSaveIp);
 		ReinitQueue(&GLOBAL(ip_group_q));
 		assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
 		CloneShipFragment(VUX_SHIP,
 						  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
-		if (CurStarDescPtr->Index == VUX_DEFINED)
+		if (CurStarDescPtr()->Index == VUX_DEFINED)
 		{
 			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
 		}
@@ -176,9 +176,9 @@ GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		{
 			uqm::currentActivity() &= ~START_INTERPLANETARY;
 			ReinitQueue(&GLOBAL(npc_built_ship_q));
-			GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+			GetGroupInfo(GroupsRandom, GroupLoadIp);
 
-			if (CurStarDescPtr->Index == VUX_DEFINED
+			if (CurStarDescPtr()->Index == VUX_DEFINED
 				|| !GET_GAME_STATE(ZEX_IS_DEAD))
 			{
 				return true;
@@ -190,33 +190,33 @@ GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 
 	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
-		if (CurStarDescPtr->Index == MAIDENS_DEFINED)
+		if (CurStarDescPtr()->Index == MAIDENS_DEFINED)
 		{
 			if (!GET_GAME_STATE(SHOFIXTI_MAIDENS))
 			{
 				LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 				solarSys->PlanetSideFrame[1] = CaptureDrawable(
-					LoadGraphic(MAIDENS_MASK_PMAP_ANIM));
-				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MAIDENS_STRTAB);
+					LoadGraphic(MaidensMaskPmapAnimRes));
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MaidensStrtabRes);
 				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			}
 		}
-		else if (CurStarDescPtr->Index == VUX_BEAST_DEFINED)
+		else if (CurStarDescPtr()->Index == VUX_BEAST_DEFINED)
 		{
 			if (!GET_GAME_STATE(VUX_BEAST))
 			{
 				LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 				solarSys->PlanetSideFrame[1] = 0;
-				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BEAST_STRTAB);
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BeastStrtabRes);
 				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			}
 		}
-		else // if (CurStarDescPtr->Index == VUX_DEFINED)
+		else // if (CurStarDescPtr()->Index == VUX_DEFINED)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
-				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+				CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RuinsStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 		}
 	}
@@ -237,7 +237,7 @@ static uint16_t
 GenerateVux_generateEnergy(const SOLARSYS_STATE* solarSys,
 						   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (CurStarDescPtr->Index == MAIDENS_DEFINED
+	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		// This check is redundant since the retrieval bit will keep the
@@ -256,7 +256,7 @@ GenerateVux_generateEnergy(const SOLARSYS_STATE* solarSys,
 		return 1; // only matters when count is requested
 	}
 
-	if (CurStarDescPtr->Index == VUX_DEFINED
+	if (CurStarDescPtr()->Index == VUX_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
@@ -269,7 +269,7 @@ static bool
 GenerateVux_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						 uint16_t whichNode)
 {
-	if (CurStarDescPtr->Index == MAIDENS_DEFINED
+	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		assert(!GET_GAME_STATE(SHOFIXTI_MAIDENS) && whichNode == 0);
@@ -283,7 +283,7 @@ GenerateVux_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		return true; // picked up
 	}
 
-	if (CurStarDescPtr->Index == VUX_DEFINED
+	if (CurStarDescPtr()->Index == VUX_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		// Standard ruins report
@@ -295,13 +295,13 @@ GenerateVux_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-#define LIFE_BOOL (EXTENDED && GET_GAME_STATE(VUX_BEAST))
+#define LIFE_BOOL (IsExtended() && GET_GAME_STATE(VUX_BEAST))
 
 static uint16_t
 GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
 						 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (CurStarDescPtr->Index == MAIDENS_DEFINED
+	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		const static int8_t life[] =
@@ -320,11 +320,11 @@ GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
 			};
 
 		return GeneratePresetLife(
-			&solarSys->SysInfo, EXTENDED ? lifeEx : life,
+			&solarSys->SysInfo, IsExtended() ? lifeEx : life,
 			whichNode, info);
 	}
 
-	if (CurStarDescPtr->Index == VUX_BEAST_DEFINED
+	if (CurStarDescPtr()->Index == VUX_BEAST_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		const static int8_t life[] =
@@ -346,7 +346,7 @@ static bool
 GenerateVux_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 					   uint16_t whichNode)
 {
-	if (CurStarDescPtr->Index == VUX_BEAST_DEFINED
+	if (CurStarDescPtr()->Index == VUX_BEAST_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		if (whichNode == 0)
@@ -367,13 +367,13 @@ GenerateVux_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		return true; // picked up
 	}
 
-	if (LIFE_BOOL && CurStarDescPtr->Index == MAIDENS_DEFINED
+	if (LIFE_BOOL && CurStarDescPtr()->Index == MAIDENS_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		if (whichNode == 10)
 		{ // Picked up Zex' Beauty... Again.
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BEAST_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(BeastStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 
 			GenerateDefault_landerReport(solarSys);
@@ -387,8 +387,8 @@ GenerateVux_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 				// overrides it
 				LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 				solarSys->PlanetSideFrame[1] = CaptureDrawable(
-					LoadGraphic(MAIDENS_MASK_PMAP_ANIM));
-				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MAIDENS_STRTAB);
+					LoadGraphic(MaidensMaskPmapAnimRes));
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MaidensStrtabRes);
 				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			}
 		}

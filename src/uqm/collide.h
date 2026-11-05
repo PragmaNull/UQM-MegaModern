@@ -25,17 +25,17 @@
 extern "C" {
 #endif
 
-#define COLLISION_TURN_WAIT 1
-#define COLLISION_THRUST_WAIT 3
+inline constexpr auto CollisionTurnWait {1};
+inline constexpr auto CollisionThrustWait {3};
 
-#define SKIP_COLLISION (NONSOLID | DISAPPEARING)
+inline constexpr auto SkipCollision {(Nonsolid | Disappearing)};
 #define CollidingElement(e) \
-	(!((e)->state_flags & SKIP_COLLISION))
-#define CollisionPossible(e0, e1)                                         \
-	(CollidingElement(e0)                                                 \
-	 && (!(((e1)->state_flags & (e0)->state_flags) & COLLISION)           \
-		 && ((!(((e1)->state_flags & (e0)->state_flags) & IGNORE_SIMILAR) \
-			  || (e1)->pParent != (e0)->pParent))                         \
+	(!((e)->state_flags & SkipCollision))
+#define CollisionPossible(e0, e1)                                        \
+	(CollidingElement(e0)                                                \
+	 && (!(((e1)->state_flags & (e0)->state_flags) & Collision)          \
+		 && ((!(((e1)->state_flags & (e0)->state_flags) & IgnoreSimilar) \
+			  || (e1)->pParent != (e0)->pParent))                        \
 		 && ((e1)->mass_points || (e0)->mass_points)))
 
 #define InitIntersectStartPoint(eptr)                      \

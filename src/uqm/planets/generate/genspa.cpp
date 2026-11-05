@@ -75,7 +75,7 @@ GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
 
-	if (CurStarDescPtr->Index == SPATHI_DEFINED)
+	if (CurStarDescPtr()->Index == SPATHI_DEFINED)
 	{
 		pSunDesc->NumPlanets = 1;
 		pSunDesc->PlanetByte = 0;
@@ -104,7 +104,7 @@ GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 		}
 
 		if (GET_GAME_STATE(SPATHI_SHIELDED_SELVES)
-			&& !(EXTENDED && GET_GAME_STATE(KOHR_AH_FRENZY)
+			&& !(IsExtended() && GET_GAME_STATE(KOHR_AH_FRENZY)
 				 && RaceDead(ORZ_SHIP)))
 		{
 			pPlanet->data_index |= PLANET_SHIELDED;
@@ -115,9 +115,9 @@ GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (EXTENDED)
+	if (IsExtended())
 	{
-		if (CurStarDescPtr->Index == ALGOLITES_DEFINED)
+		if (CurStarDescPtr()->Index == ALGOLITES_DEFINED)
 		{
 			pSunDesc->PlanetByte = PickClosestHabitable(solarSys);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -125,7 +125,7 @@ GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 			pPlanet->data_index = GenerateHabitableWorld();
 		}
 
-		if (CurStarDescPtr->Index == SPATHI_MONUMENT_DEFINED)
+		if (CurStarDescPtr()->Index == SPATHI_MONUMENT_DEFINED)
 		{
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
@@ -143,7 +143,7 @@ GenerateSpathi_generateMoons(SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (CurStarDescPtr->Index == SPATHI_DEFINED
+	if (CurStarDescPtr()->Index == SPATHI_DEFINED
 		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
@@ -176,7 +176,7 @@ GenerateSpathi_generateName(const SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (CurStarDescPtr->Index == SPATHI_DEFINED
+	if (CurStarDescPtr()->Index == SPATHI_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 		&& IsHomeworldKnown(SPATHI_HOME))
 	{
@@ -199,15 +199,15 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 {
 	uint32_t rand_val {};
 
-	if (CurStarDescPtr->Index == SPATHI_DEFINED)
+	if (CurStarDescPtr()->Index == SPATHI_DEFINED)
 	{
 		if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
 		{ /* Spathiwa's moon */
 			if (!GET_GAME_STATE(SPATHI_SHIELDED_SELVES)
 				&& StartSphereTracking(SPATHI_SHIP))
 			{
-				NotifyOthers(SPATHI_SHIP, IPNL_ALL_CLEAR);
-				PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+				NotifyOthers(SPATHI_SHIP, IpnlAllClear);
+				PutGroupInfo(GroupsRandom, GroupSaveIp);
 				ReinitQueue(&GLOBAL(ip_group_q));
 				assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
 
@@ -222,7 +222,7 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 				{
 					uqm::currentActivity() &= ~START_INTERPLANETARY;
 					ReinitQueue(&GLOBAL(npc_built_ship_q));
-					GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+					GetGroupInfo(GroupsRandom, GroupLoadIp);
 				}
 				return true;
 			}
@@ -254,8 +254,8 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 				LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 				solarSys->PlanetSideFrame[1] =
 					CaptureDrawable(
-						LoadGraphic(UMGAH_BCS_MASK_PMAP_ANIM));
-				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(UMGAH_BCS_STRTAB);
+						LoadGraphic(UmgahBcsMaskPmapAnimRes));
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(UmgahBcsStrtabRes);
 				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				if (!GET_GAME_STATE(SPATHI_SHIELDED_SELVES))
 				{ // The first report talks extensively about Spathi
@@ -285,15 +285,15 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 			if (GET_GAME_STATE(KOHR_AH_FRENZY)
 				&& GET_GAME_STATE(SPATHI_SHIELDED_SELVES)
 				&& RaceDead(ORZ_SHIP)
-				&& EXTENDED)
+				&& IsExtended())
 			{
 				solarSys->SysInfo.PlanetInfo.ScanSeed[ENERGY_SCAN] =
 					rand_val;
 
 				LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 				solarSys->PlanetSideFrame[1] =
-					CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+					CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RuinsStrtabRes);
 				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 			}
 
@@ -312,34 +312,34 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 		}
 	}
 
-	if (CurStarDescPtr->Index == ALGOLITES_DEFINED
+	if (CurStarDescPtr()->Index == ALGOLITES_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ALGOLITE_RUINS_STRTAB);
+			CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(AlgoliteRuinsStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
-	if (CurStarDescPtr->Index == SPATHI_MONUMENT_DEFINED
+	if (CurStarDescPtr()->Index == SPATHI_MONUMENT_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
 			CaptureDrawable(
-				LoadGraphic(MONUMENT_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SPATHI_MONUMENT_STRTAB);
+				LoadGraphic(MonumentMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SpathiMonumentStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);
 
-	if (CurStarDescPtr->Index == ALGOLITES_DEFINED
+	if (CurStarDescPtr()->Index == ALGOLITES_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		solarSys->SysInfo.PlanetInfo.AtmoDensity = 0;
 		solarSys->SysInfo.PlanetInfo.Weather = 0;
@@ -352,7 +352,7 @@ static uint16_t
 GenerateSpathi_generateEnergy(const SOLARSYS_STATE* solarSys,
 							  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (CurStarDescPtr->Index == SPATHI_DEFINED)
+	if (CurStarDescPtr()->Index == SPATHI_DEFINED)
 	{
 		if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
 		{
@@ -369,24 +369,24 @@ GenerateSpathi_generateEnergy(const SOLARSYS_STATE* solarSys,
 		else if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 				 && GET_GAME_STATE(KOHR_AH_FRENZY) && RaceDead(ORZ_SHIP)
 				 && GET_GAME_STATE(SPATHI_SHIELDED_SELVES)
-				 && EXTENDED)
+				 && IsExtended())
 		{
 			return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN, 4,
 									   0, whichNode, info);
 		}
 	}
 
-	if (CurStarDescPtr->Index == ALGOLITES_DEFINED
+	if (CurStarDescPtr()->Index == ALGOLITES_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN, 6,
 								   0, whichNode, info);
 	}
 
-	if (CurStarDescPtr->Index == SPATHI_MONUMENT_DEFINED
+	if (CurStarDescPtr()->Index == SPATHI_MONUMENT_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		return GenerateDefault_generateArtifact(
 			solarSys, whichNode, info);
@@ -399,7 +399,7 @@ static bool
 GenerateSpathi_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 							uint16_t whichNode)
 {
-	if (CurStarDescPtr->Index == SPATHI_DEFINED)
+	if (CurStarDescPtr()->Index == SPATHI_DEFINED)
 	{
 		if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
 		{
@@ -416,7 +416,7 @@ GenerateSpathi_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		else if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
 				 && GET_GAME_STATE(KOHR_AH_FRENZY) && RaceDead(ORZ_SHIP)
 				 && GET_GAME_STATE(SPATHI_SHIELDED_SELVES)
-				 && EXTENDED)
+				 && IsExtended())
 		{
 			GenerateDefault_landerReportCycle(solarSys);
 
@@ -424,10 +424,10 @@ GenerateSpathi_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		}
 	}
 
-	if ((CurStarDescPtr->Index == ALGOLITES_DEFINED
-		 || CurStarDescPtr->Index == SPATHI_MONUMENT_DEFINED)
+	if ((CurStarDescPtr()->Index == ALGOLITES_DEFINED
+		 || CurStarDescPtr()->Index == SPATHI_MONUMENT_DEFINED)
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& EXTENDED)
+		&& IsExtended())
 	{
 		GenerateDefault_landerReportCycle(solarSys);
 
@@ -442,7 +442,7 @@ static uint16_t
 GenerateSpathi_generateLife(const SOLARSYS_STATE* solarSys,
 							const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (CurStarDescPtr->Index == SPATHI_DEFINED
+	if (CurStarDescPtr()->Index == SPATHI_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 #define NUM_EVIL_ONES 32
@@ -457,7 +457,7 @@ static bool
 GenerateSpathi_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						  uint16_t whichNode)
 {
-	if (CurStarDescPtr->Index == SPATHI_DEFINED
+	if (CurStarDescPtr()->Index == SPATHI_DEFINED
 		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
 	{
 		assert(!GET_GAME_STATE(SPATHI_CREATURES_ELIMINATED) && !GET_GAME_STATE(SPATHI_SHIELDED_SELVES));

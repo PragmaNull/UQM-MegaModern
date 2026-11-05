@@ -124,8 +124,8 @@ GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,
 		if (uqm::isOriginalSeed() || uqm::isStarSeed())
 		{
 			pMoonDesc->radius = MIN_MOON_RADIUS;
-			pMoonDesc->location.x = COSINE(QUADRANT, pMoonDesc->radius);
-			pMoonDesc->location.y = SINE(QUADRANT, pMoonDesc->radius);
+			pMoonDesc->location.x = COSINE(Quadrant, pMoonDesc->radius);
+			pMoonDesc->location.y = SINE(Quadrant, pMoonDesc->radius);
 			ComputeSpeed(pMoonDesc, true, 1);
 		}
 	}
@@ -165,8 +165,8 @@ GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
 	{ /* Gaia */
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RUINS_STRTAB);
+			CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(RuinsStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		GenerateDefault_generateOrbital(solarSys, world);
@@ -196,7 +196,7 @@ GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
 		else
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SYREEN_BASE_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SyreenBaseStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 			DoDiscoveryReport(MenuSounds);

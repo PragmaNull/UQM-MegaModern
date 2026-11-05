@@ -54,7 +54,7 @@
 #define DISCRIMINATOR_OFFSET RES_SCALE(4)
 #define TRACK_WAIT 1
 
-// HD
+// HdResolutionFactor
 #define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
 #define MISSILE_RANGE_HD (MISSILE_SPEED_HD * MISSILE_LIFE)
 
@@ -62,7 +62,7 @@ static RACE_DESC spathi_desc =
 	{
 		{/* SHIP_INFO */
 		 "eluder",
-		 FIRES_FORE | FIRES_AFT | SEEKING_SPECIAL | DONT_CHASE,
+		 FiresFore | FiresAft | SeekingSpecial | DontChase,
 		 18, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
@@ -72,7 +72,7 @@ static RACE_DESC spathi_desc =
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			1000 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			1000 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				2549,
@@ -145,7 +145,7 @@ butt_missile_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->next.image.frame =
 				SetAbsFrameIndex(ElementPtr->next.image.frame,
 								 facing);
-			ElementPtr->state_flags |= CHANGING;
+			ElementPtr->state_flags |= Changing;
 
 			SetVelocityVector(&ElementPtr->velocity,
 							  DISCRIMINATOR_SPEED, facing);
@@ -167,7 +167,7 @@ spawn_butt_missile(ELEMENT* ShipPtr)
 	ButtMissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
 	ButtMissileBlock.face = ButtMissileBlock.index =
 		NORMALIZE_FACING(StarShipPtr->ShipFacing
-						 + ANGLE_TO_FACING(HALF_CIRCLE));
+						 + ANGLE_TO_FACING(HalfCircle));
 	ButtMissileBlock.sender = ShipPtr->playerNr;
 	ButtMissileBlock.flags = 0;
 	ButtMissileBlock.pixoffs = SPATHI_REAR_OFFSET;
@@ -205,7 +205,7 @@ spathi_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	StarShipPtr->ship_input_state &= ~SPECIAL;
+	StarShipPtr->ship_input_state &= ~SpecialFlag;
 
 	const EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (StarShipPtr->special_counter == 0
@@ -219,7 +219,7 @@ spathi_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 		travel_facing = NORMALIZE_FACING(
 			ANGLE_TO_FACING(GetVelocityTravelAngle(&ShipPtr->velocity)
-							+ HALF_CIRCLE));
+							+ HalfCircle));
 		delta_x = lpEvalDesc->ObjectPtr->current.location.x
 				- ShipPtr->current.location.x;
 		delta_y = lpEvalDesc->ObjectPtr->current.location.y
@@ -228,22 +228,22 @@ spathi_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)));
 
 		if (NORMALIZE_FACING(direction_facing
-							 - (StarShipPtr->ShipFacing + ANGLE_TO_FACING(HALF_CIRCLE))
-							 + ANGLE_TO_FACING(QUADRANT))
-				<= ANGLE_TO_FACING(HALF_CIRCLE)
+							 - (StarShipPtr->ShipFacing + ANGLE_TO_FACING(HalfCircle))
+							 + ANGLE_TO_FACING(Quadrant))
+				<= ANGLE_TO_FACING(HalfCircle)
 			&& (lpEvalDesc->which_turn <= 8
 				|| NORMALIZE_FACING(direction_facing
-									+ ANGLE_TO_FACING(HALF_CIRCLE)
+									+ ANGLE_TO_FACING(HalfCircle)
 									- ANGLE_TO_FACING(GetVelocityTravelAngle(
 										&lpEvalDesc->ObjectPtr->velocity))
-									+ ANGLE_TO_FACING(QUADRANT))
-					   <= ANGLE_TO_FACING(HALF_CIRCLE))
-			&& (!(StarShipPtr->cur_status_flags & (SHIP_BEYOND_MAX_SPEED | SHIP_IN_GRAVITY_WELL))
+									+ ANGLE_TO_FACING(Quadrant))
+					   <= ANGLE_TO_FACING(HalfCircle))
+			&& (!(StarShipPtr->cur_status_flags & (ShipBeyondMaxSpeed | ShipInGravityWell))
 				|| NORMALIZE_FACING(direction_facing
-									- travel_facing + ANGLE_TO_FACING(QUADRANT))
-					   <= ANGLE_TO_FACING(HALF_CIRCLE)))
+									- travel_facing + ANGLE_TO_FACING(Quadrant))
+					   <= ANGLE_TO_FACING(HalfCircle)))
 		{
-			StarShipPtr->ship_input_state |= SPECIAL;
+			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
 	}
 }
@@ -260,7 +260,7 @@ initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = SPATHI_FORWARD_OFFSET;
 	MissileBlock.speed = MISSILE_SPEED_HD;
 	MissileBlock.hit_points = MISSILE_HITS;
@@ -279,7 +279,7 @@ spathi_postprocess(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
@@ -293,7 +293,7 @@ spathi_postprocess(ELEMENT* ElementPtr)
 RACE_DESC*
 init_spathi(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		spathi_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
 		spathi_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);

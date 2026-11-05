@@ -32,11 +32,11 @@ static LOCDATA yehat_desc =
 		nullptr, /* uninit_encounter_func */
 		YEHAT_PMAP_ANIM, /* AlienFrame */
 		YEHAT_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* (SIS_TEXT_WIDTH - 16) * 2 / 3, */	 /* AlienTextWidth */
+		/* (SisTextWidth() - 16) * 2 / 3, */	 /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
 		YEHAT_COLOR_MAP, /* AlienColorMap */
@@ -54,8 +54,8 @@ static LOCDATA yehat_desc =
 				/* right hand-wing tapping keyboard; front guy */
 				4, /* StartIndex */
 				3, /* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 10, /* FrameRate */
 				GameTicksPerSecond,
@@ -66,8 +66,8 @@ static LOCDATA yehat_desc =
 				/* left hand-wing tapping keyboard; front guy */
 				7, /* StartIndex */
 				3, /* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 10, /* FrameRate */
 				GameTicksPerSecond,
@@ -75,9 +75,9 @@ static LOCDATA yehat_desc =
 				(1 << 6) | (1 << 7),
 			},
 								{
-				10,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				10,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -85,9 +85,9 @@ static LOCDATA yehat_desc =
 				(1 << 4) | (1 << 14),
 			},
 								{
-				13,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				13,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -95,9 +95,9 @@ static LOCDATA yehat_desc =
 				(1 << 5),
 			},
 								{
-				16,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				16,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -105,9 +105,9 @@ static LOCDATA yehat_desc =
 				(1 << 2) | (1 << 14),
 			},
 								{
-				21,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				21,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -118,8 +118,8 @@ static LOCDATA yehat_desc =
 				/* right arm-wing rising; front guy */
 				26, /* StartIndex */
 				2,	/* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -130,8 +130,8 @@ static LOCDATA yehat_desc =
 				/* left arm-wing rising; front guy */
 				28, /* StartIndex */
 				2,	/* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -139,9 +139,9 @@ static LOCDATA yehat_desc =
 				(1 << 0) | (1 << 1),
 			},
 								{
-				30,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				30,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -149,9 +149,9 @@ static LOCDATA yehat_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				33,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				33,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -159,9 +159,9 @@ static LOCDATA yehat_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				36,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				36,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -169,9 +169,9 @@ static LOCDATA yehat_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				39,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				39,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -179,9 +179,9 @@ static LOCDATA yehat_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				42,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				42,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -189,9 +189,9 @@ static LOCDATA yehat_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				45,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				45,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -201,8 +201,8 @@ static LOCDATA yehat_desc =
 								{
 				48, /* StartIndex */
 				4,	/* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -491,12 +491,12 @@ init_rebel_yehat_comm(void)
 	// generalised in the future.
 	uqm::lua().beginComm(nullptr, NullResource);
 
-	yehat_desc.AlienTextBaseline.x = SIS_SCREEN_WIDTH * 2 / 3;
+	yehat_desc.AlienTextBaseline.x = SisScreenWidth() * 2 / 3;
 	yehat_desc.AlienTextBaseline.y = RES_SCALE(107 * 2 / 3);
-	yehat_desc.AlienTextWidth = (SIS_TEXT_WIDTH - RES_SCALE(16)) * 2 / 3;
+	yehat_desc.AlienTextWidth = (SisTextWidth() - RES_SCALE(16)) * 2 / 3;
 
 	// use alternate "Rebels" track if available
-	altResFlags |= USE_ALT_SONG;
+	altResFlags |= UseAltSong;
 
 	setSegue(Segue_peace);
 	LOCDATA* retval {&yehat_desc};

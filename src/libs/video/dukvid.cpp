@@ -490,19 +490,19 @@ dukv_RenderFrame(TFB_VideoDecoder* This)
 				dst1 = (uint16_t*)This->callbacks.GetCanvasLine(
 					This, y * 2 + 1);
 
-				if (IS_HD && y % scale != 0)
+				if (IsHd() && y % scale != 0)
 				{
 					dec -= dukv->decoder.w;
 				}
 
 				for (x = 0; x < dukv->decoder.w; ++x, chooseIfHd(++dec, reinterpret_cast<uint32_t*>(++bufInc)), ++dst0, ++dst1)
 				{
-					/*if (IS_HD)
+					/*if (IsHd())
 						++bufInc;
 					else
 						++dec;*/
 
-					if (bufInc % scale == 0 && IS_HD)
+					if (bufInc % scale == 0 && IsHd())
 					{
 						dec++;
 					}
@@ -524,19 +524,19 @@ dukv_RenderFrame(TFB_VideoDecoder* This)
 				dst1 = (uint8_t*)This->callbacks.GetCanvasLine(
 					This, y * 2 + 1);
 
-				if (IS_HD && y % scale != 0)
+				if (IsHd() && y % scale != 0)
 				{
 					dec -= dukv->decoder.w;
 				}
 
 				for (x = 0; x < dukv->decoder.w; ++x, chooseIfHd(++dec, reinterpret_cast<uint32_t*>(++bufInc)), dst0 += 3, dst1 += 3)
 				{
-					/*if (IS_HD)
+					/*if (IsHd())
 						++bufInc;
 					else
 						++dec;*/
 
-					if (bufInc % scale == 0 && IS_HD)
+					if (bufInc % scale == 0 && IsHd())
 					{
 						dec++;
 					}
@@ -560,19 +560,19 @@ dukv_RenderFrame(TFB_VideoDecoder* This)
 				dst1 = (uint32_t*)This->callbacks.GetCanvasLine(
 					This, y * 2 + 1);
 
-				if (IS_HD && y % scale != 0)
+				if (IsHd() && y % scale != 0)
 				{
 					dec -= RES_DESCALE(dukv->decoder.w);
 				}
 
 				for (x = 0; x < dukv->decoder.w; ++x, chooseIfHd(++dec, reinterpret_cast<uint32_t*>(++bufInc)), ++dst0, ++dst1)
 				{
-					/*if (IS_HD)
+					/*if (IsHd())
 						++bufInc;
 					else
 						++dec;*/
 
-					if (bufInc % scale == 0 && IS_HD)
+					if (bufInc % scale == 0 && IsHd())
 					{
 						dec++;
 					}

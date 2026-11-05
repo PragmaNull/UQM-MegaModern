@@ -60,22 +60,22 @@ void RepairSISBorder(void)
 	BatchGraphics();
 
 	// Left border
-	r.corner.x = SIS_ORG_X - RES_SCALE(1);
-	r.corner.y = SIS_ORG_Y - RES_SCALE(1);
+	r.corner.x = SisOrgX() - RES_SCALE(1);
+	r.corner.y = SisOrgY() - RES_SCALE(1);
 	r.extent.width = RES_SCALE(1);
-	r.extent.height = SIS_SCREEN_HEIGHT + RES_SCALE(2);
-	SetContextForeGroundColor(SIS_LEFT_BORDER_COLOR);
+	r.extent.height = SisScreenHeight() + RES_SCALE(2);
+	SetContextForeGroundColor(SisLeftBorderColor);
 	DrawFilledRectangle(&r);
 
 	// Right border
-	SetContextForeGroundColor(SIS_BOTTOM_RIGHT_BORDER_COLOR);
-	r.corner.x += (SIS_SCREEN_WIDTH + RES_SCALE(2)) - RES_SCALE(1);
+	SetContextForeGroundColor(SisBottomRightBorderColor);
+	r.corner.x += (SisScreenWidth() + RES_SCALE(2)) - RES_SCALE(1);
 	DrawFilledRectangle(&r);
 
 	// Bottom border
-	r.corner.x = SIS_ORG_X - RES_SCALE(1);
-	r.corner.y += (SIS_SCREEN_HEIGHT + RES_SCALE(2)) - RES_SCALE(1);
-	r.extent.width = SIS_SCREEN_WIDTH + RES_SCALE(1);
+	r.corner.x = SisOrgX() - RES_SCALE(1);
+	r.corner.y += (SisScreenHeight() + RES_SCALE(2)) - RES_SCALE(1);
+	r.extent.width = SisScreenWidth() + RES_SCALE(1);
 	r.extent.height = RES_SCALE(1);
 	DrawFilledRectangle(&r);
 
@@ -96,26 +96,26 @@ void ClearSISRect(uint8_t ClearFlags)
 		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
 
 	//r.corner.x = RES_SCALE (2);
-	//r.extent.width = STATUS_WIDTH - RES_SCALE (4); Unused
+	//r.extent.width = StatusWidth() - RES_SCALE (4); Unused
 
 	BatchGraphics();
-	if (ClearFlags & DRAW_SIS_DISPLAY)
+	if (ClearFlags & DrawSisDisplay)
 	{
-		DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
+		DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 	}
 
-	if (ClearFlags & CLEAR_SIS_RADAR)
+	if (ClearFlags & ClearSisRadar)
 	{
 		DrawMenuStateStrings((uint8_t)~0, 1);
 #ifdef NEVER
-		r.corner.x = RADAR_X - RES_SCALE(1);
-		r.corner.y = RADAR_Y - RES_SCALE(1);
-		r.extent.width = RADAR_WIDTH + RES_SCALE(2);
-		r.extent.height = RADAR_HEIGHT + RES_SCALE(2);
+		r.corner.x = RadarX() - RES_SCALE(1);
+		r.corner.y = RadarY() - RES_SCALE(1);
+		r.extent.width = RadarWidth() + RES_SCALE(2);
+		r.extent.height = RadarHeight() + RES_SCALE(2);
 
-		DrawStarConBox(&r, RES_SCALE(1), SHADOWBOX_MEDIUM_COLOR,
-					   SHADOWBOX_DARK_COLOR, true, SCAN_BIOLOGICAL_TEXT_COLOR,
-					   false, TRANSPARENT);
+		DrawStarConBox(&r, RES_SCALE(1), ShadowboxMediumColor,
+					   ShadowboxDarkColor, true, ScanBiologicalTextColor,
+					   false, Transparent);
 #endif /* NEVER */
 	}
 	UnbatchGraphics();
@@ -133,18 +133,18 @@ void DrawSISTitle(const char* pStr)
 	GFXRECT r;
 	uqstl::string buf {};
 
-	t.baseline.x = RES_SCALE((RES_DESCALE(SIS_TITLE_WIDTH) >> 1));
-	t.baseline.y = SIS_TITLE_HEIGHT - RES_SCALE(2);
+	t.baseline.x = RES_SCALE((RES_DESCALE(SisTitleWidth()) >> 1));
+	t.baseline.y = SisTitleHeight() - RES_SCALE(2);
 	t.align = ALIGN_CENTER;
 	t.pStr = pStr;
 	t.CharCount = (uint16_t)~0;
 
 	GFXCONTEXT OldContext {SetContext(OffScreenContext)};
-	r.corner.x = SIS_ORG_X + SIS_SCREEN_WIDTH - SIS_TITLE_BOX_WIDTH
+	r.corner.x = SisOrgX() + SisScreenWidth() - SisTitleBoxWidth()
 			   + RES_SCALE(1);
-	r.corner.y = SIS_ORG_Y - SIS_TITLE_HEIGHT;
-	r.extent.width = SIS_TITLE_WIDTH;
-	r.extent.height = SIS_TITLE_HEIGHT - RES_SCALE(1);
+	r.corner.y = SisOrgY() - SisTitleHeight();
+	r.extent.width = SisTitleWidth();
+	r.extent.height = SisTitleHeight() - RES_SCALE(1);
 	SetContextFGFrame(Screen);
 	SetContextClipRect(&r);
 	if (isPC(uqm::UQMOptions::read().whichFonts) || SaveOrLoad)
@@ -164,13 +164,13 @@ void DrawSISTitle(const char* pStr)
 	BatchGraphics();
 
 	// Background color
-	SetContextBackGroundColor(SIS_TITLE_BACKGROUND_COLOR);
+	SetContextBackGroundColor(SisTitleBackgroundColor);
 	ClearDrawable();
 
 	DrawBorder(SIS_TITLE_FRAME);
 
 	// Text color
-	SetContextForeGroundColor(SIS_TITLE_TEXT_COLOR);
+	SetContextForeGroundColor(SisTitleTextColor);
 	font_DrawText(&t);
 
 	UnbatchGraphics();
@@ -199,7 +199,7 @@ void DrawSaveInfo(SIS_STATE SisState)
 	char TempDiff[11];
 	char TempExt[12] = "";
 	char TempNom[10] = "";
-	char TempVer[SIS_NAME_SIZE] = "";
+	char TempVer[SisNameSize] = "";
 
 	if (SisState.SaveVersion > 0)
 	{
@@ -245,7 +245,7 @@ void DrawSaveInfo(SIS_STATE SisState)
 
 void DrawSISMessage(const char* pStr)
 {
-	DrawSISMessageEx(pStr, -1, -1, DSME_NONE);
+	DrawSISMessageEx(pStr, -1, -1, DsmeNone);
 }
 
 // See sis.h for the allowed flags. This is the field at the top of the
@@ -259,15 +259,15 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 
 	GFXCONTEXT OldContext {SetContext(OffScreenContext)};
 	// prepare the context
-	r.corner.x = SIS_ORG_X + RES_SCALE(1);
-	r.corner.y = SIS_ORG_Y - SIS_MESSAGE_HEIGHT;
-	r.extent.width = SIS_MESSAGE_WIDTH;
-	r.extent.height = SIS_MESSAGE_HEIGHT - RES_SCALE(1);
+	r.corner.x = SisOrgX() + RES_SCALE(1);
+	r.corner.y = SisOrgY() - SisMessageHeight();
+	r.extent.width = SisMessageWidth();
+	r.extent.height = SisMessageHeight() - RES_SCALE(1);
 	SetContextFGFrame(Screen);
 	SetContextClipRect(&r);
 
 	BatchGraphics();
-	SetContextBackGroundColor(SIS_MESSAGE_BACKGROUND_COLOR);
+	SetContextBackGroundColor(SisMessageBackgroundColor);
 
 	if (pStr == 0)
 	{
@@ -279,7 +279,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 				break;
 			case IN_LAST_BATTLE:
 			case IN_INTERPLANETARY:
-				GetClusterName(CurStarDescPtr, buf);
+				GetClusterName(CurStarDescPtr(), buf);
 				pStr = buf;
 				break;
 			case IN_HYPERSPACE:
@@ -298,8 +298,8 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 					// "QuasiSpace"
 
 					if (GET_GAME_STATE(ARILOU_HOME_VISITS)
-						&& (Log.x == ARILOU_HOME_X
-							&& Log.y == ARILOU_HOME_Y))
+						&& (Log.x == ArilouHomeX
+							&& Log.y == ArilouHomeY))
 					{
 						uqm::utf8StringCopy(
 							GLOBAL_SIS(PlanetName),
@@ -312,13 +312,13 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		}
 	}
 
-	if (!(flags & DSME_MYCOLOR))
+	if (!(flags & DsmeMycolor))
 	{
-		SetContextForeGroundColor(SIS_MESSAGE_TEXT_COLOR);
+		SetContextForeGroundColor(SisMessageTextColor);
 	}
 
-	t.baseline.y = SIS_MESSAGE_HEIGHT - RES_SCALE(2);
-	t.baseline.x = RES_SCALE(RES_DESCALE(SIS_MESSAGE_WIDTH) >> 1);
+	t.baseline.y = SisMessageHeight() - RES_SCALE(2);
+	t.baseline.x = RES_SCALE(RES_DESCALE(SisMessageWidth()) >> 1);
 	t.pStr = pStr;
 	t.CharCount = (uint16_t)~0;
 	if (isPC(uqm::UQMOptions::read().whichFonts) || SaveOrLoad)
@@ -341,7 +341,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		}
 	}
 
-	if (flags & DSME_CLEARFR)
+	if (flags & DsmeClearfr)
 	{
 		SetFlashRect(nullptr, false);
 	}
@@ -397,7 +397,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 				cur_r.corner.x -= RES_SCALE(1);
 			}
 
-			if (flags & DSME_BLOCKCUR)
+			if (flags & DsmeBlockcur)
 			{ // Use block cursor for keyboardless systems
 
 				cur_r.corner.y = 0;
@@ -434,7 +434,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 				}
 				else
 				{
-					SetContextForeGroundColor(SIS_MESSAGE_CURSOR_COLOR);
+					SetContextForeGroundColor(SisMessageCursorColor);
 					DrawFilledRectangle(&cur_r);
 				}
 			}
@@ -455,7 +455,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 			SetCursorRect(&cur_r, OffScreenContext);
 		}
 
-		SetContextForeGroundColor(SIS_MESSAGE_TEXT_COLOR);
+		SetContextForeGroundColor(SisMessageTextColor);
 
 		if (ExPos >= 0 && ExPos < t.CharCount)
 		{ // handle extra characters
@@ -463,7 +463,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 			font_DrawText(&t);
 
 			// print extra chars
-			SetContextForeGroundColor(SIS_MESSAGE_EXTRA_TEXT_COLOR);
+			SetContextForeGroundColor(SisMessageExtraTextColor);
 			for (i = ExPos, pchar_deltas = char_deltas; i > 0; --i)
 			{
 				t.baseline.x += (int16_t)*pchar_deltas++;
@@ -478,7 +478,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 		}
 	}
 
-	if (flags & DSME_SETFR)
+	if (flags & DsmeSetfr)
 	{
 		r.corner.x = 0;
 		r.corner.y = 0;
@@ -522,8 +522,8 @@ void GetStatusMessageRect(GFXRECT* r)
 {
 	r->corner.x = RES_SCALE(2);
 	r->corner.y = RES_SCALE(130);
-	r->extent.width = STATUS_MESSAGE_WIDTH;
-	r->extent.height = STATUS_MESSAGE_HEIGHT;
+	r->extent.width = StatusMessageWidth();
+	r->extent.height = StatusMessageHeight();
 }
 
 void DrawStatusMessage(const char* pStr)
@@ -545,7 +545,7 @@ void DrawStatusMessage(const char* pStr)
 	SetContextClipRect(&r);
 
 	BatchGraphics();
-	SetContextBackGroundColor(STATUS_MESSAGE_BACKGROUND_COLOR);
+	SetContextBackGroundColor(StatusMessageBackgroundColor);
 	ClearDrawable();
 
 	DrawBorder(STAT_MSG_FRAME);
@@ -593,22 +593,22 @@ void DrawStatusMessage(const char* pStr)
 		pStr = buf;
 	}
 
-	t.baseline.x = (STATUS_MESSAGE_WIDTH >> 1);
-	t.baseline.y = STATUS_MESSAGE_HEIGHT - RES_SCALE(1);
+	t.baseline.x = (StatusMessageWidth() >> 1);
+	t.baseline.y = StatusMessageHeight() - RES_SCALE(1);
 	t.align = ALIGN_CENTER;
 	t.pStr = pStr;
 	t.CharCount = (uint16_t)~0;
 
 	{
-		Color statusColor = STATUS_MESSAGE_TEXT_COLOR;
+		Color statusColor = StatusMessageTextColor;
 
 		if (curMsgMode == SMM_WARNING)
 		{
-			statusColor = STATUS_MESSAGE_WARNING_TEXT_COLOR;
+			statusColor = StatusMessageWarningTextColor;
 		}
 		if (curMsgMode == SMM_ALERT)
 		{
-			statusColor = STATUS_MESSAGE_ALERT_TEXT_COLOR;
+			statusColor = StatusMessageAlertTextColor;
 		}
 
 		SetContextForeGroundColor(statusColor);
@@ -631,7 +631,7 @@ void DrawStatusMessage(const char* pStr)
 		t.CharCount = (uint16_t)~0;
 	}
 
-	SetContextForeGroundColor(STATUS_MESSAGE_TEXT_COLOR);
+	SetContextForeGroundColor(StatusMessageTextColor);
 	font_DrawText(&t);
 	UnbatchGraphics();
 
@@ -665,12 +665,12 @@ void DrawCaptainsName(bool NewGame)
 		OldFont = SetContextFont(TinyFontBold);
 	}
 
-	OldColor = SetContextForeGroundColor(CAPTAIN_NAME_BACKGROUND_COLOR);
+	OldColor = SetContextForeGroundColor(CaptainNameBackgroundColor);
 
 	r.corner.x = RES_SCALE(2 + 1);
 	r.corner.y = RES_SCALE(10);
-	r.extent.width = SHIP_NAME_WIDTH - RES_SCALE(2);
-	r.extent.height = SHIP_NAME_HEIGHT;
+	r.extent.width = ShipNameWidth() - RES_SCALE(2);
+	r.extent.height = ShipNameHeight();
 	DrawFilledRectangle(&r);
 
 	if (!NewGame)
@@ -678,12 +678,12 @@ void DrawCaptainsName(bool NewGame)
 		DrawBorder(CAP_NAME_FRAME);
 	}
 
-	t.baseline.x = (STATUS_WIDTH >> 1) - RES_SCALE(1);
+	t.baseline.x = (StatusWidth() >> 1) - RES_SCALE(1);
 	t.baseline.y = r.corner.y + RES_SCALE(6);
 	t.align = ALIGN_CENTER;
 	t.pStr = GLOBAL_SIS(CommanderName);
 	t.CharCount = (uint16_t)~0;
-	SetContextForeGroundColor(CAPTAIN_NAME_TEXT_COLOR);
+	SetContextForeGroundColor(CaptainNameTextColor);
 	font_DrawText(&t);
 
 	SetContextForeGroundColor(OldColor);
@@ -702,7 +702,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 	char buf[250];
 
 	FRAME OldFontEffect {SetContextFontEffect(nullptr)};
-	OldColor = SetContextForeGroundColor(FLAGSHIP_NAME_BACKGROUND_COLOR);
+	OldColor = SetContextForeGroundColor(FlagshipNameBackgroundColor);
 
 	if (InStatusArea)
 	{
@@ -711,8 +711,8 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 
 		r.corner.x = RES_SCALE(2);
 		r.corner.y = RES_SCALE(20);
-		r.extent.width = SHIP_NAME_WIDTH;
-		r.extent.height = SHIP_NAME_HEIGHT;
+		r.extent.width = ShipNameWidth();
+		r.extent.height = ShipNameHeight();
 
 		t.pStr = GLOBAL_SIS(ShipName);
 
@@ -725,21 +725,21 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 
 		r.corner.x = 0;
 		r.corner.y = RES_SCALE(1);
-		r.extent.width = SIS_SCREEN_WIDTH;
-		r.extent.height = SHIP_NAME_HEIGHT;
+		r.extent.width = SisScreenWidth();
+		r.extent.height = ShipNameHeight();
 
 		t.pStr = buf;
 		fmt::format_to_sz_n(buf, "{} {}",
 							GAME_STRING(NAMING_STRING_BASE + 1), GLOBAL_SIS(ShipName));
 		uqm::utf8StringCopy(buf, sizeof buf, uqm::toUpperUtf8(buf).c_str());
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			rHD = r;
 			rHD.extent.width *= 0.75;
 			rHD.corner.x =
 				(r.extent.width >> 1) - (rHD.extent.width >> 1);
-			SetContextForeGroundColor(FLAGSHIP_NAME_BACKGROUND_COLOR);
+			SetContextForeGroundColor(FlagshipNameBackgroundColor);
 		}
 
 		DrawFilledRectangle(chooseIfHd(&r, &rHD));
@@ -753,7 +753,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 	t.baseline.x =
 		r.corner.x + RES_SCALE(RES_DESCALE(r.extent.width) >> 1);
 	t.baseline.y =
-		r.corner.y + (SHIP_NAME_HEIGHT - RES_SCALE(InStatusArea));
+		r.corner.y + (ShipNameHeight() - RES_SCALE(InStatusArea));
 	t.align = ALIGN_CENTER;
 	t.CharCount = (uint16_t)~0;
 	if (isPC(uqm::UQMOptions::read().whichFonts))
@@ -763,7 +763,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 	}
 	else
 	{
-		SetContextForeGroundColor(THREEDO_FLAGSHIP_NAME_TEXT_COLOR);
+		SetContextForeGroundColor(ThreedoFlagshipNameTextColor);
 	}
 
 	font_DrawText(&t);
@@ -794,7 +794,7 @@ void DrawFlagshipStats(void)
 	uint32_t fuel {};
 	int16_t base_y {};
 
-	if (is3DO(uqm::UQMOptions::read().whichFonts) || IS_PAD)
+	if (is3DO(uqm::UQMOptions::read().whichFonts) || IsPad())
 	{
 		return;
 	}
@@ -808,19 +808,19 @@ void DrawFlagshipStats(void)
 	energy_wait = ENERGY_WAIT;
 	max_thrust = MAX_THRUST;
 	turn_wait = TURN_WAIT;
-	fuel = 10 * FUEL_TANK_SCALE;
+	fuel = 10 * FuelTankScale;
 	num_dynamos = 0;
 	num_shivas = 0;
 
-	for (i = 0; i < NUM_MODULE_SLOTS; i++)
+	for (i = 0; i < NumModuleSlots; i++)
 	{
 		switch (GLOBAL_SIS(ModuleSlots[i]))
 		{
 			case FUEL_TANK:
-				fuel += FUEL_TANK_CAPACITY;
+				fuel += FuelTankCapacity;
 				break;
 			case HIGHEFF_FUELSYS:
-				fuel += HEFUEL_TANK_CAPACITY;
+				fuel += HefuelTankCapacity;
 				break;
 			case DYNAMO_UNIT:
 				energy_wait -= 2;
@@ -837,7 +837,7 @@ void DrawFlagshipStats(void)
 		}
 	}
 
-	for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
+	for (i = 0; i < NumDriveSlots; ++i)
 	{
 		if (GLOBAL_SIS(DriveSlots[i]) == FUSION_THRUSTER)
 		{
@@ -845,7 +845,7 @@ void DrawFlagshipStats(void)
 		}
 	}
 
-	for (i = 0; i < NUM_JET_SLOTS; ++i)
+	for (i = 0; i < NumJetSlots; ++i)
 	{
 		if (GLOBAL_SIS(JetSlots[i]) == TURNING_JETS)
 		{
@@ -860,11 +860,11 @@ void DrawFlagshipStats(void)
 	GetContextFontLeading(&leading);
 
 	r.corner.x = 0;
-	r.corner.y = SIS_SCREEN_HEIGHT - (DOS_BOOL(4, 3) * leading);
-	r.extent.width = SIS_SCREEN_WIDTH;
+	r.corner.y = SisScreenHeight() - (DOS_BOOL(4, 3) * leading);
+	r.extent.width = SisScreenWidth();
 	r.extent.height = (DOS_BOOL(4, 3) * leading);
 
-	OldColor = SetContextForeGroundColor(BLACK_COLOR);
+	OldColor = SetContextForeGroundColor(BlackColor);
 	DrawFilledRectangle(&r);
 
 	/*
@@ -874,7 +874,7 @@ void DrawFlagshipStats(void)
 	leading -= RES_SCALE(2);
 	base_y = r.corner.y + leading - RES_SCALE(2);
 
-	t.baseline.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH / 6 + 1);
+	t.baseline.x = RES_SCALE(OrigSisScreenWidth() / 6 + 1);
 	t.baseline.y = base_y;
 	t.align = ALIGN_RIGHT;
 	t.CharCount = (uint16_t)~0;
@@ -942,7 +942,7 @@ void DrawFlagshipStats(void)
 	fmt::format_to_sz_n(buf, "{:4}", 1 + TURN_WAIT - turn_wait);
 	font_DrawText(&t);
 	t.baseline.y += leading;
-	if (!IS_DOS)
+	if (!IsDos())
 	{
 		const unsigned int energy_per_10_sec =
 			(((100 * GameTicksPerSecond * energy_regeneration) / ((1 + energy_wait) * BattleFrameRateTicks.count())) + 5) / 10;
@@ -956,7 +956,7 @@ void DrawFlagshipStats(void)
 	}
 	font_DrawText(&t);
 	t.baseline.y += leading;
-	fmt::format_to_sz_n(buf, "{:4}", (fuel / FUEL_TANK_SCALE));
+	fmt::format_to_sz_n(buf, "{:4}", (fuel / FuelTankScale));
 	font_DrawText(&t);
 
 	SetContextFontEffect(OldFontEffect);
@@ -1000,18 +1000,18 @@ void DrawLanders(void)
 	GetFrameRect(s.frame, &r);
 
 	uint8_t i {GLOBAL_SIS(NumLanders)};
-	r.corner.x = (STATUS_WIDTH >> 1) - r.corner.x;
+	r.corner.x = (StatusWidth() >> 1) - r.corner.x;
 	s.origin.x = r.corner.x
 			   - RES_SCALE(
 					 RES_DESCALE((r.extent.width * i) + (RES_SCALE(2) * (i - 1))) >> 1);
 	s.origin.y = RES_SCALE(29);
 
 	width = r.extent.width + RES_SCALE(2);
-	r.extent.width = (r.extent.width * MAX_LANDERS)
-				   + (RES_SCALE(2) * (MAX_LANDERS - 1)) + RES_SCALE(2);
+	r.extent.width = (r.extent.width * MaxLanders)
+				   + (RES_SCALE(2) * (MaxLanders - 1)) + RES_SCALE(2);
 	r.corner.x -= RES_SCALE(RES_DESCALE(r.extent.width) >> 1);
 	r.corner.y += s.origin.y;
-	SetContextForeGroundColor(BLACK_COLOR);
+	SetContextForeGroundColor(BlackColor);
 	DrawFilledRectangle(&r);
 	while (i--)
 	{
@@ -1034,10 +1034,10 @@ void DrawStorageBays(bool Refresh)
 	r.corner.y = RES_SCALE(123);
 	if (Refresh)
 	{
-		r.extent.width = NUM_MODULE_SLOTS * (r.extent.width + 1);
-		r.corner.x = (STATUS_WIDTH >> 1) - (r.extent.width >> 1);
+		r.extent.width = NumModuleSlots * (r.extent.width + 1);
+		r.corner.x = (StatusWidth() >> 1) - (r.extent.width >> 1);
 
-		SetContextForeGroundColor(BLACK_COLOR);
+		SetContextForeGroundColor(BlackColor);
 		DrawFilledRectangle(&r);
 		r.extent.width = RES_SCALE(2);
 	}
@@ -1047,13 +1047,13 @@ void DrawStorageBays(bool Refresh)
 	{
 		uint16_t j {};
 
-		r.corner.x = (STATUS_WIDTH >> 1)
+		r.corner.x = (StatusWidth() >> 1)
 				   - RES_SCALE(
 						 RES_DESCALE(i * (r.extent.width + RES_SCALE(1)))
 						 >> 1);
-		SetContextForeGroundColor(STORAGE_BAY_FULL_COLOR);
+		SetContextForeGroundColor(StorageBayFullColor);
 		for (j = GLOBAL_SIS(TotalElementMass);
-			 j >= STORAGE_BAY_CAPACITY; j -= STORAGE_BAY_CAPACITY)
+			 j >= StorageBayCapacity; j -= StorageBayCapacity)
 		{
 			DrawFilledRectangle(&r);
 			r.corner.x += r.extent.width + RES_SCALE(1);
@@ -1061,8 +1061,8 @@ void DrawStorageBays(bool Refresh)
 			--i;
 		}
 
-		r.extent.height = (RES_SCALE(4) * j + (STORAGE_BAY_CAPACITY - 1))
-						/ STORAGE_BAY_CAPACITY;
+		r.extent.height = (RES_SCALE(4) * j + (StorageBayCapacity - 1))
+						/ StorageBayCapacity;
 		if (r.extent.height)
 		{
 			r.corner.y += RES_SCALE(4) - r.extent.height;
@@ -1071,7 +1071,7 @@ void DrawStorageBays(bool Refresh)
 			if (r.extent.height)
 			{
 				r.corner.y = RES_SCALE(123);
-				SetContextForeGroundColor(STORAGE_BAY_EMPTY_COLOR);
+				SetContextForeGroundColor(StorageBayEmptyColor);
 				DrawFilledRectangle(&r);
 			}
 			r.corner.x += r.extent.width + RES_SCALE(1);
@@ -1080,7 +1080,7 @@ void DrawStorageBays(bool Refresh)
 		}
 		r.extent.height = RES_SCALE(4);
 
-		SetContextForeGroundColor(STORAGE_BAY_EMPTY_COLOR);
+		SetContextForeGroundColor(StorageBayEmptyColor);
 		while (i--)
 		{
 			DrawFilledRectangle(&r);
@@ -1094,7 +1094,7 @@ void DrawStorageBays(bool Refresh)
 void GetGaugeRect(GFXRECT* pRect, bool IsCrewRect)
 {
 	pRect->extent.width = RES_SCALE(24);
-	pRect->corner.x = (STATUS_WIDTH >> 1) - (pRect->extent.width >> 1);
+	pRect->corner.x = (StatusWidth() >> 1) - (pRect->extent.width >> 1);
 	pRect->extent.height = RES_SCALE(5);
 	pRect->corner.y = IsCrewRect ? RES_SCALE(117) : RES_SCALE(38);
 }
@@ -1106,12 +1106,12 @@ void GetGaugeRect(GFXRECT* pRect, bool IsCrewRect)
 //	GFXRECT r;
 //
 //	GetGaugeRect (&r, false);
-//	t.baseline.x = (STATUS_WIDTH >> 1);
+//	t.baseline.x = (StatusWidth() >> 1);
 //	t.baseline.y = r.corner.y - RES_SCALE (1);
 //	t.align = ALIGN_CENTER;
 //	t.CharCount = (uint16_t)~0;
 //	SetContextFont (TinyFont);
-//	SetContextForeGroundColor (BLACK_COLOR);
+//	SetContextForeGroundColor (BlackColor);
 //
 //	// Black rectangle behind "FUEL" text and fuel amount.
 //	r.corner.y -= RES_SCALE (6);
@@ -1138,13 +1138,13 @@ void GetGaugeRect(GFXRECT* pRect, bool IsCrewRect)
 //	r.corner.y = RES_SCALE (3);
 //	r.extent.width = RES_SCALE (58);
 //	r.extent.height = RES_SCALE (7);
-//	SetContextForeGroundColor (PC_CAPTAIN_STRING_BACKGROUND_COLOR);
+//	SetContextForeGroundColor (PcCaptainStringBackgroundColor);
 //	DrawFilledRectangle (&r);
 //
 //	DrawBorder (CAPTAIN_FRAME);
 //
 //	// Text "CAPTAIN".
-//	SetContextForeGroundColor (PC_CAPTAIN_STRING_TEXT_COLOR);
+//	SetContextForeGroundColor (PcCaptainStringTextColor);
 //	t.baseline.y = r.corner.y + RES_SCALE (6);
 //	t.baseline.x -= RES_SCALE (1);
 //	t.pStr = GAME_STRING (STATUS_STRING_BASE + 5); // "CAPTAIN"
@@ -1159,12 +1159,12 @@ Draw_SIS(void)
 	const bool flat = (bool)is3DO(uqm::UQMOptions::read().whichFonts);
 
 	GetGaugeRect(&r, false);
-	t.baseline.x = (STATUS_WIDTH >> 1);
+	t.baseline.x = (StatusWidth() >> 1);
 	t.baseline.y = r.corner.y - RES_SCALE(1);
 	t.align = ALIGN_CENTER;
 	t.CharCount = (uint16_t)~0;
 	SetContextFont(flat ? TinyFontBold : TinyFont);
-	SetContextForeGroundColor(BLACK_COLOR);
+	SetContextForeGroundColor(BlackColor);
 
 	// Black rectangle behind "FUEL" text and fuel amount.
 	r.corner.y -= RES_SCALE(6);
@@ -1191,13 +1191,13 @@ Draw_SIS(void)
 	r.corner.y = RES_SCALE(3);
 	r.extent.width = RES_SCALE(58);
 	r.extent.height = RES_SCALE(7);
-	SetContextForeGroundColor(PC_CAPTAIN_STRING_BACKGROUND_COLOR);
+	SetContextForeGroundColor(PcCaptainStringBackgroundColor);
 	DrawFilledRectangle(&r);
 
 	DrawBorder(CAPTAIN_FRAME);
 
 	// Text "CAPTAIN".
-	SetContextForeGroundColor(flat ? THREEDO_CAPTAIN_STRING_TEXT_COLOR : PC_CAPTAIN_STRING_TEXT_COLOR);
+	SetContextForeGroundColor(flat ? ThreedoCaptainStringTextColor : PcCaptainStringTextColor);
 	t.baseline.y = r.corner.y + RES_SCALE(6);
 	t.baseline.x -= RES_SCALE(1);
 	t.pStr = GAME_STRING(STATUS_STRING_BASE + (flat ? 19 : 5));
@@ -1212,10 +1212,10 @@ DrawThrusters(void)
 
 	s.origin.x = RES_SCALE(1);
 	s.origin.y = 0;
-	for (uint16_t i {0}; i < NUM_DRIVE_SLOTS; ++i)
+	for (uint16_t i {0}; i < NumDriveSlots; ++i)
 	{
 		const uint8_t which_piece = GLOBAL_SIS(DriveSlots[i]);
-		if (which_piece < EMPTY_SLOT)
+		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 0);
 			DrawStamp(&s);
@@ -1234,10 +1234,10 @@ DrawTurningJets(void)
 
 	s.origin.x = RES_SCALE(1);
 	s.origin.y = 0;
-	for (uint16_t i {0}; i < NUM_JET_SLOTS; ++i)
+	for (uint16_t i {0}; i < NumJetSlots; ++i)
 	{
 		const uint8_t which_piece = GLOBAL_SIS(JetSlots[i]);
-		if (which_piece < EMPTY_SLOT)
+		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 1);
 			DrawStamp(&s);
@@ -1257,10 +1257,10 @@ DrawModules(void)
 	// This properly centers the modules.
 	s.origin.x = RES_SCALE(1);
 	s.origin.y = RES_SCALE(1);
-	for (uint16_t i {0}; i < NUM_MODULE_SLOTS; ++i)
+	for (uint16_t i {0}; i < NumModuleSlots; ++i)
 	{
 		const uint8_t which_piece = GLOBAL_SIS(ModuleSlots[i]);
-		if (which_piece < EMPTY_SLOT)
+		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 2);
 			DrawStamp(&s);
@@ -1276,7 +1276,7 @@ DrawSupportShips(void)
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hNextShip {};
 	const GFXPOINT* pship_pos {};
-	const GFXPOINT ship_pos[MAX_BUILT_SHIPS] =
+	const GFXPOINT ship_pos[MaxBuiltShips] =
 		{
 			SUPPORT_SHIP_PTS};
 
@@ -1306,7 +1306,7 @@ DeltaSISGauges_crewDelta(int16_t crew_delta)
 		return;
 	}
 
-	if (crew_delta != UNDEFINED_DELTA)
+	if (crew_delta != UndefinedDelta)
 	{
 		uint16_t CrewCapacity {};
 
@@ -1335,13 +1335,13 @@ DeltaSISGauges_crewDelta(int16_t crew_delta)
 
 		GetGaugeRect(&r, true);
 
-		t.baseline.x = (STATUS_WIDTH >> 1);
+		t.baseline.x = (StatusWidth() >> 1);
 		t.baseline.y = r.corner.y + r.extent.height;
 		t.align = ALIGN_CENTER;
 		t.pStr = buf;
 		t.CharCount = (uint16_t)~0;
 
-		SetContextForeGroundColor(BLACK_COLOR);
+		SetContextForeGroundColor(BlackColor);
 		DrawFilledRectangle(&r);
 		SetContextForeGroundColor(
 			BuildColor(MakeRgb15(0x00, 0x0E, 0x00), 0x6C));
@@ -1359,14 +1359,14 @@ DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 		return;
 	}
 
-	if (fuel_delta == UNDEFINED_DELTA)
+	if (fuel_delta == UndefinedDelta)
 	{
 		OldCoarseFuel = (uint32_t)~0;
 	}
 	else
 	{
 
-		OldCoarseFuel = (GLOBAL_SIS(FuelOnBoard) / (!uqm::UQMOptions::read().wholeFuel ? FUEL_TANK_SCALE : 1));
+		OldCoarseFuel = (GLOBAL_SIS(FuelOnBoard) / (!uqm::UQMOptions::read().wholeFuel ? FuelTankScale : 1));
 		if (fuel_delta < 0
 			&& GLOBAL_SIS(FuelOnBoard) <= (uint32_t)-fuel_delta)
 		{
@@ -1383,7 +1383,7 @@ DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 		}
 	}
 
-	const uint32_t NewCoarseFuel {(GLOBAL_SIS(FuelOnBoard) / (!uqm::UQMOptions::read().wholeFuel ? FUEL_TANK_SCALE : 1))};
+	const uint32_t NewCoarseFuel {(GLOBAL_SIS(FuelOnBoard) / (!uqm::UQMOptions::read().wholeFuel ? FuelTankScale : 1))};
 	if (NewCoarseFuel != OldCoarseFuel)
 	{
 		TEXT t;
@@ -1405,13 +1405,13 @@ DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 			SetContextFont(TinyFont);
 		}
 
-		t.baseline.x = (STATUS_WIDTH >> 1);
+		t.baseline.x = (StatusWidth() >> 1);
 		t.baseline.y = r.corner.y + r.extent.height;
 		t.align = ALIGN_CENTER;
 		t.pStr = buf;
 		t.CharCount = (uint16_t)~0;
 
-		SetContextForeGroundColor(BLACK_COLOR);
+		SetContextForeGroundColor(BlackColor);
 		if (uqm::UQMOptions::read().wholeFuel)
 		{
 			r.corner.x -= RES_SCALE(1);
@@ -1433,7 +1433,7 @@ DeltaSISGauges_resunitDelta(int16_t resunit_delta)
 		return;
 	}
 
-	if (resunit_delta != UNDEFINED_DELTA)
+	if (resunit_delta != UndefinedDelta)
 	{
 		if (resunit_delta < 0
 			&& GLOBAL_SIS(ResUnits) <= (uint32_t)-resunit_delta)
@@ -1464,7 +1464,7 @@ static bool
 isUndefinedDelta(int16_t size, int32_t sdword, int integer)
 {
 
-	return ((size && sdword && integer) && (size == UNDEFINED_DELTA || sdword == UNDEFINED_DELTA || integer == UNDEFINED_DELTA));
+	return ((size && sdword && integer) && (size == UndefinedDelta || sdword == UndefinedDelta || integer == UndefinedDelta));
 }
 
 void DeltaSISGauges(int16_t crew_delta, int32_t fuel_delta, int resunit_delta)
@@ -1546,7 +1546,7 @@ GetModuleCrewCapacity(uint8_t moduleType)
 {
 	if (moduleType == CREW_POD)
 	{
-		return CREW_POD_CAPACITY;
+		return CrewPodCapacity;
 	}
 
 	return 0;
@@ -1558,7 +1558,7 @@ GetCrewPodCapacity(void)
 {
 	uint16_t capacity = 0;
 
-	for (uint16_t slotI {0}; slotI < NUM_MODULE_SLOTS; slotI++)
+	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
 	{
 		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
 		capacity += GetModuleCrewCapacity(moduleType);
@@ -1576,7 +1576,7 @@ GetCrewPodForCrewMember(uint16_t crewNr, uint16_t* slotNr, uint16_t* seatNr)
 {
 	uint16_t capacity = 0;
 
-	uint16_t slotI {NUM_MODULE_SLOTS};
+	uint16_t slotI {NumModuleSlots};
 	while (slotI--)
 	{
 		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
@@ -1616,8 +1616,8 @@ GetCPodCapacity(GFXPOINT* ppt)
 		return GetCrewPodCapacity();
 	}
 
-	rowNr = seatNr / CREW_PER_ROW;
-	colNr = seatNr % CREW_PER_ROW;
+	rowNr = seatNr / CrewPerRow;
+	colNr = seatNr % CrewPerRow;
 
 	if (uqm::UQMOptions::read().whichFonts == uqm::EmulationMode::PC)
 	{
@@ -1625,11 +1625,11 @@ GetCPodCapacity(GFXPOINT* ppt)
 	}
 	else
 	{
-		SetContextForeGroundColor(THREEDO_CREW_COLOR);
+		SetContextForeGroundColor(ThreedoCrewColor);
 	}
 
-	ppt->x = RES_SCALE(27) + (slotNr * SHIP_PIECE_OFFSET)
-		   - RES_SCALE(colNr * 2) - SAFE_PAD;
+	ppt->x = RES_SCALE(27) + (slotNr * ShipPieceOffset())
+		   - RES_SCALE(colNr * 2) - SafePad();
 	ppt->y = RES_SCALE(34 - rowNr * 2) + IF_HD(2);
 
 	return GetCrewPodCapacity();
@@ -1652,7 +1652,7 @@ GetModuleStorageCapacity(uint8_t moduleType)
 {
 	if (moduleType == STORAGE_BAY)
 	{
-		return STORAGE_BAY_CAPACITY;
+		return StorageBayCapacity;
 	}
 
 	return 0;
@@ -1664,7 +1664,7 @@ GetStorageBayCapacity(void)
 {
 	uint16_t capacity = 0;
 
-	for (uint16_t slotI {0}; slotI < NUM_MODULE_SLOTS; slotI++)
+	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
 	{
 		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
 		capacity += GetModuleStorageCapacity(moduleType);
@@ -1682,7 +1682,7 @@ GetStorageCellForMineralUnit(uint16_t unitNr, uint16_t* slotNr, uint16_t* cellNr
 {
 	uint16_t capacity = 0;
 
-	uint16_t slotI {NUM_MODULE_SLOTS};
+	uint16_t slotI {NumModuleSlots};
 	while (slotI--)
 	{
 		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
@@ -1722,12 +1722,12 @@ GetSBayCapacity(GFXPOINT* ppt)
 		return GetStorageBayCapacity();
 	}
 
-	rowNr = cellNr / SBAY_MASS_PER_ROW;
-	// colNr = cellNr % SBAY_MASS_PER_ROW; Unused
+	rowNr = cellNr / SbayMassPerRow;
+	// colNr = cellNr % SbayMassPerRow; Unused
 
 	if (rowNr == 0)
 	{
-		SetContextForeGroundColor(BLACK_COLOR);
+		SetContextForeGroundColor(BlackColor);
 	}
 	else
 	{
@@ -1735,7 +1735,7 @@ GetSBayCapacity(GFXPOINT* ppt)
 		SetContextForeGroundColor(colorBars[rowNr]);
 	}
 
-	ppt->x = RES_SCALE(19) + (slotNr * SHIP_PIECE_OFFSET) - SAFE_PAD;
+	ppt->x = RES_SCALE(19) + (slotNr * ShipPieceOffset()) - SafePad();
 	ppt->y = RES_SCALE(34 - (rowNr * 2)) + IF_HD(2);
 
 	return GetStorageBayCapacity();
@@ -1758,12 +1758,12 @@ GetModuleFuelCapacity(uint8_t moduleType)
 {
 	if (moduleType == FUEL_TANK)
 	{
-		return FUEL_TANK_CAPACITY;
+		return FuelTankCapacity;
 	}
 
 	if (moduleType == HIGHEFF_FUELSYS)
 	{
-		return HEFUEL_TANK_CAPACITY;
+		return HefuelTankCapacity;
 	}
 
 	return 0;
@@ -1773,9 +1773,9 @@ GetModuleFuelCapacity(uint8_t moduleType)
 uint32_t
 GetFuelTankCapacity(void)
 {
-	uint32_t capacity = FUEL_RESERVE;
+	uint32_t capacity = FuelReserve;
 
-	for (uint16_t slotI {0}; slotI < NUM_MODULE_SLOTS; slotI++)
+	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
 	{
 		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
 		capacity += GetModuleFuelCapacity(moduleType);
@@ -1792,11 +1792,11 @@ GetFuelTankCapacity(void)
 static bool
 GetFuelTankForFuelUnit(uint32_t unitNr, uint16_t* slotNr, uint32_t* compartmentNr)
 {
-	uint32_t capacity = FUEL_RESERVE;
+	uint32_t capacity = FuelReserve;
 
-	assert(unitNr >= FUEL_RESERVE);
+	assert(unitNr >= FuelReserve);
 
-	uint16_t slotI {NUM_MODULE_SLOTS};
+	uint16_t slotI {NumModuleSlots};
 	while (slotI--)
 	{
 		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
@@ -1826,7 +1826,7 @@ GetFTankScreenPos(GFXPOINT* ppt)
 	const static Color fuelColors[] = FUEL_COLOR_TABLE;
 
 	const uint32_t fuelAmount {GetFuelTotal()};
-	if (fuelAmount < FUEL_RESERVE)
+	if (fuelAmount < FuelReserve)
 	{
 		// Fuel is in the SIS reserve, not in a fuel tank.
 		// *ppt is unchanged
@@ -1842,12 +1842,12 @@ GetFTankScreenPos(GFXPOINT* ppt)
 	const uint8_t moduleType {GLOBAL_SIS(ModuleSlots[slotNr])};
 	const uint32_t volume {GetModuleFuelCapacity(moduleType)};
 
-	rowNr = ((volume - compartmentNr) * MAX_FUEL_BARS
-			 / HEFUEL_TANK_CAPACITY);
+	rowNr = ((volume - compartmentNr) * MaxFuelBars
+			 / HefuelTankCapacity);
 
-	ppt->x = RES_SCALE(21) + (slotNr * SHIP_PIECE_OFFSET)
-		   + IF_HD(OutfitOrShipyard == 2 ? 0 : 2) - SAFE_PAD;
-	if (volume == FUEL_TANK_CAPACITY)
+	ppt->x = RES_SCALE(21) + (slotNr * ShipPieceOffset())
+		   + IF_HD(OutfitOrShipyard == 2 ? 0 : 2) - SafePad();
+	if (volume == FuelTankCapacity)
 	{
 		ppt->y = RES_SCALE(27 - rowNr);
 	}
@@ -1873,7 +1873,7 @@ CountSISPieces(uint8_t piece_type)
 	uint16_t num_pieces {0};
 	if (piece_type == FUSION_THRUSTER)
 	{
-		for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
+		for (i = 0; i < NumDriveSlots; ++i)
 		{
 			if (GLOBAL_SIS(DriveSlots[i]) == piece_type)
 			{
@@ -1883,7 +1883,7 @@ CountSISPieces(uint8_t piece_type)
 	}
 	else if (piece_type == TURNING_JETS)
 	{
-		for (i = 0; i < NUM_JET_SLOTS; ++i)
+		for (i = 0; i < NumJetSlots; ++i)
 		{
 			if (GLOBAL_SIS(JetSlots[i]) == piece_type)
 			{
@@ -1893,7 +1893,7 @@ CountSISPieces(uint8_t piece_type)
 	}
 	else
 	{
-		for (i = 0; i < NUM_MODULE_SLOTS; ++i)
+		for (i = 0; i < NumModuleSlots; ++i)
 		{
 			if (GLOBAL_SIS(ModuleSlots[i]) == piece_type)
 			{
@@ -1923,7 +1923,7 @@ AutoPilotTextLogic(void)
 	{
 		DrawSISMessageEx(
 			GAME_STRING(NAVIGATION_STRING_BASE + 2),
-			-1, -1, DSME_MYCOLOR); // "OUT OF FUEL"
+			-1, -1, DsmeMycolor); // "OUT OF FUEL"
 		return;
 	}
 
@@ -1931,13 +1931,13 @@ AutoPilotTextLogic(void)
 	{
 		DrawSISMessageEx(
 			GAME_STRING(NAVIGATION_STRING_BASE + 3),
-			-1, -1, DSME_MYCOLOR); // "AUTO-PILOT"
+			-1, -1, DsmeMycolor); // "AUTO-PILOT"
 		return;
 	}
 
 	// Show destination and distance to destination
-	Falayalaralfali.x = ARILOU_HOME_X;
-	Falayalaralfali.y = ARILOU_HOME_Y;
+	Falayalaralfali.x = ArilouHomeX;
+	Falayalaralfali.y = ArilouHomeY;
 	current_position.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
 	current_position.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
 	destination = uqm::flagship().autopilot.target();
@@ -1960,7 +1960,7 @@ AutoPilotTextLogic(void)
 							destination.y / 10, destination.y % 10,	 // Y Coordinates
 							target_distance);
 
-		DrawSISMessageEx(buf, -1, -1, DSME_MYCOLOR);
+		DrawSISMessageEx(buf, -1, -1, DsmeMycolor);
 		return;
 	}
 
@@ -1972,7 +1972,7 @@ AutoPilotTextLogic(void)
 							GAME_STRING(NAVIGATION_STRING_BASE)		 // "HyperSpace"
 		);
 
-		DrawSISMessageEx(buf, -1, -1, DSME_MYCOLOR);
+		DrawSISMessageEx(buf, -1, -1, DsmeMycolor);
 		return;
 	}
 
@@ -1988,7 +1988,7 @@ AutoPilotTextLogic(void)
 	temp.pStr = buf;
 	r = font_GetTextRect(&temp);
 
-	if (r.extent.width > SIS_MESSAGE_WIDTH)
+	if (r.extent.width > SisMessageWidth())
 	{ // If the full text is too large then
 		// use "->" instead of "AUTO-PILOT"
 		// -> to [StarCluster] - [TargetDistance]
@@ -2001,7 +2001,7 @@ AutoPilotTextLogic(void)
 	temp.pStr = buf;
 	r = font_GetTextRect(&temp);
 
-	if (r.extent.width > SIS_MESSAGE_WIDTH)
+	if (r.extent.width > SisMessageWidth())
 	{ // If shortened text is *still* too
 		// large then just show distance
 		fmt::format_to_sz_n(buf, "{} - {:.1}",
@@ -2009,7 +2009,7 @@ AutoPilotTextLogic(void)
 							target_distance);
 	}
 
-	DrawSISMessageEx(buf, -1, -1, DSME_MYCOLOR);
+	DrawSISMessageEx(buf, -1, -1, DsmeMycolor);
 }
 
 void DrawAutoPilotMessage(bool Reset)
@@ -2039,7 +2039,7 @@ void DrawAutoPilotMessage(bool Reset)
 			DrawSISMessage(nullptr);
 			cycle_index = 0;
 
-			if (EXTENDED)
+			if (IsExtended())
 			{
 				ZeroLastLoc();
 			}
@@ -2080,16 +2080,16 @@ void DrawFuelInFTanks(bool isOutfit)
 	}
 	else
 	{
-		c = BLACK_COLOR;
+		c = BlackColor;
 	}
 
 	r.extent.height = RES_SCALE(1);
 
 	// Loop through all the rows to draw
-	for (GLOBAL_SIS(FuelOnBoard) = FUEL_RESERVE;
+	for (GLOBAL_SIS(FuelOnBoard) = FuelReserve;
 		 GLOBAL_SIS(FuelOnBoard) < capacity;)
 	{
-		if (IS_HD && hdFuelFrame)
+		if (IsHd() && hdFuelFrame)
 		{
 			volume = GetFTankScreenPos(&r.corner);
 
@@ -2110,7 +2110,7 @@ void DrawFuelInFTanks(bool isOutfit)
 					r.extent.width = RES_SCALE(5);
 					r.extent.height =
 						(GLOBAL_SIS(FuelOnBoard) - FuelVolume)
-						/ (FUEL_VOLUME_PER_ROW >> 2);
+						/ (FuelVolumePerRow >> 2);
 					r.corner.y = -(GetFrameHot(s.frame).y);
 					SetContextForeGroundColor(c);
 					DrawFilledRectangle(&r);
@@ -2140,7 +2140,7 @@ void DrawFuelInFTanks(bool isOutfit)
 				r.corner.x += RES_SCALE(1);
 
 				SetContextForeGroundColor(
-					SetContextBackGroundColor(BLACK_COLOR));
+					SetContextBackGroundColor(BlackColor));
 			}
 			else
 			{ // Otherwise, draw an empty bar.
@@ -2148,7 +2148,7 @@ void DrawFuelInFTanks(bool isOutfit)
 				SetContextForeGroundColor(c);
 			}
 			DrawFilledRectangle(&r);
-			GLOBAL_SIS(FuelOnBoard) += FUEL_VOLUME_PER_ROW;
+			GLOBAL_SIS(FuelOnBoard) += FuelVolumePerRow;
 		}
 	}
 	GLOBAL_SIS(FuelOnBoard) = FuelVolume;
@@ -2235,15 +2235,15 @@ void SetFlashRect(const GFXRECT* pRect, bool pcRect)
 	GFXRECT temp_r;
 	uint16_t i {};
 
-	if (pRect != SFR_MENU_3DO && pRect != SFR_MENU_ANY
-		&& pRect != SFR_MENU_NON)
+	if (pRect != SfrMenu3do() && pRect != SfrMenuAny()
+		&& pRect != SfrMenuNon())
 	{ // The caller specified their own flash area, or nullptr (stop flashing).
 		GetContextClipRect(&clip_r);
 	}
 	else
 	{
-		if ((uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC && pRect != SFR_MENU_ANY)
-			|| pRect == SFR_MENU_NON)
+		if ((uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC && pRect != SfrMenuAny())
+			|| pRect == SfrMenuNon())
 		{
 			// The player wants PC menus and this flash is not used
 			// for a PC menu.
@@ -2257,11 +2257,11 @@ void SetFlashRect(const GFXRECT* pRect, bool pcRect)
 			GFXCONTEXT OldContext = SetContext(StatusContext);
 			GetContextClipRect(&clip_r);
 			pRect = &temp_r;
-			temp_r.corner.x = RADAR_X - clip_r.corner.x;
-			temp_r.corner.y = RADAR_Y - clip_r.corner.y;
+			temp_r.corner.x = RadarX() - clip_r.corner.x;
+			temp_r.corner.y = RadarY() - clip_r.corner.y;
 			temp_r.corner.y += DOS_NUM_SCL(10);
-			temp_r.extent.width = RADAR_WIDTH;
-			temp_r.extent.height = RADAR_HEIGHT;
+			temp_r.extent.width = RadarWidth();
+			temp_r.extent.height = RadarHeight();
 			temp_r.extent.height -= DOS_NUM_SCL(10);
 			SetContext(OldContext);
 		}

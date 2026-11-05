@@ -49,14 +49,14 @@ DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
 
 	SetContext(ScreenContext);
 	SetContextFont(StarConFont);
-	SetContextForeGroundColor(BLACK_COLOR);
+	SetContextForeGroundColor(BlackColor);
 
-	t.baseline.x = RES_SCALE(73 - 4) + SAFE_X;
+	t.baseline.x = RES_SCALE(73 - 4) + SafeX();
 	t.align = ALIGN_CENTER;
 
 	if (OldState == (STARBASE_STATE)~0)
 	{
-		t.baseline.y = text_base_y + SAFE_Y;
+		t.baseline.y = text_base_y + SafeY();
 		for (OldState = TALK_COMMANDER; OldState < DEPART_BASE; ++OldState)
 		{
 			if (OldState != NewState)
@@ -69,14 +69,14 @@ DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
 		}
 	}
 
-	t.baseline.y = text_base_y + SAFE_Y + (text_spacing_y * OldState);
+	t.baseline.y = text_base_y + SafeY() + (text_spacing_y * OldState);
 	t.pStr = GAME_STRING(STARBASE_STRING_BASE + 1 + OldState);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E));
-	t.baseline.y = text_base_y + SAFE_Y + (text_spacing_y * NewState);
+	t.baseline.y = text_base_y + SafeY() + (text_spacing_y * NewState);
 	t.pStr = GAME_STRING(STARBASE_STRING_BASE + 1 + NewState);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
@@ -85,7 +85,7 @@ DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
 void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 				   bool DrawBluePrint)
 {
-	Color OldColor = UNDEFINED_COLOR;
+	Color OldColor = UndefinedColor;
 	// Initialisation is just to keep the compiler silent.
 	GFXRECT r;
 	STAMP Side;
@@ -95,56 +95,56 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 	switch (which_piece)
 	{
 		case FUSION_THRUSTER:
-		case EMPTY_SLOT + 0:
-			Side.origin.x = DRIVE_SIDE_X;
-			Side.origin.y = DRIVE_SIDE_Y;
-			Top.origin.x = DRIVE_TOP_X;
-			Top.origin.y = DRIVE_TOP_Y;
+		case EmptySlot + 0:
+			Side.origin.x = DriveSideX();
+			Side.origin.y = DriveSideY();
+			Top.origin.x = DriveTopX();
+			Top.origin.y = DriveTopY();
 			break;
 		case TURNING_JETS:
-		case EMPTY_SLOT + 1:
-			Side.origin.x = JET_SIDE_X;
-			Side.origin.y = JET_SIDE_Y;
-			Top.origin.x = JET_TOP_X;
-			Top.origin.y = JET_TOP_Y;
+		case EmptySlot + 1:
+			Side.origin.x = JetSideX();
+			Side.origin.y = JetSideY();
+			Top.origin.x = JetTopX();
+			Top.origin.y = JetTopY();
 			break;
 		default:
-			if (which_piece < EMPTY_SLOT + 2)
+			if (which_piece < EmptySlot + 2)
 			{
 				RepairSlot = 1;
-				if (which_piece < EMPTY_SLOT
+				if (which_piece < EmptySlot
 					&& (which_slot == 0
-						|| GLOBAL_SIS(ModuleSlots[which_slot - 1]) < EMPTY_SLOT))
+						|| GLOBAL_SIS(ModuleSlots[which_slot - 1]) < EmptySlot))
 				{
 					++RepairSlot;
 				}
 			}
 			else if (!DrawBluePrint)
 			{
-				if (which_slot == 0 || which_slot >= NUM_MODULE_SLOTS - 3)
+				if (which_slot == 0 || which_slot >= NumModuleSlots - 3)
 				{
 					++which_piece;
 				}
 
-				if (which_slot < NUM_MODULE_SLOTS - 1
-					&& GLOBAL_SIS(ModuleSlots[which_slot + 1]) < EMPTY_SLOT)
+				if (which_slot < NumModuleSlots - 1
+					&& GLOBAL_SIS(ModuleSlots[which_slot + 1]) < EmptySlot)
 				{
 					RepairSlot = -1;
-					if (which_piece == EMPTY_SLOT + 3
-						|| which_slot + 1 == NUM_MODULE_SLOTS - 3)
+					if (which_piece == EmptySlot + 3
+						|| which_slot + 1 == NumModuleSlots - 3)
 					{
 						--RepairSlot;
 					}
 				}
 			}
-			Side.origin.x = MODULE_SIDE_X;
-			Side.origin.y = MODULE_SIDE_Y;
-			Top.origin.x = MODULE_TOP_X;
-			Top.origin.y = MODULE_TOP_Y;
+			Side.origin.x = ModuleSideX();
+			Side.origin.y = ModuleSideY();
+			Top.origin.x = ModuleTopX();
+			Top.origin.y = ModuleTopY();
 			break;
 	}
 
-	Side.origin.x += which_slot * SHIP_PIECE_OFFSET;
+	Side.origin.x += which_slot * ShipPieceOffset();
 	Side.frame = nullptr;
 	if (RepairSlot < 0)
 	{
@@ -156,15 +156,15 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 	else if (RepairSlot)
 	{
 		r.corner = Side.origin;
-		r.extent.width = SHIP_PIECE_OFFSET;
+		r.extent.width = ShipPieceOffset();
 		r.extent.height = RES_SCALE(1);
-		OldColor = SetContextForeGroundColor(BLACK_COLOR);
-		if (!IS_HD)
+		OldColor = SetContextForeGroundColor(BlackColor);
+		if (!IsHd())
 		{
 			DrawFilledRectangle(&r);
 		}
 		r.corner.y += RES_SCALE(23 - 1);
-		if (!IS_HD)
+		if (!IsHd())
 		{
 			DrawFilledRectangle(&r);
 		}
@@ -174,26 +174,26 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 		if (RepairSlot == 2)
 		{
 			r.corner = Side.origin;
-			if (!IS_HD)
+			if (!IsHd())
 			{
 				DrawFilledRectangle(&r);
 			}
 			r.corner.y += RES_SCALE(15);
-			if (!IS_HD)
+			if (!IsHd())
 			{
 				DrawFilledRectangle(&r);
 			}
 		}
-		if (which_slot < (NUM_MODULE_SLOTS - 1))
+		if (which_slot < (NumModuleSlots - 1))
 		{
 			r.corner = Side.origin;
-			r.corner.x += SHIP_PIECE_OFFSET;
-			if (!IS_HD)
+			r.corner.x += ShipPieceOffset();
+			if (!IsHd())
 			{
 				DrawFilledRectangle(&r);
 			}
 			r.corner.y += RES_SCALE(15);
-			if (!IS_HD)
+			if (!IsHd())
 			{
 				DrawFilledRectangle(&r);
 			}
@@ -211,7 +211,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 	}
 	else
 	{
-		Top.origin.x += which_slot * SHIP_PIECE_OFFSET;
+		Top.origin.x += which_slot * ShipPieceOffset();
 		if (RepairSlot < 0)
 		{
 			Top.frame = SetRelFrameIndex(Side.frame, -((NUM_MODULES - 1) + 6));
@@ -220,14 +220,14 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 		else if (RepairSlot)
 		{
 			r.corner = Top.origin;
-			r.extent.width = SHIP_PIECE_OFFSET;
+			r.extent.width = ShipPieceOffset();
 			r.extent.height = RES_SCALE(1);
-			if (!IS_HD)
+			if (!IsHd())
 			{
 				DrawFilledRectangle(&r);
 			}
 			r.corner.y += RES_SCALE(32 - 1);
-			if (!IS_HD)
+			if (!IsHd())
 			{
 				DrawFilledRectangle(&r);
 			}
@@ -237,27 +237,27 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 			if (RepairSlot == 2)
 			{
 				r.corner = Top.origin;
-				if (!IS_HD)
+				if (!IsHd())
 				{
 					DrawFilledRectangle(&r);
 				}
 				r.corner.y += RES_SCALE(20);
-				if (!IS_HD)
+				if (!IsHd())
 				{
 					DrawFilledRectangle(&r);
 				}
 			}
-			RepairSlot = (which_slot < NUM_MODULE_SLOTS - 1);
+			RepairSlot = (which_slot < NumModuleSlots - 1);
 			if (RepairSlot)
 			{
 				r.corner = Top.origin;
-				r.corner.x += SHIP_PIECE_OFFSET;
-				if (!IS_HD)
+				r.corner.x += ShipPieceOffset();
+				if (!IsHd())
 				{
 					DrawFilledRectangle(&r);
 				}
 				r.corner.y += RES_SCALE(20);
-				if (!IS_HD)
+				if (!IsHd())
 				{
 					DrawFilledRectangle(&r);
 				}
@@ -270,27 +270,27 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 		Side.frame = SetRelFrameIndex(Top.frame, (NUM_MODULES - 1) + 6);
 		DrawStamp(&Side);
 
-		if (which_slot == 1 && which_piece == EMPTY_SLOT + 2)
+		if (which_slot == 1 && which_piece == EmptySlot + 2)
 		{
 			STAMP s;
 
 			s.origin = Top.origin;
-			s.origin.x -= SHIP_PIECE_OFFSET;
+			s.origin.x -= ShipPieceOffset();
 			s.frame = SetAbsFrameIndex(ModuleFrame, NUM_MODULES + 5);
 			DrawStamp(&s);
 			s.origin = Side.origin;
-			s.origin.x -= SHIP_PIECE_OFFSET;
+			s.origin.x -= ShipPieceOffset();
 			s.frame = SetRelFrameIndex(s.frame, (NUM_MODULES - 1) + 6);
 			DrawStamp(&s);
 		}
 
 		if (RepairSlot)
 		{
-			Top.origin.x += SHIP_PIECE_OFFSET;
-			Side.origin.x += SHIP_PIECE_OFFSET;
+			Top.origin.x += ShipPieceOffset();
+			Side.origin.x += ShipPieceOffset();
 			which_piece = GLOBAL_SIS(ModuleSlots[++which_slot]);
-			if (which_piece == EMPTY_SLOT + 2
-				&& which_slot >= NUM_MODULE_SLOTS - 3)
+			if (which_piece == EmptySlot + 2
+				&& which_slot >= NumModuleSlots - 3)
 			{
 				++which_piece;
 			}
@@ -313,8 +313,8 @@ rotateStarbase(MENU_STATE* pMS, FRAME AniFrame)
 	if (AniFrame)
 	{ // Setup the animation
 		pMS->flash_frame0 = AniFrame;
-		pMS->flash_rect0.corner.x = SAFE_X;
-		pMS->flash_rect0.corner.y = SAFE_Y;
+		pMS->flash_rect0.corner.x = SafeX();
+		pMS->flash_rect0.corner.y = SafeY();
 	}
 
 	if (Now >= NextTime || AniFrame)
@@ -345,7 +345,7 @@ bool DoStarBase(MENU_STATE* pMS)
 		pMS->CurState = DEPART_BASE;
 		goto ExitStarBase;
 	}
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	if (!pMS->Initialized)
 	{
@@ -363,13 +363,13 @@ bool DoStarBase(MENU_STATE* pMS)
 
 		pMS->Initialized = true;
 
-		pMS->CurFrame = CaptureDrawable(LoadGraphic(STARBASE_ANIM));
-		pMS->hMusic = LoadMusic(STARBASE_MUSIC);
+		pMS->CurFrame = CaptureDrawable(LoadGraphic(StarbaseAnimRes));
+		pMS->hMusic = LoadMusicInstance(StarbaseMusicRes);
 
 		SetContext(ScreenContext);
 		SetTransitionSource(nullptr);
 		BatchGraphics();
-		SetContextBackGroundColor(BLACK_COLOR);
+		SetContextBackGroundColor(BlackColor);
 		ClearDrawable();
 		rotateStarbase(pMS, pMS->CurFrame);
 		DrawBaseStateStrings((STARBASE_STATE)~0, pMS->CurState);
@@ -418,10 +418,10 @@ ExitStarBase:
 		{
 			uint8_t OldState {};
 
-			if (IS_HD && !hdFuelFrame)
+			if (IsHd() && !hdFuelFrame)
 			{
 				hdFuelFrame =
-					CaptureDrawable(LoadGraphic(FUEL_PMAP_ANIM));
+					CaptureDrawable(LoadGraphic(FuelPmapAnimRes));
 			}
 
 			switch (OldState = pMS->CurState)
@@ -434,10 +434,10 @@ ExitStarBase:
 					break;
 			}
 
-			SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+			SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 			DoInput(pMS, true);
 
-			if (IS_HD)
+			if (IsHd())
 			{
 				DestroyDrawable(ReleaseDrawable(hdFuelFrame));
 				hdFuelFrame = 0;
@@ -501,15 +501,15 @@ DoTimePassage(void)
 		GFXPOINT starbase_coords;
 
 		// Calculate the starbase position on a circle with the help of sin and cos.
-		newAngle = ((double)(10) + daysElapsed() * (FULL_CIRCLE / 11.46)) * M_PI / 32 - M_PI / 2; // JMS: Starbase orbit values copied from gensol.c
+		newAngle = ((double)(10) + daysElapsed() * (FullCircle / 11.46)) * M_PI / 32 - M_PI / 2; // JMS: Starbase orbit values copied from gensol.c
 		starbase_coords.x = (int16_t)(cos(newAngle) * MIN_MOON_RADIUS);
 		starbase_coords.y = (int16_t)(sin(newAngle) * MIN_MOON_RADIUS);
 
-		//log_add (log_Debug, "startangle:{} angle:{}, radius:{}, speed:{}, days:{} X:{}, y:{}", 10, newAngle, MIN_MOON_RADIUS, FULL_CIRCLE / 11.46, daysElapsed(), starbase_coords.x, starbase_coords.y);
+		//log_add (log_Debug, "startangle:{} angle:{}, radius:{}, speed:{}, days:{} X:{}, y:{}", 10, newAngle, MIN_MOON_RADIUS, FullCircle / 11.46, daysElapsed(), starbase_coords.x, starbase_coords.y);
 
 		// Translate the coordinates on a circle to an ellipse and update the ship's graphics' coordinates on the screen.
-		uqm::flagship().shipStamp.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1) + starbase_coords.x;
-		uqm::flagship().shipStamp.origin.y = RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1) + (starbase_coords.y >> 1);
+		uqm::flagship().shipStamp.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1) + starbase_coords.x;
+		uqm::flagship().shipStamp.origin.y = RES_SCALE(OrigSisScreenHeight() >> 1) + (starbase_coords.y >> 1);
 	}
 }
 
@@ -523,7 +523,7 @@ void VisitStarBase(void)
 	if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
 	{ // We were just transported by Chmmr to the Starbase
 		// Force a reload of the SolarSys
-		CurStarDescPtr = nullptr;
+		CurStarDescPtr() = nullptr;
 		// This marks that we are in Starbase.
 		SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, (uint8_t)~0);
 	}
@@ -625,12 +625,12 @@ void InstallBombAtEarth(void)
 {
 	DoTimePassage();
 
-	uqm::flagship().shipStamp.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
-	uqm::flagship().shipStamp.origin.y = RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1);
+	uqm::flagship().shipStamp.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1);
+	uqm::flagship().shipStamp.origin.y = RES_SCALE(OrigSisScreenHeight() >> 1);
 
 	SetContext(ScreenContext);
 	SetTransitionSource(nullptr);
-	SetContextBackGroundColor(BLACK_COLOR);
+	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
 
 	SleepThreadUntil(FadeScreen(FadeAllToColor, TimePeriod {}));
@@ -638,7 +638,7 @@ void InstallBombAtEarth(void)
 	SET_GAME_STATE(CHMMR_BOMB_STATE, 3); /* bomb processed */
 	uqm::currentActivity() = CHECK_LOAD; /* fake a load game */
 	NextActivity = uqm::makeWord(IN_INTERPLANETARY, 0) | START_INTERPLANETARY;
-	CurStarDescPtr = 0; /* force SolarSys reload */
+	CurStarDescPtr() = 0; /* force SolarSys reload */
 }
 
 // XXX: Doesn't really belong in this file.

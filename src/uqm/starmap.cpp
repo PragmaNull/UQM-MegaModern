@@ -38,16 +38,16 @@
 // there.  "starmap_array" should never be altered and referenced as little
 // as possible.
 //STAR_DESC *star_array;
-STAR_DESC star_array[NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 3] {};
-//STAR_DESC star_array[NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 3] =
-//		{[0 ... (NUM_SOLAR_SYSTEMS + NUM_HYPER_VORTICES + 2)] =
+STAR_DESC star_array[NumSolarSystems + NumHyperVortices + 3] {};
+//STAR_DESC star_array[NumSolarSystems + NumHyperVortices + 3] =
+//		{[0 ... (NumSolarSystems + NumHyperVortices + 2)] =
 //		{{~0, ~0}, 0, 0, 0, 0}};
 const GFXPOINT* constel_array;
 // JSD Give my own starseed
 uqstl::optional<uqm::UQMRandom> StarGenRNG {};
-PORTAL_LOCATION portal_map[NUM_HYPER_VORTICES + 1] {};
-//PORTAL_LOCATION portal_map[NUM_HYPER_VORTICES+1] =
-//		{[0 ... (NUM_HYPER_VORTICES)] = {{0, 0}, {0, 0}, nullptr}};
+PORTAL_LOCATION portal_map[NumHyperVortices + 1] {};
+//PORTAL_LOCATION portal_map[NumHyperVortices+1] =
+//		{[0 ... (NumHyperVortices)] = {{0, 0}, {0, 0}, nullptr}};
 
 
 STAR_DESC*
@@ -63,13 +63,13 @@ FindStar(STAR_DESC* LastSDPtr, GFXPOINT* puniverse, int16_t xbounds,
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 	{
 		BaseSDPtr = star_array;
-		hi = NUM_SOLAR_SYSTEMS - 1;
+		hi = NumSolarSystems - 1;
 	}
 	else
 	{
-		//#define NUM_HYPER_VORTICES 15 //JSD moved to .h
-		BaseSDPtr = &star_array[NUM_SOLAR_SYSTEMS + 1];
-		hi = (NUM_HYPER_VORTICES + 1) - 1;
+		//#define NumHyperVortices 15 //JSD moved to .h
+		BaseSDPtr = &star_array[NumSolarSystems + 1];
+		hi = (NumHyperVortices + 1) - 1;
 	}
 
 	if (LastSDPtr == nullptr)
@@ -178,8 +178,8 @@ FindNearest(STAR_DESC* starmap, GFXPOINT p, bool constellation)
 	}
 	uint16_t star_id = 0;
 	uint32_t dist {};
-	uint32_t min_dist = MAX_X_UNIVERSE * MAX_Y_UNIVERSE;
-	for (uint16_t index {0}; index < NUM_SOLAR_SYSTEMS; index++)
+	uint32_t min_dist = MaxXUniverse * MaxYUniverse;
+	for (uint16_t index {0}; index < NumSolarSystems; index++)
 	{
 		dist = (starmap[index].star_pt.x - p.x) * (starmap[index].star_pt.x - p.x) + (starmap[index].star_pt.y - p.y) * (starmap[index].star_pt.y - p.y);
 		if (dist < min_dist && (starmap[index].Prefix > 0 || !constellation))
@@ -224,7 +224,6 @@ PLOT_LOCATION plot_map[NUM_PLOTS] = {};
 //PLOT_LOCATION plot_map[NUM_PLOTS] = {[0 ... (NUM_PLOTS - 1)] =
 //		{{~0, ~0}, nullptr, {[0 ... (NUM_PLOTS - 1)] = 0}}};
 
-#define VORTEX_SCALE 20		// From the starmap; scales vortex distances
 #define MIN_PORTAL 2000		// The min distance between portals (exits)
 #define MIN_VORTEX 150		// The min distance between vorticies in QS
 #define MIN_PORTAL_SOL 500	// The min distance between SOL and portal 0
@@ -236,55 +235,55 @@ PLOT_LOCATION plot_map[NUM_PLOTS] = {};
 // These are called Hyperspace Vortices (Vortex) when in Quasispace,
 // and Quasispace Portals when in Hyperspace (all of these are exit only)
 // The recurring 2-way Portal/Vortex is ARILOU_DEFINED plot loc and 5000x5000
-PORTAL_LOCATION portalmap_array[NUM_HYPER_VORTICES + 1] =
+PORTAL_LOCATION portalmap_array[NumHyperVortices + 1] =
 	{
 		{{4091, 7748},
-		 {(-12 * VORTEX_SCALE) + 5000, (-21 * VORTEX_SCALE) + 5000},
+		 {(-12 * VortexScale) + 5000, (-21 * VortexScale) + 5000},
 		 nullptr},
 		{{3184, 4906},
-		 {(1 * VORTEX_SCALE) + 5000, (-20 * VORTEX_SCALE) + 5000},
+		 {(1 * VortexScale) + 5000, (-20 * VortexScale) + 5000},
 		 nullptr},
 		{{9211, 6104},
-		 {(-16 * VORTEX_SCALE) + 5000, (-18 * VORTEX_SCALE) + 5000},
+		 {(-16 * VortexScale) + 5000, (-18 * VortexScale) + 5000},
 		 nullptr},
 		{{5673, 1207},
-		 {(8 * VORTEX_SCALE) + 5000, (-17 * VORTEX_SCALE) + 5000},
+		 {(8 * VortexScale) + 5000, (-17 * VortexScale) + 5000},
 		 nullptr},
 		{{1910, 926},
-		 {(3 * VORTEX_SCALE) + 5000, (-13 * VORTEX_SCALE) + 5000},
+		 {(3 * VortexScale) + 5000, (-13 * VortexScale) + 5000},
 		 nullptr},
 		{{8607, 151},
-		 {(-21 * VORTEX_SCALE) + 5000, (-4 * VORTEX_SCALE) + 5000},
+		 {(-21 * VortexScale) + 5000, (-4 * VortexScale) + 5000},
 		 nullptr},
 		{{50, 1647},
-		 {(-4 * VORTEX_SCALE) + 5000, (-4 * VORTEX_SCALE) + 5000},
+		 {(-4 * VortexScale) + 5000, (-4 * VortexScale) + 5000},
 		 nullptr},
 		{{6117, 4131},
-		 {(-12 * VORTEX_SCALE) + 5000, (-2 * VORTEX_SCALE) + 5000},
+		 {(-12 * VortexScale) + 5000, (-2 * VortexScale) + 5000},
 		 nullptr},
 		{{5658, 9712},
-		 {(-26 * VORTEX_SCALE) + 5000, (2 * VORTEX_SCALE) + 5000},
+		 {(-26 * VortexScale) + 5000, (2 * VortexScale) + 5000},
 		 nullptr},
 		{{2302, 3988},
-		 {(-17 * VORTEX_SCALE) + 5000, (7 * VORTEX_SCALE) + 5000},
+		 {(-17 * VortexScale) + 5000, (7 * VortexScale) + 5000},
 		 nullptr},
 		{{112, 9409},
-		 {(10 * VORTEX_SCALE) + 5000, (7 * VORTEX_SCALE) + 5000},
+		 {(10 * VortexScale) + 5000, (7 * VortexScale) + 5000},
 		 nullptr},
 		{{7752, 8906},
-		 {(15 * VORTEX_SCALE) + 5000, (14 * VORTEX_SCALE) + 5000},
+		 {(15 * VortexScale) + 5000, (14 * VortexScale) + 5000},
 		 nullptr},
 		{{368, 6332},
-		 {(22 * VORTEX_SCALE) + 5000, (16 * VORTEX_SCALE) + 5000},
+		 {(22 * VortexScale) + 5000, (16 * VortexScale) + 5000},
 		 nullptr},
 		{{9735, 3153},
-		 {(-6 * VORTEX_SCALE) + 5000, (19 * VORTEX_SCALE) + 5000},
+		 {(-6 * VortexScale) + 5000, (19 * VortexScale) + 5000},
 		 nullptr},
 		{{5850, 6213},
-		 {(10 * VORTEX_SCALE) + 5000, (20 * VORTEX_SCALE) + 5000},
+		 {(10 * VortexScale) + 5000, (20 * VortexScale) + 5000},
 		 nullptr},
 		{{0, 0},
-		 {ARILOU_HOME_X, ARILOU_HOME_Y},
+		 {ArilouHomeX, ArilouHomeY},
 		 nullptr}
 };
 
@@ -299,7 +298,7 @@ void DefaultStarmap(STAR_DESC* starmap)
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "DefaultStarmap setting star map to original values.\n");
 #endif
-	for (uint16_t i {0}; i < NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1 + 1; i++)
+	for (uint16_t i {0}; i < NumSolarSystems + 1 + NumHyperVortices + 1 + 1; i++)
 	{
 		starmap[i] = StarmapArray[i];
 	}
@@ -327,7 +326,7 @@ void SeedStarmap(STAR_DESC* starmap)
 	}
 	StarGenRNG->reseed(uqm::currentSeed().value);
 
-	for (uint16_t i {0}; i < NUM_SOLAR_SYSTEMS; i++)
+	for (uint16_t i {0}; i < NumSolarSystems; i++)
 	{
 		rand_val = StarGenRNG->next();
 		// 469 is the default number of dwarf stars, and 24 the number of
@@ -611,8 +610,8 @@ void DefaultPlot(PLOT_LOCATION* plot, STAR_DESC* starmap)
 
 	ResetPlot(plot);
 	plot[0].star_pt = GFXPOINT {ARILOU_SPACE_X, ARILOU_SPACE_Y};
-	plot[0].star = &(starmap[NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1]);
-	for (uint16_t i {0}; i < NUM_SOLAR_SYSTEMS; i++)
+	plot[0].star = &(starmap[NumSolarSystems + 1 + NumHyperVortices + 1]);
+	for (uint16_t i {0}; i < NumSolarSystems; i++)
 	{
 		if (starmap[i].Index > 0)
 		{
@@ -996,7 +995,7 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 
 	while (star->Index != StarmapArray[i].Index)
 	{
-		if (++i >= NUM_SOLAR_SYSTEMS)
+		if (++i >= NumSolarSystems)
 		{
 			return; // It doesn't have one
 		}
@@ -1118,7 +1117,7 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 		int j = 0;
 		while (RAINBOW0_DEFINED != starmap[j].Index)
 		{
-			if (++j >= NUM_SOLAR_SYSTEMS)
+			if (++j >= NumSolarSystems)
 			{
 				return; // It doesn't have one
 			}
@@ -1136,7 +1135,7 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 		int j = 0;
 		while (RAINBOW0_DEFINED != starmap[j].Index)
 		{
-			if (++j >= NUM_SOLAR_SYSTEMS)
+			if (++j >= NumSolarSystems)
 			{
 				return; // It doesn't have one
 			}
@@ -1154,7 +1153,7 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 		int j = 0;
 		while ((starmap[j].Postfix != star->Postfix) || (starmap[j].Prefix != 1))
 		{
-			if (++j >= NUM_SOLAR_SYSTEMS)
+			if (++j >= NumSolarSystems)
 			{
 				return; // It doesn't have one
 			}
@@ -1178,7 +1177,7 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 		int j = 0;
 		while (starmap[j].Postfix != 129) // Postfix 129 = "Sol"
 		{
-			if (++j >= NUM_SOLAR_SYSTEMS)
+			if (++j >= NumSolarSystems)
 			{
 				return; // Somehow, Sol does not exist
 			}
@@ -1193,7 +1192,7 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 			int prefix = 0;
 			int k {};
 			// Re-order the stars to remove new Sol's prefix
-			for (k = 0; k < NUM_SOLAR_SYSTEMS; k++)
+			for (k = 0; k < NumSolarSystems; k++)
 			{
 				if (starmap[k].Postfix == star->Postfix && starmap[k].Prefix > star->Prefix)
 				{
@@ -1207,7 +1206,7 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 			const STAR_DESC* pStr = FindNearestConstellation(starmap,
 															 starmap[j].star_pt);
 			// Find the highest Prefix
-			for (k = 0; k < NUM_SOLAR_SYSTEMS; k++)
+			for (k = 0; k < NumSolarSystems; k++)
 			{
 				if (starmap[k].Postfix == pStr->Postfix && starmap[k].Prefix > prefix)
 				{
@@ -1227,7 +1226,7 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 	if (star->Index == ALGOLITES_DEFINED)
 	{
 		int j = 0;
-		for (j = 0; j < NUM_SOLAR_SYSTEMS; j++)
+		for (j = 0; j < NumSolarSystems; j++)
 		{
 			if (&starmap[j] == star)
 			{
@@ -1264,7 +1263,7 @@ void DebugPlotTicker(uint16_t plot_id)
 #endif
 
 // The amount we skip around in the starmap, must be coprime with
-// NUM_SOLAR_SYSTEMS (502)
+// NumSolarSystems (502)
 #define STAR_FACTOR 89
 
 // SeedPlot will create a seeded location for each remaining item on the
@@ -1295,9 +1294,9 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 	uint16_t return_id {};
 	// timelimit is in deciseconds, if loading 60 seconds, if new 2 seconds
 #ifdef DEBUG_STARSEED_TRACE_Z
-	bool tried[NUM_SOLAR_SYSTEMS] = {false};
-	//bool tried[NUM_SOLAR_SYSTEMS] = {[0 ... NUM_SOLAR_SYSTEMS - 1] = false};
-	for (i = 0; i < NUM_SOLAR_SYSTEMS; i++)
+	bool tried[NumSolarSystems] = {false};
+	//bool tried[NumSolarSystems] = {[0 ... NumSolarSystems - 1] = false};
+	for (i = 0; i < NumSolarSystems; i++)
 	{
 		tried[i] = 0;
 	}
@@ -1337,7 +1336,7 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 		if (plotmap[ARILOU_DEFINED].star_pt.x != ~0 && plotmap[ARILOU_DEFINED].star_pt.y != ~0)
 		{
 			plotmap[ARILOU_DEFINED].star =
-				&(starmap[NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1]);
+				&(starmap[NumSolarSystems + 1 + NumHyperVortices + 1]);
 		}
 #if 0
 		// Place down any plots which were already assigned in plotmap
@@ -1492,7 +1491,7 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 		return return_id;
 	}
 	// Otherwise find this plot an empty star to call home, then recurse
-	for (i = 0; i < NUM_SOLAR_SYSTEMS; i++)
+	for (i = 0; i < NumSolarSystems; i++)
 	{
 #ifdef DEBUG_STARSEED_TRACE
 		DebugPlotTicker(plot_id);
@@ -1512,12 +1511,12 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 				continue;
 			}
 			// Arilou homeworld pointer for reasons
-			star_id = NUM_SOLAR_SYSTEMS + 1 + NUM_HYPER_VORTICES + 1;
+			star_id = NumSolarSystems + 1 + NumHyperVortices + 1;
 			plotmap[plot_id].star = &(starmap[star_id]);
 		}
 		else
 		{
-			star_id = (rand_val + i * STAR_FACTOR) % NUM_SOLAR_SYSTEMS;
+			star_id = (rand_val + i * STAR_FACTOR) % NumSolarSystems;
 			// Not empty, requeue
 			if (starmap[star_id].Index != 0)
 			{
@@ -1621,7 +1620,7 @@ void DefaultQuasispace(PORTAL_LOCATION* portalmap)
 		return;
 	}
 
-	for (uint16_t i {0}; i < NUM_HYPER_VORTICES + 1; i++)
+	for (uint16_t i {0}; i < NumHyperVortices + 1; i++)
 	{
 		portalmap[i].star_pt = portalmap_array[i].star_pt;
 		portalmap[i].quasi_pt = portalmap_array[i].quasi_pt;
@@ -1638,7 +1637,7 @@ void DefaultQuasispace(PORTAL_LOCATION* portalmap)
 
 // Seeds the quasispace to hyperspace portals in hyperspace, ensuring a minimum
 // distance between each.  Then randomizes the quasispace vortices using a
-// random 0..25 * VORTEX_SCALE (similar to how they appear to be created),
+// random 0..25 * VortexScale (similar to how they appear to be created),
 // and keep them a minimum distance apart as well.
 // Then sort the quasi side based on Y value ascending (starmap requirement)
 // Then shove the coords into the star_map (QUASI side) in the same order
@@ -1661,8 +1660,8 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 		StarGenRNG.emplace();
 	}
 	StarGenRNG->reseed(uqm::currentSeed().value);
-	// NUM_HYPER_VORTICES is the Arilou Homeworld, but no reason to move it
-	for (i = 0; i < NUM_HYPER_VORTICES; i++)
+	// NumHyperVortices is the Arilou Homeworld, but no reason to move it
+	for (i = 0; i < NumHyperVortices; i++)
 	{
 		do
 		{
@@ -1686,7 +1685,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 				// Note: as long as MIN_PORTAL > 1000 + 500 (1500) you don't
 				// have to check for other portals too close to SOL
 				// (as long as 500 is that limit).
-				if ((portalmap[i].star_pt.x < 189) || (portalmap[i].star_pt.x > MAX_X_UNIVERSE - 189) || (portalmap[i].star_pt.y < 189) || (portalmap[i].star_pt.y > MAX_Y_UNIVERSE - 189) || ((portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) * (portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) + (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) * (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) < 250000) || ((portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) * (portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) + (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) * (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) > 1000000))
+				if ((portalmap[i].star_pt.x < 189) || (portalmap[i].star_pt.x > MaxXUniverse - 189) || (portalmap[i].star_pt.y < 189) || (portalmap[i].star_pt.y > MaxYUniverse - 189) || ((portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) * (portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) + (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) * (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) < 250000) || ((portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) * (portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) + (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) * (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) > 1000000))
 				{
 					valid = false;
 					continue;
@@ -1701,8 +1700,8 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 				// 189 [0] and 9810 [255].
 				// ([rnd] 255 * 9999 / 265 = 9621) + 189 = 9810
 				// (or 189 below the top)
-				portalmap[i].star_pt = GFXPOINT {uqm::lowByte(rand_val) * MAX_X_UNIVERSE / 265 + 189,
-												 uqm::highByte(rand_val) * MAX_Y_UNIVERSE / 265 + 189};
+				portalmap[i].star_pt = GFXPOINT {uqm::lowByte(rand_val) * MaxXUniverse / 265 + 189,
+												 uqm::highByte(rand_val) * MaxYUniverse / 265 + 189};
 				for (j = 0; j < i; j++)
 				{
 					if ((portalmap[i].star_pt.x - portalmap[j].star_pt.x) * (portalmap[i].star_pt.x - portalmap[j].star_pt.x) + (portalmap[i].star_pt.y - portalmap[j].star_pt.y) * (portalmap[i].star_pt.y - portalmap[j].star_pt.y) < MIN_PORTAL * MIN_PORTAL)
@@ -1715,7 +1714,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 					continue;
 				}
 			}
-			if (portalmap[i].star_pt.x <= 0 || portalmap[i].star_pt.x >= MAX_X_UNIVERSE || portalmap[i].star_pt.y <= 0 || portalmap[i].star_pt.y >= MAX_Y_UNIVERSE)
+			if (portalmap[i].star_pt.x <= 0 || portalmap[i].star_pt.x >= MaxXUniverse || portalmap[i].star_pt.y <= 0 || portalmap[i].star_pt.y >= MaxYUniverse)
 			{
 				fmt::print(stderr, "BAD Quasi Portal %c at %05.1f : %05.1f, {}",
 						   'A' + i, (float)portalmap[i].star_pt.x / 10,
@@ -1757,8 +1756,8 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 		{
 			valid = true;
 			rand_val = StarGenRNG->next();
-			portalmap[i].quasi_pt = GFXPOINT {(uqm::lowByte(rand_val) * 51 / 256 - 25) * VORTEX_SCALE + 5000,
-											  (uqm::highByte(rand_val) * 51 / 256 - 25) * VORTEX_SCALE + 5000};
+			portalmap[i].quasi_pt = GFXPOINT {(uqm::lowByte(rand_val) * 51 / 256 - 25) * VortexScale + 5000,
+											  (uqm::highByte(rand_val) * 51 / 256 - 25) * VortexScale + 5000};
 			for (j = 0; j < i; j++)
 			{
 				if ((portalmap[i].quasi_pt.x - portalmap[j].quasi_pt.x) * (portalmap[i].quasi_pt.x - portalmap[j].quasi_pt.x) + (portalmap[i].quasi_pt.y - portalmap[j].quasi_pt.y) * (portalmap[i].quasi_pt.y - portalmap[j].quasi_pt.y) < MIN_VORTEX * MIN_VORTEX)
@@ -1778,9 +1777,9 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 	{
 		valid = true;
 		// Yes I know bubble sorts are lazy but we really only do this once.
-		for (i = 0; i < NUM_HYPER_VORTICES - 1; i++)
+		for (i = 0; i < NumHyperVortices - 1; i++)
 		{
-			for (j = i + 1; j < NUM_HYPER_VORTICES; j++)
+			for (j = i + 1; j < NumHyperVortices; j++)
 			{
 				if (portalmap[i].quasi_pt.y > portalmap[j].quasi_pt.y || (portalmap[i].quasi_pt.y == portalmap[j].quasi_pt.y && portalmap[i].quasi_pt.x > portalmap[j].quasi_pt.x))
 				{
@@ -1792,7 +1791,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 			}
 		}
 	}
-	for (i = 0, j = NUM_SOLAR_SYSTEMS + 1; i < NUM_HYPER_VORTICES; ++i, ++j)
+	for (i = 0, j = NumSolarSystems + 1; i < NumHyperVortices; ++i, ++j)
 	{
 		starmap[j].star_pt = portalmap[i].quasi_pt;
 	}
@@ -1962,7 +1961,7 @@ MMRNMHRM_ID:
 // human         1752, 1450,		same
 // ilwrath       48, 1700,		229, 3666	Not using this one
 // kohrah        6000, 6250,	6200, 5935	-200, 315	373.129	2666	14.00
-// melnorme      MAX_X_UNIVERSE >> 1, MAX_Y_UNIVERSE >> 1,
+// melnorme      MaxXUniverse >> 1, MaxYUniverse >> 1,
 // mmrnmhrm      0, 0,
 // mycon         6392, 2200,	6291, 2208	101, -8		101.316	1070	9.47
 // orz           3608, 2637,	3713, 2537	-113, 100	145.000	333		43.54

@@ -32,11 +32,11 @@ static LOCDATA pkunk_desc =
 		nullptr, /* uninit_encounter_func */
 		PKUNK_PMAP_ANIM, /* AlienFrame */
 		PKUNK_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		WhiteColorInit, /* AlienTextFColor */
+		BlackColorInit, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
 		PKUNK_COLOR_MAP, /* AlienColorMap */
@@ -53,8 +53,8 @@ static LOCDATA pkunk_desc =
 			{
 				3, /* StartIndex */
 				4, /* NumFrames */
-				CIRCULAR_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				CircularAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -64,8 +64,8 @@ static LOCDATA pkunk_desc =
 								{
 				7, /* StartIndex */
 				4, /* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -75,8 +75,8 @@ static LOCDATA pkunk_desc =
 								{
 				11, /* StartIndex */
 				3,	/* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -973,7 +973,7 @@ Intro(void)
 			SET_GAME_STATE(CLEAR_SPINDLE_ON_SHIP, 1);
 		}
 		else if (!GET_GAME_STATE(PKUNK_SENSE_VICTOR)
-				 && uqm::gameState().clock().year() > START_YEAR
+				 && uqm::gameState().clock().year() > StartYear
 				 && !GET_GAME_STATE(KOHR_AH_FRENZY))
 		{
 			NPCPhrase(SENSE_KOHRAH_VICTORY);
@@ -1192,9 +1192,9 @@ init_pkunk_comm(void)
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	pkunk_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	pkunk_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	pkunk_desc.AlienTextBaseline.y = 0;
-	pkunk_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	pkunk_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
 
 	if (GET_GAME_STATE(PKUNK_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)

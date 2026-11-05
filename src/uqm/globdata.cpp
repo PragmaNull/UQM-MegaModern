@@ -57,10 +57,10 @@ CreateRadar(void)
 		RadarContext = CreateContext("RadarContext");
 		GFXCONTEXT OldContext {SetContext(RadarContext)};
 		SetContextFGFrame(Screen);
-		r.corner.x = RADAR_X;
-		r.corner.y = RADAR_Y;
-		r.extent.width = RADAR_WIDTH;
-		r.extent.height = RADAR_HEIGHT;
+		r.corner.x = RadarX();
+		r.corner.y = RadarY();
+		r.extent.width = RadarWidth();
+		r.extent.height = RadarHeight();
 		SetContextClipRect(&r);
 		SetContext(OldContext);
 	}
@@ -71,28 +71,28 @@ bool LoadSC2Data(void)
 	if (FlagStatFrame == 0)
 	{
 		FlagStatFrame = CaptureDrawable(
-			LoadGraphic(FLAGSTAT_MASK_PMAP_ANIM));
+			LoadGraphic(FlagstatMaskPmapAnimRes));
 		if (FlagStatFrame == nullptr)
 		{
 			return false;
 		}
 
 		MiscDataFrame = CaptureDrawable(
-			LoadGraphic(MISCDATA_MASK_PMAP_ANIM));
+			LoadGraphic(MiscdataMaskPmapAnimRes));
 		if (MiscDataFrame == nullptr)
 		{
 			return false;
 		}
 
 		visitedStarsFrame = CaptureDrawable(
-			LoadGraphic(VISITED_STARS_ANIM));
+			LoadGraphic(VisitedStarsAnimRes));
 		if (visitedStarsFrame == nullptr)
 		{
 			return false;
 		}
 
 		FontGradFrame = CaptureDrawable(
-			LoadGraphic(FONTGRAD_PMAP_ANIM));
+			LoadGraphic(FontgradPmapAnimRes));
 	}
 
 	CreateRadar();
@@ -271,7 +271,7 @@ bool InitGameStructures(void)
 		return (false);
 	}
 
-	PlayFrame = CaptureDrawable(LoadGraphic(PLAYMENU_ANIM));
+	PlayFrame = CaptureDrawable(LoadGraphic(PlaymenuAnimRes));
 
 	// Load ships based on current seed settings
 	ReloadMasterShipList(nullptr);
@@ -283,7 +283,7 @@ bool InitGameStructures(void)
 	InitPlanetInfo();
 	InitGroupInfo(true);
 
-	uqm::globalFlags() = NUM_READ_SPEEDS >> 1;
+	uqm::globalFlags() = NumReadSpeeds >> 1;
 
 	GLOBAL(ElementWorth[COMMON]) = 1;
 	GLOBAL_SIS(ElementAmounts[COMMON]) = 0;
@@ -320,21 +320,21 @@ bool InitGameStructures(void)
 			break;
 	}
 
-	for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
+	for (i = 0; i < NumDriveSlots; ++i)
 	{
-		GLOBAL_SIS(DriveSlots[i]) = EMPTY_SLOT + 0;
+		GLOBAL_SIS(DriveSlots[i]) = EmptySlot + 0;
 	}
 	GLOBAL_SIS(DriveSlots[5]) =
 		GLOBAL_SIS(DriveSlots[6]) = FUSION_THRUSTER;
-	for (i = 0; i < NUM_JET_SLOTS; ++i)
+	for (i = 0; i < NumJetSlots; ++i)
 	{
-		GLOBAL_SIS(JetSlots[i]) = EMPTY_SLOT + 1;
+		GLOBAL_SIS(JetSlots[i]) = EmptySlot + 1;
 	}
 	GLOBAL_SIS(JetSlots[0]) =
 		GLOBAL_SIS(JetSlots[6]) = TURNING_JETS;
-	for (i = 0; i < NUM_MODULE_SLOTS; ++i)
+	for (i = 0; i < NumModuleSlots; ++i)
 	{
-		GLOBAL_SIS(ModuleSlots[i]) = EMPTY_SLOT + 2;
+		GLOBAL_SIS(ModuleSlots[i]) = EmptySlot + 2;
 	}
 	GLOBAL_SIS(ModuleSlots[15]) = GUN_WEAPON;
 	GLOBAL_SIS(ModuleSlots[2]) = CREW_POD;
@@ -342,10 +342,10 @@ bool InitGameStructures(void)
 	// Tobermoon during the journey from Vela to Sol, Hard and/or Extended
 	// mode only
 	GLOBAL_SIS(CrewEnlisted) =
-		(isDifficulty(uqm::Difficulty::Hard) || EXTENDED) ? 31 : CREW_POD_CAPACITY;
+		(isDifficulty(uqm::Difficulty::Hard) || IsExtended()) ? 31 : CrewPodCapacity;
 	GLOBAL_SIS(ModuleSlots[8]) = STORAGE_BAY;
 	GLOBAL_SIS(ModuleSlots[1]) = FUEL_TANK;
-	GLOBAL_SIS(FuelOnBoard) = ifEasyDifficulty(4338, 10 * FUEL_TANK_SCALE);
+	GLOBAL_SIS(FuelOnBoard) = ifEasyDifficulty(4338, 10 * FuelTankScale);
 
 	if (isDifficulty(uqm::Difficulty::Easy))
 	{
@@ -361,7 +361,7 @@ bool InitGameStructures(void)
 			GLOBAL_SIS(DriveSlots[4]) = FUSION_THRUSTER;
 		GLOBAL_SIS(JetSlots[2]) =
 			GLOBAL_SIS(JetSlots[5]) = TURNING_JETS;
-		GLOBAL_SIS(FuelOnBoard) += 20 * FUEL_TANK_SCALE;
+		GLOBAL_SIS(FuelOnBoard) += 20 * FuelTankScale;
 	}
 
 	if (uqm::UQMOptions::read().headStart)
@@ -379,25 +379,25 @@ bool InitGameStructures(void)
 
 	loadGameCheats();
 
-	GLOBAL(stowed_ship_q).reset(MAX_STOWED_SHIPS, sizeof(SHIP_FRAGMENT));
-	GLOBAL(built_ship_q).reset(MAX_BUILT_SHIPS, sizeof(SHIP_FRAGMENT));
-	GLOBAL(npc_built_ship_q).reset(MAX_SHIPS_PER_SIDE, sizeof(SHIP_FRAGMENT));
-	GLOBAL(ip_group_q).reset(MAX_BATTLE_GROUPS, sizeof(IP_GROUP));
-	GLOBAL(encounter_q).reset(MAX_ENCOUNTERS, sizeof(ENCOUNTER));
+	GLOBAL(stowed_ship_q).reset(MaxStowedShips, sizeof(SHIP_FRAGMENT));
+	GLOBAL(built_ship_q).reset(MaxBuiltShips, sizeof(SHIP_FRAGMENT));
+	GLOBAL(npc_built_ship_q).reset(MaxShipsPerSide, sizeof(SHIP_FRAGMENT));
+	GLOBAL(ip_group_q).reset(MaxBattleGroups, sizeof(IP_GROUP));
+	GLOBAL(encounter_q).reset(MaxEncounters, sizeof(ENCOUNTER));
 
 	uqm::currentActivity() = IN_INTERPLANETARY | START_INTERPLANETARY;
 
 	GLOBAL_SIS(ResUnits) = ifEasyDifficulty(2500, 0);
 	GLOBAL(CrewCost) = 3;
-	GLOBAL(FuelCost) = FUEL_COST_RU; // JMS: Was "20"
-	GLOBAL(ModuleCost[PLANET_LANDER]) = 500 / MODULE_COST_SCALE;
-	GLOBAL(ModuleCost[FUSION_THRUSTER]) = 500 / MODULE_COST_SCALE;
-	GLOBAL(ModuleCost[TURNING_JETS]) = 500 / MODULE_COST_SCALE;
-	GLOBAL(ModuleCost[CREW_POD]) = 2000 / MODULE_COST_SCALE;
-	GLOBAL(ModuleCost[STORAGE_BAY]) = 750 / MODULE_COST_SCALE;
-	GLOBAL(ModuleCost[FUEL_TANK]) = 500 / MODULE_COST_SCALE;
-	GLOBAL(ModuleCost[DYNAMO_UNIT]) = 2000 / MODULE_COST_SCALE;
-	GLOBAL(ModuleCost[GUN_WEAPON]) = 2000 / MODULE_COST_SCALE;
+	GLOBAL(FuelCost) = FuelCostRu; // JMS: Was "20"
+	GLOBAL(ModuleCost[PLANET_LANDER]) = 500 / ModuleCostScale;
+	GLOBAL(ModuleCost[FUSION_THRUSTER]) = 500 / ModuleCostScale;
+	GLOBAL(ModuleCost[TURNING_JETS]) = 500 / ModuleCostScale;
+	GLOBAL(ModuleCost[CREW_POD]) = 2000 / ModuleCostScale;
+	GLOBAL(ModuleCost[STORAGE_BAY]) = 750 / ModuleCostScale;
+	GLOBAL(ModuleCost[FUEL_TANK]) = 500 / ModuleCostScale;
+	GLOBAL(ModuleCost[DYNAMO_UNIT]) = 2000 / ModuleCostScale;
+	GLOBAL(ModuleCost[GUN_WEAPON]) = 2000 / ModuleCostScale;
 
 	GLOBAL_SIS(NumLanders) = ifEasyDifficulty(2, 1);
 
@@ -413,18 +413,18 @@ bool InitGameStructures(void)
 
 	if (uqm::UQMOptions::read().headStart)
 	{
-		const uint8_t SpaCrew = ifEasyDifficulty(MAX_CREW_SIZE, 1);
+		const uint8_t SpaCrew = ifEasyDifficulty(MaxCrewSize, 1);
 		AddEscortShips(SPATHI_SHIP, 1);
 		// Make the Eluder escort captained by Fwiffo alone or have a full
 		// compliment for Easy mode.
 		SetEscortCrewComplement(SPATHI_SHIP,
-								SpaCrew, NAME_OFFSET + NUM_CAPTAINS_NAMES);
+								SpaCrew, NameOffset + NumCaptainsNames);
 		StartSphereTracking(SPATHI_SHIP);
 	}
 
 	GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(plot_map[SOL_DEFINED].star_pt.x);
 	GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(plot_map[SOL_DEFINED].star_pt.y);
-	CurStarDescPtr = 0;
+	CurStarDescPtr() = 0;
 	uqm::flagship().autopilot.clear();
 
 	ZeroLastLoc();
@@ -647,7 +647,7 @@ bool InitStarseed(bool newgame)
 	}
 	if (OOPS_ALL > 0)
 	{
-		for (i = 0; i < NUM_SOLAR_SYSTEMS; i++)
+		for (i = 0; i < NumSolarSystems; i++)
 		{
 			if (!star_array[i].Index)
 			{

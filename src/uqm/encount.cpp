@@ -59,7 +59,7 @@ static void DrawFadeText(const char* str1, const char* str2,
 static bool
 DoSelectAction(MENU_STATE* pMS)
 {
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		pMS->CurState = ATTACK + 1;
@@ -89,7 +89,7 @@ DoSelectAction(MENU_STATE* pMS)
 					return false;
 				}
 				DrawMenuStateStrings(PM_CONVERSE, pMS->CurState);
-				SetFlashRect(SFR_MENU_3DO, false);
+				SetFlashRect(SfrMenu3do(), false);
 				break;
 			default:
 				fmt::print("Unknown option: {}\n", pMS->CurState);
@@ -102,7 +102,7 @@ DoSelectAction(MENU_STATE* pMS)
 static QUEUE*
 GetShipFragQueueForPlayer(uint16_t playerNr)
 {
-	if (playerNr == RPG_PLAYER_NUM)
+	if (playerNr == RpgPlayerNum)
 	{
 		return &GLOBAL(built_ship_q);
 	}
@@ -116,7 +116,7 @@ void SetBattlePlanet(void)
 {
 	uint8_t selector {(uint8_t)((uint16_t)uqm::random().next() % NUMBER_OF_PLANET_TYPES)};
 
-	if (EXTENDED && (selector == RAINBOW_WORLD || selector == SHATTERED_WORLD))
+	if (IsExtended() && (selector == RAINBOW_WORLD || selector == SHATTERED_WORLD))
 	{ // No rainbow or shattered worlds in hyperspace
 		if (selector == RAINBOW_WORLD)
 		{
@@ -149,7 +149,7 @@ void BuildBattle(uint16_t which_player)
 		return;
 	}
 
-	if (which_player != RPG_PLAYER_NUM)
+	if (which_player != RpgPlayerNum)
 	{ // This function is called first for the NPC character
 		// and this is when a centerpiece is loaded
 		switch (uqm::lowByte(uqm::currentActivity()))
@@ -171,7 +171,7 @@ void BuildBattle(uint16_t which_player)
 				{
 					SET_GAME_STATE(ESCAPE_COUNTER, 110);
 
-					if (EXTENDED && pSolarSysState && worldIsMoon(pSolarSysState, pSolarSysState->pOrbitalDesc))
+					if (IsExtended() && pSolarSysState && worldIsMoon(pSolarSysState, pSolarSysState->pOrbitalDesc))
 					{ // Set gravity well to moon if encounter takes
 						// place there (Spathiwa moon, Taalo HW,
 						// Utwig Bomb Loc)
@@ -243,12 +243,12 @@ void BuildBattle(uint16_t which_player)
 		UnlockShipFrag(pQueue, hStarShip);
 	}
 
-	if (which_player == RPG_PLAYER_NUM
+	if (which_player == RpgPlayerNum
 		&& (hBuiltShip = Build(&race_q[0], SIS_SHIP_ID)))
 	{
 		BuiltShipPtr = LockStarShip(&race_q[0], hBuiltShip);
 		BuiltShipPtr->captains_name_index = 0;
-		BuiltShipPtr->playerNr = RPG_PLAYER_NUM;
+		BuiltShipPtr->playerNr = RpgPlayerNum;
 		BuiltShipPtr->crew_level = 0;
 		BuiltShipPtr->max_crew = 0;
 		// Crew will be copied directly from
@@ -257,7 +257,7 @@ void BuildBattle(uint16_t which_player)
 		BuiltShipPtr->icons = 0;
 		BuiltShipPtr->index = -1;
 		BuiltShipPtr->ship_cost = 0;
-		BuiltShipPtr->energy_counter = MAX_ENERGY_SIZE;
+		BuiltShipPtr->energy_counter = MaxEnergySize;
 		BuiltShipPtr->RaceDescPtr = 0;
 		UnlockStarShip(&race_q[0], hBuiltShip);
 	}
@@ -338,7 +338,7 @@ InitEncounter(void)
 	SetContext(SpaceContext);
 	SetContextFont(MicroFont);
 
-	MUSIC_REF MR {LoadMusic(REDALERT_MUSIC)};
+	MUSIC_REF MR {LoadMusicInstance(RedalertMusicRes)};
 	PlayMusic(MR, false, 1);
 	FRAME SegueFrame {GetStarBackGround(true)};
 	WaitForSoundEnd(TfbsoundWaitAll);
@@ -349,13 +349,13 @@ InitEncounter(void)
 	SetTransitionSource(nullptr);
 	BatchGraphics();
 
-	SetContextBackGroundColor(BLACK_COLOR);
+	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
 	s.frame = SegueFrame;
 	DrawStamp(&s);
 
-	//    t.baseline.x = SIS_SCREEN_WIDTH >> 1;
-	t.baseline.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
+	//    t.baseline.x = SisScreenWidth() >> 1;
+	t.baseline.x = RES_SCALE(OrigSisScreenWidth() >> 1);
 	t.baseline.y = RES_SCALE(10);
 	t.align = ALIGN_CENTER;
 
@@ -382,7 +382,7 @@ InitEncounter(void)
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 		t.baseline.y += RES_SCALE(12);
-		GetClusterName(CurStarDescPtr, buf);
+		GetClusterName(CurStarDescPtr(), buf);
 		t.pStr = buf;
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
@@ -393,8 +393,8 @@ InitEncounter(void)
 	}
 	DrawSISMessage(nullptr);
 
-	s.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
-	s.origin.y = SIS_SCREEN_HEIGHT >> 1;
+	s.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1);
+	s.origin.y = SisScreenHeight() >> 1;
 	s.frame = planet[0];
 	DrawStamp(&s);
 
@@ -441,7 +441,7 @@ InitEncounter(void)
 									 + (long)s.origin.y * s.origin.y)
 					   + ((i / NUM_DISPLAY_PTS) * 18);
 
-				radius <<= RESOLUTION_FACTOR;
+				radius <<= resolutionFactor;
 
 				const uint16_t angle {ARCTAN(s.origin.x, s.origin.y)};
 				s.origin.x = (COSINE(angle, radius));
@@ -449,13 +449,13 @@ InitEncounter(void)
 			}
 			else
 			{
-				s.origin.x <<= RESOLUTION_FACTOR;
-				s.origin.y <<= RESOLUTION_FACTOR;
+				s.origin.x <<= resolutionFactor;
+				s.origin.y <<= resolutionFactor;
 			}
 			s.frame = SetAbsFrameIndex(FragPtr->icons, 0);
 			GetFrameRect(s.frame, &r);
-			s.origin.x += RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1) - (r.extent.width >> 1);
-			s.origin.y += RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1) - (r.extent.height >> 1);
+			s.origin.x += RES_SCALE(OrigSisScreenWidth() >> 1) - (r.extent.width >> 1);
+			s.origin.y += RES_SCALE(OrigSisScreenHeight() >> 1) - (r.extent.height >> 1);
 			DrawStamp(&s);
 
 			UnlockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
@@ -474,7 +474,7 @@ InitEncounter(void)
 		MenuState.Initialized = false;
 
 		DrawMenuStateStrings(PM_CONVERSE, MenuState.CurState = HAIL);
-		SetFlashRect(SFR_MENU_3DO, false);
+		SetFlashRect(SfrMenu3do(), false);
 
 		DoInput(&MenuState, true);
 
@@ -552,7 +552,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 			i = NUM_FADES - 1;
 		}
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			RepairPickFrame(&r1, 1);
 			RepairPickFrame(&r2, 1);
@@ -567,7 +567,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 	}
 	if (!fade_in)
 	{ // Clear the remaining text
-		if (IS_HD)
+		if (IsHd())
 		{
 			RepairPickFrame(&r1, 1);
 			RepairPickFrame(&r2, 1);
@@ -584,7 +584,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 static void
 ClearRectBack(GFXRECT* pRect)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
 		RepairPickFrame(pRect, 1);
 	}
@@ -662,7 +662,7 @@ UninitEncounter(void)
 		ship_s.origin.x = 0;
 		ship_s.origin.y = 0;
 		Sleepy = true;
-		for (i = 0; i < NUM_SIDES; ++i)
+		for (i = 0; i < NumSides; ++i)
 		{
 			QUEUE* pQueue {};
 			HSHIPFRAG hNextShip {};
@@ -687,7 +687,7 @@ UninitEncounter(void)
 					}
 					else if (uqm::flagship().ipPlanet == 0)
 					{
-						DrawHyperCoords(CurStarDescPtr->star_pt);
+						DrawHyperCoords(CurStarDescPtr()->star_pt);
 					}
 					else
 					{
@@ -704,7 +704,7 @@ UninitEncounter(void)
 				pQueue = &GLOBAL(npc_built_ship_q);
 			}
 
-			ReinitQueue(&race_q[(NUM_SIDES - 1) - i]);
+			ReinitQueue(&race_q[(NumSides - 1) - i]);
 
 			for (hStarShip = GetHeadLink(pQueue); hStarShip;
 				 hStarShip = hNextShip)
@@ -713,9 +713,9 @@ UninitEncounter(void)
 				hNextShip = _GetSuccLink(FragPtr);
 
 				if (FragPtr->crew_level == 0
-					|| (VictoryState && i == NUM_SIDES - 1))
+					|| (VictoryState && i == NumSides - 1))
 				{
-					if (i == NUM_SIDES - 1)
+					if (i == NumSides - 1)
 					{
 						++ships_killed;
 						if (VictoryState)
@@ -733,7 +733,7 @@ UninitEncounter(void)
 								ship_s.origin.y = scavenge_r.corner.y + RES_SCALE(56);
 								ship_s.frame = IncFrameIndex(FragPtr->icons);
 								DrawStamp(&ship_s);
-								SetContextForeGroundColor(MDKGRAY_COLOR);
+								SetContextForeGroundColor(MdkgrayColor);
 
 								SetContextFont(isPC(uqm::UQMOptions::read().whichFonts) ? TinyFont : TinyFontBold);
 
@@ -770,7 +770,7 @@ UninitEncounter(void)
 							r.corner.y = scavenge_r.corner.y + RES_SCALE(9);
 							r.extent.height = RES_SCALE(22);
 
-							SetContextForeGroundColor(BLACK_COLOR);
+							SetContextForeGroundColor(BlackColor);
 
 							r.extent.width = RES_SCALE(34);
 							r.corner.x = scavenge_r.corner.x + scavenge_r.extent.width
@@ -814,7 +814,7 @@ UninitEncounter(void)
 							else
 							{
 								const GFXRECT textRect = font_GetTextRect(&t);
-								SetContextForeGroundColor(BLACK_COLOR);
+								SetContextForeGroundColor(BlackColor);
 
 								r.corner.x =
 									scavenge_r.corner.x
@@ -847,7 +847,7 @@ UninitEncounter(void)
 								{
 									Sleepy = (bool)!AnyButtonPress(true) && !(uqm::currentActivity() & CHECK_ABORT);
 
-									if (IS_HD)
+									if (IsHd())
 									{ // Back of the current ship
 										GFXPOINT p;
 										GFXRECT ship_r;
@@ -905,7 +905,7 @@ UninitEncounter(void)
 				DrawFadeText(str1, str2, false, &scavenge_r);
 				if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_ESCAPE])
 				{
-					SetContextForeGroundColor(BLACK_COLOR);
+					SetContextForeGroundColor(BlackColor);
 					r.corner.x = scavenge_r.corner.x + RES_SCALE(10);
 					r.extent.width = RES_SCALE(132);
 
@@ -1032,12 +1032,12 @@ void EncounterBattle(void)
 	WaitForSoundEnd(TfbsoundWaitAll);
 	//    DestroySound (ReleaseSound (MenuSounds));
 
-	if (uqm::globalFlags() & CYBORG_ENABLED)
+	if (uqm::globalFlags() & CyborgEnabled)
 	{
 		uint8_t cur_speed {};
 
-		cur_speed = (uint8_t)(uqm::globalFlags() & COMBAT_SPEED_MASK)
-				 >> COMBAT_SPEED_SHIFT;
+		cur_speed = (uint8_t)(uqm::globalFlags() & CombatSpeedMask)
+				 >> CombatSpeedShift;
 		if (cur_speed == 1)
 		{
 			cur_speed = 0; /* normal speed */
@@ -1068,7 +1068,7 @@ void EncounterBattle(void)
 
 	// PlayerControl[1] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard; // Yes, you can make Adventure mode 2-player
 
-	GameSounds = uqm::loadSoundBank(GAME_SOUNDS).release();
+	GameSounds = uqm::loadSoundBank(GameSoundsRes).release();
 
 	Battle(nullptr);
 
@@ -1080,7 +1080,7 @@ void EncounterBattle(void)
 		GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
 	}
 
-	if (uqm::globalFlags() & CYBORG_ENABLED)
+	if (uqm::globalFlags() & CyborgEnabled)
 	{
 		nth_frame = uqm::makeWord(0, 0);
 		PlayerControl[0] = PlayerControlFlags::Human | PlayerControlFlags::DifficultyStandard;
@@ -1089,9 +1089,9 @@ void EncounterBattle(void)
 	}
 
 	//    MicroFont = CaptureFont (
-	// LoadFont (MICRO_FONT)
+	// LoadFont (MicroFontRes)
 	// );
-	//    MenuSounds = CaptureSound (LoadSound (MENU_SOUNDS));
+	//    MenuSounds = CaptureSound (LoadSound (MenuSoundsRes));
 	//    LoadSC2Data ();
 
 	uqm::currentActivity() = OldActivity;

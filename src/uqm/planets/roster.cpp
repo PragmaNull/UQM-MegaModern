@@ -38,7 +38,7 @@ static GFXRECT savedShipFrame_r;
 static STAMP savedShipFrame;
 
 // Ship icon positions in status display around the flagship
-const static GFXPOINT ship_pos[MAX_BUILT_SHIPS] =
+const static GFXPOINT ship_pos[MaxBuiltShips] =
 	{
 		SUPPORT_SHIP_PTS};
 
@@ -47,7 +47,7 @@ typedef struct
 	// Ship icon positions split into (lower half) left and right (upper)
 	// and sorted in the Y coord. These are used for navigation around the
 	// escort positions.
-	GFXPOINT shipPos[MAX_BUILT_SHIPS];
+	GFXPOINT shipPos[MaxBuiltShips];
 	uint16_t count;
 	// Number of ships
 
@@ -254,7 +254,7 @@ static void
 drawModifiedSupportShip(ROSTER_STATE* rosterState)
 {
 	SetContext(StatusContext);
-	SetContextForeGroundColor(ROSTER_MODIFY_SHIP_COLOR);
+	SetContextForeGroundColor(RosterModifyShipColor);
 	drawSupportShip(rosterState, true, false);
 }
 
@@ -301,14 +301,14 @@ DoModifyRoster(MENU_STATE* pMS)
 		if (!rosterState->modifyingCrew)
 		{
 			SetFlashRect(nullptr, false);
-			SetMenuSounds(MENU_SOUND_ARROWS | MENU_SOUND_PAGE, MENU_SOUND_SELECT);
+			SetMenuSounds(MenuSoundArrows | MenuSoundPage, MenuSoundSelect);
 		}
 		else
 		{
 			drawModifiedSupportShip(rosterState);
 			flashSupportShipCrew();
-			SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN | MENU_SOUND_PAGE,
-						  MENU_SOUND_ACTION);
+			SetMenuSounds(MenuSoundUp | MenuSoundDown | MenuSoundPage,
+						  MenuSoundAction);
 		}
 	}
 	else if (rosterState->modifyingCrew)
@@ -422,9 +422,9 @@ DoModifyRoster(MENU_STATE* pMS)
 		if (NewState != pMS->CurState)
 		{
 			// Draw the previous escort in unselected state.
-			// JMS_GFX: In HD mode we draw the rectangle of screen
+			// JMS_GFX: In HdResolutionFactor mode we draw the rectangle of screen
 			// we captured earlier.
-			if (IS_HD)
+			if (IsHd())
 			{
 				DrawStamp(&savedShipFrame);
 			}
@@ -436,9 +436,9 @@ DoModifyRoster(MENU_STATE* pMS)
 			selectSupportShip(rosterState, NewState);
 			pMS->CurState = NewState;
 
-			// JMS_GFX: In HD mode we now have to capture the
+			// JMS_GFX: In HdResolutionFactor mode we now have to capture the
 			// location of this new rectangle.
-			if (IS_HD)
+			if (IsHd())
 			{
 				flashSupportShip(rosterState, true);
 			}
@@ -487,7 +487,7 @@ bool RosterMenu(void)
 
 	// JMS_GFX: Remember the location of the first ship to be able to erase
 	// the red junk from around it after rostering.
-	if (IS_HD)
+	if (IsHd())
 	{
 		drawSupportShip(&RosterState, true, true);
 	}
@@ -497,7 +497,7 @@ bool RosterMenu(void)
 		DrawMenuStateStrings(PM_ALT_CARGO, 2);
 	}
 
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	MenuState.InputFunc = DoModifyRoster;
 	DoInput(&MenuState, true);
@@ -505,9 +505,9 @@ bool RosterMenu(void)
 	SetContext(StatusContext);
 
 	// Draw the last escort in unselected state.
-	// JMS_GFX: In HD mode we draw the rectangle of screen
+	// JMS_GFX: In HdResolutionFactor mode we draw the rectangle of screen
 	// we captured earlier.
-	if (IS_HD)
+	if (IsHd())
 	{
 		DrawStamp(&savedShipFrame);
 	}

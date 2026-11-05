@@ -48,7 +48,7 @@ bool GameClock::start(uint16_t eventCapacity)
 	{
 		return false;
 	}
-	restore(c_startDay, c_startMonth, START_YEAR, 0, 0);
+	restore(c_startDay, c_startMonth, StartYear, 0, 0);
 	return true;
 }
 
@@ -69,7 +69,7 @@ void GameClock::restore(uint8_t day, uint8_t month, uint16_t year, int16_t tickC
 float GameClock::daysElapsed() const
 {
 	float days {0};
-	for (uint16_t year {START_YEAR}; year < m_year; ++year)
+	for (uint16_t year {StartYear}; year < m_year; ++year)
 	{
 		days += isLeapYear(year) ? 366 : 365;
 	}

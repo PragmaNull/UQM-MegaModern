@@ -219,7 +219,7 @@ MeleeSetup_new(void)
 {
 	auto* result {new MeleeSetup {}};
 
-	for (size_t teamI {0}; teamI < NUM_SIDES; teamI++)
+	for (size_t teamI {0}; teamI < NumSides; teamI++)
 	{
 		MeleeTeam_init(&result->teams[teamI]);
 		result->fleetValue[teamI] = 0;
@@ -238,7 +238,7 @@ void MeleeSetup_delete(MeleeSetup* setup)
 #ifdef NETPLAY
 void MeleeSetup_resetSentTeams(MeleeSetup* setup)
 {
-	for (size_t teamI {0}; teamI < NUM_SIDES; teamI++)
+	for (size_t teamI {0}; teamI < NumSides; teamI++)
 	{
 		MeleeSetup_initSentTeam(setup, teamI);
 	}
