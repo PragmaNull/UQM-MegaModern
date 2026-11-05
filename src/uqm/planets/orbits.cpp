@@ -37,8 +37,7 @@ enum
 	PLANET_ALWAYS = 255
 };
 
-static uint8_t
-BlueDistribution(uint8_t which_world)
+static uint8_t BlueDistribution(uint8_t which_world)
 {
 	const uint8_t PlanetDistribution[NUMBER_OF_PLANET_TYPES] =
 		{
@@ -109,8 +108,7 @@ BlueDistribution(uint8_t which_world)
 	return (PlanetDistribution[which_world]);
 }
 
-static uint8_t
-GreenDistribution(uint8_t which_world)
+static uint8_t GreenDistribution(uint8_t which_world)
 {
 	const uint8_t PlanetDistribution[NUMBER_OF_PLANET_TYPES] =
 		{
@@ -181,8 +179,7 @@ GreenDistribution(uint8_t which_world)
 	return (PlanetDistribution[which_world]);
 }
 
-static uint8_t
-OrangeDistribution(uint8_t which_world)
+static uint8_t OrangeDistribution(uint8_t which_world)
 {
 	const uint8_t PlanetDistribution[NUMBER_OF_PLANET_TYPES] =
 		{
@@ -253,8 +250,7 @@ OrangeDistribution(uint8_t which_world)
 	return (PlanetDistribution[which_world]);
 }
 
-static uint8_t
-RedDistribution(uint8_t which_world)
+static uint8_t RedDistribution(uint8_t which_world)
 {
 	const uint8_t PlanetDistribution[NUMBER_OF_PLANET_TYPES] =
 		{
@@ -325,8 +321,7 @@ RedDistribution(uint8_t which_world)
 	return (PlanetDistribution[which_world]);
 }
 
-static uint8_t
-WhiteDistribution(uint8_t which_world)
+static uint8_t WhiteDistribution(uint8_t which_world)
 {
 	const uint8_t PlanetDistribution[NUMBER_OF_PLANET_TYPES] =
 		{
@@ -397,8 +392,7 @@ WhiteDistribution(uint8_t which_world)
 	return (PlanetDistribution[which_world]);
 }
 
-static uint8_t
-YellowDistribution(uint8_t which_world)
+static uint8_t YellowDistribution(uint8_t which_world)
 {
 	const uint8_t PlanetDistribution[NUMBER_OF_PLANET_TYPES] =
 		{
@@ -709,8 +703,7 @@ RelocatePlanet:
 	}
 }
 
-uint8_t
-PickClosestHabitable(SOLARSYS_STATE* solarSys)
+uint8_t PickClosestHabitable(SOLARSYS_STATE* solarSys)
 {
 	const int16_t hRangesD[NUM_STAR_COLORS][2] = {
 		{860,  1790}, // blue

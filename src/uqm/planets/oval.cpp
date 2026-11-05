@@ -38,8 +38,7 @@ static constexpr auto FourthQuad {(1 << 3)};
 static constexpr auto FullVisibility {(1 << 4)};
 static constexpr auto AllQuad {(FirstQuad | SecondQuad | ThirdQuad | FourthQuad)};
 
-static bool
-PointOnScreen(int32_t x, int32_t y)
+static bool PointOnScreen(int32_t x, int32_t y)
 {
 	int32_t extend = 0;
 
@@ -52,15 +51,13 @@ PointOnScreen(int32_t x, int32_t y)
 			&& (y + extend) >= 0 && y <= SisScreenHeight());
 }
 
-static bool
-DPointOnScreen(DPOINT* p)
+static bool DPointOnScreen(DPOINT* p)
 {
 	return (p->x >= 0 && p->x <= SisScreenWidth()
 			&& p->y >= 0 && p->y <= SisScreenHeight());
 }
 
-static void
-TruncateDPoint(DPOINT* p)
+static void TruncateDPoint(DPOINT* p)
 {
 	if (p->x > 32767)
 	{
@@ -92,8 +89,7 @@ TruncateDPoint(DPOINT* p)
 // through ellipse equation. If radius > 1 - point is outside of the ellipse, and if < 1 - inside. In case if one point is inside and the other is
 // outside - then the diagonal crosses the curve somewhere on the screen, therefore the curve is visible. Otherwise, if both points are
 // inside/outside, then the curve is not on screen.
-static uint8_t
-CheckOvalCollision(DPOINT* p0, DPOINT* p1)
+static uint8_t CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 {
 	DPOINT mp; // Middle point
 	uint8_t quad_visible = 0;

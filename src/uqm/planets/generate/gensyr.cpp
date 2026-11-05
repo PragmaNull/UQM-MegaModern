@@ -62,8 +62,7 @@ const GenerateFunctions generateSyreenFunctions = {
 };
 
 
-static bool
-GenerateSyreen_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateSyreen_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
@@ -101,9 +100,8 @@ GenerateSyreen_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,
-							 PLANET_DESC* planet)
+static bool GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,
+										 PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -133,9 +131,8 @@ GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateSyreen_generateName(const SOLARSYS_STATE* solarSys,
-							const PLANET_DESC* world)
+static bool GenerateSyreen_generateName(const SOLARSYS_STATE* solarSys,
+										const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
@@ -156,9 +153,8 @@ GenerateSyreen_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
-							   PLANET_DESC* world)
+static bool GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
+										   PLANET_DESC* world)
 {
 
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -213,9 +209,8 @@ GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t
-GenerateSyreen_generateEnergy(const SOLARSYS_STATE* solarSys,
-							  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSyreen_generateEnergy(const SOLARSYS_STATE* solarSys,
+											  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -225,9 +220,8 @@ GenerateSyreen_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateSyreen_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-							uint16_t whichNode)
+static bool GenerateSyreen_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+										uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{ // Standard ruins report

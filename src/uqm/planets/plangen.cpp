@@ -110,8 +110,7 @@ const static Color tintColors[] =
 		ScanBiologicalTintColor,
 };
 
-uint8_t
-clip_channel(int c)
+uint8_t clip_channel(int c)
 {
 	if (c > 255)
 	{
@@ -159,8 +158,7 @@ void TransformColor(Color* c, uint16_t scan)
 	}
 }
 
-int8_t
-ColorDelta(uint16_t scan, uint32_t avg)
+int8_t ColorDelta(uint16_t scan, uint32_t avg)
 {
 	if (scan == NUM_SCAN_TYPES)
 	{
@@ -258,8 +256,7 @@ void AdjustColor(Color* c, uint16_t scan, uint16_t height, uint16_t width, int8_
 	}
 }
 
-RESOURCE
-GetAltColorMap(PLANET_DESC* pPlanetDesc)
+RESOURCE GetAltColorMap(PLANET_DESC* pPlanetDesc)
 {
 	switch (pPlanetDesc->data_index)
 	{
@@ -306,8 +303,7 @@ GetAltColorMap(PLANET_DESC* pPlanetDesc)
 	}
 }
 
-static void
-ExpandLevelMasks(PLANET_ORBIT* Orbit)
+static void ExpandLevelMasks(PLANET_ORBIT* Orbit)
 { // Expand mask frame to avoid null spaces
 	uint16_t spherespanx {};
 	int16_t width {};
@@ -373,8 +369,7 @@ ExpandLevelMasks(PLANET_ORBIT* Orbit)
 	}
 }
 
-static void
-RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
+static void RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 { // Kruzen: Originally there were 3 frames for levels 2,3,4 that was
 	// drawn backwards using masks and prerendered colored spheres
 	// Mask code has been nuked some time ago therefore I'm rendering 1
@@ -485,9 +480,8 @@ RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 	SetContextFGFrame(OldFrame);
 }
 
-static void
-RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
-				 bool SurfDef, COLORMAPPTR scanColors)
+static void RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
+							 bool SurfDef, COLORMAPPTR scanColors)
 {
 	int16_t base {};
 	int16_t d {};
@@ -572,30 +566,26 @@ RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
 	WriteFramePixelColors(DstFrame, map, w, h);
 }
 
-static inline void
-P3mult(POINT3* res, POINT3* vec, double cnst)
+static inline void P3mult(POINT3* res, POINT3* vec, double cnst)
 {
 	res->x = vec->x * cnst;
 	res->y = vec->y * cnst;
 	res->z = vec->z * cnst;
 }
 
-static inline void
-P3sub(POINT3* res, POINT3* v1, POINT3* v2)
+static inline void P3sub(POINT3* res, POINT3* v1, POINT3* v2)
 {
 	res->x = v1->x - v2->x;
 	res->y = v1->y - v2->y;
 	res->z = v1->z - v2->z;
 }
 
-static inline double
-P3dot(POINT3* v1, POINT3* v2)
+static inline double P3dot(POINT3* v1, POINT3* v2)
 {
 	return (v1->x * v2->x + v1->y * v2->y + v1->z * v2->z);
 }
 
-static inline void
-P3norm(POINT3* res, POINT3* vec)
+static inline void P3norm(POINT3* res, POINT3* vec)
 {
 	const double mag = sqrt(P3dot(vec, vec));
 	P3mult(res, vec, 1 / mag);
@@ -608,8 +598,7 @@ static constexpr auto Mshi {2};
 
 // GenerateSphereMask builds a shadow map for the rotating planet
 //  loc indicates the planet's position relative to the sun
-static void
-GenerateSphereMask(GFXPOINT loc, uint16_t radius)
+static void GenerateSphereMask(GFXPOINT loc, uint16_t radius)
 {
 	GFXPOINT pt;
 	POINT3 light;
@@ -714,8 +703,7 @@ GenerateSphereMask(GFXPOINT loc, uint16_t radius)
 //  4 points around the 'ideal' point at x,y
 //  the concept is to compute the weight based on the
 //  distance from the integer location points to the ideal point
-static void
-create_aa_points(MAP3D_POINT* ppt, double x, double y, uint16_t height)
+static void create_aa_points(MAP3D_POINT* ppt, double x, double y, uint16_t height)
 {
 	double deltax {NAN};
 	double deltay {NAN};
@@ -810,8 +798,7 @@ create_aa_points(MAP3D_POINT* ppt, double x, double y, uint16_t height)
 	}
 }
 
-static inline uint8_t
-get_color_channel(Color c, int channel)
+static inline uint8_t get_color_channel(Color c, int channel)
 {
 	switch (channel)
 	{
@@ -828,8 +815,7 @@ get_color_channel(Color c, int channel)
 
 // Creates either a red, green, or blue value by
 // computing the weighted averages of the 4 points in p
-static uint8_t
-get_avg_channel(Color p[4], uint32_t mult[4], int channel)
+static uint8_t get_avg_channel(Color p[4], uint32_t mult[4], int channel)
 {
 	uint32_t ci = 0;
 
@@ -852,8 +838,7 @@ get_avg_channel(Color p[4], uint32_t mult[4], int channel)
 
 // CreateSphereTiltMap creates 'map_rotate' to map the topo data
 //  for a tilted planet.  It also does the sphere->plane mapping
-static void
-CreateSphereTiltMap(int angle, uint16_t height, uint16_t radius)
+static void CreateSphereTiltMap(int angle, uint16_t height, uint16_t radius)
 {
 	int x {};
 	int y {};
@@ -939,8 +924,7 @@ static auto ShieldRadius() { return (Radius() + ShieldHalo()); }
 static constexpr auto ShieldHaloGlow {(ShieldGlowComp + ShieldReflectComp)};
 static constexpr auto ShieldHaloGlowMin {(ShieldHaloGlow >> 2)};
 
-static FRAME
-CreateShieldMask(uint16_t radius)
+static FRAME CreateShieldMask(uint16_t radius)
 {
 	Color clear;
 	int x {};
@@ -1025,8 +1009,7 @@ CreateShieldMask(uint16_t radius)
 	return ShieldFrame;
 }
 
-FRAME
-SaveBackFrame(uint16_t radius)
+FRAME SaveBackFrame(uint16_t radius)
 {
 	GFXRECT r;
 	const uint16_t shieldradius = ShieldRadius() * radius / Radius();
@@ -1056,8 +1039,7 @@ static constexpr auto ThrobMaxLevel {256};
 static constexpr auto ThrobMinLevel {100};
 static constexpr auto ThrobDLevel {(ThrobMaxLevel - ThrobMinLevel)};
 
-static inline int
-shield_level(int offset)
+static inline int shield_level(int offset)
 {
 	offset = (offset << 8) % ThrobCycle();
 	int level {abs(offset - ThrobHalfCycle())};
@@ -1142,8 +1124,7 @@ void Draw3DOShield(STAMP ShieldFrame)
 }
 
 // Apply the shield to the topo image
-static void
-ApplyShieldTint(void)
+static void ApplyShieldTint(void)
 {
 	DrawMode mode;
 	DrawMode oldMode;
@@ -1168,8 +1149,7 @@ ApplyShieldTint(void)
 	SetContextFGFrame(oldFrame);
 }
 
-static inline uint8_t
-calc_map_light(uint8_t val, uint32_t dif, int lvf)
+static inline uint8_t calc_map_light(uint8_t val, uint32_t dif, int lvf)
 {
 	int i {};
 
@@ -1190,8 +1170,7 @@ calc_map_light(uint8_t val, uint32_t dif, int lvf)
 	return ((uint8_t)i);
 }
 
-static inline Color
-get_map_pixel(Color* pixels, int x, int y, uint16_t width, uint16_t spherespanx)
+static inline Color get_map_pixel(Color* pixels, int x, int y, uint16_t width, uint16_t spherespanx)
 {
 	/* if (y * (width + spherespanx) + x > 463000)
 		log_add (log_Warning,"x:{}, y:{}, width:{}, spherespanx:{}, "
@@ -1201,8 +1180,7 @@ get_map_pixel(Color* pixels, int x, int y, uint16_t width, uint16_t spherespanx)
 	return pixels[y * (width + spherespanx) + x];
 }
 
-static inline Color
-apply_alpha_pixel(Color pix, int scan)
+static inline Color apply_alpha_pixel(Color pix, int scan)
 {
 	Color c;
 	c.r = (tintColors[scan].r * 0x45 / 0xFF)
@@ -1215,8 +1193,7 @@ apply_alpha_pixel(Color pix, int scan)
 	return c;
 }
 
-static inline Color
-apply_additive_pixel(Color pix, int scan)
+static inline Color apply_additive_pixel(Color pix, int scan)
 {
 	Color c;
 	c.r = clip_channel(pix.r + ((tintColors[scan].r * 0x45) >> 8));
@@ -1226,8 +1203,7 @@ apply_additive_pixel(Color pix, int scan)
 	return c;
 }
 
-static inline int
-get_map_elev(int8_t* elevs, int x, int y, int offset, uint16_t width)
+static inline int get_map_elev(int8_t* elevs, int x, int y, int offset, uint16_t width)
 {
 	return elevs[y * width + (offset + x) % width];
 }
@@ -1548,8 +1524,7 @@ static constexpr auto RangeShift {6};
 
 static constexpr auto DitherVariance {(1 << (RangeShift - 3))};
 
-static void
-DitherMap(int8_t* DepthArray, uint16_t width, uint16_t height)
+static void DitherMap(int8_t* DepthArray, uint16_t width, uint16_t height)
 {
 	uint32_t i {};
 	int8_t* elev {};
@@ -1573,8 +1548,7 @@ DitherMap(int8_t* DepthArray, uint16_t width, uint16_t height)
 	}
 }
 
-static void
-MakeCrater(GFXRECT* pRect, int8_t* DepthArray, int16_t rim_delta, int16_t crater_delta, bool SetDepth, uint16_t width)
+static void MakeCrater(GFXRECT* pRect, int8_t* DepthArray, int16_t rim_delta, int16_t crater_delta, bool SetDepth, uint16_t width)
 {
 	int16_t lf_x {};
 	int16_t rt_x {};
@@ -1772,9 +1746,8 @@ static constexpr auto NumBandColors {4};
 
 static constexpr auto MaxStorms {8};
 
-static void
-MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
-		   uint16_t height)
+static void MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
+					   uint16_t height)
 {
 	uint16_t i {};
 	GFXRECT storm_r[MaxStorms];
@@ -1912,8 +1885,7 @@ MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 	}
 }
 
-static void
-MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t depth_delta)
+static void MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t depth_delta)
 {
 	int16_t last_y {};
 	int16_t next_y {};
@@ -1994,8 +1966,7 @@ MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t dep
 	DitherMap(DepthArray, pRect->extent.width, pRect->extent.height);
 }
 
-static void
-ValidateMap(int8_t* DepthArray, uint16_t width, uint16_t height)
+static void ValidateMap(int8_t* DepthArray, uint16_t width, uint16_t height)
 {
 	uint8_t state {};
 	uint8_t pixel_count[2];
@@ -2060,8 +2031,7 @@ ValidateMap(int8_t* DepthArray, uint16_t width, uint16_t height)
 	} while (--i);
 }
 
-static void
-planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
+static void planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 {
 	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
 	const uint16_t spherespanx = height;
@@ -2166,8 +2136,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 	}
 }
 
-static unsigned
-frandom(void)
+static unsigned frandom(void)
 {
 	static unsigned seed = 0x12345678;
 
@@ -2182,14 +2151,12 @@ frandom(void)
 
 static constexpr auto ScaleShift {8};
 
-static inline int
-TopoVarianceFactor(int step, int allowed, int min)
+static inline int TopoVarianceFactor(int step, int allowed, int min)
 {
 	return ((abs(step) * allowed) >> ScaleShift) + min;
 }
 
-static inline int
-TopoVarianceCalc(int factor)
+static inline int TopoVarianceCalc(int factor)
 {
 	if (factor == 0)
 	{
@@ -2204,9 +2171,8 @@ TopoVarianceCalc(int factor)
 static constexpr auto AvgVariance {250};
 static constexpr auto StepRange {(4 - 1)};
 
-static void
-TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
-			int fault_var)
+static void TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
+						int fault_var)
 {
 	// Interpolate the topographical data by connecting the elevations
 	// to their nearest neighboors using straight lines (in random
@@ -2446,9 +2412,8 @@ typedef struct
 
 } elev_block_t;
 
-static inline void
-get_vblock_avg(elev_block_t* pblk, int8_t* pTopo, int x, int y,
-			   uint16_t width, uint16_t height)
+static inline void get_vblock_avg(elev_block_t* pblk, int8_t* pTopo, int x, int y,
+								  uint16_t width, uint16_t height)
 {
 	const int8_t* elev = pTopo;
 	int i {};
@@ -2505,8 +2470,7 @@ get_vblock_avg(elev_block_t* pblk, int8_t* pTopo, int x, int y,
 static constexpr auto LmapBlocks {(2 * LmapMaxDist + 1)};
 
 // See description above
-static void
-GenerateLightMap(int8_t* pTopo, int w, int h)
+static void GenerateLightMap(int8_t* pTopo, int w, int h)
 {
 	int x {};
 	int y {};

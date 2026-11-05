@@ -204,8 +204,7 @@ static LOCDATA druuge_desc =
 static uint16_t SlaveryCount = 0;
 static bool AttemptedSalvage = false;
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, bye))
 	{
@@ -275,8 +274,7 @@ static constexpr auto ArtifactCrewCost {100};
 static constexpr auto ShipCrewCost {100};
 static constexpr auto FuelCrewCost {10};
 
-static void
-Buy(RESPONSE_REF R)
+static void Buy(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, want_to_buy)
 		|| PlayerSaid(R, im_ready_to_buy))
@@ -400,8 +398,7 @@ static void Sell(RESPONSE_REF R);
 
 static RESPONSE_REF LastResponse = 0;
 
-static void
-Trade(RESPONSE_REF R)
+static void Trade(RESPONSE_REF R)
 {
 	if (!PlayerSaid(R, whats_the_sphere_again))
 	{
@@ -423,8 +420,7 @@ Trade(RESPONSE_REF R)
 	}
 }
 
-static void
-DoTransaction(RESPONSE_REF R)
+static void DoTransaction(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, sell_maidens))
 	{
@@ -593,8 +589,7 @@ DoTransaction(RESPONSE_REF R)
 	}
 }
 
-static void
-Sell(RESPONSE_REF R)
+static void Sell(RESPONSE_REF R)
 {
 	RESPONSE_FUNC RespFunc {};
 
@@ -663,8 +658,7 @@ Sell(RESPONSE_REF R)
 	Response(done_selling, TradeWorld);
 }
 
-static void
-ExplainSlaveTrade(RESPONSE_REF R)
+static void ExplainSlaveTrade(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, want_to_buy))
 	{
@@ -696,8 +690,7 @@ ExplainSlaveTrade(RESPONSE_REF R)
 	Response(im_ready_to_buy, Buy);
 }
 
-static void
-TradeWorld(RESPONSE_REF R)
+static void TradeWorld(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, whats_up_at_trade_world))
 	{
@@ -756,8 +749,7 @@ TradeWorld(RESPONSE_REF R)
 	Response(bye, ExitConversation);
 }
 
-static void
-BombAmbush(RESPONSE_REF R)
+static void BombAmbush(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, whats_up_at_bomb_planet))
 	{
@@ -785,8 +777,7 @@ BombAmbush(RESPONSE_REF R)
 	Response(bye, ExitConversation);
 }
 
-static void
-Space(RESPONSE_REF R)
+static void Space(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, whats_up_in_space))
 	{
@@ -821,8 +812,7 @@ Space(RESPONSE_REF R)
 	Response(bye, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -1025,15 +1015,13 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_druuge(void)
+static uint16_t uninit_druuge(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_druuge_enc(void)
+static void post_druuge_enc(void)
 {
 	if (getSegue() == Segue_hostile
 		&& !AttemptedSalvage
@@ -1047,8 +1035,7 @@ post_druuge_enc(void)
 	}
 }
 
-LOCDATA*
-init_druuge_comm(void)
+LOCDATA* init_druuge_comm(void)
 {
 	SlaveryCount = 0;
 	AttemptedSalvage = false;

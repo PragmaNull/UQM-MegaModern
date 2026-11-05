@@ -125,8 +125,7 @@ static RACE_DESC yehat_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t
-initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -158,9 +157,8 @@ initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	return (2);
 }
 
-static void
-yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				   uint16_t ConcernCounter)
+static void yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							   uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -245,8 +243,7 @@ yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 */
 }
 
-static void
-yehat_postprocess(ELEMENT* ElementPtr)
+static void yehat_postprocess(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & Nonsolid))
 	{
@@ -320,8 +317,7 @@ yehat_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-yehat_preprocess(ELEMENT* ElementPtr)
+static void yehat_preprocess(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & Appearing))
 	{
@@ -372,8 +368,7 @@ yehat_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_yehat(void)
+RACE_DESC* init_yehat(void)
 {
 	if (IsHd())
 	{

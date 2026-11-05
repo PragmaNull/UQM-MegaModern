@@ -242,8 +242,7 @@ static LOCDATA umgah_desc =
 		nullptr,
 };
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
@@ -300,8 +299,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	}
 }
 
-static void
-Zombies(RESPONSE_REF R)
+static void Zombies(RESPONSE_REF R)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::MET_NORMAL_UMGAH))
 	{
@@ -474,8 +472,7 @@ Zombies(RESPONSE_REF R)
 	}
 }
 
-static void
-NormalUmgah(RESPONSE_REF R)
+static void NormalUmgah(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, whats_up_pre_zombie))
 	{
@@ -515,8 +512,7 @@ NormalUmgah(RESPONSE_REF R)
 	Response(bye_pre_zombie, CombatIsInevitable);
 }
 
-static void
-UmgahReward(RESPONSE_REF R)
+static void UmgahReward(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, what_before_tpet))
 	{
@@ -596,8 +592,7 @@ UmgahReward(RESPONSE_REF R)
 	Response(bye_post_zombie, CombatIsInevitable);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -777,15 +772,13 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_umgah(void)
+static uint16_t uninit_umgah(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_umgah_enc(void)
+static void post_umgah_enc(void)
 {
 	if (!uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES))
 	{
@@ -793,8 +786,7 @@ post_umgah_enc(void)
 	}
 }
 
-LOCDATA*
-init_umgah_comm(void)
+LOCDATA* init_umgah_comm(void)
 {
 	umgah_desc.init_encounter_func = Intro;
 	umgah_desc.post_encounter_func = post_umgah_enc;

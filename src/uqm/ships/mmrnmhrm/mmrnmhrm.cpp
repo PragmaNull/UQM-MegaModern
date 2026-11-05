@@ -145,16 +145,14 @@ typedef CHARACTERISTIC_STUFF MMRNMHRM_DATA;
 typedef MMRNMHRM_DATA CustomShipData_t;
 
 // Retrieve race-specific ship data from a race desc
-static CustomShipData_t*
-GetCustomShipData(RACE_DESC* pRaceDesc)
+static CustomShipData_t* GetCustomShipData(RACE_DESC* pRaceDesc)
 {
 	return (CustomShipData_t*)pRaceDesc->data;
 }
 
 // Set the race-specific data in a race desc
 // (Re)Allocates its own storage for the data.
-static void
-SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
+static void SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 {
 	if (pRaceDesc->data == data)
 	{
@@ -173,8 +171,7 @@ SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 	}
 }
 
-static void
-missile_preprocess(ELEMENT* ElementPtr)
+static void missile_preprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -198,9 +195,8 @@ missile_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					  uint16_t ConcernCounter)
+static void mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								  uint16_t ConcernCounter)
 {
 	bool CanTransform {};
 	STARSHIP* StarShipPtr {};
@@ -302,9 +298,8 @@ mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void
-twin_laser_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-					 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void twin_laser_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+								 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	if (!(ElementPtr1->state_flags & PlayerShip)
 		|| !elementsOfSamePlayer(ElementPtr0, ElementPtr1))
@@ -313,8 +308,7 @@ twin_laser_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static uint16_t
-initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
+static uint16_t initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 {
 	int16_t cx {};
 	int16_t cy {};
@@ -413,8 +407,7 @@ initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 	return (2);
 }
 
-static void
-mmrnmhrm_postprocess(ELEMENT* ElementPtr)
+static void mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -471,8 +464,7 @@ mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-mmrnmhrm_preprocess(ELEMENT* ElementPtr)
+static void mmrnmhrm_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -509,14 +501,12 @@ mmrnmhrm_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-uninit_mmrnmhrm(RACE_DESC* pRaceDesc)
+static void uninit_mmrnmhrm(RACE_DESC* pRaceDesc)
 {
 	SetCustomShipData(pRaceDesc, nullptr);
 }
 
-RACE_DESC*
-init_mmrnmhrm(void)
+RACE_DESC* init_mmrnmhrm(void)
 {
 	// The caller of this func will copy the struct
 	static RACE_DESC new_mmrnmhrm_desc;

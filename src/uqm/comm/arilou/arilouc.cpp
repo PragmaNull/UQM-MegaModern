@@ -232,8 +232,7 @@ static LOCDATA arilou_desc =
 		nullptr,
 };
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
@@ -267,8 +266,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void
-ArilouHome(RESPONSE_REF R)
+static void ArilouHome(RESPONSE_REF R)
 {
 	uint8_t i {};
 	RESPONSE_REF pStr[4];
@@ -514,8 +512,7 @@ ArilouHome(RESPONSE_REF R)
 	Response(bye_friendly_homeworld, ExitConversation);
 }
 
-static void
-AngryHomeArilou(RESPONSE_REF R)
+static void AngryHomeArilou(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, invaders_from_mars))
 	{
@@ -568,8 +565,7 @@ AngryHomeArilou(RESPONSE_REF R)
 	}
 }
 
-static void
-AngrySpaceArilou(RESPONSE_REF R)
+static void AngrySpaceArilou(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, im_sorry))
 	{
@@ -586,8 +582,7 @@ AngrySpaceArilou(RESPONSE_REF R)
 	Response(bye_angry_space, ExitConversation);
 }
 
-static void
-FriendlySpaceArilou(RESPONSE_REF R)
+static void FriendlySpaceArilou(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -713,8 +708,7 @@ FriendlySpaceArilou(RESPONSE_REF R)
 	Response(bye_friendly_space, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 	uint8_t Manner {};
@@ -869,15 +863,13 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_arilou(void)
+static uint16_t uninit_arilou(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_arilou_enc(void)
+static void post_arilou_enc(void)
 {
 	uint8_t Manner {};
 
@@ -906,8 +898,7 @@ post_arilou_enc(void)
 	}
 }
 
-LOCDATA*
-init_arilou_comm(void)
+LOCDATA* init_arilou_comm(void)
 {
 	arilou_desc.init_encounter_func = Intro;
 	arilou_desc.post_encounter_func = post_arilou_enc;

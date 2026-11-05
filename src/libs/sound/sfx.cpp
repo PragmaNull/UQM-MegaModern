@@ -60,8 +60,7 @@ void StopChannel(uint16_t channel, uint8_t Priority)
 	(void)Priority; // ignored
 }
 
-static void
-CheckFinishedChannels(void)
+static void CheckFinishedChannels(void)
 {
 	for (int i {FirstSfxSource}; i <= LastSfxSource; ++i)
 	{

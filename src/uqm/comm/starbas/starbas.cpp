@@ -209,8 +209,7 @@ static LOCDATA commander_desc =
 
 static uint32_t CurBulletinMask;
 
-static uint16_t
-DoSellMinerals(void)
+static uint16_t DoSellMinerals(void)
 {
 	uint16_t total = 0;
 	bool Sleepy = true;
@@ -293,8 +292,7 @@ DoSellMinerals(void)
 	return total;
 }
 
-static RESPONSE_REF
-EveryOnesACritic(uint16_t total)
+static RESPONSE_REF EveryOnesACritic(uint16_t total)
 {
 	RESPONSE_REF pStr = LIGHT_LOAD_A;
 
@@ -394,8 +392,7 @@ EveryOnesACritic(uint16_t total)
 	return pStr;
 }
 
-static void
-ByeBye(RESPONSE_REF R)
+static void ByeBye(RESPONSE_REF R)
 {
 	(void)R; // ignored
 
@@ -459,8 +456,7 @@ static constexpr auto AllianceChenjesu {(1 << 3)};
 static constexpr auto AllianceMmrnmhrm {(1 << 4)};
 static constexpr auto AllianceSyreen {(1 << 5)};
 
-static void
-AllianceInfo(RESPONSE_REF R)
+static void AllianceInfo(RESPONSE_REF R)
 {
 	static uint8_t AllianceMask = 0;
 
@@ -536,8 +532,7 @@ static constexpr auto HierarchyIlwrath {(1 << 4)};
 static constexpr auto HierarchyVux {(1 << 5)};
 static constexpr auto HierarchyUrquan {(1 << 6)};
 
-static void
-HierarchyInfo(RESPONSE_REF R)
+static void HierarchyInfo(RESPONSE_REF R)
 {
 	static uint8_t HierarchyMask = 0;
 
@@ -618,8 +613,7 @@ static constexpr auto RacesAlliance {(1 << 0)};
 static constexpr auto RacesHierarchy {(1 << 1)};
 static constexpr auto RacesOther {(1 << 2)};
 
-static void
-AlienRaces(RESPONSE_REF R)
+static void AlienRaces(RESPONSE_REF R)
 {
 	static uint8_t RacesMask = 0;
 
@@ -664,8 +658,7 @@ static constexpr auto WarWasLike {(1 << 1)};
 static constexpr auto WarLost {(1 << 2)};
 static constexpr auto WarAftermath {(1 << 3)};
 
-static void
-WarInfo(RESPONSE_REF R)
+static void WarInfo(RESPONSE_REF R)
 {
 	static uint8_t WarMask = 0;
 
@@ -718,8 +711,7 @@ static constexpr auto AncientPrecursors {(1 << 0)};
 static constexpr auto AncientRaces {(1 << 1)};
 static constexpr auto AncientEarth {(1 << 2)};
 
-static void
-AncientHistory(RESPONSE_REF R)
+static void AncientHistory(RESPONSE_REF R)
 {
 	static uint8_t AncientMask = 0;
 
@@ -759,8 +751,7 @@ AncientHistory(RESPONSE_REF R)
 	Response(enough_ancient, TellHistory);
 }
 
-static void
-TellHistory(RESPONSE_REF R)
+static void TellHistory(RESPONSE_REF R)
 {
 	RESPONSE_REF pstack[3];
 
@@ -838,8 +829,7 @@ static constexpr auto HowFightUrquan {(1 << 1)};
 static constexpr auto HowAllyAgainstUrquan {(1 << 2)};
 static constexpr auto HowStrongAgainstUrquan {(1 << 3)};
 
-static void
-DefeatUrquan(RESPONSE_REF R)
+static void DefeatUrquan(RESPONSE_REF R)
 {
 	static uint8_t DefeatMask = 0;
 
@@ -888,8 +878,7 @@ DefeatUrquan(RESPONSE_REF R)
 	Response(enough_defeat, TellMission);
 }
 
-static void
-AnalyzeCondition(void)
+static void AnalyzeCondition(void)
 {
 	uint8_t i {};
 	uint8_t num_thrusters = 0;
@@ -1124,8 +1113,7 @@ AnalyzeCondition(void)
 	}
 }
 
-static void
-TellMission(RESPONSE_REF R)
+static void TellMission(RESPONSE_REF R)
 {
 	RESPONSE_REF pstack[4];
 
@@ -1235,8 +1223,7 @@ TellMission(RESPONSE_REF R)
 	Response(enough_mission, NeedInfo);
 }
 
-static void
-TellStarBase(RESPONSE_REF R)
+static void TellStarBase(RESPONSE_REF R)
 {
 	RESPONSE_REF pstack[4];
 
@@ -1359,8 +1346,7 @@ TellStarBase(RESPONSE_REF R)
 
 static void NormalStarbase(RESPONSE_REF R);
 
-static void
-NeedInfo(RESPONSE_REF R)
+static void NeedInfo(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, need_info))
 	{
@@ -1385,8 +1371,7 @@ NeedInfo(RESPONSE_REF R)
 	Response(no_need_info, NormalStarbase);
 }
 
-static bool
-DiscussDevices(bool TalkAbout)
+static bool DiscussDevices(bool TalkAbout)
 {
 	//bool Undiscussed; unused
 
@@ -1664,8 +1649,7 @@ DiscussDevices(bool TalkAbout)
 	return (PhraseIndex > 2);
 }
 
-static bool
-CheckTiming(uint16_t month_index, uint16_t day_index)
+static bool CheckTiming(uint16_t month_index, uint16_t day_index)
 {
 	uint16_t mi {};
 	const uint8_t days_in_month[12] =
@@ -1711,8 +1695,7 @@ CheckTiming(uint16_t month_index, uint16_t day_index)
 
 static constexpr auto NumGiftArilous {3};
 
-static void
-CheckBulletins(bool Repeat)
+static void CheckBulletins(bool Repeat)
 {
 	uint32_t BulletinMask {};
 	const uint16_t CrewSold = uqm::makeWord(
@@ -2003,8 +1986,7 @@ CheckBulletins(bool Repeat)
 	}
 }
 
-static void
-NormalStarbase(RESPONSE_REF R)
+static void NormalStarbase(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, no_need_info))
 	{
@@ -2090,8 +2072,7 @@ NormalStarbase(RESPONSE_REF R)
 	Response(goodbye_commander, ByeBye);
 }
 
-static void
-SellMinerals(RESPONSE_REF R)
+static void SellMinerals(RESPONSE_REF R)
 {
 	uint16_t total = 0;
 	RESPONSE_REF pStr = 0;
@@ -2162,8 +2143,7 @@ SellMinerals(RESPONSE_REF R)
 	NormalStarbase(R);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	if (IsHd()) // To smooth out HdResolutionFactor blink animation
 	{
@@ -2173,15 +2153,13 @@ Intro(void)
 	NormalStarbase(0);
 }
 
-static uint16_t
-uninit_starbase(void)
+static uint16_t uninit_starbase(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_starbase_enc(void)
+static void post_starbase_enc(void)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::MOONBASE_ON_SHIP, static_cast<uint32_t>(0));
 	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
@@ -2190,8 +2168,7 @@ post_starbase_enc(void)
 	}
 }
 
-LOCDATA*
-init_starbase_comm()
+LOCDATA* init_starbase_comm()
 {
 	commander_desc.init_encounter_func = Intro;
 	commander_desc.post_encounter_func = post_starbase_enc;

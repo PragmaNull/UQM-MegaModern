@@ -107,8 +107,7 @@ static RACE_DESC probe_desc =
 		0, /* CodeRef */
 };
 
-RACE_DESC*
-init_probe(void)
+RACE_DESC* init_probe(void)
 {
 	RACE_DESC* RaceDescPtr {&probe_desc};
 

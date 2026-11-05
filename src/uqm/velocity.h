@@ -54,14 +54,12 @@ extern void SetVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_
 
 extern void DeltaVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy); // JMS_GFX: Changed int16_t to int32_t to prevent overflows
 
-static inline bool
-IsVelocityZero(VELOCITY_DESC* vptr)
+static inline bool IsVelocityZero(VELOCITY_DESC* vptr)
 {
 	return vptr->vector.width == 0 && vptr->vector.height == 0 && vptr->incr.width == 0 && vptr->incr.height == 0 && vptr->fract.width == 0 && vptr->fract.height == 0;
 }
 
-static inline uint32_t
-VelocitySquared(int16_t dx, int16_t dy)
+static inline uint32_t VelocitySquared(int16_t dx, int16_t dy)
 {
 	return (uint32_t)((long)dx * dx + (long)dy * dy);
 }

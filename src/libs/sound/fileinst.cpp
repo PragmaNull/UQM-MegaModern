@@ -23,8 +23,7 @@
 #include <string.h>
 
 
-MUSIC_REF
-LoadMusicFile(const char* pStr)
+MUSIC_REF LoadMusicFile(const char* pStr)
 {
 	char filename[256] {};
 	uqm::strncpy_safe(filename, pStr);

@@ -21,8 +21,7 @@
 
 #include <windows.h>
 
-static HBITMAP
-sdl_surface_to_bitmap(SDL_Surface* surface)
+static HBITMAP sdl_surface_to_bitmap(SDL_Surface* surface)
 {
 	BITMAPINFOHEADER BIH;
 	HBITMAP hbitmap {};
@@ -53,8 +52,7 @@ sdl_surface_to_bitmap(SDL_Surface* surface)
 	return hbitmap;
 }
 
-static int
-CopySurfaceToClipboard_Win32(SDL_Surface* surface)
+static int CopySurfaceToClipboard_Win32(SDL_Surface* surface)
 {
 	if (!surface)
 	{

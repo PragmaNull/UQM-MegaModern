@@ -133,8 +133,7 @@ static RACE_DESC zoqfotpik_desc =
 		0, /* CodeRef */
 };
 
-static void
-spit_preprocess(ELEMENT* ElementPtr)
+static void spit_preprocess(ELEMENT* ElementPtr)
 {
 	ElementPtr->next.image.frame =
 		IncFrameIndex(ElementPtr->next.image.frame);
@@ -171,8 +170,7 @@ spit_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static uint16_t
-initialize_spit(ELEMENT* ShipPtr, HELEMENT SpitArray[])
+static uint16_t initialize_spit(ELEMENT* ShipPtr, HELEMENT SpitArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -211,8 +209,7 @@ initialize_spit(ELEMENT* ShipPtr, HELEMENT SpitArray[])
 
 static void spawn_tongue(ELEMENT* ElementPtr);
 
-static void
-tongue_postprocess(ELEMENT* ElementPtr)
+static void tongue_postprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait)
 	{
@@ -220,9 +217,8 @@ tongue_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-tongue_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void tongue_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -237,8 +233,7 @@ tongue_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	ElementPtr0->state_flags |= Nonsolid;
 }
 
-static void
-spawn_tongue(ELEMENT* ElementPtr)
+static void spawn_tongue(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK TongueBlock;
@@ -305,9 +300,8 @@ spawn_tongue(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					   uint16_t ConcernCounter)
+static void zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								   uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -375,8 +369,7 @@ zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void
-zoqfotpik_postprocess(ELEMENT* ElementPtr)
+static void zoqfotpik_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -400,8 +393,7 @@ zoqfotpik_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_zoqfotpik(void)
+RACE_DESC* init_zoqfotpik(void)
 {
 	if (IsHd())
 	{

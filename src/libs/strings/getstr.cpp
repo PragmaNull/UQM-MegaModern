@@ -29,8 +29,7 @@
 
 static constexpr int c_stringTableVersion {1};
 
-static void
-dword_convert(uint32_t* dword_array, uint16_t num_dwords)
+static void dword_convert(uint32_t* dword_array, uint16_t num_dwords)
 {
 	const uint8_t* p = (uint8_t*)dword_array;
 

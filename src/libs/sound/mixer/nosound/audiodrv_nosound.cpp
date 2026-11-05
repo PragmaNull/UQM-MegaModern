@@ -94,8 +94,7 @@ const static audio_Driver noSound_Driver =
 static_assert(sizeof(mixer_Object) <= sizeof(audio_Object), "mixer_Object must fit in audio_Object");
 
 // Converts an array of n audio_Objects to an array of mixer_Objects, in place.
-static void
-noSound_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
+static void noSound_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
@@ -107,8 +106,7 @@ noSound_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 	}
 }
 // Converts an array of n mixer_Objects to an array of audio_Objects, in place.
-static void
-noSound_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
+static void noSound_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
@@ -125,8 +123,7 @@ noSound_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
  * Initialization
  */
 
-int32_t
-noSound_Init(audio_Driver* driver, AudioFlags flags)
+int32_t noSound_Init(audio_Driver* driver, AudioFlags flags)
 {
 	TFB_DecoderFormats formats =
 		{
@@ -225,8 +222,7 @@ void PlaybackTaskFunc(uqstl::stop_token stopToken)
  * General
  */
 
-int32_t
-noSound_GetError(void)
+int32_t noSound_GetError(void)
 {
 	int32_t value = mixer_GetError();
 	switch (value)

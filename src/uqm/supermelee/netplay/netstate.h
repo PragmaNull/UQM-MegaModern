@@ -69,8 +69,7 @@ struct
 
 void NetConnectionStateData_release(NetConnectionStateData* stateData);
 
-static inline bool
-NetState_battleActive(NetState state)
+static inline bool NetState_battleActive(NetState state)
 {
 	return state == NetState_inBattle || state == NetState_endingBattle || state == NetState_endingBattle2;
 }

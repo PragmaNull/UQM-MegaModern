@@ -82,8 +82,7 @@ STAR_BLOCK StarBlock[NumStarPlanes] =
 		 },
 };
 
-static void
-SortStarBlock(STAR_BLOCK* pStarBlock)
+static void SortStarBlock(STAR_BLOCK* pStarBlock)
 {
 	for (uint16_t i {0}; i < pStarBlock->num_stars; ++i)
 	{
@@ -108,8 +107,7 @@ SortStarBlock(STAR_BLOCK* pStarBlock)
 		&pStarBlock->star_array[pStarBlock->num_stars - 1];
 }
 
-static void
-WrapStarBlock(int16_t plane, int32_t dx, int32_t dy)
+static void WrapStarBlock(int16_t plane, int32_t dx, int32_t dy)
 {
 	int32_t offs_y {};
 	uint16_t num_stars {};
@@ -340,9 +338,8 @@ void InitGalaxy(void)
 	SortStarBlock(&StarBlock[2]);
 }
 
-static bool
-CmpMovePoints(const GFXPOINT* pt1, const DPOINT* pt2, int32_t dx, int32_t dy,
-			  int16_t reduction)
+static bool CmpMovePoints(const GFXPOINT* pt1, const DPOINT* pt2, int32_t dx, int32_t dy,
+						  int16_t reduction)
 {
 	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 	{

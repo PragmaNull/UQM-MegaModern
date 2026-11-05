@@ -60,8 +60,7 @@ typedef struct
 
 static SHIP_FRAGMENT* LockSupportShip(ROSTER_STATE*, HSHIPFRAG* phFrag);
 
-static void
-drawSupportShip(ROSTER_STATE* rosterState, bool filled, bool saveFrame)
+static void drawSupportShip(ROSTER_STATE* rosterState, bool filled, bool saveFrame)
 {
 	STAMP s;
 
@@ -98,8 +97,7 @@ drawSupportShip(ROSTER_STATE* rosterState, bool filled, bool saveFrame)
 	}
 }
 
-static void
-getSupportShipIcon(ROSTER_STATE* rosterState)
+static void getSupportShipIcon(ROSTER_STATE* rosterState)
 {
 	HSHIPFRAG hShipFrag {};
 
@@ -114,8 +112,7 @@ getSupportShipIcon(ROSTER_STATE* rosterState)
 	UnlockShipFrag(&uqm::gameState().game().built_ship_q, hShipFrag);
 }
 
-static void
-flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
+static void flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
 {
 	static Color c = BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x24);
 	static TimeCount NextTime {};
@@ -152,8 +149,7 @@ flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
 	}
 }
 
-static SHIP_FRAGMENT*
-LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
+static SHIP_FRAGMENT* LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
 {
 	const GFXPOINT* pship_pos {};
 	HSHIPFRAG hStarShip {};
@@ -180,8 +176,7 @@ LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
 	return nullptr;
 }
 
-static void
-flashSupportShipCrew(void)
+static void flashSupportShipCrew(void)
 {
 	GFXRECT r;
 
@@ -190,8 +185,7 @@ flashSupportShipCrew(void)
 	SetFlashRect(&r, false);
 }
 
-static bool
-DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
+static bool DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
 {
 	bool ret = false;
 	char buf[40] {};
@@ -248,24 +242,21 @@ DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
 	return ret;
 }
 
-static void
-drawModifiedSupportShip(ROSTER_STATE* rosterState)
+static void drawModifiedSupportShip(ROSTER_STATE* rosterState)
 {
 	SetContext(StatusContext);
 	SetContextForeGroundColor(RosterModifyShipColor);
 	drawSupportShip(rosterState, true, false);
 }
 
-static void
-selectSupportShip(ROSTER_STATE* rosterState, uint16_t shipIndex)
+static void selectSupportShip(ROSTER_STATE* rosterState, uint16_t shipIndex)
 {
 	rosterState->curShipPt = rosterState->shipPos[shipIndex];
 	getSupportShipIcon(rosterState);
 	DeltaSupportCrew(rosterState, 0);
 }
 
-static bool
-DoModifyRoster(MENU_STATE* pMS)
+static bool DoModifyRoster(MENU_STATE* pMS)
 {
 	ROSTER_STATE* rosterState = (ROSTER_STATE*)pMS->privData;
 	bool select {};

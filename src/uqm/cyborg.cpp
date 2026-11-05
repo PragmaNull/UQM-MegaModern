@@ -30,9 +30,8 @@
 
 //#define DEBUG_CYBORG
 
-uint16_t
-PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
-			  uint16_t max_turns, uint16_t margin_of_error)
+uint16_t PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
+					   uint16_t max_turns, uint16_t margin_of_error)
 {
 	int32_t time_y_0 {};
 	int32_t time_y_1 {};
@@ -339,8 +338,7 @@ PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 	return (0);
 }
 
-static void
-InitCyborg(STARSHIP* StarShipPtr)
+static void InitCyborg(STARSHIP* StarShipPtr)
 {
 	uint16_t Index {};
 	uint16_t Divisor {};
@@ -368,8 +366,7 @@ InitCyborg(STARSHIP* StarShipPtr)
 	StarShipPtr->RaceDescPtr->cyborg_control.ManeuverabilityIndex = Index;
 }
 
-static void
-ship_movement(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
+static void ship_movement(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 {
 	if (EvalDescPtr->which_turn == 0)
 	{
@@ -1148,8 +1145,7 @@ void Avoid(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 	(void)EvalDescPtr; /* Satisfying compiler (unused parameter) */
 }
 
-BATTLE_INPUT_STATE
-tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
+BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 {
 	ELEMENT* ShipPtr {};
 	ELEMENT Ship;

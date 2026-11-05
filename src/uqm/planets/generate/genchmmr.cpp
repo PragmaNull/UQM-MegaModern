@@ -59,8 +59,7 @@ const GenerateFunctions generateChmmrFunctions = {
 };
 
 
-static bool
-GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
@@ -136,8 +135,7 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
+static bool GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -168,9 +166,8 @@ GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 	return true;
 }
 
-static bool
-GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
-							  PLANET_DESC* world)
+static bool GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
+										  PLANET_DESC* world)
 {
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -309,9 +306,8 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t
-GenerateChmmr_generateEnergy(const SOLARSYS_STATE* solarSys,
-							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateChmmr_generateEnergy(const SOLARSYS_STATE* solarSys,
+											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED
@@ -332,9 +328,8 @@ GenerateChmmr_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateChmmr_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						   uint16_t whichNode)
+static bool GenerateChmmr_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									   uint16_t whichNode)
 {
 
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED

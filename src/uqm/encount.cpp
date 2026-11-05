@@ -56,8 +56,7 @@ static void DrawFadeText(const char* str1, const char* str2,
 						 bool fade_in, GFXRECT* pRect);
 
 
-static bool
-DoSelectAction(MENU_STATE* pMS)
+static bool DoSelectAction(MENU_STATE* pMS)
 {
 	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	if (uqm::currentActivity() & CHECK_ABORT)
@@ -99,8 +98,7 @@ DoSelectAction(MENU_STATE* pMS)
 	return (true);
 }
 
-static QUEUE*
-GetShipFragQueueForPlayer(uint16_t playerNr)
+static QUEUE* GetShipFragQueueForPlayer(uint16_t playerNr)
 {
 	if (playerNr == RpgPlayerNum)
 	{
@@ -326,8 +324,7 @@ void UpdateShipFragCrew(STARSHIP* StarShipPtr)
  * waits for a decision of the player on how to handle the situation.
  * Returns either HAIL or ATTACK.
  */
-uint16_t
-InitEncounter(void)
+uint16_t InitEncounter(void)
 {
 	uint16_t i {};
 	STAMP s;
@@ -518,9 +515,8 @@ InitEncounter(void)
 //	return s;
 //}
 
-static void
-DrawFadeText(const char* str1, const char* str2, bool fade_in,
-			 GFXRECT* pRect)
+static void DrawFadeText(const char* str1, const char* str2, bool fade_in,
+						 GFXRECT* pRect)
 {
 	TimeCount TimeIn;
 	TEXT t1;
@@ -581,8 +577,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 	}
 }
 
-static void
-ClearRectBack(GFXRECT* pRect)
+static void ClearRectBack(GFXRECT* pRect)
 {
 	if (IsHd())
 	{
@@ -596,8 +591,7 @@ ClearRectBack(GFXRECT* pRect)
 
 static constexpr auto MaxDeadDisplayed {5};
 
-uint16_t
-UninitEncounter(void)
+uint16_t UninitEncounter(void)
 {
 	uint16_t ships_killed {0};
 

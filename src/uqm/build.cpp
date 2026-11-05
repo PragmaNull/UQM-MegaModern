@@ -35,8 +35,7 @@
 
 
 // Allocate a new STARSHIP or SHIP_FRAGMENT and put it in the queue
-HLINK
-Build(QUEUE* pQueue, SPECIES_ID SpeciesID)
+HLINK Build(QUEUE* pQueue, SPECIES_ID SpeciesID)
 {
 	assert(GetLinkSize(pQueue) == sizeof(STARSHIP) || GetLinkSize(pQueue) == sizeof(SHIP_FRAGMENT));
 
@@ -56,8 +55,7 @@ Build(QUEUE* pQueue, SPECIES_ID SpeciesID)
 	return hNewShip;
 }
 
-HLINK
-GetStarShipFromIndex(QUEUE* pShipQ, uint16_t Index)
+HLINK GetStarShipFromIndex(QUEUE* pShipQ, uint16_t Index)
 {
 	HLINK hStarShip {};
 	HLINK hNextShip {};
@@ -74,8 +72,7 @@ GetStarShipFromIndex(QUEUE* pShipQ, uint16_t Index)
 }
 
 // Gives the first fleet in avail_race_q that builds specified ship.
-HLINK
-GetFleetFromSpecies(SPECIES_ID id)
+HLINK GetFleetFromSpecies(SPECIES_ID id)
 {
 	HLINK hFleet {};
 	HLINK hNextFleet {};
@@ -102,8 +99,7 @@ GetFleetFromSpecies(SPECIES_ID id)
 // This is for every part of the game that assumes a RACE_ID is a SPECIES_ID
 // If shipseed is not in use, it will do GetStarShipFromIndex on avail_race_q
 // If this seems like overkill just remember the Yehat rebels.
-HFLEETINFO
-GetSeededFleetFromIndex(uint16_t Index)
+HFLEETINFO GetSeededFleetFromIndex(uint16_t Index)
 {
 	const FLEET_INFO* TemplatePtr = nullptr;
 	SPECIES_ID ship;
@@ -125,8 +121,7 @@ GetSeededFleetFromIndex(uint16_t Index)
 	return hFleet;
 }
 
-HSHIPFRAG
-GetEscortByStarShipIndex(uint16_t index)
+HSHIPFRAG GetEscortByStarShipIndex(uint16_t index)
 {
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hNextShip {};
@@ -150,8 +145,7 @@ GetEscortByStarShipIndex(uint16_t index)
 	return hStarShip;
 }
 
-SPECIES_ID
-ShipIdStrToIndex(const char* shipIdStr)
+SPECIES_ID ShipIdStrToIndex(const char* shipIdStr)
 {
 	HMASTERSHIP hStarShip {};
 	HMASTERSHIP hNextShip {};
@@ -216,14 +210,12 @@ static RaceIdMap raceIdMap[] = {
 	// Same as URQUAN_DRONE_SHIP
 };
 
-static int
-RaceIdCompare(const void* id1, const void* id2)
+static int RaceIdCompare(const void* id1, const void* id2)
 {
 	return strcmp(((RaceIdMap*)id1)->idStr, ((RaceIdMap*)id2)->idStr);
 }
 
-RACE_ID
-RaceIdStrToIndex(const char* raceIdStr)
+RACE_ID RaceIdStrToIndex(const char* raceIdStr)
 {
 	RaceIdMap key = {/* .idStr = */ raceIdStr, /* .id = */ (RACE_ID)-1};
 	const RaceIdMap* found = (RaceIdMap*)bsearch(&key, raceIdMap,
@@ -243,8 +235,7 @@ RaceIdStrToIndex(const char* raceIdStr)
  * limited by the number of free slots.
  * Returns the number of ships added.
  */
-uint16_t
-AddEscortShips(RACE_ID race, int16_t count)
+uint16_t AddEscortShips(RACE_ID race, int16_t count)
 {
 	uint16_t i {};
 
@@ -307,8 +298,7 @@ AddEscortShips(RACE_ID race, int16_t count)
 /*
  * Returns the total value of all the ships escorting the SIS.
  */
-uint16_t
-CalculateEscortsWorth(void)
+uint16_t CalculateEscortsWorth(void)
 {
 	uint16_t total = 0;
 	HSHIPFRAG hStarShip {};
@@ -404,8 +394,7 @@ void PrepareShip(RACE_ID race)
  * Returns the size of the fleet of the specified race when the starmap was
  * last checked. If the race has no SoI, 0 is returned.
  */
-uint16_t
-GetRaceKnownSize (RACE_ID race)
+uint16_t GetRaceKnownSize (RACE_ID race)
 {
 	HFLEETINFO hFleet;
 	FLEET_INFO *FleetPtr;
@@ -462,8 +451,7 @@ bool SetRaceAllied(RACE_ID race, bool flag)
  * 	The value returned is 'race', unless the type of ship is only available
  * 	in SuperMelee, in which case 0 is returned.
  */
-uint16_t
-StartSphereTracking(RACE_ID race)
+uint16_t StartSphereTracking(RACE_ID race)
 {
 	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race)};
 	if (!hFleet)
@@ -546,8 +534,7 @@ bool KillRace(RACE_ID race)
  * Returns the number of ships of the specified race among the
  * escort ships.
  */
-uint16_t
-CountEscortShips(RACE_ID race)
+uint16_t CountEscortShips(RACE_ID race)
 {
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hNextShip {};
@@ -589,8 +576,7 @@ bool HaveEscortShip(RACE_ID race)
  * Returns 0 if 'race' is not available.
  * Otherwise, returns the number of ships that can be added.
  */
-uint16_t
-EscortFeasibilityStudy(RACE_ID race)
+uint16_t EscortFeasibilityStudy(RACE_ID race)
 {
 	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race)};
 	if (!hFleet)
@@ -606,8 +592,7 @@ EscortFeasibilityStudy(RACE_ID race)
  * Either DEAD_GUY (extinct), GOOD_GUY (allied), or BAD_GUY (not allied) is
  * returned.
  */
-uint16_t
-CheckAlliance(RACE_ID race)
+uint16_t CheckAlliance(RACE_ID race)
 {
 	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race)};
 	if (!hFleet)
@@ -631,8 +616,7 @@ bool RaceDead(RACE_ID race)
  * Remove a number of escort ships of the specified race (if present).
  * Returns the number of escort ships removed.
  */
-uint16_t
-RemoveSomeEscortShips(RACE_ID race, uint16_t count)
+uint16_t RemoveSomeEscortShips(RACE_ID race, uint16_t count)
 {
 	QUEUE* ship_q = &uqm::gameState().game().built_ship_q;
 	HSHIPFRAG hStarShip = GetHeadLink(ship_q);
@@ -682,14 +666,12 @@ RemoveSomeEscortShips(RACE_ID race, uint16_t count)
 /*
  * Remove all escort ships of the specified race.
  */
-uint16_t
-RemoveEscortShips(RACE_ID race)
+uint16_t RemoveEscortShips(RACE_ID race)
 {
 	return RemoveSomeEscortShips(race, (uint16_t)-1);
 }
 
-uint16_t
-GetIndexFromStarShip(QUEUE* pShipQ, HLINK hStarShip)
+uint16_t GetIndexFromStarShip(QUEUE* pShipQ, HLINK hStarShip)
 {
 	uint16_t Index {0};
 	while (hStarShip != GetHeadLink(pShipQ))
@@ -705,8 +687,7 @@ GetIndexFromStarShip(QUEUE* pShipQ, HLINK hStarShip)
 	return Index;
 }
 
-uint8_t
-NameCaptain(QUEUE* pQueue, SPECIES_ID SpeciesID)
+uint8_t NameCaptain(QUEUE* pQueue, SPECIES_ID SpeciesID)
 {
 	uint8_t name_index {};
 	HLINK hStarShip {};
@@ -743,8 +724,7 @@ NameCaptain(QUEUE* pQueue, SPECIES_ID SpeciesID)
 
 // crew_level can be set to InfiniteFleet for a ship which is to
 // represent an infinite number of ships.
-HSHIPFRAG
-CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
+HSHIPFRAG CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
 {
 	HFLEETINFO hFleet {};
 	uint8_t captains_name_index {};
@@ -852,8 +832,7 @@ int SetEscortCrewComplement(RACE_ID which_ship, uint16_t crew_level, uint8_t cap
 	return Index;
 }
 
-static void
-deviceSwitch(int device, int val)
+static void deviceSwitch(int device, int val)
 {
 	int var = 0;
 
@@ -961,8 +940,7 @@ deviceSwitch(int device, int val)
 	//SET_GAME_STATE (SYREEN_HOME_VISITS, 0);
 }
 
-static void
-upgradeSwitch(int upgrade, int val)
+static void upgradeSwitch(int upgrade, int val)
 {
 	int var = 0;
 	uint8_t LanderShields {};
@@ -1062,8 +1040,7 @@ upgradeSwitch(int upgrade, int val)
 	}
 }
 
-static void
-cheatAddRemoveDevices(void)
+static void cheatAddRemoveDevices(void)
 {
 	for (uint8_t i {0}; i < std::size(optDeviceArray); i++)
 	{
@@ -1074,8 +1051,7 @@ cheatAddRemoveDevices(void)
 	}
 }
 
-static void
-cheatAddRemoveUpgrades(void)
+static void cheatAddRemoveUpgrades(void)
 {
 	for (uint8_t i {0}; i < NumUpgrades; i++)
 	{
@@ -1132,8 +1108,7 @@ void loadGameCheats(void)
 // the fraction at the end.
 // (uint16_t) sqrt (rand_val) gives a value 0..255 which leans heavy towards 255
 // so subtract from 255 to receive a weighted towards zero jitter.
-uint16_t
-Jitter(uint16_t str, uint16_t rand_val)
+uint16_t Jitter(uint16_t str, uint16_t rand_val)
 {
 	return (str * (SphereRadiusIncrement / 2) * (255 - (uint16_t)sqrt(rand_val)) / 256) * 2 / 3;
 }
@@ -1169,8 +1144,7 @@ void JitDebug(FLEET_INFO* FleetPtr, uint16_t rand_val_x, uint16_t rand_val_y)
 
 // Provide the default fleet movement or war era position for the
 // given fleet and plot ID being visited
-GFXPOINT
-DefaultFleetLocation(SPECIES_ID SpeciesID, uint16_t visit)
+GFXPOINT DefaultFleetLocation(SPECIES_ID SpeciesID, uint16_t visit)
 {
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "Seeding hard coded location for fleet {} (plot {}).\n",
@@ -1313,8 +1287,7 @@ DefaultFleetLocation(SPECIES_ID SpeciesID, uint16_t visit)
 }
 
 // Provide the war era strength for the given species ID (from fleet).
-uint16_t
-WarEraStrength(SPECIES_ID SpeciesID)
+uint16_t WarEraStrength(SPECIES_ID SpeciesID)
 {
 	switch (SpeciesID)
 	{
@@ -1353,8 +1326,7 @@ WarEraStrength(SPECIES_ID SpeciesID)
 }
 
 // Provide the homeworld plot ID for the given species ID (from fleet).
-uint16_t
-Homeworld(SPECIES_ID SpeciesID)
+uint16_t Homeworld(SPECIES_ID SpeciesID)
 {
 	switch (SpeciesID)
 	{
@@ -1459,8 +1431,7 @@ constexpr int FifthY(auto rand_val_x, auto rand_val_y) { return ((rand_val_x + r
 // fleet/race ID and the plot IDs.
 // For PrimeSeed games this will need to look up the hard coded fleet movements
 // or resets which were part of gameev.c, or the war era map.
-GFXPOINT
-SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
+GFXPOINT SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 {
 	uint16_t rand_val_x {};
 	uint16_t rand_val_y {};

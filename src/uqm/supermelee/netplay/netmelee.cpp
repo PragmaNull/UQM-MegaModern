@@ -62,8 +62,7 @@ void removeNetConnection(int playerNr)
 	numNetConnections--;
 }
 
-size_t
-getNumNetConnections(void)
+size_t getNumNetConnections(void)
 {
 	return numNetConnections;
 }
@@ -155,8 +154,7 @@ NetMelee_getBattleState(NetConnection* conn)
 
 ////////////////////////////////////////////////////////////////////////////
 
-static inline void
-netInputAux(uint32_t timeoutMs)
+static inline void netInputAux(uint32_t timeoutMs)
 {
 	netplayContext().poll(uqstl::chrono::milliseconds {timeoutMs});
 	// This may cause more packets to be queued, hence the
@@ -328,8 +326,7 @@ void setBattleStateConnections(struct battlestate_struct* bs)
 
 static constexpr auto MaxBlockTime {500};
 
-BATTLE_INPUT_STATE
-networkBattleInput(NetworkInputContext* context, STARSHIP* StarShipPtr)
+BATTLE_INPUT_STATE networkBattleInput(NetworkInputContext* context, STARSHIP* StarShipPtr)
 {
 	BattleInputBuffer* bib = getBattleInputBuffer(context->playerNr);
 	BATTLE_INPUT_STATE result {};
@@ -397,14 +394,12 @@ networkBattleInput(NetworkInputContext* context, STARSHIP* StarShipPtr)
 	return result;
 }
 
-static void
-deleteConnectionCallback(NetConnection* conn)
+static void deleteConnectionCallback(NetConnection* conn)
 {
 	removeNetConnection(NetConnection_getPlayerNr(conn));
 }
 
-NetConnection*
-openPlayerNetworkConnection(uint16_t player, void* extra)
+NetConnection* openPlayerNetworkConnection(uint16_t player, void* extra)
 {
 	NetConnection* conn {};
 
@@ -461,8 +456,7 @@ bool setupInputDelay(size_t localInputDelay)
 	return true;
 }
 
-static bool
-setStateConnection(NetConnection* conn, void* arg)
+static bool setStateConnection(NetConnection* conn, void* arg)
 {
 	const NetState* state = (NetState*)arg;
 	NetConnection_setState(conn, *state);
@@ -474,8 +468,7 @@ bool setStateConnections(NetState state)
 	return forEachConnectedPlayer(setStateConnection, &state);
 }
 
-static bool
-sendAbortConnection(NetConnection* conn, void* arg)
+static bool sendAbortConnection(NetConnection* conn, void* arg)
 {
 	const NetplayAbortReason* reason = (NetplayAbortReason*)arg;
 	sendAbort(conn, *reason);
@@ -487,8 +480,7 @@ bool sendAbortConnections(NetplayAbortReason reason)
 	return forEachConnectedPlayer(sendAbortConnection, &reason);
 }
 
-static bool
-resetConnection(NetConnection* conn, void* arg)
+static bool resetConnection(NetConnection* conn, void* arg)
 {
 	const NetplayResetReason* reason = (NetplayResetReason*)arg;
 	Netplay_localReset(conn, *reason);
@@ -509,8 +501,7 @@ typedef struct
 	bool notifyRemote;
 } LocalReadyConnectionArg;
 
-static bool
-localReadyConnection(NetConnection* conn, void* arg)
+static bool localReadyConnection(NetConnection* conn, void* arg)
 {
 	const LocalReadyConnectionArg* readyArg = (LocalReadyConnectionArg*)arg;
 	Netplay_localReady(conn, readyArg->readyCallback,
@@ -546,8 +537,7 @@ struct NegotiateReadyState
 	bool done;
 };
 
-static bool
-negotiateReadyInputFunc(NegotiateReadyState* state)
+static bool negotiateReadyInputFunc(NegotiateReadyState* state)
 {
 	netInputBlocking(NetworkPollDelay);
 	// The timing out is necessary so that immediate key presses get
@@ -567,8 +557,7 @@ negotiateReadyInputFunc(NegotiateReadyState* state)
 }
 
 // Called when both sides are ready
-static void
-negotiateReadyBothReadyCallback(NetConnection* conn, void* arg)
+static void negotiateReadyBothReadyCallback(NetConnection* conn, void* arg)
 {
 	NegotiateReadyState* state = (NegotiateReadyState*)arg;
 
@@ -643,8 +632,7 @@ struct WaitReadyState
 	bool done;
 };
 
-static void
-waitReadyCallback(NetConnection* conn, void* arg)
+static void waitReadyCallback(NetConnection* conn, void* arg)
 {
 	WaitReadyState* state = (WaitReadyState*)arg;
 	state->done = true;
@@ -653,8 +641,7 @@ waitReadyCallback(NetConnection* conn, void* arg)
 	state->readyCallback(conn, state->readyCallbackArg);
 }
 
-static bool
-waitReadyInputFunc(WaitReadyState* state)
+static bool waitReadyInputFunc(WaitReadyState* state)
 {
 	netInputBlocking(NetworkPollDelay);
 	// The timing out is necessary so that immediate key presses get
@@ -704,8 +691,7 @@ struct WaitResetState
 	bool done;
 };
 
-static bool
-waitResetInputFunc(WaitResetState* state)
+static bool waitResetInputFunc(WaitResetState* state)
 {
 	netInputBlocking(NetworkPollDelay);
 	// The timing out is necessary so that immediate key presses get
@@ -725,8 +711,7 @@ waitResetInputFunc(WaitResetState* state)
 }
 
 // Called when both sides are reset.
-static void
-waitResetBothResetCallback(NetConnection* conn, void* arg)
+static void waitResetBothResetCallback(NetConnection* conn, void* arg)
 {
 	WaitResetState* state = (WaitResetState*)arg;
 

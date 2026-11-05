@@ -67,9 +67,8 @@
 
 
 // This function is called when one side initiates a reset.
-static void
-Netplay_connectionReset(NetConnection* conn, NetplayResetReason reason,
-						bool byRemote)
+static void Netplay_connectionReset(NetConnection* conn, NetplayResetReason reason,
+									bool byRemote)
 {
 	switch (NetConnection_getState(conn))
 	{
@@ -89,8 +88,7 @@ Netplay_connectionReset(NetConnection* conn, NetplayResetReason reason,
 	}
 }
 
-static void
-Netplay_doConnectionResetCallback(NetConnection* conn)
+static void Netplay_doConnectionResetCallback(NetConnection* conn)
 {
 	NetConnection_ResetCallback callback {conn->resetCallback};
 	void* resetArg {conn->resetCallbackArg};
@@ -102,8 +100,7 @@ Netplay_doConnectionResetCallback(NetConnection* conn)
 	callback(conn, resetArg);
 }
 
-static void
-Netplay_resetConditionTriggered(NetConnection* conn)
+static void Netplay_resetConditionTriggered(NetConnection* conn)
 {
 	if (conn->resetCallback == nullptr)
 	{

@@ -122,8 +122,7 @@ static RACE_DESC arilou_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t
-initialize_autoaim_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
+static uint16_t initialize_autoaim_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 {
 	uint16_t orig_facing {};
 	int16_t delta_facing {};
@@ -152,9 +151,8 @@ initialize_autoaim_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 	return (1);
 }
 
-static void
-arilou_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					uint16_t ConcernCounter)
+static void arilou_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -205,8 +203,7 @@ arilou_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void
-arilou_preprocess(ELEMENT* ElementPtr)
+static void arilou_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -323,8 +320,7 @@ arilou_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_arilou(void)
+RACE_DESC* init_arilou(void)
 {
 	if (IsHd())
 	{

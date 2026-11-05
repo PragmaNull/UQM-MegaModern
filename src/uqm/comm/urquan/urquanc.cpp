@@ -169,8 +169,7 @@ static LOCDATA urquan_desc =
 		nullptr,
 };
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
@@ -252,8 +251,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	}
 }
 
-static void
-DescribePet(RESPONSE_REF R)
+static void DescribePet(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, wascally_little_guy))
 	{
@@ -274,8 +272,7 @@ DescribePet(RESPONSE_REF R)
 	}
 }
 
-static void
-DescribeCompulsion(RESPONSE_REF R)
+static void DescribeCompulsion(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, alien_mind_control))
 	{
@@ -296,8 +293,7 @@ DescribeCompulsion(RESPONSE_REF R)
 	}
 }
 
-static void
-MentionCompulsion(RESPONSE_REF R)
+static void MentionCompulsion(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, compulsion))
 	{
@@ -330,8 +326,7 @@ MentionCompulsion(RESPONSE_REF R)
 	}
 }
 
-static void
-UrquanHypno(RESPONSE_REF R)
+static void UrquanHypno(RESPONSE_REF R)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::URQUAN_HYPNO_VISITS) == 0)
 	{
@@ -408,8 +403,7 @@ UrquanHypno(RESPONSE_REF R)
 	}
 }
 
-static void
-NormalUrquan(RESPONSE_REF R)
+static void NormalUrquan(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, i_surrender))
 	{
@@ -452,8 +446,7 @@ NormalUrquan(RESPONSE_REF R)
 	}
 }
 
-static void
-LoserUrquan(RESPONSE_REF R)
+static void LoserUrquan(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, why_flee))
 	{
@@ -489,8 +482,7 @@ LoserUrquan(RESPONSE_REF R)
 	Response(bye_wars_over, CombatIsInevitable);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	if (IsExtended())
 	{
@@ -598,21 +590,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_urquan(void)
+static uint16_t uninit_urquan(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_urquan_enc(void)
+static void post_urquan_enc(void)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HYPNOTIZED, static_cast<uint32_t>(0));
 }
 
-LOCDATA*
-init_urquan_comm(void)
+LOCDATA* init_urquan_comm(void)
 {
 	urquan_desc.init_encounter_func = Intro;
 	urquan_desc.post_encounter_func = post_urquan_enc;

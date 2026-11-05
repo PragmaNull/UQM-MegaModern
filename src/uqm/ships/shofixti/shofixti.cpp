@@ -132,8 +132,7 @@ static RACE_DESC shofixti_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t
-initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 {
 
 	STARSHIP* StarShipPtr {};
@@ -160,8 +159,7 @@ initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 
 static constexpr auto DestructSwitch {((NumExplosionFrames * 3) - 3)};
 
-static void
-destruct_preprocess(ELEMENT* ElementPtr)
+static void destruct_preprocess(ELEMENT* ElementPtr)
 {
 
 	// ship_death() set the ship element's life_span to
@@ -269,8 +267,7 @@ destruct_preprocess(ELEMENT* ElementPtr)
 #include "uqm/random/UQMRandom.h"
 constexpr auto OrzMarine(const auto& ptr) { return (ptr->preprocess_func == intruder_preprocess && ptr->collision_func == marine_collision); }
 
-static void
-self_destruct_kill_objects(ELEMENT* ElementPtr)
+static void self_destruct_kill_objects(ELEMENT* ElementPtr)
 {
 	// This is called during PostProcessQueue(), close to or at the end,
 	// for the temporary destruct element to apply the effects of glory
@@ -340,8 +337,7 @@ self_destruct_kill_objects(ELEMENT* ElementPtr)
 
 // This function is called when the ship dies via Glory Device.
 // The generic ship_death() function is not called for the ship in this case.
-static void
-shofixti_destruct_death(ELEMENT* ShipPtr)
+static void shofixti_destruct_death(ELEMENT* ShipPtr)
 {
 	STARSHIP* StarShip {};
 
@@ -376,8 +372,7 @@ shofixti_destruct_death(ELEMENT* ShipPtr)
 	RecordShipDeath(ShipPtr);
 }
 
-static void
-self_destruct(ELEMENT* ElementPtr)
+static void self_destruct(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -419,9 +414,8 @@ self_destruct(ELEMENT* ElementPtr)
 	ElementPtr->death_func = shofixti_destruct_death;
 }
 
-static void
-shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					  uint16_t ConcernCounter)
+static void shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								  uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -458,8 +452,7 @@ shofixti_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void
-shofixti_preprocess(ELEMENT* ElementPtr)
+static void shofixti_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -480,8 +473,7 @@ shofixti_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-shofixti_postprocess(ELEMENT* ElementPtr)
+static void shofixti_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -493,8 +485,7 @@ shofixti_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_shofixti(void)
+RACE_DESC* init_shofixti(void)
 {
 	RACE_DESC* RaceDescPtr {};
 	// The caller of this func will copy the struct

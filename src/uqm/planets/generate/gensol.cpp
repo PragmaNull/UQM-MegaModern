@@ -73,8 +73,7 @@ const GenerateFunctions generateSolFunctions = {
 };
 
 
-static bool
-GenerateSol_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateSol_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (uqm::UQMOptions::read().headStart)
 	{
@@ -102,8 +101,7 @@ GenerateSol_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) != 3)
 	{
@@ -121,8 +119,7 @@ GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys)
 
 static constexpr auto SolSeed {334241042L};
 
-static bool
-GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	SysGenRNG->reseed(SolSeed + (uqm::isStarSeed() ? uqm::currentSeed().value : 0));
 
@@ -198,8 +195,7 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
+static bool GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 {
 	uint32_t rand_val {};
 
@@ -271,9 +267,8 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 	return true;
 }
 
-static bool
-GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
-						 const PLANET_DESC* world)
+static bool GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
+									 const PLANET_DESC* world)
 {
 	const uint16_t planetNr = planetIndex(solarSys, world);
 
@@ -285,8 +280,7 @@ GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
+static bool GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
 	uint32_t rand_val {};
 	uint16_t planetNr {};
@@ -659,9 +653,8 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 	return true;
 }
 
-static uint16_t
-GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
-							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
+											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (IsExtended() && matchWorld(solarSys, world, 8, 0))
 	{
@@ -682,9 +675,8 @@ GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
 }
 
 
-static uint16_t
-GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
-						   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
+										   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (matchWorld(solarSys, world, 8, MatchPlanet))
 	{
@@ -731,9 +723,8 @@ GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
 
 static constexpr auto FwiffoFrags {8};
 
-static bool
-GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						 uint16_t whichNode)
+static bool GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									 uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, 8, MatchPlanet))
 	{ // Pluto
@@ -781,9 +772,8 @@ GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-static uint16_t
-GenerateSol_generateLife(const SOLARSYS_STATE* solarSys,
-						 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSol_generateLife(const SOLARSYS_STATE* solarSys,
+										 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (matchWorld(solarSys, world, 2, 1))
 	{
@@ -796,8 +786,7 @@ GenerateSol_generateLife(const SOLARSYS_STATE* solarSys,
 }
 
 
-static int
-init_probe(void)
+static int init_probe(void)
 {
 	HIPGROUP hGroup {};
 
@@ -822,8 +811,7 @@ init_probe(void)
 	}
 }
 
-static void
-check_probe(void)
+static void check_probe(void)
 {
 	if (!uqm::gameState().game().BattleGroupRef)
 	{

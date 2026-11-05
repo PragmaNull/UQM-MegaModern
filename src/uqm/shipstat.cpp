@@ -77,8 +77,7 @@ void DrawCrewFuelString(int16_t y, int16_t state)
 	}
 }
 
-static void
-DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
+static void DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
 {
 	TEXT Text;
 

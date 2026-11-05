@@ -239,8 +239,7 @@ static FILTER_DESC spahome_filters =
 								  }
 };
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 	if (PlayerSaid(R, we_attack_again))
@@ -368,8 +367,7 @@ ExitConversation(RESPONSE_REF R)
 
 static void SpathiAllies(RESPONSE_REF R);
 
-static void
-SpathiInfo(RESPONSE_REF R)
+static void SpathiInfo(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
 	if (PlayerSaid(R, like_some_info))
@@ -440,8 +438,7 @@ SpathiInfo(RESPONSE_REF R)
 	}
 }
 
-static void
-SpathiAllies(RESPONSE_REF R)
+static void SpathiAllies(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -531,8 +528,7 @@ SpathiAllies(RESPONSE_REF R)
 	Response(bye_ally, ExitConversation);
 }
 
-static void
-SpathiQuest(RESPONSE_REF R)
+static void SpathiQuest(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -591,8 +587,7 @@ SpathiQuest(RESPONSE_REF R)
 	}
 }
 
-static void
-LearnQuest(RESPONSE_REF R)
+static void LearnQuest(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -665,8 +660,7 @@ LearnQuest(RESPONSE_REF R)
 	}
 }
 
-static void
-AllianceOffer(RESPONSE_REF R)
+static void AllianceOffer(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, misunderstanding))
 	{
@@ -739,8 +733,7 @@ AllianceOffer(RESPONSE_REF R)
 	}
 }
 
-static void
-SpathiAngry(RESPONSE_REF R)
+static void SpathiAngry(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -759,8 +752,7 @@ SpathiAngry(RESPONSE_REF R)
 	Response(bye_angry_spathi, ExitConversation);
 }
 
-static void
-SpathiParty(RESPONSE_REF R)
+static void SpathiParty(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -863,8 +855,7 @@ SpathiParty(RESPONSE_REF R)
 	}
 }
 
-static void
-SpathiCouncil(RESPONSE_REF R)
+static void SpathiCouncil(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -966,8 +957,7 @@ SpathiCouncil(RESPONSE_REF R)
 	Response(bye_no_ally_offer, ExitConversation);
 }
 
-static void
-SpathiPassword(RESPONSE_REF R)
+static void SpathiPassword(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -1014,8 +1004,7 @@ SpathiPassword(RESPONSE_REF R)
 	}
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t Manner {};
 
@@ -1086,15 +1075,13 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_spahome(void)
+static uint16_t uninit_spahome(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_spahome_enc(void)
+static void post_spahome_enc(void)
 {
 	uint8_t Manner {};
 
@@ -1110,8 +1097,7 @@ post_spahome_enc(void)
 	}
 }
 
-LOCDATA*
-init_spahome_comm()
+LOCDATA* init_spahome_comm()
 {
 	spahome_desc.init_encounter_func = Intro;
 	spahome_desc.post_encounter_func = post_spahome_enc;

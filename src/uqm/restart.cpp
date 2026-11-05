@@ -151,8 +151,7 @@ void DrawToolTips(MENU_STATE* pMS, int answer)
 	StringBank_Free(bank);
 }
 
-static void
-DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
+static void DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 {
 	STAMP s;
 	TEXT t;
@@ -187,8 +186,7 @@ DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 	SetContextFont(oldFont);
 }
 
-static bool
-DoDiffChooser(MENU_STATE* pMS)
+static bool DoDiffChooser(MENU_STATE* pMS)
 {
 	static TimeCount LastInputTime;
 	static TimePeriod InactTimeOut;
@@ -312,8 +310,7 @@ static auto MainTextY() { return (ResScale(42) - DosNumScl(20)); }
 
 FRAME TextCache[5];
 
-static void
-InitPulseText(void)
+static void InitPulseText(void)
 {
 	FRAME frame {};
 	FRAME OldFrame {};
@@ -357,8 +354,7 @@ InitPulseText(void)
 }
 
 // Draw the full restart menu. Nothing is done with selections.
-static void
-DrawRestartMenuGraphic(MENU_STATE* pMS)
+static void DrawRestartMenuGraphic(MENU_STATE* pMS)
 {
 	GFXRECT r;
 	STAMP s;
@@ -426,8 +422,7 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 	UnbatchGraphics();
 }
 
-static void
-DrawRestartMenu(MENU_STATE* pMS, uint8_t NewState, FRAME f)
+static void DrawRestartMenu(MENU_STATE* pMS, uint8_t NewState, FRAME f)
 {
 	GFXPOINT origin;
 	origin.x = 0;
@@ -437,8 +432,7 @@ DrawRestartMenu(MENU_STATE* pMS, uint8_t NewState, FRAME f)
 	(void)f; // Silence compiler warnings
 }
 
-static bool
-RestartMessage(void)
+static bool RestartMessage(void)
 {
 	if (!optRequiresRestart)
 	{
@@ -460,8 +454,7 @@ RestartMessage(void)
 static bool s_playSaveTaken {};
 
 // True if the main menu loads the save of --play-save.
-static bool
-HasPlaySave(void)
+static bool HasPlaySave(void)
 {
 	return !s_playSaveTaken && !uqm::UQMOptions::read().playSave.empty();
 }
@@ -476,8 +469,7 @@ const char* TakePlaySave(void)
 	return uqm::UQMOptions::read().playSave.c_str();
 }
 
-static bool
-DoRestart(MENU_STATE* pMS)
+static bool DoRestart(MENU_STATE* pMS)
 {
 	static TimeCount LastInputTime;
 	static TimePeriod InactTimeOut;
@@ -789,8 +781,7 @@ void ShowGameEnding(void)
 	uqm::currentActivity() = CHECK_ABORT;
 }
 
-static bool
-RestartMenu(MENU_STATE* pMS)
+static bool RestartMenu(MENU_STATE* pMS)
 {
 	ReinitQueue(&race_q[0]);
 	ReinitQueue(&race_q[1]);
@@ -854,8 +845,7 @@ RestartMenu(MENU_STATE* pMS)
 	return (uqm::lowByte(uqm::currentActivity()) != SUPER_MELEE);
 }
 
-static bool
-TryStartGame(void)
+static bool TryStartGame(void)
 {
 	MENU_STATE MenuState;
 

@@ -79,8 +79,7 @@ void RepairPickFrame(GFXRECT* pRect, uint16_t frame)
 	SetContextClipRect(&OldRect);
 }
 
-static bool
-DoPickBattleShip(MENU_STATE* pMS)
+static bool DoPickBattleShip(MENU_STATE* pMS)
 {
 	GFXRECT r {};
 	TEXT t {};
@@ -335,8 +334,7 @@ ChangeSelection:
 	return (true);
 }
 
-static HSTARSHIP
-GetArmadaStarShip(void)
+static HSTARSHIP GetArmadaStarShip(void)
 {
 	GFXRECT pick_r;
 	HSTARSHIP hBattleShip {};
@@ -393,8 +391,7 @@ GetArmadaStarShip(void)
 static constexpr auto RunAwayFuelCost {(5 * FuelTankScale)};
 
 // Get the next ship to use.
-HSTARSHIP
-GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
+HSTARSHIP GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 {
 	if (inHQSpace())
 	{

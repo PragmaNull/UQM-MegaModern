@@ -65,8 +65,7 @@ const GenerateFunctions generateMyconFunctions = {
 
 static constexpr auto StateOffset {29};
 
-static bool
-GenerateMyconDefenders(uint8_t index)
+static bool GenerateMyconDefenders(uint8_t index)
 {
 	const uint8_t shift = index - StateOffset;
 	bool Survivors {};
@@ -115,8 +114,7 @@ GenerateMyconDefenders(uint8_t index)
 	return false;
 }
 
-static bool
-GenerateMycon_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateMycon_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
@@ -149,9 +147,8 @@ GenerateMycon_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateMycon_generateName(const SOLARSYS_STATE* solarSys,
-						   const PLANET_DESC* world)
+static bool GenerateMycon_generateName(const SOLARSYS_STATE* solarSys,
+									   const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
@@ -171,9 +168,8 @@ GenerateMycon_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
-							  PLANET_DESC* world)
+static bool GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
+										  PLANET_DESC* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -302,9 +298,8 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t
-GenerateMycon_generateEnergy(const SOLARSYS_STATE* solarSys,
-							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateMycon_generateEnergy(const SOLARSYS_STATE* solarSys,
+											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == SUN_DEVICE_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -341,9 +336,8 @@ GenerateMycon_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateMycon_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						   uint16_t whichNode)
+static bool GenerateMycon_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									   uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == SUN_DEVICE_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -390,9 +384,8 @@ GenerateMycon_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-static uint16_t
-GenerateMycon_generateLife(const SOLARSYS_STATE* solarSys,
-						   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateMycon_generateLife(const SOLARSYS_STATE* solarSys,
+										   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	// Gee, I wonder why there isn't any life in Mycon systems...
 	(void)whichNode;

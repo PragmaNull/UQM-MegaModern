@@ -47,8 +47,7 @@ GFXCONTEXT RadarContext;
 FRAME PlayFrame;
 
 
-static void
-CreateRadar(void)
+static void CreateRadar(void)
 {
 	if (RadarContext == 0)
 	{
@@ -106,8 +105,7 @@ bool LoadSC2Data(void)
 	return true;
 }
 
-static void
-copyFleetInfo(FLEET_INFO* dst, SHIP_INFO* src, FLEET_STUFF* fleet)
+static void copyFleetInfo(FLEET_INFO* dst, SHIP_INFO* src, FLEET_STUFF* fleet)
 {
 	// other leading fields are irrelevant
 	dst->crew_level = src->crew_level;
@@ -677,8 +675,7 @@ bool inSuperMelee(void)
 }
 
 #if 0
-bool
-inBattle (void)
+bool inBattle (void)
 {
 	// TODO: IN_BATTLE is also set while in HyperSpace/QuasiSpace.
 	return ((uqm::currentActivity() & IN_BATTLE) != 0);
@@ -688,24 +685,21 @@ inBattle (void)
 #if 0
 // Disabled for now as there are similar functions in uqm/planets/planets.h
 // Pre: inFullGame()
-bool
-inInterPlanetary (void)
+bool inInterPlanetary (void)
 {
 	assert (inFullGame ());
 	return (pSolarSysState != nullptr);
 }
 
 // Pre: inFullGame()
-bool
-inSolarSystem (void)
+bool inSolarSystem (void)
 {
 	assert (inFullGame ());
 	return (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY);
 }
 
 // Pre: inFullGame()
-bool
-inOrbit (void)
+bool inOrbit (void)
 {
 	assert (inFullGame ());
 	return (pSolarSysState != nullptr) &&

@@ -41,8 +41,7 @@ uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> MakeStateFiles(void)
 }
 
 
-GAME_STATE_FILE*
-OpenStateFile(int stateFile, const char* mode)
+GAME_STATE_FILE* OpenStateFile(int stateFile, const char* mode)
 {
 	if (stateFile < 0 || stateFile >= NUM_STATE_FILES)
 	{
@@ -121,8 +120,7 @@ void DeleteStateFile(int stateFile)
 	fp->data = {};
 }
 
-uint32_t
-LengthStateFile(GAME_STATE_FILE* fp)
+uint32_t LengthStateFile(GAME_STATE_FILE* fp)
 {
 	return fp->used;
 }

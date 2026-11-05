@@ -77,8 +77,7 @@ bool OpponentAlive(STARSHIP* TestStarShipPtr)
 	return true;
 }
 
-static void
-PlayDitty(STARSHIP* ship)
+static void PlayDitty(STARSHIP* ship)
 {
 	PlayMusic(ship->RaceDescPtr->ship_data.victory_ditty, false, 3);
 	dittyIsPlaying = true;
@@ -93,8 +92,7 @@ void StopDitty(void)
 	dittyIsPlaying = false;
 }
 
-static bool
-DittyPlaying(void)
+static bool DittyPlaying(void)
 {
 	if (!dittyIsPlaying)
 	{
@@ -111,15 +109,13 @@ void ResetWinnerStarShip(void)
 }
 
 #ifdef NETPLAY
-static void
-readyToEnd2Callback(NetConnection* conn, void* arg)
+static void readyToEnd2Callback(NetConnection* conn, void* arg)
 {
 	NetConnection_setState(conn, NetState_endingBattle2);
 	(void)arg;
 }
 
-static void
-readyToEndCallback(NetConnection* conn, void* arg)
+static void readyToEndCallback(NetConnection* conn, void* arg)
 {
 	// This callback function gets called from inside the function that
 	// updates the frame counter, but this is not a problem as the
@@ -172,8 +168,7 @@ readyToEndCallback(NetConnection* conn, void* arg)
  *    reached the target frame count.
  * 5. The battle ends.
  */
-static bool
-readyForBattleEndPlayer(NetConnection* conn)
+static bool readyForBattleEndPlayer(NetConnection* conn)
 {
 	const BattleStateData* battleStateData {(BattleStateData*)NetConnection_getStateData(conn)};
 
@@ -257,8 +252,7 @@ bool battleEndReadyNetwork(NetworkInputContext* context)
 #endif
 
 // Returns true iff this side is ready to end the battle.
-static inline bool
-readyForBattleEnd(void)
+static inline bool readyForBattleEnd(void)
 {
 #ifndef NETPLAY
 	return !DittyPlaying();
@@ -282,8 +276,7 @@ readyForBattleEnd(void)
 #endif /* defined (NETPLAY) */
 }
 
-static void
-preprocess_dead_ship(ELEMENT* DeadShipPtr)
+static void preprocess_dead_ship(ELEMENT* DeadShipPtr)
 {
 	SuppressSounds();
 	(void)DeadShipPtr; // unused argument
@@ -379,8 +372,7 @@ void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 	}
 }
 
-static void
-setMinShipLifeSpan(ELEMENT* ship, uint16_t life_span)
+static void setMinShipLifeSpan(ELEMENT* ship, uint16_t life_span)
 {
 	if (ship->death_func == new_ship)
 	{ // The ship has finished exploding or warping out, and now
@@ -394,8 +386,7 @@ setMinShipLifeSpan(ELEMENT* ship, uint16_t life_span)
 	}
 }
 
-static void
-setMinStarShipLifeSpan(STARSHIP* starShip, uint16_t life_span)
+static void setMinStarShipLifeSpan(STARSHIP* starShip, uint16_t life_span)
 {
 	ELEMENT* ship {};
 
@@ -404,8 +395,7 @@ setMinStarShipLifeSpan(STARSHIP* starShip, uint16_t life_span)
 	UnlockElement(starShip->hShip);
 }
 
-static void
-checkOtherShipLifeSpan(ELEMENT* deadShip)
+static void checkOtherShipLifeSpan(ELEMENT* deadShip)
 {
 	STARSHIP* deadStarShip {};
 
@@ -546,8 +536,7 @@ void new_ship(ELEMENT* DeadShipPtr)
 	}
 }
 
-static void
-explosion_preprocess(ELEMENT* ShipPtr)
+static void explosion_preprocess(ELEMENT* ShipPtr)
 {
 	uint8_t i {};
 
@@ -630,8 +619,7 @@ void StopAllBattleMusic(void)
 	StopMusic();
 }
 
-STARSHIP*
-FindAliveStarShip(ELEMENT* deadShip)
+STARSHIP* FindAliveStarShip(ELEMENT* deadShip)
 {
 	STARSHIP* aliveShip = nullptr;
 	HELEMENT hNextElement {};
@@ -666,8 +654,7 @@ FindAliveStarShip(ELEMENT* deadShip)
 	return aliveShip;
 }
 
-STARSHIP*
-GetWinnerStarShip(void)
+STARSHIP* GetWinnerStarShip(void)
 {
 	return winnerStarShip;
 }
@@ -765,8 +752,7 @@ static constexpr auto StartIonColor {BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7
 
 // Called from the death_func of an element for an ion trail pixel, or a
 // ship shadow (when warping in/out).
-static void
-cycle_ion_trail(ELEMENT* ElementPtr)
+static void cycle_ion_trail(ELEMENT* ElementPtr)
 {
 	const static Color colorTab[] =
 		{

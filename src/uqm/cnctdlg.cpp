@@ -74,8 +74,7 @@ static int do_connect(WIDGET* self, int event);
 static int do_listen(WIDGET* self, int event);
 static int do_cancel(WIDGET* self, int event);
 
-static void
-MCD_DrawMenuScreen(WIDGET* _self, int x, int y)
+static void MCD_DrawMenuScreen(WIDGET* _self, int x, int y)
 {
 	const WIDGET_MENU_SCREEN* self = (WIDGET_MENU_SCREEN*)_self;
 
@@ -88,8 +87,7 @@ MCD_DrawMenuScreen(WIDGET* _self, int x, int y)
 	}
 }
 
-static void
-MCD_DrawButton(WIDGET* _self, int x, int y)
+static void MCD_DrawButton(WIDGET* _self, int x, int y)
 {
 	const WIDGET_BUTTON* self = (WIDGET_BUTTON*)_self;
 	Color oldtext;
@@ -122,8 +120,7 @@ MCD_DrawButton(WIDGET* _self, int x, int y)
 	(void)x;
 }
 
-static void
-MCD_DrawSlider(WIDGET* _self, int x, int y)
+static void MCD_DrawSlider(WIDGET* _self, int x, int y)
 {
 	WIDGET_SLIDER* self = (WIDGET_SLIDER*)_self;
 	Color oldtext;
@@ -173,8 +170,7 @@ MCD_DrawSlider(WIDGET* _self, int x, int y)
 	SetContextForeGroundColor(oldtext);
 }
 
-static void
-MCD_DrawTextEntry(WIDGET* _self, int x, int y)
+static void MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 {
 	WIDGET_TEXTENTRY* self = (WIDGET_TEXTENTRY*)_self;
 	Color oldtext;
@@ -327,8 +323,7 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 /* Text entry stuff, mostly C&Ped from setupmenu.c.  Could use some
  * refactoring, as redraw_menu () is the only real change. */
 
-static bool
-OnTextEntryChange(TEXTENTRY_STATE* pTES)
+static bool OnTextEntryChange(TEXTENTRY_STATE* pTES)
 {
 	WIDGET_TEXTENTRY* widget = (WIDGET_TEXTENTRY*)pTES->CbParam;
 
@@ -349,8 +344,7 @@ OnTextEntryChange(TEXTENTRY_STATE* pTES)
 	return true; // allow change
 }
 
-static bool
-OnTextEntryFrame(TEXTENTRY_STATE* pTES)
+static bool OnTextEntryFrame(TEXTENTRY_STATE* pTES)
 {
 	DrawConnectDialog();
 
@@ -361,8 +355,7 @@ OnTextEntryFrame(TEXTENTRY_STATE* pTES)
 	return true; // continue
 }
 
-static int
-OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
+static int OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 { // Going to edit the text
 	TEXTENTRY_STATE tes;
 	char revert_buf[256];
@@ -406,8 +399,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 
 /* Button response routines */
 
-static int
-do_connect(WIDGET* self, int event)
+static int do_connect(WIDGET* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -425,8 +417,7 @@ do_connect(WIDGET* self, int event)
 	return false;
 }
 
-static int
-do_listen(WIDGET* self, int event)
+static int do_listen(WIDGET* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -443,8 +434,7 @@ do_listen(WIDGET* self, int event)
 	return false;
 }
 
-static int
-do_cancel(WIDGET* self, int event)
+static int do_cancel(WIDGET* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -456,8 +446,7 @@ do_cancel(WIDGET* self, int event)
 }
 
 
-static void
-CreateWidgets(void)
+static void CreateWidgets(void)
 {
 	int i {};
 
@@ -543,8 +532,7 @@ CreateWidgets(void)
 	menu.receiveFocus((WIDGET*)&menu, WIDGET_EVENT_DOWN);
 }
 
-static void
-DrawConnectDialog(void)
+static void DrawConnectDialog(void)
 {
 	GFXRECT r;
 
@@ -561,8 +549,7 @@ DrawConnectDialog(void)
 			  r.corner.x + ResScale(10), r.corner.y + ResScale(10));
 }
 
-static bool
-DoMeleeConnectDialog(CONNECT_DIALOG_STATE* state)
+static bool DoMeleeConnectDialog(CONNECT_DIALOG_STATE* state)
 {
 	bool changed {};
 

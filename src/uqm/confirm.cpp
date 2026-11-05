@@ -39,8 +39,7 @@ static auto ConfirmWinHeight() { return ResScale(26); }
 
 bool WarpFromMenu = false;
 
-static void
-DrawConfirmationWindow(bool answer, bool confirm)
+static void DrawConfirmationWindow(bool answer, bool confirm)
 {
 	const Color oldfg = SetContextForeGroundColor(ShadowboxDarkColor);
 	FONT oldfont = SetContextFont(StarConFont);
@@ -224,8 +223,7 @@ typedef struct popup_state
 	bool (*InputFunc)(struct popup_state* self);
 } POPUP_STATE;
 
-static bool
-DoPopup(struct popup_state* self)
+static bool DoPopup(struct popup_state* self)
 {
 	(void)self;
 	SleepThread(c_gameSecond / 20);

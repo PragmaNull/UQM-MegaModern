@@ -38,39 +38,33 @@ extern "C" {
 #endif
 
 
-static inline void
-crc_processELEMENT_FLAGS(crc_State* state, ELEMENT_FLAGS val)
+static inline void crc_processELEMENT_FLAGS(crc_State* state, ELEMENT_FLAGS val)
 {
 	crc_processUint16(state, (uint16_t)val);
 }
 
-static inline void
-crc_processCOUNT(crc_State* state, uint16_t val)
+static inline void crc_processCOUNT(crc_State* state, uint16_t val)
 {
 	crc_processUint16(state, (uint16_t)val);
 }
 
-static inline void
-crc_processBYTE(crc_State* state, uint8_t val)
+static inline void crc_processBYTE(crc_State* state, uint8_t val)
 {
 	crc_processUint8(state, (uint8_t)val);
 }
 
-static inline void
-crc_processDWORD(crc_State* state, uint32_t val)
+static inline void crc_processDWORD(crc_State* state, uint32_t val)
 {
 	crc_processUint32(state, (uint32_t)val);
 }
 
-static inline void
-crc_processCOORD(crc_State* state, int16_t val)
+static inline void crc_processCOORD(crc_State* state, int16_t val)
 {
 	crc_processUint16(state, (uint16_t)val);
 }
 
 #if 0
-static inline void
-crc_processTIME_VALUE(crc_State *state, const TIME_VALUE val) {
+static inline void crc_processTIME_VALUE(crc_State *state, const TIME_VALUE val) {
 	crc_processUint16(state, (uint16_t) val);
 }
 #endif

@@ -169,8 +169,7 @@ void UninitGroupInfo(void)
 	DeleteStateFile(RandgrpinfoFile);
 }
 
-HIPGROUP
-BuildGroup(QUEUE* pDstQueue, uint8_t race_id)
+HIPGROUP BuildGroup(QUEUE* pDstQueue, uint8_t race_id)
 {
 	assert(GetLinkSize(pDstQueue) == sizeof(IP_GROUP));
 
@@ -498,9 +497,8 @@ void findRaceSOI(void)
 	spaceMusicBySOI = SpeciesArr[Index];
 }
 
-static void
-FlushGroupInfo(GROUP_HEADER* pGH, uint32_t offset, uint8_t which_group,
-			   GAME_STATE_FILE* fp)
+static void FlushGroupInfo(GROUP_HEADER* pGH, uint32_t offset, uint8_t which_group,
+						   GAME_STATE_FILE* fp)
 {
 	if (which_group == GroupList)
 	{
@@ -947,8 +945,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 	}
 }
 
-uint32_t
-PutGroupInfo(uint32_t offset, uint8_t which_group)
+uint32_t PutGroupInfo(uint32_t offset, uint8_t which_group)
 {
 	GAME_STATE_FILE* fp {};
 	GROUP_HEADER GH;

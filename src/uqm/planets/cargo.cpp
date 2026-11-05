@@ -89,8 +89,7 @@ void ShowRemainingCapacity(void)
 	SetContext(OldContext);
 }
 
-static void
-DrawElementAmount(uint16_t element, bool selected)
+static void DrawElementAmount(uint16_t element, bool selected)
 {
 	GFXRECT r;
 	TEXT t;
@@ -146,8 +145,7 @@ DrawElementAmount(uint16_t element, bool selected)
 	font_DrawText(&t);
 }
 
-static void
-DrawCargoDisplay(void)
+static void DrawCargoDisplay(void)
 {
 	STAMP s;
 	TEXT t;
@@ -297,8 +295,7 @@ void DrawCargoStrings(uint8_t OldElement, uint8_t NewElement)
 	SetContext(OldContext);
 }
 
-static void
-DrawElementDescription(uint16_t element)
+static void DrawElementDescription(uint16_t element)
 {
 	DrawStatusMessage(GameString(element + (CARGO_STRING_BASE + 2)));
 }
@@ -408,8 +405,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	SetContext(OldContext);
 }
 
-static bool
-DoDiscardCargo(MENU_STATE* pMS)
+static bool DoDiscardCargo(MENU_STATE* pMS)
 {
 	uint8_t NewState {};
 	bool select {};

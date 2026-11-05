@@ -50,9 +50,8 @@ PORTAL_LOCATION portal_map[NumHyperVortices + 1] {};
 //		{[0 ... (NumHyperVortices)] = {{0, 0}, {0, 0}, nullptr}};
 
 
-STAR_DESC*
-FindStar(STAR_DESC* LastSDPtr, GFXPOINT* puniverse, int16_t xbounds,
-		 int16_t ybounds)
+STAR_DESC* FindStar(STAR_DESC* LastSDPtr, GFXPOINT* puniverse, int16_t xbounds,
+					int16_t ybounds)
 {
 	int16_t min_y {};
 	int16_t max_y {};
@@ -169,8 +168,7 @@ void GetClusterName(const STAR_DESC* pSD, char buf[])
 
 // Finds the nearest (constellation = true / false = star) to the
 // point P provided on the starmap, returns pointer to that star.
-STAR_DESC*
-FindNearest(STAR_DESC* starmap, GFXPOINT p, bool constellation)
+STAR_DESC* FindNearest(STAR_DESC* starmap, GFXPOINT p, bool constellation)
 {
 	if (!starmap || p.x == ~0 || p.y == ~0)
 	{
@@ -192,15 +190,13 @@ FindNearest(STAR_DESC* starmap, GFXPOINT p, bool constellation)
 }
 
 // Returns a pointer to the closest star to point p on the starmap
-STAR_DESC*
-FindNearestStar(STAR_DESC* starmap, GFXPOINT p)
+STAR_DESC* FindNearestStar(STAR_DESC* starmap, GFXPOINT p)
 {
 	return (starmap ? FindNearest(starmap, p, false) : nullptr);
 }
 
 // Returns a pointer to the closest constellation to point p on the starmap
-STAR_DESC*
-FindNearestConstellation(STAR_DESC* starmap, GFXPOINT p)
+STAR_DESC* FindNearestConstellation(STAR_DESC* starmap, GFXPOINT p)
 {
 	return (starmap ? FindNearest(starmap, p, true) : nullptr);
 }
@@ -482,8 +478,7 @@ void SetPlotLength(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB,
 // If the min/max plot lengths are set and valid, gives relative weight of
 // this plot pair, otherwise 0.  The relative weight is the min distance
 // plus the (MaxPlot - the max distance) of each plot thread connected.
-uint32_t
-ConnectedPlot(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB)
+uint32_t ConnectedPlot(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB)
 {
 	// report bad data
 	if (!(plot && (plotA < NUM_PLOTS) && (plotB < NUM_PLOTS)))
@@ -511,8 +506,7 @@ static uint16_t next_plot = ~0;
 // plot map which has yet to be assigned a home, or NUM_PLOTS if all
 // plots are allocated For a plot to be set, both int16_t and STAR_DESC
 // ptr need data.  If both are set, we'll just stamp the starmap.
-uint16_t
-GetNextPlot(PLOT_LOCATION* plot)
+uint16_t GetNextPlot(PLOT_LOCATION* plot)
 {
 	uint16_t plot_id = 0;
 	uint32_t top_weight = 0;
@@ -948,8 +942,7 @@ bool CheckValid(PLOT_LOCATION* plot, uint16_t plot_id)
 }
 
 
-static bool
-NeedsHabitable(uint8_t sIndex)
+static bool NeedsHabitable(uint8_t sIndex)
 {
 	switch (sIndex)
 	{
@@ -1280,8 +1273,7 @@ static constexpr auto StarFactor {89};
 // recurse further until complete, otherwise return failed plot ID which is
 // used by previous iteration to retry with differnt locations.
 // NUM_PLOTS = success; NUM_PLOTS + 1 = timed out
-uint16_t
-SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
+uint16_t SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 {
 	static bool timer_running = false;
 	static clock_t timer;
@@ -1887,8 +1879,7 @@ static constexpr PlotIdMap plotIdMap[] = {
 	{"zoqfot",			   ZOQFOT_DEFINED			 }  // Alpha Tucanae
 }; // Currently 70 total (correct number)
 
-static int
-PlotIdCompare(const void* id1, const void* id2)
+static int PlotIdCompare(const void* id1, const void* id2)
 {
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "compare {} and {}.\n",
@@ -1897,8 +1888,7 @@ PlotIdCompare(const void* id1, const void* id2)
 	return strcmp(((PlotIdMap*)id1)->idStr, ((PlotIdMap*)id2)->idStr);
 }
 
-uint16_t
-PlotIdStrToIndex(const char* plotIdStr)
+uint16_t PlotIdStrToIndex(const char* plotIdStr)
 {
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "START PlotIdStrToIndex {}.\n", plotIdStr);

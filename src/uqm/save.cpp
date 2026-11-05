@@ -376,8 +376,7 @@ void SaveStarDesc(yyjson_mut_doc* doc, yyjson_mut_val* root, const STAR_DESC& SD
 
 } // namespace
 
-static void
-PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
+static void PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 {
 	SummPtr->SS = uqm::gameState().sis();
 
@@ -448,8 +447,7 @@ PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 
 static constexpr auto MaxMsgLines {1};
 
-static void
-SaveProblemMessage(STAMP* MsgStamp)
+static void SaveProblemMessage(STAMP* MsgStamp)
 {
 	GFXRECT r = {
 		{0, 0},
@@ -537,8 +535,7 @@ void SaveProblem(void)
 	DestroyDrawable(ReleaseDrawable(s.frame));
 }
 
-static void
-SaveFlagshipState(void)
+static void SaveFlagshipState(void)
 {
 	if (inHQSpace())
 	{
@@ -551,8 +548,7 @@ SaveFlagshipState(void)
 	}
 }
 
-static void
-SaveStarInfo(yyjson_mut_doc* doc, yyjson_mut_val* root)
+static void SaveStarInfo(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
 	GAME_STATE_FILE* fp {OpenStateFile(StarinfoFile, "rb")};
 	if (fp)
@@ -578,9 +574,8 @@ SaveStarInfo(yyjson_mut_doc* doc, yyjson_mut_val* root)
 	}
 }
 
-static void
-SaveBattleGroup(yyjson_mut_doc* doc, yyjson_mut_val* list, GAME_STATE_FILE* fp,
-				uint32_t encounter_id, uint32_t grpoffs)
+static void SaveBattleGroup(yyjson_mut_doc* doc, yyjson_mut_val* list, GAME_STATE_FILE* fp,
+							uint32_t encounter_id, uint32_t grpoffs)
 {
 	GROUP_HEADER h;
 	SeekStateFile(fp, grpoffs, SEEK_SET);
@@ -620,8 +615,7 @@ SaveBattleGroup(yyjson_mut_doc* doc, yyjson_mut_val* list, GAME_STATE_FILE* fp,
 	}
 }
 
-static uint32_t
-GetBattleGroupOffset(int encounterIndex)
+static uint32_t GetBattleGroupOffset(int encounterIndex)
 {
 	// The reason for this switch, even though the group offsets are
 	// successive, is because GET_GAME_STATE is a #define, which stringizes
@@ -663,8 +657,7 @@ GetBattleGroupOffset(int encounterIndex)
 	}
 }
 
-static void
-SaveGroups(yyjson_mut_doc* doc, yyjson_mut_val* root)
+static void SaveGroups(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
 	yyjson_mut_val* battleGroups {};
 	GAME_STATE_FILE* fp {OpenStateFile(RandgrpinfoFile, "rb")};
@@ -737,8 +730,7 @@ using MutDocPtr = uqstl::unique_ptr<yyjson_mut_doc, decltype(&yyjson_mut_doc_fre
 using TextPtr = uqstl::unique_ptr<char, decltype(&free)>;
 
 // Makes the save document from the game state.
-static MutDocPtr
-WriteGameDocument(const SUMMARY_DESC& summary)
+static MutDocPtr WriteGameDocument(const SUMMARY_DESC& summary)
 {
 	STAR_DESC SD {};
 	if (CurStarDescPtr())

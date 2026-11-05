@@ -55,8 +55,7 @@ void animation_preprocess(ELEMENT* ElementPtr)
 }
 
 
-STATUS_FLAGS
-inertial_thrust(ELEMENT* ElementPtr)
+STATUS_FLAGS inertial_thrust(ELEMENT* ElementPtr)
 {
 	const auto MaxAllowedSpeed = [&] {
 		return WorldToVelocity(DisplayToWorld(ResScale(18)));
@@ -438,8 +437,7 @@ void collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static bool
-spawn_ship(STARSHIP* StarShipPtr)
+static bool spawn_ship(STARSHIP* StarShipPtr)
 {
 	HELEMENT hShip {};
 

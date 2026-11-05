@@ -49,9 +49,8 @@ bool animIsInTransition(CAPTAIN_STUFF* CSPtr)
 	return (CSPtr->thrust_offset & 1) || (CSPtr->weapon_offset & 1) || (CSPtr->special_offset & 1) || (CSPtr->tl_offset & 1) || (CSPtr->tr_offset & 1);
 }
 
-static uint8_t
-CalculateAnimOffsets(CAPTAIN_STUFF* CSPtr,
-					 STATUS_FLAGS delta_status_flags, STATUS_FLAGS cur_status_flags)
+static uint8_t CalculateAnimOffsets(CAPTAIN_STUFF* CSPtr,
+									STATUS_FLAGS delta_status_flags, STATUS_FLAGS cur_status_flags)
 {
 	uint8_t redraw_flag = 0;
 
@@ -148,9 +147,8 @@ CalculateAnimOffsets(CAPTAIN_STUFF* CSPtr,
 	return redraw_flag;
 }
 
-static void
-DrawCaptainWindowAnimation(CAPTAIN_STUFF* CSPtr, int16_t y,
-						   uint8_t redraw_flag)
+static void DrawCaptainWindowAnimation(CAPTAIN_STUFF* CSPtr, int16_t y,
+									   uint8_t redraw_flag)
 {
 	STAMP Stamp;
 
@@ -203,8 +201,7 @@ DrawCaptainWindowAnimation(CAPTAIN_STUFF* CSPtr, int16_t y,
 	}
 }
 
-static void
-DrawCaptainWindowFrame(FRAME fr, int16_t y)
+static void DrawCaptainWindowFrame(FRAME fr, int16_t y)
 {
 	STAMP Stamp;
 

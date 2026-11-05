@@ -137,8 +137,7 @@ typedef struct
 SHIPS_STATE ShipState;
 
 // Count the ships in the stowed queue
-static uint16_t
-GetStowedShipCount(void)
+static uint16_t GetStowedShipCount(void)
 {
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hNextShip {};
@@ -158,8 +157,7 @@ GetStowedShipCount(void)
 
 uint16_t ShipPoints(HFLEETINFO hFleet);
 
-static void
-DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
+static void DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 {
 	GFXRECT r;
 	TEXT t;
@@ -226,8 +224,7 @@ DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 	}
 }
 
-static void
-DrawShipsDisplay(SHIPS_STATE* shipState)
+static void DrawShipsDisplay(SHIPS_STATE* shipState)
 {
 	TEXT t;
 	GFXRECT r;
@@ -285,8 +282,7 @@ DrawShipsDisplay(SHIPS_STATE* shipState)
 	}
 }
 
-static void
-DrawShips(SHIPS_STATE* shipState, uint16_t NewItem)
+static void DrawShips(SHIPS_STATE* shipState, uint16_t NewItem)
 {
 	GFXCONTEXT OldContext = SetContext(StatusContext);
 	const uint16_t pos = NewItem - shipState->topIndex;
@@ -301,8 +297,7 @@ DrawShips(SHIPS_STATE* shipState, uint16_t NewItem)
 	SetContext(OldContext);
 }
 
-static void
-ManipulateShips(int16_t NewState)
+static void ManipulateShips(int16_t NewState)
 {
 	int16_t NewTop {};
 
@@ -328,8 +323,7 @@ ManipulateShips(int16_t NewState)
 	DrawShips(shipState, NewState);
 }
 
-static void
-GetShipStats(SHIP_STATS* ship_stats, SPECIES_ID species_id)
+static void GetShipStats(SHIP_STATS* ship_stats, SPECIES_ID species_id)
 {
 	HMASTERSHIP hMasterShip = FindMasterShip(species_id);
 	const MASTER_SHIP_INFO* ShipPtr = LockMasterShip(&master_q, hMasterShip);
@@ -343,8 +337,7 @@ GetShipStats(SHIP_STATS* ship_stats, SPECIES_ID species_id)
 	UnlockMasterShip(&master_q, hMasterShip);
 }
 
-static void
-GetStowedShipStats(SHIP_STATS* ship_stats, HSHIPFRAG hStowShip)
+static void GetStowedShipStats(SHIP_STATS* ship_stats, HSHIPFRAG hStowShip)
 {
 	const SHIP_FRAGMENT* StowShipPtr = LockShipFrag(
 		&uqm::gameState().game().stowed_ship_q, hStowShip);
@@ -363,8 +356,7 @@ GetStowedShipStats(SHIP_STATS* ship_stats, HSHIPFRAG hStowShip)
 	UnlockShipFrag(&uqm::gameState().game().stowed_ship_q, hStowShip);
 }
 
-static void
-InventoryShips(SHIPS_STATE* ship_state)
+static void InventoryShips(SHIPS_STATE* ship_state)
 {
 	uint16_t i {};
 	int16_t ShipsOnBoard = 0;
@@ -405,8 +397,7 @@ InventoryShips(SHIPS_STATE* ship_state)
 	}
 }
 
-static void
-FillHangarX(void)
+static void FillHangarX(void)
 {
 	for (uint8_t i {0}; i < HangarShipsRow(); i++)
 	{
@@ -437,8 +428,7 @@ static auto WanderingX() { return (optWindowType == uqm::WindowStyle::UQM ? 2 : 
 
 static constexpr auto InitialCrew {2000};
 
-static void
-showRemainingCrew(void)
+static void showRemainingCrew(void)
 {
 	GFXRECT r;
 	TEXT t;
@@ -508,8 +498,7 @@ showRemainingCrew(void)
 	UnbatchGraphics();
 }
 
-uint16_t
-ShipPoints(HFLEETINFO hFleet)
+uint16_t ShipPoints(HFLEETINFO hFleet)
 {
 	if (!hFleet)
 	{
@@ -523,14 +512,12 @@ ShipPoints(HFLEETINFO hFleet)
 	return shipCost;
 }
 
-uint16_t
-ShipCost(uint8_t race_id)
+uint16_t ShipCost(uint8_t race_id)
 {
 	return ShipPoints(GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race_id)) * 100;
 }
 
-static int16_t
-CalculateAllyPoints()
+static int16_t CalculateAllyPoints()
 {
 	HFLEETINFO hFleet {};
 	const FLEET_INFO* FleetPtr {};
@@ -564,8 +551,7 @@ CalculateAllyPoints()
 /*
  * Returns the total point value of all the ships escorting the SIS.
  */
-uint16_t
-CalculateEscortsPoints(void)
+uint16_t CalculateEscortsPoints(void)
 {
 	uint16_t total = 0;
 	HSHIPFRAG hStarShip {};
@@ -600,8 +586,7 @@ bool CanBuyPoints(HFLEETINFO hFleet)
 	return true;
 }
 
-static void
-showRemainingPoints(int delta)
+static void showRemainingPoints(int delta)
 {
 	GFXRECT r;
 	TEXT t;
@@ -671,8 +656,7 @@ showRemainingPoints(int delta)
 	UnbatchGraphics();
 }
 
-static void
-animatePowerLines(MENU_STATE* pMS)
+static void animatePowerLines(MENU_STATE* pMS)
 {
 	static STAMP s;
 	static COLORMAP ColorMap {};
@@ -705,8 +689,7 @@ animatePowerLines(MENU_STATE* pMS)
 	}
 }
 
-static void
-SpinStarShip(MENU_STATE* pMS, HFLEETINFO hStarShip)
+static void SpinStarShip(MENU_STATE* pMS, HFLEETINFO hStarShip)
 {
 	const FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 	const int Index {FindMasterShipIndex(FleetPtr->SpeciesID)};
@@ -724,8 +707,7 @@ SpinStarShip(MENU_STATE* pMS, HFLEETINFO hStarShip)
 	DoShipSpins = false;
 }
 
-static void
-on_input_frame(void)
+static void on_input_frame(void)
 {
 	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	if (!DoShipSpins)
@@ -736,8 +718,7 @@ on_input_frame(void)
 }
 
 // Count the ships which can be built by the player.
-static uint16_t
-GetAvailableRaceCount(void)
+static uint16_t GetAvailableRaceCount(void)
 {
 	HFLEETINFO hStarShip {};
 	HFLEETINFO hNextShip {};
@@ -760,8 +741,7 @@ GetAvailableRaceCount(void)
 	return Index;
 }
 
-static HFLEETINFO
-GetAvailableRaceFromIndex(uint8_t Index)
+static HFLEETINFO GetAvailableRaceFromIndex(uint8_t Index)
 {
 	HFLEETINFO hStarShip {};
 	HFLEETINFO hNextShip {};
@@ -785,8 +765,7 @@ GetAvailableRaceFromIndex(uint8_t Index)
 	return 0;
 }
 
-static void
-DrawShipyardShipText(GFXRECT* r, int Index)
+static void DrawShipyardShipText(GFXRECT* r, int Index)
 {
 	char race_name[64];
 	char ship_name[64];
@@ -855,8 +834,7 @@ DrawShipyardShipText(GFXRECT* r, int Index)
 	SetContextForeGroundColor(OldColor);
 }
 
-static void
-DrawRaceStrings(uint8_t NewRaceItem)
+static void DrawRaceStrings(uint8_t NewRaceItem)
 {
 	GFXRECT r;
 	GFXRECT textRect;
@@ -1090,8 +1068,7 @@ static auto ShipWinFrames() { return ((ShipWinWidth() >> 1) + 1); }
 // image, either as '30' (full), '28/30' (partially full), or 'SCRAP'
 // (empty).
 // pRect is the rectangle of the ship image.
-static void
-ShowShipCrew(SHIP_FRAGMENT* StarShipPtr, const GFXRECT* pRect)
+static void ShowShipCrew(SHIP_FRAGMENT* StarShipPtr, const GFXRECT* pRect)
 {
 	GFXRECT r;
 	TEXT t;
@@ -1180,9 +1157,8 @@ ShowShipCrew(SHIP_FRAGMENT* StarShipPtr, const GFXRECT* pRect)
 	}
 }
 
-static void
-ShowCombatShip(MENU_STATE* pMS, uint16_t which_window,
-			   SHIP_FRAGMENT* YankedStarShipPtr)
+static void ShowCombatShip(MENU_STATE* pMS, uint16_t which_window,
+						   SHIP_FRAGMENT* YankedStarShipPtr)
 {
 	uint16_t i {};
 	HSHIPFRAG hStarShip {};
@@ -1364,8 +1340,7 @@ ShowCombatShip(MENU_STATE* pMS, uint16_t which_window,
 	}
 }
 
-static void
-CrewTransaction(int16_t crew_delta)
+static void CrewTransaction(int16_t crew_delta)
 {
 	if (crew_delta)
 	{
@@ -1414,8 +1389,7 @@ CrewTransaction(int16_t crew_delta)
 	}
 }
 
-static void
-DMS_FlashFlagShip(void)
+static void DMS_FlashFlagShip(void)
 {
 	GFXRECT r;
 	r.corner.x = 0;
@@ -1432,8 +1406,7 @@ DMS_FlashFlagShip(void)
 	SetFlashRect(&r, uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC);
 }
 
-static void
-DMS_GetEscortShipRect(GFXRECT* rOut, uint8_t slotNr)
+static void DMS_GetEscortShipRect(GFXRECT* rOut, uint8_t slotNr)
 {
 	const uint8_t row = slotNr / HangarShipsRow();
 	const uint8_t col = slotNr % HangarShipsRow();
@@ -1444,16 +1417,14 @@ DMS_GetEscortShipRect(GFXRECT* rOut, uint8_t slotNr)
 	rOut->extent.height = ShipWinHeight();
 }
 
-static void
-DMS_FlashEscortShip(uint8_t slotNr)
+static void DMS_FlashEscortShip(uint8_t slotNr)
 {
 	GFXRECT r;
 	DMS_GetEscortShipRect(&r, slotNr);
 	SetFlashRect(&r, uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC);
 }
 
-static void
-DMS_FlashFlagShipCrewCount(void)
+static void DMS_FlashFlagShipCrewCount(void)
 {
 	GFXRECT r;
 	SetContext(StatusContext);
@@ -1462,8 +1433,7 @@ DMS_FlashFlagShipCrewCount(void)
 	SetContext(SpaceContext);
 }
 
-static void
-DMS_FlashEscortShipCrewCount(uint8_t slotNr)
+static void DMS_FlashEscortShipCrewCount(uint8_t slotNr)
 {
 	GFXRECT r;
 	const uint8_t row = slotNr / HangarShipsRow();
@@ -1481,8 +1451,7 @@ DMS_FlashEscortShipCrewCount(uint8_t slotNr)
 
 // Helper function for DoModifyShips(). Called to change the flash
 // rectangle to the currently selected ship (flagship or escort ship).
-static void
-DMS_FlashActiveShip(MENU_STATE* pMS)
+static void DMS_FlashActiveShip(MENU_STATE* pMS)
 {
 	if (uqm::highNibble(pMS->CurState))
 	{
@@ -1501,8 +1470,7 @@ DMS_FlashActiveShip(MENU_STATE* pMS)
 // XXX: right now, this only switches the sound and flash rectangle.
 // Perhaps we should move more of the code to modify other aspects
 // here too.
-static void
-DMS_SetMode(MENU_STATE* pMS, DMS_Mode mode)
+static void DMS_SetMode(MENU_STATE* pMS, DMS_Mode mode)
 {
 	switch (mode)
 	{
@@ -1542,8 +1510,7 @@ static constexpr auto ModifyCrewFlag {(1 << 8)};
 // the crew, and when a new ship is added.
 // hStarShip is the ship in the slot under the cursor
 // (or 0 if no such ship).
-static bool
-DMS_SpinShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
+static bool DMS_SpinShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 {
 	HFLEETINFO hSpinShip = 0;
 	GFXRECT OldClipRect;
@@ -1608,8 +1575,7 @@ DMS_SpinShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 // up button when modifying the crew of the flagship.
 // Buy crew for the flagship.
 // Returns the change in crew (1 on success, 0 on failure).
-static int16_t
-DMS_HireFlagShipCrew(void)
+static int16_t DMS_HireFlagShipCrew(void)
 {
 	GFXRECT r;
 	int16_t crew_bought {};
@@ -1656,8 +1622,7 @@ DMS_HireFlagShipCrew(void)
 // down button when modifying the crew of the flagship.
 // Dismiss crew from the flagship.
 // Returns the change in crew (-1 on success, 0 on failure).
-static int16_t
-DMS_DismissFlagShipCrew(void)
+static int16_t DMS_DismissFlagShipCrew(void)
 {
 	int16_t crew_bought {};
 	GFXRECT r;
@@ -1692,8 +1657,7 @@ DMS_DismissFlagShipCrew(void)
 // up button when modifying the crew of an escort ship.
 // Buy crew for an escort ship
 // Returns the change in crew (1 on success, 0 on failure).
-static int16_t
-DMS_HireEscortShipCrew(SHIP_FRAGMENT* StarShipPtr)
+static int16_t DMS_HireEscortShipCrew(SHIP_FRAGMENT* StarShipPtr)
 {
 	uint16_t templateMaxCrew {};
 	GFXRECT r;
@@ -1767,8 +1731,7 @@ DMS_HireEscortShipCrew(SHIP_FRAGMENT* StarShipPtr)
 // down button when modifying the crew of an escort ship.
 // Dismiss crew from an escort ship
 // Returns the change in crew (-1 on success, 0 on failure).
-static int16_t
-DMS_DismissEscortShipCrew(SHIP_FRAGMENT* StarShipPtr)
+static int16_t DMS_DismissEscortShipCrew(SHIP_FRAGMENT* StarShipPtr)
 {
 	int16_t crew_delta = 0;
 	GFXRECT r;
@@ -1821,8 +1784,7 @@ DMS_DismissEscortShipCrew(SHIP_FRAGMENT* StarShipPtr)
 // 'hStarShip' is the currently escort ship, or 0 if no ship is selected.
 // 'dy' is -1 if the 'up' button was pressed, or '1' if the down button was
 // pressed.
-static void
-DMS_ModifyCrew(MENU_STATE* pMS, HSHIPFRAG hStarShip, int8_t dy)
+static void DMS_ModifyCrew(MENU_STATE* pMS, HSHIPFRAG hStarShip, int8_t dy)
 {
 	int16_t crew_delta = 0;
 	SHIP_FRAGMENT* StarShipPtr = nullptr;
@@ -1946,8 +1908,7 @@ DMS_ModifyCrew(MENU_STATE* pMS, HSHIPFRAG hStarShip, int8_t dy)
 // Helper function for DoModifyShips(), called when the player presses the
 // select button when the cursor is over an empty escort ship slot.
 // Try to add the currently selected ship as an escort ship.
-static void
-DMS_TryAddEscortShip(MENU_STATE* pMS)
+static void DMS_TryAddEscortShip(MENU_STATE* pMS)
 {
 	HFLEETINFO hFleet = GetAvailableRaceFromIndex(
 		uqm::lowByte(pMS->delta_item));
@@ -1980,8 +1941,7 @@ DMS_TryAddEscortShip(MENU_STATE* pMS)
 // Helper function for DoModifyShips(), called when the player presses the
 // select button when the cursor is over an empty escort ship slot.
 // Try to moving the currently selected ship from storage as an escort ship.
-static void
-DMS_TryUnstowEscortShip(MENU_STATE* pMS)
+static void DMS_TryUnstowEscortShip(MENU_STATE* pMS)
 {
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hStowShip = GetStarShipFromIndex(&uqm::gameState().game().stowed_ship_q,
@@ -2037,9 +1997,8 @@ DMS_TryUnstowEscortShip(MENU_STATE* pMS)
 // empty slot).
 // lowByte (pMS->delta_item) is used to store the currently highlighted
 // ship. Returns false if the flash rectangle needs to be updated.
-static void
-DMS_AddEscortShip(MENU_STATE* pMS, bool special, bool select,
-				  bool cancel, int8_t dx, int8_t dy)
+static void DMS_AddEscortShip(MENU_STATE* pMS, bool special, bool select,
+							  bool cancel, int8_t dx, int8_t dy)
 {
 	assert(pMS->delta_item & ModifyCrewFlag);
 
@@ -2146,8 +2105,7 @@ DMS_AddEscortShip(MENU_STATE* pMS, bool special, bool select,
 
 // Helper function for DoModifyShips(), called when the player presses
 // 'select' or 'cancel' after selling all the crew.
-static void
-DMS_ScrapEscortShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
+static void DMS_ScrapEscortShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 {
 	SHIP_FRAGMENT* StarShipPtr =
 		LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
@@ -2170,8 +2128,7 @@ DMS_ScrapEscortShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 
 // Helper function for DoModifyShips(), called when the player presses
 // 'select' or 'cancel' after selling all the crew.
-static void
-DMS_StowEscortShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
+static void DMS_StowEscortShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 {
 	HSHIPFRAG hStowShip {};
 	SHIP_FRAGMENT* StarShipPtr =
@@ -2206,8 +2163,7 @@ DMS_StowEscortShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 
 // Helper function for DoModifyShips(), called when the player presses
 // one of the motion keys when not in crew modification mode.
-static uint8_t
-DMS_MoveCursor(uint8_t curState, int8_t dx, int8_t dy)
+static uint8_t DMS_MoveCursor(uint8_t curState, int8_t dx, int8_t dy)
 {
 	uint8_t row = uqm::lowNibble(curState) / HangarShipsRow();
 	uint8_t col = uqm::lowNibble(curState) % HangarShipsRow();
@@ -2251,9 +2207,8 @@ DMS_MoveCursor(uint8_t curState, int8_t dx, int8_t dy)
 
 // Helper function for DoModifyShips(), called every time DoModifyShip() is
 // called when we are in crew editing mode.
-static void
-DMS_EditCrewMode(MENU_STATE* pMS, HSHIPFRAG hStarShip,
-				 bool select, bool cancel, int8_t dy)
+static void DMS_EditCrewMode(MENU_STATE* pMS, HSHIPFRAG hStarShip,
+							 bool select, bool cancel, int8_t dy)
 {
 	if (cancel)
 	{
@@ -2339,9 +2294,8 @@ DMS_EditCrewMode(MENU_STATE* pMS, HSHIPFRAG hStarShip,
 // Helper function for DoModifyShips(), called every time DoModifyShip() is
 // called when we are in the mode where you can select a ship or empty
 // slot.
-static void
-DMS_NavigateShipSlots(MENU_STATE* pMS, bool special, bool select,
-					  bool cancel, int8_t dx, int8_t dy)
+static void DMS_NavigateShipSlots(MENU_STATE* pMS, bool special, bool select,
+								  bool cancel, int8_t dx, int8_t dy)
 {
 	HSHIPFRAG hStarShip = GetEscortByStarShipIndex(pMS->CurState);
 
@@ -2406,8 +2360,7 @@ DMS_NavigateShipSlots(MENU_STATE* pMS, bool special, bool select,
  * some bitwise math is still done to scroll through ships, for it to work
  * ships per row number must divide 0xf0 without remainder
  */
-static bool
-DoModifyShips(MENU_STATE* pMS)
+static bool DoModifyShips(MENU_STATE* pMS)
 {
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -2544,8 +2497,7 @@ DoModifyShips(MENU_STATE* pMS)
 	return true;
 }
 
-static void
-DrawBluePrint(MENU_STATE* pMS)
+static void DrawBluePrint(MENU_STATE* pMS)
 {
 	uint16_t num_frames {};
 	STAMP s;

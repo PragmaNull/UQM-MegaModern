@@ -159,8 +159,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 }
 
 
-static void
-CreatePlanetContext(void)
+static void CreatePlanetContext(void)
 {
 	GFXRECT r;
 
@@ -179,8 +178,7 @@ CreatePlanetContext(void)
 	SetContext(oldContext);
 }
 
-static void
-DestroyPlanetContext(void)
+static void DestroyPlanetContext(void)
 {
 	if (PlanetContext)
 	{
@@ -318,8 +316,7 @@ typedef enum
 
 } DRAW_ORBITAL_MODE;
 
-static void
-DrawEnterOrbitText(GFXRECT rect)
+static void DrawEnterOrbitText(GFXRECT rect)
 {
 	TEXT text;
 	FRAME OldFontEffect {};
@@ -433,8 +430,7 @@ void DrawOrbitMapGraphic(void)
 #endif
 }
 
-static void
-DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
+static void DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 {
 	GFXRECT r;
 
@@ -630,8 +626,7 @@ void FreeLanderFont(PLANET_INFO* info)
 	info->LanderFontEff = nullptr;
 }
 
-static bool
-DoPlanetOrbit(MENU_STATE* pMS)
+static bool DoPlanetOrbit(MENU_STATE* pMS)
 {
 	bool select = (bool)PulsedInputState.menu[KEY_MENU_SELECT];
 
@@ -731,8 +726,7 @@ DoPlanetOrbit(MENU_STATE* pMS)
 	return true;
 }
 
-static void
-on_input_frame(void)
+static void on_input_frame(void)
 {
 	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{

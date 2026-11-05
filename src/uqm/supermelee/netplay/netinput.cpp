@@ -37,14 +37,12 @@ void setBattleInputDelay(size_t delay)
 	BattleInput_inputDelay = delay;
 }
 
-size_t
-getBattleInputDelay(void)
+size_t getBattleInputDelay(void)
 {
 	return BattleInput_inputDelay;
 }
 
-static void
-BattleInputBuffer_init(BattleInputBuffer* bib, size_t bufSize)
+static void BattleInputBuffer_init(BattleInputBuffer* bib, size_t bufSize)
 {
 	bib->buf = (BATTLE_INPUT_STATE*)malloc(bufSize * sizeof(BATTLE_INPUT_STATE));
 	bib->maxSize = bufSize;
@@ -52,8 +50,7 @@ BattleInputBuffer_init(BattleInputBuffer* bib, size_t bufSize)
 	bib->size = 0;
 }
 
-static void
-BattleInputBuffer_uninit(BattleInputBuffer* bib)
+static void BattleInputBuffer_uninit(BattleInputBuffer* bib)
 {
 	if (bib->buf != nullptr)
 	{
@@ -139,8 +136,7 @@ bool BattleInputBuffer_pop(BattleInputBuffer* bib, BATTLE_INPUT_STATE* input)
 	return true;
 }
 
-BattleInputBuffer*
-getBattleInputBuffer(size_t player)
+BattleInputBuffer* getBattleInputBuffer(size_t player)
 {
 	return &battleInputBuffers[player];
 }

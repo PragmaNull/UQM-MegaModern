@@ -83,8 +83,7 @@ inline constexpr auto MaxRevolutions {5};
 inline constexpr auto StationRadius {1600};
 inline constexpr auto OrbitRadius {2400};
 
-static inline IP_GROUP*
-LockIpGroup(const QUEUE* pq, HIPGROUP h)
+static inline IP_GROUP* LockIpGroup(const QUEUE* pq, HIPGROUP h)
 {
 	assert(GetLinkSize(pq) == sizeof(IP_GROUP));
 	return (IP_GROUP*)LockLink(pq, h);

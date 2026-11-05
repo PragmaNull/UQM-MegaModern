@@ -79,8 +79,7 @@ void ReinitQueue(QUEUE* pq)
 	}
 }
 
-HLINK
-AllocLink(QUEUE* pq)
+HLINK AllocLink(QUEUE* pq)
 {
 	HLINK hLink {GetFreeList(pq)};
 	if (hLink)
@@ -187,8 +186,7 @@ void RemoveQueue(QUEUE* pq, HLINK hLink)
 	UnlockLink(pq, hLink);
 }
 
-uint16_t
-CountLinks(QUEUE* pq)
+uint16_t CountLinks(QUEUE* pq)
 {
 	HLINK hNextLink {};
 

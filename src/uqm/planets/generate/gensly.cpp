@@ -47,8 +47,7 @@ const GenerateFunctions generateSlylandroFunctions = {
 };
 
 
-static bool
-GenerateSlylandro_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateSlylandro_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
@@ -71,9 +70,8 @@ GenerateSlylandro_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateSlylandro_generateName(const SOLARSYS_STATE* solarSys,
-							   const PLANET_DESC* world)
+static bool GenerateSlylandro_generateName(const SOLARSYS_STATE* solarSys,
+										   const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
@@ -93,9 +91,8 @@ GenerateSlylandro_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateSlylandro_generateOrbital(SOLARSYS_STATE* solarSys,
-								  PLANET_DESC* world)
+static bool GenerateSlylandro_generateOrbital(SOLARSYS_STATE* solarSys,
+											  PLANET_DESC* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{

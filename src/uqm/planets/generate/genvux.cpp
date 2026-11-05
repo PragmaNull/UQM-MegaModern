@@ -64,8 +64,7 @@ const GenerateFunctions generateVuxFunctions = {
 };
 
 
-static bool
-GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
@@ -140,8 +139,7 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
+static bool GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
 	if ((matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		 && (CurStarDescPtr()->Index == VUX_DEFINED
@@ -233,9 +231,8 @@ GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 	return true;
 }
 
-static uint16_t
-GenerateVux_generateEnergy(const SOLARSYS_STATE* solarSys,
-						   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateVux_generateEnergy(const SOLARSYS_STATE* solarSys,
+										   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -265,9 +262,8 @@ GenerateVux_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateVux_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						 uint16_t whichNode)
+static bool GenerateVux_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									 uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -297,9 +293,8 @@ GenerateVux_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 
 static auto LifeBool() { return (IsExtended() && uqm::gameState().flag(uqm::GameFlag::VUX_BEAST)); }
 
-static uint16_t
-GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
-						 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
+										 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -342,9 +337,8 @@ GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
 	return GenerateDefault_generateLife(solarSys, world, whichNode, info);
 }
 
-static bool
-GenerateVux_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-					   uint16_t whichNode)
+static bool GenerateVux_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+								   uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == VUX_BEAST_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))

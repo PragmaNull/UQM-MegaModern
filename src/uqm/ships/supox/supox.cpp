@@ -125,9 +125,8 @@ static RACE_DESC supox_desc =
 		0, /* CodeRef */
 };
 
-static void
-supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				   uint16_t ConcernCounter)
+static void supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							   uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -205,8 +204,7 @@ supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static uint16_t
-initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
+static uint16_t initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -229,8 +227,7 @@ initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 	return (1);
 }
 
-static void
-supox_preprocess(ELEMENT* ElementPtr)
+static void supox_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -300,8 +297,7 @@ supox_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_supox(void)
+RACE_DESC* init_supox(void)
 {
 	if (IsHd())
 	{

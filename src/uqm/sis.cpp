@@ -640,8 +640,7 @@ void DrawStatusMessage(const char* pStr)
 	SetContext(OldContext);
 }
 
-StatMsgMode
-SetStatusMessageMode(StatMsgMode newMode)
+StatMsgMode SetStatusMessageMode(StatMsgMode newMode)
 {
 	const StatMsgMode oldMode = curMsgMode;
 	curMsgMode = newMode;
@@ -966,8 +965,7 @@ void DrawFlagshipStats(void)
 	SetContext(OldContext);
 }
 
-const static char*
-describeWeapon(uint8_t moduleType)
+const static char* describeWeapon(uint8_t moduleType)
 {
 	switch (moduleType)
 	{
@@ -1152,8 +1150,7 @@ void GetGaugeRect(GFXRECT* pRect, bool IsCrewRect)
 //	font_DrawText (&t);
 //}
 
-static void
-Draw_SIS(void)
+static void Draw_SIS(void)
 {
 	TEXT t;
 	GFXRECT r;
@@ -1206,8 +1203,7 @@ Draw_SIS(void)
 	font_DrawText(&t);
 }
 
-static void
-DrawThrusters(void)
+static void DrawThrusters(void)
 {
 	STAMP s;
 
@@ -1228,8 +1224,7 @@ DrawThrusters(void)
 	}
 }
 
-static void
-DrawTurningJets(void)
+static void DrawTurningJets(void)
 {
 	STAMP s;
 
@@ -1250,8 +1245,7 @@ DrawTurningJets(void)
 	}
 }
 
-static void
-DrawModules(void)
+static void DrawModules(void)
 {
 	STAMP s;
 
@@ -1271,8 +1265,7 @@ DrawModules(void)
 	}
 }
 
-static void
-DrawSupportShips(void)
+static void DrawSupportShips(void)
 {
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hNextShip {};
@@ -1297,8 +1290,7 @@ DrawSupportShips(void)
 	}
 }
 
-static void
-DeltaSISGauges_crewDelta(int16_t crew_delta)
+static void DeltaSISGauges_crewDelta(int16_t crew_delta)
 {
 	if (crew_delta == 0)
 	{
@@ -1348,8 +1340,7 @@ DeltaSISGauges_crewDelta(int16_t crew_delta)
 	}
 }
 
-static void
-DeltaSISGauges_fuelDelta(int32_t fuel_delta)
+static void DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 {
 	uint32_t OldCoarseFuel {};
 
@@ -1423,8 +1414,7 @@ DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 	}
 }
 
-static void
-DeltaSISGauges_resunitDelta(int16_t resunit_delta)
+static void DeltaSISGauges_resunitDelta(int16_t resunit_delta)
 {
 	if (resunit_delta == 0)
 	{
@@ -1459,8 +1449,7 @@ DeltaSISGauges_resunitDelta(int16_t resunit_delta)
 	DrawStatusMessage(nullptr);
 }
 
-static bool
-isUndefinedDelta(int16_t size, int32_t sdword, int integer)
+static bool isUndefinedDelta(int16_t size, int32_t sdword, int integer)
 {
 
 	return ((size && sdword && integer) && (size == UndefinedDelta || sdword == UndefinedDelta || integer == UndefinedDelta));
@@ -1533,15 +1522,13 @@ void DeltaSISGauges(int16_t crew_delta, int32_t fuel_delta, int resunit_delta)
 ////////////////////////////////////////////////////////////////////////////
 
 // Get the total amount of crew aboard the SIS.
-uint16_t
-GetCrewCount(void)
+uint16_t GetCrewCount(void)
 {
 	return uqm::gameState().sis().CrewEnlisted;
 }
 
 // Get the number of crew which fit in a module of a specified type.
-uint16_t
-GetModuleCrewCapacity(uint8_t moduleType)
+uint16_t GetModuleCrewCapacity(uint8_t moduleType)
 {
 	if (moduleType == CREW_POD)
 	{
@@ -1552,8 +1539,7 @@ GetModuleCrewCapacity(uint8_t moduleType)
 }
 
 // Gets the amount of crew which currently fit in the ship's crew pods.
-uint16_t
-GetCrewPodCapacity(void)
+uint16_t GetCrewPodCapacity(void)
 {
 	uint16_t capacity = 0;
 
@@ -1570,8 +1556,7 @@ GetCrewPodCapacity(void)
 // where the Nth crew member would be located.
 // If the crew member does not fit, false is returned, and *slotNr and
 // *seatNr are unchanged.
-static bool
-GetCrewPodForCrewMember(uint16_t crewNr, uint16_t* slotNr, uint16_t* seatNr)
+static bool GetCrewPodForCrewMember(uint16_t crewNr, uint16_t* slotNr, uint16_t* seatNr)
 {
 	uint16_t capacity = 0;
 
@@ -1597,8 +1582,7 @@ GetCrewPodForCrewMember(uint16_t crewNr, uint16_t* slotNr, uint16_t* seatNr)
 // set the foreground color to the color for that crew member,
 // and return GetCrewPodCapacity ().
 // TODO: Split of the parts of this function into separate functions.
-uint16_t
-GetCPodCapacity(GFXPOINT* ppt)
+uint16_t GetCPodCapacity(GFXPOINT* ppt)
 {
 	uint16_t slotNr {};
 	uint16_t seatNr {};
@@ -1639,15 +1623,13 @@ GetCPodCapacity(GFXPOINT* ppt)
 ////////////////////////////////////////////////////////////////////////////
 
 // Get the total amount of minerals aboard the SIS.
-static uint16_t
-GetElementMass(void)
+static uint16_t GetElementMass(void)
 {
 	return uqm::gameState().sis().TotalElementMass;
 }
 
 // Get the number of crew which fit in a module of a specified type.
-uint16_t
-GetModuleStorageCapacity(uint8_t moduleType)
+uint16_t GetModuleStorageCapacity(uint8_t moduleType)
 {
 	if (moduleType == STORAGE_BAY)
 	{
@@ -1658,8 +1640,7 @@ GetModuleStorageCapacity(uint8_t moduleType)
 }
 
 // Gets the amount of minerals which currently fit in the ship's storage.
-uint16_t
-GetStorageBayCapacity(void)
+uint16_t GetStorageBayCapacity(void)
 {
 	uint16_t capacity = 0;
 
@@ -1676,8 +1657,7 @@ GetStorageBayCapacity(void)
 // storage bay, where the N-1th mineral unit would be located.
 // If the mineral unit does not fit, false is returned, and *slotNr and
 // *cellNr are unchanged.
-static bool
-GetStorageCellForMineralUnit(uint16_t unitNr, uint16_t* slotNr, uint16_t* cellNr)
+static bool GetStorageCellForMineralUnit(uint16_t unitNr, uint16_t* slotNr, uint16_t* cellNr)
 {
 	uint16_t capacity = 0;
 
@@ -1703,8 +1683,7 @@ GetStorageCellForMineralUnit(uint16_t unitNr, uint16_t* slotNr, uint16_t* cellNr
 // set the foreground color to the color for that mineral unit,
 // and return GetStorageBayCapacity ().
 // TODO: Split of the parts of this function into separate functions.
-uint16_t
-GetSBayCapacity(GFXPOINT* ppt)
+uint16_t GetSBayCapacity(GFXPOINT* ppt)
 {
 	uint16_t slotNr {};
 	uint16_t cellNr {};
@@ -1745,15 +1724,13 @@ GetSBayCapacity(GFXPOINT* ppt)
 ////////////////////////////////////////////////////////////////////////////
 
 // Get the total amount of fuel aboard the SIS.
-static uint32_t
-GetFuelTotal(void)
+static uint32_t GetFuelTotal(void)
 {
 	return uqm::gameState().sis().FuelOnBoard;
 }
 
 // Get the amount of fuel which fits in a module of a specified type.
-uint32_t
-GetModuleFuelCapacity(uint8_t moduleType)
+uint32_t GetModuleFuelCapacity(uint8_t moduleType)
 {
 	if (moduleType == FUEL_TANK)
 	{
@@ -1769,8 +1746,7 @@ GetModuleFuelCapacity(uint8_t moduleType)
 }
 
 // Gets the amount of fuel which currently fits in the ship's fuel tanks.
-uint32_t
-GetFuelTankCapacity(void)
+uint32_t GetFuelTankCapacity(void)
 {
 	uint32_t capacity = FuelReserve;
 
@@ -1788,8 +1764,7 @@ GetFuelTankCapacity(void)
 // If the unit does not fit, false is returned, and *slotNr and
 // *compartmentNr are unchanged.
 // Pre: unitNr >= FUEL_RESERER
-static bool
-GetFuelTankForFuelUnit(uint32_t unitNr, uint16_t* slotNr, uint32_t* compartmentNr)
+static bool GetFuelTankForFuelUnit(uint32_t unitNr, uint16_t* slotNr, uint32_t* compartmentNr)
 {
 	uint32_t capacity = FuelReserve;
 
@@ -1814,8 +1789,7 @@ GetFuelTankForFuelUnit(uint32_t unitNr, uint16_t* slotNr, uint32_t* compartmentN
 
 // Get the point where to draw the next fuel unit, set the foreground color
 // to the color for that unit, and return GetFuelTankCapacity ().
-static uint32_t
-GetFTankScreenPos(GFXPOINT* ppt)
+static uint32_t GetFTankScreenPos(GFXPOINT* ppt)
 {
 	uint16_t slotNr {};
 	uint32_t compartmentNr {};
@@ -1864,8 +1838,7 @@ GetFTankScreenPos(GFXPOINT* ppt)
 
 ///////////////////////////////////////////////////////////////////////////
 
-uint16_t
-CountSISPieces(uint8_t piece_type)
+uint16_t CountSISPieces(uint8_t piece_type)
 {
 	uint16_t i {};
 
@@ -1906,8 +1879,7 @@ CountSISPieces(uint8_t piece_type)
 
 static constexpr auto MaxCluster {45}; // "Epsilon Camelopardalis" x 2 + null terminator
 
-static void
-AutoPilotTextLogic(void)
+static void AutoPilotTextLogic(void)
 {
 	char buf[PATH_MAX];
 	char star_cluster[MaxCluster];
@@ -2166,8 +2138,7 @@ static uint8_t count_r = NumRects;
 
 static void scheduleFlashAlarm(void);
 
-static void
-updateFlashRect(void* arg)
+static void updateFlashRect(void* arg)
 {
 	if (flashContext[0] == nullptr)
 	{
@@ -2182,8 +2153,7 @@ updateFlashRect(void* arg)
 	(void)arg;
 }
 
-static void
-scheduleFlashAlarm(void)
+static void scheduleFlashAlarm(void)
 {
 	const TimeCount nextTime {Flash_nextTime(flashContext[0])};
 	const AlarmTime alarmTime {nextTime == TimeCount::max() ? AlarmTime::max() : uqstl::chrono::duration_cast<AlarmTime>(nextTime.time_since_epoch())};

@@ -68,8 +68,7 @@ static void Flash_drawCurrentFrame(FlashContext* context);
 static GFXCONTEXT workGfxContext;
 // Off-screen internal drawing context
 
-static FlashContext*
-Flash_create(GFXCONTEXT gfxContext)
+static FlashContext* Flash_create(GFXCONTEXT gfxContext)
 {
 	auto* context {new FlashContext {}};
 
@@ -111,8 +110,7 @@ Flash_create(GFXCONTEXT gfxContext)
 // 'startNumer / denom' is the brightness in the start state of the sequence.
 // 'endNumer / denom' is the brightness in the end state of the sequence.
 // These numbers are relative to the brighness of the original image.
-FlashContext*
-Flash_createHighlight(GFXCONTEXT gfxContext, const GFXRECT* rect)
+FlashContext* Flash_createHighlight(GFXCONTEXT gfxContext, const GFXRECT* rect)
 {
 	FlashContext* context = Flash_create(gfxContext);
 
@@ -134,9 +132,8 @@ Flash_createHighlight(GFXCONTEXT gfxContext, const GFXRECT* rect)
 	return context;
 }
 
-FlashContext*
-Flash_createTransition(GFXCONTEXT gfxContext, const GFXPOINT* origin,
-					   FRAME first, FRAME final)
+FlashContext* Flash_createTransition(GFXCONTEXT gfxContext, const GFXPOINT* origin,
+									 FRAME first, FRAME final)
 {
 	FlashContext* context = Flash_create(gfxContext);
 
@@ -150,8 +147,7 @@ Flash_createTransition(GFXCONTEXT gfxContext, const GFXPOINT* origin,
 	return context;
 }
 
-FlashContext*
-Flash_createOverlay(GFXCONTEXT gfxContext, const GFXPOINT* origin, FRAME overlay)
+FlashContext* Flash_createOverlay(GFXCONTEXT gfxContext, const GFXPOINT* origin, FRAME overlay)
 {
 	FlashContext* context = Flash_create(gfxContext);
 
@@ -246,8 +242,7 @@ void Flash_continue(FlashContext* context)
 
 // Change the state to the next state as long as the current state has
 // a zero-time duration.
-static void
-Flash_fixState(FlashContext* context)
+static void Flash_fixState(FlashContext* context)
 {
 	TimePeriod stateTime {};
 
@@ -276,8 +271,7 @@ Flash_fixState(FlashContext* context)
 	}
 }
 
-static void
-Flash_nextState(FlashContext* context)
+static void Flash_nextState(FlashContext* context)
 {
 	context->state = (FlashState)((context->state + 1) & 0x3);
 	Flash_fixState(context);
@@ -397,8 +391,7 @@ bool Flash_getPulseBox(FlashContext* context)
 }
 
 // Returns the time when the flash area is to be updated.
-TimeCount
-Flash_nextTime(FlashContext* context)
+TimeCount Flash_nextTime(FlashContext* context)
 {
 	if (!context->started || context->paused)
 	{
@@ -426,8 +419,7 @@ Flash_nextTime(FlashContext* context)
 	}
 }
 
-static void
-Flash_clearCache(FlashContext* context)
+static void Flash_clearCache(FlashContext* context)
 {
 #ifdef BEGIN_AND_END_FRAME_EXCEPTIONS
 	if (context->type == FlashType_transition || context->type == FlashType_overlay)
@@ -533,8 +525,7 @@ void Flash_postUpdate(FlashContext* context)
 }
 
 // Pre: context->original has been initialised.
-static void
-Flash_initCache(FlashContext* context)
+static void Flash_initCache(FlashContext* context)
 {
 	context->cache.assign(context->cacheSize, nullptr);
 }
@@ -557,14 +548,12 @@ void Flash_setCacheSize(FlashContext* context, uint16_t size)
 	}
 }
 
-uint16_t
-Flash_getCacheSize(const FlashContext* context)
+uint16_t Flash_getCacheSize(const FlashContext* context)
 {
 	return context->cacheSize;
 }
 
-static void
-Flash_grabOriginal(FlashContext* context)
+static void Flash_grabOriginal(FlashContext* context)
 {
 	if (context->original != (FRAME)0)
 	{
@@ -585,9 +574,8 @@ void Flash_UpdateOriginal(FlashContext* context)
 	Flash_grabOriginal(context);
 }
 
-static inline void
-Flash_blendFraction(FlashContext* context, int numer, int denom,
-					int* resNumer, int* resDenom)
+static inline void Flash_blendFraction(FlashContext* context, int numer, int denom,
+									   int* resNumer, int* resDenom)
 {
 	// This function merges two fractions (F0 and F1),
 	// based on another fraction (P) (yielding R).
@@ -604,8 +592,7 @@ Flash_blendFraction(FlashContext* context, int numer, int denom,
 	*resDenom = denom * context->denom;
 }
 
-static void
-Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int denom)
+static void Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int denom)
 {
 	STAMP s;
 	int blendedNumer {};
@@ -684,8 +671,7 @@ Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int denom)
 }
 
 // Prepare an entry in the cache.
-static inline void
-Flash_prepareCacheFrame(FlashContext* context, uint16_t index)
+static inline void Flash_prepareCacheFrame(FlashContext* context, uint16_t index)
 {
 	if (context->cache[index] != (FRAME)0)
 	{
@@ -739,8 +725,7 @@ Color GetFlashPCColor(void)
 	return cycle_tab[cycle_index];
 }
 
-static void
-Flash_drawFrame(FlashContext* context, FRAME frame, bool pcRect)
+static void Flash_drawFrame(FlashContext* context, FRAME frame, bool pcRect)
 {
 	STAMP stamp;
 
@@ -763,8 +748,7 @@ Flash_drawFrame(FlashContext* context, FRAME frame, bool pcRect)
 	SetContext(oldGfxContext);
 }
 
-static void
-Flash_drawCacheFrame(FlashContext* context, uint16_t index)
+static void Flash_drawCacheFrame(FlashContext* context, uint16_t index)
 {
 	if (context->lastFrameIndex == index)
 	{
@@ -778,8 +762,7 @@ Flash_drawCacheFrame(FlashContext* context, uint16_t index)
 	context->lastFrameIndex = index;
 }
 
-static inline void
-Flash_drawUncachedFrame(FlashContext* context, int numer, int denom)
+static inline void Flash_drawUncachedFrame(FlashContext* context, int numer, int denom)
 {
 #ifdef BEGIN_AND_END_FRAME_EXCEPTIONS
 	// 'lastFrameIndex' is 0 for the first image, 1 for the final
@@ -835,8 +818,7 @@ Flash_drawUncachedFrame(FlashContext* context, int numer, int denom)
 	}
 }
 
-static inline void
-Flash_drawCachedFrame(FlashContext* context, int numer, int denom)
+static inline void Flash_drawCachedFrame(FlashContext* context, int numer, int denom)
 {
 	uint16_t cachePos {};
 
@@ -845,8 +827,7 @@ Flash_drawCachedFrame(FlashContext* context, int numer, int denom)
 	Flash_drawCacheFrame(context, cachePos);
 }
 
-static void
-Flash_drawCurrentFrame(FlashContext* context)
+static void Flash_drawCurrentFrame(FlashContext* context)
 {
 	int numer {};
 	int denom {};

@@ -223,28 +223,24 @@ inline auto LogUnitsY() { return ((int32_t)(UniverseUnitsY * ResScale(16))); }
 
 constexpr auto RoundingError(const auto& div) { return ((div) >> 1); }
 
-static inline int32_t
-logxToUniverse(int32_t lx)
+static inline int32_t logxToUniverse(int32_t lx)
 {
 	return (int32_t)((lx * UniverseUnitsX + RoundingError(LogUnitsX()))
 					 / LogUnitsX());
 }
 constexpr auto LogxToUniverse(const auto& lx) { return logxToUniverse(lx); }
-static inline int32_t
-logyToUniverse(int32_t ly)
+static inline int32_t logyToUniverse(int32_t ly)
 {
 	return (int32_t)(MaxYUniverse - ((ly * UniverseUnitsY + RoundingError(LogUnitsY())) / LogUnitsY()));
 }
 constexpr auto LogyToUniverse(const auto& ly) { return logyToUniverse(ly); }
-static inline int32_t
-universeToLogx(int16_t ux)
+static inline int32_t universeToLogx(int16_t ux)
 {
 	return (ux * LogUnitsX() + RoundingError(UniverseUnitsX))
 		 / UniverseUnitsX;
 }
 constexpr auto UniverseToLogx(const auto& ux) { return universeToLogx(ux); }
-static inline int32_t
-universeToLogy(int16_t uy)
+static inline int32_t universeToLogy(int16_t uy)
 {
 	return ((MaxYUniverse - uy) * LogUnitsY()
 			+ RoundingError(UniverseUnitsY))
@@ -265,21 +261,18 @@ inline constexpr auto OldLogUnitsY {((int32_t)(7680 >> 4) * SectorHeight)};
 inline constexpr auto OldUniverseUnitsX {(((MaxXUniverse + 1) >> 4) * 10)};
 inline constexpr auto OldUniverseUnitsY {(((MaxYUniverse + 1) >> 4))};
 
-static inline int32_t
-oldLogxToUniverse(int32_t lx)
+static inline int32_t oldLogxToUniverse(int32_t lx)
 {
 	return (int32_t)((lx * OldUniverseUnitsX + RoundingError(OldLogUnitsX))
 					 / OldLogUnitsX);
 }
 
-static inline int32_t
-oldLogyToUniverse(int32_t ly)
+static inline int32_t oldLogyToUniverse(int32_t ly)
 {
 	return (int32_t)(MaxYUniverse - ((ly * OldUniverseUnitsY + RoundingError(OldLogUnitsY)) / OldLogUnitsY));
 }
 
-static inline int32_t
-inBounds(int32_t val, int32_t min, int32_t max)
+static inline int32_t inBounds(int32_t val, int32_t min, int32_t max)
 {
 	if (val < min)
 	{

@@ -24,8 +24,7 @@
 
 // We use a wrapper, so that we can call the custom function with the
 // arguments of our choice (i.e. no arguments).
-static int
-luaFunctionWrapper(lua_State* luaState)
+static int luaFunctionWrapper(lua_State* luaState)
 {
 	int arg {};
 	int isNum {};
@@ -54,9 +53,8 @@ luaFunctionWrapper(lua_State* luaState)
 
 // [-1]  -> table t
 // We keep the actual pointer as an upvalue in the closure.
-static int
-luaUqm_custom_addFunction(lua_State* luaState,
-						  const luaUqm_custom_Function* fun)
+static int luaUqm_custom_addFunction(lua_State* luaState,
+									 const luaUqm_custom_Function* fun)
 {
 	lua_pushlightuserdata(luaState, (void*)fun->fun);
 	lua_pushcclosure(luaState, luaFunctionWrapper, 1);

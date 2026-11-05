@@ -94,15 +94,13 @@ static inline constexpr auto DCQueueTicksForFps {getTicksForFramerate(DCQueueFPS
 int RenderedFrames = 0;
 
 
-static bool
-DCQ_HasSpace(int slots) UQM_REQUIRES(s_dcqMutex)
+static bool DCQ_HasSpace(int slots) UQM_REQUIRES(s_dcqMutex)
 {
 	return DrawCommandQueue.FullSize < DcqMax - slots;
 }
 
 // Wait for the queue to be emptied. Always have the DCQ locked when calling this.
-static void
-TFB_WaitForSpace(int requested_slots) UQM_REQUIRES(s_dcqMutex)
+static void TFB_WaitForSpace(int requested_slots) UQM_REQUIRES(s_dcqMutex)
 {
 	uqm::log::debug("DCQ overload (Size = {}, FullSize = {}, "
 					"Requested = {}).  Sleeping until renderer is done.",
@@ -119,8 +117,7 @@ TFB_WaitForSpace(int requested_slots) UQM_REQUIRES(s_dcqMutex)
 }
 
 // Locks the DCQ, and waits until it has space for the slots.
-static void
-lockDcqWithSpace(int slots) UQM_ACQUIRE(s_dcqMutex)
+static void lockDcqWithSpace(int slots) UQM_ACQUIRE(s_dcqMutex)
 {
 	lockDcq();
 	if (!DCQ_HasSpace(slots))
@@ -130,16 +127,14 @@ lockDcqWithSpace(int slots) UQM_ACQUIRE(s_dcqMutex)
 }
 
 // The number of commands that the renderer can take now.
-static int
-DCQ_Size(void)
+static int DCQ_Size(void)
 {
 	const uqm::LockGuard lock {s_dcqMutex};
 	return DrawCommandQueue.Size;
 }
 
 // The number of commands in the queue, with the batched ones.
-static int
-DCQ_FullSize(void)
+static int DCQ_FullSize(void)
 {
 	const uqm::LockGuard lock {s_dcqMutex};
 	return DrawCommandQueue.FullSize;
@@ -157,8 +152,7 @@ void Unlock_DCQ(void) UQM_NO_THREAD_SAFETY_ANALYSIS
 }
 
 // Always have the DCQ locked when calling this.
-static void
-Synchronize_DCQ(void) UQM_REQUIRES(s_dcqMutex)
+static void Synchronize_DCQ(void) UQM_REQUIRES(s_dcqMutex)
 {
 	if (!DrawCommandQueue.Batching)
 	{
@@ -279,8 +273,7 @@ void TFB_DrawCommandQueue_Clear()
 	unlockDcq();
 }
 
-static void
-checkExclusiveThread(TFB_DrawCommand* DrawCommand)
+static void checkExclusiveThread(TFB_DrawCommand* DrawCommand)
 {
 #ifdef DEBUG_DCQ_THREADS
 	static uqstl::thread::id exclusiveThreadId {};
@@ -359,8 +352,7 @@ static uqstl::chrono::steady_clock::duration s_renderTime {};
 static int s_renderFrames {};
 
 // Adds the time since start to the render time, for one rendered frame.
-static void
-addRenderTime(uqstl::chrono::steady_clock::time_point start)
+static void addRenderTime(uqstl::chrono::steady_clock::time_point start)
 {
 	s_renderTime += uqstl::chrono::steady_clock::now() - start;
 	++s_renderFrames;
@@ -368,8 +360,7 @@ addRenderTime(uqstl::chrono::steady_clock::time_point start)
 
 // fps is the rate of the frames that the game draws. renderFps is the rate
 // that the rendering could reach if it did not wait for the game.
-static void
-computeFPS(int* fps, int* renderFps)
+static void computeFPS(int* fps, int* renderFps)
 {
 	static TimeCount last_time;
 	static TimePeriod fps_counter;
@@ -397,8 +388,7 @@ computeFPS(int* fps, int* renderFps)
 }
 
 // Draws text on the FPS canvas. The text starts at x.
-static void
-drawFPSText(uqstl::string_view text, int x, int y, Color color)
+static void drawFPSText(uqstl::string_view text, int x, int y, Color color)
 {
 	GFXRECT tr;
 	int16_t w {};
@@ -427,8 +417,7 @@ drawFPSText(uqstl::string_view text, int x, int y, Color color)
 	TFB_DrawImage_Delete(img);
 }
 
-static void
-RenderFPS(int fps, int renderFps)
+static void RenderFPS(int fps, int renderFps)
 {
 	static int prevFPS = 0;
 	static int prevRenderFPS = 0;

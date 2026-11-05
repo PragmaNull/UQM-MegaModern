@@ -142,16 +142,14 @@ typedef struct
 typedef ANDROSYNTH_DATA CustomShipData_t;
 
 // Retrieve race-specific ship data from a race desc
-static CustomShipData_t*
-GetCustomShipData(RACE_DESC* pRaceDesc)
+static CustomShipData_t* GetCustomShipData(RACE_DESC* pRaceDesc)
 {
 	return (CustomShipData_t*)pRaceDesc->data;
 }
 
 // Set the race-specific data in a race desc
 // (Re)Allocates its own storage for the data.
-static void
-SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
+static void SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 {
 	if (pRaceDesc->data == data)
 	{
@@ -170,9 +168,8 @@ SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 	}
 }
 
-static void
-blazer_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void blazer_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	const uint16_t old_crew_level {ElementPtr0->crew_level};
 	const uint16_t old_life {ElementPtr0->life_span};
@@ -189,8 +186,7 @@ blazer_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 }
 
-static void
-bubble_preprocess(ELEMENT* ElementPtr)
+static void bubble_preprocess(ELEMENT* ElementPtr)
 {
 	uint8_t turn_wait {};
 
@@ -240,8 +236,7 @@ bubble_preprocess(ELEMENT* ElementPtr)
 	ElementPtr->turn_wait = uqm::makeByte(turn_wait, thrust_wait);
 }
 
-static uint16_t
-initialize_bubble(ELEMENT* ShipPtr, HELEMENT BubbleArray[])
+static uint16_t initialize_bubble(ELEMENT* ShipPtr, HELEMENT BubbleArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -275,9 +270,8 @@ initialize_bubble(ELEMENT* ShipPtr, HELEMENT BubbleArray[])
 	return (1);
 }
 
-static void
-androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-						uint16_t ConcernCounter)
+static void androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+									uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -384,8 +378,7 @@ androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void
-androsynth_postprocess(ELEMENT* ElementPtr)
+static void androsynth_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -447,8 +440,7 @@ androsynth_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-androsynth_preprocess(ELEMENT* ElementPtr)
+static void androsynth_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 	STATUS_FLAGS cur_status_flags {};
@@ -550,8 +542,7 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 //}
 
 
-RACE_DESC*
-init_androsynth(void)
+RACE_DESC* init_androsynth(void)
 {
 	if (IsHd())
 	{

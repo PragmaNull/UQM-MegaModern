@@ -184,8 +184,7 @@ FONT Widget_SetFont(FONT newFont)
 	return oldFont;
 }
 
-static void
-Widget_DrawToolTips(int numlines, const char** tips)
+static void Widget_DrawToolTips(int numlines, const char** tips)
 {
 	// This functions draws the text at the bottom of the screen
 	// which explains what the current option does.

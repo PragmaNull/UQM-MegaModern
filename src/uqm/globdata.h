@@ -371,64 +371,55 @@ inline auto StorageQ() { return (uqm::UQMOptions::read().shipStore || isDifficul
 // The stored value for no location. The location states are 16 bits; they hold int16_t coordinates.
 constexpr uint16_t c_noLocation {0xffff};
 
-static inline GFXPOINT
-LoadLastLoc(void)
+static inline GFXPOINT LoadLastLoc(void)
 {
 	return GFXPOINT {(int16_t)uqm::gameState().flag(uqm::GameFlag::LAST_LOCATION_X),
 					 (int16_t)uqm::gameState().flag(uqm::GameFlag::LAST_LOCATION_Y)};
 }
 
-static inline void
-SaveLastLoc(GFXPOINT pt)
+static inline void SaveLastLoc(GFXPOINT pt)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::LAST_LOCATION_X, static_cast<uint32_t>(static_cast<uint16_t>(pt.x)));
 	uqm::gameState().setFlag(uqm::GameFlag::LAST_LOCATION_Y, static_cast<uint32_t>(static_cast<uint16_t>(pt.y)));
 }
 
-static inline void
-ZeroLastLoc(void)
+static inline void ZeroLastLoc(void)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::LAST_LOCATION_X, static_cast<uint32_t>(c_noLocation));
 	uqm::gameState().setFlag(uqm::GameFlag::LAST_LOCATION_Y, static_cast<uint32_t>(c_noLocation));
 }
 
-static inline GFXPOINT
-LoadAdvancedQuasiPilot(void)
+static inline GFXPOINT LoadAdvancedQuasiPilot(void)
 {
 	return GFXPOINT {(int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_X),
 					 (int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_Y)};
 }
 
-static inline GFXPOINT
-LoadAdvancedAutoPilot(void)
+static inline GFXPOINT LoadAdvancedAutoPilot(void)
 {
 	return GFXPOINT {(int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_X),
 					 (int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_Y)};
 }
 
-static inline void
-SaveAdvancedQuasiPilot(GFXPOINT pt)
+static inline void SaveAdvancedQuasiPilot(GFXPOINT pt)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_X, static_cast<uint32_t>(static_cast<uint16_t>(pt.x)));
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_Y, static_cast<uint32_t>(static_cast<uint16_t>(pt.y)));
 }
 
-static inline void
-SaveAdvancedAutoPilot(GFXPOINT pt)
+static inline void SaveAdvancedAutoPilot(GFXPOINT pt)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_X, static_cast<uint32_t>(static_cast<uint16_t>(pt.x)));
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_Y, static_cast<uint32_t>(static_cast<uint16_t>(pt.y)));
 }
 
-static inline void
-ZeroAdvancedQuasiPilot(void)
+static inline void ZeroAdvancedQuasiPilot(void)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_X, static_cast<uint32_t>(c_noLocation));
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_Y, static_cast<uint32_t>(c_noLocation));
 }
 
-static inline void
-ZeroAdvancedAutoPilot(void)
+static inline void ZeroAdvancedAutoPilot(void)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_X, static_cast<uint32_t>(c_noLocation));
 	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_Y, static_cast<uint32_t>(c_noLocation));
@@ -444,8 +435,7 @@ inline constexpr auto EarthOuterY {597};
 inline auto MinSold() { return difficultyCase(200, 100, 10); }
 inline auto MaxSold() { return difficultyCase(500, 250, 25); }
 
-static inline bool
-IsHomeworldKnown(uint32_t homeworld)
+static inline bool IsHomeworldKnown(uint32_t homeworld)
 {
 	if (homeworld > 18)
 	{
@@ -455,8 +445,7 @@ IsHomeworldKnown(uint32_t homeworld)
 	return (bool)(uqm::gameState().flag(uqm::GameFlag::KNOW_HOMEWORLD) & (1 << homeworld));
 }
 
-static inline void
-SetHomeworldKnown(uint32_t homeworld)
+static inline void SetHomeworldKnown(uint32_t homeworld)
 {
 	if (IsHomeworldKnown(homeworld))
 	{

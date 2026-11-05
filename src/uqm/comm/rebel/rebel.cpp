@@ -241,8 +241,7 @@ static LOCDATA yehat_desc =
 		nullptr,
 };
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, bye_rebel))
 	{
@@ -252,8 +251,7 @@ ExitConversation(RESPONSE_REF R)
 
 static void Rebels(RESPONSE_REF R);
 
-static void
-RebelInfo(RESPONSE_REF R)
+static void RebelInfo(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
 	if (PlayerSaid(R, give_info_rebels))
@@ -325,8 +323,7 @@ RebelInfo(RESPONSE_REF R)
 	}
 }
 
-static void
-Rebels(RESPONSE_REF R)
+static void Rebels(RESPONSE_REF R)
 {
 	uint16_t NumVisits {};
 
@@ -423,8 +420,7 @@ Rebels(RESPONSE_REF R)
 	Response(bye_rebel, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -467,21 +463,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_yehat(void)
+static uint16_t uninit_yehat(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_yehat_enc(void)
+static void post_yehat_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_rebel_yehat_comm(void)
+LOCDATA* init_rebel_yehat_comm(void)
 {
 	yehat_desc.init_encounter_func = Intro;
 	yehat_desc.post_encounter_func = post_yehat_enc;

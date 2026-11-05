@@ -46,20 +46,17 @@ enum
 	WHITE_SUN_INTENSITY
 };
 
-static uint16_t
-CalcFromBase(uint16_t base, uint16_t variance)
+static uint16_t CalcFromBase(uint16_t base, uint16_t variance)
 {
 	return base + uqm::lowWord(SysGenRNG->next()) % variance;
 }
 
-static inline uint16_t
-CalcHalfBaseVariance(uint16_t base)
+static inline uint16_t CalcHalfBaseVariance(uint16_t base)
 {
 	return CalcFromBase(base, (base >> 1) + 1);
 }
 
-static void
-CalcSysInfo(SYSTEM_INFO* SysInfoPtr)
+static void CalcSysInfo(SYSTEM_INFO* SysInfoPtr)
 {
 	SysInfoPtr->StarSize = pSolarSysState->SunDesc[0].data_index;
 	switch (StarColor(CurStarDescPtr()->Type))
@@ -101,9 +98,8 @@ CalcSysInfo(SYSTEM_INFO* SysInfoPtr)
 	}
 }
 
-static uint16_t
-GeneratePlanetComposition(PLANET_INFO* PlanetInfoPtr, int16_t SurfaceTemp,
-						  int16_t radius)
+static uint16_t GeneratePlanetComposition(PLANET_INFO* PlanetInfoPtr, int16_t SurfaceTemp,
+										  int16_t radius)
 {
 	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
 	{
@@ -185,8 +181,7 @@ static constexpr auto HotBonus {200};
 // calculating the actual temperature (when landing or scanning), but not
 // when determining the colors of the drawn orbits. (Thanks to James Scott
 // for this insight.)
-static int16_t
-CalcTemp(SYSTEM_INFO* SysInfoPtr, int16_t radius)
+static int16_t CalcTemp(SYSTEM_INFO* SysInfoPtr, int16_t radius)
 {
 	int16_t centigrade {};
 
@@ -221,8 +216,7 @@ CalcTemp(SYSTEM_INFO* SysInfoPtr, int16_t radius)
 static constexpr auto NumTosses {10};
 static constexpr auto TiltRange {180};
 
-static uint16_t
-CalcRotation(PLANET_INFO* PlanetInfoPtr)
+static uint16_t CalcRotation(PLANET_INFO* PlanetInfoPtr)
 {
 	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
 	{
@@ -238,8 +232,7 @@ CalcRotation(PLANET_INFO* PlanetInfoPtr)
 	}
 }
 
-static int16_t
-CalcTilt(void)
+static int16_t CalcTilt(void)
 { /* Calculate Axial Tilt */
 
 	int16_t tilt {-(TiltRange / 2)};
@@ -253,15 +246,13 @@ CalcTilt(void)
 	return (tilt);
 }
 
-uint16_t
-CalcGravity(const PLANET_INFO* PlanetInfoPtr)
+uint16_t CalcGravity(const PLANET_INFO* PlanetInfoPtr)
 {
 	return (uint32_t)PlanetInfoPtr->PlanetDensity * PlanetInfoPtr->PlanetRadius
 		 / 100;
 }
 
-static uint16_t
-CalcTectonics(uint16_t base, uint16_t temp)
+static uint16_t CalcTectonics(uint16_t base, uint16_t temp)
 {
 	const uint16_t tect = CalcFromBase(base, 3 << 5);
 #ifdef OLD
@@ -284,8 +275,7 @@ CalcTectonics(uint16_t base, uint16_t temp)
 }
 
 // This code moved from planets/surface.c:CalcLifeForms()
-static int
-CalcLifeChance(const PLANET_INFO* PlanetInfoPtr)
+static int CalcLifeChance(const PLANET_INFO* PlanetInfoPtr)
 {
 	int16_t life_var = 0;
 

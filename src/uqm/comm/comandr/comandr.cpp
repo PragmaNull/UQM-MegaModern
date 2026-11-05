@@ -156,8 +156,7 @@ static FILTER_DESC commander_filters =
 								  }
 };
 
-static void
-RaveParty(void)
+static void RaveParty(void)
 {
 	CommData.AlienColorMapIndex = (uqm::random().next() % 3) + 1;
 
@@ -180,8 +179,7 @@ RaveParty(void)
 	}
 }
 
-static void
-ByeBye(RESPONSE_REF R)
+static void ByeBye(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, ok_i_will_get_radios))
 	{
@@ -284,8 +282,7 @@ ByeBye(RESPONSE_REF R)
 
 static void GiveRadios(RESPONSE_REF R);
 
-static void
-NoRadioactives(RESPONSE_REF R)
+static void NoRadioactives(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, yes_this_is_supply_ship))
 	{
@@ -390,8 +387,7 @@ NoRadioactives(RESPONSE_REF R)
 	}
 }
 
-static void
-AskAfterRadios(RESPONSE_REF R)
+static void AskAfterRadios(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, i_lost_my_lander))
 	{
@@ -460,8 +456,7 @@ AskAfterRadios(RESPONSE_REF R)
 	}
 }
 
-static void
-BaseDestroyed(RESPONSE_REF R)
+static void BaseDestroyed(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, we_fought_them))
 	{
@@ -487,8 +482,7 @@ BaseDestroyed(RESPONSE_REF R)
 	}
 }
 
-static void
-TellMoonBase(RESPONSE_REF R)
+static void TellMoonBase(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -580,8 +574,7 @@ TellMoonBase(RESPONSE_REF R)
 
 static void RevealSelf(RESPONSE_REF R);
 
-static void
-TellProbe(RESPONSE_REF R)
+static void TellProbe(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase(THAT_WAS_PROBE);
@@ -592,8 +585,7 @@ TellProbe(RESPONSE_REF R)
 	Response(what_probe, RevealSelf);
 }
 
-static void
-RevealSelf(RESPONSE_REF R)
+static void RevealSelf(RESPONSE_REF R)
 {
 	uint8_t stack {0};
 	if (PlayerSaid(R, we_are_vindicator))
@@ -699,8 +691,7 @@ RevealSelf(RESPONSE_REF R)
 	}
 }
 
-static void
-GiveRadios(RESPONSE_REF R)
+static void GiveRadios(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, we_will_transfer_now))
 	{
@@ -771,8 +762,7 @@ GiveRadios(RESPONSE_REF R)
 	}
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	if (IsHd()) // To smooth out HdResolutionFactor blink animation
 	{
@@ -829,21 +819,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_commander(void)
+static uint16_t uninit_commander(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_commander_enc(void)
+static void post_commander_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_commander_comm()
+LOCDATA* init_commander_comm()
 {
 	commander_desc.init_encounter_func = Intro;
 	commander_desc.post_encounter_func = post_commander_enc;

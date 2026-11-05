@@ -72,8 +72,7 @@ typedef struct namePlate
 	uint8_t index;
 } NAMEPLATE;
 
-static void
-SwapPlates(NAMEPLATE* n1, NAMEPLATE* n2)
+static void SwapPlates(NAMEPLATE* n1, NAMEPLATE* n2)
 {
 	const NAMEPLATE temp = *n1;
 	*n1 = *n2;
@@ -90,8 +89,7 @@ static int zoomLevel;
 static FRAME StarMapFrame;
 static CURRENT_STARMAP_SHOWN which_starmap;
 
-static inline long
-signedDivWithError(long val, long divisor)
+static inline long signedDivWithError(long val, long divisor)
 {
 	int invert = 0;
 	if (val < 0)
@@ -106,8 +104,7 @@ signedDivWithError(long val, long divisor)
 static auto MapFitX() { return ((MaxXUniverse + 1) / OrigSisScreenWidth() + 1); }
 static auto MapFitXx() { return ((MaxXUniverse + 1) / SisScreenWidth() + 1); }
 
-static inline int16_t
-universeToDispx(long ux)
+static inline int16_t universeToDispx(long ux)
 {
 	return signedDivWithError(((ux - mapOrigin.x) << zoomLevel)
 								  * OrigSisScreenWidth(),
@@ -117,8 +114,7 @@ universeToDispx(long ux)
 constexpr auto UniverseToDispx(const auto& ux) { return ResScale(universeToDispx(ux)); }
 constexpr auto OrigUniverseToDispx(const auto& ux) { return universeToDispx(ux); }
 
-static inline int16_t
-universeToDispy(long uy)
+static inline int16_t universeToDispy(long uy)
 {
 	return signedDivWithError(((mapOrigin.y - uy) << zoomLevel)
 								  * OrigSisScreenHeight(),
@@ -128,8 +124,7 @@ universeToDispy(long uy)
 constexpr auto UniverseToDispy(const auto& uy) { return ResScale(universeToDispy(uy)); }
 constexpr auto OrigUniverseToDispy(const auto& uy) { return universeToDispy(uy); }
 
-static inline int16_t
-dispxToUniverse(int16_t dx)
+static inline int16_t dispxToUniverse(int16_t dx)
 {
 	return (((long)(dx - ((OrigSisScreenWidth() - 1) >> 1))
 			 * (MaxXUniverse + MapFitX()))
@@ -140,8 +135,7 @@ dispxToUniverse(int16_t dx)
 constexpr auto DispToUniversex(const auto& dx) { return dispxToUniverse(ResDescale(dx)); }
 constexpr auto OrigDispToUniversex(const auto& dx) { return dispxToUniverse(dx); }
 
-static inline int16_t
-dispyToUniverse(int16_t dy)
+static inline int16_t dispyToUniverse(int16_t dy)
 {
 	return (((long)(((OrigSisScreenHeight() - 1) >> 1) - dy)
 			 * (MaxYUniverse + 2))
@@ -153,8 +147,7 @@ constexpr auto DispToUniversey(const auto& dy) { return dispyToUniverse(ResDesca
 constexpr auto OrigDispToUniversey(const auto& dy) { return dispyToUniverse(dy); }
 
 // Old school HdResolutionFactor-mod code for Malin's Sol ellipse.
-static inline int16_t
-universeToDispx2(int16_t ux)
+static inline int16_t universeToDispx2(int16_t ux)
 {
 	const long v = signedDivWithError((((long)ux - mapOrigin.x) << zoomLevel)
 										  * SisScreenWidth(),
@@ -170,8 +163,7 @@ universeToDispx2(int16_t ux)
 	}
 	return v;
 }
-static inline int16_t
-universeToDispy2(int16_t uy)
+static inline int16_t universeToDispy2(int16_t uy)
 {
 	const long v = signedDivWithError((((long)mapOrigin.y - uy) << zoomLevel)
 										  * SisScreenHeight(),
@@ -193,8 +185,7 @@ constexpr auto UniverseToDispy2(const auto& uy) { return (IsHd() ? universeToDis
 
 static bool transition_pending;
 
-static void
-flashCurrentLocation(GFXPOINT* where, bool force)
+static void flashCurrentLocation(GFXPOINT* where, bool force)
 {
 	static bool redraw = false;
 	static uint8_t c = 0;
@@ -241,8 +232,7 @@ flashCurrentLocation(GFXPOINT* where, bool force)
 	}
 }
 
-static void
-DrawCursor(int16_t curs_x, int16_t curs_y)
+static void DrawCursor(int16_t curs_x, int16_t curs_y)
 {
 	STAMP s;
 
@@ -253,8 +243,7 @@ DrawCursor(int16_t curs_x, int16_t curs_y)
 	DrawStamp(&s);
 }
 
-static void
-DrawMarker(GFXPOINT dest, uint8_t type)
+static void DrawMarker(GFXPOINT dest, uint8_t type)
 {
 	STAMP s;
 
@@ -271,8 +260,7 @@ DrawMarker(GFXPOINT dest, uint8_t type)
 	DrawStamp(&s);
 }
 
-static void
-DrawAutoPilot(GFXPOINT* pDstPt)
+static void DrawAutoPilot(GFXPOINT* pDstPt)
 {
 	int16_t dx {};
 	int16_t dy {};
@@ -370,8 +358,7 @@ DrawAutoPilot(GFXPOINT* pDstPt)
 	}
 }
 
-static void
-GetSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
+static void GetSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
 {
 	const long diameter {(long)(FleetPtr->known_strength * SphereRadiusIncrement)};
 	pRect->extent.width = UniverseToDispx(diameter)
@@ -439,8 +426,7 @@ GetSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
 }
 
 // For showing the War-Era situation in starmap
-static void
-GetWarEraSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
+static void GetWarEraSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
 {
 	const long diameter = (long)(WarEraStrength(FleetPtr->SpeciesID) * SphereRadiusIncrement);
 	const GFXPOINT loc = SeedFleetLocation(FleetPtr, plot_map, WAR_ERA);
@@ -494,8 +480,7 @@ GetWarEraSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
 	pRepairRect->extent.height += ResScale(1);
 }
 
-static unsigned int
-FuelRequiredTo(GFXPOINT dest)
+static unsigned int FuelRequiredTo(GFXPOINT dest)
 {
 	uint16_t fuel_required {};
 	GFXPOINT pt;
@@ -529,21 +514,18 @@ FuelRequiredTo(GFXPOINT dest)
 // Begin Malin's fuel to Sol ellipse code. Edited by Kruzen
 constexpr auto MathRound(const auto& X) { return ((X) + ((int)((X) + 0.5) > (X) ? 1 : 0)); }
 
-GFXPOINT
-GetPointOfEllipse(double a, double b, double radian)
+GFXPOINT GetPointOfEllipse(double a, double b, double radian)
 {
 	const double t[2] = {a * cos(radian), b * sin(radian)};
 	return GFXPOINT {(int16_t)MathRound(t[0]), (int16_t)MathRound(t[1])};
 }
 
-GFXPOINT
-ShiftPoint(GFXPOINT p, GFXPOINT s)
+GFXPOINT ShiftPoint(GFXPOINT p, GFXPOINT s)
 {
 	return p + s;
 }
 
-GFXPOINT
-RotatePoint(GFXPOINT p, GFXPOINT Pivot, double radian)
+GFXPOINT RotatePoint(GFXPOINT p, GFXPOINT Pivot, double radian)
 {
 	const double d[2] = {static_cast<double>(p.x - Pivot.x), static_cast<double>(p.y - Pivot.y)};
 	const double cosine[2] = {cos(radian), sin(radian)};
@@ -554,8 +536,7 @@ RotatePoint(GFXPOINT p, GFXPOINT Pivot, double radian)
 }
 
 // Kruzen: Merged together with overflow check. Functions above are redundant
-GFXPOINT
-CalcEllipsePoint(double a, double b, double rad_one, double rad_two, GFXPOINT Pivot)
+GFXPOINT CalcEllipsePoint(double a, double b, double rad_one, double rad_two, GFXPOINT Pivot)
 {
 	const double q[2] = {a * cos(rad_one), b * sin(rad_one)};
 	const double w[2] = {MathRound(q[0]) + Pivot.x, MathRound(q[1]) + Pivot.y};
@@ -598,8 +579,7 @@ bool onScreen(LINE* l, bool ignoreX, bool ignoreY)
 				 && l->second.y >= SisScreenHeight() && !ignoreY));
 }
 
-static void
-DrawNoReturnZone(void)
+static void DrawNoReturnZone(void)
 {
 	double dist {NAN};
 	GFXPOINT sol;
@@ -714,8 +694,7 @@ DrawNoReturnZone(void)
 	}
 }
 
-static void
-GetFuelRect(DRECT* r, int32_t diameter, GFXPOINT corner)
+static void GetFuelRect(DRECT* r, int32_t diameter, GFXPOINT corner)
 { // Operating with DRECT because of overflows in HdResolutionFactor on max zoom
 	int32_t x {};
 	int32_t y {};
@@ -766,8 +745,7 @@ GetFuelRect(DRECT* r, int32_t diameter, GFXPOINT corner)
 	r->extent.height = height;
 }
 
-static void
-DrawFuelCircle(bool secondary)
+static void DrawFuelCircle(bool secondary)
 {
 	DRECT r;
 	GFXPOINT corner;
@@ -1001,8 +979,7 @@ bool isHomeworld(uint8_t Index)
 	return raceBool;
 }
 
-const char*
-markerBuf(const int star_index, const char* marker_state)
+const char* markerBuf(const int star_index, const char* marker_state)
 {
 	static char buf[255];
 
@@ -1044,8 +1021,7 @@ void setStarMarked(const int star_index, const char* marker_state)
 	DSetGameState(markerBuf(starIndex, marker_state), starData);
 }
 
-static int16_t
-CheckTextsIntersect(GFXRECT* curr, GFXRECT* prev)
+static int16_t CheckTextsIntersect(GFXRECT* curr, GFXRECT* prev)
 {
 	if (((curr->corner.x + curr->extent.width) <= prev->corner.x) || ((prev->corner.x + prev->extent.width) <= curr->corner.x))
 	{
@@ -1060,8 +1036,7 @@ CheckTextsIntersect(GFXRECT* curr, GFXRECT* prev)
 	return ((prev->extent.height + ResScale(1)) - abs(curr->corner.y - prev->corner.y));
 }
 
-static void
-AdjustTextRect(GFXRECT* r, TEXT* t)
+static void AdjustTextRect(GFXRECT* r, TEXT* t)
 {
 	int16_t offs {};
 	if (r->corner.x <= 0)
@@ -1094,8 +1069,7 @@ AdjustTextRect(GFXRECT* r, TEXT* t)
 	}
 }
 
-static void
-DrawRaceName(TEXT* t, Color* c)
+static void DrawRaceName(TEXT* t, Color* c)
 {
 	// The text color is slightly lighter than the color of
 	// the SoI.
@@ -1175,8 +1149,7 @@ Color RaceColor(uint16_t index)
 
 static constexpr auto GridDelta {500};
 
-static void
-DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
+static void DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 {
 	int16_t i {};
 	uint16_t which_space {};
@@ -1776,8 +1749,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 	UnbatchGraphics();
 }
 
-static void
-EraseCursor(int16_t curs_x, int16_t curs_y)
+static void EraseCursor(int16_t curs_x, int16_t curs_y)
 {
 	GFXRECT r;
 
@@ -1813,8 +1785,7 @@ EraseCursor(int16_t curs_x, int16_t curs_y)
 
 static constexpr auto MaxZoomShift {4};
 
-static void
-ZoomStarMap(int16_t dir)
+static void ZoomStarMap(int16_t dir)
 {
 	if (dir > 0)
 	{
@@ -1848,8 +1819,7 @@ ZoomStarMap(int16_t dir)
 	}
 }
 
-static void
-UpdateCursorLocation(int sx, int sy, const GFXPOINT* newpt)
+static void UpdateCursorLocation(int sx, int sy, const GFXPOINT* newpt)
 { // Kruzen: OrigSisScreenWidth()/HEIGHT for viewport follows cursor mode
 	// We're scaling the result of s.origin afterwards, but calculating
 	// everything in SD values. So we can use max zoom in HdResolutionFactor
@@ -1949,8 +1919,7 @@ int starIndex(GFXPOINT starPt)
 	return i;
 }
 
-static void
-UpdateCursorInfo(std::span<char> prevbuf)
+static void UpdateCursorInfo(std::span<char> prevbuf)
 {
 	char buf[CursorInfoBufsize] {};
 	GFXPOINT pt;
@@ -2142,14 +2111,12 @@ UpdateCursorInfo(std::span<char> prevbuf)
 	}
 }
 
-static unsigned int
-FuelRequired(void)
+static unsigned int FuelRequired(void)
 {
 	return FuelRequiredTo(cursorLoc);
 }
 
-static void
-UpdateFuelRequirement(void)
+static void UpdateFuelRequirement(void)
 {
 	char buf[80] {};
 	const uint16_t fuel_required = FuelRequired();
@@ -2185,8 +2152,7 @@ typedef struct starsearch_state
 	int SortedStars[NumSolarSystems];
 } STAR_SEARCH_STATE;
 
-static bool
-starNameLess(int index1, int index2)
+static bool starNameLess(int index1, int index2)
 {
 	const STAR_DESC& star1 {star_array[index1]};
 	const STAR_DESC& star2 {star_array[index2]};
@@ -2197,16 +2163,14 @@ starNameLess(int index1, int index2)
 	return star1.Prefix < star2.Prefix;
 }
 
-static void
-SortStarsOnName(STAR_SEARCH_STATE* pSS)
+static void SortStarsOnName(STAR_SEARCH_STATE* pSS)
 {
 	int* const sorted {pSS->SortedStars};
 	uqstl::iota(sorted, sorted + NumSolarSystems, 0);
 	uqstl::sort(sorted, sorted + NumSolarSystems, starNameLess);
 }
 
-static void
-SplitStarName(STAR_SEARCH_STATE* pSS)
+static void SplitStarName(STAR_SEARCH_STATE* pSS)
 {
 	char* buf = pSS->Buffer;
 	char* next {};
@@ -2259,8 +2223,7 @@ SplitStarName(STAR_SEARCH_STATE* pSS)
 	pSS->PrefixLen = uqm::utf8StringCount(pSS->Prefix);
 }
 
-static inline int
-SkipStarCluster(int* sortedStars, int istar)
+static inline int SkipStarCluster(int* sortedStars, int istar)
 {
 	const int Postfix = star_array[sortedStars[istar]].Postfix;
 
@@ -2270,8 +2233,7 @@ SkipStarCluster(int* sortedStars, int istar)
 	return istar;
 }
 
-static int
-FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
+static int FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
 {
 	int i {};
 
@@ -2371,8 +2333,7 @@ FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
 	return (i < NumSolarSystems) ? i : -1;
 }
 
-static void
-DrawMatchedStarName(TEXTENTRY_STATE* pTES)
+static void DrawMatchedStarName(TEXTENTRY_STATE* pTES)
 {
 	STAR_SEARCH_STATE* pSS = (STAR_SEARCH_STATE*)pTES->CbParam;
 	char buf[StarSearchBufsize] {};
@@ -2410,8 +2371,7 @@ DrawMatchedStarName(TEXTENTRY_STATE* pTES)
 	DrawHyperCoords(cursorLoc);
 }
 
-static void
-MatchNextStar(STAR_SEARCH_STATE* pSS, bool Reset)
+static void MatchNextStar(STAR_SEARCH_STATE* pSS, bool Reset)
 {
 	if (Reset)
 	{
@@ -2457,8 +2417,7 @@ MatchNextStar(STAR_SEARCH_STATE* pSS, bool Reset)
 	}
 }
 
-static bool
-OnStarNameChange(TEXTENTRY_STATE* pTES)
+static bool OnStarNameChange(TEXTENTRY_STATE* pTES)
 {
 	STAR_SEARCH_STATE* pSS = (STAR_SEARCH_STATE*)pTES->CbParam;
 	uint16_t flags {};
@@ -2503,8 +2462,7 @@ OnStarNameChange(TEXTENTRY_STATE* pTES)
 	return ret;
 }
 
-static bool
-OnStarNameFrame(TEXTENTRY_STATE* pTES)
+static bool OnStarNameFrame(TEXTENTRY_STATE* pTES)
 {
 	STAR_SEARCH_STATE* pSS = (STAR_SEARCH_STATE*)pTES->CbParam;
 
@@ -2570,8 +2528,7 @@ bool coords_only(char* s)
 	return i == j && countD <= 2 && countC == 1;
 }
 
-static bool
-DoStarSearch(MENU_STATE* pMS)
+static bool DoStarSearch(MENU_STATE* pMS)
 {
 	TEXTENTRY_STATE tes;
 	STAR_SEARCH_STATE searchState {};
@@ -2654,8 +2611,7 @@ void DoBubbleWarp(bool UseFuel)
 	}
 }
 
-static void
-AdvancedAutoPilot(void)
+static void AdvancedAutoPilot(void)
 {
 	const uint16_t portalFuelCost {difficultyCase<uint16_t>(5, 20, 20)};
 	// (Based on the Python QuasiSpace Calculator by Lukrative525
@@ -2722,8 +2678,7 @@ static constexpr auto MinAccelDelay {(c_gameSecond / 60)};
 static constexpr auto MaxAccelDelay {(c_gameSecond / 8)};
 static constexpr auto StepAccelDelay {(c_gameSecond / 120)};
 
-static bool
-DoMoveCursor(MENU_STATE* pMS)
+static bool DoMoveCursor(MENU_STATE* pMS)
 {
 	static char last_buf[CursorInfoBufsize];
 	const TimeCount TimeIn {GetTimeCounter()};
@@ -2980,8 +2935,7 @@ DoMoveCursor(MENU_STATE* pMS)
 	return !(uqm::currentActivity() & CHECK_ABORT);
 }
 
-static void
-RepairMap(uint16_t update_race, GFXRECT* pLastRect, GFXRECT* pNextRect)
+static void RepairMap(uint16_t update_race, GFXRECT* pLastRect, GFXRECT* pNextRect)
 {
 	GFXRECT r;
 
@@ -3037,8 +2991,7 @@ RepairMap(uint16_t update_race, GFXRECT* pLastRect, GFXRECT* pNextRect)
 	DrawStarMap(update_race, &r);
 }
 
-static void
-UpdateMap(void)
+static void UpdateMap(void)
 {
 	uint8_t ButtonState {};
 	uint8_t VisibleChange {};
@@ -3283,8 +3236,7 @@ auto ifGamepad(T gamepadValue, T keyboardValue = {0})
 	return ResScale(uqm::UQMOptions::read().optControllerType != uqm::ControllerType::KeyboardMouse ? gamepadValue : keyboardValue);
 }
 
-static void
-DrawStarmapHelper(void)
+static void DrawStarmapHelper(void)
 {
 
 	STAMP s;

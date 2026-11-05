@@ -141,15 +141,13 @@ extern bool OkayToResume(void);
 extern uint32_t GetMusicPosition(void);
 extern void ResetMusicResume(void);
 
-static inline void
-print_mp(const MUSIC_POSITION mp)
+static inline void print_mp(const MUSIC_POSITION mp)
 {
 	fmt::print("filename_hash: {:#X}, position: {}, last_played: {}\n",
 			   mp.filename_hash, mp.position, mp.last_played.time_since_epoch().count());
 }
 
-static inline void
-print_mp_array(const MUSIC_POSITION mp_array[], const uint16_t num_items)
+static inline void print_mp_array(const MUSIC_POSITION mp_array[], const uint16_t num_items)
 {
 	//system ("cls");
 	fmt::print("--------------------\n\n");

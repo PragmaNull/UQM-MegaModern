@@ -171,14 +171,12 @@ static int aifa_DecodePCM(TFB_AiffSoundDecoder*, void* buf, int32_t bufsize);
 static int aifa_DecodeSDX2(TFB_AiffSoundDecoder*, void* buf, int32_t bufsize);
 
 
-const static char*
-aifa_GetName(void)
+const static char* aifa_GetName(void)
 {
 	return "AIFF";
 }
 
-static bool
-aifa_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
+static bool aifa_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
 {
 	aifa_formats = fmts;
 	return true;
@@ -186,26 +184,22 @@ aifa_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
 	uqstl::ignore = flags; // laugh at compiler warning
 }
 
-static void
-aifa_TermModule(void)
+static void aifa_TermModule(void)
 {
 	// no specific module term
 }
 
-static TFB_SoundDecoder*
-aifa_Create(void)
+static TFB_SoundDecoder* aifa_Create(void)
 {
 	return &(new TFB_AiffSoundDecoder {})->decoder;
 }
 
-static void
-aifa_Destroy(TFB_SoundDecoder* decoder)
+static void aifa_Destroy(TFB_SoundDecoder* decoder)
 {
 	delete reinterpret_cast<TFB_AiffSoundDecoder*>(decoder);
 }
 
-static int
-aifa_GetError(TFB_SoundDecoder* This)
+static int aifa_GetError(TFB_SoundDecoder* This)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 	const int ret = aifa->last_error;
@@ -213,23 +207,20 @@ aifa_GetError(TFB_SoundDecoder* This)
 	return ret;
 }
 
-static bool
-aifa_Init(TFB_SoundDecoder* This)
+static bool aifa_Init(TFB_SoundDecoder* This)
 {
 	//TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*) This;
 	This->need_swap = !aifa_formats->want_big_endian;
 	return true;
 }
 
-static void
-aifa_Term(TFB_SoundDecoder* This)
+static void aifa_Term(TFB_SoundDecoder* This)
 {
 	//TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*) This;
 	aifa_Close(This); // ensure cleanup
 }
 
-static bool
-read_be_16(uqm::io::File* fp, uint16_t* v)
+static bool read_be_16(uqm::io::File* fp, uint16_t* v)
 {
 	if (!fp->readValue(*v))
 	{
@@ -239,8 +230,7 @@ read_be_16(uqm::io::File* fp, uint16_t* v)
 	return true;
 }
 
-static bool
-read_be_32(uqm::io::File* fp, uint32_t* v)
+static bool read_be_32(uqm::io::File* fp, uint32_t* v)
 {
 	if (!fp->readValue(*v))
 	{
@@ -253,8 +243,7 @@ read_be_32(uqm::io::File* fp, uint32_t* v)
 // Read 80-bit IEEE 754 floating point number.
 // We are only interested in values that we can work with,
 //   so using an int32_t here is fine.
-static bool
-read_be_f80(uqm::io::File* fp, int32_t* v)
+static bool read_be_f80(uqm::io::File* fp, int32_t* v)
 {
 	int sign {};
 	int exp {};
@@ -292,8 +281,7 @@ read_be_f80(uqm::io::File* fp, int32_t* v)
 	return true;
 }
 
-static bool
-aifa_readFileHeader(TFB_AiffSoundDecoder* aifa, aiff_FileHeader* hdr)
+static bool aifa_readFileHeader(TFB_AiffSoundDecoder* aifa, aiff_FileHeader* hdr)
 {
 	if (!read_be_32(aifa->fp, &hdr->chunk.id) || !read_be_32(aifa->fp, &hdr->chunk.size) || !read_be_32(aifa->fp, &hdr->type))
 	{
@@ -303,8 +291,7 @@ aifa_readFileHeader(TFB_AiffSoundDecoder* aifa, aiff_FileHeader* hdr)
 	return true;
 }
 
-static bool
-aifa_readChunkHeader(TFB_AiffSoundDecoder* aifa, aiff_ChunkHeader* hdr)
+static bool aifa_readChunkHeader(TFB_AiffSoundDecoder* aifa, aiff_ChunkHeader* hdr)
 {
 	if (!read_be_32(aifa->fp, &hdr->id) || !read_be_32(aifa->fp, &hdr->size))
 	{
@@ -314,9 +301,8 @@ aifa_readChunkHeader(TFB_AiffSoundDecoder* aifa, aiff_ChunkHeader* hdr)
 	return true;
 }
 
-static int
-aifa_readCommonChunk(TFB_AiffSoundDecoder* aifa, uint32_t size,
-					 aiff_ExtCommonChunk* fmt)
+static int aifa_readCommonChunk(TFB_AiffSoundDecoder* aifa, uint32_t size,
+								aiff_ExtCommonChunk* fmt)
 {
 	memset(fmt, 0, sizeof(*fmt));
 	if (size < AiffCommSize)
@@ -345,9 +331,8 @@ aifa_readCommonChunk(TFB_AiffSoundDecoder* aifa, uint32_t size,
 	return bytes;
 }
 
-static bool
-aifa_readSoundDataChunk(TFB_AiffSoundDecoder* aifa,
-						aiff_SoundDataChunk* data)
+static bool aifa_readSoundDataChunk(TFB_AiffSoundDecoder* aifa,
+									aiff_SoundDataChunk* data)
 {
 	if (!read_be_32(aifa->fp, &data->offset) || !read_be_32(aifa->fp, &data->blockSize))
 	{
@@ -357,8 +342,7 @@ aifa_readSoundDataChunk(TFB_AiffSoundDecoder* aifa,
 	return true;
 }
 
-static bool
-aifa_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
+static bool aifa_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 	aiff_FileHeader fileHdr;
@@ -540,8 +524,7 @@ aifa_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* fil
 	return true;
 }
 
-static void
-aifa_Close(TFB_SoundDecoder* This)
+static void aifa_Close(TFB_SoundDecoder* This)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 
@@ -552,8 +535,7 @@ aifa_Close(TFB_SoundDecoder* This)
 	}
 }
 
-static int
-aifa_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
+static int aifa_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 	switch (aifa->comp_type)
@@ -568,8 +550,7 @@ aifa_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 	}
 }
 
-static int
-aifa_DecodePCM(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
+static int aifa_DecodePCM(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
 {
 	uint32_t dec_pcm {bufsize / aifa->block_align};
 	if (dec_pcm > aifa->max_pcm - aifa->cur_pcm)
@@ -594,8 +575,7 @@ aifa_DecodePCM(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
 	return size;
 }
 
-static int
-aifa_DecodeSDX2(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
+static int aifa_DecodeSDX2(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
 {
 	int16_t* dst = (int16_t*)buf;
 
@@ -636,8 +616,7 @@ aifa_DecodeSDX2(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
 	return dec_pcm * aifa->block_align;
 }
 
-static uint32_t
-aifa_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
+static uint32_t aifa_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 
@@ -656,8 +635,7 @@ aifa_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 	return pcm_pos;
 }
 
-static uint32_t
-aifa_GetFrame(TFB_SoundDecoder* This)
+static uint32_t aifa_GetFrame(TFB_SoundDecoder* This)
 {
 	//TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*) This;
 	return 0; // only 1 frame for now

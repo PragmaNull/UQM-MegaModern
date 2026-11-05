@@ -28,8 +28,7 @@ struct NativePalette
 	SDL_Color colors[NumberOfPlutvals];
 };
 
-static inline Color
-NativeToColor(SDL_Color native)
+static inline Color NativeToColor(SDL_Color native)
 {
 	Color color;
 	color.r = native.r;
@@ -39,8 +38,7 @@ NativeToColor(SDL_Color native)
 	return color;
 }
 
-static inline SDL_Color
-ColorToNative(Color color)
+static inline SDL_Color ColorToNative(Color color)
 {
 	SDL_Color native;
 	native.r = color.r;

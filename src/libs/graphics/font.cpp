@@ -30,8 +30,7 @@
 
 static inline TFB_Char* getCharFrame(FONT_DESC* fontPtr, uqm::UniChar ch);
 
-TFB_Char*
-GetFrameForFPS(uqm::UniChar ch)
+TFB_Char* GetFrameForFPS(uqm::UniChar ch)
 {
 	if (StarConFont && !(uqm::currentActivity() & CHECK_ABORT))
 	{
@@ -190,8 +189,7 @@ void font_DrawTracedText(TEXT* pText, Color text, Color trace)
 }
 
 // Alt stuff to handle 2 fonts at once (for Orz)
-uint8_t
-font_DrawTextAlt(TEXT* lpText, uint8_t swap, FONT AltFontPtr, uqm::UniChar key)
+uint8_t font_DrawTextAlt(TEXT* lpText, uint8_t swap, FONT AltFontPtr, uqm::UniChar key)
 {
 	GFXRECT ClipRect;
 	GFXPOINT origin;
@@ -826,9 +824,8 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 	return (false);
 }
 
-uint8_t
-_text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swap,
-			  FONT AltFontPtr, uqm::UniChar key)
+uint8_t _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swap,
+					  FONT AltFontPtr, uqm::UniChar key)
 { // Kruzen: To create text using 2 fonts (Orz case)
 	// Safest way to do so without going too deep into
 	// original code
@@ -959,8 +956,7 @@ _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swa
 	return swap;
 }
 
-static inline TFB_Char*
-getCharFrame(FONT_DESC* fontPtr, uqm::UniChar ch)
+static inline TFB_Char* getCharFrame(FONT_DESC* fontPtr, uqm::UniChar ch)
 {
 	const uqm::UniChar pageStart = ch & CharacterPageMask;
 

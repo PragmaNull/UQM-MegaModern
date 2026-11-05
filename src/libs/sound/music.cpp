@@ -92,8 +92,7 @@ void PLRPause(MUSIC_REF MusicRef)
 	}
 }
 
-static uint32_t
-get_current_music_pos(MUSIC_REF MusicRef)
+static uint32_t get_current_music_pos(MUSIC_REF MusicRef)
 {
 	uint32_t pos = 0;
 	float length = 0.0f;
@@ -136,8 +135,7 @@ get_current_music_pos(MUSIC_REF MusicRef)
 	return pos;
 }
 
-uint32_t
-PLRGetPos(void)
+uint32_t PLRGetPos(void)
 {
 	return curMusicRef != 0 ? get_current_music_pos(curMusicRef) : 0;
 }
@@ -152,8 +150,7 @@ void PLRResume(MUSIC_REF MusicRef)
 	}
 }
 
-static uint32_t
-get_current_music_filename_hash(MUSIC_REF MusicRef)
+static uint32_t get_current_music_filename_hash(MUSIC_REF MusicRef)
 {
 	uint32_t filename_hash {};
 
@@ -176,8 +173,7 @@ get_current_music_filename_hash(MUSIC_REF MusicRef)
 	}
 }
 
-uint32_t
-PLRGetFilenameHash(void)
+uint32_t PLRGetFilenameHash(void)
 {
 	return curMusicRef != 0 ? get_current_music_filename_hash(curMusicRef) : 0;
 }
@@ -330,8 +326,7 @@ void SetMusicPosition(void)
 	}
 }
 
-uint32_t
-GetMusicPosition()
+uint32_t GetMusicPosition()
 {
 	if (!uqm::UQMOptions::read().musicResume || uqm::currentActivity() & CHECK_ABORT)
 	{

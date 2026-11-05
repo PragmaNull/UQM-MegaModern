@@ -131,8 +131,7 @@ static inline void SeedShipMap(SPECIES_ID* map, int seed)
 
 // Uses a ship map to map species ID to another species ID.
 // When in load window, it uses two ship maps to fake a valid response.
-SPECIES_ID
-SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
+SPECIES_ID SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 {
 	static int seedStamp = -1;
 	static int sisStamp = -1;
@@ -189,14 +188,12 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 	return target;
 }
 
-static void
-SwapStrings(uqm::StringTable* a, uqm::StringTable* b, size_t ia, size_t ib)
+static void SwapStrings(uqm::StringTable* a, uqm::StringTable* b, size_t ia, size_t ib)
 {
 	a->swap(ia, *b, ib);
 }
 
-RACE_DESC*
-load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
+RACE_DESC* load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 {
 	RACE_DESC* RDPtr = 0;
 	void* CodeRef {};

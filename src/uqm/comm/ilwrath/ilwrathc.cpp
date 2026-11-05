@@ -124,8 +124,7 @@ static LOCDATA ilwrath_desc =
 		nullptr,
 };
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	const bool isGTFO = PlayerSaid(R, gtfo);
 	setSegue(Segue_hostile);
@@ -233,8 +232,7 @@ CombatIsInevitable(RESPONSE_REF R)
 
 static void IlwrathHome(RESPONSE_REF R);
 
-static void
-IlwrathGods(RESPONSE_REF R)
+static void IlwrathGods(RESPONSE_REF R)
 {
 	uint8_t GodsLeft {false};
 	if (PlayerSaid(R, want_info_on_gods))
@@ -294,8 +292,7 @@ IlwrathGods(RESPONSE_REF R)
 	}
 }
 
-static void
-IlwrathInfo(RESPONSE_REF R)
+static void IlwrathInfo(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
 	if (PlayerSaid(R, want_info_on_ilwrath))
@@ -371,8 +368,7 @@ IlwrathInfo(RESPONSE_REF R)
 	}
 }
 
-static void
-IlwrathHome(RESPONSE_REF R)
+static void IlwrathHome(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -415,8 +411,7 @@ IlwrathHome(RESPONSE_REF R)
 
 static void GodsSpeak(RESPONSE_REF R);
 
-static void
-GodsOrder(RESPONSE_REF R)
+static void GodsOrder(RESPONSE_REF R)
 {
 	uint8_t OrdersLeft {false};
 	if (PlayerSaid(R, other_divine_orders))
@@ -476,8 +471,7 @@ GodsOrder(RESPONSE_REF R)
 	}
 }
 
-static void
-GodsSpeak(RESPONSE_REF R)
+static void GodsSpeak(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -566,8 +560,7 @@ GodsSpeak(RESPONSE_REF R)
 	Response(bye_gods, CombatIsInevitable);
 }
 
-static void
-IlwrathSpace(RESPONSE_REF R)
+static void IlwrathSpace(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -621,8 +614,7 @@ IlwrathSpace(RESPONSE_REF R)
 	Response(bye_space, CombatIsInevitable);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -738,21 +730,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_ilwrath(void)
+static uint16_t uninit_ilwrath(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_ilwrath_enc(void)
+static void post_ilwrath_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_ilwrath_comm(void)
+LOCDATA* init_ilwrath_comm(void)
 {
 	ilwrath_desc.init_encounter_func = Intro;
 	ilwrath_desc.post_encounter_func = post_ilwrath_enc;

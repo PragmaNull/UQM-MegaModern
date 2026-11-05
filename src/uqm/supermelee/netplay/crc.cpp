@@ -135,8 +135,7 @@ void crc_processUint32(crc_State* state, uint32_t val)
 	state->crc = newCrc;
 }
 
-uint32_t
-crc_finish(const crc_State* state)
+uint32_t crc_finish(const crc_State* state)
 {
 	return ~state->crc;
 }

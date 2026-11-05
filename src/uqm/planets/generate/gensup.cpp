@@ -58,8 +58,7 @@ const GenerateFunctions generateSupoxFunctions = {
 };
 
 
-static bool
-GenerateSupox_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateSupox_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
@@ -90,9 +89,8 @@ GenerateSupox_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateSupox_generateName(const SOLARSYS_STATE* solarSys,
-						   const PLANET_DESC* world)
+static bool GenerateSupox_generateName(const SOLARSYS_STATE* solarSys,
+									   const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
@@ -112,9 +110,8 @@ GenerateSupox_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
-							  PLANET_DESC* world)
+static bool GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
+										  PLANET_DESC* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -159,9 +156,8 @@ GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateSupox_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						   uint16_t whichNode)
+static bool GenerateSupox_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									   uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -182,9 +178,8 @@ GenerateSupox_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-static uint16_t
-GenerateSupox_generateEnergy(const SOLARSYS_STATE* solarSys,
-							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSupox_generateEnergy(const SOLARSYS_STATE* solarSys,
+											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{

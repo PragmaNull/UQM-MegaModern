@@ -135,9 +135,8 @@ static RACE_DESC thraddash_desc =
 		0, /* CodeRef */
 };
 
-static void
-thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					   uint16_t ConcernCounter)
+static void thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								   uint16_t ConcernCounter)
 {
 
 	STARSHIP* StarShipPtr {};
@@ -236,8 +235,7 @@ thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void
-flame_napalm_preprocess(ELEMENT* ElementPtr)
+static void flame_napalm_preprocess(ELEMENT* ElementPtr)
 {
 	ZeroVelocityComponents(&ElementPtr->velocity);
 
@@ -281,8 +279,7 @@ flame_napalm_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static uint16_t
-initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
+static uint16_t initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -306,8 +303,7 @@ initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 	return (1);
 }
 
-static void
-thraddash_preprocess(ELEMENT* ElementPtr)
+static void thraddash_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -412,8 +408,7 @@ thraddash_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_thraddash(void)
+RACE_DESC* init_thraddash(void)
 {
 	if (IsHd())
 	{

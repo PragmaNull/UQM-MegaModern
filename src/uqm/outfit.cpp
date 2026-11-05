@@ -55,8 +55,7 @@ enum
 GFXPOINT lander_pos[MaxLanders];
 FONT ModuleFont;
 
-static void
-InitializeDOSLanderPos(void)
+static void InitializeDOSLanderPos(void)
 { // Initialize the DOS lander icon positions
 	int i {};
 	const auto& temp {LanderDosPts};
@@ -104,8 +103,7 @@ typedef struct
 
 MODULES_STATE ModuleState;
 
-static void
-DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
+static void DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 {
 	GFXRECT r;
 	TEXT t;
@@ -165,8 +163,7 @@ DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 	}
 }
 
-static void
-DrawModuleDisplay(MODULES_STATE* modState)
+static void DrawModuleDisplay(MODULES_STATE* modState)
 {
 	TEXT t;
 	GFXRECT r;
@@ -211,8 +208,7 @@ DrawModuleDisplay(MODULES_STATE* modState)
 	}
 }
 
-static void
-DrawModules(MODULES_STATE* modState, uint16_t NewItem)
+static void DrawModules(MODULES_STATE* modState, uint16_t NewItem)
 {
 	GFXCONTEXT OldContext = SetContext(StatusContext);
 
@@ -227,8 +223,7 @@ DrawModules(MODULES_STATE* modState, uint16_t NewItem)
 	SetContext(OldContext);
 }
 
-static void
-ManipulateModules(int16_t NewState)
+static void ManipulateModules(int16_t NewState)
 {
 	int16_t NewTop {};
 
@@ -254,8 +249,7 @@ ManipulateModules(int16_t NewState)
 	DrawModules(modState, NewState);
 }
 
-int16_t
-InventoryModules(uint8_t* pModuleMap, uint16_t Size)
+int16_t InventoryModules(uint8_t* pModuleMap, uint16_t Size)
 {
 	int16_t ModulesOnBoard {0};
 	for (uint8_t i {0}; i < NUM_PURCHASE_MODULES && Size > 0; ++i)
@@ -274,8 +268,7 @@ InventoryModules(uint8_t* pModuleMap, uint16_t Size)
 	return ModulesOnBoard;
 }
 
-static void
-DrawModuleMenuText(GFXRECT* r, int Index)
+static void DrawModuleMenuText(GFXRECT* r, int Index)
 {
 	TEXT text;
 	int16_t leading {};
@@ -330,8 +323,7 @@ DrawModuleMenuText(GFXRECT* r, int Index)
 	}
 }
 
-static void
-DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
+static void DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
 {
 	GFXRECT r;
 	STAMP s;
@@ -450,8 +442,7 @@ DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
 	SetContext(OldContext);
 }
 
-static void
-RedistributeFuel(void)
+static void RedistributeFuel(void)
 {
 	const GFXCONTEXT OldContext = SetContext(SpaceContext);
 
@@ -463,8 +454,7 @@ RedistributeFuel(void)
 	SetContext(OldContext);
 }
 
-static void
-DrawEscapePodText(GFXRECT rect)
+static void DrawEscapePodText(GFXRECT rect)
 {
 	TEXT text;
 	Color OldColor;
@@ -527,8 +517,7 @@ DrawEscapePodText(GFXRECT rect)
 	SetContextForeGroundColor(OldColor);
 }
 
-static void
-DrawNoLandersText(GFXRECT rect)
+static void DrawNoLandersText(GFXRECT rect)
 {
 	TEXT text;
 	Color OldColor;
@@ -568,8 +557,7 @@ static auto LanderX() { return (ResScale(24) - SafePad()); }
 static auto LanderY() { return ResScale(67); }
 static auto LanderWidth() { return ResScale(15); }
 
-static void
-DisplayLanders(MENU_STATE* pMS)
+static void DisplayLanders(MENU_STATE* pMS)
 {
 	STAMP s;
 
@@ -628,8 +616,7 @@ DisplayLanders(MENU_STATE* pMS)
 	}
 }
 
-static bool
-DoInstallModule(MENU_STATE* pMS)
+static bool DoInstallModule(MENU_STATE* pMS)
 {
 	uint8_t new_slot_piece {};
 	uint8_t old_slot_piece {};
@@ -1160,8 +1147,7 @@ InitFlash:
 	return (true);
 }
 
-static void
-ChangeFuelQuantity(void)
+static void ChangeFuelQuantity(void)
 {
 	int32_t incr = 0; // Fuel increment in fuel points (not units).
 	const int32_t maxFit =
@@ -1246,8 +1232,7 @@ ChangeFuelQuantity(void)
 	}
 }
 
-static void
-onNamingDone(void)
+static void onNamingDone(void)
 {
 	// In case player just named a ship, redraw it
 	DrawFlagshipName(false, false);

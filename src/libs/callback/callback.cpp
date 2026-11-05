@@ -43,21 +43,18 @@ static CallbackLink* callbacks UQM_GUARDED_BY(callbackListLock);
 static CallbackLink** callbacksEnd UQM_GUARDED_BY(callbackListLock);
 static CallbackLink* const* callbacksProcessEnd UQM_GUARDED_BY(callbackListLock);
 
-static inline void
-CallbackList_lock(void) UQM_ACQUIRE(callbackListLock)
+static inline void CallbackList_lock(void) UQM_ACQUIRE(callbackListLock)
 {
 	callbackListLock.lock();
 }
 
-static inline void
-CallbackList_unlock(void) UQM_RELEASE(callbackListLock)
+static inline void CallbackList_unlock(void) UQM_RELEASE(callbackListLock)
 {
 	callbackListLock.unlock();
 }
 
 #if 0
-static inline bool
-CallbackList_isLocked(void) {
+static inline bool CallbackList_isLocked(void) {
 	// TODO
 }
 #endif
@@ -77,8 +74,7 @@ void Callback_uninit(void)
 }
 
 // Callbacks are guaranteed to be called in the order that they are queued.
-CallbackID
-Callback_add(CallbackFunction callback, CallbackArg arg)
+CallbackID Callback_add(CallbackFunction callback, CallbackArg arg)
 {
 	CallbackLink* link = (CallbackLink*)(malloc(sizeof(CallbackLink)));
 	link->callback = callback;
@@ -93,14 +89,12 @@ Callback_add(CallbackFunction callback, CallbackArg arg)
 }
 
 
-static void
-CallbackLink_delete(CallbackLink* link)
+static void CallbackLink_delete(CallbackLink* link)
 {
 	free(link);
 }
 
-static CallbackLink**
-CallbackLink_find(CallbackLink* link) UQM_REQUIRES(callbackListLock)
+static CallbackLink** CallbackLink_find(CallbackLink* link) UQM_REQUIRES(callbackListLock)
 {
 	//assert(CallbackList_isLocked());
 	for (CallbackLink** ptr {&callbacks}; *ptr != nullptr; ptr = &(*ptr)->next)
@@ -142,8 +136,7 @@ bool Callback_remove(CallbackID id)
 	return true;
 }
 
-static inline void
-CallbackLink_doCallback(CallbackLink* link)
+static inline void CallbackLink_doCallback(CallbackLink* link)
 {
 	(link->callback)(link->arg);
 }

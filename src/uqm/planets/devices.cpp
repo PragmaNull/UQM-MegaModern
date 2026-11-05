@@ -87,8 +87,7 @@ typedef struct
 
 
 #if 0
-static void
-EraseDevicesBackground (void)
+static void EraseDevicesBackground (void)
 {
 	GFXRECT r;
 
@@ -101,8 +100,7 @@ EraseDevicesBackground (void)
 }
 #endif
 
-static void
-DrawDevice(uint16_t device, uint16_t pos, bool selected)
+static void DrawDevice(uint16_t device, uint16_t pos, bool selected)
 {
 	GFXRECT r;
 	TEXT t;
@@ -144,8 +142,7 @@ DrawDevice(uint16_t device, uint16_t pos, bool selected)
 	font_DrawText(&t);
 }
 
-static void
-DrawDevicesDisplay(DEVICES_STATE* devState)
+static void DrawDevicesDisplay(DEVICES_STATE* devState)
 {
 	TEXT t;
 	GFXRECT r;
@@ -204,8 +201,7 @@ DrawDevicesDisplay(DEVICES_STATE* devState)
 	}
 }
 
-static void
-DrawDevices(DEVICES_STATE* devState, uint16_t OldDevice, uint16_t NewDevice)
+static void DrawDevices(DEVICES_STATE* devState, uint16_t OldDevice, uint16_t NewDevice)
 {
 	BatchGraphics();
 
@@ -236,8 +232,7 @@ DrawDevices(DEVICES_STATE* devState, uint16_t OldDevice, uint16_t NewDevice)
 
 // Returns true if the broadcaster has been successfully activated,
 // and false otherwise.
-static bool
-UseCaster(void)
+static bool UseCaster(void)
 {
 	if (inHQSpace())
 	{
@@ -324,8 +319,7 @@ UseCaster(void)
 	return false;
 }
 
-static DeviceStatus
-InvokeDevice(uint8_t which_device)
+static DeviceStatus InvokeDevice(uint8_t which_device)
 {
 	uint8_t val {};
 
@@ -524,8 +518,7 @@ bool InvokeSpawner(void)
 	return (status == DEVICE_FAILURE);
 }
 
-static bool
-DoManipulateDevices(MENU_STATE* pMS)
+static bool DoManipulateDevices(MENU_STATE* pMS)
 {
 	DEVICES_STATE* devState = (DEVICES_STATE*)pMS->privData;
 	bool select {};
@@ -623,8 +616,7 @@ DoManipulateDevices(MENU_STATE* pMS)
 	return true;
 }
 
-int16_t
-InventoryDevices(uint8_t* pDeviceMap, uint16_t Size)
+int16_t InventoryDevices(uint8_t* pDeviceMap, uint16_t Size)
 {
 	int16_t DevicesOnBoard {0};
 	for (uint8_t i {0}; i < NUM_DEVICES && Size > 0; ++i)

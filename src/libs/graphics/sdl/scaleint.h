@@ -93,20 +93,17 @@ extern void Scale_ExpandRect(SDL_Rect* rect, int expansion,
 // Standard plain C versions of support functions
 
 // Initialize various platform-specific features
-static inline void
-SCALE_(PlatInit)(void)
+static inline void SCALE_(PlatInit)(void)
 {
 }
 
 // Finish with various platform-specific features
-static inline void
-SCALE_(PlatDone)(void)
+static inline void SCALE_(PlatDone)(void)
 {
 }
 
 #if 0
-static inline void
-SCALE_(Prefetch) (const void* p)
+static inline void SCALE_(Prefetch) (const void* p)
 {
 	/* no-op in pure C */
 	(void)p;
@@ -117,8 +114,7 @@ SCALE_(Prefetch) (const void* p)
 
 // compute the RGB distance squared between 2 pixels
 // Plain C version
-static inline int
-SCALE_(GetRGBDelta)(const SDL_PixelFormatDetails* fmt, Uint32 pix1, Uint32 pix2)
+static inline int SCALE_(GetRGBDelta)(const SDL_PixelFormatDetails* fmt, Uint32 pix1, Uint32 pix2)
 {
 	int c {};
 
@@ -136,8 +132,7 @@ SCALE_(GetRGBDelta)(const SDL_PixelFormatDetails* fmt, Uint32 pix1, Uint32 pix2)
 
 // retrieve the Y (intensity) component of pixel's YUV
 // Plain C version
-static inline int
-SCALE_(GetPixY)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
+static inline int SCALE_(GetPixY)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
 {
 	const Uint32 r {(pix >> fmt->Rshift) & 0xff};
 	const Uint32 g {(pix >> fmt->Gshift) & 0xff};
@@ -148,8 +143,7 @@ SCALE_(GetPixY)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
 		 + RGB_to_YUV[YUV_XFORM_B][YUV_XFORM_Y][b];
 }
 
-static inline YUV_VECTOR
-SCALE_(RGBtoYUV)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
+static inline YUV_VECTOR SCALE_(RGBtoYUV)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
 {
 	return RGB15_to_YUV[(((pix >> (fmt->Rshift + 3)) & 0x1f) << 10) | (((pix >> (fmt->Gshift + 3)) & 0x1f) << 5) | (((pix >> (fmt->Bshift + 3)) & 0x1f))];
 }
@@ -158,8 +152,7 @@ SCALE_(RGBtoYUV)(const SDL_PixelFormatDetails* fmt, Uint32 pix)
 // tolerance set by toler arg
 // returns true: close; false: distant (-gt toler)
 // Plain C version
-static inline bool
-SCALE_(CmpYUV)(const SDL_PixelFormatDetails* fmt, Uint32 pix1, Uint32 pix2, int toler)
+static inline bool SCALE_(CmpYUV)(const SDL_PixelFormatDetails* fmt, Uint32 pix1, Uint32 pix2, int toler)
 #if 1
 {
 	int dr {};
@@ -229,8 +222,7 @@ SCALE_(CmpYUV)(const SDL_PixelFormatDetails* fmt, Uint32 pix1, Uint32 pix2, int 
 // Check if 2 pixels are different with respect to their
 // YUV representations
 // returns 0: close; ~0: distant
-static inline int
-SCALE_(DiffYUV)(Uint32 yuv1, Uint32 yuv2)
+static inline int SCALE_(DiffYUV)(Uint32 yuv1, Uint32 yuv2)
 {
 	// non-branching version -- assumes 2's complement integers
 	// delta math only needs 25 bits and we have 32 available;
@@ -258,8 +250,7 @@ SCALE_(DiffYUV)(Uint32 yuv1, Uint32 yuv2)
 }
 
 // blends two pixels with 1:1 ratio
-static inline Uint32
-SCALE_(Blend_11)(Uint32 pix1, Uint32 pix2)
+static inline Uint32 SCALE_(Blend_11)(Uint32 pix1, Uint32 pix2)
 {
 	/* (pix1 + pix2) >> 1 */
 	return
@@ -271,9 +262,8 @@ SCALE_(Blend_11)(Uint32 pix1, Uint32 pix2)
 }
 
 // blends four pixels with 1:1:1:1 ratio
-static inline Uint32
-SCALE_(Blend_1111)(Uint32 pix1, Uint32 pix2,
-				   Uint32 pix3, Uint32 pix4)
+static inline Uint32 SCALE_(Blend_1111)(Uint32 pix1, Uint32 pix2,
+										Uint32 pix3, Uint32 pix4)
 {
 	/* (pix1 + pix2 + pix3 + pix4) >> 2 */
 	return
@@ -287,8 +277,7 @@ SCALE_(Blend_1111)(Uint32 pix1, Uint32 pix2,
 }
 
 // blends pixels with 3:1 ratio
-static inline Uint32
-Scale_Blend_31(Uint32 pix1, Uint32 pix2)
+static inline Uint32 Scale_Blend_31(Uint32 pix1, Uint32 pix2)
 {
 	/* (pix1 * 3 + pix2) / 4 */
 	/*	lower bits can be safely ignored - the error is minimal */
@@ -296,8 +285,7 @@ Scale_Blend_31(Uint32 pix1, Uint32 pix2)
 }
 
 // blends pixels with 2:1:1 ratio
-static inline Uint32
-Scale_Blend_211(Uint32 pix1, Uint32 pix2, Uint32 pix3)
+static inline Uint32 Scale_Blend_211(Uint32 pix1, Uint32 pix2, Uint32 pix3)
 {
 	/* (pix1 * 2 + pix2 + pix3) / 4 */
 	/*	lower bits can be safely ignored - the error is minimal */
@@ -305,8 +293,7 @@ Scale_Blend_211(Uint32 pix1, Uint32 pix2, Uint32 pix3)
 }
 
 // blends pixels with 5:2:1 ratio
-static inline Uint32
-Scale_Blend_521(Uint32 pix1, Uint32 pix2, Uint32 pix3)
+static inline Uint32 Scale_Blend_521(Uint32 pix1, Uint32 pix2, Uint32 pix3)
 {
 	/* (pix1 * 5 + pix2 * 2 + pix3) / 8 */
 	/*	lower bits can be safely ignored - the error is minimal */
@@ -314,8 +301,7 @@ Scale_Blend_521(Uint32 pix1, Uint32 pix2, Uint32 pix3)
 }
 
 // blends pixels with 6:1:1 ratio
-static inline Uint32
-Scale_Blend_611(Uint32 pix1, Uint32 pix2, Uint32 pix3)
+static inline Uint32 Scale_Blend_611(Uint32 pix1, Uint32 pix2, Uint32 pix3)
 {
 	/* (pix1 * 6 + pix2 + pix3) / 8 */
 	/*	lower bits can be safely ignored - the error is minimal */
@@ -323,8 +309,7 @@ Scale_Blend_611(Uint32 pix1, Uint32 pix2, Uint32 pix3)
 }
 
 // blends pixels with 2:3:3 ratio
-static inline Uint32
-Scale_Blend_233(Uint32 pix1, Uint32 pix2, Uint32 pix3)
+static inline Uint32 Scale_Blend_233(Uint32 pix1, Uint32 pix2, Uint32 pix3)
 {
 	/* (pix1 * 2 + pix2 * 3 + pix3 * 3) / 8 */
 	/*	lower bits can be safely ignored - the error is minimal */
@@ -332,8 +317,7 @@ Scale_Blend_233(Uint32 pix1, Uint32 pix2, Uint32 pix3)
 }
 
 // blends pixels with 14:1:1 ratio
-static inline Uint32
-Scale_Blend_e11(Uint32 pix1, Uint32 pix2, Uint32 pix3)
+static inline Uint32 Scale_Blend_e11(Uint32 pix1, Uint32 pix2, Uint32 pix3)
 {
 	/* (pix1 * 14 + pix2 + pix3) >> 4 */
 	/*	lower bits can be safely ignored - the error is minimal */
@@ -341,8 +325,7 @@ Scale_Blend_e11(Uint32 pix1, Uint32 pix2, Uint32 pix3)
 }
 
 // Halfs the pixel's intensity
-static inline Uint32
-SCALE_(HalfPixel)(Uint32 pix)
+static inline Uint32 SCALE_(HalfPixel)(Uint32 pix)
 {
 	return ((pix & 0xfefefefe) >> 1);
 }
@@ -357,9 +340,8 @@ SCALE_(HalfPixel)(Uint32 pix)
 //	dp[1] = (3*sp[0] + 9*sp[1] + 1*sp[2] + 3*sp[3]) / 16
 //	dp[2] = (3*sp[0] + 1*sp[1] + 9*sp[2] + 3*sp[3]) / 16
 //	dp[3] = (1*sp[0] + 3*sp[1] + 3*sp[2] + 9*sp[3]) / 16
-static inline void
-SCALE_(Blend_bilinear)(const Uint32* row0, const Uint32* row1,
-					   Uint32* dst_p, Uint32 dlen)
+static inline void SCALE_(Blend_bilinear)(const Uint32* row0, const Uint32* row1,
+										  Uint32* dst_p, Uint32 dlen)
 {
 	// We loose some lower bits here and try to compensate for
 	// that by adding half-error values.

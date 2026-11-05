@@ -74,8 +74,7 @@ void crc_processPOINT(crc_State* state, const GFXPOINT* val)
 }
 
 #if 0
-void
-crc_processSTAMP(crc_State *state, const STAMP *val) {
+void crc_processSTAMP(crc_State *state, const STAMP *val) {
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processSTAMP().");
 #endif
@@ -86,8 +85,7 @@ crc_processSTAMP(crc_State *state, const STAMP *val) {
 #endif
 }
 
-void
-crc_processINTERSECT_CONTROL(crc_State *state, const INTERSECT_CONTROL *val) {
+void crc_processINTERSECT_CONTROL(crc_State *state, const INTERSECT_CONTROL *val) {
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processINTERSECT_CONTROL().");
 #endif

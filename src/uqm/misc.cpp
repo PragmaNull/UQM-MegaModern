@@ -103,8 +103,7 @@ void spawn_planet(void)
 
 extern FRAME asteroid[];
 
-static void
-spawn_rubble(ELEMENT* AsteroidElementPtr)
+static void spawn_rubble(ELEMENT* AsteroidElementPtr)
 {
 	HELEMENT hRubbleElement {AllocElement()};
 	if (hRubbleElement)
@@ -137,8 +136,7 @@ spawn_rubble(ELEMENT* AsteroidElementPtr)
 	}
 }
 
-static void
-asteroid_preprocess(ELEMENT* ElementPtr)
+static void asteroid_preprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{

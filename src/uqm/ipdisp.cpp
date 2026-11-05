@@ -38,8 +38,7 @@ bool legacySave;
 uint8_t GTFO = 0;
 extern FRAME SpaceJunkFrame;
 
-static inline int16_t
-RaceIPSpeed(RACE_ID Index)
+static inline int16_t RaceIPSpeed(RACE_ID Index)
 {
 	static int seedStamp = -1;
 	const auto& defaultMap {RaceIpSpeed};
@@ -156,8 +155,7 @@ void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 	}
 }
 
-static int16_t
-zoomRadiusForLocation(uint8_t location)
+static int16_t zoomRadiusForLocation(uint8_t location)
 {
 	if (location == 0)
 	{ // In outer system view; use current zoom radius
@@ -169,8 +167,7 @@ zoomRadiusForLocation(uint8_t location)
 	}
 }
 
-static inline void
-adjustDeltaVforZoom(int16_t zoom, int16_t* dx, int16_t* dy)
+static inline void adjustDeltaVforZoom(int16_t zoom, int16_t* dx, int16_t* dy)
 {
 	if (zoom == MinZoomRadius)
 	{
@@ -184,8 +181,7 @@ adjustDeltaVforZoom(int16_t zoom, int16_t* dx, int16_t* dy)
 	}
 }
 
-static uint8_t
-getFlagshipLocation(void)
+static uint8_t getFlagshipLocation(void)
 {
 	if (!playerInInnerSystem())
 	{
@@ -205,8 +201,7 @@ FRAME Ywing = NullResource;
 static constexpr auto TrackWait {5};
 static constexpr auto OrbitSpeed {60};
 
-static void
-ip_group_preprocess(ELEMENT* ElementPtr)
+static void ip_group_preprocess(ELEMENT* ElementPtr)
 {
 	uint8_t task {};
 	uint8_t group_loc {};
@@ -717,9 +712,8 @@ CheckGetAway:
 	EPtr->state_flags |= Changing;
 }
 
-static void
-flag_ship_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-					ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void flag_ship_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+								ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	if (uqm::currentActivity() & START_ENCOUNTER)
 	{
@@ -740,9 +734,8 @@ flag_ship_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static void
-ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	IP_GROUP* GroupPtr {};
 	void* OtherPtr {};
@@ -805,8 +798,7 @@ ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static void
-spawn_ip_group(IP_GROUP* GroupPtr)
+static void spawn_ip_group(IP_GROUP* GroupPtr)
 {
 	HELEMENT hIPSHIPElement {AllocElement()};
 	if (hIPSHIPElement)
@@ -937,8 +929,7 @@ spawn_ip_group(IP_GROUP* GroupPtr)
 
 static constexpr auto FlipWait {42};
 
-static void
-flag_ship_preprocess(ELEMENT* ElementPtr)
+static void flag_ship_preprocess(ELEMENT* ElementPtr)
 {
 	if (--ElementPtr->thrust_wait == 0)
 	/* juggle list after flagship */
@@ -1036,8 +1027,7 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-AdjustInitialPosition(void)
+static void AdjustInitialPosition(void)
 { // Corrects SIS position - rounding error, described in
 	// EnterPlanetOrbit() in solarsys.c
 	GFXPOINT pt;
@@ -1055,8 +1045,7 @@ AdjustInitialPosition(void)
 	uqm::flagship().shipStamp.origin = pt;
 }
 
-static void
-spawn_flag_ship(void)
+static void spawn_flag_ship(void)
 {
 	HELEMENT hFlagShipElement {AllocElement()};
 	if (hFlagShipElement)

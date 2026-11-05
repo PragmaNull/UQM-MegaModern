@@ -124,8 +124,7 @@ static RACE_DESC slylandro_desc =
 static uint16_t initialize_lightning(ELEMENT* ElementPtr,
 									 HELEMENT LaserArray[]);
 
-static void
-lightning_postprocess(ELEMENT* ElementPtr)
+static void lightning_postprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait
 		&& !(ElementPtr->state_flags & Collision))
@@ -140,9 +139,8 @@ lightning_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-lightning_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-					ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void lightning_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+								ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -158,8 +156,7 @@ lightning_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 }
 
-static uint16_t
-initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
+static uint16_t initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 {
 	LASER_BLOCK LaserBlock;
 
@@ -272,9 +269,8 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 	return (1);
 }
 
-static void
-slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					   uint16_t ConcernCounter)
+static void slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								   uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -324,8 +320,7 @@ slylandro_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static bool
-harvest_space_junk(ELEMENT* ElementPtr)
+static bool harvest_space_junk(ELEMENT* ElementPtr)
 {
 	HELEMENT hElement {};
 	HELEMENT hNextElement {};
@@ -388,8 +383,7 @@ harvest_space_junk(ELEMENT* ElementPtr)
 	return (retval);
 }
 
-static void
-slylandro_postprocess(ELEMENT* ElementPtr)
+static void slylandro_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -415,8 +409,7 @@ slylandro_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-slylandro_preprocess(ELEMENT* ElementPtr)
+static void slylandro_preprocess(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & (Appearing | Nonsolid)))
 	{
@@ -462,8 +455,7 @@ slylandro_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_slylandro(void)
+RACE_DESC* init_slylandro(void)
 {
 	if (IsHd())
 	{

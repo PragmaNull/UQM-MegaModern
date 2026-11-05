@@ -66,27 +66,23 @@ static void reportShipSelected(GETMELEE_STATE* gms, uint16_t index);
 FRAME PickMeleeFrame;
 
 
-static FleetShipIndex
-PickMelee_GetShipIndex(uint8_t row, uint8_t col)
+static FleetShipIndex PickMelee_GetShipIndex(uint8_t row, uint8_t col)
 {
 	return row * NumPickmeleeColumns + col;
 }
 
-static uint8_t
-PickMelee_GetShipRow(FleetShipIndex index)
+static uint8_t PickMelee_GetShipRow(FleetShipIndex index)
 {
 	return index / NumPickmeleeColumns;
 }
 
-static uint8_t
-PickMelee_GetShipColumn(int index)
+static uint8_t PickMelee_GetShipColumn(int index)
 {
 	return index % NumPickmeleeColumns;
 }
 
 // Returns the <index>th ship in the queue, or 0 if it is not available.
-static HSTARSHIP
-MeleeShipByQueueIndex(const QUEUE* queue, uint16_t index)
+static HSTARSHIP MeleeShipByQueueIndex(const QUEUE* queue, uint16_t index)
 {
 	HSTARSHIP hShip {};
 	HSTARSHIP hNextShip {};
@@ -112,8 +108,7 @@ MeleeShipByQueueIndex(const QUEUE* queue, uint16_t index)
 }
 
 // Returns the <index>th available ship in the queue.
-static HSTARSHIP
-MeleeShipByUsedIndex(const QUEUE* queue, uint16_t index)
+static HSTARSHIP MeleeShipByUsedIndex(const QUEUE* queue, uint16_t index)
 {
 	HSTARSHIP hShip {};
 	HSTARSHIP hNextShip {};
@@ -134,8 +129,7 @@ MeleeShipByUsedIndex(const QUEUE* queue, uint16_t index)
 }
 
 #if 0
-static uint16_t
-queueIndexFromShip (HSTARSHIP hShip)
+static uint16_t queueIndexFromShip (HSTARSHIP hShip)
 {
 	uint16_t result;
 	STARSHIP *StarShipPtr = LockStarShip (queue, hShip);
@@ -145,8 +139,7 @@ queueIndexFromShip (HSTARSHIP hShip)
 #endif
 
 // Pre: called does not hold the graphics lock
-static void
-PickMelee_ChangedSelection(GETMELEE_STATE* gms, uint16_t playerI)
+static void PickMelee_ChangedSelection(GETMELEE_STATE* gms, uint16_t playerI)
 {
 	GFXRECT r;
 
@@ -199,9 +192,8 @@ bool setShipSelected(GETMELEE_STATE* gms, uint16_t playerI, uint16_t choice,
 }
 
 // Returns false if aborted.
-static bool
-SelectShip_processInput(GETMELEE_STATE* gms, uint16_t playerI,
-						BATTLE_INPUT_STATE inputState)
+static bool SelectShip_processInput(GETMELEE_STATE* gms, uint16_t playerI,
+									BATTLE_INPUT_STATE inputState)
 {
 	if (inputState & BattleWeapon)
 	{
@@ -320,8 +312,7 @@ bool selectShipNetwork(NetworkInputContext* context, GETMELEE_STATE* gms)
 // to the chosen (or randomly selected) ship, or to 0 if 'exit' has
 // been chosen.
 /* TODO: Include player timeouts */
-static bool
-DoGetMelee(GETMELEE_STATE* gms)
+static bool DoGetMelee(GETMELEE_STATE* gms)
 {
 	bool done {};
 	uint16_t playerI {};
@@ -414,8 +405,7 @@ aborted:
 	return false;
 }
 
-static uint16_t
-GetRaceQueueValue(const QUEUE* queue)
+static uint16_t GetRaceQueueValue(const QUEUE* queue)
 {
 	HSTARSHIP hBattleShip {};
 	HSTARSHIP hNextShip {};
@@ -444,8 +434,7 @@ GetRaceQueueValue(const QUEUE* queue)
 // 'frame' is the PickMeleeFrame for the player.
 // 'shipI' is the index in the ship list.
 // Pre: caller holds the graphics lock.
-static void
-CrossOutShip(FRAME frame, uint16_t shipNr)
+static void CrossOutShip(FRAME frame, uint16_t shipNr)
 {
 	STAMP s;
 	const uint8_t row = PickMelee_GetShipRow(shipNr);
@@ -466,8 +455,7 @@ CrossOutShip(FRAME frame, uint16_t shipNr)
 
 // Draw the value of the fleet in the top right of the PickMeleeFrame.
 // Pre: caller holds the graphics lock.
-static void
-UpdatePickMeleeFleetValue(FRAME frame, uint16_t which_player)
+static void UpdatePickMeleeFleetValue(FRAME frame, uint16_t which_player)
 {
 	GFXRECT r;
 	TEXT t;
@@ -661,8 +649,7 @@ void DestroyPickMeleeFrame(void)
 }
 
 // Pre: caller holds the graphics lock.
-static void
-DrawPickMeleeFrame(uint16_t which_player)
+static void DrawPickMeleeFrame(uint16_t which_player)
 {
 	STAMP s;
 
@@ -725,8 +712,7 @@ void MeleeShipDeath(STARSHIP* ship)
 }
 
 // Post: the NetState for all players is NetState_interBattle
-static bool
-GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
+static bool GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 {
 	uint16_t playerI {};
 	GETMELEE_STATE gmstate;
@@ -961,8 +947,7 @@ bool updateMeleeSelection(GETMELEE_STATE* gms, uint16_t playerI, uint16_t ship)
 	return true;
 }
 
-static void
-reportShipSelected(GETMELEE_STATE* gms, uint16_t index)
+static void reportShipSelected(GETMELEE_STATE* gms, uint16_t index)
 {
 	for (size_t playerI {0}; playerI < NumPlayers; playerI++)
 	{

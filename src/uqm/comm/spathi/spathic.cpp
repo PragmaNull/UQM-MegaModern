@@ -174,8 +174,7 @@ static LOCDATA spathi_desc =
 		nullptr,
 };
 
-static void
-ExitConversation(RESPONSE_REF Response)
+static void ExitConversation(RESPONSE_REF Response)
 {
 	const uint8_t SpaCrew = ifEasyDifficulty(MaxCrewSize, 1);
 	setSegue(Segue_peace);
@@ -267,8 +266,7 @@ ExitConversation(RESPONSE_REF Response)
 
 static uint8_t join_us_refusals;
 
-static void
-SpathiOnPluto(RESPONSE_REF R)
+static void SpathiOnPluto(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, hi_there))
 	{
@@ -498,8 +496,7 @@ SpathiOnPluto(RESPONSE_REF R)
 	Response(changed_mind, ExitConversation);
 }
 
-static void
-SpathiMustGrovel(RESPONSE_REF R)
+static void SpathiMustGrovel(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, identify))
 	{
@@ -534,8 +531,7 @@ SpathiMustGrovel(RESPONSE_REF R)
 	}
 }
 
-static void
-SpathiAllies(RESPONSE_REF R)
+static void SpathiAllies(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -602,8 +598,7 @@ SpathiAllies(RESPONSE_REF R)
 	Response(bye_ally_space, ExitConversation);
 }
 
-static void
-SpathiFriendly(RESPONSE_REF R)
+static void SpathiFriendly(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -648,8 +643,7 @@ SpathiFriendly(RESPONSE_REF R)
 
 static void SpathiNeutral(RESPONSE_REF R);
 
-static void
-SpathiBefriend(RESPONSE_REF R)
+static void SpathiBefriend(RESPONSE_REF R)
 {
 	RESPONSE_REF pStr[2];
 
@@ -732,8 +726,7 @@ SpathiBefriend(RESPONSE_REF R)
 	}
 }
 
-static void
-SpathiAntagonize(RESPONSE_REF R)
+static void SpathiAntagonize(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, prepare_to_die))
 	{
@@ -785,8 +778,7 @@ SpathiAntagonize(RESPONSE_REF R)
 	Response(attack_you_now, ExitConversation);
 }
 
-static void
-SpathiNeutral(RESPONSE_REF R)
+static void SpathiNeutral(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -842,8 +834,7 @@ SpathiNeutral(RESPONSE_REF R)
 	Response(part_in_peace, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t Manner {};
 
@@ -910,15 +901,13 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_spathi(void)
+static uint16_t uninit_spathi(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_spathi_enc(void)
+static void post_spathi_enc(void)
 {
 	uint8_t Manner {};
 
@@ -942,8 +931,7 @@ post_spathi_enc(void)
 	}
 }
 
-LOCDATA*
-init_spathi_comm(void)
+LOCDATA* init_spathi_comm(void)
 {
 	spathi_desc.init_encounter_func = Intro;
 	spathi_desc.post_encounter_func = post_spathi_enc;

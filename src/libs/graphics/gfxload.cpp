@@ -35,8 +35,7 @@
 #include <fmt/format.h>
 
 
-static void
-process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int cel_ct)
+static void process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int cel_ct)
 {
 	FramePtr->Type = RomDrawable;
 	FramePtr->Index = cel_ct;
@@ -100,8 +99,7 @@ process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int ce
 #endif
 }
 
-static void
-processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
+static void processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
 {
 	size_t dpitch {};
 

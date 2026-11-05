@@ -36,9 +36,8 @@
 
 // A wrapper function for weapon_collision that discards the return value.
 // This makes its signature match ElementCollisionFunc.
-static void
-weapon_collision_cb(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
-					ELEMENT* HitElementPtr, GFXPOINT* pHPt)
+static void weapon_collision_cb(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
+								ELEMENT* HitElementPtr, GFXPOINT* pHPt)
 {
 	weapon_collision(WeaponElementPtr, pWPt, HitElementPtr, pHPt);
 }
@@ -46,8 +45,7 @@ weapon_collision_cb(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 
 static constexpr auto LaserLife {1};
 
-HELEMENT
-initialize_laser(LASER_BLOCK* pLaserBlock)
+HELEMENT initialize_laser(LASER_BLOCK* pLaserBlock)
 {
 	HELEMENT hLaserElement {AllocElement()};
 	if (hLaserElement)
@@ -86,8 +84,7 @@ initialize_laser(LASER_BLOCK* pLaserBlock)
 	return (hLaserElement);
 }
 
-HELEMENT
-initialize_missile(MISSILE_BLOCK* pMissileBlock)
+HELEMENT initialize_missile(MISSILE_BLOCK* pMissileBlock)
 {
 	HELEMENT hMissileElement {AllocElement()};
 	if (hMissileElement)
@@ -132,9 +129,8 @@ initialize_missile(MISSILE_BLOCK* pMissileBlock)
 	return (hMissileElement);
 }
 
-HELEMENT
-weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
-				 ELEMENT* HitElementPtr, GFXPOINT* pHPt)
+HELEMENT weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
+						  ELEMENT* HitElementPtr, GFXPOINT* pHPt)
 {
 	int16_t damage {};
 	HELEMENT hBlastElement {};
@@ -255,9 +251,8 @@ weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 	return ((HELEMENT)0);
 }
 
-FRAME
-ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
-				 uint8_t modify_flags)
+FRAME ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
+					   uint8_t modify_flags)
 {
 	GFXRECT r {};
 	GFXRECT originalRect {};
@@ -328,8 +323,7 @@ ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
 // -1 if no target was found.
 // Cloaked ships won't be detected, except when the Appearing flag is
 // set for the Tracker.
-int16_t
-TrackShip(ELEMENT* Tracker, uint16_t* pfacing)
+int16_t TrackShip(ELEMENT* Tracker, uint16_t* pfacing)
 {
 	HELEMENT hNextShip {};
 	ELEMENT* Trackee {};

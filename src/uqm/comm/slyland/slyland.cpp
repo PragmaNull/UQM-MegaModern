@@ -249,8 +249,7 @@ static RESPONSE_REF threat,
 	why_attack,
 	bye;
 
-static void
-sayCoord(int coord)
+static void sayCoord(int coord)
 {
 	const int ac {abs(coord)};
 
@@ -260,8 +259,7 @@ sayCoord(int coord)
 	NPCNumber(ac % 10, nullptr);
 }
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -488,8 +486,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	}
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	if (isDifficulty(uqm::Difficulty::Hard) && uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
@@ -545,20 +542,17 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_slyland(void)
+static uint16_t uninit_slyland(void)
 {
 	return (0);
 }
 
-static void
-post_slyland_enc(void)
+static void post_slyland_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_slyland_comm(void)
+LOCDATA* init_slyland_comm(void)
 {
 	slylandro_desc.init_encounter_func = Intro;
 	slylandro_desc.post_encounter_func = post_slyland_enc;

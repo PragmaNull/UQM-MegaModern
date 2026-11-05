@@ -64,8 +64,7 @@ void VidStop(void)
 	_cur_video = NullVideoRef;
 }
 
-VIDEO_REF
-VidPlaying(void)
+VIDEO_REF VidPlaying(void)
 // this should just probably return bool
 {
 	if (!_cur_video)
@@ -91,8 +90,7 @@ bool VidProcessFrame(void)
 }
 
 // return current video position in milliseconds
-uint32_t
-VidGetPosition(void)
+uint32_t VidGetPosition(void)
 {
 	if (!VidPlaying())
 	{
@@ -111,9 +109,8 @@ bool VidSeek(uint32_t pos)
 	return (bool)TFB_SeekVideo(_cur_video, pos);
 }
 
-VIDEO_TYPE
-VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
-		  uint32_t LoopFrame)
+VIDEO_TYPE VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
+					 uint32_t LoopFrame)
 {
 	VIDEO_TYPE ret;
 
@@ -166,14 +163,12 @@ VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
 	return ret;
 }
 
-VIDEO_TYPE
-VidPlay(VIDEO_REF VidRef)
+VIDEO_TYPE VidPlay(VIDEO_REF VidRef)
 {
 	return VidPlayEx(VidRef, 0, 0, VidNoLoop);
 }
 
-VIDEO_REF
-_init_video_file(const char* pStr)
+VIDEO_REF _init_video_file(const char* pStr)
 {
 	TFB_VideoDecoder* dec {VideoDecoder_Load(uqm::contentDir(), pStr)};
 	if (!dec)

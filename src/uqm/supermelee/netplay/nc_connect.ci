@@ -24,8 +24,7 @@ static void NetConnection_connectionClosed(NetConnection* conn, std::error_code 
 
 ////////////////////////////////////////////////////////////////////////////
 
-static void
-NetConnection_go(NetConnection* conn)
+static void NetConnection_go(NetConnection* conn)
 {
 	if (NetConnection_isConnected(conn))
 	{
@@ -69,8 +68,7 @@ NetConnection_go(NetConnection* conn)
 }
 
 // Called when a connection has been established. The server has the discriminant.
-static void
-NetConnection_connected(NetConnection* conn, uqm::net::Connection connection, bool discriminant)
+static void NetConnection_connected(NetConnection* conn, uqm::net::Connection connection, bool discriminant)
 {
 	assert(conn->connection == nullptr);
 	conn->listener.reset();
@@ -92,8 +90,7 @@ NetConnection_connected(NetConnection* conn, uqm::net::Connection connection, bo
 	(*conn->connectCallback)(conn);
 }
 
-static void
-NetConnection_connectError(NetConnection* conn, std::error_code connectError)
+static void NetConnection_connectError(NetConnection* conn, std::error_code connectError)
 {
 	conn->stateFlags.connected = false;
 	conn->stateFlags.disconnected = true;
@@ -110,8 +107,7 @@ NetConnection_connectError(NetConnection* conn, std::error_code connectError)
 }
 
 // Called when the remote side closes the connection, or an error occurs.
-static void
-NetConnection_connectionClosed(NetConnection* conn, std::error_code closeError)
+static void NetConnection_connectionClosed(NetConnection* conn, std::error_code closeError)
 {
 	if (closeError)
 	{

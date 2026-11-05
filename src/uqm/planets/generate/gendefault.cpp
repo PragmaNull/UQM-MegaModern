@@ -146,9 +146,8 @@ bool GenerateDefault_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* worl
 	return true;
 }
 
-uint16_t
-GenerateDefault_generateMinerals(const SOLARSYS_STATE* solarSys,
-								 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateDefault_generateMinerals(const SOLARSYS_STATE* solarSys,
+										  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	return GenerateMineralDeposits(&solarSys->SysInfo, whichNode, info);
 	(void)world;
@@ -164,9 +163,8 @@ bool GenerateDefault_pickupMinerals(SOLARSYS_STATE* solarSys, PLANET_DESC* world
 	return true;
 }
 
-uint16_t
-GenerateDefault_generateEnergy(const SOLARSYS_STATE* solarSys,
-							   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateDefault_generateEnergy(const SOLARSYS_STATE* solarSys,
+										const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	(void)whichNode;
 	(void)solarSys;
@@ -187,9 +185,8 @@ bool GenerateDefault_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-uint16_t
-GenerateDefault_generateLife(const SOLARSYS_STATE* solarSys,
-							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateDefault_generateLife(const SOLARSYS_STATE* solarSys,
+									  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	return GenerateLifeForms(&solarSys->SysInfo, whichNode, info);
 	(void)world;
@@ -205,26 +202,23 @@ bool GenerateDefault_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return true;
 }
 
-uint16_t
-GenerateDefault_generateArtifact(const SOLARSYS_STATE* solarSys,
-								 uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateDefault_generateArtifact(const SOLARSYS_STATE* solarSys,
+										  uint16_t whichNode, NODE_INFO* info)
 {
 	// Generate an energy node at a random location
 	return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN, 1, 0,
 							   whichNode, info);
 }
 
-uint16_t
-GenerateDefault_generateRuins(const SOLARSYS_STATE* solarSys,
-							  uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateDefault_generateRuins(const SOLARSYS_STATE* solarSys,
+									   uint16_t whichNode, NODE_INFO* info)
 {
 	// Generate a standard spread of city ruins of a destroyed civilization
 	return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN,
 							   NumRaceRuins, 0, whichNode, info);
 }
 
-static inline void
-runLanderReport(void)
+static inline void runLanderReport(void)
 {
 	UnbatchGraphics();
 	DoDiscoveryReport(MenuSounds);
@@ -321,8 +315,7 @@ void GeneratePlanets(SOLARSYS_STATE* solarSys)
 	}
 }
 
-uint8_t
-GenerateWorlds(uint8_t whichType)
+uint8_t GenerateWorlds(uint8_t whichType)
 {
 	uint8_t planet = FIRST_SMALL_ROCKY_WORLD;
 
@@ -405,8 +398,7 @@ void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 	}
 }
 
-uint8_t
-GenerateCrystalWorld(void)
+uint8_t GenerateCrystalWorld(void)
 {
 	const int crystalArray[] = {
 		SAPPHIRE_WORLD,
@@ -415,8 +407,7 @@ GenerateCrystalWorld(void)
 	return crystalArray[SysGenRNG->next() % 3];
 }
 
-uint8_t
-GenerateDesolateWorld(void)
+uint8_t GenerateDesolateWorld(void)
 {
 	const int desolateArray[] = {
 		DUST_WORLD,
@@ -425,8 +416,7 @@ GenerateDesolateWorld(void)
 	return desolateArray[SysGenRNG->next() % 3];
 }
 
-uint8_t
-GenerateHabitableWorld(void)
+uint8_t GenerateHabitableWorld(void)
 {
 	const int habitableArray[] = {
 		PRIMORDIAL_WORLD,
@@ -436,8 +426,7 @@ GenerateHabitableWorld(void)
 	return habitableArray[SysGenRNG->next() % 4];
 }
 
-uint8_t
-GenerateGasGiantWorld(void)
+uint8_t GenerateGasGiantWorld(void)
 {
 	return FIRST_GAS_GIANT + SysGenRNG->next() % NumberOfGasGiants;
 }
@@ -445,8 +434,7 @@ GenerateGasGiantWorld(void)
 // input: 1 <= min <= max
 // output: min <= RNG <= max
 // min 0 will be treated 1; min >= max will return max
-uint8_t
-GenerateMinPlanets(uint8_t min)
+uint8_t GenerateMinPlanets(uint8_t min)
 {
 	const uint8_t max = MaxGenPlanets + 1;
 
@@ -464,8 +452,7 @@ GenerateMinPlanets(uint8_t min)
 
 // input: 0 <= minimum < MaxGenPlanets
 // output: minimum + 1 <= RNG <= MaxGenPlanets
-uint8_t
-GenerateNumberOfPlanets(uint8_t minimum)
+uint8_t GenerateNumberOfPlanets(uint8_t minimum)
 {
 	const uint8_t roll = MaxGenPlanets - minimum;
 	const uint8_t adjust = minimum + 1;
@@ -473,14 +460,12 @@ GenerateNumberOfPlanets(uint8_t minimum)
 }
 
 // "Random PlanetByte Generator"
-uint8_t
-PlanetByteGen(PLANET_DESC* pPDesc)
+uint8_t PlanetByteGen(PLANET_DESC* pPDesc)
 {
 	return SysGenRNG->next() % pPDesc->NumPlanets;
 }
 
-static void
-check_yehat_rebellion(void)
+static void check_yehat_rebellion(void)
 {
 	HIPGROUP hGroup {};
 	HIPGROUP hNextGroup {};

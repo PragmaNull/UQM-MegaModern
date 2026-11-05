@@ -44,8 +44,7 @@ extern QUEUE master_q;
 /* List of ships available in SuperMelee;
 		 * queue element is MASTER_SHIP_INFO */
 
-static inline MASTER_SHIP_INFO*
-LockMasterShip(const QUEUE* pq, HMASTERSHIP h)
+static inline MASTER_SHIP_INFO* LockMasterShip(const QUEUE* pq, HMASTERSHIP h)
 {
 	assert(GetLinkSize(pq) == sizeof(MASTER_SHIP_INFO));
 	return (MASTER_SHIP_INFO*)LockLink(pq, h);

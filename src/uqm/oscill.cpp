@@ -65,8 +65,7 @@ void UninitOscilloscope(void)
 	scope_init = 0;
 }
 
-uint8_t
-ScaleHeightByVolume(uint8_t scope_data, bool toScale)
+uint8_t ScaleHeightByVolume(uint8_t scope_data, bool toScale)
 {
 	if (!toScale || musicVolume == NormalVolume)
 	{

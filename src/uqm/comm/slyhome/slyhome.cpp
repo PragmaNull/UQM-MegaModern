@@ -228,8 +228,7 @@ static FILTER_DESC slyhome_filters =
 								  }
 };
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	setSegue(Segue_peace);
@@ -247,8 +246,7 @@ ExitConversation(RESPONSE_REF R)
 
 static void HomeWorld(RESPONSE_REF R);
 
-static void
-HumanInfo(RESPONSE_REF R)
+static void HumanInfo(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, happy_to_tell_more))
 	{
@@ -325,8 +323,7 @@ HumanInfo(RESPONSE_REF R)
 	}
 }
 
-static void
-SlylandroInfo(RESPONSE_REF R)
+static void SlylandroInfo(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, like_more_about_you))
 	{
@@ -386,8 +383,7 @@ SlylandroInfo(RESPONSE_REF R)
 	}
 }
 
-static void
-FixBug(RESPONSE_REF R)
+static void FixBug(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, think_about_rep_priorities))
 	{
@@ -427,8 +423,7 @@ FixBug(RESPONSE_REF R)
 	Response(mega_self_destruct, HomeWorld);
 }
 
-static void
-ProbeBug(RESPONSE_REF R)
+static void ProbeBug(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, probe_has_bug))
 	{
@@ -473,8 +468,7 @@ ProbeBug(RESPONSE_REF R)
 
 static void ProbeInfo(RESPONSE_REF R);
 
-static void
-ProbeFunction(RESPONSE_REF R)
+static void ProbeFunction(RESPONSE_REF R)
 {
 	RESPONSE_REF pStr[2];
 
@@ -612,8 +606,7 @@ ProbeFunction(RESPONSE_REF R)
 	Response(enough_problem, ProbeInfo);
 }
 
-static void
-ProbeInfo(RESPONSE_REF R)
+static void ProbeInfo(RESPONSE_REF R)
 {
 	uint8_t i {};
 	uint8_t InfoLeft {};
@@ -737,8 +730,7 @@ ProbeInfo(RESPONSE_REF R)
 	}
 }
 
-static void
-HomeWorld(RESPONSE_REF R)
+static void HomeWorld(RESPONSE_REF R)
 {
 	uint8_t i {};
 	RESPONSE_REF pStr[3];
@@ -936,8 +928,7 @@ HomeWorld(RESPONSE_REF R)
 	Response(bye, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -983,21 +974,18 @@ Intro(void)
 	HomeWorld((RESPONSE_REF)0);
 }
 
-static uint16_t
-uninit_slylandro(void)
+static uint16_t uninit_slylandro(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_slylandro_enc(void)
+static void post_slylandro_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_slylandro_comm(void)
+LOCDATA* init_slylandro_comm(void)
 {
 	slylandro_desc.init_encounter_func = Intro;
 	slylandro_desc.post_encounter_func = post_slylandro_enc;

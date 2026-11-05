@@ -94,8 +94,7 @@ const static audio_Driver mixSDL_Driver =
 static_assert(sizeof(mixer_Object) <= sizeof(audio_Object), "mixer_Object must fit in audio_Object");
 
 // Converts an array of n audio_Objects to an array of mixer_Objects, in place.
-static void
-mixSDL_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
+static void mixSDL_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
@@ -107,8 +106,7 @@ mixSDL_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 	}
 }
 // Converts an array of n mixer_Objects to an array of audio_Objects, in place.
-static void
-mixSDL_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
+static void mixSDL_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
@@ -127,8 +125,7 @@ static void audioCallback(void* userdata, SDL_AudioStream* audioStream, int addi
  * Initialization
  */
 
-int32_t
-mixSDL_Init(audio_Driver* driver, AudioFlags flags)
+int32_t mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 {
 	SDL_AudioSpec desired {};
 	mixer_Quality quality;
@@ -255,8 +252,7 @@ void mixSDL_Uninit(void)
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
-static void
-audioCallback(void* userdata, SDL_AudioStream* audioStream, int additionalAmount, int totalAmount)
+static void audioCallback(void* userdata, SDL_AudioStream* audioStream, int additionalAmount, int totalAmount)
 {
 	(void)totalAmount;
 	if (additionalAmount <= 0)
@@ -272,8 +268,7 @@ audioCallback(void* userdata, SDL_AudioStream* audioStream, int additionalAmount
  * General
  */
 
-int32_t
-mixSDL_GetError(void)
+int32_t mixSDL_GetError(void)
 {
 	int32_t value = mixer_GetError();
 	switch (value)

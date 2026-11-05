@@ -376,8 +376,7 @@ void NPCNumber(int number, const char* fmt)
 
 static constexpr auto MaxNumberTracks {20};
 
-static int
-NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
+static int NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 {
 	NUMBER_SPEECH speech = CommData.AlienNumberSpeech;
 	int queued = 0;
@@ -563,8 +562,7 @@ Segue getSegue(void)
 	}
 }
 
-LOCDATA*
-init_race(CONVERSATION comm_id)
+LOCDATA* init_race(CONVERSATION comm_id)
 {
 	switch (comm_id)
 	{
@@ -637,8 +635,7 @@ init_race(CONVERSATION comm_id)
 	}
 }
 
-RESPONSE_REF
-phraseIdStrToNum(const char* phraseIdStr)
+RESPONSE_REF phraseIdStrToNum(const char* phraseIdStr)
 {
 	const uqstl::optional<size_t> phrase {CommData.ConversationPhrases->find(phraseIdStr)};
 	if (!phrase)
@@ -650,8 +647,7 @@ phraseIdStrToNum(const char* phraseIdStr)
 	// Index 0 is for NULL_PHRASE, hence the '+ 1"
 }
 
-const char*
-phraseIdNumToStr(RESPONSE_REF response)
+const char* phraseIdNumToStr(RESPONSE_REF response)
 {
 	// Index 0 is for NULL_PHRASE, hence the '- 1'.
 	return CommData.ConversationPhrases->name(response - 1);

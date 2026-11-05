@@ -24,15 +24,13 @@
 #include <fmt/format.h>
 
 
-static bool
-FreeLegacyVideoData(void* data)
+static bool FreeLegacyVideoData(void* data)
 {
 	delete static_cast<LEGACY_VIDEO>(data);
 	return data != nullptr;
 }
 
-static void
-GetLegacyVideoData(const ResourceArg& arg, RESOURCE_DATA* resdata)
+static void GetLegacyVideoData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 {
 	const char* const video {resourceStringField(arg, "video")};
 	if (video == nullptr)
@@ -58,8 +56,7 @@ bool InstallVideoResType(void)
 	return true;
 }
 
-LEGACY_VIDEO
-LoadLegacyVideoInstance(RESOURCE res)
+LEGACY_VIDEO LoadLegacyVideoInstance(RESOURCE res)
 {
 	void* data {res_GetResource(res)};
 	if (data)

@@ -94,8 +94,7 @@ const static char* flight_res_names[] = {
 	"thrust",
 	nullptr};
 
-static void
-register_menu_controls(int index)
+static void register_menu_controls(int index)
 {
 	char buf[40] {};
 
@@ -162,8 +161,7 @@ static bool loadKeyConfiguration()
 }
 constexpr auto ControlPtr(auto i, auto j, auto k) { return (controls.data() + ((i)*num_flight + (j)) * MaxFlightAlternates + (k)); }
 
-static void
-register_flight_controls(void)
+static void register_flight_controls(void)
 {
 	int j {};
 	int k {};
@@ -202,8 +200,7 @@ register_flight_controls(void)
 	}
 }
 
-static void
-initKeyConfig(void)
+static void initKeyConfig(void)
 {
 	int i {};
 
@@ -238,8 +235,7 @@ initKeyConfig(void)
 	return;
 }
 
-static void
-resetKeyboardState(void)
+static void resetKeyboardState(void)
 {
 }
 
@@ -259,8 +255,7 @@ void TFB_SetInputVectors(uqstl::atomic<int>* menu, int num_menu_, uqstl::atomic<
 
 #ifdef HAVE_JOYSTICK
 
-static void
-initJoystick(void)
+static void initJoystick(void)
 {
 	const char* slash {};
 
@@ -376,8 +371,7 @@ void ExitCharacterMode(void)
 	VControl_ResetInput();
 }
 
-uqm::UniChar
-GetNextCharacter(void)
+uqm::UniChar GetNextCharacter(void)
 {
 	if (kbdhead == kbdtail)
 	{
@@ -388,8 +382,7 @@ GetNextCharacter(void)
 	return result;
 }
 
-uqm::UniChar
-GetLastCharacter(void)
+uqm::UniChar GetLastCharacter(void)
 {
 	return lastchar;
 }
@@ -397,8 +390,7 @@ GetLastCharacter(void)
 uqstl::atomic<int> MouseButtonDown {0};
 
 #if 0
-static void
-ProcessMouseEvent (const SDL_Event *e)
+static void ProcessMouseEvent (const SDL_Event *e)
 {
 	switch (e->type)
 	{
@@ -415,8 +407,7 @@ ProcessMouseEvent (const SDL_Event *e)
 #endif
 
 
-static inline int
-is_numpad_char_event(const SDL_Event* Event)
+static inline int is_numpad_char_event(const SDL_Event* Event)
 {
 	return in_character_mode && (Event->type == SDL_EVENT_KEY_DOWN || Event->type == SDL_EVENT_KEY_UP) && (Event->key.mod & SDL_KMOD_NUM) && /* Numlock on */
 		   Event->key.key >= SDLK_KP_1 &&																									 /* Keypad key */

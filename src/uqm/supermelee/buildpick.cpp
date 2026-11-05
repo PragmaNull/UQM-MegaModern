@@ -157,8 +157,7 @@ void DrawPickIcon(MeleeShip ship, bool DrawErase)
 	}
 }
 
-static void
-DrawTooltipBox(void)
+static void DrawTooltipBox(void)
 {
 	STAMP s;
 
@@ -274,8 +273,7 @@ void GetBuildPickFrameRect(GFXRECT* r)
 	GetFrameRect(BuildPickFrame, r);
 }
 
-static bool
-DoPickShip(MELEE_STATE* pMS)
+static bool DoPickShip(MELEE_STATE* pMS)
 {
 	const TimeCount TimeIn {GetTimeCounter()};
 

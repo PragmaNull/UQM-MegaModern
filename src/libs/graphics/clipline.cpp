@@ -18,8 +18,7 @@
 
 #include "gfxintrn.h"
 
-INTERSECT_CODE
-_clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
+INTERSECT_CODE _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 {
 	int16_t p {};
 	int16_t x0 {};

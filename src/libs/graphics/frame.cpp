@@ -22,8 +22,7 @@
 #include "tfb_prim.h"
 #include "uqm/units.h"
 
-HOT_SPOT
-MAKE_HOT_SPOT(int16_t x, int16_t y)
+HOT_SPOT MAKE_HOT_SPOT(int16_t x, int16_t y)
 {
 	HOT_SPOT hs;
 	hs.x = x;
@@ -90,8 +89,7 @@ bool GetContextValidRect(GFXRECT* pValidRect, GFXPOINT* origin)
 	return (true);
 }
 
-static void
-ClearBackGround(GFXRECT* pClipRect)
+static void ClearBackGround(GFXRECT* pClipRect)
 {
 	GFXRECT clearRect;
 	const Color color = _get_context_bg_color();

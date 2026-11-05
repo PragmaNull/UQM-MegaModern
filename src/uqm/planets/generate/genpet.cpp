@@ -60,8 +60,7 @@ const GenerateFunctions generateTalkingPetFunctions = {
 };
 
 
-static bool
-GenerateTalkingPet_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateTalkingPet_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
@@ -91,9 +90,8 @@ GenerateTalkingPet_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
-								   PLANET_DESC* world)
+static bool GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
+											   PLANET_DESC* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& (uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES)
@@ -178,9 +176,8 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t
-GenerateTalkingPet_generateEnergy(const SOLARSYS_STATE* solarSys,
-								  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateTalkingPet_generateEnergy(const SOLARSYS_STATE* solarSys,
+												  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -190,9 +187,8 @@ GenerateTalkingPet_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateTalkingPet_pickupEnergy(SOLARSYS_STATE* solarSys,
-								PLANET_DESC* world, uint16_t whichNode)
+static bool GenerateTalkingPet_pickupEnergy(SOLARSYS_STATE* solarSys,
+											PLANET_DESC* world, uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -207,8 +203,7 @@ GenerateTalkingPet_pickupEnergy(SOLARSYS_STATE* solarSys,
 
 static constexpr auto LostDays {15};
 
-static void
-ZapToUrquanEncounter(void)
+static void ZapToUrquanEncounter(void)
 {
 	HENCOUNTER hEncounter {};
 

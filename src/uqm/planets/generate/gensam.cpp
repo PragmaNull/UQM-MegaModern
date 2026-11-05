@@ -68,8 +68,7 @@ const GenerateFunctions generateSaMatraFunctions = {
 };
 
 
-static bool
-GenerateSaMatra_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateSaMatra_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
 	{
@@ -93,8 +92,7 @@ GenerateSaMatra_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 {
 	bool GuardEngaged {};
 	HIPGROUP hGroup {};
@@ -152,8 +150,7 @@ GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
@@ -247,9 +244,8 @@ GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
-							  PLANET_DESC* planet)
+static bool GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
+										  PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -287,9 +283,8 @@ GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
-								PLANET_DESC* world)
+static bool GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
+											PLANET_DESC* world)
 {
 	/* Samatra */
 	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
@@ -428,8 +423,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 static constexpr auto NumUrquanGuards0 {12};
 static constexpr auto NumUrquanGuards1 {4};
 
-static void
-BuildUrquanGuard(SOLARSYS_STATE* solarSys)
+static void BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 {
 	uint8_t ship1 {};
 	uint8_t ship2 {};
@@ -529,9 +523,8 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 	(void)solarSys;
 }
 
-static uint16_t
-GenerateSaMatra_generateEnergy(const SOLARSYS_STATE* solarSys,
-							   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSaMatra_generateEnergy(const SOLARSYS_STATE* solarSys,
+											   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (IsExtended()
 		&& CurStarDescPtr()->Index == DESTROYED_STARBASE_DEFINED
@@ -543,9 +536,8 @@ GenerateSaMatra_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateSaMatra_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-							 uint16_t whichNode)
+static bool GenerateSaMatra_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+										 uint16_t whichNode)
 {
 	if (IsExtended()
 		&& CurStarDescPtr()->Index == DESTROYED_STARBASE_DEFINED

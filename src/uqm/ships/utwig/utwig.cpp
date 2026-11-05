@@ -127,8 +127,7 @@ static RACE_DESC utwig_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t
-initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
+static uint16_t initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -193,9 +192,8 @@ initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 	return (6);
 }
 
-static void
-utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				   uint16_t ConcernCounter)
+static void utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							   uint16_t ConcernCounter)
 {
 	int16_t ShieldStatus {};
 	STARSHIP* StarShipPtr {};
@@ -275,9 +273,8 @@ utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 }
 
-static void
-utwig_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void utwig_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	if (ElementPtr0->life_span > NormalLife
 		&& (ElementPtr1->state_flags & FiniteLife)
@@ -289,8 +286,7 @@ utwig_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 }
 
-static void
-utwig_preprocess(ELEMENT* ElementPtr)
+static void utwig_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -388,8 +384,7 @@ utwig_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_utwig(void)
+RACE_DESC* init_utwig(void)
 {
 	if (IsHd())
 	{

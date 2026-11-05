@@ -195,8 +195,7 @@ void UninitSpace(void)
 	}
 }
 
-static HSTARSHIP
-BuildSIS(void)
+static HSTARSHIP BuildSIS(void)
 {
 	HSTARSHIP hStarShip {Build(&race_q[0], SIS_SHIP_ID)};
 	if (!hStarShip)
@@ -214,8 +213,7 @@ BuildSIS(void)
 static constexpr auto NumAsteroids {5};
 static constexpr auto NumPlanets {1};
 
-int16_t
-InitShips(void)
+int16_t InitShips(void)
 {
 	int16_t num_ships {};
 
@@ -288,8 +286,7 @@ InitShips(void)
 }
 
 // Count the crew elements in the display list.
-static uint16_t
-CountCrewElements(void)
+static uint16_t CountCrewElements(void)
 {
 	HELEMENT hElement {};
 	HELEMENT hNextElement {};

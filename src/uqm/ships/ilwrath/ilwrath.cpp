@@ -124,8 +124,7 @@ static RACE_DESC ilwrath_desc =
 		0, /* CodeRef */
 };
 
-static void
-flame_preprocess(ELEMENT* ElementPtr)
+static void flame_preprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -141,18 +140,16 @@ flame_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-flame_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void flame_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 	ElementPtr0->state_flags &= ~Disappearing;
 	ElementPtr0->state_flags |= Nonsolid;
 }
 
-static void
-ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					 uint16_t ConcernCounter)
+static void ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								 uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -193,8 +190,7 @@ ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static uint16_t
-initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
+static uint16_t initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -236,8 +232,7 @@ initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
 	return (1);
 }
 
-static void
-ilwrath_preprocess(ELEMENT* ElementPtr)
+static void ilwrath_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -417,8 +412,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_ilwrath(void)
+RACE_DESC* init_ilwrath(void)
 {
 	if (IsHd())
 	{

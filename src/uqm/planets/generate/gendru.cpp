@@ -60,8 +60,7 @@ const GenerateFunctions generateDruugeFunctions = {
 };
 
 
-static bool
-GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
@@ -98,9 +97,8 @@ GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
-							const PLANET_DESC* world)
+static bool GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
+										const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
@@ -120,9 +118,8 @@ GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
-							   PLANET_DESC* world)
+static bool GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
+										   PLANET_DESC* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -173,9 +170,8 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateDruuge_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-							uint16_t whichNode)
+static bool GenerateDruuge_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+										uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -197,9 +193,8 @@ GenerateDruuge_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-static uint16_t
-GenerateDruuge_generateEnergy(const SOLARSYS_STATE* solarSys,
-							  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateDruuge_generateEnergy(const SOLARSYS_STATE* solarSys,
+											  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{

@@ -243,8 +243,7 @@ static LOCDATA yehat_desc =
 		nullptr,
 };
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
@@ -317,8 +316,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void
-Royalists(RESPONSE_REF R)
+static void Royalists(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, how_is_rebellion))
 	{
@@ -376,8 +374,7 @@ Royalists(RESPONSE_REF R)
 	Response(bye_royalist, ExitConversation);
 }
 
-static void
-StartRevolt(RESPONSE_REF R)
+static void StartRevolt(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, shofixti_alive_1))
 	{
@@ -401,8 +398,7 @@ StartRevolt(RESPONSE_REF R)
 	Response(not_send, ExitConversation);
 }
 
-static void
-YehatHome(RESPONSE_REF R)
+static void YehatHome(RESPONSE_REF R)
 {
 
 	SetHomeworldKnown(YEHAT_HOME);
@@ -477,8 +473,7 @@ YehatHome(RESPONSE_REF R)
 	Response(bye_homeworld, ExitConversation);
 }
 
-static void
-YehatSpace(RESPONSE_REF R)
+static void YehatSpace(RESPONSE_REF R)
 {
 	uint8_t i {};
 	RESPONSE_REF pStr[3];
@@ -629,8 +624,7 @@ YehatSpace(RESPONSE_REF R)
 	Response(bye_space, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -719,21 +713,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_yehat(void)
+static uint16_t uninit_yehat(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_yehat_enc(void)
+static void post_yehat_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_yehat_comm(void)
+LOCDATA* init_yehat_comm(void)
 {
 	yehat_desc.init_encounter_func = Intro;
 	yehat_desc.post_encounter_func = post_yehat_enc;

@@ -38,8 +38,7 @@ static constexpr auto DefaultBackColor {BuildColor(MakeRgb15(0x00, 0x00, 0x00), 
 
 static constexpr auto DefaultDrawMode {MAKE_DRAW_MODE(DRAW_DEFAULT, 255)};
 
-GFXCONTEXT
-SetContext(GFXCONTEXT Context)
+GFXCONTEXT SetContext(GFXCONTEXT Context)
 {
 	GFXCONTEXT LastContext {_pCurContext};
 	if (Context != LastContext)
@@ -74,11 +73,9 @@ SetContext(GFXCONTEXT Context)
 }
 
 #ifdef DEBUG
-GFXCONTEXT
-CreateContextAux(const char* name)
+GFXCONTEXT CreateContextAux(const char* name)
 #else  /* if !defined(DEBUG) */
-GFXCONTEXT
-CreateContextAux(void)
+GFXCONTEXT CreateContextAux(void)
 #endif /* !defined(DEBUG) */
 {
 	GFXCONTEXT NewContext {new CONTEXT_DESC {}};
@@ -104,8 +101,7 @@ CreateContextAux(void)
 // Loop through the list of context to the pointer which points to the
 // specified context. This is either 'firstContext' or the address of
 // the 'next' field of some other context.
-static GFXCONTEXT*
-FindContextPtr(GFXCONTEXT context)
+static GFXCONTEXT* FindContextPtr(GFXCONTEXT context)
 {
 	GFXCONTEXT* ptr;
 
@@ -216,8 +212,7 @@ Color GetContextBackGroundColor(void)
 	return _get_context_bg_color();
 }
 
-DrawMode
-SetContextDrawMode(DrawMode mode)
+DrawMode SetContextDrawMode(DrawMode mode)
 {
 	DrawMode oldMode;
 
@@ -232,8 +227,7 @@ SetContextDrawMode(DrawMode mode)
 	return oldMode;
 }
 
-DrawMode
-GetContextDrawMode(void)
+DrawMode GetContextDrawMode(void)
 {
 	if (!ContextActive())
 	{
@@ -244,8 +238,7 @@ GetContextDrawMode(void)
 }
 
 // Returns a rect based at 0,0 and the size of context foreground frame
-static inline GFXRECT
-_get_context_fg_rect(void)
+static inline GFXRECT _get_context_fg_rect(void)
 {
 	GFXRECT r = {
 		{0, 0},
@@ -301,15 +294,13 @@ bool GetContextClipRect(GFXRECT* lpRect)
 	return (bool)(_pCurContext->ClipRect.extent.width != 0);
 }
 
-GFXPOINT
-SetContextOrigin(GFXPOINT orgOffset)
+GFXPOINT SetContextOrigin(GFXPOINT orgOffset)
 {
 	// XXX: This is a hack, kind of. But that's what the original did.
 	return SetFrameHot(_CurFramePtr, orgOffset);
 }
 
-FRAME
-SetContextFontEffect(FRAME EffectFrame)
+FRAME SetContextFontEffect(FRAME EffectFrame)
 {
 	if (!ContextActive())
 	{
@@ -381,8 +372,7 @@ void FixContextFontEffect(void)
 
 // 'area' may be nullptr to copy the entire GFXCONTEXT cliprect
 // 'area' is relative to the GFXCONTEXT cliprect
-DRAWABLE
-CopyContextRect(const GFXRECT* area)
+DRAWABLE CopyContextRect(const GFXRECT* area)
 {
 	GFXRECT clipRect;
 	GFXRECT fgRect;
@@ -420,20 +410,17 @@ CopyContextRect(const GFXRECT* area)
 }
 
 #ifdef DEBUG
-const char*
-GetContextName(GFXCONTEXT context)
+const char* GetContextName(GFXCONTEXT context)
 {
 	return context->name;
 }
 
-GFXCONTEXT
-GetFirstContext(void)
+GFXCONTEXT GetFirstContext(void)
 {
 	return firstContext;
 }
 
-GFXCONTEXT
-GetNextContext(GFXCONTEXT context)
+GFXCONTEXT GetNextContext(GFXCONTEXT context)
 {
 	return context->next;
 }

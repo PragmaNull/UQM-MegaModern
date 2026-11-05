@@ -136,8 +136,7 @@ static RACE_DESC vux_desc =
 };
 
 
-static void
-limpet_preprocess(ELEMENT* ElementPtr)
+static void limpet_preprocess(ELEMENT* ElementPtr)
 {
 	uint16_t facing {};
 	uint16_t orig_facing {};
@@ -156,9 +155,8 @@ limpet_preprocess(ELEMENT* ElementPtr)
 	ElementPtr->state_flags |= Changing;
 }
 
-static void
-limpet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void limpet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	if (ElementPtr1->state_flags & PlayerShip)
 	{
@@ -220,8 +218,7 @@ limpet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static void
-spawn_limpets(ELEMENT* ElementPtr)
+static void spawn_limpets(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -256,8 +253,7 @@ spawn_limpets(ELEMENT* ElementPtr)
 	}
 }
 
-static uint16_t
-initialize_horrific_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
+static uint16_t initialize_horrific_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 {
 	STARSHIP* StarShipPtr {};
 	LASER_BLOCK LaserBlock;
@@ -277,9 +273,8 @@ initialize_horrific_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 	return (1);
 }
 
-static void
-vux_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				 uint16_t ConcernCounter)
+static void vux_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							 uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -319,8 +314,7 @@ vux_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void
-vux_postprocess(ELEMENT* ElementPtr)
+static void vux_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -340,8 +334,7 @@ vux_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-vux_preprocess(ELEMENT* ElementPtr)
+static void vux_preprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->state_flags & Appearing)
 	{
@@ -407,8 +400,7 @@ vux_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_vux(void)
+RACE_DESC* init_vux(void)
 {
 	if (IsHd())
 	{

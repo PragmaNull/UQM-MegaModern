@@ -39,15 +39,13 @@
 #include <png.h>
 
 /* Link function between SDL_IOStream and PNG's data source */
-static void
-png_read_data(png_structp ctx, png_bytep area, png_size_t size)
+static void png_read_data(png_structp ctx, png_bytep area, png_size_t size)
 {
 	SDL_IOStream* src = (SDL_IOStream*)png_get_io_ptr(ctx);
 	SDL_ReadIO(src, area, size);
 }
 
-SDL_Surface*
-TFB_png_to_sdl(SDL_IOStream* src)
+SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src)
 {
 	Sint64 start {};
 	const char* error {};
@@ -318,15 +316,13 @@ static constexpr auto GMask {0x00ff0000};
 static constexpr auto RMask {0xff000000};
 #endif
 
-static void
-png_write_data(png_structp ctx, png_bytep area, png_size_t size)
+static void png_write_data(png_structp ctx, png_bytep area, png_size_t size)
 {
 	SDL_IOStream* rw = (SDL_IOStream*)png_get_io_ptr(ctx);
 	SDL_WriteIO(rw, area, size);
 }
 
-SDL_Surface*
-SDL_PNGFormatAlpha(SDL_Surface* src)
+SDL_Surface* SDL_PNGFormatAlpha(SDL_Surface* src)
 {
 	SDL_Surface* surf {};
 	SDL_Rect rect = {0};

@@ -121,8 +121,7 @@ static RACE_DESC mycon_desc =
 		0, /* CodeRef */
 };
 
-static void
-plasma_preprocess(ELEMENT* ElementPtr)
+static void plasma_preprocess(ELEMENT* ElementPtr)
 {
 	uint16_t plasma_index {};
 
@@ -164,8 +163,7 @@ plasma_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-plasma_blast_preprocess(ELEMENT* ElementPtr)
+static void plasma_blast_preprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->life_span >= ElementPtr->thrust_wait)
 	{
@@ -189,9 +187,8 @@ plasma_blast_preprocess(ELEMENT* ElementPtr)
 	ElementPtr->state_flags |= Changing;
 }
 
-static void
-plasma_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void plasma_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	HELEMENT hBlastElement {};
 
@@ -241,9 +238,8 @@ plasma_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static void
-mycon_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				   uint16_t ConcernCounter)
+static void mycon_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							   uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -319,8 +315,7 @@ mycon_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static uint16_t
-initialize_plasma(ELEMENT* ShipPtr, HELEMENT PlasmaArray[])
+static uint16_t initialize_plasma(ELEMENT* ShipPtr, HELEMENT PlasmaArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -355,8 +350,7 @@ initialize_plasma(ELEMENT* ShipPtr, HELEMENT PlasmaArray[])
 	return (1);
 }
 
-static void
-mycon_postprocess(ELEMENT* ElementPtr)
+static void mycon_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -383,8 +377,7 @@ mycon_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_mycon(void)
+RACE_DESC* init_mycon(void)
 {
 	if (IsHd())
 	{

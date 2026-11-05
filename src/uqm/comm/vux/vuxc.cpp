@@ -286,8 +286,7 @@ static FILTER_DESC vux_filters =
 								  }
 };
 
-static void
-ZexBeingEatenAlive(void)
+static void ZexBeingEatenAlive(void)
 {
 	if (altResFlags & UseAltFrame)
 	{ // make sure we're using the correct set of frames
@@ -320,8 +319,7 @@ ZexBeingEatenAlive(void)
 	}
 }
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -452,8 +450,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	}
 }
 
-static void
-Menagerie(RESPONSE_REF R)
+static void Menagerie(RESPONSE_REF R)
 {
 	uint8_t i {};
 	uint8_t LastStack {};
@@ -690,8 +687,7 @@ Menagerie(RESPONSE_REF R)
 	}
 }
 
-static void
-NormalVux(RESPONSE_REF R)
+static void NormalVux(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, why_so_mean))
 	{
@@ -826,8 +822,7 @@ NormalVux(RESPONSE_REF R)
 	Response(bye_hostile_space, CombatIsInevitable);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	if (altResFlags & UseAltFrame)
 	{
@@ -899,21 +894,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_vux(void)
+static uint16_t uninit_vux(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_vux_enc(void)
+static void post_vux_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_vux_comm(void)
+LOCDATA* init_vux_comm(void)
 {
 	vux_desc.init_encounter_func = Intro;
 	vux_desc.post_encounter_func = post_vux_enc;

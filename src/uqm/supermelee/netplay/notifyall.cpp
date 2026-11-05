@@ -107,8 +107,7 @@ void Netplay_NotifyAll_setShip(MELEE_STATE* pMS, size_t playerNr, size_t index)
 	}
 }
 
-static bool
-Netplay_NotifyAll_inputDelayCallback(NetConnection* conn, void* arg)
+static bool Netplay_NotifyAll_inputDelayCallback(NetConnection* conn, void* arg)
 {
 	const size_t* delay = (size_t*)arg;
 	Netplay_Notify_inputDelay(conn, *delay);

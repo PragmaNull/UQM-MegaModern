@@ -164,8 +164,7 @@ static LOCDATA thradd_desc =
 		nullptr,
 };
 
-static int
-GetCultureName(void)
+static int GetCultureName(void)
 {
 	int culture = 0;
 
@@ -187,8 +186,7 @@ GetCultureName(void)
 	return (culture);
 }
 
-static void
-PolitePhrase(uint8_t which_phrase)
+static void PolitePhrase(uint8_t which_phrase)
 {
 	switch (which_phrase)
 	{
@@ -207,8 +205,7 @@ PolitePhrase(uint8_t which_phrase)
 	}
 }
 
-static void
-RhymePhrase(uint8_t which_phrase)
+static void RhymePhrase(uint8_t which_phrase)
 {
 	switch (which_phrase)
 	{
@@ -227,8 +224,7 @@ RhymePhrase(uint8_t which_phrase)
 	}
 }
 
-static void
-PigLatinPhrase(uint8_t which_phrase)
+static void PigLatinPhrase(uint8_t which_phrase)
 {
 	switch (which_phrase)
 	{
@@ -247,8 +243,7 @@ PigLatinPhrase(uint8_t which_phrase)
 	}
 }
 
-static void
-LikeYouPhrase(uint8_t which_phrase)
+static void LikeYouPhrase(uint8_t which_phrase)
 {
 	switch (which_phrase)
 	{
@@ -267,8 +262,7 @@ LikeYouPhrase(uint8_t which_phrase)
 	}
 }
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
@@ -375,8 +369,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void
-ThraddAllies(RESPONSE_REF R)
+static void ThraddAllies(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -493,8 +486,7 @@ ThraddAllies(RESPONSE_REF R)
 	Response(bye_ally, ExitConversation);
 }
 
-static void
-ThraddDemeanor(RESPONSE_REF R)
+static void ThraddDemeanor(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, you_decide))
 	{
@@ -522,8 +514,7 @@ ThraddDemeanor(RESPONSE_REF R)
 	Response(just_like_us, ExitConversation);
 }
 
-static void
-ThraddCulture(RESPONSE_REF R)
+static void ThraddCulture(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, be_polite))
 	{
@@ -556,8 +547,7 @@ ThraddCulture(RESPONSE_REF R)
 	Response(the_slave_empire, ThraddDemeanor);
 }
 
-static void
-ThraddWorship(RESPONSE_REF R)
+static void ThraddWorship(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	uqm::gameState().setFlag(uqm::GameFlag::THRADD_VISITS, static_cast<uint32_t>(0));
@@ -571,8 +561,7 @@ ThraddWorship(RESPONSE_REF R)
 	Response(just_the_way_we_do, ThraddCulture);
 }
 
-static void
-HelixWorld(RESPONSE_REF R)
+static void HelixWorld(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, why_you_here_hostile))
 	{
@@ -623,8 +612,7 @@ HelixWorld(RESPONSE_REF R)
 	Response(bye_hostile_helix, ExitConversation);
 }
 
-static void
-ThraddHostile(RESPONSE_REF R)
+static void ThraddHostile(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, whats_up_hostile_1))
 	{
@@ -773,8 +761,7 @@ ThraddHostile(RESPONSE_REF R)
 	}
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 	HFLEETINFO hThradd = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, THRADDASH_SHIP);
@@ -1053,21 +1040,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_thradd(void)
+static uint16_t uninit_thradd(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_thradd_enc(void)
+static void post_thradd_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_thradd_comm(void)
+LOCDATA* init_thradd_comm(void)
 {
 	thradd_desc.init_encounter_func = Intro;
 	thradd_desc.post_encounter_func = post_thradd_enc;

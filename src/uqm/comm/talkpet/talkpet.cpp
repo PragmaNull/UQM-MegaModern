@@ -279,8 +279,7 @@ static FILTER_DESC talkpet_filters =
 								  }
 };
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 	uqm::gameState().setFlag(uqm::GameFlag::SHIP_TO_COMPEL, static_cast<uint32_t>(0));
@@ -326,8 +325,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void
-MindFuckUrquan(RESPONSE_REF R)
+static void MindFuckUrquan(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, what_now))
 	{
@@ -355,8 +353,7 @@ MindFuckUrquan(RESPONSE_REF R)
 
 static void PetDevice(RESPONSE_REF R);
 
-static void
-MindControlStrobe(void)
+static void MindControlStrobe(void)
 {
 	// Enable the one-shot strobe animation
 	CommData.AlienAmbientArray[16].AnimFlags &= ~AnimDisabled;
@@ -367,8 +364,7 @@ MindControlStrobe(void)
 	}
 }
 
-static void
-MindControl(RESPONSE_REF R)
+static void MindControl(RESPONSE_REF R)
 {
 	RESPONSE_FUNC RespFunc {};
 
@@ -393,8 +389,7 @@ MindControl(RESPONSE_REF R)
 	Response(R, RespFunc);
 }
 
-static void
-PetInfo(RESPONSE_REF R)
+static void PetInfo(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, about_your_race))
 	{
@@ -448,8 +443,7 @@ PetInfo(RESPONSE_REF R)
 	Response(enough_info, PetDevice);
 }
 
-static void
-PetDevice(RESPONSE_REF R)
+static void PetDevice(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -554,8 +548,7 @@ PetDevice(RESPONSE_REF R)
 	Response(bye_onboard, ExitConversation);
 }
 
-static void
-CompelPlayer(RESPONSE_REF R)
+static void CompelPlayer(RESPONSE_REF R)
 {
 	RESPONSE_REF pStr[3];
 
@@ -659,8 +652,7 @@ CompelPlayer(RESPONSE_REF R)
 
 static void PetDeal(RESPONSE_REF R);
 
-static void
-KillPet(RESPONSE_REF R)
+static void KillPet(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, must_kill))
 	{
@@ -675,8 +667,7 @@ KillPet(RESPONSE_REF R)
 	Response(want_kill_3, ExitConversation);
 }
 
-static void
-PetDeal(RESPONSE_REF R)
+static void PetDeal(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, what_kind_of_deal))
 	{
@@ -763,8 +754,7 @@ PetDeal(RESPONSE_REF R)
 	}
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -931,21 +921,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_talkpet(void)
+static uint16_t uninit_talkpet(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_talkpet_enc(void)
+static void post_talkpet_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_talkpet_comm(void)
+LOCDATA* init_talkpet_comm(void)
 {
 	talkpet_desc.init_encounter_func = Intro;
 	talkpet_desc.post_encounter_func = post_talkpet_enc;

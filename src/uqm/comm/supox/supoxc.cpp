@@ -123,8 +123,7 @@ static LOCDATA supox_desc =
 		nullptr,
 };
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
@@ -176,8 +175,7 @@ ExitConversation(RESPONSE_REF R)
 
 static void AlliedHome(RESPONSE_REF R);
 
-static void
-AlliedHome(RESPONSE_REF R)
+static void AlliedHome(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 	uint8_t News {};
@@ -293,8 +291,7 @@ AlliedHome(RESPONSE_REF R)
 	Response(bye_allied_homeworld, ExitConversation);
 }
 
-static void
-BeforeKohrAh(RESPONSE_REF R)
+static void BeforeKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -333,8 +330,7 @@ BeforeKohrAh(RESPONSE_REF R)
 	Response(bye_before_space, ExitConversation);
 }
 
-static void
-AfterKohrAh(RESPONSE_REF R)
+static void AfterKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -373,8 +369,7 @@ AfterKohrAh(RESPONSE_REF R)
 	Response(bye_after_space, ExitConversation);
 }
 
-static void
-NeutralSupox(RESPONSE_REF R)
+static void NeutralSupox(RESPONSE_REF R)
 {
 	uint8_t i {};
 	uint8_t NumVisits {};
@@ -594,8 +589,7 @@ NeutralSupox(RESPONSE_REF R)
 	Response(bye_neutral, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -742,21 +736,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_supox(void)
+static uint16_t uninit_supox(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_supox_enc(void)
+static void post_supox_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_supox_comm(void)
+LOCDATA* init_supox_comm(void)
 {
 	supox_desc.init_encounter_func = Intro;
 	supox_desc.post_encounter_func = post_supox_enc;

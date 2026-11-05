@@ -54,8 +54,7 @@ static mixer_Source* active_sources[MaxSources] UQM_GUARDED_BY(act_mutex);
  *  Internals
  */
 
-static void
-mixer_SetError(uint32_t error)
+static void mixer_SetError(uint32_t error)
 {
 	last_error = error;
 }
@@ -64,8 +63,7 @@ mixer_SetError(uint32_t error)
  *  General interface
  */
 
-uint32_t
-mixer_GetError(void)
+uint32_t mixer_GetError(void)
 {
 	const uint32_t error = last_error;
 	last_error = MIX_NO_ERROR;
@@ -885,8 +883,7 @@ void mixer_SourceUnqueueBuffers(mixer_Object srcobj, uint32_t n,
  *  Sources internals
  */
 
-static void
-mixer_SourceUnqueueAll(mixer_Source* src)
+static void mixer_SourceUnqueueAll(mixer_Source* src)
 {
 	mixer_Buffer* nextbuf {};
 
@@ -924,8 +921,7 @@ mixer_SourceUnqueueAll(mixer_Source* src)
 }
 
 /* add the source to the active array */
-static void
-mixer_SourceActivate(mixer_Source* src)
+static void mixer_SourceActivate(mixer_Source* src)
 {
 	uint32_t i {};
 
@@ -961,8 +957,7 @@ mixer_SourceActivate(mixer_Source* src)
 }
 
 /* remove the source from the active array */
-static void
-mixer_SourceDeactivate(mixer_Source* src)
+static void mixer_SourceDeactivate(mixer_Source* src)
 {
 	uint32_t i {};
 
@@ -983,8 +978,7 @@ mixer_SourceDeactivate(mixer_Source* src)
 	act_mutex.unlock();
 }
 
-static void
-mixer_SourceStop_internal(mixer_Source* src)
+static void mixer_SourceStop_internal(mixer_Source* src)
 {
 	mixer_Buffer* buf {};
 	mixer_Buffer* nextbuf {};
@@ -1039,8 +1033,7 @@ mixer_SourceStop_internal(mixer_Source* src)
 	buf_mutex.unlock();
 }
 
-static void
-mixer_SourceRewind_internal(mixer_Source* src)
+static void mixer_SourceRewind_internal(mixer_Source* src)
 {
 	/* should change the processed buffers to queued */
 	mixer_Buffer* buf {};
@@ -1070,8 +1063,7 @@ mixer_SourceRewind_internal(mixer_Source* src)
 }
 
 /* get the sample next in queue in internal format */
-static inline bool
-mixer_SourceGetNextSample(mixer_Source* src, float* psamp, bool left)
+static inline bool mixer_SourceGetNextSample(mixer_Source* src, float* psamp, bool left)
 {
 	/* fake the data if requested */
 	if (mixer_flags & MIX_FAKE_DATA)
@@ -1133,8 +1125,7 @@ mixer_SourceGetNextSample(mixer_Source* src, float* psamp, bool left)
 }
 
 /* fake the next sample, but process buffers and states */
-static inline bool
-mixer_SourceGetFakeSample(mixer_Source* src, float* psamp, bool left)
+static inline bool mixer_SourceGetFakeSample(mixer_Source* src, float* psamp, bool left)
 {
 	while (src->nextqueued)
 	{
@@ -1182,8 +1173,7 @@ mixer_SourceGetFakeSample(mixer_Source* src, float* psamp, bool left)
 }
 
 /* advance position in currently queued buffer */
-static inline uint32_t
-mixer_SourceAdvance(mixer_Source* src, bool left)
+static inline uint32_t mixer_SourceAdvance(mixer_Source* src, bool left)
 {
 	const mixer_Buffer* curr = src->nextqueued;
 	if (curr->orgchannels == 2 && mixer_channels == 2)
@@ -1541,8 +1531,7 @@ void mixer_BufferData(mixer_Object bufobj, uint32_t format, void* data,
  *  Buffer internals
  */
 
-static inline bool
-mixer_CheckBufferState(mixer_Buffer* buf, const char* FuncName)
+static inline bool mixer_CheckBufferState(mixer_Buffer* buf, const char* FuncName)
 {
 	if (!buf)
 	{
@@ -1572,8 +1561,7 @@ mixer_CheckBufferState(mixer_Buffer* buf, const char* FuncName)
 	return true;
 }
 
-static void
-mixer_ConvertBuffer_internal(mixer_Convertion* conv)
+static void mixer_ConvertBuffer_internal(mixer_Convertion* conv)
 {
 	conv->srcbpc = MixFormatBpc(conv->srcfmt);
 	conv->srcchans = MixFormatChans(conv->srcfmt);
@@ -1608,8 +1596,7 @@ mixer_ConvertBuffer_internal(mixer_Convertion* conv)
 /* get a sample from external buffer
  * in internal format
  */
-static inline int32_t
-mixer_GetSampleExt(void* src, uint32_t bpc)
+static inline int32_t mixer_GetSampleExt(void* src, uint32_t bpc)
 {
 	if (bpc == 2)
 	{
@@ -1622,8 +1609,7 @@ mixer_GetSampleExt(void* src, uint32_t bpc)
 }
 
 /* get a sample from internal buffer */
-static inline int32_t
-mixer_GetSampleInt(void* src, uint32_t bpc)
+static inline int32_t mixer_GetSampleInt(void* src, uint32_t bpc)
 {
 	if (bpc == 2)
 	{
@@ -1638,8 +1624,7 @@ mixer_GetSampleInt(void* src, uint32_t bpc)
 /* put a sample into an external buffer
  * from internal format
  */
-static inline void
-mixer_PutSampleExt(void* dst, uint32_t bpc, int32_t samp)
+static inline void mixer_PutSampleExt(void* dst, uint32_t bpc, int32_t samp)
 {
 	if (bpc == 2)
 	{
@@ -1654,8 +1639,7 @@ mixer_PutSampleExt(void* dst, uint32_t bpc, int32_t samp)
 /* put a sample into an internal buffer
  * in internal format
  */
-static inline void
-mixer_PutSampleInt(void* dst, uint32_t bpc, int32_t samp)
+static inline void mixer_PutSampleInt(void* dst, uint32_t bpc, int32_t samp)
 {
 	if (bpc == 2)
 	{
@@ -1668,8 +1652,7 @@ mixer_PutSampleInt(void* dst, uint32_t bpc, int32_t samp)
 }
 
 /* get a sample from source */
-static float
-mixer_ResampleNone(mixer_Source* src, bool left)
+static float mixer_ResampleNone(mixer_Source* src, bool left)
 {
 	uint8_t* d0 = src->nextqueued->data.get() + src->pos;
 	src->pos += mixer_chansize;
@@ -1678,8 +1661,7 @@ mixer_ResampleNone(mixer_Source* src, bool left)
 }
 
 /* get a resampled (up/down) sample from source (nearest neighbor) */
-static float
-mixer_ResampleNearest(mixer_Source* src, bool left)
+static float mixer_ResampleNearest(mixer_Source* src, bool left)
 {
 	uint8_t* d0 = src->nextqueued->data.get() + src->pos;
 	d0 += mixer_SourceAdvance(src, left);
@@ -1687,8 +1669,7 @@ mixer_ResampleNearest(mixer_Source* src, bool left)
 }
 
 /* get an upsampled sample from source (linear interpolation) */
-static float
-mixer_UpsampleLinear(mixer_Source* src, bool left)
+static float mixer_UpsampleLinear(mixer_Source* src, bool left)
 {
 	const mixer_Buffer* curr = src->nextqueued;
 	const mixer_Buffer* next = src->nextqueued->next;
@@ -1727,8 +1708,7 @@ mixer_UpsampleLinear(mixer_Source* src, bool left)
 }
 
 /* get an upsampled sample from source (cubic interpolation) */
-static float
-mixer_UpsampleCubic(mixer_Source* src, bool left)
+static float mixer_UpsampleCubic(mixer_Source* src, bool left)
 {
 	const mixer_Buffer* prev = src->prevqueued;
 	const mixer_Buffer* curr = src->nextqueued;
@@ -1828,8 +1808,7 @@ mixer_UpsampleCubic(mixer_Source* src, bool left)
  * in internal format, while performing
  * convertion if necessary
  */
-static inline int32_t
-mixer_GetConvSample(uint8_t** psrc, uint32_t bpc, uint32_t flags)
+static inline int32_t mixer_GetConvSample(uint8_t** psrc, uint32_t bpc, uint32_t flags)
 {
 	int32_t samp {mixer_GetSampleExt(*psrc, bpc)};
 	*psrc += bpc;
@@ -1861,8 +1840,7 @@ mixer_GetConvSample(uint8_t** psrc, uint32_t bpc, uint32_t flags)
  * in internal format, while performing
  * convertion if necessary
  */
-static inline void
-mixer_PutConvSample(uint8_t** pdst, uint32_t bpc, uint32_t flags, int32_t samp)
+static inline void mixer_PutConvSample(uint8_t** pdst, uint32_t bpc, uint32_t flags, int32_t samp)
 {
 	mixer_PutSampleInt(*pdst, bpc, samp);
 	*pdst += bpc;
@@ -1874,8 +1852,7 @@ mixer_PutConvSample(uint8_t** pdst, uint32_t bpc, uint32_t flags, int32_t samp)
 }
 
 /* resampling with respect to sample size only */
-static void
-mixer_ResampleFlat(mixer_Convertion* conv)
+static void mixer_ResampleFlat(mixer_Convertion* conv)
 {
 	const mixer_ConvFlags flags = conv->flags;
 	uint8_t* src = (uint8_t*)conv->srcdata;

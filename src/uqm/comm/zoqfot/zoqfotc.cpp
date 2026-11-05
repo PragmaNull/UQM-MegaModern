@@ -139,8 +139,7 @@ enum
 static int LastAlien;
 
 // Queued and executes synchronously on the Starcon2Main thread
-static void
-SelectAlienZOQ(CallbackArg arg)
+static void SelectAlienZOQ(CallbackArg arg)
 {
 	if (LastAlien != ZOQ_ALIEN)
 	{
@@ -166,8 +165,7 @@ SelectAlienZOQ(CallbackArg arg)
 }
 
 // Queued and executes synchronously on the Starcon2Main thread
-static void
-SelectAlienPIK(CallbackArg arg)
+static void SelectAlienPIK(CallbackArg arg)
 {
 	if (LastAlien != PIK_ALIEN)
 	{
@@ -192,16 +190,14 @@ SelectAlienPIK(CallbackArg arg)
 	(void)arg; // ignored
 }
 
-static void
-ZFPTalkSegue(uint16_t wait_track)
+static void ZFPTalkSegue(uint16_t wait_track)
 {
 	LastAlien = FOT_ALIEN;
 	SelectAlienZOQ(0);
 	AlienTalkSegue(wait_track);
 }
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
@@ -276,8 +272,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void
-FormAlliance(RESPONSE_REF R)
+static void FormAlliance(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase_cb(ALLY_WITH_US0, &SelectAlienZOQ);
@@ -293,8 +288,7 @@ FormAlliance(RESPONSE_REF R)
 	Response(decide_later, ExitConversation);
 }
 
-static void
-ZoqFotIntro(RESPONSE_REF R)
+static void ZoqFotIntro(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, we_are_vindicator))
 	{
@@ -421,8 +415,7 @@ ZoqFotIntro(RESPONSE_REF R)
 	}
 }
 
-static void
-AquaintZoqFot(RESPONSE_REF R)
+static void AquaintZoqFot(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, which_fot))
 	{
@@ -471,8 +464,7 @@ AquaintZoqFot(RESPONSE_REF R)
 
 static void ZoqFotHome(RESPONSE_REF R);
 
-static void
-ZoqFotInfo(RESPONSE_REF R)
+static void ZoqFotInfo(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, want_specific_info))
 	{
@@ -593,8 +585,7 @@ static constexpr auto UrquanLose {(1 << 2)};
 static constexpr auto KohrAhKill {(1 << 3)};
 static constexpr auto KnowAll {(UtwigBuyTime | KohrAhWin | UrquanLose | KohrAhKill)};
 
-static void
-ZoqFotHome(RESPONSE_REF R)
+static void ZoqFotHome(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -791,8 +782,7 @@ ZoqFotHome(RESPONSE_REF R)
 	Response(bye_homeworld, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -972,21 +962,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_zoqfot(void)
+static uint16_t uninit_zoqfot(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_zoqfot_enc(void)
+static void post_zoqfot_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_zoqfot_comm(void)
+LOCDATA* init_zoqfot_comm(void)
 {
 	zoqfot_desc.init_encounter_func = Intro;
 	zoqfot_desc.post_encounter_func = post_zoqfot_enc;

@@ -196,8 +196,7 @@ static LOCDATA shofixti_desc =
 
 static RESPONSE_REF shofixti_name;
 
-static void
-GetShofixtiName(void)
+static void GetShofixtiName(void)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_KIA))
 	{
@@ -209,8 +208,7 @@ GetShofixtiName(void)
 	}
 }
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
@@ -319,8 +317,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void
-GiveMaidens(RESPONSE_REF R)
+static void GiveMaidens(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, important_duty))
 	{
@@ -340,8 +337,7 @@ GiveMaidens(RESPONSE_REF R)
 	}
 }
 
-static void
-ConsoleShofixti(RESPONSE_REF R)
+static void ConsoleShofixti(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, dont_do_it))
 	{
@@ -365,8 +361,7 @@ ConsoleShofixti(RESPONSE_REF R)
 	Response(go_ahead, ExitConversation);
 }
 
-static void
-ExplainDefeat(RESPONSE_REF R)
+static void ExplainDefeat(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, i_am_nice))
 	{
@@ -387,8 +382,7 @@ ExplainDefeat(RESPONSE_REF R)
 	Response(butt_blasted, ConsoleShofixti);
 }
 
-static void
-RealizeMistake(RESPONSE_REF R)
+static void RealizeMistake(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase(DGRUNTI);
@@ -401,8 +395,7 @@ RealizeMistake(RESPONSE_REF R)
 	Response(i_am_guy, ExplainDefeat);
 }
 
-static void
-Hostile(RESPONSE_REF R)
+static void Hostile(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK1))
@@ -454,8 +447,7 @@ Hostile(RESPONSE_REF R)
 	Response(dont_want_to_fight, ExitConversation);
 }
 
-static void
-Friendly(RESPONSE_REF R)
+static void Friendly(RESPONSE_REF R)
 {
 	uint8_t i {};
 	struct
@@ -585,8 +577,7 @@ Friendly(RESPONSE_REF R)
 	DoResponsePhrase(bye0, ExitConversation, shared_phrase_buf);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -665,21 +656,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_shofixti(void)
+static uint16_t uninit_shofixti(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_shofixti_enc(void)
+static void post_shofixti_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_shofixti_comm(void)
+LOCDATA* init_shofixti_comm(void)
 {
 	shofixti_desc.init_encounter_func = Intro;
 	shofixti_desc.post_encounter_func = post_shofixti_enc;

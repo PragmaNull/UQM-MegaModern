@@ -127,8 +127,7 @@ int eventIdStrToNum(const char* eventIdStr)
 	return -1;
 }
 
-const char*
-eventIdNumToStr(int eventNum)
+const char* eventIdNumToStr(int eventNum)
 {
 	const size_t eventCount = std::size(eventNames);
 	if (eventNum < 0 || (size_t)eventNum >= eventCount)
@@ -177,8 +176,7 @@ void SetRaceDest(uint8_t which_race, int16_t x, int16_t y, uint8_t days_left,
 }
 
 
-static int
-arilou_entrance_event(int arg)
+static int arilou_entrance_event(int arg)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE, static_cast<uint32_t>(OPENING));
 	AddEvent(RELATIVE_EVENT, 0, 3, 0, ARILOU_EXIT_EVENT);
@@ -186,8 +184,7 @@ arilou_entrance_event(int arg)
 	return 0;
 }
 
-static int
-arilou_exit_event(int arg)
+static int arilou_exit_event(int arg)
 {
 	uint16_t month_index {};
 
@@ -206,8 +203,7 @@ arilou_exit_event(int arg)
 	return 0;
 }
 
-static void
-check_race_growth(void)
+static void check_race_growth(void)
 {
 	HFLEETINFO hStarShip {};
 	HFLEETINFO hNextShip {};
@@ -266,8 +262,7 @@ check_race_growth(void)
 	}
 }
 
-static int
-hyperspace_encounter_event(int arg)
+static int hyperspace_encounter_event(int arg)
 {
 	check_race_growth();
 	if (inHyperSpace())
@@ -281,8 +276,7 @@ hyperspace_encounter_event(int arg)
 	return 0;
 }
 
-static int
-kohr_ah_victorious_event(int arg)
+static int kohr_ah_victorious_event(int arg)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::UTWIG_SUPOX_MISSION))
 	{
@@ -296,8 +290,7 @@ kohr_ah_victorious_event(int arg)
 	return kohr_ah_genocide_event(arg);
 }
 
-static int
-advance_pkunk_mission(int arg)
+static int advance_pkunk_mission(int arg)
 {
 	HFLEETINFO hPkunk {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, PKUNK_SHIP)};
 	FLEET_INFO* PkunkPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hPkunk)};
@@ -363,8 +356,7 @@ advance_pkunk_mission(int arg)
 }
 
 // Send the Thraddash to fight the Kohr-Ah.
-static int
-advance_thradd_mission(int arg)
+static int advance_thradd_mission(int arg)
 {
 	uint8_t MissionState {};
 
@@ -417,8 +409,7 @@ advance_thradd_mission(int arg)
 	return 0;
 }
 
-static int
-zoqfot_distress_event(int arg)
+static int zoqfot_distress_event(int arg)
 {
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		&& CurStarDescPtr()
@@ -436,8 +427,7 @@ zoqfot_distress_event(int arg)
 	return 0;
 }
 
-static int
-zoqfot_death_event(int arg)
+static int zoqfot_death_event(int arg)
 {
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		&& CurStarDescPtr()
@@ -463,8 +453,7 @@ zoqfot_death_event(int arg)
 	return 0;
 }
 
-static int
-shofixti_return_event(int arg)
+static int shofixti_return_event(int arg)
 {
 	HFLEETINFO hShofixti {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, SHOFIXTI_SHIP)};
 	FLEET_INFO* ShofixtiPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hShofixti)};
@@ -494,8 +483,7 @@ shofixti_return_event(int arg)
 	return 0;
 }
 
-static int
-advance_utwig_supox_mission(int arg)
+static int advance_utwig_supox_mission(int arg)
 {
 	uint8_t MissionState {};
 
@@ -596,8 +584,7 @@ advance_utwig_supox_mission(int arg)
 	return 0;
 }
 
-static int
-kohr_ah_genocide_event(int arg)
+static int kohr_ah_genocide_event(int arg)
 {
 	uint8_t Index {};
 	int16_t best_dx {};
@@ -714,8 +701,7 @@ kohr_ah_genocide_event(int arg)
 	return 0;
 }
 
-static int
-spathi_shield_event(int arg)
+static int spathi_shield_event(int arg)
 {
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
 		&& CurStarDescPtr()
@@ -751,8 +737,7 @@ spathi_shield_event(int arg)
 
 static constexpr auto MaddLength {128};
 
-static int
-advance_ilwrath_mission(int arg)
+static int advance_ilwrath_mission(int arg)
 {
 	uint8_t ThraddState {};
 
@@ -855,8 +840,7 @@ advance_ilwrath_mission(int arg)
 	return 0;
 }
 
-static int
-advance_mycon_mission(int arg)
+static int advance_mycon_mission(int arg)
 {
 	HFLEETINFO hMycon {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, MYCON_SHIP)};
 	FLEET_INFO* MyconPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hMycon)};
@@ -930,8 +914,7 @@ advance_mycon_mission(int arg)
 	return 0;
 }
 
-static int
-arilou_umgah_check(int arg)
+static int arilou_umgah_check(int arg)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::ARILOU_CHECKED_UMGAH, static_cast<uint32_t>(2));
 
@@ -939,8 +922,7 @@ arilou_umgah_check(int arg)
 	return 0;
 }
 
-static int
-yehat_rebel_event(int arg)
+static int yehat_rebel_event(int arg)
 {
 	HFLEETINFO hRebel {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, YEHAT_REBEL_SHIP)};
 	FLEET_INFO* RebelPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hRebel)};
@@ -957,8 +939,7 @@ yehat_rebel_event(int arg)
 	return 0;
 }
 
-static int
-slylandro_ramp_up(int arg)
+static int slylandro_ramp_up(int arg)
 {
 	if (!uqm::gameState().flag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP))
 	{
@@ -976,8 +957,7 @@ slylandro_ramp_up(int arg)
 	return 0;
 }
 
-static int
-slylandro_ramp_down(int arg)
+static int slylandro_ramp_down(int arg)
 {
 	uint8_t ramp_factor {};
 

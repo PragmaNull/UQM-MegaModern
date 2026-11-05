@@ -70,15 +70,13 @@ constexpr auto GetPrimColor(auto pPrim) { return ((pPrim)->color); }
 constexpr auto SetPrimFlags(auto pPrim, auto f) { return ((pPrim)->flags = f); }
 constexpr auto GetPrimFlags(auto pPrim) { return ((pPrim)->flags); }
 
-static inline void
-SetPrimNextLink(PRIMITIVE* pPrim, uint16_t Link)
+static inline void SetPrimNextLink(PRIMITIVE* pPrim, uint16_t Link)
 {
 	SetPrimLinks(pPrim, EndOfList, Link);
 }
 
 
-static inline uint16_t
-GetPrimNextLink(PRIMITIVE* pPrim)
+static inline uint16_t GetPrimNextLink(PRIMITIVE* pPrim)
 {
 	return GetSuccLink(GetPrimLinks(pPrim));
 }

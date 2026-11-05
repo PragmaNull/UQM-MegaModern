@@ -270,8 +270,7 @@ void TFB_DrawImage_MaskImage(TFB_Image* img, DrawMode mode, TFB_Image* target, C
 }
 
 
-TFB_Image*
-TFB_DrawImage_New(TFB_Canvas canvas)
+TFB_Image* TFB_DrawImage_New(TFB_Canvas canvas)
 {
 	auto* img {new TFB_Image {}};
 	img->ScaledImg = nullptr;
@@ -299,8 +298,7 @@ TFB_DrawImage_New(TFB_Canvas canvas)
 	return img;
 }
 
-TFB_Image*
-TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
+TFB_Image* TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
 {
 	auto* img {new TFB_Image {}};
 	img->ScaledImg = nullptr;
@@ -321,8 +319,7 @@ TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
 	return img;
 }
 
-TFB_Image*
-TFB_DrawImage_New_Rotated(TFB_Image* img, int angle)
+TFB_Image* TFB_DrawImage_New_Rotated(TFB_Image* img, int angle)
 {
 	TFB_Canvas dst {};
 	EXTENT size;

@@ -138,9 +138,8 @@ static RACE_DESC orz_desc =
 		0, /* CodeRef */
 };
 
-static void
-howitzer_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void howitzer_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	if (!elementsOfSamePlayer(ElementPtr0, ElementPtr1))
 	{
@@ -148,8 +147,7 @@ howitzer_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static uint16_t
-initialize_turret_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_turret_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 {
 	ELEMENT* TurretPtr {};
 	STARSHIP* StarShipPtr {};
@@ -204,8 +202,7 @@ initialize_turret_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	return (1);
 }
 
-static uint8_t
-count_marines(STARSHIP* StarShipPtr, bool FindSpot)
+static uint8_t count_marines(STARSHIP* StarShipPtr, bool FindSpot)
 {
 	uint8_t id_use[MaxMarines];
 	HELEMENT hElement {};
@@ -254,9 +251,8 @@ count_marines(STARSHIP* StarShipPtr, bool FindSpot)
 	return (num_marines);
 }
 
-static void
-orz_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				 uint16_t ConcernCounter)
+static void orz_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							 uint16_t ConcernCounter)
 {
 	ELEMENT* TurretPtr {};
 	STARSHIP* StarShipPtr {};
@@ -344,8 +340,7 @@ orz_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	UnlockElement(GetSuccElement(ShipPtr));
 }
 
-static void
-ion_preprocess(ELEMENT* ElementPtr)
+static void ion_preprocess(ELEMENT* ElementPtr)
 {
 	/* Originally, this table also contained the now commented out
 	 * entries. It then used some if statements to skip over these.
@@ -555,8 +550,7 @@ spawn_marine_ion_trail(ELEMENT* ElementPtr, STARSHIP* StarShipPtr,
 	}
 }
 
-static void
-marine_preprocess(ELEMENT* ElementPtr)
+static void marine_preprocess(ELEMENT* ElementPtr)
 {
 	ELEMENT* ShipPtr {};
 	STARSHIP* StarShipPtr {};
@@ -866,8 +860,7 @@ void marine_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static void
-animate(ELEMENT* ElementPtr)
+static void animate(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -883,8 +876,7 @@ animate(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-turret_postprocess(ELEMENT* ElementPtr)
+static void turret_postprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->life_span == 0)
 	{
@@ -1069,8 +1061,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-orz_preprocess(ELEMENT* ElementPtr)
+static void orz_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -1120,8 +1111,7 @@ orz_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_orz(void)
+RACE_DESC* init_orz(void)
 {
 	if (IsHd())
 	{

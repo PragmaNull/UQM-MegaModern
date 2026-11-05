@@ -58,14 +58,12 @@ inline constexpr auto TimeShift {8};
 inline constexpr auto MaxTimeValue {((1 << TimeShift) + 1)};
 
 
-static inline bool
-sameColor(Color c1, Color c2)
+static inline bool sameColor(Color c1, Color c2)
 {
 	return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b && c1.a == c2.a;
 }
 
-static inline bool
-sameColor24(Color c1, Color c2)
+static inline bool sameColor24(Color c1, Color c2)
 {
 	return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b;
 }
@@ -96,15 +94,13 @@ constexpr Color BuildColor(Color col, [[maybe_unused]] int c256) { return col; }
 
 // Turn a 15 bits color into a 24-bits color.
 // r, g, and b are each 5-bits color components.
-constexpr Color
-colorFromRgb15(uint8_t r, uint8_t g, uint8_t b)
+constexpr Color colorFromRgb15(uint8_t r, uint8_t g, uint8_t b)
 {
 	return {static_cast<uint8_t>(Cc5to8(r)), static_cast<uint8_t>(Cc5to8(g)), static_cast<uint8_t>(Cc5to8(b)), 0xff};
 }
 constexpr Color MakeRgb15(uint8_t r, uint8_t g, uint8_t b) { return colorFromRgb15(r, g, b); }
 
-constexpr Color
-buildColorRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+constexpr Color buildColorRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
 	return {r, g, b, a};
 }
@@ -114,8 +110,7 @@ constexpr auto BuildShadeRgba(auto s) { return buildColorRgba((s), (s), (s), 0xF
 
 constexpr auto BuildColorRgb(auto r, auto g, auto b) { return buildColorRgba((r), (g), (b), 0xFF); }
 
-static inline void
-IncreaseBrightness(uint8_t* ch, uint8_t value)
+static inline void IncreaseBrightness(uint8_t* ch, uint8_t value)
 {
 	int c {};
 	if (*ch < 128)
@@ -142,8 +137,7 @@ IncreaseBrightness(uint8_t* ch, uint8_t value)
 	}
 }
 
-static inline bool
-AreTheyShades(Color first_color, Color second_color)
+static inline bool AreTheyShades(Color first_color, Color second_color)
 {
 	return (bool)((first_color.r == first_color.g
 				   && first_color.g == first_color.b)
@@ -151,8 +145,7 @@ AreTheyShades(Color first_color, Color second_color)
 					  && second_color.g == second_color.b));
 }
 
-static inline Color
-CreateAvgShade(Color first_color, Color second_color)
+static inline Color CreateAvgShade(Color first_color, Color second_color)
 {
 	Color temp;
 
@@ -281,29 +274,25 @@ typedef struct line
 	GFXPOINT first, second;
 } LINE;
 
-static inline GFXPOINT
-MAKE_POINT(int16_t x, int16_t y)
+static inline GFXPOINT MAKE_POINT(int16_t x, int16_t y)
 {
 	GFXPOINT pt = {x, y};
 	return pt;
 }
 
-static inline DPOINT
-MAKE_DPOINT(int32_t x, int32_t y)
+static inline DPOINT MAKE_DPOINT(int32_t x, int32_t y)
 {
 	DPOINT pt = {x, y};
 	return pt;
 }
 
-static inline EXTENT
-MAKE_EXTENT(int16_t width, int16_t height)
+static inline EXTENT MAKE_EXTENT(int16_t width, int16_t height)
 {
 	EXTENT ext = {width, height};
 	return ext;
 }
 
-static inline DEXTENT
-MAKE_DEXTENT(int32_t width, int32_t height)
+static inline DEXTENT MAKE_DEXTENT(int32_t width, int32_t height)
 {
 	DEXTENT ext = {width, height};
 	return ext;
@@ -312,8 +301,7 @@ MAKE_DEXTENT(int32_t width, int32_t height)
 // Kruzen: Some DrawOval() calls still use standard rect where overflow is impossible as it's 2 figures away from that
 // Used to draw SOI and planet orbits
 // To avoid any typedef conflicts - transform standard GFXRECT to DRECT
-static inline DRECT
-RECT_TO_DRECT(GFXRECT r)
+static inline DRECT RECT_TO_DRECT(GFXRECT r)
 {
 	DRECT dr = {
 		{r.corner.x,	 r.corner.y	   },
@@ -332,49 +320,42 @@ RECT_TO_DRECT(GFXRECT r)
 //	line->second.y = y2;
 //}
 
-static inline void
-MAKE_LINE(LINE* line, GFXPOINT first, GFXPOINT second)
+static inline void MAKE_LINE(LINE* line, GFXPOINT first, GFXPOINT second)
 {
 	line->first = first;
 	line->second = second;
 }
 
-static inline bool
-pointsEqual(GFXPOINT p1, GFXPOINT p2)
+static inline bool pointsEqual(GFXPOINT p1, GFXPOINT p2)
 {
 	return p1.x == p2.x && p1.y == p2.y;
 }
 
-static inline bool
-extentsEqual(EXTENT e1, EXTENT e2)
+static inline bool extentsEqual(EXTENT e1, EXTENT e2)
 {
 	return e1.width == e2.width && e1.height == e2.height;
 }
 
-static inline bool
-rectsEqual(GFXRECT r1, GFXRECT r2)
+static inline bool rectsEqual(GFXRECT r1, GFXRECT r2)
 {
 	return pointsEqual(r1.corner, r2.corner)
 		&& extentsEqual(r1.extent, r2.extent);
 }
 
-static inline bool
-pointWithinRect(GFXRECT r, GFXPOINT p)
+static inline bool pointWithinRect(GFXRECT r, GFXPOINT p)
 {
 	return p.x >= r.corner.x && p.y >= r.corner.y
 		&& p.x < r.corner.x + r.extent.width
 		&& p.y < r.corner.y + r.extent.height;
 }
 
-static inline double
-ptDistance(GFXPOINT p1, GFXPOINT p2)
+static inline double ptDistance(GFXPOINT p1, GFXPOINT p2)
 {
 	return (sqrt(pow((double)p2.x - (double)p1.x, 2)
 				 + pow((double)p2.y - (double)p1.y, 2)));
 }
 
-static inline double
-calcDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+static inline double calcDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
 	const double dx = (double)x2 - (double)x1;
 	const double dy = (double)y2 - (double)y1;
@@ -382,40 +363,35 @@ calcDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 	return (sqrt(pow(dx, 2) + pow(dy, 2)));
 }
 
-static inline void
-printPt(GFXPOINT pt, char* Str)
+static inline void printPt(GFXPOINT pt, char* Str)
 {
 	fmt::print("{} = {} x {}\n", Str, pt.x, pt.y);
 }
 #define PRINT_PT(pt) \
 	printPt(pt, #pt)
 
-static inline void
-printDPt(DPOINT dPt, char* Str)
+static inline void printDPt(DPOINT dPt, char* Str)
 {
 	fmt::print("{} = {} x {}\n", Str, dPt.x, dPt.y);
 }
 #define PRINT_DPT(dpt) \
 	printDPt(dpt, #dpt)
 
-static inline void
-printExt(EXTENT ext, char* Str)
+static inline void printExt(EXTENT ext, char* Str)
 {
 	fmt::print("{} = {} x {}\n", Str, ext.width, ext.height);
 }
 #define PRINT_EXT(ext) \
 	printExt(ext, #ext)
 
-static inline void
-printDExt(DEXTENT dExt, char* Str)
+static inline void printDExt(DEXTENT dExt, char* Str)
 {
 	fmt::print("{} = {} x {}\n", Str, dExt.width, dExt.height);
 }
 #define PRINT_DEXT(dext) \
 	printDExt(dext, #dext)
 
-static inline void
-printRect(GFXRECT r, char* Str)
+static inline void printRect(GFXRECT r, char* Str)
 {
 	fmt::print("{}.corner = {} x {}\n", Str, r.corner.x, r.corner.y);
 	fmt::print("{}.extent = {} x {}\n", Str, r.extent.width, r.extent.height);
@@ -423,8 +399,7 @@ printRect(GFXRECT r, char* Str)
 #define PRINT_RECT(rect) \
 	printRect(rect, #rect)
 
-static inline void
-printDRect(DRECT r, char* Str)
+static inline void printDRect(DRECT r, char* Str)
 {
 	fmt::print("{}.corner = {} x {}\n", Str, r.corner.x, r.corner.y);
 	fmt::print("{}.extent = {} x {}\n", Str, r.extent.width, r.extent.height);
@@ -432,14 +407,12 @@ printDRect(DRECT r, char* Str)
 #define PRINT_DRECT(drect) \
 	printDRect(drect, #drect)
 
-static inline void
-ZeroPoint(GFXPOINT* pt)
+static inline void ZeroPoint(GFXPOINT* pt)
 {
 	pt->x = pt->y = ~0;
 }
 
-static inline bool
-ValidPoint(GFXPOINT pt)
+static inline bool ValidPoint(GFXPOINT pt)
 {
 	return (bool)(pt.x != ~0 && pt.y != ~0);
 }
@@ -580,8 +553,7 @@ inline constexpr auto TransferAlpha {0x7fff};
 
 inline constexpr auto DesatAmount {0xBE};
 
-constexpr DrawMode
-MAKE_DRAW_MODE(DrawKind kind, int16_t factor)
+constexpr DrawMode MAKE_DRAW_MODE(DrawKind kind, int16_t factor)
 {
 	return {static_cast<uint8_t>(kind), factor};
 }

@@ -64,8 +64,7 @@ const GenerateFunctions generateMelnormeFunctions = {
 };
 
 
-static bool
-GenerateMelnorme_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateMelnorme_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	if ((IsExtended() && !uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 		|| !IsExtended())
@@ -85,8 +84,7 @@ GenerateMelnorme_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
@@ -130,9 +128,8 @@ GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateMelnorme_generateMoons(SOLARSYS_STATE* solarSys,
-							   PLANET_DESC* planet)
+static bool GenerateMelnorme_generateMoons(SOLARSYS_STATE* solarSys,
+										   PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -147,9 +144,8 @@ GenerateMelnorme_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
-								 PLANET_DESC* world)
+static bool GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
+											 PLANET_DESC* world)
 {
 	if (IsExtended() && CurStarDescPtr()->Index == MELNORME1_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
@@ -181,9 +177,8 @@ GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t
-GenerateMelnorme_generateEnergy(const SOLARSYS_STATE* solarSys,
-								const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateMelnorme_generateEnergy(const SOLARSYS_STATE* solarSys,
+												const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -195,9 +190,8 @@ GenerateMelnorme_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateMelnorme_pickupEnergy(SOLARSYS_STATE* solarSys,
-							  PLANET_DESC* world, uint16_t whichNode)
+static bool GenerateMelnorme_pickupEnergy(SOLARSYS_STATE* solarSys,
+										  PLANET_DESC* world, uint16_t whichNode)
 {
 	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -213,8 +207,7 @@ GenerateMelnorme_pickupEnergy(SOLARSYS_STATE* solarSys,
 	return false;
 }
 
-const char*
-SelectMelnormeRefVar(void)
+const char* SelectMelnormeRefVar(void)
 {
 	switch (CurStarDescPtr()->Index)
 	{
@@ -241,8 +234,7 @@ SelectMelnormeRefVar(void)
 	}
 }
 
-static uint32_t
-GetMelnormeRef(void)
+static uint32_t GetMelnormeRef(void)
 {
 	const char* RefVar = SelectMelnormeRefVar();
 
@@ -255,8 +247,7 @@ GetMelnormeRef(void)
 	return DGetGameState(RefVar);
 }
 
-static void
-SetMelnormeRef(uint32_t Ref)
+static void SetMelnormeRef(uint32_t Ref)
 {
 	const char* RefVar = SelectMelnormeRefVar();
 

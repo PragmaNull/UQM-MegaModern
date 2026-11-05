@@ -18,20 +18,17 @@
 
 #include "strintrn.h"
 
-static void
-GetStringTableFileData(const char* pathname, RESOURCE_DATA* resdata)
+static void GetStringTableFileData(const char* pathname, RESOURCE_DATA* resdata)
 {
 	resdata->ptr = LoadResourceFromPath(pathname, _GetStringData);
 }
 
-static void
-GetBinaryTableFileData(const char* pathname, RESOURCE_DATA* resdata)
+static void GetBinaryTableFileData(const char* pathname, RESOURCE_DATA* resdata)
 {
 	resdata->ptr = LoadResourceFromPath(pathname, _GetBinaryTableData);
 }
 
-static bool
-ReleaseStringTableData(void* data)
+static bool ReleaseStringTableData(void* data)
 {
 	delete static_cast<uqm::StringTable*>(data);
 	return true;
@@ -60,8 +57,7 @@ StringTablePtr loadStringTable(RESOURCE res)
 
 } // namespace uqm
 
-const char*
-LoadStringInstance(RESOURCE res)
+const char* LoadStringInstance(RESOURCE res)
 {
 	const char* data {(const char*)res_GetResource(res)};
 	if (data)

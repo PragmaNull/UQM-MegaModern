@@ -59,8 +59,7 @@ const GenerateFunctions generateZoqFotPikFunctions = {
 };
 
 
-static bool
-GenerateZoqFotPik_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateZoqFotPik_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS) != 1)
 	{
@@ -75,8 +74,7 @@ GenerateZoqFotPik_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
@@ -136,9 +134,8 @@ GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateZoqFotPik_generateMoons(SOLARSYS_STATE* solarSys,
-								PLANET_DESC* planet)
+static bool GenerateZoqFotPik_generateMoons(SOLARSYS_STATE* solarSys,
+											PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -155,9 +152,8 @@ GenerateZoqFotPik_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
-								  PLANET_DESC* world)
+static bool GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
+											  PLANET_DESC* world)
 {
 	if (CurStarDescPtr()->Index == ZOQFOT_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -271,9 +267,8 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 
 static constexpr auto NumRuins {4};
 
-static uint16_t
-GenerateZoqFotPik_generateEnergy(const SOLARSYS_STATE* solarSys,
-								 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateZoqFotPik_generateEnergy(const SOLARSYS_STATE* solarSys,
+												 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -305,9 +300,8 @@ GenerateZoqFotPik_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateZoqFotPik_pickupEnergy(SOLARSYS_STATE* solarSys,
-							   PLANET_DESC* world, uint16_t whichNode)
+static bool GenerateZoqFotPik_pickupEnergy(SOLARSYS_STATE* solarSys,
+										   PLANET_DESC* world, uint16_t whichNode)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& CurStarDescPtr()->Index != ZOQ_COLONY2_DEFINED)

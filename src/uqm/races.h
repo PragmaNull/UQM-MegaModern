@@ -298,8 +298,7 @@ struct STARSHIP : SHIP_BASE
 inline constexpr auto RpgPlayerNum {0};
 inline constexpr auto NpcPlayerNum {1};
 
-static inline STARSHIP*
-LockStarShip(const QUEUE* pq, HSTARSHIP h)
+static inline STARSHIP* LockStarShip(const QUEUE* pq, HSTARSHIP h)
 {
 	assert(GetLinkSize(pq) == sizeof(STARSHIP));
 	return (STARSHIP*)LockLink(pq, h);
@@ -331,8 +330,7 @@ struct SHIP_FRAGMENT : SHIP_BASE
 	FRAME melee_icon; /* Only used by Shipyard */
 };
 
-static inline SHIP_FRAGMENT*
-LockShipFrag(const QUEUE* pq, HSHIPFRAG h)
+static inline SHIP_FRAGMENT* LockShipFrag(const QUEUE* pq, HSHIPFRAG h)
 {
 	assert(GetLinkSize(pq) == sizeof(SHIP_FRAGMENT));
 	return (SHIP_FRAGMENT*)LockLink(pq, h);
@@ -401,8 +399,7 @@ enum
 	BAD_GUY,	  // Race is not allied with the player
 };
 
-static inline FLEET_INFO*
-LockFleetInfo(const QUEUE* pq, HFLEETINFO h)
+static inline FLEET_INFO* LockFleetInfo(const QUEUE* pq, HFLEETINFO h)
 {
 	assert(GetLinkSize(pq) == sizeof(FLEET_INFO));
 	return (FLEET_INFO*)LockLink(pq, h);
@@ -667,8 +664,7 @@ typedef enum
 	NUM_AVAILABLE_HOMES
 } HOME_ID;
 
-static inline HOME_ID
-SpeciesToHomeID(SPECIES_ID species_id)
+static inline HOME_ID SpeciesToHomeID(SPECIES_ID species_id)
 {
 	switch (species_id)
 	{

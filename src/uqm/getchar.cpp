@@ -40,8 +40,7 @@ static bool block = false;
 //   of overhead to convert UniChar back to UTF8 string. This overhead
 //   will probably be offset by removal of looped string-compare overhead ;)
 
-static int
-ReadOneChar(joy_char_t* ch, const char* str)
+static int ReadOneChar(joy_char_t* ch, const char* str)
 {
 	const char* next = uqm::skipUTF8Chars(str, 1);
 	const int len = next - str;
@@ -52,8 +51,7 @@ ReadOneChar(joy_char_t* ch, const char* str)
 	return len;
 }
 
-static uqstl::vector<joy_char_t>
-LoadJoystickAlpha(const char* str, int* count)
+static uqstl::vector<joy_char_t> LoadJoystickAlpha(const char* str, int* count)
 {
 	int c {};
 	int i {};
@@ -78,9 +76,8 @@ LoadJoystickAlpha(const char* str, int* count)
 	return chars;
 }
 
-static int
-JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
-			  int setsize)
+static int JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
+						 int setsize)
 {
 	int i {};
 
@@ -90,15 +87,13 @@ JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
 	return (i < setsize) ? i : -1;
 }
 
-static int
-JoyCharIsLower(const joy_char_t* ch, TEXTENTRY_STATE* pTES)
+static int JoyCharIsLower(const joy_char_t* ch, TEXTENTRY_STATE* pTES)
 {
 	return 0 <= JoyCharFindIn(ch, pTES->JoyLower.data(), pTES->JoyRegLength);
 }
 
-static void
-JoyCharSwitchReg(joy_char_t* ch, const joy_char_t* from,
-				 const joy_char_t* to, int regsize)
+static void JoyCharSwitchReg(joy_char_t* ch, const joy_char_t* from,
+							 const joy_char_t* to, int regsize)
 {
 	const int i = JoyCharFindIn(ch, from, regsize);
 	if (i >= 0)
@@ -107,18 +102,16 @@ JoyCharSwitchReg(joy_char_t* ch, const joy_char_t* from,
 	}
 }
 
-static void
-JoyCharToUpper(joy_char_t* outch, const joy_char_t* ch,
-			   TEXTENTRY_STATE* pTES)
+static void JoyCharToUpper(joy_char_t* outch, const joy_char_t* ch,
+						   TEXTENTRY_STATE* pTES)
 {
 	*outch = *ch;
 	JoyCharSwitchReg(outch, pTES->JoyLower.data(), pTES->JoyUpper.data(),
 					 pTES->JoyRegLength);
 }
 
-static void
-JoyCharToLower(joy_char_t* outch, const joy_char_t* ch,
-			   TEXTENTRY_STATE* pTES)
+static void JoyCharToLower(joy_char_t* outch, const joy_char_t* ch,
+						   TEXTENTRY_STATE* pTES)
 {
 	*outch = *ch;
 	JoyCharSwitchReg(outch, pTES->JoyUpper.data(), pTES->JoyLower.data(),
@@ -145,8 +138,7 @@ void FlushCursorRect(void)
 
 static constexpr auto BlinkRate {(c_gameSecond / 32)};
 
-static void
-FlashCursor(void)
+static void FlashCursor(void)
 {
 	static TimeCount NextTime {};
 	static uint32_t cycle_index = 0;

@@ -74,8 +74,7 @@ bool RunAwayAllowed(void)
 			&& (isDifficulty(uqm::Difficulty::Easy) || !uqm::gameState().flag(uqm::GameFlag::BOMB_CARRIER)));
 }
 
-static void
-DoRunAway(STARSHIP* StarShipPtr)
+static void DoRunAway(STARSHIP* StarShipPtr)
 {
 	ELEMENT* ElementPtr {};
 
@@ -109,8 +108,7 @@ DoRunAway(STARSHIP* StarShipPtr)
 	UnlockElement(StarShipPtr->hShip);
 }
 
-static void
-setupBattleInputOrder(void)
+static void setupBattleInputOrder(void)
 {
 	size_t i {};
 
@@ -145,15 +143,13 @@ setupBattleInputOrder(void)
 #endif
 }
 
-BATTLE_INPUT_STATE
-frameInputHuman(HumanInputContext* context, STARSHIP* StarShipPtr)
+BATTLE_INPUT_STATE frameInputHuman(HumanInputContext* context, STARSHIP* StarShipPtr)
 {
 	(void)StarShipPtr;
 	return CurrentInputToBattleInput(context->playerNr);
 }
 
-static void
-ProcessInput(void)
+static void ProcessInput(void)
 {
 #ifdef NETPLAY
 	netInput();
@@ -297,8 +293,7 @@ void FreeBattleSong(void)
 	BattleRef = 0;
 }
 
-static bool
-DoBattle(BATTLE_STATE* bs)
+static bool DoBattle(BATTLE_STATE* bs)
 {
 	extern uint16_t nth_frame;
 	GFXRECT r;
@@ -396,8 +391,7 @@ DoBattle(BATTLE_STATE* bs)
 }
 
 #ifdef NETPLAY
-uint16_t
-GetPlayerOrder(uint16_t i)
+uint16_t GetPlayerOrder(uint16_t i)
 {
 	// Iff 'myTurn' is set on a connection, the local party will be
 	// processed first.
@@ -416,8 +410,7 @@ GetPlayerOrder(uint16_t i)
 #endif
 
 // Let each player pick his ship.
-static bool
-selectAllShips(int16_t num_ships)
+static bool selectAllShips(int16_t num_ships)
 {
 	if (num_ships == 1)
 	{

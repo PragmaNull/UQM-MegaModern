@@ -66,8 +66,7 @@ uqstl::atomic<bool> MainExited {false};
 
 // Open or close the periodically occuring QuasiSpace portal.
 // It changes the appearant portal size when necessary.
-static void
-checkArilouGate(void)
+static void checkArilouGate(void)
 {
 	uint8_t counter {};
 
@@ -90,8 +89,7 @@ checkArilouGate(void)
 }
 
 // Battle frame callback function.
-static void
-on_battle_frame(void)
+static void on_battle_frame(void)
 {
 	GameClockTick();
 	checkArilouGate();
@@ -104,8 +102,7 @@ on_battle_frame(void)
 	DrawAutoPilotMessage(false);
 }
 
-static void
-BackgroundInitKernel(TimeCount TimeOut)
+static void BackgroundInitKernel(TimeCount TimeOut)
 {
 	LoadMasterShipList(TaskSwitch);
 	TaskSwitch();
@@ -201,8 +198,7 @@ void ProcessUtilityKeys(void)
 #endif /* DEBUG */
 }
 
-static void
-SetRandomMenuMusic(void)
+static void SetRandomMenuMusic(void)
 {
 	const time_t t = time(nullptr);
 	const uqstl::tm tm {uqm::localtime(t)};
@@ -217,8 +213,7 @@ extern AudioDriverType snddriver;
 extern AudioFlags soundflags;
 
 // Releases the kernel and tells the main thread that Starcon2Main ends.
-static void
-ShutdownKernel(void)
+static void ShutdownKernel(void)
 {
 	UninitGameKernel();
 	FreeMasterShipList();

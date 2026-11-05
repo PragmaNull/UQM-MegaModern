@@ -108,14 +108,12 @@ typedef struct
 
 static bool DoPresentation(void* pIS);
 
-static Color
-commandColor(const uqm::SlideCommand& cmd)
+static Color commandColor(const uqm::SlideCommand& cmd)
 {
 	return BuildColorRgba(cmd.color[0], cmd.color[1], cmd.color[2], 0xff);
 }
 
-static bool
-DoFadeScreen(PRESENTATION_INPUT_STATE* pPIS, int msecs, uint8_t FadeType)
+static bool DoFadeScreen(PRESENTATION_INPUT_STATE* pPIS, int msecs, uint8_t FadeType)
 {
 	pPIS->TimeOut = FadeScreen((ScreenFadeType)FadeType, msecs * c_gameSecond / 1000)
 				  + c_gameSecond / 10;
@@ -123,8 +121,7 @@ DoFadeScreen(PRESENTATION_INPUT_STATE* pPIS, int msecs, uint8_t FadeType)
 	return true;
 }
 
-static void
-DrawTextEffect(TEXT* pText, Color Fore, Color Back, bool traced)
+static void DrawTextEffect(TEXT* pText, Color Fore, Color Back, bool traced)
 {
 	if (traced)
 	{
@@ -137,8 +134,7 @@ DrawTextEffect(TEXT* pText, Color Fore, Color Back, bool traced)
 	}
 }
 
-static void
-Present_BatchGraphics(PRESENTATION_INPUT_STATE* pPIS)
+static void Present_BatchGraphics(PRESENTATION_INPUT_STATE* pPIS)
 {
 	if (!pPIS->Batched)
 	{
@@ -147,8 +143,7 @@ Present_BatchGraphics(PRESENTATION_INPUT_STATE* pPIS)
 	}
 }
 
-static void
-Present_UnbatchGraphics(PRESENTATION_INPUT_STATE* pPIS, bool bYield)
+static void Present_UnbatchGraphics(PRESENTATION_INPUT_STATE* pPIS, bool bYield)
 {
 	if (pPIS->Batched)
 	{
@@ -161,8 +156,7 @@ Present_UnbatchGraphics(PRESENTATION_INPUT_STATE* pPIS, bool bYield)
 	}
 }
 
-static void
-Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
+static void Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 {
 	const auto ModuleYofsP = [&] {
 		return -(ResScale(79) + IfHd(33));
@@ -279,8 +273,7 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 	pPIS->SisFrame = SisFrame;
 }
 
-static void
-DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool* skip)
+static void DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool* skip)
 {
 	TEXT Text;
 
@@ -293,8 +286,7 @@ DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool* skip)
 	font_DrawText_Fade(&Text, repair, skip);
 }
 
-static void
-DoSpinLine(LINE* l, Color front, Color back, bool* skip)
+static void DoSpinLine(LINE* l, Color front, Color back, bool* skip)
 {
 	if (!*skip)
 	{
@@ -307,8 +299,7 @@ DoSpinLine(LINE* l, Color front, Color back, bool* skip)
 	DrawLine(l, ResScale(1));
 }
 
-static void
-DoSpinStatBox(GFXRECT* r, Color front, Color back, bool* skip)
+static void DoSpinStatBox(GFXRECT* r, Color front, Color back, bool* skip)
 {
 	if (!*skip)
 	{
@@ -319,9 +310,8 @@ DoSpinStatBox(GFXRECT* r, Color front, Color back, bool* skip)
 	DrawStarConBox(r, ResScale(1), front, front, false, BlackColor, false, BlackColor);
 }
 
-static void
-DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Color front, Color back,
-		   bool* skip)
+static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Color front, Color back,
+					   bool* skip)
 {
 	TEXT Text;
 	uint16_t i {};
@@ -411,8 +401,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 	}
 }
 
-static void
-Present_DrawMovieFrame(PRESENTATION_INPUT_STATE* pPIS)
+static void Present_DrawMovieFrame(PRESENTATION_INPUT_STATE* pPIS)
 {
 	STAMP s;
 
@@ -422,8 +411,7 @@ Present_DrawMovieFrame(PRESENTATION_INPUT_STATE* pPIS)
 	DrawStamp(&s);
 }
 
-static bool
-ShowPresentationFile(const char* name)
+static bool ShowPresentationFile(const char* name)
 {
 	const auto text {uqm::readTextFile(uqm::contentDir(), name)};
 	const auto commands {text ? uqm::slideshowFromJson(*text) : uqstl::nullopt};
@@ -479,8 +467,7 @@ static uint16_t shipID = NumShips;
 static uint16_t raceID = NumShips;
 static bool linespun = false;
 
-static void
-SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
+static void SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 {
 	//TODO Nullicious: Get rid of goto :(
 	if (!uqm::currentSeed().ships)
@@ -522,8 +509,7 @@ SeedDittyPassThru:
 	return;
 }
 
-static void
-SeedLineSpin(int* x1, int* y1, int* x2, int* y2)
+static void SeedLineSpin(int* x1, int* y1, int* x2, int* y2)
 {
 	if (!uqm::currentSeed().ships || !x1 || !x2 || !y1 || !y2 || shipID == raceID || shipID >= NumShips || raceID >= NumShips)
 	{
@@ -543,8 +529,7 @@ SeedLineSpinPassThru:
 	return;
 }
 
-static void
-SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
+static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 {
 	if (!uqm::currentSeed().ships || !x || !y || shipID == raceID || shipID >= NumShips || raceID >= NumShips)
 	{
@@ -684,8 +669,7 @@ SeedTextSpinPassThru:
 	return;
 }
 
-static bool
-DoPresentation(void* pIS)
+static bool DoPresentation(void* pIS)
 {
 	PRESENTATION_INPUT_STATE* pPIS = (PRESENTATION_INPUT_STATE*)pIS;
 
@@ -1369,8 +1353,7 @@ DoPresentation(void* pIS)
 	return false;
 }
 
-static bool
-ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
+static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 {
 	GFXRECT OldRect;
 	PRESENTATION_INPUT_STATE pis;
@@ -1415,8 +1398,7 @@ ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 	return true;
 }
 
-static bool
-DoVideoInput(void* pIS)
+static bool DoVideoInput(void* pIS)
 {
 	const VIDEO_INPUT_STATE* pVIS = (VIDEO_INPUT_STATE*)pIS;
 
@@ -1464,8 +1446,7 @@ DoVideoInput(void* pIS)
 	return true;
 }
 
-static void
-FadeClearScreen(void)
+static void FadeClearScreen(void)
 {
 	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 
@@ -1477,8 +1458,7 @@ FadeClearScreen(void)
 	FadeScreen(FadeAllToColor, TimePeriod {});
 }
 
-static bool
-ShowLegacyVideo(LEGACY_VIDEO vid)
+static bool ShowLegacyVideo(LEGACY_VIDEO vid)
 {
 	VIDEO_INPUT_STATE vis;
 

@@ -189,8 +189,7 @@ void SeekStream(uint32_t source, uint32_t pos)
 	PlayStream(sample, source, looping, scope, false);
 }
 
-uint32_t
-GetStreamFrame(uint32_t source)
+uint32_t GetStreamFrame(uint32_t source)
 {
 	const TFB_SoundSample* sample = soundSource[source].sample;
 
@@ -202,8 +201,7 @@ GetStreamFrame(uint32_t source)
 	return SoundDecoder_GetFrame(sample->decoder);
 }
 
-uint16_t
-GetNumTrackerPos(uint32_t source)
+uint16_t GetNumTrackerPos(uint32_t source)
 {
 	const TFB_SoundSample* sample = soundSource[source].sample;
 
@@ -241,8 +239,7 @@ float GetStreamLength(uint32_t source)
 	return sample->decoder->length * 1000;
 }
 
-uint32_t
-GetStreamTime(uint32_t source)
+uint32_t GetStreamTime(uint32_t source)
 {
 	const TFB_SoundSample* sample = soundSource[source].sample;
 
@@ -261,9 +258,8 @@ bool PlayingStream(uint32_t source)
 }
 
 
-TFB_SoundSample*
-TFB_CreateSoundSample(TFB_SoundDecoder* decoder, uint32_t num_buffers,
-					  const TFB_SoundCallbacks* pcbs /* can be nullptr */)
+TFB_SoundSample* TFB_CreateSoundSample(TFB_SoundDecoder* decoder, uint32_t num_buffers,
+									   const TFB_SoundCallbacks* pcbs /* can be nullptr */)
 {
 	auto* sample {new TFB_SoundSample {}};
 	sample->decoder = decoder;
@@ -308,14 +304,12 @@ void TFB_SetSoundSampleCallbacks(TFB_SoundSample* sample,
 	}
 }
 
-TFB_SoundDecoder*
-TFB_GetSoundSampleDecoder(TFB_SoundSample* sample)
+TFB_SoundDecoder* TFB_GetSoundSampleDecoder(TFB_SoundSample* sample)
 {
 	return sample->decoder;
 }
 
-TFB_SoundTag*
-TFB_FindTaggedBuffer(TFB_SoundSample* sample, audio_Object buffer)
+TFB_SoundTag* TFB_FindTaggedBuffer(TFB_SoundSample* sample, audio_Object buffer)
 {
 	uint32_t buf_num {};
 
@@ -366,8 +360,7 @@ void TFB_ClearBufferTag(TFB_SoundTag* ptag)
 	ptag->buf_name = 0;
 }
 
-static void
-remove_scope_data(TFB_SoundSource* source, audio_Object buffer) UQM_REQUIRES(source->stream_mutex)
+static void remove_scope_data(TFB_SoundSource* source, audio_Object buffer) UQM_REQUIRES(source->stream_mutex)
 {
 	audio_IntVal buf_size {};
 
@@ -379,8 +372,7 @@ remove_scope_data(TFB_SoundSource* source, audio_Object buffer) UQM_REQUIRES(sou
 	source->sbuf_lasttime = GetTimeCounter();
 }
 
-static void
-add_scope_data(TFB_SoundSource* source, uint32_t bytes)
+static void add_scope_data(TFB_SoundSource* source, uint32_t bytes)
 {
 	uint8_t* sbuffer = source->sbuffer.data();
 	const uint8_t* dec_buf = (uint8_t*)source->sample->decoder->buffer;
@@ -420,8 +412,7 @@ add_scope_data(TFB_SoundSource* source, uint32_t bytes)
 	}
 }
 
-static void
-process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_mutex)
+static void process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_mutex)
 {
 	TFB_SoundSample* sample = source->sample;
 	TFB_SoundDecoder* decoder = sample->decoder;
@@ -585,8 +576,7 @@ process_stream(TFB_SoundSource* source) UQM_REQUIRES(source->stream_mutex)
 	}
 }
 
-static void
-processMusicFade(void)
+static void processMusicFade(void)
 {
 	fade_mutex.lock();
 
@@ -607,8 +597,7 @@ processMusicFade(void)
 	fade_mutex.unlock();
 }
 
-static void
-StreamDecoderTaskFunc(uqstl::stop_token stopToken)
+static void StreamDecoderTaskFunc(uqstl::stop_token stopToken)
 {
 	int active_streams {};
 	int i {};
@@ -648,8 +637,7 @@ StreamDecoderTaskFunc(uqstl::stop_token stopToken)
 	}
 }
 
-static inline int32_t
-readSoundSample(void* ptr, int sample_size)
+static inline int32_t readSoundSample(void* ptr, int sample_size)
 {
 	if (sample_size == sizeof(uint8_t))
 	{

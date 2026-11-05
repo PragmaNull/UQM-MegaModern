@@ -98,8 +98,7 @@ bool classicPackPresent;
 bool usingSpeech;
 
 
-static void
-InitPlayerInput(void)
+static void InitPlayerInput(void)
 {
 }
 
@@ -302,8 +301,7 @@ bool InitContexts(void)
 	return true;
 }
 
-static bool
-InitKernel(void)
+static bool InitKernel(void)
 {
 	for (uint16_t counter {0}; counter < NumPlayers; ++counter)
 	{

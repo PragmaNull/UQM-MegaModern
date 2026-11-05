@@ -244,8 +244,7 @@ static LOCDATA utwig_desc =
 		nullptr,
 };
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
@@ -382,8 +381,7 @@ ExitConversation(RESPONSE_REF R)
 
 static void AlliedHome(RESPONSE_REF R);
 
-static void
-AlliedHome(RESPONSE_REF R)
+static void AlliedHome(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 	uint8_t News {};
@@ -489,8 +487,7 @@ AlliedHome(RESPONSE_REF R)
 	Response(bye_allied_homeworld, ExitConversation);
 }
 
-static void
-BeforeKohrAh(RESPONSE_REF R)
+static void BeforeKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -529,8 +526,7 @@ BeforeKohrAh(RESPONSE_REF R)
 	Response(bye_before_space, ExitConversation);
 }
 
-static void
-AfterKohrAh(RESPONSE_REF R)
+static void AfterKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -569,8 +565,7 @@ AfterKohrAh(RESPONSE_REF R)
 	Response(bye_after_space, ExitConversation);
 }
 
-static void
-NeutralUtwig(RESPONSE_REF R)
+static void NeutralUtwig(RESPONSE_REF R)
 {
 	uint8_t i {};
 	RESPONSE_REF pStr[4];
@@ -707,8 +702,7 @@ NeutralUtwig(RESPONSE_REF R)
 	Response(bye_neutral, ExitConversation);
 }
 
-static void
-BombWorld(RESPONSE_REF R)
+static void BombWorld(RESPONSE_REF R)
 {
 	RESPONSE_REF pStr[2];
 
@@ -831,8 +825,7 @@ BombWorld(RESPONSE_REF R)
 	}
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -1041,21 +1034,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_utwig(void)
+static uint16_t uninit_utwig(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_utwig_enc(void)
+static void post_utwig_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_utwig_comm(void)
+LOCDATA* init_utwig_comm(void)
 {
 	utwig_desc.init_encounter_func = Intro;
 	utwig_desc.post_encounter_func = post_utwig_enc;

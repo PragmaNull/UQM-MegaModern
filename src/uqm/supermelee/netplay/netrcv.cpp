@@ -34,9 +34,8 @@
 // Try to get a single packet from a stream of data.
 // Returns the length of the packet that was processed, 0 if the packet is
 // not complete, or an error, in which case the state is unchanged.
-static uqstl::expected<size_t, uqstl::error_code>
-dataReceivedSingle(NetConnection* conn, const uint8_t* data,
-				   size_t dataLen)
+static uqstl::expected<size_t, uqstl::error_code> dataReceivedSingle(NetConnection* conn, const uint8_t* data,
+																	 size_t dataLen)
 {
 	uint32_t packetLen {};
 	PacketType type;
@@ -105,8 +104,7 @@ dataReceivedSingle(NetConnection* conn, const uint8_t* data,
 
 // Try to get all the packets from a stream of data.
 // Returns the number of bytes processed.
-static uqstl::expected<size_t, uqstl::error_code>
-dataReceivedMulti(NetConnection* conn, const uint8_t* data, size_t len)
+static uqstl::expected<size_t, uqstl::error_code> dataReceivedMulti(NetConnection* conn, const uint8_t* data, size_t len)
 {
 	size_t processed {0};
 	while (len > 0)

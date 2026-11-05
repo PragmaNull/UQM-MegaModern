@@ -505,8 +505,7 @@ void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 	}
 }
 
-static void
-renderTintFrame(Color tintColor)
+static void renderTintFrame(Color tintColor)
 {
 	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
 	DrawMode mode;

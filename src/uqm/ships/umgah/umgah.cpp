@@ -132,16 +132,14 @@ typedef struct
 typedef UMGAH_DATA CustomShipData_t;
 
 // Retrieve race-specific ship data from a race desc
-static CustomShipData_t*
-GetCustomShipData(RACE_DESC* pRaceDesc)
+static CustomShipData_t* GetCustomShipData(RACE_DESC* pRaceDesc)
 {
 	return (CustomShipData_t*)pRaceDesc->data;
 }
 
 // Set the race-specific data in a race desc
 // (Re)Allocates its own storage for the data.
-static void
-SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
+static void SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 {
 	if (pRaceDesc->data == data)
 	{
@@ -161,8 +159,7 @@ SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 }
 
 
-static void
-cone_preprocess(ELEMENT* ElementPtr)
+static void cone_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -174,9 +171,8 @@ cone_preprocess(ELEMENT* ElementPtr)
 	ElementPtr->state_flags |= Appearing;
 }
 
-static void
-cone_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-			   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void cone_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+						   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	HELEMENT hBlastElement {weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1)};
 	if (hBlastElement)
@@ -188,9 +184,8 @@ cone_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static void
-umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				   uint16_t ConcernCounter)
+static void umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							   uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 	STARSHIP* EnemyStarShipPtr {};
@@ -327,8 +322,7 @@ umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static uint16_t
-initialize_cone(ELEMENT* ShipPtr, HELEMENT ConeArray[])
+static uint16_t initialize_cone(ELEMENT* ShipPtr, HELEMENT ConeArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -384,8 +378,7 @@ initialize_cone(ELEMENT* ShipPtr, HELEMENT ConeArray[])
 	return (1);
 }
 
-static void
-umgah_postprocess(ELEMENT* ElementPtr)
+static void umgah_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -398,8 +391,7 @@ umgah_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-umgah_preprocess(ELEMENT* ElementPtr)
+static void umgah_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -434,14 +426,12 @@ umgah_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-uninit_umgah(RACE_DESC* pRaceDesc)
+static void uninit_umgah(RACE_DESC* pRaceDesc)
 {
 	SetCustomShipData(pRaceDesc, nullptr);
 }
 
-RACE_DESC*
-init_umgah(void)
+RACE_DESC* init_umgah(void)
 {
 	if (IsHd())
 	{

@@ -18,8 +18,7 @@
 
 #include "gfxintrn.h"
 
-INTERSECT_CODE
-BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
+INTERSECT_CODE BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 {
 	int16_t x1 {};
 	int16_t delta {};

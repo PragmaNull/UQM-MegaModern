@@ -139,8 +139,7 @@ static RACE_DESC chenjesu_desc =
 		0, /* CodeRef */
 };
 
-static void
-crystal_postprocess(ELEMENT* ElementPtr)
+static void crystal_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -183,8 +182,7 @@ crystal_postprocess(ELEMENT* ElementPtr)
 				 ElementPtr);
 }
 
-static void
-crystal_preprocess(ELEMENT* ElementPtr)
+static void crystal_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -201,8 +199,7 @@ crystal_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-animate(ELEMENT* ElementPtr)
+static void animate(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -218,9 +215,8 @@ animate(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-crystal_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void crystal_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	HELEMENT hBlastElement {};
 
@@ -248,8 +244,7 @@ crystal_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static void
-doggy_preprocess(ELEMENT* ElementPtr)
+static void doggy_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -306,8 +301,7 @@ doggy_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-doggy_death(ELEMENT* ElementPtr)
+static void doggy_death(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -330,9 +324,8 @@ doggy_death(ELEMENT* ElementPtr)
 	ElementPtr->turn_wait = ElementPtr->next_turn = 0;
 }
 
-static void
-doggy_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void doggy_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 	if ((ElementPtr1->state_flags & PlayerShip)
@@ -361,8 +354,7 @@ doggy_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static void
-spawn_doggy(ELEMENT* ElementPtr)
+static void spawn_doggy(ELEMENT* ElementPtr)
 {
 	HELEMENT hDoggyElement {};
 
@@ -414,9 +406,8 @@ spawn_doggy(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					  uint16_t ConcernCounter)
+static void chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								  uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -610,8 +601,7 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static uint16_t
-initialize_crystal(ELEMENT* ShipPtr, HELEMENT CrystalArray[])
+static uint16_t initialize_crystal(ELEMENT* ShipPtr, HELEMENT CrystalArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -645,8 +635,7 @@ initialize_crystal(ELEMENT* ShipPtr, HELEMENT CrystalArray[])
 	return (1);
 }
 
-static void
-chenjesu_postprocess(ELEMENT* ElementPtr)
+static void chenjesu_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -663,8 +652,7 @@ chenjesu_postprocess(ELEMENT* ElementPtr)
 			 * decrement special_counter */
 }
 
-static void
-chenjesu_preprocess(ELEMENT* ElementPtr)
+static void chenjesu_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -683,8 +671,7 @@ chenjesu_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_chenjesu(void)
+RACE_DESC* init_chenjesu(void)
 {
 	if (IsHd())
 	{

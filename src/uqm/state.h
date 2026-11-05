@@ -95,8 +95,7 @@ int ReadStateFile(void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_FILE* f
 int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_FILE* fp);
 int SeekStateFile(GAME_STATE_FILE* fp, long offset, int whence);
 
-static inline uint16_t
-sread_8(GAME_STATE_FILE* fp, uint8_t* v)
+static inline uint16_t sread_8(GAME_STATE_FILE* fp, uint8_t* v)
 {
 	uint8_t t {};
 	if (!v) /* read value ignored */
@@ -106,8 +105,7 @@ sread_8(GAME_STATE_FILE* fp, uint8_t* v)
 	return ReadStateFile(v, 1, 1, fp);
 }
 
-static inline uint16_t
-sread_16(GAME_STATE_FILE* fp, uint16_t* v)
+static inline uint16_t sread_16(GAME_STATE_FILE* fp, uint16_t* v)
 {
 	uint16_t t {};
 	if (!v) /* read value ignored */
@@ -117,8 +115,7 @@ sread_16(GAME_STATE_FILE* fp, uint16_t* v)
 	return ReadStateFile(v, 2, 1, fp);
 }
 
-static inline uint16_t
-sread_16s(GAME_STATE_FILE* fp, int16_t* v)
+static inline uint16_t sread_16s(GAME_STATE_FILE* fp, int16_t* v)
 {
 	uint16_t t {};
 	const uint16_t ret {sread_16(fp, &t)};
@@ -130,8 +127,7 @@ sread_16s(GAME_STATE_FILE* fp, int16_t* v)
 	return ret;
 }
 
-static inline uint16_t
-sread_32(GAME_STATE_FILE* fp, uint32_t* v)
+static inline uint16_t sread_32(GAME_STATE_FILE* fp, uint32_t* v)
 {
 	uint32_t t {};
 	if (!v) /* read value ignored */
@@ -141,8 +137,7 @@ sread_32(GAME_STATE_FILE* fp, uint32_t* v)
 	return ReadStateFile(v, 4, 1, fp);
 }
 
-static inline uint16_t
-sread_a32(GAME_STATE_FILE* fp, uint32_t* ar, uint16_t count)
+static inline uint16_t sread_a32(GAME_STATE_FILE* fp, uint32_t* ar, uint16_t count)
 {
 	assert(ar != nullptr);
 
@@ -156,26 +151,22 @@ sread_a32(GAME_STATE_FILE* fp, uint32_t* ar, uint16_t count)
 	return 1;
 }
 
-static inline uint16_t
-swrite_8(GAME_STATE_FILE* fp, uint8_t v)
+static inline uint16_t swrite_8(GAME_STATE_FILE* fp, uint8_t v)
 {
 	return WriteStateFile(&v, 1, 1, fp);
 }
 
-static inline uint16_t
-swrite_16(GAME_STATE_FILE* fp, uint16_t v)
+static inline uint16_t swrite_16(GAME_STATE_FILE* fp, uint16_t v)
 {
 	return WriteStateFile(&v, 2, 1, fp);
 }
 
-static inline uint16_t
-swrite_32(GAME_STATE_FILE* fp, uint32_t v)
+static inline uint16_t swrite_32(GAME_STATE_FILE* fp, uint32_t v)
 {
 	return WriteStateFile(&v, 4, 1, fp);
 }
 
-static inline uint16_t
-swrite_a32(GAME_STATE_FILE* fp, const uint32_t* ar, uint16_t count)
+static inline uint16_t swrite_a32(GAME_STATE_FILE* fp, const uint32_t* ar, uint16_t count)
 {
 	for (; count > 0; --count, ++ar)
 	{

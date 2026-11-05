@@ -126,8 +126,7 @@ RACE_DESC human_desc =
 		0, /* CodeRef */
 };
 
-static void
-nuke_preprocess(ELEMENT* ElementPtr)
+static void nuke_preprocess(ELEMENT* ElementPtr)
 {
 	uint16_t facing {GetFrameIndex(ElementPtr->next.image.frame)};
 	if (ElementPtr->turn_wait > 0)
@@ -159,8 +158,7 @@ nuke_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-spawn_point_defense(ELEMENT* ElementPtr)
+static void spawn_point_defense(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -267,8 +265,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 	}
 }
 
-static uint16_t
-initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
+static uint16_t initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -301,9 +298,8 @@ initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
 	return (1);
 }
 
-static void
-human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				   uint16_t ConcernCounter)
+static void human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							   uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -336,8 +332,7 @@ human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void
-human_postprocess(ELEMENT* ElementPtr)
+static void human_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -349,8 +344,7 @@ human_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_human(void)
+RACE_DESC* init_human(void)
 {
 	if (IsHd())
 	{

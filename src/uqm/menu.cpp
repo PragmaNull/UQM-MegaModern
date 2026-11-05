@@ -46,8 +46,7 @@ void FunkyMenu(uint8_t m, STAMP stmp);
 
 /* Draw the blue background for PC Menu Text, with a border around it.
  * The specified rectangle includes the border. */
-static void
-DrawPCMenuFrame(GFXRECT* r)
+static void DrawPCMenuFrame(GFXRECT* r)
 {
 
 	if (IsHd() || uqm::UQMOptions::read().customBorder)
@@ -82,8 +81,7 @@ static char pm_crew_str[128];
 static char pm_fuel_str[128];
 
 /* Actually display the menu text */
-static void
-DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilite, GFXRECT* r)
+static void DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilite, GFXRECT* r)
 {
 	uint8_t pos {};
 	uint16_t j {};
@@ -191,8 +189,7 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 }
 
 /* Determine the last text item to display */
-static uint8_t
-GetEndMenuState(uint8_t BaseState)
+static uint8_t GetEndMenuState(uint8_t BaseState)
 {
 	switch (BaseState)
 	{
@@ -232,15 +229,13 @@ GetEndMenuState(uint8_t BaseState)
 	return BaseState;
 }
 
-static uint8_t
-GetBeginMenuState(uint8_t BaseState)
+static uint8_t GetBeginMenuState(uint8_t BaseState)
 {
 	return BaseState;
 }
 
 /* Correct Menu State for cases where the Menu shouldn't move */
-static uint8_t
-FixMenuState(uint8_t BadState)
+static uint8_t FixMenuState(uint8_t BadState)
 {
 	switch (BadState)
 	{
@@ -271,8 +266,7 @@ FixMenuState(uint8_t BadState)
 }
 
 /* Choose the next menu to hilight in the 'forward' direction */
-static uint8_t
-NextMenuState(uint8_t BaseState, uint8_t CurState)
+static uint8_t NextMenuState(uint8_t BaseState, uint8_t CurState)
 {
 	uint8_t NextState {};
 	uint8_t AdjBase = BaseState;
@@ -323,8 +317,7 @@ NextMenuState(uint8_t BaseState, uint8_t CurState)
 }
 
 /* Choose the next menu to hilight in the 'back' direction */
-uint8_t
-PreviousMenuState(uint8_t BaseState, uint8_t CurState)
+uint8_t PreviousMenuState(uint8_t BaseState, uint8_t CurState)
 {
 	int16_t NextState {};
 	uint8_t AdjBase = BaseState;
@@ -378,8 +371,7 @@ PreviousMenuState(uint8_t BaseState, uint8_t CurState)
 
 
 /* When using PC hierarchy, convert 3do->PC */
-static bool
-GetAlternateMenu(uint8_t* BaseState, uint8_t* CurState)
+static bool GetAlternateMenu(uint8_t* BaseState, uint8_t* CurState)
 {
 	uint8_t AdjBase = *BaseState;
 	uint8_t adj = 0;
@@ -467,8 +459,7 @@ GetAlternateMenu(uint8_t* BaseState, uint8_t* CurState)
 }
 
 /* When using PC hierarchy, convert PC->3DO */
-static uint8_t
-ConvertAlternateMenu(uint8_t BaseState, uint8_t NewState)
+static uint8_t ConvertAlternateMenu(uint8_t BaseState, uint8_t NewState)
 {
 	switch (BaseState + NewState)
 	{
@@ -579,8 +570,7 @@ bool DoMenuChooser(MENU_STATE* pMS, uint8_t BaseState)
 	return true;
 }
 
-const char*
-IndexToText(int Index)
+const char* IndexToText(int Index)
 {
 	int i = -1;
 
@@ -660,8 +650,7 @@ IndexToText(int Index)
 	return GameString(PLAYMENU_STRING_BASE + i);
 }
 
-static void
-Draw3DOMenuText(GFXRECT* r, int Index)
+static void Draw3DOMenuText(GFXRECT* r, int Index)
 {
 	TEXT text;
 	int16_t leading {};

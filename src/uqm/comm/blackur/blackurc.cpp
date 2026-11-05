@@ -172,8 +172,7 @@ static LOCDATA blackurq_desc =
 		nullptr,
 };
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -337,8 +336,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	}
 }
 
-static void
-Frenzy(RESPONSE_REF R)
+static void Frenzy(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS))
@@ -388,8 +386,7 @@ Frenzy(RESPONSE_REF R)
 	}
 }
 
-static void
-KohrAhStory(RESPONSE_REF R)
+static void KohrAhStory(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, key_phrase))
 	{
@@ -441,8 +438,7 @@ KohrAhStory(RESPONSE_REF R)
 	Response(guess_thats_all, CombatIsInevitable);
 }
 
-static void
-DieHuman(RESPONSE_REF R)
+static void DieHuman(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS))
@@ -495,8 +491,7 @@ DieHuman(RESPONSE_REF R)
 	Response(bye, CombatIsInevitable);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -582,21 +577,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_blackurq(void)
+static uint16_t uninit_blackurq(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_blackurq_enc(void)
+static void post_blackurq_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_blackurq_comm(void)
+LOCDATA* init_blackurq_comm(void)
 {
 	blackurq_desc.init_encounter_func = Intro;
 	blackurq_desc.post_encounter_func = post_blackurq_enc;

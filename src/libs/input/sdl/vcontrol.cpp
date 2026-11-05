@@ -109,8 +109,7 @@ static keypool* pool UQM_GUARDED_BY(s_vcontrolLock);
 static int event_ready UQM_GUARDED_BY(s_vcontrolLock);
 static SDL_Event last_interesting UQM_GUARDED_BY(s_vcontrolLock);
 
-static keypool*
-allocate_key_chunk(void) UQM_REQUIRES(s_vcontrolLock)
+static keypool* allocate_key_chunk(void) UQM_REQUIRES(s_vcontrolLock)
 {
 	auto* x {new keypool {}};
 	x->remaining = PoolChunkSize;
@@ -125,8 +124,7 @@ allocate_key_chunk(void) UQM_REQUIRES(s_vcontrolLock)
 	return x;
 }
 
-static void
-free_key_pool(keypool* x)
+static void free_key_pool(keypool* x)
 {
 	while (x)
 	{
@@ -138,16 +136,14 @@ free_key_pool(keypool* x)
 
 #ifdef HAVE_JOYSTICK
 
-static void
-store_default_binding(int is_axis_binding, int axis, int polarity,
-					  int button, uqstl::atomic<int>* target, int logical_port) UQM_REQUIRES(s_vcontrolLock)
+static void store_default_binding(int is_axis_binding, int axis, int polarity,
+								  int button, uqstl::atomic<int>* target, int logical_port) UQM_REQUIRES(s_vcontrolLock)
 {
 	default_bindings.push_back(default_binding {is_axis_binding, axis, polarity, button, target, logical_port});
 }
 
-static void
-apply_default_bindings_to_controller(SDL_JoystickID instance_id,
-									 int logical_port) UQM_REQUIRES(s_vcontrolLock)
+static void apply_default_bindings_to_controller(SDL_JoystickID instance_id,
+												 int logical_port) UQM_REQUIRES(s_vcontrolLock)
 {
 	for (const default_binding& entry : default_bindings)
 	{
@@ -249,8 +245,7 @@ void create_joystick(SDL_JoystickID instance_id)
 	apply_default_bindings_to_controller(instance_id, logical_port);
 }
 
-static void
-destroy_joystick(SDL_JoystickID instance_id) UQM_REQUIRES(s_vcontrolLock)
+static void destroy_joystick(SDL_JoystickID instance_id) UQM_REQUIRES(s_vcontrolLock)
 {
 	for (int i = 0; i < 2; i++)
 	{
@@ -294,8 +289,7 @@ destroy_joystick(SDL_JoystickID instance_id) UQM_REQUIRES(s_vcontrolLock)
 
 #endif /* HAVE_JOYSTICK */
 
-static void
-key_init(void) UQM_REQUIRES(s_vcontrolLock)
+static void key_init(void) UQM_REQUIRES(s_vcontrolLock)
 {
 	unsigned int i {};
 	pool = allocate_key_chunk();
@@ -317,8 +311,7 @@ key_init(void) UQM_REQUIRES(s_vcontrolLock)
 #endif /* HAVE_JOYSTICK */
 }
 
-static void
-key_uninit(void) UQM_REQUIRES(s_vcontrolLock)
+static void key_uninit(void) UQM_REQUIRES(s_vcontrolLock)
 {
 	free_key_pool(pool);
 	for (unsigned int i {0}; i < KeyboardInputBuckets; i++)
@@ -386,8 +379,7 @@ int VControl_SetJoyThreshold(int port, int threshold)
 	}
 }
 
-static void
-add_binding(keybinding** newptr, uqstl::atomic<int>* target, sdl_key_t keycode) UQM_REQUIRES(s_vcontrolLock)
+static void add_binding(keybinding** newptr, uqstl::atomic<int>* target, sdl_key_t keycode) UQM_REQUIRES(s_vcontrolLock)
 {
 	keybinding* newbinding {};
 	keypool* searchbase {};
@@ -448,8 +440,7 @@ add_binding(keybinding** newptr, uqstl::atomic<int>* target, sdl_key_t keycode) 
 	searchbase->remaining--;
 }
 
-static void
-remove_binding(keybinding** ptr, uqstl::atomic<int>* target, sdl_key_t keycode)
+static void remove_binding(keybinding** ptr, uqstl::atomic<int>* target, sdl_key_t keycode)
 {
 	if (!(*ptr))
 	{
@@ -486,8 +477,7 @@ remove_binding(keybinding** ptr, uqstl::atomic<int>* target, sdl_key_t keycode)
 
 // Replaces the value of the target with func(value), also if another thread changes it.
 template <typename Func>
-static void
-updateTarget(uqstl::atomic<int>& target, Func func)
+static void updateTarget(uqstl::atomic<int>& target, Func func)
 {
 	int value {target.load()};
 	while (!target.compare_exchange_weak(value, func(value)))
@@ -495,8 +485,7 @@ updateTarget(uqstl::atomic<int>& target, Func func)
 	}
 }
 
-static void
-activate(keybinding* i, sdl_key_t keycode)
+static void activate(keybinding* i, sdl_key_t keycode)
 {
 	while (i != nullptr)
 	{
@@ -510,8 +499,7 @@ activate(keybinding* i, sdl_key_t keycode)
 	}
 }
 
-static void
-deactivate(keybinding* i, sdl_key_t keycode)
+static void deactivate(keybinding* i, sdl_key_t keycode)
 {
 	while (i != nullptr)
 	{
@@ -525,8 +513,7 @@ deactivate(keybinding* i, sdl_key_t keycode)
 	}
 }
 
-static void
-event2gesture(SDL_Event* e, VCONTROL_GESTURE* g)
+static void event2gesture(SDL_Event* e, VCONTROL_GESTURE* g)
 {
 	switch (e->type)
 	{
@@ -1148,8 +1135,7 @@ typedef struct vcontrol_parse_state
 	int linenum {};
 } parse_state;
 
-static void
-next_token(parse_state* state)
+static void next_token(parse_state* state)
 {
 	int index {};
 	int base {};
@@ -1180,16 +1166,14 @@ next_token(parse_state* state)
 	state->index = base + index;
 }
 
-static void
-expected_error(parse_state* state, const char* expected)
+static void expected_error(parse_state* state, const char* expected)
 {
 	uqm::log::warn("VControl: Expected '{}' on config file line {}",
 				   expected, state->linenum);
 	state->error = 1;
 }
 
-static void
-consume(parse_state* state, const char* expected)
+static void consume(parse_state* state, const char* expected)
 {
 	if (strcasecmp(expected, state->token))
 	{
@@ -1198,8 +1182,7 @@ consume(parse_state* state, const char* expected)
 	next_token(state);
 }
 
-static int
-consume_keyname(parse_state* state)
+static int consume_keyname(parse_state* state)
 {
 	const int keysym = VControl_name2code(state->token);
 	if (!keysym)
@@ -1213,8 +1196,7 @@ consume_keyname(parse_state* state)
 	return keysym;
 }
 
-static int
-consume_num(parse_state* state)
+static int consume_num(parse_state* state)
 {
 	char* end {};
 	const int result = strtol(state->token, &end, 10);
@@ -1229,8 +1211,7 @@ consume_num(parse_state* state)
 	return result;
 }
 
-static int
-consume_polarity(parse_state* state)
+static int consume_polarity(parse_state* state)
 {
 	int result = 0;
 	if (!strcasecmp(state->token, "positive"))
@@ -1249,8 +1230,7 @@ consume_polarity(parse_state* state)
 	return result;
 }
 
-static Uint8
-consume_dir(parse_state* state)
+static Uint8 consume_dir(parse_state* state)
 {
 	Uint8 result = 0;
 	if (!strcasecmp(state->token, "left"))
@@ -1277,8 +1257,7 @@ consume_dir(parse_state* state)
 	return result;
 }
 
-static void
-parse_joybinding(parse_state* state, VCONTROL_GESTURE* gesture)
+static void parse_joybinding(parse_state* state, VCONTROL_GESTURE* gesture)
 {
 	consume(state, "joystick");
 	const int sticknum {consume_num(state)};
@@ -1334,8 +1313,7 @@ parse_joybinding(parse_state* state, VCONTROL_GESTURE* gesture)
 	}
 }
 
-static void
-parse_gesture(parse_state* state, VCONTROL_GESTURE* gesture)
+static void parse_gesture(parse_state* state, VCONTROL_GESTURE* gesture)
 {
 	gesture->type = VCONTROL_NONE; /* Default to error */
 	if (!strcasecmp(state->token, "key"))

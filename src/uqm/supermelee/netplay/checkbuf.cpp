@@ -29,8 +29,7 @@
 #include <stdlib.h>
 
 
-static inline BattleFrameCounter
-ChecksumBuffer_getCurrentFrameNr(void)
+static inline BattleFrameCounter ChecksumBuffer_getCurrentFrameNr(void)
 {
 	return battleFrameCount;
 }
@@ -91,9 +90,8 @@ void ChecksumBuffer_uninit(ChecksumBuffer* cb)
 
 // Returns the entry that would be used for the checksum for the specified
 // frame. Whether the entry is actually valid is not checked.
-static ChecksumEntry*
-ChecksumBuffer_getChecksumEntry(ChecksumBuffer* cb,
-								BattleFrameCounter frameNr)
+static ChecksumEntry* ChecksumBuffer_getChecksumEntry(ChecksumBuffer* cb,
+													  BattleFrameCounter frameNr)
 {
 	assert(frameNr % cb->interval == 0);
 	// We only record checksums exactly every 'interval' frames.

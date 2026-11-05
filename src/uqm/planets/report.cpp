@@ -45,8 +45,7 @@ static constexpr auto NumCellRows {(Sc2MapHeight / 6)};
 
 extern FRAME SpaceJunkFrame;
 
-static void
-ClearReportArea(int16_t startx)
+static void ClearReportArea(int16_t startx)
 {
 	uint16_t x {};
 	uint16_t y {};
@@ -92,8 +91,7 @@ ClearReportArea(int16_t startx)
 	UnbatchGraphics();
 }
 
-static void
-MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
+static void MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 {
 	int end_page_len {};
 	char end_page_buf[200] {};

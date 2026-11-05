@@ -40,8 +40,7 @@
 
 static void CleanupAfterStarBase(void);
 
-static void
-DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
+static void DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
 {
 	TEXT t;
 	const uint16_t text_base_y = ResScale(106 + 28);
@@ -304,8 +303,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 	}
 }
 
-static void
-rotateStarbase(MENU_STATE* pMS, FRAME AniFrame)
+static void rotateStarbase(MENU_STATE* pMS, FRAME AniFrame)
 {
 	static TimeCount NextTime {};
 	const TimeCount Now = GetTimeCounter();
@@ -489,8 +487,7 @@ ExitStarBase:
 
 static constexpr auto LostDays {14};
 
-static void
-DoTimePassage(void)
+static void DoTimePassage(void)
 {
 	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond * 2));
 	MoveGameClockDays(LostDays);
@@ -608,8 +605,7 @@ void VisitStarBase(void)
 	CleanupAfterStarBase();
 }
 
-static void
-CleanupAfterStarBase(void)
+static void CleanupAfterStarBase(void)
 {
 	if (!(uqm::currentActivity() & (CHECK_LOAD | CHECK_ABORT)))
 	{
@@ -643,8 +639,7 @@ void InstallBombAtEarth(void)
 }
 
 // XXX: Doesn't really belong in this file.
-uint16_t
-WrapText(const char* pStr, uint16_t len, TEXT* tarray, int16_t field_width)
+uint16_t WrapText(const char* pStr, uint16_t len, TEXT* tarray, int16_t field_width)
 {
 	uint16_t num_lines {0};
 	do

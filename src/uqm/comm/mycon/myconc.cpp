@@ -140,8 +140,7 @@ static LOCDATA mycon_desc =
 
 static uint8_t MadeChoice;
 
-static void
-DoRamble(RESPONSE_REF R)
+static void DoRamble(RESPONSE_REF R)
 {
 	uint8_t Counter {};
 
@@ -272,8 +271,7 @@ DoRamble(RESPONSE_REF R)
 	}
 }
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
@@ -310,8 +308,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	MadeChoice = 0;
 }
 
-static void
-SunDevice(RESPONSE_REF R)
+static void SunDevice(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, whats_up_sun_device))
 	{
@@ -352,8 +349,7 @@ SunDevice(RESPONSE_REF R)
 	Response(bye_sun_device, CombatIsInevitable);
 }
 
-static void
-TrickMycon(RESPONSE_REF R)
+static void TrickMycon(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, i_have_a_cunning_plan))
 	{
@@ -409,8 +405,7 @@ TrickMycon(RESPONSE_REF R)
 	}
 }
 
-static void
-NormalMycon(RESPONSE_REF R)
+static void NormalMycon(RESPONSE_REF R)
 {
 	RESPONSE_FUNC RespFunc {};
 
@@ -561,8 +556,7 @@ NormalMycon(RESPONSE_REF R)
 	}
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -680,21 +674,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_mycon(void)
+static uint16_t uninit_mycon(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_mycon_enc(void)
+static void post_mycon_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_mycon_comm(void)
+LOCDATA* init_mycon_comm(void)
 {
 	mycon_desc.init_encounter_func = Intro;
 	mycon_desc.post_encounter_func = post_mycon_enc;

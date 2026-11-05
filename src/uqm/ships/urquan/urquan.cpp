@@ -135,8 +135,7 @@ static RACE_DESC urquan_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t
-initialize_fusion(ELEMENT* ShipPtr, HELEMENT FusionArray[])
+static uint16_t initialize_fusion(ELEMENT* ShipPtr, HELEMENT FusionArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -160,8 +159,7 @@ initialize_fusion(ELEMENT* ShipPtr, HELEMENT FusionArray[])
 	return (1);
 }
 
-static void
-fighter_postprocess(ELEMENT* ElementPtr)
+static void fighter_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 	LASER_BLOCK LaserBlock;
@@ -264,8 +262,7 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //	}
 //}
 
-static void
-fighter_preprocess(ELEMENT* ElementPtr)
+static void fighter_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -382,9 +379,8 @@ fighter_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -474,8 +470,7 @@ fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static void
-spawn_fighters(ELEMENT* ElementPtr)
+static void spawn_fighters(ELEMENT* ElementPtr)
 {
 	int16_t i {};
 	uint16_t facing {};
@@ -550,9 +545,8 @@ spawn_fighters(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					uint16_t ConcernCounter)
+static void urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -609,8 +603,7 @@ urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	StarShipPtr->RaceDescPtr->characteristics.special_wait = 0;
 }
 
-static void
-urquan_postprocess(ELEMENT* ElementPtr)
+static void urquan_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -630,8 +623,7 @@ urquan_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_urquan(void)
+RACE_DESC* init_urquan(void)
 {
 	if (IsHd())
 	{

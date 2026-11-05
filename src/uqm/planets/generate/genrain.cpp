@@ -50,8 +50,7 @@ const GenerateFunctions generateRainbowWorldFunctions = {
 	/* .pickupLife       = */ GenerateDefault_pickupLife,
 };
 
-static bool
-GenerateRainbowWorld_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateRainbowWorld_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (isDifficulty(uqm::Difficulty::Hard) && uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER) > 0)
 	{
@@ -65,8 +64,7 @@ GenerateRainbowWorld_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateRainbowWorld_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateRainbowWorld_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
@@ -98,9 +96,8 @@ GenerateRainbowWorld_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateRainbowWorld_generateOrbital(SOLARSYS_STATE* solarSys,
-									 PLANET_DESC* world)
+static bool GenerateRainbowWorld_generateOrbital(SOLARSYS_STATE* solarSys,
+												 PLANET_DESC* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& CurStarDescPtr()->Index >= RAINBOW0_DEFINED
@@ -121,8 +118,7 @@ GenerateRainbowWorld_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static void
-GenerateSlylandro(SOLARSYS_STATE* solarSys)
+static void GenerateSlylandro(SOLARSYS_STATE* solarSys)
 {
 	HIPGROUP hGroup {};
 	HIPGROUP hNextGroup {};

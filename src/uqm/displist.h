@@ -58,8 +58,7 @@ typedef struct /* queue */
 extern HLINK AllocLink(QUEUE* pq);
 extern void FreeLink(QUEUE* pq, HLINK hLink);
 
-static inline LINK*
-LockLink(const QUEUE* pq, HLINK h)
+static inline LINK* LockLink(const QUEUE* pq, HLINK h)
 {
 	if (h) // Apparently, h==0 is OK
 	{	   // Make sure the link is actually in our queue!
@@ -68,8 +67,7 @@ LockLink(const QUEUE* pq, HLINK h)
 	return (LINK*)h;
 }
 
-static inline void
-UnlockLink(const QUEUE* pq, HLINK h)
+static inline void UnlockLink(const QUEUE* pq, HLINK h)
 {
 	if (h) // Apparently, h==0 is OK
 	{	   // Make sure the link is actually in our queue!

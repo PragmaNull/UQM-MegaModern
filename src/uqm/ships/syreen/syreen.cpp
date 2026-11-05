@@ -126,8 +126,7 @@ static RACE_DESC syreen_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t
-initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
+static uint16_t initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -151,8 +150,7 @@ initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
 	return (1);
 }
 
-static void
-spawn_crew(ELEMENT* ElementPtr)
+static void spawn_crew(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->state_flags & PlayerShip)
 	{
@@ -236,9 +234,8 @@ spawn_crew(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-syreen_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					uint16_t ConcernCounter)
+static void syreen_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								uint16_t ConcernCounter)
 {
 	ship_intelligence(ShipPtr,
 					  ObjectsOfConcern, ConcernCounter);
@@ -265,8 +262,7 @@ syreen_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void
-syreen_postprocess(ELEMENT* ElementPtr)
+static void syreen_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -286,8 +282,7 @@ syreen_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_syreen(void)
+RACE_DESC* init_syreen(void)
 {
 	if (IsHd())
 	{

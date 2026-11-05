@@ -181,8 +181,7 @@ static FILTER_DESC chmmr_filters =
 
 static constexpr auto EarthIndex {2}; /* earth is 3rd planet --> 3 - 1 = 2 */
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
@@ -320,8 +319,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void
-NotReady(RESPONSE_REF R)
+static void NotReady(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -371,8 +369,7 @@ NotReady(RESPONSE_REF R)
 	Response(bye, ExitConversation);
 }
 
-static void
-ImproveBomb(RESPONSE_REF R)
+static void ImproveBomb(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -423,8 +420,7 @@ ImproveBomb(RESPONSE_REF R)
 	Response(perhaps_not_install, ExitConversation);
 }
 
-static void
-ChmmrFree(RESPONSE_REF R)
+static void ChmmrFree(RESPONSE_REF R)
 {
 	if (R == 0
 		|| PlayerSaid(R, i_am_captain)
@@ -486,8 +482,7 @@ ChmmrFree(RESPONSE_REF R)
 
 static void ChmmrShielded(RESPONSE_REF R);
 
-static void
-ChmmrAdvice(RESPONSE_REF R)
+static void ChmmrAdvice(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, need_advice))
 	{
@@ -559,8 +554,7 @@ ChmmrAdvice(RESPONSE_REF R)
 	}
 }
 
-static void
-ChmmrShielded(RESPONSE_REF R)
+static void ChmmrShielded(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, find_out_whats_up))
 	{
@@ -614,8 +608,7 @@ ChmmrShielded(RESPONSE_REF R)
 	Response(bye_shielded, ExitConversation);
 }
 
-static void
-AfterBomb(RESPONSE_REF R)
+static void AfterBomb(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, whats_up_after_bomb))
 	{
@@ -650,8 +643,7 @@ AfterBomb(RESPONSE_REF R)
 	Response(bye_after_bomb, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -766,21 +758,18 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_chmmr(void)
+static uint16_t uninit_chmmr(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_chmmr_enc(void)
+static void post_chmmr_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_chmmr_comm(void)
+LOCDATA* init_chmmr_comm(void)
 {
 	chmmr_desc.init_encounter_func = Intro;
 	chmmr_desc.post_encounter_func = post_chmmr_enc;

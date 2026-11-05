@@ -43,8 +43,7 @@ inline uint32_t crc32b(uqstl::string_view str)
 	return static_cast<uint32_t>(crc32(0, reinterpret_cast<const Bytef*>(str.data()), static_cast<uInt>(str.size())));
 }
 
-inline static float
-scaleThing(float original, float thingToScale)
+inline static float scaleThing(float original, float thingToScale)
 {
 	return (original / thingToScale);
 }

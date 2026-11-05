@@ -124,9 +124,8 @@ static RACE_DESC druuge_desc =
 		0, /* CodeRef */
 };
 
-static void
-cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 
@@ -162,8 +161,7 @@ cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static uint16_t
-initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
+static uint16_t initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -197,9 +195,8 @@ initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
 	return (1);
 }
 
-static void
-druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					uint16_t ConcernCounter)
+static void druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								uint16_t ConcernCounter)
 {
 	uint16_t ship_flags = 0;
 	STARSHIP* StarShipPtr {};
@@ -257,8 +254,7 @@ druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void
-druuge_postprocess(ELEMENT* ElementPtr)
+static void druuge_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -291,8 +287,7 @@ druuge_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-druuge_preprocess(ELEMENT* ElementPtr)
+static void druuge_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -322,8 +317,7 @@ druuge_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_druuge(void)
+RACE_DESC* init_druuge(void)
 {
 	if (IsHd())
 	{

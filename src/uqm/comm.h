@@ -39,92 +39,77 @@ inline auto SliderHeight() { return ResScale((!usingSpeech && isPC(uqm::UQMOptio
 
 extern LOCDATA CommData;
 
-static inline bool
-haveTalkingAnim(void)
+static inline bool haveTalkingAnim(void)
 {
 	return CommData.AlienTalkDesc.NumFrames > 0;
 }
 
-static inline bool
-haveTransitionAnim(void)
+static inline bool haveTransitionAnim(void)
 {
 	return CommData.AlienTransitionDesc.NumFrames > 0;
 }
 
-static inline bool
-wantTalkingAnim(void)
+static inline bool wantTalkingAnim(void)
 {
 	return !(CommData.AlienTalkDesc.AnimFlags & PauseTalking);
 }
 
-static inline void
-setRunTalkingAnim(void)
+static inline void setRunTalkingAnim(void)
 {
 	CommData.AlienTalkDesc.AnimFlags |= WaitTalking;
 }
 
-static inline void
-clearRunTalkingAnim(void)
+static inline void clearRunTalkingAnim(void)
 {
 	CommData.AlienTalkDesc.AnimFlags &= ~WaitTalking;
 }
 
-static inline bool
-runningTalkingAnim(void)
+static inline bool runningTalkingAnim(void)
 {
 	return (CommData.AlienTalkDesc.AnimFlags & WaitTalking);
 }
 
-static inline void
-setRunIntroAnim(void)
+static inline void setRunIntroAnim(void)
 {
 	CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
 }
 
-static inline bool
-runningIntroAnim(void)
+static inline bool runningIntroAnim(void)
 {
 	return (CommData.AlienTransitionDesc.AnimFlags & TalkIntro);
 }
 
-static inline void
-setStopTalkingAnim(void)
+static inline void setStopTalkingAnim(void)
 {
 	CommData.AlienTalkDesc.AnimFlags |= TalkDone;
 }
 
-static inline void
-clearStopTalkingAnim(void)
+static inline void clearStopTalkingAnim(void)
 {
 	CommData.AlienTalkDesc.AnimFlags &= ~TalkDone;
 }
 
-static inline void
-restartStopTalkingAnim(void)
+static inline void restartStopTalkingAnim(void)
 {
 	CommData.AlienTalkDesc.AnimFlags &= TalkDone;
 }
 
-static inline bool
-signaledStopTalkingAnim(void)
+static inline bool signaledStopTalkingAnim(void)
 {
 	return CommData.AlienTalkDesc.AnimFlags & TalkDone;
 }
 
-static inline void
-freezeTalkingAnim(void)
+static inline void freezeTalkingAnim(void)
 {
 	CommData.AlienTalkDesc.AnimFlags |= FreezeTalking;
 }
 
-static inline void
-unFreezeTalkingAnim(void)
+static inline void unFreezeTalkingAnim(void)
 {
 	CommData.AlienTalkDesc.AnimFlags &= ~FreezeTalking;
 }
 
-static inline bool
-signaledFreezeTalkingAnim(void)
+static inline bool signaledFreezeTalkingAnim(void)
 {
 	return CommData.AlienTalkDesc.AnimFlags & FreezeTalking;
 }

@@ -54,8 +54,7 @@ const GenerateFunctions generateColonyFunctions = {
 };
 
 
-static bool
-GenerateColony_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateColony_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	HIPGROUP hGroup {};
 
@@ -89,8 +88,7 @@ GenerateColony_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
@@ -129,9 +127,8 @@ GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateColony_generateMoons(SOLARSYS_STATE* solarSys,
-							 PLANET_DESC* planet)
+static bool GenerateColony_generateMoons(SOLARSYS_STATE* solarSys,
+										 PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -149,9 +146,8 @@ GenerateColony_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateColony_generateName(const SOLARSYS_STATE* solarSys,
-							const PLANET_DESC* world)
+static bool GenerateColony_generateName(const SOLARSYS_STATE* solarSys,
+										const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
@@ -170,9 +166,8 @@ GenerateColony_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateColony_generateOrbital(SOLARSYS_STATE* solarSys,
-							   PLANET_DESC* world)
+static bool GenerateColony_generateOrbital(SOLARSYS_STATE* solarSys,
+										   PLANET_DESC* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{

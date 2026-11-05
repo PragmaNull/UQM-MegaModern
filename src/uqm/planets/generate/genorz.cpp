@@ -60,8 +60,7 @@ const GenerateFunctions generateOrzFunctions = {
 };
 
 
-static bool
-GenerateOrz_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateOrz_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
@@ -142,8 +141,7 @@ GenerateOrz_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateOrz_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
+static bool GenerateOrz_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -160,8 +158,7 @@ GenerateOrz_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 	return true;
 }
 
-static bool
-GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
+static bool GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
 	if ((CurStarDescPtr()->Index == ORZ_DEFINED
 		 && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -264,9 +261,8 @@ GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 	return true;
 }
 
-static uint16_t
-GenerateOrz_generateEnergy(const SOLARSYS_STATE* solarSys,
-						   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateOrz_generateEnergy(const SOLARSYS_STATE* solarSys,
+										   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
@@ -291,9 +287,8 @@ GenerateOrz_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateOrz_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						 uint16_t whichNode)
+static bool GenerateOrz_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									 uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))

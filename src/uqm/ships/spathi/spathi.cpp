@@ -130,8 +130,7 @@ static RACE_DESC spathi_desc =
 		0, /* CodeRef */
 };
 
-static void
-butt_missile_preprocess(ELEMENT* ElementPtr)
+static void butt_missile_preprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -155,8 +154,7 @@ butt_missile_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-spawn_butt_missile(ELEMENT* ShipPtr)
+static void spawn_butt_missile(ELEMENT* ShipPtr)
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK ButtMissileBlock;
@@ -196,9 +194,8 @@ spawn_butt_missile(ELEMENT* ShipPtr)
 	}
 }
 
-static void
-spathi_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					uint16_t ConcernCounter)
+static void spathi_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -248,8 +245,7 @@ spathi_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static uint16_t
-initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -273,8 +269,7 @@ initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	return (1);
 }
 
-static void
-spathi_postprocess(ELEMENT* ElementPtr)
+static void spathi_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -290,8 +285,7 @@ spathi_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_spathi(void)
+RACE_DESC* init_spathi(void)
 {
 	if (IsHd())
 	{

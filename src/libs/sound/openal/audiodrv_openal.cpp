@@ -99,8 +99,7 @@ const static audio_Driver openAL_Driver =
 static_assert(sizeof(ALuint) <= sizeof(audio_Object), "ALuint must fit in audio_Object");
 
 // Converts an array of n audio_Objects to an array of ALuints, in place.
-static void
-openAL_ConvertObjectArrayToALuints(uint32_t n, audio_Object* arr)
+static void openAL_ConvertObjectArrayToALuints(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(ALuint))
 	{
@@ -112,8 +111,7 @@ openAL_ConvertObjectArrayToALuints(uint32_t n, audio_Object* arr)
 	}
 }
 // Converts an array of n ALuints to an array of audio_Objects, in place.
-static void
-openAL_ConvertObjectArrayFromALuints(uint32_t n, audio_Object* arr)
+static void openAL_ConvertObjectArrayFromALuints(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(ALuint))
 	{
@@ -130,8 +128,7 @@ openAL_ConvertObjectArrayFromALuints(uint32_t n, audio_Object* arr)
  * Initialization
  */
 
-int32_t
-openAL_Init(audio_Driver* driver, AudioFlags flags)
+int32_t openAL_Init(audio_Driver* driver, AudioFlags flags)
 {
 	TFB_DecoderFormats formats =
 		{
@@ -249,8 +246,7 @@ void openAL_Uninit(void)
  * General
  */
 
-int32_t
-openAL_GetError(void)
+int32_t openAL_GetError(void)
 {
 	ALint value = alGetError();
 	switch (value)

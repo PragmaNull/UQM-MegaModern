@@ -88,8 +88,7 @@ int32_t sinetab[] =
 		-FltAdjust(0.995185),
 };
 
-uint16_t
-ARCTAN(int32_t delta_x, int32_t delta_y)
+uint16_t ARCTAN(int32_t delta_x, int32_t delta_y)
 {
 	const static uint16_t atantab[] =
 		{

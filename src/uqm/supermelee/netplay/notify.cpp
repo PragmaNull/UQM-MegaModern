@@ -28,8 +28,7 @@
 
 // Convert a local player number to a side indication relative to this
 // party.
-static inline NetplaySide
-netSide(NetConnection* conn, int side)
+static inline NetplaySide netSide(NetConnection* conn, int side)
 {
 	if (side == conn->player)
 	{

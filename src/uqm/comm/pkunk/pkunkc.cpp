@@ -120,8 +120,7 @@ static constexpr auto GoodReason2 {(1 << 1)};
 static constexpr auto BadReason1 {(1 << 2)};
 static constexpr auto BadReason2 {(1 << 3)};
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
@@ -243,8 +242,7 @@ ExitConversation(RESPONSE_REF R)
 
 static void PkunkHome(RESPONSE_REF R);
 
-static void
-PkunkAngry(RESPONSE_REF R)
+static void PkunkAngry(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, why_insults))
 	{
@@ -292,8 +290,7 @@ PkunkAngry(RESPONSE_REF R)
 	Response(bye_angry, ExitConversation);
 }
 
-static void
-DiscussConquer(RESPONSE_REF R)
+static void DiscussConquer(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, we_conquer))
 	{
@@ -344,8 +341,7 @@ DiscussConquer(RESPONSE_REF R)
 	Response(no_conquest, PkunkHome);
 }
 
-static void
-OfferAlliance(RESPONSE_REF R)
+static void OfferAlliance(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, we_are_vindicator))
 	{
@@ -376,8 +372,7 @@ OfferAlliance(RESPONSE_REF R)
 	}
 }
 
-static void
-AboutPkunk(RESPONSE_REF R)
+static void AboutPkunk(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
 	if (PlayerSaid(R, what_about_you))
@@ -448,8 +443,7 @@ AboutPkunk(RESPONSE_REF R)
 	}
 }
 
-static void
-AboutIlwrath(RESPONSE_REF R)
+static void AboutIlwrath(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
 	if (PlayerSaid(R, what_about_ilwrath))
@@ -509,8 +503,7 @@ AboutIlwrath(RESPONSE_REF R)
 	}
 }
 
-static void
-PkunkHome(RESPONSE_REF R)
+static void PkunkHome(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -677,8 +670,7 @@ PkunkHome(RESPONSE_REF R)
 	Response(bye_friendly, ExitConversation);
 }
 
-static void
-PkunkFriendlySpace(RESPONSE_REF R)
+static void PkunkFriendlySpace(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -801,8 +793,7 @@ PkunkFriendlySpace(RESPONSE_REF R)
 	Response(friendly_bye_space, ExitConversation);
 }
 
-static void
-PkunkNeutralSpace(RESPONSE_REF R)
+static void PkunkNeutralSpace(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -873,8 +864,7 @@ PkunkNeutralSpace(RESPONSE_REF R)
 	Response(neutral_bye_space, ExitConversation);
 }
 
-static void
-PkunkMigrate(RESPONSE_REF R)
+static void PkunkMigrate(RESPONSE_REF R)
 {
 	uint8_t ReasonMask {};
 	(void)R; // ignored
@@ -899,8 +889,7 @@ PkunkMigrate(RESPONSE_REF R)
 	Response(suit_yourself, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 	uint8_t Manner {};
@@ -1157,15 +1146,13 @@ Intro(void)
 }
 
 // Called after combat or communications
-static uint16_t
-uninit_pkunk(void)
+static uint16_t uninit_pkunk(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_pkunk_enc(void)
+static void post_pkunk_enc(void)
 {
 	uint8_t Manner {};
 
@@ -1181,8 +1168,7 @@ post_pkunk_enc(void)
 	}
 }
 
-LOCDATA*
-init_pkunk_comm(void)
+LOCDATA* init_pkunk_comm(void)
 {
 	pkunk_desc.init_encounter_func = Intro;
 	pkunk_desc.post_encounter_func = post_pkunk_enc;

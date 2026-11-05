@@ -50,40 +50,35 @@ struct fmt::formatter<lua_State> : fmt::formatter<std::string>
 };
 
 // [1] -> string logMessage
-static int
-luaUqm_log_debug(lua_State* luaState)
+static int luaUqm_log_debug(lua_State* luaState)
 {
 	uqm::log::debug("{}", *luaState);
 	return 0;
 }
 
 // [1] -> string logMessage
-static int
-luaUqm_log_error(lua_State* luaState)
+static int luaUqm_log_error(lua_State* luaState)
 {
 	uqm::log::error("{}", *luaState);
 	return 0;
 }
 
 // [1] -> string logMessage
-static int
-luaUqm_log_fatal(lua_State* luaState)
+static int luaUqm_log_fatal(lua_State* luaState)
 {
 	uqm::log::critical("{}", *luaState);
 	return 0;
 }
 
 // [1] -> string logMessage
-static int
-luaUqm_log_info(lua_State* luaState)
+static int luaUqm_log_info(lua_State* luaState)
 {
 	uqm::log::info("{}", *luaState);
 	return 0;
 }
 
 // [1] -> string logMessage
-static int
-luaUqm_log_warn(lua_State* luaState)
+static int luaUqm_log_warn(lua_State* luaState)
 {
 	uqm::log::warn("{}", *luaState);
 	return 0;

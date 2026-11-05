@@ -19,8 +19,7 @@
 #include "gfxintrn.h"
 #include "core/log/log.h"
 
-DRAWABLE
-GetFrameParentDrawable(FRAME f)
+DRAWABLE GetFrameParentDrawable(FRAME f)
 {
 	if (f != nullptr)
 	{
@@ -29,8 +28,7 @@ GetFrameParentDrawable(FRAME f)
 	return nullptr;
 }
 
-FRAME
-CaptureDrawable(DRAWABLE DrawablePtr)
+FRAME CaptureDrawable(DRAWABLE DrawablePtr)
 {
 	if (DrawablePtr)
 	{
@@ -40,8 +38,7 @@ CaptureDrawable(DRAWABLE DrawablePtr)
 	return nullptr;
 }
 
-DRAWABLE
-ReleaseDrawable(FRAME FramePtr)
+DRAWABLE ReleaseDrawable(FRAME FramePtr)
 {
 	if (FramePtr != 0)
 	{
@@ -53,8 +50,7 @@ ReleaseDrawable(FRAME FramePtr)
 	return nullptr;
 }
 
-uint16_t
-GetFrameCount(FRAME FramePtr)
+uint16_t GetFrameCount(FRAME FramePtr)
 {
 	if (FramePtr == 0)
 	{
@@ -65,8 +61,7 @@ GetFrameCount(FRAME FramePtr)
 	return DrawablePtr->MaxIndex + 1;
 }
 
-uint16_t
-GetFrameIndex(FRAME FramePtr)
+uint16_t GetFrameIndex(FRAME FramePtr)
 {
 	if (FramePtr == 0)
 	{
@@ -76,8 +71,7 @@ GetFrameIndex(FRAME FramePtr)
 	return FramePtr->Index;
 }
 
-FRAME
-SetAbsFrameIndex(FRAME FramePtr, uint16_t FrameIndex)
+FRAME SetAbsFrameIndex(FRAME FramePtr, uint16_t FrameIndex)
 {
 	if (FramePtr != 0)
 	{
@@ -89,8 +83,7 @@ SetAbsFrameIndex(FRAME FramePtr, uint16_t FrameIndex)
 	return FramePtr;
 }
 
-FRAME
-SetRelFrameIndex(FRAME FramePtr, int16_t FrameOffs)
+FRAME SetRelFrameIndex(FRAME FramePtr, int16_t FrameOffs)
 {
 	if (FramePtr != 0)
 	{
@@ -111,8 +104,7 @@ SetRelFrameIndex(FRAME FramePtr, int16_t FrameOffs)
 	return FramePtr;
 }
 
-FRAME
-SetEquFrameIndex(FRAME DstFramePtr, FRAME SrcFramePtr)
+FRAME SetEquFrameIndex(FRAME DstFramePtr, FRAME SrcFramePtr)
 {
 	if (!DstFramePtr || !SrcFramePtr)
 	{
@@ -136,8 +128,7 @@ SetEquFrameIndex(FRAME DstFramePtr, FRAME SrcFramePtr)
 	return SetAbsFrameIndex(DstFramePtr, Index);
 }
 
-FRAME
-IncFrameIndex(FRAME FramePtr)
+FRAME IncFrameIndex(FRAME FramePtr)
 {
 	if (FramePtr == 0)
 	{
@@ -155,8 +146,7 @@ IncFrameIndex(FRAME FramePtr)
 	}
 }
 
-FRAME
-DecFrameIndex(FRAME FramePtr)
+FRAME DecFrameIndex(FRAME FramePtr)
 {
 	if (FramePtr == 0)
 	{

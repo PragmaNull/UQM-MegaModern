@@ -73,15 +73,13 @@ static TFB_SoundCallbacks trackCBs =
 		OnBufferTag,
 		nullptr};
 
-static inline int32_t
-chunk_end_time(TFB_SoundChunk* chunk)
+static inline int32_t chunk_end_time(TFB_SoundChunk* chunk)
 {
 	return static_cast<int32_t>(
 		uqstl::chrono::duration_cast<GameTicks>(FloatSeconds {chunk->start_time + chunk->decoder->length}).count());
 }
 
-static inline int32_t
-tracks_end_time(void)
+static inline int32_t tracks_end_time(void)
 {
 	return chunk_end_time(chunks_tail);
 }
@@ -158,8 +156,7 @@ void ResumeTrack(void)
 	soundSource[SpeechSource].stream_mutex.unlock();
 }
 
-uint16_t
-PlayingTrack(void)
+uint16_t PlayingTrack(void)
 {
 	// This ignores the paused state and simply returns what track
 	// *should* be playing
@@ -206,8 +203,7 @@ void StopTrack(void)
 	}
 }
 
-static void
-DoTrackTag(TFB_SoundChunk* chunk)
+static void DoTrackTag(TFB_SoundChunk* chunk)
 {
 	soundSource[SpeechSource].stream_mutex.lock();
 	if (chunk->callback)
@@ -222,8 +218,7 @@ DoTrackTag(TFB_SoundChunk* chunk)
 // This func is called by PlayStream() when stream is about
 // to start. We have a chance to tweak the stream here.
 // This is called on the DoInput thread.
-static bool
-OnStreamStart(TFB_SoundSample* sample)
+static bool OnStreamStart(TFB_SoundSample* sample)
 {
 	if (sample != sound_sample)
 	{
@@ -250,8 +245,7 @@ OnStreamStart(TFB_SoundSample* sample)
 // This func is called by StreamDecoderTaskFunc() when the last buffer
 // of the current chunk has been decoded (not when it has been *played*).
 // This is called on the stream task thread.
-static bool
-OnChunkEnd(TFB_SoundSample* sample, audio_Object buffer)
+static bool OnChunkEnd(TFB_SoundSample* sample, audio_Object buffer)
 {
 	if (sample != sound_sample)
 	{
@@ -282,8 +276,7 @@ OnChunkEnd(TFB_SoundSample* sample, audio_Object buffer)
 
 // This func is called by StreamDecoderTaskFunc() when stream has ended
 // This is called on the stream task thread.
-static void
-OnStreamEnd(TFB_SoundSample* sample)
+static void OnStreamEnd(TFB_SoundSample* sample)
 {
 	if (sample != sound_sample)
 	{
@@ -297,8 +290,7 @@ OnStreamEnd(TFB_SoundSample* sample)
 // This func is called by StreamDecoderTaskFunc() when a tagged buffer
 // has finished playing.
 // This is called on the stream task thread.
-static void
-OnBufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
+static void OnBufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
 {
 	TFB_SoundChunk* chunk = (TFB_SoundChunk*)tag->data;
 
@@ -316,8 +308,7 @@ OnBufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
 // Parse the timestamps string into an int array.
 // Rerturns number of timestamps parsed.
 // Stops if it encounters a ; as this is used for alternate time stamps.
-static int
-GetTimeStamps(const char* TimeStamps, int32_t* time_stamps)
+static int GetTimeStamps(const char* TimeStamps, int32_t* time_stamps)
 {
 	int pos {};
 	int num = 0;
@@ -347,8 +338,7 @@ GetTimeStamps(const char* TimeStamps, int32_t* time_stamps)
 
 static constexpr auto TextSpeed {80};
 // Returns number of parsed pages
-static int
-SplitSubPages(const char* text, uqstl::string pages[], int32_t timestamp[], int size)
+static int SplitSubPages(const char* text, uqstl::string pages[], int32_t timestamp[], int size)
 {
 	int lead_ellips = 0;
 	uint16_t page {};
@@ -638,8 +628,7 @@ void SpliceTrack(const char* TrackName, const char* TrackText, const char* TimeS
 // XXX: This means that whatever speech has already been queued on the
 //   source will continue playing, so we may need some small timing
 //   adjustments. It may be simpler to just call PlayStream().
-static void
-seek_track(int32_t offset)
+static void seek_track(int32_t offset)
 {
 	TFB_SoundChunk* cur {};
 	TFB_SoundChunk* last_tag = nullptr;
@@ -700,8 +689,7 @@ seek_track(int32_t offset)
 	}
 }
 
-static int32_t
-get_current_track_pos(void) UQM_REQUIRES(soundSource[SpeechSource].stream_mutex)
+static int32_t get_current_track_pos(void) UQM_REQUIRES(soundSource[SpeechSource].stream_mutex)
 {
 	int32_t pos = static_cast<int32_t>((GetTimeCounter() - soundSource[SpeechSource].start_time).count());
 	if (pos < 0)
@@ -816,8 +804,7 @@ int GetTrackPosition(int in_units)
 	return in_units * offset / length;
 }
 
-TFB_SoundChunk*
-create_SoundChunk(TFB_SoundDecoder* decoder, float start_time)
+TFB_SoundChunk* create_SoundChunk(TFB_SoundDecoder* decoder, float start_time)
 {
 	auto* chunk {new TFB_SoundChunk {}};
 	chunk->decoder = decoder;
@@ -840,8 +827,7 @@ void destroy_SoundChunk_list(TFB_SoundChunk* chunk)
 }
 
 // Returns the next chunk with a subtitle
-TFB_SoundChunk*
-find_next_page(TFB_SoundChunk* cur)
+TFB_SoundChunk* find_next_page(TFB_SoundChunk* cur)
 {
 	if (!cur)
 	{
@@ -854,8 +840,7 @@ find_next_page(TFB_SoundChunk* cur)
 
 // Returns the previous chunk with a subtitle.
 // cur == 0 is treated as end of the list.
-TFB_SoundChunk*
-find_prev_page(TFB_SoundChunk* cur)
+TFB_SoundChunk* find_prev_page(TFB_SoundChunk* cur)
 {
 	TFB_SoundChunk* last_valid = chunks_head;
 
@@ -876,15 +861,13 @@ find_prev_page(TFB_SoundChunk* cur)
 
 
 // External access to the chunks list
-SUBTITLE_REF
-GetFirstTrackSubtitle(void)
+SUBTITLE_REF GetFirstTrackSubtitle(void)
 {
 	return chunks_head;
 }
 
 // External access to the chunks list
-SUBTITLE_REF
-GetNextTrackSubtitle(SUBTITLE_REF LastRef)
+SUBTITLE_REF GetNextTrackSubtitle(SUBTITLE_REF LastRef)
 {
 	if (!LastRef)
 	{
@@ -895,8 +878,7 @@ GetNextTrackSubtitle(SUBTITLE_REF LastRef)
 }
 
 // External access to the chunk subtitles
-const char*
-GetTrackSubtitleText(SUBTITLE_REF SubRef)
+const char* GetTrackSubtitleText(SUBTITLE_REF SubRef)
 {
 	if (!SubRef)
 	{
@@ -908,8 +890,7 @@ GetTrackSubtitleText(SUBTITLE_REF SubRef)
 
 // External access to currently active subtitle text
 // Returns nullptr is none is active
-const char*
-GetTrackSubtitle(void)
+const char* GetTrackSubtitle(void)
 {
 	const char* cur_sub = nullptr;
 
@@ -928,8 +909,7 @@ GetTrackSubtitle(void)
 	return cur_sub;
 }
 
-uint16_t
-GetSubtitleNumber(const char* sub)
+uint16_t GetSubtitleNumber(const char* sub)
 {
 	uint16_t i = 0;
 
@@ -954,8 +934,7 @@ GetSubtitleNumber(const char* sub)
 	return i;
 }
 
-uint16_t
-GetSubtitleNumberByTrack(uint16_t track)
+uint16_t GetSubtitleNumberByTrack(uint16_t track)
 {
 	uint16_t i = 0;
 
@@ -982,8 +961,7 @@ GetSubtitleNumberByTrack(uint16_t track)
 	return i;
 }
 
-uint32_t
-RecalculateDelay(uint32_t numChars, bool talk)
+uint32_t RecalculateDelay(uint32_t numChars, bool talk)
 {
 	uint32_t silence_length {};
 	uint32_t talk_length = GameTicksPerSecond * numChars / ModerateSpeed;

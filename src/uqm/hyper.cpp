@@ -68,8 +68,7 @@ enum HyperMenuItems
 	NAVIGATION,
 };
 
-static inline int16_t
-RaceHyperSpeed(RACE_ID Index)
+static inline int16_t RaceHyperSpeed(RACE_ID Index)
 {
 	static int seedStamp = -1;
 	const int defaultMap[] {
@@ -534,8 +533,7 @@ void FreeHyperData(void)
 static auto ArispaceMask() { return (AnimatedHyperspace() ? ArianimMaskPmapAnimRes : ArispaceMaskPmapAnimRes); }
 static auto HyperstarsMask() { return (AnimatedHyperspace() ? HyperanimMaskPmapAnimRes : HyperstarsMaskPmapAnimRes); }
 
-static void
-LoadHyperData(void)
+static void LoadHyperData(void)
 {
 	if (hyperstars[0] == 0)
 	{
@@ -637,8 +635,7 @@ bool FreeHyperspace(void)
 	return true;
 }
 
-static void
-ElementToUniverse(ELEMENT* ElementPtr, GFXPOINT* pPt)
+static void ElementToUniverse(ELEMENT* ElementPtr, GFXPOINT* pPt)
 {
 	int32_t log_x {};
 	int32_t log_y {};
@@ -651,8 +648,7 @@ ElementToUniverse(ELEMENT* ElementPtr, GFXPOINT* pPt)
 	pPt->y = LogyToUniverse(log_y);
 }
 
-static void
-cleanup_hyperspace(void)
+static void cleanup_hyperspace(void)
 {
 	HENCOUNTER hEncounter {};
 	HENCOUNTER hNextEncounter {};
@@ -692,8 +688,7 @@ typedef enum
 	ARILOU_SPACE_TRANSITION
 } TRANSITION_TYPE;
 
-static void
-InterplanetaryTransition(ELEMENT* ElementPtr)
+static void InterplanetaryTransition(ELEMENT* ElementPtr)
 {
 	uqm::flagship().ipPlanet = 0;
 	uqm::flagship().inOrbit = 0;
@@ -764,8 +759,7 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 /* Enter QuasiSpace from HyperSpace by any portal, or HyperSpace from
  * QuasiSpace through the periodically opening portal.
  */
-static void
-ArilouSpaceTransition(void)
+static void ArilouSpaceTransition(void)
 {
 	uqm::flagship().shipFacing = 0; /* Not reentering the system */
 	uqm::gameState().setFlag(uqm::GameFlag::USED_BROADCASTER, static_cast<uint32_t>(0));
@@ -815,8 +809,7 @@ ArilouSpaceTransition(void)
 	}
 }
 
-static void
-unhyper_transition(ELEMENT* ElementPtr)
+static void unhyper_transition(ELEMENT* ElementPtr)
 {
 	// JMS: If leaving interplanetary on autopilot, always arrive HS with
 	// the ship's nose pointed into correct direction.
@@ -880,9 +873,8 @@ unhyper_transition(ELEMENT* ElementPtr)
 						 frame_index);
 }
 
-static void
-init_transition(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
-				TRANSITION_TYPE which_transition)
+static void init_transition(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
+							TRANSITION_TYPE which_transition)
 {
 	int16_t dx {};
 	int16_t dy {};
@@ -1043,9 +1035,8 @@ bool hyper_transition(ELEMENT* ElementPtr)
 	return true;
 }
 
-static void
-hyper_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void hyper_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	if ((ElementPtr1->state_flags & PlayerShip)
 		&& uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER) == 0)
@@ -1084,8 +1075,7 @@ hyper_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static void
-hyper_death(ELEMENT* ElementPtr)
+static void hyper_death(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & DefyPhysics)
 		&& (uqm::currentActivity() & IN_BATTLE))
@@ -1094,8 +1084,7 @@ hyper_death(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-arilou_space_death(ELEMENT* ElementPtr)
+static void arilou_space_death(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & DefyPhysics)
 		|| uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_COUNTER) == 0)
@@ -1111,9 +1100,8 @@ arilou_space_death(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-arilou_space_collision(ELEMENT* ElementPtr0,
-					   GFXPOINT* pPt0, ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void arilou_space_collision(ELEMENT* ElementPtr0,
+								   GFXPOINT* pPt0, ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	uint16_t which_side {};
 
@@ -1141,8 +1129,7 @@ arilou_space_collision(ELEMENT* ElementPtr0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static HELEMENT
-AllocHyperElement(const GFXPOINT* elem_pt)
+static HELEMENT AllocHyperElement(const GFXPOINT* elem_pt)
 {
 	HELEMENT hHyperSpaceElement {AllocElement()};
 	if (hHyperSpaceElement)
@@ -1179,8 +1166,7 @@ AllocHyperElement(const GFXPOINT* elem_pt)
 	return hHyperSpaceElement;
 }
 
-static void
-AddAmbientElement(void)
+static void AddAmbientElement(void)
 {
 	HELEMENT hHyperSpaceElement {AllocElement()};
 	if (hHyperSpaceElement)
@@ -1250,8 +1236,7 @@ static auto TrCompensation() { return (AnimatedHyperspace() ? 8 : 0); } // Kruze
 // standard option it stars count down every other frame, effectively adding 8 frames of waiting
 
 // Kruzen: preprocess func for animated hole
-static void
-encounter_animation(ELEMENT* ElementPtr)
+static void encounter_animation(ELEMENT* ElementPtr)
 {
 	const uint16_t f_index = GetFrameIndex(ElementPtr->current.image.frame);
 
@@ -1267,8 +1252,7 @@ encounter_animation(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-encounter_transition(ELEMENT* ElementPtr)
+static void encounter_transition(ELEMENT* ElementPtr)
 {
 	ElementPtr->state_flags &= ~Disappearing;
 	ElementPtr->life_span = 1;
@@ -1306,8 +1290,7 @@ encounter_transition(ELEMENT* ElementPtr)
 	}
 }
 
-static HELEMENT
-getSisElement(void)
+static HELEMENT getSisElement(void)
 {
 	HELEMENT hShip {};
 
@@ -1333,9 +1316,8 @@ getSisElement(void)
 	return hShip;
 }
 
-static void
-encounter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-					ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void encounter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+								ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	HENCOUNTER hEncounter {};
 	HENCOUNTER hNextEncounter {};
@@ -1377,8 +1359,7 @@ encounter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static HELEMENT
-AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
+static HELEMENT AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 {
 	bool NewEncounter {};
 	GFXPOINT enc_pt;
@@ -1545,8 +1526,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 
 static constexpr auto GridOffset {200};
 
-static void
-DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
+static void DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 {
 	int16_t sx {};
 	int16_t sy {};
@@ -1621,9 +1601,8 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 static constexpr auto EncounterTrackWait {3};
 
 // Returns false if the encounter is to be removed.
-static bool
-ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
-				 int16_t ox, int16_t oy, STAMP* stamp)
+static bool ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
+							 int16_t ox, int16_t oy, STAMP* stamp)
 {
 	ELEMENT* ElementPtr {};
 	int16_t ex {};
@@ -1815,8 +1794,7 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 	return true;
 }
 
-static void
-ProcessEncounters(GFXPOINT* puniverse, int16_t ox, int16_t oy)
+static void ProcessEncounters(GFXPOINT* puniverse, int16_t ox, int16_t oy)
 {
 	STAMP stamp;
 	HENCOUNTER hEncounter {};
@@ -1845,8 +1823,7 @@ ProcessEncounters(GFXPOINT* puniverse, int16_t ox, int16_t oy)
 
 static constexpr auto NumFrames {32};
 
-static Color
-GetMaskColor(uint8_t startype)
+static Color GetMaskColor(uint8_t startype)
 {
 	switch (startype)
 	{
@@ -2239,8 +2216,7 @@ void SeedUniverse(void)
 	frameCounter = (frameCounter + 1) & 0x1F;
 }
 
-static bool
-DoHyperspaceMenu(MENU_STATE* pMS)
+static bool DoHyperspaceMenu(MENU_STATE* pMS)
 {
 	bool select = PulsedInputState.menu[KEY_MENU_SELECT];
 

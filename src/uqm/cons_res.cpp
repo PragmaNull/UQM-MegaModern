@@ -97,22 +97,19 @@ void free_gravity_well(void)
 	}
 }
 
-FRAME
-load_life_form(uint8_t selector)
+FRAME load_life_form(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "graphics.life.{}", selector);
 	return CaptureDrawable(LoadGraphic(buffer));
 }
 
-MUSIC_REF
-load_orbit_theme(uint8_t selector)
+MUSIC_REF load_orbit_theme(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "music.orbit{}", selector + 1);
 	return LoadMusicInstance(buffer);
 }
 
-MUSIC_REF
-loadMainMenuMusic(uint8_t selector)
+MUSIC_REF loadMainMenuMusic(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "music.mainmenu{}", selector + 1);
 	return LoadMusicInstance(buffer);

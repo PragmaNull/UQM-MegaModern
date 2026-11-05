@@ -145,16 +145,14 @@ typedef struct
 typedef PKUNK_DATA CustomShipData_t;
 
 // Retrieve race-specific ship data from a race desc
-static CustomShipData_t*
-GetCustomShipData(RACE_DESC* pRaceDesc)
+static CustomShipData_t* GetCustomShipData(RACE_DESC* pRaceDesc)
 {
 	return (CustomShipData_t*)pRaceDesc->data;
 }
 
 // Set the race-specific data in a race desc
 // (Re)Allocates its own storage for the data.
-static void
-SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
+static void SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 {
 	if (pRaceDesc->data == data)
 	{
@@ -173,8 +171,7 @@ SetCustomShipData(RACE_DESC* pRaceDesc, const CustomShipData_t* data)
 	}
 }
 
-static void
-animate(ELEMENT* ElementPtr)
+static void animate(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -190,8 +187,7 @@ animate(ELEMENT* ElementPtr)
 	}
 }
 
-static uint16_t
-initialize_bug_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_bug_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -242,9 +238,8 @@ initialize_bug_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	return (3);
 }
 
-static void
-pkunk_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				   uint16_t ConcernCounter)
+static void pkunk_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							   uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -272,8 +267,7 @@ pkunk_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 static void pkunk_preprocess(ELEMENT* ElementPtr);
 
-static void
-new_pkunk(ELEMENT* ElementPtr)
+static void new_pkunk(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -336,8 +330,7 @@ new_pkunk(ELEMENT* ElementPtr)
 
 // This function is called when the ship dies but reincarnates.
 // The generic ship_death() function is not called for the ship in this case.
-static void
-pkunk_reincarnation_death(ELEMENT* ShipPtr)
+static void pkunk_reincarnation_death(ELEMENT* ShipPtr)
 {
 	// Simulate ship death
 	StopAllBattleMusic();
@@ -346,8 +339,7 @@ pkunk_reincarnation_death(ELEMENT* ShipPtr)
 	ShipPtr->death_func = new_pkunk;
 }
 
-static void
-intercept_pkunk_death(ELEMENT* ElementPtr)
+static void intercept_pkunk_death(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 	ELEMENT* ShipPtr {};
@@ -383,8 +375,7 @@ intercept_pkunk_death(ELEMENT* ElementPtr)
 	UnlockElement(StarShipPtr->hShip);
 }
 
-static void
-spawn_phoenix_trail(ELEMENT* ElementPtr)
+static void spawn_phoenix_trail(ELEMENT* ElementPtr)
 {
 	const static Color colorTable[] =
 		{
@@ -416,8 +407,7 @@ spawn_phoenix_trail(ELEMENT* ElementPtr)
 	} // else, the element disappears.
 }
 
-static void
-phoenix_transition(ELEMENT* ElementPtr)
+static void phoenix_transition(ELEMENT* ElementPtr)
 {
 	HELEMENT hShipImage {};
 	ELEMENT* ShipImagePtr {};
@@ -485,8 +475,7 @@ phoenix_transition(ELEMENT* ElementPtr)
 
 SOUND_REF FwiffoSounds = 0;
 
-static void
-pkunk_preprocess(ELEMENT* ElementPtr)
+static void pkunk_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -596,8 +585,7 @@ pkunk_preprocess(ELEMENT* ElementPtr)
 
 static uint16_t LastSound = 0;
 
-static void
-pkunk_postprocess(ELEMENT* ElementPtr)
+static void pkunk_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -627,8 +615,7 @@ pkunk_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-uninit_pkunk(RACE_DESC* pRaceDesc)
+static void uninit_pkunk(RACE_DESC* pRaceDesc)
 {
 	SetCustomShipData(pRaceDesc, nullptr);
 	if (FwiffoSounds)
@@ -638,8 +625,7 @@ uninit_pkunk(RACE_DESC* pRaceDesc)
 	}
 }
 
-RACE_DESC*
-init_pkunk(void)
+RACE_DESC* init_pkunk(void)
 {
 	static RACE_DESC new_pkunk_desc;
 	RACE_DESC* RaceDescPtr {};

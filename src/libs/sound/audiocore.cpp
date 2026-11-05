@@ -47,8 +47,7 @@ int32_t noSound_Init(audio_Driver* driver, AudioFlags flags);
  * Initialization
  */
 
-int32_t
-initAudio(AudioDriverType driver, AudioFlags flags)
+int32_t initAudio(AudioDriverType driver, AudioFlags flags)
 {
 	int32_t ret {};
 
@@ -115,8 +114,7 @@ void unInitAudio(void)
  * General
  */
 
-int32_t
-audio_GetError(void)
+int32_t audio_GetError(void)
 {
 	return audiodrv.GetError();
 }

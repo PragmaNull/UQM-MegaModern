@@ -79,28 +79,24 @@ typedef struct tfb_oggsounddecoder
 
 const static TFB_DecoderFormats* ova_formats = nullptr;
 
-static size_t
-ogg_read(void* ptr, size_t size, size_t nmemb, void* datasource)
+static size_t ogg_read(void* ptr, size_t size, size_t nmemb, void* datasource)
 {
 	return ReadResFile(ptr, size, nmemb, *static_cast<uqm::io::File*>(datasource));
 }
 
-static int
-ogg_seek(void* datasource, ogg_int64_t offset, int whence)
+static int ogg_seek(void* datasource, ogg_int64_t offset, int whence)
 {
 	const long off = (long)offset;
 	return SeekResFile(*static_cast<uqm::io::File*>(datasource), off, whence);
 }
 
-static int
-ogg_close(void* datasource)
+static int ogg_close(void* datasource)
 {
 	delete static_cast<uqm::io::File*>(datasource);
 	return 0;
 }
 
-static long
-ogg_tell(void* datasource)
+static long ogg_tell(void* datasource)
 {
 	return TellResFile(*static_cast<uqm::io::File*>(datasource));
 }
@@ -113,14 +109,12 @@ const static ov_callbacks ogg_callbacks =
 		ogg_tell,
 };
 
-const static char*
-ova_GetName(void)
+const static char* ova_GetName(void)
 {
 	return "Ogg Vorbis";
 }
 
-static bool
-ova_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
+static bool ova_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
 {
 	ova_formats = fmts;
 	return true;
@@ -128,26 +122,22 @@ ova_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
 	uqstl::ignore = flags; // laugh at compiler warning
 }
 
-static void
-ova_TermModule(void)
+static void ova_TermModule(void)
 {
 	// no specific module term
 }
 
-static TFB_SoundDecoder*
-ova_Create(void)
+static TFB_SoundDecoder* ova_Create(void)
 {
 	return &(new TFB_OggSoundDecoder {})->decoder;
 }
 
-static void
-ova_Destroy(TFB_SoundDecoder* decoder)
+static void ova_Destroy(TFB_SoundDecoder* decoder)
 {
 	delete reinterpret_cast<TFB_OggSoundDecoder*>(decoder);
 }
 
-static int
-ova_GetError(TFB_SoundDecoder* This)
+static int ova_GetError(TFB_SoundDecoder* This)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 	const int ret = ova->last_error;
@@ -155,23 +145,20 @@ ova_GetError(TFB_SoundDecoder* This)
 	return ret;
 }
 
-static bool
-ova_Init(TFB_SoundDecoder* This)
+static bool ova_Init(TFB_SoundDecoder* This)
 {
 	//TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*) This;
 	This->need_swap = false;
 	return true;
 }
 
-static void
-ova_Term(TFB_SoundDecoder* This)
+static void ova_Term(TFB_SoundDecoder* This)
 {
 	//TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*) This;
 	ova_Close(This); // ensure cleanup
 }
 
-static bool
-ova_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
+static bool ova_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 
@@ -227,16 +214,14 @@ ova_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* file
 	return true;
 }
 
-static void
-ova_Close(TFB_SoundDecoder* This)
+static void ova_Close(TFB_SoundDecoder* This)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 
 	ov_clear(&ova->vf);
 }
 
-static int
-ova_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
+static int ova_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 	long rc {};
@@ -261,8 +246,7 @@ ova_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 	return rc;
 }
 
-static uint32_t
-ova_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
+static uint32_t ova_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 
@@ -278,8 +262,7 @@ ova_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 	}
 }
 
-static uint32_t
-ova_GetFrame(TFB_SoundDecoder* This)
+static uint32_t ova_GetFrame(TFB_SoundDecoder* This)
 {
 	const TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 	// this is the closest to a frame there is in ogg vorbis stream

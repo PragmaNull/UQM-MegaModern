@@ -46,8 +46,7 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool
-testNetState(bool condition, PacketType type)
+static bool testNetState(bool condition, PacketType type)
 {
 	if (!condition)
 	{
@@ -58,9 +57,8 @@ testNetState(bool condition, PacketType type)
 	return condition;
 }
 
-static int
-versionCompare(int major1, int minor1, float patch1,
-			   int major2, int minor2, float patch2)
+static int versionCompare(int major1, int minor1, float patch1,
+						  int major2, int minor2, float patch2)
 {
 	if (major1 < major2)
 	{
@@ -162,8 +160,7 @@ NetResult PacketHandler_Ack(NetConnection* conn, const Packet_Ack* packet)
 
 // Convert the side indication relative to a remote party to
 // a local player number.
-static inline int
-localSide(NetConnection* conn, NetplaySide side)
+static inline int localSide(NetConnection* conn, NetplaySide side)
 {
 	if (side == NetplaySide_local)
 	{
@@ -314,8 +311,7 @@ NetResult PacketHandler_TeamName(NetConnection* conn, const Packet_TeamName* pac
 	return {};
 }
 
-static void
-handshakeComplete(NetConnection* conn)
+static void handshakeComplete(NetConnection* conn)
 {
 	assert(!conn->stateFlags.handshake.localOk);
 	assert(!conn->stateFlags.handshake.remoteOk);

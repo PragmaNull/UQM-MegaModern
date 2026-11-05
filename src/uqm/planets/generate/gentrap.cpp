@@ -44,8 +44,7 @@ const GenerateFunctions generateTrapFunctions = {
 };
 
 
-static bool
-GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
@@ -76,8 +75,7 @@ GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateTrap_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
+static bool GenerateTrap_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
 	GenerateDefault_generateOrbital(solarSys, world);
 

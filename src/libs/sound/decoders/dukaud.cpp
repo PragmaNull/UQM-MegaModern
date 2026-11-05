@@ -106,9 +106,8 @@ typedef struct
 
 const static TFB_DecoderFormats* duka_formats = nullptr;
 
-static int32_t
-duka_readAudFrameHeader(TFB_DuckSoundDecoder* duka, uint32_t iframe,
-						DukAud_AudSubframe* aud)
+static int32_t duka_readAudFrameHeader(TFB_DuckSoundDecoder* duka, uint32_t iframe,
+									   DukAud_AudSubframe* aud)
 {
 	DukAud_FrameHeader hdr;
 
@@ -181,9 +180,8 @@ static int adpcm_index[16] = {
 	-1, -1, -1, -1, 2, 4, 6, 8,
 	-1, -1, -1, -1, 2, 4, 6, 8};
 
-static void
-decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
-			   int32_t* predictors, uint16_t* indices)
+static void decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
+						   int32_t* predictors, uint16_t* indices)
 {
 	int32_t step[2];
 	int32_t index[2];
@@ -239,9 +237,8 @@ decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
 }
 // *** END part copied from MPlayer ***
 
-static int32_t
-duka_decodeFrame(TFB_DuckSoundDecoder* duka, DukAud_AudSubframe* header,
-				 uint8_t* input)
+static int32_t duka_decodeFrame(TFB_DuckSoundDecoder* duka, DukAud_AudSubframe* header,
+								uint8_t* input)
 {
 	int16_t* output {};
 	int16_t* outptr {};
@@ -265,8 +262,7 @@ duka_decodeFrame(TFB_DuckSoundDecoder* duka, DukAud_AudSubframe* header,
 }
 
 
-static int32_t
-duka_readNextFrame(TFB_DuckSoundDecoder* duka)
+static int32_t duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 {
 	DukAud_FrameHeader hdr;
 
@@ -304,8 +300,7 @@ duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 	return duka_decodeFrame(duka, aud, p);
 }
 
-static int32_t
-duka_stuffBuffer(TFB_DuckSoundDecoder* duka, void* buf, int32_t bufsize)
+static int32_t duka_stuffBuffer(TFB_DuckSoundDecoder* duka, void* buf, int32_t bufsize)
 {
 	int32_t dataleft {};
 
@@ -329,14 +324,12 @@ duka_stuffBuffer(TFB_DuckSoundDecoder* duka, void* buf, int32_t bufsize)
 }
 
 
-const static char*
-duka_GetName(void)
+const static char* duka_GetName(void)
 {
 	return "DukAud";
 }
 
-static bool
-duka_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
+static bool duka_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
 {
 	duka_formats = fmts;
 	return true;
@@ -344,26 +337,22 @@ duka_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
 	uqstl::ignore = flags; // laugh at compiler warning
 }
 
-static void
-duka_TermModule(void)
+static void duka_TermModule(void)
 {
 	// no specific module term
 }
 
-static TFB_SoundDecoder*
-duka_Create(void)
+static TFB_SoundDecoder* duka_Create(void)
 {
 	return &(new TFB_DuckSoundDecoder {})->decoder;
 }
 
-static void
-duka_Destroy(TFB_SoundDecoder* decoder)
+static void duka_Destroy(TFB_SoundDecoder* decoder)
 {
 	delete reinterpret_cast<TFB_DuckSoundDecoder*>(decoder);
 }
 
-static int
-duka_GetError(TFB_SoundDecoder* This)
+static int duka_GetError(TFB_SoundDecoder* This)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 	const int ret = duka->last_error;
@@ -371,8 +360,7 @@ duka_GetError(TFB_SoundDecoder* This)
 	return ret;
 }
 
-static bool
-duka_Init(TFB_SoundDecoder* This)
+static bool duka_Init(TFB_SoundDecoder* This)
 {
 	//TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*) This;
 	This->need_swap =
@@ -380,15 +368,13 @@ duka_Init(TFB_SoundDecoder* This)
 	return true;
 }
 
-static void
-duka_Term(TFB_SoundDecoder* This)
+static void duka_Term(TFB_SoundDecoder* This)
 {
 	//TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*) This;
 	duka_Close(This); // ensure cleanup
 }
 
-static bool
-duka_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* file)
+static bool duka_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* file)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 	DukAud_AudSubframe aud;
@@ -470,8 +456,7 @@ duka_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* fil
 	return true;
 }
 
-static void
-duka_Close(TFB_SoundDecoder* This)
+static void duka_Close(TFB_SoundDecoder* This)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 
@@ -485,8 +470,7 @@ duka_Close(TFB_SoundDecoder* This)
 	duka->last_error = 0;
 }
 
-static int
-duka_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
+static int duka_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 	int32_t stuffed {};
@@ -517,8 +501,7 @@ duka_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 	return total;
 }
 
-static uint32_t
-duka_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
+static uint32_t duka_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 
@@ -534,8 +517,7 @@ duka_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 	return duka->iframe * duka->pcm_frame;
 }
 
-static uint32_t
-duka_GetFrame(TFB_SoundDecoder* This)
+static uint32_t duka_GetFrame(TFB_SoundDecoder* This)
 {
 	const TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 

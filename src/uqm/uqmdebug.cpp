@@ -94,8 +94,7 @@ void doInstantMove(void)
 }
 
 // playerNr should be 0 or 1
-STARSHIP*
-findPlayerShip(int16_t playerNr)
+STARSHIP* findPlayerShip(int16_t playerNr)
 {
 	HELEMENT hNextElement {};
 
@@ -157,8 +156,7 @@ void resetEnergyBattle(void)
 }
 
 // Kills the opponent of the player controlled ship
-static void
-scuttleOpponent(void)
+static void scuttleOpponent(void)
 {
 	const STARSHIP* StarShipPtr {};
 	uint16_t delta {};
@@ -199,8 +197,7 @@ scuttleOpponent(void)
 }
 
 // Zeroes out all ship's velocity, freezing them in their tracks
-static void
-HaltShips(void)
+static void HaltShips(void)
 {
 	const STARSHIP* StarShipPtr {};
 	ELEMENT* ElementPtr {};
@@ -371,8 +368,7 @@ void forwardToNextEvent(bool skipHEE)
 	MoveGameClockToNextEvent(skipHEE);
 }
 
-const char*
-eventName(uint8_t func_index)
+const char* eventName(uint8_t func_index)
 {
 	switch (func_index)
 	{
@@ -418,8 +414,7 @@ eventName(uint8_t func_index)
 	}
 }
 
-const char*
-raceName(uint8_t func_index)
+const char* raceName(uint8_t func_index)
 {
 	switch (func_index)
 	{
@@ -479,8 +474,7 @@ raceName(uint8_t func_index)
 	}
 }
 
-static void
-dumpEventCallback(const EVENT* eventPtr, void* arg)
+static void dumpEventCallback(const EVENT* eventPtr, void* arg)
 {
 	FILE* out = (FILE*)arg;
 	dumpEvent(out, eventPtr);
@@ -687,8 +681,7 @@ void clearEscorts(void)
 // Not needed anymore, but could be useful in the future.
 
 // Find the HELEMENT belonging to the Flagship.
-static HELEMENT
-findFlagshipElement (void)
+static HELEMENT findFlagshipElement (void)
 {
 	HELEMENT hElement, hNextElement;
 	ELEMENT *ElementPtr;
@@ -865,8 +858,7 @@ void UniverseRecurse(UniverseRecurseArg* universeRecurseArg)
 	UnlockGameClock();
 }
 
-static void
-starRecurse(STAR_DESC* star, void* arg)
+static void starRecurse(STAR_DESC* star, void* arg)
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
@@ -912,9 +904,8 @@ starRecurse(STAR_DESC* star, void* arg)
 	CurStarDescPtr() = oldStarDescPtr;
 }
 
-static void
-planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
-			  void* arg)
+static void planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
+						  void* arg)
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
@@ -958,9 +949,8 @@ planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
 	}
 }
 
-static void
-moonRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
-			PLANET_DESC* moon, void* arg)
+static void moonRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
+						PLANET_DESC* moon, void* arg)
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
@@ -1035,9 +1025,8 @@ void dumpUniverseToFile(void)
 	// in particular for special planet generation.
 }
 
-static void
-dumpSystemCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
-				   void* arg)
+static void dumpSystemCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
+							   void* arg)
 {
 	FILE* out = ((DumpUniverseArg*)arg)->out;
 	dumpSystem(out, star, system);
@@ -1063,8 +1052,7 @@ void dumpSystem(FILE* out, const STAR_DESC* star, const SOLARSYS_STATE* system)
 	(void)system; /* satisfy compiler */
 }
 
-const char*
-bodyColorString(uint8_t col)
+const char* bodyColorString(uint8_t col)
 {
 	switch (col)
 	{
@@ -1092,8 +1080,7 @@ bodyColorString(uint8_t col)
 	}
 }
 
-const char*
-starTypeString(uint8_t type)
+const char* starTypeString(uint8_t type)
 {
 	switch (type)
 	{
@@ -1109,8 +1096,7 @@ starTypeString(uint8_t type)
 	}
 }
 
-const char*
-starPresenceString(uint8_t index)
+const char* starPresenceString(uint8_t index)
 {
 	switch (index)
 	{
@@ -1239,8 +1225,7 @@ starPresenceString(uint8_t index)
 	}
 }
 
-static void
-dumpPlanetCallback(const PLANET_DESC* planet, void* arg)
+static void dumpPlanetCallback(const PLANET_DESC* planet, void* arg)
 {
 	FILE* out = ((DumpUniverseArg*)arg)->out;
 	dumpPlanet(out, planet);
@@ -1254,8 +1239,7 @@ void dumpPlanet(FILE* out, const PLANET_DESC* planet)
 	dumpWorld(out, planet);
 }
 
-static void
-dumpMoonCallback(const PLANET_DESC* moon, void* arg)
+static void dumpMoonCallback(const PLANET_DESC* moon, void* arg)
 {
 	FILE* out = ((DumpUniverseArg*)arg)->out;
 	dumpMoon(out, moon);
@@ -1291,8 +1275,7 @@ void dumpMoon(FILE* out, const PLANET_DESC* moon)
 	dumpWorld(out, moon);
 }
 
-static void
-dumpWorld(FILE* out, const PLANET_DESC* world)
+static void dumpWorld(FILE* out, const PLANET_DESC* world)
 {
 	PLANET_INFO* info;
 
@@ -1406,8 +1389,7 @@ void printWorld(const PLANET_DESC* world)
 	fmt::print(fp, "____________________________________\n\n");
 }
 
-uint16_t
-calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
+uint16_t calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 {
 	uint16_t result;
 	uint16_t numBio;
@@ -1452,8 +1434,7 @@ void generateBioIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world,
 	}
 }
 
-uint16_t
-calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
+uint16_t calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 {
 	uint16_t result;
 	uint16_t numDeposits;
@@ -1547,9 +1528,8 @@ void tallyResourcesToFile(void)
 	// in particular for special planet generation.
 }
 
-static void
-tallySystemPreCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
-					   void* arg)
+static void tallySystemPreCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
+								   void* arg)
 {
 	TallyResourcesArg* tallyResourcesArg = (TallyResourcesArg*)arg;
 	tallyResourcesArg->mineralCount = 0;
@@ -1559,9 +1539,8 @@ tallySystemPreCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
 	(void)system; /* satisfy compiler */
 }
 
-static void
-tallySystemPostCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
-						void* arg)
+static void tallySystemPostCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
+									void* arg)
 {
 	char name[256];
 	TallyResourcesArg* tallyResourcesArg = (TallyResourcesArg*)arg;
@@ -1575,20 +1554,17 @@ tallySystemPostCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
 	(void)system; /* satisfy compiler */
 }
 
-static void
-tallyPlanetCallback(const PLANET_DESC* planet, void* arg)
+static void tallyPlanetCallback(const PLANET_DESC* planet, void* arg)
 {
 	tallyResourcesWorld((TallyResourcesArg*)arg, planet);
 }
 
-static void
-tallyMoonCallback(const PLANET_DESC* moon, void* arg)
+static void tallyMoonCallback(const PLANET_DESC* moon, void* arg)
 {
 	tallyResourcesWorld((TallyResourcesArg*)arg, moon);
 }
 
-static void
-tallyResourcesWorld(TallyResourcesArg* arg, const PLANET_DESC* world)
+static void tallyResourcesWorld(TallyResourcesArg* arg, const PLANET_DESC* world)
 {
 	if (world->data_index == HIERARCHY_STARBASE)
 	{
@@ -1640,8 +1616,7 @@ void dumpPlanetTypes(FILE* out)
 	forAllPlanetTypes(dumpPlanetTypeCallback, (void*)&dumpPlanetTypesArg);
 }
 
-static void
-dumpPlanetTypeCallback(int index, const PlanetFrame* planetType, void* arg)
+static void dumpPlanetTypeCallback(int index, const PlanetFrame* planetType, void* arg)
 {
 	DumpPlanetTypesArg* dumpPlanetTypesArg = (DumpPlanetTypesArg*)arg;
 
@@ -1685,8 +1660,7 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 	fmt::print(out, "\n");
 }
 
-const char*
-planetTypeString(int typeIndex)
+const char* planetTypeString(int typeIndex)
 {
 	static char typeStr[40];
 
@@ -1707,8 +1681,7 @@ planetTypeString(int typeIndex)
 }
 
 // size is what you get from Plansize (planetFrame.Type)
-const char*
-worldSizeString(uint8_t size)
+const char* worldSizeString(uint8_t size)
 {
 	switch (size)
 	{
@@ -1725,8 +1698,7 @@ worldSizeString(uint8_t size)
 }
 
 // algo is what you get from Planalgo (planetFrame.Type)
-const char*
-worldGenAlgoString(uint8_t algo)
+const char* worldGenAlgoString(uint8_t algo)
 {
 	switch (algo)
 	{
@@ -1744,8 +1716,7 @@ worldGenAlgoString(uint8_t algo)
 
 // tectonics is what you get from planetFrame.BaseTechtonics
 // not reentrant
-const char*
-tectonicsString(uint8_t tectonics)
+const char* tectonicsString(uint8_t tectonics)
 {
 	static char buf[sizeof "-127"];
 	switch (tectonics)
@@ -1767,8 +1738,7 @@ tectonicsString(uint8_t tectonics)
 }
 
 // atmosphere is what you get from HINIBBLE (planetFrame.AtmoAndDensity)
-const char*
-atmosphereString(uint8_t atmosphere)
+const char* atmosphereString(uint8_t atmosphere)
 {
 	switch (atmosphere)
 	{
@@ -1784,8 +1754,7 @@ atmosphereString(uint8_t atmosphere)
 }
 
 // density is what you get from LONIBBLE (planetFrame.AtmoAndDensity)
-const char*
-densityString(uint8_t density)
+const char* densityString(uint8_t density)
 {
 	switch (density)
 	{
@@ -1808,8 +1777,7 @@ densityString(uint8_t density)
 }
 
 // quality is what you get from DepositQuality (elementEntry.Density)
-const char*
-depositQualityString(uint8_t quality)
+const char* depositQualityString(uint8_t quality)
 {
 	switch (quality)
 	{
@@ -1928,8 +1896,7 @@ void dumpStrings(FILE* out)
 ////////////////////////////////////////////////////////////////////////////
 
 
-static Color
-hsvaToRgba(double hue, double sat, double val, uint8_t alpha)
+static Color hsvaToRgba(double hue, double sat, double val, uint8_t alpha)
 {
 	unsigned int hi = (int)(hue / 60.0);
 	double f = (hue / 60.0) - ((int)(hue / 60.0));
@@ -1971,8 +1938,7 @@ hsvaToRgba(double hue, double sat, double val, uint8_t alpha)
 }
 
 // Returns true iff this context has a visible FRAME.
-static bool
-isContextVisible(GFXCONTEXT context)
+static bool isContextVisible(GFXCONTEXT context)
 {
 	FRAME contextFrame;
 
@@ -1988,8 +1954,7 @@ isContextVisible(GFXCONTEXT context)
 	return contextFrame == Screen;
 }
 
-static size_t
-countVisibleContexts(void)
+static size_t countVisibleContexts(void)
 {
 	size_t contextCount;
 	GFXCONTEXT context;
@@ -2009,8 +1974,7 @@ countVisibleContexts(void)
 	return contextCount;
 }
 
-static void
-drawContext(GFXCONTEXT context, double hue /* no pun intended */)
+static void drawContext(GFXCONTEXT context, double hue /* no pun intended */)
 {
 	//FRAME drawFrame; unused
 	GFXCONTEXT oldContext;
@@ -2089,8 +2053,7 @@ drawContext(GFXCONTEXT context, double hue /* no pun intended */)
 	(void)SetContextFont(oldFont);
 }
 
-static void
-describeContext(FILE* out, const GFXCONTEXT context)
+static void describeContext(FILE* out, const GFXCONTEXT context)
 {
 	GFXRECT rect;
 	GFXCONTEXT oldContext = SetContext(context);
@@ -2148,8 +2111,7 @@ getScreen(void)
 	return savedFrame;
 }
 
-static void
-putScreen(FRAME savedFrame)
+static void putScreen(FRAME savedFrame)
 {
 	STAMP stamp;
 

@@ -124,20 +124,17 @@ struct Packet
 	PacketHeader header;
 };
 
-static inline size_t
-packetLength(const Packet* packet)
+static inline size_t packetLength(const Packet* packet)
 {
 	return (size_t)uqm::convertBigEndian<uint16_t>(packet->header.len);
 }
 
-static inline PacketType
-packetType(const Packet* packet)
+static inline PacketType packetType(const Packet* packet)
 {
 	return (PacketType)(int)uqm::convertBigEndian<uint16_t>(packet->header.type);
 }
 
-static inline bool
-validPacketType(PacketType type)
+static inline bool validPacketType(PacketType type)
 {
 	return type < PACKET_NUM;
 }

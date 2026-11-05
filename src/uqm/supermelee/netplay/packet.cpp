@@ -56,14 +56,12 @@ PacketTypeData packetTypeData[PACKET_NUM] = {
 	DEFINE_PACKETDATA(Reset),
 };
 
-static inline void*
-Packet_alloc(size_t size)
+static inline void* Packet_alloc(size_t size)
 {
 	return malloc(size);
 }
 
-static Packet*
-Packet_create(PacketType type, size_t extraSize)
+static Packet* Packet_create(PacketType type, size_t extraSize)
 {
 	size_t len {};
 
@@ -82,8 +80,7 @@ void Packet_delete(Packet* packet)
 	free(packet);
 }
 
-Packet_Init*
-Packet_Init_create(void)
+Packet_Init* Packet_Init_create(void)
 {
 	Packet_Init* packet = (Packet_Init*)Packet_create(PACKET_INIT, 0);
 
@@ -97,8 +94,7 @@ Packet_Init_create(void)
 	return packet;
 }
 
-Packet_Ping*
-Packet_Ping_create(uint32_t id)
+Packet_Ping* Packet_Ping_create(uint32_t id)
 {
 	Packet_Ping* packet = (Packet_Ping*)Packet_create(PACKET_PING, 0);
 
@@ -106,8 +102,7 @@ Packet_Ping_create(uint32_t id)
 	return packet;
 }
 
-Packet_Ack*
-Packet_Ack_create(uint32_t id)
+Packet_Ack* Packet_Ack_create(uint32_t id)
 {
 	Packet_Ack* packet = (Packet_Ack*)Packet_create(PACKET_ACK, 0);
 
@@ -115,8 +110,7 @@ Packet_Ack_create(uint32_t id)
 	return packet;
 }
 
-Packet_Ready*
-Packet_Ready_create(void)
+Packet_Ready* Packet_Ready_create(void)
 {
 	Packet_Ready* packet = (Packet_Ready*)Packet_create(PACKET_READY, 0);
 
@@ -126,8 +120,7 @@ Packet_Ready_create(void)
 // The fleet itself still needs to be filled by the caller.
 // This function takes care of the necessary padding; it is allocated,
 // and filled with zero chars.
-Packet_Fleet*
-Packet_Fleet_create(NetplaySide side, size_t numShips)
+Packet_Fleet* Packet_Fleet_create(NetplaySide side, size_t numShips)
 {
 	const size_t fleetSize {numShips * sizeof(FleetEntry)};
 	const size_t extraSize {(fleetSize + 3) & ~0x03};
@@ -144,8 +137,7 @@ Packet_Fleet_create(NetplaySide side, size_t numShips)
 // 'size' is the number of bytes (not characters) in 'name', excluding
 // a possible terminating '\0'. A '\0' will be included in the packet though.
 // This function takes care of the required padding.
-Packet_TeamName*
-Packet_TeamName_create(NetplaySide side, const char* name, size_t size)
+Packet_TeamName* Packet_TeamName_create(NetplaySide side, const char* name, size_t size)
 {
 	const size_t extraSize {((size + 1) + 3) & ~0x03};
 	// The +1 is for the '\0'.
@@ -161,24 +153,21 @@ Packet_TeamName_create(NetplaySide side, const char* name, size_t size)
 	return packet;
 }
 
-Packet_Handshake0*
-Packet_Handshake0_create(void)
+Packet_Handshake0* Packet_Handshake0_create(void)
 {
 	Packet_Handshake0* packet =
 		(Packet_Handshake0*)Packet_create(PACKET_HANDSHAKE0, 0);
 	return packet;
 }
 
-Packet_Handshake1*
-Packet_Handshake1_create(void)
+Packet_Handshake1* Packet_Handshake1_create(void)
 {
 	Packet_Handshake1* packet =
 		(Packet_Handshake1*)Packet_create(PACKET_HANDSHAKE1, 0);
 	return packet;
 }
 
-Packet_HandshakeCancel*
-Packet_HandshakeCancel_create(void)
+Packet_HandshakeCancel* Packet_HandshakeCancel_create(void)
 {
 	Packet_HandshakeCancel* packet =
 		(Packet_HandshakeCancel*)Packet_create(
@@ -186,8 +175,7 @@ Packet_HandshakeCancel_create(void)
 	return packet;
 }
 
-Packet_HandshakeCancelAck*
-Packet_HandshakeCancelAck_create(void)
+Packet_HandshakeCancelAck* Packet_HandshakeCancelAck_create(void)
 {
 	Packet_HandshakeCancelAck* packet =
 		(Packet_HandshakeCancelAck*)Packet_create(
@@ -195,8 +183,7 @@ Packet_HandshakeCancelAck_create(void)
 	return packet;
 }
 
-Packet_SeedRandom*
-Packet_SeedRandom_create(uint32_t seed)
+Packet_SeedRandom* Packet_SeedRandom_create(uint32_t seed)
 {
 	Packet_SeedRandom* packet =
 		(Packet_SeedRandom*)Packet_create(PACKET_SEEDRANDOM, 0);
@@ -205,8 +192,7 @@ Packet_SeedRandom_create(uint32_t seed)
 	return packet;
 }
 
-Packet_InputDelay*
-Packet_InputDelay_create(uint32_t delay)
+Packet_InputDelay* Packet_InputDelay_create(uint32_t delay)
 {
 	Packet_InputDelay* packet =
 		(Packet_InputDelay*)Packet_create(PACKET_INPUTDELAY, 0);
@@ -215,8 +201,7 @@ Packet_InputDelay_create(uint32_t delay)
 	return packet;
 }
 
-Packet_SelectShip*
-Packet_SelectShip_create(uint16_t ship)
+Packet_SelectShip* Packet_SelectShip_create(uint16_t ship)
 {
 	Packet_SelectShip* packet =
 		(Packet_SelectShip*)Packet_create(PACKET_SELECTSHIP, 0);
@@ -225,8 +210,7 @@ Packet_SelectShip_create(uint16_t ship)
 	return packet;
 }
 
-Packet_BattleInput*
-Packet_BattleInput_create(uint8_t state)
+Packet_BattleInput* Packet_BattleInput_create(uint8_t state)
 {
 	Packet_BattleInput* packet =
 		(Packet_BattleInput*)Packet_create(PACKET_BATTLEINPUT, 0);
@@ -236,8 +220,7 @@ Packet_BattleInput_create(uint8_t state)
 	return packet;
 }
 
-Packet_FrameCount*
-Packet_FrameCount_create(uint32_t frameCount)
+Packet_FrameCount* Packet_FrameCount_create(uint32_t frameCount)
 {
 	Packet_FrameCount* packet =
 		(Packet_FrameCount*)Packet_create(PACKET_FRAMECOUNT, 0);
@@ -245,8 +228,7 @@ Packet_FrameCount_create(uint32_t frameCount)
 	return packet;
 }
 
-Packet_Checksum*
-Packet_Checksum_create(uint32_t frameNr, uint32_t checksum)
+Packet_Checksum* Packet_Checksum_create(uint32_t frameNr, uint32_t checksum)
 {
 	Packet_Checksum* packet =
 		(Packet_Checksum*)Packet_create(PACKET_CHECKSUM, 0);
@@ -255,16 +237,14 @@ Packet_Checksum_create(uint32_t frameNr, uint32_t checksum)
 	return packet;
 }
 
-Packet_Abort*
-Packet_Abort_create(uint16_t reason)
+Packet_Abort* Packet_Abort_create(uint16_t reason)
 {
 	Packet_Abort* packet = (Packet_Abort*)Packet_create(PACKET_ABORT, 0);
 	packet->reason = uqm::convertBigEndian<uint16_t>(reason);
 	return packet;
 }
 
-Packet_Reset*
-Packet_Reset_create(uint16_t reason)
+Packet_Reset* Packet_Reset_create(uint16_t reason)
 {
 	Packet_Reset* packet = (Packet_Reset*)Packet_create(PACKET_RESET, 0);
 	packet->reason = uqm::convertBigEndian<uint16_t>(reason);

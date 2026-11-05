@@ -83,8 +83,7 @@ static void* buffer;
 static ULONG bufsize;
 static ULONG written;
 
-static ULONG*
-moda_mmout_SetOutputBuffer(void* buf, ULONG size)
+static ULONG* moda_mmout_SetOutputBuffer(void* buf, ULONG size)
 {
 	buffer = buf;
 	bufsize = size;
@@ -92,27 +91,23 @@ moda_mmout_SetOutputBuffer(void* buf, ULONG size)
 	return &written;
 }
 
-static BOOL
-moda_mmout_IsThere(void)
+static BOOL moda_mmout_IsThere(void)
 {
 	return 1;
 }
 
-static BOOL
-moda_mmout_Init(void)
+static BOOL moda_mmout_Init(void)
 {
 	md_mode |= DMODE_SOFT_MUSIC | DMODE_SOFT_SNDFX;
 	return VC_Init();
 }
 
-static void
-moda_mmout_Exit(void)
+static void moda_mmout_Exit(void)
 {
 	VC_Exit();
 }
 
-static void
-moda_mmout_Update(void)
+static void moda_mmout_Update(void)
 {
 	written = 0;
 	if (!buffer || bufsize == 0)
@@ -123,8 +118,7 @@ moda_mmout_Update(void)
 	written = VC_WriteBytes((int8_t*)buffer, bufsize);
 }
 
-static BOOL
-moda_mmout_Reset(void)
+static BOOL moda_mmout_Reset(void)
 {
 	return 0;
 }
@@ -186,38 +180,32 @@ typedef struct MIOREADER
 
 } MIOREADER;
 
-static BOOL
-moda_ioReader_Eof(MREADER* reader)
+static BOOL moda_ioReader_Eof(MREADER* reader)
 {
 	return ((MIOREADER*)reader)->file->eof();
 }
 
-static BOOL
-moda_ioReader_Read(MREADER* reader, void* ptr, size_t size)
+static BOOL moda_ioReader_Read(MREADER* reader, void* ptr, size_t size)
 {
 	return ReadResFile(ptr, size, 1, *((MIOREADER*)reader)->file);
 }
 
-static int
-moda_ioReader_Get(MREADER* reader)
+static int moda_ioReader_Get(MREADER* reader)
 {
 	return ((MIOREADER*)reader)->file->getChar();
 }
 
-static BOOL
-moda_ioReader_Seek(MREADER* reader, long offset, int whence)
+static BOOL moda_ioReader_Seek(MREADER* reader, long offset, int whence)
 {
 	return SeekResFile(*((MIOREADER*)reader)->file, offset, whence);
 }
 
-static long
-moda_ioReader_Tell(MREADER* reader)
+static long moda_ioReader_Tell(MREADER* reader)
 {
 	return TellResFile(*((MIOREADER*)reader)->file);
 }
 
-static MREADER*
-moda_new_ioReader(uqm::io::File* fp)
+static MREADER* moda_new_ioReader(uqm::io::File* fp)
 {
 	auto* reader {new MIOREADER {}};
 	reader->core.Eof = &moda_ioReader_Eof;
@@ -231,21 +219,18 @@ moda_new_ioReader(uqm::io::File* fp)
 	return &reader->core;
 }
 
-static void
-moda_delete_ioReader(MREADER* reader)
+static void moda_delete_ioReader(MREADER* reader)
 {
 	delete reinterpret_cast<MIOREADER*>(reader);
 }
 
 
-const static char*
-moda_GetName(void)
+const static char* moda_GetName(void)
 {
 	return "MikMod";
 }
 
-static bool
-moda_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
+static bool moda_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
 {
 	MikMod_RegisterDriver(&moda_mmout_drv);
 	MikMod_RegisterAllLoaders();
@@ -287,26 +272,22 @@ moda_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
 	return true;
 }
 
-static void
-moda_TermModule(void)
+static void moda_TermModule(void)
 {
 	MikMod_Exit();
 }
 
-static TFB_SoundDecoder*
-moda_Create(void)
+static TFB_SoundDecoder* moda_Create(void)
 {
 	return &(new TFB_ModSoundDecoder {})->decoder;
 }
 
-static void
-moda_Destroy(TFB_SoundDecoder* decoder)
+static void moda_Destroy(TFB_SoundDecoder* decoder)
 {
 	delete reinterpret_cast<TFB_ModSoundDecoder*>(decoder);
 }
 
-static int
-moda_GetError(TFB_SoundDecoder* This)
+static int moda_GetError(TFB_SoundDecoder* This)
 {
 	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 	const int ret = moda->last_error;
@@ -314,8 +295,7 @@ moda_GetError(TFB_SoundDecoder* This)
 	return ret;
 }
 
-static bool
-moda_Init(TFB_SoundDecoder* This)
+static bool moda_Init(TFB_SoundDecoder* This)
 {
 	//TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*) This;
 	This->need_swap =
@@ -323,15 +303,13 @@ moda_Init(TFB_SoundDecoder* This)
 	return true;
 }
 
-static void
-moda_Term(TFB_SoundDecoder* This)
+static void moda_Term(TFB_SoundDecoder* This)
 {
 	//TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*) This;
 	moda_Close(This); // ensure cleanup
 }
 
-static bool
-moda_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
+static bool moda_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 
@@ -378,8 +356,7 @@ moda_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* fil
 	return true;
 }
 
-static void
-moda_Close(TFB_SoundDecoder* This)
+static void moda_Close(TFB_SoundDecoder* This)
 {
 	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 
@@ -390,8 +367,7 @@ moda_Close(TFB_SoundDecoder* This)
 	}
 }
 
-static int
-moda_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
+static int moda_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 {
 	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 	const volatile ULONG* poutsize {};
@@ -408,8 +384,7 @@ moda_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 	return *poutsize;
 }
 
-static uint32_t
-moda_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
+static uint32_t moda_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 {
 	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 
@@ -419,8 +394,7 @@ moda_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 	return 0;
 }
 
-static uint32_t
-moda_GetFrame(TFB_SoundDecoder* This)
+static uint32_t moda_GetFrame(TFB_SoundDecoder* This)
 {
 	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 	return moda->module->sngpos;

@@ -116,8 +116,7 @@ void SetInputScriptMenuDump(void (*dump)(void))
 	inputScriptMenuDump = dump;
 }
 
-static int
-scriptMenuKey(uqm::ScriptKey key)
+static int scriptMenuKey(uqm::ScriptKey key)
 {
 	switch (key)
 	{
@@ -154,8 +153,7 @@ scriptMenuKey(uqm::ScriptKey key)
 }
 
 // Adds the scripted key, if any, to the input of this frame.
-static void
-applyInputScript(void)
+static void applyInputScript(void)
 {
 	const uqstl::lock_guard lock {inputScriptMutex};
 	const auto now {uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(uqstl::chrono::steady_clock::now() - inputScriptStart).count()};
@@ -217,8 +215,7 @@ applyInputScript(void)
 	}
 }
 
-static void
-_clear_menu_state(void)
+static void _clear_menu_state(void)
 {
 	int i {};
 	int j {};
@@ -260,9 +257,8 @@ void ResetKeyRepeat(void)
 	GestaltTime = initTime;
 }
 
-static void
-_check_for_pulse(int* current, int* cached, int* old, TimePeriod* accel,
-				 TimeCount* newtime, TimeCount* oldtime)
+static void _check_for_pulse(int* current, int* cached, int* old, TimePeriod* accel,
+							 TimeCount* newtime, TimeCount* oldtime)
 {
 	if (*cached && *old)
 	{
@@ -296,8 +292,7 @@ _check_for_pulse(int* current, int* cached, int* old, TimePeriod* accel,
  * this will affect the gestalt repeat rate.  This isn't a problem
  * *yet*, but it will be once the user gets to define control
  * templates on his own --McM */
-static void
-_check_gestalt(TimeCount NewTime)
+static void _check_gestalt(TimeCount NewTime)
 {
 	int i {};
 	int j {};
@@ -467,8 +462,7 @@ void UpdateInputState(void)
 #endif
 }
 
-InputFrameCallback*
-SetInputCallback(InputFrameCallback* callback)
+InputFrameCallback* SetInputCallback(InputFrameCallback* callback)
 {
 	InputFrameCallback* old = inputCallback;
 
@@ -506,8 +500,7 @@ void FlushInput(void)
 	_clear_menu_state();
 }
 
-static MENU_SOUND_FLAGS
-MenuKeysToSoundFlags(const CONTROLLER_INPUT_STATE* state)
+static MENU_SOUND_FLAGS MenuKeysToSoundFlags(const CONTROLLER_INPUT_STATE* state)
 {
 	MENU_SOUND_FLAGS soundFlags {MenuSoundNone};
 	if (state->menu[KEY_MENU_UP])
@@ -606,8 +599,7 @@ void GetMenuSounds(MENU_SOUND_FLAGS* s0, MENU_SOUND_FLAGS* s1)
 	*s1 = sound_1;
 }
 
-static BATTLE_INPUT_STATE
-ControlInputToBattleInput(const int* keyState)
+static BATTLE_INPUT_STATE ControlInputToBattleInput(const int* keyState)
 {
 	BATTLE_INPUT_STATE InputState = 0;
 
@@ -647,15 +639,13 @@ ControlInputToBattleInput(const int* keyState)
 	return InputState;
 }
 
-BATTLE_INPUT_STATE
-CurrentInputToBattleInput(uint16_t player)
+BATTLE_INPUT_STATE CurrentInputToBattleInput(uint16_t player)
 {
 	return ControlInputToBattleInput(
 		CurrentInputState.key[static_cast<int>(PlayerControlTemplates[player])]);
 }
 
-BATTLE_INPUT_STATE
-PulsedInputToBattleInput(uint16_t player)
+BATTLE_INPUT_STATE PulsedInputToBattleInput(uint16_t player)
 {
 	return ControlInputToBattleInput(
 		PulsedInputState.key[static_cast<int>(PlayerControlTemplates[player])]);

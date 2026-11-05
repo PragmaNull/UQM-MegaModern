@@ -329,8 +329,7 @@ void DrawRadarBorder(void)
 	SetContext(OldContext);
 }
 
-uint32_t
-SeedRandomNumbers(void)
+uint32_t SeedRandomNumbers(void)
 {
 	const auto cur_time {static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count())};
 	uqm::random().reseed(cur_time);
@@ -338,8 +337,7 @@ SeedRandomNumbers(void)
 	return (cur_time);
 }
 
-STAMP
-SaveContextFrame(const GFXRECT* saveRect)
+STAMP SaveContextFrame(const GFXRECT* saveRect)
 {
 	STAMP s;
 
@@ -358,8 +356,7 @@ SaveContextFrame(const GFXRECT* saveRect)
 	return s;
 }
 
-static void
-DrawPauseText(GFXRECT* rect)
+static void DrawPauseText(GFXRECT* rect)
 {
 	TEXT text;
 	Color OldColor;
@@ -644,8 +641,7 @@ void SleepGame(void)
 
 /* Returns the fuel requirement to get to Sol (in fuel units * 100)
  */
-uint32_t
-get_fuel_to_sol(void)
+uint32_t get_fuel_to_sol(void)
 {
 	GFXPOINT pt;
 

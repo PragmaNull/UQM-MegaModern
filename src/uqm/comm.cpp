@@ -150,8 +150,7 @@ static bool PauseSubtitles(bool force);
 /* _count_lines - sees how many lines a given input string would take to
  * display given the line wrapping information
  */
-static int
-_count_lines(TEXT* pText)
+static int _count_lines(TEXT* pText)
 {
 	int16_t text_width {};
 	const char* pStr {};
@@ -177,8 +176,7 @@ _count_lines(TEXT* pText)
 // status == -2: draw non-highlighted player dialog option
 // status == -4: use current context, and baseline from pTextIn
 // status ==  1:  draw alien speech; subtitle cache is used
-static int16_t
-add_text(int status, TEXT* pTextIn)
+static int16_t add_text(int status, TEXT* pTextIn)
 {
 	uint16_t numchars {};
 	TEXT locText;
@@ -566,8 +564,7 @@ void DrawCommBorder(GFXRECT r)
 	DrawBorder(SIS_COMM_FRAME);
 }
 
-static void
-DrawSISComWindow(void)
+static void DrawSISComWindow(void)
 {
 	GFXCONTEXT OldContext {};
 
@@ -610,8 +607,7 @@ void uninit_communication(void)
 	// now a no-op
 }
 
-static void
-RefreshResponsesSpecial(ENCOUNTER_STATE* pES)
+static void RefreshResponsesSpecial(ENCOUNTER_STATE* pES)
 { // PC style repsonses
 	int16_t y {};
 	uint8_t response {};
@@ -644,8 +640,7 @@ RefreshResponsesSpecial(ENCOUNTER_STATE* pES)
 	UnbatchGraphics();
 }
 
-static void
-RefreshResponses(ENCOUNTER_STATE* pES)
+static void RefreshResponses(ENCOUNTER_STATE* pES)
 {
 	int16_t y {};
 	uint8_t response {};
@@ -703,8 +698,7 @@ RefreshResponses(ENCOUNTER_STATE* pES)
 	UnbatchGraphics();
 }
 
-static void
-FeedbackPlayerPhrase(char* pStr)
+static void FeedbackPlayerPhrase(char* pStr)
 {
 	SetContext(SpaceContext);
 
@@ -741,8 +735,7 @@ FeedbackPlayerPhrase(char* pStr)
 	UnbatchGraphics();
 }
 
-static void
-InitSpeechGraphics(void)
+static void InitSpeechGraphics(void)
 {
 	if (uqm::UQMOptions::read().scopeStyle != uqm::EmulationMode::PC)
 	{
@@ -758,8 +751,7 @@ InitSpeechGraphics(void)
 			   SetAbsFrameIndex(ActivityFrame, 2));
 }
 
-static void
-UpdateSpeechGraphics(void)
+static void UpdateSpeechGraphics(void)
 {
 	static TimeCount NextTime;
 
@@ -777,8 +769,7 @@ UpdateSpeechGraphics(void)
 	SetContext(OldContext);
 }
 
-static void
-UpdateAnimations(bool paused)
+static void UpdateAnimations(bool paused)
 {
 	static TimeCount NextTime;
 
@@ -862,8 +853,7 @@ void InitUIRects(bool state)
 	}
 }
 
-static void
-FadePlayerUI(void)
+static void FadePlayerUI(void)
 {
 	if (!IsDarkMode)
 	{
@@ -923,8 +913,7 @@ FadePlayerUI(void)
 	}
 }
 
-static void
-UpdateCommGraphics(void)
+static void UpdateCommGraphics(void)
 {
 	UpdateAnimations(false);
 	UpdateSpeechGraphics();
@@ -945,8 +934,7 @@ typedef struct talking_state
 
 } TALKING_STATE;
 
-static bool
-DoTalkSegue(TALKING_STATE* pTS)
+static bool DoTalkSegue(TALKING_STATE* pTS)
 {
 	bool left = false;
 	bool right = false;
@@ -1127,15 +1115,13 @@ DoTalkSegue(TALKING_STATE* pTS)
 	return pTS->seeking || (curTrack && curTrack <= pTS->waitTrack);
 }
 
-static void
-runCommAnimFrame(void)
+static void runCommAnimFrame(void)
 {
 	UpdateCommGraphics();
 	SleepThread(CommAnimRate);
 }
 
-static bool
-TalkSegue(uint16_t wait_track)
+static bool TalkSegue(uint16_t wait_track)
 {
 	TALKING_STATE talkingState;
 
@@ -1198,8 +1184,7 @@ TalkSegue(uint16_t wait_track)
 	return talkingState.ended;
 }
 
-static void
-CommIntroTransition(void)
+static void CommIntroTransition(void)
 {
 	if (curIntroMode == CIM_CROSSFADE_SCREEN)
 	{
@@ -1298,8 +1283,7 @@ typedef struct summary_state
 
 } SUMMARY_STATE;
 
-static void
-remove_char_from_string(char* str, const char c)
+static void remove_char_from_string(char* str, const char c)
 { // MB: Hack for removing '$' characters from Orz dialogue when viewing
 	// summary conversation - Used by DoConvSummary below
 	char* pr = str;
@@ -1313,8 +1297,7 @@ remove_char_from_string(char* str, const char c)
 	*pw = '\0';
 }
 
-static bool
-DoConvSummary(SUMMARY_STATE* pSS)
+static bool DoConvSummary(SUMMARY_STATE* pSS)
 {
 	const auto DeltaYSummary = [&] {
 		return ResScale(8);
@@ -1475,8 +1458,7 @@ DoConvSummary(SUMMARY_STATE* pSS)
 	return true; // keep going
 }
 
-static void
-ClearResponses(ENCOUNTER_STATE* pES)
+static void ClearResponses(ENCOUNTER_STATE* pES)
 {
 	for (size_t responseI {0}; responseI < MaxResponses; responseI++)
 	{
@@ -1485,8 +1467,7 @@ ClearResponses(ENCOUNTER_STATE* pES)
 }
 
 // Called when the player presses the select button on a response.
-static void
-SelectResponse(ENCOUNTER_STATE* pES)
+static void SelectResponse(ENCOUNTER_STATE* pES)
 {
 	const TEXT* response_text =
 		&pES->response_list[pES->cur_response].response_text;
@@ -1524,8 +1505,7 @@ SelectResponse(ENCOUNTER_STATE* pES)
 }
 
 // Called when the player presses the cancel button in comm.
-static void
-SelectConversationSummary(ENCOUNTER_STATE* pES)
+static void SelectConversationSummary(ENCOUNTER_STATE* pES)
 {
 	SUMMARY_STATE SummaryState;
 
@@ -1544,8 +1524,7 @@ SelectConversationSummary(ENCOUNTER_STATE* pES)
 	clear_subtitles = true;
 }
 
-static void
-SelectReplay(ENCOUNTER_STATE* pES)
+static void SelectReplay(ENCOUNTER_STATE* pES)
 {
 	FadeMusic(BackgroundVol(), c_gameSecond);
 	if (pES)
@@ -1556,8 +1535,7 @@ SelectReplay(ENCOUNTER_STATE* pES)
 	TalkSegue(0);
 }
 
-static void
-PlayerResponseInput(ENCOUNTER_STATE* pES)
+static void PlayerResponseInput(ENCOUNTER_STATE* pES)
 {
 	uint8_t response {};
 
@@ -1643,8 +1621,7 @@ typedef struct last_replay_state
 
 } LAST_REPLAY_STATE;
 
-static bool
-DoLastReplay(LAST_REPLAY_STATE* pLRS)
+static bool DoLastReplay(LAST_REPLAY_STATE* pLRS)
 {
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
@@ -1678,8 +1655,7 @@ DoLastReplay(LAST_REPLAY_STATE* pLRS)
 	return true;
 }
 
-static bool
-DoCommunication(ENCOUNTER_STATE* pES)
+static bool DoCommunication(ENCOUNTER_STATE* pES)
 {
 	if (!IsDarkMode)
 	{
@@ -1838,8 +1814,7 @@ void SetUpCommData(void)
 	CommData.ConversationPhrases = uqm::loadStringTable(CommData.ConversationPhrasesRes).release();
 }
 
-static void
-HailAlien(void)
+static void HailAlien(void)
 {
 	ENCOUNTER_STATE ES {};
 	FONT PlayerFont {};
@@ -2024,8 +1999,7 @@ void SetCommIntroMode(CommIntroMode newMode, TimePeriod howLong)
 	fadeTime = howLong;
 }
 
-uint16_t
-InitCommunication(CONVERSATION which_comm)
+uint16_t InitCommunication(CONVERSATION which_comm)
 {
 	uint16_t status {};
 	const LOCDATA* LocDataPtr {};
@@ -2374,8 +2348,7 @@ void RaceCommunication(void)
 	}
 }
 
-static void
-RedrawSubtitles(void)
+static void RedrawSubtitles(void)
 {
 	TEXT t;
 
@@ -2398,8 +2371,7 @@ RedrawSubtitles(void)
 	}
 }
 
-static void
-ClearSubtitles(void)
+static void ClearSubtitles(void)
 {
 	clear_subtitles = true;
 	last_subtitle = nullptr;
@@ -2407,8 +2379,7 @@ ClearSubtitles(void)
 	SubtitleText.CharCount = 0;
 }
 
-static bool
-PauseSubtitles(bool force)
+static bool PauseSubtitles(bool force)
 {
 	static uint16_t num = 0;
 
@@ -2430,8 +2401,7 @@ PauseSubtitles(bool force)
 	return false;
 }
 
-static void
-CheckSubtitles(bool really)
+static void CheckSubtitles(bool really)
 {
 	GFXPOINT baseline;
 	TEXT_ALIGN align;

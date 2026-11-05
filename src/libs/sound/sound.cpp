@@ -134,8 +134,7 @@ void SetSpeechVolume(float volume)
 	audio_Sourcef(soundSource[SpeechSource].handle, audio_GAIN, volume);
 }
 
-TimeCount
-FadeMusic(uint8_t end_vol, TimePeriod TimeInterval)
+TimeCount FadeMusic(uint8_t end_vol, TimePeriod TimeInterval)
 {
 	if (QuitPosted || TimeInterval < TimePeriod {}) // Don't make users wait for fades
 	{

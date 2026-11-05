@@ -126,8 +126,7 @@ static RACE_DESC chmmr_desc =
 		0, /* CodeRef */
 };
 
-static void
-animate(ELEMENT* ElementPtr)
+static void animate(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -143,8 +142,7 @@ animate(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-laser_death(ELEMENT* ElementPtr)
+static void laser_death(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -211,8 +209,7 @@ laser_death(ELEMENT* ElementPtr)
 	}
 }
 
-static uint16_t
-initialize_megawatt_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
+static uint16_t initialize_megawatt_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 {
 	GFXRECT r;
 	STARSHIP* StarShipPtr {};
@@ -259,9 +256,8 @@ initialize_megawatt_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 	return (1);
 }
 
-static void
-chmmr_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				   uint16_t ConcernCounter)
+static void chmmr_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							   uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -285,8 +281,7 @@ chmmr_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 }
 
-static void
-chmmr_postprocess(ELEMENT* ElementPtr)
+static void chmmr_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -448,8 +443,7 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 	StarShipPtr->special_counter = 0;
 }
 
-static void
-satellite_preprocess(ELEMENT* ElementPtr)
+static void satellite_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -501,8 +495,7 @@ satellite_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-spawn_point_defense(ELEMENT* ElementPtr)
+static void spawn_point_defense(ELEMENT* ElementPtr)
 {
 	uint16_t best_dist {};
 	STARSHIP* StarShipPtr {};
@@ -598,8 +591,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 	UnlockElement(StarShipPtr->hShip);
 }
 
-static void
-satellite_postprocess(ELEMENT* ElementPtr)
+static void satellite_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -638,9 +630,8 @@ satellite_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-satellite_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-					ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void satellite_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+								ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	(void)ElementPtr0; /* Satisfying compiler (unused parameter) */
 	(void)pPt0;		   /* Satisfying compiler (unused parameter) */
@@ -648,8 +639,7 @@ satellite_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1;		   /* Satisfying compiler (unused parameter) */
 }
 
-static void
-satellite_death(ELEMENT* ElementPtr)
+static void satellite_death(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -670,8 +660,7 @@ satellite_death(ELEMENT* ElementPtr)
 	ElementPtr->collision_func = nullptr;
 }
 
-static void
-spawn_satellites(ELEMENT* ElementPtr)
+static void spawn_satellites(ELEMENT* ElementPtr)
 {
 	uint16_t i {};
 	STARSHIP* StarShipPtr {};
@@ -726,8 +715,7 @@ spawn_satellites(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-chmmr_preprocess(ELEMENT* ElementPtr)
+static void chmmr_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -758,8 +746,7 @@ chmmr_preprocess(ELEMENT* ElementPtr)
 	StarShipPtr->RaceDescPtr->preprocess_func = 0;
 }
 
-RACE_DESC*
-init_chmmr(void)
+RACE_DESC* init_chmmr(void)
 {
 	if (IsHd())
 	{

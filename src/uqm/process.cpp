@@ -46,8 +46,7 @@ uint16_t zoom_out = 1 << ZoomShift;
 static int16_t opt_max_zoom_out;
 
 #if 0
-static inline void
-CALC_ZOOM_STUFF (uint16_t* idx, uint16_t* sc)
+static inline void CALC_ZOOM_STUFF (uint16_t* idx, uint16_t* sc)
 {
 	int i, z;
 
@@ -58,8 +57,7 @@ CALC_ZOOM_STUFF (uint16_t* idx, uint16_t* sc)
 	*sc = ((1 << i) << (ZoomShift + 8)) / zoom_out;
 }
 #else
-static inline void
-CALC_ZOOM_STUFF(uint16_t* idx, uint16_t* sc)
+static inline void CALC_ZOOM_STUFF(uint16_t* idx, uint16_t* sc)
 {
 	int i {};
 
@@ -80,8 +78,7 @@ CALC_ZOOM_STUFF(uint16_t* idx, uint16_t* sc)
 }
 #endif
 
-HELEMENT
-AllocElement(void)
+HELEMENT AllocElement(void)
 {
 	HELEMENT hElement {AllocLink(&disp_q)};
 	if (hElement)
@@ -129,8 +126,7 @@ void SetUpElement(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-PreProcess(ELEMENT* ElementPtr)
+static void PreProcess(ELEMENT* ElementPtr)
 {
 	ELEMENT_FLAGS state_flags {};
 
@@ -202,8 +198,7 @@ PreProcess(ELEMENT* ElementPtr)
 							| PreProcessFlag;
 }
 
-static void
-PostProcess(ELEMENT* ElementPtr)
+static void PostProcess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->postprocess_func)
 	{
@@ -222,8 +217,7 @@ PostProcess(ELEMENT* ElementPtr)
 							| PostProcessFlag;
 }
 
-static uint16_t
-CalcReduction(int32_t dx, int32_t dy)
+static uint16_t CalcReduction(int32_t dx, int32_t dy)
 {
 	uint16_t next_reduction {};
 
@@ -327,9 +321,8 @@ CalcReduction(int32_t dx, int32_t dy)
 
 static constexpr auto ZoomJump {((1 << ZoomShift) >> 3)};
 
-static VIEW_STATE
-CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
-		 int32_t* pdx, int32_t* pdy, uint16_t ships_alive)
+static VIEW_STATE CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
+						   int32_t* pdx, int32_t* pdy, uint16_t ships_alive)
 {
 	VIEW_STATE view_state;
 
@@ -421,9 +414,8 @@ CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 }
 
 
-static ELEMENT_FLAGS
-ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
-				  TIME_VALUE min_time, ELEMENT_FLAGS process_flags)
+static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
+									   TIME_VALUE min_time, ELEMENT_FLAGS process_flags)
 {
 	HELEMENT hTestElement {};
 
@@ -701,8 +693,7 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 	return (ElementPtr->state_flags & Collision);
 }
 
-static VIEW_STATE
-PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
+static VIEW_STATE PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 {
 	int16_t min_reduction {};
 	int16_t max_reduction {};
@@ -884,8 +875,7 @@ void InsertPrim(PRIM_LINKS* pLinks, uint16_t primIndex, uint16_t iPI)
 
 PRIM_LINKS DisplayLinks;
 
-static inline int16_t
-CalcDisplayCoord(int32_t c, int32_t orgc, int16_t reduction)
+static inline int16_t CalcDisplayCoord(int32_t c, int32_t orgc, int16_t reduction)
 {
 	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 	{ /* old fixed-step zoom style */
@@ -897,8 +887,7 @@ CalcDisplayCoord(int32_t c, int32_t orgc, int16_t reduction)
 	}
 }
 
-static void
-PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
+static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 {
 	DPOINT delta;
 	int16_t reduction {};

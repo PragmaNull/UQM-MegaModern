@@ -87,8 +87,7 @@ void RepairBackRect(GFXRECT* pRect)
 	DrawFromExtraScreen(&new_r);
 }
 
-static void
-EraseCoarseScan(void)
+static void EraseCoarseScan(void)
 {
 	SetContext(PlanetContext);
 
@@ -98,8 +97,7 @@ EraseCoarseScan(void)
 	UnbatchGraphics();
 }
 
-static void
-PrintScanTitleText(TEXT* t)
+static void PrintScanTitleText(TEXT* t)
 {
 	SetContextForeGroundColor(uqm::usesAltScanColors(uqm::UQMOptions::read().whichCoarseScan) ? ScanPcTitleColor6014 : ScanPcTitleColor);
 
@@ -115,8 +113,7 @@ PrintScanTitleText(TEXT* t)
 	SetContextForeGroundColor(ScanInfoColor);
 }
 
-static void
-PrintScanTitlePC(TEXT* t, char* buf, int16_t xpos)
+static void PrintScanTitlePC(TEXT* t, char* buf, int16_t xpos)
 {
 	GFXRECT r;
 
@@ -131,8 +128,7 @@ PrintScanTitlePC(TEXT* t, char* buf, int16_t xpos)
 	t->baseline.x += r.extent.width;
 }
 
-static void
-PrintScanText(TEXT* t)
+static void PrintScanText(TEXT* t)
 {
 	if (!uqm::usesPictograms(uqm::UQMOptions::read().whichCoarseScan))
 	{
@@ -150,8 +146,7 @@ PrintScanText(TEXT* t)
 	}
 }
 
-static void
-MakeScanValue(uqstl::span<char> buf, long val, const char* extra)
+static void MakeScanValue(uqstl::span<char> buf, long val, const char* extra)
 {
 	if (val >= 10 * 100)
 	{ // 1 decimal place
@@ -165,8 +160,7 @@ MakeScanValue(uqstl::span<char> buf, long val, const char* extra)
 	}
 }
 
-static void
-MakeDayValue(uqstl::span<char> buf, long val, const char* extra)
+static void MakeDayValue(uqstl::span<char> buf, long val, const char* extra)
 {
 	if (pSolarSysState->SysInfo.PlanetInfo.RotationPeriod < 240 * 10)
 	{
@@ -180,8 +174,7 @@ MakeDayValue(uqstl::span<char> buf, long val, const char* extra)
 	}
 }
 
-static int16_t
-GetRotationalPeriod(void)
+static int16_t GetRotationalPeriod(void)
 {
 	if (pSolarSysState->SysInfo.PlanetInfo.RotationPeriod < 240 * 10)
 	{
@@ -231,8 +224,7 @@ void GetPlanetTitle(uqstl::span<char> buf)
 	}
 }
 
-static void
-HazardCase(uint8_t hazard)
+static void HazardCase(uint8_t hazard)
 {
 	const auto PickHazardColor = [](bool a, bool b) {
 		return a ? DullYellowColor : (b ? BrightRedColor : ScanInfoColor);
@@ -268,8 +260,7 @@ HazardCase(uint8_t hazard)
 
 static auto ScanTitleY() { return ResScale(13); }
 
-static void
-PrintCoarseScanPC(void)
+static void PrintCoarseScanPC(void)
 {
 	int32_t val {};
 	TEXT t;
@@ -463,8 +454,7 @@ PrintCoarseScanPC(void)
 	UnbatchGraphics();
 }
 
-static void
-PrintCoarseScan3DO(void)
+static void PrintCoarseScan3DO(void)
 {
 	const auto ScanLeading = [&] {
 		return ResScale(19);
@@ -628,16 +618,14 @@ PrintCoarseScan3DO(void)
 	UnbatchGraphics();
 }
 
-static void
-initPlanetLocationImage(void)
+static void initPlanetLocationImage(void)
 {
 	// Get the cursor image
 	FRAME cursorFrame {SetAbsFrameIndex(MiscDataFrame, FlashIndex)};
 	cursorRect.extent = GetFrameBounds(cursorFrame);
 }
 
-static void
-savePlanetLocationImage(void)
+static void savePlanetLocationImage(void)
 {
 	GFXRECT r;
 	FRAME cursorFrame = SetAbsFrameIndex(MiscDataFrame, FlashIndex);
@@ -652,8 +640,7 @@ savePlanetLocationImage(void)
 	SetFrameHot(eraseFrame, hs);
 }
 
-static void
-restorePlanetLocationImage(void)
+static void restorePlanetLocationImage(void)
 {
 	STAMP s;
 
@@ -662,8 +649,7 @@ restorePlanetLocationImage(void)
 	DrawStamp(&s);
 }
 
-static void
-drawPlanetCursor(bool filled)
+static void drawPlanetCursor(bool filled)
 {
 	STAMP s;
 
@@ -679,16 +665,14 @@ drawPlanetCursor(bool filled)
 	}
 }
 
-static void
-setPlanetCursorLoc(GFXPOINT new_pt)
+static void setPlanetCursorLoc(GFXPOINT new_pt)
 {
 	new_pt.x >>= MagShift;
 	new_pt.y >>= MagShift;
 	cursorRect.corner = new_pt;
 }
 
-static void
-setPlanetLoc(GFXPOINT new_pt, bool restoreOld)
+static void setPlanetLoc(GFXPOINT new_pt, bool restoreOld)
 {
 	planetLoc = new_pt;
 
@@ -703,8 +687,7 @@ setPlanetLoc(GFXPOINT new_pt, bool restoreOld)
 
 static constexpr auto FlashFrameDelay {(c_gameSecond / 16)};
 
-static void
-flashPlanetLocation(void)
+static void flashPlanetLocation(void)
 {
 	static uint8_t c = 0x00;
 	static int val = -2;
@@ -771,8 +754,7 @@ void RedrawSurfaceScan(const GFXPOINT* newLoc)
 	SetContext(OldContext);
 }
 
-static uint16_t
-getLandingFuelNeeded(void)
+static uint16_t getLandingFuelNeeded(void)
 {
 	uint16_t fuel {};
 
@@ -785,8 +767,7 @@ getLandingFuelNeeded(void)
 	return fuel;
 }
 
-static void
-spawnFwiffo(void)
+static void spawnFwiffo(void)
 {
 	HSHIPFRAG hStarShip {};
 
@@ -810,8 +791,7 @@ spawnFwiffo(void)
 }
 
 // Returns true if the parent menu should remain
-static bool
-DispatchLander(void)
+static bool DispatchLander(void)
 {
 	const int16_t landingFuel = getLandingFuelNeeded();
 
@@ -873,8 +853,7 @@ typedef struct
 	// true when player selected a location
 } PICK_PLANET_STATE;
 
-static bool
-DoPickPlanetSide(MENU_STATE* pMS)
+static bool DoPickPlanetSide(MENU_STATE* pMS)
 {
 	PICK_PLANET_STATE* pickState = (PICK_PLANET_STATE*)pMS->privData;
 	const TimeCount TimeIn {GetTimeCounter()};
@@ -984,8 +963,7 @@ DoPickPlanetSide(MENU_STATE* pMS)
 	return true;
 }
 
-static void
-drawLandingFuelUsage(uint16_t fuel)
+static void drawLandingFuelUsage(uint16_t fuel)
 {
 	/* We need this so we can save the StatusMessageMode
 	 * and fix it when we're done.
@@ -1015,14 +993,12 @@ drawLandingFuelUsage(uint16_t fuel)
 	}
 }
 
-static void
-eraseLandingFuelUsage(void)
+static void eraseLandingFuelUsage(void)
 {
 	DrawStatusMessage(nullptr);
 }
 
-static bool
-PickPlanetSide(void)
+static bool PickPlanetSide(void)
 {
 	MENU_STATE MenuState;
 	PICK_PLANET_STATE PickState;
@@ -1077,8 +1053,7 @@ PickPlanetSide(void)
 
 static constexpr auto NumFlashColors {8};
 
-static void
-DrawScannedStuff(uint16_t y, uint16_t scan)
+static void DrawScannedStuff(uint16_t y, uint16_t scan)
 {
 	HELEMENT hNextElement {};
 	Color OldColor;
@@ -1158,8 +1133,7 @@ DrawScannedStuff(uint16_t y, uint16_t scan)
 	SetContextForeGroundColor(OldColor);
 }
 
-static void
-DrawPCScannedStuff(uint16_t scan)
+static void DrawPCScannedStuff(uint16_t scan)
 {
 	HELEMENT hNextElement {};
 	TimePeriod interval;
@@ -1255,10 +1229,9 @@ DrawPCScannedStuff(uint16_t scan)
 	}
 }
 
-uint16_t
-callGenerateForScanType(const SOLARSYS_STATE* solarSys,
-						const PLANET_DESC* world, uint16_t node, uint8_t scanType,
-						NODE_INFO* info)
+uint16_t callGenerateForScanType(const SOLARSYS_STATE* solarSys,
+								 const PLANET_DESC* world, uint16_t node, uint8_t scanType,
+								 NODE_INFO* info)
 {
 	switch (scanType)
 	{
@@ -1297,8 +1270,7 @@ bool callPickupForScanType(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-static void
-ScanPlanet(uint16_t scanType)
+static void ScanPlanet(uint16_t scanType)
 {
 	const auto ScanDuration = [&] {
 		return ((GameTicksPerSecond * 7 / 4 + chooseIfHd(UINT8_MAX, 0ui8)));
@@ -1488,8 +1460,7 @@ ScanPlanet(uint16_t scanType)
 	FlushInput();
 }
 
-static bool
-DoScan(MENU_STATE* pMS)
+static bool DoScan(MENU_STATE* pMS)
 {
 	bool select {};
 	bool cancel {};
@@ -1562,8 +1533,7 @@ DoScan(MENU_STATE* pMS)
 	return true;
 }
 
-static GFXCONTEXT
-CreateScanContext(bool inSpace)
+static GFXCONTEXT CreateScanContext(bool inSpace)
 {
 	GFXRECT r;
 	int16_t x_offset {};
@@ -1594,8 +1564,7 @@ CreateScanContext(bool inSpace)
 	return context;
 }
 
-GFXCONTEXT
-GetScanContext(bool* owner)
+GFXCONTEXT GetScanContext(bool* owner)
 {
 	// TODO: Make GFXCONTEXT ref-counted
 	if (ScanContext)
@@ -1690,9 +1659,8 @@ void ScanSystem(void)
 	eraseFrame = nullptr;
 }
 
-static void
-generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
-				uint8_t* life_init_tab, uint16_t creatureType)
+static void generateBioNode(SOLARSYS_STATE* system, ELEMENT* NodeElementPtr,
+							uint8_t* life_init_tab, uint16_t creatureType)
 {
 	uint16_t i {};
 	uint32_t j {};
@@ -1866,8 +1834,7 @@ bool isNodeRetrieved(PLANET_INFO* planetInfo, uint8_t scanType, uint8_t nodeNr)
 		!= 0;
 }
 
-uint16_t
-countNodesRetrieved(PLANET_INFO* planetInfo, uint8_t scanType)
+uint16_t countNodesRetrieved(PLANET_INFO* planetInfo, uint8_t scanType)
 {
 	uint16_t count {};
 	uint32_t mask = planetInfo->ScanRetrieveMask[scanType];

@@ -102,8 +102,7 @@ void ProcessSound(SOUND Sound, ELEMENT* PositionalObject)
 	}
 }
 
-SoundPosition
-CalcSoundPosition(ELEMENT* ElementPtr)
+SoundPosition CalcSoundPosition(ELEMENT* ElementPtr)
 {
 	SoundPosition pos;
 
@@ -136,8 +135,7 @@ CalcSoundPosition(ELEMENT* ElementPtr)
 	return pos;
 }
 
-SoundPosition
-NotPositional(void)
+SoundPosition NotPositional(void)
 {
 	return CalcSoundPosition(nullptr);
 }

@@ -134,8 +134,7 @@ static RACE_DESC melnorme_desc =
 		0, /* CodeRef */
 };
 
-static void
-pump_up_preprocess(ELEMENT* ElementPtr)
+static void pump_up_preprocess(ELEMENT* ElementPtr)
 {
 	if (--ElementPtr->thrust_wait & 1)
 	{
@@ -163,8 +162,7 @@ pump_up_preprocess(ELEMENT* ElementPtr)
 
 static uint16_t initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[]);
 
-static void
-pump_up_postprocess(ELEMENT* ElementPtr)
+static void pump_up_postprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->state_flags & Appearing)
 	{
@@ -266,8 +264,7 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-animate(ELEMENT* ElementPtr)
+static void animate(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -283,9 +280,8 @@ animate(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-pump_up_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void pump_up_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	GFXRECT r;
 
@@ -319,8 +315,7 @@ pump_up_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static uint16_t
-initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
+static uint16_t initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -365,8 +360,7 @@ initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 	return (1);
 }
 
-static void
-confuse_preprocess_april(ELEMENT* ElementPtr)
+static void confuse_preprocess_april(ELEMENT* ElementPtr)
 {
 	const static Color colorTable[] =
 		{
@@ -462,8 +456,7 @@ confuse_preprocess_april(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-confuse_preprocess(ELEMENT* ElementPtr)
+static void confuse_preprocess(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & Nonsolid))
 	{
@@ -528,9 +521,8 @@ confuse_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-					ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+								ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	if (ElementPtr1->state_flags & PlayerShip)
 	{
@@ -606,8 +598,7 @@ confusion_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static uint16_t
-initialize_confusion(ELEMENT* ShipPtr, HELEMENT ConfusionArray[])
+static uint16_t initialize_confusion(ELEMENT* ShipPtr, HELEMENT ConfusionArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK ConfusionBlock;
@@ -641,8 +632,7 @@ initialize_confusion(ELEMENT* ShipPtr, HELEMENT ConfusionArray[])
 	return (1);
 }
 
-static uint16_t
-initialize_test_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
+static uint16_t initialize_test_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -668,9 +658,8 @@ initialize_test_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 	return (1);
 }
 
-static void
-melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					  uint16_t ConcernCounter)
+static void melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								  uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -746,8 +735,7 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	StarShipPtr->RaceDescPtr->init_weapon_func = initialize_pump_up;
 }
 
-static void
-melnorme_postprocess(ELEMENT* ElementPtr)
+static void melnorme_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -776,8 +764,7 @@ melnorme_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_melnorme(void)
+RACE_DESC* init_melnorme(void)
 {
 	if (IsHd())
 	{

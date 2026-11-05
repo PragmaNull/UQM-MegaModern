@@ -432,8 +432,7 @@ void prepareScrShotDir(void)
 	}
 }
 
-static void
-mountContentDir(const char* contentPath)
+static void mountContentDir(const char* contentPath)
 {
 	uqm::io::Result<uqm::io::Mount> contentMount {s_gameFiles->fileSystem.mountDirectory("/", contentPath, uqm::io::Access::ReadOnly, uqm::io::MountPosition::Top, nullptr)};
 	if (!contentMount)
@@ -523,8 +522,7 @@ bool isAddonAvailable(uqgsl::czstring addon_name)
 	return uqstl::ranges::contains(g_addonList, crc32b(addon_name));
 }
 
-static void
-mountArchive(const uqm::io::Directory& dir, const uqstl::string& name, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
+static void mountArchive(const uqm::io::Directory& dir, const uqstl::string& name, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
 	if (uqm::io::Result<uqm::io::Mount> mount {s_gameFiles->fileSystem.mountArchive(mountPoint, dir, name, position, &relative)})
 	{
@@ -536,8 +534,7 @@ mountArchive(const uqm::io::Directory& dir, const uqstl::string& name, const cha
 	}
 }
 
-static void
-mountDirZips(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
+static void mountDirZips(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
 	for (const uqstl::string& name : dir.list("", packageMatcher()).value_or(uqstl::vector<uqstl::string> {}))
 	{
@@ -545,8 +542,7 @@ mountDirZips(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::Mou
 	}
 }
 
-static void
-mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
+static void mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
 	if (!dir.exists(BaseContentName))
 	{

@@ -69,8 +69,7 @@ const GenerateFunctions generateSpathiFunctions = {
 };
 
 
-static bool
-GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
@@ -137,9 +136,8 @@ GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateSpathi_generateMoons(SOLARSYS_STATE* solarSys,
-							 PLANET_DESC* planet)
+static bool GenerateSpathi_generateMoons(SOLARSYS_STATE* solarSys,
+										 PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -170,9 +168,8 @@ GenerateSpathi_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateSpathi_generateName(const SOLARSYS_STATE* solarSys,
-							const PLANET_DESC* world)
+static bool GenerateSpathi_generateName(const SOLARSYS_STATE* solarSys,
+										const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
@@ -193,9 +190,8 @@ GenerateSpathi_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
-							   PLANET_DESC* world)
+static bool GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
+										   PLANET_DESC* world)
 {
 	uint32_t rand_val {};
 
@@ -348,9 +344,8 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t
-GenerateSpathi_generateEnergy(const SOLARSYS_STATE* solarSys,
-							  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSpathi_generateEnergy(const SOLARSYS_STATE* solarSys,
+											  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == SPATHI_DEFINED)
 	{
@@ -395,9 +390,8 @@ GenerateSpathi_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateSpathi_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-							uint16_t whichNode)
+static bool GenerateSpathi_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+										uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == SPATHI_DEFINED)
 	{
@@ -440,9 +434,8 @@ GenerateSpathi_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 
 static constexpr auto NumEvilOnes {32};
 
-static uint16_t
-GenerateSpathi_generateLife(const SOLARSYS_STATE* solarSys,
-							const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSpathi_generateLife(const SOLARSYS_STATE* solarSys,
+											const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == SPATHI_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -454,9 +447,8 @@ GenerateSpathi_generateLife(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateSpathi_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						  uint16_t whichNode)
+static bool GenerateSpathi_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									  uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == SPATHI_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))

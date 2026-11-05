@@ -33,16 +33,14 @@
 // XXX: we should not include anything from uqm/ inside libs/
 #include "uqm/coderes.h"
 
-static RESOURCE_INDEX
-allocResourceIndex(void)
+static RESOURCE_INDEX allocResourceIndex(void)
 {
 	auto* ndx {new RESOURCE_INDEX_DESC {}};
 	ndx->map = new uqstl::unordered_map<uqstl::string, ResourceDesc*>();
 	return ndx;
 }
 
-static void
-freeResourceIndex(RESOURCE_INDEX h)
+static void freeResourceIndex(RESOURCE_INDEX h)
 {
 	if (h != nullptr)
 	{
@@ -61,8 +59,7 @@ freeResourceIndex(RESOURCE_INDEX h)
 	}
 }
 
-static ResourceDesc*
-newResourceDesc(const char* res_id, uqstl::string_view type, ResourceArg arg)
+static ResourceDesc* newResourceDesc(const char* res_id, uqstl::string_view type, ResourceArg arg)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
 	const ResourceDesc* handlerdesc {lookupResourceDesc(idx, fmt::format("sys.{}", type).c_str())};
@@ -96,8 +93,7 @@ newResourceDesc(const char* res_id, uqstl::string_view type, ResourceArg arg)
 	return result;
 }
 
-static void
-process_resource_desc(const char* key, uqstl::string_view type, ResourceArg arg)
+static void process_resource_desc(const char* key, uqstl::string_view type, ResourceArg arg)
 {
 	auto* map = _get_current_index_header()->map;
 	ResourceDesc* newDesc = newResourceDesc(key, type, uqstl::move(arg));
@@ -112,27 +108,23 @@ process_resource_desc(const char* key, uqstl::string_view type, ResourceArg arg)
 	}
 }
 
-static void
-UseDescriptorAsRes(const ResourceArg& arg, RESOURCE_DATA* resdata)
+static void UseDescriptorAsRes(const ResourceArg& arg, RESOURCE_DATA* resdata)
 {
 	resdata->str = resourceString(arg);
 }
 
-static void
-UseTextAsRes(const char* text, RESOURCE_DATA* resdata)
+static void UseTextAsRes(const char* text, RESOURCE_DATA* resdata)
 {
 	resdata->str = text;
 }
 
-static void
-DescriptorToInt(const ResourceArg& arg, RESOURCE_DATA* resdata)
+static void DescriptorToInt(const ResourceArg& arg, RESOURCE_DATA* resdata)
 {
 	const int64_t* const value {uqstl::get_if<int64_t>(&arg)};
 	resdata->num = value != nullptr ? static_cast<uint32_t>(*value) : 0;
 }
 
-static void
-DescriptorToFloat(const ResourceArg& arg, RESOURCE_DATA* resdata)
+static void DescriptorToFloat(const ResourceArg& arg, RESOURCE_DATA* resdata)
 {
 	if (const double* const value {uqstl::get_if<double>(&arg)})
 	{
@@ -148,8 +140,7 @@ DescriptorToFloat(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	}
 }
 
-static void
-DescriptorToBoolean(const ResourceArg& arg, RESOURCE_DATA* resdata)
+static void DescriptorToBoolean(const ResourceArg& arg, RESOURCE_DATA* resdata)
 {
 	const bool* const value {uqstl::get_if<bool>(&arg)};
 	resdata->num = value != nullptr && *value;
@@ -162,8 +153,7 @@ void _set_current_index_header(RESOURCE_INDEX newResourceIndex)
 	curResourceIndex = newResourceIndex;
 }
 
-RESOURCE_INDEX
-InitResourceSystem(void)
+RESOURCE_INDEX InitResourceSystem(void)
 {
 	if (curResourceIndex)
 	{
@@ -187,8 +177,7 @@ InitResourceSystem(void)
 	return ndx;
 }
 
-RESOURCE_INDEX
-_get_current_index_header(void)
+RESOURCE_INDEX _get_current_index_header(void)
 {
 	if (!curResourceIndex)
 	{
@@ -249,9 +238,8 @@ void UninitResourceSystem(void)
 	_set_current_index_header(nullptr);
 }
 
-static bool
-installResourceHandlers(const char* resType, ResourceLoadFun* loadFun, ResourceTextLoadFun* textLoadFun,
-						ResourceFreeFun* freeFun)
+static bool installResourceHandlers(const char* resType, ResourceLoadFun* loadFun, ResourceTextLoadFun* textLoadFun,
+									ResourceFreeFun* freeFun)
 {
 	auto* const handlers {new ResourceHandlers {}};
 	handlers->loadFun = loadFun;
@@ -285,8 +273,7 @@ bool res_IsString(const char* key)
 	return (bool)(desc && !strcmp(desc->vtable->resType, "STRING"));
 }
 
-const char*
-res_GetString(const char* key)
+const char* res_GetString(const char* key)
 {
 	RESOURCE_INDEX idx = _get_current_index_header();
 	const ResourceDesc* desc = lookupResourceDesc(idx, key);

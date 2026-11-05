@@ -51,8 +51,7 @@ static void DrawFileStrings(MELEE_STATE* pMS);
 static bool FillFileView(MELEE_STATE* pMS);
 
 
-static bool
-LoadTeamImage(const char* fileName, MeleeTeam* team)
+static bool LoadTeamImage(const char* fileName, MeleeTeam* team)
 {
 
 	uqm::io::Result<uqm::io::File> stream {uqm::meleeDir().open(fileName, uqm::io::OpenMode::Read)};
@@ -64,8 +63,7 @@ LoadTeamImage(const char* fileName, MeleeTeam* team)
 }
 
 #if 0 /* Not used */
-static void
-UnindexFleet (MELEE_STATE *pMS, uint16_t index)
+static void UnindexFleet (MELEE_STATE *pMS, uint16_t index)
 {
 	assert (index < pMS->load.numIndices);
 	pMS->load.numIndices--;
@@ -75,8 +73,7 @@ UnindexFleet (MELEE_STATE *pMS, uint16_t index)
 }
 #endif
 
-static void
-UnindexFleets(MELEE_STATE* pMS, uint16_t index, uint16_t count)
+static void UnindexFleets(MELEE_STATE* pMS, uint16_t index, uint16_t count)
 {
 	assert(index + count <= pMS->load.numIndices);
 
@@ -86,8 +83,7 @@ UnindexFleets(MELEE_STATE* pMS, uint16_t index, uint16_t count)
 			(pMS->load.numIndices - index) * sizeof pMS->load.entryIndices[0]);
 }
 
-static bool
-GetFleetByIndex(MELEE_STATE* pMS, uint16_t index, MeleeTeam* result)
+static bool GetFleetByIndex(MELEE_STATE* pMS, uint16_t index, MeleeTeam* result)
 {
 	if (index < pMS->load.preBuiltCount)
 	{
@@ -122,8 +118,7 @@ GetFleetByIndex(MELEE_STATE* pMS, uint16_t index, MeleeTeam* result)
 }
 
 // returns (uint16_t) -1 if not found
-static uint16_t
-GetFleetIndexByFileName(MELEE_STATE* pMS, const char* fileName)
+static uint16_t GetFleetIndexByFileName(MELEE_STATE* pMS, const char* fileName)
 {
 	for (uint16_t index {0}; index < pMS->load.numIndices; index++)
 	{
@@ -142,9 +137,8 @@ GetFleetIndexByFileName(MELEE_STATE* pMS, const char* fileName)
 // If drawShips is set the ships themselves are drawn, in addition to the
 // fleet name and value; if not, only the fleet name and value are drawn.
 // If highlite is set the text is drawn in the color used for highlighting.
-static void
-DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
-			   bool drawShips, bool highlite)
+static void DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
+						   bool drawShips, bool highlite)
 {
 	if (IsHd())
 	{ // Draw the background of the text
@@ -218,8 +212,7 @@ DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
 // returns true if there are any entries in the view, in which case
 // pMS->load.bot gets set to the index just past the bottom entry in the view.
 // returns false if not, in which case, the entire view remains unchanged.
-static bool
-FillFileView(MELEE_STATE* pMS)
+static bool FillFileView(MELEE_STATE* pMS)
 {
 	uint16_t viewI {};
 
@@ -246,8 +239,7 @@ static auto FileStringOriginX() { return ResScale(5 + DosNum(2)); }
 static auto FileStringOriginY() { return ResScale(32 - DosNum(1)); }
 static auto EntryHeight() { return ResScale(32); }
 
-static void
-SelectFileString(MELEE_STATE* pMS, bool hilite)
+static void SelectFileString(MELEE_STATE* pMS, bool hilite)
 {
 	GFXPOINT origin;
 	uint16_t viewI {};
@@ -266,8 +258,7 @@ SelectFileString(MELEE_STATE* pMS, bool hilite)
 	SetContext(OldContext);
 }
 
-static void
-DrawFileStrings(MELEE_STATE* pMS)
+static void DrawFileStrings(MELEE_STATE* pMS)
 {
 	GFXPOINT origin;
 
@@ -294,8 +285,7 @@ DrawFileStrings(MELEE_STATE* pMS)
 	SetContext(OldContext);
 }
 
-static void
-RefocusView(MELEE_STATE* pMS, uint16_t index)
+static void RefocusView(MELEE_STATE* pMS, uint16_t index)
 {
 	assert(index < pMS->load.preBuiltCount + pMS->load.numIndices);
 
@@ -312,8 +302,7 @@ RefocusView(MELEE_STATE* pMS, uint16_t index)
 
 static constexpr auto FlashRate {(c_gameSecond / 9)};
 
-static void
-flashSelectedTeam(MELEE_STATE* pMS)
+static void flashSelectedTeam(MELEE_STATE* pMS)
 {
 	static TimeCount NextTime {};
 	static int hilite = 0;
@@ -455,8 +444,7 @@ bool DoLoadTeam(MELEE_STATE* pMS)
 	return true;
 }
 
-static void
-SelectTeamByFileName(MELEE_STATE* pMS, const char* fileName)
+static void SelectTeamByFileName(MELEE_STATE* pMS, const char* fileName)
 {
 	const uint16_t index = GetFleetIndexByFileName(pMS, fileName);
 	if (index == (uint16_t)-1)
@@ -528,8 +516,7 @@ bool DoSaveTeam(MELEE_STATE* pMS)
 
 static constexpr auto PrebuiltCount {15};
 
-static void
-InitPreBuilt(MELEE_STATE* pMS)
+static void InitPreBuilt(MELEE_STATE* pMS)
 {
 	MeleeTeam* const* list {};
 
@@ -793,8 +780,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	assert(list == pMS->load.preBuiltList.data() + pMS->load.preBuiltCount);
 }
 
-static void
-UninitPreBuilt(MELEE_STATE* pMS)
+static void UninitPreBuilt(MELEE_STATE* pMS)
 {
 	for (size_t fleetI {0}; fleetI < pMS->load.preBuiltCount; fleetI++)
 	{
@@ -804,8 +790,7 @@ UninitPreBuilt(MELEE_STATE* pMS)
 	pMS->load.preBuiltCount = 0;
 }
 
-static void
-InitLoadView(MELEE_STATE* pMS)
+static void InitLoadView(MELEE_STATE* pMS)
 {
 	MeleeTeam** view = pMS->load.view;
 
@@ -815,8 +800,7 @@ InitLoadView(MELEE_STATE* pMS)
 	}
 }
 
-static void
-UninitLoadView(MELEE_STATE* pMS)
+static void UninitLoadView(MELEE_STATE* pMS)
 {
 	MeleeTeam* const* view = pMS->load.view;
 

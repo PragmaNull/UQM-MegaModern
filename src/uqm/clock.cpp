@@ -36,14 +36,12 @@
 static uqm::RecursiveMutex clock_mutex {};
 static bool s_clockInited {};
 
-static uqm::GameClock&
-gameClock(void)
+static uqm::GameClock& gameClock(void)
 {
 	return uqm::gameState().clock();
 }
 
-static void
-nextClockDay(void)
+static void nextClockDay(void)
 {
 	gameClock().nextDay();
 
@@ -57,8 +55,7 @@ float daysElapsed(void)
 	return gameClock().daysElapsed();
 }
 
-static void
-processClockDayEvents(void)
+static void processClockDayEvents(void)
 {
 	uint8_t funcIndex {};
 	while (gameClock().takeDueEvent(funcIndex))
@@ -132,8 +129,7 @@ bool ValidateEvent(EVENT_TYPE type, uint16_t* pmonth_index, uint16_t* pday_index
 	return gameClock().resolveDate(type, *pmonth_index, *pday_index, *pyear_index);
 }
 
-HEVENT
-AddEvent(EVENT_TYPE type, uint16_t month_index, uint16_t day_index, uint16_t year_index, uint8_t func_index)
+HEVENT AddEvent(EVENT_TYPE type, uint16_t month_index, uint16_t day_index, uint16_t year_index, uint8_t func_index)
 {
 	if (type == RELATIVE_EVENT
 		&& month_index == 0

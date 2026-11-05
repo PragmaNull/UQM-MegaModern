@@ -251,8 +251,7 @@ static FILTER_DESC syreen_filters =
 								  }
 };
 
-static void
-FriendlyExit(RESPONSE_REF R)
+static void FriendlyExit(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
@@ -335,8 +334,7 @@ FriendlyExit(RESPONSE_REF R)
 	}
 }
 
-static void
-Sex(RESPONSE_REF R)
+static void Sex(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, in_the_spirit))
 	{
@@ -403,8 +401,7 @@ Sex(RESPONSE_REF R)
 	}
 }
 
-static void
-Foreplay(RESPONSE_REF R)
+static void Foreplay(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, whats_my_reward)
 		|| PlayerSaid(R, what_about_us))
@@ -480,8 +477,7 @@ Foreplay(RESPONSE_REF R)
 	Response(hands_off, FriendlyExit);
 }
 
-static void
-AfterAmbush(RESPONSE_REF R)
+static void AfterAmbush(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, what_now_after_ambush))
 	{
@@ -540,8 +536,7 @@ AfterAmbush(RESPONSE_REF R)
 	Response(bye_after_ambush, FriendlyExit);
 }
 
-static void
-AmbushReady(RESPONSE_REF R)
+static void AmbushReady(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, repeat_plan))
 	{
@@ -557,8 +552,7 @@ AmbushReady(RESPONSE_REF R)
 	Response(bye_before_ambush, FriendlyExit);
 }
 
-static void
-SyreenShuttle(RESPONSE_REF R)
+static void SyreenShuttle(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, whats_next_step))
 	{
@@ -637,8 +631,7 @@ SyreenShuttle(RESPONSE_REF R)
 	}
 }
 
-static void
-NormalSyreen(RESPONSE_REF R)
+static void NormalSyreen(RESPONSE_REF R)
 {
 	uint8_t i {};
 	RESPONSE_REF pStr[4];
@@ -838,8 +831,7 @@ NormalSyreen(RESPONSE_REF R)
 	Response(bye, FriendlyExit);
 }
 
-static void
-InitialSyreen(RESPONSE_REF R)
+static void InitialSyreen(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, we_are_vice_squad))
 	{
@@ -888,8 +880,7 @@ InitialSyreen(RESPONSE_REF R)
 	}
 }
 
-static void
-PlanAmbush(RESPONSE_REF R)
+static void PlanAmbush(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase(OK_FOUND_VAULT);
@@ -924,8 +915,7 @@ PlanAmbush(RESPONSE_REF R)
 	Response(bye_after_vault, FriendlyExit);
 }
 
-static void
-SyreenVault(RESPONSE_REF R)
+static void SyreenVault(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, vault_hint))
 	{
@@ -941,8 +931,7 @@ SyreenVault(RESPONSE_REF R)
 	Response(bye_before_vault, FriendlyExit);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -1064,22 +1053,19 @@ Intro(void)
 	uqm::gameState().setFlag(uqm::GameFlag::SYREEN_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 }
 
-static uint16_t
-uninit_syreen(void)
+static uint16_t uninit_syreen(void)
 {
 	FlushCustomBaseLine();
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_syreen_enc(void)
+static void post_syreen_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_syreen_comm(void)
+LOCDATA* init_syreen_comm(void)
 {
 	syreen_desc.init_encounter_func = Intro;
 	syreen_desc.post_encounter_func = post_syreen_enc;

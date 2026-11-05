@@ -301,8 +301,7 @@ const static TechData tech_data_table[] =
 const size_t NUM_TECHNOLOGIES = std::size(tech_data_table);
 
 // Lookup function to get the data for a particular tech
-const static TechData*
-GetTechData(TechId_t techId)
+const static TechData* GetTechData(TechId_t techId)
 {
 	size_t i = 0;
 	for (i = 0; i < NUM_TECHNOLOGIES; ++i)
@@ -317,20 +316,17 @@ GetTechData(TechId_t techId)
 
 
 // 'stateId' is a uqm::GameFlag.
-static bool
-HasStateTech(int stateId)
+static bool HasStateTech(int stateId)
 {
 	return uqm::gameState().flag(static_cast<uqm::GameFlag>(stateId)) != 0;
 }
 
-static void
-GrantStateTech(int stateId, uint8_t value)
+static void GrantStateTech(int stateId, uint8_t value)
 {
 	uqm::gameState().setFlag(static_cast<uqm::GameFlag>(stateId), value);
 }
 
-static bool
-HasTech(TechId_t techId)
+static bool HasTech(TechId_t techId)
 {
 	const TechData* techData = GetTechData(techId);
 	if (!techData)
@@ -350,8 +346,7 @@ HasTech(TechId_t techId)
 	return false;
 }
 
-static void
-GrantTech(TechId_t techId)
+static void GrantTech(TechId_t techId)
 {
 	const TechData* techData = GetTechData(techId);
 	if (!techData)
@@ -376,8 +371,7 @@ GrantTech(TechId_t techId)
 	}
 }
 
-static int
-countTech(void)
+static int countTech(void)
 {
 	uint8_t numTech = 0;
 	uint8_t i = 0;
@@ -464,8 +458,7 @@ GetNumLines(const int array[])
 
 // Get the line, with range checking.
 // Returns the last line if the desired one is out of range.
-static int
-GetLineSafe(const int array[], size_t linenum)
+static int GetLineSafe(const int array[], size_t linenum)
 {
 	const size_t array_size = GetNumLines(array);
 	assert(array_size > 0);
@@ -509,8 +502,7 @@ const size_t NUM_TECH_ITEMS = std::size(tech_sale_catalog);
 
 // Return the next tech for sale that the player doesn't already have.
 // Returns nullptr if the player has all the techs.
-static TechSaleData*
-GetNextTechForSale(void)
+static TechSaleData* GetNextTechForSale(void)
 {
 	uint8_t i = 0;
 	uint8_t j = 0;
@@ -591,8 +583,7 @@ static StatMsgMode prevMsgMode;
 
 static void DoFirstMeeting(RESPONSE_REF R);
 
-static uint16_t
-ShipWorth(void)
+static uint16_t ShipWorth(void)
 {
 	uint8_t i {};
 	int8_t crew_pods {};
@@ -635,8 +626,7 @@ static SIS_STATE SIS_copy;
 
 // Extract method to return the response string index
 // for stripping a given module.
-static int
-GetStripModuleRef(int moduleID)
+static int GetStripModuleRef(int moduleID)
 {
 	switch (moduleID)
 	{
@@ -673,8 +663,7 @@ GetStripModuleRef(int moduleID)
 	return 0;
 }
 
-static uint32_t
-getStripRandomSeed(void)
+static uint32_t getStripRandomSeed(void)
 {
 	uint32_t x {};
 	uint32_t y {};
@@ -691,8 +680,7 @@ getStripRandomSeed(void)
 		 + uqm::gameState().sis().ModuleSlots[7] + uqm::gameState().sis().ModuleSlots[10];
 }
 
-static bool
-StripShip(uint16_t fuel_required)
+static bool StripShip(uint16_t fuel_required)
 {
 	uint8_t i {};
 	uint8_t which_module {};
@@ -905,8 +893,7 @@ StripShip(uint16_t fuel_required)
 	return (true);
 }
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, no_trade_now))
 	{
@@ -992,8 +979,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void
-DoRescue(RESPONSE_REF R)
+static void DoRescue(RESPONSE_REF R)
 {
 	int16_t dx {};
 	int16_t dy {};
@@ -1021,16 +1007,14 @@ DoRescue(RESPONSE_REF R)
 }
 
 // Extract method for getting the player's current credits.
-static uint16_t
-GetAvailableCredits(void)
+static uint16_t GetAvailableCredits(void)
 {
 	return uqm::makeWord(uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT0),
 						 uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT1));
 }
 
 // Extract method for setting the player's current credits.
-static void
-SetAvailableCredits(uint16_t credits)
+static void SetAvailableCredits(uint16_t credits)
 {
 	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_CREDIT0, static_cast<uint32_t>(uqm::lowByte(credits)));
 	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_CREDIT1, static_cast<uint32_t>(uqm::highByte(credits)));
@@ -1038,8 +1022,7 @@ SetAvailableCredits(uint16_t credits)
 
 // Now returns whether the purchase succeeded instead of the remaining
 // credit balance.  Use GetAvailableCredits() to get the latter.
-static bool
-DeltaCredit(int16_t delta_credit)
+static bool DeltaCredit(int16_t delta_credit)
 {
 	uint16_t Credit = GetAvailableCredits();
 
@@ -1064,8 +1047,7 @@ DeltaCredit(int16_t delta_credit)
 // Extract methods to process the giving of various bits of information to the
 // player.  Ideally, we'd want to merge these three into a single parameterized
 // function, but the nature of the XXX_GAME_STATE() code makes that tricky.
-static void
-CurrentEvents(void)
+static void CurrentEvents(void)
 {
 	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_EVENTS_INFO_STACK);
 	const int phraseId = GetLineSafe(ok_buy_event_lines, stack);
@@ -1082,8 +1064,7 @@ CurrentEvents(void)
 	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_EVENTS_INFO_STACK, static_cast<uint32_t>(stack + 1));
 }
 
-static void
-AlienRaces(void)
+static void AlienRaces(void)
 {
 	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_ALIEN_INFO_STACK);
 	const int phraseId = GetLineSafe(ok_buy_alien_race_lines, stack);
@@ -1129,8 +1110,7 @@ AlienRaces(void)
 	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ALIEN_INFO_STACK, static_cast<uint32_t>(stack + 1));
 }
 
-static void
-History(void)
+static void History(void)
 {
 	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_HISTORY_INFO_STACK);
 	const int phraseId = GetLineSafe(ok_buy_history_lines, stack);
@@ -1153,8 +1133,7 @@ static uint8_t AskedToBuy;
 
 static constexpr auto InfoCost {75};
 
-static void
-DoBuy(RESPONSE_REF R)
+static void DoBuy(RESPONSE_REF R)
 {
 	int16_t needed_credit {};
 	const uint8_t FuelCost = BioCreditValueDefault / 2;
@@ -1431,8 +1410,7 @@ BuyBuyBuy:
 	}
 }
 
-static void
-DoSell(RESPONSE_REF R)
+static void DoSell(RESPONSE_REF R)
 {
 	uint8_t num_new_rainbows {};
 	uint16_t rainbow_mask {};
@@ -1645,8 +1623,7 @@ DoSell(RESPONSE_REF R)
 }
 
 
-static void
-NatureOfConversation(RESPONSE_REF R)
+static void NatureOfConversation(RESPONSE_REF R)
 {
 	uint8_t num_new_rainbows {};
 	uint16_t rainbow_mask {};
@@ -1768,8 +1745,7 @@ NatureOfConversation(RESPONSE_REF R)
 
 static uint8_t local_stack0, local_stack1;
 
-static void
-DoBluster(RESPONSE_REF R)
+static void DoBluster(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, trade_is_for_the_weak))
 	{
@@ -1838,8 +1814,7 @@ DoBluster(RESPONSE_REF R)
 	Response(youre_on, ExitConversation);
 }
 
-static void
-yack0_respond(void)
+static void yack0_respond(void)
 {
 
 	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK0))
@@ -1853,8 +1828,7 @@ yack0_respond(void)
 	}
 }
 
-static void
-yack1_respond(void)
+static void yack1_respond(void)
 {
 	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK1))
 	{
@@ -1870,8 +1844,7 @@ yack1_respond(void)
 	}
 }
 
-static void
-yack2_respond(void)
+static void yack2_respond(void)
 {
 	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK2))
 	{
@@ -1890,8 +1863,7 @@ yack2_respond(void)
 	}
 }
 
-static void
-DoFirstMeeting(RESPONSE_REF R)
+static void DoFirstMeeting(RESPONSE_REF R)
 {
 	uint8_t last_stack = 0;
 	using VoidFunc = void (*)(void);
@@ -1989,8 +1961,7 @@ DoFirstMeeting(RESPONSE_REF R)
 	Response(no_trade_now, ExitConversation);
 }
 
-static void
-DoMelnormeMiffed(RESPONSE_REF R)
+static void DoMelnormeMiffed(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -2062,8 +2033,7 @@ DoMelnormeMiffed(RESPONSE_REF R)
 	Response(bye_melnorme_slightly_angry, ExitConversation);
 }
 
-static void
-DoMelnormePissed(RESPONSE_REF R)
+static void DoMelnormePissed(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
@@ -2119,8 +2089,7 @@ DoMelnormePissed(RESPONSE_REF R)
 	Response(bye_melnorme_pissed_off, ExitConversation);
 }
 
-static void
-DoMelnormeHate(RESPONSE_REF R)
+static void DoMelnormeHate(RESPONSE_REF R)
 {
 	uint8_t hate_count {};
 
@@ -2150,8 +2119,7 @@ DoMelnormeHate(RESPONSE_REF R)
 	Response(you_hate_us_so_we_go_away, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	prevMsgMode = SetStatusMessageMode(SMM_CREDITS);
 
@@ -2194,15 +2162,13 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_melnorme(void)
+static uint16_t uninit_melnorme(void)
 {
 	uqm::lua().endComm();
 	return 0;
 }
 
-static void
-post_melnorme_enc(void)
+static void post_melnorme_enc(void)
 {
 	if (prevMsgMode != SMM_UNDEFINED)
 	{
@@ -2211,8 +2177,7 @@ post_melnorme_enc(void)
 	DrawStatusMessage(nullptr);
 }
 
-LOCDATA*
-init_melnorme_comm(void)
+LOCDATA* init_melnorme_comm(void)
 {
 	melnorme_desc.init_encounter_func = Intro;
 	melnorme_desc.post_encounter_func = post_melnorme_enc;

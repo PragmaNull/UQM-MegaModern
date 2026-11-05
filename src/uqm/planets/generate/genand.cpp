@@ -57,8 +57,7 @@ const GenerateFunctions generateAndrosynthFunctions = {
 };
 
 
-static bool
-GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
@@ -106,9 +105,8 @@ GenerateAndrosynth_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
-								   PLANET_DESC* world)
+static bool GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
+											   PLANET_DESC* world)
 {
 	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -175,9 +173,8 @@ GenerateAndrosynth_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateAndrosynth_pickupEnergy(SOLARSYS_STATE* solarSys,
-								PLANET_DESC* world, uint16_t whichNode)
+static bool GenerateAndrosynth_pickupEnergy(SOLARSYS_STATE* solarSys,
+											PLANET_DESC* world, uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
@@ -218,9 +215,8 @@ GenerateAndrosynth_pickupEnergy(SOLARSYS_STATE* solarSys,
 	return false;
 }
 
-static uint16_t
-GenerateAndrosynth_generateEnergy(const SOLARSYS_STATE* solarSys,
-								  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateAndrosynth_generateEnergy(const SOLARSYS_STATE* solarSys,
+												  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == ANDROSYNTH_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{

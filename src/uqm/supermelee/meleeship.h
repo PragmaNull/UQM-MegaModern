@@ -46,8 +46,7 @@ inline MeleeShip operator-=(MeleeShip lhs, int rhs) { return static_cast<MeleeSh
 inline MeleeShip operator++(MeleeShip val) { return static_cast<MeleeShip>(static_cast<int>(val) + 1); }
 inline MeleeShip operator--(MeleeShip val) { return static_cast<MeleeShip>(static_cast<int>(val) - 1); }
 
-static inline bool
-MeleeShip_valid(MeleeShip ship)
+static inline bool MeleeShip_valid(MeleeShip ship)
 {
 	return (ship < NumMeleeShips) || (ship == MELEE_NONE);
 }

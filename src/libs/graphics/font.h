@@ -35,16 +35,14 @@ typedef struct FontPage
 	uqstl::vector<TFB_Char> charDesc;
 } FONT_PAGE;
 
-static inline FONT_PAGE*
-AllocFontPage(int numChars)
+static inline FONT_PAGE* AllocFontPage(int numChars)
 {
 	auto* result {new FONT_PAGE {}};
 	result->charDesc.assign(numChars, TFB_Char {});
 	return result;
 }
 
-static inline void
-FreeFontPage(FONT_PAGE* page)
+static inline void FreeFontPage(FONT_PAGE* page)
 {
 	delete page;
 }

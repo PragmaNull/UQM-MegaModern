@@ -62,8 +62,7 @@ const GenerateFunctions generateUtwigFunctions = {
 };
 
 
-static bool
-GenerateUtwig_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateUtwig_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (CurStarDescPtr()->Index == BOMB_DEFINED
 		&& !uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB))
@@ -84,8 +83,7 @@ GenerateUtwig_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
@@ -166,9 +164,8 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateUtwig_generateName(const SOLARSYS_STATE* solarSys,
-						   const PLANET_DESC* world)
+static bool GenerateUtwig_generateName(const SOLARSYS_STATE* solarSys,
+									   const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
@@ -189,9 +186,8 @@ GenerateUtwig_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
-							  PLANET_DESC* world)
+static bool GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
+										  PLANET_DESC* world)
 {
 	if ((CurStarDescPtr()->Index == UTWIG_DEFINED
 		 && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -306,9 +302,8 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t
-GenerateUtwig_generateEnergy(const SOLARSYS_STATE* solarSys,
-							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateUtwig_generateEnergy(const SOLARSYS_STATE* solarSys,
+											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == UTWIG_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
@@ -333,9 +328,8 @@ GenerateUtwig_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateUtwig_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						   uint16_t whichNode)
+static bool GenerateUtwig_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									   uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == UTWIG_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))

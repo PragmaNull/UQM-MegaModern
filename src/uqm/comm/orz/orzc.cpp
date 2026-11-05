@@ -232,8 +232,7 @@ static FILTER_DESC orz_filters =
 								  }
 };
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
@@ -355,8 +354,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 }
 
-static void
-TaaloWorld(RESPONSE_REF R)
+static void TaaloWorld(RESPONSE_REF R)
 {
 	// We can only get here when ORZ_MANNER != HOSTILE (2)
 	uint8_t Manner {};
@@ -456,8 +454,7 @@ TaaloWorld(RESPONSE_REF R)
 	Response(bye_taalo, ExitConversation);
 }
 
-static void
-OrzAllied(RESPONSE_REF R)
+static void OrzAllied(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
@@ -545,8 +542,7 @@ OrzAllied(RESPONSE_REF R)
 
 static void OrzNeutral(RESPONSE_REF R);
 
-static void
-WhereAndrosyn(RESPONSE_REF R)
+static void WhereAndrosyn(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase(DISEMBLE_ABOUT_ANDROSYN);
@@ -556,8 +552,7 @@ WhereAndrosyn(RESPONSE_REF R)
 	Response(dont_really_care, OrzNeutral);
 }
 
-static void
-OfferAlliance(RESPONSE_REF R)
+static void OfferAlliance(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, seem_like_nice_guys))
 	{
@@ -583,8 +578,7 @@ OfferAlliance(RESPONSE_REF R)
 	Response(yes_alliance, ExitConversation);
 }
 
-static void
-OrzNeutral(RESPONSE_REF R)
+static void OrzNeutral(RESPONSE_REF R)
 {
 	RESPONSE_REF pStr[3];
 
@@ -702,8 +696,7 @@ OrzNeutral(RESPONSE_REF R)
 	Response(bye_neutral, ExitConversation);
 }
 
-static void
-OrzAngry(RESPONSE_REF R)
+static void OrzAngry(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, whats_up_angry))
 	{
@@ -760,8 +753,7 @@ OrzAngry(RESPONSE_REF R)
 	Response(bye_angry, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 	uint8_t Manner {};
@@ -981,15 +973,13 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_orz(void)
+static uint16_t uninit_orz(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_orz_enc(void)
+static void post_orz_enc(void)
 {
 	uint8_t Manner {};
 
@@ -1006,8 +996,7 @@ post_orz_enc(void)
 	}
 }
 
-LOCDATA*
-init_orz_comm(void)
+LOCDATA* init_orz_comm(void)
 {
 	orz_desc.init_encounter_func = Intro;
 	orz_desc.post_encounter_func = post_orz_enc;

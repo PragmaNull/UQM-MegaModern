@@ -100,8 +100,7 @@ static FONT_SIZE_DEF CreditsFont[] =
 };
 
 
-static FRAME
-Credits_MakeTransFrame(int w, int h, Color TransColor)
+static FRAME Credits_MakeTransFrame(int w, int h, Color TransColor)
 {
 	FRAME f {CaptureDrawable(CreateDrawable(WantPixmap, w, h, 1))};
 	SetFrameTransparentColor(f, TransColor);
@@ -114,9 +113,8 @@ Credits_MakeTransFrame(int w, int h, Color TransColor)
 	return f;
 }
 
-static FRAME
-Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
-						Color BackColor, Color ForeColor)
+static FRAME Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
+									 Color BackColor, Color ForeColor)
 {
 	FRAME f {};
 	FRAME OldFrame {};
@@ -250,15 +248,13 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	return f;
 }
 
-static inline int
-frameIndex(int index)
+static inline int frameIndex(int index)
 {
 	// Make sure index is positive before %
 	return (index + MaxCreditFrames) % MaxCreditFrames;
 }
 
-static void
-RenderCreditsScreen(GFXCONTEXT targetContext)
+static void RenderCreditsScreen(GFXCONTEXT targetContext)
 {
 	STAMP s;
 
@@ -290,8 +286,7 @@ RenderCreditsScreen(GFXCONTEXT targetContext)
 	SetContext(oldContext);
 }
 
-static void
-InitCredits(void)
+static void InitCredits(void)
 {
 	GFXRECT ctxRect;
 
@@ -336,15 +331,13 @@ InitCredits(void)
 	CreditsRunning = true;
 }
 
-static void
-freeCreditTextFrame(CreditTextFrame* tf)
+static void freeCreditTextFrame(CreditTextFrame* tf)
 {
 	DestroyDrawable(ReleaseDrawable(tf->frame));
 	tf->frame = nullptr;
 }
 
-static void
-UninitCredits(void)
+static void UninitCredits(void)
 {
 	DestroyContext(DrawContext);
 	DrawContext = nullptr;
@@ -360,8 +353,7 @@ UninitCredits(void)
 	}
 }
 
-static int
-calcDeficitHeight(void)
+static int calcDeficitHeight(void)
 {
 	int maxPos {-curFrameOfs};
 	for (int i {firstFrame}; i != lastFrame; i = frameIndex(i + 1))
@@ -375,8 +367,7 @@ calcDeficitHeight(void)
 	return CreditsExtent.height - maxPos;
 }
 
-static void
-processCreditsFrame(void)
+static void processCreditsFrame(void)
 {
 	static TimeCount NextTime;
 	const TimeCount Now = GetTimeCounter();
@@ -537,8 +528,7 @@ processCreditsFrame(void)
 	}
 }
 
-static bool
-LoadCredits(void)
+static bool LoadCredits(void)
 {
 	const char* const path {res_GetString(CreditsFileRes)};
 	const auto text {uqm::readTextFile(uqm::contentDir(), path)};
@@ -559,8 +549,7 @@ LoadCredits(void)
 	return true;
 }
 
-static void
-FreeCredits(void)
+static void FreeCredits(void)
 {
 	CreditsBlocks.clear();
 
@@ -577,8 +566,7 @@ FreeCredits(void)
 
 static constexpr auto NumOuttakes {15};
 
-static void
-OutTakes(void)
+static void OutTakes(void)
 {
 	const static CONVERSATION outtake_list[NumOuttakes] =
 		{
@@ -629,8 +617,7 @@ typedef struct
 
 } CREDITS_INPUT_STATE;
 
-static bool
-DoCreditsInput(void* pIS)
+static bool DoCreditsInput(void* pIS)
 {
 	CREDITS_INPUT_STATE* pCIS = (CREDITS_INPUT_STATE*)pIS;
 
@@ -701,8 +688,7 @@ DoCreditsInput(void* pIS)
 	return true;
 }
 
-static void
-on_input_frame(void)
+static void on_input_frame(void)
 {
 	processCreditsFrame();
 }

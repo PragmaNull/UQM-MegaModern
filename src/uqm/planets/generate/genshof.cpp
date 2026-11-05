@@ -61,8 +61,7 @@ const GenerateFunctions generateShofixtiFunctions = {
 };
 
 
-static bool
-GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (!uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_RECRUITED)
 		&& (!uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_KIA)
@@ -107,8 +106,7 @@ GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateShofixti_reinitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateShofixti_reinitNpcs(SOLARSYS_STATE* solarSys)
 {
 	GenerateDefault_reinitNpcs(solarSys);
 	check_old_shofixti();
@@ -117,8 +115,7 @@ GenerateShofixti_reinitNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateShofixti_uninitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateShofixti_uninitNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (uqm::gameState().game().BattleGroupRef
 		&& !uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_RECRUITED)
@@ -145,8 +142,7 @@ GenerateShofixti_uninitNpcs(SOLARSYS_STATE* solarSys)
 
 static constexpr auto NumPlanets {6};
 
-static bool
-GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	uint16_t i {};
@@ -228,9 +224,8 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
-							   PLANET_DESC* planet)
+static bool GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
+										   PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
@@ -245,9 +240,8 @@ GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateShofixti_generateName(const SOLARSYS_STATE* solarSys,
-							  const PLANET_DESC* world)
+static bool GenerateShofixti_generateName(const SOLARSYS_STATE* solarSys,
+										  const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
@@ -266,9 +260,8 @@ GenerateShofixti_generateName(const SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
-								 PLANET_DESC* world)
+static bool GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
+											 PLANET_DESC* world)
 {
 	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
@@ -302,8 +295,7 @@ GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static void
-check_old_shofixti(void)
+static void check_old_shofixti(void)
 {
 	if (!uqm::gameState().game().BattleGroupRef)
 	{

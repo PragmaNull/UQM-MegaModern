@@ -44,8 +44,7 @@ const GenerateFunctions generateZoqFotPikScoutFunctions = {
 };
 
 
-static bool
-GenerateZoqFotPikScout_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateZoqFotPikScout_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (!uqm::gameState().flag(uqm::GameFlag::MET_ZOQFOT))
 	{
@@ -65,8 +64,7 @@ GenerateZoqFotPikScout_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateZoqFotPikScout_reinitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateZoqFotPikScout_reinitNpcs(SOLARSYS_STATE* solarSys)
 {
 	GenerateDefault_reinitNpcs(solarSys);
 

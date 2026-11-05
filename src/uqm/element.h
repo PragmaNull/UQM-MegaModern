@@ -171,8 +171,7 @@ struct element
 
 inline constexpr auto NeutralPlayerNum {-1};
 
-static inline bool
-elementsOfSamePlayer(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
+static inline bool elementsOfSamePlayer(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 {
 	return (bool)(ElementPtr0->playerNr == ElementPtr1->playerNr);
 }
