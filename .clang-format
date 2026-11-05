@@ -1,0 +1,151 @@
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: c++20
+
+UseTab: Always
+TabWidth: 4
+IndentWidth: 4
+ContinuationIndentWidth: 4
+ConstructorInitializerIndentWidth: 4
+
+IndentCaseLabels: true
+IndentCaseBlocks: true
+IndentPPDirectives: BeforeHash
+IndentExternBlock: NoIndent
+IndentWrappedFunctionNames: false
+IndentGotoLabels: true
+
+AccessModifierOffset: -4
+
+NamespaceIndentation: None
+CompactNamespaces: false
+FixNamespaceComments: true
+
+BreakBeforeBraces: Allman
+
+
+ColumnLimit: 0
+
+PointerAlignment: Left
+ReferenceAlignment: Left
+DerivePointerAlignment: false
+
+SpaceBeforeParens: ControlStatements
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeCpp11BracedList: true
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: Never
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+SpacesInContainerLiterals: false
+SpacesInSquareBrackets: false
+
+InsertBraces: true
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortLambdasOnASingleLine: Inline
+
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: true
+BinPackParameters: true
+BreakAfterReturnType: Automatic
+BreakBeforeBinaryOperators: None
+BreakBeforeConceptDeclarations: true
+BreakBeforeTernaryOperators: true
+BreakStringLiterals: true
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+
+BreakConstructorInitializers: BeforeComma
+PackConstructorInitializers: CurrentLine
+
+BreakInheritanceList: AfterComma
+
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: Left
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  Consecutive: true
+  AcrossComments: true
+AlignConsecutiveBitFields:
+  Enabled: true
+  AcrossEmptyLines: false
+  Consecutive: true
+  AcrossComments: true
+AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: None
+AlignEscapedNewlines: Left
+AlignOperands: Align
+AlignTrailingComments: true
+
+InsertNewlineAtEOF: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 2
+ReflowComments: true
+SeparateDefinitionBlocks: Leave
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: Always
+Cpp11BracedListStyle: Block
+
+SortIncludes: Never
+SortUsingDeclarations: false
+IncludeBlocks: Preserve
+
+
+PenaltyBreakAssignment: 2
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment: 300
+PenaltyBreakFirstLessLess: 120
+PenaltyBreakOpenParenthesis: 0
+PenaltyBreakString: 1000
+PenaltyBreakTemplateDeclaration: 10
+PenaltyExcessCharacter: 1000000
+PenaltyIndentedWhitespace: 0
+PenaltyReturnTypeOnItsOwnLine: 9999999
+
+
+
+# Macros treated as complete statements (not formatted as function calls)
+StatementMacros:
+  - ENUM_BITWISE_OPS
+
+# Macros treated as attributes on declarations
+AttributeMacros:
+  - UQM_CAPABILITY
+  - UQM_SCOPED_CAPABILITY
+  - UQM_GUARDED_BY
+  - UQM_PT_GUARDED_BY
+  - UQM_REQUIRES
+  - UQM_EXCLUDES
+  - UQM_ACQUIRE
+  - UQM_RELEASE
+  - UQM_TRY_ACQUIRE
+  - UQM_RETURN_CAPABILITY
+  - UQM_NO_THREAD_SAFETY_ANALYSIS
+
+# Macros that behave like foreach loops
+#ForEachMacros:
+
+
+# String-literal macros whose arguments should not be reformatted
+WhitespaceSensitiveMacros:
+  - STRINGIZE
+  - PP_STRINGIZE
+  - TEXT
+  - TEXTVIEW
+  - LOCTEXT
