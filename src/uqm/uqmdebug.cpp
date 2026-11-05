@@ -2191,11 +2191,14 @@ void debugContexts(void)
 	{
 		return;
 	}
+	const auto resetGuard {uqgsl::finally([] {
+		inDebugContexts = false;
+	})};
 
 	contextCount = countVisibleContexts();
 	if (contextCount == 0)
 	{
-		goto out;
+		return;
 	}
 
 	savedScreen = getScreen();
@@ -2253,9 +2256,6 @@ void debugContexts(void)
 	putScreen(savedScreen);
 
 	DestroyDrawable(ReleaseDrawable(savedScreen));
-
-out:
-	inDebugContexts = false;
 }
 
 #endif /* DEBUG */

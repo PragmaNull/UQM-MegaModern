@@ -456,6 +456,9 @@ void TFB_FlushGraphics(void)
 	static int renderFps = 0;
 	const bool showFps {testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS)};
 	const uqstl::chrono::steady_clock::time_point start {uqstl::chrono::steady_clock::now()};
+	const auto notifyDone {uqgsl::finally([] {
+		s_renderingDone.notify_all();
+	})};
 
 	if (DCQ_Size() == 0)
 	{
@@ -491,7 +494,6 @@ void TFB_FlushGraphics(void)
 
 		last_fade = current_fade;
 		last_transition = current_transition;
-		s_renderingDone.notify_all();
 		return;
 	}
 
@@ -790,7 +792,6 @@ void TFB_FlushGraphics(void)
 	{
 		addRenderTime(start);
 	}
-	s_renderingDone.notify_all();
 }
 
 void TFB_PurgeDanglingGraphics(void)
