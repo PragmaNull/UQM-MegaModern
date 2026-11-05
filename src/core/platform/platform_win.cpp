@@ -1,5 +1,6 @@
 #include "platform.h"
 
+#include <cerrno>
 #include <stdlib.h>
 #include "core/stl/system_error.h"
 #include "core/string/StringUtils.h"
@@ -59,6 +60,26 @@ bool setEnvironmentValue(uqgsl::czstring name, uqgsl::czstring value, bool overw
 #endif
 }
 
+
+void FileCloser::operator()(std::FILE* file) const noexcept
+{
+	std::fclose(file);
+}
+
+FilePtr openFile(uqgsl::czstring path, uqgsl::czstring mode)
+{
+#ifdef _MSC_VER
+	std::FILE* file {};
+	if (const errno_t err {fopen_s(&file, path, mode)}; err != 0)
+	{
+		errno = err;
+		return nullptr;
+	}
+	return FilePtr {file};
+#else
+	return FilePtr {std::fopen(path, mode)};
+#endif
+}
 
 uqstl::string strerror(int err)
 {
