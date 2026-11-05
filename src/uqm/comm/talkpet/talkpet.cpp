@@ -333,13 +333,13 @@ MindFuckUrquan(RESPONSE_REF R)
 	{
 		NPCPhrase(DO_THIS);
 
-		DISABLE_PHRASE(what_now);
+		DisablePhrase(what_now);
 	}
 	else if (PlayerSaid(R, im_scared))
 	{
 		NPCPhrase(STUPID_FOP);
 
-		DISABLE_PHRASE(im_scared);
+		DisablePhrase(im_scared);
 	}
 
 	if (PhraseEnabled(what_now))
@@ -404,25 +404,25 @@ PetInfo(RESPONSE_REF R)
 	{
 		NPCPhrase(NO_TALK_ABOUT_SELF);
 
-		DISABLE_PHRASE(what_about_physiology);
+		DisablePhrase(what_about_physiology);
 	}
 	else if (PlayerSaid(R, what_about_your_history))
 	{
 		NPCPhrase(ABOUT_HISTORY);
 
-		DISABLE_PHRASE(what_about_your_history);
+		DisablePhrase(what_about_your_history);
 	}
 	else if (PlayerSaid(R, sentient_milieu))
 	{
 		NPCPhrase(ABOUT_SENTIENT_MILIEU);
 
-		DISABLE_PHRASE(sentient_milieu);
+		DisablePhrase(sentient_milieu);
 	}
 	else if (PlayerSaid(R, what_about_war))
 	{
 		NPCPhrase(ABOUT_WAR);
 
-		DISABLE_PHRASE(what_about_war);
+		DisablePhrase(what_about_war);
 	}
 
 	if (PhraseEnabled(what_about_physiology))
@@ -486,7 +486,7 @@ PetDevice(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_onboard);
+		DisablePhrase(whats_up_onboard);
 	}
 	else if (PlayerSaid(R, any_suggestions))
 	{
@@ -521,7 +521,7 @@ PetDevice(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_SUGGESTIONS, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(any_suggestions);
+		DisablePhrase(any_suggestions);
 	}
 	else if (PlayerSaid(R, enough_info))
 	{
@@ -565,20 +565,20 @@ CompelPlayer(RESPONSE_REF R)
 	{
 		NPCPhrase(JUST_TALKING_PET);
 
-		DISABLE_PHRASE(what_are_you);
+		DisablePhrase(what_are_you);
 	}
 	else if (PlayerSaid(R, what_do_to_umgah))
 	{
 		NPCPhrase(DID_NOTHING);
 
-		DISABLE_PHRASE(what_do_to_umgah);
+		DisablePhrase(what_do_to_umgah);
 		LastStack = 1;
 	}
 	else if (PlayerSaid(R, we_are_vindicator))
 	{
 		NPCPhrase(GOOD_FOR_YOU);
 
-		DISABLE_PHRASE(we_are_vindicator);
+		DisablePhrase(we_are_vindicator);
 		LastStack = 2;
 	}
 	else if (R != 0)
@@ -682,44 +682,44 @@ PetDeal(RESPONSE_REF R)
 	{
 		NPCPhrase(HELP_DEFEAT_URQUAN);
 
-		DISABLE_PHRASE(what_kind_of_deal);
+		DisablePhrase(what_kind_of_deal);
 	}
 	else if (PlayerSaid(R, how_trust))
 	{
 		NPCPhrase(TRUST);
 
-		DISABLE_PHRASE(how_trust);
+		DisablePhrase(how_trust);
 	}
 	else if (PlayerSaid(R, boneless_dweeb))
 	{
 		NPCPhrase(YOUR_BONELESS_DWEEB);
 
-		DISABLE_PHRASE(boneless_dweeb);
+		DisablePhrase(boneless_dweeb);
 	}
 	else if (PlayerSaid(R, what_are_you_really))
 	{
 		NPCPhrase(POOR_DNYARRI);
 
-		DISABLE_PHRASE(what_are_you_really);
+		DisablePhrase(what_are_you_really);
 	}
 	else if (PlayerSaid(R, hard_to_believe))
 	{
 		NPCPhrase(ITS_TRUE);
 
 		uqm::gameState().setFlag(uqm::GameFlag::DNYARRI_LIED, static_cast<uint32_t>(1));
-		DISABLE_PHRASE(hard_to_believe);
+		DisablePhrase(hard_to_believe);
 	}
 	else if (PlayerSaid(R, bullshit))
 	{
 		NPCPhrase(WORTH_A_TRY);
 
-		DISABLE_PHRASE(bullshit);
+		DisablePhrase(bullshit);
 	}
 	else if (PlayerSaid(R, kill_you))
 	{
 		NPCPhrase(PLEASE_DONT);
 
-		DISABLE_PHRASE(kill_you);
+		DisablePhrase(kill_you);
 	}
 
 	if (PhraseEnabled(what_kind_of_deal))
@@ -923,7 +923,7 @@ Intro(void)
 			{ // The how_trust-TRUST exchange only makes sense when the
 				// player visited the Talking Pet before so he tried to
 				// kill the player *and* the player has the Taalo shield.
-				DISABLE_PHRASE(how_trust);
+				DisablePhrase(how_trust);
 			}
 		}
 

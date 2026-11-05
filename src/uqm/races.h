@@ -446,357 +446,201 @@ typedef enum
 	NUM_AVAILABLE_RACES
 } RACE_ID;
 
-#define RACE_COMMUNICATION                                 \
-	ARILOU_CONVERSATION,		   /* ARILOU_SHIP */       \
-		CHMMR_CONVERSATION,		   /* CHMMR_SHIP */        \
-		INVALID_CONVERSATION,	   /* HUMAN_SHIP */        \
-		ORZ_CONVERSATION,		   /* ORZ_SHIP */          \
-		PKUNK_CONVERSATION,		   /* PKUNK_SHIP */        \
-		SHOFIXTI_CONVERSATION,	   /* SHOFIXTI_SHIP */     \
-		SPATHI_CONVERSATION,	   /* SPATHI_SHIP */       \
-		SUPOX_CONVERSATION,		   /* SUPOX_SHIP */        \
-		THRADD_CONVERSATION,	   /* THRADDASH_SHIP */    \
-		UTWIG_CONVERSATION,		   /* UTWIG_SHIP */        \
-		VUX_CONVERSATION,		   /* VUX_SHIP */          \
-		YEHAT_CONVERSATION,		   /* YEHAT_SHIP */        \
-		MELNORME_CONVERSATION,	   /* MELNORME_SHIP */     \
-		DRUUGE_CONVERSATION,	   /* DRUUGE_SHIP */       \
-		ILWRATH_CONVERSATION,	   /* ILWRATH_SHIP */      \
-		MYCON_CONVERSATION,		   /* MYCON_SHIP */        \
-		SLYLANDRO_CONVERSATION,	   /* SLYLANDRO_SHIP */    \
-		UMGAH_CONVERSATION,		   /* UMGAH_SHIP */        \
-		URQUAN_CONVERSATION,	   /* URQUAN_SHIP */       \
-		ZOQFOTPIK_CONVERSATION,	   /* ZOQFOTPIK_SHIP */    \
-		INVALID_CONVERSATION,	   /* SYREEN_SHIP */       \
-		BLACKURQ_CONVERSATION,	   /* BLACK_URQUAN_SHIP */ \
-		INVALID_CONVERSATION,	   /* ANDROSYNTH_SHIP */   \
-		INVALID_CONVERSATION,	   /* CHENJESU_SHIP */     \
-		INVALID_CONVERSATION,	   /* MMRNMHRM_SHIP */     \
-		YEHAT_REBEL_CONVERSATION,  /* YEHAT_REBEL_SHIP */  \
-		URQUAN_DRONE_CONVERSATION, /* URQUAN_DRONE_SHIP */
+inline constexpr Color RaceColors[] {
+	BuildColor(MakeRgb15(0x00, 0x00, 0x10), 0x53), /* ARILOU_SHIP */
+};
 
-#define RACE_SHIP_FOR_COMM                                   \
-	ARILOU_SHIP,		   /* ARILOU_CONVERSATION */         \
-		CHMMR_SHIP,		   /* CHMMR_CONVERSATION */          \
-		HUMAN_SHIP,		   /* COMMANDER_CONVERSATION */      \
-		ORZ_SHIP,		   /* ORZ_CONVERSATION */            \
-		PKUNK_SHIP,		   /* PKUNK_CONVERSATION */          \
-		SHOFIXTI_SHIP,	   /* SHOFIXTI_CONVERSATION */       \
-		SPATHI_SHIP,	   /* SPATHI_CONVERSATION */         \
-		SUPOX_SHIP,		   /* SUPOX_CONVERSATION */          \
-		THRADDASH_SHIP,	   /* THRADD_CONVERSATION */         \
-		UTWIG_SHIP,		   /* UTWIG_CONVERSATION */          \
-		VUX_SHIP,		   /* VUX_CONVERSATION */            \
-		YEHAT_SHIP,		   /* YEHAT_CONVERSATION */          \
-		MELNORME_SHIP,	   /* MELNORME_CONVERSATION */       \
-		DRUUGE_SHIP,	   /* DRUUGE_CONVERSATION */         \
-		ILWRATH_SHIP,	   /* ILWRATH_CONVERSATION */        \
-		MYCON_SHIP,		   /* MYCON_CONVERSATION */          \
-		SLYLANDRO_SHIP,	   /* SLYLANDRO_CONVERSATION */      \
-		UMGAH_SHIP,		   /* UMGAH_CONVERSATION */          \
-		URQUAN_SHIP,	   /* URQUAN_CONVERSATION */         \
-		ZOQFOTPIK_SHIP,	   /* ZOQFOTPIK_CONVERSATION */      \
-		SYREEN_SHIP,	   /* SYREEN_CONVERSATION */         \
-		BLACK_URQUAN_SHIP, /* BLACKURQ_CONVERSATION */       \
-		ANDROSYNTH_SHIP,   /* ANDROSYNTH_CONVERSATION */     \
-		CHENJESU_SHIP,	   /* CHENJESU_CONVERSATION */       \
-		MMRNMHRM_SHIP,	   /* MMRNMHRM_CONVERSATION */       \
-		UMGAH_SHIP,		   /* TALKING_PET_CONVERSATION */    \
-		SLYLANDRO_SHIP,	   /* SLYLANDRO_HOME_CONVERSATION */ \
-		URQUAN_DRONE_SHIP, /* URQUAN_DRONE_CONVERSATION */   \
-		YEHAT_SHIP,		   /* YEHAT_REBEL_CONVERSATION */    \
-		HUMAN_SHIP		   /* INVALID_CONVERSATION */
+inline constexpr uint16_t RaceShipForComm[] {
+	ARILOU_SHIP,	   /* ARILOU_CONVERSATION */
+	CHMMR_SHIP,		   /* CHMMR_CONVERSATION */
+	HUMAN_SHIP,		   /* COMMANDER_CONVERSATION */
+	ORZ_SHIP,		   /* ORZ_CONVERSATION */
+	PKUNK_SHIP,		   /* PKUNK_CONVERSATION */
+	SHOFIXTI_SHIP,	   /* SHOFIXTI_CONVERSATION */
+	SPATHI_SHIP,	   /* SPATHI_CONVERSATION */
+	SUPOX_SHIP,		   /* SUPOX_CONVERSATION */
+	THRADDASH_SHIP,	   /* THRADD_CONVERSATION */
+	UTWIG_SHIP,		   /* UTWIG_CONVERSATION */
+	VUX_SHIP,		   /* VUX_CONVERSATION */
+	YEHAT_SHIP,		   /* YEHAT_CONVERSATION */
+	MELNORME_SHIP,	   /* MELNORME_CONVERSATION */
+	DRUUGE_SHIP,	   /* DRUUGE_CONVERSATION */
+	ILWRATH_SHIP,	   /* ILWRATH_CONVERSATION */
+	MYCON_SHIP,		   /* MYCON_CONVERSATION */
+	SLYLANDRO_SHIP,	   /* SLYLANDRO_CONVERSATION */
+	UMGAH_SHIP,		   /* UMGAH_CONVERSATION */
+	URQUAN_SHIP,	   /* URQUAN_CONVERSATION */
+	ZOQFOTPIK_SHIP,	   /* ZOQFOTPIK_CONVERSATION */
+	SYREEN_SHIP,	   /* SYREEN_CONVERSATION */
+	BLACK_URQUAN_SHIP, /* BLACKURQ_CONVERSATION */
+	ANDROSYNTH_SHIP,   /* ANDROSYNTH_CONVERSATION */
+	CHENJESU_SHIP,	   /* CHENJESU_CONVERSATION */
+	MMRNMHRM_SHIP,	   /* MMRNMHRM_CONVERSATION */
+	UMGAH_SHIP,		   /* TALKING_PET_CONVERSATION */
+	SLYLANDRO_SHIP,	   /* SLYLANDRO_HOME_CONVERSATION */
+	URQUAN_DRONE_SHIP, /* URQUAN_DRONE_CONVERSATION */
+	YEHAT_SHIP,		   /* YEHAT_REBEL_CONVERSATION */
+	HUMAN_SHIP		   /* INVALID_CONVERSATION */
+};
 
 constexpr auto LogToIp(const auto& s) { return ((s) << 1); }
-#define RACE_IP_SPEED                        \
-	LogToIp(40),	 /* ARILOU_SHIP */       \
-		LogToIp(27), /* CHMMR_SHIP */        \
-		LogToIp(24), /* HUMAN_SHIP */        \
-		LogToIp(40), /* ORZ_SHIP */          \
-		LogToIp(40), /* PKUNK_SHIP */        \
-		LogToIp(35), /* SHOFIXTI_SHIP */     \
-		LogToIp(48), /* SPATHI_SHIP */       \
-		LogToIp(40), /* SUPOX_SHIP */        \
-		LogToIp(28), /* THRADDASH_SHIP */    \
-		LogToIp(30), /* UTWIG_SHIP */        \
-		LogToIp(21), /* VUX_SHIP */          \
-		LogToIp(30), /* YEHAT_SHIP */        \
-		LogToIp(40), /* MELNORME_SHIP */     \
-		LogToIp(20), /* DRUUGE_SHIP */       \
-		LogToIp(25), /* ILWRATH_SHIP */      \
-		LogToIp(27), /* MYCON_SHIP */        \
-		LogToIp(60), /* SLYLANDRO_SHIP */    \
-		LogToIp(18), /* UMGAH_SHIP */        \
-		LogToIp(30), /* URQUAN_SHIP */       \
-		LogToIp(40), /* ZOQFOTPIK_SHIP */    \
-		LogToIp(36), /* SYREEN_SHIP */       \
-		LogToIp(30), /* BLACK_URQUAN_SHIP */ \
-		LogToIp(24), /* ANDROSYNTH_SHIP */   \
-		LogToIp(27), /* CHENJESU_SHIP */     \
-		LogToIp(50), /* MMRNMHRM_SHIP */     \
-		LogToIp(30), /* YEHAT_REBEL_SHIP */  \
-		LogToIp(90), /* URQUAN_DRONE_SHIP */
+inline constexpr int16_t RaceIpSpeed[] {
+	LogToIp(40), /* ARILOU_SHIP */
+	LogToIp(27), /* CHMMR_SHIP */
+	LogToIp(24), /* HUMAN_SHIP */
+	LogToIp(40), /* ORZ_SHIP */
+	LogToIp(40), /* PKUNK_SHIP */
+	LogToIp(35), /* SHOFIXTI_SHIP */
+	LogToIp(48), /* SPATHI_SHIP */
+	LogToIp(40), /* SUPOX_SHIP */
+	LogToIp(28), /* THRADDASH_SHIP */
+	LogToIp(30), /* UTWIG_SHIP */
+	LogToIp(21), /* VUX_SHIP */
+	LogToIp(30), /* YEHAT_SHIP */
+	LogToIp(40), /* MELNORME_SHIP */
+	LogToIp(20), /* DRUUGE_SHIP */
+	LogToIp(25), /* ILWRATH_SHIP */
+	LogToIp(27), /* MYCON_SHIP */
+	LogToIp(60), /* SLYLANDRO_SHIP */
+	LogToIp(18), /* UMGAH_SHIP */
+	LogToIp(30), /* URQUAN_SHIP */
+	LogToIp(40), /* ZOQFOTPIK_SHIP */
+	LogToIp(36), /* SYREEN_SHIP */
+	LogToIp(30), /* BLACK_URQUAN_SHIP */
+	LogToIp(24), /* ANDROSYNTH_SHIP */
+	LogToIp(27), /* CHENJESU_SHIP */
+	LogToIp(50), /* MMRNMHRM_SHIP */
+	LogToIp(30), /* YEHAT_REBEL_SHIP */
+	LogToIp(90), /* URQUAN_DRONE_SHIP */
+};
 
 constexpr auto LogToHyper(const auto& s) { return (WorldToVelocity(s) >> 1); }
-#define RACE_HYPER_SPEED                                  \
-	LogToHyper(ResScale(40)),	  /* ARILOU_SHIP */       \
-		LogToHyper(ResScale(27)), /* CHMMR_SHIP */        \
-		LogToHyper(ResScale(24)), /* HUMAN_SHIP */        \
-		LogToHyper(ResScale(40)), /* ORZ_SHIP */          \
-		LogToHyper(ResScale(40)), /* PKUNK_SHIP */        \
-		LogToHyper(ResScale(35)), /* SHOFIXTI_SHIP */     \
-		LogToHyper(ResScale(48)), /* SPATHI_SHIP */       \
-		LogToHyper(ResScale(40)), /* SUPOX_SHIP */        \
-		LogToHyper(ResScale(50)), /* THRADDASH_SHIP */    \
-		LogToHyper(ResScale(30)), /* UTWIG_SHIP */        \
-		LogToHyper(ResScale(21)), /* VUX_SHIP */          \
-		LogToHyper(ResScale(30)), /* YEHAT_SHIP */        \
-		LogToHyper(ResScale(40)), /* MELNORME_SHIP */     \
-		LogToHyper(ResScale(20)), /* DRUUGE_SHIP */       \
-		LogToHyper(ResScale(25)), /* ILWRATH_SHIP */      \
-		LogToHyper(ResScale(27)), /* MYCON_SHIP */        \
-		LogToHyper(ResScale(60)), /* SLYLANDRO_SHIP */    \
-		LogToHyper(ResScale(18)), /* UMGAH_SHIP */        \
-		LogToHyper(ResScale(30)), /* URQUAN_SHIP */       \
-		LogToHyper(ResScale(40)), /* ZOQFOTPIK_SHIP */    \
-		LogToHyper(ResScale(36)), /* SYREEN_SHIP */       \
-		LogToHyper(ResScale(30)), /* BLACK_URQUAN_SHIP */ \
-		LogToHyper(ResScale(45)), /* ANDROSYNTH_SHIP */   \
-		LogToHyper(ResScale(27)), /* CHENJESU_SHIP */     \
-		LogToHyper(ResScale(50)), /* MMRNMHRM_SHIP */     \
-		LogToHyper(ResScale(30)), /* YEHAT_REBEL_SHIP */
+inline constexpr uint16_t RaceHyperspacePercent[] {
+	20, /* ARILOU_SHIP */
+	0,	/* CHMMR_SHIP */
+	0,	/* HUMAN_SHIP */
+	20, /* ORZ_SHIP */
+	40, /* PKUNK_SHIP */
+	0,	/* SHOFIXTI_SHIP */
+	20, /* SPATHI_SHIP */
+	40, /* SUPOX_SHIP */
+	60, /* THRADDASH_SHIP */
+	40, /* UTWIG_SHIP */
+	40, /* VUX_SHIP */
+	60, /* YEHAT_SHIP */
+	0,	/* MELNORME_SHIP */
+	30, /* DRUUGE_SHIP */
+	60, /* ILWRATH_SHIP */
+	40, /* MYCON_SHIP */
+	2,	/* SLYLANDRO_SHIP */
+	30, /* UMGAH_SHIP */
+	70, /* URQUAN_SHIP */
+	0,	/* ZOQFOTPIK_SHIP */
+	0,	/* SYREEN_SHIP */
+	70, /* BLACK_URQUAN_SHIP */
+	0,	/* ANDROSYNTH_SHIP */
+	0,	/* CHENJESU_SHIP */
+	0,	/* MMRNMHRM_SHIP */
+	60, /* YEHAT_REBEL_SHIP */
+	0,	/* URQUAN_DRONE_SHIP */
+};
 
-#define RACE_HYPERSPACE_PERCENT     \
-	20,		/* ARILOU_SHIP */       \
-		0,	/* CHMMR_SHIP */        \
-		0,	/* HUMAN_SHIP */        \
-		20, /* ORZ_SHIP */          \
-		40, /* PKUNK_SHIP */        \
-		0,	/* SHOFIXTI_SHIP */     \
-		20, /* SPATHI_SHIP */       \
-		40, /* SUPOX_SHIP */        \
-		60, /* THRADDASH_SHIP */    \
-		40, /* UTWIG_SHIP */        \
-		40, /* VUX_SHIP */          \
-		60, /* YEHAT_SHIP */        \
-		0,	/* MELNORME_SHIP */     \
-		30, /* DRUUGE_SHIP */       \
-		60, /* ILWRATH_SHIP */      \
-		40, /* MYCON_SHIP */        \
-		2,	/* SLYLANDRO_SHIP */    \
-		30, /* UMGAH_SHIP */        \
-		70, /* URQUAN_SHIP */       \
-		0,	/* ZOQFOTPIK_SHIP */    \
-		0,	/* SYREEN_SHIP */       \
-		70, /* BLACK_URQUAN_SHIP */ \
-		0,	/* ANDROSYNTH_SHIP */   \
-		0,	/* CHENJESU_SHIP */     \
-		0,	/* MMRNMHRM_SHIP */     \
-		60, /* YEHAT_REBEL_SHIP */  \
-		0,	/* URQUAN_DRONE_SHIP */
+inline constexpr uint8_t RaceInterplanetaryPercent[] {
+	2,	/* ARILOU_SHIP */
+	0,	/* CHMMR_SHIP */
+	0,	/* HUMAN_SHIP */
+	20, /* ORZ_SHIP */
+	20, /* PKUNK_SHIP */
+	0,	/* SHOFIXTI_SHIP */
+	10, /* SPATHI_SHIP */
+	20, /* SUPOX_SHIP */
+	20, /* THRADDASH_SHIP */
+	20, /* UTWIG_SHIP */
+	20, /* VUX_SHIP */
+	40, /* YEHAT_SHIP */
+	0,	/* MELNORME_SHIP */
+	20, /* DRUUGE_SHIP */
+	60, /* ILWRATH_SHIP */
+	20, /* MYCON_SHIP */
+	5,	/* SLYLANDRO_SHIP */
+	20, /* UMGAH_SHIP */
+	40, /* URQUAN_SHIP */
+	0,	/* ZOQFOTPIK_SHIP */
+	0,	/* SYREEN_SHIP */
+	40, /* BLACK_URQUAN_SHIP */
+	0,	/* ANDROSYNTH_SHIP */
+	0,	/* CHENJESU_SHIP */
+	0,	/* MMRNMHRM_SHIP */
+	40, /* YEHAT_REBEL_SHIP */
+	0,	/* URQUAN_DRONE_SHIP */
+};
 
-#define RACE_INTERPLANETARY_PERCENT \
-	2,		/* ARILOU_SHIP */       \
-		0,	/* CHMMR_SHIP */        \
-		0,	/* HUMAN_SHIP */        \
-		20, /* ORZ_SHIP */          \
-		20, /* PKUNK_SHIP */        \
-		0,	/* SHOFIXTI_SHIP */     \
-		10, /* SPATHI_SHIP */       \
-		20, /* SUPOX_SHIP */        \
-		20, /* THRADDASH_SHIP */    \
-		20, /* UTWIG_SHIP */        \
-		20, /* VUX_SHIP */          \
-		40, /* YEHAT_SHIP */        \
-		0,	/* MELNORME_SHIP */     \
-		20, /* DRUUGE_SHIP */       \
-		60, /* ILWRATH_SHIP */      \
-		20, /* MYCON_SHIP */        \
-		5,	/* SLYLANDRO_SHIP */    \
-		20, /* UMGAH_SHIP */        \
-		40, /* URQUAN_SHIP */       \
-		0,	/* ZOQFOTPIK_SHIP */    \
-		0,	/* SYREEN_SHIP */       \
-		40, /* BLACK_URQUAN_SHIP */ \
-		0,	/* ANDROSYNTH_SHIP */   \
-		0,	/* CHENJESU_SHIP */     \
-		0,	/* MMRNMHRM_SHIP */     \
-		40, /* YEHAT_REBEL_SHIP */  \
-		0,	/* URQUAN_DRONE_SHIP */
-
-#define RACE_MUSIC_BOOL            \
-	1,	   /* ARILOU_SHIP */       \
-		1, /* CHMMR_SHIP */        \
-		0, /* HUMAN_SHIP */        \
-		1, /* ORZ_SHIP */          \
-		1, /* PKUNK_SHIP */        \
-		0, /* SHOFIXTI_SHIP */     \
-		1, /* SPATHI_SHIP */       \
-		1, /* SUPOX_SHIP */        \
-		1, /* THRADDASH_SHIP */    \
-		1, /* UTWIG_SHIP */        \
-		1, /* VUX_SHIP */          \
-		1, /* YEHAT_SHIP */        \
-		0, /* MELNORME_SHIP */     \
-		1, /* DRUUGE_SHIP */       \
-		1, /* ILWRATH_SHIP */      \
-		1, /* MYCON_SHIP */        \
-		0, /* SLYLANDRO_SHIP */    \
-		1, /* UMGAH_SHIP */        \
-		1, /* URQUAN_SHIP */       \
-		1, /* ZOQFOTPIK_SHIP */    \
-		1, /* SYREEN_SHIP */       \
-		1, /* BLACK_URQUAN_SHIP */ \
-		0, /* ANDROSYNTH_SHIP */   \
-		0, /* CHENJESU_SHIP */     \
-		0, /* MMRNMHRM_SHIP */     \
-		1, /* YEHAT_REBEL_SHIP */  \
-		0, /* URQUAN_DRONE_SHIP */
-
-#define HOMEWORLD_LOC                            \
-	0,					 /* ARILOU_SHIP */       \
-		CHMMR_DEFINED,	 /* CHMMR_SHIP */        \
-		0,				 /* HUMAN_SHIP */        \
-		ORZ_DEFINED,	 /* ORZ_SHIP */          \
-		PKUNK_DEFINED,	 /* PKUNK_SHIP */        \
-		0,				 /* SHOFIXTI_SHIP */     \
-		SPATHI_DEFINED,	 /* SPATHI_SHIP */       \
-		SUPOX_DEFINED,	 /* SUPOX_SHIP */        \
-		THRADD_DEFINED,	 /* THRADDASH_SHIP */    \
-		UTWIG_DEFINED,	 /* UTWIG_SHIP */        \
-		VUX_DEFINED,	 /* VUX_SHIP */          \
-		YEHAT_DEFINED,	 /* YEHAT_SHIP */        \
-		0,				 /* MELNORME_SHIP */     \
-		DRUUGE_DEFINED,	 /* DRUUGE_SHIP */       \
-		ILWRATH_DEFINED, /* ILWRATH_SHIP */      \
-		MYCON_DEFINED,	 /* MYCON_SHIP */        \
-		0,				 /* SLYLANDRO_SHIP */    \
-		UmgahDefined,	 /* UMGAH_SHIP */        \
-		0,				 /* URQUAN_SHIP */       \
-		ZOQFOT_DEFINED,	 /* ZOQFOTPIK_SHIP */    \
-		SYREEN_DEFINED,	 /* SYREEN_SHIP */       \
-		0,				 /* BLACK_URQUAN_SHIP */ \
-		0,				 /* ANDROSYNTH_SHIP */   \
-		0,				 /* CHENJESU_SHIP */     \
-		0,				 /* MMRNMHRM_SHIP */     \
-		0,				 /* YEHAT_REBEL_SHIP */
+inline constexpr uint8_t RaceMusicBool[] {
+	1, /* ARILOU_SHIP */
+	1, /* CHMMR_SHIP */
+	0, /* HUMAN_SHIP */
+	1, /* ORZ_SHIP */
+	1, /* PKUNK_SHIP */
+	0, /* SHOFIXTI_SHIP */
+	1, /* SPATHI_SHIP */
+	1, /* SUPOX_SHIP */
+	1, /* THRADDASH_SHIP */
+	1, /* UTWIG_SHIP */
+	1, /* VUX_SHIP */
+	1, /* YEHAT_SHIP */
+	0, /* MELNORME_SHIP */
+	1, /* DRUUGE_SHIP */
+	1, /* ILWRATH_SHIP */
+	1, /* MYCON_SHIP */
+	0, /* SLYLANDRO_SHIP */
+	1, /* UMGAH_SHIP */
+	1, /* URQUAN_SHIP */
+	1, /* ZOQFOTPIK_SHIP */
+	1, /* SYREEN_SHIP */
+	1, /* BLACK_URQUAN_SHIP */
+	0, /* ANDROSYNTH_SHIP */
+	0, /* CHENJESU_SHIP */
+	0, /* MMRNMHRM_SHIP */
+	1, /* YEHAT_REBEL_SHIP */
+	0, /* URQUAN_DRONE_SHIP */
+};
 
 // How many ships will an encounter consist of.
 // The first number specifies the minimum, the second the maximum.
 // The chance is 50% for each ship past the minimum to be present.
-#define RACE_ENCOUNTER_MAKEUP                        \
-	uqm::makeByte(1, 5),	 /* ARILOU_SHIP */       \
-		0,					 /* CHMMR_SHIP */        \
-		0,					 /* HUMAN_SHIP */        \
-		uqm::makeByte(1, 5), /* ORZ_SHIP */          \
-		uqm::makeByte(1, 5), /* PKUNK_SHIP */        \
-		0,					 /* SHOFIXTI_SHIP */     \
-		uqm::makeByte(1, 5), /* SPATHI_SHIP */       \
-		uqm::makeByte(1, 5), /* SUPOX_SHIP */        \
-		uqm::makeByte(1, 5), /* THRADDASH_SHIP */    \
-		uqm::makeByte(1, 5), /* UTWIG_SHIP */        \
-		uqm::makeByte(1, 5), /* VUX_SHIP */          \
-		uqm::makeByte(1, 5), /* YEHAT_SHIP */        \
-		uqm::makeByte(1, 1), /* MELNORME_SHIP */     \
-		uqm::makeByte(1, 5), /* DRUUGE_SHIP */       \
-		uqm::makeByte(1, 5), /* ILWRATH_SHIP */      \
-		uqm::makeByte(1, 5), /* MYCON_SHIP */        \
-		uqm::makeByte(1, 1), /* SLYLANDRO_SHIP */    \
-		uqm::makeByte(1, 5), /* UMGAH_SHIP */        \
-		uqm::makeByte(1, 5), /* URQUAN_SHIP */       \
-		uqm::makeByte(1, 5), /* ZOQFOTPIK_SHIP */    \
-		0,					 /* SYREEN_SHIP */       \
-		uqm::makeByte(1, 5), /* BLACK_URQUAN_SHIP */ \
-		0,					 /* ANDROSYNTH_SHIP*/    \
-		0,					 /* CHENJESU_SHIP */     \
-		0,					 /* MMRNMHRM_SHIP */     \
-		uqm::makeByte(1, 5), /* YEHAT_REBEL_SHIP */
+inline constexpr uint8_t RaceEncounterMakeup[] {
+	uqm::makeByte(1, 5), /* ARILOU_SHIP */
+	0,					 /* CHMMR_SHIP */
+	0,					 /* HUMAN_SHIP */
+	uqm::makeByte(1, 5), /* ORZ_SHIP */
+	uqm::makeByte(1, 5), /* PKUNK_SHIP */
+	0,					 /* SHOFIXTI_SHIP */
+	uqm::makeByte(1, 5), /* SPATHI_SHIP */
+	uqm::makeByte(1, 5), /* SUPOX_SHIP */
+	uqm::makeByte(1, 5), /* THRADDASH_SHIP */
+	uqm::makeByte(1, 5), /* UTWIG_SHIP */
+	uqm::makeByte(1, 5), /* VUX_SHIP */
+	uqm::makeByte(1, 5), /* YEHAT_SHIP */
+	uqm::makeByte(1, 1), /* MELNORME_SHIP */
+	uqm::makeByte(1, 5), /* DRUUGE_SHIP */
+	uqm::makeByte(1, 5), /* ILWRATH_SHIP */
+	uqm::makeByte(1, 5), /* MYCON_SHIP */
+	uqm::makeByte(1, 1), /* SLYLANDRO_SHIP */
+	uqm::makeByte(1, 5), /* UMGAH_SHIP */
+	uqm::makeByte(1, 5), /* URQUAN_SHIP */
+	uqm::makeByte(1, 5), /* ZOQFOTPIK_SHIP */
+	0,					 /* SYREEN_SHIP */
+	uqm::makeByte(1, 5), /* BLACK_URQUAN_SHIP */
+	0,					 /* ANDROSYNTH_SHIP*/
+	0,					 /* CHENJESU_SHIP */
+	0,					 /* MMRNMHRM_SHIP */
+	uqm::makeByte(1, 5), /* YEHAT_REBEL_SHIP */
+};
 
-#define RACE_COLORS                                                            \
-	BuildColor(MakeRgb15(0x00, 0x00, 0x10), 0x53),	   /* ARILOU_SHIP */       \
-		BuildColorRgba(0xB5, 0xB5, 0xB5, 0xFF),		   /* CHMMR_SHIP */        \
-		BuildColor(MakeRgb15(0x00, 0x01, 0x1F), 0x4D), /* HUMAN_SHIP */        \
-		BuildColor(MakeRgb15(0x0E, 0x00, 0x0E), 0x36), /* ORZ_SHIP */          \
-		BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x62), /* PKUNK_SHIP */        \
-		BuildColor(MakeRgb15(0x0A, 0x06, 0x00), 0x77), /* SHOFIXTI_SHIP */     \
-		BuildColor(MakeRgb15(0x0C, 0x05, 0x00), 0x76), /* SPATHI_SHIP */       \
-		BuildColor(MakeRgb15(0x0C, 0x05, 0x00), 0x76), /* SUPOX_SHIP */        \
-		BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x62), /* THRADDASH_SHIP */    \
-		BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x62), /* UTWIG_SHIP */        \
-		BuildColor(MakeRgb15(0x00, 0x00, 0x10), 0x53), /* VUX_SHIP */          \
-		BuildColor(MakeRgb15(0x0A, 0x00, 0x11), 0x3D), /* YEHAT_SHIP */        \
-		BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x62), /* MELNORME_SHIP */     \
-		BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D), /* DRUUGE_SHIP */       \
-		BuildColor(MakeRgb15(0x0E, 0x00, 0x0E), 0x36), /* ILWRATH_SHIP */      \
-		BuildColor(MakeRgb15(0x0E, 0x00, 0x0E), 0x36), /* MYCON_SHIP */        \
-		BuildColor(MakeRgb15(0x0C, 0x05, 0x00), 0x76), /* SLYLANDRO_SHIP */    \
-		BuildColor(MakeRgb15(0x0A, 0x00, 0x11), 0x3D), /* UMGAH_SHIP */        \
-		BuildColor(MakeRgb15(0x00, 0x08, 0x00), 0x6E), /* URQUAN_SHIP */       \
-		BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D), /* ZOQFOTPIK_SHIP */    \
-		BuildColorRgba(0x51, 0x18, 0x8B, 0xFF),		   /* SYREEN_SHIP */       \
-		BuildColor(MakeRgb15(0x06, 0x06, 0x06), 0x20), /* BLACK_URQUAN_SHIP */ \
-		BuildColor(MakeRgb15(0x12, 0x10, 0x1F), 0x00), /* ANDROSYNTH_SHIP */   \
-		BuildColor(MakeRgb15(0x00, 0x15, 0x1C), 0x00), /* CHENJESU_SHIP */     \
-		BuildColor(MakeRgb15(0x18, 0x18, 0x18), 0x00), /* MMRNMHRM_SHIP */     \
-		BuildColor(MakeRgb15(0x14, 0x07, 0x1F), 0x39), /* YEHAT_REBEL_SHIP */
 
 // JMS: For showing the SC1-era situation in starmap
-#define WAR_ERA_STRENGTHS                                      \
-	0,		  /* ARILOU_SHIP */                                \
-		0,	  /* CHMMR_SHIP */                                 \
-		460,  /* HUMAN_SHIP */                                 \
-		0,	  /* ORZ_SHIP */                                   \
-		350,  /* PKUNK_SHIP, should be marked 'Unknown' */     \
-		329,  /* SHOFIXTI_SHIP */                              \
-		1007, /* SPATHI_SHIP */                                \
-		0,	  /* SUPOX_SHIP */                                 \
-		723,  /* THRADDASH_SHIP, should be marked 'Unknown' */ \
-		0,	  /* UTWIG_SHIP */                                 \
-		572,  /* VUX_SHIP */                                   \
-		1029, /* YEHAT_SHIP */                                 \
-		0,	  /* MELNORME_SHIP */                              \
-		745,  /* DRUUGE_SHIP, should be marked 'Unknown' */    \
-		470,  /* ILWRATH_SHIP */                               \
-		591,  /* MYCON_SHIP */                                 \
-		0,	  /* SLYLANDRO_SHIP */                             \
-		506,  /* UMGAH_SHIP */                                 \
-		0,	  /* URQUAN_SHIP */                                \
-		0,	  /* ZOQFOTPIK_SHIP */                             \
-		0,	  /* SYREEN_SHIP */                                \
-		0,	  /* BLACK_URQUAN_SHIP */                          \
-		504,  /* ANDROSYNTH_SHIP */                            \
-		657,  /* CHENJESU_SHIP */                              \
-		482,  /* MMRNMHRM_SHIP */                              \
-		0,	  /* YEHAT_REBEL_SHIP */
 
 // JMS: For showing the SC1-era situation in starmap
-#define WAR_ERA_LOCATIONS                                              \
-	{0, 0},			  /* ARILOU_SHIP */                                \
-		{0, 0},		  /* CHMMR_SHIP */                                 \
-		{1806, 1476}, /* HUMAN_SHIP */                                 \
-		{0, 0},		  /* ORZ_SHIP */                                   \
-		{577, 463},	  /* PKUNK_SHIP, should be marked 'Unknown' */     \
-		{2852, 242},  /* SHOFIXTI_SHIP */                              \
-		{2416, 3687}, /* SPATHI_SHIP */                                \
-		{0, 0},		  /* SUPOX_SHIP */                                 \
-		{2808, 8522}, /* THRADDASH_SHIP, should be marked 'Unknown' */ \
-		{0, 0},		  /* UTWIG_SHIP */                                 \
-		{4333, 1520}, /* VUX_SHIP */                                   \
-		{4969, 75},	  /* YEHAT_SHIP */                                 \
-		{0, 0},		  /* MELNORME_SHIP */                              \
-		{9421, 2754}, /* DRUUGE_SHIP, should be marked 'Unknown' */    \
-		{0, 3589},	  /* ILWRATH_SHIP */                               \
-		{6278, 2399}, /* MYCON_SHIP */                                 \
-		{0, 0},		  /* SLYLANDRO_SHIP */                             \
-		{1860, 6099}, /* UMGAH_SHIP */                                 \
-		{0, 0},		  /* URQUAN_SHIP */                                \
-		{0, 0},		  /* ZOQFOTPIK_SHIP */                             \
-		{0, 0},		  /* SYREEN_SHIP */                                \
-		{0, 0},		  /* BLACK_URQUAN_SHIP */                          \
-		{3676, 2619}, /* ANDROSYNTH_SHIP */                            \
-		{701, 2137},  /* CHENJESU_SHIP */                              \
-		{672, 2930},  /* MMRNMHRM_SHIP */                              \
-		{0, 0},		  /* YEHAT_REBEL_SHIP */
 
 typedef enum
 {

@@ -260,8 +260,7 @@ void DestroyPCLanderContext(void)
 static Color
 DamageColorCycle(Color c, uint16_t i)
 {
-	const static Color damage_tab[DamageCycle + 1] =
-		LANDER_DAMAGE_COLOR_TABLE;
+	const auto& damage_tab {LanderDamageColorTable};
 
 	if (i)
 	{
@@ -1206,8 +1205,7 @@ lightning_process(ELEMENT* ElementPtr)
 		else
 		{
 			int16_t s {};
-			const static Color color_tab[NumCycles] =
-				LIGHTNING_COLOR_TABLE;
+			const auto& color_tab {LightningColorTable};
 
 			s = ElementPtr->life_span;
 			if (s > NumCycles - 1)

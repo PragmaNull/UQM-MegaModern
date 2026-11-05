@@ -213,7 +213,7 @@ AlliedHome(RESPONSE_REF R)
 			}
 		}
 
-		DISABLE_PHRASE(how_goes_war);
+		DisablePhrase(how_goes_war);
 	}
 	else if (PlayerSaid(R, learn_new_info))
 	{
@@ -228,7 +228,7 @@ AlliedHome(RESPONSE_REF R)
 			News |= (1 << 1);
 		}
 
-		DISABLE_PHRASE(learn_new_info);
+		DisablePhrase(learn_new_info);
 	}
 	else if (PlayerSaid(R, what_now_homeworld))
 	{
@@ -241,19 +241,19 @@ AlliedHome(RESPONSE_REF R)
 			NPCPhrase(HOPE_KILL_EACH_OTHER);
 		}
 
-		DISABLE_PHRASE(what_now_homeworld);
+		DisablePhrase(what_now_homeworld);
 	}
 	else if (PlayerSaid(R, how_is_ultron))
 	{
 		NPCPhrase(ULTRON_IS_GREAT);
 
-		DISABLE_PHRASE(how_is_ultron);
+		DisablePhrase(how_is_ultron);
 	}
 	else if (IsExtended() && PlayerSaid(R, give_info))
 	{
 		NPCPhrase(GOOD_HINTS);
 
-		DISABLE_PHRASE(give_info);
+		DisablePhrase(give_info);
 	}
 	uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(News));
 
@@ -313,13 +313,13 @@ BeforeKohrAh(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_before_space);
+		DisablePhrase(whats_up_before_space);
 	}
 	else if (PlayerSaid(R, what_now_before_space))
 	{
 		NPCPhrase(DO_THIS_BEFORE_SPACE);
 
-		DISABLE_PHRASE(what_now_before_space);
+		DisablePhrase(what_now_before_space);
 	}
 
 	if (PhraseEnabled(whats_up_before_space))
@@ -353,13 +353,13 @@ AfterKohrAh(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_after_space);
+		DisablePhrase(whats_up_after_space);
 	}
 	else if (PlayerSaid(R, what_now_after_space))
 	{
 		NPCPhrase(DO_THIS_AFTER_SPACE);
 
-		DISABLE_PHRASE(what_now_after_space);
+		DisablePhrase(what_now_after_space);
 	}
 
 	if (PhraseEnabled(whats_up_after_space))
@@ -387,21 +387,21 @@ NeutralSupox(RESPONSE_REF R)
 		NPCPhrase(WE_ARE_SUPOX);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(1));
-		DISABLE_PHRASE(i_am);
+		DisablePhrase(i_am);
 	}
 	else if (PlayerSaid(R, my_ship))
 	{
 		NPCPhrase(OUR_SHIP);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(2));
-		DISABLE_PHRASE(my_ship);
+		DisablePhrase(my_ship);
 	}
 	else if (PlayerSaid(R, from_alliance))
 	{
 		NPCPhrase(FROM_SUPOX);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(3));
-		DISABLE_PHRASE(from_alliance);
+		DisablePhrase(from_alliance);
 	}
 	else if (PlayerSaid(R, are_you_copying))
 	{
@@ -498,7 +498,7 @@ NeutralSupox(RESPONSE_REF R)
 	{
 		NPCPhrase(GOOD_HINTS);
 
-		DISABLE_PHRASE(give_info);
+		DisablePhrase(give_info);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::SUPOX_STACK2))

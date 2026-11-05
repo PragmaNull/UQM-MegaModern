@@ -419,7 +419,7 @@ AlliedHome(RESPONSE_REF R)
 			}
 		}
 
-		DISABLE_PHRASE(how_goes_war);
+		DisablePhrase(how_goes_war);
 	}
 	else if (PlayerSaid(R, learn_new_info))
 	{
@@ -434,7 +434,7 @@ AlliedHome(RESPONSE_REF R)
 			News |= (1 << 1);
 		}
 
-		DISABLE_PHRASE(learn_new_info);
+		DisablePhrase(learn_new_info);
 	}
 	else if (PlayerSaid(R, what_now_homeworld))
 	{
@@ -447,13 +447,13 @@ AlliedHome(RESPONSE_REF R)
 			NPCPhrase(HOPE_KILL_EACH_OTHER);
 		}
 
-		DISABLE_PHRASE(what_now_homeworld);
+		DisablePhrase(what_now_homeworld);
 	}
 	else if (PlayerSaid(R, how_is_ultron))
 	{
 		NPCPhrase(ULTRON_IS_GREAT);
 
-		DISABLE_PHRASE(how_is_ultron);
+		DisablePhrase(how_is_ultron);
 	}
 	uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(News));
 
@@ -509,13 +509,13 @@ BeforeKohrAh(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_before_space);
+		DisablePhrase(whats_up_before_space);
 	}
 	else if (PlayerSaid(R, what_now_before_space))
 	{
 		NPCPhrase(DO_THIS_BEFORE_SPACE);
 
-		DISABLE_PHRASE(what_now_before_space);
+		DisablePhrase(what_now_before_space);
 	}
 
 	if (PhraseEnabled(whats_up_before_space))
@@ -549,13 +549,13 @@ AfterKohrAh(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_after_space);
+		DisablePhrase(whats_up_after_space);
 	}
 	else if (PlayerSaid(R, what_now_after_space))
 	{
 		NPCPhrase(DO_THIS_AFTER_SPACE);
 
-		DISABLE_PHRASE(what_now_after_space);
+		DisablePhrase(what_now_after_space);
 	}
 
 	if (PhraseEnabled(whats_up_after_space))
@@ -770,7 +770,7 @@ BombWorld(RESPONSE_REF R)
 			uqm::gameState().setFlag(uqm::GameFlag::BOMB_INFO, static_cast<uint32_t>(1));
 		}
 
-		DISABLE_PHRASE(whats_up_bomb);
+		DisablePhrase(whats_up_bomb);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::BOMB_STACK2))

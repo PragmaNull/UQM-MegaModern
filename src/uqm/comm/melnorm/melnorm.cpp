@@ -1638,7 +1638,7 @@ DoSell(RESPONSE_REF R)
 		{
 			NPCPhrase(NOTHING_TO_SELL);
 		}
-		DISABLE_PHRASE(sell);
+		DisablePhrase(sell);
 
 		NatureOfConversation(R);
 	}

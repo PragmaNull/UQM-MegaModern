@@ -33,7 +33,7 @@ extern char shared_phrase_buf[2048];
 
 constexpr auto PlayerSaid(const auto& r, const auto& i) { return ((r) == (i)); }
 constexpr auto PhraseEnabled(const auto& p) { return (*CommData.ConversationPhrases->text((p)-1) != '\0'); }
-#define DISABLE_PHRASE(p) (CommData.ConversationPhrases->set((p) - 1, uqstl::string_view {"", 1}))
+inline void DisablePhrase(int p) { CommData.ConversationPhrases->set(p - 1, uqstl::string_view {"", 1}); }
 
 
 typedef uint16_t RESPONSE_REF;

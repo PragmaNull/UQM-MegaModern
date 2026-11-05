@@ -317,13 +317,13 @@ SunDevice(RESPONSE_REF R)
 	{
 		NPCPhrase(GENERAL_INFO_SUN_DEVICE);
 
-		DISABLE_PHRASE(whats_up_sun_device);
+		DisablePhrase(whats_up_sun_device);
 	}
 	else if (PlayerSaid(R, how_goes_implanting))
 	{
 		NPCPhrase(UNFORSEEN_DELAYS);
 
-		DISABLE_PHRASE(how_goes_implanting);
+		DisablePhrase(how_goes_implanting);
 	}
 	else if (PlayerSaid(R, i_have_a_cunning_plan))
 	{
@@ -359,25 +359,25 @@ TrickMycon(RESPONSE_REF R)
 	{
 		NPCPhrase(TELL_US_ABOUT_WORLD);
 
-		DISABLE_PHRASE(i_have_a_cunning_plan);
+		DisablePhrase(i_have_a_cunning_plan);
 	}
 	else if (PlayerSaid(R, clue_1))
 	{
 		NPCPhrase(RESPONSE_1);
 
-		DISABLE_PHRASE(clue_1);
+		DisablePhrase(clue_1);
 	}
 	else if (PlayerSaid(R, clue_2))
 	{
 		NPCPhrase(RESPONSE_2);
 
-		DISABLE_PHRASE(clue_2);
+		DisablePhrase(clue_2);
 	}
 	else if (PlayerSaid(R, clue_3))
 	{
 		NPCPhrase(RESPONSE_3);
 
-		DISABLE_PHRASE(clue_3);
+		DisablePhrase(clue_3);
 	}
 
 	if (PhraseEnabled(clue_1) == 0
@@ -425,7 +425,7 @@ NormalMycon(RESPONSE_REF R)
 		DoRamble(R);
 		NPCPhrase(RAMBLE_TAIL);
 
-		DISABLE_PHRASE(R);
+		DisablePhrase(R);
 	}
 
 	if ((uint8_t)uqm::random().next() < 256 * 30 / 100)

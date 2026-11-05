@@ -247,7 +247,7 @@ GeneratePresetLife(const SYSTEM_INFO* SysInfoPtr, const int8_t* lifeTypes,
 static int16_t
 widthPick(void)
 {
-	const EXTENT map_dimensions[] = {MAP_DIMENSIONS};
+	const auto& map_dimensions {MapDimensions};
 
 	return map_dimensions[uqm::UQMOptions::read().planetTexture].width;
 }
@@ -255,7 +255,7 @@ widthPick(void)
 static int16_t
 heightPick(void)
 {
-	const EXTENT map_dimensions[] = {MAP_DIMENSIONS};
+	const auto& map_dimensions {MapDimensions};
 
 	return map_dimensions[uqm::UQMOptions::read().planetTexture].height;
 }

@@ -53,7 +53,7 @@ void PutEvent(HEVENT h);
 void UnlockEvent(HEVENT h);
 void FreeEvent(HEVENT h);
 void ForAllEvents(void (*callback)(LINK*, void*), void* arg);
-#define LockEvent(h, ppe) (*(ppe) = (EVENT*)LockLink(&uqm::gameState().clock().events(), h))
+void LockEvent(HEVENT h, EVENT** ppe);
 constexpr auto GetSuccEvent(const auto& l) { return _GetSuccLink(l); }
 
 // Rates are in seconds per game day

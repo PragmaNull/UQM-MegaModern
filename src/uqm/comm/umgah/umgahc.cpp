@@ -309,19 +309,19 @@ Zombies(RESPONSE_REF R)
 		{
 			NPCPhrase(GENERAL_INFO_ZOMBIE);
 
-			DISABLE_PHRASE(whats_up_zombies);
+			DisablePhrase(whats_up_zombies);
 		}
 		else if (PlayerSaid(R, how_goes_tpet))
 		{
 			NPCPhrase(WHAT_TPET);
 
-			DISABLE_PHRASE(how_goes_tpet);
+			DisablePhrase(how_goes_tpet);
 		}
 		else if (PlayerSaid(R, you_told_us))
 		{
 			NPCPhrase(SADLY_IT_DIED);
 
-			DISABLE_PHRASE(you_told_us);
+			DisablePhrase(you_told_us);
 		}
 
 		if (PhraseEnabled(whats_up_zombies) && PhraseEnabled(how_goes_tpet))
@@ -357,49 +357,49 @@ Zombies(RESPONSE_REF R)
 		{
 			NPCPhrase(YES_VERY_EVIL);
 
-			DISABLE_PHRASE(evil_blobbies);
+			DisablePhrase(evil_blobbies);
 			LastStack = 0;
 		}
 		else if (PlayerSaid(R, we_vindicator))
 		{
 			NPCPhrase(GOOD_FOR_YOU_1);
 
-			DISABLE_PHRASE(we_vindicator);
+			DisablePhrase(we_vindicator);
 			LastStack = 1;
 		}
 		else if (PlayerSaid(R, come_in_peace))
 		{
 			NPCPhrase(GOOD_FOR_YOU_2);
 
-			DISABLE_PHRASE(come_in_peace);
+			DisablePhrase(come_in_peace);
 			LastStack = 1;
 		}
 		else if (PlayerSaid(R, know_any_jokes))
 		{
 			NPCPhrase(JOKE_1);
 
-			DISABLE_PHRASE(know_any_jokes);
+			DisablePhrase(know_any_jokes);
 			LastStack = 2;
 		}
 		else if (PlayerSaid(R, better_joke))
 		{
 			NPCPhrase(JOKE_2);
 
-			DISABLE_PHRASE(better_joke);
+			DisablePhrase(better_joke);
 			LastStack = 2;
 		}
 		else if (PlayerSaid(R, not_very_funny))
 		{
 			NPCPhrase(YES_WE_ARE);
 
-			DISABLE_PHRASE(not_very_funny);
+			DisablePhrase(not_very_funny);
 			LastStack = 2;
 		}
 		else if (PlayerSaid(R, what_about_tpet))
 		{
 			NPCPhrase(WHAT_TPET);
 
-			DISABLE_PHRASE(what_about_tpet);
+			DisablePhrase(what_about_tpet);
 			LastStack = 3;
 		}
 		else if (PlayerSaid(R, give_up_or_die))
@@ -481,13 +481,13 @@ NormalUmgah(RESPONSE_REF R)
 	{
 		NPCPhrase(GENERAL_INFO_PRE_ZOMBIE);
 
-		DISABLE_PHRASE(whats_up_pre_zombie);
+		DisablePhrase(whats_up_pre_zombie);
 	}
 	else if (PlayerSaid(R, want_to_defeat_urquan))
 	{
 		NPCPhrase(FINE_BY_US);
 
-		DISABLE_PHRASE(want_to_defeat_urquan);
+		DisablePhrase(want_to_defeat_urquan);
 	}
 
 	if (!uqm::gameState().flag(uqm::GameFlag::UMGAH_EVIL_BLOBBIES))
@@ -522,47 +522,47 @@ UmgahReward(RESPONSE_REF R)
 	{
 		NPCPhrase(TRKD_SPATHI_AND_ILWRATH);
 
-		DISABLE_PHRASE(what_before_tpet);
+		DisablePhrase(what_before_tpet);
 	}
 	else if (PlayerSaid(R, where_caster))
 	{
 		NPCPhrase(SPATHI_TOOK_THEM);
 
-		DISABLE_PHRASE(where_caster);
+		DisablePhrase(where_caster);
 	}
 	else if (PlayerSaid(R, owe_me_big_time))
 	{
 		NPCPhrase(THANKS);
 
 		uqm::gameState().sis().TotalBioMass += 1000 / BioCreditValueDefault;
-		DISABLE_PHRASE(owe_me_big_time);
-		DISABLE_PHRASE(our_largesse);
+		DisablePhrase(owe_me_big_time);
+		DisablePhrase(our_largesse);
 	}
 	else if (PlayerSaid(R, our_largesse))
 	{
 		NPCPhrase(GIVE_LIFEDATA);
 
 		uqm::gameState().sis().TotalBioMass += 1000 / BioCreditValueDefault;
-		DISABLE_PHRASE(our_largesse);
-		DISABLE_PHRASE(owe_me_big_time);
+		DisablePhrase(our_largesse);
+		DisablePhrase(owe_me_big_time);
 	}
 	else if (PlayerSaid(R, what_do_with_tpet))
 	{
 		NPCPhrase(TRICK_URQUAN);
 
-		DISABLE_PHRASE(what_do_with_tpet);
+		DisablePhrase(what_do_with_tpet);
 	}
 	else if (PlayerSaid(R, any_jokes))
 	{
 		NPCPhrase(SURE);
 
-		DISABLE_PHRASE(any_jokes);
+		DisablePhrase(any_jokes);
 	}
 	else if (PlayerSaid(R, so_what_for_now))
 	{
 		NPCPhrase(DO_THIS_NOW);
 
-		DISABLE_PHRASE(so_what_for_now);
+		DisablePhrase(so_what_for_now);
 	}
 
 	if (!uqm::gameState().flag(uqm::GameFlag::MET_NORMAL_UMGAH))

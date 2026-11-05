@@ -84,7 +84,10 @@ constexpr auto PutEncounter(const auto& h) { return PutQueue(&uqm::gameState().g
 constexpr auto InsertEncounter(const auto& h, const auto& i) { return InsertQueue(&uqm::gameState().game().encounter_q, h, i); }
 constexpr auto GetHeadEncounter() { return GetHeadLink(&uqm::gameState().game().encounter_q); }
 
-#define LockEncounter(h, ppe) (*(ppe) = (ENCOUNTER*)LockLink(&uqm::gameState().game().encounter_q, h))
+inline void LockEncounter(HENCOUNTER h, ENCOUNTER** ppe)
+{
+	*ppe = reinterpret_cast<ENCOUNTER*>(LockLink(&uqm::gameState().game().encounter_q, h));
+}
 constexpr auto UnlockEncounter(const auto& h) { return UnlockLink(&uqm::gameState().game().encounter_q, h); }
 constexpr auto RemoveEncounter(const auto& h) { return RemoveQueue(&uqm::gameState().game().encounter_q, h); }
 constexpr auto FreeEncounter(const auto& h) { return FreeLink(&uqm::gameState().game().encounter_q, h); }

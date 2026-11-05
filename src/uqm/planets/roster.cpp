@@ -38,9 +38,7 @@ static GFXRECT savedShipFrame_r;
 static STAMP savedShipFrame;
 
 // Ship icon positions in status display around the flagship
-const static GFXPOINT ship_pos[MaxBuiltShips] =
-	{
-		SUPPORT_SHIP_PTS};
+const auto& ship_pos {SupportShipPts};
 
 typedef struct
 {

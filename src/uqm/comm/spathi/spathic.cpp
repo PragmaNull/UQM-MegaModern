@@ -298,103 +298,103 @@ SpathiOnPluto(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_20_YEARS_AGO);
 
-		DISABLE_PHRASE(what_doing_on_pluto_1);
+		DisablePhrase(what_doing_on_pluto_1);
 	}
 	else if (PlayerSaid(R, what_doing_on_pluto_2))
 	{
 		NPCPhrase(WHEN_URQUAN_ARRIVED);
 
-		DISABLE_PHRASE(what_doing_on_pluto_2);
+		DisablePhrase(what_doing_on_pluto_2);
 	}
 	else if (PlayerSaid(R, what_doing_on_pluto_3))
 	{
 		NPCPhrase(STATIONED_ON_EARTH_MOON);
 
-		DISABLE_PHRASE(what_doing_on_pluto_3);
+		DisablePhrase(what_doing_on_pluto_3);
 	}
 	else if (PlayerSaid(R, what_about_ilwrath))
 	{
 		NPCPhrase(ABOUT_ILWRATH);
 
-		DISABLE_PHRASE(what_about_ilwrath);
+		DisablePhrase(what_about_ilwrath);
 	}
 	else if (PlayerSaid(R, when_ilwrath))
 	{
 		NPCPhrase(THEN_ILWRATH);
 
-		DISABLE_PHRASE(when_ilwrath);
+		DisablePhrase(when_ilwrath);
 	}
 	else if (PlayerSaid(R, what_about_moonbase))
 	{
 		NPCPhrase(SET_UP_BASE);
 
-		DISABLE_PHRASE(what_about_moonbase);
+		DisablePhrase(what_about_moonbase);
 	}
 	else if (PlayerSaid(R, what_about_other_spathi))
 	{
 		NPCPhrase(SPATHI_ARE);
 
-		DISABLE_PHRASE(what_about_other_spathi);
+		DisablePhrase(what_about_other_spathi);
 	}
 	else if (PlayerSaid(R, what_about_other_spathi))
 	{
 		NPCPhrase(THEN_ILWRATH);
 
-		DISABLE_PHRASE(what_about_other_spathi);
+		DisablePhrase(what_about_other_spathi);
 	}
 	else if (PlayerSaid(R, how_many_crew))
 	{
 		NPCPhrase(THOUSANDS);
 
-		DISABLE_PHRASE(how_many_crew);
+		DisablePhrase(how_many_crew);
 	}
 	else if (PlayerSaid(R, really_thousands))
 	{
 		NPCPhrase(JUST_ME);
 
-		DISABLE_PHRASE(really_thousands);
+		DisablePhrase(really_thousands);
 	}
 	else if (PlayerSaid(R, full_of_monsters))
 	{
 		NPCPhrase(HOW_TRUE);
 
-		DISABLE_PHRASE(full_of_monsters);
+		DisablePhrase(full_of_monsters);
 	}
 	else if (PlayerSaid(R, what_enemy))
 	{
 		NPCPhrase(ENEMY_IS);
 
-		DISABLE_PHRASE(what_enemy);
+		DisablePhrase(what_enemy);
 	}
 	else if (PlayerSaid(R, why_you_here))
 	{
 		NPCPhrase(DREW_SHORT_STRAW);
 
-		DISABLE_PHRASE(why_you_here);
+		DisablePhrase(why_you_here);
 	}
 	else if (PlayerSaid(R, where_are_urquan))
 	{
 		NPCPhrase(URQUAN_LEFT);
 
-		DISABLE_PHRASE(where_are_urquan);
+		DisablePhrase(where_are_urquan);
 	}
 	else if (PlayerSaid(R, what_about_other_races))
 	{
 		NPCPhrase(ABOUT_OTHER_RACES);
 
-		DISABLE_PHRASE(what_about_other_races);
+		DisablePhrase(what_about_other_races);
 	}
 	else if (PlayerSaid(R, what_blaze_of_glory))
 	{
 		NPCPhrase(BLAZE_IS);
 
-		DISABLE_PHRASE(what_blaze_of_glory);
+		DisablePhrase(what_blaze_of_glory);
 	}
 	else if (PlayerSaid(R, what_about_yourself))
 	{
 		NPCPhrase(ABOUT_MYSELF);
 
-		DISABLE_PHRASE(what_about_yourself);
+		DisablePhrase(what_about_yourself);
 	}
 	else if (PlayerSaid(R, join_us))
 	{
@@ -558,25 +558,25 @@ SpathiAllies(RESPONSE_REF R)
 	{
 		NPCPhrase(GENERAL_INFO_SPACE_2);
 
-		DISABLE_PHRASE(whats_up_space_2);
+		DisablePhrase(whats_up_space_2);
 	}
 	else if (PlayerSaid(R, give_us_info_from_space))
 	{
 		NPCPhrase(GET_INFO_FROM_SPATHIWA);
 
-		DISABLE_PHRASE(give_us_info_from_space);
+		DisablePhrase(give_us_info_from_space);
 	}
 	else if (PlayerSaid(R, give_us_resources_space))
 	{
 		NPCPhrase(GET_RESOURCES_FROM_SPATHIWA);
 
-		DISABLE_PHRASE(give_us_resources_space);
+		DisablePhrase(give_us_resources_space);
 	}
 	else if (PlayerSaid(R, what_do_for_fun))
 	{
 		NPCPhrase(DO_THIS_FOR_FUN);
 
-		DISABLE_PHRASE(what_do_for_fun);
+		DisablePhrase(what_do_for_fun);
 	}
 
 	if (PhraseEnabled(whats_up_space_2))
@@ -626,13 +626,13 @@ SpathiFriendly(RESPONSE_REF R)
 	{
 		NPCPhrase(GIVE_ADVICE);
 
-		DISABLE_PHRASE(since_friendly_give_stuff);
+		DisablePhrase(since_friendly_give_stuff);
 	}
 	else if (PlayerSaid(R, whats_up_space_1))
 	{
 		NPCPhrase(GENERAL_INFO_SPACE_1);
 
-		DISABLE_PHRASE(whats_up_space_1);
+		DisablePhrase(whats_up_space_1);
 	}
 
 	if (PhraseEnabled(whats_up_space_1))
@@ -664,32 +664,32 @@ SpathiBefriend(RESPONSE_REF R)
 	{
 		NPCPhrase(URQUAN_SLAVES);
 
-		DISABLE_PHRASE(looking_for_a_few_good_squids);
+		DisablePhrase(looking_for_a_few_good_squids);
 	}
 	else if (PlayerSaid(R, why_slaves))
 	{
 		NPCPhrase(UMGAH_TRICK);
 
-		DISABLE_PHRASE(why_slaves);
+		DisablePhrase(why_slaves);
 	}
 	else if (PlayerSaid(R, tell_us_about_you))
 	{
 		NPCPhrase(ABOUT_US);
 
-		DISABLE_PHRASE(tell_us_about_you);
+		DisablePhrase(tell_us_about_you);
 		LastStack = 1;
 	}
 	else if (PlayerSaid(R, what_you_really_want))
 	{
 		NPCPhrase(WANT_THIS);
 
-		DISABLE_PHRASE(what_you_really_want);
+		DisablePhrase(what_you_really_want);
 	}
 	else if (PlayerSaid(R, how_about_alliance))
 	{
 		NPCPhrase(SURE);
 
-		DISABLE_PHRASE(how_about_alliance);
+		DisablePhrase(how_about_alliance);
 	}
 
 	if (PhraseEnabled(looking_for_a_few_good_squids))
@@ -745,25 +745,25 @@ SpathiAntagonize(RESPONSE_REF R)
 	{
 		NPCPhrase(DARN_TOOTIN);
 
-		DISABLE_PHRASE(heard_youre_cowards);
+		DisablePhrase(heard_youre_cowards);
 	}
 	else if (PlayerSaid(R, wanna_fight))
 	{
 		NPCPhrase(YES_WE_DO);
 
-		DISABLE_PHRASE(wanna_fight);
+		DisablePhrase(wanna_fight);
 	}
 	else if (PlayerSaid(R, so_lets_fight))
 	{
 		NPCPhrase(OK_LETS_FIGHT);
 
-		DISABLE_PHRASE(so_lets_fight);
+		DisablePhrase(so_lets_fight);
 	}
 	else if (PlayerSaid(R, so_lets_fight_already))
 	{
 		NPCPhrase(DONT_REALLY_WANT_TO_FIGHT);
 
-		DISABLE_PHRASE(so_lets_fight_already);
+		DisablePhrase(so_lets_fight_already);
 	}
 
 	if (PhraseEnabled(wanna_fight))

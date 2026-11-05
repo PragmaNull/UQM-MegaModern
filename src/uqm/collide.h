@@ -32,28 +32,22 @@ inline constexpr auto SkipCollision {(Nonsolid | Disappearing)};
 constexpr auto CollidingElement(const auto& e) { return (!((e)->state_flags & SkipCollision)); }
 constexpr auto CollisionPossible(const auto& e0, const auto& e1) { return (CollidingElement(e0) && (!(((e1)->state_flags & (e0)->state_flags) & Collision) && ((!(((e1)->state_flags & (e0)->state_flags) & IgnoreSimilar) || (e1)->pParent != (e0)->pParent)) && ((e1)->mass_points || (e0)->mass_points))); }
 
-#define InitIntersectStartPoint(eptr)                      \
-	{                                                      \
-		(eptr)->IntersectControl.IntersectStamp.origin.x = \
-			WorldToDisplay((eptr)->current.location.x);    \
-		(eptr)->IntersectControl.IntersectStamp.origin.y = \
-			WorldToDisplay((eptr)->current.location.y);    \
-	}
+inline void InitIntersectStartPoint(ELEMENT* eptr)
+{
+	eptr->IntersectControl.IntersectStamp.origin.x = WorldToDisplay(eptr->current.location.x);
+	eptr->IntersectControl.IntersectStamp.origin.y = WorldToDisplay(eptr->current.location.y);
+}
 
-#define InitIntersectEndPoint(eptr)                  \
-	{                                                \
-		(eptr)->IntersectControl.EndPoint.x =        \
-			WorldToDisplay((eptr)->next.location.x); \
-		(eptr)->IntersectControl.EndPoint.y =        \
-			WorldToDisplay((eptr)->next.location.y); \
-	}
+inline void InitIntersectEndPoint(ELEMENT* eptr)
+{
+	eptr->IntersectControl.EndPoint.x = WorldToDisplay(eptr->next.location.x);
+	eptr->IntersectControl.EndPoint.y = WorldToDisplay(eptr->next.location.y);
+}
 
-#define InitIntersectFrame(eptr)                           \
-	{                                                      \
-		(eptr)->IntersectControl.IntersectStamp.frame =    \
-			SetEquFrameIndex((eptr)->next.image.farray[0], \
-							 (eptr)->next.image.frame);    \
-	}
+inline void InitIntersectFrame(ELEMENT* eptr)
+{
+	eptr->IntersectControl.IntersectStamp.frame = SetEquFrameIndex(eptr->next.image.farray[0], eptr->next.image.frame);
+}
 
 extern void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1);
 

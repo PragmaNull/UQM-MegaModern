@@ -380,31 +380,31 @@ SpathiInfo(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_HIERARCHY);
 
-		DISABLE_PHRASE(what_about_hierarchy);
+		DisablePhrase(what_about_hierarchy);
 	}
 	else if (PlayerSaid(R, what_about_history))
 	{
 		NPCPhrase(ABOUT_HISTORY);
 
-		DISABLE_PHRASE(what_about_history);
+		DisablePhrase(what_about_history);
 	}
 	else if (PlayerSaid(R, what_about_alliance))
 	{
 		NPCPhrase(ABOUT_ALLIANCE);
 
-		DISABLE_PHRASE(what_about_alliance);
+		DisablePhrase(what_about_alliance);
 	}
 	else if (PlayerSaid(R, what_about_other))
 	{
 		NPCPhrase(ABOUT_OTHER);
 
-		DISABLE_PHRASE(what_about_other);
+		DisablePhrase(what_about_other);
 	}
 	else if (PlayerSaid(R, what_about_precursors))
 	{
 		NPCPhrase(ABOUT_PRECURSORS);
 
-		DISABLE_PHRASE(what_about_precursors);
+		DisablePhrase(what_about_precursors);
 	}
 
 	if (PhraseEnabled(what_about_hierarchy))
@@ -436,7 +436,7 @@ SpathiInfo(RESPONSE_REF R)
 
 	if (!InfoLeft)
 	{
-		DISABLE_PHRASE(like_some_info);
+		DisablePhrase(like_some_info);
 	}
 }
 
@@ -493,13 +493,13 @@ SpathiAllies(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up);
+		DisablePhrase(whats_up);
 	}
 	else if (PlayerSaid(R, resources_please))
 	{
 		NPCPhrase(SORRY_NO_RESOURCES);
 
-		DISABLE_PHRASE(resources_please);
+		DisablePhrase(resources_please);
 	}
 	else if (PlayerSaid(R, something_fishy))
 	{
@@ -549,19 +549,19 @@ SpathiQuest(RESPONSE_REF R)
 	{
 		NPCPhrase(BIG_MISTAKE);
 
-		DISABLE_PHRASE(little_mistake);
+		DisablePhrase(little_mistake);
 	}
 	else if (PlayerSaid(R, talk_test))
 	{
 		NPCPhrase(TEST_AGAIN);
 
-		DISABLE_PHRASE(talk_test);
+		DisablePhrase(talk_test);
 	}
 	else if (PlayerSaid(R, zapped_a_few))
 	{
 		NPCPhrase(YOU_FORTUNATE);
 
-		DISABLE_PHRASE(zapped_a_few);
+		DisablePhrase(zapped_a_few);
 	}
 
 	if (!uqm::gameState().flag(uqm::GameFlag::LIED_ABOUT_CREATURES))
@@ -598,10 +598,10 @@ LearnQuest(RESPONSE_REF R)
 	{
 		NPCPhrase(QUEST_AGAIN);
 
-		DISABLE_PHRASE(what_test);
+		DisablePhrase(what_test);
 		if (uqm::gameState().flag(uqm::GameFlag::KNOW_SPATHI_EVIL))
 		{
-			DISABLE_PHRASE(tell_evil);
+			DisablePhrase(tell_evil);
 		}
 	}
 	else if (PlayerSaid(R, how_prove))
@@ -613,27 +613,27 @@ LearnQuest(RESPONSE_REF R)
 		NPCPhrase(WIPE_EVIL);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_SPATHI_QUEST, static_cast<uint32_t>(1));
-		DISABLE_PHRASE(what_test);
+		DisablePhrase(what_test);
 	}
 	else if (PlayerSaid(R, tell_evil))
 	{
 		NPCPhrase(BEFORE_ACCEPT);
 
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_SPATHI_EVIL, static_cast<uint32_t>(1));
-		DISABLE_PHRASE(tell_evil);
-		DISABLE_PHRASE(prove_strength);
+		DisablePhrase(tell_evil);
+		DisablePhrase(prove_strength);
 	}
 	else if (PlayerSaid(R, prove_strength))
 	{
 		NPCPhrase(YOUR_BEHAVIOR);
 
-		DISABLE_PHRASE(prove_strength);
+		DisablePhrase(prove_strength);
 	}
 	else if (PlayerSaid(R, why_dont_you_do_it))
 	{
 		NPCPhrase(WE_WONT_BECAUSE);
 
-		DISABLE_PHRASE(why_dont_you_do_it);
+		DisablePhrase(why_dont_you_do_it);
 	}
 
 	if (PhraseEnabled(what_test))
@@ -686,31 +686,31 @@ AllianceOffer(RESPONSE_REF R)
 	{
 		NPCPhrase(TOO_AFRAID);
 
-		DISABLE_PHRASE(hand_in_friendship);
+		DisablePhrase(hand_in_friendship);
 	}
 	else if (PlayerSaid(R, stronger))
 	{
 		NPCPhrase(YOURE_NOT);
 
-		DISABLE_PHRASE(stronger);
+		DisablePhrase(stronger);
 	}
 	else if (PlayerSaid(R, yes_we_are))
 	{
 		NPCPhrase(NO_YOURE_NOT);
 
-		DISABLE_PHRASE(yes_we_are);
+		DisablePhrase(yes_we_are);
 	}
 	else if (PlayerSaid(R, share_info))
 	{
 		NPCPhrase(NO_INFO);
 
-		DISABLE_PHRASE(share_info);
+		DisablePhrase(share_info);
 	}
 	else if (PlayerSaid(R, give_us_resources))
 	{
 		NPCPhrase(NO_RESOURCES);
 
-		DISABLE_PHRASE(give_us_resources);
+		DisablePhrase(give_us_resources);
 	}
 
 	if (PhraseEnabled(hand_in_friendship))
@@ -786,37 +786,37 @@ SpathiParty(RESPONSE_REF R)
 	{
 		NPCPhrase(WAIT_A_WHILE);
 
-		DISABLE_PHRASE(deals_a_deal);
+		DisablePhrase(deals_a_deal);
 	}
 	else if (PlayerSaid(R, how_long))
 	{
 		NPCPhrase(TEN_YEARS);
 
-		DISABLE_PHRASE(how_long);
+		DisablePhrase(how_long);
 	}
 	else if (PlayerSaid(R, reneging))
 	{
 		NPCPhrase(ADULT_VIEW);
 
-		DISABLE_PHRASE(reneging);
+		DisablePhrase(reneging);
 	}
 	else if (PlayerSaid(R, return_beasts))
 	{
 		NPCPhrase(WHAT_RELATIONSHIP);
 
-		DISABLE_PHRASE(return_beasts);
+		DisablePhrase(return_beasts);
 	}
 	else if (PlayerSaid(R, minds_and_might))
 	{
 		NPCPhrase(HUH);
 
-		DISABLE_PHRASE(minds_and_might);
+		DisablePhrase(minds_and_might);
 	}
 	else if (PlayerSaid(R, fellowship))
 	{
 		NPCPhrase(WHAT);
 
-		DISABLE_PHRASE(fellowship);
+		DisablePhrase(fellowship);
 	}
 
 	if (PhraseEnabled(deals_a_deal))
@@ -884,40 +884,40 @@ SpathiCouncil(RESPONSE_REF R)
 	{
 		NPCPhrase(KILLED_SPATHI);
 
-		DISABLE_PHRASE(we_come_in_peace);
+		DisablePhrase(we_come_in_peace);
 	}
 	else if (PlayerSaid(R, spathi_on_pluto))
 	{
 		NPCPhrase(WHERE_SPATHI);
 
-		DISABLE_PHRASE(spathi_on_pluto);
+		DisablePhrase(spathi_on_pluto);
 	}
 	else if (PlayerSaid(R, hostage))
 	{
 		NPCPhrase(GUN_TO_HEAD);
 
 		uqm::gameState().setFlag(uqm::GameFlag::FOUND_PLUTO_SPATHI, static_cast<uint32_t>(3));
-		DISABLE_PHRASE(hostage);
+		DisablePhrase(hostage);
 	}
 	else if (PlayerSaid(R, killed_fwiffo))
 	{
 		NPCPhrase(POOR_FWIFFO);
 
 		uqm::gameState().setFlag(uqm::GameFlag::FOUND_PLUTO_SPATHI, static_cast<uint32_t>(3));
-		DISABLE_PHRASE(killed_fwiffo);
+		DisablePhrase(killed_fwiffo);
 	}
 	else if (PlayerSaid(R, fwiffo_fine))
 	{
 		NPCPhrase(NOT_LIKELY);
 
 		R = killed_fwiffo;
-		DISABLE_PHRASE(fwiffo_fine);
+		DisablePhrase(fwiffo_fine);
 	}
 	else if (PlayerSaid(R, surrender))
 	{
 		NPCPhrase(NO_SURRENDER);
 
-		DISABLE_PHRASE(surrender);
+		DisablePhrase(surrender);
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER) == 0)
@@ -991,7 +991,7 @@ SpathiPassword(RESPONSE_REF R)
 	{
 		NPCPhrase(YOU_GET_TO_LIVE);
 
-		DISABLE_PHRASE(what_do_i_get);
+		DisablePhrase(what_do_i_get);
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI)

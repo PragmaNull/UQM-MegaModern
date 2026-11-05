@@ -401,25 +401,25 @@ KohrAhStory(RESPONSE_REF R)
 	{
 		NPCPhrase(WE_WERE_SLAVES);
 
-		DISABLE_PHRASE(why_do_you_destroy);
+		DisablePhrase(why_do_you_destroy);
 	}
 	else if (PlayerSaid(R, relationship_with_urquan))
 	{
 		NPCPhrase(WE_ARE_URQUAN_TOO);
 
-		DISABLE_PHRASE(relationship_with_urquan);
+		DisablePhrase(relationship_with_urquan);
 	}
 	else if (PlayerSaid(R, what_about_culture))
 	{
 		NPCPhrase(BONE_GARDENS);
 
-		DISABLE_PHRASE(what_about_culture);
+		DisablePhrase(what_about_culture);
 	}
 	else if (PlayerSaid(R, how_leave_me_alone))
 	{
 		NPCPhrase(YOU_DIE);
 
-		DISABLE_PHRASE(how_leave_me_alone);
+		DisablePhrase(how_leave_me_alone);
 	}
 
 	if (PhraseEnabled(why_do_you_destroy))

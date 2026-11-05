@@ -3320,7 +3320,7 @@ DoIpFlight(SOLARSYS_STATE* pSS)
 static int16_t
 widthPick(void)
 {
-	const EXTENT sis_screen_dimensions[] = {SIS_SCREEN_DIMENSIONS};
+	const auto& sis_screen_dimensions {SisScreenDimensions};
 
 	return sis_screen_dimensions[uqm::UQMOptions::read().starBackground].width;
 }
@@ -3328,7 +3328,7 @@ widthPick(void)
 static int16_t
 heightPick(void)
 {
-	const EXTENT sis_screen_dimensions[] = {SIS_SCREEN_DIMENSIONS};
+	const auto& sis_screen_dimensions {SisScreenDimensions};
 
 	return sis_screen_dimensions[uqm::UQMOptions::read().starBackground].height;
 }

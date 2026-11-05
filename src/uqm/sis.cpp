@@ -1277,9 +1277,7 @@ DrawSupportShips(void)
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hNextShip {};
 	const GFXPOINT* pship_pos {};
-	const GFXPOINT ship_pos[MaxBuiltShips] =
-		{
-			SUPPORT_SHIP_PTS};
+	const auto& ship_pos {SupportShipPts};
 
 	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q),
 		pship_pos = ship_pos;
@@ -1608,7 +1606,7 @@ GetCPodCapacity(GFXPOINT* ppt)
 	uint16_t rowNr {};
 	uint16_t colNr {};
 
-	const static Color crewRows[] = PC_CREW_COLOR_TABLE;
+	const auto& crewRows {PcCrewColorTable};
 
 	const uint16_t crewCount {GetCrewCount()};
 	if (!GetCrewPodForCrewMember(crewCount, &slotNr, &seatNr))
@@ -1714,7 +1712,7 @@ GetSBayCapacity(GFXPOINT* ppt)
 	uint16_t rowNr {};
 	// uint16_t colNr; Unused
 
-	const static Color colorBars[] = STORAGE_BAY_COLOR_TABLE;
+	const auto& colorBars {StorageBayColorTable};
 
 	const uint16_t massCount {GetElementMass()};
 	if (!GetStorageCellForMineralUnit(massCount, &slotNr, &cellNr))
@@ -1824,7 +1822,7 @@ GetFTankScreenPos(GFXPOINT* ppt)
 
 	uint32_t rowNr {};
 
-	const static Color fuelColors[] = FUEL_COLOR_TABLE;
+	const auto& fuelColors {FuelColorTable};
 
 	const uint32_t fuelAmount {GetFuelTotal()};
 	if (fuelAmount < FuelReserve)
@@ -2022,7 +2020,7 @@ void DrawAutoPilotMessage(bool Reset)
 	static uint32_t cycle_index = 0;
 	bool OnAutoPilot {};
 
-	const static Color cycle_tab[] = AUTOPILOT_COLOR_CYCLE_TABLE;
+	const auto& cycle_tab {AutopilotColorCycleTable};
 	const size_t cycleCount = std::size(cycle_tab);
 
 	if (Reset || uqm::UQMOptions::read().bubbleWarp)

@@ -307,7 +307,7 @@ NoRadioactives(RESPONSE_REF R)
 		{
 			NPCPhrase(RADIOS_ON_MERCURY);
 
-			DISABLE_PHRASE(where_can_i_get_radios);
+			DisablePhrase(where_can_i_get_radios);
 		}
 		else if (PlayerSaid(R, no_but_well_help))
 		{
@@ -425,7 +425,7 @@ AskAfterRadios(RESPONSE_REF R)
 	{
 		NPCPhrase(RADIOS_ON_MERCURY);
 
-		DISABLE_PHRASE(where_get_radios);
+		DisablePhrase(where_get_radios);
 	}
 
 	{
@@ -585,7 +585,7 @@ TellProbe(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase(THAT_WAS_PROBE);
-	DISABLE_PHRASE(what_was_red_thing);
+	DisablePhrase(what_was_red_thing);
 
 	Response(it_went_away, RevealSelf);
 	Response(we_destroyed_it, RevealSelf);
@@ -600,41 +600,41 @@ RevealSelf(RESPONSE_REF R)
 	{
 		NPCPhrase(THATS_IMPOSSIBLE);
 
-		DISABLE_PHRASE(we_are_vindicator);
+		DisablePhrase(we_are_vindicator);
 	}
 	else if (PlayerSaid(R, our_mission_was_secret))
 	{
 		NPCPhrase(ACKNOWLEDGE_SECRET);
 
-		DISABLE_PHRASE(our_mission_was_secret);
+		DisablePhrase(our_mission_was_secret);
 	}
 	else if (PlayerSaid(R, first_give_info))
 	{
 		NPCPhrase(ASK_AWAY);
 
 		stack = 1;
-		DISABLE_PHRASE(first_give_info);
+		DisablePhrase(first_give_info);
 	}
 	else if (PlayerSaid(R, whats_this_starbase))
 	{
 		NPCPhrase(STARBASE_IS);
 
 		stack = 1;
-		DISABLE_PHRASE(whats_this_starbase);
+		DisablePhrase(whats_this_starbase);
 	}
 	else if (PlayerSaid(R, what_about_earth))
 	{
 		NPCPhrase(HAPPENED_TO_EARTH);
 
 		stack = 1;
-		DISABLE_PHRASE(what_about_earth);
+		DisablePhrase(what_about_earth);
 	}
 	else if (PlayerSaid(R, where_are_urquan))
 	{
 		NPCPhrase(URQUAN_LEFT);
 
 		stack = 1;
-		DISABLE_PHRASE(where_are_urquan);
+		DisablePhrase(where_are_urquan);
 	}
 	else if (PlayerSaid(R, it_went_away))
 	{

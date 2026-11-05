@@ -366,7 +366,7 @@ TaaloWorld(RESPONSE_REF R)
 	{
 		NPCPhrase(ASK_NICELY);
 
-		DISABLE_PHRASE(demand_to_land);
+		DisablePhrase(demand_to_land);
 	}
 	else if (PlayerSaid(R, why_you_here))
 	{
@@ -379,7 +379,7 @@ TaaloWorld(RESPONSE_REF R)
 			NPCPhrase(ANGRY_EXPLANATION);
 		}
 
-		DISABLE_PHRASE(why_you_here);
+		DisablePhrase(why_you_here);
 	}
 	else if (PlayerSaid(R, what_is_this_place))
 	{
@@ -393,26 +393,26 @@ TaaloWorld(RESPONSE_REF R)
 			SetHomeworldKnown(ORZ_HOME);
 		}
 
-		DISABLE_PHRASE(what_is_this_place);
+		DisablePhrase(what_is_this_place);
 	}
 	else if (PlayerSaid(R, may_we_land))
 	{
 		NPCPhrase(ALLIES_CAN_VISIT);
 
-		DISABLE_PHRASE(may_we_land);
+		DisablePhrase(may_we_land);
 	}
 	else if (PlayerSaid(R, make_alliance))
 	{
 		NPCPhrase(CANT_ALLY_HERE);
 		SetHomeworldKnown(ORZ_HOME);
 
-		DISABLE_PHRASE(make_alliance);
+		DisablePhrase(make_alliance);
 	}
 	else if (PlayerSaid(R, why_busy))
 	{
 		NPCPhrase(BUSY_BECAUSE);
 
-		DISABLE_PHRASE(why_busy);
+		DisablePhrase(why_busy);
 	}
 
 	if (PhraseEnabled(may_we_land))
@@ -482,7 +482,7 @@ OrzAllied(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_GENERAL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_ally);
+		DisablePhrase(whats_up_ally);
 	}
 	else if (PlayerSaid(R, more_about_you))
 	{
@@ -505,7 +505,7 @@ OrzAllied(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_PERSONAL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(more_about_you);
+		DisablePhrase(more_about_you);
 	}
 	else if (PlayerSaid(R, about_andro_1))
 	{
@@ -550,7 +550,7 @@ WhereAndrosyn(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase(DISEMBLE_ABOUT_ANDROSYN);
-	DISABLE_PHRASE(where_androsyn);
+	DisablePhrase(where_androsyn);
 
 	Response(must_know_about_androsyn, ExitConversation);
 	Response(dont_really_care, OrzNeutral);
@@ -594,7 +594,7 @@ OrzNeutral(RESPONSE_REF R)
 	{
 		NPCPhrase(HOSTILITY_IS_BAD_1);
 
-		DISABLE_PHRASE(hostile_1);
+		DisablePhrase(hostile_1);
 		LastStack = 2;
 	}
 	else if (PlayerSaid(R, we_are_vindicator))
@@ -620,14 +620,14 @@ OrzNeutral(RESPONSE_REF R)
 	{
 		NPCPhrase(MAYBE_LATER);
 
-		DISABLE_PHRASE(talk_about_alliance);
+		DisablePhrase(talk_about_alliance);
 		uqm::gameState().setFlag(uqm::GameFlag::REFUSED_ORZ_ALLIANCE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, decide_later))
 	{
 		NPCPhrase(OK_LATER);
 
-		DISABLE_PHRASE(talk_about_alliance);
+		DisablePhrase(talk_about_alliance);
 		uqm::gameState().setFlag(uqm::GameFlag::REFUSED_ORZ_ALLIANCE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, dont_really_care))
@@ -722,7 +722,7 @@ OrzAngry(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ORZ_GENERAL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_angry);
+		DisablePhrase(whats_up_angry);
 	}
 
 	if (PhraseEnabled(whats_up_angry))

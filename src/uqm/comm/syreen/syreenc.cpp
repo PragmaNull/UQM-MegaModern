@@ -365,19 +365,19 @@ Sex(RESPONSE_REF R)
 	{
 		NPCPhrase(THIS_HAPPENS);
 
-		DISABLE_PHRASE(what_happens_if_i_touch_this);
+		DisablePhrase(what_happens_if_i_touch_this);
 	}
 	else if (PlayerSaid(R, are_you_sure_this_is_ok))
 	{
 		NPCPhrase(YES_SURE);
 
-		DISABLE_PHRASE(are_you_sure_this_is_ok);
+		DisablePhrase(are_you_sure_this_is_ok);
 	}
 	else if (PlayerSaid(R, boy_they_never_taught))
 	{
 		NPCPhrase(THEN_LET_ME_TEACH);
 
-		DISABLE_PHRASE(boy_they_never_taught);
+		DisablePhrase(boy_they_never_taught);
 	}
 
 	if (!PhraseEnabled(what_happens_if_i_touch_this)
@@ -454,13 +454,13 @@ Foreplay(RESPONSE_REF R)
 
 		NPCPhrase(LIGHTS_OFF_BECAUSE);
 
-		DISABLE_PHRASE(why_lights_off);
+		DisablePhrase(why_lights_off);
 	}
 	else if (PlayerSaid(R, evil_monster))
 	{
 		NPCPhrase(NOT_EVIL_MONSTER);
 
-		DISABLE_PHRASE(evil_monster);
+		DisablePhrase(evil_monster);
 	}
 
 	if (PhraseEnabled(why_lights_off))
@@ -487,13 +487,13 @@ AfterAmbush(RESPONSE_REF R)
 	{
 		NPCPhrase(DO_THIS_AFTER_AMBUSH);
 
-		DISABLE_PHRASE(what_now_after_ambush);
+		DisablePhrase(what_now_after_ambush);
 	}
 	else if (PlayerSaid(R, what_about_you))
 	{
 		NPCPhrase(ABOUT_ME);
 
-		DISABLE_PHRASE(what_about_you);
+		DisablePhrase(what_about_you);
 	}
 	else if (PlayerSaid(R, whats_up_after_ambush))
 	{
@@ -518,7 +518,7 @@ AfterAmbush(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_after_ambush);
+		DisablePhrase(whats_up_after_ambush);
 	}
 
 	if (PhraseEnabled(what_about_you))
@@ -547,7 +547,7 @@ AmbushReady(RESPONSE_REF R)
 	{
 		NPCPhrase(OK_REPEAT_PLAN);
 
-		DISABLE_PHRASE(repeat_plan);
+		DisablePhrase(repeat_plan);
 	}
 
 	if (PhraseEnabled(repeat_plan))
@@ -564,19 +564,19 @@ SyreenShuttle(RESPONSE_REF R)
 	{
 		NPCPhrase(OPEN_VAULT);
 
-		DISABLE_PHRASE(whats_next_step);
+		DisablePhrase(whats_next_step);
 	}
 	else if (PlayerSaid(R, what_do_i_get_for_this))
 	{
 		NPCPhrase(GRATITUDE);
 
-		DISABLE_PHRASE(what_do_i_get_for_this);
+		DisablePhrase(what_do_i_get_for_this);
 	}
 	else if (PlayerSaid(R, not_sure))
 	{
 		NPCPhrase(PLEASE);
 
-		DISABLE_PHRASE(not_sure);
+		DisablePhrase(not_sure);
 	}
 	else if (PlayerSaid(R, where_is_it))
 	{
@@ -586,7 +586,7 @@ SyreenShuttle(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP, static_cast<uint32_t>(1));
 
-		DISABLE_PHRASE(where_is_it);
+		DisablePhrase(where_is_it);
 	}
 	else if (PlayerSaid(R, been_there))
 	{
@@ -596,7 +596,7 @@ SyreenShuttle(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE, static_cast<uint32_t>(1));
 		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP, static_cast<uint32_t>(1));
 
-		DISABLE_PHRASE(been_there);
+		DisablePhrase(been_there);
 	}
 
 	if (PhraseEnabled(whats_next_step))
@@ -657,7 +657,7 @@ NormalSyreen(RESPONSE_REF R)
 	{
 		NPCPhrase(WHAT_ABOUT_DEEP_CHILDREN);
 
-		DISABLE_PHRASE(know_about_deep_children);
+		DisablePhrase(know_about_deep_children);
 	}
 	else if (PlayerSaid(R, mycons_involved))
 	{
@@ -675,7 +675,7 @@ NormalSyreen(RESPONSE_REF R)
 	{
 		NPCPhrase(SEE_PROOF);
 
-		DISABLE_PHRASE(have_proof);
+		DisablePhrase(have_proof);
 	}
 	else if (PlayerSaid(R, what_doing_here))
 	{
@@ -865,15 +865,15 @@ InitialSyreen(RESPONSE_REF R)
 	{
 		NPCPhrase(OK_NEED);
 
-		DISABLE_PHRASE(i_need_you);
-		DISABLE_PHRASE(i_need_touch_o_vision);
+		DisablePhrase(i_need_you);
+		DisablePhrase(i_need_touch_o_vision);
 	}
 	else if (PlayerSaid(R, i_need_touch_o_vision))
 	{
 		NPCPhrase(TOUCH_O_VISION);
 
-		DISABLE_PHRASE(i_need_you);
-		DISABLE_PHRASE(i_need_touch_o_vision);
+		DisablePhrase(i_need_you);
+		DisablePhrase(i_need_touch_o_vision);
 	}
 
 	Response(we_here_to_help, NormalSyreen);
@@ -931,7 +931,7 @@ SyreenVault(RESPONSE_REF R)
 	{
 		NPCPhrase(OK_HINT);
 
-		DISABLE_PHRASE(vault_hint);
+		DisablePhrase(vault_hint);
 	}
 
 	if (PhraseEnabled(vault_hint))

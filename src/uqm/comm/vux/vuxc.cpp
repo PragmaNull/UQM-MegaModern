@@ -472,19 +472,19 @@ Menagerie(RESPONSE_REF R)
 		{
 			NPCPhrase(TRUST_1);
 
-			DISABLE_PHRASE(why_trust_1);
+			DisablePhrase(why_trust_1);
 		}
 		else if (PlayerSaid(R, why_trust_2))
 		{
 			NPCPhrase(TRUST_2);
 
-			DISABLE_PHRASE(why_trust_2);
+			DisablePhrase(why_trust_2);
 		}
 		else if (PlayerSaid(R, why_trust_3))
 		{
 			NPCPhrase(TRUST_3);
 
-			DISABLE_PHRASE(why_trust_3);
+			DisablePhrase(why_trust_3);
 		}
 
 		if (PhraseEnabled(why_trust_1))
@@ -578,13 +578,13 @@ Menagerie(RESPONSE_REF R)
 			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_1, static_cast<uint32_t>(3));
 
 			R = about_creature_again;
-			DISABLE_PHRASE(what_about_creature);
+			DisablePhrase(what_about_creature);
 		}
 		else if (PlayerSaid(R, about_creature_again))
 		{
 			NPCPhrase(CREATURE_AGAIN);
 
-			DISABLE_PHRASE(about_creature_again);
+			DisablePhrase(about_creature_again);
 		}
 		else if (PlayerSaid(R, why_dont_you_attack))
 		{
@@ -734,7 +734,7 @@ NormalVux(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::VUX_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_hostile);
+		DisablePhrase(whats_up_hostile);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_1))

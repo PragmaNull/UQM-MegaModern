@@ -126,11 +126,12 @@ inline constexpr auto UqmSisScreenHeight {(227)};
 inline constexpr auto HdmodSisScreenWidth {(1074)};
 inline constexpr auto HdmodSisScreenHeight {(924)};
 
-#define SIS_SCREEN_DIMENSIONS                            \
-	{DosSisScreenWidth, DosSisScreenHeight},             \
-		{ThreedoSisScreenWidth, ThreedoSisScreenHeight}, \
-		{UqmSisScreenWidth, UqmSisScreenHeight},         \
-		{HdmodSisScreenWidth, HdmodSisScreenHeight},
+inline constexpr EXTENT SisScreenDimensions[] {
+	{DosSisScreenWidth,		DosSisScreenHeight	  },
+	{ThreedoSisScreenWidth, ThreedoSisScreenHeight},
+	{UqmSisScreenWidth,		UqmSisScreenHeight	  },
+	{HdmodSisScreenWidth,	  HdmodSisScreenHeight  },
+};
 
 /* Radar. */
 inline auto RadarX() { return (ResScale(4) + (SpaceWidth() + SafeX())); }

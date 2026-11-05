@@ -19,6 +19,7 @@
 #include "build.h"
 #include "starmap.h"
 #include "gendef.h"
+#include "core/stl/array.h"
 #include "globdata.h"
 #include "intel.h"
 #include "state.h"
@@ -197,6 +198,35 @@ BuildGroup(QUEUE* pDstQueue, uint8_t race_id)
 	return hGroup;
 }
 
+static constexpr uint8_t HomeworldLoc[] {
+	0,				 /* ARILOU_SHIP */
+	CHMMR_DEFINED,	 /* CHMMR_SHIP */
+	0,				 /* HUMAN_SHIP */
+	ORZ_DEFINED,	 /* ORZ_SHIP */
+	PKUNK_DEFINED,	 /* PKUNK_SHIP */
+	0,				 /* SHOFIXTI_SHIP */
+	SPATHI_DEFINED,	 /* SPATHI_SHIP */
+	SUPOX_DEFINED,	 /* SUPOX_SHIP */
+	THRADD_DEFINED,	 /* THRADDASH_SHIP */
+	UTWIG_DEFINED,	 /* UTWIG_SHIP */
+	VUX_DEFINED,	 /* VUX_SHIP */
+	YEHAT_DEFINED,	 /* YEHAT_SHIP */
+	0,				 /* MELNORME_SHIP */
+	DRUUGE_DEFINED,	 /* DRUUGE_SHIP */
+	ILWRATH_DEFINED, /* ILWRATH_SHIP */
+	MYCON_DEFINED,	 /* MYCON_SHIP */
+	0,				 /* SLYLANDRO_SHIP */
+	UmgahDefined,	 /* UMGAH_SHIP */
+	0,				 /* URQUAN_SHIP */
+	ZOQFOT_DEFINED,	 /* ZOQFOTPIK_SHIP */
+	SYREEN_DEFINED,	 /* SYREEN_SHIP */
+	0,				 /* BLACK_URQUAN_SHIP */
+	0,				 /* ANDROSYNTH_SHIP */
+	0,				 /* CHENJESU_SHIP */
+	0,				 /* MMRNMHRM_SHIP */
+	0,				 /* YEHAT_REBEL_SHIP */
+};
+
 void BuildGroups(void)
 {
 	uint8_t Index {};
@@ -206,8 +236,8 @@ void BuildGroups(void)
 	HFLEETINFO hFleet {};
 	HFLEETINFO hNextFleet {};
 
-	uint8_t HomeWorld[] = {HOMEWORLD_LOC};
-	uint8_t EncounterPercent[] = {RACE_INTERPLANETARY_PERCENT};
+	auto HomeWorld {uqstl::to_array(HomeworldLoc)};
+	auto EncounterPercent {uqstl::to_array(RaceInterplanetaryPercent)};
 
 	EncounterPercent[SLYLANDRO_SHIP] *= uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER);
 
@@ -320,9 +350,7 @@ FoundHome:
 	if (BestPercent)
 	{
 		uint8_t num_groups {};
-		const uint8_t EncounterMakeup[] =
-			{
-				RACE_ENCOUNTER_MAKEUP};
+		const auto& EncounterMakeup {RaceEncounterMakeup};
 
 		uint8_t which_group {0};
 		num_groups = ((uint16_t)uqm::random().next() % (BestPercent >> 1)) + 1;
@@ -367,8 +395,8 @@ void findRaceSOI(void)
 	uint8_t Index {};
 	uint8_t i = 0;
 	uint8_t j {};
-	const uint8_t RaceHasMusic[] = {RACE_MUSIC_BOOL};
-	const uint8_t HomeWorld[] = {HOMEWORLD_LOC};
+	const auto& RaceHasMusic {RaceMusicBool};
+	const auto& HomeWorld {HomeworldLoc};
 	uint8_t WhichHomeWorld = NO_ID;
 	uint8_t SpeciesArr[MaxOverlap] = {NO_ID};
 	uint16_t RadiusArr[MaxOverlap] = {0};

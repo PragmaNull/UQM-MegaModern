@@ -527,7 +527,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 	TEXT t2;
 	GFXRECT r1;
 	GFXRECT r2;
-	const static Color fade_cycle[] = SCAVENGE_TEXT_COLOR_TABLE;
+	const auto& fade_cycle {ScavengeTextColorTable};
 	constexpr auto NumFades {(std::size(fade_cycle))};
 
 	t1.baseline.x = pRect->corner.x + ResScale(100);
@@ -634,7 +634,7 @@ UninitEncounter(void)
 		StatMsgMode prevMsgMode = SMM_UNDEFINED;
 		char buf[80] {};
 		const SHIP_FRAGMENT* FragPtr {};
-		const static Color fade_ship_cycle[] = SCAVENGE_SCREEN_COLOR_TABLE;
+		const auto& fade_ship_cycle {ScavengeScreenColorTable};
 		constexpr auto NumShipFades {(std::size(fade_ship_cycle))};
 
 		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));

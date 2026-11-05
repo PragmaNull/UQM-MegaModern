@@ -1070,7 +1070,7 @@ DrawSavegameCargo(SIS_STATE* sisState)
 	STAMP s;
 	TEXT t;
 	char buf[40];
-	const static Color cargo_color[NumColors] = CARGO_COLOR_TABLE;
+	const auto& cargo_color {CargoColorTable};
 	const auto ElementOrgY = [&] {
 		return ResScale(17);
 	};

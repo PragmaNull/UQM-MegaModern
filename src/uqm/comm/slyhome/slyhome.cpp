@@ -336,25 +336,25 @@ SlylandroInfo(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_HOME);
 
-		DISABLE_PHRASE(what_about_home);
+		DisablePhrase(what_about_home);
 	}
 	else if (PlayerSaid(R, what_about_culture))
 	{
 		NPCPhrase(ABOUT_CULTURE);
 
-		DISABLE_PHRASE(what_about_culture);
+		DisablePhrase(what_about_culture);
 	}
 	else if (PlayerSaid(R, what_about_history))
 	{
 		NPCPhrase(ABOUT_HISTORY);
 
-		DISABLE_PHRASE(what_about_history);
+		DisablePhrase(what_about_history);
 	}
 	else if (PlayerSaid(R, what_about_biology))
 	{
 		NPCPhrase(ABOUT_BIOLOGY);
 
-		DISABLE_PHRASE(what_about_biology);
+		DisablePhrase(what_about_biology);
 	}
 
 	uint8_t InfoLeft {false};
@@ -382,7 +382,7 @@ SlylandroInfo(RESPONSE_REF R)
 	Response(enough_info, HomeWorld);
 	if (!InfoLeft)
 	{
-		DISABLE_PHRASE(like_more_about_you);
+		DisablePhrase(like_more_about_you);
 	}
 }
 
@@ -397,19 +397,19 @@ FixBug(RESPONSE_REF R)
 	{
 		NPCPhrase(GROW_TOO_FAST);
 
-		DISABLE_PHRASE(hunt_them_down);
+		DisablePhrase(hunt_them_down);
 	}
 	else if (PlayerSaid(R, sue_melnorme))
 	{
 		NPCPhrase(SIGNED_WAIVER);
 
-		DISABLE_PHRASE(sue_melnorme);
+		DisablePhrase(sue_melnorme);
 	}
 	else if (PlayerSaid(R, recall_signal))
 	{
 		NPCPhrase(NOT_THIS_MODEL);
 
-		DISABLE_PHRASE(recall_signal);
+		DisablePhrase(recall_signal);
 	}
 
 	if (PhraseEnabled(hunt_them_down))
@@ -438,19 +438,19 @@ ProbeBug(RESPONSE_REF R)
 	{
 		NPCPhrase(REP_NO_PROBLEM);
 
-		DISABLE_PHRASE(tell_me_about_rep_2);
+		DisablePhrase(tell_me_about_rep_2);
 	}
 	else if (PlayerSaid(R, what_about_rep_priorities))
 	{
 		NPCPhrase(MAXIMUM_SO_WHAT);
 
-		DISABLE_PHRASE(what_about_rep_priorities);
+		DisablePhrase(what_about_rep_priorities);
 	}
 	else if (PlayerSaid(R, tell_me_about_attack))
 	{
 		NPCPhrase(ATTACK_NO_PROBLEM);
 
-		DISABLE_PHRASE(tell_me_about_attack);
+		DisablePhrase(tell_me_about_attack);
 	}
 
 	if (PhraseEnabled(tell_me_about_rep_2))
@@ -489,20 +489,20 @@ ProbeFunction(RESPONSE_REF R)
 		NPCPhrase(BASIC_COMMANDS);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_KNOWS_PROGRAM, static_cast<uint32_t>(1));
-		DISABLE_PHRASE(tell_basics_again);
+		DisablePhrase(tell_basics_again);
 	}
 	else if (PlayerSaid(R, tell_basics_again))
 	{
 		NPCPhrase(OK_BASICS_AGAIN);
 
-		DISABLE_PHRASE(tell_basics_again);
+		DisablePhrase(tell_basics_again);
 	}
 	else if (PlayerSaid(R, what_effect))
 	{
 		NPCPhrase(AFFECTS_BEHAVIOR);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_KNOWS_EFFECTS, static_cast<uint32_t>(1));
-		DISABLE_PHRASE(what_effect);
+		DisablePhrase(what_effect);
 	}
 	else if (PlayerSaid(R, tell_me_about_rep_1))
 	{
@@ -516,7 +516,7 @@ ProbeFunction(RESPONSE_REF R)
 		NPCPhrase(MAXIMUM);
 
 		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_KNOWS_PRIORITY, static_cast<uint32_t>(1));
-		DISABLE_PHRASE(what_set_priority);
+		DisablePhrase(what_set_priority);
 	}
 	else if (PlayerSaid(R, how_does_probe_defend))
 	{
@@ -733,7 +733,7 @@ ProbeInfo(RESPONSE_REF R)
 	Response(enough_probe, HomeWorld);
 	if (!InfoLeft)
 	{
-		DISABLE_PHRASE(know_more_probe);
+		DisablePhrase(know_more_probe);
 	}
 }
 
@@ -750,7 +750,7 @@ HomeWorld(RESPONSE_REF R)
 		NPCPhrase(TERRIBLY_EXCITING);
 
 		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK1, static_cast<uint32_t>(1));
-		DISABLE_PHRASE(we_are_us);
+		DisablePhrase(we_are_us);
 	}
 	else if (PlayerSaid(R, what_other_visitors))
 	{

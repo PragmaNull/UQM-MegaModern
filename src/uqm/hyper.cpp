@@ -72,7 +72,35 @@ static inline int16_t
 RaceHyperSpeed(RACE_ID Index)
 {
 	static int seedStamp = -1;
-	const int defaultMap[] {RACE_HYPER_SPEED};
+	const int defaultMap[] {
+		LogToHyper(ResScale(40)), /* ARILOU_SHIP */
+		LogToHyper(ResScale(27)), /* CHMMR_SHIP */
+		LogToHyper(ResScale(24)), /* HUMAN_SHIP */
+		LogToHyper(ResScale(40)), /* ORZ_SHIP */
+		LogToHyper(ResScale(40)), /* PKUNK_SHIP */
+		LogToHyper(ResScale(35)), /* SHOFIXTI_SHIP */
+		LogToHyper(ResScale(48)), /* SPATHI_SHIP */
+		LogToHyper(ResScale(40)), /* SUPOX_SHIP */
+		LogToHyper(ResScale(50)), /* THRADDASH_SHIP */
+		LogToHyper(ResScale(30)), /* UTWIG_SHIP */
+		LogToHyper(ResScale(21)), /* VUX_SHIP */
+		LogToHyper(ResScale(30)), /* YEHAT_SHIP */
+		LogToHyper(ResScale(40)), /* MELNORME_SHIP */
+		LogToHyper(ResScale(20)), /* DRUUGE_SHIP */
+		LogToHyper(ResScale(25)), /* ILWRATH_SHIP */
+		LogToHyper(ResScale(27)), /* MYCON_SHIP */
+		LogToHyper(ResScale(60)), /* SLYLANDRO_SHIP */
+		LogToHyper(ResScale(18)), /* UMGAH_SHIP */
+		LogToHyper(ResScale(30)), /* URQUAN_SHIP */
+		LogToHyper(ResScale(40)), /* ZOQFOTPIK_SHIP */
+		LogToHyper(ResScale(36)), /* SYREEN_SHIP */
+		LogToHyper(ResScale(30)), /* BLACK_URQUAN_SHIP */
+		LogToHyper(ResScale(45)), /* ANDROSYNTH_SHIP */
+		LogToHyper(ResScale(27)), /* CHENJESU_SHIP */
+		LogToHyper(ResScale(50)), /* MMRNMHRM_SHIP */
+		LogToHyper(ResScale(30)), /* YEHAT_REBEL_SHIP */
+
+	};
 	const uint16_t numRaces = uqstl::size(defaultMap);
 	static int16_t speedMap[numRaces] = {0}; // set urquan drone to 0.
 	int x {};
@@ -342,9 +370,7 @@ void check_hyperspace_encounter(void)
 	GFXPOINT universe;
 	HFLEETINFO hStarShip {};
 	HFLEETINFO hNextShip {};
-	const uint16_t EncounterPercent[] =
-		{
-			RACE_HYPERSPACE_PERCENT};
+	const auto& EncounterPercent {RaceHyperspacePercent};
 
 	universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
 	universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
@@ -1385,9 +1411,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 		int16_t dy {};
 		uint16_t i {};
 		uint32_t radius_squared {};
-		const uint8_t EncounterMakeup[] =
-			{
-				RACE_ENCOUNTER_MAKEUP};
+		const auto& EncounterMakeup {RaceEncounterMakeup};
 
 		NewEncounter = true;
 

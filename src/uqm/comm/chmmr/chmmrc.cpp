@@ -331,7 +331,7 @@ NotReady(RESPONSE_REF R)
 	{
 		NPCPhrase(NO_FURTHER_ASSISTANCE);
 
-		DISABLE_PHRASE(further_assistance);
+		DisablePhrase(further_assistance);
 	}
 	else if (PlayerSaid(R, tech_help))
 	{
@@ -343,13 +343,13 @@ NotReady(RESPONSE_REF R)
 	{
 		NPCPhrase(PRECURSOR_WEAPON);
 
-		DISABLE_PHRASE(where_weapon);
+		DisablePhrase(where_weapon);
 	}
 	else if (PlayerSaid(R, where_distraction))
 	{
 		NPCPhrase(PSYCHIC_WEAPONRY);
 
-		DISABLE_PHRASE(where_distraction);
+		DisablePhrase(where_distraction);
 	}
 
 	if (CheckAlliance(CHMMR_SHIP) != GOOD_GUY)
@@ -382,19 +382,19 @@ ImproveBomb(RESPONSE_REF R)
 	{
 		NPCPhrase(MODIFY_VESSEL);
 
-		DISABLE_PHRASE(what_now);
+		DisablePhrase(what_now);
 	}
 	else if (PlayerSaid(R, wont_hurt_my_ship))
 	{
 		NPCPhrase(WILL_DESTROY_IT);
 
-		DISABLE_PHRASE(wont_hurt_my_ship);
+		DisablePhrase(wont_hurt_my_ship);
 	}
 	else if (PlayerSaid(R, bummer_about_my_ship))
 	{
 		NPCPhrase(DEAD_SILENCE);
 
-		DISABLE_PHRASE(bummer_about_my_ship);
+		DisablePhrase(bummer_about_my_ship);
 	}
 	else if (PlayerSaid(R, other_assistance))
 	{
@@ -498,31 +498,31 @@ ChmmrAdvice(RESPONSE_REF R)
 		NPCPhrase(DEFEAT_LIKE_SO);
 
 		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_BOMB_STATE, static_cast<uint32_t>(1));
-		DISABLE_PHRASE(how_defeat_urquan);
+		DisablePhrase(how_defeat_urquan);
 	}
 	else if (PlayerSaid(R, what_about_tpet))
 	{
 		NPCPhrase(SCARY_BUT_USEFUL);
 
-		DISABLE_PHRASE(what_about_tpet);
+		DisablePhrase(what_about_tpet);
 	}
 	else if (PlayerSaid(R, what_about_bomb))
 	{
 		NPCPhrase(ABOUT_BOMB);
 
-		DISABLE_PHRASE(what_about_bomb);
+		DisablePhrase(what_about_bomb);
 	}
 	else if (PlayerSaid(R, what_about_sun_device))
 	{
 		NPCPhrase(ABOUT_SUN_DEVICE);
 
-		DISABLE_PHRASE(what_about_sun_device);
+		DisablePhrase(what_about_sun_device);
 	}
 	else if (PlayerSaid(R, what_about_samatra))
 	{
 		NPCPhrase(ABOUT_SAMATRA);
 
-		DISABLE_PHRASE(what_about_samatra);
+		DisablePhrase(what_about_samatra);
 	}
 
 	uint8_t AdviceLeft {0};
@@ -555,7 +555,7 @@ ChmmrAdvice(RESPONSE_REF R)
 
 	if (!AdviceLeft)
 	{
-		DISABLE_PHRASE(need_advice);
+		DisablePhrase(need_advice);
 	}
 }
 
@@ -566,7 +566,7 @@ ChmmrShielded(RESPONSE_REF R)
 	{
 		NPCPhrase(HYBRID_PROCESS);
 
-		DISABLE_PHRASE(find_out_whats_up);
+		DisablePhrase(find_out_whats_up);
 	}
 	else if (PlayerSaid(R, need_help))
 	{
@@ -630,13 +630,13 @@ AfterBomb(RESPONSE_REF R)
 			uqm::gameState().setFlag(uqm::GameFlag::CHMMR_STACK, static_cast<uint32_t>(1));
 		}
 
-		DISABLE_PHRASE(whats_up_after_bomb);
+		DisablePhrase(whats_up_after_bomb);
 	}
 	else if (PlayerSaid(R, what_do_after_bomb))
 	{
 		NPCPhrase(DO_AFTER_BOMB);
 
-		DISABLE_PHRASE(what_do_after_bomb);
+		DisablePhrase(what_do_after_bomb);
 	}
 
 	if (PhraseEnabled(whats_up_after_bomb))

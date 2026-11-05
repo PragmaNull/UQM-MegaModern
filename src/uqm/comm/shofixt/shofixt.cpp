@@ -346,7 +346,7 @@ ConsoleShofixti(RESPONSE_REF R)
 	if (PlayerSaid(R, dont_do_it))
 	{
 		NPCPhrase(YES_I_DO_IT);
-		DISABLE_PHRASE(dont_do_it);
+		DisablePhrase(dont_do_it);
 	}
 	else
 	{
@@ -472,7 +472,7 @@ Friendly(RESPONSE_REF R)
 	{
 		NPCPhrase(NOTHING_NEW);
 
-		DISABLE_PHRASE(report0);
+		DisablePhrase(report0);
 	}
 	else if (PlayerSaid(R, why_here0))
 	{

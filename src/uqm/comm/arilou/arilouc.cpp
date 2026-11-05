@@ -334,7 +334,7 @@ ArilouHome(RESPONSE_REF R)
 			SetHomeworldKnown(UMGAH_HOME);
 		}
 
-		DISABLE_PHRASE(learned_about_umgah);
+		DisablePhrase(learned_about_umgah);
 	}
 	else if (PlayerSaid(R, umgah_acting_weird))
 	{
@@ -342,7 +342,7 @@ ArilouHome(RESPONSE_REF R)
 
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_CHECKED_UMGAH, static_cast<uint32_t>(1));
 		AddEvent(RELATIVE_EVENT, 0, 10, 0, ARILOU_UMGAH_CHECK);
-		DISABLE_PHRASE(umgah_acting_weird);
+		DisablePhrase(umgah_acting_weird);
 	}
 	else if (PlayerSaid(R, what_do_now))
 	{
@@ -380,7 +380,7 @@ ArilouHome(RESPONSE_REF R)
 		uqm::gameState().setFlag(uqm::GameFlag::KNOW_ARILOU_WANT_WRECK, static_cast<uint32_t>(1));
 
 		R = about_portal_again;
-		DISABLE_PHRASE(what_give_me);
+		DisablePhrase(what_give_me);
 	}
 	else if (PlayerSaid(R, what_about_tpet))
 	{
@@ -392,7 +392,7 @@ ArilouHome(RESPONSE_REF R)
 	{
 		NPCPhrase(PORTAL_AGAIN);
 
-		DISABLE_PHRASE(about_portal_again);
+		DisablePhrase(about_portal_again);
 	}
 	else if (PlayerSaid(R, got_it))
 	{
@@ -521,25 +521,25 @@ AngryHomeArilou(RESPONSE_REF R)
 	{
 		NPCPhrase(HAD_OUR_REASONS);
 
-		DISABLE_PHRASE(invaders_from_mars);
+		DisablePhrase(invaders_from_mars);
 	}
 	else if (PlayerSaid(R, why_should_i_trust))
 	{
 		NPCPhrase(TRUST_BECAUSE);
 
-		DISABLE_PHRASE(why_should_i_trust);
+		DisablePhrase(why_should_i_trust);
 	}
 	else if (PlayerSaid(R, what_about_interference))
 	{
 		NPCPhrase(INTERFERENCE_NECESSARY);
 
-		DISABLE_PHRASE(what_about_interference);
+		DisablePhrase(what_about_interference);
 	}
 	else if (PlayerSaid(R, i_just_like_to_leave))
 	{
 		NPCPhrase(SORRY_NO_LEAVE);
 
-		DISABLE_PHRASE(i_just_like_to_leave);
+		DisablePhrase(i_just_like_to_leave);
 	}
 
 	if (PhraseEnabled(invaders_from_mars))
@@ -575,7 +575,7 @@ AngrySpaceArilou(RESPONSE_REF R)
 	{
 		NPCPhrase(APOLOGIZE_AT_HOMEWORLD);
 
-		DISABLE_PHRASE(im_sorry);
+		DisablePhrase(im_sorry);
 	}
 
 	Response(lets_fight, ExitConversation);
@@ -625,7 +625,7 @@ FriendlySpaceArilou(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_2);
+		DisablePhrase(whats_up_2);
 	}
 	else if (PlayerSaid(R, why_you_here))
 	{
@@ -673,7 +673,7 @@ FriendlySpaceArilou(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HINTS, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(give_me_info_2);
+		DisablePhrase(give_me_info_2);
 	}
 
 	switch (uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_5))

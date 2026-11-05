@@ -384,13 +384,13 @@ ThraddAllies(RESPONSE_REF R)
 	{
 		NPCPhrase(GUARDING_HELIX_ALLY);
 
-		DISABLE_PHRASE(why_you_here_ally);
+		DisablePhrase(why_you_here_ally);
 	}
 	else if (PlayerSaid(R, whats_helix_ally))
 	{
 		NPCPhrase(HELIX_IS_ALLY);
 
-		DISABLE_PHRASE(whats_helix_ally);
+		DisablePhrase(whats_helix_ally);
 	}
 	else if (PlayerSaid(R, whats_up_ally))
 	{
@@ -413,7 +413,7 @@ ThraddAllies(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_ally);
+		DisablePhrase(whats_up_ally);
 	}
 	else if (PlayerSaid(R, how_goes_culture))
 	{
@@ -464,7 +464,7 @@ ThraddAllies(RESPONSE_REF R)
 		NumVisits |= 1 << 2;
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_DEMEANOR, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(how_goes_culture);
+		DisablePhrase(how_goes_culture);
 	}
 
 	if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
@@ -631,7 +631,7 @@ ThraddHostile(RESPONSE_REF R)
 		NPCPhrase(GENERAL_INFO_HOSTILE_1);
 
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INFO, static_cast<uint32_t>(1));
-		DISABLE_PHRASE(whats_up_hostile_2);
+		DisablePhrase(whats_up_hostile_2);
 	}
 	else if (PlayerSaid(R, whats_up_hostile_2))
 	{
@@ -653,7 +653,7 @@ ThraddHostile(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::THRADD_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_hostile_2);
+		DisablePhrase(whats_up_hostile_2);
 	}
 	else if (PlayerSaid(R, what_about_you_1))
 	{
@@ -688,7 +688,7 @@ ThraddHostile(RESPONSE_REF R)
 	else if (PlayerSaid(R, be_friends_2))
 	{
 		NPCPhrase(NO_FRIENDS_2);
-		DISABLE_PHRASE(be_friends_2);
+		DisablePhrase(be_friends_2);
 	}
 	else if (PlayerSaid(R, how_impressed_urquan_1))
 	{

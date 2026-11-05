@@ -59,7 +59,7 @@ static void
 InitializeDOSLanderPos(void)
 { // Initialize the DOS lander icon positions
 	int i {};
-	const GFXPOINT temp[MaxLanders] = {LANDER_DOS_PTS};
+	const auto& temp {LanderDosPts};
 
 	if (!IsDos())
 	{

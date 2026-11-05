@@ -337,7 +337,7 @@ Royalists(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(how_is_rebellion);
+		DisablePhrase(how_is_rebellion);
 	}
 	else if (PlayerSaid(R, what_about_pkunk_royalist))
 	{
@@ -424,7 +424,7 @@ YehatHome(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_homeworld);
+		DisablePhrase(whats_up_homeworld);
 	}
 	else if (PlayerSaid(R, at_least_help_us_homeworld))
 	{
@@ -512,7 +512,7 @@ YehatSpace(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_space_1);
+		DisablePhrase(whats_up_space_1);
 	}
 	else if (PlayerSaid(R, i_demand_you_ally_space))
 	{

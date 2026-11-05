@@ -42,7 +42,7 @@ static inline int16_t
 RaceIPSpeed(RACE_ID Index)
 {
 	static int seedStamp = -1;
-	const int16_t defaultMap[] = {RACE_IP_SPEED};
+	const auto& defaultMap {RaceIpSpeed};
 	const uint16_t numRaces = uqstl::size(defaultMap);
 	static int16_t speedMap[uqstl::size(defaultMap)] = {0};
 	int x {};
@@ -753,7 +753,7 @@ ip_group_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 
 	*(&GroupPtr) = (IP_GROUP*)(ElementPtr0)->pParent;
-	GetElementStarShip(ElementPtr1, &OtherPtr);
+	OtherPtr = ElementPtr1->pParent;
 
 	if (!(uqm::flagship().autopilot.target().x == ~0 && uqm::flagship().autopilot.target().y == ~0)
 		&& (CheckAlliance((RACE_ID)GroupPtr->race_id) == GOOD_GUY))
@@ -923,7 +923,7 @@ spawn_ip_group(IP_GROUP* GroupPtr)
 				- (LogSpaceHeight() >> (MaxReduction + 1));
 		}
 
-		SetElementStarShip(IPSHIPElementPtr, GroupPtr);
+		IPSHIPElementPtr->pParent = GroupPtr;
 
 		SetUpElement(IPSHIPElementPtr);
 		IPSHIPElementPtr->IntersectControl.IntersectStamp.frame =

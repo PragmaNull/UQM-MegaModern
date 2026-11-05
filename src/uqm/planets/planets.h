@@ -52,9 +52,10 @@ inline auto MapHeight() { return ResScale(Sc2MapHeight); }
 inline auto ScaledMapWidth() { return ResScale(((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SafeNum(33)); }
 inline auto UnscaledMapWidth() { return (((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SafeNum(33)); }
 
-#define MAP_DIMENSIONS           \
-	{Sc2MapWidth, Sc2MapHeight}, \
-		{(UqmMapWidth - 1), UqmMapHeight},
+inline constexpr EXTENT MapDimensions[] {
+	{Sc2MapWidth,		  Sc2MapHeight},
+	{(UqmMapWidth - 1), UqmMapHeight},
+};
 
 enum
 {

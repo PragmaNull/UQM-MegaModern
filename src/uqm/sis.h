@@ -116,34 +116,36 @@ inline constexpr auto MaxStowedShips {200}; // Limited to a byte
 											/* Maximum number of ships banked at the starbase */
 inline constexpr auto MaxLanders {10};
 
-#define SUPPORT_SHIP_PTS         \
-	{3 + 0, 30 + (2 * 16)},      \
-		{3 + 42, 30 + (2 * 16)}, \
-		{3 + 0, 30 + (3 * 16)},  \
-		{3 + 42, 30 + (3 * 16)}, \
-		{3 + 0, 30 + (1 * 16)},  \
-		{3 + 42, 30 + (1 * 16)}, \
-		{3 + 0, 30 + (4 * 16)},  \
-		{3 + 42, 30 + (4 * 16)}, \
-		{3 + 0, 30 + (0 * 16)},  \
-		{3 + 42, 30 + (0 * 16)}, \
-		{3 + 0, 30 + (5 * 16)},  \
-		{3 + 42, 30 + (5 * 16)},
+inline constexpr GFXPOINT SupportShipPts[MaxBuiltShips] {
+	{3 + 0,	30 + (2 * 16)},
+	{3 + 42, 30 + (2 * 16)},
+	{3 + 0,	30 + (3 * 16)},
+	{3 + 42, 30 + (3 * 16)},
+	{3 + 0,	30 + (1 * 16)},
+	{3 + 42, 30 + (1 * 16)},
+	{3 + 0,	30 + (4 * 16)},
+	{3 + 42, 30 + (4 * 16)},
+	{3 + 0,	30 + (0 * 16)},
+	{3 + 42, 30 + (0 * 16)},
+	{3 + 0,	30 + (5 * 16)},
+	{3 + 42, 30 + (5 * 16)},
+};
 
 inline constexpr auto LanderDosX {206};
 inline constexpr auto LanderDosY {59};
 
-#define LANDER_DOS_PTS                      \
-	{LanderDosX, LanderDosY},               \
-		{LanderDosX + 14, LanderDosY - 6},  \
-		{LanderDosX + 14, LanderDosY + 9},  \
-		{LanderDosX, LanderDosY - 15},      \
-		{LanderDosX, LanderDosY + 15},      \
-		{LanderDosX - 14, LanderDosY - 9},  \
-		{LanderDosX - 14, LanderDosY + 6},  \
-		{LanderDosX + 14, LanderDosY - 21}, \
-		{LanderDosX + 14, LanderDosY + 24}, \
-		{LanderDosX - 28, LanderDosY - 3},
+inline constexpr GFXPOINT LanderDosPts[MaxLanders] {
+	{LanderDosX,		 LanderDosY	   },
+	{LanderDosX + 14, LanderDosY - 6 },
+	{LanderDosX + 14, LanderDosY + 9 },
+	{LanderDosX,		 LanderDosY - 15},
+	{LanderDosX,		 LanderDosY + 15},
+	{LanderDosX - 14, LanderDosY - 9 },
+	{LanderDosX - 14, LanderDosY + 6 },
+	{LanderDosX + 14, LanderDosY - 21},
+	{LanderDosX + 14, LanderDosY + 24},
+	{LanderDosX - 28, LanderDosY - 3 },
+};
 
 inline constexpr auto SisNameSize {32};
 

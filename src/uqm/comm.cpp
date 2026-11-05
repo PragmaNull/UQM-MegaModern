@@ -874,9 +874,9 @@ FadePlayerUI(void)
 		static TimeCount NextTime;
 
 		// emulating as close as possible PC-DOS text glow
-		const static Color DarkModeFGTextColor[] = DARKMODE_FG_TABLE;
+		const auto& DarkModeFGTextColor {DarkmodeFgTable};
 		// it was not instantanious, but also looked like fading shenanigans
-		const static Color DarkModeBGTextColor[] = DARKMODE_BG_TABLE;
+		const auto& DarkModeBGTextColor {DarkmodeBgTable};
 
 		if (fadeIndex > 50)
 		{
@@ -2094,8 +2094,7 @@ InitCommunication(CONVERSATION which_comm)
 		}
 		else
 		{
-			const uint16_t commToShip[] = {
-				RACE_SHIP_FOR_COMM};
+			const auto& commToShip {RaceShipForComm};
 			status = commToShip[which_comm];
 			if (status >= YEHAT_REBEL_SHIP)
 			{
@@ -2193,6 +2192,36 @@ InitCommunication(CONVERSATION which_comm)
 	return (status);
 }
 
+static constexpr CONVERSATION RaceConversations[] {
+	ARILOU_CONVERSATION,	   /* ARILOU_SHIP */
+	CHMMR_CONVERSATION,		   /* CHMMR_SHIP */
+	INVALID_CONVERSATION,	   /* HUMAN_SHIP */
+	ORZ_CONVERSATION,		   /* ORZ_SHIP */
+	PKUNK_CONVERSATION,		   /* PKUNK_SHIP */
+	SHOFIXTI_CONVERSATION,	   /* SHOFIXTI_SHIP */
+	SPATHI_CONVERSATION,	   /* SPATHI_SHIP */
+	SUPOX_CONVERSATION,		   /* SUPOX_SHIP */
+	THRADD_CONVERSATION,	   /* THRADDASH_SHIP */
+	UTWIG_CONVERSATION,		   /* UTWIG_SHIP */
+	VUX_CONVERSATION,		   /* VUX_SHIP */
+	YEHAT_CONVERSATION,		   /* YEHAT_SHIP */
+	MELNORME_CONVERSATION,	   /* MELNORME_SHIP */
+	DRUUGE_CONVERSATION,	   /* DRUUGE_SHIP */
+	ILWRATH_CONVERSATION,	   /* ILWRATH_SHIP */
+	MYCON_CONVERSATION,		   /* MYCON_SHIP */
+	SLYLANDRO_CONVERSATION,	   /* SLYLANDRO_SHIP */
+	UMGAH_CONVERSATION,		   /* UMGAH_SHIP */
+	URQUAN_CONVERSATION,	   /* URQUAN_SHIP */
+	ZOQFOTPIK_CONVERSATION,	   /* ZOQFOTPIK_SHIP */
+	INVALID_CONVERSATION,	   /* SYREEN_SHIP */
+	BLACKURQ_CONVERSATION,	   /* BLACK_URQUAN_SHIP */
+	INVALID_CONVERSATION,	   /* ANDROSYNTH_SHIP */
+	INVALID_CONVERSATION,	   /* CHENJESU_SHIP */
+	INVALID_CONVERSATION,	   /* MMRNMHRM_SHIP */
+	YEHAT_REBEL_CONVERSATION,  /* YEHAT_REBEL_SHIP */
+	URQUAN_DRONE_CONVERSATION, /* URQUAN_DRONE_SHIP */
+};
+
 void RaceCommunication(void)
 {
 	uint16_t i {};
@@ -2200,9 +2229,7 @@ void RaceCommunication(void)
 	HSHIPFRAG hStarShip {};
 	const SHIP_FRAGMENT* FragPtr {};
 	HENCOUNTER hEncounter = 0;
-	const CONVERSATION RaceComm[] =
-		{
-			RACE_COMMUNICATION};
+	const auto& RaceComm {RaceConversations};
 
 	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 	{

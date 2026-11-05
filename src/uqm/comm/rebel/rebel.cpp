@@ -264,32 +264,32 @@ RebelInfo(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_URQUAN);
 
-		DISABLE_PHRASE(what_about_urquan);
+		DisablePhrase(what_about_urquan);
 	}
 	else if (PlayerSaid(R, what_about_royalty))
 	{
 		NPCPhrase(ABOUT_ROYALTY);
 
-		DISABLE_PHRASE(what_about_royalty);
+		DisablePhrase(what_about_royalty);
 	}
 	else if (PlayerSaid(R, what_about_war))
 	{
 		NPCPhrase(ABOUT_WAR);
 		SetHomeworldKnown(SHOFIXTI_HOME);
 
-		DISABLE_PHRASE(what_about_war);
+		DisablePhrase(what_about_war);
 	}
 	else if (PlayerSaid(R, what_about_vux))
 	{
 		NPCPhrase(ABOUT_VUX);
 
-		DISABLE_PHRASE(what_about_vux);
+		DisablePhrase(what_about_vux);
 	}
 	else if (PlayerSaid(R, what_about_clue))
 	{
 		NPCPhrase(ABOUT_CLUE);
 
-		DISABLE_PHRASE(what_about_clue);
+		DisablePhrase(what_about_clue);
 	}
 
 	if (PhraseEnabled(what_about_urquan))
@@ -321,7 +321,7 @@ RebelInfo(RESPONSE_REF R)
 
 	if (!InfoLeft)
 	{
-		DISABLE_PHRASE(give_info_rebels);
+		DisablePhrase(give_info_rebels);
 	}
 }
 
@@ -351,7 +351,7 @@ Rebels(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(how_goes_revolution);
+		DisablePhrase(how_goes_revolution);
 	}
 	else if (PlayerSaid(R, any_ships))
 	{
@@ -382,7 +382,7 @@ Rebels(RESPONSE_REF R)
 			PrepareShip(YEHAT_SHIP);
 		}
 
-		DISABLE_PHRASE(any_ships);
+		DisablePhrase(any_ships);
 	}
 	else if (PlayerSaid(R, what_about_pkunk_rebel))
 	{

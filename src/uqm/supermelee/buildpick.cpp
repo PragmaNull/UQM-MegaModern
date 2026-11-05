@@ -78,7 +78,7 @@ Color GetShipFlashColor(void)
 	{
 		static uint8_t cycle_index = 0;
 
-		const static Color cycle_tab[] = SHIP_SELECT_COLOR_CYCLE_TABLE;
+		const auto& cycle_tab {ShipSelectColorCycleTable};
 		const size_t cycleCount = std::size(cycle_tab);
 
 		cycle_index = (cycle_index + 1) % cycleCount;

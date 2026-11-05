@@ -263,7 +263,7 @@ DescribePet(RESPONSE_REF R)
 	{
 		NPCPhrase(WHAT_IS_TURD_AND_TOAD);
 
-		DISABLE_PHRASE(turd_and_toad);
+		DisablePhrase(turd_and_toad);
 	}
 
 	Response(terran_amphibian, CombatIsInevitable);
@@ -285,7 +285,7 @@ DescribeCompulsion(RESPONSE_REF R)
 	{
 		NPCPhrase(EXPLAIN);
 
-		DISABLE_PHRASE(before_coffee);
+		DisablePhrase(before_coffee);
 	}
 
 	Response(falling_asleep, CombatIsInevitable);
@@ -309,13 +309,13 @@ MentionCompulsion(RESPONSE_REF R)
 	{
 		NPCPhrase(STUPID_DEVIL);
 
-		DISABLE_PHRASE(possessed_by_devil);
+		DisablePhrase(possessed_by_devil);
 	}
 	else if (PlayerSaid(R, why_explain))
 	{
 		NPCPhrase(MUST_EXPLAIN);
 
-		DISABLE_PHRASE(why_explain);
+		DisablePhrase(why_explain);
 	}
 
 	Response(wascally_little_guy, DescribePet);
@@ -343,19 +343,19 @@ UrquanHypno(RESPONSE_REF R)
 		{
 			NPCPhrase(YOU_ARE_HERE);
 
-			DISABLE_PHRASE(where_am_i);
+			DisablePhrase(where_am_i);
 		}
 		else if (PlayerSaid(R, why_does_my_head_hurt))
 		{
 			NPCPhrase(HURTS_BECAUSE);
 
-			DISABLE_PHRASE(why_does_my_head_hurt);
+			DisablePhrase(why_does_my_head_hurt);
 		}
 		else if (PlayerSaid(R, what_about_2_weeks))
 		{
 			NPCPhrase(ABOUT_2_WEEKS);
 
-			DISABLE_PHRASE(what_about_2_weeks);
+			DisablePhrase(what_about_2_weeks);
 		}
 
 		if (PhraseEnabled(where_am_i))
@@ -383,13 +383,13 @@ UrquanHypno(RESPONSE_REF R)
 		{
 			NPCPhrase(NO_UH_OH);
 
-			DISABLE_PHRASE(uh_oh);
+			DisablePhrase(uh_oh);
 		}
 		else if (PlayerSaid(R, stop_meeting))
 		{
 			NPCPhrase(NO_STOP_MEETING);
 
-			DISABLE_PHRASE(stop_meeting);
+			DisablePhrase(stop_meeting);
 		}
 
 		if (PhraseEnabled(uh_oh))
@@ -459,19 +459,19 @@ LoserUrquan(RESPONSE_REF R)
 	{
 		NPCPhrase(FLEE_BECAUSE);
 
-		DISABLE_PHRASE(why_flee);
+		DisablePhrase(why_flee);
 	}
 	else if (PlayerSaid(R, what_happens_now))
 	{
 		NPCPhrase(HAPPENS_NOW);
 
-		DISABLE_PHRASE(what_happens_now);
+		DisablePhrase(what_happens_now);
 	}
 	else if (PlayerSaid(R, what_about_you))
 	{
 		NPCPhrase(ABOUT_US);
 
-		DISABLE_PHRASE(what_about_you);
+		DisablePhrase(what_about_you);
 	}
 
 	if (PhraseEnabled(why_flee))

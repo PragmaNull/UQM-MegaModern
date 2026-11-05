@@ -33,6 +33,7 @@ extern "C" {
 inline constexpr auto NormalLife {1};
 
 typedef HLINK HELEMENT;
+typedef struct STARSHIP STARSHIP;
 
 // Bits for ELEMENT_FLAGS:
 // bits 0 and 1 are now available
@@ -185,23 +186,20 @@ inline constexpr auto MaxDisplayPrims {330};
 extern uint16_t DisplayFreeList;
 extern PRIMITIVE DisplayArray[MaxDisplayPrims];
 
-#define AllocDisplayPrim() \
-	DisplayFreeList;       \
-	DisplayFreeList = GetSuccLink(GetPrimLinks(&DisplayArray[DisplayFreeList]))
-#define FreeDisplayPrim(p)                                      \
-	SetPrimLinks(&DisplayArray[p], EndOfList, DisplayFreeList); \
-	DisplayFreeList = (p)
+inline uint16_t AllocDisplayPrim()
+{
+	const uint16_t prim {DisplayFreeList};
+	DisplayFreeList = GetSuccLink(GetPrimLinks(&DisplayArray[DisplayFreeList]));
+	return prim;
+}
+inline void FreeDisplayPrim(uint16_t p)
+{
+	SetPrimLinks(&DisplayArray[p], EndOfList, DisplayFreeList);
+	DisplayFreeList = p;
+}
 
-#define GetElementStarShip(e, ppsd)        \
-	do                                     \
-	{                                      \
-		*(ppsd) = (STARSHIP*)(e)->pParent; \
-	} while (0)
-#define SetElementStarShip(e, psd)     \
-	do                                 \
-	{                                  \
-		(e)->pParent = (STARSHIP*)psd; \
-	} while (0)
+inline void GetElementStarShip(const ELEMENT* e, STARSHIP** ppsd) { *ppsd = static_cast<STARSHIP*>(e->pParent); }
+inline void SetElementStarShip(ELEMENT* e, STARSHIP* psd) { e->pParent = psd; }
 
 inline constexpr auto MaxCrewSize {42};
 inline constexpr auto MaxEnergySize {42};
@@ -218,7 +216,7 @@ constexpr auto PutElement(const auto& h) { return PutQueue(&disp_q, h); }
 constexpr auto InsertElement(const auto& h, const auto& i) { return InsertQueue(&disp_q, h, i); }
 constexpr auto GetHeadElement() { return GetHeadLink(&disp_q); }
 constexpr auto GetTailElement() { return GetTailLink(&disp_q); }
-#define LockElement(h, ppe) (*(ppe) = (ELEMENT*)LockLink(&disp_q, h))
+inline void LockElement(HELEMENT h, ELEMENT** ppe) { *ppe = reinterpret_cast<ELEMENT*>(LockLink(&disp_q, h)); }
 constexpr auto UnlockElement(const auto& h) { return UnlockLink(&disp_q, h); }
 constexpr auto GetPredElement(const auto& l) { return _GetPredLink(l); }
 constexpr auto GetSuccElement(const auto& l) { return _GetSuccLink(l); }

@@ -1117,7 +1117,6 @@ Color RaceColor(uint16_t index)
 {
 	if (uqm::UQMOptions::read().sphereColors == uqm::SphereOfInfluenceColors::Default)
 	{
-		static constexpr Color RaceColors[] = {RACE_COLORS};
 		static constexpr uint16_t NumColors = uqstl::size(RaceColors);
 		if (index < NumColors)
 		{

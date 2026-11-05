@@ -245,25 +245,25 @@ IlwrathGods(RESPONSE_REF R)
 	{
 		NPCPhrase(LONG_AGO);
 
-		DISABLE_PHRASE(when_start_worship);
+		DisablePhrase(when_start_worship);
 	}
 	else if (PlayerSaid(R, any_good_gods))
 	{
 		NPCPhrase(KILLED_GOOD_GODS);
 
-		DISABLE_PHRASE(any_good_gods);
+		DisablePhrase(any_good_gods);
 	}
 	else if (PlayerSaid(R, how_talk_with_gods))
 	{
 		NPCPhrase(CHANNEL_44);
 
-		DISABLE_PHRASE(how_talk_with_gods);
+		DisablePhrase(how_talk_with_gods);
 	}
 	else if (PlayerSaid(R, why_44))
 	{
 		NPCPhrase(BECAUSE_44);
 
-		DISABLE_PHRASE(why_44);
+		DisablePhrase(why_44);
 	}
 
 	if (PhraseEnabled(when_start_worship))
@@ -290,7 +290,7 @@ IlwrathGods(RESPONSE_REF R)
 
 	if (!GodsLeft)
 	{
-		DISABLE_PHRASE(want_info_on_gods);
+		DisablePhrase(want_info_on_gods);
 	}
 }
 
@@ -306,31 +306,31 @@ IlwrathInfo(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_PHYSIO);
 
-		DISABLE_PHRASE(what_about_physio);
+		DisablePhrase(what_about_physio);
 	}
 	else if (PlayerSaid(R, what_about_history))
 	{
 		NPCPhrase(ABOUT_HISTORY);
 
-		DISABLE_PHRASE(what_about_history);
+		DisablePhrase(what_about_history);
 	}
 	else if (PlayerSaid(R, what_about_culture))
 	{
 		NPCPhrase(ABOUT_CULTURE);
 
-		DISABLE_PHRASE(what_about_culture);
+		DisablePhrase(what_about_culture);
 	}
 	else if (PlayerSaid(R, what_about_urquan))
 	{
 		NPCPhrase(URQUAN_TOO_NICE);
 
-		DISABLE_PHRASE(what_about_urquan);
+		DisablePhrase(what_about_urquan);
 	}
 	else if (PlayerSaid(R, are_you_evil))
 	{
 		NPCPhrase(OF_COURSE_WERE_EVIL);
 
-		DISABLE_PHRASE(are_you_evil);
+		DisablePhrase(are_you_evil);
 	}
 
 	if (PhraseEnabled(what_about_physio))
@@ -367,7 +367,7 @@ IlwrathInfo(RESPONSE_REF R)
 
 	if (!InfoLeft)
 	{
-		DISABLE_PHRASE(want_info_on_ilwrath);
+		DisablePhrase(want_info_on_ilwrath);
 	}
 }
 
@@ -427,25 +427,25 @@ GodsOrder(RESPONSE_REF R)
 	{
 		NPCPhrase(OK_WARSHIP);
 
-		DISABLE_PHRASE(say_warship);
+		DisablePhrase(say_warship);
 	}
 	else if (PlayerSaid(R, say_dwe))
 	{
 		NPCPhrase(OK_DWE);
 
-		DISABLE_PHRASE(say_dwe);
+		DisablePhrase(say_dwe);
 	}
 	else if (PlayerSaid(R, say_youboo))
 	{
 		NPCPhrase(OK_YOUBOO);
 
-		DISABLE_PHRASE(say_youboo);
+		DisablePhrase(say_youboo);
 	}
 	else if (PlayerSaid(R, say_dillrat))
 	{
 		NPCPhrase(OK_DILRAT);
 
-		DISABLE_PHRASE(say_dillrat);
+		DisablePhrase(say_dillrat);
 	}
 
 	if (PhraseEnabled(say_warship))
@@ -472,7 +472,7 @@ GodsOrder(RESPONSE_REF R)
 
 	if (!OrdersLeft)
 	{
-		DISABLE_PHRASE(other_divine_orders);
+		DisablePhrase(other_divine_orders);
 	}
 }
 
@@ -544,7 +544,7 @@ GodsSpeak(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_WORSHIP, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(worship_us);
+		DisablePhrase(worship_us);
 	}
 	else if (PlayerSaid(R, enough_orders))
 	{

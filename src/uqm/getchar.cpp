@@ -151,7 +151,7 @@ FlashCursor(void)
 	static TimeCount NextTime {};
 	static uint32_t cycle_index = 0;
 
-	const static Color cycle_tab[] = CURSOR_COLOR_CYCLE_TABLE;
+	const auto& cycle_tab {CursorColorCycleTable};
 	const size_t cycleCount = std::size(cycle_tab);
 
 	if (GetTimeCounter() >= NextTime)

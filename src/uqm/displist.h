@@ -80,9 +80,11 @@ UnlockLink(const QUEUE* pq, HLINK h)
 constexpr auto GetFreeList(const auto& pq) { return (pq)->free_list; }
 constexpr auto SetFreeList(const auto& pq, const auto& h) { return (pq)->free_list = (h); }
 constexpr auto AllocQueueTab(const auto& pq, const auto& n) { return ((pq)->pq_tab = new uint8_t[(uint16_t)(pq)->object_size * (uint16_t)((pq)->num_objects = (uint8_t)(n))]); }
-#define FreeQueueTab(pq)   \
-	delete[] (pq)->pq_tab; \
-	(pq)->pq_tab = nullptr
+inline void FreeQueueTab(QUEUE* pq)
+{
+	delete[] pq->pq_tab;
+	pq->pq_tab = nullptr;
+}
 constexpr auto SizeQueueTab(const auto& pq) { return (uint16_t)((pq)->num_objects); }
 constexpr auto GetLinkAddr(const auto& pq, const auto& i) { return (HLINK)((pq)->pq_tab + ((pq)->object_size * ((i)-1))); }
 

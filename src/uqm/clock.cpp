@@ -205,3 +205,4 @@ void PutEvent(HEVENT h) { PutQueue(&uqm::gameState().clock().events(), h); }
 void UnlockEvent(HEVENT h) { UnlockLink(&uqm::gameState().clock().events(), h); }
 void FreeEvent(HEVENT h) { FreeLink(&uqm::gameState().clock().events(), h); }
 void ForAllEvents(void (*callback)(LINK*, void*), void* arg) { ForAllLinks(&uqm::gameState().clock().events(), callback, arg); }
+void LockEvent(HEVENT h, EVENT** ppe) { *ppe = reinterpret_cast<EVENT*>(LockLink(&uqm::gameState().clock().events(), h)); }

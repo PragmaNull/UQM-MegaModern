@@ -412,7 +412,7 @@ Trade(RESPONSE_REF R)
 	{
 		NPCPhrase(SPHERE_IS);
 
-		DISABLE_PHRASE(whats_the_sphere_again);
+		DisablePhrase(whats_the_sphere_again);
 	}
 
 	Response(no_way, Sell);
@@ -725,7 +725,7 @@ TradeWorld(RESPONSE_REF R)
 				break;
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_HOME_INFO, static_cast<uint32_t>(NumVisits));
-		DISABLE_PHRASE(whats_up_at_trade_world);
+		DisablePhrase(whats_up_at_trade_world);
 	}
 	else if (PlayerSaid(R, done_selling))
 	{
@@ -811,7 +811,7 @@ Space(RESPONSE_REF R)
 		}
 		uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_SPACE_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_in_space);
+		DisablePhrase(whats_up_in_space);
 	}
 
 	if (PhraseEnabled(whats_up_in_space))

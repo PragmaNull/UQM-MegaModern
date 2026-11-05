@@ -271,7 +271,7 @@ luaUqm_comm_disablePhrase(lua_State* luaState)
 		return 0;
 	}
 
-	DISABLE_PHRASE(phraseId);
+	DisablePhrase(phraseId);
 	return 0;
 }
 
