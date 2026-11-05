@@ -474,11 +474,6 @@ void mixer_Sourcef(mixer_Object srcobj, mixer_SourceProp pname, float value)
 	src_mutex.unlock();
 }
 
-#if !defined(_MSC_VER)
-#define max(a, b) (((a) > (b)) ? (a) : (b))
-#define min(a, b) (((a) < (b)) ? (a) : (b))
-#endif
-
 /* set source float array property */
 void mixer_Sourcefv(mixer_Object srcobj, mixer_SourceProp pname, float* value)
 {

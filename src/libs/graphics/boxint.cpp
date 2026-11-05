@@ -18,11 +18,6 @@
 
 #include "gfxintrn.h"
 
-#undef MIN
-#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
-#undef MAX
-#define MAX(a, b) (((a) >= (b)) ? (a) : (b))
-
 INTERSECT_CODE
 BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 {
@@ -107,19 +102,19 @@ void BoxUnion(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* punion)
 
 	// Union is A AND B, put together, correct?  Returns a bigger box that
 	// encompasses the two.
-	punion->corner.x = MIN(pr1->corner.x, pr2->corner.x);
-	punion->corner.y = MIN(pr1->corner.y, pr2->corner.y);
+	punion->corner.x = uqstl::min(pr1->corner.x, pr2->corner.x);
+	punion->corner.y = uqstl::min(pr1->corner.y, pr2->corner.y);
 
-	punion->extent.width = MAX(pr1->corner.x + pr1->extent.width,
-							   pr2->corner.x + pr2->extent.width)
+	punion->extent.width = uqstl::max(pr1->corner.x + pr1->extent.width,
+									  pr2->corner.x + pr2->extent.width)
 						 - punion->corner.x;
-	punion->extent.height = MAX(pr1->corner.y + pr1->extent.height,
-								pr2->corner.y + pr2->extent.height)
+	punion->extent.height = uqstl::max(pr1->corner.y + pr1->extent.height,
+									   pr2->corner.y + pr2->extent.height)
 						  - punion->corner.y;
 
 
 #if NEVER // FIXME - I think this is broken, but keeping it around for reference
-		  // FIXME - just in case.
+	// FIXME - just in case.
 
 #if 1 /* alter based on 0 widths */
 

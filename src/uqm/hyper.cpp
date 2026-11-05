@@ -73,7 +73,7 @@ RaceHyperSpeed(RACE_ID Index)
 {
 	static int seedStamp = -1;
 	const int defaultMap[] {RACE_HYPER_SPEED};
-	const uint16_t numRaces = sizeof(defaultMap) / sizeof(int);
+	const uint16_t numRaces = uqstl::size(defaultMap);
 	static int16_t speedMap[numRaces] = {0}; // set urquan drone to 0.
 	int x {};
 	if (!uqm::currentSeed().ships && (seedStamp != -1 || speedMap[0] == 0))

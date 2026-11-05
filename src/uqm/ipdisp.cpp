@@ -43,8 +43,8 @@ RaceIPSpeed(RACE_ID Index)
 {
 	static int seedStamp = -1;
 	const int16_t defaultMap[] = {RACE_IP_SPEED};
-	const uint16_t numRaces = sizeof(defaultMap) / sizeof(uint16_t);
-	static int16_t speedMap[sizeof(defaultMap) / sizeof(uint16_t)] = {0};
+	const uint16_t numRaces = uqstl::size(defaultMap);
+	static int16_t speedMap[uqstl::size(defaultMap)] = {0};
 	int x {};
 	if (!uqm::currentSeed().ships && (seedStamp != -1 || speedMap[0] == 0))
 	{

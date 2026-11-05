@@ -183,20 +183,6 @@ static int adpcm_index[16] = {
 	-1, -1, -1, -1, 2, 4, 6, 8,
 	-1, -1, -1, -1, 2, 4, 6, 8};
 
-// clamp a number between 0 and 88
-#define CLAMP_0_TO_88(x) \
-	if ((x) < 0)         \
-		(x) = 0;         \
-	else if ((x) > 88)   \
-		(x) = 88;
-
-// clamp a number within a signed 16-bit range
-#define CLAMP_S16(x)      \
-	if ((x) < -32768)     \
-		(x) = -32768;     \
-	else if ((x) > 32767) \
-		(x) = 32767;
-
 static void
 decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
 			   int32_t* predictors, uint16_t* indices)
@@ -219,7 +205,7 @@ decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
 		delta = output[i];
 
 		index[channel_number] += adpcm_index[delta];
-		CLAMP_0_TO_88(index[channel_number]);
+		index[channel_number] = uqstl::clamp(index[channel_number], 0, 88);
 
 		sign = delta & 8;
 		delta = delta & 7;
@@ -245,7 +231,7 @@ decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
 			predictors[channel_number] += diff;
 		}
 
-		CLAMP_S16(predictors[channel_number]);
+		predictors[channel_number] = uqstl::clamp(predictors[channel_number], -32768, 32767);
 		output[i] = predictors[channel_number];
 		step[channel_number] = adpcm_step[index[channel_number]];
 

@@ -205,17 +205,15 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 	{
 		int16_t crew_height {}, energy_height {};
 
-#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
 		if (!IS_HD)
 		{
-			crew_height = ((MIN(SIPtr->max_crew, MAX_CREW_SIZE) + 1) & ~1) + 1;
+			crew_height = ((uqstl::min<uint16_t>(SIPtr->max_crew, MAX_CREW_SIZE) + 1) & ~1) + 1;
 		}
 		else
 		{
-			crew_height = ((MIN(SIPtr->max_crew, MAX_CREW_SIZE) + 1) * RES_SCALE(1));
+			crew_height = ((uqstl::min<uint16_t>(SIPtr->max_crew, MAX_CREW_SIZE) + 1) * RES_SCALE(1));
 		}
 		energy_height = (((SIPtr->max_energy + 1) >> 1) << RES_TRP(1)) + RES_SCALE(1);
-#undef MIN
 
 		if (!IS_HD)
 		{
@@ -398,11 +396,9 @@ void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
 		uint16_t blockI {};
 		uint16_t newCrewLevel {};
 
-#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
-		oldNumBlocks = MIN(ShipInfoPtr->crew_level, MAX_CREW_SIZE);
+		oldNumBlocks = uqstl::min<uint16_t>(ShipInfoPtr->crew_level, MAX_CREW_SIZE);
 		newCrewLevel = ShipInfoPtr->crew_level + crew_delta;
-		newNumBlocks = MIN(newCrewLevel, MAX_CREW_SIZE);
-#undef MIN
+		newNumBlocks = uqstl::min<uint16_t>(newCrewLevel, MAX_CREW_SIZE);
 
 		if (crew_delta > 0)
 		{

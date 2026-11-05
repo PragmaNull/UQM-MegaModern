@@ -16,8 +16,6 @@
 #include "port.h"
 #include "rotozoom.h"
 
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-
 
 /* 
  
@@ -659,8 +657,8 @@ static void rotozoomSurfaceSizeTrig(int width, int height, double angle, double 
 	cy = *canglezoom * y;
 	sx = *sanglezoom * x;
 	sy = *sanglezoom * y;
-	dstwidthhalf = MAX(ceil(fabs(cx) + fabs(sy)), 1);
-	dstheighthalf = MAX(ceil(fabs(sx) + fabs(cy)), 1);
+	dstwidthhalf = uqstl::max(ceil(fabs(cx) + fabs(sy)), 1.0);
+	dstheighthalf = uqstl::max(ceil(fabs(sx) + fabs(cy)), 1.0);
 	*dstwidth = 2 * dstwidthhalf;
 	*dstheight = 2 * dstheighthalf;
 }

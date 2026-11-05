@@ -463,10 +463,10 @@ const static SHIPMAP ship_map[] = {
 	{MMRNMHRM_ID,	  "mmrnmhrm",	  "MMRNMHRM",		  " TRANSFORMER",  128, 84 },
 };
 
-#define NUM_SHIPS (sizeof(ship_map) / sizeof(SHIPMAP))
+static constexpr uint16_t c_numShips {static_cast<uint16_t>(uqstl::size(ship_map))};
 
-static uint16_t shipID = NUM_SHIPS;
-static uint16_t raceID = NUM_SHIPS;
+static uint16_t shipID = c_numShips;
+static uint16_t raceID = c_numShips;
 static bool linespun = false;
 
 static void
@@ -478,26 +478,26 @@ SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 		goto SeedDittyPassThru;
 	}
 
-	for (shipID = 0; shipID < NUM_SHIPS; shipID++)
+	for (shipID = 0; shipID < c_numShips; shipID++)
 	{
 		if (!strcasecmp(str.data(), ship_map[shipID].ditty))
 		{
 			break;
 		}
 	}
-	if (shipID >= NUM_SHIPS)
+	if (shipID >= c_numShips)
 	{
 		goto SeedDittyPassThru;
 	}
 
-	for (raceID = 0; raceID < NUM_SHIPS; raceID++)
+	for (raceID = 0; raceID < c_numShips; raceID++)
 	{
 		if (SeedShip(ship_map[raceID].sID, false) == ship_map[shipID].sID)
 		{
 			break;
 		}
 	}
-	if (raceID >= NUM_SHIPS)
+	if (raceID >= c_numShips)
 	{
 		goto SeedDittyPassThru;
 	}
@@ -507,7 +507,7 @@ SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 	return;
 
 SeedDittyPassThru:
-	shipID = raceID = NUM_SHIPS;
+	shipID = raceID = c_numShips;
 	fmt::format_to_sz_n(buf, "ship.{}.ditty", str);
 	return;
 }
@@ -515,7 +515,7 @@ SeedDittyPassThru:
 static void
 SeedLineSpin(int* x1, int* y1, int* x2, int* y2)
 {
-	if (!uqm::currentSeed().ships || !x1 || !x2 || !y1 || !y2 || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
+	if (!uqm::currentSeed().ships || !x1 || !x2 || !y1 || !y2 || shipID == raceID || shipID >= c_numShips || raceID >= c_numShips)
 	{
 		goto SeedLineSpinPassThru;
 	}
@@ -536,7 +536,7 @@ SeedLineSpinPassThru:
 static void
 SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 {
-	if (!uqm::currentSeed().ships || !x || !y || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
+	if (!uqm::currentSeed().ships || !x || !y || shipID == raceID || shipID >= c_numShips || raceID >= c_numShips)
 	{
 		goto SeedTextSpinPassThru;
 	}

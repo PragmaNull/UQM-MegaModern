@@ -1120,7 +1120,7 @@ Color RaceColor(uint16_t index)
 	if (uqm::UQMOptions::read().sphereColors == uqm::SphereOfInfluenceColors::Default)
 	{
 		static constexpr Color RaceColors[] = {RACE_COLORS};
-		static constexpr uint16_t NumColors = sizeof(RaceColors) / sizeof(Color);
+		static constexpr uint16_t NumColors = uqstl::size(RaceColors);
 		if (index < NumColors)
 		{
 			return RaceColors[index];
@@ -1158,7 +1158,7 @@ Color RaceColor(uint16_t index)
 				BUILD_COLOR(MAKE_RGB15_INIT(0x19, 0x10, 0x1F), 0x00), // YEHAT_REBEL_SHIP Lavender
 			};
 
-		static constexpr uint16_t NumColors = sizeof(StarseedColors) / sizeof(Color);
+		static constexpr uint16_t NumColors = uqstl::size(StarseedColors);
 
 		if (index < NumColors)
 		{
@@ -3037,10 +3037,6 @@ RepairMap(uint16_t update_race, GFXRECT* pLastRect, GFXRECT* pNextRect)
 	DrawStarMap(update_race, &r);
 }
 
-#ifndef MAX
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#endif
-
 static void
 UpdateMap(void)
 {
@@ -3215,7 +3211,7 @@ DoneSphereMove:
 				last_r.extent.width += RES_SCALE(1);
 				last_r.extent.height += RES_SCALE(1);
 				// Kruzen: Font size to clean up double space because of text stacking now
-				last_r.extent.height = MAX(last_r.extent.height, RES_SCALE(14));
+				last_r.extent.height = uqstl::max(last_r.extent.height, static_cast<int16_t>(RES_SCALE(14)));
 				VisibleChange = false;
 
 				/*printf("{}: {}\n", raceName (index),
