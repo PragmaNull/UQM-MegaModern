@@ -625,7 +625,7 @@ static void transformSurfaceY(SDL_Surface* src, SDL_Surface* dst, int cx, int cy
 
 */
 
-#define VALUE_LIMIT 0.001
+static constexpr auto ValueLimit {0.001};
 
 
 /* Local rotozoom-size function with trig result return */
@@ -729,16 +729,16 @@ SDL_Surface* rotozoomSurface(SDL_Surface* src, double angle, double zoom, int sm
 	/*
      * Sanity check zoom factor 
      */
-	if (zoom < VALUE_LIMIT)
+	if (zoom < ValueLimit)
 	{
-		zoom = VALUE_LIMIT;
+		zoom = ValueLimit;
 	}
 	zoominv = 65536.0 / (zoom * zoom);
 
 	/*
      * Check if we have a rotozoom or just a zoom 
      */
-	if (fabs(angle) > VALUE_LIMIT)
+	if (fabs(angle) > ValueLimit)
 	{
 
 		/*
@@ -949,7 +949,7 @@ int rotateSurface(SDL_Surface* src, SDL_Surface* dst, double angle, int smooth)
 	zoominv = 65536.0;
 
 	/* Check if we have to rotate anything */
-	if (fabs(angle) <= VALUE_LIMIT)
+	if (fabs(angle) <= ValueLimit)
 	{
 		SDL_BlitSurface(src, nullptr, dst, nullptr);
 		return 0;
@@ -1015,20 +1015,19 @@ int rotateSurface(SDL_Surface* src, SDL_Surface* dst, double angle, int smooth)
 
 */
 
-#define VALUE_LIMIT 0.001
 
 void zoomSurfaceSize(int width, int height, double zoomx, double zoomy, int* dstwidth, int* dstheight)
 {
 	/*
      * Sanity check zoom factors 
      */
-	if (zoomx < VALUE_LIMIT)
+	if (zoomx < ValueLimit)
 	{
-		zoomx = VALUE_LIMIT;
+		zoomx = ValueLimit;
 	}
-	if (zoomy < VALUE_LIMIT)
+	if (zoomy < ValueLimit)
 	{
-		zoomy = VALUE_LIMIT;
+		zoomy = ValueLimit;
 	}
 
 	/*

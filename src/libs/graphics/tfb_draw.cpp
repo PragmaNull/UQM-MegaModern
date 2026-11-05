@@ -72,7 +72,7 @@ void TFB_DrawScreen_Image(TFB_Image* img, int x, int y, int scale,
 	DC.data.image.colormap = cmap;
 	DC.data.image.x = x;
 	DC.data.image.y = y;
-	DC.data.image.scale = (scale == GSCALE_IDENTITY) ? 0 : scale;
+	DC.data.image.scale = (scale == GscaleIdentity) ? 0 : scale;
 	DC.data.image.scaleMode = scaleMode;
 	DC.data.image.drawMode = mode;
 	DC.data.image.destBuffer = dest;
@@ -89,7 +89,7 @@ void TFB_DrawScreen_FilledImage(TFB_Image* img, int x, int y, int scale,
 	DC.data.filledimage.image = img;
 	DC.data.filledimage.x = x;
 	DC.data.filledimage.y = y;
-	DC.data.filledimage.scale = (scale == GSCALE_IDENTITY) ? 0 : scale;
+	DC.data.filledimage.scale = (scale == GscaleIdentity) ? 0 : scale;
 	DC.data.filledimage.scaleMode = scaleMode;
 	DC.data.filledimage.color = color;
 	DC.data.filledimage.drawMode = mode;

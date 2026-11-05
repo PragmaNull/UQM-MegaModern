@@ -83,7 +83,7 @@ request_drawable(uint16_t NumFrames, DRAWABLE_TYPE DrawableType,
 	{
 		FRAME FramePtr = &Drawable->Frame[i];
 
-		if (DrawableType == RAM_DRAWABLE && width > 0 && height > 0)
+		if (DrawableType == RamDrawable && width > 0 && height > 0)
 		{
 			FramePtr->image = TFB_DrawImage_New(TFB_DrawCanvas_New_TrueColor(
 				width, height, (flags & WantAlpha) ? true : false));
@@ -125,7 +125,7 @@ request_indexed_drawable(Color* palette, int16_t width, int16_t height)
 			return nullptr;
 		}
 
-		FramePtr->Type = RAM_DRAWABLE;
+		FramePtr->Type = RamDrawable;
 		FramePtr->Index = 0;
 		SetFrameBounds(FramePtr, width, height);
 	}
@@ -140,7 +140,7 @@ CreateDisplay(CREATE_FLAGS CreateFlags, int16_t* pwidth, int16_t* pheight)
 
 	// TODO: CanvasWidth and CanvasHeight should be passed in
 	//   instead of returned.
-	Drawable = request_drawable(1, SCREEN_DRAWABLE,
+	Drawable = request_drawable(1, ScreenDrawable,
 								(CreateFlags & (WantPixmap | WantMask)),
 								CanvasWidth, CanvasHeight);
 	if (Drawable)
@@ -181,7 +181,7 @@ CreateDrawable(CREATE_FLAGS CreateFlags, int16_t width, int16_t height, uint16_t
 {
 	DRAWABLE Drawable {};
 
-	Drawable = request_drawable(num_frames, RAM_DRAWABLE,
+	Drawable = request_drawable(num_frames, RamDrawable,
 								(CreateFlags & (WantMask | WantPixmap | WantAlpha | MappedToDisplay)),
 								width, height);
 	if (Drawable)
@@ -289,9 +289,9 @@ RotateFrame(FRAME Frame, int angle_deg)
 		return nullptr;
 	}
 
-	assert(Frame->Type != SCREEN_DRAWABLE);
+	assert(Frame->Type != ScreenDrawable);
 
-	DRAWABLE Drawable {request_drawable(1, RAM_DRAWABLE, WantPixmap, 0, 0)};
+	DRAWABLE Drawable {request_drawable(1, RamDrawable, WantPixmap, 0, 0)};
 	if (!Drawable)
 	{
 		return 0;
@@ -334,7 +334,7 @@ void SetFrameTransparentColor(FRAME frame, Color color)
 		return;
 	}
 
-	assert(frame->Type != SCREEN_DRAWABLE);
+	assert(frame->Type != ScreenDrawable);
 
 	TFB_Image* img {frame->image};
 	const uqm::LockGuard imageLock {img->mutex};
@@ -352,7 +352,7 @@ Color GetFramePixel(FRAME frame, GFXPOINT pixelPt)
 		return BuildColorRgba(0, 0, 0, 0);
 	}
 
-	assert(frame->Type != SCREEN_DRAWABLE);
+	assert(frame->Type != ScreenDrawable);
 
 	TFB_Image* img {frame->image};
 	const uqm::LockGuard imageLock {img->mutex};
@@ -410,7 +410,7 @@ makeMatchingIndexedFrame(FRAME frame, int width, int height)
 }
 
 // Creates an new DRAWABLE containing a copy of specified FRAME's rect
-// Source FRAME must not be a SCREEN_DRAWABLE
+// Source FRAME must not be a ScreenDrawable
 DRAWABLE
 CopyFrameRect(FRAME frame, const GFXRECT* area)
 {
@@ -422,7 +422,7 @@ CopyFrameRect(FRAME frame, const GFXRECT* area)
 		return nullptr;
 	}
 
-	assert(frame->Type != SCREEN_DRAWABLE);
+	assert(frame->Type != ScreenDrawable);
 
 	newFrame = makeMatchingFrame(frame, area->extent.width,
 								 area->extent.height);
@@ -437,7 +437,7 @@ CopyFrameRect(FRAME frame, const GFXRECT* area)
 }
 
 // Creates an new DRAWABLE mostly identical to specified FRAME
-// Source FRAME must not be a SCREEN_DRAWABLE
+// Source FRAME must not be a ScreenDrawable
 DRAWABLE
 CloneFrame(FRAME frame)
 {
@@ -448,7 +448,7 @@ CloneFrame(FRAME frame)
 		return nullptr;
 	}
 
-	assert(frame->Type != SCREEN_DRAWABLE);
+	assert(frame->Type != ScreenDrawable);
 
 	GetFrameRect(frame, &r);
 	r.corner.x = 0;
@@ -478,7 +478,7 @@ RescaleFrame(FRAME frame, int width, int height)
 		return nullptr;
 	}
 
-	assert(frame->Type != SCREEN_DRAWABLE);
+	assert(frame->Type != ScreenDrawable);
 
 	if (TFB_DrawCanvas_IsPaletted(frame->image->NormalImg))
 	{ // request Paletted frame
@@ -522,7 +522,7 @@ RescalePercentage(FRAME frame, float percentage)
 		return nullptr;
 	}
 
-	assert(frame->Type != SCREEN_DRAWABLE);
+	assert(frame->Type != ScreenDrawable);
 
 	percentage = percentage / 100;
 
@@ -558,7 +558,7 @@ bool ReadFramePixelColors(FRAME frame, Color* pixels, int width, int height)
 		return false;
 	}
 
-	assert(frame->Type != SCREEN_DRAWABLE);
+	assert(frame->Type != ScreenDrawable);
 
 	// TODO: Do we need to lock the img->mutex here?
 	const TFB_Image* img {frame->image};
@@ -574,7 +574,7 @@ bool WriteFramePixelColors(FRAME frame, const Color* pixels, int width, int heig
 		return false;
 	}
 
-	assert(frame->Type != SCREEN_DRAWABLE);
+	assert(frame->Type != ScreenDrawable);
 
 	// TODO: Do we need to lock the img->mutex here?
 	const TFB_Image* img {frame->image};
@@ -589,7 +589,7 @@ bool ReadFramePixelIndexes(FRAME frame, uint8_t* pixels, int width, int height, 
 		return false;
 	}
 
-	assert(frame->Type != SCREEN_DRAWABLE);
+	assert(frame->Type != ScreenDrawable);
 
 	// TODO: Do we need to lock the img->mutex here?
 	const TFB_Image* img {frame->image};
@@ -614,7 +614,7 @@ bool WriteFramePixelIndexes(FRAME frame, const uint8_t* pixels, int width, int h
 		return false;
 	}
 
-	assert(frame->Type != SCREEN_DRAWABLE);
+	assert(frame->Type != ScreenDrawable);
 
 	// TODO: Do we need to lock the img->mutex here?
 	const TFB_Image* img {frame->image};

@@ -992,7 +992,7 @@ CheckObjectCollision(uint16_t index)
 	const PRIMITIVE* pLanderPrim {};
 	PLANETSIDE_DESC* pPSD = planetSideDesc;
 
-	if (index != END_OF_LIST)
+	if (index != EndOfList)
 	{
 		pLanderPrim = &DisplayArray[index];
 		LanderControl.IntersectStamp = pLanderPrim->Object.Stamp;
@@ -1011,7 +1011,7 @@ CheckObjectCollision(uint16_t index)
 	LanderHandle =
 		GetFrameParentDrawable(LanderControl.IntersectStamp.frame);
 
-	for (; index != END_OF_LIST; index = GetPredLink(GetPrimLinks(pPrim)))
+	for (; index != EndOfList; index = GetPredLink(GetPrimLinks(pPrim)))
 	{
 		INTERSECT_CONTROL ElementControl;
 		HELEMENT hElement {};
@@ -1381,7 +1381,7 @@ BuildObjectList(void)
 	HELEMENT hNextElement {};
 	const PLANETSIDE_DESC* pPSD = planetSideDesc;
 
-	DisplayLinks = MakeLinks(END_OF_LIST, END_OF_LIST);
+	DisplayLinks = uqm::makeDword(EndOfList, EndOfList);
 
 	lander_flags &= ~KILL_CREW;
 
@@ -1499,7 +1499,7 @@ BuildObjectList(void)
 			if (lander_flags & ADD_AT_END)
 			{
 				InsertPrim(&DisplayLinks, ElementPtr->PrimIndex,
-						   END_OF_LIST);
+						   EndOfList);
 			}
 			else
 			{
@@ -1635,9 +1635,9 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 	}
 
 	if (landingOffset == ON_THE_GROUND && crew_left
-		&& GetPredLink(DisplayLinks) != END_OF_LIST)
+		&& GetPredLink(DisplayLinks) != EndOfList)
 	{
-		CheckObjectCollision(END_OF_LIST);
+		CheckObjectCollision(EndOfList);
 	}
 
 	{

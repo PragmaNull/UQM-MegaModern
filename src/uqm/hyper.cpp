@@ -1178,7 +1178,7 @@ AddAmbientElement(void)
 		if (IS_HD && inQuasiSpace())
 		{
 			SetPrimFlags(&DisplayArray[HyperSpaceElementPtr->PrimIndex],
-						 HYPER_TO_QUASI_COLOR);
+						 HyperToQuasiColor);
 		}
 
 		const uint32_t rand_val {uqm::random().next()};
@@ -2149,7 +2149,7 @@ void SeedUniverse(void)
 				SetPrimType(&DisplayArray[*PrimIndex], STAMPFILL_PRIM);
 				SetPrimColor(&DisplayArray[*PrimIndex],
 							 GetMaskColor(STAR_COLOR(star_type)));
-				SetPrimFlags(&DisplayArray[*PrimIndex], HS_STARMASK);
+				SetPrimFlags(&DisplayArray[*PrimIndex], HsStarmask);
 
 				HyperSpaceElementPtr->state_flags =
 					APPEARING | FINITE_LIFE | NONSOLID;

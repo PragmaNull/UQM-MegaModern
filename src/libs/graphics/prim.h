@@ -51,29 +51,29 @@ struct PRIMITIVE
 	uint8_t flags {};
 };
 
-#define END_OF_LIST ((uint16_t)0xFFFF)
+inline constexpr auto EndOfList {((uint16_t)0xFFFF)};
 
 /* Primitive flags */
-#define UNSCALED_STAMP (1 << 0)		  // Stamp will not be scaled via smooth scaler
-#define HYPER_TO_QUASI_COLOR (1 << 1) // Stamp be rendered with quasispace filter (for ambience in HD only)
-#define HS_STARMASK (1 << 2)
+inline constexpr auto UnscaledStamp {(1 << 0)};		// Stamp will not be scaled via smooth scaler
+inline constexpr auto HyperToQuasiColor {(1 << 1)}; // Stamp be rendered with quasispace filter (for ambience in HD only)
+inline constexpr auto HsStarmask {(1 << 2)};
 
-#define GetPredLink(l) uqm::lowWord(l)
-#define GetSuccLink(l) uqm::highWord(l)
-#define MakeLinks uqm::makeDword
-#define SetPrimLinks(pPrim, p, s) ((pPrim)->Links = MakeLinks(p, s))
-#define GetPrimLinks(pPrim) ((pPrim)->Links)
-#define SetPrimType(pPrim, t) ((pPrim)->Type = t)
-#define GetPrimType(pPrim) ((pPrim)->Type)
-#define SetPrimColor(pPrim, c) ((pPrim)->color = c)
-#define GetPrimColor(pPrim) ((pPrim)->color)
-#define SetPrimFlags(pPrim, f) ((pPrim)->flags = f)
-#define GetPrimFlags(pPrim) ((pPrim)->flags)
+constexpr auto GetPredLink(auto l) { return uqm::lowWord(l); }
+constexpr auto GetSuccLink(auto l) { return uqm::highWord(l); }
+
+constexpr auto SetPrimLinks(auto pPrim, auto p, auto s) { return ((pPrim)->Links = uqm::makeDword(p, s)); }
+constexpr auto GetPrimLinks(auto pPrim) { return ((pPrim)->Links); }
+constexpr auto SetPrimType(auto pPrim, auto t) { return ((pPrim)->Type = t); }
+constexpr auto GetPrimType(auto pPrim) { return ((pPrim)->Type); }
+constexpr auto SetPrimColor(auto pPrim, auto c) { return ((pPrim)->color = c); }
+constexpr auto GetPrimColor(auto pPrim) { return ((pPrim)->color); }
+constexpr auto SetPrimFlags(auto pPrim, auto f) { return ((pPrim)->flags = f); }
+constexpr auto GetPrimFlags(auto pPrim) { return ((pPrim)->flags); }
 
 static inline void
 SetPrimNextLink(PRIMITIVE* pPrim, uint16_t Link)
 {
-	SetPrimLinks(pPrim, END_OF_LIST, Link);
+	SetPrimLinks(pPrim, EndOfList, Link);
 }
 
 

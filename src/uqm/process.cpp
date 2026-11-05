@@ -91,7 +91,7 @@ AllocElement(void)
 		LockElement(hElement, &ElementPtr);
 		memset(ElementPtr, 0, sizeof(*ElementPtr));
 		ElementPtr->PrimIndex = AllocDisplayPrim();
-		if (ElementPtr->PrimIndex == END_OF_LIST)
+		if (ElementPtr->PrimIndex == EndOfList)
 		{
 			uqm::log::error("AllocElement: Out of display prims!");
 			uqm::fatalExit();
@@ -838,16 +838,16 @@ void InsertPrim(PRIM_LINKS* pLinks, uint16_t primIndex, uint16_t iPI)
 	uint16_t Link {};
 	PRIM_LINKS PL {};
 
-	if (iPI == END_OF_LIST)
+	if (iPI == EndOfList)
 	{
 		Link = GetSuccLink(*pLinks); /* get tail */
-		if (Link == END_OF_LIST)
+		if (Link == EndOfList)
 		{
-			*pLinks = MakeLinks(primIndex, primIndex);
+			*pLinks = uqm::makeDword(primIndex, primIndex);
 		}
 		else
 		{
-			*pLinks = MakeLinks(GetPredLink(*pLinks), primIndex);
+			*pLinks = uqm::makeDword(GetPredLink(*pLinks), primIndex);
 		}
 	}
 	else
@@ -859,13 +859,13 @@ void InsertPrim(PRIM_LINKS* pLinks, uint16_t primIndex, uint16_t iPI)
 		}
 		else
 		{
-			Link = END_OF_LIST;
-			*pLinks = MakeLinks(primIndex, GetSuccLink(*pLinks));
+			Link = EndOfList;
+			*pLinks = uqm::makeDword(primIndex, GetSuccLink(*pLinks));
 		}
 		SetPrimLinks(&DisplayArray[iPI], primIndex, GetSuccLink(PL));
 	}
 
-	if (Link != END_OF_LIST)
+	if (Link != EndOfList)
 	{
 		PL = GetPrimLinks(&DisplayArray[Link]);
 		SetPrimLinks(&DisplayArray[Link], GetPredLink(PL), primIndex);
@@ -1015,7 +1015,7 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 							|| (state_flags & (APPEARING | CHANGING)))
 						{
 							uint16_t index {};
-							uint16_t scale = GSCALE_IDENTITY;
+							uint16_t scale = GscaleIdentity;
 
 							if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 							{
@@ -1030,7 +1030,7 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 								ElementPtr->next.image.farray[index],
 								ElementPtr->next.image.frame);
 
-							if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Trilinear && index < 2 && scale != GSCALE_IDENTITY)
+							if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Trilinear && index < 2 && scale != GscaleIdentity)
 							{
 								// enqueues drawcommand to assign next
 								// (smaller) zoom level image as mipmap,
@@ -1063,7 +1063,7 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 
 			if (ObjType < NUM_PRIMS)
 			{
-				InsertPrim(&DisplayLinks, ElementPtr->PrimIndex, END_OF_LIST);
+				InsertPrim(&DisplayLinks, ElementPtr->PrimIndex, EndOfList);
 			}
 
 			hNextElement = GetSuccElement(ElementPtr);
@@ -1096,11 +1096,11 @@ void InitDisplayList(void)
 
 	for (i = 0; i < MAX_DISPLAY_PRIMS; ++i)
 	{
-		SetPrimLinks(&DisplayArray[i], END_OF_LIST, i + 1);
+		SetPrimLinks(&DisplayArray[i], EndOfList, i + 1);
 	}
-	SetPrimLinks(&DisplayArray[i - 1], END_OF_LIST, END_OF_LIST);
+	SetPrimLinks(&DisplayArray[i - 1], EndOfList, EndOfList);
 	DisplayFreeList = 0;
-	DisplayLinks = MakeLinks(END_OF_LIST, END_OF_LIST);
+	DisplayLinks = uqm::makeDword(EndOfList, EndOfList);
 }
 
 uint16_t nth_frame = 0;
@@ -1156,7 +1156,7 @@ void RedrawQueue(bool clear)
 		FlushSounds();
 	}
 
-	DisplayLinks = MakeLinks(END_OF_LIST, END_OF_LIST);
+	DisplayLinks = uqm::makeDword(EndOfList, EndOfList);
 }
 
 // Set the hTarget field to 0 for all elements in the display list that

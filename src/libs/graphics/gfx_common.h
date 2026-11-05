@@ -45,7 +45,7 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw);
 // True if the ImGui overlay shows, and the screen must update each frame.
 bool TFB_ImGuiVisible(void);
 
-#define GSCALE_IDENTITY 256
+inline constexpr auto GscaleIdentity {256};
 
 void LoadIntoExtraScreen(GFXRECT* r);
 void DrawFromExtraScreen(GFXRECT* r);

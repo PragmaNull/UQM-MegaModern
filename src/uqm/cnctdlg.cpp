@@ -207,7 +207,7 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 	font_DrawText(&t);
 
 	/* Force string termination */
-	self->value[WIDGET_TEXTENTRY_WIDTH - 1] = 0;
+	self->value[WidgetTextentryWidth - 1] = 0;
 
 	t.baseline.y = y;
 	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value);
@@ -232,7 +232,7 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 	{ // editing state
 		uint16_t i {};
 		GFXRECT text_r;
-		uint8_t char_deltas[WIDGET_TEXTENTRY_WIDTH];
+		uint8_t char_deltas[WidgetTextentryWidth];
 		GFXRECT r;
 		int16_t leading {};
 
@@ -243,10 +243,10 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 		// XXX: this may need some tuning, especially if a
 		//   different font is used. The font 'leading' values
 		//   are not what they should be.
-#define BOX_VERT_OFFSET RES_SCALE(2)
+		const auto BoxVertOffset {RES_SCALE(2)};
 		GetContextFontLeading(&leading);
 		r.corner.x = t.baseline.x - RES_SCALE(1);
-		r.corner.y = t.baseline.y - leading + BOX_VERT_OFFSET;
+		r.corner.y = t.baseline.y - leading + BoxVertOffset;
 		r.extent.width = MCD_WIDTH - r.corner.x - RES_SCALE(10);
 		r.extent.height = leading - RES_SCALE(1);
 
@@ -520,7 +520,7 @@ CreateWidgets(void)
 		texts[i].height = Widget_HeightOneLine;
 		texts[i].width = Widget_WidthFullScreen;
 		texts[i].handleEventSelect = OnTextEntryEvent;
-		texts[i].maxlen = WIDGET_TEXTENTRY_WIDTH - RES_SCALE(1);
+		texts[i].maxlen = WidgetTextentryWidth - RES_SCALE(1);
 		texts[i].state = WTE_NORMAL;
 		texts[i].cursor_pos = 0;
 	}

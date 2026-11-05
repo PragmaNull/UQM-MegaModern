@@ -47,8 +47,8 @@ LoadDisplayPixmap(const GFXRECT* area, FRAME frame)
 
 	frame = SetAbsFrameIndex(CaptureDrawable(buffer), index);
 
-	if (_CurFramePtr->Type != SCREEN_DRAWABLE
-		|| frame->Type == SCREEN_DRAWABLE
+	if (_CurFramePtr->Type != ScreenDrawable
+		|| frame->Type == ScreenDrawable
 		|| !(GetFrameParentDrawable(frame)->Flags & MappedToDisplay))
 	{
 		uqm::log::warn("Unimplemented function activated: "

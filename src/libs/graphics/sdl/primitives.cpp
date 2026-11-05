@@ -304,9 +304,9 @@ renderpixel_additive(SDL_Surface* surface, int x, int y, Uint32 pixel,
 	UNPACK_PIXEL_RGB(sp, fmt, sr, sg, sb);
 	UNPACK_PIXEL_RGB(pixel, fmt, r, g, b);
 
-	// TODO: We may need a special case for factor == -ADDITIVE_FACTOR_1 too,
+	// TODO: We may need a special case for factor == -AdditiveFactor1 too,
 	// but it is not important enough right now to care ;)
-	if (factor == ADDITIVE_FACTOR_1)
+	if (factor == AdditiveFactor1)
 	{ // no need to modulate the 'pixel', and modulation does not
 		// work correctly with factor==255 anyway
 		sr = clip_channel(sr + r);
@@ -335,7 +335,7 @@ renderpixel_alpha(SDL_Surface* surface, int x, int y, Uint32 pixel,
 	int g {};
 	int b {};
 
-	if (factor == FULLY_OPAQUE_ALPHA)
+	if (factor == FullyOpaqueAlpha)
 	{ // alpha == 255 is equivalent to 'replace' and blending does not
 		// work correctly anyway because we use >> 8 instead of / 255
 		putpixel_32(surface, x, y, pixel);

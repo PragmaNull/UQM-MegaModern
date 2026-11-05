@@ -1145,7 +1145,7 @@ DoPresentation(void* pIS)
 					s.origin.y = cmd.y << RESOLUTION_FACTOR;
 					const uqm::TFBScaleMode old_mode {
 						SetGraphicScaleMode(drawSis ? uqm::TFBScaleMode::Nearest : uqm::TFBScaleMode::Bilinear)};
-					const int old_scale {SetGraphicScale(cmd.scale.value_or(GSCALE_IDENTITY))};
+					const int old_scale {SetGraphicScale(cmd.scale.value_or(GscaleIdentity))};
 					DrawStamp(&s);
 					SetGraphicScale(old_scale);
 					SetGraphicScaleMode(old_mode);

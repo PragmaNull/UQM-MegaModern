@@ -244,7 +244,7 @@ void TFB_DrawCanvas_Image(TFB_Image* img, int x, int y, int scale,
 		TFB_SetColors((SDL_Surface*)img->NormalImg, cmap->palette->colors, 0, 256);
 	}
 
-	if (scale != 0 && scale != GSCALE_IDENTITY)
+	if (scale != 0 && scale != GscaleIdentity)
 	{
 		if (scaleMode == uqm::TFBScaleMode::Trilinear)
 		{
@@ -474,7 +474,7 @@ void TFB_DrawCanvas_FilledImage(TFB_Image* img, int x, int y, int scale,
 
 	const uqm::LockGuard imageLock {img->mutex};
 
-	if (scale != 0 && scale != GSCALE_IDENTITY)
+	if (scale != 0 && scale != GscaleIdentity)
 	{
 		if (scaleMode == uqm::TFBScaleMode::Trilinear)
 		{
@@ -1204,43 +1204,43 @@ void TFB_DrawCanvas_GetScaledExtent(TFB_Canvas src_canvas, HOT_SPOT* src_hs,
 		// interpolates extents between src and mipmap to get smoother
 		// transition when surface changes
 		const SDL_Surface* mipmap = (SDL_Surface*)src_mipmap;
-		const int ratio = scale * 2 - GSCALE_IDENTITY;
+		const int ratio = scale * 2 - GscaleIdentity;
 
-		assert(scale >= GSCALE_IDENTITY / 2);
+		assert(scale >= GscaleIdentity / 2);
 
-		w = mipmap->w * GSCALE_IDENTITY + (src->w - mipmap->w) * ratio;
-		h = mipmap->h * GSCALE_IDENTITY + (src->h - mipmap->h) * ratio;
+		w = mipmap->w * GscaleIdentity + (src->w - mipmap->w) * ratio;
+		h = mipmap->h * GscaleIdentity + (src->h - mipmap->h) * ratio;
 
 		// Seems it is better to use mipmap hotspot because some
 		// source and mipmap images have the same dimensions!
-		x = mm_hs->x * GSCALE_IDENTITY + (src_hs->x - mm_hs->x) * ratio;
-		y = mm_hs->y * GSCALE_IDENTITY + (src_hs->y - mm_hs->y) * ratio;
+		x = mm_hs->x * GscaleIdentity + (src_hs->x - mm_hs->x) * ratio;
+		y = mm_hs->y * GscaleIdentity + (src_hs->y - mm_hs->y) * ratio;
 	}
 
 	if (type != uqm::TFBScaleMode::Nearest)
 	{
 		// align hotspot on an whole pixel
-		if (x & (GSCALE_IDENTITY - 1))
+		if (x & (GscaleIdentity - 1))
 		{
-			frac = GSCALE_IDENTITY - (x & (GSCALE_IDENTITY - 1));
+			frac = GscaleIdentity - (x & (GscaleIdentity - 1));
 			x += frac;
 			w += frac;
 		}
-		if (y & (GSCALE_IDENTITY - 1))
+		if (y & (GscaleIdentity - 1))
 		{
-			frac = GSCALE_IDENTITY - (y & (GSCALE_IDENTITY - 1));
+			frac = GscaleIdentity - (y & (GscaleIdentity - 1));
 			y += frac;
 			h += frac;
 		}
 		// pad the extent to accomodate fractional edge pixels
-		w += (GSCALE_IDENTITY - 1);
-		h += (GSCALE_IDENTITY - 1);
+		w += (GscaleIdentity - 1);
+		h += (GscaleIdentity - 1);
 	}
 
-	size->width = w / GSCALE_IDENTITY;
-	size->height = h / GSCALE_IDENTITY;
-	hs->x = x / GSCALE_IDENTITY;
-	hs->y = y / GSCALE_IDENTITY;
+	size->width = w / GscaleIdentity;
+	size->height = h / GscaleIdentity;
+	hs->x = x / GscaleIdentity;
+	hs->y = y / GscaleIdentity;
 
 	// Scaled image can be larger than the source by 1 pixel
 	// because of hotspot alignment and fractional edge pixels
@@ -1518,7 +1518,7 @@ void TFB_DrawCanvas_Rescale_Trilinear(TFB_Canvas src_canvas, TFB_Canvas src_mipm
 	Uint32 transparent = 0;
 	const int alpha_threshold = dst_has_alpha ? 0 : 127;
 	// src v. mipmap importance factor
-	const int ratio = scale * 2 - GSCALE_IDENTITY;
+	const int ratio = scale * 2 - GscaleIdentity;
 	// source masks and keys
 	Uint32 mk0 = 0;
 	Uint32 ck0 = ~0;
@@ -1555,15 +1555,15 @@ void TFB_DrawCanvas_Rescale_Trilinear(TFB_Canvas src_canvas, TFB_Canvas src_mipm
 
 	if (scale > 0)
 	{
-		// Use (scale / GSCALE_IDENTITY) sizing factor
+		// Use (scale / GscaleIdentity) sizing factor
 		TFB_DrawCanvas_GetScaledExtent(src, src_hs, mm, mm_hs, scale,
 									   uqm::TFBScaleMode::Trilinear, size, dst_hs);
 
 		w = size->width;
 		h = size->height;
 
-		const int fw {mm->w * GSCALE_IDENTITY + (src->w - mm->w) * ratio};
-		const int fh {mm->h * GSCALE_IDENTITY + (src->h - mm->h) * ratio};
+		const int fw {mm->w * GscaleIdentity + (src->w - mm->w) * ratio};
+		const int fh {mm->h * GscaleIdentity + (src->h - mm->h) * ratio};
 
 		// This limits the effective source dimensions to 2048x2048,
 		// and we also lose 4 bits of precision out of 16 (no problem)
@@ -1869,14 +1869,14 @@ void TFB_DrawCanvas_Rescale_Bilinear(TFB_Canvas src_canvas, TFB_Canvas dst_canva
 
 	if (scale > 0)
 	{
-		// Use (scale / GSCALE_IDENTITY) sizing factor
+		// Use (scale / GscaleIdentity) sizing factor
 		TFB_DrawCanvas_GetScaledExtent(src, src_hs, nullptr, nullptr, scale,
 									   uqm::TFBScaleMode::Bilinear, size, dst_hs);
 
 		w = size->width;
 		h = size->height;
-		fsx = (GSCALE_IDENTITY << 16) / scale;
-		fsy = (GSCALE_IDENTITY << 16) / scale;
+		fsx = (GscaleIdentity << 16) / scale;
+		fsy = (GscaleIdentity << 16) / scale;
 
 		// position the hotspots directly over each other
 		ssx = (src_hs->x << 16) - fsx * dst_hs->x;

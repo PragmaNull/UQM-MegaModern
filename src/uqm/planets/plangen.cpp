@@ -406,7 +406,7 @@ RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 		SetPrimType(pBatch, POINT_PRIM);
 		SetPrimFlags(pBatch, 0);
 	}
-	SetPrimNextLink(&pBatch[-1], END_OF_LIST);
+	SetPrimNextLink(&pBatch[-1], EndOfList);
 
 	const PlanetFrame* PlanDataPtr {&PlanData[pSolarSysState->pOrbitalDesc->data_index & ~PLANET_SHIELDED]};
 	const uint8_t AlgoType {PLANALGO(PlanDataPtr->Type)};

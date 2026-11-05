@@ -52,14 +52,13 @@ BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 
 	if (w1 > 0)
 	{
-#define h2 w2
 		int16_t y1 {};
 
 		y1 = pr1->corner.y - pr2->corner.y;
 
 		int16_t h1 {pr1->extent.height};
-		h2 = pr2->extent.height;
-		if ((delta = h2 - y1) <= h1)
+		w2 = pr2->extent.height;
+		if ((delta = w2 - y1) <= h1)
 		{
 			if (delta != h1)
 			{
@@ -88,7 +87,6 @@ BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 
 			return (intersect_code);
 		}
-#undef h2
 	}
 
 	return ((INTERSECT_CODE)0);
@@ -114,7 +112,7 @@ void BoxUnion(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* punion)
 
 
 #if NEVER // FIXME - I think this is broken, but keeping it around for reference
-		  // FIXME - just in case.
+	// FIXME - just in case.
 
 #if 1 /* alter based on 0 widths */
 

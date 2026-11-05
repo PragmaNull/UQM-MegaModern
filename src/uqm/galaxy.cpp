@@ -254,7 +254,7 @@ void InitGalaxy(void)
 					"transition_height = {}",
 					TRANSITION_WIDTH, TRANSITION_HEIGHT);
 
-	PRIM_LINKS Links {MakeLinks(END_OF_LIST, END_OF_LIST)};
+	PRIM_LINKS Links {uqm::makeDword(EndOfList, EndOfList)};
 	uint16_t factor {ONE_SHIFT + MAX_REDUCTION + (BACKGROUND_SHIFT - 3)};
 	num_sceneries = 0;
 	for (i = 0, ppt = log_star_array; i < NUM_STARS; ++i, ++ppt)
@@ -296,7 +296,7 @@ void InitGalaxy(void)
 				SetPrimType(&DisplayArray[p], STAMP_PRIM);
 				if (uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE)
 				{
-					SetPrimFlags(&DisplayArray[p], UNSCALED_STAMP);
+					SetPrimFlags(&DisplayArray[p], UnscaledStamp);
 					DisplayArray[p].Object.Stamp.frame =
 						SetAbsFrameIndex(stars_in_space, 3);
 				}
@@ -306,7 +306,7 @@ void InitGalaxy(void)
 						SetAbsFrameIndex(stars_in_space, 96);
 					if (inQuasiSpace())
 					{
-						SetPrimFlags(&DisplayArray[p], HYPER_TO_QUASI_COLOR);
+						SetPrimFlags(&DisplayArray[p], HyperToQuasiColor);
 					}
 				}
 			}
@@ -394,7 +394,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 
 						if (IS_HD && inQuasiSpace())
 						{
-							SetPrimFlags(pprim, HYPER_TO_QUASI_COLOR);
+							SetPrimFlags(pprim, HyperToQuasiColor);
 						}
 					}
 				}
@@ -477,7 +477,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 						else if (scale == 1)
 						{
 							/* Kruzen: a hack to slip in unscaled flag */
-							star_object[1] |= (UNSCALED_STAMP << 7);
+							star_object[1] |= (UnscaledStamp << 7);
 							star_frame[0] = star_frame[1];
 							star_frame[1] = star_frame[2];
 						}
@@ -584,7 +584,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 		}
 	}
 
-	DisplayLinks = MakeLinks(NUM_STARS - 1, 0);
+	DisplayLinks = uqm::makeDword(NUM_STARS - 1, 0);
 }
 
 void SetStarPoint(GFXPOINT pt, uint16_t i)

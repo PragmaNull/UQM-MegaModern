@@ -383,7 +383,7 @@ void PrepareNextRotationFrameForIP(PLANET_DESC* pPlanetDesc, int16_t frameCounte
 void ZoomInPlanetSphere(void)
 {
 	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
-	const int base = GSCALE_IDENTITY;
+	const int base = GscaleIdentity;
 	int oldScale {};
 	int frameCount {};
 	int zoomCorner {};

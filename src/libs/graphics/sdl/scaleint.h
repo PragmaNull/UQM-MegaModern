@@ -44,9 +44,9 @@
 
 #define SCALE_DIFFYUV(p1, p2) \
 	SCALE_(DiffYUV)(p1, p2)
-#define SCALE_DIFFYUV_TY 0x40
-#define SCALE_DIFFYUV_TU 0x12
-#define SCALE_DIFFYUV_TV 0x0c
+inline constexpr auto ScaleDiffyuvTy {0x40};
+inline constexpr auto ScaleDiffyuvTu {0x12};
+inline constexpr auto ScaleDiffyuvTv {0x0c};
 
 #define SCALE_GETY(p) \
 	SCALE_(GetPixY)(fmt, p)
@@ -244,15 +244,15 @@ SCALE_(DiffYUV)(Uint32 yuv1, Uint32 yuv2)
 
 	// compute Y delta
 	int32_t delta {abs(int(yuv1 & 0xff0000u) - int(yuv2 & 0xff0000u))};
-	ret = (SCALE_DIFFYUV_TY << 16) - delta; // save sign bit
+	ret = (ScaleDiffyuvTy << 16) - delta; // save sign bit
 
 	// compute U delta
 	delta = abs(int(yuv1 & 0x00ff00) - int(yuv2 & 0x00ff00));
-	ret |= (SCALE_DIFFYUV_TU << 8) - delta; // save sign bit
+	ret |= (ScaleDiffyuvTu << 8) - delta; // save sign bit
 
 	// compute V delta
 	delta = abs(int(yuv1 & 0x0000ff) - int(yuv2 & 0x0000ff));
-	ret |= SCALE_DIFFYUV_TV - delta; // save sign bit
+	ret |= ScaleDiffyuvTv - delta; // save sign bit
 
 	return (ret >> 31);
 }
@@ -369,9 +369,9 @@ SCALE_(Blend_bilinear)(const Uint32* row0, const Uint32* row1,
 	(((p) & 0xfefefefe) >> 1)
 #define BL_SUM(p1, p2) \
 	(BL_PACKED_HALF(p1) + BL_PACKED_HALF(p2))
-#define BL_HALF_ERR 0x01010101
+	constexpr auto BlHalfErr {0x01010101};
 #define BL_SUM_WERR(p1, p2) \
-	(BL_PACKED_HALF(p1) + BL_PACKED_HALF(p2) + BL_HALF_ERR)
+	(BL_PACKED_HALF(p1) + BL_PACKED_HALF(p2) + BlHalfErr)
 
 	// cache p[0] + 3*(p[1] + p[2]) + p[3] in sum1331
 	// cache p[1] + 3*(p[0] + p[3]) + p[2] in sum3113
@@ -400,7 +400,6 @@ SCALE_(Blend_bilinear)(const Uint32* row0, const Uint32* row1,
 
 #undef BL_PACKED_HALF
 #undef BL_SUM
-#undef BL_HALF_ERR
 #undef BL_SUM_WERR
 }
 

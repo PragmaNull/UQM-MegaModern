@@ -1906,12 +1906,12 @@ DrawTexturedBody(PLANET_DESC* planet, STAMP s)
 						   MOON_DIAMETER;
 
 		oldScale = SetGraphicScale(
-			GSCALE_IDENTITY * RES_SCALE(size) / moonDiameter);
+			GscaleIdentity * RES_SCALE(size) / moonDiameter);
 	}
 	else
 	{
 		oldScale = SetGraphicScale(
-			GSCALE_IDENTITY * RES_SCALE(size)
+			GscaleIdentity * RES_SCALE(size)
 			/ PLANET_DIAMETER);
 	}
 

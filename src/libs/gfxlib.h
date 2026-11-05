@@ -712,7 +712,7 @@ extern bool WriteFramePixelIndexes(FRAME frame, const uint8_t* pixels,
 extern void SetFrameTransparentColor(FRAME, Color);
 extern bool IsFrameIndexed(FRAME Frame);
 
-// If the frame is an active SCREEN_DRAWABLE, this call must be
+// If the frame is an active ScreenDrawable, this call must be
 // preceeded by FlushGraphics() for draw commands to have taken effect
 extern Color GetFramePixel(FRAME, GFXPOINT pixelPt);
 

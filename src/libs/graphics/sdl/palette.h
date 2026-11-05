@@ -25,7 +25,7 @@
 
 struct NativePalette
 {
-	SDL_Color colors[NUMBER_OF_PLUTVALS];
+	SDL_Color colors[NumberOfPlutvals];
 };
 
 static inline Color

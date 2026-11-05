@@ -21,23 +21,23 @@
 
 #include "libs/gfxlib.h"
 
-#define MAX_COLORMAPS 250
+inline constexpr auto MaxColormaps {250};
 
 // These are pertinent to colortable file format
 // We load colormaps as binary and parse them when needed
-#define PLUTVAL_BYTE_SIZE 3
+inline constexpr auto PlutvalByteSize {3};
 // Channel order in colormap tables
-#define PLUTVAL_RED 0
-#define PLUTVAL_GREEN 1
-#define PLUTVAL_BLUE 2
+inline constexpr auto PlutvalRed {0};
+inline constexpr auto PlutvalGreen {1};
+inline constexpr auto PlutvalBlue {2};
 
-#define NUMBER_OF_PLUTVALS 256
+inline constexpr auto NumberOfPlutvals {256};
 // Size of the colormap in a colortable file
-#define PLUT_BYTE_SIZE (PLUTVAL_BYTE_SIZE * NUMBER_OF_PLUTVALS)
 
-#define FADE_NO_INTENSITY 0
-#define FADE_NORMAL_INTENSITY 255
-#define FADE_FULL_INTENSITY 510
+
+inline constexpr auto FadeNoIntensity {0};
+inline constexpr auto FadeNormalIntensity {255};
+inline constexpr auto FadeFullIntensity {510};
 
 typedef struct NativePalette NativePalette;
 

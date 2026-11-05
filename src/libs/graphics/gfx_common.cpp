@@ -50,7 +50,7 @@ int TFB_DEBUG_HALT = 0;
 
 uqstl::atomic<int> TransitionAmount {255};
 
-static int gscale = GSCALE_IDENTITY;
+static int gscale = GscaleIdentity;
 static uqm::TFBScaleMode gscale_mode = uqm::TFBScaleMode::Nearest;
 
 void DrawFromExtraScreen(GFXRECT* r)
@@ -66,7 +66,7 @@ void LoadIntoExtraScreen(GFXRECT* r)
 int SetGraphicScale(int scale)
 {
 	const int old_scale = gscale;
-	gscale = (scale ? scale : GSCALE_IDENTITY);
+	gscale = (scale ? scale : GscaleIdentity);
 	return old_scale;
 }
 

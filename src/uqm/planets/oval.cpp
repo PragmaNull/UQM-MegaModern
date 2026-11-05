@@ -371,7 +371,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 		return;
 	}
 
-	uint16_t StartPrim {END_OF_LIST};
+	uint16_t StartPrim {EndOfList};
 	for (x = 0; x < NUM_QUADS; ++x)
 	{
 		if (quad_visible & (1 << x))
@@ -827,7 +827,7 @@ void DrawFilledOval(DRECT* pRect)
 		return;
 	}
 
-	uint16_t StartPrim {END_OF_LIST};
+	uint16_t StartPrim {EndOfList};
 	for (x = 0; x < (NUM_QUADS >> 1); ++x)
 	{
 		SetPrimNextLink(&prim[x], StartPrim);

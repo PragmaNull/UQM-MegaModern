@@ -307,15 +307,15 @@ done: /* Clean up and return */
  */
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#define A_MASK 0xff000000
-#define B_MASK 0x00ff0000
-#define G_MASK 0x0000ff00
-#define R_MASK 0x000000ff
+static constexpr auto AMask {0xff000000};
+static constexpr auto BMask {0x00ff0000};
+static constexpr auto GMask {0x0000ff00};
+static constexpr auto RMask {0x000000ff};
 #else
-#define A_MASK 0x000000ff
-#define B_MASK 0x0000ff00
-#define G_MASK 0x00ff0000
-#define R_MASK 0xff000000
+static constexpr auto AMask {0x000000ff};
+static constexpr auto BMask {0x0000ff00};
+static constexpr auto GMask {0x00ff0000};
+static constexpr auto RMask {0xff000000};
 #endif
 
 static void
@@ -434,9 +434,9 @@ int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* dst, int freedst)
 	png_set_packing(png_ptr);
 
 	/* Allow BGR surfaces */
-	if (SDL_GetPixelFormatDetails(surface->format)->Rmask == B_MASK
-		&& SDL_GetPixelFormatDetails(surface->format)->Gmask == G_MASK
-		&& SDL_GetPixelFormatDetails(surface->format)->Bmask == R_MASK)
+	if (SDL_GetPixelFormatDetails(surface->format)->Rmask == BMask
+		&& SDL_GetPixelFormatDetails(surface->format)->Gmask == GMask
+		&& SDL_GetPixelFormatDetails(surface->format)->Bmask == RMask)
 	{
 		png_set_bgr(png_ptr);
 	}

@@ -85,7 +85,7 @@ private:
 
 } // namespace
 
-static TFB_DrawCommand DCQ[DCQ_MAX] UQM_GUARDED_BY(s_dcqMutex);
+static TFB_DrawCommand DCQ[DcqMax] UQM_GUARDED_BY(s_dcqMutex);
 
 static TFB_DrawCommandQueue DrawCommandQueue UQM_GUARDED_BY(s_dcqMutex);
 
@@ -97,7 +97,7 @@ int RenderedFrames = 0;
 static bool
 DCQ_HasSpace(int slots) UQM_REQUIRES(s_dcqMutex)
 {
-	return DrawCommandQueue.FullSize < DCQ_MAX - slots;
+	return DrawCommandQueue.FullSize < DcqMax - slots;
 }
 
 // Wait for the queue to be emptied. Always have the DCQ locked when calling this.
@@ -171,7 +171,7 @@ Synchronize_DCQ(void) UQM_REQUIRES(s_dcqMutex)
 		}
 		else
 		{
-			DrawCommandQueue.Size = (back + DCQ_MAX - front);
+			DrawCommandQueue.Size = (back + DcqMax - front);
 		}
 		DrawCommandQueue.FullSize = DrawCommandQueue.Size;
 	}
@@ -232,7 +232,7 @@ void TFB_DrawCommandQueue_Push(TFB_DrawCommand* Command)
 	lockDcqWithSpace(1);
 	DCQ[DrawCommandQueue.InsertionPoint] = *Command;
 	DrawCommandQueue.InsertionPoint = (DrawCommandQueue.InsertionPoint + 1)
-									% DCQ_MAX;
+									% DcqMax;
 	DrawCommandQueue.FullSize++;
 	Synchronize_DCQ();
 	unlockDcq();
@@ -248,7 +248,7 @@ int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
 		return (0);
 	}
 
-	if (DrawCommandQueue.Front == DrawCommandQueue.Back && DrawCommandQueue.Size != DCQ_MAX)
+	if (DrawCommandQueue.Front == DrawCommandQueue.Back && DrawCommandQueue.Size != DcqMax)
 	{
 		uqm::log::debug("Augh!  Assertion failure in DCQ!  "
 						"Front == Back, Size != DCQ_MAX");
@@ -258,7 +258,7 @@ int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
 	}
 
 	*target = DCQ[DrawCommandQueue.Front];
-	DrawCommandQueue.Front = (DrawCommandQueue.Front + 1) % DCQ_MAX;
+	DrawCommandQueue.Front = (DrawCommandQueue.Front + 1) % DcqMax;
 
 	DrawCommandQueue.Size--;
 	DrawCommandQueue.FullSize--;
@@ -316,7 +316,7 @@ void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand)
 	checkExclusiveThread(DrawCommand);
 
 	if (DrawCommand->Type <= TFB_DRAWCOMMANDTYPE_COPYTOIMAGE
-		&& _CurFramePtr->Type == SCREEN_DRAWABLE)
+		&& _CurFramePtr->Type == ScreenDrawable)
 	{
 		static GFXRECT scissor_rect;
 
@@ -501,12 +501,12 @@ void TFB_FlushGraphics(void)
 	int commands_handled {0};
 	bool livelock_deterrence {false};
 
-	if (DCQ_FullSize() > DCQ_FORCE_BREAK_SIZE)
+	if (DCQ_FullSize() > DcqForceBreakSize)
 	{
 		TFB_BatchReset();
 	}
 
-	if (DCQ_Size() > DCQ_FORCE_SLOWDOWN_SIZE)
+	if (DCQ_Size() > DcqForceSlowdownSize)
 	{
 		Lock_DCQ(-1);
 		livelock_deterrence = true;
@@ -525,7 +525,7 @@ void TFB_FlushGraphics(void)
 		}
 
 		++commands_handled;
-		if (!livelock_deterrence && commands_handled + DCQ_Size() > DCQ_LIVELOCK_MAX)
+		if (!livelock_deterrence && commands_handled + DCQ_Size() > DcqLivelockMax)
 		{
 			// log_add (log_Debug, "Initiating livelock deterrence!");
 			livelock_deterrence = true;

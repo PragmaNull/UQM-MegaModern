@@ -187,8 +187,8 @@ extern PRIMITIVE DisplayArray[MAX_DISPLAY_PRIMS];
 #define AllocDisplayPrim() \
 	DisplayFreeList;       \
 	DisplayFreeList = GetSuccLink(GetPrimLinks(&DisplayArray[DisplayFreeList]))
-#define FreeDisplayPrim(p)                                        \
-	SetPrimLinks(&DisplayArray[p], END_OF_LIST, DisplayFreeList); \
+#define FreeDisplayPrim(p)                                      \
+	SetPrimLinks(&DisplayArray[p], EndOfList, DisplayFreeList); \
 	DisplayFreeList = (p)
 
 #define GetElementStarShip(e, ppsd)        \

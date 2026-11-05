@@ -241,7 +241,7 @@ populate_editkeys(int templat)
 		{
 			InterrogateInputState(templat, i, j,
 								  controlentries[i].controlname[j],
-								  WIDGET_CONTROLENTRY_WIDTH);
+								  WidgetControlentryWidth);
 		}
 	}
 }
@@ -673,7 +673,7 @@ init_shared_widgets(void)
 	layoutName.height = Widget_HeightOneLine;
 	layoutName.width = Widget_WidthFullScreen;
 	layoutName.handleEventSelect = OnTextEntryEvent;
-	layoutName.maxlen = WIDGET_TEXTENTRY_WIDTH - 1;
+	layoutName.maxlen = WidgetTextentryWidth - 1;
 	layoutName.state = WTE_NORMAL;
 	layoutName.onChange = rename_template;
 

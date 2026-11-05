@@ -84,7 +84,7 @@ bool DestroyFont(FONT FontRef)
 		SetContextFont((FONT) nullptr);
 	}
 
-	return (FreeFont(FontRef));
+	return (_ReleaseFontData(FontRef));
 }
 
 // Returns the GFXRECT of any given TEXT
@@ -334,7 +334,7 @@ bool GetContextFontDispWidth(int16_t* pwidth)
 
 bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 {
-	uint8_t char_delta_array[MAX_DELTAS];
+	uint8_t char_delta_array[MaxDeltas];
 
 	FONT FontPtr {_CurFontPtr};
 	if (FontPtr != 0 && lpText->CharCount != 0)
@@ -353,10 +353,10 @@ bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 		if (pdelta == 0)
 		{
 			pdelta = char_delta_array;
-			if (num_chars > MAX_DELTAS)
+			if (num_chars > MaxDeltas)
 			{
-				num_chars = MAX_DELTAS;
-				lpText->CharCount = MAX_DELTAS;
+				num_chars = MaxDeltas;
+				lpText->CharCount = MaxDeltas;
 			}
 		}
 
@@ -405,7 +405,7 @@ bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 
 				width += charFrame->disp.width + FontPtr->CharSpace;
 
-				if (num_chars && next_ch < MAX_UNICODE
+				if (num_chars && next_ch < MaxUnicode
 					&& FontPtr->KernTab[ch] != (uint8_t)~0
 					&& !(FontPtr->KernTab[ch]
 						 & (FontPtr->KernTab[next_ch] >> 2)))
@@ -520,7 +520,7 @@ void _text_blt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin)
 
 			origin.x += fontChar->disp.width + FontPtr->CharSpace;
 
-			if (num_chars && next_ch < MAX_UNICODE
+			if (num_chars && next_ch < MaxUnicode
 				&& FontPtr->KernTab[ch] != (uint8_t)~0
 				&& !(FontPtr->KernTab[ch]
 					 & (FontPtr->KernTab[next_ch] >> 2)))
@@ -653,7 +653,7 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 			{
 				origin.x += fontChar->disp.width + FontPtr->CharSpace;
 
-				if (num_chars && next_ch < MAX_UNICODE
+				if (num_chars && next_ch < MaxUnicode
 					&& FontPtr->KernTab[ch] != (uint8_t)~0
 					&& !(FontPtr->KernTab[ch]
 						 & (FontPtr->KernTab[next_ch] >> 2)))
@@ -688,7 +688,7 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 				 uqm::UniChar key, FONT AltFontPtr)
 {
-	uint8_t char_delta_array[MAX_DELTAS];
+	uint8_t char_delta_array[MaxDeltas];
 
 	FONT FontPtr {_CurFontPtr};
 	if (FontPtr != 0 && lpText->CharCount != 0)
@@ -707,10 +707,10 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 		if (pdelta == 0)
 		{
 			pdelta = char_delta_array;
-			if (num_chars > MAX_DELTAS)
+			if (num_chars > MaxDeltas)
 			{
-				num_chars = MAX_DELTAS;
-				lpText->CharCount = MAX_DELTAS;
+				num_chars = MaxDeltas;
+				lpText->CharCount = MaxDeltas;
 			}
 		}
 
@@ -772,7 +772,7 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 
 				width += charFrame->disp.width + FontPtr->CharSpace;
 
-				if (num_chars && next_ch < MAX_UNICODE
+				if (num_chars && next_ch < MaxUnicode
 					&& FontPtr->KernTab[ch] != (uint8_t)~0
 					&& !(FontPtr->KernTab[ch]
 						 & (FontPtr->KernTab[next_ch] >> 2)))
@@ -938,7 +938,7 @@ _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swa
 
 			origin.x += fontChar->disp.width + FontPtr->CharSpace;
 
-			if (num_chars && next_ch < MAX_UNICODE
+			if (num_chars && next_ch < MaxUnicode
 				&& FontPtr->KernTab[ch] != (uint8_t)~0
 				&& !(FontPtr->KernTab[ch]
 					 & (FontPtr->KernTab[next_ch] >> 2)))
@@ -962,7 +962,7 @@ _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swa
 static inline TFB_Char*
 getCharFrame(FONT_DESC* fontPtr, uqm::UniChar ch)
 {
-	const uqm::UniChar pageStart = ch & CHARACTER_PAGE_MASK;
+	const uqm::UniChar pageStart = ch & CharacterPageMask;
 
 	FONT_PAGE* page = fontPtr->fontPages;
 	for (;;)

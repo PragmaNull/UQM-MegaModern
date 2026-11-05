@@ -38,7 +38,7 @@
 static void
 process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int cel_ct)
 {
-	FramePtr->Type = ROM_DRAWABLE;
+	FramePtr->Type = RomDrawable;
 	FramePtr->Index = cel_ct;
 
 	// handle transparency cases
@@ -276,7 +276,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 			continue;
 		}
 
-		if (charIndex > MAX_UNICODE)
+		if (charIndex > MaxUnicode)
 		{
 			continue;
 		}
@@ -317,7 +317,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 			fontPtr->HaveFntData = true;
 			for (const uqm::FontKern& kern : metrics->kerning)
 			{
-				if (kern.ch < MAX_UNICODE)
+				if (kern.ch < MaxUnicode)
 				{
 					fontPtr->KernTab[kern.ch] = static_cast<uint8_t>((kern.left << 2) | kern.right);
 				}
@@ -348,10 +348,10 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 		while (startBCD < numBCDs)
 		{
 			// Process one character page.
-			pageStart = bcds[startBCD].index & CHARACTER_PAGE_MASK;
+			pageStart = bcds[startBCD].index & CharacterPageMask;
 
 			size_t endBCD {startBCD};
-			while (endBCD < numBCDs && (bcds[endBCD].index & CHARACTER_PAGE_MASK) == pageStart)
+			while (endBCD < numBCDs && (bcds[endBCD].index & CharacterPageMask) == pageStart)
 			{
 				endBCD++;
 			}

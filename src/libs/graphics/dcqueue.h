@@ -27,25 +27,25 @@
 // Furthermore, if the main program is queuing commands at a speed
 // comparable to our processing of the commands, we never finish and
 // the game freezes.  Thus, if the queue starts out larger than
-// DCQ_FORCE_SLOWDOWN_SIZE, or DCQ_LIVELOCK_MAX commands find
+// DcqForceSlowdownSize, or DcqLivelockMax commands find
 // themselves being processed in one go, livelock deterrence is
 // enabled, and TFB_FlushGraphics locks the DCQ until it has processed
-// all entries.  If batched but pending commands exceed DCQ_FORCE_BREAK_SIZE,
+// all entries.  If batched but pending commands exceed DcqForceBreakSize,
 // a continuity break is performed.  This will effectively slow down the
 // game logic, a fate we seek to avoid - however, it seems to be unavoidable
 // on slower machines.  Even there, it's seems nonexistent outside of
 // communications screens.  --Michael
 
 #ifdef DCQ_OF_DOOM
-#define DCQ_MAX 512
-#define DCQ_FORCE_SLOWDOWN_SIZE 128
-#define DCQ_FORCE_BREAK_SIZE 512
-#define DCQ_LIVELOCK_MAX 256
+inline constexpr auto DcqMax {512};
+inline constexpr auto DcqForceSlowdownSize {128};
+inline constexpr auto DcqForceBreakSize {512};
+inline constexpr auto DcqLivelockMax {256};
 #else
-#define DCQ_MAX 16384
-#define DCQ_FORCE_SLOWDOWN_SIZE 4096
-#define DCQ_FORCE_BREAK_SIZE 16384
-#define DCQ_LIVELOCK_MAX 4096
+inline constexpr auto DcqMax {16384};
+inline constexpr auto DcqForceSlowdownSize {4096};
+inline constexpr auto DcqForceBreakSize {16384};
+inline constexpr auto DcqLivelockMax {4096};
 #endif
 
 #endif

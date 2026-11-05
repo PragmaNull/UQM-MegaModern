@@ -21,14 +21,15 @@
 
 #include "core/stl/vector.h"
 
-#define MAX_DELTAS 100
-#define MAX_UNICODE 0xFFFF
+inline constexpr auto MaxDeltas {100};
+inline constexpr auto MaxUnicode {0xFFFF};
+
+inline constexpr auto CharacterPageMask {0xfffff800};
 
 typedef struct FontPage
 {
 	struct FontPage* next;
 	uqm::UniChar pageStart;
-#define CHARACTER_PAGE_MASK 0xfffff800
 	uqm::UniChar firstChar;
 	size_t numChars;
 	uqstl::vector<TFB_Char> charDesc;
@@ -55,16 +56,11 @@ struct font_desc
 	EXTENT disp;
 	uint8_t CharSpace;
 	uint8_t KernAmount;
-	uint8_t KernTab[MAX_UNICODE];
+	uint8_t KernTab[MaxUnicode];
 	int8_t VertAlign;
 	bool HaveFntData;
 };
 
-#define CHAR_DESCPTR PCHAR_DESC
-
-#define FONT_PRIORITY DEFAULT_MEM_PRIORITY
-
-#define FreeFont _ReleaseFontData
 
 extern FONT _CurFontPtr;
 

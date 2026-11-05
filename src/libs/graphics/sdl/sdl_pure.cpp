@@ -77,15 +77,15 @@ static constexpr int FpsScreenWidthShift {2};
 static constexpr int FpsScreenHeightShift {3};
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#define A_MASK 0xff000000
-#define B_MASK 0x00ff0000
-#define G_MASK 0x0000ff00
-#define R_MASK 0x000000ff
+static constexpr auto AMask {0xff000000};
+static constexpr auto BMask {0x00ff0000};
+static constexpr auto GMask {0x0000ff00};
+static constexpr auto RMask {0x000000ff};
 #else
-#define A_MASK 0x000000ff
-#define B_MASK 0x0000ff00
-#define G_MASK 0x00ff0000
-#define R_MASK 0xff000000
+static constexpr auto AMask {0x000000ff};
+static constexpr auto BMask {0x0000ff00};
+static constexpr auto GMask {0x00ff0000};
+static constexpr auto RMask {0xff000000};
 #endif
 
 static void TFB_SDL_Preprocess(uqm::TFBRedraw force_full_redraw,
@@ -126,7 +126,7 @@ static SDL_Surface*
 Create_Screen(int w, int h)
 {
 	SDL_Surface* newsurf = TFB_CreateSurface(w, h,
-											 32, R_MASK, G_MASK, B_MASK, 0);
+											 32, RMask, GMask, BMask, 0);
 	if (newsurf == 0)
 	{
 		uqm::log::error("Couldn't create screen buffers: {}",
@@ -155,8 +155,8 @@ ReInit_FPS_Screen(SDL_Surface** screen, int w, int h)
 		SDL_DestroySurface(*screen);
 	}
 	s_fpsTexture.reset();
-	*screen = TFB_CreateSurface(w, h, 32, R_MASK, G_MASK,
-								B_MASK, A_MASK);
+	*screen = TFB_CreateSurface(w, h, 32, RMask, GMask,
+								BMask, AMask);
 	if (*screen == 0)
 	{
 		uqm::log::error("Couldn't create screen buffers: {}",
@@ -356,7 +356,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		SDL_Screen = SDL_Screens[0];
 		TransitionScreen = SDL_Screens[2];
 		format_conv_surf = TFB_CreateSurface(0, 0,
-											 32, R_MASK, G_MASK, B_MASK, A_MASK);
+											 32, RMask, GMask, BMask, AMask);
 		if (!format_conv_surf)
 		{
 			return -1;
