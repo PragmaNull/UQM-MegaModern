@@ -227,10 +227,10 @@ void UninitPlanetInfo(void)
 	DeleteStateFile(StarinfoFile);
 }
 
-#define OFFSET_SIZE (sizeof(uint32_t))
-//#define SCAN_RECORD_SIZE  (sizeof (uint32_t) * NUM_SCAN_TYPES)
+static constexpr auto OffsetSize {(sizeof(uint32_t))};
+//#define ScanRecordSize  (sizeof (uint32_t) * NUM_SCAN_TYPES)
 // JMS: Increased the size of scan record to house partially scavenged minerals.
-#define SCAN_RECORD_SIZE ((sizeof(uint32_t) * NUM_SCAN_TYPES) + (sizeof(uint8_t) * NUM_SCAN_TYPES * 32))
+static constexpr auto ScanRecordSize {((sizeof(uint32_t) * NUM_SCAN_TYPES) + (sizeof(uint8_t) * NUM_SCAN_TYPES * 32))};
 
 void GetPlanetInfo(void)
 {
@@ -270,7 +270,7 @@ void GetPlanetInfo(void)
 									- pSolarSysState->MoonDesc + 1);
 		}
 
-		SeekStateFile(fp, star_index * OFFSET_SIZE, SEEK_SET);
+		SeekStateFile(fp, star_index * OffsetSize, SEEK_SET);
 		sread_32(fp, &offset);
 
 		if (offset)
@@ -278,11 +278,11 @@ void GetPlanetInfo(void)
 			// Skip scan records for all preceeding planets to the one we need
 			for (uint16_t i {0}; i < planet_index; ++i)
 			{
-				offset += (pSolarSysState->PlanetDesc[i].NumPlanets + 1) * SCAN_RECORD_SIZE;
+				offset += (pSolarSysState->PlanetDesc[i].NumPlanets + 1) * ScanRecordSize;
 			}
 
 			// Skip scan records for all preceeding moons to the one we need
-			offset += moon_index * SCAN_RECORD_SIZE;
+			offset += moon_index * ScanRecordSize;
 
 			SeekStateFile(fp, offset, SEEK_SET);
 			sread_a32(fp, pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask,
@@ -331,7 +331,7 @@ void PutPlanetInfo(void)
 									- pSolarSysState->MoonDesc + 1);
 		}
 
-		SeekStateFile(fp, star_index * OFFSET_SIZE, SEEK_SET);
+		SeekStateFile(fp, star_index * OffsetSize, SEEK_SET);
 		sread_32(fp, &offset);
 
 		if (offset == 0)
@@ -356,7 +356,7 @@ void PutPlanetInfo(void)
 			offset = LengthStateFile(fp);
 
 			// Write the record offset
-			SeekStateFile(fp, star_index * OFFSET_SIZE, SEEK_SET);
+			SeekStateFile(fp, star_index * OffsetSize, SEEK_SET);
 			swrite_32(fp, offset);
 
 			// Init scan records for all planets and moons in the system
@@ -398,11 +398,11 @@ void PutPlanetInfo(void)
 		// Skip scan records for all preceeding planets to the one we need
 		for (i = 0; i < planet_index; ++i)
 		{
-			offset += (pSolarSysState->PlanetDesc[i].NumPlanets + 1) * SCAN_RECORD_SIZE;
+			offset += (pSolarSysState->PlanetDesc[i].NumPlanets + 1) * ScanRecordSize;
 		}
 
 		// Skip scan records for all preceeding moons to the one we need
-		offset += moon_index * SCAN_RECORD_SIZE;
+		offset += moon_index * ScanRecordSize;
 
 		SeekStateFile(fp, offset, SEEK_SET);
 

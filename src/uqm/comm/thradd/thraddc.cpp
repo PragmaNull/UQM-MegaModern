@@ -31,23 +31,23 @@ static LOCDATA thradd_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		THRADD_PMAP_ANIM, /* AlienFrame */
-		THRADD_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		ThraddPmapAnim, /* AlienFrame */
+		ThraddFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		THRADD_COLOR_MAP, /* AlienColorMap */
-		THRADD_MUSIC, /* AlienSong */
+		ThraddColorMap, /* AlienColorMap */
+		ThraddMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		THRADD_CONVERSATION_PHRASES, /* PlayerPhrases */
+		ThraddConversationPhrases, /* PlayerPhrases */
 		8, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

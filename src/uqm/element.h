@@ -136,7 +136,7 @@ struct element
 		uint8_t mass_points;
 		/* Planetside:
 				 * - for living bio: Index in CreatureData, possibly OR'ed
-				 *   with CREATURE_AWARE
+				 *   with CreatureAware
 				 * - for canned bio: value of creature
 				 */
 		// TODO: Use a different name for Planetside bio, like

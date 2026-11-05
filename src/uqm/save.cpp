@@ -446,17 +446,18 @@ PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 	SummPtr->res_factor = resolutionFactor;
 }
 
+static constexpr auto MaxMsgLines {1};
+
 static void
 SaveProblemMessage(STAMP* MsgStamp)
 {
-#define MAX_MSG_LINES 1
 	GFXRECT r = {
 		{0, 0},
 		{0, 0}
 	  };
 	uint16_t i {};
 	TEXT t;
-	const char* ppStr[MAX_MSG_LINES];
+	const char* ppStr[MaxMsgLines];
 
 	// TODO: This should probably just use DoPopupWindow()
 
@@ -466,7 +467,7 @@ SaveProblemMessage(STAMP* MsgStamp)
 
 	t.baseline.x = t.baseline.y = 0;
 	t.align = ALIGN_CENTER;
-	for (i = 0; i < MAX_MSG_LINES; ++i)
+	for (i = 0; i < MaxMsgLines; ++i)
 	{
 		GFXRECT tr;
 
@@ -506,7 +507,7 @@ SaveProblemMessage(STAMP* MsgStamp)
 	SetContextForeGroundColor(
 		isPC(uqm::UQMOptions::read().whichFonts) ? WhiteColor : LtgrayColor);
 
-	for (i = 0; i < MAX_MSG_LINES; ++i)
+	for (i = 0; i < MaxMsgLines; ++i)
 	{
 		t.pStr = ppStr[i];
 		if (*t.pStr == '\0')

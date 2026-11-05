@@ -33,23 +33,23 @@ static LOCDATA mycon_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		MYCON_PMAP_ANIM, /* AlienFrame */
-		MYCON_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		MyconPmapAnim, /* AlienFrame */
+		MyconFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		MYCON_COLOR_MAP, /* AlienColorMap */
-		MYCON_MUSIC, /* AlienSong */
+		MyconColorMap, /* AlienColorMap */
+		MyconMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		MYCON_CONVERSATION_PHRASES, /* PlayerPhrases */
+		MyconConversationPhrases, /* PlayerPhrases */
 		4, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

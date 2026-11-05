@@ -2,15 +2,15 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define MYCON_BIG_MASK_PMAP_ANIM "ship.mycon.graphics.podship.large"
-#define MYCON_CAPTAIN_MASK_PMAP_ANIM "ship.mycon.graphics.captain"
-#define MYCON_ICON_MASK_PMAP_ANIM "ship.mycon.icons"
-#define MYCON_MED_MASK_PMAP_ANIM "ship.mycon.graphics.podship.medium"
-#define MYCON_MICON_MASK_PMAP_ANIM "ship.mycon.meleeicons"
-#define MYCON_RACE_STRINGS "ship.mycon.text"
-#define MYCON_SHIP_SOUNDS "ship.mycon.sounds"
-#define MYCON_SML_MASK_PMAP_ANIM "ship.mycon.graphics.podship.small"
-#define MYCON_VICTORY_SONG "ship.mycon.ditty"
-#define PLASMA_BIG_MASK_PMAP_ANIM "ship.mycon.graphics.plasma.large"
-#define PLASMA_MED_MASK_PMAP_ANIM "ship.mycon.graphics.plasma.medium"
-#define PLASMA_SML_MASK_PMAP_ANIM "ship.mycon.graphics.plasma.small"
+inline constexpr uqgsl::czstring MyconBigMaskPmapAnim {"ship.mycon.graphics.podship.large"};
+inline constexpr uqgsl::czstring MyconCaptainMaskPmapAnim {"ship.mycon.graphics.captain"};
+inline constexpr uqgsl::czstring MyconIconMaskPmapAnim {"ship.mycon.icons"};
+inline constexpr uqgsl::czstring MyconMedMaskPmapAnim {"ship.mycon.graphics.podship.medium"};
+inline constexpr uqgsl::czstring MyconMiconMaskPmapAnim {"ship.mycon.meleeicons"};
+inline constexpr uqgsl::czstring MyconRaceStrings {"ship.mycon.text"};
+inline constexpr uqgsl::czstring MyconShipSounds {"ship.mycon.sounds"};
+inline constexpr uqgsl::czstring MyconSmlMaskPmapAnim {"ship.mycon.graphics.podship.small"};
+inline constexpr uqgsl::czstring MyconVictorySong {"ship.mycon.ditty"};
+inline constexpr uqgsl::czstring PlasmaBigMaskPmapAnim {"ship.mycon.graphics.plasma.large"};
+inline constexpr uqgsl::czstring PlasmaMedMaskPmapAnim {"ship.mycon.graphics.plasma.medium"};
+inline constexpr uqgsl::czstring PlasmaSmlMaskPmapAnim {"ship.mycon.graphics.plasma.small"};

@@ -30,23 +30,23 @@ static LOCDATA umgah_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		UMGAH_PMAP_ANIM, /* AlienFrame */
-		UMGAH_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		UmgahPmapAnim, /* AlienFrame */
+		UmgahFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		UMGAH_COLOR_MAP, /* AlienColorMap */
-		UMGAH_MUSIC, /* AlienSong */
+		UmgahColorMap, /* AlienColorMap */
+		UmgahMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		UMGAH_CONVERSATION_PHRASES, /* PlayerPhrases */
+		UmgahConversationPhrases, /* PlayerPhrases */
 		16, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

@@ -121,23 +121,23 @@ static LOCDATA slylandro_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		SLYLAND_PMAP_ANIM, /* AlienFrame */
-		SLYLAND_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		SlylandPmapAnim, /* AlienFrame */
+		SlylandFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		SLYLAND_COLOR_MAP, /* AlienColorMap */
-		SLYLAND_MUSIC, /* AlienSong */
+		SlylandColorMap, /* AlienColorMap */
+		SlylandMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		SLYLAND_CONVERSATION_PHRASES, /* PlayerPhrases */
+		SlylandConversationPhrases, /* PlayerPhrases */
 		6, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

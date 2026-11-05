@@ -283,19 +283,17 @@ void do_damage(ELEMENT* ElementPtr, int16_t damage)
 	}
 }
 
-#define CREW_COLOR_LOW_INTENSITY \
-	BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)
-#define CREW_COLOR_HIGH_INTENSITY \
-	BuildColor(MakeRgb15(0x0A, 0x1E, 0x0A), 0x0A)
+static constexpr auto CrewColorLowIntensity {BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)};
+static constexpr auto CrewColorHighIntensity {BuildColor(MakeRgb15(0x0A, 0x1E, 0x0A), 0x0A)};
 void crew_preprocess(ELEMENT* ElementPtr)
 {
 	HELEMENT hTarget {};
 
 	// Switch from dark to light or vice versa:
 	const Color oldColor = GetPrimColor(&DisplayArray[ElementPtr->PrimIndex]);
-	const Color newColor = sameColor(oldColor, CREW_COLOR_LOW_INTENSITY) ?
-							   CREW_COLOR_HIGH_INTENSITY :
-							   CREW_COLOR_LOW_INTENSITY;
+	const Color newColor = sameColor(oldColor, CrewColorLowIntensity) ?
+							   CrewColorHighIntensity :
+							   CrewColorLowIntensity;
 	SetPrimColor(&DisplayArray[ElementPtr->PrimIndex], newColor);
 
 	ElementPtr->state_flags |= Changing;
@@ -319,7 +317,9 @@ void crew_preprocess(ELEMENT* ElementPtr)
 
 	if (hTarget)
 	{
-#define CREW_DELTA RES_SCALE(ScaledOne)
+		const auto CrewDelta = [&] {
+			return RES_SCALE(ScaledOne);
+		};
 		int16_t delta {};
 		ELEMENT* ShipPtr {};
 
@@ -329,22 +329,22 @@ void crew_preprocess(ELEMENT* ElementPtr)
 		delta = WRAP_DELTA_X(delta);
 		if (delta > 0)
 		{
-			ElementPtr->next.location.x += CREW_DELTA;
+			ElementPtr->next.location.x += CrewDelta();
 		}
 		else if (delta < 0)
 		{
-			ElementPtr->next.location.x -= CREW_DELTA;
+			ElementPtr->next.location.x -= CrewDelta();
 		}
 
 		delta = ShipPtr->current.location.y - ElementPtr->current.location.y;
 		delta = WRAP_DELTA_Y(delta);
 		if (delta > 0)
 		{
-			ElementPtr->next.location.y += CREW_DELTA;
+			ElementPtr->next.location.y += CrewDelta();
 		}
 		else if (delta < 0)
 		{
-			ElementPtr->next.location.y -= CREW_DELTA;
+			ElementPtr->next.location.y -= CrewDelta();
 		}
 		UnlockElement(hTarget);
 	}
@@ -374,6 +374,8 @@ void crew_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
+static constexpr auto CrewLife {300};
+
 void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 				 uint16_t crew_loss)
 {
@@ -402,15 +404,16 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 	}
 	else
 	{
-#define MORE_THAN_ENOUGH RES_SCALE(100)
+		const auto MoreThanEnough = [&] {
+			return RES_SCALE(100);
+		};
 		direction += HalfCircle;
-		dx = COSINE(direction, MORE_THAN_ENOUGH);
-		dy = SINE(direction, MORE_THAN_ENOUGH);
+		dx = COSINE(direction, MoreThanEnough());
+		dy = SINE(direction, MoreThanEnough());
 	}
 
 	while (crew_loss-- && (hCrew = AllocElement()))
 	{
-#define CREW_LIFE 300
 		ELEMENT* CrewPtr {};
 
 		DeltaCrew(ShipPtr, -1);
@@ -420,7 +423,7 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 		CrewPtr->playerNr = NeutralPlayerNum;
 		CrewPtr->hit_points = 1;
 		CrewPtr->state_flags = Appearing | FiniteLife | CrewObject;
-		CrewPtr->life_span = CREW_LIFE;
+		CrewPtr->life_span = CrewLife;
 		if (!IsHd())
 		{
 			SetPrimType(&DisplayArray[CrewPtr->PrimIndex], POINT_PRIM);

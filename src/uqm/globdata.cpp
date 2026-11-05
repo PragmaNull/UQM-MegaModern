@@ -40,7 +40,7 @@
 #include "UQMGame.h"
 #include "uqm/random/UQMRandom.h"
 
-#define OOPS_ALL 0 // Set a plot ID to stamp it to all empty starsystems
+static constexpr auto OopsAll {0}; // Set a plot ID to stamp it to all empty starsystems
 static void CreateRadar(void);
 
 GFXCONTEXT RadarContext;
@@ -479,11 +479,12 @@ void UninitGameStructures(void)
 }
 
 
+static constexpr auto SampleSize {1000};
+
 // For debugging purposes, generate a bunch of seeds and then
 // calculate how many fall into each time category.
 void SeedDEBUG()
 {
-#define SAMPLE_SIZE 1000
 #define START 123000
 	const uqm::GameSeed save {uqm::currentSeed()};
 	uqm::GameSeed sample {save};
@@ -504,7 +505,7 @@ void SeedDEBUG()
 		myRNG = true;
 	}
 	StarGenRNG->reseed(123456);
-	for (sample.value = START; sample.value < (START + SAMPLE_SIZE); ++sample.value)
+	for (sample.value = START; sample.value < (START + SampleSize); ++sample.value)
 	{
 		uqm::gameState().setSeed(sample);
 		start_clock = clock();
@@ -645,13 +646,13 @@ bool InitStarseed(bool newgame)
 			return false;
 		}
 	}
-	if (OOPS_ALL > 0)
+	if (OopsAll > 0)
 	{
 		for (i = 0; i < NumSolarSystems; i++)
 		{
 			if (!star_array[i].Index)
 			{
-				star_array[i].Index = OOPS_ALL;
+				star_array[i].Index = OopsAll;
 			}
 		}
 	}

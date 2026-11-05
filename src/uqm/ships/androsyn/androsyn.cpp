@@ -25,36 +25,36 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 20
-#define MAX_ENERGY 24
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 8
-#define MAX_THRUST 24
-#define THRUST_INCREMENT 3
-#define TURN_WAIT 4
-#define THRUST_WAIT 0
-#define SHIP_MASS 6
+static constexpr auto MaxCrew {20};
+static constexpr auto MaxEnergy {24};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {8};
+static constexpr auto MaxThrust {24};
+static constexpr auto ThrustIncrement {3};
+static constexpr auto TurnWait {4};
+static constexpr auto ThrustWait {0};
+static constexpr auto ShipMass {6};
 
 // Bubbles
-#define WEAPON_ENERGY_COST 3
-#define WEAPON_WAIT 0
-#define ANDROSYNTH_OFFSET RES_SCALE(14)
-#define MISSILE_OFFSET RES_SCALE(3)
-#define MISSILE_SPEED DISPLAY_TO_WORLD(RES_SCALE(8))
-#define MISSILE_LIFE 200
-#define MISSILE_HITS 3
-#define MISSILE_DAMAGE 2
-#define TRACK_WAIT 2
+static constexpr auto WeaponEnergyCost {3};
+static constexpr auto WeaponWait {0};
+static auto AndrosynthOffset() { return RES_SCALE(14); }
+static auto MissileOffset() { return RES_SCALE(3); }
+static auto MissileSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(8)); }
+static constexpr auto MissileLife {200};
+static constexpr auto MissileHits {3};
+static constexpr auto MissileDamage {2};
+static constexpr auto TrackWait {2};
 
 // Blazer
-#define SPECIAL_ENERGY_COST 2
-#define BLAZER_DEGENERATION (-1)
-#define SPECIAL_WAIT 0
-#define BLAZER_OFFSET RES_SCALE(10)
-#define BLAZER_THRUST RES_SCALE(60)
-#define BLAZER_TURN_WAIT 1
-#define BLAZER_DAMAGE 3
-#define BLAZER_MASS 1
+static constexpr auto SpecialEnergyCost {2};
+static constexpr auto BlazerDegeneration {(-1)};
+static constexpr auto SpecialWait {0};
+static auto BlazerOffset() { return RES_SCALE(10); }
+static auto BlazerThrust() { return RES_SCALE(60); }
+static constexpr auto BlazerTurnWait {1};
+static constexpr auto BlazerDamage {3};
+static constexpr auto BlazerMass {1};
 
 static RACE_DESC androsynth_desc =
 	{
@@ -62,11 +62,11 @@ static RACE_DESC androsynth_desc =
 		 "guardian",
 		 FiresFore | SeekingWeapon,
 		 15, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 ANDROSYNTH_RACE_STRINGS,
-		 ANDROSYNTH_ICON_MASK_PMAP_ANIM,
-		 ANDROSYNTH_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 AndrosynthRaceStrings,
+		 AndrosynthIconMaskPmapAnim,
+		 AndrosynthMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -79,39 +79,39 @@ static RACE_DESC androsynth_desc =
 		 },
 		{
 			/* CHARACTERISTIC_STUFF */
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{/* DATA_STUFF */
 		 {
-			 ANDROSYNTH_BIG_MASK_PMAP_ANIM,
-			 ANDROSYNTH_MED_MASK_PMAP_ANIM,
-			 ANDROSYNTH_SML_MASK_PMAP_ANIM,
+			 AndrosynthBigMaskPmapAnim,
+			 AndrosynthMedMaskPmapAnim,
+			 AndrosynthSmlMaskPmapAnim,
 		 },
 		 {
-			 BUBBLE_BIG_MASK_PMAP_ANIM,
-			 BUBBLE_MED_MASK_PMAP_ANIM,
-			 BUBBLE_SML_MASK_PMAP_ANIM,
+			 BubbleBigMaskPmapAnim,
+			 BubbleMedMaskPmapAnim,
+			 BubbleSmlMaskPmapAnim,
 		 },
 		 {
-			 BLAZER_BIG_MASK_PMAP_ANIM,
-			 BLAZER_MED_MASK_PMAP_ANIM,
-			 BLAZER_SML_MASK_PMAP_ANIM,
+			 BlazerBigMaskPmapAnim,
+			 BlazerMedMaskPmapAnim,
+			 BlazerSmlMaskPmapAnim,
 		 },
-		 {ANDROSYNTH_CAPT_MASK_PMAP_ANIM,
+		 {AndrosynthCaptMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 ANDROSYNTH_VICTORY_SONG,
-		 ANDROSYNTH_SHIP_SOUNDS,
+		 AndrosynthVictorySong,
+		 AndrosynthShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -177,10 +177,10 @@ blazer_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	const uint16_t old_crew_level {ElementPtr0->crew_level};
 	const uint16_t old_life {ElementPtr0->life_span};
 	const uint8_t old_offs {ElementPtr0->blast_offset};
-	ElementPtr0->blast_offset = BLAZER_OFFSET;
-	ElementPtr0->mass_points = BLAZER_DAMAGE;
+	ElementPtr0->blast_offset = BlazerOffset();
+	ElementPtr0->mass_points = BlazerDamage;
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
-	ElementPtr0->mass_points = BLAZER_MASS;
+	ElementPtr0->mass_points = BlazerMass;
 	ElementPtr0->blast_offset = old_offs;
 	ElementPtr0->life_span = old_life;
 	ElementPtr0->crew_level = old_crew_level;
@@ -233,8 +233,8 @@ bubble_preprocess(ELEMENT* ElementPtr)
 			facing -= (uint16_t)uqm::random().next() & (ANGLE_TO_FACING(HalfCircle) - 1);
 		}
 		SetVelocityVector(&ElementPtr->velocity,
-						  MISSILE_SPEED, facing);
-		turn_wait = TRACK_WAIT;
+						  MissileSpeed(), facing);
+		turn_wait = TrackWait;
 	}
 
 	ElementPtr->turn_wait = uqm::makeByte(turn_wait, thrust_wait);
@@ -254,13 +254,13 @@ initialize_bubble(ELEMENT* ShipPtr, HELEMENT BubbleArray[])
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = ANDROSYNTH_OFFSET;
-	MissileBlock.speed = MISSILE_SPEED;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.pixoffs = AndrosynthOffset();
+	MissileBlock.speed = MissileSpeed();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = bubble_preprocess;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset();
 	BubbleArray[0] = initialize_missile(&MissileBlock);
 
 	if (BubbleArray[0])
@@ -313,10 +313,10 @@ androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			GetElementStarShip(lpEvalDesc->ObjectPtr, &pEnemyStarShip);
 			if (lpEvalDesc->which_turn <= 16
 				&& (StarShipPtr->special_counter > 0
-					|| StarShipPtr->RaceDescPtr->ship_info.energy_level < MAX_ENERGY / 3
+					|| StarShipPtr->RaceDescPtr->ship_info.energy_level < MaxEnergy / 3
 					|| ((WEAPON_RANGE(&pEnemyStarShip->RaceDescPtr->cyborg_control) <= RES_SCALE(CloseRangeWeapon)
-						 && lpEvalDesc->ObjectPtr->crew_level > BLAZER_DAMAGE)
-						|| (lpEvalDesc->ObjectPtr->crew_level > (BLAZER_DAMAGE * 3)
+						 && lpEvalDesc->ObjectPtr->crew_level > BlazerDamage)
+						|| (lpEvalDesc->ObjectPtr->crew_level > (BlazerDamage * 3)
 							&& MANEUVERABILITY(&pEnemyStarShip->RaceDescPtr->cyborg_control) > RESOLUTION_COMPENSATED(SlowShip)))))
 			{
 				lpEvalDesc->MoveState = ENTICE;
@@ -331,12 +331,12 @@ androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			if ((ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
 				 && ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 4)
 				|| (lpEvalDesc->ObjectPtr
-					&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= MAX_ENERGY / 3
+					&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= MaxEnergy / 3
 					&& (WEAPON_RANGE(&pEnemyStarShip->RaceDescPtr->cyborg_control) >= WEAPON_RANGE(&StarShipPtr->RaceDescPtr->cyborg_control) << 1
 						|| (lpEvalDesc->which_turn < 16
 							&& (WEAPON_RANGE(&pEnemyStarShip->RaceDescPtr->cyborg_control) > RES_SCALE(CloseRangeWeapon)
-								|| lpEvalDesc->ObjectPtr->crew_level <= BLAZER_DAMAGE)
-							&& (lpEvalDesc->ObjectPtr->crew_level <= (BLAZER_DAMAGE * 3)
+								|| lpEvalDesc->ObjectPtr->crew_level <= BlazerDamage)
+							&& (lpEvalDesc->ObjectPtr->crew_level <= (BlazerDamage * 3)
 								|| MANEUVERABILITY(&pEnemyStarShip->RaceDescPtr->cyborg_control) <= RESOLUTION_COMPENSATED(SlowShip))))))
 			{
 				StarShipPtr->ship_input_state |= SpecialFlag;
@@ -397,8 +397,8 @@ androsynth_postprocess(ELEMENT* ElementPtr)
 			|| StarShipPtr->RaceDescPtr->ship_info.energy_level == 0)
 		{
 			StarShipPtr->RaceDescPtr->characteristics.energy_regeneration =
-				(uint8_t)BLAZER_DEGENERATION;
-			StarShipPtr->energy_counter = ENERGY_WAIT;
+				(uint8_t)BlazerDegeneration;
+			StarShipPtr->energy_counter = EnergyWait;
 
 			if (StarShipPtr->cur_status_flags & AndrosynCometToggle)
 			{
@@ -409,8 +409,8 @@ androsynth_postprocess(ELEMENT* ElementPtr)
 				ElementPtr->thrust_wait = 0;
 				StarShipPtr->RaceDescPtr->characteristics.special_wait =
 					StarShipPtr->RaceDescPtr->characteristics.turn_wait;
-				ElementPtr->mass_points = BLAZER_MASS;
-				StarShipPtr->RaceDescPtr->characteristics.turn_wait = BLAZER_TURN_WAIT;
+				ElementPtr->mass_points = BlazerMass;
+				StarShipPtr->RaceDescPtr->characteristics.turn_wait = BlazerTurnWait;
 				StarShipPtr->cur_status_flags &= ~AndrosynCometToggle;
 
 				/* Save the current collision func because we were not the
@@ -432,8 +432,8 @@ androsynth_postprocess(ELEMENT* ElementPtr)
 		{
 			StarShipPtr->RaceDescPtr->characteristics.special_wait =
 				StarShipPtr->RaceDescPtr->characteristics.turn_wait;
-			StarShipPtr->RaceDescPtr->characteristics.turn_wait = BLAZER_TURN_WAIT;
-			DeltaEnergy(ElementPtr, -BLAZER_DEGENERATION);
+			StarShipPtr->RaceDescPtr->characteristics.turn_wait = BlazerTurnWait;
+			DeltaEnergy(ElementPtr, -BlazerDegeneration);
 			StarShipPtr->energy_counter = 1;
 		}
 	}
@@ -460,7 +460,7 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 	{
 		if (cur_status_flags & SpecialFlag)
 		{
-			if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SPECIAL_ENERGY_COST)
+			if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SpecialEnergyCost)
 			{
 				cur_status_flags |= LowOnEnergy; /* so text will flash */
 			}
@@ -483,12 +483,12 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 		cur_status_flags &= ~(ThrustFlag | WeaponFlag);
 
 		/* protection against vux */
-		if (StarShipPtr->RaceDescPtr->characteristics.turn_wait > BLAZER_TURN_WAIT)
+		if (StarShipPtr->RaceDescPtr->characteristics.turn_wait > BlazerTurnWait)
 		{
 			StarShipPtr->RaceDescPtr->characteristics.special_wait +=
 				StarShipPtr->RaceDescPtr->characteristics.turn_wait
-				- BLAZER_TURN_WAIT;
-			StarShipPtr->RaceDescPtr->characteristics.turn_wait = BLAZER_TURN_WAIT;
+				- BlazerTurnWait;
+			StarShipPtr->RaceDescPtr->characteristics.turn_wait = BlazerTurnWait;
 		}
 
 		if (StarShipPtr->RaceDescPtr->ship_info.energy_level == 0)
@@ -499,8 +499,8 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 
 			StarShipPtr->RaceDescPtr->characteristics.turn_wait =
 				StarShipPtr->RaceDescPtr->characteristics.special_wait;
-			StarShipPtr->RaceDescPtr->characteristics.energy_regeneration = ENERGY_REGENERATION;
-			ElementPtr->mass_points = SHIP_MASS;
+			StarShipPtr->RaceDescPtr->characteristics.energy_regeneration = EnergyRegeneration;
+			ElementPtr->mass_points = ShipMass;
 			ElementPtr->collision_func =
 				GetCustomShipData(StarShipPtr->RaceDescPtr)->collision_func;
 			ElementPtr->next.image.farray =
@@ -535,7 +535,7 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 				}
 
 				SetVelocityVector(&ElementPtr->velocity,
-								  BLAZER_THRUST, NORMALIZE_FACING(facing));
+								  BlazerThrust(), NORMALIZE_FACING(facing));
 				cur_status_flags |= ShipAtMaxSpeed | ShipBeyondMaxSpeed;
 			}
 		}
@@ -555,15 +555,15 @@ init_androsynth(void)
 {
 	if (IsHd())
 	{
-		androsynth_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		androsynth_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
+		androsynth_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		androsynth_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
 		androsynth_desc.cyborg_control.WeaponRange = LongRangeWeaponHd >> 2;
 	}
 	else
 	{
-		androsynth_desc.characteristics.max_thrust = MAX_THRUST;
+		androsynth_desc.characteristics.max_thrust = MaxThrust;
 		androsynth_desc.characteristics.thrust_increment =
-			THRUST_INCREMENT;
+			ThrustIncrement;
 		androsynth_desc.cyborg_control.WeaponRange =
 			LongRangeWeapon >> 2;
 	}

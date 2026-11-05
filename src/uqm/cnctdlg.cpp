@@ -30,10 +30,10 @@
 #include "options/options.h"
 
 
-#define MCD_WIDTH RES_SCALE(260)
-#define MCD_HEIGHT RES_SCALE(110)
+static auto McdWidth() { return RES_SCALE(260); }
+static auto McdHeight() { return RES_SCALE(110); }
 
-#define MENU_FRAME_RATE (c_gameSecond / 20)
+static constexpr auto MenuFrameRate {(c_gameSecond / 20)};
 
 typedef struct connect_dialog_state
 {
@@ -133,7 +133,7 @@ MCD_DrawSlider(WIDGET* _self, int x, int y)
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
 	GFXRECT r;
-	const int tick = RES_SCALE(RES_DESCALE(MCD_WIDTH) / 8);
+	const int tick = RES_SCALE(RES_DESCALE(McdWidth()) / 8);
 
 	default_color = MenuTextColor;
 	selected = MenuHighlightColor;
@@ -247,7 +247,7 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 		GetContextFontLeading(&leading);
 		r.corner.x = t.baseline.x - RES_SCALE(1);
 		r.corner.y = t.baseline.y - leading + BoxVertOffset;
-		r.extent.width = MCD_WIDTH - r.corner.x - RES_SCALE(10);
+		r.extent.width = McdWidth() - r.corner.x - RES_SCALE(10);
 		r.extent.height = leading - RES_SCALE(1);
 
 		TextRect(&t, &text_r, char_deltas);
@@ -355,7 +355,7 @@ OnTextEntryFrame(TEXTENTRY_STATE* pTES)
 	DrawConnectDialog();
 
 	SleepThreadUntil(pTES->NextTime);
-	pTES->NextTime = GetTimeCounter() + MENU_FRAME_RATE;
+	pTES->NextTime = GetTimeCounter() + MenuFrameRate;
 
 	(void)pTES;	 // satisfying compiler
 	return true; // continue
@@ -377,7 +377,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 
 	// text entry setup
 	tes.Initialized = false;
-	tes.NextTime = GetTimeCounter() + MENU_FRAME_RATE;
+	tes.NextTime = GetTimeCounter() + MenuFrameRate;
 	tes.BaseStr = widget->value;
 	tes.MaxSize = widget->maxlen;
 	tes.CursorPos = widget->cursor_pos;
@@ -548,8 +548,8 @@ DrawConnectDialog(void)
 {
 	GFXRECT r;
 
-	r.extent.width = MCD_WIDTH;
-	r.extent.height = MCD_HEIGHT;
+	r.extent.width = McdWidth();
+	r.extent.height = McdHeight();
 	r.corner.x = (CanvasWidth - r.extent.width) >> 1;
 	r.corner.y = (CanvasHeight - r.extent.height) >> 1;
 
@@ -619,7 +619,7 @@ DoMeleeConnectDialog(CONNECT_DIALOG_STATE* state)
 		DrawConnectDialog();
 	}
 
-	SleepThreadUntil(state->NextTime + MENU_FRAME_RATE);
+	SleepThreadUntil(state->NextTime + MenuFrameRate);
 	state->NextTime = GetTimeCounter();
 	return !((uqm::currentActivity() & CHECK_ABORT) || done);
 }

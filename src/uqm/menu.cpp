@@ -73,10 +73,10 @@ DrawPCMenuFrame(GFXRECT* r)
 	r->extent.width -= RES_SCALE(2);
 }
 
-#define ALT_MANIFEST 0x80
-#define ALT_EXIT_MANIFEST 0x81
+static constexpr auto AltManifest {0x80};
+static constexpr auto AltExitManifest {0x81};
 
-#define PC_MENU_HEIGHT (RES_SCALE(8))
+static auto PcMenuHeight() { return (RES_SCALE(8)); }
 
 static char pm_crew_str[128];
 static char pm_fuel_str[128];
@@ -99,7 +99,7 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 	// Gray rectangle behind PC menu
 	rt = *r;
 	rt.corner.x -= RES_SCALE(1);
-	rt.corner.y += PC_MENU_HEIGHT - DOS_BOOL_SCL(12, 3);
+	rt.corner.y += PcMenuHeight() - DOS_BOOL_SCL(12, 3);
 	rt.extent.width += RES_SCALE(2);
 	rt.extent.height += DOS_BOOL_SCL(2, -6);
 	if (!uqm::UQMOptions::read().customBorder)
@@ -109,15 +109,15 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 
 	DrawBorder(SIS_RADAR_FRAME);
 
-	if (num_items * PC_MENU_HEIGHT > r->extent.height)
+	if (num_items * PcMenuHeight() > r->extent.height)
 	{
 		uqm::log::error("Warning, no room for all menu items!");
 	}
 	else
 	{
-		r->corner.y += (r->extent.height - (num_items * PC_MENU_HEIGHT)) / 2;
+		r->corner.y += (r->extent.height - (num_items * PcMenuHeight())) / 2;
 	}
-	r->extent.height = num_items * PC_MENU_HEIGHT + RES_SCALE(3);
+	r->extent.height = num_items * PcMenuHeight() + RES_SCALE(3);
 
 	r->corner.y += DOS_NUM_SCL(1);
 	r->corner.y -= SAFE_NUM_SCL(4);
@@ -127,7 +127,7 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 	FONT OldFont {SetContextFont(StarConFont)};
 	t.align = ALIGN_LEFT;
 	t.baseline.x = r->corner.x + RES_SCALE(2);
-	t.baseline.y = r->corner.y + PC_MENU_HEIGHT - RES_SCALE(1);
+	t.baseline.y = r->corner.y + PcMenuHeight() - RES_SCALE(1);
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 	r->corner.x += RES_SCALE(1);
@@ -150,9 +150,9 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 			{ // Draw the background of the selection.
 				SetContextForeGroundColor(
 					PcmenuSelectionBackgroundColor);
-				r->corner.y = t.baseline.y - PC_MENU_HEIGHT
+				r->corner.y = t.baseline.y - PcMenuHeight()
 							+ RES_SCALE(2);
-				r->extent.height = PC_MENU_HEIGHT - RES_SCALE(1);
+				r->extent.height = PcMenuHeight() - RES_SCALE(1);
 				if (uqm::UQMOptions::read().customBorder)
 				{
 					STAMP s;
@@ -185,7 +185,7 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 			SetContextForeGroundColor(PcmenuTextColor);
 			font_DrawText(&t);
 		}
-		t.baseline.y += PC_MENU_HEIGHT;
+		t.baseline.y += PcMenuHeight();
 	}
 	SetContextFont(OldFont);
 }
@@ -392,11 +392,11 @@ GetAlternateMenu(uint8_t* BaseState, uint8_t* CurState)
 	{
 		switch (*CurState)
 		{
-			case ALT_MANIFEST:
+			case AltManifest:
 				*BaseState = PM_ALT_SCAN + adj;
 				*CurState = PM_ALT_MANIFEST - PM_ALT_SCAN - adj;
 				return true;
-			case ALT_EXIT_MANIFEST:
+			case AltExitManifest:
 				*BaseState = PM_ALT_CARGO;
 				*CurState = PM_ALT_EXIT_MANIFEST - PM_ALT_CARGO;
 				return true;
@@ -477,7 +477,7 @@ ConvertAlternateMenu(uint8_t BaseState, uint8_t NewState)
 		case PM_ALT_STARMAP:
 			return (PM_STARMAP - PM_SCAN);
 		case PM_ALT_MANIFEST:
-			return (ALT_MANIFEST);
+			return (AltManifest);
 		case PM_ALT_GAME_MENU:
 			return (PM_GAME_MENU - PM_SCAN);
 		case PM_ALT_NAVIGATE:
@@ -489,7 +489,7 @@ ConvertAlternateMenu(uint8_t BaseState, uint8_t NewState)
 		case PM_ALT_ROSTER:
 			return (PM_ROSTER - PM_SCAN);
 		case PM_ALT_EXIT_MANIFEST:
-			return (ALT_EXIT_MANIFEST);
+			return (AltExitManifest);
 		case PM_ALT_MSCAN:
 			return (PM_MIN_SCAN - PM_MIN_SCAN);
 		case PM_ALT_ESCAN:
@@ -526,13 +526,13 @@ bool DoMenuChooser(MENU_STATE* pMS, uint8_t BaseState)
 	else if (useAltMenu && PulsedInputState.menu[KEY_MENU_SELECT])
 	{
 		NewState = ConvertAlternateMenu(BaseState, NewState);
-		if (NewState == ALT_MANIFEST)
+		if (NewState == AltManifest)
 		{
 			DrawMenuStateStrings(PM_ALT_CARGO, 0);
 			pMS->CurState = PM_CARGO - PM_SCAN;
 			return true;
 		}
-		if (NewState == ALT_EXIT_MANIFEST)
+		if (NewState == AltExitManifest)
 		{
 			if (OrigBase == PM_SCAN)
 			{
@@ -544,7 +544,7 @@ bool DoMenuChooser(MENU_STATE* pMS, uint8_t BaseState)
 				DrawMenuStateStrings(PM_ALT_STARMAP,
 									 PM_ALT_MANIFEST - PM_ALT_STARMAP);
 			}
-			pMS->CurState = ALT_MANIFEST;
+			pMS->CurState = AltManifest;
 			return true;
 		}
 		return false;
@@ -561,7 +561,7 @@ bool DoMenuChooser(MENU_STATE* pMS, uint8_t BaseState)
 			DrawMenuStateStrings(PM_ALT_STARMAP,
 								 PM_ALT_MANIFEST - PM_ALT_STARMAP);
 		}
-		pMS->CurState = ALT_MANIFEST;
+		pMS->CurState = AltManifest;
 		return true;
 	}
 	else
@@ -749,7 +749,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 	r.corner.x = s.origin.x - RES_SCALE(1);
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
-		r.corner.y = s.origin.y - PC_MENU_HEIGHT - IF_HD(2);
+		r.corner.y = s.origin.y - PcMenuHeight() - IF_HD(2);
 	}
 	else
 	{
@@ -925,27 +925,37 @@ void DrawMineralHelpers(void)
 	GetContextFontLeading(&leading);
 	leading -= RES_SCALE(1);
 
-#define ELEMENT_ORG_Y RES_SCALE(24)
-#define ELEMENT_SPACING_Y RES_SCALE(9)
+	const auto ElementOrgY = [&] {
+		return RES_SCALE(24);
+	};
+	const auto ElementSpacingY = [&] {
+		return RES_SCALE(9);
+	};
 
-#define ELEMENT_COL_0 RES_SCALE(10)
-#define ELEMENT_COL_1 RES_SCALE(32)
-#define ELEMENT_COL_2 RES_SCALE(58)
+	const auto ElementCol0 = [&] {
+		return RES_SCALE(10);
+	};
+	const auto ElementCol1 = [&] {
+		return RES_SCALE(32);
+	};
+	const auto ElementCol2 = [&] {
+		return RES_SCALE(58);
+	};
 
 	// setup element icons
 	s.frame = SetAbsFrameIndex(MiscDataFrame,
-							   (NUM_SCANDOT_TRANSITIONS << 1) + 3);
-	s.origin.x = ELEMENT_COL_0;
-	s.origin.y = ELEMENT_ORG_Y;
+							   (NumScandotTransitions << 1) + 3);
+	s.origin.x = ElementCol0();
+	s.origin.y = ElementOrgY();
 	// setup element worths
-	t.baseline.x = ELEMENT_COL_1;
-	t.baseline.y = ELEMENT_ORG_Y + RES_SCALE(3);
+	t.baseline.x = ElementCol1();
+	t.baseline.y = ElementOrgY() + RES_SCALE(3);
 	t.align = ALIGN_RIGHT;
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 
 	r.extent = GetFrameBounds(s.frame);
-	r.corner.x = ELEMENT_COL_0 - RES_SCALE(3);
+	r.corner.x = ElementCol0() - RES_SCALE(3);
 
 	// draw element icons and worths
 	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
@@ -953,7 +963,7 @@ void DrawMineralHelpers(void)
 		// draw element icon
 		DrawStamp(&s);
 		s.frame = SetRelFrameIndex(s.frame, 5);
-		s.origin.y += ELEMENT_SPACING_Y;
+		s.origin.y += ElementSpacingY();
 
 		// print element worth
 		SetContextForeGroundColor(ModulePriceColor);
@@ -967,12 +977,12 @@ void DrawMineralHelpers(void)
 
 		// print the element amount
 		SetContextForeGroundColor(ModuleNameColor);
-		t.baseline.x = ELEMENT_COL_2;
+		t.baseline.x = ElementCol2();
 		fmt::format_to_sz_n(buf, "{}", GLOBAL_SIS(ElementAmounts[i]));
 		font_DrawText(&t);
 
-		t.baseline.x = ELEMENT_COL_1;
-		t.baseline.y += ELEMENT_SPACING_Y;
+		t.baseline.x = ElementCol1();
+		t.baseline.y += ElementSpacingY();
 	}
 
 	SetContextForeGroundColor(BlackColor);
@@ -986,10 +996,10 @@ void DrawMineralHelpers(void)
 
 	// print the bio amount
 	SetContextForeGroundColor(ModuleNameColor);
-	t.baseline.x = ELEMENT_COL_2;
+	t.baseline.x = ElementCol2();
 	fmt::format_to_sz_n(buf, "{}", GLOBAL_SIS(TotalBioMass));
 	font_DrawText(&t);
-	t.baseline.y += ELEMENT_SPACING_Y;
+	t.baseline.y += ElementSpacingY();
 
 	r.corner.x = RES_SCALE(4);
 	r.corner.y = t.baseline.y - RES_SCALE(7);

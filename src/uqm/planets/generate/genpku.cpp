@@ -69,7 +69,7 @@ GeneratePkunk_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		pPlanet->data_index = WATER_WORLD;
 		pPlanet->NumPlanets = 1;
-		pPlanet->radius = EARTH_RADIUS * 104L / 100;
+		pPlanet->radius = EarthRadius * 104L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -96,7 +96,7 @@ GeneratePkunk_generatePlanets(SOLARSYS_STATE* solarSys)
 static bool
 GeneratePkunk_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (StartSphereTracking(PKUNK_SHIP))
 		{
@@ -143,7 +143,7 @@ static bool
 GeneratePkunk_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						   uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		GenerateDefault_landerReportCycle(solarSys);
 
@@ -167,7 +167,7 @@ static uint16_t
 GeneratePkunk_generateEnergy(const SOLARSYS_STATE* solarSys,
 							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}

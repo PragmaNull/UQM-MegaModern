@@ -719,6 +719,8 @@ Flash_prepareCacheFrame(FlashContext* context, uint16_t index)
 	}
 }
 
+static constexpr auto BlinkRate {(c_gameSecond / 18)};
+
 Color GetFlashPCColor(void)
 {
 	static TimeCount NextTime {};
@@ -726,11 +728,10 @@ Color GetFlashPCColor(void)
 
 	const static Color cycle_tab[] = PC_RECT_COLOR_CYCLE_TABLE;
 	const size_t cycleCount = std::size(cycle_tab);
-#define BLINK_RATE (c_gameSecond / 18)
 
 	if (GetTimeCounter() >= NextTime)
 	{
-		NextTime = GetTimeCounter() + BLINK_RATE;
+		NextTime = GetTimeCounter() + BlinkRate;
 
 		cycle_index = (cycle_index + 1) % cycleCount;
 	}

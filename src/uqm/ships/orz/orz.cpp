@@ -27,44 +27,44 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 16
-#define MAX_ENERGY 20
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 6
-#define MAX_THRUST 35
-#define THRUST_INCREMENT 5
-#define THRUST_WAIT 0
-#define TURN_WAIT 1
-#define SHIP_MASS 4
+static constexpr auto MaxCrew {16};
+static constexpr auto MaxEnergy {20};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {6};
+static constexpr auto MaxThrust {35};
+static constexpr auto ThrustIncrement {5};
+static constexpr auto ThrustWait {0};
+static constexpr auto TurnWait {1};
+static constexpr auto ShipMass {4};
 
 // Howitzer
-#define WEAPON_ENERGY_COST (MAX_ENERGY / 3)
-#define WEAPON_WAIT 4
-#define ORZ_OFFSET 9
-#define MISSILE_SPEED DISPLAY_TO_WORLD(30)
-#define MISSILE_LIFE 12
-#define MISSILE_HITS 2
-#define MISSILE_DAMAGE 3
-#define MISSILE_OFFSET 1
+static constexpr auto WeaponEnergyCost {(MaxEnergy / 3)};
+static constexpr auto WeaponWait {4};
+
+static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(30)};
+static constexpr auto MissileLife {12};
+static constexpr auto MissileHits {2};
+static constexpr auto MissileDamage {3};
+static constexpr auto MissileOffset {1};
 
 // Marine
-#define SPECIAL_ENERGY_COST 0
-#define SPECIAL_WAIT 12
-#define MARINE_MAX_THRUST RES_SCALE(32)
-#define MARINE_THRUST_INCREMENT RES_SCALE(8)
-#define MARINE_HIT_POINTS 3
-#define MARINE_MASS_POINTS 1
-#define MAX_MARINES 8
-#define MARINE_WAIT 12
-#define ION_LIFE 1
-#define START_ION_COLOR BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A)
+static constexpr auto SpecialEnergyCost {0};
+static constexpr auto SpecialWait {12};
+static auto MarineMaxThrust() { return RES_SCALE(32); }
+static auto MarineThrustIncrement() { return RES_SCALE(8); }
+static constexpr auto MarineHitPoints {3};
+static constexpr auto MarineMassPoints {1};
+static constexpr auto MaxMarines {8};
+static constexpr auto MarineWait {12};
+static constexpr auto IonLife {1};
+static constexpr auto StartIonColor {BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A)};
 
 // Rotating Turret
-#define TURRET_OFFSET RES_SCALE(14)
-#define TURRET_WAIT 3
+static auto TurretOffset() { return RES_SCALE(14); }
+static constexpr auto TurretWait {3};
 
 // HdResolutionFactor
-#define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
+static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
 
 static RACE_DESC orz_desc =
 	{
@@ -72,11 +72,11 @@ static RACE_DESC orz_desc =
 		 "nemesis",
 		 FiresFore | SeekingSpecial,
 		 23, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 ORZ_RACE_STRINGS,
-		 ORZ_ICON_MASK_PMAP_ANIM,
-		 ORZ_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 OrzRaceStrings,
+		 OrzIconMaskPmapAnim,
+		 OrzMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -88,38 +88,38 @@ static RACE_DESC orz_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 ORZ_BIG_MASK_PMAP_ANIM,
-			 ORZ_MED_MASK_PMAP_ANIM,
-			 ORZ_SML_MASK_PMAP_ANIM,
+			 OrzBigMaskPmapAnim,
+			 OrzMedMaskPmapAnim,
+			 OrzSmlMaskPmapAnim,
 		 },
 		 {
-			 HOWITZER_BIG_MASK_PMAP_ANIM,
-			 HOWITZER_MED_MASK_PMAP_ANIM,
-			 HOWITZER_SML_MASK_PMAP_ANIM,
+			 HowitzerBigMaskPmapAnim,
+			 HowitzerMedMaskPmapAnim,
+			 HowitzerSmlMaskPmapAnim,
 		 },
 		 {
-			 TURRET_BIG_MASK_PMAP_ANIM,
-			 TURRET_MED_MASK_PMAP_ANIM,
-			 TURRET_SML_MASK_PMAP_ANIM,
+			 TurretBigMaskPmapAnim,
+			 TurretMedMaskPmapAnim,
+			 TurretSmlMaskPmapAnim,
 		 },
-		 {ORZ_CAPTAIN_MASK_PMAP_ANIM,
+		 {OrzCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 ORZ_VICTORY_SONG,
-		 ORZ_SHIP_SOUNDS,
+		 OrzVictorySong,
+		 OrzShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -127,7 +127,7 @@ static RACE_DESC orz_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_SPEED * MISSILE_LIFE,
+			MissileSpeed * MissileLife,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -174,7 +174,7 @@ initialize_turret_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 			--TurretPtr->thrust_wait;
 		}
 
-		TurretPtr->turn_wait = TURRET_WAIT + 1;
+		TurretPtr->turn_wait = TurretWait + 1;
 	}
 	MissileBlock.face = MissileBlock.index =
 		NORMALIZE_FACING(StarShipPtr->ShipFacing
@@ -183,13 +183,13 @@ initialize_turret_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = TURRET_OFFSET;
-	MissileBlock.speed = MISSILE_SPEED_HD;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.pixoffs = TurretOffset();
+	MissileBlock.speed = MissileSpeedHd();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset;
 	MissileArray[0] = initialize_missile(&MissileBlock);
 
 	if (MissileArray[0])
@@ -207,11 +207,11 @@ initialize_turret_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 static uint8_t
 count_marines(STARSHIP* StarShipPtr, bool FindSpot)
 {
-	uint8_t id_use[MAX_MARINES];
+	uint8_t id_use[MaxMarines];
 	HELEMENT hElement {};
 	HELEMENT hNextElement {};
 
-	uint8_t num_marines {MAX_MARINES};
+	uint8_t num_marines {MaxMarines};
 	while (num_marines--)
 	{
 		id_use[num_marines] = 0;
@@ -233,7 +233,7 @@ count_marines(STARSHIP* StarShipPtr, bool FindSpot)
 				id_use[ElementPtr->turn_wait] = 1;
 			}
 
-			if (++num_marines == MAX_MARINES)
+			if (++num_marines == MaxMarines)
 			{
 				UnlockElement(hElement);
 				hNextElement = 0;
@@ -415,7 +415,7 @@ void intruder_preprocess(ELEMENT* ElementPtr)
 		{
 			STAMP s;
 
-			if (ElementPtr->thrust_wait == MARINE_WAIT)
+			if (ElementPtr->thrust_wait == MarineWait)
 			{
 				--ElementPtr->thrust_wait;
 
@@ -445,7 +445,7 @@ LeftShip:
 			}
 			else if (ElementPtr->thrust_wait == 0)
 			{
-				ElementPtr->thrust_wait = MARINE_WAIT;
+				ElementPtr->thrust_wait = MarineWait;
 
 				const uint8_t randval {(uint8_t)uqm::random().next()};
 				if (randval < (0x0100 / 16))
@@ -522,7 +522,7 @@ spawn_marine_ion_trail(ELEMENT* ElementPtr, STARSHIP* StarShipPtr,
 		LockElement(hIonElement, &IonElementPtr);
 		IonElementPtr->playerNr = NeutralPlayerNum;
 		IonElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
-		IonElementPtr->thrust_wait = ION_LIFE;
+		IonElementPtr->thrust_wait = IonLife;
 		IonElementPtr->life_span = IonElementPtr->thrust_wait;
 		// When the element "dies", in the death_func
 		// 'cycle_ion_trail', it is given new life a number of
@@ -530,7 +530,7 @@ spawn_marine_ion_trail(ELEMENT* ElementPtr, STARSHIP* StarShipPtr,
 		SetPrimType(&DisplayArray[IonElementPtr->PrimIndex],
 					POINT_PRIM); // Actual marine ion trail
 		SetPrimColor(&DisplayArray[IonElementPtr->PrimIndex],
-					 START_ION_COLOR);
+					 StartIonColor);
 		IonElementPtr->colorCycleIndex = 0;
 		IonElementPtr->current.location = ElementPtr->current.location;
 		IonElementPtr->current.location.x +=
@@ -756,9 +756,9 @@ marine_preprocess(ELEMENT* ElementPtr)
 			//   gravity well flags
 			StarShipPtr->cur_status_flags = ElementPtr->thrust_wait << 6;
 			StarShipPtr->RaceDescPtr->characteristics.thrust_increment =
-				MARINE_THRUST_INCREMENT;
+				MarineThrustIncrement();
 			StarShipPtr->RaceDescPtr->characteristics.max_thrust =
-				MARINE_MAX_THRUST;
+				MarineMaxThrust();
 
 			const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
 
@@ -841,7 +841,7 @@ void marine_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				}
 
 				ElementPtr0->turn_wait = count_marines(StarShipPtr, true);
-				ElementPtr0->thrust_wait = MARINE_WAIT;
+				ElementPtr0->thrust_wait = MarineWait;
 				ElementPtr0->next.image.frame = SetAbsFrameIndex(
 					ElementPtr0->next.image.farray[0],
 					22 + ElementPtr0->turn_wait);
@@ -932,7 +932,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 						--TurretPtr->thrust_wait;
 					}
 
-					TurretPtr->turn_wait = TURRET_WAIT;
+					TurretPtr->turn_wait = TurretWait;
 				}
 				facing = NORMALIZE_FACING(StarShipPtr->ShipFacing
 										  + TurretPtr->thrust_wait);
@@ -970,11 +970,11 @@ turret_postprocess(ELEMENT* ElementPtr)
 						TurretEffectPtr->current.location.x =
 							TurretPtr->current.location.x
 							+ COSINE(facing,
-									 DISPLAY_TO_WORLD(TURRET_OFFSET));
+									 DISPLAY_TO_WORLD(TurretOffset()));
 						TurretEffectPtr->current.location.y =
 							TurretPtr->current.location.y
 							+ SINE(facing,
-								   DISPLAY_TO_WORLD(TURRET_OFFSET));
+								   DISPLAY_TO_WORLD(TurretOffset()));
 						TurretEffectPtr->current.image.farray =
 							StarShipPtr->RaceDescPtr->ship_data.special;
 						TurretEffectPtr->current.image.frame =
@@ -1012,7 +1012,7 @@ turret_postprocess(ELEMENT* ElementPtr)
 				&& (StarShipPtr->cur_status_flags & SpecialFlag)
 				&& (StarShipPtr->cur_status_flags & WeaponFlag)
 				&& ShipPtr->crew_level > 1
-				&& count_marines(StarShipPtr, false) < MAX_MARINES
+				&& count_marines(StarShipPtr, false) < MaxMarines
 				&& TrackShip(ShipPtr, &facing) >= 0
 				&& (hSpaceMarine = AllocElement()))
 			{
@@ -1023,16 +1023,16 @@ turret_postprocess(ELEMENT* ElementPtr)
 				SpaceMarinePtr->state_flags = IgnoreSimilar | Appearing
 											| CrewObject;
 				SpaceMarinePtr->life_span = NormalLife;
-				SpaceMarinePtr->hit_points = MARINE_HIT_POINTS;
-				SpaceMarinePtr->mass_points = MARINE_MASS_POINTS;
+				SpaceMarinePtr->hit_points = MarineHitPoints;
+				SpaceMarinePtr->mass_points = MarineMassPoints;
 
 				facing = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
 				SpaceMarinePtr->current.location.x =
 					ShipPtr->current.location.x
-					- COSINE(facing, DISPLAY_TO_WORLD(TURRET_OFFSET << ((resolutionFactor + 1) / 2)));
+					- COSINE(facing, DISPLAY_TO_WORLD(TurretOffset() << ((resolutionFactor + 1) / 2)));
 				SpaceMarinePtr->current.location.y =
 					ShipPtr->current.location.y
-					- SINE(facing, DISPLAY_TO_WORLD(TURRET_OFFSET << ((resolutionFactor + 1) / 2)));
+					- SINE(facing, DISPLAY_TO_WORLD(TurretOffset() << ((resolutionFactor + 1) / 2)));
 				SpaceMarinePtr->current.image.farray =
 					StarShipPtr->RaceDescPtr->ship_data.special;
 				SpaceMarinePtr->current.image.frame = SetAbsFrameIndex(
@@ -1125,15 +1125,15 @@ init_orz(void)
 {
 	if (IsHd())
 	{
-		orz_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		orz_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		orz_desc.cyborg_control.WeaponRange = MISSILE_SPEED_HD * MISSILE_LIFE;
+		orz_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		orz_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		orz_desc.cyborg_control.WeaponRange = MissileSpeedHd() * MissileLife;
 	}
 	else
 	{
-		orz_desc.characteristics.max_thrust = MAX_THRUST;
-		orz_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		orz_desc.cyborg_control.WeaponRange = MISSILE_SPEED * MISSILE_LIFE;
+		orz_desc.characteristics.max_thrust = MaxThrust;
+		orz_desc.characteristics.thrust_increment = ThrustIncrement;
+		orz_desc.cyborg_control.WeaponRange = MissileSpeed * MissileLife;
 	}
 
 	orz_desc.preprocess_func = orz_preprocess;

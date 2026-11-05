@@ -20,20 +20,20 @@
 #include "probe.h"
 #include "resinst.h"
 
-#define MAX_CREW 1
-#define MAX_ENERGY 1
-#define ENERGY_REGENERATION 0
-#define WEAPON_ENERGY_COST 0
-#define SPECIAL_ENERGY_COST 0
-#define ENERGY_WAIT 0
-#define MAX_THRUST 0
-#define THRUST_INCREMENT 0
-#define TURN_WAIT 0
-#define THRUST_WAIT 0
-#define WEAPON_WAIT 0
-#define SPECIAL_WAIT 0
+static constexpr auto MaxCrew {1};
+static constexpr auto MaxEnergy {1};
+static constexpr auto EnergyRegeneration {0};
+static constexpr auto WeaponEnergyCost {0};
+static constexpr auto SpecialEnergyCost {0};
+static constexpr auto EnergyWait {0};
+static constexpr auto MaxThrust {0};
+static constexpr auto ThrustIncrement {0};
+static constexpr auto TurnWait {0};
+static constexpr auto ThrustWait {0};
+static constexpr auto WeaponWait {0};
+static constexpr auto SpecialWait {0};
 
-#define SHIP_MASS 0
+static constexpr auto ShipMass {0};
 
 static RACE_DESC probe_desc =
 	{
@@ -41,11 +41,11 @@ static RACE_DESC probe_desc =
 		 "urquanprobe",
 		 0,
 		 0, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
 		 0,
 		 0,
-		 URQUAN_DRONE_MICON_MASK_PMAP_ANIM,
+		 UrquanDroneMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -57,17 +57,17 @@ static RACE_DESC probe_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
 			 NullResource,

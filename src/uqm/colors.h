@@ -556,16 +556,9 @@ inline constexpr auto ShpShadowColor {BuildShadeRgba(0x4B)};
 inline constexpr auto LandStatMinColor {BuildColorRgb(0x7C, 0x00, 0x00)};
 inline constexpr auto LandStatDatColor {BuildColorRgb(0x00, 0x00, 0x90)};
 
-// Temporary, until we can use C'99 features:
-inline constexpr auto BlackColorInit {BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)};
-inline constexpr auto WhiteColorInit {BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)};
-inline constexpr auto BrightRedColorInit {BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x04)};
-inline constexpr auto BrightGreenColorInit {BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0x02)};
-
-inline constexpr auto UndefinedColorInit {BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)};
-inline constexpr auto ScanMineralTintColor {BrightRedColorInit};
-inline constexpr auto ScanEnergyTintColor {WhiteColorInit};
-inline constexpr auto ScanBiologicalTintColor {BrightGreenColorInit};
+inline constexpr auto ScanMineralTintColor {BrightRedColor};
+inline constexpr auto ScanEnergyTintColor {WhiteColor};
+inline constexpr auto ScanBiologicalTintColor {BrightGreenColor};
 
 // Transparent
 inline constexpr auto Transparent {BuildColorRgba(0x50, 0x50, 0x50, 0x00)};

@@ -34,23 +34,23 @@ static LOCDATA druuge_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		DRUUGE_PMAP_ANIM, /* AlienFrame */
-		DRUUGE_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		DruugePmapAnim, /* AlienFrame */
+		DruugeFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
-		DRUUGE_COLOR_MAP, /* AlienColorMap */
-		DRUUGE_MUSIC, /* AlienSong */
+		DruugeColorMap, /* AlienColorMap */
+		DruugeMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		DRUUGE_CONVERSATION_PHRASES, /* PlayerPhrases */
+		DruugeConversationPhrases, /* PlayerPhrases */
 		11, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
@@ -270,6 +270,11 @@ ExitConversation(RESPONSE_REF R)
 
 static void TradeWorld(RESPONSE_REF R);
 
+static constexpr auto ArtifactCrewCost {100};
+
+static constexpr auto ShipCrewCost {100};
+static constexpr auto FuelCrewCost {10};
+
 static void
 Buy(RESPONSE_REF R)
 {
@@ -295,8 +300,7 @@ Buy(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, buy_druuge_ship))
 	{
-#define SHIP_CREW_COST 100
-		if (GLOBAL_SIS(CrewEnlisted) < SHIP_CREW_COST)
+		if (GLOBAL_SIS(CrewEnlisted) < ShipCrewCost)
 		{
 			NPCPhrase(NOT_ENOUGH_CREW);
 		}
@@ -306,24 +310,23 @@ Buy(RESPONSE_REF R)
 		}
 		else
 		{
-			DeltaSISGauges(-SHIP_CREW_COST, 0, 0);
-			SlaveryCount += SHIP_CREW_COST;
+			DeltaSISGauges(-ShipCrewCost, 0, 0);
+			SlaveryCount += ShipCrewCost;
 			AddEscortShips(DRUUGE_SHIP, 1);
 
 			NPCPhrase(BOUGHT_SHIP);
 		}
 	}
-#define ARTIFACT_CREW_COST 100
 	else if (PLAYER_SAID(R, buy_rosy_sphere))
 	{
-		if (GLOBAL_SIS(CrewEnlisted) < ARTIFACT_CREW_COST)
+		if (GLOBAL_SIS(CrewEnlisted) < ArtifactCrewCost)
 		{
 			NPCPhrase(NOT_ENOUGH_CREW);
 		}
 		else
 		{
-			DeltaSISGauges(-ARTIFACT_CREW_COST, 0, 0);
-			SlaveryCount += ARTIFACT_CREW_COST;
+			DeltaSISGauges(-ArtifactCrewCost, 0, 0);
+			SlaveryCount += ArtifactCrewCost;
 			SET_GAME_STATE(ROSY_SPHERE_ON_SHIP, 1);
 			SET_GAME_STATE(ROSY_SPHERE, 1);
 
@@ -332,14 +335,14 @@ Buy(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, buy_art_1))
 	{
-		if (GLOBAL_SIS(CrewEnlisted) < ARTIFACT_CREW_COST)
+		if (GLOBAL_SIS(CrewEnlisted) < ArtifactCrewCost)
 		{
 			NPCPhrase(NOT_ENOUGH_CREW);
 		}
 		else
 		{
-			DeltaSISGauges(-ARTIFACT_CREW_COST, 0, 0);
-			SlaveryCount += ARTIFACT_CREW_COST;
+			DeltaSISGauges(-ArtifactCrewCost, 0, 0);
+			SlaveryCount += ArtifactCrewCost;
 			SET_GAME_STATE(WIMBLIS_TRIDENT_ON_SHIP, 1);
 
 			NPCPhrase(BOUGHT_ART_1);
@@ -347,14 +350,14 @@ Buy(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, buy_art_2))
 	{
-		if (GLOBAL_SIS(CrewEnlisted) < ARTIFACT_CREW_COST)
+		if (GLOBAL_SIS(CrewEnlisted) < ArtifactCrewCost)
 		{
 			NPCPhrase(NOT_ENOUGH_CREW);
 		}
 		else
 		{
-			DeltaSISGauges(-ARTIFACT_CREW_COST, 0, 0);
-			SlaveryCount += ARTIFACT_CREW_COST;
+			DeltaSISGauges(-ArtifactCrewCost, 0, 0);
+			SlaveryCount += ArtifactCrewCost;
 			SET_GAME_STATE(GLOWING_ROD_ON_SHIP, 1);
 
 			NPCPhrase(BOUGHT_ART_2);
@@ -362,16 +365,15 @@ Buy(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, buy_fuel))
 	{
-#define FUEL_CREW_COST 10
-		if (GLOBAL_SIS(CrewEnlisted) < FUEL_CREW_COST)
+		if (GLOBAL_SIS(CrewEnlisted) < FuelCrewCost)
 		{
 			NPCPhrase(NOT_ENOUGH_CREW);
 		}
 		else
 		{
-			DeltaSISGauges(-FUEL_CREW_COST,
-						   FUEL_CREW_COST * FuelTankScale, 0);
-			SlaveryCount += FUEL_CREW_COST;
+			DeltaSISGauges(-FuelCrewCost,
+						   FuelCrewCost * FuelTankScale, 0);
+			SlaveryCount += FuelCrewCost;
 
 			NPCPhrase(BOUGHT_FUEL);
 		}

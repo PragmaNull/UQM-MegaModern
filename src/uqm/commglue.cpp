@@ -374,14 +374,15 @@ void NPCNumber(int number, const char* fmt)
 	SpliceTrack(nullptr, buf, nullptr, nullptr);
 }
 
+static constexpr auto MaxNumberTracks {20};
+
 static int
 NPCNumberPhrase(int number, const char* fmt, const char** ptrack)
 {
-#define MAX_NUMBER_TRACKS 20
 	NUMBER_SPEECH speech = CommData.AlienNumberSpeech;
 	int queued = 0;
 	int toplevel = 0;
-	const char* TrackNames[MAX_NUMBER_TRACKS];
+	const char* TrackNames[MaxNumberTracks];
 	char numbuf[60] {};
 	const SPEECH_DIGIT* dig = nullptr;
 

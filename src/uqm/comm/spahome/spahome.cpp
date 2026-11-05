@@ -31,23 +31,23 @@ static LOCDATA spahome_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		SPATHI_HOME_PMAP_ANIM, /* AlienFrame */
-		SPATHI_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		SpathiHomePmapAnim, /* AlienFrame */
+		SpathiFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		SPATHI_HOME_COLOR_MAP, /* AlienColorMap */
-		SPATHI_MUSIC, /* AlienSong */
+		SpathiHomeColorMap, /* AlienColorMap */
+		SpathiMusic, /* AlienSong */
 		{
-								NullResource,  /* AlienAltFrame */
-			NullResource,  /* AlienAltColorMap */
-			SPAHOME_MUSIC, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			SpahomeMusic, /* AlienAltSong */
 		},
-		SPATHI_HOME_CONVERSATION_PHRASES, /* PlayerPhrases */
+		SpathiHomeConversationPhrases, /* PlayerPhrases */
 		14, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

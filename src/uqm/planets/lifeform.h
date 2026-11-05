@@ -25,45 +25,45 @@
 extern "C" {
 #endif
 
-#define BEHAVIOR_HUNT (0 << 0)
-#define BEHAVIOR_FLEE (1 << 0)
-#define BEHAVIOR_UNPREDICTABLE (2 << 0)
+inline constexpr auto BehaviorHunt {(0 << 0)};
+inline constexpr auto BehaviorFlee {(1 << 0)};
+inline constexpr auto BehaviorUnpredictable {(2 << 0)};
 
-#define BEHAVIOR_MASK 0x03
-#define BEHAVIOR_SHIFT 0
+inline constexpr auto BehaviorMask {0x03};
+inline constexpr auto BehaviorShift {0};
 
-#define AWARENESS_LOW (0 << 2)
-#define AWARENESS_MEDIUM (1 << 2)
-#define AWARENESS_HIGH (2 << 2)
+inline constexpr auto AwarenessLow {(0 << 2)};
+inline constexpr auto AwarenessMedium {(1 << 2)};
+inline constexpr auto AwarenessHigh {(2 << 2)};
 
-#define AWARENESS_MASK 0x0C
-#define AWARENESS_SHIFT (BEHAVIOR_SHIFT + 2)
+inline constexpr auto AwarenessMask {0x0C};
+inline constexpr auto AwarenessShift {(BehaviorShift + 2)};
 
-#define SPEED_MOTIONLESS (0 << 4)
-#define SPEED_SLOW (1 << 4)
-#define SPEED_MEDIUM (2 << 4)
-#define SPEED_FAST (3 << 4)
+inline constexpr auto SpeedMotionless {(0 << 4)};
+inline constexpr auto SpeedSlow {(1 << 4)};
+inline constexpr auto SpeedMedium {(2 << 4)};
+inline constexpr auto SpeedFast {(3 << 4)};
 
-#define SPEED_MASK 0x30
-#define SPEED_SHIFT (AWARENESS_SHIFT + 2)
+inline constexpr auto SpeedMask {0x30};
+inline constexpr auto SpeedShift {(AwarenessShift + 2)};
 
-#define DANGER_HARMLESS (0 << 6)
-#define DANGER_WEAK (1 << 6)
-#define DANGER_NORMAL (2 << 6)
-#define DANGER_MONSTROUS (3 << 6)
+inline constexpr auto DangerHarmless {(0 << 6)};
+inline constexpr auto DangerWeak {(1 << 6)};
+inline constexpr auto DangerNormal {(2 << 6)};
+inline constexpr auto DangerMonstrous {(3 << 6)};
 
-#define DANGER_MASK 0xC0
-#define DANGER_SHIFT (SPEED_SHIFT + 2)
+inline constexpr auto DangerMask {0xC0};
+inline constexpr auto DangerShift {(SpeedShift + 2)};
 
-#define NUM_CREATURE_TYPES 23
-#define NUM_SPECIAL_CREATURE_TYPES 3
-#define MAX_LIFE_VARIATION 3
+inline constexpr auto NumCreatureTypes {23};
+inline constexpr auto NumSpecialCreatureTypes {3};
+inline constexpr auto MaxLifeVariation {3};
 
-#define EVIL_ONE NUM_CREATURE_TYPES
-#define BRAINBOX_BULLDOZER NUM_CREATURE_TYPES + 1
-#define ZEX_BEAUTY NUM_CREATURE_TYPES + 2
+inline constexpr auto EvilOne {NumCreatureTypes};
+inline constexpr auto BrainboxBulldozer {NumCreatureTypes + 1};
+inline constexpr auto ZexBeauty {NumCreatureTypes + 2};
 
-#define CREATURE_AWARE (uint8_t)(1 << 7)
+inline constexpr auto CreatureAware {(uint8_t)(1 << 7)};
 
 typedef struct
 {

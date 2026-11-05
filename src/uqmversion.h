@@ -17,16 +17,16 @@
 #ifndef UQMVERSION_H
 #define UQMVERSION_H
 
-#define UQM_MAJOR_VERSION 0
+inline constexpr auto UqmMajorVersion {0};
 #define UQM_MAJOR_VERSION_S "0"
-#define UQM_MINOR_VERSION 8
+inline constexpr auto UqmMinorVersion {8};
 #define UQM_MINOR_VERSION_S "8"
 #ifdef RC_INVOKED
 // Versions in resource files must be integers.
-#define UQM_PATCH_VERSION 4
-#define UQM_REVISION_VERSION 0
+inline constexpr auto UqmPatchVersion {4};
+
 #else
-#define UQM_PATCH_VERSION 4
+inline constexpr auto UqmPatchVersion {4};
 #endif
 #define UQM_PATCH_VERSION_S "4"
 #if defined(DEBUG)
@@ -35,12 +35,9 @@
 #define UQM_EXTRA_VERSION "MegaMod"
 #endif
 /* The final version is interpreted as:
- * printf ("{}.{}.{}{}", UQM_MAJOR_VERSION, UQM_MINOR_VERSION,
- * 		UQM_PATCH_VERSION, UQM_EXTRA_VERSION);
+ * printf ("{}.{}.{}{}", UqmMajorVersion, UqmMinorVersion,
+ * 		UqmPatchVersion, UQM_EXTRA_VERSION);
  */
 
-#define UQM_STRING_VERSION                                              \
-	UQM_MAJOR_VERSION_S "." UQM_MINOR_VERSION_S "." UQM_PATCH_VERSION_S \
-						" " UQM_EXTRA_VERSION
 
 #endif

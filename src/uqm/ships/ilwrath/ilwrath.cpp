@@ -25,32 +25,32 @@
 
 
 // Core characteristics
-#define MAX_CREW 22
-#define MAX_ENERGY 16
-#define ENERGY_REGENERATION 4
-#define ENERGY_WAIT 4
-#define MAX_THRUST 25
-#define THRUST_INCREMENT 5
-#define THRUST_WAIT 0
-#define TURN_WAIT 2
-#define SHIP_MASS 7
-#define LOOK_AHEAD 4
+static constexpr auto MaxCrew {22};
+static constexpr auto MaxEnergy {16};
+static constexpr auto EnergyRegeneration {4};
+static constexpr auto EnergyWait {4};
+static constexpr auto MaxThrust {25};
+static constexpr auto ThrustIncrement {5};
+static constexpr auto ThrustWait {0};
+static constexpr auto TurnWait {2};
+static constexpr auto ShipMass {7};
+static constexpr auto LookAhead {4};
 /* Controls how much the auto-turn will attempt to "lead"
 		 * its target. */
 
 // Hellfire Spout
-#define WEAPON_ENERGY_COST 1
-#define WEAPON_WAIT 0
-#define MISSILE_LIFE 8
-#define ILWRATH_OFFSET RES_SCALE(29)
-#define MISSILE_SPEED RES_SCALE(MAX_THRUST)
-#define MISSILE_HITS 1
-#define MISSILE_DAMAGE 1
-#define MISSILE_OFFSET 0
+static constexpr auto WeaponEnergyCost {1};
+static constexpr auto WeaponWait {0};
+static constexpr auto MissileLife {8};
+static auto IlwrathOffset() { return RES_SCALE(29); }
+static auto MissileSpeed() { return RES_SCALE(MaxThrust); }
+static constexpr auto MissileHits {1};
+static constexpr auto MissileDamage {1};
+static constexpr auto MissileOffset {0};
 
 // Cloaking Device
-#define SPECIAL_ENERGY_COST 3
-#define SPECIAL_WAIT 13
+static constexpr auto SpecialEnergyCost {3};
+static constexpr auto SpecialWait {13};
 
 static RACE_DESC ilwrath_desc =
 	{
@@ -58,11 +58,11 @@ static RACE_DESC ilwrath_desc =
 		 "avenger",
 		 FiresFore,
 		 10, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 ILWRATH_RACE_STRINGS,
-		 ILWRATH_ICON_MASK_PMAP_ANIM,
-		 ILWRATH_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 IlwrathRaceStrings,
+		 IlwrathIconMaskPmapAnim,
+		 IlwrathMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -74,38 +74,38 @@ static RACE_DESC ilwrath_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 ILWRATH_BIG_MASK_PMAP_ANIM,
-			 ILWRATH_MED_MASK_PMAP_ANIM,
-			 ILWRATH_SML_MASK_PMAP_ANIM,
+			 IlwrathBigMaskPmapAnim,
+			 IlwrathMedMaskPmapAnim,
+			 IlwrathSmlMaskPmapAnim,
 		 },
 		 {
-			 FIRE_BIG_MASK_PMAP_ANIM,
-			 FIRE_MED_MASK_PMAP_ANIM,
-			 FIRE_SML_MASK_PMAP_ANIM,
+			 FireBigMaskPmapAnim,
+			 FireMedMaskPmapAnim,
+			 FireSmlMaskPmapAnim,
 		 },
 		 {
 			 NullResource,
 			 NullResource,
 			 NullResource,
 		 },
-		 {ILWRATH_CAPTAIN_MASK_PMAP_ANIM,
+		 {IlwrathCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 ILWRATH_VICTORY_SONG,
-		 ILWRATH_SHIP_SOUNDS,
+		 IlwrathVictorySong,
+		 IlwrathShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -207,13 +207,13 @@ initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = ILWRATH_OFFSET;
-	MissileBlock.speed = MISSILE_SPEED;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.pixoffs = IlwrathOffset();
+	MissileBlock.speed = MissileSpeed();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = flame_preprocess;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset;
 	FlameArray[0] = initialize_missile(&MissileBlock);
 
 	if (FlameArray[0])
@@ -251,7 +251,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 
 		color = GetPrimColor(lpPrim);
 		weapon_discharge = ((status_flags & WeaponFlag)
-							&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= WEAPON_ENERGY_COST);
+							&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= WeaponEnergyCost);
 		if (weapon_discharge
 			|| (StarShipPtr->special_counter == 0
 				&& ((status_flags & SpecialFlag) || !sameColor(color, BlackColor))))
@@ -307,9 +307,9 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 
 						LockElement(ElementPtr->hTarget, &eptr);
 						v = eptr->velocity;
-						GetNextVelocityComponents(&v, &dx0, &dy0, LOOK_AHEAD);
+						GetNextVelocityComponents(&v, &dx0, &dy0, LookAhead);
 						v = ElementPtr->velocity;
-						GetNextVelocityComponents(&v, &dx1, &dy1, LOOK_AHEAD);
+						GetNextVelocityComponents(&v, &dx1, &dy1, LookAhead);
 						dx0 = (eptr->current.location.x + dx0)
 							- (ElementPtr->current.location.x + dx1);
 						dy0 = (eptr->current.location.y + dy0)
@@ -337,7 +337,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 								dx0 += dx1;
 								dy0 += dy1;
 								GetNextVelocityComponents(&temp_v,
-														  &dx1, &dy1, LOOK_AHEAD);
+														  &dx1, &dy1, LookAhead);
 								dx0 -= dx1;
 								dy0 -= dy1;
 								StarShipPtr->ShipFacing =
@@ -400,7 +400,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 
 	if ((status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
-		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
 		SetPrimColor(lpPrim,
 					 BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
@@ -422,15 +422,15 @@ init_ilwrath(void)
 {
 	if (IsHd())
 	{
-		ilwrath_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
+		ilwrath_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
 		ilwrath_desc.characteristics.thrust_increment =
-			RES_SCALE(THRUST_INCREMENT);
+			RES_SCALE(ThrustIncrement);
 		ilwrath_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else
 	{
-		ilwrath_desc.characteristics.max_thrust = MAX_THRUST;
-		ilwrath_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		ilwrath_desc.characteristics.max_thrust = MaxThrust;
+		ilwrath_desc.characteristics.thrust_increment = ThrustIncrement;
 		ilwrath_desc.cyborg_control.WeaponRange = CloseRangeWeapon;
 	}
 

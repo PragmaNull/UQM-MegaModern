@@ -92,6 +92,8 @@ ScaleHeightByVolume(uint8_t scope_data, bool toScale)
 	}
 }
 
+static constexpr auto DimPercentage {0.77};
+
 void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toScale)
 {
 	int i {};
@@ -115,10 +117,9 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 
 	if (nonStop)
 	{ // Dim the oscilloscope lines for Non-Stop option
-#define DIM_PERCENTAGE 0.77
-		scopeColor.r *= DIM_PERCENTAGE;
-		scopeColor.g *= DIM_PERCENTAGE;
-		scopeColor.b *= DIM_PERCENTAGE;
+		scopeColor.r *= DimPercentage;
+		scopeColor.g *= DimPercentage;
+		scopeColor.b *= DimPercentage;
 	}
 
 	SetContextForeGroundColor(scopeColor);

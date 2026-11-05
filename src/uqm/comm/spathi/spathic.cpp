@@ -30,23 +30,23 @@ static LOCDATA spathi_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		SPATHI_PMAP_ANIM, /* AlienFrame */
-		SPATHI_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		SpathiPmapAnim, /* AlienFrame */
+		SpathiFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		SPATHI_COLOR_MAP, /* AlienColorMap */
-		SPATHI_MUSIC, /* AlienSong */
+		SpathiColorMap, /* AlienColorMap */
+		SpathiMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
-			FWIFFO_MUSIC, /* AlienAltSong */
+			FwiffoMusic,  /* AlienAltSong */
 		},
-		SPATHI_CONVERSATION_PHRASES, /* PlayerPhrases */
+		SpathiConversationPhrases, /* PlayerPhrases */
 		8, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

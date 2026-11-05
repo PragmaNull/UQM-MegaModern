@@ -24,35 +24,35 @@
 #include "libs/mathlib.h"
 
 // Core characteristics
-#define SYREEN_MAX_CREW_SIZE MaxCrewSize
-#define MAX_CREW 12
-#define MAX_ENERGY 16
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 6
-#define MAX_THRUST /* DISPLAY_TO_WORLD (8) */ 36
-#define THRUST_INCREMENT /* DISPLAY_TO_WORLD (2) */ 9
-#define THRUST_WAIT 1
-#define TURN_WAIT 1
-#define SHIP_MASS 2
+
+static constexpr auto MaxCrew {12};
+static constexpr auto MaxEnergy {16};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {6};
+static constexpr auto MaxThrust {36};
+static constexpr auto ThrustIncrement {9};
+static constexpr auto ThrustWait {1};
+static constexpr auto TurnWait {1};
+static constexpr auto ShipMass {2};
 
 // Particle Beam Stiletto
-#define WEAPON_ENERGY_COST 1
-#define WEAPON_WAIT 8
-#define SYREEN_OFFSET RES_SCALE(30)
-#define MISSILE_SPEED DISPLAY_TO_WORLD(30)
-#define MISSILE_LIFE 10
-#define MISSILE_HITS 1
-#define MISSILE_DAMAGE 2
-#define MISSILE_OFFSET RES_SCALE(3)
+static constexpr auto WeaponEnergyCost {1};
+static constexpr auto WeaponWait {8};
+static auto SyreenOffset() { return RES_SCALE(30); }
+static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(30)};
+static constexpr auto MissileLife {10};
+static constexpr auto MissileHits {1};
+static constexpr auto MissileDamage {2};
+static auto MissileOffset() { return RES_SCALE(3); }
 
 // Syreen song
-#define SPECIAL_ENERGY_COST 5
-#define SPECIAL_WAIT 20
-#define ABANDONER_RANGE RES_SCALE(208) /* originally SpaceHeight() */
-#define MAX_ABANDONERS 8
+static constexpr auto SpecialEnergyCost {5};
+static constexpr auto SpecialWait {20};
+static auto AbandonerRange() { return RES_SCALE(208); } /* originally SpaceHeight() */
+static constexpr auto MaxAbandoners {8};
 
 // HdResolutionFactor
-#define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
+static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
 
 static RACE_DESC syreen_desc =
 	{
@@ -60,11 +60,11 @@ static RACE_DESC syreen_desc =
 		 "penetrator",
 		 FiresFore,
 		 13, /* Super Melee cost */
-		 MAX_CREW, SYREEN_MAX_CREW_SIZE,
-		 MAX_ENERGY, MAX_ENERGY,
-		 SYREEN_RACE_STRINGS,
-		 SYREEN_ICON_MASK_PMAP_ANIM,
-		 SYREEN_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrewSize,
+		 MaxEnergy, MaxEnergy,
+		 SyreenRaceStrings,
+		 SyreenIconMaskPmapAnim,
+		 SyreenMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -76,38 +76,38 @@ static RACE_DESC syreen_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 SYREEN_BIG_MASK_PMAP_ANIM,
-			 SYREEN_MED_MASK_PMAP_ANIM,
-			 SYREEN_SML_MASK_PMAP_ANIM,
+			 SyreenBigMaskPmapAnim,
+			 SyreenMedMaskPmapAnim,
+			 SyreenSmlMaskPmapAnim,
 		 },
 		 {
-			 DAGGER_BIG_MASK_PMAP_ANIM,
-			 DAGGER_MED_MASK_PMAP_ANIM,
-			 DAGGER_SML_MASK_PMAP_ANIM,
+			 DaggerBigMaskPmapAnim,
+			 DaggerMedMaskPmapAnim,
+			 DaggerSmlMaskPmapAnim,
 		 },
 		 {
 			 NullResource,
 			 NullResource,
 			 NullResource,
 		 },
-		 {SYREEN_CAPTAIN_MASK_PMAP_ANIM,
+		 {SyreenCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 SYREEN_VICTORY_SONG,
-		 SYREEN_SHIP_SOUNDS,
+		 SyreenVictorySong,
+		 SyreenShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -115,7 +115,7 @@ static RACE_DESC syreen_desc =
 		 nullptr},
 		{
 			0,
-			(MISSILE_SPEED * MISSILE_LIFE * 2 / 3),
+			(MissileSpeed * MissileLife * 2 / 3),
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -139,13 +139,13 @@ initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = SYREEN_OFFSET;
-	MissileBlock.speed = MISSILE_SPEED_HD;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.pixoffs = SyreenOffset();
+	MissileBlock.speed = MissileSpeedHd();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset();
 	DaggerArray[0] = initialize_missile(&MissileBlock);
 
 	return (1);
@@ -206,16 +206,16 @@ spawn_crew(ELEMENT* ElementPtr)
 
 				dx = WORLD_TO_DISPLAY(dx);
 				dy = WORLD_TO_DISPLAY(dy);
-				if (dx <= ABANDONER_RANGE && dy <= ABANDONER_RANGE
+				if (dx <= AbandonerRange() && dy <= AbandonerRange()
 					&& (d_squared = (uint32_t)((uint16_t)dx * (uint16_t)dx)
 								  + (uint32_t)((uint16_t)dy * (uint16_t)dy))
-						   <= (uint32_t)((uint16_t)ABANDONER_RANGE * (uint16_t)ABANDONER_RANGE))
+						   <= (uint32_t)((uint16_t)AbandonerRange() * (uint16_t)AbandonerRange()))
 				{
 					uint16_t crew_loss {};
 
 					if (!antiCheat(ElementPtr, true, uqm::GodModeFlags::NoDamage))
 					{
-						crew_loss = ((MAX_ABANDONERS * (ABANDONER_RANGE - square_root(d_squared))) / ABANDONER_RANGE) + 1;
+						crew_loss = ((MaxAbandoners * (AbandonerRange() - square_root(d_squared))) / AbandonerRange()) + 1;
 					}
 					else
 					{
@@ -273,7 +273,7 @@ syreen_postprocess(ELEMENT* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
-		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
 		ProcessSound(GetSound(
 						 /* SYREEN_SONG */
@@ -291,16 +291,16 @@ init_syreen(void)
 {
 	if (IsHd())
 	{
-		syreen_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		syreen_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		syreen_desc.cyborg_control.WeaponRange = (MISSILE_SPEED_HD * MISSILE_LIFE * 2 / 3);
+		syreen_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		syreen_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		syreen_desc.cyborg_control.WeaponRange = (MissileSpeedHd() * MissileLife * 2 / 3);
 	}
 	else
 	{
-		syreen_desc.characteristics.max_thrust = MAX_THRUST;
-		syreen_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		syreen_desc.characteristics.max_thrust = MaxThrust;
+		syreen_desc.characteristics.thrust_increment = ThrustIncrement;
 		syreen_desc.cyborg_control.WeaponRange =
-			(MISSILE_SPEED * MISSILE_LIFE * 2 / 3);
+			(MissileSpeed * MissileLife * 2 / 3);
 	}
 
 	syreen_desc.postprocess_func = syreen_postprocess;

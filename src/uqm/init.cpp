@@ -211,6 +211,9 @@ BuildSIS(void)
 	return hStarShip;
 }
 
+static constexpr auto NumAsteroids {5};
+static constexpr auto NumPlanets {1};
+
 int16_t
 InitShips(void)
 {
@@ -266,13 +269,11 @@ InitShips(void)
 		}
 		else
 		{
-#define NUM_ASTEROIDS 5
-			for (i = 0; i < NUM_ASTEROIDS; ++i)
+			for (i = 0; i < NumAsteroids; ++i)
 			{
 				spawn_asteroid(nullptr);
 			}
-#define NUM_PLANETS 1
-			for (i = 0; i < NUM_PLANETS; ++i)
+			for (i = 0; i < NumPlanets; ++i)
 			{
 				spawn_planet();
 			}

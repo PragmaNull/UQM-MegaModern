@@ -2,12 +2,12 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define SLYLANDRO_BIG_MASK_PMAP_ANIM "ship.slylandro.graphics.probe.large"
-#define SLYLANDRO_CAPTAIN_MASK_PMAP_ANIM "ship.slylandro.graphics.captain"
-#define SLYLANDRO_ICON_MASK_PMAP_ANIM "ship.slylandro.icons"
-#define SLYLANDRO_MED_MASK_PMAP_ANIM "ship.slylandro.graphics.probe.medium"
-#define SLYLANDRO_MICON_MASK_PMAP_ANIM "ship.slylandro.meleeicons"
-#define SLYLANDRO_RACE_STRINGS "ship.slylandro.text"
-#define SLYLANDRO_SHIP_SOUNDS "ship.slylandro.sounds"
-#define SLYLANDRO_SML_MASK_PMAP_ANIM "ship.slylandro.graphics.probe.small"
-#define SLYLANDRO_VICTORY_SONG "ship.slylandro.ditty"
+inline constexpr uqgsl::czstring SlylandroBigMaskPmapAnim {"ship.slylandro.graphics.probe.large"};
+inline constexpr uqgsl::czstring SlylandroCaptainMaskPmapAnim {"ship.slylandro.graphics.captain"};
+inline constexpr uqgsl::czstring SlylandroIconMaskPmapAnim {"ship.slylandro.icons"};
+inline constexpr uqgsl::czstring SlylandroMedMaskPmapAnim {"ship.slylandro.graphics.probe.medium"};
+inline constexpr uqgsl::czstring SlylandroMiconMaskPmapAnim {"ship.slylandro.meleeicons"};
+inline constexpr uqgsl::czstring SlylandroRaceStrings {"ship.slylandro.text"};
+inline constexpr uqgsl::czstring SlylandroShipSounds {"ship.slylandro.sounds"};
+inline constexpr uqgsl::czstring SlylandroSmlMaskPmapAnim {"ship.slylandro.graphics.probe.small"};
+inline constexpr uqgsl::czstring SlylandroVictorySong {"ship.slylandro.ditty"};

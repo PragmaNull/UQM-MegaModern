@@ -369,14 +369,14 @@ void PrepareNextRotationFrameForIP(PLANET_DESC* pPlanetDesc, int16_t frameCounte
 					   pPlanetDesc->rotPointIndex,
 					   pPlanetDesc->data_index & PLANET_SHIELDED,
 					   false, pPlanetDesc->rotwidth, pPlanetDesc->rotheight,
-					   (pPlanetDesc->rotheight >> 1) - IF_HD(2)); // RADIUS
+					   (pPlanetDesc->rotheight >> 1) - IF_HD(2)); // Radius
 	Orbit->SphereFrame->image->dirty = true;
 	// BW: slightly hacky but, in DrawTexturedBody, the call
 	// to DrawStamp won't re-blit the frame unless scale has changed.
 }
 
-#define ZOOM_RATE RES_SCALE(35)
-#define ZOOM_TIME (GameTicksPerSecond * 6 / 5)
+static auto ZoomRate() { return RES_SCALE(35); }
+static constexpr auto ZoomTime {(GameTicksPerSecond * 6 / 5)};
 
 // This takes care of zooming the planet sphere into place
 // when entering orbit
@@ -393,7 +393,7 @@ void ZoomInPlanetSphere(void)
 	TimeCount Now;
 	TimeCount RenderNextTime;
 
-	frameCount = ZOOM_TIME / (GameTicksPerSecond / ZOOM_RATE);
+	frameCount = ZoomTime / (GameTicksPerSecond / ZoomRate());
 
 	// Planet zoom in from a randomly chosen corner
 	zoomCorner = uqm::random().next();
@@ -417,7 +417,7 @@ void ZoomInPlanetSphere(void)
 		GFXPOINT pt;
 
 		Now = GetTimeCounter();
-		NextTime = Now + (c_gameSecond / ZOOM_RATE);
+		NextTime = Now + (c_gameSecond / ZoomRate());
 
 		// Use 1 + e^-2 - e^(-2x / frameCount)) function to get a
 		// decelerating zoom like the one 3DO does (supposedly)
@@ -435,7 +435,7 @@ void ZoomInPlanetSphere(void)
 			 + (int)(dx * (1.0 - scale)
 						 * RES_SCALE(OrigSisScreenWidth() * 6 / 10)
 					 + 0.5);
-		pt.y = PLANET_ORG_Y + (int)(dy * (1.0 - scale) * (RES_SCALE(SCAN_SCREEN_HEIGHT) * 6 / 10) + 0.5);
+		pt.y = PLANET_ORG_Y + (int)(dy * (1.0 - scale) * (RES_SCALE(ScanScreenHeight()) * 6 / 10) + 0.5);
 
 		SetContext(PlanetContext);
 
@@ -466,7 +466,7 @@ void ZoomInPlanetSphere(void)
 	}
 }
 
-#define PLANET_ROTATION_FPS (c_gameSecond / 60)
+static constexpr auto PlanetRotationFps {(c_gameSecond / 60)};
 
 void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 {
@@ -492,7 +492,7 @@ void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 
 		if (Now >= OutNextTime)
 		{
-			OutNextTime = Now + PLANET_ROTATION_FPS;
+			OutNextTime = Now + PlanetRotationFps;
 
 			DrawDefaultPlanetSphere();
 
@@ -610,7 +610,7 @@ void DrawPlanet(int tintY, Color tintColor)
 			SetContextClipRect(&oldClipRect);
 
 			edge.extent.height = 1;
-			edge.extent.width = SCALED_MAP_WIDTH;
+			edge.extent.width = ScaledMapWidth();
 			edge.corner.x = tintFrame->HotSpot.x;
 			edge.corner.y = clipRect.extent.height;
 

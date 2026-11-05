@@ -289,6 +289,8 @@ preprocess_dead_ship(ELEMENT* DeadShipPtr)
 	(void)DeadShipPtr; // unused argument
 }
 
+static constexpr auto MinDittyFrameCount {((c_gameSecond * 3) / BattleFrameRateTicks)};
+
 void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 {
 	STARSHIP* DeadStarShipPtr {};
@@ -353,19 +355,18 @@ void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 			UnlockElement(hElement);
 		}
 
-#define MIN_DITTY_FRAME_COUNT ((c_gameSecond * 3) / BattleFrameRateTicks)
 		// The ship will be "alive" for at least 2 more frames to make sure
 		// the elements it owns (set up for deletion above) expire first.
 		// Ditty does NOT play in the following circumstances:
 		//  * The winning ship dies before the loser finishes exploding
 		//  * At the moment the losing ship dies, the winner has started
 		//    the warp out sequence
-		DeadShipPtr->life_span = MusicStarted ? MIN_DITTY_FRAME_COUNT : 1;
+		DeadShipPtr->life_span = MusicStarted ? MinDittyFrameCount : 1;
 		if (DeadStarShipPtr == winnerStarShip)
 		{ // This ship died but won the battle. We need to keep it alive
 			// longer than the dead opponent ship so that the winning player
 			// picks last.
-			DeadShipPtr->life_span = MIN_DITTY_FRAME_COUNT + 1;
+			DeadShipPtr->life_span = MinDittyFrameCount + 1;
 		}
 		DeadShipPtr->death_func = new_ship;
 		DeadShipPtr->preprocess_func = preprocess_dead_ship;
@@ -760,7 +761,7 @@ void ship_death(ELEMENT* ShipPtr)
 	RecordShipDeath(ShipPtr);
 }
 
-#define START_ION_COLOR BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A)
+static constexpr auto StartIonColor {BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A)};
 
 // Called from the death_func of an element for an ion trail pixel, or a
 // ship shadow (when warping in/out).
@@ -800,6 +801,8 @@ cycle_ion_trail(ELEMENT* ElementPtr)
 	} // else, the element disappears.
 }
 
+static constexpr auto IonLife {1};
+
 void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 {
 	assert(ElementPtr->state_flags & PlayerShip);
@@ -807,7 +810,6 @@ void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 	HELEMENT hIonElement {AllocElement()};
 	if (hIonElement)
 	{
-#define ION_LIFE 1
 		uint16_t angle {};
 		GFXRECT r;
 		ELEMENT* IonElementPtr {};
@@ -822,7 +824,7 @@ void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 		LockElement(hIonElement, &IonElementPtr);
 		IonElementPtr->playerNr = NeutralPlayerNum;
 		IonElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
-		IonElementPtr->thrust_wait = ION_LIFE;
+		IonElementPtr->thrust_wait = IonLife;
 		IonElementPtr->life_span = IonElementPtr->thrust_wait;
 		// When the element "dies", in the death_func
 		// 'cycle_ion_trail', it is given new life a number of
@@ -843,7 +845,7 @@ void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 			IonElementPtr->next.image.farray = IonElementPtr->current.image.farray;
 		}
 		SetPrimColor(&DisplayArray[IonElementPtr->PrimIndex],
-					 START_ION_COLOR);
+					 StartIonColor);
 		IonElementPtr->colorCycleIndex = 0;
 		IonElementPtr->current.location = ElementPtr->current.location;
 		IonElementPtr->current.location.x +=
@@ -867,6 +869,8 @@ void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 		UnlockElement(hIonElement);
 	}
 }
+
+static constexpr auto TransitionLife {1};
 
 // Preprocess function for spawning a ship into or out of battle.
 // Used when a new ship warps in, or a ship escapes by warping out, but not
@@ -923,8 +927,9 @@ void ship_transition(ELEMENT* ElementPtr)
 		}
 		else if ((hShipImage = AllocElement()))
 		{
-#define TRANSITION_SPEED DISPLAY_TO_WORLD(RES_SCALE(40))
-#define TRANSITION_LIFE 1
+			const auto TransitionSpeed = [&] {
+				return DISPLAY_TO_WORLD(RES_SCALE(40));
+			};
 			uint16_t angle {};
 
 			PutElement(hShipImage);
@@ -934,7 +939,7 @@ void ship_transition(ELEMENT* ElementPtr)
 			LockElement(hShipImage, &ShipImagePtr);
 			ShipImagePtr->playerNr = NeutralPlayerNum;
 			ShipImagePtr->state_flags = Appearing | FiniteLife | Nonsolid;
-			ShipImagePtr->thrust_wait = TRANSITION_LIFE;
+			ShipImagePtr->thrust_wait = TransitionLife;
 			ShipImagePtr->life_span = ShipImagePtr->thrust_wait;
 			// When the element "dies", in the death_func
 			// 'cycle_ion_trail', it is given new life a number of
@@ -942,16 +947,16 @@ void ship_transition(ELEMENT* ElementPtr)
 			SetPrimType(&DisplayArray[ShipImagePtr->PrimIndex],
 						STAMPFILL_PRIM);
 			SetPrimColor(&DisplayArray[ShipImagePtr->PrimIndex],
-						 START_ION_COLOR);
+						 StartIonColor);
 			ShipImagePtr->colorCycleIndex = 0;
 			ShipImagePtr->current.image = ElementPtr->current.image;
 			ShipImagePtr->current.location = ElementPtr->current.location;
 			if (!(ElementPtr->state_flags & PlayerShip))
 			{
 				ShipImagePtr->current.location.x +=
-					COSINE(angle, TRANSITION_SPEED);
+					COSINE(angle, TransitionSpeed());
 				ShipImagePtr->current.location.y +=
-					SINE(angle, TRANSITION_SPEED);
+					SINE(angle, TransitionSpeed());
 				ElementPtr->preprocess_func = nullptr;
 			}
 			else if (ElementPtr->crew_level)
@@ -959,8 +964,8 @@ void ship_transition(ELEMENT* ElementPtr)
 				// JMS_GFX: Circumventing overflows by using temp variables
 				// instead of subtracting straight from the GFXPOINT sized
 				// ShipImagePtr->current.location.
-				const int32_t temp_x = (int32_t)ShipImagePtr->current.location.x - COSINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1);
-				const int32_t temp_y = (int32_t)ShipImagePtr->current.location.y - SINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1);
+				const int32_t temp_x = (int32_t)ShipImagePtr->current.location.x - COSINE(angle, TransitionSpeed()) * (ElementPtr->life_span - 1);
+				const int32_t temp_y = (int32_t)ShipImagePtr->current.location.y - SINE(angle, TransitionSpeed()) * (ElementPtr->life_span - 1);
 
 				ShipImagePtr->current.location.x = WRAP_X(temp_x);
 				ShipImagePtr->current.location.y = WRAP_Y(temp_y);

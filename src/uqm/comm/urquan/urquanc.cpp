@@ -27,23 +27,23 @@ static LOCDATA urquan_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		URQUAN_PMAP_ANIM, /* AlienFrame */
-		URQUAN_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		UrquanPmapAnim, /* AlienFrame */
+		UrquanFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		URQUAN_COLOR_MAP, /* AlienColorMap */
-		URQUAN_MUSIC, /* AlienSong */
+		UrquanColorMap, /* AlienColorMap */
+		UrquanMusic, /* AlienSong */
 		{
-								NullResource,		 /* AlienAltFrame */
-			URQUAN_ALTCOLOR_MAP, /* AlienAltColorMap */
-			URQUAN_PROBE_MUSIC,	 /* AlienAltSong */
+								NullResource,	   /* AlienAltFrame */
+			UrquanAltcolorMap, /* AlienAltColorMap */
+			UrquanProbeMusic,  /* AlienAltSong */
 		},
-		URQUAN_CONVERSATION_PHRASES, /* PlayerPhrases */
+		UrquanConversationPhrases, /* PlayerPhrases */
 		9, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

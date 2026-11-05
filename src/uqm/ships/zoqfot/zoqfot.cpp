@@ -24,42 +24,42 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 10
-#define MAX_ENERGY 10
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 4
-#define MAX_THRUST 40
-#define THRUST_INCREMENT 10
-#define THRUST_WAIT 0
-#define TURN_WAIT 1
-#define SHIP_MASS 5
+static constexpr auto MaxCrew {10};
+static constexpr auto MaxEnergy {10};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {4};
+static constexpr auto MaxThrust {40};
+static constexpr auto ThrustIncrement {10};
+static constexpr auto ThrustWait {0};
+static constexpr auto TurnWait {1};
+static constexpr auto ShipMass {5};
 
 // Main weapon
-#define WEAPON_ENERGY_COST 1
-#define WEAPON_WAIT 0
-#define ZOQFOTPIK_OFFSET RES_SCALE(13)
-#define MISSILE_OFFSET 0
-#define MISSILE_SPEED DISPLAY_TO_WORLD(10)
+static constexpr auto WeaponEnergyCost {1};
+static constexpr auto WeaponWait {0};
+static auto ZoqfotpikOffset() { return RES_SCALE(13); }
+static constexpr auto MissileOffset {0};
+static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(10)};
 /* Used by the cyborg only. */
-#define MISSILE_LIFE 10
-#define MISSILE_RANGE (MISSILE_SPEED * MISSILE_LIFE)
-#define MISSILE_DAMAGE 1
-#define MISSILE_HITS 1
-#define SPIT_WAIT 2
+static constexpr auto MissileLife {10};
+static constexpr auto MissileRange {(MissileSpeed * MissileLife)};
+static constexpr auto MissileDamage {1};
+static constexpr auto MissileHits {1};
+static constexpr auto SpitWait {2};
 /* Controls the main weapon color change animation's speed.
-		 * The animation advances one frame every SPIT_WAIT frames. */
+		 * The animation advances one frame every SpitWait frames. */
 
 // Tongue
-#define SPECIAL_ENERGY_COST (MAX_ENERGY * 3 / 4)
-#define SPECIAL_WAIT 6
-#define TONGUE_SPEED 0
-#define TONGUE_HITS 1
-#define TONGUE_DAMAGE 12
-#define TONGUE_OFFSET RES_SCALE(4)
+static constexpr auto SpecialEnergyCost {(MaxEnergy * 3 / 4)};
+static constexpr auto SpecialWait {6};
+static constexpr auto TongueSpeed {0};
+static constexpr auto TongueHits {1};
+static constexpr auto TongueDamage {12};
+static auto TongueOffset() { return RES_SCALE(4); }
 
 // HdResolutionFactor
-#define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
-#define MISSILE_RANGE_HD (MISSILE_SPEED_HD * MISSILE_LIFE)
+static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
+static auto MissileRangeHd() { return (MissileSpeedHd() * MissileLife); }
 
 static RACE_DESC zoqfotpik_desc =
 	{
@@ -67,11 +67,11 @@ static RACE_DESC zoqfotpik_desc =
 		 "stinger",
 		 FiresFore,
 		 6, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 ZOQFOTPIK_RACE_STRINGS,
-		 ZOQFOTPIK_ICON_MASK_PMAP_ANIM,
-		 ZOQFOTPIK_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 ZoqfotpikRaceStrings,
+		 ZoqfotpikIconMaskPmapAnim,
+		 ZoqfotpikMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -83,38 +83,38 @@ static RACE_DESC zoqfotpik_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 ZOQFOTPIK_BIG_MASK_PMAP_ANIM,
-			 ZOQFOTPIK_MED_MASK_PMAP_ANIM,
-			 ZOQFOTPIK_SML_MASK_PMAP_ANIM,
+			 ZoqfotpikBigMaskPmapAnim,
+			 ZoqfotpikMedMaskPmapAnim,
+			 ZoqfotpikSmlMaskPmapAnim,
 		 },
 		 {
-			 SPIT_BIG_MASK_PMAP_ANIM,
-			 SPIT_MED_MASK_PMAP_ANIM,
-			 SPIT_SML_MASK_PMAP_ANIM,
+			 SpitBigMaskPmapAnim,
+			 SpitMedMaskPmapAnim,
+			 SpitSmlMaskPmapAnim,
 		 },
 		 {
-			 STINGER_BIG_MASK_PMAP_ANIM,
-			 STINGER_MED_MASK_PMAP_ANIM,
-			 STINGER_SML_MASK_PMAP_ANIM,
+			 StingerBigMaskPmapAnim,
+			 StingerMedMaskPmapAnim,
+			 StingerSmlMaskPmapAnim,
 		 },
-		 {ZOQFOTPIK_CAPTAIN_MASK_PMAP_ANIM,
+		 {ZoqfotpikCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 ZOQFOTPIK_VICTORY_SONG,
-		 ZOQFOTPIK_SHIP_SOUNDS,
+		 ZoqfotpikVictorySong,
+		 ZoqfotpikShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -122,7 +122,7 @@ static RACE_DESC zoqfotpik_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_RANGE,
+			MissileRange,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -166,7 +166,7 @@ spit_preprocess(ELEMENT* ElementPtr)
 							  (int16_t)SINE(angle, speed));
 
 		/* turn_wait is abused here to control the animation speed. */
-		ElementPtr->turn_wait = SPIT_WAIT;
+		ElementPtr->turn_wait = SpitWait;
 		ElementPtr->state_flags |= Changing;
 	}
 }
@@ -185,15 +185,15 @@ initialize_spit(ELEMENT* ShipPtr, HELEMENT SpitArray[])
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = ZOQFOTPIK_OFFSET;
+	MissileBlock.pixoffs = ZoqfotpikOffset();
 	MissileBlock.speed = DISPLAY_TO_WORLD(
 							 RES_SCALE(GetFrameCount(StarShipPtr->RaceDescPtr->ship_data.weapon[0])))
 					  << 1;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = spit_preprocess;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset;
 	SpitArray[0] = initialize_missile(&MissileBlock);
 
 	if (IsHd() && SpitArray[0])
@@ -251,12 +251,12 @@ spawn_tongue(ELEMENT* ElementPtr)
 	TongueBlock.sender = ElementPtr->playerNr;
 	TongueBlock.flags = IgnoreSimilar;
 	TongueBlock.pixoffs = 0;
-	TongueBlock.speed = TONGUE_SPEED;
-	TongueBlock.hit_points = TONGUE_HITS;
-	TongueBlock.damage = TONGUE_DAMAGE;
+	TongueBlock.speed = TongueSpeed;
+	TongueBlock.hit_points = TongueHits;
+	TongueBlock.damage = TongueDamage;
 	TongueBlock.life = 1;
 	TongueBlock.preprocess_func = 0;
-	TongueBlock.blast_offs = TONGUE_OFFSET;
+	TongueBlock.blast_offs = TongueOffset();
 	HELEMENT Tongue {initialize_missile(&TongueBlock)};
 	if (Tongue)
 	{
@@ -322,7 +322,7 @@ zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		if (lpEnemyEvalDesc->ObjectPtr
 			&& lpEnemyEvalDesc->which_turn <= 4
 #ifdef NEVER
-			&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= SPECIAL_ENERGY_COST
+			&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= SpecialEnergyCost
 #endif /* NEVER */
 		)
 		{
@@ -383,7 +383,7 @@ zoqfotpik_postprocess(ELEMENT* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
-		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
 		ProcessSound(GetSound(
 						 /* STICK_OUT_TONGUE */
@@ -405,15 +405,15 @@ init_zoqfotpik(void)
 {
 	if (IsHd())
 	{
-		zoqfotpik_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		zoqfotpik_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		zoqfotpik_desc.cyborg_control.WeaponRange = MISSILE_RANGE_HD;
+		zoqfotpik_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		zoqfotpik_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		zoqfotpik_desc.cyborg_control.WeaponRange = MissileRangeHd();
 	}
 	else
 	{
-		zoqfotpik_desc.characteristics.max_thrust = MAX_THRUST;
-		zoqfotpik_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		zoqfotpik_desc.cyborg_control.WeaponRange = MISSILE_RANGE;
+		zoqfotpik_desc.characteristics.max_thrust = MaxThrust;
+		zoqfotpik_desc.characteristics.thrust_increment = ThrustIncrement;
+		zoqfotpik_desc.cyborg_control.WeaponRange = MissileRange;
 	}
 
 	zoqfotpik_desc.postprocess_func = zoqfotpik_postprocess;

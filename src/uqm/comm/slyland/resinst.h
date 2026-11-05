@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define SLYLAND_COLOR_MAP "comm.probe.colortable"
-#define SLYLAND_CONVERSATION_PHRASES "comm.probe.dialogue"
-#define SLYLAND_FONT "comm.probe.font"
-#define SLYLAND_MUSIC "comm.probe.music"
-#define SLYLAND_PMAP_ANIM "comm.probe.graphics"
-#define SLYLAND_SCRIPT "comm.probe.script"
+inline constexpr uqgsl::czstring SlylandColorMap {"comm.probe.colortable"};
+inline constexpr uqgsl::czstring SlylandConversationPhrases {"comm.probe.dialogue"};
+inline constexpr uqgsl::czstring SlylandFont {"comm.probe.font"};
+inline constexpr uqgsl::czstring SlylandMusic {"comm.probe.music"};
+inline constexpr uqgsl::czstring SlylandPmapAnim {"comm.probe.graphics"};

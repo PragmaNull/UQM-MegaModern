@@ -2,4 +2,4 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define SUPOX_CODE "ship.supox.code"
+inline constexpr uqgsl::czstring SupoxCode {"ship.supox.code"};

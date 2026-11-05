@@ -31,9 +31,9 @@ extern "C" {
 #endif
 
 // Surface magnification shift (x4)
-#define MAG_SHIFT 2
+inline constexpr auto MagShift {2};
 
-#define NUM_TEXT_FRAMES 32
+inline constexpr auto NumTextFrames {32};
 
 typedef struct
 {
@@ -59,7 +59,7 @@ typedef struct
 	char AmountBuf[40];
 	TEXT MineralText[3];
 
-	Color ColorCycle[NUM_TEXT_FRAMES >> 1];
+	Color ColorCycle[NumTextFrames >> 1];
 
 	uint8_t TectonicsChance;
 	uint8_t WeatherChance;

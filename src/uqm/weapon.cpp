@@ -44,13 +44,14 @@ weapon_collision_cb(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 }
 
 
+static constexpr auto LaserLife {1};
+
 HELEMENT
 initialize_laser(LASER_BLOCK* pLaserBlock)
 {
 	HELEMENT hLaserElement {AllocElement()};
 	if (hLaserElement)
 	{
-#define LASER_LIFE 1
 		ELEMENT* LaserElementPtr {};
 
 		LockElement(hLaserElement, &LaserElementPtr);
@@ -59,7 +60,7 @@ initialize_laser(LASER_BLOCK* pLaserBlock)
 		LaserElementPtr->mass_points = 1;
 		LaserElementPtr->state_flags = Appearing | FiniteLife
 									 | pLaserBlock->flags;
-		LaserElementPtr->life_span = LASER_LIFE;
+		LaserElementPtr->life_span = LaserLife;
 		LaserElementPtr->collision_func = weapon_collision_cb;
 		LaserElementPtr->blast_offset = 1;
 

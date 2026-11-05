@@ -165,19 +165,19 @@ zoomRadiusForLocation(uint8_t location)
 	}
 	else
 	{ // In inner system view; always max zoom
-		return MAX_ZOOM_RADIUS;
+		return MaxZoomRadius;
 	}
 }
 
 static inline void
 adjustDeltaVforZoom(int16_t zoom, int16_t* dx, int16_t* dy)
 {
-	if (zoom == MIN_ZOOM_RADIUS)
+	if (zoom == MinZoomRadius)
 	{
 		*dx >>= 2;
 		*dy >>= 2;
 	}
-	else if (zoom < MAX_ZOOM_RADIUS)
+	else if (zoom < MaxZoomRadius)
 	{
 		*dx >>= 1;
 		*dy >>= 1;
@@ -202,10 +202,12 @@ getFlagshipLocation(void)
 FRAME Xform = NullResource;
 FRAME Ywing = NullResource;
 
+static constexpr auto TrackWait {5};
+static constexpr auto OrbitSpeed {60};
+
 static void
 ip_group_preprocess(ELEMENT* ElementPtr)
 {
-#define TRACK_WAIT 5
 	uint8_t task {};
 	uint8_t group_loc {};
 	GFXPOINT dest_pt;
@@ -280,7 +282,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 		{
 			/* if intercepting flagship */
 			target_loc = flagship_loc;
-			if (EPtr->thrust_wait > TRACK_WAIT)
+			if (EPtr->thrust_wait > TrackWait)
 			{
 				EPtr->thrust_wait = 0;
 				ZeroVelocityComponents(&EPtr->velocity);
@@ -297,7 +299,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 
 			if (group_loc != 0) /* if in planetary views */
 			{
-				detect_dist *= (MAX_ZOOM_RADIUS / MIN_ZOOM_RADIUS);
+				detect_dist *= (MaxZoomRadius / MinZoomRadius);
 				if (GroupPtr->race_id == URQUAN_DRONE_SHIP)
 				{
 					detect_dist <<= 1;
@@ -459,8 +461,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 
 			if (EPtr->thrust_wait && GroupPtr->dest_loc != IpnlInterceptPlayer)
 			{
-#define ORBIT_SPEED 60
-				speed = ORBIT_SPEED;
+				speed = OrbitSpeed;
 				if (task == ON_STATION)
 				{
 					speed >>= 1;
@@ -469,7 +470,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 			else
 			{
 				speed = RaceIPSpeed((RACE_ID)GroupPtr->race_id);
-				EPtr->thrust_wait = TRACK_WAIT;
+				EPtr->thrust_wait = TrackWait;
 			}
 
 			vdx = COSINE(angle, speed);
@@ -522,7 +523,7 @@ PartialRevolution:
 CheckGetAway:
 				dest_pt = displayToLocation(
 					MAKE_POINT(SisScreenWidth(), SisScreenHeight()),
-					MAX_ZOOM_RADIUS);
+					MaxZoomRadius);
 				if (!((GroupPtr->loc.x > -dest_pt.x
 					   && GroupPtr->loc.y > -dest_pt.y)
 					  && (GroupPtr->loc.x < dest_pt.x
@@ -577,7 +578,7 @@ CheckGetAway:
 					entryPt.y = RES_SCALE(OrigSisScreenHeight() >> 1)
 							  - SINE(angle, SisScreenHeight() * 9 / 16);
 					GroupPtr->loc = displayToLocation(entryPt,
-													  MAX_ZOOM_RADIUS);
+													  MaxZoomRadius);
 					group_loc = target_loc;
 					GroupPtr->sys_loc = target_loc;
 				}
@@ -898,7 +899,7 @@ spawn_ip_group(IP_GROUP* GroupPtr)
 		{
 			GroupPtr->melee_icon =
 				CaptureDrawable(
-					LoadGraphic(SLYLANDRO_SML_MASK_PMAP_ANIM));
+					LoadGraphic(SlylandroSmlMaskPmapAnim));
 			IPSHIPElementPtr->current.image.frame = SetAbsFrameIndex(
 				GroupPtr->melee_icon, (uqm::random().next() % (15 - 1) + 1));
 			// randomize initial sprite
@@ -934,7 +935,7 @@ spawn_ip_group(IP_GROUP* GroupPtr)
 	}
 }
 
-#define FLIP_WAIT 42
+static constexpr auto FlipWait {42};
 
 static void
 flag_ship_preprocess(ELEMENT* ElementPtr)
@@ -959,7 +960,7 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 			(void)hPredElement; // satisfy compiler (unused variable)
 		}
 
-		ElementPtr->thrust_wait = FLIP_WAIT;
+		ElementPtr->thrust_wait = FlipWait;
 	}
 
 	{
@@ -1073,7 +1074,7 @@ spawn_flag_ship(void)
 			FlagShipElementPtr->state_flags |= Nonsolid;
 		}
 		FlagShipElementPtr->life_span = NormalLife;
-		FlagShipElementPtr->thrust_wait = FLIP_WAIT;
+		FlagShipElementPtr->thrust_wait = FlipWait;
 		SetPrimType(&DisplayArray[FlagShipElementPtr->PrimIndex], STAMP_PRIM);
 		FlagShipElementPtr->current.image.farray =
 			&uqm::flagship().shipStamp.frame;

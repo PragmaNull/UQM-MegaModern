@@ -2,10 +2,9 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define SHOFIXTI_COLOR_MAP "comm.shofixti.colortable"
-#define SHOFIXTI_CONVERSATION_PHRASES "comm.shofixti.dialogue"
-#define SHOFIXTI_FONT "comm.shofixti.font"
-#define SHOFIXTI_MUSIC "comm.shofixti.music"
-#define SHOFIXTI_PMAP_ANIM "comm.shofixti.graphics"
-#define SHOFIXTI_ALT_PMAP_ANIM "comm.shofixti.alt.graphics"
-#define SHOFIXTI_SCRIPT "comm.shofixti.script"
+inline constexpr uqgsl::czstring ShofixtiColorMap {"comm.shofixti.colortable"};
+inline constexpr uqgsl::czstring ShofixtiConversationPhrases {"comm.shofixti.dialogue"};
+inline constexpr uqgsl::czstring ShofixtiFont {"comm.shofixti.font"};
+inline constexpr uqgsl::czstring ShofixtiMusic {"comm.shofixti.music"};
+inline constexpr uqgsl::czstring ShofixtiPmapAnim {"comm.shofixti.graphics"};
+inline constexpr uqgsl::czstring ShofixtiAltPmapAnim {"comm.shofixti.alt.graphics"};

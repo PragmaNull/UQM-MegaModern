@@ -2,15 +2,14 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define COMMANDER_COLOR_MAP "comm.commander.colortable"
-#define COMMANDER_CONVERSATION_PHRASES "comm.commander.dialogue"
-#define COMMANDER_FONT "comm.commander.font"
-#define COMMANDER_LOWPOW_MUSIC "comm.commander.lowpower.music"
-#define COMMANDER_MUSIC "comm.commander.music"
-#define COMMANDER_PMAP_ANIM "comm.commander.graphics"
-#define COMMANDER_INIT_PMAP_ANIM "comm.starbas.graphics"
-#define COMMANDER_PMAP_ANIM_RED "comm.commander.red.graphics"
-#define COMMANDER_SCRIPT "comm.commander.script"
-#define STARBASE_ALT_MUSIC "comm.starbase.music"
-#define STARBASE_CONVERSATION_PHRASES "comm.starbase.dialogue"
-#define STARBASE_SCRIPT "comm.starbase.script"
+inline constexpr uqgsl::czstring CommanderColorMap {"comm.commander.colortable"};
+inline constexpr uqgsl::czstring CommanderConversationPhrases {"comm.commander.dialogue"};
+inline constexpr uqgsl::czstring CommanderFont {"comm.commander.font"};
+inline constexpr uqgsl::czstring CommanderLowpowMusic {"comm.commander.lowpower.music"};
+inline constexpr uqgsl::czstring CommanderMusic {"comm.commander.music"};
+inline constexpr uqgsl::czstring CommanderPmapAnim {"comm.commander.graphics"};
+inline constexpr uqgsl::czstring CommanderInitPmapAnim {"comm.starbas.graphics"};
+inline constexpr uqgsl::czstring CommanderPmapAnimRed {"comm.commander.red.graphics"};
+
+inline constexpr uqgsl::czstring StarbaseAltMusic {"comm.starbase.music"};
+inline constexpr uqgsl::czstring StarbaseConversationPhrases {"comm.starbase.dialogue"};

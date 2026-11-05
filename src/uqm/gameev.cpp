@@ -749,6 +749,8 @@ spathi_shield_event(int arg)
 	return 0;
 }
 
+static constexpr auto MaddLength {128};
+
 static int
 advance_ilwrath_mission(int arg)
 {
@@ -780,7 +782,6 @@ advance_ilwrath_mission(int arg)
 		}
 		else
 		{
-#define MADD_LENGTH 128
 			int16_t strength_loss {};
 
 			if (IlwrathPtr->days_left == 0)
@@ -788,12 +789,12 @@ advance_ilwrath_mission(int arg)
 				SET_GAME_STATE(ILWRATH_FIGHT_THRADDASH, 1);
 				SET_GAME_STATE(HELIX_UNPROTECTED, 1);
 				strength_loss = (int16_t)IlwrathPtr->actual_strength;
-				IlwrathPtr->growth = (uint8_t)(-strength_loss / MADD_LENGTH);
+				IlwrathPtr->growth = (uint8_t)(-strength_loss / MaddLength);
 				IlwrathPtr->growth_fract =
-					(uint8_t)(((strength_loss % MADD_LENGTH) << 8) / MADD_LENGTH);
+					(uint8_t)(((strength_loss % MaddLength) << 8) / MaddLength);
 				SetRaceDest(ILWRATH_SHIP, (conflict.x + thradd_home.x) / 2,
 							(conflict.y + thradd_home.y) / 2,
-							MADD_LENGTH - 1, ADVANCE_ILWRATH_MISSION);
+							MaddLength - 1, ADVANCE_ILWRATH_MISSION);
 
 				if (IsExtended() && ThraddPtr->allied_state == GOOD_GUY)
 				{
@@ -804,9 +805,9 @@ advance_ilwrath_mission(int arg)
 					strength_loss = (int16_t)ThraddPtr->actual_strength;
 				}
 
-				ThraddPtr->growth = (uint8_t)(-strength_loss / MADD_LENGTH);
+				ThraddPtr->growth = (uint8_t)(-strength_loss / MaddLength);
 				ThraddPtr->growth_fract =
-					(uint8_t)(((strength_loss % MADD_LENGTH) << 8) / MADD_LENGTH);
+					(uint8_t)(((strength_loss % MaddLength) << 8) / MaddLength);
 
 				if ((IsExtended() && ThraddPtr->allied_state != GOOD_GUY) || !IsExtended())
 				{

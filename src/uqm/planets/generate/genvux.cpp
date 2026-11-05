@@ -85,7 +85,7 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 			// called. Is it safe to remove one, or does this change
 			// the RNG so that the outcome is different?
 			pPlanet->data_index = REDUX_WORLD;
-			pPlanet->radius = EARTH_RADIUS * 212L / 100;
+			pPlanet->radius = EarthRadius * 212L / 100;
 			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -96,7 +96,7 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 			{
 				pPlanet->data_index = REDUX_WORLD;
 				pPlanet->NumPlanets = 1;
-				pPlanet->radius = EARTH_RADIUS * 42L / 100;
+				pPlanet->radius = EarthRadius * 42L / 100;
 				angle = HalfCircle + Octant;
 			}
 			else /* if (CurStarDescPtr()->Index == VUX_BEAST_DEFINED) */
@@ -109,7 +109,7 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 
 				angle = HalfCircle - Octant;
 				pPlanet->data_index = WATER_WORLD;
-				pPlanet->radius = EARTH_RADIUS * 110L / 100;
+				pPlanet->radius = EarthRadius * 110L / 100;
 				pPlanet->NumPlanets = 0;
 			}
 
@@ -143,7 +143,7 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 static bool
 GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
-	if ((matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if ((matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		 && (CurStarDescPtr()->Index == VUX_DEFINED
 			 || (CurStarDescPtr()->Index == MAIDENS_DEFINED
 				 && !GET_GAME_STATE(ZEX_IS_DEAD))))
@@ -188,7 +188,7 @@ GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		}
 	}
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (CurStarDescPtr()->Index == MAIDENS_DEFINED)
 		{
@@ -223,7 +223,7 @@ GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 
 	GenerateDefault_generateOrbital(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
 		solarSys->SysInfo.PlanetInfo.Weather = 2;
@@ -238,7 +238,7 @@ GenerateVux_generateEnergy(const SOLARSYS_STATE* solarSys,
 						   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
@@ -249,15 +249,15 @@ GenerateVux_generateEnergy(const SOLARSYS_STATE* solarSys,
 
 		if (info)
 		{
-			info->loc_pt.x = SCALED_MAP_WIDTH / 3;
-			info->loc_pt.y = MAP_HEIGHT * 5 / 8;
+			info->loc_pt.x = ScaledMapWidth() / 3;
+			info->loc_pt.y = MapHeight() * 5 / 8;
 		}
 
 		return 1; // only matters when count is requested
 	}
 
 	if (CurStarDescPtr()->Index == VUX_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
@@ -270,7 +270,7 @@ GenerateVux_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						 uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		assert(!GET_GAME_STATE(SHOFIXTI_MAIDENS) && whichNode == 0);
 
@@ -284,7 +284,7 @@ GenerateVux_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	}
 
 	if (CurStarDescPtr()->Index == VUX_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
 		GenerateDefault_landerReportCycle(solarSys);
@@ -295,14 +295,14 @@ GenerateVux_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-#define LIFE_BOOL (IsExtended() && GET_GAME_STATE(VUX_BEAST))
+static auto LifeBool() { return (IsExtended() && GET_GAME_STATE(VUX_BEAST)); }
 
 static uint16_t
 GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
 						 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == MAIDENS_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const static int8_t life[] =
 			{
@@ -315,7 +315,7 @@ GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
 			{
 				9, 9, 9, 9, 9,		/* Carousel Beast */
 				18, 18, 18, 18, 18, /* Penguin Cyclops */
-				ZEX_BEAUTY,			/* VUX Beast */
+				ZexBeauty,			/* VUX Beast */
 				-1					/* term */
 			};
 
@@ -325,11 +325,11 @@ GenerateVux_generateLife(const SOLARSYS_STATE* solarSys,
 	}
 
 	if (CurStarDescPtr()->Index == VUX_BEAST_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const static int8_t life[] =
 			{
-				ZEX_BEAUTY,	   /* VUX Beast */
+				ZexBeauty,	   /* VUX Beast */
 							   // Must be the first node, see pickupLife() below
 				3, 3, 3, 3, 3, /* Whackin' Bush */
 				8, 8, 8, 8, 8, /* Glowing Medusa */
@@ -347,7 +347,7 @@ GenerateVux_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 					   uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == VUX_BEAST_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (whichNode == 0)
 		{ // Picked up Zex' Beauty
@@ -367,8 +367,8 @@ GenerateVux_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		return true; // picked up
 	}
 
-	if (LIFE_BOOL && CurStarDescPtr()->Index == MAIDENS_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (LifeBool() && CurStarDescPtr()->Index == MAIDENS_DEFINED
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (whichNode == 10)
 		{ // Picked up Zex' Beauty... Again.

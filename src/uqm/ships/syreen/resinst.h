@@ -2,15 +2,15 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define DAGGER_BIG_MASK_PMAP_ANIM "ship.syreen.graphics.dagger.large"
-#define DAGGER_MED_MASK_PMAP_ANIM "ship.syreen.graphics.dagger.medium"
-#define DAGGER_SML_MASK_PMAP_ANIM "ship.syreen.graphics.dagger.small"
-#define SYREEN_BIG_MASK_PMAP_ANIM "ship.syreen.graphics.penetrator.large"
-#define SYREEN_CAPTAIN_MASK_PMAP_ANIM "ship.syreen.graphics.captain"
-#define SYREEN_ICON_MASK_PMAP_ANIM "ship.syreen.icons"
-#define SYREEN_MED_MASK_PMAP_ANIM "ship.syreen.graphics.penetrator.medium"
-#define SYREEN_MICON_MASK_PMAP_ANIM "ship.syreen.meleeicons"
-#define SYREEN_RACE_STRINGS "ship.syreen.text"
-#define SYREEN_SHIP_SOUNDS "ship.syreen.sounds"
-#define SYREEN_SML_MASK_PMAP_ANIM "ship.syreen.graphics.penetrator.small"
-#define SYREEN_VICTORY_SONG "ship.syreen.ditty"
+inline constexpr uqgsl::czstring DaggerBigMaskPmapAnim {"ship.syreen.graphics.dagger.large"};
+inline constexpr uqgsl::czstring DaggerMedMaskPmapAnim {"ship.syreen.graphics.dagger.medium"};
+inline constexpr uqgsl::czstring DaggerSmlMaskPmapAnim {"ship.syreen.graphics.dagger.small"};
+inline constexpr uqgsl::czstring SyreenBigMaskPmapAnim {"ship.syreen.graphics.penetrator.large"};
+inline constexpr uqgsl::czstring SyreenCaptainMaskPmapAnim {"ship.syreen.graphics.captain"};
+inline constexpr uqgsl::czstring SyreenIconMaskPmapAnim {"ship.syreen.icons"};
+inline constexpr uqgsl::czstring SyreenMedMaskPmapAnim {"ship.syreen.graphics.penetrator.medium"};
+inline constexpr uqgsl::czstring SyreenMiconMaskPmapAnim {"ship.syreen.meleeicons"};
+inline constexpr uqgsl::czstring SyreenRaceStrings {"ship.syreen.text"};
+inline constexpr uqgsl::czstring SyreenShipSounds {"ship.syreen.sounds"};
+inline constexpr uqgsl::czstring SyreenSmlMaskPmapAnim {"ship.syreen.graphics.penetrator.small"};
+inline constexpr uqgsl::czstring SyreenVictorySong {"ship.syreen.ditty"};

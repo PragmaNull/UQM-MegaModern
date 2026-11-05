@@ -92,7 +92,7 @@ GenerateZoqFotPik_generatePlanets(SOLARSYS_STATE* solarSys)
 
 			pPlanet->data_index = WATER_WORLD;
 			pPlanet->NumPlanets = 1;
-			pPlanet->radius = EARTH_RADIUS * 138L / 100;
+			pPlanet->radius = EarthRadius * 138L / 100;
 			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -143,7 +143,7 @@ GenerateZoqFotPik_generateMoons(SOLARSYS_STATE* solarSys,
 	GenerateDefault_generateMoons(solarSys, planet);
 
 	if (CurStarDescPtr()->Index == ZOQ_COLONY2_DEFINED
-		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET)
+		&& matchWorld(solarSys, planet, MatchPbyte, MatchPlanet)
 		&& IsExtended())
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
@@ -160,7 +160,7 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 								  PLANET_DESC* world)
 {
 	if (CurStarDescPtr()->Index == ZOQFOT_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (StartSphereTracking(ZOQFOTPIK_SHIP))
 		{
@@ -218,7 +218,7 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 	if (((CurStarDescPtr()->Index == ZOQ_COLONY0_DEFINED
 		  || CurStarDescPtr()->Index == ZOQ_COLONY1_DEFINED
 		  || CurStarDescPtr()->Index == ZOQ_COLONY3_DEFINED)
-		 && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		 && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 		&& IsExtended())
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
@@ -229,7 +229,7 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 	}
 
 	if (CurStarDescPtr()->Index == ZOQ_COLONY2_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
+		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte)
 		&& IsExtended())
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
@@ -243,7 +243,7 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 
 	if ((CurStarDescPtr()->Index == ZOQFOT_DEFINED || IsExtended())
 		&& CurStarDescPtr()->Index != ZOQ_COLONY2_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
 		const uint32_t rand = SysGenRNG->seed();
@@ -255,7 +255,7 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 	}
 
 	if (CurStarDescPtr()->Index == ZOQ_COLONY2_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
+		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte)
 		&& IsExtended() && !isDifficulty(uqm::Difficulty::Hard))
 	{
 		const uint32_t rand = SysGenRNG->seed();
@@ -269,13 +269,14 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
+static constexpr auto NumRuins {4};
+
 static uint16_t
 GenerateZoqFotPik_generateEnergy(const SOLARSYS_STATE* solarSys,
 								 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-#define NUM_RUINS 4
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (CurStarDescPtr()->Index == ZOQFOT_DEFINED)
 		{
@@ -289,16 +290,16 @@ GenerateZoqFotPik_generateEnergy(const SOLARSYS_STATE* solarSys,
 			&& IsExtended())
 		{
 			return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN,
-									   NUM_RUINS, 0, whichNode, info);
+									   NumRuins, 0, whichNode, info);
 		}
 	}
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte)
 		&& CurStarDescPtr()->Index == ZOQ_COLONY2_DEFINED
 		&& IsExtended())
 	{
 		return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN,
-								   NUM_RUINS, 0, whichNode, info);
+								   NumRuins, 0, whichNode, info);
 	}
 
 	return 0;
@@ -308,7 +309,7 @@ static bool
 GenerateZoqFotPik_pickupEnergy(SOLARSYS_STATE* solarSys,
 							   PLANET_DESC* world, uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& CurStarDescPtr()->Index != ZOQ_COLONY2_DEFINED)
 	{
 		// Standard ruins report
@@ -318,7 +319,7 @@ GenerateZoqFotPik_pickupEnergy(SOLARSYS_STATE* solarSys,
 	}
 
 	if (CurStarDescPtr()->Index == ZOQ_COLONY2_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		GenerateDefault_landerReportCycle(solarSys);
 

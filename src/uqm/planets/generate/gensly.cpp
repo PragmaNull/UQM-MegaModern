@@ -77,7 +77,7 @@ GenerateSlylandro_generateName(const SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& GET_GAME_STATE(SLYLANDRO_HOME_VISITS))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
@@ -97,7 +97,7 @@ static bool
 GenerateSlylandro_generateOrbital(SOLARSYS_STATE* solarSys,
 								  PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		InitCommunication(SLYLANDRO_HOME_CONVERSATION);
 		return true;

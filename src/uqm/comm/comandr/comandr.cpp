@@ -36,23 +36,23 @@ static LOCDATA commander_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		COMMANDER_PMAP_ANIM, /* AlienFrame */
-		COMMANDER_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		CommanderPmapAnim, /* AlienFrame */
+		CommanderFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth(), */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
-		COMMANDER_COLOR_MAP, /* AlienColorMap */
-		COMMANDER_MUSIC, /* AlienSong */
+		CommanderColorMap, /* AlienColorMap */
+		CommanderMusic, /* AlienSong */
 		{
-								COMMANDER_INIT_PMAP_ANIM, /* AlienAltFrame */
-			NullResource,			  /* AlienAltColorMap */
-			COMMANDER_LOWPOW_MUSIC,	  /* AlienAltSong */
+								CommanderInitPmapAnim, /* AlienAltFrame */
+			NullResource,		   /* AlienAltColorMap */
+			CommanderLowpowMusic,  /* AlienAltSong */
 		},
-		COMMANDER_CONVERSATION_PHRASES, /* PlayerPhrases */
+		CommanderConversationPhrases, /* PlayerPhrases */
 		4, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

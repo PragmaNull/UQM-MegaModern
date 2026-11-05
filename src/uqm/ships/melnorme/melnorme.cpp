@@ -28,40 +28,39 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 20
-#define MAX_ENERGY MaxEnergySize
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 4
-#define MAX_THRUST 36
-#define THRUST_INCREMENT 6
-#define THRUST_WAIT 4
-#define TURN_WAIT 4
-#define SHIP_MASS 7
+static constexpr auto MaxCrew {20};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {4};
+static constexpr auto MaxThrust {36};
+static constexpr auto ThrustIncrement {6};
+static constexpr auto ThrustWait {4};
+static constexpr auto TurnWait {4};
+static constexpr auto ShipMass {7};
 
 // Blaster Pulse
-#define WEAPON_ENERGY_COST 5
-#define WEAPON_WAIT 1
-#define MELNORME_OFFSET RES_SCALE(24)
-#define LEVEL_COUNTER 72
-#define MAX_PUMP 4
-#define PUMPUP_SPEED DISPLAY_TO_WORLD(45)
-#define PUMPUP_LIFE 10
-#define PUMPUP_DAMAGE 2
-#define MIN_PUMPITUDE_ANIMS 3
-#define NUM_PUMP_ANIMS 5
-#define REVERSE_DIR (uint8_t)(1 << 7)
+static constexpr auto WeaponEnergyCost {5};
+static constexpr auto WeaponWait {1};
+static auto MelnormeOffset() { return RES_SCALE(24); }
+static constexpr auto LevelCounter {72};
+static constexpr auto MaxPump {4};
+static constexpr auto PumpupSpeed {DISPLAY_TO_WORLD(45)};
+static constexpr auto PumpupLife {10};
+static constexpr auto PumpupDamage {2};
+static constexpr auto MinPumpitudeAnims {3};
+static constexpr auto NumPumpAnims {5};
+static constexpr auto ReverseDir {(uint8_t)(1 << 7)};
 
 // Confusion Pulse
-#define SPECIAL_ENERGY_COST 20
-#define SPECIAL_WAIT 20
-#define CMISSILE_SPEED DISPLAY_TO_WORLD(RES_SCALE(30))
-#define CMISSILE_LIFE 20
-#define CMISSILE_HITS 200
-#define CMISSILE_DAMAGE 0
-#define CMISSILE_OFFSET RES_SCALE(4)
+static constexpr auto SpecialEnergyCost {20};
+static constexpr auto SpecialWait {20};
+static auto CmissileSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(30)); }
+static constexpr auto CmissileLife {20};
+static constexpr auto CmissileHits {200};
+static constexpr auto CmissileDamage {0};
+static auto CmissileOffset() { return RES_SCALE(4); }
 
 // HdResolutionFactor
-#define PUMPUP_SPEED_HD RES_SCALE(PUMPUP_SPEED)
+static auto PumpupSpeedHd() { return RES_SCALE(PumpupSpeed); }
 
 static RACE_DESC melnorme_desc =
 	{
@@ -69,11 +68,11 @@ static RACE_DESC melnorme_desc =
 		 "trader",
 		 FiresFore,
 		 18, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 MELNORME_RACE_STRINGS,
-		 MELNORME_ICON_MASK_PMAP_ANIM,
-		 MELNORME_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergySize, MaxEnergySize,
+		 MelnormeRaceStrings,
+		 MelnormeIconMaskPmapAnim,
+		 MelnormeMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -85,38 +84,38 @@ static RACE_DESC melnorme_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 MELNORME_BIG_MASK_PMAP_ANIM,
-			 MELNORME_MED_MASK_PMAP_ANIM,
-			 MELNORME_SML_MASK_PMAP_ANIM,
+			 MelnormeBigMaskPmapAnim,
+			 MelnormeMedMaskPmapAnim,
+			 MelnormeSmlMaskPmapAnim,
 		 },
 		 {
-			 PUMPUP_BIG_MASK_PMAP_ANIM,
-			 PUMPUP_MED_MASK_PMAP_ANIM,
-			 PUMPUP_SML_MASK_PMAP_ANIM,
+			 PumpupBigMaskPmapAnim,
+			 PumpupMedMaskPmapAnim,
+			 PumpupSmlMaskPmapAnim,
 		 },
 		 {
-			 CONFUSE_BIG_MASK_PMAP_ANIM,
-			 CONFUSE_MED_MASK_PMAP_ANIM,
-			 CONFUSE_SML_MASK_PMAP_ANIM,
+			 ConfuseBigMaskPmapAnim,
+			 ConfuseMedMaskPmapAnim,
+			 ConfuseSmlMaskPmapAnim,
 		 },
-		 {MELNORME_CAPTAIN_MASK_PMAP_ANIM,
+		 {MelnormeCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 MELNORME_VICTORY_SONG,
-		 MELNORME_SHIP_SOUNDS,
+		 MelnormeVictorySong,
+		 MelnormeShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -124,7 +123,7 @@ static RACE_DESC melnorme_desc =
 		 nullptr},
 		{
 			0,
-			PUMPUP_SPEED * PUMPUP_LIFE,
+			PumpupSpeed * PumpupLife,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -141,18 +140,18 @@ pump_up_preprocess(ELEMENT* ElementPtr)
 	if (--ElementPtr->thrust_wait & 1)
 	{
 		uint16_t frame_index {GetFrameIndex(ElementPtr->current.image.frame)};
-		if (((ElementPtr->turn_wait & REVERSE_DIR)
-			 && (frame_index % NUM_PUMP_ANIMS) != 0)
-			|| (!(ElementPtr->turn_wait & REVERSE_DIR)
-				&& ((frame_index + 1) % NUM_PUMP_ANIMS) == 0))
+		if (((ElementPtr->turn_wait & ReverseDir)
+			 && (frame_index % NumPumpAnims) != 0)
+			|| (!(ElementPtr->turn_wait & ReverseDir)
+				&& ((frame_index + 1) % NumPumpAnims) == 0))
 		{
 			--frame_index;
-			ElementPtr->turn_wait |= REVERSE_DIR;
+			ElementPtr->turn_wait |= ReverseDir;
 		}
 		else
 		{
 			++frame_index;
-			ElementPtr->turn_wait &= ~REVERSE_DIR;
+			ElementPtr->turn_wait &= ~ReverseDir;
 		}
 
 		ElementPtr->next.image.frame = SetAbsFrameIndex(
@@ -191,11 +190,11 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 		EPtr->thrust_wait = ElementPtr->thrust_wait;
 		if (--EPtr->thrust_wait == 0)
 		{
-			if ((EPtr->turn_wait & ~REVERSE_DIR) < MAX_PUMP - 1)
+			if ((EPtr->turn_wait & ~ReverseDir) < MaxPump - 1)
 			{
 				++EPtr->turn_wait;
 				EPtr->current.image.frame = SetRelFrameIndex(
-					EPtr->current.image.frame, NUM_PUMP_ANIMS);
+					EPtr->current.image.frame, NumPumpAnims);
 				ProcessSound(GetSound(
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 0),
 							 EPtr);
@@ -206,29 +205,29 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 			}
 			else
 			{
-				EPtr->thrust_wait = LEVEL_COUNTER;
+				EPtr->thrust_wait = LevelCounter;
 			}
 		}
 
 		EPtr->mass_points = EPtr->hit_points =
-			(PUMPUP_DAMAGE << (ElementPtr->turn_wait & ~REVERSE_DIR));
+			(PumpupDamage << (ElementPtr->turn_wait & ~ReverseDir));
 		SetElementStarShip(EPtr, StarShipPtr);
 
 		if (EPtr->thrust_wait & 1)
 		{
 			uint16_t frame_index {GetFrameIndex(EPtr->current.image.frame)};
-			if (((EPtr->turn_wait & REVERSE_DIR)
-				 && (frame_index % NUM_PUMP_ANIMS) != 0)
-				|| (!(EPtr->turn_wait & REVERSE_DIR)
-					&& ((frame_index + 1) % NUM_PUMP_ANIMS) == 0))
+			if (((EPtr->turn_wait & ReverseDir)
+				 && (frame_index % NumPumpAnims) != 0)
+				|| (!(EPtr->turn_wait & ReverseDir)
+					&& ((frame_index + 1) % NumPumpAnims) == 0))
 			{
 				--frame_index;
-				EPtr->turn_wait |= REVERSE_DIR;
+				EPtr->turn_wait |= ReverseDir;
 			}
 			else
 			{
 				++frame_index;
-				EPtr->turn_wait &= ~REVERSE_DIR;
+				EPtr->turn_wait &= ~ReverseDir;
 			}
 
 			EPtr->current.image.frame = SetAbsFrameIndex(
@@ -238,20 +237,20 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 		if (StarShipPtr->cur_status_flags & StarShipPtr->old_status_flags
 			& WeaponFlag)
 		{
-			StarShipPtr->weapon_counter = WEAPON_WAIT;
+			StarShipPtr->weapon_counter = WeaponWait;
 		}
 		else
 		{
 			uint16_t angle {};
 
-			EPtr->life_span = PUMPUP_LIFE;
+			EPtr->life_span = PumpupLife;
 			EPtr->preprocess_func = pump_up_preprocess;
 			EPtr->postprocess_func = 0;
 
 			angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
 			SetVelocityComponents(&EPtr->velocity,
-								  COSINE(angle, WORLD_TO_VELOCITY(PUMPUP_SPEED_HD)),
-								  SINE(angle, WORLD_TO_VELOCITY(PUMPUP_SPEED_HD)));
+								  COSINE(angle, WORLD_TO_VELOCITY(PumpupSpeedHd())),
+								  SINE(angle, WORLD_TO_VELOCITY(PumpupSpeedHd())));
 
 			ProcessSound(GetSound(
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
@@ -304,8 +303,8 @@ pump_up_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		LockElement(hBlastElement, &BlastElementPtr);
 
 		BlastElementPtr->life_span =
-			MIN_PUMPITUDE_ANIMS
-			+ (ElementPtr0->turn_wait & ~REVERSE_DIR);
+			MinPumpitudeAnims
+			+ (ElementPtr0->turn_wait & ~ReverseDir);
 		BlastElementPtr->turn_wait = BlastElementPtr->next_turn = 0;
 		{
 			BlastElementPtr->preprocess_func = animate;
@@ -314,7 +313,7 @@ pump_up_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		BlastElementPtr->current.image.farray = ElementPtr0->next.image.farray;
 		BlastElementPtr->current.image.frame =
 			SetAbsFrameIndex(BlastElementPtr->current.image.farray[0],
-							 MAX_PUMP * NUM_PUMP_ANIMS);
+							 MaxPump * NumPumpAnims);
 
 		UnlockElement(hBlastElement);
 	}
@@ -334,10 +333,10 @@ initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = MELNORME_OFFSET;
-	MissileBlock.speed = DISPLAY_TO_WORLD(MELNORME_OFFSET);
-	MissileBlock.hit_points = PUMPUP_DAMAGE;
-	MissileBlock.damage = PUMPUP_DAMAGE;
+	MissileBlock.pixoffs = MelnormeOffset();
+	MissileBlock.speed = DISPLAY_TO_WORLD(MelnormeOffset());
+	MissileBlock.hit_points = PumpupDamage;
+	MissileBlock.damage = PumpupDamage;
 	MissileBlock.life = 2;
 	MissileBlock.preprocess_func = 0;
 	MissileBlock.blast_offs = 0;
@@ -357,7 +356,7 @@ initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 		}
 		else
 		{
-			PumpUpPtr->thrust_wait = LEVEL_COUNTER;
+			PumpUpPtr->thrust_wait = LevelCounter;
 		}
 
 		UnlockElement(PumpUpArray[0]);
@@ -621,13 +620,13 @@ initialize_confusion(ELEMENT* ShipPtr, HELEMENT ConfusionArray[])
 	ConfusionBlock.face = StarShipPtr->ShipFacing;
 	ConfusionBlock.sender = ShipPtr->playerNr;
 	ConfusionBlock.flags = IgnoreSimilar;
-	ConfusionBlock.pixoffs = MELNORME_OFFSET;
-	ConfusionBlock.speed = CMISSILE_SPEED;
-	ConfusionBlock.hit_points = CMISSILE_HITS;
-	ConfusionBlock.damage = CMISSILE_DAMAGE;
-	ConfusionBlock.life = CMISSILE_LIFE;
+	ConfusionBlock.pixoffs = MelnormeOffset();
+	ConfusionBlock.speed = CmissileSpeed();
+	ConfusionBlock.hit_points = CmissileHits;
+	ConfusionBlock.damage = CmissileDamage;
+	ConfusionBlock.life = CmissileLife;
 	ConfusionBlock.preprocess_func = confuse_preprocess;
-	ConfusionBlock.blast_offs = CMISSILE_OFFSET;
+	ConfusionBlock.blast_offs = CmissileOffset();
 	ConfusionArray[0] = initialize_missile(&ConfusionBlock);
 
 	if (ConfusionArray[0])
@@ -657,11 +656,11 @@ initialize_test_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = MELNORME_OFFSET;
-	MissileBlock.speed = PUMPUP_SPEED_HD;
-	MissileBlock.hit_points = PUMPUP_DAMAGE;
-	MissileBlock.damage = PUMPUP_DAMAGE;
-	MissileBlock.life = PUMPUP_LIFE;
+	MissileBlock.pixoffs = MelnormeOffset();
+	MissileBlock.speed = PumpupSpeedHd();
+	MissileBlock.hit_points = PumpupDamage;
+	MissileBlock.damage = PumpupDamage;
+	MissileBlock.life = PumpupLife;
 	MissileBlock.preprocess_func = 0;
 	MissileBlock.blast_offs = 0;
 	PumpUpArray[0] = initialize_missile(&MissileBlock);
@@ -680,7 +679,7 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	StarShipPtr->RaceDescPtr->init_weapon_func = initialize_test_pump_up;
 	const uint8_t old_count {StarShipPtr->weapon_counter};
 
-	if (StarShipPtr->weapon_counter == WEAPON_WAIT)
+	if (StarShipPtr->weapon_counter == WeaponWait)
 	{
 		StarShipPtr->weapon_counter = 0;
 	}
@@ -688,8 +687,8 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (lpEvalDesc->ObjectPtr)
 	{
-		if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SPECIAL_ENERGY_COST
-																   + WEAPON_ENERGY_COST
+		if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SpecialEnergyCost
+																   + WeaponEnergyCost
 			&& !(StarShipPtr->old_status_flags & WeaponFlag))
 		{
 			lpEvalDesc->MoveState = ENTICE;
@@ -711,8 +710,8 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	if (StarShipPtr->weapon_counter == 0
 		&& (old_count != 0
 			|| ((StarShipPtr->special_counter
-				 || StarShipPtr->RaceDescPtr->ship_info.energy_level >= SPECIAL_ENERGY_COST
-																			+ WEAPON_ENERGY_COST)
+				 || StarShipPtr->RaceDescPtr->ship_info.energy_level >= SpecialEnergyCost
+																			+ WeaponEnergyCost)
 				&& !(StarShipPtr->ship_input_state & WeaponFlag))))
 	{
 		StarShipPtr->ship_input_state ^= WeaponFlag;
@@ -720,7 +719,7 @@ melnorme_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	StarShipPtr->ship_input_state &= ~SpecialFlag;
 	if (StarShipPtr->special_counter == 0
-		&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= SPECIAL_ENERGY_COST)
+		&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= SpecialEnergyCost)
 	{
 		const uint8_t old_input_state {StarShipPtr->ship_input_state};
 
@@ -755,7 +754,7 @@ melnorme_postprocess(ELEMENT* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
-		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
 		HELEMENT Confusion {};
 
@@ -782,16 +781,16 @@ init_melnorme(void)
 {
 	if (IsHd())
 	{
-		melnorme_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		melnorme_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		melnorme_desc.cyborg_control.WeaponRange = PUMPUP_SPEED_HD * PUMPUP_LIFE;
+		melnorme_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		melnorme_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		melnorme_desc.cyborg_control.WeaponRange = PumpupSpeedHd() * PumpupLife;
 	}
 	else
 	{
-		melnorme_desc.characteristics.max_thrust = MAX_THRUST;
-		melnorme_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		melnorme_desc.characteristics.max_thrust = MaxThrust;
+		melnorme_desc.characteristics.thrust_increment = ThrustIncrement;
 		melnorme_desc.cyborg_control.WeaponRange =
-			PUMPUP_SPEED * PUMPUP_LIFE;
+			PumpupSpeed * PumpupLife;
 	}
 
 	melnorme_desc.postprocess_func = melnorme_postprocess;

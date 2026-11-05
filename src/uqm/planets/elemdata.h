@@ -184,13 +184,11 @@ enum
 
 	NUMBER_OF_ELEMENTS
 };
-#define NUMBER_OF_SPECIAL (NUMBER_OF_ELEMENTS - NUMBER_OF_NORMAL)
 
-#define CHANCE_MASK ((1 << 2) - 1)
 
-#define FEW 1
-#define MODERATE 4
-#define NUMEROUS 8
+inline constexpr auto Few {1};
+inline constexpr auto Moderate {4};
+inline constexpr auto Numerous {8};
 
 enum
 {
@@ -198,13 +196,13 @@ enum
 	MEDIUM,
 	HEAVY
 };
-#define NOTHING (uint8_t)(~0)
+inline constexpr auto Nothing {(uint8_t)(~0)};
 
 #define MINERAL_DEPOSIT(qn, ql) uqm::makeByte(qn, ql)
 #define DEPOSIT_QUANTITY(md) uqm::lowNibble(md)
 #define DEPOSIT_QUALITY(md) uqm::highNibble(md)
 
-#define MAX_ELEMENT_UNITS 0xF
+inline constexpr auto MaxElementUnits {0xF};
 
 const extern uint8_t* Elements;
 

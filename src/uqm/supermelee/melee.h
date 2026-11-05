@@ -34,24 +34,24 @@ extern "C" {
 
 typedef struct melee_state MELEE_STATE;
 
-#define NUM_MELEE_ROWS 2
-#define NUM_MELEE_COLUMNS SAFE_BOOL(7, 6)
-//#define NUM_MELEE_COLUMNS 7
-#define TRUE_MELEE_FLEET_SIZE (NUM_MELEE_ROWS * NUM_MELEE_COLUMNS)
-#define MELEE_FLEET_SIZE (14)
-#define ICON_WIDTH RES_SCALE(16)
-#define ICON_HEIGHT RES_SCALE(16)
+inline constexpr auto NumMeleeRows {2};
+inline auto NumMeleeColumns() { return SAFE_BOOL(7, 6); }
+//#define NumMeleeColumns() 7
+inline auto TrueMeleeFleetSize() { return (NumMeleeRows * NumMeleeColumns()); }
+inline constexpr auto MeleeFleetSize {(14)};
+inline auto IconWidth() { return RES_SCALE(16); }
+inline auto IconHeight() { return RES_SCALE(16); }
 
 extern FRAME PickMeleeFrame;
 
-#define PICK_BG_COLOR BuildColor(MakeRgb15(0x00, 0x01, 0x0F), 0x01)
-#define PICK_VALUE_COLOR BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C)
+inline constexpr auto PickBgColor {BuildColor(MakeRgb15(0x00, 0x01, 0x0F), 0x01)};
+inline constexpr auto PickValueColor {BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C)};
 // Used for the current fleet value in the next ship selection
 // in SuperMelee.
 
-#define MAX_TEAM_CHARS 30
-#define NUM_PICK_COLS 5
-#define NUM_PICK_ROWS 5
+inline constexpr auto MaxTeamChars {30};
+inline constexpr auto NumPickCols {5};
+inline constexpr auto NumPickRows {5};
 
 typedef uint8_t MELEE_OPTIONS;
 

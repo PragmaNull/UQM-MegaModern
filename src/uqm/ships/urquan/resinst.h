@@ -2,18 +2,18 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define FIGHTER_BIG_MASK_PMAP_ANIM "ship.urquan.graphics.fighter.large"
-#define FIGHTER_MED_MASK_PMAP_ANIM "ship.urquan.graphics.fighter.medium"
-#define FIGHTER_SML_MASK_PMAP_ANIM "ship.urquan.graphics.fighter.small"
-#define FUSION_BIG_MASK_PMAP_ANIM "ship.urquan.graphics.fusion.large"
-#define FUSION_MED_MASK_PMAP_ANIM "ship.urquan.graphics.fusion.medium"
-#define FUSION_SML_MASK_PMAP_ANIM "ship.urquan.graphics.fusion.small"
-#define URQUAN_BIG_MASK_PMAP_ANIM "ship.urquan.graphics.dreadnought.large"
-#define URQUAN_CAPTAIN_MASK_PMAP_ANIM "ship.urquan.graphics.captain"
-#define URQUAN_ICON_MASK_PMAP_ANIM "ship.urquan.icons"
-#define URQUAN_MED_MASK_PMAP_ANIM "ship.urquan.graphics.dreadnought.medium"
-#define URQUAN_MICON_MASK_PMAP_ANIM "ship.urquan.meleeicons"
-#define URQUAN_RACE_STRINGS "ship.urquan.text"
-#define URQUAN_SHIP_SOUNDS "ship.urquan.sounds"
-#define URQUAN_SML_MASK_PMAP_ANIM "ship.urquan.graphics.dreadnought.small"
-#define URQUAN_VICTORY_SONG "ship.urquan.ditty"
+inline constexpr uqgsl::czstring FighterBigMaskPmapAnim {"ship.urquan.graphics.fighter.large"};
+inline constexpr uqgsl::czstring FighterMedMaskPmapAnim {"ship.urquan.graphics.fighter.medium"};
+inline constexpr uqgsl::czstring FighterSmlMaskPmapAnim {"ship.urquan.graphics.fighter.small"};
+inline constexpr uqgsl::czstring FusionBigMaskPmapAnim {"ship.urquan.graphics.fusion.large"};
+inline constexpr uqgsl::czstring FusionMedMaskPmapAnim {"ship.urquan.graphics.fusion.medium"};
+inline constexpr uqgsl::czstring FusionSmlMaskPmapAnim {"ship.urquan.graphics.fusion.small"};
+inline constexpr uqgsl::czstring UrquanBigMaskPmapAnim {"ship.urquan.graphics.dreadnought.large"};
+inline constexpr uqgsl::czstring UrquanCaptainMaskPmapAnim {"ship.urquan.graphics.captain"};
+inline constexpr uqgsl::czstring UrquanIconMaskPmapAnim {"ship.urquan.icons"};
+inline constexpr uqgsl::czstring UrquanMedMaskPmapAnim {"ship.urquan.graphics.dreadnought.medium"};
+inline constexpr uqgsl::czstring UrquanMiconMaskPmapAnim {"ship.urquan.meleeicons"};
+inline constexpr uqgsl::czstring UrquanRaceStrings {"ship.urquan.text"};
+inline constexpr uqgsl::czstring UrquanShipSounds {"ship.urquan.sounds"};
+inline constexpr uqgsl::czstring UrquanSmlMaskPmapAnim {"ship.urquan.graphics.dreadnought.small"};
+inline constexpr uqgsl::czstring UrquanVictorySong {"ship.urquan.ditty"};

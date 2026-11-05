@@ -58,8 +58,12 @@ void animation_preprocess(ELEMENT* ElementPtr)
 STATUS_FLAGS
 inertial_thrust(ELEMENT* ElementPtr)
 {
-#define MAX_ALLOWED_SPEED WORLD_TO_VELOCITY(DISPLAY_TO_WORLD(RES_SCALE(18)))
-#define MAX_ALLOWED_SPEED_SQR ((uint32_t)MAX_ALLOWED_SPEED * MAX_ALLOWED_SPEED)
+	const auto MaxAllowedSpeed = [&] {
+		return WORLD_TO_VELOCITY(DISPLAY_TO_WORLD(RES_SCALE(18)));
+	};
+	const auto MaxAllowedSpeedSqr = [&] {
+		return ((uint32_t)MaxAllowedSpeed() * MaxAllowedSpeed());
+	};
 
 	uint16_t CurrentAngle {};
 	uint16_t max_thrust {};
@@ -107,7 +111,7 @@ inertial_thrust(ELEMENT* ElementPtr)
 			SetVelocityComponents(VelocityPtr, delta_x, delta_y);
 		}
 		else if (((StarShipPtr->cur_status_flags & ShipInGravityWell)
-				  && desired_speed <= MAX_ALLOWED_SPEED_SQR)
+				  && desired_speed <= MaxAllowedSpeedSqr())
 				 || desired_speed < current_speed)
 		{ // acceleration in a gravity well within max allowed
 			// deceleration after gravity whip

@@ -45,7 +45,7 @@
 // the lander animation is playing
 #define SPIN_ON_LAUNCH
 
-// PLANET_SIDE_RATE governs how fast the lander,
+// PlanetSideRate governs how fast the lander,
 // bio and planet effects will be
 // We're using the 3DO speed, which is 35 FPS
 // The PC speed was 30 FPS.
@@ -55,7 +55,7 @@
 // comparing speeds frame-by-frame and I came
 // up with 42 FPS. Can be changed later if it
 // causes any trouble.
-#define PLANET_SIDE_RATE (c_gameSecond / 42)
+static constexpr auto PlanetSideRate {(c_gameSecond / 42)};
 
 
 // This is a derived type from INPUT_STATE_DESC.
@@ -79,105 +79,104 @@ static MUSIC_REF OrbitMusic[NumOrbitThemes];
 
 LIFEFORM_DESC CreatureData[] =
 	{
-		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 uqm::makeByte(1, 1) },
+		{SpeedMotionless | DangerHarmless,							   uqm::makeByte(1, 1) },
 		// Roto-Dendron
-		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 uqm::makeByte(6, 1) },
+		{SpeedMotionless | DangerHarmless,							   uqm::makeByte(6, 1) },
 		// Macrocillia
-		{SPEED_MOTIONLESS | DANGER_WEAK,									 uqm::makeByte(3, 1) },
+		{SpeedMotionless | DangerWeak,								   uqm::makeByte(3, 1) },
 		// Splort Wort
-		{SPEED_MOTIONLESS | DANGER_NORMAL,								   uqm::makeByte(5, 3) },
+		{SpeedMotionless | DangerNormal,								 uqm::makeByte(5, 3) },
 		// Whackin' Bush
-		{SPEED_MOTIONLESS | DANGER_HARMLESS,								 uqm::makeByte(2, 10)},
+		{SpeedMotionless | DangerHarmless,							   uqm::makeByte(2, 10)},
 		// Slot Machine Tree
-		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_HARMLESS,
-		 uqm::makeByte(1,																	2) },
+		{BehaviorUnpredictable | SpeedSlow | DangerHarmless,
+		 uqm::makeByte(1,																2) },
 		// Neon Worm
-		{BEHAVIOR_FLEE | AWARENESS_MEDIUM | SPEED_SLOW | DANGER_HARMLESS,
-		 uqm::makeByte(8,																	5) },
+		{BehaviorFlee | AwarenessMedium | SpeedSlow | DangerHarmless,
+		 uqm::makeByte(8,																5) },
 		// Stiletto Urchin
-		{BEHAVIOR_HUNT | AWARENESS_LOW | SPEED_SLOW | DANGER_WEAK,
-		 uqm::makeByte(2,																	2) },
+		{BehaviorHunt | AwarenessLow | SpeedSlow | DangerWeak,
+		 uqm::makeByte(2,																2) },
 		// Deluxe Blob
-		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_NORMAL,
-		 uqm::makeByte(3,																	8) },
+		{BehaviorUnpredictable | SpeedSlow | DangerNormal,
+		 uqm::makeByte(3,																8) },
 		// Glowing Medusa
-		{BEHAVIOR_HUNT | AWARENESS_MEDIUM | SPEED_SLOW | DANGER_MONSTROUS,
-		 uqm::makeByte(10,																   15)},
+		{BehaviorHunt | AwarenessMedium | SpeedSlow | DangerMonstrous,
+		 uqm::makeByte(10,															   15)},
 		// Carousel Beast
-		{BEHAVIOR_HUNT | AWARENESS_MEDIUM | SPEED_MEDIUM | DANGER_WEAK,
-		 uqm::makeByte(3,																	3) },
+		{BehaviorHunt | AwarenessMedium | SpeedMedium | DangerWeak,
+		 uqm::makeByte(3,																3) },
 		// Mysterious Bees
-		{BEHAVIOR_FLEE | AWARENESS_MEDIUM | SPEED_MEDIUM | DANGER_HARMLESS,
-		 uqm::makeByte(2,																	1) },
+		{BehaviorFlee | AwarenessMedium | SpeedMedium | DangerHarmless,
+		 uqm::makeByte(2,																1) },
 		// Hopping Blobby
-		{BEHAVIOR_UNPREDICTABLE | SPEED_MEDIUM | DANGER_WEAK,
-		 uqm::makeByte(2,																	2) },
+		{BehaviorUnpredictable | SpeedMedium | DangerWeak,
+		 uqm::makeByte(2,																2) },
 		// Blood Monkey
-		{BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_MEDIUM | DANGER_NORMAL,
-		 uqm::makeByte(4,																	6) },
+		{BehaviorHunt | AwarenessHigh | SpeedMedium | DangerNormal,
+		 uqm::makeByte(4,																6) },
 		// Yompin Yiminy
-		{BEHAVIOR_UNPREDICTABLE | SPEED_MEDIUM | DANGER_MONSTROUS,
-		 uqm::makeByte(9,																	12)},
+		{BehaviorUnpredictable | SpeedMedium | DangerMonstrous,
+		 uqm::makeByte(9,																12)},
 		// Amorphous Trandicula
-		{BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_FAST | DANGER_WEAK,
-		 uqm::makeByte(3,																	1) },
+		{BehaviorHunt | AwarenessHigh | SpeedFast | DangerWeak,
+		 uqm::makeByte(3,																1) },
 		// Crazy Weasel
-		{BEHAVIOR_FLEE | AWARENESS_HIGH | SPEED_FAST | DANGER_HARMLESS,
-		 uqm::makeByte(1,																	1) },
+		{BehaviorFlee | AwarenessHigh | SpeedFast | DangerHarmless,
+		 uqm::makeByte(1,																1) },
 		// Merry Whumpet
-		{BEHAVIOR_HUNT | AWARENESS_LOW | SPEED_FAST | DANGER_NORMAL,
-		 uqm::makeByte(7,																	8) },
+		{BehaviorHunt | AwarenessLow | SpeedFast | DangerNormal,
+		 uqm::makeByte(7,																8) },
 		// Fungal Squid
-		{BEHAVIOR_FLEE | AWARENESS_HIGH | SPEED_FAST | DANGER_WEAK,
-		 uqm::makeByte(15,																   2) },
+		{BehaviorFlee | AwarenessHigh | SpeedFast | DangerWeak,
+		 uqm::makeByte(15,															   2) },
 		// Penguin Cyclops
-		{BEHAVIOR_FLEE | AWARENESS_LOW | SPEED_FAST | DANGER_WEAK,
-		 uqm::makeByte(1,																	1) },
+		{BehaviorFlee | AwarenessLow | SpeedFast | DangerWeak,
+		 uqm::makeByte(1,																1) },
 		// Chicken
-		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_WEAK,					uqm::makeByte(6, 2) },
+		{BehaviorUnpredictable | SpeedSlow | DangerWeak,				 uqm::makeByte(6, 2) },
 		// Bubble Vine
-		{BEHAVIOR_FLEE | AWARENESS_HIGH | SPEED_SLOW | DANGER_WEAK,
-		 uqm::makeByte(4,																	2) },
+		{BehaviorFlee | AwarenessHigh | SpeedSlow | DangerWeak,
+		 uqm::makeByte(4,																2) },
 		// Bug-Eyed Bait
-		{SPEED_MOTIONLESS | DANGER_WEAK,									 uqm::makeByte(8, 5) },
+		{SpeedMotionless | DangerWeak,								   uqm::makeByte(8, 5) },
 		// Goo Burger
 
-		{SPEED_MOTIONLESS | DANGER_MONSTROUS,								  uqm::makeByte(1, 1) },
+		{SpeedMotionless | DangerMonstrous,								uqm::makeByte(1, 1) },
 		// Evil One
-		{BEHAVIOR_UNPREDICTABLE | SPEED_SLOW | DANGER_HARMLESS,
-		 uqm::makeByte(1,																	1) }, // ? was 0, 1
+		{BehaviorUnpredictable | SpeedSlow | DangerHarmless,
+		 uqm::makeByte(1,																1) }, // ? was 0, 1
 							   // Brainbox Bulldozers
-		{BEHAVIOR_HUNT | AWARENESS_HIGH | SPEED_FAST | DANGER_MONSTROUS,
-		 uqm::makeByte(15,																   15)},
+		{BehaviorHunt | AwarenessHigh | SpeedFast | DangerMonstrous,
+		 uqm::makeByte(15,															   15)},
 		// Zex's Beauty
 };
 
 extern PRIM_LINKS DisplayLinks;
 
-#define DAMAGE_CYCLE 6
+static constexpr auto DamageCycle {6};
 // XXX: There are actually only 9 explosion images.
 //   The last frame is drawn twice.
-#define EXPLOSION_LIFE 10
+static constexpr auto ExplosionLife {10};
 // How long to wait after the lander explodes, so that the full
 // gravity of the player's situation sinks in
-#define EXPLOSION_WAIT (GameTicksPerSecond * 2)
-#define EXPLOSION_WAIT_FRAMES (TimePeriod {EXPLOSION_WAIT} / PLANET_SIDE_RATE)
+static constexpr auto ExplosionWait {(GameTicksPerSecond * 2)};
+#define EXPLOSION_WAIT_FRAMES (TimePeriod {ExplosionWait} / PlanetSideRate)
 // The actual number of frame that the explosion and wait takes is:
-//   EXPLOSION_LIFE * 3 + EXPLOSION_WAIT_FRAMES
+//   ExplosionLife * 3 + EXPLOSION_WAIT_FRAMES
 
-#define DEATH_EXPLOSION 0
+static constexpr auto DeathExplosion {0};
 
 // TODO: redefine these in terms of GFXCONTEXT width/height
-#define SURFACE_WIDTH SisScreenWidth()
-#define SURFACE_HEIGHT (SisScreenHeight() - MAP_HEIGHT - MAP_BORDER_HEIGHT)
+static auto SurfaceWidth() { return SisScreenWidth(); }
+static auto SurfaceHeight() { return (SisScreenHeight() - MapHeight() - MapBorderHeight()); }
 
-#define REPAIR_LANDER (1 << 7)
-#define REPAIR_TRANSITION (1 << 6)
-#define KILL_CREW (1 << 5)
-#define ADD_AT_END (1 << 4)
-#define REPAIR_COUNT (0xf)
 
-#define LANDER_SPEED_DENOM (isPC(uqm::UQMOptions::read().landerStyle) ? 14 : 10)
+static constexpr auto KillCrew {(1 << 5)};
+static constexpr auto AddAtEnd {(1 << 4)};
+
+
+static auto LanderSpeedDenom() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 14 : 10); }
 
 static uint8_t lander_flags;
 static GFXPOINT curLanderLoc;
@@ -199,7 +198,7 @@ static PLANETSIDE_DESC* planetSideDesc;
 
 EXTENT MapSurface;
 
-#define ON_THE_GROUND 0
+static constexpr auto OnTheGround {0};
 
 GFXCONTEXT
 CreatePCLanderContext(void)
@@ -213,12 +212,12 @@ CreatePCLanderContext(void)
 	GFXCONTEXT context {CreateContext("PCLanderContext")};
 	SetContext(context);
 	SetContextFGFrame(Screen);
-	r.corner.x += (r.extent.width - MAP_WIDTH)
+	r.corner.x += (r.extent.width - MapWidth())
 				+ (SafeX() * 2 + SAFE_NUM_SCL(1));
-	r.corner.y += r.extent.height - MAP_HEIGHT;
-	r.extent.width = RES_SCALE(UQM_MAP_WIDTH - SC2_MAP_WIDTH) - SisOrgX()
+	r.corner.y += r.extent.height - MapHeight();
+	r.extent.width = RES_SCALE(UqmMapWidth - Sc2MapWidth) - SisOrgX()
 				   + SAFE_POS(1);
-	r.extent.height = MAP_HEIGHT;
+	r.extent.height = MapHeight();
 	SetContextClipRect(&r);
 
 	SetContext(oldContext);
@@ -261,7 +260,7 @@ void DestroyPCLanderContext(void)
 static Color
 DamageColorCycle(Color c, uint16_t i)
 {
-	const static Color damage_tab[DAMAGE_CYCLE + 1] =
+	const static Color damage_tab[DamageCycle + 1] =
 		LANDER_DAMAGE_COLOR_TABLE;
 
 	if (i)
@@ -348,10 +347,10 @@ void object_animation(ELEMENT* ElementPtr)
 		if (ElementPtr->state_flags & FiniteLife)
 		{
 			/* A natural disaster */
-			if (ElementPtr->mass_points == DEATH_EXPLOSION)
+			if (ElementPtr->mass_points == DeathExplosion)
 			{ // Lander explosion
 				++explosion_index;
-				if (explosion_index >= EXPLOSION_LIFE)
+				if (explosion_index >= ExplosionLife)
 				{ // XXX: The last frame is drawn twice
 					pPrim->Object.Stamp.frame =
 						DecFrameIndex(pPrim->Object.Stamp.frame);
@@ -407,20 +406,20 @@ void object_animation(ELEMENT* ElementPtr)
 					{
 						LavaElementPtr->next.location.y = 0;
 					}
-					else if (LavaElementPtr->next.location.y >= (MAP_HEIGHT << MAG_SHIFT))
+					else if (LavaElementPtr->next.location.y >= (MapHeight() << MagShift))
 					{
 						LavaElementPtr->next.location.y =
-							(MAP_HEIGHT << MAG_SHIFT) - 1;
+							(MapHeight() << MagShift) - 1;
 					}
 					if (LavaElementPtr->next.location.x < 0)
 					{
 						LavaElementPtr->next.location.x +=
-							SCALED_MAP_WIDTH << MAG_SHIFT;
+							ScaledMapWidth() << MagShift;
 					}
 					else
 					{
 						LavaElementPtr->next.location.x %=
-							SCALED_MAP_WIDTH << MAG_SHIFT;
+							ScaledMapWidth() << MagShift;
 					}
 					LavaElementPtr->facing = NORMALIZE_FACING(
 						ElementPtr->facing + (uqm::random().next() % 3 - 1));
@@ -433,21 +432,21 @@ void object_animation(ELEMENT* ElementPtr)
 			uint8_t index {};
 			uint16_t speed {};
 
-			index = ElementPtr->mass_points & ~CREATURE_AWARE;
-			speed = CreatureData[index].Attributes & SPEED_MASK;
+			index = ElementPtr->mass_points & ~CreatureAware;
+			speed = CreatureData[index].Attributes & SpeedMask;
 			if (speed)
 			{
 				int16_t dx {};
 				int16_t dy {};
 
 				dx = curLanderLoc.x - ElementPtr->next.location.x;
-				if (dx < 0 && dx < -(SCALED_MAP_WIDTH << (MAG_SHIFT - 1)))
+				if (dx < 0 && dx < -(ScaledMapWidth() << (MagShift - 1)))
 				{
-					dx += SCALED_MAP_WIDTH << MAG_SHIFT;
+					dx += ScaledMapWidth() << MagShift;
 				}
-				else if (dx > (SCALED_MAP_WIDTH << (MAG_SHIFT - 1)))
+				else if (dx > (ScaledMapWidth() << (MagShift - 1)))
 				{
-					dx -= SCALED_MAP_WIDTH << MAG_SHIFT;
+					dx -= ScaledMapWidth() << MagShift;
 				}
 				dy = curLanderLoc.y - ElementPtr->next.location.y;
 				angle = ARCTAN(dx, dy);
@@ -464,19 +463,19 @@ void object_animation(ELEMENT* ElementPtr)
 					|| dx * dx + dy * dy
 						   >= MapSurface.width * MapSurface.width)
 				{
-					ElementPtr->mass_points &= ~CREATURE_AWARE;
+					ElementPtr->mass_points &= ~CreatureAware;
 				}
-				else if (!(ElementPtr->mass_points & CREATURE_AWARE))
+				else if (!(ElementPtr->mass_points & CreatureAware))
 				{
 					uint8_t DetectPercent {};
 
 					DetectPercent = (((uint8_t)(CreatureData[index].Attributes
-												& AWARENESS_MASK)
-									  >> AWARENESS_SHIFT)
+												& AwarenessMask)
+									  >> AwarenessShift)
 									 + 1)
 								  * (30 / 6);
 					// XXX: Shouldn't this be dependent on
-					// PLANET_SIDE_RATE somehow? And why is it
+					// PlanetSideRate somehow? And why is it
 					// written as '30 / 6' instead of 5? Does the
 					// 30 specify the (PC) framerate? That doesn't
 					// make sense; I would expect it to be in the
@@ -488,12 +487,12 @@ void object_animation(ELEMENT* ElementPtr)
 					if (uqm::random().next() % 100 < DetectPercent)
 					{
 						ElementPtr->thrust_wait = 0;
-						ElementPtr->mass_points |= CREATURE_AWARE;
+						ElementPtr->mass_points |= CreatureAware;
 					}
 				}
 
 				if (ElementPtr->next.location.y == 0
-					|| ElementPtr->next.location.y == (MAP_HEIGHT << MAG_SHIFT) - 1)
+					|| ElementPtr->next.location.y == (MapHeight() << MagShift) - 1)
 				{
 					ElementPtr->thrust_wait = 0;
 				}
@@ -504,10 +503,10 @@ void object_animation(ELEMENT* ElementPtr)
 					--ElementPtr->thrust_wait;
 					angle = old_angle;
 				}
-				else if (!(ElementPtr->mass_points & CREATURE_AWARE)
+				else if (!(ElementPtr->mass_points & CreatureAware)
 						 || (CreatureData[index].Attributes
-							 & BEHAVIOR_MASK)
-								== BEHAVIOR_UNPREDICTABLE)
+							 & BehaviorMask)
+								== BehaviorUnpredictable)
 				{
 					uint16_t rand_val {};
 
@@ -517,11 +516,11 @@ void object_animation(ELEMENT* ElementPtr)
 						(uqm::highByte(rand_val) >> 2) + 10;
 				}
 				else if ((CreatureData[index].Attributes
-						  & BEHAVIOR_MASK)
-						 == BEHAVIOR_FLEE)
+						  & BehaviorMask)
+						 == BehaviorFlee)
 				{
 					if (ElementPtr->next.location.y == 0
-						|| ElementPtr->next.location.y == (MAP_HEIGHT << MAG_SHIFT) - 1)
+						|| ElementPtr->next.location.y == (MapHeight() << MagShift) - 1)
 					{
 						if (angle & (HalfCircle - 1))
 						{
@@ -545,13 +544,13 @@ void object_animation(ELEMENT* ElementPtr)
 
 				switch (speed)
 				{
-					case SPEED_SLOW:
+					case SpeedSlow:
 						speed = WORLD_TO_VELOCITY(2 * 1) >> 2;
 						break;
-					case SPEED_MEDIUM:
+					case SpeedMedium:
 						speed = WORLD_TO_VELOCITY(2 * 1) >> 1;
 						break;
-					case SPEED_FAST:
+					case SpeedFast:
 						speed = WORLD_TO_VELOCITY(2 * 1) * 9 / 10;
 						break;
 				}
@@ -564,15 +563,15 @@ void object_animation(ELEMENT* ElementPtr)
 	}
 
 	if ((ElementPtr->state_flags & FiniteLife)
-		&& ElementPtr->mass_points == DEATH_EXPLOSION
+		&& ElementPtr->mass_points == DeathExplosion
 		&& GetSuccLink(DisplayLinks) != ElementPtr->PrimIndex)
 	{
-		lander_flags |= ADD_AT_END;
+		lander_flags |= AddAtEnd;
 	}
 }
 
-#define NUM_CREW_COLS (is3DO(uqm::UQMOptions::read().landerStyle) ? 6 : 3)
-#define NUM_CREW_ROWS (is3DO(uqm::UQMOptions::read().landerStyle) ? 2 : 4)
+static auto NumCrewCols() { return (is3DO(uqm::UQMOptions::read().landerStyle) ? 6 : 3); }
+static auto NumCrewRows() { return (is3DO(uqm::UQMOptions::read().landerStyle) ? 2 : 4); }
 
 static void
 DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
@@ -610,7 +609,7 @@ DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 			}
 		}
 
-		damage_index = DAMAGE_CYCLE;
+		damage_index = DamageCycle;
 		if (shieldHit)
 		{
 			return;
@@ -625,14 +624,14 @@ DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 
 	if (is3DO(uqm::UQMOptions::read().landerStyle))
 	{
-		s.origin.x = RES_SCALE(11) + (RES_SCALE(6) * (crew_delta % NUM_CREW_COLS));
-		s.origin.y = RES_SCALE(35) - (RES_SCALE(6) * (crew_delta / NUM_CREW_COLS));
+		s.origin.x = RES_SCALE(11) + (RES_SCALE(6) * (crew_delta % NumCrewCols()));
+		s.origin.y = RES_SCALE(35) - (RES_SCALE(6) * (crew_delta / NumCrewCols()));
 		OldContext = SetContext(RadarContext);
 	}
 	else
 	{
-		s.origin.x = RES_SCALE(6) + (RES_SCALE(6) * (crew_delta % NUM_CREW_COLS));
-		s.origin.y = RES_SCALE(39) - (RES_SCALE(6) * (crew_delta / NUM_CREW_COLS));
+		s.origin.x = RES_SCALE(6) + (RES_SCALE(6) * (crew_delta % NumCrewCols()));
+		s.origin.y = RES_SCALE(39) - (RES_SCALE(6) * (crew_delta / NumCrewCols()));
 		OldContext = SetContext(PCLanderContext);
 	}
 
@@ -675,11 +674,11 @@ FillLanderHold(PLANETSIDE_DESC* pPSD, uint16_t scan, uint16_t NumRetrieved)
 	}
 
 	tmpholdint =
-		((start_count + NumRetrieved) * MAX_HOLD_BARS / MAX_SCROUNGED)
-		- ((start_count * MAX_HOLD_BARS / MAX_SCROUNGED)
-		   + (NumRetrieved * MAX_HOLD_BARS / MAX_SCROUNGED));
-	start_count = start_count * MAX_HOLD_BARS / MAX_SCROUNGED;
-	NumRetrieved = (NumRetrieved * MAX_HOLD_BARS / MAX_SCROUNGED)
+		((start_count + NumRetrieved) * MaxHoldBars() / MaxScrounged())
+		- ((start_count * MaxHoldBars() / MaxScrounged())
+		   + (NumRetrieved * MaxHoldBars() / MaxScrounged()));
+	start_count = start_count * MaxHoldBars() / MaxScrounged();
+	NumRetrieved = (NumRetrieved * MaxHoldBars() / MaxScrounged())
 				 + tmpholdint;
 
 	s.origin.x = 0;
@@ -724,7 +723,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 	uint16_t Max {};
 
 	uint16_t* Amount {&pPSD->BiologicalLevel};
-	Max = MAX_SCROUNGED;
+	Max = MaxScrounged();
 	uint8_t EType {ElementPtr->thrust_wait};
 	uint16_t Offset {BIOLOGICAL_STRING_BASE};
 
@@ -825,7 +824,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 		pPSD->NodeData.NumNodesGrabbed++;
 	}
 
-	pPSD->NumFrames = NUM_TEXT_FRAMES;
+	pPSD->NumFrames = NumTextFrames;
 	const auto fmtResult = fmt::format_to_n(pPSD->AmountBuf, sizeof(pPSD->AmountBuf) - 1, "{}", NumRetrieved);
 	*fmtResult.out = '\0';
 	const char* pStr {GAME_STRING(EType + Offset)};
@@ -869,13 +868,13 @@ ExplodeCritter(ELEMENT* ElementPtr)
 		ELEMENT* ExplosionElementPtr {};
 		LockElement(hExplosionElement, &ExplosionElementPtr);
 
-		ExplosionElementPtr->mass_points = DEATH_EXPLOSION;
+		ExplosionElementPtr->mass_points = DeathExplosion;
 		ExplosionElementPtr->state_flags = FiniteLife;
 		ExplosionElementPtr->playerNr = PS_NON_PLAYER;
 		ExplosionElementPtr->next.location = ElementPtr->next.location;
 		ExplosionElementPtr->preprocess_func = object_animation;
 		ExplosionElementPtr->turn_wait = uqm::makeByte(2, 2);
-		ExplosionElementPtr->life_span = EXPLOSION_LIFE
+		ExplosionElementPtr->life_span = ExplosionLife
 									   * (uqm::lowNibble(ExplosionElementPtr->turn_wait));
 
 		SetPrimType(&DisplayArray[ExplosionElementPtr->PrimIndex],
@@ -937,7 +936,7 @@ shotCreature(ELEMENT* ElementPtr, uint8_t value,
 	if (ElementPtr->hit_points == 0)
 	{
 		// Brainbox bulldozers (Tractors at moon) explode.
-		if ((ElementPtr->mass_points & ~CREATURE_AWARE) == 24)
+		if ((ElementPtr->mass_points & ~CreatureAware) == 24)
 		{
 			ExplodeCritter(ElementPtr);
 		}
@@ -947,15 +946,15 @@ shotCreature(ELEMENT* ElementPtr, uint8_t value,
 			// thrust_wait field.  It seems to be unused
 			// by the game for anything at this point
 			ElementPtr->thrust_wait =
-				ElementPtr->mass_points & ~CREATURE_AWARE;
+				ElementPtr->mass_points & ~CreatureAware;
 			ElementPtr->mass_points = value;
 			DisplayArray[ElementPtr->PrimIndex].Object.Stamp.frame =
 				pSolarSysState->PlanetSideFrame[0];
 		}
 	}
-	else if (CreatureData[ElementPtr->mass_points & ~CREATURE_AWARE]
+	else if (CreatureData[ElementPtr->mass_points & ~CreatureAware]
 				 .Attributes
-			 & SPEED_MASK)
+			 & SpeedMask)
 	{
 		uint16_t angle {};
 
@@ -966,7 +965,7 @@ shotCreature(ELEMENT* ElementPtr, uint8_t value,
 								COSINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))),
 								SINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))));
 		ElementPtr->thrust_wait = 0;
-		ElementPtr->mass_points |= CREATURE_AWARE;
+		ElementPtr->mass_points |= CreatureAware;
 	}
 
 	SetPrimType(pPrim, STAMPFILL_PRIM);
@@ -1099,9 +1098,9 @@ CheckObjectCollision(uint16_t index)
 							{
 								0, 6, 13, 26};
 						const int creatureIndex = ElementPtr->mass_points
-												& ~CREATURE_AWARE;
+												& ~CreatureAware;
 						const int dangerLevel =
-							(CreatureData[creatureIndex].Attributes & DANGER_MASK) >> DANGER_SHIFT;
+							(CreatureData[creatureIndex].Attributes & DangerMask) >> DangerShift;
 
 						if (uqm::random().next() % 128 < danger_vals[dangerLevel])
 						{
@@ -1136,7 +1135,7 @@ CheckObjectCollision(uint16_t index)
 
 					if (scan == BIOLOGICAL_SCAN
 						&& (value = uqm::lowNibble(CreatureData[ElementPtr->mass_points
-																& ~CREATURE_AWARE]
+																& ~CreatureAware]
 													   .ValueAndHitPoints)))
 					{
 						// Collision of a stun bolt with a viable creature
@@ -1182,6 +1181,8 @@ CheckObjectCollision(uint16_t index)
 	}
 }
 
+static constexpr auto NumCycles {8};
+
 static void
 lightning_process(ELEMENT* ElementPtr)
 {
@@ -1205,14 +1206,13 @@ lightning_process(ELEMENT* ElementPtr)
 		else
 		{
 			int16_t s {};
-#define NUM_CYCLES 8
-			const static Color color_tab[NUM_CYCLES] =
+			const static Color color_tab[NumCycles] =
 				LIGHTNING_COLOR_TABLE;
 
 			s = ElementPtr->life_span;
-			if (s > NUM_CYCLES - 1)
+			if (s > NumCycles - 1)
 			{
-				s = NUM_CYCLES - 1;
+				s = NumCycles - 1;
 			}
 			SetPrimColor(pPrim, color_tab[s]);
 
@@ -1222,7 +1222,7 @@ lightning_process(ELEMENT* ElementPtr)
 				if (crew_left && uqm::random().next() % 100 < 10
 					&& !planetSideDesc->InTransit)
 				{
-					lander_flags |= KILL_CREW;
+					lander_flags |= KillCrew;
 				}
 
 				ElementPtr->next.location = curLanderLoc;
@@ -1238,7 +1238,7 @@ lightning_process(ELEMENT* ElementPtr)
 
 	if (GetSuccLink(DisplayLinks) != ElementPtr->PrimIndex)
 	{
-		lander_flags |= ADD_AT_END;
+		lander_flags |= AddAtEnd;
 	}
 }
 
@@ -1268,16 +1268,16 @@ AddLightning(void)
 		rand_val = uqm::random().next();
 		LightningElementPtr->life_span = 10 + (uqm::highWord(rand_val) % 10) + 1;
 		LightningElementPtr->next.location.x = (curLanderLoc.x
-												+ ((SCALED_MAP_WIDTH << MAG_SHIFT)
-												   - ((SURFACE_WIDTH >> 1) - 6))
+												+ ((ScaledMapWidth() << MagShift)
+												   - ((SurfaceWidth() >> 1) - 6))
 												+ (chooseIfHd(static_cast<uint32_t>(uqm::lowByte(rand_val)), rand_val)
-												   % (SURFACE_WIDTH - RES_SCALE(12))))
-											 % (SCALED_MAP_WIDTH << MAG_SHIFT);
+												   % (SurfaceWidth() - RES_SCALE(12))))
+											 % (ScaledMapWidth() << MagShift);
 		LightningElementPtr->next.location.y = (curLanderLoc.y
-												+ ((MAP_HEIGHT << MAG_SHIFT) - ((SURFACE_HEIGHT >> 1) - 6))
+												+ ((MapHeight() << MagShift) - ((SurfaceHeight() >> 1) - 6))
 												+ (chooseIfHd(static_cast<uint32_t>(uqm::highByte(rand_val)), rand_val)
-												   % (SURFACE_HEIGHT - RES_SCALE(12))))
-											 % (MAP_HEIGHT << MAG_SHIFT);
+												   % (SurfaceHeight() - RES_SCALE(12))))
+											 % (MapHeight() << MagShift);
 
 		LightningElementPtr->cycle = LightningElementPtr->life_span;
 
@@ -1324,14 +1324,14 @@ AddGroundDisaster(uint16_t which_disaster)
 
 		const uint32_t rand_val {uqm::random().next()};
 		GroundDisasterElementPtr->next.location.x = (curLanderLoc.x
-													 + ((SCALED_MAP_WIDTH << MAG_SHIFT)
-														- (SURFACE_WIDTH * 3 / 8))
-													 + (uqm::lowWord(rand_val) % (SURFACE_WIDTH * 3 / 4)))
-												  % (SCALED_MAP_WIDTH << MAG_SHIFT);
+													 + ((ScaledMapWidth() << MagShift)
+														- (SurfaceWidth() * 3 / 8))
+													 + (uqm::lowWord(rand_val) % (SurfaceWidth() * 3 / 4)))
+												  % (ScaledMapWidth() << MagShift);
 		GroundDisasterElementPtr->next.location.y = (curLanderLoc.y
-													 + ((MAP_HEIGHT << MAG_SHIFT) - (SURFACE_HEIGHT * 3 / 8))
-													 + (uqm::highWord(rand_val) % (SURFACE_HEIGHT * 3 / 4)))
-												  % (MAP_HEIGHT << MAG_SHIFT);
+													 + ((MapHeight() << MagShift) - (SurfaceHeight() * 3 / 8))
+													 + (uqm::highWord(rand_val) % (SurfaceHeight() * 3 / 4)))
+												  % (MapHeight() << MagShift);
 
 
 		if (which_disaster == EARTHQUAKE_DISASTER)
@@ -1383,7 +1383,7 @@ BuildObjectList(void)
 
 	DisplayLinks = uqm::makeDword(EndOfList, EndOfList);
 
-	lander_flags &= ~KILL_CREW;
+	lander_flags &= ~KillCrew;
 
 	const uint32_t rand_val {uqm::random().next()};
 	if (uqm::lowByte(uqm::highWord(rand_val)) < pPSD->FireChance)
@@ -1427,7 +1427,7 @@ BuildObjectList(void)
 			--ElementPtr->life_span;
 		}
 
-		lander_flags &= ~ADD_AT_END;
+		lander_flags &= ~AddAtEnd;
 
 		if (ElementPtr->preprocess_func)
 		{
@@ -1447,30 +1447,30 @@ BuildObjectList(void)
 					ElementPtr->next.location.y = 0;
 				}
 				else if (ElementPtr->next.location.y
-						 >= (MAP_HEIGHT << MAG_SHIFT))
+						 >= (MapHeight() << MagShift))
 				{
 					ElementPtr->next.location.y =
-						(MAP_HEIGHT << MAG_SHIFT) - 1;
+						(MapHeight() << MagShift) - 1;
 				}
 			}
 			if (ElementPtr->next.location.x < 0)
 			{
 				ElementPtr->next.location.x +=
-					SCALED_MAP_WIDTH << MAG_SHIFT;
+					ScaledMapWidth() << MagShift;
 			}
 			else
 			{
 				ElementPtr->next.location.x %=
-					SCALED_MAP_WIDTH << MAG_SHIFT;
+					ScaledMapWidth() << MagShift;
 			}
 
 			// XXX: Appearing flag is set by scan.c for scanned blips
 			if (ElementPtr->state_flags & Appearing)
 			{ // Update the location of a moving object on the scan map
 				ElementPtr->current.location.x =
-					ElementPtr->next.location.x >> MAG_SHIFT;
+					ElementPtr->next.location.x >> MagShift;
 				ElementPtr->current.location.y =
-					ElementPtr->next.location.y >> MAG_SHIFT;
+					ElementPtr->next.location.y >> MagShift;
 			}
 		}
 
@@ -1479,24 +1479,24 @@ BuildObjectList(void)
 			pPrim->Object.Stamp.origin.x =
 				ElementPtr->next.location.x
 				- org.x + (MapSurface.width >> 1);
-			if (pPrim->Object.Stamp.origin.x >= (SCALED_MAP_WIDTH << MAG_SHIFT)
+			if (pPrim->Object.Stamp.origin.x >= (ScaledMapWidth() << MagShift)
 													- (MapSurface.width * 3 / 2))
 			{
 				pPrim->Object.Stamp.origin.x -=
-					SCALED_MAP_WIDTH << MAG_SHIFT;
+					ScaledMapWidth() << MagShift;
 			}
-			else if (pPrim->Object.Stamp.origin.x <= -((SCALED_MAP_WIDTH << MAG_SHIFT)
+			else if (pPrim->Object.Stamp.origin.x <= -((ScaledMapWidth() << MagShift)
 													   - (MapSurface.width * 3 / 2)))
 			{
 				pPrim->Object.Stamp.origin.x +=
-					SCALED_MAP_WIDTH << MAG_SHIFT;
+					ScaledMapWidth() << MagShift;
 			}
 
 			pPrim->Object.Stamp.origin.y =
 				ElementPtr->next.location.y
 				- org.y + (MapSurface.height >> 1);
 
-			if (lander_flags & ADD_AT_END)
+			if (lander_flags & AddAtEnd)
 			{
 				InsertPrim(&DisplayLinks, ElementPtr->PrimIndex,
 						   EndOfList);
@@ -1530,9 +1530,9 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 		dx = 0;
 		ZeroVelocityComponents(&uqm::flagship().velocity);
 	}
-	else if (new_pt.y > (MAP_HEIGHT << MAG_SHIFT) - 1)
+	else if (new_pt.y > (MapHeight() << MagShift) - 1)
 	{
-		new_pt.y = (MAP_HEIGHT << MAG_SHIFT) - 1;
+		new_pt.y = (MapHeight() << MagShift) - 1;
 		dy = new_pt.y - curLanderLoc.y;
 		dx = 0;
 		ZeroVelocityComponents(&uqm::flagship().velocity);
@@ -1541,11 +1541,11 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 	new_pt.x = curLanderLoc.x + dx;
 	if (new_pt.x < 0)
 	{
-		new_pt.x += SCALED_MAP_WIDTH << MAG_SHIFT;
+		new_pt.x += ScaledMapWidth() << MagShift;
 	}
-	else if (new_pt.x >= SCALED_MAP_WIDTH << MAG_SHIFT)
+	else if (new_pt.x >= ScaledMapWidth() << MagShift)
 	{
-		new_pt.x -= SCALED_MAP_WIDTH << MAG_SHIFT;
+		new_pt.x -= ScaledMapWidth() << MagShift;
 	}
 
 	curLanderLoc = new_pt;
@@ -1572,9 +1572,9 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 		s.frame = pSolarSysState->Orbit.TopoZoomFrame;
 
 		DrawStamp(&s);
-		s.origin.x += SCALED_MAP_WIDTH << MAG_SHIFT;
+		s.origin.x += ScaledMapWidth() << MagShift;
 		DrawStamp(&s);
-		s.origin.x -= SCALED_MAP_WIDTH << (MAG_SHIFT + 1);
+		s.origin.x -= ScaledMapWidth() << (MagShift + 1);
 		DrawStamp(&s);
 	}
 
@@ -1590,7 +1590,7 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 		lander_s.origin.y = (MapSurface.height >> 1) + landingOffset;
 		lander_s.frame = LanderFrame[0];
 
-		if (landingOffset != ON_THE_GROUND)
+		if (landingOffset != OnTheGround)
 		{ // Landing, draw a shadow
 			shadow_s.origin.x = lander_s.origin.y + (MapSurface.width >> 1)
 							  - (MapSurface.height >> 1); //2;
@@ -1634,7 +1634,7 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 		}
 	}
 
-	if (landingOffset == ON_THE_GROUND && crew_left
+	if (landingOffset == OnTheGround && crew_left
 		&& GetPredLink(DisplayLinks) != EndOfList)
 	{
 		CheckObjectCollision(EndOfList);
@@ -1675,7 +1675,7 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 
 	RedrawSurfaceScan(&new_pt);
 
-	if (lander_flags & KILL_CREW)
+	if (lander_flags & KillCrew)
 	{
 		DeltaLanderCrew(-1, LIGHTNING_DISASTER);
 	}
@@ -1692,16 +1692,17 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 	SetContext(OldContext);
 }
 
+static constexpr auto AnimFrameRate {(c_gameSecond / 30)};
+
 static void
 animationInterframe(TimeCount* TimeIn, uint16_t periods)
 {
-#define ANIM_FRAME_RATE (c_gameSecond / 30)
 
 	while (periods > 0)
 	{
 		RotatePlanetSphere(true, nullptr);
 
-		if (GetTimeCounter() >= *TimeIn + ANIM_FRAME_RATE)
+		if (GetTimeCounter() >= *TimeIn + AnimFrameRate)
 		{
 			*TimeIn = GetTimeCounter();
 			periods--;
@@ -1730,7 +1731,7 @@ AnimateLaunch(FRAME farray, bool isLanding)
 
 	uint16_t num_frames {GetFrameCount(s.frame)};
 	NextTime = GetTimeCounter() + (c_gameSecond / 22);
-	psNextTime = GetTimeCounter() + PLANET_SIDE_RATE;
+	psNextTime = GetTimeCounter() + PlanetSideRate;
 	while (num_frames > 0)
 	{
 		RotatePlanetSphere(true, &s);
@@ -1742,7 +1743,7 @@ AnimateLaunch(FRAME farray, bool isLanding)
 			// 10 to clear the lander off of the screen
 			ScrollPlanetSide(0, 0,
 							 -(MapSurface.height / 2 + RES_SCALE(10)));
-			psNextTime = Now + PLANET_SIDE_RATE;
+			psNextTime = Now + PlanetSideRate;
 		}
 
 		if (Now >= NextTime)
@@ -1794,7 +1795,7 @@ AnimateLanderWarmup(void)
 
 	animationInterframe(&TimeIn, 2);
 
-	for (num_crew = 0; num_crew < (NUM_CREW_COLS * NUM_CREW_ROWS)
+	for (num_crew = 0; num_crew < (NumCrewCols() * NumCrewRows())
 					   && GLOBAL_SIS(CrewEnlisted);
 		 ++num_crew)
 	{
@@ -1860,27 +1861,29 @@ static void
 InitPlanetSide(GFXPOINT pt)
 {
 	// Adjust landing location by a random jitter.
-#define RANDOM_MISS RES_SCALE(64)
+	const auto RandomMiss = [&] {
+		return RES_SCALE(64);
+	};
 	// Jitter the X landing point.
-	pt.x -= RANDOM_MISS - uqm::random().next() % (RANDOM_MISS << 1);
+	pt.x -= RandomMiss() - uqm::random().next() % (RandomMiss() << 1);
 	if (pt.x < 0)
 	{
-		pt.x += (SCALED_MAP_WIDTH << MAG_SHIFT);
+		pt.x += (ScaledMapWidth() << MagShift);
 	}
-	else if (pt.x >= (SCALED_MAP_WIDTH << MAG_SHIFT))
+	else if (pt.x >= (ScaledMapWidth() << MagShift))
 	{
-		pt.x -= (SCALED_MAP_WIDTH << MAG_SHIFT);
+		pt.x -= (ScaledMapWidth() << MagShift);
 	}
 
 	// Jitter the Y landing point.
-	pt.y -= RANDOM_MISS - uqm::random().next() % (RANDOM_MISS << 1);
+	pt.y -= RandomMiss() - uqm::random().next() % (RandomMiss() << 1);
 	if (pt.y < 0)
 	{
 		pt.y = 0;
 	}
-	else if (pt.y >= (MAP_HEIGHT << MAG_SHIFT))
+	else if (pt.y >= (MapHeight() << MagShift))
 	{
-		pt.y = (MAP_HEIGHT << MAG_SHIFT) - 1;
+		pt.y = (MapHeight() << MagShift) - 1;
 	}
 
 	if (isPC(uqm::UQMOptions::read().landerStyle))
@@ -1895,7 +1898,7 @@ InitPlanetSide(GFXPOINT pt)
 	else
 	{
 		SetContext(PlanetContext);
-		MapSurface = MAKE_EXTENT(SURFACE_WIDTH, SURFACE_HEIGHT);
+		MapSurface = MAKE_EXTENT(SurfaceWidth(), SurfaceHeight());
 	}
 
 	curLanderLoc = pt;
@@ -1928,9 +1931,9 @@ InitPlanetSide(GFXPOINT pt)
 			s.origin.y = -pt.y + (MapSurface.height >> 1);
 			s.frame = pSolarSysState->Orbit.TopoZoomFrame;
 			DrawStamp(&s);
-			s.origin.x += SCALED_MAP_WIDTH << MAG_SHIFT;
+			s.origin.x += ScaledMapWidth() << MagShift;
 			DrawStamp(&s);
-			s.origin.x -= SCALED_MAP_WIDTH << (MAG_SHIFT + 1);
+			s.origin.x -= ScaledMapWidth() << (MagShift + 1);
 			DrawStamp(&s);
 
 			DrawRadarArea();
@@ -1947,10 +1950,11 @@ InitPlanetSide(GFXPOINT pt)
 	SET_GAME_STATE(PLANETARY_LANDING, 1);
 }
 
+static auto ShuttleFireWait() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 10 : 14); }
+
 static void
 LanderFire(int16_t facing)
 {
-#define SHUTTLE_FIRE_WAIT (isPC(uqm::UQMOptions::read().landerStyle) ? 10 : 14)
 	int16_t wdx {};
 	int16_t wdy {};
 	ELEMENT* WeaponElementPtr {};
@@ -2020,8 +2024,8 @@ put_node(ELEMENT* ElementPtr)
 	setNodeNotRetrieved(&pSolarSysState->SysInfo.PlanetInfo,
 						MINERAL_SCAN, ElementPtr->cycle);
 
-	ElementPtr->next.location.x >>= MAG_SHIFT;
-	ElementPtr->next.location.y >>= MAG_SHIFT;
+	ElementPtr->next.location.x >>= MagShift;
+	ElementPtr->next.location.y >>= MagShift;
 
 	CustomMineralDeposit(&info, ElementPtr->turn_wait,
 						 ElementPtr->thrust_wait, ElementPtr->next.location);
@@ -2043,7 +2047,7 @@ put_node(ELEMENT* ElementPtr)
 								- pSolarSysState->SysInfo.PlanetInfo.PartiallyScavengedList[MINERAL_SCAN][ElementPtr->cycle];
 
 	NodeElementPtr->current.image.frame = SetAbsFrameIndex(
-		MiscDataFrame, (NUM_SCANDOT_TRANSITIONS * 2)
+		MiscDataFrame, (NumScandotTransitions * 2)
 						   + ElementCategory(info.type) * 5);
 	NodeElementPtr->next.image.frame = SetRelFrameIndex(
 		NodeElementPtr->current.image.frame,
@@ -2053,9 +2057,9 @@ put_node(ELEMENT* ElementPtr)
 		IncFrameIndex(NodeElementPtr->next.image.frame);
 
 	NodeElementPtr->next.location.x =
-		NodeElementPtr->current.location.x << MAG_SHIFT;
+		NodeElementPtr->current.location.x << MagShift;
 	NodeElementPtr->next.location.y =
-		NodeElementPtr->current.location.y << MAG_SHIFT;
+		NodeElementPtr->current.location.y << MagShift;
 
 	NodeElementPtr->state_flags |= Appearing;
 	SET_GAME_STATE(PLANETARY_CHANGE, 1);
@@ -2073,9 +2077,9 @@ spawn_node(ELEMENT* ElementPtr)
 		ElementPtr->next.location.y = 0;
 		ZeroVelocityComponents(&ElementPtr->velocity);
 	}
-	if (ElementPtr->next.location.y > (MAP_HEIGHT << MAG_SHIFT) - 1)
+	if (ElementPtr->next.location.y > (MapHeight() << MagShift) - 1)
 	{
-		ElementPtr->next.location.y = (MAP_HEIGHT << MAG_SHIFT) - 1;
+		ElementPtr->next.location.y = (MapHeight() << MagShift) - 1;
 		ZeroVelocityComponents(&ElementPtr->velocity);
 	}
 
@@ -2165,7 +2169,7 @@ LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amount)
 	SetPrimType(&DisplayArray[NodeElementPtr->PrimIndex], STAMPFILL_PRIM);
 	SetPrimColor(&DisplayArray[NodeElementPtr->PrimIndex], BlackColor);
 	NodeElementPtr->current.image.frame = SetAbsFrameIndex(
-		MiscDataFrame, (NUM_SCANDOT_TRANSITIONS * 2)
+		MiscDataFrame, (NumScandotTransitions * 2)
 						   + ElementCategory(type) * 5);
 
 	NodeElementPtr->next.image.frame = SetRelFrameIndex(
@@ -2201,7 +2205,7 @@ ScatterDeposits(void)
 	NumNodesGrabbed = pPSD->NodeData.NumNodesGrabbed;
 
 	numDeposits = callGenerateForScanType(pSolarSysState,
-										  pSolarSysState->pOrbitalDesc, GENERATE_ALL, MINERAL_SCAN, nullptr);
+										  pSolarSysState->pOrbitalDesc, GenerateAll, MINERAL_SCAN, nullptr);
 
 	for (uint16_t i {numDeposits}; i < (numDeposits + NumNodesGrabbed); i++)
 	{
@@ -2232,13 +2236,13 @@ LanderExplosion(void)
 	LockElement(hExplosionElement, &ExplosionElementPtr);
 
 	ExplosionElementPtr->playerNr = PS_HUMAN_PLAYER;
-	ExplosionElementPtr->mass_points = DEATH_EXPLOSION;
+	ExplosionElementPtr->mass_points = DeathExplosion;
 	ExplosionElementPtr->state_flags = FiniteLife;
 	ExplosionElementPtr->next.location = curLanderLoc;
 	ExplosionElementPtr->preprocess_func = object_animation;
 	// Animation advances every 3rd frame
 	ExplosionElementPtr->turn_wait = uqm::makeByte(2, 2);
-	ExplosionElementPtr->life_span = EXPLOSION_LIFE
+	ExplosionElementPtr->life_span = ExplosionLife
 								   * (uqm::lowNibble(ExplosionElementPtr->turn_wait) + 1);
 
 	SetPrimType(&DisplayArray[ExplosionElementPtr->PrimIndex],
@@ -2264,7 +2268,9 @@ DoPlanetSide(LanderInputState* pMS)
 	int16_t dx = 0;
 	int16_t dy = 0;
 
-#define SHUTTLE_TURN_WAIT (isPC(uqm::UQMOptions::read().landerStyle) ? 1 : 3)
+	const auto ShuttleTurnWait = [&] {
+		return (isPC(uqm::UQMOptions::read().landerStyle) ? 1 : 3);
+	};
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
 		return (false);
@@ -2290,8 +2296,8 @@ DoPlanetSide(LanderInputState* pMS)
 #endif
 
 		SetVelocityComponents(&uqm::flagship().velocity,
-							  COSINE(angle, landerSpeedNumer) / LANDER_SPEED_DENOM,
-							  SINE(angle, landerSpeedNumer) / LANDER_SPEED_DENOM);
+							  COSINE(angle, landerSpeedNumer) / LanderSpeedDenom(),
+							  SINE(angle, landerSpeedNumer) / LanderSpeedDenom());
 
 		return true;
 	}
@@ -2311,12 +2317,12 @@ DoPlanetSide(LanderInputState* pMS)
 
 	else if (!crew_left && !damage_index)
 	{ // Dead, damage dealt, and exploding
-		if (explosion_index > EXPLOSION_LIFE + EXPLOSION_WAIT_FRAMES)
+		if (explosion_index > ExplosionLife + EXPLOSION_WAIT_FRAMES)
 		{
 			return false;
 		}
 
-		if (explosion_index > EXPLOSION_LIFE)
+		if (explosion_index > ExplosionLife)
 		{ // Keep going until the wait expires
 			++explosion_index;
 		}
@@ -2372,11 +2378,11 @@ DoPlanetSide(LanderInputState* pMS)
 
 				SetVelocityComponents(&uqm::flagship().velocity,
 									  COSINE(angle, landerSpeedNumer)
-										  / LANDER_SPEED_DENOM,
+										  / LanderSpeedDenom(),
 									  SINE(angle, landerSpeedNumer)
-										  / LANDER_SPEED_DENOM);
+										  / LanderSpeedDenom());
 
-				turn_wait = SHUTTLE_TURN_WAIT;
+				turn_wait = ShuttleTurnWait();
 			}
 			if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_THRUST]
 				|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_UP])
@@ -2397,7 +2403,7 @@ DoPlanetSide(LanderInputState* pMS)
 			{
 				LanderFire(index);
 
-				weapon_wait = SHUTTLE_FIRE_WAIT;
+				weapon_wait = ShuttleFireWait();
 				if (GET_GAME_STATE(IMPROVED_LANDER_SHOT))
 				{
 					weapon_wait >>= 1;
@@ -2406,7 +2412,7 @@ DoPlanetSide(LanderInputState* pMS)
 		}
 	}
 
-	ScrollPlanetSide(dx, dy, ON_THE_GROUND);
+	ScrollPlanetSide(dx, dy, OnTheGround);
 
 	if (isDifficulty(uqm::Difficulty::Hard))
 	{
@@ -2422,7 +2428,7 @@ DoPlanetSide(LanderInputState* pMS)
 
 	SleepThreadUntil(pMS->NextTime);
 	// NOTE: The rate is not stabilized
-	pMS->NextTime = GetTimeCounter() + PLANET_SIDE_RATE;
+	pMS->NextTime = GetTimeCounter() + PlanetSideRate;
 
 	return true;
 }
@@ -2604,31 +2610,34 @@ IdlePlanetSide(LanderInputState* inputState, TimePeriod howLong)
 		// 10 to clear the lander off of the screen
 		ScrollPlanetSide(0, 0, -(MapSurface.height / 2 + RES_SCALE(10)));
 		SleepThreadUntil(inputState->NextTime);
-		inputState->NextTime += PLANET_SIDE_RATE;
+		inputState->NextTime += PlanetSideRate;
 	}
 }
+
+static constexpr auto MaxOffsets {20};
+static constexpr auto MaxOffsetsHd {400};
 
 static void
 LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 {
-// We cannot solve a quadratic equation in a macro, so use a sensible max
-#define MAX_OFFSETS 20
-#define MAX_OFFSETS_HD 400
-// RES_SCALE (10) to clear the lander off of the screen
-#define DISTANCE_COVERED (MapSurface.height / 2 + RES_SCALE(10))
-	int landingOfs[MAX_OFFSETS];
+	// We cannot solve a quadratic equation in a macro, so use a sensible max
+	// RES_SCALE (10) to clear the lander off of the screen
+	const auto DistanceCovered = [&] {
+		return (MapSurface.height / 2 + RES_SCALE(10));
+	};
+	int landingOfs[MaxOffsets];
 	int start {};
 	int end {};
 	int index {};
-	int landingOfsHD[MAX_OFFSETS_HD];
+	int landingOfsHD[MaxOffsetsHd];
 
 	// Produce smooth acceleration deltas from a simple 1..x progression
 	int delta {0};
 	// JMS_GFX: In HdResolutionFactor graphics we run out of default offsets. -> Use larger
 	// offset value.
-	const int max_offsets {chooseIfHd(MAX_OFFSETS, MAX_OFFSETS_HD)};
+	const int max_offsets {chooseIfHd(MaxOffsets, MaxOffsetsHd)};
 
-	for (index = 0; index < max_offsets && delta < DISTANCE_COVERED;
+	for (index = 0; index < max_offsets && delta < DistanceCovered();
 		 ++index)
 	{
 		delta += index + 1;
@@ -2642,7 +2651,7 @@ LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 			landingOfs[index] = -delta;
 		}
 	}
-	assert(delta >= DISTANCE_COVERED && "Increase MAX_OFFSETS!");
+	assert(delta >= DistanceCovered() && "Increase MAX_OFFSETS!");
 
 	if (landing)
 	{
@@ -2676,7 +2685,7 @@ LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 		}
 
 		SleepThreadUntil(inputState->NextTime);
-		inputState->NextTime += PLANET_SIDE_RATE;
+		inputState->NextTime += PlanetSideRate;
 	}
 
 	if (!landing)
@@ -2779,7 +2788,7 @@ void PlanetSide(GFXPOINT planetLoc)
 
 	PSD.ElementLevel = GetStorageBayCapacity()
 					 - GLOBAL_SIS(TotalElementMass);
-	PSD.MaxElementLevel = MAX_SCROUNGED;
+	PSD.MaxElementLevel = MaxScrounged();
 	if (GET_GAME_STATE(IMPROVED_LANDER_CARGO))
 	{
 		PSD.MaxElementLevel <<= 1;
@@ -2799,18 +2808,18 @@ void PlanetSide(GFXPOINT planetLoc)
 	PSD.ColorCycle[1] = BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7D);
 	PSD.ColorCycle[2] = BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B);
 	PSD.ColorCycle[3] = BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x71);
-	for (index = 4; index < (NUM_TEXT_FRAMES >> 1) - 4; ++index)
+	for (index = 4; index < (NumTextFrames >> 1) - 4; ++index)
 	{
 		PSD.ColorCycle[index] =
 			BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F);
 	}
-	PSD.ColorCycle[(NUM_TEXT_FRAMES >> 1) - 4] =
+	PSD.ColorCycle[(NumTextFrames >> 1) - 4] =
 		BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x71);
-	PSD.ColorCycle[(NUM_TEXT_FRAMES >> 1) - 3] =
+	PSD.ColorCycle[(NumTextFrames >> 1) - 3] =
 		BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B);
-	PSD.ColorCycle[(NUM_TEXT_FRAMES >> 1) - 2] =
+	PSD.ColorCycle[(NumTextFrames >> 1) - 2] =
 		BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7D);
-	PSD.ColorCycle[(NUM_TEXT_FRAMES >> 1) - 1] =
+	PSD.ColorCycle[(NumTextFrames >> 1) - 1] =
 		BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F);
 	planetSideDesc = &PSD;
 
@@ -2825,7 +2834,7 @@ void PlanetSide(GFXPOINT planetLoc)
 
 	InitPlanetSide(planetLoc);
 
-	landerInputState.NextTime = GetTimeCounter() + PLANET_SIDE_RATE;
+	landerInputState.NextTime = GetTimeCounter() + PlanetSideRate;
 	LandingTakeoffSequence(&landerInputState, true);
 	PSD.InTransit = false;
 
@@ -3046,14 +3055,14 @@ void InitLander(uint8_t LanderFlags)
 
 		free_space = GetStorageBayCapacity()
 				   - GLOBAL_SIS(TotalElementMass);
-		if ((int)free_space < (int)(MAX_SCROUNGED << capacity_shift))
+		if ((int)free_space < (int)(MaxScrounged() << capacity_shift))
 		{
 			r.corner.x = RES_SCALE(1);
 			r.extent.width = RES_SCALE(4);
 			r.extent.height =
-				RES_SCALE(MAX_HOLD_BARS
+				RES_SCALE(MaxHoldBars()
 						  - ((free_space >> capacity_shift)
-							 * MAX_HOLD_BARS / MAX_SCROUNGED)
+							 * MaxHoldBars() / MaxScrounged())
 						  + 2);
 			SetContextForeGroundColor(BlackColor);
 			DrawFilledRectangle(&r);
@@ -3118,11 +3127,11 @@ void InitPCLander(bool Loading)
 
 		free_space = GetStorageBayCapacity()
 				   - GLOBAL_SIS(TotalElementMass);
-		if ((int)free_space < (int)(MAX_SCROUNGED << capacity_shift))
+		if ((int)free_space < (int)(MaxScrounged() << capacity_shift))
 		{
 			uint16_t inc {};
 
-			inc = MAX_HOLD_BARS - ((free_space >> capacity_shift) * MAX_HOLD_BARS / MAX_SCROUNGED) + 1;
+			inc = MaxHoldBars() - ((free_space >> capacity_shift) * MaxHoldBars() / MaxScrounged()) + 1;
 
 			r.corner = MAKE_POINT(RES_SCALE(1), 0);
 			r.extent = MAKE_EXTENT(RES_SCALE(2), RES_SCALE(inc));

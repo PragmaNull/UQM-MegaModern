@@ -86,7 +86,7 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 				const uint32_t RandVal = SysGenRNG->next();
 				const uint8_t PByte = pSunDesc->PlanetByte + 1;
 				pSunDesc->NumPlanets =
-					(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);
+					(RandVal % (MaxGenPlanets - PByte) + PByte);
 
 				FillOrbits(solarSys, pSunDesc->NumPlanets,
 						   solarSys->PlanetDesc, false);
@@ -142,7 +142,7 @@ GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 	GenerateDefault_generateMoons(solarSys, planet);
 
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED
-		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		uint16_t angle {};
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
@@ -157,7 +157,7 @@ GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 			pMoonDesc->data_index = DESTROYED_STARBASE;
 		}
 
-		pMoonDesc->radius = MIN_MOON_RADIUS;
+		pMoonDesc->radius = MinMoonRadius();
 		const uint32_t rand_val {SysGenRNG->next()};
 		angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 		pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
@@ -173,7 +173,7 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 							  PLANET_DESC* world)
 {
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const bool HardModeBS = isDifficulty(uqm::Difficulty::Hard) && !GET_GAME_STATE(KOHR_AH_FRENZY)
 							 && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << ILWRATH_ENCOUNTER);
@@ -198,7 +198,7 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 
 			if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
 			{
-				uqm::currentActivity() |= END_INTERPLANETARY;
+				uqm::currentActivity() |= EndInterplanetary;
 			}
 
 			return true;
@@ -268,7 +268,7 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 	}
 
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		/* Starbase */
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
@@ -286,7 +286,7 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 	}
 
 	if (IsExtended() && CurStarDescPtr()->Index == MOTHER_ARK_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const bool MelnormeInfo =
 			GET_GAME_STATE(MELNORME_ALIEN_INFO_STACK) >= 8;
@@ -315,14 +315,14 @@ GenerateChmmr_generateEnergy(const SOLARSYS_STATE* solarSys,
 {
 
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
 
 	if (CurStarDescPtr()->Index == MOTHER_ARK_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& IsExtended())
 	{
 		return GenerateDefault_generateArtifact(
@@ -338,7 +338,7 @@ GenerateChmmr_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 {
 
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
 		GenerateDefault_landerReportCycle(solarSys);
@@ -346,7 +346,7 @@ GenerateChmmr_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	}
 
 	if (IsExtended() && CurStarDescPtr()->Index == MOTHER_ARK_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		assert(whichNode == 0);
 

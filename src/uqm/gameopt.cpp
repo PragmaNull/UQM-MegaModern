@@ -44,12 +44,12 @@
 
 extern FRAME PlayFrame;
 
-#define MAX_SAVED_GAMES 50
-#define SAVES_PER_PAGE (optWindowType != uqm::WindowStyle::UQM ? 2 : 5)
-#define MAX_NAME_SIZE SisNameSize
+static constexpr auto MaxSavedGames {50};
+static auto SavesPerPage() { return (optWindowType != uqm::WindowStyle::UQM ? 2 : 5); }
 
-#define SUMMARY_X_OFFS NSAFE_NUM_SCL(14)
-#define SUMMARY_SIDE_OFFS NSAFE_NUM_SCL(7)
+
+static auto SummaryXOffs() { return NSAFE_NUM_SCL(14); }
+static auto SummarySideOffs() { return NSAFE_NUM_SCL(7); }
 
 static uint16_t lastUsedSlot;
 
@@ -241,9 +241,9 @@ FeedbackSetting(uint8_t which_setting)
 	DrawStatusMessage(buf);
 }
 
-#define DDSHS_NORMAL 0
-#define DDSHS_EDIT 1
-#define DDSHS_BLOCKCUR 2
+static constexpr auto DdshsNormal {0};
+static constexpr auto DdshsEdit {1};
+static constexpr auto DdshsBlockcur {2};
 
 static bool
 DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
@@ -298,7 +298,7 @@ DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 	lf.pStr = Str;
 	lf.CharCount = (uint16_t)~0;
 
-	if (!(state & DDSHS_EDIT))
+	if (!(state & DdshsEdit))
 	{ // normal state
 		if (nameCaptain)
 		{
@@ -312,7 +312,7 @@ DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 	else
 	{ // editing state
 		GFXRECT text_r;
-		uint8_t char_deltas[MAX_NAME_SIZE];
+		uint8_t char_deltas[SisNameSize];
 
 		TextRect(&lf, &text_r, char_deltas);
 
@@ -341,7 +341,7 @@ DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 			text_r.corner.x -= RES_SCALE(1);
 		}
 
-		if (state & DDSHS_BLOCKCUR)
+		if (state & DdshsBlockcur)
 		{ // Use block cursor for keyboardless systems
 
 			text_r.corner.y = r.corner.y;
@@ -403,11 +403,11 @@ static bool
 OnNameChange(TEXTENTRY_STATE* pTES)
 {
 	const bool nameCaptain = (bool)pTES->CbParam;
-	uint16_t hl = DDSHS_EDIT;
+	uint16_t hl = DdshsEdit;
 
 	if (pTES->JoystickMode)
 	{
-		hl |= DDSHS_BLOCKCUR;
+		hl |= DdshsBlockcur;
 	}
 
 	return DrawNameString(nameCaptain, pTES->BaseStr, pTES->CursorPos, hl);
@@ -416,13 +416,13 @@ OnNameChange(TEXTENTRY_STATE* pTES)
 static void
 NameCaptainOrShip(bool nameCaptain, bool gamestart)
 {
-	char buf[MAX_NAME_SIZE] = "";
+	char buf[SisNameSize] = "";
 	TEXTENTRY_STATE tes;
 	char* Setting {};
 	uint16_t CursPos = 0;
 
 	SetContext(StatusContext);
-	DrawNameString(nameCaptain, buf, CursPos, DDSHS_EDIT);
+	DrawNameString(nameCaptain, buf, CursPos, DdshsEdit);
 
 	DrawStatusMessage(
 		GAME_STRING(
@@ -476,7 +476,7 @@ NameCaptainOrShip(bool nameCaptain, bool gamestart)
 
 	SetFlashRect(SfrMenu3do(), false);
 
-	DrawNameString(nameCaptain, buf, CursPos, DDSHS_NORMAL);
+	DrawNameString(nameCaptain, buf, CursPos, DdshsNormal);
 
 	DrawBorder(SIS_STAT_REPAIR_FRAME);
 
@@ -504,13 +504,13 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 
 	SetContextForeGroundColor(SaveSelectedColor);
 	r.extent.width = RES_SCALE(15);
-	if (MAX_SAVED_GAMES > 99)
+	if (MaxSavedGames > 99)
 	{
 		r.extent.width += RES_SCALE(5);
 	}
 	r.extent.height = RES_SCALE(11);
 	r.corner.x = RES_SCALE(8);
-	r.corner.y = RES_SCALE(160 + ((gameIndex % SAVES_PER_PAGE) * 13));
+	r.corner.y = RES_SCALE(160 + ((gameIndex % SavesPerPage()) * 13));
 	DrawRectangle(&r, IsHd());
 
 	r.extent.width = RES_SCALE(204) + (SisScreenWidth() - RES_SCALE(242));
@@ -530,7 +530,7 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 	lf.pStr = fullStr;
 	lf.CharCount = (uint16_t)~0;
 
-	if (!(state & DDSHS_EDIT))
+	if (!(state & DdshsEdit))
 	{
 		TEXT t;
 
@@ -577,7 +577,7 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 			text_r.corner.x -= RES_SCALE(1);
 		}
 
-		if (state & DDSHS_BLOCKCUR)
+		if (state & DdshsBlockcur)
 		{ // Use block cursor for keyboardless systems
 			if (FullCursorPos == lf.CharCount)
 			{ // cursor at end-line -- use insertion point
@@ -613,12 +613,12 @@ DrawSaveNameString(char* Str, uint16_t CursorPos, uint16_t state, uint16_t gameI
 static bool
 OnSaveNameChange(TEXTENTRY_STATE* pTES)
 {
-	uint16_t hl = DDSHS_EDIT;
+	uint16_t hl = DdshsEdit;
 	const uint16_t* gameIndex = (uint16_t*)pTES->CbParam;
 
 	if (pTES->JoystickMode)
 	{
-		hl |= DDSHS_BLOCKCUR;
+		hl |= DdshsBlockcur;
 	}
 
 	return DrawSaveNameString(pTES->BaseStr, pTES->CursorPos, hl, *gameIndex);
@@ -632,7 +632,7 @@ NameSaveGame(uint16_t gameIndex, char* buf)
 	uint16_t gIndex {gameIndex};
 	GFXRECT r;
 
-	DrawSaveNameString(buf, CursPos, DDSHS_EDIT, gameIndex);
+	DrawSaveNameString(buf, CursPos, DdshsEdit, gameIndex);
 
 	tes.MaxSize = SaveNameSize;
 
@@ -647,7 +647,7 @@ NameSaveGame(uint16_t gameIndex, char* buf)
 				   + (SisScreenWidth() - RES_SCALE(242));
 	r.extent.height = RES_SCALE(11);
 	r.corner.x = RES_SCALE(30);
-	r.corner.y = (RES_SCALE(160) + ((gameIndex % SAVES_PER_PAGE) * RES_SCALE(13)));
+	r.corner.y = (RES_SCALE(160) + ((gameIndex % SavesPerPage()) * RES_SCALE(13)));
 	SetFlashRect(&r, false);
 
 	if (!DoTextEntry(&tes))
@@ -657,7 +657,7 @@ NameSaveGame(uint16_t gameIndex, char* buf)
 
 	SetFlashRect(nullptr, false);
 
-	DrawSaveNameString(buf, CursPos, DDSHS_NORMAL, gameIndex);
+	DrawSaveNameString(buf, CursPos, DdshsNormal, gameIndex);
 
 	if (namingCB)
 	{
@@ -836,7 +836,7 @@ void SettingsMenu(bool NameFlagship)
 
 typedef struct
 {
-	SUMMARY_DESC summary[MAX_SAVED_GAMES];
+	SUMMARY_DESC summary[MaxSavedGames];
 	bool saving;
 	// true when saving, false when loading
 	bool success;
@@ -909,11 +909,11 @@ DrawLabel(GFXPOINT pt, int16_t width, uint32_t gamestr)
 	SetContextForeGroundColor(OldColor);
 }
 
-#define SUMM_LABEL_LEFT_X (11 - SAFE_NUM(9))
-#define SUMM_LABEL_LEFT_W 69 // Nice
-#define SUMM_LABEL_RIGHT_X (158 - SAFE_NUM(20))
-#define SUMM_LABEL_RIGHT_W 72
-#define SUMM_LABEL_TOP_Y 5
+static auto SummLabelLeftX() { return (11 - SAFE_NUM(9)); }
+static constexpr auto SummLabelLeftW {69}; // Nice
+static auto SummLabelRightX() { return (158 - SAFE_NUM(20)); }
+static constexpr auto SummLabelRightW {72};
+static constexpr auto SummLabelTopY {5};
 
 static void
 DrawAllLabels(GFXRECT rect)
@@ -940,17 +940,17 @@ DrawAllLabels(GFXRECT rect)
 	DrawFilledRectangle(&rect);
 	SetContextForeGroundColor(OldColor);
 
-	width = SUMM_LABEL_LEFT_W;
-	pt.x = SUMM_LABEL_LEFT_X;
-	pt.y = SUMM_LABEL_TOP_Y;
+	width = SummLabelLeftW;
+	pt.x = SummLabelLeftX();
+	pt.y = SummLabelTopY;
 	DrawLabel(pt, width, LABEL_STRING_BASE + 4); // CARGO
 
 	pt.y = 76;
 	DrawLabel(pt, width, LABEL_STRING_BASE + 5); // LANDER
 
-	width = SUMM_LABEL_RIGHT_W;
-	pt.x = SUMM_LABEL_RIGHT_X;
-	pt.y = SUMM_LABEL_TOP_Y;
+	width = SummLabelRightW;
+	pt.x = SummLabelRightX();
+	pt.y = SummLabelTopY;
 	DrawLabel(pt, width, LABEL_STRING_BASE + 6); // DEVICES
 
 	pt.y = 87;
@@ -1018,8 +1018,12 @@ DrawSaveLoadText(PICK_GAME_STATE* pickState)
 	char buf[256];
 	int16_t leading {};
 
-#define SAVE_LOAD_Y RES_SCALE(151)
-#define SAVE_LOAD_H RES_SCALE(7)
+	const auto SaveLoadY = [&] {
+		return RES_SCALE(151);
+	};
+	const auto SaveLoadH = [&] {
+		return RES_SCALE(7);
+	};
 
 	if (!strlen(
 			GAME_STRING(LABEL_STRING_BASE + (3 - pickState->saving))))
@@ -1029,9 +1033,9 @@ DrawSaveLoadText(PICK_GAME_STATE* pickState)
 	}
 
 	r.corner.x = RES_SCALE(1);
-	r.corner.y = SAVE_LOAD_Y - SAFE_BOOL_SCL(2, 1);
+	r.corner.y = SaveLoadY() - SAFE_BOOL_SCL(2, 1);
 	r.extent.width = SisScreenWidth() - SAFE_BOOL_SCL(2, 1);
-	r.extent.height = SAVE_LOAD_H + SAFE_BOOL_SCL(4, 3);
+	r.extent.height = SaveLoadH() + SAFE_BOOL_SCL(4, 3);
 	SetContextForeGroundColor(BlackColor);
 	DrawFilledRectangle(&r);
 
@@ -1042,7 +1046,7 @@ DrawSaveLoadText(PICK_GAME_STATE* pickState)
 	GetContextFontLeading(&leading);
 
 	text.baseline.x = RES_SCALE(OrigSisScreenWidth() / 2);
-	text.baseline.y = RES_SCALE(5) + SAVE_LOAD_Y + SAFE_BOOL_SCL(2, 1);
+	text.baseline.y = RES_SCALE(5) + SaveLoadY() + SAFE_BOOL_SCL(2, 1);
 
 	uqm::utf8StringCopy(buf, sizeof(buf),
 						GAME_STRING(LABEL_STRING_BASE + (3 - pickState->saving)));
@@ -1057,6 +1061,8 @@ DrawSaveLoadText(PICK_GAME_STATE* pickState)
 	SetContextForeGroundColor(OldColor);
 }
 
+static constexpr auto NumColors {9};
+
 static void
 DrawSavegameCargo(SIS_STATE* sisState)
 {
@@ -1064,11 +1070,16 @@ DrawSavegameCargo(SIS_STATE* sisState)
 	STAMP s;
 	TEXT t;
 	char buf[40];
-#define NUM_COLORS 9
-	const static Color cargo_color[NUM_COLORS] = CARGO_COLOR_TABLE;
-#define ELEMENT_ORG_Y RES_SCALE(17)
-#define ELEMENT_SPACING_Y RES_SCALE(12)
-#define ELEMENT_SPACING_X RES_SCALE(36)
+	const static Color cargo_color[NumColors] = CARGO_COLOR_TABLE;
+	const auto ElementOrgY = [&] {
+		return RES_SCALE(17);
+	};
+	const auto ElementSpacingY = [&] {
+		return RES_SCALE(12);
+	};
+	const auto ElementSpacingX = [&] {
+		return RES_SCALE(36);
+	};
 
 	SetContext(SpaceContext);
 	BatchGraphics();
@@ -1076,14 +1087,14 @@ DrawSavegameCargo(SIS_STATE* sisState)
 
 	// setup element icons
 	s.frame = SetAbsFrameIndex(MiscDataFrame,
-							   (NUM_SCANDOT_TRANSITIONS << 1) + 3);
-	s.origin.x = RES_SCALE(7) + SUMMARY_X_OFFS - SUMMARY_SIDE_OFFS
+							   (NumScandotTransitions << 1) + 3);
+	s.origin.x = RES_SCALE(7) + SummaryXOffs() - SummarySideOffs()
 			   + NSAFE_NUM_SCL(3);
-	s.origin.y = ELEMENT_ORG_Y;
+	s.origin.y = ElementOrgY();
 	// setup element amounts
-	t.baseline.x = RES_SCALE(33) + SUMMARY_X_OFFS - SUMMARY_SIDE_OFFS
+	t.baseline.x = RES_SCALE(33) + SummaryXOffs() - SummarySideOffs()
 				 + NSAFE_NUM_SCL(3);
-	t.baseline.y = ELEMENT_ORG_Y + RES_SCALE(3);
+	t.baseline.y = ElementOrgY() + RES_SCALE(3);
 	t.align = ALIGN_RIGHT;
 	t.pStr = buf;
 
@@ -1092,30 +1103,30 @@ DrawSavegameCargo(SIS_STATE* sisState)
 	{
 		if (i == NUM_ELEMENT_CATEGORIES / 2)
 		{
-			s.origin.x += ELEMENT_SPACING_X;
-			s.origin.y = ELEMENT_ORG_Y;
-			t.baseline.x += ELEMENT_SPACING_X;
-			t.baseline.y = ELEMENT_ORG_Y + RES_SCALE(3);
+			s.origin.x += ElementSpacingX();
+			s.origin.y = ElementOrgY();
+			t.baseline.x += ElementSpacingX();
+			t.baseline.y = ElementOrgY() + RES_SCALE(3);
 		}
 		// draw element icon
 		DrawStamp(&s);
 		s.frame = SetRelFrameIndex(s.frame, 5);
-		s.origin.y += ELEMENT_SPACING_Y;
+		s.origin.y += ElementSpacingY();
 		// print element amount
 		SetContextForeGroundColor(cargo_color[i]);
 		fmt::format_to_sz_n(buf, "{}", sisState->ElementAmounts[i]);
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
-		t.baseline.y += ELEMENT_SPACING_Y;
+		t.baseline.y += ElementSpacingY();
 	}
 
 	// draw Bio icon
-	s.origin.x = RES_SCALE(24) + SUMMARY_X_OFFS - SUMMARY_SIDE_OFFS;
+	s.origin.x = RES_SCALE(24) + SummaryXOffs() - SummarySideOffs();
 	s.origin.y = RES_SCALE(68);
 	s.frame = SetAbsFrameIndex(s.frame, 68);
 	DrawStamp(&s);
 	// print Bio amount
-	t.baseline.x = RES_SCALE(50) + SUMMARY_X_OFFS;
+	t.baseline.x = RES_SCALE(50) + SummaryXOffs();
 	t.baseline.y = s.origin.y + RES_SCALE(3);
 	SetContextForeGroundColor(cargo_color[i]);
 	fmt::format_to_sz_n(buf, "{}", sisState->TotalBioMass);
@@ -1303,7 +1314,7 @@ DrawNoLimit(void)
 	GFXPOINT t_baseline;
 	int16_t leading {};
 
-	r.corner.x = RES_SCALE(137) + SUMMARY_X_OFFS + SUMMARY_SIDE_OFFS;
+	r.corner.x = RES_SCALE(137) + SummaryXOffs() + SummarySideOffs();
 	r.corner.y = RES_SCALE(93);
 	r.extent.width = RES_SCALE(75);
 	r.extent.height = RES_SCALE(17);
@@ -1399,7 +1410,7 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		r.corner.x = SisOrgX()
 				   + RES_SCALE(
 						 RES_DESCALE(SisScreenWidth() - StatusWidth()) >> 1)
-				   - NSAFE_NUM_SCL(16) + SUMMARY_X_OFFS;
+				   - NSAFE_NUM_SCL(16) + SummaryXOffs();
 		r.corner.y = SisOrgY();
 		r.extent.width = StatusWidth();
 		r.extent.height = StatusHeight();
@@ -1431,8 +1442,8 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		s.origin.y = RES_SCALE(13);
 		for (i = 0; i < 4; ++i)
 		{
-			s.origin.x = RES_SCALE(140) + SUMMARY_X_OFFS
-					   + SUMMARY_SIDE_OFFS;
+			s.origin.x = RES_SCALE(140) + SummaryXOffs()
+					   + SummarySideOffs();
 			for (uint16_t j {0}; j < 4; ++j)
 			{
 				const uint16_t devIndex = (i * 4) + j;
@@ -1448,15 +1459,15 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		}
 
 		SetContextFont(StarConFont);
-		t.baseline.x = RES_SCALE(173) + SUMMARY_X_OFFS
-					 + SUMMARY_SIDE_OFFS;
+		t.baseline.x = RES_SCALE(173) + SummaryXOffs()
+					 + SummarySideOffs();
 		t.align = ALIGN_CENTER;
 		t.CharCount = (uint16_t)~0;
 		t.pStr = buf;
 		if (pSD->Flags & AfterBombInstalled)
 		{
 			// draw the bomb and the escape pod
-			s.origin.x = SUMMARY_X_OFFS - SUMMARY_SIDE_OFFS
+			s.origin.x = SummaryXOffs() - SummarySideOffs()
 					   + NSAFE_NUM_SCL(6);
 			s.origin.y = 0;
 			s.frame = SetRelFrameIndex(pickState->SummaryFrame, 0);
@@ -1474,8 +1485,8 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 			SetContext(RadarContext);
 			// Hack RadarContext so we can use standard Lander display funcs
 			GetContextClipRect(&OldRect);
-			r.corner.x = SisOrgX() + RES_SCALE(10) + SUMMARY_X_OFFS
-					   - SUMMARY_SIDE_OFFS;
+			r.corner.x = SisOrgX() + RES_SCALE(10) + SummaryXOffs()
+					   - SummarySideOffs();
 			r.corner.y = SisOrgY() + RES_SCALE(84);
 			r.extent = OldRect.extent;
 			SetContextClipRect(&r);
@@ -1661,8 +1672,8 @@ DrawGameSelection(PICK_GAME_STATE* pickState, uint16_t selSlot)
 	t.align = ALIGN_LEFT;
 
 	// Draw savegame slots info
-	curSlot = selSlot - (selSlot % SAVES_PER_PAGE);
-	for (i = 0; i < SAVES_PER_PAGE && curSlot < MAX_SAVED_GAMES;
+	curSlot = selSlot - (selSlot % SavesPerPage());
+	for (i = 0; i < SavesPerPage() && curSlot < MaxSavedGames;
 		 ++i, ++curSlot)
 	{
 		SUMMARY_DESC* desc = &pickState->summary[curSlot];
@@ -1670,7 +1681,7 @@ DrawGameSelection(PICK_GAME_STATE* pickState, uint16_t selSlot)
 		SetContextForeGroundColor(
 			(curSlot == selSlot) ? Selected : UnSelected);
 		r.extent.width = RES_SCALE(15);
-		if (MAX_SAVED_GAMES > 99)
+		if (MaxSavedGames > 99)
 		{
 			r.extent.width += RES_SCALE(5);
 		}
@@ -1682,7 +1693,7 @@ DrawGameSelection(PICK_GAME_STATE* pickState, uint16_t selSlot)
 		t.baseline.x = r.corner.x + RES_SCALE(3);
 		t.baseline.y = r.corner.y + RES_SCALE(8);
 		fmt::format_to_sz_n(buf,
-							(MAX_SAVED_GAMES > 99) ? "{:03}" : "{:02}", curSlot);
+							(MaxSavedGames > 99) ? "{:03}" : "{:02}", curSlot);
 		font_DrawText(&t);
 
 		r.extent.width = RES_SCALE(204) + (SisScreenWidth() - RES_SCALE(242));
@@ -1726,7 +1737,7 @@ RedrawPickDisplay(PICK_GAME_STATE* pickState, uint16_t selSlot)
 static void
 LoadGameDescriptions(SUMMARY_DESC* pSD)
 {
-	for (uint16_t i {0}; i < MAX_SAVED_GAMES; ++i, ++pSD)
+	for (uint16_t i {0}; i < MaxSavedGames; ++i, ++pSD)
 	{
 		if (!LoadGame(i, pSD))
 		{
@@ -1793,11 +1804,11 @@ DoPickGame(MENU_STATE* pMS)
 		{
 			if (NewState == 0)
 			{
-				NewState = MAX_SAVED_GAMES - 1;
+				NewState = MaxSavedGames - 1;
 			}
-			else if ((NewState - SAVES_PER_PAGE) > 0)
+			else if ((NewState - SavesPerPage()) > 0)
 			{
-				NewState -= SAVES_PER_PAGE;
+				NewState -= SavesPerPage();
 			}
 			else
 			{
@@ -1807,24 +1818,24 @@ DoPickGame(MENU_STATE* pMS)
 		else if (PulsedInputState.menu[KEY_MENU_RIGHT]
 				 || PulsedInputState.menu[KEY_MENU_PAGE_DOWN])
 		{
-			if (NewState == MAX_SAVED_GAMES - 1)
+			if (NewState == MaxSavedGames - 1)
 			{
 				NewState = 0;
 			}
-			else if ((NewState + SAVES_PER_PAGE) < MAX_SAVED_GAMES - 1)
+			else if ((NewState + SavesPerPage()) < MaxSavedGames - 1)
 			{
-				NewState += SAVES_PER_PAGE;
+				NewState += SavesPerPage();
 			}
 			else
 			{
-				NewState = MAX_SAVED_GAMES - 1;
+				NewState = MaxSavedGames - 1;
 			}
 		}
 		else if (PulsedInputState.menu[KEY_MENU_UP])
 		{
 			if (NewState == 0)
 			{
-				NewState = MAX_SAVED_GAMES - 1;
+				NewState = MaxSavedGames - 1;
 			}
 			else
 			{
@@ -1833,7 +1844,7 @@ DoPickGame(MENU_STATE* pMS)
 		}
 		else if (PulsedInputState.menu[KEY_MENU_DOWN])
 		{
-			if (NewState == MAX_SAVED_GAMES - 1)
+			if (NewState == MaxSavedGames - 1)
 			{
 				NewState = 0;
 			}

@@ -45,8 +45,8 @@
 #include "starcon.h"
 #include "libs/graphics/gfx_common.h"
 
-#define ACCELERATION_INCREMENT (c_gameSecond / 12)
-#define MENU_REPEAT_DELAY (c_gameSecond / 2)
+static constexpr auto AccelerationIncrement {(c_gameSecond / 12)};
+static constexpr auto MenuRepeatDelay {(c_gameSecond / 2)};
 
 typedef struct
 {
@@ -492,9 +492,9 @@ void SetMenuRepeatDelay(TimePeriod min, TimePeriod max, TimePeriod step, bool ge
 
 void SetDefaultMenuRepeatDelay(void)
 {
-	_min_accel = ACCELERATION_INCREMENT;
-	_max_accel = MENU_REPEAT_DELAY;
-	_step_accel = ACCELERATION_INCREMENT;
+	_min_accel = AccelerationIncrement;
+	_max_accel = MenuRepeatDelay;
+	_step_accel = AccelerationIncrement;
 	_gestalt_keys = false;
 	//_clear_menu_state ();
 	ResetKeyRepeat();

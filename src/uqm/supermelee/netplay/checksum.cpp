@@ -210,11 +210,11 @@ void initChecksumBuffers(void)
 
 		ChecksumBuffer* cb {NetConnection_getChecksumBuffer(conn)};
 		ChecksumBuffer_init(cb, getBattleInputDelay(),
-							NETPLAY_CHECKSUM_INTERVAL);
+							NetplayChecksumInterval);
 	}
 
 	ChecksumBuffer_init(&localChecksumBuffer, getBattleInputDelay(),
-						NETPLAY_CHECKSUM_INTERVAL);
+						NetplayChecksumInterval);
 }
 
 void uninitChecksumBuffers(void)

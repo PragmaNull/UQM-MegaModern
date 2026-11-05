@@ -43,44 +43,43 @@
 #include "util.h"
 #include "shipcont.h"
 
-#define DOS_MENU (uqm::UQMOptions::read().dosMenus || IsDos()) // The DOS Menu window
+static auto DosMenu() { return (uqm::UQMOptions::read().dosMenus || IsDos()); } // The DOS Menu window
 
 // 3DO 4x3 hangar layout
-#define HANGAR_SHIPS_ROW_3DO 4
-#define HANGAR_Y_3DO 64
-#define HANGAR_DY_3DO 44
+static constexpr auto HangarShipsRow3do {4};
+static constexpr auto HangarY3do {64};
+static constexpr auto HangarDy3do {44};
 
-const int16_t hangar_x_coords_3do[HANGAR_SHIPS_ROW_3DO] =
+const int16_t hangar_x_coords_3do[HangarShipsRow3do] =
 	{
 		19, 60, 116, 157};
 
 // modified PC 6x2 hangar layout
-#define HANGAR_SHIPS_ROW_DOS 6
+static constexpr auto HangarShipsRowDos {6};
 // The Y position of the upper line of hangar bay doors.
-#define HANGAR_Y RES_SCALE(SAFE_BOOL(DOS_BOOL(88, 71), HANGAR_Y_3DO))
+static auto HangarY() { return RES_SCALE(SAFE_BOOL(DOS_BOOL(88, 71), HangarY3do)); }
 // The Y position of the lower line of hangar bay doors.
-#define HANGAR_DY RES_SCALE(SAFE_BOOL(DOS_BOOL(84, 76), HANGAR_DY_3DO))
+static auto HangarDy() { return RES_SCALE(SAFE_BOOL(DOS_BOOL(84, 76), HangarDy3do)); }
 
 // The X positions of the hangar bay doors for each resolution mode.
 // Calculated from the right edge of the left grey border bar on the
 // screen.
-const int16_t hangar_x_coords_uqm[HANGAR_SHIPS_ROW_DOS] =
+const int16_t hangar_x_coords_uqm[HangarShipsRowDos] =
 	{
 		0, 38, 76, 131, 169, 207};
 
-const int16_t hangar_x_coords_dos[HANGAR_SHIPS_ROW_DOS] =
+const int16_t hangar_x_coords_dos[HangarShipsRowDos] =
 	{
 		0, 38, 76, 133, 171, 209};
 
-int16_t hangar_x_coords[HANGAR_SHIPS_ROW_DOS];
+int16_t hangar_x_coords[HangarShipsRowDos];
 
-#define HANGAR_SHIPS 12
-#define HANGAR_SHIPS_ROW SAFE_BOOL(HANGAR_SHIPS_ROW_DOS, \
-								   HANGAR_SHIPS_ROW_3DO)
+static constexpr auto HangarShips {12};
+static auto HangarShipsRow() { return SAFE_BOOL(HangarShipsRowDos, HangarShipsRow3do); }
 
-#define HANGAR_ROWS (HANGAR_SHIPS / HANGAR_SHIPS_ROW)
+static auto HangarRows() { return (HangarShips / HangarShipsRow()); }
 
-#define HANGAR_ANIM_RATE RES_SCALE(15) // fps
+static auto HangarAnimRate() { return RES_SCALE(15); } // fps
 
 enum
 {
@@ -106,20 +105,20 @@ static uint16_t stowCount = 0;		// Number of ships stowed
 static uint16_t availableCount = 0; // Number of ships available to purchase
 
 // This is all for drawing the DOS version modules menu
-#define SHIPS_ORG_Y RES_SCALE(36)
-#define SHIPS_SPACING_Y RES_SCALE(16)
+static auto ShipsOrgY() { return RES_SCALE(36); }
+static auto ShipsSpacingY() { return RES_SCALE(16); }
 
-#define SHIPS_COL_0 RES_SCALE(5)
-#define SHIPS_COL_1 RES_SCALE(61)
+static auto ShipsCol0() { return RES_SCALE(5); }
+static auto ShipsCol1() { return RES_SCALE(61); }
 
-#define SHIPS_SEL_ORG_X (SHIPS_COL_0 - RES_SCALE(1))
-#define SHIPS_SEL_WIDTH (FieldWidth() - RES_SCALE(3))
+static auto ShipsSelOrgX() { return (ShipsCol0() - RES_SCALE(1)); }
+static auto ShipsSelWidth() { return (FieldWidth() - RES_SCALE(3)); }
 
-#define NAME_OFS_Y RES_SCALE(2)
-#define TEXT_BASELINE RES_SCALE(6)
-#define TEXT_SPACING_Y RES_SCALE(7)
+static auto NameOfsY() { return RES_SCALE(2); }
+static auto TextBaseline() { return RES_SCALE(6); }
+static auto TextSpacingY() { return RES_SCALE(7); }
 
-#define MAX_VIS_MODULES 5
+static constexpr auto MaxVisModules {5};
 
 typedef struct
 {
@@ -171,14 +170,14 @@ DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 		index += NUM_BUILDABLE_SHIPS;
 	}
 	t.align = ALIGN_LEFT;
-	t.baseline.x = SHIPS_COL_0;
+	t.baseline.x = ShipsCol0();
 
-	r.extent.width = SHIPS_SEL_WIDTH;
-	r.extent.height = TEXT_SPACING_Y * 2;
-	r.corner.x = SHIPS_SEL_ORG_X;
+	r.extent.width = ShipsSelWidth();
+	r.extent.height = TextSpacingY() * 2;
+	r.corner.x = ShipsSelOrgX();
 
 	// draw line background
-	r.corner.y = SHIPS_ORG_Y + pos * SHIPS_SPACING_Y + NAME_OFS_Y;
+	r.corner.y = ShipsOrgY() + pos * ShipsSpacingY() + NameOfsY();
 	SetContextForeGroundColor(selected ?
 								  ModuleSelectedBackColor :
 								  ModuleBackColor);
@@ -188,14 +187,14 @@ DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 	// print ship name or captain name
 	SetContextForeGroundColor(selected ? ModuleSelectedColor :
 										 (stowed_q ? CaptainNameTextColor : ModuleNameColor));
-	t.baseline.y = r.corner.y + TEXT_BASELINE;
+	t.baseline.y = r.corner.y + TextBaseline();
 	t.pStr = ShipState.ShipStats[index].ShipName;
 	t.CharCount = (stowed_q ? (uint16_t)~0 : uqm::utf8StringPos(t.pStr, ' '));
 	font_DrawText(&t);
 	if (!stowed_q)
 	{
 		// print second half of ship name
-		t.baseline.y += TEXT_SPACING_Y;
+		t.baseline.y += TextSpacingY();
 		t.pStr = uqm::skipUTF8Chars(t.pStr, t.CharCount + 1);
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
@@ -205,7 +204,7 @@ DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 								  ModuleSelectedColor :
 								  ModulePriceColor);
 	t.align = ALIGN_RIGHT;
-	t.baseline.x = SHIPS_COL_1 - RES_SCALE(2);
+	t.baseline.x = ShipsCol1() - RES_SCALE(2);
 	if (!stowed_q)
 	{
 		t.baseline.y -= RES_SCALE(3);
@@ -217,7 +216,7 @@ DrawShipsStatus(uint16_t index, uint16_t pos, bool selected)
 	if (stowed_q)
 	{
 		// print crew totals
-		t.baseline.y += TEXT_SPACING_Y;
+		t.baseline.y += TextSpacingY();
 		fmt::format_to_sz_n(buf, "{}/{}",
 							ShipState.ShipStats[index].CrewLevel,
 							ShipState.ShipStats[index].MaxCrew);
@@ -273,7 +272,7 @@ DrawShipsDisplay(SHIPS_STATE* shipState)
 
 	// print names and costs
 	const uint16_t count = (stowed_q ? stowCount : shipState->count);
-	for (uint16_t i {0}; i < MAX_VIS_MODULES; ++i)
+	for (uint16_t i {0}; i < MaxVisModules; ++i)
 	{
 		const uint16_t modIndex = shipState->topIndex + i;
 
@@ -307,7 +306,7 @@ ManipulateShips(int16_t NewState)
 {
 	int16_t NewTop {};
 
-	if (!DOS_MENU)
+	if (!DosMenu())
 	{
 		return;
 	}
@@ -321,9 +320,9 @@ ManipulateShips(int16_t NewState)
 		return;
 	}
 
-	if (NewState < NewTop || NewState >= NewTop + MAX_VIS_MODULES)
+	if (NewState < NewTop || NewState >= NewTop + MaxVisModules)
 	{
-		shipState->topIndex = NewState - NewState % MAX_VIS_MODULES;
+		shipState->topIndex = NewState - NewState % MaxVisModules;
 	}
 
 	DrawShips(shipState, NewState);
@@ -409,7 +408,7 @@ InventoryShips(SHIPS_STATE* ship_state)
 static void
 FillHangarX(void)
 {
-	for (uint8_t i {0}; i < HANGAR_SHIPS_ROW; i++)
+	for (uint8_t i {0}; i < HangarShipsRow(); i++)
 	{
 		if (IsPad())
 		{
@@ -434,7 +433,9 @@ FillHangarX(void)
 	}
 }
 
-#define WANDERING_X (optWindowType == uqm::WindowStyle::UQM ? 2 : (optWindowType == uqm::WindowStyle::Console3DO ? 6 : 19))
+static auto WanderingX() { return (optWindowType == uqm::WindowStyle::UQM ? 2 : (optWindowType == uqm::WindowStyle::Console3DO ? 6 : 19)); }
+
+static constexpr auto InitialCrew {2000};
 
 static void
 showRemainingCrew(void)
@@ -443,7 +444,6 @@ showRemainingCrew(void)
 	TEXT t;
 	char buf[30] {};
 	int16_t remaining_crew {};
-#define INITIAL_CREW 2000
 
 	if (!isDifficulty(uqm::Difficulty::Hard))
 	{
@@ -452,10 +452,10 @@ showRemainingCrew(void)
 
 	BatchGraphics();
 
-	remaining_crew = INITIAL_CREW - (int16_t)uqm::makeWord(GET_GAME_STATE(CREW_PURCHASED0), GET_GAME_STATE(CREW_PURCHASED1));
+	remaining_crew = InitialCrew - (int16_t)uqm::makeWord(GET_GAME_STATE(CREW_PURCHASED0), GET_GAME_STATE(CREW_PURCHASED1));
 
 	r.extent = MAKE_EXTENT(RES_SCALE(122), RES_SCALE(7));
-	r.corner = MAKE_POINT(RES_SCALE(WANDERING_X),
+	r.corner = MAKE_POINT(RES_SCALE(WanderingX()),
 						  RES_SCALE(74) - (r.extent.height + RES_SCALE(2)));
 
 	if (optWindowType != uqm::WindowStyle::UQM)
@@ -582,7 +582,7 @@ CalculateEscortsPoints(void)
 	return total;
 }
 
-#define REMAINING_FP (CalculateAllyPoints() - CalculateEscortsPoints())
+static auto RemainingFp() { return (CalculateAllyPoints() - CalculateEscortsPoints()); }
 
 bool CanBuyPoints(HFLEETINFO hFleet)
 {
@@ -592,7 +592,7 @@ bool CanBuyPoints(HFLEETINFO hFleet)
 		return true;
 	}
 
-	if (ShipPoints(hFleet) > REMAINING_FP)
+	if (ShipPoints(hFleet) > RemainingFp())
 	{
 		return false;
 	}
@@ -606,7 +606,7 @@ showRemainingPoints(int delta)
 	GFXRECT r;
 	TEXT t;
 	int8_t percentage_left {};
-	int16_t FP = REMAINING_FP + delta;
+	int16_t FP = RemainingFp() + delta;
 
 	if ((!uqm::UQMOptions::read().fleetPointSys && !isDifficulty(uqm::Difficulty::Hard))
 		|| GET_GAME_STATE(CHMMR_BOMB_STATE) == 3)
@@ -643,7 +643,7 @@ showRemainingPoints(int delta)
 	r.corner.x = RES_SCALE(((optWindowType != uqm::WindowStyle::Console3DO) ?
 								DosSisScreenWidth :
 								ThreedoSisScreenWidth)
-						   - WANDERING_X);
+						   - WanderingX());
 
 	t.baseline.x = r.corner.x;
 	t.baseline.y = r.corner.y + r.extent.height - RES_SCALE(1);
@@ -696,7 +696,7 @@ animatePowerLines(MENU_STATE* pMS)
 
 	if (Now >= NextTime || pMS)
 	{
-		NextTime = Now + (c_gameSecond / HANGAR_ANIM_RATE);
+		NextTime = Now + (c_gameSecond / HangarAnimRate());
 
 		SetColorMap(GetColorMapAddress(ColorMap, ColorMapIndex));
 		DrawStamp(&s);
@@ -712,7 +712,7 @@ SpinStarShip(MENU_STATE* pMS, HFLEETINFO hStarShip)
 	const int Index {FindMasterShipIndex(FleetPtr->SpeciesID)};
 	UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
 
-	if (Index >= 0 && Index < NUM_MELEE_SHIPS)
+	if (Index >= 0 && Index < NumMeleeShips)
 	{
 		if (isPC(uqm::UQMOptions::read().whichIntro))
 		{
@@ -1046,11 +1046,11 @@ DrawRaceStrings(uint8_t NewRaceItem)
 			const auto fmtResult = fmt::format_to_n(buf, sizeof(buf) - 1, "{}", shipPoints);
 			*fmtResult.out = '\0';
 
-			if (shipPoints < REMAINING_FP / 2)
+			if (shipPoints < RemainingFp() / 2)
 			{
 				SetContextForeGroundColor(BrightGreenColor);
 			}
-			else if (shipPoints <= REMAINING_FP)
+			else if (shipPoints <= RemainingFp())
 			{
 				SetContextForeGroundColor(BrightYellowColor);
 			}
@@ -1076,15 +1076,15 @@ DrawRaceStrings(uint8_t NewRaceItem)
 }
 
 // Width of an escort ship window.
-#define SHIP_WIN_WIDTH RES_SCALE(34)
+static auto ShipWinWidth() { return RES_SCALE(34); }
 
 // Height of an escort ship window.
-#define SHIP_WIN_HEIGHT (SHIP_WIN_WIDTH + RES_SCALE(6))
+static auto ShipWinHeight() { return (ShipWinWidth() + RES_SCALE(6)); }
 
 // For how many animation frames' time the escort ship bay doors
 // are slid left and right when opening them. If this number is not large
 // enough, part of the doors are left visible upon opening.
-#define SHIP_WIN_FRAMES ((SHIP_WIN_WIDTH >> 1) + 1)
+static auto ShipWinFrames() { return ((ShipWinWidth() >> 1) + 1); }
 
 // Print the crew count of an escort ship on top of its (already drawn)
 // image, either as '30' (full), '28/30' (partially full), or 'SCRAP'
@@ -1145,7 +1145,7 @@ ShowShipCrew(SHIP_FRAGMENT* StarShipPtr, const GFXRECT* pRect)
 	{
 		// Black out the crew before printing it if this is a redraw
 		r.corner.y = t.baseline.y - RES_SCALE(6);
-		r.extent.width = SHIP_WIN_WIDTH;
+		r.extent.width = ShipWinWidth();
 		r.extent.height = RES_SCALE(6);
 		SetContextForeGroundColor(BlackColor);
 		DrawFilledRectangle(&r);
@@ -1168,7 +1168,7 @@ ShowShipCrew(SHIP_FRAGMENT* StarShipPtr, const GFXRECT* pRect)
 	{
 		// Dim the top of the ship the first time you draw it
 		r.corner.y = t.baseline.y - RES_SCALE(6);
-		r.extent.width = SHIP_WIN_WIDTH;
+		r.extent.width = ShipWinWidth();
 		r.extent.height = RES_SCALE(6);
 		const Color shady = BuildColorRgba(0x00, 0x00, 0x00, 0x80);
 		SetContextForeGroundColor(shady);
@@ -1203,20 +1203,20 @@ ShowCombatShip(MENU_STATE* pMS, uint16_t which_window,
 	{
 		pship_win_info->StarShipPtr = YankedStarShipPtr;
 
-		pship_win_info->lfdoor_s.origin.x = -(SHIP_WIN_WIDTH >> 1);
-		pship_win_info->rtdoor_s.origin.x = (SHIP_WIN_WIDTH >> 1);
+		pship_win_info->lfdoor_s.origin.x = -(ShipWinWidth() >> 1);
+		pship_win_info->rtdoor_s.origin.x = (ShipWinWidth() >> 1);
 		pship_win_info->lfdoor_s.origin.y = 0;
 		pship_win_info->rtdoor_s.origin.y = 0;
 		pship_win_info->lfdoor_s.frame = IncFrameIndex(pMS->ModuleFrame);
 		pship_win_info->rtdoor_s.frame =
 			IncFrameIndex(pship_win_info->lfdoor_s.frame);
 
-		pship_win_info->ship_s.origin.x = (SHIP_WIN_WIDTH >> 1) + 1;
-		pship_win_info->ship_s.origin.y = (SHIP_WIN_WIDTH >> 1);
+		pship_win_info->ship_s.origin.x = (ShipWinWidth() >> 1) + 1;
+		pship_win_info->ship_s.origin.y = (ShipWinWidth() >> 1);
 		pship_win_info->ship_s.frame = YankedStarShipPtr->melee_icon;
 
-		pship_win_info->finished_s.x = hangar_x_coords[which_window % HANGAR_SHIPS_ROW];
-		pship_win_info->finished_s.y = HANGAR_Y + (HANGAR_DY * (which_window / HANGAR_SHIPS_ROW));
+		pship_win_info->finished_s.x = hangar_x_coords[which_window % HangarShipsRow()];
+		pship_win_info->finished_s.y = HangarY() + (HangarDy() * (which_window / HangarShipsRow()));
 	}
 	else
 	{
@@ -1273,13 +1273,13 @@ ShowCombatShip(MENU_STATE* pMS, uint16_t which_window,
 			pship_win_info->rtdoor_s.frame =
 				IncFrameIndex(pship_win_info->lfdoor_s.frame);
 
-			pship_win_info->ship_s.origin.x = (SHIP_WIN_WIDTH >> 1) + 1;
-			pship_win_info->ship_s.origin.y = (SHIP_WIN_WIDTH >> 1);
+			pship_win_info->ship_s.origin.x = (ShipWinWidth() >> 1) + 1;
+			pship_win_info->ship_s.origin.y = (ShipWinWidth() >> 1);
 			pship_win_info->ship_s.frame = StarShipPtr->melee_icon;
 
 			which_window = StarShipPtr->index;
-			pship_win_info->finished_s.x = hangar_x_coords[which_window % HANGAR_SHIPS_ROW];
-			pship_win_info->finished_s.y = HANGAR_Y + (HANGAR_DY * (which_window / HANGAR_SHIPS_ROW));
+			pship_win_info->finished_s.x = hangar_x_coords[which_window % HangarShipsRow()];
+			pship_win_info->finished_s.y = HangarY() + (HangarDy() * (which_window / HangarShipsRow()));
 			++pship_win_info;
 
 			UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
@@ -1296,12 +1296,12 @@ ShowCombatShip(MENU_STATE* pMS, uint16_t which_window,
 
 		bool AllDoorsFinished {false};
 		r.corner.x = r.corner.y = 0;
-		r.extent.width = SHIP_WIN_WIDTH;
-		r.extent.height = SHIP_WIN_HEIGHT;
+		r.extent.width = ShipWinWidth();
+		r.extent.height = ShipWinHeight();
 		FlushInput();
 		TimeIn = GetTimeCounter();
 
-		for (int j {0}; (j < SHIP_WIN_FRAMES) && !AllDoorsFinished; j++)
+		for (int j {0}; (j < ShipWinFrames()) && !AllDoorsFinished; j++)
 		{
 			SleepThreadUntil(TimeIn + c_gameSecond / RES_SCALE(24));
 			TimeIn = GetTimeCounter();
@@ -1328,8 +1328,8 @@ ShowCombatShip(MENU_STATE* pMS, uint16_t which_window,
 
 					ClipRect.corner.x = SisOrgX() + pship_win_info->finished_s.x;
 					ClipRect.corner.y = SisOrgY() + pship_win_info->finished_s.y;
-					ClipRect.extent.width = SHIP_WIN_WIDTH;
-					ClipRect.extent.height = SHIP_WIN_HEIGHT;
+					ClipRect.extent.width = ShipWinWidth();
+					ClipRect.extent.height = ShipWinHeight();
 					SetContextClipRect(&ClipRect);
 
 					ClearDrawable();
@@ -1435,13 +1435,13 @@ DMS_FlashFlagShip(void)
 static void
 DMS_GetEscortShipRect(GFXRECT* rOut, uint8_t slotNr)
 {
-	const uint8_t row = slotNr / HANGAR_SHIPS_ROW;
-	const uint8_t col = slotNr % HANGAR_SHIPS_ROW;
+	const uint8_t row = slotNr / HangarShipsRow();
+	const uint8_t col = slotNr % HangarShipsRow();
 
 	rOut->corner.x = hangar_x_coords[col];
-	rOut->corner.y = HANGAR_Y + (HANGAR_DY * row);
-	rOut->extent.width = SHIP_WIN_WIDTH;
-	rOut->extent.height = SHIP_WIN_HEIGHT;
+	rOut->corner.y = HangarY() + (HangarDy() * row);
+	rOut->extent.width = ShipWinWidth();
+	rOut->extent.height = ShipWinHeight();
 }
 
 static void
@@ -1466,13 +1466,13 @@ static void
 DMS_FlashEscortShipCrewCount(uint8_t slotNr)
 {
 	GFXRECT r;
-	const uint8_t row = slotNr / HANGAR_SHIPS_ROW;
-	const uint8_t col = slotNr % HANGAR_SHIPS_ROW;
+	const uint8_t row = slotNr / HangarShipsRow();
+	const uint8_t col = slotNr % HangarShipsRow();
 
 	r.corner.x = hangar_x_coords[col];
-	r.corner.y = (HANGAR_Y + (HANGAR_DY * row))
-			   + (SHIP_WIN_HEIGHT - RES_SCALE(6));
-	r.extent.width = SHIP_WIN_WIDTH;
+	r.corner.y = (HangarY() + (HangarDy() * row))
+			   + (ShipWinHeight() - RES_SCALE(6));
+	r.extent.width = ShipWinWidth();
 	r.extent.height = RES_SCALE(5);
 
 	SetContext(SpaceContext);
@@ -1535,7 +1535,7 @@ DMS_SetMode(MENU_STATE* pMS, DMS_Mode mode)
 	}
 }
 
-#define MODIFY_CREW_FLAG (1 << 8)
+static constexpr auto ModifyCrewFlag {(1 << 8)};
 // Helper function for DoModifyShips(), called when the player presses the
 // special button.
 // It works both when the cursor is over an escort ship, while not editing
@@ -1556,7 +1556,7 @@ DMS_SpinShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 
 	// We must either be hovering over a used ship slot, or adding a new
 	// ship to the fleet.
-	if ((hStarShip == 0) == !(pMS->delta_item & MODIFY_CREW_FLAG))
+	if ((hStarShip == 0) == !(pMS->delta_item & ModifyCrewFlag))
 	{
 		return false;
 	}
@@ -1829,7 +1829,7 @@ DMS_ModifyCrew(MENU_STATE* pMS, HSHIPFRAG hStarShip, int8_t dy)
 	uint16_t loop {};
 	uint16_t DoLoop = 1;
 	GFXRECT r;
-	//int16_t remaining_crew = INITIAL_CREW - (int16_t)MAKE_WORD (
+	//int16_t remaining_crew = InitialCrew - (int16_t)MAKE_WORD (
 	//		GET_GAME_STATE (CREW_PURCHASED0),
 	//		GET_GAME_STATE (CREW_PURCHASED1)); Unused
 
@@ -1939,7 +1939,7 @@ DMS_ModifyCrew(MENU_STATE* pMS, HSHIPFRAG hStarShip, int8_t dy)
 
 		// Clear out the bought ship index so that flash rects work
 		// correctly.
-		pMS->delta_item &= MODIFY_CREW_FLAG;
+		pMS->delta_item &= ModifyCrewFlag;
 	}
 }
 
@@ -2010,7 +2010,7 @@ DMS_TryUnstowEscortShip(MENU_STATE* pMS)
 
 		DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 
-		if (DOS_MENU)
+		if (DosMenu())
 		{
 			// Regenerate the ship list
 			memset(&ShipState, 0, sizeof ShipState);
@@ -2041,7 +2041,7 @@ static void
 DMS_AddEscortShip(MENU_STATE* pMS, bool special, bool select,
 				  bool cancel, int8_t dx, int8_t dy)
 {
-	assert(pMS->delta_item & MODIFY_CREW_FLAG);
+	assert(pMS->delta_item & ModifyCrewFlag);
 
 	uint8_t currentShip = uqm::lowByte(pMS->delta_item);
 
@@ -2058,7 +2058,7 @@ DMS_AddEscortShip(MENU_STATE* pMS, bool special, bool select,
 	if (cancel)
 	{
 		// Cancel selecting an escort ship.
-		pMS->delta_item &= ~MODIFY_CREW_FLAG;
+		pMS->delta_item &= ~ModifyCrewFlag;
 		SetFlashRect(nullptr, false);
 
 		DrawMenuStateStrings(PM_CREW, SHIPYARD_CREW);
@@ -2066,7 +2066,7 @@ DMS_AddEscortShip(MENU_STATE* pMS, bool special, bool select,
 		// twice to reset menu selection
 		DMS_SetMode(pMS, DMS_Mode_navigate);
 
-		if (DOS_MENU)
+		if (DosMenu())
 		{
 			DeltaSISGauges(UndefinedDelta, UndefinedDelta,
 						   UndefinedDelta);
@@ -2100,7 +2100,7 @@ DMS_AddEscortShip(MENU_STATE* pMS, bool special, bool select,
 			PreUpdateFlashRect();
 			DrawRaceStrings(currentShip);
 			PostUpdateFlashRect();
-			pMS->delta_item = currentShip | MODIFY_CREW_FLAG;
+			pMS->delta_item = currentShip | ModifyCrewFlag;
 		}
 	}
 	else if (dx)
@@ -2112,9 +2112,9 @@ DMS_AddEscortShip(MENU_STATE* pMS, bool special, bool select,
 			if (currentShip < -dx)
 			{
 				currentShip = (stowed_q ? stowCount : availableCount) - 1;
-				if (DOS_MENU && dx != -1)
+				if (DosMenu() && dx != -1)
 				{
-					currentShip = currentShip - currentShip % MAX_VIS_MODULES;
+					currentShip = currentShip - currentShip % MaxVisModules;
 				}
 			}
 			else
@@ -2139,7 +2139,7 @@ DMS_AddEscortShip(MENU_STATE* pMS, bool special, bool select,
 			PreUpdateFlashRect();
 			DrawRaceStrings(currentShip);
 			PostUpdateFlashRect();
-			pMS->delta_item = currentShip | MODIFY_CREW_FLAG;
+			pMS->delta_item = currentShip | ModifyCrewFlag;
 		}
 	}
 }
@@ -2209,8 +2209,8 @@ DMS_StowEscortShip(MENU_STATE* pMS, HSHIPFRAG hStarShip)
 static uint8_t
 DMS_MoveCursor(uint8_t curState, int8_t dx, int8_t dy)
 {
-	uint8_t row = uqm::lowNibble(curState) / HANGAR_SHIPS_ROW;
-	uint8_t col = uqm::lowNibble(curState) % HANGAR_SHIPS_ROW;
+	uint8_t row = uqm::lowNibble(curState) / HangarShipsRow();
+	uint8_t col = uqm::lowNibble(curState) % HangarShipsRow();
 	bool isFlagShipSelected = (uqm::highNibble(curState) != 0);
 
 	if (dy)
@@ -2221,14 +2221,14 @@ DMS_MoveCursor(uint8_t curState, int8_t dx, int8_t dy)
 		// to ease operations.
 		if (isFlagShipSelected)
 		{
-			row = HANGAR_ROWS;
+			row = HangarRows();
 		}
 
 		// Move up/down, wrapping around:
-		row = (row + (HANGAR_ROWS + 1) + dy) % (HANGAR_ROWS + 1);
+		row = (row + (HangarRows() + 1) + dy) % (HangarRows() + 1);
 
 		// If we moved to the 'extra row', this means the flag ship.
-		isFlagShipSelected = (row == HANGAR_ROWS);
+		isFlagShipSelected = (row == HangarRows());
 		if (isFlagShipSelected)
 		{
 			row = 0;
@@ -2241,11 +2241,11 @@ DMS_MoveCursor(uint8_t curState, int8_t dx, int8_t dy)
 		{
 			// Moving horizontally through the escort ship slots,
 			// wrapping around if necessary.
-			col = (col + HANGAR_SHIPS_ROW + dx) % HANGAR_SHIPS_ROW;
+			col = (col + HangarShipsRow() + dx) % HangarShipsRow();
 		}
 	}
 
-	return uqm::makeByte(row * HANGAR_SHIPS_ROW + col,
+	return uqm::makeByte(row * HangarShipsRow() + col,
 						 isFlagShipSelected ? 0xf : 0);
 }
 
@@ -2290,7 +2290,7 @@ DMS_EditCrewMode(MENU_STATE* pMS, HSHIPFRAG hStarShip,
 			{
 				// Stowing the ship along with its crew
 				DMS_StowEscortShip(pMS, hStarShip);
-				if (DOS_MENU)
+				if (DosMenu())
 				{
 					// Regenerate the ship list
 					memset(&ShipState, 0, sizeof ShipState);
@@ -2299,7 +2299,7 @@ DMS_EditCrewMode(MENU_STATE* pMS, HSHIPFRAG hStarShip,
 			}
 		}
 
-		pMS->delta_item &= ~MODIFY_CREW_FLAG;
+		pMS->delta_item &= ~ModifyCrewFlag;
 		DMS_SetMode(pMS, DMS_Mode_navigate);
 	}
 	else if (dy)
@@ -2377,7 +2377,7 @@ DMS_NavigateShipSlots(MENU_STATE* pMS, bool special, bool select,
 			{
 				currentStowShip = stowCount - 1;
 			}
-			pMS->delta_item = MODIFY_CREW_FLAG | (stowed_q ? currentStowShip : 0);
+			pMS->delta_item = ModifyCrewFlag | (stowed_q ? currentStowShip : 0);
 			DrawRaceStrings(uqm::lowByte(pMS->delta_item));
 			DMS_SetMode(pMS, DMS_Mode_addEscort);
 		}
@@ -2385,7 +2385,7 @@ DMS_NavigateShipSlots(MENU_STATE* pMS, bool special, bool select,
 		{
 			// Select button was pressed over an escort ship or
 			// the flagship. Entering crew editing mode
-			pMS->delta_item |= MODIFY_CREW_FLAG;
+			pMS->delta_item |= ModifyCrewFlag;
 			DMS_SetMode(pMS, DMS_Mode_editCrew);
 		}
 	}
@@ -2435,7 +2435,7 @@ DoModifyShips(MENU_STATE* pMS)
 		int8_t dy = 0;
 
 
-		if (!(pMS->delta_item & MODIFY_CREW_FLAG))
+		if (!(pMS->delta_item & ModifyCrewFlag))
 		{
 			// Navigating through the ship slots.
 			if (PulsedInputState.menu[KEY_MENU_RIGHT])
@@ -2661,7 +2661,7 @@ bool DoShipyard(MENU_STATE* pMS)
 		stowCount = GetStowedShipCount();
 		availableCount = GetAvailableRaceCount();
 
-		if (DOS_MENU)
+		if (DosMenu())
 		{
 			memset(&ShipState, 0, sizeof ShipState);
 			InventoryShips(&ShipState);

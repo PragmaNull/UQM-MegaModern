@@ -40,8 +40,8 @@
 #include "core/string/StringUtils.h"
 
 // How manyeth .png in the module.ani file is the first lander shield.
-#define SHIELD_LOCATION_IN_MODULE_ANI (23 + 2 * NUM_PURCHASE_MODULES)
-#define DOS_MENU (uqm::UQMOptions::read().dosMenus || IsDos()) // The DOS Menu window
+static constexpr auto ShieldLocationInModuleAni {(23 + 2 * NUM_PURCHASE_MODULES)};
+static auto DosMenu() { return (uqm::UQMOptions::read().dosMenus || IsDos()); } // The DOS Menu window
 
 enum
 {
@@ -77,20 +77,20 @@ InitializeDOSLanderPos(void)
 }
 
 // This is all for drawing the DOS version modules menu
-#define MODULE_ORG_Y RES_SCALE(36)
-#define MODULE_SPACING_Y RES_SCALE(16)
+static auto ModuleOrgY() { return RES_SCALE(36); }
+static auto ModuleSpacingY() { return RES_SCALE(16); }
 
-#define MODULE_COL_0 RES_SCALE(5)
-#define MODULE_COL_1 RES_SCALE(61)
+static auto ModuleCol0() { return RES_SCALE(5); }
+static auto ModuleCol1() { return RES_SCALE(61); }
 
-#define MODULE_SEL_ORG_X (MODULE_COL_0 - RES_SCALE(1))
-#define MODULE_SEL_WIDTH (FieldWidth() - RES_SCALE(3))
+static auto ModuleSelOrgX() { return (ModuleCol0() - RES_SCALE(1)); }
+static auto ModuleSelWidth() { return (FieldWidth() - RES_SCALE(3)); }
 
-#define NAME_OFS_Y RES_SCALE(2)
-#define TEXT_BASELINE RES_SCALE(6)
-#define TEXT_SPACING_Y RES_SCALE(7)
+static auto NameOfsY() { return RES_SCALE(2); }
+static auto TextBaseline() { return RES_SCALE(6); }
+static auto TextSpacingY() { return RES_SCALE(7); }
 
-#define MAX_VIS_MODULES 5
+static constexpr auto MaxVisModules {5};
 
 typedef struct
 {
@@ -112,14 +112,14 @@ DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 	char buf[10];
 
 	t.align = ALIGN_LEFT;
-	t.baseline.x = MODULE_COL_0;
+	t.baseline.x = ModuleCol0();
 
-	r.extent.width = MODULE_SEL_WIDTH;
-	r.extent.height = TEXT_SPACING_Y * 2;
-	r.corner.x = MODULE_SEL_ORG_X;
+	r.extent.width = ModuleSelWidth();
+	r.extent.height = TextSpacingY() * 2;
+	r.corner.x = ModuleSelOrgX();
 
 	// draw line background
-	r.corner.y = MODULE_ORG_Y + pos * MODULE_SPACING_Y + NAME_OFS_Y;
+	r.corner.y = ModuleOrgY() + pos * ModuleSpacingY() + NameOfsY();
 	SetContextForeGroundColor(selected ?
 								  ModuleSelectedBackColor :
 								  ModuleBackColor);
@@ -132,11 +132,11 @@ DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 		SetContextForeGroundColor(selected ?
 									  ModuleSelectedColor :
 									  ModuleNameColor);
-		t.baseline.y = r.corner.y + TEXT_BASELINE;
+		t.baseline.y = r.corner.y + TextBaseline();
 		t.pStr = GAME_STRING(index + DosStarbaseStringBase);
 		t.CharCount = uqm::utf8StringPos(t.pStr, ' ');
 		font_DrawText(&t);
-		t.baseline.y += TEXT_SPACING_Y;
+		t.baseline.y += TextSpacingY();
 		t.pStr = uqm::skipUTF8Chars(t.pStr, t.CharCount + 1);
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
@@ -146,7 +146,7 @@ DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 									  ModuleSelectedColor :
 									  ModulePriceColor);
 		t.align = ALIGN_RIGHT;
-		t.baseline.x = MODULE_COL_1 - RES_SCALE(2);
+		t.baseline.x = ModuleCol1() - RES_SCALE(2);
 		t.baseline.y -= RES_SCALE(3);
 		fmt::format_to_sz_n(buf, "{}",
 							GLOBAL(ModuleCost[index]) * ModuleCostScale);
@@ -198,7 +198,7 @@ DrawModuleDisplay(MODULES_STATE* modState)
 	font_DrawText(&t);
 
 	// print names and costs
-	for (uint16_t i {0}; i < MAX_VIS_MODULES; ++i)
+	for (uint16_t i {0}; i < MaxVisModules; ++i)
 	{
 		const uint16_t modIndex = modState->topIndex + i;
 
@@ -232,7 +232,7 @@ ManipulateModules(int16_t NewState)
 {
 	int16_t NewTop {};
 
-	if (!DOS_MENU)
+	if (!DosMenu())
 	{
 		return;
 	}
@@ -246,9 +246,9 @@ ManipulateModules(int16_t NewState)
 		return;
 	}
 
-	if (NewState < NewTop || NewState >= NewTop + MAX_VIS_MODULES)
+	if (NewState < NewTop || NewState >= NewTop + MaxVisModules)
 	{
-		modState->topIndex = NewState - NewState % MAX_VIS_MODULES;
+		modState->topIndex = NewState - NewState % MaxVisModules;
 	}
 
 	DrawModules(modState, NewState);
@@ -564,9 +564,9 @@ DrawNoLandersText(GFXRECT rect)
 	SetContextForeGroundColor(OldColor);
 }
 
-#define LANDER_X (RES_SCALE(24) - SafePad())
-#define LANDER_Y RES_SCALE(67)
-#define LANDER_WIDTH RES_SCALE(15)
+static auto LanderX() { return (RES_SCALE(24) - SafePad()); }
+static auto LanderY() { return RES_SCALE(67); }
+static auto LanderWidth() { return RES_SCALE(15); }
 
 static void
 DisplayLanders(MENU_STATE* pMS)
@@ -580,7 +580,7 @@ DisplayLanders(MENU_STATE* pMS)
 		s.origin.x = -SafeX();
 		s.origin.y = 0;
 		s.frame = SetAbsFrameIndex(pMS->ModuleFrame,
-								   SHIELD_LOCATION_IN_MODULE_ANI + 4);
+								   ShieldLocationInModuleAni + 4);
 		DrawStamp(&s);
 
 		GetFrameRect(s.frame, &rect);
@@ -595,19 +595,19 @@ DisplayLanders(MENU_STATE* pMS)
 
 		if (!IsDos())
 		{
-			s.origin.x = LANDER_X;
-			s.origin.y = LANDER_Y;
+			s.origin.x = LanderX();
+			s.origin.y = LanderY();
 			for (i = 0; i < GLOBAL_SIS(NumLanders); ++i)
 			{
 				DrawStamp(&s);
-				s.origin.x += LANDER_WIDTH;
+				s.origin.x += LanderWidth();
 			}
 
 			SetContextForeGroundColor(BlackColor);
 			for (; i < MaxLanders; ++i)
 			{
 				DrawFilledStamp(&s);
-				s.origin.x += LANDER_WIDTH;
+				s.origin.x += LanderWidth();
 			}
 		}
 		else
@@ -989,7 +989,7 @@ DoInstallModule(MENU_STATE* pMS)
 				if (NewState == PLANET_LANDER
 					|| NewState == EmptySlot + 3)
 				{
-					w = LANDER_WIDTH;
+					w = LanderWidth();
 				}
 				else
 				{
@@ -1022,17 +1022,17 @@ InitFlash:
 					case PLANET_LANDER:
 					case EmptySlot + 3:
 						pMS->flash_rect0.corner.x =
-							DOS_BOOL(LANDER_X, RES_SCALE(LanderDosX))
+							DOS_BOOL(LanderX(), RES_SCALE(LanderDosX))
 							- RES_SCALE(1);
 						pMS->flash_rect0.corner.y =
-							DOS_BOOL(LANDER_Y, RES_SCALE(LanderDosY))
+							DOS_BOOL(LanderY(), RES_SCALE(LanderDosY))
 							- RES_SCALE(1);
 						pMS->flash_rect0.extent.width =
 							RES_SCALE(11 + 2);
 						pMS->flash_rect0.extent.height =
 							RES_SCALE(13 + 2);
 
-						w = LANDER_WIDTH;
+						w = LanderWidth();
 						break;
 					case FUSION_THRUSTER:
 					case EmptySlot + 0:
@@ -1349,7 +1349,7 @@ bool DoOutfit(MENU_STATE* pMS)
 				ShieldFlags = GET_GAME_STATE(LANDER_SHIELDS);
 
 				s.frame = SetAbsFrameIndex(pMS->ModuleFrame,
-										   SHIELD_LOCATION_IN_MODULE_ANI);
+										   ShieldLocationInModuleAni);
 				if (ShieldFlags & (1 << EARTHQUAKE_DISASTER))
 				{
 					DrawStamp(&s);
@@ -1449,7 +1449,7 @@ ExitOutfit:
 				break;
 			case OUTFIT_MODULES:
 
-				if (DOS_MENU)
+				if (DosMenu())
 				{
 					memset(&ModuleState, 0, sizeof ModuleState);
 					ModuleState.count = InventoryModules(ModuleState.list,

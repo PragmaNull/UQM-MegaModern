@@ -648,7 +648,7 @@ void TFB_ScreenShot(void)
 	const uqstl::string shotDirName = uqm::getEnvironmentValue("UQM_SCR_SHOT_DIR");
 	auto now = std::chrono::system_clock::now();
 	auto fullPath = fmt::format("{}{:%Y-%m-%d %H-%M-%S} v{}.{}.{} {}.png", shotDirName, now,
-								UQM_MAJOR_VERSION, UQM_MINOR_VERSION, UQM_PATCH_VERSION,
+								UqmMajorVersion, UqmMinorVersion, UqmPatchVersion,
 								chooseIfHd<const char*>(UQM_EXTRA_VERSION, "HD " UQM_EXTRA_VERSION));
 
 	if (std::filesystem::exists(shotDirName))

@@ -25,9 +25,9 @@
 #include "uqm/battle.h"
 #include "uqm/sounds.h"
 
-#define STROBE_RATE 30
-#define STROBE_LENGTH (GameTicksPerSecond / 3)
-#define NUM_STROBES (STROBE_LENGTH * STROBE_RATE / GameTicksPerSecond)
+static constexpr auto StrobeRate {30};
+static constexpr auto StrobeLength {(GameTicksPerSecond / 3)};
+static constexpr auto NumStrobes {(StrobeLength * StrobeRate / GameTicksPerSecond)};
 
 static LOCDATA talkpet_desc =
 	{
@@ -35,23 +35,23 @@ static LOCDATA talkpet_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		TALKING_PET_PMAP_ANIM, /* AlienFrame */
-		TALKING_PET_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		TalkingPetPmapAnim, /* AlienFrame */
+		TalkingPetFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		TALKING_PET_COLOR_MAP, /* AlienColorMap */
-		TALKING_PET_MUSIC, /* AlienSong */
+		TalkingPetColorMap, /* AlienColorMap */
+		TalkingPetMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		TALKING_PET_CONVERSATION_PHRASES, /* PlayerPhrases */
+		TalkingPetConversationPhrases, /* PlayerPhrases */
 		18, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
@@ -222,11 +222,11 @@ static LOCDATA talkpet_desc =
 			},
 								{
 				/* Mind control strobe (on-demand) */
-				1,				 /* StartIndex */
-				NUM_STROBES * 2, /* NumFrames */
+				1,				/* StartIndex */
+				NumStrobes * 2, /* NumFrames */
 				CircularAnim | ColorxformAnim | OneShotAnim
 					| AnimDisabled, /* AnimFlags */
-				GameTicksPerSecond / (STROBE_RATE * 2),
+				GameTicksPerSecond / (StrobeRate * 2),
 				0, /* FrameRate */
 				0,
 				0, /* RestartRate */

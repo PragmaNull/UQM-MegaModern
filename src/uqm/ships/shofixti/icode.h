@@ -2,4 +2,4 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define SHOFIXTI_CODE "ship.shofixti.code"
+inline constexpr uqgsl::czstring ShofixtiCode {"ship.shofixti.code"};

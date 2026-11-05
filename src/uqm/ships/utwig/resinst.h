@@ -2,15 +2,15 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define LANCE_BIG_MASK_PMAP_ANIM "ship.utwig.graphics.lance.large"
-#define LANCE_MED_MASK_PMAP_ANIM "ship.utwig.graphics.lance.medium"
-#define LANCE_SML_MASK_PMAP_ANIM "ship.utwig.graphics.lance.small"
-#define UTWIG_BIG_MASK_PMAP_ANIM "ship.utwig.graphics.jugger.large"
-#define UTWIG_CAPTAIN_MASK_PMAP_ANIM "ship.utwig.graphics.captain"
-#define UTWIG_ICON_MASK_PMAP_ANIM "ship.utwig.icons"
-#define UTWIG_MED_MASK_PMAP_ANIM "ship.utwig.graphics.jugger.medium"
-#define UTWIG_MICON_MASK_PMAP_ANIM "ship.utwig.meleeicons"
-#define UTWIG_RACE_STRINGS "ship.utwig.text"
-#define UTWIG_SHIP_SOUNDS "ship.utwig.sounds"
-#define UTWIG_SML_MASK_PMAP_ANIM "ship.utwig.graphics.jugger.small"
-#define UTWIG_VICTORY_SONG "ship.utwig.ditty"
+inline constexpr uqgsl::czstring LanceBigMaskPmapAnim {"ship.utwig.graphics.lance.large"};
+inline constexpr uqgsl::czstring LanceMedMaskPmapAnim {"ship.utwig.graphics.lance.medium"};
+inline constexpr uqgsl::czstring LanceSmlMaskPmapAnim {"ship.utwig.graphics.lance.small"};
+inline constexpr uqgsl::czstring UtwigBigMaskPmapAnim {"ship.utwig.graphics.jugger.large"};
+inline constexpr uqgsl::czstring UtwigCaptainMaskPmapAnim {"ship.utwig.graphics.captain"};
+inline constexpr uqgsl::czstring UtwigIconMaskPmapAnim {"ship.utwig.icons"};
+inline constexpr uqgsl::czstring UtwigMedMaskPmapAnim {"ship.utwig.graphics.jugger.medium"};
+inline constexpr uqgsl::czstring UtwigMiconMaskPmapAnim {"ship.utwig.meleeicons"};
+inline constexpr uqgsl::czstring UtwigRaceStrings {"ship.utwig.text"};
+inline constexpr uqgsl::czstring UtwigShipSounds {"ship.utwig.sounds"};
+inline constexpr uqgsl::czstring UtwigSmlMaskPmapAnim {"ship.utwig.graphics.jugger.small"};
+inline constexpr uqgsl::czstring UtwigVictorySong {"ship.utwig.ditty"};

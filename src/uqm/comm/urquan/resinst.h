@@ -2,11 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define URQUAN_COLOR_MAP "comm.urquan.colortable"
-#define URQUAN_ALTCOLOR_MAP "comm.urquan.alt.colortable"
-#define URQUAN_CONVERSATION_PHRASES "comm.urquan.dialogue"
-#define URQUAN_FONT "comm.urquan.font"
-#define URQUAN_MUSIC "comm.urquan.music"
-#define URQUAN_PROBE_MUSIC "comm.urquan.probe.music"
-#define URQUAN_PMAP_ANIM "comm.urquan.graphics"
-#define URQUAN_SCRIPT "comm.urquan.script"
+inline constexpr uqgsl::czstring UrquanColorMap {"comm.urquan.colortable"};
+inline constexpr uqgsl::czstring UrquanAltcolorMap {"comm.urquan.alt.colortable"};
+inline constexpr uqgsl::czstring UrquanConversationPhrases {"comm.urquan.dialogue"};
+inline constexpr uqgsl::czstring UrquanFont {"comm.urquan.font"};
+inline constexpr uqgsl::czstring UrquanMusic {"comm.urquan.music"};
+inline constexpr uqgsl::czstring UrquanProbeMusic {"comm.urquan.probe.music"};
+inline constexpr uqgsl::czstring UrquanPmapAnim {"comm.urquan.graphics"};

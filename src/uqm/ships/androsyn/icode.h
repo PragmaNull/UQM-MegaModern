@@ -2,4 +2,4 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define ANDROSYNTH_CODE "ship.androsynth.code"
+inline constexpr uqgsl::czstring AndrosynthCode {"ship.androsynth.code"};

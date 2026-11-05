@@ -128,23 +128,23 @@ static LOCDATA melnorme_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		MELNORME_PMAP_ANIM, /* AlienFrame */
-		MELNORME_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		MelnormePmapAnim, /* AlienFrame */
+		MelnormeFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		MELNORME_COLOR_MAP, /* AlienColorMap */
-		MELNORME_MUSIC, /* AlienSong */
+		MelnormeColorMap, /* AlienColorMap */
+		MelnormeMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		MELNORME_CONVERSATION_PHRASES, /* PlayerPhrases */
+		MelnormeConversationPhrases, /* PlayerPhrases */
 		5, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
@@ -487,23 +487,23 @@ typedef struct
 
 // Right now, all techs have the same price.
 // Unless Hard Mode is enabled.
-#define TECHPRICE (75 * BioCreditValueDefault)
+static constexpr auto Techprice {(75 * BioCreditValueDefault)};
 
 TechSaleData tech_sale_catalog[] =
 	{
-		{TECH_MODULE_BLASTER,		  TECHPRICE, NEW_TECH_1,	 OK_BUY_NEW_TECH_1 },
-		{TECH_LANDER_SPEED,			TECHPRICE, NEW_TECH_2,  OK_BUY_NEW_TECH_2 },
-		{TECH_MODULE_ANTIMISSILE,	  TECHPRICE, NEW_TECH_3,	 OK_BUY_NEW_TECH_3 },
-		{TECH_LANDER_SHIELD_BIO,		 TECHPRICE, NEW_TECH_4,	OK_BUY_NEW_TECH_4 },
-		{TECH_LANDER_CARGO,			TECHPRICE, NEW_TECH_5,  OK_BUY_NEW_TECH_5 },
-		{TECH_MODULE_BIGFUELTANK,	  TECHPRICE, NEW_TECH_6,	 OK_BUY_NEW_TECH_6 },
-		{TECH_LANDER_RAPIDFIRE,		TECHPRICE, NEW_TECH_7,  OK_BUY_NEW_TECH_7 },
-		{TECH_LANDER_SHIELD_QUAKE,	   TECHPRICE, NEW_TECH_8,  OK_BUY_NEW_TECH_8 },
-		{TECH_MODULE_TRACKING,		   TECHPRICE, NEW_TECH_9,  OK_BUY_NEW_TECH_9 },
-		{TECH_LANDER_SHIELD_LIGHTNING, TECHPRICE, NEW_TECH_10, OK_BUY_NEW_TECH_10},
-		{TECH_LANDER_SHIELD_HEAT,	  TECHPRICE, NEW_TECH_11, OK_BUY_NEW_TECH_11},
-		{TECH_MODULE_CANNON,			 TECHPRICE, NEW_TECH_12, OK_BUY_NEW_TECH_12},
-		{TECH_MODULE_FURNACE,		  TECHPRICE, NEW_TECH_13, OK_BUY_NEW_TECH_13},
+		{TECH_MODULE_BLASTER,		  Techprice, NEW_TECH_1,	 OK_BUY_NEW_TECH_1 },
+		{TECH_LANDER_SPEED,			Techprice, NEW_TECH_2,  OK_BUY_NEW_TECH_2 },
+		{TECH_MODULE_ANTIMISSILE,	  Techprice, NEW_TECH_3,	 OK_BUY_NEW_TECH_3 },
+		{TECH_LANDER_SHIELD_BIO,		 Techprice, NEW_TECH_4,	OK_BUY_NEW_TECH_4 },
+		{TECH_LANDER_CARGO,			Techprice, NEW_TECH_5,  OK_BUY_NEW_TECH_5 },
+		{TECH_MODULE_BIGFUELTANK,	  Techprice, NEW_TECH_6,	 OK_BUY_NEW_TECH_6 },
+		{TECH_LANDER_RAPIDFIRE,		Techprice, NEW_TECH_7,  OK_BUY_NEW_TECH_7 },
+		{TECH_LANDER_SHIELD_QUAKE,	   Techprice, NEW_TECH_8,  OK_BUY_NEW_TECH_8 },
+		{TECH_MODULE_TRACKING,		   Techprice, NEW_TECH_9,  OK_BUY_NEW_TECH_9 },
+		{TECH_LANDER_SHIELD_LIGHTNING, Techprice, NEW_TECH_10, OK_BUY_NEW_TECH_10},
+		{TECH_LANDER_SHIELD_HEAT,	  Techprice, NEW_TECH_11, OK_BUY_NEW_TECH_11},
+		{TECH_MODULE_CANNON,			 Techprice, NEW_TECH_12, OK_BUY_NEW_TECH_12},
+		{TECH_MODULE_FURNACE,		  Techprice, NEW_TECH_13, OK_BUY_NEW_TECH_13},
 };
 const size_t NUM_TECH_ITEMS = std::size(tech_sale_catalog);
 
@@ -1151,6 +1151,8 @@ static void NatureOfConversation(RESPONSE_REF R);
 static uint8_t AskedToBuy;
 
 
+static constexpr auto InfoCost {75};
+
 static void
 DoBuy(RESPONSE_REF R)
 {
@@ -1327,9 +1329,9 @@ TryFuelAgain:
 
 		if (isDifficulty(uqm::Difficulty::Hard) && countTech())
 		{
-			nextTech->price = TECHPRICE + countTech() * 50;
+			nextTech->price = Techprice + countTech() * 50;
 			NPCPhrase(NEED_MORE_CREDIT0);
-			NPCNumber(nextTech->price - TECHPRICE, nullptr);
+			NPCNumber(nextTech->price - Techprice, nullptr);
 			NPCPhrase(NEED_MORE_CREDIT1);
 		}
 
@@ -1352,8 +1354,7 @@ TryFuelAgain:
 		}
 		else
 		{
-#define INFO_COST 75
-			if (!uqm::UQMOptions::read().infiniteCredits && !DeltaCredit(-INFO_COST))
+			if (!uqm::UQMOptions::read().infiniteCredits && !DeltaCredit(-InfoCost))
 			{
 				goto BuyBuyBuy;
 			}

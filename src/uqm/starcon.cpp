@@ -249,7 +249,7 @@ int Starcon2Main(void* threadArg)
 						   "pack to run properly.");
 		uqm::log::critical("This file is typically called "
 						   "mm-{}.{}.{}-content.uqm.  UQM was expecting",
-						   UQM_MAJOR_VERSION, UQM_MINOR_VERSION, UQM_PATCH_VERSION);
+						   UqmMajorVersion, UqmMinorVersion, UqmPatchVersion);
 		uqm::log::critical("it in the {}/packages directory.",
 						   baseContentPath);
 		uqm::log::critical("Either your installation did not install the "

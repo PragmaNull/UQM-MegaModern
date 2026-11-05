@@ -62,7 +62,7 @@ uqm::SeedType optSeedType;
 bool optMaskOfDeceit;
 bool optNoClassic;
 uqm::CheatAction optDeviceArray[28];
-uqm::CheatAction optUpgradeArray[NUM_UPGRADES];
+uqm::CheatAction optUpgradeArray[NumUpgrades];
 namespace
 {
 // The game file system. The members are destroyed in reverse order: the directories, the mounts, then the file system.
@@ -199,7 +199,7 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 
 	if (isEmpty(contentDirName))
 	{
-		const uqstl::optional<uqstl::string> expandedContentDir {uqm::expandPath(CONTENTDIR)};
+		const uqstl::optional<uqstl::string> expandedContentDir {uqm::expandPath(Contentdir)};
 		if (!expandedContentDir)
 		{
 			uqm::log::critical("Fatal error: Invalid path to "
@@ -209,8 +209,8 @@ void prepareContentDir(uqgsl::czstring contentDirName, uqgsl::czstring addonDirN
 
 		// Try the default content locations.
 		const char* locs[] = {
-			CONTENTDIR,					 /* defined in config.h */
-			expandedContentDir->c_str(), /* expanded CONTENTDIR */
+			Contentdir,					 /* defined in config.h */
+			expandedContentDir->c_str(), /* expanded Contentdir */
 			"content",
 		};
 		loc = findFileInDirs(locs, std::size(locs), testFile);
@@ -281,7 +281,7 @@ uqstl::string resolveConfigDir(uqstl::string_view configDirOption)
 	}
 	if (configDirPath.empty())
 	{
-		configDirPath = CONFIGDIR;
+		configDirPath = Configdir;
 	}
 
 	return uqm::expandPath(configDirPath).value_or(uqstl::string {});
@@ -327,7 +327,7 @@ void prepareSaveDir(void)
 	uqstl::string saveDirName = uqm::getEnvironmentValue("UQM_SAVE_DIR");
 	if (saveDirName.empty())
 	{
-		saveDirName = SAVEDIR;
+		saveDirName = Savedir;
 	}
 
 	const uqstl::optional<uqstl::string> expanded {uqm::expandPath(saveDirName)};
@@ -365,7 +365,7 @@ void prepareMeleeDir(void)
 	uqstl::string meleeDirName = uqm::getEnvironmentValue("UQM_MELEE_DIR");
 	if (meleeDirName.empty())
 	{
-		meleeDirName = MELEEDIR;
+		meleeDirName = Meleedir;
 	}
 
 	const uqstl::optional<uqstl::string> expanded {uqm::expandPath(meleeDirName)};
@@ -401,7 +401,7 @@ void prepareScrShotDir(void)
 	uqstl::string shotDirName = uqm::getEnvironmentValue("UQM_SCR_SHOT_DIR");
 	if (shotDirName.empty())
 	{
-		shotDirName = SCRSHOTDIR;
+		shotDirName = Scrshotdir;
 	}
 
 	const uqstl::optional<uqstl::string> expanded {uqm::expandPath(shotDirName)};
@@ -424,7 +424,7 @@ void prepareScrShotDir(void)
 
 	s_gameFiles->scrShotDir = uqm::configDir().subdir("screenshots");
 	// TODO: this doesn't work if the save dir is not
-	//       "screenshots" in the SCRSHOTDIR macro.
+	//       "screenshots" in the Scrshotdir macro.
 	if (!s_gameFiles->scrShotDir)
 	{
 		uqm::log::critical("Fatal error: Could not open screenshot dir.");
@@ -548,12 +548,12 @@ mountDirZips(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::Mou
 static void
 mountBaseZip(const uqm::io::Directory& dir, const char* mountPoint, uqm::io::MountPosition position, const uqm::io::Mount& relative)
 {
-	if (!dir.exists(BASE_CONTENT_NAME))
+	if (!dir.exists(BaseContentName))
 	{
-		uqm::log::warn("Warning: Could not find '{}'.", BASE_CONTENT_NAME);
+		uqm::log::warn("Warning: Could not find '{}'.", BaseContentName);
 		return;
 	}
-	mountArchive(dir, BASE_CONTENT_NAME, mountPoint, position, relative);
+	mountArchive(dir, BaseContentName, mountPoint, position, relative);
 }
 
 int loadIndices(const uqm::io::Directory& dir)

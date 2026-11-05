@@ -2,15 +2,15 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define DRUUGE_BIG_MASK_PMAP_ANIM "ship.druuge.graphics.mauler.large"
-#define DRUUGE_CANNON_BIG_MASK_PMAP_ANIM "ship.druuge.graphics.cannon.large"
-#define DRUUGE_CANNON_MED_MASK_PMAP_ANIM "ship.druuge.graphics.cannon.medium"
-#define DRUUGE_CANNON_SML_MASK_PMAP_ANIM "ship.druuge.graphics.cannon.small"
-#define DRUUGE_CAPT_MASK_PMAP_ANIM "ship.druuge.graphics.captain"
-#define DRUUGE_ICON_MASK_PMAP_ANIM "ship.druuge.icons"
-#define DRUUGE_MED_MASK_PMAP_ANIM "ship.druuge.graphics.mauler.medium"
-#define DRUUGE_MICON_MASK_PMAP_ANIM "ship.druuge.meleeicons"
-#define DRUUGE_RACE_STRINGS "ship.druuge.text"
-#define DRUUGE_SHIP_SOUNDS "ship.druuge.sounds"
-#define DRUUGE_SML_MASK_PMAP_ANIM "ship.druuge.graphics.mauler.small"
-#define DRUUGE_VICTORY_SONG "ship.druuge.ditty"
+inline constexpr uqgsl::czstring DruugeBigMaskPmapAnim {"ship.druuge.graphics.mauler.large"};
+inline constexpr uqgsl::czstring DruugeCannonBigMaskPmapAnim {"ship.druuge.graphics.cannon.large"};
+inline constexpr uqgsl::czstring DruugeCannonMedMaskPmapAnim {"ship.druuge.graphics.cannon.medium"};
+inline constexpr uqgsl::czstring DruugeCannonSmlMaskPmapAnim {"ship.druuge.graphics.cannon.small"};
+inline constexpr uqgsl::czstring DruugeCaptMaskPmapAnim {"ship.druuge.graphics.captain"};
+inline constexpr uqgsl::czstring DruugeIconMaskPmapAnim {"ship.druuge.icons"};
+inline constexpr uqgsl::czstring DruugeMedMaskPmapAnim {"ship.druuge.graphics.mauler.medium"};
+inline constexpr uqgsl::czstring DruugeMiconMaskPmapAnim {"ship.druuge.meleeicons"};
+inline constexpr uqgsl::czstring DruugeRaceStrings {"ship.druuge.text"};
+inline constexpr uqgsl::czstring DruugeShipSounds {"ship.druuge.sounds"};
+inline constexpr uqgsl::czstring DruugeSmlMaskPmapAnim {"ship.druuge.graphics.mauler.small"};
+inline constexpr uqgsl::czstring DruugeVictorySong {"ship.druuge.ditty"};

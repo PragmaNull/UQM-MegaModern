@@ -38,14 +38,13 @@
 #include "libs/graphics/drawable.h"
 
 // Rates in pixel lines per second
-#define CREDITS_BASE_RATE RES_SCALE(9)
-#define CREDITS_MAX_RATE RES_SCALE(130)
+static auto CreditsBaseRate() { return RES_SCALE(9); }
+static auto CreditsMaxRate() { return RES_SCALE(130); }
 // Maximum frame rate
-#define CREDITS_FRAME_RATE RES_SCALE(36)
+static auto CreditsFrameRate() { return RES_SCALE(36); }
 
-#define CREDITS_TIMEOUT (c_gameSecond * 5)
+static constexpr auto CreditsTimeout {(c_gameSecond * 5)};
 
-#define TRANS_COLOR BrightBlueColor
 
 // Positive or negative scroll rate in pixel lines per second
 static int CreditsRate;
@@ -70,11 +69,11 @@ typedef struct
 	int strIndex;
 } CreditTextFrame;
 
-#define MAX_CREDIT_FRAMES 32
+static constexpr auto MaxCreditFrames {32};
 // Circular text frame buffer for scrolling
 // Text frames are generated as needed, and when a text frame scrolls
 // of the screen, it is destroyed
-static CreditTextFrame textFrames[MAX_CREDIT_FRAMES];
+static CreditTextFrame textFrames[MaxCreditFrames];
 // Index of first active frame in the circular buffer (the first frame
 // is the one on top)
 static int firstFrame;
@@ -255,7 +254,7 @@ static inline int
 frameIndex(int index)
 {
 	// Make sure index is positive before %
-	return (index + MAX_CREDIT_FRAMES) % MAX_CREDIT_FRAMES;
+	return (index + MaxCreditFrames) % MaxCreditFrames;
 }
 
 static void
@@ -284,7 +283,7 @@ RenderCreditsScreen(GFXCONTEXT targetContext)
 
 	if (OutTakesRunning)
 	{ // Cut out the Outtakes rect
-		SetContextForeGroundColor(TRANS_COLOR);
+		SetContextForeGroundColor(BrightBlueColor);
 		DrawFilledRectangle(&CommWndRect);
 	}
 
@@ -310,13 +309,13 @@ InitCredits(void)
 	// Local screen copy. We draw everything to this frame, then cut
 	// the Outtakes rect out and draw this frame to the screen.
 	CreditsFrame = Credits_MakeTransFrame(CreditsExtent.width,
-										  CreditsExtent.height, TRANS_COLOR);
+										  CreditsExtent.height, BrightBlueColor);
 	SetContextFGFrame(CreditsFrame);
 
 	// The first credits frame is fake, the height of the screen,
 	// so that the credits can roll in from the bottom
 	textFrames[0].frame = Credits_MakeTransFrame(1, CreditsExtent.height,
-												 TRANS_COLOR);
+												 BrightBlueColor);
 	textFrames[0].strIndex = -1;
 	firstFrame = 0;
 	lastFrame = firstFrame + 1;
@@ -333,7 +332,7 @@ InitCredits(void)
 	// Prepare the first screen frame
 	RenderCreditsScreen(LocalContext);
 
-	CreditsRate = CREDITS_BASE_RATE;
+	CreditsRate = CreditsBaseRate();
 	CreditsRunning = true;
 }
 
@@ -395,7 +394,7 @@ processCreditsFrame(void)
 			// scroll direction; forward or backward
 			direction = CreditsRate / rate;
 			// step in pixels
-			dirstep = (rate + CREDITS_FRAME_RATE - 1) / CREDITS_FRAME_RATE;
+			dirstep = (rate + CreditsFrameRate() - 1) / CreditsFrameRate();
 			rate = GameTicksPerSecond * dirstep / rate;
 			// step is also directional
 			dirstep *= direction;
@@ -576,11 +575,12 @@ FreeCredits(void)
 	}
 }
 
+static constexpr auto NumOuttakes {15};
+
 static void
 OutTakes(void)
 {
-#define NUM_OUTTAKES 15
-	const static CONVERSATION outtake_list[NUM_OUTTAKES] =
+	const static CONVERSATION outtake_list[NumOuttakes] =
 		{
 			ZOQFOTPIK_CONVERSATION,
 			TALKING_PET_CONVERSATION,
@@ -606,7 +606,7 @@ OutTakes(void)
 	sliderDisabled = true;
 	oscillDisabled = true;
 
-	for (i = 0; (i < NUM_OUTTAKES) && !(uqm::currentActivity() & CHECK_ABORT); i++)
+	for (i = 0; (i < NumOuttakes) && !(uqm::currentActivity() & CHECK_ABORT); i++)
 	{
 		SetCommIntroMode(CIM_CROSSFADE_WINDOW, TimePeriod {});
 		InitCommunication(outtake_list[i]);
@@ -660,13 +660,13 @@ DoCreditsInput(void* pIS)
 		{
 			newrate -= step;
 		}
-		if (newrate < -CREDITS_MAX_RATE)
+		if (newrate < -CreditsMaxRate())
 		{
-			newrate = -CREDITS_MAX_RATE;
+			newrate = -CreditsMaxRate();
 		}
-		else if (newrate > CREDITS_MAX_RATE)
+		else if (newrate > CreditsMaxRate())
 		{
-			newrate = CREDITS_MAX_RATE;
+			newrate = CreditsMaxRate();
 		}
 
 		CreditsRate = newrate;
@@ -681,7 +681,7 @@ DoCreditsInput(void* pIS)
 	{ // auto-close controlled by timeout
 		if (pCIS->CloseTimeOut == TimeCount {})
 		{ // set timeout
-			pCIS->CloseTimeOut = GetTimeCounter() + CREDITS_TIMEOUT;
+			pCIS->CloseTimeOut = GetTimeCounter() + CreditsTimeout;
 		}
 		else if (GetTimeCounter() > pCIS->CloseTimeOut)
 		{ // all done!
@@ -696,7 +696,7 @@ DoCreditsInput(void* pIS)
 		return false;
 	}
 
-	SleepThread(c_gameSecond / CREDITS_FRAME_RATE);
+	SleepThread(c_gameSecond / CreditsFrameRate());
 
 	return true;
 }

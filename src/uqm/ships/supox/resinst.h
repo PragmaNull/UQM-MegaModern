@@ -2,15 +2,15 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define GOB_BIG_MASK_PMAP_ANIM "ship.supox.graphics.glob.large"
-#define GOB_MED_MASK_PMAP_ANIM "ship.supox.graphics.glob.medium"
-#define GOB_SML_MASK_PMAP_ANIM "ship.supox.graphics.glob.small"
-#define SUPOX_BIG_MASK_PMAP_ANIM "ship.supox.graphics.blade.large"
-#define SUPOX_CAPTAIN_MASK_PMAP_ANIM "ship.supox.graphics.captain"
-#define SUPOX_ICON_MASK_PMAP_ANIM "ship.supox.icons"
-#define SUPOX_MED_MASK_PMAP_ANIM "ship.supox.graphics.blade.medium"
-#define SUPOX_MICON_MASK_PMAP_ANIM "ship.supox.meleeicons"
-#define SUPOX_RACE_STRINGS "ship.supox.text"
-#define SUPOX_SHIP_SOUNDS "ship.supox.sounds"
-#define SUPOX_SML_MASK_PMAP_ANIM "ship.supox.graphics.blade.small"
-#define SUPOX_VICTORY_SONG "ship.supox.ditty"
+inline constexpr uqgsl::czstring GobBigMaskPmapAnim {"ship.supox.graphics.glob.large"};
+inline constexpr uqgsl::czstring GobMedMaskPmapAnim {"ship.supox.graphics.glob.medium"};
+inline constexpr uqgsl::czstring GobSmlMaskPmapAnim {"ship.supox.graphics.glob.small"};
+inline constexpr uqgsl::czstring SupoxBigMaskPmapAnim {"ship.supox.graphics.blade.large"};
+inline constexpr uqgsl::czstring SupoxCaptainMaskPmapAnim {"ship.supox.graphics.captain"};
+inline constexpr uqgsl::czstring SupoxIconMaskPmapAnim {"ship.supox.icons"};
+inline constexpr uqgsl::czstring SupoxMedMaskPmapAnim {"ship.supox.graphics.blade.medium"};
+inline constexpr uqgsl::czstring SupoxMiconMaskPmapAnim {"ship.supox.meleeicons"};
+inline constexpr uqgsl::czstring SupoxRaceStrings {"ship.supox.text"};
+inline constexpr uqgsl::czstring SupoxShipSounds {"ship.supox.sounds"};
+inline constexpr uqgsl::czstring SupoxSmlMaskPmapAnim {"ship.supox.graphics.blade.small"};
+inline constexpr uqgsl::czstring SupoxVictorySong {"ship.supox.ditty"};

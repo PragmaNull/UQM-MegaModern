@@ -28,34 +28,34 @@
 
 static RESOURCE code_resources[] = {
 	NullResource,
-	ARILOU_CODE,
-	CHMMR_CODE,
-	HUMAN_CODE,
-	ORZ_CODE,
-	PKUNK_CODE,
-	SHOFIXTI_CODE,
-	SPATHI_CODE,
-	SUPOX_CODE,
-	THRADDASH_CODE,
-	UTWIG_CODE,
-	VUX_CODE,
-	YEHAT_CODE,
-	MELNORME_CODE,
-	DRUUGE_CODE,
-	ILWRATH_CODE,
-	MYCON_CODE,
-	SLYLANDRO_CODE,
-	UMGAH_CODE,
-	URQUAN_CODE,
-	ZOQFOTPIK_CODE,
-	SYREEN_CODE,
-	KOHR_AH_CODE,
-	ANDROSYNTH_CODE,
-	CHENJESU_CODE,
-	MMRNMHRM_CODE,
-	SIS_CODE,
-	SAMATRA_CODE,
-	URQUAN_DRONE_CODE};
+	ArilouCode,
+	ChmmrCode,
+	HumanCode,
+	OrzCode,
+	PkunkCode,
+	ShofixtiCode,
+	SpathiCode,
+	SupoxCode,
+	ThraddashCode,
+	UtwigCode,
+	VuxCode,
+	YehatCode,
+	MelnormeCode,
+	DruugeCode,
+	IlwrathCode,
+	MyconCode,
+	SlylandroCode,
+	UmgahCode,
+	UrquanCode,
+	ZoqfotpikCode,
+	SyreenCode,
+	KohrAhCode,
+	AndrosynthCode,
+	ChenjesuCode,
+	MmrnmhrmCode,
+	SisCode,
+	SamatraCode,
+	UrquanDroneCode};
 
 SPECIES_ID ship[] = {CHMMR_ID, ORZ_ID, UTWIG_ID, YEHAT_ID,					// Capital
 					 MYCON_ID, UR_QUAN_ID, KOHR_AH_ID, CHENJESU_ID,			// Capital
@@ -65,24 +65,24 @@ SPECIES_ID ship[] = {CHMMR_ID, ORZ_ID, UTWIG_ID, YEHAT_ID,					// Capital
 					 ILWRATH_ID, UMGAH_ID, ZOQFOTPIK_ID, SYREEN_ID};		// Scout
 
 SPECIES_ID* capital = ship;
-#define NUM_CAPITALS 8
-SPECIES_ID* escort = &(ship[NUM_CAPITALS]);
-#define NUM_ESCORTS 9
-SPECIES_ID* scout = &(ship[NUM_CAPITALS + NUM_ESCORTS]);
-#define NUM_SCOUTS 8
-#define NUM_SHIPS (NUM_CAPITALS + NUM_ESCORTS + NUM_SCOUTS)
+static constexpr auto NumCapitals {8};
+SPECIES_ID* escort = &(ship[NumCapitals]);
+static constexpr auto NumEscorts {9};
+SPECIES_ID* scout = &(ship[NumCapitals + NumEscorts]);
+static constexpr auto NumScouts {8};
+static constexpr auto NumShips {(NumCapitals + NumEscorts + NumScouts)};
 
 // Returns the array index in ship array for a specific SpeciesID.
 static inline uint16_t ShipIndex(SPECIES_ID SpeciesID)
 {
-	for (uint16_t x = 0; x < NUM_SHIPS; x++)
+	for (uint16_t x = 0; x < NumShips; x++)
 	{
 		if (SpeciesID == ship[x])
 		{
 			return x;
 		}
 	}
-	return (NUM_SHIPS);
+	return (NumShips);
 }
 
 // Creates a ship map based on seed. We need up to two maps loaded
@@ -92,38 +92,38 @@ static inline void SeedShipMap(SPECIES_ID* map, int seed)
 	uqm::PrimeRandom ShipGenRNG {};
 	uint16_t rand_val {};
 	SPECIES_ID* cMap = map;
-	SPECIES_ID* eMap = &(map[NUM_CAPITALS]);
-	SPECIES_ID* sMap = &(map[NUM_CAPITALS + NUM_ESCORTS]);
+	SPECIES_ID* eMap = &(map[NumCapitals]);
+	SPECIES_ID* sMap = &(map[NumCapitals + NumEscorts]);
 	uint16_t x = 0;
 	ShipGenRNG.reseed(seed);
-	for (x = 0; x < NUM_SHIPS; x++)
+	for (x = 0; x < NumShips; x++)
 	{
 		map[x] = NUM_SPECIES_ID;
 	}
-	for (x = 0; x < NUM_CAPITALS; x++)
+	for (x = 0; x < NumCapitals; x++)
 	{
-		rand_val = ShipGenRNG.next() % NUM_CAPITALS;
+		rand_val = ShipGenRNG.next() % NumCapitals;
 		while (cMap[rand_val] != NUM_SPECIES_ID)
 		{
-			rand_val = (rand_val + 1) % NUM_CAPITALS;
+			rand_val = (rand_val + 1) % NumCapitals;
 		}
 		cMap[rand_val] = capital[x];
 	}
-	for (x = 0; x < NUM_ESCORTS; x++)
+	for (x = 0; x < NumEscorts; x++)
 	{
-		rand_val = ShipGenRNG.next() % NUM_ESCORTS;
+		rand_val = ShipGenRNG.next() % NumEscorts;
 		while (eMap[rand_val] != NUM_SPECIES_ID)
 		{
-			rand_val = (rand_val + 1) % NUM_ESCORTS;
+			rand_val = (rand_val + 1) % NumEscorts;
 		}
 		eMap[rand_val] = escort[x];
 	}
-	for (x = 0; x < NUM_SCOUTS; x++)
+	for (x = 0; x < NumScouts; x++)
 	{
-		rand_val = ShipGenRNG.next() % NUM_SCOUTS;
+		rand_val = ShipGenRNG.next() % NumScouts;
 		while (sMap[rand_val] != NUM_SPECIES_ID)
 		{
-			rand_val = (rand_val + 1) % NUM_SCOUTS;
+			rand_val = (rand_val + 1) % NumScouts;
 		}
 		sMap[rand_val] = scout[x];
 	}
@@ -136,10 +136,10 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 {
 	static int seedStamp = -1;
 	static int sisStamp = -1;
-	static SPECIES_ID shipMap[NUM_SHIPS];
-	static SPECIES_ID shipWindowMap[NUM_SHIPS];
+	static SPECIES_ID shipMap[NumShips];
+	static SPECIES_ID shipWindowMap[NumShips];
 	SPECIES_ID target;
-	uint16_t index = NUM_SHIPS;
+	uint16_t index = NumShips;
 
 #ifdef DEBUG_SHIPSEED
 	if (loadWindow)
@@ -160,7 +160,7 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 	}
 
 	target = SpeciesID;
-	if ((index = ShipIndex(SpeciesID)) < NUM_SHIPS)
+	if ((index = ShipIndex(SpeciesID)) < NumShips)
 	{
 		if (!loadWindow && uqm::currentSeed().ships)
 		{
@@ -174,14 +174,14 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 		{
 			return target;
 		}
-		for (index = 0; index < NUM_SHIPS; index++)
+		for (index = 0; index < NumShips; index++)
 		{
 			if (shipMap[index] == target)
 			{
 				break;
 			}
 		}
-		if (index < NUM_SHIPS)
+		if (index < NumShips)
 		{
 			return (ship[index]);
 		}

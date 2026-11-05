@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define UMGAH_COLOR_MAP "comm.umgah.colortable"
-#define UMGAH_CONVERSATION_PHRASES "comm.umgah.dialogue"
-#define UMGAH_FONT "comm.umgah.font"
-#define UMGAH_MUSIC "comm.umgah.music"
-#define UMGAH_PMAP_ANIM "comm.umgah.graphics"
-#define UMGAH_SCRIPT "comm.umgah.script"
+inline constexpr uqgsl::czstring UmgahColorMap {"comm.umgah.colortable"};
+inline constexpr uqgsl::czstring UmgahConversationPhrases {"comm.umgah.dialogue"};
+inline constexpr uqgsl::czstring UmgahFont {"comm.umgah.font"};
+inline constexpr uqgsl::czstring UmgahMusic {"comm.umgah.music"};
+inline constexpr uqgsl::czstring UmgahPmapAnim {"comm.umgah.graphics"};

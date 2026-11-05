@@ -77,7 +77,7 @@ GenerateThraddash_generatePlanets(SOLARSYS_STATE* solarSys)
 		if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED)
 		{
 			pPlanet->data_index = PRIMORDIAL_WORLD;
-			pPlanet->radius = EARTH_RADIUS * 65L / 100;
+			pPlanet->radius = EarthRadius * 65L / 100;
 			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -86,7 +86,7 @@ GenerateThraddash_generatePlanets(SOLARSYS_STATE* solarSys)
 		{
 			pPlanet->data_index = WATER_WORLD;
 			pPlanet->NumPlanets = 0;
-			pPlanet->radius = EARTH_RADIUS * 98L / 100;
+			pPlanet->radius = EarthRadius * 98L / 100;
 			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -109,7 +109,7 @@ static bool
 GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 								  PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (StartSphereTracking(THRADDASH_SHIP)
 			&& (CurStarDescPtr()->Index == THRADD_DEFINED
@@ -249,13 +249,13 @@ GenerateThraddash_generateEnergy(const SOLARSYS_STATE* solarSys,
 								 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == THRADD_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
 
 	if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
@@ -276,7 +276,7 @@ GenerateThraddash_pickupEnergy(SOLARSYS_STATE* solarSys,
 							   PLANET_DESC* world, uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == THRADD_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
 		GenerateDefault_landerReportCycle(solarSys);
@@ -284,7 +284,7 @@ GenerateThraddash_pickupEnergy(SOLARSYS_STATE* solarSys,
 	}
 
 	if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		HFLEETINFO hThradd =
 			GetStarShipFromIndex(

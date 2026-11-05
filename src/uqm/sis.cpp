@@ -774,6 +774,11 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 	SetContext(OldContext);
 }
 
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {10};
+static constexpr auto MaxThrust {10};
+static constexpr auto TurnWait {17};
+
 void DrawFlagshipStats(void)
 {
 	GFXRECT r;
@@ -800,14 +805,10 @@ void DrawFlagshipStats(void)
 	}
 
 	/* collect stats */
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 10
-#define MAX_THRUST 10
-#define TURN_WAIT 17
-	energy_regeneration = ENERGY_REGENERATION;
-	energy_wait = ENERGY_WAIT;
-	max_thrust = MAX_THRUST;
-	turn_wait = TURN_WAIT;
+	energy_regeneration = EnergyRegeneration;
+	energy_wait = EnergyWait;
+	max_thrust = MaxThrust;
+	turn_wait = TurnWait;
 	fuel = 10 * FuelTankScale;
 	num_dynamos = 0;
 	num_shivas = 0;
@@ -939,7 +940,7 @@ void DrawFlagshipStats(void)
 	fmt::format_to_sz_n(buf, "{:4}", max_thrust * 4);
 	font_DrawText(&t);
 	t.baseline.y += leading;
-	fmt::format_to_sz_n(buf, "{:4}", 1 + TURN_WAIT - turn_wait);
+	fmt::format_to_sz_n(buf, "{:4}", 1 + TurnWait - turn_wait);
 	font_DrawText(&t);
 	t.baseline.y += leading;
 	if (!IsDos())
@@ -1905,13 +1906,13 @@ CountSISPieces(uint8_t piece_type)
 	return num_pieces;
 }
 
-#define MAX_CLUSTER 45 // "Epsilon Camelopardalis" x 2 + null terminator
+static constexpr auto MaxCluster {45}; // "Epsilon Camelopardalis" x 2 + null terminator
 
 static void
 AutoPilotTextLogic(void)
 {
 	char buf[PATH_MAX];
-	char star_cluster[MAX_CLUSTER];
+	char star_cluster[MaxCluster];
 	GFXPOINT Falayalaralfali;
 	GFXPOINT destination;
 	GFXPOINT current_position;
@@ -2012,6 +2013,8 @@ AutoPilotTextLogic(void)
 	DrawSISMessageEx(buf, -1, -1, DsmeMycolor);
 }
 
+static constexpr auto BlinkRate {(c_gameSecond * 3 / 40)}; // 9 @ 120 ticks/second
+
 void DrawAutoPilotMessage(bool Reset)
 {
 	static bool LastPilot = false;
@@ -2021,7 +2024,6 @@ void DrawAutoPilotMessage(bool Reset)
 
 	const static Color cycle_tab[] = AUTOPILOT_COLOR_CYCLE_TABLE;
 	const size_t cycleCount = std::size(cycle_tab);
-#define BLINK_RATE (c_gameSecond * 3 / 40) // 9 @ 120 ticks/second
 
 	if (Reset || uqm::UQMOptions::read().bubbleWarp)
 	{ // Just a reset, not drawing
@@ -2058,7 +2060,7 @@ void DrawAutoPilotMessage(bool Reset)
 			}
 
 			cycle_index = (cycle_index + 1) % cycleCount;
-			NextTime = GetTimeCounter() + BLINK_RATE;
+			NextTime = GetTimeCounter() + BlinkRate;
 		}
 
 		LastPilot = OnAutoPilot;
@@ -2154,15 +2156,15 @@ void DrawFuelInFTanks(bool isOutfit)
 	GLOBAL_SIS(FuelOnBoard) = FuelVolume;
 }
 
-#define MAX_NUM_RECTS 5 // 5 flashing rects at once should be enough
-#define NUM_RECTS 1
+static constexpr auto MaxNumRects {5}; // 5 flashing rects at once should be enough
+static constexpr auto NumRects {1};
 
-static FlashContext* flashContext[MAX_NUM_RECTS] =
+static FlashContext* flashContext[MaxNumRects] =
 	{nullptr, nullptr, nullptr, nullptr, nullptr};
-static GFXRECT flash_rect[MAX_NUM_RECTS];
+static GFXRECT flash_rect[MaxNumRects];
 static Alarm* flashAlarm = nullptr;
 static bool flashPaused = false;
-static uint8_t count_r = NUM_RECTS;
+static uint8_t count_r = NumRects;
 
 static void scheduleFlashAlarm(void);
 
@@ -2193,7 +2195,7 @@ scheduleFlashAlarm(void)
 void SetAdditionalRect(const GFXRECT* pRect, uint16_t number)
 { // Add new flashing rect (Max 5)
 	// Must be called one by one and in incremental order
-	if (pRect != nullptr && count_r != MAX_NUM_RECTS)
+	if (pRect != nullptr && count_r != MaxNumRects)
 	{
 		GFXRECT clip_r = {
 			{0, 0},
@@ -2223,7 +2225,7 @@ void DumpAdditionalRect(void)
 			flashContext[i] = nullptr;
 		}
 	}
-	count_r = NUM_RECTS;
+	count_r = NumRects;
 }
 
 void SetFlashRect(const GFXRECT* pRect, bool pcRect)
@@ -2311,7 +2313,7 @@ void SetFlashRect(const GFXRECT* pRect, bool pcRect)
 				Flash_terminate(flashContext[i]);
 				flashContext[i] = nullptr;
 			}
-			count_r = NUM_RECTS;
+			count_r = NumRects;
 		}
 	}
 }

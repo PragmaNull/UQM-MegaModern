@@ -2,18 +2,18 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define CHMMR_BIG_MASK_PMAP_ANIM "ship.chmmr.graphics.avatar.large"
-#define CHMMR_CAPTAIN_MASK_PMAP_ANIM "ship.chmmr.graphics.captain"
-#define CHMMR_ICON_MASK_PMAP_ANIM "ship.chmmr.icons"
-#define CHMMR_MED_MASK_PMAP_ANIM "ship.chmmr.graphics.avatar.medium"
-#define CHMMR_MICON_MASK_PMAP_ANIM "ship.chmmr.meleeicons"
-#define CHMMR_RACE_STRINGS "ship.chmmr.text"
-#define CHMMR_SHIP_SOUNDS "ship.chmmr.sounds"
-#define CHMMR_SML_MASK_PMAP_ANIM "ship.chmmr.graphics.avatar.small"
-#define CHMMR_VICTORY_SONG "ship.chmmr.ditty"
-#define MUZZLE_BIG_MASK_PMAP_ANIM "ship.chmmr.graphics.muzzle.large"
-#define MUZZLE_MED_MASK_PMAP_ANIM "ship.chmmr.graphics.muzzle.medium"
-#define MUZZLE_SML_MASK_PMAP_ANIM "ship.chmmr.graphics.muzzle.small"
-#define SATELLITE_BIG_MASK_PMAP_ANIM "ship.chmmr.graphics.satellite.large"
-#define SATELLITE_MED_MASK_PMAP_ANIM "ship.chmmr.graphics.satellite.medium"
-#define SATELLITE_SML_MASK_PMAP_ANIM "ship.chmmr.graphics.satellite.small"
+inline constexpr uqgsl::czstring ChmmrBigMaskPmapAnim {"ship.chmmr.graphics.avatar.large"};
+inline constexpr uqgsl::czstring ChmmrCaptainMaskPmapAnim {"ship.chmmr.graphics.captain"};
+inline constexpr uqgsl::czstring ChmmrIconMaskPmapAnim {"ship.chmmr.icons"};
+inline constexpr uqgsl::czstring ChmmrMedMaskPmapAnim {"ship.chmmr.graphics.avatar.medium"};
+inline constexpr uqgsl::czstring ChmmrMiconMaskPmapAnim {"ship.chmmr.meleeicons"};
+inline constexpr uqgsl::czstring ChmmrRaceStrings {"ship.chmmr.text"};
+inline constexpr uqgsl::czstring ChmmrShipSounds {"ship.chmmr.sounds"};
+inline constexpr uqgsl::czstring ChmmrSmlMaskPmapAnim {"ship.chmmr.graphics.avatar.small"};
+inline constexpr uqgsl::czstring ChmmrVictorySong {"ship.chmmr.ditty"};
+inline constexpr uqgsl::czstring MuzzleBigMaskPmapAnim {"ship.chmmr.graphics.muzzle.large"};
+inline constexpr uqgsl::czstring MuzzleMedMaskPmapAnim {"ship.chmmr.graphics.muzzle.medium"};
+inline constexpr uqgsl::czstring MuzzleSmlMaskPmapAnim {"ship.chmmr.graphics.muzzle.small"};
+inline constexpr uqgsl::czstring SatelliteBigMaskPmapAnim {"ship.chmmr.graphics.satellite.large"};
+inline constexpr uqgsl::czstring SatelliteMedMaskPmapAnim {"ship.chmmr.graphics.satellite.medium"};
+inline constexpr uqgsl::czstring SatelliteSmlMaskPmapAnim {"ship.chmmr.graphics.satellite.small"};

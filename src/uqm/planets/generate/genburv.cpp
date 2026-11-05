@@ -73,7 +73,7 @@ GenerateBurvixese_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pPlanet->data_index = REDUX_WORLD;
 		pPlanet->NumPlanets = 1;
-		pPlanet->radius = EARTH_RADIUS * 39L / 100;
+		pPlanet->radius = EarthRadius * 39L / 100;
 		angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -111,7 +111,7 @@ GenerateBurvixese_generateMoons(SOLARSYS_STATE* solarSys,
 		return true;
 	}
 
-	if (matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
@@ -119,7 +119,7 @@ GenerateBurvixese_generateMoons(SOLARSYS_STATE* solarSys,
 
 		pMoonDesc->data_index = SELENIC_WORLD;
 		pMoonDesc->radius =
-			MIN_MOON_RADIUS + (MAX_GEN_MOONS - 1) * MOON_DELTA;
+			MinMoonRadius() + (MaxGenMoons - 1) * MoonDelta();
 		const uint32_t rand_val {SysGenRNG->next()};
 		angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 		pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
@@ -138,15 +138,15 @@ GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
 	uint32_t rand_val {SysGenRNG->seed()};
 
 	solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] = rand_val;
-	GenerateLifeForms(&solarSys->SysInfo, GENERATE_ALL, nullptr);
+	GenerateLifeForms(&solarSys->SysInfo, GenerateAll, nullptr);
 	rand_val = SysGenRNG->seed();
 
 	solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
-	GenerateMineralDeposits(&solarSys->SysInfo, GENERATE_ALL, nullptr);
+	GenerateMineralDeposits(&solarSys->SysInfo, GenerateAll, nullptr);
 
 	solarSys->SysInfo.PlanetInfo.ScanSeed[ENERGY_SCAN] = rand_val;
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
@@ -161,7 +161,7 @@ GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
 			solarSys->SysInfo.PlanetInfo.Tectonics = 0;
 		}
 	}
-	else if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
+	else if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte)
 			 && !GET_GAME_STATE(BURVIXESE_BROADCASTERS))
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
@@ -186,12 +186,12 @@ static uint16_t
 GenerateBurvixese_generateEnergy(const SOLARSYS_STATE* solarSys,
 								 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
@@ -211,14 +211,14 @@ static bool
 GenerateBurvixese_pickupEnergy(SOLARSYS_STATE* solarSys,
 							   PLANET_DESC* world, uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
 		GenerateDefault_landerReportCycle(solarSys);
 		return false;
 	}
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		assert(!GET_GAME_STATE(BURVIXESE_BROADCASTERS) && whichNode == 0);
 

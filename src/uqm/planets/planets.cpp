@@ -173,7 +173,7 @@ CreatePlanetContext(void)
 	PlanetContext = CreateContext("PlanetContext");
 	SetContext(PlanetContext);
 	SetContextFGFrame(Screen);
-	r.extent.height -= MAP_HEIGHT + MAP_BORDER_HEIGHT;
+	r.extent.height -= MapHeight() + MapBorderHeight();
 	SetContextClipRect(&r);
 
 	SetContext(oldContext);
@@ -239,9 +239,9 @@ void DrawPlanetSurfaceBorder(void)
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
 	r.corner.x = 0;
-	r.corner.y = clipRect.extent.height - MAP_HEIGHT - MAP_BORDER_HEIGHT;
+	r.corner.y = clipRect.extent.height - MapHeight() - MapBorderHeight();
 	r.extent.width = clipRect.extent.width;
-	r.extent.height = MAP_BORDER_HEIGHT - RES_SCALE(2);
+	r.extent.height = MapBorderHeight() - RES_SCALE(2);
 	DrawFilledRectangle(&r);
 
 	SetContextForeGroundColor(SisBottomRightBorderColor);
@@ -253,33 +253,33 @@ void DrawPlanetSurfaceBorder(void)
 	r.corner.y -= RES_SCALE(1);
 	DrawFilledRectangle(&r);
 
-	// XXX: We will need bulk left and right rects here if MAP_WIDTH changes
+	// XXX: We will need bulk left and right rects here if MapWidth() changes
 
 	// Right shadow line
 	r.extent.width = RES_SCALE(1);
-	r.extent.height = MAP_HEIGHT + RES_SCALE(2);
-	r.corner.y += MAP_BORDER_HEIGHT - RES_SCALE(1);
+	r.extent.height = MapHeight() + RES_SCALE(2);
+	r.corner.y += MapBorderHeight() - RES_SCALE(1);
 	r.corner.x = clipRect.extent.width - RES_SCALE(1);
 	DrawFilledRectangle(&r);
 
 	SetContextForeGroundColor(SisLeftBorderColor);
 
 	// Left shadow line
-	r.corner.x -= MAP_WIDTH + RES_SCALE(1);
+	r.corner.x -= MapWidth() + RES_SCALE(1);
 	DrawFilledRectangle(&r);
 
 	// Border bottom shadow line
-	r.extent.width = MAP_WIDTH + RES_SCALE(2);
+	r.extent.width = MapWidth() + RES_SCALE(2);
 	r.extent.height = RES_SCALE(1);
 	DrawFilledRectangle(&r);
 
 	if (isPC(uqm::UQMOptions::read().landerStyle))
 	{
-		r.corner.x = RES_SCALE(UQM_MAP_WIDTH - SC2_MAP_WIDTH)
+		r.corner.x = RES_SCALE(UqmMapWidth - Sc2MapWidth)
 				   - SisOrgX() + RES_SCALE(1) + SAFE_POS(1);
-		r.corner.y = clipRect.extent.height - MAP_HEIGHT - RES_SCALE(1);
+		r.corner.y = clipRect.extent.height - MapHeight() - RES_SCALE(1);
 		r.extent.width = RES_SCALE(1);
-		r.extent.height = MAP_HEIGHT;
+		r.extent.height = MapHeight();
 		SetContextForeGroundColor(SisBottomRightBorderColor);
 		DrawFilledRectangle(&r);
 		r.corner.x += RES_SCALE(1);
@@ -384,7 +384,7 @@ void DrawOrbitMapGraphic(void)
 		if (isPC(uqm::UQMOptions::read().landerStyle))
 		{
 			s.origin.x -=
-				RES_SCALE(((UQM_MAP_WIDTH - SC2_MAP_WIDTH) / 2)
+				RES_SCALE(((UqmMapWidth - Sc2MapWidth) / 2)
 						  + SAFE_NUM(5));
 		}
 
@@ -600,7 +600,7 @@ void FreePlanet(void)
 
 	pSolarSysState->OrbitalCMap.reset();
 
-	DestroyOrbitStruct(Orbit, MAP_HEIGHT);
+	DestroyOrbitStruct(Orbit, MapHeight());
 
 	pSolarSysState->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 	FreeLanderFont(&pSolarSysState->SysInfo.PlanetInfo);

@@ -43,30 +43,30 @@
 // an additive overlay for the shield effect
 #undef USE_ALPHA_SHIELD
 
-#define SHIELD_GLOW_COMP 120
-#define SHIELD_REFLECT_COMP 100
+static constexpr auto ShieldGlowComp {120};
+static constexpr auto ShieldReflectComp {100};
 
-#define NUM_BATCH_POINTS 64
-#define RADIUS RES_SCALE(33)
-//2*RADIUS
-#define TWORADIUS (RADIUS << 1)
-//RADIUS^2
+static constexpr auto NumBatchPoints {64};
+static auto Radius() { return RES_SCALE(33); }
+//2*Radius()
+static auto Tworadius() { return (Radius() << 1); }
+//Radius()^2
 #define RADIUS_2(a) (a * a)
 // distance beyond which all pixels are transparent (for aa)
 #define RADIUS_THRES(a) ((a + 1) * (a + 1))
-#define DIAMETER (TWORADIUS + 1)
+
 #if 0
-#define SPHERE_SPAN_X (MAP_WIDTH >> 1)
+static auto SphereSpanX() { return (MapWidth() >> 1); }
 #else
-#define SPHERE_SPAN_X (MAP_HEIGHT)
+static auto SphereSpanX() { return (MapHeight()); }
 #endif
-// XXX: technically, the sphere's span over X should be MAP_WIDTH/2
+// XXX: technically, the sphere's span over X should be MapWidth()/2
 // but this causes visible surface compression over X, because
 // the surface dims ratio is H x H*PI, instead of H x 2*H
 // see bug #885
 
-#define DIFFUSE_BITS 16
-#define AA_WEIGHT_BITS 16
+static constexpr auto DiffuseBits {16};
+static constexpr auto AaWeightBits {16};
 
 #ifndef M_TWOPI
 #ifndef M_PI
@@ -79,10 +79,10 @@
 #endif
 
 // BW: dynamically allocated in the orbit structure
-// JMS_GFX: Changed initialization to constant numbers since DIAMETER is
+// JMS_GFX: Changed initialization to constant numbers since Diameter is
 // now variably defined The value 330 is the value that's reached at the
 // biggest resolution, 4x.
-// uint32_t light_diff[330][330]; //uint32_t light_diff[DIAMETER][DIAMETER];
+// uint32_t light_diff[330][330]; //uint32_t light_diff[Diameter][Diameter];
 
 // BW: Moved to planets.h
 // typedef struct
@@ -92,11 +92,11 @@
 // } MAP3D_POINT;
 
 // BW: dynamically allocated in the orbit structure
-// JMS_GFX: Changed initialization to constant numbers since DIAMETER is
+// JMS_GFX: Changed initialization to constant numbers since Diameter is
 // now variably defined The value 330 is the value that's reached at the
 // biggest resolution, 4x.
 // MAP3D_POINT map_rotate[330][330];
-// //MAP3D_POINT map_rotate[DIAMETER][DIAMETER];
+// //MAP3D_POINT map_rotate[Diameter][Diameter];
 
 typedef struct
 {
@@ -384,7 +384,7 @@ RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 	int16_t base {};
 	int16_t d {};
 	GFXPOINT pt;
-	PRIMITIVE BatchArray[NUM_BATCH_POINTS];
+	PRIMITIVE BatchArray[NumBatchPoints];
 	const int8_t* pSrc {};
 	GFXPOINT oldOrigin;
 	GFXRECT ClipRect;
@@ -400,7 +400,7 @@ RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 	const int16_t h {mask->Bounds.height};
 
 	PRIMITIVE* pBatch {&BatchArray[0]};
-	for (i = 0; i < NUM_BATCH_POINTS; ++i, ++pBatch)
+	for (i = 0; i < NumBatchPoints; ++i, ++pBatch)
 	{
 		SetPrimNextLink(pBatch, i + 1);
 		SetPrimType(pBatch, POINT_PRIM);
@@ -426,7 +426,7 @@ RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 	while (num_frames > 0)
 	{
 		num_frames--;
-		i = NUM_BATCH_POINTS;
+		i = NumBatchPoints;
 		pBatch = &BatchArray[i];
 
 		pSrc = pTopoData;
@@ -437,7 +437,7 @@ RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 				d = *pSrc++;
 				d += base;
 
-				if (AlgoType == GAS_GIANT_ALGO)
+				if (AlgoType == GasGiantAlgo)
 				{ // make elevation value non-negative
 					d &= 255;
 				}
@@ -468,14 +468,14 @@ RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 					if (--i == 0)
 					{ // flush the batch and start the next one
 						DrawBatch(BatchArray, 0, 0);
-						i = NUM_BATCH_POINTS;
+						i = NumBatchPoints;
 						pBatch = &BatchArray[i];
 					}
 				}
 			}
 		}
 
-		if (i < NUM_BATCH_POINTS)
+		if (i < NumBatchPoints)
 		{
 			DrawBatch(BatchArray, i, 0);
 		}
@@ -541,7 +541,7 @@ RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
 	for (i = 0; i < sqr; ++i, ++pSrc, ++pix)
 	{
 		d = *pSrc;
-		if (AlgoType == GAS_GIANT_ALGO)
+		if (AlgoType == GasGiantAlgo)
 		{ // make elevation value non-negative
 			if (uqm::UQMOptions::read().sphereType == 1)
 			{
@@ -601,6 +601,11 @@ P3norm(POINT3* res, POINT3* vec)
 	P3mult(res, vec, 1 / mag);
 }
 
+static constexpr auto AmbientLight {0.1};
+static constexpr auto LightZ {1.2};
+static constexpr auto LightIntens {0.3};
+static constexpr auto Mshi {2};
+
 // GenerateSphereMask builds a shadow map for the rotating planet
 //  loc indicates the planet's position relative to the sun
 static void
@@ -609,22 +614,20 @@ GenerateSphereMask(GFXPOINT loc, uint16_t radius)
 	GFXPOINT pt;
 	POINT3 light;
 	double lrad {NAN};
-	const uint32_t step = 1 << DIFFUSE_BITS;
+	const uint32_t step = 1 << DiffuseBits;
 	int y {};
 	int x {};
 	const uint16_t tworadius = radius << 1;
 	const uint16_t radius_thres = (radius + 1) * (radius + 1);
 	const uint16_t radius_2 = radius * radius;
 
-#define AMBIENT_LIGHT 0.1
-#define LIGHT_Z 1.2
 	// lrad is the distance from the sun to the planet
 	lrad = sqrt(loc.x * loc.x + loc.y * loc.y);
 	// light is the sun's position.  the z-coordinate is whatever
 	// looks good
 	light.x = -((double)loc.x);
 	light.y = -((double)loc.y);
-	light.z = LIGHT_Z * lrad;
+	light.z = LightZ * lrad;
 	P3norm(&light, &light);
 
 	for (pt.y = 0, y = -radius; pt.y <= tworadius; ++pt.y, y++)
@@ -659,8 +662,6 @@ GenerateSphereMask(GFXPOINT loc, uint16_t radius)
 				//  Specular highlight is only good for perfectly smooth
 				//  surfaces, like balls (of which planets are not)
 				//  This is the Phong equation
-#define LIGHT_INTENS 0.3
-#define MSHI 2
 				double fb, spec;
 				POINT3 rvec;
 				POINT3 view;
@@ -674,21 +675,21 @@ GenerateSphereMask(GFXPOINT loc, uint16_t radius)
 				view.z = 1.0;
 
 				// specular highlight is the phong equation:
-				// (rvec dot view)^MSHI
+				// (rvec dot view)^Mshi
 				// where rvec = (2*diff)*norm - light (reflection of light
 				// around norm)
 				P3mult (&rvec, &norm, 2 * diff);
 				P3sub (&rvec, &rvec, &light);
 				fb = P3dot (&rvec, &view);
 				if (fb > 0.0)
-					spec = LIGHT_INTENS * pow (fb, MSHI);
+					spec = LightIntens * pow (fb, Mshi);
 				else
 					spec = 0;
 #endif
 				// adjust for the ambient light
-				if (diff < AMBIENT_LIGHT)
+				if (diff < AmbientLight)
 				{
-					diff = AMBIENT_LIGHT;
+					diff = AmbientLight;
 				}
 				// Now we antialias the edge of the spere to look nice
 				if (rad_2 > radius_2)
@@ -805,7 +806,7 @@ create_aa_points(MAP3D_POINT* ppt, double x, double y, uint16_t height)
 
 	for (uint16_t i {0}; i < 4; i++)
 	{
-		ppt->m[i] = (uint32_t)(m[i] * (1 << AA_WEIGHT_BITS) + 0.5);
+		ppt->m[i] = (uint32_t)(m[i] * (1 << AaWeightBits) + 0.5);
 	}
 }
 
@@ -839,7 +840,7 @@ get_avg_channel(Color p[4], uint32_t mult[4], int channel)
 		const uint8_t c = get_color_channel(p[j], channel);
 		ci += c * mult[j];
 	}
-	ci >>= AA_WEIGHT_BITS;
+	ci >>= AaWeightBits;
 	//check for overflow
 	if (ci > 255)
 	{
@@ -931,13 +932,12 @@ CreateSphereTiltMap(int angle, uint16_t height, uint16_t radius)
 // made by this routine, but a filter can be applied if desired too.
 
 // HALO rim size
-#define SHIELD_HALO RES_SCALE(playerInPlanetOrbit() ? 7 : 14)
-#define SHIELD_RADIUS (RADIUS + SHIELD_HALO)
-#define SHIELD_DIAM ((SHIELD_RADIUS << 1) + 1)
-#define SHIELD_RADIUS_2 (SHIELD_RADIUS * SHIELD_RADIUS)
-#define SHIELD_RADIUS_THRES ((SHIELD_RADIUS + 1) * (SHIELD_RADIUS + 1))
-#define SHIELD_HALO_GLOW (SHIELD_GLOW_COMP + SHIELD_REFLECT_COMP)
-#define SHIELD_HALO_GLOW_MIN (SHIELD_HALO_GLOW >> 2)
+static auto ShieldHalo() { return RES_SCALE(playerInPlanetOrbit() ? 7 : 14); }
+static auto ShieldRadius() { return (Radius() + ShieldHalo()); }
+
+
+static constexpr auto ShieldHaloGlow {(ShieldGlowComp + ShieldReflectComp)};
+static constexpr auto ShieldHaloGlowMin {(ShieldHaloGlow >> 2)};
 
 static FRAME
 CreateShieldMask(uint16_t radius)
@@ -947,7 +947,7 @@ CreateShieldMask(uint16_t radius)
 	int y {};
 	FRAME ShieldFrame {};
 	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
-	const uint16_t shieldradius = SHIELD_RADIUS * radius / RADIUS;
+	const uint16_t shieldradius = ShieldRadius() * radius / Radius();
 	const uint16_t shielddiam = (shieldradius << 1) + 1;
 
 	ShieldFrame = CaptureDrawable(
@@ -964,7 +964,7 @@ CreateShieldMask(uint16_t radius)
 		{
 			const int rad_2 = x * x + y * y;
 			// This is a non-transparent red for the halo
-			int red = SHIELD_HALO_GLOW;
+			int red = ShieldHaloGlow;
 			int alpha = 255;
 			double rad {NAN};
 
@@ -991,8 +991,8 @@ CreateShieldMask(uint16_t radius)
 			}
 			else
 			{ // shield pixels
-				red -= (int)((red - SHIELD_HALO_GLOW_MIN) * (rad - radius)
-							 / (SHIELD_HALO * radius / RADIUS));
+				red -= (int)((red - ShieldHaloGlowMin) * (rad - radius)
+							 / (ShieldHalo() * radius / Radius()));
 				if (red < 0)
 				{
 					red = 0;
@@ -1029,7 +1029,7 @@ FRAME
 SaveBackFrame(uint16_t radius)
 {
 	GFXRECT r;
-	const uint16_t shieldradius = SHIELD_RADIUS * radius / RADIUS;
+	const uint16_t shieldradius = ShieldRadius() * radius / Radius();
 	const uint16_t shielddiam = (shieldradius << 1) + 1;
 
 	r.corner = MAKE_POINT((RES_SCALE(OrigSisScreenWidth() >> 1))
@@ -1047,21 +1047,21 @@ SaveBackFrame(uint16_t radius)
 
 // SetShieldThrobEffect adjusts the red levels in the shield glow graphic
 //  the throbbing cycle is tied to the planet rotation cycle
-#define SHIELD_THROBS 12
+static constexpr auto ShieldThrobs {12};
 // throb cycles per revolution
-#define THROB_CYCLE ((RES_SCALE(ORIGINAL_MAP_WIDTH) << 8) / SHIELD_THROBS)
-#define THROB_HALF_CYCLE (THROB_CYCLE >> 1)
+static auto ThrobCycle() { return ((RES_SCALE(OriginalMapWidth()) << 8) / ShieldThrobs); }
+static auto ThrobHalfCycle() { return (ThrobCycle() >> 1); }
 
-#define THROB_MAX_LEVEL 256
-#define THROB_MIN_LEVEL 100
-#define THROB_D_LEVEL (THROB_MAX_LEVEL - THROB_MIN_LEVEL)
+static constexpr auto ThrobMaxLevel {256};
+static constexpr auto ThrobMinLevel {100};
+static constexpr auto ThrobDLevel {(ThrobMaxLevel - ThrobMinLevel)};
 
 static inline int
 shield_level(int offset)
 {
-	offset = (offset << 8) % THROB_CYCLE;
-	int level {abs(offset - THROB_HALF_CYCLE)};
-	level = THROB_MIN_LEVEL + level * THROB_D_LEVEL / THROB_HALF_CYCLE;
+	offset = (offset << 8) % ThrobCycle();
+	int level {abs(offset - ThrobHalfCycle())};
+	level = ThrobMinLevel + level * ThrobDLevel / ThrobHalfCycle();
 
 	return level;
 }
@@ -1086,19 +1086,19 @@ void SetShieldThrobEffect(FRAME ShieldFrame, int offset, FRAME ThrobFrame)
 
 		if (uqm::UQMOptions::read().nebulae)
 		{
-			p.a = p.a * level / THROB_MAX_LEVEL;
+			p.a = p.a * level / ThrobMaxLevel;
 		}
 		else
 		{
 			if (p.a == 255)
 			{ // adjust color data for full-alpha pixels
-				p.r = p.r * level / THROB_MAX_LEVEL;
-				p.g = p.g * level / THROB_MAX_LEVEL;
-				p.b = p.b * level / THROB_MAX_LEVEL;
+				p.r = p.r * level / ThrobMaxLevel;
+				p.g = p.g * level / ThrobMaxLevel;
+				p.b = p.b * level / ThrobMaxLevel;
 			}
 			else if (p.a > 0)
 			{ // adjust alpha for translucent pixels
-				p.a = p.a * level / THROB_MAX_LEVEL;
+				p.a = p.a * level / ThrobMaxLevel;
 			}
 		}
 
@@ -1174,7 +1174,7 @@ calc_map_light(uint8_t val, uint32_t dif, int lvf)
 	int i {};
 
 	// apply diffusion
-	i = (dif * val) >> DIFFUSE_BITS;
+	i = (dif * val) >> DiffuseBits;
 	// apply light variance for 3d lighting effect
 	i += (lvf * val) >> 7;
 
@@ -1197,7 +1197,7 @@ get_map_pixel(Color* pixels, int x, int y, uint16_t width, uint16_t spherespanx)
 		log_add (log_Warning,"x:{}, y:{}, width:{}, spherespanx:{}, "
 				"slot:{}. Max:{}", x, y, width, spherespanx,
 				y * (width + spherespanx) + x,
-				(MAP_HEIGHT + 1) * (MAP_WIDTH + spherespanx)); */
+				(MapHeight() + 1) * (MapWidth() + spherespanx)); */
 	return pixels[y * (width + spherespanx) + x];
 }
 
@@ -1319,7 +1319,7 @@ void RenderPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
 										  offset, width)
 						   * ppt->m[i];
 				}
-				lvf = lvsum >> AA_WEIGHT_BITS;
+				lvf = lvsum >> AaWeightBits;
 			}
 
 			// Apply the lighting model.  This also bounds the sphere
@@ -1337,12 +1337,12 @@ void RenderPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
 				c.b = calc_map_light(c.b, diffus, lvf);
 
 				// The shield is glow + reflect (+ filter for others)
-				r = calc_map_light(SHIELD_REFLECT_COMP, diffus, 0);
-				r += SHIELD_GLOW_COMP;
+				r = calc_map_light(ShieldReflectComp, diffus, 0);
+				r += ShieldGlowComp;
 
 				if (doThrob)
 				{ // adjust red level for throbbing shield
-					r = r * shLevel / THROB_MAX_LEVEL;
+					r = r * shLevel / ThrobMaxLevel;
 				}
 
 				r += c.r;
@@ -1544,12 +1544,13 @@ void Render3DOPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
 	SetFrameHot(MaskFrame, MAKE_HOT_SPOT(radius + 1, radius + 1));
 }
 
-#define RANGE_SHIFT 6
+static constexpr auto RangeShift {6};
+
+static constexpr auto DitherVariance {(1 << (RangeShift - 3))};
 
 static void
 DitherMap(int8_t* DepthArray, uint16_t width, uint16_t height)
 {
-#define DITHER_VARIANCE (1 << (RANGE_SHIFT - 3))
 	uint32_t i {};
 	int8_t* elev {};
 	uint32_t rand_val = 0;
@@ -1568,7 +1569,7 @@ DitherMap(int8_t* DepthArray, uint16_t width, uint16_t height)
 		}
 
 		// Bring the elevation point up or down
-		*elev += DITHER_VARIANCE / 2 - (rand_val & (DITHER_VARIANCE - 1));
+		*elev += DitherVariance / 2 - (rand_val & (DitherVariance - 1));
 	}
 }
 
@@ -1767,15 +1768,16 @@ MakeCrater(GFXRECT* pRect, int8_t* DepthArray, int16_t rim_delta, int16_t crater
 	}
 }
 
-#define NUM_BAND_COLORS 4
+static constexpr auto NumBandColors {4};
+
+static constexpr auto MaxStorms {8};
 
 static void
 MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 		   uint16_t height)
 {
-#define MAX_STORMS 8
 	uint16_t i {};
-	GFXRECT storm_r[MAX_STORMS];
+	GFXRECT storm_r[MaxStorms];
 	GFXRECT* pstorm_r {};
 
 	pstorm_r = &storm_r[i = storm_count];
@@ -1801,20 +1803,20 @@ MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 			{
 				case 0:
 					pstorm_r->extent.height =
-						(uqm::lowByte(hiword) % (ORIGINAL_MAP_HEIGHT >> 2))
-						+ (ORIGINAL_MAP_HEIGHT >> 2);
+						(uqm::lowByte(hiword) % (OriginalMapHeight() >> 2))
+						+ (OriginalMapHeight() >> 2);
 					break;
 				case 1:
 				case 2:
 				case 3:
 				case 4:
 					pstorm_r->extent.height =
-						(uqm::lowByte(hiword) % (ORIGINAL_MAP_HEIGHT >> 3))
-						+ (ORIGINAL_MAP_HEIGHT >> 3);
+						(uqm::lowByte(hiword) % (OriginalMapHeight() >> 3))
+						+ (OriginalMapHeight() >> 3);
 					break;
 				default:
 					pstorm_r->extent.height =
-						(uqm::lowByte(hiword) % (ORIGINAL_MAP_HEIGHT >> 4))
+						(uqm::lowByte(hiword) % (OriginalMapHeight() >> 4))
 						+ 4;
 					break;
 			}
@@ -1832,18 +1834,18 @@ MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 								   + (uqm::lowByte(loword) % pstorm_r->extent.height);
 
 			pstorm_r->corner.x = uqm::highByte(loword)
-							   % (ORIGINAL_MAP_WIDTH - pstorm_r->extent.width);
+							   % (OriginalMapWidth() - pstorm_r->extent.width);
 			pstorm_r->corner.y = uqm::lowByte(loword)
-							   % (ORIGINAL_MAP_HEIGHT - pstorm_r->extent.height);
+							   % (OriginalMapHeight() - pstorm_r->extent.height);
 
 			pstorm_r->corner.x = pstorm_r->corner.x * width
-							   / ORIGINAL_MAP_WIDTH;
+							   / OriginalMapWidth();
 			pstorm_r->extent.width = pstorm_r->extent.width * width
-								   / ORIGINAL_MAP_WIDTH;
+								   / OriginalMapWidth();
 			pstorm_r->corner.y = pstorm_r->corner.y * height
-							   / ORIGINAL_MAP_HEIGHT;
+							   / OriginalMapHeight();
 			pstorm_r->extent.height = pstorm_r->extent.height * height
-									/ ORIGINAL_MAP_HEIGHT;
+									/ OriginalMapHeight();
 
 			for (j = i + 1; j < storm_count; ++j)
 			{
@@ -1873,7 +1875,7 @@ MakeStorms(uint16_t storm_count, int8_t* DepthArray, uint16_t width,
 		pstorm_r->extent.width -= 2;
 		pstorm_r->extent.height -= 2;
 
-		band_delta = uqm::highByte(loword) & ((3 << RANGE_SHIFT) + 20);
+		band_delta = uqm::highByte(loword) & ((3 << RangeShift) + 20);
 
 		MakeCrater(pstorm_r, DepthArray,
 				   band_delta, band_delta, true, width);
@@ -1924,15 +1926,15 @@ MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t dep
 	uint16_t hiword {};
 	uint32_t rand_val {};
 
-	band_height = ORIGINAL_MAP_HEIGHT / num_bands;
-	band_bump = ORIGINAL_MAP_HEIGHT % num_bands;
+	band_height = OriginalMapHeight() / num_bands;
+	band_bump = OriginalMapHeight() % num_bands;
 	band_error = num_bands >> 1;
 	int8_t* lpDst {DepthArray};
 
 	band_delta = ((uqm::lowWord(SysGenRNG->next())
-				   & (NUM_BAND_COLORS - 1))
-				  << RANGE_SHIFT)
-			   + (1 << (RANGE_SHIFT - 1));
+				   & (NumBandColors - 1))
+				  << RangeShift)
+			   + (1 << (RangeShift - 1));
 	last_y = next_y = 0;
 	for (uint16_t i {num_bands}; i > 0; --i)
 	{
@@ -1959,11 +1961,11 @@ MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t dep
 			cur_y = next_y
 				  + ((band_height - 2) >> 1)
 				  - ((uqm::lowByte(hiword) % (band_height - 2)) + 1);
-			cur_y = cur_y * pRect->extent.height / ORIGINAL_MAP_HEIGHT;
+			cur_y = cur_y * pRect->extent.height / OriginalMapHeight();
 			r.corner.x = r.corner.y = 0;
 			r.extent.width = pRect->extent.width;
 			r.extent.height = 5 * pRect->extent.height
-							/ ORIGINAL_MAP_HEIGHT;
+							/ OriginalMapHeight();
 			DeltaTopography(50,
 							&DepthArray[(cur_y - (r.extent.height >> 1))
 										* r.extent.width],
@@ -1982,8 +1984,8 @@ MakeGasGiant(uint16_t num_bands, int8_t* DepthArray, GFXRECT* pRect, int16_t dep
 
 		last_y = cur_y;
 		band_delta = (band_delta
-					  + ((((uqm::lowByte(loword) & 1) << 1) - 1) << RANGE_SHIFT))
-				   & (((1 << RANGE_SHIFT) * NUM_BAND_COLORS) - 1);
+					  + ((((uqm::lowByte(loword) & 1) << 1) - 1) << RangeShift))
+				   & (((1 << RangeShift) * NumBandColors) - 1);
 	}
 
 	MakeStorms(4 + (SysGenRNG->next() & 3) + 1,
@@ -2063,7 +2065,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 {
 	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
 	const uint16_t spherespanx = height;
-	const uint16_t shieldradius = (height >> 1) * SHIELD_RADIUS / RADIUS;
+	const uint16_t shieldradius = (height >> 1) * ShieldRadius() / Radius();
 	const uint16_t shielddiam = (shieldradius << 1) + 1;
 	const uint16_t diameter = height + 1;
 	uint16_t i {};
@@ -2178,11 +2180,12 @@ frandom(void)
 	return seed;
 }
 
+static constexpr auto ScaleShift {8};
+
 static inline int
 TopoVarianceFactor(int step, int allowed, int min)
 {
-#define SCALE_SHIFT 8
-	return ((abs(step) * allowed) >> SCALE_SHIFT) + min;
+	return ((abs(step) * allowed) >> ScaleShift) + min;
 }
 
 static inline int
@@ -2198,6 +2201,9 @@ TopoVarianceCalc(int factor)
 	}
 }
 
+static constexpr auto AvgVariance {250};
+static constexpr auto StepRange {(4 - 1)};
+
 static void
 TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 			int fault_var)
@@ -2206,13 +2212,12 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 	// to their nearest neighboors using straight lines (in random
 	// direction) with random variance factors defined by
 	// num_faults and fault_var args
-#define AVG_VARIANCE 250
 	int x {};
 	int y {};
-	const int w = SCALED_MAP_WIDTH;
-	const int h = MAP_HEIGHT;
-	const int spitch = SCALED_MAP_WIDTH;
-	const int dpitch = SCALED_MAP_WIDTH * 4;
+	const int w = ScaledMapWidth();
+	const int h = MapHeight();
+	const int spitch = ScaledMapWidth();
+	const int dpitch = ScaledMapWidth() * 4;
 	int elev[5][5];
 	const static struct line_def_t
 	{
@@ -2254,19 +2259,18 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 			},
 	};
 
-	uqstl::vector<int> prevrowBuf(SCALED_MAP_WIDTH * 4 + 1);
+	uqstl::vector<int> prevrowBuf(ScaledMapWidth() * 4 + 1);
 	int* prevrow {prevrowBuf.data()};
 
-	const int var_allow {(num_faults << SCALE_SHIFT) / AVG_VARIANCE};
-	const int var_min {fault_var << SCALE_SHIFT};
+	const int var_allow {(num_faults << ScaleShift) / AvgVariance};
+	const int var_min {fault_var << ScaleShift};
 
-	//memset (pDstTopo, 0, MAP_WIDTH * MAP_HEIGHT * 16);
+	//memset (pDstTopo, 0, MapWidth() * MapHeight() * 16);
 
 	// init the first row in advance
 	const int8_t* pSrc {pSrcTopo};
 	int* prow {prevrow};
-#define STEP_RANGE (4 - 1)
-	prow[0] = ((int)pSrc[0]) << SCALE_SHIFT;
+	prow[0] = ((int)pSrc[0]) << ScaleShift;
 	for (x = 0; x < w; ++x, ++pSrc, prow += 4)
 	{
 		int x2 {};
@@ -2275,17 +2279,17 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 		if (x < w - 1)
 		{
 			// one right
-			prow[4] = ((int)pSrc[1]) << SCALE_SHIFT;
+			prow[4] = ((int)pSrc[1]) << ScaleShift;
 		}
 		else
 		{
 			// wrap around
-			prow[4] = ((int)pSrc[1 - spitch]) << SCALE_SHIFT;
+			prow[4] = ((int)pSrc[1 - spitch]) << ScaleShift;
 		}
 
 		// compute elevations between 2 points
 		int val {prow[0]};
-		const int step {(prow[4] - val) / STEP_RANGE};
+		const int step {(prow[4] - val) / StepRange};
 		const int rndfact {TopoVarianceFactor(step, var_allow, var_min)};
 		for (x2 = 1, val += step; x2 < 4; ++x2, val += step)
 		{
@@ -2307,7 +2311,7 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 		elev[4][0] = prow[0];
 		if (y < h - 1)
 		{
-			elev[4][4] = ((int)pSrc[spitch]) << SCALE_SHIFT;
+			elev[4][4] = ((int)pSrc[spitch]) << ScaleShift;
 		}
 		else
 		{
@@ -2315,7 +2319,7 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 		}
 		// compute elevations for interpolated column
 		int val {elev[4][0]};
-		int step {(elev[4][4] - val) / STEP_RANGE};
+		int step {(elev[4][4] - val) / StepRange};
 		int rndfact {TopoVarianceFactor(step, var_allow, var_min)};
 		for (y2 = 1, val += step; y2 < 4; ++y2, val += step)
 		{
@@ -2340,12 +2344,12 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 				if (x < w - 1)
 				{
 					// one right, one down
-					elev[4][4] = ((int)pSrc[1 + spitch]) << SCALE_SHIFT;
+					elev[4][4] = ((int)pSrc[1 + spitch]) << ScaleShift;
 				}
 				else
 				{
 					// wrap around, one down
-					elev[4][4] = ((int)pSrc[1]) << SCALE_SHIFT;
+					elev[4][4] = ((int)pSrc[1]) << ScaleShift;
 				}
 			}
 			else
@@ -2355,7 +2359,7 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 
 			// compute elevations for the rest of square borders first
 			val = elev[0][4];
-			step = (elev[4][4] - val) / STEP_RANGE;
+			step = (elev[4][4] - val) / StepRange;
 			rndfact = TopoVarianceFactor(step, var_allow, var_min);
 			for (x2 = 1, val += step; x2 < 4; ++x2, val += step)
 			{
@@ -2363,7 +2367,7 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 			}
 
 			val = elev[4][0];
-			step = (elev[4][4] - val) / STEP_RANGE;
+			step = (elev[4][4] - val) / StepRange;
 			rndfact = TopoVarianceFactor(step, var_allow, var_min);
 			for (y2 = 1, val += step; y2 < 4; ++y2, val += step)
 			{
@@ -2399,7 +2403,7 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 				p = pDst + y2 * dpitch;
 				for (x2 = 0; x2 < 4; ++x2, ++p)
 				{
-					int e = elev[x2][y2] >> SCALE_SHIFT;
+					int e = elev[x2][y2] >> ScaleShift;
 					if (e > 127)
 					{
 						e = 127;
@@ -2430,9 +2434,9 @@ TopoScale4x(int8_t* pDstTopo, int8_t* pSrcTopo, int num_faults,
 // Lots of pure Voodoo here ;)
 //  the goal is a 3D illusion, not mathematically correct lighting
 
-#define LMAP_AVG_BLOCK ((SC2_MAP_HEIGHT + 64) / 5)
-#define LMAP_MAX_DIST ((LMAP_AVG_BLOCK + 1) >> 1)
-#define LMAP_WEIGHT_THRES (LMAP_MAX_DIST * 2 / 3)
+static constexpr auto LmapAvgBlock {((Sc2MapHeight + 64) / 5)};
+static constexpr auto LmapMaxDist {((LmapAvgBlock + 1) >> 1)};
+static constexpr auto LmapWeightThres {(LmapMaxDist * 2 / 3)};
 
 typedef struct
 {
@@ -2456,8 +2460,8 @@ get_vblock_avg(elev_block_t* pblk, int8_t* pTopo, int x, int y,
 	// surface wraps around along x
 	x = (x + width) % width;
 
-	int y0 {y - LMAP_MAX_DIST};
-	int y1 {y + LMAP_MAX_DIST};
+	int y0 {y - LmapMaxDist};
+	int y1 {y + LmapMaxDist};
 	if (y0 < 0)
 	{
 		y0 = 0;
@@ -2474,10 +2478,10 @@ get_vblock_avg(elev_block_t* pblk, int8_t* pTopo, int x, int y,
 		int weight = 255; // full weight
 		const int v = *elev;
 
-		if (delta >= LMAP_WEIGHT_THRES)
+		if (delta >= LmapWeightThres)
 		{ // too far -- progressively reduced weight
-			weight = weight * (LMAP_MAX_DIST - delta + 1)
-				   / (LMAP_MAX_DIST - LMAP_WEIGHT_THRES + 2);
+			weight = weight * (LmapMaxDist - delta + 1)
+				   / (LmapMaxDist - LmapWeightThres + 2);
 		}
 
 		if (v > max)
@@ -2498,14 +2502,15 @@ get_vblock_avg(elev_block_t* pblk, int8_t* pTopo, int x, int y,
 	pblk->avg = avg / (y1 - y0);
 }
 
+static constexpr auto LmapBlocks {(2 * LmapMaxDist + 1)};
+
 // See description above
 static void
 GenerateLightMap(int8_t* pTopo, int w, int h)
 {
-#define LMAP_BLOCKS (2 * LMAP_MAX_DIST + 1)
 	int x {};
 	int y {};
-	elev_block_t vblocks[LMAP_BLOCKS];
+	elev_block_t vblocks[LmapBlocks];
 	// we use a running block average to reduce the amount of work
 	// where a block is a vertical line of map points
 	int8_t* elev {};
@@ -2568,10 +2573,10 @@ GenerateLightMap(int8_t* pTopo, int w, int h)
 
 		// prime the running block average
 		// get the minimum, maximum and avg elevation for each block
-		for (i = -LMAP_MAX_DIST; i < LMAP_MAX_DIST; ++i)
+		for (i = -LmapMaxDist; i < LmapMaxDist; ++i)
 		{
 			// blocks wrap around on both sides
-			pblk = vblocks + ((i + LMAP_BLOCKS) % LMAP_BLOCKS);
+			pblk = vblocks + ((i + LmapBlocks) % LmapBlocks);
 
 			get_vblock_avg(pblk, pTopo, i, y, w, h);
 		}
@@ -2585,21 +2590,21 @@ GenerateLightMap(int8_t* pTopo, int w, int h)
 			max = -127;
 
 			// prepare next block as we move along x
-			pblk = vblocks + ((x + LMAP_MAX_DIST) % LMAP_BLOCKS);
-			get_vblock_avg(pblk, pTopo, x + LMAP_MAX_DIST, y, w, h);
+			pblk = vblocks + ((x + LmapMaxDist) % LmapBlocks);
+			get_vblock_avg(pblk, pTopo, x + LmapMaxDist, y, w, h);
 
 			// compute the min, max and weighted avg of blocks
-			for (i = x - LMAP_MAX_DIST; i <= x + LMAP_MAX_DIST; ++i)
+			for (i = x - LmapMaxDist; i <= x + LmapMaxDist; ++i)
 			{
 				const int delta = abs(i - x);
 				int weight = 255; // full weight
 
-				pblk = vblocks + ((i + LMAP_BLOCKS) % LMAP_BLOCKS);
+				pblk = vblocks + ((i + LmapBlocks) % LmapBlocks);
 
-				if (delta >= LMAP_WEIGHT_THRES)
+				if (delta >= LmapWeightThres)
 				{ // too far -- progressively reduced weight
-					weight = weight * (LMAP_MAX_DIST - delta + 1)
-						   / (LMAP_MAX_DIST - LMAP_WEIGHT_THRES + 2);
+					weight = weight * (LmapMaxDist - delta + 1)
+						   / (LmapMaxDist - LmapWeightThres + 2);
 				}
 
 				if (pblk->max > max)
@@ -2655,12 +2660,12 @@ void load_color_resources(PLANET_DESC* pPlanetDesc,
 	pSolarSysState->OrbitalCMapIndex = 0;
 	pSolarSysState->XlatTable = uqm::loadStringTable(PlanDataPtr->XlatTabInstance);
 
-	if (PlanetInfo->SurfaceTemperature > HOT_THRESHOLD)
+	if (PlanetInfo->SurfaceTemperature > HotThreshold)
 	{
 		pSolarSysState->OrbitalCMapIndex = 2;
 		xlatIndex = 2;
 	}
-	else if (PlanetInfo->SurfaceTemperature > COLD_THRESHOLD)
+	else if (PlanetInfo->SurfaceTemperature > ColdThreshold)
 	{
 		pSolarSysState->OrbitalCMapIndex = 1;
 		xlatIndex = 1;
@@ -2682,12 +2687,12 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 	memset(Orbit->lpTopoData, 0, width * height);
 	switch (PLANALGO(PlanDataPtr->Type))
 	{
-		case GAS_GIANT_ALGO:
+		case GasGiantAlgo:
 			MakeGasGiant(PlanDataPtr->num_faults,
 						 Orbit->lpTopoData, &r, PlanDataPtr->fault_depth);
 			break;
-		case TOPO_ALGO:
-		case CRATERED_ALGO:
+		case TopoAlgo:
+		case CrateredAlgo:
 			if (PlanDataPtr->num_faults)
 			{
 				DeltaTopography(PlanDataPtr->num_faults,
@@ -2705,8 +2710,8 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 					case 0:
 						crater_r.extent.width =
 							(uqm::lowByte(loword)
-							 % (ORIGINAL_MAP_HEIGHT >> 2))
-							+ (ORIGINAL_MAP_HEIGHT >> 2);
+							 % (OriginalMapHeight() >> 2))
+							+ (OriginalMapHeight() >> 2);
 						break;
 					case 1:
 					case 2:
@@ -2714,13 +2719,13 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 					case 4:
 						crater_r.extent.width =
 							(uqm::lowByte(loword)
-							 % (ORIGINAL_MAP_HEIGHT >> 3))
-							+ (ORIGINAL_MAP_HEIGHT >> 3);
+							 % (OriginalMapHeight() >> 3))
+							+ (OriginalMapHeight() >> 3);
 						break;
 					default:
 						crater_r.extent.width =
 							(uqm::lowByte(loword)
-							 % (ORIGINAL_MAP_HEIGHT >> 4))
+							 % (OriginalMapHeight() >> 4))
 							+ 4;
 						break;
 				}
@@ -2728,27 +2733,27 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 				loword = uqm::lowWord(SysGenRNG->next());
 				crater_r.extent.height = crater_r.extent.width;
 				crater_r.corner.x = uqm::highByte(loword)
-								  % (ORIGINAL_MAP_WIDTH
+								  % (OriginalMapWidth()
 									 - crater_r.extent.width);
 				crater_r.corner.y = uqm::lowByte(loword)
-								  % (ORIGINAL_MAP_HEIGHT
+								  % (OriginalMapHeight()
 									 - crater_r.extent.height);
 
 				// BW: ... then scale them up
 				crater_r.extent.width = crater_r.extent.width
-									  * height / ORIGINAL_MAP_HEIGHT;
+									  * height / OriginalMapHeight();
 				crater_r.extent.height = crater_r.extent.width;
 				crater_r.corner.x = crater_r.corner.x
-								  * width / ORIGINAL_MAP_WIDTH;
+								  * width / OriginalMapWidth();
 				crater_r.corner.y = crater_r.corner.y
-								  * height / ORIGINAL_MAP_HEIGHT;
+								  * height / OriginalMapHeight();
 
 				MakeCrater(&crater_r, Orbit->lpTopoData,
 						   PlanDataPtr->fault_depth << 2,
 						   -(PlanDataPtr->fault_depth << 2),
 						   false, width);
 			}
-			if (PLANALGO(PlanDataPtr->Type) == CRATERED_ALGO)
+			if (PLANALGO(PlanDataPtr->Type) == CrateredAlgo)
 			{
 				DitherMap(Orbit->lpTopoData, width, height);
 			}
@@ -2771,8 +2776,8 @@ void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
 	uint16_t height {};
 	const bool shielded = (pPlanetDesc->data_index & PLANET_SHIELDED);
 
-	width = SCALED_MAP_WIDTH;
-	height = MAP_HEIGHT;
+	width = ScaledMapWidth();
+	height = MapHeight();
 
 	const PlanetFrame* PlanDataPtr {&PlanData[pPlanetDesc->data_index & ~PLANET_SHIELDED]};
 
@@ -2796,12 +2801,12 @@ void GetPlanetTopography(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame)
 		pSolarSysState->OrbitalCMapIndex = 0;
 		pSolarSysState->XlatTable = uqm::loadStringTable(PlanDataPtr->XlatTabInstance);
 
-		if (PlanetInfo->SurfaceTemperature > HOT_THRESHOLD)
+		if (PlanetInfo->SurfaceTemperature > HotThreshold)
 		{
 			pSolarSysState->OrbitalCMapIndex = 2;
 			xlatIndex = 2;
 		}
-		else if (PlanetInfo->SurfaceTemperature > COLD_THRESHOLD)
+		else if (PlanetInfo->SurfaceTemperature > ColdThreshold)
 		{
 			pSolarSysState->OrbitalCMapIndex = 1;
 			xlatIndex = 1;
@@ -2838,10 +2843,10 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 
 	if (!width && !height)
 	{
-		width = SCALED_MAP_WIDTH;
-		height = MAP_HEIGHT;
-		spherespanx = SPHERE_SPAN_X;
-		radius = RADIUS;
+		width = ScaledMapWidth();
+		height = MapHeight();
+		spherespanx = SphereSpanX();
+		radius = Radius();
 		ForIP = false;
 
 		useDosSpheres = uqm::UQMOptions::read().sphereType == 0;
@@ -2868,7 +2873,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 
 	load_color_resources(
 		pPlanetDesc, PlanDataPtr, PlanetInfo,
-		shielded && useDosSpheres, (customTexture && !ForIP && !useDosSpheres && !shielded && PlanetInfo->AtmoDensity != GAS_GIANT_ATMOSPHERE));
+		shielded && useDosSpheres, (customTexture && !ForIP && !useDosSpheres && !shielded && PlanetInfo->AtmoDensity != GasGiantAtmosphere));
 
 	if (SurfDefFrame)
 	{ // This is a defined planet; pixmap for the topography and
@@ -3008,7 +3013,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 	}
 
 	if (!ForIP && !shielded
-		&& PlanetInfo->AtmoDensity != GAS_GIANT_ATMOSPHERE)
+		&& PlanetInfo->AtmoDensity != GasGiantAtmosphere)
 	{ // produce 4x scaled topo image for Planetside
 		// for the planets that we can land on
 
@@ -3021,22 +3026,22 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 		}
 		else
 		{ // usual smooth 3DO landscape
-			uqstl::vector<int8_t> scaledTopo(SCALED_MAP_WIDTH * 4 * MAP_HEIGHT * 4);
+			uqstl::vector<int8_t> scaledTopo(ScaledMapWidth() * 4 * MapHeight() * 4);
 
 			Orbit->TopoZoomFrame = CaptureDrawable(CreateDrawable(
 				WantPixmap, width << 2, height << 2, 1));
 
 			TopoScale4x(scaledTopo.data(), Orbit->lpTopoData,
-						PlanDataPtr->num_faults, PlanDataPtr->fault_depth * (PLANALGO(PlanDataPtr->Type) == CRATERED_ALGO ? 2 : 1));
+						PlanDataPtr->num_faults, PlanDataPtr->fault_depth * (PLANALGO(PlanDataPtr->Type) == CrateredAlgo ? 2 : 1));
 			RenderTopography(Orbit->TopoZoomFrame, scaledTopo.data(),
-							 SCALED_MAP_WIDTH * 4, MAP_HEIGHT * 4, SurfDef, nullptr);
+							 ScaledMapWidth() * 4, MapHeight() * 4, SurfDef, nullptr);
 		}
 	}
 
 	if (Orbit->TopoColors)
 	{ // Generate a pixel array from the Topography map.
 		// We use this instead of lpTopoData because it needs to be
-		// WAP_WIDTH+SPHERE_SPAN_X wide and we need this method for Earth
+		// WAP_WIDTH+SphereSpanX() wide and we need this method for Earth
 		// anyway. It may be more efficient to build it from lpTopoData
 		// instead of the FRAMPTR though.
 		uint32_t y {};
@@ -3047,7 +3052,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 		{
 			RepairColorOpacity(Orbit->TopoColors, width + spherespanx, height);
 		}
-		// Extend the width from MAP_WIDTH to MAP_WIDTH+SPHERE_SPAN_X
+		// Extend the width from MapWidth() to MapWidth()+SphereSpanX()
 		for (y = 0; y < (uint32_t)(height * (width + spherespanx));
 			 y += width + spherespanx)
 		{
@@ -3075,7 +3080,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 		}
 	}
 
-	if (PLANALGO(PlanDataPtr->Type) == GAS_GIANT_ALGO
+	if (PLANALGO(PlanDataPtr->Type) == GasGiantAlgo
 		|| (customTexture && use3DOSpheres))
 	{ // convert topo data to a light map, based on relative
 		// map point elevations

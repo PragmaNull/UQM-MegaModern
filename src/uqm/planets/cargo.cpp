@@ -32,19 +32,19 @@
 #include "core/string/StringUtils.h"
 
 
-#define ELEMENT_ORG_Y RES_SCALE(35)
-#define FREE_ORG_Y (ELEMENT_ORG_Y + (NUM_ELEMENT_CATEGORIES * ELEMENT_SPACING_Y))
-#define BIO_ORG_Y RES_SCALE(119)
-#define ELEMENT_SPACING_Y RES_SCALE(9)
+static auto ElementOrgY() { return RES_SCALE(35); }
+static auto BioOrgY() { return RES_SCALE(119); }
+static auto ElementSpacingY() { return RES_SCALE(9); }
+static auto FreeOrgY() { return (ElementOrgY() + (NUM_ELEMENT_CATEGORIES * ElementSpacingY())); }
 
-#define ELEMENT_COL_0 RES_SCALE(7)
-#define ELEMENT_COL_1 RES_SCALE(32)
-#define ELEMENT_COL_2 RES_SCALE(58)
+static auto ElementCol0() { return RES_SCALE(7); }
+static auto ElementCol1() { return RES_SCALE(32); }
+static auto ElementCol2() { return RES_SCALE(58); }
 
-#define ELEMENT_SEL_ORG_X (ELEMENT_COL_0 + RES_SCALE(7 + 5))
-#define ELEMENT_SEL_WIDTH (ELEMENT_COL_2 - ELEMENT_SEL_ORG_X + RES_SCALE(1))
+static auto ElementSelOrgX() { return (ElementCol0() + RES_SCALE(7 + 5)); }
+static auto ElementSelWidth() { return (ElementCol2() - ElementSelOrgX() + RES_SCALE(1)); }
 
-#define TEXT_BASELINE RES_SCALE(6)
+static auto TextBaseline() { return RES_SCALE(6); }
 
 
 void ShowRemainingCapacity(void)
@@ -64,18 +64,18 @@ void ShowRemainingCapacity(void)
 	}
 
 	r.corner.x = RES_SCALE(40);
-	r.corner.y = FREE_ORG_Y;
+	r.corner.y = FreeOrgY();
 
 	fmt::format_to_sz_n(buf, "{}",
 						GetStorageBayCapacity() - GLOBAL_SIS(TotalElementMass));
-	t.baseline.x = ELEMENT_COL_2 + RES_SCALE(1);
-	t.baseline.y = r.corner.y + TEXT_BASELINE;
+	t.baseline.x = ElementCol2() + RES_SCALE(1);
+	t.baseline.y = r.corner.y + TextBaseline();
 	t.align = ALIGN_RIGHT;
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 
 	r.extent.width = t.baseline.x - r.corner.x + RES_SCALE(1);
-	r.extent.height = ELEMENT_SPACING_Y - RES_SCALE(2);
+	r.extent.height = ElementSpacingY() - RES_SCALE(2);
 
 	BatchGraphics();
 	// erase previous free amount
@@ -96,17 +96,17 @@ DrawElementAmount(uint16_t element, bool selected)
 	TEXT t;
 	char buf[40];
 
-	r.corner.x = ELEMENT_SEL_ORG_X;
-	r.extent.width = ELEMENT_SEL_WIDTH;
-	r.extent.height = ELEMENT_SPACING_Y - RES_SCALE(2);
+	r.corner.x = ElementSelOrgX();
+	r.extent.width = ElementSelWidth();
+	r.extent.height = ElementSpacingY() - RES_SCALE(2);
 
 	if (element == NUM_ELEMENT_CATEGORIES)
 	{
-		r.corner.y = BIO_ORG_Y;
+		r.corner.y = BioOrgY();
 	}
 	else
 	{
-		r.corner.y = ELEMENT_ORG_Y + (element * ELEMENT_SPACING_Y);
+		r.corner.y = ElementOrgY() + (element * ElementSpacingY());
 	}
 
 	// draw line background
@@ -117,7 +117,7 @@ DrawElementAmount(uint16_t element, bool selected)
 
 	t.align = ALIGN_RIGHT;
 	t.pStr = buf;
-	t.baseline.y = r.corner.y + TEXT_BASELINE;
+	t.baseline.y = r.corner.y + TextBaseline();
 
 	if (element == NUM_ELEMENT_CATEGORIES)
 	{ // Bio
@@ -129,7 +129,7 @@ DrawElementAmount(uint16_t element, bool selected)
 		SetContextForeGroundColor(selected ?
 									  CargoSelectedWorthColor :
 									  CargoWorthColor);
-		t.baseline.x = ELEMENT_COL_1;
+		t.baseline.x = ElementCol1();
 		fmt::format_to_sz_n(buf, "{}", GLOBAL(ElementWorth[element]));
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
@@ -141,7 +141,7 @@ DrawElementAmount(uint16_t element, bool selected)
 	SetContextForeGroundColor(selected ?
 								  CargoSelectedAmountColor :
 								  CargoAmountColor);
-	t.baseline.x = ELEMENT_COL_2;
+	t.baseline.x = ElementCol2();
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 }
@@ -192,12 +192,12 @@ DrawCargoDisplay(void)
 	}
 
 	s.frame = SetAbsFrameIndex(MiscDataFrame,
-							   (NUM_SCANDOT_TRANSITIONS * 2) + 3);
-	r.corner.x = ELEMENT_COL_0;
+							   (NumScandotTransitions * 2) + 3);
+	r.corner.x = ElementCol0();
 	r.extent = GetFrameBounds(s.frame);
 	s.origin.x = r.corner.x + RES_RECENTER(r.extent.height);
 
-	cy = ELEMENT_ORG_Y;
+	cy = ElementOrgY();
 
 	// print element column headings
 	t.align = ALIGN_RIGHT;
@@ -205,16 +205,16 @@ DrawCargoDisplay(void)
 	t.CharCount = (uint16_t)~0;
 
 	SetContextForeGroundColor(CargoWorthColor);
-	t.baseline.x = ELEMENT_COL_1;
+	t.baseline.x = ElementCol1();
 	t.pStr = "$";
 	font_DrawText(&t);
 
-	t.baseline.x = ELEMENT_COL_2;
+	t.baseline.x = ElementCol2();
 	t.pStr = "#";
 	font_DrawText(&t);
 
 	// draw element icons and print amounts
-	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i, cy += ELEMENT_SPACING_Y)
+	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i, cy += ElementSpacingY())
 	{
 		// erase background under an element icon
 		SetContextForeGroundColor(BlackColor);
@@ -231,7 +231,7 @@ DrawCargoDisplay(void)
 
 	// erase background under the Bio icon
 	SetContextForeGroundColor(BlackColor);
-	r.corner.y = BIO_ORG_Y;
+	r.corner.y = BioOrgY();
 	DrawFilledRectangle(&r);
 
 	// draw the Bio icon
@@ -244,7 +244,7 @@ DrawCargoDisplay(void)
 
 	// draw the line over the Bio amount
 	r.corner.x = RES_SCALE(4);
-	r.corner.y = BIO_ORG_Y - RES_SCALE(2);
+	r.corner.y = BioOrgY() - RES_SCALE(2);
 	r.extent.width = FieldWidth() - RES_SCALE(3);
 	r.extent.height = RES_SCALE(1);
 	SetContextForeGroundColor(CargoSelectedBackColor);
@@ -252,7 +252,7 @@ DrawCargoDisplay(void)
 
 	// print "Free"
 	t.baseline.x = RES_SCALE(5);
-	t.baseline.y = FREE_ORG_Y + TEXT_BASELINE;
+	t.baseline.y = FreeOrgY() + TextBaseline();
 	t.align = ALIGN_LEFT;
 	t.pStr = GAME_STRING(CARGO_STRING_BASE + 1);
 	t.CharCount = (uint16_t)~0;
@@ -352,7 +352,7 @@ void DrawRainbowPlanet(uint16_t planet)
 								  CargoBackColor);
 	r.corner.x = (StatusWidth() >> 1) - RES_SCALE(6);
 	r.extent.width = RES_SCALE(12);
-	r.extent.height = ELEMENT_SPACING_Y - RES_SCALE(2);
+	r.extent.height = ElementSpacingY() - RES_SCALE(2);
 	r.corner.y = s.origin.y - s.frame->HotSpot.y + s.frame->Bounds.height
 			   + RES_SCALE(3);
 	DrawFilledRectangle(&r);
@@ -360,7 +360,7 @@ void DrawRainbowPlanet(uint16_t planet)
 	fmt::format_to_sz_n(buf, "{}", planet);
 	t.CharCount = (uint16_t)~0;
 	t.baseline.x = (StatusWidth() >> 1);
-	t.baseline.y = r.corner.y + TEXT_BASELINE;
+	t.baseline.y = r.corner.y + TextBaseline();
 	SetContextForeGroundColor(planet != 0 ?
 								  PcmenuSelectionTextColor :
 								  PcmenuTextColor);

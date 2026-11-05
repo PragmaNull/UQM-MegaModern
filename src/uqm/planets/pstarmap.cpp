@@ -80,9 +80,9 @@ SwapPlates(NAMEPLATE* n1, NAMEPLATE* n2)
 	*n2 = temp;
 }
 
-#define IGNORE_MOVING_SOI (1 << 5)
-#define PRE_DEATH_SOI (1 << 6)
-#define DEATH_SOI (1 << 7)
+static constexpr auto IgnoreMovingSoi {(1 << 5)};
+static constexpr auto PreDeathSoi {(1 << 6)};
+static constexpr auto DeathSoi {(1 << 7)};
 
 static GFXPOINT cursorLoc;
 static GFXPOINT mapOrigin;
@@ -103,15 +103,15 @@ signedDivWithError(long val, long divisor)
 	return invert ? -val : val;
 }
 
-#define MAP_FIT_X ((MaxXUniverse + 1) / OrigSisScreenWidth() + 1)
-#define MAP_FIT_XX ((MaxXUniverse + 1) / SisScreenWidth() + 1)
+static auto MapFitX() { return ((MaxXUniverse + 1) / OrigSisScreenWidth() + 1); }
+static auto MapFitXx() { return ((MaxXUniverse + 1) / SisScreenWidth() + 1); }
 
 static inline int16_t
 universeToDispx(long ux)
 {
 	return signedDivWithError(((ux - mapOrigin.x) << zoomLevel)
 								  * OrigSisScreenWidth(),
-							  MaxXUniverse + MAP_FIT_X)
+							  MaxXUniverse + MapFitX())
 		 + ((OrigSisScreenWidth() - 1) >> 1);
 }
 #define UNIVERSE_TO_DISPX(ux) RES_SCALE(universeToDispx(ux))
@@ -132,7 +132,7 @@ static inline int16_t
 dispxToUniverse(int16_t dx)
 {
 	return (((long)(dx - ((OrigSisScreenWidth() - 1) >> 1))
-			 * (MaxXUniverse + MAP_FIT_X))
+			 * (MaxXUniverse + MapFitX()))
 			>> zoomLevel)
 			 / OrigSisScreenWidth()
 		 + mapOrigin.x;
@@ -158,7 +158,7 @@ universeToDispx2(int16_t ux)
 {
 	const long v = signedDivWithError((((long)ux - mapOrigin.x) << zoomLevel)
 										  * SisScreenWidth(),
-									  MaxXUniverse + MAP_FIT_XX)
+									  MaxXUniverse + MapFitXx())
 				 + ((SisScreenWidth() - 1) >> 1);
 	if (v > 32767)
 	{
@@ -738,7 +738,7 @@ GetFuelRect(DRECT* r, int32_t diameter, GFXPOINT corner)
 	// Calculate in case of overflow
 	width = RES_SCALE(signedDivWithError(((diameter - mapOrigin.x) << zoomLevel)
 											 * OrigSisScreenWidth(),
-										 MaxXUniverse + MAP_FIT_X)
+										 MaxXUniverse + MapFitX())
 					  + ((OrigSisScreenWidth() - 1) >> 1))
 		  - UNIVERSE_TO_DISPX(0); // Cannot overflow in current HdResolutionFactor resolution
 
@@ -1176,10 +1176,11 @@ Color RaceColor(uint16_t index)
 #endif
 }
 
+static constexpr auto GridDelta {500};
+
 static void
 DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 {
-#define GRID_DELTA 500
 	int16_t i {};
 	uint16_t which_space {};
 	// long diameter;
@@ -1253,7 +1254,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 					   - (RES_SCALE(1) << zoomLevel);
 		r.extent.height = RES_SCALE(1);
 
-		for (i = MaxYUniverse; i >= 0; i -= GRID_DELTA)
+		for (i = MaxYUniverse; i >= 0; i -= GridDelta)
 		{
 			r.corner.y = UNIVERSE_TO_DISPY(i);
 			DrawFilledRectangle(&r);
@@ -1267,7 +1268,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 		r.extent.width = RES_SCALE(1);
 		r.extent.height = (SisScreenHeight() << zoomLevel) - RES_SCALE(1);
 
-		for (i = 0; i < MaxYUniverse; i += GRID_DELTA)
+		for (i = 0; i < MaxYUniverse; i += GridDelta)
 		{
 			r.corner.x = UNIVERSE_TO_DISPX(i);
 			DrawFilledRectangle(&r);
@@ -1407,7 +1408,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 					TextRect(&t, &r, nullptr);
 
-					if (index == race_index && race_update & IGNORE_MOVING_SOI)
+					if (index == race_index && race_update & IgnoreMovingSoi)
 					{
 						AdjustTextRect(&r, &t);
 						DrawRaceName(&t, &c);
@@ -1421,7 +1422,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 					}
 				}
 			}
-			else if (index == race_index && race_update & (PRE_DEATH_SOI | DEATH_SOI))
+			else if (index == race_index && race_update & (PreDeathSoi | DeathSoi))
 			{ // Kruzen: SoI is dead, but we need to fade nameplate
 				TEXT t;
 				GFXRECT repair_r;
@@ -1477,11 +1478,11 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 			for (j = 0; j < currMax; j++, mid--)
 			{
-				if (nameplate[j].index & PRE_DEATH_SOI)
+				if (nameplate[j].index & PreDeathSoi)
 				{
 					c = WhiteColor;
 				}
-				else if (nameplate[j].index & DEATH_SOI)
+				else if (nameplate[j].index & DeathSoi)
 				{
 					c = BuildShadeRgba(0x80);
 				}
@@ -1517,11 +1518,11 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 			for (j = 1; j <= mid; j++)
 			{
-				if (nameplate[currMax - j].index & PRE_DEATH_SOI)
+				if (nameplate[currMax - j].index & PreDeathSoi)
 				{
 					c = WhiteColor;
 				}
-				else if (nameplate[currMax - j].index & DEATH_SOI)
+				else if (nameplate[currMax - j].index & DeathSoi)
 				{
 					c = BuildShadeRgba(0x80);
 				}
@@ -1813,13 +1814,14 @@ EraseCursor(int16_t curs_x, int16_t curs_y)
 #endif /* OLD */
 }
 
+static constexpr auto MaxZoomShift {4};
+
 static void
 ZoomStarMap(int16_t dir)
 {
-#define MAX_ZOOM_SHIFT 4
 	if (dir > 0)
 	{
-		if (zoomLevel < MAX_ZOOM_SHIFT)
+		if (zoomLevel < MaxZoomShift)
 		{
 			++zoomLevel;
 			mapOrigin = cursorLoc;
@@ -1933,7 +1935,7 @@ UpdateCursorLocation(int sx, int sy, const GFXPOINT* newpt)
 	}
 }
 
-#define CURSOR_INFO_BUFSIZE 256
+static constexpr auto CursorInfoBufsize {256};
 
 int starIndex(GFXPOINT starPt)
 {
@@ -1953,7 +1955,7 @@ int starIndex(GFXPOINT starPt)
 static void
 UpdateCursorInfo(std::span<char> prevbuf)
 {
-	char buf[CURSOR_INFO_BUFSIZE] {};
+	char buf[CursorInfoBufsize] {};
 	GFXPOINT pt;
 	STAR_DESC* SDPtr {};
 	STAR_DESC* BestSDPtr {};
@@ -2012,7 +2014,7 @@ UpdateCursorInfo(std::span<char> prevbuf)
 			// This means quasi star array must have rigidly ordered Postfix.
 			// portal_map[whichPortal].star_pt - coords of the exit
 			//                  nearest_star - STAR_DESC* of nearest constell.
-			char starnameBuf[CURSOR_INFO_BUFSIZE] = "";
+			char starnameBuf[CursorInfoBufsize] = "";
 			uqm::utf8StringCopy(starnameBuf, sizeof(starnameBuf), GAME_STRING(portal_map[whichPortal].nearest_star->Postfix));
 			// Abbreviate names longer than 11 at the 10th (or less)
 			// non-vowel character.
@@ -2097,7 +2099,7 @@ UpdateCursorInfo(std::span<char> prevbuf)
 				&& isStarMarked(starIndex(BestSDPtr->star_pt),
 								"VISITED"))
 			{
-				char visBuf[CURSOR_INFO_BUFSIZE] = "";
+				char visBuf[CursorInfoBufsize] = "";
 
 				uqm::utf8StringCopy(visBuf, sizeof(visBuf), buf);
 				// This is how you get rid of compiler warnings over string
@@ -2163,21 +2165,21 @@ UpdateFuelRequirement(void)
 	DrawStatusMessage(buf);
 }
 
-#define STAR_SEARCH_BUFSIZE 256
+static constexpr auto StarSearchBufsize {256};
 
 typedef struct starsearch_state
 {
 	// TODO: pMS field is probably not needed anymore
 	MENU_STATE* pMS;
-	char Text[STAR_SEARCH_BUFSIZE];
-	char LastText[STAR_SEARCH_BUFSIZE];
+	char Text[StarSearchBufsize];
+	char LastText[StarSearchBufsize];
 	TimeCount LastChangeTime;
 	int FirstIndex;
 	int CurIndex;
 	int LastIndex;
 	bool SingleClust;
 	bool SingleMatch;
-	char Buffer[STAR_SEARCH_BUFSIZE];
+	char Buffer[StarSearchBufsize];
 	const char* Prefix;
 	const char* Cluster;
 	int PrefixLen;
@@ -2284,7 +2286,7 @@ FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
 	for (i = from; i < NumSolarSystems; ++i)
 	{
 		const STAR_DESC* SDPtr = &star_array[pSS->SortedStars[i]];
-		char FullName[STAR_SEARCH_BUFSIZE];
+		char FullName[StarSearchBufsize];
 		const char* ClusterName = GAME_STRING(SDPtr->Postfix);
 		const char* sptr {};
 		const char* dptr {};
@@ -2376,7 +2378,7 @@ static void
 DrawMatchedStarName(TEXTENTRY_STATE* pTES)
 {
 	STAR_SEARCH_STATE* pSS = (STAR_SEARCH_STATE*)pTES->CbParam;
-	char buf[STAR_SEARCH_BUFSIZE] {};
+	char buf[StarSearchBufsize] {};
 	int16_t ExPos = 0;
 	int16_t CurPos = -1;
 	const STAR_DESC* SDPtr = &star_array[pSS->SortedStars[pSS->CurIndex]];
@@ -2645,7 +2647,7 @@ void DoBubbleWarp(bool UseFuel)
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
 	{
 		// We're in a solar system; exit it.
-		uqm::currentActivity() |= END_INTERPLANETARY;
+		uqm::currentActivity() |= EndInterplanetary;
 		// Set a hook to move to the new location:
 		debugHook = doInstantMove;
 	}
@@ -2719,13 +2721,14 @@ AdvancedAutoPilot(void)
 	}
 }
 
+static constexpr auto MinAccelDelay {(c_gameSecond / 60)};
+static constexpr auto MaxAccelDelay {(c_gameSecond / 8)};
+static constexpr auto StepAccelDelay {(c_gameSecond / 120)};
+
 static bool
 DoMoveCursor(MENU_STATE* pMS)
 {
-#define MIN_ACCEL_DELAY (c_gameSecond / 60)
-#define MAX_ACCEL_DELAY (c_gameSecond / 8)
-#define STEP_ACCEL_DELAY (c_gameSecond / 120)
-	static char last_buf[CURSOR_INFO_BUFSIZE];
+	static char last_buf[CursorInfoBufsize];
 	const TimeCount TimeIn {GetTimeCounter()};
 	static uint16_t moveRepeats;
 	bool isMove = false;
@@ -2832,8 +2835,8 @@ DoMoveCursor(MENU_STATE* pMS)
 			UpdateCursorInfo(last_buf);
 			UpdateFuelRequirement();
 
-			SetMenuRepeatDelay(MIN_ACCEL_DELAY, MAX_ACCEL_DELAY,
-							   STEP_ACCEL_DELAY, true);
+			SetMenuRepeatDelay(MinAccelDelay, MaxAccelDelay,
+							   StepAccelDelay, true);
 			SetMenuSounds(MenuSoundNone, MenuSoundNone);
 		}
 		else
@@ -2963,7 +2966,7 @@ DoMoveCursor(MENU_STATE* pMS)
 			isMove = true;
 		}
 
-		SleepThreadUntil(TimeIn + MIN_ACCEL_DELAY);
+		SleepThreadUntil(TimeIn + MinAccelDelay);
 	}
 
 	if (isMove)
@@ -3174,7 +3177,7 @@ UpdateMap(void)
 						|| temp_r0.corner.y != temp_r1.corner.y)
 					{ // Ignore name stacking during movement
 						VisibleChange = true;
-						RepairMap(index | IGNORE_MOVING_SOI, &last_r, &r);
+						RepairMap(index | IgnoreMovingSoi, &last_r, &r);
 						SleepThread(c_gameSecond / 24);
 					}
 				} while (delta >= 0);
@@ -3256,9 +3259,9 @@ DoneSphereMove:
 					else if (str > 0 && FleetPtr->known_strength == 0)
 					{ // Flash dying race name
 						VisibleChange = true;
-						RepairMap(index | PRE_DEATH_SOI, &last_r, &r);
+						RepairMap(index | PreDeathSoi, &last_r, &r);
 						SleepThread(c_gameSecond / 12);
-						RepairMap(index | DEATH_SOI, &last_r, &r);
+						RepairMap(index | DeathSoi, &last_r, &r);
 						SleepThread(c_gameSecond / 12);
 					}
 				} while (delta >= 0);
@@ -3493,7 +3496,7 @@ bool StarMap(void)
 	UnbatchGraphics();
 
 	SetMenuSounds(MenuSoundNone, MenuSoundNone);
-	SetMenuRepeatDelay(MIN_ACCEL_DELAY, MAX_ACCEL_DELAY, STEP_ACCEL_DELAY,
+	SetMenuRepeatDelay(MinAccelDelay, MaxAccelDelay, StepAccelDelay,
 					   true);
 
 	DoInput(&MenuState, false);

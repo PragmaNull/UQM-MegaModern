@@ -101,7 +101,7 @@ GenerateColony_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	if (uqm::isOriginalSeed())
 	{
-		pPlanet->radius = EARTH_RADIUS * 115L / 100;
+		pPlanet->radius = EarthRadius * 115L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -141,7 +141,7 @@ GenerateColony_generateMoons(SOLARSYS_STATE* solarSys,
 	}
 
 	if (IsExtended()
-		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		solarSys->MoonDesc[0].data_index = SELENIC_WORLD;
 	}
@@ -155,7 +155,7 @@ GenerateColony_generateName(const SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
@@ -174,12 +174,12 @@ static bool
 GenerateColony_generateOrbital(SOLARSYS_STATE* solarSys,
 							   PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		DoPlanetaryAnalysis(&solarSys->SysInfo, world);
 
 		solarSys->SysInfo.PlanetInfo.AtmoDensity =
-			EARTH_ATMOSPHERE * 98 / 100;
+			EarthAtmosphere * 98 / 100;
 		solarSys->SysInfo.PlanetInfo.Weather = 0;
 		solarSys->SysInfo.PlanetInfo.Tectonics = 0;
 		solarSys->SysInfo.PlanetInfo.SurfaceTemperature = 28;

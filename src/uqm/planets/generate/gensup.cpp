@@ -73,7 +73,7 @@ GenerateSupox_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pPlanet->data_index = WATER_WORLD;
 		pPlanet->NumPlanets = 2;
-		pPlanet->radius = EARTH_RADIUS * 152L / 100;
+		pPlanet->radius = EarthRadius * 152L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -96,7 +96,7 @@ GenerateSupox_generateName(const SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& GET_GAME_STATE(SUPOX_STACK1) > 2)
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
@@ -116,7 +116,7 @@ static bool
 GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
 							  PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (StartSphereTracking(SUPOX_SHIP))
 		{
@@ -163,7 +163,7 @@ static bool
 GenerateSupox_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						   uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		GenerateDefault_landerReportCycle(solarSys);
 
@@ -186,7 +186,7 @@ static uint16_t
 GenerateSupox_generateEnergy(const SOLARSYS_STATE* solarSys,
 							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}

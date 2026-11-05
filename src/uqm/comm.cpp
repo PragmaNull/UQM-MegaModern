@@ -51,12 +51,12 @@
 
 #include <ctype.h>
 
-#define MAX_RESPONSES 8
+static constexpr auto MaxResponses {8};
 
 // Oscilloscope frame rate
-// Should be <= COMM_ANIM_RATE
+// Should be <= CommAnimRate
 // XXX: was 32 picked experimentally?
-#define OSCILLOSCOPE_RATE (c_gameSecond / chooseIfHd(32, 60))
+static auto OscilloscopeRate() { return (c_gameSecond / chooseIfHd(32, 60)); }
 
 // Maximum comm animation frame rate (actual execution rate)
 // A gfx frame is not always produced during an execution frame,
@@ -64,7 +64,7 @@
 // The rate was originally 120fps which allowed for more animation
 // precision which is ultimately wasted on the human eye anyway.
 // The highest known stable animation rate is 40fps, so that's what we use.
-#define COMM_ANIM_RATE (c_gameSecond / 40)
+static constexpr auto CommAnimRate {(c_gameSecond / 40)};
 
 static GFXCONTEXT AnimContext;
 
@@ -100,7 +100,7 @@ typedef struct encounter_state
 	uint8_t num_responses;
 	uint8_t cur_response;
 	uint8_t top_response;
-	RESPONSE_ENTRY response_list[MAX_RESPONSES];
+	RESPONSE_ENTRY response_list[MaxResponses];
 
 	char phrase_buf[1024];
 } ENCOUNTER_STATE;
@@ -768,7 +768,7 @@ UpdateSpeechGraphics(void)
 		return; // too early
 	}
 
-	NextTime = GetTimeCounter() + OSCILLOSCOPE_RATE;
+	NextTime = GetTimeCounter() + OscilloscopeRate();
 
 	GFXCONTEXT OldContext {SetContext(RadarContext)};
 	DrawOscilloscope();
@@ -787,7 +787,7 @@ UpdateAnimations(bool paused)
 		return; // too early
 	}
 
-	NextTime = GetTimeCounter() + COMM_ANIM_RATE;
+	NextTime = GetTimeCounter() + CommAnimRate;
 
 	GFXCONTEXT OldContext {SetContext(AnimContext)};
 	BatchGraphics();
@@ -1131,7 +1131,7 @@ static void
 runCommAnimFrame(void)
 {
 	UpdateCommGraphics();
-	SleepThread(COMM_ANIM_RATE);
+	SleepThread(CommAnimRate);
 }
 
 static bool
@@ -1316,8 +1316,10 @@ remove_char_from_string(char* str, const char c)
 static bool
 DoConvSummary(SUMMARY_STATE* pSS)
 {
-#define DELTA_Y_SUMMARY RES_SCALE(8)
-#define MAX_SUMM_ROWS (SliderY() / DELTA_Y_SUMMARY) - 1
+	const auto DeltaYSummary = [&] {
+		return RES_SCALE(8);
+	};
+#define MAX_SUMM_ROWS (SliderY() / DeltaYSummary()) - 1
 
 	if (!pSS->Initialized)
 	{
@@ -1365,7 +1367,7 @@ DoConvSummary(SUMMARY_STATE* pSS)
 		r.extent.width -= RES_SCALE(2 + 2);
 		t.baseline.x = RES_SCALE(2);
 		t.align = ALIGN_LEFT;
-		t.baseline.y = DELTA_Y_SUMMARY;
+		t.baseline.y = DeltaYSummary();
 
 		SetContextFont(TinyFont);
 
@@ -1408,7 +1410,7 @@ DoConvSummary(SUMMARY_STATE* pSS)
 					font_DrawText(&t);
 				}
 
-				t.baseline.y += DELTA_Y_SUMMARY;
+				t.baseline.y += DeltaYSummary();
 				t.pStr = next;
 				t.CharCount = (uint16_t)~0;
 			}
@@ -1434,7 +1436,7 @@ DoConvSummary(SUMMARY_STATE* pSS)
 			{
 				font_DrawText(&t);
 			}
-			t.baseline.y += DELTA_Y_SUMMARY;
+			t.baseline.y += DeltaYSummary();
 		}
 
 		if (row >= MAX_SUMM_ROWS && (pSS->NextSub || pSS->LeftOver))
@@ -1474,7 +1476,7 @@ DoConvSummary(SUMMARY_STATE* pSS)
 static void
 ClearResponses(ENCOUNTER_STATE* pES)
 {
-	for (size_t responseI {0}; responseI < MAX_RESPONSES; responseI++)
+	for (size_t responseI {0}; responseI < MaxResponses; responseI++)
 	{
 		pES->response_list[responseI].allocedResponse.clear();
 	}
@@ -1669,7 +1671,7 @@ DoLastReplay(LAST_REPLAY_STATE* pLRS)
 		UpdateCommGraphics();
 	}
 
-	pLRS->NextTime = GetTimeCounter() + COMM_ANIM_RATE;
+	pLRS->NextTime = GetTimeCounter() + CommAnimRate;
 
 	return true;
 }

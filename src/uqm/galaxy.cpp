@@ -37,18 +37,16 @@ extern uint16_t zoom_out;
 extern PRIM_LINKS DisplayLinks;
 
 
-#define BIG_STAR_COUNT 30
-#define MED_STAR_COUNT 60
-#define SML_STAR_COUNT 90
-#define NUM_STARS (BIG_STAR_COUNT   \
-				   + MED_STAR_COUNT \
-				   + SML_STAR_COUNT)
+static constexpr auto BigStarCount {30};
+static constexpr auto MedStarCount {60};
+static constexpr auto SmlStarCount {90};
+static constexpr auto NumStars {(BigStarCount + MedStarCount + SmlStarCount)};
 
 DPOINT SpaceOrg;
-static DPOINT log_star_array[NUM_STARS];
+static DPOINT log_star_array[NumStars];
 static uint16_t num_sceneries;
 
-#define NUM_STAR_PLANES 3
+static constexpr auto NumStarPlanes {3};
 
 typedef struct
 {
@@ -59,26 +57,26 @@ typedef struct
 	DPOINT* plast_star;
 } STAR_BLOCK;
 
-STAR_BLOCK StarBlock[NUM_STAR_PLANES] =
+STAR_BLOCK StarBlock[NumStarPlanes] =
 	{
 		{
 			0,
-			BIG_STAR_COUNT,
+			BigStarCount,
 			&log_star_array[0],
 			nullptr,
 			nullptr,
 		 },
 		{
 			0,
-			MED_STAR_COUNT,
-			&log_star_array[BIG_STAR_COUNT],
+			MedStarCount,
+			&log_star_array[BigStarCount],
 			nullptr,
 			nullptr,
 		 },
 		{
 			0,
-			SML_STAR_COUNT,
-			&log_star_array[BIG_STAR_COUNT + MED_STAR_COUNT],
+			SmlStarCount,
+			&log_star_array[BigStarCount + MedStarCount],
 			nullptr,
 			nullptr,
 		 },
@@ -257,14 +255,14 @@ void InitGalaxy(void)
 	PRIM_LINKS Links {uqm::makeDword(EndOfList, EndOfList)};
 	uint16_t factor {OneShift + MaxReduction + (BackgroundShift - 3)};
 	num_sceneries = 0;
-	for (i = 0, ppt = log_star_array; i < NUM_STARS; ++i, ++ppt)
+	for (i = 0, ppt = log_star_array; i < NumStars; ++i, ++ppt)
 	{
 		uint16_t p {};
 
 		p = AllocDisplayPrim();
 		SetPrimFlags(&DisplayArray[p], 0);
 
-		if (i == BIG_STAR_COUNT || i == BIG_STAR_COUNT + MED_STAR_COUNT)
+		if (i == BigStarCount || i == BigStarCount + MedStarCount)
 		{
 			++factor;
 		}
@@ -272,13 +270,13 @@ void InitGalaxy(void)
 		ppt->x = (int32_t)((uint16_t)uqm::random().next() % SpaceWidth()) << factor;
 		ppt->y = (int32_t)((uint16_t)uqm::random().next() % SpaceHeight()) << factor;
 
-		if (i < BIG_STAR_COUNT + MED_STAR_COUNT)
+		if (i < BigStarCount + MedStarCount)
 		{
 			SetPrimType(&DisplayArray[p], STAMP_PRIM);
 			SetPrimColor(&DisplayArray[p],
 						 BuildColor(MakeRgb15(0x0B, 0x0B, 0x1F), 0x09));
 
-			if (useScenery && i == (BIG_STAR_COUNT + MED_STAR_COUNT - 1))
+			if (useScenery && i == (BigStarCount + MedStarCount - 1))
 			{ //Set SA-MATRA as background image on the second Star layer
 				SetPrimType(&DisplayArray[p], STAMP_PRIM);
 				DisplayArray[p].Object.Stamp.frame = scenery;
@@ -363,9 +361,9 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 	PRIMITIVE* pprim {};
 	const static uint16_t star_counts[] =
 		{
-			BIG_STAR_COUNT,
-			MED_STAR_COUNT,
-			SML_STAR_COUNT};
+			BigStarCount,
+			MedStarCount,
+			SmlStarCount};
 	const static uint16_t star_frame_ofs[] = {32 + 26, 26, 0};
 	const bool meleeScaleModeIsStep {uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step};
 
@@ -501,7 +499,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 
 		if (inHQSpace())
 		{
-			for (i = BIG_STAR_COUNT + MED_STAR_COUNT, pprim = DisplayArray;
+			for (i = BigStarCount + MedStarCount, pprim = DisplayArray;
 				 i > 0; --i, ++pprim)
 			{
 				uint16_t base_index {};
@@ -584,7 +582,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 		}
 	}
 
-	DisplayLinks = uqm::makeDword(NUM_STARS - 1, 0);
+	DisplayLinks = uqm::makeDword(NumStars - 1, 0);
 }
 
 void SetStarPoint(GFXPOINT pt, uint16_t i)

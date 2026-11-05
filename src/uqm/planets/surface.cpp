@@ -28,8 +28,8 @@
 const uint8_t* Elements;
 const PlanetFrame* PlanData;
 
-#define MEDIUM_DEPOSIT_THRESHOLD 150
-#define LARGE_DEPOSIT_THRESHOLD 225
+static constexpr auto MediumDepositThreshold {150};
+static constexpr auto LargeDepositThreshold {225};
 
 static uint16_t
 CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
@@ -81,11 +81,11 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 				temp_deposit_quality = 0;
 			}
 
-			if (temp_deposit_quality < MEDIUM_DEPOSIT_THRESHOLD)
+			if (temp_deposit_quality < MediumDepositThreshold)
 			{
 				deposit_quality_gross = 0;
 			}
-			else if (temp_deposit_quality < LARGE_DEPOSIT_THRESHOLD)
+			else if (temp_deposit_quality < LargeDepositThreshold)
 			{
 				deposit_quality_gross = 1;
 			}
@@ -133,6 +133,8 @@ GenerateMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t whichDeposit,
 	return CalcMineralDeposits(SysInfoPtr, whichDeposit, info);
 }
 
+static constexpr auto MinLifeChance {10};
+
 static uint16_t
 CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
 			  NODE_INFO* info)
@@ -140,17 +142,16 @@ CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
 	uint16_t num_life_forms {0};
 	if (PLANSIZE(SysInfoPtr->PlanetInfo.PlanDataPtr->Type) != GAS_GIANT)
 	{
-#define MIN_LIFE_CHANCE 10
 		int16_t life_var {};
 
 		life_var = SysGenRNG->next() & 1023;
 		if (life_var < SysInfoPtr->PlanetInfo.LifeChance
-			|| (SysInfoPtr->PlanetInfo.LifeChance < MIN_LIFE_CHANCE
-				&& life_var < MIN_LIFE_CHANCE))
+			|| (SysInfoPtr->PlanetInfo.LifeChance < MinLifeChance
+				&& life_var < MinLifeChance))
 		{
 			uint8_t num_types {};
 
-			num_types = 1 + uqm::lowByte(SysGenRNG->next()) % MAX_LIFE_VARIATION;
+			num_types = 1 + uqm::lowByte(SysGenRNG->next()) % MaxLifeVariation;
 			do
 			{
 				uint8_t index {};
@@ -158,7 +159,7 @@ CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
 				uint16_t rand_val {};
 
 				rand_val = SysGenRNG->next();
-				index = uqm::lowByte(rand_val) % NUM_CREATURE_TYPES;
+				index = uqm::lowByte(rand_val) % NumCreatureTypes;
 				num_creatures = 1 + uqm::highByte(rand_val) % 10;
 				do
 				{
@@ -264,9 +265,9 @@ scaleMapWidth(int16_t value)
 {
 	float percentage = 1;
 
-	if (UNSCALED_MAP_WIDTH != widthPick())
+	if (UnscaledMapWidth() != widthPick())
 	{
-		percentage = scaleThing(UNSCALED_MAP_WIDTH, widthPick());
+		percentage = scaleThing(UnscaledMapWidth(), widthPick());
 	}
 
 	return RES_SCALE((int16_t)(value * percentage));
@@ -277,9 +278,9 @@ scaleMapHeight(int16_t value)
 {
 	float percentage = 1;
 
-	if (SC2_MAP_HEIGHT != heightPick())
+	if (Sc2MapHeight != heightPick())
 	{
-		percentage = scaleThing(SC2_MAP_HEIGHT, heightPick());
+		percentage = scaleThing(Sc2MapHeight, heightPick());
 	}
 
 	return RES_SCALE((int16_t)(value * percentage));
@@ -402,11 +403,11 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 				temp_deposit_quality = 0;
 			}
 
-			if (temp_deposit_quality < MEDIUM_DEPOSIT_THRESHOLD)
+			if (temp_deposit_quality < MediumDepositThreshold)
 			{
 				deposit_quality_gross = 0;
 			}
-			else if (temp_deposit_quality < LARGE_DEPOSIT_THRESHOLD)
+			else if (temp_deposit_quality < LargeDepositThreshold)
 			{
 				deposit_quality_gross = 1;
 			}
@@ -452,11 +453,11 @@ CustomMineralDeposit(NODE_INFO* info, uint16_t type, uint8_t quality,
 
 	deposit_quality_fine = quality * 10;
 
-	if (deposit_quality_fine < MEDIUM_DEPOSIT_THRESHOLD)
+	if (deposit_quality_fine < MediumDepositThreshold)
 	{
 		deposit_quality_gross = 0;
 	}
-	else if (deposit_quality_fine < LARGE_DEPOSIT_THRESHOLD)
+	else if (deposit_quality_fine < LargeDepositThreshold)
 	{
 		deposit_quality_gross = 1;
 	}

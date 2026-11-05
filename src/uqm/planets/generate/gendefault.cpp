@@ -134,11 +134,11 @@ bool GenerateDefault_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* worl
 	uint32_t rand_val {SysGenRNG->seed()};
 
 	sysInfo->PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] = rand_val;
-	GenerateLifeForms(sysInfo, GENERATE_ALL, nullptr);
+	GenerateLifeForms(sysInfo, GenerateAll, nullptr);
 	rand_val = SysGenRNG->seed();
 
 	sysInfo->PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
-	GenerateMineralDeposits(sysInfo, GENERATE_ALL, nullptr);
+	GenerateMineralDeposits(sysInfo, GenerateAll, nullptr);
 
 	sysInfo->PlanetInfo.ScanSeed[ENERGY_SCAN] = rand_val;
 	LoadPlanet(nullptr);
@@ -220,7 +220,7 @@ GenerateDefault_generateRuins(const SOLARSYS_STATE* solarSys,
 {
 	// Generate a standard spread of city ruins of a destroyed civilization
 	return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN,
-							   NUM_RACE_RUINS, 0, whichNode, info);
+							   NumRaceRuins, 0, whichNode, info);
 }
 
 static inline void
@@ -326,55 +326,56 @@ GenerateWorlds(uint8_t whichType)
 {
 	uint8_t planet = FIRST_SMALL_ROCKY_WORLD;
 
-	if (whichType & SMALL_ROCKY)
+	if (whichType & SmallRocky)
 	{
-		planet = FIRST_SMALL_ROCKY_WORLD + SysGenRNG->next() % NUMBER_OF_SMALL_ROCKY_WORLDS;
+		planet = FIRST_SMALL_ROCKY_WORLD + SysGenRNG->next() % NumberOfSmallRockyWorlds;
 	}
-	else if (whichType & LARGE_ROCKY)
+	else if (whichType & LargeRocky)
 	{
-		planet = FIRST_LARGE_ROCKY_WORLD + SysGenRNG->next() % (NUMBER_OF_LARGE_ROCKY_WORLDS - 2);
+		planet = FIRST_LARGE_ROCKY_WORLD + SysGenRNG->next() % (NumberOfLargeRockyWorlds - 2);
 		// Skip over rainbow_world and shattered_world, which are adjacent.
 		if (planet >= RAINBOW_WORLD)
 		{
 			planet += 2;
 		}
 	}
-	else if (whichType & ALL_ROCKY)
+	else if (whichType & AllRocky)
 	{
-		planet = FIRST_ROCKY_WORLD + SysGenRNG->next() % (NUMBER_OF_ROCKY_WORLDS - 2);
+		planet = FIRST_ROCKY_WORLD + SysGenRNG->next() % (NumberOfRockyWorlds - 2);
 		// Skip over rainbow_world and shattered_world, which are adjacent.
 		if (planet >= RAINBOW_WORLD)
 		{
 			planet += 2;
 		}
 	}
-	else if (whichType & ONLY_LARGE)
+	else if (whichType & OnlyLarge)
 	{
-		planet = FIRST_LARGE_ROCKY_WORLD + SysGenRNG->next() % (NUMBER_OF_LARGE_ROCKY_WORLDS + NUMBER_OF_GAS_GIANTS - 2);
+		planet = FIRST_LARGE_ROCKY_WORLD + SysGenRNG->next() % (NumberOfLargeRockyWorlds + NumberOfGasGiants - 2);
 		// Skip over rainbow_world and shattered_world, which are adjacent.
 		if (planet >= RAINBOW_WORLD)
 		{
 			planet += 2;
 		}
 	}
-	else if (whichType & ONLY_GAS)
+	else if (whichType & OnlyGas)
 	{
-		planet = FIRST_GAS_GIANT + SysGenRNG->next() % NUMBER_OF_GAS_GIANTS;
+		planet = FIRST_GAS_GIANT + SysGenRNG->next() % NumberOfGasGiants;
 	}
 
 	return planet;
 }
 
+static constexpr auto DwarfGasgDist {SCALE_RADIUS(12)};
+
 void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	uint8_t i {};
-#define DWARF_GASG_DIST SCALE_RADIUS(12)
 	const uint32_t rand = SysGenRNG->seed();
 
 	for (i = 0; i < pSunDesc->NumPlanets; i++)
 	{
-		if (solarSys->PlanetDesc[i].radius >= DWARF_GASG_DIST)
+		if (solarSys->PlanetDesc[i].radius >= DwarfGasgDist)
 		{
 			break;
 		}
@@ -391,12 +392,12 @@ void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 	pSunDesc->PlanetByte = i;
 	PLANET_DESC* pPlanet {&solarSys->PlanetDesc[pSunDesc->PlanetByte]};
 
-	pPlanet->data_index = GenerateWorlds(ONLY_GAS);
+	pPlanet->data_index = GenerateWorlds(OnlyGas);
 
-	if (solarSys->PlanetDesc[i].radius < DWARF_GASG_DIST)
+	if (solarSys->PlanetDesc[i].radius < DwarfGasgDist)
 	{
 		pPlanet->radius =
-			uqm::rangeMinMax(DWARF_GASG_DIST, MAX_PLANET_RADIUS, rand);
+			uqm::rangeMinMax(DwarfGasgDist, MaxPlanetRadius, rand);
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -438,7 +439,7 @@ GenerateHabitableWorld(void)
 uint8_t
 GenerateGasGiantWorld(void)
 {
-	return FIRST_GAS_GIANT + SysGenRNG->next() % NUMBER_OF_GAS_GIANTS;
+	return FIRST_GAS_GIANT + SysGenRNG->next() % NumberOfGasGiants;
 }
 
 // input: 1 <= min <= max
@@ -447,26 +448,26 @@ GenerateGasGiantWorld(void)
 uint8_t
 GenerateMinPlanets(uint8_t min)
 {
-	const uint8_t max = MAX_GEN_PLANETS + 1;
+	const uint8_t max = MaxGenPlanets + 1;
 
 	if (min == 0)
 	{
 		min = 1;
 	}
-	if (min >= MAX_GEN_PLANETS)
+	if (min >= MaxGenPlanets)
 	{
-		min = MAX_GEN_PLANETS;
+		min = MaxGenPlanets;
 	}
 
 	return SysGenRNG->next() % (max - min) + min;
 }
 
-// input: 0 <= minimum < MAX_GEN_PLANETS
-// output: minimum + 1 <= RNG <= MAX_GEN_PLANETS
+// input: 0 <= minimum < MaxGenPlanets
+// output: minimum + 1 <= RNG <= MaxGenPlanets
 uint8_t
 GenerateNumberOfPlanets(uint8_t minimum)
 {
-	const uint8_t roll = MAX_GEN_PLANETS - minimum;
+	const uint8_t roll = MaxGenPlanets - minimum;
 	const uint8_t adjust = minimum + 1;
 	return (SysGenRNG->next() % roll) + adjust;
 }

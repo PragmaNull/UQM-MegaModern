@@ -72,7 +72,7 @@ void Netplay_NotifyAll_setFleet(MELEE_STATE* pMS, size_t playerNr)
 			continue;
 		}
 
-		Netplay_Notify_setFleet(conn, playerNr, ships, MELEE_FLEET_SIZE);
+		Netplay_Notify_setFleet(conn, playerNr, ships, MeleeFleetSize);
 	}
 }
 

@@ -22,10 +22,10 @@
 SOUND_REF MenuSounds;
 SOUND_REF GameSounds;
 
-#define MAX_SOUNDS 8
+static constexpr auto MaxSounds {8};
 static uint8_t num_sounds = 0;
-static SOUND sound_buf[MAX_SOUNDS];
-static ELEMENT* sound_posobj[MAX_SOUNDS];
+static SOUND sound_buf[MaxSounds];
+static ELEMENT* sound_posobj[MaxSounds];
 
 void PlaySound(SOUND S, SoundPosition Pos, ELEMENT* PositionalObject,
 			   uint8_t Priority)
@@ -90,12 +90,12 @@ void SuppressSounds(void)
 {
 	memset(sound_buf, 0, sizeof(sound_buf));
 	memset(sound_posobj, 0, sizeof(sound_posobj));
-	num_sounds = MAX_SOUNDS;
+	num_sounds = MaxSounds;
 }
 
 void ProcessSound(SOUND Sound, ELEMENT* PositionalObject)
 {
-	if (num_sounds < MAX_SOUNDS)
+	if (num_sounds < MaxSounds)
 	{
 		sound_buf[num_sounds] = Sound;
 		sound_posobj[num_sounds++] = PositionalObject;

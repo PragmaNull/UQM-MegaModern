@@ -71,8 +71,8 @@ enum
 	HARD_DIFF
 };
 
-#define CHOOSER_X (CanvasWidth >> 1)
-#define CHOOSER_Y ((CanvasHeight >> 1) - RES_SCALE(12))
+static auto ChooserX() { return (CanvasWidth >> 1); }
+static auto ChooserY() { return ((CanvasHeight >> 1) - RES_SCALE(12)); }
 
 // Kruzen: Having this ref separated gains more control
 // We can load and free it whenever we want and not rely on menu volume
@@ -121,7 +121,7 @@ void DrawToolTips(MENU_STATE* pMS, int answer)
 	SetContextFont(TinyFont);
 
 	GetFrameRect(SetRelFrameIndex(pMS->CurFrame, 2), &r);
-	r.corner.y += CHOOSER_Y + r.extent.height + RES_SCALE(1);
+	r.corner.y += ChooserY() + r.extent.height + RES_SCALE(1);
 
 	s.frame = SetRelFrameIndex(pMS->CurFrame, 3);
 	r.extent = GetFrameBounds(s.frame);
@@ -157,7 +157,7 @@ DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 	STAMP s;
 	TEXT t;
 
-	s.origin = MAKE_POINT(CHOOSER_X, CHOOSER_Y);
+	s.origin = MAKE_POINT(ChooserX(), ChooserY());
 	s.frame = SetRelFrameIndex(pMS->CurFrame, 2);
 	DrawStamp(&s);
 
@@ -307,8 +307,8 @@ DoDiffChooser(MENU_STATE* pMS)
 	return response;
 }
 
-#define MAIN_TEXT_X (CanvasWidth >> 1)
-#define MAIN_TEXT_Y (RES_SCALE(42) - DOS_NUM_SCL(20))
+static auto MainTextX() { return (CanvasWidth >> 1); }
+static auto MainTextY() { return (RES_SCALE(42) - DOS_NUM_SCL(20)); }
 
 FRAME TextCache[5];
 
@@ -330,8 +330,8 @@ InitPulseText(void)
 	SetContextForeGroundColor(WhiteColor);
 	GetContextFontLeading(&leading);
 
-	t.baseline.x = MAIN_TEXT_X;
-	t.baseline.y = MAIN_TEXT_Y;
+	t.baseline.x = MainTextX();
+	t.baseline.y = MainTextY();
 	t.align = ALIGN_CENTER;
 	t.CharCount = (uint16_t)~0;
 
@@ -385,8 +385,8 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 
 	GetContextFontLeading(&leading);
 
-	t.baseline.x = MAIN_TEXT_X;
-	t.baseline.y = MAIN_TEXT_Y;
+	t.baseline.x = MainTextX();
+	t.baseline.y = MainTextY();
 	t.align = ALIGN_CENTER;
 	t.CharCount = (uint16_t)~0;
 
@@ -403,7 +403,7 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 	SetContextFont(TinyFont);
 	SetContextForeGroundColor(WhiteColor);
 	fmt::format_to_sz_n(buf, "v{}.{}.{} {}",
-						UQM_MAJOR_VERSION, UQM_MINOR_VERSION, UQM_PATCH_VERSION,
+						UqmMajorVersion, UqmMinorVersion, UqmPatchVersion,
 						chooseIfHd<const char*>(UQM_EXTRA_VERSION, "HD " UQM_EXTRA_VERSION));
 	t.pStr = buf;
 	t.baseline.x = CanvasWidth - RES_SCALE(2);

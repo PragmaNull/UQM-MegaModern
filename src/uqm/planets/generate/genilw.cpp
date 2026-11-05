@@ -68,7 +68,7 @@ GenerateIlwrath_generatePlanets(SOLARSYS_STATE* solarSys)
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 		pPlanet->data_index = PRIMORDIAL_WORLD;
-		pPlanet->radius = EARTH_RADIUS * 204L / 100;
+		pPlanet->radius = EarthRadius * 204L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -89,7 +89,7 @@ static bool
 GenerateIlwrath_generateOrbital(SOLARSYS_STATE* solarSys,
 								PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (StartSphereTracking(ILWRATH_SHIP))
 		{
@@ -126,7 +126,7 @@ GenerateIlwrath_generateOrbital(SOLARSYS_STATE* solarSys,
 
 	GenerateDefault_generateOrbital(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
 		solarSys->SysInfo.PlanetInfo.Weather = 2;
@@ -140,7 +140,7 @@ static uint16_t
 GenerateIlwrath_generateEnergy(const SOLARSYS_STATE* solarSys,
 							   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
@@ -152,7 +152,7 @@ static bool
 GenerateIlwrath_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 							 uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
 		GenerateDefault_landerReportCycle(solarSys);

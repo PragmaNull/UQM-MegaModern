@@ -238,9 +238,9 @@ bool LoadKernel(int argc, char* argv[])
 
 	/* Now load the rest of the addons, in order. */
 	uqstl::vector<uqstl::string> addons {uqm::UQMOptions::read().addons};
-	if (!IsHd() && uqstl::erase(addons, uqstl::string {HD_MODE}) > 0)
+	if (!IsHd() && uqstl::erase(addons, uqstl::string {HdMode}) > 0)
 	{
-		uqm::log::warn("Warning: The '{}' addon is for HD mode only. Set graphics.resolutionFactor to 2 to use it.", HD_MODE);
+		uqm::log::warn("Warning: The '{}' addon is for HD mode only. Set graphics.resolutionFactor to 2 to use it.", HdMode);
 	}
 	uqm::prepareAddons(addons);
 

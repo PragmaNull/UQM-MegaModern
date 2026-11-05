@@ -27,7 +27,7 @@
 #include "../../nameref.h"
 // JMS_GFX: For LoadGraphic()
 #include "../../planets/planets.h"
-// For MIN_MOON_RADIUS
+// For MinMoonRadius()
 // JSD it needs starmap.h to find SOL
 #include "../../starmap.h"
 
@@ -38,23 +38,23 @@ static LOCDATA chmmr_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		CHMMR_PMAP_ANIM, /* AlienFrame */
-		CHMMR_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		ChmmrPmapAnim, /* AlienFrame */
+		ChmmrFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		CHMMR_COLOR_MAP, /* AlienColorMap */
-		CHMMR_MUSIC, /* AlienSong */
+		ChmmrColorMap, /* AlienColorMap */
+		ChmmrMusic, /* AlienSong */
 		{
-								NullResource,		 /* AlienAltFrame */
-			NullResource,		 /* AlienAltColorMap */
-			CHMMR_PROCESS_MUSIC, /* AlienAltSong */
+								NullResource,	   /* AlienAltFrame */
+			NullResource,	   /* AlienAltColorMap */
+			ChmmrProcessMusic, /* AlienAltSong */
 		},
-		CHMMR_CONVERSATION_PHRASES, /* PlayerPhrases */
+		ChmmrConversationPhrases, /* PlayerPhrases */
 		6, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
@@ -179,6 +179,8 @@ static FILTER_DESC chmmr_filters =
 								  }
 };
 
+static constexpr auto EarthIndex {2}; /* earth is 3rd planet --> 3 - 1 = 2 */
+
 static void
 ExitConversation(RESPONSE_REF R)
 {
@@ -221,7 +223,6 @@ ExitConversation(RESPONSE_REF R)
 		GLOBAL_SIS(NumLanders) = 0;
 		GLOBAL(ModuleCost[PLANET_LANDER]) = 0;
 
-#define EARTH_INDEX 2 /* earth is 3rd planet --> 3 - 1 = 2 */
 
 		/* transport player to Earth */
 		// JSD replace old method of teleport to SOL with new method
@@ -231,7 +232,7 @@ ExitConversation(RESPONSE_REF R)
 		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(plot_map[SOL_DEFINED].star_pt.y);
 		uqm::flagship().shipFacing = 1;
 		/* At Earth or at Starbase */
-		uqm::flagship().ipPlanet = EARTH_INDEX + 1;
+		uqm::flagship().ipPlanet = EarthIndex + 1;
 		uqm::flagship().inOrbit = 0;
 		/* XXX : this should be unhardcoded eventually */
 		uqm::flagship().ipLocation.x = EarthOuterX;
@@ -255,8 +256,8 @@ ExitConversation(RESPONSE_REF R)
 			/* XXX : this should be unhardcoded eventually */
 			/* transport to Starbase */
 			/* note: if uqm::UQMOptions::read().orbitingPlanets is enabled, this will be corrected in DoTimePassage */
-			uqm::flagship().shipStamp.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1) + COSINE(HalfCircle + Quadrant, MIN_MOON_RADIUS);
-			uqm::flagship().shipStamp.origin.y = RES_SCALE(OrigSisScreenHeight() >> 1) + SINE(HalfCircle + Quadrant, MIN_MOON_RADIUS >> 1);
+			uqm::flagship().shipStamp.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1) + COSINE(HalfCircle + Quadrant, MinMoonRadius());
+			uqm::flagship().shipStamp.origin.y = RES_SCALE(OrigSisScreenHeight() >> 1) + SINE(HalfCircle + Quadrant, MinMoonRadius() >> 1);
 		}
 		else
 		{ /* 'Beating Game Differently' mode - never visited Starbase,

@@ -101,7 +101,7 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 
 			pPlanet->data_index = WATER_WORLD;
 			pPlanet->NumPlanets = 1;
-			pPlanet->radius = EARTH_RADIUS * 174L / 100;
+			pPlanet->radius = EarthRadius * 174L / 100;
 			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
 			pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -128,7 +128,7 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 				const uint32_t RandVal = SysGenRNG->next();
 				const uint8_t PByte = pSunDesc->PlanetByte + 1;
 				pSunDesc->NumPlanets =
-					(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);
+					(RandVal % (MaxGenPlanets - PByte) + PByte);
 			}
 			else
 			{
@@ -147,7 +147,7 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 
 			if (!uqm::isStarSeed())
 			{
-				pPlanet->data_index = GenerateWorlds(ONLY_GAS);
+				pPlanet->data_index = GenerateWorlds(OnlyGas);
 			}
 
 			GeneratePlanets(solarSys);
@@ -173,7 +173,7 @@ GenerateUtwig_generateName(const SOLARSYS_STATE* solarSys,
 	GenerateDefault_generateName(solarSys, world);
 
 	if (CurStarDescPtr()->Index == UTWIG_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& IsHomeworldKnown(UTWIG_HOME))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
@@ -194,9 +194,9 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 							  PLANET_DESC* world)
 {
 	if ((CurStarDescPtr()->Index == UTWIG_DEFINED
-		 && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		 && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 		|| (CurStarDescPtr()->Index == BOMB_DEFINED
-			&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
+			&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte)
 			&& !GET_GAME_STATE(UTWIG_BOMB)))
 	{
 		if ((CurStarDescPtr()->Index == UTWIG_DEFINED
@@ -296,7 +296,7 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 	GenerateDefault_generateOrbital(solarSys, world);
 
 	if (CurStarDescPtr()->Index == UTWIG_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
 		solarSys->SysInfo.PlanetInfo.Weather = 1;
@@ -311,13 +311,13 @@ GenerateUtwig_generateEnergy(const SOLARSYS_STATE* solarSys,
 							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == UTWIG_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
 
 	if (CurStarDescPtr()->Index == BOMB_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
@@ -338,7 +338,7 @@ GenerateUtwig_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						   uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == UTWIG_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
 		GenerateDefault_landerReportCycle(solarSys);
@@ -346,7 +346,7 @@ GenerateUtwig_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	}
 
 	if (CurStarDescPtr()->Index == BOMB_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		assert(!GET_GAME_STATE(UTWIG_BOMB) && whichNode == 0);
 

@@ -2,4 +2,4 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define ZOQFOTPIK_CODE "ship.zoqfotpik.code"
+inline constexpr uqgsl::czstring ZoqfotpikCode {"ship.zoqfotpik.code"};

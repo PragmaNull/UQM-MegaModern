@@ -48,24 +48,24 @@
 // devices the player actually possesses.
 //#define DEBUG_DEVICES
 
-#define DEVICE_ICON_WIDTH RES_SCALE(16)
-#define DEVICE_ICON_HEIGHT RES_SCALE(16)
+static auto DeviceIconWidth() { return RES_SCALE(16); }
+static auto DeviceIconHeight() { return RES_SCALE(16); }
 
-#define DEVICE_ORG_Y RES_SCALE(33)
-#define DEVICE_SPACING_Y (DEVICE_ICON_HEIGHT + RES_SCALE(2))
+static auto DeviceOrgY() { return RES_SCALE(33); }
+static auto DeviceSpacingY() { return (DeviceIconHeight() + RES_SCALE(2)); }
 
-#define DEVICE_COL_0 RES_SCALE(4)
-#define DEVICE_COL_1 RES_SCALE(40)
+static auto DeviceCol0() { return RES_SCALE(4); }
+static auto DeviceCol1() { return RES_SCALE(40); }
 
-#define DEVICE_SEL_ORG_X (DEVICE_COL_0 + DEVICE_ICON_WIDTH)
-#define DEVICE_SEL_WIDTH (FieldWidth() + RES_SCALE(2) - DEVICE_SEL_ORG_X)
+static auto DeviceSelOrgX() { return (DeviceCol0() + DeviceIconWidth()); }
+static auto DeviceSelWidth() { return (FieldWidth() + RES_SCALE(2) - DeviceSelOrgX()); }
 
-#define ICON_OFS_Y RES_SCALE(1)
-#define NAME_OFS_Y RES_SCALE(2)
-#define TEXT_BASELINE RES_SCALE(6)
-#define TEXT_SPACING_Y RES_SCALE(7)
+static auto IconOfsY() { return RES_SCALE(1); }
+static auto NameOfsY() { return RES_SCALE(2); }
+static auto TextBaseline() { return RES_SCALE(6); }
+static auto TextSpacingY() { return RES_SCALE(7); }
 
-#define MAX_VIS_DEVICES ((RES_SCALE(129) - DEVICE_ORG_Y) / DEVICE_SPACING_Y)
+static auto MaxVisDevices() { return ((RES_SCALE(129) - DeviceOrgY()) / DeviceSpacingY()); }
 
 
 typedef enum
@@ -94,8 +94,8 @@ EraseDevicesBackground (void)
 
 	r.corner.x = RES_SCALE (3); 
 	r.extent.width = FieldWidth() - RES_SCALE (1); 
-	r.corner.y = DEVICE_ORG_Y;
-	r.extent.height = MAX_VIS_DEVICES * DEVICE_SPACING_Y;
+	r.corner.y = DeviceOrgY();
+	r.extent.height = MaxVisDevices() * DeviceSpacingY();
 	SetContextForeGroundColor (DevicesBackColor);
 	DrawFilledRectangle (&r);
 }
@@ -108,14 +108,14 @@ DrawDevice(uint16_t device, uint16_t pos, bool selected)
 	TEXT t;
 
 	t.align = ALIGN_CENTER;
-	t.baseline.x = DEVICE_COL_1;
+	t.baseline.x = DeviceCol1();
 
-	r.extent.width = DEVICE_SEL_WIDTH;
-	r.extent.height = TEXT_SPACING_Y * 2;
-	r.corner.x = DEVICE_SEL_ORG_X;
+	r.extent.width = DeviceSelWidth();
+	r.extent.height = TextSpacingY() * 2;
+	r.corner.x = DeviceSelOrgX();
 
 	// draw line background
-	r.corner.y = DEVICE_ORG_Y + pos * DEVICE_SPACING_Y + NAME_OFS_Y;
+	r.corner.y = DeviceOrgY() + pos * DeviceSpacingY() + NameOfsY();
 	SetContextForeGroundColor(selected ?
 								  DevicesSelectedBackColor :
 								  DevicesBackColor);
@@ -134,11 +134,11 @@ DrawDevice(uint16_t device, uint16_t pos, bool selected)
 	SetContextForeGroundColor(selected ?
 								  DevicesSelectedNameColor :
 								  DevicesNameColor);
-	t.baseline.y = r.corner.y + TEXT_BASELINE;
+	t.baseline.y = r.corner.y + TextBaseline();
 	t.pStr = GAME_STRING(device + DEVICE_STRING_BASE + 1);
 	t.CharCount = uqm::utf8StringPos(t.pStr, ' ');
 	font_DrawText(&t);
-	t.baseline.y += TEXT_SPACING_Y;
+	t.baseline.y += TextSpacingY();
 	t.pStr = uqm::skipUTF8Chars(t.pStr, t.CharCount + 1);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
@@ -180,11 +180,11 @@ DrawDevicesDisplay(DEVICES_STATE* devState)
 	SetContextForeGroundColor(DevicesSelectedNameColor);
 	font_DrawText(&t);
 
-	s.origin.x = DEVICE_COL_0;
-	cy = DEVICE_ORG_Y;
+	s.origin.x = DeviceCol0();
+	cy = DeviceOrgY();
 
 	// draw device icons and print names
-	for (uint16_t i {0}; i < MAX_VIS_DEVICES; ++i, cy += DEVICE_SPACING_Y)
+	for (uint16_t i {0}; i < MaxVisDevices(); ++i, cy += DeviceSpacingY())
 	{
 		const uint16_t devIndex = devState->topIndex + i;
 
@@ -194,7 +194,7 @@ DrawDevicesDisplay(DEVICES_STATE* devState)
 		}
 
 		// draw device icon
-		s.origin.y = cy + ICON_OFS_Y;
+		s.origin.y = cy + IconOfsY();
 		s.frame = SetAbsFrameIndex(MiscDataFrame,
 								   77 + devState->list[devIndex]);
 
@@ -257,7 +257,7 @@ UseCaster(void)
 
 	if (playerInPlanetOrbit()
 		&& matchWorld(pSolarSysState, pSolarSysState->pOrbitalDesc,
-					  MATCH_PBYTE, MATCH_PLANET)
+					  MatchPbyte, MatchPlanet)
 		&& CurStarDescPtr()->Index == CHMMR_DEFINED
 		&& !GET_GAME_STATE(CHMMR_UNLEASHED))
 	{
@@ -356,7 +356,7 @@ InvokeDevice(uint8_t which_device)
 				if (CurStarDescPtr()->Index != CHMMR_DEFINED
 					|| !matchWorld(pSolarSysState,
 								   pSolarSysState->pOrbitalDesc,
-								   MATCH_PBYTE, MATCH_PLANET))
+								   MatchPbyte, MatchPlanet))
 				{
 					FadeScreen(FadeAllToColor, c_gameSecond * 2);
 				}
@@ -472,7 +472,7 @@ InvokeDevice(uint8_t which_device)
 			break;
 		case PORTAL_SPAWNER_DEVICE:
 			{
-#define MAX_ZFP_SHIPS DIF_CASE(4, 4, 2)
+
 				const uint32_t portalFuelCost {difficultyCase<uint32_t>(5, 10, 20) * FuelTankScale};
 
 				if ((inHyperSpace() || (IsExtended() && inHQSpace()))
@@ -584,11 +584,11 @@ DoManipulateDevices(MENU_STATE* pMS)
 		}
 		else if (pagefwd)
 		{
-			NewState += MAX_VIS_DEVICES;
+			NewState += MaxVisDevices();
 		}
 		else if (pageback)
 		{
-			NewState -= MAX_VIS_DEVICES;
+			NewState -= MaxVisDevices();
 		}
 
 		if (NewState < 0)
@@ -600,9 +600,9 @@ DoManipulateDevices(MENU_STATE* pMS)
 			NewState = devState->count - 1;
 		}
 
-		if (NewState < NewTop || NewState >= NewTop + MAX_VIS_DEVICES)
+		if (NewState < NewTop || NewState >= NewTop + MaxVisDevices())
 		{
-			NewTop = NewState - NewState % MAX_VIS_DEVICES;
+			NewTop = NewState - NewState % MaxVisDevices();
 		}
 
 		if (NewState != pMS->CurState)

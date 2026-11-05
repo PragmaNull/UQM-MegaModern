@@ -30,23 +30,23 @@ static LOCDATA supox_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		SUPOX_PMAP_ANIM, /* AlienFrame */
-		SUPOX_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		SupoxPmapAnim, /* AlienFrame */
+		SupoxFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		SUPOX_COLOR_MAP, /* AlienColorMap */
-		SUPOX_MUSIC, /* AlienSong */
+		SupoxColorMap, /* AlienColorMap */
+		SupoxMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		SUPOX_CONVERSATION_PHRASES, /* PlayerPhrases */
+		SupoxConversationPhrases, /* PlayerPhrases */
 		4, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

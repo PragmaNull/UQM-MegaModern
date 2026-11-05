@@ -63,11 +63,12 @@ const GenerateFunctions generateMyconFunctions = {
 	/* .pickupLife       = */ GenerateDefault_pickupLife,
 };
 
+static constexpr auto StateOffset {29};
+
 static bool
 GenerateMyconDefenders(uint8_t index)
 {
-#define STATE_OFFSET 29
-	const uint8_t shift = index - STATE_OFFSET;
+	const uint8_t shift = index - StateOffset;
 	bool Survivors {};
 	uint16_t state {};
 	uint16_t i {};
@@ -134,7 +135,7 @@ GenerateMycon_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	if (uqm::isOriginalSeed())
 	{
-		pPlanet->radius = EARTH_RADIUS * 80L / 100;
+		pPlanet->radius = EarthRadius * 80L / 100;
 		if (pPlanet->NumPlanets > 2)
 		{
 			pPlanet->NumPlanets = 2;
@@ -155,7 +156,7 @@ GenerateMycon_generateName(const SOLARSYS_STATE* solarSys,
 	GenerateDefault_generateName(solarSys, world);
 
 	if (CurStarDescPtr()->Index == EGG_CASE0_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
@@ -174,7 +175,7 @@ static bool
 GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 							  PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if ((CurStarDescPtr()->Index == MYCON_DEFINED
 			 || CurStarDescPtr()->Index == SUN_DEVICE_DEFINED)
@@ -288,7 +289,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 
 	GenerateDefault_generateOrbital(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& !uqm::isOriginalSeed()
 		&& (CurStarDescPtr()->Index != EGG_CASE0_DEFINED || isDifficulty(uqm::Difficulty::Hard)))
 	{
@@ -306,7 +307,7 @@ GenerateMycon_generateEnergy(const SOLARSYS_STATE* solarSys,
 							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == SUN_DEVICE_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
@@ -322,7 +323,7 @@ GenerateMycon_generateEnergy(const SOLARSYS_STATE* solarSys,
 	if ((CurStarDescPtr()->Index == EGG_CASE0_DEFINED
 		 || CurStarDescPtr()->Index == EGG_CASE1_DEFINED
 		 || CurStarDescPtr()->Index == EGG_CASE2_DEFINED)
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
@@ -345,7 +346,7 @@ GenerateMycon_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						   uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == SUN_DEVICE_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		assert(!GET_GAME_STATE(SUN_DEVICE) && whichNode == 0);
 
@@ -362,7 +363,7 @@ GenerateMycon_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	if ((CurStarDescPtr()->Index == EGG_CASE0_DEFINED
 		 || CurStarDescPtr()->Index == EGG_CASE1_DEFINED
 		 || CurStarDescPtr()->Index == EGG_CASE2_DEFINED)
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		assert(whichNode == 0);
 

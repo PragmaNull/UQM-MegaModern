@@ -26,38 +26,38 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 20
-#define MAX_ENERGY 40
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 8
-#define MAX_THRUST /* DISPLAY_TO_WORLD (5) */ 21
-#define THRUST_INCREMENT /* DISPLAY_TO_WORLD (2) */ 7
-#define THRUST_WAIT 4
-#define TURN_WAIT 6
-#define SHIP_MASS 6
+static constexpr auto MaxCrew {20};
+static constexpr auto MaxEnergy {40};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {8};
+static constexpr auto MaxThrust {21};
+static constexpr auto ThrustIncrement {7};
+static constexpr auto ThrustWait {4};
+static constexpr auto TurnWait {6};
+static constexpr auto ShipMass {6};
 
 // Laser
-#define WEAPON_ENERGY_COST 1
-#define WEAPON_WAIT 0
-#define VUX_OFFSET chooseIfHd(12, 38)
-#define LASER_BASE RES_SCALE(150)
-#define LASER_RANGE DISPLAY_TO_WORLD(LASER_BASE + VUX_OFFSET)
+static constexpr auto WeaponEnergyCost {1};
+static constexpr auto WeaponWait {0};
+static auto VuxOffset() { return chooseIfHd(12, 38); }
+static auto LaserBase() { return RES_SCALE(150); }
+#define LASER_RANGE DISPLAY_TO_WORLD(LaserBase() + VuxOffset())
 
 // Limpet
-#define SPECIAL_ENERGY_COST 2
-#define SPECIAL_WAIT 7
-#define LIMPET_SPEED RES_SCALE(25)
-#define LIMPET_OFFSET RES_SCALE(8)
-#define LIMPET_LIFE 80
-#define LIMPET_HITS 1
-#define LIMPET_DAMAGE 0
-#define MIN_THRUST_INCREMENT DISPLAY_TO_WORLD(RES_SCALE(1))
+static constexpr auto SpecialEnergyCost {2};
+static constexpr auto SpecialWait {7};
+static auto LimpetSpeed() { return RES_SCALE(25); }
+static auto LimpetOffset() { return RES_SCALE(8); }
+static constexpr auto LimpetLife {80};
+static constexpr auto LimpetHits {1};
+static constexpr auto LimpetDamage {0};
+static auto MinThrustIncrement() { return DISPLAY_TO_WORLD(RES_SCALE(1)); }
 
 // Aggressive Entry
-#define WARP_OFFSET RES_SCALE(46)
+static auto WarpOffset() { return RES_SCALE(46); }
 /* How far outside of the laser range can the ship warp in. */
-#define MAXX_ENTRY_DIST DISPLAY_TO_WORLD((LASER_BASE + VUX_OFFSET + WARP_OFFSET) << 1)
-#define MAXY_ENTRY_DIST DISPLAY_TO_WORLD((LASER_BASE + VUX_OFFSET + WARP_OFFSET) << 1)
+static auto MaxxEntryDist() { return DISPLAY_TO_WORLD((LaserBase() + VuxOffset() + WarpOffset()) << 1); }
+static auto MaxyEntryDist() { return DISPLAY_TO_WORLD((LaserBase() + VuxOffset() + WarpOffset()) << 1); }
 /* Originally, the warp distance was:
 		 * DISPLAY_TO_WORLD (SpaceHeight() << 1)
 		 * where SpaceHeight() = CanvasHeight
@@ -69,11 +69,11 @@ static RACE_DESC vux_desc =
 		 "intruder",
 		 FiresFore | SeekingSpecial | ImmediateWeapon,
 		 12, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 VUX_RACE_STRINGS,
-		 VUX_ICON_MASK_PMAP_ANIM,
-		 VUX_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 VuxRaceStrings,
+		 VuxIconMaskPmapAnim,
+		 VuxMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -85,38 +85,38 @@ static RACE_DESC vux_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 VUX_BIG_MASK_PMAP_ANIM,
-			 VUX_MED_MASK_PMAP_ANIM,
-			 VUX_SML_MASK_PMAP_ANIM,
+			 VuxBigMaskPmapAnim,
+			 VuxMedMaskPmapAnim,
+			 VuxSmlMaskPmapAnim,
 		 },
 		 {
-			 SLIME_MASK_PMAP_ANIM,
+			 SlimeMaskPmapAnim,
 			 NullResource,
 			 NullResource,
 		 },
 		 {
-			 LIMPETS_BIG_MASK_PMAP_ANIM,
-			 LIMPETS_MED_MASK_PMAP_ANIM,
-			 LIMPETS_SML_MASK_PMAP_ANIM,
+			 LimpetsBigMaskPmapAnim,
+			 LimpetsMedMaskPmapAnim,
+			 LimpetsSmlMaskPmapAnim,
 		 },
-		 {VUX_CAPTAIN_MASK_PMAP_ANIM,
+		 {VuxCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 VUX_VICTORY_SONG,
-		 VUX_SHIP_SOUNDS,
+		 VuxVictorySong,
+		 VuxShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -148,7 +148,7 @@ limpet_preprocess(ELEMENT* ElementPtr)
 	if ((delta_facing = TrackShip(ElementPtr, &facing)) > 0)
 	{
 		facing = orig_facing + delta_facing;
-		SetVelocityVector(&ElementPtr->velocity, LIMPET_SPEED, facing);
+		SetVelocityVector(&ElementPtr->velocity, LimpetSpeed(), facing);
 	}
 	ElementPtr->next.image.frame =
 		IncFrameIndex(ElementPtr->next.image.frame);
@@ -177,7 +177,7 @@ limpet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			{
 				--RDPtr->characteristics.thrust_wait;
 			}
-			if (RDPtr->characteristics.thrust_increment <= MIN_THRUST_INCREMENT)
+			if (RDPtr->characteristics.thrust_increment <= MinThrustIncrement())
 			{
 				RDPtr->characteristics.max_thrust =
 					RDPtr->characteristics.thrust_increment << 1;
@@ -232,11 +232,11 @@ spawn_limpets(ELEMENT* ElementPtr)
 	MissileBlock.index = 0;
 	MissileBlock.sender = ElementPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = LIMPET_OFFSET;
-	MissileBlock.speed = LIMPET_SPEED;
-	MissileBlock.hit_points = LIMPET_HITS;
-	MissileBlock.damage = LIMPET_DAMAGE;
-	MissileBlock.life = LIMPET_LIFE;
+	MissileBlock.pixoffs = LimpetOffset();
+	MissileBlock.speed = LimpetSpeed();
+	MissileBlock.hit_points = LimpetHits;
+	MissileBlock.damage = LimpetDamage;
+	MissileBlock.life = LimpetLife;
 	MissileBlock.preprocess_func = limpet_preprocess;
 	MissileBlock.blast_offs = 0;
 
@@ -270,7 +270,7 @@ initialize_horrific_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 	LaserBlock.ey = SINE(FACING_TO_ANGLE(LaserBlock.face), LASER_RANGE);
 	LaserBlock.sender = ShipPtr->playerNr;
 	LaserBlock.flags = IgnoreSimilar;
-	LaserBlock.pixoffs = VUX_OFFSET;
+	LaserBlock.pixoffs = VuxOffset();
 	LaserBlock.color = BuildColor(MakeRgb15(0x0A, 0x1F, 0x0A), 0x0A);
 	LaserArray[0] = initialize_laser(&LaserBlock);
 
@@ -327,7 +327,7 @@ vux_postprocess(ELEMENT* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
-		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
 		ProcessSound(GetSound(
 						 /* LAUNCH_LIMPET */
@@ -370,9 +370,9 @@ vux_preprocess(ELEMENT* ElementPtr)
 				// instead of subtracting straight from the GFXPOINT sized
 				// ShipImagePtr->current.location.
 				int32_t temp_x =
-					((int32_t)OtherShipPtr->current.location.x - (MAXX_ENTRY_DIST >> 1)) + ((uint16_t)uqm::random().next() % MAXX_ENTRY_DIST);
+					((int32_t)OtherShipPtr->current.location.x - (MaxxEntryDist() >> 1)) + ((uint16_t)uqm::random().next() % MaxxEntryDist());
 				int32_t temp_y =
-					((int32_t)OtherShipPtr->current.location.y - (MAXY_ENTRY_DIST >> 1)) + ((uint16_t)uqm::random().next() % MAXY_ENTRY_DIST);
+					((int32_t)OtherShipPtr->current.location.y - (MaxyEntryDist() >> 1)) + ((uint16_t)uqm::random().next() % MaxyEntryDist());
 
 				temp_x += temp_x > 0 ? SA_MATRA_EXTRA_DIST : -SA_MATRA_EXTRA_DIST;
 				temp_y += temp_y > 0 ? SA_MATRA_EXTRA_DIST : -SA_MATRA_EXTRA_DIST;
@@ -412,14 +412,14 @@ init_vux(void)
 {
 	if (IsHd())
 	{
-		vux_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		vux_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
+		vux_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		vux_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
 		vux_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else
 	{
-		vux_desc.characteristics.max_thrust = MAX_THRUST;
-		vux_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		vux_desc.characteristics.max_thrust = MaxThrust;
+		vux_desc.characteristics.thrust_increment = ThrustIncrement;
 		vux_desc.cyborg_control.WeaponRange = CloseRangeWeapon;
 	}
 

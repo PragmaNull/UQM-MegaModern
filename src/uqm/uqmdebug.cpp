@@ -883,7 +883,7 @@ starRecurse(STAR_DESC* star, void* arg)
 	SolarSysState.SunDesc[0].data_index = STAR_TYPE(star->Type);
 	SolarSysState.SunDesc[0].location.x = 0;
 	SolarSysState.SunDesc[0].location.y = 0;
-	//SolarSysState.SunDesc[0].radius = MIN_ZOOM_RADIUS;
+	//SolarSysState.SunDesc[0].radius = MinZoomRadius;
 	SolarSysState.genFuncs = getGenerateFunctions(star->Index);
 
 	pSolarSysState = &SolarSysState;
@@ -1014,16 +1014,17 @@ void dumpUniverse(FILE* out)
 	UniverseRecurse(&universeRecurseArg);
 }
 
+static constexpr uqgsl::czstring UniverseDumpFile {"PlanetInfo"};
+
 // Must be called from the Starcon2Main thread.
 void dumpUniverseToFile(void)
 {
-#define UNIVERSE_DUMP_FILE "PlanetInfo"
-	const uqm::FilePtr out {uqm::openFile(UNIVERSE_DUMP_FILE, "w")};
+	const uqm::FilePtr out {uqm::openFile(UniverseDumpFile, "w")};
 	if (out == nullptr)
 	{
 		fmt::print(stderr, "Error: Could not open file '{}' for "
 						   "writing: {}",
-				   UNIVERSE_DUMP_FILE, uqm::strerror(errno));
+				   UniverseDumpFile, uqm::strerror(errno));
 		return;
 	}
 
@@ -1415,7 +1416,7 @@ calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 
 	assert(system->pOrbitalDesc == world);
 
-	numBio = callGenerateForScanType(system, world, GENERATE_ALL,
+	numBio = callGenerateForScanType(system, world, GenerateAll,
 									 BIOLOGICAL_SCAN, nullptr);
 
 	result = 0;
@@ -1436,10 +1437,10 @@ void generateBioIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world,
 
 	assert(system->pOrbitalDesc == world);
 
-	numBio = callGenerateForScanType(system, world, GENERATE_ALL,
+	numBio = callGenerateForScanType(system, world, GenerateAll,
 									 BIOLOGICAL_SCAN, nullptr);
 
-	for (i = 0; i < NUM_CREATURE_TYPES + NUM_SPECIAL_CREATURE_TYPES; i++)
+	for (i = 0; i < NumCreatureTypes + NumSpecialCreatureTypes; i++)
 	{
 		bio[i] = 0;
 	}
@@ -1461,7 +1462,7 @@ calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 
 	assert(system->pOrbitalDesc == world);
 
-	numDeposits = callGenerateForScanType(system, world, GENERATE_ALL,
+	numDeposits = callGenerateForScanType(system, world, GenerateAll,
 										  MINERAL_SCAN, nullptr);
 
 	result = 0;
@@ -1482,7 +1483,7 @@ void generateMineralIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world
 
 	assert(system->pOrbitalDesc == world);
 
-	numDeposits = callGenerateForScanType(system, world, GENERATE_ALL,
+	numDeposits = callGenerateForScanType(system, world, GenerateAll,
 										  MINERAL_SCAN, nullptr);
 
 	for (i = 0; i < NUM_ELEMENT_CATEGORIES; i++)
@@ -1525,16 +1526,17 @@ void tallyResources(FILE* out)
 	UniverseRecurse(&universeRecurseArg);
 }
 
+static constexpr uqgsl::czstring ResourceTallyFile {"ResourceTally"};
+
 // Must be called from the Starcon2Main thread.
 void tallyResourcesToFile(void)
 {
-#define RESOURCE_TALLY_FILE "ResourceTally"
-	const uqm::FilePtr out {uqm::openFile(RESOURCE_TALLY_FILE, "w")};
+	const uqm::FilePtr out {uqm::openFile(ResourceTallyFile, "w")};
 	if (out == nullptr)
 	{
 		fmt::print(stderr, "Error: Could not open file '{}' for "
 						   "writing: {}\n",
-				   RESOURCE_TALLY_FILE, uqm::strerror(errno));
+				   ResourceTallyFile, uqm::strerror(errno));
 		return;
 	}
 
@@ -1729,11 +1731,11 @@ worldGenAlgoString(uint8_t algo)
 {
 	switch (algo)
 	{
-		case TOPO_ALGO:
+		case TopoAlgo:
 			return "TOPO_ALGO";
-		case CRATERED_ALGO:
+		case CrateredAlgo:
 			return "CRATERED_ALGO";
-		case GAS_GIANT_ALGO:
+		case GasGiantAlgo:
 			return "GAS_GIANT_ALGO";
 		default:
 			// Should not happen
@@ -1749,15 +1751,15 @@ tectonicsString(uint8_t tectonics)
 	static char buf[sizeof "-127"];
 	switch (tectonics)
 	{
-		case NO_TECTONICS:
+		case NoTectonics:
 			return "none";
-		case LOW_TECTONICS:
+		case LowTectonics:
 			return "low";
-		case MED_TECTONICS:
+		case MedTectonics:
 			return "medium";
-		case HIGH_TECTONICS:
+		case HighTectonics:
 			return "high";
-		case SUPER_TECTONICS:
+		case SuperTectonics:
 			return "super";
 		default:
 			fmt::format_to_sz_n(buf, "{}", tectonics);

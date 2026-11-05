@@ -251,12 +251,16 @@ CalcReduction(int32_t dx, int32_t dy)
 		if (next_reduction < zoom_out
 			&& zoom_out <= MaxVisReduction)
 		{
-#define HYSTERESIS_X DISPLAY_TO_WORLD(RES_SCALE(24))
-#define HYSTERESIS_Y DISPLAY_TO_WORLD(RES_SCALE(20))
-			if (((sdx + HYSTERESIS_X)
+			const auto HysteresisX = [&] {
+				return DISPLAY_TO_WORLD(RES_SCALE(24));
+			};
+			const auto HysteresisY = [&] {
+				return DISPLAY_TO_WORLD(RES_SCALE(20));
+			};
+			if (((sdx + HysteresisX())
 				 << (MaxVisReduction - next_reduction))
 					> TransitionWidth()
-				|| ((sdy + HYSTERESIS_Y)
+				|| ((sdy + HysteresisY())
 					<< (MaxVisReduction - next_reduction))
 					   > TransitionHeight())
 			{
@@ -321,6 +325,8 @@ CalcReduction(int32_t dx, int32_t dy)
 	return (next_reduction);
 }
 
+static constexpr auto ZoomJump {((1 << ZoomShift) >> 3)};
+
 static VIEW_STATE
 CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 		 int32_t* pdx, int32_t* pdy, uint16_t ships_alive)
@@ -337,23 +343,27 @@ CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 	const bool meleeScaleModeIsTFBStep {uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step};
 	if (ships_alive == 1 && (!meleeScaleModeIsTFBStep || isNetwork()))
 	{
-#define ORG_JUMP_X ((int32_t)DISPLAY_ALIGN(LogSpaceWidth() / 75))
-#define ORG_JUMP_Y ((int32_t)DISPLAY_ALIGN(LogSpaceHeight() / 75))
-		if (dx > ORG_JUMP_X)
+		const auto OrgJumpX = [&] {
+			return ((int32_t)DISPLAY_ALIGN(LogSpaceWidth() / 75));
+		};
+		const auto OrgJumpY = [&] {
+			return ((int32_t)DISPLAY_ALIGN(LogSpaceHeight() / 75));
+		};
+		if (dx > OrgJumpX())
 		{
-			dx = ORG_JUMP_X;
+			dx = OrgJumpX();
 		}
-		else if (dx < -ORG_JUMP_X)
+		else if (dx < -OrgJumpX())
 		{
-			dx = -ORG_JUMP_X;
+			dx = -OrgJumpX();
 		}
-		if (dy > ORG_JUMP_Y)
+		if (dy > OrgJumpY())
 		{
-			dy = ORG_JUMP_Y;
+			dy = OrgJumpY();
 		}
-		else if (dy < -ORG_JUMP_Y)
+		else if (dy < -OrgJumpY())
 		{
-			dy = -ORG_JUMP_Y;
+			dy = -OrgJumpY();
 		}
 	}
 
@@ -379,13 +389,12 @@ CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 		}
 		else
 		{
-#define ZOOM_JUMP ((1 << ZoomShift) >> 3)
 			if (ships_alive == 1
 				&& zoom_out > next_reduction
 				&& zoom_out <= MaxZoomOut
-				&& zoom_out - next_reduction > ZOOM_JUMP)
+				&& zoom_out - next_reduction > ZoomJump)
 			{
-				next_reduction = zoom_out - ZOOM_JUMP;
+				next_reduction = zoom_out - ZoomJump;
 			}
 
 			// Always align the origin on a whole pixel to reduce the

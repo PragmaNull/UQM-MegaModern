@@ -19,7 +19,7 @@
 #ifndef UQM_SUPERMELEE_LOADMELE_H_
 #define UQM_SUPERMELEE_LOADMELE_H_
 
-#define LOAD_TEAM_VIEW_SIZE 5
+inline constexpr auto LoadTeamViewSize {5};
 
 struct melee_load_state;
 
@@ -40,7 +40,7 @@ struct melee_load_state
 	uqstl::vector<uint16_t> entryIndices;
 	uint16_t numIndices;
 
-	MeleeTeam* view[LOAD_TEAM_VIEW_SIZE];
+	MeleeTeam* view[LoadTeamViewSize];
 	uint16_t top;
 	// Index of the first entry for the view.
 	uint16_t bot;

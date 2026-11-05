@@ -31,23 +31,23 @@ static LOCDATA utwig_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		UTWIG_PMAP_ANIM, /* AlienFrame */
-		UTWIG_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		UtwigPmapAnim, /* AlienFrame */
+		UtwigFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
-		UTWIG_COLOR_MAP, /* AlienColorMap */
-		UTWIG_MUSIC, /* AlienSong */
+		UtwigColorMap, /* AlienColorMap */
+		UtwigMusic, /* AlienSong */
 		{
-								NullResource,		/* AlienAltFrame */
-			NullResource,		/* AlienAltColorMap */
-			UTWIG_ULTRON_MUSIC, /* AlienAltSong */
+								NullResource,	  /* AlienAltFrame */
+			NullResource,	  /* AlienAltColorMap */
+			UtwigUltronMusic, /* AlienAltSong */
 		},
-		UTWIG_CONVERSATION_PHRASES, /* PlayerPhrases */
+		UtwigConversationPhrases, /* PlayerPhrases */
 		16, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

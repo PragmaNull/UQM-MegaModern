@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define MYCON_COLOR_MAP "comm.mycon.colortable"
-#define MYCON_CONVERSATION_PHRASES "comm.mycon.dialogue"
-#define MYCON_FONT "comm.mycon.font"
-#define MYCON_MUSIC "comm.mycon.music"
-#define MYCON_PMAP_ANIM "comm.mycon.graphics"
-#define MYCON_SCRIPT "comm.mycon.script"
+inline constexpr uqgsl::czstring MyconColorMap {"comm.mycon.colortable"};
+inline constexpr uqgsl::czstring MyconConversationPhrases {"comm.mycon.dialogue"};
+inline constexpr uqgsl::czstring MyconFont {"comm.mycon.font"};
+inline constexpr uqgsl::czstring MyconMusic {"comm.mycon.music"};
+inline constexpr uqgsl::czstring MyconPmapAnim {"comm.mycon.graphics"};

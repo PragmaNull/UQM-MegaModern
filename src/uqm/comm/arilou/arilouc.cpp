@@ -32,23 +32,23 @@ static LOCDATA arilou_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		ARILOU_PMAP_ANIM, /* AlienFrame */
-		ARILOU_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		ArilouPmapAnim, /* AlienFrame */
+		ArilouFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		ARILOU_COLOR_MAP, /* AlienColorMap */
-		ARILOU_MUSIC, /* AlienSong */
+		ArilouColorMap, /* AlienColorMap */
+		ArilouMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		ARILOU_CONVERSATION_PHRASES, /* PlayerPhrases */
+		ArilouConversationPhrases, /* PlayerPhrases */
 		20, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

@@ -31,23 +31,23 @@ static LOCDATA shofixti_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		SHOFIXTI_PMAP_ANIM, /* AlienFrame */
-		SHOFIXTI_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		ShofixtiPmapAnim, /* AlienFrame */
+		ShofixtiFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth(), */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		SHOFIXTI_COLOR_MAP, /* AlienColorMap */
-		SHOFIXTI_MUSIC, /* AlienSong */
+		ShofixtiColorMap, /* AlienColorMap */
+		ShofixtiMusic, /* AlienSong */
 		{
-								SHOFIXTI_ALT_PMAP_ANIM, /* AlienAltFrame */
-			NullResource,			/* AlienAltColorMap */
-			NullResource,			/* AlienAltSong */
+								ShofixtiAltPmapAnim, /* AlienAltFrame */
+			NullResource,		 /* AlienAltColorMap */
+			NullResource,		 /* AlienAltSong */
 		},
-		SHOFIXTI_CONVERSATION_PHRASES, /* PlayerPhrases */
+		ShofixtiConversationPhrases, /* PlayerPhrases */
 		11, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

@@ -2,23 +2,23 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define DART_BIG_MASK_PMAP_ANIM "ship.shofixti.graphics.missile.large"
-#define DART_MED_MASK_PMAP_ANIM "ship.shofixti.graphics.missile.medium"
-#define DART_SML_MASK_PMAP_ANIM "ship.shofixti.graphics.missile.small"
-#define DESTRUCT_BIG_MASK_ANIM "ship.shofixti.graphics.destruct.large"
-#define DESTRUCT_MED_MASK_ANIM "ship.shofixti.graphics.destruct.medium"
-#define DESTRUCT_SML_MASK_ANIM "ship.shofixti.graphics.destruct.small"
-#define OLDSHOF_BIG_MASK_PMAP_ANIM "ship.shofixti.graphics.oldscout.large"
-#define OLDSHOF_CAPTAIN_MASK_PMAP_ANIM "ship.shofixti.graphics.oldcaptain"
-#define OLDSHOF_ICON_MASK_PMAP_ANIM "ship.shofixti.oldicons"
-#define OLDSHOF_MED_MASK_PMAP_ANIM "ship.shofixti.graphics.oldscout.medium"
-#define OLDSHOF_SML_MASK_PMAP_ANIM "ship.shofixti.graphics.oldscout.small"
-#define SHOFIXTI_BIG_MASK_PMAP_ANIM "ship.shofixti.graphics.scout.large"
-#define SHOFIXTI_CAPTAIN_MASK_PMAP_ANIM "ship.shofixti.graphics.captain"
-#define SHOFIXTI_ICON_MASK_PMAP_ANIM "ship.shofixti.icons"
-#define SHOFIXTI_MED_MASK_PMAP_ANIM "ship.shofixti.graphics.scout.medium"
-#define SHOFIXTI_MICON_MASK_PMAP_ANIM "ship.shofixti.meleeicons"
-#define SHOFIXTI_RACE_STRINGS "ship.shofixti.text"
-#define SHOFIXTI_SHIP_SOUNDS "ship.shofixti.sounds"
-#define SHOFIXTI_SML_MASK_PMAP_ANIM "ship.shofixti.graphics.scout.small"
-#define SHOFIXTI_VICTORY_SONG "ship.shofixti.ditty"
+inline constexpr uqgsl::czstring DartBigMaskPmapAnim {"ship.shofixti.graphics.missile.large"};
+inline constexpr uqgsl::czstring DartMedMaskPmapAnim {"ship.shofixti.graphics.missile.medium"};
+inline constexpr uqgsl::czstring DartSmlMaskPmapAnim {"ship.shofixti.graphics.missile.small"};
+inline constexpr uqgsl::czstring DestructBigMaskAnim {"ship.shofixti.graphics.destruct.large"};
+inline constexpr uqgsl::czstring DestructMedMaskAnim {"ship.shofixti.graphics.destruct.medium"};
+inline constexpr uqgsl::czstring DestructSmlMaskAnim {"ship.shofixti.graphics.destruct.small"};
+inline constexpr uqgsl::czstring OldshofBigMaskPmapAnim {"ship.shofixti.graphics.oldscout.large"};
+inline constexpr uqgsl::czstring OldshofCaptainMaskPmapAnim {"ship.shofixti.graphics.oldcaptain"};
+inline constexpr uqgsl::czstring OldshofIconMaskPmapAnim {"ship.shofixti.oldicons"};
+inline constexpr uqgsl::czstring OldshofMedMaskPmapAnim {"ship.shofixti.graphics.oldscout.medium"};
+inline constexpr uqgsl::czstring OldshofSmlMaskPmapAnim {"ship.shofixti.graphics.oldscout.small"};
+inline constexpr uqgsl::czstring ShofixtiBigMaskPmapAnim {"ship.shofixti.graphics.scout.large"};
+inline constexpr uqgsl::czstring ShofixtiCaptainMaskPmapAnim {"ship.shofixti.graphics.captain"};
+inline constexpr uqgsl::czstring ShofixtiIconMaskPmapAnim {"ship.shofixti.icons"};
+inline constexpr uqgsl::czstring ShofixtiMedMaskPmapAnim {"ship.shofixti.graphics.scout.medium"};
+inline constexpr uqgsl::czstring ShofixtiMiconMaskPmapAnim {"ship.shofixti.meleeicons"};
+inline constexpr uqgsl::czstring ShofixtiRaceStrings {"ship.shofixti.text"};
+inline constexpr uqgsl::czstring ShofixtiShipSounds {"ship.shofixti.sounds"};
+inline constexpr uqgsl::czstring ShofixtiSmlMaskPmapAnim {"ship.shofixti.graphics.scout.small"};
+inline constexpr uqgsl::czstring ShofixtiVictorySong {"ship.shofixti.ditty"};

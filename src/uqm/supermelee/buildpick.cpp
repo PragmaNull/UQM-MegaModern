@@ -29,8 +29,8 @@
 
 static FRAME BuildPickFrame;
 
-#define TTIP_FRAME_OFFSET 43
-#define BUILDPICK_FRAME_OFFSET 27
+static constexpr auto TtipFrameOffset {43};
+static constexpr auto BuildpickFrameOffset {27};
 
 void BuildBuildPickFrame(void)
 {
@@ -42,7 +42,7 @@ void BuildBuildPickFrame(void)
 	s.origin.x = 0;
 	s.origin.y = 0;
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   BUILDPICK_FRAME_OFFSET + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
+							   BuildpickFrameOffset + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
 	// 5x5 grid of ships to pick from
 	GetFrameRect(s.frame, &r);
 
@@ -52,7 +52,7 @@ void BuildBuildPickFrame(void)
 	SetFrameHot(s.frame, MAKE_HOT_SPOT(0, 0));
 	DrawStamp(&s);
 
-	for (uint16_t i {0}; i < NUM_PICK_COLS * NUM_PICK_ROWS; ++i)
+	for (uint16_t i {0}; i < NumPickCols * NumPickRows; ++i)
 	{
 		DrawPickIcon((MeleeShip)i, true);
 	}
@@ -115,7 +115,7 @@ void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 	s.origin.x = pRect->corner.x;
 	s.origin.y = pRect->corner.y;
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   BUILDPICK_FRAME_OFFSET + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
+							   BuildpickFrameOffset + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
 
 	DrawStamp(&s);
 
@@ -132,8 +132,8 @@ void DrawPickIcon(MeleeShip ship, bool DrawErase)
 
 	GetFrameRect(BuildPickFrame, &r);
 
-	s.origin.x = r.corner.x + RES_SCALE(20) + (ship % NUM_PICK_COLS) * RES_SCALE(18);
-	s.origin.y = r.corner.y + RES_SCALE(5) + (ship / NUM_PICK_COLS) * RES_SCALE(18);
+	s.origin.x = r.corner.x + RES_SCALE(20) + (ship % NumPickCols) * RES_SCALE(18);
+	s.origin.y = r.corner.y + RES_SCALE(5) + (ship / NumPickCols) * RES_SCALE(18);
 
 	s.frame = GetShipIconsFromIndex(ship);
 
@@ -163,18 +163,18 @@ DrawTooltipBox(void)
 	STAMP s;
 
 	s.origin.x = s.origin.y = 0;
-	s.frame = SetAbsFrameIndex(MeleeFrame, TTIP_FRAME_OFFSET);
+	s.frame = SetAbsFrameIndex(MeleeFrame, TtipFrameOffset);
 
 	DrawStamp(&s);
 }
 
 void GetToolTipFrameRect(GFXRECT* r)
 {
-	GetFrameRect(SetAbsFrameIndex(MeleeFrame, TTIP_FRAME_OFFSET), r);
+	GetFrameRect(SetAbsFrameIndex(MeleeFrame, TtipFrameOffset), r);
 }
 
-#define RACE_NAME_OFFSET 0
-#define RACE_SHIP_OFFSET 3
+static constexpr auto RaceNameOffset {0};
+static constexpr auto RaceShipOffset {3};
 
 void DrawTooltip(SHIP_INFO* SIPtr)
 {
@@ -186,8 +186,8 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 	GetToolTipFrameRect(&r);
 
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{} {}",
-					 SIPtr->race_strings->text(RACE_NAME_OFFSET),
-					 SIPtr->race_strings->text(RACE_SHIP_OFFSET));
+					 SIPtr->race_strings->text(RaceNameOffset),
+					 SIPtr->race_strings->text(RaceShipOffset));
 
 	Text.pStr = buf;
 	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
@@ -239,7 +239,7 @@ void DrawPickFrame(MELEE_STATE* pMS)
 	STAMP s;
 
 	GetShipBox(&r0, 0, 0, 0),
-		GetShipBox(&r1, 1, NUM_MELEE_ROWS - 1, NUM_MELEE_COLUMNS - 1),
+		GetShipBox(&r1, 1, NumMeleeRows - 1, NumMeleeColumns() - 1),
 		BoxUnion(&r0, &r1, &ship_r);
 
 	s.frame = SetAbsFrameIndex(BuildPickFrame, 0);
@@ -317,41 +317,41 @@ DoPickShip(MELEE_STATE* pMS)
 
 		if (PulsedInputState.menu[KEY_MENU_LEFT])
 		{
-			if (newSelectedShip % NUM_PICK_COLS == 0)
+			if (newSelectedShip % NumPickCols == 0)
 			{
-				newSelectedShip += NUM_PICK_COLS;
+				newSelectedShip += NumPickCols;
 			}
 			--newSelectedShip;
 		}
 		else if (PulsedInputState.menu[KEY_MENU_RIGHT])
 		{
 			++newSelectedShip;
-			if (newSelectedShip % NUM_PICK_COLS == 0)
+			if (newSelectedShip % NumPickCols == 0)
 			{
-				newSelectedShip -= NUM_PICK_COLS;
+				newSelectedShip -= NumPickCols;
 			}
 		}
 
 		if (PulsedInputState.menu[KEY_MENU_UP])
 		{
-			if (newSelectedShip >= NUM_PICK_COLS)
+			if (newSelectedShip >= NumPickCols)
 			{
-				newSelectedShip -= NUM_PICK_COLS;
+				newSelectedShip -= NumPickCols;
 			}
 			else
 			{
-				newSelectedShip += NUM_PICK_COLS * (NUM_PICK_ROWS - 1);
+				newSelectedShip += NumPickCols * (NumPickRows - 1);
 			}
 		}
 		else if (PulsedInputState.menu[KEY_MENU_DOWN])
 		{
-			if (newSelectedShip < NUM_PICK_COLS * (NUM_PICK_ROWS - 1))
+			if (newSelectedShip < NumPickCols * (NumPickRows - 1))
 			{
-				newSelectedShip += NUM_PICK_COLS;
+				newSelectedShip += NumPickCols;
 			}
 			else
 			{
-				newSelectedShip -= NUM_PICK_COLS * (NUM_PICK_ROWS - 1);
+				newSelectedShip -= NumPickCols * (NumPickRows - 1);
 			}
 		}
 

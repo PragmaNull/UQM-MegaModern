@@ -47,9 +47,9 @@
 #include "util.h"
 #include "uqm/random/UQMRandom.h"
 
-#define XOFFS ((RadarScanWidth() + (UnitScreenWidth() << 2)) >> 1)
-#define YOFFS ((RadarScanHeight() + (UnitScreenHeight() << 2)) >> 1)
-#define ANIMATED_HYPERSPACE (IsHd() && uqm::UQMOptions::read().hyperStars)
+static auto Xoffs() { return ((RadarScanWidth() + (UnitScreenWidth() << 2)) >> 1); }
+static auto Yoffs() { return ((RadarScanHeight() + (UnitScreenHeight() << 2)) >> 1); }
+static auto AnimatedHyperspace() { return (IsHd() && uqm::UQMOptions::read().hyperStars); }
 
 static FRAME hyperstars[3];
 static COLORMAP hypercmaps[2];
@@ -505,12 +505,8 @@ void FreeHyperData(void)
 	hypercmaps[1] = 0;
 }
 
-#define ARISPACE_MASK (ANIMATED_HYPERSPACE ?        \
-						   ArianimMaskPmapAnimRes : \
-						   ArispaceMaskPmapAnimRes)
-#define HYPERSTARS_MASK (ANIMATED_HYPERSPACE ?          \
-							 HyperanimMaskPmapAnimRes : \
-							 HyperstarsMaskPmapAnimRes)
+static auto ArispaceMask() { return (AnimatedHyperspace() ? ArianimMaskPmapAnimRes : ArispaceMaskPmapAnimRes); }
+static auto HyperstarsMask() { return (AnimatedHyperspace() ? HyperanimMaskPmapAnimRes : HyperstarsMaskPmapAnimRes); }
 
 static void
 LoadHyperData(void)
@@ -520,11 +516,11 @@ LoadHyperData(void)
 		hyperstars[0] = CaptureDrawable(
 			LoadGraphic(AmbientMaskPmapAnimRes));
 		hyperstars[1] = CaptureDrawable(
-			LoadGraphic(HYPERSTARS_MASK));
+			LoadGraphic(HyperstarsMask()));
 		hypercmaps[0] = uqm::loadStringTable(HyperColorTabRes).release();
 
 		hyperstars[2] = CaptureDrawable(
-			LoadGraphic(ARISPACE_MASK));
+			LoadGraphic(ArispaceMask()));
 		hypercmaps[1] = uqm::loadStringTable(ArispaceColorTabRes).release();
 	}
 }
@@ -777,8 +773,8 @@ ArilouSpaceTransition(void)
 		if (!IsExtended() || (IsExtended() && !ValidPoint(LoadLastLoc())))
 		{
 			// JSD Converting hard coded ARILOU portal to plot based
-			//GLOBAL_SIS (log_x) = UNIVERSE_TO_LOGX (ARILOU_SPACE_X);
-			//GLOBAL_SIS (log_y) = UNIVERSE_TO_LOGY (ARILOU_SPACE_Y);
+			//GLOBAL_SIS (log_x) = UNIVERSE_TO_LOGX (ArilouSpaceX);
+			//GLOBAL_SIS (log_y) = UNIVERSE_TO_LOGY (ArilouSpaceY);
 			GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(plot_map[ARILOU_DEFINED].star_pt.x);
 			GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(plot_map[ARILOU_DEFINED].star_pt.y);
 		}
@@ -1220,11 +1216,11 @@ AddAmbientElement(void)
 	}
 }
 
-#define NUM_VORTEX_TRANSITIONS (ANIMATED_HYPERSPACE ? 18 : 9)
-#define VORTEX_WAIT 1
+static auto NumVortexTransitions() { return (AnimatedHyperspace() ? 18 : 9); }
+static constexpr auto VortexWait {1};
 /* Hyperspace Animation related */
-#define BASE_VORTEX_FRAME_INDEX 139					  // Kruzen: first frame of actual battle group vortex, not the birth/death
-#define TR_COMPENSATION (ANIMATED_HYPERSPACE ? 8 : 0) // Kruzen: transition_state counts down from 100 when reforming a vortex, but reaching 9 with
+static constexpr auto BaseVortexFrameIndex {139};						// Kruzen: first frame of actual battle group vortex, not the birth/death
+static auto TrCompensation() { return (AnimatedHyperspace() ? 8 : 0); } // Kruzen: transition_state counts down from 100 when reforming a vortex, but reaching 9 with
 // standard option it stars count down every other frame, effectively adding 8 frames of waiting
 
 // Kruzen: preprocess func for animated hole
@@ -1233,10 +1229,10 @@ encounter_animation(ELEMENT* ElementPtr)
 {
 	const uint16_t f_index = GetFrameIndex(ElementPtr->current.image.frame);
 
-	if ((f_index >= BASE_VORTEX_FRAME_INDEX + 31))
+	if ((f_index >= BaseVortexFrameIndex + 31))
 	{
 		ElementPtr->next.image.frame =
-			SetAbsFrameIndex(ElementPtr->current.image.frame, BASE_VORTEX_FRAME_INDEX); // reached max - reset to base frame
+			SetAbsFrameIndex(ElementPtr->current.image.frame, BaseVortexFrameIndex); // reached max - reset to base frame
 	}
 	else
 	{
@@ -1272,7 +1268,7 @@ encounter_transition(ELEMENT* ElementPtr)
 			}
 			else
 			{
-				if (ANIMATED_HYPERSPACE)
+				if (AnimatedHyperspace())
 				{
 					ElementPtr->preprocess_func = encounter_animation;
 				}
@@ -1280,7 +1276,7 @@ encounter_transition(ELEMENT* ElementPtr)
 			}
 		}
 
-		ElementPtr->turn_wait = (ANIMATED_HYPERSPACE ? 0 : VORTEX_WAIT);
+		ElementPtr->turn_wait = (AnimatedHyperspace() ? 0 : VortexWait);
 	}
 }
 
@@ -1370,7 +1366,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 	{
 		EncounterPtr->flags &= ~EncounterReforming;
 
-		EncounterPtr->transition_state = 100 + TR_COMPENSATION;
+		EncounterPtr->transition_state = 100 + TrCompensation();
 		if ((EncounterPtr->flags & OneShotEncounter)
 			|| EncounterPtr->num_ships == 0)
 		{
@@ -1433,7 +1429,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 			const uint32_t rand_val {uqm::random().next()};
 
 			enc_pt.x = puniverse->x
-					 + (uqm::lowWord(rand_val) % (XOFFS << 1)) - XOFFS;
+					 + (uqm::lowWord(rand_val) % (Xoffs() << 1)) - Xoffs();
 			if (enc_pt.x < 0)
 			{
 				enc_pt.x = 0;
@@ -1443,7 +1439,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 				enc_pt.x = MaxXUniverse;
 			}
 			enc_pt.y = puniverse->y
-					 + (uqm::highWord(rand_val) % (YOFFS << 1)) - YOFFS;
+					 + (uqm::highWord(rand_val) % (Yoffs() << 1)) - Yoffs();
 			if (enc_pt.y < 0)
 			{
 				enc_pt.y = 0;
@@ -1477,9 +1473,9 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 				i = -i;
 				ElementPtr->hit_points = 1;
 			}
-			if (i == 0 || i > NUM_VORTEX_TRANSITIONS)
+			if (i == 0 || i > NumVortexTransitions())
 			{
-				i = NUM_VORTEX_TRANSITIONS;
+				i = NumVortexTransitions();
 			}
 
 			ElementPtr->current.image.frame = SetRelFrameIndex(
@@ -1489,11 +1485,11 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 		}
 		else
 		{
-			if (ANIMATED_HYPERSPACE)
+			if (AnimatedHyperspace())
 			{
 				ElementPtr->preprocess_func = encounter_animation;
 				ElementPtr->current.image.frame = SetAbsFrameIndex(
-					ElementPtr->current.image.farray[0], BASE_VORTEX_FRAME_INDEX + (uqm::random().next() % 31));
+					ElementPtr->current.image.farray[0], BaseVortexFrameIndex + (uqm::random().next() % 31));
 			}
 			else
 			{
@@ -1503,7 +1499,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 			}
 		}
 
-		ElementPtr->turn_wait = VORTEX_WAIT;
+		ElementPtr->turn_wait = VortexWait;
 		ElementPtr->postprocess_func = nullptr; // decorate_vortex;
 		ElementPtr->collision_func = encounter_collision;
 
@@ -1523,7 +1519,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 	return hElement;
 }
 
-#define GRID_OFFSET 200
+static constexpr auto GridOffset {200};
 
 static void
 DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
@@ -1545,7 +1541,7 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 	}
 	else
 	{
-		sx -= sx % GRID_OFFSET;
+		sx -= sx % GridOffset;
 	}
 	ex = ux + (RadarScanWidth() >> 1);
 	if (ex > MaxXUniverse + 1)
@@ -1560,7 +1556,7 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 	}
 	else
 	{
-		sy -= sy % GRID_OFFSET;
+		sy -= sy % GridOffset;
 	}
 	ey = uy + (RadarScanHeight() >> 1);
 	if (ey > MaxYUniverse + 1)
@@ -1577,7 +1573,7 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 					   - oy)
 					- r.corner.y
 					+ RES_SCALE(1);
-	for (ux = sx; ux <= ex; ux += GRID_OFFSET)
+	for (ux = sx; ux <= ex; ux += GridOffset)
 	{
 		r.corner.x = (int16_t)((long)ux * RadarWidth() / RadarScanWidth())
 				   - ox;
@@ -1589,7 +1585,7 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 					  - ox)
 				   - r.corner.x + RES_SCALE(1);
 	r.extent.height = RES_SCALE(1);
-	for (uy = sy; uy <= ey; uy += GRID_OFFSET)
+	for (uy = sy; uy <= ey; uy += GridOffset)
 	{
 		r.corner.y = (int16_t)((long)(MaxYUniverse - uy)
 							   * RadarHeight() / RadarScanHeight())
@@ -1597,6 +1593,8 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 		DrawFilledRectangle(&r);
 	}
 }
+
+static constexpr auto EncounterTrackWait {3};
 
 // Returns false if the encounter is to be removed.
 static bool
@@ -1620,11 +1618,11 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 		if (EncounterPtr->transition_state && ElementPtr->turn_wait == 0)
 		{
 			--EncounterPtr->transition_state;
-			if (EncounterPtr->transition_state >= NUM_VORTEX_TRANSITIONS)
+			if (EncounterPtr->transition_state >= NumVortexTransitions())
 			{
 				++ElementPtr->turn_wait;
 			}
-			else if (EncounterPtr->transition_state == -NUM_VORTEX_TRANSITIONS)
+			else if (EncounterPtr->transition_state == -NumVortexTransitions())
 			{
 				ElementPtr->death_func = nullptr;
 				UnlockElement(EncounterPtr->hElement);
@@ -1661,7 +1659,6 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 			delta_facing = NORMALIZE_FACING(cur_facing - ANGLE_TO_FACING(ARCTAN(puniverse->x - EncounterPtr->loc_pt.x, puniverse->y - EncounterPtr->loc_pt.y)));
 			if (delta_facing || (delta_x == 0 && delta_y == 0))
 			{
-#define ENCOUNTER_TRACK_WAIT 3
 				int16_t speed {RaceHyperSpeed((RACE_ID)EncounterPtr->race_id)};
 				if (delta_facing < ANGLE_TO_FACING(HalfCircle))
 				{
@@ -1692,7 +1689,7 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 				GetNextVelocityComponents(&ElementPtr->velocity,
 										  &delta_x, &delta_y, 1);
 
-				ElementPtr->thrust_wait = ENCOUNTER_TRACK_WAIT;
+				ElementPtr->thrust_wait = EncounterTrackWait;
 			}
 		}
 		EncounterPtr->log_x += delta_x;
@@ -1700,7 +1697,7 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 		EncounterPtr->loc_pt.x = LOGX_TO_UNIVERSE(EncounterPtr->log_x);
 		EncounterPtr->loc_pt.y = LOGY_TO_UNIVERSE(EncounterPtr->log_y);
 
-		encounter_radius = EncounterPtr->radius + (GRID_OFFSET >> 1);
+		encounter_radius = EncounterPtr->radius + (GridOffset >> 1);
 		delta_x = EncounterPtr->loc_pt.x - EncounterPtr->origin.x;
 		if (delta_x < 0)
 		{
@@ -1725,7 +1722,7 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 				EncounterPtr->transition_state = -1;
 				ElementPtr->hit_points = 1;
 
-				if (ANIMATED_HYPERSPACE)
+				if (AnimatedHyperspace())
 				{
 					ElementPtr->preprocess_func = nullptr;
 					ElementPtr->current.image.frame =
@@ -1770,8 +1767,8 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 	else
 	{
 		ElementPtr->state_flags |= Nonsolid;
-		if (ex - puniverse->x < -XOFFS || ex - puniverse->x > XOFFS
-			|| ey - puniverse->y < -YOFFS || ey - puniverse->y > YOFFS)
+		if (ex - puniverse->x < -Xoffs() || ex - puniverse->x > Xoffs()
+			|| ey - puniverse->y < -Yoffs() || ey - puniverse->y > Yoffs())
 		{
 			ElementPtr->life_span = 0;
 			ElementPtr->death_func = nullptr;
@@ -1822,7 +1819,7 @@ ProcessEncounters(GFXPOINT* puniverse, int16_t ox, int16_t oy)
 	}
 }
 
-#define NUM_FRAMES 32
+static constexpr auto NumFrames {32};
 
 static Color
 GetMaskColor(uint8_t startype)
@@ -1898,7 +1895,7 @@ void SeedUniverse(void)
 
 		{
 			SDPtr = 0;
-			while ((SDPtr = FindStar(SDPtr, &universe, XOFFS, YOFFS)))
+			while ((SDPtr = FindStar(SDPtr, &universe, Xoffs(), Yoffs())))
 			{
 				ex = SDPtr->star_pt.x;
 				ey = SDPtr->star_pt.y;
@@ -1935,7 +1932,7 @@ void SeedUniverse(void)
 			// A player-created QuasiSpace portal is opening.
 			static GFXPOINT portal_pt;
 
-			if (ANIMATED_HYPERSPACE)
+			if (AnimatedHyperspace())
 			{
 				SD[i].Index = portalCounter + 98;
 				if (SD[i].Index > 107)
@@ -1966,7 +1963,7 @@ void SeedUniverse(void)
 		if (arilouSpaceCounter)
 		{
 			// The periodically appearing QuasiSpace portal is open.
-			if (ANIMATED_HYPERSPACE)
+			if (AnimatedHyperspace())
 			{
 				SD[i].Index = arilouSpaceCounter - 1;
 			}
@@ -1977,14 +1974,14 @@ void SeedUniverse(void)
 			if (arilouSpaceSide <= 1)
 			{
 				// The player is in HyperSpace
-				if (ANIMATED_HYPERSPACE)
+				if (AnimatedHyperspace())
 				{
 					SD[i].Index += 81;
 				}
 				SD[i].Index += 18;
 				// JSD Converting hard coded ARILOU portal to plot based
-				//SD[i].star_pt.x = ARILOU_SPACE_X;
-				//SD[i].star_pt.y = ARILOU_SPACE_Y;
+				//SD[i].star_pt.x = ArilouSpaceX;
+				//SD[i].star_pt.y = ArilouSpaceY;
 				SD[i].star_pt = plot_map[ARILOU_DEFINED].star_pt;
 			}
 			else
@@ -2000,10 +1997,10 @@ void SeedUniverse(void)
 		do
 		{
 			--i;
-			sx = SD[i].star_pt.x - universe.x + XOFFS;
-			sy = SD[i].star_pt.y - universe.y + YOFFS;
-			if (sx < 0 || sy < 0 || sx >= (XOFFS << 1)
-				|| sy >= (YOFFS << 1))
+			sx = SD[i].star_pt.x - universe.x + Xoffs();
+			sy = SD[i].star_pt.y - universe.y + Yoffs();
+			if (sx < 0 || sy < 0 || sx >= (Xoffs() << 1)
+				|| sy >= (Yoffs() << 1))
 			{
 				continue;
 			}
@@ -2029,8 +2026,8 @@ void SeedUniverse(void)
 				ey = -ey;
 			}
 
-			if (ex > (XOFFS / NumRadarScreens)
-				|| ey > (YOFFS / NumRadarScreens))
+			if (ex > (Xoffs() / NumRadarScreens)
+				|| ey > (Yoffs() / NumRadarScreens))
 			{
 				continue;
 			}
@@ -2043,7 +2040,7 @@ void SeedUniverse(void)
 
 			LockElement(hHyperSpaceElement, &HyperSpaceElementPtr);
 
-			if (ANIMATED_HYPERSPACE && ((SD[i].Index == 107 && arilouSpaceSide <= 1) || (SD[i].Index == 8 && arilouSpaceSide > 1)))
+			if (AnimatedHyperspace() && ((SD[i].Index == 107 && arilouSpaceSide <= 1) || (SD[i].Index == 8 && arilouSpaceSide > 1)))
 			{
 				HyperSpaceElementPtr->current.image.frame =
 					SetAbsFrameIndex(
@@ -2083,7 +2080,7 @@ void SeedUniverse(void)
 
 	{
 		SDPtr = 0;
-		while ((SDPtr = FindStar(SDPtr, &universe, XOFFS, YOFFS)))
+		while ((SDPtr = FindStar(SDPtr, &universe, Xoffs(), Yoffs())))
 		{
 			const uint8_t star_type = SDPtr->Type;
 			const uint8_t star_color = STAR_COLOR(star_type);
@@ -2091,7 +2088,7 @@ void SeedUniverse(void)
 			lx = UNIVERSE_TO_LOGX(SDPtr->star_pt.x) - GLOBAL_SIS(log_x);
 			ly = UNIVERSE_TO_LOGY(SDPtr->star_pt.y) - GLOBAL_SIS(log_y);
 
-			if (ANIMATED_HYPERSPACE)
+			if (AnimatedHyperspace())
 			{
 				if ((arilouSpaceSide > 1))
 				{
@@ -2101,7 +2098,7 @@ void SeedUniverse(void)
 				else
 				{
 					star_frame = SetAbsFrameIndex(hyperstars[1],
-												  STAR_TYPE(star_type) * NUM_FRAMES + frameCounter);
+												  STAR_TYPE(star_type) * NumFrames + frameCounter);
 				}
 			}
 			else
@@ -2135,7 +2132,7 @@ void SeedUniverse(void)
 
 			LockElement(hHyperSpaceElement, &HyperSpaceElementPtr);
 
-			if (ANIMATED_HYPERSPACE && !(arilouSpaceSide > 1)
+			if (AnimatedHyperspace() && !(arilouSpaceSide > 1)
 				&& star_color != WHITE_BODY)
 			{
 				const uint16_t* PrimIndex {};

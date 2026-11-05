@@ -1077,7 +1077,7 @@ cheatAddRemoveDevices(void)
 static void
 cheatAddRemoveUpgrades(void)
 {
-	for (uint8_t i {0}; i < NUM_UPGRADES; i++)
+	for (uint8_t i {0}; i < NumUpgrades; i++)
 	{
 		if (optUpgradeArray[i] != uqm::CheatAction::None)
 		{
@@ -1457,12 +1457,12 @@ void SeedFleet(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap)
 	((plotmap[home].star_pt.y > plotmap[(a)].star_pt.y) ? 1 : -1)
 
 // For those with no toward/away you can randomly jitter +/-
-#define HALF_X (rand_val_x % 2 ? 1 : -1)
-#define HALF_Y (rand_val_y % 2 ? 1 : -1)
+constexpr int HalfX(auto rand_val_x) { return (rand_val_x % 2 ? 1 : -1); }
+constexpr int HalfY(auto rand_val_y) { return (rand_val_y % 2 ? 1 : -1); }
 
 // 1/5 of the time we flip X, or Y, or both for some races.  Why?  Why not!
-#define FIFTH_X ((rand_val_x * rand_val_y) % 10 ? 1 : -1)
-#define FIFTH_Y ((rand_val_x + rand_val_y) % 5 ? 1 : -1)
+constexpr int FifthX(auto rand_val_x, auto rand_val_y) { return ((rand_val_x * rand_val_y) % 10 ? 1 : -1); }
+constexpr int FifthY(auto rand_val_x, auto rand_val_y) { return ((rand_val_x + rand_val_y) % 5 ? 1 : -1); }
 
 // SeedFleetLocation is called when a fleet needs to be located or relocated.
 // It will return the center for the SOI of the race listed, or if visit
@@ -1568,40 +1568,40 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 			break;
 		case CHMMR_ID: // Jitter towards Mmrnmhrm home
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(MOTHER_ARK_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(MOTHER_ARK_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TOWARD_X(MOTHER_ARK_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TOWARD_Y(MOTHER_ARK_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case EARTHLING_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case ORZ_ID: // Jitter towards the playground
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(TAALO_PROTECTOR_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(TAALO_PROTECTOR_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TOWARD_X(TAALO_PROTECTOR_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TOWARD_Y(TAALO_PROTECTOR_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case PKUNK_ID: // Jitter away from Ilwrath / home from Yehat
 			if (visit == YEHAT_DEFINED)
 			{
 				location = GFXPOINT {
-					plotmap[visit].star_pt.x + AWAY_X(visit) * FIFTH_X * Jitter(strength, rand_val_x),
-					plotmap[visit].star_pt.y + AWAY_Y(visit) * FIFTH_Y * Jitter(strength, rand_val_y)};
+					plotmap[visit].star_pt.x + AWAY_X(visit) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+					plotmap[visit].star_pt.y + AWAY_Y(visit) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + AWAY_X(ILWRATH_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + AWAY_Y(ILWRATH_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + AWAY_X(ILWRATH_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + AWAY_Y(ILWRATH_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case SHOFIXTI_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(YEHAT_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(YEHAT_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TOWARD_X(YEHAT_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TOWARD_Y(YEHAT_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case SPATHI_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case SUPOX_ID: // Jitter towards Utwig
 			if (visit == SAMATRA_DEFINED)
@@ -1614,8 +1614,8 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(UTWIG_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(UTWIG_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TOWARD_X(UTWIG_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TOWARD_Y(UTWIG_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case THRADDASH_ID:
 			if (visit == SAMATRA_DEFINED)
@@ -1628,8 +1628,8 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(AQUA_HELIX_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(AQUA_HELIX_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TOWARD_X(AQUA_HELIX_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TOWARD_Y(AQUA_HELIX_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case UTWIG_ID: // Jitter towards Supox
 			if (visit == SAMATRA_DEFINED)
@@ -1642,32 +1642,32 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(SUPOX_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(SUPOX_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TOWARD_X(SUPOX_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TOWARD_Y(SUPOX_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case VUX_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case YEHAT_ID: // Jitter towards Shofixti.  Except rebels.
 			if (visit == YEHAT_DEFINED)
 			{
 				location = GFXPOINT {
-					plotmap[home].star_pt.x + AWAY_X(SHOFIXTI_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-					plotmap[home].star_pt.y + AWAY_Y(SHOFIXTI_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+					plotmap[home].star_pt.x + AWAY_X(SHOFIXTI_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+					plotmap[home].star_pt.y + AWAY_Y(SHOFIXTI_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(SHOFIXTI_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(SHOFIXTI_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TOWARD_X(SHOFIXTI_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TOWARD_Y(SHOFIXTI_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case MELNORME_ID:
 			break;
 		case DRUUGE_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case ILWRATH_ID:				 // Jitter towards victims
 			if (visit == THRADD_DEFINED) // default 290 distance
@@ -1694,8 +1694,8 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case MYCON_ID:
 			if (visit == MYCON_TRAP_DEFINED)
@@ -1722,18 +1722,18 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case UR_QUAN_ID: // Halved jitter due to size
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_Y * Jitter(strength, rand_val_x) / 2,
-				plotmap[home].star_pt.y + HALF_X + Jitter(strength, rand_val_y) / 2};
+				plotmap[home].star_pt.x + HalfY(rand_val_y) * Jitter(strength, rand_val_x) / 2,
+				plotmap[home].star_pt.y + HalfX(rand_val_x) + Jitter(strength, rand_val_y) / 2};
 			break;
 		case KOHR_AH_ID:		 // Halved jitter, swap x and y from UQ (same seed)
 			location = GFXPOINT {// and ONE sign for a 90 degree turn
-								 plotmap[home].star_pt.x - HALF_X * Jitter(strength, rand_val_y) / 2,
-								 plotmap[home].star_pt.y + HALF_Y + Jitter(strength, rand_val_x) / 2};
+								 plotmap[home].star_pt.x - HalfX(rand_val_x) * Jitter(strength, rand_val_y) / 2,
+								 plotmap[home].star_pt.y + HalfY(rand_val_y) + Jitter(strength, rand_val_x) / 2};
 			break;
 		case ZOQFOTPIK_ID:		 // ZoqFot jitter is inverted (str - jit) away from
 			location = GFXPOINT {// KA/UQ zone, then /2, gives 16% - 50% jit
@@ -1744,28 +1744,28 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 			if (visit == MYCON_TRAP_DEFINED)
 			{
 				location = GFXPOINT {
-					plotmap[visit].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-					plotmap[visit].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+					plotmap[visit].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+					plotmap[visit].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case ANDROSYNTH_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_y),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_x)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_y),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_x)};
 			break;
 		case CHENJESU_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case MMRNMHRM_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_y),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_x)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_y),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_x)};
 			break;
 		default:
 			break;

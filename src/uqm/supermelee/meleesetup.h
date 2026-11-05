@@ -39,8 +39,8 @@ extern "C" {
 #ifdef MELEETEAM_INTERNAL
 struct MeleeTeam
 {
-	MeleeShip ships[MELEE_FLEET_SIZE];
-	char name[MAX_TEAM_CHARS + 1 + 24];
+	MeleeShip ships[MeleeFleetSize];
+	char name[MaxTeamChars + 1 + 24];
 	/* The +1 is for the terminating \0; the +24 is in case some
 			 * default name in starcon.txt is unknowingly mangled. */
 	// XXX: SvdB: Why would it be mangled? Why don't we just reject

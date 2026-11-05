@@ -303,9 +303,10 @@ CaptainsWindow (CAPTAIN_STUFF *CSPtr, int16_t y,
 	}
 }*/
 
+static constexpr auto MaxCrewDigits {3};
+
 void DrawBattleCrewAmount(SHIP_INFO* ShipInfoPtr, int16_t y_offs)
 {
-#define MAX_CREW_DIGITS 3
 	GFXRECT r;
 	TEXT t;
 	char buf[40] {};
@@ -317,7 +318,7 @@ void DrawBattleCrewAmount(SHIP_INFO* ShipInfoPtr, int16_t y_offs)
 	t.CharCount = (uint16_t)~0;
 	r.corner.x = t.baseline.x - RES_SCALE(MENU_BOOL(2, 9));
 	r.corner.y = t.baseline.y - RES_SCALE(5);
-	r.extent.width = RES_SCALE(6 * MAX_CREW_DIGITS + 6);
+	r.extent.width = RES_SCALE(6 * MaxCrewDigits + 6);
 	r.extent.height = RES_SCALE(5);
 
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{}", ShipInfoPtr->crew_level);

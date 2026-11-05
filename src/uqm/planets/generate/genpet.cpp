@@ -74,7 +74,7 @@ GenerateTalkingPet_generatePlanets(SOLARSYS_STATE* solarSys)
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 		pPlanet->data_index = TELLURIC_WORLD;
-		pPlanet->radius = EARTH_RADIUS * 204L / 100;
+		pPlanet->radius = EarthRadius * 204L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
 		pPlanet->location.y = SINE(angle, pPlanet->radius);
@@ -95,7 +95,7 @@ static bool
 GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 								   PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& (GET_GAME_STATE(UMGAH_ZOMBIE_BLOBBIES)
 			|| !GET_GAME_STATE(TALKING_PET)
 			|| StartSphereTracking(UMGAH_SHIP)))
@@ -159,7 +159,7 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 		return true;
 	}
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
@@ -170,7 +170,7 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 
 	GenerateDefault_generateOrbital(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		solarSys->SysInfo.PlanetInfo.Weather = 0;
 	}
@@ -182,7 +182,7 @@ static uint16_t
 GenerateTalkingPet_generateEnergy(const SOLARSYS_STATE* solarSys,
 								  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
@@ -194,7 +194,7 @@ static bool
 GenerateTalkingPet_pickupEnergy(SOLARSYS_STATE* solarSys,
 								PLANET_DESC* world, uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
 		GenerateDefault_landerReportCycle(solarSys);
@@ -204,6 +204,8 @@ GenerateTalkingPet_pickupEnergy(SOLARSYS_STATE* solarSys,
 	(void)whichNode;
 	return false;
 }
+
+static constexpr auto LostDays {15};
 
 static void
 ZapToUrquanEncounter(void)
@@ -256,9 +258,8 @@ ZapToUrquanEncounter(void)
 		UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
 
 		{
-#define LOST_DAYS 15
 			SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond * 2));
-			MoveGameClockDays(LOST_DAYS);
+			MoveGameClockDays(LostDays);
 		}
 
 		uqm::currentActivity() =

@@ -28,23 +28,23 @@ static LOCDATA vux_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		VUX_PMAP_ANIM, /* AlienFrame */
-		VUX_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		VuxPmapAnim, /* AlienFrame */
+		VuxFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* (SisTextWidth() - 16) >> 1, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		VUX_COLOR_MAP, /* AlienColorMap */
-		VUX_MUSIC, /* AlienSong */
+		VuxColorMap, /* AlienColorMap */
+		VuxMusic, /* AlienSong */
 		{
-								VUX_ZEX_PMAP_ANIM, /* AlienAltFrame */
-			NullResource,	   /* AlienAltColorMap */
-			VUX_ZEX_MUSIC,	   /* AlienAltSong */
+								VuxZexPmapAnim, /* AlienAltFrame */
+			NullResource,	/* AlienAltColorMap */
+			VuxZexMusic,	/* AlienAltSong */
 		},
-		VUX_CONVERSATION_PHRASES, /* PlayerPhrases */
+		VuxConversationPhrases, /* PlayerPhrases */
 		19, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

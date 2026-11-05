@@ -400,7 +400,6 @@ InitEncounter(void)
 
 	if (uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
 	{
-#define NUM_DISPLAY_PTS (std::size(display_pt))
 		HSHIPFRAG hStarShip {};
 		HSHIPFRAG hNextShip {};
 		const GFXPOINT display_pt[] =
@@ -416,6 +415,7 @@ InitEncounter(void)
 				{44,	 -27},
 				{-44, -27},
 		};
+		constexpr auto NumDisplayPts {(std::size(display_pt))};
 
 		for (hStarShip = GetHeadLink(&GLOBAL(npc_built_ship_q)), i = 0;
 			 hStarShip && i < 60; hStarShip = hNextShip, ++i)
@@ -432,14 +432,14 @@ InitEncounter(void)
 				hNextShip = hStarShip;
 			}
 
-			s.origin = display_pt[i % NUM_DISPLAY_PTS];
-			if (i >= NUM_DISPLAY_PTS)
+			s.origin = display_pt[i % NumDisplayPts];
+			if (i >= NumDisplayPts)
 			{
 				uint16_t radius {};
 
 				radius = square_root((long)s.origin.x * s.origin.x
 									 + (long)s.origin.y * s.origin.y)
-					   + ((i / NUM_DISPLAY_PTS) * 18);
+					   + ((i / NumDisplayPts) * 18);
 
 				radius <<= resolutionFactor;
 
@@ -528,7 +528,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 	GFXRECT r1;
 	GFXRECT r2;
 	const static Color fade_cycle[] = SCAVENGE_TEXT_COLOR_TABLE;
-#define NUM_FADES (std::size(fade_cycle))
+	constexpr auto NumFades {(std::size(fade_cycle))};
 
 	t1.baseline.x = pRect->corner.x + RES_SCALE(100);
 	t1.baseline.y = pRect->corner.y + RES_SCALE(45);
@@ -545,11 +545,11 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 	FlushInput();
 	TimeIn = GetTimeCounter();
 
-	for (int16_t i {0}; i < (int16_t)NUM_FADES; ++i)
+	for (int16_t i {0}; i < (int16_t)NumFades; ++i)
 	{
 		if (AnyButtonPress(true))
 		{
-			i = NUM_FADES - 1;
+			i = NumFades - 1;
 		}
 
 		if (IsHd())
@@ -559,7 +559,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 		}
 
 		SetContextForeGroundColor(
-			fade_cycle[fade_in ? i : (int16_t)(NUM_FADES - i - 1)]);
+			fade_cycle[fade_in ? i : (int16_t)(NumFades - i - 1)]);
 		font_DrawText(&t1);
 		font_DrawText(&t2);
 		SleepThreadUntil(TimeIn + (c_gameSecond / 20));
@@ -593,6 +593,8 @@ ClearRectBack(GFXRECT* pRect)
 		DrawFilledRectangle(pRect);
 	}
 }
+
+static constexpr auto MaxDeadDisplayed {5};
 
 uint16_t
 UninitEncounter(void)
@@ -633,7 +635,7 @@ UninitEncounter(void)
 		char buf[80] {};
 		const SHIP_FRAGMENT* FragPtr {};
 		const static Color fade_ship_cycle[] = SCAVENGE_SCREEN_COLOR_TABLE;
-#define NUM_SHIP_FADES (std::size(fade_ship_cycle))
+		constexpr auto NumShipFades {(std::size(fade_ship_cycle))};
 
 		SET_GAME_STATE(BATTLE_SEGUE, 0);
 		SET_GAME_STATE(BOMB_CARRIER, 0);
@@ -720,7 +722,6 @@ UninitEncounter(void)
 						++ships_killed;
 						if (VictoryState)
 						{
-#define MAX_DEAD_DISPLAYED 5
 							uint16_t j {};
 
 							if (ships_killed == 1)
@@ -807,7 +808,7 @@ UninitEncounter(void)
 							UnbatchGraphics();
 							DeltaSISGauges(0, 0, j);
 
-							if ((VictoryState++ - 1) % MAX_DEAD_DISPLAYED)
+							if ((VictoryState++ - 1) % MaxDeadDisplayed)
 							{
 								ship_s.origin.x += RES_SCALE(17);
 							}
@@ -830,7 +831,7 @@ UninitEncounter(void)
 									SleepThread(c_gameSecond / 15);
 								}
 
-								// MAX_DEAD_DISPLAYED reached - erase
+								// MaxDeadDisplayed reached - erase
 								ClearRectBack(&r);
 
 								ship_s.origin.x =
@@ -843,7 +844,7 @@ UninitEncounter(void)
 							if (Sleepy)
 							{
 								TimeCount Time = GetTimeCounter();
-								for (j = 0; j < NUM_SHIP_FADES; ++j)
+								for (j = 0; j < NumShipFades; ++j)
 								{
 									Sleepy = (bool)!AnyButtonPress(true) && !(uqm::currentActivity() & CHECK_ABORT);
 

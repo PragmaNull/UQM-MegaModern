@@ -61,12 +61,11 @@ enum class CheatAction : uint8_t
 };
 } // namespace uqm
 
-#define NUM_UPGRADES 13
+inline constexpr auto NumUpgrades {13};
 
 extern uqm::CheatAction optDeviceArray[28];
-extern uqm::CheatAction optUpgradeArray[NUM_UPGRADES];
+extern uqm::CheatAction optUpgradeArray[NumUpgrades];
 
-#define GAMMA_SCALE 1000
 
 extern char baseContentPath[PATH_MAX];
 
@@ -77,17 +76,15 @@ extern uqgsl::czstring addonDirPath;
 extern uqstl::vector<uint32_t> g_addonList;
 
 // addon names to check against
-#define THREEDO_MUSIC "3domusic"
-#define REMIX_MUSIC "remix"
-#define VOL_RMX_MUSIC "volasaurus-remix-pack"
-#define REGION_MUSIC "SpaceMusic"
-#define HD_MODE "mm-hd"
+
+
+inline constexpr uqgsl::czstring HdMode {"mm-hd"};
 
 #define DOS_MODE(a) ((a) ? "dos-mode-hd" : "dos-mode-sd")
 #define THREEDO_MODE(a) ((a) ? "3do-mode-hd" : "3do-mode-sd")
 #define WINDOW_MODE(a, b) ((b) == 0 ? DOS_MODE(a) : THREEDO_MODE(a))
 
-#define BASE_CONTENT_NAME "mm-" UQM_MAJOR_VERSION_S "." UQM_MINOR_VERSION_S "." UQM_PATCH_VERSION_S "-content.uqm"
+inline constexpr auto BaseContentName {"mm-" UQM_MAJOR_VERSION_S "." UQM_MINOR_VERSION_S "." UQM_PATCH_VERSION_S "-content.uqm"};
 
 namespace uqm
 {

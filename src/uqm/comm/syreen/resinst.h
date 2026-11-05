@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define SYREEN_COLOR_MAP "comm.syreen.colortable"
-#define SYREEN_CONVERSATION_PHRASES "comm.syreen.dialogue"
-#define SYREEN_FONT "comm.syreen.font"
-#define SYREEN_MUSIC "comm.syreen.music"
-#define SYREEN_PMAP_ANIM "comm.syreen.graphics"
-#define SYREEN_SCRIPT "comm.syreen.script"
+inline constexpr uqgsl::czstring SyreenColorMap {"comm.syreen.colortable"};
+inline constexpr uqgsl::czstring SyreenConversationPhrases {"comm.syreen.dialogue"};
+inline constexpr uqgsl::czstring SyreenFont {"comm.syreen.font"};
+inline constexpr uqgsl::czstring SyreenMusic {"comm.syreen.music"};
+inline constexpr uqgsl::czstring SyreenPmapAnim {"comm.syreen.graphics"};

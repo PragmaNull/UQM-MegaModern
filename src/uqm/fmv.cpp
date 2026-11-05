@@ -33,7 +33,7 @@
 #include "gameopt.h"
 #include "build.h"
 
-#define MAX_LOAD_ENTRIES 40
+static constexpr auto MaxLoadEntries {40};
 
 void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
 {
@@ -237,7 +237,7 @@ void AdvanceLoadProgress(void)
 		r.extent.height = RES_SCALE(15);
 		r.extent.width = RES_SCALE((i + 1) * 7);
 
-		if (i == MAX_LOAD_ENTRIES)
+		if (i == MaxLoadEntries)
 		{
 			SetContextForeGroundColor(BuildColorRgba(0, 192, 0, 255));
 			i = 0;

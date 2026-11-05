@@ -30,7 +30,7 @@ uqstl::string_view shipName(MeleeShip ship)
 
 uqstl::optional<MeleeShip> shipFromName(uqstl::string_view name)
 {
-	for (int index = 0; index < NUM_MELEE_SHIPS; ++index)
+	for (int index = 0; index < NumMeleeShips; ++index)
 	{
 		const auto ship {static_cast<MeleeShip>(index)};
 		if (compareICase(name, shipName(ship)))
@@ -136,7 +136,7 @@ uqstl::string meleeConfigToJson(uqstl::span<const MeleeSideConfig> sides)
 		yyjson_mut_val* ships {yyjson_mut_obj_add_arr(doc, team, "ships")};
 		for (const MeleeShip ship : side.ships)
 		{
-			if (ship == MELEE_NONE || ship >= NUM_MELEE_SHIPS)
+			if (ship == MELEE_NONE || ship >= NumMeleeShips)
 			{
 				yyjson_mut_arr_add_null(doc, ships);
 				continue;

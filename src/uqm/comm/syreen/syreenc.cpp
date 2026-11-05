@@ -31,23 +31,23 @@ static LOCDATA syreen_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		SYREEN_PMAP_ANIM, /* AlienFrame */
-		SYREEN_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		SyreenPmapAnim, /* AlienFrame */
+		SyreenFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		SYREEN_COLOR_MAP, /* AlienColorMap */
-		SYREEN_MUSIC, /* AlienSong */
+		SyreenColorMap, /* AlienColorMap */
+		SyreenMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		SYREEN_CONVERSATION_PHRASES, /* PlayerPhrases */
+		SyreenConversationPhrases, /* PlayerPhrases */
 		15, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

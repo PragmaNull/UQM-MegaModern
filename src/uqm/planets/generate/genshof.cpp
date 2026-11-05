@@ -143,6 +143,8 @@ GenerateShofixti_uninitNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
+static constexpr auto NumPlanets {6};
+
 static bool
 GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 {
@@ -154,14 +156,13 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	if (uqm::isOriginalSeed())
 	{
-#define NUM_PLANETS 6
-		pSunDesc->NumPlanets = NUM_PLANETS;
-		for (i = 0; i < NUM_PLANETS; ++i)
+		pSunDesc->NumPlanets = NumPlanets;
+		for (i = 0; i < NumPlanets; ++i)
 		{
 			PLANET_DESC* pCurDesc = &solarSys->PlanetDesc[i];
 
 			pCurDesc->NumPlanets = 0;
-			if (i < (NUM_PLANETS >> 1))
+			if (i < (NumPlanets >> 1))
 			{
 				pCurDesc->data_index = SELENIC_WORLD;
 			}
@@ -171,7 +172,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 			}
 		}
 
-		FillOrbits(solarSys, NUM_PLANETS, solarSys->PlanetDesc, true);
+		FillOrbits(solarSys, NumPlanets, solarSys->PlanetDesc, true);
 	}
 	else
 	{
@@ -184,7 +185,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 			pSunDesc->NumPlanets = 9;
 		}
 
-		FillOrbits(solarSys, NUMPLANETS_PDESC, nullptr, false);
+		FillOrbits(solarSys, NumplanetsPdesc, nullptr, false);
 
 		if (uqm::isStarSeed())
 		{
@@ -194,7 +195,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 		// The only benefit to pre-stamping is that it shuffles them.
 		// But this causes problems when the star is orange, due to metal
 		// type. Easier to seed them then stamp them in a shuffled loop so
-		// that all types work. This relies on MAX_PLANETS <= 9 for
+		// that all types work. This relies on MaxPlanets <= 9 for
 		// randomness to work, otherwise you'll have to count the bitshifts
 		// and re-random every 4th time.
 		for (i = 0; i < pSunDesc->NumPlanets; ++i)
@@ -233,7 +234,7 @@ GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
+	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
@@ -250,7 +251,7 @@ GenerateShofixti_generateName(const SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
@@ -269,7 +270,7 @@ static bool
 GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 								 PLANET_DESC* world)
 {
-	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		if (CheckAlliance(SHOFIXTI_SHIP) == GOOD_GUY)
 		{

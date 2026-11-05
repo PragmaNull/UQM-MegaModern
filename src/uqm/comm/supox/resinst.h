@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define SUPOX_COLOR_MAP "comm.supox.colortable"
-#define SUPOX_CONVERSATION_PHRASES "comm.supox.dialogue"
-#define SUPOX_FONT "comm.supox.font"
-#define SUPOX_MUSIC "comm.supox.music"
-#define SUPOX_PMAP_ANIM "comm.supox.graphics"
-#define SUPOX_SCRIPT "comm.supox.script"
+inline constexpr uqgsl::czstring SupoxColorMap {"comm.supox.colortable"};
+inline constexpr uqgsl::czstring SupoxConversationPhrases {"comm.supox.dialogue"};
+inline constexpr uqgsl::czstring SupoxFont {"comm.supox.font"};
+inline constexpr uqgsl::czstring SupoxMusic {"comm.supox.music"};
+inline constexpr uqgsl::czstring SupoxPmapAnim {"comm.supox.graphics"};

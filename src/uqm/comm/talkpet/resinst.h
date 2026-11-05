@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define TALKING_PET_COLOR_MAP "comm.talkingpet.colortable"
-#define TALKING_PET_CONVERSATION_PHRASES "comm.talkingpet.dialogue"
-#define TALKING_PET_FONT "comm.talkingpet.font"
-#define TALKING_PET_MUSIC "comm.talkingpet.music"
-#define TALKING_PET_PMAP_ANIM "comm.talkingpet.graphics"
-#define TALKING_PET_SCRIPT "comm.talkingpet.script"
+inline constexpr uqgsl::czstring TalkingPetColorMap {"comm.talkingpet.colortable"};
+inline constexpr uqgsl::czstring TalkingPetConversationPhrases {"comm.talkingpet.dialogue"};
+inline constexpr uqgsl::czstring TalkingPetFont {"comm.talkingpet.font"};
+inline constexpr uqgsl::czstring TalkingPetMusic {"comm.talkingpet.music"};
+inline constexpr uqgsl::czstring TalkingPetPmapAnim {"comm.talkingpet.graphics"};

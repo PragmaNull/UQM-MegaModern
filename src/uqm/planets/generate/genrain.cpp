@@ -80,7 +80,7 @@ GenerateRainbowWorld_generatePlanets(SOLARSYS_STATE* solarSys)
 	if (uqm::isOriginalSeed())
 	{
 		pPlanet->NumPlanets = 0;
-		pPlanet->radius = EARTH_RADIUS * 50L / 100;
+		pPlanet->radius = EarthRadius * 50L / 100;
 		uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 		if (angle <= Quadrant)
 		{
@@ -102,7 +102,7 @@ static bool
 GenerateRainbowWorld_generateOrbital(SOLARSYS_STATE* solarSys,
 									 PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& CurStarDescPtr()->Index >= RAINBOW0_DEFINED
 		&& CurStarDescPtr()->Index <= RAINBOW9_DEFINED)
 	{

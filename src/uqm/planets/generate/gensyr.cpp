@@ -107,7 +107,7 @@ GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
@@ -123,7 +123,7 @@ GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,
 
 		if (uqm::isOriginalSeed() || uqm::isStarSeed())
 		{
-			pMoonDesc->radius = MIN_MOON_RADIUS;
+			pMoonDesc->radius = MinMoonRadius();
 			pMoonDesc->location.x = COSINE(Quadrant, pMoonDesc->radius);
 			pMoonDesc->location.y = SINE(Quadrant, pMoonDesc->radius);
 			ComputeSpeed(pMoonDesc, true, 1);
@@ -139,7 +139,7 @@ GenerateSyreen_generateName(const SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& (GET_GAME_STATE(SYREEN_HOME_VISITS)
 			|| GET_GAME_STATE(SYREEN_KNOW_ABOUT_MYCON)))
 	{
@@ -161,7 +161,7 @@ GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
 							   PLANET_DESC* world)
 {
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{ /* Gaia */
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
@@ -173,7 +173,7 @@ GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
 
 		solarSys->SysInfo.PlanetInfo.SurfaceTemperature = 19;
 		solarSys->SysInfo.PlanetInfo.AtmoDensity =
-			EARTH_ATMOSPHERE * 9 / 10;
+			EarthAtmosphere * 9 / 10;
 
 		if (!isDifficulty(uqm::Difficulty::Hard))
 		{
@@ -184,7 +184,7 @@ GenerateSyreen_generateOrbital(SOLARSYS_STATE* solarSys,
 		return true;
 	}
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		/* Starbase */
 		if (!RaceDead(SYREEN_SHIP))
@@ -217,7 +217,7 @@ static uint16_t
 GenerateSyreen_generateEnergy(const SOLARSYS_STATE* solarSys,
 							  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
@@ -229,7 +229,7 @@ static bool
 GenerateSyreen_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 							uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{ // Standard ruins report
 		GenerateDefault_landerReportCycle(solarSys);
 		return false;

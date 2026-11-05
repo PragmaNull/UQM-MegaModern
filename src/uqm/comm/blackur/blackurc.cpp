@@ -27,23 +27,23 @@ static LOCDATA blackurq_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		BLACKURQ_PMAP_ANIM, /* AlienFrame */
-		BLACKURQ_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		BlackurqPmapAnim, /* AlienFrame */
+		BlackurqFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		BLACKURQ_COLOR_MAP, /* AlienColorMap */
-		BLACKURQ_MUSIC, /* AlienSong */
+		BlackurqColorMap, /* AlienColorMap */
+		BlackurqMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		BLACKURQ_CONVERSATION_PHRASES, /* PlayerPhrases */
+		BlackurqConversationPhrases, /* PlayerPhrases */
 		9, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

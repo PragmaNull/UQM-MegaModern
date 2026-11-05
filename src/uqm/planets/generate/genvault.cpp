@@ -79,7 +79,7 @@ GenerateVault_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	if (!uqm::isOriginalSeed())
 	{
-		pPlanet->data_index = GenerateWorlds(LARGE_ROCKY);
+		pPlanet->data_index = GenerateWorlds(LargeRocky);
 
 		if (!pPlanet->NumPlanets)
 		{
@@ -94,7 +94,7 @@ static bool
 GenerateVault_generateOrbital(SOLARSYS_STATE* solarSys,
 							  PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
@@ -161,7 +161,7 @@ static uint16_t
 GenerateVault_generateEnergy(const SOLARSYS_STATE* solarSys,
 							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		return GenerateDefault_generateArtifact(
 			solarSys, whichNode, info);
@@ -174,7 +174,7 @@ static bool
 GenerateVault_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						   uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		assert(whichNode == 0);
 

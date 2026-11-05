@@ -76,7 +76,7 @@ GenerateOrz_generatePlanets(SOLARSYS_STATE* solarSys)
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
 			pPlanet->data_index = WATER_WORLD;
-			pPlanet->radius = EARTH_RADIUS * 156L / 100;
+			pPlanet->radius = EarthRadius * 156L / 100;
 			pPlanet->NumPlanets = 0;
 			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
 			pPlanet->location.x = COSINE(angle, pPlanet->radius);
@@ -104,7 +104,7 @@ GenerateOrz_generatePlanets(SOLARSYS_STATE* solarSys)
 				const uint32_t RandVal = SysGenRNG->next();
 				const uint8_t PByte = pSunDesc->PlanetByte + 1;
 				pSunDesc->NumPlanets =
-					(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);
+					(RandVal % (MaxGenPlanets - PByte) + PByte);
 			}
 			else
 			{
@@ -123,7 +123,7 @@ GenerateOrz_generatePlanets(SOLARSYS_STATE* solarSys)
 
 			if (!uqm::isStarSeed())
 			{
-				pPlanet->data_index = GenerateWorlds(ONLY_GAS);
+				pPlanet->data_index = GenerateWorlds(OnlyGas);
 			}
 
 			GeneratePlanets(solarSys);
@@ -148,7 +148,7 @@ GenerateOrz_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 	GenerateDefault_generateMoons(solarSys, planet);
 
 	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
-		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET)
+		&& matchWorld(solarSys, planet, MatchPbyte, MatchPlanet)
 		&& IsExtended())
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
@@ -164,9 +164,9 @@ static bool
 GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
 	if ((CurStarDescPtr()->Index == ORZ_DEFINED
-		 && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		 && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 		|| (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
-			&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
+			&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte)
 			&& !GET_GAME_STATE(TAALO_PROTECTOR)))
 	{
 		uint16_t i {};
@@ -246,14 +246,14 @@ GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 	GenerateDefault_generateOrbital(solarSys, world);
 
 	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE)
+		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
 		solarSys->SysInfo.PlanetInfo.Weather = 0;
 		solarSys->SysInfo.PlanetInfo.Tectonics = 0;
 	}
 	if (CurStarDescPtr()->Index == ORZ_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
 		solarSys->SysInfo.PlanetInfo.Weather = 3;
@@ -269,7 +269,7 @@ GenerateOrz_generateEnergy(const SOLARSYS_STATE* solarSys,
 						   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
@@ -283,7 +283,7 @@ GenerateOrz_generateEnergy(const SOLARSYS_STATE* solarSys,
 	}
 
 	if (CurStarDescPtr()->Index == ORZ_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
@@ -296,7 +296,7 @@ GenerateOrz_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						 uint16_t whichNode)
 {
 	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		assert(!GET_GAME_STATE(TAALO_PROTECTOR) && whichNode == 0);
 
@@ -310,7 +310,7 @@ GenerateOrz_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	}
 
 	if (CurStarDescPtr()->Index == ORZ_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
 		GenerateDefault_landerReportCycle(solarSys);

@@ -25,35 +25,35 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 20
-#define MAX_ENERGY 20
-#define ENERGY_REGENERATION 0
-#define ENERGY_WAIT 255
-#define MAX_THRUST 36
-#define THRUST_INCREMENT 6
-#define THRUST_WAIT 6
-#define TURN_WAIT 1
-#define SHIP_MASS 8
+static constexpr auto MaxCrew {20};
+static constexpr auto MaxEnergy {20};
+static constexpr auto EnergyRegeneration {0};
+static constexpr auto EnergyWait {255};
+static constexpr auto MaxThrust {36};
+static constexpr auto ThrustIncrement {6};
+static constexpr auto ThrustWait {6};
+static constexpr auto TurnWait {1};
+static constexpr auto ShipMass {8};
 
 // Weapon
-#define WEAPON_ENERGY_COST 0
-#define WEAPON_WAIT 7
-#define UTWIG_OFFSET 9
-#define MISSILE_SPEED DISPLAY_TO_WORLD(RES_SCALE(30))
-#define MISSILE_LIFE 10
-#define MISSILE_HITS 1
-#define MISSILE_DAMAGE 1
-#define MISSILE_OFFSET RES_SCALE(1)
-#define LAUNCH_XOFFS0 DISPLAY_TO_WORLD(RES_SCALE(5))
-#define LAUNCH_YOFFS0 -DISPLAY_TO_WORLD(chooseIfHd(18, 63))
-#define LAUNCH_XOFFS1 DISPLAY_TO_WORLD(chooseIfHd(13, 48))
-#define LAUNCH_YOFFS1 -DISPLAY_TO_WORLD(chooseIfHd(9, 25))
-#define LAUNCH_XOFFS2 DISPLAY_TO_WORLD(chooseIfHd(17, 64))
-#define LAUNCH_YOFFS2 -DISPLAY_TO_WORLD(chooseIfHd(4, 11))
+static constexpr auto WeaponEnergyCost {0};
+static constexpr auto WeaponWait {7};
+
+static auto MissileSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(30)); }
+static constexpr auto MissileLife {10};
+static constexpr auto MissileHits {1};
+static constexpr auto MissileDamage {1};
+static auto MissileOffset() { return RES_SCALE(1); }
+static auto LaunchXoffs0() { return DISPLAY_TO_WORLD(RES_SCALE(5)); }
+static auto LaunchYoffs0() { return -DISPLAY_TO_WORLD(chooseIfHd(18, 63)); }
+static auto LaunchXoffs1() { return DISPLAY_TO_WORLD(chooseIfHd(13, 48)); }
+static auto LaunchYoffs1() { return -DISPLAY_TO_WORLD(chooseIfHd(9, 25)); }
+static auto LaunchXoffs2() { return DISPLAY_TO_WORLD(chooseIfHd(17, 64)); }
+static auto LaunchYoffs2() { return -DISPLAY_TO_WORLD(chooseIfHd(4, 11)); }
 
 // Shield
-#define SPECIAL_ENERGY_COST 1
-#define SPECIAL_WAIT 12
+static constexpr auto SpecialEnergyCost {1};
+static constexpr auto SpecialWait {12};
 
 static RACE_DESC utwig_desc =
 	{
@@ -61,11 +61,11 @@ static RACE_DESC utwig_desc =
 		 "jugger",
 		 FiresFore | PointDefense | ShieldDefense,
 		 22, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY >> 1, MAX_ENERGY,
-		 UTWIG_RACE_STRINGS,
-		 UTWIG_ICON_MASK_PMAP_ANIM,
-		 UTWIG_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy >> 1, MaxEnergy,
+		 UtwigRaceStrings,
+		 UtwigIconMaskPmapAnim,
+		 UtwigMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -77,38 +77,38 @@ static RACE_DESC utwig_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 UTWIG_BIG_MASK_PMAP_ANIM,
-			 UTWIG_MED_MASK_PMAP_ANIM,
-			 UTWIG_SML_MASK_PMAP_ANIM,
+			 UtwigBigMaskPmapAnim,
+			 UtwigMedMaskPmapAnim,
+			 UtwigSmlMaskPmapAnim,
 		 },
 		 {
-			 LANCE_BIG_MASK_PMAP_ANIM,
-			 LANCE_MED_MASK_PMAP_ANIM,
-			 LANCE_SML_MASK_PMAP_ANIM,
+			 LanceBigMaskPmapAnim,
+			 LanceMedMaskPmapAnim,
+			 LanceSmlMaskPmapAnim,
 		 },
 		 {
 			 NullResource,
 			 NullResource,
 			 NullResource,
 		 },
-		 {UTWIG_CAPTAIN_MASK_PMAP_ANIM,
+		 {UtwigCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 UTWIG_VICTORY_SONG,
-		 UTWIG_SHIP_SOUNDS,
+		 UtwigVictorySong,
+		 UtwigShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -138,12 +138,12 @@ initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.speed = MISSILE_SPEED;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.speed = MissileSpeed();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset();
 	MissileBlock.pixoffs = 0;
 
 	for (uint16_t i {0}; i < 3; ++i)
@@ -159,16 +159,16 @@ initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 		switch (i)
 		{
 			case 0:
-				cos0 = LAUNCH_XOFFS0;
-				sin0 = LAUNCH_YOFFS0;
+				cos0 = LaunchXoffs0();
+				sin0 = LaunchYoffs0();
 				break;
 			case 1:
-				cos0 = LAUNCH_XOFFS1;
-				sin0 = LAUNCH_YOFFS1;
+				cos0 = LaunchXoffs1();
+				sin0 = LaunchYoffs1();
 				break;
 			case 2:
-				cos0 = LAUNCH_XOFFS2;
-				sin0 = LAUNCH_YOFFS2;
+				cos0 = LaunchXoffs2();
+				sin0 = LaunchYoffs2();
 				break;
 		}
 		angle = FACING_TO_ANGLE(MissileBlock.face) + Quadrant;
@@ -314,9 +314,9 @@ utwig_preprocess(ELEMENT* ElementPtr)
 	{
 		StarShipPtr->special_counter = 0;
 	}
-	else if (StarShipPtr->special_counter % (SPECIAL_WAIT >> 1) == 0)
+	else if (StarShipPtr->special_counter % (SpecialWait >> 1) == 0)
 	{
-		if (!DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+		if (!DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 		{
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags &=
 				~(PointDefense | ShieldDefense);
@@ -393,14 +393,14 @@ init_utwig(void)
 {
 	if (IsHd())
 	{
-		utwig_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		utwig_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
+		utwig_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		utwig_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
 		utwig_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else
 	{
-		utwig_desc.characteristics.max_thrust = MAX_THRUST;
-		utwig_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		utwig_desc.characteristics.max_thrust = MaxThrust;
+		utwig_desc.characteristics.thrust_increment = ThrustIncrement;
 		utwig_desc.cyborg_control.WeaponRange = CloseRangeWeapon;
 	}
 

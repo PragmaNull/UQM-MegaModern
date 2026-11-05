@@ -2,10 +2,9 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define ORZ_COLOR_MAP "comm.orz.colortable"
-#define ORZ_CONVERSATION_PHRASES "comm.orz.dialogue"
-#define ORZ_FONT "comm.orz.font"
-#define ORZ_MUSIC "comm.orz.music"
-#define ORZ_PMAP_ANIM "comm.orz.graphics"
-#define ORZ_ANGRY_PMAP_ANIM "comm.orz.angry.graphics"
-#define ORZ_SCRIPT "comm.orz.script"
+inline constexpr uqgsl::czstring OrzColorMap {"comm.orz.colortable"};
+inline constexpr uqgsl::czstring OrzConversationPhrases {"comm.orz.dialogue"};
+inline constexpr uqgsl::czstring OrzFont {"comm.orz.font"};
+inline constexpr uqgsl::czstring OrzMusic {"comm.orz.music"};
+inline constexpr uqgsl::czstring OrzPmapAnim {"comm.orz.graphics"};
+inline constexpr uqgsl::czstring OrzAngryPmapAnim {"comm.orz.angry.graphics"};

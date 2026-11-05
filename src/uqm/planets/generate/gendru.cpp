@@ -78,7 +78,7 @@ GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 		++pSunDesc->NumPlanets;
 
 		pPlanet->data_index = DUST_WORLD;
-		pPlanet->radius = EARTH_RADIUS * 50L / 100;
+		pPlanet->radius = EarthRadius * 50L / 100;
 		pPlanet->NumPlanets = 0;
 		const uint16_t angle {HalfCircle - Octant};
 		pPlanet->location.x = COSINE(angle, pPlanet->radius);
@@ -104,7 +104,7 @@ GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& IsHomeworldKnown(DRUUGE_HOME))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
@@ -124,7 +124,7 @@ static bool
 GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 							   PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (StartSphereTracking(DRUUGE_SHIP))
 		{
@@ -163,7 +163,7 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 
 	GenerateDefault_generateOrbital(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
 		solarSys->SysInfo.PlanetInfo.Weather = 3;
@@ -177,7 +177,7 @@ static bool
 GenerateDruuge_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 							uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		GenerateDefault_landerReportCycle(solarSys);
 
@@ -201,7 +201,7 @@ static uint16_t
 GenerateDruuge_generateEnergy(const SOLARSYS_STATE* solarSys,
 							  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}

@@ -124,7 +124,7 @@ static float maxGamma = 2.5f;
 // The gamma slider uses an exponential curve
 // We use y = e^(2.1972*(x-1)) curve to give us a nice spread of
 // gamma values 0.11 < g < 9.0 centered at g=1.0
-#define GAMMA_CURVE_B 2.1972f
+static constexpr auto GammaCurveB {2.1972f};
 static float minGammaX;
 static float maxGammaX;
 
@@ -252,7 +252,7 @@ rename_template(WIDGET_TEXTENTRY* self)
 	uqm::strncpy_safe(uqm::input_templates[editTemplate].name, self->value);
 }
 
-#define MENU_FRAME_RATE (c_gameSecond / 20)
+static constexpr auto MenuFrameRate {(c_gameSecond / 20)};
 
 static bool
 DoSetupMenu(SETUP_MENU_STATE* pInputState)
@@ -325,7 +325,7 @@ DoSetupMenu(SETUP_MENU_STATE* pInputState)
 		Widget_Event(WIDGET_EVENT_DELETE);
 	}
 
-	SleepThreadUntil(pInputState->NextTime + MENU_FRAME_RATE);
+	SleepThreadUntil(pInputState->NextTime + MenuFrameRate);
 	pInputState->NextTime = GetTimeCounter();
 	return !((uqm::currentActivity() & CHECK_ABORT) || (next == nullptr));
 }
@@ -366,7 +366,7 @@ OnTextEntryFrame(TEXTENTRY_STATE* pTES)
 	redraw_menu();
 
 	SleepThreadUntil(pTES->NextTime);
-	pTES->NextTime = GetTimeCounter() + MENU_FRAME_RATE;
+	pTES->NextTime = GetTimeCounter() + MenuFrameRate;
 
 	return true; // continue
 }
@@ -387,7 +387,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 
 	// text entry setup
 	tes.Initialized = false;
-	tes.NextTime = GetTimeCounter() + MENU_FRAME_RATE;
+	tes.NextTime = GetTimeCounter() + MenuFrameRate;
 	tes.BaseStr = widget->value;
 	tes.MaxSize = widget->maxlen;
 	tes.CursorPos = widget->cursor_pos;
@@ -419,13 +419,13 @@ static inline float
 gammaCurve(float x)
 {
 	// The slider uses an exponential curve
-	return exp((x - 1) * GAMMA_CURVE_B);
+	return exp((x - 1) * GammaCurveB);
 }
 
 static inline float
 solveGammaCurve(float y)
 {
-	return log(y) / GAMMA_CURVE_B + 1;
+	return log(y) / GammaCurveB + 1;
 }
 
 static int
@@ -883,7 +883,7 @@ apply_settings(void)
 {
 	auto& uqmOptions {uqm::UQMOptions::edit()};
 
-	const int factor {uqm::isAddonAvailable(HD_MODE) ? *uqmOptions.resolutionFactor : 0};
+	const int factor {uqm::isAddonAvailable(HdMode) ? *uqmOptions.resolutionFactor : 0};
 	if (factor != (int)resolutionFactor)
 	{
 		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));

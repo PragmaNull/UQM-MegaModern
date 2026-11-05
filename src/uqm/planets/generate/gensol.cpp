@@ -119,11 +119,12 @@ GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
+static constexpr auto SolSeed {334241042L};
+
 static bool
 GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-#define SOL_SEED 334241042L
-	SysGenRNG->reseed(SOL_SEED + (uqm::isStarSeed() ? uqm::currentSeed().value : 0));
+	SysGenRNG->reseed(SolSeed + (uqm::isStarSeed() ? uqm::currentSeed().value : 0));
 
 	solarSys->SunDesc[0].NumPlanets = 9;
 	for (uint16_t planetI {0}; planetI < 9; ++planetI)
@@ -139,49 +140,49 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 		{
 			case 0: /* MERCURY */
 				pCurDesc->data_index = METAL_WORLD;
-				pCurDesc->radius = EARTH_RADIUS * 39L / 100;
+				pCurDesc->radius = EarthRadius * 39L / 100;
 				pCurDesc->NumPlanets = 0;
 				break;
 			case 1: /* VENUS */
 				pCurDesc->data_index = PRIMORDIAL_WORLD;
-				pCurDesc->radius = EARTH_RADIUS * 72L / 100;
+				pCurDesc->radius = EarthRadius * 72L / 100;
 				pCurDesc->NumPlanets = 0;
 				pCurDesc->angle =
 					NORMALIZE_ANGLE(FullCircle - pCurDesc->angle);
 				break;
 			case 2: /* EARTH */
 				pCurDesc->data_index = WATER_WORLD | PLANET_SHIELDED;
-				pCurDesc->radius = EARTH_RADIUS;
+				pCurDesc->radius = EarthRadius;
 				pCurDesc->NumPlanets = 2;
 				break;
 			case 3: /* MARS */
 				pCurDesc->data_index = DUST_WORLD;
-				pCurDesc->radius = EARTH_RADIUS * 152L / 100;
+				pCurDesc->radius = EarthRadius * 152L / 100;
 				pCurDesc->NumPlanets = 0;
 				break;
 			case 4: /* JUPITER */
 				pCurDesc->data_index = RED_GAS_GIANT;
-				pCurDesc->radius = EARTH_RADIUS * 500L /* 520L */ / 100;
+				pCurDesc->radius = EarthRadius * 500L /* 520L */ / 100;
 				pCurDesc->NumPlanets = 4;
 				break;
 			case 5: /* SATURN */
 				pCurDesc->data_index = ORA_GAS_GIANT;
-				pCurDesc->radius = EARTH_RADIUS * 750L /* 952L */ / 100;
+				pCurDesc->radius = EarthRadius * 750L /* 952L */ / 100;
 				pCurDesc->NumPlanets = 1;
 				break;
 			case 6: /* URANUS */
 				pCurDesc->data_index = GRN_GAS_GIANT;
-				pCurDesc->radius = EARTH_RADIUS * 1000L /* 1916L */ / 100;
+				pCurDesc->radius = EarthRadius * 1000L /* 1916L */ / 100;
 				pCurDesc->NumPlanets = 0;
 				break;
 			case 7: /* NEPTUNE */
 				pCurDesc->data_index = BLU_GAS_GIANT;
-				pCurDesc->radius = EARTH_RADIUS * 1250L /* 2999L */ / 100;
+				pCurDesc->radius = EarthRadius * 1250L /* 2999L */ / 100;
 				pCurDesc->NumPlanets = 1;
 				break;
 			case 8: /* PLUTO */
 				pCurDesc->data_index = PELLUCID_WORLD;
-				pCurDesc->radius = EARTH_RADIUS * 1550L /* 3937L */ / 100;
+				pCurDesc->radius = EarthRadius * 1550L /* 3937L */ / 100;
 				pCurDesc->NumPlanets = IsExtended();
 				if (uqm::isOriginalSeed())
 				{
@@ -189,7 +190,7 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 				}
 				break;
 		}
-		pCurDesc->orb_speed = FullCircle / (365.25 * pow((float)pCurDesc->radius / EARTH_RADIUS, 1.5));
+		pCurDesc->orb_speed = FullCircle / (365.25 * pow((float)pCurDesc->radius / EarthRadius, 1.5));
 		pCurDesc->location.x = COSINE(pCurDesc->angle, pCurDesc->radius);
 		pCurDesc->location.y = SINE(pCurDesc->angle, pCurDesc->radius);
 	}
@@ -213,7 +214,7 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 
 				/* Starbase: */
 				solarSys->MoonDesc[0].data_index = HIERARCHY_STARBASE;
-				solarSys->MoonDesc[0].radius = MIN_MOON_RADIUS;
+				solarSys->MoonDesc[0].radius = MinMoonRadius();
 				angle = HalfCircle + Quadrant;
 				solarSys->MoonDesc[0].location.x =
 					COSINE(angle, solarSys->MoonDesc[0].radius);
@@ -223,8 +224,8 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 
 				/* Luna: */
 				solarSys->MoonDesc[1].data_index = SELENIC_WORLD;
-				solarSys->MoonDesc[1].radius = MIN_MOON_RADIUS
-											 + (4 - 1) * MOON_DELTA;
+				solarSys->MoonDesc[1].radius = MinMoonRadius()
+											 + (4 - 1) * MoonDelta();
 				rand_val = SysGenRNG->next();
 				angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
 				solarSys->MoonDesc[1].location.x =
@@ -250,8 +251,8 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 			break;
 		case 5: /* moons of SATURN */
 			solarSys->MoonDesc[0].data_index = ALKALI_WORLD;
-			/*solarSys->MoonDesc[0].radius = MIN_MOON_RADIUS
-					+ (MAX_GEN_MOONS - 1) * MOON_DELTA;*/
+			/*solarSys->MoonDesc[0].radius = MinMoonRadius()
+					+ (MaxGenMoons - 1) * MoonDelta();*/
 			solarSys->MoonDesc[0].orb_speed = FullCircle / 15.22;
 			/* Titan */
 			break;
@@ -326,7 +327,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 	rand_val = SysGenRNG->seed();
 
 	solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
-	GenerateMineralDeposits(&solarSys->SysInfo, GENERATE_ALL, nullptr);
+	GenerateMineralDeposits(&solarSys->SysInfo, GenerateAll, nullptr);
 	rand_val = SysGenRNG->seed();
 
 	planetNr = planetIndex(solarSys, world);
@@ -345,7 +346,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = 165;
 				break;
 			case 1: /* VENUS */
-				solarSys->SysInfo.PlanetInfo.AtmoDensity = 90 * EARTH_ATMOSPHERE;
+				solarSys->SysInfo.PlanetInfo.AtmoDensity = 90 * EarthAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 95;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 95;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 177;
@@ -356,7 +357,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				break;
 			case 2: /* EARTH */
 				solarSys->SysInfo.PlanetInfo.AtmoDensity =
-					EARTH_ATMOSPHERE;
+					EarthAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 100;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 100;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 23;
@@ -378,7 +379,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				break;
 			case 4: /* JUPITER */
 				solarSys->SysInfo.PlanetInfo.AtmoDensity =
-					GAS_GIANT_ATMOSPHERE;
+					GasGiantAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 24;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 1120;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 3;
@@ -387,11 +388,11 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 98;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -143;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 520L / 100;
+					EarthRadius * 520L / 100;
 				break;
 			case 5: /* SATURN */
 				solarSys->SysInfo.PlanetInfo.AtmoDensity =
-					GAS_GIANT_ATMOSPHERE;
+					GasGiantAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 13;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 945;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 27;
@@ -400,11 +401,11 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 102;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -197;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 952L / 100;
+					EarthRadius * 952L / 100;
 				break;
 			case 6: /* URANUS */
 				solarSys->SysInfo.PlanetInfo.AtmoDensity =
-					GAS_GIANT_ATMOSPHERE;
+					GasGiantAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 21;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 411;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 98;
@@ -413,11 +414,11 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 172;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -217;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 1916L / 100;
+					EarthRadius * 1916L / 100;
 				break;
 			case 7: /* NEPTUNE */
 				solarSys->SysInfo.PlanetInfo.AtmoDensity =
-					GAS_GIANT_ATMOSPHERE;
+					GasGiantAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 28;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 396;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 30;
@@ -426,7 +427,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 182;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -229;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 2999L / 100;
+					EarthRadius * 2999L / 100;
 				break;
 			case 8: /* PLUTO */
 				if (!GET_GAME_STATE(FOUND_PLUTO_SPATHI))
@@ -448,7 +449,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 1533;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -235;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 3937L / 100;
+					EarthRadius * 3937L / 100;
 				break;
 		}
 
@@ -537,7 +538,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 
 			case 4: /* moons of JUPITER */
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 520L / 100;
+					EarthRadius * 520L / 100;
 				switch (moonNr)
 				{
 					case 0: /* Io */
@@ -573,7 +574,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 
 			case 5: /* moon of SATURN: Titan */
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 952L / 100;
+					EarthRadius * 952L / 100;
 				solarSys->SysInfo.PlanetInfo.AtmoDensity = 160;
 				solarSys->SysInfo.PlanetInfo.Weather = 2;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 34;
@@ -585,7 +586,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 
 			case 7: /* moon of NEPTUNE: Triton */
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 2999L / 100;
+					EarthRadius * 2999L / 100;
 				solarSys->SysInfo.PlanetInfo.AtmoDensity = 10;
 				solarSys->SysInfo.PlanetInfo.Weather = 1;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 95;
@@ -604,7 +605,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 1533;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -220;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 3937L / 100;
+					EarthRadius * 3937L / 100;
 				break;
 		}
 
@@ -669,7 +670,7 @@ GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
 		return CustomMineralDeposits(&solarSys->SysInfo, whichNode, info,
 									 5, CHARON_DUST, LIGHT);
 	}
-	else if (!uqm::isOriginalSeed() && matchWorld(solarSys, world, 0, MATCH_PLANET))
+	else if (!uqm::isOriginalSeed() && matchWorld(solarSys, world, 0, MatchPlanet))
 	{
 		/* Mercury */
 		return CustomMineralDeposits(&solarSys->SysInfo, whichNode, info,
@@ -686,7 +687,7 @@ static uint16_t
 GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
 						   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, 8, MATCH_PLANET))
+	if (matchWorld(solarSys, world, 8, MatchPlanet))
 	{
 		/* Pluto */
 		// This check is needed because the retrieval bit is not set for
@@ -700,7 +701,7 @@ GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
 		if (info)
 		{
 			info->loc_pt.x = RES_SCALE(20);
-			info->loc_pt.y = MAP_HEIGHT - RES_SCALE(8);
+			info->loc_pt.y = MapHeight() - RES_SCALE(8);
 		}
 
 		return 1; // only matters when count is requested
@@ -718,8 +719,8 @@ GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
 
 		if (info)
 		{
-			info->loc_pt.x = SCALED_MAP_WIDTH * 3 / 4;
-			info->loc_pt.y = MAP_HEIGHT * 1 / 4;
+			info->loc_pt.x = ScaledMapWidth() * 3 / 4;
+			info->loc_pt.y = MapHeight() * 1 / 4;
 		}
 
 		return 1; // only matters when count is requested
@@ -729,17 +730,18 @@ GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
+static constexpr auto FwiffoFrags {8};
+
 static bool
 GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						 uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, 8, MATCH_PLANET))
+	if (matchWorld(solarSys, world, 8, MatchPlanet))
 	{ // Pluto
 		assert(!GET_GAME_STATE(FOUND_PLUTO_SPATHI) && whichNode == 0);
 
-// Ran into Fwiffo on Pluto
-#define FWIFFO_FRAGS 8
-		if (!KillLanderCrewSeq(FWIFFO_FRAGS, c_gameSecond / 20))
+		// Ran into Fwiffo on Pluto
+		if (!KillLanderCrewSeq(FwiffoFrags, c_gameSecond / 20))
 		{
 			return false; // lander probably died
 		}
@@ -788,7 +790,7 @@ GenerateSol_generateLife(const SOLARSYS_STATE* solarSys,
 	{
 		/* Earth Moon */
 		return GenerateRandomNodes(&solarSys->SysInfo, BIOLOGICAL_SCAN,
-								   10, BRAINBOX_BULLDOZER, whichNode, info);
+								   10, BrainboxBulldozer, whichNode, info);
 	}
 
 	return 0;

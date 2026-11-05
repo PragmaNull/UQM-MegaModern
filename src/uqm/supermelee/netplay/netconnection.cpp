@@ -146,7 +146,7 @@ NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
 	conn->stateFlags.agreement = Agreement_nothingAgreed;
 	conn->stateFlags.inputDelay = 0;
 #ifdef NETPLAY_CHECKSUM
-	conn->stateFlags.checksumInterval = NETPLAY_CHECKSUM_INTERVAL;
+	conn->stateFlags.checksumInterval = NetplayChecksumInterval;
 #endif
 
 #ifdef NETPLAY_STATISTICS

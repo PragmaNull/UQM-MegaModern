@@ -87,12 +87,12 @@ Packet_Init_create(void)
 {
 	Packet_Init* packet = (Packet_Init*)Packet_create(PACKET_INIT, 0);
 
-	packet->protoVersion.major = NETPLAY_PROTOCOL_VERSION_MAJOR;
-	packet->protoVersion.minor = NETPLAY_PROTOCOL_VERSION_MINOR;
+	packet->protoVersion.major = NetplayProtocolVersionMajor;
+	packet->protoVersion.minor = NetplayProtocolVersionMinor;
 	packet->padding0 = 0;
-	packet->uqmVersion.major = UQM_MAJOR_VERSION;
-	packet->uqmVersion.minor = UQM_MINOR_VERSION;
-	packet->uqmVersion.patch = UQM_PATCH_VERSION;
+	packet->uqmVersion.major = UqmMajorVersion;
+	packet->uqmVersion.minor = UqmMinorVersion;
+	packet->uqmVersion.patch = UqmPatchVersion;
 	packet->padding1 = 0;
 	return packet;
 }

@@ -25,28 +25,28 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 12
-#define MAX_ENERGY 20
-#define ENERGY_REGENERATION 0
-#define ENERGY_WAIT 10
-#define MAX_THRUST 60
-#define THRUST_INCREMENT MAX_THRUST
-#define THRUST_WAIT 0
-#define TURN_WAIT 0
-#define SHIP_MASS 1
+static constexpr auto MaxCrew {12};
+static constexpr auto MaxEnergy {20};
+static constexpr auto EnergyRegeneration {0};
+static constexpr auto EnergyWait {10};
+static constexpr auto MaxThrust {60};
+static constexpr auto ThrustIncrement {MaxThrust};
+static constexpr auto ThrustWait {0};
+static constexpr auto TurnWait {0};
+static constexpr auto ShipMass {1};
 
 // Lightning weapon
-#define WEAPON_ENERGY_COST 2
-#define WEAPON_WAIT 17
-#define SLYLANDRO_OFFSET 9
-#define LASER_LENGTH RES_SCALE(32)
+static constexpr auto WeaponEnergyCost {2};
+static constexpr auto WeaponWait {17};
+
+static auto LaserLength() { return RES_SCALE(32); }
 /* Total length of lighting bolts. Actual range is usually less than
 		 * this, since the lightning rarely is straight. */
 
 // Harvester
-#define SPECIAL_ENERGY_COST 0
-#define SPECIAL_WAIT 20
-#define HARVEST_RANGE RES_SCALE(208 * 3 / 8)
+static constexpr auto SpecialEnergyCost {0};
+static constexpr auto SpecialWait {20};
+static auto HarvestRange() { return RES_SCALE(208 * 3 / 8); }
 /* Was originally (SpaceHeight() * 3 / 8) */
 
 static RACE_DESC slylandro_desc =
@@ -55,11 +55,11 @@ static RACE_DESC slylandro_desc =
 		 "probe",
 		 SeekingWeapon | CrewImmune,
 		 17, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 SLYLANDRO_RACE_STRINGS,
-		 SLYLANDRO_ICON_MASK_PMAP_ANIM,
-		 SLYLANDRO_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 SlylandroRaceStrings,
+		 SlylandroIconMaskPmapAnim,
+		 SlylandroMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -71,22 +71,22 @@ static RACE_DESC slylandro_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 SLYLANDRO_BIG_MASK_PMAP_ANIM,
-			 SLYLANDRO_MED_MASK_PMAP_ANIM,
-			 SLYLANDRO_SML_MASK_PMAP_ANIM,
+			 SlylandroBigMaskPmapAnim,
+			 SlylandroMedMaskPmapAnim,
+			 SlylandroSmlMaskPmapAnim,
 		 },
 		 {
 			 NullResource,
@@ -98,11 +98,11 @@ static RACE_DESC slylandro_desc =
 			 NullResource,
 			 NullResource,
 		 },
-		 {SLYLANDRO_CAPTAIN_MASK_PMAP_ANIM,
+		 {SlylandroCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 SLYLANDRO_VICTORY_SONG,
-		 SLYLANDRO_SHIP_SOUNDS,
+		 SlylandroVictorySong,
+		 SlylandroShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -147,10 +147,10 @@ lightning_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr0, &StarShipPtr);
-	if (StarShipPtr->weapon_counter > WEAPON_WAIT >> 1)
+	if (StarShipPtr->weapon_counter > WeaponWait >> 1)
 	{
 		StarShipPtr->weapon_counter =
-			WEAPON_WAIT - StarShipPtr->weapon_counter;
+			WeaponWait - StarShipPtr->weapon_counter;
 	}
 	StarShipPtr->weapon_counter -= ElementPtr0->turn_wait;
 	ElementPtr0->turn_wait = 0;
@@ -211,12 +211,12 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 
 			if ((LaserPtr->turn_wait = StarShipPtr->weapon_counter) == 0)
 			{
-				LaserPtr->turn_wait = WEAPON_WAIT;
+				LaserPtr->turn_wait = WeaponWait;
 			}
 
-			if (LaserPtr->turn_wait > WEAPON_WAIT >> 1)
+			if (LaserPtr->turn_wait > WeaponWait >> 1)
 			{
-				LaserPtr->turn_wait = WEAPON_WAIT - LaserPtr->turn_wait;
+				LaserPtr->turn_wait = WeaponWait - LaserPtr->turn_wait;
 			}
 
 			switch (uqm::highByte(uqm::lowWord(rand_val)) & 3)
@@ -261,7 +261,7 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 			angle -= uqm::lowWord(rand_val) & (Quadrant - 1);
 		}
 		delta = WORLD_TO_VELOCITY(
-			DISPLAY_TO_WORLD((uqm::highWord(rand_val) & (LASER_LENGTH - 1)) + 4));
+			DISPLAY_TO_WORLD((uqm::highWord(rand_val) & (LaserLength() - 1)) + 4));
 		SetVelocityComponents(&LaserPtr->velocity,
 							  COSINE(angle, delta), SINE(angle, delta));
 
@@ -361,8 +361,8 @@ harvest_space_junk(ELEMENT* ElementPtr)
 			}
 			dx = WORLD_TO_DISPLAY(dx);
 			dy = WORLD_TO_DISPLAY(dy);
-			if (dx <= HARVEST_RANGE && dy <= HARVEST_RANGE
-				&& dx * dx + dy * dy <= HARVEST_RANGE * HARVEST_RANGE)
+			if (dx <= HarvestRange() && dy <= HarvestRange()
+				&& dx * dx + dy * dy <= HarvestRange() * HarvestRange())
 			{
 				ObjPtr->life_span = 0;
 				ObjPtr->state_flags |= Nonsolid;
@@ -377,7 +377,7 @@ harvest_space_junk(ELEMENT* ElementPtr)
 					ProcessSound(GetSound(
 									 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 								 ElementPtr);
-					DeltaEnergy(ElementPtr, MAX_ENERGY);
+					DeltaEnergy(ElementPtr, MaxEnergy);
 				}
 			}
 		}
@@ -395,7 +395,7 @@ slylandro_postprocess(ELEMENT* ElementPtr)
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if (StarShipPtr->weapon_counter
-		&& StarShipPtr->weapon_counter < WEAPON_WAIT)
+		&& StarShipPtr->weapon_counter < WeaponWait)
 	{
 		HELEMENT Lightning {};
 
@@ -467,14 +467,14 @@ init_slylandro(void)
 {
 	if (IsHd())
 	{
-		slylandro_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		slylandro_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
+		slylandro_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		slylandro_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
 		slylandro_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd << 1;
 	}
 	else
 	{
-		slylandro_desc.characteristics.max_thrust = MAX_THRUST;
-		slylandro_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		slylandro_desc.characteristics.max_thrust = MaxThrust;
+		slylandro_desc.characteristics.thrust_increment = ThrustIncrement;
 		slylandro_desc.cyborg_control.WeaponRange =
 			CloseRangeWeapon << 1;
 	}

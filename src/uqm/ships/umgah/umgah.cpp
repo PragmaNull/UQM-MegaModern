@@ -24,30 +24,30 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 10
-#define MAX_ENERGY 30
-#define ENERGY_REGENERATION MAX_ENERGY
-#define ENERGY_WAIT 150
-#define MAX_THRUST /* DISPLAY_TO_WORLD (5) */ 18
-#define THRUST_INCREMENT /* DISPLAY_TO_WORLD (2) */ 6
-#define THRUST_WAIT 3
-#define TURN_WAIT 4
-#define SHIP_MASS 1
+static constexpr auto MaxCrew {10};
+static constexpr auto MaxEnergy {30};
+static constexpr auto EnergyRegeneration {MaxEnergy};
+static constexpr auto EnergyWait {150};
+static constexpr auto MaxThrust {18};
+static constexpr auto ThrustIncrement {6};
+static constexpr auto ThrustWait {3};
+static constexpr auto TurnWait {4};
+static constexpr auto ShipMass {1};
 
 // Antimatter cone
-#define WEAPON_ENERGY_COST 0
-#define WEAPON_WAIT 0
-#define UMGAH_OFFSET 0
-#define CONE_OFFSET 0
-#define CONE_SPEED 0
-#define CONE_HITS 100
-#define CONE_DAMAGE 1
-#define CONE_LIFE 1
+static constexpr auto WeaponEnergyCost {0};
+static constexpr auto WeaponWait {0};
+static constexpr auto UmgahOffset {0};
+static constexpr auto ConeOffset {0};
+static constexpr auto ConeSpeed {0};
+static constexpr auto ConeHits {100};
+static constexpr auto ConeDamage {1};
+static constexpr auto ConeLife {1};
 
 // Retropropulsion
-#define SPECIAL_ENERGY_COST 1
-#define SPECIAL_WAIT 2
-#define JUMP_DIST DISPLAY_TO_WORLD(RES_SCALE(40))
+static constexpr auto SpecialEnergyCost {1};
+static constexpr auto SpecialWait {2};
+static auto JumpDist() { return DISPLAY_TO_WORLD(RES_SCALE(40)); }
 
 static RACE_DESC umgah_desc =
 	{
@@ -55,11 +55,11 @@ static RACE_DESC umgah_desc =
 		 "drone",
 		 FiresFore | ImmediateWeapon,
 		 7, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 UMGAH_RACE_STRINGS,
-		 UMGAH_ICON_MASK_PMAP_ANIM,
-		 UMGAH_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 UmgahRaceStrings,
+		 UmgahIconMaskPmapAnim,
+		 UmgahMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -71,38 +71,38 @@ static RACE_DESC umgah_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 UMGAH_BIG_MASK_PMAP_ANIM,
-			 UMGAH_MED_MASK_PMAP_ANIM,
-			 UMGAH_SML_MASK_PMAP_ANIM,
+			 UmgahBigMaskPmapAnim,
+			 UmgahMedMaskPmapAnim,
+			 UmgahSmlMaskPmapAnim,
 		 },
 		 {
-			 SPRITZ_MASK_PMAP_ANIM,
+			 SpritzMaskPmapAnim,
 			 NullResource,
 			 NullResource,
 		 },
 		 {
-			 CONE_BIG_MASK_ANIM,
-			 CONE_MED_MASK_ANIM,
-			 CONE_SML_MASK_ANIM,
+			 ConeBigMaskAnim,
+			 ConeMedMaskAnim,
+			 ConeSmlMaskAnim,
 		 },
-		 {UMGAH_CAPTAIN_MASK_PMAP_ANIM,
+		 {UmgahCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 UMGAH_VICTORY_SONG,
-		 UMGAH_SHIP_SOUNDS,
+		 UmgahVictorySong,
+		 UmgahShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -245,8 +245,8 @@ umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		}
 
 		EnoughJuice = (bool)((WORLD_TO_TURN(RES_DESCALE(
-								 JUMP_DIST * StarShipPtr->RaceDescPtr->ship_info.energy_level
-								 / SPECIAL_ENERGY_COST)))
+								 JumpDist() * StarShipPtr->RaceDescPtr->ship_info.energy_level
+								 / SpecialEnergyCost)))
 							 > this_turn);
 		const int32_t delta_x {lpEvalDesc->ObjectPtr->next.location.x - ShipPtr->next.location.x};
 		const int32_t delta_y {lpEvalDesc->ObjectPtr->next.location.y - ShipPtr->next.location.y};
@@ -340,13 +340,13 @@ initialize_cone(ELEMENT* ShipPtr, HELEMENT ConeArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = UMGAH_OFFSET;
-	MissileBlock.speed = CONE_SPEED;
-	MissileBlock.hit_points = CONE_HITS;
-	MissileBlock.damage = CONE_DAMAGE;
-	MissileBlock.life = CONE_LIFE;
+	MissileBlock.pixoffs = UmgahOffset;
+	MissileBlock.speed = ConeSpeed;
+	MissileBlock.hit_points = ConeHits;
+	MissileBlock.damage = ConeDamage;
+	MissileBlock.life = ConeLife;
 	MissileBlock.preprocess_func = cone_preprocess;
-	MissileBlock.blast_offs = CONE_OFFSET;
+	MissileBlock.blast_offs = ConeOffset;
 
 	// This func is called every frame while the player is holding down WeaponFlag
 	// Don't reset the cone FRAME to the first image every time
@@ -414,7 +414,7 @@ umgah_preprocess(ELEMENT* ElementPtr)
 	{
 		if (ElementPtr->thrust_wait == 0
 			&& (StarShipPtr->cur_status_flags & SpecialFlag)
-			&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+			&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 		{
 			uint16_t facing {};
 
@@ -424,12 +424,12 @@ umgah_preprocess(ELEMENT* ElementPtr)
 						 ElementPtr);
 			facing = FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HalfCircle;
 			DeltaVelocityComponents(&ElementPtr->velocity,
-									COSINE(facing, WORLD_TO_VELOCITY(JUMP_DIST)),
-									SINE(facing, WORLD_TO_VELOCITY(JUMP_DIST)));
+									COSINE(facing, WORLD_TO_VELOCITY(JumpDist())),
+									SINE(facing, WORLD_TO_VELOCITY(JumpDist())));
 			StarShipPtr->cur_status_flags &=
 				~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
 
-			StarShipPtr->special_counter = SPECIAL_WAIT;
+			StarShipPtr->special_counter = SpecialWait;
 		}
 	}
 }
@@ -445,14 +445,14 @@ init_umgah(void)
 {
 	if (IsHd())
 	{
-		umgah_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		umgah_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
+		umgah_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		umgah_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
 		umgah_desc.cyborg_control.WeaponRange = (LongRangeWeaponHd << 2);
 	}
 	else
 	{
-		umgah_desc.characteristics.max_thrust = MAX_THRUST;
-		umgah_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		umgah_desc.characteristics.max_thrust = MaxThrust;
+		umgah_desc.characteristics.thrust_increment = ThrustIncrement;
 		umgah_desc.cyborg_control.WeaponRange = (LongRangeWeapon << 2);
 	}
 

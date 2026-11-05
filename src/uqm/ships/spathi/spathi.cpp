@@ -21,42 +21,42 @@
 #include "resinst.h"
 
 // Core characteristics
-#define MAX_CREW 30
-#define MAX_ENERGY 10
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 10
-#define MAX_THRUST 48
-#define THRUST_INCREMENT 12
-#define THRUST_WAIT 1
-#define TURN_WAIT 1
-#define SHIP_MASS 5
+static constexpr auto MaxCrew {30};
+static constexpr auto MaxEnergy {10};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {10};
+static constexpr auto MaxThrust {48};
+static constexpr auto ThrustIncrement {12};
+static constexpr auto ThrustWait {1};
+static constexpr auto TurnWait {1};
+static constexpr auto ShipMass {5};
 
 // Forward gun
-#define WEAPON_ENERGY_COST 2
-#define WEAPON_WAIT 0
-#define SPATHI_FORWARD_OFFSET chooseIfHd(16, 59)
-#define MISSILE_SPEED DISPLAY_TO_WORLD(30)
-#define MISSILE_LIFE 10
-#define MISSILE_HITS 1
-#define MISSILE_DAMAGE 1
-#define MISSILE_OFFSET RES_SCALE(1)
-#define MISSILE_RANGE (MISSILE_SPEED * MISSILE_LIFE)
+static constexpr auto WeaponEnergyCost {2};
+static constexpr auto WeaponWait {0};
+static auto SpathiForwardOffset() { return chooseIfHd(16, 59); }
+static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(30)};
+static constexpr auto MissileLife {10};
+static constexpr auto MissileHits {1};
+static constexpr auto MissileDamage {1};
+static auto MissileOffset() { return RES_SCALE(1); }
+static constexpr auto MissileRange {(MissileSpeed * MissileLife)};
 /* This is for the cyborg only. */
 
 // B.U.T.T.
-#define SPECIAL_ENERGY_COST 3
-#define SPECIAL_WAIT 7
-#define SPATHI_REAR_OFFSET chooseIfHd(20, 71)
-#define DISCRIMINATOR_SPEED DISPLAY_TO_WORLD(RES_SCALE(8))
-#define DISCRIMINATOR_LIFE 30
-#define DISCRIMINATOR_HITS 1
-#define DISCRIMINATOR_DAMAGE 2
-#define DISCRIMINATOR_OFFSET RES_SCALE(4)
-#define TRACK_WAIT 1
+static constexpr auto SpecialEnergyCost {3};
+static constexpr auto SpecialWait {7};
+static auto SpathiRearOffset() { return chooseIfHd(20, 71); }
+static auto DiscriminatorSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(8)); }
+static constexpr auto DiscriminatorLife {30};
+static constexpr auto DiscriminatorHits {1};
+static constexpr auto DiscriminatorDamage {2};
+static auto DiscriminatorOffset() { return RES_SCALE(4); }
+static constexpr auto TrackWait {1};
 
 // HdResolutionFactor
-#define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
-#define MISSILE_RANGE_HD (MISSILE_SPEED_HD * MISSILE_LIFE)
+static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
+static auto MissileRangeHd() { return (MissileSpeedHd() * MissileLife); }
 
 static RACE_DESC spathi_desc =
 	{
@@ -64,11 +64,11 @@ static RACE_DESC spathi_desc =
 		 "eluder",
 		 FiresFore | FiresAft | SeekingSpecial | DontChase,
 		 18, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 SPATHI_RACE_STRINGS,
-		 SPATHI_ICON_MASK_PMAP_ANIM,
-		 SPATHI_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 SpathiRaceStrings,
+		 SpathiIconMaskPmapAnim,
+		 SpathiMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -80,38 +80,38 @@ static RACE_DESC spathi_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 SPATHI_BIG_MASK_PMAP_ANIM,
-			 SPATHI_MED_MASK_PMAP_ANIM,
-			 SPATHI_SML_MASK_PMAP_ANIM,
+			 SpathiBigMaskPmapAnim,
+			 SpathiMedMaskPmapAnim,
+			 SpathiSmlMaskPmapAnim,
 		 },
 		 {
-			 MISSILE_BIG_MASK_PMAP_ANIM,
-			 MISSILE_MED_MASK_PMAP_ANIM,
-			 MISSILE_SML_MASK_PMAP_ANIM,
+			 MissileBigMaskPmapAnim,
+			 MissileMedMaskPmapAnim,
+			 MissileSmlMaskPmapAnim,
 		 },
 		 {
-			 DISCRIM_BIG_MASK_PMAP_ANIM,
-			 DISCRIM_MED_MASK_PMAP_ANIM,
-			 DISCRIM_SML_MASK_PMAP_ANIM,
+			 DiscrimBigMaskPmapAnim,
+			 DiscrimMedMaskPmapAnim,
+			 DiscrimSmlMaskPmapAnim,
 		 },
-		 {SPATHI_CAPTAIN_MASK_PMAP_ANIM,
+		 {SpathiCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 SPATHI_VICTORY_SONG,
-		 SPATHI_SHIP_SOUNDS,
+		 SpathiVictorySong,
+		 SpathiShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -119,7 +119,7 @@ static RACE_DESC spathi_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_RANGE,
+			MissileRange,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -148,10 +148,10 @@ butt_missile_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->state_flags |= Changing;
 
 			SetVelocityVector(&ElementPtr->velocity,
-							  DISCRIMINATOR_SPEED, facing);
+							  DiscriminatorSpeed(), facing);
 		}
 
-		ElementPtr->turn_wait = TRACK_WAIT;
+		ElementPtr->turn_wait = TrackWait;
 	}
 }
 
@@ -170,20 +170,20 @@ spawn_butt_missile(ELEMENT* ShipPtr)
 						 + ANGLE_TO_FACING(HalfCircle));
 	ButtMissileBlock.sender = ShipPtr->playerNr;
 	ButtMissileBlock.flags = 0;
-	ButtMissileBlock.pixoffs = SPATHI_REAR_OFFSET;
-	ButtMissileBlock.speed = DISCRIMINATOR_SPEED;
-	ButtMissileBlock.hit_points = DISCRIMINATOR_HITS;
-	ButtMissileBlock.damage = DISCRIMINATOR_DAMAGE;
-	ButtMissileBlock.life = DISCRIMINATOR_LIFE;
+	ButtMissileBlock.pixoffs = SpathiRearOffset();
+	ButtMissileBlock.speed = DiscriminatorSpeed();
+	ButtMissileBlock.hit_points = DiscriminatorHits;
+	ButtMissileBlock.damage = DiscriminatorDamage;
+	ButtMissileBlock.life = DiscriminatorLife;
 	ButtMissileBlock.preprocess_func = butt_missile_preprocess;
-	ButtMissileBlock.blast_offs = DISCRIMINATOR_OFFSET;
+	ButtMissileBlock.blast_offs = DiscriminatorOffset();
 	HELEMENT ButtMissile {initialize_missile(&ButtMissileBlock)};
 	if (ButtMissile)
 	{
 		ELEMENT* ButtPtr {};
 
 		LockElement(ButtMissile, &ButtPtr);
-		ButtPtr->turn_wait = TRACK_WAIT;
+		ButtPtr->turn_wait = TrackWait;
 		SetElementStarShip(ButtPtr, StarShipPtr);
 
 		ProcessSound(GetSound(
@@ -261,13 +261,13 @@ initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = SPATHI_FORWARD_OFFSET;
-	MissileBlock.speed = MISSILE_SPEED_HD;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.pixoffs = SpathiForwardOffset();
+	MissileBlock.speed = MissileSpeedHd();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset();
 	MissileArray[0] = initialize_missile(&MissileBlock);
 
 	return (1);
@@ -281,7 +281,7 @@ spathi_postprocess(ELEMENT* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
-		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
 		spawn_butt_missile(ElementPtr);
 
@@ -295,15 +295,15 @@ init_spathi(void)
 {
 	if (IsHd())
 	{
-		spathi_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		spathi_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		spathi_desc.cyborg_control.WeaponRange = MISSILE_RANGE_HD;
+		spathi_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		spathi_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		spathi_desc.cyborg_control.WeaponRange = MissileRangeHd();
 	}
 	else
 	{
-		spathi_desc.characteristics.max_thrust = MAX_THRUST;
-		spathi_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		spathi_desc.cyborg_control.WeaponRange = MISSILE_RANGE;
+		spathi_desc.characteristics.max_thrust = MaxThrust;
+		spathi_desc.characteristics.thrust_increment = ThrustIncrement;
+		spathi_desc.cyborg_control.WeaponRange = MissileRange;
 	}
 
 	spathi_desc.postprocess_func = spathi_postprocess;

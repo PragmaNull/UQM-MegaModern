@@ -35,23 +35,23 @@ static LOCDATA orz_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		ORZ_PMAP_ANIM, /* AlienFrame */
-		ORZ_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		OrzPmapAnim, /* AlienFrame */
+		OrzFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		ORZ_COLOR_MAP, /* AlienColorMap */
-		ORZ_MUSIC, /* AlienSong */
+		OrzColorMap, /* AlienColorMap */
+		OrzMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		ORZ_CONVERSATION_PHRASES, /* PlayerPhrases */
+		OrzConversationPhrases, /* PlayerPhrases */
 		13, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
@@ -785,7 +785,7 @@ Intro(void)
 		// JMS_GFX: Use separate red angry graphics in hires instead of colormap transform.
 		if (IsHd())
 		{
-			CommData.AlienFrameRes = ORZ_ANGRY_PMAP_ANIM;
+			CommData.AlienFrameRes = OrzAngryPmapAnim;
 			CommData.AlienFrame = CaptureDrawable(
 				LoadGraphic(CommData.AlienFrameRes));
 		}

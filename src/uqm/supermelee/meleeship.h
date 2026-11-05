@@ -40,7 +40,7 @@ typedef enum MeleeShip
 	MELEE_NONE = (uint8_t)~0
 	// Empty fleet position.
 } MeleeShip;
-#define NUM_MELEE_SHIPS (MELEE_ZOQFOTPIK + 1)
+inline constexpr auto NumMeleeShips {(MELEE_ZOQFOTPIK + 1)};
 inline MeleeShip operator+=(MeleeShip lhs, int rhs) { return static_cast<MeleeShip>(static_cast<int>(lhs) + rhs); }
 inline MeleeShip operator-=(MeleeShip lhs, int rhs) { return static_cast<MeleeShip>(static_cast<int>(lhs) - rhs); }
 inline MeleeShip operator++(MeleeShip val) { return static_cast<MeleeShip>(static_cast<int>(val) + 1); }
@@ -49,7 +49,7 @@ inline MeleeShip operator--(MeleeShip val) { return static_cast<MeleeShip>(stati
 static inline bool
 MeleeShip_valid(MeleeShip ship)
 {
-	return (ship < NUM_MELEE_SHIPS) || (ship == MELEE_NONE);
+	return (ship < NumMeleeShips) || (ship == MELEE_NONE);
 }
 
 #if 0 //defined(__cplusplus)

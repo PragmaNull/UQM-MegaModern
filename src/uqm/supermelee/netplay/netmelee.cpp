@@ -326,6 +326,8 @@ void setBattleStateConnections(struct battlestate_struct* bs)
 	}
 }
 
+static constexpr auto MaxBlockTime {500};
+
 BATTLE_INPUT_STATE
 networkBattleInput(NetworkInputContext* context, STARSHIP* StarShipPtr)
 {
@@ -381,8 +383,7 @@ networkBattleInput(NetworkInputContext* context, STARSHIP* StarShipPtr)
 					"network input. Increase the input delay if this "
 					"happens a lot.\n", context->playerNr);
 #endif
-#define MAX_BLOCK_TIME 500
-			netInputBlocking(MAX_BLOCK_TIME);
+			netInputBlocking(MaxBlockTime);
 			if (!NetConnection_isConnected(conn))
 			{
 				// Connection aborted.
@@ -531,7 +532,7 @@ bool localReadyConnections(NetConnection_ReadyCallback readyCallback,
 
 /////////////////////////////////////////////////////////////////////////////
 
-#define NETWORK_POLL_DELAY (GameTicksPerSecond / 24)
+static constexpr auto NetworkPollDelay {(GameTicksPerSecond / 24)};
 
 typedef struct NegotiateReadyState NegotiateReadyState;
 struct NegotiateReadyState
@@ -548,7 +549,7 @@ struct NegotiateReadyState
 static bool
 negotiateReadyInputFunc(NegotiateReadyState* state)
 {
-	netInputBlocking(NETWORK_POLL_DELAY);
+	netInputBlocking(NetworkPollDelay);
 	// The timing out is necessary so that immediate key presses get
 	// handled while we wait. If we could do without the timeout,
 	// we wouldn't even need negotiateReadyInputFunc() and the
@@ -655,7 +656,7 @@ waitReadyCallback(NetConnection* conn, void* arg)
 static bool
 waitReadyInputFunc(WaitReadyState* state)
 {
-	netInputBlocking(NETWORK_POLL_DELAY);
+	netInputBlocking(NetworkPollDelay);
 	// The timing out is necessary so that immediate key presses get
 	// handled while we wait. If we could do without the timeout,
 	// we wouldn't even need negotiateReadyInputFunc() and the
@@ -706,7 +707,7 @@ struct WaitResetState
 static bool
 waitResetInputFunc(WaitResetState* state)
 {
-	netInputBlocking(NETWORK_POLL_DELAY);
+	netInputBlocking(NetworkPollDelay);
 	// The timing out is necessary so that immediate key presses get
 	// handled while we wait. If we could do without the timeout,
 	// we wouldn't even need waitResetInputFunc() and the

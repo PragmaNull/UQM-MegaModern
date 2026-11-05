@@ -29,73 +29,70 @@
 
 /* Core characteristics.
  * All of these are changed at init time by some module, except for
- * MAX_ENERGY, THRUST_INCREMENT, and SHIP_MASS. */
+ * MaxEnergySize, ThrustIncrement, and MaxShipMass. */
 
-#define MAX_CREW MaxCrewSize
 /* This value gets thrown out - actual max crew is determined by the
 		 * number of crew pods. The minimum value is 1 (just the Captain). */
 
-#define MAX_ENERGY MaxEnergySize
-#define ENERGY_REGENERATION 1
+static constexpr auto EnergyRegeneration {1};
 /* Shiva furnaces increase this by 1 each. */
-#define SHIVA_ENERGY_REGEN_INC 1
+static constexpr auto ShivaEnergyRegenInc {1};
 
-#define ENERGY_WAIT 10
+static constexpr auto EnergyWait {10};
 /* Dynamos decrease this by 2 each, to a minimum of 4. */
-#define MIN_ENERGY_WAIT 4
-#define DYNAMO_UNIT_ENERGY_WAIT_DEC 2
+static constexpr auto MinEnergyWait {4};
+static constexpr auto DynamoUnitEnergyWaitDec {2};
 
-#define MAX_THRUST 10
-/* Thrusters increase this and decrease THRUST_WAIT based on
-		 * THRUST_INCREMENT, see InitDriveSlots near the bottom of this file
+static constexpr auto MaxThrust {10};
+/* Thrusters increase this and decrease ThrustWait based on
+		 * ThrustIncrement, see InitDriveSlots near the bottom of this file
 		 * for details. */
-#define THRUST_INCREMENT 4
-#define THRUST_WAIT 6
-#define TURN_WAIT 17
+static constexpr auto ThrustIncrement {4};
+static constexpr auto ThrustWait {6};
+static constexpr auto TurnWait {17};
 /* Turning jets decrease by 2 each */
-#define SHIP_MASS MaxShipMass
 
 
 /* Primary weapon - energy cost and damage change at init time based on
  * the number and type of weapon modules installed. */
 
-#define BLASTER_DAMAGE 2
+static constexpr auto BlasterDamage {2};
 /* This is the damage value for the basic ion bolt guns. Fusion
-		 * blasters and hellbore cannons end up doing (BLASTER_DAMAGE * 2)
-		 * and (BLASTER_DAMAGE * 3) damage, respectively, but this depends
+		 * blasters and hellbore cannons end up doing (BlasterDamage * 2)
+		 * and (BlasterDamage * 3) damage, respectively, but this depends
 		 * on enum values. */
 
-#define BLASTER_HITS 2 /* Hitpoints for ion bolt guns, see BLASTER_DAMAGE */
+static constexpr auto BlasterHits {2}; /* Hitpoints for ion bolt guns, see BLASTER_DAMAGE */
 
-#define WEAPON_ENERGY_COST 1
+static constexpr auto WeaponEnergyCost {1};
 /* This value gets thrown out and reset in an ugly manner based on
 		 * the enum that is used for module IDs. Bigger gun = higher value.
 		 */
-#define WEAPON_WAIT 6
-#define BLASTER_SPEED DISPLAY_TO_WORLD(24)
-#define BLASTER_LIFE 12
+static constexpr auto WeaponWait {6};
+static constexpr auto BlasterSpeed {DISPLAY_TO_WORLD(24)};
+static constexpr auto BlasterLife {12};
 /* This value is greatly increased, based in part on the enum used
 		 * for module IDs (bigger gun == longer life). See the first half of
 		 * InitWeaponSlots */
-#define MAX_TRACKING 3
-#define TRACKER_ENERGY_COST ifHardDifficulty(6, 3)
-#define BLASTER_OFFSET RES_SCALE(8)
-#define SIS_VERT_OFFSET RES_SCALE(28)
+static constexpr auto MaxTracking {3};
+static auto TrackerEnergyCost() { return ifHardDifficulty(6, 3); }
+static auto BlasterOffset() { return RES_SCALE(8); }
+static auto SisVertOffset() { return RES_SCALE(28); }
 /* Used for foward, spread, and rear slots */
-#define SIS_HORZ_OFFSET RES_SCALE(20)
+static auto SisHorzOffset() { return RES_SCALE(20); }
 /* Used for side slot */
 
 /* Secondary weapon */
-#define SPECIAL_ENERGY_COST 0
+static constexpr auto SpecialEnergyCost {0};
 /* Increased by 1 for each point defense module */
-#define ANTIMISSILE_ENERGY_INC 1
-#define SPECIAL_WAIT 9
+static constexpr auto AntimissileEnergyInc {1};
+static constexpr auto SpecialWait {9};
 #define LASER_RANGE (uint16_t)RES_SCALE(100)
-#define MAX_DEFENSE 8
+static constexpr auto MaxDefense {8};
 
 // HdResolutionFactor
-#define BLASTER_SPEED_HD RES_SCALE(BLASTER_SPEED)
-#define BLASTER_SPEED_BOOL chooseIfHd(BLASTER_SPEED, BLASTER_SPEED_HD)
+static auto BlasterSpeedHd() { return RES_SCALE(BlasterSpeed); }
+static auto BlasterSpeedBool() { return chooseIfHd(BlasterSpeed, BlasterSpeedHd()); }
 
 
 static RACE_DESC sis_desc =
@@ -104,10 +101,10 @@ static RACE_DESC sis_desc =
 		 "flagship",
 		 0,
 		 16, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
+		 MaxCrewSize, MaxCrewSize,
+		 MaxEnergySize, MaxEnergySize,
 		 NullResource,
-		 SIS_ICON_MASK_PMAP_ANIM,
+		 SisIconMaskPmapAnim,
 		 NullResource,
 		 nullptr, nullptr, nullptr},
 		{
@@ -120,38 +117,38 @@ static RACE_DESC sis_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			MaxShipMass,
 		 },
 		{{
-			 SIS_BIG_MASK_PMAP_ANIM,
-			 SIS_MED_MASK_PMAP_ANIM,
-			 SIS_SML_MASK_PMAP_ANIM,
+			 SisBigMaskPmapAnim,
+			 SisMedMaskPmapAnim,
+			 SisSmlMaskPmapAnim,
 		 },
 		 {
-			 BLASTER_BIG_MASK_PMAP_ANIM,
-			 BLASTER_MED_MASK_PMAP_ANIM,
-			 BLASTER_SML_MASK_PMAP_ANIM,
+			 BlasterBigMaskPmapAnim,
+			 BlasterMedMaskPmapAnim,
+			 BlasterSmlMaskPmapAnim,
 		 },
 		 {
 			 NullResource,
 			 NullResource,
 			 NullResource,
 		 },
-		 {SIS_CAPTAIN_MASK_PMAP_ANIM,
+		 {SisCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 SIS_VICTORY_SONG,
-		 SIS_SHIP_SOUNDS,
+		 SisVictorySong,
+		 SisShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -159,7 +156,7 @@ static RACE_DESC sis_desc =
 		 nullptr},
 		{
 			0,
-			BLASTER_SPEED * BLASTER_LIFE,
+			BlasterSpeed * BlasterLife,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -407,6 +404,8 @@ LeaveAutoPilot:
 	}
 }
 
+static constexpr auto MenuDelay {10};
+
 static void
 sis_hyper_postprocess(ELEMENT* ElementPtr)
 {
@@ -418,10 +417,9 @@ sis_hyper_postprocess(ELEMENT* ElementPtr)
 	if (((StarShipPtr->cur_status_flags & WeaponFlag) || PulsedInputState.menu[KEY_MENU_CANCEL])
 		&& StarShipPtr->special_counter == 0)
 	{
-#define MENU_DELAY 10
 		HyperspaceMenu();
 		StarShipPtr->cur_status_flags &= ~ShipAtMaxSpeed;
-		StarShipPtr->special_counter = MENU_DELAY;
+		StarShipPtr->special_counter = MenuDelay;
 	}
 }
 
@@ -592,18 +590,18 @@ blaster_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		LockElement(hBlastElement, &BlastElementPtr);
 		switch (ElementPtr0->mass_points)
 		{
-			case BLASTER_DAMAGE * 1:
+			case BlasterDamage * 1:
 				BlastElementPtr->life_span = 2;
 				BlastElementPtr->current.image.frame =
 					SetAbsFrameIndex(ElementPtr0->current.image.frame, 0);
 				BlastElementPtr->preprocess_func = nullptr;
 				break;
-			case BLASTER_DAMAGE * 2:
+			case BlasterDamage * 2:
 				BlastElementPtr->life_span = 6;
 				BlastElementPtr->current.image.frame =
 					IncFrameIndex(ElementPtr0->current.image.frame);
 				break;
-			case BLASTER_DAMAGE * 3:
+			case BlasterDamage * 3:
 				BlastElementPtr->life_span = 7;
 				BlastElementPtr->current.image.frame =
 					SetAbsFrameIndex(ElementPtr0->current.image.frame, 20);
@@ -620,7 +618,7 @@ blaster_preprocess(ELEMENT* ElementPtr)
 
 	switch (ElementPtr->mass_points)
 	{
-		case BLASTER_DAMAGE * 1:
+		case BlasterDamage * 1:
 			if (GetFrameIndex(ElementPtr->current.image.frame) < 8)
 			{
 				ElementPtr->next.image.frame =
@@ -628,7 +626,7 @@ blaster_preprocess(ELEMENT* ElementPtr)
 				ElementPtr->state_flags |= Changing;
 			}
 			break;
-		case BLASTER_DAMAGE * 3:
+		case BlasterDamage * 3:
 			if (GetFrameIndex(ElementPtr->current.image.frame) < 19)
 			{
 				ElementPtr->next.image.frame =
@@ -655,7 +653,7 @@ blaster_preprocess(ELEMENT* ElementPtr)
 			GetVelocityTravelAngle(&ElementPtr->velocity)));
 		if (TrackShip(ElementPtr, &facing) > 0)
 		{
-			SetVelocityVector(&ElementPtr->velocity, BLASTER_SPEED_BOOL, facing);
+			SetVelocityVector(&ElementPtr->velocity, BlasterSpeedBool(), facing);
 		}
 
 		ElementPtr->turn_wait = uqm::makeByte(wait, wait);
@@ -805,12 +803,12 @@ InitWeaponSlots(RACE_DESC* RaceDescPtr, const uint8_t* ModuleSlots)
 			which_gun * (IfHard ? 4 : 2);
 
 		lpMB->flags = IgnoreSimilar;
-		lpMB->blast_offs = BLASTER_OFFSET;
-		lpMB->speed = BLASTER_SPEED_BOOL;
+		lpMB->blast_offs = BlasterOffset();
+		lpMB->speed = BlasterSpeedBool();
 		lpMB->preprocess_func = blaster_preprocess;
-		lpMB->hit_points = BLASTER_HITS * which_gun;
-		lpMB->damage = BLASTER_DAMAGE * which_gun;
-		lpMB->life = BLASTER_LIFE + ((BLASTER_LIFE >> 2) * (which_gun - 1));
+		lpMB->hit_points = BlasterHits * which_gun;
+		lpMB->damage = BlasterDamage * which_gun;
+		lpMB->life = BlasterLife + ((BlasterLife >> 2) * (which_gun - 1));
 
 		if (which_gun == 1)
 		{
@@ -829,12 +827,12 @@ InitWeaponSlots(RACE_DESC* RaceDescPtr, const uint8_t* ModuleSlots)
 		{
 			case 0: /* NOSE WeaponFlag */
 				RaceDescPtr->ship_info.ship_flags |= FiresFore;
-				lpMB->pixoffs = SIS_VERT_OFFSET;
+				lpMB->pixoffs = SisVertOffset();
 				lpMB->face = 0;
 				break;
 			case 1: /* SPREAD WeaponFlag */
 				RaceDescPtr->ship_info.ship_flags |= FiresFore;
-				lpMB->pixoffs = SIS_VERT_OFFSET;
+				lpMB->pixoffs = SisVertOffset();
 				lpMB->face = +1;
 				/* copy it because there are two */
 				lpMB[1] = lpMB[0];
@@ -845,7 +843,7 @@ InitWeaponSlots(RACE_DESC* RaceDescPtr, const uint8_t* ModuleSlots)
 			case 2: /* SIDE WeaponFlag */
 				RaceDescPtr->ship_info.ship_flags |=
 					FiresLeft | FiresRight;
-				lpMB->pixoffs = SIS_HORZ_OFFSET;
+				lpMB->pixoffs = SisHorzOffset();
 				lpMB->face = ANGLE_TO_FACING(Quadrant);
 				/* copy it because there are two */
 				lpMB[1] = lpMB[0];
@@ -855,7 +853,7 @@ InitWeaponSlots(RACE_DESC* RaceDescPtr, const uint8_t* ModuleSlots)
 				break;
 			case NumModuleSlots - 1: /* TAIL WeaponFlag */
 				RaceDescPtr->ship_info.ship_flags |= FiresAft;
-				lpMB->pixoffs = SIS_VERT_OFFSET;
+				lpMB->pixoffs = SisVertOffset();
 				lpMB->face = ANGLE_TO_FACING(HalfCircle);
 				break;
 		}
@@ -885,36 +883,36 @@ InitModuleSlots(RACE_DESC* RaceDescPtr, const uint8_t* ModuleSlots)
 				break;
 			case ANTIMISSILE_DEFENSE:
 				RaceDescPtr->characteristics.special_energy_cost +=
-					ANTIMISSILE_ENERGY_INC;
+					AntimissileEnergyInc;
 				break;
 			case SHIVA_FURNACE:
 				RaceDescPtr->characteristics.energy_regeneration +=
-					SHIVA_ENERGY_REGEN_INC;
+					ShivaEnergyRegenInc;
 				break;
 			case DYNAMO_UNIT:
 				RaceDescPtr->characteristics.energy_wait -=
-					DYNAMO_UNIT_ENERGY_WAIT_DEC;
-				if (RaceDescPtr->characteristics.energy_wait < MIN_ENERGY_WAIT)
+					DynamoUnitEnergyWaitDec;
+				if (RaceDescPtr->characteristics.energy_wait < MinEnergyWait)
 				{
-					RaceDescPtr->characteristics.energy_wait = MIN_ENERGY_WAIT;
+					RaceDescPtr->characteristics.energy_wait = MinEnergyWait;
 				}
 				break;
 		}
 	}
 
-	if (num_trackers > MAX_TRACKING)
+	if (num_trackers > MaxTracking)
 	{
-		num_trackers = MAX_TRACKING;
+		num_trackers = MaxTracking;
 	}
 	RaceDescPtr->characteristics.weapon_energy_cost +=
-		num_trackers * TRACKER_ENERGY_COST;
+		num_trackers * TrackerEnergyCost();
 	SisData->num_trackers = num_trackers;
 	if (RaceDescPtr->characteristics.special_energy_cost)
 	{
 		RaceDescPtr->ship_info.ship_flags |= PointDefense;
-		if (RaceDescPtr->characteristics.special_energy_cost > MAX_DEFENSE)
+		if (RaceDescPtr->characteristics.special_energy_cost > MaxDefense)
 		{
-			RaceDescPtr->characteristics.special_energy_cost = MAX_DEFENSE;
+			RaceDescPtr->characteristics.special_energy_cost = MaxDefense;
 		}
 	}
 }
@@ -934,7 +932,7 @@ InitDriveSlots(RACE_DESC* RaceDescPtr, const uint8_t* DriveSlots)
 				break;
 		}
 	}
-	RaceDescPtr->characteristics.thrust_wait = (uint8_t)(THRUST_WAIT - (RaceDescPtr->characteristics.thrust_wait >> 1));
+	RaceDescPtr->characteristics.thrust_wait = (uint8_t)(ThrustWait - (RaceDescPtr->characteristics.thrust_wait >> 1));
 	RaceDescPtr->characteristics.max_thrust =
 		((RaceDescPtr->characteristics.max_thrust / RaceDescPtr->characteristics.thrust_increment) + 1)
 		* RaceDescPtr->characteristics.thrust_increment;
@@ -966,15 +964,15 @@ init_sis(void)
 
 	if (IsHd())
 	{
-		sis_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		sis_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		sis_desc.cyborg_control.WeaponRange = BLASTER_SPEED_HD * BLASTER_LIFE;
+		sis_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		sis_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		sis_desc.cyborg_control.WeaponRange = BlasterSpeedHd() * BlasterLife;
 	}
 	else
 	{
-		sis_desc.characteristics.max_thrust = MAX_THRUST;
-		sis_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		sis_desc.cyborg_control.WeaponRange = BLASTER_SPEED * BLASTER_LIFE;
+		sis_desc.characteristics.max_thrust = MaxThrust;
+		sis_desc.characteristics.thrust_increment = ThrustIncrement;
+		sis_desc.cyborg_control.WeaponRange = BlasterSpeed * BlasterLife;
 	}
 
 	/* copy initial ship settings to new_sis_desc */
@@ -995,7 +993,7 @@ init_sis(void)
 		new_sis_desc.ship_data.victory_ditty_rsc = NullResource;
 		new_sis_desc.ship_data.ship_sounds_rsc = NullResource;
 
-		new_sis_desc.ship_data.ship_rsc[0] = SIS_HYPER_MASK_PMAP_ANIM;
+		new_sis_desc.ship_data.ship_rsc[0] = SisHyperMaskPmapAnim;
 
 		new_sis_desc.preprocess_func = sis_hyper_preprocess;
 		new_sis_desc.postprocess_func = sis_hyper_postprocess;
@@ -1011,17 +1009,17 @@ init_sis(void)
 
 		if (uqm::UQMOptions::read().flagshipColor == uqm::EmulationMode::Console3DO)
 		{
-			new_sis_desc.ship_info.icons_rsc = SIS_ICON_MASK_PMAP_ANIM_RED;
-			new_sis_desc.ship_data.ship_rsc[0] = SIS_BIG_MASK_PMAP_ANIM_RED;
-			new_sis_desc.ship_data.ship_rsc[1] = SIS_MED_MASK_PMAP_ANIM_RED;
-			new_sis_desc.ship_data.ship_rsc[2] = SIS_SML_MASK_PMAP_ANIM_RED;
+			new_sis_desc.ship_info.icons_rsc = SisIconMaskPmapAnimRed;
+			new_sis_desc.ship_data.ship_rsc[0] = SisBigMaskPmapAnimRed;
+			new_sis_desc.ship_data.ship_rsc[1] = SisMedMaskPmapAnimRed;
+			new_sis_desc.ship_data.ship_rsc[2] = SisSmlMaskPmapAnimRed;
 		}
 		else
 		{
-			new_sis_desc.ship_info.icons_rsc = SIS_ICON_MASK_PMAP_ANIM;
-			new_sis_desc.ship_data.ship_rsc[0] = SIS_BIG_MASK_PMAP_ANIM;
-			new_sis_desc.ship_data.ship_rsc[1] = SIS_MED_MASK_PMAP_ANIM;
-			new_sis_desc.ship_data.ship_rsc[2] = SIS_SML_MASK_PMAP_ANIM;
+			new_sis_desc.ship_info.icons_rsc = SisIconMaskPmapAnim;
+			new_sis_desc.ship_data.ship_rsc[0] = SisBigMaskPmapAnim;
+			new_sis_desc.ship_data.ship_rsc[1] = SisMedMaskPmapAnim;
+			new_sis_desc.ship_data.ship_rsc[2] = SisSmlMaskPmapAnim;
 		}
 
 		if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 3)

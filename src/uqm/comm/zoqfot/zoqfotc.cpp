@@ -25,21 +25,18 @@
 #include "uqm/gameev.h"
 
 
-#define ZOQ_FG_COLOR WhiteColor
-#define ZOQ_BG_COLOR BlackColor
-#define ZOQ_BASE_X (TextXOffs() + ((SisTextWidth() >> 1) >> 1))
-#define ZOQ_BASE_Y RES_SCALE(24)
-#define ZOQ_TALK_INDEX 18
-#define ZOQ_TALK_FRAMES 5
-#define FOT_TO_ZOQ 23
+static auto ZoqBaseX() { return (TextXOffs() + ((SisTextWidth() >> 1) >> 1)); }
+static auto ZoqBaseY() { return RES_SCALE(24); }
+static constexpr auto ZoqTalkIndex {18};
+static constexpr auto ZoqTalkFrames {5};
+static constexpr auto FotToZoq {23};
 
-#define PIK_FG_COLOR WhiteColor
-#define PIK_BG_COLOR BlackColor
-#define PIK_BASE_X (SisScreenWidth() - (TextXOffs() + ((SisTextWidth() >> 1) >> 1)))
-#define PIK_BASE_Y RES_SCALE(24)
-#define PIK_TALK_INDEX 29
-#define PIK_TALK_FRAMES 2
-#define FOT_TO_PIK 26
+
+static auto PikBaseX() { return (SisScreenWidth() - (TextXOffs() + ((SisTextWidth() >> 1) >> 1))); }
+static auto PikBaseY() { return RES_SCALE(24); }
+static constexpr auto PikTalkIndex {29};
+static constexpr auto PikTalkFrames {2};
+static constexpr auto FotToPik {26};
 
 static LOCDATA zoqfot_desc =
 	{
@@ -47,22 +44,22 @@ static LOCDATA zoqfot_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		ZOQFOTPIK_PMAP_ANIM, /* AlienFrame */
-		ZOQFOTPIK_FONT, /* AlienFont */
-		UndefinedColorInit, /* AlienTextFColor */
-		UndefinedColorInit, /* AlienTextBColor */
+		ZoqfotpikPmapAnim, /* AlienFrame */
+		ZoqfotpikFont, /* AlienFont */
+		UndefinedColor, /* AlienTextFColor */
+		UndefinedColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0, /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
-		ZOQFOTPIK_COLOR_MAP, /* AlienColorMap */
-		ZOQFOTPIK_MUSIC, /* AlienSong */
+		ZoqfotpikColorMap, /* AlienColorMap */
+		ZoqfotpikMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		ZOQFOTPIK_CONVERSATION_PHRASES, /* PlayerPhrases */
+		ZoqfotpikConversationPhrases, /* PlayerPhrases */
 		3, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
@@ -103,9 +100,9 @@ static LOCDATA zoqfot_desc =
 								},
 		{
 								/* AlienTransitionDesc - Move Eye */
-			FOT_TO_ZOQ, /* StartIndex */
-			3,			/* NumFrames */
-			0,			/* AnimFlags */
+			FotToZoq, /* StartIndex */
+			3,		  /* NumFrames */
+			0,		  /* AnimFlags */
 			GameTicksPerSecond / 30,
 								0, /* FrameRate */
 			0,
@@ -114,9 +111,9 @@ static LOCDATA zoqfot_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			ZOQ_TALK_INDEX,	 /* StartIndex */
-			ZOQ_TALK_FRAMES, /* NumFrames */
-			0,				 /* AnimFlags */
+			ZoqTalkIndex,  /* StartIndex */
+			ZoqTalkFrames, /* NumFrames */
+			0,			   /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,
@@ -154,15 +151,15 @@ SelectAlienZOQ(CallbackArg arg)
 		}
 		LastAlien = ZOQ_ALIEN;
 		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
-		CommData.AlienTransitionDesc.StartIndex = FOT_TO_ZOQ;
-		CommData.AlienTalkDesc.StartIndex = ZOQ_TALK_INDEX;
-		CommData.AlienTalkDesc.NumFrames = ZOQ_TALK_FRAMES;
+		CommData.AlienTransitionDesc.StartIndex = FotToZoq;
+		CommData.AlienTalkDesc.StartIndex = ZoqTalkIndex;
+		CommData.AlienTalkDesc.NumFrames = ZoqTalkFrames;
 		CommData.AlienAmbientArray[1].AnimFlags &= ~WaitTalking;
 
-		CommData.AlienTextBaseline.x = (int16_t)ZOQ_BASE_X;
-		CommData.AlienTextBaseline.y = ZOQ_BASE_Y;
-		CommData.AlienTextFColor = ZOQ_FG_COLOR;
-		CommData.AlienTextBColor = ZOQ_BG_COLOR;
+		CommData.AlienTextBaseline.x = (int16_t)ZoqBaseX();
+		CommData.AlienTextBaseline.y = ZoqBaseY();
+		CommData.AlienTextFColor = WhiteColor;
+		CommData.AlienTextBColor = BlackColor;
 	}
 
 	(void)arg; // ignored
@@ -181,15 +178,15 @@ SelectAlienPIK(CallbackArg arg)
 		}
 		LastAlien = PIK_ALIEN;
 		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
-		CommData.AlienTransitionDesc.StartIndex = FOT_TO_PIK;
-		CommData.AlienTalkDesc.StartIndex = PIK_TALK_INDEX;
-		CommData.AlienTalkDesc.NumFrames = PIK_TALK_FRAMES;
+		CommData.AlienTransitionDesc.StartIndex = FotToPik;
+		CommData.AlienTalkDesc.StartIndex = PikTalkIndex;
+		CommData.AlienTalkDesc.NumFrames = PikTalkFrames;
 		CommData.AlienAmbientArray[1].AnimFlags |= WaitTalking;
 
-		CommData.AlienTextBaseline.x = (int16_t)PIK_BASE_X;
-		CommData.AlienTextBaseline.y = PIK_BASE_Y;
-		CommData.AlienTextFColor = PIK_FG_COLOR;
-		CommData.AlienTextBColor = PIK_BG_COLOR;
+		CommData.AlienTextBaseline.x = (int16_t)PikBaseX();
+		CommData.AlienTextBaseline.y = PikBaseY();
+		CommData.AlienTextFColor = WhiteColor;
+		CommData.AlienTextBColor = BlackColor;
 	}
 
 	(void)arg; // ignored
@@ -590,6 +587,12 @@ ZoqFotInfo(RESPONSE_REF R)
 	}
 }
 
+static constexpr auto UtwigBuyTime {(1 << 0)};
+static constexpr auto KohrAhWin {(1 << 1)};
+static constexpr auto UrquanLose {(1 << 2)};
+static constexpr auto KohrAhKill {(1 << 3)};
+static constexpr auto KnowAll {(UtwigBuyTime | KohrAhWin | UrquanLose | KohrAhKill)};
+
 static void
 ZoqFotHome(RESPONSE_REF R)
 {
@@ -650,16 +653,11 @@ ZoqFotHome(RESPONSE_REF R)
 	}
 	else if (PLAYER_SAID(R, any_war_news))
 	{
-#define UTWIG_BUY_TIME (1 << 0)
-#define KOHR_AH_WIN (1 << 1)
-#define URQUAN_LOSE (1 << 2)
-#define KOHR_AH_KILL (1 << 3)
-#define KNOW_ALL (UTWIG_BUY_TIME | KOHR_AH_WIN | URQUAN_LOSE | KOHR_AH_KILL)
 		uint8_t KnowMask {};
 
 		NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
 		KnowMask = GET_GAME_STATE(ZOQFOT_KNOW_MASK);
-		if (!(KnowMask & KOHR_AH_KILL) && GET_GAME_STATE(KOHR_AH_FRENZY))
+		if (!(KnowMask & KohrAhKill) && GET_GAME_STATE(KOHR_AH_FRENZY))
 		{
 			NPCPhrase_cb(KOHRAH_FRENZY0, &SelectAlienZOQ);
 			NPCPhrase_cb(KOHRAH_FRENZY1, &SelectAlienPIK);
@@ -675,9 +673,9 @@ ZoqFotHome(RESPONSE_REF R)
 			NPCPhrase_cb(KOHRAH_FRENZY11, &SelectAlienPIK);
 			ZFPTalkSegue((uint16_t)~0);
 
-			KnowMask = KNOW_ALL;
+			KnowMask = KnowAll;
 		}
-		else if (!(KnowMask & UTWIG_BUY_TIME)
+		else if (!(KnowMask & UtwigBuyTime)
 				 && NumVisits > 0 && NumVisits < 5)
 		{
 			NPCPhrase_cb(UTWIG_DELAY0, &SelectAlienZOQ);
@@ -696,7 +694,7 @@ ZoqFotHome(RESPONSE_REF R)
 			NPCPhrase_cb(UTWIG_DELAY13, &SelectAlienPIK);
 			ZFPTalkSegue((uint16_t)~0);
 
-			KnowMask |= UTWIG_BUY_TIME;
+			KnowMask |= UtwigBuyTime;
 		}
 		else
 		{
@@ -712,7 +710,7 @@ ZoqFotHome(RESPONSE_REF R)
 			{
 				i = 0;
 			}
-			if (!(KnowMask & URQUAN_LOSE) && i <= 0)
+			if (!(KnowMask & UrquanLose) && i <= 0)
 			{
 				NPCPhrase_cb(URQUAN_NEARLY_GONE0, &SelectAlienZOQ);
 				NPCPhrase_cb(URQUAN_NEARLY_GONE1, &SelectAlienPIK);
@@ -722,9 +720,9 @@ ZoqFotHome(RESPONSE_REF R)
 				NPCPhrase_cb(URQUAN_NEARLY_GONE5, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 
-				KnowMask |= KOHR_AH_WIN | URQUAN_LOSE;
+				KnowMask |= KohrAhWin | UrquanLose;
 			}
-			else if (!(KnowMask & KOHR_AH_WIN) && i == 1)
+			else if (!(KnowMask & KohrAhWin) && i == 1)
 			{
 				NPCPhrase_cb(KOHRAH_WINNING0, &SelectAlienZOQ);
 				NPCPhrase_cb(KOHRAH_WINNING1, &SelectAlienPIK);
@@ -738,7 +736,7 @@ ZoqFotHome(RESPONSE_REF R)
 				NPCPhrase_cb(KOHRAH_WINNING9, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 
-				KnowMask |= KOHR_AH_WIN;
+				KnowMask |= KohrAhWin;
 			}
 			else
 			{

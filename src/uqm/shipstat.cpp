@@ -25,6 +25,8 @@
 #include "menustat.h"
 #include "util.h"
 
+static constexpr auto LowFuelColor {BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E)};
+
 void DrawCrewFuelString(int16_t y, int16_t state)
 {
 	STAMP Stamp;
@@ -70,8 +72,7 @@ void DrawCrewFuelString(int16_t y, int16_t state)
 	}
 	else
 	{
-#define LOW_FUEL_COLOR BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E)
-		SetContextForeGroundColor(LOW_FUEL_COLOR);
+		SetContextForeGroundColor(LowFuelColor);
 		DrawFilledStamp(&Stamp);
 	}
 }
@@ -369,6 +370,12 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 	SetContext(OldContext);
 }
 
+static constexpr auto CrewUnitColor {BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)};
+
+static constexpr auto RobotUnitColor {BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08)};
+static constexpr auto PlayerUnitColor {BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)};
+static constexpr auto FuelUnitColor {BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x04)};
+
 // Pre: -crew_delta <= ShipInfoPtr->crew_level
 //      crew_delta <= ShipInfoPtr->max_crew - ShipInfoPtr->crew_level
 void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
@@ -403,12 +410,10 @@ void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
 		if (crew_delta > 0)
 		{
 			r.corner.y = (y + RES_SCALE(1)) - (((oldNumBlocks + 1) >> 1) * (UnitHeight() + RES_SCALE(1)));
-#define CREW_UNIT_COLOR BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)
-#define ROBOT_UNIT_COLOR BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08)
 			SetContextForeGroundColor(
 				(ShipInfoPtr->ship_flags & CrewImmune) ?
-					ROBOT_UNIT_COLOR :
-					CREW_UNIT_COLOR);
+					RobotUnitColor :
+					CrewUnitColor);
 			for (blockI = oldNumBlocks; blockI < newNumBlocks; blockI++)
 			{
 				r.corner.x = x + (CrewXoffs() + RES_SCALE(1));
@@ -441,11 +446,10 @@ void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
 			if (((ShipInfoPtr->crew_level > MaxCrewSize) != (newCrewLevel > MaxCrewSize) || ShipInfoPtr->crew_level == 0) && newCrewLevel != 0)
 			{
 				// The block indicating the captain needs to change color.
-#define PLAYER_UNIT_COLOR BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)
 				SetContextForeGroundColor(
 					(newCrewLevel > MaxCrewSize) ?
-						CREW_UNIT_COLOR :
-						PLAYER_UNIT_COLOR);
+						CrewUnitColor :
+						PlayerUnitColor);
 				r.corner.x = x + (CrewXoffs() + RES_SCALE(1)) + (UnitWidth() + RES_SCALE(1));
 				r.corner.y = y - UnitHeight();
 				DrawFilledRectangle(&r);
@@ -466,8 +470,7 @@ void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
 	{
 		if (energy_delta > 0)
 		{
-#define FUEL_UNIT_COLOR BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x04)
-			SetContextForeGroundColor(FUEL_UNIT_COLOR);
+			SetContextForeGroundColor(FuelUnitColor);
 			r.corner.y = (y + RES_SCALE(1)) - (((ShipInfoPtr->energy_level + 1) >> 1) * (UnitHeight() + RES_SCALE(1)));
 			do
 			{

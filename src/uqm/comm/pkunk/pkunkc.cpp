@@ -30,23 +30,23 @@ static LOCDATA pkunk_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		PKUNK_PMAP_ANIM, /* AlienFrame */
-		PKUNK_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		PkunkPmapAnim, /* AlienFrame */
+		PkunkFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		PKUNK_COLOR_MAP, /* AlienColorMap */
-		PKUNK_MUSIC, /* AlienSong */
+		PkunkColorMap, /* AlienColorMap */
+		PkunkMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		PKUNK_CONVERSATION_PHRASES, /* PlayerPhrases */
+		PkunkConversationPhrases, /* PlayerPhrases */
 		3, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
@@ -115,10 +115,10 @@ static LOCDATA pkunk_desc =
 		nullptr,
 };
 
-#define GOOD_REASON_1 (1 << 0)
-#define GOOD_REASON_2 (1 << 1)
-#define BAD_REASON_1 (1 << 2)
-#define BAD_REASON_2 (1 << 3)
+static constexpr auto GoodReason1 {(1 << 0)};
+static constexpr auto GoodReason2 {(1 << 1)};
+static constexpr auto BadReason1 {(1 << 2)};
+static constexpr auto BadReason2 {(1 << 3)};
 
 static void
 ExitConversation(RESPONSE_REF R)
@@ -218,24 +218,24 @@ ExitConversation(RESPONSE_REF R)
 		if (PLAYER_SAID(R, good_reason_1))
 		{
 			NPCPhrase(WE_GO_HOME_1);
-			ReasonMask |= GOOD_REASON_1;
+			ReasonMask |= GoodReason1;
 			AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_PKUNK_MISSION);
 		}
 		else if (PLAYER_SAID(R, good_reason_2))
 		{
 			NPCPhrase(WE_GO_HOME_2);
-			ReasonMask |= GOOD_REASON_2;
+			ReasonMask |= GoodReason2;
 			AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_PKUNK_MISSION);
 		}
 		else if (PLAYER_SAID(R, bad_reason_1))
 		{
 			NPCPhrase(NO_GO_HOME_1);
-			ReasonMask |= BAD_REASON_1;
+			ReasonMask |= BadReason1;
 		}
 		else if (PLAYER_SAID(R, bad_reason_2))
 		{
 			NPCPhrase(NO_GO_HOME_2);
-			ReasonMask |= BAD_REASON_2;
+			ReasonMask |= BadReason2;
 		}
 		SET_GAME_STATE(PKUNK_REASONS, ReasonMask);
 	}
@@ -880,19 +880,19 @@ PkunkMigrate(RESPONSE_REF R)
 	(void)R; // ignored
 
 	ReasonMask = GET_GAME_STATE(PKUNK_REASONS);
-	if (!(ReasonMask & GOOD_REASON_1))
+	if (!(ReasonMask & GoodReason1))
 	{
 		Response(good_reason_1, ExitConversation);
 	}
-	if (!(ReasonMask & BAD_REASON_1))
+	if (!(ReasonMask & BadReason1))
 	{
 		Response(bad_reason_1, ExitConversation);
 	}
-	if (!(ReasonMask & GOOD_REASON_2))
+	if (!(ReasonMask & GoodReason2))
 	{
 		Response(good_reason_2, ExitConversation);
 	}
-	if (!(ReasonMask & BAD_REASON_2))
+	if (!(ReasonMask & BadReason2))
 	{
 		Response(bad_reason_2, ExitConversation);
 	}

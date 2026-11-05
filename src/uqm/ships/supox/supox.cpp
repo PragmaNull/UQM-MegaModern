@@ -24,34 +24,34 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 12
-#define MAX_ENERGY 16
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 4
-#define MAX_THRUST 40
-#define THRUST_INCREMENT 8
-#define THRUST_WAIT 0
-#define TURN_WAIT 1
-#define SHIP_MASS 4
+static constexpr auto MaxCrew {12};
+static constexpr auto MaxEnergy {16};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {4};
+static constexpr auto MaxThrust {40};
+static constexpr auto ThrustIncrement {8};
+static constexpr auto ThrustWait {0};
+static constexpr auto TurnWait {1};
+static constexpr auto ShipMass {4};
 
 // Gob launcher
-#define WEAPON_ENERGY_COST 1
-#define WEAPON_WAIT 2
-#define SUPOX_OFFSET RES_SCALE(23)
-#define MISSILE_OFFSET 2
-#define MISSILE_SPEED DISPLAY_TO_WORLD(30)
-#define MISSILE_LIFE 10
-#define MISSILE_HITS 1
-#define MISSILE_DAMAGE 1
+static constexpr auto WeaponEnergyCost {1};
+static constexpr auto WeaponWait {2};
+static auto SupoxOffset() { return RES_SCALE(23); }
+static constexpr auto MissileOffset {2};
+static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(30)};
+static constexpr auto MissileLife {10};
+static constexpr auto MissileHits {1};
+static constexpr auto MissileDamage {1};
 
 // Lateral/reverse thrust
-#define SPECIAL_ENERGY_COST 1
+static constexpr auto SpecialEnergyCost {1};
 /* Unused - uncomment below to enable. */
-#define SPECIAL_WAIT 0
+static constexpr auto SpecialWait {0};
 /* Unused except to initialize supox_desc.special_wait */
 
 // HdResolutionFactor
-#define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
+static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
 
 static RACE_DESC supox_desc =
 	{
@@ -59,11 +59,11 @@ static RACE_DESC supox_desc =
 		 "blade",
 		 FiresFore,
 		 16, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 SUPOX_RACE_STRINGS,
-		 SUPOX_ICON_MASK_PMAP_ANIM,
-		 SUPOX_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 SupoxRaceStrings,
+		 SupoxIconMaskPmapAnim,
+		 SupoxMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -75,38 +75,38 @@ static RACE_DESC supox_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 SUPOX_BIG_MASK_PMAP_ANIM,
-			 SUPOX_MED_MASK_PMAP_ANIM,
-			 SUPOX_SML_MASK_PMAP_ANIM,
+			 SupoxBigMaskPmapAnim,
+			 SupoxMedMaskPmapAnim,
+			 SupoxSmlMaskPmapAnim,
 		 },
 		 {
-			 GOB_BIG_MASK_PMAP_ANIM,
-			 GOB_MED_MASK_PMAP_ANIM,
-			 GOB_SML_MASK_PMAP_ANIM,
+			 GobBigMaskPmapAnim,
+			 GobMedMaskPmapAnim,
+			 GobSmlMaskPmapAnim,
 		 },
 		 {
 			 NullResource,
 			 NullResource,
 			 NullResource,
 		 },
-		 {SUPOX_CAPTAIN_MASK_PMAP_ANIM,
+		 {SupoxCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 SUPOX_VICTORY_SONG,
-		 SUPOX_SHIP_SOUNDS,
+		 SupoxVictorySong,
+		 SupoxShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -114,7 +114,7 @@ static RACE_DESC supox_desc =
 		 nullptr},
 		{
 			0,
-			(MISSILE_SPEED * MISSILE_LIFE) >> 1,
+			(MissileSpeed * MissileLife) >> 1,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -218,13 +218,13 @@ initialize_horn(ELEMENT* ShipPtr, HELEMENT HornArray[])
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = SUPOX_OFFSET;
-	MissileBlock.speed = MISSILE_SPEED_HD;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.pixoffs = SupoxOffset();
+	MissileBlock.speed = MissileSpeedHd();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset;
 	HornArray[0] = initialize_missile(&MissileBlock);
 	return (1);
 }
@@ -237,7 +237,7 @@ supox_preprocess(ELEMENT* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		/*
-			&& DeltaEnergy (ElementPtr, -SPECIAL_ENERGY_COST)
+			&& DeltaEnergy (ElementPtr, -SpecialEnergyCost)
 */
 	)
 	{
@@ -305,16 +305,16 @@ init_supox(void)
 {
 	if (IsHd())
 	{
-		supox_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		supox_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		supox_desc.cyborg_control.WeaponRange = (MISSILE_SPEED_HD * MISSILE_LIFE) >> 1;
+		supox_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		supox_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		supox_desc.cyborg_control.WeaponRange = (MissileSpeedHd() * MissileLife) >> 1;
 	}
 	else
 	{
-		supox_desc.characteristics.max_thrust = MAX_THRUST;
-		supox_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		supox_desc.characteristics.max_thrust = MaxThrust;
+		supox_desc.characteristics.thrust_increment = ThrustIncrement;
 		supox_desc.cyborg_control.WeaponRange =
-			(MISSILE_SPEED * MISSILE_LIFE) >> 1;
+			(MissileSpeed * MissileLife) >> 1;
 	}
 
 	supox_desc.preprocess_func = supox_preprocess;

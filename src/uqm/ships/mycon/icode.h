@@ -2,4 +2,4 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define MYCON_CODE "ship.mycon.code"
+inline constexpr uqgsl::czstring MyconCode {"ship.mycon.code"};

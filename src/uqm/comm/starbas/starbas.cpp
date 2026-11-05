@@ -45,23 +45,23 @@ static LOCDATA commander_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		COMMANDER_PMAP_ANIM, /* AlienFrame */
-		COMMANDER_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		CommanderPmapAnim, /* AlienFrame */
+		CommanderFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth(), */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
-		COMMANDER_COLOR_MAP, /* AlienColorMap */
-		COMMANDER_MUSIC, /* AlienSong */
+		CommanderColorMap, /* AlienColorMap */
+		CommanderMusic, /* AlienSong */
 		{
-								COMMANDER_PMAP_ANIM_RED, /* AlienAltFrame */
-			NullResource,			 /* AlienAltColorMap */
-			STARBASE_ALT_MUSIC,		 /* AlienAltSong */
+								CommanderPmapAnimRed, /* AlienAltFrame */
+			NullResource,		  /* AlienAltColorMap */
+			StarbaseAltMusic,	  /* AlienAltSong */
 		},
-		STARBASE_CONVERSATION_PHRASES, /* PlayerPhrases */
+		StarbaseConversationPhrases, /* PlayerPhrases */
 		10, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
@@ -452,15 +452,16 @@ static uint8_t stack1;
 static uint8_t stack2;
 static uint8_t stack3;
 
+static constexpr auto AllianceShofixti {(1 << 0)};
+static constexpr auto AllianceYehat {(1 << 1)};
+static constexpr auto AllianceArilou {(1 << 2)};
+static constexpr auto AllianceChenjesu {(1 << 3)};
+static constexpr auto AllianceMmrnmhrm {(1 << 4)};
+static constexpr auto AllianceSyreen {(1 << 5)};
+
 static void
 AllianceInfo(RESPONSE_REF R)
 {
-#define ALLIANCE_SHOFIXTI (1 << 0)
-#define ALLIANCE_YEHAT (1 << 1)
-#define ALLIANCE_ARILOU (1 << 2)
-#define ALLIANCE_CHENJESU (1 << 3)
-#define ALLIANCE_MMRNMHRM (1 << 4)
-#define ALLIANCE_SYREEN (1 << 5)
 	static uint8_t AllianceMask = 0;
 
 	if (PLAYER_SAID(R, what_about_alliance))
@@ -471,72 +472,73 @@ AllianceInfo(RESPONSE_REF R)
 	else if (PLAYER_SAID(R, shofixti))
 	{
 		NPCPhrase(ABOUT_SHOFIXTI);
-		AllianceMask |= ALLIANCE_SHOFIXTI;
+		AllianceMask |= AllianceShofixti;
 		SetHomeworldKnown(SHOFIXTI_HOME);
 	}
 	else if (PLAYER_SAID(R, yehat))
 	{
 		NPCPhrase(ABOUT_YEHAT);
-		AllianceMask |= ALLIANCE_YEHAT;
+		AllianceMask |= AllianceYehat;
 	}
 	else if (PLAYER_SAID(R, arilou))
 	{
 		NPCPhrase(ABOUT_ARILOU);
-		AllianceMask |= ALLIANCE_ARILOU;
+		AllianceMask |= AllianceArilou;
 	}
 	else if (PLAYER_SAID(R, chenjesu))
 	{
 		NPCPhrase(ABOUT_CHENJESU);
-		AllianceMask |= ALLIANCE_CHENJESU;
+		AllianceMask |= AllianceChenjesu;
 	}
 	else if (PLAYER_SAID(R, mmrnmhrm))
 	{
 		NPCPhrase(ABOUT_MMRNMHRM);
-		AllianceMask |= ALLIANCE_MMRNMHRM;
+		AllianceMask |= AllianceMmrnmhrm;
 	}
 	else if (PLAYER_SAID(R, syreen))
 	{
 		NPCPhrase(ABOUT_SYREEN);
-		AllianceMask |= ALLIANCE_SYREEN;
+		AllianceMask |= AllianceSyreen;
 	}
 
-	if (!(AllianceMask & ALLIANCE_SHOFIXTI))
+	if (!(AllianceMask & AllianceShofixti))
 	{
 		Response(shofixti, AllianceInfo);
 	}
-	if (!(AllianceMask & ALLIANCE_YEHAT))
+	if (!(AllianceMask & AllianceYehat))
 	{
 		Response(yehat, AllianceInfo);
 	}
-	if (!(AllianceMask & ALLIANCE_ARILOU))
+	if (!(AllianceMask & AllianceArilou))
 	{
 		Response(arilou, AllianceInfo);
 	}
-	if (!(AllianceMask & ALLIANCE_CHENJESU))
+	if (!(AllianceMask & AllianceChenjesu))
 	{
 		Response(chenjesu, AllianceInfo);
 	}
-	if (!(AllianceMask & ALLIANCE_MMRNMHRM))
+	if (!(AllianceMask & AllianceMmrnmhrm))
 	{
 		Response(mmrnmhrm, AllianceInfo);
 	}
-	if (!(AllianceMask & ALLIANCE_SYREEN))
+	if (!(AllianceMask & AllianceSyreen))
 	{
 		Response(syreen, AllianceInfo);
 	}
 	Response(enough_alliance, AlienRaces);
 }
 
+static constexpr auto HierarchyMycon {(1 << 0)};
+static constexpr auto HierarchySpathi {(1 << 1)};
+static constexpr auto HierarchyUmgah {(1 << 2)};
+static constexpr auto HierarchyAndrosynth {(1 << 3)};
+static constexpr auto HierarchyIlwrath {(1 << 4)};
+static constexpr auto HierarchyVux {(1 << 5)};
+static constexpr auto HierarchyUrquan {(1 << 6)};
+
 static void
 HierarchyInfo(RESPONSE_REF R)
 {
-#define HIERARCHY_MYCON (1 << 0)
-#define HIERARCHY_SPATHI (1 << 1)
-#define HIERARCHY_UMGAH (1 << 2)
-#define HIERARCHY_ANDROSYNTH (1 << 3)
-#define HIERARCHY_ILWRATH (1 << 4)
-#define HIERARCHY_VUX (1 << 5)
-#define HIERARCHY_URQUAN (1 << 6)
 	static uint8_t HierarchyMask = 0;
 
 	if (PLAYER_SAID(R, what_about_hierarchy))
@@ -547,77 +549,78 @@ HierarchyInfo(RESPONSE_REF R)
 	else if (PLAYER_SAID(R, urquan))
 	{
 		NPCPhrase(ABOUT_URQUAN);
-		HierarchyMask |= HIERARCHY_URQUAN;
+		HierarchyMask |= HierarchyUrquan;
 	}
 	else if (PLAYER_SAID(R, mycon))
 	{
 		NPCPhrase(ABOUT_MYCON);
-		HierarchyMask |= HIERARCHY_MYCON;
+		HierarchyMask |= HierarchyMycon;
 	}
 	else if (PLAYER_SAID(R, spathi))
 	{
 		NPCPhrase(ABOUT_SPATHI);
-		HierarchyMask |= HIERARCHY_SPATHI;
+		HierarchyMask |= HierarchySpathi;
 	}
 	else if (PLAYER_SAID(R, umgah))
 	{
 		NPCPhrase(ABOUT_UMGAH);
-		HierarchyMask |= HIERARCHY_UMGAH;
+		HierarchyMask |= HierarchyUmgah;
 	}
 	else if (PLAYER_SAID(R, androsynth))
 	{
 		NPCPhrase(ABOUT_ANDROSYNTH);
-		HierarchyMask |= HIERARCHY_ANDROSYNTH;
+		HierarchyMask |= HierarchyAndrosynth;
 		SetHomeworldKnown(ANDROSYNTH_HOME);
 	}
 	else if (PLAYER_SAID(R, ilwrath))
 	{
 		NPCPhrase(ABOUT_ILWRATH);
-		HierarchyMask |= HIERARCHY_ILWRATH;
+		HierarchyMask |= HierarchyIlwrath;
 	}
 	else if (PLAYER_SAID(R, vux))
 	{
 		NPCPhrase(ABOUT_VUX);
-		HierarchyMask |= HIERARCHY_VUX;
+		HierarchyMask |= HierarchyVux;
 	}
 
-	if (!(HierarchyMask & HIERARCHY_URQUAN))
+	if (!(HierarchyMask & HierarchyUrquan))
 	{
 		Response(urquan, HierarchyInfo);
 	}
-	if (!(HierarchyMask & HIERARCHY_MYCON))
+	if (!(HierarchyMask & HierarchyMycon))
 	{
 		Response(mycon, HierarchyInfo);
 	}
-	if (!(HierarchyMask & HIERARCHY_SPATHI))
+	if (!(HierarchyMask & HierarchySpathi))
 	{
 		Response(spathi, HierarchyInfo);
 	}
-	if (!(HierarchyMask & HIERARCHY_UMGAH))
+	if (!(HierarchyMask & HierarchyUmgah))
 	{
 		Response(umgah, HierarchyInfo);
 	}
-	if (!(HierarchyMask & HIERARCHY_ANDROSYNTH))
+	if (!(HierarchyMask & HierarchyAndrosynth))
 	{
 		Response(androsynth, HierarchyInfo);
 	}
-	if (!(HierarchyMask & HIERARCHY_ILWRATH))
+	if (!(HierarchyMask & HierarchyIlwrath))
 	{
 		Response(ilwrath, HierarchyInfo);
 	}
-	if (!(HierarchyMask & HIERARCHY_VUX))
+	if (!(HierarchyMask & HierarchyVux))
 	{
 		Response(vux, HierarchyInfo);
 	}
 	Response(enough_hierarchy, AlienRaces);
 }
 
+static constexpr auto RacesAlliance {(1 << 0)};
+static constexpr auto RacesHierarchy {(1 << 1)};
+static constexpr auto RacesOther {(1 << 2)};
+
 static void
 AlienRaces(RESPONSE_REF R)
 {
-#define RACES_ALLIANCE (1 << 0)
-#define RACES_HIERARCHY (1 << 1)
-#define RACES_OTHER (1 << 2)
 	static uint8_t RacesMask = 0;
 
 	if (PLAYER_SAID(R, alien_races))
@@ -628,41 +631,42 @@ AlienRaces(RESPONSE_REF R)
 	else if (PLAYER_SAID(R, enough_alliance))
 	{
 		NPCPhrase(OK_ENOUGH_ALLIANCE);
-		RacesMask |= RACES_ALLIANCE;
+		RacesMask |= RacesAlliance;
 	}
 	else if (PLAYER_SAID(R, enough_hierarchy))
 	{
 		NPCPhrase(OK_ENOUGH_HIERARCHY);
-		RacesMask |= RACES_HIERARCHY;
+		RacesMask |= RacesHierarchy;
 	}
 	else if (PLAYER_SAID(R, what_about_other))
 	{
 		NPCPhrase(ABOUT_OTHER);
-		RacesMask |= RACES_OTHER;
+		RacesMask |= RacesOther;
 	}
 
-	if (!(RacesMask & RACES_ALLIANCE))
+	if (!(RacesMask & RacesAlliance))
 	{
 		Response(what_about_alliance, AllianceInfo);
 	}
-	if (!(RacesMask & RACES_HIERARCHY))
+	if (!(RacesMask & RacesHierarchy))
 	{
 		Response(what_about_hierarchy, HierarchyInfo);
 	}
-	if (!(RacesMask & RACES_OTHER))
+	if (!(RacesMask & RacesOther))
 	{
 		Response(what_about_other, AlienRaces);
 	}
 	Response(enough_aliens, TellHistory);
 }
 
+static constexpr auto WarStarted {(1 << 0)};
+static constexpr auto WarWasLike {(1 << 1)};
+static constexpr auto WarLost {(1 << 2)};
+static constexpr auto WarAftermath {(1 << 3)};
+
 static void
 WarInfo(RESPONSE_REF R)
 {
-#define WAR_STARTED (1 << 0)
-#define WAR_WAS_LIKE (1 << 1)
-#define WAR_LOST (1 << 2)
-#define WAR_AFTERMATH (1 << 3)
 	static uint8_t WarMask = 0;
 
 	if (PLAYER_SAID(R, the_war))
@@ -673,49 +677,50 @@ WarInfo(RESPONSE_REF R)
 	else if (PLAYER_SAID(R, what_started_war))
 	{
 		NPCPhrase(URQUAN_STARTED_WAR);
-		WarMask |= WAR_STARTED;
+		WarMask |= WarStarted;
 	}
 	else if (PLAYER_SAID(R, what_was_war_like))
 	{
 		NPCPhrase(WAR_WAS_LIKE_SO);
-		WarMask |= WAR_WAS_LIKE;
+		WarMask |= WarWasLike;
 	}
 	else if (PLAYER_SAID(R, why_lose_war))
 	{
 		NPCPhrase(LOST_WAR_BECAUSE);
-		WarMask |= WAR_LOST;
+		WarMask |= WarLost;
 	}
 	else if (PLAYER_SAID(R, what_after_war))
 	{
 		NPCPhrase(AFTER_WAR);
-		WarMask |= WAR_AFTERMATH;
+		WarMask |= WarAftermath;
 	}
 
-	if (!(WarMask & WAR_STARTED))
+	if (!(WarMask & WarStarted))
 	{
 		Response(what_started_war, WarInfo);
 	}
-	if (!(WarMask & WAR_WAS_LIKE))
+	if (!(WarMask & WarWasLike))
 	{
 		Response(what_was_war_like, WarInfo);
 	}
-	if (!(WarMask & WAR_LOST))
+	if (!(WarMask & WarLost))
 	{
 		Response(why_lose_war, WarInfo);
 	}
-	if (!(WarMask & WAR_AFTERMATH))
+	if (!(WarMask & WarAftermath))
 	{
 		Response(what_after_war, WarInfo);
 	}
 	Response(enough_war, TellHistory);
 }
 
+static constexpr auto AncientPrecursors {(1 << 0)};
+static constexpr auto AncientRaces {(1 << 1)};
+static constexpr auto AncientEarth {(1 << 2)};
+
 static void
 AncientHistory(RESPONSE_REF R)
 {
-#define ANCIENT_PRECURSORS (1 << 0)
-#define ANCIENT_RACES (1 << 1)
-#define ANCIENT_EARTH (1 << 2)
 	static uint8_t AncientMask = 0;
 
 	if (PLAYER_SAID(R, ancient_history))
@@ -726,28 +731,28 @@ AncientHistory(RESPONSE_REF R)
 	else if (PLAYER_SAID(R, precursors))
 	{
 		NPCPhrase(ABOUT_PRECURSORS);
-		AncientMask |= ANCIENT_PRECURSORS;
+		AncientMask |= AncientPrecursors;
 	}
 	else if (PLAYER_SAID(R, old_races))
 	{
 		NPCPhrase(ABOUT_OLD_RACES);
-		AncientMask |= ANCIENT_RACES;
+		AncientMask |= AncientRaces;
 	}
 	else if (PLAYER_SAID(R, aliens_on_earth))
 	{
 		NPCPhrase(ABOUT_ALIENS_ON_EARTH);
-		AncientMask |= ANCIENT_EARTH;
+		AncientMask |= AncientEarth;
 	}
 
-	if (!(AncientMask & ANCIENT_PRECURSORS))
+	if (!(AncientMask & AncientPrecursors))
 	{
 		Response(precursors, AncientHistory);
 	}
-	if (!(AncientMask & ANCIENT_RACES))
+	if (!(AncientMask & AncientRaces))
 	{
 		Response(old_races, AncientHistory);
 	}
-	if (!(AncientMask & ANCIENT_EARTH))
+	if (!(AncientMask & AncientEarth))
 	{
 		Response(aliens_on_earth, AncientHistory);
 	}
@@ -828,13 +833,14 @@ TellHistory(RESPONSE_REF R)
 	Response(enough_history, NeedInfo);
 }
 
+static constexpr auto HowFindUrquan {(1 << 0)};
+static constexpr auto HowFightUrquan {(1 << 1)};
+static constexpr auto HowAllyAgainstUrquan {(1 << 2)};
+static constexpr auto HowStrongAgainstUrquan {(1 << 3)};
+
 static void
 DefeatUrquan(RESPONSE_REF R)
 {
-#define HOW_FIND_URQUAN (1 << 0)
-#define HOW_FIGHT_URQUAN (1 << 1)
-#define HOW_ALLY_AGAINST_URQUAN (1 << 2)
-#define HOW_STRONG_AGAINST_URQUAN (1 << 3)
 	static uint8_t DefeatMask = 0;
 
 	if (PLAYER_SAID(R, how_defeat))
@@ -845,37 +851,37 @@ DefeatUrquan(RESPONSE_REF R)
 	else if (PLAYER_SAID(R, how_find_urquan))
 	{
 		NPCPhrase(FIND_URQUAN);
-		DefeatMask |= HOW_FIND_URQUAN;
+		DefeatMask |= HowFindUrquan;
 	}
 	else if (PLAYER_SAID(R, how_fight_urquan))
 	{
 		NPCPhrase(FIGHT_URQUAN);
-		DefeatMask |= HOW_FIGHT_URQUAN;
+		DefeatMask |= HowFightUrquan;
 	}
 	else if (PLAYER_SAID(R, how_ally))
 	{
 		NPCPhrase(ALLY_LIKE_SO);
-		DefeatMask |= HOW_ALLY_AGAINST_URQUAN;
+		DefeatMask |= HowAllyAgainstUrquan;
 	}
 	else if (PLAYER_SAID(R, how_get_strong))
 	{
 		NPCPhrase(STRONG_LIKE_SO);
-		DefeatMask |= HOW_STRONG_AGAINST_URQUAN;
+		DefeatMask |= HowStrongAgainstUrquan;
 	}
 
-	if (!(DefeatMask & HOW_FIND_URQUAN))
+	if (!(DefeatMask & HowFindUrquan))
 	{
 		Response(how_find_urquan, DefeatUrquan);
 	}
-	if (!(DefeatMask & HOW_FIGHT_URQUAN))
+	if (!(DefeatMask & HowFightUrquan))
 	{
 		Response(how_fight_urquan, DefeatUrquan);
 	}
-	if (!(DefeatMask & HOW_ALLY_AGAINST_URQUAN))
+	if (!(DefeatMask & HowAllyAgainstUrquan))
 	{
 		Response(how_ally, DefeatUrquan);
 	}
-	if (!(DefeatMask & HOW_STRONG_AGAINST_URQUAN))
+	if (!(DefeatMask & HowStrongAgainstUrquan))
 	{
 		Response(how_get_strong, DefeatUrquan);
 	}
@@ -1703,6 +1709,8 @@ CheckTiming(uint16_t month_index, uint16_t day_index)
 						&& day_index < uqm::gameState().clock().day()))));
 }
 
+static constexpr auto NumGiftArilous {3};
+
 static void
 CheckBulletins(bool Repeat)
 {
@@ -1766,11 +1774,10 @@ CheckBulletins(bool Repeat)
 					else if (GET_GAME_STATE(PORTAL_SPAWNER)
 							 && (Repeat || EscortFeasibilityStudy(ARILOU_SHIP)))
 					{
-#define NUM_GIFT_ARILOUS 3
 						pStr = STARBASE_BULLETIN_6;
 						if (!Repeat)
 						{
-							AddEscortShips(ARILOU_SHIP, NUM_GIFT_ARILOUS);
+							AddEscortShips(ARILOU_SHIP, NumGiftArilous);
 						}
 					}
 					break;

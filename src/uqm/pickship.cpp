@@ -34,13 +34,13 @@
 #include "libs/mathlib.h"
 #include "util.h"
 
-#define NUM_PICK_SHIP_ROWS 2
-#define NUM_PICK_SHIP_COLUMNS 6
+static constexpr auto NumPickShipRows {2};
+static constexpr auto NumPickShipColumns {6};
 
-#define FLAGSHIP_X_OFFS RES_SCALE(65)
-#define FLAGSHIP_Y_OFFS RES_SCALE(4)
-#define FLAGSHIP_WIDTH RES_SCALE(22)
-#define FLAGSHIP_HEIGHT RES_SCALE(48)
+static auto FlagshipXOffs() { return RES_SCALE(65); }
+static auto FlagshipYOffs() { return RES_SCALE(4); }
+static auto FlagshipWidth() { return RES_SCALE(22); }
+static auto FlagshipHeight() { return RES_SCALE(48); }
 
 FRAME PickFrame;
 GFXPOINT frameOrigin;
@@ -145,18 +145,18 @@ DoPickBattleShip(MENU_STATE* pMS)
 
 			if (new_col < 0)
 			{
-				new_col = NUM_PICK_SHIP_COLUMNS;
+				new_col = NumPickShipColumns;
 			}
-			else if (new_col > NUM_PICK_SHIP_COLUMNS)
+			else if (new_col > NumPickShipColumns)
 			{
 				new_col = 0;
 			}
 
 			if (new_row < 0)
 			{
-				new_row = NUM_PICK_SHIP_ROWS - 1;
+				new_row = NumPickShipRows - 1;
 			}
-			else if (new_row == NUM_PICK_SHIP_ROWS)
+			else if (new_row == NumPickShipRows)
 			{
 				new_row = 0;
 			}
@@ -173,14 +173,14 @@ DoPickBattleShip(MENU_STATE* pMS)
 			pMS->first_item.x = new_col;
 
 ChangeSelection:
-			if (pMS->first_item.x == (NUM_PICK_SHIP_COLUMNS >> 1))
+			if (pMS->first_item.x == (NumPickShipColumns >> 1))
 			{
 				pMS->flash_rect0.corner.x =
-					pMS->flash_rect1.corner.x - RES_SCALE(2) + FLAGSHIP_X_OFFS;
+					pMS->flash_rect1.corner.x - RES_SCALE(2) + FlagshipXOffs();
 				pMS->flash_rect0.corner.y =
-					pMS->flash_rect1.corner.y - RES_SCALE(2) + FLAGSHIP_Y_OFFS;
-				pMS->flash_rect0.extent.width = FLAGSHIP_WIDTH + RES_SCALE(4);
-				pMS->flash_rect0.extent.height = FLAGSHIP_HEIGHT + RES_SCALE(4);
+					pMS->flash_rect1.corner.y - RES_SCALE(2) + FlagshipYOffs();
+				pMS->flash_rect0.extent.width = FlagshipWidth() + RES_SCALE(4);
+				pMS->flash_rect0.extent.height = FlagshipHeight() + RES_SCALE(4);
 
 				hBattleShip = GetTailLink(&race_q[0]); /* Flagship */
 			}
@@ -188,18 +188,18 @@ ChangeSelection:
 			{
 				new_col = pMS->first_item.x;
 				pMS->flash_rect0.corner.x = RES_SCALE(5) + pMS->flash_rect1.corner.x
-										  - RES_SCALE(2) + ((ICON_WIDTH + RES_SCALE(4)) * new_col);
-				if (new_col > (NUM_PICK_SHIP_COLUMNS >> 1))
+										  - RES_SCALE(2) + ((IconWidth() + RES_SCALE(4)) * new_col);
+				if (new_col > (NumPickShipColumns >> 1))
 				{
 					--new_col;
-					pMS->flash_rect0.corner.x += FLAGSHIP_WIDTH - ICON_WIDTH;
+					pMS->flash_rect0.corner.x += FlagshipWidth() - IconWidth();
 				}
 				pMS->flash_rect0.corner.y = RES_SCALE(16) + pMS->flash_rect1.corner.y
-										  - RES_SCALE(2) + ((ICON_HEIGHT + RES_SCALE(4)) * pMS->first_item.y);
-				pMS->flash_rect0.extent.width = ICON_WIDTH + RES_SCALE(4);
-				pMS->flash_rect0.extent.height = ICON_HEIGHT + RES_SCALE(4);
+										  - RES_SCALE(2) + ((IconHeight() + RES_SCALE(4)) * pMS->first_item.y);
+				pMS->flash_rect0.extent.width = IconWidth() + RES_SCALE(4);
+				pMS->flash_rect0.extent.height = IconHeight() + RES_SCALE(4);
 
-				ship_index = (pMS->first_item.y * NUM_PICK_SHIP_COLUMNS)
+				ship_index = (pMS->first_item.y * NumPickShipColumns)
 						   + new_col;
 
 				for (hBattleShip = GetHeadLink(&race_q[0]);
@@ -229,7 +229,7 @@ ChangeSelection:
 			SetContextForeGroundColor(BlackColor);
 			r.corner.x = pMS->flash_rect1.corner.x + RES_SCALE(6) - RES_SCALE(1);
 			r.corner.y = pMS->flash_rect1.corner.y + RES_SCALE(5) - RES_SCALE(1);
-			r.extent.width = ((ICON_WIDTH + RES_SCALE(4)) * 3) - RES_SCALE(4);
+			r.extent.width = ((IconWidth() + RES_SCALE(4)) * 3) - RES_SCALE(4);
 			r.extent.height = RES_SCALE(7);
 
 			if (IsHd())
@@ -286,9 +286,9 @@ ChangeSelection:
 				SetContextForeGroundColor(BlackColor);
 			}
 
-			r.corner.x += (ICON_WIDTH + RES_SCALE(4))
-							* ((NUM_PICK_SHIP_COLUMNS >> 1) + 1)
-						+ FLAGSHIP_WIDTH - ICON_WIDTH;
+			r.corner.x += (IconWidth() + RES_SCALE(4))
+							* ((NumPickShipColumns >> 1) + 1)
+						+ FlagshipWidth() - IconWidth();
 
 			if (IsHd())
 			{
@@ -358,7 +358,7 @@ GetArmadaStarShip(void)
 
 		MenuState.InputFunc = DoPickBattleShip;
 		MenuState.Initialized = false;
-		MenuState.first_item.x = NUM_PICK_SHIP_COLUMNS >> 1;
+		MenuState.first_item.x = NumPickShipColumns >> 1;
 		MenuState.first_item.y = 0;
 		MenuState.CurFrame = 0;
 		MenuState.flash_rect1.corner = pick_r.corner;
@@ -389,6 +389,8 @@ GetArmadaStarShip(void)
 
 	return (hBattleShip);
 }
+
+static constexpr auto RunAwayFuelCost {(5 * FuelTankScale)};
 
 // Get the next ship to use.
 HSTARSHIP
@@ -433,7 +435,6 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 			}
 			else if (LastStarShipPtr != 0)
 			{ // last ship was the flagship
-#define RUN_AWAY_FUEL_COST (5 * FuelTankScale)
 				if (LastStarShipPtr->crew_level == 0)
 				{ // Died in the line of duty
 					GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
@@ -441,9 +442,9 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 				}
 				else
 				{ // Player ran away
-					if (GLOBAL_SIS(FuelOnBoard) > RUN_AWAY_FUEL_COST && !uqm::UQMOptions::read().infiniteFuel)
+					if (GLOBAL_SIS(FuelOnBoard) > RunAwayFuelCost && !uqm::UQMOptions::read().infiniteFuel)
 					{
-						GLOBAL_SIS(FuelOnBoard) -= RUN_AWAY_FUEL_COST;
+						GLOBAL_SIS(FuelOnBoard) -= RunAwayFuelCost;
 					}
 					else
 					{
@@ -556,8 +557,8 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 
 	SetContextFontEffect(OldFontEffect);
 
-	r.extent.width = ICON_WIDTH;
-	r.extent.height = ICON_HEIGHT;
+	r.extent.width = IconWidth();
+	r.extent.height = IconHeight();
 	for (hBattleShip = GetHeadLink(&race_q[0]);
 		 hBattleShip != 0; hBattleShip = hNextShip)
 	{
@@ -569,13 +570,13 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 			const uint16_t ship_index {StarShipPtr->index};
 
 			s.origin.x = pick_r.corner.x
-					   + (RES_SCALE(5) + ((ICON_WIDTH + RES_SCALE(4)) * (ship_index % NUM_PICK_SHIP_COLUMNS)));
-			if ((ship_index % NUM_PICK_SHIP_COLUMNS) >= (NUM_PICK_SHIP_COLUMNS >> 1))
+					   + (RES_SCALE(5) + ((IconWidth() + RES_SCALE(4)) * (ship_index % NumPickShipColumns)));
+			if ((ship_index % NumPickShipColumns) >= (NumPickShipColumns >> 1))
 			{
-				s.origin.x += FLAGSHIP_WIDTH + RES_SCALE(4);
+				s.origin.x += FlagshipWidth() + RES_SCALE(4);
 			}
 			s.origin.y = pick_r.corner.y
-					   + (RES_SCALE(16) + ((ICON_HEIGHT + RES_SCALE(4)) * (ship_index / NUM_PICK_SHIP_COLUMNS)));
+					   + (RES_SCALE(16) + ((IconHeight() + RES_SCALE(4)) * (ship_index / NumPickShipColumns)));
 			s.frame = StarShipPtr->icons;
 			r.corner = s.origin;
 

@@ -2,18 +2,18 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define ANDROSYNTH_BIG_MASK_PMAP_ANIM "ship.androsynth.graphics.guardian.large"
-#define ANDROSYNTH_CAPT_MASK_PMAP_ANIM "ship.androsynth.graphics.captain"
-#define ANDROSYNTH_ICON_MASK_PMAP_ANIM "ship.androsynth.icons"
-#define ANDROSYNTH_MED_MASK_PMAP_ANIM "ship.androsynth.graphics.guardian.medium"
-#define ANDROSYNTH_MICON_MASK_PMAP_ANIM "ship.androsynth.meleeicons"
-#define ANDROSYNTH_RACE_STRINGS "ship.androsynth.text"
-#define ANDROSYNTH_SHIP_SOUNDS "ship.androsynth.sounds"
-#define ANDROSYNTH_SML_MASK_PMAP_ANIM "ship.androsynth.graphics.guardian.small"
-#define ANDROSYNTH_VICTORY_SONG "ship.androsynth.ditty"
-#define BLAZER_BIG_MASK_PMAP_ANIM "ship.androsynth.graphics.blazer.large"
-#define BLAZER_MED_MASK_PMAP_ANIM "ship.androsynth.graphics.blazer.medium"
-#define BLAZER_SML_MASK_PMAP_ANIM "ship.androsynth.graphics.blazer.small"
-#define BUBBLE_BIG_MASK_PMAP_ANIM "ship.androsynth.graphics.bubble.large"
-#define BUBBLE_MED_MASK_PMAP_ANIM "ship.androsynth.graphics.bubble.medium"
-#define BUBBLE_SML_MASK_PMAP_ANIM "ship.androsynth.graphics.bubble.small"
+inline constexpr uqgsl::czstring AndrosynthBigMaskPmapAnim {"ship.androsynth.graphics.guardian.large"};
+inline constexpr uqgsl::czstring AndrosynthCaptMaskPmapAnim {"ship.androsynth.graphics.captain"};
+inline constexpr uqgsl::czstring AndrosynthIconMaskPmapAnim {"ship.androsynth.icons"};
+inline constexpr uqgsl::czstring AndrosynthMedMaskPmapAnim {"ship.androsynth.graphics.guardian.medium"};
+inline constexpr uqgsl::czstring AndrosynthMiconMaskPmapAnim {"ship.androsynth.meleeicons"};
+inline constexpr uqgsl::czstring AndrosynthRaceStrings {"ship.androsynth.text"};
+inline constexpr uqgsl::czstring AndrosynthShipSounds {"ship.androsynth.sounds"};
+inline constexpr uqgsl::czstring AndrosynthSmlMaskPmapAnim {"ship.androsynth.graphics.guardian.small"};
+inline constexpr uqgsl::czstring AndrosynthVictorySong {"ship.androsynth.ditty"};
+inline constexpr uqgsl::czstring BlazerBigMaskPmapAnim {"ship.androsynth.graphics.blazer.large"};
+inline constexpr uqgsl::czstring BlazerMedMaskPmapAnim {"ship.androsynth.graphics.blazer.medium"};
+inline constexpr uqgsl::czstring BlazerSmlMaskPmapAnim {"ship.androsynth.graphics.blazer.small"};
+inline constexpr uqgsl::czstring BubbleBigMaskPmapAnim {"ship.androsynth.graphics.bubble.large"};
+inline constexpr uqgsl::czstring BubbleMedMaskPmapAnim {"ship.androsynth.graphics.bubble.medium"};
+inline constexpr uqgsl::czstring BubbleSmlMaskPmapAnim {"ship.androsynth.graphics.bubble.small"};

@@ -28,15 +28,15 @@
 #include "planets.h"
 #include "uqm/setup.h"
 
-#define NUM_QUADS 4
-#define OFFSCREEN_PRIM NUM_PRIMS
+static constexpr auto NumQuads {4};
+static constexpr auto OffscreenPrim {NUM_PRIMS};
 
-#define FIRST_QUAD (1 << 0)
-#define SECOND_QUAD (1 << 1)
-#define THIRD_QUAD (1 << 2)
-#define FOURTH_QUAD (1 << 3)
-#define FULL_VISIBILITY (1 << 4)
-#define ALL_QUAD (FIRST_QUAD | SECOND_QUAD | THIRD_QUAD | FOURTH_QUAD)
+static constexpr auto FirstQuad {(1 << 0)};
+static constexpr auto SecondQuad {(1 << 1)};
+static constexpr auto ThirdQuad {(1 << 2)};
+static constexpr auto FourthQuad {(1 << 3)};
+static constexpr auto FullVisibility {(1 << 4)};
+static constexpr auto AllQuad {(FirstQuad | SecondQuad | ThirdQuad | FourthQuad)};
 
 static bool
 PointOnScreen(int32_t x, int32_t y)
@@ -110,7 +110,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 	// Step 1
 	if (DPointOnScreen(p0) && DPointOnScreen(p1))
 	{
-		quad_visible = ALL_QUAD | FULL_VISIBILITY;
+		quad_visible = AllQuad | FullVisibility;
 		return quad_visible;
 	}
 
@@ -148,7 +148,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 		// Step 5
 		if (PointOnScreen(mp.x, p0->y) || PointOnScreen(p1->x, mp.y))
 		{
-			quad_visible |= FIRST_QUAD;
+			quad_visible |= FirstQuad;
 		}
 		else
 		{
@@ -163,7 +163,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 
 			if (r0 >= 1.0f && r1 <= 1.0f)
 			{
-				quad_visible |= FIRST_QUAD;
+				quad_visible |= FirstQuad;
 			}
 		}
 	}
@@ -174,7 +174,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 		// Step 5
 		if (PointOnScreen(p0->x, mp.y) || PointOnScreen(mp.x, p0->y))
 		{
-			quad_visible |= SECOND_QUAD;
+			quad_visible |= SecondQuad;
 		}
 		else
 		{
@@ -189,7 +189,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 
 			if (r0 >= 1.0f && r1 <= 1.0f)
 			{
-				quad_visible |= SECOND_QUAD;
+				quad_visible |= SecondQuad;
 			}
 		}
 	}
@@ -200,7 +200,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 		// Step 5
 		if (PointOnScreen(p0->x, mp.y) || PointOnScreen(mp.x, p1->y))
 		{
-			quad_visible |= THIRD_QUAD;
+			quad_visible |= ThirdQuad;
 		}
 		else
 		{
@@ -215,7 +215,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 
 			if (r0 >= 1.0f && r1 <= 1.0f)
 			{
-				quad_visible |= THIRD_QUAD;
+				quad_visible |= ThirdQuad;
 			}
 		}
 	}
@@ -226,7 +226,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 		// Step 5
 		if (PointOnScreen(mp.x, p1->y) || PointOnScreen(p1->x, mp.y))
 		{
-			quad_visible |= FOURTH_QUAD;
+			quad_visible |= FourthQuad;
 		}
 		else
 		{
@@ -241,7 +241,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 
 			if (r0 >= 1.0f && r1 <= 1.0f)
 			{
-				quad_visible |= FOURTH_QUAD;
+				quad_visible |= FourthQuad;
 			}
 		}
 	}
@@ -266,7 +266,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //
 //	if (ch_one->y >= 0 && ch_one->y < ClipRect.extent.height
 //		&& ch_two->x >= 0 && ch_two->x < ClipRect.extent.width)
-//		quad_visible |= FIRST_QUAD;
+//		quad_visible |= FirstQuad;
 //	else
 //	{
 //		ClipLine.first.x = mp.x;
@@ -274,12 +274,12 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.second.x = ch_two->x;
 //		ClipLine.second.y = mp.y;
 //		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
-//			quad_visible |= FIRST_QUAD;
+//			quad_visible |= FirstQuad;
 //	}
 //
 //	if (ch_one->y >= 0 && ch_one->y < ClipRect.extent.height
 //		&& ch_one->x >= 0 && ch_one->x < ClipRect.extent.width)
-//		quad_visible |= SECOND_QUAD;
+//		quad_visible |= SecondQuad;
 //	else
 //	{
 //		ClipLine.first.x = mp.x;
@@ -287,12 +287,12 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.second.x = ch_one->x;
 //		ClipLine.second.y = mp.y;
 //		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
-//			quad_visible |= SECOND_QUAD;
+//			quad_visible |= SecondQuad;
 //	}
 //
 //	if (ch_two->y >= 0 && ch_two->y < ClipRect.extent.height
 //		&& ch_one->x >= 0 && ch_one->x < ClipRect.extent.width)
-//		quad_visible |= THIRD_QUAD;
+//		quad_visible |= ThirdQuad;
 //	else
 //	{
 //		ClipLine.first.x = mp.x;
@@ -300,12 +300,12 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.second.x = ch_one->x;
 //		ClipLine.second.y = mp.y;
 //		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
-//			quad_visible |= THIRD_QUAD;
+//			quad_visible |= ThirdQuad;
 //	}
 //
 //	if (ch_two->y >= 0 && ch_two->y < ClipRect.extent.height
 //		&& ch_two->x >= 0 && ch_two->x < ClipRect.extent.width)
-//		quad_visible |= FOURTH_QUAD;
+//		quad_visible |= FourthQuad;
 //	else
 //	{
 //		ClipLine.first.x = mp.x;
@@ -313,7 +313,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.second.x = ch_two->x;
 //		ClipLine.second.y = mp.y;
 //		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
-//			quad_visible |= FOURTH_QUAD;
+//			quad_visible |= FourthQuad;
 //	}
 //
 //	return quad_visible;
@@ -327,7 +327,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 	int16_t B {};
 	int64_t TwoAsquared {};
 	int64_t dy {};
-	PRIMITIVE prim[NUM_QUADS];
+	PRIMITIVE prim[NumQuads];
 	DPOINT p0;
 	DPOINT p1;
 	const bool use_pointprim = (!scaled && num_off_pixels <= 1);
@@ -372,7 +372,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 	}
 
 	uint16_t StartPrim {EndOfList};
-	for (x = 0; x < NUM_QUADS; ++x)
+	for (x = 0; x < NumQuads; ++x)
 	{
 		if (quad_visible & (1 << x))
 		{
@@ -386,7 +386,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 		}
 		else // Kruzen: just to be sure so DrawBatch() skip it
 		{
-			SetPrimType(&prim[x], OFFSCREEN_PRIM);
+			SetPrimType(&prim[x], OffscreenPrim);
 		}
 	}
 
@@ -427,13 +427,13 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 				prim[1].Object.Point.x = prim[2].Object.Point.x = A - x;
 				prim[2].Object.Point.y = prim[3].Object.Point.y = B + y;
 
-				if (quad_visible & FULL_VISIBILITY)
+				if (quad_visible & FullVisibility)
 				{
 					DrawBatch(prim, StartPrim, 0);
 				}
 				else
 				{
-					if (quad_visible & FIRST_QUAD)
+					if (quad_visible & FirstQuad)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
@@ -442,11 +442,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[0], OFFSCREEN_PRIM);
+							SetPrimType(&prim[0], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & SECOND_QUAD)
+					if (quad_visible & SecondQuad)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
@@ -455,11 +455,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[1], OFFSCREEN_PRIM);
+							SetPrimType(&prim[1], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & THIRD_QUAD)
+					if (quad_visible & ThirdQuad)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
@@ -468,11 +468,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[2], OFFSCREEN_PRIM);
+							SetPrimType(&prim[2], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & FOURTH_QUAD)
+					if (quad_visible & FourthQuad)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
@@ -481,7 +481,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[3], OFFSCREEN_PRIM);
+							SetPrimType(&prim[3], OffscreenPrim);
 						}
 					}
 
@@ -517,13 +517,13 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 				prim[1].Object.Stamp.origin.x = prim[2].Object.Stamp.origin.x = A - x;
 				prim[2].Object.Stamp.origin.y = prim[3].Object.Stamp.origin.y = B + y;
 
-				if (quad_visible & FULL_VISIBILITY)
+				if (quad_visible & FullVisibility)
 				{
 					DrawBatch(prim, StartPrim, 0);
 				}
 				else
 				{
-					if (quad_visible & FIRST_QUAD)
+					if (quad_visible & FirstQuad)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
@@ -532,11 +532,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[0], OFFSCREEN_PRIM);
+							SetPrimType(&prim[0], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & SECOND_QUAD)
+					if (quad_visible & SecondQuad)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
@@ -545,11 +545,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[1], OFFSCREEN_PRIM);
+							SetPrimType(&prim[1], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & THIRD_QUAD)
+					if (quad_visible & ThirdQuad)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
@@ -558,11 +558,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[2], OFFSCREEN_PRIM);
+							SetPrimType(&prim[2], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & FOURTH_QUAD)
+					if (quad_visible & FourthQuad)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
@@ -571,7 +571,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[3], OFFSCREEN_PRIM);
+							SetPrimType(&prim[3], OffscreenPrim);
 						}
 					}
 
@@ -610,13 +610,13 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 				prim[1].Object.Point.x = prim[2].Object.Point.x = A - x;
 				prim[2].Object.Point.y = prim[3].Object.Point.y = B + y;
 
-				if (quad_visible & FULL_VISIBILITY)
+				if (quad_visible & FullVisibility)
 				{
 					DrawBatch(prim, StartPrim, 0);
 				}
 				else
 				{
-					if (quad_visible & FIRST_QUAD)
+					if (quad_visible & FirstQuad)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
@@ -625,11 +625,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[0], OFFSCREEN_PRIM);
+							SetPrimType(&prim[0], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & SECOND_QUAD)
+					if (quad_visible & SecondQuad)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
@@ -638,11 +638,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[1], OFFSCREEN_PRIM);
+							SetPrimType(&prim[1], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & THIRD_QUAD)
+					if (quad_visible & ThirdQuad)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
@@ -651,11 +651,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[2], OFFSCREEN_PRIM);
+							SetPrimType(&prim[2], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & FOURTH_QUAD)
+					if (quad_visible & FourthQuad)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
@@ -664,7 +664,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[3], OFFSCREEN_PRIM);
+							SetPrimType(&prim[3], OffscreenPrim);
 						}
 					}
 
@@ -700,13 +700,13 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 				prim[1].Object.Stamp.origin.x = prim[2].Object.Stamp.origin.x = A - x;
 				prim[2].Object.Stamp.origin.y = prim[3].Object.Stamp.origin.y = B + y;
 
-				if (quad_visible & FULL_VISIBILITY)
+				if (quad_visible & FullVisibility)
 				{
 					DrawBatch(prim, StartPrim, 0);
 				}
 				else
 				{
-					if (quad_visible & FIRST_QUAD)
+					if (quad_visible & FirstQuad)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
@@ -715,11 +715,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[0], OFFSCREEN_PRIM);
+							SetPrimType(&prim[0], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & SECOND_QUAD)
+					if (quad_visible & SecondQuad)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
@@ -728,11 +728,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[1], OFFSCREEN_PRIM);
+							SetPrimType(&prim[1], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & THIRD_QUAD)
+					if (quad_visible & ThirdQuad)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
@@ -741,11 +741,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[2], OFFSCREEN_PRIM);
+							SetPrimType(&prim[2], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & FOURTH_QUAD)
+					if (quad_visible & FourthQuad)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
@@ -754,7 +754,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[3], OFFSCREEN_PRIM);
+							SetPrimType(&prim[3], OffscreenPrim);
 						}
 					}
 
@@ -789,7 +789,7 @@ void DrawFilledOval(DRECT* pRect)
 	int16_t B {};
 	int64_t TwoAsquared {};
 	int64_t dy {};
-	PRIMITIVE prim[NUM_QUADS >> 1];
+	PRIMITIVE prim[NumQuads >> 1];
 	GFXPOINT first;
 	GFXPOINT second;
 	DPOINT p0;
@@ -828,7 +828,7 @@ void DrawFilledOval(DRECT* pRect)
 	}
 
 	uint16_t StartPrim {EndOfList};
-	for (x = 0; x < (NUM_QUADS >> 1); ++x)
+	for (x = 0; x < (NumQuads >> 1); ++x)
 	{
 		SetPrimNextLink(&prim[x], StartPrim);
 		SetPrimType(&prim[x], LINE_PRIM);
@@ -878,7 +878,7 @@ void DrawFilledOval(DRECT* pRect)
 			}
 			else
 			{
-				SetPrimType(&prim[0], OFFSCREEN_PRIM);
+				SetPrimType(&prim[0], OffscreenPrim);
 			}
 
 			first.y = second.y = B + y;
@@ -891,7 +891,7 @@ void DrawFilledOval(DRECT* pRect)
 			}
 			else
 			{
-				SetPrimType(&prim[1], OFFSCREEN_PRIM);
+				SetPrimType(&prim[1], OffscreenPrim);
 			}
 
 			if (lines_r > 0)
@@ -927,7 +927,7 @@ void DrawFilledOval(DRECT* pRect)
 		}
 		else
 		{
-			SetPrimType(&prim[0], OFFSCREEN_PRIM);
+			SetPrimType(&prim[0], OffscreenPrim);
 		}
 
 		first.y = second.y = B + y;
@@ -940,7 +940,7 @@ void DrawFilledOval(DRECT* pRect)
 		}
 		else
 		{
-			SetPrimType(&prim[1], OFFSCREEN_PRIM);
+			SetPrimType(&prim[1], OffscreenPrim);
 		}
 
 		if (lines_r > 0)

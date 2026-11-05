@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define DRUUGE_COLOR_MAP "comm.druuge.colortable"
-#define DRUUGE_CONVERSATION_PHRASES "comm.druuge.dialogue"
-#define DRUUGE_FONT "comm.druuge.font"
-#define DRUUGE_MUSIC "comm.druuge.music"
-#define DRUUGE_PMAP_ANIM "comm.druuge.graphics"
-#define DRUUGE_SCRIPT "comm.druuge.script"
+inline constexpr uqgsl::czstring DruugeColorMap {"comm.druuge.colortable"};
+inline constexpr uqgsl::czstring DruugeConversationPhrases {"comm.druuge.dialogue"};
+inline constexpr uqgsl::czstring DruugeFont {"comm.druuge.font"};
+inline constexpr uqgsl::czstring DruugeMusic {"comm.druuge.music"};
+inline constexpr uqgsl::czstring DruugePmapAnim {"comm.druuge.graphics"};

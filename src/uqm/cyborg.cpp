@@ -812,6 +812,9 @@ void Pursue(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 	}
 }
 
+static constexpr auto FlankLeft {-Quadrant};
+static constexpr auto ShipLeft {-Octant};
+
 // JMS:GFX Made SIZEs SDWORDs and changed the GetNextVelocityComponents to GetNextVelocityComponentsSdword
 void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 {
@@ -898,17 +901,15 @@ void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 
 		if (desired_thrust_angle == LeftFlag)
 		{
-#define FLANK_LEFT -Quadrant
-#define SHIP_LEFT -Octant
 			desired_thrust_angle = EvalDescPtr->facing
-								 + FLANK_LEFT - (SHIP_LEFT >> 1);
+								 + FlankLeft - (ShipLeft >> 1);
 		}
 		else
 		{
-#define FLANK_RIGHT Quadrant
-#define SHIP_RIGHT Octant
+
+
 			desired_thrust_angle = EvalDescPtr->facing
-								 + FLANK_RIGHT - (SHIP_RIGHT >> 1);
+								 + Quadrant - (Octant >> 1);
 		}
 
 		desired_thrust_angle = NORMALIZE_ANGLE(desired_thrust_angle);

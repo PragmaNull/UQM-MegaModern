@@ -469,14 +469,14 @@ YellowDistribution(uint8_t which_world)
 	return (PlanetDistribution[which_world]);
 }
 
-#define DWARF_ROCK_DIST MIN_PLANET_RADIUS
-#define DWARF_GASG_DIST SCALE_RADIUS(12)
+static constexpr auto DwarfRockDist {MinPlanetRadius};
+static constexpr auto DwarfGasgDist {SCALE_RADIUS(12)};
 
-#define GIANT_ROCK_DIST SCALE_RADIUS(8)
-#define GIANT_GASG_DIST SCALE_RADIUS(13)
+static constexpr auto GiantRockDist {SCALE_RADIUS(8)};
+static constexpr auto GiantGasgDist {SCALE_RADIUS(13)};
 
-#define SUPERGIANT_ROCK_DIST SCALE_RADIUS(16)
-#define SUPERGIANT_GASG_DIST SCALE_RADIUS(33)
+static constexpr auto SupergiantRockDist {SCALE_RADIUS(16)};
+static constexpr auto SupergiantGasgDist {SCALE_RADIUS(33)};
 
 void ComputeSpeed(PLANET_DESC* planet, bool GeneratingMoons,
 				  uint16_t rand_val)
@@ -486,7 +486,7 @@ void ComputeSpeed(PLANET_DESC* planet, bool GeneratingMoons,
 	if (GeneratingMoons)
 	{
 		planet->orb_speed =
-			FullCircle / (29 * pow((double)planet->radius / (MIN_MOON_RADIUS + (MAX_GEN_MOONS - 1) * MOON_DELTA), 1.5));
+			FullCircle / (29 * pow((double)planet->radius / (MinMoonRadius() + (MaxGenMoons - 1) * MoonDelta()), 1.5));
 		if ((planet->pPrevDesc->data_index & ~PLANET_SHIELDED)
 			>= FIRST_GAS_GIANT)
 		{
@@ -500,7 +500,7 @@ void ComputeSpeed(PLANET_DESC* planet, bool GeneratingMoons,
 	else
 	{
 		planet->orb_speed =
-			FullCircle / (ONE_YEAR * pow((double)planet->radius / EARTH_RADIUS, 1.5));
+			FullCircle / (OneYear * pow((double)planet->radius / EarthRadius, 1.5));
 	}
 }
 
@@ -516,9 +516,9 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 		uint16_t MinRockyDist, MinGasGDist;
 	} Suns[] =
 		{
-			{DWARF_ROCK_DIST,	  DWARF_GASG_DIST	 },
-			{GIANT_ROCK_DIST,	  GIANT_GASG_DIST	 },
-			{SUPERGIANT_ROCK_DIST, SUPERGIANT_GASG_DIST},
+			{DwarfRockDist,		DwarfGasgDist	 },
+			{GiantRockDist,		GiantGasgDist	 },
+			{SupergiantRockDist, SupergiantGasgDist},
 	};
 #ifdef DEBUG_ORBITS
 	char buf[256];
@@ -526,7 +526,7 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 	char scolor[] = {'B', 'G', 'O', 'R', 'W', 'Y'};
 #endif /* DEBUG_ORBITS */
 
-	if (NumPlanets == NUMPLANETS_PDESC)
+	if (NumPlanets == NumplanetsPdesc)
 	{ // To shorten the redundancy of the function in repeated areas.
 		NumPlanets = system->SunDesc[0].NumPlanets;
 		pBaseDesc = system->PlanetDesc;
@@ -545,7 +545,7 @@ void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 		do
 		{
 			NumPlanets = uqm::lowWord(SysGenRNG->next())
-					   % (MAX_GEN_PLANETS + 1);
+					   % (MaxGenPlanets + 1);
 		} while (NumPlanets == 0);
 		system->SunDesc[0].NumPlanets = NumPlanets;
 	}
@@ -625,8 +625,8 @@ RelocatePlanet:
 		rand_val = SysGenRNG->next();
 		if (GeneratingMoons)
 		{
-			pPD->radius = MIN_MOON_RADIUS
-						+ ((uqm::lowWord(rand_val) % MAX_GEN_MOONS) * MOON_DELTA);
+			pPD->radius = MinMoonRadius()
+						+ ((uqm::lowWord(rand_val) % MaxGenMoons) * MoonDelta());
 			for (pLocPD = pPD - 1; pLocPD >= pBaseDesc; --pLocPD)
 			{
 				if (pPD->radius == pLocPD->radius)
@@ -639,7 +639,7 @@ RelocatePlanet:
 		else
 		{
 			pPD->radius =
-				(uqm::lowWord(rand_val) % (MAX_PLANET_RADIUS - min_radius))
+				(uqm::lowWord(rand_val) % (MaxPlanetRadius - min_radius))
 				+ min_radius;
 			for (pLocPD = pPD - 1; pLocPD >= pBaseDesc; --pLocPD)
 			{
@@ -766,7 +766,7 @@ PickClosestHabitable(SOLARSYS_STATE* solarSys)
 
 			pPlanet = &pPD[numPlanets--];
 
-			pPlanet->radius = MAX_PLANET_RADIUS;
+			pPlanet->radius = MaxPlanetRadius;
 			pPlanet->angle = NORMALIZE_ANGLE(uqm::lowWord(rand));
 			pPlanet->location.x = COSINE(pPlanet->angle, pPlanet->radius);
 			pPlanet->location.y = SINE(pPlanet->angle, pPlanet->radius);
@@ -837,12 +837,12 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 		{1231, 2569}, // white
 		{312,  778 }  // yellow
 	};
-#define CLOSEST_RADIUS HabitableRanges[ORANGE_BODY][0]
+
 	int16_t i {};
 	const uint8_t planetByte = solarSys->SunDesc[0].PlanetByte;
 	const uint8_t numPlanets = solarSys->SunDesc[0].NumPlanets;
 	int16_t newRadius {}; // , radiusDiff;
-	uint32_t planetRadii[MAX_GEN_PLANETS];
+	uint32_t planetRadii[MaxGenPlanets];
 	// static int16_t diffCheck, min_radius;
 
 	uint8_t starColor {STAR_COLOR(CurStarDescPtr()->Type)};
@@ -905,9 +905,9 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 
 	/*if (planetByte > 0 && newRadius < pPD[planetByte-1].radius)
 	{
-		uint32_t radialSection = planetRadii[planetByte] - CLOSEST_RADIUS;
-		uint8_t numRockySections = radialSection / DWARF_ROCK_DIST;
-		uint8_t numGassySections = radialSection / DWARF_GASG_DIST;
+		uint32_t radialSection = planetRadii[planetByte] - ClosestRadius;
+		uint8_t numRockySections = radialSection / DwarfRockDist;
+		uint8_t numGassySections = radialSection / DwarfGasgDist;
 
 		printf ("radialSection {}, numRockySections {}, numGassySections {}\n", radialSection, numRockySections, numGassySections);
 
@@ -916,15 +916,15 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 			rand_val = SysGenRNG->next();
 
 			planetRadii[i] = (uqm::lowWord(rand_val) % (
-				planetRadii[(i + 1)] - CLOSEST_RADIUS) + CLOSEST_RADIUS);
+				planetRadii[(i + 1)] - ClosestRadius) + ClosestRadius);
 		}
 
 		for (i = planetByte - 1; i > -1; --i)
 		{
 			if (pPD[i].data_index < FIRST_GAS_GIANT)
-				min_radius = DWARF_ROCK_DIST;
+				min_radius = DwarfRockDist;
 			else
-				min_radius = DWARF_GASG_DIST;
+				min_radius = DwarfGasgDist;
 
 			if (i > -1)
 			{
@@ -940,7 +940,7 @@ bool CheckForHabitable(SOLARSYS_STATE* solarSys)
 
 		for (i = planetByte - 1; i > -1; --i)
 		{
-			if (planetRadii[i] > CLOSEST_RADIUS)
+			if (planetRadii[i] > ClosestRadius)
 			{
 				rand_val = SysGenRNG->next();
 				pPD[i].radius = planetRadii[i];

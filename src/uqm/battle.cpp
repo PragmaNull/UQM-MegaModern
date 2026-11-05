@@ -306,7 +306,7 @@ DoBattle(BATTLE_STATE* bs)
 	SetMenuSounds(MenuSoundNone, MenuSoundNone);
 
 #if defined(NETPLAY) && defined(NETPLAY_CHECKSUM)
-	if (getNumNetConnections() > 0 && battleFrameCount % NETPLAY_CHECKSUM_INTERVAL == 0)
+	if (getNumNetConnections() > 0 && battleFrameCount % NetplayChecksumInterval == 0)
 	{
 		crc_State state;
 
@@ -328,7 +328,7 @@ DoBattle(BATTLE_STATE* bs)
 		const size_t delay = getBattleInputDelay();
 
 		if (battleFrameCount >= delay
-			&& (battleFrameCount - delay) % NETPLAY_CHECKSUM_INTERVAL == 0)
+			&& (battleFrameCount - delay) % NetplayChecksumInterval == 0)
 		{
 			if (!(uqm::currentActivity() & CHECK_ABORT))
 			{

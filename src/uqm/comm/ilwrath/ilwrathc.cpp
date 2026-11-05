@@ -32,23 +32,23 @@ static LOCDATA ilwrath_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		ILWRATH_PMAP_ANIM, /* AlienFrame */
-		ILWRATH_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		IlwrathPmapAnim, /* AlienFrame */
+		IlwrathFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
-		ILWRATH_COLOR_MAP, /* AlienColorMap */
-		ILWRATH_MUSIC, /* AlienSong */
+		IlwrathColorMap, /* AlienColorMap */
+		IlwrathMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		ILWRATH_CONVERSATION_PHRASES, /* PlayerPhrases */
+		IlwrathConversationPhrases, /* PlayerPhrases */
 		4, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

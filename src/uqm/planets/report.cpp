@@ -38,10 +38,10 @@
 #include "uqm/lua/UQMLua.h"
 
 
-#define COL_MULTIPLIER (isPC(uqm::UQMOptions::read().landerStyle) || IsPad() ? 7 : 6)
-#define NUM_CELL_COLS (UQM_MAP_WIDTH / COL_MULTIPLIER)
-#define NUM_CELL_ROWS (SC2_MAP_HEIGHT / 6)
-#define MAX_CELL_COLS 40 // Why is this is never used???
+static auto ColMultiplier() { return (isPC(uqm::UQMOptions::read().landerStyle) || IsPad() ? 7 : 6); }
+static auto NumCellCols() { return (UqmMapWidth / ColMultiplier()); }
+static constexpr auto NumCellRows {(Sc2MapHeight / 6)};
+
 
 extern FRAME SpaceJunkFrame;
 
@@ -70,10 +70,10 @@ ClearReportArea(int16_t startx)
 		BuildColor(MakeRgb15(0x00, 0x07, 0x00), 0x57));
 
 	s.origin.y = RES_SCALE(1);
-	for (y = 0; y < NUM_CELL_ROWS; ++y)
+	for (y = 0; y < NumCellRows; ++y)
 	{
 		s.origin.x = startx;
-		for (x = 0; x < NUM_CELL_COLS; ++x)
+		for (x = 0; x < NumCellCols(); ++x)
 		{
 			if (uqm::UQMOptions::read().whichFonts == uqm::EmulationMode::PC)
 			{
@@ -127,7 +127,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 	uint16_t row_cells {0};
 	fgcolor = BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0xFF);
 
-	if (contextRect.extent.width < SCALED_MAP_WIDTH)
+	if (contextRect.extent.width < ScaledMapWidth())
 	{
 		startx = RES_SCALE(1); // Special case if we're in space
 	}
@@ -182,10 +182,10 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 
 		uint16_t col_cells {0};
 		// check if the remaining text fits on current screen
-		if (row_cells == NUM_CELL_ROWS - 1
-			&& (StrLen > NUM_CELL_COLS || lf_pos > 1))
+		if (row_cells == NumCellRows - 1
+			&& (StrLen > NumCellCols() || lf_pos > 1))
 		{
-			col_cells = (NUM_CELL_COLS >> 1) - (end_page_len >> 1);
+			col_cells = (NumCellCols() >> 1) - (end_page_len >> 1);
 			t.pStr = end_page_buf;
 			StrLen += end_page_len;
 
@@ -199,12 +199,12 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 		{
 			if (curr_line == 0)
 			{
-				col_cells = (NUM_CELL_COLS - first_line_length) >> 1;
+				col_cells = (NumCellCols() - first_line_length) >> 1;
 			}
 
 			if (curr_line == total_lines)
 			{
-				col_cells = ((NUM_CELL_COLS - (StrLen - 2)) >> 1) - 2;
+				col_cells = ((NumCellCols() - (StrLen - 2)) >> 1) - 2;
 			}
 		}
 
@@ -223,7 +223,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 			}
 
 			uint16_t word_chars {(uint16_t)uqm::utf8StringCount(uqstl::string_view {t.pStr, static_cast<size_t>(pStr - t.pStr)})};
-			if ((col_cells += word_chars) <= NUM_CELL_COLS)
+			if ((col_cells += word_chars) <= NumCellCols())
 			{
 				TimeCount TimeOut;
 
@@ -320,11 +320,11 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 					curr_line++;
 				}
 			}
-		} while (col_cells <= NUM_CELL_COLS && last_c != '\n' && StrLen);
+		} while (col_cells <= NumCellCols() && last_c != '\n' && StrLen);
 
 		t.baseline.y += r.extent.height + RES_SCALE(1);
 		// Text vertical spacing
-		if (++row_cells == NUM_CELL_ROWS || StrLen == 0)
+		if (++row_cells == NumCellRows || StrLen == 0)
 		{
 			t.pStr = pLastStr;
 			if (!Sleepy)

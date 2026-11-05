@@ -24,6 +24,9 @@
 
 //#define DEBUG_GRAVITY
 
+static auto DifuseGravity() { return RES_SCALE(175); } // JMS_GFX: Because of the ifdef NEVER this is actually never run. Well, changed it for consistency
+static auto MaxMagnitude() { return RES_SCALE(6); }	   // JMS_GFX: Because of the ifdef NEVER this is actually never run. Well, changed it for consistency
+
 bool CalculateGravity(ELEMENT* ElementPtr)
 {
 	bool HasGravity {};
@@ -104,10 +107,9 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 #ifdef NEVER
 					uint16_t magnitude;
 
-#define DIFUSE_GRAVITY RES_SCALE(175) // JMS_GFX: Because of the ifdef NEVER this is actually never run. Well, changed it for consistency
-					dist_squared += (uint32_t)abs_dx * (DIFUSE_GRAVITY << 1)
-								  + (uint32_t)abs_dy * (DIFUSE_GRAVITY << 1)
-								  + ((uint32_t)(DIFUSE_GRAVITY * DIFUSE_GRAVITY) << 1);
+					dist_squared += (uint32_t)abs_dx * (DifuseGravity() << 1)
+								  + (uint32_t)abs_dy * (DifuseGravity() << 1)
+								  + ((uint32_t)(DifuseGravity() * DifuseGravity()) << 1);
 					if ((magnitude = (uint16_t)((uint32_t)(GravityThreshold()
 														   * GravityThreshold())
 												/ dist_squared))
@@ -116,10 +118,9 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 						magnitude = 1;
 					}
 
-#define MAX_MAGNITUDE RES_SCALE(6) // JMS_GFX: Because of the ifdef NEVER this is actually never run. Well, changed it for consistency
-					else if (magnitude > MAX_MAGNITUDE)
+					else if (magnitude > MaxMagnitude())
 					{
-						magnitude = MAX_MAGNITUDE;
+						magnitude = MaxMagnitude();
 					}
 					uqm::log::debug("magnitude = {}", magnitude);
 #endif /* NEVER */

@@ -68,7 +68,7 @@ GenerateWreck_generatePlanets(SOLARSYS_STATE* solarSys)
 			const uint32_t RandVal = SysGenRNG->next();
 			const uint8_t PByte = pSunDesc->PlanetByte + 1;
 			pSunDesc->NumPlanets =
-				(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);
+				(RandVal % (MaxGenPlanets - PByte) + PByte);
 
 			FillOrbits(solarSys, pSunDesc->NumPlanets,
 					   solarSys->PlanetDesc, false);
@@ -86,7 +86,7 @@ GenerateWreck_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		pPlanet->data_index = GenerateWorlds(SMALL_ROCKY);
+		pPlanet->data_index = GenerateWorlds(SmallRocky);
 	}
 	else
 	{
@@ -100,7 +100,7 @@ static bool
 GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 							  PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (isDifficulty(uqm::Difficulty::Hard) && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << PROBE_ENCOUNTER))
 		{
@@ -179,7 +179,7 @@ static uint16_t
 GenerateWreck_generateEnergy(const SOLARSYS_STATE* solarSys,
 							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateArtifact(
 			solarSys, whichNode, info);
@@ -192,7 +192,7 @@ static bool
 GenerateWreck_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 						   uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		assert(whichNode == 0);
 

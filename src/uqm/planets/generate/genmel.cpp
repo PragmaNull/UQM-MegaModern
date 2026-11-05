@@ -100,7 +100,7 @@ GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		if (IsExtended() && pPlanet->NumPlanets < MAX_GEN_MOONS)
+		if (IsExtended() && pPlanet->NumPlanets < MaxGenMoons)
 		{
 			pPlanet->NumPlanets++;
 		}
@@ -123,7 +123,7 @@ GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-			pPlanet->data_index = GenerateWorlds(ALL_ROCKY);
+			pPlanet->data_index = GenerateWorlds(AllRocky);
 		}
 	}
 
@@ -137,7 +137,7 @@ GenerateMelnorme_generateMoons(SOLARSYS_STATE* solarSys,
 	GenerateDefault_generateMoons(solarSys, planet);
 
 	if (IsExtended() && CurStarDescPtr()->Index == MELNORME1_DEFINED
-		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 
@@ -151,7 +151,7 @@ static bool
 GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
 								 PLANET_DESC* world)
 {
-	if (IsExtended() && CurStarDescPtr()->Index == MELNORME1_DEFINED && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+	if (IsExtended() && CurStarDescPtr()->Index == MELNORME1_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		/* Starbase */
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
@@ -167,7 +167,7 @@ GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
 		return true;
 	}
 
-	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
@@ -186,7 +186,7 @@ GenerateMelnorme_generateEnergy(const SOLARSYS_STATE* solarSys,
 								const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateArtifact(
 			solarSys, whichNode, info);
@@ -199,7 +199,7 @@ static bool
 GenerateMelnorme_pickupEnergy(SOLARSYS_STATE* solarSys,
 							  PLANET_DESC* world, uint16_t whichNode)
 {
-	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		assert(whichNode == 0);
 

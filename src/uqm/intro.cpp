@@ -164,11 +164,21 @@ Present_UnbatchGraphics(PRESENTATION_INPUT_STATE* pPIS, bool bYield)
 static void
 Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 {
-#define MODULE_YOFS_P -(RES_SCALE(79) + IF_HD(33))
-#define DRIVE_TOP_Y_P (DriveTopY() + MODULE_YOFS_P)
-#define JET_TOP_Y_P (JetTopY() + MODULE_YOFS_P)
-#define MODULE_TOP_Y_P (ModuleTopY() + MODULE_YOFS_P)
-#define MODULE_TOP_X_P ModuleTopX()
+	const auto ModuleYofsP = [&] {
+		return -(RES_SCALE(79) + IF_HD(33));
+	};
+	const auto DriveTopYP = [&] {
+		return (DriveTopY() + ModuleYofsP());
+	};
+	const auto JetTopYP = [&] {
+		return (JetTopY() + ModuleYofsP());
+	};
+	const auto ModuleTopYP = [&] {
+		return (ModuleTopY() + ModuleYofsP());
+	};
+	const auto ModuleTopXP = [&] {
+		return ModuleTopX();
+	};
 	FRAME SisFrame {};
 	STAMP s;
 	GFXRECT r;
@@ -202,7 +212,7 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 		if (piece < EmptySlot)
 		{
 			s.origin.x = DriveTopX();
-			s.origin.y = DRIVE_TOP_Y_P;
+			s.origin.y = DriveTopYP();
 			s.origin.x += slot * ShipPieceOffset();
 			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
 			DrawStamp(&s);
@@ -214,7 +224,7 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 		if (piece < EmptySlot)
 		{
 			s.origin.x = JetTopX();
-			s.origin.y = JET_TOP_Y_P;
+			s.origin.y = JetTopYP();
 			s.origin.x += slot * ShipPieceOffset();
 			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
 			DrawStamp(&s);
@@ -225,8 +235,8 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 		piece = GLOBAL_SIS(ModuleSlots[slot]);
 		if (piece < EmptySlot)
 		{
-			s.origin.x = MODULE_TOP_X_P;
-			s.origin.y = MODULE_TOP_Y_P;
+			s.origin.x = ModuleTopXP();
+			s.origin.y = ModuleTopYP();
 			s.origin.x += slot * ShipPieceOffset();
 			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
 			if (piece >= BOMB_MODULE_0)
@@ -1258,8 +1268,12 @@ DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::StatBox:
 				{ /* draw stat box for spin */
-#define STATBOX_WIDTH RES_SCALE(122)
-#define STATBOX_HEIGHT RES_SCALE(60)
+					const auto StatboxWidth = [&] {
+						return RES_SCALE(122);
+					};
+					const auto StatboxHeight = [&] {
+						return RES_SCALE(60);
+					};
 					int x {cmd.x << resolutionFactor};
 					int y {cmd.y << resolutionFactor};
 					pPIS->NumSpinStat = 0;
@@ -1274,7 +1288,7 @@ DoPresentation(void* pIS)
 
 					pPIS->StatBox.corner = MAKE_POINT(x, y);
 					pPIS->StatBox.extent =
-						MAKE_EXTENT(STATBOX_WIDTH, STATBOX_HEIGHT);
+						MAKE_EXTENT(StatboxWidth(), StatboxHeight());
 
 					DoSpinStatBox(&pPIS->StatBox, pPIS->TextColor,
 								  pPIS->TextBackColor, &pPIS->Skip);

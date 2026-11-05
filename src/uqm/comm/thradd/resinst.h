@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define THRADD_COLOR_MAP "comm.thraddash.colortable"
-#define THRADD_CONVERSATION_PHRASES "comm.thraddash.dialogue"
-#define THRADD_FONT "comm.thraddash.font"
-#define THRADD_MUSIC "comm.thraddash.music"
-#define THRADD_PMAP_ANIM "comm.thraddash.graphics"
-#define THRADD_SCRIPT "comm.thraddash.script"
+inline constexpr uqgsl::czstring ThraddColorMap {"comm.thraddash.colortable"};
+inline constexpr uqgsl::czstring ThraddConversationPhrases {"comm.thraddash.dialogue"};
+inline constexpr uqgsl::czstring ThraddFont {"comm.thraddash.font"};
+inline constexpr uqgsl::czstring ThraddMusic {"comm.thraddash.music"};
+inline constexpr uqgsl::czstring ThraddPmapAnim {"comm.thraddash.graphics"};

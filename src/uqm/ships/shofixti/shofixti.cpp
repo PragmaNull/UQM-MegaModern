@@ -27,38 +27,38 @@
 #include "../../starmap.h"
 
 // Core characteristics
-#define MAX_CREW 6
-#define MAX_ENERGY 4
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 9
-#define MAX_THRUST 35
-#define THRUST_INCREMENT 5
-#define TURN_WAIT 1
-#define THRUST_WAIT 0
-#define WEAPON_WAIT 3
-#define SPECIAL_WAIT 0
-#define SHIP_MASS 1
+static constexpr auto MaxCrew {6};
+static constexpr auto MaxEnergy {4};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {9};
+static constexpr auto MaxThrust {35};
+static constexpr auto ThrustIncrement {5};
+static constexpr auto TurnWait {1};
+static constexpr auto ThrustWait {0};
+static constexpr auto WeaponWait {3};
+static constexpr auto SpecialWait {0};
+static constexpr auto ShipMass {1};
 
 // Dart Gun
-#define WEAPON_ENERGY_COST 1
-#define SHOFIXTI_OFFSET chooseIfHd(15, 51)
-#define MISSILE_OFFSET RES_SCALE(1)
-#define MISSILE_SPEED DISPLAY_TO_WORLD(24)
-#define MISSILE_LIFE 10
-#define MISSILE_HITS 1
-#define MISSILE_DAMAGE 1
+static constexpr auto WeaponEnergyCost {1};
+static auto ShofixtiOffset() { return chooseIfHd(15, 51); }
+static auto MissileOffset() { return RES_SCALE(1); }
+static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(24)};
+static constexpr auto MissileLife {10};
+static constexpr auto MissileHits {1};
+static constexpr auto MissileDamage {1};
 
 // Glory Device
-#define SPECIAL_ENERGY_COST 0
-#define SPECIAL_SAUCE 180
-#define DESTRUCT_RANGE RES_SCALE(SPECIAL_SAUCE)
-#define MAX_DESTRUCTION (SPECIAL_SAUCE / 10)
+static constexpr auto SpecialEnergyCost {0};
+static constexpr auto SpecialSauce {180};
+static auto DestructRange() { return RES_SCALE(SpecialSauce); }
+static constexpr auto MaxDestruction {(SpecialSauce / 10)};
 
 // Full game: Tanaka/Katana's damaged ships
-#define NUM_LIMPETS 3
+static constexpr auto NumLimpets {3};
 
 // HdResolutionFactor
-#define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
+static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
 
 static RACE_DESC shofixti_desc =
 	{
@@ -66,11 +66,11 @@ static RACE_DESC shofixti_desc =
 		 "scout",
 		 FiresFore,
 		 5, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 SHOFIXTI_RACE_STRINGS,
-		 SHOFIXTI_ICON_MASK_PMAP_ANIM,
-		 SHOFIXTI_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 ShofixtiRaceStrings,
+		 ShofixtiIconMaskPmapAnim,
+		 ShofixtiMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -82,38 +82,38 @@ static RACE_DESC shofixti_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 SHOFIXTI_BIG_MASK_PMAP_ANIM,
-			 SHOFIXTI_MED_MASK_PMAP_ANIM,
-			 SHOFIXTI_SML_MASK_PMAP_ANIM,
+			 ShofixtiBigMaskPmapAnim,
+			 ShofixtiMedMaskPmapAnim,
+			 ShofixtiSmlMaskPmapAnim,
 		 },
 		 {
-			 DART_BIG_MASK_PMAP_ANIM,
-			 DART_MED_MASK_PMAP_ANIM,
-			 DART_SML_MASK_PMAP_ANIM,
+			 DartBigMaskPmapAnim,
+			 DartMedMaskPmapAnim,
+			 DartSmlMaskPmapAnim,
 		 },
 		 {
-			 DESTRUCT_BIG_MASK_ANIM,
-			 DESTRUCT_MED_MASK_ANIM,
-			 DESTRUCT_SML_MASK_ANIM,
+			 DestructBigMaskAnim,
+			 DestructMedMaskAnim,
+			 DestructSmlMaskAnim,
 		 },
-		 {SHOFIXTI_CAPTAIN_MASK_PMAP_ANIM,
+		 {ShofixtiCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 SHOFIXTI_VICTORY_SONG,
-		 SHOFIXTI_SHIP_SOUNDS,
+		 ShofixtiVictorySong,
+		 ShofixtiShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -121,7 +121,7 @@ static RACE_DESC shofixti_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_SPEED * MISSILE_LIFE,
+			MissileSpeed * MissileLife,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -146,33 +146,34 @@ initialize_standard_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = SHOFIXTI_OFFSET;
-	MissileBlock.speed = MISSILE_SPEED_HD;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.pixoffs = ShofixtiOffset();
+	MissileBlock.speed = MissileSpeedHd();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset();
 	MissileArray[0] = initialize_missile(&MissileBlock);
 
 	return (1);
 }
 
+static constexpr auto DestructSwitch {((NumExplosionFrames * 3) - 3)};
+
 static void
 destruct_preprocess(ELEMENT* ElementPtr)
 {
-#define DESTRUCT_SWITCH ((NumExplosionFrames * 3) - 3)
 
 	// ship_death() set the ship element's life_span to
 	// (NumExplosionFrames * 3)
 	PRIMITIVE* lpPrim {&DisplayArray[ElementPtr->PrimIndex]};
 	ElementPtr->state_flags |= Changing;
-	if (ElementPtr->life_span > DESTRUCT_SWITCH)
+	if (ElementPtr->life_span > DestructSwitch)
 	{
 		// First, stamp-fill the ship's own element with changing colors
 		// for 3 frames. No explosion element yet.
 		SetPrimType(lpPrim, STAMPFILL_PRIM);
-		if (ElementPtr->life_span == DESTRUCT_SWITCH + 2)
+		if (ElementPtr->life_span == DestructSwitch + 2)
 		{
 			SetPrimColor(lpPrim,
 						 BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E));
@@ -183,7 +184,7 @@ destruct_preprocess(ELEMENT* ElementPtr)
 						 BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
 		}
 	}
-	else if (ElementPtr->life_span < DESTRUCT_SWITCH)
+	else if (ElementPtr->life_span < DestructSwitch)
 	{
 		// Stamp-fill the explosion element with cycling colors for the
 		// remainder of the glory explosion frames.
@@ -303,10 +304,10 @@ self_destruct_kill_objects(ELEMENT* ElementPtr)
 		delta_x = WORLD_TO_DISPLAY(delta_x);
 		delta_y = WORLD_TO_DISPLAY(delta_y);
 		dist = delta_x * delta_x + delta_y * delta_y;
-		if (delta_x <= DESTRUCT_RANGE && delta_y <= DESTRUCT_RANGE
-			&& (int)dist <= DESTRUCT_RANGE * DESTRUCT_RANGE)
+		if (delta_x <= DestructRange() && delta_y <= DestructRange()
+			&& (int)dist <= DestructRange() * DestructRange())
 		{
-			const int destruction = 1 + MAX_DESTRUCTION * (DESTRUCT_RANGE - square_root(dist)) / DESTRUCT_RANGE;
+			const int destruction = 1 + MaxDestruction * (DestructRange() - square_root(dist)) / DestructRange();
 
 			// XXX: Why not simply call do_damage()?
 			if (ObjPtr->state_flags & PlayerShip)
@@ -501,16 +502,16 @@ init_shofixti(void)
 
 	if (IsHd())
 	{
-		shofixti_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		shofixti_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		shofixti_desc.cyborg_control.WeaponRange = MISSILE_SPEED_HD * MISSILE_LIFE;
+		shofixti_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		shofixti_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		shofixti_desc.cyborg_control.WeaponRange = MissileSpeedHd() * MissileLife;
 	}
 	else
 	{
-		shofixti_desc.characteristics.max_thrust = MAX_THRUST;
-		shofixti_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		shofixti_desc.characteristics.max_thrust = MaxThrust;
+		shofixti_desc.characteristics.thrust_increment = ThrustIncrement;
 		shofixti_desc.cyborg_control.WeaponRange =
-			MISSILE_SPEED * MISSILE_LIFE;
+			MissileSpeed * MissileLife;
 	}
 
 	shofixti_desc.preprocess_func = shofixti_preprocess;
@@ -527,16 +528,16 @@ init_shofixti(void)
 		// This is determined by being at the homeworld & not allied
 		uint16_t i {};
 
-		new_shofixti_desc.ship_data.ship_rsc[0] = OLDSHOF_BIG_MASK_PMAP_ANIM;
-		new_shofixti_desc.ship_data.ship_rsc[1] = OLDSHOF_MED_MASK_PMAP_ANIM;
-		new_shofixti_desc.ship_data.ship_rsc[2] = OLDSHOF_SML_MASK_PMAP_ANIM;
+		new_shofixti_desc.ship_data.ship_rsc[0] = OldshofBigMaskPmapAnim;
+		new_shofixti_desc.ship_data.ship_rsc[1] = OldshofMedMaskPmapAnim;
+		new_shofixti_desc.ship_data.ship_rsc[2] = OldshofSmlMaskPmapAnim;
 		new_shofixti_desc.ship_data.special_rsc[0] = NullResource;
 		new_shofixti_desc.ship_data.special_rsc[1] = NullResource;
 		new_shofixti_desc.ship_data.special_rsc[2] = NullResource;
 		new_shofixti_desc.ship_data.captain_control.captain_rsc =
-			OLDSHOF_CAPTAIN_MASK_PMAP_ANIM;
+			OldshofCaptainMaskPmapAnim;
 		// JMS: Tanaka also has a corresponding limpeted ship status icon in melee.
-		new_shofixti_desc.ship_info.icons_rsc = OLDSHOF_ICON_MASK_PMAP_ANIM;
+		new_shofixti_desc.ship_info.icons_rsc = OldshofIconMaskPmapAnim;
 
 		/* Weapon doesn't work as well */
 		if (!isDifficulty(uqm::Difficulty::Hard))
@@ -545,7 +546,7 @@ init_shofixti(void)
 		}
 
 		/* Simulate VUX limpets */
-		for (i = 0; i < NUM_LIMPETS; ++i)
+		for (i = 0; i < NumLimpets; ++i)
 		{
 			if (!isDifficulty(uqm::Difficulty::Hard))
 			{
@@ -558,10 +559,12 @@ init_shofixti(void)
 					--new_shofixti_desc.characteristics.thrust_wait;
 				}
 
-				/* This should be the same as MIN_THRUST_INCREMENT in vux.c */
-#define MIN_THRUST_INCREMENT DISPLAY_TO_WORLD(RES_SCALE(1))
+				/* This should be the same as MinThrustIncrement() in vux.c */
+				const auto MinThrustIncrement = [&] {
+					return DISPLAY_TO_WORLD(RES_SCALE(1));
+				};
 
-				if (new_shofixti_desc.characteristics.thrust_increment <= MIN_THRUST_INCREMENT)
+				if (new_shofixti_desc.characteristics.thrust_increment <= MinThrustIncrement())
 				{
 					new_shofixti_desc.characteristics.max_thrust =
 						new_shofixti_desc.characteristics.thrust_increment << 1;

@@ -2,14 +2,13 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define FWIFFO_MUSIC "comm.fwiffo.music"
-#define SPAHOME_MUSIC "comm.safeones.music"
-#define SPATHI_COLOR_MAP "comm.spathi.colortable"
-#define SPATHI_CONVERSATION_PHRASES "comm.spathi.dialogue"
-#define SPATHI_FONT "comm.spathi.font"
-#define SPATHI_HOME_COLOR_MAP "comm.safeones.colortable"
-#define SPATHI_HOME_CONVERSATION_PHRASES "comm.safeones.dialogue"
-#define SPATHI_HOME_PMAP_ANIM "comm.safeones.graphics"
-#define SPATHI_MUSIC "comm.spathi.music"
-#define SPATHI_PMAP_ANIM "comm.spathi.graphics"
-#define SPATHI_SCRIPT "comm.spathi.script"
+inline constexpr uqgsl::czstring FwiffoMusic {"comm.fwiffo.music"};
+inline constexpr uqgsl::czstring SpahomeMusic {"comm.safeones.music"};
+inline constexpr uqgsl::czstring SpathiColorMap {"comm.spathi.colortable"};
+inline constexpr uqgsl::czstring SpathiConversationPhrases {"comm.spathi.dialogue"};
+inline constexpr uqgsl::czstring SpathiFont {"comm.spathi.font"};
+inline constexpr uqgsl::czstring SpathiHomeColorMap {"comm.safeones.colortable"};
+inline constexpr uqgsl::czstring SpathiHomeConversationPhrases {"comm.safeones.dialogue"};
+inline constexpr uqgsl::czstring SpathiHomePmapAnim {"comm.safeones.graphics"};
+inline constexpr uqgsl::czstring SpathiMusic {"comm.spathi.music"};
+inline constexpr uqgsl::czstring SpathiPmapAnim {"comm.spathi.graphics"};

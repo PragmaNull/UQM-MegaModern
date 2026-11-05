@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define ILWRATH_COLOR_MAP "comm.ilwrath.colortable"
-#define ILWRATH_CONVERSATION_PHRASES "comm.ilwrath.dialogue"
-#define ILWRATH_FONT "comm.ilwrath.font"
-#define ILWRATH_MUSIC "comm.ilwrath.music"
-#define ILWRATH_PMAP_ANIM "comm.ilwrath.graphics"
-#define ILWRATH_SCRIPT "comm.ilwrath.script"
+inline constexpr uqgsl::czstring IlwrathColorMap {"comm.ilwrath.colortable"};
+inline constexpr uqgsl::czstring IlwrathConversationPhrases {"comm.ilwrath.dialogue"};
+inline constexpr uqgsl::czstring IlwrathFont {"comm.ilwrath.font"};
+inline constexpr uqgsl::czstring IlwrathMusic {"comm.ilwrath.music"};
+inline constexpr uqgsl::czstring IlwrathPmapAnim {"comm.ilwrath.graphics"};

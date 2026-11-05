@@ -224,10 +224,9 @@ PLOT_LOCATION plot_map[NUM_PLOTS] = {};
 //PLOT_LOCATION plot_map[NUM_PLOTS] = {[0 ... (NUM_PLOTS - 1)] =
 //		{{~0, ~0}, nullptr, {[0 ... (NUM_PLOTS - 1)] = 0}}};
 
-#define MIN_PORTAL 2000		// The min distance between portals (exits)
-#define MIN_VORTEX 150		// The min distance between vorticies in QS
-#define MIN_PORTAL_SOL 500	// The min distance between SOL and portal 0
-#define MAX_PORTAL_SOL 1000 // The max distance between SOL and portal 0
+static constexpr auto MinPortal {2000}; // The min distance between portals (exits)
+static constexpr auto MinVortex {150};	// The min distance between vorticies in QS
+
 
 // portal_map and portalmap_array work exactly like star_map and StarmapArray
 // but for Quasispace.  We use this static one here for reference to initialize
@@ -394,11 +393,11 @@ void print_plot_id(uint16_t plot_id)
 // The minimum distance you can set a max plot length to; needs to be
 // non-zero, LARGER values have more weight.  The maximum distance you
 // can set a min plot length to; too large and it will push off the map.
-#define MIN_PLOT 100
-#define MAX_PLOT 10000
+static constexpr auto MinPlot {100};
+static constexpr auto MaxPlot {10000};
 // We effectively won't care about the weight of a max plot length above this
 // value either, it caps
-#define MAX_PWEIGHT 100000000 // (10000 * 10000) or MAX_PLOT * MAX_PLOT
+static constexpr auto MaxPweight {100000000}; // (10000 * 10000) or MAX_PLOT * MAX_PLOT
 
 // Internal (although it could be shared)
 // Sets the min and max distances (squared internally)
@@ -419,19 +418,19 @@ void SetPlotLength(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB,
 				   plotA, plotB, p_min, p_max);
 		return;
 	}
-	// If you zero out max, it will treat it as MAX_PLOT (any length)
+	// If you zero out max, it will treat it as MaxPlot (any length)
 	// If your plot max/min is too small/large, push it up/down to the cap
-	if ((max > MAX_PLOT) || (max == 0))
+	if ((max > MaxPlot) || (max == 0))
 	{
-		max = MAX_PLOT;
+		max = MaxPlot;
 	}
-	if (max < MIN_PLOT)
+	if (max < MinPlot)
 	{
-		max = MIN_PLOT;
+		max = MinPlot;
 	}
-	if (min > MAX_PLOT)
+	if (min > MaxPlot)
 	{
-		min = MAX_PLOT;
+		min = MaxPlot;
 	}
 
 	// If the plots already have a min or max, remove it from the plot_weight
@@ -448,7 +447,7 @@ void SetPlotLength(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB,
 		PLOT_WEIGHT(plotA) -= (uint16_t)sqrt(PLOT_MIN(plotA, plotB));
 		PLOT_WEIGHT(plotB) -= (uint16_t)sqrt(PLOT_MIN(plotA, plotB));
 	}
-	if (PLOT_MAX(plotA, plotB) != 0 && PLOT_MAX(plotA, plotB) < MAX_PLOT * MAX_PLOT)
+	if (PLOT_MAX(plotA, plotB) != 0 && PLOT_MAX(plotA, plotB) < MaxPlot * MaxPlot)
 	{
 #ifdef DEBUG_STARSEED_TRACE
 		fmt::print(stderr, "SetPlotLength reducing plot max ");
@@ -456,10 +455,10 @@ void SetPlotLength(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB,
 		fmt::print(stderr, " (weight {}) to ", PLOT_WEIGHT(plotA));
 		print_plot_id(plotB);
 		fmt::print(stderr, " (weight {}), max {}\n", PLOT_WEIGHT(plotB),
-				   MAX_PLOT - (uint16_t)sqrt(PLOT_MAX(plotA, plotB)));
+				   MaxPlot - (uint16_t)sqrt(PLOT_MAX(plotA, plotB)));
 #endif
-		PLOT_WEIGHT(plotA) += (uint16_t)sqrt(PLOT_MAX(plotA, plotB)) - MAX_PLOT;
-		PLOT_WEIGHT(plotB) += (uint16_t)sqrt(PLOT_MAX(plotA, plotB)) - MAX_PLOT;
+		PLOT_WEIGHT(plotA) += (uint16_t)sqrt(PLOT_MAX(plotA, plotB)) - MaxPlot;
+		PLOT_WEIGHT(plotB) += (uint16_t)sqrt(PLOT_MAX(plotA, plotB)) - MaxPlot;
 	}
 
 	// Now set the plot lengths
@@ -467,14 +466,14 @@ void SetPlotLength(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB,
 	PLOT_MAX_SET(plotA, plotB, max * max);
 
 	// Now we increase the weights
-	PLOT_WEIGHT(plotA) += min + MAX_PLOT - max;
-	PLOT_WEIGHT(plotB) += min + MAX_PLOT - max;
+	PLOT_WEIGHT(plotA) += min + MaxPlot - max;
+	PLOT_WEIGHT(plotB) += min + MaxPlot - max;
 }
 
 // Internal. (although it could be shared)
 // If the min/max plot lengths are set and valid, gives relative weight of
 // this plot pair, otherwise 0.  The relative weight is the min distance
-// plus the (MAX_PLOT - the max distance) of each plot thread connected.
+// plus the (MaxPlot - the max distance) of each plot thread connected.
 uint32_t
 ConnectedPlot(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB)
 {
@@ -487,12 +486,12 @@ ConnectedPlot(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB)
 		return 0;
 	}
 	// Plot MIN (capped at max pweight) + MAX weight - PLOT MAX (if valid)
-	return (PLOT_MIN(plotA, plotB) > MAX_PWEIGHT ?
-				MAX_PWEIGHT :
+	return (PLOT_MIN(plotA, plotB) > MaxPweight ?
+				MaxPweight :
 				PLOT_MIN(plotA, plotB))
-		 + ((PLOT_MAX(plotA, plotB) == 0 || PLOT_MAX(plotA, plotB) > MAX_PWEIGHT) ?
+		 + ((PLOT_MAX(plotA, plotB) == 0 || PLOT_MAX(plotA, plotB) > MaxPweight) ?
 				0 :
-				MAX_PWEIGHT - PLOT_MAX(plotA, plotB));
+				MaxPweight - PLOT_MAX(plotA, plotB));
 }
 
 // Used by GetNextPlot to re-iterate on a failed plot after pop-back.
@@ -595,11 +594,12 @@ void ResetPlot(PLOT_LOCATION* plot)
 	}
 }
 
+static constexpr auto ArilouSpaceX {438};  // We don't seed arilou from the map, they
+static constexpr auto ArilouSpaceY {6372}; // are hard code all the way.
+
 // Sets all plot locations to their position on the provided starmap.
 void DefaultPlot(PLOT_LOCATION* plot, STAR_DESC* starmap)
 {
-#define ARILOU_SPACE_X 438	// We don't seed arilou from the map, they
-#define ARILOU_SPACE_Y 6372 // are hard code all the way.
 
 	if (!plot || !starmap)
 	{
@@ -609,7 +609,7 @@ void DefaultPlot(PLOT_LOCATION* plot, STAR_DESC* starmap)
 	}
 
 	ResetPlot(plot);
-	plot[0].star_pt = GFXPOINT {ARILOU_SPACE_X, ARILOU_SPACE_Y};
+	plot[0].star_pt = GFXPOINT {ArilouSpaceX, ArilouSpaceY};
 	plot[0].star = &(starmap[NumSolarSystems + 1 + NumHyperVortices + 1]);
 	for (uint16_t i {0}; i < NumSolarSystems; i++)
 	{
@@ -679,7 +679,7 @@ void InitPlot(PLOT_LOCATION* plotmap)
 						  (home_map[i][1] > home_map[j][1]) ?
 							  home_map[i][1] :
 							  home_map[j][1],
-						  MAX_PLOT);
+						  MaxPlot);
 		}
 	}
 
@@ -696,11 +696,11 @@ void InitPlot(PLOT_LOCATION* plotmap)
 	// 5030 Arilou are not too close or far, so they can "hide" the humans
 	// 5090 Arilou and Orz are not in the same *space*
 	// 8480 The Slylandro are far away and annoying to find
-	SetPlotLength(plotmap, SOL_DEFINED, SAMATRA_DEFINED, 5000, MAX_PLOT);
+	SetPlotLength(plotmap, SOL_DEFINED, SAMATRA_DEFINED, 5000, MaxPlot);
 	SetPlotLength(plotmap, SOL_DEFINED, START_COLONY_DEFINED, 1500, 5000);
-	SetPlotLength(plotmap, ARILOU_DEFINED, ORZ_DEFINED, 4000, MAX_PLOT);
+	SetPlotLength(plotmap, ARILOU_DEFINED, ORZ_DEFINED, 4000, MaxPlot);
 	SetPlotLength(plotmap, ARILOU_DEFINED, SOL_DEFINED, 3000, 7000);
-	SetPlotLength(plotmap, SLYLANDRO_DEFINED, SOL_DEFINED, 6000, MAX_PLOT);
+	SetPlotLength(plotmap, SLYLANDRO_DEFINED, SOL_DEFINED, 6000, MaxPlot);
 
 	// Druuge 1400 and Melnorme
 	// 2990 Burvix are outside Druuge space but close enough to lure
@@ -708,7 +708,7 @@ void InitPlot(PLOT_LOCATION* plotmap)
 	// 6600 They're not very close to Spathi at all for some reason.
 	SetPlotLength(plotmap, DRUUGE_DEFINED, BURVIXESE_DEFINED, 2000, 4000);
 	SetPlotLength(plotmap, DRUUGE_DEFINED, ALGOLITES_DEFINED, 0, 1250);
-	SetPlotLength(plotmap, SPATHI_DEFINED, ALGOLITES_DEFINED, 5000, MAX_PLOT);
+	SetPlotLength(plotmap, SPATHI_DEFINED, ALGOLITES_DEFINED, 5000, MaxPlot);
 
 	// Ilwrath 1410 and Chmrr, Chenjesu
 	// 1490 The Chenjesu homeworld is between Ilwrath homeworld (guarding)
@@ -735,7 +735,7 @@ void InitPlot(PLOT_LOCATION* plotmap)
 	// 120 The Androsynth were near the Dig Site
 	// 2150 The Androysnth fled Sol (but not too far because of colony)
 	// 680 The Start Colony is near Androsynth space
-	SetPlotLength(plotmap, ORZ_DEFINED, SAMATRA_DEFINED, 3000, MAX_PLOT);
+	SetPlotLength(plotmap, ORZ_DEFINED, SAMATRA_DEFINED, 3000, MaxPlot);
 	SetPlotLength(plotmap, ANDROSYNTH_DEFINED, ORZ_DEFINED, 0, 350);
 	SetPlotLength(plotmap, ORZ_DEFINED, TAALO_PROTECTOR_DEFINED, 0, 350);
 	SetPlotLength(plotmap, ANDROSYNTH_DEFINED,
@@ -766,9 +766,9 @@ void InitPlot(PLOT_LOCATION* plotmap)
 	// 5230 Have them start pretty far from Ilwrath space
 	// 8090 And also have them start far from the Pkunk space
 	SetPlotLength(plotmap, THRADD_DEFINED, AQUA_HELIX_DEFINED, 0, 700);
-	SetPlotLength(plotmap, CHMMR_DEFINED, THRADD_DEFINED, 3000, MAX_PLOT);
-	SetPlotLength(plotmap, ILWRATH_DEFINED, THRADD_DEFINED, 3000, MAX_PLOT);
-	SetPlotLength(plotmap, PKUNK_DEFINED, THRADD_DEFINED, 3000, MAX_PLOT);
+	SetPlotLength(plotmap, CHMMR_DEFINED, THRADD_DEFINED, 3000, MaxPlot);
+	SetPlotLength(plotmap, ILWRATH_DEFINED, THRADD_DEFINED, 3000, MaxPlot);
+	SetPlotLength(plotmap, PKUNK_DEFINED, THRADD_DEFINED, 3000, MaxPlot);
 
 	// Umgah 833 (defined by their suffering: TALKING_PET_DEFINED)
 	// Alas, no plot threads for them, just standard homeworld stuff
@@ -779,7 +779,7 @@ void InitPlot(PLOT_LOCATION* plotmap)
 	// The UQ Wreck is outside the battle zone
 	// 1820 The Ship Vault is specifically close to the Syreen
 	SetPlotLength(plotmap, SAMATRA_DEFINED, SHIP_VAULT_DEFINED, 0, 3000);
-	SetPlotLength(plotmap, SAMATRA_DEFINED, URQUAN_WRECK_DEFINED, 4000, MAX_PLOT);
+	SetPlotLength(plotmap, SAMATRA_DEFINED, URQUAN_WRECK_DEFINED, 4000, MaxPlot);
 	SetPlotLength(plotmap, SYREEN_DEFINED, SHIP_VAULT_DEFINED, 1700, 2100);
 	// The UQ/KA bases are all in or near the battle zone
 	SetPlotLength(plotmap, SAMATRA_DEFINED, URQUAN0_DEFINED, 0, 2500);
@@ -791,7 +791,7 @@ void InitPlot(PLOT_LOCATION* plotmap)
 	// This is an abandoned slave-shielded planet
 	// (also used as random planet name by ZEX)
 	SetPlotLength(plotmap,
-				  SAMATRA_DEFINED, DESTROYED_STARBASE_DEFINED, 3000, MAX_PLOT);
+				  SAMATRA_DEFINED, DESTROYED_STARBASE_DEFINED, 3000, MaxPlot);
 
 	// Utwig 666
 	// 690 The Utwig keep their Bomb handy
@@ -803,7 +803,7 @@ void InitPlot(PLOT_LOCATION* plotmap)
 	// 320 Admiral ZEX (the maidens) is within VUX territory
 	// 7950 the VUX beast is far away from ZEX
 	SetPlotLength(plotmap, VUX_DEFINED, MAIDENS_DEFINED, 0, 1000);
-	SetPlotLength(plotmap, VUX_BEAST_DEFINED, MAIDENS_DEFINED, 5000, MAX_PLOT);
+	SetPlotLength(plotmap, VUX_BEAST_DEFINED, MAIDENS_DEFINED, 5000, MaxPlot);
 
 	// Yehat 750 and Shofixti
 	// 2020 The Shofixti and Yehat - brothers for life
@@ -847,7 +847,7 @@ void InitMelnormeRainbow(PLOT_LOCATION* plotmap)
 		{
 			if (i != j)
 			{
-				SetPlotLength(plotmap, i, j, 2500, MAX_PLOT);
+				SetPlotLength(plotmap, i, j, 2500, MaxPlot);
 			}
 		}
 	}
@@ -859,7 +859,7 @@ void InitMelnormeRainbow(PLOT_LOCATION* plotmap)
 		{
 			if (i != j)
 			{
-				SetPlotLength(plotmap, i, j, 2750, MAX_PLOT);
+				SetPlotLength(plotmap, i, j, 2750, MaxPlot);
 			}
 		}
 	}
@@ -922,7 +922,7 @@ bool CheckValid(PLOT_LOCATION* plot, uint16_t plot_id)
 		{
 			continue;
 		}
-		if (PLOT_MIN(plot_id, i) == 0 && PLOT_MAX(plot_id, i) == MAX_PWEIGHT)
+		if (PLOT_MIN(plot_id, i) == 0 && PLOT_MAX(plot_id, i) == MaxPweight)
 		{
 			continue;
 		}
@@ -1264,7 +1264,7 @@ void DebugPlotTicker(uint16_t plot_id)
 
 // The amount we skip around in the starmap, must be coprime with
 // NumSolarSystems (502)
-#define STAR_FACTOR 89
+static constexpr auto StarFactor {89};
 
 // SeedPlot will create a seeded location for each remaining item on the
 // plotmap which does not have an assigned location, within the bounds
@@ -1499,7 +1499,7 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 		// ARILOU is a special case, we pick a point not a star
 		if (plot_id == ARILOU_DEFINED)
 		{
-			star_id = (rand_val + i * STAR_FACTOR) % 100;
+			star_id = (rand_val + i * StarFactor) % 100;
 			plotmap[ARILOU_DEFINED].star_pt = GFXPOINT {
 				(star_id / 10) * 1000 + uqm::lowByte(rand_val) * 100 / 256,
 				(star_id % 10) * 1000 + uqm::highByte(rand_val) * 100 / 256};
@@ -1516,7 +1516,7 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 		}
 		else
 		{
-			star_id = (rand_val + i * STAR_FACTOR) % NumSolarSystems;
+			star_id = (rand_val + i * StarFactor) % NumSolarSystems;
 			// Not empty, requeue
 			if (starmap[star_id].Index != 0)
 			{
@@ -1682,7 +1682,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 				// to SOL.  Here, 250000 (50.0 squared) is the min distance
 				// squared from SOL to portal and 1000000 (100.0 squared) is
 				// the max distance squared from SOL to portal.
-				// Note: as long as MIN_PORTAL > 1000 + 500 (1500) you don't
+				// Note: as long as MinPortal > 1000 + 500 (1500) you don't
 				// have to check for other portals too close to SOL
 				// (as long as 500 is that limit).
 				if ((portalmap[i].star_pt.x < 189) || (portalmap[i].star_pt.x > MaxXUniverse - 189) || (portalmap[i].star_pt.y < 189) || (portalmap[i].star_pt.y > MaxYUniverse - 189) || ((portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) * (portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) + (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) * (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) < 250000) || ((portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) * (portalmap[i].star_pt.x - plotmap[SOL_DEFINED].star_pt.x) + (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) * (portalmap[i].star_pt.y - plotmap[SOL_DEFINED].star_pt.y) > 1000000))
@@ -1691,7 +1691,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 					continue;
 				}
 			}
-			// Place a portal, make sure it is MIN_PORTAL from the others
+			// Place a portal, make sure it is MinPortal from the others
 			else
 			{
 				rand_val = StarGenRNG->next();
@@ -1704,7 +1704,7 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 												 uqm::highByte(rand_val) * MaxYUniverse / 265 + 189};
 				for (j = 0; j < i; j++)
 				{
-					if ((portalmap[i].star_pt.x - portalmap[j].star_pt.x) * (portalmap[i].star_pt.x - portalmap[j].star_pt.x) + (portalmap[i].star_pt.y - portalmap[j].star_pt.y) * (portalmap[i].star_pt.y - portalmap[j].star_pt.y) < MIN_PORTAL * MIN_PORTAL)
+					if ((portalmap[i].star_pt.x - portalmap[j].star_pt.x) * (portalmap[i].star_pt.x - portalmap[j].star_pt.x) + (portalmap[i].star_pt.y - portalmap[j].star_pt.y) * (portalmap[i].star_pt.y - portalmap[j].star_pt.y) < MinPortal * MinPortal)
 					{
 						valid = false;
 					}
@@ -1760,12 +1760,12 @@ bool SeedQuasispace(PORTAL_LOCATION* portalmap, PLOT_LOCATION* plotmap,
 											  (uqm::highByte(rand_val) * 51 / 256 - 25) * VortexScale + 5000};
 			for (j = 0; j < i; j++)
 			{
-				if ((portalmap[i].quasi_pt.x - portalmap[j].quasi_pt.x) * (portalmap[i].quasi_pt.x - portalmap[j].quasi_pt.x) + (portalmap[i].quasi_pt.y - portalmap[j].quasi_pt.y) * (portalmap[i].quasi_pt.y - portalmap[j].quasi_pt.y) < MIN_VORTEX * MIN_VORTEX)
+				if ((portalmap[i].quasi_pt.x - portalmap[j].quasi_pt.x) * (portalmap[i].quasi_pt.x - portalmap[j].quasi_pt.x) + (portalmap[i].quasi_pt.y - portalmap[j].quasi_pt.y) * (portalmap[i].quasi_pt.y - portalmap[j].quasi_pt.y) < MinVortex * MinVortex)
 				{
 					valid = false;
 				}
 			}
-			if ((portalmap[i].quasi_pt.x - 5000) * (portalmap[i].quasi_pt.x - 5000) + (portalmap[i].quasi_pt.y - 5000) * (portalmap[i].quasi_pt.y - 5000) < MIN_VORTEX * MIN_VORTEX)
+			if ((portalmap[i].quasi_pt.x - 5000) * (portalmap[i].quasi_pt.x - 5000) + (portalmap[i].quasi_pt.y - 5000) * (portalmap[i].quasi_pt.y - 5000) < MinVortex * MinVortex)
 			{
 				valid = false;
 			}

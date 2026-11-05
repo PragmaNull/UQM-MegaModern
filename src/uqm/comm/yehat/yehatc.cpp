@@ -35,23 +35,23 @@ static LOCDATA yehat_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		YEHAT_PMAP_ANIM, /* AlienFrame */
-		YEHAT_FONT, /* AlienFont */
-		WhiteColorInit, /* AlienTextFColor */
-		BlackColorInit, /* AlienTextBColor */
+		YehatPmapAnim, /* AlienFrame */
+		YehatFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
 		/* (SisTextWidth() - 16) * 2 / 3, */	 /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
-		YEHAT_COLOR_MAP, /* AlienColorMap */
-		YEHAT_MUSIC, /* AlienSong */
+		YehatColorMap, /* AlienColorMap */
+		YehatMusic, /* AlienSong */
 		{
 								NullResource, /* AlienAltFrame */
 			NullResource, /* AlienAltColorMap */
 			NullResource, /* AlienAltSong */
 		},
-		YEHAT_CONVERSATION_PHRASES, /* PlayerPhrases */
+		YehatConversationPhrases, /* PlayerPhrases */
 		15, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */

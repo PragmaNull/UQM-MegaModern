@@ -357,6 +357,8 @@ FoundHome:
 	GetGroupInfo(GroupsRandom, GroupInitIp);
 }
 
+static constexpr auto MaxOverlap {10};
+
 void findRaceSOI(void)
 {
 	const GFXPOINT universe = CurStarDescPtr()->star_pt;
@@ -368,9 +370,8 @@ void findRaceSOI(void)
 	const uint8_t RaceHasMusic[] = {RACE_MUSIC_BOOL};
 	const uint8_t HomeWorld[] = {HOMEWORLD_LOC};
 	uint8_t WhichHomeWorld = NO_ID;
-#define MAX_OVERLAP 10
-	uint8_t SpeciesArr[MAX_OVERLAP] = {NO_ID};
-	uint16_t RadiusArr[MAX_OVERLAP] = {0};
+	uint8_t SpeciesArr[MaxOverlap] = {NO_ID};
+	uint16_t RadiusArr[MaxOverlap] = {0};
 
 	if (!SpaceMusicOK)
 	{

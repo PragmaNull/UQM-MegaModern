@@ -35,28 +35,36 @@ NetConnection_go(NetConnection* conn)
 	assert(conn->state == NetState_unconnected);
 	NetConnection_setState(conn, NetState_connecting);
 
-	const bool ipv4Only {NETPLAY == NETPLAY_IPV4};
+	const bool ipv4Only {NETPLAY == NetplayIpv4};
 	if (conn->options->isServer)
 	{
 		const uqm::net::ListenOptions options {.port = conn->options->address.port,
 											   .ipv4Only = ipv4Only,
-											   .backlog = NETPLAY_LISTEN_BACKLOG};
+											   .backlog = NetplayListenBacklog};
 		conn->listener = uqstl::make_unique<uqm::net::Listener>(
 			netplayContext(), options,
-			[conn](uqm::net::Connection connection) { NetConnection_connected(conn, uqstl::move(connection), true); },
-			[conn](std::error_code error) { NetConnection_connectError(conn, error); });
+			[conn](uqm::net::Connection connection) {
+				NetConnection_connected(conn, uqstl::move(connection), true);
+			},
+			[conn](std::error_code error) {
+				NetConnection_connectError(conn, error);
+			});
 	}
 	else
 	{
 		const uqm::net::ConnectOptions options {.host = conn->options->address.host,
 												.service = uqstl::to_string(conn->options->address.port),
 												.ipv4Only = ipv4Only,
-												.timeout = uqstl::chrono::milliseconds {NETPLAY_CONNECTTIMEOUT},
-												.retryDelay = uqstl::chrono::milliseconds {NETPLAY_RETRYDELAY}};
+												.timeout = uqstl::chrono::milliseconds {NetplayConnecttimeout},
+												.retryDelay = uqstl::chrono::milliseconds {NetplayRetrydelay}};
 		conn->connector = uqstl::make_unique<uqm::net::Connector>(
 			netplayContext(), options,
-			[conn](uqm::net::Connection connection) { NetConnection_connected(conn, uqstl::move(connection), false); },
-			[conn](std::error_code error) { NetConnection_connectError(conn, error); });
+			[conn](uqm::net::Connection connection) {
+				NetConnection_connected(conn, uqstl::move(connection), false);
+			},
+			[conn](std::error_code error) {
+				NetConnection_connectError(conn, error);
+			});
 	}
 }
 
@@ -69,9 +77,13 @@ NetConnection_connected(NetConnection* conn, uqm::net::Connection connection, bo
 	conn->connector.reset();
 	conn->connection = uqstl::make_unique<uqm::net::Connection>(uqstl::move(connection));
 	conn->connection->start(
-		NETPLAY_READBUFSIZE,
-		[conn](uqstl::span<const std::byte> data) { return dataReceived(conn, data); },
-		[conn](std::error_code error) { NetConnection_connectionClosed(conn, error); });
+		NetplayReadbufsize,
+		[conn](uqstl::span<const std::byte> data) {
+			return dataReceived(conn, data);
+		},
+		[conn](std::error_code error) {
+			NetConnection_connectionClosed(conn, error);
+		});
 
 	conn->stateFlags.discriminant = discriminant;
 	conn->stateFlags.connected = true;
