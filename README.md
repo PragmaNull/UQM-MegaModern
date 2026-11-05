@@ -16,6 +16,61 @@ This project is a work in progress. Save files, content files, and settings are 
 
 Report problems at the [issue tracker](https://github.com/PragmaNull/UQM-MegaModern/issues).
 
+## Changes from UQM-MegaMod
+
+This project forked from UQM-MegaMod at commit `18e1f3d1` (2026-01-29). The numbers below compare that commit with this repository in November 2026. The 518 MegaMod commits after the fork are not in this project.
+
+### Size
+
+| | MegaMod at the fork | MegaModern |
+|---|---:|---:|
+| Commits after the fork | — | 380 |
+| C source files in `src` | 413 | 0 |
+| C++ source files in `src` | 1 | 333 |
+| Lines of C/C++ code in `src` | 243,839 | 201,433 |
+| Lines without bundled third-party code and generated shader headers | 208,374 | 188,398 (−10%) |
+| Unit tests (Google Test) | 0 | 367 |
+| CTest tests | 0 | 593 |
+
+Line counts do not include blank lines. Across the full repository, the diff from the fork is 1,935 files changed, +263,739 and −402,589 lines.
+
+### Code that was removed or replaced
+
+* **Bundled third-party code (35,465 lines):** Lua, MikMod, regex, getopt, and MD5 come from Conan packages.
+* **Old UQM libraries:** `libs/uio` (12,930 lines) is replaced by `libs/io` on `std::filesystem`. `libs/threads`, `heap`, `list`, `task`, `memory`, and `log` are replaced by the standard library and spdlog. `libs/cdp` and `libs/decomp` are removed.
+* **Platforms and build systems:** the Darwin and Symbian code, and the `build.sh`, Makefile, and MSVC project builds, are replaced by CMake and Conan.
+* **Libraries:** SDL2 is replaced by SDL3, with GPU shaders for the scalers. Netplay uses Asio.
+
+### Legacy patterns
+
+Number of lines in `src` that contain the pattern, without bundled third-party code and generated headers:
+
+| Pattern | At the fork | Now |
+|---|---:|---:|
+| Legacy integer types (`BYTE`, `COUNT`, `SIZE`, `BOOLEAN`, ...) | 5,951 | 0 |
+| `NULL` | 3,182 | 0 |
+| `HMalloc` / `HFree` | 408 | 0 |
+| `printf` / `fprintf` | 480 | 10 |
+| `sprintf` / `strcpy` / `strcat` / `strncpy` | 310 | 5 |
+| `sscanf` | 36 | 0 |
+| `malloc` / `free` | 73 | 20 |
+| `volatile` | 42 | 1 |
+| `goto` | 195 | 78 |
+| `#define` | 5,091 | 537 |
+| `constexpr` | 0 | 3,028 |
+| `enum class` | 0 | 44 |
+| `UQM_GUARDED_BY` / `UQM_REQUIRES` | 0 | 70 |
+
+### Bug fixes in the MegaMod code
+
+The conversion found and fixed 13 bugs in the code from MegaMod: 8 memory leaks, 2 data races, 2 problems with HD content at SD scale, and a hash that sign-extended bytes. [FIXES.md](FIXES.md) lists them with their MegaMod locations and the commits that fix them here.
+
+### New features
+
+* A seed menu for each new game, and the seed of the game in the Game Options menu.
+* ImGui windows that show and change the game state, the settings, and the cheats.
+* `--check-save`, `--play-save`, and `--input-script` for automated tests.
+
 ## Content
 
 The game data is in a separate repository: [UQM-MegaModern-Content](https://github.com/PragmaNull/UQM-MegaModern-Content).
