@@ -257,13 +257,13 @@ ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(WE_NEVER_FRIENDS);
 
-		SET_GAME_STATE(ARILOU_MANNER, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_MANNER, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, best_if_i_killed_you))
 	{
 		NPCPhrase(WICKED_HUMAN);
 
-		SET_GAME_STATE(ARILOU_MANNER, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_MANNER, static_cast<uint32_t>(2));
 	}
 }
 
@@ -295,14 +295,14 @@ ArilouHome(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_WAR);
 
-		SET_GAME_STATE(ARILOU_STACK_1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_1, static_cast<uint32_t>(1));
 		SetHomeworldKnown(SHOFIXTI_HOME);
 	}
 	else if (PlayerSaid(R, what_about_urquan))
 	{
 		NPCPhrase(ABOUT_URQUAN);
 
-		SET_GAME_STATE(ARILOU_STACK_1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_1, static_cast<uint32_t>(2));
 		SetHomeworldKnown(SYREEN_HOME);
 	}
 	else if (PlayerSaid(R, tell_arilou_about_tpet))
@@ -310,18 +310,18 @@ ArilouHome(RESPONSE_REF R)
 		NPCPhrase(BAD_NEWS_ABOUT_TPET);
 
 		LastStack = 1;
-		SET_GAME_STATE(ARILOU_STACK_2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_2, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, what_do_about_tpet))
 	{
 		NPCPhrase(DANGEROUS_BUT_USEFUL);
 
 		LastStack = 1;
-		SET_GAME_STATE(ARILOU_STACK_2, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_2, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, learned_about_umgah))
 	{
-		if (GET_GAME_STATE(ARILOU_CHECKED_UMGAH) != 2)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_CHECKED_UMGAH) != 2)
 		{
 			NPCPhrase(NO_NEWS_YET);
 		}
@@ -340,7 +340,7 @@ ArilouHome(RESPONSE_REF R)
 	{
 		NPCPhrase(WELL_GO_CHECK);
 
-		SET_GAME_STATE(ARILOU_CHECKED_UMGAH, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_CHECKED_UMGAH, static_cast<uint32_t>(1));
 		AddEvent(RELATIVE_EVENT, 0, 10, 0, ARILOU_UMGAH_CHECK);
 		DISABLE_PHRASE(umgah_acting_weird);
 	}
@@ -348,7 +348,7 @@ ArilouHome(RESPONSE_REF R)
 	{
 		NPCPhrase(GO_FIND_OUT);
 
-		SET_GAME_STATE(ARILOU_CHECKED_UMGAH, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_CHECKED_UMGAH, static_cast<uint32_t>(3));
 		SetHomeworldKnown(UMGAH_HOME);
 	}
 	else if (PlayerSaid(R, what_did_on_earth))
@@ -356,28 +356,28 @@ ArilouHome(RESPONSE_REF R)
 		NPCPhrase(DID_THIS);
 
 		LastStack = 2;
-		SET_GAME_STATE(ARILOU_STACK_3, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_3, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, why_did_this))
 	{
 		NPCPhrase(IDF_PARASITES);
 
 		LastStack = 2;
-		SET_GAME_STATE(ARILOU_STACK_3, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_3, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, tell_more))
 	{
 		NPCPhrase(NOT_NOW);
 
 		LastStack = 2;
-		SET_GAME_STATE(ARILOU_STACK_3, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_3, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, what_give_me))
 	{
 		NPCPhrase(ABOUT_PORTAL);
 
 		LastStack = 3;
-		SET_GAME_STATE(KNOW_ARILOU_WANT_WRECK, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_ARILOU_WANT_WRECK, static_cast<uint32_t>(1));
 
 		R = about_portal_again;
 		DISABLE_PHRASE(what_give_me);
@@ -386,7 +386,7 @@ ArilouHome(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_TPET);
 
-		SET_GAME_STATE(ARILOU_STACK_4, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_4, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, about_portal_again))
 	{
@@ -396,26 +396,26 @@ ArilouHome(RESPONSE_REF R)
 	}
 	else if (PlayerSaid(R, got_it))
 	{
-		if (GET_GAME_STATE(ARILOU_HOME_VISITS) == 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS) == 1)
 		{
 			NPCPhrase(CLEVER_HUMAN);
 		}
 		NPCPhrase(GIVE_PORTAL);
 
-		SET_GAME_STATE(PORTAL_KEY_ON_SHIP, 0);
-		SET_GAME_STATE(PORTAL_SPAWNER, 1);
-		SET_GAME_STATE(PORTAL_SPAWNER_ON_SHIP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PORTAL_KEY_ON_SHIP, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::PORTAL_SPAWNER, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP, static_cast<uint32_t>(1));
 	}
 #ifdef NEVER
 	else if (PlayerSaid(R, got_tpet))
 	{
 		NPCPhrase(OK_GOT_TPET);
 
-		SET_GAME_STATE(ARILOU_STACK_2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_2, static_cast<uint32_t>(1));
 	}
 #endif /* NEVER */
 
-	switch (GET_GAME_STATE(ARILOU_STACK_1))
+	switch (uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_1))
 	{
 		case 0:
 			pStr[0] = what_about_war;
@@ -424,10 +424,10 @@ ArilouHome(RESPONSE_REF R)
 			pStr[0] = what_about_urquan;
 			break;
 	}
-	if (GET_GAME_STATE(TALKING_PET))
+	if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET))
 	{
 #ifdef NEVER
-		if (GET_GAME_STATE(ARILOU_STACK_2) == 0)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_2) == 0)
 		{
 			pStr[1] = got_tpet;
 		}
@@ -435,9 +435,9 @@ ArilouHome(RESPONSE_REF R)
 	}
 	else
 	{
-		if (GET_GAME_STATE(TALKING_PET_VISITS))
+		if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET_VISITS))
 		{
-			switch (GET_GAME_STATE(ARILOU_STACK_2))
+			switch (uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_2))
 			{
 				case 0:
 					pStr[1] = tell_arilou_about_tpet;
@@ -447,9 +447,9 @@ ArilouHome(RESPONSE_REF R)
 					break;
 			}
 		}
-		else if (GET_GAME_STATE(KNOW_UMGAH_ZOMBIES))
+		else if (uqm::gameState().flag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES))
 		{
-			if (!GET_GAME_STATE(ARILOU_CHECKED_UMGAH))
+			if (!uqm::gameState().flag(uqm::GameFlag::ARILOU_CHECKED_UMGAH))
 			{
 				pStr[1] = umgah_acting_weird;
 			}
@@ -457,13 +457,13 @@ ArilouHome(RESPONSE_REF R)
 			{
 				pStr[1] = learned_about_umgah;
 			}
-			else if (GET_GAME_STATE(ARILOU_CHECKED_UMGAH) == 2)
+			else if (uqm::gameState().flag(uqm::GameFlag::ARILOU_CHECKED_UMGAH) == 2)
 			{
 				pStr[1] = what_do_now;
 			}
 		}
 	}
-	switch (GET_GAME_STATE(ARILOU_STACK_3))
+	switch (uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_3))
 	{
 		case 0:
 			pStr[2] = what_did_on_earth;
@@ -475,11 +475,11 @@ ArilouHome(RESPONSE_REF R)
 			pStr[2] = tell_more;
 			break;
 	}
-	if (!GET_GAME_STATE(KNOW_ARILOU_WANT_WRECK))
+	if (!uqm::gameState().flag(uqm::GameFlag::KNOW_ARILOU_WANT_WRECK))
 	{
 		pStr[3] = what_give_me;
 	}
-	else if (!GET_GAME_STATE(ARILOU_STACK_4))
+	else if (!uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_4))
 	{
 		pStr[3] = what_about_tpet;
 	}
@@ -496,18 +496,18 @@ ArilouHome(RESPONSE_REF R)
 		}
 	}
 
-	if (GET_GAME_STATE(KNOW_ARILOU_WANT_WRECK))
+	if (uqm::gameState().flag(uqm::GameFlag::KNOW_ARILOU_WANT_WRECK))
 	{
-		if (GET_GAME_STATE(PORTAL_KEY_ON_SHIP))
+		if (uqm::gameState().flag(uqm::GameFlag::PORTAL_KEY_ON_SHIP))
 		{
 			Response(got_it, ArilouHome);
 		}
-		else if (PhraseEnabled(about_portal_again) && !GET_GAME_STATE(PORTAL_SPAWNER))
+		else if (PhraseEnabled(about_portal_again) && !uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER))
 		{
 			Response(about_portal_again, ArilouHome);
 		}
 	}
-	if (GET_GAME_STATE(ARILOU_MANNER) != 3)
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_MANNER) != 3)
 	{
 		Response(best_if_i_killed_you, ExitConversation);
 	}
@@ -606,7 +606,7 @@ FriendlySpaceArilou(RESPONSE_REF R)
 	else if (PlayerSaid(R, whats_up_1)
 			 || PlayerSaid(R, whats_up_2))
 	{
-		NumVisits = GET_GAME_STATE(ARILOU_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ARILOU_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -623,7 +623,7 @@ FriendlySpaceArilou(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ARILOU_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_2);
 	}
@@ -631,24 +631,24 @@ FriendlySpaceArilou(RESPONSE_REF R)
 	{
 		NPCPhrase(LEARN_THINGS);
 
-		SET_GAME_STATE(ARILOU_STACK_5, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_5, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, what_things))
 	{
 		NPCPhrase(THESE_THINGS);
 
-		SET_GAME_STATE(ARILOU_STACK_5, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_5, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, why_do_it))
 	{
 		NPCPhrase(DO_IT_BECAUSE);
 
-		SET_GAME_STATE(ARILOU_STACK_5, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_5, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, give_me_info_1)
 			 || PlayerSaid(R, give_me_info_2))
 	{
-		NumVisits = GET_GAME_STATE(ARILOU_HINTS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ARILOU_HINTS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -656,27 +656,27 @@ FriendlySpaceArilou(RESPONSE_REF R)
 				break;
 			case 1:
 				NPCPhrase(ARILOU_HINTS_2);
-				if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) < 2)
+				if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 2)
 				{
-					SET_GAME_STATE(KNOW_ABOUT_SHATTERED, 2);
+					uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 				}
 				break;
 			case 2:
 				NPCPhrase(ARILOU_HINTS_3);
-				SET_GAME_STATE(KNOW_URQUAN_STORY, 1);
-				SET_GAME_STATE(KNOW_KOHR_AH_STORY, 1);
+				uqm::gameState().setFlag(uqm::GameFlag::KNOW_URQUAN_STORY, static_cast<uint32_t>(1));
+				uqm::gameState().setFlag(uqm::GameFlag::KNOW_KOHR_AH_STORY, static_cast<uint32_t>(1));
 				break;
 			case 3:
 				NPCPhrase(ARILOU_HINTS_4);
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ARILOU_HINTS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HINTS, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(give_me_info_2);
 	}
 
-	switch (GET_GAME_STATE(ARILOU_STACK_5))
+	switch (uqm::gameState().flag(uqm::GameFlag::ARILOU_STACK_5))
 	{
 		case 0:
 			Response(why_you_here, FriendlySpaceArilou);
@@ -690,7 +690,7 @@ FriendlySpaceArilou(RESPONSE_REF R)
 	}
 	if (PhraseEnabled(whats_up_2))
 	{
-		if (GET_GAME_STATE(ARILOU_INFO) == 0)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_INFO) == 0)
 		{
 			Response(whats_up_1, FriendlySpaceArilou);
 		}
@@ -701,7 +701,7 @@ FriendlySpaceArilou(RESPONSE_REF R)
 	}
 	if (PhraseEnabled(give_me_info_2))
 	{
-		if (GET_GAME_STATE(ARILOU_HINTS) == 0)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_HINTS) == 0)
 		{
 			Response(give_me_info_1, FriendlySpaceArilou);
 		}
@@ -726,11 +726,11 @@ Intro(void)
 		setSegue(Segue_peace);
 		return;
 	}
-	else if (!GET_GAME_STATE(MET_ARILOU))
+	else if (!uqm::gameState().flag(uqm::GameFlag::MET_ARILOU))
 	{
 		RESPONSE_FUNC RespFunc {};
 
-		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
 			NPCPhrase(INIT_HELLO);
 			RespFunc = (RESPONSE_FUNC)FriendlySpaceArilou;
@@ -739,19 +739,19 @@ Intro(void)
 		{
 			NPCPhrase(FRDLY_HOMEWORLD_HELLO_1);
 			RespFunc = (RESPONSE_FUNC)ArilouHome;
-			SET_GAME_STATE(ARILOU_HOME_VISITS, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HOME_VISITS, static_cast<uint32_t>(1));
 		}
 		Response(confused_by_hello, RespFunc);
 		Response(happy_by_hello, RespFunc);
 		Response(miffed_by_hello, RespFunc);
-		SET_GAME_STATE(MET_ARILOU, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MET_ARILOU, static_cast<uint32_t>(1));
 		return;
 	}
 
-	Manner = GET_GAME_STATE(ARILOU_MANNER);
+	Manner = uqm::gameState().flag(uqm::GameFlag::ARILOU_MANNER);
 	if (Manner == 2)
 	{
-		NumVisits = GET_GAME_STATE(ARILOU_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ARILOU_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -768,22 +768,22 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ARILOU_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_VISITS, static_cast<uint32_t>(NumVisits));
 
 		setSegue(Segue_peace);
 	}
 	else if (Manner == 1)
 	{
-		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1)
 		{
 			NPCPhrase(INIT_ANGRY_HWLD_HELLO);
-			SET_GAME_STATE(ARILOU_HOME_VISITS, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HOME_VISITS, static_cast<uint32_t>(1));
 
 			AngryHomeArilou((RESPONSE_REF)0);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(ARILOU_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ARILOU_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -794,16 +794,16 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ARILOU_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_VISITS, static_cast<uint32_t>(NumVisits));
 
 			AngrySpaceArilou((RESPONSE_REF)0);
 		}
 	}
 	else
 	{
-		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
-			NumVisits = GET_GAME_STATE(ARILOU_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ARILOU_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -820,16 +820,16 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ARILOU_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_VISITS, static_cast<uint32_t>(NumVisits));
 
 			FriendlySpaceArilou((RESPONSE_REF)0);
 		}
 		else
 		{
-			if (!GET_GAME_STATE(PORTAL_SPAWNER)
-				&& GET_GAME_STATE(KNOW_ARILOU_WANT_WRECK))
+			if (!uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER)
+				&& uqm::gameState().flag(uqm::GameFlag::KNOW_ARILOU_WANT_WRECK))
 			{
-				NumVisits = GET_GAME_STATE(NO_PORTAL_VISITS);
+				NumVisits = uqm::gameState().flag(uqm::GameFlag::NO_PORTAL_VISITS);
 				switch (NumVisits++)
 				{
 					case 0:
@@ -840,11 +840,11 @@ Intro(void)
 						--NumVisits;
 						break;
 				}
-				SET_GAME_STATE(NO_PORTAL_VISITS, NumVisits);
+				uqm::gameState().setFlag(uqm::GameFlag::NO_PORTAL_VISITS, static_cast<uint32_t>(NumVisits));
 			}
 			else
 			{
-				NumVisits = GET_GAME_STATE(ARILOU_HOME_VISITS);
+				NumVisits = uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS);
 				switch (NumVisits++)
 				{
 					case 0:
@@ -861,7 +861,7 @@ Intro(void)
 						--NumVisits;
 						break;
 				}
-				SET_GAME_STATE(ARILOU_HOME_VISITS, NumVisits);
+				uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 			}
 
 			ArilouHome((RESPONSE_REF)0);
@@ -882,26 +882,26 @@ post_arilou_enc(void)
 	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
-		&& (Manner = GET_GAME_STATE(ARILOU_MANNER)) != 2)
+		&& (Manner = uqm::gameState().flag(uqm::GameFlag::ARILOU_MANNER)) != 2)
 	{
-		SET_GAME_STATE(ARILOU_MANNER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_MANNER, static_cast<uint32_t>(1));
 		if (Manner != 1)
 		{
-			SET_GAME_STATE(ARILOU_VISITS, 0);
-			SET_GAME_STATE(ARILOU_HOME_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_VISITS, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_HOME_VISITS, static_cast<uint32_t>(0));
 		}
 	}
 
-	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1
-		&& GET_GAME_STATE(ARILOU_HOME_VISITS) <= 1)
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1
+		&& uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS) <= 1)
 	{
-		SET_GAME_STATE(UMGAH_ZOMBIE_BLOBBIES, 1);
-		SET_GAME_STATE(UMGAH_VISITS, 0);
-		SET_GAME_STATE(UMGAH_HOME_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_HOME_VISITS, static_cast<uint32_t>(0));
 
-		if (GET_GAME_STATE(ARILOU_MANNER) < 2)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_MANNER) < 2)
 		{
-			SET_GAME_STATE(ARILOU_MANNER, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_MANNER, static_cast<uint32_t>(3));
 		}
 	}
 }
@@ -919,8 +919,8 @@ init_arilou_comm(void)
 	arilou_desc.AlienTextBaseline.y = 0;
 	arilou_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1
-		|| GET_GAME_STATE(ARILOU_MANNER) == 3
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1
+		|| uqm::gameState().flag(uqm::GameFlag::ARILOU_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);

@@ -59,17 +59,17 @@ void doInstantMove(void)
 	{
 		// If no destination has been selected, use the current location
 		// as the destination.
-		uqm::flagship().autopilot.setTarget({LogxToUniverse(GLOBAL_SIS(log_x)), LogyToUniverse(GLOBAL_SIS(log_y))});
+		uqm::flagship().autopilot.setTarget({LogxToUniverse(uqm::gameState().sis().log_x), LogyToUniverse(uqm::gameState().sis().log_y)});
 	}
 	else
 	{
 		// A new destination has been selected.
-		GLOBAL_SIS(log_x) = UniverseToLogx(uqm::flagship().autopilot.target().x);
-		GLOBAL_SIS(log_y) = UniverseToLogy(uqm::flagship().autopilot.target().y);
+		uqm::gameState().sis().log_x = UniverseToLogx(uqm::flagship().autopilot.target().x);
+		uqm::gameState().sis().log_y = UniverseToLogy(uqm::flagship().autopilot.target().y);
 	}
 
 	// Check for a solar systems at the destination.
-	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{
 		// If there's a solar system at the destination, enter it.
 		GFXPOINT target {uqm::flagship().autopilot.target()};
@@ -77,7 +77,7 @@ void doInstantMove(void)
 		if (CurStarDescPtr())
 		{
 			// Leave HyperSpace/QuasiSpace if we're there:
-			SET_GAME_STATE(USED_BROADCASTER, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::USED_BROADCASTER, static_cast<uint32_t>(0));
 			uqm::currentActivity() &= ~IN_BATTLE;
 
 			// Enter IP:
@@ -264,8 +264,8 @@ void debugKeyPressedSynchronous(void)
 		printf("Debug Key Activated\n\n");
 		equipShip();
 		showSpheres(false);
-		SET_GAME_STATE(KNOW_QS_PORTAL, ~0);
-		SET_GAME_STATE(KNOW_HOMEWORLD, ~0);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_QS_PORTAL, static_cast<uint32_t>(~0));
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_HOMEWORLD, static_cast<uint32_t>(~0));
 	}
 
 	forwardToNextEvent(true);
@@ -294,8 +294,8 @@ void debugKeyPressedSynchronous(void)
 		resetCrewBattle();
 		resetEnergyBattle();
 		activateAllShips();
-		SET_GAME_STATE(MELNORME_CREDIT1, 100);
-		GLOBAL_SIS(ResUnits) = 100000;
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_CREDIT1, static_cast<uint32_t>(100));
+		uqm::gameState().sis().ResUnits = 100000;
 
 		// Informational:
 		dumpEvents(stderr);
@@ -519,78 +519,77 @@ void equipShip(void)
 	// Thrusters:
 	for (i = 0; i < NumDriveSlots; i++)
 	{
-		GLOBAL_SIS(DriveSlots[i]) = FUSION_THRUSTER;
+		uqm::gameState().sis().DriveSlots[i] = FUSION_THRUSTER;
 	}
 
 	// Turning jets:
 	for (i = 0; i < NumJetSlots; i++)
 	{
-		GLOBAL_SIS(JetSlots[i]) = TURNING_JETS;
+		uqm::gameState().sis().JetSlots[i] = TURNING_JETS;
 	}
 
 	// Shields:
-	SET_GAME_STATE(LANDER_SHIELDS,
-				   (1 << EARTHQUAKE_DISASTER) | (1 << BIOLOGICAL_DISASTER) | (1 << LIGHTNING_DISASTER) | (1 << LAVASPOT_DISASTER));
+	uqm::gameState().setFlag(uqm::GameFlag::LANDER_SHIELDS, static_cast<uint32_t>((1 << EARTHQUAKE_DISASTER) | (1 << BIOLOGICAL_DISASTER) | (1 << LIGHTNING_DISASTER) | (1 << LAVASPOT_DISASTER)));
 	// Lander upgrades:
-	SET_GAME_STATE(IMPROVED_LANDER_SPEED, 1);
-	SET_GAME_STATE(IMPROVED_LANDER_CARGO, 1);
-	SET_GAME_STATE(IMPROVED_LANDER_SHOT, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::IMPROVED_LANDER_SPEED, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::IMPROVED_LANDER_CARGO, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::IMPROVED_LANDER_SHOT, static_cast<uint32_t>(1));
 
 	// Modules:
-	if (GET_GAME_STATE(CHMMR_BOMB_STATE) < 2)
+	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 2)
 	{
 		// The Precursor bomb has not been installed.
 		// This is the original TFB testing layout.
 		i = 0;
-		GLOBAL_SIS(ModuleSlots[i++]) = HIGHEFF_FUELSYS;
-		GLOBAL_SIS(ModuleSlots[i++]) = CREW_POD;
-		GLOBAL_SIS(ModuleSlots[i++]) = STORAGE_BAY;
-		GLOBAL_SIS(ModuleSlots[i++]) = STORAGE_BAY;
-		GLOBAL_SIS(ModuleSlots[i++]) = ANTIMISSILE_DEFENSE;
-		GLOBAL_SIS(ModuleSlots[i++]) = TRACKING_SYSTEM;
-		GLOBAL_SIS(ModuleSlots[i++]) = TRACKING_SYSTEM;
-		GLOBAL_SIS(ModuleSlots[i++]) = TRACKING_SYSTEM;
-		GLOBAL_SIS(ModuleSlots[i++]) = DYNAMO_UNIT;
-		GLOBAL_SIS(ModuleSlots[i++]) = DYNAMO_UNIT;
-		GLOBAL_SIS(ModuleSlots[i++]) = DYNAMO_UNIT;
-		GLOBAL_SIS(ModuleSlots[i++]) = SHIVA_FURNACE;
-		GLOBAL_SIS(ModuleSlots[i++]) = SHIVA_FURNACE;
-		GLOBAL_SIS(ModuleSlots[i++]) = SHIVA_FURNACE;
-		GLOBAL_SIS(ModuleSlots[i++]) = CANNON_WEAPON;
-		GLOBAL_SIS(ModuleSlots[i++]) = CANNON_WEAPON;
+		uqm::gameState().sis().ModuleSlots[i++] = HIGHEFF_FUELSYS;
+		uqm::gameState().sis().ModuleSlots[i++] = CREW_POD;
+		uqm::gameState().sis().ModuleSlots[i++] = STORAGE_BAY;
+		uqm::gameState().sis().ModuleSlots[i++] = STORAGE_BAY;
+		uqm::gameState().sis().ModuleSlots[i++] = ANTIMISSILE_DEFENSE;
+		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
+		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
+		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
+		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
+		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
+		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
+		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
+		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
+		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
+		uqm::gameState().sis().ModuleSlots[i++] = CANNON_WEAPON;
+		uqm::gameState().sis().ModuleSlots[i++] = CANNON_WEAPON;
 
 		// Landers:
-		GLOBAL_SIS(NumLanders) = MaxLanders;
+		uqm::gameState().sis().NumLanders = MaxLanders;
 	}
 	else
 	{
 		// The Precursor bomb has been installed.
 		i = NumBombModules;
-		GLOBAL_SIS(ModuleSlots[i++]) = HIGHEFF_FUELSYS;
-		GLOBAL_SIS(ModuleSlots[i++]) = CREW_POD;
-		GLOBAL_SIS(ModuleSlots[i++]) = DYNAMO_UNIT;
-		GLOBAL_SIS(ModuleSlots[i++]) = SHIVA_FURNACE;
-		GLOBAL_SIS(ModuleSlots[i++]) = CANNON_WEAPON;
-		GLOBAL_SIS(ModuleSlots[i++]) = TRACKING_SYSTEM;
+		uqm::gameState().sis().ModuleSlots[i++] = HIGHEFF_FUELSYS;
+		uqm::gameState().sis().ModuleSlots[i++] = CREW_POD;
+		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
+		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
+		uqm::gameState().sis().ModuleSlots[i++] = CANNON_WEAPON;
+		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
 	}
 
 	assert(i <= NumModuleSlots);
 
 	// Fill the fuel and crew compartments to the maximum.
-	GLOBAL_SIS(FuelOnBoard) = FuelReserve;
-	GLOBAL_SIS(CrewEnlisted) = 0;
+	uqm::gameState().sis().FuelOnBoard = FuelReserve;
+	uqm::gameState().sis().CrewEnlisted = 0;
 	for (i = 0; i < NumModuleSlots; i++)
 	{
-		switch (GLOBAL_SIS(ModuleSlots[i]))
+		switch (uqm::gameState().sis().ModuleSlots[i])
 		{
 			case CREW_POD:
-				GLOBAL_SIS(CrewEnlisted) += CrewPodCapacity;
+				uqm::gameState().sis().CrewEnlisted += CrewPodCapacity;
 				break;
 			case FUEL_TANK:
-				GLOBAL_SIS(FuelOnBoard) += FuelTankCapacity;
+				uqm::gameState().sis().FuelOnBoard += FuelTankCapacity;
 				break;
 			case HIGHEFF_FUELSYS:
-				GLOBAL_SIS(FuelOnBoard) += HefuelTankCapacity;
+				uqm::gameState().sis().FuelOnBoard += HefuelTankCapacity;
 				break;
 		}
 	}
@@ -602,7 +601,7 @@ void equipShip(void)
 		pSolarSysState->max_ship_speed = 5 * IpShipThrustIncrement;
 		for (i = 0; i < NumDriveSlots; i++)
 		{
-			if (GLOBAL_SIS(DriveSlots[i] == FUSION_THRUSTER))
+			if (uqm::gameState().sis().DriveSlots[i] == FUSION_THRUSTER)
 			{
 				pSolarSysState->max_ship_speed += IpShipThrustIncrement;
 			}
@@ -612,7 +611,7 @@ void equipShip(void)
 		pSolarSysState->turn_wait = IpShipTurnWait;
 		for (i = 0; i < NumJetSlots; i++)
 		{
-			if (GLOBAL_SIS(JetSlots[i]) == TURNING_JETS)
+			if (uqm::gameState().sis().JetSlots[i] == TURNING_JETS)
 			{
 				pSolarSysState->turn_wait -= IpShipTurnDecrement;
 			}
@@ -630,34 +629,34 @@ void equipShip(void)
 
 void giveDevices(void)
 {
-	SET_GAME_STATE(ROSY_SPHERE_ON_SHIP, 1);
-	SET_GAME_STATE(WIMBLIS_TRIDENT_ON_SHIP, 1);
-	SET_GAME_STATE(GLOWING_ROD_ON_SHIP, 1);
-	SET_GAME_STATE(SUN_DEVICE_ON_SHIP, 1);
-	SET_GAME_STATE(UTWIG_BOMB_ON_SHIP, 1);
-	SET_GAME_STATE(UTWIG_BOMB, 1);
-	SET_GAME_STATE(ULTRON_CONDITION, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::GLOWING_ROD_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::SUN_DEVICE_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::UTWIG_BOMB, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::ULTRON_CONDITION, static_cast<uint32_t>(1));
 	//SET_GAME_STATE (ULTRON_CONDITION, 2);
 	//SET_GAME_STATE (ULTRON_CONDITION, 3);
 	//SET_GAME_STATE (ULTRON_CONDITION, 4);
-	SET_GAME_STATE(MAIDENS_ON_SHIP, 1);
-	SET_GAME_STATE(TALKING_PET_ON_SHIP, 1);
-	SET_GAME_STATE(AQUA_HELIX_ON_SHIP, 1);
-	SET_GAME_STATE(CLEAR_SPINDLE_ON_SHIP, 1);
-	SET_GAME_STATE(UMGAH_BROADCASTERS_ON_SHIP, 1);
-	SET_GAME_STATE(TAALO_PROTECTOR_ON_SHIP, 1);
-	SET_GAME_STATE(EGG_CASE0_ON_SHIP, 1);
-	SET_GAME_STATE(EGG_CASE1_ON_SHIP, 1);
-	SET_GAME_STATE(EGG_CASE2_ON_SHIP, 1);
-	SET_GAME_STATE(SYREEN_SHUTTLE_ON_SHIP, 1);
-	SET_GAME_STATE(VUX_BEAST_ON_SHIP, 1);
-	SET_GAME_STATE(PORTAL_SPAWNER_ON_SHIP, 1);
-	SET_GAME_STATE(PORTAL_KEY_ON_SHIP, 1);
-	SET_GAME_STATE(BURV_BROADCASTERS_ON_SHIP, 1);
-	SET_GAME_STATE(MOONBASE_ON_SHIP, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::MAIDENS_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::AQUA_HELIX_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::UMGAH_BROADCASTERS_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE0_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE1_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE2_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::VUX_BEAST_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::PORTAL_KEY_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::MOONBASE_ON_SHIP, static_cast<uint32_t>(1));
 
 	// Not strictly a device (although it originally was one).
-	SET_GAME_STATE(DESTRUCT_CODE_ON_SHIP, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP, static_cast<uint32_t>(1));
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -666,17 +665,17 @@ void clearEscorts(void)
 {
 	HSHIPFRAG hStarShip, hNextShip;
 
-	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q));
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q);
 		 hStarShip; hStarShip = hNextShip)
 	{
 		SHIP_FRAGMENT* StarShipPtr;
 
-		StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		StarShipPtr = LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 		hNextShip = _GetSuccLink(StarShipPtr);
-		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 
-		RemoveQueue(&GLOBAL(built_ship_q), hStarShip);
-		FreeShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		RemoveQueue(&uqm::gameState().game().built_ship_q, hStarShip);
+		FreeShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 	}
 
 	DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
@@ -731,12 +730,12 @@ void showSpheres(bool Animated)
 	{
 		HFLEETINFO hStarShip, hNextShip;
 
-		for (hStarShip = GetHeadLink(&GLOBAL(avail_race_q));
+		for (hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 			 hStarShip != nullptr; hStarShip = hNextShip)
 		{
 			FLEET_INFO* FleetPtr;
 
-			FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+			FleetPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 			hNextShip = _GetSuccLink(FleetPtr);
 
 			if ((FleetPtr->actual_strength != INFINITE_RADIUS) && (FleetPtr->known_strength != FleetPtr->actual_strength))
@@ -745,20 +744,20 @@ void showSpheres(bool Animated)
 				FleetPtr->known_loc = FleetPtr->loc;
 			}
 
-			UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+			UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 		}
 	}
 
 	if (IsExtended())
 	{
 		HFLEETINFO hSyreen = GetStarShipFromIndex(
-			&GLOBAL(avail_race_q), SYREEN_SHIP);
+			&uqm::gameState().game().avail_race_q, SYREEN_SHIP);
 		FLEET_INFO* SyreenPtr = LockFleetInfo(
-			&GLOBAL(avail_race_q), hSyreen);
+			&uqm::gameState().game().avail_race_q, hSyreen);
 		HFLEETINFO hChmmr = GetStarShipFromIndex(
-			&GLOBAL(avail_race_q), CHMMR_SHIP);
+			&uqm::gameState().game().avail_race_q, CHMMR_SHIP);
 		FLEET_INFO* ChmmrPtr = LockFleetInfo(
-			&GLOBAL(avail_race_q), hChmmr);
+			&uqm::gameState().game().avail_race_q, hChmmr);
 
 		SyreenPtr->actual_strength = 300 / SphereRadiusIncrement * 2;
 		SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, HOME);
@@ -768,8 +767,8 @@ void showSpheres(bool Animated)
 		ChmmrPtr->loc = SeedFleetLocation(ChmmrPtr, plot_map, HOME);
 		StartSphereTracking(CHMMR_SHIP);
 
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hSyreen);
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hChmmr);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hChmmr);
 	}
 }
 
@@ -779,12 +778,12 @@ void activateAllShips(void)
 {
 	HFLEETINFO hStarShip, hNextShip;
 
-	for (hStarShip = GetHeadLink(&GLOBAL(avail_race_q));
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 		 hStarShip != nullptr; hStarShip = hNextShip)
 	{
 		FLEET_INFO* FleetPtr;
 
-		FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		FleetPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 		hNextShip = _GetSuccLink(FleetPtr);
 
 		if (FleetPtr->icons != nullptr)
@@ -793,7 +792,7 @@ void activateAllShips(void)
 			FleetPtr->allied_state = GOOD_GUY;
 		}
 
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 	}
 }
 
@@ -1250,7 +1249,7 @@ dumpPlanetCallback(const PLANET_DESC* planet, void* arg)
 void dumpPlanet(FILE* out, const PLANET_DESC* planet)
 {
 	(*pSolarSysState->genFuncs->generateName)(pSolarSysState, planet);
-	fmt::print(out, "- {:>37}  {}\n", GLOBAL_SIS(PlanetName),
+	fmt::print(out, "- {:>37}  {}\n", uqm::gameState().sis().PlanetName,
 			   planetTypeString(planet->data_index & ~PLANET_SHIELDED));
 	dumpWorld(out, planet);
 }
@@ -1372,9 +1371,9 @@ void printWorld(const PLANET_DESC* world)
 
 	GetPlanetTitle({buf, sizeof(buf)});
 
-	if (strcmp(buf, GLOBAL_SIS(PlanetName)) != 0)
+	if (strcmp(buf, uqm::gameState().sis().PlanetName) != 0)
 	{
-		fmt::print(fp, "Planet:     {}\n", GLOBAL_SIS(PlanetName));
+		fmt::print(fp, "Planet:     {}\n", uqm::gameState().sis().PlanetName);
 	}
 
 	info = &pSolarSysState->SysInfo.PlanetInfo;
@@ -1470,7 +1469,7 @@ calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 	{
 		NODE_INFO info;
 		callGenerateForScanType(system, world, i, MINERAL_SCAN, &info);
-		result += uqm::highByte(info.density) * GLOBAL(ElementWorth[ElementCategory(info.type)]);
+		result += uqm::highByte(info.density) * uqm::gameState().game().ElementWorth[ElementCategory(info.type)];
 	}
 	return result;
 }

@@ -145,7 +145,7 @@ DoRamble(RESPONSE_REF R)
 {
 	uint8_t Counter {};
 
-	Counter = GET_GAME_STATE(MYCON_RAMBLE);
+	Counter = uqm::gameState().flag(uqm::GameFlag::MYCON_RAMBLE);
 	switch (Counter++)
 	{
 		case 0:
@@ -222,9 +222,9 @@ DoRamble(RESPONSE_REF R)
 			break;
 		case 24:
 			NPCPhrase(RAMBLE_25);
-			if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) < 2)
+			if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 2)
 			{
-				SET_GAME_STATE(KNOW_ABOUT_SHATTERED, 2);
+				uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 			}
 			break;
 		case 25:
@@ -250,15 +250,15 @@ DoRamble(RESPONSE_REF R)
 			Counter = 0;
 			break;
 	}
-	SET_GAME_STATE(MYCON_RAMBLE, Counter);
+	uqm::gameState().setFlag(uqm::GameFlag::MYCON_RAMBLE, static_cast<uint32_t>(Counter));
 
-	if (!(GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
+	if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 	{
 		if (!PlayerSaid(R, come_in_peace)
 			&& !PlayerSaid(R, gonna_die))
 		{
-			Counter = (GET_GAME_STATE(MYCON_INSULTS) + 1) & 7;
-			SET_GAME_STATE(MYCON_INSULTS, Counter);
+			Counter = (uqm::gameState().flag(uqm::GameFlag::MYCON_INSULTS) + 1) & 7;
+			uqm::gameState().setFlag(uqm::GameFlag::MYCON_INSULTS, static_cast<uint32_t>(Counter));
 			MadeChoice = 1;
 		}
 	}
@@ -266,8 +266,8 @@ DoRamble(RESPONSE_REF R)
 			 && !PlayerSaid(R, came_to_homeworld)
 			 && !PlayerSaid(R, submit_to_us))
 	{
-		Counter = (GET_GAME_STATE(MYCON_INFO) + 1) & 15;
-		SET_GAME_STATE(MYCON_INFO, Counter);
+		Counter = (uqm::gameState().flag(uqm::GameFlag::MYCON_INFO) + 1) & 15;
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_INFO, static_cast<uint32_t>(Counter));
 		MadeChoice = 1;
 	}
 }
@@ -298,7 +298,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	else
 	{
 		DoRamble(R);
-		if (!(GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
+		if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 		{
 			NPCPhrase(BYE_AND_DIE_SPACE);
 		}
@@ -329,23 +329,23 @@ SunDevice(RESPONSE_REF R)
 	{
 		NPCPhrase(WONT_FALL_FOR_TRICK);
 
-		SET_GAME_STATE(NO_TRICK_AT_SUN, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::NO_TRICK_AT_SUN, static_cast<uint32_t>(1));
 	}
 
 	if (PhraseEnabled(whats_up_sun_device))
 	{
 		Response(whats_up_sun_device, SunDevice);
 	}
-	if (GET_GAME_STATE(MYCON_FELL_FOR_AMBUSH))
+	if (uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
 	{
-		if (PhraseEnabled(how_goes_implanting) && GET_GAME_STATE(MYCON_FELL_FOR_AMBUSH))
+		if (PhraseEnabled(how_goes_implanting) && uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
 		{
 			Response(how_goes_implanting, SunDevice);
 		}
 		Response(like_to_land, CombatIsInevitable);
 	}
-	else if (GET_GAME_STATE(MYCON_AMBUSH)
-			 && !GET_GAME_STATE(NO_TRICK_AT_SUN))
+	else if (uqm::gameState().flag(uqm::GameFlag::MYCON_AMBUSH)
+			 && !uqm::gameState().flag(uqm::GameFlag::NO_TRICK_AT_SUN))
 	{
 		Response(i_have_a_cunning_plan, SunDevice);
 	}
@@ -387,7 +387,7 @@ TrickMycon(RESPONSE_REF R)
 		NPCPhrase(WE_GO_TO_IMPLANT);
 
 		setSegue(Segue_peace);
-		SET_GAME_STATE(MYCON_FELL_FOR_AMBUSH, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH, static_cast<uint32_t>(1));
 		AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_MYCON_MISSION);
 	}
 	else
@@ -418,7 +418,7 @@ NormalMycon(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_SHATTERED);
 
-		SET_GAME_STATE(KNOW_ABOUT_SHATTERED, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 	}
 	else if (R)
 	{
@@ -436,7 +436,7 @@ NormalMycon(RESPONSE_REF R)
 	{
 		RespFunc = (RESPONSE_FUNC)NormalMycon;
 	}
-	if (!(GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
+	if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 	{
 		if (PhraseEnabled(come_in_peace))
 		{
@@ -448,7 +448,7 @@ NormalMycon(RESPONSE_REF R)
 		}
 		if (!MadeChoice)
 		{
-			switch (GET_GAME_STATE(MYCON_INSULTS))
+			switch (uqm::gameState().flag(uqm::GameFlag::MYCON_INSULTS))
 			{
 				case 0:
 					Response(insult_1, RespFunc);
@@ -482,7 +482,7 @@ NormalMycon(RESPONSE_REF R)
 	{
 		if (!MadeChoice)
 		{
-			switch (GET_GAME_STATE(MYCON_INFO))
+			switch (uqm::gameState().flag(uqm::GameFlag::MYCON_INFO))
 			{
 				case 0:
 					Response(question_1, RespFunc);
@@ -546,13 +546,13 @@ NormalMycon(RESPONSE_REF R)
 		{
 			Response(submit_to_us, RespFunc);
 		}
-		if (!GET_GAME_STATE(MYCON_FELL_FOR_AMBUSH))
+		if (!uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
 		{
-			if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) == 1)
+			if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) == 1)
 			{
 				Response(what_about_shattered, NormalMycon);
 			}
-			if (GET_GAME_STATE(MYCON_AMBUSH))
+			if (uqm::gameState().flag(uqm::GameFlag::MYCON_AMBUSH))
 			{
 				Response(i_have_a_cunning_plan, TrickMycon);
 			}
@@ -566,9 +566,9 @@ Intro(void)
 {
 	uint8_t NumVisits {};
 
-	if (GET_GAME_STATE(SUN_DEVICE))
+	if (uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE))
 	{
-		NumVisits = GET_GAME_STATE(MYCON_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::MYCON_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -579,19 +579,19 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(MYCON_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_VISITS, static_cast<uint32_t>(NumVisits));
 
 		setSegue(Segue_hostile);
 	}
-	else if (GET_GAME_STATE(MYCON_KNOW_AMBUSH))
+	else if (uqm::gameState().flag(uqm::GameFlag::MYCON_KNOW_AMBUSH))
 	{
 		NPCPhrase(DIE_LIAR);
 
 		setSegue(Segue_hostile);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		NumVisits = GET_GAME_STATE(MYCON_SUN_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::MYCON_SUN_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -603,13 +603,13 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(MYCON_SUN_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_SUN_VISITS, static_cast<uint32_t>(NumVisits));
 
 		SunDevice((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
-		NumVisits = GET_GAME_STATE(MYCON_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::MYCON_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -638,13 +638,13 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(MYCON_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 		NormalMycon((RESPONSE_REF)0);
 	}
 	else
 	{
-		NumVisits = GET_GAME_STATE(MYCON_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::MYCON_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -674,7 +674,7 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(MYCON_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_VISITS, static_cast<uint32_t>(NumVisits));
 
 		NormalMycon((RESPONSE_REF)0);
 	}

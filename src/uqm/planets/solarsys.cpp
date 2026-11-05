@@ -604,7 +604,7 @@ initSolarSysSISCharacteristics(void)
 	uint8_t num_thrusters {0};
 	for (i = 0; i < NumDriveSlots; ++i)
 	{
-		if (GLOBAL_SIS(DriveSlots[i]) == FUSION_THRUSTER)
+		if (uqm::gameState().sis().DriveSlots[i] == FUSION_THRUSTER)
 		{
 			++num_thrusters;
 		}
@@ -614,7 +614,7 @@ initSolarSysSISCharacteristics(void)
 	pSolarSysState->turn_wait = IpShipTurnWait;
 	for (i = 0; i < NumJetSlots; ++i)
 	{
-		if (GLOBAL_SIS(JetSlots[i]) == TURNING_JETS)
+		if (uqm::gameState().sis().JetSlots[i] == TURNING_JETS)
 		{
 			pSolarSysState->turn_wait -= IpShipTurnDecrement;
 		}
@@ -776,10 +776,10 @@ LoadSolarSys(void)
 	pCurDesc->image.frame = SunFrame;
 
 	(*pSolarSysState->genFuncs->generatePlanets)(pSolarSysState);
-	if (GET_GAME_STATE(PLANETARY_CHANGE))
+	if (uqm::gameState().flag(uqm::GameFlag::PLANETARY_CHANGE))
 	{
 		PutPlanetInfo();
-		SET_GAME_STATE(PLANETARY_CHANGE, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(0));
 	}
 
 	for (i = 0, pCurDesc = pSolarSysState->PlanetDesc;
@@ -826,7 +826,7 @@ LoadSolarSys(void)
 		GenerateMoons(pSolarSysState, pSolarSysState->pOrbitalDesc);
 		pSolarSysState->pBaseDesc = pSolarSysState->MoonDesc;
 
-		SET_GAME_STATE(PLANETARY_LANDING, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_LANDING, static_cast<uint32_t>(0));
 	}
 
 	initSolarSysSISCharacteristics();
@@ -2088,7 +2088,7 @@ DrawInnerSystem(void)
 	{
 		DrawInnerPlanets(pSolarSysState->pOrbitalDesc);
 	}
-	DrawSISTitle(GLOBAL_SIS(PlanetName));
+	DrawSISTitle(uqm::gameState().sis().PlanetName);
 }
 
 static void
@@ -2222,8 +2222,8 @@ EnterPlanetOrbit(void)
 			&& !(pSolarSysState->pOrbitalDesc->data_index
 				 & WORLD_TYPE_SPECIAL))
 		{
-			fmt::format_to_sz_n(GLOBAL_SIS(PlanetName)
-									+ strlen(GLOBAL_SIS(PlanetName)),
+			fmt::format_to_sz_n(uqm::gameState().sis().PlanetName
+									+ strlen(uqm::gameState().sis().PlanetName),
 								4, "-{}{}",
 								moonLetter(pSolarSysState, pSolarSysState->pOrbitalDesc),
 								'\0');
@@ -2241,8 +2241,8 @@ EnterPlanetOrbit(void)
 	(*pSolarSysState->genFuncs->generateOrbital)(pSolarSysState,
 												 pSolarSysState->pOrbitalDesc);
 	LastActivity &= ~(CHECK_LOAD | CHECK_RESTART);
-	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD | START_ENCOUNTER)) || GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
-		|| GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
+	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD | START_ENCOUNTER)) || uqm::gameState().sis().CrewEnlisted == (uint16_t)~0
+		|| uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 	{
 		return;
 	}
@@ -2261,7 +2261,7 @@ EnterPlanetOrbit(void)
 	// a Caster for Ilwrath
 	// Could also have blown self up with Utwig Bomb
 	if (!(uqm::currentActivity() & (START_ENCOUNTER | CHECK_ABORT | CHECK_LOAD))
-		&& GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
+		&& uqm::gameState().sis().CrewEnlisted != (uint16_t)~0)
 	{ // Reload the system and return to the inner view
 		const PLANET_DESC* orbital = LoadSolarSys();
 		assert(!orbital);
@@ -2338,9 +2338,9 @@ InitSolarSys(void)
 	{
 		EncounterRace = -1;
 		EncounterGroup = 0;
-		GLOBAL(BattleGroupRef) = 0;
-		ReinitQueue(&GLOBAL(ip_group_q));
-		ReinitQueue(&GLOBAL(npc_built_ship_q));
+		uqm::gameState().game().BattleGroupRef = 0;
+		ReinitQueue(&uqm::gameState().game().ip_group_q);
+		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 		(*pSolarSysState->genFuncs->initNpcs)(pSolarSysState);
 	}
 
@@ -2425,7 +2425,7 @@ endInterPlanetary(void)
 		// These are game state changing ops and so cannot be
 		// called once another game has been loaded!
 		(*pSolarSysState->genFuncs->uninitNpcs)(pSolarSysState);
-		SET_GAME_STATE(USED_BROADCASTER, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::USED_BROADCASTER, static_cast<uint32_t>(0));
 	}
 }
 
@@ -2480,7 +2480,7 @@ UninitSolarSys(void)
 
 	if ((uqm::currentActivity() & START_ENCOUNTER) && EncounterGroup)
 	{
-		GetGroupInfo(GLOBAL(BattleGroupRef), EncounterGroup);
+		GetGroupInfo(uqm::gameState().game().BattleGroupRef, EncounterGroup);
 		// Generate the encounter location name based on the closest planet
 
 		if (uqm::flagship().ipPlanet == 0)
@@ -2851,8 +2851,8 @@ GetStarBackGround(bool encounter)
 	else
 	{
 		location = MAKE_POINT(
-			LogxToUniverse(GLOBAL_SIS(log_x)),
-			LogyToUniverse(GLOBAL_SIS(log_y)));
+			LogxToUniverse(uqm::gameState().sis().log_x),
+			LogyToUniverse(uqm::gameState().sis().log_y));
 	}
 
 	SysRNG.reseed(GetRandomSeedForVar(location));
@@ -2890,8 +2890,8 @@ void ExploreSolarSys(void)
 	{
 		GFXPOINT universe;
 
-		universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
-		universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
+		universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
+		universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
 		CurStarDescPtr() = FindStar(0, &universe, 1, 1);
 		if (!CurStarDescPtr())
 		{
@@ -2900,8 +2900,8 @@ void ExploreSolarSys(void)
 			uqm::fatalExit();
 		}
 	}
-	GLOBAL_SIS(log_x) = UniverseToLogx(CurStarDescPtr()->star_pt.x);
-	GLOBAL_SIS(log_y) = UniverseToLogy(CurStarDescPtr()->star_pt.y);
+	uqm::gameState().sis().log_x = UniverseToLogx(CurStarDescPtr()->star_pt.x);
+	uqm::gameState().sis().log_y = UniverseToLogy(CurStarDescPtr()->star_pt.y);
 
 	pSolarSysState = &SolarSysState;
 
@@ -3024,14 +3024,14 @@ const char* GetNamedPlanetaryBody(void)
 				}
 				break;
 			case SYREEN_DEFINED: // Gaia
-				if ((GET_GAME_STATE(SYREEN_HOME_VISITS)
-					 || GET_GAME_STATE(SYREEN_KNOW_ABOUT_MYCON)))
+				if ((uqm::gameState().flag(uqm::GameFlag::SYREEN_HOME_VISITS)
+					 || uqm::gameState().flag(uqm::GameFlag::SYREEN_KNOW_ABOUT_MYCON)))
 				{
 					return GameString(PLANET_NUMBER_BASE + 39);
 				}
 				break;
 			case SLYLANDRO_DEFINED: // Source
-				if (GET_GAME_STATE(SLYLANDRO_HOME_VISITS))
+				if (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_HOME_VISITS))
 				{
 					return GameString(PLANET_NUMBER_BASE + 36);
 				}
@@ -3051,7 +3051,7 @@ const char* GetNamedPlanetaryBody(void)
 				}
 				break;
 			case SUPOX_DEFINED: // Vlik
-				if (GET_GAME_STATE(SUPOX_STACK1) > 2)
+				if (uqm::gameState().flag(uqm::GameFlag::SUPOX_STACK1) > 2)
 				{
 					return GameString(PLANET_NUMBER_BASE + 38);
 				}
@@ -3076,7 +3076,7 @@ void GetPlanetOrMoonName(char* buf, uint16_t bufsize)
 	}
 
 	// Either not named or we already have a name
-	uqm::utf8StringCopy(buf, bufsize, GLOBAL_SIS(PlanetName));
+	uqm::utf8StringCopy(buf, bufsize, uqm::gameState().sis().PlanetName);
 
 	if (!playerInSolarSystem() || !playerInInnerSystem()
 		|| worldIsPlanet(pSolarSysState, pSolarSysState->pOrbitalDesc)
@@ -3128,10 +3128,10 @@ void SaveSolarSysLocation(void)
 		uint8_t moon {};
 
 		// Update the starinfo.dat file if necessary.
-		if (GET_GAME_STATE(PLANETARY_CHANGE))
+		if (uqm::gameState().flag(uqm::GameFlag::PLANETARY_CHANGE))
 		{
 			PutPlanetInfo();
-			SET_GAME_STATE(PLANETARY_CHANGE, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(0));
 		}
 
 		// GLOBAL (ip_planet) is already set
@@ -3156,7 +3156,7 @@ DoSolarSysMenu(MENU_STATE* pMS)
 	bool select = PulsedInputState.menu[KEY_MENU_SELECT];
 
 	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
-		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
+		|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
 	{
 		return false;
 	}
@@ -3314,7 +3314,7 @@ DoIpFlight(SOLARSYS_STATE* pSS)
 	return (!(uqm::currentActivity()
 			  & (START_ENCOUNTER | EndInterplanetary
 				 | CHECK_ABORT | CHECK_LOAD))
-			&& GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0);
+			&& uqm::gameState().sis().CrewEnlisted != (uint16_t)~0);
 }
 
 static int16_t

@@ -140,9 +140,9 @@ ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(HIDEOUS_MONSTERS);
 
-		SET_GAME_STATE(SUPOX_HOSTILE, 1);
-		SET_GAME_STATE(SUPOX_HOME_VISITS, 0);
-		SET_GAME_STATE(SUPOX_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_HOSTILE, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(0));
 	}
 	else if (PlayerSaid(R, bye_after_space))
 	{
@@ -182,8 +182,8 @@ AlliedHome(RESPONSE_REF R)
 	uint8_t NumVisits {};
 	uint8_t News {};
 
-	News = GET_GAME_STATE(SUPOX_WAR_NEWS);
-	NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
+	News = uqm::gameState().flag(uqm::GameFlag::SUPOX_WAR_NEWS);
+	NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_SUPOX_MISSION);
 	if (PlayerSaid(R, how_went_war))
 	{
 		NPCPhrase(ABOUT_BATTLE);
@@ -196,11 +196,11 @@ AlliedHome(RESPONSE_REF R)
 		{
 			NPCPhrase(FLEET_ON_WAY);
 
-			SET_GAME_STATE(SUPOX_WAR_NEWS, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(1));
 		}
 		else
 		{
-			switch (GET_GAME_STATE(SUPOX_WAR_NEWS))
+			switch (uqm::gameState().flag(uqm::GameFlag::SUPOX_WAR_NEWS))
 			{
 				case 0:
 					NPCPhrase(BATTLE_HAPPENS_1);
@@ -255,7 +255,7 @@ AlliedHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(give_info);
 	}
-	SET_GAME_STATE(SUPOX_WAR_NEWS, News);
+	uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(News));
 
 	if (NumVisits >= 5)
 	{
@@ -300,7 +300,7 @@ BeforeKohrAh(RESPONSE_REF R)
 
 	if (PlayerSaid(R, whats_up_before_space))
 	{
-		NumVisits = GET_GAME_STATE(SUPOX_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SUPOX_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -311,7 +311,7 @@ BeforeKohrAh(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SUPOX_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_before_space);
 	}
@@ -340,7 +340,7 @@ AfterKohrAh(RESPONSE_REF R)
 
 	if (PlayerSaid(R, whats_up_after_space))
 	{
-		NumVisits = GET_GAME_STATE(SUPOX_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SUPOX_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -351,7 +351,7 @@ AfterKohrAh(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SUPOX_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_after_space);
 	}
@@ -386,54 +386,54 @@ NeutralSupox(RESPONSE_REF R)
 	{
 		NPCPhrase(WE_ARE_SUPOX);
 
-		SET_GAME_STATE(SUPOX_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(1));
 		DISABLE_PHRASE(i_am);
 	}
 	else if (PlayerSaid(R, my_ship))
 	{
 		NPCPhrase(OUR_SHIP);
 
-		SET_GAME_STATE(SUPOX_STACK1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(2));
 		DISABLE_PHRASE(my_ship);
 	}
 	else if (PlayerSaid(R, from_alliance))
 	{
 		NPCPhrase(FROM_SUPOX);
 
-		SET_GAME_STATE(SUPOX_STACK1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(3));
 		DISABLE_PHRASE(from_alliance);
 	}
 	else if (PlayerSaid(R, are_you_copying))
 	{
 		NPCPhrase(YEAH_SORRY);
 
-		SET_GAME_STATE(SUPOX_STACK1, 4);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(4));
 	}
 	else if (PlayerSaid(R, why_copy))
 	{
 		NPCPhrase(SYMBIOTS);
 
-		SET_GAME_STATE(SUPOX_STACK1, 5);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK1, static_cast<uint32_t>(5));
 	}
 	else if (PlayerSaid(R, tell_us_of_your_species))
 	{
 		NPCPhrase(OUR_SPECIES);
 
 		LastStack = 1;
-		SET_GAME_STATE(SUPOX_STACK2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK2, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, plants_arent_intelligent))
 	{
 		NPCPhrase(PROVES_WERE_SPECIAL);
 
-		SET_GAME_STATE(SUPOX_STACK2, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_STACK2, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, anyone_around_here))
 	{
 		NPCPhrase(UTWIG_NEARBY);
 
 		LastStack = 2;
-		SET_GAME_STATE(SUPOX_WAR_NEWS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(1));
 		StartSphereTracking(UTWIG_SHIP);
 	}
 	else if (PlayerSaid(R, what_relation_to_utwig))
@@ -441,21 +441,21 @@ NeutralSupox(RESPONSE_REF R)
 		NPCPhrase(UTWIG_ALLIES);
 
 		LastStack = 2;
-		SET_GAME_STATE(SUPOX_WAR_NEWS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, whats_wrong_with_utwig))
 	{
 		NPCPhrase(BROKE_ULTRON);
 
 		LastStack = 2;
-		SET_GAME_STATE(SUPOX_WAR_NEWS, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, whats_ultron))
 	{
 		NPCPhrase(TAKE_ULTRON);
 
-		SET_GAME_STATE(SUPOX_WAR_NEWS, 0);
-		SET_GAME_STATE(ULTRON_CONDITION, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ULTRON_CONDITION, static_cast<uint32_t>(1));
 
 		Response(what_do_i_do_now, (IsExtended() ? NeutralSupox : ExitConversation));
 		Response(thanks_now_we_eat_you, ExitConversation);
@@ -470,19 +470,19 @@ NeutralSupox(RESPONSE_REF R)
 	{
 		NPCPhrase(GOOD_GIVE_TO_UTWIG);
 
-		SET_GAME_STATE(SUPOX_ULTRON_HELP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, look_i_repaired_lots))
 	{
 		NPCPhrase(ALMOST_THERE);
 
-		SET_GAME_STATE(SUPOX_ULTRON_HELP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, look_i_slightly_repaired))
 	{
 		NPCPhrase(GREAT_DO_MORE);
 
-		SET_GAME_STATE(SUPOX_ULTRON_HELP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, where_get_repairs))
 	{
@@ -492,7 +492,7 @@ NeutralSupox(RESPONSE_REF R)
 		{
 			StartSphereTracking(DRUUGE_SHIP);
 		}
-		SET_GAME_STATE(SUPOX_ULTRON_HELP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_ULTRON_HELP, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, give_info))
 	{
@@ -501,7 +501,7 @@ NeutralSupox(RESPONSE_REF R)
 		DISABLE_PHRASE(give_info);
 	}
 
-	switch (GET_GAME_STATE(SUPOX_STACK2))
+	switch (uqm::gameState().flag(uqm::GameFlag::SUPOX_STACK2))
 	{
 		case 0:
 			pStr[1] = tell_us_of_your_species;
@@ -510,7 +510,7 @@ NeutralSupox(RESPONSE_REF R)
 			pStr[1] = plants_arent_intelligent;
 			break;
 	}
-	switch (GET_GAME_STATE(SUPOX_STACK1))
+	switch (uqm::gameState().flag(uqm::GameFlag::SUPOX_STACK1))
 	{
 		case 0:
 			pStr[0] = i_am;
@@ -533,15 +533,15 @@ NeutralSupox(RESPONSE_REF R)
 			pStr[1] = 0;
 			break;
 	}
-	NumVisits = GET_GAME_STATE(ULTRON_CONDITION);
+	NumVisits = uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION);
 	if (NumVisits == 0)
 	{
-		switch (GET_GAME_STATE(SUPOX_WAR_NEWS))
+		switch (uqm::gameState().flag(uqm::GameFlag::SUPOX_WAR_NEWS))
 		{
 			case 0:
-				if (GET_GAME_STATE(UTWIG_VISITS)
-					|| GET_GAME_STATE(UTWIG_HOME_VISITS)
-					|| GET_GAME_STATE(BOMB_VISITS))
+				if (uqm::gameState().flag(uqm::GameFlag::UTWIG_VISITS)
+					|| uqm::gameState().flag(uqm::GameFlag::UTWIG_HOME_VISITS)
+					|| uqm::gameState().flag(uqm::GameFlag::BOMB_VISITS))
 				{
 					pStr[2] = what_relation_to_utwig;
 				}
@@ -569,7 +569,7 @@ NeutralSupox(RESPONSE_REF R)
 			Response(pStr[i], NeutralSupox);
 		}
 	}
-	if (!GET_GAME_STATE(SUPOX_ULTRON_HELP))
+	if (!uqm::gameState().flag(uqm::GameFlag::SUPOX_ULTRON_HELP))
 	{
 		switch (NumVisits)
 		{
@@ -607,9 +607,9 @@ Intro(void)
 		return;
 	}
 
-	if (GET_GAME_STATE(SUPOX_HOSTILE))
+	if (uqm::gameState().flag(uqm::GameFlag::SUPOX_HOSTILE))
 	{
-		NumVisits = GET_GAME_STATE(SUPOX_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SUPOX_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -620,15 +620,15 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SUPOX_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(NumVisits));
 
 		setSegue(Segue_peace);
 	}
 	else if (CheckAlliance(SUPOX_SHIP) == GOOD_GUY)
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(SUPOX_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::SUPOX_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -645,16 +645,16 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(SUPOX_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::SUPOX_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 			AlliedHome((RESPONSE_REF)0);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_SUPOX_MISSION);
 			if (NumVisits == 1)
 			{
-				NumVisits = GET_GAME_STATE(SUPOX_VISITS);
+				NumVisits = uqm::gameState().flag(uqm::GameFlag::SUPOX_VISITS);
 				switch (NumVisits++)
 				{
 					case 0:
@@ -665,13 +665,13 @@ Intro(void)
 						--NumVisits;
 						break;
 				}
-				SET_GAME_STATE(SUPOX_VISITS, NumVisits);
+				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(NumVisits));
 
 				BeforeKohrAh((RESPONSE_REF)0);
 			}
 			else if (NumVisits < 5)
 			{
-				NumVisits = GET_GAME_STATE(SUPOX_VISITS);
+				NumVisits = uqm::gameState().flag(uqm::GameFlag::SUPOX_VISITS);
 				switch (NumVisits++)
 				{
 					case 0:
@@ -682,11 +682,11 @@ Intro(void)
 						--NumVisits;
 						break;
 				}
-				SET_GAME_STATE(SUPOX_VISITS, NumVisits);
+				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(NumVisits));
 			}
 			else
 			{
-				NumVisits = GET_GAME_STATE(SUPOX_VISITS);
+				NumVisits = uqm::gameState().flag(uqm::GameFlag::SUPOX_VISITS);
 				switch (NumVisits++)
 				{
 					case 0:
@@ -697,7 +697,7 @@ Intro(void)
 						--NumVisits;
 						break;
 				}
-				SET_GAME_STATE(SUPOX_VISITS, NumVisits);
+				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(NumVisits));
 
 				AfterKohrAh((RESPONSE_REF)0);
 			}
@@ -705,9 +705,9 @@ Intro(void)
 	}
 	else
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(SUPOX_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::SUPOX_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -718,13 +718,13 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(SUPOX_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::SUPOX_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 			SetHomeworldKnown(SUPOX_HOME);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(SUPOX_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::SUPOX_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -735,7 +735,7 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(SUPOX_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		NeutralSupox((RESPONSE_REF)0);
@@ -770,7 +770,7 @@ init_supox_comm(void)
 	supox_desc.AlienTextBaseline.y = 0;
 	supox_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if (!GET_GAME_STATE(SUPOX_HOSTILE)
+	if (!uqm::gameState().flag(uqm::GameFlag::SUPOX_HOSTILE)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);

@@ -88,7 +88,7 @@ void spawn_planet(void)
 
 		PutElement(hPlanetElement);
 	}
-	if (IsExtended() && GET_GAME_STATE(URQUAN_PROTECTING_SAMATRA))
+	if (IsExtended() && uqm::gameState().flag(uqm::GameFlag::URQUAN_PROTECTING_SAMATRA))
 	{ // Works inconsistently because planet is on top star layer
 		// and Sa-Matra on second, therefore scrollig is a bit off
 		pt.x += 1200;

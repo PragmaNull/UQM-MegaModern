@@ -185,7 +185,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(URQUAN_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::URQUAN_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -202,7 +202,7 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(URQUAN_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_INFO, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, i_wont_surrender))
 	{
@@ -232,7 +232,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	{
 		NPCPhrase(GOODBYE_AND_DIE_INIT_HYPNO);
 
-		SET_GAME_STATE(URQUAN_HYPNO_VISITS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_HYPNO_VISITS, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, terran_amphibian)
 			 || PlayerSaid(R, talking_pet_on_steroids))
@@ -240,7 +240,7 @@ CombatIsInevitable(RESPONSE_REF R)
 		NPCPhrase(BAD_NEWS);
 
 		setSegue(Segue_peace);
-		SET_GAME_STATE(URQUAN_HYPNO_VISITS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_HYPNO_VISITS, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, falling_asleep)
 			 || PlayerSaid(R, someone_else_controlled))
@@ -248,7 +248,7 @@ CombatIsInevitable(RESPONSE_REF R)
 		NPCPhrase(SOUNDS_FAMILIAR);
 
 		setSegue(Segue_peace);
-		SET_GAME_STATE(URQUAN_HYPNO_VISITS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_HYPNO_VISITS, static_cast<uint32_t>(1));
 	}
 }
 
@@ -303,7 +303,7 @@ MentionCompulsion(RESPONSE_REF R)
 	{
 		NPCPhrase(WHAT_COMPULSION);
 
-		SET_GAME_STATE(MENTIONED_PET_COMPULSION, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MENTIONED_PET_COMPULSION, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, possessed_by_devil))
 	{
@@ -333,7 +333,7 @@ MentionCompulsion(RESPONSE_REF R)
 static void
 UrquanHypno(RESPONSE_REF R)
 {
-	if (GET_GAME_STATE(URQUAN_HYPNO_VISITS) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::URQUAN_HYPNO_VISITS) == 0)
 	{
 		if (R == 0)
 		{
@@ -400,7 +400,7 @@ UrquanHypno(RESPONSE_REF R)
 		{
 			Response(stop_meeting, UrquanHypno);
 		}
-		if (!GET_GAME_STATE(MENTIONED_PET_COMPULSION))
+		if (!uqm::gameState().flag(uqm::GameFlag::MENTIONED_PET_COMPULSION))
 		{
 			Response(compulsion, MentionCompulsion);
 		}
@@ -424,15 +424,15 @@ NormalUrquan(RESPONSE_REF R)
 		{
 			NPCPhrase(URQUAN_STORY);
 
-			SET_GAME_STATE(KNOW_URQUAN_STORY, 2);
+			uqm::gameState().setFlag(uqm::GameFlag::KNOW_URQUAN_STORY, static_cast<uint32_t>(2));
 		}
 
 		Response(you_must_surrender, CombatIsInevitable);
-		if (GET_GAME_STATE(KNOW_URQUAN_STORY) == 1)
+		if (uqm::gameState().flag(uqm::GameFlag::KNOW_URQUAN_STORY) == 1)
 		{
 			Response(key_phrase, NormalUrquan);
 		}
-		switch (GET_GAME_STATE(URQUAN_INFO))
+		switch (uqm::gameState().flag(uqm::GameFlag::URQUAN_INFO))
 		{
 			case 0:
 				Response(whats_up_1, CombatIsInevitable);
@@ -506,15 +506,15 @@ Intro(void)
 		return;
 	}
 
-	uint32_t GrpOffs {GET_GAME_STATE(URQUAN_PROBE_GRPOFFS)};
+	uint32_t GrpOffs {uqm::gameState().flag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS)};
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-		&& GLOBAL(BattleGroupRef)
-		&& GLOBAL(BattleGroupRef) == GrpOffs)
+		&& uqm::gameState().game().BattleGroupRef
+		&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 	{
 		NPCPhrase(SEND_MESSAGE);
-		SET_GAME_STATE(PROBE_MESSAGE_DELIVERED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PROBE_MESSAGE_DELIVERED, static_cast<uint32_t>(1));
 	}
-	else if (GET_GAME_STATE(PLAYER_HYPNOTIZED))
+	else if (uqm::gameState().flag(uqm::GameFlag::PLAYER_HYPNOTIZED))
 	{
 		SetCommIntroMode(CIM_FADE_IN_SCREEN, c_gameSecond * 5);
 		UrquanHypno((RESPONSE_REF)0);
@@ -523,17 +523,17 @@ Intro(void)
 	{
 		uint8_t NumVisits {};
 
-		if (!GET_GAME_STATE(URQUAN_SENSES_EVIL)
-			&& GET_GAME_STATE(TALKING_PET_ON_SHIP))
+		if (!uqm::gameState().flag(uqm::GameFlag::URQUAN_SENSES_EVIL)
+			&& uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 		{
 			NPCPhrase(SENSE_EVIL);
-			SET_GAME_STATE(URQUAN_SENSES_EVIL, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::URQUAN_SENSES_EVIL, static_cast<uint32_t>(1));
 		}
 
-		GrpOffs = GET_GAME_STATE(COLONY_GRPOFFS);
+		GrpOffs = uqm::gameState().flag(uqm::GameFlag::COLONY_GRPOFFS);
 		if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-			&& GLOBAL(BattleGroupRef)
-			&& GLOBAL(BattleGroupRef) == GrpOffs)
+			&& uqm::gameState().game().BattleGroupRef
+			&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 		{
 			NPCPhrase(CAUGHT_YA);
 
@@ -541,20 +541,20 @@ Intro(void)
 			return;
 		}
 
-		GrpOffs = GET_GAME_STATE(SAMATRA_GRPOFFS);
+		GrpOffs = uqm::gameState().flag(uqm::GameFlag::SAMATRA_GRPOFFS);
 		if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-			&& GLOBAL(BattleGroupRef)
-			&& GLOBAL(BattleGroupRef) == GrpOffs)
+			&& uqm::gameState().game().BattleGroupRef
+			&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 		{
 			NPCPhrase(HELLO_SAMATRA);
 
-			SET_GAME_STATE(AWARE_OF_SAMATRA, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
 			setSegue(Segue_hostile);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(URQUAN_VISITS);
-			if (!GET_GAME_STATE(KOHR_AH_FRENZY))
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::URQUAN_VISITS);
+			if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 			{
 				switch (NumVisits++)
 				{
@@ -593,7 +593,7 @@ Intro(void)
 						break;
 				}
 			}
-			SET_GAME_STATE(URQUAN_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::URQUAN_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 	}
 }
@@ -608,7 +608,7 @@ uninit_urquan(void)
 static void
 post_urquan_enc(void)
 {
-	SET_GAME_STATE(PLAYER_HYPNOTIZED, 0);
+	uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HYPNOTIZED, static_cast<uint32_t>(0));
 }
 
 LOCDATA*
@@ -624,12 +624,12 @@ init_urquan_comm(void)
 	urquan_desc.AlienTextBaseline.y = 0;
 	urquan_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	const uint32_t GrpOffs {GET_GAME_STATE(URQUAN_PROBE_GRPOFFS)};
+	const uint32_t GrpOffs {uqm::gameState().flag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS)};
 
 	// use alternate "Probe" track if available
 	if ((uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-		 && GLOBAL(BattleGroupRef)
-		 && GLOBAL(BattleGroupRef) == GrpOffs))
+		 && uqm::gameState().game().BattleGroupRef
+		 && uqm::gameState().game().BattleGroupRef == GrpOffs))
 	{
 		altResFlags |= UseAltSong;
 	}
@@ -639,11 +639,11 @@ init_urquan_comm(void)
 		altResFlags |= UseAltColormap;
 	}
 
-	if (GET_GAME_STATE(PLAYER_HYPNOTIZED)
+	if (uqm::gameState().flag(uqm::GameFlag::PLAYER_HYPNOTIZED)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE
 		|| (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-			&& GLOBAL(BattleGroupRef)
-			&& GLOBAL(BattleGroupRef) == GrpOffs))
+			&& uqm::gameState().game().BattleGroupRef
+			&& uqm::gameState().game().BattleGroupRef == GrpOffs))
 	{
 		setSegue(Segue_peace);
 	}

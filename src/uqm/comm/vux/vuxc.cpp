@@ -338,15 +338,15 @@ CombatIsInevitable(RESPONSE_REF R)
 
 		AlienTalkSegue((uint16_t)~0);
 
-		SET_GAME_STATE(VUX_BEAST_ON_SHIP, 0);
-		SET_GAME_STATE(ZEX_IS_DEAD, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_BEAST_ON_SHIP, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ZEX_IS_DEAD, static_cast<uint32_t>(1));
 		setSegue(Segue_peace);
 	}
 	else if (PlayerSaid(R, try_any_way))
 	{
 		NPCPhrase(NOPE);
 
-		SET_GAME_STATE(VUX_STACK_1, 4);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(4));
 	}
 	else if (PlayerSaid(R, kill_you_squids_1)
 			 || PlayerSaid(R, kill_you_squids_2)
@@ -355,10 +355,10 @@ CombatIsInevitable(RESPONSE_REF R)
 	{
 		NPCPhrase(WE_FIGHT);
 
-		NumVisits = GET_GAME_STATE(VUX_STACK_2) + 1;
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_STACK_2) + 1;
 		if (NumVisits <= 3)
 		{
-			SET_GAME_STATE(VUX_STACK_2, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_2, static_cast<uint32_t>(NumVisits));
 		}
 	}
 	else if (PlayerSaid(R, cant_we_be_friends_1)
@@ -366,7 +366,7 @@ CombatIsInevitable(RESPONSE_REF R)
 			 || PlayerSaid(R, cant_we_be_friends_3)
 			 || PlayerSaid(R, cant_we_be_friends_4))
 	{
-		NumVisits = GET_GAME_STATE(VUX_STACK_3);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_STACK_3);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -383,11 +383,11 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(VUX_STACK_3, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_3, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, bye_hostile_space))
 	{
-		NumVisits = GET_GAME_STATE(VUX_STACK_4);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_STACK_4);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -404,7 +404,7 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(VUX_STACK_4, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_4, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, bye_zex))
 	{
@@ -414,7 +414,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	}
 	else
 	{
-		NumVisits = GET_GAME_STATE(VUX_STACK_1);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_STACK_1);
 		switch (NumVisits++)
 		{
 			case 4:
@@ -448,7 +448,7 @@ CombatIsInevitable(RESPONSE_REF R)
 				NPCPhrase(TRUTH);
 				break;
 		}
-		SET_GAME_STATE(VUX_STACK_1, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(NumVisits));
 	}
 }
 
@@ -512,8 +512,8 @@ Menagerie(RESPONSE_REF R)
 		NPCPhrase(THEN_FIGHT);
 
 		setSegue(Segue_hostile);
-		SET_GAME_STATE(ZEX_STACK_3, 2);
-		SET_GAME_STATE(ZEX_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_3, static_cast<uint32_t>(2));
+		uqm::gameState().setFlag(uqm::GameFlag::ZEX_VISITS, static_cast<uint32_t>(0));
 	}
 	else
 	{
@@ -523,8 +523,8 @@ Menagerie(RESPONSE_REF R)
 		{
 			uint8_t NumVisits {};
 
-			NumVisits = GET_GAME_STATE(ZEX_VISITS);
-			if (GET_GAME_STATE(ZEX_STACK_3) >= 2)
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ZEX_VISITS);
+			if (uqm::gameState().flag(uqm::GameFlag::ZEX_STACK_3) >= 2)
 			{
 				switch (NumVisits++)
 				{
@@ -556,26 +556,26 @@ Menagerie(RESPONSE_REF R)
 						break;
 				}
 			}
-			SET_GAME_STATE(ZEX_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 		else if (PlayerSaid(R, what_you_do_here))
 		{
 			NPCPhrase(MY_MENAGERIE);
 
-			SET_GAME_STATE(ZEX_STACK_1, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_1, static_cast<uint32_t>(1));
 		}
 		else if (PlayerSaid(R, what_about_menagerie))
 		{
 			NPCPhrase(NEED_NEW_CREATURE);
 
-			SET_GAME_STATE(ZEX_STACK_1, 2);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_1, static_cast<uint32_t>(2));
 		}
 		else if (PlayerSaid(R, what_about_creature))
 		{
 			NPCPhrase(ABOUT_CREATURE);
 
-			SET_GAME_STATE(KNOW_ZEX_WANTS_MONSTER, 1);
-			SET_GAME_STATE(ZEX_STACK_1, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::KNOW_ZEX_WANTS_MONSTER, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_1, static_cast<uint32_t>(3));
 
 			R = about_creature_again;
 			DISABLE_PHRASE(what_about_creature);
@@ -591,44 +591,44 @@ Menagerie(RESPONSE_REF R)
 			NPCPhrase(LIKE_YOU);
 
 			LastStack = 1;
-			SET_GAME_STATE(ZEX_STACK_2, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_2, static_cast<uint32_t>(1));
 		}
 		else if (PlayerSaid(R, why_like_me))
 		{
 			NPCPhrase(LIKE_BECAUSE);
 
 			LastStack = 1;
-			SET_GAME_STATE(ZEX_STACK_2, 2);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_2, static_cast<uint32_t>(2));
 		}
 		else if (PlayerSaid(R, are_you_a_pervert))
 		{
 			NPCPhrase(CALL_ME_WHAT_YOU_WISH);
 
-			SET_GAME_STATE(ZEX_STACK_2, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_2, static_cast<uint32_t>(3));
 		}
 		else if (PlayerSaid(R, take_by_force))
 		{
 			NPCPhrase(PRECURSOR_DEVICE);
 
 			LastStack = 2;
-			SET_GAME_STATE(ZEX_STACK_3, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_3, static_cast<uint32_t>(1));
 		}
 		else if (PlayerSaid(R, you_lied))
 		{
 			NPCPhrase(YUP_LIED);
 
 			LastStack = 2;
-			SET_GAME_STATE(ZEX_STACK_3, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_3, static_cast<uint32_t>(3));
 		}
 
-		if (GET_GAME_STATE(KNOW_ZEX_WANTS_MONSTER)
-			&& GET_GAME_STATE(VUX_BEAST_ON_SHIP))
+		if (uqm::gameState().flag(uqm::GameFlag::KNOW_ZEX_WANTS_MONSTER)
+			&& uqm::gameState().flag(uqm::GameFlag::VUX_BEAST_ON_SHIP))
 		{
 			pStr[0] = i_have_beast;
 		}
 		else
 		{
-			switch (GET_GAME_STATE(ZEX_STACK_1))
+			switch (uqm::gameState().flag(uqm::GameFlag::ZEX_STACK_1))
 			{
 				case 0:
 					pStr[0] = what_you_do_here;
@@ -647,7 +647,7 @@ Menagerie(RESPONSE_REF R)
 					break;
 			}
 		}
-		switch (GET_GAME_STATE(ZEX_STACK_2))
+		switch (uqm::gameState().flag(uqm::GameFlag::ZEX_STACK_2))
 		{
 			case 0:
 				pStr[1] = why_dont_you_attack;
@@ -659,7 +659,7 @@ Menagerie(RESPONSE_REF R)
 				pStr[1] = are_you_a_pervert;
 				break;
 		}
-		switch (GET_GAME_STATE(ZEX_STACK_3))
+		switch (uqm::gameState().flag(uqm::GameFlag::ZEX_STACK_3))
 		{
 			case 0:
 				pStr[2] = take_by_force;
@@ -697,25 +697,25 @@ NormalVux(RESPONSE_REF R)
 	{
 		NPCPhrase(URQUAN_SLAVES);
 
-		SET_GAME_STATE(VUX_STACK_1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, deeper_reason))
 	{
 		NPCPhrase(OLD_INSULT);
 
-		SET_GAME_STATE(VUX_STACK_1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, if_we_apologize))
 	{
 		NPCPhrase(PROBABLY_NOT);
 
-		SET_GAME_STATE(VUX_STACK_1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, whats_up_hostile))
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(VUX_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -732,12 +732,12 @@ NormalVux(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(VUX_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_hostile);
 	}
 
-	switch (GET_GAME_STATE(VUX_STACK_1))
+	switch (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_1))
 	{
 		case 0:
 			Response(why_so_mean, NormalVux);
@@ -783,7 +783,7 @@ NormalVux(RESPONSE_REF R)
 			break;
 	}
 
-	switch (GET_GAME_STATE(VUX_STACK_2))
+	switch (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_2))
 	{
 		case 0:
 			Response(kill_you_squids_1, CombatIsInevitable);
@@ -804,9 +804,9 @@ NormalVux(RESPONSE_REF R)
 		Response(whats_up_hostile, NormalVux);
 	}
 
-	if (GET_GAME_STATE(VUX_STACK_1) > 13)
+	if (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_1) > 13)
 	{
-		switch (GET_GAME_STATE(VUX_STACK_3))
+		switch (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_3))
 		{
 			case 0:
 				Response(cant_we_be_friends_1, CombatIsInevitable);
@@ -842,7 +842,7 @@ Intro(void)
 		return;
 	}
 
-	if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
 		Menagerie((RESPONSE_REF)0);
 	}
@@ -850,9 +850,9 @@ Intro(void)
 	{
 		uint8_t NumVisits {};
 
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(VUX_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -869,13 +869,13 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(VUX_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::VUX_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 			SetHomeworldKnown(VUX_HOME);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(VUX_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -892,7 +892,7 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(VUX_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::VUX_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		NormalVux((RESPONSE_REF)0);
@@ -928,7 +928,7 @@ init_vux_comm(void)
 							+ SafeX();
 
 	// use alternate "ZEX" track and frame if available
-	if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
 		altResFlags |= UseAltSong;
 
@@ -938,7 +938,7 @@ init_vux_comm(void)
 		}
 	}
 
-	if ((GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	if ((uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);

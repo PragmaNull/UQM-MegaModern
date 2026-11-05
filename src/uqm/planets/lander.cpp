@@ -594,7 +594,7 @@ DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 			return; // irrelevant -- all dead
 		}
 
-		shieldHit = GET_GAME_STATE(LANDER_SHIELDS);
+		shieldHit = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS);
 		shieldHit &= 1 << which_disaster;
 		if (!shieldHit || uqm::random().next() % 100 >= 95)
 		{ // No shield, or it did not help
@@ -663,7 +663,7 @@ FillLanderHold(PLANETSIDE_DESC* pPSD, uint16_t scan, uint16_t NumRetrieved)
 	{
 		start_count = pPSD->ElementLevel;
 		pPSD->ElementLevel += NumRetrieved;
-		if (GET_GAME_STATE(IMPROVED_LANDER_CARGO))
+		if (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_CARGO))
 		{
 			start_count >>= 1;
 			NumRetrieved = (pPSD->ElementLevel >> 1) - start_count;
@@ -792,7 +792,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 				// Notify the engine that the scan screen gfx should be
 				// updated.
 				ElementPtr->state_flags |= Changing;
-				SET_GAME_STATE(PLANETARY_CHANGE, 1);
+				uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(1));
 
 				// Change the surface screen gfx.
 				pPrim->Object.Stamp.frame = SetRelFrameIndex(
@@ -916,7 +916,7 @@ ExplodeCritter(ELEMENT* ElementPtr)
 		//		BIOLOGICAL_SCAN);
 		// Re-run GenerateLifeForms so the changed state takes
 		// effect
-		SET_GAME_STATE(PLANETARY_CHANGE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(1));
 		// Save the changes to the file containing the states of
 		// all lifeforms.
 	}
@@ -1172,7 +1172,7 @@ CheckObjectCollision(uint16_t index)
 				{ // Node retrieved, remove from the surface
 					setNodeRetrieved(&pSolarSysState->SysInfo.PlanetInfo,
 									 scan, which_node);
-					SET_GAME_STATE(PLANETARY_CHANGE, 1);
+					uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(1));
 					ElementPtr->state_flags |= Disappearing;
 				}
 				UnlockElement(hElement);
@@ -1796,12 +1796,12 @@ AnimateLanderWarmup(void)
 	animationInterframe(&TimeIn, 2);
 
 	for (num_crew = 0; num_crew < (NumCrewCols() * NumCrewRows())
-					   && GLOBAL_SIS(CrewEnlisted);
+					   && uqm::gameState().sis().CrewEnlisted;
 		 ++num_crew)
 	{
 		animationInterframe(&TimeIn, 1);
 
-		--GLOBAL_SIS(CrewEnlisted);
+		--uqm::gameState().sis().CrewEnlisted;
 
 		DrawMineralHelpers();
 		if (!uqm::UQMOptions::read().submenu)
@@ -1814,7 +1814,7 @@ AnimateLanderWarmup(void)
 
 	animationInterframe(&TimeIn, 2);
 
-	if (GET_GAME_STATE(IMPROVED_LANDER_SHOT))
+	if (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SHOT))
 	{
 		s.frame = SetAbsFrameIndex(s.frame, 58);
 	}
@@ -1827,7 +1827,7 @@ AnimateLanderWarmup(void)
 
 	animationInterframe(&TimeIn, 2);
 
-	if (GET_GAME_STATE(IMPROVED_LANDER_SPEED))
+	if (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SPEED))
 	{
 		s.frame = SetAbsFrameIndex(s.frame, 57);
 	}
@@ -1843,7 +1843,7 @@ AnimateLanderWarmup(void)
 	}
 	DrawStamp(&s);
 
-	if (GET_GAME_STATE(IMPROVED_LANDER_CARGO))
+	if (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_CARGO))
 	{
 		animationInterframe(&TimeIn, 2);
 
@@ -1947,7 +1947,7 @@ InitPlanetSide(GFXPOINT pt)
 	}
 
 
-	SET_GAME_STATE(PLANETARY_LANDING, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_LANDING, static_cast<uint32_t>(1));
 }
 
 static auto ShuttleFireWait() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 10 : 14); }
@@ -2062,7 +2062,7 @@ put_node(ELEMENT* ElementPtr)
 		NodeElementPtr->current.location.y << MagShift;
 
 	NodeElementPtr->state_flags |= Appearing;
-	SET_GAME_STATE(PLANETARY_CHANGE, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(1));
 
 	UnlockElement(hNodeElement);
 
@@ -2287,7 +2287,7 @@ DoPlanetSide(LanderInputState* pMS)
 		weapon_wait = 0;
 
 		angle = FacingToAngle(GetFrameIndex(LanderFrame[0]));
-		landerSpeedNumer = GET_GAME_STATE(IMPROVED_LANDER_SPEED) ?
+		landerSpeedNumer = uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SPEED) ?
 							   WorldToVelocity(2 * ResScale(14)) :
 							   WorldToVelocity(2 * ResScale(8));
 
@@ -2368,7 +2368,7 @@ DoPlanetSide(LanderInputState* pMS)
 				LanderFrame[0] = SetAbsFrameIndex(LanderFrame[0], index);
 
 				angle = FacingToAngle(index);
-				landerSpeedNumer = GET_GAME_STATE(IMPROVED_LANDER_SPEED) ?
+				landerSpeedNumer = uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SPEED) ?
 									   WorldToVelocity(ResScale(2 * 14)) :
 									   WorldToVelocity(ResScale(2 * 8));
 
@@ -2404,7 +2404,7 @@ DoPlanetSide(LanderInputState* pMS)
 				LanderFire(index);
 
 				weapon_wait = ShuttleFireWait();
-				if (GET_GAME_STATE(IMPROVED_LANDER_SHOT))
+				if (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SHOT))
 				{
 					weapon_wait >>= 1;
 				}
@@ -2442,7 +2442,7 @@ void MaskLanderGraphics(void)
 		return;
 	}
 
-	currFlagState = (GET_GAME_STATE(IMPROVED_LANDER_SHOT) << 0) + (GET_GAME_STATE(IMPROVED_LANDER_SPEED) << 1) + (GET_GAME_STATE(IMPROVED_LANDER_CARGO) << 2);
+	currFlagState = (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SHOT) << 0) + (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SPEED) << 1) + (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_CARGO) << 2);
 
 	if (currFlagState != LanderUpgradesFlag)
 	{
@@ -2787,9 +2787,9 @@ void PlanetSide(GFXPOINT planetLoc)
 										 pSolarSysState->SysInfo.PlanetInfo.SurfaceTemperature));
 
 	PSD.ElementLevel = GetStorageBayCapacity()
-					 - GLOBAL_SIS(TotalElementMass);
+					 - uqm::gameState().sis().TotalElementMass;
 	PSD.MaxElementLevel = MaxScrounged();
-	if (GET_GAME_STATE(IMPROVED_LANDER_CARGO))
+	if (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_CARGO))
 	{
 		PSD.MaxElementLevel <<= 1;
 	}
@@ -2848,7 +2848,7 @@ void PlanetSide(GFXPOINT planetLoc)
 	{
 		if (crew_left == 0)
 		{
-			--GLOBAL_SIS(NumLanders);
+			--uqm::gameState().sis().NumLanders;
 			if (!uqm::UQMOptions::read().submenu)
 			{
 				DrawLanders();
@@ -2877,10 +2877,10 @@ void PlanetSide(GFXPOINT planetLoc)
 			else
 			{ // Get the crew from landers back but not draw anything
 				const uint16_t CrewCapacity = GetCrewPodCapacity();
-				GLOBAL_SIS(CrewEnlisted) += crew_left;
-				if (GLOBAL_SIS(CrewEnlisted) > CrewCapacity)
+				uqm::gameState().sis().CrewEnlisted += crew_left;
+				if (uqm::gameState().sis().CrewEnlisted > CrewCapacity)
 				{
-					GLOBAL_SIS(CrewEnlisted) = CrewCapacity;
+					uqm::gameState().sis().CrewEnlisted = CrewCapacity;
 				}
 			}
 
@@ -2888,9 +2888,9 @@ void PlanetSide(GFXPOINT planetLoc)
 			{
 				for (index = 0; index < NUM_ELEMENT_CATEGORIES; ++index)
 				{
-					GLOBAL_SIS(ElementAmounts[index]) +=
+					uqm::gameState().sis().ElementAmounts[index] +=
 						PSD.ElementAmounts[index];
-					GLOBAL_SIS(TotalElementMass) +=
+					uqm::gameState().sis().TotalElementMass +=
 						PSD.ElementAmounts[index];
 				}
 				if (!uqm::UQMOptions::read().submenu)
@@ -2899,7 +2899,7 @@ void PlanetSide(GFXPOINT planetLoc)
 				}
 			}
 
-			GLOBAL_SIS(TotalBioMass) += PSD.BiologicalLevel;
+			uqm::gameState().sis().TotalBioMass += PSD.BiologicalLevel;
 
 			if (isPC(uqm::UQMOptions::read().landerStyle))
 			{
@@ -2994,7 +2994,7 @@ void InitLander(uint8_t LanderFlags)
 	SetContextForeGroundColor(BlackColor);
 	DrawFilledRectangle(&r);
 
-	if (GLOBAL_SIS(NumLanders) || LanderFlags)
+	if (uqm::gameState().sis().NumLanders || LanderFlags)
 	{
 		uint8_t ShieldFlags {};
 		uint8_t capacity_shift {};
@@ -3010,8 +3010,8 @@ void InitLander(uint8_t LanderFlags)
 		DrawMinDatText();
 		if (LanderFlags == 0)
 		{
-			ShieldFlags = GET_GAME_STATE(LANDER_SHIELDS);
-			capacity_shift = GET_GAME_STATE(IMPROVED_LANDER_CARGO);
+			ShieldFlags = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS);
+			capacity_shift = uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_CARGO);
 			DrawMineralHelpers();
 		}
 		else
@@ -3054,7 +3054,7 @@ void InitLander(uint8_t LanderFlags)
 		}
 
 		free_space = GetStorageBayCapacity()
-				   - GLOBAL_SIS(TotalElementMass);
+				   - uqm::gameState().sis().TotalElementMass;
 		if ((int)free_space < (int)(MaxScrounged() << capacity_shift))
 		{
 			r.corner.x = ResScale(1);
@@ -3107,7 +3107,7 @@ void InitPCLander(bool Loading)
 
 	DrawFilledRectangle(&r);
 
-	if (GLOBAL_SIS(NumLanders) && !Loading
+	if (uqm::gameState().sis().NumLanders && !Loading
 		&& !(pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED)
 		&& !(pSolarSysState->pOrbitalDesc->data_index >= FIRST_GAS_GIANT
 			 && pSolarSysState->pOrbitalDesc->data_index <= LAST_GAS_GIANT))
@@ -3122,11 +3122,11 @@ void InitPCLander(bool Loading)
 		s.origin = MAKE_POINT(0, 0);
 		DrawStamp(&s);
 
-		ShieldFlags = GET_GAME_STATE(LANDER_SHIELDS);
-		capacity_shift = GET_GAME_STATE(IMPROVED_LANDER_CARGO);
+		ShieldFlags = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS);
+		capacity_shift = uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_CARGO);
 
 		free_space = GetStorageBayCapacity()
-				   - GLOBAL_SIS(TotalElementMass);
+				   - uqm::gameState().sis().TotalElementMass;
 		if ((int)free_space < (int)(MaxScrounged() << capacity_shift))
 		{
 			uint16_t inc {};

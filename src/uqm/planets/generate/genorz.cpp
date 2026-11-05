@@ -167,33 +167,33 @@ GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		 && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 		|| (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
 			&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte)
-			&& !GET_GAME_STATE(TAALO_PROTECTOR)))
+			&& !uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR)))
 	{
 		uint16_t i {};
 
 		if ((CurStarDescPtr()->Index == ORZ_DEFINED
-			 || !GET_GAME_STATE(TAALO_UNPROTECTED))
+			 || !uqm::gameState().flag(uqm::GameFlag::TAALO_UNPROTECTED))
 			&& StartSphereTracking(ORZ_SHIP))
 		{
 			NotifyOthers(ORZ_SHIP, IpnlAllClear);
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			if (CurStarDescPtr()->Index == ORZ_DEFINED)
 			{
 				CloneShipFragment(ORZ_SHIP,
-								  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
-				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+								  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
+				uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			}
 			else
 			{
 				for (i = 0; i < 14; ++i)
 				{
 					CloneShipFragment(ORZ_SHIP,
-									  &GLOBAL(npc_built_ship_q), 0);
+									  &uqm::gameState().game().npc_built_ship_q, 0);
 				}
-				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 6);
+				uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));
 			}
 			uqm::currentActivity() |= START_INTERPLANETARY;
 			InitCommunication(ORZ_CONVERSATION);
@@ -206,12 +206,12 @@ GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 			{
 				bool OrzSurvivors {};
 
-				OrzSurvivors = GetHeadLink(&GLOBAL(npc_built_ship_q))
+				OrzSurvivors = GetHeadLink(&uqm::gameState().game().npc_built_ship_q)
 							&& (CurStarDescPtr()->Index == ORZ_DEFINED
-								|| !GET_GAME_STATE(TAALO_UNPROTECTED));
+								|| !uqm::gameState().flag(uqm::GameFlag::TAALO_UNPROTECTED));
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
-				ReinitQueue(&GLOBAL(npc_built_ship_q));
+				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 
 				if (OrzSurvivors)
@@ -223,7 +223,7 @@ GenerateOrz_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 			}
 		}
 
-		SET_GAME_STATE(TAALO_UNPROTECTED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::TAALO_UNPROTECTED, static_cast<uint32_t>(1));
 		if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
@@ -273,7 +273,7 @@ GenerateOrz_generateEnergy(const SOLARSYS_STATE* solarSys,
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
-		if (GET_GAME_STATE(TAALO_PROTECTOR))
+		if (uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR))
 		{ // already picked up
 			return 0;
 		}
@@ -298,13 +298,13 @@ GenerateOrz_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	if (CurStarDescPtr()->Index == TAALO_PROTECTOR_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
-		assert(!GET_GAME_STATE(TAALO_PROTECTOR) && whichNode == 0);
+		assert(!uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR) && whichNode == 0);
 
 		GenerateDefault_landerReport(solarSys);
 		SetLanderTakeoff();
 
-		SET_GAME_STATE(TAALO_PROTECTOR, 1);
-		SET_GAME_STATE(TAALO_PROTECTOR_ON_SHIP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::TAALO_PROTECTOR, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP, static_cast<uint32_t>(1));
 
 		return true; // picked up
 	}

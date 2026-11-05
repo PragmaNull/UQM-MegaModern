@@ -78,16 +78,16 @@ GenerateSol_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (uqm::UQMOptions::read().headStart)
 	{
-		SET_GAME_STATE(PROBE_MESSAGE_DELIVERED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PROBE_MESSAGE_DELIVERED, static_cast<uint32_t>(1));
 	}
-	GLOBAL(BattleGroupRef) = GET_GAME_STATE(URQUAN_PROBE_GRPOFFS);
-	if (GLOBAL(BattleGroupRef) == 0 && !GET_GAME_STATE(PROBE_MESSAGE_DELIVERED))
+	uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS);
+	if (uqm::gameState().game().BattleGroupRef == 0 && !uqm::gameState().flag(uqm::GameFlag::PROBE_MESSAGE_DELIVERED))
 	{
 		CloneShipFragment(URQUAN_DRONE_SHIP,
-						  &GLOBAL(npc_built_ship_q), 0);
-		GLOBAL(BattleGroupRef) = PutGroupInfo(GroupsAddNew, 1);
-		ReinitQueue(&GLOBAL(npc_built_ship_q));
-		SET_GAME_STATE(URQUAN_PROBE_GRPOFFS, GLOBAL(BattleGroupRef));
+						  &uqm::gameState().game().npc_built_ship_q, 0);
+		uqm::gameState().game().BattleGroupRef = PutGroupInfo(GroupsAddNew, 1);
+		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS, static_cast<uint32_t>(uqm::gameState().game().BattleGroupRef));
 	}
 
 	if (!init_probe())
@@ -105,16 +105,16 @@ GenerateSol_initNpcs(SOLARSYS_STATE* solarSys)
 static bool
 GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys)
 {
-	if (GET_GAME_STATE(CHMMR_BOMB_STATE) != 3)
+	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) != 3)
 	{
 		GenerateDefault_reinitNpcs(solarSys);
 		check_probe();
 	}
 	else
 	{
-		GLOBAL(BattleGroupRef) = 0;
-		ReinitQueue(&GLOBAL(ip_group_q));
-		assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+		uqm::gameState().game().BattleGroupRef = 0;
+		ReinitQueue(&uqm::gameState().game().ip_group_q);
+		assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 	}
 	return true;
 }
@@ -277,11 +277,10 @@ GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
 {
 	const uint16_t planetNr = planetIndex(solarSys, world);
 
-	uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
-						sizeof(GLOBAL_SIS(PlanetName)),
+	uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+						sizeof(uqm::gameState().sis().PlanetName),
 						GameString(PLANET_NUMBER_BASE + planetNr));
-	SET_GAME_STATE(BATTLE_PLANET,
-				   solarSys->PlanetDesc[planetNr].data_index);
+	uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(solarSys->PlanetDesc[planetNr].data_index));
 
 	return true;
 }
@@ -298,12 +297,12 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		{
 			/* Starbase */
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			EncounterGroup = 0;
 			uqm::currentActivity() |= START_ENCOUNTER;
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, (uint8_t)~0);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>((uint8_t)~0));
 
 			return true;
 		}
@@ -430,7 +429,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 					EarthRadius * 2999L / 100;
 				break;
 			case 8: /* PLUTO */
-				if (!GET_GAME_STATE(FOUND_PLUTO_SPATHI))
+				if (!uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI))
 				{
 					LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 					solarSys->PlanetSideFrame[1] =
@@ -518,7 +517,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] =
 					rand_val;
 
-				if (!GET_GAME_STATE(MOONBASE_DESTROYED))
+				if (!uqm::gameState().flag(uqm::GameFlag::MOONBASE_DESTROYED))
 				{
 					LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 					solarSys->PlanetSideFrame[1] =
@@ -693,7 +692,7 @@ GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
 		// This check is needed because the retrieval bit is not set for
 		// this node to keep it on the surface while the lander is taking
 		// off
-		if (GET_GAME_STATE(FOUND_PLUTO_SPATHI))
+		if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI))
 		{ // already picked up
 			return 0;
 		}
@@ -712,7 +711,7 @@ GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
 		/* Earth Moon */
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
-		if (GET_GAME_STATE(MOONBASE_DESTROYED))
+		if (uqm::gameState().flag(uqm::GameFlag::MOONBASE_DESTROYED))
 		{ // already picked up
 			return 0;
 		}
@@ -738,7 +737,7 @@ GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 {
 	if (matchWorld(solarSys, world, 8, MatchPlanet))
 	{ // Pluto
-		assert(!GET_GAME_STATE(FOUND_PLUTO_SPATHI) && whichNode == 0);
+		assert(!uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) && whichNode == 0);
 
 		// Ran into Fwiffo on Pluto
 		if (!KillLanderCrewSeq(FwiffoFrags, c_gameSecond / 20))
@@ -746,7 +745,7 @@ GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 			return false; // lander probably died
 		}
 
-		SET_GAME_STATE(FOUND_PLUTO_SPATHI, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::FOUND_PLUTO_SPATHI, static_cast<uint32_t>(1));
 
 		GenerateDefault_landerReport(solarSys);
 		SetLanderTakeoff();
@@ -759,7 +758,7 @@ GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 
 	if (matchWorld(solarSys, world, 2, 1))
 	{ // Earth Moon
-		assert(!GET_GAME_STATE(MOONBASE_DESTROYED) && whichNode == 0);
+		assert(!uqm::gameState().flag(uqm::GameFlag::MOONBASE_DESTROYED) && whichNode == 0);
 
 		GenerateDefault_landerReport(solarSys);
 
@@ -767,8 +766,8 @@ GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		{
 			SetLanderTakeoff();
 
-			SET_GAME_STATE(MOONBASE_DESTROYED, 1);
-			SET_GAME_STATE(MOONBASE_ON_SHIP, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::MOONBASE_DESTROYED, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::MOONBASE_ON_SHIP, static_cast<uint32_t>(1));
 
 			return true; // picked up
 		}
@@ -802,18 +801,18 @@ init_probe(void)
 {
 	HIPGROUP hGroup {};
 
-	if (!GET_GAME_STATE(PROBE_MESSAGE_DELIVERED)
-		&& GetGroupInfo(GLOBAL(BattleGroupRef), GroupInitIp)
-		&& (hGroup = GetHeadLink(&GLOBAL(ip_group_q))))
+	if (!uqm::gameState().flag(uqm::GameFlag::PROBE_MESSAGE_DELIVERED)
+		&& GetGroupInfo(uqm::gameState().game().BattleGroupRef, GroupInitIp)
+		&& (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q)))
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		GroupPtr->task = IN_ORBIT;
 		GroupPtr->sys_loc = 2 + 1;	/* orbitting earth */
 		GroupPtr->dest_loc = 2 + 1; /* orbitting earth */
 		GroupPtr->loc.x = 0;
 		GroupPtr->loc.y = 0;
 		GroupPtr->group_counter = 0;
-		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 
 		return 1;
 	}
@@ -826,18 +825,18 @@ init_probe(void)
 static void
 check_probe(void)
 {
-	if (!GLOBAL(BattleGroupRef))
+	if (!uqm::gameState().game().BattleGroupRef)
 	{
 		return; // nothing to check
 	}
 
-	HIPGROUP hGroup {GetHeadLink(&GLOBAL(ip_group_q))};
+	HIPGROUP hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
 	if (!hGroup)
 	{
 		return; // still nothing to check
 	}
 
-	IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+	IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
 	if (GroupPtr->race_id == URQUAN_DRONE_SHIP
@@ -848,5 +847,5 @@ check_probe(void)
 		GroupPtr->task = FLEE | IGNORE_FLAGSHIP;
 		GroupPtr->dest_loc = 0;
 	}
-	UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+	UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 }

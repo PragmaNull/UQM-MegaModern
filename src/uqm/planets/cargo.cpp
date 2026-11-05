@@ -67,7 +67,7 @@ void ShowRemainingCapacity(void)
 	r.corner.y = FreeOrgY();
 
 	fmt::format_to_sz_n(buf, "{}",
-						GetStorageBayCapacity() - GLOBAL_SIS(TotalElementMass));
+						GetStorageBayCapacity() - uqm::gameState().sis().TotalElementMass);
 	t.baseline.x = ElementCol2() + ResScale(1);
 	t.baseline.y = r.corner.y + TextBaseline();
 	t.align = ALIGN_RIGHT;
@@ -121,7 +121,7 @@ DrawElementAmount(uint16_t element, bool selected)
 
 	if (element == NUM_ELEMENT_CATEGORIES)
 	{ // Bio
-		fmt::format_to_sz_n(buf, "{}", GLOBAL_SIS(TotalBioMass));
+		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().TotalBioMass);
 	}
 	else
 	{ // Element
@@ -130,11 +130,11 @@ DrawElementAmount(uint16_t element, bool selected)
 									  CargoSelectedWorthColor :
 									  CargoWorthColor);
 		t.baseline.x = ElementCol1();
-		fmt::format_to_sz_n(buf, "{}", GLOBAL(ElementWorth[element]));
+		fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().ElementWorth[element]);
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 
-		fmt::format_to_sz_n(buf, "{}", GLOBAL_SIS(ElementAmounts[element]));
+		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().ElementAmounts[element]);
 	}
 
 	// print the element/bio amount
@@ -431,12 +431,12 @@ DoDiscardCargo(MENU_STATE* pMS)
 	}
 	else if (select)
 	{
-		if (GLOBAL_SIS(ElementAmounts[pMS->CurState]))
+		if (uqm::gameState().sis().ElementAmounts[pMS->CurState])
 		{
-			--GLOBAL_SIS(ElementAmounts[pMS->CurState]);
+			--uqm::gameState().sis().ElementAmounts[pMS->CurState];
 			DrawCargoStrings(pMS->CurState, pMS->CurState);
 
-			--GLOBAL_SIS(TotalElementMass);
+			--uqm::gameState().sis().TotalElementMass;
 			ShowRemainingCapacity();
 		}
 		else

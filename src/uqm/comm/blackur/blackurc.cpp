@@ -181,7 +181,7 @@ CombatIsInevitable(RESPONSE_REF R)
 
 	if (PlayerSaid(R, bye))
 	{
-		if (GET_GAME_STATE(KOHR_AH_BYES) == 0)
+		if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_BYES) == 0)
 		{
 			NPCPhrase(GOODBYE_AND_DIE);
 		}
@@ -190,7 +190,7 @@ CombatIsInevitable(RESPONSE_REF R)
 			NPCPhrase(DIE_HUMAN /* GOODBYE_AND_DIE_2 */);
 		}
 
-		SET_GAME_STATE(KOHR_AH_BYES, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_BYES, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, guess_thats_all))
 	{
@@ -200,26 +200,26 @@ CombatIsInevitable(RESPONSE_REF R)
 	{
 		NPCPhrase(BONE_PILE);
 
-		SET_GAME_STATE(KOHR_AH_INFO, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_INFO, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, you_sure_are_creepy))
 	{
 		NPCPhrase(YES_CREEPY);
 
-		SET_GAME_STATE(KOHR_AH_INFO, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_INFO, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, stop_that_gross_blinking))
 	{
 		NPCPhrase(DIE_HUMAN);
 
-		SET_GAME_STATE(KOHR_AH_INFO, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_INFO, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, threat_1)
 			 || PlayerSaid(R, threat_2)
 			 || PlayerSaid(R, threat_3)
 			 || PlayerSaid(R, threat_4))
 	{
-		NumVisits = GET_GAME_STATE(KOHR_AH_REASONS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -236,14 +236,14 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(KOHR_AH_REASONS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_REASONS, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, plead_1)
 			 || PlayerSaid(R, plead_2)
 			 || PlayerSaid(R, plead_3)
 			 || PlayerSaid(R, plead_4))
 	{
-		NumVisits = GET_GAME_STATE(KOHR_AH_PLEAD);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -261,14 +261,14 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(KOHR_AH_PLEAD, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_PLEAD, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, why_kill_all_1)
 			 || PlayerSaid(R, why_kill_all_2)
 			 || PlayerSaid(R, why_kill_all_3)
 			 || PlayerSaid(R, why_kill_all_4))
 	{
-		NumVisits = GET_GAME_STATE(KOHR_AH_REASONS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -285,14 +285,14 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(KOHR_AH_REASONS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_REASONS, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, please_dont_kill_1)
 			 || PlayerSaid(R, please_dont_kill_2)
 			 || PlayerSaid(R, please_dont_kill_3)
 			 || PlayerSaid(R, please_dont_kill_4))
 	{
-		NumVisits = GET_GAME_STATE(KOHR_AH_PLEAD);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -309,14 +309,14 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(KOHR_AH_PLEAD, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_PLEAD, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, bye_frenzy_1)
 			 || PlayerSaid(R, bye_frenzy_2)
 			 || PlayerSaid(R, bye_frenzy_3)
 			 || PlayerSaid(R, bye_frenzy_4))
 	{
-		NumVisits = GET_GAME_STATE(KOHR_AH_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -333,7 +333,7 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(KOHR_AH_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_INFO, static_cast<uint32_t>(NumVisits));
 	}
 }
 
@@ -341,7 +341,7 @@ static void
 Frenzy(RESPONSE_REF R)
 {
 	(void)R; // ignored
-	switch (GET_GAME_STATE(KOHR_AH_REASONS))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS))
 	{
 		case 0:
 			Response(why_kill_all_1, CombatIsInevitable);
@@ -356,7 +356,7 @@ Frenzy(RESPONSE_REF R)
 			Response(why_kill_all_4, CombatIsInevitable);
 			break;
 	}
-	switch (GET_GAME_STATE(KOHR_AH_PLEAD))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD))
 	{
 		case 0:
 			Response(please_dont_kill_1, CombatIsInevitable);
@@ -371,7 +371,7 @@ Frenzy(RESPONSE_REF R)
 			Response(please_dont_kill_4, CombatIsInevitable);
 			break;
 	}
-	switch (GET_GAME_STATE(KOHR_AH_INFO))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_INFO))
 	{
 		case 0:
 			Response(bye_frenzy_1, CombatIsInevitable);
@@ -395,7 +395,7 @@ KohrAhStory(RESPONSE_REF R)
 	{
 		NPCPhrase(RESPONSE_TO_KEY_PHRASE);
 
-		SET_GAME_STATE(KNOW_KOHR_AH_STORY, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_KOHR_AH_STORY, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, why_do_you_destroy))
 	{
@@ -445,7 +445,7 @@ static void
 DieHuman(RESPONSE_REF R)
 {
 	(void)R; // ignored
-	switch (GET_GAME_STATE(KOHR_AH_REASONS))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS))
 	{
 		case 0:
 			Response(threat_1, CombatIsInevitable);
@@ -460,11 +460,11 @@ DieHuman(RESPONSE_REF R)
 			Response(threat_4, CombatIsInevitable);
 			break;
 	}
-	if (GET_GAME_STATE(KNOW_KOHR_AH_STORY) == 1)
+	if (uqm::gameState().flag(uqm::GameFlag::KNOW_KOHR_AH_STORY) == 1)
 	{
 		Response(key_phrase, KohrAhStory);
 	}
-	switch (GET_GAME_STATE(KOHR_AH_INFO))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_INFO))
 	{
 		case 0:
 			Response(what_are_you_hovering_over, CombatIsInevitable);
@@ -476,7 +476,7 @@ DieHuman(RESPONSE_REF R)
 			Response(stop_that_gross_blinking, CombatIsInevitable);
 			break;
 	}
-	switch (GET_GAME_STATE(KOHR_AH_PLEAD))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD))
 	{
 		case 0:
 			Response(plead_1, CombatIsInevitable);
@@ -506,7 +506,7 @@ Intro(void)
 		return;
 	}
 
-	if (GET_GAME_STATE(KOHR_AH_KILLED_ALL))
+	if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_KILLED_ALL))
 	{
 		NPCPhrase(GAME_OVER_DUDE);
 
@@ -514,29 +514,29 @@ Intro(void)
 		return;
 	}
 
-	if (!GET_GAME_STATE(KOHR_AH_SENSES_EVIL)
-		&& GET_GAME_STATE(TALKING_PET_ON_SHIP))
+	if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_SENSES_EVIL)
+		&& uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 	{
 		NPCPhrase(SENSE_EVIL);
-		SET_GAME_STATE(KOHR_AH_SENSES_EVIL, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_SENSES_EVIL, static_cast<uint32_t>(1));
 	}
 
-	const uint32_t GrpOffs {GET_GAME_STATE(SAMATRA_GRPOFFS)};
+	const uint32_t GrpOffs {uqm::gameState().flag(uqm::GameFlag::SAMATRA_GRPOFFS)};
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-		&& GLOBAL(BattleGroupRef)
-		&& GLOBAL(BattleGroupRef) == GrpOffs)
+		&& uqm::gameState().game().BattleGroupRef
+		&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 	{
 		NPCPhrase(HELLO_SAMATRA);
 
-		SET_GAME_STATE(AWARE_OF_SAMATRA, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
 		setSegue(Segue_hostile);
 	}
 	else
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(KOHR_AH_VISITS);
-		if (GET_GAME_STATE(KOHR_AH_FRENZY))
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_VISITS);
+		if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 		{
 			switch (NumVisits++)
 			{
@@ -578,7 +578,7 @@ Intro(void)
 
 			DieHuman((RESPONSE_REF)0);
 		}
-		SET_GAME_STATE(KOHR_AH_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 }
 
@@ -608,7 +608,7 @@ init_blackurq_comm(void)
 	blackurq_desc.AlienTextBaseline.y = 0;
 	blackurq_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if (!GET_GAME_STATE(KOHR_AH_KILLED_ALL)
+	if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_KILLED_ALL)
 		&& uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
 		setSegue(Segue_hostile);

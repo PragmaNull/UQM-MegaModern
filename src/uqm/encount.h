@@ -79,15 +79,15 @@ struct encounter
 	int32_t log_x, log_y;
 };
 
-constexpr auto AllocEncounter() { return AllocLink(&GLOBAL(encounter_q)); }
-constexpr auto PutEncounter(const auto& h) { return PutQueue(&GLOBAL(encounter_q), h); }
-constexpr auto InsertEncounter(const auto& h, const auto& i) { return InsertQueue(&GLOBAL(encounter_q), h, i); }
-constexpr auto GetHeadEncounter() { return GetHeadLink(&GLOBAL(encounter_q)); }
+constexpr auto AllocEncounter() { return AllocLink(&uqm::gameState().game().encounter_q); }
+constexpr auto PutEncounter(const auto& h) { return PutQueue(&uqm::gameState().game().encounter_q, h); }
+constexpr auto InsertEncounter(const auto& h, const auto& i) { return InsertQueue(&uqm::gameState().game().encounter_q, h, i); }
+constexpr auto GetHeadEncounter() { return GetHeadLink(&uqm::gameState().game().encounter_q); }
 
-#define LockEncounter(h, ppe) (*(ppe) = (ENCOUNTER*)LockLink(&GLOBAL(encounter_q), h))
-constexpr auto UnlockEncounter(const auto& h) { return UnlockLink(&GLOBAL(encounter_q), h); }
-constexpr auto RemoveEncounter(const auto& h) { return RemoveQueue(&GLOBAL(encounter_q), h); }
-constexpr auto FreeEncounter(const auto& h) { return FreeLink(&GLOBAL(encounter_q), h); }
+#define LockEncounter(h, ppe) (*(ppe) = (ENCOUNTER*)LockLink(&uqm::gameState().game().encounter_q, h))
+constexpr auto UnlockEncounter(const auto& h) { return UnlockLink(&uqm::gameState().game().encounter_q, h); }
+constexpr auto RemoveEncounter(const auto& h) { return RemoveQueue(&uqm::gameState().game().encounter_q, h); }
+constexpr auto FreeEncounter(const auto& h) { return FreeLink(&uqm::gameState().game().encounter_q, h); }
 
 constexpr auto GetSuccEncounter(const auto& l) { return _GetSuccLink(l); }
 

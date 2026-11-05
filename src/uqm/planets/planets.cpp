@@ -448,7 +448,7 @@ DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 		SetTransitionSource(nullptr);
 		DrawSISFrame();
 		DrawSISMessage(nullptr);
-		DrawSISTitle(GLOBAL_SIS(PlanetName));
+		DrawSISTitle(uqm::gameState().sis().PlanetName);
 		DrawStarBackGround();
 		DrawPlanetSurfaceBorder();
 	}
@@ -636,7 +636,7 @@ DoPlanetOrbit(MENU_STATE* pMS)
 	bool select = (bool)PulsedInputState.menu[KEY_MENU_SELECT];
 
 	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
-		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
+		|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
 	{
 		return false;
 	}

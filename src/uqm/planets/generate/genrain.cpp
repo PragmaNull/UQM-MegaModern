@@ -53,7 +53,7 @@ const GenerateFunctions generateRainbowWorldFunctions = {
 static bool
 GenerateRainbowWorld_initNpcs(SOLARSYS_STATE* solarSys)
 {
-	if (isDifficulty(uqm::Difficulty::Hard) && GET_GAME_STATE(SLYLANDRO_MULTIPLIER) > 0)
+	if (isDifficulty(uqm::Difficulty::Hard) && uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER) > 0)
 	{
 		GenerateSlylandro(solarSys);
 	}
@@ -109,12 +109,12 @@ GenerateRainbowWorld_generateOrbital(SOLARSYS_STATE* solarSys,
 		uint16_t rainbow_mask {};
 
 		rainbow_mask = uqm::makeWord(
-			GET_GAME_STATE(RAINBOW_WORLD0),
-			GET_GAME_STATE(RAINBOW_WORLD1));
+			uqm::gameState().flag(uqm::GameFlag::RAINBOW_WORLD0),
+			uqm::gameState().flag(uqm::GameFlag::RAINBOW_WORLD1));
 
 		rainbow_mask |= 1 << (CurStarDescPtr()->Index - RAINBOW0_DEFINED);
-		SET_GAME_STATE(RAINBOW_WORLD0, uqm::lowByte(rainbow_mask));
-		SET_GAME_STATE(RAINBOW_WORLD1, uqm::highByte(rainbow_mask));
+		uqm::gameState().setFlag(uqm::GameFlag::RAINBOW_WORLD0, static_cast<uint32_t>(uqm::lowByte(rainbow_mask)));
+		uqm::gameState().setFlag(uqm::GameFlag::RAINBOW_WORLD1, static_cast<uint32_t>(uqm::highByte(rainbow_mask)));
 	}
 
 	GenerateDefault_generateOrbital(solarSys, world);
@@ -130,19 +130,19 @@ GenerateSlylandro(SOLARSYS_STATE* solarSys)
 	uint8_t num_groups {};
 	uint8_t which_group {};
 
-	if (!GetGroupInfo(GLOBAL(BattleGroupRef), GroupInitIp))
+	if (!GetGroupInfo(uqm::gameState().game().BattleGroupRef, GroupInitIp))
 	{ // This code will run if we have no battle group generated
 		// or all are expired
-		GLOBAL(BattleGroupRef) = 0;
+		uqm::gameState().game().BattleGroupRef = 0;
 		/* 1-3, 3-5, 5-7, 7-9 Probes total */
-		num_groups = (GET_GAME_STATE(SLYLANDRO_MULTIPLIER) * 2) - 1 + (uint16_t)uqm::random().next() % 3;
+		num_groups = (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER) * 2) - 1 + (uint16_t)uqm::random().next() % 3;
 		which_group = 0;
 		do
 		{
 			CloneShipFragment(SLYLANDRO_SHIP,
-							  &GLOBAL(npc_built_ship_q), 0);
+							  &uqm::gameState().game().npc_built_ship_q, 0);
 			PutGroupInfo(GroupsRandom, ++which_group);
-			ReinitQueue(&GLOBAL(npc_built_ship_q));
+			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 		} while (--num_groups);
 
 		GetGroupInfo(GroupsRandom, GroupInitIp);
@@ -150,10 +150,10 @@ GenerateSlylandro(SOLARSYS_STATE* solarSys)
 	// Fresh groups or not - force probes to rotate around rainbow
 	// world and not spread around the system
 	angle = (uint16_t)uqm::random().next() % 9; // Initial angle = 0 - Octant
-	for (hGroup = GetHeadLink(&GLOBAL(ip_group_q));
+	for (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q);
 		 hGroup; hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 
 		GroupPtr->task = IN_ORBIT;
@@ -162,7 +162,7 @@ GenerateSlylandro(SOLARSYS_STATE* solarSys)
 		GroupPtr->orbit_pos =
 			NormalizeFacing(AngleToFacing(angle));
 		GroupPtr->group_counter = 0;
-		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 
 		// Next ship in queue will add random value to its angle
 		// between Octant and HalfCircle

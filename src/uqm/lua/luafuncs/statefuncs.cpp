@@ -422,9 +422,9 @@ luaUqm_state_sis_addCrew(lua_State* luaState)
 {
 	const auto delta = luaL_checkinteger(luaState, 1);
 
-	const auto oldCrew = GLOBAL_SIS(CrewEnlisted);
+	const auto oldCrew = uqm::gameState().sis().CrewEnlisted;
 	DeltaSISGauges(static_cast<int16_t>(delta), 0, 0);
-	const auto newCrew = GLOBAL_SIS(CrewEnlisted);
+	const auto newCrew = uqm::gameState().sis().CrewEnlisted;
 
 	lua_pushinteger(luaState, newCrew - oldCrew);
 	return 1;
@@ -437,9 +437,9 @@ luaUqm_state_sis_addFuel(lua_State* luaState)
 
 	const auto delta = luaL_checkinteger(luaState, 1);
 
-	const auto oldFuel = GLOBAL_SIS(FuelOnBoard);
+	const auto oldFuel = uqm::gameState().sis().FuelOnBoard;
 	DeltaSISGauges(0, static_cast<int32_t>(delta), 0);
-	const auto newFuel = GLOBAL_SIS(FuelOnBoard);
+	const auto newFuel = uqm::gameState().sis().FuelOnBoard;
 
 	lua_pushinteger(luaState, newFuel - oldFuel);
 	return 1;
@@ -451,7 +451,7 @@ luaUqm_state_sis_addLanders(lua_State* luaState)
 {
 	const auto delta = luaL_checkinteger(luaState, 1);
 
-	const auto oldCount = GLOBAL_SIS(NumLanders);
+	const auto oldCount = uqm::gameState().sis().NumLanders;
 	auto newCount = oldCount + delta;
 	if (newCount < 0)
 	{
@@ -464,7 +464,7 @@ luaUqm_state_sis_addLanders(lua_State* luaState)
 
 	if (newCount != oldCount)
 	{
-		GLOBAL_SIS(NumLanders) = static_cast<decltype(GLOBAL_SIS(NumLanders))>(newCount);
+		uqm::gameState().sis().NumLanders = static_cast<decltype(uqm::gameState().sis().NumLanders)>(newCount);
 		DrawLanders();
 	}
 
@@ -478,9 +478,9 @@ luaUqm_state_sis_addResUnits(lua_State* luaState)
 {
 	const auto delta = luaL_checkinteger(luaState, 1);
 
-	const auto oldResUnits = GLOBAL_SIS(ResUnits);
+	const auto oldResUnits = uqm::gameState().sis().ResUnits;
 	DeltaSISGauges(0, 0, static_cast<int>(delta));
-	const auto newResUnits = GLOBAL_SIS(ResUnits);
+	const auto newResUnits = uqm::gameState().sis().ResUnits;
 
 	lua_pushinteger(luaState, newResUnits - oldResUnits);
 	return 1;
@@ -489,42 +489,42 @@ luaUqm_state_sis_addResUnits(lua_State* luaState)
 static int
 luaUqm_state_sis_getCaptainName(lua_State* luaState)
 {
-	lua_pushstring(luaState, GLOBAL_SIS(CommanderName));
+	lua_pushstring(luaState, uqm::gameState().sis().CommanderName);
 	return 1;
 }
 
 static int
 luaUqm_state_sis_getCrew(lua_State* luaState)
 {
-	lua_pushinteger(luaState, GLOBAL_SIS(CrewEnlisted));
+	lua_pushinteger(luaState, uqm::gameState().sis().CrewEnlisted);
 	return 1;
 }
 
 static int
 luaUqm_state_sis_getFuel(lua_State* luaState)
 {
-	lua_pushinteger(luaState, GLOBAL_SIS(FuelOnBoard));
+	lua_pushinteger(luaState, uqm::gameState().sis().FuelOnBoard);
 	return 1;
 }
 
 static int
 luaUqm_state_sis_getResUnits(lua_State* luaState)
 {
-	lua_pushinteger(luaState, GLOBAL_SIS(ResUnits));
+	lua_pushinteger(luaState, uqm::gameState().sis().ResUnits);
 	return 1;
 }
 
 static int
 luaUqm_state_sis_getLanders(lua_State* luaState)
 {
-	lua_pushinteger(luaState, GLOBAL_SIS(NumLanders));
+	lua_pushinteger(luaState, uqm::gameState().sis().NumLanders);
 	return 1;
 }
 
 static int
 luaUqm_state_sis_getShipName(lua_State* luaState)
 {
-	lua_pushstring(luaState, GLOBAL_SIS(ShipName));
+	lua_pushstring(luaState, uqm::gameState().sis().ShipName);
 	return 1;
 }
 

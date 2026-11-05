@@ -265,11 +265,11 @@ CombatIsInevitable(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		if (GET_GAME_STATE(DESTRUCT_CODE_ON_SHIP))
+		if (uqm::gameState().flag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP))
 		{
 			Response(destruct_code, CombatIsInevitable);
 		}
-		switch (GET_GAME_STATE(SLYLANDRO_PROBE_THREAT))
+		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_THREAT))
 		{
 			case 0:
 				threat = threat_1;
@@ -285,7 +285,7 @@ CombatIsInevitable(RESPONSE_REF R)
 				break;
 		}
 		Response(threat, CombatIsInevitable);
-		switch (GET_GAME_STATE(SLYLANDRO_PROBE_WRONG))
+		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_WRONG))
 		{
 			case 0:
 				something_wrong = something_wrong_1;
@@ -301,7 +301,7 @@ CombatIsInevitable(RESPONSE_REF R)
 				break;
 		}
 		Response(something_wrong, CombatIsInevitable);
-		switch (GET_GAME_STATE(SLYLANDRO_PROBE_ID))
+		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_ID))
 		{
 			case 0:
 				we_are_us = we_are_us_1;
@@ -317,7 +317,7 @@ CombatIsInevitable(RESPONSE_REF R)
 				break;
 		}
 		Response(we_are_us, CombatIsInevitable);
-		switch (GET_GAME_STATE(SLYLANDRO_PROBE_INFO))
+		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_INFO))
 		{
 			case 0:
 				why_attack = why_attack_1;
@@ -333,7 +333,7 @@ CombatIsInevitable(RESPONSE_REF R)
 				break;
 		}
 		Response(why_attack, CombatIsInevitable);
-		switch (GET_GAME_STATE(SLYLANDRO_PROBE_EXIT))
+		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_EXIT))
 		{
 			case 0:
 				bye = bye_1;
@@ -361,7 +361,7 @@ CombatIsInevitable(RESPONSE_REF R)
 
 		if (PlayerSaid(R, threat))
 		{
-			NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_THREAT);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_THREAT);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -378,11 +378,11 @@ CombatIsInevitable(RESPONSE_REF R)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(SLYLANDRO_PROBE_THREAT, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_PROBE_THREAT, static_cast<uint32_t>(NumVisits));
 		}
 		else if (PlayerSaid(R, something_wrong))
 		{
-			NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_WRONG);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_WRONG);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -399,11 +399,11 @@ CombatIsInevitable(RESPONSE_REF R)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(SLYLANDRO_PROBE_WRONG, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_PROBE_WRONG, static_cast<uint32_t>(NumVisits));
 		}
 		else if (PlayerSaid(R, we_are_us))
 		{
-			NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_ID);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_ID);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -423,8 +423,8 @@ CombatIsInevitable(RESPONSE_REF R)
 						// Probe's coordinate system is +/-{Y,X} relative to home
 						// If homeworld X or Y are < 5000, we will flip the sign
 						// (and always say Y before X)
-						dx = (plot_map[SLYLANDRO_DEFINED].star_pt.x - LogxToUniverse(GLOBAL_SIS(log_x))) * (plot_map[SLYLANDRO_DEFINED].star_pt.x > 5000 ? 1 : -1);
-						dy = (plot_map[SLYLANDRO_DEFINED].star_pt.y - LogyToUniverse(GLOBAL_SIS(log_y))) * (plot_map[SLYLANDRO_DEFINED].star_pt.y > 5000 ? 1 : -1);
+						dx = (plot_map[SLYLANDRO_DEFINED].star_pt.x - LogxToUniverse(uqm::gameState().sis().log_x)) * (plot_map[SLYLANDRO_DEFINED].star_pt.x > 5000 ? 1 : -1);
+						dy = (plot_map[SLYLANDRO_DEFINED].star_pt.y - LogyToUniverse(uqm::gameState().sis().log_y)) * (plot_map[SLYLANDRO_DEFINED].star_pt.y > 5000 ? 1 : -1);
 
 						NPCPhrase(THIS_IS_PROBE_40);
 						sayCoord(dy);
@@ -436,11 +436,11 @@ CombatIsInevitable(RESPONSE_REF R)
 						break;
 					}
 			}
-			SET_GAME_STATE(SLYLANDRO_PROBE_ID, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_PROBE_ID, static_cast<uint32_t>(NumVisits));
 		}
 		else if (PlayerSaid(R, why_attack))
 		{
-			NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_INFO);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_INFO);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -457,11 +457,11 @@ CombatIsInevitable(RESPONSE_REF R)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(SLYLANDRO_PROBE_INFO, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_PROBE_INFO, static_cast<uint32_t>(NumVisits));
 		}
 		else if (PlayerSaid(R, bye))
 		{
-			NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_EXIT);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_EXIT);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -478,12 +478,12 @@ CombatIsInevitable(RESPONSE_REF R)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(SLYLANDRO_PROBE_EXIT, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_PROBE_EXIT, static_cast<uint32_t>(NumVisits));
 		}
 
 		NPCPhrase(HOSTILE);
 
-		SET_GAME_STATE(PROBE_EXHIBITED_BUG, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PROBE_EXHIBITED_BUG, static_cast<uint32_t>(1));
 		setSegue(Segue_hostile);
 	}
 }
@@ -491,7 +491,7 @@ CombatIsInevitable(RESPONSE_REF R)
 static void
 Intro(void)
 {
-	if (isDifficulty(uqm::Difficulty::Hard) && GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	if (isDifficulty(uqm::Difficulty::Hard) && uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
 		NPCPhrase(COORD_POINT);
 		for (uint16_t i {0}; i < 16; i++)
@@ -503,14 +503,14 @@ Intro(void)
 
 		NPCPhrase(HOSTILE);
 
-		SET_GAME_STATE(PROBE_EXHIBITED_BUG, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PROBE_EXHIBITED_BUG, static_cast<uint32_t>(1));
 		setSegue(Segue_hostile);
 	}
 	else
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_PROBE_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -539,7 +539,7 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SLYLANDRO_PROBE_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_PROBE_VISITS, static_cast<uint32_t>(NumVisits));
 
 		CombatIsInevitable((RESPONSE_REF)0);
 	}

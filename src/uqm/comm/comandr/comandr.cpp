@@ -195,7 +195,7 @@ ByeBye(RESPONSE_REF R)
 	{
 		NPCPhrase(GOOD_LUCK_WITH_BASE);
 
-		SET_GAME_STATE(WILL_DESTROY_BASE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::WILL_DESTROY_BASE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, take_care_of_base_again))
 	{
@@ -207,27 +207,27 @@ ByeBye(RESPONSE_REF R)
 		NPCPhrase(IT_WAS_ABANDONED);
 		NPCPhrase(HERE_COMES_ILWRATH);
 
-		SET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, oh_yes_big_fight))
 	{
 		NPCPhrase(IM_GLAD_YOU_WON);
 		NPCPhrase(HERE_COMES_ILWRATH);
 
-		SET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, i_cant_talk_about_it))
 	{
 		NPCPhrase(IM_SURE_IT_WAS_DIFFICULT);
 		NPCPhrase(HERE_COMES_ILWRATH);
 
-		SET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, cook_their_butts)
 			 || PlayerSaid(R, overthrow_evil_aliens)
 			 || PlayerSaid(R, annihilate_those_monsters))
 	{
-		SET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER, static_cast<uint32_t>(0));
 
 		if (PlayerSaid(R, cook_their_butts))
 		{
@@ -249,7 +249,7 @@ ByeBye(RESPONSE_REF R)
 		Response(name_3, ByeBye);
 		Response(name_4, ByeBye);
 
-		SET_GAME_STATE(STARBASE_AVAILABLE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::STARBASE_AVAILABLE, static_cast<uint32_t>(1));
 	}
 	else
 	{
@@ -257,25 +257,25 @@ ByeBye(RESPONSE_REF R)
 		{
 			NPCPhrase(OK_THE_NAFS);
 
-			SET_GAME_STATE(NEW_ALLIANCE_NAME, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::NEW_ALLIANCE_NAME, static_cast<uint32_t>(0));
 		}
 		else if (PlayerSaid(R, name_2))
 		{
 			NPCPhrase(OK_THE_CAN);
 
-			SET_GAME_STATE(NEW_ALLIANCE_NAME, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::NEW_ALLIANCE_NAME, static_cast<uint32_t>(1));
 		}
 		else if (PlayerSaid(R, name_3))
 		{
 			NPCPhrase(OK_THE_UFW);
 
-			SET_GAME_STATE(NEW_ALLIANCE_NAME, 2);
+			uqm::gameState().setFlag(uqm::GameFlag::NEW_ALLIANCE_NAME, static_cast<uint32_t>(2));
 		}
 		else /* if (PlayerSaid (R, name_4)) */
 		{
 			NPCPhrase(OK_THE_NAME_IS_EMPIRE);
 
-			SET_GAME_STATE(NEW_ALLIANCE_NAME, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::NEW_ALLIANCE_NAME, static_cast<uint32_t>(3));
 		}
 
 		NPCPhrase(STARBASE_WILL_BE_READY);
@@ -291,7 +291,7 @@ NoRadioactives(RESPONSE_REF R)
 	{
 		NPCPhrase(ABOUT_TIME);
 
-		if (GLOBAL_SIS(ElementAmounts[RADIOACTIVE]))
+		if (uqm::gameState().sis().ElementAmounts[RADIOACTIVE])
 		{
 			GiveRadios(0);
 		}
@@ -325,16 +325,16 @@ NoRadioactives(RESPONSE_REF R)
 		else if (PlayerSaid(R, i_lost_my_lander))
 		{
 			NPCPhrase(HERE_IS_A_NEW_LANDER);
-			++GLOBAL_SIS(NumLanders);
+			++uqm::gameState().sis().NumLanders;
 			DrawLanders();
 			DeltaSISGauges(4, 0, 0);
 
-			SET_GAME_STATE(LANDERS_LOST, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::LANDERS_LOST, static_cast<uint32_t>(1));
 		}
 		else if (PlayerSaid(R, i_lost_another_lander))
 		{
 			NPCPhrase(HERE_IS_ANOTHER_LANDER);
-			++GLOBAL_SIS(NumLanders);
+			++uqm::gameState().sis().NumLanders;
 			DrawLanders();
 			DeltaSISGauges(4, 0, 0);
 		}
@@ -343,7 +343,7 @@ NoRadioactives(RESPONSE_REF R)
 			NPCPhrase(GIVE_FUEL);
 			DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
-			SET_GAME_STATE(GIVEN_FUEL_BEFORE, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::GIVEN_FUEL_BEFORE, static_cast<uint32_t>(1));
 		}
 		else if (PlayerSaid(R, need_fuel_again))
 		{
@@ -351,16 +351,16 @@ NoRadioactives(RESPONSE_REF R)
 			DeltaSISGauges(0, 5 * FuelTankScale, 0);
 		}
 
-		if (GLOBAL_SIS(ElementAmounts[RADIOACTIVE]))
+		if (uqm::gameState().sis().ElementAmounts[RADIOACTIVE])
 		{
 			GiveRadios(0);
 		}
 		else
 		{
-			if (GLOBAL_SIS(NumLanders) == 0
-				&& GET_GAME_STATE(CHMMR_BOMB_STATE) < 2)
+			if (uqm::gameState().sis().NumLanders == 0
+				&& uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 2)
 			{
-				if (GET_GAME_STATE(LANDERS_LOST))
+				if (uqm::gameState().flag(uqm::GameFlag::LANDERS_LOST))
 				{
 					Response(i_lost_another_lander, NoRadioactives);
 				}
@@ -369,9 +369,9 @@ NoRadioactives(RESPONSE_REF R)
 					Response(i_lost_my_lander, NoRadioactives);
 				}
 			}
-			if (GLOBAL_SIS(FuelOnBoard) < 2 * FuelTankScale)
+			if (uqm::gameState().sis().FuelOnBoard < 2 * FuelTankScale)
 			{
-				if (GET_GAME_STATE(GIVEN_FUEL_BEFORE))
+				if (uqm::gameState().flag(uqm::GameFlag::GIVEN_FUEL_BEFORE))
 				{
 					Response(need_fuel_again, NoRadioactives);
 				}
@@ -396,16 +396,16 @@ AskAfterRadios(RESPONSE_REF R)
 	if (PlayerSaid(R, i_lost_my_lander))
 	{
 		NPCPhrase(HERE_IS_A_NEW_LANDER);
-		++GLOBAL_SIS(NumLanders);
+		++uqm::gameState().sis().NumLanders;
 		DrawLanders();
 		DeltaSISGauges(4, 0, 0);
 
-		SET_GAME_STATE(LANDERS_LOST, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::LANDERS_LOST, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, i_lost_another_lander))
 	{
 		NPCPhrase(HERE_IS_ANOTHER_LANDER);
-		++GLOBAL_SIS(NumLanders);
+		++uqm::gameState().sis().NumLanders;
 		DrawLanders();
 		DeltaSISGauges(4, 0, 0);
 	}
@@ -414,7 +414,7 @@ AskAfterRadios(RESPONSE_REF R)
 		NPCPhrase(GIVE_FUEL);
 		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
-		SET_GAME_STATE(GIVEN_FUEL_BEFORE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::GIVEN_FUEL_BEFORE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, need_fuel_again))
 	{
@@ -429,10 +429,10 @@ AskAfterRadios(RESPONSE_REF R)
 	}
 
 	{
-		if (GLOBAL_SIS(NumLanders) == 0
-			&& GET_GAME_STATE(CHMMR_BOMB_STATE) < 2)
+		if (uqm::gameState().sis().NumLanders == 0
+			&& uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 2)
 		{
-			if (GET_GAME_STATE(LANDERS_LOST))
+			if (uqm::gameState().flag(uqm::GameFlag::LANDERS_LOST))
 			{
 				Response(i_lost_another_lander, AskAfterRadios);
 			}
@@ -441,9 +441,9 @@ AskAfterRadios(RESPONSE_REF R)
 				Response(i_lost_my_lander, AskAfterRadios);
 			}
 		}
-		if (GLOBAL_SIS(FuelOnBoard) < 2 * FuelTankScale)
+		if (uqm::gameState().sis().FuelOnBoard < 2 * FuelTankScale)
 		{
-			if (GET_GAME_STATE(GIVEN_FUEL_BEFORE))
+			if (uqm::gameState().flag(uqm::GameFlag::GIVEN_FUEL_BEFORE))
 			{
 				Response(need_fuel_again, AskAfterRadios);
 			}
@@ -497,16 +497,16 @@ TellMoonBase(RESPONSE_REF R)
 	else if (PlayerSaid(R, i_lost_my_lander))
 	{
 		NPCPhrase(HERE_IS_A_NEW_LANDER);
-		++GLOBAL_SIS(NumLanders);
+		++uqm::gameState().sis().NumLanders;
 		DrawLanders();
 		DeltaSISGauges(4, 0, 0);
 
-		SET_GAME_STATE(LANDERS_LOST, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::LANDERS_LOST, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, i_lost_another_lander))
 	{
 		NPCPhrase(HERE_IS_ANOTHER_LANDER);
-		++GLOBAL_SIS(NumLanders);
+		++uqm::gameState().sis().NumLanders;
 		DrawLanders();
 		DeltaSISGauges(4, 0, 0);
 	}
@@ -515,7 +515,7 @@ TellMoonBase(RESPONSE_REF R)
 		NPCPhrase(GIVE_FUEL);
 		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
-		SET_GAME_STATE(GIVEN_FUEL_BEFORE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::GIVEN_FUEL_BEFORE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, need_fuel_again))
 	{
@@ -526,21 +526,21 @@ TellMoonBase(RESPONSE_REF R)
 	{
 		NPCPhrase(BASE_ON_MOON);
 	}
-	else if (GET_GAME_STATE(STARBASE_YACK_STACK1) == 0)
+	else if (uqm::gameState().flag(uqm::GameFlag::STARBASE_YACK_STACK1) == 0)
 	{
 		NPCPhrase(ABOUT_BASE);
 
-		SET_GAME_STATE(STARBASE_YACK_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::STARBASE_YACK_STACK1, static_cast<uint32_t>(1));
 	}
 	else
 	{
 		NPCPhrase(ABOUT_BASE_AGAIN);
 	}
 
-	if (GLOBAL_SIS(NumLanders) == 0
-		&& GET_GAME_STATE(CHMMR_BOMB_STATE) < 2)
+	if (uqm::gameState().sis().NumLanders == 0
+		&& uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 2)
 	{
-		if (GET_GAME_STATE(LANDERS_LOST))
+		if (uqm::gameState().flag(uqm::GameFlag::LANDERS_LOST))
 		{
 			Response(i_lost_another_lander, TellMoonBase);
 		}
@@ -549,9 +549,9 @@ TellMoonBase(RESPONSE_REF R)
 			Response(i_lost_my_lander, TellMoonBase);
 		}
 	}
-	if (GLOBAL_SIS(FuelOnBoard) < 2 * FuelTankScale)
+	if (uqm::gameState().sis().FuelOnBoard < 2 * FuelTankScale)
 	{
-		if (GET_GAME_STATE(GIVEN_FUEL_BEFORE))
+		if (uqm::gameState().flag(uqm::GameFlag::GIVEN_FUEL_BEFORE))
 		{
 			Response(need_fuel_again, TellMoonBase);
 		}
@@ -560,7 +560,7 @@ TellMoonBase(RESPONSE_REF R)
 			Response(need_fuel_luna, TellMoonBase);
 		}
 	}
-	if (GET_GAME_STATE(WILL_DESTROY_BASE) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::WILL_DESTROY_BASE) == 0)
 	{
 		Response(we_will_take_care_of_base, ByeBye);
 	}
@@ -568,7 +568,7 @@ TellMoonBase(RESPONSE_REF R)
 	{
 		Response(take_care_of_base_again, ByeBye);
 	}
-	if (GET_GAME_STATE(STARBASE_YACK_STACK1) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::STARBASE_YACK_STACK1) == 0)
 	{
 		Response(tell_me_about_base, TellMoonBase);
 	}
@@ -686,7 +686,7 @@ RevealSelf(RESPONSE_REF R)
 			}
 			else
 			{
-				if (GET_GAME_STATE(MOONBASE_DESTROYED) == 0)
+				if (uqm::gameState().flag(uqm::GameFlag::MOONBASE_DESTROYED) == 0)
 				{
 					Response(we_are_here_to_help, TellMoonBase);
 				}
@@ -704,7 +704,7 @@ GiveRadios(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, we_will_transfer_now))
 	{
-		SET_GAME_STATE(RADIOACTIVES_PROVIDED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::RADIOACTIVES_PROVIDED, static_cast<uint32_t>(1));
 
 		NPCPhrase(FUEL_UP0);
 		NPCPhrase(FUEL_UP1);
@@ -779,7 +779,7 @@ Intro(void)
 		CommData.AlienAmbientArray[0].BaseFrameRate = GameTicksPerSecond / 40;
 	}
 
-	if (GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER))
+	if (uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER))
 	{
 		NPCPhrase(VERY_IMPRESSIVE);
 
@@ -787,11 +787,11 @@ Intro(void)
 		Response(overthrow_evil_aliens, ByeBye);
 		Response(annihilate_those_monsters, ByeBye);
 	}
-	else if (GET_GAME_STATE(STARBASE_VISITED))
+	else if (uqm::gameState().flag(uqm::GameFlag::STARBASE_VISITED))
 	{
-		if (GET_GAME_STATE(RADIOACTIVES_PROVIDED))
+		if (uqm::gameState().flag(uqm::GameFlag::RADIOACTIVES_PROVIDED))
 		{
-			if (GET_GAME_STATE(MOONBASE_DESTROYED) == 0)
+			if (uqm::gameState().flag(uqm::GameFlag::MOONBASE_DESTROYED) == 0)
 			{
 				TellMoonBase(0);
 			}
@@ -806,7 +806,7 @@ Intro(void)
 
 			NPCPhrase(DO_YOU_HAVE_RADIO_THIS_TIME);
 
-			if (GLOBAL_SIS(ElementAmounts[RADIOACTIVE]))
+			if (uqm::gameState().sis().ElementAmounts[RADIOACTIVE])
 			{
 				GiveRadios(0);
 			}
@@ -820,7 +820,7 @@ Intro(void)
 	{
 		RaveParty();
 
-		SET_GAME_STATE(STARBASE_VISITED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::STARBASE_VISITED, static_cast<uint32_t>(1));
 
 		NPCPhrase(ARE_YOU_SUPPLY_SHIP);
 		Response(no_but_well_help, NoRadioactives);
@@ -853,7 +853,7 @@ init_commander_comm()
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	if (!GET_GAME_STATE(RADIOACTIVES_PROVIDED))
+	if (!uqm::gameState().flag(uqm::GameFlag::RADIOACTIVES_PROVIDED))
 	{
 		altResFlags |= UseAltSong;
 	}

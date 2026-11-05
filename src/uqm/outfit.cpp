@@ -127,7 +127,7 @@ DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 	SetContextFont(TinyFont);
 
 
-	if (GLOBAL(ModuleCost[index]))
+	if (uqm::gameState().game().ModuleCost[index])
 	{ // print module name
 		SetContextForeGroundColor(selected ?
 									  ModuleSelectedColor :
@@ -149,7 +149,7 @@ DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 		t.baseline.x = ModuleCol1() - ResScale(2);
 		t.baseline.y -= ResScale(3);
 		fmt::format_to_sz_n(buf, "{}",
-							GLOBAL(ModuleCost[index]) * ModuleCostScale);
+							uqm::gameState().game().ModuleCost[index] * ModuleCostScale);
 		t.pStr = buf;
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
@@ -420,7 +420,7 @@ DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
 		t.CharCount = (uint16_t)~0;
 		t.pStr = buf;
 		fmt::format_to_n(buf, sizeof(buf) - 1, "{}",
-						 GLOBAL(ModuleCost[NewModule]) * ModuleCostScale);
+						 uqm::gameState().game().ModuleCost[NewModule] * ModuleCostScale);
 		if (isPC(uqm::UQMOptions::read().whichFonts))
 		{
 			SetContextFont(TinyFont);
@@ -430,8 +430,8 @@ DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
 			SetContextFont(TinyFontBold);
 		}
 
-		if ((GLOBAL_SIS(ResUnits))
-			>= (uint32_t)((GLOBAL(ModuleCost[NewModule])
+		if ((uqm::gameState().sis().ResUnits)
+			>= (uint32_t)((uqm::gameState().game().ModuleCost[NewModule]
 						   * ModuleCostScale)))
 		{
 			SetContextForeGroundColor(BrightGreenColor);
@@ -574,7 +574,7 @@ DisplayLanders(MENU_STATE* pMS)
 	STAMP s;
 
 	s.frame = pMS->ModuleFrame;
-	if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 3)
+	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 3)
 	{
 		GFXRECT rect;
 		s.origin.x = -SafeX();
@@ -597,7 +597,7 @@ DisplayLanders(MENU_STATE* pMS)
 		{
 			s.origin.x = LanderX();
 			s.origin.y = LanderY();
-			for (i = 0; i < GLOBAL_SIS(NumLanders); ++i)
+			for (i = 0; i < uqm::gameState().sis().NumLanders; ++i)
 			{
 				DrawStamp(&s);
 				s.origin.x += LanderWidth();
@@ -612,7 +612,7 @@ DisplayLanders(MENU_STATE* pMS)
 		}
 		else
 		{
-			for (i = 0; i < GLOBAL_SIS(NumLanders); ++i)
+			for (i = 0; i < uqm::gameState().sis().NumLanders; ++i)
 			{
 				s.origin = lander_pos[i];
 				DrawStamp(&s);
@@ -655,22 +655,22 @@ DoInstallModule(MENU_STATE* pMS)
 	{
 		case PLANET_LANDER:
 		case EmptySlot + 3:
-			old_slot_piece = pMS->delta_item < GLOBAL_SIS(NumLanders) ? PLANET_LANDER : (EmptySlot + 3);
+			old_slot_piece = pMS->delta_item < uqm::gameState().sis().NumLanders ? PLANET_LANDER : (EmptySlot + 3);
 			LastItem = MaxLanders - 1;
 			break;
 		case FUSION_THRUSTER:
 		case EmptySlot + 0:
-			old_slot_piece = GLOBAL_SIS(DriveSlots[pMS->delta_item]);
+			old_slot_piece = uqm::gameState().sis().DriveSlots[pMS->delta_item];
 			LastItem = NumDriveSlots - 1;
 			break;
 		case TURNING_JETS:
 		case EmptySlot + 1:
-			old_slot_piece = GLOBAL_SIS(JetSlots[pMS->delta_item]);
+			old_slot_piece = uqm::gameState().sis().JetSlots[pMS->delta_item];
 			LastItem = NumJetSlots - 1;
 			break;
 		default:
-			old_slot_piece = GLOBAL_SIS(ModuleSlots[pMS->delta_item]);
-			if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 3)
+			old_slot_piece = uqm::gameState().sis().ModuleSlots[pMS->delta_item];
+			if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 3)
 			{
 				FirstItem = NumBombModules;
 			}
@@ -707,8 +707,8 @@ DoInstallModule(MENU_STATE* pMS)
 		{
 			if (new_slot_piece < EmptySlot)
 			{
-				if (GLOBAL_SIS(ResUnits) < (uint32_t)(GLOBAL(ModuleCost[new_slot_piece])
-													  * ModuleCostScale))
+				if (uqm::gameState().sis().ResUnits < (uint32_t)(uqm::gameState().game().ModuleCost[new_slot_piece]
+																 * ModuleCostScale))
 				{ // not enough RUs to build
 					PlayMenuSound(MENU_SOUND_FAILURE);
 					return (true);
@@ -718,7 +718,7 @@ DoInstallModule(MENU_STATE* pMS)
 			{
 				if (old_slot_piece == CREW_POD)
 				{
-					if (GLOBAL_SIS(CrewEnlisted)
+					if (uqm::gameState().sis().CrewEnlisted
 						> CrewPodCapacity
 							  * (CountSISPieces(CREW_POD) - 1))
 					{ // crew pod still needed for crew recruited
@@ -736,7 +736,7 @@ DoInstallModule(MENU_STATE* pMS)
 						   + (uint32_t)CountSISPieces(HIGHEFF_FUELSYS)
 								 * HefuelTankCapacity;
 					volume -= (old_slot_piece == FUEL_TANK ? FuelTankCapacity : HefuelTankCapacity);
-					if (GLOBAL_SIS(FuelOnBoard) > volume + FuelReserve)
+					if (uqm::gameState().sis().FuelOnBoard > volume + FuelReserve)
 					{ // fuel tank still needed for the fuel on board
 						if (!uqm::UQMOptions::read().infiniteFuel)
 						{
@@ -758,7 +758,7 @@ DoInstallModule(MENU_STATE* pMS)
 				}
 				else if (old_slot_piece == STORAGE_BAY)
 				{
-					if (GLOBAL_SIS(TotalElementMass)
+					if (uqm::gameState().sis().TotalElementMass
 						> StorageBayCapacity
 							  * (CountSISPieces(STORAGE_BAY) - 1))
 					{ // storage bay still needed for the cargo
@@ -789,23 +789,23 @@ DoInstallModule(MENU_STATE* pMS)
 				switch (pMS->CurState)
 				{
 					case PLANET_LANDER:
-						++GLOBAL_SIS(NumLanders);
+						++uqm::gameState().sis().NumLanders;
 						break;
 					case EmptySlot + 3:
-						--GLOBAL_SIS(NumLanders);
+						--uqm::gameState().sis().NumLanders;
 						break;
 					case FUSION_THRUSTER:
 					case EmptySlot + 0:
-						GLOBAL_SIS(DriveSlots[pMS->delta_item]) =
+						uqm::gameState().sis().DriveSlots[pMS->delta_item] =
 							new_slot_piece;
 						break;
 					case TURNING_JETS:
 					case EmptySlot + 1:
-						GLOBAL_SIS(JetSlots[pMS->delta_item]) =
+						uqm::gameState().sis().JetSlots[pMS->delta_item] =
 							new_slot_piece;
 						break;
 					default:
-						GLOBAL_SIS(ModuleSlots[pMS->delta_item]) =
+						uqm::gameState().sis().ModuleSlots[pMS->delta_item] =
 							new_slot_piece;
 						break;
 				}
@@ -813,13 +813,13 @@ DoInstallModule(MENU_STATE* pMS)
 				if (new_slot_piece < EmptySlot)
 				{
 					DeltaSISGauges(UndefinedDelta, UndefinedDelta,
-								   -(GLOBAL(ModuleCost[new_slot_piece])
+								   -(uqm::gameState().game().ModuleCost[new_slot_piece]
 									 * ModuleCostScale));
 				}
 				else /* if (old_slot_piece < EmptySlot) */
 				{
 					DeltaSISGauges(UndefinedDelta, UndefinedDelta,
-								   GLOBAL(ModuleCost[old_slot_piece])
+								   uqm::gameState().game().ModuleCost[old_slot_piece]
 									   * ModuleCostScale);
 				}
 
@@ -848,7 +848,7 @@ DoInstallModule(MENU_STATE* pMS)
 		if (pMS->CurState < EmptySlot)
 		{
 			pMS->CurState += EmptySlot - 1;
-			if ((pMS->CurState == EmptySlot - 1) && pMS->delta_item + 1 > GLOBAL_SIS(NumLanders))
+			if ((pMS->CurState == EmptySlot - 1) && pMS->delta_item + 1 > uqm::gameState().sis().NumLanders)
 			{
 				new_slot_piece = old_slot_piece;
 			}
@@ -868,7 +868,7 @@ DoInstallModule(MENU_STATE* pMS)
 		}
 		else if (!cancel)
 		{
-			if ((new_slot_piece == EmptySlot + 3) && (old_slot_piece == PLANET_LANDER) && (pMS->delta_item < GLOBAL_SIS(NumLanders)))
+			if ((new_slot_piece == EmptySlot + 3) && (old_slot_piece == PLANET_LANDER) && (pMS->delta_item < uqm::gameState().sis().NumLanders))
 			{
 				new_slot_piece = old_slot_piece;
 			}
@@ -914,7 +914,7 @@ DoInstallModule(MENU_STATE* pMS)
 					}
 				}
 				NewItem = 0;
-				if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 3)
+				if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 3)
 				{
 					if (NewState == EmptySlot + 3)
 					{
@@ -944,7 +944,7 @@ DoInstallModule(MENU_STATE* pMS)
 				}
 			}
 		} while (NewState < EmptySlot
-				 && (GLOBAL(ModuleCost[NewItem]) == 0
+				 && (uqm::gameState().game().ModuleCost[NewItem] == 0
 					 || (NewItem >= GUN_WEAPON && NewItem <= CANNON_WEAPON
 						 && pMS->delta_item > 0 && pMS->delta_item < 13)));
 
@@ -967,18 +967,18 @@ DoInstallModule(MENU_STATE* pMS)
 			{
 				case PLANET_LANDER:
 				case EmptySlot + 3:
-					new_slot_piece = NewItem < GLOBAL_SIS(NumLanders) ? PLANET_LANDER : (EmptySlot + 3);
+					new_slot_piece = NewItem < uqm::gameState().sis().NumLanders ? PLANET_LANDER : (EmptySlot + 3);
 					break;
 				case FUSION_THRUSTER:
 				case EmptySlot + 0:
-					new_slot_piece = GLOBAL_SIS(DriveSlots[NewItem]);
+					new_slot_piece = uqm::gameState().sis().DriveSlots[NewItem];
 					break;
 				case TURNING_JETS:
 				case EmptySlot + 1:
-					new_slot_piece = GLOBAL_SIS(JetSlots[NewItem]);
+					new_slot_piece = uqm::gameState().sis().JetSlots[NewItem];
 					break;
 				default:
-					new_slot_piece = GLOBAL_SIS(ModuleSlots[NewItem]);
+					new_slot_piece = uqm::gameState().sis().ModuleSlots[NewItem];
 					break;
 			}
 
@@ -1165,8 +1165,8 @@ ChangeFuelQuantity(void)
 {
 	int32_t incr = 0; // Fuel increment in fuel points (not units).
 	const int32_t maxFit =
-		GetFuelTankCapacity() - (int32_t)GLOBAL_SIS(FuelOnBoard);
-	const int32_t minFit = -(int32_t)GLOBAL_SIS(FuelOnBoard);
+		GetFuelTankCapacity() - (int32_t)uqm::gameState().sis().FuelOnBoard;
+	const int32_t minFit = -(int32_t)uqm::gameState().sis().FuelOnBoard;
 
 	if (PulsedInputState.menu[KEY_MENU_UP])
 	{
@@ -1205,7 +1205,7 @@ ChangeFuelQuantity(void)
 
 	// Clamp incr to what we can afford/hold/have.
 	{
-		const int32_t maxAfford = GLOBAL_SIS(ResUnits) / GLOBAL(FuelCost);
+		const int32_t maxAfford = uqm::gameState().sis().ResUnits / uqm::gameState().game().FuelCost;
 
 		if (incr > maxFit)
 		{
@@ -1230,7 +1230,7 @@ ChangeFuelQuantity(void)
 	}
 	else
 	{
-		const int cost = (incr / FuelTankScale) * GLOBAL(FuelCost);
+		const int cost = (incr / FuelTankScale) * uqm::gameState().game().FuelCost;
 		PreUpdateFlashRect();
 		DeltaSISGauges(0, incr, -cost);
 		PostUpdateFlashRect();
@@ -1313,7 +1313,7 @@ bool DoOutfit(MENU_STATE* pMS)
 			for (num_frames = 0; num_frames < NumDriveSlots;
 				 ++num_frames)
 			{
-				const uint8_t which_piece {GLOBAL_SIS(DriveSlots[num_frames])};
+				const uint8_t which_piece {uqm::gameState().sis().DriveSlots[num_frames]};
 				if (which_piece < EmptySlot)
 				{
 					DrawShipPiece(pMS->ModuleFrame, which_piece,
@@ -1323,7 +1323,7 @@ bool DoOutfit(MENU_STATE* pMS)
 			for (num_frames = 0; num_frames < NumJetSlots;
 				 ++num_frames)
 			{
-				const uint8_t which_piece {GLOBAL_SIS(JetSlots[num_frames])};
+				const uint8_t which_piece {uqm::gameState().sis().JetSlots[num_frames]};
 				if (which_piece < EmptySlot)
 				{
 					DrawShipPiece(pMS->ModuleFrame, which_piece,
@@ -1333,7 +1333,7 @@ bool DoOutfit(MENU_STATE* pMS)
 			for (num_frames = 0; num_frames < NumModuleSlots;
 				 ++num_frames)
 			{
-				const uint8_t which_piece {GLOBAL_SIS(ModuleSlots[num_frames])};
+				const uint8_t which_piece {uqm::gameState().sis().ModuleSlots[num_frames]};
 				if (which_piece < EmptySlot)
 				{
 					DrawShipPiece(pMS->ModuleFrame, which_piece,
@@ -1342,11 +1342,11 @@ bool DoOutfit(MENU_STATE* pMS)
 			}
 			RedistributeFuel();
 			DisplayLanders(pMS);
-			if (GET_GAME_STATE(CHMMR_BOMB_STATE) < 3)
+			if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 3)
 			{
 				uint8_t ShieldFlags {};
 
-				ShieldFlags = GET_GAME_STATE(LANDER_SHIELDS);
+				ShieldFlags = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS);
 
 				s.frame = SetAbsFrameIndex(pMS->ModuleFrame,
 										   ShieldLocationInModuleAni);
@@ -1384,11 +1384,11 @@ bool DoOutfit(MENU_STATE* pMS)
 
 			SetFlashRect(SfrMenu3do(), false);
 
-			GLOBAL_SIS(FuelOnBoard) =
-				(GLOBAL_SIS(FuelOnBoard)
+			uqm::gameState().sis().FuelOnBoard =
+				(uqm::gameState().sis().FuelOnBoard
 				 + (FuelTankScale >> 1))
 				/ FuelTankScale;
-			GLOBAL_SIS(FuelOnBoard) *= FuelTankScale;
+			uqm::gameState().sis().FuelOnBoard *= FuelTankScale;
 		}
 
 		SetContext(StatusContext);
@@ -1458,7 +1458,7 @@ ExitOutfit:
 
 				DrawMenuStateStrings(PM_FUEL, pMS->CurState);
 				pMS->CurState = EmptySlot + 2;
-				if (GET_GAME_STATE(CHMMR_BOMB_STATE) != 3)
+				if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) != 3)
 				{
 					pMS->delta_item = 0;
 				}
@@ -1516,7 +1516,7 @@ ExitOutfit:
 	}
 	if (uqm::UQMOptions::read().infiniteRU)
 	{
-		GLOBAL_SIS(ResUnits) = 1000000L;
+		uqm::gameState().sis().ResUnits = 1000000L;
 	}
 
 	return (true);

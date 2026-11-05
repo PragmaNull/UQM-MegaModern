@@ -729,12 +729,12 @@ void ShowGameEnding(void)
 	SetContext(ScreenContext);
 
 	uqm::currentActivity() |= CHECK_ABORT;
-	if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
-		&& GET_GAME_STATE(UTWIG_BOMB_ON_SHIP)
-		&& !GET_GAME_STATE(UTWIG_BOMB)
+	if (uqm::gameState().sis().CrewEnlisted == (uint16_t)~0
+		&& uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP)
+		&& !uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB)
 		&& DeathBySuicide)
 	{ // player blew himself up with Utwig bomb
-		SET_GAME_STATE(UTWIG_BOMB_ON_SHIP, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP, static_cast<uint32_t>(0));
 
 		SleepThreadUntil(FadeScreen(FadeAllToWhite, c_gameSecond / 8)
 						 + c_gameSecond / 60);
@@ -757,7 +757,7 @@ void ShowGameEnding(void)
 	}
 	else
 	{
-		if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
+		if (uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
 		{
 			uqm::currentActivity() = IN_ENCOUNTER;
 

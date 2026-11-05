@@ -454,7 +454,7 @@ void DrawCaptainsWindow(STARSHIP* StarShipPtr)
 		t.baseline.x = StatusWidth() >> 1;
 		t.baseline.y = y + ResScale(6);
 		t.align = ALIGN_CENTER;
-		t.pStr = GLOBAL_SIS(CommanderName);
+		t.pStr = uqm::gameState().sis().CommanderName;
 		t.CharCount = (uint16_t)~0;
 		SetContextForeGroundColor(
 			BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02));

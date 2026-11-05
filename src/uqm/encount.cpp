@@ -104,11 +104,11 @@ GetShipFragQueueForPlayer(uint16_t playerNr)
 {
 	if (playerNr == RpgPlayerNum)
 	{
-		return &GLOBAL(built_ship_q);
+		return &uqm::gameState().game().built_ship_q;
 	}
 	else
 	{
-		return &GLOBAL(npc_built_ship_q);
+		return &uqm::gameState().game().npc_built_ship_q;
 	}
 }
 
@@ -129,7 +129,7 @@ void SetBattlePlanet(void)
 	}
 
 	// Set BATTLE_PLANET state so it can be serialized if game is saved
-	SET_GAME_STATE(BATTLE_PLANET, selector);
+	uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(selector));
 }
 
 // Called by comm code to intialize battle fleets during encounter
@@ -143,9 +143,9 @@ void BuildBattle(uint16_t which_player)
 
 	EncounterRace = -1;
 
-	if (GetHeadLink(&GLOBAL(npc_built_ship_q)) == 0)
+	if (GetHeadLink(&uqm::gameState().game().npc_built_ship_q) == 0)
 	{
-		SET_GAME_STATE(BATTLE_SEGUE, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
 		return;
 	}
 
@@ -159,17 +159,17 @@ void BuildBattle(uint16_t which_player)
 				break;
 			case IN_HYPERSPACE:
 				{ // If somehow BATTLE_PLANET is invalid (maybe Core game load missalign)
-					if (GET_GAME_STATE(BATTLE_PLANET) > NUMBER_OF_PLANET_TYPES)
+					if (uqm::gameState().flag(uqm::GameFlag::BATTLE_PLANET) > NUMBER_OF_PLANET_TYPES)
 					{
 						SetBattlePlanet();
 					}
 
-					load_gravity_well(GET_GAME_STATE(BATTLE_PLANET));
+					load_gravity_well(uqm::gameState().flag(uqm::GameFlag::BATTLE_PLANET));
 					break;
 				}
 			default:
 				{
-					SET_GAME_STATE(ESCAPE_COUNTER, 110);
+					uqm::gameState().setFlag(uqm::GameFlag::ESCAPE_COUNTER, static_cast<uint32_t>(110));
 
 					if (IsExtended() && pSolarSysState && worldIsMoon(pSolarSysState, pSolarSysState->pOrbitalDesc))
 					{ // Set gravity well to moon if encounter takes
@@ -185,8 +185,8 @@ void BuildBattle(uint16_t which_player)
 
 						if (selector == SA_MATRA)
 						{
-							uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
-												sizeof(GLOBAL_SIS(PlanetName)),
+							uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+												sizeof(uqm::gameState().sis().PlanetName),
 												GameString(PLANET_NUMBER_BASE + 32));
 							DrawSISTitle(
 								GameString(PLANET_NUMBER_BASE + 32));
@@ -197,7 +197,7 @@ void BuildBattle(uint16_t which_player)
 					}
 					else
 					{
-						load_gravity_well(GET_GAME_STATE(BATTLE_PLANET));
+						load_gravity_well(uqm::gameState().flag(uqm::GameFlag::BATTLE_PLANET));
 						break;
 					}
 				}
@@ -387,7 +387,7 @@ InitEncounter(void)
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 		t.baseline.y += ResScale(12);
-		t.pStr = GLOBAL_SIS(PlanetName);
+		t.pStr = uqm::gameState().sis().PlanetName;
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 	}
@@ -417,12 +417,12 @@ InitEncounter(void)
 		};
 		constexpr auto NumDisplayPts {(std::size(display_pt))};
 
-		for (hStarShip = GetHeadLink(&GLOBAL(npc_built_ship_q)), i = 0;
+		for (hStarShip = GetHeadLink(&uqm::gameState().game().npc_built_ship_q), i = 0;
 			 hStarShip && i < 60; hStarShip = hNextShip, ++i)
 		{
 			GFXRECT r;
 
-			const SHIP_FRAGMENT* FragPtr {LockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip)};
+			const SHIP_FRAGMENT* FragPtr {LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip)};
 			if (FragPtr->crew_level != INFINITE_FLEET)
 			{
 				hNextShip = _GetSuccLink(FragPtr);
@@ -458,7 +458,7 @@ InitEncounter(void)
 			s.origin.y += ResScale(OrigSisScreenHeight() >> 1) - (r.extent.height >> 1);
 			DrawStamp(&s);
 
-			UnlockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
+			UnlockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 		}
 	}
 
@@ -604,14 +604,14 @@ UninitEncounter(void)
 	free_gravity_well();
 
 	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
-		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
+		|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0
 		|| uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		goto ExitUninitEncounter;
 	}
 
-	if (GET_GAME_STATE(BATTLE_SEGUE) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::BATTLE_SEGUE) == 0)
 	{
 		ReinitQueue(&race_q[0]);
 		ReinitQueue(&race_q[1]);
@@ -637,24 +637,24 @@ UninitEncounter(void)
 		const static Color fade_ship_cycle[] = SCAVENGE_SCREEN_COLOR_TABLE;
 		constexpr auto NumShipFades {(std::size(fade_ship_cycle))};
 
-		SET_GAME_STATE(BATTLE_SEGUE, 0);
-		SET_GAME_STATE(BOMB_CARRIER, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::BOMB_CARRIER, static_cast<uint32_t>(0));
 
 		VictoryState = (battle_counter[1] || !battle_counter[0]
-						|| GET_GAME_STATE(URQUAN_PROTECTING_SAMATRA)) ?
+						|| uqm::gameState().flag(uqm::GameFlag::URQUAN_PROTECTING_SAMATRA)) ?
 						   0 :
 						   1;
 
-		HSHIPFRAG hStarShip {GetHeadLink(&GLOBAL(npc_built_ship_q))};
-		FragPtr = LockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
+		HSHIPFRAG hStarShip {GetHeadLink(&uqm::gameState().game().npc_built_ship_q)};
+		FragPtr = LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 		EncounterRace = FragPtr->race_id;
-		if (GetStarShipFromIndex(&GLOBAL(avail_race_q), EncounterRace) == 0)
+		if (GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, EncounterRace) == 0)
 		{
 			/* Suppress the final tally and salvage info */
 			VictoryState = -1;
 			InitSISContexts();
 		}
-		UnlockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 
 		if (VictoryState > 0) // Set RU only when we get them
 		{
@@ -671,7 +671,7 @@ UninitEncounter(void)
 
 			if (i == 0)
 			{
-				pQueue = &GLOBAL(built_ship_q);
+				pQueue = &uqm::gameState().game().built_ship_q;
 			}
 			else
 			{
@@ -693,7 +693,7 @@ UninitEncounter(void)
 					}
 					else
 					{
-						DrawSISTitle(GLOBAL_SIS(PlanetName));
+						DrawSISTitle(uqm::gameState().sis().PlanetName);
 					}
 
 					SetContext(SpaceContext);
@@ -703,7 +703,7 @@ UninitEncounter(void)
 						DrawArmadaPickShip(true, &scavenge_r);
 					}
 				}
-				pQueue = &GLOBAL(npc_built_ship_q);
+				pQueue = &uqm::gameState().game().npc_built_ship_q;
 			}
 
 			ReinitQueue(&race_q[(NumSides - 1) - i]);
@@ -943,13 +943,13 @@ UninitEncounter(void)
 		}
 
 		if (ships_killed && EncounterRace == THRADDASH_SHIP
-			&& !GET_GAME_STATE(THRADD_MANNER))
+			&& !uqm::gameState().flag(uqm::GameFlag::THRADD_MANNER))
 		{
-			if ((ships_killed += GET_GAME_STATE(THRADDASH_BODY_COUNT)) > THRADDASH_BODY_THRESHOLD)
+			if ((ships_killed += uqm::gameState().flag(uqm::GameFlag::THRADDASH_BODY_COUNT)) > THRADDASH_BODY_THRESHOLD)
 			{
 				ships_killed = THRADDASH_BODY_THRESHOLD;
 			}
-			SET_GAME_STATE(THRADDASH_BODY_COUNT, ships_killed);
+			uqm::gameState().setFlag(uqm::GameFlag::THRADDASH_BODY_COUNT, static_cast<uint32_t>(ships_killed));
 		}
 
 		if (uqm::UQMOptions::read().slaughterMode && CheckSphereTracking((RACE_ID)EncounterRace)
@@ -979,10 +979,10 @@ UninitEncounter(void)
 
 			if (!isBanned)
 			{
-				hEncounter = GetStarShipFromIndex(&GLOBAL(avail_race_q),
+				hEncounter = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q,
 												  EncounterRace);
 				EncounterPtr =
-					LockFleetInfo(&GLOBAL(avail_race_q), hEncounter);
+					LockFleetInfo(&uqm::gameState().game().avail_race_q, hEncounter);
 
 				if (EncounterPtr->actual_strength > 0)
 				{
@@ -1001,7 +1001,7 @@ UninitEncounter(void)
 					}
 				}
 
-				UnlockFleetInfo(&GLOBAL(avail_race_q), hEncounter);
+				UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hEncounter);
 			}
 		}
 	}
@@ -1016,7 +1016,7 @@ void EncounterBattle(void)
 	InputContext* savedPlayerInput = nullptr;
 
 
-	SET_GAME_STATE(BATTLE_SEGUE, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(1));
 
 	const ACTIVITY OldActivity {uqm::currentActivity()};
 	if (uqm::lowByte(OldActivity) == IN_LAST_BATTLE)
@@ -1078,7 +1078,7 @@ void EncounterBattle(void)
 
 	if (uqm::currentActivity() & CHECK_ABORT)
 	{
-		GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
+		uqm::gameState().sis().CrewEnlisted = (uint16_t)~0;
 	}
 
 	if (uqm::globalFlags() & CyborgEnabled)

@@ -246,29 +246,29 @@ DoSellMinerals(void)
 			DrawCargoStrings((uint8_t)(i - 1), (uint8_t)i);
 		}
 
-		if ((amount = GLOBAL_SIS(ElementAmounts[i])) != 0)
+		if ((amount = uqm::gameState().sis().ElementAmounts[i]) != 0)
 		{
-			total += amount * GLOBAL(ElementWorth[i]);
+			total += amount * uqm::gameState().game().ElementWorth[i];
 			do
 			{
 				if (!Sleepy || AnyButtonPress(true) || (uqm::currentActivity() & CHECK_ABORT))
 				{
 					Sleepy = false;
-					GLOBAL_SIS(ElementAmounts[i]) = 0;
-					GLOBAL_SIS(TotalElementMass) -= amount;
+					uqm::gameState().sis().ElementAmounts[i] = 0;
+					uqm::gameState().sis().TotalElementMass -= amount;
 					DeltaSISGauges(0, 0,
-								   amount * GLOBAL(ElementWorth[i]));
+								   amount * uqm::gameState().game().ElementWorth[i]);
 					break;
 				}
 
 				UpdateDuty(false);
 
-				--GLOBAL_SIS(ElementAmounts[i]);
-				--GLOBAL_SIS(TotalElementMass);
+				--uqm::gameState().sis().ElementAmounts[i];
+				--uqm::gameState().sis().TotalElementMass;
 				TaskSwitch();
 				DrawCargoStrings((uint8_t)i, (uint8_t)i);
 				ShowRemainingCapacity();
-				DeltaSISGauges(0, 0, GLOBAL(ElementWorth[i]));
+				DeltaSISGauges(0, 0, uqm::gameState().game().ElementWorth[i]);
 			} while (--amount);
 		}
 		if (Sleepy)
@@ -300,7 +300,7 @@ EveryOnesACritic(uint16_t total)
 
 	if (total < 1000)
 	{
-		total = GET_GAME_STATE(LIGHT_MINERAL_LOAD);
+		total = uqm::gameState().flag(uqm::GameFlag::LIGHT_MINERAL_LOAD);
 		switch (total++)
 		{
 			case 0:
@@ -328,11 +328,11 @@ EveryOnesACritic(uint16_t total)
 				pStr = LIGHT_LOAD_G;
 				break;
 		}
-		SET_GAME_STATE(LIGHT_MINERAL_LOAD, total);
+		uqm::gameState().setFlag(uqm::GameFlag::LIGHT_MINERAL_LOAD, static_cast<uint32_t>(total));
 	}
 	else if (total < 2500)
 	{
-		total = GET_GAME_STATE(MEDIUM_MINERAL_LOAD);
+		total = uqm::gameState().flag(uqm::GameFlag::MEDIUM_MINERAL_LOAD);
 		switch (total++)
 		{
 			case 0:
@@ -358,11 +358,11 @@ EveryOnesACritic(uint16_t total)
 				pStr = MEDIUM_LOAD_G;
 				break;
 		}
-		SET_GAME_STATE(MEDIUM_MINERAL_LOAD, total);
+		uqm::gameState().setFlag(uqm::GameFlag::MEDIUM_MINERAL_LOAD, static_cast<uint32_t>(total));
 	}
 	else
 	{
-		total = GET_GAME_STATE(HEAVY_MINERAL_LOAD);
+		total = uqm::gameState().flag(uqm::GameFlag::HEAVY_MINERAL_LOAD);
 		switch (total++)
 		{
 			case 0:
@@ -388,7 +388,7 @@ EveryOnesACritic(uint16_t total)
 				pStr = HEAVY_LOAD_G;
 				break;
 		}
-		SET_GAME_STATE(HEAVY_MINERAL_LOAD, total);
+		uqm::gameState().setFlag(uqm::GameFlag::HEAVY_MINERAL_LOAD, static_cast<uint32_t>(total));
 	}
 
 	return pStr;
@@ -399,11 +399,11 @@ ByeBye(RESPONSE_REF R)
 {
 	(void)R; // ignored
 
-	CurBulletinMask |= GET_GAME_STATE(STARBASE_BULLETS);
-	SET_GAME_STATE(STARBASE_BULLETS, CurBulletinMask);
+	CurBulletinMask |= uqm::gameState().flag(uqm::GameFlag::STARBASE_BULLETS);
+	uqm::gameState().setFlag(uqm::GameFlag::STARBASE_BULLETS, static_cast<uint32_t>(CurBulletinMask));
 
 	/* if (R == goodbye_starbase_commander) */
-	if (GET_GAME_STATE(CHMMR_BOMB_STATE) >= 2)
+	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) >= 2)
 	{
 		NPCPhrase(GOOD_LUCK_AGAIN);
 	}
@@ -903,14 +903,14 @@ AnalyzeCondition(void)
 
 	for (i = 0; i < NumDriveSlots; ++i)
 	{
-		if (GLOBAL_SIS(DriveSlots[i]) < EmptySlot)
+		if (uqm::gameState().sis().DriveSlots[i] < EmptySlot)
 		{
 			++num_thrusters;
 		}
 	}
 	for (i = 0; i < NumJetSlots; ++i)
 	{
-		if (GLOBAL_SIS(JetSlots[i]) < EmptySlot)
+		if (uqm::gameState().sis().JetSlots[i] < EmptySlot)
 		{
 			++num_jets;
 		}
@@ -919,7 +919,7 @@ AnalyzeCondition(void)
 	{
 		uint8_t which_piece {};
 
-		switch (which_piece = GLOBAL_SIS(ModuleSlots[i]))
+		switch (which_piece = uqm::gameState().sis().ModuleSlots[i])
 		{
 			case STORAGE_BAY:
 				++num_bays;
@@ -947,12 +947,12 @@ AnalyzeCondition(void)
 	}
 
 	HasMinimum = (num_thrusters >= 7 && num_jets >= 5
-				  && GLOBAL_SIS(CrewEnlisted) >= CrewPodCapacity
-				  && GLOBAL_SIS(FuelOnBoard) >= FuelTankCapacity
-				  && num_bays >= 1 && GLOBAL_SIS(NumLanders)
+				  && uqm::gameState().sis().CrewEnlisted >= CrewPodCapacity
+				  && uqm::gameState().sis().FuelOnBoard >= FuelTankCapacity
+				  && num_bays >= 1 && uqm::gameState().sis().NumLanders
 				  && num_batts >= 1 && num_guns >= 2);
 	NPCPhrase(LETS_SEE);
-	if (!HasMinimum && GET_GAME_STATE(CHMMR_BOMB_STATE) < 2)
+	if (!HasMinimum && uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 2)
 	{
 		NPCPhrase(IMPROVE_1);
 		if (num_thrusters < 7)
@@ -967,11 +967,11 @@ AnalyzeCondition(void)
 		{
 			NPCPhrase(NEED_GUNS_1);
 		}
-		if (GLOBAL_SIS(CrewEnlisted) < CrewPodCapacity)
+		if (uqm::gameState().sis().CrewEnlisted < CrewPodCapacity)
 		{
 			NPCPhrase(NEED_CREW_1);
 		}
-		if (GLOBAL_SIS(FuelOnBoard) < FuelTankCapacity)
+		if (uqm::gameState().sis().FuelOnBoard < FuelTankCapacity)
 		{
 			NPCPhrase(NEED_FUEL_1);
 		}
@@ -979,7 +979,7 @@ AnalyzeCondition(void)
 		{
 			NPCPhrase(NEED_STORAGE_1);
 		}
-		if (GLOBAL_SIS(NumLanders) == 0)
+		if (uqm::gameState().sis().NumLanders == 0)
 		{
 			NPCPhrase(NEED_LANDERS_2);
 		}
@@ -988,7 +988,7 @@ AnalyzeCondition(void)
 			NPCPhrase(NEED_DYNAMOS_1);
 		}
 
-		if (GLOBAL_SIS(ResUnits) >= 3000)
+		if (uqm::gameState().sis().ResUnits >= 3000)
 		{
 			NPCPhrase(IMPROVE_FLAGSHIP_WITH_RU);
 		}
@@ -1013,11 +1013,11 @@ AnalyzeCondition(void)
 
 		HasMaximum = (num_thrusters == NumDriveSlots
 					  && num_jets == NumJetSlots
-					  && GLOBAL_SIS(CrewEnlisted) >= CrewPodCapacity * 3
-					  && GLOBAL_SIS(FuelOnBoard) >= FuelTankCapacity * 3
-					  && GLOBAL_SIS(NumLanders) >= 3
+					  && uqm::gameState().sis().CrewEnlisted >= CrewPodCapacity * 3
+					  && uqm::gameState().sis().FuelOnBoard >= FuelTankCapacity * 3
+					  && uqm::gameState().sis().NumLanders >= 3
 					  && num_batts >= 4 && num_guns >= 7 && num_defense >= 2);
-		if (!HasMaximum && GET_GAME_STATE(CHMMR_BOMB_STATE) < 2)
+		if (!HasMaximum && uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 2)
 		{
 			NPCPhrase(GOT_OK_FLAGSHIP);
 		}
@@ -1026,7 +1026,7 @@ AnalyzeCondition(void)
 			NPCPhrase(GOT_AWESOME_FLAGSHIP);
 		}
 
-		if (GET_GAME_STATE(CHMMR_BOMB_STATE) >= 2)
+		if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) >= 2)
 		{
 			NPCPhrase(CHMMR_IMPROVED_BOMB);
 			if (FleetStrength < 20000)
@@ -1036,7 +1036,7 @@ AnalyzeCondition(void)
 			else
 			{
 				NPCPhrase(GOT_AWESOME_FLEET);
-				if (!GET_GAME_STATE(TALKING_PET_ON_SHIP))
+				if (!uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 				{
 					NPCPhrase(MUST_ELIMINATE_URQUAN_GUARDS);
 				}
@@ -1055,7 +1055,7 @@ AnalyzeCondition(void)
 			NPCPhrase(MADE_SOME_ALLIES);
 			if (FleetStrength < 6000)
 			{
-				if (GLOBAL_SIS(ResUnits) >= 3000)
+				if (uqm::gameState().sis().ResUnits >= 3000)
 				{
 					NPCPhrase(BUY_COMBAT_SHIPS);
 				}
@@ -1082,15 +1082,15 @@ AnalyzeCondition(void)
 					{
 						NPCPhrase(NEED_GUNS_2);
 					}
-					if (GLOBAL_SIS(CrewEnlisted) < CrewPodCapacity * 3)
+					if (uqm::gameState().sis().CrewEnlisted < CrewPodCapacity * 3)
 					{
 						NPCPhrase(NEED_CREW_2);
 					}
-					if (GLOBAL_SIS(FuelOnBoard) < FuelTankCapacity * 3)
+					if (uqm::gameState().sis().FuelOnBoard < FuelTankCapacity * 3)
 					{
 						NPCPhrase(NEED_FUEL_2);
 					}
-					if (GLOBAL_SIS(NumLanders) < 3)
+					if (uqm::gameState().sis().NumLanders < 3)
 					{
 						NPCPhrase(NEED_LANDERS_1);
 					}
@@ -1103,18 +1103,18 @@ AnalyzeCondition(void)
 						NPCPhrase(NEED_POINT);
 					}
 				}
-				else if (!GET_GAME_STATE(AWARE_OF_SAMATRA))
+				else if (!uqm::gameState().flag(uqm::GameFlag::AWARE_OF_SAMATRA))
 				{
 					NPCPhrase(GO_LEARN_ABOUT_URQUAN);
 				}
 				else
 				{
 					NPCPhrase(KNOW_ABOUT_SAMATRA);
-					if (!GET_GAME_STATE(UTWIG_BOMB))
+					if (!uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB))
 					{
 						NPCPhrase(FIND_WAY_TO_DESTROY_SAMATRA);
 					}
-					else if (GET_GAME_STATE(UTWIG_BOMB_ON_SHIP))
+					else if (uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 					{
 						NPCPhrase(MUST_INCREASE_BOMB_STRENGTH);
 					}
@@ -1404,227 +1404,227 @@ DiscussDevices(bool TalkAbout)
 		switch (i)
 		{
 			case ROSY_SPHERE_DEVICE:
-				if (GET_GAME_STATE(ROSY_SPHERE_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_ROSY_SPHERE))
+				if (uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ROSY_SPHERE))
 				{
 					pStr = ABOUT_SPHERE;
-					SET_GAME_STATE(DISCUSSED_ROSY_SPHERE, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ROSY_SPHERE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case WIMBLIS_TRIDENT_DEVICE:
-				if (GET_GAME_STATE(WIMBLIS_TRIDENT_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_WIMBLIS_TRIDENT))
+				if (uqm::gameState().flag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_WIMBLIS_TRIDENT))
 				{
 					pStr = ABOUT_WIMBLIS_TRIDENT;
-					SET_GAME_STATE(DISCUSSED_WIMBLIS_TRIDENT, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_WIMBLIS_TRIDENT, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case GLOWING_ROD_DEVICE:
-				if (GET_GAME_STATE(GLOWING_ROD_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_GLOWING_ROD))
+				if (uqm::gameState().flag(uqm::GameFlag::GLOWING_ROD_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_GLOWING_ROD))
 				{
 					pStr = ABOUT_GLOWING_ROD;
-					SET_GAME_STATE(DISCUSSED_GLOWING_ROD, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_GLOWING_ROD, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case SUN_EFFICIENCY_DEVICE:
-				if (GET_GAME_STATE(SUN_DEVICE_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_SUN_EFFICIENCY))
+				if (uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_SUN_EFFICIENCY))
 				{
 					pStr = ABOUT_SUN;
-					SET_GAME_STATE(DISCUSSED_SUN_EFFICIENCY, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_SUN_EFFICIENCY, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case UTWIG_BOMB_DEVICE:
-				if (GET_GAME_STATE(UTWIG_BOMB_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_UTWIG_BOMB))
+				if (uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_UTWIG_BOMB))
 				{
 					pStr = ABOUT_BOMB;
-					SET_GAME_STATE(DISCUSSED_UTWIG_BOMB, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_UTWIG_BOMB, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case ULTRON_0_DEVICE:
-				if (GET_GAME_STATE(ULTRON_CONDITION) == 1
-					&& !GET_GAME_STATE(DISCUSSED_ULTRON))
+				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 1
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
 					pStr = ABOUT_ULTRON_0;
-					SET_GAME_STATE(DISCUSSED_ULTRON, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case ULTRON_1_DEVICE:
-				if (GET_GAME_STATE(ULTRON_CONDITION) == 2
-					&& !GET_GAME_STATE(DISCUSSED_ULTRON))
+				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 2
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
 					pStr = ABOUT_ULTRON_1;
-					SET_GAME_STATE(DISCUSSED_ULTRON, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case ULTRON_2_DEVICE:
-				if (GET_GAME_STATE(ULTRON_CONDITION) == 3
-					&& !GET_GAME_STATE(DISCUSSED_ULTRON))
+				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 3
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
 					pStr = ABOUT_ULTRON_2;
-					SET_GAME_STATE(DISCUSSED_ULTRON, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case ULTRON_3_DEVICE:
-				if (GET_GAME_STATE(ULTRON_CONDITION) == 4
-					&& !GET_GAME_STATE(DISCUSSED_ULTRON))
+				if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) == 4
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_ULTRON))
 				{
 					pStr = ABOUT_ULTRON_3;
-					SET_GAME_STATE(DISCUSSED_ULTRON, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_ULTRON, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case MAIDENS_DEVICE:
-				if (GET_GAME_STATE(MAIDENS_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_MAIDENS))
+				if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_MAIDENS))
 				{
 					pStr = ABOUT_MAIDENS;
-					SET_GAME_STATE(DISCUSSED_MAIDENS, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_MAIDENS, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case TALKING_PET_DEVICE:
-				if (GET_GAME_STATE(TALKING_PET_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_TALKING_PET))
+				if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_TALKING_PET))
 				{
 					pStr = ABOUT_TALKPET;
-					SET_GAME_STATE(DISCUSSED_TALKING_PET, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_TALKING_PET, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case AQUA_HELIX_DEVICE:
-				if (GET_GAME_STATE(AQUA_HELIX_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_AQUA_HELIX))
+				if (uqm::gameState().flag(uqm::GameFlag::AQUA_HELIX_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_AQUA_HELIX))
 				{
 					pStr = ABOUT_HELIX;
-					SET_GAME_STATE(DISCUSSED_AQUA_HELIX, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_AQUA_HELIX, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case CLEAR_SPINDLE_DEVICE:
-				if (GET_GAME_STATE(CLEAR_SPINDLE_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_CLEAR_SPINDLE))
+				if (uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_CLEAR_SPINDLE))
 				{
 					pStr = ABOUT_SPINDLE;
-					SET_GAME_STATE(DISCUSSED_CLEAR_SPINDLE, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_CLEAR_SPINDLE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case UMGAH_HYPERWAVE_DEVICE:
-				if (GET_GAME_STATE(UMGAH_BROADCASTERS_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_UMGAH_HYPERWAVE))
+				if (uqm::gameState().flag(uqm::GameFlag::UMGAH_BROADCASTERS_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_UMGAH_HYPERWAVE))
 				{
 					pStr = ABOUT_UCASTER;
-					SET_GAME_STATE(DISCUSSED_UMGAH_HYPERWAVE, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_UMGAH_HYPERWAVE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 #ifdef NEVER
 			case DATA_PLATE_1_DEVICE:
-				if (GET_GAME_STATE(DATA_PLATE_1_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_DATA_PLATE_1))
+				if (uqm::gameState().flag(uqm::GameFlag::DATA_PLATE_1_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_DATA_PLATE_1))
 				{
 					pStr = ABOUT_DATAPLATE_1;
-					SET_GAME_STATE(DISCUSSED_DATA_PLATE_1, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_DATA_PLATE_1, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case DATA_PLATE_2_DEVICE:
-				if (GET_GAME_STATE(DATA_PLATE_2_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_DATA_PLATE_2))
+				if (uqm::gameState().flag(uqm::GameFlag::DATA_PLATE_2_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_DATA_PLATE_2))
 				{
 					pStr = ABOUT_DATAPLATE_2;
-					SET_GAME_STATE(DISCUSSED_DATA_PLATE_2, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_DATA_PLATE_2, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case DATA_PLATE_3_DEVICE:
-				if (GET_GAME_STATE(DATA_PLATE_3_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_DATA_PLATE_3))
+				if (uqm::gameState().flag(uqm::GameFlag::DATA_PLATE_3_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_DATA_PLATE_3))
 				{
 					pStr = ABOUT_DATAPLATE_3;
-					SET_GAME_STATE(DISCUSSED_DATA_PLATE_3, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_DATA_PLATE_3, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 #endif /* NEVER */
 			case TAALO_PROTECTOR_DEVICE:
-				if (GET_GAME_STATE(TAALO_PROTECTOR_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_TAALO_PROTECTOR))
+				if (uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_TAALO_PROTECTOR))
 				{
 					pStr = ABOUT_SHIELD;
-					SET_GAME_STATE(DISCUSSED_TAALO_PROTECTOR, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_TAALO_PROTECTOR, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case EGG_CASING0_DEVICE:
-				if (GET_GAME_STATE(EGG_CASE0_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_EGG_CASING0))
+				if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE0_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_EGG_CASING0))
 				{
 					pStr = ABOUT_EGGCASE_0;
-					SET_GAME_STATE(DISCUSSED_EGG_CASING0, TalkAbout);
-					SET_GAME_STATE(DISCUSSED_EGG_CASING1, TalkAbout);
-					SET_GAME_STATE(DISCUSSED_EGG_CASING2, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING0, static_cast<uint32_t>(TalkAbout));
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING1, static_cast<uint32_t>(TalkAbout));
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING2, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case EGG_CASING1_DEVICE:
-				if (GET_GAME_STATE(EGG_CASE1_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_EGG_CASING1))
+				if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE1_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_EGG_CASING1))
 				{
 					pStr = ABOUT_EGGCASE_0;
-					SET_GAME_STATE(DISCUSSED_EGG_CASING0, TalkAbout);
-					SET_GAME_STATE(DISCUSSED_EGG_CASING1, TalkAbout);
-					SET_GAME_STATE(DISCUSSED_EGG_CASING2, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING0, static_cast<uint32_t>(TalkAbout));
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING1, static_cast<uint32_t>(TalkAbout));
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING2, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case EGG_CASING2_DEVICE:
-				if (GET_GAME_STATE(EGG_CASE2_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_EGG_CASING2))
+				if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE2_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_EGG_CASING2))
 				{
 					pStr = ABOUT_EGGCASE_0;
-					SET_GAME_STATE(DISCUSSED_EGG_CASING0, TalkAbout);
-					SET_GAME_STATE(DISCUSSED_EGG_CASING1, TalkAbout);
-					SET_GAME_STATE(DISCUSSED_EGG_CASING2, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING0, static_cast<uint32_t>(TalkAbout));
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING1, static_cast<uint32_t>(TalkAbout));
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_EGG_CASING2, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case SYREEN_SHUTTLE_DEVICE:
-				if (GET_GAME_STATE(SYREEN_SHUTTLE_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_SYREEN_SHUTTLE))
+				if (uqm::gameState().flag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_SYREEN_SHUTTLE))
 				{
 					pStr = ABOUT_SHUTTLE;
-					SET_GAME_STATE(DISCUSSED_SYREEN_SHUTTLE, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_SYREEN_SHUTTLE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case VUX_BEAST_DEVICE:
-				if (GET_GAME_STATE(VUX_BEAST_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_VUX_BEAST))
+				if (uqm::gameState().flag(uqm::GameFlag::VUX_BEAST_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_VUX_BEAST))
 				{
 					pStr = ABOUT_VUXBEAST0;
-					SET_GAME_STATE(DISCUSSED_VUX_BEAST, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_VUX_BEAST, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case DESTRUCT_CODE_DEVICE:
-				if (GET_GAME_STATE(DESTRUCT_CODE_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_DESTRUCT_CODE))
+				if (uqm::gameState().flag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_DESTRUCT_CODE))
 				{
 					pStr = ABOUT_DESTRUCT;
-					SET_GAME_STATE(DISCUSSED_DESTRUCT_CODE, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_DESTRUCT_CODE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case PORTAL_SPAWNER_DEVICE:
-				if (GET_GAME_STATE(PORTAL_SPAWNER_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_PORTAL_SPAWNER))
+				if (uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_PORTAL_SPAWNER))
 				{
 					pStr = ABOUT_PORTAL;
-					SET_GAME_STATE(DISCUSSED_PORTAL_SPAWNER, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_PORTAL_SPAWNER, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case URQUAN_WARP_DEVICE:
-				if (GET_GAME_STATE(PORTAL_KEY_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_URQUAN_WARP))
+				if (uqm::gameState().flag(uqm::GameFlag::PORTAL_KEY_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_URQUAN_WARP))
 				{
 					pStr = ABOUT_WARPPOD;
-					SET_GAME_STATE(DISCUSSED_URQUAN_WARP, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_URQUAN_WARP, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 			case BURVIX_HYPERWAVE_DEVICE:
-				if (GET_GAME_STATE(BURV_BROADCASTERS_ON_SHIP)
-					&& !GET_GAME_STATE(DISCUSSED_BURVIX_HYPERWAVE))
+				if (uqm::gameState().flag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP)
+					&& !uqm::gameState().flag(uqm::GameFlag::DISCUSSED_BURVIX_HYPERWAVE))
 				{
 					pStr = ABOUT_BCASTER;
-					SET_GAME_STATE(DISCUSSED_BURVIX_HYPERWAVE, TalkAbout);
+					uqm::gameState().setFlag(uqm::GameFlag::DISCUSSED_BURVIX_HYPERWAVE, static_cast<uint32_t>(TalkAbout));
 				}
 				break;
 		}
@@ -1684,10 +1684,10 @@ CheckTiming(uint16_t month_index, uint16_t day_index)
 			31,
 		};
 
-	mi = GET_GAME_STATE(STARBASE_MONTH);
+	mi = uqm::gameState().flag(uqm::GameFlag::STARBASE_MONTH);
 	uint16_t year_index {StartYear};
 
-	day_index += GET_GAME_STATE(STARBASE_DAY);
+	day_index += uqm::gameState().flag(uqm::GameFlag::STARBASE_DAY);
 	while (day_index > days_in_month[mi - 1])
 	{
 		day_index -= days_in_month[mi - 1];
@@ -1716,8 +1716,8 @@ CheckBulletins(bool Repeat)
 {
 	uint32_t BulletinMask {};
 	const uint16_t CrewSold = uqm::makeWord(
-		GET_GAME_STATE(CREW_SOLD_TO_DRUUGE0),
-		GET_GAME_STATE(CREW_SOLD_TO_DRUUGE1));
+		uqm::gameState().flag(uqm::GameFlag::CREW_SOLD_TO_DRUUGE0),
+		uqm::gameState().flag(uqm::GameFlag::CREW_SOLD_TO_DRUUGE1));
 
 	if (Repeat)
 	{
@@ -1725,7 +1725,7 @@ CheckBulletins(bool Repeat)
 	}
 	else
 	{
-		BulletinMask = GET_GAME_STATE(STARBASE_BULLETS);
+		BulletinMask = uqm::gameState().flag(uqm::GameFlag::STARBASE_BULLETS);
 	}
 
 	RESPONSE_REF pIntro {0};
@@ -1767,11 +1767,11 @@ CheckBulletins(bool Repeat)
 					}
 					break;
 				case 5:
-					if (GET_GAME_STATE(ARILOU_MANNER) == 2)
+					if (uqm::gameState().flag(uqm::GameFlag::ARILOU_MANNER) == 2)
 					{
 						BulletinMask |= 1L << b0;
 					}
-					else if (GET_GAME_STATE(PORTAL_SPAWNER)
+					else if (uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER)
 							 && (Repeat || EscortFeasibilityStudy(ARILOU_SHIP)))
 					{
 						pStr = STARBASE_BULLETIN_6;
@@ -1782,13 +1782,13 @@ CheckBulletins(bool Repeat)
 					}
 					break;
 				case 6:
-					if (GET_GAME_STATE(ZOQFOT_DISTRESS) == 1)
+					if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS) == 1)
 					{
 						pStr = STARBASE_BULLETIN_7;
 					}
 					break;
 				case 7:
-					if (GET_GAME_STATE(MET_MELNORME))
+					if (uqm::gameState().flag(uqm::GameFlag::MET_MELNORME))
 					{
 						BulletinMask |= 1L << b0;
 					}
@@ -1798,7 +1798,7 @@ CheckBulletins(bool Repeat)
 					}
 					break;
 				case 8:
-					if (GET_GAME_STATE(MET_MELNORME))
+					if (uqm::gameState().flag(uqm::GameFlag::MET_MELNORME))
 					{
 						BulletinMask |= 1L << b0;
 					}
@@ -1808,7 +1808,7 @@ CheckBulletins(bool Repeat)
 					}
 					break;
 				case 9:
-					if (GET_GAME_STATE(FOUND_PLUTO_SPATHI))
+					if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI))
 					{
 						BulletinMask |= 1L << b0;
 					}
@@ -1818,14 +1818,14 @@ CheckBulletins(bool Repeat)
 					}
 					break;
 				case 10:
-					if (GET_GAME_STATE(SPATHI_SHIELDED_SELVES))
+					if (uqm::gameState().flag(uqm::GameFlag::SPATHI_SHIELDED_SELVES))
 					{
 						pStr = STARBASE_BULLETIN_11;
 					}
 					break;
 				case 11:
-					if (GET_GAME_STATE(ZOQFOT_HOME_VISITS)
-						|| GET_GAME_STATE(ZOQFOT_GRPOFFS))
+					if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_HOME_VISITS)
+						|| uqm::gameState().flag(uqm::GameFlag::ZOQFOT_GRPOFFS))
 					{
 						BulletinMask |= 1L << b0;
 					}
@@ -1847,13 +1847,13 @@ CheckBulletins(bool Repeat)
 					}
 					break;
 				case 14:
-					if (GET_GAME_STATE(PKUNK_MISSION))
+					if (uqm::gameState().flag(uqm::GameFlag::PKUNK_MISSION))
 					{
 						pStr = STARBASE_BULLETIN_15;
 					}
 					break;
 				case 15:
-					if (GET_GAME_STATE(DESTRUCT_CODE_ON_SHIP))
+					if (uqm::gameState().flag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP))
 					{
 						BulletinMask |= 1L << b0;
 					}
@@ -1865,13 +1865,13 @@ CheckBulletins(bool Repeat)
 				case 16:
 					break;
 				case 17:
-					if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK))
+					if (uqm::gameState().flag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK))
 					{
 						pStr = STARBASE_BULLETIN_18;
 					}
 					break;
 				case 18:
-					if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
+					if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 					{
 						pStr = STARBASE_BULLETIN_19;
 					}
@@ -1881,7 +1881,7 @@ CheckBulletins(bool Repeat)
 				case 20:
 					break;
 				case 21:
-					if (GET_GAME_STATE(ZOQFOT_DISTRESS) == 2)
+					if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS) == 2)
 					{
 						pStr = STARBASE_BULLETIN_22;
 					}
@@ -1927,8 +1927,8 @@ CheckBulletins(bool Repeat)
 						uint16_t crew_bought {};
 
 						crew_bought = uqm::makeWord(
-							GET_GAME_STATE(CREW_PURCHASED0),
-							GET_GAME_STATE(CREW_PURCHASED1));
+							uqm::gameState().flag(uqm::GameFlag::CREW_PURCHASED0),
+							uqm::gameState().flag(uqm::GameFlag::CREW_PURCHASED1));
 						if (crew_bought >= CrewExpenseThreshold)
 						{
 							pStr = STARBASE_BULLETIN_29;
@@ -1993,13 +1993,13 @@ CheckBulletins(bool Repeat)
 		}
 	}
 
-	if (pIntro == 0 && GET_GAME_STATE(STARBASE_VISITED))
+	if (pIntro == 0 && uqm::gameState().flag(uqm::GameFlag::STARBASE_VISITED))
 	{
 		NPCPhrase(RETURN_HELLO);
 	}
 	else if (!Repeat)
 	{
-		SET_GAME_STATE(STARBASE_BULLETS, BulletinMask);
+		uqm::gameState().setFlag(uqm::GameFlag::STARBASE_BULLETS, static_cast<uint32_t>(BulletinMask));
 	}
 }
 
@@ -2020,7 +2020,7 @@ NormalStarbase(RESPONSE_REF R)
 	}
 	else if (R == 0)
 	{
-		if (GET_GAME_STATE(MOONBASE_ON_SHIP))
+		if (uqm::gameState().flag(uqm::GameFlag::MOONBASE_ON_SHIP))
 		{
 			NPCPhrase(STARBASE_IS_READY);
 			DeltaSISGauges(0, 0, 2500);
@@ -2028,12 +2028,10 @@ NormalStarbase(RESPONSE_REF R)
 			{
 				oldRU = 2500;
 			}
-			SET_GAME_STATE(STARBASE_MONTH,
-						   uqm::gameState().clock().month());
-			SET_GAME_STATE(STARBASE_DAY,
-						   uqm::gameState().clock().day());
+			uqm::gameState().setFlag(uqm::GameFlag::STARBASE_MONTH, static_cast<uint32_t>(uqm::gameState().clock().month()));
+			uqm::gameState().setFlag(uqm::GameFlag::STARBASE_DAY, static_cast<uint32_t>(uqm::gameState().clock().day()));
 		}
-		else if (GET_GAME_STATE(STARBASE_VISITED))
+		else if (uqm::gameState().flag(uqm::GameFlag::STARBASE_VISITED))
 		{
 			CheckBulletins(false);
 		}
@@ -2073,10 +2071,10 @@ NormalStarbase(RESPONSE_REF R)
 			CheckBulletins(false);
 		}
 
-		SET_GAME_STATE(STARBASE_VISITED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::STARBASE_VISITED, static_cast<uint32_t>(1));
 	}
 
-	if (GLOBAL_SIS(TotalElementMass))
+	if (uqm::gameState().sis().TotalElementMass)
 	{
 		Response(have_minerals, SellMinerals);
 	}
@@ -2120,9 +2118,9 @@ SellMinerals(RESPONSE_REF R)
 		NPCPhrase(CARGO_LIST);
 		for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
 		{
-			if ((amount[seg] = GLOBAL_SIS(ElementAmounts[i])) != 0)
+			if ((amount[seg] = uqm::gameState().sis().ElementAmounts[i]) != 0)
 			{
-				Ru[seg] = amount[seg] * GLOBAL(ElementWorth[i]);
+				Ru[seg] = amount[seg] * uqm::gameState().game().ElementWorth[i];
 				if (count > 0)
 				{
 					NPCPhrase(ELLIPSES);
@@ -2139,7 +2137,7 @@ SellMinerals(RESPONSE_REF R)
 				NPCPhrase(RESUNITS);
 				total += Ru[seg];
 				seg++;
-				GLOBAL_SIS(ElementAmounts[i]) = 0;
+				uqm::gameState().sis().ElementAmounts[i] = 0;
 				++count;
 			}
 		}
@@ -2155,7 +2153,7 @@ SellMinerals(RESPONSE_REF R)
 		for (uint16_t sseg {1}; sseg < seg + 1; sseg++)
 		{
 			AlienTalkSegue(sseg);
-			GLOBAL_SIS(TotalElementMass) -= amount[sseg - 1];
+			uqm::gameState().sis().TotalElementMass -= amount[sseg - 1];
 			DeltaSISGauges(0, 0, Ru[sseg - 1]);
 			ClearSISRect(DrawSisDisplay);
 		}
@@ -2185,10 +2183,10 @@ uninit_starbase(void)
 static void
 post_starbase_enc(void)
 {
-	SET_GAME_STATE(MOONBASE_ON_SHIP, 0);
-	if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
+	uqm::gameState().setFlag(uqm::GameFlag::MOONBASE_ON_SHIP, static_cast<uint32_t>(0));
+	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 	{
-		SET_GAME_STATE(CHMMR_BOMB_STATE, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_BOMB_STATE, static_cast<uint32_t>(3));
 	}
 }
 

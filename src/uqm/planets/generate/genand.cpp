@@ -192,7 +192,7 @@ GenerateAndrosynth_pickupEnergy(SOLARSYS_STATE* solarSys,
 		setNodeRetrieved(planetInfo, ENERGY_SCAN, whichNode + 16);
 		// We set the retrieved bit manually here and need to indicate
 		// the change to the solar system state functions
-		SET_GAME_STATE(PLANETARY_CHANGE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PLANETARY_CHANGE, static_cast<uint32_t>(1));
 
 		// Androsynth ruins have several lander reports which form a story
 		GenerateDefault_landerReportCycle(solarSys);

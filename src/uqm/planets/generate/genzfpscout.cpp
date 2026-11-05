@@ -47,16 +47,16 @@ const GenerateFunctions generateZoqFotPikScoutFunctions = {
 static bool
 GenerateZoqFotPikScout_initNpcs(SOLARSYS_STATE* solarSys)
 {
-	if (!GET_GAME_STATE(MET_ZOQFOT))
+	if (!uqm::gameState().flag(uqm::GameFlag::MET_ZOQFOT))
 	{
-		GLOBAL(BattleGroupRef) = GET_GAME_STATE(ZOQFOT_GRPOFFS);
-		if (GLOBAL(BattleGroupRef) == 0)
+		uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_GRPOFFS);
+		if (uqm::gameState().game().BattleGroupRef == 0)
 		{
 			CloneShipFragment(ZOQFOTPIK_SHIP,
-							  &GLOBAL(npc_built_ship_q), 0);
-			GLOBAL(BattleGroupRef) = PutGroupInfo(GroupsAddNew, 1);
-			ReinitQueue(&GLOBAL(npc_built_ship_q));
-			SET_GAME_STATE(ZOQFOT_GRPOFFS, GLOBAL(BattleGroupRef));
+							  &uqm::gameState().game().npc_built_ship_q, 0);
+			uqm::gameState().game().BattleGroupRef = PutGroupInfo(GroupsAddNew, 1);
+			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+			uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_GRPOFFS, static_cast<uint32_t>(uqm::gameState().game().BattleGroupRef));
 		}
 	}
 
@@ -70,18 +70,18 @@ GenerateZoqFotPikScout_reinitNpcs(SOLARSYS_STATE* solarSys)
 {
 	GenerateDefault_reinitNpcs(solarSys);
 
-	if (!GLOBAL(BattleGroupRef))
+	if (!uqm::gameState().game().BattleGroupRef)
 	{
 		return true; // nothing to check
 	}
 
-	HIPGROUP hGroup {GetHeadLink(&GLOBAL(ip_group_q))};
+	HIPGROUP hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
 	if (!hGroup)
 	{
 		return true; // still nothing to check
 	}
 
-	IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+	IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
 	if (GroupPtr->race_id == ZOQFOTPIK_SHIP
@@ -90,7 +90,7 @@ GenerateZoqFotPikScout_reinitNpcs(SOLARSYS_STATE* solarSys)
 		GroupPtr->task = FLEE | IGNORE_FLAGSHIP | REFORM_GROUP;
 		GroupPtr->dest_loc = 0;
 	}
-	UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+	UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 
 	return true;
 }

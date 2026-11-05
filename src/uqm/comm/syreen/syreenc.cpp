@@ -312,7 +312,7 @@ FriendlyExit(RESPONSE_REF R)
 
 		DrawSISFrame();
 		DrawSISMessage(nullptr);
-		DrawSISTitle(GLOBAL_SIS(PlanetName));
+		DrawSISTitle(uqm::gameState().sis().PlanetName);
 		SetCommDarkMode(false);
 		RedrawSISComWindow();
 
@@ -330,8 +330,8 @@ FriendlyExit(RESPONSE_REF R)
 		FadeScreen(FadeAllToColor, c_gameSecond / 2);
 		AlienTalkSegue((uint16_t)~0);
 
-		SET_GAME_STATE(PLAYER_HAD_SEX, 1);
-		SET_GAME_STATE(PLAYER_HAVING_SEX, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HAD_SEX, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HAVING_SEX, static_cast<uint32_t>(0));
 	}
 }
 
@@ -444,7 +444,7 @@ Foreplay(RESPONSE_REF R)
 		// For future ideas maybe
 
 		AlienTalkSegue((uint16_t)~0);
-		SET_GAME_STATE(PLAYER_HAVING_SEX, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HAVING_SEX, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, why_lights_off))
 	{
@@ -499,7 +499,7 @@ AfterAmbush(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SYREEN_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SYREEN_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -516,7 +516,7 @@ AfterAmbush(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SYREEN_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_after_ambush);
 	}
@@ -525,7 +525,7 @@ AfterAmbush(RESPONSE_REF R)
 	{
 		Response(what_about_you, AfterAmbush);
 	}
-	else if (!GET_GAME_STATE(PLAYER_HAD_SEX))
+	else if (!uqm::gameState().flag(uqm::GameFlag::PLAYER_HAD_SEX))
 	{
 		Response(what_about_us, Foreplay);
 	}
@@ -583,8 +583,8 @@ SyreenShuttle(RESPONSE_REF R)
 		NPCPhrase(DONT_KNOW_WHERE);
 		NPCPhrase(GIVE_SHUTTLE);
 
-		SET_GAME_STATE(SYREEN_SHUTTLE, 1);
-		SET_GAME_STATE(SYREEN_SHUTTLE_ON_SHIP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP, static_cast<uint32_t>(1));
 
 		DISABLE_PHRASE(where_is_it);
 	}
@@ -593,8 +593,8 @@ SyreenShuttle(RESPONSE_REF R)
 		NPCPhrase(GREAT);
 		NPCPhrase(GIVE_SHUTTLE);
 
-		SET_GAME_STATE(SYREEN_SHUTTLE, 1);
-		SET_GAME_STATE(SYREEN_SHUTTLE_ON_SHIP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP, static_cast<uint32_t>(1));
 
 		DISABLE_PHRASE(been_there);
 	}
@@ -605,7 +605,7 @@ SyreenShuttle(RESPONSE_REF R)
 	}
 	else
 	{
-		if (!GET_GAME_STATE(KNOW_SYREEN_VAULT))
+		if (!uqm::gameState().flag(uqm::GameFlag::KNOW_SYREEN_VAULT))
 		{
 			if (PhraseEnabled(where_is_it))
 			{
@@ -663,13 +663,13 @@ NormalSyreen(RESPONSE_REF R)
 	{
 		NPCPhrase(WHAT_PROOF);
 
-		SET_GAME_STATE(KNOW_ABOUT_SHATTERED, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, have_no_proof))
 	{
 		NPCPhrase(NEED_PROOF);
 
-		SET_GAME_STATE(SYREEN_WANT_PROOF, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_WANT_PROOF, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, have_proof))
 	{
@@ -681,70 +681,70 @@ NormalSyreen(RESPONSE_REF R)
 	{
 		NPCPhrase(OUR_NEW_WORLD);
 
-		SET_GAME_STATE(SYREEN_STACK0, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK0, static_cast<uint32_t>(1));
 		LastStack = 1;
 	}
 	else if (PlayerSaid(R, what_about_war))
 	{
 		NPCPhrase(ABOUT_WAR);
 
-		SET_GAME_STATE(SYREEN_STACK0, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK0, static_cast<uint32_t>(2));
 		LastStack = 1;
 	}
 	else if (PlayerSaid(R, help_us))
 	{
 		NPCPhrase(WONT_HELP);
 
-		SET_GAME_STATE(SYREEN_STACK0, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK0, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, what_about_history))
 	{
 		NPCPhrase(BEFORE_WAR);
 
-		SET_GAME_STATE(SYREEN_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK1, static_cast<uint32_t>(1));
 		LastStack = 2;
 	}
 	else if (PlayerSaid(R, what_about_homeworld))
 	{
 		NPCPhrase(ABOUT_HOMEWORLD);
 
-		SET_GAME_STATE(SYREEN_STACK1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK1, static_cast<uint32_t>(2));
 		LastStack = 2;
 	}
 	else if (PlayerSaid(R, what_happened))
 	{
 		NPCPhrase(DONT_KNOW_HOW);
 
-		SET_GAME_STATE(KNOW_SYREEN_WORLD_SHATTERED, 1);
-		SET_GAME_STATE(SYREEN_STACK1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_SYREEN_WORLD_SHATTERED, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK1, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, what_about_outfit))
 	{
 		NPCPhrase(HOPE_YOU_LIKE_IT);
 
-		SET_GAME_STATE(SYREEN_STACK2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK2, static_cast<uint32_t>(1));
 		LastStack = 3;
 	}
 	else if (PlayerSaid(R, where_mates))
 	{
 		NPCPhrase(MATES_KILLED);
 
-		SET_GAME_STATE(SYREEN_STACK2, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK2, static_cast<uint32_t>(2));
 		LastStack = 3;
 	}
 	else if (PlayerSaid(R, get_lonely))
 	{
 		NPCPhrase(MAKE_OUT_ALL_RIGHT);
 
-		SET_GAME_STATE(SYREEN_STACK2, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK2, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, look_at_egg_sacks))
 	{
 		NPCPhrase(HORRIBLE_TRUTH);
 
 		setSegue(Segue_peace);
-		SET_GAME_STATE(SYREEN_HOME_VISITS, 0);
-		SET_GAME_STATE(SYREEN_KNOW_ABOUT_MYCON, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_KNOW_ABOUT_MYCON, static_cast<uint32_t>(1));
 
 		if (!SyreenVoiceFix && usingSpeech)
 		{
@@ -753,10 +753,10 @@ NormalSyreen(RESPONSE_REF R)
 		return;
 	}
 
-	if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) < 3)
+	if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 3)
 	{
-		if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) == 2
-			&& GET_GAME_STATE(KNOW_SYREEN_WORLD_SHATTERED))
+		if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) == 2
+			&& uqm::gameState().flag(uqm::GameFlag::KNOW_SYREEN_WORLD_SHATTERED))
 		{
 			if (PhraseEnabled(know_about_deep_children))
 			{
@@ -770,9 +770,9 @@ NormalSyreen(RESPONSE_REF R)
 	}
 	else
 	{
-		if (GET_GAME_STATE(EGG_CASE0_ON_SHIP)
-			|| GET_GAME_STATE(EGG_CASE1_ON_SHIP)
-			|| GET_GAME_STATE(EGG_CASE2_ON_SHIP))
+		if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE0_ON_SHIP)
+			|| uqm::gameState().flag(uqm::GameFlag::EGG_CASE1_ON_SHIP)
+			|| uqm::gameState().flag(uqm::GameFlag::EGG_CASE2_ON_SHIP))
 		{
 			if (PhraseEnabled(have_proof))
 			{
@@ -783,12 +783,12 @@ NormalSyreen(RESPONSE_REF R)
 				pStr[0] = look_at_egg_sacks;
 			}
 		}
-		else if (!GET_GAME_STATE(SYREEN_WANT_PROOF))
+		else if (!uqm::gameState().flag(uqm::GameFlag::SYREEN_WANT_PROOF))
 		{
 			pStr[0] = have_no_proof;
 		}
 	}
-	switch (GET_GAME_STATE(SYREEN_STACK0))
+	switch (uqm::gameState().flag(uqm::GameFlag::SYREEN_STACK0))
 	{
 		case 0:
 			pStr[1] = what_doing_here;
@@ -800,7 +800,7 @@ NormalSyreen(RESPONSE_REF R)
 			pStr[1] = help_us;
 			break;
 	}
-	switch (GET_GAME_STATE(SYREEN_STACK1))
+	switch (uqm::gameState().flag(uqm::GameFlag::SYREEN_STACK1))
 	{
 		case 0:
 			pStr[2] = what_about_history;
@@ -812,7 +812,7 @@ NormalSyreen(RESPONSE_REF R)
 			pStr[2] = what_happened;
 			break;
 	}
-	switch (GET_GAME_STATE(SYREEN_STACK2))
+	switch (uqm::gameState().flag(uqm::GameFlag::SYREEN_STACK2))
 	{
 		case 0:
 			pStr[3] = what_about_outfit;
@@ -894,18 +894,18 @@ PlanAmbush(RESPONSE_REF R)
 	(void)R; // ignored
 	NPCPhrase(OK_FOUND_VAULT);
 
-	SET_GAME_STATE(MYCON_AMBUSH, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::MYCON_AMBUSH, static_cast<uint32_t>(1));
 	// This is redundant but left here for clarity
-	SET_GAME_STATE(SYREEN_HOME_VISITS, 0);
+	uqm::gameState().setFlag(uqm::GameFlag::SYREEN_HOME_VISITS, static_cast<uint32_t>(0));
 
 	// Send ambush fleet to Organon.  EncounterPercent for the
 	// Syreen is 0, so this is purely decorative.
 	if (IsExtended())
 	{
 		HFLEETINFO hSyreen =
-			GetStarShipFromIndex(&GLOBAL(avail_race_q), SYREEN_SHIP);
+			GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, SYREEN_SHIP);
 		FLEET_INFO* SyreenPtr =
-			LockFleetInfo(&GLOBAL(avail_race_q), hSyreen);
+			LockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
 
 		if (SyreenPtr)
 		{
@@ -917,7 +917,7 @@ PlanAmbush(RESPONSE_REF R)
 			SetRaceDest(SYREEN_SHIP, loc.x, loc.y, 15, (uint8_t)~0);
 		}
 
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hSyreen);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
 	}
 
 	Response(whats_my_reward, Foreplay);
@@ -956,8 +956,8 @@ Intro(void)
 		return;
 	}
 
-	NumVisits = GET_GAME_STATE(SYREEN_HOME_VISITS);
-	if (GET_GAME_STATE(MYCON_KNOW_AMBUSH))
+	NumVisits = uqm::gameState().flag(uqm::GameFlag::SYREEN_HOME_VISITS);
+	if (uqm::gameState().flag(uqm::GameFlag::MYCON_KNOW_AMBUSH))
 	{
 		switch (NumVisits++)
 		{
@@ -979,7 +979,7 @@ Intro(void)
 
 		AfterAmbush((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(MYCON_AMBUSH))
+	else if (uqm::gameState().flag(uqm::GameFlag::MYCON_AMBUSH))
 	{
 		switch (NumVisits++)
 		{
@@ -991,7 +991,7 @@ Intro(void)
 
 		AmbushReady((RESPONSE_REF)0);
 	}
-	else if (!GET_GAME_STATE(SYREEN_KNOW_ABOUT_MYCON))
+	else if (!uqm::gameState().flag(uqm::GameFlag::SYREEN_KNOW_ABOUT_MYCON))
 	{
 		switch (NumVisits++)
 		{
@@ -1023,7 +1023,7 @@ Intro(void)
 		}
 	}
 
-	else if (!GET_GAME_STATE(SYREEN_SHUTTLE) && (SyreenVoiceFix || !usingSpeech))
+	else if (!uqm::gameState().flag(uqm::GameFlag::SYREEN_SHUTTLE) && (SyreenVoiceFix || !usingSpeech))
 	{
 		switch (NumVisits++)
 		{
@@ -1036,7 +1036,7 @@ Intro(void)
 		SyreenShuttle((RESPONSE_REF)0);
 	}
 
-	else if (GET_GAME_STATE(SHIP_VAULT_UNLOCKED))
+	else if (uqm::gameState().flag(uqm::GameFlag::SHIP_VAULT_UNLOCKED))
 	{
 		PlanAmbush((RESPONSE_REF)0);
 		// XXX: PlanAmbush() sets SYREEN_HOME_VISITS=0, but then this value
@@ -1061,7 +1061,7 @@ Intro(void)
 
 		SyreenVault((RESPONSE_REF)0);
 	}
-	SET_GAME_STATE(SYREEN_HOME_VISITS, NumVisits);
+	uqm::gameState().setFlag(uqm::GameFlag::SYREEN_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 }
 
 static uint16_t

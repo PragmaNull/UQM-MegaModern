@@ -254,8 +254,8 @@ LeaveAutoPilot:
 		}
 
 		if (!(StarShipPtr->cur_status_flags & ThrustFlag)
-			|| (GLOBAL_SIS(FuelOnBoard) == 0
-				&& GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1))
+			|| (uqm::gameState().sis().FuelOnBoard == 0
+				&& uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1))
 		{
 			AccelerateDirection = -1;
 			GetCurrentVelocityComponents(&ElementPtr->velocity,
@@ -272,8 +272,8 @@ LeaveAutoPilot:
 		int16_t facing {};
 		GFXPOINT universe;
 
-		universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
-		universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
+		universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
+		universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
 		udx = uqm::flagship().autopilot.target().x - universe.x;
 		udy = -(uqm::flagship().autopilot.target().y - universe.y);
 		if ((dx = (int16_t)udx) < 0)
@@ -329,8 +329,8 @@ LeaveAutoPilot:
 		}
 
 		GetCurrentVelocityComponents(&ElementPtr->velocity, &dx, &dy);
-		if ((GLOBAL_SIS(FuelOnBoard)
-			 || GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1)
+		if ((uqm::gameState().sis().FuelOnBoard
+			 || uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1)
 			&& (int)facing == (int)StarShipPtr->ShipFacing)
 		{
 			StarShipPtr->cur_status_flags |= ShipAtMaxSpeed;
@@ -1022,17 +1022,17 @@ init_sis(void)
 			new_sis_desc.ship_data.ship_rsc[2] = SisSmlMaskPmapAnim;
 		}
 
-		if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 3)
+		if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 3)
 		{
-			SET_GAME_STATE(BOMB_CARRIER, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::BOMB_CARRIER, static_cast<uint32_t>(1));
 		}
 	}
 
 	SetCustomShipData(&new_sis_desc, &empty_data);
-	InitModuleSlots(&new_sis_desc, GLOBAL_SIS(ModuleSlots));
-	InitWeaponSlots(&new_sis_desc, GLOBAL_SIS(ModuleSlots));
-	InitDriveSlots(&new_sis_desc, GLOBAL_SIS(DriveSlots));
-	InitJetSlots(&new_sis_desc, GLOBAL_SIS(JetSlots));
+	InitModuleSlots(&new_sis_desc, uqm::gameState().sis().ModuleSlots);
+	InitWeaponSlots(&new_sis_desc, uqm::gameState().sis().ModuleSlots);
+	InitDriveSlots(&new_sis_desc, uqm::gameState().sis().DriveSlots);
+	InitJetSlots(&new_sis_desc, uqm::gameState().sis().JetSlots);
 
 	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 	{
@@ -1042,7 +1042,7 @@ init_sis(void)
 	{
 		// Count the captain too.
 		new_sis_desc.ship_info.max_crew++;
-		new_sis_desc.ship_info.crew_level = GLOBAL_SIS(CrewEnlisted) + 1;
+		new_sis_desc.ship_info.crew_level = uqm::gameState().sis().CrewEnlisted + 1;
 		new_sis_desc.ship_info.ship_flags |= PlayerCaptain;
 	}
 
@@ -1058,11 +1058,10 @@ uninit_sis(RACE_DESC* pRaceDesc)
 {
 	if (!inHQSpace())
 	{
-		GLOBAL_SIS(CrewEnlisted) = pRaceDesc->ship_info.crew_level;
+		uqm::gameState().sis().CrewEnlisted = pRaceDesc->ship_info.crew_level;
 		if (pRaceDesc->ship_info.ship_flags & PlayerCaptain)
 		{
-			GLOBAL_SIS(CrewEnlisted)
-			--;
+			uqm::gameState().sis().CrewEnlisted--;
 		}
 	}
 

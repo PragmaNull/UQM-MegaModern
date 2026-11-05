@@ -73,7 +73,7 @@ GenerateSaMatra_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
 	{
-		if (!GET_GAME_STATE(URQUAN_MESSED_UP))
+		if (!uqm::gameState().flag(uqm::GameFlag::URQUAN_MESSED_UP))
 		{
 			BuildUrquanGuard(solarSys);
 		}
@@ -108,13 +108,13 @@ GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 		// Do not want guards to chase the player
 
 		GuardEngaged = false;
-		for (hGroup = GetHeadLink(&GLOBAL(ip_group_q));
+		for (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q);
 			 hGroup; hGroup = hNextGroup)
 		{
-			IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+			IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 			hNextGroup = _GetSuccLink(GroupPtr);
 
-			if (GET_GAME_STATE(URQUAN_MESSED_UP))
+			if (uqm::gameState().flag(uqm::GameFlag::URQUAN_MESSED_UP))
 			{
 				GroupPtr->task &= REFORM_GROUP;
 				GroupPtr->task |= FLEE | IGNORE_FLAGSHIP;
@@ -130,7 +130,7 @@ GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 				GuardEngaged = true;
 			}
 
-			UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+			UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 		}
 
 		if (GuardEngaged)
@@ -195,7 +195,7 @@ GenerateSaMatra_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pPlanet->data_index = GenerateHabitableWorld();
 
-		if (!GET_GAME_STATE(KOHR_AH_FRENZY)
+		if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
 			&& (RaceDead(ARILOU_SHIP) || uqm::isStarSeed()))
 		{
 			pPlanet->data_index |= PLANET_SHIELDED;
@@ -297,16 +297,16 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 		if (CurStarDescPtr()->Index == SAMATRA_DEFINED)
 		{
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			if (!GET_GAME_STATE(URQUAN_MESSED_UP))
+			if (!uqm::gameState().flag(uqm::GameFlag::URQUAN_MESSED_UP))
 			{
 				CloneShipFragment((IsExtended()
-										   && GET_GAME_STATE(KOHR_AH_FRENZY) ?
+										   && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY) ?
 									   BLACK_URQUAN_SHIP :
 									   URQUAN_SHIP),
-								  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
+								  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
 			}
 			else
 			{
@@ -315,19 +315,19 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 				for (uint8_t i = 0; i < urQuanRemants; ++i)
 				{
 					CloneShipFragment((IsExtended()
-											   && GET_GAME_STATE(KOHR_AH_FRENZY) ?
+											   && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY) ?
 										   BLACK_URQUAN_SHIP :
 										   URQUAN_SHIP),
-									  &GLOBAL(npc_built_ship_q), 0);
+									  &uqm::gameState().game().npc_built_ship_q, 0);
 					CloneShipFragment(BLACK_URQUAN_SHIP,
-									  &GLOBAL(npc_built_ship_q), 0);
+									  &uqm::gameState().game().npc_built_ship_q, 0);
 				}
 			}
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
-			SET_GAME_STATE(URQUAN_PROTECTING_SAMATRA, 1);
-			if (IsExtended() && GET_GAME_STATE(KOHR_AH_FRENZY))
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
+			uqm::gameState().setFlag(uqm::GameFlag::URQUAN_PROTECTING_SAMATRA, static_cast<uint32_t>(1));
+			if (IsExtended() && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 			{
 				InitCommunication(BLACKURQ_CONVERSATION);
 			}
@@ -341,18 +341,18 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 				bool UrquanSurvivors {};
 
 				UrquanSurvivors =
-					GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
+					GetHeadLink(&uqm::gameState().game().npc_built_ship_q) != 0;
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
-				ReinitQueue(&GLOBAL(npc_built_ship_q));
+				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 				if (UrquanSurvivors)
 				{
-					SET_GAME_STATE(URQUAN_PROTECTING_SAMATRA, 0);
+					uqm::gameState().setFlag(uqm::GameFlag::URQUAN_PROTECTING_SAMATRA, static_cast<uint32_t>(0));
 				}
 				else
 				{
-					if (isDifficulty(uqm::Difficulty::Hard) && (GET_GAME_STATE(HM_ENCOUNTERS) & 1 << NO_HELP_FROM_PKUNK))
+					if (isDifficulty(uqm::Difficulty::Hard) && (uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << NO_HELP_FROM_PKUNK))
 					{
 						return true;
 					}
@@ -361,7 +361,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 					EncounterRace = -1;
 					uqm::currentActivity() =
 						IN_LAST_BATTLE | START_ENCOUNTER;
-					if (GET_GAME_STATE(YEHAT_CIVIL_WAR)
+					if (uqm::gameState().flag(uqm::GameFlag::YEHAT_CIVIL_WAR)
 						&& StartSphereTracking(YEHAT_SHIP)
 						&& EscortFeasibilityStudy(YEHAT_REBEL_SHIP))
 					{
@@ -389,7 +389,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 
 					// use alternate text if the player
 					// hasn't freed the Earth starbase yet
-					if (!GET_GAME_STATE(STARBASE_AVAILABLE))
+					if (!uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 					{
 						solarSys->SysInfo.PlanetInfo.DiscoveryIndex += 1;
 					}
@@ -438,9 +438,9 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 	GFXPOINT org;
 	HIPGROUP hNextGroup {};
 
-	GLOBAL(BattleGroupRef) = GET_GAME_STATE(SAMATRA_GRPOFFS);
+	uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::SAMATRA_GRPOFFS);
 
-	if (!GET_GAME_STATE(KOHR_AH_FRENZY))
+	if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 	{
 		ship1 = URQUAN_SHIP;
 		ship2 = BLACK_URQUAN_SHIP;
@@ -451,42 +451,42 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 		ship2 = (!IsExtended() ? URQUAN_SHIP : BLACK_URQUAN_SHIP);
 	}
 
-	assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+	assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 	for (b0 = 0; b0 < MaxShipsPerSide; ++b0)
 	{
-		CloneShipFragment((RACE_ID)ship1, &GLOBAL(npc_built_ship_q), 0);
+		CloneShipFragment((RACE_ID)ship1, &uqm::gameState().game().npc_built_ship_q, 0);
 	}
 
-	if (GLOBAL(BattleGroupRef) == 0)
+	if (uqm::gameState().game().BattleGroupRef == 0)
 	{
-		GLOBAL(BattleGroupRef) = PutGroupInfo(GroupsAddNew, 1);
-		SET_GAME_STATE(SAMATRA_GRPOFFS, GLOBAL(BattleGroupRef));
+		uqm::gameState().game().BattleGroupRef = PutGroupInfo(GroupsAddNew, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SAMATRA_GRPOFFS, static_cast<uint32_t>(uqm::gameState().game().BattleGroupRef));
 	}
 
 	for (b0 = 1; b0 <= NumUrquanGuards0; ++b0)
 	{
-		PutGroupInfo(GLOBAL(BattleGroupRef), b0);
+		PutGroupInfo(uqm::gameState().game().BattleGroupRef, b0);
 	}
 
-	ReinitQueue(&GLOBAL(npc_built_ship_q));
+	ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 	for (b0 = 0; b0 < MaxShipsPerSide; ++b0)
 	{
-		CloneShipFragment((RACE_ID)ship2, &GLOBAL(npc_built_ship_q), 0);
+		CloneShipFragment((RACE_ID)ship2, &uqm::gameState().game().npc_built_ship_q, 0);
 	}
 
 	for (b0 = 1; b0 <= NumUrquanGuards1; ++b0)
 	{
-		PutGroupInfo(GLOBAL(BattleGroupRef),
+		PutGroupInfo(uqm::gameState().game().BattleGroupRef,
 					 (uint8_t)(NumUrquanGuards0 + b0));
 	}
 
-	ReinitQueue(&GLOBAL(npc_built_ship_q));
+	ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 
-	GetGroupInfo(GLOBAL(BattleGroupRef), GroupInitIp);
+	GetGroupInfo(uqm::gameState().game().BattleGroupRef, GroupInitIp);
 
 	org = planetOuterLocation(solarSys->SunDesc[0].PlanetByte);
-	HIPGROUP hGroup {GetHeadLink(&GLOBAL(ip_group_q))};
+	HIPGROUP hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
 	for (b0 = 0, b1 = 0;
 		 b0 < NumUrquanGuards0;
 		 ++b0, b1 += FullCircle / (NumUrquanGuards0 + NumUrquanGuards1))
@@ -496,7 +496,7 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 			b1 += FullCircle / (NumUrquanGuards0 + NumUrquanGuards1);
 		}
 
-		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 		GroupPtr->task = ON_STATION | IGNORE_FLAGSHIP;
 		GroupPtr->sys_loc = 0;
@@ -505,7 +505,7 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 		GroupPtr->group_counter = 0;
 		GroupPtr->loc.x = org.x + Cosine(b1, StationRadius);
 		GroupPtr->loc.y = org.y + Sine(b1, StationRadius);
-		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 		hGroup = hNextGroup;
 	}
 
@@ -513,7 +513,7 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 		 b0 < NumUrquanGuards1;
 		 ++b0, b1 += FullCircle / NumUrquanGuards1)
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 		GroupPtr->task = ON_STATION | IGNORE_FLAGSHIP;
 		GroupPtr->sys_loc = 0;
@@ -522,7 +522,7 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 		GroupPtr->group_counter = 0;
 		GroupPtr->loc.x = org.x + Cosine(b1, StationRadius);
 		GroupPtr->loc.y = org.y + Sine(b1, StationRadius);
-		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 		hGroup = hNextGroup;
 	}
 

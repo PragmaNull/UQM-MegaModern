@@ -258,9 +258,9 @@ ChangeSelection:
 				StarShipPtr = LockStarShip(&race_q[0], hBattleShip);
 				if (StarShipPtr->captains_name_index == 0)
 				{
-					t.pStr = GLOBAL_SIS(CommanderName);
+					t.pStr = uqm::gameState().sis().CommanderName;
 					t.CharCount = (uint16_t)~0;
-					crew_level = GLOBAL_SIS(CrewEnlisted);
+					crew_level = uqm::gameState().sis().CrewEnlisted;
 					max_crew = GetCrewPodCapacity();
 				}
 				else
@@ -437,18 +437,18 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 			{ // last ship was the flagship
 				if (LastStarShipPtr->crew_level == 0)
 				{ // Died in the line of duty
-					GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
+					uqm::gameState().sis().CrewEnlisted = (uint16_t)~0;
 					DeathByMelee = true;
 				}
 				else
 				{ // Player ran away
-					if (GLOBAL_SIS(FuelOnBoard) > RunAwayFuelCost && !uqm::UQMOptions::read().infiniteFuel)
+					if (uqm::gameState().sis().FuelOnBoard > RunAwayFuelCost && !uqm::UQMOptions::read().infiniteFuel)
 					{
-						GLOBAL_SIS(FuelOnBoard) -= RunAwayFuelCost;
+						uqm::gameState().sis().FuelOnBoard -= RunAwayFuelCost;
 					}
 					else
 					{
-						GLOBAL_SIS(FuelOnBoard) = (uqm::UQMOptions::read().infiniteFuel ? GLOBAL_SIS(FuelOnBoard) : 0);
+						uqm::gameState().sis().FuelOnBoard = (uqm::UQMOptions::read().infiniteFuel ? uqm::gameState().sis().FuelOnBoard : 0);
 					}
 				}
 			}
@@ -537,7 +537,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 	t.baseline.x = pick_r.corner.x + (pick_r.extent.width >> 1);
 	t.baseline.y = pick_r.corner.y + pick_r.extent.height - ResScale(5);
 	t.align = ALIGN_CENTER;
-	t.pStr = GLOBAL_SIS(ShipName);
+	t.pStr = uqm::gameState().sis().ShipName;
 	t.CharCount = (uint16_t)~0;
 
 	// Code to make use of the PC version's font gradient

@@ -110,11 +110,11 @@ GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
-							sizeof(GLOBAL_SIS(PlanetName)),
+		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+							sizeof(uqm::gameState().sis().PlanetName),
 							GameString(PLANET_NUMBER_BASE + 41));
 
-		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
 
 	return true;
@@ -130,19 +130,19 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 		{
 			NotifyOthers(DRUUGE_SHIP, IpnlAllClear);
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			CloneShipFragment(DRUUGE_SHIP,
-							  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
+							  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			InitCommunication(DRUUGE_CONVERSATION);
 			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
-				ReinitQueue(&GLOBAL(npc_built_ship_q));
+				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 			return true;
@@ -154,7 +154,7 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 				CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
 			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(DruugeRuinsStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
-			if (GET_GAME_STATE(ROSY_SPHERE))
+			if (uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE))
 			{ // Already picked up Rosy Sphere, skip the report
 				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 			}
@@ -182,12 +182,12 @@ GenerateDruuge_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		GenerateDefault_landerReportCycle(solarSys);
 
 		// The artifact can be picked up from any ruin
-		if (!GET_GAME_STATE(ROSY_SPHERE))
+		if (!uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE))
 		{ // Just picked up the Rosy Sphere from a ruin
 			SetLanderTakeoff();
 
-			SET_GAME_STATE(ROSY_SPHERE, 1);
-			SET_GAME_STATE(ROSY_SPHERE_ON_SHIP, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP, static_cast<uint32_t>(1));
 		}
 
 		return false; // do not remove the node

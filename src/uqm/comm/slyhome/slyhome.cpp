@@ -234,7 +234,7 @@ ExitConversation(RESPONSE_REF R)
 	(void)R; // ignored
 	setSegue(Segue_peace);
 
-	switch (GET_GAME_STATE(SLYLANDRO_HOME_VISITS))
+	switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_HOME_VISITS))
 	{
 		case 1:
 			NPCPhrase(GOODBYE_1);
@@ -254,7 +254,7 @@ HumanInfo(RESPONSE_REF R)
 	{
 		NPCPhrase(TELL_MORE);
 
-		SET_GAME_STATE(SLYLANDRO_STACK4, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK4, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, would_you_like_to_know_more))
 	{
@@ -264,55 +264,55 @@ HumanInfo(RESPONSE_REF R)
 	{
 		NPCPhrase(OK_EARTH);
 
-		SET_GAME_STATE(SLYLANDRO_KNOW_EARTH, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_KNOW_EARTH, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, we_explore))
 	{
 		NPCPhrase(OK_EXPLORE);
 
-		SET_GAME_STATE(SLYLANDRO_KNOW_EXPLORE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_KNOW_EXPLORE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, we_fight_urquan))
 	{
 		NPCPhrase(URQUAN_NICE_GUYS);
 
-		SET_GAME_STATE(SLYLANDRO_KNOW_URQUAN, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_KNOW_URQUAN, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, not_same_urquan))
 	{
 		NPCPhrase(PERSONALITY_CHANGE);
 
-		SET_GAME_STATE(SLYLANDRO_KNOW_URQUAN, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_KNOW_URQUAN, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, we_gather))
 	{
 		NPCPhrase(MAYBE_INTERESTED);
 
-		SET_GAME_STATE(SLYLANDRO_KNOW_GATHER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_KNOW_GATHER, static_cast<uint32_t>(1));
 	}
 
 	uint8_t InfoLeft {false};
-	if (GET_GAME_STATE(SLYLANDRO_KNOW_URQUAN) == 1)
+	if (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_KNOW_URQUAN) == 1)
 	{
 		InfoLeft = true;
 		Response(not_same_urquan, HumanInfo);
 	}
-	if (!GET_GAME_STATE(SLYLANDRO_KNOW_EARTH))
+	if (!uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_KNOW_EARTH))
 	{
 		InfoLeft = true;
 		Response(we_come_from_earth, HumanInfo);
 	}
-	if (!GET_GAME_STATE(SLYLANDRO_KNOW_EXPLORE))
+	if (!uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_KNOW_EXPLORE))
 	{
 		InfoLeft = true;
 		Response(we_explore, HumanInfo);
 	}
-	if (!GET_GAME_STATE(SLYLANDRO_KNOW_URQUAN))
+	if (!uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_KNOW_URQUAN))
 	{
 		InfoLeft = true;
 		Response(we_fight_urquan, HumanInfo);
 	}
-	if (!GET_GAME_STATE(SLYLANDRO_KNOW_GATHER))
+	if (!uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_KNOW_GATHER))
 	{
 		InfoLeft = true;
 		Response(we_gather, HumanInfo);
@@ -321,7 +321,7 @@ HumanInfo(RESPONSE_REF R)
 	Response(enough_about_me, HomeWorld);
 	if (!InfoLeft)
 	{
-		SET_GAME_STATE(SLYLANDRO_STACK4, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK4, static_cast<uint32_t>(2));
 	}
 }
 
@@ -488,7 +488,7 @@ ProbeFunction(RESPONSE_REF R)
 	{
 		NPCPhrase(BASIC_COMMANDS);
 
-		SET_GAME_STATE(PLAYER_KNOWS_PROGRAM, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_KNOWS_PROGRAM, static_cast<uint32_t>(1));
 		DISABLE_PHRASE(tell_basics_again);
 	}
 	else if (PlayerSaid(R, tell_basics_again))
@@ -501,7 +501,7 @@ ProbeFunction(RESPONSE_REF R)
 	{
 		NPCPhrase(AFFECTS_BEHAVIOR);
 
-		SET_GAME_STATE(PLAYER_KNOWS_EFFECTS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_KNOWS_EFFECTS, static_cast<uint32_t>(1));
 		DISABLE_PHRASE(what_effect);
 	}
 	else if (PlayerSaid(R, tell_me_about_rep_1))
@@ -509,13 +509,13 @@ ProbeFunction(RESPONSE_REF R)
 		NPCPhrase(ABOUT_REP);
 
 		LastStack = 2;
-		SET_GAME_STATE(SLYLANDRO_STACK8, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK8, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, what_set_priority))
 	{
 		NPCPhrase(MAXIMUM);
 
-		SET_GAME_STATE(PLAYER_KNOWS_PRIORITY, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_KNOWS_PRIORITY, static_cast<uint32_t>(1));
 		DISABLE_PHRASE(what_set_priority);
 	}
 	else if (PlayerSaid(R, how_does_probe_defend))
@@ -523,23 +523,23 @@ ProbeFunction(RESPONSE_REF R)
 		NPCPhrase(ONLY_SELF_DEFENSE);
 
 		LastStack = 1;
-		SET_GAME_STATE(SLYLANDRO_STACK9, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK9, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, combat_behavior))
 	{
 		NPCPhrase(MISSILE_BATTERIES);
 
 		LastStack = 1;
-		SET_GAME_STATE(SLYLANDRO_STACK9, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK9, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, what_missile_batteries))
 	{
 		NPCPhrase(LIGHTNING_ONLY_FOR_HARVESTING);
 
-		SET_GAME_STATE(SLYLANDRO_STACK9, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK9, static_cast<uint32_t>(3));
 	}
 
-	switch (GET_GAME_STATE(SLYLANDRO_STACK9))
+	switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK9))
 	{
 		case 0:
 			pStr[0] = how_does_probe_defend;
@@ -551,7 +551,7 @@ ProbeFunction(RESPONSE_REF R)
 			pStr[0] = what_missile_batteries;
 			break;
 	}
-	switch (GET_GAME_STATE(SLYLANDRO_STACK8))
+	switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK8))
 	{
 		case 2:
 			pStr[1] = tell_me_about_rep_1;
@@ -568,15 +568,15 @@ ProbeFunction(RESPONSE_REF R)
 	{
 		Response(pStr[LastStack - 1], ProbeFunction);
 	}
-	if (!GET_GAME_STATE(PLAYER_KNOWS_PROGRAM))
+	if (!uqm::gameState().flag(uqm::GameFlag::PLAYER_KNOWS_PROGRAM))
 	{
 		Response(tell_me_about_basics, ProbeFunction);
 	}
 	else
 	{
-		if (GET_GAME_STATE(PLAYER_KNOWS_PRIORITY))
+		if (uqm::gameState().flag(uqm::GameFlag::PLAYER_KNOWS_PRIORITY))
 		{
-			if (GET_GAME_STATE(PLAYER_KNOWS_EFFECTS))
+			if (uqm::gameState().flag(uqm::GameFlag::PLAYER_KNOWS_EFFECTS))
 			{
 				Response(probe_has_bug, ProbeBug);
 			}
@@ -625,7 +625,7 @@ ProbeInfo(RESPONSE_REF R)
 	{
 		NPCPhrase(PROBES_ARE);
 
-		SET_GAME_STATE(SLYLANDRO_STACK5, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK5, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, know_more_probe))
 	{
@@ -635,7 +635,7 @@ ProbeInfo(RESPONSE_REF R)
 	{
 		NPCPhrase(ONLY_DEFEND);
 
-		SET_GAME_STATE(SLYLANDRO_STACK6, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK6, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, talk_more_probe_attack))
 	{
@@ -647,43 +647,43 @@ ProbeInfo(RESPONSE_REF R)
 		NPCPhrase(PROBES_FROM_MELNORME);
 
 		LastStack = 1;
-		SET_GAME_STATE(SLYLANDRO_STACK7, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK7, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, why_sell))
 	{
 		NPCPhrase(SELL_FOR_INFO);
 
 		LastStack = 1;
-		SET_GAME_STATE(SLYLANDRO_STACK7, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK7, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, how_long_ago))
 	{
 		NPCPhrase(FIFTY_THOUSAND_ROTATIONS);
 
-		SET_GAME_STATE(SLYLANDRO_STACK7, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK7, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, whats_probes_mission))
 	{
 		NPCPhrase(SEEK_OUT_NEW_LIFE);
 
 		LastStack = 2;
-		SET_GAME_STATE(SLYLANDRO_STACK8, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK8, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, if_only_one))
 	{
 		NPCPhrase(THEY_REPLICATE);
 
-		SET_GAME_STATE(SLYLANDRO_STACK8, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK8, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, enough_problem))
 	{
 		NPCPhrase(OK_ENOUGH_PROBLEM);
 	}
 
-	if (!GET_GAME_STATE(SLYLANDRO_KNOW_BROKEN)
-		&& GET_GAME_STATE(PROBE_EXHIBITED_BUG))
+	if (!uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_KNOW_BROKEN)
+		&& uqm::gameState().flag(uqm::GameFlag::PROBE_EXHIBITED_BUG))
 	{
-		switch (GET_GAME_STATE(SLYLANDRO_STACK6))
+		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK6))
 		{
 			case 0:
 				pStr[0] = why_probe_always_attack;
@@ -693,7 +693,7 @@ ProbeInfo(RESPONSE_REF R)
 				break;
 		}
 	}
-	switch (GET_GAME_STATE(SLYLANDRO_STACK7))
+	switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK7))
 	{
 		case 0:
 			pStr[1] = where_probes_from;
@@ -705,7 +705,7 @@ ProbeInfo(RESPONSE_REF R)
 			pStr[1] = how_long_ago;
 			break;
 	}
-	switch (GET_GAME_STATE(SLYLANDRO_STACK8))
+	switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK8))
 	{
 		case 0:
 			pStr[2] = whats_probes_mission;
@@ -749,73 +749,73 @@ HomeWorld(RESPONSE_REF R)
 	{
 		NPCPhrase(TERRIBLY_EXCITING);
 
-		SET_GAME_STATE(SLYLANDRO_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK1, static_cast<uint32_t>(1));
 		DISABLE_PHRASE(we_are_us);
 	}
 	else if (PlayerSaid(R, what_other_visitors))
 	{
 		NPCPhrase(VISITORS);
 
-		SET_GAME_STATE(PLAYER_KNOWS_PROBE, 1);
-		SET_GAME_STATE(SLYLANDRO_STACK1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_KNOWS_PROBE, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK1, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, any_other_visitors))
 	{
 		NPCPhrase(LONG_AGO);
 
-		SET_GAME_STATE(SLYLANDRO_STACK1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK1, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, what_about_sentient_milieu))
 	{
 		NPCPhrase(MET_TAALO_THEY_ARE_FROM);
 
-		SET_GAME_STATE(SLYLANDRO_STACK1, 4);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK1, static_cast<uint32_t>(4));
 	}
 	else if (PlayerSaid(R, who_else))
 	{
 		NPCPhrase(PRECURSORS);
 
-		SET_GAME_STATE(SLYLANDRO_STACK1, 5);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK1, static_cast<uint32_t>(5));
 	}
 	else if (PlayerSaid(R, precursors_yow))
 	{
 		NPCPhrase(ABOUT_PRECURSORS);
 
-		SET_GAME_STATE(SLYLANDRO_STACK1, 6);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK1, static_cast<uint32_t>(6));
 	}
 	else if (PlayerSaid(R, must_know_more))
 	{
 		NPCPhrase(ALL_WE_KNOW);
 
-		SET_GAME_STATE(SLYLANDRO_STACK1, 7);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK1, static_cast<uint32_t>(7));
 	}
 	else if (PlayerSaid(R, who_are_you))
 	{
 		NPCPhrase(WE_ARE_SLY);
 
 		LastStack = 1;
-		SET_GAME_STATE(SLYLANDRO_STACK2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK2, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, where_are_you))
 	{
 		NPCPhrase(DOWN_HERE);
 
 		LastStack = 2;
-		SET_GAME_STATE(SLYLANDRO_STACK3, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK3, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, thats_impossible_1))
 	{
 		NPCPhrase(NO_ITS_NOT_1);
 
 		LastStack = 2;
-		SET_GAME_STATE(SLYLANDRO_STACK3, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK3, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, thats_impossible_2))
 	{
 		NPCPhrase(NO_ITS_NOT_2);
 
 		LastStack = 2;
-		SET_GAME_STATE(SLYLANDRO_STACK3, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_STACK3, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, like_more_about_you))
 	{
@@ -838,14 +838,14 @@ HomeWorld(RESPONSE_REF R)
 	{
 		NPCPhrase(WHY_YES_THERE_IS);
 
-		SET_GAME_STATE(SLYLANDRO_KNOW_BROKEN, 1);
-		SET_GAME_STATE(DESTRUCT_CODE_ON_SHIP, 1);
-		i = GET_GAME_STATE(SLYLANDRO_MULTIPLIER) + 1;
-		SET_GAME_STATE(SLYLANDRO_MULTIPLIER, i);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_KNOW_BROKEN, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP, static_cast<uint32_t>(1));
+		i = uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER) + 1;
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_MULTIPLIER, static_cast<uint32_t>(i));
 		AddEvent(RELATIVE_EVENT, 0, 0, 0, SLYLANDRO_RAMP_DOWN);
 	}
 
-	switch (GET_GAME_STATE(SLYLANDRO_STACK1))
+	switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK1))
 	{
 		case 0:
 			pStr[0] = we_are_us;
@@ -869,7 +869,7 @@ HomeWorld(RESPONSE_REF R)
 			pStr[0] = must_know_more;
 			break;
 	}
-	switch (GET_GAME_STATE(SLYLANDRO_STACK2))
+	switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK2))
 	{
 		case 0:
 			pStr[1] = who_are_you;
@@ -881,7 +881,7 @@ HomeWorld(RESPONSE_REF R)
 			}
 			break;
 	}
-	switch (GET_GAME_STATE(SLYLANDRO_STACK3))
+	switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK3))
 	{
 		case 0:
 			pStr[2] = where_are_you;
@@ -905,9 +905,9 @@ HomeWorld(RESPONSE_REF R)
 			Response(pStr[i], HomeWorld);
 		}
 	}
-	if (GET_GAME_STATE(SLYLANDRO_STACK1))
+	if (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK1))
 	{
-		switch (GET_GAME_STATE(SLYLANDRO_STACK4))
+		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK4))
 		{
 			case 0:
 				Response(happy_to_tell_more, HumanInfo);
@@ -917,10 +917,10 @@ HomeWorld(RESPONSE_REF R)
 				break;
 		}
 	}
-	if (GET_GAME_STATE(PLAYER_KNOWS_PROBE)
-		&& !GET_GAME_STATE(SLYLANDRO_KNOW_BROKEN))
+	if (uqm::gameState().flag(uqm::GameFlag::PLAYER_KNOWS_PROBE)
+		&& !uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_KNOW_BROKEN))
 	{
-		switch (GET_GAME_STATE(SLYLANDRO_STACK5))
+		switch (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_STACK5))
 		{
 			case 0:
 				Response(what_are_probes, ProbeInfo);
@@ -949,16 +949,16 @@ Intro(void)
 
 	CommData.AlienAmbientArray[0].AnimFlags &= ~AnimDisabled;
 
-	if (GET_GAME_STATE(SLYLANDRO_KNOW_BROKEN)
-		&& (NumVisits = GET_GAME_STATE(RECALL_VISITS)) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_KNOW_BROKEN)
+		&& (NumVisits = uqm::gameState().flag(uqm::GameFlag::RECALL_VISITS)) == 0)
 	{
 		NPCPhrase(RECALL_PROGRAM_1);
 		++NumVisits;
-		SET_GAME_STATE(RECALL_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::RECALL_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 	else
 	{
-		NumVisits = GET_GAME_STATE(SLYLANDRO_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -975,7 +975,7 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SLYLANDRO_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SLYLANDRO_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 		SetHomeworldKnown(SLYLANDRO_HOME);
 	}

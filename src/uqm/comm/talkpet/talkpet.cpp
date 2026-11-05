@@ -283,13 +283,13 @@ static void
 ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
-	SET_GAME_STATE(SHIP_TO_COMPEL, 0);
+	uqm::gameState().setFlag(uqm::GameFlag::SHIP_TO_COMPEL, static_cast<uint32_t>(0));
 
 	if (PlayerSaid(R, compel_urquan))
 	{
 		NPCPhrase(HERE_WE_GO);
 
-		SET_GAME_STATE(URQUAN_MESSED_UP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_MESSED_UP, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, wish_to_go_now))
 	{
@@ -317,12 +317,12 @@ ExitConversation(RESPONSE_REF R)
 			NPCPhrase(GLAD_YOU_WONT_KILL);
 		}
 
-		SET_GAME_STATE(TALKING_PET, 1);
-		SET_GAME_STATE(TALKING_PET_ON_SHIP, 1);
-		SET_GAME_STATE(UMGAH_ZOMBIE_BLOBBIES, 0);
-		SET_GAME_STATE(UMGAH_VISITS, 0);
-		SET_GAME_STATE(UMGAH_HOME_VISITS, 0);
-		SET_GAME_STATE(ARILOU_STACK_2, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_ON_SHIP, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_STACK_2, static_cast<uint32_t>(0));
 	}
 }
 
@@ -455,7 +455,7 @@ PetDevice(RESPONSE_REF R)
 
 	if (PlayerSaid(R, whats_up_onboard))
 	{
-		NumVisits = GET_GAME_STATE(TALKING_PET_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::TALKING_PET_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -484,13 +484,13 @@ PetDevice(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(TALKING_PET_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_onboard);
 	}
 	else if (PlayerSaid(R, any_suggestions))
 	{
-		NumVisits = GET_GAME_STATE(TALKING_PET_SUGGESTIONS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::TALKING_PET_SUGGESTIONS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -519,7 +519,7 @@ PetDevice(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(TALKING_PET_SUGGESTIONS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_SUGGESTIONS, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(any_suggestions);
 	}
@@ -531,10 +531,10 @@ PetDevice(RESPONSE_REF R)
 	{
 		NPCPhrase(SO_WHAT);
 
-		SET_GAME_STATE(DNYARRI_LIED, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::DNYARRI_LIED, static_cast<uint32_t>(0));
 	}
 
-	if (GET_GAME_STATE(SHIP_TO_COMPEL))
+	if (uqm::gameState().flag(uqm::GameFlag::SHIP_TO_COMPEL))
 	{
 		Response(compel_that_ship, ExitConversation);
 	}
@@ -547,7 +547,7 @@ PetDevice(RESPONSE_REF R)
 		Response(any_suggestions, PetDevice);
 	}
 	Response(about_your_race, PetInfo);
-	if (GET_GAME_STATE(DNYARRI_LIED) && GET_GAME_STATE(LEARNED_TALKING_PET))
+	if (uqm::gameState().flag(uqm::GameFlag::DNYARRI_LIED) && uqm::gameState().flag(uqm::GameFlag::LEARNED_TALKING_PET))
 	{
 		Response(you_lied, PetDevice);
 	}
@@ -600,10 +600,10 @@ CompelPlayer(RESPONSE_REF R)
 			NPCPhrase(OH_NO_YOU_DONT);
 		}
 
-		SET_GAME_STATE(KNOW_UMGAH_ZOMBIES, 1);
-		if (!GET_GAME_STATE(TAALO_PROTECTOR_ON_SHIP))
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES, static_cast<uint32_t>(1));
+		if (!uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP))
 		{
-			SET_GAME_STATE(PLAYER_HYPNOTIZED, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HYPNOTIZED, static_cast<uint32_t>(1));
 		}
 		else
 		{
@@ -623,7 +623,7 @@ CompelPlayer(RESPONSE_REF R)
 	{
 		pStr[0] = talking_pets_dumb;
 	}
-	if (GET_GAME_STATE(KNOW_UMGAH_ZOMBIES))
+	if (uqm::gameState().flag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES))
 	{
 		if (PhraseEnabled(what_do_to_umgah))
 		{
@@ -706,7 +706,7 @@ PetDeal(RESPONSE_REF R)
 	{
 		NPCPhrase(ITS_TRUE);
 
-		SET_GAME_STATE(DNYARRI_LIED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::DNYARRI_LIED, static_cast<uint32_t>(1));
 		DISABLE_PHRASE(hard_to_believe);
 	}
 	else if (PlayerSaid(R, bullshit))
@@ -744,11 +744,11 @@ PetDeal(RESPONSE_REF R)
 	}
 	else
 	{
-		if (PhraseEnabled(hard_to_believe) && !GET_GAME_STATE(LEARNED_TALKING_PET))
+		if (PhraseEnabled(hard_to_believe) && !uqm::gameState().flag(uqm::GameFlag::LEARNED_TALKING_PET))
 		{
 			Response(hard_to_believe, PetDeal);
 		}
-		else if (PhraseEnabled(bullshit) && GET_GAME_STATE(LEARNED_TALKING_PET))
+		else if (PhraseEnabled(bullshit) && uqm::gameState().flag(uqm::GameFlag::LEARNED_TALKING_PET))
 		{
 			Response(bullshit, PetDeal);
 		}
@@ -778,7 +778,7 @@ Intro(void)
 
 	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 	{
-		SET_GAME_STATE(SHIP_TO_COMPEL, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::SHIP_TO_COMPEL, static_cast<uint32_t>(0));
 		setSegue(Segue_hostile);
 		if (!(uqm::globalFlags() & CyborgEnabled))
 		{
@@ -789,15 +789,15 @@ Intro(void)
 			NPCPhrase(CYBORG_PEP_TALK);
 		}
 	}
-	else if (GET_GAME_STATE(READY_TO_CONFUSE_URQUAN))
+	else if (uqm::gameState().flag(uqm::GameFlag::READY_TO_CONFUSE_URQUAN))
 	{
-		SET_GAME_STATE(SHIP_TO_COMPEL, 0);
-		SET_GAME_STATE(READY_TO_CONFUSE_URQUAN, 0);
-		SET_GAME_STATE(AWARE_OF_SAMATRA, 1);
-		if (GET_GAME_STATE(CHMMR_BOMB_STATE) != 3)
+		uqm::gameState().setFlag(uqm::GameFlag::SHIP_TO_COMPEL, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::READY_TO_CONFUSE_URQUAN, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
+		if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) != 3)
 		{
 			NPCPhrase(HAVENT_GOT_EVERYTHING);
-			if (!GET_GAME_STATE(UTWIG_BOMB_ON_SHIP))
+			if (!uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 			{
 				NPCPhrase(NEED_BOMB);
 			}
@@ -808,7 +808,7 @@ Intro(void)
 
 			setSegue(Segue_peace);
 		}
-		else if (GET_GAME_STATE(URQUAN_MESSED_UP))
+		else if (uqm::gameState().flag(uqm::GameFlag::URQUAN_MESSED_UP))
 		{
 			NPCPhrase(HELLO_AFTER_COMPEL_URQUAN);
 
@@ -821,15 +821,15 @@ Intro(void)
 			MindFuckUrquan((RESPONSE_REF)0);
 		}
 	}
-	else if (GET_GAME_STATE(TALKING_PET_ON_SHIP))
+	else if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 	{
-		NumVisits = GET_GAME_STATE(TALKING_PET_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::TALKING_PET_VISITS);
 
 		// You can acquire the Talking Pet without having Taalo Shield after
 		// the Kohr-Ah wipe out the Umgah. In that case, the Pet will join
 		// you willingly, but his complaints about the Taalo shield as in
 		// HELLO_AS_DEVICE_1 do not make any sense.
-		if (!GET_GAME_STATE(TAALO_PROTECTOR_ON_SHIP) && NumVisits == 0)
+		if (!uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP) && NumVisits == 0)
 		{
 			++NumVisits; // skip HELLO_AS_DEVICE_1
 		}
@@ -862,17 +862,17 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(TALKING_PET_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_VISITS, static_cast<uint32_t>(NumVisits));
 
 		PetDevice((RESPONSE_REF)0);
 	}
-	else if (GetHeadLink(&GLOBAL(npc_built_ship_q)))
+	else if (GetHeadLink(&uqm::gameState().game().npc_built_ship_q))
 	{
-		NumVisits = GET_GAME_STATE(TALKING_PET_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::TALKING_PET_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
-				SET_GAME_STATE(UMGAH_VISITS, 0);
+				uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(0));
 				NPCPhrase(HELLO_AT_UMGAH);
 				break;
 			case 1:
@@ -889,16 +889,16 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(TALKING_PET_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 		SetHomeworldKnown(UMGAH_HOME);
 		if (NumVisits == 1)
 		{
 			CompelPlayer((RESPONSE_REF)0);
 		}
-		else if (!GET_GAME_STATE(TAALO_PROTECTOR_ON_SHIP))
+		else if (!uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP))
 		{
-			SET_GAME_STATE(PLAYER_HYPNOTIZED, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HYPNOTIZED, static_cast<uint32_t>(1));
 			setSegue(Segue_peace);
 		}
 		else
@@ -918,8 +918,8 @@ Intro(void)
 		{
 			NPCPhrase(UMGAH_ALL_GONE);
 
-			if (GET_GAME_STATE(TALKING_PET_HOME_VISITS) == 0
-				|| !GET_GAME_STATE(TAALO_PROTECTOR_ON_SHIP))
+			if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET_HOME_VISITS) == 0
+				|| !uqm::gameState().flag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP))
 			{ // The how_trust-TRUST exchange only makes sense when the
 				// player visited the Talking Pet before so he tried to
 				// kill the player *and* the player has the Taalo shield.

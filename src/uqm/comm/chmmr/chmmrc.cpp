@@ -206,30 +206,30 @@ ExitConversation(RESPONSE_REF R)
 
 		SetRaceAllied(CHMMR_SHIP, true);
 
-		SET_GAME_STATE(CHMMR_HOME_VISITS, 0);
-		SET_GAME_STATE(CHMMR_STACK, 0);
-		SET_GAME_STATE(CHMMR_BOMB_STATE, 2);
-		SET_GAME_STATE(UTWIG_BOMB_ON_SHIP, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_STACK, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_BOMB_STATE, static_cast<uint32_t>(2));
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP, static_cast<uint32_t>(0));
 
 		if (!uqm::UQMOptions::read().infiniteRU)
 		{
-			GLOBAL_SIS(ResUnits) = 1000000L;
+			uqm::gameState().sis().ResUnits = 1000000L;
 		}
 		else
 		{
 			oldRU = 1000000L;
 		}
 
-		GLOBAL_SIS(NumLanders) = 0;
-		GLOBAL(ModuleCost[PLANET_LANDER]) = 0;
+		uqm::gameState().sis().NumLanders = 0;
+		uqm::gameState().game().ModuleCost[PLANET_LANDER] = 0;
 
 
 		/* transport player to Earth */
 		// JSD replace old method of teleport to SOL with new method
 		// GLOBAL_SIS (log_x) = UniverseToLogx (SOL_X);
 		// GLOBAL_SIS (log_y) = UniverseToLogy (SOL_Y);
-		GLOBAL_SIS(log_x) = UniverseToLogx(plot_map[SOL_DEFINED].star_pt.x);
-		GLOBAL_SIS(log_y) = UniverseToLogy(plot_map[SOL_DEFINED].star_pt.y);
+		uqm::gameState().sis().log_x = UniverseToLogx(plot_map[SOL_DEFINED].star_pt.x);
+		uqm::gameState().sis().log_y = UniverseToLogy(plot_map[SOL_DEFINED].star_pt.y);
 		uqm::flagship().shipFacing = 1;
 		/* At Earth or at Starbase */
 		uqm::flagship().ipPlanet = EarthIndex + 1;
@@ -238,19 +238,19 @@ ExitConversation(RESPONSE_REF R)
 		uqm::flagship().ipLocation.x = EarthOuterX;
 		uqm::flagship().ipLocation.y = EarthOuterY;
 
-		if (GET_GAME_STATE(STARBASE_AVAILABLE))
+		if (uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 		{ /* Normal game mode - you are transported to Starbase */
-			GLOBAL_SIS(FuelOnBoard) = FuelReserve;
-			GLOBAL_SIS(CrewEnlisted) = 0;
-			GLOBAL_SIS(TotalElementMass) = 0;
-			GLOBAL(ModuleCost[STORAGE_BAY]) = 0; /* disable Storage Bay */
+			uqm::gameState().sis().FuelOnBoard = FuelReserve;
+			uqm::gameState().sis().CrewEnlisted = 0;
+			uqm::gameState().sis().TotalElementMass = 0;
+			uqm::gameState().game().ModuleCost[STORAGE_BAY] = 0; /* disable Storage Bay */
 			for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
 			{
-				GLOBAL_SIS(ElementAmounts[i]) = 0;
+				uqm::gameState().sis().ElementAmounts[i] = 0;
 			}
 			for (i = NumBombModules; i < NumModuleSlots; ++i)
 			{
-				GLOBAL_SIS(ModuleSlots[i]) = EmptySlot + 2;
+				uqm::gameState().sis().ModuleSlots[i] = EmptySlot + 2;
 			}
 
 			/* XXX : this should be unhardcoded eventually */
@@ -269,7 +269,7 @@ ExitConversation(RESPONSE_REF R)
 
 				/* find next unused slot */
 				for (; i > 0
-					   && GLOBAL_SIS(ModuleSlots[i]) != EmptySlot + 2;
+					   && uqm::gameState().sis().ModuleSlots[i] != EmptySlot + 2;
 					 --i)
 					;
 				if (i == 0)
@@ -278,7 +278,7 @@ ExitConversation(RESPONSE_REF R)
 				}
 				/* find next module to move */
 				for (m = i - 1; m >= 0
-								&& GLOBAL_SIS(ModuleSlots[m]) == EmptySlot + 2;
+								&& uqm::gameState().sis().ModuleSlots[m] == EmptySlot + 2;
 					 --m)
 					;
 				if (m < 0)
@@ -287,30 +287,30 @@ ExitConversation(RESPONSE_REF R)
 				}
 
 				/* move the module */
-				GLOBAL_SIS(ModuleSlots[i]) = GLOBAL_SIS(ModuleSlots[m]);
-				GLOBAL_SIS(ModuleSlots[m]) = EmptySlot + 2;
+				uqm::gameState().sis().ModuleSlots[i] = uqm::gameState().sis().ModuleSlots[m];
+				uqm::gameState().sis().ModuleSlots[m] = EmptySlot + 2;
 			}
 		}
 
 		/* install Chmmr-supplied modules */
 		for (i = 0; i < NumDriveSlots; ++i)
 		{
-			GLOBAL_SIS(DriveSlots[i]) = FUSION_THRUSTER;
+			uqm::gameState().sis().DriveSlots[i] = FUSION_THRUSTER;
 		}
 		for (i = 0; i < NumJetSlots; ++i)
 		{
-			GLOBAL_SIS(JetSlots[i]) = TURNING_JETS;
+			uqm::gameState().sis().JetSlots[i] = TURNING_JETS;
 		}
-		GLOBAL_SIS(ModuleSlots[0]) = BOMB_MODULE_4;
-		GLOBAL_SIS(ModuleSlots[1]) = BOMB_MODULE_5;
-		GLOBAL_SIS(ModuleSlots[2]) = BOMB_MODULE_3;
-		GLOBAL_SIS(ModuleSlots[3]) = BOMB_MODULE_1;
-		GLOBAL_SIS(ModuleSlots[4]) = BOMB_MODULE_0;
-		GLOBAL_SIS(ModuleSlots[5]) = BOMB_MODULE_1;
-		GLOBAL_SIS(ModuleSlots[6]) = BOMB_MODULE_3;
-		GLOBAL_SIS(ModuleSlots[7]) = BOMB_MODULE_4;
-		GLOBAL_SIS(ModuleSlots[8]) = BOMB_MODULE_5;
-		GLOBAL_SIS(ModuleSlots[9]) = BOMB_MODULE_2;
+		uqm::gameState().sis().ModuleSlots[0] = BOMB_MODULE_4;
+		uqm::gameState().sis().ModuleSlots[1] = BOMB_MODULE_5;
+		uqm::gameState().sis().ModuleSlots[2] = BOMB_MODULE_3;
+		uqm::gameState().sis().ModuleSlots[3] = BOMB_MODULE_1;
+		uqm::gameState().sis().ModuleSlots[4] = BOMB_MODULE_0;
+		uqm::gameState().sis().ModuleSlots[5] = BOMB_MODULE_1;
+		uqm::gameState().sis().ModuleSlots[6] = BOMB_MODULE_3;
+		uqm::gameState().sis().ModuleSlots[7] = BOMB_MODULE_4;
+		uqm::gameState().sis().ModuleSlots[8] = BOMB_MODULE_5;
+		uqm::gameState().sis().ModuleSlots[9] = BOMB_MODULE_2;
 	}
 	else if (PlayerSaid(R, perhaps_not_install))
 	{
@@ -360,11 +360,11 @@ NotReady(RESPONSE_REF R)
 	{
 		Response(further_assistance, NotReady);
 	}
-	if (PhraseEnabled(where_weapon) && !GET_GAME_STATE(UTWIG_BOMB_ON_SHIP))
+	if (PhraseEnabled(where_weapon) && !uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 	{
 		Response(where_weapon, NotReady);
 	}
-	if (PhraseEnabled(where_distraction) && !GET_GAME_STATE(TALKING_PET_ON_SHIP))
+	if (PhraseEnabled(where_distraction) && !uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 	{
 		Response(where_distraction, NotReady);
 	}
@@ -433,7 +433,7 @@ ChmmrFree(RESPONSE_REF R)
 	{
 		NPCPhrase(WHY_HAVE_YOU_FREED_US);
 		AlienTalkSegue((uint16_t)~0);
-		SET_GAME_STATE(CHMMR_EMERGING, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_EMERGING, static_cast<uint32_t>(0));
 
 		Response(serious_1, ChmmrFree);
 		Response(serious_2, ChmmrFree);
@@ -443,7 +443,7 @@ ChmmrFree(RESPONSE_REF R)
 	{
 		NPCPhrase(WILL_HELP_ANALYZE_LOGS);
 
-		if (GET_GAME_STATE(AWARE_OF_SAMATRA))
+		if (uqm::gameState().flag(uqm::GameFlag::AWARE_OF_SAMATRA))
 		{
 			NPCPhrase(YOU_KNOW_SAMATRA);
 		}
@@ -451,10 +451,10 @@ ChmmrFree(RESPONSE_REF R)
 		{
 			NPCPhrase(DONT_KNOW_ABOUT_SAMATRA);
 
-			SET_GAME_STATE(AWARE_OF_SAMATRA, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
 		}
 
-		if (GET_GAME_STATE(TALKING_PET_ON_SHIP))
+		if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 		{
 			NPCPhrase(HAVE_TALKING_PET);
 		}
@@ -463,7 +463,7 @@ ChmmrFree(RESPONSE_REF R)
 			NPCPhrase(NEED_DISTRACTION);
 		}
 
-		if (GET_GAME_STATE(UTWIG_BOMB_ON_SHIP))
+		if (uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 		{
 			NPCPhrase(HAVE_BOMB);
 		}
@@ -472,8 +472,8 @@ ChmmrFree(RESPONSE_REF R)
 			NPCPhrase(NEED_WEAPON);
 		}
 
-		if (!GET_GAME_STATE(TALKING_PET_ON_SHIP)
-			|| !GET_GAME_STATE(UTWIG_BOMB_ON_SHIP))
+		if (!uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP)
+			|| !uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 		{
 			NotReady((RESPONSE_REF)0);
 		}
@@ -497,7 +497,7 @@ ChmmrAdvice(RESPONSE_REF R)
 	{
 		NPCPhrase(DEFEAT_LIKE_SO);
 
-		SET_GAME_STATE(CHMMR_BOMB_STATE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_BOMB_STATE, static_cast<uint32_t>(1));
 		DISABLE_PHRASE(how_defeat_urquan);
 	}
 	else if (PlayerSaid(R, what_about_tpet))
@@ -531,22 +531,22 @@ ChmmrAdvice(RESPONSE_REF R)
 		Response(how_defeat_urquan, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PhraseEnabled(what_about_tpet) && GET_GAME_STATE(TALKING_PET_ON_SHIP))
+	if (PhraseEnabled(what_about_tpet) && uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 	{
 		Response(what_about_tpet, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PhraseEnabled(what_about_bomb) && GET_GAME_STATE(UTWIG_BOMB_ON_SHIP))
+	if (PhraseEnabled(what_about_bomb) && uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 	{
 		Response(what_about_bomb, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PhraseEnabled(what_about_sun_device) && GET_GAME_STATE(SUN_DEVICE_ON_SHIP))
+	if (PhraseEnabled(what_about_sun_device) && uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE_ON_SHIP))
 	{
 		Response(what_about_sun_device, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PhraseEnabled(what_about_samatra) && GET_GAME_STATE(AWARE_OF_SAMATRA))
+	if (PhraseEnabled(what_about_samatra) && uqm::gameState().flag(uqm::GameFlag::AWARE_OF_SAMATRA))
 	{
 		Response(what_about_samatra, ChmmrAdvice);
 		AdviceLeft = true;
@@ -572,26 +572,26 @@ ChmmrShielded(RESPONSE_REF R)
 	{
 		NPCPhrase(CANT_HELP);
 
-		SET_GAME_STATE(CHMMR_STACK, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_STACK, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, why_no_help))
 	{
 		NPCPhrase(LONG_TIME);
 
-		SET_GAME_STATE(CHMMR_STACK, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_STACK, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, what_if_more_energy))
 	{
 		NPCPhrase(DANGER_TO_US);
 
-		SET_GAME_STATE(CHMMR_STACK, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_STACK, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, enough_advice))
 	{
 		NPCPhrase(OK_ENOUGH_ADVICE);
 	}
 
-	switch (GET_GAME_STATE(CHMMR_STACK))
+	switch (uqm::gameState().flag(uqm::GameFlag::CHMMR_STACK))
 	{
 		case 0:
 			Response(need_help, ChmmrShielded);
@@ -619,7 +619,7 @@ AfterBomb(RESPONSE_REF R)
 {
 	if (PlayerSaid(R, whats_up_after_bomb))
 	{
-		if (GET_GAME_STATE(CHMMR_STACK))
+		if (uqm::gameState().flag(uqm::GameFlag::CHMMR_STACK))
 		{
 			NPCPhrase(GENERAL_INFO_AFTER_BOMB_2);
 		}
@@ -627,7 +627,7 @@ AfterBomb(RESPONSE_REF R)
 		{
 			NPCPhrase(GENERAL_INFO_AFTER_BOMB_1);
 
-			SET_GAME_STATE(CHMMR_STACK, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::CHMMR_STACK, static_cast<uint32_t>(1));
 		}
 
 		DISABLE_PHRASE(whats_up_after_bomb);
@@ -655,9 +655,9 @@ Intro(void)
 {
 	uint8_t NumVisits {};
 
-	if (GET_GAME_STATE(CHMMR_BOMB_STATE) >= 2)
+	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) >= 2)
 	{
-		NumVisits = GET_GAME_STATE(CHMMR_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::CHMMR_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -668,14 +668,14 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(CHMMR_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 		AfterBomb((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(CHMMR_UNLEASHED))
+	else if (uqm::gameState().flag(uqm::GameFlag::CHMMR_UNLEASHED))
 	{
-		if (!GET_GAME_STATE(TALKING_PET_ON_SHIP)
-			|| !GET_GAME_STATE(UTWIG_BOMB_ON_SHIP))
+		if (!uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP)
+			|| !uqm::gameState().flag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP))
 		{
 			NotReady((RESPONSE_REF)0);
 		}
@@ -688,8 +688,8 @@ Intro(void)
 	}
 	else
 	{
-		NumVisits = GET_GAME_STATE(CHMMR_HOME_VISITS);
-		if (!GET_GAME_STATE(CHMMR_EMERGING))
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::CHMMR_HOME_VISITS);
+		if (!uqm::gameState().flag(uqm::GameFlag::CHMMR_EMERGING))
 		{
 			// Run filter for HdResolutionFactor
 			if (IsHd())
@@ -737,7 +737,7 @@ Intro(void)
 				Response(i_am_silly, ChmmrFree);
 			}
 
-			SET_GAME_STATE(CHMMR_UNLEASHED, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::CHMMR_UNLEASHED, static_cast<uint32_t>(1));
 
 			// Setup a Chmmr sphere-of-influence, now that they're out
 			// of their shell.  EncounterPercent for the Chmmr is 0,
@@ -745,9 +745,9 @@ Intro(void)
 			if (IsExtended())
 			{
 				HFLEETINFO hChmmr = GetStarShipFromIndex(
-					&GLOBAL(avail_race_q), CHMMR_SHIP);
+					&uqm::gameState().game().avail_race_q, CHMMR_SHIP);
 				FLEET_INFO* ChmmrPtr = LockFleetInfo(
-					&GLOBAL(avail_race_q), hChmmr);
+					&uqm::gameState().game().avail_race_q, hChmmr);
 
 				if (ChmmrPtr)
 				{
@@ -757,10 +757,10 @@ Intro(void)
 													  HOME);
 					StartSphereTracking(CHMMR_SHIP);
 				}
-				UnlockFleetInfo(&GLOBAL(avail_race_q), hChmmr);
+				UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hChmmr);
 			}
 		}
-		SET_GAME_STATE(CHMMR_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::CHMMR_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 		SetHomeworldKnown(CHMMR_HOME);
 	}
@@ -791,8 +791,8 @@ init_chmmr_comm(void)
 	// generalised in the future.
 
 	// use alternate "Process Complete" track if available
-	if (GET_GAME_STATE(CHMMR_UNLEASHED)
-		|| GET_GAME_STATE(CHMMR_EMERGING))
+	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_UNLEASHED)
+		|| uqm::gameState().flag(uqm::GameFlag::CHMMR_EMERGING))
 	{
 		altResFlags |= UseAltSong;
 	}

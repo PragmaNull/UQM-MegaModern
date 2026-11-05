@@ -162,7 +162,7 @@ GenerateBurvixese_generateOrbital(SOLARSYS_STATE* solarSys,
 		}
 	}
 	else if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte)
-			 && !GET_GAME_STATE(BURVIXESE_BROADCASTERS))
+			 && !uqm::gameState().flag(uqm::GameFlag::BURVIXESE_BROADCASTERS))
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] = CaptureDrawable(
@@ -195,7 +195,7 @@ GenerateBurvixese_generateEnergy(const SOLARSYS_STATE* solarSys,
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
-		if (GET_GAME_STATE(BURVIXESE_BROADCASTERS))
+		if (uqm::gameState().flag(uqm::GameFlag::BURVIXESE_BROADCASTERS))
 		{ // already picked up
 			return 0;
 		}
@@ -220,13 +220,13 @@ GenerateBurvixese_pickupEnergy(SOLARSYS_STATE* solarSys,
 
 	if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
-		assert(!GET_GAME_STATE(BURVIXESE_BROADCASTERS) && whichNode == 0);
+		assert(!uqm::gameState().flag(uqm::GameFlag::BURVIXESE_BROADCASTERS) && whichNode == 0);
 
 		GenerateDefault_landerReport(solarSys);
 		SetLanderTakeoff();
 
-		SET_GAME_STATE(BURVIXESE_BROADCASTERS, 1);
-		SET_GAME_STATE(BURV_BROADCASTERS_ON_SHIP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::BURVIXESE_BROADCASTERS, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP, static_cast<uint32_t>(1));
 
 		return true; // picked up
 	}

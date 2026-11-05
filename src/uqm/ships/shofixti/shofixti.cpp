@@ -522,7 +522,7 @@ init_shofixti(void)
 	new_shofixti_desc = shofixti_desc;
 	if (uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
 		&& CurStarDescPtr() && CurStarDescPtr()->Index == SHOFIXTI_DEFINED
-		&& !GET_GAME_STATE(SHOFIXTI_RECRUITED))
+		&& !uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_RECRUITED))
 	{
 		// Tanaka/Katana flies in a damaged ship.
 		// This is determined by being at the homeworld & not allied

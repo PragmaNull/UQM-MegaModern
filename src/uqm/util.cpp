@@ -649,8 +649,8 @@ get_fuel_to_sol(void)
 {
 	GFXPOINT pt;
 
-	pt.x = LogxToUniverse(GLOBAL_SIS(log_x));
-	pt.y = LogyToUniverse(GLOBAL_SIS(log_y));
+	pt.x = LogxToUniverse(uqm::gameState().sis().log_x);
+	pt.y = LogyToUniverse(uqm::gameState().sis().log_y);
 
 	// JSD Replace old hard coded SOL with plot based SOL
 	//pt.x -= SOL_X;
@@ -659,7 +659,7 @@ get_fuel_to_sol(void)
 	pt.y -= plot_map[SOL_DEFINED].star_pt.y;
 
 	const uint32_t f {(uint32_t)((long)pt.x * pt.x + (long)pt.y * pt.y)};
-	if (f == 0 || GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1)
+	if (f == 0 || uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1)
 	{
 		return 0;
 	}
@@ -729,7 +729,7 @@ void formatFuelValue(uint32_t coarseFuel, uqstl::span<char> buf)
 char* WholeFuelValue(void)
 {
 	static char buf[8] {};
-	const uint32_t CoarseFuel = GLOBAL_SIS(FuelOnBoard);
+	const uint32_t CoarseFuel = uqm::gameState().sis().FuelOnBoard;
 
 	formatFuelValue(CoarseFuel, {buf, sizeof(buf)});
 

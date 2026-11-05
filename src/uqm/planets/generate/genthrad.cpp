@@ -113,25 +113,25 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 	{
 		if (StartSphereTracking(THRADDASH_SHIP)
 			&& (CurStarDescPtr()->Index == THRADD_DEFINED
-				|| (!GET_GAME_STATE(HELIX_UNPROTECTED)
-					&& (uint8_t)(GET_GAME_STATE(THRADD_MISSION) - 1) >= 3)))
+				|| (!uqm::gameState().flag(uqm::GameFlag::HELIX_UNPROTECTED)
+					&& (uint8_t)(uqm::gameState().flag(uqm::GameFlag::THRADD_MISSION) - 1) >= 3)))
 		{
 			NotifyOthers(THRADDASH_SHIP, IpnlAllClear);
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			CloneShipFragment(THRADDASH_SHIP, &GLOBAL(npc_built_ship_q),
+			CloneShipFragment(THRADDASH_SHIP, &uqm::gameState().game().npc_built_ship_q,
 							  INFINITE_FLEET);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
 			if (CurStarDescPtr()->Index == THRADD_DEFINED)
 			{
-				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+				uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			}
 			else
 			{
-				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 6);
+				uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));
 			}
 			InitCommunication(THRADD_CONVERSATION);
 
@@ -141,12 +141,12 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 
 			uqm::currentActivity() &= ~START_INTERPLANETARY;
-			ReinitQueue(&GLOBAL(npc_built_ship_q));
+			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 			GetGroupInfo(GroupsRandom, GroupLoadIp);
 
 			if (CurStarDescPtr()->Index == THRADD_DEFINED
-				|| (!GET_GAME_STATE(HELIX_UNPROTECTED)
-					&& (uint8_t)(GET_GAME_STATE(THRADD_MISSION) - 1) >= 3))
+				|| (!uqm::gameState().flag(uqm::GameFlag::HELIX_UNPROTECTED)
+					&& (uint8_t)(uqm::gameState().flag(uqm::GameFlag::THRADD_MISSION) - 1) >= 3))
 			{
 				return true;
 			}
@@ -157,20 +157,20 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 		}
 		else if (isDifficulty(uqm::Difficulty::Hard)
 				 && CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
-				 && !GET_GAME_STATE(HELIX_UNPROTECTED)
-				 && !(GET_GAME_STATE(HM_ENCOUNTERS)
+				 && !uqm::gameState().flag(uqm::GameFlag::HELIX_UNPROTECTED)
+				 && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS)
 					  & 1 << THRADDASH_ENCOUNTER)
 				 && (StartSphereTracking(THRADDASH_SHIP)
-					 || !(GET_GAME_STATE(KOHR_AH_FRENZY))))
+					 || !(uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))))
 		{
 			uint16_t sum {};
 
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			if (!StartSphereTracking(THRADDASH_SHIP)
-				|| GET_GAME_STATE(ILWRATH_FIGHT_THRADDASH))
+				|| uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 			{
 				sum = 6;
 			}
@@ -182,10 +182,10 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 			for (uint16_t i {0}; i < sum; ++i)
 			{
 				CloneShipFragment(THRADDASH_SHIP,
-								  &GLOBAL(npc_built_ship_q), 0);
+								  &uqm::gameState().game().npc_built_ship_q, 0);
 			}
 
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 6);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));
 			uqm::currentActivity() |= START_INTERPLANETARY;
 			InitCommunication(THRADD_CONVERSATION);
 
@@ -196,13 +196,13 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 
 			{
 				const bool Survivors =
-					GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
+					GetHeadLink(&uqm::gameState().game().npc_built_ship_q) != 0;
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
-				ReinitQueue(&GLOBAL(npc_built_ship_q));
+				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 
-				if (Survivors && !GET_GAME_STATE(HELIX_UNPROTECTED))
+				if (Survivors && !uqm::gameState().flag(uqm::GameFlag::HELIX_UNPROTECTED))
 				{
 					return true;
 				}
@@ -210,11 +210,11 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 				{
 					uint16_t state {};
 
-					state = GET_GAME_STATE(HM_ENCOUNTERS);
+					state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
 
 					state |= 1 << THRADDASH_ENCOUNTER;
 
-					SET_GAME_STATE(HM_ENCOUNTERS, state);
+					uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 				}
 
 				RepairSISBorder();
@@ -222,7 +222,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 		}
 
 		if (CurStarDescPtr()->Index == AQUA_HELIX_DEFINED
-			&& !GET_GAME_STATE(AQUA_HELIX))
+			&& !uqm::gameState().flag(uqm::GameFlag::AQUA_HELIX))
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
@@ -259,7 +259,7 @@ GenerateThraddash_generateEnergy(const SOLARSYS_STATE* solarSys,
 	{
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
-		if (GET_GAME_STATE(AQUA_HELIX))
+		if (uqm::gameState().flag(uqm::GameFlag::AQUA_HELIX))
 		{ // already picked up
 			return 0;
 		}
@@ -288,22 +288,22 @@ GenerateThraddash_pickupEnergy(SOLARSYS_STATE* solarSys,
 	{
 		HFLEETINFO hThradd =
 			GetStarShipFromIndex(
-				&GLOBAL(avail_race_q), THRADDASH_SHIP);
+				&uqm::gameState().game().avail_race_q, THRADDASH_SHIP);
 		FLEET_INFO* ThraddPtr =
-			LockFleetInfo(&GLOBAL(avail_race_q), hThradd);
+			LockFleetInfo(&uqm::gameState().game().avail_race_q, hThradd);
 		int16_t strength_loss {};
 
-		assert(!GET_GAME_STATE(AQUA_HELIX) && whichNode == 0);
+		assert(!uqm::gameState().flag(uqm::GameFlag::AQUA_HELIX) && whichNode == 0);
 
 		GenerateDefault_landerReport(solarSys);
 		SetLanderTakeoff();
 
-		SET_GAME_STATE(HELIX_VISITS, 0);
-		SET_GAME_STATE(AQUA_HELIX, 1);
-		SET_GAME_STATE(AQUA_HELIX_ON_SHIP, 1);
-		SET_GAME_STATE(HELIX_UNPROTECTED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::HELIX_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::AQUA_HELIX, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::AQUA_HELIX_ON_SHIP, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::HELIX_UNPROTECTED, static_cast<uint32_t>(1));
 		if (IsExtended() && ThraddPtr->allied_state == GOOD_GUY
-			&& GET_GAME_STATE(ILWRATH_FIGHT_THRADDASH))
+			&& uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 		{
 			SetRaceAllied(THRADDASH_SHIP, false);
 			RemoveEscortShips(THRADDASH_SHIP);
@@ -313,7 +313,7 @@ GenerateThraddash_pickupEnergy(SOLARSYS_STATE* solarSys,
 			ThraddPtr->growth_fract =
 				(uint8_t)(((strength_loss % ThraddPtr->days_left) << 8)
 						  / ThraddPtr->days_left);
-			SET_GAME_STATE(THRADD_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::THRADD_VISITS, static_cast<uint32_t>(0));
 		}
 
 		return true; // picked up

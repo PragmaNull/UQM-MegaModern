@@ -541,7 +541,7 @@ SpathiAllies(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -552,7 +552,7 @@ SpathiAllies(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, whats_up_space_2))
 	{
@@ -609,7 +609,7 @@ SpathiFriendly(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -620,7 +620,7 @@ SpathiFriendly(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, since_friendly_give_stuff))
 	{
@@ -727,7 +727,7 @@ SpathiBefriend(RESPONSE_REF R)
 
 	if (!InfoLeft)
 	{
-		SET_GAME_STATE(SPATHI_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_STACK1, static_cast<uint32_t>(1));
 		SpathiNeutral(R);
 	}
 }
@@ -739,7 +739,7 @@ SpathiAntagonize(RESPONSE_REF R)
 	{
 		NPCPhrase(ALWAYS_PREPARED);
 
-		SET_GAME_STATE(SPATHI_STACK2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_STACK2, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, heard_youre_cowards))
 	{
@@ -792,7 +792,7 @@ SpathiNeutral(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -803,22 +803,22 @@ SpathiNeutral(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, look_weird))
 	{
 		NPCPhrase(YOU_LOOK_WEIRD);
 
-		SET_GAME_STATE(SPATHI_STACK0, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_STACK0, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, no_look_really_weird))
 	{
 		NPCPhrase(NO_YOU_LOOK_REALLY_WEIRD);
 
-		SET_GAME_STATE(SPATHI_STACK0, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_STACK0, static_cast<uint32_t>(2));
 	}
 
-	switch (GET_GAME_STATE(SPATHI_STACK0))
+	switch (uqm::gameState().flag(uqm::GameFlag::SPATHI_STACK0))
 	{
 		case 0:
 			Response(look_weird, SpathiNeutral);
@@ -827,11 +827,11 @@ SpathiNeutral(RESPONSE_REF R)
 			Response(no_look_really_weird, SpathiNeutral);
 			break;
 	}
-	if (GET_GAME_STATE(SPATHI_STACK1) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_STACK1) == 0)
 	{
 		Response(come_in_peace, SpathiBefriend);
 	}
-	if (GET_GAME_STATE(SPATHI_STACK2) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_STACK2) == 0)
 	{
 		Response(prepare_to_die, SpathiAntagonize);
 	}
@@ -847,8 +847,8 @@ Intro(void)
 {
 	uint8_t Manner {};
 
-	Manner = GET_GAME_STATE(SPATHI_MANNER);
-	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1)
+	Manner = uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER);
+	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1)
 	{
 		join_us_refusals = 0;
 
@@ -857,10 +857,10 @@ Intro(void)
 		/* if already know password from Melnorme,
 			 * but haven't visited Spathiwa yet . . .
 			 */
-		if (GET_GAME_STATE(SPATHI_HOME_VISITS) == 7)
+		if (uqm::gameState().flag(uqm::GameFlag::SPATHI_HOME_VISITS) == 7)
 		{
-			SET_GAME_STATE(KNOW_SPATHI_PASSWORD, 0);
-			SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::KNOW_SPATHI_PASSWORD, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
 		}
 		SetHomeworldKnown(SPATHI_HOME);
 
@@ -878,7 +878,7 @@ Intro(void)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -889,7 +889,7 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 
 		Response(give_info_space, ExitConversation);
 		Response(we_sorry_space, ExitConversation);
@@ -900,7 +900,7 @@ Intro(void)
 	{
 		SpathiAllies((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(SPATHI_QUEST))
+	else if (uqm::gameState().flag(uqm::GameFlag::SPATHI_QUEST))
 	{
 		SpathiFriendly((RESPONSE_REF)0);
 	}
@@ -922,21 +922,21 @@ post_spathi_enc(void)
 {
 	uint8_t Manner {};
 
-	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1)
+	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1)
 	{
-		SET_GAME_STATE(FOUND_PLUTO_SPATHI, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::FOUND_PLUTO_SPATHI, static_cast<uint32_t>(2));
 	}
 	else if (getSegue() == Segue_hostile
-			 && (Manner = GET_GAME_STATE(SPATHI_MANNER)) != 2)
+			 && (Manner = uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER)) != 2)
 	{
-		SET_GAME_STATE(SPATHI_MANNER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(1));
 		if (Manner != 1)
 		{
-			SET_GAME_STATE(SPATHI_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(0));
 			/* if don't know about Spathi via Melnorme . . . */
-			if (GET_GAME_STATE(SPATHI_HOME_VISITS) != 7)
+			if (uqm::gameState().flag(uqm::GameFlag::SPATHI_HOME_VISITS) != 7)
 			{
-				SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
+				uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
 			}
 		}
 	}
@@ -956,13 +956,13 @@ init_spathi_comm(void)
 	spathi_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	// use alternate Fwiffo track if available
-	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1)
+	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1)
 	{
 		altResFlags |= UseAltSong;
 	}
 
-	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1
-		|| GET_GAME_STATE(SPATHI_MANNER) == 3
+	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1
+		|| uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);

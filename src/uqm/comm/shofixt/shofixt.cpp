@@ -199,7 +199,7 @@ static RESPONSE_REF shofixti_name;
 static void
 GetShofixtiName(void)
 {
-	if (GET_GAME_STATE(SHOFIXTI_KIA))
+	if (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_KIA))
 	{
 		shofixti_name = katana;
 	}
@@ -240,8 +240,8 @@ ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(LEAPING_HAPPINESS);
 
-		SET_GAME_STATE(SHOFIXTI_RECRUITED, 1);
-		SET_GAME_STATE(MAIDENS_ON_SHIP, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_RECRUITED, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::MAIDENS_ON_SHIP, static_cast<uint32_t>(0));
 		setSegue(Segue_peace);
 
 		AddEvent(RELATIVE_EVENT, 2, 0, 0, SHOFIXTI_RETURN_EVENT);
@@ -250,55 +250,55 @@ ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(TYPICAL_PLOY);
 
-		SET_GAME_STATE(SHOFIXTI_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, hey_stop))
 	{
 		NPCPhrase(ONLY_STOP);
 
-		SET_GAME_STATE(SHOFIXTI_STACK1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, look_you_are))
 	{
 		NPCPhrase(TOO_BAD);
 
-		SET_GAME_STATE(SHOFIXTI_STACK1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, no_one_insults))
 	{
 		NPCPhrase(YOU_LIMP);
 
-		SET_GAME_STATE(SHOFIXTI_STACK2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK2, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, mighty_words))
 	{
 		NPCPhrase(HANG_YOUR);
 
-		SET_GAME_STATE(SHOFIXTI_STACK2, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK2, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, dont_know))
 	{
 		NPCPhrase(NEVER);
 
-		SET_GAME_STATE(SHOFIXTI_STACK3, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, look0))
 	{
 		NPCPhrase(FOR_YOU);
 
-		SET_GAME_STATE(SHOFIXTI_STACK3, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, no_bloodshed))
 	{
 		NPCPhrase(YES_BLOODSHED);
 
-		SET_GAME_STATE(SHOFIXTI_STACK3, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, dont_want_to_fight))
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SHOFIXTI_STACK4);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK4);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -315,7 +315,7 @@ ExitConversation(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SHOFIXTI_STACK4, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK4, static_cast<uint32_t>(NumVisits));
 	}
 }
 
@@ -353,7 +353,7 @@ ConsoleShofixti(RESPONSE_REF R)
 		NPCPhrase(VERY_SAD_KILL_SELF);
 	}
 
-	if (GET_GAME_STATE(MAIDENS_ON_SHIP))
+	if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP))
 	{
 		Response(important_duty, GiveMaidens);
 	}
@@ -392,9 +392,9 @@ RealizeMistake(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase(DGRUNTI);
-	SET_GAME_STATE(SHOFIXTI_STACK1, 0);
-	SET_GAME_STATE(SHOFIXTI_STACK3, 0);
-	SET_GAME_STATE(SHOFIXTI_STACK2, 3);
+	uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(0));
+	uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(0));
+	uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK2, static_cast<uint32_t>(3));
 
 	Response(i_am_captain, ExplainDefeat);
 	Response(i_am_nice, ExplainDefeat);
@@ -405,7 +405,7 @@ static void
 Hostile(RESPONSE_REF R)
 {
 	(void)R; // ignored
-	switch (GET_GAME_STATE(SHOFIXTI_STACK1))
+	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK1))
 	{
 		case 0:
 			Response(dont_attack, ExitConversation);
@@ -417,7 +417,7 @@ Hostile(RESPONSE_REF R)
 			Response(look_you_are, ExitConversation);
 			break;
 	}
-	switch (GET_GAME_STATE(SHOFIXTI_STACK2))
+	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK2))
 	{
 		case 0:
 			Response(no_one_insults, (getNomadMode() == uqm::NomadMode::Normal ? RealizeMistake : ExitConversation));
@@ -429,7 +429,7 @@ Hostile(RESPONSE_REF R)
 			Response(donkey_breath, RealizeMistake);
 			break;
 	}
-	switch (GET_GAME_STATE(SHOFIXTI_STACK3))
+	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK3))
 	{
 		case 0:
 			Response(dont_know, ExitConversation);
@@ -481,20 +481,20 @@ Friendly(RESPONSE_REF R)
 		SetHomeworldKnown(SHOFIXTI_HOME);
 
 		LastStack = 1;
-		SET_GAME_STATE(SHOFIXTI_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, what_happened))
 	{
 		NPCPhrase(MET_VUX);
 
 		LastStack = 1;
-		SET_GAME_STATE(SHOFIXTI_STACK1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, glory_device))
 	{
 		NPCPhrase(SWITCH_BROKE);
 
-		SET_GAME_STATE(SHOFIXTI_STACK1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, where_world))
 	{
@@ -503,13 +503,13 @@ Friendly(RESPONSE_REF R)
 		SetHomeworldKnown(SHOFIXTI_HOME);
 
 		LastStack = 2;
-		SET_GAME_STATE(SHOFIXTI_STACK3, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, how_survive))
 	{
 		NPCPhrase(NOT_HERE);
 
-		SET_GAME_STATE(SHOFIXTI_STACK3, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(2));
 	}
 
 	if (PhraseEnabled(report0))
@@ -526,7 +526,7 @@ Friendly(RESPONSE_REF R)
 		Resp[0].c_buf = buf0;
 	}
 
-	switch (GET_GAME_STATE(SHOFIXTI_STACK1))
+	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK1))
 	{
 		case 0:
 			construct_response(
@@ -548,7 +548,7 @@ Friendly(RESPONSE_REF R)
 			break;
 	}
 
-	switch (GET_GAME_STATE(SHOFIXTI_STACK3))
+	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK3))
 	{
 		case 0:
 			Resp[2].pStr = where_world;
@@ -569,7 +569,7 @@ Friendly(RESPONSE_REF R)
 			DoResponsePhrase(Resp[i].pStr, Friendly, Resp[i].c_buf);
 		}
 	}
-	if (GET_GAME_STATE(MAIDENS_ON_SHIP))
+	if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP))
 	{
 		Response(important_duty, GiveMaidens);
 	}
@@ -598,7 +598,7 @@ Intro(void)
 
 	GetShofixtiName();
 
-	if (GET_GAME_STATE(SHOFIXTI_STACK2) > 2)
+	if (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK2) > 2)
 	{
 		NPCPhrase(FRIENDLY_HELLO);
 
@@ -608,8 +608,8 @@ Intro(void)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SHOFIXTI_VISITS);
-		if (GET_GAME_STATE(SHOFIXTI_KIA))
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_VISITS);
+		if (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_KIA))
 		{
 			switch (NumVisits++)
 			{
@@ -659,7 +659,7 @@ Intro(void)
 					break;
 			}
 		}
-		SET_GAME_STATE(SHOFIXTI_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_VISITS, static_cast<uint32_t>(NumVisits));
 
 		Hostile((RESPONSE_REF)0);
 	}

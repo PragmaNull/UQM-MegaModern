@@ -345,7 +345,7 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 	else if (StarShipPtr->playerNr == RpgPlayerNum)
 	{ // This is SIS
 		DrawCrewFuelString(y, 0);
-		DrawShipNameString(GLOBAL_SIS(ShipName), (uint16_t)~0, y);
+		DrawShipNameString(uqm::gameState().sis().ShipName, (uint16_t)~0, y);
 	}
 
 	{

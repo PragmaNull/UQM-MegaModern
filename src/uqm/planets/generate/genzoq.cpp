@@ -62,7 +62,7 @@ const GenerateFunctions generateZoqFotPikFunctions = {
 static bool
 GenerateZoqFotPik_initNpcs(SOLARSYS_STATE* solarSys)
 {
-	if (GET_GAME_STATE(ZOQFOT_DISTRESS) != 1)
+	if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS) != 1)
 	{
 		GenerateDefault_initNpcs(solarSys);
 	}
@@ -165,16 +165,16 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 		if (StartSphereTracking(ZOQFOTPIK_SHIP))
 		{
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			if (GET_GAME_STATE(ZOQFOT_DISTRESS))
+			if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS))
 			{
 				CloneShipFragment(BLACK_URQUAN_SHIP,
-								  &GLOBAL(npc_built_ship_q), 0);
+								  &uqm::gameState().game().npc_built_ship_q, 0);
 
 				uqm::currentActivity() |= START_INTERPLANETARY;
-				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+				uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 				InitCommunication(BLACKURQ_CONVERSATION);
 
 				if (uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
@@ -182,26 +182,26 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 					return true;
 				}
 
-				if (GetHeadLink(&GLOBAL(npc_built_ship_q)))
+				if (GetHeadLink(&uqm::gameState().game().npc_built_ship_q))
 				{
 					uqm::currentActivity() &= ~START_INTERPLANETARY;
-					ReinitQueue(&GLOBAL(npc_built_ship_q));
+					ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 					GetGroupInfo(GroupsRandom, GroupLoadIp);
 					return true;
 				}
 			}
 
 			CloneShipFragment(ZOQFOTPIK_SHIP,
-							  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
+							  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			InitCommunication(ZOQFOTPIK_CONVERSATION);
 
 			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
-				ReinitQueue(&GLOBAL(npc_built_ship_q));
+				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 

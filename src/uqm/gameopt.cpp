@@ -430,14 +430,14 @@ NameCaptainOrShip(bool nameCaptain, bool gamestart)
 
 	if (nameCaptain)
 	{
-		Setting = GLOBAL_SIS(CommanderName);
-		tes.MaxSize = sizeof(GLOBAL_SIS(CommanderName));
+		Setting = uqm::gameState().sis().CommanderName;
+		tes.MaxSize = sizeof(uqm::gameState().sis().CommanderName);
 		TextEntry3DO = (bool)is3DO(uqm::UQMOptions::read().whichFonts);
 	}
 	else
 	{
-		Setting = GLOBAL_SIS(ShipName);
-		tes.MaxSize = sizeof(GLOBAL_SIS(ShipName));
+		Setting = uqm::gameState().sis().ShipName;
+		tes.MaxSize = sizeof(uqm::gameState().sis().ShipName);
 		TextEntry3DO = false;
 	}
 
@@ -1420,19 +1420,19 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		uqm::gameState().sis() = pSD->SS;
 
 		DrawSaveInfo(uqm::gameState().sis());
-		swap(player_built_q, GLOBAL(built_ship_q));
-		GLOBAL(built_ship_q).reset(MaxBuiltShips, sizeof(SHIP_FRAGMENT));
+		swap(player_built_q, uqm::gameState().game().built_ship_q);
+		uqm::gameState().game().built_ship_q.reset(MaxBuiltShips, sizeof(SHIP_FRAGMENT));
 		for (i = 0; i < pSD->NumShips; ++i)
 		{
 			CloneShipFragment(
-				(RACE_ID)pSD->ShipList[i], &GLOBAL(built_ship_q), 0);
+				(RACE_ID)pSD->ShipList[i], &uqm::gameState().game().built_ship_q, 0);
 		}
 		DateToString(buf, sizeof buf,
 					 pSD->month_index, pSD->day_index, pSD->year_index);
 		ClearSISRect(DrawSisDisplay);
 		DrawBorder(SIS_STAT_SUMM_FRAME);
 		DrawStatusMessage(buf);
-		GLOBAL(built_ship_q).release();
+		uqm::gameState().game().built_ship_q.release();
 
 		SetContextClipRect(&OldRect);
 
@@ -1524,10 +1524,10 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 				{
 					uint8_t QuasiState {};
 
-					QuasiState = GET_GAME_STATE(ARILOU_SPACE_SIDE);
-					SET_GAME_STATE(ARILOU_SPACE_SIDE, 0);
+					QuasiState = uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE);
+					uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(0));
 					const STAR_DESC* SDPtr {FindStar(nullptr, &starPt, 1, 1)};
-					SET_GAME_STATE(ARILOU_SPACE_SIDE, QuasiState);
+					uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(QuasiState));
 					if (SDPtr)
 					{
 						GetClusterName(SDPtr, buf);
@@ -1598,7 +1598,7 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		SetContext(OldContext);
 
 		// Restore the state and queues because we hacked them
-		swap(GLOBAL(built_ship_q), player_built_q);
+		swap(uqm::gameState().game().built_ship_q, player_built_q);
 		uqm::gameState().sis() = SaveSS;
 		if (uqm::UQMOptions::read().customBorder)
 		{
@@ -1774,19 +1774,19 @@ DoPickGame(MENU_STATE* pMS)
 
 			if (uqm::UQMOptions::read().infiniteRU)
 			{
-				GLOBAL_SIS(ResUnits) = oldRU;
+				uqm::gameState().sis().ResUnits = oldRU;
 			}
 
 			if (uqm::UQMOptions::read().infiniteFuel)
 			{
 				if (loadFuel <= GetFuelTankCapacity())
 				{
-					GLOBAL_SIS(FuelOnBoard) = loadFuel;
+					uqm::gameState().sis().FuelOnBoard = loadFuel;
 				}
 				else
 				{
-					GLOBAL_SIS(ResUnits) += (LoadFuelScaled - TankCapacityScaled) * GLOBAL(FuelCost);
-					GLOBAL_SIS(FuelOnBoard) = GetFuelTankCapacity();
+					uqm::gameState().sis().ResUnits += (LoadFuelScaled - TankCapacityScaled) * uqm::gameState().game().FuelCost;
+					uqm::gameState().sis().FuelOnBoard = GetFuelTankCapacity();
 				}
 			}
 
@@ -2026,7 +2026,7 @@ PickGame(bool saving, bool fromMainMenu)
 		uqm::log::info("Name: {}", pSD->SaveName);
 		uqm::log::info("Slot: {}", MenuState.CurState);
 		uqm::log::info("Seed Type: {}", toString(uqm::currentSeed().type));
-		uqm::log::info("Seed: {}", GLOBAL_SIS(Seed));
+		uqm::log::info("Seed: {}", uqm::gameState().sis().Seed);
 		uqm::log::info("Difficulty: {:s}", getDifficulty());
 		uqm::log::info("Extended: {}", BoolStr(IsExtended()));
 		uqm::log::info("Nomad: {:s}\n", getNomadMode());
@@ -2034,7 +2034,7 @@ PickGame(bool saving, bool fromMainMenu)
 
 	if (!(uqm::currentActivity() & CHECK_ABORT) && (saving || (!pickState.success && !fromMainMenu)))
 	{ // Restore previous screen
-		const bool InStarbase = (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0);
+		const bool InStarbase = (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0);
 
 		// Math to include the title bars in the screen transition
 		DlgRect.extent.width += DlgRect.corner.x;
@@ -2068,7 +2068,7 @@ PickGame(bool saving, bool fromMainMenu)
 		}
 		else
 		{
-			DrawSISTitle(GLOBAL_SIS(PlanetName));
+			DrawSISTitle(uqm::gameState().sis().PlanetName);
 		}
 
 		// Redraws fuel, crew, and status message (green box)
@@ -2177,7 +2177,7 @@ bool GameOptions(void)
 		return false;
 	}
 
-	const bool inStarbase {GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0};
+	const bool inStarbase {uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0};
 	const uint8_t outfitOrShipyard {OutfitOrShipyard};
 
 	MenuState.CurState = SAVE_GAME;

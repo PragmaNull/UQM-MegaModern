@@ -96,23 +96,23 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 								   PLANET_DESC* world)
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
-		&& (GET_GAME_STATE(UMGAH_ZOMBIE_BLOBBIES)
-			|| !GET_GAME_STATE(TALKING_PET)
+		&& (uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES)
+			|| !uqm::gameState().flag(uqm::GameFlag::TALKING_PET)
 			|| StartSphereTracking(UMGAH_SHIP)))
 	{
 		NotifyOthers(UMGAH_SHIP, IpnlAllClear);
 		PutGroupInfo(GroupsRandom, GroupSaveIp);
-		ReinitQueue(&GLOBAL(ip_group_q));
-		assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+		ReinitQueue(&uqm::gameState().game().ip_group_q);
+		assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 		if (StartSphereTracking(UMGAH_SHIP))
 		{
 			uqm::currentActivity() |= START_INTERPLANETARY;
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
-			if (!GET_GAME_STATE(UMGAH_ZOMBIE_BLOBBIES))
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
+			if (!uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES))
 			{
 				CloneShipFragment(UMGAH_SHIP,
-								  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
+								  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
 				InitCommunication(UMGAH_CONVERSATION);
 			}
 			else
@@ -120,7 +120,7 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 				for (uint16_t i {0}; i < 10; ++i)
 				{
 					CloneShipFragment(UMGAH_SHIP,
-									  &GLOBAL(npc_built_ship_q), 0);
+									  &uqm::gameState().game().npc_built_ship_q, 0);
 				}
 				InitCommunication(TALKING_PET_CONVERSATION);
 			}
@@ -131,15 +131,15 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 			bool UmgahSurvivors {};
 
 			UmgahSurvivors = GetHeadLink(
-								 &GLOBAL(npc_built_ship_q))
+								 &uqm::gameState().game().npc_built_ship_q)
 						  != 0;
 			uqm::currentActivity() &= ~START_INTERPLANETARY;
 
-			if (GET_GAME_STATE(PLAYER_HYPNOTIZED))
+			if (uqm::gameState().flag(uqm::GameFlag::PLAYER_HYPNOTIZED))
 			{
 				ZapToUrquanEncounter();
 			}
-			else if (GET_GAME_STATE(UMGAH_ZOMBIE_BLOBBIES)
+			else if (uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES)
 					 && !UmgahSurvivors)
 			{
 				// Defeated the zombie fleet.
@@ -152,7 +152,7 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 				InitCommunication(TALKING_PET_CONVERSATION);
 			}
 
-			ReinitQueue(&GLOBAL(npc_built_ship_q));
+			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 			GetGroupInfo(GroupsRandom, GroupLoadIp);
 		}
 
@@ -231,8 +231,8 @@ ZapToUrquanEncounter(void)
 		InsertEncounter(hEncounter, GetHeadEncounter());
 
 		hStarShip = GetStarShipFromIndex(
-			&GLOBAL(avail_race_q), URQUAN_SHIP);
-		const FLEET_INFO* TemplatePtr {LockFleetInfo(&GLOBAL(avail_race_q), hStarShip)};
+			&uqm::gameState().game().avail_race_q, URQUAN_SHIP);
+		const FLEET_INFO* TemplatePtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 		EncounterPtr->origin = TemplatePtr->loc;
 		EncounterPtr->radius = TemplatePtr->actual_strength;
 		EncounterPtr->race_id = URQUAN_SHIP;
@@ -244,18 +244,18 @@ ZapToUrquanEncounter(void)
 		BSIPtr->max_crew = TemplatePtr->max_crew;
 		BSIPtr->max_energy = TemplatePtr->max_energy;
 
-		HFLEETINFO hUmgah = GetStarShipFromIndex(&GLOBAL(avail_race_q), UMGAH_SHIP);
+		HFLEETINFO hUmgah = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, UMGAH_SHIP);
 		FLEET_INFO* UmgahPtr =
-			LockFleetInfo(&GLOBAL(avail_race_q), hUmgah);
+			LockFleetInfo(&uqm::gameState().game().avail_race_q, hUmgah);
 
 		EncounterPtr->loc_pt = SeedFleetLocation(UmgahPtr, plot_map, SAMATRA_DEFINED);
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hUmgah);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hUmgah);
 
 		EncounterPtr->log_x = UniverseToLogx(EncounterPtr->loc_pt.x);
 		EncounterPtr->log_y = UniverseToLogy(EncounterPtr->loc_pt.y);
-		GLOBAL_SIS(log_x) = EncounterPtr->log_x;
-		GLOBAL_SIS(log_y) = EncounterPtr->log_y;
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		uqm::gameState().sis().log_x = EncounterPtr->log_x;
+		uqm::gameState().sis().log_y = EncounterPtr->log_y;
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 
 		{
 			SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond * 2));
@@ -276,10 +276,10 @@ ZapToUrquanEncounter(void)
 			DeltaSISGauges(0, -dx, 0);
 		}
 
-		if (GLOBAL_SIS(FuelOnBoard) < 5 * FuelTankScale)
+		if (uqm::gameState().sis().FuelOnBoard < 5 * FuelTankScale)
 		{
 			dx = ((5 + ((uint16_t)uqm::random().next() % 5)) * FuelTankScale)
-			   - (int16_t)GLOBAL_SIS(FuelOnBoard);
+			   - (int16_t)uqm::gameState().sis().FuelOnBoard;
 			DeltaSISGauges(0, dx, 0);
 		}
 		DrawSISMessage(nullptr);

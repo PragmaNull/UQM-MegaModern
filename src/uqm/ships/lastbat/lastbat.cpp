@@ -341,7 +341,7 @@ gate_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				&& GetPrimType(
 					   &DisplayArray[ElementPtr0->PrimIndex])
 					   == STAMPFILL_PRIM
-				&& GET_GAME_STATE(BOMB_CARRIER))
+				&& uqm::gameState().flag(uqm::GameFlag::BOMB_CARRIER))
 			{
 				uqm::currentActivity() &= ~IN_BATTLE;
 			}

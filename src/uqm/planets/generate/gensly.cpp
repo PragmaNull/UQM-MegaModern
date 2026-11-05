@@ -78,16 +78,16 @@ GenerateSlylandro_generateName(const SOLARSYS_STATE* solarSys,
 	GenerateDefault_generateName(solarSys, world);
 
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
-		&& GET_GAME_STATE(SLYLANDRO_HOME_VISITS))
+		&& uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_HOME_VISITS))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
-							sizeof(GLOBAL_SIS(PlanetName)),
+		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+							sizeof(uqm::gameState().sis().PlanetName),
 							GameString(PLANET_NUMBER_BASE + 36));
 
-		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
 
 	return true;

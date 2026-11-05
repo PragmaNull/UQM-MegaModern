@@ -332,7 +332,7 @@ Rebels(RESPONSE_REF R)
 
 	if (PlayerSaid(R, how_goes_revolution))
 	{
-		NumVisits = GET_GAME_STATE(YEHAT_REBEL_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -349,7 +349,7 @@ Rebels(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(YEHAT_REBEL_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(how_goes_revolution);
 	}
@@ -386,7 +386,7 @@ Rebels(RESPONSE_REF R)
 	}
 	else if (PlayerSaid(R, what_about_pkunk_rebel))
 	{
-		if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK))
+		if (uqm::gameState().flag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK))
 		{
 			NPCPhrase(PKUNK_ABSORBED_REBEL);
 		}
@@ -395,7 +395,7 @@ Rebels(RESPONSE_REF R)
 			NPCPhrase(HATE_PKUNK_REBEL);
 		}
 
-		SET_GAME_STATE(YEHAT_REBEL_TOLD_PKUNK, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_TOLD_PKUNK, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, enough_info))
 	{
@@ -406,9 +406,9 @@ Rebels(RESPONSE_REF R)
 	{
 		Response(how_goes_revolution, Rebels);
 	}
-	if (!GET_GAME_STATE(YEHAT_REBEL_TOLD_PKUNK)
-		&& GET_GAME_STATE(PKUNK_VISITS)
-		&& GET_GAME_STATE(PKUNK_HOME_VISITS))
+	if (!uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_TOLD_PKUNK)
+		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_VISITS)
+		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_HOME_VISITS))
 	{
 		Response(what_about_pkunk_rebel, Rebels);
 	}
@@ -444,7 +444,7 @@ Intro(void)
 	}
 	else
 	{
-		NumVisits = GET_GAME_STATE(YEHAT_REBEL_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -461,7 +461,7 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(YEHAT_REBEL_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_VISITS, static_cast<uint32_t>(NumVisits));
 
 		Rebels((RESPONSE_REF)0);
 	}

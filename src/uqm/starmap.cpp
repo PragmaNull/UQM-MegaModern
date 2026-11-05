@@ -60,7 +60,7 @@ FindStar(STAR_DESC* LastSDPtr, GFXPOINT* puniverse, int16_t xbounds,
 	int16_t hi {};
 	STAR_DESC* BaseSDPtr {};
 
-	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{
 		BaseSDPtr = star_array;
 		hi = NumSolarSystems - 1;

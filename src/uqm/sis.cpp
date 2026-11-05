@@ -291,19 +291,19 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 				else
 				{
 					const GFXPOINT Log = MAKE_POINT(
-						LogxToUniverse(GLOBAL_SIS(log_x)),
-						LogyToUniverse(GLOBAL_SIS(log_y)));
+						LogxToUniverse(uqm::gameState().sis().log_x),
+						LogyToUniverse(uqm::gameState().sis().log_y));
 
 					pStr = GameString(NAVIGATION_STRING_BASE + 1);
 					// "QuasiSpace"
 
-					if (GET_GAME_STATE(ARILOU_HOME_VISITS)
+					if (uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS)
 						&& (Log.x == ArilouHomeX
 							&& Log.y == ArilouHomeY))
 					{
 						uqm::utf8StringCopy(
-							GLOBAL_SIS(PlanetName),
-							sizeof GLOBAL_SIS(PlanetName),
+							uqm::gameState().sis().PlanetName,
+							sizeof uqm::gameState().sis().PlanetName,
 							GameString(STAR_STRING_BASE + 148));
 						// "Falayalaralfali"
 					}
@@ -564,12 +564,12 @@ void DrawStatusMessage(const char* pStr)
 			}
 			else
 			{
-				fmt::format_to_sz_n(buf, "{} {}", uqm::makeWord(GET_GAME_STATE(MELNORME_CREDIT0), GET_GAME_STATE(MELNORME_CREDIT1)), GameString(STATUS_STRING_BASE + 0)); // "Cr"
+				fmt::format_to_sz_n(buf, "{} {}", uqm::makeWord(uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT0), uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT1)), GameString(STATUS_STRING_BASE + 0)); // "Cr"
 			}
 		}
 		else if (curMsgMode == SMM_RES_UNITS)
 		{
-			if (GET_GAME_STATE(CHMMR_BOMB_STATE) >= 2 || uqm::UQMOptions::read().infiniteRU)
+			if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) >= 2 || uqm::UQMOptions::read().infiniteRU)
 			{
 				fmt::format_to_sz_n(buf, "{} {}",
 									(isPC(uqm::UQMOptions::read().whichMenu) && isPC(uqm::UQMOptions::read().whichFonts)) ?
@@ -579,7 +579,7 @@ void DrawStatusMessage(const char* pStr)
 			}
 			else
 			{
-				fmt::format_to_sz_n(buf, "{} {}", GLOBAL_SIS(ResUnits),
+				fmt::format_to_sz_n(buf, "{} {}", uqm::gameState().sis().ResUnits,
 									GameString(STATUS_STRING_BASE + 1)); // "RU"
 			}
 		}
@@ -681,7 +681,7 @@ void DrawCaptainsName(bool NewGame)
 	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
 	t.baseline.y = r.corner.y + ResScale(6);
 	t.align = ALIGN_CENTER;
-	t.pStr = GLOBAL_SIS(CommanderName);
+	t.pStr = uqm::gameState().sis().CommanderName;
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(CaptainNameTextColor);
 	font_DrawText(&t);
@@ -714,7 +714,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 		r.extent.width = ShipNameWidth();
 		r.extent.height = ShipNameHeight();
 
-		t.pStr = GLOBAL_SIS(ShipName);
+		t.pStr = uqm::gameState().sis().ShipName;
 
 		DrawFilledRectangle(&r);
 	}
@@ -730,7 +730,7 @@ void DrawFlagshipName(bool InStatusArea, bool NewGame)
 
 		t.pStr = buf;
 		fmt::format_to_sz_n(buf, "{} {}",
-							GameString(NAMING_STRING_BASE + 1), GLOBAL_SIS(ShipName));
+							GameString(NAMING_STRING_BASE + 1), uqm::gameState().sis().ShipName);
 		uqm::utf8StringCopy(buf, sizeof buf, uqm::toUpperUtf8(buf).c_str());
 
 		if (IsHd())
@@ -815,7 +815,7 @@ void DrawFlagshipStats(void)
 
 	for (i = 0; i < NumModuleSlots; i++)
 	{
-		switch (GLOBAL_SIS(ModuleSlots[i]))
+		switch (uqm::gameState().sis().ModuleSlots[i])
 		{
 			case FUEL_TANK:
 				fuel += FuelTankCapacity;
@@ -840,7 +840,7 @@ void DrawFlagshipStats(void)
 
 	for (i = 0; i < NumDriveSlots; ++i)
 	{
-		if (GLOBAL_SIS(DriveSlots[i]) == FUSION_THRUSTER)
+		if (uqm::gameState().sis().DriveSlots[i] == FUSION_THRUSTER)
 		{
 			max_thrust += 2;
 		}
@@ -848,7 +848,7 @@ void DrawFlagshipStats(void)
 
 	for (i = 0; i < NumJetSlots; ++i)
 	{
-		if (GLOBAL_SIS(JetSlots[i]) == TURNING_JETS)
+		if (uqm::gameState().sis().JetSlots[i] == TURNING_JETS)
 		{
 			turn_wait -= 2;
 		}
@@ -900,19 +900,19 @@ void DrawFlagshipStats(void)
 	t.pStr = buf;
 
 	fmt::format_to_sz_n(buf, "{}",
-						describeWeapon(GLOBAL_SIS(ModuleSlots[15])));
+						describeWeapon(uqm::gameState().sis().ModuleSlots[15]));
 	font_DrawText(&t);
 	t.baseline.y += leading;
 	fmt::format_to_sz_n(buf, "{}",
-						describeWeapon(GLOBAL_SIS(ModuleSlots[14])));
+						describeWeapon(uqm::gameState().sis().ModuleSlots[14]));
 	font_DrawText(&t);
 	t.baseline.y += leading;
 	fmt::format_to_sz_n(buf, "{}",
-						describeWeapon(GLOBAL_SIS(ModuleSlots[13])));
+						describeWeapon(uqm::gameState().sis().ModuleSlots[13]));
 	font_DrawText(&t);
 	t.baseline.y += leading;
 	fmt::format_to_sz_n(buf, "{}",
-						describeWeapon(GLOBAL_SIS(ModuleSlots[0])));
+						describeWeapon(uqm::gameState().sis().ModuleSlots[0]));
 	font_DrawText(&t);
 
 	t.baseline.x = r.extent.width - ResScale(26);
@@ -1000,7 +1000,7 @@ void DrawLanders(void)
 	s.frame = IncFrameIndex(FlagStatFrame);
 	GetFrameRect(s.frame, &r);
 
-	uint8_t i {GLOBAL_SIS(NumLanders)};
+	uint8_t i {uqm::gameState().sis().NumLanders};
 	r.corner.x = (StatusWidth() >> 1) - r.corner.x;
 	s.origin.x = r.corner.x
 			   - ResScale(
@@ -1053,7 +1053,7 @@ void DrawStorageBays(bool Refresh)
 						 ResDescale(i * (r.extent.width + ResScale(1)))
 						 >> 1);
 		SetContextForeGroundColor(StorageBayFullColor);
-		for (j = GLOBAL_SIS(TotalElementMass);
+		for (j = uqm::gameState().sis().TotalElementMass;
 			 j >= StorageBayCapacity; j -= StorageBayCapacity)
 		{
 			DrawFilledRectangle(&r);
@@ -1215,7 +1215,7 @@ DrawThrusters(void)
 	s.origin.y = 0;
 	for (uint16_t i {0}; i < NumDriveSlots; ++i)
 	{
-		const uint8_t which_piece = GLOBAL_SIS(DriveSlots[i]);
+		const uint8_t which_piece = uqm::gameState().sis().DriveSlots[i];
 		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 0);
@@ -1237,7 +1237,7 @@ DrawTurningJets(void)
 	s.origin.y = 0;
 	for (uint16_t i {0}; i < NumJetSlots; ++i)
 	{
-		const uint8_t which_piece = GLOBAL_SIS(JetSlots[i]);
+		const uint8_t which_piece = uqm::gameState().sis().JetSlots[i];
 		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 1);
@@ -1260,7 +1260,7 @@ DrawModules(void)
 	s.origin.y = ResScale(1);
 	for (uint16_t i {0}; i < NumModuleSlots; ++i)
 	{
-		const uint8_t which_piece = GLOBAL_SIS(ModuleSlots[i]);
+		const uint8_t which_piece = uqm::gameState().sis().ModuleSlots[i];
 		if (which_piece < EmptySlot)
 		{
 			s.frame = SetAbsFrameIndex(FlagStatFrame, which_piece + 1 + 2);
@@ -1281,13 +1281,13 @@ DrawSupportShips(void)
 		{
 			SUPPORT_SHIP_PTS};
 
-	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q)),
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q),
 		pship_pos = ship_pos;
 		 hStarShip; hStarShip = hNextShip, ++pship_pos)
 	{
 		STAMP s;
 
-		const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
+		const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip)};
 		hNextShip = _GetSuccLink(StarShipPtr);
 
 		s.origin = MAKE_POINT(
@@ -1295,7 +1295,7 @@ DrawSupportShips(void)
 		s.frame = SetAbsFrameIndex(StarShipPtr->icons, 0);
 		DrawStamp(&s);
 
-		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 	}
 }
 
@@ -1312,17 +1312,17 @@ DeltaSISGauges_crewDelta(int16_t crew_delta)
 		uint16_t CrewCapacity {};
 
 		if (crew_delta < 0
-			&& GLOBAL_SIS(CrewEnlisted) <= (uint16_t)-crew_delta)
+			&& uqm::gameState().sis().CrewEnlisted <= (uint16_t)-crew_delta)
 		{
-			GLOBAL_SIS(CrewEnlisted) = 0;
+			uqm::gameState().sis().CrewEnlisted = 0;
 		}
 		else
 		{
-			GLOBAL_SIS(CrewEnlisted) += crew_delta;
+			uqm::gameState().sis().CrewEnlisted += crew_delta;
 			CrewCapacity = GetCrewPodCapacity();
-			if (GLOBAL_SIS(CrewEnlisted) > CrewCapacity)
+			if (uqm::gameState().sis().CrewEnlisted > CrewCapacity)
 			{
-				GLOBAL_SIS(CrewEnlisted) = CrewCapacity;
+				uqm::gameState().sis().CrewEnlisted = CrewCapacity;
 			}
 		}
 	}
@@ -1332,7 +1332,7 @@ DeltaSISGauges_crewDelta(int16_t crew_delta)
 		char buf[60];
 		GFXRECT r;
 
-		fmt::format_to_sz_n(buf, "{}", GLOBAL_SIS(CrewEnlisted));
+		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().CrewEnlisted);
 
 		GetGaugeRect(&r, true);
 
@@ -1367,24 +1367,24 @@ DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 	else
 	{
 
-		OldCoarseFuel = (GLOBAL_SIS(FuelOnBoard) / (!uqm::UQMOptions::read().wholeFuel ? FuelTankScale : 1));
+		OldCoarseFuel = (uqm::gameState().sis().FuelOnBoard / (!uqm::UQMOptions::read().wholeFuel ? FuelTankScale : 1));
 		if (fuel_delta < 0
-			&& GLOBAL_SIS(FuelOnBoard) <= (uint32_t)-fuel_delta)
+			&& uqm::gameState().sis().FuelOnBoard <= (uint32_t)-fuel_delta)
 		{
-			GLOBAL_SIS(FuelOnBoard) = 0;
+			uqm::gameState().sis().FuelOnBoard = 0;
 		}
 		else
 		{
 			const uint32_t FuelCapacity = GetFuelTankCapacity();
-			GLOBAL_SIS(FuelOnBoard) += fuel_delta;
-			if (GLOBAL_SIS(FuelOnBoard) > FuelCapacity)
+			uqm::gameState().sis().FuelOnBoard += fuel_delta;
+			if (uqm::gameState().sis().FuelOnBoard > FuelCapacity)
 			{
-				GLOBAL_SIS(FuelOnBoard) = FuelCapacity;
+				uqm::gameState().sis().FuelOnBoard = FuelCapacity;
 			}
 		}
 	}
 
-	const uint32_t NewCoarseFuel {(GLOBAL_SIS(FuelOnBoard) / (!uqm::UQMOptions::read().wholeFuel ? FuelTankScale : 1))};
+	const uint32_t NewCoarseFuel {(uqm::gameState().sis().FuelOnBoard / (!uqm::UQMOptions::read().wholeFuel ? FuelTankScale : 1))};
 	if (NewCoarseFuel != OldCoarseFuel)
 	{
 		TEXT t;
@@ -1437,13 +1437,13 @@ DeltaSISGauges_resunitDelta(int16_t resunit_delta)
 	if (resunit_delta != UndefinedDelta)
 	{
 		if (resunit_delta < 0
-			&& GLOBAL_SIS(ResUnits) <= (uint32_t)-resunit_delta)
+			&& uqm::gameState().sis().ResUnits <= (uint32_t)-resunit_delta)
 		{
-			GLOBAL_SIS(ResUnits) = 0;
+			uqm::gameState().sis().ResUnits = 0;
 		}
 		else
 		{
-			GLOBAL_SIS(ResUnits) += resunit_delta;
+			uqm::gameState().sis().ResUnits += resunit_delta;
 		}
 
 		assert(curMsgMode == SMM_RES_UNITS);
@@ -1538,7 +1538,7 @@ void DeltaSISGauges(int16_t crew_delta, int32_t fuel_delta, int resunit_delta)
 uint16_t
 GetCrewCount(void)
 {
-	return GLOBAL_SIS(CrewEnlisted);
+	return uqm::gameState().sis().CrewEnlisted;
 }
 
 // Get the number of crew which fit in a module of a specified type.
@@ -1561,7 +1561,7 @@ GetCrewPodCapacity(void)
 
 	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
 	{
-		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
 		capacity += GetModuleCrewCapacity(moduleType);
 	}
 
@@ -1580,7 +1580,7 @@ GetCrewPodForCrewMember(uint16_t crewNr, uint16_t* slotNr, uint16_t* seatNr)
 	uint16_t slotI {NumModuleSlots};
 	while (slotI--)
 	{
-		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
 		const uint16_t moduleCapacity = GetModuleCrewCapacity(moduleType);
 
 		if (crewNr < capacity + moduleCapacity)
@@ -1644,7 +1644,7 @@ GetCPodCapacity(GFXPOINT* ppt)
 static uint16_t
 GetElementMass(void)
 {
-	return GLOBAL_SIS(TotalElementMass);
+	return uqm::gameState().sis().TotalElementMass;
 }
 
 // Get the number of crew which fit in a module of a specified type.
@@ -1667,7 +1667,7 @@ GetStorageBayCapacity(void)
 
 	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
 	{
-		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
 		capacity += GetModuleStorageCapacity(moduleType);
 	}
 
@@ -1686,7 +1686,7 @@ GetStorageCellForMineralUnit(uint16_t unitNr, uint16_t* slotNr, uint16_t* cellNr
 	uint16_t slotI {NumModuleSlots};
 	while (slotI--)
 	{
-		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
 		const uint16_t moduleCapacity = GetModuleStorageCapacity(moduleType);
 
 		if (unitNr <= capacity + moduleCapacity)
@@ -1750,7 +1750,7 @@ GetSBayCapacity(GFXPOINT* ppt)
 static uint32_t
 GetFuelTotal(void)
 {
-	return GLOBAL_SIS(FuelOnBoard);
+	return uqm::gameState().sis().FuelOnBoard;
 }
 
 // Get the amount of fuel which fits in a module of a specified type.
@@ -1778,7 +1778,7 @@ GetFuelTankCapacity(void)
 
 	for (uint16_t slotI {0}; slotI < NumModuleSlots; slotI++)
 	{
-		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
 		capacity += GetModuleFuelCapacity(moduleType);
 	}
 
@@ -1800,7 +1800,7 @@ GetFuelTankForFuelUnit(uint32_t unitNr, uint16_t* slotNr, uint32_t* compartmentN
 	uint16_t slotI {NumModuleSlots};
 	while (slotI--)
 	{
-		const uint8_t moduleType = GLOBAL_SIS(ModuleSlots[slotI]);
+		const uint8_t moduleType = uqm::gameState().sis().ModuleSlots[slotI];
 
 		capacity += GetModuleFuelCapacity(moduleType);
 		if (unitNr < capacity)
@@ -1840,7 +1840,7 @@ GetFTankScreenPos(GFXPOINT* ppt)
 		return 0;
 	}
 
-	const uint8_t moduleType {GLOBAL_SIS(ModuleSlots[slotNr])};
+	const uint8_t moduleType {uqm::gameState().sis().ModuleSlots[slotNr]};
 	const uint32_t volume {GetModuleFuelCapacity(moduleType)};
 
 	rowNr = ((volume - compartmentNr) * MaxFuelBars
@@ -1876,7 +1876,7 @@ CountSISPieces(uint8_t piece_type)
 	{
 		for (i = 0; i < NumDriveSlots; ++i)
 		{
-			if (GLOBAL_SIS(DriveSlots[i]) == piece_type)
+			if (uqm::gameState().sis().DriveSlots[i] == piece_type)
 			{
 				++num_pieces;
 			}
@@ -1886,7 +1886,7 @@ CountSISPieces(uint8_t piece_type)
 	{
 		for (i = 0; i < NumJetSlots; ++i)
 		{
-			if (GLOBAL_SIS(JetSlots[i]) == piece_type)
+			if (uqm::gameState().sis().JetSlots[i] == piece_type)
 			{
 				++num_pieces;
 			}
@@ -1896,7 +1896,7 @@ CountSISPieces(uint8_t piece_type)
 	{
 		for (i = 0; i < NumModuleSlots; ++i)
 		{
-			if (GLOBAL_SIS(ModuleSlots[i]) == piece_type)
+			if (uqm::gameState().sis().ModuleSlots[i] == piece_type)
 			{
 				++num_pieces;
 			}
@@ -1920,7 +1920,7 @@ AutoPilotTextLogic(void)
 	TEXT temp;
 	GFXRECT r;
 
-	if (GLOBAL_SIS(FuelOnBoard) == 0)
+	if (uqm::gameState().sis().FuelOnBoard == 0)
 	{
 		DrawSISMessageEx(
 			GameString(NAVIGATION_STRING_BASE + 2),
@@ -1939,13 +1939,13 @@ AutoPilotTextLogic(void)
 	// Show destination and distance to destination
 	Falayalaralfali.x = ArilouHomeX;
 	Falayalaralfali.y = ArilouHomeY;
-	current_position.x = LogxToUniverse(GLOBAL_SIS(log_x));
-	current_position.y = LogyToUniverse(GLOBAL_SIS(log_y));
+	current_position.x = LogxToUniverse(uqm::gameState().sis().log_x);
+	current_position.y = LogyToUniverse(uqm::gameState().sis().log_y);
 	destination = uqm::flagship().autopilot.target();
 	target_distance = ptDistance(current_position, destination) / 10;
 	const STAR_DESC* StarPointer {FindStar(nullptr, &destination, 1, 1)};
 
-	if (inQuasiSpace() && (!pointsEqual(destination, Falayalaralfali) || (pointsEqual(destination, Falayalaralfali) && !(GET_GAME_STATE(KNOW_QS_PORTAL) & (1 << 15)))))
+	if (inQuasiSpace() && (!pointsEqual(destination, Falayalaralfali) || (pointsEqual(destination, Falayalaralfali) && !(uqm::gameState().flag(uqm::GameFlag::KNOW_QS_PORTAL) & (1 << 15)))))
 	{
 		StarPointer = nullptr;
 	}
@@ -2032,7 +2032,7 @@ void DrawAutoPilotMessage(bool Reset)
 	}
 
 	OnAutoPilot = (uqm::flagship().autopilot.hasTarget())
-			   || GLOBAL_SIS(FuelOnBoard) == 0;
+			   || uqm::gameState().sis().FuelOnBoard == 0;
 
 	if (OnAutoPilot || LastPilot)
 	{
@@ -2049,7 +2049,7 @@ void DrawAutoPilotMessage(bool Reset)
 		else if (GetTimeCounter() >= NextTime)
 		{
 			if (!(uqm::currentActivity() & CHECK_ABORT)
-				&& GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
+				&& uqm::gameState().sis().CrewEnlisted != (uint16_t)~0)
 			{
 				GFXCONTEXT OldContext {SetContext(OffScreenContext)};
 				SetContextForeGroundColor(cycle_tab[cycle_index]);
@@ -2071,7 +2071,7 @@ void DrawAutoPilotMessage(bool Reset)
 void DrawFuelInFTanks(bool isOutfit)
 {
 	GFXRECT r;
-	const uint32_t FuelVolume = GLOBAL_SIS(FuelOnBoard);
+	const uint32_t FuelVolume = uqm::gameState().sis().FuelOnBoard;
 	const uint32_t capacity = GetFuelTankCapacity();
 	uint32_t volume {};
 	Color c;
@@ -2088,14 +2088,14 @@ void DrawFuelInFTanks(bool isOutfit)
 	r.extent.height = ResScale(1);
 
 	// Loop through all the rows to draw
-	for (GLOBAL_SIS(FuelOnBoard) = FuelReserve;
-		 GLOBAL_SIS(FuelOnBoard) < capacity;)
+	for (uqm::gameState().sis().FuelOnBoard = FuelReserve;
+		 uqm::gameState().sis().FuelOnBoard < capacity;)
 	{
 		if (IsHd() && hdFuelFrame)
 		{
 			volume = GetFTankScreenPos(&r.corner);
 
-			if (GLOBAL_SIS(FuelOnBoard) < FuelVolume)
+			if (uqm::gameState().sis().FuelOnBoard < FuelVolume)
 			{
 				STAMP s;
 
@@ -2105,13 +2105,13 @@ void DrawFuelInFTanks(bool isOutfit)
 										   volume > 5000 ? 0 : 1);
 				DrawStamp(&s);
 
-				GLOBAL_SIS(FuelOnBoard) += volume;
+				uqm::gameState().sis().FuelOnBoard += volume;
 
-				if (GLOBAL_SIS(FuelOnBoard) > FuelVolume)
+				if (uqm::gameState().sis().FuelOnBoard > FuelVolume)
 				{ // this tank is not full, draw rect on top
 					r.extent.width = ResScale(5);
 					r.extent.height =
-						(GLOBAL_SIS(FuelOnBoard) - FuelVolume)
+						(uqm::gameState().sis().FuelOnBoard - FuelVolume)
 						/ (FuelVolumePerRow >> 2);
 					r.corner.y = -(GetFrameHot(s.frame).y);
 					SetContextForeGroundColor(c);
@@ -2127,13 +2127,13 @@ void DrawFuelInFTanks(bool isOutfit)
 				// return exact corner
 				SetContextForeGroundColor(c);
 				DrawFilledRectangle(&r);
-				GLOBAL_SIS(FuelOnBoard) += volume;
+				uqm::gameState().sis().FuelOnBoard += volume;
 			}
 		}
 		else
 		{
 			GetFTankScreenPos(&r.corner);
-			if (GLOBAL_SIS(FuelOnBoard) < FuelVolume)
+			if (uqm::gameState().sis().FuelOnBoard < FuelVolume)
 			{ // If we're less than the fuel level, draw fuel.
 				r.extent.width = ResScale(5);
 				DrawFilledRectangle(&r);
@@ -2150,10 +2150,10 @@ void DrawFuelInFTanks(bool isOutfit)
 				SetContextForeGroundColor(c);
 			}
 			DrawFilledRectangle(&r);
-			GLOBAL_SIS(FuelOnBoard) += FuelVolumePerRow;
+			uqm::gameState().sis().FuelOnBoard += FuelVolumePerRow;
 		}
 	}
-	GLOBAL_SIS(FuelOnBoard) = FuelVolume;
+	uqm::gameState().sis().FuelOnBoard = FuelVolume;
 }
 
 static constexpr auto MaxNumRects {5}; // 5 flashing rects at once should be enough

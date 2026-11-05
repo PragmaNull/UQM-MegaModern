@@ -102,20 +102,20 @@ GeneratePkunk_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		{
 			NotifyOthers(PKUNK_SHIP, IpnlAllClear);
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			CloneShipFragment(PKUNK_SHIP,
-							  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
+							  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			InitCommunication(PKUNK_CONVERSATION);
 
 			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
-				ReinitQueue(&GLOBAL(npc_built_ship_q));
+				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 			return true;
@@ -127,7 +127,7 @@ GeneratePkunk_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
 			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(PkunkRuinsStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
-			if (GET_GAME_STATE(CLEAR_SPINDLE))
+			if (uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE))
 			{ // Already picked up the Clear Spindle, skip the report
 				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 			}
@@ -148,12 +148,12 @@ GeneratePkunk_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		GenerateDefault_landerReportCycle(solarSys);
 
 		// The artifact can be picked up from any ruin
-		if (!GET_GAME_STATE(CLEAR_SPINDLE))
+		if (!uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE))
 		{ // Just picked up the Clear Spindle from a ruin
 			SetLanderTakeoff();
 
-			SET_GAME_STATE(CLEAR_SPINDLE, 1);
-			SET_GAME_STATE(CLEAR_SPINDLE_ON_SHIP, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP, static_cast<uint32_t>(1));
 		}
 
 		return false; // do not remove the node

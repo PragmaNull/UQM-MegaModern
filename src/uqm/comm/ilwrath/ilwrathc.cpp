@@ -183,7 +183,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(ILWRATH_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -204,7 +204,7 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ILWRATH_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_INFO, static_cast<uint32_t>(NumVisits));
 	}
 	else
 	{
@@ -378,7 +378,7 @@ IlwrathHome(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(ILWRATH_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -389,7 +389,7 @@ IlwrathHome(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ILWRATH_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, enough_gods))
 	{
@@ -483,17 +483,17 @@ GodsSpeak(RESPONSE_REF R)
 
 	if (R == 0)
 	{
-		if (GET_GAME_STATE(ILWRATH_FIGHT_THRADDASH))
+		if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 		{
 			NPCPhrase(GLORIOUS_WORSHIP);
 		}
-		else if (GET_GAME_STATE(ILWRATH_DECEIVED))
+		else if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED))
 		{
 			NPCPhrase(ON_WAY);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(ILWRATH_GODS_SPOKEN);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_GODS_SPOKEN);
 
 			if (NumVisits > 3)
 			{
@@ -516,19 +516,19 @@ GodsSpeak(RESPONSE_REF R)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ILWRATH_GODS_SPOKEN, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_GODS_SPOKEN, static_cast<uint32_t>(NumVisits));
 		}
 	}
 	else if (PlayerSaid(R, go_kill_thraddash))
 	{
 		NPCPhrase(OK_KILL_THRADDASH);
 
-		SET_GAME_STATE(ILWRATH_DECEIVED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_DECEIVED, static_cast<uint32_t>(1));
 		AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_ILWRATH_MISSION);
 	}
 	else if (PlayerSaid(R, worship_us))
 	{
-		NumVisits = GET_GAME_STATE(ILWRATH_WORSHIP);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_WORSHIP);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -542,7 +542,7 @@ GodsSpeak(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ILWRATH_WORSHIP, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_WORSHIP, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(worship_us);
 	}
@@ -551,7 +551,7 @@ GodsSpeak(RESPONSE_REF R)
 		NPCPhrase(NEVER_ENOUGH);
 	}
 
-	if (!GET_GAME_STATE(ILWRATH_DECEIVED))
+	if (!uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED))
 	{
 		Response(go_kill_thraddash, GodsSpeak);
 	}
@@ -573,7 +573,7 @@ IlwrathSpace(RESPONSE_REF R)
 
 	if (R == 0)
 	{
-		NumVisits = GET_GAME_STATE(ILWRATH_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -593,10 +593,10 @@ IlwrathSpace(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ILWRATH_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 
-	NumVisits = GET_GAME_STATE(ILWRATH_INFO);
+	NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_INFO);
 	switch (NumVisits)
 	{
 		case 0:
@@ -626,7 +626,7 @@ Intro(void)
 {
 	uint8_t NumVisits {};
 
-	if (GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER))
+	if (uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER))
 	{
 		NPCPhrase(SEND_MESSAGE);
 
@@ -635,13 +635,13 @@ Intro(void)
 		Response(surrender, CombatIsInevitable);
 		Response(be_reasonable, CombatIsInevitable);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
 		IlwrathHome((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		NumVisits = GET_GAME_STATE(ILWRATH_CHMMR_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_CHMMR_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -652,19 +652,19 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ILWRATH_CHMMR_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_CHMMR_VISITS, static_cast<uint32_t>(NumVisits));
 
 		Response(whats_up, CombatIsInevitable);
 		Response(bye, CombatIsInevitable);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 5))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 5))
 	{
 		// Communicating with an Ilwrath ship using a HyperWave Broadcaster.
-		if (GET_GAME_STATE(ILWRATH_FIGHT_THRADDASH))
+		if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 		{
 			NPCPhrase(BIG_FUN);
 		}
-		else if (GET_GAME_STATE(ILWRATH_DECEIVED))
+		else if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED))
 		{
 			NPCPhrase(FAST_AS_CAN);
 		}
@@ -672,7 +672,7 @@ Intro(void)
 		{
 			if (IsExtended())
 			{
-				NumVisits = GET_GAME_STATE(ILWRATH_GODS_SPOKEN);
+				NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_GODS_SPOKEN);
 
 				if (NumVisits < 5)
 				{
@@ -703,7 +703,7 @@ Intro(void)
 						--NumVisits;
 						break;
 				}
-				SET_GAME_STATE(ILWRATH_GODS_SPOKEN, NumVisits);
+				uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_GODS_SPOKEN, static_cast<uint32_t>(NumVisits));
 			}
 			else
 			{
@@ -713,7 +713,7 @@ Intro(void)
 			setSegue(Segue_peace);
 		}
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 4))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 4))
 	{
 		// Communicating with the Ilwrath homeworld using a
 		// Hyperwave Broadcaster.
@@ -723,11 +723,11 @@ Intro(void)
 	{
 		setSegue(Segue_peace);
 
-		if (GET_GAME_STATE(ILWRATH_FIGHT_THRADDASH))
+		if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 		{
 			NPCPhrase(HAPPY_FIGHTING_THRADDASH);
 		}
-		else if (GET_GAME_STATE(ILWRATH_DECEIVED))
+		else if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED))
 		{
 			NPCPhrase(ON_WAY_TO_THRADDASH);
 		}
@@ -764,8 +764,8 @@ init_ilwrath_comm(void)
 	ilwrath_desc.AlienTextBaseline.y = ResScale(64);
 	ilwrath_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if (GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)
-		|| (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA)
+	if (uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER)
+		|| (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA)
 			& ((1 << 4) | (1 << 5)))
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{

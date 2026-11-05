@@ -1928,8 +1928,8 @@ HailAlien(void)
 		}
 		else
 		{
-			const GFXPOINT Log = MAKE_POINT(LogxToUniverse(GLOBAL_SIS(log_x)),
-											LogyToUniverse(GLOBAL_SIS(log_y)));
+			const GFXPOINT Log = MAKE_POINT(LogxToUniverse(uqm::gameState().sis().log_x),
+											LogyToUniverse(uqm::gameState().sis().log_y));
 
 			r.corner.x = SisOrgX();
 			r.corner.y = SisOrgY();
@@ -1939,8 +1939,8 @@ HailAlien(void)
 			DrawSISFrame();
 			// TODO: find a better way to do this, perhaps set the titles
 			// forward from callers.
-			if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
-				&& GET_GAME_STATE(STARBASE_AVAILABLE))
+			if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
+				&& uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 			{ // Talking to allied Starbase
 				DrawSISMessage(GameString(STARBASE_STRING_BASE + 1));
 				// "Starbase Commander"
@@ -1955,11 +1955,11 @@ HailAlien(void)
 				if (inHQSpace())
 				{
 					DrawHyperCoords(uqm::flagship().shipStamp.origin);
-					if (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1
-						&& GET_GAME_STATE(ARILOU_HOME_VISITS)
+					if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1
+						&& uqm::gameState().flag(uqm::GameFlag::ARILOU_HOME_VISITS)
 						&& (Log.x == ArilouHomeX && Log.y == ArilouHomeY))
 					{
-						DrawSISMessage(GLOBAL_SIS(PlanetName));
+						DrawSISMessage(uqm::gameState().sis().PlanetName);
 					}
 				}
 				else if (uqm::flagship().ipPlanet == 0)
@@ -1968,7 +1968,7 @@ HailAlien(void)
 				}
 				else
 				{
-					DrawSISTitle(GLOBAL_SIS(PlanetName));
+					DrawSISTitle(uqm::gameState().sis().PlanetName);
 				}
 			}
 		}
@@ -2069,12 +2069,12 @@ InitCommunication(CONVERSATION which_comm)
 							&& pSolarSysState->pOrbitalDesc->data_index != DESTROYED_STARBASE
 							&& pSolarSysState->pOrbitalDesc->data_index != PRECURSOR_STARBASE))
 					{
-						fmt::format_to_sz_n((GLOBAL_SIS(PlanetName)) + strlen(GLOBAL_SIS(PlanetName)),
+						fmt::format_to_sz_n((uqm::gameState().sis().PlanetName) + strlen(uqm::gameState().sis().PlanetName),
 											4, "-%c%c", 'A' + moonIndex(pSolarSysState, pSolarSysState->pOrbitalDesc), '\0');
 					}
 				}
 
-				DrawSISTitle(GLOBAL_SIS(PlanetName));
+				DrawSISTitle(uqm::gameState().sis().PlanetName);
 			}
 		}
 	}
@@ -2107,7 +2107,7 @@ InitCommunication(CONVERSATION which_comm)
 
 		if (which_comm == ORZ_CONVERSATION
 			|| (which_comm == TALKING_PET_CONVERSATION
-				&& (!GET_GAME_STATE(TALKING_PET_ON_SHIP)
+				&& (!uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP)
 					|| uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE))
 			|| (which_comm != CHMMR_CONVERSATION
 				&& which_comm != SYREEN_CONVERSATION)) //&& CheckAlliance (status) == BAD_GUY))
@@ -2124,7 +2124,7 @@ InitCommunication(CONVERSATION which_comm)
 		CommData = *LocDataPtr;
 	}
 
-	if (GET_GAME_STATE(BATTLE_SEGUE) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::BATTLE_SEGUE) == 0)
 	{
 		// Not offered the chance to attack.
 		status = HAIL;
@@ -2132,13 +2132,13 @@ InitCommunication(CONVERSATION which_comm)
 	else if ((status = InitEncounter()) == HAIL && LocDataPtr)
 	{
 		// The player chose to talk.
-		SET_GAME_STATE(BATTLE_SEGUE, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
 	}
 	else
 	{
 		// The player chose to attack.
 		status = ATTACK;
-		SET_GAME_STATE(BATTLE_SEGUE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(1));
 	}
 
 	if (status == HAIL)
@@ -2164,27 +2164,27 @@ InitCommunication(CONVERSATION which_comm)
 		if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
 			&& (uqm::globalFlags() & CyborgEnabled))
 		{
-			ReinitQueue(&GLOBAL(npc_built_ship_q));
+			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 		}
 
 		// Clear the location flags
-		SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 0);
-		status = (GET_GAME_STATE(BATTLE_SEGUE)
-				  && GetHeadLink(&GLOBAL(npc_built_ship_q)));
+		uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(0));
+		status = (uqm::gameState().flag(uqm::GameFlag::BATTLE_SEGUE)
+				  && GetHeadLink(&uqm::gameState().game().npc_built_ship_q));
 		if (status)
 		{
 			// Start combat
-			if (IsExtended() && GET_GAME_STATE(URQUAN_PROTECTING_SAMATRA))
+			if (IsExtended() && uqm::gameState().flag(uqm::GameFlag::URQUAN_PROTECTING_SAMATRA))
 			{ // reload GW to planet in penultimate battle
 				free_gravity_well();
-				load_gravity_well(GET_GAME_STATE(BATTLE_PLANET));
+				load_gravity_well(uqm::gameState().flag(uqm::GameFlag::BATTLE_PLANET));
 			}
 			BuildBattle(RpgPlayerNum);
 			EncounterBattle();
 		}
 		else
 		{
-			SET_GAME_STATE(BATTLE_SEGUE, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
 		}
 	}
 
@@ -2207,11 +2207,11 @@ void RaceCommunication(void)
 	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 	{
 		/* Going into talking pet conversation */
-		ReinitQueue(&GLOBAL(npc_built_ship_q));
-		CloneShipFragment(SAMATRA_SHIP, &GLOBAL(npc_built_ship_q), 0);
+		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+		CloneShipFragment(SAMATRA_SHIP, &uqm::gameState().game().npc_built_ship_q, 0);
 		InitCommunication(TALKING_PET_CONVERSATION);
 		if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
-			&& GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
+			&& uqm::gameState().sis().CrewEnlisted != (uint16_t)~0)
 		{
 			uqm::currentActivity() = WON_LAST_BATTLE;
 		}
@@ -2221,17 +2221,17 @@ void RaceCommunication(void)
 	{
 		uint8_t ec {};
 
-		ec = GET_GAME_STATE(ESCAPE_COUNTER);
+		ec = uqm::gameState().flag(uqm::GameFlag::ESCAPE_COUNTER);
 
-		if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1)
+		if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1)
 		{
 			InitCommunication(SPATHI_CONVERSATION);
 		}
-		else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == 0)
+		else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == 0)
 		{
 			InitCommunication(TALKING_PET_CONVERSATION);
 		}
-		else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & ((1 << 4) | (1 << 5)))
+		else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & ((1 << 4) | (1 << 5)))
 		{
 			// Communicate with the Ilwrath using a Hyperwave Broadcaster.
 			InitCommunication(ILWRATH_CONVERSATION);
@@ -2240,7 +2240,7 @@ void RaceCommunication(void)
 		{
 			InitCommunication(CHMMR_CONVERSATION);
 		}
-		if (GLOBAL_SIS(CrewEnlisted) != (uint16_t)~0)
+		if (uqm::gameState().sis().CrewEnlisted != (uint16_t)~0)
 		{
 			NextActivity = uqm::currentActivity() & ~START_ENCOUNTER;
 			if (uqm::lowByte(NextActivity) == IN_INTERPLANETARY)
@@ -2250,13 +2250,13 @@ void RaceCommunication(void)
 			uqm::currentActivity() |= CHECK_LOAD; /* fake a load game */
 		}
 
-		SET_GAME_STATE(ESCAPE_COUNTER, ec);
+		uqm::gameState().setFlag(uqm::GameFlag::ESCAPE_COUNTER, static_cast<uint32_t>(ec));
 		return;
 	}
 	else if (inHQSpace())
 	{
-		ReinitQueue(&GLOBAL(npc_built_ship_q));
-		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) >= 2)
+		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) >= 2)
 		{
 			InitCommunication(ARILOU_CONVERSATION);
 			return;
@@ -2274,7 +2274,7 @@ void RaceCommunication(void)
 			for (i = 0; i < EncounterPtr->num_ships; ++i)
 			{
 				CloneShipFragment((RACE_ID)EncounterPtr->race_id,
-								  &GLOBAL(npc_built_ship_q),
+								  &uqm::gameState().game().npc_built_ship_q,
 								  EncounterPtr->ShipList[i].crew_level);
 			}
 
@@ -2287,10 +2287,10 @@ void RaceCommunication(void)
 
 	// First ship in the npc queue defines which alien race
 	// the player will be talking to
-	hStarShip = GetHeadLink(&GLOBAL(npc_built_ship_q));
-	FragPtr = LockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
+	hStarShip = GetHeadLink(&uqm::gameState().game().npc_built_ship_q);
+	FragPtr = LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 	i = FragPtr->race_id;
-	UnlockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
+	UnlockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 
 	status = InitCommunication(RaceComm[i]);
 
@@ -2301,7 +2301,7 @@ void RaceCommunication(void)
 
 	if (i == CHMMR_SHIP)
 	{
-		ReinitQueue(&GLOBAL(npc_built_ship_q));
+		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 	}
 
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
@@ -2309,7 +2309,7 @@ void RaceCommunication(void)
 		/* if used destruct code in interplanetary */
 		if (i == SLYLANDRO_SHIP && status == 0)
 		{
-			ReinitQueue(&GLOBAL(npc_built_ship_q));
+			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 		}
 	}
 	else if (hEncounter)
@@ -2320,7 +2320,7 @@ void RaceCommunication(void)
 
 		LockEncounter(hEncounter, &EncounterPtr);
 
-		NumShips = CountLinks(&GLOBAL(npc_built_ship_q));
+		NumShips = CountLinks(&uqm::gameState().game().npc_built_ship_q);
 		EncounterPtr->num_ships = NumShips;
 		EncounterPtr->flags |= EncounterReforming;
 		if (status == 0)
@@ -2330,18 +2330,18 @@ void RaceCommunication(void)
 
 		for (uint8_t i {0}; i < NumShips; ++i)
 		{
-			HSHIPFRAG hStarShip {GetStarShipFromIndex(&GLOBAL(npc_built_ship_q), i)};
-			const SHIP_FRAGMENT* FragPtr {LockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip)};
+			HSHIPFRAG hStarShip {GetStarShipFromIndex(&uqm::gameState().game().npc_built_ship_q, i)};
+			const SHIP_FRAGMENT* FragPtr {LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip)};
 			BRIEF_SHIP_INFO* BSIPtr {&EncounterPtr->ShipList[i]};
 			BSIPtr->race_id = FragPtr->race_id;
 			BSIPtr->crew_level = FragPtr->crew_level;
 			BSIPtr->max_crew = FragPtr->max_crew;
 			BSIPtr->max_energy = FragPtr->max_energy;
-			UnlockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
+			UnlockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 		}
 
 		UnlockEncounter(hEncounter);
-		ReinitQueue(&GLOBAL(npc_built_ship_q));
+		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 	}
 }
 

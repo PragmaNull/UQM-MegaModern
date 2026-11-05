@@ -260,7 +260,7 @@ ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(ENEMY_MUST_DIE);
 
-		SET_GAME_STATE(NO_YEHAT_ALLY_HOME, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_ALLY_HOME, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, bye_space))
 	{
@@ -278,7 +278,7 @@ ExitConversation(RESPONSE_REF R)
 	else if (PlayerSaid(R, not_here)
 			 || PlayerSaid(R, not_send))
 	{
-		switch (GET_GAME_STATE(YEHAT_REBEL_VISITS))
+		switch (uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_VISITS))
 		{
 			case 0:
 				NPCPhrase(JUST_A_TRICK_1);
@@ -287,30 +287,30 @@ ExitConversation(RESPONSE_REF R)
 				NPCPhrase(JUST_A_TRICK_2);
 				break;
 		}
-		SET_GAME_STATE(YEHAT_REBEL_VISITS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_VISITS, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, ok_send))
 	{
 		NPCPhrase(WE_REVOLT);
 
 		setSegue(Segue_peace);
-		SET_GAME_STATE(YEHAT_CIVIL_WAR, 1);
-		SET_GAME_STATE(YEHAT_VISITS, 0);
-		SET_GAME_STATE(YEHAT_HOME_VISITS, 0);
-		SET_GAME_STATE(YEHAT_REBEL_VISITS, 0);
-		SET_GAME_STATE(YEHAT_REBEL_INFO, 0);
-		SET_GAME_STATE(YEHAT_REBEL_TOLD_PKUNK, 0);
-		SET_GAME_STATE(NO_YEHAT_INFO, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_CIVIL_WAR, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_INFO, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_TOLD_PKUNK, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_INFO, static_cast<uint32_t>(0));
 
-		if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK) && isDifficulty(uqm::Difficulty::Hard))
+		if (uqm::gameState().flag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK) && isDifficulty(uqm::Difficulty::Hard))
 		{ // absorbed before revolution
 			uint16_t state {};
 
-			state = GET_GAME_STATE(HM_ENCOUNTERS);
+			state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
 
 			state |= 1 << NO_HELP_FROM_PKUNK;
 
-			SET_GAME_STATE(HM_ENCOUNTERS, state);
+			uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 		}
 
 		AddEvent(RELATIVE_EVENT, 0, 0, 0, YEHAT_REBEL_EVENT);
@@ -324,7 +324,7 @@ Royalists(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(YEHAT_ROYALIST_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::YEHAT_ROYALIST_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -335,13 +335,13 @@ Royalists(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(YEHAT_ROYALIST_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(how_is_rebellion);
 	}
 	else if (PlayerSaid(R, what_about_pkunk_royalist))
 	{
-		if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK))
+		if (uqm::gameState().flag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK))
 		{
 			NPCPhrase(PKUNK_ABSORBED_ROYALIST);
 		}
@@ -350,26 +350,26 @@ Royalists(RESPONSE_REF R)
 			NPCPhrase(HATE_PKUNK_ROYALIST);
 		}
 
-		SET_GAME_STATE(YEHAT_ROYALIST_TOLD_PKUNK, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_TOLD_PKUNK, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, sorry_about_revolution))
 	{
 		NPCPhrase(ALL_YOUR_FAULT);
 
-		SET_GAME_STATE(NO_YEHAT_INFO, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_INFO, static_cast<uint32_t>(1));
 	}
 
 	if (PhraseEnabled(how_is_rebellion))
 	{
 		Response(how_is_rebellion, Royalists);
 	}
-	if (!GET_GAME_STATE(YEHAT_ROYALIST_TOLD_PKUNK)
-		&& GET_GAME_STATE(PKUNK_VISITS)
-		&& GET_GAME_STATE(PKUNK_HOME_VISITS))
+	if (!uqm::gameState().flag(uqm::GameFlag::YEHAT_ROYALIST_TOLD_PKUNK)
+		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_VISITS)
+		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_HOME_VISITS))
 	{
 		Response(what_about_pkunk_royalist, Royalists);
 	}
-	if (!GET_GAME_STATE(NO_YEHAT_INFO))
+	if (!uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_INFO))
 	{
 		Response(sorry_about_revolution, Royalists);
 	}
@@ -383,7 +383,7 @@ StartRevolt(RESPONSE_REF R)
 	{
 		NPCPhrase(SEND_HIM_OVER_1);
 
-		SET_GAME_STATE(YEHAT_REBEL_TOLD_PKUNK, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_TOLD_PKUNK, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, shofixti_alive_2))
 	{
@@ -411,7 +411,7 @@ YehatHome(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(YEHAT_ROYALIST_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::YEHAT_ROYALIST_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -422,7 +422,7 @@ YehatHome(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(YEHAT_ROYALIST_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_homeworld);
 	}
@@ -430,17 +430,17 @@ YehatHome(RESPONSE_REF R)
 	{
 		NPCPhrase(NO_HELP_ENEMY);
 
-		SET_GAME_STATE(NO_YEHAT_HELP_HOME, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_HELP_HOME, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, give_info))
 	{
 		NPCPhrase(NO_INFO_FOR_ENEMY);
 
-		SET_GAME_STATE(NO_YEHAT_INFO, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_INFO, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, what_about_pkunk_royalist))
 	{
-		if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK))
+		if (uqm::gameState().flag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK))
 		{
 			NPCPhrase(PKUNK_ABSORBED_ROYALIST);
 		}
@@ -449,28 +449,28 @@ YehatHome(RESPONSE_REF R)
 			NPCPhrase(HATE_PKUNK_ROYALIST);
 		}
 
-		SET_GAME_STATE(YEHAT_ROYALIST_TOLD_PKUNK, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_TOLD_PKUNK, static_cast<uint32_t>(1));
 	}
 
 	if (PhraseEnabled(whats_up_homeworld))
 	{
 		Response(whats_up_homeworld, YehatHome);
 	}
-	if (!GET_GAME_STATE(YEHAT_ROYALIST_TOLD_PKUNK)
-		&& GET_GAME_STATE(PKUNK_VISITS)
-		&& GET_GAME_STATE(PKUNK_HOME_VISITS))
+	if (!uqm::gameState().flag(uqm::GameFlag::YEHAT_ROYALIST_TOLD_PKUNK)
+		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_VISITS)
+		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_HOME_VISITS))
 	{
 		Response(what_about_pkunk_royalist, YehatHome);
 	}
-	if (!GET_GAME_STATE(NO_YEHAT_HELP_HOME))
+	if (!uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_HELP_HOME))
 	{
 		Response(at_least_help_us_homeworld, YehatHome);
 	}
-	if (!GET_GAME_STATE(NO_YEHAT_INFO))
+	if (!uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_INFO))
 	{
 		Response(give_info, YehatHome);
 	}
-	if (!GET_GAME_STATE(NO_YEHAT_ALLY_HOME))
+	if (!uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_ALLY_HOME))
 	{
 		Response(i_demand_you_ally_homeworld, ExitConversation);
 	}
@@ -492,7 +492,7 @@ YehatSpace(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(YEHAT_REBEL_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -510,7 +510,7 @@ YehatSpace(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(YEHAT_REBEL_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_REBEL_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_space_1);
 	}
@@ -519,14 +519,14 @@ YehatSpace(RESPONSE_REF R)
 		NPCPhrase(WE_CANNOT_1);
 
 		LastStack = 2;
-		SET_GAME_STATE(NO_YEHAT_ALLY_SPACE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_ALLY_SPACE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, obligation))
 	{
 		NPCPhrase(WE_CANNOT_2);
 
 		setSegue(Segue_peace);
-		SET_GAME_STATE(NO_YEHAT_ALLY_SPACE, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_ALLY_SPACE, static_cast<uint32_t>(2));
 
 		return;
 	}
@@ -535,17 +535,17 @@ YehatSpace(RESPONSE_REF R)
 		NPCPhrase(SORRY_CANNOT);
 
 		LastStack = 1;
-		SET_GAME_STATE(NO_YEHAT_HELP_SPACE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_HELP_SPACE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, dishonor))
 	{
 		NPCPhrase(HERES_A_HINT);
 
-		SET_GAME_STATE(NO_YEHAT_HELP_SPACE, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::NO_YEHAT_HELP_SPACE, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, what_about_pkunk_royalist))
 	{
-		if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK))
+		if (uqm::gameState().flag(uqm::GameFlag::YEHAT_ABSORBED_PKUNK))
 		{
 			NPCPhrase(PKUNK_ABSORBED_ROYALIST);
 		}
@@ -554,13 +554,13 @@ YehatSpace(RESPONSE_REF R)
 			NPCPhrase(HATE_PKUNK_ROYALIST);
 		}
 
-		SET_GAME_STATE(YEHAT_ROYALIST_TOLD_PKUNK, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_ROYALIST_TOLD_PKUNK, static_cast<uint32_t>(1));
 	}
 
 	// SET_FUNCPTR (&PtrDesc, YehatSpace);
 	if (PhraseEnabled(whats_up_space_1))
 	{
-		switch (GET_GAME_STATE(YEHAT_REBEL_INFO))
+		switch (uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_INFO))
 		{
 			case 0:
 				pStr[0] = whats_up_space_1;
@@ -576,7 +576,7 @@ YehatSpace(RESPONSE_REF R)
 				break;
 		}
 	}
-	switch (GET_GAME_STATE(NO_YEHAT_HELP_SPACE))
+	switch (uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_HELP_SPACE))
 	{
 		case 0:
 			pStr[1] = at_least_help_us_space;
@@ -585,7 +585,7 @@ YehatSpace(RESPONSE_REF R)
 			pStr[1] = dishonor;
 			break;
 	}
-	switch (GET_GAME_STATE(NO_YEHAT_ALLY_SPACE))
+	switch (uqm::gameState().flag(uqm::GameFlag::NO_YEHAT_ALLY_SPACE))
 	{
 		case 0:
 			{
@@ -608,15 +608,15 @@ YehatSpace(RESPONSE_REF R)
 			Response(pStr[i], YehatSpace);
 		}
 	}
-	if (!GET_GAME_STATE(YEHAT_ROYALIST_TOLD_PKUNK)
-		&& GET_GAME_STATE(PKUNK_VISITS)
-		&& GET_GAME_STATE(PKUNK_HOME_VISITS))
+	if (!uqm::gameState().flag(uqm::GameFlag::YEHAT_ROYALIST_TOLD_PKUNK)
+		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_VISITS)
+		&& uqm::gameState().flag(uqm::GameFlag::PKUNK_HOME_VISITS))
 	{
 		Response(what_about_pkunk_royalist, YehatSpace);
 	}
-	if (GET_GAME_STATE(SHOFIXTI_VISITS))
+	if (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_VISITS))
 	{
-		switch (GET_GAME_STATE(YEHAT_REBEL_TOLD_PKUNK))
+		switch (uqm::gameState().flag(uqm::GameFlag::YEHAT_REBEL_TOLD_PKUNK))
 		{
 			case 0:
 				Response(shofixti_alive_1, StartRevolt);
@@ -642,11 +642,11 @@ Intro(void)
 		return;
 	}
 
-	if (GET_GAME_STATE(YEHAT_CIVIL_WAR))
+	if (uqm::gameState().flag(uqm::GameFlag::YEHAT_CIVIL_WAR))
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(YEHAT_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::YEHAT_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -657,11 +657,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(YEHAT_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::YEHAT_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(YEHAT_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::YEHAT_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -672,14 +672,14 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(YEHAT_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::YEHAT_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		Royalists((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
-		NumVisits = GET_GAME_STATE(YEHAT_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::YEHAT_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -690,13 +690,13 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(YEHAT_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 		YehatHome((RESPONSE_REF)0);
 	}
 	else
 	{
-		NumVisits = GET_GAME_STATE(YEHAT_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::YEHAT_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -713,7 +713,7 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(YEHAT_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::YEHAT_VISITS, static_cast<uint32_t>(NumVisits));
 
 		YehatSpace((RESPONSE_REF)0);
 	}

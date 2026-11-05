@@ -113,7 +113,7 @@ getSupportShipIcon(ROSTER_STATE* rosterState)
 	}
 
 	rosterState->curShipFrame = SetAbsFrameIndex(ShipFragPtr->icons, 2);
-	UnlockShipFrag(&GLOBAL(built_ship_q), hShipFrag);
+	UnlockShipFrag(&uqm::gameState().game().built_ship_q, hShipFrag);
 }
 
 static void
@@ -163,11 +163,11 @@ LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
 
 	// Lookup the current escort's location in the unsorted points list
 	// to find the original escort index
-	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q)),
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q),
 		pship_pos = ship_pos;
 		 hStarShip; hStarShip = hNextShip, ++pship_pos)
 	{
-		SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
+		SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip)};
 
 		if (pointsEqual(*pship_pos, rosterState->curShipPt))
 		{
@@ -176,7 +176,7 @@ LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
 		}
 
 		hNextShip = _GetSuccLink(StarShipPtr);
-		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 	}
 
 	return nullptr;
@@ -206,9 +206,9 @@ DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
 		return false;
 	}
 
-	hTemplate = GetStarShipFromIndex(&GLOBAL(avail_race_q),
+	hTemplate = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q,
 									 StarShipPtr->race_id);
-	FLEET_INFO* TemplatePtr {LockFleetInfo(&GLOBAL(avail_race_q), hTemplate)};
+	FLEET_INFO* TemplatePtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hTemplate)};
 
 	StarShipPtr->crew_level += crew_delta;
 
@@ -244,8 +244,8 @@ DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
 		ret = true;
 	}
 
-	UnlockFleetInfo(&GLOBAL(avail_race_q), hTemplate);
-	UnlockShipFrag(&GLOBAL(built_ship_q), hShipFrag);
+	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hTemplate);
+	UnlockShipFrag(&uqm::gameState().game().built_ship_q, hShipFrag);
 
 	return ret;
 }
@@ -319,7 +319,7 @@ DoModifyRoster(MENU_STATE* pMS)
 
 		if (up || pgup)
 		{
-			if (GLOBAL_SIS(CrewEnlisted))
+			if (uqm::gameState().sis().CrewEnlisted)
 			{
 				DoLoop = pgup ? 10 : 1;
 			}
@@ -330,7 +330,7 @@ DoModifyRoster(MENU_STATE* pMS)
 		}
 		else if (down || pgdn)
 		{
-			if (GLOBAL_SIS(CrewEnlisted) < GetCrewPodCapacity())
+			if (uqm::gameState().sis().CrewEnlisted < GetCrewPodCapacity())
 			{
 				DoLoop = pgdn ? 10 : 1;
 			}
@@ -468,7 +468,7 @@ bool RosterMenu(void)
 
 	memset(&RosterState, 0, sizeof RosterState);
 
-	RosterState.count = CountLinks(&GLOBAL(built_ship_q));
+	RosterState.count = CountLinks(&uqm::gameState().game().built_ship_q);
 	if (!RosterState.count)
 	{
 		return false;

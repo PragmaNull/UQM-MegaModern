@@ -257,8 +257,6 @@ namespace uqm
 [[nodiscard]] uint8_t& globalFlags();
 } // namespace uqm
 
-#define GLOBAL(f) uqm::gameState().game().f
-#define GLOBAL_SIS(f) uqm::gameState().sis().f
 
 inline constexpr auto MaxEncounters {16};
 inline constexpr auto MaxBattleGroups {32};
@@ -288,10 +286,6 @@ enum
 
 //#define STATE_DEBUG
 
-#define SET_GAME_STATE(SName, val) \
-	uqm::gameState().setFlag(uqm::GameFlag::SName, static_cast<uint32_t>(val))
-#define GET_GAME_STATE(SName) \
-	uqm::gameState().flag(uqm::GameFlag::SName)
 
 // For dynamic variable names
 constexpr auto DSetGameState(const auto& SName, const auto& val) { return setGameStateUint(SName, static_cast<uint32_t>(val)); }
@@ -324,7 +318,7 @@ extern void UninitGameStructures(void);
 // Difficulty
 inline uqm::Difficulty getDifficulty()
 {
-	return GLOBAL_SIS(Difficulty);
+	return uqm::gameState().sis().Difficulty;
 }
 
 template <typename T>
@@ -365,11 +359,11 @@ inline T ifHardDifficulty(T trueVal, T falseVal) { return isDifficulty(uqm::Diff
 //																				   "CYO"))
 
 // Extended
-inline auto IsExtended() { return (GLOBAL_SIS(Extended) ? true : false); }
+inline auto IsExtended() { return (uqm::gameState().sis().Extended ? true : false); }
 
 
 // Nomad
-static inline uqm::NomadMode getNomadMode() { return GLOBAL_SIS(Nomad); }
+static inline uqm::NomadMode getNomadMode() { return uqm::gameState().sis().Nomad; }
 
 // Storage Queue
 inline auto StorageQ() { return (uqm::UQMOptions::read().shipStore || isDifficulty(uqm::Difficulty::Hard) || uqm::UQMOptions::read().fleetPointSys); }
@@ -380,64 +374,64 @@ constexpr uint16_t c_noLocation {0xffff};
 static inline GFXPOINT
 LoadLastLoc(void)
 {
-	return GFXPOINT {(int16_t)GET_GAME_STATE(LAST_LOCATION_X),
-					 (int16_t)GET_GAME_STATE(LAST_LOCATION_Y)};
+	return GFXPOINT {(int16_t)uqm::gameState().flag(uqm::GameFlag::LAST_LOCATION_X),
+					 (int16_t)uqm::gameState().flag(uqm::GameFlag::LAST_LOCATION_Y)};
 }
 
 static inline void
 SaveLastLoc(GFXPOINT pt)
 {
-	SET_GAME_STATE(LAST_LOCATION_X, static_cast<uint16_t>(pt.x));
-	SET_GAME_STATE(LAST_LOCATION_Y, static_cast<uint16_t>(pt.y));
+	uqm::gameState().setFlag(uqm::GameFlag::LAST_LOCATION_X, static_cast<uint32_t>(static_cast<uint16_t>(pt.x)));
+	uqm::gameState().setFlag(uqm::GameFlag::LAST_LOCATION_Y, static_cast<uint32_t>(static_cast<uint16_t>(pt.y)));
 }
 
 static inline void
 ZeroLastLoc(void)
 {
-	SET_GAME_STATE(LAST_LOCATION_X, c_noLocation);
-	SET_GAME_STATE(LAST_LOCATION_Y, c_noLocation);
+	uqm::gameState().setFlag(uqm::GameFlag::LAST_LOCATION_X, static_cast<uint32_t>(c_noLocation));
+	uqm::gameState().setFlag(uqm::GameFlag::LAST_LOCATION_Y, static_cast<uint32_t>(c_noLocation));
 }
 
 static inline GFXPOINT
 LoadAdvancedQuasiPilot(void)
 {
-	return GFXPOINT {(int16_t)GET_GAME_STATE(ADV_AUTOPILOT_QUASI_X),
-					 (int16_t)GET_GAME_STATE(ADV_AUTOPILOT_QUASI_Y)};
+	return GFXPOINT {(int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_X),
+					 (int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_Y)};
 }
 
 static inline GFXPOINT
 LoadAdvancedAutoPilot(void)
 {
-	return GFXPOINT {(int16_t)GET_GAME_STATE(ADV_AUTOPILOT_SAVE_X),
-					 (int16_t)GET_GAME_STATE(ADV_AUTOPILOT_SAVE_Y)};
+	return GFXPOINT {(int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_X),
+					 (int16_t)uqm::gameState().flag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_Y)};
 }
 
 static inline void
 SaveAdvancedQuasiPilot(GFXPOINT pt)
 {
-	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_X, static_cast<uint16_t>(pt.x));
-	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_Y, static_cast<uint16_t>(pt.y));
+	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_X, static_cast<uint32_t>(static_cast<uint16_t>(pt.x)));
+	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_Y, static_cast<uint32_t>(static_cast<uint16_t>(pt.y)));
 }
 
 static inline void
 SaveAdvancedAutoPilot(GFXPOINT pt)
 {
-	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_X, static_cast<uint16_t>(pt.x));
-	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_Y, static_cast<uint16_t>(pt.y));
+	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_X, static_cast<uint32_t>(static_cast<uint16_t>(pt.x)));
+	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_Y, static_cast<uint32_t>(static_cast<uint16_t>(pt.y)));
 }
 
 static inline void
 ZeroAdvancedQuasiPilot(void)
 {
-	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_X, c_noLocation);
-	SET_GAME_STATE(ADV_AUTOPILOT_QUASI_Y, c_noLocation);
+	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_X, static_cast<uint32_t>(c_noLocation));
+	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_QUASI_Y, static_cast<uint32_t>(c_noLocation));
 }
 
 static inline void
 ZeroAdvancedAutoPilot(void)
 {
-	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_X, c_noLocation);
-	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_Y, c_noLocation);
+	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_X, static_cast<uint32_t>(c_noLocation));
+	uqm::gameState().setFlag(uqm::GameFlag::ADV_AUTOPILOT_SAVE_Y, static_cast<uint32_t>(c_noLocation));
 }
 
 constexpr auto BoolStr(const auto& a) { return ((a) ? "True" : "False"); }
@@ -458,7 +452,7 @@ IsHomeworldKnown(uint32_t homeworld)
 		return false;
 	}
 
-	return (bool)(GET_GAME_STATE(KNOW_HOMEWORLD) & (1 << homeworld));
+	return (bool)(uqm::gameState().flag(uqm::GameFlag::KNOW_HOMEWORLD) & (1 << homeworld));
 }
 
 static inline void
@@ -469,9 +463,9 @@ SetHomeworldKnown(uint32_t homeworld)
 		return;
 	}
 
-	uint32_t current {GET_GAME_STATE(KNOW_HOMEWORLD)};
+	uint32_t current {uqm::gameState().flag(uqm::GameFlag::KNOW_HOMEWORLD)};
 	current |= 1 << homeworld;
-	SET_GAME_STATE(KNOW_HOMEWORLD, current);
+	uqm::gameState().setFlag(uqm::GameFlag::KNOW_HOMEWORLD, static_cast<uint32_t>(current));
 }
 
 #if 0 //defined(__cplusplus)

@@ -59,31 +59,31 @@ GenerateColony_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	HIPGROUP hGroup {};
 
-	GLOBAL(BattleGroupRef) = GET_GAME_STATE(COLONY_GRPOFFS);
-	if (GLOBAL(BattleGroupRef) == 0)
+	uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::COLONY_GRPOFFS);
+	if (uqm::gameState().game().BattleGroupRef == 0)
 	{
 		CloneShipFragment(URQUAN_SHIP,
-						  &GLOBAL(npc_built_ship_q), 0);
-		GLOBAL(BattleGroupRef) = PutGroupInfo(GroupsAddNew, 1);
-		ReinitQueue(&GLOBAL(npc_built_ship_q));
-		SET_GAME_STATE(COLONY_GRPOFFS, GLOBAL(BattleGroupRef));
+						  &uqm::gameState().game().npc_built_ship_q, 0);
+		uqm::gameState().game().BattleGroupRef = PutGroupInfo(GroupsAddNew, 1);
+		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+		uqm::gameState().setFlag(uqm::GameFlag::COLONY_GRPOFFS, static_cast<uint32_t>(uqm::gameState().game().BattleGroupRef));
 	}
 
 	GenerateDefault_initNpcs(solarSys);
 
-	if (GLOBAL(BattleGroupRef)
-		&& (hGroup = GetHeadLink(&GLOBAL(ip_group_q))))
+	if (uqm::gameState().game().BattleGroupRef
+		&& (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q)))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte + 1;
 
-		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		GroupPtr->task = IN_ORBIT;
 		GroupPtr->sys_loc = PlanetByte;	 /* orbitting colony */
 		GroupPtr->dest_loc = PlanetByte; /* orbitting colony */
 		GroupPtr->loc.x = 0;
 		GroupPtr->loc.y = 0;
 		GroupPtr->group_counter = 0;
-		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 	}
 
 	return true;
@@ -160,11 +160,11 @@ GenerateColony_generateName(const SOLARSYS_STATE* solarSys,
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
-							sizeof(GLOBAL_SIS(PlanetName)),
+		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+							sizeof(uqm::gameState().sis().PlanetName),
 							GameString(PLANET_NUMBER_BASE + 33));
 
-		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
 
 	return true;

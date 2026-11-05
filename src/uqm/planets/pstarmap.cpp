@@ -291,8 +291,8 @@ DrawAutoPilot(GFXPOINT* pDstPt)
 	}
 	else
 	{
-		pt.x = LogxToUniverse(GLOBAL_SIS(log_x));
-		pt.y = LogyToUniverse(GLOBAL_SIS(log_y));
+		pt.x = LogxToUniverse(uqm::gameState().sis().log_x);
+		pt.y = LogyToUniverse(uqm::gameState().sis().log_y);
 	}
 
 	if (IsHd())
@@ -506,15 +506,15 @@ FuelRequiredTo(GFXPOINT dest)
 	}
 	else
 	{
-		pt.x = LogxToUniverse(GLOBAL_SIS(log_x));
-		pt.y = LogyToUniverse(GLOBAL_SIS(log_y));
+		pt.x = LogxToUniverse(uqm::gameState().sis().log_x);
+		pt.y = LogyToUniverse(uqm::gameState().sis().log_y);
 	}
 
 	pt.x -= dest.x;
 	pt.y -= dest.y;
 
 	const uint32_t f {(uint32_t)((long)pt.x * pt.x + (long)pt.y * pt.y)};
-	if (f == 0 || GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1)
+	if (f == 0 || uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1)
 	{
 		fuel_required = 0;
 	}
@@ -604,11 +604,11 @@ DrawNoReturnZone(void)
 	double dist {NAN};
 	GFXPOINT sol;
 	GFXPOINT sis;
-	const double halfFuel = GLOBAL_SIS(FuelOnBoard) / 2;
+	const double halfFuel = uqm::gameState().sis().FuelOnBoard / 2;
 
 	sol = plot_map[SOL_DEFINED].star_pt;
-	sis = GFXPOINT {(int16_t)LogxToUniverse(GLOBAL_SIS(log_x)),
-					(int16_t)LogyToUniverse(GLOBAL_SIS(log_y))};
+	sis = GFXPOINT {(int16_t)LogxToUniverse(uqm::gameState().sis().log_x),
+					(int16_t)LogyToUniverse(uqm::gameState().sis().log_y)};
 
 	dist = (double)FuelRequiredTo(sol) / 2;
 
@@ -772,7 +772,7 @@ DrawFuelCircle(bool secondary)
 	DRECT r;
 	GFXPOINT corner;
 	Color OldColor;
-	uint32_t OnBoardFuel = GLOBAL_SIS(FuelOnBoard);
+	uint32_t OnBoardFuel = uqm::gameState().sis().FuelOnBoard;
 
 	if (secondary)
 	{
@@ -785,8 +785,8 @@ DrawFuelCircle(bool secondary)
 	}
 	else
 	{
-		corner.x = LogxToUniverse(GLOBAL_SIS(log_x));
-		corner.y = LogyToUniverse(GLOBAL_SIS(log_y));
+		corner.x = LogxToUniverse(uqm::gameState().sis().log_x);
+		corner.y = LogyToUniverse(uqm::gameState().sis().log_y);
 	}
 
 	GetFuelRect(&r, OnBoardFuel << 1, corner);
@@ -1220,7 +1220,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 	}
 	BatchGraphics();
 
-	which_space = GET_GAME_STATE(ARILOU_SPACE_SIDE);
+	which_space = uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE);
 
 	if (which_space <= 1)
 	{
@@ -1241,7 +1241,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 	if (which_starmap != CONSTELLATION_MAP
 		&& (race_update == 0 && which_space < 2)
-		&& !(uqm::UQMOptions::read().infiniteFuel || GLOBAL_SIS(FuelOnBoard) == 0))
+		&& !(uqm::UQMOptions::read().infiniteFuel || uqm::gameState().sis().FuelOnBoard == 0))
 	{ // Draw the fuel range circle
 		DrawFuelCircle(false);
 	}
@@ -1288,7 +1288,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 	if (which_starmap != CONSTELLATION_MAP
 		&& (race_update == 0 && which_space < 2)
-		&& !(uqm::UQMOptions::read().infiniteFuel || GLOBAL_SIS(FuelOnBoard) == 0)
+		&& !(uqm::UQMOptions::read().infiniteFuel || uqm::gameState().sis().FuelOnBoard == 0)
 		&& (testFlag(uqm::UQMOptions::read().optFuelRange, uqm::FuelRangeDisplay::FuelAtDestination))
 		&& (uqm::flagship().autopilot.hasTarget()))
 	{ // Draw the autopilot fuel range circle (on top of the grid)
@@ -1306,10 +1306,10 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 		uint8_t currMax = 0;
 
 		for (index = 0,
-			hStarShip = GetHeadLink(&GLOBAL(avail_race_q));
+			hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 			 hStarShip != 0; ++index, hStarShip = hNextShip)
 		{
-			FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hStarShip)};
+			FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 			hNextShip = _GetSuccLink(FleetPtr);
 
 			if ((FleetPtr->known_strength && which_starmap != WAR_ERA_STARMAP) || (which_starmap == WAR_ERA_STARMAP && WarEraStrength(FleetPtr->SpeciesID) && index < NUM_BUILDABLE_SHIPS))
@@ -1442,7 +1442,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 				nameplate[currMax].index = race_update - 1;
 				currMax++;
 			}
-			UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+			UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 		}
 
 		if (currMax > 0)
@@ -1625,7 +1625,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 		}
 		for (i = 0; i < NumHyperVortices; ++i)
 		{
-			if (!(GET_GAME_STATE(KNOW_QS_PORTAL) & (1 << i)))
+			if (!(uqm::gameState().flag(uqm::GameFlag::KNOW_QS_PORTAL) & (1 << i)))
 			{
 				continue;
 			}
@@ -1651,8 +1651,8 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 		uint16_t rainbow_mask {};
 
 		rainbow_mask = uqm::makeWord(
-			GET_GAME_STATE(RAINBOW_WORLD0),
-			GET_GAME_STATE(RAINBOW_WORLD1));
+			uqm::gameState().flag(uqm::GameFlag::RAINBOW_WORLD0),
+			uqm::gameState().flag(uqm::GameFlag::RAINBOW_WORLD1));
 
 		if (rainbow_mask == 0)
 		{
@@ -1724,7 +1724,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 	} while (SDPtr->star_pt.x <= MaxXUniverse
 			 && SDPtr->star_pt.y <= MaxYUniverse);
 
-	if (GET_GAME_STATE(ARILOU_SPACE))
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE))
 	{
 		if (which_space <= 1)
 		{
@@ -1992,14 +1992,14 @@ UpdateCursorInfo(std::span<char> prevbuf)
 		// Snap cursor onto star
 		cursorLoc = BestSDPtr->star_pt;
 
-		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) >= 2
-			&& !(GET_GAME_STATE(KNOW_QS_PORTAL) & (1 << whichPortal)))
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) >= 2
+			&& !(uqm::gameState().flag(uqm::GameFlag::KNOW_QS_PORTAL) & (1 << whichPortal)))
 		{
 			// "UNKNOWN" string
 			uqm::utf8StringCopy(buf, sizeof(buf),
 								GameString(STAR_STRING_BASE + 132));
 		}
-		else if (GET_GAME_STATE(ARILOU_SPACE_SIDE) < 2 || whichPortal == NumHyperVortices)
+		else if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) < 2 || whichPortal == NumHyperVortices)
 		{
 			// Hyperspace side, or Arilou homeworld name once known
 			GetClusterName(BestSDPtr, buf);
@@ -2062,11 +2062,11 @@ UpdateCursorInfo(std::span<char> prevbuf)
 		}
 	}
 
-	if (GET_GAME_STATE(ARILOU_SPACE))
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE))
 	{
 		GFXPOINT ari_pt;
 
-		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
 			ari_pt = plot_map[ARILOU_DEFINED].star_pt;
 		}
@@ -2112,7 +2112,7 @@ UpdateCursorInfo(std::span<char> prevbuf)
 		else
 		{
 			// In HS, display default star search button name.
-			if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+			if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 			{
 				GFXCONTEXT OldContext {SetContext(OffScreenContext)};
 
@@ -2669,10 +2669,10 @@ AdvancedAutoPilot(void)
 	double fuel_with_portal {NAN};
 	double minimum = 0.0;
 	uint8_t index = 0;
-	const uint16_t KnownQSPortals = GET_GAME_STATE(KNOW_QS_PORTAL);
+	const uint16_t KnownQSPortals = uqm::gameState().flag(uqm::GameFlag::KNOW_QS_PORTAL);
 
-	current_position.x = LogxToUniverse(GLOBAL_SIS(log_x));
-	current_position.y = LogyToUniverse(GLOBAL_SIS(log_y));
+	current_position.x = LogxToUniverse(uqm::gameState().sis().log_x);
+	current_position.y = LogyToUniverse(uqm::gameState().sis().log_y);
 
 	if (pointsEqual(current_position, destination))
 	{
@@ -2744,8 +2744,8 @@ DoMoveCursor(MENU_STATE* pMS)
 		}
 		else
 		{
-			universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
-			universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
+			universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
+			universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
 		}
 		flashCurrentLocation(&universe, false);
 
@@ -2761,7 +2761,7 @@ DoMoveCursor(MENU_STATE* pMS)
 
 		if ((uqm::UQMOptions::read().bubbleWarp && !uqm::UQMOptions::read().infiniteFuel && !inQuasiSpace())
 			&& uqm::flagship().autopilot.hasTarget()
-			&& GLOBAL_SIS(FuelOnBoard) >= FuelRequired())
+			&& uqm::gameState().sis().FuelOnBoard >= FuelRequired())
 		{
 			DoBubbleWarp(true);
 		}
@@ -2773,12 +2773,12 @@ DoMoveCursor(MENU_STATE* pMS)
 			{
 				SaveLastLoc(
 					MAKE_POINT(
-						LogxToUniverse(GLOBAL_SIS(log_x)),
-						LogyToUniverse(GLOBAL_SIS(log_y))));
+						LogxToUniverse(uqm::gameState().sis().log_x),
+						LogyToUniverse(uqm::gameState().sis().log_y)));
 			}
 
 			if (uqm::UQMOptions::read().advancedAutoPilot
-				&& GET_GAME_STATE(PORTAL_SPAWNER_ON_SHIP))
+				&& uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP))
 			{
 				AdvancedAutoPilot();
 			}
@@ -2819,7 +2819,7 @@ DoMoveCursor(MENU_STATE* pMS)
 	{
 		FlushInput();
 
-		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{ // HyperSpace search
 			const GFXPOINT oldpt = cursorLoc;
 
@@ -2846,7 +2846,7 @@ DoMoveCursor(MENU_STATE* pMS)
 	{
 		FlushInput();
 
-		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
 			uint8_t NewState {};
 			NewState = which_starmap;
@@ -2880,7 +2880,7 @@ DoMoveCursor(MENU_STATE* pMS)
 	{
 		FlushInput();
 
-		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
 			setStarMarked(starIndex(cursorLoc), "PLYR_MARKER");
 
@@ -2895,7 +2895,7 @@ DoMoveCursor(MENU_STATE* pMS)
 	{
 		FlushInput();
 
-		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
 			for (uint16_t i {0}; i <= NumSolarSystems; i++)
 			{
@@ -3055,10 +3055,10 @@ UpdateMap(void)
 
 	MapDrawn = Interrupted = false;
 	for (index = 1,
-		hStarShip = GetHeadLink(&GLOBAL(avail_race_q));
+		hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 		 hStarShip; ++index, hStarShip = hNextShip)
 	{
-		FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hStarShip)};
+		FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 		hNextShip = _GetSuccLink(FleetPtr);
 
 		if (ButtonState)
@@ -3274,7 +3274,7 @@ DoneSphereGrowth:
 			}
 		}
 
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 	}
 }
 
@@ -3436,8 +3436,8 @@ bool StarMap(void)
 	}
 	else
 	{
-		universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
-		universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
+		universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
+		universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
 	}
 
 	cursorLoc = uqm::flagship().autopilot.target();
@@ -3462,7 +3462,7 @@ bool StarMap(void)
 	MenuState.Initialized = false;
 
 	transition_pending = true;
-	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{
 		UpdateMap();
 	}

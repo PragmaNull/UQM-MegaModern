@@ -244,7 +244,7 @@ void InitGalaxy(void)
 {
 	uint16_t i {};
 	DPOINT* ppt {};
-	const bool useScenery = (IsExtended() && GET_GAME_STATE(URQUAN_PROTECTING_SAMATRA)
+	const bool useScenery = (IsExtended() && uqm::gameState().flag(uqm::GameFlag::URQUAN_PROTECTING_SAMATRA)
 							 && uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE
 							 && uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE);
 
@@ -317,7 +317,7 @@ void InitGalaxy(void)
 								 BuildColor(
 									 MakeRgb15(0x15, 0x15, 0x15), 0x07));
 				}
-				else if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+				else if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 				{
 					SetPrimColor(&DisplayArray[p],
 								 BuildColor(

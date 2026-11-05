@@ -50,9 +50,9 @@ const GenerateFunctions generateDefaultFunctions = {
 
 bool GenerateDefault_initNpcs(SOLARSYS_STATE* solarSys)
 {
-	if (!GetGroupInfo(GLOBAL(BattleGroupRef), GroupInitIp))
+	if (!GetGroupInfo(uqm::gameState().game().BattleGroupRef, GroupInitIp))
 	{
-		GLOBAL(BattleGroupRef) = 0;
+		uqm::gameState().game().BattleGroupRef = 0;
 		BuildGroups();
 	}
 
@@ -81,8 +81,8 @@ bool GenerateDefault_reinitNpcs(SOLARSYS_STATE* solarSys)
 bool GenerateDefault_uninitNpcs(SOLARSYS_STATE* solarSys)
 {
 	PutGroupInfo(GroupsRandom, GroupSaveIp);
-	ReinitQueue(&GLOBAL(npc_built_ship_q));
-	ReinitQueue(&GLOBAL(ip_group_q));
+	ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+	ReinitQueue(&uqm::gameState().game().ip_group_q);
 
 	(void)solarSys;
 	return true;
@@ -105,9 +105,9 @@ bool GenerateDefault_generateName(const SOLARSYS_STATE* solarSys,
 								  const PLANET_DESC* world)
 {
 	const uint16_t i = planetIndex(solarSys, world);
-	uqm::utf8StringCopy(GLOBAL_SIS(PlanetName), sizeof(GLOBAL_SIS(PlanetName)),
+	uqm::utf8StringCopy(uqm::gameState().sis().PlanetName, sizeof(uqm::gameState().sis().PlanetName),
 						GameString(PLANET_NUMBER_BASE + (9 + 7) + i));
-	SET_GAME_STATE(BATTLE_PLANET, world->data_index);
+	uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(world->data_index));
 
 	return true;
 }
@@ -493,17 +493,17 @@ check_yehat_rebellion(void)
 	//   in an encounter with Royalists.
 	// TRANSLATION: "If the civil war has not started yet, or the player
 	//   battled a ship -- bail."
-	if (!GET_GAME_STATE(YEHAT_CIVIL_WAR) || EncounterRace >= 0)
+	if (!uqm::gameState().flag(uqm::GameFlag::YEHAT_CIVIL_WAR) || EncounterRace >= 0)
 	{
 		return; // not this time
 	}
 
 	// Send Yehat groups to flee the system, but only if the player
 	// has actually talked to a ship.
-	for (hGroup = GetHeadLink(&GLOBAL(ip_group_q)); hGroup;
+	for (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q); hGroup;
 		 hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr = LockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		IP_GROUP* GroupPtr = LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 		hNextGroup = _GetSuccLink(GroupPtr);
 		// IGNORE_FLAGSHIP was set in ipdisp.c:ip_group_collision()
 		// during a collision with the flagship.
@@ -514,6 +514,6 @@ check_yehat_rebellion(void)
 			GroupPtr->task |= FLEE | IGNORE_FLAGSHIP;
 			GroupPtr->dest_loc = 0;
 		}
-		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 	}
 }

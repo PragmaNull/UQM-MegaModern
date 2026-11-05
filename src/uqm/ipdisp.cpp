@@ -68,7 +68,7 @@ RaceIPSpeed(RACE_ID Index)
 			if (hFleet)
 			{
 				speedMap[x] = defaultMap[GetIndexFromStarShip(
-					&GLOBAL(avail_race_q), hFleet)];
+					&uqm::gameState().game().avail_race_q, hFleet)];
 			}
 			else
 			{
@@ -90,15 +90,15 @@ void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 
 	// NOTE: "Others" includes the group causing the notification too.
 
-	for (hGroup = GetHeadLink(&GLOBAL(ip_group_q));
+	for (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q);
 		 hGroup; hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 
 		if (GroupPtr->race_id != which_race)
 		{
-			UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+			UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 			continue;
 		}
 
@@ -152,7 +152,7 @@ void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 			GroupPtr->dest_loc = 0;
 		}
 
-		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 	}
 }
 
@@ -236,7 +236,7 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 
 	const uint8_t flagship_loc {getFlagshipLocation()};
 
-	if ((GET_GAME_STATE(KOHR_AH_FRENZY)
+	if ((uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
 		 && CheckAlliance((RACE_ID)GroupPtr->race_id) == DEAD_GUY)
 		|| (GTFO == 1 && GroupPtr->race_id == ILWRATH_SHIP))
 	{
@@ -847,15 +847,15 @@ spawn_ip_group(IP_GROUP* GroupPtr)
 		if (uqm::currentSeed().ships)
 		{
 			const FLEET_INFO* TemplatePtr = nullptr;
-			HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), GroupPtr->race_id)};
+			HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, GroupPtr->race_id)};
 			if (hFleet)
 			{
-				TemplatePtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+				TemplatePtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 			}
 			if (TemplatePtr)
 			{
 				const SPECIES_ID ship = SeedShip(TemplatePtr->SpeciesID, false);
-				UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+				UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 				GroupPtr->flags = 0;
 				switch (ship)
 				{
@@ -1023,13 +1023,13 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->sys_loc = flagship_loc;
 		}
 
-		if ((ec = GET_GAME_STATE(ESCAPE_COUNTER))
+		if ((ec = uqm::gameState().flag(uqm::GameFlag::ESCAPE_COUNTER))
 			&& !(uqm::currentActivity() & START_ENCOUNTER))
 		{
 			ElementPtr->state_flags |= Nonsolid;
 
 			--ec;
-			SET_GAME_STATE(ESCAPE_COUNTER, ec);
+			uqm::gameState().setFlag(uqm::GameFlag::ESCAPE_COUNTER, static_cast<uint32_t>(ec));
 		}
 
 		ElementPtr->state_flags |= Changing;
@@ -1069,7 +1069,7 @@ spawn_flag_ship(void)
 		FlagShipElementPtr->mass_points = 1;
 		FlagShipElementPtr->sys_loc = getFlagshipLocation();
 		FlagShipElementPtr->state_flags = Appearing | IgnoreVelocity;
-		if (GET_GAME_STATE(ESCAPE_COUNTER))
+		if (uqm::gameState().flag(uqm::GameFlag::ESCAPE_COUNTER))
 		{
 			FlagShipElementPtr->state_flags |= Nonsolid;
 		}
@@ -1113,10 +1113,10 @@ void DoMissions(void)
 		EncounterRace = -1;
 	}
 
-	for (hGroup = GetHeadLink(&GLOBAL(ip_group_q));
+	for (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q);
 		 hGroup; hGroup = hNextGroup)
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		hNextGroup = _GetSuccLink(GroupPtr);
 
 		if (GroupPtr->in_system
@@ -1125,6 +1125,6 @@ void DoMissions(void)
 			spawn_ip_group(GroupPtr);
 		}
 
-		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 	}
 }

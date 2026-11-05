@@ -197,14 +197,14 @@ void SaveGroupQueue(yyjson_mut_doc* doc, yyjson_mut_val* root, QUEUE* pQueue)
 
 void SaveEncounters(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
-	uint16_t num_links {CountLinks(&GLOBAL(encounter_q))};
+	uint16_t num_links {CountLinks(&uqm::gameState().game().encounter_q)};
 	if (num_links == 0)
 	{
 		return;
 	}
 
 	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "encounters")};
-	HENCOUNTER hEncounter {GetHeadLink(&GLOBAL(encounter_q))};
+	HENCOUNTER hEncounter {GetHeadLink(&uqm::gameState().game().encounter_q)};
 	while (num_links--)
 	{
 		ENCOUNTER* EncounterPtr {};
@@ -394,7 +394,7 @@ PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 			// Get a better planet name for summary
 			GetPlanetOrMoonName(SummPtr->SS.PlanetName,
 								sizeof(SummPtr->SS.PlanetName));
-			if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0)
+			if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0)
 			{
 				SummPtr->Activity = IN_STARBASE;
 			}
@@ -410,33 +410,33 @@ PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 			break;
 	}
 
-	SummPtr->MCreditLo = GET_GAME_STATE(MELNORME_CREDIT0);
-	SummPtr->MCreditHi = GET_GAME_STATE(MELNORME_CREDIT1);
+	SummPtr->MCreditLo = uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT0);
+	SummPtr->MCreditHi = uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT1);
 
 	{
 		HSHIPFRAG hStarShip {};
 		HSHIPFRAG hNextShip {};
 
-		for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q)),
+		for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q),
 			SummPtr->NumShips = 0;
 			 hStarShip; hStarShip = hNextShip,
 			++SummPtr->NumShips)
 		{
-			const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
+			const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip)};
 			hNextShip = _GetSuccLink(StarShipPtr);
 			SummPtr->ShipList[SummPtr->NumShips] = StarShipPtr->race_id;
-			UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+			UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 		}
 	}
 
 	SummPtr->NumDevices = InventoryDevices(SummPtr->DeviceList,
 										   MaxExclusiveDevices);
 
-	SummPtr->Flags = GET_GAME_STATE(LANDER_SHIELDS)
-				   | (GET_GAME_STATE(IMPROVED_LANDER_SPEED) << (4 + 0))
-				   | (GET_GAME_STATE(IMPROVED_LANDER_CARGO) << (4 + 1))
-				   | (GET_GAME_STATE(IMPROVED_LANDER_SHOT) << (4 + 2))
-				   | ((GET_GAME_STATE(CHMMR_BOMB_STATE) < 2 ? 0 : 1) << (4 + 3));
+	SummPtr->Flags = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS)
+				   | (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SPEED) << (4 + 0))
+				   | (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_CARGO) << (4 + 1))
+				   | (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SHOT) << (4 + 2))
+				   | ((uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 2 ? 0 : 1) << (4 + 3));
 
 	SummPtr->day_index = uqm::gameState().clock().day();
 	SummPtr->month_index = uqm::gameState().clock().month();
@@ -588,7 +588,7 @@ SaveBattleGroup(yyjson_mut_doc* doc, yyjson_mut_val* list, GAME_STATE_FILE* fp,
 
 	yyjson_mut_val* battleGroup {yyjson_mut_arr_add_obj(doc, list)};
 	addInt(doc, battleGroup, "encounter", encounter_id);
-	yyjson_mut_obj_add_bool(doc, battleGroup, "current", grpoffs && GLOBAL(BattleGroupRef) == grpoffs);
+	yyjson_mut_obj_add_bool(doc, battleGroup, "current", grpoffs && uqm::gameState().game().BattleGroupRef == grpoffs);
 	addInt(doc, battleGroup, "star_index", h.star_index);
 	addInt(doc, battleGroup, "day_index", h.day_index);
 	addInt(doc, battleGroup, "month_index", h.month_index);
@@ -629,33 +629,33 @@ GetBattleGroupOffset(int encounterIndex)
 	switch (encounterIndex)
 	{
 		case 1:
-			return GET_GAME_STATE(SHOFIXTI_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_GRPOFFS);
 		case 2:
-			return GET_GAME_STATE(ZOQFOT_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::ZOQFOT_GRPOFFS);
 		case 3:
-			return GET_GAME_STATE(MELNORME0_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME0_GRPOFFS);
 		case 4:
-			return GET_GAME_STATE(MELNORME1_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME1_GRPOFFS);
 		case 5:
-			return GET_GAME_STATE(MELNORME2_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME2_GRPOFFS);
 		case 6:
-			return GET_GAME_STATE(MELNORME3_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME3_GRPOFFS);
 		case 7:
-			return GET_GAME_STATE(MELNORME4_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME4_GRPOFFS);
 		case 8:
-			return GET_GAME_STATE(MELNORME5_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME5_GRPOFFS);
 		case 9:
-			return GET_GAME_STATE(MELNORME6_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME6_GRPOFFS);
 		case 10:
-			return GET_GAME_STATE(MELNORME7_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME7_GRPOFFS);
 		case 11:
-			return GET_GAME_STATE(MELNORME8_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME8_GRPOFFS);
 		case 12:
-			return GET_GAME_STATE(URQUAN_PROBE_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS);
 		case 13:
-			return GET_GAME_STATE(COLONY_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::COLONY_GRPOFFS);
 		case 14:
-			return GET_GAME_STATE(SAMATRA_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::SAMATRA_GRPOFFS);
 		default:
 			uqm::log::warn("SetBattleGroupOffset: invalid encounter"
 						   " index.\n");
@@ -754,7 +754,7 @@ WriteGameDocument(const SUMMARY_DESC& summary)
 	SaveSummary(doc.get(), root, summary);
 	SaveGameState(doc.get(), root, uqm::gameState());
 
-	SaveRaceQueue(doc.get(), root, &GLOBAL(avail_race_q));
+	SaveRaceQueue(doc.get(), root, &uqm::gameState().game().avail_race_q);
 	// START_INTERPLANETARY is only set when saving from Homeworld
 	//   encounter screen. When the game is loaded, the
 	//   GenerateOrbitalFunction for the current star system
@@ -763,7 +763,7 @@ WriteGameDocument(const SUMMARY_DESC& summary)
 	{
 		if (uqm::currentActivity() & START_ENCOUNTER)
 		{
-			SaveShipQueue(doc.get(), root, "npcShipQueue", &GLOBAL(npc_built_ship_q));
+			SaveShipQueue(doc.get(), root, "npcShipQueue", &uqm::gameState().game().npc_built_ship_q);
 		}
 		else if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
 		{
@@ -771,11 +771,11 @@ WriteGameDocument(const SUMMARY_DESC& summary)
 			//   saved/loaded at all. IP groups will be reloaded
 			//   from group state files. But the original code did,
 			//   and so will we until we can prove we do not need to.
-			SaveGroupQueue(doc.get(), root, &GLOBAL(ip_group_q));
+			SaveGroupQueue(doc.get(), root, &uqm::gameState().game().ip_group_q);
 		}
 	}
-	SaveShipQueue(doc.get(), root, "shipQueue", &GLOBAL(built_ship_q));
-	SaveShipQueue(doc.get(), root, "stowedShipQueue", &GLOBAL(stowed_ship_q));
+	SaveShipQueue(doc.get(), root, "shipQueue", &uqm::gameState().game().built_ship_q);
+	SaveShipQueue(doc.get(), root, "stowedShipQueue", &uqm::gameState().game().stowed_ship_q);
 
 	SaveEvents(doc.get(), root);
 	// Black globes in HyperSpace and QuasiSpace

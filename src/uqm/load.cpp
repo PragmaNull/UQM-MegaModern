@@ -625,46 +625,46 @@ void SetBattleGroupOffset(int encounterIndex, uint32_t offset)
 	switch (encounterIndex)
 	{
 		case 1:
-			SET_GAME_STATE(SHOFIXTI_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 2:
-			SET_GAME_STATE(ZOQFOT_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 3:
-			SET_GAME_STATE(MELNORME0_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME0_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 4:
-			SET_GAME_STATE(MELNORME1_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME1_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 5:
-			SET_GAME_STATE(MELNORME2_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME2_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 6:
-			SET_GAME_STATE(MELNORME3_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME3_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 7:
-			SET_GAME_STATE(MELNORME4_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME4_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 8:
-			SET_GAME_STATE(MELNORME5_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME5_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 9:
-			SET_GAME_STATE(MELNORME6_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME6_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 10:
-			SET_GAME_STATE(MELNORME7_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME7_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 11:
-			SET_GAME_STATE(MELNORME8_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME8_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 12:
-			SET_GAME_STATE(URQUAN_PROBE_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 13:
-			SET_GAME_STATE(COLONY_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::COLONY_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 14:
-			SET_GAME_STATE(SAMATRA_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::SAMATRA_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		default:
 			uqm::log::warn("SetBattleGroupOffset: invalid encounter "
@@ -766,7 +766,7 @@ void LoadBattleGroup(SaveReader& reader, yyjson_val* battleGroup)
 		SetBattleGroupOffset(encounter, offset);
 		if (current)
 		{
-			GLOBAL(BattleGroupRef) = offset;
+			uqm::gameState().game().BattleGroupRef = offset;
 		}
 	}
 }
@@ -781,7 +781,7 @@ void LoadGroups(SaveReader& reader, yyjson_val* root)
 	}
 
 	InitGroupInfo(true);
-	GLOBAL(BattleGroupRef) = 0;
+	uqm::gameState().game().BattleGroupRef = 0;
 	if (groupList)
 	{
 		if (!yyjson_is_obj(groupList))
@@ -863,16 +863,16 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	uqm::gameState().sis() = loc_sd.SS;
 	legacySave = loc_sd.SS.SaveVersion > 0;
 
-	uqm::gameState().setSeed({.type = uqm::SeedType::Original, .value = GLOBAL_SIS(Seed), .ships = GLOBAL_SIS(ShipSeed) != 0});
+	uqm::gameState().setSeed({.type = uqm::SeedType::Original, .value = uqm::gameState().sis().Seed, .ships = uqm::gameState().sis().ShipSeed != 0});
 	ReloadMasterShipList(nullptr);
 	LoadFleetInfo();
 
 	ReinitQueue(&uqm::gameState().clock().events());
-	ReinitQueue(&GLOBAL(encounter_q));
-	ReinitQueue(&GLOBAL(ip_group_q));
-	ReinitQueue(&GLOBAL(npc_built_ship_q));
-	ReinitQueue(&GLOBAL(built_ship_q));
-	ReinitQueue(&GLOBAL(stowed_ship_q));
+	ReinitQueue(&uqm::gameState().game().encounter_q);
+	ReinitQueue(&uqm::gameState().game().ip_group_q);
+	ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+	ReinitQueue(&uqm::gameState().game().built_ship_q);
+	ReinitQueue(&uqm::gameState().game().stowed_ship_q);
 
 	uninitEventSystem();
 	uqm::lua().closeState();
@@ -885,11 +885,11 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	NextActivity = uqm::currentActivity();
 	uqm::currentActivity() = Activity;
 
-	LoadRaceQueue(reader, root, &GLOBAL(avail_race_q));
-	LoadShipQueue(reader, root, "npcShipQueue", &GLOBAL(npc_built_ship_q));
-	LoadGroupQueue(reader, root, &GLOBAL(ip_group_q));
-	LoadShipQueue(reader, root, "shipQueue", &GLOBAL(built_ship_q));
-	LoadShipQueue(reader, root, "stowedShipQueue", &GLOBAL(stowed_ship_q));
+	LoadRaceQueue(reader, root, &uqm::gameState().game().avail_race_q);
+	LoadShipQueue(reader, root, "npcShipQueue", &uqm::gameState().game().npc_built_ship_q);
+	LoadGroupQueue(reader, root, &uqm::gameState().game().ip_group_q);
+	LoadShipQueue(reader, root, "shipQueue", &uqm::gameState().game().built_ship_q);
+	LoadShipQueue(reader, root, "stowedShipQueue", &uqm::gameState().game().stowed_ship_q);
 	LoadEvents(reader, root);
 	LoadEncounters(reader, root);
 	LoadScanInfo(reader, root);
@@ -920,7 +920,7 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	DebugKeyPressed = false;
 	// Set the SeedType flag and then start Starseed
 	uqm::GameSeed loadedSeed {uqm::currentSeed()};
-	loadedSeed.type = static_cast<uqm::SeedType>(GET_GAME_STATE(SEED_TYPE));
+	loadedSeed.type = static_cast<uqm::SeedType>(uqm::gameState().flag(uqm::GameFlag::SEED_TYPE));
 	// Assuming load from older version, the seed type should be Original.
 	// If the seed is also 0 it's a really old save file and prime seed.
 	// Otherwise if the seed isn't prime, the seed type goes to Planet.

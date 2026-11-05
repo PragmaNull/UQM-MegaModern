@@ -147,16 +147,16 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 		fmt::print(stderr, "Calling SeedShip (load window) species {}, "
 						   "Seed {}, ShipSeed {}, SIS (Seed) {}, SIS (ShipSeed) {}\n",
 				   SpeciesID, uqm::currentSeed().value, uqm::currentSeed().ships ? "on" : "off",
-				   GLOBAL_SIS(Seed), GLOBAL_SIS(ShipSeed));
+				   uqm::gameState().sis().Seed, uqm::gameState().sis().ShipSeed);
 	}
 #endif
 	if (seedStamp != uqm::currentSeed().value)
 	{
 		SeedShipMap(shipMap, seedStamp = uqm::currentSeed().value);
 	}
-	if (sisStamp != GLOBAL_SIS(Seed) && loadWindow)
+	if (sisStamp != uqm::gameState().sis().Seed && loadWindow)
 	{
-		SeedShipMap(shipWindowMap, sisStamp = GLOBAL_SIS(Seed));
+		SeedShipMap(shipWindowMap, sisStamp = uqm::gameState().sis().Seed);
 	}
 
 	target = SpeciesID;
@@ -166,7 +166,7 @@ SeedShip(SPECIES_ID SpeciesID, bool loadWindow)
 		{
 			return shipMap[index];
 		}
-		if (GLOBAL_SIS(ShipSeed) != 0)
+		if (uqm::gameState().sis().ShipSeed != 0)
 		{
 			target = shipWindowMap[index];
 		}

@@ -108,7 +108,7 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 			}
 		}
 
-		if (!GET_GAME_STATE(CHMMR_UNLEASHED))
+		if (!uqm::gameState().flag(uqm::GameFlag::CHMMR_UNLEASHED))
 		{
 			pPlanet->data_index |= PLANET_SHIELDED;
 		}
@@ -175,8 +175,8 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 	if (CurStarDescPtr()->Index == CHMMR_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		const bool HardModeBS = isDifficulty(uqm::Difficulty::Hard) && !GET_GAME_STATE(KOHR_AH_FRENZY)
-							 && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << ILWRATH_ENCOUNTER);
+		const bool HardModeBS = isDifficulty(uqm::Difficulty::Hard) && !uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
+							 && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << ILWRATH_ENCOUNTER);
 
 		if (RaceDead(CHMMR_SHIP))
 		{
@@ -191,30 +191,30 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 			return true;
 		}
 
-		if (GET_GAME_STATE(CHMMR_UNLEASHED))
+		if (uqm::gameState().flag(uqm::GameFlag::CHMMR_UNLEASHED))
 		{
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			InitCommunication(CHMMR_CONVERSATION);
 
-			if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
+			if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 			{
 				uqm::currentActivity() |= EndInterplanetary;
 			}
 
 			return true;
 		}
-		else if (GET_GAME_STATE(SUN_DEVICE_ON_SHIP)
-				 && ((!GET_GAME_STATE(ILWRATH_DECEIVED)
+		else if (uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE_ON_SHIP)
+				 && ((!uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED)
 					  && StartSphereTracking(ILWRATH_SHIP))
 					 || HardModeBS))
 		{
 			uint16_t state {};
 
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			if (GET_GAME_STATE(ILWRATH_DECEIVED) && isDifficulty(uqm::Difficulty::Hard))
+			if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED) && isDifficulty(uqm::Difficulty::Hard))
 			{
 				uint16_t lim {};
 
@@ -230,16 +230,16 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 				for (uint16_t i {0}; i < lim; ++i)
 				{
 					CloneShipFragment(ILWRATH_SHIP,
-									  &GLOBAL(npc_built_ship_q), 0);
+									  &uqm::gameState().game().npc_built_ship_q, 0);
 				}
 			}
 			else
 			{
 				CloneShipFragment(ILWRATH_SHIP,
-								  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
+								  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
 			}
 
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 6);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));
 			uqm::currentActivity() |= START_INTERPLANETARY;
 			InitCommunication(ILWRATH_CONVERSATION);
 
@@ -248,10 +248,10 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 				return true;
 			}
 
-			const bool Survivors {GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0};
+			const bool Survivors {GetHeadLink(&uqm::gameState().game().npc_built_ship_q) != 0};
 
 			uqm::currentActivity() &= ~START_INTERPLANETARY;
-			ReinitQueue(&GLOBAL(npc_built_ship_q));
+			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 			GetGroupInfo(GroupsRandom, GroupLoadIp);
 
 			if (Survivors)
@@ -259,9 +259,9 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 				return true;
 			}
 
-			state = GET_GAME_STATE(HM_ENCOUNTERS);
+			state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
 			state |= 1 << ILWRATH_ENCOUNTER;
-			SET_GAME_STATE(HM_ENCOUNTERS, state);
+			uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 
 			RepairSISBorder();
 		}
@@ -289,8 +289,8 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const bool MelnormeInfo =
-			GET_GAME_STATE(MELNORME_ALIEN_INFO_STACK) >= 8;
-		const bool ChmmrStack = GET_GAME_STATE(CHMMR_HOME_VISITS);
+			uqm::gameState().flag(uqm::GameFlag::MELNORME_ALIEN_INFO_STACK) >= 8;
+		const bool ChmmrStack = uqm::gameState().flag(uqm::GameFlag::CHMMR_HOME_VISITS);
 
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =

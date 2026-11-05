@@ -520,18 +520,18 @@ void setSegue(Segue segue)
 	switch (segue)
 	{
 		case Segue_peace:
-			SET_GAME_STATE(BATTLE_SEGUE, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
 			break;
 		case Segue_hostile:
-			SET_GAME_STATE(BATTLE_SEGUE, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(1));
 			break;
 		case Segue_victory:
 			instantVictory = true;
-			SET_GAME_STATE(BATTLE_SEGUE, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(1));
 			break;
 		case Segue_defeat:
-			SET_GAME_STATE(BATTLE_SEGUE, 0);
-			GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
+			uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
+			uqm::gameState().sis().CrewEnlisted = (uint16_t)~0;
 			uqm::currentActivity() |= CHECK_RESTART;
 			break;
 	}
@@ -539,9 +539,9 @@ void setSegue(Segue segue)
 
 Segue getSegue(void)
 {
-	if (GET_GAME_STATE(BATTLE_SEGUE) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::BATTLE_SEGUE) == 0)
 	{
-		if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0 && (uqm::currentActivity() & CHECK_RESTART))
+		if (uqm::gameState().sis().CrewEnlisted == (uint16_t)~0 && (uqm::currentActivity() & CHECK_RESTART))
 		{
 			return Segue_defeat;
 		}
@@ -575,7 +575,7 @@ init_race(CONVERSATION comm_id)
 		case CHMMR_CONVERSATION:
 			return init_chmmr_comm();
 		case COMMANDER_CONVERSATION:
-			if (!GET_GAME_STATE(STARBASE_AVAILABLE))
+			if (!uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 			{
 				return init_commander_comm();
 			}
@@ -602,7 +602,7 @@ init_race(CONVERSATION comm_id)
 		case SLYLANDRO_HOME_CONVERSATION:
 			return init_slylandro_comm();
 		case SPATHI_CONVERSATION:
-			if (!(GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
+			if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 			{
 				return init_spathi_comm();
 			}

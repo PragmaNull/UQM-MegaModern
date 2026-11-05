@@ -182,7 +182,7 @@ ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 	else if (StarShipPtr->special_counter == 0
 			 && (uqm::lowByte(uqm::currentActivity()) != IN_ENCOUNTER
-				 || !GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)))
+				 || !uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER)))
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
 		if (!ObjectCloaked(ShipPtr)

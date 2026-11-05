@@ -67,16 +67,16 @@ const GenerateFunctions generateMelnormeFunctions = {
 static bool
 GenerateMelnorme_initNpcs(SOLARSYS_STATE* solarSys)
 {
-	if ((IsExtended() && !GET_GAME_STATE(KOHR_AH_FRENZY))
+	if ((IsExtended() && !uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 		|| !IsExtended())
 	{
-		GLOBAL(BattleGroupRef) = GetMelnormeRef();
-		if (GLOBAL(BattleGroupRef) == 0)
+		uqm::gameState().game().BattleGroupRef = GetMelnormeRef();
+		if (uqm::gameState().game().BattleGroupRef == 0)
 		{
-			CloneShipFragment(MELNORME_SHIP, &GLOBAL(npc_built_ship_q), 0);
-			GLOBAL(BattleGroupRef) = PutGroupInfo(GroupsAddNew, 1);
-			ReinitQueue(&GLOBAL(npc_built_ship_q));
-			SetMelnormeRef(GLOBAL(BattleGroupRef));
+			CloneShipFragment(MELNORME_SHIP, &uqm::gameState().game().npc_built_ship_q, 0);
+			uqm::gameState().game().BattleGroupRef = PutGroupInfo(GroupsAddNew, 1);
+			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+			SetMelnormeRef(uqm::gameState().game().BattleGroupRef);
 		}
 	}
 

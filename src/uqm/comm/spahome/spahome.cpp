@@ -292,10 +292,10 @@ ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(EARLY_BIRD_CHECK);
 
-		SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
-		SET_GAME_STATE(SPATHI_VISITS, 0);
-		SET_GAME_STATE(SPATHI_PARTY, 1);
-		SET_GAME_STATE(SPATHI_MANNER, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_PARTY, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(3));
 	}
 	else if (PlayerSaid(R, too_dangerous))
 	{
@@ -309,9 +309,9 @@ ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(AWAIT_RETURN);
 
-		SET_GAME_STATE(SPATHI_QUEST, 1);
-		SET_GAME_STATE(SPATHI_MANNER, 3);
-		SET_GAME_STATE(SPATHI_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_QUEST, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(3));
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(0));
 	}
 	else if (PlayerSaid(R, do_as_we_say))
 	{
@@ -319,39 +319,39 @@ ExitConversation(RESPONSE_REF R)
 
 		SetRaceAllied(SPATHI_SHIP, true);
 		AddEvent(RELATIVE_EVENT, 6, 0, 0, SPATHI_SHIELD_EVENT);
-		SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
-		SET_GAME_STATE(SPATHI_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(0));
 	}
 	else if (PlayerSaid(R, killed_them_all_1))
 	{
 		NPCPhrase(WILL_CHECK_1);
 
-		if (!GET_GAME_STATE(SPATHI_CREATURES_ELIMINATED))
+		if (!uqm::gameState().flag(uqm::GameFlag::SPATHI_CREATURES_ELIMINATED))
 		{
-			SET_GAME_STATE(LIED_ABOUT_CREATURES, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::LIED_ABOUT_CREATURES, static_cast<uint32_t>(1));
 		}
 		else
 		{
-			SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
-			SET_GAME_STATE(SPATHI_VISITS, 0);
-			SET_GAME_STATE(SPATHI_PARTY, 1);
-			SET_GAME_STATE(SPATHI_MANNER, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_PARTY, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(3));
 		}
 	}
 	else if (PlayerSaid(R, killed_them_all_2))
 	{
 		NPCPhrase(WILL_CHECK_2);
 
-		if (!GET_GAME_STATE(SPATHI_CREATURES_ELIMINATED))
+		if (!uqm::gameState().flag(uqm::GameFlag::SPATHI_CREATURES_ELIMINATED))
 		{
-			SET_GAME_STATE(LIED_ABOUT_CREATURES, 2);
+			uqm::gameState().setFlag(uqm::GameFlag::LIED_ABOUT_CREATURES, static_cast<uint32_t>(2));
 		}
 		else
 		{
-			SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
-			SET_GAME_STATE(SPATHI_VISITS, 0);
-			SET_GAME_STATE(SPATHI_PARTY, 1);
-			SET_GAME_STATE(SPATHI_MANNER, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_PARTY, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(3));
 		}
 	}
 	else if (PlayerSaid(R, bye_before_party))
@@ -447,7 +447,7 @@ SpathiAllies(RESPONSE_REF R)
 
 	if (R == 0)
 	{
-		NumVisits = GET_GAME_STATE(SPATHI_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -461,11 +461,11 @@ SpathiAllies(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, whats_up))
 	{
-		NumVisits = GET_GAME_STATE(SPATHI_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -476,8 +476,8 @@ SpathiAllies(RESPONSE_REF R)
 				break;
 			case 2:
 				NPCPhrase(GENERAL_INFO_3);
-				SET_GAME_STATE(KNOW_URQUAN_STORY, 1);
-				SET_GAME_STATE(KNOW_KOHR_AH_STORY, 1);
+				uqm::gameState().setFlag(uqm::GameFlag::KNOW_URQUAN_STORY, static_cast<uint32_t>(1));
+				uqm::gameState().setFlag(uqm::GameFlag::KNOW_KOHR_AH_STORY, static_cast<uint32_t>(1));
 				break;
 			case 3:
 				NPCPhrase(GENERAL_INFO_4);
@@ -491,7 +491,7 @@ SpathiAllies(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up);
 	}
@@ -505,14 +505,14 @@ SpathiAllies(RESPONSE_REF R)
 	{
 		NPCPhrase(NOTHING_FISHY);
 
-		SET_GAME_STATE(SPATHI_INFO, 5);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_INFO, static_cast<uint32_t>(5));
 	}
 	else if (PlayerSaid(R, enough_info))
 	{
 		NPCPhrase(OK_ENOUGH_INFO);
 	}
 
-	if (GET_GAME_STATE(SPATHI_INFO) == 4)
+	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_INFO) == 4)
 	{
 		Response(something_fishy, SpathiAllies);
 	}
@@ -536,7 +536,7 @@ SpathiQuest(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
-		if (!GET_GAME_STATE(LIED_ABOUT_CREATURES))
+		if (!uqm::gameState().flag(uqm::GameFlag::LIED_ABOUT_CREATURES))
 		{
 			NPCPhrase(HOW_GO_EFFORTS);
 		}
@@ -564,7 +564,7 @@ SpathiQuest(RESPONSE_REF R)
 		DISABLE_PHRASE(zapped_a_few);
 	}
 
-	if (!GET_GAME_STATE(LIED_ABOUT_CREATURES))
+	if (!uqm::gameState().flag(uqm::GameFlag::LIED_ABOUT_CREATURES))
 	{
 		Response(killed_them_all_1, ExitConversation);
 	}
@@ -576,14 +576,14 @@ SpathiQuest(RESPONSE_REF R)
 		}
 		Response(killed_them_all_2, ExitConversation);
 	}
-	if (!GET_GAME_STATE(SPATHI_CREATURES_ELIMINATED))
+	if (!uqm::gameState().flag(uqm::GameFlag::SPATHI_CREATURES_ELIMINATED))
 	{
 		if (PhraseEnabled(talk_test))
 		{
 			Response(talk_test, SpathiQuest);
 		}
 		if (PhraseEnabled(zapped_a_few)
-			&& GET_GAME_STATE(SPATHI_CREATURES_EXAMINED))
+			&& uqm::gameState().flag(uqm::GameFlag::SPATHI_CREATURES_EXAMINED))
 		{
 			Response(zapped_a_few, SpathiQuest);
 		}
@@ -599,7 +599,7 @@ LearnQuest(RESPONSE_REF R)
 		NPCPhrase(QUEST_AGAIN);
 
 		DISABLE_PHRASE(what_test);
-		if (GET_GAME_STATE(KNOW_SPATHI_EVIL))
+		if (uqm::gameState().flag(uqm::GameFlag::KNOW_SPATHI_EVIL))
 		{
 			DISABLE_PHRASE(tell_evil);
 		}
@@ -612,14 +612,14 @@ LearnQuest(RESPONSE_REF R)
 	{
 		NPCPhrase(WIPE_EVIL);
 
-		SET_GAME_STATE(KNOW_SPATHI_QUEST, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_SPATHI_QUEST, static_cast<uint32_t>(1));
 		DISABLE_PHRASE(what_test);
 	}
 	else if (PlayerSaid(R, tell_evil))
 	{
 		NPCPhrase(BEFORE_ACCEPT);
 
-		SET_GAME_STATE(KNOW_SPATHI_EVIL, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_SPATHI_EVIL, static_cast<uint32_t>(1));
 		DISABLE_PHRASE(tell_evil);
 		DISABLE_PHRASE(prove_strength);
 	}
@@ -640,7 +640,7 @@ LearnQuest(RESPONSE_REF R)
 	{
 		Response(what_test, LearnQuest);
 	}
-	else if (GET_GAME_STATE(SPATHI_CREATURES_ELIMINATED))
+	else if (uqm::gameState().flag(uqm::GameFlag::SPATHI_CREATURES_ELIMINATED))
 	{
 		Response(already_got_them, ExitConversation);
 	}
@@ -655,7 +655,7 @@ LearnQuest(RESPONSE_REF R)
 		Response(think_more, ExitConversation);
 		Response(i_accept, ExitConversation);
 	}
-	if (PhraseEnabled(prove_strength) && !GET_GAME_STATE(KNOW_SPATHI_QUEST))
+	if (PhraseEnabled(prove_strength) && !uqm::gameState().flag(uqm::GameFlag::KNOW_SPATHI_QUEST))
 	{
 		Response(prove_strength, LearnQuest);
 	}
@@ -675,8 +675,8 @@ AllianceOffer(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 					  c_gameSecond / 4);
 
-		SET_GAME_STATE(SPATHI_MANNER, 3);
-		SET_GAME_STATE(SPATHI_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(3));
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(0));
 	}
 	else if (PlayerSaid(R, we_come_in_peace))
 	{
@@ -766,7 +766,7 @@ SpathiParty(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SPATHI_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -780,7 +780,7 @@ SpathiParty(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, deals_a_deal))
 	{
@@ -849,7 +849,7 @@ SpathiParty(RESPONSE_REF R)
 
 		return;
 	}
-	switch (GET_GAME_STATE(SPATHI_HOME_VISITS) - 1)
+	switch (uqm::gameState().flag(uqm::GameFlag::SPATHI_HOME_VISITS) - 1)
 	{
 		case 0:
 			Response(bye_from_party_1, ExitConversation);
@@ -877,8 +877,8 @@ SpathiCouncil(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 					  c_gameSecond / 4);
 
-		SET_GAME_STATE(KNOW_SPATHI_PASSWORD, 1);
-		SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_SPATHI_PASSWORD, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
 	}
 	else if (PlayerSaid(R, we_come_in_peace))
 	{
@@ -896,14 +896,14 @@ SpathiCouncil(RESPONSE_REF R)
 	{
 		NPCPhrase(GUN_TO_HEAD);
 
-		SET_GAME_STATE(FOUND_PLUTO_SPATHI, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::FOUND_PLUTO_SPATHI, static_cast<uint32_t>(3));
 		DISABLE_PHRASE(hostage);
 	}
 	else if (PlayerSaid(R, killed_fwiffo))
 	{
 		NPCPhrase(POOR_FWIFFO);
 
-		SET_GAME_STATE(FOUND_PLUTO_SPATHI, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::FOUND_PLUTO_SPATHI, static_cast<uint32_t>(3));
 		DISABLE_PHRASE(killed_fwiffo);
 	}
 	else if (PlayerSaid(R, fwiffo_fine))
@@ -920,7 +920,7 @@ SpathiCouncil(RESPONSE_REF R)
 		DISABLE_PHRASE(surrender);
 	}
 
-	if (GET_GAME_STATE(SPATHI_MANNER) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER) == 0)
 	{
 		Response(we_come_in_peace, AllianceOffer);
 	}
@@ -932,8 +932,8 @@ SpathiCouncil(RESPONSE_REF R)
 	{
 		Response(misunderstanding, AllianceOffer);
 	}
-	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI)
-		&& GET_GAME_STATE(FOUND_PLUTO_SPATHI) < 3)
+	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI)
+		&& uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) < 3)
 	{
 		if (PhraseEnabled(spathi_on_pluto))
 		{
@@ -973,7 +973,7 @@ SpathiPassword(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SPATHI_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			default:
@@ -985,7 +985,7 @@ SpathiPassword(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 	else if (PlayerSaid(R, what_do_i_get))
 	{
@@ -994,8 +994,8 @@ SpathiPassword(RESPONSE_REF R)
 		DISABLE_PHRASE(what_do_i_get);
 	}
 
-	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI)
-		|| GET_GAME_STATE(KNOW_SPATHI_PASSWORD))
+	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI)
+		|| uqm::gameState().flag(uqm::GameFlag::KNOW_SPATHI_PASSWORD))
 	{
 		Response(good_password, SpathiCouncil);
 		if (PhraseEnabled(what_do_i_get))
@@ -1025,16 +1025,16 @@ Intro(void)
 		EngageFilters(&spahome_filters);
 	}
 
-	Manner = GET_GAME_STATE(SPATHI_MANNER);
+	Manner = uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER);
 	if (Manner == 2)
 	{
 		NPCPhrase(HATE_YOU_FOREVER);
 		setSegue(Segue_hostile);
 	}
 	else if (Manner == 1
-			 && GET_GAME_STATE(KNOW_SPATHI_PASSWORD)
-			 && (GET_GAME_STATE(FOUND_PLUTO_SPATHI)
-				 || GET_GAME_STATE(SPATHI_HOME_VISITS) != 7))
+			 && uqm::gameState().flag(uqm::GameFlag::KNOW_SPATHI_PASSWORD)
+			 && (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI)
+				 || uqm::gameState().flag(uqm::GameFlag::SPATHI_HOME_VISITS) != 7))
 	{
 		SpathiAngry((RESPONSE_REF)0);
 	}
@@ -1044,15 +1044,15 @@ Intro(void)
 
 		SpathiAllies((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(SPATHI_PARTY))
+	else if (uqm::gameState().flag(uqm::GameFlag::SPATHI_PARTY))
 	{
 		CommData.AlienColorMapIndex = 1;
 
 		SpathiParty((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(SPATHI_QUEST))
+	else if (uqm::gameState().flag(uqm::GameFlag::SPATHI_QUEST))
 	{
-		if (GET_GAME_STATE(LIED_ABOUT_CREATURES) < 2)
+		if (uqm::gameState().flag(uqm::GameFlag::LIED_ABOUT_CREATURES) < 2)
 		{
 			CommData.AlienColorMapIndex = 1;
 
@@ -1062,19 +1062,19 @@ Intro(void)
 		{
 			NPCPhrase(YOU_LIED_2);
 
-			SET_GAME_STATE(SPATHI_MANNER, 2);
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(2));
 			setSegue(Segue_hostile);
 		}
 	}
-	else if (GET_GAME_STATE(KNOW_SPATHI_QUEST))
+	else if (uqm::gameState().flag(uqm::GameFlag::KNOW_SPATHI_QUEST))
 	{
 		CommData.AlienColorMapIndex = 1;
 
 		LearnQuest((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(KNOW_SPATHI_PASSWORD)
-			 && (GET_GAME_STATE(FOUND_PLUTO_SPATHI)
-				 || GET_GAME_STATE(SPATHI_HOME_VISITS) != 7))
+	else if (uqm::gameState().flag(uqm::GameFlag::KNOW_SPATHI_PASSWORD)
+			 && (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI)
+				 || uqm::gameState().flag(uqm::GameFlag::SPATHI_HOME_VISITS) != 7))
 	{
 		CommData.AlienColorMapIndex = 1;
 
@@ -1099,13 +1099,13 @@ post_spahome_enc(void)
 	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
-		&& (Manner = GET_GAME_STATE(SPATHI_MANNER)) != 2)
+		&& (Manner = uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER)) != 2)
 	{
-		SET_GAME_STATE(SPATHI_MANNER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(1));
 		if (Manner != 1)
 		{
-			SET_GAME_STATE(SPATHI_VISITS, 0);
-			SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
 		}
 	}
 }
@@ -1128,7 +1128,7 @@ init_spahome_comm()
 	// use alternate "Safe Ones" track if available
 	altResFlags |= UseAltSong;
 
-	if (GET_GAME_STATE(SPATHI_MANNER) == 3)
+	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER) == 3)
 	{
 		setSegue(Segue_peace);
 	}

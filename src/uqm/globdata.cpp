@@ -126,7 +126,7 @@ copyFleetInfo(FLEET_INFO* dst, SHIP_INFO* src, FLEET_STUFF* fleet)
 void LoadFleetInfo(void)
 { /* Yehat Rebels and Ur-Quan probe */
 	const uint16_t num_ships = LAST_MELEE_ID - ARILOU_ID + 1 + 2;
-	GLOBAL(avail_race_q).reset(num_ships, sizeof(FLEET_INFO));
+	uqm::gameState().game().avail_race_q.reset(num_ships, sizeof(FLEET_INFO));
 	SPECIES_ID ship_ref = (SPECIES_ID)(ARILOU_ID - 1);
 	for (int i = 0; i < num_ships; ++i)
 	{
@@ -146,12 +146,12 @@ void LoadFleetInfo(void)
 			ship_ref = UR_QUAN_PROBE_ID;
 		}
 
-		hFleet = AllocLink(&GLOBAL(avail_race_q));
+		hFleet = AllocLink(&uqm::gameState().game().avail_race_q);
 		if (!hFleet)
 		{
 			continue;
 		}
-		FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+		FleetPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 		FleetPtr->SpeciesID = ship_ref;
 
 		if (i < num_ships - 1)
@@ -237,8 +237,8 @@ void LoadFleetInfo(void)
 			FleetPtr->can_build = true;
 		}
 
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
-		PutQueue(&GLOBAL(avail_race_q), hFleet);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
+		PutQueue(&uqm::gameState().game().avail_race_q, hFleet);
 	}
 }
 
@@ -246,9 +246,9 @@ bool InitGameStructures(void)
 {
 	uint16_t i {};
 
-	GLOBAL_SIS(Difficulty) = uqm::UQMOptions::read().optDifficulty;
-	GLOBAL_SIS(Extended) = uqm::UQMOptions::read().extended;
-	GLOBAL_SIS(Nomad) = uqm::UQMOptions::read().nomad;
+	uqm::gameState().sis().Difficulty = uqm::UQMOptions::read().optDifficulty;
+	uqm::gameState().sis().Extended = uqm::UQMOptions::read().extended;
+	uqm::gameState().sis().Nomad = uqm::UQMOptions::read().nomad;
 	// Set the seed, then check/start StarSeed
 	const uqstl::optional<uqm::GameSeed> chosenSeed {uqm::UQMGame::getInstance().takeNewGameSeed()};
 	uqm::gameState().setSeed(chosenSeed ? uqm::normalized(*chosenSeed) : uqm::newGameSeed(uqm::UQMOptions::read()));
@@ -285,35 +285,35 @@ bool InitGameStructures(void)
 
 	uqm::globalFlags() = NumReadSpeeds >> 1;
 
-	GLOBAL(ElementWorth[COMMON]) = 1;
-	GLOBAL_SIS(ElementAmounts[COMMON]) = 0;
-	GLOBAL(ElementWorth[CORROSIVE]) = 2;
-	GLOBAL_SIS(ElementAmounts[CORROSIVE]) = 0;
-	GLOBAL(ElementWorth[BASE_METAL]) = 3;
-	GLOBAL_SIS(ElementAmounts[BASE_METAL]) = 0;
-	GLOBAL(ElementWorth[NOBLE]) = 4;
-	GLOBAL_SIS(ElementAmounts[NOBLE]) = 0;
-	GLOBAL(ElementWorth[RARE_EARTH]) = 5;
-	GLOBAL_SIS(ElementAmounts[RARE_EARTH]) = 0;
-	GLOBAL(ElementWorth[PRECIOUS]) = 6;
-	GLOBAL_SIS(ElementAmounts[PRECIOUS]) = 0;
-	GLOBAL(ElementWorth[RADIOACTIVE]) = 8;
-	GLOBAL_SIS(ElementAmounts[RADIOACTIVE]) = 0;
-	GLOBAL(ElementWorth[EXOTIC]) = 25;
-	GLOBAL_SIS(ElementAmounts[EXOTIC]) = 0;
+	uqm::gameState().game().ElementWorth[COMMON] = 1;
+	uqm::gameState().sis().ElementAmounts[COMMON] = 0;
+	uqm::gameState().game().ElementWorth[CORROSIVE] = 2;
+	uqm::gameState().sis().ElementAmounts[CORROSIVE] = 0;
+	uqm::gameState().game().ElementWorth[BASE_METAL] = 3;
+	uqm::gameState().sis().ElementAmounts[BASE_METAL] = 0;
+	uqm::gameState().game().ElementWorth[NOBLE] = 4;
+	uqm::gameState().sis().ElementAmounts[NOBLE] = 0;
+	uqm::gameState().game().ElementWorth[RARE_EARTH] = 5;
+	uqm::gameState().sis().ElementAmounts[RARE_EARTH] = 0;
+	uqm::gameState().game().ElementWorth[PRECIOUS] = 6;
+	uqm::gameState().sis().ElementAmounts[PRECIOUS] = 0;
+	uqm::gameState().game().ElementWorth[RADIOACTIVE] = 8;
+	uqm::gameState().sis().ElementAmounts[RADIOACTIVE] = 0;
+	uqm::gameState().game().ElementWorth[EXOTIC] = 25;
+	uqm::gameState().sis().ElementAmounts[EXOTIC] = 0;
 
 	switch (getDifficulty())
 	{
 		case uqm::Difficulty::Easy:
 			for (int i = 0; i < NUM_ELEMENT_CATEGORIES; i++)
 			{
-				GLOBAL(ElementWorth[i]) *= 2;
+				uqm::gameState().game().ElementWorth[i] *= 2;
 			}
 			break;
 		case uqm::Difficulty::Hard:
-			GLOBAL(ElementWorth[EXOTIC]) = 16;
-			SET_GAME_STATE(CREW_PURCHASED0, uqm::lowByte<uint8_t>(100));
-			SET_GAME_STATE(CREW_PURCHASED1, uqm::highByte<uint8_t>(100));
+			uqm::gameState().game().ElementWorth[EXOTIC] = 16;
+			uqm::gameState().setFlag(uqm::GameFlag::CREW_PURCHASED0, static_cast<uint32_t>(uqm::lowByte<uint8_t>(100)));
+			uqm::gameState().setFlag(uqm::GameFlag::CREW_PURCHASED1, static_cast<uint32_t>(uqm::highByte<uint8_t>(100)));
 			break;
 		case uqm::Difficulty::Normal:
 		case uqm::Difficulty::ChooseYourOwn:
@@ -322,94 +322,94 @@ bool InitGameStructures(void)
 
 	for (i = 0; i < NumDriveSlots; ++i)
 	{
-		GLOBAL_SIS(DriveSlots[i]) = EmptySlot + 0;
+		uqm::gameState().sis().DriveSlots[i] = EmptySlot + 0;
 	}
-	GLOBAL_SIS(DriveSlots[5]) =
-		GLOBAL_SIS(DriveSlots[6]) = FUSION_THRUSTER;
+	uqm::gameState().sis().DriveSlots[5] =
+		uqm::gameState().sis().DriveSlots[6] = FUSION_THRUSTER;
 	for (i = 0; i < NumJetSlots; ++i)
 	{
-		GLOBAL_SIS(JetSlots[i]) = EmptySlot + 1;
+		uqm::gameState().sis().JetSlots[i] = EmptySlot + 1;
 	}
-	GLOBAL_SIS(JetSlots[0]) =
-		GLOBAL_SIS(JetSlots[6]) = TURNING_JETS;
+	uqm::gameState().sis().JetSlots[0] =
+		uqm::gameState().sis().JetSlots[6] = TURNING_JETS;
 	for (i = 0; i < NumModuleSlots; ++i)
 	{
-		GLOBAL_SIS(ModuleSlots[i]) = EmptySlot + 2;
+		uqm::gameState().sis().ModuleSlots[i] = EmptySlot + 2;
 	}
-	GLOBAL_SIS(ModuleSlots[15]) = GUN_WEAPON;
-	GLOBAL_SIS(ModuleSlots[2]) = CREW_POD;
+	uqm::gameState().sis().ModuleSlots[15] = GUN_WEAPON;
+	uqm::gameState().sis().ModuleSlots[2] = CREW_POD;
 	// Make crew 31 at start to align with the amount of crew lost on the
 	// Tobermoon during the journey from Vela to Sol, Hard and/or Extended
 	// mode only
-	GLOBAL_SIS(CrewEnlisted) =
+	uqm::gameState().sis().CrewEnlisted =
 		(isDifficulty(uqm::Difficulty::Hard) || IsExtended()) ? 31 : CrewPodCapacity;
-	GLOBAL_SIS(ModuleSlots[8]) = STORAGE_BAY;
-	GLOBAL_SIS(ModuleSlots[1]) = FUEL_TANK;
-	GLOBAL_SIS(FuelOnBoard) = ifEasyDifficulty(4338, 10 * FuelTankScale);
+	uqm::gameState().sis().ModuleSlots[8] = STORAGE_BAY;
+	uqm::gameState().sis().ModuleSlots[1] = FUEL_TANK;
+	uqm::gameState().sis().FuelOnBoard = ifEasyDifficulty(4338, 10 * FuelTankScale);
 
 	if (isDifficulty(uqm::Difficulty::Easy))
 	{
-		GLOBAL_SIS(DriveSlots[7]) =
-			GLOBAL_SIS(DriveSlots[8]) = FUSION_THRUSTER;
-		GLOBAL_SIS(JetSlots[1]) =
-			GLOBAL_SIS(JetSlots[7]) = TURNING_JETS;
+		uqm::gameState().sis().DriveSlots[7] =
+			uqm::gameState().sis().DriveSlots[8] = FUSION_THRUSTER;
+		uqm::gameState().sis().JetSlots[1] =
+			uqm::gameState().sis().JetSlots[7] = TURNING_JETS;
 	}
 
 	if (getNomadMode() == uqm::NomadMode::Easy)
 	{
-		GLOBAL_SIS(DriveSlots[3]) =
-			GLOBAL_SIS(DriveSlots[4]) = FUSION_THRUSTER;
-		GLOBAL_SIS(JetSlots[2]) =
-			GLOBAL_SIS(JetSlots[5]) = TURNING_JETS;
-		GLOBAL_SIS(FuelOnBoard) += 20 * FuelTankScale;
+		uqm::gameState().sis().DriveSlots[3] =
+			uqm::gameState().sis().DriveSlots[4] = FUSION_THRUSTER;
+		uqm::gameState().sis().JetSlots[2] =
+			uqm::gameState().sis().JetSlots[5] = TURNING_JETS;
+		uqm::gameState().sis().FuelOnBoard += 20 * FuelTankScale;
 	}
 
 	if (uqm::UQMOptions::read().headStart)
 	{
-		SET_GAME_STATE(FOUND_PLUTO_SPATHI, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::FOUND_PLUTO_SPATHI, static_cast<uint32_t>(2));
 		SetHomeworldKnown(SPATHI_HOME);
 		if (getNomadMode() == uqm::NomadMode::Off)
 		{
-			SET_GAME_STATE(MOONBASE_ON_SHIP, 1);
-			SET_GAME_STATE(MOONBASE_DESTROYED, 1);
-			GLOBAL_SIS(ElementAmounts[RADIOACTIVE]) = 1;
-			GLOBAL_SIS(TotalElementMass) = 1;
+			uqm::gameState().setFlag(uqm::GameFlag::MOONBASE_ON_SHIP, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::MOONBASE_DESTROYED, static_cast<uint32_t>(1));
+			uqm::gameState().sis().ElementAmounts[RADIOACTIVE] = 1;
+			uqm::gameState().sis().TotalElementMass = 1;
 		}
 	}
 
 	loadGameCheats();
 
-	GLOBAL(stowed_ship_q).reset(MaxStowedShips, sizeof(SHIP_FRAGMENT));
-	GLOBAL(built_ship_q).reset(MaxBuiltShips, sizeof(SHIP_FRAGMENT));
-	GLOBAL(npc_built_ship_q).reset(MaxShipsPerSide, sizeof(SHIP_FRAGMENT));
-	GLOBAL(ip_group_q).reset(MaxBattleGroups, sizeof(IP_GROUP));
-	GLOBAL(encounter_q).reset(MaxEncounters, sizeof(ENCOUNTER));
+	uqm::gameState().game().stowed_ship_q.reset(MaxStowedShips, sizeof(SHIP_FRAGMENT));
+	uqm::gameState().game().built_ship_q.reset(MaxBuiltShips, sizeof(SHIP_FRAGMENT));
+	uqm::gameState().game().npc_built_ship_q.reset(MaxShipsPerSide, sizeof(SHIP_FRAGMENT));
+	uqm::gameState().game().ip_group_q.reset(MaxBattleGroups, sizeof(IP_GROUP));
+	uqm::gameState().game().encounter_q.reset(MaxEncounters, sizeof(ENCOUNTER));
 
 	uqm::currentActivity() = IN_INTERPLANETARY | START_INTERPLANETARY;
 
-	GLOBAL_SIS(ResUnits) = ifEasyDifficulty(2500, 0);
-	GLOBAL(CrewCost) = 3;
-	GLOBAL(FuelCost) = FuelCostRu; // JMS: Was "20"
-	GLOBAL(ModuleCost[PLANET_LANDER]) = 500 / ModuleCostScale;
-	GLOBAL(ModuleCost[FUSION_THRUSTER]) = 500 / ModuleCostScale;
-	GLOBAL(ModuleCost[TURNING_JETS]) = 500 / ModuleCostScale;
-	GLOBAL(ModuleCost[CREW_POD]) = 2000 / ModuleCostScale;
-	GLOBAL(ModuleCost[STORAGE_BAY]) = 750 / ModuleCostScale;
-	GLOBAL(ModuleCost[FUEL_TANK]) = 500 / ModuleCostScale;
-	GLOBAL(ModuleCost[DYNAMO_UNIT]) = 2000 / ModuleCostScale;
-	GLOBAL(ModuleCost[GUN_WEAPON]) = 2000 / ModuleCostScale;
+	uqm::gameState().sis().ResUnits = ifEasyDifficulty(2500, 0);
+	uqm::gameState().game().CrewCost = 3;
+	uqm::gameState().game().FuelCost = FuelCostRu; // JMS: Was "20"
+	uqm::gameState().game().ModuleCost[PLANET_LANDER] = 500 / ModuleCostScale;
+	uqm::gameState().game().ModuleCost[FUSION_THRUSTER] = 500 / ModuleCostScale;
+	uqm::gameState().game().ModuleCost[TURNING_JETS] = 500 / ModuleCostScale;
+	uqm::gameState().game().ModuleCost[CREW_POD] = 2000 / ModuleCostScale;
+	uqm::gameState().game().ModuleCost[STORAGE_BAY] = 750 / ModuleCostScale;
+	uqm::gameState().game().ModuleCost[FUEL_TANK] = 500 / ModuleCostScale;
+	uqm::gameState().game().ModuleCost[DYNAMO_UNIT] = 2000 / ModuleCostScale;
+	uqm::gameState().game().ModuleCost[GUN_WEAPON] = 2000 / ModuleCostScale;
 
-	GLOBAL_SIS(NumLanders) = ifEasyDifficulty(2, 1);
+	uqm::gameState().sis().NumLanders = ifEasyDifficulty(2, 1);
 
-	uqm::utf8StringCopy(GLOBAL_SIS(ShipName),
-						sizeof(GLOBAL_SIS(ShipName)),
+	uqm::utf8StringCopy(uqm::gameState().sis().ShipName,
+						sizeof(uqm::gameState().sis().ShipName),
 						GameString(NAMING_STRING_BASE + 6)); // UNNAMED
-	uqm::utf8StringCopy(GLOBAL_SIS(CommanderName),
-						sizeof(GLOBAL_SIS(CommanderName)),
+	uqm::utf8StringCopy(uqm::gameState().sis().CommanderName,
+						sizeof(uqm::gameState().sis().CommanderName),
 						GameString(NAMING_STRING_BASE + 6)); // UNNAMED
 
 	SetRaceAllied(HUMAN_SHIP, true);
-	CloneShipFragment(HUMAN_SHIP, &GLOBAL(built_ship_q), 0);
+	CloneShipFragment(HUMAN_SHIP, &uqm::gameState().game().built_ship_q, 0);
 
 	if (uqm::UQMOptions::read().headStart)
 	{
@@ -422,8 +422,8 @@ bool InitGameStructures(void)
 		StartSphereTracking(SPATHI_SHIP);
 	}
 
-	GLOBAL_SIS(log_x) = UniverseToLogx(plot_map[SOL_DEFINED].star_pt.x);
-	GLOBAL_SIS(log_y) = UniverseToLogy(plot_map[SOL_DEFINED].star_pt.y);
+	uqm::gameState().sis().log_x = UniverseToLogx(plot_map[SOL_DEFINED].star_pt.x);
+	uqm::gameState().sis().log_y = UniverseToLogy(plot_map[SOL_DEFINED].star_pt.y);
 	CurStarDescPtr() = 0;
 	uqm::flagship().autopilot.clear();
 
@@ -450,11 +450,11 @@ void FreeSC2Data(void)
 
 void UninitGameStructures(void)
 {
-	GLOBAL(encounter_q).release();
-	GLOBAL(ip_group_q).release();
-	GLOBAL(npc_built_ship_q).release();
-	GLOBAL(built_ship_q).release();
-	GLOBAL(stowed_ship_q).release();
+	uqm::gameState().game().encounter_q.release();
+	uqm::gameState().game().ip_group_q.release();
+	uqm::gameState().game().npc_built_ship_q.release();
+	uqm::gameState().game().built_ship_q.release();
+	uqm::gameState().game().stowed_ship_q.release();
 	UninitGroupInfo();
 	UninitPlanetInfo();
 
@@ -462,17 +462,17 @@ void UninitGameStructures(void)
 
 	// The only resources avail_race_q owns are the Ur-Quan probe's
 	// so free them now
-	HFLEETINFO hStarShip {GetTailLink(&GLOBAL(avail_race_q))};
+	HFLEETINFO hStarShip {GetTailLink(&uqm::gameState().game().avail_race_q)};
 	if (hStarShip)
 	{
-		const FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hStarShip)};
+		const FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 		DestroyDrawable(ReleaseDrawable(FleetPtr->melee_icon));
 		DestroyDrawable(ReleaseDrawable(FleetPtr->icons));
 		delete FleetPtr->race_strings;
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 	}
 
-	GLOBAL(avail_race_q).release();
+	uqm::gameState().game().avail_race_q.release();
 
 	DestroyDrawable(ReleaseDrawable(PlayFrame));
 	PlayFrame = 0;
@@ -727,7 +727,7 @@ bool inHQSpace(void)
 bool inHyperSpace(void)
 {
 	//assert (inFullGame ());
-	return (uqm::lowByte(uqm::currentActivity()) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1);
+	return (uqm::lowByte(uqm::currentActivity()) == IN_HYPERSPACE) && (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1);
 	// IN_HYPERSPACE is also set for QuasiSpace
 }
 
@@ -736,7 +736,7 @@ bool inHyperSpace(void)
 bool inQuasiSpace(void)
 {
 	//assert (inFullGame ());
-	return (uqm::lowByte(uqm::currentActivity()) == IN_HYPERSPACE) && (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1);
+	return (uqm::lowByte(uqm::currentActivity()) == IN_HYPERSPACE) && (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1);
 	// IN_HYPERSPACE is also set for QuasiSpace
 }
 

@@ -251,7 +251,7 @@ ExitConversation(RESPONSE_REF R)
 	}
 	else if (PlayerSaid(R, bye_taalo))
 	{
-		if (GET_GAME_STATE(ORZ_MANNER) == 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER) == 1)
 		{
 			NPCPhrase(ANGRY_TAALO_GOODBYE);
 		}
@@ -270,7 +270,7 @@ ExitConversation(RESPONSE_REF R)
 	{
 		NPCPhrase(SURE_LAND);
 
-		SET_GAME_STATE(TAALO_UNPROTECTED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::TAALO_UNPROTECTED, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, yes_alliance)
 			 || PlayerSaid(R, were_sorry))
@@ -284,10 +284,10 @@ ExitConversation(RESPONSE_REF R)
 			NPCPhrase(APOLOGY_ACCEPTED);
 		}
 
-		SET_GAME_STATE(ORZ_ANDRO_STATE, 0);
-		SET_GAME_STATE(ORZ_GENERAL_INFO, 0);
-		SET_GAME_STATE(ORZ_PERSONAL_INFO, 0);
-		SET_GAME_STATE(ORZ_MANNER, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_GENERAL_INFO, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_PERSONAL_INFO, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_MANNER, static_cast<uint32_t>(3));
 		SetRaceAllied(ORZ_SHIP, true);
 	}
 	else if (PlayerSaid(R, demand_to_land))
@@ -317,8 +317,8 @@ ExitConversation(RESPONSE_REF R)
 			NPCPhrase(KNOW_TOO_MUCH);
 		}
 
-		SET_GAME_STATE(ORZ_VISITS, 0);
-		SET_GAME_STATE(ORZ_MANNER, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_MANNER, static_cast<uint32_t>(2));
 		setSegue(Segue_hostile);
 		if (PlayerSaid(R, about_andro_3))
 		{
@@ -330,7 +330,7 @@ ExitConversation(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(ORZ_PERSONAL_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_PERSONAL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -351,7 +351,7 @@ ExitConversation(RESPONSE_REF R)
 				setSegue(Segue_hostile);
 				break;
 		}
-		SET_GAME_STATE(ORZ_PERSONAL_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_PERSONAL_INFO, static_cast<uint32_t>(NumVisits));
 	}
 }
 
@@ -361,7 +361,7 @@ TaaloWorld(RESPONSE_REF R)
 	// We can only get here when ORZ_MANNER != HOSTILE (2)
 	uint8_t Manner {};
 
-	Manner = GET_GAME_STATE(ORZ_MANNER);
+	Manner = uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER);
 	if (PlayerSaid(R, demand_to_land))
 	{
 		NPCPhrase(ASK_NICELY);
@@ -463,7 +463,7 @@ OrzAllied(RESPONSE_REF R)
 
 	if (PlayerSaid(R, whats_up_ally))
 	{
-		NumVisits = GET_GAME_STATE(ORZ_GENERAL_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_GENERAL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -480,13 +480,13 @@ OrzAllied(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ORZ_GENERAL_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_GENERAL_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_ally);
 	}
 	else if (PlayerSaid(R, more_about_you))
 	{
-		NumVisits = GET_GAME_STATE(ORZ_PERSONAL_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_PERSONAL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -503,7 +503,7 @@ OrzAllied(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ORZ_PERSONAL_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_PERSONAL_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(more_about_you);
 	}
@@ -511,20 +511,20 @@ OrzAllied(RESPONSE_REF R)
 	{
 		NPCPhrase(FORGET_ANDRO_1);
 
-		SET_GAME_STATE(ORZ_ANDRO_STATE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, about_andro_2))
 	{
 		NPCPhrase(FORGET_ANDRO_2);
 
-		SET_GAME_STATE(ORZ_ANDRO_STATE, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(2));
 	}
 
-	if (GET_GAME_STATE(ORZ_ANDRO_STATE) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 0)
 	{
 		Response(about_andro_1, OrzAllied);
 	}
-	else if (GET_GAME_STATE(ORZ_ANDRO_STATE) == 1)
+	else if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 1)
 	{
 		Response(about_andro_2, OrzAllied);
 	}
@@ -571,12 +571,12 @@ OfferAlliance(RESPONSE_REF R)
 	{
 		NPCPhrase(TRUSTING_BECAUSE);
 
-		SET_GAME_STATE(ORZ_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_STACK1, static_cast<uint32_t>(1));
 	}
 
 	Response(no_alliance, OrzNeutral);
 	Response(decide_later, OrzNeutral);
-	if (GET_GAME_STATE(ORZ_STACK1) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::ORZ_STACK1) == 0)
 	{
 		Response(why_so_trusting, OfferAlliance);
 	}
@@ -601,34 +601,34 @@ OrzNeutral(RESPONSE_REF R)
 	{
 		NPCPhrase(NICE_TO_MEET_YOU);
 
-		SET_GAME_STATE(ORZ_STACK0, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_STACK0, static_cast<uint32_t>(1));
 		LastStack = 1;
 	}
 	else if (PlayerSaid(R, who_you))
 	{
 		NPCPhrase(WE_ARE_ORZ);
 
-		SET_GAME_STATE(ORZ_ANDRO_STATE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, why_here))
 	{
 		NPCPhrase(HERE_BECAUSE);
 
-		SET_GAME_STATE(ORZ_ANDRO_STATE, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(2));
 	}
 	else if (PlayerSaid(R, no_alliance))
 	{
 		NPCPhrase(MAYBE_LATER);
 
 		DISABLE_PHRASE(talk_about_alliance);
-		SET_GAME_STATE(REFUSED_ORZ_ALLIANCE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::REFUSED_ORZ_ALLIANCE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, decide_later))
 	{
 		NPCPhrase(OK_LATER);
 
 		DISABLE_PHRASE(talk_about_alliance);
-		SET_GAME_STATE(REFUSED_ORZ_ALLIANCE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::REFUSED_ORZ_ALLIANCE, static_cast<uint32_t>(1));
 	}
 	else if (PlayerSaid(R, dont_really_care))
 	{
@@ -651,26 +651,26 @@ OrzNeutral(RESPONSE_REF R)
 		return;
 	}
 
-	if (GET_GAME_STATE(ORZ_ANDRO_STATE) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 0)
 	{
 		pStr[0] = who_you;
 	}
-	else if (GET_GAME_STATE(ORZ_ANDRO_STATE) == 1)
+	else if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 1)
 	{
 		pStr[0] = why_here;
 	}
-	else if (PhraseEnabled(where_androsyn) && GET_GAME_STATE(ORZ_ANDRO_STATE) == 2)
+	else if (PhraseEnabled(where_androsyn) && uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 2)
 	{
 		pStr[0] = where_androsyn;
 	}
-	if (GET_GAME_STATE(REFUSED_ORZ_ALLIANCE))
+	if (uqm::gameState().flag(uqm::GameFlag::REFUSED_ORZ_ALLIANCE))
 	{
 		if (PhraseEnabled(talk_about_alliance))
 		{
 			pStr[1] = talk_about_alliance;
 		}
 	}
-	else if (GET_GAME_STATE(ORZ_STACK0) == 0)
+	else if (uqm::gameState().flag(uqm::GameFlag::ORZ_STACK0) == 0)
 	{
 		pStr[1] = we_are_vindicator;
 	}
@@ -709,7 +709,7 @@ OrzAngry(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(ORZ_GENERAL_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_GENERAL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -720,7 +720,7 @@ OrzAngry(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ORZ_GENERAL_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_GENERAL_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_angry);
 	}
@@ -730,7 +730,7 @@ OrzAngry(RESPONSE_REF R)
 		Response(whats_up_angry, OrzAngry);
 	}
 	Response(were_sorry, ExitConversation);
-	switch (GET_GAME_STATE(ORZ_PERSONAL_INFO))
+	switch (uqm::gameState().flag(uqm::GameFlag::ORZ_PERSONAL_INFO))
 	{
 		case 0:
 			Response(insult_1, ExitConversation);
@@ -774,12 +774,12 @@ Intro(void)
 		return;
 	}
 
-	if (!GET_GAME_STATE(MET_ORZ_BEFORE))
+	if (!uqm::gameState().flag(uqm::GameFlag::MET_ORZ_BEFORE))
 	{
 		NPCPhrase(INIT_HELLO);
 	}
 
-	Manner = GET_GAME_STATE(ORZ_MANNER);
+	Manner = uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER);
 	if (Manner == 2)
 	{
 		// JMS_GFX: Use separate red angry graphics in hires instead of colormap transform.
@@ -794,7 +794,7 @@ Intro(void)
 			CommData.AlienColorMapIndex = 1;
 		}
 
-		NumVisits = GET_GAME_STATE(ORZ_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -805,13 +805,13 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ORZ_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 
 		setSegue(Segue_hostile);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		NumVisits = GET_GAME_STATE(TAALO_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::TAALO_VISITS);
 		if (Manner != 1)
 		{
 			switch (NumVisits++)
@@ -838,15 +838,15 @@ Intro(void)
 					break;
 			}
 		}
-		SET_GAME_STATE(TAALO_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::TAALO_VISITS, static_cast<uint32_t>(NumVisits));
 
 		TaaloWorld((RESPONSE_REF)0);
 	}
 	else if (Manner == 3 && CheckAlliance(ORZ_SHIP) == GOOD_GUY)
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(ORZ_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -863,11 +863,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(ORZ_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -884,16 +884,16 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		OrzAllied((RESPONSE_REF)0);
 	}
 	else if (Manner != 1)
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(ORZ_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -910,11 +910,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(ORZ_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -931,16 +931,16 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		OrzNeutral((RESPONSE_REF)0);
 	}
 	else
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(ORZ_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -951,11 +951,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(ORZ_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -966,15 +966,15 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		OrzAngry((RESPONSE_REF)0);
 	}
 
-	if (!GET_GAME_STATE(MET_ORZ_BEFORE))
+	if (!uqm::gameState().flag(uqm::GameFlag::MET_ORZ_BEFORE))
 	{
-		SET_GAME_STATE(MET_ORZ_BEFORE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MET_ORZ_BEFORE, static_cast<uint32_t>(1));
 
 		// Disable talking anim and run the computer report
 		BlockTalkingAnim(0, 1);
@@ -994,14 +994,14 @@ post_orz_enc(void)
 	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
-		&& (Manner = GET_GAME_STATE(ORZ_MANNER)) != 2)
+		&& (Manner = uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER)) != 2)
 	{
-		SET_GAME_STATE(ORZ_MANNER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_MANNER, static_cast<uint32_t>(1));
 		if (Manner != 1)
 		{
-			SET_GAME_STATE(ORZ_VISITS, 0);
-			SET_GAME_STATE(ORZ_HOME_VISITS, 0);
-			SET_GAME_STATE(TAALO_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_HOME_VISITS, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::TAALO_VISITS, static_cast<uint32_t>(0));
 		}
 	}
 }
@@ -1021,7 +1021,7 @@ init_orz_comm(void)
 	orz_desc.AlienTextBaseline.y = 0;
 	orz_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if (GET_GAME_STATE(ORZ_MANNER) == 3
+	if (uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);

@@ -114,7 +114,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 				RepairSlot = 1;
 				if (which_piece < EmptySlot
 					&& (which_slot == 0
-						|| GLOBAL_SIS(ModuleSlots[which_slot - 1]) < EmptySlot))
+						|| uqm::gameState().sis().ModuleSlots[which_slot - 1] < EmptySlot))
 				{
 					++RepairSlot;
 				}
@@ -127,7 +127,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 				}
 
 				if (which_slot < NumModuleSlots - 1
-					&& GLOBAL_SIS(ModuleSlots[which_slot + 1]) < EmptySlot)
+					&& uqm::gameState().sis().ModuleSlots[which_slot + 1] < EmptySlot)
 				{
 					RepairSlot = -1;
 					if (which_piece == EmptySlot + 3
@@ -288,7 +288,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 		{
 			Top.origin.x += ShipPieceOffset();
 			Side.origin.x += ShipPieceOffset();
-			which_piece = GLOBAL_SIS(ModuleSlots[++which_slot]);
+			which_piece = uqm::gameState().sis().ModuleSlots[++which_slot];
 			if (which_piece == EmptySlot + 2
 				&& which_slot >= NumModuleSlots - 3)
 			{
@@ -400,7 +400,7 @@ ExitStarBase:
 		{
 			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
-				SET_GAME_STATE(STARBASE_VISITED, 0);
+				uqm::gameState().setFlag(uqm::GameFlag::STARBASE_VISITED, static_cast<uint32_t>(0));
 			}
 			return (false);
 		}
@@ -412,7 +412,7 @@ ExitStarBase:
 			InitCommunication(COMMANDER_CONVERSATION);
 			// XXX: InitCommunication() clears these flags, and we need them
 			//   This marks that we are in Starbase.
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, (uint8_t)~0);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>((uint8_t)~0));
 		}
 		else
 		{
@@ -521,15 +521,15 @@ void VisitStarBase(void)
 	StatMsgMode prevMsgMode = SMM_UNDEFINED;
 
 	// XXX: This should probably be moved out to Starcon2Main()
-	if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
+	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 	{ // We were just transported by Chmmr to the Starbase
 		// Force a reload of the SolarSys
 		CurStarDescPtr() = nullptr;
 		// This marks that we are in Starbase.
-		SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, (uint8_t)~0);
+		uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>((uint8_t)~0));
 	}
 
-	if (!GET_GAME_STATE(STARBASE_AVAILABLE))
+	if (!uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 	{
 		HSHIPFRAG hStarShip {};
 		SHIP_FRAGMENT* FragPtr {};
@@ -537,7 +537,7 @@ void VisitStarBase(void)
 		// Unallied Starbase conversation
 		SetCommIntroMode(CIM_CROSSFADE_SCREEN, TimePeriod {});
 		InitCommunication(COMMANDER_CONVERSATION);
-		if (!GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)
+		if (!uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER)
 			|| (uqm::currentActivity() & CHECK_ABORT))
 		{
 			CleanupAfterStarBase();
@@ -547,15 +547,15 @@ void VisitStarBase(void)
 		/* Create an Ilwrath ship responding to the Ur-Quan
 		 * probe's broadcast */
 		hStarShip = CloneShipFragment(ILWRATH_SHIP,
-									  &GLOBAL(npc_built_ship_q), 7);
-		FragPtr = LockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
+									  &uqm::gameState().game().npc_built_ship_q, 7);
+		FragPtr = LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 		/* Hack (sort of): Suppress the tally and salvage info
 		 * after the battle */
 		FragPtr->race_id = (uint8_t)~0;
-		UnlockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 
 		InitCommunication(ILWRATH_CONVERSATION);
-		if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0
+		if (uqm::gameState().sis().CrewEnlisted == (uint16_t)~0
 			|| (uqm::currentActivity() & CHECK_ABORT))
 		{
 			return; // Killed by Ilwrath
@@ -570,18 +570,18 @@ void VisitStarBase(void)
 		}
 		// XXX: InitCommunication() clears these flags, and we need them
 		//   This marks that we are in Starbase.
-		SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, (uint8_t)~0);
+		uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>((uint8_t)~0));
 	}
 
 	prevMsgMode = SetStatusMessageMode(SMM_RES_UNITS);
 
-	if (GET_GAME_STATE(MOONBASE_ON_SHIP)
-		|| GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
+	if (uqm::gameState().flag(uqm::GameFlag::MOONBASE_ON_SHIP)
+		|| uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 	{ // Go immediately into a conversation with the Commander when the
 		// Starbase becomes available for the first time, or after Chmmr
 		// install the bomb.
 		DoTimePassage();
-		if (GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
+		if (uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
 		{
 			return; // You are now dead! Thank you! (killed by Kohr-Ah)
 		}
@@ -594,7 +594,7 @@ void VisitStarBase(void)
 		}
 		// XXX: InitCommunication() clears these flags, and we need them
 		//   This marks that we are in Starbase.
-		SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, (uint8_t)~0);
+		uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>((uint8_t)~0));
 	}
 
 	memset(&MenuState, 0, sizeof(MenuState));
@@ -614,7 +614,7 @@ CleanupAfterStarBase(void)
 	if (!(uqm::currentActivity() & (CHECK_LOAD | CHECK_ABORT)))
 	{
 		// Mark as not in Starbase anymore
-		SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(0));
 		// Fake a load so Starcon2Main takes us to IP
 		uqm::currentActivity() = CHECK_LOAD;
 		NextActivity = uqm::makeWord(IN_INTERPLANETARY, 0)
@@ -636,8 +636,8 @@ void InstallBombAtEarth(void)
 
 	SleepThreadUntil(FadeScreen(FadeAllToColor, TimePeriod {}));
 
-	SET_GAME_STATE(CHMMR_BOMB_STATE, 3); /* bomb processed */
-	uqm::currentActivity() = CHECK_LOAD; /* fake a load game */
+	uqm::gameState().setFlag(uqm::GameFlag::CHMMR_BOMB_STATE, static_cast<uint32_t>(3)); /* bomb processed */
+	uqm::currentActivity() = CHECK_LOAD;												 /* fake a load game */
 	NextActivity = uqm::makeWord(IN_INTERPLANETARY, 0) | START_INTERPLANETARY;
 	CurStarDescPtr() = 0; /* force SolarSys reload */
 }

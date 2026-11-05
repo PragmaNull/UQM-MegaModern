@@ -765,13 +765,13 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 		{
 			fmt::format_to_sz_n(pm_crew_str, "{}({})",
 								GameString(MAINMENU_STRING_BASE + static_cast<int>(PM_CREW)),
-								GLOBAL(CrewCost));
+								uqm::gameState().game().CrewCost);
 		}
 		if (beg_index == PM_FUEL)
 		{
 			fmt::format_to_sz_n(pm_fuel_str, "{}({})",
 								GameString(MAINMENU_STRING_BASE + static_cast<int>(PM_FUEL)),
-								GLOBAL(FuelCost));
+								uqm::gameState().game().FuelCost);
 		}
 		if (beg_index == PM_SOUND_ON)
 		{
@@ -864,7 +864,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 				t.align = ALIGN_RIGHT;
 				t.CharCount = (uint16_t)~0;
 				t.pStr = buf;
-				fmt::format_to_sz_n(buf, "{}", GLOBAL(CrewCost));
+				fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().CrewCost);
 				if (isPC(uqm::UQMOptions::read().whichFonts))
 				{
 					SetContextFont(TinyFont);
@@ -882,7 +882,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 				t.align = ALIGN_RIGHT;
 				t.CharCount = (uint16_t)~0;
 				t.pStr = buf;
-				fmt::format_to_sz_n(buf, "{}", GLOBAL(FuelCost));
+				fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().FuelCost);
 				if (uqm::UQMOptions::read().whichFonts == uqm::EmulationMode::Console3DO && !uqm::UQMOptions::read().wholeFuel)
 				{
 					SetContextFont(TinyFontBold);
@@ -967,7 +967,7 @@ void DrawMineralHelpers(void)
 
 		// print element worth
 		SetContextForeGroundColor(ModulePriceColor);
-		fmt::format_to_sz_n(buf, "{}", GLOBAL(ElementWorth[i]));
+		fmt::format_to_sz_n(buf, "{}", uqm::gameState().game().ElementWorth[i]);
 		font_DrawText(&t);
 
 		// print x'es
@@ -978,7 +978,7 @@ void DrawMineralHelpers(void)
 		// print the element amount
 		SetContextForeGroundColor(ModuleNameColor);
 		t.baseline.x = ElementCol2();
-		fmt::format_to_sz_n(buf, "{}", GLOBAL_SIS(ElementAmounts[i]));
+		fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().ElementAmounts[i]);
 		font_DrawText(&t);
 
 		t.baseline.x = ElementCol1();
@@ -997,7 +997,7 @@ void DrawMineralHelpers(void)
 	// print the bio amount
 	SetContextForeGroundColor(ModuleNameColor);
 	t.baseline.x = ElementCol2();
-	fmt::format_to_sz_n(buf, "{}", GLOBAL_SIS(TotalBioMass));
+	fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().TotalBioMass);
 	font_DrawText(&t);
 	t.baseline.y += ElementSpacingY();
 
@@ -1040,13 +1040,13 @@ void DrawMineralHelpers(void)
 	font_DrawText(&t);
 
 	t.baseline.y += leading;
-	fmt::format_to_sz_n(buf, "{}", GLOBAL_SIS(CrewEnlisted));
+	fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().CrewEnlisted);
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	t.baseline.y += leading;
-	fmt::format_to_sz_n(buf, "{}", GLOBAL_SIS(NumLanders));
+	fmt::format_to_sz_n(buf, "{}", uqm::gameState().sis().NumLanders);
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
@@ -1055,7 +1055,7 @@ void DrawMineralHelpers(void)
 
 	if (GetStorageBayCapacity())
 	{
-		float totalCapacity = (float)GLOBAL_SIS(TotalElementMass)
+		float totalCapacity = (float)uqm::gameState().sis().TotalElementMass
 							/ (float)GetStorageBayCapacity() * 100;
 
 		if (totalCapacity == 100)

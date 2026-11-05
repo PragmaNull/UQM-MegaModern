@@ -250,7 +250,7 @@ ExitConversation(RESPONSE_REF R)
 		ZFPTalkSegue((uint16_t)~0);
 		SetRaceAllied(ZOQFOTPIK_SHIP, true);
 		AddEvent(RELATIVE_EVENT, 3, 0, 0, ZOQFOT_DISTRESS_EVENT);
-		SET_GAME_STATE(ZOQFOT_HOME_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
 	}
 	else if (PlayerSaid(R, all_very_interesting))
 	{
@@ -260,8 +260,8 @@ ExitConversation(RESPONSE_REF R)
 		NPCPhrase_cb(SEE_TOLD_YOU3, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		SET_GAME_STATE(ZOQFOT_HOSTILE, 1);
-		SET_GAME_STATE(ZOQFOT_HOME_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOSTILE, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
 		setSegue(Segue_hostile);
 	}
 	else if (PlayerSaid(R, never))
@@ -270,8 +270,8 @@ ExitConversation(RESPONSE_REF R)
 		NPCPhrase_cb(WE_ENEMIES1, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		SET_GAME_STATE(ZOQFOT_HOME_VISITS, 0);
-		SET_GAME_STATE(ZOQFOT_HOSTILE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOSTILE, static_cast<uint32_t>(1));
 		setSegue(Segue_hostile);
 	}
 }
@@ -409,7 +409,7 @@ ZoqFotIntro(RESPONSE_REF R)
 			Response(what_look_like, ZoqFotIntro);
 		}
 		Response(all_very_interesting, ExitConversation);
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
 			Response(how_can_i_help, FormAlliance);
 		}
@@ -600,7 +600,7 @@ ZoqFotHome(RESPONSE_REF R)
 
 	if (PlayerSaid(R, whats_up_homeworld))
 	{
-		NumVisits = GET_GAME_STATE(ZOQFOT_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -647,7 +647,7 @@ ZoqFotHome(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ZOQFOT_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_homeworld);
 	}
@@ -655,9 +655,9 @@ ZoqFotHome(RESPONSE_REF R)
 	{
 		uint8_t KnowMask {};
 
-		NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
-		KnowMask = GET_GAME_STATE(ZOQFOT_KNOW_MASK);
-		if (!(KnowMask & KohrAhKill) && GET_GAME_STATE(KOHR_AH_FRENZY))
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_SUPOX_MISSION);
+		KnowMask = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_KNOW_MASK);
+		if (!(KnowMask & KohrAhKill) && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 		{
 			NPCPhrase_cb(KOHRAH_FRENZY0, &SelectAlienZOQ);
 			NPCPhrase_cb(KOHRAH_FRENZY1, &SelectAlienPIK);
@@ -745,7 +745,7 @@ ZoqFotHome(RESPONSE_REF R)
 				ZFPTalkSegue((uint16_t)~0);
 			}
 		}
-		SET_GAME_STATE(ZOQFOT_KNOW_MASK, KnowMask);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_KNOW_MASK, static_cast<uint32_t>(KnowMask));
 
 		DISABLE_PHRASE(any_war_news);
 	}
@@ -819,9 +819,9 @@ Intro(void)
 		return;
 	}
 
-	if (GET_GAME_STATE(ZOQFOT_HOSTILE))
+	if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_HOSTILE))
 	{
-		NumVisits = GET_GAME_STATE(ZOQFOT_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -850,13 +850,13 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ZOQFOT_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 		setSegue(Segue_hostile);
 	}
-	else if (!GET_GAME_STATE(MET_ZOQFOT))
+	else if (!uqm::gameState().flag(uqm::GameFlag::MET_ZOQFOT))
 	{
-		SET_GAME_STATE(MET_ZOQFOT, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MET_ZOQFOT, static_cast<uint32_t>(1));
 
 		NPCPhrase_cb(WE_ARE0, &SelectAlienZOQ);
 		NPCPhrase_cb(WE_ARE1, &SelectAlienPIK);
@@ -867,7 +867,7 @@ Intro(void)
 		NPCPhrase_cb(WE_ARE6, &SelectAlienZOQ);
 		NPCPhrase_cb(WE_ARE7, &SelectAlienPIK);
 
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
 			NPCPhrase_cb(INIT_HOME_HELLO0, &SelectAlienZOQ);
 			NPCPhrase_cb(INIT_HOME_HELLO1, &SelectAlienPIK);
@@ -888,7 +888,7 @@ Intro(void)
 	}
 	else
 	{
-		if (GET_GAME_STATE(ZOQFOT_DISTRESS))
+		if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS))
 		{
 			NPCPhrase_cb(THANKS_FOR_RESCUE0, &SelectAlienZOQ);
 			NPCPhrase_cb(THANKS_FOR_RESCUE1, &SelectAlienPIK);
@@ -904,12 +904,12 @@ Intro(void)
 			NPCPhrase_cb(THANKS_FOR_RESCUE11, &SelectAlienPIK);
 			ZFPTalkSegue((uint16_t)~0);
 
-			SET_GAME_STATE(ZOQFOT_DISTRESS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_DISTRESS, static_cast<uint32_t>(0));
 			AddEscortShips(ZOQFOTPIK_SHIP, difficultyCase(4, 4, 2));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(ZOQFOT_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_HOME_VISITS);
 			if (CheckAlliance(ZOQFOTPIK_SHIP) != GOOD_GUY)
 			{
 				switch (NumVisits++)
@@ -965,7 +965,7 @@ Intro(void)
 						break;
 				}
 			}
-			SET_GAME_STATE(ZOQFOT_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		ZoqFotHome(0);

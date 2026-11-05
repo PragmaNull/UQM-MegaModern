@@ -103,8 +103,8 @@ GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 			pPlanet->data_index = GenerateHabitableWorld();
 		}
 
-		if (GET_GAME_STATE(SPATHI_SHIELDED_SELVES)
-			&& !(IsExtended() && GET_GAME_STATE(KOHR_AH_FRENZY)
+		if (uqm::gameState().flag(uqm::GameFlag::SPATHI_SHIELDED_SELVES)
+			&& !(IsExtended() && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
 				 && RaceDead(ORZ_SHIP)))
 		{
 			pPlanet->data_index |= PLANET_SHIELDED;
@@ -183,11 +183,11 @@ GenerateSpathi_generateName(const SOLARSYS_STATE* solarSys,
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
-							sizeof(GLOBAL_SIS(PlanetName)),
+		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+							sizeof(uqm::gameState().sis().PlanetName),
 							GameString(PLANET_NUMBER_BASE + 37));
 
-		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
 
 	return true;
@@ -203,25 +203,25 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 	{
 		if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 		{ /* Spathiwa's moon */
-			if (!GET_GAME_STATE(SPATHI_SHIELDED_SELVES)
+			if (!uqm::gameState().flag(uqm::GameFlag::SPATHI_SHIELDED_SELVES)
 				&& StartSphereTracking(SPATHI_SHIP))
 			{
 				NotifyOthers(SPATHI_SHIP, IpnlAllClear);
 				PutGroupInfo(GroupsRandom, GroupSaveIp);
-				ReinitQueue(&GLOBAL(ip_group_q));
-				assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+				ReinitQueue(&uqm::gameState().game().ip_group_q);
+				assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-				CloneShipFragment(SPATHI_SHIP, &GLOBAL(npc_built_ship_q),
+				CloneShipFragment(SPATHI_SHIP, &uqm::gameState().game().npc_built_ship_q,
 								  INFINITE_FLEET);
 
-				SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+				uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 				uqm::currentActivity() |= START_INTERPLANETARY;
 				InitCommunication(SPATHI_CONVERSATION);
 
 				if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 				{
 					uqm::currentActivity() &= ~START_INTERPLANETARY;
-					ReinitQueue(&GLOBAL(npc_built_ship_q));
+					ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 					GetGroupInfo(GroupsRandom, GroupLoadIp);
 				}
 				return true;
@@ -249,7 +249,7 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = 28;
 			}
 
-			if (!GET_GAME_STATE(UMGAH_BROADCASTERS))
+			if (!uqm::gameState().flag(uqm::GameFlag::UMGAH_BROADCASTERS))
 			{
 				LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 				solarSys->PlanetSideFrame[1] =
@@ -257,7 +257,7 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 						LoadGraphic(UmgahBcsMaskPmapAnimRes));
 				solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(UmgahBcsStrtabRes);
 				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
-				if (!GET_GAME_STATE(SPATHI_SHIELDED_SELVES))
+				if (!uqm::gameState().flag(uqm::GameFlag::SPATHI_SHIELDED_SELVES))
 				{ // The first report talks extensively about Spathi
 					// slave-shielding selves. If they never did so, the
 					// report makes no sense, so use an alternate.
@@ -282,8 +282,8 @@ GenerateSpathi_generateOrbital(SOLARSYS_STATE* solarSys,
 			solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] =
 				rand_val;
 
-			if (GET_GAME_STATE(KOHR_AH_FRENZY)
-				&& GET_GAME_STATE(SPATHI_SHIELDED_SELVES)
+			if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
+				&& uqm::gameState().flag(uqm::GameFlag::SPATHI_SHIELDED_SELVES)
 				&& RaceDead(ORZ_SHIP)
 				&& IsExtended())
 			{
@@ -358,7 +358,7 @@ GenerateSpathi_generateEnergy(const SOLARSYS_STATE* solarSys,
 		{
 			// This check is redundant since the retrieval bit will keep
 			// the node from showing up again
-			if (GET_GAME_STATE(UMGAH_BROADCASTERS))
+			if (uqm::gameState().flag(uqm::GameFlag::UMGAH_BROADCASTERS))
 			{ // already picked up
 				return 0;
 			}
@@ -367,8 +367,8 @@ GenerateSpathi_generateEnergy(const SOLARSYS_STATE* solarSys,
 				solarSys, whichNode, info);
 		}
 		else if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
-				 && GET_GAME_STATE(KOHR_AH_FRENZY) && RaceDead(ORZ_SHIP)
-				 && GET_GAME_STATE(SPATHI_SHIELDED_SELVES)
+				 && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY) && RaceDead(ORZ_SHIP)
+				 && uqm::gameState().flag(uqm::GameFlag::SPATHI_SHIELDED_SELVES)
 				 && IsExtended())
 		{
 			return GenerateRandomNodes(&solarSys->SysInfo, ENERGY_SCAN, 4,
@@ -403,19 +403,19 @@ GenerateSpathi_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	{
 		if (matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 		{
-			assert(!GET_GAME_STATE(UMGAH_BROADCASTERS) && whichNode == 0);
+			assert(!uqm::gameState().flag(uqm::GameFlag::UMGAH_BROADCASTERS) && whichNode == 0);
 
 			GenerateDefault_landerReport(solarSys);
 			SetLanderTakeoff();
 
-			SET_GAME_STATE(UMGAH_BROADCASTERS, 1);
-			SET_GAME_STATE(UMGAH_BROADCASTERS_ON_SHIP, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::UMGAH_BROADCASTERS, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::UMGAH_BROADCASTERS_ON_SHIP, static_cast<uint32_t>(1));
 
 			return true; // picked up
 		}
 		else if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
-				 && GET_GAME_STATE(KOHR_AH_FRENZY) && RaceDead(ORZ_SHIP)
-				 && GET_GAME_STATE(SPATHI_SHIELDED_SELVES)
+				 && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY) && RaceDead(ORZ_SHIP)
+				 && uqm::gameState().flag(uqm::GameFlag::SPATHI_SHIELDED_SELVES)
 				 && IsExtended())
 		{
 			GenerateDefault_landerReportCycle(solarSys);
@@ -461,15 +461,15 @@ GenerateSpathi_pickupLife(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	if (CurStarDescPtr()->Index == SPATHI_DEFINED
 		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		assert(!GET_GAME_STATE(SPATHI_CREATURES_ELIMINATED) && !GET_GAME_STATE(SPATHI_SHIELDED_SELVES));
+		assert(!uqm::gameState().flag(uqm::GameFlag::SPATHI_CREATURES_ELIMINATED) && !uqm::gameState().flag(uqm::GameFlag::SPATHI_SHIELDED_SELVES));
 
-		SET_GAME_STATE(SPATHI_CREATURES_EXAMINED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_CREATURES_EXAMINED, static_cast<uint32_t>(1));
 		if (countNodesRetrieved(
 				&solarSys->SysInfo.PlanetInfo, BIOLOGICAL_SCAN)
 				+ 1
 			== NumEvilOnes)
 		{ // last creature picked up
-			SET_GAME_STATE(SPATHI_CREATURES_ELIMINATED, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_CREATURES_ELIMINATED, static_cast<uint32_t>(1));
 		}
 
 		return true; // picked up

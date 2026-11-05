@@ -208,7 +208,7 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 
 	for (slot = 0; slot < NumDriveSlots; ++slot)
 	{
-		piece = GLOBAL_SIS(DriveSlots[slot]);
+		piece = uqm::gameState().sis().DriveSlots[slot];
 		if (piece < EmptySlot)
 		{
 			s.origin.x = DriveTopX();
@@ -220,7 +220,7 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 	}
 	for (slot = 0; slot < NumJetSlots; ++slot)
 	{
-		piece = GLOBAL_SIS(JetSlots[slot]);
+		piece = uqm::gameState().sis().JetSlots[slot];
 		if (piece < EmptySlot)
 		{
 			s.origin.x = JetTopX();
@@ -232,7 +232,7 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 	}
 	for (slot = 0; slot < NumModuleSlots; ++slot)
 	{
-		piece = GLOBAL_SIS(ModuleSlots[slot]);
+		piece = uqm::gameState().sis().ModuleSlots[slot];
 		if (piece < EmptySlot)
 		{
 			s.origin.x = ModuleTopXP();

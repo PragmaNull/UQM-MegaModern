@@ -792,20 +792,20 @@ spawnFwiffo(void)
 
 	EncounterGroup = 0;
 	PutGroupInfo(GroupsRandom, GroupSaveIp);
-	ReinitQueue(&GLOBAL(ip_group_q));
-	assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+	ReinitQueue(&uqm::gameState().game().ip_group_q);
+	assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 	hStarShip = CloneShipFragment(SPATHI_SHIP,
-								  &GLOBAL(npc_built_ship_q), 1);
+								  &uqm::gameState().game().npc_built_ship_q, 1);
 	if (hStarShip)
 	{
 		SHIP_FRAGMENT* StarShipPtr {};
 
-		StarShipPtr = LockShipFrag(&GLOBAL(npc_built_ship_q),
+		StarShipPtr = LockShipFrag(&uqm::gameState().game().npc_built_ship_q,
 								   hStarShip);
 		// Name Fwiffo
 		StarShipPtr->captains_name_index = NameOffset + NumCaptainsNames;
-		UnlockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 	}
 }
 
@@ -822,7 +822,7 @@ DispatchLander(void)
 
 	if (!uqm::UQMOptions::read().infiniteFuel)
 	{
-		GLOBAL_SIS(FuelOnBoard) -= landingFuel;
+		uqm::gameState().sis().FuelOnBoard -= landingFuel;
 
 		DrawMineralHelpers();
 		if (!uqm::UQMOptions::read().submenu)
@@ -840,7 +840,7 @@ DispatchLander(void)
 		return false;
 	}
 
-	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1)
+	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1)
 	{
 		/* Create Fwiffo group and go into comm with it */
 		spawnFwiffo();
@@ -993,13 +993,13 @@ drawLandingFuelUsage(uint16_t fuel)
 	StatMsgMode old_status_message_mode = SMM_UNDEFINED;
 	char buf[100] {};
 
-	if (((int32_t)(GLOBAL_SIS(FuelOnBoard)) - fuel)
+	if (((int32_t)(uqm::gameState().sis().FuelOnBoard) - fuel)
 		<= (int32_t)(get_fuel_to_sol()))
 	{ // We will not have enough fuel to get to Sol if we dispatch the
 		// lander
 		old_status_message_mode = SetStatusMessageMode(SMM_ALERT);
 	}
-	else if (((int32_t)(GLOBAL_SIS(FuelOnBoard)) - fuel)
+	else if (((int32_t)(uqm::gameState().sis().FuelOnBoard) - fuel)
 			 <= (int32_t)(get_fuel_to_sol() + (5 * FuelTankScale)))
 	{ // We will have enough fuel to get to Sol if we dispatch the lander
 		// but will have less than 5 to spare
@@ -1516,9 +1516,9 @@ DoScan(MENU_STATE* pMS)
 			}
 
 			const uint16_t fuel_required {getLandingFuelNeeded()};
-			if (GLOBAL_SIS(FuelOnBoard) < fuel_required
-				|| GLOBAL_SIS(NumLanders) == 0
-				|| GLOBAL_SIS(CrewEnlisted) == 0)
+			if (uqm::gameState().sis().FuelOnBoard < fuel_required
+				|| uqm::gameState().sis().NumLanders == 0
+				|| uqm::gameState().sis().CrewEnlisted == 0)
 			{
 				PlayMenuSound(MENU_SOUND_FAILURE);
 				return true;

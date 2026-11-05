@@ -33,6 +33,8 @@ Keep these, because they are large and in use: `graphics`, `sound`, `video`, `in
 
 ## Graphics
 
+- **CPU scaler macros:** the CPU scalers (`2xscalers.cpp`, `biadv2x.cpp`, `hq2x.cpp`, `triscan2x.cpp`, `scaleint.h`) still use macros. `SCALE_` builds a function name for each pixel format with `##`, and other macros read the local variables of the caller (`fmt`, `src_p`, `slen`, `pixels`, `dst_p`). Change them to C++ templates on the pixel format. The tests do not run these scalers, so compare the output with the old scalers.
+
 - **MSL shaders:** the MSL output of `shaders.bat` is not tested yet.
 - **Shader header check:** add a check in the build that the shader headers match the `.hlsl` files.
 - **GPU backend setting:** add a setting for the GPU backend. Now only the `SDL_GPU_DRIVER` environment variable selects it.

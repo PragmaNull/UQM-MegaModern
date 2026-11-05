@@ -98,7 +98,7 @@ RaceHyperSpeed(RACE_ID Index)
 			if (hFleet)
 			{
 				speedMap[x] = defaultMap[GetIndexFromStarShip(
-					&GLOBAL(avail_race_q), hFleet)];
+					&uqm::gameState().game().avail_race_q, hFleet)];
 			}
 			else
 			{
@@ -232,29 +232,29 @@ decorate_vortex (ELEMENT *ElementPtr)
 void MoveSIS(int32_t* pdx, int32_t* pdy)
 {
 	int32_t new_dx {*pdx};
-	GLOBAL_SIS(log_x) -= new_dx;
-	if (GLOBAL_SIS(log_x) < 0)
+	uqm::gameState().sis().log_x -= new_dx;
+	if (uqm::gameState().sis().log_x < 0)
 	{
-		new_dx += (int16_t)GLOBAL_SIS(log_x);
-		GLOBAL_SIS(log_x) = 0;
+		new_dx += (int16_t)uqm::gameState().sis().log_x;
+		uqm::gameState().sis().log_x = 0;
 	}
-	else if (GLOBAL_SIS(log_x) > MaxXLogical())
+	else if (uqm::gameState().sis().log_x > MaxXLogical())
 	{
-		new_dx += (int16_t)(GLOBAL_SIS(log_x) - MaxXLogical());
-		GLOBAL_SIS(log_x) = MaxXLogical();
+		new_dx += (int16_t)(uqm::gameState().sis().log_x - MaxXLogical());
+		uqm::gameState().sis().log_x = MaxXLogical();
 	}
 
 	int32_t new_dy {*pdy};
-	GLOBAL_SIS(log_y) -= new_dy;
-	if (GLOBAL_SIS(log_y) < 0)
+	uqm::gameState().sis().log_y -= new_dy;
+	if (uqm::gameState().sis().log_y < 0)
 	{
-		new_dy += (int16_t)GLOBAL_SIS(log_y);
-		GLOBAL_SIS(log_y) = 0;
+		new_dy += (int16_t)uqm::gameState().sis().log_y;
+		uqm::gameState().sis().log_y = 0;
 	}
-	else if (GLOBAL_SIS(log_y) > MaxYLogical())
+	else if (uqm::gameState().sis().log_y > MaxYLogical())
 	{
-		new_dy += (int16_t)(GLOBAL_SIS(log_y) - MaxYLogical());
-		GLOBAL_SIS(log_y) = MaxYLogical();
+		new_dy += (int16_t)(uqm::gameState().sis().log_y - MaxYLogical());
+		uqm::gameState().sis().log_y = MaxYLogical();
 	}
 
 	if (new_dx != *pdx || new_dy != *pdy)
@@ -289,8 +289,8 @@ void MoveSIS(int32_t* pdx, int32_t* pdy)
 		}
 	}
 
-	if (GLOBAL_SIS(FuelOnBoard)
-		&& GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+	if (uqm::gameState().sis().FuelOnBoard
+		&& uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{
 		uint16_t cur_fuel_ticks {};
 		uint16_t hyper_dist {};
@@ -346,13 +346,13 @@ void check_hyperspace_encounter(void)
 		{
 			RACE_HYPERSPACE_PERCENT};
 
-	universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
-	universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
-	for (hStarShip = GetHeadLink(&GLOBAL(avail_race_q)), Type = 0;
+	universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
+	universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q), Type = 0;
 		 hStarShip && (uqm::currentActivity() & IN_BATTLE);
 		 hStarShip = hNextShip, ++Type)
 	{
-		const FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hStarShip)};
+		const FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip)};
 		hNextShip = _GetSuccLink(FleetPtr);
 
 		uint16_t encounter_radius {FleetPtr->actual_strength};
@@ -376,15 +376,15 @@ void check_hyperspace_encounter(void)
 				encounter_radius =
 					(encounter_radius * SphereRadiusIncrement) >> 1;
 
-				if (IsExtended() && GET_GAME_STATE(KOHR_AH_FRENZY)
+				if (IsExtended() && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
 					&& Type == BLACK_URQUAN_SHIP
-					&& GET_GAME_STATE(USED_BROADCASTER))
+					&& uqm::gameState().flag(uqm::GameFlag::USED_BROADCASTER))
 				{
 					encounter_radius = (MaxXUniverse + 1) << 1;
 					percent = 100;
 					encounter_flags = OneShotEncounter;
 
-					SET_GAME_STATE(BROADCASTER_RESPONSE, 1);
+					uqm::gameState().setFlag(uqm::GameFlag::BROADCASTER_RESPONSE, static_cast<uint32_t>(1));
 				}
 			}
 			else /* encounter_radius == infinity */
@@ -395,13 +395,13 @@ void check_hyperspace_encounter(void)
 				if (Type == SLYLANDRO_SHIP)
 				{
 					encounter_flags = OneShotEncounter;
-					if (!GET_GAME_STATE(STARBASE_AVAILABLE))
+					if (!uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 					{
 						percent = 100;
 					}
 					else
 					{
-						percent *= GET_GAME_STATE(SLYLANDRO_MULTIPLIER);
+						percent *= uqm::gameState().flag(uqm::GameFlag::SLYLANDRO_MULTIPLIER);
 					}
 
 					if (uqm::UQMOptions::read().noHQEncounters)
@@ -410,15 +410,15 @@ void check_hyperspace_encounter(void)
 					}
 				}
 
-				if ((IsExtended() && !GET_GAME_STATE(KOHR_AH_FRENZY))
+				if ((IsExtended() && !uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 					|| !IsExtended())
 				{
 					if (Type == MELNORME_SHIP
-						&& (GLOBAL_SIS(FuelOnBoard) == 0
-							|| GET_GAME_STATE(USED_BROADCASTER))
-						&& GET_GAME_STATE(MELNORME_ANGER) < 3)
+						&& (uqm::gameState().sis().FuelOnBoard == 0
+							|| uqm::gameState().flag(uqm::GameFlag::USED_BROADCASTER))
+						&& uqm::gameState().flag(uqm::GameFlag::MELNORME_ANGER) < 3)
 					{
-						if (!GET_GAME_STATE(USED_BROADCASTER))
+						if (!uqm::gameState().flag(uqm::GameFlag::USED_BROADCASTER))
 						{
 							percent = 30;
 						}
@@ -447,7 +447,7 @@ void check_hyperspace_encounter(void)
 
 				if (percent == 100 && Type == MELNORME_SHIP)
 				{
-					SET_GAME_STATE(BROADCASTER_RESPONSE, 1);
+					uqm::gameState().setFlag(uqm::GameFlag::BROADCASTER_RESPONSE, static_cast<uint32_t>(1));
 				}
 			}
 
@@ -484,10 +484,10 @@ void check_hyperspace_encounter(void)
 			}
 		}
 
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 	}
 
-	SET_GAME_STATE(USED_BROADCASTER, 0);
+	uqm::gameState().setFlag(uqm::GameFlag::USED_BROADCASTER, static_cast<uint32_t>(0));
 }
 
 void FreeHyperData(void)
@@ -568,7 +568,7 @@ bool LoadHyperspace(void)
 		BuildColor(MakeRgb15(0x00, 0x0E, 0x00), 0x6C));
 
 	SetContext(SpaceContext);
-	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{ // Hyperspace Color
 		SetContextBackGroundColor(
 			BuildColor(MakeRgb15(0x07, 0x00, 0x00), 0x2F));
@@ -579,8 +579,8 @@ bool LoadHyperspace(void)
 		SetContextBackGroundColor(
 			BuildColor(MakeRgb15(0x00, 0x1A, 0x00), 0x2F));
 		SetColorMap(GetColorMapAddress(hypercmaps[1], 0));
-		SET_GAME_STATE(USED_BROADCASTER, 0);
-		SET_GAME_STATE(BROADCASTER_RESPONSE, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::USED_BROADCASTER, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::BROADCASTER_RESPONSE, static_cast<uint32_t>(0));
 	}
 	//    ClearDrawable ();
 
@@ -617,9 +617,9 @@ ElementToUniverse(ELEMENT* ElementPtr, GFXPOINT* pPt)
 	int32_t log_x {};
 	int32_t log_y {};
 
-	log_x = GLOBAL_SIS(log_x)
+	log_x = uqm::gameState().sis().log_x
 		  + (ElementPtr->next.location.x - (LogSpaceWidth() >> 1));
-	log_y = GLOBAL_SIS(log_y)
+	log_y = uqm::gameState().sis().log_y
 		  + (ElementPtr->next.location.y - (LogSpaceHeight() >> 1));
 	pPt->x = LogxToUniverse(log_x);
 	pPt->y = LogyToUniverse(log_y);
@@ -672,17 +672,17 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 	uqm::flagship().ipPlanet = 0;
 	uqm::flagship().inOrbit = 0;
 	uqm::flagship().shipFacing = 0; /* Not reentering the system */
-	SET_GAME_STATE(USED_BROADCASTER, 0);
-	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+	uqm::gameState().setFlag(uqm::GameFlag::USED_BROADCASTER, static_cast<uint32_t>(0));
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{
 		// Enter a solar system from HyperSpace.
 		uqm::currentActivity() |= START_INTERPLANETARY;
-		SET_GAME_STATE(ESCAPE_COUNTER, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::ESCAPE_COUNTER, static_cast<uint32_t>(0));
 	}
 	else
 	{
 		GFXPOINT pt;
-		uint16_t KnownQSPortals = GET_GAME_STATE(KNOW_QS_PORTAL);
+		uint16_t KnownQSPortals = uqm::gameState().flag(uqm::GameFlag::KNOW_QS_PORTAL);
 
 		uqm::flagship().autopilot.clear();
 
@@ -708,7 +708,7 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 
 			// JMS: The arilou homeworld name can now be shown on QS map.
 			KnownQSPortals |= (1 << 15);
-			SET_GAME_STATE(KNOW_QS_PORTAL, KnownQSPortals);
+			uqm::gameState().setFlag(uqm::GameFlag::KNOW_QS_PORTAL, static_cast<uint32_t>(KnownQSPortals));
 		}
 		else
 		{
@@ -722,15 +722,15 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 			index = CurStarDescPtr() - &star_array[NumSolarSystems + 1];
 			//GLOBAL_SIS(log_x) = UniverseToLogx(portal_pt[index].x);
 			//GLOBAL_SIS(log_y) = UniverseToLogy(portal_pt[index].y);
-			GLOBAL_SIS(log_x) = UniverseToLogx(portal_map[index].star_pt.x);
-			GLOBAL_SIS(log_y) = UniverseToLogy(portal_map[index].star_pt.y);
+			uqm::gameState().sis().log_x = UniverseToLogx(portal_map[index].star_pt.x);
+			uqm::gameState().sis().log_y = UniverseToLogy(portal_map[index].star_pt.y);
 
 			// JMS: This QS portal's HS coordinates are revealed on QS map
 			// the next time the player visits QS.
 			KnownQSPortals |= (1 << index);
-			SET_GAME_STATE(KNOW_QS_PORTAL, KnownQSPortals);
+			uqm::gameState().setFlag(uqm::GameFlag::KNOW_QS_PORTAL, static_cast<uint32_t>(KnownQSPortals));
 
-			SET_GAME_STATE(ARILOU_SPACE_SIDE, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(0));
 		}
 	}
 }
@@ -742,17 +742,17 @@ static void
 ArilouSpaceTransition(void)
 {
 	uqm::flagship().shipFacing = 0; /* Not reentering the system */
-	SET_GAME_STATE(USED_BROADCASTER, 0);
+	uqm::gameState().setFlag(uqm::GameFlag::USED_BROADCASTER, static_cast<uint32_t>(0));
 	uqm::flagship().autopilot.clear();
-	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{
 		// From HyperSpace to QuasiSpace.
-		GLOBAL_SIS(log_x) = UniverseToLogx(QuasiSpaceX);
-		GLOBAL_SIS(log_y) = UniverseToLogy(QuasiSpaceY);
-		if (GET_GAME_STATE(PORTAL_COUNTER) == 0)
+		uqm::gameState().sis().log_x = UniverseToLogx(QuasiSpaceX);
+		uqm::gameState().sis().log_y = UniverseToLogy(QuasiSpaceY);
+		if (uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER) == 0)
 		{
 			// Periodically appearing portal.
-			SET_GAME_STATE(ARILOU_SPACE_SIDE, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(3));
 
 			if (IsExtended())
 			{
@@ -762,8 +762,8 @@ ArilouSpaceTransition(void)
 		else
 		{
 			// Player-induced portal.
-			SET_GAME_STATE(PORTAL_COUNTER, 0);
-			SET_GAME_STATE(ARILOU_SPACE_SIDE, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::PORTAL_COUNTER, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(3));
 		}
 	}
 	else
@@ -775,17 +775,17 @@ ArilouSpaceTransition(void)
 			// JSD Converting hard coded ARILOU portal to plot based
 			//GLOBAL_SIS (log_x) = UniverseToLogx (ArilouSpaceX);
 			//GLOBAL_SIS (log_y) = UniverseToLogy (ArilouSpaceY);
-			GLOBAL_SIS(log_x) = UniverseToLogx(plot_map[ARILOU_DEFINED].star_pt.x);
-			GLOBAL_SIS(log_y) = UniverseToLogy(plot_map[ARILOU_DEFINED].star_pt.y);
+			uqm::gameState().sis().log_x = UniverseToLogx(plot_map[ARILOU_DEFINED].star_pt.x);
+			uqm::gameState().sis().log_y = UniverseToLogy(plot_map[ARILOU_DEFINED].star_pt.y);
 		}
 		else if (IsExtended() && ValidPoint(LoadLastLoc()))
 		{
-			GLOBAL_SIS(log_x) = UniverseToLogx(LoadLastLoc().x);
-			GLOBAL_SIS(log_y) = UniverseToLogy(LoadLastLoc().y);
+			uqm::gameState().sis().log_x = UniverseToLogx(LoadLastLoc().x);
+			uqm::gameState().sis().log_y = UniverseToLogy(LoadLastLoc().y);
 
 			ZeroLastLoc();
 		}
-		SET_GAME_STATE(ARILOU_SPACE_SIDE, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(0));
 	}
 }
 
@@ -804,8 +804,8 @@ unhyper_transition(ELEMENT* ElementPtr)
 		int32_t udy = 0;
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
-		universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
-		universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
+		universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
+		universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
 		udx = uqm::flagship().autopilot.target().x - universe.x;
 		udy = -(uqm::flagship().autopilot.target().y - universe.y);
 
@@ -961,8 +961,8 @@ bool hyper_transition(ELEMENT* ElementPtr)
 			int32_t udy = 0;
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
-			universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
-			universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
+			universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
+			universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
 			udx = uqm::flagship().autopilot.target().x - universe.x;
 			udy = -(uqm::flagship().autopilot.target().y - universe.y);
 
@@ -1022,7 +1022,7 @@ hyper_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	if ((ElementPtr1->state_flags & PlayerShip)
-		&& GET_GAME_STATE(PORTAL_COUNTER) == 0)
+		&& uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER) == 0)
 	{
 		int16_t dx {};
 		int16_t dy {};
@@ -1072,15 +1072,15 @@ static void
 arilou_space_death(ELEMENT* ElementPtr)
 {
 	if (!(ElementPtr->state_flags & DefyPhysics)
-		|| GET_GAME_STATE(ARILOU_SPACE_COUNTER) == 0)
+		|| uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_COUNTER) == 0)
 	{
-		if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 		{
-			SET_GAME_STATE(ARILOU_SPACE_SIDE, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(0));
 		}
 		else
 		{
-			SET_GAME_STATE(ARILOU_SPACE_SIDE, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(3));
 		}
 	}
 }
@@ -1096,12 +1096,12 @@ arilou_space_collision(ELEMENT* ElementPtr0,
 		return;
 	}
 
-	which_side = GET_GAME_STATE(ARILOU_SPACE_SIDE);
+	which_side = uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE);
 	if (which_side == 0 || which_side == 3)
 	{
 		if (ElementPtr1->state_flags & DefyPhysics)
 		{
-			SET_GAME_STATE(ARILOU_SPACE_SIDE, which_side ^ 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_SIDE, static_cast<uint32_t>(which_side ^ 1));
 		}
 		else
 		{
@@ -1134,18 +1134,18 @@ AllocHyperElement(const GFXPOINT* elem_pt)
 			long ly {};
 
 			lx = UniverseToLogx(elem_pt->x)
-			   + (LogSpaceWidth() >> 1) - GLOBAL_SIS(log_x);
+			   + (LogSpaceWidth() >> 1) - uqm::gameState().sis().log_x;
 			HyperSpaceElementPtr->current.location.x = WrapX(lx);
 
 			ly = UniverseToLogy(elem_pt->y)
-			   + (LogSpaceHeight() >> 1) - GLOBAL_SIS(log_y);
+			   + (LogSpaceHeight() >> 1) - uqm::gameState().sis().log_y;
 			HyperSpaceElementPtr->current.location.y = WrapY(ly);
 		}
 
 		SetPrimType(&DisplayArray[HyperSpaceElementPtr->PrimIndex],
 					STAMP_PRIM);
 		HyperSpaceElementPtr->current.image.farray =
-			&hyperstars[1 + (GET_GAME_STATE(ARILOU_SPACE_SIDE) >> 1)];
+			&hyperstars[1 + (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) >> 1)];
 
 		UnlockElement(hHyperSpaceElement);
 	}
@@ -1357,7 +1357,7 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 	bool NewEncounter {};
 	GFXPOINT enc_pt;
 
-	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) >= 2)
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) >= 2)
 	{
 		return 0;
 	}
@@ -1414,14 +1414,14 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 		{
 			BRIEF_SHIP_INFO* BSIPtr = &EncounterPtr->ShipList[i];
 			HFLEETINFO hStarShip =
-				GetStarShipFromIndex(&GLOBAL(avail_race_q), Type);
+				GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, Type);
 			const FLEET_INFO* FleetPtr =
-				LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+				LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 			BSIPtr->race_id = Type;
 			BSIPtr->crew_level = FleetPtr->crew_level;
 			BSIPtr->max_crew = FleetPtr->max_crew;
 			BSIPtr->max_energy = FleetPtr->max_energy;
-			UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+			UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 		}
 
 		do
@@ -1746,10 +1746,10 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 		&& ey - puniverse->y <= UnitScreenHeight())
 	{
 		ElementPtr->next.location.x =
-			(int16_t)(EncounterPtr->log_x - GLOBAL_SIS(log_x))
+			(int16_t)(EncounterPtr->log_x - uqm::gameState().sis().log_x)
 			+ (LogSpaceWidth() >> 1);
 		ElementPtr->next.location.y =
-			(int16_t)(EncounterPtr->log_y - GLOBAL_SIS(log_y))
+			(int16_t)(EncounterPtr->log_y - uqm::gameState().sis().log_y)
 			+ (LogSpaceHeight() >> 1);
 		if ((ElementPtr->state_flags & Nonsolid)
 			&& EncounterPtr->transition_state == 0)
@@ -1865,8 +1865,8 @@ void SeedUniverse(void)
 
 	static uint16_t frameCounter = 0; // BW
 
-	universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
-	universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
+	universe.x = LogxToUniverse(uqm::gameState().sis().log_x);
+	universe.y = LogyToUniverse(uqm::gameState().sis().log_y);
 
 	FRAME blip_frame {SetAbsFrameIndex(stars_in_space, 90)};
 
@@ -1886,8 +1886,8 @@ void SeedUniverse(void)
 				   * RadarHeight() / RadarScanHeight())
 	   - (RadarHeight() >> 1);
 
-	arilouSpaceCounter = GET_GAME_STATE(ARILOU_SPACE_COUNTER);
-	arilouSpaceSide = GET_GAME_STATE(ARILOU_SPACE_SIDE);
+	arilouSpaceCounter = uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_COUNTER);
+	arilouSpaceSide = uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE);
 
 	//	if (ox != ex || oy != ey)
 	{
@@ -1918,7 +1918,7 @@ void SeedUniverse(void)
 		}
 	}
 
-	portalCounter = GET_GAME_STATE(PORTAL_COUNTER);
+	portalCounter = uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER);
 	if (portalCounter || arilouSpaceCounter)
 	{
 		STAR_DESC SD[2];
@@ -1957,7 +1957,7 @@ void SeedUniverse(void)
 			}
 
 
-			SET_GAME_STATE(PORTAL_COUNTER, portalCounter);
+			uqm::gameState().setFlag(uqm::GameFlag::PORTAL_COUNTER, static_cast<uint32_t>(portalCounter));
 		}
 
 		if (arilouSpaceCounter)
@@ -2085,8 +2085,8 @@ void SeedUniverse(void)
 			const uint8_t star_type = SDPtr->Type;
 			const uint8_t star_color = StarColor(star_type);
 
-			lx = UniverseToLogx(SDPtr->star_pt.x) - GLOBAL_SIS(log_x);
-			ly = UniverseToLogy(SDPtr->star_pt.y) - GLOBAL_SIS(log_y);
+			lx = UniverseToLogx(SDPtr->star_pt.x) - uqm::gameState().sis().log_x;
+			ly = UniverseToLogy(SDPtr->star_pt.y) - uqm::gameState().sis().log_y;
 
 			if (AnimatedHyperspace())
 			{
@@ -2172,7 +2172,7 @@ void SeedUniverse(void)
 			SetUpElement(HyperSpaceElementPtr);
 
 			if (SDPtr == CurStarDescPtr()
-				&& GET_GAME_STATE(PORTAL_COUNTER) == 0)
+				&& uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER) == 0)
 			{
 				HyperSpaceElementPtr->death_func = hyper_death;
 			}
@@ -2221,7 +2221,7 @@ DoHyperspaceMenu(MENU_STATE* pMS)
 	bool select = PulsedInputState.menu[KEY_MENU_SELECT];
 
 	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
-		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
+		|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
 	{
 		return false;
 	}
@@ -2243,7 +2243,7 @@ DoHyperspaceMenu(MENU_STATE* pMS)
 	{
 		case EQUIP_DEVICE:
 			select = DevicesMenu();
-			if (GET_GAME_STATE(PORTAL_COUNTER))
+			if (uqm::gameState().flag(uqm::GameFlag::PORTAL_COUNTER))
 			{ // A player-induced portal to QuasiSpace is opening
 				return false;
 			}

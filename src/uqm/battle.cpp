@@ -70,8 +70,8 @@ bool RunAwayAllowed(void)
 	return ((uqm::lowByte(uqm::currentActivity()) == IN_ENCOUNTER
 			 || uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 			&& (getNomadMode() == uqm::NomadMode::Easy
-				|| GET_GAME_STATE(STARBASE_AVAILABLE))
-			&& (isDifficulty(uqm::Difficulty::Easy) || !GET_GAME_STATE(BOMB_CARRIER)));
+				|| uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
+			&& (isDifficulty(uqm::Difficulty::Easy) || !uqm::gameState().flag(uqm::GameFlag::BOMB_CARRIER)));
 }
 
 static void

@@ -71,8 +71,8 @@ checkArilouGate(void)
 {
 	uint8_t counter {};
 
-	counter = GET_GAME_STATE(ARILOU_SPACE_COUNTER);
-	if (GET_GAME_STATE(ARILOU_SPACE) == OPENING)
+	counter = uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_COUNTER);
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE) == OPENING)
 	{ // The portal is opening or fully open
 		if (counter < 9)
 		{
@@ -86,7 +86,7 @@ checkArilouGate(void)
 			--counter;
 		}
 	}
-	SET_GAME_STATE(ARILOU_SPACE_COUNTER, counter);
+	uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_COUNTER, static_cast<uint32_t>(counter));
 }
 
 // Battle frame callback function.
@@ -309,10 +309,10 @@ int Starcon2Main(void* threadArg)
 		if (LastActivity == (CHECK_LOAD | CHECK_RESTART))
 		{
 			uqm::log::info("New Game Seed Type: {}", toString(uqm::currentSeed().type));
-			uqm::log::info("New Game Seed: {}", GLOBAL_SIS(Seed));
+			uqm::log::info("New Game Seed: {}", uqm::gameState().sis().Seed);
 			uqm::log::info("New Game Difficulty: {:s}", getDifficulty());
 			uqm::log::info("New Game Extended: {}",
-						   BoolStr(GLOBAL_SIS(Extended)));
+						   BoolStr(uqm::gameState().sis().Extended));
 			uqm::log::info("New Game Nomad: {:s}", getNomadMode());
 		}
 
@@ -339,15 +339,15 @@ int Starcon2Main(void* threadArg)
 			}
 
 			if ((uqm::currentActivity() & START_ENCOUNTER)
-				|| GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
+				|| uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 			{
-				if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 2
-					&& !GET_GAME_STATE(STARBASE_AVAILABLE))
+				if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2
+					&& !uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 				{ /* BGD mode */
 					InstallBombAtEarth();
 				}
-				else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
-						 || GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
+				else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
+						 || uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 				{
 					uqm::currentActivity() |= START_ENCOUNTER;
 					VisitStarBase();
@@ -392,9 +392,9 @@ int Starcon2Main(void* threadArg)
 			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 				&& (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE
 					// if died for some reason
-					|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0))
+					|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0))
 			{
-				if (GET_GAME_STATE(KOHR_AH_KILLED_ALL))
+				if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_KILLED_ALL))
 				{
 					InitCommunication(BLACKURQ_CONVERSATION);
 					if (uqm::UQMOptions::read().gameOver)

@@ -102,15 +102,15 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 {
 	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		if (isDifficulty(uqm::Difficulty::Hard) && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << PROBE_ENCOUNTER))
+		if (isDifficulty(uqm::Difficulty::Hard) && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << PROBE_ENCOUNTER))
 		{
 			uint16_t sum {};
 
 			PutGroupInfo(GroupsRandom, GroupSaveIp);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			if (GET_GAME_STATE(DESTRUCT_CODE_ON_SHIP))
+			if (uqm::gameState().flag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP))
 			{
 				sum = 2;
 			}
@@ -122,10 +122,10 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 			for (uint16_t i {0}; i < sum; ++i)
 			{
 				CloneShipFragment(SLYLANDRO_SHIP,
-								  &GLOBAL(npc_built_ship_q), 0);
+								  &uqm::gameState().game().npc_built_ship_q, 0);
 			}
 
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 6);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));
 			uqm::currentActivity() |= START_INTERPLANETARY;
 			InitCommunication(SLYLANDRO_CONVERSATION);
 
@@ -136,10 +136,10 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 
 			{
 				const bool Survivors =
-					GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0;
+					GetHeadLink(&uqm::gameState().game().npc_built_ship_q) != 0;
 
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
-				ReinitQueue(&GLOBAL(npc_built_ship_q));
+				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
 				GetGroupInfo(GroupsRandom, GroupLoadIp);
 
 				if (Survivors)
@@ -150,11 +150,11 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 				{
 					uint16_t state {};
 
-					state = GET_GAME_STATE(HM_ENCOUNTERS);
+					state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
 
 					state |= 1 << PROBE_ENCOUNTER;
 
-					SET_GAME_STATE(HM_ENCOUNTERS, state);
+					uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 				}
 
 				RepairSISBorder();
@@ -165,7 +165,7 @@ GenerateWreck_generateOrbital(SOLARSYS_STATE* solarSys,
 			CaptureDrawable(LoadGraphic(WreckMaskPmapAnimRes));
 		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(WreckStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
-		if (GET_GAME_STATE(PORTAL_KEY))
+		if (uqm::gameState().flag(uqm::GameFlag::PORTAL_KEY))
 		{ // Already picked it up, skip the first report
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 		}
@@ -198,12 +198,12 @@ GenerateWreck_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 
 		GenerateDefault_landerReportCycle(solarSys);
 
-		if (!GET_GAME_STATE(PORTAL_KEY))
+		if (!uqm::gameState().flag(uqm::GameFlag::PORTAL_KEY))
 		{
 			SetLanderTakeoff();
 
-			SET_GAME_STATE(PORTAL_KEY, 1);
-			SET_GAME_STATE(PORTAL_KEY_ON_SHIP, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::PORTAL_KEY, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::PORTAL_KEY_ON_SHIP, static_cast<uint32_t>(1));
 		}
 
 		// The Wreck cannot be "picked up". It is always on the surface.

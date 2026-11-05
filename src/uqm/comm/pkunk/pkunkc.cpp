@@ -154,10 +154,10 @@ ExitConversation(RESPONSE_REF R)
 		}
 		NPCPhrase(ALMOST_ALLIANCE);
 
-		SET_GAME_STATE(PKUNK_MANNER, 3);
-		SET_GAME_STATE(PKUNK_VISITS, 0);
-		SET_GAME_STATE(PKUNK_HOME_VISITS, 0);
-		SET_GAME_STATE(PKUNK_INFO, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(3));
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_INFO, static_cast<uint32_t>(0));
 
 		AddEvent(RELATIVE_EVENT, 6, 0, 0, ADVANCE_PKUNK_MISSION);
 
@@ -180,10 +180,10 @@ ExitConversation(RESPONSE_REF R)
 		NPCPhrase(CANT_ASK_FOR_MORE);
 		NPCPhrase(VISIT_OUR_HOMEWORLD);
 
-		SET_GAME_STATE(PKUNK_MANNER, 3);
-		SET_GAME_STATE(PKUNK_VISITS, 0);
-		SET_GAME_STATE(PKUNK_HOME_VISITS, 0);
-		SET_GAME_STATE(PKUNK_INFO, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(3));
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_INFO, static_cast<uint32_t>(0));
 	}
 	else if (PlayerSaid(R, must_conquer)
 			 || PlayerSaid(R, obey))
@@ -196,7 +196,7 @@ ExitConversation(RESPONSE_REF R)
 		{
 			NPCPhrase(BAD_IDEA);
 
-			SET_GAME_STATE(PKUNK_MANNER, 2);
+			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(2));
 		}
 		setSegue(Segue_hostile);
 	}
@@ -214,7 +214,7 @@ ExitConversation(RESPONSE_REF R)
 	{
 		uint8_t ReasonMask {};
 
-		ReasonMask = GET_GAME_STATE(PKUNK_REASONS);
+		ReasonMask = uqm::gameState().flag(uqm::GameFlag::PKUNK_REASONS);
 		if (PlayerSaid(R, good_reason_1))
 		{
 			NPCPhrase(WE_GO_HOME_1);
@@ -237,7 +237,7 @@ ExitConversation(RESPONSE_REF R)
 			NPCPhrase(NO_GO_HOME_2);
 			ReasonMask |= BadReason2;
 		}
-		SET_GAME_STATE(PKUNK_REASONS, ReasonMask);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_REASONS, static_cast<uint32_t>(ReasonMask));
 	}
 }
 
@@ -271,7 +271,7 @@ PkunkAngry(RESPONSE_REF R)
 	}
 	else
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
 			Response(try_to_be_nicer, PkunkHome);
 		}
@@ -530,10 +530,10 @@ PkunkHome(RESPONSE_REF R)
 			 || PlayerSaid(R, where_fleet_2)
 			 || PlayerSaid(R, where_fleet_3))
 	{
-		SET_GAME_STATE(PKUNK_SWITCH, 1);
-		if (!(GET_GAME_STATE(PKUNK_MISSION) & 1))
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_SWITCH, static_cast<uint32_t>(1));
+		if (!(uqm::gameState().flag(uqm::GameFlag::PKUNK_MISSION) & 1))
 		{
-			NumVisits = GET_GAME_STATE(PKUNK_RETURN);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_RETURN);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -544,11 +544,11 @@ PkunkHome(RESPONSE_REF R)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(PKUNK_RETURN, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_RETURN, static_cast<uint32_t>(NumVisits));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(PKUNK_MIGRATE);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_MIGRATE);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -562,11 +562,11 @@ PkunkHome(RESPONSE_REF R)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(PKUNK_MIGRATE, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MIGRATE, static_cast<uint32_t>(NumVisits));
 		}
 
-		NumVisits = GET_GAME_STATE(PKUNK_FLEET) + 1;
-		SET_GAME_STATE(PKUNK_FLEET, NumVisits);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_FLEET) + 1;
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_FLEET, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(where_fleet_1);
 	}
@@ -574,7 +574,7 @@ PkunkHome(RESPONSE_REF R)
 			 || PlayerSaid(R, am_worried_2)
 			 || PlayerSaid(R, am_worried_3))
 	{
-		NumVisits = GET_GAME_STATE(PKUNK_WORRY);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_WORRY);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -588,26 +588,26 @@ PkunkHome(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(PKUNK_WORRY, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_WORRY, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(am_worried_1);
 	}
 	else if (PlayerSaid(R, try_to_be_nicer))
 	{
 		NPCPhrase(CANT_ASK_FOR_MORE);
-		if (!GET_GAME_STATE(CLEAR_SPINDLE))
+		if (!uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE))
 		{
 			NPCPhrase(GIVE_SPINDLE);
 
-			SET_GAME_STATE(CLEAR_SPINDLE, 1);
-			SET_GAME_STATE(CLEAR_SPINDLE_ON_SHIP, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP, static_cast<uint32_t>(1));
 		}
 		NPCPhrase(CAN_BE_FRIENDS);
 		SetHomeworldKnown(PKUNK_HOME);
 
-		SET_GAME_STATE(PKUNK_MANNER, 3);
-		SET_GAME_STATE(PKUNK_VISITS, 0);
-		SET_GAME_STATE(PKUNK_HOME_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(3));
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_HOME_VISITS, static_cast<uint32_t>(0));
 	}
 	else if (PlayerSaid(R, what_about_ilwrath))
 	{
@@ -616,15 +616,15 @@ PkunkHome(RESPONSE_REF R)
 		DISABLE_PHRASE(what_about_ilwrath);
 	}
 
-	if (PhraseEnabled(we_conquer) && GET_GAME_STATE(PKUNK_MANNER) == 0)
+	if (PhraseEnabled(we_conquer) && uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 0)
 	{
 		Response(we_conquer, DiscussConquer);
 	}
-	if (GET_GAME_STATE(PKUNK_ON_THE_MOVE))
+	if (uqm::gameState().flag(uqm::GameFlag::PKUNK_ON_THE_MOVE))
 	{
-		if (PhraseEnabled(where_fleet_1) && !GET_GAME_STATE(PKUNK_SWITCH))
+		if (PhraseEnabled(where_fleet_1) && !uqm::gameState().flag(uqm::GameFlag::PKUNK_SWITCH))
 		{
-			switch (GET_GAME_STATE(PKUNK_FLEET))
+			switch (uqm::gameState().flag(uqm::GameFlag::PKUNK_FLEET))
 			{
 				case 0:
 					Response(where_fleet_1, PkunkHome);
@@ -639,9 +639,9 @@ PkunkHome(RESPONSE_REF R)
 		}
 		else if (!PhraseEnabled(where_fleet_1)
 				 && PhraseEnabled(am_worried_1)
-				 && (GET_GAME_STATE(PKUNK_MISSION) & 1))
+				 && (uqm::gameState().flag(uqm::GameFlag::PKUNK_MISSION) & 1))
 		{
-			switch (GET_GAME_STATE(PKUNK_WORRY))
+			switch (uqm::gameState().flag(uqm::GameFlag::PKUNK_WORRY))
 			{
 				case 0:
 					Response(am_worried_1, PkunkHome);
@@ -655,7 +655,7 @@ PkunkHome(RESPONSE_REF R)
 			}
 		}
 	}
-	if (!GET_GAME_STATE(PKUNK_SHIP_MONTH))
+	if (!uqm::gameState().flag(uqm::GameFlag::PKUNK_SHIP_MONTH))
 	{
 		Response(we_are_vindicator, OfferAlliance);
 	}
@@ -665,7 +665,7 @@ PkunkHome(RESPONSE_REF R)
 	}
 	if (PhraseEnabled(what_about_ilwrath))
 	{
-		if (!GET_GAME_STATE(ILWRATH_DECEIVED))
+		if (!uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED))
 		{
 			Response(what_about_ilwrath, AboutIlwrath);
 		}
@@ -684,13 +684,13 @@ PkunkFriendlySpace(RESPONSE_REF R)
 
 	if (PlayerSaid(R, whats_up_space))
 	{
-		if (ShipsReady(PKUNK_SHIP) && GET_GAME_STATE(PKUNK_MANNER) == 3)
+		if (ShipsReady(PKUNK_SHIP) && uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 3)
 		{
 			NPCPhrase(SHIPS_AT_HOME);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(PKUNK_INFO);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_INFO);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -719,20 +719,20 @@ PkunkFriendlySpace(RESPONSE_REF R)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(PKUNK_INFO, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_INFO, static_cast<uint32_t>(NumVisits));
 		}
 
 		DISABLE_PHRASE(whats_up_space);
 	}
 	else if (PlayerSaid(R, how_goes_war))
 	{
-		NumVisits = GET_GAME_STATE(PKUNK_WAR);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_WAR);
 		switch (NumVisits++)
 		{
 			case 0:
 				NPCPhrase(WAR_GOES_1);
-				SET_GAME_STATE(KNOW_URQUAN_STORY, 1);
-				SET_GAME_STATE(KNOW_KOHR_AH_STORY, 1);
+				uqm::gameState().setFlag(uqm::GameFlag::KNOW_URQUAN_STORY, static_cast<uint32_t>(1));
+				uqm::gameState().setFlag(uqm::GameFlag::KNOW_KOHR_AH_STORY, static_cast<uint32_t>(1));
 				break;
 			case 1:
 				NPCPhrase(WAR_GOES_2);
@@ -742,17 +742,17 @@ PkunkFriendlySpace(RESPONSE_REF R)
 				break;
 			case 3:
 				NPCPhrase(WAR_GOES_4);
-				SET_GAME_STATE(PKUNK_DONE_WAR, 1);
+				uqm::gameState().setFlag(uqm::GameFlag::PKUNK_DONE_WAR, static_cast<uint32_t>(1));
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(PKUNK_WAR, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_WAR, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(how_goes_war);
 	}
 	else if (PlayerSaid(R, tell_my_fortune))
 	{
-		NumVisits = GET_GAME_STATE(PKUNK_FORTUNE);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_FORTUNE);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -781,7 +781,7 @@ PkunkFriendlySpace(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(PKUNK_FORTUNE, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_FORTUNE, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(tell_my_fortune);
 	}
@@ -790,7 +790,7 @@ PkunkFriendlySpace(RESPONSE_REF R)
 	{
 		Response(whats_up_space, PkunkFriendlySpace);
 	}
-	if (!GET_GAME_STATE(PKUNK_DONE_WAR) && PhraseEnabled(how_goes_war))
+	if (!uqm::gameState().flag(uqm::GameFlag::PKUNK_DONE_WAR) && PhraseEnabled(how_goes_war))
 	{
 		Response(how_goes_war, PkunkFriendlySpace);
 	}
@@ -828,7 +828,7 @@ PkunkNeutralSpace(RESPONSE_REF R)
 	}
 	else if (PlayerSaid(R, whats_up_neutral))
 	{
-		NumVisits = GET_GAME_STATE(PKUNK_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -845,7 +845,7 @@ PkunkNeutralSpace(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(PKUNK_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_INFO, static_cast<uint32_t>(NumVisits));
 
 		DISABLE_PHRASE(whats_up_neutral);
 	}
@@ -879,7 +879,7 @@ PkunkMigrate(RESPONSE_REF R)
 	uint8_t ReasonMask {};
 	(void)R; // ignored
 
-	ReasonMask = GET_GAME_STATE(PKUNK_REASONS);
+	ReasonMask = uqm::gameState().flag(uqm::GameFlag::PKUNK_REASONS);
 	if (!(ReasonMask & GoodReason1))
 	{
 		Response(good_reason_1, ExitConversation);
@@ -913,11 +913,11 @@ Intro(void)
 		return;
 	}
 
-	Manner = GET_GAME_STATE(PKUNK_MANNER);
+	Manner = uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER);
 	if (Manner == 2)
 	{
 		// Irreparably Pissed off the Pkunk.
-		NumVisits = GET_GAME_STATE(PKUNK_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -934,14 +934,14 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(PKUNK_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(NumVisits));
 
 		setSegue(Segue_hostile);
 	}
 	else if (Manner == 1)
 	{
 		// Bad relations with the Pkunk, but not irreparably.
-		NumVisits = GET_GAME_STATE(PKUNK_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -958,30 +958,30 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(PKUNK_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(NumVisits));
 
 		PkunkAngry((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
 		// Encountering the Pkunk at their home world.
-		if (!GET_GAME_STATE(CLEAR_SPINDLE))
+		if (!uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE))
 		{
 			NPCPhrase(GIVE_SPINDLE);
 
-			SET_GAME_STATE(CLEAR_SPINDLE, 1);
-			SET_GAME_STATE(CLEAR_SPINDLE_ON_SHIP, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP, static_cast<uint32_t>(1));
 		}
-		else if (!GET_GAME_STATE(PKUNK_SENSE_VICTOR)
+		else if (!uqm::gameState().flag(uqm::GameFlag::PKUNK_SENSE_VICTOR)
 				 && uqm::gameState().clock().year() > StartYear
-				 && !GET_GAME_STATE(KOHR_AH_FRENZY))
+				 && !uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 		{
 			NPCPhrase(SENSE_KOHRAH_VICTORY);
 
-			SET_GAME_STATE(PKUNK_SENSE_VICTOR, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_SENSE_VICTOR, static_cast<uint32_t>(1));
 		}
 
-		NumVisits = GET_GAME_STATE(PKUNK_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_HOME_VISITS);
 		if (Manner == 0)
 		{
 			switch (NumVisits++)
@@ -1003,7 +1003,7 @@ Intro(void)
 		}
 		else
 		{
-			if (NumVisits && ShipsReady(PKUNK_SHIP) && GET_GAME_STATE(PKUNK_MANNER) == 3)
+			if (NumVisits && ShipsReady(PKUNK_SHIP) && uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 3)
 			{
 				if (EscortFeasibilityStudy(PKUNK_SHIP) == 0)
 				{
@@ -1050,16 +1050,16 @@ Intro(void)
 				}
 			}
 		}
-		SET_GAME_STATE(PKUNK_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 		PkunkHome((RESPONSE_REF)0);
 	}
-	else if ((NumVisits = GET_GAME_STATE(PKUNK_MISSION)) == 0
+	else if ((NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_MISSION)) == 0
 			 || !(NumVisits & 1))
 	{
 		// Encountering a Pkunk ship in space, while they are not
 		// migrating.
-		NumVisits = GET_GAME_STATE(PKUNK_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_VISITS);
 		if (Manner == 3)
 		{
 			switch (NumVisits++)
@@ -1115,13 +1115,13 @@ Intro(void)
 
 			PkunkNeutralSpace((RESPONSE_REF)0);
 		}
-		SET_GAME_STATE(PKUNK_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 	else
 	{
 		// Encountering a Pkunk ship in space, while they are
 		// migrating.
-		NumVisits = GET_GAME_STATE(PKUNK_MIGRATE_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::PKUNK_MIGRATE_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -1150,7 +1150,7 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(PKUNK_MIGRATE_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MIGRATE_VISITS, static_cast<uint32_t>(NumVisits));
 
 		PkunkMigrate((RESPONSE_REF)0);
 	}
@@ -1170,13 +1170,13 @@ post_pkunk_enc(void)
 	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
-		&& (Manner = GET_GAME_STATE(PKUNK_MANNER)) != 2)
+		&& (Manner = uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER)) != 2)
 	{
-		SET_GAME_STATE(PKUNK_MANNER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PKUNK_MANNER, static_cast<uint32_t>(1));
 		if (Manner != 1)
 		{
-			SET_GAME_STATE(PKUNK_VISITS, 0);
-			SET_GAME_STATE(PKUNK_HOME_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_VISITS, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_HOME_VISITS, static_cast<uint32_t>(0));
 		}
 	}
 }
@@ -1196,7 +1196,7 @@ init_pkunk_comm(void)
 	pkunk_desc.AlienTextBaseline.y = 0;
 	pkunk_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if (GET_GAME_STATE(PKUNK_MANNER) == 3
+	if (uqm::gameState().flag(uqm::GameFlag::PKUNK_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		// Enter communications immediately.
