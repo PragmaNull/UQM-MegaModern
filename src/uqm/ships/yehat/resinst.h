@@ -2,18 +2,18 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define SHIELD_BIG_MASK_ANIM "ship.yehat.graphics.shield.large"
-#define SHIELD_MED_MASK_ANIM "ship.yehat.graphics.shield.medium"
-#define SHIELD_SML_MASK_ANIM "ship.yehat.graphics.shield.small"
-#define YEHAT_BIG_MASK_PMAP_ANIM "ship.yehat.graphics.terminator.large"
-#define YEHAT_CANNON_BIG_MASK_PMAP_ANIM "ship.yehat.graphics.missile.large"
-#define YEHAT_CANNON_MED_MASK_PMAP_ANIM "ship.yehat.graphics.missile.medium"
-#define YEHAT_CANNON_SML_MASK_PMAP_ANIM "ship.yehat.graphics.missile.small"
-#define YEHAT_CAPTAIN_MASK_PMAP_ANIM "ship.yehat.graphics.captain"
-#define YEHAT_ICON_MASK_PMAP_ANIM "ship.yehat.icons"
-#define YEHAT_MED_MASK_PMAP_ANIM "ship.yehat.graphics.terminator.medium"
-#define YEHAT_MICON_MASK_PMAP_ANIM "ship.yehat.meleeicons"
-#define YEHAT_RACE_STRINGS "ship.yehat.text"
-#define YEHAT_SHIP_SOUNDS "ship.yehat.sounds"
-#define YEHAT_SML_MASK_PMAP_ANIM "ship.yehat.graphics.terminator.small"
-#define YEHAT_VICTORY_SONG "ship.yehat.ditty"
+inline constexpr uqgsl::czstring ShieldBigMaskAnim {"ship.yehat.graphics.shield.large"};
+inline constexpr uqgsl::czstring ShieldMedMaskAnim {"ship.yehat.graphics.shield.medium"};
+inline constexpr uqgsl::czstring ShieldSmlMaskAnim {"ship.yehat.graphics.shield.small"};
+inline constexpr uqgsl::czstring YehatBigMaskPmapAnim {"ship.yehat.graphics.terminator.large"};
+inline constexpr uqgsl::czstring YehatCannonBigMaskPmapAnim {"ship.yehat.graphics.missile.large"};
+inline constexpr uqgsl::czstring YehatCannonMedMaskPmapAnim {"ship.yehat.graphics.missile.medium"};
+inline constexpr uqgsl::czstring YehatCannonSmlMaskPmapAnim {"ship.yehat.graphics.missile.small"};
+inline constexpr uqgsl::czstring YehatCaptainMaskPmapAnim {"ship.yehat.graphics.captain"};
+inline constexpr uqgsl::czstring YehatIconMaskPmapAnim {"ship.yehat.icons"};
+inline constexpr uqgsl::czstring YehatMedMaskPmapAnim {"ship.yehat.graphics.terminator.medium"};
+inline constexpr uqgsl::czstring YehatMiconMaskPmapAnim {"ship.yehat.meleeicons"};
+inline constexpr uqgsl::czstring YehatRaceStrings {"ship.yehat.text"};
+inline constexpr uqgsl::czstring YehatShipSounds {"ship.yehat.sounds"};
+inline constexpr uqgsl::czstring YehatSmlMaskPmapAnim {"ship.yehat.graphics.terminator.small"};
+inline constexpr uqgsl::czstring YehatVictorySong {"ship.yehat.ditty"};

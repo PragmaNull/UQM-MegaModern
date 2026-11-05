@@ -19,8 +19,7 @@
 #include "vidplayer.h"
 #include "uqm/util.h"
 
-LEGACY_VIDEO_REF
-PlayLegacyVideo(LEGACY_VIDEO vid)
+LEGACY_VIDEO_REF PlayLegacyVideo(LEGACY_VIDEO vid)
 {
 	VIDEO_TYPE type;
 

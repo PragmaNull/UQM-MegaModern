@@ -37,17 +37,16 @@ extern "C" {
 
 typedef HLINK HENCOUNTER;
 
-#define MAX_HYPER_SHIPS 7
+inline constexpr auto MaxHyperShips {7};
 
 // ENCOUNTER.flags
 // XXX: Currently, the flags are combined with num_ships into a single uint8_t
 //   in the savegames: num_ships occupy the low nibble and flags the high one.
 //   Bits 4 and 5 are available for more flags in the savegames,
 //   and bits 0-3 available in the game but will not be saved.
-#define ONE_SHOT_ENCOUNTER (1 << 7)
-#define ENCOUNTER_REFORMING (1 << 6)
-#define ENCOUNTER_SHIPS_MASK 0x0f
-#define ENCOUNTER_FLAGS_MASK 0xf0
+inline constexpr auto OneShotEncounter {(1 << 7)};
+inline constexpr auto EncounterReforming {(1 << 6)};
+
 
 struct brief_ship_info
 {
@@ -74,23 +73,26 @@ struct encounter
 	// See ENCOUNTER.flags above
 	GFXPOINT loc_pt;
 
-	BRIEF_SHIP_INFO ShipList[MAX_HYPER_SHIPS];
+	BRIEF_SHIP_INFO ShipList[MaxHyperShips];
 	// Only the crew_level member is currently used
 
 	int32_t log_x, log_y;
 };
 
-#define AllocEncounter() AllocLink(&GLOBAL(encounter_q))
-#define PutEncounter(h) PutQueue(&GLOBAL(encounter_q), h)
-#define InsertEncounter(h, i) InsertQueue(&GLOBAL(encounter_q), h, i)
-#define GetHeadEncounter() GetHeadLink(&GLOBAL(encounter_q))
-#define GetTailEncounter() GetTailLink(&GLOBAL(encounter_q))
-#define LockEncounter(h, ppe) (*(ppe) = (ENCOUNTER*)LockLink(&GLOBAL(encounter_q), h))
-#define UnlockEncounter(h) UnlockLink(&GLOBAL(encounter_q), h)
-#define RemoveEncounter(h) RemoveQueue(&GLOBAL(encounter_q), h)
-#define FreeEncounter(h) FreeLink(&GLOBAL(encounter_q), h)
-#define GetPredEncounter(l) _GetPredLink(l)
-#define GetSuccEncounter(l) _GetSuccLink(l)
+constexpr auto AllocEncounter() { return AllocLink(&uqm::gameState().game().encounter_q); }
+constexpr auto PutEncounter(const auto& h) { return PutQueue(&uqm::gameState().game().encounter_q, h); }
+constexpr auto InsertEncounter(const auto& h, const auto& i) { return InsertQueue(&uqm::gameState().game().encounter_q, h, i); }
+constexpr auto GetHeadEncounter() { return GetHeadLink(&uqm::gameState().game().encounter_q); }
+
+inline void LockEncounter(HENCOUNTER h, ENCOUNTER** ppe)
+{
+	*ppe = reinterpret_cast<ENCOUNTER*>(LockLink(&uqm::gameState().game().encounter_q, h));
+}
+constexpr auto UnlockEncounter(const auto& h) { return UnlockLink(&uqm::gameState().game().encounter_q, h); }
+constexpr auto RemoveEncounter(const auto& h) { return RemoveQueue(&uqm::gameState().game().encounter_q, h); }
+constexpr auto FreeEncounter(const auto& h) { return FreeLink(&uqm::gameState().game().encounter_q, h); }
+
+constexpr auto GetSuccEncounter(const auto& l) { return _GetSuccLink(l); }
 
 enum
 {

@@ -197,14 +197,14 @@ void SaveGroupQueue(yyjson_mut_doc* doc, yyjson_mut_val* root, QUEUE* pQueue)
 
 void SaveEncounters(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
-	uint16_t num_links {CountLinks(&GLOBAL(encounter_q))};
+	uint16_t num_links {CountLinks(&uqm::gameState().game().encounter_q)};
 	if (num_links == 0)
 	{
 		return;
 	}
 
 	yyjson_mut_val* list {yyjson_mut_obj_add_arr(doc, root, "encounters")};
-	HENCOUNTER hEncounter {GetHeadLink(&GLOBAL(encounter_q))};
+	HENCOUNTER hEncounter {GetHeadLink(&uqm::gameState().game().encounter_q)};
 	while (num_links--)
 	{
 		ENCOUNTER* EncounterPtr {};
@@ -220,7 +220,7 @@ void SaveEncounters(yyjson_mut_doc* doc, yyjson_mut_val* root)
 		addInt(doc, encounter, "flags", EncounterPtr->flags);
 
 		yyjson_mut_val* ships {yyjson_mut_obj_add_arr(doc, encounter, "ships")};
-		const uint16_t numShips {uqstl::min<uint16_t>(EncounterPtr->num_ships, MAX_HYPER_SHIPS)};
+		const uint16_t numShips {uqstl::min<uint16_t>(EncounterPtr->num_ships, MaxHyperShips)};
 		for (uint16_t i {}; i < numShips; ++i)
 		{
 			const BRIEF_SHIP_INFO& ShipInfo {EncounterPtr->ShipList[i]};
@@ -231,7 +231,7 @@ void SaveEncounters(yyjson_mut_doc* doc, yyjson_mut_val* root)
 			addInt(doc, ship, "max_energy", ShipInfo.max_energy);
 		}
 
-		addPoint(doc, encounter, "log", RES_DESCALE(EncounterPtr->log_x), RES_DESCALE(EncounterPtr->log_y));
+		addPoint(doc, encounter, "log", ResDescale(EncounterPtr->log_x), ResDescale(EncounterPtr->log_y));
 
 		UnlockEncounter(hEncounter);
 		hEncounter = hNextEncounter;
@@ -294,7 +294,7 @@ void SaveGameStateFlags(yyjson_mut_doc* doc, yyjson_mut_val* root, const uqm::Ga
 void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, uqm::GameState& gameState)
 {
 	const GAME_STATE& GS {gameState.game()};
-	const uint8_t res_scale {static_cast<uint8_t>(uqm::lowByte(uqm::currentActivity()) != IN_INTERPLANETARY ? RESOLUTION_FACTOR : 0)};
+	const uint8_t res_scale {static_cast<uint8_t>(uqm::lowByte(uqm::currentActivity()) != IN_INTERPLANETARY ? resolutionFactor : 0)};
 
 	yyjson_mut_val* state {yyjson_mut_obj_add_obj(doc, root, "globalState")};
 	addInt(doc, state, "glob_flags", uqm::globalFlags());
@@ -307,7 +307,7 @@ void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, uqm::GameState& ga
 	const uqm::FlagshipState& flagship {gameState.flagship()};
 	addPoint(doc, state, "autopilot", flagship.autopilot.target().x, flagship.autopilot.target().y);
 	addPoint(doc, state, "ip_location", flagship.ipLocation.x, flagship.ipLocation.y);
-	addPoint(doc, state, "ShipOrigin", RES_DESCALE(flagship.shipStamp.origin.x), RES_DESCALE(flagship.shipStamp.origin.y));
+	addPoint(doc, state, "ShipOrigin", ResDescale(flagship.shipStamp.origin.x), ResDescale(flagship.shipStamp.origin.y));
 	addInt(doc, state, "ShipFacing", flagship.shipFacing);
 	addInt(doc, state, "ip_planet", flagship.ipPlanet);
 	addInt(doc, state, "in_orbit", flagship.inOrbit);
@@ -326,7 +326,7 @@ void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, uqm::GameState& ga
 void SaveSisState(yyjson_mut_doc* doc, yyjson_mut_val* obj, const SIS_STATE& SS)
 {
 	yyjson_mut_val* sis {yyjson_mut_obj_add_obj(doc, obj, "sis")};
-	addPoint(doc, sis, "log", RES_DESCALE(SS.log_x), RES_DESCALE(SS.log_y));
+	addPoint(doc, sis, "log", ResDescale(SS.log_x), ResDescale(SS.log_y));
 	addInt(doc, sis, "ResUnits", SS.ResUnits);
 	addInt(doc, sis, "FuelOnBoard", SS.FuelOnBoard);
 	addInt(doc, sis, "CrewEnlisted", SS.CrewEnlisted);
@@ -376,8 +376,7 @@ void SaveStarDesc(yyjson_mut_doc* doc, yyjson_mut_val* root, const STAR_DESC& SD
 
 } // namespace
 
-static void
-PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
+static void PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 {
 	SummPtr->SS = uqm::gameState().sis();
 
@@ -394,7 +393,7 @@ PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 			// Get a better planet name for summary
 			GetPlanetOrMoonName(SummPtr->SS.PlanetName,
 								sizeof(SummPtr->SS.PlanetName));
-			if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0)
+			if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0)
 			{
 				SummPtr->Activity = IN_STARBASE;
 			}
@@ -406,67 +405,67 @@ PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 		case IN_LAST_BATTLE:
 			uqm::utf8StringCopy(SummPtr->SS.PlanetName,
 								sizeof(SummPtr->SS.PlanetName),
-								GAME_STRING(PLANET_NUMBER_BASE + 32)); // Sa-Matra
+								GameString(PLANET_NUMBER_BASE + 32)); // Sa-Matra
 			break;
 	}
 
-	SummPtr->MCreditLo = GET_GAME_STATE(MELNORME_CREDIT0);
-	SummPtr->MCreditHi = GET_GAME_STATE(MELNORME_CREDIT1);
+	SummPtr->MCreditLo = uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT0);
+	SummPtr->MCreditHi = uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT1);
 
 	{
 		HSHIPFRAG hStarShip {};
 		HSHIPFRAG hNextShip {};
 
-		for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q)),
+		for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q),
 			SummPtr->NumShips = 0;
 			 hStarShip; hStarShip = hNextShip,
 			++SummPtr->NumShips)
 		{
-			const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
+			const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip)};
 			hNextShip = _GetSuccLink(StarShipPtr);
 			SummPtr->ShipList[SummPtr->NumShips] = StarShipPtr->race_id;
-			UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+			UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 		}
 	}
 
 	SummPtr->NumDevices = InventoryDevices(SummPtr->DeviceList,
-										   MAX_EXCLUSIVE_DEVICES);
+										   MaxExclusiveDevices);
 
-	SummPtr->Flags = GET_GAME_STATE(LANDER_SHIELDS)
-				   | (GET_GAME_STATE(IMPROVED_LANDER_SPEED) << (4 + 0))
-				   | (GET_GAME_STATE(IMPROVED_LANDER_CARGO) << (4 + 1))
-				   | (GET_GAME_STATE(IMPROVED_LANDER_SHOT) << (4 + 2))
-				   | ((GET_GAME_STATE(CHMMR_BOMB_STATE) < 2 ? 0 : 1) << (4 + 3));
+	SummPtr->Flags = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS)
+				   | (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SPEED) << (4 + 0))
+				   | (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_CARGO) << (4 + 1))
+				   | (uqm::gameState().flag(uqm::GameFlag::IMPROVED_LANDER_SHOT) << (4 + 2))
+				   | ((uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 2 ? 0 : 1) << (4 + 3));
 
 	SummPtr->day_index = uqm::gameState().clock().day();
 	SummPtr->month_index = uqm::gameState().clock().month();
 	SummPtr->year_index = uqm::gameState().clock().year();
-	SummPtr->SaveName[SAVE_NAME_SIZE - 1] = 0;
+	SummPtr->SaveName[SaveNameSize - 1] = 0;
 	uqm::strncpy_safe(SummPtr->SaveName, name);
-	SummPtr->res_factor = RESOLUTION_FACTOR;
+	SummPtr->res_factor = resolutionFactor;
 }
 
-static void
-SaveProblemMessage(STAMP* MsgStamp)
+static constexpr auto MaxMsgLines {1};
+
+static void SaveProblemMessage(STAMP* MsgStamp)
 {
-#define MAX_MSG_LINES 1
 	GFXRECT r = {
 		{0, 0},
 		{0, 0}
 	  };
 	uint16_t i {};
 	TEXT t;
-	const char* ppStr[MAX_MSG_LINES];
+	const char* ppStr[MaxMsgLines];
 
 	// TODO: This should probably just use DoPopupWindow()
 
-	ppStr[0] = GAME_STRING(SAVEGAME_STRING_BASE + 2);
+	ppStr[0] = GameString(SAVEGAME_STRING_BASE + 2);
 
 	SetContextFont(StarConFont);
 
 	t.baseline.x = t.baseline.y = 0;
 	t.align = ALIGN_CENTER;
-	for (i = 0; i < MAX_MSG_LINES; ++i)
+	for (i = 0; i < MaxMsgLines; ++i)
 	{
 		GFXRECT tr;
 
@@ -487,26 +486,26 @@ SaveProblemMessage(STAMP* MsgStamp)
 		}
 		t.baseline.y += 11;
 	}
-	t.baseline.x = (RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1)
+	t.baseline.x = (ResScale(OrigSisScreenWidth() >> 1)
 					- (r.extent.width >> 1))
 				 - r.corner.x;
-	t.baseline.y = (RES_SCALE(ORIG_SIS_SCREEN_HEIGHT >> 1)
+	t.baseline.y = (ResScale(OrigSisScreenHeight() >> 1)
 					- (r.extent.height >> 1))
 				 - r.corner.y;
-	r.corner.x += t.baseline.x - RES_SCALE(4);
-	r.corner.y += t.baseline.y - RES_SCALE(4);
-	r.extent.width += RES_SCALE(8);
-	r.extent.height += RES_SCALE(8);
+	r.corner.x += t.baseline.x - ResScale(4);
+	r.corner.y += t.baseline.y - ResScale(4);
+	r.extent.width += ResScale(8);
+	r.extent.height += ResScale(8);
 
 	*MsgStamp = SaveContextFrame(&r);
 
 	BatchGraphics();
-	DrawStarConBox(&r, RES_SCALE(2), SHADOWBOX_MEDIUM_COLOR,
-				   SHADOWBOX_DARK_COLOR, true, DKGRAY_COLOR, true, TRANSPARENT);
+	DrawStarConBox(&r, ResScale(2), ShadowboxMediumColor,
+				   ShadowboxDarkColor, true, DkgrayColor, true, Transparent);
 	SetContextForeGroundColor(
-		isPC(uqm::UQMOptions::read().whichFonts) ? WHITE_COLOR : LTGRAY_COLOR);
+		isPC(uqm::UQMOptions::read().whichFonts) ? WhiteColor : LtgrayColor);
 
-	for (i = 0; i < MAX_MSG_LINES; ++i)
+	for (i = 0; i < MaxMsgLines; ++i)
 	{
 		t.pStr = ppStr[i];
 		if (*t.pStr == '\0')
@@ -528,7 +527,7 @@ void SaveProblem(void)
 	SaveProblemMessage(&s);
 	FlushGraphics();
 
-	WaitForAnyButton(true, WAIT_INFINITE, false);
+	WaitForAnyButton(true, WaitInfinite, false);
 
 	// Restore the screen under the message
 	DrawStamp(&s);
@@ -536,8 +535,7 @@ void SaveProblem(void)
 	DestroyDrawable(ReleaseDrawable(s.frame));
 }
 
-static void
-SaveFlagshipState(void)
+static void SaveFlagshipState(void)
 {
 	if (inHQSpace())
 	{
@@ -550,10 +548,9 @@ SaveFlagshipState(void)
 	}
 }
 
-static void
-SaveStarInfo(yyjson_mut_doc* doc, yyjson_mut_val* root)
+static void SaveStarInfo(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
-	GAME_STATE_FILE* fp {OpenStateFile(STARINFO_FILE, "rb")};
+	GAME_STATE_FILE* fp {OpenStateFile(StarinfoFile, "rb")};
 	if (fp)
 	{
 		uint32_t flen {LengthStateFile(fp)};
@@ -577,9 +574,8 @@ SaveStarInfo(yyjson_mut_doc* doc, yyjson_mut_val* root)
 	}
 }
 
-static void
-SaveBattleGroup(yyjson_mut_doc* doc, yyjson_mut_val* list, GAME_STATE_FILE* fp,
-				uint32_t encounter_id, uint32_t grpoffs)
+static void SaveBattleGroup(yyjson_mut_doc* doc, yyjson_mut_val* list, GAME_STATE_FILE* fp,
+							uint32_t encounter_id, uint32_t grpoffs)
 {
 	GROUP_HEADER h;
 	SeekStateFile(fp, grpoffs, SEEK_SET);
@@ -587,7 +583,7 @@ SaveBattleGroup(yyjson_mut_doc* doc, yyjson_mut_val* list, GAME_STATE_FILE* fp,
 
 	yyjson_mut_val* battleGroup {yyjson_mut_arr_add_obj(doc, list)};
 	addInt(doc, battleGroup, "encounter", encounter_id);
-	yyjson_mut_obj_add_bool(doc, battleGroup, "current", grpoffs && GLOBAL(BattleGroupRef) == grpoffs);
+	yyjson_mut_obj_add_bool(doc, battleGroup, "current", grpoffs && uqm::gameState().game().BattleGroupRef == grpoffs);
 	addInt(doc, battleGroup, "star_index", h.star_index);
 	addInt(doc, battleGroup, "day_index", h.day_index);
 	addInt(doc, battleGroup, "month_index", h.month_index);
@@ -619,8 +615,7 @@ SaveBattleGroup(yyjson_mut_doc* doc, yyjson_mut_val* list, GAME_STATE_FILE* fp,
 	}
 }
 
-static uint32_t
-GetBattleGroupOffset(int encounterIndex)
+static uint32_t GetBattleGroupOffset(int encounterIndex)
 {
 	// The reason for this switch, even though the group offsets are
 	// successive, is because GET_GAME_STATE is a #define, which stringizes
@@ -628,33 +623,33 @@ GetBattleGroupOffset(int encounterIndex)
 	switch (encounterIndex)
 	{
 		case 1:
-			return GET_GAME_STATE(SHOFIXTI_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_GRPOFFS);
 		case 2:
-			return GET_GAME_STATE(ZOQFOT_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::ZOQFOT_GRPOFFS);
 		case 3:
-			return GET_GAME_STATE(MELNORME0_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME0_GRPOFFS);
 		case 4:
-			return GET_GAME_STATE(MELNORME1_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME1_GRPOFFS);
 		case 5:
-			return GET_GAME_STATE(MELNORME2_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME2_GRPOFFS);
 		case 6:
-			return GET_GAME_STATE(MELNORME3_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME3_GRPOFFS);
 		case 7:
-			return GET_GAME_STATE(MELNORME4_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME4_GRPOFFS);
 		case 8:
-			return GET_GAME_STATE(MELNORME5_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME5_GRPOFFS);
 		case 9:
-			return GET_GAME_STATE(MELNORME6_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME6_GRPOFFS);
 		case 10:
-			return GET_GAME_STATE(MELNORME7_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME7_GRPOFFS);
 		case 11:
-			return GET_GAME_STATE(MELNORME8_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::MELNORME8_GRPOFFS);
 		case 12:
-			return GET_GAME_STATE(URQUAN_PROBE_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS);
 		case 13:
-			return GET_GAME_STATE(COLONY_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::COLONY_GRPOFFS);
 		case 14:
-			return GET_GAME_STATE(SAMATRA_GRPOFFS);
+			return uqm::gameState().flag(uqm::GameFlag::SAMATRA_GRPOFFS);
 		default:
 			uqm::log::warn("SetBattleGroupOffset: invalid encounter"
 						   " index.\n");
@@ -662,11 +657,10 @@ GetBattleGroupOffset(int encounterIndex)
 	}
 }
 
-static void
-SaveGroups(yyjson_mut_doc* doc, yyjson_mut_val* root)
+static void SaveGroups(yyjson_mut_doc* doc, yyjson_mut_val* root)
 {
 	yyjson_mut_val* battleGroups {};
-	GAME_STATE_FILE* fp {OpenStateFile(RANDGRPINFO_FILE, "rb")};
+	GAME_STATE_FILE* fp {OpenStateFile(RandgrpinfoFile, "rb")};
 	if (fp && LengthStateFile(fp) > 0)
 	{
 		GROUP_HEADER h;
@@ -696,7 +690,7 @@ SaveGroups(yyjson_mut_doc* doc, yyjson_mut_val* root)
 		SaveBattleGroup(doc, battleGroups, fp, 0, 0);
 		CloseStateFile(fp);
 	}
-	fp = OpenStateFile(DEFGRPINFO_FILE, "rb");
+	fp = OpenStateFile(DefgrpinfoFile, "rb");
 	if (fp && LengthStateFile(fp) > 0)
 	{
 		for (int encounter_index {1}; encounter_index < 15; encounter_index++)
@@ -736,13 +730,12 @@ using MutDocPtr = uqstl::unique_ptr<yyjson_mut_doc, decltype(&yyjson_mut_doc_fre
 using TextPtr = uqstl::unique_ptr<char, decltype(&free)>;
 
 // Makes the save document from the game state.
-static MutDocPtr
-WriteGameDocument(const SUMMARY_DESC& summary)
+static MutDocPtr WriteGameDocument(const SUMMARY_DESC& summary)
 {
 	STAR_DESC SD {};
-	if (CurStarDescPtr)
+	if (CurStarDescPtr())
 	{
-		SD = *CurStarDescPtr;
+		SD = *CurStarDescPtr();
 	}
 
 	MutDocPtr doc {yyjson_mut_doc_new(nullptr), &yyjson_mut_doc_free};
@@ -753,7 +746,7 @@ WriteGameDocument(const SUMMARY_DESC& summary)
 	SaveSummary(doc.get(), root, summary);
 	SaveGameState(doc.get(), root, uqm::gameState());
 
-	SaveRaceQueue(doc.get(), root, &GLOBAL(avail_race_q));
+	SaveRaceQueue(doc.get(), root, &uqm::gameState().game().avail_race_q);
 	// START_INTERPLANETARY is only set when saving from Homeworld
 	//   encounter screen. When the game is loaded, the
 	//   GenerateOrbitalFunction for the current star system
@@ -762,7 +755,7 @@ WriteGameDocument(const SUMMARY_DESC& summary)
 	{
 		if (uqm::currentActivity() & START_ENCOUNTER)
 		{
-			SaveShipQueue(doc.get(), root, "npcShipQueue", &GLOBAL(npc_built_ship_q));
+			SaveShipQueue(doc.get(), root, "npcShipQueue", &uqm::gameState().game().npc_built_ship_q);
 		}
 		else if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
 		{
@@ -770,11 +763,11 @@ WriteGameDocument(const SUMMARY_DESC& summary)
 			//   saved/loaded at all. IP groups will be reloaded
 			//   from group state files. But the original code did,
 			//   and so will we until we can prove we do not need to.
-			SaveGroupQueue(doc.get(), root, &GLOBAL(ip_group_q));
+			SaveGroupQueue(doc.get(), root, &uqm::gameState().game().ip_group_q);
 		}
 	}
-	SaveShipQueue(doc.get(), root, "shipQueue", &GLOBAL(built_ship_q));
-	SaveShipQueue(doc.get(), root, "stowedShipQueue", &GLOBAL(stowed_ship_q));
+	SaveShipQueue(doc.get(), root, "shipQueue", &uqm::gameState().game().built_ship_q);
+	SaveShipQueue(doc.get(), root, "stowedShipQueue", &uqm::gameState().game().stowed_ship_q);
 
 	SaveEvents(doc.get(), root);
 	// Black globes in HyperSpace and QuasiSpace
@@ -794,7 +787,7 @@ uqstl::optional<uqstl::string> SaveGameJson(SUMMARY_DESC* SummPtr, const char* n
 		&& !(uqm::currentActivity()
 			 & (START_ENCOUNTER | START_INTERPLANETARY)))
 	{
-		PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
+		PutGroupInfo(GroupsRandom, GroupSaveIp);
 	}
 
 	PrepareSummary(SummPtr, name);

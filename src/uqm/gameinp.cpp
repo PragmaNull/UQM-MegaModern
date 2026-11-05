@@ -45,8 +45,8 @@
 #include "starcon.h"
 #include "libs/graphics/gfx_common.h"
 
-#define ACCELERATION_INCREMENT (c_gameSecond / 12)
-#define MENU_REPEAT_DELAY (c_gameSecond / 2)
+static constexpr auto AccelerationIncrement {(c_gameSecond / 12)};
+static constexpr auto MenuRepeatDelay {(c_gameSecond / 2)};
 
 typedef struct
 {
@@ -63,7 +63,7 @@ struct MenuAnnotations
 };
 
 
-ControlTemplate PlayerControlTemplates[NUM_PLAYERS];
+ControlTemplate PlayerControlTemplates[NumPlayers];
 CONTROLLER_INPUT_STATE CurrentInputState, PulsedInputState;
 static CONTROLLER_INPUT_STATE CachedInputState, OldInputState;
 static MenuAnnotations<TimePeriod> RepeatDelays;
@@ -116,8 +116,7 @@ void SetInputScriptMenuDump(void (*dump)(void))
 	inputScriptMenuDump = dump;
 }
 
-static int
-scriptMenuKey(uqm::ScriptKey key)
+static int scriptMenuKey(uqm::ScriptKey key)
 {
 	switch (key)
 	{
@@ -154,8 +153,7 @@ scriptMenuKey(uqm::ScriptKey key)
 }
 
 // Adds the scripted key, if any, to the input of this frame.
-static void
-applyInputScript(void)
+static void applyInputScript(void)
 {
 	const uqstl::lock_guard lock {inputScriptMutex};
 	const auto now {uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(uqstl::chrono::steady_clock::now() - inputScriptStart).count()};
@@ -217,8 +215,7 @@ applyInputScript(void)
 	}
 }
 
-static void
-_clear_menu_state(void)
+static void _clear_menu_state(void)
 {
 	int i {};
 	int j {};
@@ -260,9 +257,8 @@ void ResetKeyRepeat(void)
 	GestaltTime = initTime;
 }
 
-static void
-_check_for_pulse(int* current, int* cached, int* old, TimePeriod* accel,
-				 TimeCount* newtime, TimeCount* oldtime)
+static void _check_for_pulse(int* current, int* cached, int* old, TimePeriod* accel,
+							 TimeCount* newtime, TimeCount* oldtime)
 {
 	if (*cached && *old)
 	{
@@ -296,8 +292,7 @@ _check_for_pulse(int* current, int* cached, int* old, TimePeriod* accel,
  * this will affect the gestalt repeat rate.  This isn't a problem
  * *yet*, but it will be once the user gets to define control
  * templates on his own --McM */
-static void
-_check_gestalt(TimeCount NewTime)
+static void _check_gestalt(TimeCount NewTime)
 {
 	int i {};
 	int j {};
@@ -467,8 +462,7 @@ void UpdateInputState(void)
 #endif
 }
 
-InputFrameCallback*
-SetInputCallback(InputFrameCallback* callback)
+InputFrameCallback* SetInputCallback(InputFrameCallback* callback)
 {
 	InputFrameCallback* old = inputCallback;
 
@@ -492,9 +486,9 @@ void SetMenuRepeatDelay(TimePeriod min, TimePeriod max, TimePeriod step, bool ge
 
 void SetDefaultMenuRepeatDelay(void)
 {
-	_min_accel = ACCELERATION_INCREMENT;
-	_max_accel = MENU_REPEAT_DELAY;
-	_step_accel = ACCELERATION_INCREMENT;
+	_min_accel = AccelerationIncrement;
+	_max_accel = MenuRepeatDelay;
+	_step_accel = AccelerationIncrement;
 	_gestalt_keys = false;
 	//_clear_menu_state ();
 	ResetKeyRepeat();
@@ -506,53 +500,52 @@ void FlushInput(void)
 	_clear_menu_state();
 }
 
-static MENU_SOUND_FLAGS
-MenuKeysToSoundFlags(const CONTROLLER_INPUT_STATE* state)
+static MENU_SOUND_FLAGS MenuKeysToSoundFlags(const CONTROLLER_INPUT_STATE* state)
 {
-	MENU_SOUND_FLAGS soundFlags {MENU_SOUND_NONE};
+	MENU_SOUND_FLAGS soundFlags {MenuSoundNone};
 	if (state->menu[KEY_MENU_UP])
 	{
-		soundFlags |= MENU_SOUND_UP;
+		soundFlags |= MenuSoundUp;
 	}
 	if (state->menu[KEY_MENU_DOWN])
 	{
-		soundFlags |= MENU_SOUND_DOWN;
+		soundFlags |= MenuSoundDown;
 	}
 	if (state->menu[KEY_MENU_LEFT])
 	{
-		soundFlags |= MENU_SOUND_LEFT;
+		soundFlags |= MenuSoundLeft;
 	}
 	if (state->menu[KEY_MENU_RIGHT])
 	{
-		soundFlags |= MENU_SOUND_RIGHT;
+		soundFlags |= MenuSoundRight;
 	}
 	if (state->menu[KEY_MENU_SELECT])
 	{
-		soundFlags |= MENU_SOUND_SELECT;
+		soundFlags |= MenuSoundSelect;
 	}
 	if (state->menu[KEY_MENU_CANCEL])
 	{
-		soundFlags |= MENU_SOUND_CANCEL;
+		soundFlags |= MenuSoundCancel;
 	}
 	if (state->menu[KEY_MENU_SPECIAL])
 	{
-		soundFlags |= MENU_SOUND_SPECIAL;
+		soundFlags |= MenuSoundSpecial;
 	}
 	if (state->menu[KEY_MENU_PAGE_UP])
 	{
-		soundFlags |= MENU_SOUND_PAGEUP;
+		soundFlags |= MenuSoundPageup;
 	}
 	if (state->menu[KEY_MENU_PAGE_DOWN])
 	{
-		soundFlags |= MENU_SOUND_PAGEDOWN;
+		soundFlags |= MenuSoundPagedown;
 	}
 	if (state->menu[KEY_MENU_DELETE])
 	{
-		soundFlags |= MENU_SOUND_DELETE;
+		soundFlags |= MenuSoundDelete;
 	}
 	if (state->menu[KEY_MENU_BACKSPACE])
 	{
-		soundFlags |= MENU_SOUND_DELETE;
+		soundFlags |= MenuSoundDelete;
 	}
 
 	return soundFlags;
@@ -606,56 +599,53 @@ void GetMenuSounds(MENU_SOUND_FLAGS* s0, MENU_SOUND_FLAGS* s1)
 	*s1 = sound_1;
 }
 
-static BATTLE_INPUT_STATE
-ControlInputToBattleInput(const int* keyState)
+static BATTLE_INPUT_STATE ControlInputToBattleInput(const int* keyState)
 {
 	BATTLE_INPUT_STATE InputState = 0;
 
 	if (keyState[KEY_UP])
 	{
-		InputState |= BATTLE_THRUST;
+		InputState |= BattleThrust;
 	}
 	if (keyState[KEY_LEFT])
 	{
-		InputState |= BATTLE_LEFT;
+		InputState |= BattleLeft;
 	}
 	if (keyState[KEY_RIGHT])
 	{
-		InputState |= BATTLE_RIGHT;
+		InputState |= BattleRight;
 	}
 	if (keyState[KEY_WEAPON])
 	{
-		InputState |= BATTLE_WEAPON;
+		InputState |= BattleWeapon;
 	}
 	if (keyState[KEY_SPECIAL])
 	{
-		InputState |= BATTLE_SPECIAL;
+		InputState |= BattleSpecial;
 	}
 	if (keyState[KEY_ESCAPE])
 	{
-		InputState |= BATTLE_ESCAPE;
+		InputState |= BattleEscape;
 	}
 	if (keyState[KEY_DOWN])
 	{
-		InputState |= BATTLE_DOWN;
+		InputState |= BattleDown;
 	}
 	if (keyState[KEY_THRUST])
 	{
-		InputState |= BATTLE_THRUST_ALT;
+		InputState |= BattleThrustAlt;
 	}
 
 	return InputState;
 }
 
-BATTLE_INPUT_STATE
-CurrentInputToBattleInput(uint16_t player)
+BATTLE_INPUT_STATE CurrentInputToBattleInput(uint16_t player)
 {
 	return ControlInputToBattleInput(
 		CurrentInputState.key[static_cast<int>(PlayerControlTemplates[player])]);
 }
 
-BATTLE_INPUT_STATE
-PulsedInputToBattleInput(uint16_t player)
+BATTLE_INPUT_STATE PulsedInputToBattleInput(uint16_t player)
 {
 	return ControlInputToBattleInput(
 		PulsedInputState.key[static_cast<int>(PlayerControlTemplates[player])]);

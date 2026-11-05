@@ -32,10 +32,8 @@ typedef struct BattleStateData BattleStateData;
 extern "C" {
 #endif
 
-struct BattleStateData
+struct BattleStateData : NetConnectionStateData
 {
-	NETCONNECTION_STATE_DATA_COMMON
-
 	struct melee_state* meleeState;
 	struct battlestate_struct* battleState;
 	struct getmelee_struct* getMeleeState;
@@ -54,14 +52,12 @@ void NetMelee_reenterState_inSetup(NetConnection* conn);
 // Returns true iff the connection is in a state where the confirmation
 // handshake is meaningful. Right now this is only when we're in the
 // pre-game setup menu.
-static inline bool
-handshakeMeaningful(NetState state)
+static inline bool handshakeMeaningful(NetState state)
 {
 	return state == NetState_inSetup;
 }
 
-static inline bool
-readyFlagsMeaningful(NetState state)
+static inline bool readyFlagsMeaningful(NetState state)
 {
 	return state == NetState_init || state == NetState_preBattle || state == NetState_selectShip || state == NetState_interBattle || state == NetState_inBattle || state == NetState_endingBattle || state == NetState_endingBattle2;
 }

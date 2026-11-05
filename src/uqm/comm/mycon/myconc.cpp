@@ -33,30 +33,30 @@ static LOCDATA mycon_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		MYCON_PMAP_ANIM, /* AlienFrame */
-		MYCON_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		MyconPmapAnim, /* AlienFrame */
+		MyconFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		MYCON_COLOR_MAP, /* AlienColorMap */
-		MYCON_MUSIC, /* AlienSong */
+		MyconColorMap, /* AlienColorMap */
+		MyconMusic, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
-		MYCON_CONVERSATION_PHRASES, /* PlayerPhrases */
+		MyconConversationPhrases, /* PlayerPhrases */
 		4, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				12,			   /* StartIndex */
-				10,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				12,			  /* StartIndex */
+				10,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 80,
@@ -71,15 +71,15 @@ static LOCDATA mycon_desc =
 			//   // so these animations are now merged together
 			//		18, /* StartIndex */
 			//		4, /* NumFrames */
-			//		CIRCULAR_ANIM, /* AnimFlags */
+			//		CircularAnim, /* AnimFlags */
 			//		GameTicksPerSecond * 3 / 40, 0, /* FrameRate */
 			//		GameTicksPerSecond * 3 / 40, 0, /* RestartRate */
 			//		(1 << 0), /* BlockMask */
 			//	},
 			{
-				22,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				22,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -87,9 +87,9 @@ static LOCDATA mycon_desc =
 				0, /* BlockMask */
 			},
 								{
-				28,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				28,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -97,9 +97,9 @@ static LOCDATA mycon_desc =
 				0, /* BlockMask */
 			},
 								{
-				33,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				33,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -140,12 +140,11 @@ static LOCDATA mycon_desc =
 
 static uint8_t MadeChoice;
 
-static void
-DoRamble(RESPONSE_REF R)
+static void DoRamble(RESPONSE_REF R)
 {
 	uint8_t Counter {};
 
-	Counter = GET_GAME_STATE(MYCON_RAMBLE);
+	Counter = uqm::gameState().flag(uqm::GameFlag::MYCON_RAMBLE);
 	switch (Counter++)
 	{
 		case 0:
@@ -222,9 +221,9 @@ DoRamble(RESPONSE_REF R)
 			break;
 		case 24:
 			NPCPhrase(RAMBLE_25);
-			if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) < 2)
+			if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 2)
 			{
-				SET_GAME_STATE(KNOW_ABOUT_SHATTERED, 2);
+				uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 			}
 			break;
 		case 25:
@@ -250,46 +249,45 @@ DoRamble(RESPONSE_REF R)
 			Counter = 0;
 			break;
 	}
-	SET_GAME_STATE(MYCON_RAMBLE, Counter);
+	uqm::gameState().setFlag(uqm::GameFlag::MYCON_RAMBLE, static_cast<uint32_t>(Counter));
 
-	if (!(GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
+	if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 	{
-		if (!PLAYER_SAID(R, come_in_peace)
-			&& !PLAYER_SAID(R, gonna_die))
+		if (!PlayerSaid(R, come_in_peace)
+			&& !PlayerSaid(R, gonna_die))
 		{
-			Counter = (GET_GAME_STATE(MYCON_INSULTS) + 1) & 7;
-			SET_GAME_STATE(MYCON_INSULTS, Counter);
+			Counter = (uqm::gameState().flag(uqm::GameFlag::MYCON_INSULTS) + 1) & 7;
+			uqm::gameState().setFlag(uqm::GameFlag::MYCON_INSULTS, static_cast<uint32_t>(Counter));
 			MadeChoice = 1;
 		}
 	}
-	else if (!PLAYER_SAID(R, lets_be_friends)
-			 && !PLAYER_SAID(R, came_to_homeworld)
-			 && !PLAYER_SAID(R, submit_to_us))
+	else if (!PlayerSaid(R, lets_be_friends)
+			 && !PlayerSaid(R, came_to_homeworld)
+			 && !PlayerSaid(R, submit_to_us))
 	{
-		Counter = (GET_GAME_STATE(MYCON_INFO) + 1) & 15;
-		SET_GAME_STATE(MYCON_INFO, Counter);
+		Counter = (uqm::gameState().flag(uqm::GameFlag::MYCON_INFO) + 1) & 15;
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_INFO, static_cast<uint32_t>(Counter));
 		MadeChoice = 1;
 	}
 }
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, bye_space))
+	if (PlayerSaid(R, bye_space))
 	{
 		NPCPhrase(BYE_AND_DIE_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_homeworld))
+	else if (PlayerSaid(R, bye_homeworld))
 	{
 		NPCPhrase(BYE_AND_DIE_HOMEWORLD);
 	}
-	else if (PLAYER_SAID(R, like_to_land))
+	else if (PlayerSaid(R, like_to_land))
 	{
 		NPCPhrase(NEVER_LET_LAND);
 	}
-	else if (PLAYER_SAID(R, bye_sun_device))
+	else if (PlayerSaid(R, bye_sun_device))
 	{
 		NPCPhrase(GOODBYE_SUN_DEVICE);
 
@@ -298,7 +296,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	else
 	{
 		DoRamble(R);
-		if (!(GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
+		if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 		{
 			NPCPhrase(BYE_AND_DIE_SPACE);
 		}
@@ -310,84 +308,82 @@ CombatIsInevitable(RESPONSE_REF R)
 	MadeChoice = 0;
 }
 
-static void
-SunDevice(RESPONSE_REF R)
+static void SunDevice(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_sun_device))
+	if (PlayerSaid(R, whats_up_sun_device))
 	{
 		NPCPhrase(GENERAL_INFO_SUN_DEVICE);
 
-		DISABLE_PHRASE(whats_up_sun_device);
+		DisablePhrase(whats_up_sun_device);
 	}
-	else if (PLAYER_SAID(R, how_goes_implanting))
+	else if (PlayerSaid(R, how_goes_implanting))
 	{
 		NPCPhrase(UNFORSEEN_DELAYS);
 
-		DISABLE_PHRASE(how_goes_implanting);
+		DisablePhrase(how_goes_implanting);
 	}
-	else if (PLAYER_SAID(R, i_have_a_cunning_plan))
+	else if (PlayerSaid(R, i_have_a_cunning_plan))
 	{
 		NPCPhrase(WONT_FALL_FOR_TRICK);
 
-		SET_GAME_STATE(NO_TRICK_AT_SUN, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::NO_TRICK_AT_SUN, static_cast<uint32_t>(1));
 	}
 
-	if (PHRASE_ENABLED(whats_up_sun_device))
+	if (PhraseEnabled(whats_up_sun_device))
 	{
 		Response(whats_up_sun_device, SunDevice);
 	}
-	if (GET_GAME_STATE(MYCON_FELL_FOR_AMBUSH))
+	if (uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
 	{
-		if (PHRASE_ENABLED(how_goes_implanting) && GET_GAME_STATE(MYCON_FELL_FOR_AMBUSH))
+		if (PhraseEnabled(how_goes_implanting) && uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
 		{
 			Response(how_goes_implanting, SunDevice);
 		}
 		Response(like_to_land, CombatIsInevitable);
 	}
-	else if (GET_GAME_STATE(MYCON_AMBUSH)
-			 && !GET_GAME_STATE(NO_TRICK_AT_SUN))
+	else if (uqm::gameState().flag(uqm::GameFlag::MYCON_AMBUSH)
+			 && !uqm::gameState().flag(uqm::GameFlag::NO_TRICK_AT_SUN))
 	{
 		Response(i_have_a_cunning_plan, SunDevice);
 	}
 	Response(bye_sun_device, CombatIsInevitable);
 }
 
-static void
-TrickMycon(RESPONSE_REF R)
+static void TrickMycon(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, i_have_a_cunning_plan))
+	if (PlayerSaid(R, i_have_a_cunning_plan))
 	{
 		NPCPhrase(TELL_US_ABOUT_WORLD);
 
-		DISABLE_PHRASE(i_have_a_cunning_plan);
+		DisablePhrase(i_have_a_cunning_plan);
 	}
-	else if (PLAYER_SAID(R, clue_1))
+	else if (PlayerSaid(R, clue_1))
 	{
 		NPCPhrase(RESPONSE_1);
 
-		DISABLE_PHRASE(clue_1);
+		DisablePhrase(clue_1);
 	}
-	else if (PLAYER_SAID(R, clue_2))
+	else if (PlayerSaid(R, clue_2))
 	{
 		NPCPhrase(RESPONSE_2);
 
-		DISABLE_PHRASE(clue_2);
+		DisablePhrase(clue_2);
 	}
-	else if (PLAYER_SAID(R, clue_3))
+	else if (PlayerSaid(R, clue_3))
 	{
 		NPCPhrase(RESPONSE_3);
 
-		DISABLE_PHRASE(clue_3);
+		DisablePhrase(clue_3);
 	}
 
-	if (PHRASE_ENABLED(clue_1) == 0
-		&& PHRASE_ENABLED(clue_2) == 0
-		&& PHRASE_ENABLED(clue_3) == 0)
+	if (PhraseEnabled(clue_1) == 0
+		&& PhraseEnabled(clue_2) == 0
+		&& PhraseEnabled(clue_3) == 0)
 	{
 		NPCPhrase(WE_GO_TO_IMPLANT);
 
 		setSegue(Segue_peace);
-		SET_GAME_STATE(MYCON_FELL_FOR_AMBUSH, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH, static_cast<uint32_t>(1));
 		AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_MYCON_MISSION);
 	}
 	else
@@ -395,37 +391,36 @@ TrickMycon(RESPONSE_REF R)
 		NPCPhrase(AMBUSH_TAIL);
 	}
 
-	if (PHRASE_ENABLED(clue_1))
+	if (PhraseEnabled(clue_1))
 	{
 		Response(clue_1, TrickMycon);
 	}
-	if (PHRASE_ENABLED(clue_2))
+	if (PhraseEnabled(clue_2))
 	{
 		Response(clue_2, TrickMycon);
 	}
-	if (PHRASE_ENABLED(clue_3))
+	if (PhraseEnabled(clue_3))
 	{
 		Response(clue_3, TrickMycon);
 	}
 }
 
-static void
-NormalMycon(RESPONSE_REF R)
+static void NormalMycon(RESPONSE_REF R)
 {
 	RESPONSE_FUNC RespFunc {};
 
-	if (PLAYER_SAID(R, what_about_shattered))
+	if (PlayerSaid(R, what_about_shattered))
 	{
 		NPCPhrase(ABOUT_SHATTERED);
 
-		SET_GAME_STATE(KNOW_ABOUT_SHATTERED, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 	}
 	else if (R)
 	{
 		DoRamble(R);
 		NPCPhrase(RAMBLE_TAIL);
 
-		DISABLE_PHRASE(R);
+		DisablePhrase(R);
 	}
 
 	if ((uint8_t)uqm::random().next() < 256 * 30 / 100)
@@ -436,19 +431,19 @@ NormalMycon(RESPONSE_REF R)
 	{
 		RespFunc = (RESPONSE_FUNC)NormalMycon;
 	}
-	if (!(GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
+	if (!(uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 	{
-		if (PHRASE_ENABLED(come_in_peace))
+		if (PhraseEnabled(come_in_peace))
 		{
 			Response(come_in_peace, RespFunc);
 		}
-		if (PHRASE_ENABLED(gonna_die))
+		if (PhraseEnabled(gonna_die))
 		{
 			Response(gonna_die, RespFunc);
 		}
 		if (!MadeChoice)
 		{
-			switch (GET_GAME_STATE(MYCON_INSULTS))
+			switch (uqm::gameState().flag(uqm::GameFlag::MYCON_INSULTS))
 			{
 				case 0:
 					Response(insult_1, RespFunc);
@@ -482,7 +477,7 @@ NormalMycon(RESPONSE_REF R)
 	{
 		if (!MadeChoice)
 		{
-			switch (GET_GAME_STATE(MYCON_INFO))
+			switch (uqm::gameState().flag(uqm::GameFlag::MYCON_INFO))
 			{
 				case 0:
 					Response(question_1, RespFunc);
@@ -534,25 +529,25 @@ NormalMycon(RESPONSE_REF R)
 					break;
 			}
 		}
-		if (PHRASE_ENABLED(lets_be_friends))
+		if (PhraseEnabled(lets_be_friends))
 		{
 			Response(lets_be_friends, RespFunc);
 		}
-		if (PHRASE_ENABLED(came_to_homeworld))
+		if (PhraseEnabled(came_to_homeworld))
 		{
 			Response(came_to_homeworld, RespFunc);
 		}
-		if (PHRASE_ENABLED(submit_to_us))
+		if (PhraseEnabled(submit_to_us))
 		{
 			Response(submit_to_us, RespFunc);
 		}
-		if (!GET_GAME_STATE(MYCON_FELL_FOR_AMBUSH))
+		if (!uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
 		{
-			if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) == 1)
+			if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) == 1)
 			{
 				Response(what_about_shattered, NormalMycon);
 			}
-			if (GET_GAME_STATE(MYCON_AMBUSH))
+			if (uqm::gameState().flag(uqm::GameFlag::MYCON_AMBUSH))
 			{
 				Response(i_have_a_cunning_plan, TrickMycon);
 			}
@@ -561,14 +556,13 @@ NormalMycon(RESPONSE_REF R)
 	}
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
-	if (GET_GAME_STATE(SUN_DEVICE))
+	if (uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE))
 	{
-		NumVisits = GET_GAME_STATE(MYCON_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::MYCON_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -579,19 +573,19 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(MYCON_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_VISITS, static_cast<uint32_t>(NumVisits));
 
 		setSegue(Segue_hostile);
 	}
-	else if (GET_GAME_STATE(MYCON_KNOW_AMBUSH))
+	else if (uqm::gameState().flag(uqm::GameFlag::MYCON_KNOW_AMBUSH))
 	{
 		NPCPhrase(DIE_LIAR);
 
 		setSegue(Segue_hostile);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		NumVisits = GET_GAME_STATE(MYCON_SUN_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::MYCON_SUN_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -603,13 +597,13 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(MYCON_SUN_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_SUN_VISITS, static_cast<uint32_t>(NumVisits));
 
 		SunDevice((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
-		NumVisits = GET_GAME_STATE(MYCON_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::MYCON_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -638,13 +632,13 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(MYCON_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 		NormalMycon((RESPONSE_REF)0);
 	}
 	else
 	{
-		NumVisits = GET_GAME_STATE(MYCON_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::MYCON_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -674,37 +668,34 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(MYCON_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::MYCON_VISITS, static_cast<uint32_t>(NumVisits));
 
 		NormalMycon((RESPONSE_REF)0);
 	}
 }
 
-static uint16_t
-uninit_mycon(void)
+static uint16_t uninit_mycon(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_mycon_enc(void)
+static void post_mycon_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_mycon_comm(void)
+LOCDATA* init_mycon_comm(void)
 {
 	mycon_desc.init_encounter_func = Intro;
 	mycon_desc.post_encounter_func = post_mycon_enc;
 	mycon_desc.uninit_encounter_func = uninit_mycon;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
-	mycon_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	mycon_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	mycon_desc.AlienTextBaseline.y = 0;
-	mycon_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	mycon_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	MadeChoice = 0;
 

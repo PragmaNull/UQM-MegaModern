@@ -34,54 +34,53 @@
 #include <stdlib.h>
 
 
-#define CONFIRM_WIN_WIDTH RES_SCALE(84)
-#define CONFIRM_WIN_HEIGHT RES_SCALE(26)
+static auto ConfirmWinWidth() { return ResScale(84); }
+static auto ConfirmWinHeight() { return ResScale(26); }
 
 bool WarpFromMenu = false;
 
-static void
-DrawConfirmationWindow(bool answer, bool confirm)
+static void DrawConfirmationWindow(bool answer, bool confirm)
 {
-	const Color oldfg = SetContextForeGroundColor(SHADOWBOX_DARK_COLOR);
+	const Color oldfg = SetContextForeGroundColor(ShadowboxDarkColor);
 	FONT oldfont = SetContextFont(StarConFont);
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	GFXRECT r;
 	TEXT t;
 
 	BatchGraphics();
-	r.corner.x = (SCREEN_WIDTH - CONFIRM_WIN_WIDTH) >> 1;
-	r.corner.y = (SCREEN_HEIGHT - CONFIRM_WIN_HEIGHT) >> 1;
-	r.extent.width = CONFIRM_WIN_WIDTH;
-	r.extent.height = CONFIRM_WIN_HEIGHT;
-	if (!IS_HD)
+	r.corner.x = (CanvasWidth - ConfirmWinWidth()) >> 1;
+	r.corner.y = (CanvasHeight - ConfirmWinHeight()) >> 1;
+	r.extent.width = ConfirmWinWidth();
+	r.extent.height = ConfirmWinHeight();
+	if (!IsHd())
 	{
-		DrawShadowedBox(&r, ALT_SHADOWBOX_BACKGROUND_COLOR,
-						SHADOWBOX_DARK_COLOR, SHADOWBOX_MEDIUM_COLOR);
+		DrawShadowedBox(&r, AltShadowboxBackgroundColor,
+						ShadowboxDarkColor, ShadowboxMediumColor);
 	}
 	else
 	{
-		DrawRenderedBox(&r, true, ALT_SHADOWBOX_BACKGROUND_COLOR,
+		DrawRenderedBox(&r, true, AltShadowboxBackgroundColor,
 						THICK_OUTER_BEVEL, false);
 	}
 
 
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
-	t.baseline.y = r.corner.y + RES_SCALE(10);
-	t.pStr = GAME_STRING(QUITMENU_STRING_BASE); // "Really Quit?"
+	t.baseline.y = r.corner.y + ResScale(10);
+	t.pStr = GameString(QUITMENU_STRING_BASE); // "Really Quit?"
 	t.align = ALIGN_CENTER;
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
-	t.baseline.y += RES_SCALE(10);
+	t.baseline.y += ResScale(10);
 	t.baseline.x = r.corner.x + (r.extent.width >> 2);
-	t.pStr = GAME_STRING(QUITMENU_STRING_BASE + 1); // "Yes"
+	t.pStr = GameString(QUITMENU_STRING_BASE + 1); // "Yes"
 	SetContextForeGroundColor(
-		answer ? (confirm ? WHITE_COLOR : MENU_HIGHLIGHT_COLOR) :
-				 BLACK_COLOR);
+		answer ? (confirm ? WhiteColor : MenuHighlightColor) :
+				 BlackColor);
 	font_DrawText(&t);
 	t.baseline.x += (r.extent.width >> 1);
-	t.pStr = GAME_STRING(QUITMENU_STRING_BASE + 2); // "No"
+	t.pStr = GameString(QUITMENU_STRING_BASE + 2); // "No"
 	SetContextForeGroundColor(
-		answer ? BLACK_COLOR : MENU_HIGHLIGHT_COLOR);
+		answer ? BlackColor : MenuHighlightColor);
 	font_DrawText(&t);
 
 	UnbatchGraphics();
@@ -120,17 +119,17 @@ bool DoConfirmExit(void)
 		SetContextClipRect(nullptr);
 
 		GetContextClipRect(&ctxRect);
-		r.extent.width = CONFIRM_WIN_WIDTH + RES_SCALE(4);
-		r.extent.height = CONFIRM_WIN_HEIGHT + RES_SCALE(4);
+		r.extent.width = ConfirmWinWidth() + ResScale(4);
+		r.extent.height = ConfirmWinHeight() + ResScale(4);
 		r.corner.x = (ctxRect.extent.width - r.extent.width) >> 1;
 		r.corner.y = (ctxRect.extent.height - r.extent.height) >> 1;
 		s = SaveContextFrame(&ctxRect);
 
-		mode = MAKE_DRAW_MODE(DRAW_DESATURATE, DESAT_AMOUNT);
+		mode = MAKE_DRAW_MODE(DRAW_DESATURATE, DesatAmount);
 		oldMode = SetContextDrawMode(mode);
 		DrawFilledRectangle(&ctxRect);
 		SetContextDrawMode(oldMode);
-		OldColor = SetContextForeGroundColor(BUILD_COLOR_RGBA(0x00, 0x00, 0x00, 0x30));
+		OldColor = SetContextForeGroundColor(BuildColorRgba(0x00, 0x00, 0x00, 0x30));
 		DrawFilledRectangle(&ctxRect);
 		SetContextForeGroundColor(OldColor);
 
@@ -224,8 +223,7 @@ typedef struct popup_state
 	bool (*InputFunc)(struct popup_state* self);
 } POPUP_STATE;
 
-static bool
-DoPopup(struct popup_state* self)
+static bool DoPopup(struct popup_state* self)
 {
 	(void)self;
 	SleepThread(c_gameSecond / 20);
@@ -272,13 +270,13 @@ void DoPopupWindow(const char* msg)
 	s = SaveContextFrame(nullptr);
 
 	Widget_SetFont(StarConFont);
-	Widget_SetWindowColors(SHADOWBOX_BACKGROUND_COLOR,
-						   SHADOWBOX_DARK_COLOR, SHADOWBOX_MEDIUM_COLOR);
+	Widget_SetWindowColors(ShadowboxBackgroundColor,
+						   ShadowboxDarkColor, ShadowboxMediumColor);
 	DrawLabelAsWindow(&label, &windowRect);
 	// There was a SetSystemRect(&windowRect) call which we don't need anymore
 
 	GetMenuSounds(&s0, &s1);
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
+	SetMenuSounds(MenuSoundNone, MenuSoundNone);
 	InputFrameCallback* oldCallback {SetInputCallback(nullptr)};
 
 	state.InputFunc = DoPopup;

@@ -40,7 +40,6 @@ enum
 	NUM_ELEMENT_CATEGORIES
 };
 
-#define ElementCategory(et) (Elements[et] & 0x7)
 
 /*------------------------------ Global Data ------------------------------ */
 
@@ -184,13 +183,11 @@ enum
 
 	NUMBER_OF_ELEMENTS
 };
-#define NUMBER_OF_SPECIAL (NUMBER_OF_ELEMENTS - NUMBER_OF_NORMAL)
 
-#define CHANCE_MASK ((1 << 2) - 1)
 
-#define FEW 1
-#define MODERATE 4
-#define NUMEROUS 8
+inline constexpr auto Few {1};
+inline constexpr auto Moderate {4};
+inline constexpr auto Numerous {8};
 
 enum
 {
@@ -198,15 +195,16 @@ enum
 	MEDIUM,
 	HEAVY
 };
-#define NOTHING (uint8_t)(~0)
+inline constexpr auto Nothing {(uint8_t)(~0)};
 
-#define MINERAL_DEPOSIT(qn, ql) uqm::makeByte(qn, ql)
-#define DEPOSIT_QUANTITY(md) uqm::lowNibble(md)
-#define DEPOSIT_QUALITY(md) uqm::highNibble(md)
+constexpr auto MineralDeposit(const auto& qn, const auto& ql) { return uqm::makeByte(qn, ql); }
+constexpr auto DepositQuantity(const auto& md) { return uqm::lowNibble(md); }
+constexpr auto DepositQuality(const auto& md) { return uqm::highNibble(md); }
 
-#define MAX_ELEMENT_UNITS 0xF
+inline constexpr auto MaxElementUnits {0xF};
 
 const extern uint8_t* Elements;
+inline auto ElementCategory(const auto& et) { return Elements[et] & 0x7; }
 
 #if 0 //defined(__cplusplus)
 }

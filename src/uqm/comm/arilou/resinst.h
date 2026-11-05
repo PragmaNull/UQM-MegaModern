@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define ARILOU_COLOR_MAP "comm.arilou.colortable"
-#define ARILOU_CONVERSATION_PHRASES "comm.arilou.dialogue"
-#define ARILOU_FONT "comm.arilou.font"
-#define ARILOU_MUSIC "comm.arilou.music"
-#define ARILOU_PMAP_ANIM "comm.arilou.graphics"
-#define ARILOU_SCRIPT "comm.arilou.script"
+inline constexpr uqgsl::czstring ArilouColorMap {"comm.arilou.colortable"};
+inline constexpr uqgsl::czstring ArilouConversationPhrases {"comm.arilou.dialogue"};
+inline constexpr uqgsl::czstring ArilouFont {"comm.arilou.font"};
+inline constexpr uqgsl::czstring ArilouMusic {"comm.arilou.music"};
+inline constexpr uqgsl::czstring ArilouPmapAnim {"comm.arilou.graphics"};

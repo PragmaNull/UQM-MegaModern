@@ -30,9 +30,8 @@
 
 //#define DEBUG_CYBORG
 
-uint16_t
-PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
-			  uint16_t max_turns, uint16_t margin_of_error)
+uint16_t PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
+					   uint16_t max_turns, uint16_t margin_of_error)
 {
 	int32_t time_y_0 {};
 	int32_t time_y_1 {};
@@ -50,18 +49,18 @@ PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 	int32_t dx_1 {};
 	int32_t dy_1 {}; // JMS:These were int16_t. No overflows now.
 
-	if ((ElementPtr0->state_flags | ElementPtr1->state_flags) & FINITE_LIFE)
+	if ((ElementPtr0->state_flags | ElementPtr1->state_flags) & FiniteLife)
 	{
 		//log_add (log_Debug, "E0:{}, E1:{}, max:{}",ElementPtr0->life_span,ElementPtr1->life_span, max_turns);
 
-		if (!(ElementPtr0->state_flags & FINITE_LIFE))
+		if (!(ElementPtr0->state_flags & FiniteLife))
 		{
 			if (ElementPtr1->life_span < max_turns)
 			{
 				max_turns = ElementPtr1->life_span;
 			}
 		}
-		else if (!(ElementPtr1->state_flags & FINITE_LIFE))
+		else if (!(ElementPtr1->state_flags & FiniteLife))
 		{
 			if (ElementPtr0->life_span < max_turns)
 			{
@@ -84,14 +83,14 @@ PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 	dst[0].x = (int32_t)ElementPtr0->current.location.x;
 	dst[0].y = (int32_t)ElementPtr0->current.location.y;
 	GetCurrentVelocityComponentsSdword(&ElementPtr0->velocity, &dx_0, &dy_0);
-	dx_0 = (int32_t)VELOCITY_TO_WORLD((long)dx_0 * (long)max_turns);
-	dy_0 = (int32_t)VELOCITY_TO_WORLD((long)dy_0 * (long)max_turns);
+	dx_0 = (int32_t)VelocityToWorld((long)dx_0 * (long)max_turns);
+	dy_0 = (int32_t)VelocityToWorld((long)dy_0 * (long)max_turns);
 
 	dst[1].x = (int32_t)ElementPtr1->current.location.x;
 	dst[1].y = (int32_t)ElementPtr1->current.location.y;
 	GetCurrentVelocityComponentsSdword(&ElementPtr1->velocity, &dx_1, &dy_1);
-	dx_1 = (int32_t)VELOCITY_TO_WORLD((long)dx_1 * (long)max_turns);
-	dy_1 = (int32_t)VELOCITY_TO_WORLD((long)dy_1 * (long)max_turns);
+	dx_1 = (int32_t)VelocityToWorld((long)dx_1 * (long)max_turns);
+	dy_1 = (int32_t)VelocityToWorld((long)dy_1 * (long)max_turns);
 
 	if (margin_of_error)
 	{
@@ -104,10 +103,10 @@ PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 		GetFrameRect(ElementPtr0->IntersectControl.IntersectStamp.frame, &r0);
 		GetFrameRect(ElementPtr1->IntersectControl.IntersectStamp.frame, &r1);
 
-		dst[0].y += DISPLAY_TO_WORLD(r0.corner.y);
-		dst[1].y += DISPLAY_TO_WORLD(r1.corner.y);
-		time_y_0 = DISPLAY_TO_WORLD(r0.extent.height);
-		time_y_1 = DISPLAY_TO_WORLD(r1.extent.height);
+		dst[0].y += DisplayToWorld(r0.corner.y);
+		dst[1].y += DisplayToWorld(r1.corner.y);
+		time_y_0 = DisplayToWorld(r0.extent.height);
+		time_y_1 = DisplayToWorld(r1.extent.height);
 	}
 
 	int32_t dy {dst[1].y - dst[0].y};
@@ -130,10 +129,10 @@ PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 		}
 		else
 		{
-			dst[0].x += DISPLAY_TO_WORLD(r0.corner.x);
-			dst[1].x += DISPLAY_TO_WORLD(r1.corner.x);
-			time_x_0 = DISPLAY_TO_WORLD(r0.extent.width);
-			time_x_1 = DISPLAY_TO_WORLD(r1.extent.width);
+			dst[0].x += DisplayToWorld(r0.corner.x);
+			dst[1].x += DisplayToWorld(r1.corner.x);
+			time_x_0 = DisplayToWorld(r0.extent.width);
+			time_x_1 = DisplayToWorld(r1.extent.width);
 		}
 
 		int32_t dx {dst[1].x - dst[0].x};
@@ -276,14 +275,14 @@ PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 						GetNextVelocityComponentsSdword(&Velocity0, &dx_0, &dy_0, time_y_0);
 						Pt0.x += dx_0;
 						Pt0.y += dy_0;
-						Control0.EndPoint.x = WORLD_TO_DISPLAY(Pt0.x);
-						Control0.EndPoint.y = WORLD_TO_DISPLAY(Pt0.y);
+						Control0.EndPoint.x = WorldToDisplay(Pt0.x);
+						Control0.EndPoint.y = WorldToDisplay(Pt0.y);
 
 						GetNextVelocityComponentsSdword(&Velocity1, &dx_1, &dy_1, time_y_0);
 						Pt1.x += dx_1;
 						Pt1.y += dy_1;
-						Control1.EndPoint.x = WORLD_TO_DISPLAY(Pt1.x);
-						Control1.EndPoint.y = WORLD_TO_DISPLAY(Pt1.y);
+						Control1.EndPoint.x = WorldToDisplay(Pt1.x);
+						Control1.EndPoint.y = WorldToDisplay(Pt1.y);
 					}
 
 					do
@@ -301,28 +300,28 @@ PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 						Pt1.y += dy_1;
 
 						Control0.IntersectStamp.origin = Control0.EndPoint;
-						Control0.EndPoint.x = WORLD_TO_DISPLAY(Pt0.x);
-						Control0.EndPoint.y = WORLD_TO_DISPLAY(Pt0.y);
+						Control0.EndPoint.x = WorldToDisplay(Pt0.x);
+						Control0.EndPoint.y = WorldToDisplay(Pt0.y);
 
 						Control1.IntersectStamp.origin = Control1.EndPoint;
-						Control1.EndPoint.x = WORLD_TO_DISPLAY(Pt1.x);
-						Control1.EndPoint.y = WORLD_TO_DISPLAY(Pt1.y);
+						Control1.EndPoint.x = WorldToDisplay(Pt1.x);
+						Control1.EndPoint.y = WorldToDisplay(Pt1.y);
 						when = DrawablesIntersect(&Control0,
-												  &Control1, MAX_TIME_VALUE);
+												  &Control1, MaxTimeValue);
 						if (when)
 						{
 							if (when == 1
 								&& time_y_0 == 1
 								&& ((ElementPtr0->state_flags
 									 | ElementPtr1->state_flags)
-									& APPEARING))
+									& Appearing))
 							{
 								when = 0;
-								Control0.EndPoint.x = WORLD_TO_DISPLAY(Pt0.x);
-								Control0.EndPoint.y = WORLD_TO_DISPLAY(Pt0.y);
+								Control0.EndPoint.x = WorldToDisplay(Pt0.x);
+								Control0.EndPoint.y = WorldToDisplay(Pt0.y);
 
-								Control1.EndPoint.x = WORLD_TO_DISPLAY(Pt1.x);
-								Control1.EndPoint.y = WORLD_TO_DISPLAY(Pt1.y);
+								Control1.EndPoint.x = WorldToDisplay(Pt1.x);
+								Control1.EndPoint.y = WorldToDisplay(Pt1.y);
 							}
 
 							if (when)
@@ -339,8 +338,7 @@ PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 	return (0);
 }
 
-static void
-InitCyborg(STARSHIP* StarShipPtr)
+static void InitCyborg(STARSHIP* StarShipPtr)
 {
 	uint16_t Index {};
 	uint16_t Divisor {};
@@ -368,8 +366,7 @@ InitCyborg(STARSHIP* StarShipPtr)
 	StarShipPtr->RaceDescPtr->cyborg_control.ManeuverabilityIndex = Index;
 }
 
-static void
-ship_movement(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
+static void ship_movement(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 {
 	if (EvalDescPtr->which_turn == 0)
 	{
@@ -405,9 +402,9 @@ bool ship_weapons(ELEMENT* ShipPtr, ELEMENT* OtherPtr, uint16_t margin_of_error)
 	HELEMENT Weapon[6];
 	STARSHIP* StarShipPtr {};
 
-	if (OBJECT_CLOAKED(OtherPtr))
+	if (ObjectCloaked(OtherPtr))
 	{
-		margin_of_error += DISPLAY_TO_WORLD(RES_SCALE(40));
+		margin_of_error += DisplayToWorld(ResScale(40));
 	}
 
 	Ship = *ShipPtr;
@@ -436,7 +433,7 @@ bool ship_weapons(ELEMENT* ShipPtr, ELEMENT* OtherPtr, uint16_t margin_of_error)
 			if (w)
 			{
 				LockElement(w, &EPtr);
-				if (EPtr->state_flags & APPEARING)
+				if (EPtr->state_flags & Appearing)
 				{
 					EPtr->next = EPtr->current;
 					InitIntersectStartPoint(EPtr);
@@ -498,8 +495,8 @@ void ship_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	bool ShipFired {true};
 	if (StarShipPtr->weapon_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~WEAPON;
-		if (!(StarShipPtr->RaceDescPtr->ship_info.ship_flags & SEEKING_WEAPON))
+		StarShipPtr->ship_input_state &= ~WeaponFlag;
+		if (!(StarShipPtr->RaceDescPtr->ship_info.ship_flags & SeekingWeapon))
 		{
 			ShipFired = false;
 		}
@@ -511,11 +508,11 @@ void ship_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	}
 	else if (testFlag(StarShipPtr->control, PlayerControlFlags::DifficultyGood))
 	{
-		margin_of_error = DISPLAY_TO_WORLD(RES_SCALE(20));
+		margin_of_error = DisplayToWorld(ResScale(20));
 	}
 	else /* if (StarShipPtr->control & STANDARD_RATING) */
 	{
-		margin_of_error = DISPLAY_TO_WORLD(RES_SCALE(40));
+		margin_of_error = DisplayToWorld(ResScale(40));
 	}
 
 	ObjectsOfConcern += ConcernCounter;
@@ -530,10 +527,10 @@ void ship_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			if (!ShipMoved
 				&& (ConcernCounter != ENEMY_WEAPON_INDEX
 					|| ObjectsOfConcern->MoveState == PURSUE
-					|| (ObjectsOfConcern->ObjectPtr->state_flags & CREW_OBJECT)
-					|| MANEUVERABILITY(
+					|| (ObjectsOfConcern->ObjectPtr->state_flags & CrewObject)
+					|| Maneuverability(
 						   &StarShipPtr->RaceDescPtr->cyborg_control)
-						   >= RESOLUTION_COMPENSATED(MEDIUM_SHIP)))
+						   >= ResolutionCompensated(MediumShip)))
 			{
 				ship_movement(ShipPtr, ObjectsOfConcern);
 				ShipMoved = true;
@@ -551,7 +548,7 @@ void ship_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 										 ObjectsOfConcern->ObjectPtr, margin_of_error);
 				if (ShipFired)
 				{
-					StarShipPtr->ship_input_state |= WEAPON;
+					StarShipPtr->ship_input_state |= WeaponFlag;
 				}
 			}
 		}
@@ -565,41 +562,41 @@ bool TurnShip(ELEMENT* ShipPtr, uint16_t angle)
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	uint16_t f {StarShipPtr->ShipFacing};
-	ship_delta_facing = NORMALIZE_FACING(ANGLE_TO_FACING(angle) - f);
+	ship_delta_facing = NormalizeFacing(AngleToFacing(angle) - f);
 	if (ship_delta_facing)
 	{
-		if (ship_delta_facing == ANGLE_TO_FACING(HALF_CIRCLE))
+		if (ship_delta_facing == AngleToFacing(HalfCircle))
 		{
 			ship_delta_facing =
-				NORMALIZE_FACING(ship_delta_facing + (uqm::random().next() & 1 ? ANGLE_TO_FACING(OCTANT >> 1) : -ANGLE_TO_FACING(OCTANT >> 1)));
+				NormalizeFacing(ship_delta_facing + (uqm::random().next() & 1 ? AngleToFacing(Octant >> 1) : -AngleToFacing(Octant >> 1)));
 		}
 
-		if (ship_delta_facing < ANGLE_TO_FACING(HALF_CIRCLE))
+		if (ship_delta_facing < AngleToFacing(HalfCircle))
 		{
-			StarShipPtr->ship_input_state |= RIGHT;
+			StarShipPtr->ship_input_state |= RightFlag;
 			++f;
 			ShipPtr->next.image.frame =
 				IncFrameIndex(ShipPtr->current.image.frame);
 		}
 		else
 		{
-			StarShipPtr->ship_input_state |= LEFT;
+			StarShipPtr->ship_input_state |= LeftFlag;
 			--f;
 			ShipPtr->next.image.frame =
 				DecFrameIndex(ShipPtr->current.image.frame);
 		}
 
 #ifdef NOTYET
-		if (((StarShipPtr->ship_input_state & (LEFT | RIGHT))
-			 ^ (StarShipPtr->cur_status_flags & (LEFT | RIGHT)))
-			== (LEFT | RIGHT))
+		if (((StarShipPtr->ship_input_state & (LeftFlag | RightFlag))
+			 ^ (StarShipPtr->cur_status_flags & (LeftFlag | RightFlag)))
+			== (LeftFlag | RightFlag))
 		{
-			StarShipPtr->ship_input_state &= ~(LEFT | RIGHT);
+			StarShipPtr->ship_input_state &= ~(LeftFlag | RightFlag);
 		}
 		else
 #endif /* NOTYET */
 		{
-			StarShipPtr->ShipFacing = NORMALIZE_FACING(f);
+			StarShipPtr->ShipFacing = NormalizeFacing(f);
 
 			return (true);
 		}
@@ -614,16 +611,16 @@ bool ThrustShip(ELEMENT* ShipPtr, uint16_t angle)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	if (StarShipPtr->ship_input_state & THRUST)
+	if (StarShipPtr->ship_input_state & ThrustFlag)
 	{
 		ShouldThrust = true;
 	}
-	else if (NORMALIZE_FACING(ANGLE_TO_FACING(angle)
-							  - ANGLE_TO_FACING(GetVelocityTravelAngle(&ShipPtr->velocity)))
+	else if (NormalizeFacing(AngleToFacing(angle)
+							 - AngleToFacing(GetVelocityTravelAngle(&ShipPtr->velocity)))
 				 == 0
 			 && (StarShipPtr->cur_status_flags
-				 & (SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED))
-			 && !(StarShipPtr->cur_status_flags & SHIP_IN_GRAVITY_WELL))
+				 & (ShipAtMaxSpeed | ShipBeyondMaxSpeed))
+			 && !(StarShipPtr->cur_status_flags & ShipInGravityWell))
 	{
 		ShouldThrust = false;
 	}
@@ -632,11 +629,11 @@ bool ThrustShip(ELEMENT* ShipPtr, uint16_t angle)
 		int16_t ship_delta_facing {};
 
 		ship_delta_facing =
-			NORMALIZE_FACING(ANGLE_TO_FACING(angle)
-							 - StarShipPtr->ShipFacing + ANGLE_TO_FACING(QUADRANT));
-		if (ship_delta_facing == ANGLE_TO_FACING(QUADRANT)
-			|| ((StarShipPtr->cur_status_flags & SHIP_BEYOND_MAX_SPEED)
-				&& ship_delta_facing <= ANGLE_TO_FACING(HALF_CIRCLE)))
+			NormalizeFacing(AngleToFacing(angle)
+							- StarShipPtr->ShipFacing + AngleToFacing(Quadrant));
+		if (ship_delta_facing == AngleToFacing(Quadrant)
+			|| ((StarShipPtr->cur_status_flags & ShipBeyondMaxSpeed)
+				&& ship_delta_facing <= AngleToFacing(HalfCircle)))
 		{
 			ShouldThrust = true;
 		}
@@ -650,7 +647,7 @@ bool ThrustShip(ELEMENT* ShipPtr, uint16_t angle)
 	{
 		inertial_thrust(ShipPtr);
 
-		StarShipPtr->ship_input_state |= THRUST;
+		StarShipPtr->ship_input_state |= ThrustFlag;
 	}
 
 	return (ShouldThrust);
@@ -688,73 +685,73 @@ void Pursue(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 			- ShipPtr->next.location.x;
 	delta_y = (OtherObjPtr->current.location.y + other_delta_y)
 			- ShipPtr->next.location.y;
-	delta_x = WRAP_DELTA_X(delta_x);
-	delta_y = WRAP_DELTA_Y(delta_y);
+	delta_x = WrapDeltaX(delta_x);
+	delta_y = WrapDeltaY(delta_y);
 	uint16_t desired_thrust_angle {ARCTAN(delta_x, delta_y)};
 
 	uint8_t maneuver_state {0};
 	if (ShipPtr->turn_wait == 0)
 	{
-		maneuver_state |= LEFT | RIGHT;
+		maneuver_state |= LeftFlag | RightFlag;
 	}
 	if (ShipPtr->thrust_wait == 0
-		&& ((OtherObjPtr->state_flags & PLAYER_SHIP)
+		&& ((OtherObjPtr->state_flags & PlayerShip)
 			|| elementsOfSamePlayer(OtherObjPtr, ShipPtr)
 			|| OtherObjPtr->preprocess_func == crew_preprocess))
 	{
-		maneuver_state |= THRUST;
+		maneuver_state |= ThrustFlag;
 	}
 
-	desired_turn_angle = NORMALIZE_ANGLE(desired_thrust_angle + HALF_CIRCLE);
+	desired_turn_angle = NormalizeAngle(desired_thrust_angle + HalfCircle);
 	/* other player's ship */
-	if ((OtherObjPtr->state_flags & PLAYER_SHIP)
-		&& OtherObjPtr->mass_points <= MAX_SHIP_MASS)
+	if ((OtherObjPtr->state_flags & PlayerShip)
+		&& OtherObjPtr->mass_points <= MaxShipMass)
 	{
 		STARSHIP* StarShipPtr {};
 		STARSHIP* EnemyStarShipPtr {};
 
 		GetElementStarShip(ShipPtr, &StarShipPtr);
 		GetElementStarShip(OtherObjPtr, &EnemyStarShipPtr);
-		if ((MANEUVERABILITY(
+		if ((Maneuverability(
 				 &StarShipPtr->RaceDescPtr->cyborg_control)
-				 >= RESOLUTION_COMPENSATED(FAST_SHIP)
-			 && WEAPON_RANGE(&StarShipPtr->RaceDescPtr->cyborg_control)
-					> RES_SCALE(CLOSE_RANGE_WEAPON))
+				 >= ResolutionCompensated(FastShip)
+			 && GetWeaponRange(&StarShipPtr->RaceDescPtr->cyborg_control)
+					> ResScale(CloseRangeWeapon))
 			|| (EvalDescPtr->which_turn >= 24
 				&& (StarShipPtr->RaceDescPtr->characteristics.max_thrust * 2 / 3 < EnemyStarShipPtr->RaceDescPtr->characteristics.max_thrust
-					|| (EnemyStarShipPtr->cur_status_flags & SHIP_BEYOND_MAX_SPEED))))
+					|| (EnemyStarShipPtr->cur_status_flags & ShipBeyondMaxSpeed))))
 		{
 			uint16_t ship_flags {};
 
 			ship_flags = EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags;
 			/* you're maneuverable */
-			if (MANEUVERABILITY(
+			if (Maneuverability(
 					&StarShipPtr->RaceDescPtr->cyborg_control)
-				>= RESOLUTION_COMPENSATED(MEDIUM_SHIP))
+				>= ResolutionCompensated(MediumShip))
 			{
 				uint16_t fire_flags {};
 				uint16_t facing {};
 
-				for (fire_flags = FIRES_FORE, facing = EvalDescPtr->facing;
-					 fire_flags <= FIRES_LEFT;
-					 fire_flags <<= 1, facing += QUADRANT)
+				for (fire_flags = FiresFore, facing = EvalDescPtr->facing;
+					 fire_flags <= FiresLeft;
+					 fire_flags <<= 1, facing += Quadrant)
 				{
 					if (
 						/* he's dangerous in this direction */
 						(ship_flags & fire_flags)
 						/* he's facing direction you want to go */
-						&& NORMALIZE_ANGLE(
-							   desired_turn_angle - facing + OCTANT)
-							   <= QUADRANT
+						&& NormalizeAngle(
+							   desired_turn_angle - facing + Octant)
+							   <= Quadrant
 						&& (
 							/* he's moving */
 							(other_delta_x != 0 || other_delta_y != 0)
 							&&
 							/* he's coasting backwards */
-							NORMALIZE_ANGLE(
-								(GetVelocityTravelAngle(&OtherVelocity) + HALF_CIRCLE)
-								- facing + (OCTANT + (OCTANT >> 1)))
-								<= ((OCTANT + (OCTANT >> 1)) << 1)))
+							NormalizeAngle(
+								(GetVelocityTravelAngle(&OtherVelocity) + HalfCircle)
+								- facing + (Octant + (Octant >> 1)))
+								<= ((Octant + (Octant >> 1)) << 1)))
 					{
 						/* catch him on the back side */
 						desired_thrust_angle = desired_turn_angle;
@@ -766,7 +763,7 @@ void Pursue(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 			// This code prevents Kohr-Ah, Ur-Quan and ISD from turning around mid-chase while pursuing Earthling.
 			if (StarShipPtr->SpeciesID == (KOHR_AH_ID | UR_QUAN_ID)
 				&& EnemyStarShipPtr->SpeciesID == EARTHLING_ID
-				&& !(EnemyStarShipPtr->cur_status_flags & (SHIP_BEYOND_MAX_SPEED | SHIP_IN_GRAVITY_WELL)))
+				&& !(EnemyStarShipPtr->cur_status_flags & (ShipBeyondMaxSpeed | ShipInGravityWell)))
 			{
 				distance_to_give_up_and_turn = 44;
 			}
@@ -778,39 +775,42 @@ void Pursue(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 			if (desired_thrust_angle != desired_turn_angle
 				&& (other_delta_x || other_delta_y)
 				&& EvalDescPtr->which_turn >= distance_to_give_up_and_turn
-				&& NORMALIZE_ANGLE(desired_thrust_angle
-								   - GetVelocityTravelAngle(&OtherVelocity)
-								   + OCTANT)
-					   <= QUADRANT
-				&& ((NORMALIZE_ANGLE(
+				&& NormalizeAngle(desired_thrust_angle
+								  - GetVelocityTravelAngle(&OtherVelocity)
+								  + Octant)
+					   <= Quadrant
+				&& ((NormalizeAngle(
 						 GetVelocityTravelAngle(&OtherVelocity)
 						 - GetVelocityTravelAngle(&ShipVelocity)
-						 + OCTANT)
-						 <= QUADRANT
-					 && (((StarShipPtr->cur_status_flags & SHIP_AT_MAX_SPEED)
-						  && !(StarShipPtr->cur_status_flags & SHIP_BEYOND_MAX_SPEED))
-						 || (ship_flags & DONT_CHASE)))
-					|| NORMALIZE_ANGLE(
+						 + Octant)
+						 <= Quadrant
+					 && (((StarShipPtr->cur_status_flags & ShipAtMaxSpeed)
+						  && !(StarShipPtr->cur_status_flags & ShipBeyondMaxSpeed))
+						 || (ship_flags & DontChase)))
+					|| NormalizeAngle(
 						   desired_turn_angle
-						   - FACING_TO_ANGLE(StarShipPtr->ShipFacing)
-						   + OCTANT)
-						   <= QUADRANT))
+						   - FacingToAngle(StarShipPtr->ShipFacing)
+						   + Octant)
+						   <= Quadrant))
 			{
 				desired_thrust_angle = desired_turn_angle;
 			}
 		}
 	}
 
-	if (maneuver_state & (LEFT | RIGHT))
+	if (maneuver_state & (LeftFlag | RightFlag))
 	{
 		TurnShip(ShipPtr, desired_thrust_angle);
 	}
 
-	if (maneuver_state & THRUST)
+	if (maneuver_state & ThrustFlag)
 	{
 		ThrustShip(ShipPtr, desired_thrust_angle);
 	}
 }
+
+static constexpr auto FlankLeft {-Quadrant};
+static constexpr auto ShipLeft {-Octant};
 
 // JMS:GFX Made SIZEs SDWORDs and changed the GetNextVelocityComponents to GetNextVelocityComponentsSdword
 void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
@@ -844,117 +844,115 @@ void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 			- ShipPtr->next.location.x;
 	delta_y = (OtherObjPtr->current.location.y + other_delta_y)
 			- ShipPtr->next.location.y;
-	delta_x = WRAP_DELTA_X(delta_x);
-	delta_y = WRAP_DELTA_Y(delta_y);
+	delta_x = WrapDeltaX(delta_x);
+	delta_y = WrapDeltaY(delta_y);
 	uint16_t desired_thrust_angle {ARCTAN(delta_x, delta_y)};
 
 	uint8_t maneuver_state {0};
 	if (ShipPtr->turn_wait == 0)
 	{
-		maneuver_state |= LEFT | RIGHT;
+		maneuver_state |= LeftFlag | RightFlag;
 	}
 	if (ShipPtr->thrust_wait == 0)
 	{
-		maneuver_state |= THRUST;
+		maneuver_state |= ThrustFlag;
 	}
 
 	delta_x = ship_delta_x - other_delta_x;
 	delta_y = ship_delta_y - other_delta_y;
 	const uint16_t travel_angle {ARCTAN(delta_x, delta_y)};
-	desired_turn_angle = NORMALIZE_ANGLE(desired_thrust_angle + HALF_CIRCLE);
+	desired_turn_angle = NormalizeAngle(desired_thrust_angle + HalfCircle);
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	RACE_DESC* RDPtr {StarShipPtr->RaceDescPtr};
 	if (EvalDescPtr->MoveState == AVOID)
 	{
 		desired_turn_angle =
-			NORMALIZE_ANGLE(desired_turn_angle - EvalDescPtr->facing);
+			NormalizeAngle(desired_turn_angle - EvalDescPtr->facing);
 
-		if (NORMALIZE_FACING(ANGLE_TO_FACING(desired_turn_angle)))
+		if (NormalizeFacing(AngleToFacing(desired_turn_angle)))
 		{
-			if (desired_turn_angle <= HALF_CIRCLE)
+			if (desired_turn_angle <= HalfCircle)
 			{
-				desired_thrust_angle = RIGHT;
+				desired_thrust_angle = RightFlag;
 			}
-			else /* if (desired_turn_angle > HALF_CIRCLE) */
+			else /* if (desired_turn_angle > HalfCircle) */
 			{
-				desired_thrust_angle = LEFT;
+				desired_thrust_angle = LeftFlag;
 			}
 		}
 		else
 		{
-			desired_turn_angle = NORMALIZE_ANGLE(
-				FACING_TO_ANGLE(StarShipPtr->ShipFacing)
+			desired_turn_angle = NormalizeAngle(
+				FacingToAngle(StarShipPtr->ShipFacing)
 				- EvalDescPtr->facing);
-			if ((desired_turn_angle & (HALF_CIRCLE - 1)) == 0)
+			if ((desired_turn_angle & (HalfCircle - 1)) == 0)
 			{
-				desired_thrust_angle = uqm::random().next() & 1 ? RIGHT : LEFT;
+				desired_thrust_angle = uqm::random().next() & 1 ? RightFlag : LeftFlag;
 			}
 			else
 			{
-				desired_thrust_angle = desired_turn_angle < HALF_CIRCLE ? RIGHT : LEFT;
+				desired_thrust_angle = desired_turn_angle < HalfCircle ? RightFlag : LeftFlag;
 			}
 		}
 
-		if (desired_thrust_angle == LEFT)
+		if (desired_thrust_angle == LeftFlag)
 		{
-#define FLANK_LEFT -QUADRANT
-#define SHIP_LEFT -OCTANT
 			desired_thrust_angle = EvalDescPtr->facing
-								 + FLANK_LEFT - (SHIP_LEFT >> 1);
+								 + FlankLeft - (ShipLeft >> 1);
 		}
 		else
 		{
-#define FLANK_RIGHT QUADRANT
-#define SHIP_RIGHT OCTANT
+
+
 			desired_thrust_angle = EvalDescPtr->facing
-								 + FLANK_RIGHT - (SHIP_RIGHT >> 1);
+								 + Quadrant - (Octant >> 1);
 		}
 
-		desired_thrust_angle = NORMALIZE_ANGLE(desired_thrust_angle);
+		desired_thrust_angle = NormalizeAngle(desired_thrust_angle);
 	}
-	else if (GRAVITY_MASS(OtherObjPtr->mass_points))
+	else if (GravityMass(OtherObjPtr->mass_points))
 	{
 		uint16_t planet_facing {};
 
-		planet_facing = NORMALIZE_FACING(ANGLE_TO_FACING(desired_thrust_angle));
-		cone_of_fire = NORMALIZE_FACING(
+		planet_facing = NormalizeFacing(AngleToFacing(desired_thrust_angle));
+		cone_of_fire = NormalizeFacing(
 			planet_facing
 			- StarShipPtr->ShipFacing
-			+ ANGLE_TO_FACING(QUADRANT));
+			+ AngleToFacing(Quadrant));
 
 		if (RDPtr->characteristics.thrust_increment != RDPtr->characteristics.max_thrust)
 		{
-			maneuver_state &= ~THRUST;
+			maneuver_state &= ~ThrustFlag;
 		}
 
 		/* if not pointing towards planet */
-		if (cone_of_fire > ANGLE_TO_FACING(QUADRANT << 1))
+		if (cone_of_fire > AngleToFacing(Quadrant << 1))
 		{
 			desired_turn_angle = desired_thrust_angle;
 		}
 		/* if pointing directly at planet */
-		else if (cone_of_fire == ANGLE_TO_FACING(QUADRANT)
-				 && NORMALIZE_FACING(ANGLE_TO_FACING(travel_angle)) != planet_facing)
+		else if (cone_of_fire == AngleToFacing(Quadrant)
+				 && NormalizeFacing(AngleToFacing(travel_angle)) != planet_facing)
 		{
 			desired_turn_angle = travel_angle;
 		}
 		else if (cone_of_fire == 0
-				 || cone_of_fire == ANGLE_TO_FACING(QUADRANT << 1)
-				 || (!(maneuver_state & THRUST)
-					 && (cone_of_fire < ANGLE_TO_FACING(OCTANT)
-						 || cone_of_fire > ANGLE_TO_FACING((QUADRANT << 1) - OCTANT))))
+				 || cone_of_fire == AngleToFacing(Quadrant << 1)
+				 || (!(maneuver_state & ThrustFlag)
+					 && (cone_of_fire < AngleToFacing(Octant)
+						 || cone_of_fire > AngleToFacing((Quadrant << 1) - Octant))))
 		{
-			desired_turn_angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
-			if (NORMALIZE_ANGLE(desired_turn_angle
-								- travel_angle + QUADRANT)
-				> HALF_CIRCLE)
+			desired_turn_angle = FacingToAngle(StarShipPtr->ShipFacing);
+			if (NormalizeAngle(desired_turn_angle
+							   - travel_angle + Quadrant)
+				> HalfCircle)
 			{
 				desired_turn_angle = travel_angle;
 			}
 			if (ShipPtr->thrust_wait == 0)
 			{
-				maneuver_state |= THRUST;
+				maneuver_state |= ThrustFlag;
 			}
 		}
 
@@ -964,12 +962,12 @@ void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 	{
 		uint16_t WRange {};
 
-		WRange = WEAPON_RANGE(
+		WRange = GetWeaponRange(
 			&RDPtr->cyborg_control);
 
-		cone_of_fire = NORMALIZE_ANGLE(desired_turn_angle
-									   - EvalDescPtr->facing + OCTANT);
-		if (OtherObjPtr->state_flags & PLAYER_SHIP)
+		cone_of_fire = NormalizeAngle(desired_turn_angle
+									  - EvalDescPtr->facing + Octant);
+		if (OtherObjPtr->state_flags & PlayerShip)
 		{
 			uint16_t fire_flags {};
 			uint16_t ship_flags {};
@@ -978,27 +976,27 @@ void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 
 			GetElementStarShip(OtherObjPtr, &EnemyStarShipPtr);
 			ship_flags = EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags;
-			for (fire_flags = FIRES_FORE, facing = EvalDescPtr->facing;
-				 fire_flags <= FIRES_LEFT;
-				 fire_flags <<= 1, facing += QUADRANT)
+			for (fire_flags = FiresFore, facing = EvalDescPtr->facing;
+				 fire_flags <= FiresLeft;
+				 fire_flags <<= 1, facing += Quadrant)
 			{
 				if (
 					/* he's dangerous in this direction */
 					(ship_flags & fire_flags)
 					/* he's facing direction you want to go */
-					&& (cone_of_fire = NORMALIZE_ANGLE(
-							desired_turn_angle - facing + OCTANT))
-						   <= QUADRANT
+					&& (cone_of_fire = NormalizeAngle(
+							desired_turn_angle - facing + Octant))
+						   <= Quadrant
 					/* he's moving */
 					&& ((other_delta_x != 0 || other_delta_y != 0)
 						/* he's coasting backwards */
-						&& NORMALIZE_ANGLE(
-							   (GetVelocityTravelAngle(&OtherVelocity) + HALF_CIRCLE)
-							   - facing + OCTANT)
-							   <= QUADRANT))
+						&& NormalizeAngle(
+							   (GetVelocityTravelAngle(&OtherVelocity) + HalfCircle)
+							   - facing + Octant)
+							   <= Quadrant))
 				{
 					/* need to be close for a kill */
-					if (WRange < RES_SCALE(LONG_RANGE_WEAPON)
+					if (WRange < ResScale(LongRangeWeapon)
 						&& EvalDescPtr->which_turn <= 32)
 					{
 						/* catch him on the back side */
@@ -1019,23 +1017,23 @@ void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 
 		if (
 #ifdef NOTYET
-			WRange < RES_SCALE(LONG_RANGE_WEAPON)
+			WRange < ResScale(LongRangeWeapon)
 			&&
 #endif /* NOTYET */
 			/* not at full speed */
 			!(StarShipPtr->cur_status_flags
-			  & (SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED))
+			  & (ShipAtMaxSpeed | ShipBeyondMaxSpeed))
 			&& (PlotIntercept(
-					ShipPtr, OtherObjPtr, 40, RES_SCALE(CLOSE_RANGE_WEAPON) << 1)
+					ShipPtr, OtherObjPtr, 40, ResScale(CloseRangeWeapon) << 1)
 #ifdef NOTYET
 				|| (
 					/* object's facing direction you want to go */
-					cone_of_fire <= QUADRANT
+					cone_of_fire <= Quadrant
 					/* and you're basically going in that direction */
-					&& (travel_angle == FULL_CIRCLE
-						|| NORMALIZE_ANGLE(travel_angle
-										   - desired_thrust_angle + QUADRANT)
-							   <= HALF_CIRCLE)
+					&& (travel_angle == FullCircle
+						|| NormalizeAngle(travel_angle
+										  - desired_thrust_angle + Quadrant)
+							   <= HalfCircle)
 					/* and object's in range */
 					&& PlotIntercept(ShipPtr, OtherObjPtr, 1, WRange))
 #endif /* NOTYET */
@@ -1043,11 +1041,11 @@ void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 		{
 			if (
 				/* pointed straight at him */
-				NORMALIZE_ANGLE(desired_thrust_angle
-								- FACING_TO_ANGLE(StarShipPtr->ShipFacing) + OCTANT)
-					<= QUADRANT
+				NormalizeAngle(desired_thrust_angle
+							   - FacingToAngle(StarShipPtr->ShipFacing) + Octant)
+					<= Quadrant
 				/* or not exposed to business end */
-				|| cone_of_fire > QUADRANT)
+				|| cone_of_fire > Quadrant)
 			{
 				desired_thrust_angle = desired_turn_angle;
 			}
@@ -1055,28 +1053,28 @@ void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 			{
 #ifdef NOTYET
 				if (
-					travel_angle != FULL_CIRCLE
-					&& NORMALIZE_ANGLE(travel_angle
-									   - desired_turn_angle + OCTANT)
-						   <= QUADRANT)
+					travel_angle != FullCircle
+					&& NormalizeAngle(travel_angle
+									  - desired_turn_angle + Octant)
+						   <= Quadrant)
 				{
 					desired_turn_angle =
-						NORMALIZE_ANGLE((EvalDescPtr->facing + HALF_CIRCLE)
-										+ (travel_angle - desired_turn_angle));
-					if (!(maneuver_state & (LEFT | RIGHT)))
+						NormalizeAngle((EvalDescPtr->facing + HalfCircle)
+									   + (travel_angle - desired_turn_angle));
+					if (!(maneuver_state & (LeftFlag | RightFlag)))
 					{
-						maneuver_state &= ~THRUST;
+						maneuver_state &= ~ThrustFlag;
 					}
 				}
 
-				if (maneuver_state & (LEFT | RIGHT))
+				if (maneuver_state & (LeftFlag | RightFlag))
 				{
 					TurnShip(ShipPtr, desired_turn_angle);
-					maneuver_state &= ~(LEFT | RIGHT);
+					maneuver_state &= ~(LeftFlag | RightFlag);
 				}
 #endif /* NOTYET */
 
-				desired_thrust_angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
+				desired_thrust_angle = FacingToAngle(StarShipPtr->ShipFacing);
 				desired_turn_angle = desired_thrust_angle;
 			}
 		}
@@ -1092,34 +1090,34 @@ void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 			if (RDPtr->characteristics.thrust_increment != RDPtr->characteristics.max_thrust
 				/* and already at full speed */
 				&& (StarShipPtr->cur_status_flags
-					& (SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED))
+					& (ShipAtMaxSpeed | ShipBeyondMaxSpeed))
 				/* and facing away from enemy */
-				&& (NORMALIZE_ANGLE(desired_turn_angle
-									- ARCTAN(ship_delta_x, ship_delta_y)
-									+ (OCTANT + 2))
-						<= ((OCTANT + 2) << 1)
+				&& (NormalizeAngle(desired_turn_angle
+								   - ARCTAN(ship_delta_x, ship_delta_y)
+								   + (Octant + 2))
+						<= ((Octant + 2) << 1)
 					/* or not on collision course */
 					|| !PlotIntercept(
-						ShipPtr, OtherObjPtr, 30, RES_SCALE(CLOSE_RANGE_WEAPON) << 1)))
+						ShipPtr, OtherObjPtr, 30, ResScale(CloseRangeWeapon) << 1)))
 			{
-				maneuver_state &= ~THRUST;
+				maneuver_state &= ~ThrustFlag;
 			}
 			/* veer off */
 			else if (cone_of_fire == 1
 					 || RDPtr->characteristics.thrust_increment != RDPtr->characteristics.max_thrust)
 			{
-				if (maneuver_state & (LEFT | RIGHT))
+				if (maneuver_state & (LeftFlag | RightFlag))
 				{
 					TurnShip(ShipPtr, desired_turn_angle);
-					maneuver_state &= ~(LEFT | RIGHT);
+					maneuver_state &= ~(LeftFlag | RightFlag);
 				}
 
-				if (NORMALIZE_ANGLE(desired_thrust_angle
-									- ARCTAN(ship_delta_x, ship_delta_y)
-									+ (OCTANT + 2))
-					<= ((OCTANT + 2) << 1))
+				if (NormalizeAngle(desired_thrust_angle
+								   - ARCTAN(ship_delta_x, ship_delta_y)
+								   + (Octant + 2))
+					<= ((Octant + 2) << 1))
 				{
-					desired_thrust_angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
+					desired_thrust_angle = FacingToAngle(StarShipPtr->ShipFacing);
 				}
 				else
 				{
@@ -1130,12 +1128,12 @@ void Entice(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 	}
 
 DoManeuver:
-	if (maneuver_state & (LEFT | RIGHT))
+	if (maneuver_state & (LeftFlag | RightFlag))
 	{
 		TurnShip(ShipPtr, desired_thrust_angle);
 	}
 
-	if (maneuver_state & THRUST)
+	if (maneuver_state & ThrustFlag)
 	{
 		ThrustShip(ShipPtr, desired_thrust_angle);
 	}
@@ -1147,8 +1145,7 @@ void Avoid(ELEMENT* ShipPtr, EVALUATE_DESC* EvalDescPtr)
 	(void)EvalDescPtr; /* Satisfying compiler (unused parameter) */
 }
 
-BATTLE_INPUT_STATE
-tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
+BATTLE_INPUT_STATE tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 {
 	ELEMENT* ShipPtr {};
 	ELEMENT Ship;
@@ -1170,7 +1167,7 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 
 	LockElement(StarShipPtr->hShip, &ShipPtr);
 	if (RDPtr->ship_info.crew_level == 0
-		|| GetPrimType(&DisplayArray[ShipPtr->PrimIndex]) == NO_PRIM)
+		|| GetPrimType(&DisplayArray[ShipPtr->PrimIndex]) == NoPrim)
 	{
 		UnlockElement(StarShipPtr->hShip);
 		return (0);
@@ -1184,8 +1181,8 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 	}
 
 #ifdef DEBUG_CYBORG
-	if (!(ShipPtr->state_flags & FINITE_LIFE)
-		&& ShipPtr->life_span == NORMAL_LIFE)
+	if (!(ShipPtr->state_flags & FiniteLife)
+		&& ShipPtr->life_span == NormalLife)
 	{
 		ShipPtr->life_span += 2; /* make ship invulnerable */
 	}
@@ -1204,17 +1201,17 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 	--ConcernCounter;
 
 	UltraManeuverable = (bool)(RDPtr->characteristics.thrust_increment == RDPtr->characteristics.max_thrust
-							   && MANEUVERABILITY(&RDPtr->cyborg_control) >= RESOLUTION_COMPENSATED(MEDIUM_SHIP));
+							   && Maneuverability(&RDPtr->cyborg_control) >= ResolutionCompensated(MediumShip));
 
 	if (Ship.turn_wait == 0)
 	{
 		ShipMoved = false;
-		StarShipPtr->ship_input_state &= ~(LEFT | RIGHT);
+		StarShipPtr->ship_input_state &= ~(LeftFlag | RightFlag);
 	}
 	if (Ship.thrust_wait == 0)
 	{
 		ShipMoved = false;
-		StarShipPtr->ship_input_state &= ~THRUST;
+		StarShipPtr->ship_input_state &= ~ThrustFlag;
 	}
 
 	for (hElement = GetHeadElement();
@@ -1235,9 +1232,9 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 			   - Ship.next.location.x;
 			dy = ed.ObjectPtr->next.location.y
 			   - Ship.next.location.y;
-			dx = WRAP_DELTA_X(dx);
-			dy = WRAP_DELTA_Y(dy);
-			if (GRAVITY_MASS(ed.ObjectPtr->mass_points))
+			dx = WrapDeltaX(dx);
+			dy = WrapDeltaY(dy);
+			if (GravityMass(ed.ObjectPtr->mass_points))
 			{
 				uint16_t maneuver_turn {};
 				uint16_t ship_bounds {};
@@ -1247,7 +1244,7 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 				{
 					maneuver_turn = 16;
 				}
-				else if (MANEUVERABILITY(&RDPtr->cyborg_control) <= RESOLUTION_COMPENSATED(MEDIUM_SHIP))
+				else if (Maneuverability(&RDPtr->cyborg_control) <= ResolutionCompensated(MediumShip))
 				{
 					maneuver_turn = 48;
 				}
@@ -1262,14 +1259,14 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 				ship_bounds = (uint16_t)(ship_footprint.extent.width
 										 + ship_footprint.extent.height);
 
-				if (!ShipMoved && (ed.which_turn = PlotIntercept(ed.ObjectPtr, &Ship, maneuver_turn, DISPLAY_TO_WORLD(RES_SCALE(30) + (ship_bounds * 3 /* << 2 */)))))
+				if (!ShipMoved && (ed.which_turn = PlotIntercept(ed.ObjectPtr, &Ship, maneuver_turn, DisplayToWorld(ResScale(30) + (ship_bounds * 3 /* << 2 */)))))
 				{
 					if (ed.which_turn > 1
 						|| PlotIntercept(ed.ObjectPtr, &Ship, 1,
-										 DISPLAY_TO_WORLD(RES_SCALE(35) + ship_bounds))
+										 DisplayToWorld(ResScale(35) + ship_bounds))
 						|| PlotIntercept(ed.ObjectPtr, &Ship,
 										 maneuver_turn << 1,
-										 DISPLAY_TO_WORLD(RES_SCALE(40) + ship_bounds))
+										 DisplayToWorld(ResScale(40) + ship_bounds))
 							   > 1)
 					{
 						ed.facing = ARCTAN(-dx, -dy);
@@ -1294,7 +1291,7 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 					}
 				}
 			}
-			else if (ed.ObjectPtr->state_flags & PLAYER_SHIP)
+			else if (ed.ObjectPtr->state_flags & PlayerShip)
 			{
 				GetElementStarShip(ed.ObjectPtr, &EnemyStarShipPtr);
 				EnemyRDPtr = EnemyStarShipPtr->RaceDescPtr;
@@ -1303,9 +1300,9 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 					InitCyborg(EnemyStarShipPtr);
 				}
 
-				ed.which_turn = WORLD_TO_TURN(
+				ed.which_turn = WorldToTurn(
 					square_root((long)dx * dx + (long)dy * dy));
-				if (RES_DESCALE(ed.which_turn) > ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn)
+				if (ResDescale(ed.which_turn) > ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn)
 				{
 					UnlockElement(hElement);
 					continue;
@@ -1315,37 +1312,37 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 					ed.which_turn = 1;
 				}
 
-				ed.which_turn >>= RESOLUTION_FACTOR;
+				ed.which_turn >>= resolutionFactor;
 
 				ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr = ed.ObjectPtr;
 				ObjectsOfConcern[ENEMY_SHIP_INDEX].facing =
 #ifdef MAYBE
-					OBJECT_CLOAKED(ed.ObjectPtr) ?
+					ObjectCloaked(ed.ObjectPtr) ?
 						GetVelocityTravelAngle(&ed.ObjectPtr->velocity) :
 #endif /* MAYBE */
-						FACING_TO_ANGLE(EnemyStarShipPtr->ShipFacing);
+						FacingToAngle(EnemyStarShipPtr->ShipFacing);
 				ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn = ed.which_turn;
 
 				if (ShipMoved
-					|| ed.ObjectPtr->mass_points > MAX_SHIP_MASS
-					|| (WEAPON_RANGE(&RDPtr->cyborg_control) < RES_SCALE(LONG_RANGE_WEAPON)
-						&& (WEAPON_RANGE(&RDPtr->cyborg_control) <= RES_SCALE(CLOSE_RANGE_WEAPON)
-							|| (WEAPON_RANGE(&EnemyRDPtr->cyborg_control) >= RES_SCALE(LONG_RANGE_WEAPON)
-								&& (EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & SEEKING_WEAPON))
+					|| ed.ObjectPtr->mass_points > MaxShipMass
+					|| (GetWeaponRange(&RDPtr->cyborg_control) < ResScale(LongRangeWeapon)
+						&& (GetWeaponRange(&RDPtr->cyborg_control) <= ResScale(CloseRangeWeapon)
+							|| (GetWeaponRange(&EnemyRDPtr->cyborg_control) >= ResScale(LongRangeWeapon)
+								&& (EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & SeekingWeapon))
 							|| (
 #ifdef OLD
-								MANEUVERABILITY(&RDPtr->cyborg_control) < MANEUVERABILITY(&EnemyRDPtr->cyborg_control)
+								Maneuverability(&RDPtr->cyborg_control) < Maneuverability(&EnemyRDPtr->cyborg_control)
 #else  /* !OLD */
 								RDPtr->characteristics.max_thrust < EnemyRDPtr->characteristics.max_thrust
 #endif /* !OLD */
-								&& WEAPON_RANGE(&RDPtr->cyborg_control) < WEAPON_RANGE(&EnemyRDPtr->cyborg_control)))))
+								&& GetWeaponRange(&RDPtr->cyborg_control) < GetWeaponRange(&EnemyRDPtr->cyborg_control)))))
 					ObjectsOfConcern[ENEMY_SHIP_INDEX].MoveState = PURSUE;
 				else
 				{
 					ObjectsOfConcern[ENEMY_SHIP_INDEX].MoveState = ENTICE;
 				}
 
-				if ((EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & IMMEDIATE_WEAPON)
+				if ((EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & ImmediateWeapon)
 					&& ship_weapons(ed.ObjectPtr, &Ship, 0))
 				{
 					ed.which_turn = 1;
@@ -1357,9 +1354,9 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 			}
 			else if (ed.ObjectPtr->pParent == 0)
 			{
-				if (!(ed.ObjectPtr->state_flags & FINITE_LIFE))
+				if (!(ed.ObjectPtr->state_flags & FiniteLife))
 				{
-					ed.which_turn = RES_DESCALE(WORLD_TO_TURN(
+					ed.which_turn = ResDescale(WorldToTurn(
 						square_root((long)dx * dx + (long)dy * dy)));
 
 					if (ed.which_turn < ObjectsOfConcern[FIRST_EMPTY_INDEX].which_turn)
@@ -1379,24 +1376,24 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 			{
 				GetElementStarShip(ed.ObjectPtr, &EnemyStarShipPtr);
 				EnemyRDPtr = EnemyStarShipPtr->RaceDescPtr;
-				if (((EnemyRDPtr->ship_info.ship_flags & SEEKING_WEAPON)
+				if (((EnemyRDPtr->ship_info.ship_flags & SeekingWeapon)
 					 && ed.ObjectPtr->next.image.farray != EnemyRDPtr->ship_data.special)
-					|| ((EnemyRDPtr->ship_info.ship_flags & SEEKING_SPECIAL)
+					|| ((EnemyRDPtr->ship_info.ship_flags & SeekingSpecial)
 						&& ed.ObjectPtr->next.image.farray == EnemyRDPtr->ship_data.special))
 				{
-					if ((!(ed.ObjectPtr->state_flags & (FINITE_LIFE | CREW_OBJECT))
-						 && RDPtr->characteristics.max_thrust > DISPLAY_TO_WORLD(RES_SCALE(8)))
-						|| NORMALIZE_ANGLE(GetVelocityTravelAngle(
-											   &ed.ObjectPtr->velocity)
-										   - ARCTAN(-dx, -dy)
-										   + QUADRANT)
-							   > HALF_CIRCLE)
+					if ((!(ed.ObjectPtr->state_flags & (FiniteLife | CrewObject))
+						 && RDPtr->characteristics.max_thrust > DisplayToWorld(ResScale(8)))
+						|| NormalizeAngle(GetVelocityTravelAngle(
+											  &ed.ObjectPtr->velocity)
+										  - ARCTAN(-dx, -dy)
+										  + Quadrant)
+							   > HalfCircle)
 					{
 						ed.which_turn = 0;
 					}
 					else
 					{
-						ed.which_turn = RES_DESCALE(WORLD_TO_TURN(
+						ed.which_turn = ResDescale(WorldToTurn(
 							square_root((long)dx * dx + (long)dy * dy)));
 
 						ed.MoveState = ENTICE;
@@ -1422,7 +1419,7 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 					ed.which_turn =
 						PlotIntercept(ed.ObjectPtr,
 									  &Ship, ed.ObjectPtr->life_span,
-									  DISPLAY_TO_WORLD(RES_SCALE(40)));
+									  DisplayToWorld(ResScale(40)));
 					ed.MoveState = AVOID;
 				}
 
@@ -1437,13 +1434,13 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 					ObjectsOfConcern[ENEMY_WEAPON_INDEX] = ed;
 				}
 			}
-			else if ((ed.ObjectPtr->state_flags & CREW_OBJECT)
-					 && ((!(ed.ObjectPtr->state_flags & IGNORE_SIMILAR)
+			else if ((ed.ObjectPtr->state_flags & CrewObject)
+					 && ((!(ed.ObjectPtr->state_flags & IgnoreSimilar)
 						  && elementsOfSamePlayer(ed.ObjectPtr, &Ship))
 						 || ed.ObjectPtr->preprocess_func == crew_preprocess)
 					 && ObjectsOfConcern[CREW_OBJECT_INDEX].which_turn > 1)
 			{
-				ed.which_turn = RES_DESCALE(WORLD_TO_TURN(
+				ed.which_turn = ResDescale(WorldToTurn(
 					square_root((long)dx * dx + (long)dy * dy)));
 
 				if (ed.which_turn == 0)
@@ -1468,31 +1465,31 @@ tactical_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 	RDPtr->cyborg_control.intelligence_func(&Ship, ObjectsOfConcern,
 											ConcernCounter);
 #ifdef DEBUG_CYBORG
-	StarShipPtr->ship_input_state &= ~SPECIAL;
+	StarShipPtr->ship_input_state &= ~SpecialFlag;
 #endif /* DEBUG_CYBORG */
 
 	StarShipPtr->ShipFacing = ShipFacing;
 	{
 		BATTLE_INPUT_STATE InputState {0};
-		if (StarShipPtr->ship_input_state & LEFT)
+		if (StarShipPtr->ship_input_state & LeftFlag)
 		{
-			InputState |= BATTLE_LEFT;
+			InputState |= BattleLeft;
 		}
-		else if (StarShipPtr->ship_input_state & RIGHT)
+		else if (StarShipPtr->ship_input_state & RightFlag)
 		{
-			InputState |= BATTLE_RIGHT;
+			InputState |= BattleRight;
 		}
-		if (StarShipPtr->ship_input_state & THRUST)
+		if (StarShipPtr->ship_input_state & ThrustFlag)
 		{
-			InputState |= BATTLE_THRUST;
+			InputState |= BattleThrust;
 		}
-		if (StarShipPtr->ship_input_state & WEAPON)
+		if (StarShipPtr->ship_input_state & WeaponFlag)
 		{
-			InputState |= BATTLE_WEAPON;
+			InputState |= BattleWeapon;
 		}
-		if (StarShipPtr->ship_input_state & SPECIAL)
+		if (StarShipPtr->ship_input_state & SpecialFlag)
 		{
-			InputState |= BATTLE_SPECIAL;
+			InputState |= BattleSpecial;
 		}
 
 		(void)context;

@@ -195,8 +195,7 @@ const static Scale_PlatDef_t
 };
 
 
-TFB_ScaleFunc
-Scale_PrepPlatform(uqm::GfxFlags flags, const SDL_PixelFormatDetails* fmt)
+TFB_ScaleFunc Scale_PrepPlatform(uqm::GfxFlags flags, const SDL_PixelFormatDetails* fmt)
 {
 	const Scale_PlatDef_t* pdef {};
 	const Scale_FuncDef_t* fdef {};

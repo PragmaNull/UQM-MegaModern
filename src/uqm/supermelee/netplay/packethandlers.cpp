@@ -33,7 +33,7 @@
 #include "../../controls.h"
 // for BATTLE_INPUT_STATE
 #include "../../init.h"
-// for NUM_PLAYERS
+// for NumPlayers
 #include "../../globdata.h"
 // for GLOBAL
 #include "../melee.h"
@@ -46,8 +46,7 @@
 #include "uqm/random/UQMRandom.h"
 
 
-static bool
-testNetState(bool condition, PacketType type)
+static bool testNetState(bool condition, PacketType type)
 {
 	if (!condition)
 	{
@@ -58,9 +57,8 @@ testNetState(bool condition, PacketType type)
 	return condition;
 }
 
-static int
-versionCompare(int major1, int minor1, float patch1,
-			   int major2, int minor2, float patch2)
+static int versionCompare(int major1, int minor1, float patch1,
+						  int major2, int minor2, float patch2)
 {
 	if (major1 < major2)
 	{
@@ -108,7 +106,7 @@ NetResult PacketHandler_Init(NetConnection* conn, const Packet_Init* packet)
 		return uqm::failure(uqstl::errc::bad_message);
 	}
 
-	if (packet->protoVersion.major != NETPLAY_PROTOCOL_VERSION_MAJOR || packet->protoVersion.minor != NETPLAY_PROTOCOL_VERSION_MINOR)
+	if (packet->protoVersion.major != NetplayProtocolVersionMajor || packet->protoVersion.minor != NetplayProtocolVersionMinor)
 	{
 		sendAbort(conn, AbortReason_versionMismatch);
 		abortFeedback(conn, AbortReason_versionMismatch);
@@ -118,8 +116,8 @@ NetResult PacketHandler_Init(NetConnection* conn, const Packet_Init* packet)
 	}
 
 	if (versionCompare(packet->uqmVersion.major, packet->uqmVersion.minor,
-					   packet->uqmVersion.patch, NETPLAY_MIN_UQM_VERSION_MAJOR,
-					   NETPLAY_MIN_UQM_VERSION_MINOR, NETPLAY_MIN_UQM_VERSION_PATCH)
+					   packet->uqmVersion.patch, NetplayMinUqmVersionMajor,
+					   NetplayMinUqmVersionMinor, NetplayMinUqmVersionPatch)
 		< 0)
 	{
 		sendAbort(conn, AbortReason_versionMismatch);
@@ -127,8 +125,8 @@ NetResult PacketHandler_Init(NetConnection* conn, const Packet_Init* packet)
 		uqm::log::error("Remote side is running a version of UQM that "
 						"is too old ({}.{}.{}; {}.{}.{} is required).\n",
 						packet->uqmVersion.major, packet->uqmVersion.minor,
-						packet->uqmVersion.patch, NETPLAY_MIN_UQM_VERSION_MAJOR,
-						NETPLAY_MIN_UQM_VERSION_MINOR, NETPLAY_MIN_UQM_VERSION_PATCH);
+						packet->uqmVersion.patch, NetplayMinUqmVersionMajor,
+						NetplayMinUqmVersionMinor, NetplayMinUqmVersionPatch);
 		return uqm::failure(uqstl::errc::function_not_supported);
 	}
 
@@ -162,8 +160,7 @@ NetResult PacketHandler_Ack(NetConnection* conn, const Packet_Ack* packet)
 
 // Convert the side indication relative to a remote party to
 // a local player number.
-static inline int
-localSide(NetConnection* conn, NetplaySide side)
+static inline int localSide(NetConnection* conn, NetplaySide side)
 {
 	if (side == NetplaySide_local)
 	{
@@ -244,15 +241,15 @@ NetResult PacketHandler_Fleet(NetConnection* conn, const Packet_Fleet* packet)
 
 		if (!MeleeShip_valid(ship))
 		{
-			uqm::log::warn("Invalid ship type number {} (max = {}).", static_cast<int>(ship), NUM_MELEE_SHIPS - 1);
+			uqm::log::warn("Invalid ship type number {} (max = {}).", static_cast<int>(ship), NumMeleeShips - 1);
 			return uqm::failure(uqstl::errc::bad_message);
 		}
 
-		if (index >= MELEE_FLEET_SIZE)
+		if (index >= MeleeFleetSize)
 		{
 			uqm::log::warn("Invalid ship position number {} "
 						   "(max = {}).\n",
-						   index, MELEE_FLEET_SIZE - 1);
+						   index, MeleeFleetSize - 1);
 			return uqm::failure(uqstl::errc::bad_message);
 		}
 
@@ -297,11 +294,11 @@ NetResult PacketHandler_TeamName(NetConnection* conn, const Packet_TeamName* pac
 	// The -1 is for not counting the terminating '\0'.
 
 	{
-		char buf[MAX_TEAM_CHARS + 1];
+		char buf[MaxTeamChars + 1];
 
-		if (nameLen > MAX_TEAM_CHARS)
+		if (nameLen > MaxTeamChars)
 		{
-			nameLen = MAX_TEAM_CHARS;
+			nameLen = MaxTeamChars;
 		}
 		memcpy(buf, teamName(packet), nameLen);
 		buf[nameLen] = '\0';
@@ -314,8 +311,7 @@ NetResult PacketHandler_TeamName(NetConnection* conn, const Packet_TeamName* pac
 	return {};
 }
 
-static void
-handshakeComplete(NetConnection* conn)
+static void handshakeComplete(NetConnection* conn)
 {
 	assert(!conn->stateFlags.handshake.localOk);
 	assert(!conn->stateFlags.handshake.remoteOk);

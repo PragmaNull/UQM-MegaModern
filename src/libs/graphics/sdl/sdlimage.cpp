@@ -24,8 +24,7 @@
 #include <SDL3/SDL_iostream.h>
 #include "png2sdl.h"
 
-SDL_Surface*
-sdl_loadImage(const uqm::io::Directory& dir, const char* fileName)
+SDL_Surface* sdl_loadImage(const uqm::io::Directory& dir, const char* fileName)
 {
 	const uqstl::optional<uqstl::vector<uqstl::byte>> data {uqm::readBinaryFile(dir, fileName)};
 	if (!data)

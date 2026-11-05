@@ -2,18 +2,18 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define HORN_BIG_MASK_PMAP_ANIM "ship.thraddash.graphics.horn.large"
-#define HORN_MED_MASK_PMAP_ANIM "ship.thraddash.graphics.horn.medium"
-#define HORN_SML_MASK_PMAP_ANIM "ship.thraddash.graphics.horn.small"
-#define NAPALM_BIG_MASK_PMAP_ANIM "ship.thraddash.graphics.napalm.large"
-#define NAPALM_MED_MASK_PMAP_ANIM "ship.thraddash.graphics.napalm.medium"
-#define NAPALM_SML_MASK_PMAP_ANIM "ship.thraddash.graphics.napalm.small"
-#define THRADDASH_BIG_MASK_PMAP_ANIM "ship.thraddash.graphics.torch.large"
-#define THRADDASH_CAPTAIN_MASK_PMAP_ANIM "ship.thraddash.graphics.captain"
-#define THRADDASH_ICON_MASK_PMAP_ANIM "ship.thraddash.icons"
-#define THRADDASH_MED_MASK_PMAP_ANIM "ship.thraddash.graphics.torch.medium"
-#define THRADDASH_MICON_MASK_PMAP_ANIM "ship.thraddash.meleeicons"
-#define THRADDASH_RACE_STRINGS "ship.thraddash.text"
-#define THRADDASH_SHIP_SOUNDS "ship.thraddash.sounds"
-#define THRADDASH_SML_MASK_PMAP_ANIM "ship.thraddash.graphics.torch.small"
-#define THRADDASH_VICTORY_SONG "ship.thraddash.ditty"
+inline constexpr uqgsl::czstring HornBigMaskPmapAnim {"ship.thraddash.graphics.horn.large"};
+inline constexpr uqgsl::czstring HornMedMaskPmapAnim {"ship.thraddash.graphics.horn.medium"};
+inline constexpr uqgsl::czstring HornSmlMaskPmapAnim {"ship.thraddash.graphics.horn.small"};
+inline constexpr uqgsl::czstring NapalmBigMaskPmapAnim {"ship.thraddash.graphics.napalm.large"};
+inline constexpr uqgsl::czstring NapalmMedMaskPmapAnim {"ship.thraddash.graphics.napalm.medium"};
+inline constexpr uqgsl::czstring NapalmSmlMaskPmapAnim {"ship.thraddash.graphics.napalm.small"};
+inline constexpr uqgsl::czstring ThraddashBigMaskPmapAnim {"ship.thraddash.graphics.torch.large"};
+inline constexpr uqgsl::czstring ThraddashCaptainMaskPmapAnim {"ship.thraddash.graphics.captain"};
+inline constexpr uqgsl::czstring ThraddashIconMaskPmapAnim {"ship.thraddash.icons"};
+inline constexpr uqgsl::czstring ThraddashMedMaskPmapAnim {"ship.thraddash.graphics.torch.medium"};
+inline constexpr uqgsl::czstring ThraddashMiconMaskPmapAnim {"ship.thraddash.meleeicons"};
+inline constexpr uqgsl::czstring ThraddashRaceStrings {"ship.thraddash.text"};
+inline constexpr uqgsl::czstring ThraddashShipSounds {"ship.thraddash.sounds"};
+inline constexpr uqgsl::czstring ThraddashSmlMaskPmapAnim {"ship.thraddash.graphics.torch.small"};
+inline constexpr uqgsl::czstring ThraddashVictorySong {"ship.thraddash.ditty"};

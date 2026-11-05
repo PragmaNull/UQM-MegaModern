@@ -2,19 +2,19 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define MMRNMHRM_BIG_MASK_PMAP_ANIM "ship.mmrnmhrm.graphics.xform.large"
-#define MMRNMHRM_CAPTAIN_MASK_PMAP_ANIM "ship.mmrnmhrm.graphics.captain"
-#define MMRNMHRM_ICON_MASK_PMAP_ANIM "ship.mmrnmhrm.icons"
-#define MMRNMHRM_MED_MASK_PMAP_ANIM "ship.mmrnmhrm.graphics.xform.medium"
-#define MMRNMHRM_MICON_MASK_PMAP_ANIM "ship.mmrnmhrm.meleeicons"
-#define MMRNMHRM_MICON_MASK_PMAP_ANIM_Y "ship.mmrnmhrm.meleeicons.y"
-#define MMRNMHRM_RACE_STRINGS "ship.mmrnmhrm.text"
-#define MMRNMHRM_SHIP_SOUNDS "ship.mmrnmhrm.sounds"
-#define MMRNMHRM_SML_MASK_PMAP_ANIM "ship.mmrnmhrm.graphics.xform.small"
-#define MMRNMHRM_VICTORY_SONG "ship.mmrnmhrm.ditty"
-#define TORP_BIG_MASK_PMAP_ANIM "ship.mmrnmhrm.graphics.torpedo.large"
-#define TORP_MED_MASK_PMAP_ANIM "ship.mmrnmhrm.graphics.torpedo.medium"
-#define TORP_SML_MASK_PMAP_ANIM "ship.mmrnmhrm.graphics.torpedo.small"
-#define YWING_BIG_MASK_PMAP_ANIM "ship.mmrnmhrm.graphics.ywing.large"
-#define YWING_MED_MASK_PMAP_ANIM "ship.mmrnmhrm.graphics.ywing.medium"
-#define YWING_SML_MASK_PMAP_ANIM "ship.mmrnmhrm.graphics.ywing.small"
+inline constexpr uqgsl::czstring MmrnmhrmBigMaskPmapAnim {"ship.mmrnmhrm.graphics.xform.large"};
+inline constexpr uqgsl::czstring MmrnmhrmCaptainMaskPmapAnim {"ship.mmrnmhrm.graphics.captain"};
+inline constexpr uqgsl::czstring MmrnmhrmIconMaskPmapAnim {"ship.mmrnmhrm.icons"};
+inline constexpr uqgsl::czstring MmrnmhrmMedMaskPmapAnim {"ship.mmrnmhrm.graphics.xform.medium"};
+inline constexpr uqgsl::czstring MmrnmhrmMiconMaskPmapAnim {"ship.mmrnmhrm.meleeicons"};
+
+inline constexpr uqgsl::czstring MmrnmhrmRaceStrings {"ship.mmrnmhrm.text"};
+inline constexpr uqgsl::czstring MmrnmhrmShipSounds {"ship.mmrnmhrm.sounds"};
+inline constexpr uqgsl::czstring MmrnmhrmSmlMaskPmapAnim {"ship.mmrnmhrm.graphics.xform.small"};
+inline constexpr uqgsl::czstring MmrnmhrmVictorySong {"ship.mmrnmhrm.ditty"};
+inline constexpr uqgsl::czstring TorpBigMaskPmapAnim {"ship.mmrnmhrm.graphics.torpedo.large"};
+inline constexpr uqgsl::czstring TorpMedMaskPmapAnim {"ship.mmrnmhrm.graphics.torpedo.medium"};
+inline constexpr uqgsl::czstring TorpSmlMaskPmapAnim {"ship.mmrnmhrm.graphics.torpedo.small"};
+inline constexpr uqgsl::czstring YwingBigMaskPmapAnim {"ship.mmrnmhrm.graphics.ywing.large"};
+inline constexpr uqgsl::czstring YwingMedMaskPmapAnim {"ship.mmrnmhrm.graphics.ywing.medium"};
+inline constexpr uqgsl::czstring YwingSmlMaskPmapAnim {"ship.mmrnmhrm.graphics.ywing.small"};

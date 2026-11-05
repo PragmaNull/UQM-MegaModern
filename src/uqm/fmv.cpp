@@ -33,7 +33,7 @@
 #include "gameopt.h"
 #include "build.h"
 
-#define MAX_LOAD_ENTRIES 40
+static constexpr auto MaxLoadEntries {40};
 
 void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
 {
@@ -60,13 +60,13 @@ void DoShipSpin(uint16_t index, MUSIC_REF hMusic)
 
 	if (isPC(uqm::UQMOptions::read().whichIntro))
 	{
-		if (IS_PAD || OutfitOrShipyard == 3)
+		if (IsPad() || OutfitOrShipyard == 3)
 		{
 			SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 4));
 			FlushColorXForms();
 		}
 
-		ShowPresentation(ACCESSDATA_STRTAB);
+		ShowPresentation(AccessdataStrtabRes);
 	}
 
 	// TODO: It would be nice to have better resource names for these.
@@ -111,7 +111,7 @@ void SplashScreen(void (*DoProcessing)(TimeCount TimeOut))
 		SetContext(ScreenContext);
 		s.origin.x = s.origin.y = 0;
 
-		s.frame = CaptureDrawable(LoadGraphic(TITLE_ANIM));
+		s.frame = CaptureDrawable(LoadGraphic(TitleAnimRes));
 
 		if (uqm::UQMOptions::read().flagshipColor == uqm::EmulationMode::Console3DO)
 		{
@@ -163,7 +163,7 @@ void SplashScreen(void (*DoProcessing)(TimeCount TimeOut))
 
 void Introduction(void)
 {
-	ShowPresentation(INTROPRES_STRTAB);
+	ShowPresentation(IntropresStrtabRes);
 	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 }
 
@@ -173,7 +173,7 @@ void Victory(void)
 
 	/* by default we do 3DO cinematics; or PC slides when 3DO files are
 	 * not present */
-	ShowPresentation(FINALPRES_STRTAB);
+	ShowPresentation(FinalpresStrtabRes);
 
 	FadeScreen(FadeAllToBlack, TimePeriod {});
 }
@@ -188,18 +188,18 @@ void GameOver(uint8_t DeathType)
 	switch (DeathType)
 	{
 		case DEATH_MARCH:
-			ShowPresentation(DEATHMARCHPRES_STRTAB);
+			ShowPresentation(DeathmarchpresStrtabRes);
 			break;
 		case SUICIDE:
 			SleepThreadUntil(FadeScreen(FadeAllToWhite, c_gameSecond / 2));
-			ShowPresentation(SUICIDEPRES_STRTAB);
+			ShowPresentation(SuicidepresStrtabRes);
 			break;
 		case SURRENDERED:
-			ShowPresentation(SURRENDEREDPRES_STRTAB);
+			ShowPresentation(SurrenderedpresStrtabRes);
 			break;
 		case DIED_IN_BATTLE:
 		default:
-			ShowPresentation(DEFEATEDPRES_STRTAB);
+			ShowPresentation(DefeatedpresStrtabRes);
 			break;
 	}
 	FadeScreen(FadeAllToBlack, TimePeriod {});
@@ -207,19 +207,19 @@ void GameOver(uint8_t DeathType)
 
 void Logo(void)
 {
-	ShowPresentation(LOGOPRES_STRTAB);
+	ShowPresentation(LogopresStrtabRes);
 	FadeScreen(FadeAllToBlack, TimePeriod {});
 }
 
 void Drumall(void)
 {
-	ShowPresentation(DRUMALLPRES_STRTAB);
+	ShowPresentation(DrumallpresStrtabRes);
 	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 }
 
 void Reload(void)
 {
-	ShowPresentation(RELOADPRES_STRTAB);
+	ShowPresentation(ReloadpresStrtabRes);
 
 	ReloadGameContent();
 	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
@@ -232,20 +232,20 @@ void AdvanceLoadProgress(void)
 		GFXRECT r;
 		static uint16_t i = 0;
 
-		r.corner.x = RES_SCALE(16);
-		r.corner.y = CanvasHeight - DOS_BOOL_SCL(50, 30);
-		r.extent.height = RES_SCALE(15);
-		r.extent.width = RES_SCALE((i + 1) * 7);
+		r.corner.x = ResScale(16);
+		r.corner.y = CanvasHeight - DosBoolScl(50, 30);
+		r.extent.height = ResScale(15);
+		r.extent.width = ResScale((i + 1) * 7);
 
-		if (i == MAX_LOAD_ENTRIES)
+		if (i == MaxLoadEntries)
 		{
-			SetContextForeGroundColor(BUILD_COLOR_RGBA(0, 192, 0, 255));
+			SetContextForeGroundColor(BuildColorRgba(0, 192, 0, 255));
 			i = 0;
 		}
 		else
 		{
 			SetContextForeGroundColor(
-				BUILD_COLOR_RGBA(0, 128, 192, 255));
+				BuildColorRgba(0, 128, 192, 255));
 			i++;
 		}
 		DrawFilledRectangle(&r);

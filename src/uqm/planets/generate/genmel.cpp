@@ -64,19 +64,18 @@ const GenerateFunctions generateMelnormeFunctions = {
 };
 
 
-static bool
-GenerateMelnorme_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateMelnorme_initNpcs(SOLARSYS_STATE* solarSys)
 {
-	if ((EXTENDED && !GET_GAME_STATE(KOHR_AH_FRENZY))
-		|| !EXTENDED)
+	if ((IsExtended() && !uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
+		|| !IsExtended())
 	{
-		GLOBAL(BattleGroupRef) = GetMelnormeRef();
-		if (GLOBAL(BattleGroupRef) == 0)
+		uqm::gameState().game().BattleGroupRef = GetMelnormeRef();
+		if (uqm::gameState().game().BattleGroupRef == 0)
 		{
-			CloneShipFragment(MELNORME_SHIP, &GLOBAL(npc_built_ship_q), 0);
-			GLOBAL(BattleGroupRef) = PutGroupInfo(GROUPS_ADD_NEW, 1);
-			ReinitQueue(&GLOBAL(npc_built_ship_q));
-			SetMelnormeRef(GLOBAL(BattleGroupRef));
+			CloneShipFragment(MELNORME_SHIP, &uqm::gameState().game().npc_built_ship_q, 0);
+			uqm::gameState().game().BattleGroupRef = PutGroupInfo(GroupsAddNew, 1);
+			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+			SetMelnormeRef(uqm::gameState().game().BattleGroupRef);
 		}
 	}
 
@@ -85,22 +84,21 @@ GenerateMelnorme_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
 	GenerateDefault_generatePlanets(solarSys);
 
-	if (CurStarDescPtr->Index == MELNORME1_DEFINED)
+	if (CurStarDescPtr()->Index == MELNORME1_DEFINED)
 	{
 		pSunDesc->PlanetByte = 2;
 		pSunDesc->MoonByte = 0;
 
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		if (EXTENDED && pPlanet->NumPlanets < MAX_GEN_MOONS)
+		if (IsExtended() && pPlanet->NumPlanets < MaxGenMoons)
 		{
 			pPlanet->NumPlanets++;
 		}
@@ -114,7 +112,7 @@ GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 		}
 	}
 
-	if (CurStarDescPtr->Index == MELNORME7_DEFINED)
+	if (CurStarDescPtr()->Index == MELNORME7_DEFINED)
 	{
 		pSunDesc->PlanetByte = 3;
 
@@ -123,21 +121,20 @@ GenerateMelnorme_generatePlanets(SOLARSYS_STATE* solarSys)
 			pSunDesc->PlanetByte = PlanetByteGen(pSunDesc);
 			pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-			pPlanet->data_index = GenerateWorlds(ALL_ROCKY);
+			pPlanet->data_index = GenerateWorlds(AllRocky);
 		}
 	}
 
 	return true;
 }
 
-static bool
-GenerateMelnorme_generateMoons(SOLARSYS_STATE* solarSys,
-							   PLANET_DESC* planet)
+static bool GenerateMelnorme_generateMoons(SOLARSYS_STATE* solarSys,
+										   PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (EXTENDED && CurStarDescPtr->Index == MELNORME1_DEFINED
-		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
+	if (IsExtended() && CurStarDescPtr()->Index == MELNORME1_DEFINED
+		&& matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 
@@ -147,16 +144,15 @@ GenerateMelnorme_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
-								 PLANET_DESC* world)
+static bool GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
+											 PLANET_DESC* world)
 {
-	if (EXTENDED && CurStarDescPtr->Index == MELNORME1_DEFINED && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+	if (IsExtended() && CurStarDescPtr()->Index == MELNORME1_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		/* Starbase */
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(PRECURSOR_BASE_STRTAB);
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(PrecursorBaseStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		DoDiscoveryReport(MenuSounds);
@@ -167,12 +163,12 @@ GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
 		return true;
 	}
 
-	if (EXTENDED && CurStarDescPtr->Index == MELNORME7_DEFINED && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(STELE_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(STELE_STRTAB);
+			CaptureDrawable(LoadGraphic(SteleMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SteleStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 	}
 
@@ -181,12 +177,11 @@ GenerateMelnorme_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t
-GenerateMelnorme_generateEnergy(const SOLARSYS_STATE* solarSys,
-								const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateMelnorme_generateEnergy(const SOLARSYS_STATE* solarSys,
+												const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (EXTENDED && CurStarDescPtr->Index == MELNORME7_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateArtifact(
 			solarSys, whichNode, info);
@@ -195,11 +190,10 @@ GenerateMelnorme_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateMelnorme_pickupEnergy(SOLARSYS_STATE* solarSys,
-							  PLANET_DESC* world, uint16_t whichNode)
+static bool GenerateMelnorme_pickupEnergy(SOLARSYS_STATE* solarSys,
+										  PLANET_DESC* world, uint16_t whichNode)
 {
-	if (EXTENDED && CurStarDescPtr->Index == MELNORME7_DEFINED && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (IsExtended() && CurStarDescPtr()->Index == MELNORME7_DEFINED && matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		assert(whichNode == 0);
 
@@ -213,10 +207,9 @@ GenerateMelnorme_pickupEnergy(SOLARSYS_STATE* solarSys,
 	return false;
 }
 
-const char*
-SelectMelnormeRefVar(void)
+const char* SelectMelnormeRefVar(void)
 {
-	switch (CurStarDescPtr->Index)
+	switch (CurStarDescPtr()->Index)
 	{
 		case MELNORME0_DEFINED:
 			return "MELNORME0_GRPOFFS";
@@ -241,8 +234,7 @@ SelectMelnormeRefVar(void)
 	}
 }
 
-static uint32_t
-GetMelnormeRef(void)
+static uint32_t GetMelnormeRef(void)
 {
 	const char* RefVar = SelectMelnormeRefVar();
 
@@ -252,11 +244,10 @@ GetMelnormeRef(void)
 		return 0;
 	}
 
-	return D_GET_GAME_STATE(RefVar);
+	return DGetGameState(RefVar);
 }
 
-static void
-SetMelnormeRef(uint32_t Ref)
+static void SetMelnormeRef(uint32_t Ref)
 {
 	const char* RefVar = SelectMelnormeRefVar();
 
@@ -266,5 +257,5 @@ SetMelnormeRef(uint32_t Ref)
 		return;
 	}
 
-	D_SET_GAME_STATE(RefVar, Ref);
+	DSetGameState(RefVar, Ref);
 }

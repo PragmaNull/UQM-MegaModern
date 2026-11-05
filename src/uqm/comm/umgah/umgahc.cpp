@@ -30,30 +30,30 @@ static LOCDATA umgah_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		UMGAH_PMAP_ANIM, /* AlienFrame */
-		UMGAH_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		UmgahPmapAnim, /* AlienFrame */
+		UmgahFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		UMGAH_COLOR_MAP, /* AlienColorMap */
-		UMGAH_MUSIC, /* AlienSong */
+		UmgahColorMap, /* AlienColorMap */
+		UmgahMusic, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
-		UMGAH_CONVERSATION_PHRASES, /* PlayerPhrases */
+		UmgahConversationPhrases, /* PlayerPhrases */
 		16, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				5,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				5,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -61,9 +61,9 @@ static LOCDATA umgah_desc =
 				(1 << 5),
 			},
 								{
-				8,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				8,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -71,9 +71,9 @@ static LOCDATA umgah_desc =
 				(1 << 6),
 			},
 								{
-				11,		   /* StartIndex */
-				2,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				11,		  /* StartIndex */
+				2,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -81,9 +81,9 @@ static LOCDATA umgah_desc =
 				(1 << 7),
 			},
 								{
-				13,		   /* StartIndex */
-				2,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				13,		  /* StartIndex */
+				2,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -91,9 +91,9 @@ static LOCDATA umgah_desc =
 				(1 << 8),
 			},
 								{
-				15,		   /* StartIndex */
-				2,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				15,		  /* StartIndex */
+				2,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -101,9 +101,9 @@ static LOCDATA umgah_desc =
 				(1 << 9),
 			},
 								{
-				17,			   /* StartIndex */
-				3,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				17,			  /* StartIndex */
+				3,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 60,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -111,9 +111,9 @@ static LOCDATA umgah_desc =
 				(1 << 0),
 			},
 								{
-				20,			   /* StartIndex */
-				3,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				20,			  /* StartIndex */
+				3,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 60,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -121,9 +121,9 @@ static LOCDATA umgah_desc =
 				(1 << 1),
 			},
 								{
-				23,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				23,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 60,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -131,9 +131,9 @@ static LOCDATA umgah_desc =
 				(1 << 2),
 			},
 								{
-				25,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				25,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 60,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -141,9 +141,9 @@ static LOCDATA umgah_desc =
 				(1 << 3),
 			},
 								{
-				27,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				27,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 60,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -151,9 +151,9 @@ static LOCDATA umgah_desc =
 				(1 << 4),
 			},
 								{
-				29,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				29,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -161,9 +161,9 @@ static LOCDATA umgah_desc =
 				0,						/* BlockMask */
 			},
 								{
-				32,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				32,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -171,9 +171,9 @@ static LOCDATA umgah_desc =
 				0,						/* BlockMask */
 			},
 								{
-				35,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				35,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -181,9 +181,9 @@ static LOCDATA umgah_desc =
 				0,						/* BlockMask */
 			},
 								{
-				40,		   /* StartIndex */
-				6,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				40,		  /* StartIndex */
+				6,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -191,9 +191,9 @@ static LOCDATA umgah_desc =
 				0, /* BlockMask */
 			},
 								{
-				46,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				46,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 5,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -201,9 +201,9 @@ static LOCDATA umgah_desc =
 				(1 << 15),				/* BlockMask */
 			},
 								{
-				48,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				48,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 5,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -242,97 +242,95 @@ static LOCDATA umgah_desc =
 		nullptr,
 };
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, bye_zombie))
+	if (PlayerSaid(R, bye_zombie))
 	{
 		NPCPhrase(GOODBYE_ZOMBIE);
 
 		setSegue(Segue_peace);
 	}
-	else if (PLAYER_SAID(R, bye_pre_zombie))
+	else if (PlayerSaid(R, bye_pre_zombie))
 	{
 		NPCPhrase(GOODBYE_PRE_ZOMBIE);
 	}
-	else if (PLAYER_SAID(R, can_we_be_friends))
+	else if (PlayerSaid(R, can_we_be_friends))
 	{
 		NPCPhrase(SURE_FRIENDS);
 
-		SET_GAME_STATE(UMGAH_MENTIONED_TRICKS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_MENTIONED_TRICKS, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, evil_blobbies_give_up))
+	else if (PlayerSaid(R, evil_blobbies_give_up))
 	{
 		NPCPhrase(NOT_EVIL_BLOBBIES);
 
-		SET_GAME_STATE(UMGAH_EVIL_BLOBBIES, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_EVIL_BLOBBIES, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, evil_blobbies_must_die))
+	else if (PlayerSaid(R, evil_blobbies_must_die))
 	{
 		NPCPhrase(OH_NO_WE_WONT);
 	}
-	else if (PLAYER_SAID(R, threat))
+	else if (PlayerSaid(R, threat))
 	{
 		NPCPhrase(NO_THREAT);
 	}
-	else if (PLAYER_SAID(R, dont_believe))
+	else if (PlayerSaid(R, dont_believe))
 	{
 		NPCPhrase(THEN_DIE);
 
-		SET_GAME_STATE(KNOW_UMGAH_ZOMBIES, 1);
-		SET_GAME_STATE(UMGAH_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(0));
 	}
-	else if (PLAYER_SAID(R, bye_unknown))
+	else if (PlayerSaid(R, bye_unknown))
 	{
 		NPCPhrase(GOODBYE_UNKNOWN);
 
 		setSegue(Segue_peace);
 	}
-	else if (PLAYER_SAID(R, bye_post_zombie))
+	else if (PlayerSaid(R, bye_post_zombie))
 	{
 		NPCPhrase(FUNNY_IDEA);
 
 		AlienTalkSegue((uint16_t)~0);
 		AddEscortShips(UMGAH_SHIP, difficultyCase(4, 4, 2));
-		SET_GAME_STATE(UMGAH_HOSTILE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_HOSTILE, static_cast<uint32_t>(1));
 	}
 }
 
-static void
-Zombies(RESPONSE_REF R)
+static void Zombies(RESPONSE_REF R)
 {
-	if (GET_GAME_STATE(MET_NORMAL_UMGAH))
+	if (uqm::gameState().flag(uqm::GameFlag::MET_NORMAL_UMGAH))
 	{
-		if (PLAYER_SAID(R, whats_up_zombies))
+		if (PlayerSaid(R, whats_up_zombies))
 		{
 			NPCPhrase(GENERAL_INFO_ZOMBIE);
 
-			DISABLE_PHRASE(whats_up_zombies);
+			DisablePhrase(whats_up_zombies);
 		}
-		else if (PLAYER_SAID(R, how_goes_tpet))
+		else if (PlayerSaid(R, how_goes_tpet))
 		{
 			NPCPhrase(WHAT_TPET);
 
-			DISABLE_PHRASE(how_goes_tpet);
+			DisablePhrase(how_goes_tpet);
 		}
-		else if (PLAYER_SAID(R, you_told_us))
+		else if (PlayerSaid(R, you_told_us))
 		{
 			NPCPhrase(SADLY_IT_DIED);
 
-			DISABLE_PHRASE(you_told_us);
+			DisablePhrase(you_told_us);
 		}
 
-		if (PHRASE_ENABLED(whats_up_zombies) && PHRASE_ENABLED(how_goes_tpet))
+		if (PhraseEnabled(whats_up_zombies) && PhraseEnabled(how_goes_tpet))
 		{
 			Response(whats_up_zombies, Zombies);
 		}
-		if (PHRASE_ENABLED(how_goes_tpet))
+		if (PhraseEnabled(how_goes_tpet))
 		{
 			Response(how_goes_tpet, Zombies);
 		}
-		else if (PHRASE_ENABLED(you_told_us))
+		else if (PhraseEnabled(you_told_us))
 		{
 			Response(you_told_us, Zombies);
 		}
@@ -340,7 +338,7 @@ Zombies(RESPONSE_REF R)
 		{
 			Response(dont_believe, CombatIsInevitable);
 		}
-		if (PHRASE_ENABLED(whats_up_zombies) && !PHRASE_ENABLED(how_goes_tpet))
+		if (PhraseEnabled(whats_up_zombies) && !PhraseEnabled(how_goes_tpet))
 		{
 			Response(whats_up_zombies, Zombies);
 		}
@@ -353,73 +351,73 @@ Zombies(RESPONSE_REF R)
 
 		uint8_t LastStack {0};
 		pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
-		if (PLAYER_SAID(R, evil_blobbies))
+		if (PlayerSaid(R, evil_blobbies))
 		{
 			NPCPhrase(YES_VERY_EVIL);
 
-			DISABLE_PHRASE(evil_blobbies);
+			DisablePhrase(evil_blobbies);
 			LastStack = 0;
 		}
-		else if (PLAYER_SAID(R, we_vindicator))
+		else if (PlayerSaid(R, we_vindicator))
 		{
 			NPCPhrase(GOOD_FOR_YOU_1);
 
-			DISABLE_PHRASE(we_vindicator);
+			DisablePhrase(we_vindicator);
 			LastStack = 1;
 		}
-		else if (PLAYER_SAID(R, come_in_peace))
+		else if (PlayerSaid(R, come_in_peace))
 		{
 			NPCPhrase(GOOD_FOR_YOU_2);
 
-			DISABLE_PHRASE(come_in_peace);
+			DisablePhrase(come_in_peace);
 			LastStack = 1;
 		}
-		else if (PLAYER_SAID(R, know_any_jokes))
+		else if (PlayerSaid(R, know_any_jokes))
 		{
 			NPCPhrase(JOKE_1);
 
-			DISABLE_PHRASE(know_any_jokes);
+			DisablePhrase(know_any_jokes);
 			LastStack = 2;
 		}
-		else if (PLAYER_SAID(R, better_joke))
+		else if (PlayerSaid(R, better_joke))
 		{
 			NPCPhrase(JOKE_2);
 
-			DISABLE_PHRASE(better_joke);
+			DisablePhrase(better_joke);
 			LastStack = 2;
 		}
-		else if (PLAYER_SAID(R, not_very_funny))
+		else if (PlayerSaid(R, not_very_funny))
 		{
 			NPCPhrase(YES_WE_ARE);
 
-			DISABLE_PHRASE(not_very_funny);
+			DisablePhrase(not_very_funny);
 			LastStack = 2;
 		}
-		else if (PLAYER_SAID(R, what_about_tpet))
+		else if (PlayerSaid(R, what_about_tpet))
 		{
 			NPCPhrase(WHAT_TPET);
 
-			DISABLE_PHRASE(what_about_tpet);
+			DisablePhrase(what_about_tpet);
 			LastStack = 3;
 		}
-		else if (PLAYER_SAID(R, give_up_or_die))
+		else if (PlayerSaid(R, give_up_or_die))
 		{
 			NPCPhrase(NOT_GIVE_UP);
 
 			setSegue(Segue_hostile);
 			return;
 		}
-		else if (PLAYER_SAID(R, arilou_told_us))
+		else if (PlayerSaid(R, arilou_told_us))
 		{
 			NPCPhrase(THEN_DIE);
 
 			setSegue(Segue_hostile);
-			SET_GAME_STATE(KNOW_UMGAH_ZOMBIES, 1);
-			SET_GAME_STATE(UMGAH_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(0));
 			return;
 		}
 
-		if (PHRASE_ENABLED(evil_blobbies))
+		if (PhraseEnabled(evil_blobbies))
 		{
 			pStr[0] = evil_blobbies;
 		}
@@ -428,29 +426,29 @@ Zombies(RESPONSE_REF R)
 			pStr[0] = give_up_or_die;
 		}
 
-		if (PHRASE_ENABLED(we_vindicator))
+		if (PhraseEnabled(we_vindicator))
 		{
 			pStr[1] = we_vindicator;
 		}
-		else if (PHRASE_ENABLED(come_in_peace))
+		else if (PhraseEnabled(come_in_peace))
 		{
 			pStr[1] = come_in_peace;
 		}
 
-		if (PHRASE_ENABLED(know_any_jokes))
+		if (PhraseEnabled(know_any_jokes))
 		{
 			pStr[2] = know_any_jokes;
 		}
-		else if (PHRASE_ENABLED(better_joke))
+		else if (PhraseEnabled(better_joke))
 		{
 			pStr[2] = better_joke;
 		}
-		else if (PHRASE_ENABLED(not_very_funny))
+		else if (PhraseEnabled(not_very_funny))
 		{
 			pStr[2] = not_very_funny;
 		}
 
-		if (PHRASE_ENABLED(what_about_tpet))
+		if (PhraseEnabled(what_about_tpet))
 		{
 			pStr[3] = what_about_tpet;
 		}
@@ -474,23 +472,22 @@ Zombies(RESPONSE_REF R)
 	}
 }
 
-static void
-NormalUmgah(RESPONSE_REF R)
+static void NormalUmgah(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_pre_zombie))
+	if (PlayerSaid(R, whats_up_pre_zombie))
 	{
 		NPCPhrase(GENERAL_INFO_PRE_ZOMBIE);
 
-		DISABLE_PHRASE(whats_up_pre_zombie);
+		DisablePhrase(whats_up_pre_zombie);
 	}
-	else if (PLAYER_SAID(R, want_to_defeat_urquan))
+	else if (PlayerSaid(R, want_to_defeat_urquan))
 	{
 		NPCPhrase(FINE_BY_US);
 
-		DISABLE_PHRASE(want_to_defeat_urquan);
+		DisablePhrase(want_to_defeat_urquan);
 	}
 
-	if (!GET_GAME_STATE(UMGAH_EVIL_BLOBBIES))
+	if (!uqm::gameState().flag(uqm::GameFlag::UMGAH_EVIL_BLOBBIES))
 	{
 		Response(evil_blobbies_give_up, CombatIsInevitable);
 	}
@@ -498,15 +495,15 @@ NormalUmgah(RESPONSE_REF R)
 	{
 		Response(evil_blobbies_must_die, CombatIsInevitable);
 	}
-	if (PHRASE_ENABLED(whats_up_pre_zombie))
+	if (PhraseEnabled(whats_up_pre_zombie))
 	{
 		Response(whats_up_pre_zombie, NormalUmgah);
 	}
-	if (PHRASE_ENABLED(want_to_defeat_urquan))
+	if (PhraseEnabled(want_to_defeat_urquan))
 	{
 		Response(want_to_defeat_urquan, NormalUmgah);
 	}
-	switch (GET_GAME_STATE(UMGAH_MENTIONED_TRICKS))
+	switch (uqm::gameState().flag(uqm::GameFlag::UMGAH_MENTIONED_TRICKS))
 	{
 		case 0:
 			Response(can_we_be_friends, CombatIsInevitable);
@@ -515,89 +512,87 @@ NormalUmgah(RESPONSE_REF R)
 	Response(bye_pre_zombie, CombatIsInevitable);
 }
 
-static void
-UmgahReward(RESPONSE_REF R)
+static void UmgahReward(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, what_before_tpet))
+	if (PlayerSaid(R, what_before_tpet))
 	{
 		NPCPhrase(TRKD_SPATHI_AND_ILWRATH);
 
-		DISABLE_PHRASE(what_before_tpet);
+		DisablePhrase(what_before_tpet);
 	}
-	else if (PLAYER_SAID(R, where_caster))
+	else if (PlayerSaid(R, where_caster))
 	{
 		NPCPhrase(SPATHI_TOOK_THEM);
 
-		DISABLE_PHRASE(where_caster);
+		DisablePhrase(where_caster);
 	}
-	else if (PLAYER_SAID(R, owe_me_big_time))
+	else if (PlayerSaid(R, owe_me_big_time))
 	{
 		NPCPhrase(THANKS);
 
-		GLOBAL_SIS(TotalBioMass) += 1000 / BIO_CREDIT_VALUE;
-		DISABLE_PHRASE(owe_me_big_time);
-		DISABLE_PHRASE(our_largesse);
+		uqm::gameState().sis().TotalBioMass += 1000 / BioCreditValueDefault;
+		DisablePhrase(owe_me_big_time);
+		DisablePhrase(our_largesse);
 	}
-	else if (PLAYER_SAID(R, our_largesse))
+	else if (PlayerSaid(R, our_largesse))
 	{
 		NPCPhrase(GIVE_LIFEDATA);
 
-		GLOBAL_SIS(TotalBioMass) += 1000 / BIO_CREDIT_VALUE;
-		DISABLE_PHRASE(our_largesse);
-		DISABLE_PHRASE(owe_me_big_time);
+		uqm::gameState().sis().TotalBioMass += 1000 / BioCreditValueDefault;
+		DisablePhrase(our_largesse);
+		DisablePhrase(owe_me_big_time);
 	}
-	else if (PLAYER_SAID(R, what_do_with_tpet))
+	else if (PlayerSaid(R, what_do_with_tpet))
 	{
 		NPCPhrase(TRICK_URQUAN);
 
-		DISABLE_PHRASE(what_do_with_tpet);
+		DisablePhrase(what_do_with_tpet);
 	}
-	else if (PLAYER_SAID(R, any_jokes))
+	else if (PlayerSaid(R, any_jokes))
 	{
 		NPCPhrase(SURE);
 
-		DISABLE_PHRASE(any_jokes);
+		DisablePhrase(any_jokes);
 	}
-	else if (PLAYER_SAID(R, so_what_for_now))
+	else if (PlayerSaid(R, so_what_for_now))
 	{
 		NPCPhrase(DO_THIS_NOW);
 
-		DISABLE_PHRASE(so_what_for_now);
+		DisablePhrase(so_what_for_now);
 	}
 
-	if (!GET_GAME_STATE(MET_NORMAL_UMGAH))
+	if (!uqm::gameState().flag(uqm::GameFlag::MET_NORMAL_UMGAH))
 	{
-		if (PHRASE_ENABLED(what_before_tpet))
+		if (PhraseEnabled(what_before_tpet))
 		{
 			Response(what_before_tpet, UmgahReward);
 		}
-		else if (PHRASE_ENABLED(where_caster))
+		else if (PhraseEnabled(where_caster))
 		{
 			Response(where_caster, UmgahReward);
 		}
 	}
-	if (PHRASE_ENABLED(owe_me_big_time))
+	if (PhraseEnabled(owe_me_big_time))
 	{
 		Response(owe_me_big_time, UmgahReward);
 		Response(our_largesse, UmgahReward);
 	}
-	if (PHRASE_ENABLED(what_do_with_tpet))
+	if (PhraseEnabled(what_do_with_tpet))
 	{
 		Response(what_do_with_tpet, UmgahReward);
 	}
-	else if (PHRASE_ENABLED(any_jokes) && GET_GAME_STATE(UMGAH_MENTIONED_TRICKS) < 2)
+	else if (PhraseEnabled(any_jokes) && uqm::gameState().flag(uqm::GameFlag::UMGAH_MENTIONED_TRICKS) < 2)
 	{
 		Response(any_jokes, UmgahReward);
 	}
-	if (PHRASE_ENABLED(so_what_for_now))
+	if (PhraseEnabled(so_what_for_now))
 	{
 		Response(so_what_for_now, UmgahReward);
 	}
 	Response(bye_post_zombie, CombatIsInevitable);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -605,12 +600,12 @@ Intro(void)
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		NPCPhrase(OUT_TAKES);
-		SET_GAME_STATE(BATTLE_SEGUE, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_SEGUE, static_cast<uint32_t>(0));
 		return;
 	}
-	else if (GET_GAME_STATE(UMGAH_HOSTILE))
+	else if (uqm::gameState().flag(uqm::GameFlag::UMGAH_HOSTILE))
 	{
-		NumVisits = GET_GAME_STATE(UMGAH_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::UMGAH_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -627,14 +622,14 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(UMGAH_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(NumVisits));
 
 		setSegue(Segue_hostile);
 	}
-	else if (GET_GAME_STATE(UMGAH_ZOMBIE_BLOBBIES))
+	else if (uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES))
 	{
-		NumVisits = GET_GAME_STATE(UMGAH_VISITS);
-		if (GET_GAME_STATE(TALKING_PET_VISITS))
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::UMGAH_VISITS);
+		if (uqm::gameState().flag(uqm::GameFlag::TALKING_PET_VISITS))
 		{
 			switch (NumVisits++)
 			{
@@ -655,7 +650,7 @@ Intro(void)
 
 			setSegue(Segue_hostile);
 		}
-		else if (GET_GAME_STATE(KNOW_UMGAH_ZOMBIES))
+		else if (uqm::gameState().flag(uqm::GameFlag::KNOW_UMGAH_ZOMBIES))
 		{
 			switch (NumVisits++)
 			{
@@ -697,13 +692,13 @@ Intro(void)
 
 			Zombies((RESPONSE_REF)0);
 		}
-		SET_GAME_STATE(UMGAH_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (!GET_GAME_STATE(TALKING_PET))
+	else if (!uqm::gameState().flag(uqm::GameFlag::TALKING_PET))
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(UMGAH_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::UMGAH_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -720,13 +715,13 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(UMGAH_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::UMGAH_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 			SetHomeworldKnown(UMGAH_HOME);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(UMGAH_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::UMGAH_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -743,14 +738,14 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(UMGAH_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		NormalUmgah((RESPONSE_REF)0);
 	}
 	else
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
 			NPCPhrase(POST_ZOMBIE_HWLD_HELLO);
 
@@ -759,7 +754,7 @@ Intro(void)
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(UMGAH_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::UMGAH_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -770,45 +765,42 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(UMGAH_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::UMGAH_VISITS, static_cast<uint32_t>(NumVisits));
 
 			setSegue(Segue_peace);
 		}
 	}
 }
 
-static uint16_t
-uninit_umgah(void)
+static uint16_t uninit_umgah(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_umgah_enc(void)
+static void post_umgah_enc(void)
 {
-	if (!GET_GAME_STATE(UMGAH_ZOMBIE_BLOBBIES))
+	if (!uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES))
 	{
-		SET_GAME_STATE(MET_NORMAL_UMGAH, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MET_NORMAL_UMGAH, static_cast<uint32_t>(1));
 	}
 }
 
-LOCDATA*
-init_umgah_comm(void)
+LOCDATA* init_umgah_comm(void)
 {
 	umgah_desc.init_encounter_func = Intro;
 	umgah_desc.post_encounter_func = post_umgah_enc;
 	umgah_desc.uninit_encounter_func = uninit_umgah;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	umgah_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	umgah_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	umgah_desc.AlienTextBaseline.y = 0;
-	umgah_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	umgah_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if ((GET_GAME_STATE(TALKING_PET) && !GET_GAME_STATE(UMGAH_HOSTILE))
+	if ((uqm::gameState().flag(uqm::GameFlag::TALKING_PET) && !uqm::gameState().flag(uqm::GameFlag::UMGAH_HOSTILE))
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);

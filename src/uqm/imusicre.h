@@ -2,41 +2,39 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define BATTLE_MUSIC "music.battle"
-#define BATTLE_MUSIC_SAMATRA "music.battle.samatra"
-#define CREDITS_MUSIC "music.credits"
-#define HYPERSPACE_MUSIC "music.hyperspace"
-#define IP_MUSIC "music.space"
-#define MAINMENU1_MUSIC "music.mainmenu1"
-#define MAINMENU2_MUSIC "music.mainmenu2"
-#define MAINMENU3_MUSIC "music.mainmenu3"
-#define MELEE_MUSIC "music.meleemenu"
-#define ORBIT1_MUSIC "music.orbit1"
-#define ORBIT2_MUSIC "music.orbit2"
-#define ORBIT3_MUSIC "music.orbit3"
-#define ORBIT4_MUSIC "music.orbit4"
-#define ORBIT5_MUSIC "music.orbit5"
-#define OUTFIT_MUSIC "music.outfit"
-#define QUASISPACE_MUSIC "music.quasispace"
-#define REDALERT_MUSIC "music.redalert"
-#define SHIPYARD_MUSIC "music.shipyard"
-#define STARBASE_MUSIC "music.starbase"
+#pragma once
 
-#define ARILOU_SPACE_MUSIC "space.arilou.music"
-#define CHMMR_SPACE_MUSIC "space.chmmr.music"
-#define DRUUGE_SPACE_MUSIC "space.druuge.music"
-#define ILWRATH_SPACE_MUSIC "space.ilwrath.music"
-#define KOHRAH_SPACE_MUSIC "space.kohrah.music"
-#define MYCON_SPACE_MUSIC "space.mycon.music"
-#define ORZ_SPACE_MUSIC "space.orz.music"
-#define PKUNK_SPACE_MUSIC "space.pkunk.music"
-#define SPATHI_SPACE_MUSIC "space.spathi.music"
-#define SUPOX_SPACE_MUSIC "space.supox.music"
-#define SYREEN_SPACE_MUSIC "space.syreen.music"
-#define THRADDASH_SPACE_MUSIC "space.thraddash.music"
-#define UMGAH_SPACE_MUSIC "space.umgah.music"
-#define URQUAN_SPACE_MUSIC "space.urquan.music"
-#define UTWIG_SPACE_MUSIC "space.utwig.music"
-#define VUX_SPACE_MUSIC "space.vux.music"
-#define YEHAT_SPACE_MUSIC "space.yehat.music"
-#define ZOQFOTPIK_SPACE_MUSIC "space.zoqfotpik.music"
+inline constexpr uqgsl::czstring BattleMusicRes {"music.battle"};
+inline constexpr uqgsl::czstring BattleMusicSamatraRes {"music.battle.samatra"};
+inline constexpr uqgsl::czstring CreditsMusicRes {"music.credits"};
+inline constexpr uqgsl::czstring HyperspaceMusicRes {"music.hyperspace"};
+inline constexpr uqgsl::czstring IpMusicRes {"music.space"};
+
+
+inline constexpr uqgsl::czstring MeleeMusicRes {"music.meleemenu"};
+
+
+inline constexpr uqgsl::czstring OutfitMusicRes {"music.outfit"};
+inline constexpr uqgsl::czstring QuasispaceMusicRes {"music.quasispace"};
+inline constexpr uqgsl::czstring RedalertMusicRes {"music.redalert"};
+inline constexpr uqgsl::czstring ShipyardMusicRes {"music.shipyard"};
+inline constexpr uqgsl::czstring StarbaseMusicRes {"music.starbase"};
+
+inline constexpr uqgsl::czstring ArilouSpaceMusicRes {"space.arilou.music"};
+inline constexpr uqgsl::czstring ChmmrSpaceMusicRes {"space.chmmr.music"};
+inline constexpr uqgsl::czstring DruugeSpaceMusicRes {"space.druuge.music"};
+inline constexpr uqgsl::czstring IlwrathSpaceMusicRes {"space.ilwrath.music"};
+inline constexpr uqgsl::czstring KohrahSpaceMusicRes {"space.kohrah.music"};
+inline constexpr uqgsl::czstring MyconSpaceMusicRes {"space.mycon.music"};
+inline constexpr uqgsl::czstring OrzSpaceMusicRes {"space.orz.music"};
+inline constexpr uqgsl::czstring PkunkSpaceMusicRes {"space.pkunk.music"};
+inline constexpr uqgsl::czstring SpathiSpaceMusicRes {"space.spathi.music"};
+inline constexpr uqgsl::czstring SupoxSpaceMusicRes {"space.supox.music"};
+inline constexpr uqgsl::czstring SyreenSpaceMusicRes {"space.syreen.music"};
+inline constexpr uqgsl::czstring ThraddashSpaceMusicRes {"space.thraddash.music"};
+inline constexpr uqgsl::czstring UmgahSpaceMusicRes {"space.umgah.music"};
+inline constexpr uqgsl::czstring UrquanSpaceMusicRes {"space.urquan.music"};
+inline constexpr uqgsl::czstring UtwigSpaceMusicRes {"space.utwig.music"};
+inline constexpr uqgsl::czstring VuxSpaceMusicRes {"space.vux.music"};
+inline constexpr uqgsl::czstring YehatSpaceMusicRes {"space.yehat.music"};
+inline constexpr uqgsl::czstring ZoqfotpikSpaceMusicRes {"space.zoqfotpik.music"};

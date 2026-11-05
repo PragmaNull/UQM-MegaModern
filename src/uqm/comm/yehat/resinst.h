@@ -2,11 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define REBEL_CONVERSATION_PHRASES "comm.yehat.rebel.dialogue"
-#define REBEL_MUSIC "comm.yehat.rebel.music"
-#define YEHAT_COLOR_MAP "comm.yehat.colortable"
-#define YEHAT_CONVERSATION_PHRASES "comm.yehat.dialogue"
-#define YEHAT_FONT "comm.yehat.font"
-#define YEHAT_MUSIC "comm.yehat.music"
-#define YEHAT_PMAP_ANIM "comm.yehat.graphics"
-#define YEHAT_SCRIPT "comm.yehat.script"
+inline constexpr uqgsl::czstring RebelConversationPhrases {"comm.yehat.rebel.dialogue"};
+inline constexpr uqgsl::czstring RebelMusic {"comm.yehat.rebel.music"};
+inline constexpr uqgsl::czstring YehatColorMap {"comm.yehat.colortable"};
+inline constexpr uqgsl::czstring YehatConversationPhrases {"comm.yehat.dialogue"};
+inline constexpr uqgsl::czstring YehatFont {"comm.yehat.font"};
+inline constexpr uqgsl::czstring YehatMusic {"comm.yehat.music"};
+inline constexpr uqgsl::czstring YehatPmapAnim {"comm.yehat.graphics"};

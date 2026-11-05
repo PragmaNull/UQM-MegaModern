@@ -2,7 +2,9 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define GAME_SOUNDS "sounds.battle"
-#define LANDER_SOUNDS "sounds.lander"
-#define MENU_SOUNDS "sounds.menu"
-#define TEST_SOUNDS "sounds.test"
+#pragma once
+
+inline constexpr uqgsl::czstring GameSoundsRes {"sounds.battle"};
+inline constexpr uqgsl::czstring LanderSoundsRes {"sounds.lander"};
+inline constexpr uqgsl::czstring MenuSoundsRes {"sounds.menu"};
+inline constexpr uqgsl::czstring TestSoundsRes {"sounds.test"};

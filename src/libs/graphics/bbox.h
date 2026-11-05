@@ -28,10 +28,10 @@
 
 typedef struct
 {
-	int valid;	 // If zero, the next point registered becomes the region
+	int valid;		// If zero, the next point registered becomes the region
 	GFXRECT region; // The actual modified rectangle
-	GFXRECT clip;	 // Points outside of this rectangle are pushed to
-				 // the closest border point
+	GFXRECT clip;	// Points outside of this rectangle are pushed to
+					// the closest border point
 } TFB_BoundingBox;
 
 extern TFB_BoundingBox TFB_BBox;

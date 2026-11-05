@@ -19,14 +19,12 @@
 #include "sound.h"
 #include "sndintrn.h"
 
-static void
-GetSoundBankFileData(const char* pathname, RESOURCE_DATA* resdata)
+static void GetSoundBankFileData(const char* pathname, RESOURCE_DATA* resdata)
 {
 	resdata->ptr = LoadResourceFromPath(pathname, _GetSoundBankData);
 }
 
-static void
-GetMusicFileData(const char* pathname, RESOURCE_DATA* resdata)
+static void GetMusicFileData(const char* pathname, RESOURCE_DATA* resdata)
 {
 	resdata->ptr = LoadResourceFromPath(pathname, _GetMusicData);
 }
@@ -48,8 +46,7 @@ uqm::SoundBankPtr uqm::loadSoundBank(RESOURCE res)
 	return SoundBankPtr {static_cast<SoundBank*>(data)};
 }
 
-MUSIC_REF
-LoadMusicInstance(RESOURCE res)
+MUSIC_REF LoadMusicInstance(RESOURCE res)
 {
 	void* hData {res_GetResource(res)};
 	if (hData)

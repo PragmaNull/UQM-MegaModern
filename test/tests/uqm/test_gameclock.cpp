@@ -26,7 +26,7 @@ TEST_F(GameClockTest, StartsOnFebruary17)
 {
 	EXPECT_EQ(m_clock.day(), 17);
 	EXPECT_EQ(m_clock.month(), 2);
-	EXPECT_EQ(m_clock.year(), START_YEAR);
+	EXPECT_EQ(m_clock.year(), StartYear);
 	EXPECT_EQ(m_clock.dayInTicks(), 0);
 }
 
@@ -64,7 +64,7 @@ TEST_F(GameClockTest, TickStartsANewDayOnlyWhenTheClockRuns)
 
 TEST_F(GameClockTest, SetDayInTicksKeepsThePartOfTheDay)
 {
-	m_clock.restore(17, 2, START_YEAR, 50, 100);
+	m_clock.restore(17, 2, StartYear, 50, 100);
 	m_clock.setDayInTicks(200);
 	EXPECT_EQ(m_clock.tickCount(), 100);
 	EXPECT_EQ(m_clock.dayInTicks(), 200);
@@ -72,10 +72,10 @@ TEST_F(GameClockTest, SetDayInTicksKeepsThePartOfTheDay)
 
 TEST_F(GameClockTest, DaysElapsedCountsFromTheStart)
 {
-	m_clock.restore(17, 2, START_YEAR, 100, 100);
+	m_clock.restore(17, 2, StartYear, 100, 100);
 	EXPECT_FLOAT_EQ(m_clock.daysElapsed(), 0.0f);
 
-	m_clock.restore(17, 2, START_YEAR + 1, 50, 100);
+	m_clock.restore(17, 2, StartYear + 1, 50, 100);
 	EXPECT_FLOAT_EQ(m_clock.daysElapsed(), 365.5f);
 }
 
@@ -87,14 +87,14 @@ TEST_F(GameClockTest, ResolveDateMakesRelativeDatesAbsolute)
 	EXPECT_TRUE(m_clock.resolveDate(RELATIVE_EVENT, month, day, year));
 	EXPECT_EQ(day, 3);
 	EXPECT_EQ(month, 3);
-	EXPECT_EQ(year, START_YEAR);
+	EXPECT_EQ(year, StartYear);
 }
 
 TEST_F(GameClockTest, ResolveDateRefusesPastDates)
 {
 	uint16_t month {2};
 	uint16_t day {16};
-	uint16_t year {START_YEAR};
+	uint16_t year {StartYear};
 	EXPECT_FALSE(m_clock.resolveDate(ABSOLUTE_EVENT, month, day, year));
 	day = 17;
 	EXPECT_TRUE(m_clock.resolveDate(ABSOLUTE_EVENT, month, day, year));
@@ -102,9 +102,9 @@ TEST_F(GameClockTest, ResolveDateRefusesPastDates)
 
 TEST_F(GameClockTest, DueEventsComeInDateOrder)
 {
-	EXPECT_NE(m_clock.addEvent(2, 19, START_YEAR, 3), nullptr);
-	EXPECT_NE(m_clock.addEvent(2, 18, START_YEAR, 1), nullptr);
-	EXPECT_NE(m_clock.addEvent(2, 18, START_YEAR, 2), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 19, StartYear, 3), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 18, StartYear, 1), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 18, StartYear, 2), nullptr);
 
 	uint8_t funcIndex {};
 	EXPECT_FALSE(m_clock.takeDueEvent(funcIndex));
@@ -123,7 +123,7 @@ TEST_F(GameClockTest, DueEventsComeInDateOrder)
 
 TEST_F(GameClockTest, EventsThatWereMissedAreDue)
 {
-	EXPECT_NE(m_clock.addEvent(2, 17, START_YEAR, 5), nullptr);
+	EXPECT_NE(m_clock.addEvent(2, 17, StartYear, 5), nullptr);
 	m_clock.nextDay();
 	m_clock.nextDay();
 
@@ -136,8 +136,8 @@ TEST_F(GameClockTest, EventsThatWereMissedAreDue)
 TEST_F(GameClockTest, FirstEventIsTheEarliest)
 {
 	EXPECT_FALSE(m_clock.firstEvent().has_value());
-	EXPECT_NE(m_clock.addEvent(5, 1, START_YEAR, 4), nullptr);
-	EXPECT_NE(m_clock.addEvent(3, 9, START_YEAR, 6), nullptr);
+	EXPECT_NE(m_clock.addEvent(5, 1, StartYear, 4), nullptr);
+	EXPECT_NE(m_clock.addEvent(3, 9, StartYear, 6), nullptr);
 
 	const auto first {m_clock.firstEvent()};
 	ASSERT_TRUE(first.has_value());
@@ -148,19 +148,19 @@ TEST_F(GameClockTest, FirstEventIsTheEarliest)
 
 TEST_F(GameClockTest, IsBeforeComparesDates)
 {
-	EXPECT_TRUE(m_clock.isBefore(START_YEAR, 2, 18));
-	EXPECT_TRUE(m_clock.isBefore(START_YEAR + 1, 1, 1));
-	EXPECT_FALSE(m_clock.isBefore(START_YEAR, 2, 17));
-	EXPECT_FALSE(m_clock.isBefore(START_YEAR, 1, 31));
+	EXPECT_TRUE(m_clock.isBefore(StartYear, 2, 18));
+	EXPECT_TRUE(m_clock.isBefore(StartYear + 1, 1, 1));
+	EXPECT_FALSE(m_clock.isBefore(StartYear, 2, 17));
+	EXPECT_FALSE(m_clock.isBefore(StartYear, 1, 31));
 }
 
 TEST_F(GameClockTest, AddEventFailsWhenTheQueueIsFull)
 {
 	for (int i {0}; i < 8; ++i)
 	{
-		EXPECT_NE(m_clock.addEvent(3, 1, START_YEAR, 0), nullptr);
+		EXPECT_NE(m_clock.addEvent(3, 1, StartYear, 0), nullptr);
 	}
-	EXPECT_EQ(m_clock.addEvent(3, 1, START_YEAR, 0), nullptr);
+	EXPECT_EQ(m_clock.addEvent(3, 1, StartYear, 0), nullptr);
 }
 
 } // namespace

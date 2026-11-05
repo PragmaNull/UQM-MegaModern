@@ -25,21 +25,18 @@
 #include "uqm/gameev.h"
 
 
-#define ZOQ_FG_COLOR WHITE_COLOR
-#define ZOQ_BG_COLOR BLACK_COLOR
-#define ZOQ_BASE_X (TEXT_X_OFFS + ((SIS_TEXT_WIDTH >> 1) >> 1))
-#define ZOQ_BASE_Y RES_SCALE(24)
-#define ZOQ_TALK_INDEX 18
-#define ZOQ_TALK_FRAMES 5
-#define FOT_TO_ZOQ 23
+static auto ZoqBaseX() { return (TextXOffs() + ((SisTextWidth() >> 1) >> 1)); }
+static auto ZoqBaseY() { return ResScale(24); }
+static constexpr auto ZoqTalkIndex {18};
+static constexpr auto ZoqTalkFrames {5};
+static constexpr auto FotToZoq {23};
 
-#define PIK_FG_COLOR WHITE_COLOR
-#define PIK_BG_COLOR BLACK_COLOR
-#define PIK_BASE_X (SIS_SCREEN_WIDTH - (TEXT_X_OFFS + ((SIS_TEXT_WIDTH >> 1) >> 1)))
-#define PIK_BASE_Y RES_SCALE(24)
-#define PIK_TALK_INDEX 29
-#define PIK_TALK_FRAMES 2
-#define FOT_TO_PIK 26
+
+static auto PikBaseX() { return (SisScreenWidth() - (TextXOffs() + ((SisTextWidth() >> 1) >> 1))); }
+static auto PikBaseY() { return ResScale(24); }
+static constexpr auto PikTalkIndex {29};
+static constexpr auto PikTalkFrames {2};
+static constexpr auto FotToPik {26};
 
 static LOCDATA zoqfot_desc =
 	{
@@ -47,31 +44,31 @@ static LOCDATA zoqfot_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		ZOQFOTPIK_PMAP_ANIM, /* AlienFrame */
-		ZOQFOTPIK_FONT, /* AlienFont */
-		UNDEFINED_COLOR_INIT, /* AlienTextFColor */
-		UNDEFINED_COLOR_INIT, /* AlienTextBColor */
+		ZoqfotpikPmapAnim, /* AlienFrame */
+		ZoqfotpikFont, /* AlienFont */
+		UndefinedColor, /* AlienTextFColor */
+		UndefinedColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0, /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
-		ZOQFOTPIK_COLOR_MAP, /* AlienColorMap */
-		ZOQFOTPIK_MUSIC, /* AlienSong */
+		ZoqfotpikColorMap, /* AlienColorMap */
+		ZoqfotpikMusic, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
-		ZOQFOTPIK_CONVERSATION_PHRASES, /* PlayerPhrases */
+		ZoqfotpikConversationPhrases, /* PlayerPhrases */
 		3, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
 				/* Eye blink */
-				1,		  /* StartIndex */
-				4,		  /* NumFrames */
-				YOYO_ANIM /* AnimFlags */
-					| WAIT_TALKING,
+				1,		 /* StartIndex */
+				4,		 /* NumFrames */
+				YoyoAnim /* AnimFlags */
+					| WaitTalking,
 				GameTicksPerSecond / 24,
 				0, /* FrameRate */
 				0,
@@ -80,9 +77,9 @@ static LOCDATA zoqfot_desc =
 			},
 								{
 				/* Blow smoke */
-				5,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				5,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 7 / 120,
 				0, /* FrameRate */
 				GameTicksPerSecond * 2,
@@ -91,9 +88,9 @@ static LOCDATA zoqfot_desc =
 			},
 								{
 				/* Gulp */
-				10,			   /* StartIndex */
-				8,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				10,			  /* StartIndex */
+				8,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				0,
@@ -103,9 +100,9 @@ static LOCDATA zoqfot_desc =
 								},
 		{
 								/* AlienTransitionDesc - Move Eye */
-			FOT_TO_ZOQ, /* StartIndex */
-			3,			/* NumFrames */
-			0,			/* AnimFlags */
+			FotToZoq, /* StartIndex */
+			3,		  /* NumFrames */
+			0,		  /* AnimFlags */
 			GameTicksPerSecond / 30,
 								0, /* FrameRate */
 			0,
@@ -114,9 +111,9 @@ static LOCDATA zoqfot_desc =
 		},
 		{
 								/* AlienTalkDesc */
-			ZOQ_TALK_INDEX,	 /* StartIndex */
-			ZOQ_TALK_FRAMES, /* NumFrames */
-			0,				 /* AnimFlags */
+			ZoqTalkIndex,  /* StartIndex */
+			ZoqTalkFrames, /* NumFrames */
+			0,			   /* AnimFlags */
 			GameTicksPerSecond / 15,
 								0, /* FrameRate */
 			GameTicksPerSecond / 12,
@@ -142,85 +139,81 @@ enum
 static int LastAlien;
 
 // Queued and executes synchronously on the Starcon2Main thread
-static void
-SelectAlienZOQ(CallbackArg arg)
+static void SelectAlienZOQ(CallbackArg arg)
 {
 	if (LastAlien != ZOQ_ALIEN)
 	{
 		// Transition to neutral state first if Pik was talking
 		if (LastAlien != FOT_ALIEN)
 		{
-			CommData.AlienTransitionDesc.AnimFlags |= TALK_DONE;
+			CommData.AlienTransitionDesc.AnimFlags |= TalkDone;
 		}
 		LastAlien = ZOQ_ALIEN;
-		CommData.AlienTransitionDesc.AnimFlags |= TALK_INTRO;
-		CommData.AlienTransitionDesc.StartIndex = FOT_TO_ZOQ;
-		CommData.AlienTalkDesc.StartIndex = ZOQ_TALK_INDEX;
-		CommData.AlienTalkDesc.NumFrames = ZOQ_TALK_FRAMES;
-		CommData.AlienAmbientArray[1].AnimFlags &= ~WAIT_TALKING;
+		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
+		CommData.AlienTransitionDesc.StartIndex = FotToZoq;
+		CommData.AlienTalkDesc.StartIndex = ZoqTalkIndex;
+		CommData.AlienTalkDesc.NumFrames = ZoqTalkFrames;
+		CommData.AlienAmbientArray[1].AnimFlags &= ~WaitTalking;
 
-		CommData.AlienTextBaseline.x = (int16_t)ZOQ_BASE_X;
-		CommData.AlienTextBaseline.y = ZOQ_BASE_Y;
-		CommData.AlienTextFColor = ZOQ_FG_COLOR;
-		CommData.AlienTextBColor = ZOQ_BG_COLOR;
+		CommData.AlienTextBaseline.x = (int16_t)ZoqBaseX();
+		CommData.AlienTextBaseline.y = ZoqBaseY();
+		CommData.AlienTextFColor = WhiteColor;
+		CommData.AlienTextBColor = BlackColor;
 	}
 
 	(void)arg; // ignored
 }
 
 // Queued and executes synchronously on the Starcon2Main thread
-static void
-SelectAlienPIK(CallbackArg arg)
+static void SelectAlienPIK(CallbackArg arg)
 {
 	if (LastAlien != PIK_ALIEN)
 	{
 		// Transition to neutral state first if Zoq was talking
 		if (LastAlien != FOT_ALIEN)
 		{
-			CommData.AlienTransitionDesc.AnimFlags |= TALK_DONE;
+			CommData.AlienTransitionDesc.AnimFlags |= TalkDone;
 		}
 		LastAlien = PIK_ALIEN;
-		CommData.AlienTransitionDesc.AnimFlags |= TALK_INTRO;
-		CommData.AlienTransitionDesc.StartIndex = FOT_TO_PIK;
-		CommData.AlienTalkDesc.StartIndex = PIK_TALK_INDEX;
-		CommData.AlienTalkDesc.NumFrames = PIK_TALK_FRAMES;
-		CommData.AlienAmbientArray[1].AnimFlags |= WAIT_TALKING;
+		CommData.AlienTransitionDesc.AnimFlags |= TalkIntro;
+		CommData.AlienTransitionDesc.StartIndex = FotToPik;
+		CommData.AlienTalkDesc.StartIndex = PikTalkIndex;
+		CommData.AlienTalkDesc.NumFrames = PikTalkFrames;
+		CommData.AlienAmbientArray[1].AnimFlags |= WaitTalking;
 
-		CommData.AlienTextBaseline.x = (int16_t)PIK_BASE_X;
-		CommData.AlienTextBaseline.y = PIK_BASE_Y;
-		CommData.AlienTextFColor = PIK_FG_COLOR;
-		CommData.AlienTextBColor = PIK_BG_COLOR;
+		CommData.AlienTextBaseline.x = (int16_t)PikBaseX();
+		CommData.AlienTextBaseline.y = PikBaseY();
+		CommData.AlienTextFColor = WhiteColor;
+		CommData.AlienTextBColor = BlackColor;
 	}
 
 	(void)arg; // ignored
 }
 
-static void
-ZFPTalkSegue(uint16_t wait_track)
+static void ZFPTalkSegue(uint16_t wait_track)
 {
 	LastAlien = FOT_ALIEN;
 	SelectAlienZOQ(0);
 	AlienTalkSegue(wait_track);
 }
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
-	if (PLAYER_SAID(R, bye_homeworld))
+	if (PlayerSaid(R, bye_homeworld))
 	{
 		NPCPhrase_cb(GOODBYE_HOME0, &SelectAlienZOQ);
 		NPCPhrase_cb(GOODBYE_HOME1, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 	}
-	else if (PLAYER_SAID(R, decide_later))
+	else if (PlayerSaid(R, decide_later))
 	{
 		NPCPhrase_cb(PLEASE_HURRY0, &SelectAlienZOQ);
 		NPCPhrase_cb(PLEASE_HURRY1, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 	}
-	else if (PLAYER_SAID(R, valuable_info))
+	else if (PlayerSaid(R, valuable_info))
 	{
 		NPCPhrase_cb(GOODBYE0, &SelectAlienZOQ);
 		NPCPhrase_cb(GOODBYE1, &SelectAlienPIK);
@@ -228,7 +221,7 @@ ExitConversation(RESPONSE_REF R)
 		NPCPhrase_cb(GOODBYE3, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 	}
-	else if (PLAYER_SAID(R, how_can_i_help))
+	else if (PlayerSaid(R, how_can_i_help))
 	{
 		NPCPhrase_cb(EMMISSARIES0, &SelectAlienZOQ);
 		NPCPhrase_cb(EMMISSARIES1, &SelectAlienPIK);
@@ -242,7 +235,7 @@ ExitConversation(RESPONSE_REF R)
 
 		SetHomeworldKnown(ZOQFOTPIK_HOME);
 	}
-	else if (PLAYER_SAID(R, sure))
+	else if (PlayerSaid(R, sure))
 	{
 		NPCPhrase_cb(WE_ALLY0, &SelectAlienZOQ);
 		NPCPhrase_cb(WE_ALLY1, &SelectAlienPIK);
@@ -253,9 +246,9 @@ ExitConversation(RESPONSE_REF R)
 		ZFPTalkSegue((uint16_t)~0);
 		SetRaceAllied(ZOQFOTPIK_SHIP, true);
 		AddEvent(RELATIVE_EVENT, 3, 0, 0, ZOQFOT_DISTRESS_EVENT);
-		SET_GAME_STATE(ZOQFOT_HOME_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
 	}
-	else if (PLAYER_SAID(R, all_very_interesting))
+	else if (PlayerSaid(R, all_very_interesting))
 	{
 		NPCPhrase_cb(SEE_TOLD_YOU0, &SelectAlienZOQ);
 		NPCPhrase_cb(SEE_TOLD_YOU1, &SelectAlienPIK);
@@ -263,24 +256,23 @@ ExitConversation(RESPONSE_REF R)
 		NPCPhrase_cb(SEE_TOLD_YOU3, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		SET_GAME_STATE(ZOQFOT_HOSTILE, 1);
-		SET_GAME_STATE(ZOQFOT_HOME_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOSTILE, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, never))
+	else if (PlayerSaid(R, never))
 	{
 		NPCPhrase_cb(WE_ENEMIES0, &SelectAlienZOQ);
 		NPCPhrase_cb(WE_ENEMIES1, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		SET_GAME_STATE(ZOQFOT_HOME_VISITS, 0);
-		SET_GAME_STATE(ZOQFOT_HOSTILE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOSTILE, static_cast<uint32_t>(1));
 		setSegue(Segue_hostile);
 	}
 }
 
-static void
-FormAlliance(RESPONSE_REF R)
+static void FormAlliance(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase_cb(ALLY_WITH_US0, &SelectAlienZOQ);
@@ -296,10 +288,9 @@ FormAlliance(RESPONSE_REF R)
 	Response(decide_later, ExitConversation);
 }
 
-static void
-ZoqFotIntro(RESPONSE_REF R)
+static void ZoqFotIntro(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, we_are_vindicator))
+	if (PlayerSaid(R, we_are_vindicator))
 	{
 		NPCPhrase_cb(WE_GLAD0, &SelectAlienZOQ);
 		NPCPhrase_cb(WE_GLAD1, &SelectAlienPIK);
@@ -309,9 +300,9 @@ ZoqFotIntro(RESPONSE_REF R)
 		NPCPhrase_cb(WE_GLAD5, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(we_are_vindicator);
+		DisablePhrase(we_are_vindicator);
 	}
-	else if (PLAYER_SAID(R, your_race))
+	else if (PlayerSaid(R, your_race))
 	{
 		NPCPhrase_cb(YEARS_AGO0, &SelectAlienZOQ);
 		NPCPhrase_cb(YEARS_AGO1, &SelectAlienPIK);
@@ -329,9 +320,9 @@ ZoqFotIntro(RESPONSE_REF R)
 		NPCPhrase_cb(YEARS_AGO13, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(your_race);
+		DisablePhrase(your_race);
 	}
-	else if (PLAYER_SAID(R, where_from))
+	else if (PlayerSaid(R, where_from))
 	{
 		NPCPhrase_cb(TRAVELED_FAR0, &SelectAlienZOQ);
 		NPCPhrase_cb(TRAVELED_FAR1, &SelectAlienPIK);
@@ -341,9 +332,9 @@ ZoqFotIntro(RESPONSE_REF R)
 		NPCPhrase_cb(TRAVELED_FAR5, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(where_from);
+		DisablePhrase(where_from);
 	}
-	else if (PLAYER_SAID(R, what_emergency))
+	else if (PlayerSaid(R, what_emergency))
 	{
 		NPCPhrase_cb(UNDER_ATTACK0, &SelectAlienZOQ);
 		NPCPhrase_cb(UNDER_ATTACK1, &SelectAlienPIK);
@@ -359,9 +350,9 @@ ZoqFotIntro(RESPONSE_REF R)
 		NPCPhrase_cb(UNDER_ATTACK11, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(what_emergency);
+		DisablePhrase(what_emergency);
 	}
-	else if (PLAYER_SAID(R, tough_luck))
+	else if (PlayerSaid(R, tough_luck))
 	{
 		NPCPhrase_cb(NOT_HELPFUL0, &SelectAlienZOQ);
 		NPCPhrase_cb(NOT_HELPFUL1, &SelectAlienPIK);
@@ -371,9 +362,9 @@ ZoqFotIntro(RESPONSE_REF R)
 		NPCPhrase_cb(NOT_HELPFUL5, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(tough_luck);
+		DisablePhrase(tough_luck);
 	}
-	else if (PLAYER_SAID(R, what_look_like))
+	else if (PlayerSaid(R, what_look_like))
 	{
 		NPCPhrase_cb(LOOK_LIKE0, &SelectAlienZOQ);
 		NPCPhrase_cb(LOOK_LIKE1, &SelectAlienPIK);
@@ -381,38 +372,38 @@ ZoqFotIntro(RESPONSE_REF R)
 		NPCPhrase_cb(LOOK_LIKE3, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(what_look_like);
+		DisablePhrase(what_look_like);
 	}
 
-	if (PHRASE_ENABLED(your_race)
-		|| PHRASE_ENABLED(where_from)
-		|| PHRASE_ENABLED(what_emergency))
+	if (PhraseEnabled(your_race)
+		|| PhraseEnabled(where_from)
+		|| PhraseEnabled(what_emergency))
 	{
-		if (PHRASE_ENABLED(your_race))
+		if (PhraseEnabled(your_race))
 		{
 			Response(your_race, ZoqFotIntro);
 		}
-		if (PHRASE_ENABLED(where_from))
+		if (PhraseEnabled(where_from))
 		{
 			Response(where_from, ZoqFotIntro);
 		}
-		if (PHRASE_ENABLED(what_emergency))
+		if (PhraseEnabled(what_emergency))
 		{
 			Response(what_emergency, ZoqFotIntro);
 		}
 	}
 	else
 	{
-		if (PHRASE_ENABLED(tough_luck))
+		if (PhraseEnabled(tough_luck))
 		{
 			Response(tough_luck, ZoqFotIntro);
 		}
-		if (PHRASE_ENABLED(what_look_like))
+		if (PhraseEnabled(what_look_like))
 		{
 			Response(what_look_like, ZoqFotIntro);
 		}
 		Response(all_very_interesting, ExitConversation);
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
 			Response(how_can_i_help, FormAlliance);
 		}
@@ -424,10 +415,9 @@ ZoqFotIntro(RESPONSE_REF R)
 	}
 }
 
-static void
-AquaintZoqFot(RESPONSE_REF R)
+static void AquaintZoqFot(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, which_fot))
+	if (PlayerSaid(R, which_fot))
 	{
 		NPCPhrase_cb(HE_IS0, &SelectAlienZOQ);
 		NPCPhrase_cb(HE_IS1, &SelectAlienPIK);
@@ -439,9 +429,9 @@ AquaintZoqFot(RESPONSE_REF R)
 		NPCPhrase_cb(HE_IS7, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(which_fot);
+		DisablePhrase(which_fot);
 	}
-	else if (PLAYER_SAID(R, quiet_toadies))
+	else if (PlayerSaid(R, quiet_toadies))
 	{
 		NPCPhrase_cb(TOLD_YOU0, &SelectAlienZOQ);
 		NPCPhrase_cb(TOLD_YOU1, &SelectAlienPIK);
@@ -453,18 +443,18 @@ AquaintZoqFot(RESPONSE_REF R)
 		NPCPhrase_cb(TOLD_YOU7, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(quiet_toadies);
+		DisablePhrase(quiet_toadies);
 	}
 
-	if (PHRASE_ENABLED(which_fot))
+	if (PhraseEnabled(which_fot))
 	{
 		Response(which_fot, AquaintZoqFot);
 	}
-	if (PHRASE_ENABLED(we_are_vindicator))
+	if (PhraseEnabled(we_are_vindicator))
 	{
 		Response(we_are_vindicator, ZoqFotIntro);
 	}
-	if (PHRASE_ENABLED(quiet_toadies))
+	if (PhraseEnabled(quiet_toadies))
 	{
 		Response(quiet_toadies, AquaintZoqFot);
 	}
@@ -474,16 +464,15 @@ AquaintZoqFot(RESPONSE_REF R)
 
 static void ZoqFotHome(RESPONSE_REF R);
 
-static void
-ZoqFotInfo(RESPONSE_REF R)
+static void ZoqFotInfo(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, want_specific_info))
+	if (PlayerSaid(R, want_specific_info))
 	{
 		NPCPhrase_cb(WHAT_SPECIFIC_INFO0, &SelectAlienZOQ);
 		NPCPhrase_cb(WHAT_SPECIFIC_INFO1, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 	}
-	else if (PLAYER_SAID(R, what_about_others))
+	else if (PlayerSaid(R, what_about_others))
 	{
 		NPCPhrase_cb(ABOUT_OTHERS0, &SelectAlienZOQ);
 		NPCPhrase_cb(ABOUT_OTHERS1, &SelectAlienPIK);
@@ -501,9 +490,9 @@ ZoqFotInfo(RESPONSE_REF R)
 		NPCPhrase_cb(ABOUT_OTHERS13, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(what_about_others);
+		DisablePhrase(what_about_others);
 	}
-	else if (PLAYER_SAID(R, what_about_zebranky))
+	else if (PlayerSaid(R, what_about_zebranky))
 	{
 		NPCPhrase_cb(ABOUT_ZEBRANKY0, &SelectAlienZOQ);
 		NPCPhrase_cb(ABOUT_ZEBRANKY1, &SelectAlienPIK);
@@ -515,9 +504,9 @@ ZoqFotInfo(RESPONSE_REF R)
 		NPCPhrase_cb(ABOUT_ZEBRANKY7, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(what_about_zebranky);
+		DisablePhrase(what_about_zebranky);
 	}
-	else if (PLAYER_SAID(R, what_about_stinger))
+	else if (PlayerSaid(R, what_about_stinger))
 	{
 		NPCPhrase_cb(ABOUT_STINGER0, &SelectAlienZOQ);
 		NPCPhrase_cb(ABOUT_STINGER1, &SelectAlienPIK);
@@ -527,17 +516,17 @@ ZoqFotInfo(RESPONSE_REF R)
 		NPCPhrase_cb(ABOUT_STINGER5, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(what_about_stinger);
+		DisablePhrase(what_about_stinger);
 	}
-	else if (PLAYER_SAID(R, what_about_guy_in_back))
+	else if (PlayerSaid(R, what_about_guy_in_back))
 	{
 		NPCPhrase_cb(ABOUT_GUY0, &SelectAlienZOQ);
 		NPCPhrase_cb(ABOUT_GUY1, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(what_about_guy_in_back);
+		DisablePhrase(what_about_guy_in_back);
 	}
-	else if (PLAYER_SAID(R, what_about_past))
+	else if (PlayerSaid(R, what_about_past))
 	{
 		NPCPhrase_cb(ABOUT_PAST0, &SelectAlienZOQ);
 		NPCPhrase_cb(ABOUT_PAST1, &SelectAlienPIK);
@@ -553,31 +542,31 @@ ZoqFotInfo(RESPONSE_REF R)
 		NPCPhrase_cb(ABOUT_PAST11, &SelectAlienPIK);
 		ZFPTalkSegue((uint16_t)~0);
 
-		DISABLE_PHRASE(what_about_past);
+		DisablePhrase(what_about_past);
 	}
 
 	uint8_t InfoLeft {false};
-	if (PHRASE_ENABLED(what_about_others))
+	if (PhraseEnabled(what_about_others))
 	{
 		Response(what_about_others, ZoqFotInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_zebranky))
+	if (PhraseEnabled(what_about_zebranky))
 	{
 		Response(what_about_zebranky, ZoqFotInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_stinger))
+	if (PhraseEnabled(what_about_stinger))
 	{
 		Response(what_about_stinger, ZoqFotInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_guy_in_back))
+	if (PhraseEnabled(what_about_guy_in_back))
 	{
 		Response(what_about_guy_in_back, ZoqFotInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_past))
+	if (PhraseEnabled(what_about_past))
 	{
 		Response(what_about_past, ZoqFotInfo);
 		InfoLeft = true;
@@ -586,18 +575,23 @@ ZoqFotInfo(RESPONSE_REF R)
 
 	if (!InfoLeft)
 	{
-		DISABLE_PHRASE(want_specific_info);
+		DisablePhrase(want_specific_info);
 	}
 }
 
-static void
-ZoqFotHome(RESPONSE_REF R)
+static constexpr auto UtwigBuyTime {(1 << 0)};
+static constexpr auto KohrAhWin {(1 << 1)};
+static constexpr auto UrquanLose {(1 << 2)};
+static constexpr auto KohrAhKill {(1 << 3)};
+static constexpr auto KnowAll {(UtwigBuyTime | KohrAhWin | UrquanLose | KohrAhKill)};
+
+static void ZoqFotHome(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, whats_up_homeworld))
+	if (PlayerSaid(R, whats_up_homeworld))
 	{
-		NumVisits = GET_GAME_STATE(ZOQFOT_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -644,22 +638,17 @@ ZoqFotHome(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ZOQFOT_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_homeworld);
+		DisablePhrase(whats_up_homeworld);
 	}
-	else if (PLAYER_SAID(R, any_war_news))
+	else if (PlayerSaid(R, any_war_news))
 	{
-#define UTWIG_BUY_TIME (1 << 0)
-#define KOHR_AH_WIN (1 << 1)
-#define URQUAN_LOSE (1 << 2)
-#define KOHR_AH_KILL (1 << 3)
-#define KNOW_ALL (UTWIG_BUY_TIME | KOHR_AH_WIN | URQUAN_LOSE | KOHR_AH_KILL)
 		uint8_t KnowMask {};
 
-		NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
-		KnowMask = GET_GAME_STATE(ZOQFOT_KNOW_MASK);
-		if (!(KnowMask & KOHR_AH_KILL) && GET_GAME_STATE(KOHR_AH_FRENZY))
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_SUPOX_MISSION);
+		KnowMask = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_KNOW_MASK);
+		if (!(KnowMask & KohrAhKill) && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 		{
 			NPCPhrase_cb(KOHRAH_FRENZY0, &SelectAlienZOQ);
 			NPCPhrase_cb(KOHRAH_FRENZY1, &SelectAlienPIK);
@@ -675,9 +664,9 @@ ZoqFotHome(RESPONSE_REF R)
 			NPCPhrase_cb(KOHRAH_FRENZY11, &SelectAlienPIK);
 			ZFPTalkSegue((uint16_t)~0);
 
-			KnowMask = KNOW_ALL;
+			KnowMask = KnowAll;
 		}
-		else if (!(KnowMask & UTWIG_BUY_TIME)
+		else if (!(KnowMask & UtwigBuyTime)
 				 && NumVisits > 0 && NumVisits < 5)
 		{
 			NPCPhrase_cb(UTWIG_DELAY0, &SelectAlienZOQ);
@@ -696,13 +685,13 @@ ZoqFotHome(RESPONSE_REF R)
 			NPCPhrase_cb(UTWIG_DELAY13, &SelectAlienPIK);
 			ZFPTalkSegue((uint16_t)~0);
 
-			KnowMask |= UTWIG_BUY_TIME;
+			KnowMask |= UtwigBuyTime;
 		}
 		else
 		{
 			int16_t i {};
 
-			i = START_YEAR + (YEARS_TO_KOHRAH_VICTORY + difficultyCase(2, 0, -1));
+			i = StartYear + (YearsToKohrahVictory() + difficultyCase(2, 0, -1));
 			if (NumVisits)
 			{
 				++i;
@@ -712,7 +701,7 @@ ZoqFotHome(RESPONSE_REF R)
 			{
 				i = 0;
 			}
-			if (!(KnowMask & URQUAN_LOSE) && i <= 0)
+			if (!(KnowMask & UrquanLose) && i <= 0)
 			{
 				NPCPhrase_cb(URQUAN_NEARLY_GONE0, &SelectAlienZOQ);
 				NPCPhrase_cb(URQUAN_NEARLY_GONE1, &SelectAlienPIK);
@@ -722,9 +711,9 @@ ZoqFotHome(RESPONSE_REF R)
 				NPCPhrase_cb(URQUAN_NEARLY_GONE5, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 
-				KnowMask |= KOHR_AH_WIN | URQUAN_LOSE;
+				KnowMask |= KohrAhWin | UrquanLose;
 			}
-			else if (!(KnowMask & KOHR_AH_WIN) && i == 1)
+			else if (!(KnowMask & KohrAhWin) && i == 1)
 			{
 				NPCPhrase_cb(KOHRAH_WINNING0, &SelectAlienZOQ);
 				NPCPhrase_cb(KOHRAH_WINNING1, &SelectAlienPIK);
@@ -738,7 +727,7 @@ ZoqFotHome(RESPONSE_REF R)
 				NPCPhrase_cb(KOHRAH_WINNING9, &SelectAlienPIK);
 				ZFPTalkSegue((uint16_t)~0);
 
-				KnowMask |= KOHR_AH_WIN;
+				KnowMask |= KohrAhWin;
 			}
 			else
 			{
@@ -747,11 +736,11 @@ ZoqFotHome(RESPONSE_REF R)
 				ZFPTalkSegue((uint16_t)~0);
 			}
 		}
-		SET_GAME_STATE(ZOQFOT_KNOW_MASK, KnowMask);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_KNOW_MASK, static_cast<uint32_t>(KnowMask));
 
-		DISABLE_PHRASE(any_war_news);
+		DisablePhrase(any_war_news);
 	}
-	else if (PLAYER_SAID(R, i_want_alliance))
+	else if (PlayerSaid(R, i_want_alliance))
 	{
 		NPCPhrase_cb(GOOD0, &SelectAlienZOQ);
 		NPCPhrase_cb(GOOD1, &SelectAlienPIK);
@@ -768,17 +757,17 @@ ZoqFotHome(RESPONSE_REF R)
 		SetRaceAllied(ZOQFOTPIK_SHIP, true);
 		AddEvent(RELATIVE_EVENT, 3, 0, 0, ZOQFOT_DISTRESS_EVENT);
 	}
-	else if (PLAYER_SAID(R, enough_info))
+	else if (PlayerSaid(R, enough_info))
 	{
 		NPCPhrase_cb(OK_ENOUGH_INFO, &SelectAlienZOQ);
 		ZFPTalkSegue((uint16_t)~0);
 	}
 
-	if (PHRASE_ENABLED(whats_up_homeworld))
+	if (PhraseEnabled(whats_up_homeworld))
 	{
 		Response(whats_up_homeworld, ZoqFotHome);
 	}
-	if (PHRASE_ENABLED(any_war_news))
+	if (PhraseEnabled(any_war_news))
 	{
 		Response(any_war_news, ZoqFotHome);
 	}
@@ -786,15 +775,14 @@ ZoqFotHome(RESPONSE_REF R)
 	{
 		Response(i_want_alliance, ZoqFotHome);
 	}
-	else if (PHRASE_ENABLED(want_specific_info))
+	else if (PhraseEnabled(want_specific_info))
 	{
 		Response(want_specific_info, ZoqFotInfo);
 	}
 	Response(bye_homeworld, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -821,9 +809,9 @@ Intro(void)
 		return;
 	}
 
-	if (GET_GAME_STATE(ZOQFOT_HOSTILE))
+	if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_HOSTILE))
 	{
-		NumVisits = GET_GAME_STATE(ZOQFOT_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -852,13 +840,13 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ZOQFOT_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 		setSegue(Segue_hostile);
 	}
-	else if (!GET_GAME_STATE(MET_ZOQFOT))
+	else if (!uqm::gameState().flag(uqm::GameFlag::MET_ZOQFOT))
 	{
-		SET_GAME_STATE(MET_ZOQFOT, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MET_ZOQFOT, static_cast<uint32_t>(1));
 
 		NPCPhrase_cb(WE_ARE0, &SelectAlienZOQ);
 		NPCPhrase_cb(WE_ARE1, &SelectAlienPIK);
@@ -869,7 +857,7 @@ Intro(void)
 		NPCPhrase_cb(WE_ARE6, &SelectAlienZOQ);
 		NPCPhrase_cb(WE_ARE7, &SelectAlienPIK);
 
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
 			NPCPhrase_cb(INIT_HOME_HELLO0, &SelectAlienZOQ);
 			NPCPhrase_cb(INIT_HOME_HELLO1, &SelectAlienPIK);
@@ -890,7 +878,7 @@ Intro(void)
 	}
 	else
 	{
-		if (GET_GAME_STATE(ZOQFOT_DISTRESS))
+		if (uqm::gameState().flag(uqm::GameFlag::ZOQFOT_DISTRESS))
 		{
 			NPCPhrase_cb(THANKS_FOR_RESCUE0, &SelectAlienZOQ);
 			NPCPhrase_cb(THANKS_FOR_RESCUE1, &SelectAlienPIK);
@@ -906,12 +894,12 @@ Intro(void)
 			NPCPhrase_cb(THANKS_FOR_RESCUE11, &SelectAlienPIK);
 			ZFPTalkSegue((uint16_t)~0);
 
-			SET_GAME_STATE(ZOQFOT_DISTRESS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_DISTRESS, static_cast<uint32_t>(0));
 			AddEscortShips(ZOQFOTPIK_SHIP, difficultyCase(4, 4, 2));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(ZOQFOT_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ZOQFOT_HOME_VISITS);
 			if (CheckAlliance(ZOQFOTPIK_SHIP) != GOOD_GUY)
 			{
 				switch (NumVisits++)
@@ -967,38 +955,35 @@ Intro(void)
 						break;
 				}
 			}
-			SET_GAME_STATE(ZOQFOT_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		ZoqFotHome(0);
 	}
 }
 
-static uint16_t
-uninit_zoqfot(void)
+static uint16_t uninit_zoqfot(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_zoqfot_enc(void)
+static void post_zoqfot_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_zoqfot_comm(void)
+LOCDATA* init_zoqfot_comm(void)
 {
 	zoqfot_desc.init_encounter_func = Intro;
 	zoqfot_desc.post_encounter_func = post_zoqfot_enc;
 	zoqfot_desc.uninit_encounter_func = uninit_zoqfot;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	zoqfot_desc.AlienTextWidth = (SIS_TEXT_WIDTH >> 1) - TEXT_X_OFFS;
+	zoqfot_desc.AlienTextWidth = (SisTextWidth() >> 1) - TextXOffs();
 
 	if (CheckAlliance(ZOQFOTPIK_SHIP) == GOOD_GUY
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)

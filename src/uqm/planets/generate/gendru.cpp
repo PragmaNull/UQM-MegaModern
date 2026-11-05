@@ -60,8 +60,7 @@ const GenerateFunctions generateDruugeFunctions = {
 };
 
 
-static bool
-GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
@@ -78,11 +77,11 @@ GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 		++pSunDesc->NumPlanets;
 
 		pPlanet->data_index = DUST_WORLD;
-		pPlanet->radius = EARTH_RADIUS * 50L / 100;
+		pPlanet->radius = EarthRadius * 50L / 100;
 		pPlanet->NumPlanets = 0;
-		const uint16_t angle {HALF_CIRCLE - OCTANT};
-		pPlanet->location.x = COSINE(angle, pPlanet->radius);
-		pPlanet->location.y = SINE(angle, pPlanet->radius);
+		const uint16_t angle {HalfCircle - Octant};
+		pPlanet->location.x = Cosine(angle, pPlanet->radius);
+		pPlanet->location.y = Sine(angle, pPlanet->radius);
 		pPlanet->rand_seed =
 			uqm::makeDword(pPlanet->location.x, pPlanet->location.y);
 		ComputeSpeed(pPlanet, false, 1);
@@ -98,52 +97,50 @@ GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
-							const PLANET_DESC* world)
+static bool GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
+										const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& IsHomeworldKnown(DRUUGE_HOME))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
-							sizeof(GLOBAL_SIS(PlanetName)),
-							GAME_STRING(PLANET_NUMBER_BASE + 41));
+		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+							sizeof(uqm::gameState().sis().PlanetName),
+							GameString(PLANET_NUMBER_BASE + 41));
 
-		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
 
 	return true;
 }
 
-static bool
-GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
-							   PLANET_DESC* world)
+static bool GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
+										   PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (StartSphereTracking(DRUUGE_SHIP))
 		{
-			NotifyOthers(DRUUGE_SHIP, IPNL_ALL_CLEAR);
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			NotifyOthers(DRUUGE_SHIP, IpnlAllClear);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			CloneShipFragment(DRUUGE_SHIP,
-							  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
+							  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			InitCommunication(DRUUGE_CONVERSATION);
 			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
-				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 			return true;
 		}
@@ -151,10 +148,10 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
-				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(DRUUGE_RUINS_STRTAB);
+				CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(DruugeRuinsStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
-			if (GET_GAME_STATE(ROSY_SPHERE))
+			if (uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE))
 			{ // Already picked up Rosy Sphere, skip the report
 				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 			}
@@ -163,7 +160,7 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 
 	GenerateDefault_generateOrbital(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
 		&& !isDifficulty(uqm::Difficulty::Hard))
 	{
 		solarSys->SysInfo.PlanetInfo.Weather = 3;
@@ -173,21 +170,20 @@ GenerateDruuge_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateDruuge_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-							uint16_t whichNode)
+static bool GenerateDruuge_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+										uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		GenerateDefault_landerReportCycle(solarSys);
 
 		// The artifact can be picked up from any ruin
-		if (!GET_GAME_STATE(ROSY_SPHERE))
+		if (!uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE))
 		{ // Just picked up the Rosy Sphere from a ruin
 			SetLanderTakeoff();
 
-			SET_GAME_STATE(ROSY_SPHERE, 1);
-			SET_GAME_STATE(ROSY_SPHERE_ON_SHIP, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP, static_cast<uint32_t>(1));
 		}
 
 		return false; // do not remove the node
@@ -197,11 +193,10 @@ GenerateDruuge_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-static uint16_t
-GenerateDruuge_generateEnergy(const SOLARSYS_STATE* solarSys,
-							  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateDruuge_generateEnergy(const SOLARSYS_STATE* solarSys,
+											  const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}

@@ -25,59 +25,59 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 36
-#define MAX_ENERGY 30
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 4
-#define MAX_THRUST /* DISPLAY_TO_WORLD (7) */ 27
-#define THRUST_INCREMENT /* DISPLAY_TO_WORLD (2) */ 3
-#define THRUST_WAIT 4
-#define TURN_WAIT 6
-#define SHIP_MASS 10
+static constexpr auto MaxCrew {36};
+static constexpr auto MaxEnergy {30};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {4};
+static constexpr auto MaxThrust {27};
+static constexpr auto ThrustIncrement {3};
+static constexpr auto ThrustWait {4};
+static constexpr auto TurnWait {6};
+static constexpr auto ShipMass {10};
 
 // Photon Shard
-#define WEAPON_ENERGY_COST 5
-#define WEAPON_WAIT 0
-#define CHENJESU_OFFSET RES_SCALE(16)
-#define MISSILE_OFFSET 0
-#define MISSILE_SPEED DISPLAY_TO_WORLD(RES_SCALE(16))
-#define MISSILE_LIFE 90
+static constexpr auto WeaponEnergyCost {5};
+static constexpr auto WeaponWait {0};
+static auto ChenjesuOffset() { return ResScale(16); }
+static constexpr auto MissileOffset {0};
+static auto MissileSpeed() { return DisplayToWorld(ResScale(16)); }
+static constexpr auto MissileLife {90};
 /* actually, it's as long as you hold the button down. */
-#define MISSILE_HITS 10
-#define MISSILE_DAMAGE 6
-#define NUM_SPARKLES 8
+static constexpr auto MissileHits {10};
+static constexpr auto MissileDamage {6};
+static constexpr auto NumSparkles {8};
 
 // Shrapnel
-#define FRAGMENT_OFFSET RES_SCALE(2)
-#define NUM_FRAGMENTS 8
-#define FRAGMENT_LIFE 10
-#define FRAGMENT_SPEED MISSILE_SPEED
-#define FRAGMENT_RANGE (FRAGMENT_LIFE * FRAGMENT_SPEED)
+static auto FragmentOffset() { return ResScale(2); }
+static constexpr auto NumFragments {8};
+static constexpr auto FragmentLife {10};
+static auto FragmentSpeed() { return MissileSpeed(); }
+static auto FragmentRange() { return (FragmentLife * FragmentSpeed()); }
 /* This bit is for the cyborg only. */
-#define FRAGMENT_HITS 1
-#define FRAGMENT_DAMAGE 2
+static constexpr auto FragmentHits {1};
+static constexpr auto FragmentDamage {2};
 
 // DOGI
-#define SPECIAL_ENERGY_COST MAX_ENERGY
-#define SPECIAL_WAIT 0
-#define DOGGY_OFFSET RES_SCALE(18)
-#define DOGGY_SPEED DISPLAY_TO_WORLD(RES_SCALE(8))
-#define ENERGY_DRAIN 10
-#define MAX_DOGGIES 4
-#define DOGGY_HITS 3
-#define DOGGY_MASS 4
+static constexpr auto SpecialEnergyCost {MaxEnergy};
+static constexpr auto SpecialWait {0};
+static auto DoggyOffset() { return ResScale(18); }
+static auto DoggySpeed() { return DisplayToWorld(ResScale(8)); }
+static constexpr auto EnergyDrain {10};
+static constexpr auto MaxDoggies {4};
+static constexpr auto DoggyHits {3};
+static constexpr auto DoggyMass {4};
 
 static RACE_DESC chenjesu_desc =
 	{
 		{/* SHIP_INFO */
 		 "broodhome",
-		 FIRES_FORE | SEEKING_SPECIAL | SEEKING_WEAPON,
+		 FiresFore | SeekingSpecial | SeekingWeapon,
 		 28, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 CHENJESU_RACE_STRINGS,
-		 CHENJESU_ICON_MASK_PMAP_ANIM,
-		 CHENJESU_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 ChenjesuRaceStrings,
+		 ChenjesuIconMaskPmapAnim,
+		 ChenjesuMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -89,38 +89,38 @@ static RACE_DESC chenjesu_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 CHENJESU_BIG_MASK_PMAP_ANIM,
-			 CHENJESU_MED_MASK_PMAP_ANIM,
-			 CHENJESU_SML_MASK_PMAP_ANIM,
+			 ChenjesuBigMaskPmapAnim,
+			 ChenjesuMedMaskPmapAnim,
+			 ChenjesuSmlMaskPmapAnim,
 		 },
 		 {
-			 SPARK_BIG_MASK_PMAP_ANIM,
-			 SPARK_MED_MASK_PMAP_ANIM,
-			 SPARK_SML_MASK_PMAP_ANIM,
+			 SparkBigMaskPmapAnim,
+			 SparkMedMaskPmapAnim,
+			 SparkSmlMaskPmapAnim,
 		 },
 		 {
-			 DOGGY_BIG_MASK_PMAP_ANIM,
-			 DOGGY_MED_MASK_PMAP_ANIM,
-			 DOGGY_SML_MASK_PMAP_ANIM,
+			 DoggyBigMaskPmapAnim,
+			 DoggyMedMaskPmapAnim,
+			 DoggySmlMaskPmapAnim,
 		 },
-		 {CHENJESU_CAPTAIN_MASK_PMAP_ANIM,
+		 {ChenjesuCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 CHENJESU_VICTORY_SONG,
-		 CHENJESU_SHIP_SOUNDS,
+		 ChenjesuVictorySong,
+		 ChenjesuShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -128,7 +128,7 @@ static RACE_DESC chenjesu_desc =
 		 nullptr},
 		{
 			0,
-			LONG_RANGE_WEAPON,
+			LongRangeWeapon,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -139,8 +139,7 @@ static RACE_DESC chenjesu_desc =
 		0, /* CodeRef */
 };
 
-static void
-crystal_postprocess(ELEMENT* ElementPtr)
+static void crystal_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -151,19 +150,19 @@ crystal_postprocess(ELEMENT* ElementPtr)
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.index = 1;
 	MissileBlock.sender = ElementPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
+	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = 0;
-	MissileBlock.speed = FRAGMENT_SPEED;
-	MissileBlock.hit_points = FRAGMENT_HITS;
-	MissileBlock.damage = FRAGMENT_DAMAGE;
-	MissileBlock.life = FRAGMENT_LIFE;
+	MissileBlock.speed = FragmentSpeed();
+	MissileBlock.hit_points = FragmentHits;
+	MissileBlock.damage = FragmentDamage;
+	MissileBlock.life = FragmentLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = FRAGMENT_OFFSET;
+	MissileBlock.blast_offs = FragmentOffset();
 
 	for (MissileBlock.face = 0;
-		 MissileBlock.face < ANGLE_TO_FACING(FULL_CIRCLE);
+		 MissileBlock.face < AngleToFacing(FullCircle);
 		 MissileBlock.face +=
-		 (ANGLE_TO_FACING(FULL_CIRCLE) / NUM_FRAGMENTS))
+		 (AngleToFacing(FullCircle) / NumFragments))
 	{
 		HELEMENT hFragment {initialize_missile(&MissileBlock)};
 		if (hFragment)
@@ -183,13 +182,12 @@ crystal_postprocess(ELEMENT* ElementPtr)
 				 ElementPtr);
 }
 
-static void
-crystal_preprocess(ELEMENT* ElementPtr)
+static void crystal_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (StarShipPtr->cur_status_flags & WEAPON)
+	if (StarShipPtr->cur_status_flags & WeaponFlag)
 	{
 		++ElementPtr->life_span; /* keep it going while key pressed */
 	}
@@ -201,8 +199,7 @@ crystal_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-animate(ELEMENT* ElementPtr)
+static void animate(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -212,15 +209,14 @@ animate(ELEMENT* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 
 		ElementPtr->turn_wait = ElementPtr->next_turn;
 	}
 }
 
-static void
-crystal_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void crystal_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	HELEMENT hBlastElement {};
 
@@ -233,7 +229,7 @@ crystal_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		LockElement(hBlastElement, &BlastElementPtr);
 		BlastElementPtr->current.location = ElementPtr1->current.location;
 
-		BlastElementPtr->life_span = NUM_SPARKLES;
+		BlastElementPtr->life_span = NumSparkles;
 		BlastElementPtr->turn_wait = BlastElementPtr->next_turn = 0;
 		{
 			BlastElementPtr->preprocess_func = animate;
@@ -248,8 +244,7 @@ crystal_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	}
 }
 
-static void
-doggy_preprocess(ELEMENT* ElementPtr)
+static void doggy_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -266,48 +261,47 @@ doggy_preprocess(ELEMENT* ElementPtr)
 		int16_t delta_facing {};
 
 		facing = orig_facing =
-			NORMALIZE_FACING(ANGLE_TO_FACING(
+			NormalizeFacing(AngleToFacing(
 				GetVelocityTravelAngle(&ElementPtr->velocity)));
 		if ((delta_facing = TrackShip(ElementPtr, &facing)) < 0)
 		{
-			facing = NORMALIZE_FACING(uqm::random().next());
+			facing = NormalizeFacing(uqm::random().next());
 		}
 		else
 		{
 			ELEMENT* ShipPtr {};
 
 			LockElement(ElementPtr->hTarget, &ShipPtr);
-			facing = NORMALIZE_FACING(ANGLE_TO_FACING(
+			facing = NormalizeFacing(AngleToFacing(
 				ARCTAN(ShipPtr->current.location.x - ElementPtr->current.location.x,
 					   ShipPtr->current.location.y - ElementPtr->current.location.y)));
-			delta_facing = NORMALIZE_FACING(facing - GetFrameIndex(ShipPtr->current.image.frame));
+			delta_facing = NormalizeFacing(facing - GetFrameIndex(ShipPtr->current.image.frame));
 			UnlockElement(ElementPtr->hTarget);
 
-			if (delta_facing > ANGLE_TO_FACING(HALF_CIRCLE - OCTANT) && delta_facing < ANGLE_TO_FACING(HALF_CIRCLE + OCTANT))
+			if (delta_facing > AngleToFacing(HalfCircle - Octant) && delta_facing < AngleToFacing(HalfCircle + Octant))
 			{
-				if (delta_facing >= ANGLE_TO_FACING(HALF_CIRCLE))
+				if (delta_facing >= AngleToFacing(HalfCircle))
 				{
-					facing -= ANGLE_TO_FACING(QUADRANT);
+					facing -= AngleToFacing(Quadrant);
 				}
 				else
 				{
-					facing += ANGLE_TO_FACING(QUADRANT);
+					facing += AngleToFacing(Quadrant);
 				}
 			}
 
-			facing = NORMALIZE_FACING(facing);
+			facing = NormalizeFacing(facing);
 		}
 
 		if (facing != orig_facing)
 		{
 			SetVelocityVector(&ElementPtr->velocity,
-							  DOGGY_SPEED, facing);
+							  DoggySpeed(), facing);
 		}
 	}
 }
 
-static void
-doggy_death(ELEMENT* ElementPtr)
+static void doggy_death(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -317,8 +311,8 @@ doggy_death(ELEMENT* ElementPtr)
 					 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 				 ElementPtr);
 
-	ElementPtr->state_flags &= ~DISAPPEARING;
-	ElementPtr->state_flags |= NONSOLID | FINITE_LIFE;
+	ElementPtr->state_flags &= ~Disappearing;
+	ElementPtr->state_flags |= Nonsolid | FiniteLife;
 	ElementPtr->life_span = 6;
 	{
 		ElementPtr->preprocess_func = animate;
@@ -330,12 +324,11 @@ doggy_death(ELEMENT* ElementPtr)
 	ElementPtr->turn_wait = ElementPtr->next_turn = 0;
 }
 
-static void
-doggy_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void doggy_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
-	if ((ElementPtr1->state_flags & PLAYER_SHIP)
+	if ((ElementPtr1->state_flags & PlayerShip)
 		&& !elementsOfSamePlayer(ElementPtr0, ElementPtr1))
 	{
 		STARSHIP* StarShipPtr {};
@@ -346,23 +339,22 @@ doggy_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 					 ElementPtr0);
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
-		if (StarShipPtr->RaceDescPtr->ship_info.energy_level < ENERGY_DRAIN)
+		if (StarShipPtr->RaceDescPtr->ship_info.energy_level < EnergyDrain)
 		{
 			DeltaEnergy(ElementPtr1, -StarShipPtr->RaceDescPtr->ship_info.energy_level);
 		}
 		else
 		{
-			DeltaEnergy(ElementPtr1, -ENERGY_DRAIN);
+			DeltaEnergy(ElementPtr1, -EnergyDrain);
 		}
 	}
-	if (ElementPtr0->thrust_wait <= COLLISION_THRUST_WAIT)
+	if (ElementPtr0->thrust_wait <= CollisionThrustWait)
 	{
-		ElementPtr0->thrust_wait += COLLISION_THRUST_WAIT << 1;
+		ElementPtr0->thrust_wait += CollisionThrustWait << 1;
 	}
 }
 
-static void
-spawn_doggy(ELEMENT* ElementPtr)
+static void spawn_doggy(ELEMENT* ElementPtr)
 {
 	HELEMENT hDoggyElement {};
 
@@ -372,16 +364,16 @@ spawn_doggy(ELEMENT* ElementPtr)
 		ELEMENT* DoggyElementPtr {};
 		STARSHIP* StarShipPtr {};
 
-		ElementPtr->state_flags |= DEFY_PHYSICS;
+		ElementPtr->state_flags |= DefyPhysics;
 
 		PutElement(hDoggyElement);
 		LockElement(hDoggyElement, &DoggyElementPtr);
-		DoggyElementPtr->hit_points = DOGGY_HITS;
-		DoggyElementPtr->mass_points = DOGGY_MASS;
+		DoggyElementPtr->hit_points = DoggyHits;
+		DoggyElementPtr->mass_points = DoggyMass;
 		DoggyElementPtr->thrust_wait = 0;
 		DoggyElementPtr->playerNr = ElementPtr->playerNr;
-		DoggyElementPtr->state_flags = APPEARING;
-		DoggyElementPtr->life_span = NORMAL_LIFE;
+		DoggyElementPtr->state_flags = Appearing;
+		DoggyElementPtr->life_span = NormalLife;
 		SetPrimType(&DisplayArray[DoggyElementPtr->PrimIndex],
 					STAMP_PRIM);
 		{
@@ -392,16 +384,16 @@ spawn_doggy(ELEMENT* ElementPtr)
 		}
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
-		angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HALF_CIRCLE;
+		angle = FacingToAngle(StarShipPtr->ShipFacing) + HalfCircle;
 		DoggyElementPtr->current.location.x = ElementPtr->next.location.x
-											+ COSINE(angle, DISPLAY_TO_WORLD(CHENJESU_OFFSET + DOGGY_OFFSET));
+											+ Cosine(angle, DisplayToWorld(ChenjesuOffset() + DoggyOffset()));
 		DoggyElementPtr->current.location.y = ElementPtr->next.location.y
-											+ SINE(angle, DISPLAY_TO_WORLD(CHENJESU_OFFSET + DOGGY_OFFSET));
+											+ Sine(angle, DisplayToWorld(ChenjesuOffset() + DoggyOffset()));
 		DoggyElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.special;
 		DoggyElementPtr->current.image.frame = StarShipPtr->RaceDescPtr->ship_data.special[0];
 
 		SetVelocityVector(&DoggyElementPtr->velocity,
-						  DOGGY_SPEED, NORMALIZE_FACING(ANGLE_TO_FACING(angle)));
+						  DoggySpeed(), NormalizeFacing(AngleToFacing(angle)));
 
 		SetElementStarShip(DoggyElementPtr, StarShipPtr);
 
@@ -414,16 +406,15 @@ spawn_doggy(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					  uint16_t ConcernCounter)
+static void chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								  uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
-	static uint32_t old_dist[NUM_SIDES] = {(uint32_t)~0, (uint32_t)~0};
+	static uint32_t old_dist[NumSides] = {(uint32_t)~0, (uint32_t)~0};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	StarShipPtr->ship_input_state &= ~SPECIAL;
+	StarShipPtr->ship_input_state &= ~SpecialFlag;
 
 	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
 	if (lpEvalDesc->ObjectPtr)
@@ -432,16 +423,16 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if ((lpEvalDesc->which_turn <= 16
-			 && MANEUVERABILITY(
+			 && Maneuverability(
 					&EnemyStarShipPtr->RaceDescPtr->cyborg_control)
-					>= RESOLUTION_COMPENSATED(MEDIUM_SHIP))
-			|| (MANEUVERABILITY(
+					>= ResolutionCompensated(MediumShip))
+			|| (Maneuverability(
 					&EnemyStarShipPtr->RaceDescPtr->cyborg_control)
-					<= RESOLUTION_COMPENSATED(SLOW_SHIP)
-				&& WEAPON_RANGE(
+					<= ResolutionCompensated(SlowShip)
+				&& GetWeaponRange(
 					   &EnemyStarShipPtr->RaceDescPtr->cyborg_control)
-					   >= chooseIfHd(LONG_RANGE_WEAPON, LONG_RANGE_WEAPON_HD) * 3 / 4
-				&& (EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & SEEKING_WEAPON)))
+					   >= chooseIfHd(LongRangeWeapon, LongRangeWeaponHd) * 3 / 4
+				&& (EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & SeekingWeapon)))
 		{
 			lpEvalDesc->MoveState = PURSUE;
 		}
@@ -463,14 +454,14 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		HELEMENT hNext {};
 		ELEMENT* CrystalPtr {};
 
-		h = (StarShipPtr->old_status_flags & WEAPON) ?
+		h = (StarShipPtr->old_status_flags & WeaponFlag) ?
 				GetTailElement() :
 				(HELEMENT)0;
 		for (; h; h = hNext)
 		{
 			LockElement(h, &CrystalPtr);
 			hNext = GetPredElement(CrystalPtr);
-			if (!(CrystalPtr->state_flags & NONSOLID)
+			if (!(CrystalPtr->state_flags & Nonsolid)
 				&& CrystalPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.weapon
 				&& CrystalPtr->preprocess_func
 				&& CrystalPtr->life_span > 0
@@ -481,11 +472,11 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					uint16_t which_turn {};
 					bool crystal_would_miss = false;
 
-					if (!IS_HD || lpEvalDesc != &ObjectsOfConcern[ENEMY_SHIP_INDEX])
+					if (!IsHd() || lpEvalDesc != &ObjectsOfConcern[ENEMY_SHIP_INDEX])
 					{
 						crystal_would_miss = ((which_turn = PlotIntercept(CrystalPtr,
 																		  ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr,
-																		  CrystalPtr->life_span, FRAGMENT_RANGE / 2))
+																		  CrystalPtr->life_span, FragmentRange() / 2))
 												  == 0
 											  || (which_turn == 1
 												  && PlotIntercept(CrystalPtr,
@@ -504,21 +495,21 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 						/*which_turn = PlotIntercept (CrystalPtr,
 							ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr,
-							CrystalPtr->life_span, FRAGMENT_RANGE / 3);*/
+							CrystalPtr->life_span, FragmentRange() / 3);*/
 						crystal_would_miss = ((PlotIntercept(CrystalPtr,
 															 ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr,
-															 CrystalPtr->life_span, FRAGMENT_RANGE * 8)
+															 CrystalPtr->life_span, FragmentRange() * 8)
 											   == 0)
 											  || curr_dist > old_dist[ShipPtr->playerNr]);
 						old_dist[ShipPtr->playerNr] = curr_dist;
 					}
 					if (crystal_would_miss)
 					{
-						StarShipPtr->ship_input_state &= ~WEAPON;
+						StarShipPtr->ship_input_state &= ~WeaponFlag;
 						old_dist[ShipPtr->playerNr] = (uint32_t)~0;
 
 						// JMS: Let's try to stop Chenjesu's stupid over-rapid firing behavior in hires modes...
-						if (IS_HD
+						if (IsHd()
 							&& ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn > 16
 							&& ((ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
 								 && ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn > 8)
@@ -529,7 +520,7 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					}
 					else if (StarShipPtr->weapon_counter == 0)
 					{
-						StarShipPtr->ship_input_state |= WEAPON;
+						StarShipPtr->ship_input_state |= WeaponFlag;
 						lpEvalDesc = &ObjectsOfConcern[ENEMY_SHIP_INDEX];
 					}
 
@@ -543,9 +534,9 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 		if (h == 0)
 		{
-			if (StarShipPtr->old_status_flags & WEAPON)
+			if (StarShipPtr->old_status_flags & WeaponFlag)
 			{
-				StarShipPtr->ship_input_state &= ~WEAPON;
+				StarShipPtr->ship_input_state &= ~WeaponFlag;
 				old_dist[ShipPtr->playerNr] = (uint32_t)~0;
 				if (lpEvalDesc == &ObjectsOfConcern[ENEMY_WEAPON_INDEX])
 				{
@@ -553,9 +544,9 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				}
 			}
 			else if (StarShipPtr->weapon_counter == 0
-					 && ship_weapons(ShipPtr, lpEvalDesc->ObjectPtr, FRAGMENT_RANGE / 2))
+					 && ship_weapons(ShipPtr, lpEvalDesc->ObjectPtr, FragmentRange() / 2))
 			{
-				if (IS_HD)
+				if (IsHd())
 				{
 					ELEMENT Ship;
 					HELEMENT Weapon[6];
@@ -572,7 +563,7 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					if (w)
 					{
 						LockElement(w, &EPtr);
-						if (EPtr->state_flags & APPEARING)
+						if (EPtr->state_flags & Appearing)
 						{
 							EPtr->next = EPtr->current;
 							InitIntersectStartPoint(EPtr);
@@ -581,10 +572,10 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 						}
 
 						if (PlotIntercept(EPtr, lpEvalDesc->ObjectPtr,
-										  EPtr->life_span, FRAGMENT_RANGE / 2)
+										  EPtr->life_span, FragmentRange() / 2)
 							< 80)
 						{
-							StarShipPtr->ship_input_state |= WEAPON;
+							StarShipPtr->ship_input_state |= WeaponFlag;
 						}
 
 						UnlockElement(w);
@@ -593,25 +584,24 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				}
 				else
 				{
-					StarShipPtr->ship_input_state |= WEAPON;
+					StarShipPtr->ship_input_state |= WeaponFlag;
 				}
 			}
 		}
 	}
 
-	if (StarShipPtr->special_counter < MAX_DOGGIES)
+	if (StarShipPtr->special_counter < MaxDoggies)
 	{
 		if (lpEvalDesc->ObjectPtr
-			&& StarShipPtr->RaceDescPtr->ship_info.energy_level <= SPECIAL_ENERGY_COST
-			&& !(StarShipPtr->ship_input_state & WEAPON))
+			&& StarShipPtr->RaceDescPtr->ship_info.energy_level <= SpecialEnergyCost
+			&& !(StarShipPtr->ship_input_state & WeaponFlag))
 		{
-			StarShipPtr->ship_input_state |= SPECIAL;
+			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
 	}
 }
 
-static uint16_t
-initialize_crystal(ELEMENT* ShipPtr, HELEMENT CrystalArray[])
+static uint16_t initialize_crystal(ELEMENT* ShipPtr, HELEMENT CrystalArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -623,14 +613,14 @@ initialize_crystal(ELEMENT* ShipPtr, HELEMENT CrystalArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = 0;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
-	MissileBlock.pixoffs = CHENJESU_OFFSET;
-	MissileBlock.speed = MISSILE_SPEED;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.pixoffs = ChenjesuOffset();
+	MissileBlock.speed = MissileSpeed();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = crystal_preprocess;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset;
 	CrystalArray[0] = initialize_missile(&MissileBlock);
 
 	if (CrystalArray[0])
@@ -645,15 +635,14 @@ initialize_crystal(ELEMENT* ShipPtr, HELEMENT CrystalArray[])
 	return (1);
 }
 
-static void
-chenjesu_postprocess(ELEMENT* ElementPtr)
+static void chenjesu_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
-		&& StarShipPtr->special_counter < MAX_DOGGIES
-		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
+		&& StarShipPtr->special_counter < MaxDoggies
+		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
 		spawn_doggy(ElementPtr);
 	}
@@ -663,8 +652,7 @@ chenjesu_postprocess(ELEMENT* ElementPtr)
 			 * decrement special_counter */
 }
 
-static void
-chenjesu_preprocess(ELEMENT* ElementPtr)
+static void chenjesu_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -673,30 +661,29 @@ chenjesu_preprocess(ELEMENT* ElementPtr)
 											 * computer opponent
 											 */
 	{
-		StarShipPtr->special_counter += MAX_DOGGIES;
+		StarShipPtr->special_counter += MaxDoggies;
 	}
 	if (StarShipPtr->cur_status_flags
 		& StarShipPtr->old_status_flags
-		& WEAPON)
+		& WeaponFlag)
 	{
 		++StarShipPtr->weapon_counter;
 	}
 }
 
-RACE_DESC*
-init_chenjesu(void)
+RACE_DESC* init_chenjesu(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
-		chenjesu_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		chenjesu_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		chenjesu_desc.cyborg_control.WeaponRange = LONG_RANGE_WEAPON_HD;
+		chenjesu_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		chenjesu_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
+		chenjesu_desc.cyborg_control.WeaponRange = LongRangeWeaponHd;
 	}
 	else
 	{
-		chenjesu_desc.characteristics.max_thrust = MAX_THRUST;
-		chenjesu_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		chenjesu_desc.cyborg_control.WeaponRange = LONG_RANGE_WEAPON;
+		chenjesu_desc.characteristics.max_thrust = MaxThrust;
+		chenjesu_desc.characteristics.thrust_increment = ThrustIncrement;
+		chenjesu_desc.cyborg_control.WeaponRange = LongRangeWeapon;
 	}
 
 	chenjesu_desc.preprocess_func = chenjesu_preprocess;

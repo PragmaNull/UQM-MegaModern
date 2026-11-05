@@ -55,8 +55,7 @@ const GenerateFunctions generatePkunkFunctions = {
 };
 
 
-static bool
-GeneratePkunk_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GeneratePkunk_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
@@ -69,10 +68,10 @@ GeneratePkunk_generatePlanets(SOLARSYS_STATE* solarSys)
 	{
 		pPlanet->data_index = WATER_WORLD;
 		pPlanet->NumPlanets = 1;
-		pPlanet->radius = EARTH_RADIUS * 104L / 100;
+		pPlanet->radius = EarthRadius * 104L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
-		pPlanet->location.x = COSINE(angle, pPlanet->radius);
-		pPlanet->location.y = SINE(angle, pPlanet->radius);
+		pPlanet->location.x = Cosine(angle, pPlanet->radius);
+		pPlanet->location.y = Sine(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
 	}
 	else
@@ -93,30 +92,29 @@ GeneratePkunk_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GeneratePkunk_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
+static bool GeneratePkunk_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (StartSphereTracking(PKUNK_SHIP))
 		{
-			NotifyOthers(PKUNK_SHIP, IPNL_ALL_CLEAR);
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			NotifyOthers(PKUNK_SHIP, IpnlAllClear);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			CloneShipFragment(PKUNK_SHIP,
-							  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
+							  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			InitCommunication(PKUNK_CONVERSATION);
 
 			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
-				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 			return true;
 		}
@@ -124,10 +122,10 @@ GeneratePkunk_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
-				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(PKUNK_RUINS_STRTAB);
+				CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(PkunkRuinsStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
-			if (GET_GAME_STATE(CLEAR_SPINDLE))
+			if (uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE))
 			{ // Already picked up the Clear Spindle, skip the report
 				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 			}
@@ -139,21 +137,20 @@ GeneratePkunk_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 	return true;
 }
 
-static bool
-GeneratePkunk_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						   uint16_t whichNode)
+static bool GeneratePkunk_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									   uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		GenerateDefault_landerReportCycle(solarSys);
 
 		// The artifact can be picked up from any ruin
-		if (!GET_GAME_STATE(CLEAR_SPINDLE))
+		if (!uqm::gameState().flag(uqm::GameFlag::CLEAR_SPINDLE))
 		{ // Just picked up the Clear Spindle from a ruin
 			SetLanderTakeoff();
 
-			SET_GAME_STATE(CLEAR_SPINDLE, 1);
-			SET_GAME_STATE(CLEAR_SPINDLE_ON_SHIP, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP, static_cast<uint32_t>(1));
 		}
 
 		return false; // do not remove the node
@@ -163,11 +160,10 @@ GeneratePkunk_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-static uint16_t
-GeneratePkunk_generateEnergy(const SOLARSYS_STATE* solarSys,
-							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GeneratePkunk_generateEnergy(const SOLARSYS_STATE* solarSys,
+											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}

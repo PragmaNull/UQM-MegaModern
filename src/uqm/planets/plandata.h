@@ -26,8 +26,7 @@ extern "C" {
 #endif
 
 /*------------------------------ Type Defines ----------------------------- */
-#define NUMBER_OF_ORBITS 16
-#define VACANT 0xFF
+
 
 enum
 {
@@ -74,44 +73,36 @@ enum
 	OWNER_PLAYER = (1 << 2)
 };
 
-#define STAR_OWNER_SHIFT 0
-#define STAR_TYPE_SHIFT 3  /* STAR_OWNER_SHIFT + 3 */
-#define STAR_COLOR_SHIFT 5 /* STAR_TYPE_SHIFT + 2 */
-#define STAR_COLOR_MASK (uint8_t)(0xFF << STAR_COLOR_SHIFT)
-#define STAR_TYPE_MASK (uint8_t)((0xFF << STAR_TYPE_SHIFT) \
-								 & ~STAR_COLOR_MASK)
-#define STAR_OWNER_MASK (uint8_t)((0xFF << STAR_OWNER_SHIFT) \
-								  & ~(STAR_COLOR_MASK        \
-									  | STAR_TYPE_MASK))
-#define STAR_UNKNOWN_MASK (STAR_OWNER_MASK & ~OWNER_PLAYER)
+inline constexpr auto StarOwnerShift {0};
+inline constexpr auto StarTypeShift {3};  /* STAR_OWNER_SHIFT + 3 */
+inline constexpr auto StarColorShift {5}; /* STAR_TYPE_SHIFT + 2 */
+inline constexpr auto StarColorMask {(uint8_t)(0xFF << StarColorShift)};
+inline constexpr auto StarTypeMask {(uint8_t)((0xFF << StarTypeShift) & ~StarColorMask)};
+inline constexpr auto StarOwnerMask {(uint8_t)((0xFF << StarOwnerShift) & ~(StarColorMask | StarTypeMask))};
+inline constexpr auto StarUnknownMask {(StarOwnerMask & ~OWNER_PLAYER)};
 
-#define MAKE_STAR(t, c, o)                                             \
-	(uint8_t)((((uint8_t)(t) << STAR_TYPE_SHIFT) & STAR_TYPE_MASK)     \
-			  | (((uint8_t)(c) << STAR_COLOR_SHIFT) & STAR_COLOR_MASK) \
-			  | (((uint8_t)(o) << STAR_OWNER_SHIFT) & STAR_OWNER_MASK))
-#define STAR_TYPE(f) (uint8_t)(((f) & STAR_TYPE_MASK) >> STAR_TYPE_SHIFT)
-#define STAR_COLOR(f) (uint8_t)(((f) & STAR_COLOR_MASK) >> STAR_COLOR_SHIFT)
-#define STAR_OWNER(f) (uint8_t)(((f) & STAR_OWNER_MASK) >> STAR_OWNER_SHIFT)
-#define STAR_UNKNOWN(f) (bool)((STAR_OWNER(f)        \
-								& STAR_UNKNOWN_MASK) \
-							   == STAR_UNKNOWN_MASK)
+constexpr auto MakeStar(const auto& t, const auto& c, const auto& o) { return (uint8_t)((((uint8_t)(t) << StarTypeShift) & StarTypeMask) | (((uint8_t)(c) << StarColorShift) & StarColorMask) | (((uint8_t)(o) << StarOwnerShift) & StarOwnerMask)); }
+constexpr auto StarType(const auto& f) { return (uint8_t)(((f)&StarTypeMask) >> StarTypeShift); }
+constexpr auto StarColor(const auto& f) { return (uint8_t)(((f)&StarColorMask) >> StarColorShift); }
+constexpr auto StarOwner(const auto& f) { return (uint8_t)(((f)&StarOwnerMask) >> StarOwnerShift); }
 
-#define PLAN_SIZE_MASK 0x03
 
-#define TOPO_ALGO (0 << 2)
-#define CRATERED_ALGO (1 << 2)
-#define GAS_GIANT_ALGO (2 << 2)
-#define PLAN_ALGO_MASK 0x0C
+inline constexpr auto PlanSizeMask {0x03};
 
-#define PLANSIZE(type) ((uint8_t)((type) & PLAN_SIZE_MASK))
-#define PLANALGO(type) ((uint8_t)((type) & PLAN_ALGO_MASK))
-#define PLANCOLOR(type) uqm::highNibble(type)
+inline constexpr auto TopoAlgo {(0 << 2)};
+inline constexpr auto CrateredAlgo {(1 << 2)};
+inline constexpr auto GasGiantAlgo {(2 << 2)};
+inline constexpr auto PlanAlgoMask {0x0C};
 
-#define THIN_ATMOSPHERE 10
-#define NORMAL_ATMOSPHERE 75
-#define THICK_ATMOSPHERE 200
-#define SUPER_THICK_ATMOSPHERE 2500
-#define GAS_GIANT_ATMOSPHERE 0xFFFF
+constexpr auto Plansize(const auto& type) { return ((uint8_t)((type)&PlanSizeMask)); }
+constexpr auto Planalgo(const auto& type) { return ((uint8_t)((type)&PlanAlgoMask)); }
+constexpr auto Plancolor(const auto& type) { return uqm::highNibble(type); }
+
+inline constexpr auto ThinAtmosphere {10};
+inline constexpr auto NormalAtmosphere {75};
+inline constexpr auto ThickAtmosphere {200};
+inline constexpr auto SuperThickAtmosphere {2500};
+inline constexpr auto GasGiantAtmosphere {0xFFFF};
 
 enum
 {
@@ -198,10 +189,10 @@ enum
 	PRECURSOR_STARBASE = 124 | WORLD_TYPE_SPECIAL,
 };
 
-#define NUMBER_OF_SMALL_ROCKY_WORLDS (LAST_SMALL_ROCKY_WORLD - FIRST_SMALL_ROCKY_WORLD + 1)
-#define NUMBER_OF_LARGE_ROCKY_WORLDS (LAST_LARGE_ROCKY_WORLD - FIRST_LARGE_ROCKY_WORLD + 1)
-#define NUMBER_OF_ROCKY_WORLDS (NUMBER_OF_SMALL_ROCKY_WORLDS + NUMBER_OF_LARGE_ROCKY_WORLDS)
-#define NUMBER_OF_GAS_GIANTS (LAST_GAS_GIANT - FIRST_GAS_GIANT + 1)
+inline constexpr auto NumberOfSmallRockyWorlds {(LAST_SMALL_ROCKY_WORLD - FIRST_SMALL_ROCKY_WORLD + 1)};
+inline constexpr auto NumberOfLargeRockyWorlds {(LAST_LARGE_ROCKY_WORLD - FIRST_LARGE_ROCKY_WORLD + 1)};
+inline constexpr auto NumberOfRockyWorlds {(NumberOfSmallRockyWorlds + NumberOfLargeRockyWorlds)};
+inline constexpr auto NumberOfGasGiants {(LAST_GAS_GIANT - FIRST_GAS_GIANT + 1)};
 
 // TODO: This struct is highly alignment and padding dependent and
 //   should not be used! The data is loaded as binary from files and
@@ -218,20 +209,22 @@ struct ELEMENT_ENTRY
 	/* Index of this element in element_array */
 	uint8_t Density;
 	/* bits 0-3: quantity of the deposits (maximum number of
-			 *           deposits), one of FEW, MODERATE, or NUMEROUS
+			 *           deposits), one of Few, Moderate, or Numerous
 			 * bits 4-7: quality of the deposit, one of LOW, MEDIUM, or HEAVY
 			 */
 };
 
 // PlanetFrame describes a type of planet. It is not used to describe
 // individual planets.
+inline constexpr auto NumUsefulElements {8};
+
 struct PlanetFrame
 {
 	uint8_t Type;
 	/* bits 0-1: size, one of SMALL_ROCKY_WORLD, LARGE_ROCKY_WORLD, or
 			 *           GAS_GIANT
-			 * bits 2-3: map creation algoritm, one of TOPO_ALGO,
-			 *           CRATERED_ALGO, or GAS_GIANT_ALGO
+			 * bits 2-3: map creation algoritm, one of TopoAlgo,
+			 *           CrateredAlgo, or GasGiantAlgo
 			 * bits 4-7: interplanetary color, one of BLUE_BODY, GREEN_BODY,
 			 *           ORANGE_BODY, RED_BODY, WHITE_BODY (same as
 			 *           GRAY_BODY), YELLOW_BODY, CYAN_BODY, PURPLE_BODY,
@@ -240,8 +233,8 @@ struct PlanetFrame
 	uint8_t BaseTectonics;
 	/* Base constant for calculation of tectonic activity,
 			 * relative to Earth at 100.
-			 * One of: NO_TECTONICS, LOW_TECTONICS, MED_TECTONICS,
-			 *         HIGH_TECTONICS, or SUPER_TECTONICS
+			 * One of: NoTectonics, LowTectonics, MedTectonics,
+			 *         HighTectonics, or SuperTectonics
 			 */
 	uint8_t AtmoAndDensity;
 	/* bits 0-3: planet density, one of GAS_DENSITY, LIGHT_DENSITY,
@@ -250,8 +243,7 @@ struct PlanetFrame
 			 * bits 4-7: atmosphere, one of LIGHT, MEDIUM, HEAVY, or
 			 *           (no define for this) super thick.
 			 */
-#define NUM_USEFUL_ELEMENTS 8
-	ELEMENT_ENTRY UsefulElements[NUM_USEFUL_ELEMENTS];
+	ELEMENT_ENTRY UsefulElements[NumUsefulElements];
 	/* Minerals on the planet */
 
 	RESOURCE CMapInstance;
@@ -313,18 +305,18 @@ enum
 
 extern uint16_t CalcGravity(const PLANET_INFO*);
 
-#define EARTH_ATMOSPHERE 50
+inline constexpr auto EarthAtmosphere {50};
 
-#define COLD_THRESHOLD -40
-#define HOT_THRESHOLD 100
+inline constexpr auto ColdThreshold {-40};
+inline constexpr auto HotThreshold {100};
 
 /*------------------------------ Global Data ------------------------------ */
 
-#define NO_TECTONICS 0
-#define LOW_TECTONICS 40
-#define MED_TECTONICS 80
-#define HIGH_TECTONICS 140
-#define SUPER_TECTONICS 200
+inline constexpr auto NoTectonics {0};
+inline constexpr auto LowTectonics {40};
+inline constexpr auto MedTectonics {80};
+inline constexpr auto HighTectonics {140};
+inline constexpr auto SuperTectonics {200};
 
 const extern PlanetFrame* PlanData;
 

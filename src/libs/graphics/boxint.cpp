@@ -18,18 +18,12 @@
 
 #include "gfxintrn.h"
 
-#undef MIN
-#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
-#undef MAX
-#define MAX(a, b) (((a) >= (b)) ? (a) : (b))
-
-INTERSECT_CODE
-BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
+INTERSECT_CODE BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 {
 	int16_t x1 {};
 	int16_t delta {};
 
-	INTERSECT_CODE intersect_code {INTERSECT_NOCLIP};
+	INTERSECT_CODE intersect_code {IntersectNoclip};
 
 	x1 = pr1->corner.x - pr2->corner.x;
 
@@ -40,9 +34,9 @@ BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 		if (delta != w1)
 		{
 			w1 = delta;
-			intersect_code &= ~INTERSECT_NOCLIP;
+			intersect_code &= ~IntersectNoclip;
 		}
-		intersect_code |= INTERSECT_RIGHT;
+		intersect_code |= IntersectRight;
 	}
 	if (x1 <= 0)
 	{
@@ -50,28 +44,27 @@ BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 		{
 			w1 += x1;
 			x1 = 0;
-			intersect_code &= ~INTERSECT_NOCLIP;
+			intersect_code &= ~IntersectNoclip;
 		}
-		intersect_code |= INTERSECT_LEFT;
+		intersect_code |= IntersectLeft;
 	}
 
 	if (w1 > 0)
 	{
-#define h2 w2
 		int16_t y1 {};
 
 		y1 = pr1->corner.y - pr2->corner.y;
 
 		int16_t h1 {pr1->extent.height};
-		h2 = pr2->extent.height;
-		if ((delta = h2 - y1) <= h1)
+		w2 = pr2->extent.height;
+		if ((delta = w2 - y1) <= h1)
 		{
 			if (delta != h1)
 			{
 				h1 = delta;
-				intersect_code &= ~INTERSECT_NOCLIP;
+				intersect_code &= ~IntersectNoclip;
 			}
-			intersect_code |= INTERSECT_BOTTOM;
+			intersect_code |= IntersectBottom;
 		}
 		if (y1 <= 0)
 		{
@@ -79,9 +72,9 @@ BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 			{
 				h1 += y1;
 				y1 = 0;
-				intersect_code &= ~INTERSECT_NOCLIP;
+				intersect_code &= ~IntersectNoclip;
 			}
-			intersect_code |= INTERSECT_TOP;
+			intersect_code |= IntersectTop;
 		}
 
 		if (h1 > 0)
@@ -93,7 +86,6 @@ BoxIntersect(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* pinter)
 
 			return (intersect_code);
 		}
-#undef h2
 	}
 
 	return ((INTERSECT_CODE)0);
@@ -107,19 +99,19 @@ void BoxUnion(GFXRECT* pr1, GFXRECT* pr2, GFXRECT* punion)
 
 	// Union is A AND B, put together, correct?  Returns a bigger box that
 	// encompasses the two.
-	punion->corner.x = MIN(pr1->corner.x, pr2->corner.x);
-	punion->corner.y = MIN(pr1->corner.y, pr2->corner.y);
+	punion->corner.x = uqstl::min(pr1->corner.x, pr2->corner.x);
+	punion->corner.y = uqstl::min(pr1->corner.y, pr2->corner.y);
 
-	punion->extent.width = MAX(pr1->corner.x + pr1->extent.width,
-							   pr2->corner.x + pr2->extent.width)
+	punion->extent.width = uqstl::max(pr1->corner.x + pr1->extent.width,
+									  pr2->corner.x + pr2->extent.width)
 						 - punion->corner.x;
-	punion->extent.height = MAX(pr1->corner.y + pr1->extent.height,
-								pr2->corner.y + pr2->extent.height)
+	punion->extent.height = uqstl::max(pr1->corner.y + pr1->extent.height,
+									   pr2->corner.y + pr2->extent.height)
 						  - punion->corner.y;
 
 
 #if NEVER // FIXME - I think this is broken, but keeping it around for reference
-		  // FIXME - just in case.
+	// FIXME - just in case.
 
 #if 1 /* alter based on 0 widths */
 

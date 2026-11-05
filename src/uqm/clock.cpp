@@ -36,14 +36,12 @@
 static uqm::RecursiveMutex clock_mutex {};
 static bool s_clockInited {};
 
-static uqm::GameClock&
-gameClock(void)
+static uqm::GameClock& gameClock(void)
 {
 	return uqm::gameState().clock();
 }
 
-static void
-nextClockDay(void)
+static void nextClockDay(void)
 {
 	gameClock().nextDay();
 
@@ -57,8 +55,7 @@ float daysElapsed(void)
 	return gameClock().daysElapsed();
 }
 
-static void
-processClockDayEvents(void)
+static void processClockDayEvents(void)
 {
 	uint8_t funcIndex {};
 	while (gameClock().takeDueEvent(funcIndex))
@@ -117,7 +114,7 @@ bool GameClockRunning(void)
 
 void SetGameClockRate(uint16_t seconds_per_day)
 {
-	int16_t new_day_in_ticks = (int16_t)(seconds_per_day * CLOCK_BASE_FRAMERATE);
+	int16_t new_day_in_ticks = (int16_t)(seconds_per_day * ClockBaseFramerate);
 	if (uqm::UQMOptions::read().timeDilationPct != 100) [[unlikely]]
 	{
 		new_day_in_ticks = static_cast<int16_t>(new_day_in_ticks * (uqm::UQMOptions::read().timeDilationPct / 100.f));
@@ -132,8 +129,7 @@ bool ValidateEvent(EVENT_TYPE type, uint16_t* pmonth_index, uint16_t* pday_index
 	return gameClock().resolveDate(type, *pmonth_index, *pday_index, *pyear_index);
 }
 
-HEVENT
-AddEvent(EVENT_TYPE type, uint16_t month_index, uint16_t day_index, uint16_t year_index, uint8_t func_index)
+HEVENT AddEvent(EVENT_TYPE type, uint16_t month_index, uint16_t day_index, uint16_t year_index, uint8_t func_index)
 {
 	if (type == RELATIVE_EVENT
 		&& month_index == 0
@@ -199,3 +195,10 @@ void MoveGameClockDays(uint16_t days)
 	}
 	gameClock().restartDay();
 }
+
+HEVENT AllocEvent() { return AllocLink(&uqm::gameState().clock().events()); }
+void PutEvent(HEVENT h) { PutQueue(&uqm::gameState().clock().events(), h); }
+void UnlockEvent(HEVENT h) { UnlockLink(&uqm::gameState().clock().events(), h); }
+void FreeEvent(HEVENT h) { FreeLink(&uqm::gameState().clock().events(), h); }
+void ForAllEvents(void (*callback)(LINK*, void*), void* arg) { ForAllLinks(&uqm::gameState().clock().events(), callback, arg); }
+void LockEvent(HEVENT h, EVENT** ppe) { *ppe = reinterpret_cast<EVENT*>(LockLink(&uqm::gameState().clock().events(), h)); }

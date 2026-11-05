@@ -38,15 +38,14 @@
 #include "uqm/lua/UQMLua.h"
 
 
-#define COL_MULTIPLIER (isPC(uqm::UQMOptions::read().landerStyle) || IS_PAD ? 7 : 6)
-#define NUM_CELL_COLS (UQM_MAP_WIDTH / COL_MULTIPLIER)
-#define NUM_CELL_ROWS (SC2_MAP_HEIGHT / 6)
-#define MAX_CELL_COLS 40 // Why is this is never used???
+static auto ColMultiplier() { return (isPC(uqm::UQMOptions::read().landerStyle) || IsPad() ? 7 : 6); }
+static auto NumCellCols() { return (UqmMapWidth / ColMultiplier()); }
+static constexpr auto NumCellRows {(Sc2MapHeight / 6)};
+
 
 extern FRAME SpaceJunkFrame;
 
-static void
-ClearReportArea(int16_t startx)
+static void ClearReportArea(int16_t startx)
 {
 	uint16_t x {};
 	uint16_t y {};
@@ -64,16 +63,16 @@ ClearReportArea(int16_t startx)
 	GetFrameRect(s.frame, &r);
 	BatchGraphics();
 
-	SetContextBackGroundColor(BLACK_COLOR);
+	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x00, 0x07, 0x00), 0x57));
+		BuildColor(MakeRgb15(0x00, 0x07, 0x00), 0x57));
 
-	s.origin.y = RES_SCALE(1);
-	for (y = 0; y < NUM_CELL_ROWS; ++y)
+	s.origin.y = ResScale(1);
+	for (y = 0; y < NumCellRows; ++y)
 	{
 		s.origin.x = startx;
-		for (x = 0; x < NUM_CELL_COLS; ++x)
+		for (x = 0; x < NumCellCols(); ++x)
 		{
 			if (uqm::UQMOptions::read().whichFonts == uqm::EmulationMode::PC)
 			{
@@ -84,16 +83,15 @@ ClearReportArea(int16_t startx)
 				DrawFilledStamp(&s);
 			}
 
-			s.origin.x += r.extent.width + RES_SCALE(1);
+			s.origin.x += r.extent.width + ResScale(1);
 		}
-		s.origin.y += r.extent.height + RES_SCALE(1);
+		s.origin.y += r.extent.height + ResScale(1);
 	}
 
 	UnbatchGraphics();
 }
 
-static void
-MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
+static void MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 {
 	int end_page_len {};
 	char end_page_buf[200] {};
@@ -109,7 +107,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 	uint16_t first_line_length = 0;
 
 	fmt::format_to_n(end_page_buf, sizeof(end_page_buf) - 1, "{}\n",
-					 GAME_STRING(static_cast<int>(SCAN_STRING_BASE) + static_cast<int>(NUM_SCAN_TYPES)));
+					 GameString(static_cast<int>(SCAN_STRING_BASE) + static_cast<int>(NUM_SCAN_TYPES)));
 	end_page_len = uqm::utf8StringCount(end_page_buf);
 
 	GetFrameRect(SetAbsFrameIndex(SpaceJunkFrame, 18), &r);
@@ -122,23 +120,23 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 
 	FlushInput();
 
-	t.baseline.y = r.extent.height + RES_SCALE(1);
+	t.baseline.y = r.extent.height + ResScale(1);
 	// Text vertical alignment
 	uint16_t row_cells {0};
-	fgcolor = BUILD_COLOR(MAKE_RGB15(0x00, 0x1F, 0x00), 0xFF);
+	fgcolor = BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0xFF);
 
-	if (contextRect.extent.width < SCALED_MAP_WIDTH)
+	if (contextRect.extent.width < ScaledMapWidth())
 	{
-		startx = RES_SCALE(1); // Special case if we're in space
+		startx = ResScale(1); // Special case if we're in space
 	}
 	else
 	{ // In DOS version first cell is 3p away from the edge of the
 		// context, and 2 in UQM
-		startx = RES_SCALE(RES_DESCALE(r.extent.width) >> 1)
-			   + (isPC(uqm::UQMOptions::read().landerStyle) ? RES_SCALE(1) : 0);
+		startx = ResScale(ResDescale(r.extent.width) >> 1)
+			   + (isPC(uqm::UQMOptions::read().landerStyle) ? ResScale(1) : 0);
 	}
 
-	startx += SAFE_NUM_SCL(1);
+	startx += SafeNumScl(1);
 
 	if (StrLen)
 	{
@@ -182,10 +180,10 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 
 		uint16_t col_cells {0};
 		// check if the remaining text fits on current screen
-		if (row_cells == NUM_CELL_ROWS - 1
-			&& (StrLen > NUM_CELL_COLS || lf_pos > 1))
+		if (row_cells == NumCellRows - 1
+			&& (StrLen > NumCellCols() || lf_pos > 1))
 		{
-			col_cells = (NUM_CELL_COLS >> 1) - (end_page_len >> 1);
+			col_cells = (NumCellCols() >> 1) - (end_page_len >> 1);
 			t.pStr = end_page_buf;
 			StrLen += end_page_len;
 
@@ -199,16 +197,16 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 		{
 			if (curr_line == 0)
 			{
-				col_cells = (NUM_CELL_COLS - first_line_length) >> 1;
+				col_cells = (NumCellCols() - first_line_length) >> 1;
 			}
 
 			if (curr_line == total_lines)
 			{
-				col_cells = ((NUM_CELL_COLS - (StrLen - 2)) >> 1) - 2;
+				col_cells = ((NumCellCols() - (StrLen - 2)) >> 1) - 2;
 			}
 		}
 
-		t.baseline.x = startx + (col_cells * (r.extent.width + RES_SCALE(1)));
+		t.baseline.x = startx + (col_cells * (r.extent.width + ResScale(1)));
 
 		do
 		{
@@ -223,7 +221,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 			}
 
 			uint16_t word_chars {(uint16_t)uqm::utf8StringCount(uqstl::string_view {t.pStr, static_cast<size_t>(pStr - t.pStr)})};
-			if ((col_cells += word_chars) <= NUM_CELL_COLS)
+			if ((col_cells += word_chars) <= NumCellCols())
 			{
 				TimeCount TimeOut;
 
@@ -256,7 +254,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 						}
 
 						PlaySound(GetSound(ReadOutSounds, 0), NotPositional(), nullptr,
-								  GAME_SOUND_PRIORITY);
+								  GameSoundPriority);
 
 						switch (c)
 						{
@@ -306,13 +304,13 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 						}
 					}
 					t.pStr = pNextStr;
-					t.baseline.x += r.extent.width + RES_SCALE(1);
+					t.baseline.x += r.extent.width + ResScale(1);
 					// Text spacing
 				}
 
 				++col_cells;
 				last_c = uqm::getCharFromString(&t.pStr);
-				t.baseline.x += r.extent.width + RES_SCALE(1);
+				t.baseline.x += r.extent.width + ResScale(1);
 				// Space spacing
 
 				if (curr_line >= 0 && last_c == '\n')
@@ -320,11 +318,11 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 					curr_line++;
 				}
 			}
-		} while (col_cells <= NUM_CELL_COLS && last_c != '\n' && StrLen);
+		} while (col_cells <= NumCellCols() && last_c != '\n' && StrLen);
 
-		t.baseline.y += r.extent.height + RES_SCALE(1);
+		t.baseline.y += r.extent.height + ResScale(1);
 		// Text vertical spacing
-		if (++row_cells == NUM_CELL_ROWS || StrLen == 0)
+		if (++row_cells == NumCellRows || StrLen == 0)
 		{
 			t.pStr = pLastStr;
 			if (!Sleepy)
@@ -332,12 +330,12 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 				UnbatchGraphics();
 			}
 
-			if (!WaitForActButton(true, WAIT_INFINITE, false))
+			if (!WaitForActButton(true, WaitInfinite, false))
 			{
 				break;
 			}
 
-			t.baseline.y = r.extent.height + RES_SCALE(1);
+			t.baseline.y = r.extent.height + ResScale(1);
 			// Text vertical alignment
 			row_cells = 0;
 			if (StrLen)
@@ -384,7 +382,7 @@ void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 			OldFontEffect = SetContextFontEffect(nullptr);
 		}
 
-		uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+		uqm::lua().beginComm(nullptr, NullResource);
 		uqstl::late_constructed<uqstl::string> interpolatedReport {};
 		const PLANET_INFO& planetInfo {pSolarSysState->SysInfo.PlanetInfo};
 		uqstl::string_view report {planetInfo.DiscoveryStrings->text(planetInfo.DiscoveryIndex)};
@@ -411,5 +409,5 @@ void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 
 	DestroyDrawable(ReleaseDrawable(saveStamp.frame));
 
-	WaitForNoInput(WAIT_INFINITE, true);
+	WaitForNoInput(WaitInfinite, true);
 }

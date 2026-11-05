@@ -2,15 +2,15 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define GENERATOR_BIG_MASK_ANIM "ship.samatra.graphics.generator.large"
-#define GENERATOR_MED_MASK_PMAP_ANIM "ship.samatra.graphics.generator.medium"
-#define GENERATOR_SML_MASK_PMAP_ANIM "ship.samatra.graphics.generator.small"
-#define SAMATRA_BIG_MASK_ANIM "ship.samatra.graphics.samatra.large"
-#define SAMATRA_CAPTAIN_MASK_PMAP_ANIM "ship.samatra.graphics.captain"
-#define SAMATRA_MED_MASK_PMAP_ANIM "ship.samatra.graphics.samatra.medium"
-#define SAMATRA_SHIP_SOUNDS "ship.samatra.sounds"
-#define SAMATRA_SML_MASK_PMAP_ANIM "ship.samatra.graphics.samatra.small"
-#define SAMATRA_VICTORY_SONG "ship.samatra.ditty"
-#define SENTINEL_BIG_MASK_ANIM "ship.samatra.graphics.sentinel.large"
-#define SENTINEL_MED_MASK_PMAP_ANIM "ship.samatra.graphics.sentinel.medium"
-#define SENTINEL_SML_MASK_PMAP_ANIM "ship.samatra.graphics.sentinel.small"
+inline constexpr uqgsl::czstring GeneratorBigMaskAnim {"ship.samatra.graphics.generator.large"};
+inline constexpr uqgsl::czstring GeneratorMedMaskPmapAnim {"ship.samatra.graphics.generator.medium"};
+inline constexpr uqgsl::czstring GeneratorSmlMaskPmapAnim {"ship.samatra.graphics.generator.small"};
+inline constexpr uqgsl::czstring SamatraBigMaskAnim {"ship.samatra.graphics.samatra.large"};
+inline constexpr uqgsl::czstring SamatraCaptainMaskPmapAnim {"ship.samatra.graphics.captain"};
+inline constexpr uqgsl::czstring SamatraMedMaskPmapAnim {"ship.samatra.graphics.samatra.medium"};
+inline constexpr uqgsl::czstring SamatraShipSounds {"ship.samatra.sounds"};
+inline constexpr uqgsl::czstring SamatraSmlMaskPmapAnim {"ship.samatra.graphics.samatra.small"};
+
+inline constexpr uqgsl::czstring SentinelBigMaskAnim {"ship.samatra.graphics.sentinel.large"};
+inline constexpr uqgsl::czstring SentinelMedMaskPmapAnim {"ship.samatra.graphics.sentinel.medium"};
+inline constexpr uqgsl::czstring SentinelSmlMaskPmapAnim {"ship.samatra.graphics.sentinel.small"};

@@ -28,22 +28,21 @@
 const uint8_t* Elements;
 const PlanetFrame* PlanData;
 
-#define MEDIUM_DEPOSIT_THRESHOLD 150
-#define LARGE_DEPOSIT_THRESHOLD 225
+static constexpr auto MediumDepositThreshold {150};
+static constexpr auto LargeDepositThreshold {225};
 
-static uint16_t
-CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
-					NODE_INFO* info)
+static uint16_t CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
+									NODE_INFO* info)
 {
 	const ELEMENT_ENTRY* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
 	uint16_t num_deposits {0};
-	uint8_t j {NUM_USEFUL_ELEMENTS};
+	uint8_t j {NumUsefulElements};
 	do
 	{
 		uint8_t num_possible {};
 
 		num_possible = uqm::lowByte(SysGenRNG->next())
-					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
+					 % (DepositQuantity(eptr->Density) + 1);
 		while (num_possible--)
 		{
 			uint16_t deposit_quality_fine {};
@@ -54,7 +53,7 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 			int32_t temp_deposit_quality {};
 
 			deposit_quality_fine = (uqm::lowWord(SysGenRNG->next()) % 100)
-								 + (DEPOSIT_QUALITY(eptr->Density)
+								 + (DepositQuality(eptr->Density)
 									+ SysInfoPtr->StarSize)
 									   * 50;
 
@@ -81,11 +80,11 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 				temp_deposit_quality = 0;
 			}
 
-			if (temp_deposit_quality < MEDIUM_DEPOSIT_THRESHOLD)
+			if (temp_deposit_quality < MediumDepositThreshold)
 			{
 				deposit_quality_gross = 0;
 			}
-			else if (temp_deposit_quality < LARGE_DEPOSIT_THRESHOLD)
+			else if (temp_deposit_quality < LargeDepositThreshold)
 			{
 				deposit_quality_gross = 1;
 			}
@@ -120,9 +119,8 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 //   for whichLife==~0 : the number of nodes generated
 //   for whichLife<32  : the index of the last node (no known usage exists)
 // Sets the SysGenRNG to the required state first.
-uint16_t
-GenerateMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t whichDeposit,
-						NODE_INFO* info)
+uint16_t GenerateMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t whichDeposit,
+								 NODE_INFO* info)
 {
 	NODE_INFO temp_info;
 	if (!info) // user not interested in info but we need space for it
@@ -133,24 +131,24 @@ GenerateMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t whichDeposit,
 	return CalcMineralDeposits(SysInfoPtr, whichDeposit, info);
 }
 
-static uint16_t
-CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
-			  NODE_INFO* info)
+static constexpr auto MinLifeChance {10};
+
+static uint16_t CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
+							  NODE_INFO* info)
 {
 	uint16_t num_life_forms {0};
-	if (PLANSIZE(SysInfoPtr->PlanetInfo.PlanDataPtr->Type) != GAS_GIANT)
+	if (Plansize(SysInfoPtr->PlanetInfo.PlanDataPtr->Type) != GAS_GIANT)
 	{
-#define MIN_LIFE_CHANCE 10
 		int16_t life_var {};
 
 		life_var = SysGenRNG->next() & 1023;
 		if (life_var < SysInfoPtr->PlanetInfo.LifeChance
-			|| (SysInfoPtr->PlanetInfo.LifeChance < MIN_LIFE_CHANCE
-				&& life_var < MIN_LIFE_CHANCE))
+			|| (SysInfoPtr->PlanetInfo.LifeChance < MinLifeChance
+				&& life_var < MinLifeChance))
 		{
 			uint8_t num_types {};
 
-			num_types = 1 + uqm::lowByte(SysGenRNG->next()) % MAX_LIFE_VARIATION;
+			num_types = 1 + uqm::lowByte(SysGenRNG->next()) % MaxLifeVariation;
 			do
 			{
 				uint8_t index {};
@@ -158,7 +156,7 @@ CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
 				uint16_t rand_val {};
 
 				rand_val = SysGenRNG->next();
-				index = uqm::lowByte(rand_val) % NUM_CREATURE_TYPES;
+				index = uqm::lowByte(rand_val) % NumCreatureTypes;
 				num_creatures = 1 + uqm::highByte(rand_val) % 10;
 				do
 				{
@@ -190,9 +188,8 @@ CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
 //   for whichLife==~0 : the number of lifeforms generated
 //   for whichLife<32  : the index of the last lifeform (no known usage exists)
 // Sets the SysGenRNG to the required state first.
-uint16_t
-GenerateLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t whichLife,
-				  NODE_INFO* info)
+uint16_t GenerateLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t whichLife,
+						   NODE_INFO* info)
 {
 	NODE_INFO temp_info;
 	if (!info) // user not interested in info but we need space for it
@@ -208,9 +205,8 @@ GenerateLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t whichLife,
 //   for whichLife<32  : the index of the last lifeform (no known usage exists)
 // Sets the SysGenRNG to the required state first.
 // lifeTypes[] is terminated with -1
-uint16_t
-GeneratePresetLife(const SYSTEM_INFO* SysInfoPtr, const int8_t* lifeTypes,
-				   uint16_t whichLife, NODE_INFO* info)
+uint16_t GeneratePresetLife(const SYSTEM_INFO* SysInfoPtr, const int8_t* lifeTypes,
+							uint16_t whichLife, NODE_INFO* info)
 {
 	uint16_t i {};
 	NODE_INFO temp_info;
@@ -243,46 +239,42 @@ GeneratePresetLife(const SYSTEM_INFO* SysInfoPtr, const int8_t* lifeTypes,
 }
 
 
-static int16_t
-widthPick(void)
+static int16_t widthPick(void)
 {
-	const EXTENT map_dimensions[] = {MAP_DIMENSIONS};
+	const auto& map_dimensions {MapDimensions};
 
 	return map_dimensions[uqm::UQMOptions::read().planetTexture].width;
 }
 
-static int16_t
-heightPick(void)
+static int16_t heightPick(void)
 {
-	const EXTENT map_dimensions[] = {MAP_DIMENSIONS};
+	const auto& map_dimensions {MapDimensions};
 
 	return map_dimensions[uqm::UQMOptions::read().planetTexture].height;
 }
 
-static int16_t
-scaleMapWidth(int16_t value)
+static int16_t scaleMapWidth(int16_t value)
 {
 	float percentage = 1;
 
-	if (UNSCALED_MAP_WIDTH != widthPick())
+	if (UnscaledMapWidth() != widthPick())
 	{
-		percentage = scaleThing(UNSCALED_MAP_WIDTH, widthPick());
+		percentage = scaleThing(UnscaledMapWidth(), widthPick());
 	}
 
-	return RES_SCALE((int16_t)(value * percentage));
+	return ResScale((int16_t)(value * percentage));
 }
 
-static int16_t
-scaleMapHeight(int16_t value)
+static int16_t scaleMapHeight(int16_t value)
 {
 	float percentage = 1;
 
-	if (SC2_MAP_HEIGHT != heightPick())
+	if (Sc2MapHeight != heightPick())
 	{
-		percentage = scaleThing(SC2_MAP_HEIGHT, heightPick());
+		percentage = scaleThing(Sc2MapHeight, heightPick());
 	}
 
-	return RES_SCALE((int16_t)(value * percentage));
+	return ResScale((int16_t)(value * percentage));
 }
 
 void GenerateRandomLocation(GFXPOINT* loc)
@@ -299,9 +291,8 @@ void GenerateRandomLocation(GFXPOINT* loc)
 //   for whichNode==~0 : the number of nodes generated
 //   for whichNode<32  : the index of the last node (no known usage exists)
 // Sets the SysGenRNG to the required state first.
-uint16_t
-GenerateRandomNodes(const SYSTEM_INFO* SysInfoPtr, uint16_t scan, uint16_t numNodes,
-					uint16_t type, uint16_t whichNode, NODE_INFO* info)
+uint16_t GenerateRandomNodes(const SYSTEM_INFO* SysInfoPtr, uint16_t scan, uint16_t numNodes,
+							 uint16_t type, uint16_t whichNode, NODE_INFO* info)
 {
 	uint16_t i {};
 	NODE_INFO temp_info;
@@ -330,9 +321,8 @@ GenerateRandomNodes(const SYSTEM_INFO* SysInfoPtr, uint16_t scan, uint16_t numNo
 	return i;
 }
 
-uint16_t
-CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
-					  NODE_INFO* info, uint16_t numNodes, uint16_t type, uint8_t quality)
+uint16_t CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
+							   NODE_INFO* info, uint16_t numNodes, uint16_t type, uint8_t quality)
 {
 	bool OpenSeason = true;
 	NODE_INFO temp_info;
@@ -346,14 +336,14 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 
 	const ELEMENT_ENTRY* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
 	uint16_t num_deposits {0};
-	uint8_t j {NUM_USEFUL_ELEMENTS};
+	uint8_t j {NumUsefulElements};
 	do
 	{
 		uint8_t num_possible {};
 		uint8_t depositQuality = 0;
 
 		num_possible = uqm::lowByte(SysGenRNG->next())
-					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
+					 % (DepositQuantity(eptr->Density) + 1);
 
 		if (num_possible == 0 && OpenSeason)
 		{
@@ -364,7 +354,7 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 		}
 		else
 		{
-			depositQuality = DEPOSIT_QUALITY(eptr->Density);
+			depositQuality = DepositQuality(eptr->Density);
 			info->type = eptr->ElementType;
 		}
 
@@ -402,11 +392,11 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 				temp_deposit_quality = 0;
 			}
 
-			if (temp_deposit_quality < MEDIUM_DEPOSIT_THRESHOLD)
+			if (temp_deposit_quality < MediumDepositThreshold)
 			{
 				deposit_quality_gross = 0;
 			}
-			else if (temp_deposit_quality < LARGE_DEPOSIT_THRESHOLD)
+			else if (temp_deposit_quality < LargeDepositThreshold)
 			{
 				deposit_quality_gross = 1;
 			}
@@ -436,9 +426,8 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 	return num_deposits;
 }
 
-uint16_t
-CustomMineralDeposit(NODE_INFO* info, uint16_t type, uint8_t quality,
-					 GFXPOINT location)
+uint16_t CustomMineralDeposit(NODE_INFO* info, uint16_t type, uint8_t quality,
+							  GFXPOINT location)
 {
 	uint16_t deposit_quality_fine {};
 	uint16_t deposit_quality_gross {};
@@ -452,11 +441,11 @@ CustomMineralDeposit(NODE_INFO* info, uint16_t type, uint8_t quality,
 
 	deposit_quality_fine = quality * 10;
 
-	if (deposit_quality_fine < MEDIUM_DEPOSIT_THRESHOLD)
+	if (deposit_quality_fine < MediumDepositThreshold)
 	{
 		deposit_quality_gross = 0;
 	}
-	else if (deposit_quality_fine < LARGE_DEPOSIT_THRESHOLD)
+	else if (deposit_quality_fine < LargeDepositThreshold)
 	{
 		deposit_quality_gross = 1;
 	}

@@ -2,4 +2,4 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define VUX_CODE "ship.vux.code"
+inline constexpr uqgsl::czstring VuxCode {"ship.vux.code"};

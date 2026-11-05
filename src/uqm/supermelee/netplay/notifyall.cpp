@@ -24,7 +24,7 @@ void Netplay_NotifyAll_setTeamName(MELEE_STATE* pMS, size_t playerNr)
 {
 	const char* name {MeleeSetup_getTeamName(pMS->meleeSetup, playerNr)};
 	const size_t len {strlen(name)};
-	for (size_t playerI {0}; playerI < NUM_PLAYERS; playerI++)
+	for (size_t playerI {0}; playerI < NumPlayers; playerI++)
 	{
 		NetConnection* conn = netConnections[playerI];
 
@@ -53,7 +53,7 @@ void Netplay_NotifyAll_setFleet(MELEE_STATE* pMS, size_t playerNr)
 	const MeleeSetup* setup = pMS->meleeSetup;
 	const MeleeShip* ships = MeleeSetup_getFleet(setup, playerNr);
 
-	for (size_t playerI {0}; playerI < NUM_PLAYERS; playerI++)
+	for (size_t playerI {0}; playerI < NumPlayers; playerI++)
 	{
 		NetConnection* conn = netConnections[playerI];
 
@@ -72,7 +72,7 @@ void Netplay_NotifyAll_setFleet(MELEE_STATE* pMS, size_t playerNr)
 			continue;
 		}
 
-		Netplay_Notify_setFleet(conn, playerNr, ships, MELEE_FLEET_SIZE);
+		Netplay_Notify_setFleet(conn, playerNr, ships, MeleeFleetSize);
 	}
 }
 
@@ -83,7 +83,7 @@ void Netplay_NotifyAll_setShip(MELEE_STATE* pMS, size_t playerNr, size_t index)
 	const MeleeShip ship = MeleeSetup_getShip(
 		setup, playerNr, (FleetShipIndex)index);
 
-	for (size_t playerI {0}; playerI < NUM_PLAYERS; playerI++)
+	for (size_t playerI {0}; playerI < NumPlayers; playerI++)
 	{
 		NetConnection* conn = netConnections[playerI];
 
@@ -107,8 +107,7 @@ void Netplay_NotifyAll_setShip(MELEE_STATE* pMS, size_t playerNr, size_t index)
 	}
 }
 
-static bool
-Netplay_NotifyAll_inputDelayCallback(NetConnection* conn, void* arg)
+static bool Netplay_NotifyAll_inputDelayCallback(NetConnection* conn, void* arg)
 {
 	const size_t* delay = (size_t*)arg;
 	Netplay_Notify_inputDelay(conn, *delay);
@@ -124,7 +123,7 @@ bool Netplay_NotifyAll_inputDelay(size_t delay)
 #ifdef NETPLAY_CHECKSUM
 void Netplay_NotifyAll_checksum(BattleFrameCounter frameNr, Checksum checksum)
 {
-	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NumPlayers; player++)
 	{
 		NetConnection* conn = netConnections[player];
 		if (conn == nullptr)
@@ -144,7 +143,7 @@ void Netplay_NotifyAll_checksum(BattleFrameCounter frameNr, Checksum checksum)
 
 void Netplay_NotifyAll_battleInput(BATTLE_INPUT_STATE input)
 {
-	for (uint16_t player {0}; player < NUM_PLAYERS; player++)
+	for (uint16_t player {0}; player < NumPlayers; player++)
 	{
 		NetConnection* conn = netConnections[player];
 		if (conn == nullptr)

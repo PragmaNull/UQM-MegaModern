@@ -31,30 +31,30 @@ static LOCDATA utwig_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		UTWIG_PMAP_ANIM, /* AlienFrame */
-		UTWIG_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		UtwigPmapAnim, /* AlienFrame */
+		UtwigFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
-		UTWIG_COLOR_MAP, /* AlienColorMap */
-		UTWIG_MUSIC, /* AlienSong */
+		UtwigColorMap, /* AlienColorMap */
+		UtwigMusic, /* AlienSong */
 		{
-								NULL_RESOURCE,		/* AlienAltFrame */
-			NULL_RESOURCE,		/* AlienAltColorMap */
-			UTWIG_ULTRON_MUSIC, /* AlienAltSong */
+								NullResource,	  /* AlienAltFrame */
+			NullResource,	  /* AlienAltColorMap */
+			UtwigUltronMusic, /* AlienAltSong */
 		},
-		UTWIG_CONVERSATION_PHRASES, /* PlayerPhrases */
+		UtwigConversationPhrases, /* PlayerPhrases */
 		16, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				4,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				4,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond,
@@ -62,9 +62,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				7,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				7,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -74,8 +74,8 @@ static LOCDATA utwig_desc =
 								{
 				11, /* StartIndex */
 				2,	/* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -83,9 +83,9 @@ static LOCDATA utwig_desc =
 				(1 << 1),				/* BlockMask */
 			},
 								{
-				13,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				13,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond / 12,
@@ -93,9 +93,9 @@ static LOCDATA utwig_desc =
 				0, /* BlockMask */
 			},
 								{
-				18,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				18,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -103,9 +103,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				20,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				20,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -113,9 +113,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				22,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -123,9 +123,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				25,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				25,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -133,9 +133,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				27,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				27,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -143,9 +143,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				30,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				30,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -153,9 +153,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				32,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				32,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -163,9 +163,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				34,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				34,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -173,9 +173,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				36,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				36,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -183,9 +183,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				38,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				38,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -193,9 +193,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				40,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				40,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -203,9 +203,9 @@ static LOCDATA utwig_desc =
 				0,						/* BlockMask */
 			},
 								{
-				42,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				42,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -244,51 +244,50 @@ static LOCDATA utwig_desc =
 		nullptr,
 };
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
-	if (PLAYER_SAID(R, bye_neutral))
+	if (PlayerSaid(R, bye_neutral))
 	{
 		NPCPhrase(GOODBYE_NEUTRAL);
 	}
-	else if (PLAYER_SAID(R, bye_after_space))
+	else if (PlayerSaid(R, bye_after_space))
 	{
 		NPCPhrase(GOODBYE_AFTER_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_before_space))
+	else if (PlayerSaid(R, bye_before_space))
 	{
 		NPCPhrase(GOODBYE_BEFORE_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_allied_homeworld))
+	else if (PlayerSaid(R, bye_allied_homeworld))
 	{
 		NPCPhrase(GOODBYE_ALLIED_HOMEWORLD);
 	}
-	else if (PLAYER_SAID(R, bye_bomb))
+	else if (PlayerSaid(R, bye_bomb))
 	{
 		NPCPhrase(GOODBYE_BOMB);
 	}
-	else if (PLAYER_SAID(R, demand_bomb))
+	else if (PlayerSaid(R, demand_bomb))
 	{
 		NPCPhrase(GUARDS_FIGHT);
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, got_ultron)
-			 || PLAYER_SAID(R, hey_wait_got_ultron))
+	else if (PlayerSaid(R, got_ultron)
+			 || PlayerSaid(R, hey_wait_got_ultron))
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		{
 			NPCPhrase(NO_ULTRON_AT_BOMB);
 
-			SET_GAME_STATE(REFUSED_ULTRON_AT_BOMB, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::REFUSED_ULTRON_AT_BOMB, static_cast<uint32_t>(1));
 
 			SetHomeworldKnown(UTWIG_HOME);
 		}
 		else
 		{
-			if (PLAYER_SAID(R, got_ultron))
+			if (PlayerSaid(R, got_ultron))
 			{
 				NPCPhrase(DONT_WANT_TO_LOOK);
 			}
@@ -296,12 +295,12 @@ ExitConversation(RESPONSE_REF R)
 			{
 				NPCPhrase(TAUNT_US_BUT_WE_LOOK);
 			}
-			if (GET_GAME_STATE(ULTRON_CONDITION) < 4)
+			if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION) < 4)
 			{
-				switch (GET_GAME_STATE(UTWIG_INFO))
+				switch (uqm::gameState().flag(uqm::GameFlag::UTWIG_INFO))
 				{
 					case 0:
-						if (PLAYER_SAID(R, got_ultron))
+						if (PlayerSaid(R, got_ultron))
 						{
 							NPCPhrase(SICK_TRICK_1);
 						}
@@ -313,7 +312,7 @@ ExitConversation(RESPONSE_REF R)
 						}
 						break;
 					case 1:
-						if (PLAYER_SAID(R, got_ultron))
+						if (PlayerSaid(R, got_ultron))
 						{
 							NPCPhrase(SICK_TRICK_2);
 						}
@@ -325,12 +324,12 @@ ExitConversation(RESPONSE_REF R)
 						}
 						break;
 				}
-				SET_GAME_STATE(UTWIG_INFO, 1);
+				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(1));
 			}
 			else
 			{
 				NPCPhrase(HAPPY_DAYS);
-				if (GET_GAME_STATE(KOHR_AH_FRENZY))
+				if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 				{
 					NPCPhrase(TOO_LATE);
 				}
@@ -341,28 +340,28 @@ ExitConversation(RESPONSE_REF R)
 					AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_UTWIG_SUPOX_MISSION);
 				}
 
-				SET_GAME_STATE(UTWIG_HAVE_ULTRON, 1);
-				SET_GAME_STATE(ULTRON_CONDITION, 5);
+				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HAVE_ULTRON, static_cast<uint32_t>(1));
+				uqm::gameState().setFlag(uqm::GameFlag::ULTRON_CONDITION, static_cast<uint32_t>(5));
 
-				SET_GAME_STATE(UTWIG_VISITS, 0);
-				SET_GAME_STATE(SUPOX_VISITS, 0);
-				SET_GAME_STATE(UTWIG_HOME_VISITS, 0);
-				SET_GAME_STATE(SUPOX_HOME_VISITS, 0);
-				SET_GAME_STATE(BOMB_VISITS, 0);
+				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_VISITS, static_cast<uint32_t>(0));
+				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_VISITS, static_cast<uint32_t>(0));
+				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOME_VISITS, static_cast<uint32_t>(0));
+				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_HOME_VISITS, static_cast<uint32_t>(0));
+				uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(0));
 
-				SET_GAME_STATE(SUPOX_INFO, 0);
-				SET_GAME_STATE(UTWIG_INFO, 0);
-				SET_GAME_STATE(SUPOX_WAR_NEWS, 0);
-				SET_GAME_STATE(UTWIG_WAR_NEWS, 0);
-				SET_GAME_STATE(SUPOX_HOSTILE, 0);
-				SET_GAME_STATE(UTWIG_HOSTILE, 0);
+				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_INFO, static_cast<uint32_t>(0));
+				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(0));
+				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_WAR_NEWS, static_cast<uint32_t>(0));
+				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(0));
+				uqm::gameState().setFlag(uqm::GameFlag::SUPOX_HOSTILE, static_cast<uint32_t>(0));
+				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOSTILE, static_cast<uint32_t>(0));
 
 				SetRaceAllied(UTWIG_SHIP, true);
 				SetRaceAllied(SUPOX_SHIP, true);
 			}
 		}
 	}
-	else if (PLAYER_SAID(R, can_you_help))
+	else if (PlayerSaid(R, can_you_help))
 	{
 		NPCPhrase(HOW_HELP);
 		if (EscortFeasibilityStudy(UTWIG_SHIP) == 0)
@@ -382,31 +381,30 @@ ExitConversation(RESPONSE_REF R)
 
 static void AlliedHome(RESPONSE_REF R);
 
-static void
-AlliedHome(RESPONSE_REF R)
+static void AlliedHome(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 	uint8_t News {};
 
-	News = GET_GAME_STATE(UTWIG_WAR_NEWS);
-	NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
-	if (PLAYER_SAID(R, how_went_war))
+	News = uqm::gameState().flag(uqm::GameFlag::UTWIG_WAR_NEWS);
+	NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_SUPOX_MISSION);
+	if (PlayerSaid(R, how_went_war))
 	{
 		NPCPhrase(ABOUT_BATTLE);
 
 		News |= (1 << 0);
 	}
-	else if (PLAYER_SAID(R, how_goes_war))
+	else if (PlayerSaid(R, how_goes_war))
 	{
 		if (NumVisits == 1)
 		{
 			NPCPhrase(FLEET_ON_WAY);
 
-			SET_GAME_STATE(UTWIG_WAR_NEWS, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(1));
 		}
 		else
 		{
-			switch (GET_GAME_STATE(UTWIG_WAR_NEWS))
+			switch (uqm::gameState().flag(uqm::GameFlag::UTWIG_WAR_NEWS))
 			{
 				case 0:
 					NPCPhrase(BATTLE_HAPPENS_1);
@@ -419,9 +417,9 @@ AlliedHome(RESPONSE_REF R)
 			}
 		}
 
-		DISABLE_PHRASE(how_goes_war);
+		DisablePhrase(how_goes_war);
 	}
-	else if (PLAYER_SAID(R, learn_new_info))
+	else if (PlayerSaid(R, learn_new_info))
 	{
 		if (NumVisits < 5)
 		{
@@ -434,9 +432,9 @@ AlliedHome(RESPONSE_REF R)
 			News |= (1 << 1);
 		}
 
-		DISABLE_PHRASE(learn_new_info);
+		DisablePhrase(learn_new_info);
 	}
-	else if (PLAYER_SAID(R, what_now_homeworld))
+	else if (PlayerSaid(R, what_now_homeworld))
 	{
 		if (NumVisits < 5)
 		{
@@ -447,15 +445,15 @@ AlliedHome(RESPONSE_REF R)
 			NPCPhrase(HOPE_KILL_EACH_OTHER);
 		}
 
-		DISABLE_PHRASE(what_now_homeworld);
+		DisablePhrase(what_now_homeworld);
 	}
-	else if (PLAYER_SAID(R, how_is_ultron))
+	else if (PlayerSaid(R, how_is_ultron))
 	{
 		NPCPhrase(ULTRON_IS_GREAT);
 
-		DISABLE_PHRASE(how_is_ultron);
+		DisablePhrase(how_is_ultron);
 	}
-	SET_GAME_STATE(UTWIG_WAR_NEWS, News);
+	uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(News));
 
 	if (NumVisits >= 5)
 	{
@@ -464,39 +462,38 @@ AlliedHome(RESPONSE_REF R)
 			Response(how_went_war, AlliedHome);
 		}
 	}
-	else if (PHRASE_ENABLED(how_goes_war)
+	else if (PhraseEnabled(how_goes_war)
 			 && ((NumVisits == 1 && News == 0)
 				 || (NumVisits && News < 2)))
 	{
 		Response(how_goes_war, AlliedHome);
 	}
-	if (PHRASE_ENABLED(learn_new_info))
+	if (PhraseEnabled(learn_new_info))
 	{
 		Response(learn_new_info, AlliedHome);
 	}
-	if (PHRASE_ENABLED(what_now_homeworld))
+	if (PhraseEnabled(what_now_homeworld))
 	{
 		Response(what_now_homeworld, AlliedHome);
 	}
-	if (PHRASE_ENABLED(how_is_ultron))
+	if (PhraseEnabled(how_is_ultron))
 	{
 		Response(how_is_ultron, AlliedHome);
 	}
-	if (EXTENDED && ShipsReady(UTWIG_SHIP))
+	if (IsExtended() && ShipsReady(UTWIG_SHIP))
 	{
 		Response(can_you_help, ExitConversation);
 	}
 	Response(bye_allied_homeworld, ExitConversation);
 }
 
-static void
-BeforeKohrAh(RESPONSE_REF R)
+static void BeforeKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, whats_up_before_space))
+	if (PlayerSaid(R, whats_up_before_space))
 	{
-		NumVisits = GET_GAME_STATE(UTWIG_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -507,36 +504,35 @@ BeforeKohrAh(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(UTWIG_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_before_space);
+		DisablePhrase(whats_up_before_space);
 	}
-	else if (PLAYER_SAID(R, what_now_before_space))
+	else if (PlayerSaid(R, what_now_before_space))
 	{
 		NPCPhrase(DO_THIS_BEFORE_SPACE);
 
-		DISABLE_PHRASE(what_now_before_space);
+		DisablePhrase(what_now_before_space);
 	}
 
-	if (PHRASE_ENABLED(whats_up_before_space))
+	if (PhraseEnabled(whats_up_before_space))
 	{
 		Response(whats_up_before_space, BeforeKohrAh);
 	}
-	if (PHRASE_ENABLED(what_now_before_space))
+	if (PhraseEnabled(what_now_before_space))
 	{
 		Response(what_now_before_space, BeforeKohrAh);
 	}
 	Response(bye_before_space, ExitConversation);
 }
 
-static void
-AfterKohrAh(RESPONSE_REF R)
+static void AfterKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, whats_up_after_space))
+	if (PlayerSaid(R, whats_up_after_space))
 	{
-		NumVisits = GET_GAME_STATE(UTWIG_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -547,111 +543,110 @@ AfterKohrAh(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(UTWIG_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_after_space);
+		DisablePhrase(whats_up_after_space);
 	}
-	else if (PLAYER_SAID(R, what_now_after_space))
+	else if (PlayerSaid(R, what_now_after_space))
 	{
 		NPCPhrase(DO_THIS_AFTER_SPACE);
 
-		DISABLE_PHRASE(what_now_after_space);
+		DisablePhrase(what_now_after_space);
 	}
 
-	if (PHRASE_ENABLED(whats_up_after_space))
+	if (PhraseEnabled(whats_up_after_space))
 	{
 		Response(whats_up_after_space, AfterKohrAh);
 	}
-	if (PHRASE_ENABLED(what_now_after_space))
+	if (PhraseEnabled(what_now_after_space))
 	{
 		Response(what_now_after_space, AfterKohrAh);
 	}
 	Response(bye_after_space, ExitConversation);
 }
 
-static void
-NeutralUtwig(RESPONSE_REF R)
+static void NeutralUtwig(RESPONSE_REF R)
 {
 	uint8_t i {};
 	RESPONSE_REF pStr[4];
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
-	if (PLAYER_SAID(R, we_are_vindicator))
+	if (PlayerSaid(R, we_are_vindicator))
 	{
 		NPCPhrase(WOULD_BE_HAPPY_BUT);
 
-		SET_GAME_STATE(UTWIG_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK1, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, why_sad))
+	else if (PlayerSaid(R, why_sad))
 	{
 		NPCPhrase(ULTRON_BROKE);
 
-		SET_GAME_STATE(UTWIG_STACK1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK1, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, what_ultron))
+	else if (PlayerSaid(R, what_ultron))
 	{
 		NPCPhrase(GLORIOUS_ULTRON);
 
-		SET_GAME_STATE(UTWIG_STACK1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK1, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, dont_be_babies))
+	else if (PlayerSaid(R, dont_be_babies))
 	{
 		NPCPhrase(MOCK_OUR_PAIN);
 
 		setSegue(Segue_hostile);
-		SET_GAME_STATE(UTWIG_STACK1, 4);
-		SET_GAME_STATE(UTWIG_HOSTILE, 1);
-		SET_GAME_STATE(UTWIG_INFO, 0);
-		SET_GAME_STATE(UTWIG_HOME_VISITS, 0);
-		SET_GAME_STATE(UTWIG_VISITS, 0);
-		SET_GAME_STATE(BOMB_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK1, static_cast<uint32_t>(4));
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOSTILE, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(0));
 		return;
 	}
-	else if (PLAYER_SAID(R, real_sorry_about_ultron))
+	else if (PlayerSaid(R, real_sorry_about_ultron))
 	{
 		NPCPhrase(APPRECIATE_SYMPATHY);
 
-		SET_GAME_STATE(UTWIG_STACK1, 4);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK1, static_cast<uint32_t>(4));
 		return;
 	}
-	else if (PLAYER_SAID(R, what_about_you_1))
+	else if (PlayerSaid(R, what_about_you_1))
 	{
 		NPCPhrase(ABOUT_US_1);
 
 		LastStack = 2;
-		SET_GAME_STATE(UTWIG_WAR_NEWS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, what_about_you_2))
+	else if (PlayerSaid(R, what_about_you_2))
 	{
 		NPCPhrase(ABOUT_US_2);
 
 		LastStack = 2;
 		StartSphereTracking(SUPOX_SHIP);
-		SET_GAME_STATE(UTWIG_WAR_NEWS, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, what_about_you_3))
+	else if (PlayerSaid(R, what_about_you_3))
 	{
 		NPCPhrase(ABOUT_US_3);
 
-		SET_GAME_STATE(UTWIG_WAR_NEWS, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_WAR_NEWS, static_cast<uint32_t>(3));
 		SetHomeworldKnown(SUPOX_HOME);
 	}
-	else if (PLAYER_SAID(R, what_about_urquan_1))
+	else if (PlayerSaid(R, what_about_urquan_1))
 	{
 		NPCPhrase(ABOUT_URQUAN_1);
 
 		LastStack = 3;
-		SET_GAME_STATE(UTWIG_STACK2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK2, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, what_about_urquan_2))
+	else if (PlayerSaid(R, what_about_urquan_2))
 	{
 		NPCPhrase(ABOUT_URQUAN_2);
 
-		SET_GAME_STATE(UTWIG_STACK2, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_STACK2, static_cast<uint32_t>(2));
 	}
 
-	switch (GET_GAME_STATE(UTWIG_STACK1))
+	switch (uqm::gameState().flag(uqm::GameFlag::UTWIG_STACK1))
 	{
 		case 0:
 			pStr[0] = we_are_vindicator;
@@ -667,7 +662,7 @@ NeutralUtwig(RESPONSE_REF R)
 			pStr[1] = real_sorry_about_ultron;
 			break;
 	}
-	switch (GET_GAME_STATE(UTWIG_WAR_NEWS))
+	switch (uqm::gameState().flag(uqm::GameFlag::UTWIG_WAR_NEWS))
 	{
 		case 0:
 			pStr[2] = what_about_you_1;
@@ -679,7 +674,7 @@ NeutralUtwig(RESPONSE_REF R)
 			pStr[2] = what_about_you_3;
 			break;
 	}
-	switch (GET_GAME_STATE(UTWIG_STACK2))
+	switch (uqm::gameState().flag(uqm::GameFlag::UTWIG_STACK2))
 	{
 		case 0:
 			pStr[2] = what_about_urquan_1;
@@ -700,66 +695,65 @@ NeutralUtwig(RESPONSE_REF R)
 			Response(pStr[i], NeutralUtwig);
 		}
 	}
-	if (GET_GAME_STATE(ULTRON_CONDITION))
+	if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION))
 	{
 		Response(got_ultron, ExitConversation);
 	}
 	Response(bye_neutral, ExitConversation);
 }
 
-static void
-BombWorld(RESPONSE_REF R)
+static void BombWorld(RESPONSE_REF R)
 {
 	RESPONSE_REF pStr[2];
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = 0;
-	if (PLAYER_SAID(R, why_you_here))
+	if (PlayerSaid(R, why_you_here))
 	{
 		NPCPhrase(WE_GUARD_BOMB);
 
-		SET_GAME_STATE(BOMB_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::BOMB_STACK1, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, what_about_bomb))
+	else if (PlayerSaid(R, what_about_bomb))
 	{
 		NPCPhrase(ABOUT_BOMB);
 
-		SET_GAME_STATE(BOMB_STACK1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::BOMB_STACK1, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, give_us_bomb_or_die))
+	else if (PlayerSaid(R, give_us_bomb_or_die))
 	{
 		NPCPhrase(GUARDS_WARN);
 
-		SET_GAME_STATE(BOMB_STACK1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::BOMB_STACK1, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, demand_bomb))
+	else if (PlayerSaid(R, demand_bomb))
 	{
 		NPCPhrase(GUARDS_FIGHT);
 
 		setSegue(Segue_hostile);
-		SET_GAME_STATE(UTWIG_HOSTILE, 1);
-		SET_GAME_STATE(UTWIG_INFO, 0);
-		SET_GAME_STATE(UTWIG_HOME_VISITS, 0);
-		SET_GAME_STATE(UTWIG_VISITS, 0);
-		SET_GAME_STATE(BOMB_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOSTILE, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_INFO, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::UTWIG_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(0));
 		return;
 	}
-	else if (PLAYER_SAID(R, may_we_have_bomb))
+	else if (PlayerSaid(R, may_we_have_bomb))
 	{
 		NPCPhrase(NO_BOMB);
 
 		LastStack = 1;
-		SET_GAME_STATE(BOMB_STACK2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::BOMB_STACK2, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, please))
+	else if (PlayerSaid(R, please))
 	{
 		NPCPhrase(SORRY_NO_BOMB);
 
-		SET_GAME_STATE(BOMB_STACK2, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::BOMB_STACK2, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, whats_up_bomb))
+	else if (PlayerSaid(R, whats_up_bomb))
 	{
-		if (GET_GAME_STATE(BOMB_INFO))
+		if (uqm::gameState().flag(uqm::GameFlag::BOMB_INFO))
 		{
 			NPCPhrase(GENERAL_INFO_BOMB_2);
 		}
@@ -767,13 +761,13 @@ BombWorld(RESPONSE_REF R)
 		{
 			NPCPhrase(GENERAL_INFO_BOMB_1);
 
-			SET_GAME_STATE(BOMB_INFO, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::BOMB_INFO, static_cast<uint32_t>(1));
 		}
 
-		DISABLE_PHRASE(whats_up_bomb);
+		DisablePhrase(whats_up_bomb);
 	}
 
-	switch (GET_GAME_STATE(BOMB_STACK2))
+	switch (uqm::gameState().flag(uqm::GameFlag::BOMB_STACK2))
 	{
 		case 0:
 			pStr[1] = may_we_have_bomb;
@@ -782,7 +776,7 @@ BombWorld(RESPONSE_REF R)
 			pStr[1] = please;
 			break;
 	}
-	switch (GET_GAME_STATE(BOMB_STACK1))
+	switch (uqm::gameState().flag(uqm::GameFlag::BOMB_STACK1))
 	{
 		case 0:
 			pStr[0] = why_you_here;
@@ -810,18 +804,18 @@ BombWorld(RESPONSE_REF R)
 		Response(pStr[LastStack], BombWorld);
 	}
 
-	if (PHRASE_ENABLED(whats_up_bomb) && (GET_GAME_STATE(BOMB_STACK1) > 1))
+	if (PhraseEnabled(whats_up_bomb) && (uqm::gameState().flag(uqm::GameFlag::BOMB_STACK1) > 1))
 	{
 		Response(whats_up_bomb, BombWorld);
 	}
 
-	if (GET_GAME_STATE(ULTRON_CONDITION)
-		&& !GET_GAME_STATE(REFUSED_ULTRON_AT_BOMB))
+	if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION)
+		&& !uqm::gameState().flag(uqm::GameFlag::REFUSED_ULTRON_AT_BOMB))
 	{
 		Response(got_ultron, ExitConversation);
 	}
 
-	if (GET_GAME_STATE(BOMB_INFO))
+	if (uqm::gameState().flag(uqm::GameFlag::BOMB_INFO))
 	{
 		Response(bye_bomb, ExitConversation);
 	}
@@ -831,8 +825,7 @@ BombWorld(RESPONSE_REF R)
 	}
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -844,11 +837,11 @@ Intro(void)
 		return;
 	}
 
-	if (GET_GAME_STATE(UTWIG_HOSTILE))
+	if (uqm::gameState().flag(uqm::GameFlag::UTWIG_HOSTILE))
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		{
-			NumVisits = GET_GAME_STATE(BOMB_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::BOMB_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -859,11 +852,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(BOMB_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(NumVisits));
 		}
-		else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(UTWIG_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -874,11 +867,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(UTWIG_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(UTWIG_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -889,11 +882,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(UTWIG_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
-		if (!GET_GAME_STATE(ULTRON_CONDITION)
-			|| (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6)))
+		if (!uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION)
+			|| (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6)))
 		{
 			setSegue(Segue_hostile);
 		}
@@ -904,9 +897,9 @@ Intro(void)
 	}
 	else if (CheckAlliance(UTWIG_SHIP) == GOOD_GUY)
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(UTWIG_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -923,16 +916,16 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(UTWIG_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 			AlliedHome((RESPONSE_REF)0);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_SUPOX_MISSION);
 			if (NumVisits == 1)
 			{
-				NumVisits = GET_GAME_STATE(UTWIG_VISITS);
+				NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_VISITS);
 				switch (NumVisits++)
 				{
 					case 0:
@@ -943,13 +936,13 @@ Intro(void)
 						--NumVisits;
 						break;
 				}
-				SET_GAME_STATE(UTWIG_VISITS, NumVisits);
+				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_VISITS, static_cast<uint32_t>(NumVisits));
 
 				BeforeKohrAh((RESPONSE_REF)0);
 			}
 			else if (NumVisits < 5)
 			{
-				NumVisits = GET_GAME_STATE(UTWIG_VISITS);
+				NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_VISITS);
 				switch (NumVisits++)
 				{
 					case 0:
@@ -960,11 +953,11 @@ Intro(void)
 						--NumVisits;
 						break;
 				}
-				SET_GAME_STATE(UTWIG_VISITS, NumVisits);
+				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_VISITS, static_cast<uint32_t>(NumVisits));
 			}
 			else
 			{
-				NumVisits = GET_GAME_STATE(UTWIG_VISITS);
+				NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_VISITS);
 				switch (NumVisits++)
 				{
 					case 0:
@@ -975,15 +968,15 @@ Intro(void)
 						--NumVisits;
 						break;
 				}
-				SET_GAME_STATE(UTWIG_VISITS, NumVisits);
+				uqm::gameState().setFlag(uqm::GameFlag::UTWIG_VISITS, static_cast<uint32_t>(NumVisits));
 
 				AfterKohrAh((RESPONSE_REF)0);
 			}
 		}
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		NumVisits = GET_GAME_STATE(BOMB_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::BOMB_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -994,15 +987,15 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(BOMB_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(NumVisits));
 
 		BombWorld((RESPONSE_REF)0);
 	}
 	else
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(UTWIG_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -1019,11 +1012,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(UTWIG_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(UTWIG_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::UTWIG_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -1034,49 +1027,46 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(UTWIG_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		NeutralUtwig((RESPONSE_REF)0);
 	}
 }
 
-static uint16_t
-uninit_utwig(void)
+static uint16_t uninit_utwig(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_utwig_enc(void)
+static void post_utwig_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_utwig_comm(void)
+LOCDATA* init_utwig_comm(void)
 {
 	utwig_desc.init_encounter_func = Intro;
 	utwig_desc.post_encounter_func = post_utwig_enc;
 	utwig_desc.uninit_encounter_func = uninit_utwig;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	utwig_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
-	utwig_desc.AlienTextBaseline.y = RES_SCALE(64);
-	utwig_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	utwig_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
+	utwig_desc.AlienTextBaseline.y = ResScale(64);
+	utwig_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	// use alternate 'Happy Utwig!' track
-	if (GET_GAME_STATE(UTWIG_HAVE_ULTRON))
+	if (uqm::gameState().flag(uqm::GameFlag::UTWIG_HAVE_ULTRON))
 	{
-		altResFlags |= USE_ALT_SONG;
+		altResFlags |= UseAltSong;
 	}
 
 
-	if (GET_GAME_STATE(UTWIG_HAVE_ULTRON)
+	if (uqm::gameState().flag(uqm::GameFlag::UTWIG_HAVE_ULTRON)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);

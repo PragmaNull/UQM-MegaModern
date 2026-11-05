@@ -2,16 +2,16 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define LIMPETS_BIG_MASK_PMAP_ANIM "ship.vux.graphics.limpets.large"
-#define LIMPETS_MED_MASK_PMAP_ANIM "ship.vux.graphics.limpets.medium"
-#define LIMPETS_SML_MASK_PMAP_ANIM "ship.vux.graphics.limpets.small"
-#define SLIME_MASK_PMAP_ANIM "ship.vux.graphics.slime"
-#define VUX_BIG_MASK_PMAP_ANIM "ship.vux.graphics.intruder.large"
-#define VUX_CAPTAIN_MASK_PMAP_ANIM "ship.vux.graphics.captain"
-#define VUX_ICON_MASK_PMAP_ANIM "ship.vux.icons"
-#define VUX_MED_MASK_PMAP_ANIM "ship.vux.graphics.intruder.medium"
-#define VUX_MICON_MASK_PMAP_ANIM "ship.vux.meleeicons"
-#define VUX_RACE_STRINGS "ship.vux.text"
-#define VUX_SHIP_SOUNDS "ship.vux.sounds"
-#define VUX_SML_MASK_PMAP_ANIM "ship.vux.graphics.intruder.small"
-#define VUX_VICTORY_SONG "ship.vux.ditty"
+inline constexpr uqgsl::czstring LimpetsBigMaskPmapAnim {"ship.vux.graphics.limpets.large"};
+inline constexpr uqgsl::czstring LimpetsMedMaskPmapAnim {"ship.vux.graphics.limpets.medium"};
+inline constexpr uqgsl::czstring LimpetsSmlMaskPmapAnim {"ship.vux.graphics.limpets.small"};
+inline constexpr uqgsl::czstring SlimeMaskPmapAnim {"ship.vux.graphics.slime"};
+inline constexpr uqgsl::czstring VuxBigMaskPmapAnim {"ship.vux.graphics.intruder.large"};
+inline constexpr uqgsl::czstring VuxCaptainMaskPmapAnim {"ship.vux.graphics.captain"};
+inline constexpr uqgsl::czstring VuxIconMaskPmapAnim {"ship.vux.icons"};
+inline constexpr uqgsl::czstring VuxMedMaskPmapAnim {"ship.vux.graphics.intruder.medium"};
+inline constexpr uqgsl::czstring VuxMiconMaskPmapAnim {"ship.vux.meleeicons"};
+inline constexpr uqgsl::czstring VuxRaceStrings {"ship.vux.text"};
+inline constexpr uqgsl::czstring VuxShipSounds {"ship.vux.sounds"};
+inline constexpr uqgsl::czstring VuxSmlMaskPmapAnim {"ship.vux.graphics.intruder.small"};
+inline constexpr uqgsl::czstring VuxVictorySong {"ship.vux.ditty"};

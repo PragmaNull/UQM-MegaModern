@@ -28,11 +28,10 @@ extern "C" {
 
 /*------------------------------ Global Data ------------------------------ */
 
-#define NUMBER_OF_SUN_SIZES (SUPER_GIANT_STAR - DWARF_STAR + 1)
 
-#define DWARF_ENERGY 1
-#define GIANT_ENERGY 5
-#define SUPERGIANT_ENERGY 20
+inline constexpr auto DwarfEnergy {1};
+inline constexpr auto GiantEnergy {5};
+inline constexpr auto SupergiantEnergy {20};
 
 typedef struct
 {
@@ -43,7 +42,7 @@ typedef struct
 	PLANET_INFO PlanetInfo;
 } SYSTEM_INFO;
 
-#define GENERATE_ALL ((uint16_t)~0)
+inline constexpr auto GenerateAll {((uint16_t)~0)};
 
 extern uint16_t GenerateMineralDeposits(const SYSTEM_INFO*, uint16_t whichDeposit,
 										NODE_INFO* info);
@@ -60,11 +59,9 @@ extern uint16_t CustomMineralDeposit(NODE_INFO* info, uint16_t type, uint8_t qua
 extern uint16_t GeneratePresetLife(const SYSTEM_INFO*,
 								   const int8_t* lifeTypes, uint16_t whichLife, NODE_INFO* info);
 
-#define DWARF_ELEMENT_DENSITY 1
-#define GIANT_ELEMENT_DENSITY 3
-#define SUPERGIANT_ELEMENT_DENSITY 8
 
-#define MAX_ELEMENT_DENSITY ((MAX_ELEMENT_UNITS * SUPERGIANT_ELEMENT_DENSITY) << 1)
+inline constexpr auto SupergiantElementDensity {8};
+
 
 extern void DoPlanetaryAnalysis(SYSTEM_INFO* SysInfoPtr,
 								PLANET_DESC* pPlanetDesc);

@@ -22,21 +22,21 @@
 #include "core/misc/bittricks.h"
 #include "core/log/log.h"
 
-#define VELOCITY_REMAINDER(v) ((v) & (VELOCITY_SCALE - 1))
+constexpr auto VelocityRemainder(const auto& v) { return ((v) & (VelocityScale - 1)); }
 
 void GetCurrentVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t* pdy)
 {
-	*pdx = WORLD_TO_VELOCITY(velocityptr->vector.width)
+	*pdx = WorldToVelocity(velocityptr->vector.width)
 		 + (velocityptr->fract.width - (int16_t)uqm::highByte(velocityptr->incr.width));
-	*pdy = WORLD_TO_VELOCITY(velocityptr->vector.height)
+	*pdy = WorldToVelocity(velocityptr->vector.height)
 		 + (velocityptr->fract.height - (int16_t)uqm::highByte(velocityptr->incr.height));
 }
 
 void GetCurrentVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx, int32_t* pdy)
 {
-	*pdx = WORLD_TO_VELOCITY(velocityptr->vector.width)
+	*pdx = WorldToVelocity(velocityptr->vector.width)
 		 + ((int32_t)velocityptr->fract.width - (int32_t)uqm::highByte(velocityptr->incr.width));
-	*pdy = WORLD_TO_VELOCITY(velocityptr->vector.height)
+	*pdy = WorldToVelocity(velocityptr->vector.height)
 		 + ((int32_t)velocityptr->fract.height - (int32_t)uqm::highByte(velocityptr->incr.height));
 }
 
@@ -46,17 +46,17 @@ void GetNextVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t
 
 	*pdx = (velocityptr->vector.width * num_frames)
 		 + ((int16_t)((int8_t)uqm::lowByte(velocityptr->incr.width))
-			* (e >> VELOCITY_SHIFT));
+			* (e >> VelocityShift));
 
-	velocityptr->error.width = VELOCITY_REMAINDER(e);
+	velocityptr->error.width = VelocityRemainder(e);
 
 	e = (uint16_t)((uint16_t)velocityptr->error.height + ((uint16_t)velocityptr->fract.height * num_frames));
 
 	*pdy = (velocityptr->vector.height * num_frames)
 		 + ((int16_t)((int8_t)uqm::lowByte(velocityptr->incr.height))
-			* (e >> VELOCITY_SHIFT));
+			* (e >> VelocityShift));
 
-	velocityptr->error.height = VELOCITY_REMAINDER(e);
+	velocityptr->error.height = VelocityRemainder(e);
 }
 
 // JMS_GFX: New function to prevent overflows in hi-res.
@@ -66,17 +66,17 @@ void GetNextVelocityComponentsSdword(VELOCITY_DESC* velocityptr, int32_t* pdx, i
 
 	*pdx = ((int32_t)velocityptr->vector.width * num_frames)
 		 + ((int32_t)((int8_t)uqm::lowByte(velocityptr->incr.width))
-			* (e >> VELOCITY_SHIFT));
+			* (e >> VelocityShift));
 
-	velocityptr->error.width = (uint16_t)(VELOCITY_REMAINDER(e));
+	velocityptr->error.width = (uint16_t)(VelocityRemainder(e));
 
 	e = (uint32_t)((uint32_t)velocityptr->error.height + ((uint32_t)velocityptr->fract.height * num_frames));
 
 	*pdy = ((int32_t)velocityptr->vector.height * num_frames)
 		 + ((int32_t)((int8_t)uqm::lowByte(velocityptr->incr.height))
-			* (e >> VELOCITY_SHIFT));
+			* (e >> VelocityShift));
 
-	velocityptr->error.height = (uint16_t)(VELOCITY_REMAINDER(e));
+	velocityptr->error.height = (uint16_t)(VelocityRemainder(e));
 }
 
 // JMS_GFX: Preventing overflows in hi-res: The int32_t in this function's parameters was int16_t.
@@ -87,37 +87,37 @@ void SetVelocityVector(VELOCITY_DESC* velocityptr, int32_t magnitude, uint16_t f
 	int16_t dy {};
 
 	angle = velocityptr->TravelAngle =
-		FACING_TO_ANGLE(NORMALIZE_FACING(facing));
-	magnitude = WORLD_TO_VELOCITY(magnitude);
-	dx = COSINE(angle, magnitude);
-	dy = SINE(angle, magnitude);
+		FacingToAngle(NormalizeFacing(facing));
+	magnitude = WorldToVelocity(magnitude);
+	dx = Cosine(angle, magnitude);
+	dy = Sine(angle, magnitude);
 	if (dx >= 0)
 	{
-		velocityptr->vector.width = VELOCITY_TO_WORLD(dx);
+		velocityptr->vector.width = VelocityToWorld(dx);
 		velocityptr->incr.width = uqm::makeWord((uint8_t)1, (uint8_t)0);
 	}
 	else
 	{
 		dx = -dx;
-		velocityptr->vector.width = -VELOCITY_TO_WORLD(dx);
+		velocityptr->vector.width = -VelocityToWorld(dx);
 		velocityptr->incr.width =
-			uqm::makeWord((uint8_t)0xFF, (uint8_t)(VELOCITY_REMAINDER(dx) << 1));
+			uqm::makeWord((uint8_t)0xFF, (uint8_t)(VelocityRemainder(dx) << 1));
 	}
 	if (dy >= 0)
 	{
-		velocityptr->vector.height = VELOCITY_TO_WORLD(dy);
+		velocityptr->vector.height = VelocityToWorld(dy);
 		velocityptr->incr.height = uqm::makeWord((uint8_t)1, (uint8_t)0);
 	}
 	else
 	{
 		dy = -dy;
-		velocityptr->vector.height = -VELOCITY_TO_WORLD(dy);
+		velocityptr->vector.height = -VelocityToWorld(dy);
 		velocityptr->incr.height =
-			uqm::makeWord((uint8_t)0xFF, (uint8_t)(VELOCITY_REMAINDER(dy) << 1));
+			uqm::makeWord((uint8_t)0xFF, (uint8_t)(VelocityRemainder(dy) << 1));
 	}
 
-	velocityptr->fract.width = VELOCITY_REMAINDER(dx);
-	velocityptr->fract.height = VELOCITY_REMAINDER(dy);
+	velocityptr->fract.width = VelocityRemainder(dx);
+	velocityptr->fract.height = VelocityRemainder(dy);
 	velocityptr->error.width = velocityptr->error.height = 0;
 }
 
@@ -126,7 +126,7 @@ void SetVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy)
 {
 	uint16_t angle {};
 
-	if ((angle = ARCTAN(dx, dy)) == FULL_CIRCLE)
+	if ((angle = ARCTAN(dx, dy)) == FullCircle)
 	{
 		ZeroVelocityComponents(velocityptr);
 	}
@@ -134,31 +134,31 @@ void SetVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy)
 	{
 		if (dx >= 0)
 		{
-			velocityptr->vector.width = VELOCITY_TO_WORLD(dx);
+			velocityptr->vector.width = VelocityToWorld(dx);
 			velocityptr->incr.width = uqm::makeWord((uint8_t)1, (uint8_t)0);
 		}
 		else
 		{
 			dx = -dx;
-			velocityptr->vector.width = -VELOCITY_TO_WORLD(dx);
+			velocityptr->vector.width = -VelocityToWorld(dx);
 			velocityptr->incr.width =
-				uqm::makeWord((uint8_t)0xFF, (uint8_t)(VELOCITY_REMAINDER(dx) << 1));
+				uqm::makeWord((uint8_t)0xFF, (uint8_t)(VelocityRemainder(dx) << 1));
 		}
 		if (dy >= 0)
 		{
-			velocityptr->vector.height = VELOCITY_TO_WORLD(dy);
+			velocityptr->vector.height = VelocityToWorld(dy);
 			velocityptr->incr.height = uqm::makeWord((uint8_t)1, (uint8_t)0);
 		}
 		else
 		{
 			dy = -dy;
-			velocityptr->vector.height = -VELOCITY_TO_WORLD(dy);
+			velocityptr->vector.height = -VelocityToWorld(dy);
 			velocityptr->incr.height =
-				uqm::makeWord((uint8_t)0xFF, (uint8_t)(VELOCITY_REMAINDER(dy) << 1));
+				uqm::makeWord((uint8_t)0xFF, (uint8_t)(VelocityRemainder(dy) << 1));
 		}
 
-		velocityptr->fract.width = VELOCITY_REMAINDER(dx);
-		velocityptr->fract.height = VELOCITY_REMAINDER(dy);
+		velocityptr->fract.width = VelocityRemainder(dx);
+		velocityptr->fract.height = VelocityRemainder(dy);
 		velocityptr->error.width = velocityptr->error.height = 0;
 	}
 
@@ -169,9 +169,9 @@ void SetVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy)
 void DeltaVelocityComponents(VELOCITY_DESC* velocityptr, int32_t dx, int32_t dy)
 {
 
-	dx += WORLD_TO_VELOCITY(velocityptr->vector.width)
+	dx += WorldToVelocity(velocityptr->vector.width)
 		+ (velocityptr->fract.width - (int16_t)uqm::highByte(velocityptr->incr.width));
-	dy += WORLD_TO_VELOCITY(velocityptr->vector.height)
+	dy += WorldToVelocity(velocityptr->vector.height)
 		+ (velocityptr->fract.height - (int16_t)uqm::highByte(velocityptr->incr.height));
 
 	SetVelocityComponents(velocityptr, dx, dy);

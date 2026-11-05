@@ -59,66 +59,66 @@ void DrawStarConBox(GFXRECT* pRect, int16_t BorderWidth, Color TopLeftColor,
 
 	if (BorderWidth == 0)
 	{
-		BorderWidth = RES_SCALE(2);
+		BorderWidth = ResScale(2);
 	}
 
 	locRect.corner = pRect->corner;
 	locRect.extent.width = pRect->extent.width;
-	locRect.extent.height = RES_SCALE(1);
+	locRect.extent.height = ResScale(1);
 	DrawFilledRectangle(&locRect);
 
-	if (BorderWidth == RES_SCALE(2))
+	if (BorderWidth == ResScale(2))
 	{
-		locRect.corner.x += RES_SCALE(1);
-		locRect.corner.y += RES_SCALE(1);
-		locRect.extent.width -= RES_SCALE(2);
+		locRect.corner.x += ResScale(1);
+		locRect.corner.y += ResScale(1);
+		locRect.extent.width -= ResScale(2);
 		DrawFilledRectangle(&locRect);
 	}
 
 	locRect.corner = pRect->corner;
-	locRect.extent.width = RES_SCALE(1);
+	locRect.extent.width = ResScale(1);
 	locRect.extent.height = pRect->extent.height;
 	DrawFilledRectangle(&locRect);
 
-	if (BorderWidth == RES_SCALE(2))
+	if (BorderWidth == ResScale(2))
 	{
-		locRect.corner.x += RES_SCALE(1);
-		locRect.corner.y += RES_SCALE(1);
-		locRect.extent.height -= RES_SCALE(2);
+		locRect.corner.x += ResScale(1);
+		locRect.corner.y += ResScale(1);
+		locRect.extent.height -= ResScale(2);
 		DrawFilledRectangle(&locRect);
 	}
 
 	SetContextForeGroundColor(BottomRightColor);
-	locRect.corner.x = pRect->corner.x + pRect->extent.width - RES_SCALE(1);
-	locRect.corner.y = pRect->corner.y + RES_SCALE(1);
-	locRect.extent.height = pRect->extent.height - RES_SCALE(1);
+	locRect.corner.x = pRect->corner.x + pRect->extent.width - ResScale(1);
+	locRect.corner.y = pRect->corner.y + ResScale(1);
+	locRect.extent.height = pRect->extent.height - ResScale(1);
 	DrawFilledRectangle(&locRect);
 
-	if (BorderWidth == RES_SCALE(2))
+	if (BorderWidth == ResScale(2))
 	{
-		locRect.corner.x -= RES_SCALE(1);
-		locRect.corner.y += RES_SCALE(1);
-		locRect.extent.height -= RES_SCALE(2);
+		locRect.corner.x -= ResScale(1);
+		locRect.corner.y += ResScale(1);
+		locRect.extent.height -= ResScale(2);
 		DrawFilledRectangle(&locRect);
 	}
 
 	locRect.corner.x = pRect->corner.x;
 	locRect.extent.width = pRect->extent.width;
-	locRect.corner.y = pRect->corner.y + pRect->extent.height - RES_SCALE(1);
-	locRect.extent.height = RES_SCALE(1);
+	locRect.corner.y = pRect->corner.y + pRect->extent.height - ResScale(1);
+	locRect.extent.height = ResScale(1);
 	DrawFilledRectangle(&locRect);
 
-	if (BorderWidth == RES_SCALE(2))
+	if (BorderWidth == ResScale(2))
 	{
-		locRect.corner.x += RES_SCALE(1);
-		locRect.corner.y -= RES_SCALE(1);
-		locRect.extent.width -= RES_SCALE(2);
+		locRect.corner.x += ResScale(1);
+		locRect.corner.y -= ResScale(1);
+		locRect.extent.width -= ResScale(2);
 		DrawFilledRectangle(&locRect);
 	}
 
 	if (CreateCorners)
 	{
-		if (sameColor(TRANSPARENT, CornerColor)
+		if (sameColor(Transparent, CornerColor)
 			&& AreTheyShades(TopLeftColor, BottomRightColor))
 		{
 			SetContextForeGroundColor(
@@ -131,23 +131,23 @@ void DrawStarConBox(GFXRECT* pRect, int16_t BorderWidth, Color TopLeftColor,
 
 		locRect.corner.x = pRect->corner.x;
 		locRect.corner.y = pRect->corner.y + pRect->extent.height
-						 - RES_SCALE(1);
-		locRect.extent.width = RES_SCALE(1);
-		locRect.extent.height = RES_SCALE(1);
+						 - ResScale(1);
+		locRect.extent.width = ResScale(1);
+		locRect.extent.height = ResScale(1);
 		DrawFilledRectangle(&locRect);
 		locRect.corner.x = pRect->corner.x + pRect->extent.width
-						 - RES_SCALE(1);
+						 - ResScale(1);
 		locRect.corner.y = pRect->corner.y;
 		DrawFilledRectangle(&locRect);
 
-		if (BorderWidth == RES_SCALE(2))
+		if (BorderWidth == ResScale(2))
 		{
-			locRect.corner.x -= RES_SCALE(1);
-			locRect.corner.y += RES_SCALE(1);
+			locRect.corner.x -= ResScale(1);
+			locRect.corner.y += ResScale(1);
 			DrawFilledRectangle(&locRect);
-			locRect.corner.x = pRect->corner.x + RES_SCALE(1);
+			locRect.corner.x = pRect->corner.x + ResScale(1);
 			locRect.corner.y = pRect->corner.y + pRect->extent.height
-							 - RES_SCALE(2);
+							 - ResScale(2);
 			DrawFilledRectangle(&locRect);
 		}
 	}
@@ -178,20 +178,20 @@ void DrawRenderedBox(GFXRECT* r, bool filled, Color fill_color, int type,
 
 		if (type == SPECIAL_BEVEL)
 		{
-			r->corner.x += RES_SCALE(4);
-			r->corner.y += RES_SCALE(4);
-			r->extent.width -= RES_SCALE(8);
-			r->extent.height -= RES_SCALE(8);
+			r->corner.x += ResScale(4);
+			r->corner.y += ResScale(4);
+			r->extent.width -= ResScale(8);
+			r->extent.height -= ResScale(8);
 		}
 
 		DrawFilledRectangle(r);
 
 		if (type == SPECIAL_BEVEL)
 		{
-			r->corner.x -= RES_SCALE(4);
-			r->corner.y -= RES_SCALE(4);
-			r->extent.width += RES_SCALE(8);
-			r->extent.height += RES_SCALE(8);
+			r->corner.x -= ResScale(4);
+			r->corner.y -= ResScale(4);
+			r->extent.width += ResScale(8);
+			r->extent.height += ResScale(8);
 		}
 
 		SetContextForeGroundColor(OldColor);
@@ -201,8 +201,8 @@ void DrawRenderedBox(GFXRECT* r, bool filled, Color fill_color, int type,
 
 	if (type == SPECIAL_BEVEL)
 	{
-		columns -= RES_SCALE(8);
-		rows -= RES_SCALE(8);
+		columns -= ResScale(8);
+		rows -= ResScale(8);
 	}
 
 	for (i = 0; i < columns; i++)
@@ -252,7 +252,7 @@ void DrawBorderPadding(uint32_t videoWidth)
 {
 	GFXRECT r;
 	const uint16_t safe_x =
-		(videoWidth && videoWidth < 280 ? SAFE_NEG(4) * 2 : SAFE_X);
+		(videoWidth && videoWidth < 280 ? SafeNeg(4) * 2 : SafeX());
 
 	if (!safe_x)
 	{
@@ -263,17 +263,17 @@ void DrawBorderPadding(uint32_t videoWidth)
 
 	if (videoWidth)
 	{
-		SetContextForeGroundColor(BUILD_SHADE_RGBA(0x0C));
+		SetContextForeGroundColor(BuildShadeRgba(0x0C));
 	}
 	else
 	{
-		SetContextForeGroundColor(BLACK_COLOR);
+		SetContextForeGroundColor(BlackColor);
 	}
 
 	// Top bar
 	r.corner = MAKE_POINT(0, 0);
 	r.extent.width = CanvasWidth;
-	r.extent.height = SAFE_Y;
+	r.extent.height = SafeY();
 	DrawFilledRectangle(&r);
 
 	// Right bar
@@ -284,9 +284,9 @@ void DrawBorderPadding(uint32_t videoWidth)
 
 	// Bottom bar
 	r.corner.x = 0;
-	r.corner.y = CanvasHeight - SAFE_Y;
+	r.corner.y = CanvasHeight - SafeY();
 	r.extent.width = CanvasWidth;
-	r.extent.height = SAFE_Y;
+	r.extent.height = SafeY();
 	DrawFilledRectangle(&r);
 
 	// Left bar
@@ -302,35 +302,34 @@ void DrawRadarBorder(void)
 {
 	GFXRECT r;
 
-	if (IS_PAD)
+	if (IsPad())
 	{
 		return;
 	}
 
 	GFXCONTEXT OldContext {SetContext(StatusContext)};
 
-	r.corner.x = RES_SCALE(4) - RES_SCALE(1);
-	r.corner.y = RADAR_Y - RES_SCALE(1);
-	r.extent.width = RADAR_WIDTH + RES_SCALE(2);
-	r.extent.height = RADAR_HEIGHT + RES_SCALE(2);
+	r.corner.x = ResScale(4) - ResScale(1);
+	r.corner.y = RadarY() - ResScale(1);
+	r.extent.width = RadarWidth() + ResScale(2);
+	r.extent.height = RadarHeight() + ResScale(2);
 
-	if (IS_HD || uqm::UQMOptions::read().customBorder)
+	if (IsHd() || uqm::UQMOptions::read().customBorder)
 	{
-		DrawRenderedBox(&r, false, NULL_COLOR, THIN_INNER_BEVEL,
+		DrawRenderedBox(&r, false, NullColor, THIN_INNER_BEVEL,
 						uqm::UQMOptions::read().customBorder);
 	}
 	else
 	{
-		DrawStarConBox(&r, RES_SCALE(1), ALT_SHADOWBOX_TOP_LEFT,
-					   ALT_SHADOWBOX_BOTTOM_RIGHT, false, TRANSPARENT, false,
-					   TRANSPARENT);
+		DrawStarConBox(&r, ResScale(1), AltShadowboxTopLeft,
+					   AltShadowboxBottomRight, false, Transparent, false,
+					   Transparent);
 	}
 
 	SetContext(OldContext);
 }
 
-uint32_t
-SeedRandomNumbers(void)
+uint32_t SeedRandomNumbers(void)
 {
 	const auto cur_time {static_cast<uint32_t>(GetTimeCounter().time_since_epoch().count())};
 	uqm::random().reseed(cur_time);
@@ -338,8 +337,7 @@ SeedRandomNumbers(void)
 	return (cur_time);
 }
 
-STAMP
-SaveContextFrame(const GFXRECT* saveRect)
+STAMP SaveContextFrame(const GFXRECT* saveRect)
 {
 	STAMP s;
 
@@ -358,39 +356,38 @@ SaveContextFrame(const GFXRECT* saveRect)
 	return s;
 }
 
-static void
-DrawPauseText(GFXRECT* rect)
+static void DrawPauseText(GFXRECT* rect)
 {
 	TEXT text;
 	Color OldColor;
 	GFXRECT block;
 
-	if (!strlen(GAME_STRING(QUITMENU_STRING_BASE + 4)))
+	if (!strlen(GameString(QUITMENU_STRING_BASE + 4)))
 	{
 		return;
 	}
 
-	FONT OldFont {SetContextFont(DOS_BOOL(LabelFont, StarConFont))};
+	FONT OldFont {SetContextFont(DosBool(LabelFont, StarConFont))};
 	OldColor = SetContextForeGroundColor(
-		BUILD_SHADE_RGBA(DOS_BOOL(0x74, 0x6B)));
+		BuildShadeRgba(DosBool(0x74, 0x6B)));
 
 	// Blank out the text
 	block = *rect;
-	block.extent.width -= RES_SCALE(4);
-	block.extent.height -= RES_SCALE(4);
-	block.corner.x += RES_SCALE(2);
-	block.corner.y += RES_SCALE(2);
+	block.extent.width -= ResScale(4);
+	block.extent.height -= ResScale(4);
+	block.corner.x += ResScale(2);
+	block.corner.y += ResScale(2);
 	DrawFilledRectangle(&block);
 
 	SetContextForeGroundColor(
-		DOS_BOOL(SHADOWBOX_DARK_COLOR, WHITE_COLOR));
+		DosBool(ShadowboxDarkColor, WhiteColor));
 
 	text.baseline = rect->corner;
 	text.baseline.x += rect->extent.width >> 1;
-	text.baseline.y += RES_SCALE(10);
+	text.baseline.y += ResScale(10);
 	text.align = ALIGN_CENTER;
 	text.pStr = AlignText(
-		(const char*)GAME_STRING(QUITMENU_STRING_BASE + 4),
+		(const char*)GameString(QUITMENU_STRING_BASE + 4),
 		&text.baseline.x);
 	text.CharCount = (uint16_t)~0;
 
@@ -440,12 +437,12 @@ bool PauseGame(void)
 	r.corner.y = (ctxRect.extent.height - r.extent.height) >> 1;
 	saveStamp = SaveContextFrame(&ctxRect);
 
-	mode = MAKE_DRAW_MODE(DRAW_DESATURATE, DESAT_AMOUNT);
+	mode = MAKE_DRAW_MODE(DRAW_DESATURATE, DesatAmount);
 	oldMode = SetContextDrawMode(mode);
 	DrawFilledRectangle(&ctxRect);
 	SetContextDrawMode(oldMode);
 	OldColor = SetContextForeGroundColor(
-		BUILD_COLOR_RGBA(0x00, 0x00, 0x00, 0x30));
+		BuildColorRgba(0x00, 0x00, 0x00, 0x30));
 	DrawFilledRectangle(&ctxRect);
 	SetContextForeGroundColor(OldColor);
 
@@ -565,13 +562,13 @@ bool WaitForActButtonUntil(bool newButton, TimeCount timeOut,
 
 bool WaitForAnyButton(bool newButton, TimePeriod duration, bool resetInput)
 {
-	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
+	const TimeCount timeOut {duration == WaitInfinite ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForAnyButtonUntil(newButton, timeOut, resetInput);
 }
 
 bool WaitForActButton(bool newButton, TimePeriod duration, bool resetInput)
 {
-	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
+	const TimeCount timeOut {duration == WaitInfinite ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForActButtonUntil(newButton, timeOut, resetInput);
 }
 
@@ -599,7 +596,7 @@ bool WaitForNoInputUntil(TimeCount timeOut, bool resetInput)
 
 bool WaitForNoInput(TimePeriod duration, bool resetInput)
 {
-	const TimeCount timeOut {duration == WAIT_INFINITE ? TimeCount::max() : GetTimeCounter() + duration};
+	const TimeCount timeOut {duration == WaitInfinite ? TimeCount::max() : GetTimeCounter() + duration};
 	return WaitForNoInputUntil(timeOut, resetInput);
 }
 
@@ -644,13 +641,12 @@ void SleepGame(void)
 
 /* Returns the fuel requirement to get to Sol (in fuel units * 100)
  */
-uint32_t
-get_fuel_to_sol(void)
+uint32_t get_fuel_to_sol(void)
 {
 	GFXPOINT pt;
 
-	pt.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-	pt.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+	pt.x = LogxToUniverse(uqm::gameState().sis().log_x);
+	pt.y = LogyToUniverse(uqm::gameState().sis().log_y);
 
 	// JSD Replace old hard coded SOL with plot based SOL
 	//pt.x -= SOL_X;
@@ -659,13 +655,13 @@ get_fuel_to_sol(void)
 	pt.y -= plot_map[SOL_DEFINED].star_pt.y;
 
 	const uint32_t f {(uint32_t)((long)pt.x * pt.x + (long)pt.y * pt.y)};
-	if (f == 0 || GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1)
+	if (f == 0 || uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) > 1)
 	{
 		return 0;
 	}
 	else
 	{
-		return (square_root(f) + (FUEL_TANK_SCALE / 20));
+		return (square_root(f) + (FuelTankScale / 20));
 	}
 }
 
@@ -674,16 +670,16 @@ void DrawFlagStatDisplay(const char* str)
 	TEXT t;
 	GFXRECT r;
 
-	r.corner.x = RES_SCALE(2);
-	r.corner.y = RES_SCALE(20);
-	r.extent.width = FIELD_WIDTH + RES_SCALE(1);
-	r.extent.height = (RES_SCALE(129) - r.corner.y);
+	r.corner.x = ResScale(2);
+	r.corner.y = ResScale(20);
+	r.extent.width = FieldWidth() + ResScale(1);
+	r.extent.height = (ResScale(129) - r.corner.y);
 
-	if (!uqm::UQMOptions::read().customBorder && !IS_HD)
+	if (!uqm::UQMOptions::read().customBorder && !IsHd())
 	{
-		DrawStarConBox(&r, RES_SCALE(1),
-					   SHADOWBOX_MEDIUM_COLOR, SHADOWBOX_DARK_COLOR,
-					   true, MODULE_BACK_COLOR, false, TRANSPARENT);
+		DrawStarConBox(&r, ResScale(1),
+					   ShadowboxMediumColor, ShadowboxDarkColor,
+					   true, ModuleBackColor, false, Transparent);
 	}
 	else
 	{
@@ -692,18 +688,18 @@ void DrawFlagStatDisplay(const char* str)
 
 	// print the "str" title
 	SetContextFont(StarConFont);
-	t.baseline.x = (STATUS_WIDTH >> 1) - RES_SCALE(1);
-	t.baseline.y = r.corner.y + RES_SCALE(7);
+	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
+	t.baseline.y = r.corner.y + ResScale(7);
 	t.align = ALIGN_CENTER;
 	t.pStr = str;
 	t.CharCount = (uint16_t)~0;
-	SetContextForeGroundColor(MODULE_SELECTED_COLOR);
+	SetContextForeGroundColor(ModuleSelectedColor);
 	font_DrawText(&t);
 }
 
 void formatFuelValue(uint32_t coarseFuel, uqstl::span<char> buf)
 {
-	double dblFuelOnBoard = (double)coarseFuel / FUEL_TANK_SCALE;
+	double dblFuelOnBoard = (double)coarseFuel / FuelTankScale;
 
 	if (!uqm::UQMOptions::read().infiniteFuel)
 	{
@@ -722,14 +718,14 @@ void formatFuelValue(uint32_t coarseFuel, uqstl::span<char> buf)
 	}
 	else
 	{
-		fmt::format_to_sz_n(buf, "{}", STR_INFINITY_SIGN);
+		fmt::format_to_sz_n(buf, "{}", StrInfinitySign);
 	}
 }
 
 char* WholeFuelValue(void)
 {
 	static char buf[8] {};
-	const uint32_t CoarseFuel = GLOBAL_SIS(FuelOnBoard);
+	const uint32_t CoarseFuel = uqm::gameState().sis().FuelOnBoard;
 
 	formatFuelValue(CoarseFuel, {buf, sizeof(buf)});
 

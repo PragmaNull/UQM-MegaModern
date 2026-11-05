@@ -74,8 +74,7 @@ typedef enum
 
 typedef RACE_DESC* (*RaceDescInitFunc)(void);
 
-static RaceDescInitFunc
-CodeResToInitFunc(ShipCodeRes res)
+static RaceDescInitFunc CodeResToInitFunc(ShipCodeRes res)
 {
 	switch (res)
 	{
@@ -143,8 +142,7 @@ CodeResToInitFunc(ShipCodeRes res)
 	}
 }
 
-static void
-GetCodeResData(const ResourceArg& arg, RESOURCE_DATA* resdata)
+static void GetCodeResData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 {
 	const int64_t* const ship_id {uqstl::get_if<int64_t>(&arg)};
 	if (ship_id == nullptr)
@@ -159,8 +157,7 @@ GetCodeResData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	resdata->ptr = RDPtr ? new CODERES_STRUCT {*RDPtr} : nullptr;
 }
 
-static bool
-_ReleaseCodeResData(void* data)
+static bool _ReleaseCodeResData(void* data)
 {
 	delete static_cast<CODERES_STRUCT*>(data);
 	return true;

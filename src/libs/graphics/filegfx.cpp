@@ -21,8 +21,7 @@
 #include "libs/reslib.h"
 
 
-DRAWABLE
-LoadGraphicFile(const char* pStr)
+DRAWABLE LoadGraphicFile(const char* pStr)
 {
 	return static_cast<DRAWABLE>(res_LoadResFile(uqm::contentDir(), pStr, _GetCelData));
 }

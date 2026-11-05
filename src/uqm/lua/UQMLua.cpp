@@ -167,10 +167,10 @@ void UQMLua::runInitScripts()
 	prepareEnvironment(m_state.get());
 	loadLibs(m_state.get(), InitLibs);
 
-	const char* const scriptDir {res_GetString(SCRIPT_DIR_INITGAME)};
+	const char* const scriptDir {res_GetString(ScriptDirInitgameRes)};
 	if (scriptDir == nullptr)
 	{
-		log::warn("Location of game initialisation scripts ('{}') was not specified.", SCRIPT_DIR_INITGAME);
+		log::warn("Location of game initialisation scripts ('{}') was not specified.", ScriptDirInitgameRes);
 		return;
 	}
 	runLuaDir(m_state.get(), contentDir(), scriptDir);
@@ -203,7 +203,7 @@ bool UQMLua::beginComm(const luaUqm_custom_Function* customFuncs, RESOURCE scrip
 		lua_pop(m_state.get(), 1);
 	}
 
-	if (scriptRes == NULL_RESOURCE)
+	if (scriptRes == NullResource)
 	{
 		return true;
 	}

@@ -27,30 +27,30 @@ static LOCDATA blackurq_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		BLACKURQ_PMAP_ANIM, /* AlienFrame */
-		BLACKURQ_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		BlackurqPmapAnim, /* AlienFrame */
+		BlackurqFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		BLACKURQ_COLOR_MAP, /* AlienColorMap */
-		BLACKURQ_MUSIC, /* AlienSong */
+		BlackurqColorMap, /* AlienColorMap */
+		BlackurqMusic, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
-		BLACKURQ_CONVERSATION_PHRASES, /* PlayerPhrases */
+		BlackurqConversationPhrases, /* PlayerPhrases */
 		9, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				7,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				7,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -58,9 +58,9 @@ static LOCDATA blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				13,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				13,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -69,9 +69,9 @@ static LOCDATA blackurq_desc =
 			},
 								{
 				// New eye animation
-				42,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				42,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -79,9 +79,9 @@ static LOCDATA blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				20,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				20,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -89,9 +89,9 @@ static LOCDATA blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				23,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				23,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -99,9 +99,9 @@ static LOCDATA blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				26,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				26,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -109,9 +109,9 @@ static LOCDATA blackurq_desc =
 				0,						/* BlockMask */
 			},
 								{
-				29,			 /* StartIndex */
-				4,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				29,			/* StartIndex */
+				4,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -120,9 +120,9 @@ static LOCDATA blackurq_desc =
 			},
 								{
 				// "Left" extremity
-				33,							  /* StartIndex */
-				5,							  /* NumFrames */
-				CIRCULAR_ANIM | WAIT_TALKING, /* AnimFlags */
+				33,							/* StartIndex */
+				5,							/* NumFrames */
+				CircularAnim | WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -131,9 +131,9 @@ static LOCDATA blackurq_desc =
 			},
 								{
 				// "Right" extremeity
-				38,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				38,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -172,16 +172,15 @@ static LOCDATA blackurq_desc =
 		nullptr,
 };
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, bye))
+	if (PlayerSaid(R, bye))
 	{
-		if (GET_GAME_STATE(KOHR_AH_BYES) == 0)
+		if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_BYES) == 0)
 		{
 			NPCPhrase(GOODBYE_AND_DIE);
 		}
@@ -190,36 +189,36 @@ CombatIsInevitable(RESPONSE_REF R)
 			NPCPhrase(DIE_HUMAN /* GOODBYE_AND_DIE_2 */);
 		}
 
-		SET_GAME_STATE(KOHR_AH_BYES, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_BYES, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, guess_thats_all))
+	else if (PlayerSaid(R, guess_thats_all))
 	{
 		NPCPhrase(THEN_DIE);
 	}
-	else if (PLAYER_SAID(R, what_are_you_hovering_over))
+	else if (PlayerSaid(R, what_are_you_hovering_over))
 	{
 		NPCPhrase(BONE_PILE);
 
-		SET_GAME_STATE(KOHR_AH_INFO, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_INFO, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, you_sure_are_creepy))
+	else if (PlayerSaid(R, you_sure_are_creepy))
 	{
 		NPCPhrase(YES_CREEPY);
 
-		SET_GAME_STATE(KOHR_AH_INFO, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_INFO, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, stop_that_gross_blinking))
+	else if (PlayerSaid(R, stop_that_gross_blinking))
 	{
 		NPCPhrase(DIE_HUMAN);
 
-		SET_GAME_STATE(KOHR_AH_INFO, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_INFO, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, threat_1)
-			 || PLAYER_SAID(R, threat_2)
-			 || PLAYER_SAID(R, threat_3)
-			 || PLAYER_SAID(R, threat_4))
+	else if (PlayerSaid(R, threat_1)
+			 || PlayerSaid(R, threat_2)
+			 || PlayerSaid(R, threat_3)
+			 || PlayerSaid(R, threat_4))
 	{
-		NumVisits = GET_GAME_STATE(KOHR_AH_REASONS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -236,14 +235,14 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(KOHR_AH_REASONS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_REASONS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PLAYER_SAID(R, plead_1)
-			 || PLAYER_SAID(R, plead_2)
-			 || PLAYER_SAID(R, plead_3)
-			 || PLAYER_SAID(R, plead_4))
+	else if (PlayerSaid(R, plead_1)
+			 || PlayerSaid(R, plead_2)
+			 || PlayerSaid(R, plead_3)
+			 || PlayerSaid(R, plead_4))
 	{
-		NumVisits = GET_GAME_STATE(KOHR_AH_PLEAD);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -261,14 +260,14 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(KOHR_AH_PLEAD, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_PLEAD, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PLAYER_SAID(R, why_kill_all_1)
-			 || PLAYER_SAID(R, why_kill_all_2)
-			 || PLAYER_SAID(R, why_kill_all_3)
-			 || PLAYER_SAID(R, why_kill_all_4))
+	else if (PlayerSaid(R, why_kill_all_1)
+			 || PlayerSaid(R, why_kill_all_2)
+			 || PlayerSaid(R, why_kill_all_3)
+			 || PlayerSaid(R, why_kill_all_4))
 	{
-		NumVisits = GET_GAME_STATE(KOHR_AH_REASONS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -285,14 +284,14 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(KOHR_AH_REASONS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_REASONS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PLAYER_SAID(R, please_dont_kill_1)
-			 || PLAYER_SAID(R, please_dont_kill_2)
-			 || PLAYER_SAID(R, please_dont_kill_3)
-			 || PLAYER_SAID(R, please_dont_kill_4))
+	else if (PlayerSaid(R, please_dont_kill_1)
+			 || PlayerSaid(R, please_dont_kill_2)
+			 || PlayerSaid(R, please_dont_kill_3)
+			 || PlayerSaid(R, please_dont_kill_4))
 	{
-		NumVisits = GET_GAME_STATE(KOHR_AH_PLEAD);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -309,14 +308,14 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(KOHR_AH_PLEAD, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_PLEAD, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PLAYER_SAID(R, bye_frenzy_1)
-			 || PLAYER_SAID(R, bye_frenzy_2)
-			 || PLAYER_SAID(R, bye_frenzy_3)
-			 || PLAYER_SAID(R, bye_frenzy_4))
+	else if (PlayerSaid(R, bye_frenzy_1)
+			 || PlayerSaid(R, bye_frenzy_2)
+			 || PlayerSaid(R, bye_frenzy_3)
+			 || PlayerSaid(R, bye_frenzy_4))
 	{
-		NumVisits = GET_GAME_STATE(KOHR_AH_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -333,15 +332,14 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(KOHR_AH_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_INFO, static_cast<uint32_t>(NumVisits));
 	}
 }
 
-static void
-Frenzy(RESPONSE_REF R)
+static void Frenzy(RESPONSE_REF R)
 {
 	(void)R; // ignored
-	switch (GET_GAME_STATE(KOHR_AH_REASONS))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS))
 	{
 		case 0:
 			Response(why_kill_all_1, CombatIsInevitable);
@@ -356,7 +354,7 @@ Frenzy(RESPONSE_REF R)
 			Response(why_kill_all_4, CombatIsInevitable);
 			break;
 	}
-	switch (GET_GAME_STATE(KOHR_AH_PLEAD))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD))
 	{
 		case 0:
 			Response(please_dont_kill_1, CombatIsInevitable);
@@ -371,7 +369,7 @@ Frenzy(RESPONSE_REF R)
 			Response(please_dont_kill_4, CombatIsInevitable);
 			break;
 	}
-	switch (GET_GAME_STATE(KOHR_AH_INFO))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_INFO))
 	{
 		case 0:
 			Response(bye_frenzy_1, CombatIsInevitable);
@@ -388,64 +386,62 @@ Frenzy(RESPONSE_REF R)
 	}
 }
 
-static void
-KohrAhStory(RESPONSE_REF R)
+static void KohrAhStory(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, key_phrase))
+	if (PlayerSaid(R, key_phrase))
 	{
 		NPCPhrase(RESPONSE_TO_KEY_PHRASE);
 
-		SET_GAME_STATE(KNOW_KOHR_AH_STORY, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_KOHR_AH_STORY, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, why_do_you_destroy))
+	else if (PlayerSaid(R, why_do_you_destroy))
 	{
 		NPCPhrase(WE_WERE_SLAVES);
 
-		DISABLE_PHRASE(why_do_you_destroy);
+		DisablePhrase(why_do_you_destroy);
 	}
-	else if (PLAYER_SAID(R, relationship_with_urquan))
+	else if (PlayerSaid(R, relationship_with_urquan))
 	{
 		NPCPhrase(WE_ARE_URQUAN_TOO);
 
-		DISABLE_PHRASE(relationship_with_urquan);
+		DisablePhrase(relationship_with_urquan);
 	}
-	else if (PLAYER_SAID(R, what_about_culture))
+	else if (PlayerSaid(R, what_about_culture))
 	{
 		NPCPhrase(BONE_GARDENS);
 
-		DISABLE_PHRASE(what_about_culture);
+		DisablePhrase(what_about_culture);
 	}
-	else if (PLAYER_SAID(R, how_leave_me_alone))
+	else if (PlayerSaid(R, how_leave_me_alone))
 	{
 		NPCPhrase(YOU_DIE);
 
-		DISABLE_PHRASE(how_leave_me_alone);
+		DisablePhrase(how_leave_me_alone);
 	}
 
-	if (PHRASE_ENABLED(why_do_you_destroy))
+	if (PhraseEnabled(why_do_you_destroy))
 	{
 		Response(why_do_you_destroy, KohrAhStory);
 	}
-	if (PHRASE_ENABLED(relationship_with_urquan))
+	if (PhraseEnabled(relationship_with_urquan))
 	{
 		Response(relationship_with_urquan, KohrAhStory);
 	}
-	if (PHRASE_ENABLED(what_about_culture))
+	if (PhraseEnabled(what_about_culture))
 	{
 		Response(what_about_culture, KohrAhStory);
 	}
-	if (PHRASE_ENABLED(how_leave_me_alone))
+	if (PhraseEnabled(how_leave_me_alone))
 	{
 		Response(how_leave_me_alone, KohrAhStory);
 	}
 	Response(guess_thats_all, CombatIsInevitable);
 }
 
-static void
-DieHuman(RESPONSE_REF R)
+static void DieHuman(RESPONSE_REF R)
 {
 	(void)R; // ignored
-	switch (GET_GAME_STATE(KOHR_AH_REASONS))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_REASONS))
 	{
 		case 0:
 			Response(threat_1, CombatIsInevitable);
@@ -460,11 +456,11 @@ DieHuman(RESPONSE_REF R)
 			Response(threat_4, CombatIsInevitable);
 			break;
 	}
-	if (GET_GAME_STATE(KNOW_KOHR_AH_STORY) == 1)
+	if (uqm::gameState().flag(uqm::GameFlag::KNOW_KOHR_AH_STORY) == 1)
 	{
 		Response(key_phrase, KohrAhStory);
 	}
-	switch (GET_GAME_STATE(KOHR_AH_INFO))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_INFO))
 	{
 		case 0:
 			Response(what_are_you_hovering_over, CombatIsInevitable);
@@ -476,7 +472,7 @@ DieHuman(RESPONSE_REF R)
 			Response(stop_that_gross_blinking, CombatIsInevitable);
 			break;
 	}
-	switch (GET_GAME_STATE(KOHR_AH_PLEAD))
+	switch (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_PLEAD))
 	{
 		case 0:
 			Response(plead_1, CombatIsInevitable);
@@ -495,8 +491,7 @@ DieHuman(RESPONSE_REF R)
 	Response(bye, CombatIsInevitable);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -506,7 +501,7 @@ Intro(void)
 		return;
 	}
 
-	if (GET_GAME_STATE(KOHR_AH_KILLED_ALL))
+	if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_KILLED_ALL))
 	{
 		NPCPhrase(GAME_OVER_DUDE);
 
@@ -514,29 +509,29 @@ Intro(void)
 		return;
 	}
 
-	if (!GET_GAME_STATE(KOHR_AH_SENSES_EVIL)
-		&& GET_GAME_STATE(TALKING_PET_ON_SHIP))
+	if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_SENSES_EVIL)
+		&& uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 	{
 		NPCPhrase(SENSE_EVIL);
-		SET_GAME_STATE(KOHR_AH_SENSES_EVIL, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_SENSES_EVIL, static_cast<uint32_t>(1));
 	}
 
-	const uint32_t GrpOffs {GET_GAME_STATE(SAMATRA_GRPOFFS)};
+	const uint32_t GrpOffs {uqm::gameState().flag(uqm::GameFlag::SAMATRA_GRPOFFS)};
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-		&& GLOBAL(BattleGroupRef)
-		&& GLOBAL(BattleGroupRef) == GrpOffs)
+		&& uqm::gameState().game().BattleGroupRef
+		&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 	{
 		NPCPhrase(HELLO_SAMATRA);
 
-		SET_GAME_STATE(AWARE_OF_SAMATRA, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
 		setSegue(Segue_hostile);
 	}
 	else
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(KOHR_AH_VISITS);
-		if (GET_GAME_STATE(KOHR_AH_FRENZY))
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::KOHR_AH_VISITS);
+		if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 		{
 			switch (NumVisits++)
 			{
@@ -578,37 +573,34 @@ Intro(void)
 
 			DieHuman((RESPONSE_REF)0);
 		}
-		SET_GAME_STATE(KOHR_AH_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::KOHR_AH_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 }
 
-static uint16_t
-uninit_blackurq(void)
+static uint16_t uninit_blackurq(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_blackurq_enc(void)
+static void post_blackurq_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_blackurq_comm(void)
+LOCDATA* init_blackurq_comm(void)
 {
 	blackurq_desc.init_encounter_func = Intro;
 	blackurq_desc.post_encounter_func = post_blackurq_enc;
 	blackurq_desc.uninit_encounter_func = uninit_blackurq;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
-	blackurq_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	blackurq_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	blackurq_desc.AlienTextBaseline.y = 0;
-	blackurq_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	blackurq_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if (!GET_GAME_STATE(KOHR_AH_KILLED_ALL)
+	if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_KILLED_ALL)
 		&& uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{
 		setSegue(Segue_hostile);

@@ -64,8 +64,7 @@ TFB_GRAPHICS_BACKEND* graphics_backend = nullptr;
 uqstl::atomic<int> QuitPosted {0};
 uqstl::atomic<int> GameActive {1}; // Track the SDL_ACTIVEEVENT state SDL_APPACTIVE
 
-static inline bool
-IsWholeScreen(GFXRECT* r)
+static inline bool IsWholeScreen(GFXRECT* r)
 {
 	return (bool)(r->corner.x == 0 && r->corner.y == 0 && r->extent.width == CanvasWidth && r->extent.height == CanvasHeight);
 }
@@ -271,12 +270,11 @@ void TFB_SwapBuffers(uqm::TFBRedraw force_full_redraw)
 		graphics_backend->screen (TFB_SCREEN_MAIN, 255, &system_box);
 	}*/
 
-	graphics_backend->postprocess(IS_HD);
+	graphics_backend->postprocess(IsHd());
 }
 
 /* Probably ought to clean this away at some point. */
-SDL_Surface*
-TFB_DisplayFormatAlpha(SDL_Surface* surface)
+SDL_Surface* TFB_DisplayFormatAlpha(SDL_Surface* surface)
 {
 	// figure out what format to use (alpha/no alpha)
 	const SDL_PixelFormat dstformat {SDL_GetPixelFormatDetails(surface->format)->Amask ? format_conv_surf->format : SDL_Screen->format};
@@ -299,14 +297,12 @@ TFB_DisplayFormatAlpha(SDL_Surface* surface)
 
 // This function should only be called from the graphics thread,
 // like from a TFB_DrawCommand_Callback command.
-TFB_Canvas
-TFB_GetScreenCanvas(SCREEN screen)
+TFB_Canvas TFB_GetScreenCanvas(SCREEN screen)
 {
 	return SDL_Screens[screen];
 }
 
-TFB_Canvas
-TFB_GetFPSCanvas(void)
+TFB_Canvas TFB_GetFPSCanvas(void)
 {
 	return SDL_Screen_fps;
 }
@@ -648,8 +644,8 @@ void TFB_ScreenShot(void)
 	const uqstl::string shotDirName = uqm::getEnvironmentValue("UQM_SCR_SHOT_DIR");
 	auto now = std::chrono::system_clock::now();
 	auto fullPath = fmt::format("{}{:%Y-%m-%d %H-%M-%S} v{}.{}.{} {}.png", shotDirName, now,
-								UQM_MAJOR_VERSION, UQM_MINOR_VERSION, UQM_PATCH_VERSION,
-								chooseIfHd<const char*>(UQM_EXTRA_VERSION, "HD " UQM_EXTRA_VERSION));
+								UqmMajorVersion, UqmMinorVersion, UqmPatchVersion,
+								chooseIfHd<const char*>(UqmExtraVersion, UqmExtraVersionHd));
 
 	if (std::filesystem::exists(shotDirName))
 	{
@@ -703,8 +699,7 @@ void TFB_PreInit(void)
 	atexit(TFB_PreQuit);
 }
 
-static void
-TFB_PreQuit(void)
+static void TFB_PreQuit(void)
 {
 	// Release the renderer and its GPU objects while SDL still runs.
 	TFB_Pure_UninitGraphics();

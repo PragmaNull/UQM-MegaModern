@@ -10,23 +10,25 @@
 #ifndef CONFIG_VC6_H_
 #define CONFIG_VC6_H_
 
+#include "core/stl/stl.h"
+
 /* Directory where the UQM game data is located */
-#define CONTENTDIR "./content/"
+inline constexpr uqgsl::czstring Contentdir {"./content/"};
 
 /* Directory where game data will be stored */
-#define USERDIR "~/.uqm-megamodern/"
+inline constexpr uqgsl::czstring Userdir {"~/.uqm-megamodern/"};
 
 /* Directory where config files will be stored */
-#define CONFIGDIR USERDIR
+inline constexpr auto Configdir {Userdir};
 
 /* Directory where supermelee teams will be stored */
-#define MELEEDIR "%UQM_CONFIG_DIR%/teams/"
+inline constexpr uqgsl::czstring Meleedir {"%UQM_CONFIG_DIR%/teams/"};
 
 /* Directory where save games will be stored */
-#define SAVEDIR "%UQM_CONFIG_DIR%/save/"
+inline constexpr uqgsl::czstring Savedir {"%UQM_CONFIG_DIR%/save/"};
 
 /* Directory where screenshots will be stored */
-#define SCRSHOTDIR "%UQM_CONFIG_DIR%/screenshots/"
+inline constexpr uqgsl::czstring Scrshotdir {"%UQM_CONFIG_DIR%/screenshots/"};
 
 /* Defined if your system has readdir_r of its own */
 #undef HAVE_READDIR_R

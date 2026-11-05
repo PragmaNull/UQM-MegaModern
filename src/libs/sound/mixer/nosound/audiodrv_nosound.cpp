@@ -91,21 +91,10 @@ const static audio_Driver noSound_Driver =
 		noSound_BufferData
 };
 
-/* Adapted from SDL
- * This will generate "negative subscript or subscript is too large"
- * error during compile, if the size of a type is wrong
- */
-#define UQM_COMPILE_TIME_ASSERT(name, x) \
-	typedef int UQM_dummy_##name[(x) * 2 - 1]
-
-UQM_COMPILE_TIME_ASSERT(mixer_Object_fits_in_audio_Object,
-						sizeof(mixer_Object) <= sizeof(audio_Object));
-
-#undef UQM_COMPILE_TIME_ASSERT
+static_assert(sizeof(mixer_Object) <= sizeof(audio_Object), "mixer_Object must fit in audio_Object");
 
 // Converts an array of n audio_Objects to an array of mixer_Objects, in place.
-static void
-noSound_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
+static void noSound_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
@@ -117,8 +106,7 @@ noSound_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 	}
 }
 // Converts an array of n mixer_Objects to an array of audio_Objects, in place.
-static void
-noSound_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
+static void noSound_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
@@ -135,8 +123,7 @@ noSound_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
  * Initialization
  */
 
-int32_t
-noSound_Init(audio_Driver* driver, AudioFlags flags)
+int32_t noSound_Init(audio_Driver* driver, AudioFlags flags)
 {
 	TFB_DecoderFormats formats =
 		{
@@ -147,7 +134,7 @@ noSound_Init(audio_Driver* driver, AudioFlags flags)
 	uqm::log::info("Using nosound audio driver.");
 	uqm::log::info("Initializing mixer.");
 
-	if (!mixer_Init(nosound_freq, MIX_FORMAT_MAKE(1, 1),
+	if (!mixer_Init(nosound_freq, MixFormatMake(1, 1),
 					MIX_QUALITY_LOW, MIX_FAKE_DATA))
 	{
 		uqm::log::error("Mixer initialization failed: {:x}",
@@ -166,7 +153,7 @@ noSound_Init(audio_Driver* driver, AudioFlags flags)
 	uqm::log::info("Sound decoders initialized.");
 
 	*driver = noSound_Driver;
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		audio_GenSources(1, &soundSource[i].handle);
 	}
@@ -189,7 +176,7 @@ void noSound_Uninit(void)
 {
 	UninitStreamDecoder();
 
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		const uqm::LockGuard lock {soundSource[i].stream_mutex};
 		if (soundSource[i].sample && soundSource[i].sample->decoder)
@@ -235,8 +222,7 @@ void PlaybackTaskFunc(uqstl::stop_token stopToken)
  * General
  */
 
-int32_t
-noSound_GetError(void)
+int32_t noSound_GetError(void)
 {
 	int32_t value = mixer_GetError();
 	switch (value)

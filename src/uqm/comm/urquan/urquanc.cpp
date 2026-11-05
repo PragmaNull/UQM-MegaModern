@@ -27,30 +27,30 @@ static LOCDATA urquan_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		URQUAN_PMAP_ANIM, /* AlienFrame */
-		URQUAN_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		UrquanPmapAnim, /* AlienFrame */
+		UrquanFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		URQUAN_COLOR_MAP, /* AlienColorMap */
-		URQUAN_MUSIC, /* AlienSong */
+		UrquanColorMap, /* AlienColorMap */
+		UrquanMusic, /* AlienSong */
 		{
-								NULL_RESOURCE,		 /* AlienAltFrame */
-			URQUAN_ALTCOLOR_MAP, /* AlienAltColorMap */
-			URQUAN_PROBE_MUSIC,	 /* AlienAltSong */
+								NullResource,	   /* AlienAltFrame */
+			UrquanAltcolorMap, /* AlienAltColorMap */
+			UrquanProbeMusic,  /* AlienAltSong */
 		},
-		URQUAN_CONVERSATION_PHRASES, /* PlayerPhrases */
+		UrquanConversationPhrases, /* PlayerPhrases */
 		9, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				7,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				7,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -58,9 +58,9 @@ static LOCDATA urquan_desc =
 				0, /* BlockMask */
 			},
 								{
-				13,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				13,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -68,9 +68,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				16,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				16,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -78,9 +78,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				19,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				19,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -88,9 +88,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				22,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -98,9 +98,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				29,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				29,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -108,9 +108,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				36,			   /* StartIndex */
-				8,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				36,			  /* StartIndex */
+				8,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -118,9 +118,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				44,							   /* StartIndex */
-				5,							   /* NumFrames */
-				CIRCULAR_ANIM | ANIM_DISABLED, /* AnimFlags */
+				44,							 /* StartIndex */
+				5,							 /* NumFrames */
+				CircularAnim | AnimDisabled, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -128,9 +128,9 @@ static LOCDATA urquan_desc =
 				0,						/* BlockMask */
 			},
 								{
-				49,							   /* StartIndex */
-				1,							   /* NumFrames */
-				CIRCULAR_ANIM | ANIM_DISABLED, /* AnimFlags */
+				49,							 /* StartIndex */
+				1,							 /* NumFrames */
+				CircularAnim | AnimDisabled, /* AnimFlags */
 				0,
 				0, /* FrameRate */
 				0,
@@ -169,23 +169,22 @@ static LOCDATA urquan_desc =
 		nullptr,
 };
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, you_must_surrender))
+	if (PlayerSaid(R, you_must_surrender))
 	{
 		NPCPhrase(NOPE);
 	}
-	else if (PLAYER_SAID(R, whats_up_1)
-			 || PLAYER_SAID(R, whats_up_2)
-			 || PLAYER_SAID(R, whats_up_3)
-			 || PLAYER_SAID(R, whats_up_4))
+	else if (PlayerSaid(R, whats_up_1)
+			 || PlayerSaid(R, whats_up_2)
+			 || PlayerSaid(R, whats_up_3)
+			 || PlayerSaid(R, whats_up_4))
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(URQUAN_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::URQUAN_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -202,171 +201,167 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(URQUAN_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_INFO, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PLAYER_SAID(R, i_wont_surrender))
+	else if (PlayerSaid(R, i_wont_surrender))
 	{
 		NPCPhrase(BAD_CHOICE);
 	}
-	else if (PLAYER_SAID(R, i_will_surrender))
+	else if (PlayerSaid(R, i_will_surrender))
 	{
 		NPCPhrase(GOOD_CHOICE);
 
 		setSegue(Segue_defeat);
 	}
-	else if (PLAYER_SAID(R, like_to_leave))
+	else if (PlayerSaid(R, like_to_leave))
 	{
 		NPCPhrase(INDEPENDENCE_IS_BAD);
 	}
-	else if (PLAYER_SAID(R, bye_wars_over))
+	else if (PlayerSaid(R, bye_wars_over))
 	{
 		NPCPhrase(GOODBYE_WARS_OVER);
 
 		setSegue(Segue_peace);
 	}
-	else if (PLAYER_SAID(R, bye_sub_hypno))
+	else if (PlayerSaid(R, bye_sub_hypno))
 	{
 		NPCPhrase(GOODBYE_AND_DIE_SUB_HYPNO);
 	}
-	else if (PLAYER_SAID(R, bye_init_hypno))
+	else if (PlayerSaid(R, bye_init_hypno))
 	{
 		NPCPhrase(GOODBYE_AND_DIE_INIT_HYPNO);
 
-		SET_GAME_STATE(URQUAN_HYPNO_VISITS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_HYPNO_VISITS, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, terran_amphibian)
-			 || PLAYER_SAID(R, talking_pet_on_steroids))
+	else if (PlayerSaid(R, terran_amphibian)
+			 || PlayerSaid(R, talking_pet_on_steroids))
 	{
 		NPCPhrase(BAD_NEWS);
 
 		setSegue(Segue_peace);
-		SET_GAME_STATE(URQUAN_HYPNO_VISITS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_HYPNO_VISITS, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, falling_asleep)
-			 || PLAYER_SAID(R, someone_else_controlled))
+	else if (PlayerSaid(R, falling_asleep)
+			 || PlayerSaid(R, someone_else_controlled))
 	{
 		NPCPhrase(SOUNDS_FAMILIAR);
 
 		setSegue(Segue_peace);
-		SET_GAME_STATE(URQUAN_HYPNO_VISITS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_HYPNO_VISITS, static_cast<uint32_t>(1));
 	}
 }
 
-static void
-DescribePet(RESPONSE_REF R)
+static void DescribePet(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, wascally_little_guy))
+	if (PlayerSaid(R, wascally_little_guy))
 	{
 		NPCPhrase(WHAT_IT_LOOK_LIKE);
 	}
-	else if (PLAYER_SAID(R, turd_and_toad))
+	else if (PlayerSaid(R, turd_and_toad))
 	{
 		NPCPhrase(WHAT_IS_TURD_AND_TOAD);
 
-		DISABLE_PHRASE(turd_and_toad);
+		DisablePhrase(turd_and_toad);
 	}
 
 	Response(terran_amphibian, CombatIsInevitable);
 	Response(talking_pet_on_steroids, CombatIsInevitable);
-	if (PHRASE_ENABLED(turd_and_toad))
+	if (PhraseEnabled(turd_and_toad))
 	{
 		Response(turd_and_toad, DescribePet);
 	}
 }
 
-static void
-DescribeCompulsion(RESPONSE_REF R)
+static void DescribeCompulsion(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, alien_mind_control))
+	if (PlayerSaid(R, alien_mind_control))
 	{
 		NPCPhrase(WHAT_FELT_LIKE);
 	}
-	else if (PLAYER_SAID(R, before_coffee))
+	else if (PlayerSaid(R, before_coffee))
 	{
 		NPCPhrase(EXPLAIN);
 
-		DISABLE_PHRASE(before_coffee);
+		DisablePhrase(before_coffee);
 	}
 
 	Response(falling_asleep, CombatIsInevitable);
 	Response(someone_else_controlled, CombatIsInevitable);
-	if (PHRASE_ENABLED(before_coffee))
+	if (PhraseEnabled(before_coffee))
 	{
 		Response(before_coffee, DescribeCompulsion);
 	}
 }
 
-static void
-MentionCompulsion(RESPONSE_REF R)
+static void MentionCompulsion(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, compulsion))
+	if (PlayerSaid(R, compulsion))
 	{
 		NPCPhrase(WHAT_COMPULSION);
 
-		SET_GAME_STATE(MENTIONED_PET_COMPULSION, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MENTIONED_PET_COMPULSION, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, possessed_by_devil))
+	else if (PlayerSaid(R, possessed_by_devil))
 	{
 		NPCPhrase(STUPID_DEVIL);
 
-		DISABLE_PHRASE(possessed_by_devil);
+		DisablePhrase(possessed_by_devil);
 	}
-	else if (PLAYER_SAID(R, why_explain))
+	else if (PlayerSaid(R, why_explain))
 	{
 		NPCPhrase(MUST_EXPLAIN);
 
-		DISABLE_PHRASE(why_explain);
+		DisablePhrase(why_explain);
 	}
 
 	Response(wascally_little_guy, DescribePet);
 	Response(alien_mind_control, DescribeCompulsion);
-	if (PHRASE_ENABLED(possessed_by_devil))
+	if (PhraseEnabled(possessed_by_devil))
 	{
 		Response(possessed_by_devil, MentionCompulsion);
 	}
-	if (PHRASE_ENABLED(why_explain))
+	if (PhraseEnabled(why_explain))
 	{
 		Response(why_explain, MentionCompulsion);
 	}
 }
 
-static void
-UrquanHypno(RESPONSE_REF R)
+static void UrquanHypno(RESPONSE_REF R)
 {
-	if (GET_GAME_STATE(URQUAN_HYPNO_VISITS) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::URQUAN_HYPNO_VISITS) == 0)
 	{
 		if (R == 0)
 		{
 			NPCPhrase(INIT_URQUAN_WAKE_UP);
 		}
-		else if (PLAYER_SAID(R, where_am_i))
+		else if (PlayerSaid(R, where_am_i))
 		{
 			NPCPhrase(YOU_ARE_HERE);
 
-			DISABLE_PHRASE(where_am_i);
+			DisablePhrase(where_am_i);
 		}
-		else if (PLAYER_SAID(R, why_does_my_head_hurt))
+		else if (PlayerSaid(R, why_does_my_head_hurt))
 		{
 			NPCPhrase(HURTS_BECAUSE);
 
-			DISABLE_PHRASE(why_does_my_head_hurt);
+			DisablePhrase(why_does_my_head_hurt);
 		}
-		else if (PLAYER_SAID(R, what_about_2_weeks))
+		else if (PlayerSaid(R, what_about_2_weeks))
 		{
 			NPCPhrase(ABOUT_2_WEEKS);
 
-			DISABLE_PHRASE(what_about_2_weeks);
+			DisablePhrase(what_about_2_weeks);
 		}
 
-		if (PHRASE_ENABLED(where_am_i))
+		if (PhraseEnabled(where_am_i))
 		{
 			Response(where_am_i, UrquanHypno);
 		}
-		if (PHRASE_ENABLED(why_does_my_head_hurt))
+		if (PhraseEnabled(why_does_my_head_hurt))
 		{
 			Response(why_does_my_head_hurt, UrquanHypno);
 		}
-		if (PHRASE_ENABLED(what_about_2_weeks))
+		if (PhraseEnabled(what_about_2_weeks))
 		{
 			Response(what_about_2_weeks, UrquanHypno);
 		}
@@ -379,28 +374,28 @@ UrquanHypno(RESPONSE_REF R)
 		{
 			NPCPhrase(SUBSEQUENT_URQUAN_WAKE_UP);
 		}
-		else if (PLAYER_SAID(R, uh_oh))
+		else if (PlayerSaid(R, uh_oh))
 		{
 			NPCPhrase(NO_UH_OH);
 
-			DISABLE_PHRASE(uh_oh);
+			DisablePhrase(uh_oh);
 		}
-		else if (PLAYER_SAID(R, stop_meeting))
+		else if (PlayerSaid(R, stop_meeting))
 		{
 			NPCPhrase(NO_STOP_MEETING);
 
-			DISABLE_PHRASE(stop_meeting);
+			DisablePhrase(stop_meeting);
 		}
 
-		if (PHRASE_ENABLED(uh_oh))
+		if (PhraseEnabled(uh_oh))
 		{
 			Response(uh_oh, UrquanHypno);
 		}
-		if (PHRASE_ENABLED(stop_meeting))
+		if (PhraseEnabled(stop_meeting))
 		{
 			Response(stop_meeting, UrquanHypno);
 		}
-		if (!GET_GAME_STATE(MENTIONED_PET_COMPULSION))
+		if (!uqm::gameState().flag(uqm::GameFlag::MENTIONED_PET_COMPULSION))
 		{
 			Response(compulsion, MentionCompulsion);
 		}
@@ -408,10 +403,9 @@ UrquanHypno(RESPONSE_REF R)
 	}
 }
 
-static void
-NormalUrquan(RESPONSE_REF R)
+static void NormalUrquan(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, i_surrender))
+	if (PlayerSaid(R, i_surrender))
 	{
 		NPCPhrase(DISOBEDIENCE_PUNISHED);
 
@@ -420,19 +414,19 @@ NormalUrquan(RESPONSE_REF R)
 	}
 	else
 	{
-		if (PLAYER_SAID(R, key_phrase))
+		if (PlayerSaid(R, key_phrase))
 		{
 			NPCPhrase(URQUAN_STORY);
 
-			SET_GAME_STATE(KNOW_URQUAN_STORY, 2);
+			uqm::gameState().setFlag(uqm::GameFlag::KNOW_URQUAN_STORY, static_cast<uint32_t>(2));
 		}
 
 		Response(you_must_surrender, CombatIsInevitable);
-		if (GET_GAME_STATE(KNOW_URQUAN_STORY) == 1)
+		if (uqm::gameState().flag(uqm::GameFlag::KNOW_URQUAN_STORY) == 1)
 		{
 			Response(key_phrase, NormalUrquan);
 		}
-		switch (GET_GAME_STATE(URQUAN_INFO))
+		switch (uqm::gameState().flag(uqm::GameFlag::URQUAN_INFO))
 		{
 			case 0:
 				Response(whats_up_1, CombatIsInevitable);
@@ -452,50 +446,48 @@ NormalUrquan(RESPONSE_REF R)
 	}
 }
 
-static void
-LoserUrquan(RESPONSE_REF R)
+static void LoserUrquan(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, why_flee))
+	if (PlayerSaid(R, why_flee))
 	{
 		NPCPhrase(FLEE_BECAUSE);
 
-		DISABLE_PHRASE(why_flee);
+		DisablePhrase(why_flee);
 	}
-	else if (PLAYER_SAID(R, what_happens_now))
+	else if (PlayerSaid(R, what_happens_now))
 	{
 		NPCPhrase(HAPPENS_NOW);
 
-		DISABLE_PHRASE(what_happens_now);
+		DisablePhrase(what_happens_now);
 	}
-	else if (PLAYER_SAID(R, what_about_you))
+	else if (PlayerSaid(R, what_about_you))
 	{
 		NPCPhrase(ABOUT_US);
 
-		DISABLE_PHRASE(what_about_you);
+		DisablePhrase(what_about_you);
 	}
 
-	if (PHRASE_ENABLED(why_flee))
+	if (PhraseEnabled(why_flee))
 	{
 		Response(why_flee, LoserUrquan);
 	}
-	if (PHRASE_ENABLED(what_happens_now))
+	if (PhraseEnabled(what_happens_now))
 	{
 		Response(what_happens_now, LoserUrquan);
 	}
-	if (PHRASE_ENABLED(what_about_you))
+	if (PhraseEnabled(what_about_you))
 	{
 		Response(what_about_you, LoserUrquan);
 	}
 	Response(bye_wars_over, CombatIsInevitable);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
-	if (EXTENDED)
+	if (IsExtended())
 	{
-		CommData.AlienAmbientArray[7].AnimFlags &= ~ANIM_DISABLED;
-		CommData.AlienAmbientArray[8].AnimFlags &= ~CIRCULAR_ANIM;
+		CommData.AlienAmbientArray[7].AnimFlags &= ~AnimDisabled;
+		CommData.AlienAmbientArray[8].AnimFlags &= ~CircularAnim;
 	}
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
@@ -506,15 +498,15 @@ Intro(void)
 		return;
 	}
 
-	uint32_t GrpOffs {GET_GAME_STATE(URQUAN_PROBE_GRPOFFS)};
+	uint32_t GrpOffs {uqm::gameState().flag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS)};
 	if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-		&& GLOBAL(BattleGroupRef)
-		&& GLOBAL(BattleGroupRef) == GrpOffs)
+		&& uqm::gameState().game().BattleGroupRef
+		&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 	{
 		NPCPhrase(SEND_MESSAGE);
-		SET_GAME_STATE(PROBE_MESSAGE_DELIVERED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PROBE_MESSAGE_DELIVERED, static_cast<uint32_t>(1));
 	}
-	else if (GET_GAME_STATE(PLAYER_HYPNOTIZED))
+	else if (uqm::gameState().flag(uqm::GameFlag::PLAYER_HYPNOTIZED))
 	{
 		SetCommIntroMode(CIM_FADE_IN_SCREEN, c_gameSecond * 5);
 		UrquanHypno((RESPONSE_REF)0);
@@ -523,17 +515,17 @@ Intro(void)
 	{
 		uint8_t NumVisits {};
 
-		if (!GET_GAME_STATE(URQUAN_SENSES_EVIL)
-			&& GET_GAME_STATE(TALKING_PET_ON_SHIP))
+		if (!uqm::gameState().flag(uqm::GameFlag::URQUAN_SENSES_EVIL)
+			&& uqm::gameState().flag(uqm::GameFlag::TALKING_PET_ON_SHIP))
 		{
 			NPCPhrase(SENSE_EVIL);
-			SET_GAME_STATE(URQUAN_SENSES_EVIL, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::URQUAN_SENSES_EVIL, static_cast<uint32_t>(1));
 		}
 
-		GrpOffs = GET_GAME_STATE(COLONY_GRPOFFS);
+		GrpOffs = uqm::gameState().flag(uqm::GameFlag::COLONY_GRPOFFS);
 		if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-			&& GLOBAL(BattleGroupRef)
-			&& GLOBAL(BattleGroupRef) == GrpOffs)
+			&& uqm::gameState().game().BattleGroupRef
+			&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 		{
 			NPCPhrase(CAUGHT_YA);
 
@@ -541,20 +533,20 @@ Intro(void)
 			return;
 		}
 
-		GrpOffs = GET_GAME_STATE(SAMATRA_GRPOFFS);
+		GrpOffs = uqm::gameState().flag(uqm::GameFlag::SAMATRA_GRPOFFS);
 		if (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-			&& GLOBAL(BattleGroupRef)
-			&& GLOBAL(BattleGroupRef) == GrpOffs)
+			&& uqm::gameState().game().BattleGroupRef
+			&& uqm::gameState().game().BattleGroupRef == GrpOffs)
 		{
 			NPCPhrase(HELLO_SAMATRA);
 
-			SET_GAME_STATE(AWARE_OF_SAMATRA, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::AWARE_OF_SAMATRA, static_cast<uint32_t>(1));
 			setSegue(Segue_hostile);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(URQUAN_VISITS);
-			if (!GET_GAME_STATE(KOHR_AH_FRENZY))
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::URQUAN_VISITS);
+			if (!uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY))
 			{
 				switch (NumVisits++)
 				{
@@ -593,57 +585,54 @@ Intro(void)
 						break;
 				}
 			}
-			SET_GAME_STATE(URQUAN_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::URQUAN_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 	}
 }
 
-static uint16_t
-uninit_urquan(void)
+static uint16_t uninit_urquan(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_urquan_enc(void)
+static void post_urquan_enc(void)
 {
-	SET_GAME_STATE(PLAYER_HYPNOTIZED, 0);
+	uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HYPNOTIZED, static_cast<uint32_t>(0));
 }
 
-LOCDATA*
-init_urquan_comm(void)
+LOCDATA* init_urquan_comm(void)
 {
 	urquan_desc.init_encounter_func = Intro;
 	urquan_desc.post_encounter_func = post_urquan_enc;
 	urquan_desc.uninit_encounter_func = uninit_urquan;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
-	urquan_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	urquan_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	urquan_desc.AlienTextBaseline.y = 0;
-	urquan_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	urquan_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	const uint32_t GrpOffs {GET_GAME_STATE(URQUAN_PROBE_GRPOFFS)};
+	const uint32_t GrpOffs {uqm::gameState().flag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS)};
 
 	// use alternate "Probe" track if available
 	if ((uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-		 && GLOBAL(BattleGroupRef)
-		 && GLOBAL(BattleGroupRef) == GrpOffs))
+		 && uqm::gameState().game().BattleGroupRef
+		 && uqm::gameState().game().BattleGroupRef == GrpOffs))
 	{
-		altResFlags |= USE_ALT_SONG;
+		altResFlags |= UseAltSong;
 	}
 
-	if (EXTENDED)
+	if (IsExtended())
 	{
-		altResFlags |= USE_ALT_COLORMAP;
+		altResFlags |= UseAltColormap;
 	}
 
-	if (GET_GAME_STATE(PLAYER_HYPNOTIZED)
+	if (uqm::gameState().flag(uqm::GameFlag::PLAYER_HYPNOTIZED)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE
 		|| (uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY
-			&& GLOBAL(BattleGroupRef)
-			&& GLOBAL(BattleGroupRef) == GrpOffs))
+			&& uqm::gameState().game().BattleGroupRef
+			&& uqm::gameState().game().BattleGroupRef == GrpOffs))
 	{
 		setSegue(Segue_peace);
 	}

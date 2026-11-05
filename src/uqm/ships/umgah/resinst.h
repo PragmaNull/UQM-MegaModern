@@ -2,16 +2,16 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define CONE_BIG_MASK_ANIM "ship.umgah.graphics.cone.large"
-#define CONE_MED_MASK_ANIM "ship.umgah.graphics.cone.medium"
-#define CONE_SML_MASK_ANIM "ship.umgah.graphics.cone.small"
-#define SPRITZ_MASK_PMAP_ANIM "ship.umgah.graphics.spritz"
-#define UMGAH_BIG_MASK_PMAP_ANIM "ship.umgah.graphics.drone.large"
-#define UMGAH_CAPTAIN_MASK_PMAP_ANIM "ship.umgah.graphics.captain"
-#define UMGAH_ICON_MASK_PMAP_ANIM "ship.umgah.icons"
-#define UMGAH_MED_MASK_PMAP_ANIM "ship.umgah.graphics.drone.medium"
-#define UMGAH_MICON_MASK_PMAP_ANIM "ship.umgah.meleeicons"
-#define UMGAH_RACE_STRINGS "ship.umgah.text"
-#define UMGAH_SHIP_SOUNDS "ship.umgah.sounds"
-#define UMGAH_SML_MASK_PMAP_ANIM "ship.umgah.graphics.drone.small"
-#define UMGAH_VICTORY_SONG "ship.umgah.ditty"
+inline constexpr uqgsl::czstring ConeBigMaskAnim {"ship.umgah.graphics.cone.large"};
+inline constexpr uqgsl::czstring ConeMedMaskAnim {"ship.umgah.graphics.cone.medium"};
+inline constexpr uqgsl::czstring ConeSmlMaskAnim {"ship.umgah.graphics.cone.small"};
+inline constexpr uqgsl::czstring SpritzMaskPmapAnim {"ship.umgah.graphics.spritz"};
+inline constexpr uqgsl::czstring UmgahBigMaskPmapAnim {"ship.umgah.graphics.drone.large"};
+inline constexpr uqgsl::czstring UmgahCaptainMaskPmapAnim {"ship.umgah.graphics.captain"};
+inline constexpr uqgsl::czstring UmgahIconMaskPmapAnim {"ship.umgah.icons"};
+inline constexpr uqgsl::czstring UmgahMedMaskPmapAnim {"ship.umgah.graphics.drone.medium"};
+inline constexpr uqgsl::czstring UmgahMiconMaskPmapAnim {"ship.umgah.meleeicons"};
+inline constexpr uqgsl::czstring UmgahRaceStrings {"ship.umgah.text"};
+inline constexpr uqgsl::czstring UmgahShipSounds {"ship.umgah.sounds"};
+inline constexpr uqgsl::czstring UmgahSmlMaskPmapAnim {"ship.umgah.graphics.drone.small"};
+inline constexpr uqgsl::czstring UmgahVictorySong {"ship.umgah.ditty"};

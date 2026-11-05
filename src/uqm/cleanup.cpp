@@ -46,8 +46,7 @@ void FreeKernel(void)
 	UninitSound();
 }
 
-static void
-UninitContexts(void)
+static void UninitContexts(void)
 {
 	UninitQueue(&disp_q);
 
@@ -56,8 +55,7 @@ UninitContexts(void)
 	DestroyContext(StatusContext);
 }
 
-static void
-UninitKernel(void)
+static void UninitKernel(void)
 {
 	UninitSpace();
 

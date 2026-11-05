@@ -19,8 +19,7 @@
 #include "palette.h"
 #include "core/log/log.h"
 
-NativePalette*
-AllocNativePalette(void)
+NativePalette* AllocNativePalette(void)
 {
 	return new NativePalette {};
 }
@@ -32,12 +31,12 @@ void FreeNativePalette(NativePalette* palette)
 
 void SetNativePaletteColor(NativePalette* palette, int index, Color color)
 {
-	assert(index < NUMBER_OF_PLUTVALS);
+	assert(index < NumberOfPlutvals);
 	palette->colors[index] = ColorToNative(color);
 }
 
 Color GetNativePaletteColor(NativePalette* palette, int index)
 {
-	assert(index < NUMBER_OF_PLUTVALS);
+	assert(index < NumberOfPlutvals);
 	return NativeToColor(palette->colors[index]);
 }

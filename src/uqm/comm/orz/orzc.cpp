@@ -23,7 +23,7 @@
 #include "uqm/lua/UQMLua.h"
 #include "uqm/build.h"
 #include "../../nameref.h"
-//JMS_GFX: For LoadGraphic
+//JMS_GFX: For LoadGraphic()
 
 #include "uqm/setup.h"
 // for GraphicsLock
@@ -35,30 +35,30 @@ static LOCDATA orz_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		ORZ_PMAP_ANIM, /* AlienFrame */
-		ORZ_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		OrzPmapAnim, /* AlienFrame */
+		OrzFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		ORZ_COLOR_MAP, /* AlienColorMap */
-		ORZ_MUSIC, /* AlienSong */
+		OrzColorMap, /* AlienColorMap */
+		OrzMusic, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
-		ORZ_CONVERSATION_PHRASES, /* PlayerPhrases */
+		OrzConversationPhrases, /* PlayerPhrases */
 		13, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				4,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				4,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -66,9 +66,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				10,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				10,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -76,9 +76,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				15,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				15,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 10, /* FrameRate */
 				GameTicksPerSecond,
@@ -86,9 +86,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				17,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				17,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 10, /* FrameRate */
 				GameTicksPerSecond,
@@ -96,9 +96,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				20,		   /* StartIndex */
-				2,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				20,		  /* StartIndex */
+				2,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -106,9 +106,9 @@ static LOCDATA orz_desc =
 				(1 << 7),				/* BlockMask */
 			},
 								{
-				22,			   /* StartIndex */
-				8,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				22,			  /* StartIndex */
+				8,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -116,9 +116,9 @@ static LOCDATA orz_desc =
 				(1 << 6),				/* BlockMask */
 			},
 								{
-				30,			   /* StartIndex */
-				3,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				30,			  /* StartIndex */
+				3,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -126,9 +126,9 @@ static LOCDATA orz_desc =
 				(1 << 5),				/* BlockMask */
 			},
 								{
-				33,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				33,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -136,9 +136,9 @@ static LOCDATA orz_desc =
 				(1 << 4),				/* BlockMask */
 			},
 								{
-				36,			   /* StartIndex */
-				25,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				36,			  /* StartIndex */
+				25,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 60,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -146,9 +146,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				61,			   /* StartIndex */
-				15,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				61,			  /* StartIndex */
+				15,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 60,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -156,9 +156,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				76,			   /* StartIndex */
-				17,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				76,			  /* StartIndex */
+				17,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 60,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -166,9 +166,9 @@ static LOCDATA orz_desc =
 				(1 << 12),				/* BlockMask */
 			},
 								{
-				93,			   /* StartIndex */
-				25,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				93,			  /* StartIndex */
+				25,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 60,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -176,9 +176,9 @@ static LOCDATA orz_desc =
 				0,						/* BlockMask */
 			},
 								{
-				118,		   /* StartIndex */
-				11,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				118,		  /* StartIndex */
+				11,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 60,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -232,26 +232,25 @@ static FILTER_DESC orz_filters =
 								  }
 };
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
-	if (PLAYER_SAID(R, bye_ally))
+	if (PlayerSaid(R, bye_ally))
 	{
 		NPCPhrase(GOODBYE_ALLY);
 	}
-	else if (PLAYER_SAID(R, bye_neutral))
+	else if (PlayerSaid(R, bye_neutral))
 	{
 		NPCPhrase(GOODBYE_NEUTRAL);
 	}
-	else if (PLAYER_SAID(R, bye_angry))
+	else if (PlayerSaid(R, bye_angry))
 	{
 		NPCPhrase(GOODBYE_ANGRY);
 	}
-	else if (PLAYER_SAID(R, bye_taalo))
+	else if (PlayerSaid(R, bye_taalo))
 	{
-		if (GET_GAME_STATE(ORZ_MANNER) == 1)
+		if (uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER) == 1)
 		{
 			NPCPhrase(ANGRY_TAALO_GOODBYE);
 		}
@@ -260,22 +259,22 @@ ExitConversation(RESPONSE_REF R)
 			NPCPhrase(FRIENDLY_TAALO_GOODBYE);
 		}
 	}
-	else if (PLAYER_SAID(R, hostile_2))
+	else if (PlayerSaid(R, hostile_2))
 	{
 		NPCPhrase(HOSTILITY_IS_BAD_2);
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, may_we_land))
+	else if (PlayerSaid(R, may_we_land))
 	{
 		NPCPhrase(SURE_LAND);
 
-		SET_GAME_STATE(TAALO_UNPROTECTED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::TAALO_UNPROTECTED, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, yes_alliance)
-			 || PLAYER_SAID(R, were_sorry))
+	else if (PlayerSaid(R, yes_alliance)
+			 || PlayerSaid(R, were_sorry))
 	{
-		if (PLAYER_SAID(R, yes_alliance))
+		if (PlayerSaid(R, yes_alliance))
 		{
 			NPCPhrase(GREAT);
 		}
@@ -284,23 +283,23 @@ ExitConversation(RESPONSE_REF R)
 			NPCPhrase(APOLOGY_ACCEPTED);
 		}
 
-		SET_GAME_STATE(ORZ_ANDRO_STATE, 0);
-		SET_GAME_STATE(ORZ_GENERAL_INFO, 0);
-		SET_GAME_STATE(ORZ_PERSONAL_INFO, 0);
-		SET_GAME_STATE(ORZ_MANNER, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_GENERAL_INFO, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_PERSONAL_INFO, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_MANNER, static_cast<uint32_t>(3));
 		SetRaceAllied(ORZ_SHIP, true);
 	}
-	else if (PLAYER_SAID(R, demand_to_land))
+	else if (PlayerSaid(R, demand_to_land))
 	{
 		NPCPhrase(NO_DEMAND);
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, about_andro_3)
-			 || PLAYER_SAID(R, must_know_about_androsyn))
+	else if (PlayerSaid(R, about_andro_3)
+			 || PlayerSaid(R, must_know_about_androsyn))
 	{
-		// Run filter for HD
-		if (IS_HD)
+		// Run filter for HdResolutionFactor
+		if (IsHd())
 		{
 			EngageFilters(&orz_filters);
 		}
@@ -308,7 +307,7 @@ ExitConversation(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 					  c_gameSecond / 2);
 
-		if (PLAYER_SAID(R, about_andro_3))
+		if (PlayerSaid(R, about_andro_3))
 		{
 			NPCPhrase(BLEW_IT);
 		}
@@ -317,10 +316,10 @@ ExitConversation(RESPONSE_REF R)
 			NPCPhrase(KNOW_TOO_MUCH);
 		}
 
-		SET_GAME_STATE(ORZ_VISITS, 0);
-		SET_GAME_STATE(ORZ_MANNER, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_MANNER, static_cast<uint32_t>(2));
 		setSegue(Segue_hostile);
-		if (PLAYER_SAID(R, about_andro_3))
+		if (PlayerSaid(R, about_andro_3))
 		{
 			SetRaceAllied(ORZ_SHIP, false);
 			RemoveEscortShips(ORZ_SHIP);
@@ -330,7 +329,7 @@ ExitConversation(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(ORZ_PERSONAL_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_PERSONAL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -351,24 +350,23 @@ ExitConversation(RESPONSE_REF R)
 				setSegue(Segue_hostile);
 				break;
 		}
-		SET_GAME_STATE(ORZ_PERSONAL_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_PERSONAL_INFO, static_cast<uint32_t>(NumVisits));
 	}
 }
 
-static void
-TaaloWorld(RESPONSE_REF R)
+static void TaaloWorld(RESPONSE_REF R)
 {
 	// We can only get here when ORZ_MANNER != HOSTILE (2)
 	uint8_t Manner {};
 
-	Manner = GET_GAME_STATE(ORZ_MANNER);
-	if (PLAYER_SAID(R, demand_to_land))
+	Manner = uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER);
+	if (PlayerSaid(R, demand_to_land))
 	{
 		NPCPhrase(ASK_NICELY);
 
-		DISABLE_PHRASE(demand_to_land);
+		DisablePhrase(demand_to_land);
 	}
-	else if (PLAYER_SAID(R, why_you_here))
+	else if (PlayerSaid(R, why_you_here))
 	{
 		if (Manner != 1)
 		{
@@ -379,9 +377,9 @@ TaaloWorld(RESPONSE_REF R)
 			NPCPhrase(ANGRY_EXPLANATION);
 		}
 
-		DISABLE_PHRASE(why_you_here);
+		DisablePhrase(why_you_here);
 	}
-	else if (PLAYER_SAID(R, what_is_this_place))
+	else if (PlayerSaid(R, what_is_this_place))
 	{
 		if (Manner != 1)
 		{
@@ -393,29 +391,29 @@ TaaloWorld(RESPONSE_REF R)
 			SetHomeworldKnown(ORZ_HOME);
 		}
 
-		DISABLE_PHRASE(what_is_this_place);
+		DisablePhrase(what_is_this_place);
 	}
-	else if (PLAYER_SAID(R, may_we_land))
+	else if (PlayerSaid(R, may_we_land))
 	{
 		NPCPhrase(ALLIES_CAN_VISIT);
 
-		DISABLE_PHRASE(may_we_land);
+		DisablePhrase(may_we_land);
 	}
-	else if (PLAYER_SAID(R, make_alliance))
+	else if (PlayerSaid(R, make_alliance))
 	{
 		NPCPhrase(CANT_ALLY_HERE);
 		SetHomeworldKnown(ORZ_HOME);
 
-		DISABLE_PHRASE(make_alliance);
+		DisablePhrase(make_alliance);
 	}
-	else if (PLAYER_SAID(R, why_busy))
+	else if (PlayerSaid(R, why_busy))
 	{
 		NPCPhrase(BUSY_BECAUSE);
 
-		DISABLE_PHRASE(why_busy);
+		DisablePhrase(why_busy);
 	}
 
-	if (PHRASE_ENABLED(may_we_land))
+	if (PhraseEnabled(may_we_land))
 	{
 		if (Manner == 3 && CheckAlliance(ORZ_SHIP) == GOOD_GUY)
 		{
@@ -426,15 +424,15 @@ TaaloWorld(RESPONSE_REF R)
 			Response(may_we_land, TaaloWorld);
 		}
 	}
-	else if (PHRASE_ENABLED(make_alliance))
+	else if (PhraseEnabled(make_alliance))
 	{
 		Response(make_alliance, TaaloWorld);
 	}
-	else if (PHRASE_ENABLED(why_busy))
+	else if (PhraseEnabled(why_busy))
 	{
 		Response(why_busy, TaaloWorld);
 	}
-	if (PHRASE_ENABLED(demand_to_land))
+	if (PhraseEnabled(demand_to_land))
 	{
 		if (Manner == 1)
 		{
@@ -445,25 +443,24 @@ TaaloWorld(RESPONSE_REF R)
 			Response(demand_to_land, TaaloWorld);
 		}
 	}
-	if (PHRASE_ENABLED(why_you_here))
+	if (PhraseEnabled(why_you_here))
 	{
 		Response(why_you_here, TaaloWorld);
 	}
-	if (PHRASE_ENABLED(what_is_this_place))
+	if (PhraseEnabled(what_is_this_place))
 	{
 		Response(what_is_this_place, TaaloWorld);
 	}
 	Response(bye_taalo, ExitConversation);
 }
 
-static void
-OrzAllied(RESPONSE_REF R)
+static void OrzAllied(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, whats_up_ally))
+	if (PlayerSaid(R, whats_up_ally))
 	{
-		NumVisits = GET_GAME_STATE(ORZ_GENERAL_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_GENERAL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -480,13 +477,13 @@ OrzAllied(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ORZ_GENERAL_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_GENERAL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_ally);
+		DisablePhrase(whats_up_ally);
 	}
-	else if (PLAYER_SAID(R, more_about_you))
+	else if (PlayerSaid(R, more_about_you))
 	{
-		NumVisits = GET_GAME_STATE(ORZ_PERSONAL_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_PERSONAL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -503,28 +500,28 @@ OrzAllied(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ORZ_PERSONAL_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_PERSONAL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(more_about_you);
+		DisablePhrase(more_about_you);
 	}
-	else if (PLAYER_SAID(R, about_andro_1))
+	else if (PlayerSaid(R, about_andro_1))
 	{
 		NPCPhrase(FORGET_ANDRO_1);
 
-		SET_GAME_STATE(ORZ_ANDRO_STATE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, about_andro_2))
+	else if (PlayerSaid(R, about_andro_2))
 	{
 		NPCPhrase(FORGET_ANDRO_2);
 
-		SET_GAME_STATE(ORZ_ANDRO_STATE, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(2));
 	}
 
-	if (GET_GAME_STATE(ORZ_ANDRO_STATE) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 0)
 	{
 		Response(about_andro_1, OrzAllied);
 	}
-	else if (GET_GAME_STATE(ORZ_ANDRO_STATE) == 1)
+	else if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 1)
 	{
 		Response(about_andro_2, OrzAllied);
 	}
@@ -532,11 +529,11 @@ OrzAllied(RESPONSE_REF R)
 	{
 		Response(about_andro_3, ExitConversation);
 	}
-	if (PHRASE_ENABLED(whats_up_ally))
+	if (PhraseEnabled(whats_up_ally))
 	{
 		Response(whats_up_ally, OrzAllied);
 	}
-	if (PHRASE_ENABLED(more_about_you))
+	if (PhraseEnabled(more_about_you))
 	{
 		Response(more_about_you, OrzAllied);
 	}
@@ -545,132 +542,129 @@ OrzAllied(RESPONSE_REF R)
 
 static void OrzNeutral(RESPONSE_REF R);
 
-static void
-WhereAndrosyn(RESPONSE_REF R)
+static void WhereAndrosyn(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase(DISEMBLE_ABOUT_ANDROSYN);
-	DISABLE_PHRASE(where_androsyn);
+	DisablePhrase(where_androsyn);
 
 	Response(must_know_about_androsyn, ExitConversation);
 	Response(dont_really_care, OrzNeutral);
 }
 
-static void
-OfferAlliance(RESPONSE_REF R)
+static void OfferAlliance(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, seem_like_nice_guys))
+	if (PlayerSaid(R, seem_like_nice_guys))
 	{
 		NPCPhrase(ARE_NICE_WANT_ALLY);
 	}
-	else if (PLAYER_SAID(R, talk_about_alliance))
+	else if (PlayerSaid(R, talk_about_alliance))
 	{
 		NPCPhrase(OK_TALK_ALLIANCE);
 	}
-	else if (PLAYER_SAID(R, why_so_trusting))
+	else if (PlayerSaid(R, why_so_trusting))
 	{
 		NPCPhrase(TRUSTING_BECAUSE);
 
-		SET_GAME_STATE(ORZ_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_STACK1, static_cast<uint32_t>(1));
 	}
 
 	Response(no_alliance, OrzNeutral);
 	Response(decide_later, OrzNeutral);
-	if (GET_GAME_STATE(ORZ_STACK1) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::ORZ_STACK1) == 0)
 	{
 		Response(why_so_trusting, OfferAlliance);
 	}
 	Response(yes_alliance, ExitConversation);
 }
 
-static void
-OrzNeutral(RESPONSE_REF R)
+static void OrzNeutral(RESPONSE_REF R)
 {
 	RESPONSE_REF pStr[3];
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
-	if (PLAYER_SAID(R, hostile_1))
+	if (PlayerSaid(R, hostile_1))
 	{
 		NPCPhrase(HOSTILITY_IS_BAD_1);
 
-		DISABLE_PHRASE(hostile_1);
+		DisablePhrase(hostile_1);
 		LastStack = 2;
 	}
-	else if (PLAYER_SAID(R, we_are_vindicator))
+	else if (PlayerSaid(R, we_are_vindicator))
 	{
 		NPCPhrase(NICE_TO_MEET_YOU);
 
-		SET_GAME_STATE(ORZ_STACK0, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_STACK0, static_cast<uint32_t>(1));
 		LastStack = 1;
 	}
-	else if (PLAYER_SAID(R, who_you))
+	else if (PlayerSaid(R, who_you))
 	{
 		NPCPhrase(WE_ARE_ORZ);
 
-		SET_GAME_STATE(ORZ_ANDRO_STATE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, why_here))
+	else if (PlayerSaid(R, why_here))
 	{
 		NPCPhrase(HERE_BECAUSE);
 
-		SET_GAME_STATE(ORZ_ANDRO_STATE, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_ANDRO_STATE, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, no_alliance))
+	else if (PlayerSaid(R, no_alliance))
 	{
 		NPCPhrase(MAYBE_LATER);
 
-		DISABLE_PHRASE(talk_about_alliance);
-		SET_GAME_STATE(REFUSED_ORZ_ALLIANCE, 1);
+		DisablePhrase(talk_about_alliance);
+		uqm::gameState().setFlag(uqm::GameFlag::REFUSED_ORZ_ALLIANCE, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, decide_later))
+	else if (PlayerSaid(R, decide_later))
 	{
 		NPCPhrase(OK_LATER);
 
-		DISABLE_PHRASE(talk_about_alliance);
-		SET_GAME_STATE(REFUSED_ORZ_ALLIANCE, 1);
+		DisablePhrase(talk_about_alliance);
+		uqm::gameState().setFlag(uqm::GameFlag::REFUSED_ORZ_ALLIANCE, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, dont_really_care))
+	else if (PlayerSaid(R, dont_really_care))
 	{
 		NPCPhrase(YOU_ARE_OUR_FRIENDS);
 	}
-	else if (PLAYER_SAID(R, where_androsyn))
+	else if (PlayerSaid(R, where_androsyn))
 	{
 		WhereAndrosyn(R);
 		return;
 	}
-	else if (PLAYER_SAID(R, talk_about_alliance)
-			 || PLAYER_SAID(R, seem_like_nice_guys))
+	else if (PlayerSaid(R, talk_about_alliance)
+			 || PlayerSaid(R, seem_like_nice_guys))
 	{
 		OfferAlliance(R);
 		return;
 	}
-	else if (PLAYER_SAID(R, hostile_2))
+	else if (PlayerSaid(R, hostile_2))
 	{
 		ExitConversation(R);
 		return;
 	}
 
-	if (GET_GAME_STATE(ORZ_ANDRO_STATE) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 0)
 	{
 		pStr[0] = who_you;
 	}
-	else if (GET_GAME_STATE(ORZ_ANDRO_STATE) == 1)
+	else if (uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 1)
 	{
 		pStr[0] = why_here;
 	}
-	else if (PHRASE_ENABLED(where_androsyn) && GET_GAME_STATE(ORZ_ANDRO_STATE) == 2)
+	else if (PhraseEnabled(where_androsyn) && uqm::gameState().flag(uqm::GameFlag::ORZ_ANDRO_STATE) == 2)
 	{
 		pStr[0] = where_androsyn;
 	}
-	if (GET_GAME_STATE(REFUSED_ORZ_ALLIANCE))
+	if (uqm::gameState().flag(uqm::GameFlag::REFUSED_ORZ_ALLIANCE))
 	{
-		if (PHRASE_ENABLED(talk_about_alliance))
+		if (PhraseEnabled(talk_about_alliance))
 		{
 			pStr[1] = talk_about_alliance;
 		}
 	}
-	else if (GET_GAME_STATE(ORZ_STACK0) == 0)
+	else if (uqm::gameState().flag(uqm::GameFlag::ORZ_STACK0) == 0)
 	{
 		pStr[1] = we_are_vindicator;
 	}
@@ -678,7 +672,7 @@ OrzNeutral(RESPONSE_REF R)
 	{
 		pStr[1] = seem_like_nice_guys;
 	}
-	if (PHRASE_ENABLED(hostile_1))
+	if (PhraseEnabled(hostile_1))
 	{
 		pStr[2] = hostile_1;
 	}
@@ -702,14 +696,13 @@ OrzNeutral(RESPONSE_REF R)
 	Response(bye_neutral, ExitConversation);
 }
 
-static void
-OrzAngry(RESPONSE_REF R)
+static void OrzAngry(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_angry))
+	if (PlayerSaid(R, whats_up_angry))
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(ORZ_GENERAL_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_GENERAL_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -720,17 +713,17 @@ OrzAngry(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ORZ_GENERAL_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_GENERAL_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_angry);
+		DisablePhrase(whats_up_angry);
 	}
 
-	if (PHRASE_ENABLED(whats_up_angry))
+	if (PhraseEnabled(whats_up_angry))
 	{
 		Response(whats_up_angry, OrzAngry);
 	}
 	Response(were_sorry, ExitConversation);
-	switch (GET_GAME_STATE(ORZ_PERSONAL_INFO))
+	switch (uqm::gameState().flag(uqm::GameFlag::ORZ_PERSONAL_INFO))
 	{
 		case 0:
 			Response(insult_1, ExitConversation);
@@ -760,8 +753,7 @@ OrzAngry(RESPONSE_REF R)
 	Response(bye_angry, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 	uint8_t Manner {};
@@ -774,18 +766,18 @@ Intro(void)
 		return;
 	}
 
-	if (!GET_GAME_STATE(MET_ORZ_BEFORE))
+	if (!uqm::gameState().flag(uqm::GameFlag::MET_ORZ_BEFORE))
 	{
 		NPCPhrase(INIT_HELLO);
 	}
 
-	Manner = GET_GAME_STATE(ORZ_MANNER);
+	Manner = uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER);
 	if (Manner == 2)
 	{
 		// JMS_GFX: Use separate red angry graphics in hires instead of colormap transform.
-		if (IS_HD)
+		if (IsHd())
 		{
-			CommData.AlienFrameRes = ORZ_ANGRY_PMAP_ANIM;
+			CommData.AlienFrameRes = OrzAngryPmapAnim;
 			CommData.AlienFrame = CaptureDrawable(
 				LoadGraphic(CommData.AlienFrameRes));
 		}
@@ -794,7 +786,7 @@ Intro(void)
 			CommData.AlienColorMapIndex = 1;
 		}
 
-		NumVisits = GET_GAME_STATE(ORZ_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -805,13 +797,13 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ORZ_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 
 		setSegue(Segue_hostile);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		NumVisits = GET_GAME_STATE(TAALO_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::TAALO_VISITS);
 		if (Manner != 1)
 		{
 			switch (NumVisits++)
@@ -838,15 +830,15 @@ Intro(void)
 					break;
 			}
 		}
-		SET_GAME_STATE(TAALO_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::TAALO_VISITS, static_cast<uint32_t>(NumVisits));
 
 		TaaloWorld((RESPONSE_REF)0);
 	}
 	else if (Manner == 3 && CheckAlliance(ORZ_SHIP) == GOOD_GUY)
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(ORZ_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -863,11 +855,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(ORZ_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -884,16 +876,16 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		OrzAllied((RESPONSE_REF)0);
 	}
 	else if (Manner != 1)
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(ORZ_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -910,11 +902,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(ORZ_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -931,16 +923,16 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		OrzNeutral((RESPONSE_REF)0);
 	}
 	else
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(ORZ_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -951,11 +943,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(ORZ_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ORZ_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -966,62 +958,59 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ORZ_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		OrzAngry((RESPONSE_REF)0);
 	}
 
-	if (!GET_GAME_STATE(MET_ORZ_BEFORE))
+	if (!uqm::gameState().flag(uqm::GameFlag::MET_ORZ_BEFORE))
 	{
-		SET_GAME_STATE(MET_ORZ_BEFORE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MET_ORZ_BEFORE, static_cast<uint32_t>(1));
 
 		// Disable talking anim and run the computer report
 		BlockTalkingAnim(0, 1);
 	}
 }
 
-static uint16_t
-uninit_orz(void)
+static uint16_t uninit_orz(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_orz_enc(void)
+static void post_orz_enc(void)
 {
 	uint8_t Manner {};
 
 	if (getSegue() == Segue_hostile
-		&& (Manner = GET_GAME_STATE(ORZ_MANNER)) != 2)
+		&& (Manner = uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER)) != 2)
 	{
-		SET_GAME_STATE(ORZ_MANNER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ORZ_MANNER, static_cast<uint32_t>(1));
 		if (Manner != 1)
 		{
-			SET_GAME_STATE(ORZ_VISITS, 0);
-			SET_GAME_STATE(ORZ_HOME_VISITS, 0);
-			SET_GAME_STATE(TAALO_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_VISITS, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::ORZ_HOME_VISITS, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::TAALO_VISITS, static_cast<uint32_t>(0));
 		}
 	}
 }
 
-LOCDATA*
-init_orz_comm(void)
+LOCDATA* init_orz_comm(void)
 {
 	orz_desc.init_encounter_func = Intro;
 	orz_desc.post_encounter_func = post_orz_enc;
 	orz_desc.uninit_encounter_func = uninit_orz;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	orz_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	orz_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	orz_desc.AlienTextBaseline.y = 0;
-	orz_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	orz_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if (GET_GAME_STATE(ORZ_MANNER) == 3
+	if (uqm::gameState().flag(uqm::GameFlag::ORZ_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);

@@ -22,8 +22,8 @@
 #include "tfb_draw.h"
 
 typedef uint16_t FBK_FLAGS;
-#define FBK_DIRTY (1 << 0)
-#define FBK_IMAGE (1 << 1)
+inline constexpr auto FbkDirty {(1 << 0)};
+inline constexpr auto FbkImage {(1 << 1)};
 
 struct context_desc
 {
@@ -52,88 +52,60 @@ struct context_desc
 extern GFXCONTEXT _pCurContext;
 extern PRIMITIVE _locPrim;
 
-#define _get_context_fg_color() (_pCurContext->ForeGroundColor)
-#define _get_context_bg_color() (_pCurContext->BackGroundColor)
-#define _get_context_flags() (_pCurContext->Flags)
-#define _get_context_fg_frame() (_pCurContext->ForeGroundFrame)
-#define _get_context_font() (_pCurContext->Font)
-#define _get_context_fbk_flags() (_pCurContext->BackingFlags)
-#define _get_context_fonteff() (_pCurContext->FontEffect)
-#define _get_context_font_backing() (_pCurContext->FontBacking)
-#define _get_context_draw_mode() (_pCurContext->Mode)
+inline Color& _get_context_fg_color() { return _pCurContext->ForeGroundColor; }
+inline Color& _get_context_bg_color() { return _pCurContext->BackGroundColor; }
+inline uint16_t& _get_context_flags() { return _pCurContext->Flags; }
+inline FRAME& _get_context_fg_frame() { return _pCurContext->ForeGroundFrame; }
+inline FONT& _get_context_font() { return _pCurContext->Font; }
+inline FBK_FLAGS& _get_context_fbk_flags() { return _pCurContext->BackingFlags; }
+inline FRAME& _get_context_fonteff() { return _pCurContext->FontEffect; }
+inline TFB_Image*& _get_context_font_backing() { return _pCurContext->FontBacking; }
+inline DrawMode& _get_context_draw_mode() { return _pCurContext->Mode; }
 
-#define SwitchContextDrawMode(m)  \
-	{                             \
-		_pCurContext->Mode = (m); \
-	}
-#define SwitchContextForeGroundColor(c)      \
-	{                                        \
-		_pCurContext->ForeGroundColor = (c); \
-	}
-#define SwitchContextBackGroundColor(c)      \
-	{                                        \
-		_pCurContext->BackGroundColor = (c); \
-	}
-#define SetContextFlags(f)          \
-	{                               \
-		_pCurContext->Flags |= (f); \
-	}
-#define UnsetContextFlags(f)         \
-	{                                \
-		_pCurContext->Flags &= ~(f); \
-	}
-#define SwitchContextFGFrame(f)              \
-	{                                        \
-		_pCurContext->ForeGroundFrame = (f); \
-	}
-#define SwitchContextFont(f)           \
-	{                                  \
-		_pCurContext->Font = (f);      \
-		SetContextFBkFlags(FBK_DIRTY); \
-	}
-#define SwitchContextBGFunc(f)              \
-	{                                       \
-		_pCurContext->BackGroundFunc = (f); \
-	}
-#define SetContextFBkFlags(f)              \
-	{                                      \
-		_pCurContext->BackingFlags |= (f); \
-	}
-#define UnsetContextFBkFlags(f)             \
-	{                                       \
-		_pCurContext->BackingFlags &= ~(f); \
-	}
-#define SwitchContextFontEffect(f)      \
-	{                                   \
-		_pCurContext->FontEffect = (f); \
-		SetContextFBkFlags(FBK_DIRTY);  \
-	}
+inline void SwitchContextDrawMode(DrawMode m) { _pCurContext->Mode = m; }
+inline void SwitchContextForeGroundColor(Color c) { _pCurContext->ForeGroundColor = c; }
+inline void SwitchContextBackGroundColor(Color c) { _pCurContext->BackGroundColor = c; }
+inline void SetContextFlags(uint16_t f) { _pCurContext->Flags |= f; }
+inline void UnsetContextFlags(uint16_t f) { _pCurContext->Flags &= ~f; }
+inline void SwitchContextFGFrame(FRAME f) { _pCurContext->ForeGroundFrame = f; }
+inline void SetContextFBkFlags(FBK_FLAGS f) { _pCurContext->BackingFlags |= f; }
+inline void UnsetContextFBkFlags(FBK_FLAGS f) { _pCurContext->BackingFlags &= ~f; }
+
+inline void SwitchContextFont(FONT f)
+{
+	_pCurContext->Font = f;
+	SetContextFBkFlags(FbkDirty);
+}
+
+inline void SwitchContextFontEffect(FRAME f)
+{
+	_pCurContext->FontEffect = f;
+	SetContextFBkFlags(FbkDirty);
+}
 
 typedef uint8_t GRAPHICS_STATUS;
 
 extern GRAPHICS_STATUS _GraphicsStatusFlags;
-#define GRAPHICS_ACTIVE (GRAPHICS_STATUS)(1 << 0)
-#define GRAPHICS_VISIBLE (GRAPHICS_STATUS)(1 << 1)
-#define CONTEXT_ACTIVE (GRAPHICS_STATUS)(1 << 2)
-#define DRAWABLE_ACTIVE (GRAPHICS_STATUS)(1 << 3)
-#define DeactivateGraphics() (_GraphicsStatusFlags &= ~GRAPHICS_ACTIVE)
-#define ActivateGraphics() (_GraphicsStatusFlags |= GRAPHICS_ACTIVE)
-#define GraphicsActive() (_GraphicsStatusFlags & GRAPHICS_ACTIVE)
-#define DeactivateVisible() (_GraphicsStatusFlags &= ~GRAPHICS_VISIBLE)
-#define ActivateVisible() (_GraphicsStatusFlags |= GRAPHICS_VISIBLE)
-#define DeactivateContext() (_GraphicsStatusFlags &= ~CONTEXT_ACTIVE)
-#define ActivateContext() (_GraphicsStatusFlags |= CONTEXT_ACTIVE)
-#define ContextActive() (_GraphicsStatusFlags & CONTEXT_ACTIVE)
-#define DeactivateDrawable() (_GraphicsStatusFlags &= ~DRAWABLE_ACTIVE)
-#define ActivateDrawable() (_GraphicsStatusFlags |= DRAWABLE_ACTIVE)
-#define DrawableActive() (_GraphicsStatusFlags & DRAWABLE_ACTIVE)
+inline constexpr auto GraphicsActiveFlag {(GRAPHICS_STATUS)(1 << 0)};
+inline constexpr auto GraphicsVisible {(GRAPHICS_STATUS)(1 << 1)};
+inline constexpr auto ContextActiveFlag {(GRAPHICS_STATUS)(1 << 2)};
+inline constexpr auto DrawableActiveFlag {(GRAPHICS_STATUS)(1 << 3)};
+inline void DeactivateGraphics() { _GraphicsStatusFlags &= ~GraphicsActiveFlag; }
+inline void ActivateGraphics() { _GraphicsStatusFlags |= GraphicsActiveFlag; }
+inline bool GraphicsActive() { return (_GraphicsStatusFlags & GraphicsActiveFlag) != 0; }
+inline void DeactivateVisible() { _GraphicsStatusFlags &= ~GraphicsVisible; }
+inline void ActivateVisible() { _GraphicsStatusFlags |= GraphicsVisible; }
+inline void DeactivateContext() { _GraphicsStatusFlags &= ~ContextActiveFlag; }
+inline void ActivateContext() { _GraphicsStatusFlags |= ContextActiveFlag; }
+inline bool ContextActive() { return (_GraphicsStatusFlags & ContextActiveFlag) != 0; }
+inline void DeactivateDrawable() { _GraphicsStatusFlags &= ~DrawableActiveFlag; }
+inline void ActivateDrawable() { _GraphicsStatusFlags |= DrawableActiveFlag; }
+inline bool DrawableActive() { return (_GraphicsStatusFlags & DrawableActiveFlag) != 0; }
 
-#define SYSTEM_ACTIVE (GRAPHICS_STATUS)(CONTEXT_ACTIVE | DRAWABLE_ACTIVE)
+inline constexpr auto SystemActive {(GRAPHICS_STATUS)(ContextActiveFlag | DrawableActiveFlag)};
 
-#define GraphicsSystemActive() \
-	((_GraphicsStatusFlags & SYSTEM_ACTIVE) == SYSTEM_ACTIVE)
-#define GraphicsStatus() \
-	(_GraphicsStatusFlags & (GRAPHICS_STATUS)(GRAPHICS_ACTIVE | GRAPHICS_VISIBLE))
+inline bool GraphicsSystemActive() { return (_GraphicsStatusFlags & SystemActive) == SystemActive; }
+inline GRAPHICS_STATUS GraphicsStatus() { return _GraphicsStatusFlags & (GRAPHICS_STATUS)(GraphicsActiveFlag | GraphicsVisible); }
 
 // pValidRect or origin may be nullptr
 bool GetContextValidRect(GFXRECT* pValidRect, GFXPOINT* origin);

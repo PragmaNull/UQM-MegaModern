@@ -24,8 +24,6 @@
 
 /* ---- Defines */
 
-#define SMOOTHING_OFF 0
-#define SMOOTHING_ON 1
 
 /* ---- Structures */
 

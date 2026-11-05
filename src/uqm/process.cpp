@@ -39,35 +39,33 @@
 //#define DEBUG_PROCESS
 
 uint16_t DisplayFreeList;
-PRIMITIVE DisplayArray[MAX_DISPLAY_PRIMS];
+PRIMITIVE DisplayArray[MaxDisplayPrims];
 extern DPOINT SpaceOrg;
 
-uint16_t zoom_out = 1 << ZOOM_SHIFT;
+uint16_t zoom_out = 1 << ZoomShift;
 static int16_t opt_max_zoom_out;
 
 #if 0
-static inline void
-CALC_ZOOM_STUFF (uint16_t* idx, uint16_t* sc)
+static inline void CALC_ZOOM_STUFF (uint16_t* idx, uint16_t* sc)
 {
 	int i, z;
 
-	z = 1 << ZOOM_SHIFT;
+	z = 1 << ZoomShift;
 	for (i = 0; (z <<= 1) <= zoom_out; i++)
 		;
 	*idx = i;
-	*sc = ((1 << i) << (ZOOM_SHIFT + 8)) / zoom_out;
+	*sc = ((1 << i) << (ZoomShift + 8)) / zoom_out;
 }
 #else
-static inline void
-CALC_ZOOM_STUFF(uint16_t* idx, uint16_t* sc)
+static inline void CALC_ZOOM_STUFF(uint16_t* idx, uint16_t* sc)
 {
 	int i {};
 
-	if (zoom_out < 2 << ZOOM_SHIFT)
+	if (zoom_out < 2 << ZoomShift)
 	{
 		i = 0;
 	}
-	else if (zoom_out < 4 << ZOOM_SHIFT)
+	else if (zoom_out < 4 << ZoomShift)
 	{
 		i = 1;
 	}
@@ -76,12 +74,11 @@ CALC_ZOOM_STUFF(uint16_t* idx, uint16_t* sc)
 		i = 2;
 	}
 	*idx = i;
-	*sc = (1 << (i + ZOOM_SHIFT + 8)) / zoom_out;
+	*sc = (1 << (i + ZoomShift + 8)) / zoom_out;
 }
 #endif
 
-HELEMENT
-AllocElement(void)
+HELEMENT AllocElement(void)
 {
 	HELEMENT hElement {AllocLink(&disp_q)};
 	if (hElement)
@@ -91,12 +88,12 @@ AllocElement(void)
 		LockElement(hElement, &ElementPtr);
 		memset(ElementPtr, 0, sizeof(*ElementPtr));
 		ElementPtr->PrimIndex = AllocDisplayPrim();
-		if (ElementPtr->PrimIndex == END_OF_LIST)
+		if (ElementPtr->PrimIndex == EndOfList)
 		{
 			uqm::log::error("AllocElement: Out of display prims!");
 			uqm::fatalExit();
 		}
-		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NO_PRIM);
+		SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NoPrim);
 		SetPrimFlags(&DisplayArray[ElementPtr->PrimIndex], 0);
 		UnlockElement(hElement);
 	}
@@ -129,8 +126,7 @@ void SetUpElement(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-PreProcess(ELEMENT* ElementPtr)
+static void PreProcess(ELEMENT* ElementPtr)
 {
 	ELEMENT_FLAGS state_flags {};
 
@@ -141,7 +137,7 @@ PreProcess(ELEMENT* ElementPtr)
 			Untarget(ElementPtr);
 		}
 
-		ElementPtr->state_flags |= DISAPPEARING;
+		ElementPtr->state_flags |= Disappearing;
 		if (ElementPtr->death_func)
 		{
 			(*ElementPtr->death_func)(ElementPtr);
@@ -149,30 +145,30 @@ PreProcess(ELEMENT* ElementPtr)
 	}
 
 	state_flags = ElementPtr->state_flags;
-	if (!(state_flags & DISAPPEARING))
+	if (!(state_flags & Disappearing))
 	{
-		if (state_flags & APPEARING)
+		if (state_flags & Appearing)
 		{
 			SetUpElement(ElementPtr);
 
-			if (state_flags & PLAYER_SHIP)
+			if (state_flags & PlayerShip)
 			{
-				state_flags &= ~APPEARING; /* want to preprocess ship */
+				state_flags &= ~Appearing; /* want to preprocess ship */
 			}
 		}
 
-		if (ElementPtr->preprocess_func && !(state_flags & APPEARING))
+		if (ElementPtr->preprocess_func && !(state_flags & Appearing))
 		{
 			(*ElementPtr->preprocess_func)(ElementPtr);
 
 			state_flags = ElementPtr->state_flags;
-			if ((state_flags & CHANGING) && CollidingElement(ElementPtr))
+			if ((state_flags & Changing) && CollidingElement(ElementPtr))
 			{
 				InitIntersectFrame(ElementPtr);
 			}
 		}
 
-		if (!(state_flags & IGNORE_VELOCITY))
+		if (!(state_flags & IgnoreVelocity))
 		{
 			int16_t delta_x {};
 			int16_t delta_y {};
@@ -181,7 +177,7 @@ PreProcess(ELEMENT* ElementPtr)
 									  &delta_x, &delta_y, 1);
 			if (delta_x != 0 || delta_y != 0)
 			{
-				state_flags |= CHANGING;
+				state_flags |= Changing;
 				ElementPtr->next.location.x += delta_x;
 				ElementPtr->next.location.y += delta_y;
 			}
@@ -192,18 +188,17 @@ PreProcess(ELEMENT* ElementPtr)
 			InitIntersectEndPoint(ElementPtr);
 		}
 
-		if (state_flags & FINITE_LIFE)
+		if (state_flags & FiniteLife)
 		{
 			--ElementPtr->life_span;
 		}
 	}
 
-	ElementPtr->state_flags = (state_flags & ~(POST_PROCESS | COLLISION))
-							| PRE_PROCESS;
+	ElementPtr->state_flags = (state_flags & ~(PostProcessFlag | Collision))
+							| PreProcessFlag;
 }
 
-static void
-PostProcess(ELEMENT* ElementPtr)
+static void PostProcess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->postprocess_func)
 	{
@@ -218,12 +213,11 @@ PostProcess(ELEMENT* ElementPtr)
 	}
 
 	ElementPtr->state_flags = (ElementPtr->state_flags
-							   & ~(PRE_PROCESS | CHANGING | APPEARING))
-							| POST_PROCESS;
+							   & ~(PreProcessFlag | Changing | Appearing))
+							| PostProcessFlag;
 }
 
-static uint16_t
-CalcReduction(int32_t dx, int32_t dy)
+static uint16_t CalcReduction(int32_t dx, int32_t dy)
 {
 	uint16_t next_reduction {};
 
@@ -240,62 +234,66 @@ CalcReduction(int32_t dx, int32_t dy)
 
 		const int32_t sdx {dx};
 		const int32_t sdy {dy};
-		for (next_reduction = MAX_VIS_REDUCTION;
-			 (dx <<= REDUCTION_SHIFT) <= TRANSITION_WIDTH
-			 && (dy <<= REDUCTION_SHIFT) <= TRANSITION_HEIGHT
+		for (next_reduction = MaxVisReduction;
+			 (dx <<= ReductionShift) <= TransitionWidth()
+			 && (dy <<= ReductionShift) <= TransitionHeight()
 			 && next_reduction > 0;
-			 next_reduction -= REDUCTION_SHIFT)
+			 next_reduction -= ReductionShift)
 			;
 
 		/* check for "real" zoom in */
 		if (next_reduction < zoom_out
-			&& zoom_out <= MAX_VIS_REDUCTION)
+			&& zoom_out <= MaxVisReduction)
 		{
-#define HYSTERESIS_X DISPLAY_TO_WORLD(RES_SCALE(24))
-#define HYSTERESIS_Y DISPLAY_TO_WORLD(RES_SCALE(20))
-			if (((sdx + HYSTERESIS_X)
-				 << (MAX_VIS_REDUCTION - next_reduction))
-					> TRANSITION_WIDTH
-				|| ((sdy + HYSTERESIS_Y)
-					<< (MAX_VIS_REDUCTION - next_reduction))
-					   > TRANSITION_HEIGHT)
+			const auto HysteresisX = [&] {
+				return DisplayToWorld(ResScale(24));
+			};
+			const auto HysteresisY = [&] {
+				return DisplayToWorld(ResScale(20));
+			};
+			if (((sdx + HysteresisX())
+				 << (MaxVisReduction - next_reduction))
+					> TransitionWidth()
+				|| ((sdy + HysteresisY())
+					<< (MaxVisReduction - next_reduction))
+					   > TransitionHeight())
 			{
 				/* if we don't zoom in, we want to stay at next+1 */
-				next_reduction += REDUCTION_SHIFT;
+				next_reduction += ReductionShift;
 			}
 		}
 
 		if (next_reduction == 0
 			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{
-			next_reduction += REDUCTION_SHIFT;
+			next_reduction += ReductionShift;
 		}
 	}
 	else
 	{
 		if (uqm::lowByte(uqm::currentActivity()) > IN_ENCOUNTER)
 		{
-			return (1 << ZOOM_SHIFT);
+			return (1 << ZoomShift);
 		}
 
-		dx = (dx * MAX_ZOOM_OUT) / (LOG_SPACE_WIDTH >> 2);
-		if (dx < (1 << ZOOM_SHIFT))
+		dx = (dx * MaxZoomOut) / (LogSpaceWidth() >> 2);
+		if (dx < (1 << ZoomShift))
 		{
-			dx = 1 << ZOOM_SHIFT;
+			dx = 1 << ZoomShift;
 		}
-		else if (dx > MAX_ZOOM_OUT)
+		else if (dx > MaxZoomOut)
 		{
-			dx = MAX_ZOOM_OUT;
+			dx = MaxZoomOut;
 		}
 
-		dy = (dy * MAX_ZOOM_OUT) / (LOG_SPACE_HEIGHT >> 2);
-		if (dy < (1 << ZOOM_SHIFT))
+		dy = (dy * MaxZoomOut) / (LogSpaceHeight() >> 2);
+		if (dy < (1 << ZoomShift))
 		{
-			dy = 1 << ZOOM_SHIFT;
+			dy = 1 << ZoomShift;
 		}
-		else if (dy > MAX_ZOOM_OUT)
+		else if (dy > MaxZoomOut)
 		{
-			dy = MAX_ZOOM_OUT;
+			dy = MaxZoomOut;
 		}
 
 		if (dy > dx)
@@ -307,10 +305,10 @@ CalcReduction(int32_t dx, int32_t dy)
 			next_reduction = dx;
 		}
 
-		if (next_reduction < (2 << ZOOM_SHIFT)
+		if (next_reduction < (2 << ZoomShift)
 			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{
-			next_reduction = (2 << ZOOM_SHIFT);
+			next_reduction = (2 << ZoomShift);
 		}
 	}
 
@@ -321,39 +319,44 @@ CalcReduction(int32_t dx, int32_t dy)
 	return (next_reduction);
 }
 
-static VIEW_STATE
-CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
-		 int32_t* pdx, int32_t* pdy, uint16_t ships_alive)
+static constexpr auto ZoomJump {((1 << ZoomShift) >> 3)};
+
+static VIEW_STATE CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
+						   int32_t* pdx, int32_t* pdy, uint16_t ships_alive)
 {
 	VIEW_STATE view_state;
 
 #ifdef KDEBUG
 	uqm::log::debug("CalcView:");
 #endif
-	int32_t dx {((int32_t)(LOG_SPACE_WIDTH >> 1) - pNewScrollPt->x)};
-	int32_t dy {((int32_t)(LOG_SPACE_HEIGHT >> 1) - pNewScrollPt->y)};
-	dx = WRAP_DELTA_X(dx);
-	dy = WRAP_DELTA_Y(dy);
+	int32_t dx {((int32_t)(LogSpaceWidth() >> 1) - pNewScrollPt->x)};
+	int32_t dy {((int32_t)(LogSpaceHeight() >> 1) - pNewScrollPt->y)};
+	dx = WrapDeltaX(dx);
+	dy = WrapDeltaY(dy);
 	const bool meleeScaleModeIsTFBStep {uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step};
 	if (ships_alive == 1 && (!meleeScaleModeIsTFBStep || isNetwork()))
 	{
-#define ORG_JUMP_X ((int32_t)DISPLAY_ALIGN(LOG_SPACE_WIDTH / 75))
-#define ORG_JUMP_Y ((int32_t)DISPLAY_ALIGN(LOG_SPACE_HEIGHT / 75))
-		if (dx > ORG_JUMP_X)
+		const auto OrgJumpX = [&] {
+			return ((int32_t)DisplayAlign(LogSpaceWidth() / 75));
+		};
+		const auto OrgJumpY = [&] {
+			return ((int32_t)DisplayAlign(LogSpaceHeight() / 75));
+		};
+		if (dx > OrgJumpX())
 		{
-			dx = ORG_JUMP_X;
+			dx = OrgJumpX();
 		}
-		else if (dx < -ORG_JUMP_X)
+		else if (dx < -OrgJumpX())
 		{
-			dx = -ORG_JUMP_X;
+			dx = -OrgJumpX();
 		}
-		if (dy > ORG_JUMP_Y)
+		if (dy > OrgJumpY())
 		{
-			dy = ORG_JUMP_Y;
+			dy = OrgJumpY();
 		}
-		else if (dy < -ORG_JUMP_Y)
+		else if (dy < -OrgJumpY())
 		{
-			dy = -ORG_JUMP_Y;
+			dy = -OrgJumpY();
 		}
 	}
 
@@ -370,28 +373,27 @@ CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 	{
 		if (meleeScaleModeIsTFBStep)
 		{
-			SpaceOrg.x = (int32_t)(LOG_SPACE_WIDTH >> 1)
-					   - (LOG_SPACE_WIDTH >> ((MAX_REDUCTION + 1)
+			SpaceOrg.x = (int32_t)(LogSpaceWidth() >> 1)
+					   - (LogSpaceWidth() >> ((MaxReduction + 1)
 											  - next_reduction));
-			SpaceOrg.y = (int32_t)(LOG_SPACE_HEIGHT >> 1)
-					   - (LOG_SPACE_HEIGHT >> ((MAX_REDUCTION + 1)
+			SpaceOrg.y = (int32_t)(LogSpaceHeight() >> 1)
+					   - (LogSpaceHeight() >> ((MaxReduction + 1)
 											   - next_reduction));
 		}
 		else
 		{
-#define ZOOM_JUMP ((1 << ZOOM_SHIFT) >> 3)
 			if (ships_alive == 1
 				&& zoom_out > next_reduction
-				&& zoom_out <= MAX_ZOOM_OUT
-				&& zoom_out - next_reduction > ZOOM_JUMP)
+				&& zoom_out <= MaxZoomOut
+				&& zoom_out - next_reduction > ZoomJump)
 			{
-				next_reduction = zoom_out - ZOOM_JUMP;
+				next_reduction = zoom_out - ZoomJump;
 			}
 
 			// Always align the origin on a whole pixel to reduce the
 			// amount of object positioning jitter
-			SpaceOrg.x = DISPLAY_ALIGN((int)(LOG_SPACE_WIDTH >> 1) - (LOG_SPACE_WIDTH * next_reduction / (MAX_ZOOM_OUT << 2)));
-			SpaceOrg.y = DISPLAY_ALIGN((int)(LOG_SPACE_HEIGHT >> 1) - (LOG_SPACE_HEIGHT * next_reduction / (MAX_ZOOM_OUT << 2)));
+			SpaceOrg.x = DisplayAlign((int)(LogSpaceWidth() >> 1) - (LogSpaceWidth() * next_reduction / (MaxZoomOut << 2)));
+			SpaceOrg.y = DisplayAlign((int)(LogSpaceHeight() >> 1) - (LogSpaceHeight() * next_reduction / (MaxZoomOut << 2)));
 		}
 		zoom_out = next_reduction;
 		view_state = VIEW_CHANGE;
@@ -412,9 +414,8 @@ CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 }
 
 
-static ELEMENT_FLAGS
-ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
-				  TIME_VALUE min_time, ELEMENT_FLAGS process_flags)
+static ELEMENT_FLAGS ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
+									   TIME_VALUE min_time, ELEMENT_FLAGS process_flags)
 {
 	HELEMENT hTestElement {};
 
@@ -442,10 +443,10 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 
 			state_flags = ElementPtr->state_flags;
 			ELEMENT_FLAGS test_state_flags {TestElementPtr->state_flags};
-			if (((state_flags | test_state_flags) & FINITE_LIFE)
-				&& (((state_flags & APPEARING)
+			if (((state_flags | test_state_flags) & FiniteLife)
+				&& (((state_flags & Appearing)
 					 && ElementPtr->life_span > 1)
-					|| ((test_state_flags & APPEARING)
+					|| ((test_state_flags & Appearing)
 						&& TestElementPtr->life_span > 1)))
 			{
 				time_val = 0;
@@ -455,13 +456,13 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 				while ((time_val = DrawablesIntersect(&ElementPtr->IntersectControl,
 													  &TestElementPtr->IntersectControl, min_time))
 						   == 1
-					   && !((state_flags | test_state_flags) & FINITE_LIFE))
+					   && !((state_flags | test_state_flags) & FiniteLife))
 				{
 #ifdef DEBUG_PROCESS
 					uqm::log::debug("BAD NEWS {:#x} <--> {:#x}", ElementPtr,
 									TestElementPtr);
 #endif /* DEBUG_PROCESS */
-					if (state_flags & COLLISION)
+					if (state_flags & Collision)
 					{
 						InitIntersectEndPoint(TestElementPtr);
 						TestElementPtr->IntersectControl.IntersectStamp.origin =
@@ -480,7 +481,7 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 						if (NextFrame == CurFrame
 							&& TestNextFrame == TestCurFrame)
 						{
-							if (test_state_flags & APPEARING)
+							if (test_state_flags & Appearing)
 							{
 								do_damage(TestElementPtr, TestElementPtr->hit_points);
 								if (TestElementPtr->pParent) /* untarget this dead element */
@@ -488,13 +489,13 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 									Untarget(TestElementPtr);
 								}
 
-								TestElementPtr->state_flags |= (COLLISION | DISAPPEARING);
+								TestElementPtr->state_flags |= (Collision | Disappearing);
 								if (TestElementPtr->death_func)
 								{
 									(*TestElementPtr->death_func)(TestElementPtr);
 								}
 							}
-							if (state_flags & APPEARING)
+							if (state_flags & Appearing)
 							{
 								do_damage(ElementPtr, ElementPtr->hit_points);
 								if (ElementPtr->pParent) /* untarget this dead element */
@@ -502,14 +503,14 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 									Untarget(ElementPtr);
 								}
 
-								ElementPtr->state_flags |= (COLLISION | DISAPPEARING);
+								ElementPtr->state_flags |= (Collision | Disappearing);
 								if (ElementPtr->death_func)
 								{
 									(*ElementPtr->death_func)(ElementPtr);
 								}
 
 								UnlockElement(hTestElement);
-								return (COLLISION);
+								return (Collision);
 							}
 
 							time_val = 0;
@@ -526,9 +527,9 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 							{
 								ElementPtr->next.image =
 									ElementPtr->current.image;
-								if (ElementPtr->life_span > NORMAL_LIFE)
+								if (ElementPtr->life_span > NormalLife)
 								{
-									ElementPtr->life_span = NORMAL_LIFE;
+									ElementPtr->life_span = NormalLife;
 								}
 							}
 
@@ -542,16 +543,16 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 							{
 								TestElementPtr->next.image =
 									TestElementPtr->current.image;
-								if (TestElementPtr->life_span > NORMAL_LIFE)
+								if (TestElementPtr->life_span > NormalLife)
 								{
-									TestElementPtr->life_span = NORMAL_LIFE;
+									TestElementPtr->life_span = NormalLife;
 								}
 							}
 
 							InitIntersectStartPoint(ElementPtr);
 							InitIntersectEndPoint(ElementPtr);
 							InitIntersectFrame(ElementPtr);
-							if (state_flags & PLAYER_SHIP)
+							if (state_flags & PlayerShip)
 							{
 								STARSHIP* StarShipPtr {};
 
@@ -564,7 +565,7 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 							InitIntersectStartPoint(TestElementPtr);
 							InitIntersectEndPoint(TestElementPtr);
 							InitIntersectFrame(TestElementPtr);
-							if (test_state_flags & PLAYER_SHIP)
+							if (test_state_flags & PlayerShip)
 							{
 								STARSHIP* StarShipPtr {};
 
@@ -599,12 +600,12 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 				InitIntersectEndPoint(ElementPtr);
 				InitIntersectEndPoint(TestElementPtr);
 				if (time_val == 1
-					|| (((state_flags & COLLISION)
+					|| (((state_flags & Collision)
 						 || !ProcessCollisions(hSuccElement, ElementPtr,
 											   time_val - 1, process_flags))
-						&& ((test_state_flags & COLLISION)
+						&& ((test_state_flags & Collision)
 							|| !ProcessCollisions(
-								!(TestElementPtr->state_flags & APPEARING) ?
+								!(TestElementPtr->state_flags & Appearing) ?
 									GetSuccElement(ElementPtr) :
 									GetHeadElement(),
 								TestElementPtr,
@@ -617,7 +618,7 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 					uqm::log::debug("PROCESSING {:#x} <--> {:#x} at {}",
 									ElementPtr, TestElementPtr, time_val);
 #endif /* DEBUG_PROCESS */
-					if (test_state_flags & PLAYER_SHIP)
+					if (test_state_flags & PlayerShip)
 					{
 						(*TestElementPtr->collision_func)(
 							TestElementPtr, &TestSavePt,
@@ -636,51 +637,51 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 							ElementPtr, &SavePt);
 					}
 
-					if (TestElementPtr->state_flags & COLLISION)
+					if (TestElementPtr->state_flags & Collision)
 					{
-						if (!(test_state_flags & COLLISION))
+						if (!(test_state_flags & Collision))
 						{
 							TestElementPtr->IntersectControl.IntersectStamp.origin =
 								TestSavePt;
 							TestElementPtr->next.location.x =
-								DISPLAY_TO_WORLD(TestSavePt.x);
+								DisplayToWorld(TestSavePt.x);
 							TestElementPtr->next.location.y =
-								DISPLAY_TO_WORLD(TestSavePt.y);
+								DisplayToWorld(TestSavePt.y);
 							InitIntersectEndPoint(TestElementPtr);
 						}
 					}
 
-					if (ElementPtr->state_flags & COLLISION)
+					if (ElementPtr->state_flags & Collision)
 					{
-						if (!(state_flags & COLLISION))
+						if (!(state_flags & Collision))
 						{
 							ElementPtr->IntersectControl.IntersectStamp.origin =
 								SavePt;
 							ElementPtr->next.location.x =
-								DISPLAY_TO_WORLD(SavePt.x);
+								DisplayToWorld(SavePt.x);
 							ElementPtr->next.location.y =
-								DISPLAY_TO_WORLD(SavePt.y);
+								DisplayToWorld(SavePt.y);
 							InitIntersectEndPoint(ElementPtr);
 
-							if (!(state_flags & FINITE_LIFE) && !(test_state_flags & FINITE_LIFE))
+							if (!(state_flags & FiniteLife) && !(test_state_flags & FiniteLife))
 							{
 								collide(ElementPtr, TestElementPtr);
 
 								ProcessCollisions(GetHeadElement(), ElementPtr,
-												  MAX_TIME_VALUE, process_flags);
+												  MaxTimeValue, process_flags);
 								ProcessCollisions(GetHeadElement(), TestElementPtr,
-												  MAX_TIME_VALUE, process_flags);
+												  MaxTimeValue, process_flags);
 							}
 						}
 						UnlockElement(hTestElement);
-						return (COLLISION);
+						return (Collision);
 					}
 
 					if (!CollidingElement(ElementPtr))
 					{
-						ElementPtr->state_flags |= COLLISION;
+						ElementPtr->state_flags |= Collision;
 						UnlockElement(hTestElement);
-						return (COLLISION);
+						return (Collision);
 					}
 				}
 			}
@@ -689,11 +690,10 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 		UnlockElement(hTestElement);
 	}
 
-	return (ElementPtr->state_flags & COLLISION);
+	return (ElementPtr->state_flags & Collision);
 }
 
-static VIEW_STATE
-PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
+static VIEW_STATE PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 {
 	int16_t min_reduction {};
 	int16_t max_reduction {};
@@ -708,15 +708,15 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 
 	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 	{
-		min_reduction = max_reduction = MAX_VIS_REDUCTION + 1;
+		min_reduction = max_reduction = MaxVisReduction + 1;
 	}
 	else
 	{
-		min_reduction = max_reduction = MAX_ZOOM_OUT + (1 << ZOOM_SHIFT);
+		min_reduction = max_reduction = MaxZoomOut + (1 << ZoomShift);
 	}
 
-	Origin.x = (int32_t)(LOG_SPACE_WIDTH >> 1);
-	Origin.y = (int32_t)(LOG_SPACE_HEIGHT >> 1);
+	Origin.x = (int32_t)(LogSpaceWidth() >> 1);
+	Origin.y = (int32_t)(LogSpaceHeight() >> 1);
 
 	HELEMENT hElement {GetHeadElement()};
 	uint16_t ships_alive {0};
@@ -726,38 +726,38 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 
 		LockElement(hElement, &ElementPtr);
 
-		if (!(ElementPtr->state_flags & PRE_PROCESS))
+		if (!(ElementPtr->state_flags & PreProcessFlag))
 		{
 			PreProcess(ElementPtr);
 		}
 		HELEMENT hNextElement {GetSuccElement(ElementPtr)};
 
 		if (CollidingElement(ElementPtr)
-			&& !(ElementPtr->state_flags & COLLISION))
+			&& !(ElementPtr->state_flags & Collision))
 		{
 			ProcessCollisions(hNextElement, ElementPtr,
-							  MAX_TIME_VALUE, PRE_PROCESS);
+							  MaxTimeValue, PreProcessFlag);
 		}
 
-		if (ElementPtr->state_flags & PLAYER_SHIP)
+		if (ElementPtr->state_flags & PlayerShip)
 		{
 			ships_alive++;
 			if (max_reduction > opt_max_zoom_out
 				&& min_reduction > opt_max_zoom_out)
 			{
-				Origin.x = DISPLAY_ALIGN(ElementPtr->next.location.x);
-				Origin.y = DISPLAY_ALIGN(ElementPtr->next.location.y);
+				Origin.x = DisplayAlign(ElementPtr->next.location.x);
+				Origin.y = DisplayAlign(ElementPtr->next.location.y);
 			}
 
-			int32_t dx {DISPLAY_ALIGN(ElementPtr->next.location.x) - Origin.x};
-			dx = WRAP_DELTA_X(dx);
-			int32_t dy {DISPLAY_ALIGN(ElementPtr->next.location.y) - Origin.y};
-			dy = WRAP_DELTA_Y(dy);
+			int32_t dx {DisplayAlign(ElementPtr->next.location.x) - Origin.x};
+			dx = WrapDeltaX(dx);
+			int32_t dy {DisplayAlign(ElementPtr->next.location.y) - Origin.y};
+			dy = WrapDeltaY(dy);
 
 			if (sides_active <= 2 || ElementPtr->playerNr == 0)
 			{
-				Origin.x = DISPLAY_ALIGN(Origin.x + (dx >> 1));
-				Origin.y = DISPLAY_ALIGN(Origin.y + (dy >> 1));
+				Origin.x = DisplayAlign(Origin.x + (dx >> 1));
+				Origin.y = DisplayAlign(Origin.y + (dy >> 1));
 
 				if (dx < 0)
 				{
@@ -772,8 +772,8 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 			else if (max_reduction > opt_max_zoom_out
 					 && min_reduction <= opt_max_zoom_out)
 			{
-				Origin.x = DISPLAY_ALIGN(Origin.x + (dx >> 1));
-				Origin.y = DISPLAY_ALIGN(Origin.y + (dy >> 1));
+				Origin.x = DisplayAlign(Origin.x + (dx >> 1));
+				Origin.y = DisplayAlign(Origin.y + (dy >> 1));
 
 				if (dx < 0)
 				{
@@ -823,7 +823,7 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 		}
 		else
 		{
-			min_reduction = 1 << ZOOM_SHIFT;
+			min_reduction = 1 << ZoomShift;
 		}
 	}
 
@@ -838,16 +838,16 @@ void InsertPrim(PRIM_LINKS* pLinks, uint16_t primIndex, uint16_t iPI)
 	uint16_t Link {};
 	PRIM_LINKS PL {};
 
-	if (iPI == END_OF_LIST)
+	if (iPI == EndOfList)
 	{
 		Link = GetSuccLink(*pLinks); /* get tail */
-		if (Link == END_OF_LIST)
+		if (Link == EndOfList)
 		{
-			*pLinks = MakeLinks(primIndex, primIndex);
+			*pLinks = uqm::makeDword(primIndex, primIndex);
 		}
 		else
 		{
-			*pLinks = MakeLinks(GetPredLink(*pLinks), primIndex);
+			*pLinks = uqm::makeDword(GetPredLink(*pLinks), primIndex);
 		}
 	}
 	else
@@ -859,13 +859,13 @@ void InsertPrim(PRIM_LINKS* pLinks, uint16_t primIndex, uint16_t iPI)
 		}
 		else
 		{
-			Link = END_OF_LIST;
-			*pLinks = MakeLinks(primIndex, GetSuccLink(*pLinks));
+			Link = EndOfList;
+			*pLinks = uqm::makeDword(primIndex, GetSuccLink(*pLinks));
 		}
 		SetPrimLinks(&DisplayArray[iPI], primIndex, GetSuccLink(PL));
 	}
 
-	if (Link != END_OF_LIST)
+	if (Link != EndOfList)
 	{
 		PL = GetPrimLinks(&DisplayArray[Link]);
 		SetPrimLinks(&DisplayArray[Link], GetPredLink(PL), primIndex);
@@ -875,8 +875,7 @@ void InsertPrim(PRIM_LINKS* pLinks, uint16_t primIndex, uint16_t iPI)
 
 PRIM_LINKS DisplayLinks;
 
-static inline int16_t
-CalcDisplayCoord(int32_t c, int32_t orgc, int16_t reduction)
+static inline int16_t CalcDisplayCoord(int32_t c, int32_t orgc, int16_t reduction)
 {
 	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 	{ /* old fixed-step zoom style */
@@ -884,12 +883,11 @@ CalcDisplayCoord(int32_t c, int32_t orgc, int16_t reduction)
 	}
 	else
 	{ /* new continuous zoom style */
-		return ((c - orgc) << ZOOM_SHIFT) / reduction;
+		return ((c - orgc) << ZoomShift) / reduction;
 	}
 }
 
-static void
-PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
+static void PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 {
 	DPOINT delta;
 	int16_t reduction {};
@@ -899,11 +897,11 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 #endif
 	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 	{
-		reduction = zoom_out + ONE_SHIFT;
+		reduction = zoom_out + OneShift;
 	}
 	else
 	{
-		reduction = zoom_out << ONE_SHIFT;
+		reduction = zoom_out << OneShift;
 	}
 
 	HELEMENT hElement {GetHeadElement()};
@@ -916,18 +914,18 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 		LockElement(hElement, &ElementPtr);
 
 		state_flags = ElementPtr->state_flags;
-		if (state_flags & PRE_PROCESS)
+		if (state_flags & PreProcessFlag)
 		{
-			if (!(state_flags & COLLISION))
+			if (!(state_flags & Collision))
 			{
-				ElementPtr->state_flags &= ~DEFY_PHYSICS;
+				ElementPtr->state_flags &= ~DefyPhysics;
 			}
 			else
 			{
-				ElementPtr->state_flags &= ~COLLISION;
+				ElementPtr->state_flags &= ~Collision;
 			}
 
-			if (state_flags & POST_PROCESS)
+			if (state_flags & PostProcessFlag)
 			{
 				delta.x = 0;
 				delta.y = 0;
@@ -946,17 +944,17 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 				ELEMENT* PostElementPtr {};
 
 				LockElement(hPostElement, &PostElementPtr);
-				if (!(PostElementPtr->state_flags & PRE_PROCESS))
+				if (!(PostElementPtr->state_flags & PreProcessFlag))
 				{
 					PreProcess(PostElementPtr);
 				}
 				hNextElement = GetSuccElement(PostElementPtr);
 
 				if (CollidingElement(PostElementPtr)
-					&& !(PostElementPtr->state_flags & COLLISION))
+					&& !(PostElementPtr->state_flags & Collision))
 				{
 					ProcessCollisions(GetHeadElement(), PostElementPtr,
-									  MAX_TIME_VALUE, PRE_PROCESS | POST_PROCESS);
+									  MaxTimeValue, PreProcessFlag | PostProcessFlag);
 				}
 				UnlockElement(hPostElement);
 				hPostElement = hNextElement;
@@ -971,7 +969,7 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 			state_flags = ElementPtr->state_flags;
 		}
 
-		if (state_flags & DISAPPEARING)
+		if (state_flags & Disappearing)
 		{
 			hNextElement = GetSuccElement(ElementPtr);
 			UnlockElement(hElement);
@@ -982,7 +980,7 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 		{
 			const GRAPHICS_PRIM ObjType {GetPrimType(&DisplayArray[ElementPtr->PrimIndex])};
 			if (view_state != VIEW_STABLE
-				|| (state_flags & (APPEARING | CHANGING)))
+				|| (state_flags & (Appearing | Changing)))
 			{
 				GFXPOINT next;
 
@@ -991,8 +989,8 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 					const int32_t dx {(int32_t)ElementPtr->next.location.x - (int32_t)ElementPtr->current.location.x};
 					const int32_t dy {(int32_t)ElementPtr->next.location.y - (int32_t)ElementPtr->current.location.y};
 
-					next.x = WRAP_X((int32_t)ElementPtr->current.location.x + (int32_t)delta.x);
-					next.y = WRAP_Y((int32_t)ElementPtr->current.location.y + (int32_t)delta.y);
+					next.x = WrapX((int32_t)ElementPtr->current.location.x + (int32_t)delta.x);
+					next.y = WrapY((int32_t)ElementPtr->current.location.y + (int32_t)delta.y);
 					DisplayArray[ElementPtr->PrimIndex].Object.Line.first.x = CalcDisplayCoord(next.x, SpaceOrg.x, reduction);
 					DisplayArray[ElementPtr->PrimIndex].Object.Line.first.y = CalcDisplayCoord(next.y, SpaceOrg.y, reduction);
 
@@ -1003,8 +1001,8 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 				}
 				else
 				{
-					next.x = WRAP_X((int32_t)ElementPtr->next.location.x + (int32_t)delta.x);
-					next.y = WRAP_Y((int32_t)ElementPtr->next.location.y + (int32_t)delta.y);
+					next.x = WrapX((int32_t)ElementPtr->next.location.x + (int32_t)delta.x);
+					next.y = WrapY((int32_t)ElementPtr->next.location.y + (int32_t)delta.y);
 
 					DisplayArray[ElementPtr->PrimIndex].Object.Point.x = CalcDisplayCoord(next.x, SpaceOrg.x, reduction);
 					DisplayArray[ElementPtr->PrimIndex].Object.Point.y = CalcDisplayCoord(next.y, SpaceOrg.y, reduction);
@@ -1012,10 +1010,10 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 					if (ObjType == STAMP_PRIM || ObjType == STAMPFILL_PRIM)
 					{
 						if (view_state == VIEW_CHANGE
-							|| (state_flags & (APPEARING | CHANGING)))
+							|| (state_flags & (Appearing | Changing)))
 						{
 							uint16_t index {};
-							uint16_t scale = GSCALE_IDENTITY;
+							uint16_t scale = GscaleIdentity;
 
 							if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 							{
@@ -1030,7 +1028,7 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 								ElementPtr->next.image.farray[index],
 								ElementPtr->next.image.frame);
 
-							if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Trilinear && index < 2 && scale != GSCALE_IDENTITY)
+							if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Trilinear && index < 2 && scale != GscaleIdentity)
 							{
 								// enqueues drawcommand to assign next
 								// (smaller) zoom level image as mipmap,
@@ -1063,7 +1061,7 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 
 			if (ObjType < NUM_PRIMS)
 			{
-				InsertPrim(&DisplayLinks, ElementPtr->PrimIndex, END_OF_LIST);
+				InsertPrim(&DisplayLinks, ElementPtr->PrimIndex, EndOfList);
 			}
 
 			hNextElement = GetSuccElement(ElementPtr);
@@ -1083,24 +1081,24 @@ void InitDisplayList(void)
 
 	if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step)
 	{
-		zoom_out = MAX_VIS_REDUCTION + 1;
-		opt_max_zoom_out = MAX_VIS_REDUCTION;
+		zoom_out = MaxVisReduction + 1;
+		opt_max_zoom_out = MaxVisReduction;
 	}
 	else
 	{
-		zoom_out = MAX_ZOOM_OUT + (1 << ZOOM_SHIFT);
-		opt_max_zoom_out = MAX_ZOOM_OUT;
+		zoom_out = MaxZoomOut + (1 << ZoomShift);
+		opt_max_zoom_out = MaxZoomOut;
 	}
 
 	ReinitQueue(&disp_q);
 
-	for (i = 0; i < MAX_DISPLAY_PRIMS; ++i)
+	for (i = 0; i < MaxDisplayPrims; ++i)
 	{
-		SetPrimLinks(&DisplayArray[i], END_OF_LIST, i + 1);
+		SetPrimLinks(&DisplayArray[i], EndOfList, i + 1);
 	}
-	SetPrimLinks(&DisplayArray[i - 1], END_OF_LIST, END_OF_LIST);
+	SetPrimLinks(&DisplayArray[i - 1], EndOfList, EndOfList);
 	DisplayFreeList = 0;
-	DisplayLinks = MakeLinks(END_OF_LIST, END_OF_LIST);
+	DisplayLinks = uqm::makeDword(EndOfList, EndOfList);
 }
 
 uint16_t nth_frame = 0;
@@ -1132,7 +1130,7 @@ void RedrawQueue(bool clear)
 			nth_frame += skip_frames;
 			if (clear)
 			{
-				ClearDrawable(); // this is for BATCH_BUILD_PAGE effect, but not scaled by SetGraphicScale
+				ClearDrawable(); // this is for BatchBuildPage effect, but not scaled by SetGraphicScale
 			}
 
 			if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) != uqm::TFBScaleMode::Step)
@@ -1144,7 +1142,7 @@ void RedrawQueue(bool clear)
 				SetGraphicScale(scale);
 			}
 
-			DrawBatch(DisplayArray, DisplayLinks, 0); //BATCH_BUILD_PAGE);
+			DrawBatch(DisplayArray, DisplayLinks, 0); //BatchBuildPage);
 			SetGraphicScale(0);
 		}
 
@@ -1156,7 +1154,7 @@ void RedrawQueue(bool clear)
 		FlushSounds();
 	}
 
-	DisplayLinks = MakeLinks(END_OF_LIST, END_OF_LIST);
+	DisplayLinks = uqm::makeDword(EndOfList, EndOfList);
 }
 
 // Set the hTarget field to 0 for all elements in the display list that

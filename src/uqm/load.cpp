@@ -315,7 +315,7 @@ void LoadEncounter(SaveReader& reader, yyjson_val* obj, ENCOUNTER& encounter)
 	reader.get(obj, "flags", encounter.flags);
 
 	yyjson_val* ships {yyjson_obj_get(obj, "ships")};
-	if (!yyjson_is_arr(ships) || yyjson_arr_size(ships) > MAX_HYPER_SHIPS)
+	if (!yyjson_is_arr(ships) || yyjson_arr_size(ships) > MaxHyperShips)
 	{
 		reader.fail("ships");
 		return;
@@ -335,8 +335,8 @@ void LoadEncounter(SaveReader& reader, yyjson_val* obj, ENCOUNTER& encounter)
 
 	reader.getPoint(obj, "log", encounter.log_x, encounter.log_y);
 	// Let's make savegames work even between different resolution modes.
-	encounter.log_x <<= RESOLUTION_FACTOR;
-	encounter.log_y <<= RESOLUTION_FACTOR;
+	encounter.log_x <<= resolutionFactor;
+	encounter.log_y <<= resolutionFactor;
 }
 
 void LoadEncounters(SaveReader& reader, yyjson_val* root)
@@ -400,7 +400,7 @@ void LoadEvents(SaveReader& reader, yyjson_val* root)
 
 		if (uqm::UQMOptions::read().deCleansing && DeCleanse)
 		{
-			AddEvent(ABSOLUTE_EVENT, 2, 17, START_YEAR + YEARS_TO_KOHRAH_VICTORY,
+			AddEvent(ABSOLUTE_EVENT, 2, 17, StartYear + YearsToKohrahVictory(),
 					 KOHR_AH_VICTORIOUS_EVENT);
 		}
 	}
@@ -461,8 +461,8 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, uqm::GameState& gameSta
 	reader.get(state, "in_orbit", flagship.inOrbit);
 
 	// Let's make savegames work even between different resolution modes.
-	flagship.shipStamp.origin.x <<= RESOLUTION_FACTOR;
-	flagship.shipStamp.origin.y <<= RESOLUTION_FACTOR;
+	flagship.shipStamp.origin.x <<= resolutionFactor;
+	flagship.shipStamp.origin.y <<= resolutionFactor;
 
 	VELOCITY_DESC& velocity {flagship.velocity};
 	yyjson_val* velocityObj {reader.object(state, "velocity")};
@@ -474,14 +474,14 @@ void LoadGameState(SaveReader& reader, yyjson_val* root, uqm::GameState& gameSta
 
 	if (uqm::lowByte(uqm::currentActivity()) != IN_INTERPLANETARY)
 	{ // Let's make savegames work even between different resolution modes.
-		velocity.vector.width <<= RESOLUTION_FACTOR;
-		velocity.vector.height <<= RESOLUTION_FACTOR;
-		velocity.fract.width <<= RESOLUTION_FACTOR;
-		velocity.fract.height <<= RESOLUTION_FACTOR;
-		velocity.error.width <<= RESOLUTION_FACTOR;
-		velocity.error.height <<= RESOLUTION_FACTOR;
-		velocity.incr.width <<= RESOLUTION_FACTOR;
-		velocity.incr.height <<= RESOLUTION_FACTOR;
+		velocity.vector.width <<= resolutionFactor;
+		velocity.vector.height <<= resolutionFactor;
+		velocity.fract.width <<= resolutionFactor;
+		velocity.fract.height <<= resolutionFactor;
+		velocity.error.width <<= resolutionFactor;
+		velocity.error.height <<= resolutionFactor;
+		velocity.incr.width <<= resolutionFactor;
+		velocity.incr.height <<= resolutionFactor;
 	}
 
 	LoadGameStateFlags(reader, root, gameState);
@@ -511,8 +511,8 @@ void LoadSisState(SaveReader& reader, yyjson_val* obj, SIS_STATE& SS)
 	reader.get(sis, "ShipSeed", SS.ShipSeed);
 
 	// JMS: Let's make savegames work even between different resolution modes.
-	SS.log_x <<= RESOLUTION_FACTOR;
-	SS.log_y <<= RESOLUTION_FACTOR;
+	SS.log_x <<= resolutionFactor;
+	SS.log_y <<= resolutionFactor;
 }
 
 void LoadSummary(SaveReader& reader, yyjson_val* root, SUMMARY_DESC& Summ)
@@ -554,7 +554,7 @@ void LoadScanInfo(SaveReader& reader, yyjson_val* root)
 		return;
 	}
 
-	GAME_STATE_FILE* fp {OpenStateFile(STARINFO_FILE, "wb")};
+	GAME_STATE_FILE* fp {OpenStateFile(StarinfoFile, "wb")};
 	if (fp)
 	{
 		size_t index {};
@@ -575,7 +575,7 @@ void LoadScanInfo(SaveReader& reader, yyjson_val* root)
 
 void LoadGroupList(SaveReader& reader, yyjson_val* groupList)
 {
-	GAME_STATE_FILE* fp {OpenStateFile(RANDGRPINFO_FILE, "rb")};
+	GAME_STATE_FILE* fp {OpenStateFile(RandgrpinfoFile, "rb")};
 	if (fp)
 	{
 		GROUP_HEADER h;
@@ -625,46 +625,46 @@ void SetBattleGroupOffset(int encounterIndex, uint32_t offset)
 	switch (encounterIndex)
 	{
 		case 1:
-			SET_GAME_STATE(SHOFIXTI_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 2:
-			SET_GAME_STATE(ZOQFOT_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::ZOQFOT_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 3:
-			SET_GAME_STATE(MELNORME0_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME0_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 4:
-			SET_GAME_STATE(MELNORME1_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME1_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 5:
-			SET_GAME_STATE(MELNORME2_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME2_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 6:
-			SET_GAME_STATE(MELNORME3_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME3_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 7:
-			SET_GAME_STATE(MELNORME4_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME4_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 8:
-			SET_GAME_STATE(MELNORME5_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME5_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 9:
-			SET_GAME_STATE(MELNORME6_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME6_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 10:
-			SET_GAME_STATE(MELNORME7_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME7_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 11:
-			SET_GAME_STATE(MELNORME8_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME8_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 12:
-			SET_GAME_STATE(URQUAN_PROBE_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 13:
-			SET_GAME_STATE(COLONY_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::COLONY_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		case 14:
-			SET_GAME_STATE(SAMATRA_GRPOFFS, offset);
+			uqm::gameState().setFlag(uqm::GameFlag::SAMATRA_GRPOFFS, static_cast<uint32_t>(offset));
 			break;
 		default:
 			uqm::log::warn("SetBattleGroupOffset: invalid encounter "
@@ -685,14 +685,14 @@ void LoadBattleGroup(SaveReader& reader, yyjson_val* battleGroup)
 	if (encounter)
 	{
 		/* This is a defined group, so it's new */
-		fp = OpenStateFile(DEFGRPINFO_FILE, "rb");
+		fp = OpenStateFile(DefgrpinfoFile, "rb");
 		offset = fp ? LengthStateFile(fp) : 0;
 	}
 	else
 	{
 		/* This is the random group. Load in what was there,
 		 * as we might have already seen the Group List. */
-		fp = OpenStateFile(RANDGRPINFO_FILE, "rb");
+		fp = OpenStateFile(RandgrpinfoFile, "rb");
 		current = false;
 		if (fp)
 		{
@@ -705,7 +705,7 @@ void LoadBattleGroup(SaveReader& reader, yyjson_val* battleGroup)
 	}
 
 	yyjson_val* groups {yyjson_obj_get(battleGroup, "groups")};
-	if (!yyjson_is_arr(groups) || yyjson_arr_size(groups) > NUM_SAVED_BATTLE_GROUPS)
+	if (!yyjson_is_arr(groups) || yyjson_arr_size(groups) > NumSavedBattleGroups)
 	{
 		reader.fail("groups");
 		CloseStateFile(fp);
@@ -766,7 +766,7 @@ void LoadBattleGroup(SaveReader& reader, yyjson_val* battleGroup)
 		SetBattleGroupOffset(encounter, offset);
 		if (current)
 		{
-			GLOBAL(BattleGroupRef) = offset;
+			uqm::gameState().game().BattleGroupRef = offset;
 		}
 	}
 }
@@ -781,7 +781,7 @@ void LoadGroups(SaveReader& reader, yyjson_val* root)
 	}
 
 	InitGroupInfo(true);
-	GLOBAL(BattleGroupRef) = 0;
+	uqm::gameState().game().BattleGroupRef = 0;
 	if (groupList)
 	{
 		if (!yyjson_is_obj(groupList))
@@ -863,16 +863,16 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	uqm::gameState().sis() = loc_sd.SS;
 	legacySave = loc_sd.SS.SaveVersion > 0;
 
-	uqm::gameState().setSeed({.type = uqm::SeedType::Original, .value = GLOBAL_SIS(Seed), .ships = GLOBAL_SIS(ShipSeed) != 0});
+	uqm::gameState().setSeed({.type = uqm::SeedType::Original, .value = uqm::gameState().sis().Seed, .ships = uqm::gameState().sis().ShipSeed != 0});
 	ReloadMasterShipList(nullptr);
 	LoadFleetInfo();
 
 	ReinitQueue(&uqm::gameState().clock().events());
-	ReinitQueue(&GLOBAL(encounter_q));
-	ReinitQueue(&GLOBAL(ip_group_q));
-	ReinitQueue(&GLOBAL(npc_built_ship_q));
-	ReinitQueue(&GLOBAL(built_ship_q));
-	ReinitQueue(&GLOBAL(stowed_ship_q));
+	ReinitQueue(&uqm::gameState().game().encounter_q);
+	ReinitQueue(&uqm::gameState().game().ip_group_q);
+	ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+	ReinitQueue(&uqm::gameState().game().built_ship_q);
+	ReinitQueue(&uqm::gameState().game().stowed_ship_q);
 
 	uninitEventSystem();
 	uqm::lua().closeState();
@@ -885,11 +885,11 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	NextActivity = uqm::currentActivity();
 	uqm::currentActivity() = Activity;
 
-	LoadRaceQueue(reader, root, &GLOBAL(avail_race_q));
-	LoadShipQueue(reader, root, "npcShipQueue", &GLOBAL(npc_built_ship_q));
-	LoadGroupQueue(reader, root, &GLOBAL(ip_group_q));
-	LoadShipQueue(reader, root, "shipQueue", &GLOBAL(built_ship_q));
-	LoadShipQueue(reader, root, "stowedShipQueue", &GLOBAL(stowed_ship_q));
+	LoadRaceQueue(reader, root, &uqm::gameState().game().avail_race_q);
+	LoadShipQueue(reader, root, "npcShipQueue", &uqm::gameState().game().npc_built_ship_q);
+	LoadGroupQueue(reader, root, &uqm::gameState().game().ip_group_q);
+	LoadShipQueue(reader, root, "shipQueue", &uqm::gameState().game().built_ship_q);
+	LoadShipQueue(reader, root, "stowedShipQueue", &uqm::gameState().game().stowed_ship_q);
 	LoadEvents(reader, root);
 	LoadEncounters(reader, root);
 	LoadScanInfo(reader, root);
@@ -909,7 +909,7 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 
 	ReinitQueue(&race_q[0]);
 	ReinitQueue(&race_q[1]);
-	CurStarDescPtr = FindStar(nullptr, &SD.star_pt, 0, 0);
+	CurStarDescPtr() = FindStar(nullptr, &SD.star_pt, 0, 0);
 	if (!(NextActivity & START_ENCOUNTER)
 		&& uqm::lowByte(NextActivity) == IN_INTERPLANETARY)
 	{
@@ -920,7 +920,7 @@ bool LoadGameFromJson(uqstl::string_view json, uqstl::string_view file, SUMMARY_
 	DebugKeyPressed = false;
 	// Set the SeedType flag and then start Starseed
 	uqm::GameSeed loadedSeed {uqm::currentSeed()};
-	loadedSeed.type = static_cast<uqm::SeedType>(GET_GAME_STATE(SEED_TYPE));
+	loadedSeed.type = static_cast<uqm::SeedType>(uqm::gameState().flag(uqm::GameFlag::SEED_TYPE));
 	// Assuming load from older version, the seed type should be Original.
 	// If the seed is also 0 it's a really old save file and prime seed.
 	// Otherwise if the seed isn't prime, the seed type goes to Planet.

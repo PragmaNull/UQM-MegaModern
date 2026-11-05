@@ -22,13 +22,13 @@
 #include "netinput.h"
 
 #include "uqm/inteldefs.h" // for PlayerControlFlags
-#include "uqm/setup.h" // for PlayerControl
+#include "uqm/setup.h"	   // for PlayerControl
 #include "core/log/log.h"
 
 #include <stdlib.h>
 
 
-static BattleInputBuffer battleInputBuffers[NUM_PLAYERS];
+static BattleInputBuffer battleInputBuffers[NumPlayers];
 static size_t BattleInput_inputDelay;
 
 // Call before initBattleInputBuffers()
@@ -37,14 +37,12 @@ void setBattleInputDelay(size_t delay)
 	BattleInput_inputDelay = delay;
 }
 
-size_t
-getBattleInputDelay(void)
+size_t getBattleInputDelay(void)
 {
 	return BattleInput_inputDelay;
 }
 
-static void
-BattleInputBuffer_init(BattleInputBuffer* bib, size_t bufSize)
+static void BattleInputBuffer_init(BattleInputBuffer* bib, size_t bufSize)
 {
 	bib->buf = (BATTLE_INPUT_STATE*)malloc(bufSize * sizeof(BATTLE_INPUT_STATE));
 	bib->maxSize = bufSize;
@@ -52,8 +50,7 @@ BattleInputBuffer_init(BattleInputBuffer* bib, size_t bufSize)
 	bib->size = 0;
 }
 
-static void
-BattleInputBuffer_uninit(BattleInputBuffer* bib)
+static void BattleInputBuffer_uninit(BattleInputBuffer* bib)
 {
 	if (bib->buf != nullptr)
 	{
@@ -83,7 +80,7 @@ void initBattleInputBuffers(void)
 	// Initially the buffer is filled with inputDelay zeroes,
 	// so that a party can process at least that much frames.
 
-	for (size_t player {0}; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NumPlayers; player++)
 	{
 		BattleInputBuffer* bib = &battleInputBuffers[player];
 		BattleInputBuffer_init(bib, bufSize);
@@ -101,7 +98,7 @@ void initBattleInputBuffers(void)
 
 void uninitBattleInputBuffers(void)
 {
-	for (size_t player {0}; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NumPlayers; player++)
 	{
 		BattleInputBuffer* bib {&battleInputBuffers[player]};
 		BattleInputBuffer_uninit(bib);
@@ -139,8 +136,7 @@ bool BattleInputBuffer_pop(BattleInputBuffer* bib, BATTLE_INPUT_STATE* input)
 	return true;
 }
 
-BattleInputBuffer*
-getBattleInputBuffer(size_t player)
+BattleInputBuffer* getBattleInputBuffer(size_t player)
 {
 	return &battleInputBuffers[player];
 }

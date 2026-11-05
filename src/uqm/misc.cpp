@@ -44,20 +44,20 @@ void spawn_planet(void)
 		extern FRAME planet[];
 
 		LockElement(hPlanetElement, &PlanetElementPtr);
-		PlanetElementPtr->playerNr = NEUTRAL_PLAYER_NUM;
+		PlanetElementPtr->playerNr = NeutralPlayerNum;
 		PlanetElementPtr->hit_points = 200;
-		PlanetElementPtr->state_flags = APPEARING;
-		PlanetElementPtr->life_span = NORMAL_LIFE + 1;
+		PlanetElementPtr->state_flags = Appearing;
+		PlanetElementPtr->life_span = NormalLife + 1;
 		if (uqm::UQMOptions::read().meleeObstacles && !isNetwork())
 		{ // Invisible planet with cheats
-			PlanetElementPtr->state_flags |= NONSOLID;
+			PlanetElementPtr->state_flags |= Nonsolid;
 			SetPrimType(&DisplayArray[PlanetElementPtr->PrimIndex], POINT_PRIM);
 			SetPrimColor(&DisplayArray[PlanetElementPtr->PrimIndex],
-						 BUILD_COLOR_RGBA(0x00, 0x00, 0x00, 0x00));
+						 BuildColorRgba(0x00, 0x00, 0x00, 0x00));
 			PlanetElementPtr->current.location.x =
-				WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
+				WrapX(DisplayAlignX(uqm::random().next()));
 			PlanetElementPtr->current.location.y =
-				WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
+				WrapY(DisplayAlignY(uqm::random().next()));
 			PlanetElementPtr->collision_func = nullptr;
 			PlanetElementPtr->postprocess_func = nullptr;
 			ZeroVelocityComponents(&PlanetElementPtr->velocity);
@@ -75,9 +75,9 @@ void spawn_planet(void)
 			do
 			{
 				PlanetElementPtr->current.location.x =
-					WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
+					WrapX(DisplayAlignX(uqm::random().next()));
 				PlanetElementPtr->current.location.y =
-					WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
+					WrapY(DisplayAlignY(uqm::random().next()));
 			} while (CalculateGravity(PlanetElementPtr)
 					 || TimeSpaceMatterConflict(PlanetElementPtr));
 		}
@@ -88,14 +88,14 @@ void spawn_planet(void)
 
 		PutElement(hPlanetElement);
 	}
-	if (EXTENDED && GET_GAME_STATE(URQUAN_PROTECTING_SAMATRA))
+	if (IsExtended() && uqm::gameState().flag(uqm::GameFlag::URQUAN_PROTECTING_SAMATRA))
 	{ // Works inconsistently because planet is on top star layer
 		// and Sa-Matra on second, therefore scrollig is a bit off
 		pt.x += 1200;
 		pt.y += 780;
 
-		pt.x = WRAP_X(pt.x);
-		pt.y = WRAP_Y(pt.y);
+		pt.x = WrapX(pt.x);
+		pt.y = WrapY(pt.y);
 
 		SetStarPoint(pt, 31);
 	}
@@ -103,8 +103,7 @@ void spawn_planet(void)
 
 extern FRAME asteroid[];
 
-static void
-spawn_rubble(ELEMENT* AsteroidElementPtr)
+static void spawn_rubble(ELEMENT* AsteroidElementPtr)
 {
 	HELEMENT hRubbleElement {AllocElement()};
 	if (hRubbleElement)
@@ -114,16 +113,16 @@ spawn_rubble(ELEMENT* AsteroidElementPtr)
 		PutElement(hRubbleElement);
 		LockElement(hRubbleElement, &RubbleElementPtr);
 		RubbleElementPtr->playerNr = AsteroidElementPtr->playerNr;
-		RubbleElementPtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
+		RubbleElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
 		RubbleElementPtr->life_span = 5;
 		RubbleElementPtr->turn_wait = RubbleElementPtr->next_turn = 0;
 		SetPrimType(&DisplayArray[RubbleElementPtr->PrimIndex], STAMP_PRIM);
 		RubbleElementPtr->current.image.farray = asteroid;
 
 
-		if (!IS_HD)
+		if (!IsHd())
 		{
-			RubbleElementPtr->current.image.frame = SetAbsFrameIndex(asteroid[0], ANGLE_TO_FACING(FULL_CIRCLE));
+			RubbleElementPtr->current.image.frame = SetAbsFrameIndex(asteroid[0], AngleToFacing(FullCircle));
 		}
 		else
 		{
@@ -137,8 +136,7 @@ spawn_rubble(ELEMENT* AsteroidElementPtr)
 	}
 }
 
-static void
-asteroid_preprocess(ELEMENT* ElementPtr)
+static void asteroid_preprocess(ELEMENT* ElementPtr)
 {
 	if (ElementPtr->turn_wait > 0)
 	{
@@ -157,16 +155,16 @@ asteroid_preprocess(ELEMENT* ElementPtr)
 		}
 
 
-		if (!IS_HD)
+		if (!IsHd())
 		{
-			ElementPtr->next.image.frame = SetAbsFrameIndex(ElementPtr->current.image.frame, NORMALIZE_FACING(frame_index));
+			ElementPtr->next.image.frame = SetAbsFrameIndex(ElementPtr->current.image.frame, NormalizeFacing(frame_index));
 		}
 		else
 		{
 			ElementPtr->next.image.frame = SetAbsFrameIndex(ElementPtr->current.image.frame, frame_index % 30);
 		}
 
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 
 		ElementPtr->turn_wait = (unsigned char)(ElementPtr->thrust_wait & ((1 << 7) - 1));
 	}
@@ -180,8 +178,8 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 	{
 		if (ElementPtr != 0)
 		{
-			ElementPtr->state_flags &= ~DISAPPEARING;
-			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NO_PRIM);
+			ElementPtr->state_flags &= ~Disappearing;
+			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NoPrim);
 			ElementPtr->life_span = 1;
 		}
 	}
@@ -191,12 +189,12 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 		uint16_t val {};
 
 		LockElement(hAsteroidElement, &AsteroidElementPtr);
-		AsteroidElementPtr->playerNr = NEUTRAL_PLAYER_NUM;
+		AsteroidElementPtr->playerNr = NeutralPlayerNum;
 		AsteroidElementPtr->hit_points = 1;
 		AsteroidElementPtr->mass_points = 3;
 		AsteroidElementPtr->state_flags =
-			uqm::UQMOptions::read().meleeObstacles && !isNetwork() ? DISAPPEARING : APPEARING;
-		AsteroidElementPtr->life_span = NORMAL_LIFE;
+			uqm::UQMOptions::read().meleeObstacles && !isNetwork() ? Disappearing : Appearing;
+		AsteroidElementPtr->life_span = NormalLife;
 		SetPrimType(&DisplayArray[AsteroidElementPtr->PrimIndex], STAMP_PRIM);
 		if ((val = (uint16_t)uqm::random().next()) & (1 << 0))
 		{
@@ -206,22 +204,22 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 			}
 			else
 			{
-				AsteroidElementPtr->current.location.x = LOG_SPACE_WIDTH;
+				AsteroidElementPtr->current.location.x = LogSpaceWidth();
 			}
 			AsteroidElementPtr->current.location.y =
-				WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
+				WrapY(DisplayAlignY(uqm::random().next()));
 		}
 		else
 		{
 			AsteroidElementPtr->current.location.x =
-				WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
+				WrapX(DisplayAlignX(uqm::random().next()));
 			if (!(val & (1 << 1)))
 			{
 				AsteroidElementPtr->current.location.y = 0;
 			}
 			else
 			{
-				AsteroidElementPtr->current.location.y = LOG_SPACE_HEIGHT;
+				AsteroidElementPtr->current.location.y = LogSpaceHeight();
 			}
 		}
 
@@ -230,7 +228,7 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 			// of function arguments may vary per system, which may break
 			// synchronisation on network games.
 			const int16_t magnitude =
-				DISPLAY_TO_WORLD(((int16_t)uqm::random().next() & 7) + 4);
+				DisplayToWorld(((int16_t)uqm::random().next() & 7) + 4);
 			const uint16_t facing = (uint16_t)uqm::random().next();
 			SetVelocityVector(&AsteroidElementPtr->velocity, magnitude,
 							  facing);
@@ -238,7 +236,7 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 		AsteroidElementPtr->current.image.farray = asteroid;
 		AsteroidElementPtr->current.image.frame =
 			SetAbsFrameIndex(asteroid[0],
-							 NORMALIZE_FACING(uqm::random().next()));
+							 NormalizeFacing(uqm::random().next()));
 		AsteroidElementPtr->turn_wait =
 			AsteroidElementPtr->thrust_wait =
 				(uint8_t)uqm::random().next() & (uint8_t)((1 << 2) - 1);
@@ -255,20 +253,20 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 
 void do_damage(ELEMENT* ElementPtr, int16_t damage)
 {
-	// God Mode, borrowed from the UQM-HD debug invincibility code
+	// God Mode, borrowed from the UQM-HdResolutionFactor debug invincibility code
 	if (antiCheat(ElementPtr, false, uqm::GodModeFlags::NoDamage))
 	{
 		damage = 0;
 	}
-	if (ElementPtr->state_flags & PLAYER_SHIP)
+	if (ElementPtr->state_flags & PlayerShip)
 	{
 		if (!DeltaCrew(ElementPtr, -damage))
 		{
 			ElementPtr->life_span = 0;
-			ElementPtr->state_flags |= NONSOLID;
+			ElementPtr->state_flags |= Nonsolid;
 		}
 	}
-	else if (!GRAVITY_MASS(ElementPtr->mass_points))
+	else if (!GravityMass(ElementPtr->mass_points))
 	{
 		if ((uint8_t)damage < ElementPtr->hit_points)
 		{
@@ -278,27 +276,25 @@ void do_damage(ELEMENT* ElementPtr, int16_t damage)
 		{
 			ElementPtr->hit_points = 0;
 			ElementPtr->life_span = 0;
-			ElementPtr->state_flags |= NONSOLID;
+			ElementPtr->state_flags |= Nonsolid;
 		}
 	}
 }
 
-#define CREW_COLOR_LOW_INTENSITY \
-	BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x00), 0x02)
-#define CREW_COLOR_HIGH_INTENSITY \
-	BUILD_COLOR(MAKE_RGB15(0x0A, 0x1E, 0x0A), 0x0A)
+static constexpr auto CrewColorLowIntensity {BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)};
+static constexpr auto CrewColorHighIntensity {BuildColor(MakeRgb15(0x0A, 0x1E, 0x0A), 0x0A)};
 void crew_preprocess(ELEMENT* ElementPtr)
 {
 	HELEMENT hTarget {};
 
 	// Switch from dark to light or vice versa:
 	const Color oldColor = GetPrimColor(&DisplayArray[ElementPtr->PrimIndex]);
-	const Color newColor = sameColor(oldColor, CREW_COLOR_LOW_INTENSITY) ?
-							   CREW_COLOR_HIGH_INTENSITY :
-							   CREW_COLOR_LOW_INTENSITY;
+	const Color newColor = sameColor(oldColor, CrewColorLowIntensity) ?
+							   CrewColorHighIntensity :
+							   CrewColorLowIntensity;
 	SetPrimColor(&DisplayArray[ElementPtr->PrimIndex], newColor);
 
-	ElementPtr->state_flags |= CHANGING;
+	ElementPtr->state_flags |= Changing;
 
 	hTarget = ElementPtr->hTarget;
 	if (hTarget == 0)
@@ -319,32 +315,34 @@ void crew_preprocess(ELEMENT* ElementPtr)
 
 	if (hTarget)
 	{
-#define CREW_DELTA RES_SCALE(SCALED_ONE)
+		const auto CrewDelta = [&] {
+			return ResScale(ScaledOne);
+		};
 		int16_t delta {};
 		ELEMENT* ShipPtr {};
 
 		LockElement(hTarget, &ShipPtr);
 		delta = ShipPtr->current.location.x
 			  - ElementPtr->current.location.x;
-		delta = WRAP_DELTA_X(delta);
+		delta = WrapDeltaX(delta);
 		if (delta > 0)
 		{
-			ElementPtr->next.location.x += CREW_DELTA;
+			ElementPtr->next.location.x += CrewDelta();
 		}
 		else if (delta < 0)
 		{
-			ElementPtr->next.location.x -= CREW_DELTA;
+			ElementPtr->next.location.x -= CrewDelta();
 		}
 
 		delta = ShipPtr->current.location.y - ElementPtr->current.location.y;
-		delta = WRAP_DELTA_Y(delta);
+		delta = WrapDeltaY(delta);
 		if (delta > 0)
 		{
-			ElementPtr->next.location.y += CREW_DELTA;
+			ElementPtr->next.location.y += CrewDelta();
 		}
 		else if (delta < 0)
 		{
-			ElementPtr->next.location.y -= CREW_DELTA;
+			ElementPtr->next.location.y -= CrewDelta();
 		}
 		UnlockElement(hTarget);
 	}
@@ -353,14 +351,14 @@ void crew_preprocess(ELEMENT* ElementPtr)
 void crew_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 					ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	if ((ElementPtr1->state_flags & PLAYER_SHIP)
-		&& ElementPtr1->life_span >= NORMAL_LIFE
+	if ((ElementPtr1->state_flags & PlayerShip)
+		&& ElementPtr1->life_span >= NormalLife
 		&& ElementPtr0->hit_points > 0)
 	{
 		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
-		if (!(StarShipPtr->RaceDescPtr->ship_info.ship_flags & CREW_IMMUNE))
+		if (!(StarShipPtr->RaceDescPtr->ship_info.ship_flags & CrewImmune))
 		{
 			ProcessSound(GetSound(GameSounds, GRAB_CREW), ElementPtr1);
 			DeltaCrew(ElementPtr1, 1);
@@ -369,10 +367,12 @@ void crew_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 
 	ElementPtr0->hit_points = 0;
 	ElementPtr0->life_span = 0;
-	ElementPtr0->state_flags |= COLLISION | DISAPPEARING | NONSOLID;
+	ElementPtr0->state_flags |= Collision | Disappearing | Nonsolid;
 	(void)pPt0; /* Satisfying compiler (unused parameter) */
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
+
+static constexpr auto CrewLife {300};
 
 void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 				 uint16_t crew_loss)
@@ -386,7 +386,7 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 	INTERSECT_CONTROL ShipIntersect;
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
-	if (StarShipPtr->RaceDescPtr->ship_info.ship_flags & CREW_IMMUNE)
+	if (StarShipPtr->RaceDescPtr->ship_info.ship_flags & CrewImmune)
 	{
 		return;
 	}
@@ -396,32 +396,33 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 
 	if ((direction = GetVelocityTravelAngle(
 			 &ShipPtr->velocity))
-		== FULL_CIRCLE)
+		== FullCircle)
 	{
 		dx = dy = 0;
 	}
 	else
 	{
-#define MORE_THAN_ENOUGH RES_SCALE(100)
-		direction += HALF_CIRCLE;
-		dx = COSINE(direction, MORE_THAN_ENOUGH);
-		dy = SINE(direction, MORE_THAN_ENOUGH);
+		const auto MoreThanEnough = [&] {
+			return ResScale(100);
+		};
+		direction += HalfCircle;
+		dx = Cosine(direction, MoreThanEnough());
+		dy = Sine(direction, MoreThanEnough());
 	}
 
 	while (crew_loss-- && (hCrew = AllocElement()))
 	{
-#define CREW_LIFE 300
 		ELEMENT* CrewPtr {};
 
 		DeltaCrew(ShipPtr, -1);
 
 		PutElement(hCrew);
 		LockElement(hCrew, &CrewPtr);
-		CrewPtr->playerNr = NEUTRAL_PLAYER_NUM;
+		CrewPtr->playerNr = NeutralPlayerNum;
 		CrewPtr->hit_points = 1;
-		CrewPtr->state_flags = APPEARING | FINITE_LIFE | CREW_OBJECT;
-		CrewPtr->life_span = CREW_LIFE;
-		if (!IS_HD)
+		CrewPtr->state_flags = Appearing | FiniteLife | CrewObject;
+		CrewPtr->life_span = CrewLife;
+		if (!IsHd())
 		{
 			SetPrimType(&DisplayArray[CrewPtr->PrimIndex], POINT_PRIM);
 			CrewPtr->current.image.frame = DecFrameIndex(stars_in_space);
@@ -434,7 +435,7 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 			CrewPtr->current.image.farray = stars_misc;
 		}
 		SetPrimColor(&DisplayArray[CrewPtr->PrimIndex],
-					 BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x00), 0x02));
+					 BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02));
 		CrewPtr->preprocess_func = crew_preprocess;
 		CrewPtr->collision_func = crew_collision;
 
@@ -493,12 +494,12 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 			}
 
 			DrawablesIntersect(&CrewIntersect,
-							   &ShipIntersect, MAX_TIME_VALUE);
+							   &ShipIntersect, MaxTimeValue);
 
 			CrewPtr->current.location.x =
-				DISPLAY_TO_WORLD(CrewIntersect.EndPoint.x);
+				DisplayToWorld(CrewIntersect.EndPoint.x);
 			CrewPtr->current.location.y =
-				DISPLAY_TO_WORLD(CrewIntersect.EndPoint.y);
+				DisplayToWorld(CrewIntersect.EndPoint.y);
 		}
 		UnlockElement(hCrew);
 	}

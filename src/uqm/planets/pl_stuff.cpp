@@ -49,8 +49,8 @@ void DrawCurrentPlanetSphere(void)
 	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
 	GFXCONTEXT oldContext = SetContext(PlanetContext);
 
-	s.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
-	s.origin.y = PLANET_ORG_Y;
+	s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
+	s.origin.y = PlanetOrgY();
 
 	{ // re-render current frame
 		rotFrameIndex ^= 1;
@@ -92,7 +92,7 @@ void DrawCurrentPlanetSphere(void)
 							   pSolarSysState->pOrbitalDesc->data_index
 								   & PLANET_SHIELDED,
 							   throbShield, rotwidth, rotheight,
-							   (rotheight >> 1) - IF_HD(2));
+							   (rotheight >> 1) - IfHd(2));
 		}
 	}
 	BatchGraphics();
@@ -127,8 +127,8 @@ void DrawPlanetSphere(int x, int y, bool back)
 	// Draw background on static image and not during zoom
 	if (Orbit->BackFrame && back)
 	{
-		s.origin.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1);
-		s.origin.y = PLANET_ORG_Y;
+		s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
+		s.origin.y = PlanetOrgY();
 		s.frame = Orbit->BackFrame;
 		DrawStamp(&s);
 	}
@@ -156,7 +156,7 @@ void DrawDefaultPlanetSphere(void)
 {
 	GFXCONTEXT oldContext {SetContext(PlanetContext)};
 	DrawPlanetSphere(
-		RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1), PLANET_ORG_Y, true);
+		ResScale(OrigSisScreenWidth() >> 1), PlanetOrgY(), true);
 	SetContext(oldContext);
 }
 
@@ -210,7 +210,7 @@ void InitSphereRotation(int direction, bool shielded, uint16_t width,
 		// We need a scratch frame so that we can apply throbbing
 		// to the shield, so create one
 		Orbit->ObjectFrame = CaptureDrawable(CreateDrawable(
-			WANT_PIXMAP | WANT_ALPHA,
+			WantPixmap | WantAlpha,
 			GetFrameWidth(Orbit->ObjectFrame),
 			GetFrameHeight(Orbit->ObjectFrame), 2));
 	}
@@ -283,7 +283,7 @@ void PrepareNextRotationFrame(void)
 		RenderPlanetSphere(Orbit, Orbit->SphereFrame, rotPointIndex,
 						   pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED,
 						   throbShield, rotwidth, rotheight,
-						   (rotheight >> 1) - IF_HD(2));
+						   (rotheight >> 1) - IfHd(2));
 	}
 
 	if (throbShield)
@@ -369,21 +369,21 @@ void PrepareNextRotationFrameForIP(PLANET_DESC* pPlanetDesc, int16_t frameCounte
 					   pPlanetDesc->rotPointIndex,
 					   pPlanetDesc->data_index & PLANET_SHIELDED,
 					   false, pPlanetDesc->rotwidth, pPlanetDesc->rotheight,
-					   (pPlanetDesc->rotheight >> 1) - IF_HD(2)); // RADIUS
+					   (pPlanetDesc->rotheight >> 1) - IfHd(2)); // Radius
 	Orbit->SphereFrame->image->dirty = true;
 	// BW: slightly hacky but, in DrawTexturedBody, the call
 	// to DrawStamp won't re-blit the frame unless scale has changed.
 }
 
-#define ZOOM_RATE RES_SCALE(35)
-#define ZOOM_TIME (GameTicksPerSecond * 6 / 5)
+static auto ZoomRate() { return ResScale(35); }
+static constexpr auto ZoomTime {(GameTicksPerSecond * 6 / 5)};
 
 // This takes care of zooming the planet sphere into place
 // when entering orbit
 void ZoomInPlanetSphere(void)
 {
 	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
-	const int base = GSCALE_IDENTITY;
+	const int base = GscaleIdentity;
 	int oldScale {};
 	int frameCount {};
 	int zoomCorner {};
@@ -393,7 +393,7 @@ void ZoomInPlanetSphere(void)
 	TimeCount Now;
 	TimeCount RenderNextTime;
 
-	frameCount = ZOOM_TIME / (GameTicksPerSecond / ZOOM_RATE);
+	frameCount = ZoomTime / (GameTicksPerSecond / ZoomRate());
 
 	// Planet zoom in from a randomly chosen corner
 	zoomCorner = uqm::random().next();
@@ -417,7 +417,7 @@ void ZoomInPlanetSphere(void)
 		GFXPOINT pt;
 
 		Now = GetTimeCounter();
-		NextTime = Now + (c_gameSecond / ZOOM_RATE);
+		NextTime = Now + (c_gameSecond / ZoomRate());
 
 		// Use 1 + e^-2 - e^(-2x / frameCount)) function to get a
 		// decelerating zoom like the one 3DO does (supposedly)
@@ -431,11 +431,11 @@ void ZoomInPlanetSphere(void)
 		}
 
 		// start from beyond the screen
-		pt.x = RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1)
+		pt.x = ResScale(OrigSisScreenWidth() >> 1)
 			 + (int)(dx * (1.0 - scale)
-						 * RES_SCALE(ORIG_SIS_SCREEN_WIDTH * 6 / 10)
+						 * ResScale(OrigSisScreenWidth() * 6 / 10)
 					 + 0.5);
-		pt.y = PLANET_ORG_Y + (int)(dy * (1.0 - scale) * (RES_SCALE(SCAN_SCREEN_HEIGHT) * 6 / 10) + 0.5);
+		pt.y = PlanetOrgY() + (int)(dy * (1.0 - scale) * (ResScale(ScanScreenHeight()) * 6 / 10) + 0.5);
 
 		SetContext(PlanetContext);
 
@@ -458,7 +458,7 @@ void ZoomInPlanetSphere(void)
 
 		if (Now >= RenderNextTime)
 		{
-			RenderNextTime = Now + PLANET_ROTATION_RATE(uqm::UQMOptions::read().sphereType);
+			RenderNextTime = Now + PlanetRotationRate(uqm::UQMOptions::read().sphereType);
 			PrepareNextRotationFrame();
 		}
 
@@ -466,7 +466,7 @@ void ZoomInPlanetSphere(void)
 	}
 }
 
-#define PLANET_ROTATION_FPS (c_gameSecond / 60)
+static constexpr auto PlanetRotationFps {(c_gameSecond / 60)};
 
 void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 {
@@ -483,16 +483,16 @@ void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 	if (isDifficulty(uqm::Difficulty::Hard) && Now >= TimeOutClock)
 	{
 		GameClockTick();
-		TimeOutClock = Now + CLOCK_FRAME_RATE;
+		TimeOutClock = Now + ClockFrameRate;
 	}
 
 	if (Now >= NextTime)
 	{
-		NextTime = Now + PLANET_ROTATION_RATE(uqm::UQMOptions::read().sphereType);
+		NextTime = Now + PlanetRotationRate(uqm::UQMOptions::read().sphereType);
 
 		if (Now >= OutNextTime)
 		{
-			OutNextTime = Now + PLANET_ROTATION_FPS;
+			OutNextTime = Now + PlanetRotationFps;
 
 			DrawDefaultPlanetSphere();
 
@@ -505,8 +505,7 @@ void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 	}
 }
 
-static void
-renderTintFrame(Color tintColor)
+static void renderTintFrame(Color tintColor)
 {
 	const PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
 	DrawMode mode;
@@ -515,7 +514,7 @@ renderTintFrame(Color tintColor)
 	GFXRECT r;
 	double is_red {NAN};
 
-	if (sameColor(BRIGHT_RED_COLOR, tintColor))
+	if (sameColor(BrightRedColor, tintColor))
 	{
 		is_red = 0.75;
 	}
@@ -537,7 +536,7 @@ renderTintFrame(Color tintColor)
 	DrawStamp(&s);
 
 	// apply the tint
-	mode = MAKE_DRAW_MODE(DRAW_ADDITIVE, DRAW_FACTOR_1 * is_red);
+	mode = MAKE_DRAW_MODE(DRAW_ADDITIVE, DrawFactor1 * is_red);
 
 	oldMode = SetContextDrawMode(mode);
 	SetContextForeGroundColor(tintColor);
@@ -571,7 +570,7 @@ void DrawPlanet(int tintY, Color tintColor)
 	s.origin.y = 0;
 
 	BatchGraphics();
-	if (sameColor(tintColor, BLACK_COLOR))
+	if (sameColor(tintColor, BlackColor))
 	{ // no tint -- just draw the surface
 		s.frame = pSolarSysState->TopoFrame;
 		DrawStamp(&s);
@@ -610,11 +609,11 @@ void DrawPlanet(int tintY, Color tintColor)
 			SetContextClipRect(&oldClipRect);
 
 			edge.extent.height = 1;
-			edge.extent.width = SCALED_MAP_WIDTH;
+			edge.extent.width = ScaledMapWidth();
 			edge.corner.x = tintFrame->HotSpot.x;
 			edge.corner.y = clipRect.extent.height;
 
-			for (i = 0x90; i > 0; i -= 0x90 / RES_SCALE(3))
+			for (i = 0x90; i > 0; i -= 0x90 / ResScale(3))
 			{
 				tintColor.a = i;
 				SetContextForeGroundColor(tintColor);
@@ -622,7 +621,7 @@ void DrawPlanet(int tintY, Color tintColor)
 				edge.corner.y--;
 			}
 
-			tintColor = BLACK_COLOR;
+			tintColor = BlackColor;
 			edge.corner.y = clipRect.extent.height + 1;
 
 			for (i = 0x40; i > 0; i -= 8)
@@ -630,7 +629,7 @@ void DrawPlanet(int tintY, Color tintColor)
 				tintColor.a = i;
 				SetContextForeGroundColor(tintColor);
 				DrawFilledRectangle(&edge);
-				if (!IS_HD)
+				if (!IsHd())
 				{
 					break;
 				}

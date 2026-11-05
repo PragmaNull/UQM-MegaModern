@@ -43,8 +43,8 @@ typedef enum
 	renderDesatur,
 } RenderKind;
 
-#define FULLY_OPAQUE_ALPHA 255
-#define ADDITIVE_FACTOR_1 255
+inline constexpr auto FullyOpaqueAlpha {255};
+inline constexpr auto AdditiveFactor1 {255};
 
 // 'pixel' is in destination surface format
 // See gfxlib.h:DrawKind for 'factor' spec

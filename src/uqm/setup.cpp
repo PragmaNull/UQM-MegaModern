@@ -46,7 +46,7 @@
 
 
 ACTIVITY LastActivity;
-PlayerControlFlags PlayerControl[NUM_PLAYERS] {};
+PlayerControlFlags PlayerControl[NumPlayers] {};
 
 // XXX: These declarations should really go to the file they belong to.
 RESOURCE_INDEX hResIndex;
@@ -66,7 +66,7 @@ FONT LabelFont;
 FONT SlabFont;
 FONT SquareFont;
 FONT PlayMenuFont;
-QUEUE race_q[NUM_PLAYERS];
+QUEUE race_q[NumPlayers];
 FRAME ActivityFrame;
 FRAME StatusFrame;
 FRAME SubmenuFrame;
@@ -98,8 +98,7 @@ bool classicPackPresent;
 bool usingSpeech;
 
 
-static void
-InitPlayerInput(void)
+static void InitPlayerInput(void)
 {
 }
 
@@ -118,7 +117,7 @@ bool LoadKernel(int argc, char* argv[])
 		return false;
 	}
 
-	Screen = CaptureDrawable(CreateDisplay(WANT_MASK | WANT_PIXMAP,
+	Screen = CaptureDrawable(CreateDisplay(WantMask | WantPixmap,
 										   &screen_width, &screen_height));
 	if (Screen == nullptr)
 	{
@@ -143,7 +142,7 @@ bool LoadKernel(int argc, char* argv[])
 
 	classicPackPresent = false;
 
-	if (!IS_HD)
+	if (!IsHd())
 	{
 		EndlessSCLoaded = uqm::loadAddon("EndlessSC-SD");
 		solTexturesPresent = uqm::loadAddon("sol-textures-sd");
@@ -161,13 +160,13 @@ bool LoadKernel(int argc, char* argv[])
 		}
 	}
 
-	if (IS_PAD && uqm::isAddonAvailable(THREEDO_MODE(IS_HD)))
+	if (IsPad() && uqm::isAddonAvailable(ThreedoMode(IsHd())))
 	{
-		uqm::loadAddon(THREEDO_MODE(IS_HD));
+		uqm::loadAddon(ThreedoMode(IsHd()));
 	}
-	if (IS_DOS && uqm::isAddonAvailable(DOS_MODE(IS_HD)))
+	if (IsDos() && uqm::isAddonAvailable(DosMode(IsHd())))
 	{
-		uqm::loadAddon(DOS_MODE(IS_HD));
+		uqm::loadAddon(DosMode(IsHd()));
 	}
 
 	usingSpeech = (bool)uqm::UQMOptions::read().useSpeech;
@@ -215,7 +214,7 @@ bool LoadKernel(int argc, char* argv[])
 	uqm::loadAddon("ProfanePkunk");
 	uqm::loadAddon("GlaDOS");
 
-	if (!IS_HD)
+	if (!IsHd())
 	{
 		// Localization addons
 		uqm::loadAddon("xlat-finnish-sd");
@@ -238,14 +237,14 @@ bool LoadKernel(int argc, char* argv[])
 
 	/* Now load the rest of the addons, in order. */
 	uqstl::vector<uqstl::string> addons {uqm::UQMOptions::read().addons};
-	if (!IS_HD && uqstl::erase(addons, uqstl::string {HD_MODE}) > 0)
+	if (!IsHd() && uqstl::erase(addons, uqstl::string {HdMode}) > 0)
 	{
-		uqm::log::warn("Warning: The '{}' addon is for HD mode only. Set graphics.resolutionFactor to 2 to use it.", HD_MODE);
+		uqm::log::warn("Warning: The '{}' addon is for HD mode only. Set graphics.resolutionFactor to 2 to use it.", HdMode);
 	}
 	uqm::prepareAddons(addons);
 
 	{
-		const uqm::StringTablePtr ColorMapTab {uqm::loadStringTable(STARCON_COLOR_MAP)};
+		const uqm::StringTablePtr ColorMapTab {uqm::loadStringTable(StarconColorMapRes)};
 		if (ColorMapTab == nullptr)
 		{
 			return false; // The most basic resource is missing
@@ -272,10 +271,10 @@ bool InitContexts(void)
 
 	GFXCONTEXT oldContext {SetContext(StatusContext)};
 	SetContextFGFrame(Screen);
-	r.corner.x = SPACE_WIDTH + SAFE_X;
-	r.corner.y = SAFE_Y;
-	r.extent.width = STATUS_WIDTH;
-	r.extent.height = STATUS_HEIGHT;
+	r.corner.x = SpaceWidth() + SafeX();
+	r.corner.y = SafeY();
+	r.extent.width = StatusWidth();
+	r.extent.height = StatusHeight();
 	SetContextClipRect(&r);
 
 	SpaceContext = CreateContext("SpaceContext");
@@ -293,7 +292,7 @@ bool InitContexts(void)
 	}
 	AdvanceLoadProgress();
 
-	if (!InitQueue(&disp_q, MAX_DISPLAY_ELEMENTS, sizeof(ELEMENT)))
+	if (!InitQueue(&disp_q, MaxDisplayElements, sizeof(ELEMENT)))
 	{
 		return false;
 	}
@@ -302,62 +301,61 @@ bool InitContexts(void)
 	return true;
 }
 
-static bool
-InitKernel(void)
+static bool InitKernel(void)
 {
-	for (uint16_t counter {0}; counter < NUM_PLAYERS; ++counter)
+	for (uint16_t counter {0}; counter < NumPlayers; ++counter)
 	{
-		InitQueue(&race_q[counter], MAX_SHIPS_PER_SIDE, sizeof(STARSHIP));
+		InitQueue(&race_q[counter], MaxShipsPerSide, sizeof(STARSHIP));
 	}
 
-	StarConFont = LoadFont(STARCON_FONT);
+	StarConFont = LoadFont(StarconFontRes);
 	if (StarConFont == nullptr)
 	{
 		return false;
 	}
 	AdvanceLoadProgress();
 
-	TinyFont = LoadFont(TINY_FONT);
+	TinyFont = LoadFont(TinyFontRes);
 	if (TinyFont == nullptr)
 	{
 		return false;
 	}
 	AdvanceLoadProgress();
 
-	TinyFontBold = LoadFont(TINY_FONT_BOLD);
+	TinyFontBold = LoadFont(TinyFontBoldRes);
 	if (TinyFontBold == nullptr)
 	{
 		return false;
 	}
 	AdvanceLoadProgress();
 
-	TinyFontCond = LoadFont(TINY_FONT_COND);
+	TinyFontCond = LoadFont(TinyFontCondRes);
 	if (TinyFontCond == nullptr)
 	{
 		return false;
 	}
 
-	PlyrFont = LoadFont(PLAYER_FONT);
+	PlyrFont = LoadFont(PlayerFontRes);
 	if (PlyrFont == nullptr)
 	{
 		return false;
 	}
 	AdvanceLoadProgress();
 
-	PlayMenuFont = LoadFont(PLAYMENU_FONT);
+	PlayMenuFont = LoadFont(PlaymenuFontRes);
 	if (PlayMenuFont == nullptr)
 	{
 		return false;
 	}
 
-	BorderFrame = CaptureDrawable(LoadGraphic(BORDER_MASK_PMAP_ANIM));
+	BorderFrame = CaptureDrawable(LoadGraphic(BorderMaskPmapAnimRes));
 	if (BorderFrame == nullptr)
 	{
 		return false;
 	}
 	AdvanceLoadProgress();
 
-	CustBevelFrame = CaptureDrawable(LoadGraphic(CUST_BEVEL_MASK_PMAP_ANIM));
+	CustBevelFrame = CaptureDrawable(LoadGraphic(CustBevelMaskPmapAnimRes));
 	if (CustBevelFrame == nullptr)
 	{
 		return false;
@@ -365,73 +363,73 @@ InitKernel(void)
 
 	if (HDPackPresent)
 	{
-		HDBorderFrame = CaptureDrawable(LoadGraphic(HD_BORDER_MASK_PMAP_ANIM));
+		HDBorderFrame = CaptureDrawable(LoadGraphic(HdBorderMaskPmapAnimRes));
 		if (HDBorderFrame == nullptr)
 		{
 			return false;
 		}
 
-		DefBevelFrame = CaptureDrawable(LoadGraphic(DEF_BEVEL_MASK_PMAP_ANIM));
+		DefBevelFrame = CaptureDrawable(LoadGraphic(DefBevelMaskPmapAnimRes));
 		if (DefBevelFrame == nullptr)
 		{
 			return false;
 		}
 	}
 
-	ActivityFrame = CaptureDrawable(LoadGraphic(ACTIVITY_ANIM));
+	ActivityFrame = CaptureDrawable(LoadGraphic(ActivityAnimRes));
 	if (ActivityFrame == nullptr)
 	{
 		return false;
 	}
 	AdvanceLoadProgress();
 
-	StatusFrame = CaptureDrawable(LoadGraphic(STATUS_MASK_PMAP_ANIM));
+	StatusFrame = CaptureDrawable(LoadGraphic(StatusMaskPmapAnimRes));
 	if (StatusFrame == nullptr)
 	{
 		return false;
 	}
 	AdvanceLoadProgress();
 
-	SubmenuFrame = CaptureDrawable(LoadGraphic(SUBMENU_MASK_PMAP_ANIM));
+	SubmenuFrame = CaptureDrawable(LoadGraphic(SubmenuMaskPmapAnimRes));
 	if (SubmenuFrame == nullptr)
 	{
 		return false;
 	}
 	AdvanceLoadProgress();
 
-	GameStrings = uqm::loadStringTable(STARCON_GAME_STRINGS);
+	GameStrings = uqm::loadStringTable(StarconGameStringsRes);
 	if (!GameStrings)
 	{
 		return false;
 	}
 	AdvanceLoadProgress();
 
-	MicroFont = LoadFont(MICRO_FONT);
+	MicroFont = LoadFont(MicroFontRes);
 	if (MicroFont == nullptr)
 	{
 		return false;
 	}
 	AdvanceLoadProgress();
 
-	LabelFont = LoadFont(LABEL_FONT);
+	LabelFont = LoadFont(LabelFontRes);
 	if (LabelFont == nullptr)
 	{
 		return false;
 	}
 
-	SquareFont = LoadFont(SQUARE_FONT);
+	SquareFont = LoadFont(SquareFontRes);
 	if (SquareFont == nullptr)
 	{
 		return false;
 	}
 
-	SlabFont = LoadFont(SLAB_FONT);
+	SlabFont = LoadFont(SlabFontRes);
 	if (SlabFont == nullptr)
 	{
 		return false;
 	}
 
-	MenuSounds = uqm::loadSoundBank(MENU_SOUNDS).release();
+	MenuSounds = uqm::loadSoundBank(MenuSoundsRes).release();
 	if (MenuSounds == 0)
 	{
 		return false;
@@ -496,7 +494,7 @@ bool SetPlayerInput(uint16_t playerI)
 
 bool SetPlayerInputAll(void)
 {
-	for (uint16_t playerI {0}; playerI < NUM_PLAYERS; playerI++)
+	for (uint16_t playerI {0}; playerI < NumPlayers; playerI++)
 	{
 		if (!SetPlayerInput(playerI))
 		{
@@ -521,7 +519,7 @@ void ClearPlayerInput(uint16_t playerI)
 
 void ClearPlayerInputAll(void)
 {
-	for (uint16_t playerI {0}; playerI < NUM_PLAYERS; playerI++)
+	for (uint16_t playerI {0}; playerI < NumPlayers; playerI++)
 	{
 		ClearPlayerInput(playerI);
 	}

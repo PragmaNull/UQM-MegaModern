@@ -47,37 +47,37 @@ namespace uqm
 
 } // namespace uqm
 
-#define UNICHAR_TAB 0x0009
-#define STR_TAB "\x09"
-#define UNICHAR_SPACE 0x0020
-#define STR_SPACE "\x20"
-#define UNICHAR_DEGREE_SIGN 0x00b0
-#define STR_DEGREE_SIGN "\xC2\xB0"
-#define UNICHAR_INFINITY_SIGN 0x221e
-#define STR_INFINITY_SIGN "\xE2\x88\x9E"
-#define UNICHAR_EARTH_SIGN 0x2641
-#define STR_EARTH_SIGN "\xE2\x99\x81"
-#define UNICHAR_MIDDLE_DOT 0x00b7
-#define STR_MIDDLE_DOT "\xC2\xB7"
-#define UNICHAR_BULLET 0x2022
-#define STR_BULLET "\xE2\x80\xA2"
-#define UNICHAR_CROSS 0x2573
-#define STR_CROSS "\xE2\x95\xB3"
-#define UNICHAR_SQUARE 0x25A1
-#define STR_SQUARE "\xE2\x96\xA1"
-#define UNICHAR_TRIANGLE 0x25B3
-#define STR_TRIANGLE "\xE2\x96\xB3"
-#define UNICHAR_CIRCLE 0x25EF
-#define STR_CIRCLE "\xE2\x97\xAf"
-#define UNICHAR_PIPE 0x007C
-#define STR_PIPE "\x7C"
-#define UNICHAR_AMP 0x0026
-#define STR_AMP "\x26"
-#define UNICHAR_COLON 0x003A
-#define STR_COLON "\x3A"
+inline constexpr auto UnicharTab {0x0009};
+inline constexpr uqgsl::czstring StrTab {"\x09"};
+inline constexpr auto UnicharSpace {0x0020};
+inline constexpr uqgsl::czstring StrSpace {"\x20"};
+inline constexpr auto UnicharDegreeSign {0x00b0};
+inline constexpr uqgsl::czstring StrDegreeSign {"\xC2\xB0"};
+inline constexpr auto UnicharInfinitySign {0x221e};
+inline constexpr uqgsl::czstring StrInfinitySign {"\xE2\x88\x9E"};
+inline constexpr auto UnicharEarthSign {0x2641};
+inline constexpr uqgsl::czstring StrEarthSign {"\xE2\x99\x81"};
+inline constexpr auto UnicharMiddleDot {0x00b7};
+inline constexpr uqgsl::czstring StrMiddleDot {"\xC2\xB7"};
+inline constexpr auto UnicharBullet {0x2022};
+inline constexpr uqgsl::czstring StrBullet {"\xE2\x80\xA2"};
+inline constexpr auto UnicharCross {0x2573};
+inline constexpr uqgsl::czstring StrCross {"\xE2\x95\xB3"};
+inline constexpr auto UnicharSquare {0x25A1};
+inline constexpr uqgsl::czstring StrSquare {"\xE2\x96\xA1"};
+inline constexpr auto UnicharTriangle {0x25B3};
+inline constexpr uqgsl::czstring StrTriangle {"\xE2\x96\xB3"};
+inline constexpr auto UnicharCircle {0x25EF};
+inline constexpr uqgsl::czstring StrCircle {"\xE2\x97\xAf"};
+inline constexpr auto UnicharPipe {0x007C};
+inline constexpr uqgsl::czstring StrPipe {"\x7C"};
+inline constexpr auto UnicharAmp {0x0026};
+inline constexpr uqgsl::czstring StrAmp {"\x26"};
+inline constexpr auto UnicharColon {0x003A};
+inline constexpr uqgsl::czstring StrColon {"\x3A"};
 
 
-#define STR_NULL "null"
+inline constexpr uqgsl::czstring StrNull {"null"};
 
 // Skip the alignment marker "|n|" or the padding marker ":n:" at the start of 'str',
 // and add n (scaled to the resolution) to the offset.

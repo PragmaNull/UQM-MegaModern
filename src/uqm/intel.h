@@ -28,11 +28,11 @@
 #include "races.h"
 #include "setup.h"
 
-#define MANEUVERABILITY(pi) ((pi)->ManeuverabilityIndex)
-#define WEAPON_RANGE(pi) ((pi)->WeaponRange)
+constexpr auto Maneuverability(const auto& pi) { return ((pi)->ManeuverabilityIndex); }
+constexpr auto GetWeaponRange(const auto& pi) { return ((pi)->WeaponRange); }
 
-#define WORLD_TO_TURN(d) ((d) >> 6)
-#define RESOLUTION_COMPENSATED(speed) (RES_SCALE(RES_SCALE(speed)))
+constexpr auto WorldToTurn(const auto& d) { return ((d) >> 6); }
+constexpr auto ResolutionCompensated(const auto& speed) { return (ResScale(ResScale(speed))); }
 
 extern BATTLE_INPUT_STATE computer_intelligence(
 	ComputerInputContext* context, STARSHIP* StarShipPtr);
@@ -51,8 +51,7 @@ extern bool ThrustShip(ELEMENT* ShipPtr, uint16_t angle);
 
 extern PlayerControlFlags PlayerControl[];
 
-static inline bool
-antiCheatImpl(const ELEMENT* element, const bool swapPlayers, const uqm::GodModeFlags testFlags, uqstl::span<PlayerControlFlags> playerControl, const uqm::GodModeFlags godModeData)
+static inline bool antiCheatImpl(const ELEMENT* element, const bool swapPlayers, const uqm::GodModeFlags testFlags, uqstl::span<PlayerControlFlags> playerControl, const uqm::GodModeFlags godModeData)
 {
 	// both players are AI-controlled
 	if (testFlag(playerControl[0] & playerControl[1], ComputerControlFlags))
@@ -79,14 +78,12 @@ antiCheatImpl(const ELEMENT* element, const bool swapPlayers, const uqm::GodMode
 	return testFlag(playerControl[playerIndex], ComputerControlFlags);
 }
 
-static inline bool
-antiCheat(ELEMENT* ElementPtr, bool SwapBool, uqm::GodModeFlags godModeType)
+static inline bool antiCheat(ELEMENT* ElementPtr, bool SwapBool, uqm::GodModeFlags godModeType)
 {
-	return antiCheatImpl(ElementPtr, SwapBool, godModeType, {PlayerControl, NUM_PLAYERS}, uqm::UQMOptions::read().optGodModes);
+	return antiCheatImpl(ElementPtr, SwapBool, godModeType, {PlayerControl, NumPlayers}, uqm::UQMOptions::read().optGodModes);
 }
 
-static inline bool
-antiCheatAltImpl(const uqm::GodModeFlags testFlags, const uqstl::span<PlayerControlFlags> playerControl, const uqm::GodModeFlags godModeData)
+static inline bool antiCheatAltImpl(const uqm::GodModeFlags testFlags, const uqstl::span<PlayerControlFlags> playerControl, const uqm::GodModeFlags godModeData)
 {
 	const bool player0Computer = testFlag(playerControl[0], ComputerControlFlags);
 	const bool player1Computer = testFlag(playerControl[1], ComputerControlFlags);
@@ -104,14 +101,12 @@ antiCheatAltImpl(const uqm::GodModeFlags testFlags, const uqstl::span<PlayerCont
 	return player0Computer != player1Computer;
 }
 
-static inline bool
-antiCheatAlt(uqm::GodModeFlags godModeFlags)
+static inline bool antiCheatAlt(uqm::GodModeFlags godModeFlags)
 {
-	return antiCheatAltImpl(godModeFlags, {PlayerControl, NUM_PLAYERS}, uqm::UQMOptions::read().optGodModes);
+	return antiCheatAltImpl(godModeFlags, {PlayerControl, NumPlayers}, uqm::UQMOptions::read().optGodModes);
 }
 
-static inline bool
-isNetwork(void)
+static inline bool isNetwork(void)
 {
 	return testFlag(PlayerControl[0] | PlayerControl[1], PlayerControlFlags::Network);
 }

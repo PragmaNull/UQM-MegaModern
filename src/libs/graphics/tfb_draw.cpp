@@ -72,7 +72,7 @@ void TFB_DrawScreen_Image(TFB_Image* img, int x, int y, int scale,
 	DC.data.image.colormap = cmap;
 	DC.data.image.x = x;
 	DC.data.image.y = y;
-	DC.data.image.scale = (scale == GSCALE_IDENTITY) ? 0 : scale;
+	DC.data.image.scale = (scale == GscaleIdentity) ? 0 : scale;
 	DC.data.image.scaleMode = scaleMode;
 	DC.data.image.drawMode = mode;
 	DC.data.image.destBuffer = dest;
@@ -89,7 +89,7 @@ void TFB_DrawScreen_FilledImage(TFB_Image* img, int x, int y, int scale,
 	DC.data.filledimage.image = img;
 	DC.data.filledimage.x = x;
 	DC.data.filledimage.y = y;
-	DC.data.filledimage.scale = (scale == GSCALE_IDENTITY) ? 0 : scale;
+	DC.data.filledimage.scale = (scale == GscaleIdentity) ? 0 : scale;
 	DC.data.filledimage.scaleMode = scaleMode;
 	DC.data.filledimage.color = color;
 	DC.data.filledimage.drawMode = mode;
@@ -270,8 +270,7 @@ void TFB_DrawImage_MaskImage(TFB_Image* img, DrawMode mode, TFB_Image* target, C
 }
 
 
-TFB_Image*
-TFB_DrawImage_New(TFB_Canvas canvas)
+TFB_Image* TFB_DrawImage_New(TFB_Canvas canvas)
 {
 	auto* img {new TFB_Image {}};
 	img->ScaledImg = nullptr;
@@ -299,8 +298,7 @@ TFB_DrawImage_New(TFB_Canvas canvas)
 	return img;
 }
 
-TFB_Image*
-TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
+TFB_Image* TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
 {
 	auto* img {new TFB_Image {}};
 	img->ScaledImg = nullptr;
@@ -321,8 +319,7 @@ TFB_DrawImage_CreateForScreen(int w, int h, bool withalpha)
 	return img;
 }
 
-TFB_Image*
-TFB_DrawImage_New_Rotated(TFB_Image* img, int angle)
+TFB_Image* TFB_DrawImage_New_Rotated(TFB_Image* img, int angle)
 {
 	TFB_Canvas dst {};
 	EXTENT size;

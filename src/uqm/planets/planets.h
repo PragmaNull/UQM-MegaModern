@@ -22,10 +22,12 @@
 #include "libs/mathlib.h"
 #include "libs/sndlib.h"
 #include "options.h"
+#include "../units.h"
+#include "../globdata.h"
 
-#define END_INTERPLANETARY START_INTERPLANETARY
+inline constexpr auto EndInterplanetary {START_INTERPLANETARY};
 
-#define ONE_YEAR 365.25
+inline constexpr auto OneYear {365.25};
 #ifndef M_PI
 #define M_PI 3.141592653589
 #endif
@@ -39,23 +41,21 @@ enum PlanetScanTypes
 	NUM_SCAN_TYPES,
 };
 
-#define SC2_MAP_WIDTH 210
-#define SC2_MAP_HEIGHT 67
-#define UQM_MAP_WIDTH 243
-#define UQM_MAP_HEIGHT 75
-#define ORIGINAL_MAP_WIDTH \
-	(uqm::UQMOptions::read().planetTexture ? UQM_MAP_WIDTH - 1 : SC2_MAP_WIDTH)
-#define ORIGINAL_MAP_HEIGHT \
-	(uqm::UQMOptions::read().planetTexture ? UQM_MAP_HEIGHT : SC2_MAP_HEIGHT)
-#define MAP_WIDTH RES_SCALE(UQM_MAP_WIDTH)
-#define MAP_HEIGHT RES_SCALE(SC2_MAP_HEIGHT)
-#define SCALED_MAP_WIDTH RES_SCALE(((is3DO(uqm::UQMOptions::read().landerStyle) ? UQM_MAP_WIDTH : SC2_MAP_WIDTH)) - SAFE_NUM(33))
-#define UNSCALED_MAP_WIDTH \
-	(((is3DO(uqm::UQMOptions::read().landerStyle) ? UQM_MAP_WIDTH : SC2_MAP_WIDTH)) - SAFE_NUM(33))
+inline constexpr auto Sc2MapWidth {210};
+inline constexpr auto Sc2MapHeight {67};
+inline constexpr auto UqmMapWidth {243};
+inline constexpr auto UqmMapHeight {75};
+inline auto OriginalMapWidth() { return (uqm::UQMOptions::read().planetTexture ? UqmMapWidth - 1 : Sc2MapWidth); }
+inline auto OriginalMapHeight() { return (uqm::UQMOptions::read().planetTexture ? UqmMapHeight : Sc2MapHeight); }
+inline auto MapWidth() { return ResScale(UqmMapWidth); }
+inline auto MapHeight() { return ResScale(Sc2MapHeight); }
+inline auto ScaledMapWidth() { return ResScale(((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SafeNum(33)); }
+inline auto UnscaledMapWidth() { return (((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SafeNum(33)); }
 
-#define MAP_DIMENSIONS               \
-	{SC2_MAP_WIDTH, SC2_MAP_HEIGHT}, \
-		{(UQM_MAP_WIDTH - 1), UQM_MAP_HEIGHT},
+inline constexpr EXTENT MapDimensions[] {
+	{Sc2MapWidth,		  Sc2MapHeight},
+	{(UqmMapWidth - 1), UqmMapHeight},
+};
 
 enum
 {
@@ -76,60 +76,57 @@ enum
 	LANDER_DESTROYED
 };
 
-#define MAX_SCROUNGED (isPC(uqm::UQMOptions::read().landerStyle) ? 64 : 50)
-#define MAX_HOLD_BARS (isPC(uqm::UQMOptions::read().landerStyle) ? 64 : 50)
+inline auto MaxScrounged() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 64 : 50); }
+inline auto MaxHoldBars() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 64 : 50); }
 
-#define SCALE_RADIUS(r) ((r) << 6)
-#define UNSCALE_RADIUS(r) ((r) >> 6)
-#define MAX_ZOOM_RADIUS SCALE_RADIUS(128)
-#define MIN_ZOOM_RADIUS (MAX_ZOOM_RADIUS >> 3)
-#define EARTH_RADIUS SCALE_RADIUS(8)
-#define EARTH_HOURS 240
+constexpr auto ScaleRadius(const auto& r) { return ((r) << 6); }
+constexpr auto UnscaleRadius(const auto& r) { return ((r) >> 6); }
+inline constexpr auto MaxZoomRadius {ScaleRadius(128)};
+inline constexpr auto MinZoomRadius {(MaxZoomRadius >> 3)};
+inline constexpr auto EarthRadius {ScaleRadius(8)};
+inline constexpr auto EarthHours {240};
 
-#define MIN_PLANET_RADIUS SCALE_RADIUS(4)
-#define MAX_PLANET_RADIUS SCALE_RADIUS(124)
+inline constexpr auto MinPlanetRadius {ScaleRadius(4)};
+inline constexpr auto MaxPlanetRadius {ScaleRadius(124)};
 
-#define DISPLAY_FACTOR RES_SCALE((ORIG_SIS_SCREEN_WIDTH >> 1) - 8)
-#define DISPLAY_FACTOR_US ((ORIG_SIS_SCREEN_WIDTH >> 1) - 8)
+inline auto DisplayFactor() { return ResScale((OrigSisScreenWidth() >> 1) - 8); }
+inline auto DisplayFactorUs() { return ((OrigSisScreenWidth() >> 1) - 8); }
 
-#define NUM_SCANDOT_TRANSITIONS 4
+inline constexpr auto NumScandotTransitions {4};
 
-#define MIN_MOON_RADIUS RES_SCALE(35)
-#define MOON_DELTA RES_SCALE(20)
+inline auto MinMoonRadius() { return ResScale(35); }
+inline auto MoonDelta() { return ResScale(20); }
 
-#define MAX_SUNS 1
-#define MAX_PLANETS 16
-#define MAX_MOONS 4
-#define MAX_GEN_MOONS MAX_MOONS
-#define MAX_GEN_PLANETS 9
+inline constexpr auto MaxSuns {1};
+inline constexpr auto MaxPlanets {16};
+inline constexpr auto MaxMoons {4};
+inline constexpr auto MaxGenMoons {MaxMoons};
+inline constexpr auto MaxGenPlanets {9};
 
-#define MAP_BORDER_HEIGHT RES_SCALE(5)
+inline auto MapBorderHeight() { return ResScale(5); }
 
-//#define SCAN_SCREEN_HEIGHT \//
-//		(SIS_SCREEN_HEIGHT - MAP_HEIGHT - MAP_BORDER_HEIGHT)
+//#define ScanScreenHeight() \//
+//		(SisScreenHeight() - MapHeight() - MapBorderHeight())
 
-// Unscaled so that the math generates a proper output for HD
-#define SCAN_SCREEN_HEIGHT                   \
-	(ORIG_SIS_SCREEN_HEIGHT - SC2_MAP_HEIGHT \
-	 - RES_DESCALE(MAP_BORDER_HEIGHT))
+// Unscaled so that the math generates a proper output for HdResolutionFactor
+inline auto ScanScreenHeight() { return (OrigSisScreenHeight() - Sc2MapHeight - ResDescale(MapBorderHeight())); }
 
-#define PC_ROTATION_RATE (c_gameSecond / RES_SCALE(12))
-#define THREEDO_ROTATION_RATE (c_gameSecond * 6 / RES_SCALE(SC2_MAP_WIDTH))
-#define UQM_ROTATION_RATE (c_gameSecond * 12 / MAP_WIDTH)
+inline auto PcRotationRate() { return (c_gameSecond / ResScale(12)); }
+inline auto ThreedoRotationRate() { return (c_gameSecond * 6 / ResScale(Sc2MapWidth)); }
+inline auto UqmRotationRate() { return (c_gameSecond * 12 / MapWidth()); }
 
-#define PLANET_ROTATION_RATE(a) (!a ? PC_ROTATION_RATE : \
-									  (a == 1 ? THREEDO_ROTATION_RATE : UQM_ROTATION_RATE))
+constexpr auto PlanetRotationRate(const auto& a) { return (!a ? PcRotationRate() : (a == 1 ? ThreedoRotationRate() : UqmRotationRate())); }
 
-#define USE_DOS_SPHERES RES_SCALE(useDosSpheres ? 2 : 0)
+extern bool useDosSpheres;
+inline auto UseDosSpheres() { return ResScale(useDosSpheres ? 2 : 0); }
 
-#define PLANET_ORG_X RES_SCALE(ORIG_SIS_SCREEN_WIDTH >> 1)
-#define PLANET_ORG_Y \
-	RES_SCALE(SCAN_SCREEN_HEIGHT >> 1) - USE_DOS_SPHERES
+inline auto PlanetOrgX() { return ResScale(OrigSisScreenWidth() >> 1); }
+inline auto PlanetOrgY() { return ResScale(ScanScreenHeight() >> 1) - UseDosSpheres(); }
 
-#define NUM_RACE_RUINS 16
+inline constexpr auto NumRaceRuins {16};
 
-#define MIN_BRIGHTNESS(a) ((a == ENERGY_SCAN) ? (50) : (55))
-#define MAX_BRIGHTNESS(a) ((a == ENERGY_SCAN) ? (90) : (135))
+constexpr auto MinBrightness(const auto& a) { return ((a == ENERGY_SCAN) ? (50) : (55)); }
+constexpr auto MaxBrightness(const auto& a) { return ((a == ENERGY_SCAN) ? (90) : (135)); }
 
 typedef struct planet_desc PLANET_DESC;
 typedef struct star_desc STAR_DESC;
@@ -145,7 +142,6 @@ typedef struct plot_location PLOT_LOCATION;
 typedef struct portal_location PORTAL_LOCATION;
 
 #include "generate.h"
-#include "../units.h"
 #include "lifeform.h"
 #include "plandata.h"
 #include "sundata.h"
@@ -259,10 +255,10 @@ struct node_info
 	uint16_t type;
 	// For minerals: the type of element
 	// For bio: the type of the creature.
-	//       0 through NUM_CREATURE_TYPES - 1 are normal creatures,
-	//       NUM_CREATURE_TYPES     is an Evil One
-	//       NUM_CREATURE_TYPES + 1 is a Brainbox Bulldozer
-	//       NUM_CREATURE_TYPES + 2 is Zex' Beauty
+	//       0 through NumCreatureTypes - 1 are normal creatures,
+	//       NumCreatureTypes     is an Evil One
+	//       NumCreatureTypes + 1 is a Brainbox Bulldozer
+	//       NumCreatureTypes + 2 is Zex' Beauty
 	// For energy: undefined
 };
 
@@ -282,12 +278,12 @@ struct solarsys_state
 	// inner system. If set to (uint16_t)~0, all planet collisions are
 	// disabled until the flagship stops intersecting with all
 	// planets.
-	PLANET_DESC SunDesc[MAX_SUNS];
-	PLANET_DESC PlanetDesc[MAX_PLANETS];
+	PLANET_DESC SunDesc[MaxSuns];
+	PLANET_DESC PlanetDesc[MaxPlanets];
 	// Description of the planets in the system.
 	// Only defined after a call to (*genFuncs)->generatePlanets()
 	// and overwritten by subsequent calls.
-	PLANET_DESC MoonDesc[MAX_GEN_MOONS];
+	PLANET_DESC MoonDesc[MaxGenMoons];
 	// Description of the moons orbiting the planet pointed to
 	// by pBaseDesc.
 	// Only defined after a call to (*genFuncs)->generateMoons()
@@ -324,7 +320,7 @@ struct solarsys_state
 	// Functions to call to fill in various parts of this
 	// structure. See generate.h, doc/devel/generate
 
-	FRAME PlanetSideFrame[3 + MAX_LIFE_VARIATION];
+	FRAME PlanetSideFrame[3 + MaxLifeVariation];
 	/* Frames for planet-side elements.
 			 * [0] = bio cannister
 			 * [1] = energy node (world-specific)
@@ -372,7 +368,6 @@ struct portal_location
 extern SOLARSYS_STATE* pSolarSysState;
 extern MUSIC_REF SpaceMusic;
 extern GFXCONTEXT PlanetContext;
-extern bool useDosSpheres;
 extern bool use3DOSpheres;
 
 // Random context used for all solar system, planets, and surfaces
@@ -390,9 +385,9 @@ bool worldIsMoon(const SOLARSYS_STATE* solarSys,
 uint16_t planetIndex(const SOLARSYS_STATE* solarSys,
 					 const PLANET_DESC* world);
 uint16_t moonIndex(const SOLARSYS_STATE* solarSys, const PLANET_DESC* moon);
-#define MATCH_PLANET ((uint8_t)-1)
-#define MATCH_PBYTE ((uint8_t)-2)
-#define MATCH_MBYTE ((uint8_t)-3)
+inline constexpr auto MatchPlanet {((uint8_t)-1)};
+inline constexpr auto MatchPbyte {((uint8_t)-2)};
+inline constexpr auto MatchMbyte {((uint8_t)-3)};
 bool matchWorld(const SOLARSYS_STATE* solarSys, const PLANET_DESC* world,
 				uint8_t planetI, uint8_t moonI);
 
@@ -422,7 +417,7 @@ extern void DrawRotatedEllipse(int cx, int cy, int rx, int ry,
 							   int angle_deg, int filled, int dotted);
 extern void ComputeSpeed(PLANET_DESC* planet, bool GeneratingMoons,
 						 uint16_t rand_val);
-#define NUMPLANETS_PDESC ((uint8_t)-2)
+inline constexpr auto NumplanetsPdesc {((uint8_t)-2)};
 extern void FillOrbits(SOLARSYS_STATE* system, uint8_t NumPlanets,
 					   PLANET_DESC* pBaseDesc, bool TypesDefined);
 extern void InitLander(uint8_t LanderFlags);

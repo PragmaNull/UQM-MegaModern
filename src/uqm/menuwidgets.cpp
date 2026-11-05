@@ -338,7 +338,7 @@ WIDGET* MenuWidgets::buildText(const MenuDef& menu, const MenuItemDef& item)
 	widget.width = Widget_WidthFullScreen;
 	widget.handleEventSelect = m_hooks.textEntrySelect;
 	widget.category = text.item.label.c_str();
-	widget.maxlen = WIDGET_TEXTENTRY_WIDTH - 1;
+	widget.maxlen = WidgetTextentryWidth - 1;
 	widget.state = WTE_NORMAL;
 	widget.cursor_pos = 0;
 	fillTooltip(widget.tooltip, text.item.tooltip);

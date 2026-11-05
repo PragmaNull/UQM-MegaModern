@@ -26,12 +26,12 @@
 extern "C" {
 #endif
 
-// Moving NUM_HYPER_VORTICES here for portal map; one fewer than the map
+// Moving NumHyperVortices here for portal map; one fewer than the map
 // because of the Arilou homeworld.
-#define NUM_SOLAR_SYSTEMS 502
-#define NUM_HYPER_VORTICES 15
+inline constexpr auto NumSolarSystems {502};
+inline constexpr auto NumHyperVortices {15};
 
-#define CurStarDescPtr (uqm::gameState().currentStar())
+inline STAR_DESC*& CurStarDescPtr() { return uqm::gameState().currentStar(); }
 // star_array is now a static buffer we will copy the starmap_array into, and
 // then manipulate from there, so that original starmap is never altered.
 extern STAR_DESC star_array[];
@@ -46,7 +46,7 @@ extern PLOT_LOCATION plot_map[NUM_PLOTS];
 // as well as "quasi_pt" coords in quasispace, and the STAR_DESC of
 // the "closest constellation" for naming purposes.
 // Also Arilou homeworld but this is still mostly hardcoded.
-extern PORTAL_LOCATION portal_map[NUM_HYPER_VORTICES + 1];
+extern PORTAL_LOCATION portal_map[NumHyperVortices + 1];
 
 // A globally available seed for seeding the starmap and the plots it contains.
 extern uqstl::optional<uqm::UQMRandom> StarGenRNG;
@@ -104,7 +104,7 @@ uint16_t PlotIdStrToIndex(const char* plotIdStr);
 
 // JSD end of changes to this file
 
-#define INTERNAL_STAR_INDEX -1
+inline constexpr auto InternalStarIndex {-1};
 
 extern bool isStarMarked(const int star_index,
 						 const char* marker_state);

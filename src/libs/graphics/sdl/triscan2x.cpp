@@ -60,10 +60,10 @@ void SCALE_(TriScanFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 // and allow to access pixels in all directions
 #define PIX(x, y) (pixels[1 + (x)][1 + (y)])
 
-#define TRISCAN_YUV_MED 100
+	constexpr auto TriscanYuvMed {100};
 // medium tolerance pixel comparison
 #define TRISCAN_CMPYUV(p1, p2) \
-	(PIX p1 == PIX p2 || SCALE_CMPYUV(PIX p1, PIX p2, TRISCAN_YUV_MED))
+	(PIX p1 == PIX p2 || SCALE_CMPYUV(PIX p1, PIX p2, TriscanYuvMed))
 
 
 	SCALE_(PlatInit)();

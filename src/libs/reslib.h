@@ -42,7 +42,7 @@ typedef union
 	const char* str;
 } RESOURCE_DATA;
 
-#define NULL_RESOURCE nullptr
+inline constexpr auto NullResource {nullptr};
 
 
 typedef void(ResourceLoadFun)(const ResourceArg& arg, RESOURCE_DATA* resdata);

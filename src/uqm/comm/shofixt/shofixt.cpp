@@ -31,30 +31,30 @@ static LOCDATA shofixti_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		SHOFIXTI_PMAP_ANIM, /* AlienFrame */
-		SHOFIXTI_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		ShofixtiPmapAnim, /* AlienFrame */
+		ShofixtiFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH, */  /* AlienTextWidth */
+		/* SisTextWidth(), */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		SHOFIXTI_COLOR_MAP, /* AlienColorMap */
-		SHOFIXTI_MUSIC, /* AlienSong */
+		ShofixtiColorMap, /* AlienColorMap */
+		ShofixtiMusic, /* AlienSong */
 		{
-								SHOFIXTI_ALT_PMAP_ANIM, /* AlienAltFrame */
-			NULL_RESOURCE,			/* AlienAltColorMap */
-			NULL_RESOURCE,			/* AlienAltSong */
+								ShofixtiAltPmapAnim, /* AlienAltFrame */
+			NullResource,		 /* AlienAltColorMap */
+			NullResource,		 /* AlienAltSong */
 		},
-		SHOFIXTI_CONVERSATION_PHRASES, /* PlayerPhrases */
+		ShofixtiConversationPhrases, /* PlayerPhrases */
 		11, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				5,			   /* StartIndex */
-				15,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				5,			  /* StartIndex */
+				15,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -62,9 +62,9 @@ static LOCDATA shofixti_desc =
 				0, /* BlockMask */
 			},
 								{
-				20,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				20,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				(GameTicksPerSecond >> 1),
@@ -72,9 +72,9 @@ static LOCDATA shofixti_desc =
 				0,							   /* BlockMask */
 			},
 								{
-				23,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				23,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				0, /* FrameRate */
 				(GameTicksPerSecond >> 1),
@@ -82,9 +82,9 @@ static LOCDATA shofixti_desc =
 				0,							   /* BlockMask */
 			},
 								{
-				26,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				26,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -92,9 +92,9 @@ static LOCDATA shofixti_desc =
 				0,						/* BlockMask */
 			},
 								{
-				29,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				29,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -103,9 +103,9 @@ static LOCDATA shofixti_desc =
 			},
 
 								{
-				33,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				33,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -113,9 +113,9 @@ static LOCDATA shofixti_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				39,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				39,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -123,9 +123,9 @@ static LOCDATA shofixti_desc =
 				(1 << 7),				 /* BlockMask */
 			},
 								{
-				46,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				46,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -133,9 +133,9 @@ static LOCDATA shofixti_desc =
 				(1 << 6),				 /* BlockMask */
 			},
 								{
-				52,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				52,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -143,9 +143,9 @@ static LOCDATA shofixti_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				56,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				56,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -153,9 +153,9 @@ static LOCDATA shofixti_desc =
 				(1 << 10),				 /* BlockMask */
 			},
 								{
-				63,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				63,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -196,10 +196,9 @@ static LOCDATA shofixti_desc =
 
 static RESPONSE_REF shofixti_name;
 
-static void
-GetShofixtiName(void)
+static void GetShofixtiName(void)
 {
-	if (GET_GAME_STATE(SHOFIXTI_KIA))
+	if (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_KIA))
 	{
 		shofixti_name = katana;
 	}
@@ -209,24 +208,23 @@ GetShofixtiName(void)
 	}
 }
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, bye0))
+	if (PlayerSaid(R, bye0))
 	{
 		NPCPhrase(GOODBYE);
 
 		setSegue(Segue_peace);
 	}
-	else if (PLAYER_SAID(R, go_ahead))
+	else if (PlayerSaid(R, go_ahead))
 	{
 		NPCPhrase(ON_SECOND_THOUGHT);
 
 		setSegue(Segue_peace);
 	}
-	else if (PLAYER_SAID(R, need_you_for_duty))
+	else if (PlayerSaid(R, need_you_for_duty))
 	{
 		NPCPhrase(OK_WILL_BE_SENTRY);
 
@@ -234,71 +232,71 @@ ExitConversation(RESPONSE_REF R)
 
 		setSegue(Segue_peace);
 	}
-	else if (PLAYER_SAID(R, females)
-			 || PLAYER_SAID(R, nubiles)
-			 || PLAYER_SAID(R, rat_babes))
+	else if (PlayerSaid(R, females)
+			 || PlayerSaid(R, nubiles)
+			 || PlayerSaid(R, rat_babes))
 	{
 		NPCPhrase(LEAPING_HAPPINESS);
 
-		SET_GAME_STATE(SHOFIXTI_RECRUITED, 1);
-		SET_GAME_STATE(MAIDENS_ON_SHIP, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_RECRUITED, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::MAIDENS_ON_SHIP, static_cast<uint32_t>(0));
 		setSegue(Segue_peace);
 
 		AddEvent(RELATIVE_EVENT, 2, 0, 0, SHOFIXTI_RETURN_EVENT);
 	}
-	else if (PLAYER_SAID(R, dont_attack))
+	else if (PlayerSaid(R, dont_attack))
 	{
 		NPCPhrase(TYPICAL_PLOY);
 
-		SET_GAME_STATE(SHOFIXTI_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, hey_stop))
+	else if (PlayerSaid(R, hey_stop))
 	{
 		NPCPhrase(ONLY_STOP);
 
-		SET_GAME_STATE(SHOFIXTI_STACK1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, look_you_are))
+	else if (PlayerSaid(R, look_you_are))
 	{
 		NPCPhrase(TOO_BAD);
 
-		SET_GAME_STATE(SHOFIXTI_STACK1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, no_one_insults))
+	else if (PlayerSaid(R, no_one_insults))
 	{
 		NPCPhrase(YOU_LIMP);
 
-		SET_GAME_STATE(SHOFIXTI_STACK2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK2, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, mighty_words))
+	else if (PlayerSaid(R, mighty_words))
 	{
 		NPCPhrase(HANG_YOUR);
 
-		SET_GAME_STATE(SHOFIXTI_STACK2, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK2, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, dont_know))
+	else if (PlayerSaid(R, dont_know))
 	{
 		NPCPhrase(NEVER);
 
-		SET_GAME_STATE(SHOFIXTI_STACK3, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, look0))
+	else if (PlayerSaid(R, look0))
 	{
 		NPCPhrase(FOR_YOU);
 
-		SET_GAME_STATE(SHOFIXTI_STACK3, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, no_bloodshed))
+	else if (PlayerSaid(R, no_bloodshed))
 	{
 		NPCPhrase(YES_BLOODSHED);
 
-		SET_GAME_STATE(SHOFIXTI_STACK3, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, dont_want_to_fight))
+	else if (PlayerSaid(R, dont_want_to_fight))
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SHOFIXTI_STACK4);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK4);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -315,14 +313,13 @@ ExitConversation(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SHOFIXTI_STACK4, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK4, static_cast<uint32_t>(NumVisits));
 	}
 }
 
-static void
-GiveMaidens(RESPONSE_REF R)
+static void GiveMaidens(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, important_duty))
+	if (PlayerSaid(R, important_duty))
 	{
 		NPCPhrase(WHAT_DUTY);
 
@@ -340,24 +337,23 @@ GiveMaidens(RESPONSE_REF R)
 	}
 }
 
-static void
-ConsoleShofixti(RESPONSE_REF R)
+static void ConsoleShofixti(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, dont_do_it))
+	if (PlayerSaid(R, dont_do_it))
 	{
 		NPCPhrase(YES_I_DO_IT);
-		DISABLE_PHRASE(dont_do_it);
+		DisablePhrase(dont_do_it);
 	}
 	else
 	{
 		NPCPhrase(VERY_SAD_KILL_SELF);
 	}
 
-	if (GET_GAME_STATE(MAIDENS_ON_SHIP))
+	if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP))
 	{
 		Response(important_duty, GiveMaidens);
 	}
-	if (PHRASE_ENABLED(dont_do_it))
+	if (PhraseEnabled(dont_do_it))
 	{
 		Response(dont_do_it, ConsoleShofixti);
 	}
@@ -365,18 +361,17 @@ ConsoleShofixti(RESPONSE_REF R)
 	Response(go_ahead, ExitConversation);
 }
 
-static void
-ExplainDefeat(RESPONSE_REF R)
+static void ExplainDefeat(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, i_am_nice))
+	if (PlayerSaid(R, i_am_nice))
 	{
 		NPCPhrase(MUST_UNDERSTAND);
 	}
-	else if (PLAYER_SAID(R, i_am_guy))
+	else if (PlayerSaid(R, i_am_guy))
 	{
 		NPCPhrase(NICE_BUT_WHAT_IS_DONKEY);
 	}
-	else /* if (PLAYER_SAID (R, i_am_captain)) */
+	else /* if (PlayerSaid (R, i_am_captain)) */
 	{
 		NPCPhrase(SO_SORRY);
 	}
@@ -387,25 +382,23 @@ ExplainDefeat(RESPONSE_REF R)
 	Response(butt_blasted, ConsoleShofixti);
 }
 
-static void
-RealizeMistake(RESPONSE_REF R)
+static void RealizeMistake(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase(DGRUNTI);
-	SET_GAME_STATE(SHOFIXTI_STACK1, 0);
-	SET_GAME_STATE(SHOFIXTI_STACK3, 0);
-	SET_GAME_STATE(SHOFIXTI_STACK2, 3);
+	uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(0));
+	uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(0));
+	uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK2, static_cast<uint32_t>(3));
 
 	Response(i_am_captain, ExplainDefeat);
 	Response(i_am_nice, ExplainDefeat);
 	Response(i_am_guy, ExplainDefeat);
 }
 
-static void
-Hostile(RESPONSE_REF R)
+static void Hostile(RESPONSE_REF R)
 {
 	(void)R; // ignored
-	switch (GET_GAME_STATE(SHOFIXTI_STACK1))
+	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK1))
 	{
 		case 0:
 			Response(dont_attack, ExitConversation);
@@ -417,7 +410,7 @@ Hostile(RESPONSE_REF R)
 			Response(look_you_are, ExitConversation);
 			break;
 	}
-	switch (GET_GAME_STATE(SHOFIXTI_STACK2))
+	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK2))
 	{
 		case 0:
 			Response(no_one_insults, (getNomadMode() == uqm::NomadMode::Normal ? RealizeMistake : ExitConversation));
@@ -429,7 +422,7 @@ Hostile(RESPONSE_REF R)
 			Response(donkey_breath, RealizeMistake);
 			break;
 	}
-	switch (GET_GAME_STATE(SHOFIXTI_STACK3))
+	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK3))
 	{
 		case 0:
 			Response(dont_know, ExitConversation);
@@ -454,8 +447,7 @@ Hostile(RESPONSE_REF R)
 	Response(dont_want_to_fight, ExitConversation);
 }
 
-static void
-Friendly(RESPONSE_REF R)
+static void Friendly(RESPONSE_REF R)
 {
 	uint8_t i {};
 	struct
@@ -468,51 +460,51 @@ Friendly(RESPONSE_REF R)
 
 	uint8_t LastStack {0};
 	memset(Resp, 0, sizeof(Resp));
-	if (PLAYER_SAID(R, report0))
+	if (PlayerSaid(R, report0))
 	{
 		NPCPhrase(NOTHING_NEW);
 
-		DISABLE_PHRASE(report0);
+		DisablePhrase(report0);
 	}
-	else if (PLAYER_SAID(R, why_here0))
+	else if (PlayerSaid(R, why_here0))
 	{
 		NPCPhrase(I_GUARD);
 
 		SetHomeworldKnown(SHOFIXTI_HOME);
 
 		LastStack = 1;
-		SET_GAME_STATE(SHOFIXTI_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, what_happened))
+	else if (PlayerSaid(R, what_happened))
 	{
 		NPCPhrase(MET_VUX);
 
 		LastStack = 1;
-		SET_GAME_STATE(SHOFIXTI_STACK1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, glory_device))
+	else if (PlayerSaid(R, glory_device))
 	{
 		NPCPhrase(SWITCH_BROKE);
 
-		SET_GAME_STATE(SHOFIXTI_STACK1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK1, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, where_world))
+	else if (PlayerSaid(R, where_world))
 	{
 		NPCPhrase(BLEW_IT_UP);
 
 		SetHomeworldKnown(SHOFIXTI_HOME);
 
 		LastStack = 2;
-		SET_GAME_STATE(SHOFIXTI_STACK3, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, how_survive))
+	else if (PlayerSaid(R, how_survive))
 	{
 		NPCPhrase(NOT_HERE);
 
-		SET_GAME_STATE(SHOFIXTI_STACK3, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_STACK3, static_cast<uint32_t>(2));
 	}
 
-	if (PHRASE_ENABLED(report0))
+	if (PhraseEnabled(report0))
 	{
 		construct_response(
 			buf0,
@@ -526,7 +518,7 @@ Friendly(RESPONSE_REF R)
 		Resp[0].c_buf = buf0;
 	}
 
-	switch (GET_GAME_STATE(SHOFIXTI_STACK1))
+	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK1))
 	{
 		case 0:
 			construct_response(
@@ -548,7 +540,7 @@ Friendly(RESPONSE_REF R)
 			break;
 	}
 
-	switch (GET_GAME_STATE(SHOFIXTI_STACK3))
+	switch (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK3))
 	{
 		case 0:
 			Resp[2].pStr = where_world;
@@ -569,7 +561,7 @@ Friendly(RESPONSE_REF R)
 			DoResponsePhrase(Resp[i].pStr, Friendly, Resp[i].c_buf);
 		}
 	}
-	if (GET_GAME_STATE(MAIDENS_ON_SHIP))
+	if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP))
 	{
 		Response(important_duty, GiveMaidens);
 	}
@@ -585,8 +577,7 @@ Friendly(RESPONSE_REF R)
 	DoResponsePhrase(bye0, ExitConversation, shared_phrase_buf);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
@@ -598,7 +589,7 @@ Intro(void)
 
 	GetShofixtiName();
 
-	if (GET_GAME_STATE(SHOFIXTI_STACK2) > 2)
+	if (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_STACK2) > 2)
 	{
 		NPCPhrase(FRIENDLY_HELLO);
 
@@ -608,8 +599,8 @@ Intro(void)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SHOFIXTI_VISITS);
-		if (GET_GAME_STATE(SHOFIXTI_KIA))
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_VISITS);
+		if (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_KIA))
 		{
 			switch (NumVisits++)
 			{
@@ -659,44 +650,41 @@ Intro(void)
 					break;
 			}
 		}
-		SET_GAME_STATE(SHOFIXTI_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_VISITS, static_cast<uint32_t>(NumVisits));
 
 		Hostile((RESPONSE_REF)0);
 	}
 }
 
-static uint16_t
-uninit_shofixti(void)
+static uint16_t uninit_shofixti(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_shofixti_enc(void)
+static void post_shofixti_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_shofixti_comm(void)
+LOCDATA* init_shofixti_comm(void)
 {
 	shofixti_desc.init_encounter_func = Intro;
 	shofixti_desc.post_encounter_func = post_shofixti_enc;
 	shofixti_desc.uninit_encounter_func = uninit_shofixti;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
-	if (EXTENDED)
+	if (IsExtended())
 	{
-		altResFlags |= USE_ALT_FRAME;
+		altResFlags |= UseAltFrame;
 	}
 
 	shofixti_desc.AlienTextBaseline.x =
-		TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+		TextXOffs() + (SisTextWidth() >> 1);
 	shofixti_desc.AlienTextBaseline.y = 0;
-	shofixti_desc.AlienTextWidth = SIS_TEXT_WIDTH;
+	shofixti_desc.AlienTextWidth = SisTextWidth();
 
 	setSegue(Segue_peace);
 

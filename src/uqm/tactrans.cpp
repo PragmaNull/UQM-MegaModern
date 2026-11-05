@@ -77,8 +77,7 @@ bool OpponentAlive(STARSHIP* TestStarShipPtr)
 	return true;
 }
 
-static void
-PlayDitty(STARSHIP* ship)
+static void PlayDitty(STARSHIP* ship)
 {
 	PlayMusic(ship->RaceDescPtr->ship_data.victory_ditty, false, 3);
 	dittyIsPlaying = true;
@@ -93,8 +92,7 @@ void StopDitty(void)
 	dittyIsPlaying = false;
 }
 
-static bool
-DittyPlaying(void)
+static bool DittyPlaying(void)
 {
 	if (!dittyIsPlaying)
 	{
@@ -111,15 +109,13 @@ void ResetWinnerStarShip(void)
 }
 
 #ifdef NETPLAY
-static void
-readyToEnd2Callback(NetConnection* conn, void* arg)
+static void readyToEnd2Callback(NetConnection* conn, void* arg)
 {
 	NetConnection_setState(conn, NetState_endingBattle2);
 	(void)arg;
 }
 
-static void
-readyToEndCallback(NetConnection* conn, void* arg)
+static void readyToEndCallback(NetConnection* conn, void* arg)
 {
 	// This callback function gets called from inside the function that
 	// updates the frame counter, but this is not a problem as the
@@ -172,8 +168,7 @@ readyToEndCallback(NetConnection* conn, void* arg)
  *    reached the target frame count.
  * 5. The battle ends.
  */
-static bool
-readyForBattleEndPlayer(NetConnection* conn)
+static bool readyForBattleEndPlayer(NetConnection* conn)
 {
 	const BattleStateData* battleStateData {(BattleStateData*)NetConnection_getStateData(conn)};
 
@@ -257,8 +252,7 @@ bool battleEndReadyNetwork(NetworkInputContext* context)
 #endif
 
 // Returns true iff this side is ready to end the battle.
-static inline bool
-readyForBattleEnd(void)
+static inline bool readyForBattleEnd(void)
 {
 #ifndef NETPLAY
 	return !DittyPlaying();
@@ -269,7 +263,7 @@ readyForBattleEnd(void)
 		return false;
 	}
 
-	for (int playerI {0}; playerI < NUM_PLAYERS; playerI++)
+	for (int playerI {0}; playerI < NumPlayers; playerI++)
 	{
 		if (!PlayerInput[playerI]->handlers->battleEndReady(
 				PlayerInput[playerI]))
@@ -282,12 +276,13 @@ readyForBattleEnd(void)
 #endif /* defined (NETPLAY) */
 }
 
-static void
-preprocess_dead_ship(ELEMENT* DeadShipPtr)
+static void preprocess_dead_ship(ELEMENT* DeadShipPtr)
 {
 	SuppressSounds();
 	(void)DeadShipPtr; // unused argument
 }
+
+static constexpr auto MinDittyFrameCount {((c_gameSecond * 3) / BattleFrameRateTicks)};
 
 void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 {
@@ -325,15 +320,15 @@ void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 				// ship's own element.
 				SetElementStarShip(ElementPtr, 0);
 
-				if (!(ElementPtr->state_flags & CREW_OBJECT)
+				if (!(ElementPtr->state_flags & CrewObject)
 					|| ElementPtr->preprocess_func != crew_preprocess)
 				{
 					// Set the element up for deletion.
 					SetPrimType(&DisplayArray[ElementPtr->PrimIndex],
-								NO_PRIM);
+								NoPrim);
 					ElementPtr->life_span = 0;
 					ElementPtr->state_flags =
-						NONSOLID | DISAPPEARING | FINITE_LIFE;
+						Nonsolid | Disappearing | FiniteLife;
 					ElementPtr->preprocess_func = 0;
 					ElementPtr->postprocess_func = 0;
 					ElementPtr->death_func = 0;
@@ -342,34 +337,33 @@ void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 			}
 
 			if (StarShipPtr
-				&& (StarShipPtr->cur_status_flags & PLAY_VICTORY_DITTY))
+				&& (StarShipPtr->cur_status_flags & PlayVictoryDitty))
 			{
 				// StarShipPtr points to the remaining ship.
 				MusicStarted = true;
 				PlayDitty(StarShipPtr);
-				StarShipPtr->cur_status_flags &= ~PLAY_VICTORY_DITTY;
+				StarShipPtr->cur_status_flags &= ~PlayVictoryDitty;
 			}
 
 			UnlockElement(hElement);
 		}
 
-#define MIN_DITTY_FRAME_COUNT ((c_gameSecond * 3) / BattleFrameRateTicks)
 		// The ship will be "alive" for at least 2 more frames to make sure
 		// the elements it owns (set up for deletion above) expire first.
 		// Ditty does NOT play in the following circumstances:
 		//  * The winning ship dies before the loser finishes exploding
 		//  * At the moment the losing ship dies, the winner has started
 		//    the warp out sequence
-		DeadShipPtr->life_span = MusicStarted ? MIN_DITTY_FRAME_COUNT : 1;
+		DeadShipPtr->life_span = MusicStarted ? MinDittyFrameCount : 1;
 		if (DeadStarShipPtr == winnerStarShip)
 		{ // This ship died but won the battle. We need to keep it alive
 			// longer than the dead opponent ship so that the winning player
 			// picks last.
-			DeadShipPtr->life_span = MIN_DITTY_FRAME_COUNT + 1;
+			DeadShipPtr->life_span = MinDittyFrameCount + 1;
 		}
 		DeadShipPtr->death_func = new_ship;
 		DeadShipPtr->preprocess_func = preprocess_dead_ship;
-		DeadShipPtr->state_flags &= ~DISAPPEARING;
+		DeadShipPtr->state_flags &= ~Disappearing;
 		// XXX: this increment was originally done by another piece of code
 		//   just below this one. I am almost sure it is not needed, but it
 		//   keeps the original framecount.
@@ -378,14 +372,13 @@ void cleanup_dead_ship(ELEMENT* DeadShipPtr)
 	}
 }
 
-static void
-setMinShipLifeSpan(ELEMENT* ship, uint16_t life_span)
+static void setMinShipLifeSpan(ELEMENT* ship, uint16_t life_span)
 {
 	if (ship->death_func == new_ship)
 	{ // The ship has finished exploding or warping out, and now
 		// we can work with the remaining element
-		assert(ship->state_flags & FINITE_LIFE);
-		assert(!(ship->state_flags & DISAPPEARING));
+		assert(ship->state_flags & FiniteLife);
+		assert(!(ship->state_flags & Disappearing));
 		if (ship->life_span < life_span)
 		{
 			ship->life_span = life_span;
@@ -393,8 +386,7 @@ setMinShipLifeSpan(ELEMENT* ship, uint16_t life_span)
 	}
 }
 
-static void
-setMinStarShipLifeSpan(STARSHIP* starShip, uint16_t life_span)
+static void setMinStarShipLifeSpan(STARSHIP* starShip, uint16_t life_span)
 {
 	ELEMENT* ship {};
 
@@ -403,8 +395,7 @@ setMinStarShipLifeSpan(STARSHIP* starShip, uint16_t life_span)
 	UnlockElement(starShip->hShip);
 }
 
-static void
-checkOtherShipLifeSpan(ELEMENT* deadShip)
+static void checkOtherShipLifeSpan(ELEMENT* deadShip)
 {
 	STARSHIP* deadStarShip {};
 
@@ -452,7 +443,7 @@ void new_ship(ELEMENT* DeadShipPtr)
 
 	if (!readyForBattleEnd())
 	{
-		DeadShipPtr->state_flags &= ~DISAPPEARING;
+		DeadShipPtr->state_flags &= ~Disappearing;
 		++DeadShipPtr->life_span;
 
 		// Keep the winner alive longer, or in a simultaneous destruction
@@ -545,12 +536,11 @@ void new_ship(ELEMENT* DeadShipPtr)
 	}
 }
 
-static void
-explosion_preprocess(ELEMENT* ShipPtr)
+static void explosion_preprocess(ELEMENT* ShipPtr)
 {
 	uint8_t i {};
 
-	i = (NUM_EXPLOSION_FRAMES * 3) - ShipPtr->life_span;
+	i = (NumExplosionFrames * 3) - ShipPtr->life_span;
 	switch (i)
 	{
 		case 25:
@@ -574,8 +564,8 @@ explosion_preprocess(ELEMENT* ShipPtr)
 			i = 2;
 			break;
 		case 15:
-			SetPrimType(&DisplayArray[ShipPtr->PrimIndex], NO_PRIM);
-			ShipPtr->state_flags |= CHANGING;
+			SetPrimType(&DisplayArray[ShipPtr->PrimIndex], NoPrim);
+			ShipPtr->state_flags |= Changing;
 			FALLTHROUGH;
 		default:
 			i = 3;
@@ -594,30 +584,30 @@ explosion_preprocess(ELEMENT* ShipPtr)
 
 			PutElement(hElement);
 			LockElement(hElement, &ElementPtr);
-			ElementPtr->playerNr = NEUTRAL_PLAYER_NUM;
-			ElementPtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
+			ElementPtr->playerNr = NeutralPlayerNum;
+			ElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
 			ElementPtr->life_span = 9;
 			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], STAMP_PRIM);
 			ElementPtr->current.image.farray = explosion;
 			ElementPtr->current.image.frame = explosion[0];
 			uint32_t rand_val {uqm::random().next()};
 			angle = uqm::lowByte(uqm::highWord(rand_val));
-			dist = DISPLAY_TO_WORLD(RES_SCALE(uqm::lowByte(uqm::lowWord(rand_val)) % 8));
+			dist = DisplayToWorld(ResScale(uqm::lowByte(uqm::lowWord(rand_val)) % 8));
 			if (uqm::highByte(uqm::lowWord(rand_val)) < 256 * 1 / 3)
 			{
-				dist += DISPLAY_TO_WORLD(RES_SCALE(8));
+				dist += DisplayToWorld(ResScale(8));
 			}
 			ElementPtr->current.location.x =
-				ShipPtr->current.location.x + COSINE(angle, dist);
+				ShipPtr->current.location.x + Cosine(angle, dist);
 			ElementPtr->current.location.y =
-				ShipPtr->current.location.y + SINE(angle, dist);
+				ShipPtr->current.location.y + Sine(angle, dist);
 			ElementPtr->preprocess_func = animation_preprocess;
 			rand_val = uqm::random().next();
 			angle = uqm::lowByte(uqm::lowWord(rand_val));
-			dist = WORLD_TO_VELOCITY(
-				DISPLAY_TO_WORLD(RES_SCALE(uqm::highByte(uqm::lowWord(rand_val)) % 5)));
+			dist = WorldToVelocity(
+				DisplayToWorld(ResScale(uqm::highByte(uqm::lowWord(rand_val)) % 5)));
 			SetVelocityComponents(&ElementPtr->velocity,
-								  COSINE(angle, dist), SINE(angle, dist));
+								  Cosine(angle, dist), Sine(angle, dist));
 			UnlockElement(hElement);
 		}
 	} while (--i);
@@ -629,8 +619,7 @@ void StopAllBattleMusic(void)
 	StopMusic();
 }
 
-STARSHIP*
-FindAliveStarShip(ELEMENT* deadShip)
+STARSHIP* FindAliveStarShip(ELEMENT* deadShip)
 {
 	STARSHIP* aliveShip = nullptr;
 	HELEMENT hNextElement {};
@@ -641,16 +630,16 @@ FindAliveStarShip(ELEMENT* deadShip)
 		ELEMENT* ElementPtr {};
 
 		LockElement(hElement, &ElementPtr);
-		if ((ElementPtr->state_flags & PLAYER_SHIP)
+		if ((ElementPtr->state_flags & PlayerShip)
 			&& ElementPtr != deadShip
 			/* and not running away */
-			&& ElementPtr->mass_points <= MAX_SHIP_MASS + 1)
+			&& ElementPtr->mass_points <= MaxShipMass + 1)
 		{
 			GetElementStarShip(ElementPtr, &aliveShip);
 			assert(aliveShip != nullptr);
 			if (aliveShip->RaceDescPtr->ship_info.crew_level == 0
 				/* reincarnating Pkunk is not actually dead */
-				&& ElementPtr->mass_points != MAX_SHIP_MASS + 1)
+				&& ElementPtr->mass_points != MaxShipMass + 1)
 			{
 				aliveShip = nullptr;
 			}
@@ -665,8 +654,7 @@ FindAliveStarShip(ELEMENT* deadShip)
 	return aliveShip;
 }
 
-STARSHIP*
-GetWinnerStarShip(void)
+STARSHIP* GetWinnerStarShip(void)
 {
 	return winnerStarShip;
 }
@@ -678,7 +666,7 @@ void SetWinnerStarShip(STARSHIP* winner)
 		return; // nothing to do
 	}
 
-	winner->cur_status_flags |= PLAY_VICTORY_DITTY;
+	winner->cur_status_flags |= PlayVictoryDitty;
 
 	// The winner is set once per battle. If both ships die, this function is
 	// called twice, once for each ship. We need to preserve the winner
@@ -696,7 +684,7 @@ void RecordShipDeath(ELEMENT* deadShip)
 	GetElementStarShip(deadShip, &deadStarShip);
 	assert(deadStarShip != nullptr);
 
-	if (deadShip->mass_points <= MAX_SHIP_MASS)
+	if (deadShip->mass_points <= MaxShipMass)
 	{ // Not running away.
 		// When a ship tries to run away, it is (dis)counted in DoRunAway(),
 		// so when it dies while running away, we will not count it again
@@ -724,9 +712,9 @@ void StartShipExplosion(ELEMENT* ShipPtr, bool playSound)
 	DeltaEnergy(ShipPtr,
 				-(int16_t)StarShipPtr->RaceDescPtr->ship_info.energy_level);
 
-	ShipPtr->life_span = NUM_EXPLOSION_FRAMES * 3;
-	ShipPtr->state_flags &= ~DISAPPEARING;
-	ShipPtr->state_flags |= FINITE_LIFE | NONSOLID;
+	ShipPtr->life_span = NumExplosionFrames * 3;
+	ShipPtr->state_flags &= ~Disappearing;
+	ShipPtr->state_flags |= FiniteLife | Nonsolid;
 	ShipPtr->preprocess_func = explosion_preprocess;
 	ShipPtr->postprocess_func = PostProcessStatus;
 	ShipPtr->death_func = cleanup_dead_ship;
@@ -735,7 +723,7 @@ void StartShipExplosion(ELEMENT* ShipPtr, bool playSound)
 	if (playSound)
 	{
 		PlaySound(GetSound(GameSounds, SHIP_EXPLODES),
-				  CalcSoundPosition(ShipPtr), ShipPtr, GAME_SOUND_PRIORITY + 1);
+				  CalcSoundPosition(ShipPtr), ShipPtr, GameSoundPriority + 1);
 	}
 }
 
@@ -751,7 +739,7 @@ void ship_death(ELEMENT* ShipPtr)
 	// If the winning ship dies before the ditty starts, do not play it.
 	// e.g. a ship can die after the opponent begins exploding but
 	// before the explosion is over.
-	StarShipPtr->cur_status_flags &= ~PLAY_VICTORY_DITTY;
+	StarShipPtr->cur_status_flags &= ~PlayVictoryDitty;
 
 	StartShipExplosion(ShipPtr, true);
 
@@ -760,31 +748,30 @@ void ship_death(ELEMENT* ShipPtr)
 	RecordShipDeath(ShipPtr);
 }
 
-#define START_ION_COLOR BUILD_COLOR(MAKE_RGB15(0x1F, 0x15, 0x00), 0x7A)
+static constexpr auto StartIonColor {BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A)};
 
 // Called from the death_func of an element for an ion trail pixel, or a
 // ship shadow (when warping in/out).
-static void
-cycle_ion_trail(ELEMENT* ElementPtr)
+static void cycle_ion_trail(ELEMENT* ElementPtr)
 {
 	const static Color colorTab[] =
 		{
-			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x15, 0x00), 0x7a),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x11, 0x00), 0x7b),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0E, 0x00), 0x7c),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0A, 0x00), 0x7d),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x07, 0x00), 0x7e),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x03, 0x00), 0x7f),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x00, 0x00), 0x2a),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x1B, 0x00, 0x00), 0x2b),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x17, 0x00, 0x00), 0x2c),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x13, 0x00, 0x00), 0x2d),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x2e),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x0B, 0x00, 0x00), 0x2f),
+			BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
+			BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7b),
+			BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7c),
+			BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7d),
+			BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7e),
+			BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7f),
+			BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x2a),
+			BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2b),
+			BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2c),
+			BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2d),
+			BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2e),
+			BuildColor(MakeRgb15(0x0B, 0x00, 0x00), 0x2f),
 		};
 	const size_t colorTabCount = std::size(colorTab);
 
-	assert(!(ElementPtr->state_flags & PLAYER_SHIP));
+	assert(!(ElementPtr->state_flags & PlayerShip));
 
 	ElementPtr->colorCycleIndex++;
 	if (ElementPtr->colorCycleIndex != colorTabCount)
@@ -795,40 +782,41 @@ cycle_ion_trail(ELEMENT* ElementPtr)
 		SetPrimColor(&DisplayArray[ElementPtr->PrimIndex],
 					 colorTab[ElementPtr->colorCycleIndex]);
 
-		ElementPtr->state_flags &= ~DISAPPEARING;
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags &= ~Disappearing;
+		ElementPtr->state_flags |= Changing;
 	} // else, the element disappears.
 }
 
+static constexpr auto IonLife {1};
+
 void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 {
-	assert(ElementPtr->state_flags & PLAYER_SHIP);
+	assert(ElementPtr->state_flags & PlayerShip);
 
 	HELEMENT hIonElement {AllocElement()};
 	if (hIonElement)
 	{
-#define ION_LIFE 1
 		uint16_t angle {};
 		GFXRECT r;
 		ELEMENT* IonElementPtr {};
 		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
-		angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HALF_CIRCLE;
+		angle = FacingToAngle(StarShipPtr->ShipFacing) + HalfCircle;
 		GetFrameRect(StarShipPtr->RaceDescPtr->ship_data.ship[0], &r);
-		r.extent.height = DISPLAY_TO_WORLD(r.extent.height + r.corner.y);
+		r.extent.height = DisplayToWorld(r.extent.height + r.corner.y);
 
 		InsertElement(hIonElement, GetHeadElement());
 		LockElement(hIonElement, &IonElementPtr);
-		IonElementPtr->playerNr = NEUTRAL_PLAYER_NUM;
-		IonElementPtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
-		IonElementPtr->thrust_wait = ION_LIFE;
+		IonElementPtr->playerNr = NeutralPlayerNum;
+		IonElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
+		IonElementPtr->thrust_wait = IonLife;
 		IonElementPtr->life_span = IonElementPtr->thrust_wait;
 		// When the element "dies", in the death_func
 		// 'cycle_ion_trail', it is given new life a number of
 		// times, by setting life_span to thrust_wait.
 
-		if (!IS_HD)
+		if (!IsHd())
 		{
 			SetPrimType(&DisplayArray[IonElementPtr->PrimIndex], POINT_PRIM);
 			IonElementPtr->current.image.frame = DecFrameIndex(stars_in_space);
@@ -843,13 +831,13 @@ void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 			IonElementPtr->next.image.farray = IonElementPtr->current.image.farray;
 		}
 		SetPrimColor(&DisplayArray[IonElementPtr->PrimIndex],
-					 START_ION_COLOR);
+					 StartIonColor);
 		IonElementPtr->colorCycleIndex = 0;
 		IonElementPtr->current.location = ElementPtr->current.location;
 		IonElementPtr->current.location.x +=
-			(int16_t)COSINE(angle, r.extent.height) + x_offset;
+			(int16_t)Cosine(angle, r.extent.height) + x_offset;
 		IonElementPtr->current.location.y +=
-			(int16_t)SINE(angle, r.extent.height) + y_offset;
+			(int16_t)Sine(angle, r.extent.height) + y_offset;
 		IonElementPtr->death_func = cycle_ion_trail;
 
 		SetElementStarShip(IonElementPtr, StarShipPtr);
@@ -861,31 +849,33 @@ void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 			 */
 			IonElementPtr->next = IonElementPtr->current;
 			--IonElementPtr->life_span;
-			IonElementPtr->state_flags |= PRE_PROCESS;
+			IonElementPtr->state_flags |= PreProcessFlag;
 		}
 
 		UnlockElement(hIonElement);
 	}
 }
 
+static constexpr auto TransitionLife {1};
+
 // Preprocess function for spawning a ship into or out of battle.
 // Used when a new ship warps in, or a ship escapes by warping out, but not
 // when a Pkunk ship is reborn.
 void ship_transition(ELEMENT* ElementPtr)
 {
-	if (ElementPtr->state_flags & PLAYER_SHIP)
+	if (ElementPtr->state_flags & PlayerShip)
 	{
-		if (ElementPtr->state_flags & APPEARING)
+		if (ElementPtr->state_flags & Appearing)
 		{
-			ElementPtr->life_span = HYPERJUMP_LIFE;
+			ElementPtr->life_span = HyperjumpLife;
 			ElementPtr->preprocess_func = ship_transition;
 			ElementPtr->postprocess_func = nullptr;
-			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NO_PRIM);
-			ElementPtr->state_flags |= NONSOLID | FINITE_LIFE | CHANGING;
+			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NoPrim);
+			ElementPtr->state_flags |= Nonsolid | FiniteLife | Changing;
 		}
-		else if (ElementPtr->life_span < HYPERJUMP_LIFE)
+		else if (ElementPtr->life_span < HyperjumpLife)
 		{
-			if (ElementPtr->life_span == NORMAL_LIFE
+			if (ElementPtr->life_span == NormalLife
 				&& ElementPtr->crew_level)
 			{
 				ElementPtr->current.image.frame =
@@ -898,8 +888,8 @@ void ship_transition(ELEMENT* ElementPtr)
 				InitIntersectEndPoint(ElementPtr);
 				InitIntersectFrame(ElementPtr);
 				ZeroVelocityComponents(&ElementPtr->velocity);
-				ElementPtr->state_flags &= ~(NONSOLID | FINITE_LIFE);
-				ElementPtr->state_flags |= CHANGING;
+				ElementPtr->state_flags &= ~(Nonsolid | FiniteLife);
+				ElementPtr->state_flags |= Changing;
 
 				ElementPtr->preprocess_func = ship_preprocess;
 				ElementPtr->postprocess_func = ship_postprocess;
@@ -917,24 +907,25 @@ void ship_transition(ELEMENT* ElementPtr)
 		GetElementStarShip(ElementPtr, &StarShipPtr);
 		LockElement(StarShipPtr->hShip, &ShipImagePtr);
 
-		if (!(ShipImagePtr->state_flags & NONSOLID))
+		if (!(ShipImagePtr->state_flags & Nonsolid))
 		{
 			ElementPtr->preprocess_func = nullptr;
 		}
 		else if ((hShipImage = AllocElement()))
 		{
-#define TRANSITION_SPEED DISPLAY_TO_WORLD(RES_SCALE(40))
-#define TRANSITION_LIFE 1
+			const auto TransitionSpeed = [&] {
+				return DisplayToWorld(ResScale(40));
+			};
 			uint16_t angle {};
 
 			PutElement(hShipImage);
 
-			angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
+			angle = FacingToAngle(StarShipPtr->ShipFacing);
 
 			LockElement(hShipImage, &ShipImagePtr);
-			ShipImagePtr->playerNr = NEUTRAL_PLAYER_NUM;
-			ShipImagePtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
-			ShipImagePtr->thrust_wait = TRANSITION_LIFE;
+			ShipImagePtr->playerNr = NeutralPlayerNum;
+			ShipImagePtr->state_flags = Appearing | FiniteLife | Nonsolid;
+			ShipImagePtr->thrust_wait = TransitionLife;
 			ShipImagePtr->life_span = ShipImagePtr->thrust_wait;
 			// When the element "dies", in the death_func
 			// 'cycle_ion_trail', it is given new life a number of
@@ -942,16 +933,16 @@ void ship_transition(ELEMENT* ElementPtr)
 			SetPrimType(&DisplayArray[ShipImagePtr->PrimIndex],
 						STAMPFILL_PRIM);
 			SetPrimColor(&DisplayArray[ShipImagePtr->PrimIndex],
-						 START_ION_COLOR);
+						 StartIonColor);
 			ShipImagePtr->colorCycleIndex = 0;
 			ShipImagePtr->current.image = ElementPtr->current.image;
 			ShipImagePtr->current.location = ElementPtr->current.location;
-			if (!(ElementPtr->state_flags & PLAYER_SHIP))
+			if (!(ElementPtr->state_flags & PlayerShip))
 			{
 				ShipImagePtr->current.location.x +=
-					COSINE(angle, TRANSITION_SPEED);
+					Cosine(angle, TransitionSpeed());
 				ShipImagePtr->current.location.y +=
-					SINE(angle, TRANSITION_SPEED);
+					Sine(angle, TransitionSpeed());
 				ElementPtr->preprocess_func = nullptr;
 			}
 			else if (ElementPtr->crew_level)
@@ -959,11 +950,11 @@ void ship_transition(ELEMENT* ElementPtr)
 				// JMS_GFX: Circumventing overflows by using temp variables
 				// instead of subtracting straight from the GFXPOINT sized
 				// ShipImagePtr->current.location.
-				const int32_t temp_x = (int32_t)ShipImagePtr->current.location.x - COSINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1);
-				const int32_t temp_y = (int32_t)ShipImagePtr->current.location.y - SINE(angle, TRANSITION_SPEED) * (ElementPtr->life_span - 1);
+				const int32_t temp_x = (int32_t)ShipImagePtr->current.location.x - Cosine(angle, TransitionSpeed()) * (ElementPtr->life_span - 1);
+				const int32_t temp_y = (int32_t)ShipImagePtr->current.location.y - Sine(angle, TransitionSpeed()) * (ElementPtr->life_span - 1);
 
-				ShipImagePtr->current.location.x = WRAP_X(temp_x);
-				ShipImagePtr->current.location.y = WRAP_Y(temp_y);
+				ShipImagePtr->current.location.x = WrapX(temp_x);
+				ShipImagePtr->current.location.y = WrapY(temp_y);
 			}
 			ShipImagePtr->preprocess_func = ship_transition;
 			ShipImagePtr->death_func = cycle_ion_trail;
@@ -984,26 +975,26 @@ void flee_preprocess(ELEMENT* ElementPtr)
 	{
 		const static Color colorTab[] =
 			{
-				BUILD_COLOR(MAKE_RGB15_INIT(0x0A, 0x00, 0x00), 0x2E),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x0E, 0x00, 0x00), 0x2D),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x13, 0x00, 0x00), 0x2C),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x17, 0x00, 0x00), 0x2B),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1B, 0x00, 0x00), 0x2A),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x00, 0x00), 0x29),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x04, 0x04), 0x28),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0A, 0x0A), 0x27),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0F, 0x0F), 0x26),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x13, 0x13), 0x25),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x19, 0x19), 0x24),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x13, 0x13), 0x25),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0F, 0x0F), 0x26),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0A, 0x0A), 0x27),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x04, 0x04), 0x28),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x00, 0x00), 0x29),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1B, 0x00, 0x00), 0x2A),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x17, 0x00, 0x00), 0x2B),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x13, 0x00, 0x00), 0x2C),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x0E, 0x00, 0x00), 0x2D),
+				BuildColor(MakeRgb15(0x0A, 0x00, 0x00), 0x2E),
+				BuildColor(MakeRgb15(0x0E, 0x00, 0x00), 0x2D),
+				BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C),
+				BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
+				BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2A),
+				BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x29),
+				BuildColor(MakeRgb15(0x1F, 0x04, 0x04), 0x28),
+				BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x27),
+				BuildColor(MakeRgb15(0x1F, 0x0F, 0x0F), 0x26),
+				BuildColor(MakeRgb15(0x1F, 0x13, 0x13), 0x25),
+				BuildColor(MakeRgb15(0x1F, 0x19, 0x19), 0x24),
+				BuildColor(MakeRgb15(0x1F, 0x13, 0x13), 0x25),
+				BuildColor(MakeRgb15(0x1F, 0x0F, 0x0F), 0x26),
+				BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x27),
+				BuildColor(MakeRgb15(0x1F, 0x04, 0x04), 0x28),
+				BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x29),
+				BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2A),
+				BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
+				BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C),
+				BuildColor(MakeRgb15(0x0E, 0x00, 0x00), 0x2D),
 			};
 		const size_t colorTabCount = std::size(colorTab);
 
@@ -1035,17 +1026,17 @@ void flee_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->death_func = cleanup_dead_ship;
 			ElementPtr->crew_level = 0;
 
-			ElementPtr->life_span = HYPERJUMP_LIFE + 1;
+			ElementPtr->life_span = HyperjumpLife + 1;
 			ElementPtr->preprocess_func = ship_transition;
 			ElementPtr->postprocess_func = nullptr;
-			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NO_PRIM);
-			ElementPtr->state_flags |= NONSOLID | FINITE_LIFE | CHANGING;
+			SetPrimType(&DisplayArray[ElementPtr->PrimIndex], NoPrim);
+			ElementPtr->state_flags |= Nonsolid | FiniteLife | Changing;
 		}
 	}
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	StarShipPtr->cur_status_flags &=
-		~(LEFT | RIGHT | THRUST | WEAPON | SPECIAL);
+		~(LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag);
 	// Ignore control input when fleeing.
 	PreProcessStatus(ElementPtr);
 }

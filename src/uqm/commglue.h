@@ -31,23 +31,22 @@ extern "C" {
 extern LOCDATA CommData;
 extern char shared_phrase_buf[2048];
 
-#define PLAYER_SAID(r, i) ((r) == (i))
-#define PHRASE_ENABLED(p) (*CommData.ConversationPhrases->text((p) - 1) != '\0')
-#define DISABLE_PHRASE(p) (CommData.ConversationPhrases->set((p) - 1, uqstl::string_view {"", 1}))
+constexpr auto PlayerSaid(const auto& r, const auto& i) { return ((r) == (i)); }
+constexpr auto PhraseEnabled(const auto& p) { return (*CommData.ConversationPhrases->text((p)-1) != '\0'); }
+inline void DisablePhrase(int p) { CommData.ConversationPhrases->set(p - 1, uqstl::string_view {"", 1}); }
 
-#define Response(i, a) \
-	DoResponsePhrase(i, (RESPONSE_FUNC)a, 0)
 
 typedef uint16_t RESPONSE_REF;
 
 typedef void (*RESPONSE_FUNC)(RESPONSE_REF R);
 
 extern void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func, char* ContstructStr);
+inline void Response(RESPONSE_REF i, RESPONSE_FUNC a) { DoResponsePhrase(i, a, nullptr); }
 
 // The CallbackFunction is queued and executes synchronously
 // on the Starcon2Main thread
 extern void NPCPhrase_cb(int index, CallbackFunction cb);
-#define NPCPhrase(index) NPCPhrase_cb((index), nullptr)
+constexpr auto NPCPhrase(const auto& index) { return NPCPhrase_cb((index), nullptr); }
 extern void NPCPhrase_splice(int index);
 extern void NPCNumber(int number, const char* fmt);
 
@@ -134,9 +133,9 @@ extern LOCDATA* init_zoqfot_comm(void);
 
 extern LOCDATA* init_umgah_comm(void);
 
-#define MAX_INTERPOLATE 8192 // the max length we can robo-interpolate
-#define MAX_CLIPNAME 128	 // e.g. "pkunk-004c.ogg"
-#define NUM_ROBO_TRACKS 11	 // Need 11 for getPoint (8 digits, 2 points, 1 by)
+inline constexpr auto MaxInterpolate {8192}; // the max length we can robo-interpolate
+inline constexpr auto MaxClipname {128};	 // e.g. "pkunk-004c.ogg"
+inline constexpr auto NumRoboTracks {11};	 // Need 11 for getPoint (8 digits, 2 points, 1 by)
 
 enum
 {

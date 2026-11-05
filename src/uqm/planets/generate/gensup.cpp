@@ -58,8 +58,7 @@ const GenerateFunctions generateSupoxFunctions = {
 };
 
 
-static bool
-GenerateSupox_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateSupox_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
@@ -73,10 +72,10 @@ GenerateSupox_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pPlanet->data_index = WATER_WORLD;
 		pPlanet->NumPlanets = 2;
-		pPlanet->radius = EARTH_RADIUS * 152L / 100;
+		pPlanet->radius = EarthRadius * 152L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
-		pPlanet->location.x = COSINE(angle, pPlanet->radius);
-		pPlanet->location.y = SINE(angle, pPlanet->radius);
+		pPlanet->location.x = Cosine(angle, pPlanet->radius);
+		pPlanet->location.y = Sine(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
 	}
 	else
@@ -90,53 +89,51 @@ GenerateSupox_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateSupox_generateName(const SOLARSYS_STATE* solarSys,
-						   const PLANET_DESC* world)
+static bool GenerateSupox_generateName(const SOLARSYS_STATE* solarSys,
+									   const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& GET_GAME_STATE(SUPOX_STACK1) > 2)
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
+		&& uqm::gameState().flag(uqm::GameFlag::SUPOX_STACK1) > 2)
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
-							sizeof(GLOBAL_SIS(PlanetName)),
-							GAME_STRING(PLANET_NUMBER_BASE + 38));
+		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+							sizeof(uqm::gameState().sis().PlanetName),
+							GameString(PLANET_NUMBER_BASE + 38));
 
-		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
 
 	return true;
 }
 
-static bool
-GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
-							  PLANET_DESC* world)
+static bool GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
+										  PLANET_DESC* world)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (StartSphereTracking(SUPOX_SHIP))
 		{
-			NotifyOthers(SUPOX_SHIP, IPNL_ALL_CLEAR);
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			NotifyOthers(SUPOX_SHIP, IpnlAllClear);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			CloneShipFragment(SUPOX_SHIP, &GLOBAL(npc_built_ship_q),
-							  INFINITE_FLEET);
+			CloneShipFragment(SUPOX_SHIP, &uqm::gameState().game().npc_built_ship_q,
+							  InfiniteFleet);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			InitCommunication(SUPOX_CONVERSATION);
 
 			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD)))
 			{
 				uqm::currentActivity() &= ~START_INTERPLANETARY;
-				ReinitQueue(&GLOBAL(npc_built_ship_q));
-				GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+				ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+				GetGroupInfo(GroupsRandom, GroupLoadIp);
 			}
 			return true;
 		}
@@ -144,10 +141,10 @@ GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] =
-				CaptureDrawable(LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SUPOX_RUINS_STRTAB);
+				CaptureDrawable(LoadGraphic(RuinsMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SupoxRuinsStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
-			if (GET_GAME_STATE(ULTRON_CONDITION))
+			if (uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION))
 			{ // Already picked up the Ultron, skip the report
 				solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 1;
 			}
@@ -159,20 +156,19 @@ GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateSupox_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						   uint16_t whichNode)
+static bool GenerateSupox_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									   uint16_t whichNode)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		GenerateDefault_landerReportCycle(solarSys);
 
 		// The artifact can be picked up from any ruin
-		if (!GET_GAME_STATE(ULTRON_CONDITION))
+		if (!uqm::gameState().flag(uqm::GameFlag::ULTRON_CONDITION))
 		{ // Just picked up the Ultron from a ruin
 			SetLanderTakeoff();
 
-			SET_GAME_STATE(ULTRON_CONDITION, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ULTRON_CONDITION, static_cast<uint32_t>(1));
 		}
 
 		return false; // do not remove the node
@@ -182,11 +178,10 @@ GenerateSupox_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-static uint16_t
-GenerateSupox_generateEnergy(const SOLARSYS_STATE* solarSys,
-							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSupox_generateEnergy(const SOLARSYS_STATE* solarSys,
+											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}

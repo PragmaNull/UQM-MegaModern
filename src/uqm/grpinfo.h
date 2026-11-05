@@ -29,16 +29,16 @@ extern "C" {
 #endif
 
 // XXX: Needed to maintain savegame compatibility
-#define NUM_SAVED_BATTLE_GROUPS 64
+inline constexpr auto NumSavedBattleGroups {64};
 
 typedef HLINK HIPGROUP;
 
 typedef uint8_t IP_FLAGS;
 
-#define CAN_TURN (1 << 0)
-#define ROTATES (1 << 1)
-#define IS_PROBE (1 << 2)
-#define IS_XFORM (1 << 3)
+inline constexpr auto CanTurn {(1 << 0)};
+inline constexpr auto Rotates {(1 << 1)};
+inline constexpr auto IsProbe {(1 << 2)};
+inline constexpr auto IsXform {(1 << 3)};
 
 typedef struct
 {
@@ -78,20 +78,19 @@ enum
 	IGNORE_FLAGSHIP = 1 << 2,
 	REFORM_GROUP = 1 << 3
 };
-#define MAX_REVOLUTIONS 5
+inline constexpr auto MaxRevolutions {5};
 
-#define STATION_RADIUS 1600
-#define ORBIT_RADIUS 2400
+inline constexpr auto StationRadius {1600};
+inline constexpr auto OrbitRadius {2400};
 
-static inline IP_GROUP*
-LockIpGroup(const QUEUE* pq, HIPGROUP h)
+static inline IP_GROUP* LockIpGroup(const QUEUE* pq, HIPGROUP h)
 {
 	assert(GetLinkSize(pq) == sizeof(IP_GROUP));
 	return (IP_GROUP*)LockLink(pq, h);
 }
 
-#define UnlockIpGroup(pq, h) UnlockLink(pq, h)
-#define FreeIpGroup(pq, h) FreeLink(pq, h)
+constexpr auto UnlockIpGroup(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
+constexpr auto FreeIpGroup(const auto& pq, const auto& h) { return FreeLink(pq, h); }
 
 extern HIPGROUP BuildGroup(QUEUE* pDstQueue, uint8_t race_id);
 

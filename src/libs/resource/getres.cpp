@@ -24,8 +24,7 @@
 
 // At other times, it is nullptr.
 
-ResourceDesc*
-lookupResourceDesc(RESOURCE_INDEX idx, RESOURCE res)
+ResourceDesc* lookupResourceDesc(RESOURCE_INDEX idx, RESOURCE res)
 {
 	auto it = idx->map->find(res);
 	return it != idx->map->end() ? it->second : nullptr;
@@ -64,10 +63,9 @@ void* LoadResourceFromPath(const char* path, ResourceLoadFileFun* loadFun)
 	return resdata;
 }
 
-const char*
-res_GetResourceType(RESOURCE res)
+const char* res_GetResourceType(RESOURCE res)
 {
-	if (res == NULL_RESOURCE)
+	if (res == NullResource)
 	{
 		uqm::log::warn("Trying to get type of null resource");
 		return nullptr;
@@ -89,7 +87,7 @@ res_GetResourceType(RESOURCE res)
 // Get a resource by its resource ID.
 void* res_GetResource(RESOURCE res)
 {
-	if (res == NULL_RESOURCE)
+	if (res == NullResource)
 	{
 		uqm::log::warn("Trying to get null resource");
 		return nullptr;
@@ -118,10 +116,9 @@ void* res_GetResource(RESOURCE res)
 	// May still be nullptr, if the load failed.
 }
 
-uint32_t
-res_GetIntResource(RESOURCE res)
+uint32_t res_GetIntResource(RESOURCE res)
 {
-	if (res == NULL_RESOURCE)
+	if (res == NullResource)
 	{
 		uqm::log::warn("Trying to get null resource");
 		return 0;

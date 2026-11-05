@@ -23,8 +23,8 @@
 #include "uqm/units.h"
 
 
-#define NULL_VIDEO_REF (0)
-static VIDEO_REF _cur_video = NULL_VIDEO_REF;
+static constexpr VIDEO_REF NullVideoRef {nullptr};
+static VIDEO_REF _cur_video = NullVideoRef;
 static MUSIC_REF _cur_speech = 0;
 
 bool InitVideoPlayer(bool useCDROM)
@@ -61,16 +61,15 @@ void VidStop(void)
 		TFB_StopVideo(_cur_video);
 	}
 	_cur_speech = 0;
-	_cur_video = NULL_VIDEO_REF;
+	_cur_video = NullVideoRef;
 }
 
-VIDEO_REF
-VidPlaying(void)
+VIDEO_REF VidPlaying(void)
 // this should just probably return bool
 {
 	if (!_cur_video)
 	{
-		return NULL_VIDEO_REF;
+		return NullVideoRef;
 	}
 
 	if (TFB_VideoPlaying(_cur_video))
@@ -78,7 +77,7 @@ VidPlaying(void)
 		return _cur_video;
 	}
 
-	return NULL_VIDEO_REF;
+	return NullVideoRef;
 }
 
 bool VidProcessFrame(void)
@@ -91,8 +90,7 @@ bool VidProcessFrame(void)
 }
 
 // return current video position in milliseconds
-uint32_t
-VidGetPosition(void)
+uint32_t VidGetPosition(void)
 {
 	if (!VidPlaying())
 	{
@@ -111,9 +109,8 @@ bool VidSeek(uint32_t pos)
 	return (bool)TFB_SeekVideo(_cur_video, pos);
 }
 
-VIDEO_TYPE
-VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
-		  uint32_t LoopFrame)
+VIDEO_TYPE VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
+					 uint32_t LoopFrame)
 {
 	VIDEO_TYPE ret;
 
@@ -144,7 +141,7 @@ VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
 		TFB_StopVideo(_cur_video);
 	}
 	_cur_speech = 0;
-	_cur_video = NULL_VIDEO_REF;
+	_cur_video = NullVideoRef;
 
 	// play video in the center of the screen
 	if (TFB_PlayVideo(vid, (CanvasWidth - vid->w) / 2,
@@ -166,26 +163,24 @@ VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
 	return ret;
 }
 
-VIDEO_TYPE
-VidPlay(VIDEO_REF VidRef)
+VIDEO_TYPE VidPlay(VIDEO_REF VidRef)
 {
-	return VidPlayEx(VidRef, 0, 0, VID_NO_LOOP);
+	return VidPlayEx(VidRef, 0, 0, VidNoLoop);
 }
 
-VIDEO_REF
-_init_video_file(const char* pStr)
+VIDEO_REF _init_video_file(const char* pStr)
 {
 	TFB_VideoDecoder* dec {VideoDecoder_Load(uqm::contentDir(), pStr)};
 	if (!dec)
 	{
-		return NULL_VIDEO_REF;
+		return NullVideoRef;
 	}
 
 	TFB_VideoClip* vid {new TFB_VideoClip {}};
 	vid->decoder = dec;
 	vid->length = dec->length;
-	vid->w = vid->decoder->w - IF_HD(4);
-	vid->h = vid->decoder->h + IF_HD(7);
+	vid->w = vid->decoder->w - IfHd(4);
+	vid->h = vid->decoder->h + IfHd(7);
 
 	return (VIDEO_REF)vid;
 }

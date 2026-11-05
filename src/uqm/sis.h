@@ -24,37 +24,37 @@
 #include "options/OptionDefs.h"
 
 
-#define CLEAR_SIS_RADAR (1 << 2)
-#define DRAW_SIS_DISPLAY (1 << 3)
+inline constexpr auto ClearSisRadar {(1 << 2)};
+inline constexpr auto DrawSisDisplay {(1 << 3)};
 
-#define UNDEFINED_DELTA 0x7FFF
+inline constexpr auto UndefinedDelta {0x7FFF};
 
-#define NUM_DRIVE_SLOTS 11
-#define NUM_JET_SLOTS 8
-#define NUM_MODULE_SLOTS 16
+inline constexpr auto NumDriveSlots {11};
+inline constexpr auto NumJetSlots {8};
+inline constexpr auto NumModuleSlots {16};
 
-#define CREW_POD_CAPACITY 50
-#define STORAGE_BAY_CAPACITY 500 /* km cubed */
-#define FUEL_TANK_SCALE 100
-#define FUEL_TANK_CAPACITY (50 * FUEL_TANK_SCALE)
-#define HEFUEL_TANK_CAPACITY (100 * FUEL_TANK_SCALE)
-#define MODULE_COST_SCALE 50
+inline constexpr auto CrewPodCapacity {50};
+inline constexpr auto StorageBayCapacity {500}; /* km cubed */
+inline constexpr auto FuelTankScale {100};
+inline constexpr auto FuelTankCapacity {(50 * FuelTankScale)};
+inline constexpr auto HefuelTankCapacity {(100 * FuelTankScale)};
+inline constexpr auto ModuleCostScale {50};
 
-#define CREW_EXPENSE_THRESHOLD 1000
+inline constexpr auto CrewExpenseThreshold {1000};
 
-#define CREW_PER_ROW 5
-#define SBAY_MASS_PER_ROW 50
+inline constexpr auto CrewPerRow {5};
+inline constexpr auto SbayMassPerRow {50};
 
-#define MAX_FUEL_BARS 10
-#define FUEL_VOLUME_PER_ROW (HEFUEL_TANK_CAPACITY / MAX_FUEL_BARS)
-#define FUEL_RESERVE (10 * FUEL_TANK_SCALE)
-#define FUEL_COST_RU 20
+inline constexpr auto MaxFuelBars {10};
+inline constexpr auto FuelVolumePerRow {(HefuelTankCapacity / MaxFuelBars)};
+inline constexpr auto FuelReserve {(10 * FuelTankScale)};
+inline constexpr auto FuelCostRu {20};
 
-#define IP_SHIP_THRUST_INCREMENT 8
-#define IP_SHIP_TURN_WAIT 17
-#define IP_SHIP_TURN_DECREMENT 2
+inline constexpr auto IpShipThrustIncrement {8};
+inline constexpr auto IpShipTurnWait {17};
+inline constexpr auto IpShipTurnDecrement {2};
 
-#define BIO_CREDIT_VALUE 2
+inline constexpr auto BioCreditValueDefault {2};
 
 enum
 {
@@ -88,64 +88,66 @@ enum
 	NUM_MODULES /* must be last entry */
 };
 
-#define EMPTY_SLOT NUM_MODULES
-#define NUM_BOMB_MODULES 10
+inline constexpr auto EmptySlot {NUM_MODULES};
+inline constexpr auto NumBombModules {10};
 
-#define SAFE_PAD SAFE_NEG(3)
+inline auto SafePad() { return SafeNeg(3); }
 
-#define DRIVE_SIDE_X (RES_SCALE(31) - SAFE_PAD)
-#define DRIVE_SIDE_Y RES_SCALE(56)
-#define DRIVE_TOP_X (RES_SCALE(33) - SAFE_PAD)
-#define DRIVE_TOP_Y (RES_SCALE(86) - DOS_NUM_SCL(21))
+inline auto DriveSideX() { return (ResScale(31) - SafePad()); }
+inline auto DriveSideY() { return ResScale(56); }
+inline auto DriveTopX() { return (ResScale(33) - SafePad()); }
+inline auto DriveTopY() { return (ResScale(86) - DosNumScl(21)); }
 
-#define JET_SIDE_X (RES_SCALE(71) - SAFE_PAD)
-#define JET_SIDE_Y RES_SCALE(48)
-#define JET_TOP_X (RES_SCALE(70) - SAFE_PAD)
-#define JET_TOP_Y (RES_SCALE(94) - DOS_NUM_SCL(21))
+inline auto JetSideX() { return (ResScale(71) - SafePad()); }
+inline auto JetSideY() { return ResScale(48); }
+inline auto JetTopX() { return (ResScale(70) - SafePad()); }
+inline auto JetTopY() { return (ResScale(94) - DosNumScl(21)); }
 
-#define MODULE_SIDE_X (RES_SCALE(17) - SAFE_PAD)
-#define MODULE_SIDE_Y RES_SCALE(14)
-#define MODULE_TOP_X (RES_SCALE(17) - SAFE_PAD)
-#define MODULE_TOP_Y (RES_SCALE(117) - DOS_NUM_SCL(21))
+inline auto ModuleSideX() { return (ResScale(17) - SafePad()); }
+inline auto ModuleSideY() { return ResScale(14); }
+inline auto ModuleTopX() { return (ResScale(17) - SafePad()); }
+inline auto ModuleTopY() { return (ResScale(117) - DosNumScl(21)); }
 
-#define SHIP_PIECE_OFFSET RES_SCALE(12)
+inline auto ShipPieceOffset() { return ResScale(12); }
 
-#define MAX_BUILT_SHIPS 12
+inline constexpr auto MaxBuiltShips {12};
 /* Maximum number of ships escorting the SIS */
-#define MAX_STOWED_SHIPS 200 // Limited to a byte
-							 /* Maximum number of ships banked at the starbase */
-#define MAX_LANDERS 10
+inline constexpr auto MaxStowedShips {200}; // Limited to a byte
+											/* Maximum number of ships banked at the starbase */
+inline constexpr auto MaxLanders {10};
 
-#define SUPPORT_SHIP_PTS         \
-	{3 + 0, 30 + (2 * 16)},      \
-		{3 + 42, 30 + (2 * 16)}, \
-		{3 + 0, 30 + (3 * 16)},  \
-		{3 + 42, 30 + (3 * 16)}, \
-		{3 + 0, 30 + (1 * 16)},  \
-		{3 + 42, 30 + (1 * 16)}, \
-		{3 + 0, 30 + (4 * 16)},  \
-		{3 + 42, 30 + (4 * 16)}, \
-		{3 + 0, 30 + (0 * 16)},  \
-		{3 + 42, 30 + (0 * 16)}, \
-		{3 + 0, 30 + (5 * 16)},  \
-		{3 + 42, 30 + (5 * 16)},
+inline constexpr GFXPOINT SupportShipPts[MaxBuiltShips] {
+	{3 + 0,	30 + (2 * 16)},
+	{3 + 42, 30 + (2 * 16)},
+	{3 + 0,	30 + (3 * 16)},
+	{3 + 42, 30 + (3 * 16)},
+	{3 + 0,	30 + (1 * 16)},
+	{3 + 42, 30 + (1 * 16)},
+	{3 + 0,	30 + (4 * 16)},
+	{3 + 42, 30 + (4 * 16)},
+	{3 + 0,	30 + (0 * 16)},
+	{3 + 42, 30 + (0 * 16)},
+	{3 + 0,	30 + (5 * 16)},
+	{3 + 42, 30 + (5 * 16)},
+};
 
-#define LANDER_DOS_X 206
-#define LANDER_DOS_Y 59
+inline constexpr auto LanderDosX {206};
+inline constexpr auto LanderDosY {59};
 
-#define LANDER_DOS_PTS                          \
-	{LANDER_DOS_X, LANDER_DOS_Y},               \
-		{LANDER_DOS_X + 14, LANDER_DOS_Y - 6},  \
-		{LANDER_DOS_X + 14, LANDER_DOS_Y + 9},  \
-		{LANDER_DOS_X, LANDER_DOS_Y - 15},      \
-		{LANDER_DOS_X, LANDER_DOS_Y + 15},      \
-		{LANDER_DOS_X - 14, LANDER_DOS_Y - 9},  \
-		{LANDER_DOS_X - 14, LANDER_DOS_Y + 6},  \
-		{LANDER_DOS_X + 14, LANDER_DOS_Y - 21}, \
-		{LANDER_DOS_X + 14, LANDER_DOS_Y + 24}, \
-		{LANDER_DOS_X - 28, LANDER_DOS_Y - 3},
+inline constexpr GFXPOINT LanderDosPts[MaxLanders] {
+	{LanderDosX,		 LanderDosY	   },
+	{LanderDosX + 14, LanderDosY - 6 },
+	{LanderDosX + 14, LanderDosY + 9 },
+	{LanderDosX,		 LanderDosY - 15},
+	{LanderDosX,		 LanderDosY + 15},
+	{LanderDosX - 14, LanderDosY - 9 },
+	{LanderDosX - 14, LanderDosY + 6 },
+	{LanderDosX + 14, LanderDosY - 21},
+	{LanderDosX + 14, LanderDosY + 24},
+	{LanderDosX - 28, LanderDosY - 3 },
+};
 
-#define SIS_NAME_SIZE 32
+inline constexpr auto SisNameSize {32};
 
 typedef struct
 {
@@ -159,17 +161,17 @@ typedef struct
 	// Set to (uint16_t) ~0 to indicate game over.
 	uint16_t TotalElementMass, TotalBioMass;
 
-	uint8_t ModuleSlots[NUM_MODULE_SLOTS];
-	uint8_t DriveSlots[NUM_DRIVE_SLOTS];
-	uint8_t JetSlots[NUM_JET_SLOTS];
+	uint8_t ModuleSlots[NumModuleSlots];
+	uint8_t DriveSlots[NumDriveSlots];
+	uint8_t JetSlots[NumJetSlots];
 
 	uint8_t NumLanders;
 
 	uint16_t ElementAmounts[NUM_ELEMENT_CATEGORIES];
 
-	char ShipName[SIS_NAME_SIZE];
-	char CommanderName[SIS_NAME_SIZE];
-	char PlanetName[SIS_NAME_SIZE];
+	char ShipName[SisNameSize];
+	char CommanderName[SisNameSize];
+	char PlanetName[SisNameSize];
 	uqm::Difficulty Difficulty;
 	uint8_t Extended;
 	uqm::NomadMode Nomad;
@@ -178,8 +180,8 @@ typedef struct
 	uint8_t SaveVersion;
 } SIS_STATE;
 
-#define OVERRIDE_LANDER_FLAGS (1 << 7)
-#define AFTER_BOMB_INSTALLED (1 << 7)
+inline constexpr auto OverrideLanderFlags {(1 << 7)};
+inline constexpr auto AfterBombInstalled {(1 << 7)};
 
 extern void RepairSISBorder(void);
 extern void InitSISContexts(void);
@@ -193,23 +195,23 @@ extern void PostUpdateFlashRect(void);
 extern bool PauseFlash(void);
 extern void ContinueFlash(void);
 
-#define SFR_MENU_3DO ((GFXRECT*)~0L)
-#define SFR_MENU_ANY ((GFXRECT*)~1L)
-#define SFR_MENU_NON ((GFXRECT*)~2L)
+inline auto SfrMenu3do() { return ((GFXRECT*)~0L); }
+inline auto SfrMenuAny() { return ((GFXRECT*)~1L); }
+inline auto SfrMenuNon() { return ((GFXRECT*)~2L); }
 extern void DrawHyperCoords(GFXPOINT puniverse);
 extern void DrawSaveInfo(SIS_STATE SisState);
 extern void DrawSISTitle(const char* pStr);
 
 // Flags for DrawSISMessageEx (may be OR'ed):
-#define DSME_NONE 0
-#define DSME_SETFR (1 << 0)
+inline constexpr auto DsmeNone {0};
+inline constexpr auto DsmeSetfr {(1 << 0)};
 // Set the flash rectangle to the message area.
-#define DSME_CLEARFR (1 << 1)
+inline constexpr auto DsmeClearfr {(1 << 1)};
 // Disable the flash rectangle.
-#define DSME_BLOCKCUR (1 << 2)
+inline constexpr auto DsmeBlockcur {(1 << 2)};
 // Use a block cursor instead of an insertion point cursor,
 // when editing in the message field.
-#define DSME_MYCOLOR (1 << 3)
+inline constexpr auto DsmeMycolor {(1 << 3)};
 // Use the current foreground color, instead of the default.
 extern bool DrawSISMessageEx(const char* pStr, int16_t CurPos,
 							 int16_t ExPos, uint16_t flags);
@@ -262,7 +264,7 @@ extern void DrawFlagshipName(bool InStatusArea, bool NewGame);
 extern void DrawCaptainsName(bool NewGame);
 
 extern void DrawFuelInFTanks(bool isOutfit);
-extern FRAME hdFuelFrame; // Frame for HD fuel with smooth gradient
+extern FRAME hdFuelFrame; // Frame for HdResolutionFactor fuel with smooth gradient
 
 typedef enum
 {

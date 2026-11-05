@@ -6,7 +6,7 @@ namespace uqm
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//template <typename T, uqstl::enable_if_t<uqstl::is_base_of_v<Vec2TBase, T>, bool> = true> 
+//template <typename T, uqstl::enable_if_t<uqstl::is_base_of_v<Vec2TBase, T>, bool> = true>
 //const char* toString(const Vec2T<T>& value, uqstl::span<char> buffer)
 //{
 //	static const size_t ReqBufferSizePerElement = []() -> auto {

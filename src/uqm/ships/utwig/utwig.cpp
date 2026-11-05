@@ -25,51 +25,51 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 20
-#define MAX_ENERGY 20
-#define ENERGY_REGENERATION 0
-#define ENERGY_WAIT 255
-#define MAX_THRUST 36
-#define THRUST_INCREMENT 6
-#define THRUST_WAIT 6
-#define TURN_WAIT 1
-#define SHIP_MASS 8
+static constexpr auto MaxCrew {20};
+static constexpr auto MaxEnergy {20};
+static constexpr auto EnergyRegeneration {0};
+static constexpr auto EnergyWait {255};
+static constexpr auto MaxThrust {36};
+static constexpr auto ThrustIncrement {6};
+static constexpr auto ThrustWait {6};
+static constexpr auto TurnWait {1};
+static constexpr auto ShipMass {8};
 
 // Weapon
-#define WEAPON_ENERGY_COST 0
-#define WEAPON_WAIT 7
-#define UTWIG_OFFSET 9
-#define MISSILE_SPEED DISPLAY_TO_WORLD(RES_SCALE(30))
-#define MISSILE_LIFE 10
-#define MISSILE_HITS 1
-#define MISSILE_DAMAGE 1
-#define MISSILE_OFFSET RES_SCALE(1)
-#define LAUNCH_XOFFS0 DISPLAY_TO_WORLD(RES_SCALE(5))
-#define LAUNCH_YOFFS0 -DISPLAY_TO_WORLD(chooseIfHd(18, 63))
-#define LAUNCH_XOFFS1 DISPLAY_TO_WORLD(chooseIfHd(13, 48))
-#define LAUNCH_YOFFS1 -DISPLAY_TO_WORLD(chooseIfHd(9, 25))
-#define LAUNCH_XOFFS2 DISPLAY_TO_WORLD(chooseIfHd(17, 64))
-#define LAUNCH_YOFFS2 -DISPLAY_TO_WORLD(chooseIfHd(4, 11))
+static constexpr auto WeaponEnergyCost {0};
+static constexpr auto WeaponWait {7};
+
+static auto MissileSpeed() { return DisplayToWorld(ResScale(30)); }
+static constexpr auto MissileLife {10};
+static constexpr auto MissileHits {1};
+static constexpr auto MissileDamage {1};
+static auto MissileOffset() { return ResScale(1); }
+static auto LaunchXoffs0() { return DisplayToWorld(ResScale(5)); }
+static auto LaunchYoffs0() { return -DisplayToWorld(chooseIfHd(18, 63)); }
+static auto LaunchXoffs1() { return DisplayToWorld(chooseIfHd(13, 48)); }
+static auto LaunchYoffs1() { return -DisplayToWorld(chooseIfHd(9, 25)); }
+static auto LaunchXoffs2() { return DisplayToWorld(chooseIfHd(17, 64)); }
+static auto LaunchYoffs2() { return -DisplayToWorld(chooseIfHd(4, 11)); }
 
 // Shield
-#define SPECIAL_ENERGY_COST 1
-#define SPECIAL_WAIT 12
+static constexpr auto SpecialEnergyCost {1};
+static constexpr auto SpecialWait {12};
 
 static RACE_DESC utwig_desc =
 	{
 		{/* SHIP_INFO */
 		 "jugger",
-		 FIRES_FORE | POINT_DEFENSE | SHIELD_DEFENSE,
+		 FiresFore | PointDefense | ShieldDefense,
 		 22, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY >> 1, MAX_ENERGY,
-		 UTWIG_RACE_STRINGS,
-		 UTWIG_ICON_MASK_PMAP_ANIM,
-		 UTWIG_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy >> 1, MaxEnergy,
+		 UtwigRaceStrings,
+		 UtwigIconMaskPmapAnim,
+		 UtwigMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			666 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			666 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				8534,
@@ -77,38 +77,38 @@ static RACE_DESC utwig_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 UTWIG_BIG_MASK_PMAP_ANIM,
-			 UTWIG_MED_MASK_PMAP_ANIM,
-			 UTWIG_SML_MASK_PMAP_ANIM,
+			 UtwigBigMaskPmapAnim,
+			 UtwigMedMaskPmapAnim,
+			 UtwigSmlMaskPmapAnim,
 		 },
 		 {
-			 LANCE_BIG_MASK_PMAP_ANIM,
-			 LANCE_MED_MASK_PMAP_ANIM,
-			 LANCE_SML_MASK_PMAP_ANIM,
+			 LanceBigMaskPmapAnim,
+			 LanceMedMaskPmapAnim,
+			 LanceSmlMaskPmapAnim,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
-		 {UTWIG_CAPTAIN_MASK_PMAP_ANIM,
+		 {UtwigCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 UTWIG_VICTORY_SONG,
-		 UTWIG_SHIP_SOUNDS,
+		 UtwigVictorySong,
+		 UtwigShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -116,7 +116,7 @@ static RACE_DESC utwig_desc =
 		 nullptr},
 		{
 			0,
-			CLOSE_RANGE_WEAPON,
+			CloseRangeWeapon,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -127,8 +127,7 @@ static RACE_DESC utwig_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t
-initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
+static uint16_t initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -137,13 +136,13 @@ initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
-	MissileBlock.speed = MISSILE_SPEED;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.speed = MissileSpeed();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset();
 	MissileBlock.pixoffs = 0;
 
 	for (uint16_t i {0}; i < 3; ++i)
@@ -159,23 +158,23 @@ initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 		switch (i)
 		{
 			case 0:
-				cos0 = LAUNCH_XOFFS0;
-				sin0 = LAUNCH_YOFFS0;
+				cos0 = LaunchXoffs0();
+				sin0 = LaunchYoffs0();
 				break;
 			case 1:
-				cos0 = LAUNCH_XOFFS1;
-				sin0 = LAUNCH_YOFFS1;
+				cos0 = LaunchXoffs1();
+				sin0 = LaunchYoffs1();
 				break;
 			case 2:
-				cos0 = LAUNCH_XOFFS2;
-				sin0 = LAUNCH_YOFFS2;
+				cos0 = LaunchXoffs2();
+				sin0 = LaunchYoffs2();
 				break;
 		}
-		angle = FACING_TO_ANGLE(MissileBlock.face) + QUADRANT;
-		cos1cos0 = COSINE(angle, cos0);
-		sin1sin0 = SINE(angle, sin0);
-		sin1cos0 = SINE(angle, cos0);
-		cos1sin0 = COSINE(angle, sin0);
+		angle = FacingToAngle(MissileBlock.face) + Quadrant;
+		cos1cos0 = Cosine(angle, cos0);
+		sin1sin0 = Sine(angle, sin0);
+		sin1cos0 = Sine(angle, cos0);
+		cos1sin0 = Cosine(angle, sin0);
 
 		cos0 = cos1cos0 - sin1sin0;
 		sin0 = sin1cos0 + cos1sin0;
@@ -193,9 +192,8 @@ initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 	return (6);
 }
 
-static void
-utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				   uint16_t ConcernCounter)
+static void utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							   uint16_t ConcernCounter)
 {
 	int16_t ShieldStatus {};
 	STARSHIP* StarShipPtr {};
@@ -213,12 +211,12 @@ utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
 		{
 			ShieldStatus = 0;
-			if (!(lpEvalDesc->ObjectPtr->state_flags & FINITE_LIFE))
+			if (!(lpEvalDesc->ObjectPtr->state_flags & FiniteLife))
 			{
 				lpEvalDesc->MoveState = PURSUE;
 			}
 			else if (lpEvalDesc->ObjectPtr->mass_points
-					 || (lpEvalDesc->ObjectPtr->state_flags & CREW_OBJECT))
+					 || (lpEvalDesc->ObjectPtr->state_flags & CrewObject))
 			{
 				if ((lpEvalDesc->which_turn >>= 1) == 0)
 				{
@@ -240,20 +238,20 @@ utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 	if (StarShipPtr->special_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 		if (ShieldStatus)
 		{
 			if ((ShieldStatus > 0 || lpEvalDesc->ObjectPtr)
 				&& lpEvalDesc->which_turn <= 2
 				&& (ShieldStatus > 0
 					|| (lpEvalDesc->ObjectPtr->state_flags
-						& PLAYER_SHIP) /* means IMMEDIATE WEAPON */
+						& PlayerShip) /* means IMMEDIATE WeaponFlag */
 					|| PlotIntercept(lpEvalDesc->ObjectPtr,
 									 ShipPtr, 2, 0))
 				&& (uqm::random().next() & 3))
 			{
-				StarShipPtr->ship_input_state |= SPECIAL;
-				StarShipPtr->ship_input_state &= ~WEAPON;
+				StarShipPtr->ship_input_state |= SpecialFlag;
+				StarShipPtr->ship_input_state &= ~WeaponFlag;
 			}
 
 			lpEvalDesc->ObjectPtr = 0;
@@ -267,7 +265,7 @@ utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-			  & IMMEDIATE_WEAPON))
+			  & ImmediateWeapon))
 		{
 			lpEvalDesc->MoveState = PURSUE;
 		}
@@ -275,12 +273,11 @@ utwig_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 }
 
-static void
-utwig_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void utwig_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	if (ElementPtr0->life_span > NORMAL_LIFE
-		&& (ElementPtr1->state_flags & FINITE_LIFE)
+	if (ElementPtr0->life_span > NormalLife
+		&& (ElementPtr1->state_flags & FiniteLife)
 		&& ElementPtr1->mass_points)
 	{
 		ElementPtr0->life_span += ElementPtr1->mass_points;
@@ -289,37 +286,36 @@ utwig_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 }
 
-static void
-utwig_preprocess(ELEMENT* ElementPtr)
+static void utwig_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
-	if (ElementPtr->state_flags & APPEARING)
+	if (ElementPtr->state_flags & Appearing)
 	{
 		ElementPtr->collision_func = utwig_collision;
 	}
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (ElementPtr->life_span > (NORMAL_LIFE + 1))
+	if (ElementPtr->life_span > (NormalLife + 1))
 	{
 		DeltaEnergy(ElementPtr,
-					ElementPtr->life_span - (NORMAL_LIFE + 1));
+					ElementPtr->life_span - (NormalLife + 1));
 
 		ProcessSound(GetSound(
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 					 ElementPtr);
 	}
 
-	if (!(StarShipPtr->cur_status_flags & SPECIAL))
+	if (!(StarShipPtr->cur_status_flags & SpecialFlag))
 	{
 		StarShipPtr->special_counter = 0;
 	}
-	else if (StarShipPtr->special_counter % (SPECIAL_WAIT >> 1) == 0)
+	else if (StarShipPtr->special_counter % (SpecialWait >> 1) == 0)
 	{
-		if (!DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+		if (!DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 		{
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags &=
-				~(POINT_DEFENSE | SHIELD_DEFENSE);
+				~(PointDefense | ShieldDefense);
 		}
 		else if (StarShipPtr->special_counter == 0)
 		{
@@ -336,9 +332,9 @@ utwig_preprocess(ELEMENT* ElementPtr)
 	{
 		// The shield is off.
 		SetPrimColor(lpPrim,
-					 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1C, 0x00), 0x78));
+					 BuildColor(MakeRgb15(0x1F, 0x1C, 0x00), 0x78));
 		ElementPtr->colorCycleIndex = 0;
-		ElementPtr->life_span = NORMAL_LIFE;
+		ElementPtr->life_span = NormalLife;
 		SetPrimType(lpPrim, STAMP_PRIM);
 	}
 	else
@@ -352,18 +348,18 @@ utwig_preprocess(ELEMENT* ElementPtr)
 		 */
 		const static Color colorTable[] =
 			{
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x15, 0x00), 0x7a),
-				//BUILD_COLOR (MAKE_RGB15_INIT (0x1F, 0x11, 0x00), 0x7b),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0E, 0x00), 0x7c),
-				//BUILD_COLOR (MAKE_RGB15_INIT (0x1F, 0x0A, 0x00), 0x7d),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x07, 0x00), 0x7e),
-				//BUILD_COLOR (MAKE_RGB15_INIT (0x1F, 0x03, 0x00), 0x7f),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x00, 0x00), 0x2a),
-				//BUILD_COLOR (MAKE_RGB15_INIT (0x1B, 0x00, 0x00), 0x2b),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x17, 0x00, 0x00), 0x2c),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x13, 0x00, 0x00), 0x2d),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x2e),
-				//BUILD_COLOR (MAKE_RGB15_INIT (0x0B, 0x00, 0x00), 0x2f),
+				BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
+				//BuildColor (MakeRgb15 (0x1F, 0x11, 0x00), 0x7b),
+				BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7c),
+				//BuildColor (MakeRgb15 (0x1F, 0x0A, 0x00), 0x7d),
+				BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7e),
+				//BuildColor (MakeRgb15 (0x1F, 0x03, 0x00), 0x7f),
+				BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x2a),
+				//BuildColor (MakeRgb15 (0x1B, 0x00, 0x00), 0x2b),
+				BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2c),
+				BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2d),
+				BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2e),
+				//BuildColor (MakeRgb15 (0x0B, 0x00, 0x00), 0x2f),
 			};
 		const size_t colorTableCount = std::size(colorTable);
 
@@ -383,25 +379,24 @@ utwig_preprocess(ELEMENT* ElementPtr)
 
 		SetPrimColor(lpPrim, colorTable[ElementPtr->colorCycleIndex - 1]);
 
-		ElementPtr->life_span = NORMAL_LIFE + 1;
+		ElementPtr->life_span = NormalLife + 1;
 		SetPrimType(lpPrim, STAMPFILL_PRIM);
 	}
 }
 
-RACE_DESC*
-init_utwig(void)
+RACE_DESC* init_utwig(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
-		utwig_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		utwig_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		utwig_desc.cyborg_control.WeaponRange = CLOSE_RANGE_WEAPON_HD;
+		utwig_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		utwig_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
+		utwig_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else
 	{
-		utwig_desc.characteristics.max_thrust = MAX_THRUST;
-		utwig_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		utwig_desc.cyborg_control.WeaponRange = CLOSE_RANGE_WEAPON;
+		utwig_desc.characteristics.max_thrust = MaxThrust;
+		utwig_desc.characteristics.thrust_increment = ThrustIncrement;
+		utwig_desc.cyborg_control.WeaponRange = CloseRangeWeapon;
 	}
 
 	utwig_desc.preprocess_func = utwig_preprocess;

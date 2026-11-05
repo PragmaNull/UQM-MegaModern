@@ -27,8 +27,7 @@
 #include "resintrn.h"
 #include "core/log/log.h"
 
-uqstl::optional<uqm::io::File>
-res_OpenResFile(const uqm::io::Directory& dir, const char* filename, uqm::io::OpenMode mode)
+uqstl::optional<uqm::io::File> res_OpenResFile(const uqm::io::Directory& dir, const char* filename, uqm::io::OpenMode mode)
 {
 	uqm::io::Result<uqm::io::File> file {dir.open(filename, mode)};
 	if (!file)
@@ -71,8 +70,7 @@ bool DeleteResFile(const uqm::io::Directory& dir, const char* filename)
 	return !dir.remove(filename);
 }
 
-size_t
-ReadResFile(void* lpBuf, size_t size, size_t count, uqm::io::File& fp)
+size_t ReadResFile(void* lpBuf, size_t size, size_t count, uqm::io::File& fp)
 {
 	if (size == 0 || count == 0)
 	{
@@ -81,8 +79,7 @@ ReadResFile(void* lpBuf, size_t size, size_t count, uqm::io::File& fp)
 	return fp.read({static_cast<uqstl::byte*>(lpBuf), size * count}) / size;
 }
 
-size_t
-WriteResFile(const void* lpBuf, size_t size, size_t count, uqm::io::File& fp)
+size_t WriteResFile(const void* lpBuf, size_t size, size_t count, uqm::io::File& fp)
 {
 	if (size == 0 || count == 0)
 	{
@@ -130,8 +127,7 @@ long TellResFile(uqm::io::File& fp)
 	return static_cast<long>(fp.tell());
 }
 
-size_t
-LengthResFile(uqm::io::File& fp)
+size_t LengthResFile(uqm::io::File& fp)
 {
 	return static_cast<size_t>(fp.size());
 }

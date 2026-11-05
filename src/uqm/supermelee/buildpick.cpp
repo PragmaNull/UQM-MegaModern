@@ -29,8 +29,8 @@
 
 static FRAME BuildPickFrame;
 
-#define TTIP_FRAME_OFFSET 43
-#define BUILDPICK_FRAME_OFFSET 27
+static constexpr auto TtipFrameOffset {43};
+static constexpr auto BuildpickFrameOffset {27};
 
 void BuildBuildPickFrame(void)
 {
@@ -42,17 +42,17 @@ void BuildBuildPickFrame(void)
 	s.origin.x = 0;
 	s.origin.y = 0;
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   BUILDPICK_FRAME_OFFSET + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
+							   BuildpickFrameOffset + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
 	// 5x5 grid of ships to pick from
 	GetFrameRect(s.frame, &r);
 
 	BuildPickFrame = CaptureDrawable(CreateDrawable(
-		WANT_PIXMAP, r.extent.width, r.extent.height, 1));
+		WantPixmap, r.extent.width, r.extent.height, 1));
 	SetContextFGFrame(BuildPickFrame);
 	SetFrameHot(s.frame, MAKE_HOT_SPOT(0, 0));
 	DrawStamp(&s);
 
-	for (uint16_t i {0}; i < NUM_PICK_COLS * NUM_PICK_ROWS; ++i)
+	for (uint16_t i {0}; i < NumPickCols * NumPickRows; ++i)
 	{
 		DrawPickIcon((MeleeShip)i, true);
 	}
@@ -72,13 +72,13 @@ Color GetShipFlashColor(void)
 {
 	if (is3DO(uqm::UQMOptions::read().whichMenu))
 	{
-		return BLACK_COLOR;
+		return BlackColor;
 	}
 	else
 	{
 		static uint8_t cycle_index = 0;
 
-		const static Color cycle_tab[] = SHIP_SELECT_COLOR_CYCLE_TABLE;
+		const auto& cycle_tab {ShipSelectColorCycleTable};
 		const size_t cycleCount = std::size(cycle_tab);
 
 		cycle_index = (cycle_index + 1) % cycleCount;
@@ -87,7 +87,7 @@ Color GetShipFlashColor(void)
 	}
 }
 
-// Draw part of the frame underneath the ship (removes artifacts in HD)
+// Draw part of the frame underneath the ship (removes artifacts in HdResolutionFactor)
 void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 {
 	GFXRECT r;
@@ -97,12 +97,12 @@ void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 
 	r.corner.x = origin->x;
 	r.corner.y = origin->y;
-	r.extent.width = r.extent.height = RES_SCALE(16);
+	r.extent.width = r.extent.height = ResScale(16);
 
 	GFXCONTEXT OldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&OldRect);
 	SetContextClipRect(&r);
-	if (IS_PAD)
+	if (IsPad())
 	{
 		oldOrigin = SetContextOrigin(MAKE_POINT(r.corner.x, r.corner.y));
 	}
@@ -115,7 +115,7 @@ void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 	s.origin.x = pRect->corner.x;
 	s.origin.y = pRect->corner.y;
 	s.frame = SetAbsFrameIndex(MeleeFrame,
-							   BUILDPICK_FRAME_OFFSET + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
+							   BuildpickFrameOffset + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value));
 
 	DrawStamp(&s);
 
@@ -132,13 +132,13 @@ void DrawPickIcon(MeleeShip ship, bool DrawErase)
 
 	GetFrameRect(BuildPickFrame, &r);
 
-	s.origin.x = r.corner.x + RES_SCALE(20) + (ship % NUM_PICK_COLS) * RES_SCALE(18);
-	s.origin.y = r.corner.y + RES_SCALE(5) + (ship / NUM_PICK_COLS) * RES_SCALE(18);
+	s.origin.x = r.corner.x + ResScale(20) + (ship % NumPickCols) * ResScale(18);
+	s.origin.y = r.corner.y + ResScale(5) + (ship / NumPickCols) * ResScale(18);
 
 	s.frame = GetShipIconsFromIndex(ship);
 
-	// Draw a rectangle below ship to remove artifacts in HD
-	if (IS_HD)
+	// Draw a rectangle below ship to remove artifacts in HdResolutionFactor
+	if (IsHd())
 	{
 		RepairBuildPickFrame(&r, &s.origin);
 	}
@@ -157,24 +157,23 @@ void DrawPickIcon(MeleeShip ship, bool DrawErase)
 	}
 }
 
-static void
-DrawTooltipBox(void)
+static void DrawTooltipBox(void)
 {
 	STAMP s;
 
 	s.origin.x = s.origin.y = 0;
-	s.frame = SetAbsFrameIndex(MeleeFrame, TTIP_FRAME_OFFSET);
+	s.frame = SetAbsFrameIndex(MeleeFrame, TtipFrameOffset);
 
 	DrawStamp(&s);
 }
 
 void GetToolTipFrameRect(GFXRECT* r)
 {
-	GetFrameRect(SetAbsFrameIndex(MeleeFrame, TTIP_FRAME_OFFSET), r);
+	GetFrameRect(SetAbsFrameIndex(MeleeFrame, TtipFrameOffset), r);
 }
 
-#define RACE_NAME_OFFSET 0
-#define RACE_SHIP_OFFSET 3
+static constexpr auto RaceNameOffset {0};
+static constexpr auto RaceShipOffset {3};
 
 void DrawTooltip(SHIP_INFO* SIPtr)
 {
@@ -186,32 +185,32 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 	GetToolTipFrameRect(&r);
 
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{} {}",
-					 SIPtr->race_strings->text(RACE_NAME_OFFSET),
-					 SIPtr->race_strings->text(RACE_SHIP_OFFSET));
+					 SIPtr->race_strings->text(RaceNameOffset),
+					 SIPtr->race_strings->text(RaceShipOffset));
 
 	Text.pStr = buf;
 	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
 	Text.align = ALIGN_CENTER;
-	Text.baseline.y = r.corner.y + RES_SCALE(8) + RES_SCALE(1);
-	Text.baseline.x = r.corner.x + (r.extent.width >> 1) + RES_SCALE(1);
+	Text.baseline.y = r.corner.y + ResScale(8) + ResScale(1);
+	Text.baseline.x = r.corner.x + (r.extent.width >> 1) + ResScale(1);
 
 	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	DrawTooltipBox();
 
 	FONT oldFont {SetContextFont(StarConFont)};
-	oldColor = SetContextForeGroundColor(TOOLTIP_COLOR_NAME_BACK);
+	oldColor = SetContextForeGroundColor(TooltipColorNameBack);
 	font_DrawText(&Text);
 
-	SetContextForeGroundColor(TOOLTIP_COLOR_NAME_FRONT);
-	Text.baseline.x -= RES_SCALE(1);
-	Text.baseline.y -= RES_SCALE(1);
+	SetContextForeGroundColor(TooltipColorNameFront);
+	Text.baseline.x -= ResScale(1);
+	Text.baseline.y -= ResScale(1);
 	font_DrawText(&Text);
 
-	SetContextForeGroundColor(TOOLTIP_COLOR_DESC_FRONT);
+	SetContextForeGroundColor(TooltipColorDescFront);
 
 	uqm::utf8StringCopy(buf, sizeof buf,
 						SIPtr->race_strings->text(SIPtr->race_strings->size() - 1));
-	Text.baseline.y += RES_SCALE(2);
+	Text.baseline.y += ResScale(2);
 
 	{
 		uqstl::vector<uqstl::string> tokens;
@@ -220,7 +219,7 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 		{
 			Text.pStr = (const char*)tok.c_str();
 			Text.CharCount = (uint16_t)uqm::utf8StringCount(Text.pStr);
-			Text.baseline.y += RES_SCALE(9);
+			Text.baseline.y += ResScale(9);
 			font_DrawText(&Text);
 		}
 	}
@@ -239,7 +238,7 @@ void DrawPickFrame(MELEE_STATE* pMS)
 	STAMP s;
 
 	GetShipBox(&r0, 0, 0, 0),
-		GetShipBox(&r1, 1, NUM_MELEE_ROWS - 1, NUM_MELEE_COLUMNS - 1),
+		GetShipBox(&r1, 1, NumMeleeRows - 1, NumMeleeColumns() - 1),
 		BoxUnion(&r0, &r1, &ship_r);
 
 	s.frame = SetAbsFrameIndex(BuildPickFrame, 0);
@@ -274,8 +273,7 @@ void GetBuildPickFrameRect(GFXRECT* r)
 	GetFrameRect(BuildPickFrame, r);
 }
 
-static bool
-DoPickShip(MELEE_STATE* pMS)
+static bool DoPickShip(MELEE_STATE* pMS)
 {
 	const TimeCount TimeIn {GetTimeCounter()};
 
@@ -288,7 +286,7 @@ DoPickShip(MELEE_STATE* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	if (PulsedInputState.menu[KEY_MENU_SELECT] || PulsedInputState.menu[KEY_MENU_CANCEL])
 	{
@@ -317,41 +315,41 @@ DoPickShip(MELEE_STATE* pMS)
 
 		if (PulsedInputState.menu[KEY_MENU_LEFT])
 		{
-			if (newSelectedShip % NUM_PICK_COLS == 0)
+			if (newSelectedShip % NumPickCols == 0)
 			{
-				newSelectedShip += NUM_PICK_COLS;
+				newSelectedShip += NumPickCols;
 			}
 			--newSelectedShip;
 		}
 		else if (PulsedInputState.menu[KEY_MENU_RIGHT])
 		{
 			++newSelectedShip;
-			if (newSelectedShip % NUM_PICK_COLS == 0)
+			if (newSelectedShip % NumPickCols == 0)
 			{
-				newSelectedShip -= NUM_PICK_COLS;
+				newSelectedShip -= NumPickCols;
 			}
 		}
 
 		if (PulsedInputState.menu[KEY_MENU_UP])
 		{
-			if (newSelectedShip >= NUM_PICK_COLS)
+			if (newSelectedShip >= NumPickCols)
 			{
-				newSelectedShip -= NUM_PICK_COLS;
+				newSelectedShip -= NumPickCols;
 			}
 			else
 			{
-				newSelectedShip += NUM_PICK_COLS * (NUM_PICK_ROWS - 1);
+				newSelectedShip += NumPickCols * (NumPickRows - 1);
 			}
 		}
 		else if (PulsedInputState.menu[KEY_MENU_DOWN])
 		{
-			if (newSelectedShip < NUM_PICK_COLS * (NUM_PICK_ROWS - 1))
+			if (newSelectedShip < NumPickCols * (NumPickRows - 1))
 			{
-				newSelectedShip += NUM_PICK_COLS;
+				newSelectedShip += NumPickCols;
 			}
 			else
 			{
-				newSelectedShip -= NUM_PICK_COLS * (NUM_PICK_ROWS - 1);
+				newSelectedShip -= NumPickCols * (NumPickRows - 1);
 			}
 		}
 

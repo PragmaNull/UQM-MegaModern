@@ -74,8 +74,7 @@ void crc_processPOINT(crc_State* state, const GFXPOINT* val)
 }
 
 #if 0
-void
-crc_processSTAMP(crc_State *state, const STAMP *val) {
+void crc_processSTAMP(crc_State *state, const STAMP *val) {
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processSTAMP().");
 #endif
@@ -86,8 +85,7 @@ crc_processSTAMP(crc_State *state, const STAMP *val) {
 #endif
 }
 
-void
-crc_processINTERSECT_CONTROL(crc_State *state, const INTERSECT_CONTROL *val) {
+void crc_processINTERSECT_CONTROL(crc_State *state, const INTERSECT_CONTROL *val) {
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processINTERSECT_CONTROL().");
 #endif
@@ -109,7 +107,7 @@ void crc_processELEMENT(crc_State* state, const ELEMENT* val)
 #ifdef DUMP_CRC_OPS
 	crc_log("START crc_processELEMENT().");
 #endif
-	if (val->state_flags & BACKGROUND_OBJECT)
+	if (val->state_flags & BackgroundObject)
 	{
 		// The element never influences the state of other elements,
 		// and is to be excluded from checksums.
@@ -200,7 +198,7 @@ void crc_processState(crc_State* state)
 
 void initChecksumBuffers(void)
 {
-	for (size_t player {0}; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NumPlayers; player++)
 	{
 		NetConnection* conn {netConnections[player]};
 		if (conn == nullptr)
@@ -210,16 +208,16 @@ void initChecksumBuffers(void)
 
 		ChecksumBuffer* cb {NetConnection_getChecksumBuffer(conn)};
 		ChecksumBuffer_init(cb, getBattleInputDelay(),
-							NETPLAY_CHECKSUM_INTERVAL);
+							NetplayChecksumInterval);
 	}
 
 	ChecksumBuffer_init(&localChecksumBuffer, getBattleInputDelay(),
-						NETPLAY_CHECKSUM_INTERVAL);
+						NetplayChecksumInterval);
 }
 
 void uninitChecksumBuffers(void)
 {
-	for (size_t player {0}; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NumPlayers; player++)
 	{
 		NetConnection* conn {netConnections[player]};
 		if (conn == nullptr)
@@ -265,7 +263,7 @@ bool verifyChecksums(BattleFrameCounter frameNr)
 		return false;
 	}
 
-	for (size_t player {0}; player < NUM_PLAYERS; player++)
+	for (size_t player {0}; player < NumPlayers; player++)
 	{
 		Checksum remoteChecksum {};
 

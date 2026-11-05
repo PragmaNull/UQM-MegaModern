@@ -35,8 +35,7 @@
 
 
 // Allocate a new STARSHIP or SHIP_FRAGMENT and put it in the queue
-HLINK
-Build(QUEUE* pQueue, SPECIES_ID SpeciesID)
+HLINK Build(QUEUE* pQueue, SPECIES_ID SpeciesID)
 {
 	assert(GetLinkSize(pQueue) == sizeof(STARSHIP) || GetLinkSize(pQueue) == sizeof(SHIP_FRAGMENT));
 
@@ -56,8 +55,7 @@ Build(QUEUE* pQueue, SPECIES_ID SpeciesID)
 	return hNewShip;
 }
 
-HLINK
-GetStarShipFromIndex(QUEUE* pShipQ, uint16_t Index)
+HLINK GetStarShipFromIndex(QUEUE* pShipQ, uint16_t Index)
 {
 	HLINK hStarShip {};
 	HLINK hNextShip {};
@@ -74,23 +72,22 @@ GetStarShipFromIndex(QUEUE* pShipQ, uint16_t Index)
 }
 
 // Gives the first fleet in avail_race_q that builds specified ship.
-HLINK
-GetFleetFromSpecies(SPECIES_ID id)
+HLINK GetFleetFromSpecies(SPECIES_ID id)
 {
 	HLINK hFleet {};
 	HLINK hNextFleet {};
 
-	for (hFleet = GetHeadLink(&GLOBAL(avail_race_q));
+	for (hFleet = GetHeadLink(&uqm::gameState().game().avail_race_q);
 		 hFleet; hFleet = hNextFleet)
 	{
-		const FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
+		const FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 		if (FleetPtr->SpeciesID == id)
 		{
-			UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+			UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 			return hFleet;
 		}
 		hNextFleet = _GetSuccLink(FleetPtr);
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 	}
 
 	return hFleet;
@@ -102,56 +99,53 @@ GetFleetFromSpecies(SPECIES_ID id)
 // This is for every part of the game that assumes a RACE_ID is a SPECIES_ID
 // If shipseed is not in use, it will do GetStarShipFromIndex on avail_race_q
 // If this seems like overkill just remember the Yehat rebels.
-HFLEETINFO
-GetSeededFleetFromIndex(uint16_t Index)
+HFLEETINFO GetSeededFleetFromIndex(uint16_t Index)
 {
 	const FLEET_INFO* TemplatePtr = nullptr;
 	SPECIES_ID ship;
-	const bool loadWindow = ((uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) == 0) || (!uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) != 0) || (uqm::currentSeed().value != GLOBAL_SIS(Seed)));
+	const bool loadWindow = ((uqm::currentSeed().ships && uqm::gameState().sis().ShipSeed == 0) || (!uqm::currentSeed().ships && uqm::gameState().sis().ShipSeed != 0) || (uqm::currentSeed().value != uqm::gameState().sis().Seed));
 
-	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), Index)};
+	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, Index)};
 	if (!hFleet)
 	{
 		return hFleet;
 	}
-	TemplatePtr = LockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	TemplatePtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 	if (!TemplatePtr)
 	{
 		return nullptr;
 	}
 	ship = SeedShip(TemplatePtr->SpeciesID, loadWindow);
-	UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 	hFleet = GetFleetFromSpecies(ship);
 	return hFleet;
 }
 
-HSHIPFRAG
-GetEscortByStarShipIndex(uint16_t index)
+HSHIPFRAG GetEscortByStarShipIndex(uint16_t index)
 {
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hNextShip {};
 	const SHIP_FRAGMENT* StarShipPtr {};
 
-	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q));
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q);
 		 hStarShip; hStarShip = hNextShip)
 	{
-		StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		StarShipPtr = LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 
 		if (StarShipPtr->index == index)
 		{
-			UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+			UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 			break;
 		}
 
 		hNextShip = _GetSuccLink(StarShipPtr);
-		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 	}
 
 	return hStarShip;
 }
 
-SPECIES_ID
-ShipIdStrToIndex(const char* shipIdStr)
+SPECIES_ID ShipIdStrToIndex(const char* shipIdStr)
 {
 	HMASTERSHIP hStarShip {};
 	HMASTERSHIP hNextShip {};
@@ -216,14 +210,12 @@ static RaceIdMap raceIdMap[] = {
 	// Same as URQUAN_DRONE_SHIP
 };
 
-static int
-RaceIdCompare(const void* id1, const void* id2)
+static int RaceIdCompare(const void* id1, const void* id2)
 {
 	return strcmp(((RaceIdMap*)id1)->idStr, ((RaceIdMap*)id2)->idStr);
 }
 
-RACE_ID
-RaceIdStrToIndex(const char* raceIdStr)
+RACE_ID RaceIdStrToIndex(const char* raceIdStr)
 {
 	RaceIdMap key = {/* .idStr = */ raceIdStr, /* .id = */ (RACE_ID)-1};
 	const RaceIdMap* found = (RaceIdMap*)bsearch(&key, raceIdMap,
@@ -243,12 +235,11 @@ RaceIdStrToIndex(const char* raceIdStr)
  * limited by the number of free slots.
  * Returns the number of ships added.
  */
-uint16_t
-AddEscortShips(RACE_ID race, int16_t count)
+uint16_t AddEscortShips(RACE_ID race, int16_t count)
 {
 	uint16_t i {};
 
-	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
+	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race)};
 	if (!hFleet || count <= 0)
 	{
 		return 0;
@@ -261,14 +252,14 @@ AddEscortShips(RACE_ID race, int16_t count)
 		HSHIPFRAG hOldShip {};
 		SHIP_FRAGMENT* StarShipPtr {};
 
-		if (!STORAGE_Q)
+		if (!StorageQ())
 		{
-			hStarShip = CloneShipFragment(race, &GLOBAL(built_ship_q), 0);
+			hStarShip = CloneShipFragment(race, &uqm::gameState().game().built_ship_q, 0);
 		}
-		else if (!CanBuyPoints(hFleet) || !(hStarShip = CloneShipFragment(race, &GLOBAL(built_ship_q), 0)))
+		else if (!CanBuyPoints(hFleet) || !(hStarShip = CloneShipFragment(race, &uqm::gameState().game().built_ship_q, 0)))
 		{ // If we don't have room or failed to create in built queue, stow it
 			if ((hStarShip =
-					 CloneShipFragment(race, &GLOBAL(stowed_ship_q), 0)))
+					 CloneShipFragment(race, &uqm::gameState().game().stowed_ship_q, 0)))
 			{
 				continue;
 			}
@@ -278,49 +269,48 @@ AddEscortShips(RACE_ID race, int16_t count)
 			break;
 		}
 
-		RemoveQueue(&GLOBAL(built_ship_q), hStarShip);
+		RemoveQueue(&uqm::gameState().game().built_ship_q, hStarShip);
 
 		/* Find first available escort window */
 		while ((hOldShip = GetStarShipFromIndex(
-					&GLOBAL(built_ship_q), which_window++)))
+					&uqm::gameState().game().built_ship_q, which_window++)))
 		{
-			StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hOldShip);
+			StarShipPtr = LockShipFrag(&uqm::gameState().game().built_ship_q, hOldShip);
 			const uint8_t win_loc {StarShipPtr->index};
-			UnlockShipFrag(&GLOBAL(built_ship_q), hOldShip);
+			UnlockShipFrag(&uqm::gameState().game().built_ship_q, hOldShip);
 			if (which_window <= win_loc)
 			{
 				break;
 			}
 		}
 
-		StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		StarShipPtr = LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 		StarShipPtr->index = which_window - 1;
-		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 
-		InsertQueue(&GLOBAL(built_ship_q), hStarShip, hOldShip);
+		InsertQueue(&uqm::gameState().game().built_ship_q, hStarShip, hOldShip);
 	}
 
-	DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
+	DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 	return i;
 }
 
 /*
  * Returns the total value of all the ships escorting the SIS.
  */
-uint16_t
-CalculateEscortsWorth(void)
+uint16_t CalculateEscortsWorth(void)
 {
 	uint16_t total = 0;
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hNextShip {};
 
-	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q));
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q);
 		 hStarShip; hStarShip = hNextShip)
 	{
-		const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
+		const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip)};
 		hNextShip = _GetSuccLink(StarShipPtr);
 		total += ShipCost(StarShipPtr->race_id);
-		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 	}
 	return total;
 }
@@ -334,30 +324,30 @@ bool ShipsReady(RACE_ID race)
 	switch (race)
 	{
 		case PKUNK_SHIP:
-			year = GET_GAME_STATE(PKUNK_SHIP_YEAR);
-			month = GET_GAME_STATE(PKUNK_SHIP_MONTH);
-			day = GET_GAME_STATE(PKUNK_SHIP_DAY);
+			year = uqm::gameState().flag(uqm::GameFlag::PKUNK_SHIP_YEAR);
+			month = uqm::gameState().flag(uqm::GameFlag::PKUNK_SHIP_MONTH);
+			day = uqm::gameState().flag(uqm::GameFlag::PKUNK_SHIP_DAY);
 			break;
 		case SUPOX_SHIP:
-			year = GET_GAME_STATE(SUPOX_SHIP_YEAR);
-			month = GET_GAME_STATE(SUPOX_SHIP_MONTH);
-			day = GET_GAME_STATE(SUPOX_SHIP_DAY);
+			year = uqm::gameState().flag(uqm::GameFlag::SUPOX_SHIP_YEAR);
+			month = uqm::gameState().flag(uqm::GameFlag::SUPOX_SHIP_MONTH);
+			day = uqm::gameState().flag(uqm::GameFlag::SUPOX_SHIP_DAY);
 			break;
 		case UTWIG_SHIP:
-			year = GET_GAME_STATE(UTWIG_SHIP_YEAR);
-			month = GET_GAME_STATE(UTWIG_SHIP_MONTH);
-			day = GET_GAME_STATE(UTWIG_SHIP_DAY);
+			year = uqm::gameState().flag(uqm::GameFlag::UTWIG_SHIP_YEAR);
+			month = uqm::gameState().flag(uqm::GameFlag::UTWIG_SHIP_MONTH);
+			day = uqm::gameState().flag(uqm::GameFlag::UTWIG_SHIP_DAY);
 			break;
 		case YEHAT_SHIP:
 		case YEHAT_REBEL_SHIP:
-			year = GET_GAME_STATE(YEHAT_SHIP_YEAR);
-			month = GET_GAME_STATE(YEHAT_SHIP_MONTH);
-			day = GET_GAME_STATE(YEHAT_SHIP_DAY);
+			year = uqm::gameState().flag(uqm::GameFlag::YEHAT_SHIP_YEAR);
+			month = uqm::gameState().flag(uqm::GameFlag::YEHAT_SHIP_MONTH);
+			day = uqm::gameState().flag(uqm::GameFlag::YEHAT_SHIP_DAY);
 			break;
 		default:
 			return false;
 	}
-	return ((i = (uqm::gameState().clock().year() - START_YEAR) - year) > 0) || (i == 0 && (((i = uqm::gameState().clock().month() - month) > 0) || (i == 0 && uqm::gameState().clock().day() > day)));
+	return ((i = (uqm::gameState().clock().year() - StartYear) - year) > 0) || (i == 0 && (((i = uqm::gameState().clock().month() - month) > 0) || (i == 0 && uqm::gameState().clock().day() > day)));
 }
 
 void PrepareShip(RACE_ID race)
@@ -370,29 +360,29 @@ void PrepareShip(RACE_ID race)
 	{
 		di = 28;
 	}
-	yi = (uint8_t)(uqm::gameState().clock().year() - START_YEAR) + 1;
+	yi = (uint8_t)(uqm::gameState().clock().year() - StartYear) + 1;
 	switch (race)
 	{
 		case PKUNK_SHIP:
-			SET_GAME_STATE(PKUNK_SHIP_YEAR, yi);
-			SET_GAME_STATE(PKUNK_SHIP_MONTH, mi);
-			SET_GAME_STATE(PKUNK_SHIP_DAY, di);
+			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_SHIP_YEAR, static_cast<uint32_t>(yi));
+			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_SHIP_MONTH, static_cast<uint32_t>(mi));
+			uqm::gameState().setFlag(uqm::GameFlag::PKUNK_SHIP_DAY, static_cast<uint32_t>(di));
 			break;
 		case SUPOX_SHIP:
-			SET_GAME_STATE(SUPOX_SHIP_YEAR, yi);
-			SET_GAME_STATE(SUPOX_SHIP_MONTH, mi);
-			SET_GAME_STATE(SUPOX_SHIP_DAY, di);
+			uqm::gameState().setFlag(uqm::GameFlag::SUPOX_SHIP_YEAR, static_cast<uint32_t>(yi));
+			uqm::gameState().setFlag(uqm::GameFlag::SUPOX_SHIP_MONTH, static_cast<uint32_t>(mi));
+			uqm::gameState().setFlag(uqm::GameFlag::SUPOX_SHIP_DAY, static_cast<uint32_t>(di));
 			break;
 		case UTWIG_SHIP:
-			SET_GAME_STATE(UTWIG_SHIP_YEAR, yi);
-			SET_GAME_STATE(UTWIG_SHIP_MONTH, mi);
-			SET_GAME_STATE(UTWIG_SHIP_DAY, di);
+			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_SHIP_YEAR, static_cast<uint32_t>(yi));
+			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_SHIP_MONTH, static_cast<uint32_t>(mi));
+			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_SHIP_DAY, static_cast<uint32_t>(di));
 			break;
 		case YEHAT_SHIP:
 		case YEHAT_REBEL_SHIP:
-			SET_GAME_STATE(YEHAT_SHIP_YEAR, yi);
-			SET_GAME_STATE(YEHAT_SHIP_MONTH, mi);
-			SET_GAME_STATE(YEHAT_SHIP_DAY, di);
+			uqm::gameState().setFlag(uqm::GameFlag::YEHAT_SHIP_YEAR, static_cast<uint32_t>(yi));
+			uqm::gameState().setFlag(uqm::GameFlag::YEHAT_SHIP_MONTH, static_cast<uint32_t>(mi));
+			uqm::gameState().setFlag(uqm::GameFlag::YEHAT_SHIP_DAY, static_cast<uint32_t>(di));
 			break;
 		default:
 			break;
@@ -404,22 +394,21 @@ void PrepareShip(RACE_ID race)
  * Returns the size of the fleet of the specified race when the starmap was
  * last checked. If the race has no SoI, 0 is returned.
  */
-uint16_t
-GetRaceKnownSize (RACE_ID race)
+uint16_t GetRaceKnownSize (RACE_ID race)
 {
 	HFLEETINFO hFleet;
 	FLEET_INFO *FleetPtr;
 	uint16_t result;
 
-	hFleet = GetStarShipFromIndex (&GLOBAL (avail_race_q), race);
+	hFleet = GetStarShipFromIndex (&uqm::gameState().game().avail_race_q, race);
 	if (!hFleet)
 		return 0;
 
-	FleetPtr = LockFleetInfo (&GLOBAL (avail_race_q), hFleet);
+	FleetPtr = LockFleetInfo (&uqm::gameState().game().avail_race_q, hFleet);
 
 	result = FleetPtr->known_strength;
 
-	UnlockFleetInfo (&GLOBAL (avail_race_q), hFleet);
+	UnlockFleetInfo (&uqm::gameState().game().avail_race_q, hFleet);
 	return result;
 }
 #endif
@@ -433,13 +422,13 @@ GetRaceKnownSize (RACE_ID race)
  */
 bool SetRaceAllied(RACE_ID race, bool flag)
 {
-	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
+	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race)};
 	if (!hFleet)
 	{
 		return false;
 	}
 
-	FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
+	FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 
 	if (FleetPtr->allied_state == DEAD_GUY)
 	{
@@ -450,7 +439,7 @@ bool SetRaceAllied(RACE_ID race, bool flag)
 		FleetPtr->allied_state = (flag ? GOOD_GUY : BAD_GUY);
 	}
 
-	UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 	return true;
 }
 
@@ -462,16 +451,15 @@ bool SetRaceAllied(RACE_ID race, bool flag)
  * 	The value returned is 'race', unless the type of ship is only available
  * 	in SuperMelee, in which case 0 is returned.
  */
-uint16_t
-StartSphereTracking(RACE_ID race)
+uint16_t StartSphereTracking(RACE_ID race)
 {
-	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
+	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race)};
 	if (!hFleet)
 	{
 		return 0;
 	}
 
-	FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
+	FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 
 	if (FleetPtr->actual_strength == 0)
 	{
@@ -479,18 +467,18 @@ StartSphereTracking(RACE_ID race)
 		if (FleetPtr->allied_state == DEAD_GUY)
 		{
 			// Race is extinct.
-			UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+			UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 			return 0;
 		}
 	}
 	else if (FleetPtr->known_strength == 0
-			 && FleetPtr->actual_strength != INFINITE_RADIUS)
+			 && FleetPtr->actual_strength != InfiniteRadius)
 	{
 		FleetPtr->known_strength = 1;
 		FleetPtr->known_loc = FleetPtr->loc;
 	}
 
-	UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 	return race;
 }
 
@@ -502,13 +490,13 @@ bool CheckSphereTracking(RACE_ID race)
 {
 	uint16_t result {};
 
-	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
+	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race)};
 	if (!hFleet)
 	{
 		return false;
 	}
 
-	const FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
+	const FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 
 	if (FleetPtr->actual_strength == 0)
 	{
@@ -521,24 +509,24 @@ bool CheckSphereTracking(RACE_ID race)
 		result = (FleetPtr->known_strength > 0);
 	}
 
-	UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 	return result;
 }
 
 bool KillRace(RACE_ID race)
 {
-	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
+	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race)};
 	if (!hFleet)
 	{
 		return false;
 	}
 
-	FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
+	FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 
 	FleetPtr->allied_state = DEAD_GUY;
 	FleetPtr->actual_strength = 0;
 
-	UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 	return true;
 }
 
@@ -546,26 +534,25 @@ bool KillRace(RACE_ID race)
  * Returns the number of ships of the specified race among the
  * escort ships.
  */
-uint16_t
-CountEscortShips(RACE_ID race)
+uint16_t CountEscortShips(RACE_ID race)
 {
 	HSHIPFRAG hStarShip {};
 	HSHIPFRAG hNextShip {};
 	uint16_t result = 0;
 
-	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
+	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race)};
 	if (!hFleet)
 	{
 		return 0;
 	}
 
-	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q)); hStarShip;
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q); hStarShip;
 		 hStarShip = hNextShip)
 	{
-		const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
+		const SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip)};
 		hNextShip = _GetSuccLink(StarShipPtr);
 		const uint8_t ship_type {StarShipPtr->race_id};
-		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 
 		if (ship_type == race)
 		{
@@ -589,16 +576,15 @@ bool HaveEscortShip(RACE_ID race)
  * Returns 0 if 'race' is not available.
  * Otherwise, returns the number of ships that can be added.
  */
-uint16_t
-EscortFeasibilityStudy(RACE_ID race)
+uint16_t EscortFeasibilityStudy(RACE_ID race)
 {
-	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
+	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race)};
 	if (!hFleet)
 	{
 		return 0;
 	}
 
-	return (MAX_BUILT_SHIPS - CountLinks(&GLOBAL(built_ship_q)) + (STORAGE_Q ? MAX_STOWED_SHIPS - CountLinks(&GLOBAL(stowed_ship_q)) : 0));
+	return (MaxBuiltShips - CountLinks(&uqm::gameState().game().built_ship_q) + (StorageQ() ? MaxStowedShips - CountLinks(&uqm::gameState().game().stowed_ship_q) : 0));
 }
 
 /*
@@ -606,18 +592,17 @@ EscortFeasibilityStudy(RACE_ID race)
  * Either DEAD_GUY (extinct), GOOD_GUY (allied), or BAD_GUY (not allied) is
  * returned.
  */
-uint16_t
-CheckAlliance(RACE_ID race)
+uint16_t CheckAlliance(RACE_ID race)
 {
-	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), race)};
+	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, race)};
 	if (!hFleet)
 	{
 		return 0;
 	}
 
-	const FLEET_INFO* FleetPtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
+	const FLEET_INFO* FleetPtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 	const uint16_t flags {FleetPtr->allied_state};
-	UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 
 	return flags;
 }
@@ -631,10 +616,9 @@ bool RaceDead(RACE_ID race)
  * Remove a number of escort ships of the specified race (if present).
  * Returns the number of escort ships removed.
  */
-uint16_t
-RemoveSomeEscortShips(RACE_ID race, uint16_t count)
+uint16_t RemoveSomeEscortShips(RACE_ID race, uint16_t count)
 {
-	QUEUE* ship_q = &GLOBAL(built_ship_q);
+	QUEUE* ship_q = &uqm::gameState().game().built_ship_q;
 	HSHIPFRAG hStarShip = GetHeadLink(ship_q);
 	HSHIPFRAG hNextShip {};
 
@@ -642,9 +626,9 @@ RemoveSomeEscortShips(RACE_ID race, uint16_t count)
 	{
 		return 0;
 	}
-	if (!hStarShip && count > MAX_BUILT_SHIPS)
+	if (!hStarShip && count > MaxBuiltShips)
 	{
-		ship_q = &GLOBAL(stowed_ship_q);
+		ship_q = &uqm::gameState().game().stowed_ship_q;
 		hStarShip = GetHeadLink(ship_q);
 	}
 
@@ -666,15 +650,15 @@ RemoveSomeEscortShips(RACE_ID race, uint16_t count)
 				break;
 			}
 		}
-		if (count > MAX_BUILT_SHIPS && !hNextShip && ship_q == &GLOBAL(built_ship_q))
+		if (count > MaxBuiltShips && !hNextShip && ship_q == &uqm::gameState().game().built_ship_q)
 		{
-			ship_q = &GLOBAL(stowed_ship_q);
+			ship_q = &uqm::gameState().game().stowed_ship_q;
 			hNextShip = GetHeadLink(ship_q);
 		}
 	}
 
 	// Update the display.
-	DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
+	DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 
 	return count;
 }
@@ -682,14 +666,12 @@ RemoveSomeEscortShips(RACE_ID race, uint16_t count)
 /*
  * Remove all escort ships of the specified race.
  */
-uint16_t
-RemoveEscortShips(RACE_ID race)
+uint16_t RemoveEscortShips(RACE_ID race)
 {
 	return RemoveSomeEscortShips(race, (uint16_t)-1);
 }
 
-uint16_t
-GetIndexFromStarShip(QUEUE* pShipQ, HLINK hStarShip)
+uint16_t GetIndexFromStarShip(QUEUE* pShipQ, HLINK hStarShip)
 {
 	uint16_t Index {0};
 	while (hStarShip != GetHeadLink(pShipQ))
@@ -705,8 +687,7 @@ GetIndexFromStarShip(QUEUE* pShipQ, HLINK hStarShip)
 	return Index;
 }
 
-uint8_t
-NameCaptain(QUEUE* pQueue, SPECIES_ID SpeciesID)
+uint8_t NameCaptain(QUEUE* pQueue, SPECIES_ID SpeciesID)
 {
 	uint8_t name_index {};
 	HLINK hStarShip {};
@@ -741,10 +722,9 @@ NameCaptain(QUEUE* pQueue, SPECIES_ID SpeciesID)
 	return name_index;
 }
 
-// crew_level can be set to INFINITE_FLEET for a ship which is to
+// crew_level can be set to InfiniteFleet for a ship which is to
 // represent an infinite number of ships.
-HSHIPFRAG
-CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
+HSHIPFRAG CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
 {
 	HFLEETINFO hFleet {};
 	uint8_t captains_name_index {};
@@ -753,15 +733,15 @@ CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
 
 	// If options mismatch with SIS, it means we're in a load window.
 	// In that case we want to find the correct fleet ID for that ship.
-	if ((uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) == 0)
-		|| (!uqm::currentSeed().ships && GLOBAL_SIS(ShipSeed) != 0)
-		|| (uqm::currentSeed().value != GLOBAL_SIS(Seed)))
+	if ((uqm::currentSeed().ships && uqm::gameState().sis().ShipSeed == 0)
+		|| (!uqm::currentSeed().ships && uqm::gameState().sis().ShipSeed != 0)
+		|| (uqm::currentSeed().value != uqm::gameState().sis().Seed))
 	{
 		hFleet = GetSeededFleetFromIndex(shipIndex);
 	}
 	else
 	{
-		hFleet = GetStarShipFromIndex(&GLOBAL(avail_race_q), shipIndex);
+		hFleet = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, shipIndex);
 	}
 
 	if (!hFleet)
@@ -769,7 +749,7 @@ CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
 		return 0;
 	}
 
-	const FLEET_INFO* TemplatePtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
+	const FLEET_INFO* TemplatePtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 	if (shipIndex == SAMATRA_SHIP)
 	{
 		captains_name_index = 0;
@@ -802,7 +782,7 @@ CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)
 		ShipFragPtr->index = 0;
 		UnlockShipFrag(pDstQueue, hBuiltShip);
 	}
-	UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 
 	return hBuiltShip;
 }
@@ -816,24 +796,24 @@ int SetEscortCrewComplement(RACE_ID which_ship, uint16_t crew_level, uint8_t cap
 	SHIP_FRAGMENT* StarShipPtr = 0;
 	int Index {};
 
-	HFLEETINFO hFleet {GetStarShipFromIndex(&GLOBAL(avail_race_q), which_ship)};
+	HFLEETINFO hFleet {GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, which_ship)};
 	if (!hFleet)
 	{
 		return -1;
 	}
-	const FLEET_INFO* TemplatePtr {LockFleetInfo(&GLOBAL(avail_race_q), hFleet)};
+	const FLEET_INFO* TemplatePtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet)};
 
 	/* Find first ship of which_ship race */
-	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q)), Index = 0;
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q), Index = 0;
 		 hStarShip; hStarShip = hNextShip, ++Index)
 	{
-		StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		StarShipPtr = LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 		hNextShip = _GetSuccLink(StarShipPtr);
 		if (which_ship == StarShipPtr->race_id && StarShipPtr->crew_level == TemplatePtr->crew_level)
 		{
 			break; /* found one */
 		}
-		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 	}
 	if (hStarShip)
 	{
@@ -841,19 +821,18 @@ int SetEscortCrewComplement(RACE_ID which_ship, uint16_t crew_level, uint8_t cap
 									   StarShipPtr->max_crew :
 									   crew_level);
 		StarShipPtr->captains_name_index = captain;
-		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 	}
 	else
 	{
 		Index = -1;
 	}
 
-	UnlockFleetInfo(&GLOBAL(avail_race_q), hFleet);
+	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hFleet);
 	return Index;
 }
 
-static void
-deviceSwitch(int device, int val)
+static void deviceSwitch(int device, int val)
 {
 	int var = 0;
 
@@ -865,92 +844,92 @@ deviceSwitch(int device, int val)
 	switch (device)
 	{
 		case 0:
-			SET_GAME_STATE(PORTAL_SPAWNER_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 1:
-			SET_GAME_STATE(TALKING_PET_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 2:
-			SET_GAME_STATE(UTWIG_BOMB_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 3:
-			SET_GAME_STATE(SUN_DEVICE_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::SUN_DEVICE_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 4:
-			SET_GAME_STATE(ROSY_SPHERE_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 5:
-			SET_GAME_STATE(AQUA_HELIX_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::AQUA_HELIX_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 6:
-			SET_GAME_STATE(CLEAR_SPINDLE_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 7:
-			SET_GAME_STATE(ULTRON_CONDITION, var);
+			uqm::gameState().setFlag(uqm::GameFlag::ULTRON_CONDITION, static_cast<uint32_t>(var));
 			break;
 		case 8:
-			SET_GAME_STATE(ULTRON_CONDITION, var ? 2 : 0);
+			uqm::gameState().setFlag(uqm::GameFlag::ULTRON_CONDITION, static_cast<uint32_t>(var ? 2 : 0));
 			break;
 		case 9:
-			SET_GAME_STATE(ULTRON_CONDITION, var ? 3 : 0);
+			uqm::gameState().setFlag(uqm::GameFlag::ULTRON_CONDITION, static_cast<uint32_t>(var ? 3 : 0));
 			break;
 		case 10:
-			SET_GAME_STATE(ULTRON_CONDITION, var ? 4 : 0);
+			uqm::gameState().setFlag(uqm::GameFlag::ULTRON_CONDITION, static_cast<uint32_t>(var ? 4 : 0));
 			break;
 		case 11:
-			SET_GAME_STATE(MAIDENS_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::MAIDENS_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 12:
-			SET_GAME_STATE(UMGAH_BROADCASTERS_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::UMGAH_BROADCASTERS_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 13:
-			SET_GAME_STATE(BURV_BROADCASTERS_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 14:
-			SET_GAME_STATE(TAALO_PROTECTOR_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 15:
 		case 16:
 		case 17:
-			if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) < 2 && var)
+			if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 2 && var)
 			{
-				SET_GAME_STATE(KNOW_ABOUT_SHATTERED, 2);
+				uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 			}
-			SET_GAME_STATE(KNOW_SYREEN_WORLD_SHATTERED, var);
+			uqm::gameState().setFlag(uqm::GameFlag::KNOW_SYREEN_WORLD_SHATTERED, static_cast<uint32_t>(var));
 
 			if (device == 15)
 			{
-				SET_GAME_STATE(EGG_CASE0_ON_SHIP, var);
+				uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE0_ON_SHIP, static_cast<uint32_t>(var));
 			}
 			else if (device == 16)
 			{
-				SET_GAME_STATE(EGG_CASE1_ON_SHIP, var);
+				uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE1_ON_SHIP, static_cast<uint32_t>(var));
 			}
 			else
 			{
-				SET_GAME_STATE(EGG_CASE2_ON_SHIP, var);
+				uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE2_ON_SHIP, static_cast<uint32_t>(var));
 			}
 			break;
 		case 18:
-			SET_GAME_STATE(SYREEN_SHUTTLE_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 19:
-			SET_GAME_STATE(VUX_BEAST_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::VUX_BEAST_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 20:
-			SET_GAME_STATE(DESTRUCT_CODE_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 21:
-			SET_GAME_STATE(PORTAL_KEY_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::PORTAL_KEY_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 22:
-			SET_GAME_STATE(WIMBLIS_TRIDENT_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 23:
-			SET_GAME_STATE(GLOWING_ROD_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOWING_ROD_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		case 24:
-			SET_GAME_STATE(MOONBASE_ON_SHIP, var);
+			uqm::gameState().setFlag(uqm::GameFlag::MOONBASE_ON_SHIP, static_cast<uint32_t>(var));
 			break;
 		default: // Shouldn't happen, do nothing
 			break;
@@ -961,8 +940,7 @@ deviceSwitch(int device, int val)
 	//SET_GAME_STATE (SYREEN_HOME_VISITS, 0);
 }
 
-static void
-upgradeSwitch(int upgrade, int val)
+static void upgradeSwitch(int upgrade, int val)
 {
 	int var = 0;
 	uint8_t LanderShields {};
@@ -975,19 +953,19 @@ upgradeSwitch(int upgrade, int val)
 
 	if (upgrade > 2 || upgrade < 7)
 	{
-		LanderShields = GET_GAME_STATE(LANDER_SHIELDS);
+		LanderShields = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS);
 	}
 
 	switch (upgrade)
 	{
 		case 0:
-			SET_GAME_STATE(IMPROVED_LANDER_SPEED, var);
+			uqm::gameState().setFlag(uqm::GameFlag::IMPROVED_LANDER_SPEED, static_cast<uint32_t>(var));
 			break;
 		case 1:
-			SET_GAME_STATE(IMPROVED_LANDER_CARGO, var);
+			uqm::gameState().setFlag(uqm::GameFlag::IMPROVED_LANDER_CARGO, static_cast<uint32_t>(var));
 			break;
 		case 2:
-			SET_GAME_STATE(IMPROVED_LANDER_SHOT, var);
+			uqm::gameState().setFlag(uqm::GameFlag::IMPROVED_LANDER_SHOT, static_cast<uint32_t>(var));
 			break;
 		case 3:
 			if (var)
@@ -998,7 +976,7 @@ upgradeSwitch(int upgrade, int val)
 			{
 				LanderShields &= ~(1 << BIOLOGICAL_DISASTER);
 			}
-			SET_GAME_STATE(LANDER_SHIELDS, LanderShields);
+			uqm::gameState().setFlag(uqm::GameFlag::LANDER_SHIELDS, static_cast<uint32_t>(LanderShields));
 			break;
 		case 4:
 			if (var)
@@ -1009,7 +987,7 @@ upgradeSwitch(int upgrade, int val)
 			{
 				LanderShields &= ~(1 << EARTHQUAKE_DISASTER);
 			}
-			SET_GAME_STATE(LANDER_SHIELDS, LanderShields);
+			uqm::gameState().setFlag(uqm::GameFlag::LANDER_SHIELDS, static_cast<uint32_t>(LanderShields));
 			break;
 		case 5:
 			if (var)
@@ -1020,7 +998,7 @@ upgradeSwitch(int upgrade, int val)
 			{
 				LanderShields &= ~(1 << LIGHTNING_DISASTER);
 			}
-			SET_GAME_STATE(LANDER_SHIELDS, LanderShields);
+			uqm::gameState().setFlag(uqm::GameFlag::LANDER_SHIELDS, static_cast<uint32_t>(LanderShields));
 			break;
 		case 6:
 			if (var)
@@ -1031,39 +1009,38 @@ upgradeSwitch(int upgrade, int val)
 			{
 				LanderShields &= ~(1 << LAVASPOT_DISASTER);
 			}
-			SET_GAME_STATE(LANDER_SHIELDS, LanderShields);
+			uqm::gameState().setFlag(uqm::GameFlag::LANDER_SHIELDS, static_cast<uint32_t>(LanderShields));
 			break;
 		case 7:
-			ModuleCost = var ? 4000 / MODULE_COST_SCALE : 0;
-			GLOBAL(ModuleCost[ANTIMISSILE_DEFENSE]) = ModuleCost;
+			ModuleCost = var ? 4000 / ModuleCostScale : 0;
+			uqm::gameState().game().ModuleCost[ANTIMISSILE_DEFENSE] = ModuleCost;
 			break;
 		case 8:
-			ModuleCost = var ? 4000 / MODULE_COST_SCALE : 0;
-			GLOBAL(ModuleCost[BLASTER_WEAPON]) = ModuleCost;
+			ModuleCost = var ? 4000 / ModuleCostScale : 0;
+			uqm::gameState().game().ModuleCost[BLASTER_WEAPON] = ModuleCost;
 			break;
 		case 9:
-			ModuleCost = var ? 1000 / MODULE_COST_SCALE : 0;
-			GLOBAL(ModuleCost[HIGHEFF_FUELSYS]) = ModuleCost;
+			ModuleCost = var ? 1000 / ModuleCostScale : 0;
+			uqm::gameState().game().ModuleCost[HIGHEFF_FUELSYS] = ModuleCost;
 			break;
 		case 10:
-			ModuleCost = var ? 5000 / MODULE_COST_SCALE : 0;
-			GLOBAL(ModuleCost[TRACKING_SYSTEM]) = ModuleCost;
+			ModuleCost = var ? 5000 / ModuleCostScale : 0;
+			uqm::gameState().game().ModuleCost[TRACKING_SYSTEM] = ModuleCost;
 			break;
 		case 11:
-			ModuleCost = var ? 6000 / MODULE_COST_SCALE : 0;
-			GLOBAL(ModuleCost[CANNON_WEAPON]) = ModuleCost;
+			ModuleCost = var ? 6000 / ModuleCostScale : 0;
+			uqm::gameState().game().ModuleCost[CANNON_WEAPON] = ModuleCost;
 			break;
 		case 12:
-			ModuleCost = var ? 4000 / MODULE_COST_SCALE : 0;
-			GLOBAL(ModuleCost[SHIVA_FURNACE]) = ModuleCost;
+			ModuleCost = var ? 4000 / ModuleCostScale : 0;
+			uqm::gameState().game().ModuleCost[SHIVA_FURNACE] = ModuleCost;
 			break;
 		default: // Shouldn't happen, do nothing
 			break;
 	}
 }
 
-static void
-cheatAddRemoveDevices(void)
+static void cheatAddRemoveDevices(void)
 {
 	for (uint8_t i {0}; i < std::size(optDeviceArray); i++)
 	{
@@ -1074,10 +1051,9 @@ cheatAddRemoveDevices(void)
 	}
 }
 
-static void
-cheatAddRemoveUpgrades(void)
+static void cheatAddRemoveUpgrades(void)
 {
-	for (uint8_t i {0}; i < NUM_UPGRADES; i++)
+	for (uint8_t i {0}; i < NumUpgrades; i++)
 	{
 		if (optUpgradeArray[i] != uqm::CheatAction::None)
 		{
@@ -1088,10 +1064,10 @@ cheatAddRemoveUpgrades(void)
 
 void loadGameCheats(void)
 {
-	if (EXTENDED && !uqm::isStarSeed())
+	if (IsExtended() && !uqm::isStarSeed())
 	{
 		plot_map[MELNORME0_DEFINED].star->Type =
-			MAKE_STAR(SUPER_GIANT_STAR, ORANGE_BODY, -1);
+			MakeStar(SUPER_GIANT_STAR, ORANGE_BODY, -1);
 	}
 
 	if (uqm::UQMOptions::read().infiniteRU)
@@ -1116,7 +1092,7 @@ void loadGameCheats(void)
 	if (uqm::UQMOptions::read().infiniteFuel)
 	{
 		loadFuel = uqm::gameState().sis().FuelOnBoard;
-		GLOBAL_SIS(FuelOnBoard) = GetFuelTankCapacity();
+		uqm::gameState().sis().FuelOnBoard = GetFuelTankCapacity();
 	}
 	else
 	{
@@ -1132,10 +1108,9 @@ void loadGameCheats(void)
 // the fraction at the end.
 // (uint16_t) sqrt (rand_val) gives a value 0..255 which leans heavy towards 255
 // so subtract from 255 to receive a weighted towards zero jitter.
-uint16_t
-Jitter(uint16_t str, uint16_t rand_val)
+uint16_t Jitter(uint16_t str, uint16_t rand_val)
 {
-	return (str * (SPHERE_RADIUS_INCREMENT / 2) * (255 - (uint16_t)sqrt(rand_val)) / 256) * 2 / 3;
+	return (str * (SphereRadiusIncrement / 2) * (255 - (uint16_t)sqrt(rand_val)) / 256) * 2 / 3;
 }
 
 void JitDebug(FLEET_INFO* FleetPtr, uint16_t rand_val_x, uint16_t rand_val_y)
@@ -1152,8 +1127,8 @@ void JitDebug(FLEET_INFO* FleetPtr, uint16_t rand_val_x, uint16_t rand_val_y)
 	fmt::print(stderr, "{} Fleet {}: Actual Str {}; WarEra Str {}; ",
 			   fleet_name[FleetPtr->SpeciesID > 25 ? 0 : FleetPtr->SpeciesID],
 			   (int)FleetPtr->SpeciesID,
-			   FleetPtr->actual_strength * SPHERE_RADIUS_INCREMENT / 2,
-			   WarEraStrength(FleetPtr->SpeciesID) * SPHERE_RADIUS_INCREMENT / 2);
+			   FleetPtr->actual_strength * SphereRadiusIncrement / 2,
+			   WarEraStrength(FleetPtr->SpeciesID) * SphereRadiusIncrement / 2);
 	fmt::print(stderr, "Rand X {} ({}); Rand Y {} ({})\n",
 			   rand_val_x, (255 - (uint16_t)sqrt(rand_val_x)),
 			   rand_val_y, (255 - (uint16_t)sqrt(rand_val_y)));
@@ -1169,8 +1144,7 @@ void JitDebug(FLEET_INFO* FleetPtr, uint16_t rand_val_x, uint16_t rand_val_y)
 
 // Provide the default fleet movement or war era position for the
 // given fleet and plot ID being visited
-GFXPOINT
-DefaultFleetLocation(SPECIES_ID SpeciesID, uint16_t visit)
+GFXPOINT DefaultFleetLocation(SPECIES_ID SpeciesID, uint16_t visit)
 {
 #ifdef DEBUG_STARSEED
 	fmt::print(stderr, "Seeding hard coded location for fleet {} (plot {}).\n",
@@ -1313,39 +1287,38 @@ DefaultFleetLocation(SPECIES_ID SpeciesID, uint16_t visit)
 }
 
 // Provide the war era strength for the given species ID (from fleet).
-uint16_t
-WarEraStrength(SPECIES_ID SpeciesID)
+uint16_t WarEraStrength(SPECIES_ID SpeciesID)
 {
 	switch (SpeciesID)
 	{
 		case EARTHLING_ID:
-			return 460 / SPHERE_RADIUS_INCREMENT * 2;
+			return 460 / SphereRadiusIncrement * 2;
 		case PKUNK_ID:
-			return 350 / SPHERE_RADIUS_INCREMENT * 2;
+			return 350 / SphereRadiusIncrement * 2;
 		case SHOFIXTI_ID:
-			return 329 / SPHERE_RADIUS_INCREMENT * 2;
+			return 329 / SphereRadiusIncrement * 2;
 		case SPATHI_ID:
-			return 1007 / SPHERE_RADIUS_INCREMENT * 2;
+			return 1007 / SphereRadiusIncrement * 2;
 		case THRADDASH_ID:
-			return 723 / SPHERE_RADIUS_INCREMENT * 2;
+			return 723 / SphereRadiusIncrement * 2;
 		case VUX_ID:
-			return 572 / SPHERE_RADIUS_INCREMENT * 2;
+			return 572 / SphereRadiusIncrement * 2;
 		case YEHAT_ID:
-			return 1029 / SPHERE_RADIUS_INCREMENT * 2;
+			return 1029 / SphereRadiusIncrement * 2;
 		case DRUUGE_ID:
-			return 745 / SPHERE_RADIUS_INCREMENT * 2;
+			return 745 / SphereRadiusIncrement * 2;
 		case ILWRATH_ID:
-			return 470 / SPHERE_RADIUS_INCREMENT * 2;
+			return 470 / SphereRadiusIncrement * 2;
 		case MYCON_ID:
-			return 591 / SPHERE_RADIUS_INCREMENT * 2;
+			return 591 / SphereRadiusIncrement * 2;
 		case UMGAH_ID:
-			return 506 / SPHERE_RADIUS_INCREMENT * 2;
+			return 506 / SphereRadiusIncrement * 2;
 		case ANDROSYNTH_ID:
-			return 504 / SPHERE_RADIUS_INCREMENT * 2;
+			return 504 / SphereRadiusIncrement * 2;
 		case CHENJESU_ID:
-			return 657 / SPHERE_RADIUS_INCREMENT * 2;
+			return 657 / SphereRadiusIncrement * 2;
 		case MMRNMHRM_ID:
-			return 482 / SPHERE_RADIUS_INCREMENT * 2;
+			return 482 / SphereRadiusIncrement * 2;
 		default:
 			return 0;
 	}
@@ -1353,8 +1326,7 @@ WarEraStrength(SPECIES_ID SpeciesID)
 }
 
 // Provide the homeworld plot ID for the given species ID (from fleet).
-uint16_t
-Homeworld(SPECIES_ID SpeciesID)
+uint16_t Homeworld(SPECIES_ID SpeciesID)
 {
 	switch (SpeciesID)
 	{
@@ -1440,29 +1412,17 @@ void SeedFleet(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap)
 // WARPATH gives an offset to the "warpoint" destination, to be multiplied
 // by dist, in the direction of the warpather's home star.  This will scale
 // the arguments based on total distance to provide a new center.
-// {WARPATH_X (visit, dist) + jitter, WARPATH_Y (visit, dist) + jitter}
-#define WARPATH_X(a, d) \
-	(warpoint.x + (d) * (plotmap[home].star_pt.x - (a).x) / sqrt((plotmap[home].star_pt.x - (a).x) * (plotmap[home].star_pt.x - (a).x) + (plotmap[home].star_pt.y - (a).y) * (plotmap[home].star_pt.y - (a).y)))
-#define WARPATH_Y(a, d) \
-	(warpoint.y + (d) * (plotmap[home].star_pt.y - (a).y) / sqrt((plotmap[home].star_pt.x - (a).x) * (plotmap[home].star_pt.x - (a).x) + (plotmap[home].star_pt.y - (a).y) * (plotmap[home].star_pt.y - (a).y)))
+// {WarpathX (visit, dist) + jitter, WarpathY (visit, dist) + jitter}
 
 // This points your jitter towards or away from "a" in X, Y directions
-#define TOWARD_X(a) \
-	((plotmap[home].star_pt.x < plotmap[(a)].star_pt.x) ? 1 : -1)
-#define TOWARD_Y(a) \
-	((plotmap[home].star_pt.y < plotmap[(a)].star_pt.y) ? 1 : -1)
-#define AWAY_X(a) \
-	((plotmap[home].star_pt.x > plotmap[(a)].star_pt.x) ? 1 : -1)
-#define AWAY_Y(a) \
-	((plotmap[home].star_pt.y > plotmap[(a)].star_pt.y) ? 1 : -1)
 
 // For those with no toward/away you can randomly jitter +/-
-#define HALF_X (rand_val_x % 2 ? 1 : -1)
-#define HALF_Y (rand_val_y % 2 ? 1 : -1)
+constexpr int HalfX(auto rand_val_x) { return (rand_val_x % 2 ? 1 : -1); }
+constexpr int HalfY(auto rand_val_y) { return (rand_val_y % 2 ? 1 : -1); }
 
 // 1/5 of the time we flip X, or Y, or both for some races.  Why?  Why not!
-#define FIFTH_X ((rand_val_x * rand_val_y) % 10 ? 1 : -1)
-#define FIFTH_Y ((rand_val_x + rand_val_y) % 5 ? 1 : -1)
+constexpr int FifthX(auto rand_val_x, auto rand_val_y) { return ((rand_val_x * rand_val_y) % 10 ? 1 : -1); }
+constexpr int FifthY(auto rand_val_x, auto rand_val_y) { return ((rand_val_x + rand_val_y) % 5 ? 1 : -1); }
 
 // SeedFleetLocation is called when a fleet needs to be located or relocated.
 // It will return the center for the SOI of the race listed, or if visit
@@ -1471,8 +1431,7 @@ void SeedFleet(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap)
 // fleet/race ID and the plot IDs.
 // For PrimeSeed games this will need to look up the hard coded fleet movements
 // or resets which were part of gameev.c, or the war era map.
-GFXPOINT
-SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
+GFXPOINT SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 {
 	uint16_t rand_val_x {};
 	uint16_t rand_val_y {};
@@ -1496,6 +1455,24 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 	}
 
 	home = Homeworld(FleetPtr->SpeciesID);
+	const auto TowardX = [&](auto a) {
+		return ((plotmap[home].star_pt.x < plotmap[(a)].star_pt.x) ? 1 : -1);
+	};
+	const auto TowardY = [&](auto a) {
+		return ((plotmap[home].star_pt.y < plotmap[(a)].star_pt.y) ? 1 : -1);
+	};
+	const auto AwayX = [&](auto a) {
+		return ((plotmap[home].star_pt.x > plotmap[(a)].star_pt.x) ? 1 : -1);
+	};
+	const auto AwayY = [&](auto a) {
+		return ((plotmap[home].star_pt.y > plotmap[(a)].star_pt.y) ? 1 : -1);
+	};
+	const auto WarpathX = [&](const auto& a, const auto& d) {
+		return (warpoint.x + (d) * (plotmap[home].star_pt.x - (a).x) / sqrt((plotmap[home].star_pt.x - (a).x) * (plotmap[home].star_pt.x - (a).x) + (plotmap[home].star_pt.y - (a).y) * (plotmap[home].star_pt.y - (a).y)));
+	};
+	const auto WarpathY = [&](const auto& a, const auto& d) {
+		return (warpoint.y + (d) * (plotmap[home].star_pt.y - (a).y) / sqrt((plotmap[home].star_pt.x - (a).x) * (plotmap[home].star_pt.x - (a).x) + (plotmap[home].star_pt.y - (a).y) * (plotmap[home].star_pt.y - (a).y)));
+	};
 	if (home >= NUM_PLOTS)
 	{
 		return GFXPOINT {~0, ~0}; // Error already messaged in Homeworld ().
@@ -1547,8 +1524,8 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 		StarGenRNG->reseed(GetRandomSeedForStar(plotmap[visit].star));
 		const uint16_t rand_val_s = StarGenRNG->next();
 		warpoint = GFXPOINT {
-			plotmap[visit].star_pt.x + uqm::lowByte(rand_val_s) * 2 * AWAY_X(visit),
-			plotmap[visit].star_pt.y + uqm::highByte(rand_val_s) * 2 * AWAY_Y(visit)};
+			plotmap[visit].star_pt.x + uqm::lowByte(rand_val_s) * 2 * AwayX(visit),
+			plotmap[visit].star_pt.y + uqm::highByte(rand_val_s) * 2 * AwayY(visit)};
 
 		fmt::format_to_sz_n(buf, "'Sa-Matra' center {:05.1} : {:05.1}\n",
 							(float)warpoint.x / 10, (float)warpoint.y / 10);
@@ -1568,40 +1545,40 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 			break;
 		case CHMMR_ID: // Jitter towards Mmrnmhrm home
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(MOTHER_ARK_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(MOTHER_ARK_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TowardX(MOTHER_ARK_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TowardY(MOTHER_ARK_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case EARTHLING_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case ORZ_ID: // Jitter towards the playground
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(TAALO_PROTECTOR_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(TAALO_PROTECTOR_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TowardX(TAALO_PROTECTOR_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TowardY(TAALO_PROTECTOR_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case PKUNK_ID: // Jitter away from Ilwrath / home from Yehat
 			if (visit == YEHAT_DEFINED)
 			{
 				location = GFXPOINT {
-					plotmap[visit].star_pt.x + AWAY_X(visit) * FIFTH_X * Jitter(strength, rand_val_x),
-					plotmap[visit].star_pt.y + AWAY_Y(visit) * FIFTH_Y * Jitter(strength, rand_val_y)};
+					plotmap[visit].star_pt.x + AwayX(visit) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+					plotmap[visit].star_pt.y + AwayY(visit) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + AWAY_X(ILWRATH_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + AWAY_Y(ILWRATH_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + AwayX(ILWRATH_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + AwayY(ILWRATH_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case SHOFIXTI_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(YEHAT_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(YEHAT_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TowardX(YEHAT_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TowardY(YEHAT_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case SPATHI_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case SUPOX_ID: // Jitter towards Utwig
 			if (visit == SAMATRA_DEFINED)
@@ -1609,13 +1586,13 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 				// 1200 distance times warpath
 				// Then jitter fleet away from Utwig, for reasons
 				location = GFXPOINT {
-					WARPATH_X(warpoint, 1200) + AWAY_X(UTWIG_DEFINED) * Jitter(strength, rand_val_x),
-					WARPATH_Y(warpoint, 1200) + AWAY_Y(UTWIG_DEFINED) * Jitter(strength, rand_val_y)};
+					WarpathX(warpoint, 1200) + AwayX(UTWIG_DEFINED) * Jitter(strength, rand_val_x),
+					WarpathY(warpoint, 1200) + AwayY(UTWIG_DEFINED) * Jitter(strength, rand_val_y)};
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(UTWIG_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(UTWIG_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TowardX(UTWIG_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TowardY(UTWIG_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case THRADDASH_ID:
 			if (visit == SAMATRA_DEFINED)
@@ -1623,13 +1600,13 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 				// 1200 distance times warpath
 				// Bias away from the aqua helix because thraddash.
 				location = GFXPOINT {
-					WARPATH_X(warpoint, 1200) + AWAY_X(AQUA_HELIX_DEFINED) * Jitter(strength, rand_val_x),
-					WARPATH_Y(warpoint, 1200) + AWAY_Y(AQUA_HELIX_DEFINED) * Jitter(strength, rand_val_y)};
+					WarpathX(warpoint, 1200) + AwayX(AQUA_HELIX_DEFINED) * Jitter(strength, rand_val_x),
+					WarpathY(warpoint, 1200) + AwayY(AQUA_HELIX_DEFINED) * Jitter(strength, rand_val_y)};
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(AQUA_HELIX_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(AQUA_HELIX_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TowardX(AQUA_HELIX_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TowardY(AQUA_HELIX_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case UTWIG_ID: // Jitter towards Supox
 			if (visit == SAMATRA_DEFINED)
@@ -1637,37 +1614,37 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 				// 1200 distance times warpath
 				// Then jitter fleet away from Supox, for reasons
 				location = GFXPOINT {
-					WARPATH_X(warpoint, 1200) + AWAY_X(SUPOX_DEFINED) * Jitter(strength, rand_val_x),
-					WARPATH_Y(warpoint, 1200) + AWAY_Y(SUPOX_DEFINED) * Jitter(strength, rand_val_y)};
+					WarpathX(warpoint, 1200) + AwayX(SUPOX_DEFINED) * Jitter(strength, rand_val_x),
+					WarpathY(warpoint, 1200) + AwayY(SUPOX_DEFINED) * Jitter(strength, rand_val_y)};
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(SUPOX_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(SUPOX_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TowardX(SUPOX_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TowardY(SUPOX_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case VUX_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case YEHAT_ID: // Jitter towards Shofixti.  Except rebels.
 			if (visit == YEHAT_DEFINED)
 			{
 				location = GFXPOINT {
-					plotmap[home].star_pt.x + AWAY_X(SHOFIXTI_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-					plotmap[home].star_pt.y + AWAY_Y(SHOFIXTI_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+					plotmap[home].star_pt.x + AwayX(SHOFIXTI_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+					plotmap[home].star_pt.y + AwayY(SHOFIXTI_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + TOWARD_X(SHOFIXTI_DEFINED) * FIFTH_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + TOWARD_Y(SHOFIXTI_DEFINED) * FIFTH_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + TowardX(SHOFIXTI_DEFINED) * FifthX(rand_val_x, rand_val_y) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + TowardY(SHOFIXTI_DEFINED) * FifthY(rand_val_x, rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case MELNORME_ID:
 			break;
 		case DRUUGE_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case ILWRATH_ID:				 // Jitter towards victims
 			if (visit == THRADD_DEFINED) // default 290 distance
@@ -1675,8 +1652,8 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 				// Set the X and Y coords based on being 500 units away
 				// from the target along the warpath.
 				location = GFXPOINT {
-					WARPATH_X(warpoint, 500) + TOWARD_X(visit) * Jitter(strength, rand_val_x),
-					WARPATH_Y(warpoint, 500) + TOWARD_Y(visit) * Jitter(strength, rand_val_y)};
+					WarpathX(warpoint, 500) + TowardX(visit) * Jitter(strength, rand_val_x),
+					WarpathY(warpoint, 500) + TowardY(visit) * Jitter(strength, rand_val_y)};
 				fmt::format_to_sz_n(buf, "{} {:05.1} : {:05.1}\n",
 									"ILWRATH x THRADDASH",
 									(float)location.x / 10, (float)location.y / 10);
@@ -1686,23 +1663,23 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 			{
 				warpoint = plotmap[visit].star_pt;
 				location = GFXPOINT {
-					WARPATH_X(warpoint, 1400) + TOWARD_X(visit) * Jitter(strength, rand_val_x),
-					WARPATH_Y(warpoint, 1400) + TOWARD_Y(visit) * Jitter(strength, rand_val_y)};
+					WarpathX(warpoint, 1400) + TowardX(visit) * Jitter(strength, rand_val_x),
+					WarpathY(warpoint, 1400) + TowardY(visit) * Jitter(strength, rand_val_y)};
 				fmt::format_to_sz_n(buf, "{} {:05.1} : {:05.1}\n",
 									"ILWRATH x PKUNK",
 									(float)location.x / 10, (float)location.y / 10);
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case MYCON_ID:
 			if (visit == MYCON_TRAP_DEFINED)
 			{
 				location = GFXPOINT {
-					plotmap[visit].star_pt.x + AWAY_X(visit) * Jitter(strength, rand_val_x),
-					plotmap[visit].star_pt.y + AWAY_Y(visit) * Jitter(strength, rand_val_y)};
+					plotmap[visit].star_pt.x + AwayX(visit) * Jitter(strength, rand_val_x),
+					plotmap[visit].star_pt.y + AwayY(visit) * Jitter(strength, rand_val_y)};
 				break;
 			}
 			location = GFXPOINT {// Jitter towards sun device and eggs
@@ -1717,55 +1694,55 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 				// 2000 distance times warpath
 				// Bias away from the umgah
 				location = GFXPOINT {
-					WARPATH_X(warpoint, 2000) + AWAY_X(TALKING_PET_DEFINED) * Jitter(strength, rand_val_x),
-					WARPATH_Y(warpoint, 2000) + AWAY_Y(TALKING_PET_DEFINED) * Jitter(strength, rand_val_y)};
+					WarpathX(warpoint, 2000) + AwayX(TALKING_PET_DEFINED) * Jitter(strength, rand_val_x),
+					WarpathY(warpoint, 2000) + AwayY(TALKING_PET_DEFINED) * Jitter(strength, rand_val_y)};
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case UR_QUAN_ID: // Halved jitter due to size
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_Y * Jitter(strength, rand_val_x) / 2,
-				plotmap[home].star_pt.y + HALF_X + Jitter(strength, rand_val_y) / 2};
+				plotmap[home].star_pt.x + HalfY(rand_val_y) * Jitter(strength, rand_val_x) / 2,
+				plotmap[home].star_pt.y + HalfX(rand_val_x) + Jitter(strength, rand_val_y) / 2};
 			break;
 		case KOHR_AH_ID:		 // Halved jitter, swap x and y from UQ (same seed)
 			location = GFXPOINT {// and ONE sign for a 90 degree turn
-								 plotmap[home].star_pt.x - HALF_X * Jitter(strength, rand_val_y) / 2,
-								 plotmap[home].star_pt.y + HALF_Y + Jitter(strength, rand_val_x) / 2};
+								 plotmap[home].star_pt.x - HalfX(rand_val_x) * Jitter(strength, rand_val_y) / 2,
+								 plotmap[home].star_pt.y + HalfY(rand_val_y) + Jitter(strength, rand_val_x) / 2};
 			break;
 		case ZOQFOTPIK_ID:		 // ZoqFot jitter is inverted (str - jit) away from
 			location = GFXPOINT {// KA/UQ zone, then /2, gives 16% - 50% jit
-								 plotmap[home].star_pt.x + AWAY_X(SAMATRA_DEFINED) * (FleetPtr->actual_strength * SPHERE_RADIUS_INCREMENT / 2 - Jitter(strength, rand_val_x)) / 2,
-								 plotmap[home].star_pt.y + AWAY_Y(SAMATRA_DEFINED) * (FleetPtr->actual_strength * SPHERE_RADIUS_INCREMENT / 2 - Jitter(strength, rand_val_y)) / 2};
+								 plotmap[home].star_pt.x + AwayX(SAMATRA_DEFINED) * (FleetPtr->actual_strength * SphereRadiusIncrement / 2 - Jitter(strength, rand_val_x)) / 2,
+								 plotmap[home].star_pt.y + AwayY(SAMATRA_DEFINED) * (FleetPtr->actual_strength * SphereRadiusIncrement / 2 - Jitter(strength, rand_val_y)) / 2};
 			break;
 		case SYREEN_ID:
 			if (visit == MYCON_TRAP_DEFINED)
 			{
 				location = GFXPOINT {
-					plotmap[visit].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-					plotmap[visit].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+					plotmap[visit].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+					plotmap[visit].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 				break;
 			}
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case ANDROSYNTH_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_y),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_x)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_y),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_x)};
 			break;
 		case CHENJESU_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_x),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_y)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_x),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_y)};
 			break;
 		case MMRNMHRM_ID:
 			location = GFXPOINT {
-				plotmap[home].star_pt.x + HALF_X * Jitter(strength, rand_val_y),
-				plotmap[home].star_pt.y + HALF_Y * Jitter(strength, rand_val_x)};
+				plotmap[home].star_pt.x + HalfX(rand_val_x) * Jitter(strength, rand_val_y),
+				plotmap[home].star_pt.y + HalfY(rand_val_y) * Jitter(strength, rand_val_x)};
 			break;
 		default:
 			break;
@@ -1774,17 +1751,17 @@ SeedFleetLocation(FLEET_INFO* FleetPtr, PLOT_LOCATION* plotmap, uint16_t visit)
 	{
 		location.x = 0;
 	}
-	if (location.x >= MAX_X_UNIVERSE)
+	if (location.x >= MaxXUniverse)
 	{
-		location.x = MAX_X_UNIVERSE - 1;
+		location.x = MaxXUniverse - 1;
 	}
 	if (location.y < 0)
 	{
 		location.y = 0;
 	}
-	if (location.y >= MAX_Y_UNIVERSE)
+	if (location.y >= MaxYUniverse)
 	{
-		location.y = MAX_Y_UNIVERSE - 1;
+		location.y = MaxYUniverse - 1;
 	}
 
 #ifdef DEBUG_STARSEED

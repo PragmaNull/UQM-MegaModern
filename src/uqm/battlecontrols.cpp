@@ -21,16 +21,15 @@
 #include "tactrans.h"
 // For battleEndReady*
 #include "init.h"
-// For NUM_PLAYERS
+// For NumPlayers
 #ifdef NETPLAY
 #include "supermelee/netplay/netmelee.h"
 #endif /* NETPLAY */
 
-InputContext* PlayerInput[NUM_PLAYERS];
+InputContext* PlayerInput[NumPlayers];
 
 template <typename Context>
-static void
-InputContext_delete(InputContext* context)
+static void InputContext_delete(InputContext* context)
 {
 	delete static_cast<Context*>(context);
 }
@@ -67,8 +66,7 @@ void InputContext_init(InputContext* context, BattleInputHandlers* handlers,
 }
 
 
-ComputerInputContext*
-ComputerInputContext_new(uint16_t playerNr)
+ComputerInputContext* ComputerInputContext_new(uint16_t playerNr)
 {
 	auto* result {new ComputerInputContext {}};
 	InputContext_init(result,
@@ -76,8 +74,7 @@ ComputerInputContext_new(uint16_t playerNr)
 	return result;
 }
 
-HumanInputContext*
-HumanInputContext_new(uint16_t playerNr)
+HumanInputContext* HumanInputContext_new(uint16_t playerNr)
 {
 	auto* result {new HumanInputContext {}};
 	InputContext_init(result,
@@ -86,8 +83,7 @@ HumanInputContext_new(uint16_t playerNr)
 }
 
 #ifdef NETPLAY
-NetworkInputContext*
-NetworkInputContext_new(uint16_t playerNr)
+NetworkInputContext* NetworkInputContext_new(uint16_t playerNr)
 {
 	auto* result {new NetworkInputContext {}};
 	InputContext_init(result,

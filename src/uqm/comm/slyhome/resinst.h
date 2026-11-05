@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define SLYLANDRO_COLOR_MAP "comm.slylandro.colortable"
-#define SLYLANDRO_CONVERSATION_PHRASES "comm.slylandro.dialogue"
-#define SLYLANDRO_FONT "comm.slylandro.font"
-#define SLYLANDRO_MUSIC "comm.slylandro.music"
-#define SLYLANDRO_PMAP_ANIM "comm.slylandro.graphics"
-#define SLYLANDRO_SCRIPT "comm.slylandro.script"
+inline constexpr uqgsl::czstring SlylandroColorMap {"comm.slylandro.colortable"};
+inline constexpr uqgsl::czstring SlylandroConversationPhrases {"comm.slylandro.dialogue"};
+inline constexpr uqgsl::czstring SlylandroFont {"comm.slylandro.font"};
+inline constexpr uqgsl::czstring SlylandroMusic {"comm.slylandro.music"};
+inline constexpr uqgsl::czstring SlylandroPmapAnim {"comm.slylandro.graphics"};

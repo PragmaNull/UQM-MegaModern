@@ -21,52 +21,52 @@
 #include "resinst.h"
 
 // Core characteristics
-#define MAX_CREW 14
-#define MAX_ENERGY 32
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 50
-#define MAX_THRUST 20
-#define THRUST_INCREMENT 2
-#define THRUST_WAIT 1
-#define TURN_WAIT 4
-#define SHIP_MASS 5
+static constexpr auto MaxCrew {14};
+static constexpr auto MaxEnergy {32};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {50};
+static constexpr auto MaxThrust {20};
+static constexpr auto ThrustIncrement {2};
+static constexpr auto ThrustWait {1};
+static constexpr auto TurnWait {4};
+static constexpr auto ShipMass {5};
 
 // Mass Driver
-#define WEAPON_ENERGY_COST 4
-#define WEAPON_WAIT 10
-#define DRUUGE_OFFSET RES_SCALE(24)
-#define MISSILE_OFFSET RES_SCALE(6)
-#define MISSILE_SPEED DISPLAY_TO_WORLD(30)
-#define MISSILE_LIFE 20
-#define MISSILE_RANGE (MISSILE_SPEED * MISSILE_LIFE)
-#define MISSILE_HITS 4
-#define MISSILE_DAMAGE 6
-#define RECOIL_VELOCITY WORLD_TO_VELOCITY(DISPLAY_TO_WORLD(RES_SCALE(6)))
-#define MAX_RECOIL_VELOCITY (RECOIL_VELOCITY * 4)
+static constexpr auto WeaponEnergyCost {4};
+static constexpr auto WeaponWait {10};
+static auto DruugeOffset() { return ResScale(24); }
+static auto MissileOffset() { return ResScale(6); }
+static constexpr auto MissileSpeed {DisplayToWorld(30)};
+static constexpr auto MissileLife {20};
+static constexpr auto MissileRange {(MissileSpeed * MissileLife)};
+static constexpr auto MissileHits {4};
+static constexpr auto MissileDamage {6};
+static auto RecoilVelocity() { return WorldToVelocity(DisplayToWorld(ResScale(6))); }
+static auto MaxRecoilVelocity() { return (RecoilVelocity() * 4); }
 
 // Furnace
-#define SPECIAL_ENERGY_COST 16
-#define SPECIAL_WAIT 30
+static constexpr auto SpecialEnergyCost {16};
+static constexpr auto SpecialWait {30};
 
-// HD
-#define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
-#define MISSILE_RANGE_HD (MISSILE_SPEED_HD * MISSILE_LIFE)
+// HdResolutionFactor
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
+static auto MissileRangeHd() { return (MissileSpeedHd() * MissileLife); }
 
 static RACE_DESC druuge_desc =
 	{
 		{/* SHIP_INFO */
 		 "mauler",
-		 FIRES_FORE,
+		 FiresFore,
 		 17, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 DRUUGE_RACE_STRINGS,
-		 DRUUGE_ICON_MASK_PMAP_ANIM,
-		 DRUUGE_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 DruugeRaceStrings,
+		 DruugeIconMaskPmapAnim,
+		 DruugeMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			1400 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			1400 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				9500,
@@ -74,38 +74,38 @@ static RACE_DESC druuge_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 DRUUGE_BIG_MASK_PMAP_ANIM,
-			 DRUUGE_MED_MASK_PMAP_ANIM,
-			 DRUUGE_SML_MASK_PMAP_ANIM,
+			 DruugeBigMaskPmapAnim,
+			 DruugeMedMaskPmapAnim,
+			 DruugeSmlMaskPmapAnim,
 		 },
 		 {
-			 DRUUGE_CANNON_BIG_MASK_PMAP_ANIM,
-			 DRUUGE_CANNON_MED_MASK_PMAP_ANIM,
-			 DRUUGE_CANNON_SML_MASK_PMAP_ANIM,
+			 DruugeCannonBigMaskPmapAnim,
+			 DruugeCannonMedMaskPmapAnim,
+			 DruugeCannonSmlMaskPmapAnim,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
-		 {DRUUGE_CAPT_MASK_PMAP_ANIM,
+		 {DruugeCaptMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 DRUUGE_VICTORY_SONG,
-		 DRUUGE_SHIP_SOUNDS,
+		 DruugeVictorySong,
+		 DruugeShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -113,7 +113,7 @@ static RACE_DESC druuge_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_RANGE,
+			MissileRange,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -124,15 +124,14 @@ static RACE_DESC druuge_desc =
 		0, /* CodeRef */
 };
 
-static void
-cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							 ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
 
-	if ((ElementPtr1->state_flags & PLAYER_SHIP)
+	if ((ElementPtr1->state_flags & PlayerShip)
 		&& ElementPtr1->crew_level
-		&& !GRAVITY_MASS(ElementPtr1->mass_points + 1))
+		&& !GravityMass(ElementPtr1->mass_points + 1))
 	{
 		uint16_t angle {};
 		int16_t cur_delta_x {};
@@ -141,29 +140,28 @@ cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 
 		GetElementStarShip(ElementPtr1, &StarShipPtr);
 		StarShipPtr->cur_status_flags &=
-			~(SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED);
+			~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
 
-		angle = FACING_TO_ANGLE(
+		angle = FacingToAngle(
 			GetFrameIndex(ElementPtr0->next.image.frame));
 		DeltaVelocityComponents(&ElementPtr1->velocity,
-								COSINE(angle, RECOIL_VELOCITY),
-								SINE(angle, RECOIL_VELOCITY));
+								Cosine(angle, RecoilVelocity()),
+								Sine(angle, RecoilVelocity()));
 		GetCurrentVelocityComponents(&ElementPtr1->velocity,
 									 &cur_delta_x, &cur_delta_y);
 		if ((long)cur_delta_x * (long)cur_delta_x
 				+ (long)cur_delta_y * (long)cur_delta_y
-			> (long)MAX_RECOIL_VELOCITY * (long)MAX_RECOIL_VELOCITY)
+			> (long)MaxRecoilVelocity() * (long)MaxRecoilVelocity())
 		{
 			angle = ARCTAN(cur_delta_x, cur_delta_y);
 			SetVelocityComponents(&ElementPtr1->velocity,
-								  COSINE(angle, MAX_RECOIL_VELOCITY),
-								  SINE(angle, MAX_RECOIL_VELOCITY));
+								  Cosine(angle, MaxRecoilVelocity()),
+								  Sine(angle, MaxRecoilVelocity()));
 		}
 	}
 }
 
-static uint16_t
-initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
+static uint16_t initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -175,14 +173,14 @@ initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
 	MissileBlock.face = StarShipPtr->ShipFacing;
 	MissileBlock.index = MissileBlock.face;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
-	MissileBlock.pixoffs = DRUUGE_OFFSET;
-	MissileBlock.speed = chooseIfHd(MISSILE_SPEED, MISSILE_SPEED_HD);
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.pixoffs = DruugeOffset();
+	MissileBlock.speed = chooseIfHd(MissileSpeed, MissileSpeedHd());
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset();
 	CannonArray[0] = initialize_missile(&MissileBlock);
 
 	if (CannonArray[0])
@@ -197,9 +195,8 @@ initialize_cannon(ELEMENT* ShipPtr, HELEMENT CannonArray[])
 	return (1);
 }
 
-static void
-druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					uint16_t ConcernCounter)
+static void druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								uint16_t ConcernCounter)
 {
 	uint16_t ship_flags = 0;
 	STARSHIP* StarShipPtr {};
@@ -208,17 +205,17 @@ druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 
 	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_SHIP_INDEX]};
-	if (StarShipPtr->cur_status_flags & SHIP_BEYOND_MAX_SPEED)
+	if (StarShipPtr->cur_status_flags & ShipBeyondMaxSpeed)
 	{
 		lpEvalDesc->MoveState = ENTICE;
 	}
 	else if (lpEvalDesc->ObjectPtr
-			 && lpEvalDesc->which_turn <= RES_DESCALE(WORLD_TO_TURN(RES_SCALE(MISSILE_RANGE) * 3 / 4)))
+			 && lpEvalDesc->which_turn <= ResDescale(WorldToTurn(ResScale(MissileRange) * 3 / 4)))
 	{
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		ship_flags = EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags;
 		EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags &=
-			~(FIRES_FORE | FIRES_RIGHT | FIRES_AFT | FIRES_LEFT);
+			~(FiresFore | FiresRight | FiresAft | FiresLeft);
 
 		lpEvalDesc->MoveState = PURSUE;
 		if (ShipPtr->thrust_wait == 0)
@@ -232,79 +229,77 @@ druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags = ship_flags;
 	}
 
-	if (!(StarShipPtr->cur_status_flags & SHIP_BEYOND_MAX_SPEED)
+	if (!(StarShipPtr->cur_status_flags & ShipBeyondMaxSpeed)
 		&& (lpEvalDesc->which_turn <= 12
 			|| (ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr
 				&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 6)))
 	{
-		StarShipPtr->ship_input_state |= WEAPON;
-		if (ShipPtr->thrust_wait < WEAPON_WAIT + 1)
+		StarShipPtr->ship_input_state |= WeaponFlag;
+		if (ShipPtr->thrust_wait < WeaponWait + 1)
 		{
-			ShipPtr->thrust_wait = WEAPON_WAIT + 1;
+			ShipPtr->thrust_wait = WeaponWait + 1;
 		}
 	}
 
 
-	if ((StarShipPtr->ship_input_state & WEAPON)
-		&& StarShipPtr->RaceDescPtr->ship_info.energy_level < WEAPON_ENERGY_COST
+	if ((StarShipPtr->ship_input_state & WeaponFlag)
+		&& StarShipPtr->RaceDescPtr->ship_info.energy_level < WeaponEnergyCost
 		&& ShipPtr->crew_level > 1)
 	{
-		StarShipPtr->ship_input_state |= SPECIAL;
+		StarShipPtr->ship_input_state |= SpecialFlag;
 	}
 	else
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 	}
 }
 
-static void
-druuge_postprocess(ELEMENT* ElementPtr)
+static void druuge_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	/* if just fired cannon */
-	if ((StarShipPtr->cur_status_flags & WEAPON)
+	if ((StarShipPtr->cur_status_flags & WeaponFlag)
 		&& StarShipPtr->weapon_counter == StarShipPtr->RaceDescPtr->characteristics.weapon_wait)
 	{
 		uint16_t angle {};
 		int32_t cur_delta_x {};
 		int32_t cur_delta_y {};
 
-		StarShipPtr->cur_status_flags &= ~SHIP_AT_MAX_SPEED;
+		StarShipPtr->cur_status_flags &= ~ShipAtMaxSpeed;
 
-		angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HALF_CIRCLE;
+		angle = FacingToAngle(StarShipPtr->ShipFacing) + HalfCircle;
 		DeltaVelocityComponents(&ElementPtr->velocity,
-								COSINE(angle, RECOIL_VELOCITY),
-								SINE(angle, RECOIL_VELOCITY));
+								Cosine(angle, RecoilVelocity()),
+								Sine(angle, RecoilVelocity()));
 		GetCurrentVelocityComponentsSdword(&ElementPtr->velocity,
 										   &cur_delta_x, &cur_delta_y);
 		if ((long)cur_delta_x * (long)cur_delta_x
 				+ (long)cur_delta_y * (long)cur_delta_y
-			> (long)MAX_RECOIL_VELOCITY * (long)MAX_RECOIL_VELOCITY)
+			> (long)MaxRecoilVelocity() * (long)MaxRecoilVelocity())
 		{
 			angle = ARCTAN(cur_delta_x, cur_delta_y);
 			SetVelocityComponents(&ElementPtr->velocity,
-								  COSINE(angle, MAX_RECOIL_VELOCITY),
-								  SINE(angle, MAX_RECOIL_VELOCITY));
+								  Cosine(angle, MaxRecoilVelocity()),
+								  Sine(angle, MaxRecoilVelocity()));
 		}
 	}
 }
 
-static void
-druuge_preprocess(ELEMENT* ElementPtr)
+static void druuge_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (StarShipPtr->cur_status_flags & SPECIAL)
+	if (StarShipPtr->cur_status_flags & SpecialFlag)
 	{
 		if (StarShipPtr->special_counter
 			|| ElementPtr->crew_level == 1
 			|| StarShipPtr->RaceDescPtr->ship_info.energy_level
 				   == StarShipPtr->RaceDescPtr->ship_info.max_energy)
 		{
-			StarShipPtr->cur_status_flags &= ~SPECIAL;
+			StarShipPtr->cur_status_flags &= ~SpecialFlag;
 		}
 		else
 		{
@@ -314,7 +309,7 @@ druuge_preprocess(ELEMENT* ElementPtr)
 						 ElementPtr);
 
 			DeltaCrew(ElementPtr, -1);
-			DeltaEnergy(ElementPtr, SPECIAL_ENERGY_COST);
+			DeltaEnergy(ElementPtr, SpecialEnergyCost);
 
 			StarShipPtr->special_counter =
 				StarShipPtr->RaceDescPtr->characteristics.special_wait;
@@ -322,20 +317,19 @@ druuge_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_druuge(void)
+RACE_DESC* init_druuge(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
-		druuge_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		druuge_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		druuge_desc.cyborg_control.WeaponRange = MISSILE_RANGE_HD;
+		druuge_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		druuge_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
+		druuge_desc.cyborg_control.WeaponRange = MissileRangeHd();
 	}
 	else
 	{
-		druuge_desc.characteristics.max_thrust = MAX_THRUST;
-		druuge_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		druuge_desc.cyborg_control.WeaponRange = MISSILE_RANGE;
+		druuge_desc.characteristics.max_thrust = MaxThrust;
+		druuge_desc.characteristics.thrust_increment = ThrustIncrement;
+		druuge_desc.cyborg_control.WeaponRange = MissileRange;
 	}
 
 	druuge_desc.preprocess_func = druuge_preprocess;

@@ -24,15 +24,13 @@
 #include <fmt/format.h>
 
 
-static bool
-FreeLegacyVideoData(void* data)
+static bool FreeLegacyVideoData(void* data)
 {
 	delete static_cast<LEGACY_VIDEO>(data);
 	return data != nullptr;
 }
 
-static void
-GetLegacyVideoData(const ResourceArg& arg, RESOURCE_DATA* resdata)
+static void GetLegacyVideoData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 {
 	const char* const video {resourceStringField(arg, "video")};
 	if (video == nullptr)
@@ -44,7 +42,7 @@ GetLegacyVideoData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	const char* const audio {resourceStringField(arg, "audio")};
 	const char* const speech {resourceStringField(arg, "speech")};
 	const uqstl::optional<int64_t> loop {resourceIntField(arg, "loop")};
-	const uint32_t loopFrame {loop ? static_cast<uint32_t>(*loop) : VID_NO_LOOP};
+	const uint32_t loopFrame {loop ? static_cast<uint32_t>(*loop) : VidNoLoop};
 
 	uqm::log::info("\t'{}' -- video, audio '{}', speech '{}', loop frame {}", video, audio != nullptr ? audio : "", speech != nullptr ? speech : "",
 				   loop ? fmt::format("{}", loopFrame) : "none");
@@ -58,8 +56,7 @@ bool InstallVideoResType(void)
 	return true;
 }
 
-LEGACY_VIDEO
-LoadLegacyVideoInstance(RESOURCE res)
+LEGACY_VIDEO LoadLegacyVideoInstance(RESOURCE res)
 {
 	void* data {res_GetResource(res)};
 	if (data)

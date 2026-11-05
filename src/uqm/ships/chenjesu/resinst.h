@@ -2,18 +2,18 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define CHENJESU_BIG_MASK_PMAP_ANIM "ship.chenjesu.graphics.broodhome.large"
-#define CHENJESU_CAPTAIN_MASK_PMAP_ANIM "ship.chenjesu.graphics.captain"
-#define CHENJESU_ICON_MASK_PMAP_ANIM "ship.chenjesu.icons"
-#define CHENJESU_MED_MASK_PMAP_ANIM "ship.chenjesu.graphics.broodhome.medium"
-#define CHENJESU_MICON_MASK_PMAP_ANIM "ship.chenjesu.meleeicons"
-#define CHENJESU_RACE_STRINGS "ship.chenjesu.text"
-#define CHENJESU_SHIP_SOUNDS "ship.chenjesu.sounds"
-#define CHENJESU_SML_MASK_PMAP_ANIM "ship.chenjesu.graphics.broodhome.small"
-#define CHENJESU_VICTORY_SONG "ship.chenjesu.ditty"
-#define DOGGY_BIG_MASK_PMAP_ANIM "ship.chenjesu.graphics.doggy.large"
-#define DOGGY_MED_MASK_PMAP_ANIM "ship.chenjesu.graphics.doggy.medium"
-#define DOGGY_SML_MASK_PMAP_ANIM "ship.chenjesu.graphics.doggy.small"
-#define SPARK_BIG_MASK_PMAP_ANIM "ship.chenjesu.graphics.spark.large"
-#define SPARK_MED_MASK_PMAP_ANIM "ship.chenjesu.graphics.spark.medium"
-#define SPARK_SML_MASK_PMAP_ANIM "ship.chenjesu.graphics.spark.small"
+inline constexpr uqgsl::czstring ChenjesuBigMaskPmapAnim {"ship.chenjesu.graphics.broodhome.large"};
+inline constexpr uqgsl::czstring ChenjesuCaptainMaskPmapAnim {"ship.chenjesu.graphics.captain"};
+inline constexpr uqgsl::czstring ChenjesuIconMaskPmapAnim {"ship.chenjesu.icons"};
+inline constexpr uqgsl::czstring ChenjesuMedMaskPmapAnim {"ship.chenjesu.graphics.broodhome.medium"};
+inline constexpr uqgsl::czstring ChenjesuMiconMaskPmapAnim {"ship.chenjesu.meleeicons"};
+inline constexpr uqgsl::czstring ChenjesuRaceStrings {"ship.chenjesu.text"};
+inline constexpr uqgsl::czstring ChenjesuShipSounds {"ship.chenjesu.sounds"};
+inline constexpr uqgsl::czstring ChenjesuSmlMaskPmapAnim {"ship.chenjesu.graphics.broodhome.small"};
+inline constexpr uqgsl::czstring ChenjesuVictorySong {"ship.chenjesu.ditty"};
+inline constexpr uqgsl::czstring DoggyBigMaskPmapAnim {"ship.chenjesu.graphics.doggy.large"};
+inline constexpr uqgsl::czstring DoggyMedMaskPmapAnim {"ship.chenjesu.graphics.doggy.medium"};
+inline constexpr uqgsl::czstring DoggySmlMaskPmapAnim {"ship.chenjesu.graphics.doggy.small"};
+inline constexpr uqgsl::czstring SparkBigMaskPmapAnim {"ship.chenjesu.graphics.spark.large"};
+inline constexpr uqgsl::czstring SparkMedMaskPmapAnim {"ship.chenjesu.graphics.spark.medium"};
+inline constexpr uqgsl::czstring SparkSmlMaskPmapAnim {"ship.chenjesu.graphics.spark.small"};

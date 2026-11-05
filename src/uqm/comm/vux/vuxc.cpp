@@ -28,30 +28,30 @@ static LOCDATA vux_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		VUX_PMAP_ANIM, /* AlienFrame */
-		VUX_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		VuxPmapAnim, /* AlienFrame */
+		VuxFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* (SIS_TEXT_WIDTH - 16) >> 1, */  /* AlienTextWidth */
+		/* (SisTextWidth() - 16) >> 1, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		VUX_COLOR_MAP, /* AlienColorMap */
-		VUX_MUSIC, /* AlienSong */
+		VuxColorMap, /* AlienColorMap */
+		VuxMusic, /* AlienSong */
 		{
-								VUX_ZEX_PMAP_ANIM, /* AlienAltFrame */
-			NULL_RESOURCE,	   /* AlienAltColorMap */
-			VUX_ZEX_MUSIC,	   /* AlienAltSong */
+								VuxZexPmapAnim, /* AlienAltFrame */
+			NullResource,	/* AlienAltColorMap */
+			VuxZexMusic,	/* AlienAltSong */
 		},
-		VUX_CONVERSATION_PHRASES, /* PlayerPhrases */
+		VuxConversationPhrases, /* PlayerPhrases */
 		19, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				12,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				12,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -59,9 +59,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				15,			 /* StartIndex */
-				5,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				15,			/* StartIndex */
+				5,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -69,9 +69,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				20,			   /* StartIndex */
-				14,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				20,			  /* StartIndex */
+				14,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				0, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -79,9 +79,9 @@ static LOCDATA vux_desc =
 				0, /* BlockMask */
 			},
 								{
-				34,			   /* StartIndex */
-				7,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				34,			  /* StartIndex */
+				7,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -89,9 +89,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				41,			 /* StartIndex */
-				6,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				41,			/* StartIndex */
+				6,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -99,9 +99,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				47,			   /* StartIndex */
-				11,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				47,			  /* StartIndex */
+				11,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -109,9 +109,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				58,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				58,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -119,9 +119,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				61,			 /* StartIndex */
-				4,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				61,			/* StartIndex */
+				4,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -129,9 +129,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				65,			 /* StartIndex */
-				4,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				65,			/* StartIndex */
+				4,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -139,9 +139,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				69,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				69,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -149,9 +149,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				71,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				71,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -159,9 +159,9 @@ static LOCDATA vux_desc =
 				0,						/* BlockMask */
 			},
 								{
-				74,		   /* StartIndex */
-				6,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				74,		  /* StartIndex */
+				6,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -169,9 +169,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				80,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				80,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -179,9 +179,9 @@ static LOCDATA vux_desc =
 				(1 << 14),				 /* BlockMask */
 			},
 								{
-				85,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				85,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -189,9 +189,9 @@ static LOCDATA vux_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				90,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				90,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -199,9 +199,9 @@ static LOCDATA vux_desc =
 				(1 << 12),				 /* BlockMask */
 			},
 								{
-				95,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				95,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 5,
@@ -209,9 +209,9 @@ static LOCDATA vux_desc =
 				0,						/* BlockMask */
 			},
 								{
-				99,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				99,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 5,
@@ -219,9 +219,9 @@ static LOCDATA vux_desc =
 				0,						/* BlockMask */
 			},
 								{
-				103,						   /* StartIndex */
-				16,							   /* NumFrames */
-				CIRCULAR_ANIM | ANIM_DISABLED, /* AnimFlags */
+				103,						 /* StartIndex */
+				16,							 /* NumFrames */
+				CircularAnim | AnimDisabled, /* AnimFlags */
 				GameTicksPerSecond / 30,
 				GameTicksPerSecond / 30, /* FrameRate */
 				GameTicksPerSecond / 30,
@@ -231,8 +231,8 @@ static LOCDATA vux_desc =
 								{
 				119, /* StartIndex */
 				8,	 /* NumFrames */
-				CIRCULAR_ANIM | ONE_SHOT_ANIM
-					| WAIT_TALKING | ANIM_DISABLED, /* AnimFlags */
+				CircularAnim | OneShotAnim
+					| WaitTalking | AnimDisabled, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				0,
@@ -277,21 +277,20 @@ static FILTER_DESC vux_filters =
 		{
 								  /* Filter array */
 			{
-				0,				  /* Color index */
-				1,				  /* Opacity index */
-				-1,				  /* Frame index */
-				DRAW_ALPHA,		  /* DrawKind*/
-				SWITCH_OFF_ANIMS, /* Flags */
+				0,				/* Color index */
+				1,				/* Opacity index */
+				-1,				/* Frame index */
+				DRAW_ALPHA,		/* DrawKind*/
+				SwitchOffAnims, /* Flags */
 			},
 								  }
 };
 
-static void
-ZexBeingEatenAlive(void)
+static void ZexBeingEatenAlive(void)
 {
-	if (altResFlags & USE_ALT_FRAME)
+	if (altResFlags & UseAltFrame)
 	{ // make sure we're using the correct set of frames
-		if (IS_HD)
+		if (IsHd())
 		{
 			CommData.AlienFrame =
 				SetAbsFrameIndex(CommData.AlienFrame, 126);
@@ -313,21 +312,20 @@ ZexBeingEatenAlive(void)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 					  c_gameSecond / 4);
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			EngageFilters(&vux_filters);
 		}
 	}
 }
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, ok_take_beast))
+	if (PlayerSaid(R, ok_take_beast))
 	{
 		NPCPhrase(FOOL_AIEE0);
 		NPCPhrase(FOOL_AIEE1);
@@ -338,35 +336,35 @@ CombatIsInevitable(RESPONSE_REF R)
 
 		AlienTalkSegue((uint16_t)~0);
 
-		SET_GAME_STATE(VUX_BEAST_ON_SHIP, 0);
-		SET_GAME_STATE(ZEX_IS_DEAD, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_BEAST_ON_SHIP, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::ZEX_IS_DEAD, static_cast<uint32_t>(1));
 		setSegue(Segue_peace);
 	}
-	else if (PLAYER_SAID(R, try_any_way))
+	else if (PlayerSaid(R, try_any_way))
 	{
 		NPCPhrase(NOPE);
 
-		SET_GAME_STATE(VUX_STACK_1, 4);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(4));
 	}
-	else if (PLAYER_SAID(R, kill_you_squids_1)
-			 || PLAYER_SAID(R, kill_you_squids_2)
-			 || PLAYER_SAID(R, kill_you_squids_3)
-			 || PLAYER_SAID(R, kill_you_squids_4))
+	else if (PlayerSaid(R, kill_you_squids_1)
+			 || PlayerSaid(R, kill_you_squids_2)
+			 || PlayerSaid(R, kill_you_squids_3)
+			 || PlayerSaid(R, kill_you_squids_4))
 	{
 		NPCPhrase(WE_FIGHT);
 
-		NumVisits = GET_GAME_STATE(VUX_STACK_2) + 1;
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_STACK_2) + 1;
 		if (NumVisits <= 3)
 		{
-			SET_GAME_STATE(VUX_STACK_2, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_2, static_cast<uint32_t>(NumVisits));
 		}
 	}
-	else if (PLAYER_SAID(R, cant_we_be_friends_1)
-			 || PLAYER_SAID(R, cant_we_be_friends_2)
-			 || PLAYER_SAID(R, cant_we_be_friends_3)
-			 || PLAYER_SAID(R, cant_we_be_friends_4))
+	else if (PlayerSaid(R, cant_we_be_friends_1)
+			 || PlayerSaid(R, cant_we_be_friends_2)
+			 || PlayerSaid(R, cant_we_be_friends_3)
+			 || PlayerSaid(R, cant_we_be_friends_4))
 	{
-		NumVisits = GET_GAME_STATE(VUX_STACK_3);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_STACK_3);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -383,11 +381,11 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(VUX_STACK_3, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_3, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PLAYER_SAID(R, bye_hostile_space))
+	else if (PlayerSaid(R, bye_hostile_space))
 	{
-		NumVisits = GET_GAME_STATE(VUX_STACK_4);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_STACK_4);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -404,9 +402,9 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(VUX_STACK_4, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_4, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PLAYER_SAID(R, bye_zex))
+	else if (PlayerSaid(R, bye_zex))
 	{
 		NPCPhrase(GOODBYE_ZEX);
 
@@ -414,7 +412,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	}
 	else
 	{
-		NumVisits = GET_GAME_STATE(VUX_STACK_1);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_STACK_1);
 		switch (NumVisits++)
 		{
 			case 4:
@@ -448,72 +446,71 @@ CombatIsInevitable(RESPONSE_REF R)
 				NPCPhrase(TRUTH);
 				break;
 		}
-		SET_GAME_STATE(VUX_STACK_1, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(NumVisits));
 	}
 }
 
-static void
-Menagerie(RESPONSE_REF R)
+static void Menagerie(RESPONSE_REF R)
 {
 	uint8_t i {};
 	uint8_t LastStack {};
 	RESPONSE_REF pStr[3];
 
-	if (PLAYER_SAID(R, i_have_beast)
-		|| PLAYER_SAID(R, why_trust_1)
-		|| PLAYER_SAID(R, why_trust_2)
-		|| PLAYER_SAID(R, why_trust_3))
+	if (PlayerSaid(R, i_have_beast)
+		|| PlayerSaid(R, why_trust_1)
+		|| PlayerSaid(R, why_trust_2)
+		|| PlayerSaid(R, why_trust_3))
 	{
-		if (PLAYER_SAID(R, i_have_beast))
+		if (PlayerSaid(R, i_have_beast))
 		{
 			NPCPhrase(GIVE_BEAST);
 		}
-		else if (PLAYER_SAID(R, why_trust_1))
+		else if (PlayerSaid(R, why_trust_1))
 		{
 			NPCPhrase(TRUST_1);
 
-			DISABLE_PHRASE(why_trust_1);
+			DisablePhrase(why_trust_1);
 		}
-		else if (PLAYER_SAID(R, why_trust_2))
+		else if (PlayerSaid(R, why_trust_2))
 		{
 			NPCPhrase(TRUST_2);
 
-			DISABLE_PHRASE(why_trust_2);
+			DisablePhrase(why_trust_2);
 		}
-		else if (PLAYER_SAID(R, why_trust_3))
+		else if (PlayerSaid(R, why_trust_3))
 		{
 			NPCPhrase(TRUST_3);
 
-			DISABLE_PHRASE(why_trust_3);
+			DisablePhrase(why_trust_3);
 		}
 
-		if (PHRASE_ENABLED(why_trust_1))
+		if (PhraseEnabled(why_trust_1))
 		{
 			Response(why_trust_1, Menagerie);
 		}
-		else if (PHRASE_ENABLED(why_trust_2))
+		else if (PhraseEnabled(why_trust_2))
 		{
 			Response(why_trust_2, Menagerie);
 		}
-		else if (PHRASE_ENABLED(why_trust_3))
+		else if (PhraseEnabled(why_trust_3))
 		{
 			Response(why_trust_3, Menagerie);
 		}
 		Response(ok_take_beast, CombatIsInevitable);
 	}
-	else if (PLAYER_SAID(R, kill_you))
+	else if (PlayerSaid(R, kill_you))
 	{
 		NPCPhrase(FIGHT_AGAIN);
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, regardless))
+	else if (PlayerSaid(R, regardless))
 	{
 		NPCPhrase(THEN_FIGHT);
 
 		setSegue(Segue_hostile);
-		SET_GAME_STATE(ZEX_STACK_3, 2);
-		SET_GAME_STATE(ZEX_VISITS, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_3, static_cast<uint32_t>(2));
+		uqm::gameState().setFlag(uqm::GameFlag::ZEX_VISITS, static_cast<uint32_t>(0));
 	}
 	else
 	{
@@ -523,8 +520,8 @@ Menagerie(RESPONSE_REF R)
 		{
 			uint8_t NumVisits {};
 
-			NumVisits = GET_GAME_STATE(ZEX_VISITS);
-			if (GET_GAME_STATE(ZEX_STACK_3) >= 2)
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ZEX_VISITS);
+			if (uqm::gameState().flag(uqm::GameFlag::ZEX_STACK_3) >= 2)
 			{
 				switch (NumVisits++)
 				{
@@ -556,79 +553,79 @@ Menagerie(RESPONSE_REF R)
 						break;
 				}
 			}
-			SET_GAME_STATE(ZEX_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_VISITS, static_cast<uint32_t>(NumVisits));
 		}
-		else if (PLAYER_SAID(R, what_you_do_here))
+		else if (PlayerSaid(R, what_you_do_here))
 		{
 			NPCPhrase(MY_MENAGERIE);
 
-			SET_GAME_STATE(ZEX_STACK_1, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_1, static_cast<uint32_t>(1));
 		}
-		else if (PLAYER_SAID(R, what_about_menagerie))
+		else if (PlayerSaid(R, what_about_menagerie))
 		{
 			NPCPhrase(NEED_NEW_CREATURE);
 
-			SET_GAME_STATE(ZEX_STACK_1, 2);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_1, static_cast<uint32_t>(2));
 		}
-		else if (PLAYER_SAID(R, what_about_creature))
+		else if (PlayerSaid(R, what_about_creature))
 		{
 			NPCPhrase(ABOUT_CREATURE);
 
-			SET_GAME_STATE(KNOW_ZEX_WANTS_MONSTER, 1);
-			SET_GAME_STATE(ZEX_STACK_1, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::KNOW_ZEX_WANTS_MONSTER, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_1, static_cast<uint32_t>(3));
 
 			R = about_creature_again;
-			DISABLE_PHRASE(what_about_creature);
+			DisablePhrase(what_about_creature);
 		}
-		else if (PLAYER_SAID(R, about_creature_again))
+		else if (PlayerSaid(R, about_creature_again))
 		{
 			NPCPhrase(CREATURE_AGAIN);
 
-			DISABLE_PHRASE(about_creature_again);
+			DisablePhrase(about_creature_again);
 		}
-		else if (PLAYER_SAID(R, why_dont_you_attack))
+		else if (PlayerSaid(R, why_dont_you_attack))
 		{
 			NPCPhrase(LIKE_YOU);
 
 			LastStack = 1;
-			SET_GAME_STATE(ZEX_STACK_2, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_2, static_cast<uint32_t>(1));
 		}
-		else if (PLAYER_SAID(R, why_like_me))
+		else if (PlayerSaid(R, why_like_me))
 		{
 			NPCPhrase(LIKE_BECAUSE);
 
 			LastStack = 1;
-			SET_GAME_STATE(ZEX_STACK_2, 2);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_2, static_cast<uint32_t>(2));
 		}
-		else if (PLAYER_SAID(R, are_you_a_pervert))
+		else if (PlayerSaid(R, are_you_a_pervert))
 		{
 			NPCPhrase(CALL_ME_WHAT_YOU_WISH);
 
-			SET_GAME_STATE(ZEX_STACK_2, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_2, static_cast<uint32_t>(3));
 		}
-		else if (PLAYER_SAID(R, take_by_force))
+		else if (PlayerSaid(R, take_by_force))
 		{
 			NPCPhrase(PRECURSOR_DEVICE);
 
 			LastStack = 2;
-			SET_GAME_STATE(ZEX_STACK_3, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_3, static_cast<uint32_t>(1));
 		}
-		else if (PLAYER_SAID(R, you_lied))
+		else if (PlayerSaid(R, you_lied))
 		{
 			NPCPhrase(YUP_LIED);
 
 			LastStack = 2;
-			SET_GAME_STATE(ZEX_STACK_3, 3);
+			uqm::gameState().setFlag(uqm::GameFlag::ZEX_STACK_3, static_cast<uint32_t>(3));
 		}
 
-		if (GET_GAME_STATE(KNOW_ZEX_WANTS_MONSTER)
-			&& GET_GAME_STATE(VUX_BEAST_ON_SHIP))
+		if (uqm::gameState().flag(uqm::GameFlag::KNOW_ZEX_WANTS_MONSTER)
+			&& uqm::gameState().flag(uqm::GameFlag::VUX_BEAST_ON_SHIP))
 		{
 			pStr[0] = i_have_beast;
 		}
 		else
 		{
-			switch (GET_GAME_STATE(ZEX_STACK_1))
+			switch (uqm::gameState().flag(uqm::GameFlag::ZEX_STACK_1))
 			{
 				case 0:
 					pStr[0] = what_you_do_here;
@@ -640,14 +637,14 @@ Menagerie(RESPONSE_REF R)
 					pStr[0] = what_about_creature;
 					break;
 				case 3:
-					if (PHRASE_ENABLED(about_creature_again))
+					if (PhraseEnabled(about_creature_again))
 					{
 						pStr[0] = about_creature_again;
 					}
 					break;
 			}
 		}
-		switch (GET_GAME_STATE(ZEX_STACK_2))
+		switch (uqm::gameState().flag(uqm::GameFlag::ZEX_STACK_2))
 		{
 			case 0:
 				pStr[1] = why_dont_you_attack;
@@ -659,7 +656,7 @@ Menagerie(RESPONSE_REF R)
 				pStr[1] = are_you_a_pervert;
 				break;
 		}
-		switch (GET_GAME_STATE(ZEX_STACK_3))
+		switch (uqm::gameState().flag(uqm::GameFlag::ZEX_STACK_3))
 		{
 			case 0:
 				pStr[2] = take_by_force;
@@ -690,32 +687,31 @@ Menagerie(RESPONSE_REF R)
 	}
 }
 
-static void
-NormalVux(RESPONSE_REF R)
+static void NormalVux(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, why_so_mean))
+	if (PlayerSaid(R, why_so_mean))
 	{
 		NPCPhrase(URQUAN_SLAVES);
 
-		SET_GAME_STATE(VUX_STACK_1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, deeper_reason))
+	else if (PlayerSaid(R, deeper_reason))
 	{
 		NPCPhrase(OLD_INSULT);
 
-		SET_GAME_STATE(VUX_STACK_1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, if_we_apologize))
+	else if (PlayerSaid(R, if_we_apologize))
 	{
 		NPCPhrase(PROBABLY_NOT);
 
-		SET_GAME_STATE(VUX_STACK_1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_STACK_1, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, whats_up_hostile))
+	else if (PlayerSaid(R, whats_up_hostile))
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(VUX_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -732,12 +728,12 @@ NormalVux(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(VUX_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::VUX_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_hostile);
+		DisablePhrase(whats_up_hostile);
 	}
 
-	switch (GET_GAME_STATE(VUX_STACK_1))
+	switch (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_1))
 	{
 		case 0:
 			Response(why_so_mean, NormalVux);
@@ -783,7 +779,7 @@ NormalVux(RESPONSE_REF R)
 			break;
 	}
 
-	switch (GET_GAME_STATE(VUX_STACK_2))
+	switch (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_2))
 	{
 		case 0:
 			Response(kill_you_squids_1, CombatIsInevitable);
@@ -799,14 +795,14 @@ NormalVux(RESPONSE_REF R)
 			break;
 	}
 
-	if (PHRASE_ENABLED(whats_up_hostile))
+	if (PhraseEnabled(whats_up_hostile))
 	{
 		Response(whats_up_hostile, NormalVux);
 	}
 
-	if (GET_GAME_STATE(VUX_STACK_1) > 13)
+	if (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_1) > 13)
 	{
-		switch (GET_GAME_STATE(VUX_STACK_3))
+		switch (uqm::gameState().flag(uqm::GameFlag::VUX_STACK_3))
 		{
 			case 0:
 				Response(cant_we_be_friends_1, CombatIsInevitable);
@@ -826,12 +822,11 @@ NormalVux(RESPONSE_REF R)
 	Response(bye_hostile_space, CombatIsInevitable);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
-	if (altResFlags & USE_ALT_FRAME)
+	if (altResFlags & UseAltFrame)
 	{
-		CommData.AlienAmbientArray[17].AnimFlags &= ~ANIM_DISABLED;
+		CommData.AlienAmbientArray[17].AnimFlags &= ~AnimDisabled;
 	}
 
 	if (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
@@ -842,7 +837,7 @@ Intro(void)
 		return;
 	}
 
-	if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
 		Menagerie((RESPONSE_REF)0);
 	}
@@ -850,9 +845,9 @@ Intro(void)
 	{
 		uint8_t NumVisits {};
 
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(VUX_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -869,13 +864,13 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(VUX_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::VUX_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 
 			SetHomeworldKnown(VUX_HOME);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(VUX_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::VUX_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -892,53 +887,50 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(VUX_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::VUX_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		NormalVux((RESPONSE_REF)0);
 	}
 }
 
-static uint16_t
-uninit_vux(void)
+static uint16_t uninit_vux(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_vux_enc(void)
+static void post_vux_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_vux_comm(void)
+LOCDATA* init_vux_comm(void)
 {
 	vux_desc.init_encounter_func = Intro;
 	vux_desc.post_encounter_func = post_vux_enc;
 	vux_desc.uninit_encounter_func = uninit_vux;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
-	vux_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1)
-								 + (SIS_TEXT_WIDTH >> 2) - SAFE_NUM_SCL(4);
+	vux_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1)
+								 + (SisTextWidth() >> 2) - SafeNumScl(4);
 	vux_desc.AlienTextBaseline.y = 0;
-	vux_desc.AlienTextWidth = ((SIS_TEXT_WIDTH - RES_SCALE(16)) >> 1)
-							+ SAFE_X;
+	vux_desc.AlienTextWidth = ((SisTextWidth() - ResScale(16)) >> 1)
+							+ SafeX();
 
 	// use alternate "ZEX" track and frame if available
-	if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		altResFlags |= USE_ALT_SONG;
+		altResFlags |= UseAltSong;
 
-		if (EXTENDED)
+		if (IsExtended())
 		{
-			altResFlags |= USE_ALT_FRAME;
+			altResFlags |= UseAltFrame;
 		}
 	}
 
-	if ((GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	if ((uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);

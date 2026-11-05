@@ -49,8 +49,7 @@ int luaUqm_event_open(lua_State* luaState)
 // argn -> the relative index on the lua stack which contains the Lua
 //         string identifying the event.
 // Returns true if and only if an event is registered.
-static bool
-isEventRegistered(lua_State* luaState, int argn)
+static bool isEventRegistered(lua_State* luaState, int argn)
 {
 	argn = lua_absindex(luaState, argn);
 
@@ -79,8 +78,7 @@ isEventRegistered(lua_State* luaState, int argn)
 // don't rely on this).
 // TODO: make this function return an identifier for the event, so that it
 // can be removed.
-static int
-addEvent(lua_State* luaState, EVENT_TYPE type)
+static int addEvent(lua_State* luaState, EVENT_TYPE type)
 {
 	const auto year = luaL_checkinteger(luaState, 1);
 	const auto month = luaL_checkinteger(luaState, 2);
@@ -122,8 +120,7 @@ addEvent(lua_State* luaState, EVENT_TYPE type)
 // [4] -> string eventIdStr
 // TODO: make this function return an identifier for the event, so that it
 // can be removed.
-static int
-luaUqm_event_addAbsolute(lua_State* luaState)
+static int luaUqm_event_addAbsolute(lua_State* luaState)
 {
 	return addEvent(luaState, ABSOLUTE_EVENT);
 }
@@ -135,16 +132,14 @@ luaUqm_event_addAbsolute(lua_State* luaState)
 // Returns -1 on error, and 0 otherwise.
 // TODO: make this function return an identifier for the event, so that it
 // can be removed.
-static int
-luaUqm_event_addRelative(lua_State* luaState)
+static int luaUqm_event_addRelative(lua_State* luaState)
 {
 	return addEvent(luaState, RELATIVE_EVENT);
 }
 
 // [1] -> string eventIdStr
 // [2] -> function eventFun
-static int
-luaUqm_event_register(lua_State* luaState)
+static int luaUqm_event_register(lua_State* luaState)
 {
 	(void)luaL_checkstring(luaState, 1);
 	luaL_checktype(luaState, 2, LUA_TFUNCTION);
@@ -172,8 +167,7 @@ luaUqm_event_register(lua_State* luaState)
 }
 
 // [1] -> string eventIdStr
-static int
-luaUqm_event_unregister(lua_State* luaState)
+static int luaUqm_event_unregister(lua_State* luaState)
 {
 	(void)luaL_checkstring(luaState, 1);
 

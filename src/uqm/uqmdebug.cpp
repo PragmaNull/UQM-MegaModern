@@ -59,25 +59,25 @@ void doInstantMove(void)
 	{
 		// If no destination has been selected, use the current location
 		// as the destination.
-		uqm::flagship().autopilot.setTarget({LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)), LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y))});
+		uqm::flagship().autopilot.setTarget({LogxToUniverse(uqm::gameState().sis().log_x), LogyToUniverse(uqm::gameState().sis().log_y)});
 	}
 	else
 	{
 		// A new destination has been selected.
-		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(uqm::flagship().autopilot.target().x);
-		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(uqm::flagship().autopilot.target().y);
+		uqm::gameState().sis().log_x = UniverseToLogx(uqm::flagship().autopilot.target().x);
+		uqm::gameState().sis().log_y = UniverseToLogy(uqm::flagship().autopilot.target().y);
 	}
 
 	// Check for a solar systems at the destination.
-	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_SIDE) <= 1)
 	{
 		// If there's a solar system at the destination, enter it.
 		GFXPOINT target {uqm::flagship().autopilot.target()};
-		CurStarDescPtr = FindStar(0, &target, 0, 0);
-		if (CurStarDescPtr)
+		CurStarDescPtr() = FindStar(0, &target, 0, 0);
+		if (CurStarDescPtr())
 		{
 			// Leave HyperSpace/QuasiSpace if we're there:
-			SET_GAME_STATE(USED_BROADCASTER, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::USED_BROADCASTER, static_cast<uint32_t>(0));
 			uqm::currentActivity() &= ~IN_BATTLE;
 
 			// Enter IP:
@@ -94,8 +94,7 @@ void doInstantMove(void)
 }
 
 // playerNr should be 0 or 1
-STARSHIP*
-findPlayerShip(int16_t playerNr)
+STARSHIP* findPlayerShip(int16_t playerNr)
 {
 	HELEMENT hNextElement {};
 
@@ -106,7 +105,7 @@ findPlayerShip(int16_t playerNr)
 		LockElement(hElement, &ElementPtr);
 		hNextElement = GetSuccElement(ElementPtr);
 
-		if ((ElementPtr->state_flags & PLAYER_SHIP) && ElementPtr->playerNr == playerNr)
+		if ((ElementPtr->state_flags & PlayerShip) && ElementPtr->playerNr == playerNr)
 		{
 			STARSHIP* StarShipPtr {};
 			GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -133,11 +132,11 @@ void resetEnergyBattle(void)
 
 	if (testFlag(PlayerControl[1], PlayerControlFlags::Human))
 	{
-		StarShipPtr = findPlayerShip(NPC_PLAYER_NUM);
+		StarShipPtr = findPlayerShip(NpcPlayerNum);
 	}
 	else if (testFlag(PlayerControl[0], PlayerControlFlags::Human))
 	{
-		StarShipPtr = findPlayerShip(RPG_PLAYER_NUM);
+		StarShipPtr = findPlayerShip(RpgPlayerNum);
 	}
 	else
 	{
@@ -157,8 +156,7 @@ void resetEnergyBattle(void)
 }
 
 // Kills the opponent of the player controlled ship
-static void
-scuttleOpponent(void)
+static void scuttleOpponent(void)
 {
 	const STARSHIP* StarShipPtr {};
 	uint16_t delta {};
@@ -171,11 +169,11 @@ scuttleOpponent(void)
 
 	if (testFlag(PlayerControl[1], PlayerControlFlags::Human))
 	{
-		StarShipPtr = findPlayerShip(RPG_PLAYER_NUM);
+		StarShipPtr = findPlayerShip(RpgPlayerNum);
 	}
 	else if (testFlag(PlayerControl[0], PlayerControlFlags::Human))
 	{
-		StarShipPtr = findPlayerShip(NPC_PLAYER_NUM);
+		StarShipPtr = findPlayerShip(NpcPlayerNum);
 	}
 	else
 	{
@@ -199,8 +197,7 @@ scuttleOpponent(void)
 }
 
 // Zeroes out all ship's velocity, freezing them in their tracks
-static void
-HaltShips(void)
+static void HaltShips(void)
 {
 	const STARSHIP* StarShipPtr {};
 	ELEMENT* ElementPtr {};
@@ -264,8 +261,8 @@ void debugKeyPressedSynchronous(void)
 		printf("Debug Key Activated\n\n");
 		equipShip();
 		showSpheres(false);
-		SET_GAME_STATE(KNOW_QS_PORTAL, ~0);
-		SET_GAME_STATE(KNOW_HOMEWORLD, ~0);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_QS_PORTAL, static_cast<uint32_t>(~0));
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_HOMEWORLD, static_cast<uint32_t>(~0));
 	}
 
 	forwardToNextEvent(true);
@@ -294,8 +291,8 @@ void debugKeyPressedSynchronous(void)
 		resetCrewBattle();
 		resetEnergyBattle();
 		activateAllShips();
-		SET_GAME_STATE(MELNORME_CREDIT1, 100);
-		GLOBAL_SIS(ResUnits) = 100000;
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_CREDIT1, static_cast<uint32_t>(100));
+		uqm::gameState().sis().ResUnits = 100000;
 
 		// Informational:
 		dumpEvents(stderr);
@@ -371,8 +368,7 @@ void forwardToNextEvent(bool skipHEE)
 	MoveGameClockToNextEvent(skipHEE);
 }
 
-const char*
-eventName(uint8_t func_index)
+const char* eventName(uint8_t func_index)
 {
 	switch (func_index)
 	{
@@ -418,8 +414,7 @@ eventName(uint8_t func_index)
 	}
 }
 
-const char*
-raceName(uint8_t func_index)
+const char* raceName(uint8_t func_index)
 {
 	switch (func_index)
 	{
@@ -479,8 +474,7 @@ raceName(uint8_t func_index)
 	}
 }
 
-static void
-dumpEventCallback(const EVENT* eventPtr, void* arg)
+static void dumpEventCallback(const EVENT* eventPtr, void* arg)
 {
 	FILE* out = (FILE*)arg;
 	dumpEvent(out, eventPtr);
@@ -498,7 +492,7 @@ void dumpEvent(FILE* out, const EVENT* eventPtr)
 void dumpEvents(FILE* out)
 {
 	LockGameClock();
-	ForAllEvents(dumpEventCallback, out);
+	ForAllEvents(reinterpret_cast<void (*)(LINK*, void*)>(dumpEventCallback), out);
 	UnlockGameClock();
 }
 
@@ -517,80 +511,79 @@ void equipShip(void)
 	}
 
 	// Thrusters:
-	for (i = 0; i < NUM_DRIVE_SLOTS; i++)
+	for (i = 0; i < NumDriveSlots; i++)
 	{
-		GLOBAL_SIS(DriveSlots[i]) = FUSION_THRUSTER;
+		uqm::gameState().sis().DriveSlots[i] = FUSION_THRUSTER;
 	}
 
 	// Turning jets:
-	for (i = 0; i < NUM_JET_SLOTS; i++)
+	for (i = 0; i < NumJetSlots; i++)
 	{
-		GLOBAL_SIS(JetSlots[i]) = TURNING_JETS;
+		uqm::gameState().sis().JetSlots[i] = TURNING_JETS;
 	}
 
 	// Shields:
-	SET_GAME_STATE(LANDER_SHIELDS,
-				   (1 << EARTHQUAKE_DISASTER) | (1 << BIOLOGICAL_DISASTER) | (1 << LIGHTNING_DISASTER) | (1 << LAVASPOT_DISASTER));
+	uqm::gameState().setFlag(uqm::GameFlag::LANDER_SHIELDS, static_cast<uint32_t>((1 << EARTHQUAKE_DISASTER) | (1 << BIOLOGICAL_DISASTER) | (1 << LIGHTNING_DISASTER) | (1 << LAVASPOT_DISASTER)));
 	// Lander upgrades:
-	SET_GAME_STATE(IMPROVED_LANDER_SPEED, 1);
-	SET_GAME_STATE(IMPROVED_LANDER_CARGO, 1);
-	SET_GAME_STATE(IMPROVED_LANDER_SHOT, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::IMPROVED_LANDER_SPEED, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::IMPROVED_LANDER_CARGO, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::IMPROVED_LANDER_SHOT, static_cast<uint32_t>(1));
 
 	// Modules:
-	if (GET_GAME_STATE(CHMMR_BOMB_STATE) < 2)
+	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) < 2)
 	{
 		// The Precursor bomb has not been installed.
 		// This is the original TFB testing layout.
 		i = 0;
-		GLOBAL_SIS(ModuleSlots[i++]) = HIGHEFF_FUELSYS;
-		GLOBAL_SIS(ModuleSlots[i++]) = CREW_POD;
-		GLOBAL_SIS(ModuleSlots[i++]) = STORAGE_BAY;
-		GLOBAL_SIS(ModuleSlots[i++]) = STORAGE_BAY;
-		GLOBAL_SIS(ModuleSlots[i++]) = ANTIMISSILE_DEFENSE;
-		GLOBAL_SIS(ModuleSlots[i++]) = TRACKING_SYSTEM;
-		GLOBAL_SIS(ModuleSlots[i++]) = TRACKING_SYSTEM;
-		GLOBAL_SIS(ModuleSlots[i++]) = TRACKING_SYSTEM;
-		GLOBAL_SIS(ModuleSlots[i++]) = DYNAMO_UNIT;
-		GLOBAL_SIS(ModuleSlots[i++]) = DYNAMO_UNIT;
-		GLOBAL_SIS(ModuleSlots[i++]) = DYNAMO_UNIT;
-		GLOBAL_SIS(ModuleSlots[i++]) = SHIVA_FURNACE;
-		GLOBAL_SIS(ModuleSlots[i++]) = SHIVA_FURNACE;
-		GLOBAL_SIS(ModuleSlots[i++]) = SHIVA_FURNACE;
-		GLOBAL_SIS(ModuleSlots[i++]) = CANNON_WEAPON;
-		GLOBAL_SIS(ModuleSlots[i++]) = CANNON_WEAPON;
+		uqm::gameState().sis().ModuleSlots[i++] = HIGHEFF_FUELSYS;
+		uqm::gameState().sis().ModuleSlots[i++] = CREW_POD;
+		uqm::gameState().sis().ModuleSlots[i++] = STORAGE_BAY;
+		uqm::gameState().sis().ModuleSlots[i++] = STORAGE_BAY;
+		uqm::gameState().sis().ModuleSlots[i++] = ANTIMISSILE_DEFENSE;
+		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
+		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
+		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
+		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
+		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
+		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
+		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
+		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
+		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
+		uqm::gameState().sis().ModuleSlots[i++] = CANNON_WEAPON;
+		uqm::gameState().sis().ModuleSlots[i++] = CANNON_WEAPON;
 
 		// Landers:
-		GLOBAL_SIS(NumLanders) = MAX_LANDERS;
+		uqm::gameState().sis().NumLanders = MaxLanders;
 	}
 	else
 	{
 		// The Precursor bomb has been installed.
-		i = NUM_BOMB_MODULES;
-		GLOBAL_SIS(ModuleSlots[i++]) = HIGHEFF_FUELSYS;
-		GLOBAL_SIS(ModuleSlots[i++]) = CREW_POD;
-		GLOBAL_SIS(ModuleSlots[i++]) = DYNAMO_UNIT;
-		GLOBAL_SIS(ModuleSlots[i++]) = SHIVA_FURNACE;
-		GLOBAL_SIS(ModuleSlots[i++]) = CANNON_WEAPON;
-		GLOBAL_SIS(ModuleSlots[i++]) = TRACKING_SYSTEM;
+		i = NumBombModules;
+		uqm::gameState().sis().ModuleSlots[i++] = HIGHEFF_FUELSYS;
+		uqm::gameState().sis().ModuleSlots[i++] = CREW_POD;
+		uqm::gameState().sis().ModuleSlots[i++] = DYNAMO_UNIT;
+		uqm::gameState().sis().ModuleSlots[i++] = SHIVA_FURNACE;
+		uqm::gameState().sis().ModuleSlots[i++] = CANNON_WEAPON;
+		uqm::gameState().sis().ModuleSlots[i++] = TRACKING_SYSTEM;
 	}
 
-	assert(i <= NUM_MODULE_SLOTS);
+	assert(i <= NumModuleSlots);
 
 	// Fill the fuel and crew compartments to the maximum.
-	GLOBAL_SIS(FuelOnBoard) = FUEL_RESERVE;
-	GLOBAL_SIS(CrewEnlisted) = 0;
-	for (i = 0; i < NUM_MODULE_SLOTS; i++)
+	uqm::gameState().sis().FuelOnBoard = FuelReserve;
+	uqm::gameState().sis().CrewEnlisted = 0;
+	for (i = 0; i < NumModuleSlots; i++)
 	{
-		switch (GLOBAL_SIS(ModuleSlots[i]))
+		switch (uqm::gameState().sis().ModuleSlots[i])
 		{
 			case CREW_POD:
-				GLOBAL_SIS(CrewEnlisted) += CREW_POD_CAPACITY;
+				uqm::gameState().sis().CrewEnlisted += CrewPodCapacity;
 				break;
 			case FUEL_TANK:
-				GLOBAL_SIS(FuelOnBoard) += FUEL_TANK_CAPACITY;
+				uqm::gameState().sis().FuelOnBoard += FuelTankCapacity;
 				break;
 			case HIGHEFF_FUELSYS:
-				GLOBAL_SIS(FuelOnBoard) += HEFUEL_TANK_CAPACITY;
+				uqm::gameState().sis().FuelOnBoard += HefuelTankCapacity;
 				break;
 		}
 	}
@@ -599,22 +592,22 @@ void equipShip(void)
 	if (pSolarSysState != nullptr)
 	{
 		// Thrusters:
-		pSolarSysState->max_ship_speed = 5 * IP_SHIP_THRUST_INCREMENT;
-		for (i = 0; i < NUM_DRIVE_SLOTS; i++)
+		pSolarSysState->max_ship_speed = 5 * IpShipThrustIncrement;
+		for (i = 0; i < NumDriveSlots; i++)
 		{
-			if (GLOBAL_SIS(DriveSlots[i] == FUSION_THRUSTER))
+			if (uqm::gameState().sis().DriveSlots[i] == FUSION_THRUSTER)
 			{
-				pSolarSysState->max_ship_speed += IP_SHIP_THRUST_INCREMENT;
+				pSolarSysState->max_ship_speed += IpShipThrustIncrement;
 			}
 		}
 
 		// Turning jets:
-		pSolarSysState->turn_wait = IP_SHIP_TURN_WAIT;
-		for (i = 0; i < NUM_JET_SLOTS; i++)
+		pSolarSysState->turn_wait = IpShipTurnWait;
+		for (i = 0; i < NumJetSlots; i++)
 		{
-			if (GLOBAL_SIS(JetSlots[i]) == TURNING_JETS)
+			if (uqm::gameState().sis().JetSlots[i] == TURNING_JETS)
 			{
-				pSolarSysState->turn_wait -= IP_SHIP_TURN_DECREMENT;
+				pSolarSysState->turn_wait -= IpShipTurnDecrement;
 			}
 		}
 	}
@@ -622,7 +615,7 @@ void equipShip(void)
 	// Make sure everything is redrawn:
 	if (inHQSpace() || uqm::lowByte(uqm::currentActivity()) == IN_INTERPLANETARY)
 	{
-		DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
+		DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 	}
 }
 
@@ -630,34 +623,34 @@ void equipShip(void)
 
 void giveDevices(void)
 {
-	SET_GAME_STATE(ROSY_SPHERE_ON_SHIP, 1);
-	SET_GAME_STATE(WIMBLIS_TRIDENT_ON_SHIP, 1);
-	SET_GAME_STATE(GLOWING_ROD_ON_SHIP, 1);
-	SET_GAME_STATE(SUN_DEVICE_ON_SHIP, 1);
-	SET_GAME_STATE(UTWIG_BOMB_ON_SHIP, 1);
-	SET_GAME_STATE(UTWIG_BOMB, 1);
-	SET_GAME_STATE(ULTRON_CONDITION, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::GLOWING_ROD_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::SUN_DEVICE_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::UTWIG_BOMB_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::UTWIG_BOMB, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::ULTRON_CONDITION, static_cast<uint32_t>(1));
 	//SET_GAME_STATE (ULTRON_CONDITION, 2);
 	//SET_GAME_STATE (ULTRON_CONDITION, 3);
 	//SET_GAME_STATE (ULTRON_CONDITION, 4);
-	SET_GAME_STATE(MAIDENS_ON_SHIP, 1);
-	SET_GAME_STATE(TALKING_PET_ON_SHIP, 1);
-	SET_GAME_STATE(AQUA_HELIX_ON_SHIP, 1);
-	SET_GAME_STATE(CLEAR_SPINDLE_ON_SHIP, 1);
-	SET_GAME_STATE(UMGAH_BROADCASTERS_ON_SHIP, 1);
-	SET_GAME_STATE(TAALO_PROTECTOR_ON_SHIP, 1);
-	SET_GAME_STATE(EGG_CASE0_ON_SHIP, 1);
-	SET_GAME_STATE(EGG_CASE1_ON_SHIP, 1);
-	SET_GAME_STATE(EGG_CASE2_ON_SHIP, 1);
-	SET_GAME_STATE(SYREEN_SHUTTLE_ON_SHIP, 1);
-	SET_GAME_STATE(VUX_BEAST_ON_SHIP, 1);
-	SET_GAME_STATE(PORTAL_SPAWNER_ON_SHIP, 1);
-	SET_GAME_STATE(PORTAL_KEY_ON_SHIP, 1);
-	SET_GAME_STATE(BURV_BROADCASTERS_ON_SHIP, 1);
-	SET_GAME_STATE(MOONBASE_ON_SHIP, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::MAIDENS_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::TALKING_PET_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::AQUA_HELIX_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::CLEAR_SPINDLE_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::UMGAH_BROADCASTERS_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::TAALO_PROTECTOR_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE0_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE1_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE2_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::VUX_BEAST_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::PORTAL_KEY_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP, static_cast<uint32_t>(1));
+	uqm::gameState().setFlag(uqm::GameFlag::MOONBASE_ON_SHIP, static_cast<uint32_t>(1));
 
 	// Not strictly a device (although it originally was one).
-	SET_GAME_STATE(DESTRUCT_CODE_ON_SHIP, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::DESTRUCT_CODE_ON_SHIP, static_cast<uint32_t>(1));
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -666,20 +659,20 @@ void clearEscorts(void)
 {
 	HSHIPFRAG hStarShip, hNextShip;
 
-	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q));
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q);
 		 hStarShip; hStarShip = hNextShip)
 	{
 		SHIP_FRAGMENT* StarShipPtr;
 
-		StarShipPtr = LockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		StarShipPtr = LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 		hNextShip = _GetSuccLink(StarShipPtr);
-		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 
-		RemoveQueue(&GLOBAL(built_ship_q), hStarShip);
-		FreeShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		RemoveQueue(&uqm::gameState().game().built_ship_q, hStarShip);
+		FreeShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 	}
 
-	DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
+	DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -688,8 +681,7 @@ void clearEscorts(void)
 // Not needed anymore, but could be useful in the future.
 
 // Find the HELEMENT belonging to the Flagship.
-static HELEMENT
-findFlagshipElement (void)
+static HELEMENT findFlagshipElement (void)
 {
 	HELEMENT hElement, hNextElement;
 	ELEMENT *ElementPtr;
@@ -700,7 +692,7 @@ findFlagshipElement (void)
 	{
 		LockElement (hElement, &ElementPtr);
 
-		if ((ElementPtr->state_flags & PLAYER_SHIP) != 0)
+		if ((ElementPtr->state_flags & PlayerShip) != 0)
 		{
 			UnlockElement (hElement);
 			return hElement;
@@ -731,45 +723,45 @@ void showSpheres(bool Animated)
 	{
 		HFLEETINFO hStarShip, hNextShip;
 
-		for (hStarShip = GetHeadLink(&GLOBAL(avail_race_q));
+		for (hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 			 hStarShip != nullptr; hStarShip = hNextShip)
 		{
 			FLEET_INFO* FleetPtr;
 
-			FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+			FleetPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 			hNextShip = _GetSuccLink(FleetPtr);
 
-			if ((FleetPtr->actual_strength != INFINITE_RADIUS) && (FleetPtr->known_strength != FleetPtr->actual_strength))
+			if ((FleetPtr->actual_strength != InfiniteRadius) && (FleetPtr->known_strength != FleetPtr->actual_strength))
 			{
 				FleetPtr->known_strength = FleetPtr->actual_strength;
 				FleetPtr->known_loc = FleetPtr->loc;
 			}
 
-			UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+			UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 		}
 	}
 
-	if (EXTENDED)
+	if (IsExtended())
 	{
 		HFLEETINFO hSyreen = GetStarShipFromIndex(
-			&GLOBAL(avail_race_q), SYREEN_SHIP);
+			&uqm::gameState().game().avail_race_q, SYREEN_SHIP);
 		FLEET_INFO* SyreenPtr = LockFleetInfo(
-			&GLOBAL(avail_race_q), hSyreen);
+			&uqm::gameState().game().avail_race_q, hSyreen);
 		HFLEETINFO hChmmr = GetStarShipFromIndex(
-			&GLOBAL(avail_race_q), CHMMR_SHIP);
+			&uqm::gameState().game().avail_race_q, CHMMR_SHIP);
 		FLEET_INFO* ChmmrPtr = LockFleetInfo(
-			&GLOBAL(avail_race_q), hChmmr);
+			&uqm::gameState().game().avail_race_q, hChmmr);
 
-		SyreenPtr->actual_strength = 300 / SPHERE_RADIUS_INCREMENT * 2;
+		SyreenPtr->actual_strength = 300 / SphereRadiusIncrement * 2;
 		SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, HOME);
 		StartSphereTracking(SYREEN_SHIP);
 
-		ChmmrPtr->actual_strength = 986 / SPHERE_RADIUS_INCREMENT * 2;
+		ChmmrPtr->actual_strength = 986 / SphereRadiusIncrement * 2;
 		ChmmrPtr->loc = SeedFleetLocation(ChmmrPtr, plot_map, HOME);
 		StartSphereTracking(CHMMR_SHIP);
 
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hSyreen);
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hChmmr);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hChmmr);
 	}
 }
 
@@ -779,12 +771,12 @@ void activateAllShips(void)
 {
 	HFLEETINFO hStarShip, hNextShip;
 
-	for (hStarShip = GetHeadLink(&GLOBAL(avail_race_q));
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().avail_race_q);
 		 hStarShip != nullptr; hStarShip = hNextShip)
 	{
 		FLEET_INFO* FleetPtr;
 
-		FleetPtr = LockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		FleetPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 		hNextShip = _GetSuccLink(FleetPtr);
 
 		if (FleetPtr->icons != nullptr)
@@ -793,7 +785,7 @@ void activateAllShips(void)
 			FleetPtr->allied_state = GOOD_GUY;
 		}
 
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 	}
 }
 
@@ -803,7 +795,7 @@ void forAllStars(void (*callback)(STAR_DESC*, void*), void* arg)
 {
 	int i;
 
-	for (i = 0; i < NUM_SOLAR_SYSTEMS; i++)
+	for (i = 0; i < NumSolarSystems; i++)
 	{
 		callback(&star_array[i], arg);
 	}
@@ -813,7 +805,7 @@ void forAllPlanets(STAR_DESC* star, SOLARSYS_STATE* system, void (*callback)(STA
 {
 	uint16_t i;
 
-	assert(CurStarDescPtr == star);
+	assert(CurStarDescPtr() == star);
 	assert(pSolarSysState == system);
 
 	for (i = 0; i < system->SunDesc[0].NumPlanets; i++)
@@ -866,24 +858,23 @@ void UniverseRecurse(UniverseRecurseArg* universeRecurseArg)
 	UnlockGameClock();
 }
 
-static void
-starRecurse(STAR_DESC* star, void* arg)
+static void starRecurse(STAR_DESC* star, void* arg)
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
 	SOLARSYS_STATE SolarSysState {};
 	SOLARSYS_STATE* oldPSolarSysState = pSolarSysState;
-	STAR_DESC* oldStarDescPtr = CurStarDescPtr;
-	CurStarDescPtr = star;
+	STAR_DESC* oldStarDescPtr = CurStarDescPtr();
+	CurStarDescPtr() = star;
 
 	SysGenRNGDebug->reseed(GetRandomSeedForStar(star));
 
 	SolarSysState.SunDesc[0].pPrevDesc = 0;
 	SolarSysState.SunDesc[0].rand_seed = SysGenRNGDebug->next();
-	SolarSysState.SunDesc[0].data_index = STAR_TYPE(star->Type);
+	SolarSysState.SunDesc[0].data_index = StarType(star->Type);
 	SolarSysState.SunDesc[0].location.x = 0;
 	SolarSysState.SunDesc[0].location.y = 0;
-	//SolarSysState.SunDesc[0].radius = MIN_ZOOM_RADIUS;
+	//SolarSysState.SunDesc[0].radius = MinZoomRadius;
 	SolarSysState.genFuncs = getGenerateFunctions(star->Index);
 
 	pSolarSysState = &SolarSysState;
@@ -910,16 +901,15 @@ starRecurse(STAR_DESC* star, void* arg)
 	}
 
 	pSolarSysState = oldPSolarSysState;
-	CurStarDescPtr = oldStarDescPtr;
+	CurStarDescPtr() = oldStarDescPtr;
 }
 
-static void
-planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
-			  void* arg)
+static void planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
+						  void* arg)
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
-	assert(CurStarDescPtr == star);
+	assert(CurStarDescPtr() == star);
 	assert(pSolarSysState == system);
 
 	planet->pPrevDesc = &system->SunDesc[0];
@@ -959,13 +949,12 @@ planetRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
 	}
 }
 
-static void
-moonRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
-			PLANET_DESC* moon, void* arg)
+static void moonRecurse(STAR_DESC* star, SOLARSYS_STATE* system, PLANET_DESC* planet,
+						PLANET_DESC* moon, void* arg)
 {
 	UniverseRecurseArg* universeRecurseArg = (UniverseRecurseArg*)arg;
 
-	assert(CurStarDescPtr == star);
+	assert(CurStarDescPtr() == star);
 	assert(pSolarSysState == system);
 
 	moon->pPrevDesc = planet;
@@ -1014,16 +1003,17 @@ void dumpUniverse(FILE* out)
 	UniverseRecurse(&universeRecurseArg);
 }
 
+static constexpr uqgsl::czstring UniverseDumpFile {"PlanetInfo"};
+
 // Must be called from the Starcon2Main thread.
 void dumpUniverseToFile(void)
 {
-#define UNIVERSE_DUMP_FILE "PlanetInfo"
-	const uqm::FilePtr out {uqm::openFile(UNIVERSE_DUMP_FILE, "w")};
+	const uqm::FilePtr out {uqm::openFile(UniverseDumpFile, "w")};
 	if (out == nullptr)
 	{
 		fmt::print(stderr, "Error: Could not open file '{}' for "
 						   "writing: {}",
-				   UNIVERSE_DUMP_FILE, uqm::strerror(errno));
+				   UniverseDumpFile, uqm::strerror(errno));
 		return;
 	}
 
@@ -1035,9 +1025,8 @@ void dumpUniverseToFile(void)
 	// in particular for special planet generation.
 }
 
-static void
-dumpSystemCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
-				   void* arg)
+static void dumpSystemCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
+							   void* arg)
 {
 	FILE* out = ((DumpUniverseArg*)arg)->out;
 	dumpSystem(out, star, system);
@@ -1050,8 +1039,8 @@ void dumpSystem(FILE* out, const STAR_DESC* star, const SOLARSYS_STATE* system)
 
 	GetClusterName(star, name);
 	fmt::format_to_sz_n(buf, "{} {}",
-						bodyColorString(STAR_COLOR(star->Type)),
-						starTypeString(STAR_TYPE(star->Type)));
+						bodyColorString(StarColor(star->Type)),
+						starTypeString(StarType(star->Type)));
 
 	fmt::print(out, "{:>22}  ({:3}.{:1}, {:3}.{:1}) {:>19}  {}\n",
 			   name,
@@ -1063,8 +1052,7 @@ void dumpSystem(FILE* out, const STAR_DESC* star, const SOLARSYS_STATE* system)
 	(void)system; /* satisfy compiler */
 }
 
-const char*
-bodyColorString(uint8_t col)
+const char* bodyColorString(uint8_t col)
 {
 	switch (col)
 	{
@@ -1092,8 +1080,7 @@ bodyColorString(uint8_t col)
 	}
 }
 
-const char*
-starTypeString(uint8_t type)
+const char* starTypeString(uint8_t type)
 {
 	switch (type)
 	{
@@ -1109,8 +1096,7 @@ starTypeString(uint8_t type)
 	}
 }
 
-const char*
-starPresenceString(uint8_t index)
+const char* starPresenceString(uint8_t index)
 {
 	switch (index)
 	{
@@ -1239,8 +1225,7 @@ starPresenceString(uint8_t index)
 	}
 }
 
-static void
-dumpPlanetCallback(const PLANET_DESC* planet, void* arg)
+static void dumpPlanetCallback(const PLANET_DESC* planet, void* arg)
 {
 	FILE* out = ((DumpUniverseArg*)arg)->out;
 	dumpPlanet(out, planet);
@@ -1249,13 +1234,12 @@ dumpPlanetCallback(const PLANET_DESC* planet, void* arg)
 void dumpPlanet(FILE* out, const PLANET_DESC* planet)
 {
 	(*pSolarSysState->genFuncs->generateName)(pSolarSysState, planet);
-	fmt::print(out, "- {:>37}  {}\n", GLOBAL_SIS(PlanetName),
+	fmt::print(out, "- {:>37}  {}\n", uqm::gameState().sis().PlanetName,
 			   planetTypeString(planet->data_index & ~PLANET_SHIELDED));
 	dumpWorld(out, planet);
 }
 
-static void
-dumpMoonCallback(const PLANET_DESC* moon, void* arg)
+static void dumpMoonCallback(const PLANET_DESC* moon, void* arg)
 {
 	FILE* out = ((DumpUniverseArg*)arg)->out;
 	dumpMoon(out, moon);
@@ -1291,8 +1275,7 @@ void dumpMoon(FILE* out, const PLANET_DESC* moon)
 	dumpWorld(out, moon);
 }
 
-static void
-dumpWorld(FILE* out, const PLANET_DESC* world)
+static void dumpWorld(FILE* out, const PLANET_DESC* world)
 {
 	PLANET_INFO* info;
 
@@ -1344,7 +1327,7 @@ void printWorld(const PLANET_DESC* world)
 {
 	PLANET_INFO* info;
 	char buf[200] {};
-	GFXPOINT universe = CurStarDescPtr->star_pt;
+	GFXPOINT universe = CurStarDescPtr()->star_pt;
 
 	if (world->data_index == HIERARCHY_STARBASE
 		|| world->data_index == SA_MATRA
@@ -1365,15 +1348,15 @@ void printWorld(const PLANET_DESC* world)
 			   universe.x / 10, universe.x % 10,
 			   universe.y / 10, universe.y % 10);
 
-	GetClusterName(CurStarDescPtr, buf);
+	GetClusterName(CurStarDescPtr(), buf);
 
 	fmt::print(fp, "Star:       {}\n", buf);
 
 	GetPlanetTitle({buf, sizeof(buf)});
 
-	if (strcmp(buf, GLOBAL_SIS(PlanetName)) != 0)
+	if (strcmp(buf, uqm::gameState().sis().PlanetName) != 0)
 	{
-		fmt::print(fp, "Planet:     {}\n", GLOBAL_SIS(PlanetName));
+		fmt::print(fp, "Planet:     {}\n", uqm::gameState().sis().PlanetName);
 	}
 
 	info = &pSolarSysState->SysInfo.PlanetInfo;
@@ -1406,8 +1389,7 @@ void printWorld(const PLANET_DESC* world)
 	fmt::print(fp, "____________________________________\n\n");
 }
 
-uint16_t
-calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
+uint16_t calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 {
 	uint16_t result;
 	uint16_t numBio;
@@ -1415,7 +1397,7 @@ calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 
 	assert(system->pOrbitalDesc == world);
 
-	numBio = callGenerateForScanType(system, world, GENERATE_ALL,
+	numBio = callGenerateForScanType(system, world, GenerateAll,
 									 BIOLOGICAL_SCAN, nullptr);
 
 	result = 0;
@@ -1423,7 +1405,7 @@ calculateBioValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 	{
 		NODE_INFO info;
 		callGenerateForScanType(system, world, i, BIOLOGICAL_SCAN, &info);
-		result += BIO_CREDIT_VALUE * uqm::lowNibble(CreatureData[info.type].ValueAndHitPoints);
+		result += BioCreditValueDefault * uqm::lowNibble(CreatureData[info.type].ValueAndHitPoints);
 	}
 	return result;
 }
@@ -1436,10 +1418,10 @@ void generateBioIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world,
 
 	assert(system->pOrbitalDesc == world);
 
-	numBio = callGenerateForScanType(system, world, GENERATE_ALL,
+	numBio = callGenerateForScanType(system, world, GenerateAll,
 									 BIOLOGICAL_SCAN, nullptr);
 
-	for (i = 0; i < NUM_CREATURE_TYPES + NUM_SPECIAL_CREATURE_TYPES; i++)
+	for (i = 0; i < NumCreatureTypes + NumSpecialCreatureTypes; i++)
 	{
 		bio[i] = 0;
 	}
@@ -1452,8 +1434,7 @@ void generateBioIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world,
 	}
 }
 
-uint16_t
-calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
+uint16_t calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 {
 	uint16_t result;
 	uint16_t numDeposits;
@@ -1461,7 +1442,7 @@ calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 
 	assert(system->pOrbitalDesc == world);
 
-	numDeposits = callGenerateForScanType(system, world, GENERATE_ALL,
+	numDeposits = callGenerateForScanType(system, world, GenerateAll,
 										  MINERAL_SCAN, nullptr);
 
 	result = 0;
@@ -1469,7 +1450,7 @@ calculateMineralValue(const SOLARSYS_STATE* system, const PLANET_DESC* world)
 	{
 		NODE_INFO info;
 		callGenerateForScanType(system, world, i, MINERAL_SCAN, &info);
-		result += uqm::highByte(info.density) * GLOBAL(ElementWorth[ElementCategory(info.type)]);
+		result += uqm::highByte(info.density) * uqm::gameState().game().ElementWorth[ElementCategory(info.type)];
 	}
 	return result;
 }
@@ -1482,7 +1463,7 @@ void generateMineralIndex(const SOLARSYS_STATE* system, const PLANET_DESC* world
 
 	assert(system->pOrbitalDesc == world);
 
-	numDeposits = callGenerateForScanType(system, world, GENERATE_ALL,
+	numDeposits = callGenerateForScanType(system, world, GenerateAll,
 										  MINERAL_SCAN, nullptr);
 
 	for (i = 0; i < NUM_ELEMENT_CATEGORIES; i++)
@@ -1525,16 +1506,17 @@ void tallyResources(FILE* out)
 	UniverseRecurse(&universeRecurseArg);
 }
 
+static constexpr uqgsl::czstring ResourceTallyFile {"ResourceTally"};
+
 // Must be called from the Starcon2Main thread.
 void tallyResourcesToFile(void)
 {
-#define RESOURCE_TALLY_FILE "ResourceTally"
-	const uqm::FilePtr out {uqm::openFile(RESOURCE_TALLY_FILE, "w")};
+	const uqm::FilePtr out {uqm::openFile(ResourceTallyFile, "w")};
 	if (out == nullptr)
 	{
 		fmt::print(stderr, "Error: Could not open file '{}' for "
 						   "writing: {}\n",
-				   RESOURCE_TALLY_FILE, uqm::strerror(errno));
+				   ResourceTallyFile, uqm::strerror(errno));
 		return;
 	}
 
@@ -1546,9 +1528,8 @@ void tallyResourcesToFile(void)
 	// in particular for special planet generation.
 }
 
-static void
-tallySystemPreCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
-					   void* arg)
+static void tallySystemPreCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
+								   void* arg)
 {
 	TallyResourcesArg* tallyResourcesArg = (TallyResourcesArg*)arg;
 	tallyResourcesArg->mineralCount = 0;
@@ -1558,9 +1539,8 @@ tallySystemPreCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
 	(void)system; /* satisfy compiler */
 }
 
-static void
-tallySystemPostCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
-						void* arg)
+static void tallySystemPostCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
+									void* arg)
 {
 	char name[256];
 	TallyResourcesArg* tallyResourcesArg = (TallyResourcesArg*)arg;
@@ -1574,20 +1554,17 @@ tallySystemPostCallback(const STAR_DESC* star, const SOLARSYS_STATE* system,
 	(void)system; /* satisfy compiler */
 }
 
-static void
-tallyPlanetCallback(const PLANET_DESC* planet, void* arg)
+static void tallyPlanetCallback(const PLANET_DESC* planet, void* arg)
 {
 	tallyResourcesWorld((TallyResourcesArg*)arg, planet);
 }
 
-static void
-tallyMoonCallback(const PLANET_DESC* moon, void* arg)
+static void tallyMoonCallback(const PLANET_DESC* moon, void* arg)
 {
 	tallyResourcesWorld((TallyResourcesArg*)arg, moon);
 }
 
-static void
-tallyResourcesWorld(TallyResourcesArg* arg, const PLANET_DESC* world)
+static void tallyResourcesWorld(TallyResourcesArg* arg, const PLANET_DESC* world)
 {
 	if (world->data_index == HIERARCHY_STARBASE)
 	{
@@ -1639,8 +1616,7 @@ void dumpPlanetTypes(FILE* out)
 	forAllPlanetTypes(dumpPlanetTypeCallback, (void*)&dumpPlanetTypesArg);
 }
 
-static void
-dumpPlanetTypeCallback(int index, const PlanetFrame* planetType, void* arg)
+static void dumpPlanetTypeCallback(int index, const PlanetFrame* planetType, void* arg)
 {
 	DumpPlanetTypesArg* dumpPlanetTypesArg = (DumpPlanetTypesArg*)arg;
 
@@ -1660,13 +1636,13 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 			   "\tDensity: {}\n"
 			   "\tElements:\n",
 			   planetTypeString(index),
-			   worldSizeString(PLANSIZE(planetType->Type)),
-			   bodyColorString(PLANCOLOR(planetType->Type)),
-			   worldGenAlgoString(PLANALGO(planetType->Type)),
+			   worldSizeString(Plansize(planetType->Type)),
+			   bodyColorString(Plancolor(planetType->Type)),
+			   worldGenAlgoString(Planalgo(planetType->Type)),
 			   tectonicsString(planetType->BaseTectonics),
 			   atmosphereString(uqm::highNibble(planetType->AtmoAndDensity)),
 			   densityString(uqm::lowNibble(planetType->AtmoAndDensity)));
-	for (i = 0; i < NUM_USEFUL_ELEMENTS; i++)
+	for (i = 0; i < NumUsefulElements; i++)
 	{
 		const ELEMENT_ENTRY* entry;
 		entry = &planetType->UsefulElements[i];
@@ -1675,17 +1651,16 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 			continue;
 		}
 		fmt::print(out, "\t\t0 to {} {}-quality (+{}) deposits of {} ({})\n",
-				   DEPOSIT_QUANTITY(entry->Density),
-				   depositQualityString(DEPOSIT_QUALITY(entry->Density)),
-				   DEPOSIT_QUALITY(entry->Density) * 5,
-				   GAME_STRING(ELEMENTS_STRING_BASE + entry->ElementType),
-				   GAME_STRING(CARGO_STRING_BASE + 2 + ElementCategory(entry->ElementType)));
+				   DepositQuantity(entry->Density),
+				   depositQualityString(DepositQuality(entry->Density)),
+				   DepositQuality(entry->Density) * 5,
+				   GameString(ELEMENTS_STRING_BASE + entry->ElementType),
+				   GameString(CARGO_STRING_BASE + 2 + ElementCategory(entry->ElementType)));
 	}
 	fmt::print(out, "\n");
 }
 
-const char*
-planetTypeString(int typeIndex)
+const char* planetTypeString(int typeIndex)
 {
 	static char typeStr[40];
 
@@ -1693,21 +1668,20 @@ planetTypeString(int typeIndex)
 	{
 		// "Gas Giant"
 		fmt::format_to_sz_n(typeStr, "{}",
-							GAME_STRING(SCAN_STRING_BASE + 4 + 51));
+							GameString(SCAN_STRING_BASE + 4 + 51));
 	}
 	else
 	{
 		// "<type> World" (eg. "Water World")
 		fmt::format_to_sz_n(typeStr, "{} {}",
-							GAME_STRING(SCAN_STRING_BASE + 4 + typeIndex),
-							GAME_STRING(SCAN_STRING_BASE + 4 + 50));
+							GameString(SCAN_STRING_BASE + 4 + typeIndex),
+							GameString(SCAN_STRING_BASE + 4 + 50));
 	}
 	return typeStr;
 }
 
-// size is what you get from PLANSIZE (planetFrame.Type)
-const char*
-worldSizeString(uint8_t size)
+// size is what you get from Plansize (planetFrame.Type)
+const char* worldSizeString(uint8_t size)
 {
 	switch (size)
 	{
@@ -1723,17 +1697,16 @@ worldSizeString(uint8_t size)
 	}
 }
 
-// algo is what you get from PLANALGO (planetFrame.Type)
-const char*
-worldGenAlgoString(uint8_t algo)
+// algo is what you get from Planalgo (planetFrame.Type)
+const char* worldGenAlgoString(uint8_t algo)
 {
 	switch (algo)
 	{
-		case TOPO_ALGO:
+		case TopoAlgo:
 			return "TOPO_ALGO";
-		case CRATERED_ALGO:
+		case CrateredAlgo:
 			return "CRATERED_ALGO";
-		case GAS_GIANT_ALGO:
+		case GasGiantAlgo:
 			return "GAS_GIANT_ALGO";
 		default:
 			// Should not happen
@@ -1743,21 +1716,20 @@ worldGenAlgoString(uint8_t algo)
 
 // tectonics is what you get from planetFrame.BaseTechtonics
 // not reentrant
-const char*
-tectonicsString(uint8_t tectonics)
+const char* tectonicsString(uint8_t tectonics)
 {
 	static char buf[sizeof "-127"];
 	switch (tectonics)
 	{
-		case NO_TECTONICS:
+		case NoTectonics:
 			return "none";
-		case LOW_TECTONICS:
+		case LowTectonics:
 			return "low";
-		case MED_TECTONICS:
+		case MedTectonics:
 			return "medium";
-		case HIGH_TECTONICS:
+		case HighTectonics:
 			return "high";
-		case SUPER_TECTONICS:
+		case SuperTectonics:
 			return "super";
 		default:
 			fmt::format_to_sz_n(buf, "{}", tectonics);
@@ -1766,8 +1738,7 @@ tectonicsString(uint8_t tectonics)
 }
 
 // atmosphere is what you get from HINIBBLE (planetFrame.AtmoAndDensity)
-const char*
-atmosphereString(uint8_t atmosphere)
+const char* atmosphereString(uint8_t atmosphere)
 {
 	switch (atmosphere)
 	{
@@ -1783,8 +1754,7 @@ atmosphereString(uint8_t atmosphere)
 }
 
 // density is what you get from LONIBBLE (planetFrame.AtmoAndDensity)
-const char*
-densityString(uint8_t density)
+const char* densityString(uint8_t density)
 {
 	switch (density)
 	{
@@ -1806,9 +1776,8 @@ densityString(uint8_t density)
 	}
 }
 
-// quality is what you get from DEPOSIT_QUALITY (elementEntry.Density)
-const char*
-depositQualityString(uint8_t quality)
+// quality is what you get from DepositQuality (elementEntry.Density)
+const char* depositQualityString(uint8_t quality)
 {
 	switch (quality)
 	{
@@ -1837,7 +1806,7 @@ void resetCrewBattle(void)
 		return;
 	}
 
-	StarShipPtr = findPlayerShip(RPG_PLAYER_NUM);
+	StarShipPtr = findPlayerShip(RpgPlayerNum);
 	if (StarShipPtr == nullptr || StarShipPtr->RaceDescPtr == nullptr)
 	{
 		return;
@@ -1856,44 +1825,37 @@ void resetCrewBattle(void)
 // gamestrings.txt.
 void dumpStrings(FILE* out)
 {
-#define STRINGIZE(a) #a
-#define MAKE_STRING_CATEGORY(prefix)                           \
-	{                                                          \
-		/* .name  = */ STRINGIZE(prefix ## _BASE),               \
-								 /* .base  = */ prefix##_BASE, \
-								 /* .count = */ prefix##_COUNT \
-	}
 	struct
 	{
 		const char* name;
 		size_t base;
 		size_t count;
 	} categories[] = {
-		{"0",			  0,			 0		  },
-		MAKE_STRING_CATEGORY(STAR_STRING),
-		MAKE_STRING_CATEGORY(DEVICE_STRING),
-		MAKE_STRING_CATEGORY(CARGO_STRING),
-		MAKE_STRING_CATEGORY(ELEMENTS_STRING),
-		MAKE_STRING_CATEGORY(SCAN_STRING),
-		MAKE_STRING_CATEGORY(STAR_NUMBER),
-		MAKE_STRING_CATEGORY(PLANET_NUMBER),
-		MAKE_STRING_CATEGORY(MONTHS_STRING),
-		MAKE_STRING_CATEGORY(FEEDBACK_STRING),
-		MAKE_STRING_CATEGORY(STARBASE_STRING),
-		MAKE_STRING_CATEGORY(ENCOUNTER_STRING),
-		MAKE_STRING_CATEGORY(NAVIGATION_STRING),
-		MAKE_STRING_CATEGORY(NAMING_STRING),
-		MAKE_STRING_CATEGORY(MELEE_STRING),
-		MAKE_STRING_CATEGORY(SAVEGAME_STRING),
-		MAKE_STRING_CATEGORY(OPTION_STRING),
-		MAKE_STRING_CATEGORY(QUITMENU_STRING),
-		MAKE_STRING_CATEGORY(STATUS_STRING),
-		MAKE_STRING_CATEGORY(FLAGSHIP_STRING),
-		MAKE_STRING_CATEGORY(ORBITSCAN_STRING),
-		MAKE_STRING_CATEGORY(MAINMENU_STRING),
-		MAKE_STRING_CATEGORY(NETMELEE_STRING),
-		MAKE_STRING_CATEGORY(BIOLOGICAL_STRING),
-		{"GAMESTR_COUNT", GAMESTR_COUNT, (size_t)-1}
+		{"0",					  0,					  0					},
+		{"STAR_STRING_BASE",		 STAR_STRING_BASE,	   StarStringCount	  },
+		{"DEVICE_STRING_BASE",	   DEVICE_STRING_BASE,	   DeviceStringCount	},
+		{"CARGO_STRING_BASE",	  CARGO_STRING_BASE,		 CargoStringCount	 },
+		{"ELEMENTS_STRING_BASE",	 ELEMENTS_STRING_BASE,   ElementsStringCount  },
+		{"SCAN_STRING_BASE",		 SCAN_STRING_BASE,	   ScanStringCount	  },
+		{"STAR_NUMBER_BASE",		 STAR_NUMBER_BASE,	   StarNumberCount	  },
+		{"PLANET_NUMBER_BASE",	   PLANET_NUMBER_BASE,	   PlanetNumberCount	},
+		{"MONTHS_STRING_BASE",	   MONTHS_STRING_BASE,	   MonthsStringCount	},
+		{"FEEDBACK_STRING_BASE",	 FEEDBACK_STRING_BASE,   FeedbackStringCount  },
+		{"STARBASE_STRING_BASE",	 STARBASE_STRING_BASE,   StarbaseStringCount  },
+		{"ENCOUNTER_STRING_BASE",  ENCOUNTER_STRING_BASE,	 EncounterStringCount },
+		{"NAVIGATION_STRING_BASE", NAVIGATION_STRING_BASE, NavigationStringCount},
+		{"NAMING_STRING_BASE",	   NAMING_STRING_BASE,	   NamingStringCount	},
+		{"MELEE_STRING_BASE",	  MELEE_STRING_BASE,		 MeleeStringCount	 },
+		{"SAVEGAME_STRING_BASE",	 SAVEGAME_STRING_BASE,   SavegameStringCount  },
+		{"OPTION_STRING_BASE",	   OPTION_STRING_BASE,	   OptionStringCount	},
+		{"QUITMENU_STRING_BASE",	 QUITMENU_STRING_BASE,   QuitmenuStringCount  },
+		{"STATUS_STRING_BASE",	   STATUS_STRING_BASE,	   StatusStringCount	},
+		{"FLAGSHIP_STRING_BASE",	 FLAGSHIP_STRING_BASE,   FlagshipStringCount  },
+		{"ORBITSCAN_STRING_BASE",  ORBITSCAN_STRING_BASE,	 OrbitscanStringCount },
+		{"MAINMENU_STRING_BASE",	 MAINMENU_STRING_BASE,   MainmenuStringCount  },
+		{"NETMELEE_STRING_BASE",	 NETMELEE_STRING_BASE,   NetmeleeStringCount  },
+		{"BIOLOGICAL_STRING_BASE", BIOLOGICAL_STRING_BASE, BiologicalStringCount},
+		{"GAMESTR_COUNT",		  GAMESTR_COUNT,			 (size_t)-1		   }
 	};
 	size_t numCategories = std::size(categories);
 	size_t numStrings = GameStrings->size();
@@ -1927,15 +1889,14 @@ void dumpStrings(FILE* out)
 			categoryI++;
 		}
 		fmt::print(out, "[ {} + {} ]  {}\n", categories[categoryI].name,
-				   stringI - categories[categoryI].base, GAME_STRING((uint16_t)stringI));
+				   stringI - categories[categoryI].base, GameString((uint16_t)stringI));
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
 
-static Color
-hsvaToRgba(double hue, double sat, double val, uint8_t alpha)
+static Color hsvaToRgba(double hue, double sat, double val, uint8_t alpha)
 {
 	unsigned int hi = (int)(hue / 60.0);
 	double f = (hue / 60.0) - ((int)(hue / 60.0));
@@ -1959,26 +1920,25 @@ hsvaToRgba(double hue, double sat, double val, uint8_t alpha)
 	switch (hi)
 	{
 		case 0:
-			return BUILD_COLOR_RGBA(vb, tb, pb, alpha);
+			return BuildColorRgba(vb, tb, pb, alpha);
 		case 1:
-			return BUILD_COLOR_RGBA(qb, vb, pb, alpha);
+			return BuildColorRgba(qb, vb, pb, alpha);
 		case 2:
-			return BUILD_COLOR_RGBA(pb, vb, tb, alpha);
+			return BuildColorRgba(pb, vb, tb, alpha);
 		case 3:
-			return BUILD_COLOR_RGBA(pb, qb, vb, alpha);
+			return BuildColorRgba(pb, qb, vb, alpha);
 		case 4:
-			return BUILD_COLOR_RGBA(tb, pb, vb, alpha);
+			return BuildColorRgba(tb, pb, vb, alpha);
 		case 5:
-			return BUILD_COLOR_RGBA(vb, pb, qb, alpha);
+			return BuildColorRgba(vb, pb, qb, alpha);
 	}
 
 	// Should not happen.
-	return BUILD_COLOR_RGBA(0, 0, 0, alpha);
+	return BuildColorRgba(0, 0, 0, alpha);
 }
 
 // Returns true iff this context has a visible FRAME.
-static bool
-isContextVisible(GFXCONTEXT context)
+static bool isContextVisible(GFXCONTEXT context)
 {
 	FRAME contextFrame;
 
@@ -1994,8 +1954,7 @@ isContextVisible(GFXCONTEXT context)
 	return contextFrame == Screen;
 }
 
-static size_t
-countVisibleContexts(void)
+static size_t countVisibleContexts(void)
 {
 	size_t contextCount;
 	GFXCONTEXT context;
@@ -2015,8 +1974,7 @@ countVisibleContexts(void)
 	return contextCount;
 }
 
-static void
-drawContext(GFXCONTEXT context, double hue /* no pun intended */)
+static void drawContext(GFXCONTEXT context, double hue /* no pun intended */)
 {
 	//FRAME drawFrame; unused
 	GFXCONTEXT oldContext;
@@ -2095,8 +2053,7 @@ drawContext(GFXCONTEXT context, double hue /* no pun intended */)
 	(void)SetContextFont(oldFont);
 }
 
-static void
-describeContext(FILE* out, const GFXCONTEXT context)
+static void describeContext(FILE* out, const GFXCONTEXT context)
 {
 	GFXRECT rect;
 	GFXCONTEXT oldContext = SetContext(context);
@@ -2154,8 +2111,7 @@ getScreen(void)
 	return savedFrame;
 }
 
-static void
-putScreen(FRAME savedFrame)
+static void putScreen(FRAME savedFrame)
 {
 	STAMP stamp;
 
@@ -2191,11 +2147,14 @@ void debugContexts(void)
 	{
 		return;
 	}
+	const auto resetGuard {uqgsl::finally([] {
+		inDebugContexts = false;
+	})};
 
 	contextCount = countVisibleContexts();
 	if (contextCount == 0)
 	{
-		goto out;
+		return;
 	}
 
 	savedScreen = getScreen();
@@ -2253,9 +2212,6 @@ void debugContexts(void)
 	putScreen(savedScreen);
 
 	DestroyDrawable(ReleaseDrawable(savedScreen));
-
-out:
-	inDebugContexts = false;
 }
 
 #endif /* DEBUG */

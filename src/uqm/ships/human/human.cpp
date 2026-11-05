@@ -24,49 +24,47 @@
 #include "uqm/globdata.h"
 
 // Core characteristics
-#define MAX_CREW 18
-#define MAX_ENERGY 18
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 8
-#define MAX_THRUST /* DISPLAY_TO_WORLD (6) */ 24
-#define MAX_THRUST_HD RES_SCALE(MAX_THRUST)
-#define THRUST_INCREMENT /* DISPLAY_TO_WORLD (2) */ 3
-#define THRUST_WAIT 4
-#define TURN_WAIT 1
-#define SHIP_MASS 6
+static constexpr auto MaxCrew {18};
+static constexpr auto MaxEnergy {18};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {8};
+static constexpr auto MaxThrust {24};
+static auto MaxThrustHd() { return ResScale(MaxThrust); }
+static constexpr auto ThrustIncrement {3};
+static constexpr auto ThrustWait {4};
+static constexpr auto TurnWait {1};
+static constexpr auto ShipMass {6};
 
 // Nuke
-#define WEAPON_ENERGY_COST 9
-#define WEAPON_WAIT 10
-#define HUMAN_OFFSET RES_SCALE(42)
-#define NUKE_OFFSET RES_SCALE(8)
-#define MIN_MISSILE_SPEED DISPLAY_TO_WORLD(RES_SCALE(10))
-#define MAX_MISSILE_SPEED DISPLAY_TO_WORLD(RES_SCALE(20))
-#define MISSILE_SPEED (MAX_THRUST_HD >= MIN_MISSILE_SPEED ? \
-						   MAX_THRUST_HD :                  \
-						   MIN_MISSILE_SPEED)
-#define THRUST_SCALE DISPLAY_TO_WORLD(RES_SCALE(1))
-#define MISSILE_LIFE 60
-#define MISSILE_HITS 1
-#define MISSILE_DAMAGE 4
-#define TRACK_WAIT 3
+static constexpr auto WeaponEnergyCost {9};
+static constexpr auto WeaponWait {10};
+static auto HumanOffset() { return ResScale(42); }
+static auto NukeOffset() { return ResScale(8); }
+static auto MinMissileSpeed() { return DisplayToWorld(ResScale(10)); }
+static auto MaxMissileSpeed() { return DisplayToWorld(ResScale(20)); }
+static auto MissileSpeed() { return (MaxThrustHd() >= MinMissileSpeed() ? MaxThrustHd() : MinMissileSpeed()); }
+static auto ThrustScale() { return DisplayToWorld(ResScale(1)); }
+static constexpr auto MissileLife {60};
+static constexpr auto MissileHits {1};
+static constexpr auto MissileDamage {4};
+static constexpr auto TrackWait {3};
 
 // Point-Defense Laser
-#define SPECIAL_ENERGY_COST 4
-#define SPECIAL_WAIT 9
-#define LASER_RANGE (uint16_t)RES_SCALE(100)
+static constexpr auto SpecialEnergyCost {4};
+static constexpr auto SpecialWait {9};
+static auto LaserRange() { return (uint16_t)ResScale(100); }
 
 RACE_DESC human_desc =
 	{
 		{/* SHIP_INFO */
 		 "cruiser",
-		 FIRES_FORE | SEEKING_WEAPON | POINT_DEFENSE,
+		 FiresFore | SeekingWeapon | PointDefense,
 		 11, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 HUMAN_RACE_STRINGS,
-		 HUMAN_ICON_MASK_PMAP_ANIM,
-		 HUMAN_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 HumanRaceStrings,
+		 HumanIconMaskPmapAnim,
+		 HumanMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -78,38 +76,38 @@ RACE_DESC human_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 HUMAN_BIG_MASK_PMAP_ANIM,
-			 HUMAN_MED_MASK_PMAP_ANIM,
-			 HUMAN_SML_MASK_PMAP_ANIM,
+			 HumanBigMaskPmapAnim,
+			 HumanMedMaskPmapAnim,
+			 HumanSmlMaskPmapAnim,
 		 },
 		 {
-			 SATURN_BIG_MASK_PMAP_ANIM,
-			 SATURN_MED_MASK_PMAP_ANIM,
-			 SATURN_SML_MASK_PMAP_ANIM,
+			 SaturnBigMaskPmapAnim,
+			 SaturnMedMaskPmapAnim,
+			 SaturnSmlMaskPmapAnim,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
-		 {HUMAN_CAPTAIN_MASK_PMAP_ANIM,
+		 {HumanCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 HUMAN_VICTORY_SONG,
-		 HUMAN_SHIP_SOUNDS,
+		 HumanVictorySong,
+		 HumanShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -117,7 +115,7 @@ RACE_DESC human_desc =
 		 nullptr},
 		{
 			0,
-			LONG_RANGE_WEAPON,
+			LongRangeWeapon,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -128,8 +126,7 @@ RACE_DESC human_desc =
 		0, /* CodeRef */
 };
 
-static void
-nuke_preprocess(ELEMENT* ElementPtr)
+static void nuke_preprocess(ELEMENT* ElementPtr)
 {
 	uint16_t facing {GetFrameIndex(ElementPtr->next.image.frame)};
 	if (ElementPtr->turn_wait > 0)
@@ -143,31 +140,30 @@ nuke_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->next.image.frame =
 				SetAbsFrameIndex(ElementPtr->next.image.frame,
 								 facing);
-			ElementPtr->state_flags |= CHANGING;
+			ElementPtr->state_flags |= Changing;
 		}
 
-		ElementPtr->turn_wait = TRACK_WAIT;
+		ElementPtr->turn_wait = TrackWait;
 	}
 
 	{
 		int32_t speed {};
 
-		if ((speed = MISSILE_SPEED + ((MISSILE_LIFE - ElementPtr->life_span) * THRUST_SCALE)) > MAX_MISSILE_SPEED)
+		if ((speed = MissileSpeed() + ((MissileLife - ElementPtr->life_span) * ThrustScale())) > MaxMissileSpeed())
 		{
-			speed = MAX_MISSILE_SPEED;
+			speed = MaxMissileSpeed();
 		}
 		SetVelocityVector(&ElementPtr->velocity,
 						  speed, facing);
 	}
 }
 
-static void
-spawn_point_defense(ELEMENT* ElementPtr)
+static void spawn_point_defense(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if (ElementPtr->state_flags & PLAYER_SHIP)
+	if (ElementPtr->state_flags & PlayerShip)
 	{
 		HELEMENT hDefense {AllocElement()};
 		if (hDefense)
@@ -176,7 +172,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 
 			LockElement(hDefense, &DefensePtr);
 			DefensePtr->playerNr = ElementPtr->playerNr;
-			DefensePtr->state_flags = APPEARING | NONSOLID | FINITE_LIFE;
+			DefensePtr->state_flags = Appearing | Nonsolid | FiniteLife;
 			DefensePtr->death_func = spawn_point_defense;
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -200,7 +196,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 
 			LockElement(hObject, &ObjectPtr);
 			hNextObject = GetPredElement(ObjectPtr);
-			if (ObjectPtr != ShipPtr && CollidingElement(ObjectPtr) && !OBJECT_CLOAKED(ObjectPtr))
+			if (ObjectPtr != ShipPtr && CollidingElement(ObjectPtr) && !ObjectCloaked(ObjectPtr))
 			{
 				int16_t delta_x {};
 				int16_t delta_y {};
@@ -215,16 +211,16 @@ spawn_point_defense(ELEMENT* ElementPtr)
 				{
 					delta_y = -delta_y;
 				}
-				delta_x = WORLD_TO_DISPLAY(delta_x);
-				delta_y = WORLD_TO_DISPLAY(delta_y);
-				if ((uint16_t)delta_x <= LASER_RANGE && (uint16_t)delta_y <= LASER_RANGE && (uint16_t)delta_x * (uint16_t)delta_x + (uint16_t)delta_y * (uint16_t)delta_y <= LASER_RANGE * LASER_RANGE)
+				delta_x = WorldToDisplay(delta_x);
+				delta_y = WorldToDisplay(delta_y);
+				if ((uint16_t)delta_x <= LaserRange() && (uint16_t)delta_y <= LaserRange() && (uint16_t)delta_x * (uint16_t)delta_x + (uint16_t)delta_y * (uint16_t)delta_y <= LaserRange() * LaserRange())
 				{
 					HELEMENT hPointDefense {};
 					LASER_BLOCK LaserBlock;
 
 					if (!PaidFor)
 					{
-						if (!DeltaEnergy(ShipPtr, -SPECIAL_ENERGY_COST))
+						if (!DeltaEnergy(ShipPtr, -SpecialEnergyCost))
 						{
 							break;
 						}
@@ -246,9 +242,9 @@ spawn_point_defense(ELEMENT* ElementPtr)
 					LaserBlock.ey = ObjectPtr->next.location.y
 								  - ShipPtr->next.location.y;
 					LaserBlock.sender = ShipPtr->playerNr;
-					LaserBlock.flags = IGNORE_SIMILAR;
+					LaserBlock.flags = IgnoreSimilar;
 					LaserBlock.pixoffs = 0;
-					LaserBlock.color = BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F);
+					LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F);
 					hPointDefense = initialize_laser(&LaserBlock);
 					if (hPointDefense)
 					{
@@ -269,8 +265,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 	}
 }
 
-static uint16_t
-initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
+static uint16_t initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -282,13 +277,13 @@ initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = 0;
-	MissileBlock.pixoffs = HUMAN_OFFSET;
-	MissileBlock.speed = RES_SCALE(MISSILE_SPEED);
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.pixoffs = HumanOffset();
+	MissileBlock.speed = ResScale(MissileSpeed());
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nuke_preprocess;
-	MissileBlock.blast_offs = NUKE_OFFSET;
+	MissileBlock.blast_offs = NukeOffset();
 	NukeArray[0] = initialize_missile(&MissileBlock);
 
 	if (NukeArray[0])
@@ -296,16 +291,15 @@ initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
 		ELEMENT* NukePtr {};
 
 		LockElement(NukeArray[0], &NukePtr);
-		NukePtr->turn_wait = TRACK_WAIT;
+		NukePtr->turn_wait = TrackWait;
 		UnlockElement(NukeArray[0]);
 	}
 
 	return (1);
 }
 
-static void
-human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				   uint16_t ConcernCounter)
+static void human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							   uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -316,11 +310,11 @@ human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			|| (ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr != nullptr
 				&& ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn <= 4)))
 	{
-		StarShipPtr->ship_input_state |= SPECIAL;
+		StarShipPtr->ship_input_state |= SpecialFlag;
 	}
 	else
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 	}
 	ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr = nullptr;
 
@@ -330,41 +324,39 @@ human_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	if (StarShipPtr->weapon_counter == 0)
 	{
 		if (ObjectsOfConcern[ENEMY_SHIP_INDEX].ObjectPtr
-			&& (!(StarShipPtr->ship_input_state & (LEFT | RIGHT /* | THRUST */))
+			&& (!(StarShipPtr->ship_input_state & (LeftFlag | RightFlag /* | ThrustFlag */))
 				|| ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn <= 12))
 		{
-			StarShipPtr->ship_input_state |= WEAPON;
+			StarShipPtr->ship_input_state |= WeaponFlag;
 		}
 	}
 }
 
-static void
-human_postprocess(ELEMENT* ElementPtr)
+static void human_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0)
 	{
 		spawn_point_defense(ElementPtr);
 	}
 }
 
-RACE_DESC*
-init_human(void)
+RACE_DESC* init_human(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
-		human_desc.characteristics.max_thrust = MAX_THRUST_HD;
-		human_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		human_desc.cyborg_control.WeaponRange = LONG_RANGE_WEAPON_HD;
+		human_desc.characteristics.max_thrust = MaxThrustHd();
+		human_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
+		human_desc.cyborg_control.WeaponRange = LongRangeWeaponHd;
 	}
 	else
 	{
-		human_desc.characteristics.max_thrust = MAX_THRUST;
-		human_desc.characteristics.thrust_increment = THRUST_INCREMENT;
-		human_desc.cyborg_control.WeaponRange = LONG_RANGE_WEAPON;
+		human_desc.characteristics.max_thrust = MaxThrust;
+		human_desc.characteristics.thrust_increment = ThrustIncrement;
+		human_desc.cyborg_control.WeaponRange = LongRangeWeapon;
 	}
 
 	human_desc.postprocess_func = human_postprocess;

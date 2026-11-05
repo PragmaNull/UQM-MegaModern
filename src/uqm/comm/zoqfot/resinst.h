@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define ZOQFOTPIK_COLOR_MAP "comm.zoqfotpik.colortable"
-#define ZOQFOTPIK_CONVERSATION_PHRASES "comm.zoqfotpik.dialogue"
-#define ZOQFOTPIK_FONT "comm.zoqfotpik.font"
-#define ZOQFOTPIK_MUSIC "comm.zoqfotpik.music"
-#define ZOQFOTPIK_PMAP_ANIM "comm.zoqfotpik.graphics"
-#define ZOQFOTPIK_SCRIPT "comm.zoqfotpik.script"
+inline constexpr uqgsl::czstring ZoqfotpikColorMap {"comm.zoqfotpik.colortable"};
+inline constexpr uqgsl::czstring ZoqfotpikConversationPhrases {"comm.zoqfotpik.dialogue"};
+inline constexpr uqgsl::czstring ZoqfotpikFont {"comm.zoqfotpik.font"};
+inline constexpr uqgsl::czstring ZoqfotpikMusic {"comm.zoqfotpik.music"};
+inline constexpr uqgsl::czstring ZoqfotpikPmapAnim {"comm.zoqfotpik.graphics"};

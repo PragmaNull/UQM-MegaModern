@@ -59,13 +59,12 @@ const GenerateFunctions generateChmmrFunctions = {
 };
 
 
-static bool
-GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pPlanet {};
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 
-	if (CurStarDescPtr->Index == CHMMR_DEFINED)
+	if (CurStarDescPtr()->Index == CHMMR_DEFINED)
 	{
 		pSunDesc->PlanetByte = 1;
 		pSunDesc->MoonByte = 0;
@@ -86,7 +85,7 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 				const uint32_t RandVal = SysGenRNG->next();
 				const uint8_t PByte = pSunDesc->PlanetByte + 1;
 				pSunDesc->NumPlanets =
-					(RandVal % (MAX_GEN_PLANETS - PByte) + PByte);
+					(RandVal % (MaxGenPlanets - PByte) + PByte);
 
 				FillOrbits(solarSys, pSunDesc->NumPlanets,
 						   solarSys->PlanetDesc, false);
@@ -108,13 +107,13 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 			}
 		}
 
-		if (!GET_GAME_STATE(CHMMR_UNLEASHED))
+		if (!uqm::gameState().flag(uqm::GameFlag::CHMMR_UNLEASHED))
 		{
 			pPlanet->data_index |= PLANET_SHIELDED;
 		}
 	}
 
-	if (CurStarDescPtr->Index == MOTHER_ARK_DEFINED)
+	if (CurStarDescPtr()->Index == MOTHER_ARK_DEFINED)
 	{
 		GenerateDefault_generatePlanets(solarSys);
 
@@ -127,7 +126,7 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pPlanet = &solarSys->PlanetDesc[pSunDesc->PlanetByte];
 
-		if (EXTENDED)
+		if (IsExtended())
 		{
 			pPlanet->data_index = GenerateCrystalWorld();
 		}
@@ -136,13 +135,12 @@ GenerateChmmr_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
+static bool GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (CurStarDescPtr->Index == CHMMR_DEFINED
-		&& matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
+	if (CurStarDescPtr()->Index == CHMMR_DEFINED
+		&& matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		uint16_t angle {};
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
@@ -157,33 +155,32 @@ GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 			pMoonDesc->data_index = DESTROYED_STARBASE;
 		}
 
-		pMoonDesc->radius = MIN_MOON_RADIUS;
+		pMoonDesc->radius = MinMoonRadius();
 		const uint32_t rand_val {SysGenRNG->next()};
-		angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
-		pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
-		pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
+		angle = NormalizeAngle(uqm::lowWord(rand_val));
+		pMoonDesc->location.x = Cosine(angle, pMoonDesc->radius);
+		pMoonDesc->location.y = Sine(angle, pMoonDesc->radius);
 		ComputeSpeed(pMoonDesc, true, 1);
 	}
 
 	return true;
 }
 
-static bool
-GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
-							  PLANET_DESC* world)
+static bool GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
+										  PLANET_DESC* world)
 {
-	if (CurStarDescPtr->Index == CHMMR_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (CurStarDescPtr()->Index == CHMMR_DEFINED
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
-		const bool HardModeBS = isDifficulty(uqm::Difficulty::Hard) && !GET_GAME_STATE(KOHR_AH_FRENZY)
-							 && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << ILWRATH_ENCOUNTER);
+		const bool HardModeBS = isDifficulty(uqm::Difficulty::Hard) && !uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY)
+							 && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << ILWRATH_ENCOUNTER);
 
 		if (RaceDead(CHMMR_SHIP))
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 			solarSys->PlanetSideFrame[1] = CaptureDrawable(
-				LoadGraphic(RUINS_MASK_PMAP_ANIM));
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(CHMMR_HOME_STRTAB);
+				LoadGraphic(RuinsMaskPmapAnimRes));
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ChmmrHomeStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 			GenerateDefault_generateOrbital(solarSys, world);
@@ -191,30 +188,30 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 			return true;
 		}
 
-		if (GET_GAME_STATE(CHMMR_UNLEASHED))
+		if (uqm::gameState().flag(uqm::GameFlag::CHMMR_UNLEASHED))
 		{
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 7);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));
 			InitCommunication(CHMMR_CONVERSATION);
 
-			if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
+			if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 			{
-				uqm::currentActivity() |= END_INTERPLANETARY;
+				uqm::currentActivity() |= EndInterplanetary;
 			}
 
 			return true;
 		}
-		else if (GET_GAME_STATE(SUN_DEVICE_ON_SHIP)
-				 && ((!GET_GAME_STATE(ILWRATH_DECEIVED)
+		else if (uqm::gameState().flag(uqm::GameFlag::SUN_DEVICE_ON_SHIP)
+				 && ((!uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED)
 					  && StartSphereTracking(ILWRATH_SHIP))
 					 || HardModeBS))
 		{
 			uint16_t state {};
 
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
-			if (GET_GAME_STATE(ILWRATH_DECEIVED) && isDifficulty(uqm::Difficulty::Hard))
+			if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED) && isDifficulty(uqm::Difficulty::Hard))
 			{
 				uint16_t lim {};
 
@@ -230,16 +227,16 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 				for (uint16_t i {0}; i < lim; ++i)
 				{
 					CloneShipFragment(ILWRATH_SHIP,
-									  &GLOBAL(npc_built_ship_q), 0);
+									  &uqm::gameState().game().npc_built_ship_q, 0);
 				}
 			}
 			else
 			{
 				CloneShipFragment(ILWRATH_SHIP,
-								  &GLOBAL(npc_built_ship_q), INFINITE_FLEET);
+								  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 			}
 
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, 1 << 6);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));
 			uqm::currentActivity() |= START_INTERPLANETARY;
 			InitCommunication(ILWRATH_CONVERSATION);
 
@@ -248,33 +245,33 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 				return true;
 			}
 
-			const bool Survivors {GetHeadLink(&GLOBAL(npc_built_ship_q)) != 0};
+			const bool Survivors {GetHeadLink(&uqm::gameState().game().npc_built_ship_q) != 0};
 
 			uqm::currentActivity() &= ~START_INTERPLANETARY;
-			ReinitQueue(&GLOBAL(npc_built_ship_q));
-			GetGroupInfo(GROUPS_RANDOM, GROUP_LOAD_IP);
+			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+			GetGroupInfo(GroupsRandom, GroupLoadIp);
 
 			if (Survivors)
 			{
 				return true;
 			}
 
-			state = GET_GAME_STATE(HM_ENCOUNTERS);
+			state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
 			state |= 1 << ILWRATH_ENCOUNTER;
-			SET_GAME_STATE(HM_ENCOUNTERS, state);
+			uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 
 			RepairSISBorder();
 		}
 	}
 
-	if (CurStarDescPtr->Index == CHMMR_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+	if (CurStarDescPtr()->Index == CHMMR_DEFINED
+		&& matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		/* Starbase */
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
 		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(
-			RaceDead(CHMMR_SHIP) ? URQUAN_BASE_STRTAB : CHMMR_BASE_STRTAB);
+			RaceDead(CHMMR_SHIP) ? UrquanBaseStrtabRes : ChmmrBaseStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		DoDiscoveryReport(MenuSounds);
@@ -285,17 +282,17 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 		return true;
 	}
 
-	if (EXTENDED && CurStarDescPtr->Index == MOTHER_ARK_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (IsExtended() && CurStarDescPtr()->Index == MOTHER_ARK_DEFINED
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const bool MelnormeInfo =
-			GET_GAME_STATE(MELNORME_ALIEN_INFO_STACK) >= 8;
-		const bool ChmmrStack = GET_GAME_STATE(CHMMR_HOME_VISITS);
+			uqm::gameState().flag(uqm::GameFlag::MELNORME_ALIEN_INFO_STACK) >= 8;
+		const bool ChmmrStack = uqm::gameState().flag(uqm::GameFlag::CHMMR_HOME_VISITS);
 
 		LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 		solarSys->PlanetSideFrame[1] =
-			CaptureDrawable(LoadGraphic(MOTHER_ARK_MASK_PMAP_ANIM));
-		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MOTHER_ARK_STRTAB);
+			CaptureDrawable(LoadGraphic(MotherArkMaskPmapAnimRes));
+		solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MotherArkStrtabRes);
 		solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 		if (MelnormeInfo || ChmmrStack)
@@ -309,21 +306,20 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static uint16_t
-GenerateChmmr_generateEnergy(const SOLARSYS_STATE* solarSys,
-							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateChmmr_generateEnergy(const SOLARSYS_STATE* solarSys,
+											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 
-	if (CurStarDescPtr->Index == CHMMR_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (CurStarDescPtr()->Index == CHMMR_DEFINED
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
 		return GenerateDefault_generateRuins(solarSys, whichNode, info);
 	}
 
-	if (CurStarDescPtr->Index == MOTHER_ARK_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET)
-		&& EXTENDED)
+	if (CurStarDescPtr()->Index == MOTHER_ARK_DEFINED
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet)
+		&& IsExtended())
 	{
 		return GenerateDefault_generateArtifact(
 			solarSys, whichNode, info);
@@ -332,21 +328,20 @@ GenerateChmmr_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateChmmr_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						   uint16_t whichNode)
+static bool GenerateChmmr_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									   uint16_t whichNode)
 {
 
-	if (CurStarDescPtr->Index == CHMMR_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (CurStarDescPtr()->Index == CHMMR_DEFINED
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		// Standard ruins report
 		GenerateDefault_landerReportCycle(solarSys);
 		return false;
 	}
 
-	if (EXTENDED && CurStarDescPtr->Index == MOTHER_ARK_DEFINED
-		&& matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (IsExtended() && CurStarDescPtr()->Index == MOTHER_ARK_DEFINED
+		&& matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		assert(whichNode == 0);
 

@@ -39,15 +39,13 @@
 #include <png.h>
 
 /* Link function between SDL_IOStream and PNG's data source */
-static void
-png_read_data(png_structp ctx, png_bytep area, png_size_t size)
+static void png_read_data(png_structp ctx, png_bytep area, png_size_t size)
 {
 	SDL_IOStream* src = (SDL_IOStream*)png_get_io_ptr(ctx);
 	SDL_ReadIO(src, area, size);
 }
 
-SDL_Surface*
-TFB_png_to_sdl(SDL_IOStream* src)
+SDL_Surface* TFB_png_to_sdl(SDL_IOStream* src)
 {
 	Sint64 start {};
 	const char* error {};
@@ -307,26 +305,24 @@ done: /* Clean up and return */
  */
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#define A_MASK 0xff000000
-#define B_MASK 0x00ff0000
-#define G_MASK 0x0000ff00
-#define R_MASK 0x000000ff
+static constexpr auto AMask {0xff000000};
+static constexpr auto BMask {0x00ff0000};
+static constexpr auto GMask {0x0000ff00};
+static constexpr auto RMask {0x000000ff};
 #else
-#define A_MASK 0x000000ff
-#define B_MASK 0x0000ff00
-#define G_MASK 0x00ff0000
-#define R_MASK 0xff000000
+static constexpr auto AMask {0x000000ff};
+static constexpr auto BMask {0x0000ff00};
+static constexpr auto GMask {0x00ff0000};
+static constexpr auto RMask {0xff000000};
 #endif
 
-static void
-png_write_data(png_structp ctx, png_bytep area, png_size_t size)
+static void png_write_data(png_structp ctx, png_bytep area, png_size_t size)
 {
 	SDL_IOStream* rw = (SDL_IOStream*)png_get_io_ptr(ctx);
 	SDL_WriteIO(rw, area, size);
 }
 
-SDL_Surface*
-SDL_PNGFormatAlpha(SDL_Surface* src)
+SDL_Surface* SDL_PNGFormatAlpha(SDL_Surface* src)
 {
 	SDL_Surface* surf {};
 	SDL_Rect rect = {0};
@@ -434,9 +430,9 @@ int TFB_sdl_to_png(SDL_Surface* surface, SDL_IOStream* dst, int freedst)
 	png_set_packing(png_ptr);
 
 	/* Allow BGR surfaces */
-	if (SDL_GetPixelFormatDetails(surface->format)->Rmask == B_MASK
-		&& SDL_GetPixelFormatDetails(surface->format)->Gmask == G_MASK
-		&& SDL_GetPixelFormatDetails(surface->format)->Bmask == R_MASK)
+	if (SDL_GetPixelFormatDetails(surface->format)->Rmask == BMask
+		&& SDL_GetPixelFormatDetails(surface->format)->Gmask == GMask
+		&& SDL_GetPixelFormatDetails(surface->format)->Bmask == RMask)
 	{
 		png_set_bgr(png_ptr);
 	}

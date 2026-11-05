@@ -2,15 +2,15 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define FIRE_BIG_MASK_PMAP_ANIM "ship.ilwrath.graphics.fire.large"
-#define FIRE_MED_MASK_PMAP_ANIM "ship.ilwrath.graphics.fire.medium"
-#define FIRE_SML_MASK_PMAP_ANIM "ship.ilwrath.graphics.fire.small"
-#define ILWRATH_BIG_MASK_PMAP_ANIM "ship.ilwrath.graphics.avenger.large"
-#define ILWRATH_CAPTAIN_MASK_PMAP_ANIM "ship.ilwrath.graphics.captain"
-#define ILWRATH_ICON_MASK_PMAP_ANIM "ship.ilwrath.icons"
-#define ILWRATH_MED_MASK_PMAP_ANIM "ship.ilwrath.graphics.avenger.medium"
-#define ILWRATH_MICON_MASK_PMAP_ANIM "ship.ilwrath.meleeicons"
-#define ILWRATH_RACE_STRINGS "ship.ilwrath.text"
-#define ILWRATH_SHIP_SOUNDS "ship.ilwrath.sounds"
-#define ILWRATH_SML_MASK_PMAP_ANIM "ship.ilwrath.graphics.avenger.small"
-#define ILWRATH_VICTORY_SONG "ship.ilwrath.ditty"
+inline constexpr uqgsl::czstring FireBigMaskPmapAnim {"ship.ilwrath.graphics.fire.large"};
+inline constexpr uqgsl::czstring FireMedMaskPmapAnim {"ship.ilwrath.graphics.fire.medium"};
+inline constexpr uqgsl::czstring FireSmlMaskPmapAnim {"ship.ilwrath.graphics.fire.small"};
+inline constexpr uqgsl::czstring IlwrathBigMaskPmapAnim {"ship.ilwrath.graphics.avenger.large"};
+inline constexpr uqgsl::czstring IlwrathCaptainMaskPmapAnim {"ship.ilwrath.graphics.captain"};
+inline constexpr uqgsl::czstring IlwrathIconMaskPmapAnim {"ship.ilwrath.icons"};
+inline constexpr uqgsl::czstring IlwrathMedMaskPmapAnim {"ship.ilwrath.graphics.avenger.medium"};
+inline constexpr uqgsl::czstring IlwrathMiconMaskPmapAnim {"ship.ilwrath.meleeicons"};
+inline constexpr uqgsl::czstring IlwrathRaceStrings {"ship.ilwrath.text"};
+inline constexpr uqgsl::czstring IlwrathShipSounds {"ship.ilwrath.sounds"};
+inline constexpr uqgsl::czstring IlwrathSmlMaskPmapAnim {"ship.ilwrath.graphics.avenger.small"};
+inline constexpr uqgsl::czstring IlwrathVictorySong {"ship.ilwrath.ditty"};

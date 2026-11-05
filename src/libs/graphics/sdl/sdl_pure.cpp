@@ -77,15 +77,15 @@ static constexpr int FpsScreenWidthShift {2};
 static constexpr int FpsScreenHeightShift {3};
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-#define A_MASK 0xff000000
-#define B_MASK 0x00ff0000
-#define G_MASK 0x0000ff00
-#define R_MASK 0x000000ff
+static constexpr auto AMask {0xff000000};
+static constexpr auto BMask {0x00ff0000};
+static constexpr auto GMask {0x0000ff00};
+static constexpr auto RMask {0x000000ff};
 #else
-#define A_MASK 0x000000ff
-#define B_MASK 0x0000ff00
-#define G_MASK 0x00ff0000
-#define R_MASK 0xff000000
+static constexpr auto AMask {0x000000ff};
+static constexpr auto BMask {0x0000ff00};
+static constexpr auto GMask {0x00ff0000};
+static constexpr auto RMask {0xff000000};
 #endif
 
 static void TFB_SDL_Preprocess(uqm::TFBRedraw force_full_redraw,
@@ -122,11 +122,10 @@ static TFB_GRAPHICS_BACKEND sdl_unscaled_backend = {
 	TFB_SDL_Unscaled_ScreenLayer,
 	TFB_SDL_ColorLayer};
 
-static SDL_Surface*
-Create_Screen(int w, int h)
+static SDL_Surface* Create_Screen(int w, int h)
 {
 	SDL_Surface* newsurf = TFB_CreateSurface(w, h,
-											 32, R_MASK, G_MASK, B_MASK, 0);
+											 32, RMask, GMask, BMask, 0);
 	if (newsurf == 0)
 	{
 		uqm::log::error("Couldn't create screen buffers: {}",
@@ -135,8 +134,7 @@ Create_Screen(int w, int h)
 	return newsurf;
 }
 
-static int
-ReInit_Screen(SDL_Surface** screen, int w, int h)
+static int ReInit_Screen(SDL_Surface** screen, int w, int h)
 {
 	if (*screen)
 	{
@@ -147,16 +145,15 @@ ReInit_Screen(SDL_Surface** screen, int w, int h)
 	return *screen == 0 ? -1 : 0;
 }
 
-static int
-ReInit_FPS_Screen(SDL_Surface** screen, int w, int h)
+static int ReInit_FPS_Screen(SDL_Surface** screen, int w, int h)
 {
 	if (*screen)
 	{
 		SDL_DestroySurface(*screen);
 	}
 	s_fpsTexture.reset();
-	*screen = TFB_CreateSurface(w, h, 32, R_MASK, G_MASK,
-								B_MASK, A_MASK);
+	*screen = TFB_CreateSurface(w, h, 32, RMask, GMask,
+								BMask, AMask);
 	if (*screen == 0)
 	{
 		uqm::log::error("Couldn't create screen buffers: {}",
@@ -167,8 +164,7 @@ ReInit_FPS_Screen(SDL_Surface** screen, int w, int h)
 }
 
 // Returns the name of the render driver to use, or nullptr to let SDL choose.
-const static char*
-FindBestRenderDriver(void)
+const static char* FindBestRenderDriver(void)
 {
 	if (!rendererBackend || !*rendererBackend)
 	{
@@ -193,8 +189,7 @@ FindBestRenderDriver(void)
 	return nullptr;
 }
 
-static void
-SetFullscreen(uqm::GfxFlags flags, int width, int height)
+static void SetFullscreen(uqm::GfxFlags flags, int width, int height)
 {
 	if (testFlag(flags, uqm::GfxFlags::Fullscreen))
 	{
@@ -222,8 +217,7 @@ SetFullscreen(uqm::GfxFlags flags, int width, int height)
 }
 
 // True if the render driver name is also the name of a GPU backend.
-static bool
-IsGpuBackend(const char* driver)
+static bool IsGpuBackend(const char* driver)
 {
 	for (const char* backend : {"vulkan", "direct3d12", "metal"})
 	{
@@ -237,8 +231,7 @@ IsGpuBackend(const char* driver)
 
 // Makes the renderer. With GPU scaling on, it tries the GPU renderer first, so that the shaders can run.
 // The render drivers that are also GPU backends select the GPU renderer with that backend.
-static SDL_Renderer*
-CreateRenderer(void)
+static SDL_Renderer* CreateRenderer(void)
 {
 	const char* const driver {FindBestRenderDriver()};
 	const bool gpuBackend {driver && IsGpuBackend(driver)};
@@ -265,8 +258,7 @@ CreateRenderer(void)
 	return SDL_CreateRenderer(window, driver);
 }
 
-static SDL_Texture*
-CreateScreenTexture(int width, int height)
+static SDL_Texture* CreateScreenTexture(int width, int height)
 {
 	SDL_Texture* texture {SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBX8888, SDL_TEXTUREACCESS_STREAMING, width, height)};
 	if (texture)
@@ -276,8 +268,7 @@ CreateScreenTexture(int width, int height)
 	return texture;
 }
 
-static SDL_FRect
-ToFRect(const SDL_Rect& rect)
+static SDL_FRect ToFRect(const SDL_Rect& rect)
 {
 	SDL_FRect result {};
 	SDL_RectToFRect(&rect, &result);
@@ -295,8 +286,8 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 	(void)windowType;		/* satisfy compiler (unused parameter) */
 
 	fmt::format_to_sz_n(caption, "The Ur-Quan Masters v{}.{}.{} {}",
-						UQM_MAJOR_VERSION, UQM_MINOR_VERSION, UQM_PATCH_VERSION,
-						(resFactor ? "HD " UQM_EXTRA_VERSION : UQM_EXTRA_VERSION));
+						UqmMajorVersion, UqmMinorVersion, UqmPatchVersion,
+						(resFactor ? UqmExtraVersionHd : UqmExtraVersion));
 
 	if (window == nullptr)
 	{
@@ -356,7 +347,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 		SDL_Screen = SDL_Screens[0];
 		TransitionScreen = SDL_Screens[2];
 		format_conv_surf = TFB_CreateSurface(0, 0,
-											 32, R_MASK, G_MASK, B_MASK, A_MASK);
+											 32, RMask, GMask, BMask, AMask);
 		if (!format_conv_surf)
 		{
 			return -1;
@@ -602,8 +593,7 @@ void TFB_Pure_UninitGraphics(void)
 	}
 }
 
-static void
-TFB_SDL_UploadTransitionScreen(void)
+static void TFB_SDL_UploadTransitionScreen(void)
 {
 	ScreenTextures[TFB_SCREEN_TRANSITION].updated.x = 0;
 	ScreenTextures[TFB_SCREEN_TRANSITION].updated.y = 0;
@@ -612,8 +602,7 @@ TFB_SDL_UploadTransitionScreen(void)
 	ScreenTextures[TFB_SCREEN_TRANSITION].dirty = true;
 }
 
-static void
-TFB_SDL_UpdateTexture(SDL_Texture* dest, SDL_Surface* src, SDL_Rect* rect)
+static void TFB_SDL_UpdateTexture(SDL_Texture* dest, SDL_Surface* src, SDL_Rect* rect)
 {
 	SDL_LockSurface(src);
 	const char* srcBytes {(char*)src->pixels};
@@ -642,8 +631,7 @@ TFB_SDL_UpdateTexture(SDL_Texture* dest, SDL_Surface* src, SDL_Rect* rect)
 	SDL_UnlockSurface(src);
 }
 
-static void
-TFB_SDL_ScanLines(bool hd)
+static void TFB_SDL_ScanLines(bool hd)
 {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 64);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -655,8 +643,7 @@ TFB_SDL_ScanLines(bool hd)
 	(void)hd; // satisfy compiler (unused parameter)
 }
 
-static void
-TFB_SDL_FPS(void)
+static void TFB_SDL_FPS(void)
 {
 	if (!SDL_Screen_fps)
 	{
@@ -693,8 +680,7 @@ TFB_SDL_FPS(void)
 
 // Makes the texture that the frame renders into for the gamma pass. It has the
 // pixel size of the window, and the letterbox of the window.
-static bool
-PrepareFrameTarget(void)
+static bool PrepareFrameTarget(void)
 {
 	int width {};
 	int height {};
@@ -725,8 +711,7 @@ PrepareFrameTarget(void)
 }
 
 // Draws the frame to the window with gamma correction.
-static void
-FinishGammaPass(void)
+static void FinishGammaPass(void)
 {
 	SDL_SetRenderTarget(renderer, nullptr);
 	SDL_SetRenderLogicalPresentation(renderer, WindowWidth, WindowHeight, SDL_LOGICAL_PRESENTATION_DISABLED);
@@ -739,9 +724,8 @@ FinishGammaPass(void)
 	SDL_SetRenderLogicalPresentation(renderer, WindowWidth, WindowHeight, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 }
 
-static void
-TFB_SDL_Preprocess(uqm::TFBRedraw force_full_redraw, int transition_amount,
-				   int fade_amount)
+static void TFB_SDL_Preprocess(uqm::TFBRedraw force_full_redraw, int transition_amount,
+							   int fade_amount)
 {
 	(void)transition_amount;
 	(void)fade_amount;
@@ -776,8 +760,7 @@ TFB_SDL_Preprocess(uqm::TFBRedraw force_full_redraw, int transition_amount,
 	SDL_RenderClear(renderer);
 }
 
-static void
-TFB_SDL_Unscaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
+static void TFB_SDL_Unscaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 {
 	SDL_Texture* texture = ScreenTextures[screen].texture;
 	if (ScreenTextures[screen].dirty)
@@ -808,8 +791,7 @@ TFB_SDL_Unscaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 }
 
 // Draws a screen texture of twice the screen size.
-static void
-DrawScaledScreen(SDL_Texture* texture, Uint8 a, SDL_Rect* rect)
+static void DrawScaledScreen(SDL_Texture* texture, Uint8 a, SDL_Rect* rect)
 {
 	SDL_FRect srcRect;
 	SDL_FRect dstRect;
@@ -842,8 +824,7 @@ DrawScaledScreen(SDL_Texture* texture, Uint8 a, SDL_Rect* rect)
 	SDL_RenderTexture(renderer, texture, pSrcRect, pDstRect);
 }
 
-static void
-TFB_SDL_Scaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
+static void TFB_SDL_Scaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 {
 	SDL_Texture* texture = ScreenTextures[screen].texture;
 	if (ScreenTextures[screen].dirty)
@@ -861,8 +842,7 @@ TFB_SDL_Scaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 	DrawScaledScreen(texture, a, rect);
 }
 
-static void
-TFB_SDL_GpuScaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
+static void TFB_SDL_GpuScaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 {
 	TFB_SDL_SCREENINFO& info {ScreenTextures[screen]};
 	if (info.dirty)
@@ -879,8 +859,7 @@ TFB_SDL_GpuScaled_ScreenLayer(SCREEN screen, Uint8 a, SDL_Rect* rect)
 	DrawScaledScreen(info.scaledTarget, a, rect);
 }
 
-static void
-FillRect(const SDL_Rect* rect)
+static void FillRect(const SDL_Rect* rect)
 {
 	if (rect)
 	{
@@ -893,8 +872,7 @@ FillRect(const SDL_Rect* rect)
 	}
 }
 
-static void
-TFB_SDL_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect)
+static void TFB_SDL_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect)
 {
 	if (r == 0 || r == 255)
 	{
@@ -939,8 +917,7 @@ TFB_SDL_ColorLayer(Uint8 r, Uint8 g, Uint8 b, Uint8 a, SDL_Rect* rect)
 	}
 }
 
-static void
-TFB_SDL_Postprocess(bool hd)
+static void TFB_SDL_Postprocess(bool hd)
 {
 	if (testFlag(g_gfxFlags, uqm::GfxFlags::Scanlines))
 	{

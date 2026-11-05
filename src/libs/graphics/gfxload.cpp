@@ -35,10 +35,9 @@
 #include <fmt/format.h>
 
 
-static void
-process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int cel_ct)
+static void process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int cel_ct)
 {
-	FramePtr->Type = ROM_DRAWABLE;
+	FramePtr->Type = RomDrawable;
 	FramePtr->Index = cel_ct;
 
 	// handle transparency cases
@@ -100,8 +99,7 @@ process_image(FRAME FramePtr, TFB_Canvas img[], const uqm::AniFrame* ani, int ce
 #endif
 }
 
-static void
-processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
+static void processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
 {
 	size_t dpitch {};
 
@@ -125,17 +123,17 @@ processFontChar(TFB_Char* CharPtr, TFB_Canvas canvas, FONT fontPtr)
 
 		int tune_amount = 0;
 
-		if (CharPtr->disp.height <= RES_SCALE(8))
+		if (CharPtr->disp.height <= ResScale(8))
 		{
-			tune_amount = RES_SCALE(1);
+			tune_amount = ResScale(1);
 		}
-		else if (CharPtr->disp.height == RES_SCALE(9))
+		else if (CharPtr->disp.height == ResScale(9))
 		{
-			tune_amount = RES_SCALE(2);
+			tune_amount = ResScale(2);
 		}
-		else if (CharPtr->disp.height > RES_SCALE(9))
+		else if (CharPtr->disp.height > ResScale(9))
 		{
-			tune_amount = RES_SCALE(3);
+			tune_amount = ResScale(3);
 		}
 
 		if (fontPtr->HaveFntData)
@@ -181,7 +179,7 @@ void* _GetCelData(const ResourceFile& resource)
 		uqm::log::warn("Couldn't get cel data for '{}'", resource.path);
 		return nullptr;
 	}
-	Drawable->Flags = WANT_PIXMAP;
+	Drawable->Flags = WantPixmap;
 	Drawable->MaxIndex = count - 1;
 	for (int i {count - 1}; i >= 0; --i)
 	{
@@ -276,7 +274,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 			continue;
 		}
 
-		if (charIndex > MAX_UNICODE)
+		if (charIndex > MaxUnicode)
 		{
 			continue;
 		}
@@ -317,7 +315,7 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 			fontPtr->HaveFntData = true;
 			for (const uqm::FontKern& kern : metrics->kerning)
 			{
-				if (kern.ch < MAX_UNICODE)
+				if (kern.ch < MaxUnicode)
 				{
 					fontPtr->KernTab[kern.ch] = static_cast<uint8_t>((kern.left << 2) | kern.right);
 				}
@@ -348,10 +346,10 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 		while (startBCD < numBCDs)
 		{
 			// Process one character page.
-			pageStart = bcds[startBCD].index & CHARACTER_PAGE_MASK;
+			pageStart = bcds[startBCD].index & CharacterPageMask;
 
 			size_t endBCD {startBCD};
-			while (endBCD < numBCDs && (bcds[endBCD].index & CHARACTER_PAGE_MASK) == pageStart)
+			while (endBCD < numBCDs && (bcds[endBCD].index & CharacterPageMask) == pageStart)
 			{
 				endBCD++;
 			}
@@ -405,8 +403,8 @@ void* _GetFontData(const uqm::io::Directory& dir, uqstl::string_view path)
 
 	if (!fontPtr->HaveFntData)
 	{
-		fontPtr->Leading = fontPtr->disp.height + RES_SCALE(1);
-		fontPtr->CharSpace = RES_SCALE(1);
+		fontPtr->Leading = fontPtr->disp.height + ResScale(1);
+		fontPtr->CharSpace = ResScale(1);
 	}
 
 	return fontPtr;

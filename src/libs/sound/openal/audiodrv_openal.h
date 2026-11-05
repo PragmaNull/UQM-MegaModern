@@ -35,7 +35,6 @@
 #endif
 
 
-
 /* General */
 int32_t openAL_Init(audio_Driver* driver, AudioFlags flags);
 void openAL_Uninit(void);

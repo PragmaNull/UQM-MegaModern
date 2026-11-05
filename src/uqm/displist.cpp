@@ -19,7 +19,6 @@
 #include "displist.h"
 #include "core/log/log.h"
 
-#define NULL_HANDLE nullptr
 
 /*
  * This file contains code for generic doubly linked lists.
@@ -30,10 +29,10 @@
 
 bool InitQueue(QUEUE* pq, uint16_t num_elements, OBJ_SIZE size)
 {
-	SetHeadLink(pq, NULL_HANDLE);
-	SetTailLink(pq, NULL_HANDLE);
+	SetHeadLink(pq, nullptr);
+	SetTailLink(pq, nullptr);
 	SetLinkSize(pq, size);
-	SetFreeList(pq, NULL_HANDLE);
+	SetFreeList(pq, nullptr);
 #if 0	
 	log_add (log_Debug, "InitQueue(): num_elements = {} ({})",
 			num_elements, (uint8_t)num_elements);
@@ -53,9 +52,9 @@ bool InitQueue(QUEUE* pq, uint16_t num_elements, OBJ_SIZE size)
 
 bool UninitQueue(QUEUE* pq)
 {
-	SetHeadLink(pq, NULL_HANDLE);
-	SetTailLink(pq, NULL_HANDLE);
-	SetFreeList(pq, NULL_HANDLE);
+	SetHeadLink(pq, nullptr);
+	SetTailLink(pq, nullptr);
+	SetFreeList(pq, nullptr);
 	FreeQueueTab(pq);
 
 	return (true);
@@ -64,10 +63,10 @@ bool UninitQueue(QUEUE* pq)
 // Empty the queue. The elements linked to in the queue are unchanged.
 void ReinitQueue(QUEUE* pq)
 {
-	SetHeadLink(pq, NULL_HANDLE);
-	SetTailLink(pq, NULL_HANDLE);
+	SetHeadLink(pq, nullptr);
+	SetTailLink(pq, nullptr);
 	{
-		SetFreeList(pq, NULL_HANDLE);
+		SetFreeList(pq, nullptr);
 
 		uint16_t num_elements {SizeQueueTab(pq)};
 		if (num_elements)
@@ -80,8 +79,7 @@ void ReinitQueue(QUEUE* pq)
 	}
 }
 
-HLINK
-AllocLink(QUEUE* pq)
+HLINK AllocLink(QUEUE* pq)
 {
 	HLINK hLink {GetFreeList(pq)};
 	if (hLink)
@@ -123,7 +121,7 @@ void PutQueue(QUEUE* pq, HLINK hLink)
 
 	LINK* LinkPtr {LockLink(pq, hLink)};
 	_SetPredLink(LinkPtr, GetTailLink(pq));
-	_SetSuccLink(LinkPtr, NULL_HANDLE);
+	_SetSuccLink(LinkPtr, nullptr);
 	UnlockLink(pq, hLink);
 
 	SetTailLink(pq, hLink);
@@ -188,8 +186,7 @@ void RemoveQueue(QUEUE* pq, HLINK hLink)
 	UnlockLink(pq, hLink);
 }
 
-uint16_t
-CountLinks(QUEUE* pq)
+uint16_t CountLinks(QUEUE* pq)
 {
 	HLINK hNextLink {};
 

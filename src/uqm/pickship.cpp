@@ -34,20 +34,20 @@
 #include "libs/mathlib.h"
 #include "util.h"
 
-#define NUM_PICK_SHIP_ROWS 2
-#define NUM_PICK_SHIP_COLUMNS 6
+static constexpr auto NumPickShipRows {2};
+static constexpr auto NumPickShipColumns {6};
 
-#define FLAGSHIP_X_OFFS RES_SCALE(65)
-#define FLAGSHIP_Y_OFFS RES_SCALE(4)
-#define FLAGSHIP_WIDTH RES_SCALE(22)
-#define FLAGSHIP_HEIGHT RES_SCALE(48)
+static auto FlagshipXOffs() { return ResScale(65); }
+static auto FlagshipYOffs() { return ResScale(4); }
+static auto FlagshipWidth() { return ResScale(22); }
+static auto FlagshipHeight() { return ResScale(48); }
 
 FRAME PickFrame;
 GFXPOINT frameOrigin;
 
 void InitPickFrame(void)
 {
-	PickFrame = CaptureDrawable(LoadGraphic(SC2_PICK_PMAP_ANIM));
+	PickFrame = CaptureDrawable(LoadGraphic(Sc2PickPmapAnimRes));
 	PickFrame = SetAbsFrameIndex(PickFrame, isPC(uqm::UQMOptions::read().flagshipColor) ? 0 : 2);
 }
 
@@ -79,8 +79,7 @@ void RepairPickFrame(GFXRECT* pRect, uint16_t frame)
 	SetContextClipRect(&OldRect);
 }
 
-static bool
-DoPickBattleShip(MENU_STATE* pMS)
+static bool DoPickBattleShip(MENU_STATE* pMS)
 {
 	GFXRECT r {};
 	TEXT t {};
@@ -93,7 +92,7 @@ DoPickBattleShip(MENU_STATE* pMS)
 		return (false);
 	}
 
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
+	SetMenuSounds(MenuSoundNone, MenuSoundNone);
 
 	if (!pMS->Initialized)
 	{
@@ -145,18 +144,18 @@ DoPickBattleShip(MENU_STATE* pMS)
 
 			if (new_col < 0)
 			{
-				new_col = NUM_PICK_SHIP_COLUMNS;
+				new_col = NumPickShipColumns;
 			}
-			else if (new_col > NUM_PICK_SHIP_COLUMNS)
+			else if (new_col > NumPickShipColumns)
 			{
 				new_col = 0;
 			}
 
 			if (new_row < 0)
 			{
-				new_row = NUM_PICK_SHIP_ROWS - 1;
+				new_row = NumPickShipRows - 1;
 			}
-			else if (new_row == NUM_PICK_SHIP_ROWS)
+			else if (new_row == NumPickShipRows)
 			{
 				new_row = 0;
 			}
@@ -166,40 +165,40 @@ DoPickBattleShip(MENU_STATE* pMS)
 
 #ifdef NEVER
 			SetContextForeGroundColor(
-				BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x0A), 0x1D));
+				BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x1D));
 			DrawRectangle(&pMS->flash_rect0, false);
 #endif /* NEVER */
 			pMS->first_item.y = new_row;
 			pMS->first_item.x = new_col;
 
 ChangeSelection:
-			if (pMS->first_item.x == (NUM_PICK_SHIP_COLUMNS >> 1))
+			if (pMS->first_item.x == (NumPickShipColumns >> 1))
 			{
 				pMS->flash_rect0.corner.x =
-					pMS->flash_rect1.corner.x - RES_SCALE(2) + FLAGSHIP_X_OFFS;
+					pMS->flash_rect1.corner.x - ResScale(2) + FlagshipXOffs();
 				pMS->flash_rect0.corner.y =
-					pMS->flash_rect1.corner.y - RES_SCALE(2) + FLAGSHIP_Y_OFFS;
-				pMS->flash_rect0.extent.width = FLAGSHIP_WIDTH + RES_SCALE(4);
-				pMS->flash_rect0.extent.height = FLAGSHIP_HEIGHT + RES_SCALE(4);
+					pMS->flash_rect1.corner.y - ResScale(2) + FlagshipYOffs();
+				pMS->flash_rect0.extent.width = FlagshipWidth() + ResScale(4);
+				pMS->flash_rect0.extent.height = FlagshipHeight() + ResScale(4);
 
 				hBattleShip = GetTailLink(&race_q[0]); /* Flagship */
 			}
 			else
 			{
 				new_col = pMS->first_item.x;
-				pMS->flash_rect0.corner.x = RES_SCALE(5) + pMS->flash_rect1.corner.x
-										  - RES_SCALE(2) + ((ICON_WIDTH + RES_SCALE(4)) * new_col);
-				if (new_col > (NUM_PICK_SHIP_COLUMNS >> 1))
+				pMS->flash_rect0.corner.x = ResScale(5) + pMS->flash_rect1.corner.x
+										  - ResScale(2) + ((IconWidth() + ResScale(4)) * new_col);
+				if (new_col > (NumPickShipColumns >> 1))
 				{
 					--new_col;
-					pMS->flash_rect0.corner.x += FLAGSHIP_WIDTH - ICON_WIDTH;
+					pMS->flash_rect0.corner.x += FlagshipWidth() - IconWidth();
 				}
-				pMS->flash_rect0.corner.y = RES_SCALE(16) + pMS->flash_rect1.corner.y
-										  - RES_SCALE(2) + ((ICON_HEIGHT + RES_SCALE(4)) * pMS->first_item.y);
-				pMS->flash_rect0.extent.width = ICON_WIDTH + RES_SCALE(4);
-				pMS->flash_rect0.extent.height = ICON_HEIGHT + RES_SCALE(4);
+				pMS->flash_rect0.corner.y = ResScale(16) + pMS->flash_rect1.corner.y
+										  - ResScale(2) + ((IconHeight() + ResScale(4)) * pMS->first_item.y);
+				pMS->flash_rect0.extent.width = IconWidth() + ResScale(4);
+				pMS->flash_rect0.extent.height = IconHeight() + ResScale(4);
 
-				ship_index = (pMS->first_item.y * NUM_PICK_SHIP_COLUMNS)
+				ship_index = (pMS->first_item.y * NumPickShipColumns)
 						   + new_col;
 
 				for (hBattleShip = GetHeadLink(&race_q[0]);
@@ -226,13 +225,13 @@ ChangeSelection:
 
 			pMS->CurFrame = (FRAME)hBattleShip;
 
-			SetContextForeGroundColor(BLACK_COLOR);
-			r.corner.x = pMS->flash_rect1.corner.x + RES_SCALE(6) - RES_SCALE(1);
-			r.corner.y = pMS->flash_rect1.corner.y + RES_SCALE(5) - RES_SCALE(1);
-			r.extent.width = ((ICON_WIDTH + RES_SCALE(4)) * 3) - RES_SCALE(4);
-			r.extent.height = RES_SCALE(7);
+			SetContextForeGroundColor(BlackColor);
+			r.corner.x = pMS->flash_rect1.corner.x + ResScale(6) - ResScale(1);
+			r.corner.y = pMS->flash_rect1.corner.y + ResScale(5) - ResScale(1);
+			r.extent.width = ((IconWidth() + ResScale(4)) * 3) - ResScale(4);
+			r.extent.height = ResScale(7);
 
-			if (IS_HD)
+			if (IsHd())
 			{
 				RepairPickFrame(&r, 0);
 			}
@@ -252,15 +251,15 @@ ChangeSelection:
 				SetContextFont(isPC(uqm::UQMOptions::read().whichFonts) ? TinyFont : TinyFontBold);
 
 				t.baseline.x = r.corner.x + (r.extent.width >> 1);
-				t.baseline.y = r.corner.y + (r.extent.height - RES_SCALE(1));
+				t.baseline.y = r.corner.y + (r.extent.height - ResScale(1));
 				t.align = ALIGN_CENTER;
 
 				StarShipPtr = LockStarShip(&race_q[0], hBattleShip);
 				if (StarShipPtr->captains_name_index == 0)
 				{
-					t.pStr = GLOBAL_SIS(CommanderName);
+					t.pStr = uqm::gameState().sis().CommanderName;
 					t.CharCount = (uint16_t)~0;
-					crew_level = GLOBAL_SIS(CrewEnlisted);
+					crew_level = uqm::gameState().sis().CrewEnlisted;
 					max_crew = GetCrewPodCapacity();
 				}
 				else
@@ -274,23 +273,23 @@ ChangeSelection:
 
 				// Code to make use of the PC version's font gradient
 				/*if (isPC (uqm::UQMOptions::read().whichFonts))
-					SetContextForeGroundColor (WHITE_COLOR);
+					SetContextForeGroundColor (WhiteColor);
 				else
 					SetContextForeGroundColor (
-						BUILD_COLOR (MAKE_RGB15 (0x14, 0x0A, 0x00), 0x0C));*/
+						BuildColor (MakeRgb15 (0x14, 0x0A, 0x00), 0x0C));*/
 
 				SetContextForeGroundColor(
-					BUILD_COLOR(MAKE_RGB15(0x14, 0x0A, 0x00), 0x0C));
+					BuildColor(MakeRgb15(0x14, 0x0A, 0x00), 0x0C));
 
 				font_DrawText(&t);
-				SetContextForeGroundColor(BLACK_COLOR);
+				SetContextForeGroundColor(BlackColor);
 			}
 
-			r.corner.x += (ICON_WIDTH + RES_SCALE(4))
-							* ((NUM_PICK_SHIP_COLUMNS >> 1) + 1)
-						+ FLAGSHIP_WIDTH - ICON_WIDTH;
+			r.corner.x += (IconWidth() + ResScale(4))
+							* ((NumPickShipColumns >> 1) + 1)
+						+ FlagshipWidth() - IconWidth();
 
-			if (IS_HD)
+			if (IsHd())
 			{
 				RepairPickFrame(&r, 0);
 			}
@@ -317,13 +316,13 @@ ChangeSelection:
 
 				// Code to make use of the PC version's font gradient
 				/*if (isPC (uqm::UQMOptions::read().whichFonts))
-					SetContextForeGroundColor (WHITE_COLOR);
+					SetContextForeGroundColor (WhiteColor);
 				else
 					SetContextForeGroundColor (
-							BUILD_COLOR (MAKE_RGB15 (0x00, 0x14, 0x00), 0x02));*/
+							BuildColor (MakeRgb15 (0x00, 0x14, 0x00), 0x02));*/
 
 				SetContextForeGroundColor(
-					BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x00), 0x02));
+					BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02));
 				font_DrawText(&t);
 			}
 
@@ -335,8 +334,7 @@ ChangeSelection:
 	return (true);
 }
 
-static HSTARSHIP
-GetArmadaStarShip(void)
+static HSTARSHIP GetArmadaStarShip(void)
 {
 	GFXRECT pick_r;
 	HSTARSHIP hBattleShip {};
@@ -347,7 +345,7 @@ GetArmadaStarShip(void)
 		return 0;
 	}
 
-	//    MenuSounds = CaptureSound (LoadSound (MENU_SOUNDS));
+	//    MenuSounds = CaptureSound (LoadSound (MenuSoundsRes));
 
 	InitPickFrame();
 	GFXCONTEXT OldContext {SetContext(SpaceContext)};
@@ -358,13 +356,13 @@ GetArmadaStarShip(void)
 
 		MenuState.InputFunc = DoPickBattleShip;
 		MenuState.Initialized = false;
-		MenuState.first_item.x = NUM_PICK_SHIP_COLUMNS >> 1;
+		MenuState.first_item.x = NumPickShipColumns >> 1;
 		MenuState.first_item.y = 0;
 		MenuState.CurFrame = 0;
 		MenuState.flash_rect1.corner = pick_r.corner;
 		MenuState.flash_rect1.extent.width = 0;
 
-		SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+		SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 		DoInput(&MenuState, false);
 
 		SetFlashRect(nullptr, false);
@@ -376,7 +374,7 @@ GetArmadaStarShip(void)
 	{
 		if (hBattleShip == GetTailLink(&race_q[0]))
 		{ // Player chose SIS. There will be no more choices.
-			battle_counter[RPG_PLAYER_NUM] = 1;
+			battle_counter[RpgPlayerNum] = 1;
 		}
 
 		WaitForSoundEnd(0);
@@ -390,13 +388,14 @@ GetArmadaStarShip(void)
 	return (hBattleShip);
 }
 
+static constexpr auto RunAwayFuelCost {(5 * FuelTankScale)};
+
 // Get the next ship to use.
-HSTARSHIP
-GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
+HSTARSHIP GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 {
 	if (inHQSpace())
 	{
-		assert(which_player == RPG_PLAYER_NUM);
+		assert(which_player == RpgPlayerNum);
 		// SIS for the Hyperspace flight
 		return GetHeadLink(&race_q[which_player]);
 	}
@@ -420,7 +419,7 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 	else
 	{
 		// Full game.
-		if (which_player == RPG_PLAYER_NUM)
+		if (which_player == RpgPlayerNum)
 		{ // Human player in a full game.
 			if (LastStarShipPtr == 0 && battle_counter[which_player] == 1)
 			{ // First time picking a ship and player has no escorts
@@ -433,21 +432,20 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 			}
 			else if (LastStarShipPtr != 0)
 			{ // last ship was the flagship
-#define RUN_AWAY_FUEL_COST (5 * FUEL_TANK_SCALE)
 				if (LastStarShipPtr->crew_level == 0)
 				{ // Died in the line of duty
-					GLOBAL_SIS(CrewEnlisted) = (uint16_t)~0;
+					uqm::gameState().sis().CrewEnlisted = (uint16_t)~0;
 					DeathByMelee = true;
 				}
 				else
 				{ // Player ran away
-					if (GLOBAL_SIS(FuelOnBoard) > RUN_AWAY_FUEL_COST && !uqm::UQMOptions::read().infiniteFuel)
+					if (uqm::gameState().sis().FuelOnBoard > RunAwayFuelCost && !uqm::UQMOptions::read().infiniteFuel)
 					{
-						GLOBAL_SIS(FuelOnBoard) -= RUN_AWAY_FUEL_COST;
+						uqm::gameState().sis().FuelOnBoard -= RunAwayFuelCost;
 					}
 					else
 					{
-						GLOBAL_SIS(FuelOnBoard) = (uqm::UQMOptions::read().infiniteFuel ? GLOBAL_SIS(FuelOnBoard) : 0);
+						uqm::gameState().sis().FuelOnBoard = (uqm::UQMOptions::read().infiniteFuel ? uqm::gameState().sis().FuelOnBoard : 0);
 					}
 				}
 			}
@@ -486,7 +484,6 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 
 void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 {
-#define PICK_NAME_HEIGHT RES_SCALE(6);
 	HSTARSHIP hBattleShip {};
 	HSTARSHIP hNextShip {};
 	const STARSHIP* StarShipPtr {};
@@ -534,9 +531,9 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 	FRAME OldFontEffect {SetContextFontEffect(nullptr)};
 
 	t.baseline.x = pick_r.corner.x + (pick_r.extent.width >> 1);
-	t.baseline.y = pick_r.corner.y + pick_r.extent.height - RES_SCALE(5);
+	t.baseline.y = pick_r.corner.y + pick_r.extent.height - ResScale(5);
 	t.align = ALIGN_CENTER;
-	t.pStr = GLOBAL_SIS(ShipName);
+	t.pStr = uqm::gameState().sis().ShipName;
 	t.CharCount = (uint16_t)~0;
 
 	// Code to make use of the PC version's font gradient
@@ -548,7 +545,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 	else
 	{
 		SetContextForeGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x12, 0x12, 0x12), 0x17));
+			BuildColor(MakeRgb15(0x12, 0x12, 0x12), 0x17));
 	}
 
 	SetContextFont(StarConFont);
@@ -556,8 +553,8 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 
 	SetContextFontEffect(OldFontEffect);
 
-	r.extent.width = ICON_WIDTH;
-	r.extent.height = ICON_HEIGHT;
+	r.extent.width = IconWidth();
+	r.extent.height = IconHeight();
 	for (hBattleShip = GetHeadLink(&race_q[0]);
 		 hBattleShip != 0; hBattleShip = hNextShip)
 	{
@@ -569,17 +566,17 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 			const uint16_t ship_index {StarShipPtr->index};
 
 			s.origin.x = pick_r.corner.x
-					   + (RES_SCALE(5) + ((ICON_WIDTH + RES_SCALE(4)) * (ship_index % NUM_PICK_SHIP_COLUMNS)));
-			if ((ship_index % NUM_PICK_SHIP_COLUMNS) >= (NUM_PICK_SHIP_COLUMNS >> 1))
+					   + (ResScale(5) + ((IconWidth() + ResScale(4)) * (ship_index % NumPickShipColumns)));
+			if ((ship_index % NumPickShipColumns) >= (NumPickShipColumns >> 1))
 			{
-				s.origin.x += FLAGSHIP_WIDTH + RES_SCALE(4);
+				s.origin.x += FlagshipWidth() + ResScale(4);
 			}
 			s.origin.y = pick_r.corner.y
-					   + (RES_SCALE(16) + ((ICON_HEIGHT + RES_SCALE(4)) * (ship_index / NUM_PICK_SHIP_COLUMNS)));
+					   + (ResScale(16) + ((IconHeight() + ResScale(4)) * (ship_index / NumPickShipColumns)));
 			s.frame = StarShipPtr->icons;
 			r.corner = s.origin;
 
-			SetContextForeGroundColor(BLACK_COLOR);
+			SetContextForeGroundColor(BlackColor);
 			DrawFilledRectangle(&r);
 
 			if ((StarShipPtr->SpeciesID != NO_ID) || (StarShipPtr->crew_level == 0))
@@ -588,7 +585,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 				if (StarShipPtr->SpeciesID == NO_ID)
 				{
 					/* Dead ship - mark with an X. */
-					s.origin.x -= RES_SCALE(1);
+					s.origin.x -= ResScale(1);
 					s.frame = SetAbsFrameIndex(StatusFrame, 3);
 					DrawStamp(&s);
 				}
@@ -597,7 +594,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 			{
 				/* Ship ran away */
 				SetContextForeGroundColor(
-					BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x14), 0x01));
+					BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01));
 				DrawFilledStamp(&s);
 			}
 		}

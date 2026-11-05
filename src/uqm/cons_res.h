@@ -29,11 +29,11 @@ void free_gravity_well(void);
 
 FRAME load_life_form(uint8_t selector);
 
-#define NUM_ORBIT_THEMES 6
+inline constexpr auto NumOrbitThemes {6};
 MUSIC_REF load_orbit_theme(uint8_t selector);
 extern int num_orbit_themes(void);
 
-#define NUM_MM_THEMES 3
+inline constexpr auto NumMmThemes {3};
 MUSIC_REF loadMainMenuMusic(uint8_t selector);
 
 #if 0 //defined(__cplusplus)

@@ -85,7 +85,7 @@ private:
 
 } // namespace
 
-static TFB_DrawCommand DCQ[DCQ_MAX] UQM_GUARDED_BY(s_dcqMutex);
+static TFB_DrawCommand DCQ[DcqMax] UQM_GUARDED_BY(s_dcqMutex);
 
 static TFB_DrawCommandQueue DrawCommandQueue UQM_GUARDED_BY(s_dcqMutex);
 
@@ -94,15 +94,13 @@ static inline constexpr auto DCQueueTicksForFps {getTicksForFramerate(DCQueueFPS
 int RenderedFrames = 0;
 
 
-static bool
-DCQ_HasSpace(int slots) UQM_REQUIRES(s_dcqMutex)
+static bool DCQ_HasSpace(int slots) UQM_REQUIRES(s_dcqMutex)
 {
-	return DrawCommandQueue.FullSize < DCQ_MAX - slots;
+	return DrawCommandQueue.FullSize < DcqMax - slots;
 }
 
 // Wait for the queue to be emptied. Always have the DCQ locked when calling this.
-static void
-TFB_WaitForSpace(int requested_slots) UQM_REQUIRES(s_dcqMutex)
+static void TFB_WaitForSpace(int requested_slots) UQM_REQUIRES(s_dcqMutex)
 {
 	uqm::log::debug("DCQ overload (Size = {}, FullSize = {}, "
 					"Requested = {}).  Sleeping until renderer is done.",
@@ -119,8 +117,7 @@ TFB_WaitForSpace(int requested_slots) UQM_REQUIRES(s_dcqMutex)
 }
 
 // Locks the DCQ, and waits until it has space for the slots.
-static void
-lockDcqWithSpace(int slots) UQM_ACQUIRE(s_dcqMutex)
+static void lockDcqWithSpace(int slots) UQM_ACQUIRE(s_dcqMutex)
 {
 	lockDcq();
 	if (!DCQ_HasSpace(slots))
@@ -130,16 +127,14 @@ lockDcqWithSpace(int slots) UQM_ACQUIRE(s_dcqMutex)
 }
 
 // The number of commands that the renderer can take now.
-static int
-DCQ_Size(void)
+static int DCQ_Size(void)
 {
 	const uqm::LockGuard lock {s_dcqMutex};
 	return DrawCommandQueue.Size;
 }
 
 // The number of commands in the queue, with the batched ones.
-static int
-DCQ_FullSize(void)
+static int DCQ_FullSize(void)
 {
 	const uqm::LockGuard lock {s_dcqMutex};
 	return DrawCommandQueue.FullSize;
@@ -157,8 +152,7 @@ void Unlock_DCQ(void) UQM_NO_THREAD_SAFETY_ANALYSIS
 }
 
 // Always have the DCQ locked when calling this.
-static void
-Synchronize_DCQ(void) UQM_REQUIRES(s_dcqMutex)
+static void Synchronize_DCQ(void) UQM_REQUIRES(s_dcqMutex)
 {
 	if (!DrawCommandQueue.Batching)
 	{
@@ -171,7 +165,7 @@ Synchronize_DCQ(void) UQM_REQUIRES(s_dcqMutex)
 		}
 		else
 		{
-			DrawCommandQueue.Size = (back + DCQ_MAX - front);
+			DrawCommandQueue.Size = (back + DcqMax - front);
 		}
 		DrawCommandQueue.FullSize = DrawCommandQueue.Size;
 	}
@@ -232,7 +226,7 @@ void TFB_DrawCommandQueue_Push(TFB_DrawCommand* Command)
 	lockDcqWithSpace(1);
 	DCQ[DrawCommandQueue.InsertionPoint] = *Command;
 	DrawCommandQueue.InsertionPoint = (DrawCommandQueue.InsertionPoint + 1)
-									% DCQ_MAX;
+									% DcqMax;
 	DrawCommandQueue.FullSize++;
 	Synchronize_DCQ();
 	unlockDcq();
@@ -248,7 +242,7 @@ int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
 		return (0);
 	}
 
-	if (DrawCommandQueue.Front == DrawCommandQueue.Back && DrawCommandQueue.Size != DCQ_MAX)
+	if (DrawCommandQueue.Front == DrawCommandQueue.Back && DrawCommandQueue.Size != DcqMax)
 	{
 		uqm::log::debug("Augh!  Assertion failure in DCQ!  "
 						"Front == Back, Size != DCQ_MAX");
@@ -258,7 +252,7 @@ int TFB_DrawCommandQueue_Pop(TFB_DrawCommand* target)
 	}
 
 	*target = DCQ[DrawCommandQueue.Front];
-	DrawCommandQueue.Front = (DrawCommandQueue.Front + 1) % DCQ_MAX;
+	DrawCommandQueue.Front = (DrawCommandQueue.Front + 1) % DcqMax;
 
 	DrawCommandQueue.Size--;
 	DrawCommandQueue.FullSize--;
@@ -279,8 +273,7 @@ void TFB_DrawCommandQueue_Clear()
 	unlockDcq();
 }
 
-static void
-checkExclusiveThread(TFB_DrawCommand* DrawCommand)
+static void checkExclusiveThread(TFB_DrawCommand* DrawCommand)
 {
 #ifdef DEBUG_DCQ_THREADS
 	static uqstl::thread::id exclusiveThreadId {};
@@ -316,7 +309,7 @@ void TFB_EnqueueDrawCommand(TFB_DrawCommand* DrawCommand)
 	checkExclusiveThread(DrawCommand);
 
 	if (DrawCommand->Type <= TFB_DRAWCOMMANDTYPE_COPYTOIMAGE
-		&& _CurFramePtr->Type == SCREEN_DRAWABLE)
+		&& _CurFramePtr->Type == ScreenDrawable)
 	{
 		static GFXRECT scissor_rect;
 
@@ -359,8 +352,7 @@ static uqstl::chrono::steady_clock::duration s_renderTime {};
 static int s_renderFrames {};
 
 // Adds the time since start to the render time, for one rendered frame.
-static void
-addRenderTime(uqstl::chrono::steady_clock::time_point start)
+static void addRenderTime(uqstl::chrono::steady_clock::time_point start)
 {
 	s_renderTime += uqstl::chrono::steady_clock::now() - start;
 	++s_renderFrames;
@@ -368,8 +360,7 @@ addRenderTime(uqstl::chrono::steady_clock::time_point start)
 
 // fps is the rate of the frames that the game draws. renderFps is the rate
 // that the rendering could reach if it did not wait for the game.
-static void
-computeFPS(int* fps, int* renderFps)
+static void computeFPS(int* fps, int* renderFps)
 {
 	static TimeCount last_time;
 	static TimePeriod fps_counter;
@@ -397,8 +388,7 @@ computeFPS(int* fps, int* renderFps)
 }
 
 // Draws text on the FPS canvas. The text starts at x.
-static void
-drawFPSText(uqstl::string_view text, int x, int y, Color color)
+static void drawFPSText(uqstl::string_view text, int x, int y, Color color)
 {
 	GFXRECT tr;
 	int16_t w {};
@@ -409,7 +399,7 @@ drawFPSText(uqstl::string_view text, int x, int y, Color color)
 	tr.corner.x = tr.corner.y = 0;
 	tr.extent.width = w;
 	tr.extent.height = h;
-	TFB_DrawImage_Rect(&tr, color, DRAW_REPLACE_MODE, img);
+	TFB_DrawImage_Rect(&tr, color, DrawReplaceMode, img);
 
 	for (const char c : text)
 	{
@@ -427,8 +417,7 @@ drawFPSText(uqstl::string_view text, int x, int y, Color color)
 	TFB_DrawImage_Delete(img);
 }
 
-static void
-RenderFPS(int fps, int renderFps)
+static void RenderFPS(int fps, int renderFps)
 {
 	static int prevFPS = 0;
 	static int prevRenderFPS = 0;
@@ -440,14 +429,10 @@ RenderFPS(int fps, int renderFps)
 		TFB_ClearFPSCanvas();
 
 		const int x = 2 << resolutionFactor;
-		drawFPSText(fmt::format("CPU: {}", fps), x, 7 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0x00, 0xFF));
-		drawFPSText(fmt::format("GPU: {}", renderFps), x, 16 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0xFF, 0xFF));
+		drawFPSText(fmt::format("CPU: {}", fps), x, 7 << resolutionFactor, BuildColorRgba(0x00, 0xFF, 0x00, 0xFF));
+		drawFPSText(fmt::format("GPU: {}", renderFps), x, 16 << resolutionFactor, BuildColorRgba(0x00, 0xFF, 0xFF, 0xFF));
 	}
 }
-
-#ifndef MIN
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#endif
 
 // Only call from main() thread!!
 void TFB_FlushGraphics(void)
@@ -456,6 +441,9 @@ void TFB_FlushGraphics(void)
 	static int renderFps = 0;
 	const bool showFps {testFlag(g_gfxFlags, uqm::GfxFlags::ShowFPS)};
 	const uqstl::chrono::steady_clock::time_point start {uqstl::chrono::steady_clock::now()};
+	const auto notifyDone {uqgsl::finally([] {
+		s_renderingDone.notify_all();
+	})};
 
 	if (DCQ_Size() == 0)
 	{
@@ -491,7 +479,6 @@ void TFB_FlushGraphics(void)
 
 		last_fade = current_fade;
 		last_transition = current_transition;
-		s_renderingDone.notify_all();
 		return;
 	}
 
@@ -503,12 +490,12 @@ void TFB_FlushGraphics(void)
 	int commands_handled {0};
 	bool livelock_deterrence {false};
 
-	if (DCQ_FullSize() > DCQ_FORCE_BREAK_SIZE)
+	if (DCQ_FullSize() > DcqForceBreakSize)
 	{
 		TFB_BatchReset();
 	}
 
-	if (DCQ_Size() > DCQ_FORCE_SLOWDOWN_SIZE)
+	if (DCQ_Size() > DcqForceSlowdownSize)
 	{
 		Lock_DCQ(-1);
 		livelock_deterrence = true;
@@ -527,7 +514,7 @@ void TFB_FlushGraphics(void)
 		}
 
 		++commands_handled;
-		if (!livelock_deterrence && commands_handled + DCQ_Size() > DCQ_LIVELOCK_MAX)
+		if (!livelock_deterrence && commands_handled + DCQ_Size() > DcqLivelockMax)
 		{
 			// log_add (log_Debug, "Initiating livelock deterrence!");
 			livelock_deterrence = true;
@@ -641,8 +628,8 @@ void TFB_FlushGraphics(void)
 					if (cmd->destBuffer == TFB_SCREEN_MAIN)
 					{
 						GFXRECT r;
-						r.corner.x = MIN(cmd->x1, cmd->x2);
-						r.corner.y = MIN(cmd->y1, cmd->y2);
+						r.corner.x = uqstl::min(cmd->x1, cmd->x2);
+						r.corner.y = uqstl::min(cmd->y1, cmd->y2);
 						r.extent.width = abs(cmd->x1 - cmd->x2) + cmd->thickness;
 						r.extent.height = abs(cmd->y1 - cmd->y2) + cmd->thickness;
 
@@ -790,7 +777,6 @@ void TFB_FlushGraphics(void)
 	{
 		addRenderTime(start);
 	}
-	s_renderingDone.notify_all();
 }
 
 void TFB_PurgeDanglingGraphics(void)

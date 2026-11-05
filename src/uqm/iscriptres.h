@@ -2,5 +2,7 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define EVENT_SCRIPT "event.script"
-#define SCRIPT_DIR_INITGAME "script.dir.initgame"
+#pragma once
+
+inline constexpr uqgsl::czstring EventScriptRes {"event.script"};
+inline constexpr uqgsl::czstring ScriptDirInitgameRes {"script.dir.initgame"};

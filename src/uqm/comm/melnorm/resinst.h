@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define MELNORME_COLOR_MAP "comm.melnorme.colortable"
-#define MELNORME_CONVERSATION_PHRASES "comm.melnorme.dialogue"
-#define MELNORME_FONT "comm.melnorme.font"
-#define MELNORME_MUSIC "comm.melnorme.music"
-#define MELNORME_PMAP_ANIM "comm.melnorme.graphics"
-#define MELNORME_SCRIPT "comm.melnorme.script"
+inline constexpr uqgsl::czstring MelnormeColorMap {"comm.melnorme.colortable"};
+inline constexpr uqgsl::czstring MelnormeConversationPhrases {"comm.melnorme.dialogue"};
+inline constexpr uqgsl::czstring MelnormeFont {"comm.melnorme.font"};
+inline constexpr uqgsl::czstring MelnormeMusic {"comm.melnorme.music"};
+inline constexpr uqgsl::czstring MelnormePmapAnim {"comm.melnorme.graphics"};

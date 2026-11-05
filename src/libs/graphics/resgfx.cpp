@@ -20,14 +20,12 @@
 #include "options.h"
 #include "core/log/log.h"
 
-static void
-GetCelFileData(const char* pathname, RESOURCE_DATA* resdata)
+static void GetCelFileData(const char* pathname, RESOURCE_DATA* resdata)
 {
 	resdata->ptr = LoadResourceFromPath(pathname, _GetCelData);
 }
 
-static void
-GetFontFileData(const char* pathname, RESOURCE_DATA* resdata)
+static void GetFontFileData(const char* pathname, RESOURCE_DATA* resdata)
 {
 	resdata->ptr = _GetFontData(uqm::contentDir(), pathname);
 	if (resdata->ptr == nullptr)

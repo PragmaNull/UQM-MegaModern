@@ -91,21 +91,10 @@ const static audio_Driver mixSDL_Driver =
 		mixSDL_BufferData
 };
 
-/* Adapted from SDL
- * This will generate "negative subscript or subscript is too large"
- * error during compile, if the size of a type is wrong
- */
-#define UQM_COMPILE_TIME_ASSERT(name, x) \
-	typedef int UQM_dummy_##name[(x) * 2 - 1]
-
-UQM_COMPILE_TIME_ASSERT(mixer_Object_fits_in_audio_Object,
-						sizeof(mixer_Object) <= sizeof(audio_Object));
-
-#undef UQM_COMPILE_TIME_ASSERT
+static_assert(sizeof(mixer_Object) <= sizeof(audio_Object), "mixer_Object must fit in audio_Object");
 
 // Converts an array of n audio_Objects to an array of mixer_Objects, in place.
-static void
-mixSDL_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
+static void mixSDL_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
@@ -117,8 +106,7 @@ mixSDL_ConvertObjectArrayToMixerObjects(uint32_t n, audio_Object* arr)
 	}
 }
 // Converts an array of n mixer_Objects to an array of audio_Objects, in place.
-static void
-mixSDL_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
+static void mixSDL_ConvertObjectArrayFromMixerObjects(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(mixer_Object))
 	{
@@ -137,8 +125,7 @@ static void audioCallback(void* userdata, SDL_AudioStream* audioStream, int addi
  * Initialization
  */
 
-int32_t
-mixSDL_Init(audio_Driver* driver, AudioFlags flags)
+int32_t mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 {
 	SDL_AudioSpec desired {};
 	mixer_Quality quality;
@@ -199,7 +186,7 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	}
 
 	uqm::log::info("Initializing mixer.");
-	if (!mixer_Init(desired.freq, MIX_FORMAT_MAKE(2, desired.channels),
+	if (!mixer_Init(desired.freq, MixFormatMake(2, desired.channels),
 					quality, MIX_NOFLAGS))
 	{
 		uqm::log::error("Mixer initialization failed: {:x}",
@@ -222,7 +209,7 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	uqm::log::info("Sound decoders initialized.");
 
 	*driver = mixSDL_Driver;
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		audio_GenSources(1, &soundSource[i].handle);
 	}
@@ -247,7 +234,7 @@ void mixSDL_Uninit(void)
 {
 	UninitStreamDecoder();
 
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		const uqm::LockGuard lock {soundSource[i].stream_mutex};
 		if (soundSource[i].sample && soundSource[i].sample->decoder)
@@ -265,8 +252,7 @@ void mixSDL_Uninit(void)
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
-static void
-audioCallback(void* userdata, SDL_AudioStream* audioStream, int additionalAmount, int totalAmount)
+static void audioCallback(void* userdata, SDL_AudioStream* audioStream, int additionalAmount, int totalAmount)
 {
 	(void)totalAmount;
 	if (additionalAmount <= 0)
@@ -282,8 +268,7 @@ audioCallback(void* userdata, SDL_AudioStream* audioStream, int additionalAmount
  * General
  */
 
-int32_t
-mixSDL_GetError(void)
+int32_t mixSDL_GetError(void)
 {
 	int32_t value = mixer_GetError();
 	switch (value)

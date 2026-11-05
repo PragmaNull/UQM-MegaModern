@@ -2,18 +2,18 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define HOWITZER_BIG_MASK_PMAP_ANIM "ship.orz.graphics.howitzer.large"
-#define HOWITZER_MED_MASK_PMAP_ANIM "ship.orz.graphics.howitzer.medium"
-#define HOWITZER_SML_MASK_PMAP_ANIM "ship.orz.graphics.howitzer.small"
-#define ORZ_BIG_MASK_PMAP_ANIM "ship.orz.graphics.nemesis.large"
-#define ORZ_CAPTAIN_MASK_PMAP_ANIM "ship.orz.graphics.captain"
-#define ORZ_ICON_MASK_PMAP_ANIM "ship.orz.icons"
-#define ORZ_MED_MASK_PMAP_ANIM "ship.orz.graphics.nemesis.medium"
-#define ORZ_MICON_MASK_PMAP_ANIM "ship.orz.meleeicons"
-#define ORZ_RACE_STRINGS "ship.orz.text"
-#define ORZ_SHIP_SOUNDS "ship.orz.sounds"
-#define ORZ_SML_MASK_PMAP_ANIM "ship.orz.graphics.nemesis.small"
-#define ORZ_VICTORY_SONG "ship.orz.ditty"
-#define TURRET_BIG_MASK_PMAP_ANIM "ship.orz.graphics.turret.large"
-#define TURRET_MED_MASK_PMAP_ANIM "ship.orz.graphics.turret.medium"
-#define TURRET_SML_MASK_PMAP_ANIM "ship.orz.graphics.turret.small"
+inline constexpr uqgsl::czstring HowitzerBigMaskPmapAnim {"ship.orz.graphics.howitzer.large"};
+inline constexpr uqgsl::czstring HowitzerMedMaskPmapAnim {"ship.orz.graphics.howitzer.medium"};
+inline constexpr uqgsl::czstring HowitzerSmlMaskPmapAnim {"ship.orz.graphics.howitzer.small"};
+inline constexpr uqgsl::czstring OrzBigMaskPmapAnim {"ship.orz.graphics.nemesis.large"};
+inline constexpr uqgsl::czstring OrzCaptainMaskPmapAnim {"ship.orz.graphics.captain"};
+inline constexpr uqgsl::czstring OrzIconMaskPmapAnim {"ship.orz.icons"};
+inline constexpr uqgsl::czstring OrzMedMaskPmapAnim {"ship.orz.graphics.nemesis.medium"};
+inline constexpr uqgsl::czstring OrzMiconMaskPmapAnim {"ship.orz.meleeicons"};
+inline constexpr uqgsl::czstring OrzRaceStrings {"ship.orz.text"};
+inline constexpr uqgsl::czstring OrzShipSounds {"ship.orz.sounds"};
+inline constexpr uqgsl::czstring OrzSmlMaskPmapAnim {"ship.orz.graphics.nemesis.small"};
+inline constexpr uqgsl::czstring OrzVictorySong {"ship.orz.ditty"};
+inline constexpr uqgsl::czstring TurretBigMaskPmapAnim {"ship.orz.graphics.turret.large"};
+inline constexpr uqgsl::czstring TurretMedMaskPmapAnim {"ship.orz.graphics.turret.medium"};
+inline constexpr uqgsl::czstring TurretSmlMaskPmapAnim {"ship.orz.graphics.turret.small"};

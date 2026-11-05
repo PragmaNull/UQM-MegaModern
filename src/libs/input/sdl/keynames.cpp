@@ -162,8 +162,7 @@ static keyname keynames[] = {
 };
 /* Last element must have code zero */
 
-const char*
-VControl_code2name(int code)
+const char* VControl_code2name(int code)
 {
 	int i = 0;
 	while (1)

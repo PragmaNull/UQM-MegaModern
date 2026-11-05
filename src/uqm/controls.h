@@ -143,14 +143,14 @@ struct CONTROLLER_INPUT_STATE
 };
 
 typedef uint8_t BATTLE_INPUT_STATE;
-#define BATTLE_LEFT ((BATTLE_INPUT_STATE)(1 << 0))
-#define BATTLE_RIGHT ((BATTLE_INPUT_STATE)(1 << 1))
-#define BATTLE_THRUST ((BATTLE_INPUT_STATE)(1 << 2))
-#define BATTLE_WEAPON ((BATTLE_INPUT_STATE)(1 << 3))
-#define BATTLE_SPECIAL ((BATTLE_INPUT_STATE)(1 << 4))
-#define BATTLE_ESCAPE ((BATTLE_INPUT_STATE)(1 << 5))
-#define BATTLE_DOWN ((BATTLE_INPUT_STATE)(1 << 6))
-#define BATTLE_THRUST_ALT ((BATTLE_INPUT_STATE)(1 << 7))
+inline constexpr auto BattleLeft {((BATTLE_INPUT_STATE)(1 << 0))};
+inline constexpr auto BattleRight {((BATTLE_INPUT_STATE)(1 << 1))};
+inline constexpr auto BattleThrust {((BATTLE_INPUT_STATE)(1 << 2))};
+inline constexpr auto BattleWeapon {((BATTLE_INPUT_STATE)(1 << 3))};
+inline constexpr auto BattleSpecial {((BATTLE_INPUT_STATE)(1 << 4))};
+inline constexpr auto BattleEscape {((BATTLE_INPUT_STATE)(1 << 5))};
+inline constexpr auto BattleDown {((BATTLE_INPUT_STATE)(1 << 6))};
+inline constexpr auto BattleThrustAlt {((BATTLE_INPUT_STATE)(1 << 7))};
 
 BATTLE_INPUT_STATE CurrentInputToBattleInput(uint16_t player);
 BATTLE_INPUT_STATE PulsedInputToBattleInput(uint16_t player);
@@ -175,7 +175,7 @@ void SleepGame(void);
 bool DoConfirmExit(void);
 bool ConfirmExit(void);
 
-#define WAIT_INFINITE TimePeriod::max()
+inline constexpr auto WaitInfinite {TimePeriod::max()};
 bool WaitForAnyButton(bool newButton, TimePeriod duration,
 					  bool resetInput);
 bool WaitForActButton(bool newButton, TimePeriod duration,

@@ -65,20 +65,18 @@ void TFB_UninitVideoPlayer(void)
 	// now just a stub
 }
 
-static inline TimePeriod
-msecToTimeCount(int32_t msec)
+static inline TimePeriod msecToTimeCount(int32_t msec)
 {
 	return uqstl::chrono::duration_cast<TimePeriod>(uqstl::chrono::milliseconds {msec});
 }
 
 // audio-synced video playback frame function
 // the frame rate and timing is dictated by the audio
-static bool
-processAudioSyncedFrame(VIDEO_REF vid)
+static bool processAudioSyncedFrame(VIDEO_REF vid)
 {
-#define MAX_FRAME_LAG 8
-#define LAG_FRACTION 6
-#define SYNC_BIAS 1 / 3
+	constexpr auto MaxFrameLag {8};
+	constexpr auto LagFraction {6};
+	constexpr int SyncBiasDivisor {3};
 	int ret {};
 	uint32_t want_frame {};
 	int32_t wait_msec {};
@@ -122,8 +120,8 @@ processAudioSyncedFrame(VIDEO_REF vid)
 	//  *relatively* smooth
 	//
 	const uint32_t prev_want_frame {vid->cur_frame - vid->lag_cnt};
-	if (want_frame > prev_want_frame - MAX_FRAME_LAG
-		&& want_frame <= prev_want_frame + MAX_FRAME_LAG)
+	if (want_frame > prev_want_frame - MaxFrameLag
+		&& want_frame <= prev_want_frame + MaxFrameLag)
 	{
 		// we will draw the next frame right now, thus +1
 		vid->lag_cnt = vid->cur_frame + 1 - want_frame;
@@ -146,15 +144,15 @@ processAudioSyncedFrame(VIDEO_REF vid)
 	GFXCONTEXT oldContext {SetContext(nullptr)};
 	TFB_DrawScreen_Image(vid->frame,
 						 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
-						 nullptr, DRAW_REPLACE_MODE, TFB_SCREEN_MAIN);
+						 nullptr, DrawReplaceMode, TFB_SCREEN_MAIN);
 	SetContext(oldContext);
 	FlushGraphics(); // needed to prevent half-frame updates
 
 	// increase interframe with positive lag-count to allow audio to catch up
 	// decrease interframe with negative lag-count to allow video to catch up
 	wait_msec = vid->decoder->interframe_wait
-			  - (int)vid->decoder->interframe_wait * SYNC_BIAS
-			  + (int)vid->decoder->interframe_wait * vid->lag_cnt / LAG_FRACTION;
+			  - (int)vid->decoder->interframe_wait / SyncBiasDivisor
+			  + (int)vid->decoder->interframe_wait * vid->lag_cnt / LagFraction;
 	vid->frame_time = Now + msecToTimeCount(wait_msec);
 
 	ret = VideoDecoder_Decode(vid->decoder);
@@ -168,8 +166,7 @@ processAudioSyncedFrame(VIDEO_REF vid)
 
 // audio-independent video playback frame function
 // the frame rate and timing is dictated by the video decoder
-static bool
-processMuteFrame(VIDEO_REF vid)
+static bool processMuteFrame(VIDEO_REF vid)
 {
 	int ret {};
 	const TimeCount Now = GetTimeCounter();
@@ -196,7 +193,7 @@ processMuteFrame(VIDEO_REF vid)
 		GFXCONTEXT oldContext {SetContext(nullptr)};
 		TFB_DrawScreen_Image(vid->frame,
 							 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
-							 nullptr, DRAW_REPLACE_MODE, TFB_SCREEN_MAIN);
+							 nullptr, DrawReplaceMode, TFB_SCREEN_MAIN);
 		SetContext(oldContext);
 		FlushGraphics(); // needed to prevent half-frame updates
 
@@ -248,7 +245,7 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 	sr = dr;
 	// JMS_GFX: Added this if-clause around the following lines to make the
 	// 3DO videos work also in 1280x960.
-	if (IS_HD)
+	if (IsHd())
 	{
 		sr.corner.x = -sr.corner.x;
 		sr.corner.y = -sr.corner.y;
@@ -307,7 +304,7 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 
 	vid->playing = true;
 
-	loop_music = !vid->decoder->audio_synced && vid->loop_frame != VID_NO_LOOP;
+	loop_music = !vid->decoder->audio_synced && vid->loop_frame != VidNoLoop;
 	if (vid->hAudio)
 	{
 		PLRPlaySong(vid->hAudio, (bool)loop_music, 1);
@@ -375,8 +372,7 @@ bool TFB_ProcessVideoFrame(VIDEO_REF vid)
 	}
 }
 
-uint32_t
-TFB_GetVideoPosition(VIDEO_REF vid)
+uint32_t TFB_GetVideoPosition(VIDEO_REF vid)
 {
 	uint32_t pos {};
 
@@ -415,8 +411,7 @@ bool TFB_SeekVideo(VIDEO_REF vid, uint32_t pos)
 	}
 }
 
-static void
-vp_BeginFrame(TFB_VideoDecoder* decoder)
+static void vp_BeginFrame(TFB_VideoDecoder* decoder)
 {
 	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
@@ -426,8 +421,7 @@ vp_BeginFrame(TFB_VideoDecoder* decoder)
 	}
 }
 
-static void
-vp_EndFrame(TFB_VideoDecoder* decoder)
+static void vp_EndFrame(TFB_VideoDecoder* decoder)
 {
 	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
@@ -437,8 +431,7 @@ vp_EndFrame(TFB_VideoDecoder* decoder)
 	}
 }
 
-static void*
-vp_GetCanvasLine(TFB_VideoDecoder* decoder, uint32_t line)
+static void* vp_GetCanvasLine(TFB_VideoDecoder* decoder, uint32_t line)
 {
 	const TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
@@ -450,8 +443,7 @@ vp_GetCanvasLine(TFB_VideoDecoder* decoder, uint32_t line)
 	return TFB_DrawCanvas_GetLine(vid->frame->NormalImg, line);
 }
 
-static uint32_t
-vp_GetTicks(TFB_VideoDecoder* decoder)
+static uint32_t vp_GetTicks(TFB_VideoDecoder* decoder)
 {
 	return static_cast<uint32_t>(
 		uqstl::chrono::duration_cast<uqstl::chrono::milliseconds>(GetTimeCounter().time_since_epoch()).count());
@@ -459,8 +451,7 @@ vp_GetTicks(TFB_VideoDecoder* decoder)
 	(void)decoder; // gobble up compiler warning
 }
 
-static bool
-vp_SetTimer(TFB_VideoDecoder* decoder, uint32_t msecs)
+static bool vp_SetTimer(TFB_VideoDecoder* decoder, uint32_t msecs)
 {
 	TFB_VideoClip* vid = (TFB_VideoClip*)decoder->data;
 
@@ -474,8 +465,7 @@ vp_SetTimer(TFB_VideoDecoder* decoder, uint32_t msecs)
 	return true;
 }
 
-static bool
-vp_AudioStart(TFB_SoundSample* sample)
+static bool vp_AudioStart(TFB_SoundSample* sample)
 {
 	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData(sample);
 
@@ -492,8 +482,7 @@ vp_AudioStart(TFB_SoundSample* sample)
 	return true;
 }
 
-static void
-vp_AudioEnd(TFB_SoundSample* sample)
+static void vp_AudioEnd(TFB_SoundSample* sample)
 {
 	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData(sample);
 
@@ -505,8 +494,7 @@ vp_AudioEnd(TFB_SoundSample* sample)
 	}
 }
 
-static void
-vp_BufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
+static void vp_BufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
 {
 	TFB_VideoClip* vid = (TFB_VideoClip*)TFB_GetSoundSampleData(sample);
 	const uint32_t frame = (uint32_t)tag->data;
@@ -520,8 +508,7 @@ vp_BufferTag(TFB_SoundSample* sample, TFB_SoundTag* tag)
 	}
 }
 
-static void
-vp_QueueBuffer(TFB_SoundSample* sample, audio_Object buffer)
+static void vp_QueueBuffer(TFB_SoundSample* sample, audio_Object buffer)
 {
 	//TFB_VideoClip* vid = (TFB_VideoClip*) TFB_GetSoundSampleData (sample);
 	TFB_SoundDecoder* decoder = TFB_GetSoundSampleDecoder(sample);

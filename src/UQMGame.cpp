@@ -166,23 +166,23 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	if (options.runMode == RunMode::Version)
 	{
-		uqm::log::info("{}.{}.{} {}\n", UQM_MAJOR_VERSION, UQM_MINOR_VERSION,
-					   UQM_PATCH_VERSION,
-					   (resolutionFactor ? "HD " UQM_EXTRA_VERSION : UQM_EXTRA_VERSION));
+		uqm::log::info("{}.{}.{} {}\n", UqmMajorVersion, UqmMinorVersion,
+					   UqmPatchVersion,
+					   (resolutionFactor ? UqmExtraVersionHd : UqmExtraVersion));
 		//log_showBox(false, false);
 		return {EXIT_SUCCESS, true};
 	}
 
-	uqm::log::info("!! The Ur-Quan Masters v{}.{}.{} {} (compiled {} {})", UQM_MAJOR_VERSION, UQM_MINOR_VERSION, UQM_PATCH_VERSION, (resolutionFactor ? "HD " UQM_EXTRA_VERSION : UQM_EXTRA_VERSION), __DATE__, __TIME__);
+	uqm::log::info("!! The Ur-Quan Masters v{}.{}.{} {} (compiled {} {})", UqmMajorVersion, UqmMinorVersion, UqmPatchVersion, (resolutionFactor ? UqmExtraVersionHd : UqmExtraVersion), __DATE__, __TIME__);
 	uqm::log::info("!! This software comes with ABSOLUTELY NO WARRANTY;");
 	uqm::log::info("!! for details see the included 'COPYING' file.");
 
 #ifdef NETPLAY
 	uqm::log::info("Netplay protocol version {}.{}. Netplay opponent "
 				   "must have UQM {}.{}.{} or later.",
-				   NETPLAY_PROTOCOL_VERSION_MAJOR, NETPLAY_PROTOCOL_VERSION_MINOR,
-				   NETPLAY_MIN_UQM_VERSION_MAJOR, NETPLAY_MIN_UQM_VERSION_MINOR,
-				   NETPLAY_MIN_UQM_VERSION_PATCH);
+				   NetplayProtocolVersionMajor, NetplayProtocolVersionMinor,
+				   NetplayMinUqmVersionMajor, NetplayMinUqmVersionMinor,
+				   NetplayMinUqmVersionPatch);
 #endif
 
 	// Compiler info to help with future debugging.
@@ -272,13 +272,13 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	prepareContentDir(c_str(options.contentDir), c_str(options.addonDir), c_str(args.front()));
 
-	resolutionFactor = isAddonAvailable(HD_MODE) ?
+	resolutionFactor = isAddonAvailable(HdMode) ?
 						   (unsigned int)options.resolutionFactor.value :
 						   0;
 
 	optWindowType = WindowStyle::UQM;
 	const WindowStyle windowStyle {*options.windowEmulationMode};
-	if (windowStyle != WindowStyle::UQM && isAddonAvailable(WINDOW_MODE(resolutionFactor, uqstl::to_underlying(windowStyle))))
+	if (windowStyle != WindowStyle::UQM && isAddonAvailable(WindowModeName(resolutionFactor, uqstl::to_underlying(windowStyle))))
 	{
 		optWindowType = windowStyle;
 	}
@@ -286,7 +286,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	Vec2u windowSize {*options.resolution};
 	{
 		const int w = 320;
-		const int h = (DOS_BOOL(240, 200));
+		const int h = (DosBool(240, 200));
 
 		const int loresBlowup = options.loresBlowupScale.value;
 		const int scaleFactor = loresBlowup + 1; // stored value starts with 0

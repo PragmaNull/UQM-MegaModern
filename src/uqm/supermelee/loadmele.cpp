@@ -35,26 +35,23 @@
 #include "core/string/StringUtils.h"
 
 
-#define LOAD_TEAM_NAME_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x0F, 0x10, 0x1B), 0x00)
-#define LOAD_TEAM_NAME_TEXT_COLOR_HILITE \
-	BUILD_COLOR(MAKE_RGB15(0x17, 0x18, 0x1D), 0x00)
+static constexpr auto LoadTeamNameTextColor {BuildColor(MakeRgb15(0x0F, 0x10, 0x1B), 0x00)};
+static constexpr auto LoadTeamNameTextColorHilite {BuildColor(MakeRgb15(0x17, 0x18, 0x1D), 0x00)};
 
-#define LOAD_MELEE_BOX_WIDTH RES_SCALE(34)
-#define LOAD_MELEE_BOX_HEIGHT RES_SCALE(34)
-#define LOAD_MELEE_BOX_SPACE RES_SCALE(1)
+static auto LoadMeleeBoxWidth() { return ResScale(34); }
+
+static auto LoadMeleeBoxSpace() { return ResScale(1); }
 
 //Team names in loadmele.c
-#define TEAM_NAME_L_BOX_WIDTH RES_SCALE(244)
-#define TEAM_NAME_L_BOX_HEIGHT RES_SCALE(10)
+static auto TeamNameLBoxWidth() { return ResScale(244); }
+static auto TeamNameLBoxHeight() { return ResScale(10); }
 
 
 static void DrawFileStrings(MELEE_STATE* pMS);
 static bool FillFileView(MELEE_STATE* pMS);
 
 
-static bool
-LoadTeamImage(const char* fileName, MeleeTeam* team)
+static bool LoadTeamImage(const char* fileName, MeleeTeam* team)
 {
 
 	uqm::io::Result<uqm::io::File> stream {uqm::meleeDir().open(fileName, uqm::io::OpenMode::Read)};
@@ -66,8 +63,7 @@ LoadTeamImage(const char* fileName, MeleeTeam* team)
 }
 
 #if 0 /* Not used */
-static void
-UnindexFleet (MELEE_STATE *pMS, uint16_t index)
+static void UnindexFleet (MELEE_STATE *pMS, uint16_t index)
 {
 	assert (index < pMS->load.numIndices);
 	pMS->load.numIndices--;
@@ -77,8 +73,7 @@ UnindexFleet (MELEE_STATE *pMS, uint16_t index)
 }
 #endif
 
-static void
-UnindexFleets(MELEE_STATE* pMS, uint16_t index, uint16_t count)
+static void UnindexFleets(MELEE_STATE* pMS, uint16_t index, uint16_t count)
 {
 	assert(index + count <= pMS->load.numIndices);
 
@@ -88,8 +83,7 @@ UnindexFleets(MELEE_STATE* pMS, uint16_t index, uint16_t count)
 			(pMS->load.numIndices - index) * sizeof pMS->load.entryIndices[0]);
 }
 
-static bool
-GetFleetByIndex(MELEE_STATE* pMS, uint16_t index, MeleeTeam* result)
+static bool GetFleetByIndex(MELEE_STATE* pMS, uint16_t index, MeleeTeam* result)
 {
 	if (index < pMS->load.preBuiltCount)
 	{
@@ -124,8 +118,7 @@ GetFleetByIndex(MELEE_STATE* pMS, uint16_t index, MeleeTeam* result)
 }
 
 // returns (uint16_t) -1 if not found
-static uint16_t
-GetFleetIndexByFileName(MELEE_STATE* pMS, const char* fileName)
+static uint16_t GetFleetIndexByFileName(MELEE_STATE* pMS, const char* fileName)
 {
 	for (uint16_t index {0}; index < pMS->load.numIndices; index++)
 	{
@@ -144,25 +137,24 @@ GetFleetIndexByFileName(MELEE_STATE* pMS, const char* fileName)
 // If drawShips is set the ships themselves are drawn, in addition to the
 // fleet name and value; if not, only the fleet name and value are drawn.
 // If highlite is set the text is drawn in the color used for highlighting.
-static void
-DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
-			   bool drawShips, bool highlite)
+static void DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
+						   bool drawShips, bool highlite)
 {
-	if (IS_HD)
+	if (IsHd())
 	{ // Draw the background of the text
 		GFXRECT r;
 
 		r.corner.x = origin->x;
-		r.corner.y = origin->y - TEAM_NAME_L_BOX_HEIGHT + RES_SCALE(3);
-		r.extent.width = TEAM_NAME_L_BOX_WIDTH;
-		r.extent.height = TEAM_NAME_L_BOX_HEIGHT;
+		r.corner.y = origin->y - TeamNameLBoxHeight() + ResScale(3);
+		r.extent.width = TeamNameLBoxWidth();
+		r.extent.height = TeamNameLBoxHeight();
 
 		QuickRepair(30 + uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value), &r);
 	}
 
 	SetContextForeGroundColor(highlite ?
-								  LOAD_TEAM_NAME_TEXT_COLOR_HILITE :
-								  LOAD_TEAM_NAME_TEXT_COLOR);
+								  LoadTeamNameTextColorHilite :
+								  LoadTeamNameTextColor);
 
 	// Print the name of the fleet
 	{
@@ -182,8 +174,8 @@ DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
 
 		fmt::format_to_n(buf, sizeof(buf) - 1, "{}", MeleeTeam_getValue(team));
 		Text.baseline = *origin;
-		Text.baseline.x += NUM_MELEE_COLUMNS * (LOAD_MELEE_BOX_WIDTH + LOAD_MELEE_BOX_SPACE)
-						 - RES_SCALE(1);
+		Text.baseline.x += NumMeleeColumns() * (LoadMeleeBoxWidth() + LoadMeleeBoxSpace())
+						 - ResScale(1);
 		Text.align = ALIGN_RIGHT;
 		Text.pStr = buf;
 		Text.CharCount = (uint16_t)~0;
@@ -195,13 +187,13 @@ DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
 	{
 		STAMP s;
 
-		s.origin.x = origin->x + RES_SCALE(1);
-		s.origin.y = origin->y + RES_SCALE(4);
-		for (FleetShipIndex slotI {0}; slotI < MELEE_FLEET_SIZE; slotI++)
+		s.origin.x = origin->x + ResScale(1);
+		s.origin.y = origin->y + ResScale(4);
+		for (FleetShipIndex slotI {0}; slotI < MeleeFleetSize; slotI++)
 		{
 			uint8_t StarShip {};
 
-			if (slotI == TRUE_MELEE_FLEET_SIZE)
+			if (slotI == TrueMeleeFleetSize())
 			{
 				break;
 			}
@@ -211,7 +203,7 @@ DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
 			{
 				s.frame = GetShipIconsFromIndex(StarShip);
 				DrawStamp(&s);
-				s.origin.x += RES_SCALE(17);
+				s.origin.x += ResScale(17);
 			}
 		}
 	}
@@ -220,12 +212,11 @@ DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
 // returns true if there are any entries in the view, in which case
 // pMS->load.bot gets set to the index just past the bottom entry in the view.
 // returns false if not, in which case, the entire view remains unchanged.
-static bool
-FillFileView(MELEE_STATE* pMS)
+static bool FillFileView(MELEE_STATE* pMS)
 {
 	uint16_t viewI {};
 
-	for (viewI = 0; viewI < LOAD_TEAM_VIEW_SIZE; viewI++)
+	for (viewI = 0; viewI < LoadTeamViewSize; viewI++)
 	{
 		const bool success = GetFleetByIndex(pMS, pMS->load.top + viewI,
 											 pMS->load.view[viewI]);
@@ -244,12 +235,11 @@ FillFileView(MELEE_STATE* pMS)
 	return true;
 }
 
-#define FILE_STRING_ORIGIN_X RES_SCALE(5 + DOS_NUM(2))
-#define FILE_STRING_ORIGIN_Y RES_SCALE(32 - DOS_NUM(1))
-#define ENTRY_HEIGHT RES_SCALE(32)
+static auto FileStringOriginX() { return ResScale(5 + DosNum(2)); }
+static auto FileStringOriginY() { return ResScale(32 - DosNum(1)); }
+static auto EntryHeight() { return ResScale(32); }
 
-static void
-SelectFileString(MELEE_STATE* pMS, bool hilite)
+static void SelectFileString(MELEE_STATE* pMS, bool hilite)
 {
 	GFXPOINT origin;
 	uint16_t viewI {};
@@ -260,21 +250,20 @@ SelectFileString(MELEE_STATE* pMS, bool hilite)
 	SetContextFont(MicroFont);
 	BatchGraphics();
 
-	origin.x = FILE_STRING_ORIGIN_X;
-	origin.y = FILE_STRING_ORIGIN_Y + viewI * ENTRY_HEIGHT;
+	origin.x = FileStringOriginX();
+	origin.y = FileStringOriginY() + viewI * EntryHeight();
 	DrawFileString(pMS->load.view[viewI], &origin, false, hilite);
 
 	UnbatchGraphics();
 	SetContext(OldContext);
 }
 
-static void
-DrawFileStrings(MELEE_STATE* pMS)
+static void DrawFileStrings(MELEE_STATE* pMS)
 {
 	GFXPOINT origin;
 
-	origin.x = FILE_STRING_ORIGIN_X;
-	origin.y = FILE_STRING_ORIGIN_Y;
+	origin.x = FileStringOriginX();
+	origin.y = FileStringOriginY();
 
 	GFXCONTEXT OldContext {SetContext(SpaceContext)};
 	SetContextFont(MicroFont);
@@ -288,7 +277,7 @@ DrawFileStrings(MELEE_STATE* pMS)
 		{
 			DrawFileString(pMS->load.view[i - pMS->load.top], &origin,
 						   true, false);
-			origin.y += ENTRY_HEIGHT;
+			origin.y += EntryHeight();
 		}
 	}
 
@@ -296,33 +285,32 @@ DrawFileStrings(MELEE_STATE* pMS)
 	SetContext(OldContext);
 }
 
-static void
-RefocusView(MELEE_STATE* pMS, uint16_t index)
+static void RefocusView(MELEE_STATE* pMS, uint16_t index)
 {
 	assert(index < pMS->load.preBuiltCount + pMS->load.numIndices);
 
 	pMS->load.cur = index;
-	if (index <= LOAD_TEAM_VIEW_SIZE / 2)
+	if (index <= LoadTeamViewSize / 2)
 	{
 		pMS->load.top = 0;
 	}
 	else
 	{
-		pMS->load.top = index - LOAD_TEAM_VIEW_SIZE / 2;
+		pMS->load.top = index - LoadTeamViewSize / 2;
 	}
 }
 
-static void
-flashSelectedTeam(MELEE_STATE* pMS)
+static constexpr auto FlashRate {(c_gameSecond / 9)};
+
+static void flashSelectedTeam(MELEE_STATE* pMS)
 {
-#define FLASH_RATE (c_gameSecond / 9)
 	static TimeCount NextTime {};
 	static int hilite = 0;
 	const TimeCount Now = GetTimeCounter();
 
 	if (Now >= NextTime)
 	{
-		NextTime = Now + FLASH_RATE;
+		NextTime = Now + FlashRate;
 		hilite ^= 1;
 
 		GFXCONTEXT OldContext {SetContext(SpaceContext)};
@@ -343,8 +331,8 @@ bool DoLoadTeam(MELEE_STATE* pMS)
 		return false;
 	}
 
-	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN | MENU_SOUND_PAGE,
-				  MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundUp | MenuSoundDown | MenuSoundPage,
+				  MenuSoundSelect);
 
 	if (!pMS->Initialized)
 	{
@@ -386,9 +374,9 @@ bool DoLoadTeam(MELEE_STATE* pMS)
 				newIndex--;
 				if (newIndex < newTop)
 				{
-					newTop = (newTop < LOAD_TEAM_VIEW_SIZE) ?
+					newTop = (newTop < LoadTeamViewSize) ?
 								 0 :
-								 newTop - LOAD_TEAM_VIEW_SIZE;
+								 newTop - LoadTeamViewSize;
 				}
 			}
 		}
@@ -406,27 +394,27 @@ bool DoLoadTeam(MELEE_STATE* pMS)
 		}
 		else if (PulsedInputState.menu[KEY_MENU_PAGE_UP])
 		{
-			newIndex = (newIndex < LOAD_TEAM_VIEW_SIZE) ?
+			newIndex = (newIndex < LoadTeamViewSize) ?
 						   0 :
-						   newIndex - LOAD_TEAM_VIEW_SIZE;
-			newTop = (newTop < LOAD_TEAM_VIEW_SIZE) ?
+						   newIndex - LoadTeamViewSize;
+			newTop = (newTop < LoadTeamViewSize) ?
 						 0 :
-						 newTop - LOAD_TEAM_VIEW_SIZE;
+						 newTop - LoadTeamViewSize;
 		}
 		else if (PulsedInputState.menu[KEY_MENU_PAGE_DOWN])
 		{
 			const uint16_t numEntries = pMS->load.numIndices + pMS->load.preBuiltCount;
-			if (newIndex + LOAD_TEAM_VIEW_SIZE < numEntries)
+			if (newIndex + LoadTeamViewSize < numEntries)
 			{
-				newIndex += LOAD_TEAM_VIEW_SIZE;
-				newTop += LOAD_TEAM_VIEW_SIZE;
+				newIndex += LoadTeamViewSize;
+				newTop += LoadTeamViewSize;
 			}
 			else
 			{
 				newIndex = numEntries - 1;
-				if (newTop + LOAD_TEAM_VIEW_SIZE < numEntries && numEntries > LOAD_TEAM_VIEW_SIZE)
+				if (newTop + LoadTeamViewSize < numEntries && numEntries > LoadTeamViewSize)
 				{
-					newTop = numEntries - LOAD_TEAM_VIEW_SIZE;
+					newTop = numEntries - LoadTeamViewSize;
 				}
 			}
 		}
@@ -456,8 +444,7 @@ bool DoLoadTeam(MELEE_STATE* pMS)
 	return true;
 }
 
-static void
-SelectTeamByFileName(MELEE_STATE* pMS, const char* fileName)
+static void SelectTeamByFileName(MELEE_STATE* pMS, const char* fileName)
 {
 	const uint16_t index = GetFleetIndexByFileName(pMS, fileName);
 	if (index == (uint16_t)-1)
@@ -527,15 +514,14 @@ bool DoSaveTeam(MELEE_STATE* pMS)
 	return opened;
 }
 
-static void
-InitPreBuilt(MELEE_STATE* pMS)
+static constexpr auto PrebuiltCount {15};
+
+static void InitPreBuilt(MELEE_STATE* pMS)
 {
 	MeleeTeam* const* list {};
 
-#define PREBUILT_COUNT 15
-	pMS->load.preBuiltList.assign(PREBUILT_COUNT, nullptr);
-	pMS->load.preBuiltCount = PREBUILT_COUNT;
-#undef PREBUILT_COUNT
+	pMS->load.preBuiltList.assign(PrebuiltCount, nullptr);
+	pMS->load.preBuiltCount = PrebuiltCount;
 
 	{
 		for (size_t fleetI {0}; fleetI < pMS->load.preBuiltCount; fleetI++)
@@ -549,7 +535,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	{
 		/* "Balanced Team 1" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GAME_STRING(MELEE_STRING_BASE + 4));
+		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 4));
 		MeleeTeam_setShip(*list, i++, MELEE_ANDROSYNTH);
 		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
 		MeleeTeam_setShip(*list, i++, MELEE_DRUUGE);
@@ -565,7 +551,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	{
 		/* "Balanced Team 2" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GAME_STRING(MELEE_STRING_BASE + 5));
+		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 5));
 		MeleeTeam_setShip(*list, i++, MELEE_ARILOU);
 		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
 		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
@@ -583,7 +569,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	{
 		/* "200 points" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GAME_STRING(MELEE_STRING_BASE + 6));
+		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 6));
 		MeleeTeam_setShip(*list, i++, MELEE_ANDROSYNTH);
 		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
 		MeleeTeam_setShip(*list, i++, MELEE_DRUUGE);
@@ -601,7 +587,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	{
 		/* "Behemoth Zenith" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GAME_STRING(MELEE_STRING_BASE + 7));
+		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 7));
 		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
 		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
 		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
@@ -618,7 +604,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	{
 		/* "The Peeled Eyes" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GAME_STRING(MELEE_STRING_BASE + 8));
+		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 8));
 		MeleeTeam_setShip(*list, i++, MELEE_URQUAN);
 		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
 		MeleeTeam_setShip(*list, i++, MELEE_MYCON);
@@ -794,8 +780,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	assert(list == pMS->load.preBuiltList.data() + pMS->load.preBuiltCount);
 }
 
-static void
-UninitPreBuilt(MELEE_STATE* pMS)
+static void UninitPreBuilt(MELEE_STATE* pMS)
 {
 	for (size_t fleetI {0}; fleetI < pMS->load.preBuiltCount; fleetI++)
 	{
@@ -805,23 +790,21 @@ UninitPreBuilt(MELEE_STATE* pMS)
 	pMS->load.preBuiltCount = 0;
 }
 
-static void
-InitLoadView(MELEE_STATE* pMS)
+static void InitLoadView(MELEE_STATE* pMS)
 {
 	MeleeTeam** view = pMS->load.view;
 
-	for (size_t viewI {0}; viewI < LOAD_TEAM_VIEW_SIZE; viewI++)
+	for (size_t viewI {0}; viewI < LoadTeamViewSize; viewI++)
 	{
 		view[viewI] = MeleeTeam_new();
 	}
 }
 
-static void
-UninitLoadView(MELEE_STATE* pMS)
+static void UninitLoadView(MELEE_STATE* pMS)
 {
 	MeleeTeam* const* view = pMS->load.view;
 
-	for (size_t viewI {0}; viewI < LOAD_TEAM_VIEW_SIZE; viewI++)
+	for (size_t viewI {0}; viewI < LoadTeamViewSize; viewI++)
 	{
 		MeleeTeam_delete(view[viewI]);
 	}

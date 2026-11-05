@@ -21,6 +21,8 @@
 #include "starmap.h"
 #include "globdata.h"
 #include "core/log/log.h"
+
+static constexpr auto StarBufsize {(NumSolarSystems * sizeof(uint32_t) + 3800 * (3 * sizeof(uint32_t)))};
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -28,19 +30,18 @@
 
 uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> MakeStateFiles(void)
 {
-	// In the order STARINFO_FILE, RANDGRPINFO_FILE, DEFGRPINFO_FILE.
+	// In the order StarinfoFile, RandgrpinfoFile, DefgrpinfoFile.
 	return {
 		{
-			{.symname = "STARINFO", .size_hint = STAR_BUFSIZE},
-			{.symname = "RANDGRPINFO", .size_hint = RAND_BUFSIZE},
-			{.symname = "DEFGRPINFO", .size_hint = DEF_BUFSIZE},
+			{.symname = "STARINFO", .size_hint = StarBufsize},
+			{.symname = "RANDGRPINFO", .size_hint = RandBufsize},
+			{.symname = "DEFGRPINFO", .size_hint = DefBufsize},
 		 }
 	 };
 }
 
 
-GAME_STATE_FILE*
-OpenStateFile(int stateFile, const char* mode)
+GAME_STATE_FILE* OpenStateFile(int stateFile, const char* mode)
 {
 	if (stateFile < 0 || stateFile >= NUM_STATE_FILES)
 	{
@@ -119,8 +120,7 @@ void DeleteStateFile(int stateFile)
 	fp->data = {};
 }
 
-uint32_t
-LengthStateFile(GAME_STATE_FILE* fp)
+uint32_t LengthStateFile(GAME_STATE_FILE* fp)
 {
 	return fp->used;
 }
@@ -204,7 +204,7 @@ int SeekStateFile(GAME_STATE_FILE* fp, long offset, int whence)
 
 void InitPlanetInfo(void)
 {
-	GAME_STATE_FILE* fp {OpenStateFile(STARINFO_FILE, "wb")};
+	GAME_STATE_FILE* fp {OpenStateFile(StarinfoFile, "wb")};
 	if (fp)
 	{
 		// Set record offsets for all stars to 0 (not present)
@@ -213,8 +213,8 @@ void InitPlanetInfo(void)
 		{
 			swrite_32(fp, 0);
 			++pSD;
-		} while (pSD->star_pt.x <= MAX_X_UNIVERSE
-				 && pSD->star_pt.y <= MAX_Y_UNIVERSE);
+		} while (pSD->star_pt.x <= MaxXUniverse
+				 && pSD->star_pt.y <= MaxYUniverse);
 
 		CloseStateFile(fp);
 	}
@@ -222,13 +222,13 @@ void InitPlanetInfo(void)
 
 void UninitPlanetInfo(void)
 {
-	DeleteStateFile(STARINFO_FILE);
+	DeleteStateFile(StarinfoFile);
 }
 
-#define OFFSET_SIZE (sizeof(uint32_t))
-//#define SCAN_RECORD_SIZE  (sizeof (uint32_t) * NUM_SCAN_TYPES)
+static constexpr auto OffsetSize {(sizeof(uint32_t))};
+//#define ScanRecordSize  (sizeof (uint32_t) * NUM_SCAN_TYPES)
 // JMS: Increased the size of scan record to house partially scavenged minerals.
-#define SCAN_RECORD_SIZE ((sizeof(uint32_t) * NUM_SCAN_TYPES) + (sizeof(uint8_t) * NUM_SCAN_TYPES * 32))
+static constexpr auto ScanRecordSize {((sizeof(uint32_t) * NUM_SCAN_TYPES) + (sizeof(uint8_t) * NUM_SCAN_TYPES * 32))};
 
 void GetPlanetInfo(void)
 {
@@ -248,14 +248,14 @@ void GetPlanetInfo(void)
 		}
 	}
 
-	GAME_STATE_FILE* fp {OpenStateFile(STARINFO_FILE, "rb")};
+	GAME_STATE_FILE* fp {OpenStateFile(StarinfoFile, "rb")};
 	if (fp)
 	{
 		uint16_t planet_index {};
 		uint16_t moon_index {};
 		uint32_t offset {};
 
-		const uint16_t star_index {(uint16_t)(CurStarDescPtr - star_array)};
+		const uint16_t star_index {(uint16_t)(CurStarDescPtr() - star_array)};
 		planet_index = (uint16_t)(pSolarSysState->pBaseDesc->pPrevDesc
 								  - pSolarSysState->PlanetDesc);
 		if (pSolarSysState->pOrbitalDesc->pPrevDesc == pSolarSysState->SunDesc)
@@ -268,7 +268,7 @@ void GetPlanetInfo(void)
 									- pSolarSysState->MoonDesc + 1);
 		}
 
-		SeekStateFile(fp, star_index * OFFSET_SIZE, SEEK_SET);
+		SeekStateFile(fp, star_index * OffsetSize, SEEK_SET);
 		sread_32(fp, &offset);
 
 		if (offset)
@@ -276,11 +276,11 @@ void GetPlanetInfo(void)
 			// Skip scan records for all preceeding planets to the one we need
 			for (uint16_t i {0}; i < planet_index; ++i)
 			{
-				offset += (pSolarSysState->PlanetDesc[i].NumPlanets + 1) * SCAN_RECORD_SIZE;
+				offset += (pSolarSysState->PlanetDesc[i].NumPlanets + 1) * ScanRecordSize;
 			}
 
 			// Skip scan records for all preceeding moons to the one we need
-			offset += moon_index * SCAN_RECORD_SIZE;
+			offset += moon_index * ScanRecordSize;
 
 			SeekStateFile(fp, offset, SEEK_SET);
 			sread_a32(fp, pSolarSysState->SysInfo.PlanetInfo.ScanRetrieveMask,
@@ -306,7 +306,7 @@ void GetPlanetInfo(void)
 
 void PutPlanetInfo(void)
 {
-	GAME_STATE_FILE* fp {OpenStateFile(STARINFO_FILE, "r+b")};
+	GAME_STATE_FILE* fp {OpenStateFile(StarinfoFile, "r+b")};
 	if (fp)
 	{
 		uint16_t i {};
@@ -316,7 +316,7 @@ void PutPlanetInfo(void)
 		uint16_t moon_index {};
 		uint32_t offset {};
 
-		const uint16_t star_index {(uint16_t)(CurStarDescPtr - star_array)};
+		const uint16_t star_index {(uint16_t)(CurStarDescPtr() - star_array)};
 		planet_index = (uint16_t)(pSolarSysState->pBaseDesc->pPrevDesc
 								  - pSolarSysState->PlanetDesc);
 		if (pSolarSysState->pOrbitalDesc->pPrevDesc == pSolarSysState->SunDesc)
@@ -329,7 +329,7 @@ void PutPlanetInfo(void)
 									- pSolarSysState->MoonDesc + 1);
 		}
 
-		SeekStateFile(fp, star_index * OFFSET_SIZE, SEEK_SET);
+		SeekStateFile(fp, star_index * OffsetSize, SEEK_SET);
 		sread_32(fp, &offset);
 
 		if (offset == 0)
@@ -354,7 +354,7 @@ void PutPlanetInfo(void)
 			offset = LengthStateFile(fp);
 
 			// Write the record offset
-			SeekStateFile(fp, star_index * OFFSET_SIZE, SEEK_SET);
+			SeekStateFile(fp, star_index * OffsetSize, SEEK_SET);
 			swrite_32(fp, offset);
 
 			// Init scan records for all planets and moons in the system
@@ -396,11 +396,11 @@ void PutPlanetInfo(void)
 		// Skip scan records for all preceeding planets to the one we need
 		for (i = 0; i < planet_index; ++i)
 		{
-			offset += (pSolarSysState->PlanetDesc[i].NumPlanets + 1) * SCAN_RECORD_SIZE;
+			offset += (pSolarSysState->PlanetDesc[i].NumPlanets + 1) * ScanRecordSize;
 		}
 
 		// Skip scan records for all preceeding moons to the one we need
-		offset += moon_index * SCAN_RECORD_SIZE;
+		offset += moon_index * ScanRecordSize;
 
 		SeekStateFile(fp, offset, SEEK_SET);
 

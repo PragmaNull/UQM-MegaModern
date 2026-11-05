@@ -44,8 +44,7 @@ const GenerateFunctions generateTrapFunctions = {
 };
 
 
-static bool
-GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys)
+static bool GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	PLANET_DESC* pPlanet {};
@@ -59,10 +58,10 @@ GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys)
 
 		pPlanet->data_index = TELLURIC_WORLD;
 		pPlanet->NumPlanets = 1;
-		pPlanet->radius = EARTH_RADIUS * 203L / 100;
+		pPlanet->radius = EarthRadius * 203L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
-		pPlanet->location.x = COSINE(angle, pPlanet->radius);
-		pPlanet->location.y = SINE(angle, pPlanet->radius);
+		pPlanet->location.x = Cosine(angle, pPlanet->radius);
+		pPlanet->location.y = Sine(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
 	}
 	else
@@ -76,17 +75,16 @@ GenerateTrap_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateTrap_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
+static bool GenerateTrap_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
 	GenerateDefault_generateOrbital(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		if (uqm::isOriginalSeed())
 		{
 			solarSys->SysInfo.PlanetInfo.AtmoDensity =
-				EARTH_ATMOSPHERE * 2;
+				EarthAtmosphere * 2;
 			solarSys->SysInfo.PlanetInfo.SurfaceTemperature = 35;
 		}
 		if (!isDifficulty(uqm::Difficulty::Hard))

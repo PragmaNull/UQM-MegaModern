@@ -2,15 +2,15 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define ARILOU_BIG_MASK_PMAP_ANIM "ship.arilou.graphics.skiff.large"
-#define ARILOU_CAPTAIN_MASK_PMAP_ANIM "ship.arilou.graphics.captain"
-#define ARILOU_ICON_MASK_PMAP_ANIM "ship.arilou.icons"
-#define ARILOU_MED_MASK_PMAP_ANIM "ship.arilou.graphics.skiff.medium"
-#define ARILOU_MICON_MASK_PMAP_ANIM "ship.arilou.meleeicons"
-#define ARILOU_RACE_STRINGS "ship.arilou.text"
-#define ARILOU_SHIP_SOUNDS "ship.arilou.sounds"
-#define ARILOU_SML_MASK_PMAP_ANIM "ship.arilou.graphics.skiff.small"
-#define ARILOU_VICTORY_SONG "ship.arilou.ditty"
-#define WARP_BIG_MASK_PMAP_ANIM "ship.arilou.graphics.warp.large"
-#define WARP_MED_MASK_PMAP_ANIM "ship.arilou.graphics.warp.medium"
-#define WARP_SML_MASK_PMAP_ANIM "ship.arilou.graphics.warp.small"
+inline constexpr uqgsl::czstring ArilouBigMaskPmapAnim {"ship.arilou.graphics.skiff.large"};
+inline constexpr uqgsl::czstring ArilouCaptainMaskPmapAnim {"ship.arilou.graphics.captain"};
+inline constexpr uqgsl::czstring ArilouIconMaskPmapAnim {"ship.arilou.icons"};
+inline constexpr uqgsl::czstring ArilouMedMaskPmapAnim {"ship.arilou.graphics.skiff.medium"};
+inline constexpr uqgsl::czstring ArilouMiconMaskPmapAnim {"ship.arilou.meleeicons"};
+inline constexpr uqgsl::czstring ArilouRaceStrings {"ship.arilou.text"};
+inline constexpr uqgsl::czstring ArilouShipSounds {"ship.arilou.sounds"};
+inline constexpr uqgsl::czstring ArilouSmlMaskPmapAnim {"ship.arilou.graphics.skiff.small"};
+inline constexpr uqgsl::czstring ArilouVictorySong {"ship.arilou.ditty"};
+inline constexpr uqgsl::czstring WarpBigMaskPmapAnim {"ship.arilou.graphics.warp.large"};
+inline constexpr uqgsl::czstring WarpMedMaskPmapAnim {"ship.arilou.graphics.warp.medium"};
+inline constexpr uqgsl::czstring WarpSmlMaskPmapAnim {"ship.arilou.graphics.warp.small"};

@@ -39,22 +39,19 @@ static inline BattleStateData* BattleStateData_new(
 static void BattleStateData_delete(BattleStateData* battleStateData);
 
 
-static BattleStateData*
-BattleStateData_alloc(void)
+static BattleStateData* BattleStateData_alloc(void)
 {
 	return (BattleStateData*)malloc(sizeof(BattleStateData));
 }
 
-static void
-BattleStateData_free(BattleStateData* battleStateData)
+static void BattleStateData_free(BattleStateData* battleStateData)
 {
 	free(battleStateData);
 }
 
-static inline BattleStateData*
-BattleStateData_new(struct melee_state* meleeState,
-					struct battlestate_struct* battleState,
-					struct getmelee_struct* getMeleeState)
+static inline BattleStateData* BattleStateData_new(struct melee_state* meleeState,
+												   struct battlestate_struct* battleState,
+												   struct getmelee_struct* getMeleeState)
 {
 	BattleStateData* battleStateData = BattleStateData_alloc();
 	battleStateData->releaseFunction =
@@ -65,8 +62,7 @@ BattleStateData_new(struct melee_state* meleeState,
 	return battleStateData;
 }
 
-static void
-BattleStateData_delete(BattleStateData* battleStateData)
+static void BattleStateData_delete(BattleStateData* battleStateData)
 {
 	BattleStateData_free(battleStateData);
 }
@@ -108,8 +104,7 @@ void NetMelee_errorCallback(NetConnection* conn,
 
 // Callback function for when both sides have finished initialisation after
 // initial connect.
-static void
-NetMelee_enterState_inSetup(NetConnection* conn, void* arg)
+static void NetMelee_enterState_inSetup(NetConnection* conn, void* arg)
 {
 	struct melee_state* meleeState {};
 
@@ -124,7 +119,7 @@ NetMelee_enterState_inSetup(NetConnection* conn, void* arg)
 
 	// Send our team to the remote side.
 	// XXX This only works with 2 players atm.
-	assert(NUM_PLAYERS == 2);
+	assert(NumPlayers == 2);
 	Melee_bootstrapSyncTeam(meleeState, player);
 
 	flushPacketQueues();

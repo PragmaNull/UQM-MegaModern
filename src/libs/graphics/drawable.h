@@ -23,7 +23,7 @@
 #include "tfb_draw.h"
 #include "core/stl/vector.h"
 
-#define ValidPrimType(pt) ((pt) < NUM_PRIMS)
+constexpr auto ValidPrimType(auto pt) { return ((pt) < NUM_PRIMS); }
 
 typedef struct bresenham_line
 {
@@ -35,9 +35,9 @@ typedef struct bresenham_line
 } BRESENHAM_LINE;
 
 typedef uint16_t DRAWABLE_TYPE;
-#define ROM_DRAWABLE 0
-#define RAM_DRAWABLE 1
-#define SCREEN_DRAWABLE 2
+inline constexpr auto RomDrawable {0};
+inline constexpr auto RamDrawable {1};
+inline constexpr auto ScreenDrawable {2};
 
 struct frame_desc
 {
@@ -56,17 +56,14 @@ struct drawable_desc
 	uqstl::vector<FRAME_DESC> Frame;
 };
 
-#define GetFrameWidth(f) ((f)->Bounds.width)
-#define GetFrameHeight(f) ((f)->Bounds.height)
-#define GetFrameBounds(f) ((f)->Bounds)
-#define SetFrameBounds(f, w, h) \
-	((f)->Bounds.width = (w),   \
-	 ((f))->Bounds.height = (h))
+constexpr auto GetFrameWidth(auto f) { return ((f)->Bounds.width); }
+constexpr auto GetFrameHeight(auto f) { return ((f)->Bounds.height); }
+constexpr auto GetFrameBounds(auto f) { return ((f)->Bounds); }
+constexpr auto SetFrameBounds(auto f, auto w, auto h) { return ((f)->Bounds.width = (w), ((f))->Bounds.height = (h)); }
 
-#define DRAWABLE_PRIORITY DEFAULT_MEM_PRIORITY
 
 extern DRAWABLE AllocDrawable(uint16_t num_frames);
-#define FreeDrawable(D) _ReleaseCelData(D)
+constexpr auto FreeDrawable(auto D) { return _ReleaseCelData(D); }
 
 typedef struct
 {

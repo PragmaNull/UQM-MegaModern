@@ -32,30 +32,30 @@ static LOCDATA ilwrath_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		ILWRATH_PMAP_ANIM, /* AlienFrame */
-		ILWRATH_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		IlwrathPmapAnim, /* AlienFrame */
+		IlwrathFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
-		ILWRATH_COLOR_MAP, /* AlienColorMap */
-		ILWRATH_MUSIC, /* AlienSong */
+		IlwrathColorMap, /* AlienColorMap */
+		IlwrathMusic, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
-		ILWRATH_CONVERSATION_PHRASES, /* PlayerPhrases */
+		IlwrathConversationPhrases, /* PlayerPhrases */
 		4, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				6,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				6,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -63,9 +63,9 @@ static LOCDATA ilwrath_desc =
 				0,						/* BlockMask */
 			},
 								{
-				11,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				11,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -73,9 +73,9 @@ static LOCDATA ilwrath_desc =
 				0,						/* BlockMask */
 			},
 								{
-				16,			   /* StartIndex */
-				5,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				16,			  /* StartIndex */
+				5,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -83,9 +83,9 @@ static LOCDATA ilwrath_desc =
 				0,						/* BlockMask */
 			},
 								{
-				21,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				21,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -124,45 +124,44 @@ static LOCDATA ilwrath_desc =
 		nullptr,
 };
 
-static void
-CombatIsInevitable(RESPONSE_REF R)
+static void CombatIsInevitable(RESPONSE_REF R)
 {
-	const bool isGTFO = PLAYER_SAID(R, gtfo);
+	const bool isGTFO = PlayerSaid(R, gtfo);
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, you_are_weak))
+	if (PlayerSaid(R, you_are_weak))
 	{
 		NPCPhrase(STRENGTH_NOT_ALL);
 	}
-	else if (PLAYER_SAID(R, slay_by_thousands))
+	else if (PlayerSaid(R, slay_by_thousands))
 	{
 		NPCPhrase(NO_SLAY_BY_THOUSANDS);
 	}
-	else if (PLAYER_SAID(R, ease_up))
+	else if (PlayerSaid(R, ease_up))
 	{
 		NPCPhrase(NO_EASE_UP);
 	}
-	else if (PLAYER_SAID(R, bye_space))
+	else if (PlayerSaid(R, bye_space))
 	{
 		NPCPhrase(GOODBYE_AND_DIE_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_homeworld))
+	else if (PlayerSaid(R, bye_homeworld))
 	{
 		NPCPhrase(GOODBYE_AND_DIE_HOMEWORLD);
 	}
-	else if (PLAYER_SAID(R, want_peace))
+	else if (PlayerSaid(R, want_peace))
 	{
 		NPCPhrase(NO_PEACE);
 	}
-	else if (PLAYER_SAID(R, want_alliance))
+	else if (PlayerSaid(R, want_alliance))
 	{
 		NPCPhrase(NO_ALLIANCE);
 	}
-	else if (PLAYER_SAID(R, but_evil_is_defined))
+	else if (PlayerSaid(R, but_evil_is_defined))
 	{
 		NPCPhrase(DONT_CONFUSE_US);
 	}
-	else if (PLAYER_SAID(R, bye_gods) || isGTFO)
+	else if (PlayerSaid(R, bye_gods) || isGTFO)
 	{
 		NPCPhrase(GOODBYE_GODS);
 
@@ -170,20 +169,20 @@ CombatIsInevitable(RESPONSE_REF R)
 
 		setSegue(Segue_peace);
 	}
-	if (PLAYER_SAID(R, whats_up))
+	if (PlayerSaid(R, whats_up))
 	{
 		NPCPhrase(GENERAL_INFO);
 		Response(bye, CombatIsInevitable);
 	}
-	else if (PLAYER_SAID(R, whats_up_space_1)
-			 || PLAYER_SAID(R, whats_up_space_2)
-			 || PLAYER_SAID(R, whats_up_space_3)
-			 || PLAYER_SAID(R, whats_up_space_4)
-			 || PLAYER_SAID(R, whats_up_space_5))
+	else if (PlayerSaid(R, whats_up_space_1)
+			 || PlayerSaid(R, whats_up_space_2)
+			 || PlayerSaid(R, whats_up_space_3)
+			 || PlayerSaid(R, whats_up_space_4)
+			 || PlayerSaid(R, whats_up_space_5))
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(ILWRATH_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -204,27 +203,27 @@ CombatIsInevitable(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ILWRATH_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_INFO, static_cast<uint32_t>(NumVisits));
 	}
 	else
 	{
-		if (PLAYER_SAID(R, bye))
+		if (PlayerSaid(R, bye))
 		{
 			NPCPhrase(GOODBYE_AND_DIE);
 		}
-		else if (PLAYER_SAID(R, where_you_come_from))
+		else if (PlayerSaid(R, where_you_come_from))
 		{
 			NPCPhrase(CAME_FROM);
 		}
-		if (PLAYER_SAID(R, it_will_be_a_pleasure))
+		if (PlayerSaid(R, it_will_be_a_pleasure))
 		{
 			NPCPhrase(WHO_BLASTS_WHO);
 		}
-		if (PLAYER_SAID(R, surrender))
+		if (PlayerSaid(R, surrender))
 		{
 			NPCPhrase(NO_SURRENDER);
 		}
-		if (PLAYER_SAID(R, be_reasonable))
+		if (PlayerSaid(R, be_reasonable))
 		{
 			NPCPhrase(NOT_REASONABLE);
 		}
@@ -233,55 +232,54 @@ CombatIsInevitable(RESPONSE_REF R)
 
 static void IlwrathHome(RESPONSE_REF R);
 
-static void
-IlwrathGods(RESPONSE_REF R)
+static void IlwrathGods(RESPONSE_REF R)
 {
 	uint8_t GodsLeft {false};
-	if (PLAYER_SAID(R, want_info_on_gods))
+	if (PlayerSaid(R, want_info_on_gods))
 	{
 		NPCPhrase(SO_MUCH_TO_KNOW);
 	}
-	else if (PLAYER_SAID(R, when_start_worship))
+	else if (PlayerSaid(R, when_start_worship))
 	{
 		NPCPhrase(LONG_AGO);
 
-		DISABLE_PHRASE(when_start_worship);
+		DisablePhrase(when_start_worship);
 	}
-	else if (PLAYER_SAID(R, any_good_gods))
+	else if (PlayerSaid(R, any_good_gods))
 	{
 		NPCPhrase(KILLED_GOOD_GODS);
 
-		DISABLE_PHRASE(any_good_gods);
+		DisablePhrase(any_good_gods);
 	}
-	else if (PLAYER_SAID(R, how_talk_with_gods))
+	else if (PlayerSaid(R, how_talk_with_gods))
 	{
 		NPCPhrase(CHANNEL_44);
 
-		DISABLE_PHRASE(how_talk_with_gods);
+		DisablePhrase(how_talk_with_gods);
 	}
-	else if (PLAYER_SAID(R, why_44))
+	else if (PlayerSaid(R, why_44))
 	{
 		NPCPhrase(BECAUSE_44);
 
-		DISABLE_PHRASE(why_44);
+		DisablePhrase(why_44);
 	}
 
-	if (PHRASE_ENABLED(when_start_worship))
+	if (PhraseEnabled(when_start_worship))
 	{
 		Response(when_start_worship, IlwrathGods);
 		GodsLeft = true;
 	}
-	if (PHRASE_ENABLED(any_good_gods))
+	if (PhraseEnabled(any_good_gods))
 	{
 		Response(any_good_gods, IlwrathGods);
 		GodsLeft = true;
 	}
-	if (PHRASE_ENABLED(how_talk_with_gods))
+	if (PhraseEnabled(how_talk_with_gods))
 	{
 		Response(how_talk_with_gods, IlwrathGods);
 		GodsLeft = true;
 	}
-	else if (PHRASE_ENABLED(why_44))
+	else if (PhraseEnabled(why_44))
 	{
 		Response(why_44, IlwrathGods);
 		GodsLeft = true;
@@ -290,70 +288,69 @@ IlwrathGods(RESPONSE_REF R)
 
 	if (!GodsLeft)
 	{
-		DISABLE_PHRASE(want_info_on_gods);
+		DisablePhrase(want_info_on_gods);
 	}
 }
 
-static void
-IlwrathInfo(RESPONSE_REF R)
+static void IlwrathInfo(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
-	if (PLAYER_SAID(R, want_info_on_ilwrath))
+	if (PlayerSaid(R, want_info_on_ilwrath))
 	{
 		NPCPhrase(WHAT_ABOUT_ILWRATH);
 	}
-	else if (PLAYER_SAID(R, what_about_physio))
+	else if (PlayerSaid(R, what_about_physio))
 	{
 		NPCPhrase(ABOUT_PHYSIO);
 
-		DISABLE_PHRASE(what_about_physio);
+		DisablePhrase(what_about_physio);
 	}
-	else if (PLAYER_SAID(R, what_about_history))
+	else if (PlayerSaid(R, what_about_history))
 	{
 		NPCPhrase(ABOUT_HISTORY);
 
-		DISABLE_PHRASE(what_about_history);
+		DisablePhrase(what_about_history);
 	}
-	else if (PLAYER_SAID(R, what_about_culture))
+	else if (PlayerSaid(R, what_about_culture))
 	{
 		NPCPhrase(ABOUT_CULTURE);
 
-		DISABLE_PHRASE(what_about_culture);
+		DisablePhrase(what_about_culture);
 	}
-	else if (PLAYER_SAID(R, what_about_urquan))
+	else if (PlayerSaid(R, what_about_urquan))
 	{
 		NPCPhrase(URQUAN_TOO_NICE);
 
-		DISABLE_PHRASE(what_about_urquan);
+		DisablePhrase(what_about_urquan);
 	}
-	else if (PLAYER_SAID(R, are_you_evil))
+	else if (PlayerSaid(R, are_you_evil))
 	{
 		NPCPhrase(OF_COURSE_WERE_EVIL);
 
-		DISABLE_PHRASE(are_you_evil);
+		DisablePhrase(are_you_evil);
 	}
 
-	if (PHRASE_ENABLED(what_about_physio))
+	if (PhraseEnabled(what_about_physio))
 	{
 		Response(what_about_physio, IlwrathInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_history))
+	if (PhraseEnabled(what_about_history))
 	{
 		Response(what_about_history, IlwrathInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_culture))
+	if (PhraseEnabled(what_about_culture))
 	{
 		Response(what_about_culture, IlwrathInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_urquan))
+	if (PhraseEnabled(what_about_urquan))
 	{
 		Response(what_about_urquan, IlwrathInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(are_you_evil))
+	if (PhraseEnabled(are_you_evil))
 	{
 		Response(are_you_evil, IlwrathInfo);
 		InfoLeft = true;
@@ -367,18 +364,17 @@ IlwrathInfo(RESPONSE_REF R)
 
 	if (!InfoLeft)
 	{
-		DISABLE_PHRASE(want_info_on_ilwrath);
+		DisablePhrase(want_info_on_ilwrath);
 	}
 }
 
-static void
-IlwrathHome(RESPONSE_REF R)
+static void IlwrathHome(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(ILWRATH_HOME_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_HOME_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -389,22 +385,22 @@ IlwrathHome(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ILWRATH_HOME_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PLAYER_SAID(R, enough_gods))
+	else if (PlayerSaid(R, enough_gods))
 	{
 		NPCPhrase(OK_ENOUGH_GODS);
 	}
-	else if (PLAYER_SAID(R, enough_ilwrath))
+	else if (PlayerSaid(R, enough_ilwrath))
 	{
 		NPCPhrase(OK_ENOUGH_ILWRATH);
 	}
 
-	if (PHRASE_ENABLED(want_info_on_gods))
+	if (PhraseEnabled(want_info_on_gods))
 	{
 		Response(want_info_on_gods, IlwrathGods);
 	}
-	if (PHRASE_ENABLED(want_info_on_ilwrath))
+	if (PhraseEnabled(want_info_on_ilwrath))
 	{
 		Response(want_info_on_ilwrath, IlwrathInfo);
 	}
@@ -415,55 +411,54 @@ IlwrathHome(RESPONSE_REF R)
 
 static void GodsSpeak(RESPONSE_REF R);
 
-static void
-GodsOrder(RESPONSE_REF R)
+static void GodsOrder(RESPONSE_REF R)
 {
 	uint8_t OrdersLeft {false};
-	if (PLAYER_SAID(R, other_divine_orders))
+	if (PlayerSaid(R, other_divine_orders))
 	{
 		NPCPhrase(WHAT_ORDERS);
 	}
-	else if (PLAYER_SAID(R, say_warship))
+	else if (PlayerSaid(R, say_warship))
 	{
 		NPCPhrase(OK_WARSHIP);
 
-		DISABLE_PHRASE(say_warship);
+		DisablePhrase(say_warship);
 	}
-	else if (PLAYER_SAID(R, say_dwe))
+	else if (PlayerSaid(R, say_dwe))
 	{
 		NPCPhrase(OK_DWE);
 
-		DISABLE_PHRASE(say_dwe);
+		DisablePhrase(say_dwe);
 	}
-	else if (PLAYER_SAID(R, say_youboo))
+	else if (PlayerSaid(R, say_youboo))
 	{
 		NPCPhrase(OK_YOUBOO);
 
-		DISABLE_PHRASE(say_youboo);
+		DisablePhrase(say_youboo);
 	}
-	else if (PLAYER_SAID(R, say_dillrat))
+	else if (PlayerSaid(R, say_dillrat))
 	{
 		NPCPhrase(OK_DILRAT);
 
-		DISABLE_PHRASE(say_dillrat);
+		DisablePhrase(say_dillrat);
 	}
 
-	if (PHRASE_ENABLED(say_warship))
+	if (PhraseEnabled(say_warship))
 	{
 		Response(say_warship, GodsOrder);
 		OrdersLeft = true;
 	}
-	if (PHRASE_ENABLED(say_dwe))
+	if (PhraseEnabled(say_dwe))
 	{
 		Response(say_dwe, GodsOrder);
 		OrdersLeft = true;
 	}
-	if (PHRASE_ENABLED(say_youboo))
+	if (PhraseEnabled(say_youboo))
 	{
 		Response(say_youboo, GodsOrder);
 		OrdersLeft = true;
 	}
-	if (PHRASE_ENABLED(say_dillrat))
+	if (PhraseEnabled(say_dillrat))
 	{
 		Response(say_dillrat, GodsOrder);
 		OrdersLeft = true;
@@ -472,28 +467,27 @@ GodsOrder(RESPONSE_REF R)
 
 	if (!OrdersLeft)
 	{
-		DISABLE_PHRASE(other_divine_orders);
+		DisablePhrase(other_divine_orders);
 	}
 }
 
-static void
-GodsSpeak(RESPONSE_REF R)
+static void GodsSpeak(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
 	if (R == 0)
 	{
-		if (GET_GAME_STATE(ILWRATH_FIGHT_THRADDASH))
+		if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 		{
 			NPCPhrase(GLORIOUS_WORSHIP);
 		}
-		else if (GET_GAME_STATE(ILWRATH_DECEIVED))
+		else if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED))
 		{
 			NPCPhrase(ON_WAY);
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(ILWRATH_GODS_SPOKEN);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_GODS_SPOKEN);
 
 			if (NumVisits > 3)
 			{
@@ -516,19 +510,19 @@ GodsSpeak(RESPONSE_REF R)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(ILWRATH_GODS_SPOKEN, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_GODS_SPOKEN, static_cast<uint32_t>(NumVisits));
 		}
 	}
-	else if (PLAYER_SAID(R, go_kill_thraddash))
+	else if (PlayerSaid(R, go_kill_thraddash))
 	{
 		NPCPhrase(OK_KILL_THRADDASH);
 
-		SET_GAME_STATE(ILWRATH_DECEIVED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_DECEIVED, static_cast<uint32_t>(1));
 		AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_ILWRATH_MISSION);
 	}
-	else if (PLAYER_SAID(R, worship_us))
+	else if (PlayerSaid(R, worship_us))
 	{
-		NumVisits = GET_GAME_STATE(ILWRATH_WORSHIP);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_WORSHIP);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -542,38 +536,37 @@ GodsSpeak(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ILWRATH_WORSHIP, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_WORSHIP, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(worship_us);
+		DisablePhrase(worship_us);
 	}
-	else if (PLAYER_SAID(R, enough_orders))
+	else if (PlayerSaid(R, enough_orders))
 	{
 		NPCPhrase(NEVER_ENOUGH);
 	}
 
-	if (!GET_GAME_STATE(ILWRATH_DECEIVED))
+	if (!uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED))
 	{
 		Response(go_kill_thraddash, GodsSpeak);
 	}
-	if (PHRASE_ENABLED(worship_us))
+	if (PhraseEnabled(worship_us))
 	{
 		Response(worship_us, GodsSpeak);
 	}
-	if (PHRASE_ENABLED(other_divine_orders))
+	if (PhraseEnabled(other_divine_orders))
 	{
 		Response(other_divine_orders, GodsOrder);
 	}
 	Response(bye_gods, CombatIsInevitable);
 }
 
-static void
-IlwrathSpace(RESPONSE_REF R)
+static void IlwrathSpace(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
 	if (R == 0)
 	{
-		NumVisits = GET_GAME_STATE(ILWRATH_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -593,10 +586,10 @@ IlwrathSpace(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ILWRATH_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_VISITS, static_cast<uint32_t>(NumVisits));
 	}
 
-	NumVisits = GET_GAME_STATE(ILWRATH_INFO);
+	NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_INFO);
 	switch (NumVisits)
 	{
 		case 0:
@@ -621,12 +614,11 @@ IlwrathSpace(RESPONSE_REF R)
 	Response(bye_space, CombatIsInevitable);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
-	if (GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER))
+	if (uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER))
 	{
 		NPCPhrase(SEND_MESSAGE);
 
@@ -635,13 +627,13 @@ Intro(void)
 		Response(surrender, CombatIsInevitable);
 		Response(be_reasonable, CombatIsInevitable);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
 		IlwrathHome((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		NumVisits = GET_GAME_STATE(ILWRATH_CHMMR_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_CHMMR_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -652,27 +644,27 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(ILWRATH_CHMMR_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_CHMMR_VISITS, static_cast<uint32_t>(NumVisits));
 
 		Response(whats_up, CombatIsInevitable);
 		Response(bye, CombatIsInevitable);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 5))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 5))
 	{
 		// Communicating with an Ilwrath ship using a HyperWave Broadcaster.
-		if (GET_GAME_STATE(ILWRATH_FIGHT_THRADDASH))
+		if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 		{
 			NPCPhrase(BIG_FUN);
 		}
-		else if (GET_GAME_STATE(ILWRATH_DECEIVED))
+		else if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED))
 		{
 			NPCPhrase(FAST_AS_CAN);
 		}
 		else
 		{
-			if (EXTENDED)
+			if (IsExtended())
 			{
-				NumVisits = GET_GAME_STATE(ILWRATH_GODS_SPOKEN);
+				NumVisits = uqm::gameState().flag(uqm::GameFlag::ILWRATH_GODS_SPOKEN);
 
 				if (NumVisits < 5)
 				{
@@ -703,7 +695,7 @@ Intro(void)
 						--NumVisits;
 						break;
 				}
-				SET_GAME_STATE(ILWRATH_GODS_SPOKEN, NumVisits);
+				uqm::gameState().setFlag(uqm::GameFlag::ILWRATH_GODS_SPOKEN, static_cast<uint32_t>(NumVisits));
 			}
 			else
 			{
@@ -713,7 +705,7 @@ Intro(void)
 			setSegue(Segue_peace);
 		}
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 4))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 4))
 	{
 		// Communicating with the Ilwrath homeworld using a
 		// Hyperwave Broadcaster.
@@ -723,11 +715,11 @@ Intro(void)
 	{
 		setSegue(Segue_peace);
 
-		if (GET_GAME_STATE(ILWRATH_FIGHT_THRADDASH))
+		if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_FIGHT_THRADDASH))
 		{
 			NPCPhrase(HAPPY_FIGHTING_THRADDASH);
 		}
-		else if (GET_GAME_STATE(ILWRATH_DECEIVED))
+		else if (uqm::gameState().flag(uqm::GameFlag::ILWRATH_DECEIVED))
 		{
 			NPCPhrase(ON_WAY_TO_THRADDASH);
 		}
@@ -738,34 +730,31 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_ilwrath(void)
+static uint16_t uninit_ilwrath(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_ilwrath_enc(void)
+static void post_ilwrath_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_ilwrath_comm(void)
+LOCDATA* init_ilwrath_comm(void)
 {
 	ilwrath_desc.init_encounter_func = Intro;
 	ilwrath_desc.post_encounter_func = post_ilwrath_enc;
 	ilwrath_desc.uninit_encounter_func = uninit_ilwrath;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
-	ilwrath_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
-	ilwrath_desc.AlienTextBaseline.y = RES_SCALE(64);
-	ilwrath_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	ilwrath_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
+	ilwrath_desc.AlienTextBaseline.y = ResScale(64);
+	ilwrath_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if (GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)
-		|| (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA)
+	if (uqm::gameState().flag(uqm::GameFlag::PROBE_ILWRATH_ENCOUNTER)
+		|| (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA)
 			& ((1 << 4) | (1 << 5)))
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{

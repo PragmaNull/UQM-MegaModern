@@ -25,8 +25,7 @@
 
 typedef stringbank chunk;
 
-static stringbank*
-add_chunk(stringbank* bank)
+static stringbank* add_chunk(stringbank* bank)
 {
 	stringbank* n = (stringbank*)malloc(sizeof(stringbank));
 	n->len = 0;
@@ -42,8 +41,7 @@ add_chunk(stringbank* bank)
 	return n;
 }
 
-stringbank*
-StringBank_Create(void)
+stringbank* StringBank_Create(void)
 {
 	return add_chunk(nullptr);
 }
@@ -57,18 +55,17 @@ void StringBank_Free(stringbank* bank)
 	}
 }
 
-const char*
-StringBank_AddString(stringbank* bank, const char* str)
+const char* StringBank_AddString(stringbank* bank, const char* str)
 {
 	const unsigned int len = strlen(str) + 1;
 	stringbank* x = bank;
-	if (len > STRBANK_CHUNK_SIZE)
+	if (len > StrbankChunkSize)
 	{
 		return nullptr;
 	}
 	while (x)
 	{
-		const unsigned int remaining = STRBANK_CHUNK_SIZE - x->len;
+		const unsigned int remaining = StrbankChunkSize - x->len;
 		if (len < remaining)
 		{
 			char* result = x->data + x->len;
@@ -85,12 +82,11 @@ StringBank_AddString(stringbank* bank, const char* str)
 	return x->data;
 }
 
-const char*
-StringBank_AddOrFindString(stringbank* bank, const char* str)
+const char* StringBank_AddOrFindString(stringbank* bank, const char* str)
 {
 	const unsigned int len = strlen(str) + 1;
 	stringbank* x = bank;
-	if (len > STRBANK_CHUNK_SIZE)
+	if (len > StrbankChunkSize)
 	{
 		return nullptr;
 	}
@@ -115,17 +111,16 @@ StringBank_AddOrFindString(stringbank* bank, const char* str)
 	return StringBank_AddString(bank, str);
 }
 
-static char buffer[STRBANK_CHUNK_SIZE];
+static char buffer[StrbankChunkSize];
 
-const char*
-StringBank_AddSubstring(stringbank* bank, const char* str, unsigned int n)
+const char* StringBank_AddSubstring(stringbank* bank, const char* str, unsigned int n)
 {
 	const unsigned int len = strlen(str);
 	if (n > len)
 	{
 		return StringBank_AddString(bank, str);
 	}
-	if (n >= STRBANK_CHUNK_SIZE)
+	if (n >= StrbankChunkSize)
 	{
 		return nullptr;
 	}
@@ -133,15 +128,14 @@ StringBank_AddSubstring(stringbank* bank, const char* str, unsigned int n)
 	return StringBank_AddString(bank, buffer);
 }
 
-const char*
-StringBank_AddOrFindSubstring(stringbank* bank, const char* str, unsigned int n)
+const char* StringBank_AddOrFindSubstring(stringbank* bank, const char* str, unsigned int n)
 {
 	const unsigned int len = strlen(str);
 	if (n > len)
 	{
 		return StringBank_AddOrFindString(bank, str);
 	}
-	if (n >= STRBANK_CHUNK_SIZE)
+	if (n >= StrbankChunkSize)
 	{
 		return nullptr;
 	}

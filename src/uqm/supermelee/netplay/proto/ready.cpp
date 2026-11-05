@@ -26,8 +26,7 @@
 
 #include <assert.h>
 
-static void
-Netplay_bothReady(NetConnection* conn)
+static void Netplay_bothReady(NetConnection* conn)
 {
 	assert(conn->readyCallback != nullptr);
 

@@ -2,18 +2,18 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define BUZZSAW_BIG_MASK_PMAP_ANIM "ship.kohrah.graphics.buzzsaw.large"
-#define BUZZSAW_MED_MASK_PMAP_ANIM "ship.kohrah.graphics.buzzsaw.medium"
-#define BUZZSAW_SML_MASK_PMAP_ANIM "ship.kohrah.graphics.buzzsaw.small"
-#define GAS_BIG_MASK_PMAP_ANIM "ship.kohrah.graphics.gas.large"
-#define GAS_MED_MASK_PMAP_ANIM "ship.kohrah.graphics.gas.medium"
-#define GAS_SML_MASK_PMAP_ANIM "ship.kohrah.graphics.gas.small"
-#define KOHR_AH_BIG_MASK_PMAP_ANIM "ship.kohrah.graphics.marauder.large"
-#define KOHR_AH_CAPTAIN_MASK_PMAP_ANIM "ship.kohrah.graphics.captain"
-#define KOHR_AH_ICON_MASK_PMAP_ANIM "ship.kohrah.icons"
-#define KOHR_AH_MED_MASK_PMAP_ANIM "ship.kohrah.graphics.marauder.medium"
-#define KOHR_AH_MICON_MASK_PMAP_ANIM "ship.kohrah.meleeicons"
-#define KOHR_AH_RACE_STRINGS "ship.kohrah.text"
-#define KOHR_AH_SHIP_SOUNDS "ship.kohrah.sounds"
-#define KOHR_AH_SML_MASK_PMAP_ANIM "ship.kohrah.graphics.marauder.small"
-#define KOHR_AH_VICTORY_SONG "ship.kohrah.ditty"
+inline constexpr uqgsl::czstring BuzzsawBigMaskPmapAnim {"ship.kohrah.graphics.buzzsaw.large"};
+inline constexpr uqgsl::czstring BuzzsawMedMaskPmapAnim {"ship.kohrah.graphics.buzzsaw.medium"};
+inline constexpr uqgsl::czstring BuzzsawSmlMaskPmapAnim {"ship.kohrah.graphics.buzzsaw.small"};
+inline constexpr uqgsl::czstring GasBigMaskPmapAnim {"ship.kohrah.graphics.gas.large"};
+inline constexpr uqgsl::czstring GasMedMaskPmapAnim {"ship.kohrah.graphics.gas.medium"};
+inline constexpr uqgsl::czstring GasSmlMaskPmapAnim {"ship.kohrah.graphics.gas.small"};
+inline constexpr uqgsl::czstring KohrAhBigMaskPmapAnim {"ship.kohrah.graphics.marauder.large"};
+inline constexpr uqgsl::czstring KohrAhCaptainMaskPmapAnim {"ship.kohrah.graphics.captain"};
+inline constexpr uqgsl::czstring KohrAhIconMaskPmapAnim {"ship.kohrah.icons"};
+inline constexpr uqgsl::czstring KohrAhMedMaskPmapAnim {"ship.kohrah.graphics.marauder.medium"};
+inline constexpr uqgsl::czstring KohrAhMiconMaskPmapAnim {"ship.kohrah.meleeicons"};
+inline constexpr uqgsl::czstring KohrAhRaceStrings {"ship.kohrah.text"};
+inline constexpr uqgsl::czstring KohrAhShipSounds {"ship.kohrah.sounds"};
+inline constexpr uqgsl::czstring KohrAhSmlMaskPmapAnim {"ship.kohrah.graphics.marauder.small"};
+inline constexpr uqgsl::czstring KohrAhVictorySong {"ship.kohrah.ditty"};

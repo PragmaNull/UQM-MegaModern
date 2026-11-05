@@ -21,8 +21,7 @@
 #include "planets/generate/genall.h"
 
 
-const GenerateFunctions*
-getGenerateFunctions(uint8_t Index)
+const GenerateFunctions* getGenerateFunctions(uint8_t Index)
 {
 	switch (Index)
 	{

@@ -96,21 +96,10 @@ const static audio_Driver openAL_Driver =
 		openAL_BufferData
 };
 
-/* Adapted from SDL
- * This will generate "negative subscript or subscript is too large"
- * error during compile, if the size of a type is wrong
- */
-#define UQM_COMPILE_TIME_ASSERT(name, x) \
-	typedef int UQM_dummy_##name[(x) * 2 - 1]
-
-UQM_COMPILE_TIME_ASSERT(ALuint_fits_in_audio_Object,
-						sizeof(ALuint) <= sizeof(audio_Object));
-
-#undef UQM_COMPILE_TIME_ASSERT
+static_assert(sizeof(ALuint) <= sizeof(audio_Object), "ALuint must fit in audio_Object");
 
 // Converts an array of n audio_Objects to an array of ALuints, in place.
-static void
-openAL_ConvertObjectArrayToALuints(uint32_t n, audio_Object* arr)
+static void openAL_ConvertObjectArrayToALuints(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(ALuint))
 	{
@@ -122,8 +111,7 @@ openAL_ConvertObjectArrayToALuints(uint32_t n, audio_Object* arr)
 	}
 }
 // Converts an array of n ALuints to an array of audio_Objects, in place.
-static void
-openAL_ConvertObjectArrayFromALuints(uint32_t n, audio_Object* arr)
+static void openAL_ConvertObjectArrayFromALuints(uint32_t n, audio_Object* arr)
 {
 	if (sizeof(audio_Object) == sizeof(ALuint))
 	{
@@ -140,8 +128,7 @@ openAL_ConvertObjectArrayFromALuints(uint32_t n, audio_Object* arr)
  * Initialization
  */
 
-int32_t
-openAL_Init(audio_Driver* driver, AudioFlags flags)
+int32_t openAL_Init(audio_Driver* driver, AudioFlags flags)
 {
 	TFB_DecoderFormats formats =
 		{
@@ -200,7 +187,7 @@ openAL_Init(audio_Driver* driver, AudioFlags flags)
 	alListenerfv(AL_VELOCITY, listenerVel);
 	alListenerfv(AL_ORIENTATION, listenerOri);
 
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		float zero[3] = {0.0f, 0.0f, 0.0f};
 
@@ -235,7 +222,7 @@ void openAL_Uninit(void)
 {
 	UninitStreamDecoder();
 
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		const uqm::LockGuard lock {soundSource[i].stream_mutex};
 		if (soundSource[i].sample && soundSource[i].sample->decoder)
@@ -259,8 +246,7 @@ void openAL_Uninit(void)
  * General
  */
 
-int32_t
-openAL_GetError(void)
+int32_t openAL_GetError(void)
 {
 	ALint value = alGetError();
 	switch (value)

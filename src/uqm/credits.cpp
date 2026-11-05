@@ -38,14 +38,13 @@
 #include "libs/graphics/drawable.h"
 
 // Rates in pixel lines per second
-#define CREDITS_BASE_RATE RES_SCALE(9)
-#define CREDITS_MAX_RATE RES_SCALE(130)
+static auto CreditsBaseRate() { return ResScale(9); }
+static auto CreditsMaxRate() { return ResScale(130); }
 // Maximum frame rate
-#define CREDITS_FRAME_RATE RES_SCALE(36)
+static auto CreditsFrameRate() { return ResScale(36); }
 
-#define CREDITS_TIMEOUT (c_gameSecond * 5)
+static constexpr auto CreditsTimeout {(c_gameSecond * 5)};
 
-#define TRANS_COLOR BRIGHT_BLUE_COLOR
 
 // Positive or negative scroll rate in pixel lines per second
 static int CreditsRate;
@@ -70,11 +69,11 @@ typedef struct
 	int strIndex;
 } CreditTextFrame;
 
-#define MAX_CREDIT_FRAMES 32
+static constexpr auto MaxCreditFrames {32};
 // Circular text frame buffer for scrolling
 // Text frames are generated as needed, and when a text frame scrolls
 // of the screen, it is destroyed
-static CreditTextFrame textFrames[MAX_CREDIT_FRAMES];
+static CreditTextFrame textFrames[MaxCreditFrames];
 // Index of first active frame in the circular buffer (the first frame
 // is the one on top)
 static int firstFrame;
@@ -94,17 +93,16 @@ typedef struct
 
 static FONT_SIZE_DEF CreditsFont[] =
 	{
-		{13, PT13AA_FONT, 0},
-		{17, PT17AA_FONT, 0},
-		{45, PT45AA_FONT, 0},
-		{0,	0,		   0},
+		{13, Pt13aaFontRes, 0},
+		{17, Pt17aaFontRes, 0},
+		{45, Pt45aaFontRes, 0},
+		{0,	0,			   0},
 };
 
 
-static FRAME
-Credits_MakeTransFrame(int w, int h, Color TransColor)
+static FRAME Credits_MakeTransFrame(int w, int h, Color TransColor)
 {
-	FRAME f {CaptureDrawable(CreateDrawable(WANT_PIXMAP, w, h, 1))};
+	FRAME f {CaptureDrawable(CreateDrawable(WantPixmap, w, h, 1))};
 	SetFrameTransparentColor(f, TransColor);
 
 	FRAME OldFrame {SetContextFGFrame(f)};
@@ -115,9 +113,8 @@ Credits_MakeTransFrame(int w, int h, Color TransColor)
 	return f;
 }
 
-static FRAME
-Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
-						Color BackColor, Color ForeColor)
+static FRAME Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
+									 Color BackColor, Color ForeColor)
 {
 	FRAME f {};
 	FRAME OldFrame {};
@@ -206,7 +203,7 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	for (auto&& [column, format] : uqstl::views::zip(block.columns, colfmt))
 	{
 		const auto basex {[&](int16_t fallback) {
-			return column.x ? static_cast<int16_t>(*column.x << RESOLUTION_FACTOR) : fallback;
+			return column.x ? static_cast<int16_t>(*column.x << resolutionFactor) : fallback;
 		}};
 		switch (column.align)
 		{
@@ -251,15 +248,13 @@ Credits_RenderTextFrame(GFXCONTEXT TempContext, int* istr, int dir,
 	return f;
 }
 
-static inline int
-frameIndex(int index)
+static inline int frameIndex(int index)
 {
 	// Make sure index is positive before %
-	return (index + MAX_CREDIT_FRAMES) % MAX_CREDIT_FRAMES;
+	return (index + MaxCreditFrames) % MaxCreditFrames;
 }
 
-static void
-RenderCreditsScreen(GFXCONTEXT targetContext)
+static void RenderCreditsScreen(GFXCONTEXT targetContext)
 {
 	STAMP s;
 
@@ -284,15 +279,14 @@ RenderCreditsScreen(GFXCONTEXT targetContext)
 
 	if (OutTakesRunning)
 	{ // Cut out the Outtakes rect
-		SetContextForeGroundColor(TRANS_COLOR);
+		SetContextForeGroundColor(BrightBlueColor);
 		DrawFilledRectangle(&CommWndRect);
 	}
 
 	SetContext(oldContext);
 }
 
-static void
-InitCredits(void)
+static void InitCredits(void)
 {
 	GFXRECT ctxRect;
 
@@ -310,13 +304,13 @@ InitCredits(void)
 	// Local screen copy. We draw everything to this frame, then cut
 	// the Outtakes rect out and draw this frame to the screen.
 	CreditsFrame = Credits_MakeTransFrame(CreditsExtent.width,
-										  CreditsExtent.height, TRANS_COLOR);
+										  CreditsExtent.height, BrightBlueColor);
 	SetContextFGFrame(CreditsFrame);
 
 	// The first credits frame is fake, the height of the screen,
 	// so that the credits can roll in from the bottom
 	textFrames[0].frame = Credits_MakeTransFrame(1, CreditsExtent.height,
-												 TRANS_COLOR);
+												 BrightBlueColor);
 	textFrames[0].strIndex = -1;
 	firstFrame = 0;
 	lastFrame = firstFrame + 1;
@@ -333,19 +327,17 @@ InitCredits(void)
 	// Prepare the first screen frame
 	RenderCreditsScreen(LocalContext);
 
-	CreditsRate = CREDITS_BASE_RATE;
+	CreditsRate = CreditsBaseRate();
 	CreditsRunning = true;
 }
 
-static void
-freeCreditTextFrame(CreditTextFrame* tf)
+static void freeCreditTextFrame(CreditTextFrame* tf)
 {
 	DestroyDrawable(ReleaseDrawable(tf->frame));
 	tf->frame = nullptr;
 }
 
-static void
-UninitCredits(void)
+static void UninitCredits(void)
 {
 	DestroyContext(DrawContext);
 	DrawContext = nullptr;
@@ -361,8 +353,7 @@ UninitCredits(void)
 	}
 }
 
-static int
-calcDeficitHeight(void)
+static int calcDeficitHeight(void)
 {
 	int maxPos {-curFrameOfs};
 	for (int i {firstFrame}; i != lastFrame; i = frameIndex(i + 1))
@@ -376,8 +367,7 @@ calcDeficitHeight(void)
 	return CreditsExtent.height - maxPos;
 }
 
-static void
-processCreditsFrame(void)
+static void processCreditsFrame(void)
 {
 	static TimeCount NextTime;
 	const TimeCount Now = GetTimeCounter();
@@ -395,7 +385,7 @@ processCreditsFrame(void)
 			// scroll direction; forward or backward
 			direction = CreditsRate / rate;
 			// step in pixels
-			dirstep = (rate + CREDITS_FRAME_RATE - 1) / CREDITS_FRAME_RATE;
+			dirstep = (rate + CreditsFrameRate() - 1) / CreditsFrameRate();
 			rate = GameTicksPerSecond * dirstep / rate;
 			// step is also directional
 			dirstep *= direction;
@@ -493,7 +483,7 @@ processCreditsFrame(void)
 				CreditTextFrame* tf = &textFrames[lastFrame];
 
 				tf->frame = Credits_RenderTextFrame(LocalContext, &next_s,
-													direction, BLACK_COLOR, CREDITS_TEXT_COLOR);
+													direction, BlackColor, CreditsTextColor);
 				tf->strIndex = next_s - 1;
 				if (tf->frame)
 				{
@@ -520,7 +510,7 @@ processCreditsFrame(void)
 				CreditTextFrame* tf = &textFrames[index];
 
 				tf->frame = Credits_RenderTextFrame(LocalContext, &next_s,
-													direction, BLACK_COLOR, CREDITS_TEXT_COLOR);
+													direction, BlackColor, CreditsTextColor);
 				tf->strIndex = next_s + 1;
 				if (tf->frame)
 				{
@@ -538,10 +528,9 @@ processCreditsFrame(void)
 	}
 }
 
-static bool
-LoadCredits(void)
+static bool LoadCredits(void)
 {
-	const char* const path {res_GetString(CREDITS_FILE)};
+	const char* const path {res_GetString(CreditsFileRes)};
 	const auto text {uqm::readTextFile(uqm::contentDir(), path)};
 	auto blocks {text ? uqm::creditsFromJson(*text) : uqstl::nullopt};
 	if (!blocks)
@@ -550,7 +539,7 @@ LoadCredits(void)
 		return false;
 	}
 	CreditsBlocks = uqstl::move(*blocks);
-	CreditsBack = CaptureDrawable(LoadGraphic(CREDITS_BACK_ANIM));
+	CreditsBack = CaptureDrawable(LoadGraphic(CreditsBackAnimRes));
 	// load fonts
 	for (FONT_SIZE_DEF* fdef {CreditsFont}; fdef->size; ++fdef)
 	{
@@ -560,8 +549,7 @@ LoadCredits(void)
 	return true;
 }
 
-static void
-FreeCredits(void)
+static void FreeCredits(void)
 {
 	CreditsBlocks.clear();
 
@@ -576,11 +564,11 @@ FreeCredits(void)
 	}
 }
 
-static void
-OutTakes(void)
+static constexpr auto NumOuttakes {15};
+
+static void OutTakes(void)
 {
-#define NUM_OUTTAKES 15
-	const static CONVERSATION outtake_list[NUM_OUTTAKES] =
+	const static CONVERSATION outtake_list[NumOuttakes] =
 		{
 			ZOQFOTPIK_CONVERSATION,
 			TALKING_PET_CONVERSATION,
@@ -606,7 +594,7 @@ OutTakes(void)
 	sliderDisabled = true;
 	oscillDisabled = true;
 
-	for (i = 0; (i < NUM_OUTTAKES) && !(uqm::currentActivity() & CHECK_ABORT); i++)
+	for (i = 0; (i < NumOuttakes) && !(uqm::currentActivity() & CHECK_ABORT); i++)
 	{
 		SetCommIntroMode(CIM_CROSSFADE_WINDOW, TimePeriod {});
 		InitCommunication(outtake_list[i]);
@@ -629,8 +617,7 @@ typedef struct
 
 } CREDITS_INPUT_STATE;
 
-static bool
-DoCreditsInput(void* pIS)
+static bool DoCreditsInput(void* pIS)
 {
 	CREDITS_INPUT_STATE* pCIS = (CREDITS_INPUT_STATE*)pIS;
 
@@ -660,13 +647,13 @@ DoCreditsInput(void* pIS)
 		{
 			newrate -= step;
 		}
-		if (newrate < -CREDITS_MAX_RATE)
+		if (newrate < -CreditsMaxRate())
 		{
-			newrate = -CREDITS_MAX_RATE;
+			newrate = -CreditsMaxRate();
 		}
-		else if (newrate > CREDITS_MAX_RATE)
+		else if (newrate > CreditsMaxRate())
 		{
-			newrate = CREDITS_MAX_RATE;
+			newrate = CreditsMaxRate();
 		}
 
 		CreditsRate = newrate;
@@ -681,7 +668,7 @@ DoCreditsInput(void* pIS)
 	{ // auto-close controlled by timeout
 		if (pCIS->CloseTimeOut == TimeCount {})
 		{ // set timeout
-			pCIS->CloseTimeOut = GetTimeCounter() + CREDITS_TIMEOUT;
+			pCIS->CloseTimeOut = GetTimeCounter() + CreditsTimeout;
 		}
 		else if (GetTimeCounter() > pCIS->CloseTimeOut)
 		{ // all done!
@@ -696,13 +683,12 @@ DoCreditsInput(void* pIS)
 		return false;
 	}
 
-	SleepThread(c_gameSecond / CREDITS_FRAME_RATE);
+	SleepThread(c_gameSecond / CreditsFrameRate());
 
 	return true;
 }
 
-static void
-on_input_frame(void)
+static void on_input_frame(void)
 {
 	processCreditsFrame();
 }
@@ -713,12 +699,12 @@ void Credits(bool WithOuttakes)
 	GFXRECT screenRect;
 	STAMP s;
 
-	MUSIC_REF hMusic {LoadMusic(CREDITS_MUSIC)};
+	MUSIC_REF hMusic {LoadMusicInstance(CreditsMusicRes)};
 
 	SetContext(ScreenContext);
 	SetContextClipRect(nullptr);
 	GetContextClipRect(&screenRect);
-	SetContextBackGroundColor(BLACK_COLOR);
+	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
 
 	if (!LoadCredits())
@@ -736,7 +722,7 @@ void Credits(bool WithOuttakes)
 	// set the position of outtakes comm
 	CommWndRect.corner.x = (screenRect.extent.width - CommWndRect.extent.width)
 						 / 2;
-	CommWndRect.corner.y = RES_SCALE(5);
+	CommWndRect.corner.y = ResScale(5);
 
 	InitCredits();
 	SetInputCallback(on_input_frame);
@@ -761,7 +747,7 @@ void Credits(bool WithOuttakes)
 		cis.AllowCancel = !WithOuttakes;
 		cis.CloseWhenDone = !WithOuttakes;
 		cis.AllowSpeedChange = true;
-		SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
+		SetMenuSounds(MenuSoundNone, MenuSoundNone);
 		DoInput(&cis, true);
 	}
 
@@ -778,7 +764,7 @@ void Credits(bool WithOuttakes)
 		StopMusic();
 		DestroyMusic(hMusic);
 	}
-	FadeMusic(NORMAL_VOLUME, TimePeriod {});
+	FadeMusic(NormalVolume, TimePeriod {});
 
 	FreeCredits();
 }

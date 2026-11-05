@@ -46,12 +46,12 @@ void InitOscilloscope(FRAME scopeBg)
 		const EXTENT size = GetFrameBounds(scope_frame);
 
 		scopeWork = CaptureDrawable(CreateDrawable(
-			WANT_PIXMAP | MAPPED_TO_DISPLAY,
+			WantPixmap | MappedToDisplay,
 			size.width, size.height, 1));
 
 		// assume and subtract the borders
-		scopeSize.width = RES_DESCALE(size.width);
-		scopeSize.height = RES_DESCALE(size.height);
+		scopeSize.width = ResDescale(size.width);
+		scopeSize.height = ResDescale(size.height);
 		scopeData.resize(static_cast<size_t>(scopeSize.width));
 
 		scope_init = 1;
@@ -65,16 +65,15 @@ void UninitOscilloscope(void)
 	scope_init = 0;
 }
 
-uint8_t
-ScaleHeightByVolume(uint8_t scope_data, bool toScale)
+uint8_t ScaleHeightByVolume(uint8_t scope_data, bool toScale)
 {
-	if (!toScale || musicVolume == NORMAL_VOLUME)
+	if (!toScale || musicVolume == NormalVolume)
 	{
 		return scope_data;
 	}
 	else
 	{
-		const float scale = (float)musicVolume / NORMAL_VOLUME;
+		const float scale = (float)musicVolume / NormalVolume;
 		float res {NAN};
 
 		if (scope_data >= (scopeSize.height / 2))
@@ -91,6 +90,8 @@ ScaleHeightByVolume(uint8_t scope_data, bool toScale)
 		}
 	}
 }
+
+static constexpr auto DimPercentage {0.77};
 
 void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toScale)
 {
@@ -110,15 +111,14 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 
 	// Set oscilloscope line color
 	scopeColor = uqm::UQMOptions::read().scopeStyle != uqm::EmulationMode::PC ?
-					 SCOPE_COLOR_3DO :
-					 SCOPE_COLOR_PC;
+					 ScopeColor3do :
+					 ScopeColorPc;
 
 	if (nonStop)
 	{ // Dim the oscilloscope lines for Non-Stop option
-#define DIM_PERCENTAGE 0.77
-		scopeColor.r *= DIM_PERCENTAGE;
-		scopeColor.g *= DIM_PERCENTAGE;
-		scopeColor.b *= DIM_PERCENTAGE;
+		scopeColor.r *= DimPercentage;
+		scopeColor.g *= DimPercentage;
+		scopeColor.b *= DimPercentage;
 	}
 
 	SetContextForeGroundColor(scopeColor);
@@ -129,13 +129,13 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 		{
 			LINE line;
 
-			line.first.x = RES_SCALE(i);
-			line.first.y = RES_SCALE(ScaleHeightByVolume(scope_data[i],
-														 toScale));
-			line.second.x = RES_SCALE(i + 1);
-			line.second.y = RES_SCALE(ScaleHeightByVolume(
+			line.first.x = ResScale(i);
+			line.first.y = ResScale(ScaleHeightByVolume(scope_data[i],
+														toScale));
+			line.second.x = ResScale(i + 1);
+			line.second.y = ResScale(ScaleHeightByVolume(
 				scope_data[i + 1], toScale));
-			DrawLine(&line, RES_SCALE(1));
+			DrawLine(&line, ResScale(1));
 		}
 	}
 	else
@@ -143,10 +143,10 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 		LINE line;
 
 		line.first.x = 0;
-		line.first.y = RES_SCALE((scopeSize.height / 2));
-		line.second.x = RES_SCALE(scopeSize.width);
+		line.first.y = ResScale((scopeSize.height / 2));
+		line.second.x = ResScale(scopeSize.width);
 		line.second.y = line.first.y;
-		DrawLine(&line, RES_SCALE(1));
+		DrawLine(&line, ResScale(1));
 	}
 
 	SetContext(oldContext);

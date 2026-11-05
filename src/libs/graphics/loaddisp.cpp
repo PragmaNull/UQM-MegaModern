@@ -22,8 +22,7 @@
 
 
 // Reads a piece of screen into a passed FRAME or a newly created one
-DRAWABLE
-LoadDisplayPixmap(const GFXRECT* area, FRAME frame)
+DRAWABLE LoadDisplayPixmap(const GFXRECT* area, FRAME frame)
 {
 	// TODO: This should just return a FRAME instead of DRAWABLE
 	DRAWABLE buffer = GetFrameParentDrawable(frame);
@@ -31,7 +30,7 @@ LoadDisplayPixmap(const GFXRECT* area, FRAME frame)
 
 	if (!buffer)
 	{ // asked to create a new DRAWABLE instead
-		buffer = CreateDrawable(WANT_PIXMAP | MAPPED_TO_DISPLAY,
+		buffer = CreateDrawable(WantPixmap | MappedToDisplay,
 								area->extent.width, area->extent.height, 1);
 		if (!buffer)
 		{
@@ -47,9 +46,9 @@ LoadDisplayPixmap(const GFXRECT* area, FRAME frame)
 
 	frame = SetAbsFrameIndex(CaptureDrawable(buffer), index);
 
-	if (_CurFramePtr->Type != SCREEN_DRAWABLE
-		|| frame->Type == SCREEN_DRAWABLE
-		|| !(GetFrameParentDrawable(frame)->Flags & MAPPED_TO_DISPLAY))
+	if (_CurFramePtr->Type != ScreenDrawable
+		|| frame->Type == ScreenDrawable
+		|| !(GetFrameParentDrawable(frame)->Flags & MappedToDisplay))
 	{
 		uqm::log::warn("Unimplemented function activated: "
 					   "LoadDisplayPixmap()");

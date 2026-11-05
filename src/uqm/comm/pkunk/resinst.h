@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define PKUNK_COLOR_MAP "comm.pkunk.colortable"
-#define PKUNK_CONVERSATION_PHRASES "comm.pkunk.dialogue"
-#define PKUNK_FONT "comm.pkunk.font"
-#define PKUNK_MUSIC "comm.pkunk.music"
-#define PKUNK_PMAP_ANIM "comm.pkunk.graphics"
-#define PKUNK_SCRIPT "comm.pkunk.script"
+inline constexpr uqgsl::czstring PkunkColorMap {"comm.pkunk.colortable"};
+inline constexpr uqgsl::czstring PkunkConversationPhrases {"comm.pkunk.dialogue"};
+inline constexpr uqgsl::czstring PkunkFont {"comm.pkunk.font"};
+inline constexpr uqgsl::czstring PkunkMusic {"comm.pkunk.music"};
+inline constexpr uqgsl::czstring PkunkPmapAnim {"comm.pkunk.graphics"};

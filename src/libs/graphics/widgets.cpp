@@ -30,58 +30,45 @@
 WIDGET* widget_focus = nullptr;
 
 /* Some basic color defines */
-#define WIDGET_ACTIVE_COLOR \
-	MENU_HIGHLIGHT_COLOR
-#define WIDGET_INACTIVE_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x18, 0x18, 0x1F), 0x00)
-#define PAGE_BUTTON_INACTIVE_COLOR \
-	BUILD_COLOR_RGBA(0xA3, 0x2C, 0x00, 0xFF)
-#define WIDGET_INACTIVE_SELECTED_COLOR \
-	WHITE_COLOR
-#define WIDGET_CURSOR_COLOR \
-	BLACK_COLOR
-#define WIDGET_DIALOG_COLOR \
-	LTGRAY_COLOR
-#define WIDGET_DIALOG_TEXT_COLOR \
-	WIDGET_CURSOR_COLOR
-#define WIDGET_BONUS_COLOR \
-	BUILD_COLOR_RGBA(0xDF, 0x6A, 0x13, 0xFF)
+static constexpr auto WidgetActiveColor {MenuHighlightColor};
+static constexpr auto WidgetInactiveColor {BuildColor(MakeRgb15(0x18, 0x18, 0x1F), 0x00)};
 
-#define WIDGET_ENABLED_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x00, 0x18, 0x00), 0x00)
-#define WIDGET_DISABLED_COLOR \
-	PCMENU_TOP_LEFT_BORDER_COLOR
-#define WIDGET_TOOLTIP_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0xD2, 0xB4, 0x8C), 0x00)
-#define WIDGET_LABEL_COLOR \
-	BUILD_COLOR_RGBA(0x00, 0x77, 0x77, 0xFF)
-#define WIDGET_WARNING_COLOR \
-	BUILD_COLOR_RGBA(0xB1, 0x27, 0x47, 0xFF)
+static constexpr auto WidgetInactiveSelectedColor {WhiteColor};
+static constexpr auto WidgetCursorColor {BlackColor};
 
-#define ONSCREEN DOS_BOOL(13, 10)
+static constexpr auto WidgetDialogTextColor {WidgetCursorColor};
+static constexpr auto WidgetBonusColor {BuildColorRgba(0xDF, 0x6A, 0x13, 0xFF)};
+
+static constexpr auto WidgetEnabledColor {BuildColor(MakeRgb15(0x00, 0x18, 0x00), 0x00)};
+static constexpr auto WidgetDisabledColor {PcmenuTopLeftBorderColor};
+static constexpr auto WidgetTooltipColor {BuildColor(MakeRgb15(0xD2, 0xB4, 0x8C), 0x00)};
+static constexpr auto WidgetLabelColor {BuildColorRgba(0x00, 0x77, 0x77, 0xFF)};
+static constexpr auto WidgetWarningColor {BuildColorRgba(0xB1, 0x27, 0x47, 0xFF)};
+
+static auto Onscreen() { return DosBool(13, 10); }
 // The pos from the page edge where we need to start scrolling
-#define SCROLL_OFFSET 3
-#define SCREEN_CENTER RES_SCALE(RES_DESCALE(SCREEN_WIDTH) / 2)
-#define LSTEP RES_SCALE(RES_DESCALE(SCREEN_WIDTH) / 2 - 7)
-#define RSTEP RES_SCALE(RES_DESCALE(SCREEN_WIDTH) / 2 + 7)
+static constexpr auto ScrollOffset {3};
+static auto ScreenCenter() { return ResScale(ResDescale(CanvasWidth) / 2); }
+static auto Lstep() { return ResScale(ResDescale(CanvasWidth) / 2 - 7); }
+static auto Rstep() { return ResScale(ResDescale(CanvasWidth) / 2 + 7); }
 
 static Color win_bg_clr =
-	BUILD_COLOR(MAKE_RGB15_INIT(0x18, 0x18, 0x1F), 0x00);
+	BuildColor(MakeRgb15(0x18, 0x18, 0x1F), 0x00);
 static Color win_medium_clr =
-	BUILD_COLOR(MAKE_RGB15_INIT(0x10, 0x10, 0x18), 0x00);
+	BuildColor(MakeRgb15(0x10, 0x10, 0x18), 0x00);
 static Color win_dark_clr =
-	BUILD_COLOR(MAKE_RGB15_INIT(0x08, 0x08, 0x10), 0x00);
+	BuildColor(MakeRgb15(0x08, 0x08, 0x10), 0x00);
 
 static FONT cur_font;
 
 static uint16_t offset_t = 0;		// Top widget offset
-static uint16_t offset_b;			// = ONSCREEN; // Bottom widget offset
+static uint16_t offset_b;			// = Onscreen(); // Bottom widget offset
 static FRAME arrow_frame = nullptr; // Frames for additional graphics
 
 void ResetOffset(void)
 { // To reset offsets while traversing different moves
 	offset_t = 0;
-	offset_b = ONSCREEN;
+	offset_b = Onscreen();
 }
 
 void LoadArrows(void)
@@ -89,7 +76,7 @@ void LoadArrows(void)
 	if (arrow_frame == nullptr || optRequiresReload)
 	{
 		// Load the different arrows depending on the resolution factor.
-		arrow_frame = CaptureDrawable(LoadGraphic(MENUARR_PMAP_ANIM));
+		arrow_frame = CaptureDrawable(LoadGraphic(MenuarrPmapAnimRes));
 	}
 }
 
@@ -104,15 +91,15 @@ void ReleaseArrows(void)
 
 void DrawShadowedBox(GFXRECT* r, Color bg, Color dark, Color medium)
 { // Dialog box
-	DrawStarConBox(r, RES_SCALE(2), dark, medium, true, bg, true,
-				   TRANSPARENT);
+	DrawStarConBox(r, ResScale(2), dark, medium, true, bg, true,
+				   Transparent);
 }
 
 // windowRect, if not nullptr, will be filled with the dimensions of the
 // window drawn.
 void DrawLabelAsWindow(WIDGET_LABEL* label, GFXRECT* windowRect)
 {
-	const Color oldfg = SetContextForeGroundColor(WIDGET_DIALOG_TEXT_COLOR);
+	const Color oldfg = SetContextForeGroundColor(WidgetDialogTextColor);
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	GFXRECT r;
@@ -127,40 +114,40 @@ void DrawLabelAsWindow(WIDGET_LABEL* label, GFXRECT* windowRect)
 	}
 
 	/* Compute the dimensions of the label */
-	win_h = label->height((WIDGET*)label) + RES_SCALE(16);
+	win_h = label->height((WIDGET*)label) + ResScale(16);
 	win_w = 0;
 	for (i = 0; i < label->line_count; i++)
 	{
 		const size_t len = uqm::utf8StringCount(label->lines[i]);
 		if (len > win_w)
 		{
-			win_w = RES_SCALE(len);
+			win_w = ResScale(len);
 		}
 	}
-	win_w = (win_w * 6) + RES_SCALE(16);
+	win_w = (win_w * 6) + ResScale(16);
 
 	BatchGraphics();
-	r.corner.x = RES_SCALE(
-					 (RES_DESCALE(CanvasWidth) - RES_DESCALE(win_w)) >> 1)
-			   - RES_SCALE(2);
-	r.corner.y = RES_SCALE(
-					 (RES_DESCALE(CanvasHeight) - RES_DESCALE(win_h)) >> 1)
-			   - RES_SCALE(2);
-	r.extent.width = win_w + RES_SCALE(4);
-	r.extent.height = win_h + RES_SCALE(4);
+	r.corner.x = ResScale(
+					 (ResDescale(CanvasWidth) - ResDescale(win_w)) >> 1)
+			   - ResScale(2);
+	r.corner.y = ResScale(
+					 (ResDescale(CanvasHeight) - ResDescale(win_h)) >> 1)
+			   - ResScale(2);
+	r.extent.width = win_w + ResScale(4);
+	r.extent.height = win_h + ResScale(4);
 
 	DrawShadowedBox(&r, win_bg_clr, win_dark_clr, win_medium_clr);
 
 	t.baseline.x = r.corner.x
-				 + RES_SCALE(RES_DESCALE(r.extent.width) >> 1);
-	t.baseline.y = r.corner.y + RES_SCALE(16);
+				 + ResScale(ResDescale(r.extent.width) >> 1);
+	t.baseline.y = r.corner.y + ResScale(16);
 	for (i = 0; i < label->line_count; i++)
 	{
 		t.pStr = label->lines[i];
 		t.align = ALIGN_CENTER;
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
-		t.baseline.y += RES_SCALE(8);
+		t.baseline.y += ResScale(8);
 	}
 
 	UnbatchGraphics();
@@ -197,15 +184,14 @@ FONT Widget_SetFont(FONT newFont)
 	return oldFont;
 }
 
-static void
-Widget_DrawToolTips(int numlines, const char** tips)
+static void Widget_DrawToolTips(int numlines, const char** tips)
 {
 	// This functions draws the text at the bottom of the screen
 	// which explains what the current option does.
 	GFXRECT r;
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
-	const Color oldtext = SetContextForeGroundColor(WIDGET_TOOLTIP_COLOR);
+	const Color oldtext = SetContextForeGroundColor(WidgetTooltipColor);
 	TEXT t;
 	const char* amperBang = "&!";
 	const size_t abSize = strlen(amperBang);
@@ -216,16 +202,16 @@ Widget_DrawToolTips(int numlines, const char** tips)
 		oldfont = SetContextFont(cur_font);
 	}
 
-	r.corner.x = RES_SCALE(2);
-	r.corner.y = RES_SCALE(8);
-	r.extent.width = CanvasWidth - RES_SCALE(4);
-	r.extent.height = CanvasHeight + RES_SCALE(3);
+	r.corner.x = ResScale(2);
+	r.corner.y = ResScale(8);
+	r.extent.width = CanvasWidth - ResScale(4);
+	r.extent.height = CanvasHeight + ResScale(3);
 
 	t.align = ALIGN_CENTER;
 	t.CharCount = ~0;
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
 	t.baseline.y = r.corner.y
-				 + (r.extent.height - RES_SCALE(8) - RES_SCALE(8) * numlines);
+				 + (r.extent.height - ResScale(8) - ResScale(8) * numlines);
 
 	for (int i {0}; i < numlines; i++)
 	{
@@ -235,17 +221,17 @@ Widget_DrawToolTips(int numlines, const char** tips)
 		if (warning)
 		{
 			t.pStr += abSize;
-			SetContextForeGroundColor(WIDGET_WARNING_COLOR);
+			SetContextForeGroundColor(WidgetWarningColor);
 		}
 
 		font_DrawText(&t);
 
 		if (warning)
 		{
-			SetContextForeGroundColor(WIDGET_TOOLTIP_COLOR);
+			SetContextForeGroundColor(WidgetTooltipColor);
 		}
 
-		t.baseline.y += RES_SCALE(9);
+		t.baseline.y += ResScale(9);
 	}
 
 	SetContextFontEffect(oldFontEffect);
@@ -273,7 +259,7 @@ void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
 
 	if (!offset_b)
 	{
-		offset_b = ONSCREEN;
+		offset_b = Onscreen();
 	}
 
 	if (cur_font)
@@ -281,23 +267,23 @@ void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
 		oldfont = SetContextFont(cur_font);
 	}
 
-	r.corner.x = RES_SCALE(2);
-	r.corner.y = RES_SCALE(1);
-	r.extent.width = CanvasWidth - RES_SCALE(4);
-	r.extent.height = CanvasHeight - RES_SCALE(4);
+	r.corner.x = ResScale(2);
+	r.corner.y = ResScale(1);
+	r.extent.width = CanvasWidth - ResScale(4);
+	r.extent.height = CanvasHeight - ResScale(4);
 
-	title = WIDGET_INACTIVE_SELECTED_COLOR;
+	title = WidgetInactiveSelectedColor;
 
 	DrawStamp(&self->bgStamp);
 
 	oldtext = SetContextForeGroundColor(title);
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
-	t.baseline.y = r.corner.y + RES_SCALE(6);
+	t.baseline.y = r.corner.y + ResScale(6);
 	t.pStr = self->title;
 	t.align = ALIGN_CENTER;
 	t.CharCount = ~0;
 	font_DrawText(&t);
-	t.baseline.y += RES_SCALE(8);
+	t.baseline.y += ResScale(8);
 	t.pStr = self->subtitle;
 	font_DrawText(&t);
 
@@ -308,44 +294,44 @@ void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
 	{ // Calculate overall height until we hit top limit
 		// (more widgets can't fit the page)
 		WIDGET* child = self->child[widget_index];
-		if (widget_index <= ONSCREEN)
+		if (widget_index <= Onscreen())
 		{
 			height += (*child->height)(child);
-			height += RES_SCALE(5); /* spacing */
+			height += ResScale(5); /* spacing */
 		}
 	}
 
-	height -= RES_SCALE(8);
+	height -= ResScale(8);
 	widget_y = (CanvasHeight - height) >> 1;
 
 	{ // Scrolling
-		if (self->highlighted > (offset_b - SCROLL_OFFSET)
+		if (self->highlighted > (offset_b - ScrollOffset)
 			&& offset_b < self->num_children - 1)
 		{
 			if (self->highlighted == self->num_children - 1
-				&& offset_t != self->highlighted - (ONSCREEN - SCROLL_OFFSET))
+				&& offset_t != self->highlighted - (Onscreen() - ScrollOffset))
 			{ // smooth wrapping scroll
 				offset_t += 1;
 				offset_b += 1;
 			}
 			else
 			{ // standart scroll
-				offset_b = self->highlighted + SCROLL_OFFSET;
+				offset_b = self->highlighted + ScrollOffset;
 
 				if (offset_b > self->num_children - 1)
 				{ // reached bottom widget
 					offset_b = self->num_children - 1;
 					// cap bottom offset - stop further scrolling
-					offset_t = offset_b - ONSCREEN; // cap top offset
+					offset_t = offset_b - Onscreen(); // cap top offset
 				}
 				else // still moving
 				{
 					offset_t = self->highlighted
-							 - (ONSCREEN - SCROLL_OFFSET);
+							 - (Onscreen() - ScrollOffset);
 				}
 			}
 		}
-		if (self->highlighted < (offset_t + SCROLL_OFFSET) && offset_t > 0)
+		if (self->highlighted < (offset_t + ScrollOffset) && offset_t > 0)
 		{
 			if (self->highlighted < offset_t && offset_t != 0)
 			{ // smooth wrapping scroll
@@ -354,35 +340,35 @@ void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
 			}
 			else
 			{ // standart scroll
-				offset_t = self->highlighted - SCROLL_OFFSET;
-				if (offset_t > 65500)				// unit16 overflow
-				{									// reached top widget
-					offset_t = 0;					// cap top offset - stop further scrolling
-					offset_b = offset_t + ONSCREEN; // cap bottom offset
+				offset_t = self->highlighted - ScrollOffset;
+				if (offset_t > 65500)				  // unit16 overflow
+				{									  // reached top widget
+					offset_t = 0;					  // cap top offset - stop further scrolling
+					offset_b = offset_t + Onscreen(); // cap bottom offset
 				}
 				else // still moving
 				{
-					offset_b = self->highlighted + (ONSCREEN - SCROLL_OFFSET);
+					offset_b = self->highlighted + (Onscreen() - ScrollOffset);
 				}
 			}
 		}
-		if (self->num_children > ONSCREEN)
+		if (self->num_children > Onscreen())
 		{ // Arrows (blue to the right)
 			STAMP arr;
 
-			arr.origin.x = RES_SCALE(290);
+			arr.origin.x = ResScale(290);
 
 			if (offset_t != 0)
 			{
 				arr.frame = SetAbsFrameIndex(arrow_frame, 0); // Up arrow
-				arr.origin.y = RES_SCALE(25);
+				arr.origin.y = ResScale(25);
 				DrawStamp(&arr);
 			}
 			if (offset_b != self->num_children - 1)
 			{
 				arr.frame = SetAbsFrameIndex(arrow_frame, 1);
 				// Down arrow
-				arr.origin.y = RES_SCALE(195);
+				arr.origin.y = ResScale(195);
 				DrawStamp(&arr);
 			}
 		}
@@ -399,7 +385,7 @@ void Widget_DrawMenuScreen(WIDGET* _self, int x, int y)
 	{
 		WIDGET* c = self->child[widget_index];
 		(*c->draw)(c, 0, widget_y);
-		widget_y += (*c->height)(c) + RES_SCALE(5);
+		widget_y += (*c->height)(c) + ResScale(5);
 	}
 
 	SetContextFontEffect(oldFontEffect);
@@ -432,13 +418,13 @@ void Widget_DrawChoice(WIDGET* _self, int x, int y)
 		oldfont = SetContextFont(cur_font);
 	}
 
-	default_color = WIDGET_INACTIVE_SELECTED_COLOR; // White
-	enabled = WIDGET_ENABLED_COLOR;					// Green
-	disabled = WIDGET_DISABLED_COLOR;				// Grey
-	selected = WIDGET_ACTIVE_COLOR;					// Yellow
-	canbe = WIDGET_BONUS_COLOR;						// Orange
+	default_color = WidgetInactiveSelectedColor; // White
+	enabled = WidgetEnabledColor;				 // Green
+	disabled = WidgetDisabledColor;				 // Grey
+	selected = WidgetActiveColor;				 // Yellow
+	canbe = WidgetBonusColor;					 // Orange
 
-	t.baseline.x = x + LSTEP;
+	t.baseline.x = x + Lstep();
 	t.baseline.y = y;
 	t.align = ALIGN_RIGHT;
 	t.CharCount = ~0;
@@ -454,7 +440,7 @@ void Widget_DrawChoice(WIDGET* _self, int x, int y)
 	font_DrawText(&t); // Choicer name
 
 	{ // Choicer options
-		t.baseline.x = RSTEP;
+		t.baseline.x = Rstep();
 		t.align = ALIGN_LEFT;
 		for (i = 0; i < self->numopts; i++)
 		{
@@ -482,7 +468,7 @@ void Widget_DrawChoice(WIDGET* _self, int x, int y)
 					STAMP arr;
 
 					arr.origin.x = font_GetTextRect(&t).corner.x
-								 - RES_SCALE(10);
+								 - ResScale(10);
 					arr.origin.y = t.baseline.y;
 
 					// Left arrow
@@ -491,7 +477,7 @@ void Widget_DrawChoice(WIDGET* _self, int x, int y)
 
 					arr.origin.x = font_GetTextRect(&t).corner.x
 								 + font_GetTextRect(&t).extent.width
-								 + RES_SCALE(10);
+								 + ResScale(10);
 
 					// Right arrow
 					arr.frame = SetAbsFrameIndex(arrow_frame, 3);
@@ -501,15 +487,15 @@ void Widget_DrawChoice(WIDGET* _self, int x, int y)
 				{ // Navigation Dots
 					GFXRECT d;
 
-					d.extent.width = RES_SCALE(4);
-					d.extent.height = RES_SCALE(1);
+					d.extent.width = ResScale(4);
+					d.extent.height = ResScale(1);
 
-					d.corner.x = t.baseline.x - RES_SCALE(6);
-					d.corner.y = t.baseline.y + RES_SCALE(4);
+					d.corner.x = t.baseline.x - ResScale(6);
+					d.corner.y = t.baseline.y + ResScale(4);
 
 					for (uint16_t c {0}; c < self->numopts; c++)
 					{
-						d.corner.x += RES_SCALE(6);
+						d.corner.x += ResScale(6);
 
 						if (c == self->highlighted)
 						{
@@ -549,9 +535,9 @@ void Widget_DrawButton(WIDGET* _self, int x, int y)
 		oldfont = SetContextFont(cur_font);
 	}
 
-	selected = WIDGET_ACTIVE_COLOR;
-	inactive = WIDGET_INACTIVE_COLOR;
-	t.baseline.x = SCREEN_CENTER;
+	selected = WidgetActiveColor;
+	inactive = WidgetInactiveColor;
+	t.baseline.x = ScreenCenter();
 	t.baseline.y = y;
 	t.align = ALIGN_CENTER;
 	t.CharCount = ~0;
@@ -578,7 +564,7 @@ void Widget_DrawButton(WIDGET* _self, int x, int y)
 void Widget_DrawLabel(WIDGET* _self, int x, int y)
 { // Special labels
 	const WIDGET_LABEL* self = (WIDGET_LABEL*)_self;
-	const Color oldtext = SetContextForeGroundColor(WIDGET_LABEL_COLOR);
+	const Color oldtext = SetContextForeGroundColor(WidgetLabelColor);
 	FONT oldfont = 0;
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
@@ -594,7 +580,7 @@ void Widget_DrawLabel(WIDGET* _self, int x, int y)
 		oldfont = SetContextFont(cur_font);
 	}
 
-	t.baseline.x = SCREEN_CENTER;
+	t.baseline.x = ScreenCenter();
 	t.baseline.y = y;
 	t.align = ALIGN_CENTER;
 	t.CharCount = ~0;
@@ -613,22 +599,22 @@ void Widget_DrawLabel(WIDGET* _self, int x, int y)
 		if (warning)
 		{
 			t.pStr += asSize;
-			SetContextForeGroundColor(WIDGET_WARNING_COLOR);
+			SetContextForeGroundColor(WidgetWarningColor);
 		}
 
 		font_DrawText(&t);
-		t.baseline.y += RES_SCALE(10);
+		t.baseline.y += ResScale(10);
 
 		if (warning)
 		{
-			SetContextForeGroundColor(WIDGET_LABEL_COLOR);
+			SetContextForeGroundColor(WidgetLabelColor);
 		}
 
 		if (underline)
 		{ // Underline labels
 			r = font_GetTextRect(&t);
-			r.corner.y += RES_SCALE(1);
-			r.extent.height = RES_SCALE(1);
+			r.corner.y += ResScale(1);
+			r.extent.height = ResScale(1);
 			DrawFilledRectangle(&r);
 		}
 	}
@@ -660,10 +646,10 @@ void Widget_DrawSlider(WIDGET* _self, int x, int y)
 		oldfont = SetContextFont(cur_font);
 	}
 
-	default_color = WIDGET_INACTIVE_SELECTED_COLOR;
-	selected = WIDGET_ACTIVE_COLOR;
+	default_color = WidgetInactiveSelectedColor;
+	selected = WidgetActiveColor;
 
-	t.baseline.x = x + LSTEP;
+	t.baseline.x = x + Lstep();
 	t.baseline.y = y;
 	t.align = ALIGN_RIGHT;
 	t.CharCount = ~0;
@@ -680,21 +666,21 @@ void Widget_DrawSlider(WIDGET* _self, int x, int y)
 	font_DrawText(&t);
 
 	// Slider Bar
-	r.corner.x = RSTEP;
-	r.corner.y = t.baseline.y - RES_SCALE(4);
-	r.extent.height = RES_SCALE(2);
+	r.corner.x = Rstep();
+	r.corner.y = t.baseline.y - ResScale(4);
+	r.extent.height = ResScale(2);
 	r.extent.width = 2 * tick;
 	const int slider_width {r.corner.x + r.extent.width};
 	DrawFilledRectangle(&r);
 
 	// Slider Indicator
-	r.extent.width = RES_SCALE(3);
-	r.extent.height = RES_SCALE(8);
-	r.corner.y = t.baseline.y - RES_SCALE(7);
-	r.corner.x = RSTEP + (2 * tick * (self->value - self->min) / (self->max - self->min)) - (RES_SCALE(3) >> 1);
+	r.extent.width = ResScale(3);
+	r.extent.height = ResScale(8);
+	r.corner.y = t.baseline.y - ResScale(7);
+	r.corner.x = Rstep() + (2 * tick * (self->value - self->min) / (self->max - self->min)) - (ResScale(3) >> 1);
 	DrawFilledRectangle(&r);
 
-	//printf("%d + 3 * %d - 22 * %d\n", RSTEP, tick, tick);
+	//printf("%d + 3 * %d - 22 * %d\n", Rstep(), tick, tick);
 	(*self->draw_value)(self, slider_width, t.baseline.y);
 
 	SetContextFontEffect(oldFontEffect);
@@ -712,7 +698,7 @@ void Widget_Slider_DrawValue(WIDGET_SLIDER* self, int x, int y)
 
 	fmt::format_to_n(buffer, sizeof(buffer) - 1, "{}", self->value);
 
-	t.baseline.x = x + RES_SCALE(14);
+	t.baseline.x = x + ResScale(14);
 	t.baseline.y = y;
 	t.align = ALIGN_LEFT;
 	t.CharCount = ~0;
@@ -728,7 +714,7 @@ void Widget_Slider_DrawPercentageValue(WIDGET_SLIDER* self, int x, int y)
 
 	fmt::format_to_n(buffer, sizeof(buffer) - 1, "{}%", self->value);
 
-	t.baseline.x = x + RES_SCALE(14);
+	t.baseline.x = x + ResScale(14);
 	t.baseline.y = y;
 	t.align = ALIGN_LEFT;
 	t.CharCount = ~0;
@@ -754,14 +740,14 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 		oldfont = SetContextFont(cur_font);
 	}
 
-	default_color = WIDGET_INACTIVE_SELECTED_COLOR;
-	selected = WIDGET_ACTIVE_COLOR;
-	inactive = WIDGET_INACTIVE_COLOR;
-	editing = WIDGET_LABEL_COLOR;
+	default_color = WidgetInactiveSelectedColor;
+	selected = WidgetActiveColor;
+	inactive = WidgetInactiveColor;
+	editing = WidgetLabelColor;
 
 	BatchGraphics();
 
-	t.baseline.x = x + LSTEP;
+	t.baseline.x = x + Lstep();
 	t.baseline.y = y;
 	t.align = ALIGN_RIGHT;
 	t.CharCount = ~0;
@@ -780,7 +766,7 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 	t.baseline.x -= t.baseline.x;
 
 	/* Force string termination */
-	self->value[WIDGET_TEXTENTRY_WIDTH - RES_SCALE(1)] = 0;
+	self->value[WidgetTextentryWidth - ResScale(1)] = 0;
 
 	t.baseline.y = y;
 	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value);
@@ -788,7 +774,7 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 
 	if (!(self->state & WTE_EDITING))
 	{ // normal or selected state
-		t.baseline.x = RSTEP;
+		t.baseline.x = Rstep();
 		t.align = ALIGN_LEFT;
 
 		if (widget_focus == _self)
@@ -805,23 +791,23 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 	{ // editing state
 		uint16_t i {};
 		GFXRECT text_r;
-		uint8_t char_deltas[WIDGET_TEXTENTRY_WIDTH];
+		uint8_t char_deltas[WidgetTextentryWidth];
 		GFXRECT r;
 		int16_t leading {};
 
-		t.baseline.x = RSTEP;
+		t.baseline.x = Rstep();
 		t.align = ALIGN_LEFT;
 
 		// calc background box dimensions
 		// XXX: this may need some tuning, especially if a
 		//   different font is used. The font 'leading' values
 		//   are not what they should be.
-#define BOX_VERT_OFFSET RES_SCALE(2)
+		const auto BoxVertOffset {ResScale(2)};
 		GetContextFontLeading(&leading);
-		r.corner.x = t.baseline.x - RES_SCALE(1);
-		r.corner.y = t.baseline.y - leading + BOX_VERT_OFFSET;
-		r.extent.width = CanvasWidth - r.corner.x - RES_SCALE(10);
-		r.extent.height = leading - RES_SCALE(1);
+		r.corner.x = t.baseline.x - ResScale(1);
+		r.corner.y = t.baseline.y - leading + BoxVertOffset;
+		r.extent.width = CanvasWidth - r.corner.x - ResScale(10);
+		r.extent.height = leading - ResScale(1);
 
 		TextRect(&t, &text_r, char_deltas);
 #if 0
@@ -846,7 +832,7 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 		}
 		if (self->cursor_pos < t.CharCount) /* cursor mid-line */
 		{
-			r.corner.x -= RES_SCALE(1);
+			r.corner.x -= ResScale(1);
 		}
 
 		if (self->state & WTE_BLOCKCUR)
@@ -857,34 +843,34 @@ void Widget_DrawTextEntry(WIDGET* _self, int x, int y)
 
 			if (self->cursor_pos == t.CharCount)
 			{ // cursor at end-line -- use insertion point
-				r.extent.width = RES_SCALE(1);
-				r.corner.x -= IF_HD(3);
+				r.extent.width = ResScale(1);
+				r.corner.x -= IfHd(3);
 			}
 			else if (self->cursor_pos + 1 == t.CharCount)
 			{ // extra pixel for last char margin
-				r.extent.width = (int16_t)*pchar_deltas - IF_HD(3);
-				r.corner.x += RES_SCALE(1);
+				r.extent.width = (int16_t)*pchar_deltas - IfHd(3);
+				r.corner.x += ResScale(1);
 			}
 			else
 			{ // normal mid-line char
 				r.extent.width = (int16_t)*pchar_deltas;
-				r.corner.x += RES_SCALE(1);
+				r.corner.x += ResScale(1);
 			}
 		}
 		else
 		{ // Insertion point cursor
-			r.corner.y = r.corner.y + RES_SCALE(1);
-			r.extent.height = r.extent.height - RES_SCALE(2);
-			r.extent.width = RES_SCALE(1);
+			r.corner.y = r.corner.y + ResScale(1);
+			r.extent.height = r.extent.height - ResScale(2);
+			r.extent.width = ResScale(1);
 
 			if (self->cursor_pos == t.CharCount)
 			{
-				r.corner.x -= IF_HD(3);
+				r.corner.x -= IfHd(3);
 			}
 		}
 		// position cursor within input field rect
-		r.corner.x += RES_SCALE(1);
-		SetContextForeGroundColor(WIDGET_CURSOR_COLOR);
+		r.corner.x += ResScale(1);
+		SetContextForeGroundColor(WidgetCursorColor);
 		DrawFilledRectangle(&r);
 
 		SetContextForeGroundColor(editing);
@@ -915,10 +901,10 @@ void Widget_DrawControlEntry(WIDGET* _self, int x, int y)
 		oldfont = SetContextFont(cur_font);
 	}
 
-	default_color = WIDGET_INACTIVE_SELECTED_COLOR;
-	selected = WIDGET_ACTIVE_COLOR;
+	default_color = WidgetInactiveSelectedColor;
+	selected = WidgetActiveColor;
 
-	t.baseline.x = x + RES_SCALE(16);
+	t.baseline.x = x + ResScale(16);
 	t.baseline.y = y;
 	t.align = ALIGN_LEFT;
 	t.CharCount = ~0;
@@ -941,7 +927,7 @@ void Widget_DrawControlEntry(WIDGET* _self, int x, int y)
 	for (int i {0}; i < 2; i++)
 	{
 		t.baseline.x = home_x + ((i % 3) * (CanvasWidth / 3));
-		t.baseline.y = home_y + RES_SCALE(8 * (i / 3));
+		t.baseline.y = home_y + ResScale(8 * (i / 3));
 		t.pStr = self->controlname[i];
 		if (!t.pStr[0])
 		{
@@ -968,7 +954,7 @@ void Widget_DrawControlEntry(WIDGET* _self, int x, int y)
 int Widget_HeightChoice(WIDGET* _self)
 {
 	(void)_self;
-	return RES_SCALE(8); //effectively 1 column
+	return ResScale(8); //effectively 1 column
 }
 
 int Widget_HeightFullScreen(WIDGET* _self)
@@ -980,13 +966,13 @@ int Widget_HeightFullScreen(WIDGET* _self)
 int Widget_HeightOneLine(WIDGET* _self)
 {
 	(void)_self;
-	return RES_SCALE(8);
+	return ResScale(8);
 }
 
 int Widget_HeightLabel(WIDGET* _self)
 {
 	const WIDGET_LABEL* self = (WIDGET_LABEL*)_self;
-	return self->line_count * RES_SCALE(8);
+	return self->line_count * ResScale(8);
 }
 
 int Widget_WidthFullScreen(WIDGET* _self)

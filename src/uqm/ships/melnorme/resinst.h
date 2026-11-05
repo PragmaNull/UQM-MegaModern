@@ -2,18 +2,18 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define CONFUSE_BIG_MASK_PMAP_ANIM "ship.melnorme.graphics.confuse.large"
-#define CONFUSE_MED_MASK_PMAP_ANIM "ship.melnorme.graphics.confuse.medium"
-#define CONFUSE_SML_MASK_PMAP_ANIM "ship.melnorme.graphics.confuse.small"
-#define MELNORME_BIG_MASK_PMAP_ANIM "ship.melnorme.graphics.trader.large"
-#define MELNORME_CAPTAIN_MASK_PMAP_ANIM "ship.melnorme.graphics.captain"
-#define MELNORME_ICON_MASK_PMAP_ANIM "ship.melnorme.icons"
-#define MELNORME_MED_MASK_PMAP_ANIM "ship.melnorme.graphics.trader.medium"
-#define MELNORME_MICON_MASK_PMAP_ANIM "ship.melnorme.meleeicons"
-#define MELNORME_RACE_STRINGS "ship.melnorme.text"
-#define MELNORME_SHIP_SOUNDS "ship.melnorme.sounds"
-#define MELNORME_SML_MASK_PMAP_ANIM "ship.melnorme.graphics.trader.small"
-#define MELNORME_VICTORY_SONG "ship.melnorme.ditty"
-#define PUMPUP_BIG_MASK_PMAP_ANIM "ship.melnorme.graphics.pumpup.large"
-#define PUMPUP_MED_MASK_PMAP_ANIM "ship.melnorme.graphics.pumpup.medium"
-#define PUMPUP_SML_MASK_PMAP_ANIM "ship.melnorme.graphics.pumpup.small"
+inline constexpr uqgsl::czstring ConfuseBigMaskPmapAnim {"ship.melnorme.graphics.confuse.large"};
+inline constexpr uqgsl::czstring ConfuseMedMaskPmapAnim {"ship.melnorme.graphics.confuse.medium"};
+inline constexpr uqgsl::czstring ConfuseSmlMaskPmapAnim {"ship.melnorme.graphics.confuse.small"};
+inline constexpr uqgsl::czstring MelnormeBigMaskPmapAnim {"ship.melnorme.graphics.trader.large"};
+inline constexpr uqgsl::czstring MelnormeCaptainMaskPmapAnim {"ship.melnorme.graphics.captain"};
+inline constexpr uqgsl::czstring MelnormeIconMaskPmapAnim {"ship.melnorme.icons"};
+inline constexpr uqgsl::czstring MelnormeMedMaskPmapAnim {"ship.melnorme.graphics.trader.medium"};
+inline constexpr uqgsl::czstring MelnormeMiconMaskPmapAnim {"ship.melnorme.meleeicons"};
+inline constexpr uqgsl::czstring MelnormeRaceStrings {"ship.melnorme.text"};
+inline constexpr uqgsl::czstring MelnormeShipSounds {"ship.melnorme.sounds"};
+inline constexpr uqgsl::czstring MelnormeSmlMaskPmapAnim {"ship.melnorme.graphics.trader.small"};
+inline constexpr uqgsl::czstring MelnormeVictorySong {"ship.melnorme.ditty"};
+inline constexpr uqgsl::czstring PumpupBigMaskPmapAnim {"ship.melnorme.graphics.pumpup.large"};
+inline constexpr uqgsl::czstring PumpupMedMaskPmapAnim {"ship.melnorme.graphics.pumpup.medium"};
+inline constexpr uqgsl::czstring PumpupSmlMaskPmapAnim {"ship.melnorme.graphics.pumpup.small"};

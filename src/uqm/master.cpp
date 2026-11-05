@@ -122,8 +122,7 @@ void ReloadMasterShipList(void (*YieldProcessing)(void))
 	}
 }
 
-HMASTERSHIP
-FindMasterShip(SPECIES_ID ship_ref)
+HMASTERSHIP FindMasterShip(SPECIES_ID ship_ref)
 {
 	HMASTERSHIP hStarShip {};
 	HMASTERSHIP hNextShip {};
@@ -171,8 +170,7 @@ int FindMasterShipIndex(SPECIES_ID ship_ref)
 	return hStarShip ? index : -1;
 }
 
-uint16_t
-GetShipCostFromIndex(unsigned Index)
+uint16_t GetShipCostFromIndex(unsigned Index)
 {
 	HMASTERSHIP hMasterShip {GetStarShipFromIndex(&master_q, Index)};
 	if (!hMasterShip)
@@ -187,8 +185,7 @@ GetShipCostFromIndex(unsigned Index)
 	return val;
 }
 
-FRAME
-GetShipIconsFromIndex(unsigned Index)
+FRAME GetShipIconsFromIndex(unsigned Index)
 {
 	HMASTERSHIP hMasterShip {GetStarShipFromIndex(&master_q, Index)};
 	if (!hMasterShip)
@@ -203,8 +200,7 @@ GetShipIconsFromIndex(unsigned Index)
 	return val;
 }
 
-FRAME
-GetShipMeleeIconsFromIndex(unsigned Index)
+FRAME GetShipMeleeIconsFromIndex(unsigned Index)
 {
 	HMASTERSHIP hMasterShip {GetStarShipFromIndex(&master_q, Index)};
 	if (!hMasterShip)

@@ -2,18 +2,18 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define BLASTER_BIG_MASK_PMAP_ANIM "ship.flagship.graphics.blaster.large"
-#define BLASTER_MED_MASK_PMAP_ANIM "ship.flagship.graphics.blaster.medium"
-#define BLASTER_SML_MASK_PMAP_ANIM "ship.flagship.graphics.blaster.small"
-#define SIS_BIG_MASK_PMAP_ANIM "ship.flagship.graphics.flagship.large"
-#define SIS_MED_MASK_PMAP_ANIM "ship.flagship.graphics.flagship.medium"
-#define SIS_SML_MASK_PMAP_ANIM "ship.flagship.graphics.flagship.small"
-#define SIS_BIG_MASK_PMAP_ANIM_RED "ship.flagship.graphics.flagship.red.large"
-#define SIS_MED_MASK_PMAP_ANIM_RED "ship.flagship.graphics.flagship.red.medium"
-#define SIS_SML_MASK_PMAP_ANIM_RED "ship.flagship.graphics.flagship.red.small"
-#define SIS_CAPTAIN_MASK_PMAP_ANIM "ship.flagship.graphics.captain"
-#define SIS_HYPER_MASK_PMAP_ANIM "ship.flagship.graphics.hyperspace"
-#define SIS_ICON_MASK_PMAP_ANIM "ship.flagship.icons"
-#define SIS_ICON_MASK_PMAP_ANIM_RED "ship.flagship.red.icons"
-#define SIS_SHIP_SOUNDS "ship.flagship.sounds"
-#define SIS_VICTORY_SONG "ship.flagship.ditty"
+inline constexpr uqgsl::czstring BlasterBigMaskPmapAnim {"ship.flagship.graphics.blaster.large"};
+inline constexpr uqgsl::czstring BlasterMedMaskPmapAnim {"ship.flagship.graphics.blaster.medium"};
+inline constexpr uqgsl::czstring BlasterSmlMaskPmapAnim {"ship.flagship.graphics.blaster.small"};
+inline constexpr uqgsl::czstring SisBigMaskPmapAnim {"ship.flagship.graphics.flagship.large"};
+inline constexpr uqgsl::czstring SisMedMaskPmapAnim {"ship.flagship.graphics.flagship.medium"};
+inline constexpr uqgsl::czstring SisSmlMaskPmapAnim {"ship.flagship.graphics.flagship.small"};
+inline constexpr uqgsl::czstring SisBigMaskPmapAnimRed {"ship.flagship.graphics.flagship.red.large"};
+inline constexpr uqgsl::czstring SisMedMaskPmapAnimRed {"ship.flagship.graphics.flagship.red.medium"};
+inline constexpr uqgsl::czstring SisSmlMaskPmapAnimRed {"ship.flagship.graphics.flagship.red.small"};
+inline constexpr uqgsl::czstring SisCaptainMaskPmapAnim {"ship.flagship.graphics.captain"};
+inline constexpr uqgsl::czstring SisHyperMaskPmapAnim {"ship.flagship.graphics.hyperspace"};
+inline constexpr uqgsl::czstring SisIconMaskPmapAnim {"ship.flagship.icons"};
+inline constexpr uqgsl::czstring SisIconMaskPmapAnimRed {"ship.flagship.red.icons"};
+inline constexpr uqgsl::czstring SisShipSounds {"ship.flagship.sounds"};
+inline constexpr uqgsl::czstring SisVictorySong {"ship.flagship.ditty"};

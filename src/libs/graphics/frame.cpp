@@ -22,8 +22,7 @@
 #include "tfb_prim.h"
 #include "uqm/units.h"
 
-HOT_SPOT
-MAKE_HOT_SPOT(int16_t x, int16_t y)
+HOT_SPOT MAKE_HOT_SPOT(int16_t x, int16_t y)
 {
 	HOT_SPOT hs;
 	hs.x = x;
@@ -90,15 +89,14 @@ bool GetContextValidRect(GFXRECT* pValidRect, GFXPOINT* origin)
 	return (true);
 }
 
-static void
-ClearBackGround(GFXRECT* pClipRect)
+static void ClearBackGround(GFXRECT* pClipRect)
 {
 	GFXRECT clearRect;
 	const Color color = _get_context_bg_color();
 	clearRect.corner.x = 0;
 	clearRect.corner.y = 0;
 	clearRect.extent = pClipRect->extent;
-	TFB_Prim_FillRect(&clearRect, color, DRAW_REPLACE_MODE,
+	TFB_Prim_FillRect(&clearRect, color, DrawReplaceMode,
 					  pClipRect->corner);
 }
 
@@ -115,14 +113,14 @@ void DrawBatch(PRIMITIVE* lpBasePrim, PRIM_LINKS PrimLinks,
 
 		BatchGraphics();
 
-		if (BatchFlags & BATCH_BUILD_PAGE)
+		if (BatchFlags & BatchBuildPage)
 		{
 			ClearBackGround(&ValidRect);
 		}
 
 		uint16_t CurIndex {GetPredLink(PrimLinks)};
 
-		for (; CurIndex != END_OF_LIST;
+		for (; CurIndex != EndOfList;
 			 CurIndex = GetSuccLink(GetPrimLinks(lpPrim)))
 		{
 			GFXRECT ClipRect;
@@ -146,30 +144,30 @@ void DrawBatch(PRIMITIVE* lpBasePrim, PRIM_LINKS PrimLinks,
 								   mode, origin, false);
 					break;
 				case STAMP_PRIM:
-					if (flags & HYPER_TO_QUASI_COLOR)
+					if (flags & HyperToQuasiColor)
 					{
 						TFB_Prim_Stamp(&lpWorkPrim->Object.Stamp,
-									   MAKE_DRAW_MODE(DRAW_HYPTOQUAS, TRANSFER_ALPHA),
-									   origin, (bool)(flags & UNSCALED_STAMP));
+									   MAKE_DRAW_MODE(DRAW_HYPTOQUAS, TransferAlpha),
+									   origin, (bool)(flags & UnscaledStamp));
 					}
 					else
 					{
 						TFB_Prim_Stamp(&lpWorkPrim->Object.Stamp, mode,
-									   origin, (bool)(flags & UNSCALED_STAMP));
+									   origin, (bool)(flags & UnscaledStamp));
 					}
 					break;
 				case STAMPFILL_PRIM:
 					color = GetPrimColor(lpWorkPrim);
-					if (flags & HS_STARMASK)
+					if (flags & HsStarmask)
 					{
 						TFB_Prim_StampFill(&lpWorkPrim->Object.Stamp, color,
-										   MAKE_DRAW_MODE(DRAW_OVERLAY, TRANSFER_ALPHA),
-										   origin, (bool)(flags & UNSCALED_STAMP));
+										   MAKE_DRAW_MODE(DRAW_OVERLAY, TransferAlpha),
+										   origin, (bool)(flags & UnscaledStamp));
 					}
 					else
 					{
 						TFB_Prim_StampFill(&lpWorkPrim->Object.Stamp, color,
-										   mode, origin, (bool)(flags & UNSCALED_STAMP));
+										   mode, origin, (bool)(flags & UnscaledStamp));
 					}
 					break;
 				case LINE_PRIM:

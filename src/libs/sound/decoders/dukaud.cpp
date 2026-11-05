@@ -29,25 +29,23 @@
 #include "core/stl/stl.h"
 #include "core/string/StringUtils.h"
 
-#define DATA_BUF_SIZE 0x8000
-#define DUCK_GENERAL_FPS 14.622f
+static constexpr auto DataBufSize {0x8000};
+static constexpr auto DuckGeneralFps {14.622f};
 
-
-#define THIS_PTR TFB_SoundDecoder* This
 
 const static char* duka_GetName(void);
 static bool duka_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void duka_TermModule(void);
 static TFB_SoundDecoder* duka_Create(void);
 static void duka_Destroy(TFB_SoundDecoder* decoder);
-static int duka_GetError(THIS_PTR);
-static bool duka_Init(THIS_PTR);
-static void duka_Term(THIS_PTR);
-static bool duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
-static void duka_Close(THIS_PTR);
-static int duka_Decode(THIS_PTR, void* buf, int32_t bufsize);
-static uint32_t duka_Seek(THIS_PTR, uint32_t pcm_pos);
-static uint32_t duka_GetFrame(THIS_PTR);
+static int duka_GetError(TFB_SoundDecoder* This);
+static bool duka_Init(TFB_SoundDecoder* This);
+static void duka_Term(TFB_SoundDecoder* This);
+static bool duka_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
+static void duka_Close(TFB_SoundDecoder* This);
+static int duka_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize);
+static uint32_t duka_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos);
+static uint32_t duka_GetFrame(TFB_SoundDecoder* This);
 
 TFB_SoundDecoderFuncs duka_DecoderVtbl =
 	{
@@ -108,9 +106,8 @@ typedef struct
 
 const static TFB_DecoderFormats* duka_formats = nullptr;
 
-static int32_t
-duka_readAudFrameHeader(TFB_DuckSoundDecoder* duka, uint32_t iframe,
-						DukAud_AudSubframe* aud)
+static int32_t duka_readAudFrameHeader(TFB_DuckSoundDecoder* duka, uint32_t iframe,
+									   DukAud_AudSubframe* aud)
 {
 	DukAud_FrameHeader hdr;
 
@@ -183,23 +180,8 @@ static int adpcm_index[16] = {
 	-1, -1, -1, -1, 2, 4, 6, 8,
 	-1, -1, -1, -1, 2, 4, 6, 8};
 
-// clamp a number between 0 and 88
-#define CLAMP_0_TO_88(x) \
-	if ((x) < 0)         \
-		(x) = 0;         \
-	else if ((x) > 88)   \
-		(x) = 88;
-
-// clamp a number within a signed 16-bit range
-#define CLAMP_S16(x)      \
-	if ((x) < -32768)     \
-		(x) = -32768;     \
-	else if ((x) > 32767) \
-		(x) = 32767;
-
-static void
-decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
-			   int32_t* predictors, uint16_t* indices)
+static void decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
+						   int32_t* predictors, uint16_t* indices)
 {
 	int32_t step[2];
 	int32_t index[2];
@@ -219,7 +201,7 @@ decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
 		delta = output[i];
 
 		index[channel_number] += adpcm_index[delta];
-		CLAMP_0_TO_88(index[channel_number]);
+		index[channel_number] = uqstl::clamp(index[channel_number], 0, 88);
 
 		sign = delta & 8;
 		delta = delta & 7;
@@ -245,7 +227,7 @@ decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
 			predictors[channel_number] += diff;
 		}
 
-		CLAMP_S16(predictors[channel_number]);
+		predictors[channel_number] = uqstl::clamp(predictors[channel_number], -32768, 32767);
 		output[i] = predictors[channel_number];
 		step[channel_number] = adpcm_step[index[channel_number]];
 
@@ -255,9 +237,8 @@ decode_nibbles(int16_t* output, int32_t output_size, int32_t channels,
 }
 // *** END part copied from MPlayer ***
 
-static int32_t
-duka_decodeFrame(TFB_DuckSoundDecoder* duka, DukAud_AudSubframe* header,
-				 uint8_t* input)
+static int32_t duka_decodeFrame(TFB_DuckSoundDecoder* duka, DukAud_AudSubframe* header,
+								uint8_t* input)
 {
 	int16_t* output {};
 	int16_t* outptr {};
@@ -281,8 +262,7 @@ duka_decodeFrame(TFB_DuckSoundDecoder* duka, DukAud_AudSubframe* header,
 }
 
 
-static int32_t
-duka_readNextFrame(TFB_DuckSoundDecoder* duka)
+static int32_t duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 {
 	DukAud_FrameHeader hdr;
 
@@ -320,8 +300,7 @@ duka_readNextFrame(TFB_DuckSoundDecoder* duka)
 	return duka_decodeFrame(duka, aud, p);
 }
 
-static int32_t
-duka_stuffBuffer(TFB_DuckSoundDecoder* duka, void* buf, int32_t bufsize)
+static int32_t duka_stuffBuffer(TFB_DuckSoundDecoder* duka, void* buf, int32_t bufsize)
 {
 	int32_t dataleft {};
 
@@ -345,14 +324,12 @@ duka_stuffBuffer(TFB_DuckSoundDecoder* duka, void* buf, int32_t bufsize)
 }
 
 
-const static char*
-duka_GetName(void)
+const static char* duka_GetName(void)
 {
 	return "DukAud";
 }
 
-static bool
-duka_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
+static bool duka_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
 {
 	duka_formats = fmts;
 	return true;
@@ -360,26 +337,22 @@ duka_InitModule(AudioFlags flags, const TFB_DecoderFormats* fmts)
 	uqstl::ignore = flags; // laugh at compiler warning
 }
 
-static void
-duka_TermModule(void)
+static void duka_TermModule(void)
 {
 	// no specific module term
 }
 
-static TFB_SoundDecoder*
-duka_Create(void)
+static TFB_SoundDecoder* duka_Create(void)
 {
 	return &(new TFB_DuckSoundDecoder {})->decoder;
 }
 
-static void
-duka_Destroy(TFB_SoundDecoder* decoder)
+static void duka_Destroy(TFB_SoundDecoder* decoder)
 {
 	delete reinterpret_cast<TFB_DuckSoundDecoder*>(decoder);
 }
 
-static int
-duka_GetError(THIS_PTR)
+static int duka_GetError(TFB_SoundDecoder* This)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 	const int ret = duka->last_error;
@@ -387,8 +360,7 @@ duka_GetError(THIS_PTR)
 	return ret;
 }
 
-static bool
-duka_Init(THIS_PTR)
+static bool duka_Init(TFB_SoundDecoder* This)
 {
 	//TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*) This;
 	This->need_swap =
@@ -396,15 +368,13 @@ duka_Init(THIS_PTR)
 	return true;
 }
 
-static void
-duka_Term(THIS_PTR)
+static void duka_Term(TFB_SoundDecoder* This)
 {
 	//TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*) This;
 	duka_Close(This); // ensure cleanup
 }
 
-static bool
-duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
+static bool duka_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* file)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 	DukAud_AudSubframe aud;
@@ -473,11 +443,11 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 	This->format = duka_formats->stereo16;
 	duka->channels = 2;
 	duka->pcm_frame = aud.numsamples;
-	duka->data.assign(DATA_BUF_SIZE, 0);
-	duka->maxdata = DATA_BUF_SIZE;
+	duka->data.assign(DataBufSize, 0);
+	duka->maxdata = DataBufSize;
 
 	// estimate
-	This->length = (float)duka->cframes / DUCK_GENERAL_FPS;
+	This->length = (float)duka->cframes / DuckGeneralFps;
 
 	This->filename_hash = crc32b(file);
 
@@ -486,8 +456,7 @@ duka_Open(THIS_PTR, const uqm::io::Directory& dir, const char* file)
 	return true;
 }
 
-static void
-duka_Close(THIS_PTR)
+static void duka_Close(TFB_SoundDecoder* This)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 
@@ -501,8 +470,7 @@ duka_Close(THIS_PTR)
 	duka->last_error = 0;
 }
 
-static int
-duka_Decode(THIS_PTR, void* buf, int32_t bufsize)
+static int duka_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 	int32_t stuffed {};
@@ -533,8 +501,7 @@ duka_Decode(THIS_PTR, void* buf, int32_t bufsize)
 	return total;
 }
 
-static uint32_t
-duka_Seek(THIS_PTR, uint32_t pcm_pos)
+static uint32_t duka_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 {
 	TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 
@@ -550,8 +517,7 @@ duka_Seek(THIS_PTR, uint32_t pcm_pos)
 	return duka->iframe * duka->pcm_frame;
 }
 
-static uint32_t
-duka_GetFrame(THIS_PTR)
+static uint32_t duka_GetFrame(TFB_SoundDecoder* This)
 {
 	const TFB_DuckSoundDecoder* duka = (TFB_DuckSoundDecoder*)This;
 

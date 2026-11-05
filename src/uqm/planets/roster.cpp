@@ -38,16 +38,14 @@ static GFXRECT savedShipFrame_r;
 static STAMP savedShipFrame;
 
 // Ship icon positions in status display around the flagship
-const static GFXPOINT ship_pos[MAX_BUILT_SHIPS] =
-	{
-		SUPPORT_SHIP_PTS};
+const auto& ship_pos {SupportShipPts};
 
 typedef struct
 {
 	// Ship icon positions split into (lower half) left and right (upper)
 	// and sorted in the Y coord. These are used for navigation around the
 	// escort positions.
-	GFXPOINT shipPos[MAX_BUILT_SHIPS];
+	GFXPOINT shipPos[MaxBuiltShips];
 	uint16_t count;
 	// Number of ships
 
@@ -62,8 +60,7 @@ typedef struct
 
 static SHIP_FRAGMENT* LockSupportShip(ROSTER_STATE*, HSHIPFRAG* phFrag);
 
-static void
-drawSupportShip(ROSTER_STATE* rosterState, bool filled, bool saveFrame)
+static void drawSupportShip(ROSTER_STATE* rosterState, bool filled, bool saveFrame)
 {
 	STAMP s;
 
@@ -72,16 +69,16 @@ drawSupportShip(ROSTER_STATE* rosterState, bool filled, bool saveFrame)
 		return;
 	}
 
-	s.origin.x = RES_SCALE(rosterState->curShipPt.x);
-	s.origin.y = RES_SCALE(rosterState->curShipPt.y);
+	s.origin.x = ResScale(rosterState->curShipPt.x);
+	s.origin.y = ResScale(rosterState->curShipPt.y);
 	s.frame = rosterState->curShipFrame;
 
 	if (saveFrame)
 	{
 		savedShipFrame_r.corner.x = s.origin.x;
 		savedShipFrame_r.corner.y = s.origin.y;
-		savedShipFrame_r.extent.width = RES_SCALE(16);
-		savedShipFrame_r.extent.height = RES_SCALE(16);
+		savedShipFrame_r.extent.width = ResScale(16);
+		savedShipFrame_r.extent.height = ResScale(16);
 
 		savedShipFrame = SaveContextFrame(&savedShipFrame_r);
 
@@ -100,8 +97,7 @@ drawSupportShip(ROSTER_STATE* rosterState, bool filled, bool saveFrame)
 	}
 }
 
-static void
-getSupportShipIcon(ROSTER_STATE* rosterState)
+static void getSupportShipIcon(ROSTER_STATE* rosterState)
 {
 	HSHIPFRAG hShipFrag {};
 
@@ -113,13 +109,12 @@ getSupportShipIcon(ROSTER_STATE* rosterState)
 	}
 
 	rosterState->curShipFrame = SetAbsFrameIndex(ShipFragPtr->icons, 2);
-	UnlockShipFrag(&GLOBAL(built_ship_q), hShipFrag);
+	UnlockShipFrag(&uqm::gameState().game().built_ship_q, hShipFrag);
 }
 
-static void
-flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
+static void flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
 {
-	static Color c = BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x00, 0x00), 0x24);
+	static Color c = BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x24);
 	static TimeCount NextTime {};
 
 	drawSupportShip(rosterState, true, saveFrame);
@@ -133,20 +128,20 @@ flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
 		 * different colors due to rounding errors, but the old code wasn't
 		 * original anyhow, and you can't tell the difference visually.
 		 * - SvdB
-		if (c >= BUILD_COLOR (MAKE_RGB15 (0x1F, 0x19, 0x19), 0x24))
-			c = BUILD_COLOR (MAKE_RGB15 (0x1F, 0x00, 0x00), 0x24);
+		if (c >= BuildColor (MakeRgb15 (0x1F, 0x19, 0x19), 0x24))
+			c = BuildColor (MakeRgb15 (0x1F, 0x00, 0x00), 0x24);
 		else
-			c += BUILD_COLOR (MAKE_RGB15 (0x00, 0x02, 0x02), 0x00);
+			c += BuildColor (MakeRgb15 (0x00, 0x02, 0x02), 0x00);
 		*/
 
-		if (c.g >= CC5TO8(0x19))
+		if (c.g >= Cc5to8(0x19))
 		{
-			c = BUILD_COLOR(MAKE_RGB15(0x1F, 0x00, 0x00), 0x24);
+			c = BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x24);
 		}
 		else
 		{
-			c.g += CC5TO8(0x02);
-			c.b += CC5TO8(0x02);
+			c.g += Cc5to8(0x02);
+			c.b += Cc5to8(0x02);
 		}
 		SetContextForeGroundColor(c);
 
@@ -154,8 +149,7 @@ flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
 	}
 }
 
-static SHIP_FRAGMENT*
-LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
+static SHIP_FRAGMENT* LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
 {
 	const GFXPOINT* pship_pos {};
 	HSHIPFRAG hStarShip {};
@@ -163,11 +157,11 @@ LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
 
 	// Lookup the current escort's location in the unsorted points list
 	// to find the original escort index
-	for (hStarShip = GetHeadLink(&GLOBAL(built_ship_q)),
+	for (hStarShip = GetHeadLink(&uqm::gameState().game().built_ship_q),
 		pship_pos = ship_pos;
 		 hStarShip; hStarShip = hNextShip, ++pship_pos)
 	{
-		SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&GLOBAL(built_ship_q), hStarShip)};
+		SHIP_FRAGMENT* StarShipPtr {LockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip)};
 
 		if (pointsEqual(*pship_pos, rosterState->curShipPt))
 		{
@@ -176,14 +170,13 @@ LockSupportShip(ROSTER_STATE* rosterState, HSHIPFRAG* phFrag)
 		}
 
 		hNextShip = _GetSuccLink(StarShipPtr);
-		UnlockShipFrag(&GLOBAL(built_ship_q), hStarShip);
+		UnlockShipFrag(&uqm::gameState().game().built_ship_q, hStarShip);
 	}
 
 	return nullptr;
 }
 
-static void
-flashSupportShipCrew(void)
+static void flashSupportShipCrew(void)
 {
 	GFXRECT r;
 
@@ -192,8 +185,7 @@ flashSupportShipCrew(void)
 	SetFlashRect(&r, false);
 }
 
-static bool
-DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
+static bool DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
 {
 	bool ret = false;
 	char buf[40] {};
@@ -206,9 +198,9 @@ DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
 		return false;
 	}
 
-	hTemplate = GetStarShipFromIndex(&GLOBAL(avail_race_q),
+	hTemplate = GetStarShipFromIndex(&uqm::gameState().game().avail_race_q,
 									 StarShipPtr->race_id);
-	FLEET_INFO* TemplatePtr {LockFleetInfo(&GLOBAL(avail_race_q), hTemplate)};
+	FLEET_INFO* TemplatePtr {LockFleetInfo(&uqm::gameState().game().avail_race_q, hTemplate)};
 
 	StarShipPtr->crew_level += crew_delta;
 
@@ -244,30 +236,27 @@ DeltaSupportCrew(ROSTER_STATE* rosterState, int16_t crew_delta)
 		ret = true;
 	}
 
-	UnlockFleetInfo(&GLOBAL(avail_race_q), hTemplate);
-	UnlockShipFrag(&GLOBAL(built_ship_q), hShipFrag);
+	UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hTemplate);
+	UnlockShipFrag(&uqm::gameState().game().built_ship_q, hShipFrag);
 
 	return ret;
 }
 
-static void
-drawModifiedSupportShip(ROSTER_STATE* rosterState)
+static void drawModifiedSupportShip(ROSTER_STATE* rosterState)
 {
 	SetContext(StatusContext);
-	SetContextForeGroundColor(ROSTER_MODIFY_SHIP_COLOR);
+	SetContextForeGroundColor(RosterModifyShipColor);
 	drawSupportShip(rosterState, true, false);
 }
 
-static void
-selectSupportShip(ROSTER_STATE* rosterState, uint16_t shipIndex)
+static void selectSupportShip(ROSTER_STATE* rosterState, uint16_t shipIndex)
 {
 	rosterState->curShipPt = rosterState->shipPos[shipIndex];
 	getSupportShipIcon(rosterState);
 	DeltaSupportCrew(rosterState, 0);
 }
 
-static bool
-DoModifyRoster(MENU_STATE* pMS)
+static bool DoModifyRoster(MENU_STATE* pMS)
 {
 	ROSTER_STATE* rosterState = (ROSTER_STATE*)pMS->privData;
 	bool select {};
@@ -301,14 +290,14 @@ DoModifyRoster(MENU_STATE* pMS)
 		if (!rosterState->modifyingCrew)
 		{
 			SetFlashRect(nullptr, false);
-			SetMenuSounds(MENU_SOUND_ARROWS | MENU_SOUND_PAGE, MENU_SOUND_SELECT);
+			SetMenuSounds(MenuSoundArrows | MenuSoundPage, MenuSoundSelect);
 		}
 		else
 		{
 			drawModifiedSupportShip(rosterState);
 			flashSupportShipCrew();
-			SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN | MENU_SOUND_PAGE,
-						  MENU_SOUND_ACTION);
+			SetMenuSounds(MenuSoundUp | MenuSoundDown | MenuSoundPage,
+						  MenuSoundAction);
 		}
 	}
 	else if (rosterState->modifyingCrew)
@@ -319,7 +308,7 @@ DoModifyRoster(MENU_STATE* pMS)
 
 		if (up || pgup)
 		{
-			if (GLOBAL_SIS(CrewEnlisted))
+			if (uqm::gameState().sis().CrewEnlisted)
 			{
 				DoLoop = pgup ? 10 : 1;
 			}
@@ -330,7 +319,7 @@ DoModifyRoster(MENU_STATE* pMS)
 		}
 		else if (down || pgdn)
 		{
-			if (GLOBAL_SIS(CrewEnlisted) < GetCrewPodCapacity())
+			if (uqm::gameState().sis().CrewEnlisted < GetCrewPodCapacity())
 			{
 				DoLoop = pgdn ? 10 : 1;
 			}
@@ -422,9 +411,9 @@ DoModifyRoster(MENU_STATE* pMS)
 		if (NewState != pMS->CurState)
 		{
 			// Draw the previous escort in unselected state.
-			// JMS_GFX: In HD mode we draw the rectangle of screen
+			// JMS_GFX: In HdResolutionFactor mode we draw the rectangle of screen
 			// we captured earlier.
-			if (IS_HD)
+			if (IsHd())
 			{
 				DrawStamp(&savedShipFrame);
 			}
@@ -436,9 +425,9 @@ DoModifyRoster(MENU_STATE* pMS)
 			selectSupportShip(rosterState, NewState);
 			pMS->CurState = NewState;
 
-			// JMS_GFX: In HD mode we now have to capture the
+			// JMS_GFX: In HdResolutionFactor mode we now have to capture the
 			// location of this new rectangle.
-			if (IS_HD)
+			if (IsHd())
 			{
 				flashSupportShip(rosterState, true);
 			}
@@ -468,7 +457,7 @@ bool RosterMenu(void)
 
 	memset(&RosterState, 0, sizeof RosterState);
 
-	RosterState.count = CountLinks(&GLOBAL(built_ship_q));
+	RosterState.count = CountLinks(&uqm::gameState().game().built_ship_q);
 	if (!RosterState.count)
 	{
 		return false;
@@ -487,7 +476,7 @@ bool RosterMenu(void)
 
 	// JMS_GFX: Remember the location of the first ship to be able to erase
 	// the red junk from around it after rostering.
-	if (IS_HD)
+	if (IsHd())
 	{
 		drawSupportShip(&RosterState, true, true);
 	}
@@ -497,7 +486,7 @@ bool RosterMenu(void)
 		DrawMenuStateStrings(PM_ALT_CARGO, 2);
 	}
 
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	MenuState.InputFunc = DoModifyRoster;
 	DoInput(&MenuState, true);
@@ -505,9 +494,9 @@ bool RosterMenu(void)
 	SetContext(StatusContext);
 
 	// Draw the last escort in unselected state.
-	// JMS_GFX: In HD mode we draw the rectangle of screen
+	// JMS_GFX: In HdResolutionFactor mode we draw the rectangle of screen
 	// we captured earlier.
-	if (IS_HD)
+	if (IsHd())
 	{
 		DrawStamp(&savedShipFrame);
 	}

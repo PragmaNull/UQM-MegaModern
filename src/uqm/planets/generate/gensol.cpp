@@ -73,21 +73,20 @@ const GenerateFunctions generateSolFunctions = {
 };
 
 
-static bool
-GenerateSol_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateSol_initNpcs(SOLARSYS_STATE* solarSys)
 {
 	if (uqm::UQMOptions::read().headStart)
 	{
-		SET_GAME_STATE(PROBE_MESSAGE_DELIVERED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PROBE_MESSAGE_DELIVERED, static_cast<uint32_t>(1));
 	}
-	GLOBAL(BattleGroupRef) = GET_GAME_STATE(URQUAN_PROBE_GRPOFFS);
-	if (GLOBAL(BattleGroupRef) == 0 && !GET_GAME_STATE(PROBE_MESSAGE_DELIVERED))
+	uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS);
+	if (uqm::gameState().game().BattleGroupRef == 0 && !uqm::gameState().flag(uqm::GameFlag::PROBE_MESSAGE_DELIVERED))
 	{
 		CloneShipFragment(URQUAN_DRONE_SHIP,
-						  &GLOBAL(npc_built_ship_q), 0);
-		GLOBAL(BattleGroupRef) = PutGroupInfo(GROUPS_ADD_NEW, 1);
-		ReinitQueue(&GLOBAL(npc_built_ship_q));
-		SET_GAME_STATE(URQUAN_PROBE_GRPOFFS, GLOBAL(BattleGroupRef));
+						  &uqm::gameState().game().npc_built_ship_q, 0);
+		uqm::gameState().game().BattleGroupRef = PutGroupInfo(GroupsAddNew, 1);
+		ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+		uqm::gameState().setFlag(uqm::GameFlag::URQUAN_PROBE_GRPOFFS, static_cast<uint32_t>(uqm::gameState().game().BattleGroupRef));
 	}
 
 	if (!init_probe())
@@ -102,28 +101,27 @@ GenerateSol_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateSol_reinitNpcs(SOLARSYS_STATE* solarSys)
 {
-	if (GET_GAME_STATE(CHMMR_BOMB_STATE) != 3)
+	if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) != 3)
 	{
 		GenerateDefault_reinitNpcs(solarSys);
 		check_probe();
 	}
 	else
 	{
-		GLOBAL(BattleGroupRef) = 0;
-		ReinitQueue(&GLOBAL(ip_group_q));
-		assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+		uqm::gameState().game().BattleGroupRef = 0;
+		ReinitQueue(&uqm::gameState().game().ip_group_q);
+		assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 	}
 	return true;
 }
 
-static bool
-GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
+static constexpr auto SolSeed {334241042L};
+
+static bool GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 {
-#define SOL_SEED 334241042L
-	SysGenRNG->reseed(SOL_SEED + (uqm::isStarSeed() ? uqm::currentSeed().value : 0));
+	SysGenRNG->reseed(SolSeed + (uqm::isStarSeed() ? uqm::currentSeed().value : 0));
 
 	solarSys->SunDesc[0].NumPlanets = 9;
 	for (uint16_t planetI {0}; planetI < 9; ++planetI)
@@ -133,72 +131,71 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 		pCurDesc->rand_seed = SysGenRNG->next();
 		const uint32_t rand_val {pCurDesc->rand_seed};
 		const uint16_t word_val {uqm::lowWord(rand_val)};
-		pCurDesc->angle = NORMALIZE_ANGLE((uint16_t)uqm::highByte(word_val));
+		pCurDesc->angle = NormalizeAngle((uint16_t)uqm::highByte(word_val));
 
 		switch (planetI)
 		{
 			case 0: /* MERCURY */
 				pCurDesc->data_index = METAL_WORLD;
-				pCurDesc->radius = EARTH_RADIUS * 39L / 100;
+				pCurDesc->radius = EarthRadius * 39L / 100;
 				pCurDesc->NumPlanets = 0;
 				break;
 			case 1: /* VENUS */
 				pCurDesc->data_index = PRIMORDIAL_WORLD;
-				pCurDesc->radius = EARTH_RADIUS * 72L / 100;
+				pCurDesc->radius = EarthRadius * 72L / 100;
 				pCurDesc->NumPlanets = 0;
 				pCurDesc->angle =
-					NORMALIZE_ANGLE(FULL_CIRCLE - pCurDesc->angle);
+					NormalizeAngle(FullCircle - pCurDesc->angle);
 				break;
 			case 2: /* EARTH */
 				pCurDesc->data_index = WATER_WORLD | PLANET_SHIELDED;
-				pCurDesc->radius = EARTH_RADIUS;
+				pCurDesc->radius = EarthRadius;
 				pCurDesc->NumPlanets = 2;
 				break;
 			case 3: /* MARS */
 				pCurDesc->data_index = DUST_WORLD;
-				pCurDesc->radius = EARTH_RADIUS * 152L / 100;
+				pCurDesc->radius = EarthRadius * 152L / 100;
 				pCurDesc->NumPlanets = 0;
 				break;
 			case 4: /* JUPITER */
 				pCurDesc->data_index = RED_GAS_GIANT;
-				pCurDesc->radius = EARTH_RADIUS * 500L /* 520L */ / 100;
+				pCurDesc->radius = EarthRadius * 500L /* 520L */ / 100;
 				pCurDesc->NumPlanets = 4;
 				break;
 			case 5: /* SATURN */
 				pCurDesc->data_index = ORA_GAS_GIANT;
-				pCurDesc->radius = EARTH_RADIUS * 750L /* 952L */ / 100;
+				pCurDesc->radius = EarthRadius * 750L /* 952L */ / 100;
 				pCurDesc->NumPlanets = 1;
 				break;
 			case 6: /* URANUS */
 				pCurDesc->data_index = GRN_GAS_GIANT;
-				pCurDesc->radius = EARTH_RADIUS * 1000L /* 1916L */ / 100;
+				pCurDesc->radius = EarthRadius * 1000L /* 1916L */ / 100;
 				pCurDesc->NumPlanets = 0;
 				break;
 			case 7: /* NEPTUNE */
 				pCurDesc->data_index = BLU_GAS_GIANT;
-				pCurDesc->radius = EARTH_RADIUS * 1250L /* 2999L */ / 100;
+				pCurDesc->radius = EarthRadius * 1250L /* 2999L */ / 100;
 				pCurDesc->NumPlanets = 1;
 				break;
 			case 8: /* PLUTO */
 				pCurDesc->data_index = PELLUCID_WORLD;
-				pCurDesc->radius = EARTH_RADIUS * 1550L /* 3937L */ / 100;
-				pCurDesc->NumPlanets = EXTENDED;
+				pCurDesc->radius = EarthRadius * 1550L /* 3937L */ / 100;
+				pCurDesc->NumPlanets = IsExtended();
 				if (uqm::isOriginalSeed())
 				{
-					pCurDesc->angle = FULL_CIRCLE - OCTANT;
+					pCurDesc->angle = FullCircle - Octant;
 				}
 				break;
 		}
-		pCurDesc->orb_speed = FULL_CIRCLE / (365.25 * pow((float)pCurDesc->radius / EARTH_RADIUS, 1.5));
-		pCurDesc->location.x = COSINE(pCurDesc->angle, pCurDesc->radius);
-		pCurDesc->location.y = SINE(pCurDesc->angle, pCurDesc->radius);
+		pCurDesc->orb_speed = FullCircle / (365.25 * pow((float)pCurDesc->radius / EarthRadius, 1.5));
+		pCurDesc->location.x = Cosine(pCurDesc->angle, pCurDesc->radius);
+		pCurDesc->location.y = Sine(pCurDesc->angle, pCurDesc->radius);
 	}
 
 	return true;
 }
 
-static bool
-GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
+static bool GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 {
 	uint32_t rand_val {};
 
@@ -213,56 +210,56 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 
 				/* Starbase: */
 				solarSys->MoonDesc[0].data_index = HIERARCHY_STARBASE;
-				solarSys->MoonDesc[0].radius = MIN_MOON_RADIUS;
-				angle = HALF_CIRCLE + QUADRANT;
+				solarSys->MoonDesc[0].radius = MinMoonRadius();
+				angle = HalfCircle + Quadrant;
 				solarSys->MoonDesc[0].location.x =
-					COSINE(angle, solarSys->MoonDesc[0].radius);
+					Cosine(angle, solarSys->MoonDesc[0].radius);
 				solarSys->MoonDesc[0].location.y =
-					SINE(angle, solarSys->MoonDesc[0].radius);
-				solarSys->MoonDesc[0].orb_speed = FULL_CIRCLE / 11.46;
+					Sine(angle, solarSys->MoonDesc[0].radius);
+				solarSys->MoonDesc[0].orb_speed = FullCircle / 11.46;
 
 				/* Luna: */
 				solarSys->MoonDesc[1].data_index = SELENIC_WORLD;
-				solarSys->MoonDesc[1].radius = MIN_MOON_RADIUS
-											 + (4 - 1) * MOON_DELTA;
+				solarSys->MoonDesc[1].radius = MinMoonRadius()
+											 + (4 - 1) * MoonDelta();
 				rand_val = SysGenRNG->next();
-				angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
+				angle = NormalizeAngle(uqm::lowWord(rand_val));
 				solarSys->MoonDesc[1].location.x =
-					COSINE(angle, solarSys->MoonDesc[1].radius);
+					Cosine(angle, solarSys->MoonDesc[1].radius);
 				solarSys->MoonDesc[1].location.y =
-					SINE(angle, solarSys->MoonDesc[1].radius);
-				solarSys->MoonDesc[1].orb_speed = FULL_CIRCLE / 27.32;
+					Sine(angle, solarSys->MoonDesc[1].radius);
+				solarSys->MoonDesc[1].orb_speed = FullCircle / 27.32;
 				break;
 			}
 		case 4: /* moons of JUPITER */
 			solarSys->MoonDesc[0].data_index = RADIOACTIVE_WORLD;
-			solarSys->MoonDesc[0].orb_speed = FULL_CIRCLE / 1.75;
+			solarSys->MoonDesc[0].orb_speed = FullCircle / 1.75;
 			/* Io */
 			solarSys->MoonDesc[1].data_index = HALIDE_WORLD;
-			solarSys->MoonDesc[1].orb_speed = FULL_CIRCLE / 3.5;
+			solarSys->MoonDesc[1].orb_speed = FullCircle / 3.5;
 			/* Europa */
 			solarSys->MoonDesc[2].data_index = CYANIC_WORLD;
-			solarSys->MoonDesc[2].orb_speed = FULL_CIRCLE / 7.16;
+			solarSys->MoonDesc[2].orb_speed = FullCircle / 7.16;
 			/* Ganymede */
 			solarSys->MoonDesc[3].data_index = PELLUCID_WORLD;
-			solarSys->MoonDesc[3].orb_speed = FULL_CIRCLE / 16.7;
+			solarSys->MoonDesc[3].orb_speed = FullCircle / 16.7;
 			/* Callisto */
 			break;
 		case 5: /* moons of SATURN */
 			solarSys->MoonDesc[0].data_index = ALKALI_WORLD;
-			/*solarSys->MoonDesc[0].radius = MIN_MOON_RADIUS
-					+ (MAX_GEN_MOONS - 1) * MOON_DELTA;*/
-			solarSys->MoonDesc[0].orb_speed = FULL_CIRCLE / 15.22;
+			/*solarSys->MoonDesc[0].radius = MinMoonRadius()
+					+ (MaxGenMoons - 1) * MoonDelta();*/
+			solarSys->MoonDesc[0].orb_speed = FullCircle / 15.22;
 			/* Titan */
 			break;
 		case 7: /* moons of NEPTUNE */
 			solarSys->MoonDesc[0].data_index = VINYLOGOUS_WORLD;
-			solarSys->MoonDesc[0].orb_speed = FULL_CIRCLE / -5.87;
+			solarSys->MoonDesc[0].orb_speed = FullCircle / -5.87;
 			/* Triton */
 			break;
 		case 8: /* moons of Pluto */
 			solarSys->MoonDesc[0].data_index = SELENIC_WORLD;
-			solarSys->MoonDesc[0].orb_speed = FULL_CIRCLE / 6.38;
+			solarSys->MoonDesc[0].orb_speed = FullCircle / 6.38;
 			/* Charon */
 			break;
 	}
@@ -270,23 +267,20 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 	return true;
 }
 
-static bool
-GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
-						 const PLANET_DESC* world)
+static bool GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
+									 const PLANET_DESC* world)
 {
 	const uint16_t planetNr = planetIndex(solarSys, world);
 
-	uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
-						sizeof(GLOBAL_SIS(PlanetName)),
-						GAME_STRING(PLANET_NUMBER_BASE + planetNr));
-	SET_GAME_STATE(BATTLE_PLANET,
-				   solarSys->PlanetDesc[planetNr].data_index);
+	uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+						sizeof(uqm::gameState().sis().PlanetName),
+						GameString(PLANET_NUMBER_BASE + planetNr));
+	uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(solarSys->PlanetDesc[planetNr].data_index));
 
 	return true;
 }
 
-static bool
-GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
+static bool GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 {
 	uint32_t rand_val {};
 	uint16_t planetNr {};
@@ -296,13 +290,13 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		if (getNomadMode() == uqm::NomadMode::Off)
 		{
 			/* Starbase */
-			PutGroupInfo(GROUPS_RANDOM, GROUP_SAVE_IP);
-			ReinitQueue(&GLOBAL(ip_group_q));
-			assert(CountLinks(&GLOBAL(npc_built_ship_q)) == 0);
+			PutGroupInfo(GroupsRandom, GroupSaveIp);
+			ReinitQueue(&uqm::gameState().game().ip_group_q);
+			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			EncounterGroup = 0;
 			uqm::currentActivity() |= START_ENCOUNTER;
-			SET_GAME_STATE(GLOBAL_FLAGS_AND_DATA, (uint8_t)~0);
+			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>((uint8_t)~0));
 
 			return true;
 		}
@@ -310,7 +304,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		{
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(NOMAD_BASE_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(NomadBaseStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 
 			DoDiscoveryReport(MenuSounds);
@@ -326,7 +320,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 	rand_val = SysGenRNG->seed();
 
 	solarSys->SysInfo.PlanetInfo.ScanSeed[MINERAL_SCAN] = rand_val;
-	GenerateMineralDeposits(&solarSys->SysInfo, GENERATE_ALL, nullptr);
+	GenerateMineralDeposits(&solarSys->SysInfo, GenerateAll, nullptr);
 	rand_val = SysGenRNG->seed();
 
 	planetNr = planetIndex(solarSys, world);
@@ -345,7 +339,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = 165;
 				break;
 			case 1: /* VENUS */
-				solarSys->SysInfo.PlanetInfo.AtmoDensity = 90 * EARTH_ATMOSPHERE;
+				solarSys->SysInfo.PlanetInfo.AtmoDensity = 90 * EarthAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 95;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 95;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 177;
@@ -356,7 +350,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				break;
 			case 2: /* EARTH */
 				solarSys->SysInfo.PlanetInfo.AtmoDensity =
-					EARTH_ATMOSPHERE;
+					EarthAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 100;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 100;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 23;
@@ -378,7 +372,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				break;
 			case 4: /* JUPITER */
 				solarSys->SysInfo.PlanetInfo.AtmoDensity =
-					GAS_GIANT_ATMOSPHERE;
+					GasGiantAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 24;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 1120;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 3;
@@ -387,11 +381,11 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 98;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -143;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 520L / 100;
+					EarthRadius * 520L / 100;
 				break;
 			case 5: /* SATURN */
 				solarSys->SysInfo.PlanetInfo.AtmoDensity =
-					GAS_GIANT_ATMOSPHERE;
+					GasGiantAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 13;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 945;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 27;
@@ -400,11 +394,11 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 102;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -197;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 952L / 100;
+					EarthRadius * 952L / 100;
 				break;
 			case 6: /* URANUS */
 				solarSys->SysInfo.PlanetInfo.AtmoDensity =
-					GAS_GIANT_ATMOSPHERE;
+					GasGiantAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 21;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 411;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 98;
@@ -413,11 +407,11 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 172;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -217;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 1916L / 100;
+					EarthRadius * 1916L / 100;
 				break;
 			case 7: /* NEPTUNE */
 				solarSys->SysInfo.PlanetInfo.AtmoDensity =
-					GAS_GIANT_ATMOSPHERE;
+					GasGiantAtmosphere;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 28;
 				solarSys->SysInfo.PlanetInfo.PlanetRadius = 396;
 				solarSys->SysInfo.PlanetInfo.AxialTilt = 30;
@@ -426,16 +420,16 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 182;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -229;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 2999L / 100;
+					EarthRadius * 2999L / 100;
 				break;
 			case 8: /* PLUTO */
-				if (!GET_GAME_STATE(FOUND_PLUTO_SPATHI))
+				if (!uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI))
 				{
 					LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 					solarSys->PlanetSideFrame[1] =
 						CaptureDrawable(
-							LoadGraphic(SPAPLUTO_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SPAPLUTO_STRTAB);
+							LoadGraphic(SpaplutoMaskPmapAnimRes));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SpaplutoStrtabRes);
 					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 
@@ -448,7 +442,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 1533;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -235;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 3937L / 100;
+					EarthRadius * 3937L / 100;
 				break;
 		}
 
@@ -463,37 +457,37 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				switch (planetNr)
 				{
 					case 0: // MERCURY
-						maskAnim = MERCURY_MASK_ANIM;
+						maskAnim = MercuryMaskAnimRes;
 						break;
 					case 1: // VENUS
-						maskAnim = VENUS_MASK_ANIM;
+						maskAnim = VenusMaskAnimRes;
 						break;
 					case 2: // EARTH
-						maskAnim = EARTH_MASK_ANIM;
+						maskAnim = EarthMaskAnimRes;
 						break;
 					case 3: // MARS
-						maskAnim = MARS_MASK_ANIM;
+						maskAnim = MarsMaskAnimRes;
 						break;
 					case 4: // JUPITER
-						maskAnim = JUPITER_MASK_ANIM;
+						maskAnim = JupiterMaskAnimRes;
 						break;
 					case 5: // SATURN
-						maskAnim = SATURN_MASK_ANIM;
+						maskAnim = SaturnMaskAnimRes;
 						break;
 					case 6: // URANUS
-						maskAnim = URANUS_MASK_ANIM;
+						maskAnim = UranusMaskAnimRes;
 						break;
 					case 7: // NEPTUNE
-						maskAnim = NEPTUNE_MASK_ANIM;
+						maskAnim = NeptuneMaskAnimRes;
 						break;
 					case 8: // PLUTO
-						maskAnim = PLUTO_MASK_ANIM;
+						maskAnim = PlutoMaskAnimRes;
 						break;
 				}
 			}
 			else if (planetNr == 2)
 			{
-				maskAnim = EARTH_MASK_ANIM;
+				maskAnim = EarthMaskAnimRes;
 			}
 
 			LoadPlanet(CaptureDrawable(LoadGraphic(maskAnim)));
@@ -517,13 +511,13 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.ScanSeed[BIOLOGICAL_SCAN] =
 					rand_val;
 
-				if (!GET_GAME_STATE(MOONBASE_DESTROYED))
+				if (!uqm::gameState().flag(uqm::GameFlag::MOONBASE_DESTROYED))
 				{
 					LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 					solarSys->PlanetSideFrame[1] =
 						CaptureDrawable(
-							LoadGraphic(MOONBASE_MASK_PMAP_ANIM));
-					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MOONBASE_STRTAB);
+							LoadGraphic(MoonbaseMaskPmapAnimRes));
+					solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(MoonbaseStrtabRes);
 					solarSys->SysInfo.PlanetInfo.DiscoveryIndex = 0;
 				}
 
@@ -537,7 +531,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 
 			case 4: /* moons of JUPITER */
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 520L / 100;
+					EarthRadius * 520L / 100;
 				switch (moonNr)
 				{
 					case 0: /* Io */
@@ -573,7 +567,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 
 			case 5: /* moon of SATURN: Titan */
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 952L / 100;
+					EarthRadius * 952L / 100;
 				solarSys->SysInfo.PlanetInfo.AtmoDensity = 160;
 				solarSys->SysInfo.PlanetInfo.Weather = 2;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 34;
@@ -585,7 +579,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 
 			case 7: /* moon of NEPTUNE: Triton */
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 2999L / 100;
+					EarthRadius * 2999L / 100;
 				solarSys->SysInfo.PlanetInfo.AtmoDensity = 10;
 				solarSys->SysInfo.PlanetInfo.Weather = 1;
 				solarSys->SysInfo.PlanetInfo.PlanetDensity = 95;
@@ -604,7 +598,7 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 				solarSys->SysInfo.PlanetInfo.RotationPeriod = 1533;
 				solarSys->SysInfo.PlanetInfo.SurfaceTemperature = -220;
 				solarSys->SysInfo.PlanetInfo.PlanetToSunDist =
-					EARTH_RADIUS * 3937L / 100;
+					EarthRadius * 3937L / 100;
 				break;
 		}
 
@@ -621,34 +615,34 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 					case 2: // moon of EARTH: LUNA
 						if (moonNr == 1)
 						{
-							maskAnim = LUNA_MASK_ANIM;
+							maskAnim = LunaMaskAnimRes;
 						}
 						break;
 					case 4: // moons of JUPITER
 						switch (moonNr)
 						{
 							case 0: // IO
-								maskAnim = IO_MASK_ANIM;
+								maskAnim = IoMaskAnimRes;
 								break;
 							case 1: // EUROPA
-								maskAnim = EUROPA_MASK_ANIM;
+								maskAnim = EuropaMaskAnimRes;
 								break;
 							case 2: // GANYMEDE
-								maskAnim = GANYMEDE_MASK_ANIM;
+								maskAnim = GanymedeMaskAnimRes;
 								break;
 							case 3: // CALLISTO
-								maskAnim = CALLISTO_MASK_ANIM;
+								maskAnim = CallistoMaskAnimRes;
 								break;
 						}
 						break;
 					case 5: // moon of SATURN: TITAN
-						maskAnim = TITAN_MASK_ANIM;
+						maskAnim = TitanMaskAnimRes;
 						break;
 					case 7: // moon of NEPTUNE : TRITON
-						maskAnim = TRITON_MASK_ANIM;
+						maskAnim = TritonMaskAnimRes;
 						break;
 					case 8: // moon of PLUTO: CHARON
-						maskAnim = CHARON_MASK_ANIM;
+						maskAnim = CharonMaskAnimRes;
 						break;
 				}
 			}
@@ -659,17 +653,16 @@ GenerateSol_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 	return true;
 }
 
-static uint16_t
-GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
-							 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
+											 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (EXTENDED && matchWorld(solarSys, world, 8, 0))
+	if (IsExtended() && matchWorld(solarSys, world, 8, 0))
 	{
 		/* Pluto's Moon, Charon */
 		return CustomMineralDeposits(&solarSys->SysInfo, whichNode, info,
 									 5, CHARON_DUST, LIGHT);
 	}
-	else if (!uqm::isOriginalSeed() && matchWorld(solarSys, world, 0, MATCH_PLANET))
+	else if (!uqm::isOriginalSeed() && matchWorld(solarSys, world, 0, MatchPlanet))
 	{
 		/* Mercury */
 		return CustomMineralDeposits(&solarSys->SysInfo, whichNode, info,
@@ -682,25 +675,24 @@ GenerateSol_generateMinerals(const SOLARSYS_STATE* solarSys,
 }
 
 
-static uint16_t
-GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
-						   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
+										   const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
-	if (matchWorld(solarSys, world, 8, MATCH_PLANET))
+	if (matchWorld(solarSys, world, 8, MatchPlanet))
 	{
 		/* Pluto */
 		// This check is needed because the retrieval bit is not set for
 		// this node to keep it on the surface while the lander is taking
 		// off
-		if (GET_GAME_STATE(FOUND_PLUTO_SPATHI))
+		if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI))
 		{ // already picked up
 			return 0;
 		}
 
 		if (info)
 		{
-			info->loc_pt.x = RES_SCALE(20);
-			info->loc_pt.y = MAP_HEIGHT - RES_SCALE(8);
+			info->loc_pt.x = ResScale(20);
+			info->loc_pt.y = MapHeight() - ResScale(8);
 		}
 
 		return 1; // only matters when count is requested
@@ -711,15 +703,15 @@ GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
 		/* Earth Moon */
 		// This check is redundant since the retrieval bit will keep the
 		// node from showing up again
-		if (GET_GAME_STATE(MOONBASE_DESTROYED))
+		if (uqm::gameState().flag(uqm::GameFlag::MOONBASE_DESTROYED))
 		{ // already picked up
 			return 0;
 		}
 
 		if (info)
 		{
-			info->loc_pt.x = SCALED_MAP_WIDTH * 3 / 4;
-			info->loc_pt.y = MAP_HEIGHT * 1 / 4;
+			info->loc_pt.x = ScaledMapWidth() * 3 / 4;
+			info->loc_pt.y = MapHeight() * 1 / 4;
 		}
 
 		return 1; // only matters when count is requested
@@ -729,22 +721,22 @@ GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
 	return 0;
 }
 
-static bool
-GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
-						 uint16_t whichNode)
-{
-	if (matchWorld(solarSys, world, 8, MATCH_PLANET))
-	{ // Pluto
-		assert(!GET_GAME_STATE(FOUND_PLUTO_SPATHI) && whichNode == 0);
+static constexpr auto FwiffoFrags {8};
 
-// Ran into Fwiffo on Pluto
-#define FWIFFO_FRAGS 8
-		if (!KillLanderCrewSeq(FWIFFO_FRAGS, c_gameSecond / 20))
+static bool GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
+									 uint16_t whichNode)
+{
+	if (matchWorld(solarSys, world, 8, MatchPlanet))
+	{ // Pluto
+		assert(!uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) && whichNode == 0);
+
+		// Ran into Fwiffo on Pluto
+		if (!KillLanderCrewSeq(FwiffoFrags, c_gameSecond / 20))
 		{
 			return false; // lander probably died
 		}
 
-		SET_GAME_STATE(FOUND_PLUTO_SPATHI, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::FOUND_PLUTO_SPATHI, static_cast<uint32_t>(1));
 
 		GenerateDefault_landerReport(solarSys);
 		SetLanderTakeoff();
@@ -757,7 +749,7 @@ GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 
 	if (matchWorld(solarSys, world, 2, 1))
 	{ // Earth Moon
-		assert(!GET_GAME_STATE(MOONBASE_DESTROYED) && whichNode == 0);
+		assert(!uqm::gameState().flag(uqm::GameFlag::MOONBASE_DESTROYED) && whichNode == 0);
 
 		GenerateDefault_landerReport(solarSys);
 
@@ -765,8 +757,8 @@ GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 		{
 			SetLanderTakeoff();
 
-			SET_GAME_STATE(MOONBASE_DESTROYED, 1);
-			SET_GAME_STATE(MOONBASE_ON_SHIP, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::MOONBASE_DESTROYED, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::MOONBASE_ON_SHIP, static_cast<uint32_t>(1));
 
 			return true; // picked up
 		}
@@ -780,38 +772,36 @@ GenerateSol_pickupEnergy(SOLARSYS_STATE* solarSys, PLANET_DESC* world,
 	return false;
 }
 
-static uint16_t
-GenerateSol_generateLife(const SOLARSYS_STATE* solarSys,
-						 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
+static uint16_t GenerateSol_generateLife(const SOLARSYS_STATE* solarSys,
+										 const PLANET_DESC* world, uint16_t whichNode, NODE_INFO* info)
 {
 	if (matchWorld(solarSys, world, 2, 1))
 	{
 		/* Earth Moon */
 		return GenerateRandomNodes(&solarSys->SysInfo, BIOLOGICAL_SCAN,
-								   10, BRAINBOX_BULLDOZER, whichNode, info);
+								   10, BrainboxBulldozer, whichNode, info);
 	}
 
 	return 0;
 }
 
 
-static int
-init_probe(void)
+static int init_probe(void)
 {
 	HIPGROUP hGroup {};
 
-	if (!GET_GAME_STATE(PROBE_MESSAGE_DELIVERED)
-		&& GetGroupInfo(GLOBAL(BattleGroupRef), GROUP_INIT_IP)
-		&& (hGroup = GetHeadLink(&GLOBAL(ip_group_q))))
+	if (!uqm::gameState().flag(uqm::GameFlag::PROBE_MESSAGE_DELIVERED)
+		&& GetGroupInfo(uqm::gameState().game().BattleGroupRef, GroupInitIp)
+		&& (hGroup = GetHeadLink(&uqm::gameState().game().ip_group_q)))
 	{
-		IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+		IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 		GroupPtr->task = IN_ORBIT;
 		GroupPtr->sys_loc = 2 + 1;	/* orbitting earth */
 		GroupPtr->dest_loc = 2 + 1; /* orbitting earth */
 		GroupPtr->loc.x = 0;
 		GroupPtr->loc.y = 0;
 		GroupPtr->group_counter = 0;
-		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+		UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 
 		return 1;
 	}
@@ -821,21 +811,20 @@ init_probe(void)
 	}
 }
 
-static void
-check_probe(void)
+static void check_probe(void)
 {
-	if (!GLOBAL(BattleGroupRef))
+	if (!uqm::gameState().game().BattleGroupRef)
 	{
 		return; // nothing to check
 	}
 
-	HIPGROUP hGroup {GetHeadLink(&GLOBAL(ip_group_q))};
+	HIPGROUP hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
 	if (!hGroup)
 	{
 		return; // still nothing to check
 	}
 
-	IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+	IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
 	if (GroupPtr->race_id == URQUAN_DRONE_SHIP
@@ -846,5 +835,5 @@ check_probe(void)
 		GroupPtr->task = FLEE | IGNORE_FLAGSHIP;
 		GroupPtr->dest_loc = 0;
 	}
-	UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+	UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 }

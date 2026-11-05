@@ -61,41 +61,40 @@ const GenerateFunctions generateShofixtiFunctions = {
 };
 
 
-static bool
-GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
 {
-	if (!GET_GAME_STATE(SHOFIXTI_RECRUITED)
-		&& (!GET_GAME_STATE(SHOFIXTI_KIA)
-			|| (!GET_GAME_STATE(SHOFIXTI_BRO_KIA)
-				&& GET_GAME_STATE(MAIDENS_ON_SHIP))))
+	if (!uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_RECRUITED)
+		&& (!uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_KIA)
+			|| (!uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_BRO_KIA)
+				&& uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP))))
 	{
-		GLOBAL(BattleGroupRef) = GET_GAME_STATE(SHOFIXTI_GRPOFFS);
-		if (GLOBAL(BattleGroupRef) == 0
-			|| !GetGroupInfo(GLOBAL(BattleGroupRef), GROUP_INIT_IP))
+		uqm::gameState().game().BattleGroupRef = uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_GRPOFFS);
+		if (uqm::gameState().game().BattleGroupRef == 0
+			|| !GetGroupInfo(uqm::gameState().game().BattleGroupRef, GroupInitIp))
 		{
 			HSHIPFRAG hStarShip {};
 
-			if (GLOBAL(BattleGroupRef) == 0)
+			if (uqm::gameState().game().BattleGroupRef == 0)
 			{
-				GLOBAL(BattleGroupRef) = ~0L;
+				uqm::gameState().game().BattleGroupRef = ~0L;
 			}
 
 			hStarShip = CloneShipFragment(SHOFIXTI_SHIP,
-										  &GLOBAL(npc_built_ship_q), 1);
+										  &uqm::gameState().game().npc_built_ship_q, 1);
 			if (hStarShip)
 			{ /* Set old Shofixti name; his brother if Tanaka died */
 				SHIP_FRAGMENT* FragPtr = LockShipFrag(
-					&GLOBAL(npc_built_ship_q), hStarShip);
+					&uqm::gameState().game().npc_built_ship_q, hStarShip);
 				/* Name Tanaka or Katana (+1) */
 				FragPtr->captains_name_index =
-					NAME_OFFSET + NUM_CAPTAINS_NAMES + (GET_GAME_STATE(SHOFIXTI_KIA) & 1);
-				UnlockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
+					NameOffset + NumCaptainsNames + (uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_KIA) & 1);
+				UnlockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip);
 			}
 
-			GLOBAL(BattleGroupRef) = PutGroupInfo(
-				GLOBAL(BattleGroupRef), 1);
-			ReinitQueue(&GLOBAL(npc_built_ship_q));
-			SET_GAME_STATE(SHOFIXTI_GRPOFFS, GLOBAL(BattleGroupRef));
+			uqm::gameState().game().BattleGroupRef = PutGroupInfo(
+				uqm::gameState().game().BattleGroupRef, 1);
+			ReinitQueue(&uqm::gameState().game().npc_built_ship_q);
+			uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_GRPOFFS, static_cast<uint32_t>(uqm::gameState().game().BattleGroupRef));
 		}
 	}
 
@@ -107,8 +106,7 @@ GenerateShofixti_initNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateShofixti_reinitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateShofixti_reinitNpcs(SOLARSYS_STATE* solarSys)
 {
 	GenerateDefault_reinitNpcs(solarSys);
 	check_old_shofixti();
@@ -117,25 +115,24 @@ GenerateShofixti_reinitNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateShofixti_uninitNpcs(SOLARSYS_STATE* solarSys)
+static bool GenerateShofixti_uninitNpcs(SOLARSYS_STATE* solarSys)
 {
-	if (GLOBAL(BattleGroupRef)
-		&& !GET_GAME_STATE(SHOFIXTI_RECRUITED)
-		&& GetHeadLink(&GLOBAL(ip_group_q)) == 0)
+	if (uqm::gameState().game().BattleGroupRef
+		&& !uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_RECRUITED)
+		&& GetHeadLink(&uqm::gameState().game().ip_group_q) == 0)
 	{
-		if (!GET_GAME_STATE(SHOFIXTI_KIA))
+		if (!uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_KIA))
 		{
-			SET_GAME_STATE(SHOFIXTI_KIA, 1);
-			SET_GAME_STATE(SHOFIXTI_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_KIA, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_VISITS, static_cast<uint32_t>(0));
 			if (isDifficulty(uqm::Difficulty::Hard))
 			{
-				SET_GAME_STATE(SHOFIXTI_BRO_KIA, 1);
+				uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_BRO_KIA, static_cast<uint32_t>(1));
 			}
 		}
-		else if (GET_GAME_STATE(MAIDENS_ON_SHIP))
+		else if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP))
 		{
-			SET_GAME_STATE(SHOFIXTI_BRO_KIA, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::SHOFIXTI_BRO_KIA, static_cast<uint32_t>(1));
 		}
 	}
 
@@ -143,8 +140,9 @@ GenerateShofixti_uninitNpcs(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
+static constexpr auto NumPlanets {6};
+
+static bool GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 {
 	PLANET_DESC* pSunDesc = &solarSys->SunDesc[0];
 	uint16_t i {};
@@ -154,14 +152,13 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 
 	if (uqm::isOriginalSeed())
 	{
-#define NUM_PLANETS 6
-		pSunDesc->NumPlanets = NUM_PLANETS;
-		for (i = 0; i < NUM_PLANETS; ++i)
+		pSunDesc->NumPlanets = NumPlanets;
+		for (i = 0; i < NumPlanets; ++i)
 		{
 			PLANET_DESC* pCurDesc = &solarSys->PlanetDesc[i];
 
 			pCurDesc->NumPlanets = 0;
-			if (i < (NUM_PLANETS >> 1))
+			if (i < (NumPlanets >> 1))
 			{
 				pCurDesc->data_index = SELENIC_WORLD;
 			}
@@ -171,7 +168,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 			}
 		}
 
-		FillOrbits(solarSys, NUM_PLANETS, solarSys->PlanetDesc, true);
+		FillOrbits(solarSys, NumPlanets, solarSys->PlanetDesc, true);
 	}
 	else
 	{
@@ -184,7 +181,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 			pSunDesc->NumPlanets = 9;
 		}
 
-		FillOrbits(solarSys, NUMPLANETS_PDESC, nullptr, false);
+		FillOrbits(solarSys, NumplanetsPdesc, nullptr, false);
 
 		if (uqm::isStarSeed())
 		{
@@ -194,7 +191,7 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 		// The only benefit to pre-stamping is that it shuffles them.
 		// But this causes problems when the star is orange, due to metal
 		// type. Easier to seed them then stamp them in a shuffled loop so
-		// that all types work. This relies on MAX_PLANETS <= 9 for
+		// that all types work. This relies on MaxPlanets <= 9 for
 		// randomness to work, otherwise you'll have to count the bitshifts
 		// and re-random every 4th time.
 		for (i = 0; i < pSunDesc->NumPlanets; ++i)
@@ -227,13 +224,12 @@ GenerateShofixti_generatePlanets(SOLARSYS_STATE* solarSys)
 	return true;
 }
 
-static bool
-GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
-							   PLANET_DESC* planet)
+static bool GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
+										   PLANET_DESC* planet)
 {
 	GenerateDefault_generateMoons(solarSys, planet);
 
-	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, planet, MATCH_PBYTE, MATCH_PLANET))
+	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, planet, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t MoonByte = solarSys->SunDesc[0].MoonByte;
 		PLANET_DESC* pMoonDesc = &solarSys->MoonDesc[MoonByte];
@@ -244,32 +240,30 @@ GenerateShofixti_generateMoons(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static bool
-GenerateShofixti_generateName(const SOLARSYS_STATE* solarSys,
-							  const PLANET_DESC* world)
+static bool GenerateShofixti_generateName(const SOLARSYS_STATE* solarSys,
+										  const PLANET_DESC* world)
 {
 	GenerateDefault_generateName(solarSys, world);
 
-	if (matchWorld(solarSys, world, MATCH_PBYTE, MATCH_PLANET))
+	if (matchWorld(solarSys, world, MatchPbyte, MatchPlanet))
 	{
 		const uint8_t PlanetByte = solarSys->SunDesc[0].PlanetByte;
 		const PLANET_DESC pPlanetDesc = solarSys->PlanetDesc[PlanetByte];
 
-		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
-							sizeof(GLOBAL_SIS(PlanetName)),
-							GAME_STRING(PLANET_NUMBER_BASE + 35));
+		uqm::utf8StringCopy(uqm::gameState().sis().PlanetName,
+							sizeof(uqm::gameState().sis().PlanetName),
+							GameString(PLANET_NUMBER_BASE + 35));
 
-		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
+		uqm::gameState().setFlag(uqm::GameFlag::BATTLE_PLANET, static_cast<uint32_t>(pPlanetDesc.data_index));
 	}
 
 	return true;
 }
 
-static bool
-GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
-								 PLANET_DESC* world)
+static bool GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
+											 PLANET_DESC* world)
 {
-	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, world, MATCH_PBYTE, MATCH_MBYTE))
+	if (getNomadMode() != uqm::NomadMode::Off && matchWorld(solarSys, world, MatchPbyte, MatchMbyte))
 	{
 		if (CheckAlliance(SHOFIXTI_SHIP) == GOOD_GUY)
 		{
@@ -279,7 +273,7 @@ GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 
 			LoadStdLanderFont(&solarSys->SysInfo.PlanetInfo);
 
-			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(SHOFIXTI_BASE_STRTAB);
+			solarSys->SysInfo.PlanetInfo.DiscoveryStrings = uqm::loadStringTable(ShofixtiBaseStrtabRes);
 			solarSys->SysInfo.PlanetInfo.DiscoveryIndex = Index;
 
 			DoDiscoveryReport(MenuSounds);
@@ -301,29 +295,28 @@ GenerateShofixti_generateOrbital(SOLARSYS_STATE* solarSys,
 	return true;
 }
 
-static void
-check_old_shofixti(void)
+static void check_old_shofixti(void)
 {
-	if (!GLOBAL(BattleGroupRef))
+	if (!uqm::gameState().game().BattleGroupRef)
 	{
 		return; // nothing to check
 	}
 
-	HIPGROUP hGroup {GetHeadLink(&GLOBAL(ip_group_q))};
+	HIPGROUP hGroup {GetHeadLink(&uqm::gameState().game().ip_group_q)};
 	if (!hGroup)
 	{
 		return; // still nothing to check
 	}
 
-	IP_GROUP* GroupPtr {LockIpGroup(&GLOBAL(ip_group_q), hGroup)};
+	IP_GROUP* GroupPtr {LockIpGroup(&uqm::gameState().game().ip_group_q, hGroup)};
 	// REFORM_GROUP was set in ipdisp.c:ip_group_collision()
 	// during a collision with the flagship.
 	if (GroupPtr->race_id == SHOFIXTI_SHIP
 		&& (GroupPtr->task & REFORM_GROUP)
-		&& GET_GAME_STATE(SHOFIXTI_RECRUITED))
+		&& uqm::gameState().flag(uqm::GameFlag::SHOFIXTI_RECRUITED))
 	{
 		GroupPtr->task = FLEE | IGNORE_FLAGSHIP | REFORM_GROUP;
 		GroupPtr->dest_loc = 0;
 	}
-	UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
+	UnlockIpGroup(&uqm::gameState().game().ip_group_q, hGroup);
 }

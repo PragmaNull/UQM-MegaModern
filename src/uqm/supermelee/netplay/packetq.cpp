@@ -29,15 +29,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-static inline PacketQueueLink*
-PacketQueueLink_alloc(void)
+static inline PacketQueueLink* PacketQueueLink_alloc(void)
 {
 	// XXX: perhaps keep a pool of links?
 	return (PacketQueueLink*)malloc(sizeof(PacketQueueLink));
 }
 
-static inline void
-PacketQueueLink_delete(PacketQueueLink* link)
+static inline void PacketQueueLink_delete(PacketQueueLink* link)
 {
 	free(link);
 }
@@ -50,8 +48,7 @@ void PacketQueue_init(PacketQueue* queue)
 	queue->end = &queue->first;
 }
 
-static void
-PacketQueue_deleteLinks(PacketQueueLink* link)
+static void PacketQueue_deleteLinks(PacketQueueLink* link)
 {
 	while (link != nullptr)
 	{
@@ -107,8 +104,7 @@ void queuePacket(NetConnection* conn, Packet* packet)
 
 // If an error occurs during sending, we leave the unsent packets in
 // the queue, and let the caller decide what to do with them.
-static NetResult
-flushPacketQueueLinks(NetConnection* conn, PacketQueueLink** first)
+static NetResult flushPacketQueueLinks(NetConnection* conn, PacketQueueLink** first)
 {
 	PacketQueueLink* link {};
 	PacketQueueLink* next {};

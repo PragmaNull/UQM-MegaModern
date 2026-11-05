@@ -29,10 +29,10 @@ static uint8_t LastPriority;
 
 void ToggleMusic(void)
 {
-	uqm::globalFlags() ^= MUSIC_DISABLED;
+	uqm::globalFlags() ^= MusicDisabled;
 	if (LastPriority <= 1)
 	{
-		if (uqm::globalFlags() & MUSIC_DISABLED)
+		if (uqm::globalFlags() & MusicDisabled)
 		{
 			PLRStop(LastMusicRef);
 		}
@@ -54,7 +54,7 @@ void PlayMusic(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority)
 		Priority > 1
 		||
 #endif /* NEVER */
-		!(uqm::globalFlags() & MUSIC_DISABLED))
+		!(uqm::globalFlags() & MusicDisabled))
 	{
 		PLRPlaySong(MusicRef, Continuous, Priority);
 	}
@@ -83,7 +83,7 @@ void PauseMusic(void)
 
 void PlayMusicResume(MUSIC_REF MusicRef, uint8_t Volume)
 {
-	SetMusicVolume(MUTE_VOLUME);
+	SetMusicVolume(MuteVolume);
 	PlayMusic(MusicRef, true, 1);
 
 	if (OkayToResume())
@@ -99,15 +99,15 @@ void PlayMusicResume(MUSIC_REF MusicRef, uint8_t Volume)
 
 void ToggleSoundEffect(void)
 {
-	uqm::globalFlags() ^= SOUND_DISABLED;
+	uqm::globalFlags() ^= SoundDisabled;
 }
 
 void PlaySoundEffect(SOUND S, uint16_t Channel, SoundPosition Pos,
 					 void* PositionalObject, uint8_t Priority)
 {
-	if (!(uqm::globalFlags() & SOUND_DISABLED))
+	if (!(uqm::globalFlags() & SoundDisabled))
 	{
-		SetChannelVolume(Channel, MAX_VOLUME >> 1, Priority);
+		SetChannelVolume(Channel, MaxVolume >> 1, Priority);
 		//SetChannelRate (Channel, GetSampleRate (S), Priority);
 		PlayChannel(Channel, S, Pos, PositionalObject, Priority);
 	}
@@ -115,7 +115,7 @@ void PlaySoundEffect(SOUND S, uint16_t Channel, SoundPosition Pos,
 
 void PlaySpeechEffect(SOUND S, SoundPosition Pos, void* PositionalObject, uint8_t Priority)
 {
-	if (!(uqm::globalFlags() & SOUND_DISABLED))
+	if (!(uqm::globalFlags() & SoundDisabled))
 	{
 		PlayChannel(6, S, Pos, PositionalObject, Priority);
 	}

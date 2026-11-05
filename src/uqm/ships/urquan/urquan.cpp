@@ -27,59 +27,57 @@
 #include <stdlib.h>
 
 // Core characteristics
-#define MAX_CREW MAX_CREW_SIZE
-#define MAX_ENERGY MAX_ENERGY_SIZE
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 4
-#define MAX_THRUST 30
-#define THRUST_INCREMENT 6
-#define THRUST_WAIT 6
-#define TURN_WAIT 4
-#define SHIP_MASS 10
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {4};
+static constexpr auto MaxThrust {30};
+static constexpr auto ThrustIncrement {6};
+static constexpr auto ThrustWait {6};
+static constexpr auto TurnWait {4};
+static constexpr auto ShipMass {10};
 
 // Fusion blast
-#define WEAPON_ENERGY_COST 6
-#define WEAPON_WAIT 6
-#define MISSILE_SPEED DISPLAY_TO_WORLD(20)
-#define MISSILE_LIFE 20
-#define MISSILE_HITS 10
-#define MISSILE_DAMAGE 6
-#define MISSILE_OFFSET chooseIfHd(8, 21)
-#define URQUAN_OFFSET RES_SCALE(32)
+static constexpr auto WeaponEnergyCost {6};
+static constexpr auto WeaponWait {6};
+static constexpr auto MissileSpeed {DisplayToWorld(20)};
+static constexpr auto MissileLife {20};
+static constexpr auto MissileHits {10};
+static constexpr auto MissileDamage {6};
+static auto MissileOffset() { return chooseIfHd(8, 21); }
+static auto UrquanOffset() { return ResScale(32); }
 
 // Fighters
-#define SPECIAL_ENERGY_COST 8
-#define SPECIAL_WAIT 9
-#define FIGHTER_OFFSET RES_SCALE(4)
-#define FIGHTER_SPEED DISPLAY_TO_WORLD(RES_SCALE(8))
-#define ONE_WAY_FLIGHT 125
-#define TRACK_THRESHOLD 6
-#define FIGHTER_LIFE (ONE_WAY_FLIGHT + ONE_WAY_FLIGHT + 150)
-#define FIGHTER_HITS 1
-#define FIGHTER_MASS 0
-#define FIGHTER_WEAPON_WAIT 8
-#define FIGHTER_LASER_RANGE DISPLAY_TO_WORLD(RES_SCALE(40) + FIGHTER_OFFSET)
-#define ION_LIFE 1
-#define START_ION_COLOR BUILD_COLOR_RGBA(0xfc, 0xb8, 0xfc, 0xff)
+static constexpr auto SpecialEnergyCost {8};
+static constexpr auto SpecialWait {9};
+static auto FighterOffset() { return ResScale(4); }
+static auto FighterSpeed() { return DisplayToWorld(ResScale(8)); }
+static constexpr auto OneWayFlight {125};
+static constexpr auto TrackThreshold {6};
+static constexpr auto FighterLife {(OneWayFlight + OneWayFlight + 150)};
+static constexpr auto FighterHits {1};
+static constexpr auto FighterMass {0};
+static constexpr auto FighterWeaponWait {8};
+static auto FighterLaserRange() { return DisplayToWorld(ResScale(40) + FighterOffset()); }
+static constexpr auto IonLife {1};
+static constexpr auto StartIonColor {BuildColorRgba(0xfc, 0xb8, 0xfc, 0xff)};
 
-// HD
-#define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
+// HdResolutionFactor
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
 static RACE_DESC urquan_desc =
 	{
 		{/* SHIP_INFO */
 		 "dreadnought",
-		 FIRES_FORE | SEEKING_SPECIAL,
+		 FiresFore | SeekingSpecial,
 		 30, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 URQUAN_RACE_STRINGS,
-		 URQUAN_ICON_MASK_PMAP_ANIM,
-		 URQUAN_MICON_MASK_PMAP_ANIM,
+		 MaxCrewSize, MaxCrewSize,
+		 MaxEnergySize, MaxEnergySize,
+		 UrquanRaceStrings,
+		 UrquanIconMaskPmapAnim,
+		 UrquanMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			2666 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			2666 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				5750,
@@ -87,38 +85,38 @@ static RACE_DESC urquan_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 URQUAN_BIG_MASK_PMAP_ANIM,
-			 URQUAN_MED_MASK_PMAP_ANIM,
-			 URQUAN_SML_MASK_PMAP_ANIM,
+			 UrquanBigMaskPmapAnim,
+			 UrquanMedMaskPmapAnim,
+			 UrquanSmlMaskPmapAnim,
 		 },
 		 {
-			 FUSION_BIG_MASK_PMAP_ANIM,
-			 FUSION_MED_MASK_PMAP_ANIM,
-			 FUSION_SML_MASK_PMAP_ANIM,
+			 FusionBigMaskPmapAnim,
+			 FusionMedMaskPmapAnim,
+			 FusionSmlMaskPmapAnim,
 		 },
 		 {
-			 FIGHTER_BIG_MASK_PMAP_ANIM,
-			 FIGHTER_MED_MASK_PMAP_ANIM,
-			 FIGHTER_SML_MASK_PMAP_ANIM,
+			 FighterBigMaskPmapAnim,
+			 FighterMedMaskPmapAnim,
+			 FighterSmlMaskPmapAnim,
 		 },
-		 {URQUAN_CAPTAIN_MASK_PMAP_ANIM,
+		 {UrquanCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 URQUAN_VICTORY_SONG,
-		 URQUAN_SHIP_SOUNDS,
+		 UrquanVictorySong,
+		 UrquanShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -126,7 +124,7 @@ static RACE_DESC urquan_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_SPEED * MISSILE_LIFE,
+			MissileSpeed * MissileLife,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -137,8 +135,7 @@ static RACE_DESC urquan_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t
-initialize_fusion(ELEMENT* ShipPtr, HELEMENT FusionArray[])
+static uint16_t initialize_fusion(ELEMENT* ShipPtr, HELEMENT FusionArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -149,21 +146,20 @@ initialize_fusion(ELEMENT* ShipPtr, HELEMENT FusionArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
-	MissileBlock.pixoffs = URQUAN_OFFSET;
-	MissileBlock.speed = MISSILE_SPEED_HD;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.pixoffs = UrquanOffset();
+	MissileBlock.speed = MissileSpeedHd();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset();
 	FusionArray[0] = initialize_missile(&MissileBlock);
 
 	return (1);
 }
 
-static void
-fighter_postprocess(ELEMENT* ElementPtr)
+static void fighter_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 	LASER_BLOCK LaserBlock;
@@ -172,12 +168,12 @@ fighter_postprocess(ELEMENT* ElementPtr)
 	LaserBlock.cx = ElementPtr->next.location.x;
 	LaserBlock.cy = ElementPtr->next.location.y;
 	LaserBlock.face = ElementPtr->thrust_wait;
-	LaserBlock.ex = COSINE(FACING_TO_ANGLE(LaserBlock.face), FIGHTER_LASER_RANGE);
-	LaserBlock.ey = SINE(FACING_TO_ANGLE(LaserBlock.face), FIGHTER_LASER_RANGE);
+	LaserBlock.ex = Cosine(FacingToAngle(LaserBlock.face), FighterLaserRange());
+	LaserBlock.ey = Sine(FacingToAngle(LaserBlock.face), FighterLaserRange());
 	LaserBlock.sender = ElementPtr->playerNr;
-	LaserBlock.flags = IGNORE_SIMILAR;
-	LaserBlock.pixoffs = FIGHTER_OFFSET;
-	LaserBlock.color = BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x0A), 0x0E);
+	LaserBlock.flags = IgnoreSimilar;
+	LaserBlock.pixoffs = FighterOffset();
+	LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E);
 	HELEMENT Laser {initialize_laser(&LaserBlock)};
 	if (Laser)
 	{
@@ -196,7 +192,7 @@ fighter_postprocess(ELEMENT* ElementPtr)
 	}
 
 	ElementPtr->postprocess_func = 0;
-	ElementPtr->thrust_wait = FIGHTER_WEAPON_WAIT;
+	ElementPtr->thrust_wait = FighterWeaponWait;
 }
 
 //static void
@@ -204,10 +200,10 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //{
 //	static const Color colorTable[] =
 //	{
-//		MAKE_RGBA_INIT(0xfc, 0x7c, 0xfc, 0xff),
-//		MAKE_RGBA_INIT(0xfc, 0x40, 0xfc, 0xff),
-//		MAKE_RGBA_INIT(0xd0, 0x14, 0xd0, 0xff),
-//		MAKE_RGBA_INIT(0x90, 0x08, 0x94, 0xff),
+//		BuildColorRgba(0xfc, 0x7c, 0xfc, 0xff),
+//		BuildColorRgba(0xfc, 0x40, 0xfc, 0xff),
+//		BuildColorRgba(0xd0, 0x14, 0xd0, 0xff),
+//		BuildColorRgba(0x90, 0x08, 0x94, 0xff),
 //	};
 //	const size_t colorTabCount = ARRAY_SIZE (colorTable);
 //
@@ -219,8 +215,8 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //		SetPrimColor (&DisplayArray[ElementPtr->PrimIndex],
 //			colorTable[ElementPtr->colorCycleIndex]);
 //
-//		ElementPtr->state_flags &= ~DISAPPEARING;
-//		ElementPtr->state_flags |= CHANGING;
+//		ElementPtr->state_flags &= ~Disappearing;
+//		ElementPtr->state_flags |= Changing;
 //	}
 //}
 
@@ -236,22 +232,22 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //		uint16_t angle;
 //		ELEMENT *IonElementPtr;
 //
-//		angle = FACING_TO_ANGLE (facing) + HALF_CIRCLE;
+//		angle = FacingToAngle (facing) + HalfCircle;
 //
 //		InsertElement (hIonElement, GetHeadElement ());
 //		LockElement (hIonElement, &IonElementPtr);
-//		IonElementPtr->playerNr = NEUTRAL_PLAYER_NUM;
-//		IonElementPtr->state_flags = APPEARING | FINITE_LIFE | NONSOLID;
-//		IonElementPtr->thrust_wait = ION_LIFE;
+//		IonElementPtr->playerNr = NeutralPlayerNum;
+//		IonElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
+//		IonElementPtr->thrust_wait = IonLife;
 //		IonElementPtr->life_span = IonElementPtr->thrust_wait;
 //		SetPrimType (&DisplayArray[IonElementPtr->PrimIndex], POINT_PRIM);
-//		SetPrimColor (&DisplayArray[IonElementPtr->PrimIndex], START_ION_COLOR);
+//		SetPrimColor (&DisplayArray[IonElementPtr->PrimIndex], StartIonColor);
 //		IonElementPtr->colorCycleIndex = 0;
 //		IonElementPtr->current.location = ElementPtr->current.location;
 //		IonElementPtr->current.location.x +=
-//				(int16_t)COSINE (angle, DISPLAY_TO_WORLD (RES_SCALE (2)));
+//				(int16_t)Cosine (angle, DisplayToWorld (ResScale (2)));
 //		IonElementPtr->current.location.y +=
-//				(int16_t)SINE (angle, DISPLAY_TO_WORLD (RES_SCALE (2)));
+//				(int16_t)Sine (angle, DisplayToWorld (ResScale (2)));
 //		IonElementPtr->death_func = ion_preprocess;
 //
 //		SetElementStarShip (IonElementPtr, StarShipPtr);
@@ -259,23 +255,22 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //		{
 //			IonElementPtr->next = IonElementPtr->current;
 //			--IonElementPtr->life_span;
-//			IonElementPtr->state_flags |= PRE_PROCESS;
+//			IonElementPtr->state_flags |= PreProcessFlag;
 //		}
 //
 //		UnlockElement (hIonElement);
 //	}
 //}
 
-static void
-fighter_preprocess(ELEMENT* ElementPtr)
+static void fighter_preprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 
 	++StarShipPtr->RaceDescPtr->characteristics.special_wait;
-	if (FIGHTER_LIFE - ElementPtr->life_span > TRACK_THRESHOLD
-		&& !(ElementPtr->state_flags & CHANGING))
+	if (FighterLife - ElementPtr->life_span > TrackThreshold
+		&& !(ElementPtr->state_flags & Changing))
 	{
 		uint16_t orig_facing {};
 		uint16_t facing {};
@@ -290,9 +285,9 @@ fighter_preprocess(ELEMENT* ElementPtr)
 			GetFrameIndex(ElementPtr->current.image.frame);
 		if (((delta_y & 1) || ElementPtr->hTarget
 			 || TrackShip(ElementPtr, &facing) >= 0)
-			&& (delta_x == 0 || delta_y >= ONE_WAY_FLIGHT))
+			&& (delta_x == 0 || delta_y >= OneWayFlight))
 		{
-			ElementPtr->state_flags |= IGNORE_SIMILAR;
+			ElementPtr->state_flags |= IgnoreSimilar;
 		}
 		else if (delta_x)
 		{
@@ -302,10 +297,10 @@ fighter_preprocess(ELEMENT* ElementPtr)
 			delta_y = eptr->current.location.y
 					- ElementPtr->current.location.y;
 			UnlockElement(StarShipPtr->hShip);
-			delta_x = WRAP_DELTA_X(delta_x);
-			delta_y = WRAP_DELTA_Y(delta_y);
-			facing = NORMALIZE_FACING(
-				ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)));
+			delta_x = WrapDeltaX(delta_x);
+			delta_y = WrapDeltaY(delta_y);
+			facing = NormalizeFacing(
+				AngleToFacing(ARCTAN(delta_x, delta_y)));
 
 #ifdef NEVER
 			if (delta_x < 0)
@@ -318,7 +313,7 @@ fighter_preprocess(ELEMENT* ElementPtr)
 			}
 			if (delta_x <= LASER_RANGE && delta_y <= LASER_RANGE)
 #endif /* NEVER */
-				ElementPtr->state_flags &= ~IGNORE_SIMILAR;
+				ElementPtr->state_flags &= ~IgnoreSimilar;
 
 			Enroute = false;
 		}
@@ -336,42 +331,42 @@ fighter_preprocess(ELEMENT* ElementPtr)
 			delta_y = eptr->current.location.y
 					- ElementPtr->current.location.y;
 			UnlockElement(ElementPtr->hTarget);
-			delta_x = WRAP_DELTA_X(delta_x);
-			delta_y = WRAP_DELTA_Y(delta_y);
+			delta_x = WrapDeltaX(delta_x);
+			delta_y = WrapDeltaY(delta_y);
 
 			if (ElementPtr->thrust_wait == 0
-				&& abs(delta_x) < FIGHTER_LASER_RANGE * 3 / 4
-				&& abs(delta_y) < FIGHTER_LASER_RANGE * 3 / 4
-				&& delta_x * delta_x + delta_y * delta_y < (FIGHTER_LASER_RANGE * 3 / 4) * (FIGHTER_LASER_RANGE * 3 / 4))
+				&& abs(delta_x) < FighterLaserRange() * 3 / 4
+				&& abs(delta_y) < FighterLaserRange() * 3 / 4
+				&& delta_x * delta_x + delta_y * delta_y < (FighterLaserRange() * 3 / 4) * (FighterLaserRange() * 3 / 4))
 			{
 				ElementPtr->thrust_wait =
-					(uint8_t)NORMALIZE_FACING(
-						ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)));
+					(uint8_t)NormalizeFacing(
+						AngleToFacing(ARCTAN(delta_x, delta_y)));
 				ElementPtr->postprocess_func = fighter_postprocess;
 			}
 
 			if (Enroute)
 			{
 				facing = GetFrameIndex(eptr->current.image.frame);
-				if (ElementPtr->turn_wait & LEFT)
+				if (ElementPtr->turn_wait & LeftFlag)
 				{
-					delta_x += COSINE(FACING_TO_ANGLE(facing - 4),
-									  DISPLAY_TO_WORLD(RES_SCALE(30)));
-					delta_y += SINE(FACING_TO_ANGLE(facing - 4),
-									DISPLAY_TO_WORLD(RES_SCALE(30)));
+					delta_x += Cosine(FacingToAngle(facing - 4),
+									  DisplayToWorld(ResScale(30)));
+					delta_y += Sine(FacingToAngle(facing - 4),
+									DisplayToWorld(ResScale(30)));
 				}
 				else
 				{
-					delta_x += COSINE(FACING_TO_ANGLE(facing + 4),
-									  DISPLAY_TO_WORLD(RES_SCALE(30)));
-					delta_y += SINE(FACING_TO_ANGLE(facing + 4),
-									DISPLAY_TO_WORLD(RES_SCALE(30)));
+					delta_x += Cosine(FacingToAngle(facing + 4),
+									  DisplayToWorld(ResScale(30)));
+					delta_y += Sine(FacingToAngle(facing + 4),
+									DisplayToWorld(ResScale(30)));
 				}
-				facing = NORMALIZE_FACING(
-					ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)));
+				facing = NormalizeFacing(
+					AngleToFacing(ARCTAN(delta_x, delta_y)));
 			}
 		}
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 
 		if (facing != orig_facing)
 		{
@@ -379,19 +374,18 @@ fighter_preprocess(ELEMENT* ElementPtr)
 				ElementPtr->next.image.frame, facing);
 		}
 		SetVelocityVector(
-			&ElementPtr->velocity, FIGHTER_SPEED, facing);
+			&ElementPtr->velocity, FighterSpeed(), facing);
 		//spawn_fighter_ion_trail (ElementPtr, StarShipPtr, facing);
 	}
 }
 
-static void
-fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
-				  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
+static void fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
+							  ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr0, &StarShipPtr);
-	if (GRAVITY_MASS(ElementPtr1->mass_points))
+	if (GravityMass(ElementPtr1->mass_points))
 	{
 		HELEMENT hFighterElement {AllocElement()};
 		if (hFighterElement)
@@ -406,78 +400,77 @@ fighter_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			FighterElementPtr->PrimIndex = primIndex;
 			DisplayArray[primIndex] =
 				DisplayArray[ElementPtr0->PrimIndex];
-			FighterElementPtr->state_flags &= ~PRE_PROCESS;
-			FighterElementPtr->state_flags |= CHANGING;
+			FighterElementPtr->state_flags &= ~PreProcessFlag;
+			FighterElementPtr->state_flags |= Changing;
 			FighterElementPtr->next = FighterElementPtr->current;
 			travel_facing = GetVelocityTravelAngle(
 				&FighterElementPtr->velocity);
-			delta_facing = NORMALIZE_ANGLE(
+			delta_facing = NormalizeAngle(
 				ARCTAN(pPt1->x - pPt0->x, pPt1->y - pPt0->y)
 				- travel_facing);
 			if (delta_facing == 0)
 			{
-				if (FighterElementPtr->turn_wait & LEFT)
+				if (FighterElementPtr->turn_wait & LeftFlag)
 				{
-					travel_facing -= QUADRANT;
+					travel_facing -= Quadrant;
 				}
 				else
 				{
-					travel_facing += QUADRANT;
+					travel_facing += Quadrant;
 				}
 			}
-			else if (delta_facing <= HALF_CIRCLE)
+			else if (delta_facing <= HalfCircle)
 			{
-				travel_facing -= QUADRANT;
+				travel_facing -= Quadrant;
 			}
 			else
 			{
-				travel_facing += QUADRANT;
+				travel_facing += Quadrant;
 			}
 
-			travel_facing = NORMALIZE_FACING(ANGLE_TO_FACING(
-				NORMALIZE_ANGLE(travel_facing)));
+			travel_facing = NormalizeFacing(AngleToFacing(
+				NormalizeAngle(travel_facing)));
 			FighterElementPtr->next.image.frame =
 				SetAbsFrameIndex(FighterElementPtr->next.image.frame,
 								 travel_facing);
 			SetVelocityVector(&FighterElementPtr->velocity,
-							  FIGHTER_SPEED, travel_facing);
+							  FighterSpeed(), travel_facing);
 			UnlockElement(hFighterElement);
 
 			PutElement(hFighterElement);
 		}
 
-		ElementPtr0->state_flags |= DISAPPEARING | COLLISION;
+		ElementPtr0->state_flags |= Disappearing | Collision;
 	}
 	else if (ElementPtr0->pParent != ElementPtr1->pParent)
 	{
 		ElementPtr0->blast_offset = 0;
 		weapon_collision(ElementPtr0, pPt0, ElementPtr1, pPt1);
-		ElementPtr0->state_flags |= DISAPPEARING | COLLISION;
+		ElementPtr0->state_flags |= Disappearing | Collision;
 	}
-	else if (ElementPtr1->state_flags & PLAYER_SHIP)
+	else if (ElementPtr1->state_flags & PlayerShip)
 	{
 		ProcessSound(GetSound(
 						 /* FIGHTERS_RETURN */
 						 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 3),
 					 ElementPtr1);
 		DeltaCrew(ElementPtr1, 1);
-		ElementPtr0->state_flags |= DISAPPEARING | COLLISION;
+		ElementPtr0->state_flags |= Disappearing | Collision;
 	}
 
-	if (ElementPtr0->state_flags & DISAPPEARING)
+	if (ElementPtr0->state_flags & Disappearing)
 	{
-		ElementPtr0->state_flags &= ~DISAPPEARING;
+		ElementPtr0->state_flags &= ~Disappearing;
 
 		ElementPtr0->hit_points = 0;
 		ElementPtr0->life_span = 0;
-		ElementPtr0->state_flags |= NONSOLID;
+		ElementPtr0->state_flags |= Nonsolid;
 
 		--StarShipPtr->RaceDescPtr->characteristics.special_wait;
 	}
 }
 
-static void
-spawn_fighters(ELEMENT* ElementPtr)
+static void spawn_fighters(ELEMENT* ElementPtr)
 {
 	int16_t i {};
 	uint16_t facing {};
@@ -485,9 +478,9 @@ spawn_fighters(ELEMENT* ElementPtr)
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	facing = StarShipPtr->ShipFacing + ANGLE_TO_FACING(HALF_CIRCLE);
-	const int32_t delta_x {COSINE(FACING_TO_ANGLE(facing), DISPLAY_TO_WORLD(RES_SCALE(14)))};
-	const int32_t delta_y {SINE(FACING_TO_ANGLE(facing), DISPLAY_TO_WORLD(RES_SCALE(14)))};
+	facing = StarShipPtr->ShipFacing + AngleToFacing(HalfCircle);
+	const int32_t delta_x {Cosine(FacingToAngle(facing), DisplayToWorld(ResScale(14)))};
+	const int32_t delta_y {Sine(FacingToAngle(facing), DisplayToWorld(ResScale(14)))};
 
 	i = ElementPtr->crew_level > 2 ? 2 : 1;
 	while (i-- && (hFighterElement = AllocElement()))
@@ -504,13 +497,13 @@ spawn_fighters(ELEMENT* ElementPtr)
 
 		PutElement(hFighterElement);
 		LockElement(hFighterElement, &FighterElementPtr);
-		FighterElementPtr->hit_points = FIGHTER_HITS;
-		FighterElementPtr->mass_points = FIGHTER_MASS;
-		FighterElementPtr->thrust_wait = TRACK_THRESHOLD + 1;
+		FighterElementPtr->hit_points = FighterHits;
+		FighterElementPtr->mass_points = FighterMass;
+		FighterElementPtr->thrust_wait = TrackThreshold + 1;
 		FighterElementPtr->playerNr = ElementPtr->playerNr;
-		FighterElementPtr->state_flags = APPEARING | FINITE_LIFE
-									   | CREW_OBJECT | IGNORE_SIMILAR;
-		FighterElementPtr->life_span = FIGHTER_LIFE;
+		FighterElementPtr->state_flags = Appearing | FiniteLife
+									   | CrewObject | IgnoreSimilar;
+		FighterElementPtr->life_span = FighterLife;
 		SetPrimType(&DisplayArray[FighterElementPtr->PrimIndex],
 					STAMP_PRIM);
 		{
@@ -523,25 +516,25 @@ spawn_fighters(ELEMENT* ElementPtr)
 		FighterElementPtr->current.location = ElementPtr->next.location;
 		if (i == 1)
 		{
-			FighterElementPtr->turn_wait = LEFT;
-			fighter_facing = NORMALIZE_FACING(facing + 2);
+			FighterElementPtr->turn_wait = LeftFlag;
+			fighter_facing = NormalizeFacing(facing + 2);
 			FighterElementPtr->current.location.x += delta_x - delta_y;
 			FighterElementPtr->current.location.y += delta_y + delta_x;
 		}
 		else
 		{
-			FighterElementPtr->turn_wait = RIGHT;
-			fighter_facing = NORMALIZE_FACING(facing - 2);
+			FighterElementPtr->turn_wait = RightFlag;
+			fighter_facing = NormalizeFacing(facing - 2);
 			FighterElementPtr->current.location.x += delta_x + delta_y;
 			FighterElementPtr->current.location.y += delta_y - delta_x;
 		}
-		sx = COSINE(FACING_TO_ANGLE(fighter_facing),
-					WORLD_TO_VELOCITY(FIGHTER_SPEED));
-		sy = SINE(FACING_TO_ANGLE(fighter_facing),
-				  WORLD_TO_VELOCITY(FIGHTER_SPEED));
+		sx = Cosine(FacingToAngle(fighter_facing),
+					WorldToVelocity(FighterSpeed()));
+		sy = Sine(FacingToAngle(fighter_facing),
+				  WorldToVelocity(FighterSpeed()));
 		SetVelocityComponents(&FighterElementPtr->velocity, sx, sy);
-		FighterElementPtr->current.location.x -= VELOCITY_TO_WORLD(sx);
-		FighterElementPtr->current.location.y -= VELOCITY_TO_WORLD(sy);
+		FighterElementPtr->current.location.x -= VelocityToWorld(sx);
+		FighterElementPtr->current.location.y -= VelocityToWorld(sy);
 
 		FighterElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.special;
 		FighterElementPtr->current.image.frame =
@@ -552,9 +545,8 @@ spawn_fighters(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					uint16_t ConcernCounter)
+static void urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -564,9 +556,9 @@ urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	EVALUATE_DESC* lpEvalDesc {&ObjectsOfConcern[ENEMY_WEAPON_INDEX]};
 	if (lpEvalDesc->ObjectPtr
 		&& lpEvalDesc->MoveState == ENTICE
-		&& (!(lpEvalDesc->ObjectPtr->state_flags & CREW_OBJECT)
+		&& (!(lpEvalDesc->ObjectPtr->state_flags & CrewObject)
 			|| lpEvalDesc->which_turn <= 8)
-		&& (!(lpEvalDesc->ObjectPtr->state_flags & FINITE_LIFE)
+		&& (!(lpEvalDesc->ObjectPtr->state_flags & FiniteLife)
 			|| (lpEvalDesc->ObjectPtr->mass_points >= 4
 				&& lpEvalDesc->which_turn == 2
 				&& ObjectsOfConcern[ENEMY_SHIP_INDEX].which_turn > 16)))
@@ -589,38 +581,37 @@ urquan_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			&& lpEvalDesc->ObjectPtr
 			&& StarShipPtr->RaceDescPtr->ship_info.crew_level > (StarShipPtr->RaceDescPtr->ship_info.max_crew >> 2)
 			&& !(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-				 & POINT_DEFENSE)
+				 & PointDefense)
 			&& (StarShipPtr->RaceDescPtr->characteristics.special_wait < 6
-				|| (MANEUVERABILITY(
+				|| (Maneuverability(
 						&EnemyStarShipPtr->RaceDescPtr->cyborg_control)
-						<= RESOLUTION_COMPENSATED(SLOW_SHIP)
-					&& !(EnemyStarShipPtr->cur_status_flags & SHIP_BEYOND_MAX_SPEED))
+						<= ResolutionCompensated(SlowShip)
+					&& !(EnemyStarShipPtr->cur_status_flags & ShipBeyondMaxSpeed))
 				|| (lpEvalDesc->which_turn <= 12
-					&& (StarShipPtr->ship_input_state & (LEFT | RIGHT))
+					&& (StarShipPtr->ship_input_state & (LeftFlag | RightFlag))
 					&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= (uint8_t)(StarShipPtr->RaceDescPtr->ship_info.max_energy >> 1)))
-			&& !OBJECT_CLOAKED(lpEvalDesc->ObjectPtr))
+			&& !ObjectCloaked(lpEvalDesc->ObjectPtr))
 		{
-			StarShipPtr->ship_input_state |= SPECIAL;
+			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
 		else
 		{
-			StarShipPtr->ship_input_state &= ~SPECIAL;
+			StarShipPtr->ship_input_state &= ~SpecialFlag;
 		}
 	}
 
 	StarShipPtr->RaceDescPtr->characteristics.special_wait = 0;
 }
 
-static void
-urquan_postprocess(ELEMENT* ElementPtr)
+static void urquan_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& ElementPtr->crew_level > 1
 		&& StarShipPtr->special_counter == 0
-		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
 		ProcessSound(GetSound(
 						 /* LAUNCH_FIGHTERS */
@@ -628,25 +619,24 @@ urquan_postprocess(ELEMENT* ElementPtr)
 					 ElementPtr);
 		spawn_fighters(ElementPtr);
 
-		StarShipPtr->special_counter = SPECIAL_WAIT;
+		StarShipPtr->special_counter = SpecialWait;
 	}
 }
 
-RACE_DESC*
-init_urquan(void)
+RACE_DESC* init_urquan(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
-		urquan_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		urquan_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		urquan_desc.cyborg_control.WeaponRange = MISSILE_SPEED_HD * MISSILE_LIFE;
+		urquan_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		urquan_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
+		urquan_desc.cyborg_control.WeaponRange = MissileSpeedHd() * MissileLife;
 	}
 	else
 	{
-		urquan_desc.characteristics.max_thrust = MAX_THRUST;
-		urquan_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		urquan_desc.characteristics.max_thrust = MaxThrust;
+		urquan_desc.characteristics.thrust_increment = ThrustIncrement;
 		urquan_desc.cyborg_control.WeaponRange =
-			MISSILE_SPEED * MISSILE_LIFE;
+			MissileSpeed * MissileLife;
 	}
 
 	urquan_desc.postprocess_func = urquan_postprocess;

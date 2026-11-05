@@ -70,26 +70,26 @@ void SCALE_(BiAdaptAdvFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 // and allow to access pixels in all directions
 #define PIX(x, y) (pixels[1 + (x)][1 + (y)])
 #define SRC(x, y) (src_p + (x) + ((y) * slen))
-// commonly used operations, for clarity also
-// others are defined at their respective bpp levels
-#define BIADAPT_RGBHIGH 8000
-#define BIADAPT_YUVLOW 30
-#define BIADAPT_YUVMED 70
-#define BIADAPT_YUVHIGH 130
+	// commonly used operations, for clarity also
+	// others are defined at their respective bpp levels
+	constexpr auto BiadaptRgbhigh {8000};
+	constexpr auto BiadaptYuvlow {30};
+	constexpr auto BiadaptYuvmed {70};
+	constexpr auto BiadaptYuvhigh {130};
 
 // high tolerance pixel comparison
 #define BIADAPT_CMPRGB_HIGH(p1, p2) \
-	(p1 == p2 || SCALE_CMPRGB(p1, p2) <= BIADAPT_RGBHIGH)
+	(p1 == p2 || SCALE_CMPRGB(p1, p2) <= BiadaptRgbhigh)
 
 // low tolerance pixel comparison
 #define BIADAPT_CMPYUV_LOW(p1, p2) \
-	(p1 == p2 || SCALE_CMPYUV(p1, p2, BIADAPT_YUVLOW))
+	(p1 == p2 || SCALE_CMPYUV(p1, p2, BiadaptYuvlow))
 // medium tolerance pixel comparison
 #define BIADAPT_CMPYUV_MED(p1, p2) \
-	(p1 == p2 || SCALE_CMPYUV(p1, p2, BIADAPT_YUVMED))
+	(p1 == p2 || SCALE_CMPYUV(p1, p2, BiadaptYuvmed))
 // high tolerance pixel comparison
 #define BIADAPT_CMPYUV_HIGH(p1, p2) \
-	(p1 == p2 || SCALE_CMPYUV(p1, p2, BIADAPT_YUVHIGH))
+	(p1 == p2 || SCALE_CMPYUV(p1, p2, BiadaptYuvhigh))
 
 	SCALE_(PlatInit)();
 
@@ -322,7 +322,7 @@ void SCALE_(BiAdaptAdvFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 			// check pixel below the current one
 			if (!(cmatch & 1))
 			{
-				if (SCALE_CMPYUV(PIX(0, 0), PIX(0, 1), BIADAPT_YUVLOW))
+				if (SCALE_CMPYUV(PIX(0, 0), PIX(0, 1), BiadaptYuvlow))
 				{
 					SCALE_SETPIX(dst_p + dlen, Scale_Blend_11(
 												   PIX(0, 0), PIX(0, 1)));
@@ -394,7 +394,7 @@ void SCALE_(BiAdaptAdvFilter)(SDL_Surface* src, SDL_Surface* dst, SDL_Rect* r)
 			// check pixel to the right from the current one
 			if (!(cmatch & 2))
 			{
-				if (SCALE_CMPYUV(PIX(0, 0), PIX(1, 0), BIADAPT_YUVLOW))
+				if (SCALE_CMPYUV(PIX(0, 0), PIX(1, 0), BiadaptYuvlow))
 				{
 					SCALE_SETPIX(dst_p, Scale_Blend_11(
 											PIX(0, 0), PIX(1, 0)));

@@ -28,8 +28,7 @@
 #include <stdio.h>
 
 
-BATTLE_INPUT_STATE
-computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
+BATTLE_INPUT_STATE computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 {
 	BATTLE_INPUT_STATE InputState {};
 
@@ -43,7 +42,7 @@ computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 		// Selecting the next action for in battle.
 		const bool isMelee {uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE};
 		if (testFlag(StarShipPtr->control, PlayerControlFlags::Cyborg) && uqm::UQMOptions::read().passiveEnemy
-			&& (isMelee || StarShipPtr->playerNr != RPG_PLAYER_NUM))
+			&& (isMelee || StarShipPtr->playerNr != RpgPlayerNum))
 		{
 			InputState = 0;
 		}
@@ -52,11 +51,11 @@ computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 			InputState = tactical_intelligence(context, StarShipPtr);
 
 			// Allow a player to warp-escape in cyborg mode
-			if (StarShipPtr->playerNr == RPG_PLAYER_NUM)
+			if (StarShipPtr->playerNr == RpgPlayerNum)
 			{
 				InputState |= CurrentInputToBattleInput(
 								  context->playerNr)
-							& BATTLE_ESCAPE;
+							& BattleEscape;
 			}
 		}
 		else
@@ -75,7 +74,7 @@ computer_intelligence(ComputerInputContext* context, STARSHIP* StarShipPtr)
 			case SUPER_MELEE:
 				{
 					SleepThread(c_gameSecond / 2);
-					InputState = BATTLE_WEAPON; /* pick a random ship */
+					InputState = BattleWeapon; /* pick a random ship */
 					break;
 				}
 			default:

@@ -55,7 +55,7 @@ public:
 	void openState();
 	void closeState();
 
-	// Prepares the communication environment and runs the script 'scriptRes', if it is not NULL_RESOURCE.
+	// Prepares the communication environment and runs the script 'scriptRes', if it is not NullResource.
 	// Adds a 'custom' table if 'customFuncs' is not nullptr.
 	bool beginComm(const luaUqm_custom_Function* customFuncs, RESOURCE scriptRes);
 	void endComm();

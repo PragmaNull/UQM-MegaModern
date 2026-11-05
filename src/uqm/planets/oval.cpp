@@ -28,50 +28,40 @@
 #include "planets.h"
 #include "uqm/setup.h"
 
-#ifndef MIN
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#endif
-#ifndef MAX
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#endif
+static constexpr auto NumQuads {4};
+static constexpr auto OffscreenPrim {NUM_PRIMS};
 
-#define NUM_QUADS 4
-#define OFFSCREEN_PRIM NUM_PRIMS
+static constexpr auto FirstQuad {(1 << 0)};
+static constexpr auto SecondQuad {(1 << 1)};
+static constexpr auto ThirdQuad {(1 << 2)};
+static constexpr auto FourthQuad {(1 << 3)};
+static constexpr auto FullVisibility {(1 << 4)};
+static constexpr auto AllQuad {(FirstQuad | SecondQuad | ThirdQuad | FourthQuad)};
 
-#define FIRST_QUAD (1 << 0)
-#define SECOND_QUAD (1 << 1)
-#define THIRD_QUAD (1 << 2)
-#define FOURTH_QUAD (1 << 3)
-#define FULL_VISIBILITY (1 << 4)
-#define ALL_QUAD (FIRST_QUAD | SECOND_QUAD | THIRD_QUAD | FOURTH_QUAD)
-
-static bool
-PointOnScreen(int32_t x, int32_t y)
+static bool PointOnScreen(int32_t x, int32_t y)
 {
 	int32_t extend = 0;
 
-	if (IS_HD)
+	if (IsHd())
 	{
 		extend = 5;
 	}
 
-	return ((x + extend) >= 0 && x <= SIS_SCREEN_WIDTH
-			&& (y + extend) >= 0 && y <= SIS_SCREEN_HEIGHT);
+	return ((x + extend) >= 0 && x <= SisScreenWidth()
+			&& (y + extend) >= 0 && y <= SisScreenHeight());
 }
 
-static bool
-DPointOnScreen(DPOINT* p)
+static bool DPointOnScreen(DPOINT* p)
 {
-	return (p->x >= 0 && p->x <= SIS_SCREEN_WIDTH
-			&& p->y >= 0 && p->y <= SIS_SCREEN_HEIGHT);
+	return (p->x >= 0 && p->x <= SisScreenWidth()
+			&& p->y >= 0 && p->y <= SisScreenHeight());
 }
 
-static void
-TruncateDPoint(DPOINT* p)
+static void TruncateDPoint(DPOINT* p)
 {
 	if (p->x > 32767)
 	{
-		p->x = SIS_SCREEN_WIDTH;
+		p->x = SisScreenWidth();
 	}
 	if (p->x < -32768)
 	{
@@ -79,7 +69,7 @@ TruncateDPoint(DPOINT* p)
 	}
 	if (p->y > 32767)
 	{
-		p->y = SIS_SCREEN_HEIGHT;
+		p->y = SisScreenHeight();
 	}
 	if (p->y < -32768)
 	{
@@ -99,8 +89,7 @@ TruncateDPoint(DPOINT* p)
 // through ellipse equation. If radius > 1 - point is outside of the ellipse, and if < 1 - inside. In case if one point is inside and the other is
 // outside - then the diagonal crosses the curve somewhere on the screen, therefore the curve is visible. Otherwise, if both points are
 // inside/outside, then the curve is not on screen.
-static uint8_t
-CheckOvalCollision(DPOINT* p0, DPOINT* p1)
+static uint8_t CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 {
 	DPOINT mp; // Middle point
 	uint8_t quad_visible = 0;
@@ -117,7 +106,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 	// Step 1
 	if (DPointOnScreen(p0) && DPointOnScreen(p1))
 	{
-		quad_visible = ALL_QUAD | FULL_VISIBILITY;
+		quad_visible = AllQuad | FullVisibility;
 		return quad_visible;
 	}
 
@@ -128,7 +117,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 	y1 = y0 + ((y0 - p0->y) << 1);
 
 	// Step 2
-	if (x0 < 0 && y0 < 0 && x1 > SIS_SCREEN_WIDTH && y1 > SIS_SCREEN_HEIGHT)
+	if (x0 < 0 && y0 < 0 && x1 > SisScreenWidth() && y1 > SisScreenHeight())
 	{
 		return quad_visible;
 	}
@@ -150,38 +139,38 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 	bsquared = b * b;
 
 	// Step 4
-	if (!(mp.x > SIS_SCREEN_WIDTH || p1->x < 0 || p0->y > SIS_SCREEN_HEIGHT || mp.y < 0 || (x1 > SIS_SCREEN_WIDTH && y0 < 0)))
+	if (!(mp.x > SisScreenWidth() || p1->x < 0 || p0->y > SisScreenHeight() || mp.y < 0 || (x1 > SisScreenWidth() && y0 < 0)))
 	{
 		// Step 5
 		if (PointOnScreen(mp.x, p0->y) || PointOnScreen(p1->x, mp.y))
 		{
-			quad_visible |= FIRST_QUAD;
+			quad_visible |= FirstQuad;
 		}
 		else
 		{
 			// Step 6
-			x = (double)(SIS_SCREEN_WIDTH - mp.x);
+			x = (double)(SisScreenWidth() - mp.x);
 			y = (double)(0 - mp.y);
 			r0 = ((x * x) / asquared) + ((y * y) / bsquared);
 
-			x = (double)(MAX(0, mp.x) - mp.x);
-			y = (double)(MIN(SIS_SCREEN_HEIGHT, mp.y) - mp.y);
+			x = (double)(uqstl::max(0, mp.x) - mp.x);
+			y = (double)(uqstl::min(SisScreenHeight(), mp.y) - mp.y);
 			r1 = ((x * x) / asquared) + ((y * y) / bsquared);
 
 			if (r0 >= 1.0f && r1 <= 1.0f)
 			{
-				quad_visible |= FIRST_QUAD;
+				quad_visible |= FirstQuad;
 			}
 		}
 	}
 
 	// Step 4
-	if (!(p0->x > SIS_SCREEN_WIDTH || mp.x < 0 || p0->y > SIS_SCREEN_HEIGHT || mp.y < 0 || (x0 < 0 && y0 < 0)))
+	if (!(p0->x > SisScreenWidth() || mp.x < 0 || p0->y > SisScreenHeight() || mp.y < 0 || (x0 < 0 && y0 < 0)))
 	{
 		// Step 5
 		if (PointOnScreen(p0->x, mp.y) || PointOnScreen(mp.x, p0->y))
 		{
-			quad_visible |= SECOND_QUAD;
+			quad_visible |= SecondQuad;
 		}
 		else
 		{
@@ -190,65 +179,65 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 			y = (double)(0 - mp.y);
 			r0 = ((x * x) / asquared) + ((y * y) / bsquared);
 
-			x = (double)(MIN(SIS_SCREEN_WIDTH, mp.x) - mp.x);
-			y = (double)(MIN(SIS_SCREEN_HEIGHT, mp.y) - mp.y);
+			x = (double)(uqstl::min(SisScreenWidth(), mp.x) - mp.x);
+			y = (double)(uqstl::min(SisScreenHeight(), mp.y) - mp.y);
 			r1 = ((x * x) / asquared) + ((y * y) / bsquared);
 
 			if (r0 >= 1.0f && r1 <= 1.0f)
 			{
-				quad_visible |= SECOND_QUAD;
+				quad_visible |= SecondQuad;
 			}
 		}
 	}
 
 	// Step 4
-	if (!(p0->x > SIS_SCREEN_WIDTH || mp.x < 0 || mp.y > SIS_SCREEN_HEIGHT || p1->y < 0 || (x0 < 0 && y1 > SIS_SCREEN_HEIGHT)))
+	if (!(p0->x > SisScreenWidth() || mp.x < 0 || mp.y > SisScreenHeight() || p1->y < 0 || (x0 < 0 && y1 > SisScreenHeight())))
 	{
 		// Step 5
 		if (PointOnScreen(p0->x, mp.y) || PointOnScreen(mp.x, p1->y))
 		{
-			quad_visible |= THIRD_QUAD;
+			quad_visible |= ThirdQuad;
 		}
 		else
 		{
 			// Step 6
 			x = (double)(0 - mp.x);
-			y = (double)(SIS_SCREEN_HEIGHT - mp.y);
+			y = (double)(SisScreenHeight() - mp.y);
 			r0 = ((x * x) / asquared) + ((y * y) / bsquared);
 
-			x = (double)(MIN(SIS_SCREEN_WIDTH, mp.x) - mp.x);
-			y = (double)(MAX(0, mp.y) - mp.y);
+			x = (double)(uqstl::min(SisScreenWidth(), mp.x) - mp.x);
+			y = (double)(uqstl::max(0, mp.y) - mp.y);
 			r1 = ((x * x) / asquared) + ((y * y) / bsquared);
 
 			if (r0 >= 1.0f && r1 <= 1.0f)
 			{
-				quad_visible |= THIRD_QUAD;
+				quad_visible |= ThirdQuad;
 			}
 		}
 	}
 
 	// Step 4
-	if (!(mp.x > SIS_SCREEN_WIDTH || p1->x < 0 || mp.y > SIS_SCREEN_HEIGHT || p1->y < 0 || (x1 > SIS_SCREEN_WIDTH && y1 > SIS_SCREEN_HEIGHT)))
+	if (!(mp.x > SisScreenWidth() || p1->x < 0 || mp.y > SisScreenHeight() || p1->y < 0 || (x1 > SisScreenWidth() && y1 > SisScreenHeight())))
 	{
 		// Step 5
 		if (PointOnScreen(mp.x, p1->y) || PointOnScreen(p1->x, mp.y))
 		{
-			quad_visible |= FOURTH_QUAD;
+			quad_visible |= FourthQuad;
 		}
 		else
 		{
 			// Step 6
-			x = (double)(SIS_SCREEN_WIDTH - mp.x);
-			y = (double)(SIS_SCREEN_HEIGHT - mp.y);
+			x = (double)(SisScreenWidth() - mp.x);
+			y = (double)(SisScreenHeight() - mp.y);
 			r0 = ((x * x) / asquared) + ((y * y) / bsquared);
 
-			x = (double)(MAX(0, mp.x) - mp.x);
-			y = (double)(MAX(0, mp.y) - mp.y);
+			x = (double)(uqstl::max(0, mp.x) - mp.x);
+			y = (double)(uqstl::max(0, mp.y) - mp.y);
 			r1 = ((x * x) / asquared) + ((y * y) / bsquared);
 
 			if (r0 >= 1.0f && r1 <= 1.0f)
 			{
-				quad_visible |= FOURTH_QUAD;
+				quad_visible |= FourthQuad;
 			}
 		}
 	}
@@ -265,15 +254,15 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //	uint8_t quad_visible = 0;
 //
 //	ClipRect.corner.x = ClipRect.corner.y = 0;
-//	ClipRect.extent.width = SIS_SCREEN_WIDTH;
-//	ClipRect.extent.height = SIS_SCREEN_HEIGHT;
+//	ClipRect.extent.width = SisScreenWidth();
+//	ClipRect.extent.height = SisScreenHeight();
 //
 //	mp.x = (ch_one->x + ch_two->x) >> 1;
 //	mp.y = (ch_one->y + ch_two->y) >> 1;
 //
 //	if (ch_one->y >= 0 && ch_one->y < ClipRect.extent.height
 //		&& ch_two->x >= 0 && ch_two->x < ClipRect.extent.width)
-//		quad_visible |= FIRST_QUAD;
+//		quad_visible |= FirstQuad;
 //	else
 //	{
 //		ClipLine.first.x = mp.x;
@@ -281,12 +270,12 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.second.x = ch_two->x;
 //		ClipLine.second.y = mp.y;
 //		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
-//			quad_visible |= FIRST_QUAD;
+//			quad_visible |= FirstQuad;
 //	}
 //
 //	if (ch_one->y >= 0 && ch_one->y < ClipRect.extent.height
 //		&& ch_one->x >= 0 && ch_one->x < ClipRect.extent.width)
-//		quad_visible |= SECOND_QUAD;
+//		quad_visible |= SecondQuad;
 //	else
 //	{
 //		ClipLine.first.x = mp.x;
@@ -294,12 +283,12 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.second.x = ch_one->x;
 //		ClipLine.second.y = mp.y;
 //		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
-//			quad_visible |= SECOND_QUAD;
+//			quad_visible |= SecondQuad;
 //	}
 //
 //	if (ch_two->y >= 0 && ch_two->y < ClipRect.extent.height
 //		&& ch_one->x >= 0 && ch_one->x < ClipRect.extent.width)
-//		quad_visible |= THIRD_QUAD;
+//		quad_visible |= ThirdQuad;
 //	else
 //	{
 //		ClipLine.first.x = mp.x;
@@ -307,12 +296,12 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.second.x = ch_one->x;
 //		ClipLine.second.y = mp.y;
 //		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
-//			quad_visible |= THIRD_QUAD;
+//			quad_visible |= ThirdQuad;
 //	}
 //
 //	if (ch_two->y >= 0 && ch_two->y < ClipRect.extent.height
 //		&& ch_two->x >= 0 && ch_two->x < ClipRect.extent.width)
-//		quad_visible |= FOURTH_QUAD;
+//		quad_visible |= FourthQuad;
 //	else
 //	{
 //		ClipLine.first.x = mp.x;
@@ -320,7 +309,7 @@ CheckOvalCollision(DPOINT* p0, DPOINT* p1)
 //		ClipLine.second.x = ch_two->x;
 //		ClipLine.second.y = mp.y;
 //		if (_clip_line ((DRECT *)&ClipRect, &ClipLine))
-//			quad_visible |= FOURTH_QUAD;
+//			quad_visible |= FourthQuad;
 //	}
 //
 //	return quad_visible;
@@ -334,7 +323,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 	int16_t B {};
 	int64_t TwoAsquared {};
 	int64_t dy {};
-	PRIMITIVE prim[NUM_QUADS];
+	PRIMITIVE prim[NumQuads];
 	DPOINT p0;
 	DPOINT p1;
 	const bool use_pointprim = (!scaled && num_off_pixels <= 1);
@@ -378,8 +367,8 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 		return;
 	}
 
-	uint16_t StartPrim {END_OF_LIST};
-	for (x = 0; x < NUM_QUADS; ++x)
+	uint16_t StartPrim {EndOfList};
+	for (x = 0; x < NumQuads; ++x)
 	{
 		if (quad_visible & (1 << x))
 		{
@@ -393,7 +382,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 		}
 		else // Kruzen: just to be sure so DrawBatch() skip it
 		{
-			SetPrimType(&prim[x], OFFSCREEN_PRIM);
+			SetPrimType(&prim[x], OffscreenPrim);
 		}
 	}
 
@@ -434,13 +423,13 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 				prim[1].Object.Point.x = prim[2].Object.Point.x = A - x;
 				prim[2].Object.Point.y = prim[3].Object.Point.y = B + y;
 
-				if (quad_visible & FULL_VISIBILITY)
+				if (quad_visible & FullVisibility)
 				{
 					DrawBatch(prim, StartPrim, 0);
 				}
 				else
 				{
-					if (quad_visible & FIRST_QUAD)
+					if (quad_visible & FirstQuad)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
@@ -449,11 +438,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[0], OFFSCREEN_PRIM);
+							SetPrimType(&prim[0], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & SECOND_QUAD)
+					if (quad_visible & SecondQuad)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
@@ -462,11 +451,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[1], OFFSCREEN_PRIM);
+							SetPrimType(&prim[1], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & THIRD_QUAD)
+					if (quad_visible & ThirdQuad)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
@@ -475,11 +464,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[2], OFFSCREEN_PRIM);
+							SetPrimType(&prim[2], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & FOURTH_QUAD)
+					if (quad_visible & FourthQuad)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
@@ -488,7 +477,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[3], OFFSCREEN_PRIM);
+							SetPrimType(&prim[3], OffscreenPrim);
 						}
 					}
 
@@ -524,13 +513,13 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 				prim[1].Object.Stamp.origin.x = prim[2].Object.Stamp.origin.x = A - x;
 				prim[2].Object.Stamp.origin.y = prim[3].Object.Stamp.origin.y = B + y;
 
-				if (quad_visible & FULL_VISIBILITY)
+				if (quad_visible & FullVisibility)
 				{
 					DrawBatch(prim, StartPrim, 0);
 				}
 				else
 				{
-					if (quad_visible & FIRST_QUAD)
+					if (quad_visible & FirstQuad)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
@@ -539,11 +528,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[0], OFFSCREEN_PRIM);
+							SetPrimType(&prim[0], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & SECOND_QUAD)
+					if (quad_visible & SecondQuad)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
@@ -552,11 +541,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[1], OFFSCREEN_PRIM);
+							SetPrimType(&prim[1], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & THIRD_QUAD)
+					if (quad_visible & ThirdQuad)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
@@ -565,11 +554,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[2], OFFSCREEN_PRIM);
+							SetPrimType(&prim[2], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & FOURTH_QUAD)
+					if (quad_visible & FourthQuad)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
@@ -578,7 +567,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[3], OFFSCREEN_PRIM);
+							SetPrimType(&prim[3], OffscreenPrim);
 						}
 					}
 
@@ -617,13 +606,13 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 				prim[1].Object.Point.x = prim[2].Object.Point.x = A - x;
 				prim[2].Object.Point.y = prim[3].Object.Point.y = B + y;
 
-				if (quad_visible & FULL_VISIBILITY)
+				if (quad_visible & FullVisibility)
 				{
 					DrawBatch(prim, StartPrim, 0);
 				}
 				else
 				{
-					if (quad_visible & FIRST_QUAD)
+					if (quad_visible & FirstQuad)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
@@ -632,11 +621,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[0], OFFSCREEN_PRIM);
+							SetPrimType(&prim[0], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & SECOND_QUAD)
+					if (quad_visible & SecondQuad)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
@@ -645,11 +634,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[1], OFFSCREEN_PRIM);
+							SetPrimType(&prim[1], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & THIRD_QUAD)
+					if (quad_visible & ThirdQuad)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
@@ -658,11 +647,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[2], OFFSCREEN_PRIM);
+							SetPrimType(&prim[2], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & FOURTH_QUAD)
+					if (quad_visible & FourthQuad)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
@@ -671,7 +660,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[3], OFFSCREEN_PRIM);
+							SetPrimType(&prim[3], OffscreenPrim);
 						}
 					}
 
@@ -707,13 +696,13 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 				prim[1].Object.Stamp.origin.x = prim[2].Object.Stamp.origin.x = A - x;
 				prim[2].Object.Stamp.origin.y = prim[3].Object.Stamp.origin.y = B + y;
 
-				if (quad_visible & FULL_VISIBILITY)
+				if (quad_visible & FullVisibility)
 				{
 					DrawBatch(prim, StartPrim, 0);
 				}
 				else
 				{
-					if (quad_visible & FIRST_QUAD)
+					if (quad_visible & FirstQuad)
 					{
 						if (PointOnScreen(A + x, B - y))
 						{
@@ -722,11 +711,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[0], OFFSCREEN_PRIM);
+							SetPrimType(&prim[0], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & SECOND_QUAD)
+					if (quad_visible & SecondQuad)
 					{
 						if (PointOnScreen(A - x, B - y))
 						{
@@ -735,11 +724,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[1], OFFSCREEN_PRIM);
+							SetPrimType(&prim[1], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & THIRD_QUAD)
+					if (quad_visible & ThirdQuad)
 					{
 						if (PointOnScreen(A - x, B + y))
 						{
@@ -748,11 +737,11 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[2], OFFSCREEN_PRIM);
+							SetPrimType(&prim[2], OffscreenPrim);
 						}
 					}
 
-					if (quad_visible & FOURTH_QUAD)
+					if (quad_visible & FourthQuad)
 					{
 						if (PointOnScreen(A + x, B + y))
 						{
@@ -761,7 +750,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 						}
 						else
 						{
-							SetPrimType(&prim[3], OFFSCREEN_PRIM);
+							SetPrimType(&prim[3], OffscreenPrim);
 						}
 					}
 
@@ -788,7 +777,7 @@ void DrawOval(DRECT* pRect, uint8_t num_off_pixels, bool scaled)
 }
 
 void DrawFilledOval(DRECT* pRect)
-{ // Kruzen: originally there was standard rect, but drawing fuel circle in HD on max zoom causes overflow (Width ~65k)
+{ // Kruzen: originally there was standard rect, but drawing fuel circle in HdResolutionFactor on max zoom causes overflow (Width ~65k)
 	// So unless we want to expand standard rect to support 4 bytes per dimension - use this
 	int16_t x {};
 	int16_t y {};
@@ -796,7 +785,7 @@ void DrawFilledOval(DRECT* pRect)
 	int16_t B {};
 	int64_t TwoAsquared {};
 	int64_t dy {};
-	PRIMITIVE prim[NUM_QUADS >> 1];
+	PRIMITIVE prim[NumQuads >> 1];
 	GFXPOINT first;
 	GFXPOINT second;
 	DPOINT p0;
@@ -834,8 +823,8 @@ void DrawFilledOval(DRECT* pRect)
 		return;
 	}
 
-	uint16_t StartPrim {END_OF_LIST};
-	for (x = 0; x < (NUM_QUADS >> 1); ++x)
+	uint16_t StartPrim {EndOfList};
+	for (x = 0; x < (NumQuads >> 1); ++x)
 	{
 		SetPrimNextLink(&prim[x], StartPrim);
 		SetPrimType(&prim[x], LINE_PRIM);
@@ -873,10 +862,10 @@ void DrawFilledOval(DRECT* pRect)
 			// Changed to line and added a skip if offscreen
 			lines_r = 0;
 
-			first.x = MAX(A - x, 0);
-			second.x = MIN(A - x + (x << 1) + 1, SIS_SCREEN_WIDTH);
+			first.x = uqstl::max(A - x, 0);
+			second.x = uqstl::min(A - x + (x << 1) + 1, SisScreenWidth());
 			first.y = second.y = B - y;
-			if (((B - y) >= 0 && (B - y) <= SIS_SCREEN_HEIGHT))
+			if (((B - y) >= 0 && (B - y) <= SisScreenHeight()))
 			{
 				SetPrimType(&prim[0], LINE_PRIM);
 				prim[0].Object.Line.first = first;
@@ -885,11 +874,11 @@ void DrawFilledOval(DRECT* pRect)
 			}
 			else
 			{
-				SetPrimType(&prim[0], OFFSCREEN_PRIM);
+				SetPrimType(&prim[0], OffscreenPrim);
 			}
 
 			first.y = second.y = B + y;
-			if (((B + y) >= 0 && (B + y) <= SIS_SCREEN_HEIGHT))
+			if (((B + y) >= 0 && (B + y) <= SisScreenHeight()))
 			{
 				SetPrimType(&prim[1], LINE_PRIM);
 				prim[1].Object.Line.first = first;
@@ -898,7 +887,7 @@ void DrawFilledOval(DRECT* pRect)
 			}
 			else
 			{
-				SetPrimType(&prim[1], OFFSCREEN_PRIM);
+				SetPrimType(&prim[1], OffscreenPrim);
 			}
 
 			if (lines_r > 0)
@@ -922,10 +911,10 @@ void DrawFilledOval(DRECT* pRect)
 	{ // Kruzen: originally PrimType was FILLRECT with height of 1
 		// Changed to line and added a skip if offscreen
 		lines_r = 0;
-		first.x = MAX(A - x, 0);
-		second.x = MIN(A - x + (x << 1) + 1, SIS_SCREEN_WIDTH);
+		first.x = uqstl::max(A - x, 0);
+		second.x = uqstl::min(A - x + (x << 1) + 1, SisScreenWidth());
 		first.y = second.y = B - y;
-		if (((B - y) >= 0 && (B - y) <= SIS_SCREEN_HEIGHT))
+		if (((B - y) >= 0 && (B - y) <= SisScreenHeight()))
 		{
 			SetPrimType(&prim[0], LINE_PRIM);
 			prim[0].Object.Line.first = first;
@@ -934,11 +923,11 @@ void DrawFilledOval(DRECT* pRect)
 		}
 		else
 		{
-			SetPrimType(&prim[0], OFFSCREEN_PRIM);
+			SetPrimType(&prim[0], OffscreenPrim);
 		}
 
 		first.y = second.y = B + y;
-		if (((B + y) >= 0 && (B + y) <= SIS_SCREEN_HEIGHT))
+		if (((B + y) >= 0 && (B + y) <= SisScreenHeight()))
 		{
 			SetPrimType(&prim[1], LINE_PRIM);
 			prim[1].Object.Line.first = first;
@@ -947,7 +936,7 @@ void DrawFilledOval(DRECT* pRect)
 		}
 		else
 		{
-			SetPrimType(&prim[1], OFFSCREEN_PRIM);
+			SetPrimType(&prim[1], OffscreenPrim);
 		}
 
 		if (lines_r > 0)

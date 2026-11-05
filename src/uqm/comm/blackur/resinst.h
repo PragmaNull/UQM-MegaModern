@@ -2,9 +2,8 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define BLACKURQ_COLOR_MAP "comm.kohrah.colortable"
-#define BLACKURQ_CONVERSATION_PHRASES "comm.kohrah.dialogue"
-#define BLACKURQ_FONT "comm.kohrah.font"
-#define BLACKURQ_MUSIC "comm.kohrah.music"
-#define BLACKURQ_PMAP_ANIM "comm.kohrah.graphics"
-#define BLACKURQ_SCRIPT "comm.kohrah.script"
+inline constexpr uqgsl::czstring BlackurqColorMap {"comm.kohrah.colortable"};
+inline constexpr uqgsl::czstring BlackurqConversationPhrases {"comm.kohrah.dialogue"};
+inline constexpr uqgsl::czstring BlackurqFont {"comm.kohrah.font"};
+inline constexpr uqgsl::czstring BlackurqMusic {"comm.kohrah.music"};
+inline constexpr uqgsl::czstring BlackurqPmapAnim {"comm.kohrah.graphics"};

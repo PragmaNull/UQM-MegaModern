@@ -2,18 +2,18 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define DISCRIM_BIG_MASK_PMAP_ANIM "ship.spathi.graphics.butt.large"
-#define DISCRIM_MED_MASK_PMAP_ANIM "ship.spathi.graphics.butt.medium"
-#define DISCRIM_SML_MASK_PMAP_ANIM "ship.spathi.graphics.butt.small"
-#define MISSILE_BIG_MASK_PMAP_ANIM "ship.spathi.graphics.missile.large"
-#define MISSILE_MED_MASK_PMAP_ANIM "ship.spathi.graphics.missile.medium"
-#define MISSILE_SML_MASK_PMAP_ANIM "ship.spathi.graphics.missile.small"
-#define SPATHI_BIG_MASK_PMAP_ANIM "ship.spathi.graphics.eluder.large"
-#define SPATHI_CAPTAIN_MASK_PMAP_ANIM "ship.spathi.graphics.captain"
-#define SPATHI_ICON_MASK_PMAP_ANIM "ship.spathi.icons"
-#define SPATHI_MED_MASK_PMAP_ANIM "ship.spathi.graphics.eluder.medium"
-#define SPATHI_MICON_MASK_PMAP_ANIM "ship.spathi.meleeicons"
-#define SPATHI_RACE_STRINGS "ship.spathi.text"
-#define SPATHI_SHIP_SOUNDS "ship.spathi.sounds"
-#define SPATHI_SML_MASK_PMAP_ANIM "ship.spathi.graphics.eluder.small"
-#define SPATHI_VICTORY_SONG "ship.spathi.ditty"
+inline constexpr uqgsl::czstring DiscrimBigMaskPmapAnim {"ship.spathi.graphics.butt.large"};
+inline constexpr uqgsl::czstring DiscrimMedMaskPmapAnim {"ship.spathi.graphics.butt.medium"};
+inline constexpr uqgsl::czstring DiscrimSmlMaskPmapAnim {"ship.spathi.graphics.butt.small"};
+inline constexpr uqgsl::czstring MissileBigMaskPmapAnim {"ship.spathi.graphics.missile.large"};
+inline constexpr uqgsl::czstring MissileMedMaskPmapAnim {"ship.spathi.graphics.missile.medium"};
+inline constexpr uqgsl::czstring MissileSmlMaskPmapAnim {"ship.spathi.graphics.missile.small"};
+inline constexpr uqgsl::czstring SpathiBigMaskPmapAnim {"ship.spathi.graphics.eluder.large"};
+inline constexpr uqgsl::czstring SpathiCaptainMaskPmapAnim {"ship.spathi.graphics.captain"};
+inline constexpr uqgsl::czstring SpathiIconMaskPmapAnim {"ship.spathi.icons"};
+inline constexpr uqgsl::czstring SpathiMedMaskPmapAnim {"ship.spathi.graphics.eluder.medium"};
+inline constexpr uqgsl::czstring SpathiMiconMaskPmapAnim {"ship.spathi.meleeicons"};
+inline constexpr uqgsl::czstring SpathiRaceStrings {"ship.spathi.text"};
+inline constexpr uqgsl::czstring SpathiShipSounds {"ship.spathi.sounds"};
+inline constexpr uqgsl::czstring SpathiSmlMaskPmapAnim {"ship.spathi.graphics.eluder.small"};
+inline constexpr uqgsl::czstring SpathiVictorySong {"ship.spathi.ditty"};

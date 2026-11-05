@@ -34,32 +34,32 @@ static LOCDATA druuge_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		DRUUGE_PMAP_ANIM, /* AlienFrame */
-		DRUUGE_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		DruugePmapAnim, /* AlienFrame */
+		DruugeFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_MIDDLE, /* AlienTextValign */
-		DRUUGE_COLOR_MAP, /* AlienColorMap */
-		DRUUGE_MUSIC, /* AlienSong */
+		DruugeColorMap, /* AlienColorMap */
+		DruugeMusic, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
-		DRUUGE_CONVERSATION_PHRASES, /* PlayerPhrases */
+		DruugeConversationPhrases, /* PlayerPhrases */
 		11, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 
 			{
 				// Biggest flame
-				5,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				5,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -68,9 +68,9 @@ static LOCDATA druuge_desc =
 			},
 								{
 				// Flame on the right
-				9,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				9,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -79,9 +79,9 @@ static LOCDATA druuge_desc =
 			},
 								{
 				// Smallest flame (behind the biggest flame)
-				13,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				13,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 40,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 40,
@@ -90,9 +90,9 @@ static LOCDATA druuge_desc =
 			},
 								{
 				// Flashing eyes
-				19,			   /* StartIndex */
-				3,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				19,			  /* StartIndex */
+				3,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -100,9 +100,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				22,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -110,9 +110,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				25,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				25,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -120,9 +120,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				28,			 /* StartIndex */
-				3,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				28,			/* StartIndex */
+				3,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -130,9 +130,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				31,			   /* StartIndex */
-				2,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				31,			  /* StartIndex */
+				2,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -140,9 +140,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				33,							  /* StartIndex */
-				7,							  /* NumFrames */
-				CIRCULAR_ANIM | WAIT_TALKING, /* AnimFlags */
+				33,							/* StartIndex */
+				7,							/* NumFrames */
+				CircularAnim | WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond * 7,
@@ -150,9 +150,9 @@ static LOCDATA druuge_desc =
 				0,						/* BlockMask */
 			},
 								{
-				40,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				40,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond * 3 / 10,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3 / 10,
@@ -160,9 +160,9 @@ static LOCDATA druuge_desc =
 				0, /* BlockMask */
 			},
 								{
-				44,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				44,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 5,
 				0, /* FrameRate */
 				GameTicksPerSecond / 5,
@@ -204,44 +204,43 @@ static LOCDATA druuge_desc =
 static uint16_t SlaveryCount = 0;
 static bool AttemptedSalvage = false;
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, bye))
+	if (PlayerSaid(R, bye))
 	{
 		setSegue(Segue_peace);
 
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
 			if (SlaveryCount)
 			{
 				uint16_t PreviousSlaves {};
 
 				PreviousSlaves = uqm::makeWord(
-					GET_GAME_STATE(CREW_SOLD_TO_DRUUGE0),
-					GET_GAME_STATE(CREW_SOLD_TO_DRUUGE1));
+					uqm::gameState().flag(uqm::GameFlag::CREW_SOLD_TO_DRUUGE0),
+					uqm::gameState().flag(uqm::GameFlag::CREW_SOLD_TO_DRUUGE1));
 				SlaveryCount += PreviousSlaves;
-				if (SlaveryCount > MAX_SOLD && PreviousSlaves <= MAX_SOLD)
+				if (SlaveryCount > MaxSold() && PreviousSlaves <= MaxSold())
 				{
-					if (PreviousSlaves > MIN_SOLD)
+					if (PreviousSlaves > MinSold())
 					{
-						GLOBAL(CrewCost) += (22 - 7);
+						uqm::gameState().game().CrewCost += (22 - 7);
 					}
 					else
 					{
-						GLOBAL(CrewCost) += 22;
+						uqm::gameState().game().CrewCost += 22;
 					}
 				}
-				else if (SlaveryCount > MIN_SOLD && PreviousSlaves <= MIN_SOLD)
+				else if (SlaveryCount > MinSold() && PreviousSlaves <= MinSold())
 				{
-					GLOBAL(CrewCost) += 7;
+					uqm::gameState().game().CrewCost += 7;
 				}
 
-				SET_GAME_STATE(CREW_SOLD_TO_DRUUGE0, uqm::lowByte(SlaveryCount));
-				SET_GAME_STATE(CREW_SOLD_TO_DRUUGE1, uqm::highByte(SlaveryCount));
+				uqm::gameState().setFlag(uqm::GameFlag::CREW_SOLD_TO_DRUUGE0, static_cast<uint32_t>(uqm::lowByte(SlaveryCount)));
+				uqm::gameState().setFlag(uqm::GameFlag::CREW_SOLD_TO_DRUUGE1, static_cast<uint32_t>(uqm::highByte(SlaveryCount)));
 			}
 
-			switch (GET_GAME_STATE(DRUUGE_HOME_VISITS))
+			switch (uqm::gameState().flag(uqm::GameFlag::DRUUGE_HOME_VISITS))
 			{
 				case 1:
 					NPCPhrase(BYE_FROM_TRADE_WORLD_1);
@@ -251,7 +250,7 @@ ExitConversation(RESPONSE_REF R)
 					break;
 			}
 		}
-		else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+		else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		{
 			NPCPhrase(GOODBYE_FROM_BOMB_PLANET);
 		}
@@ -270,33 +269,36 @@ ExitConversation(RESPONSE_REF R)
 
 static void TradeWorld(RESPONSE_REF R);
 
-static void
-Buy(RESPONSE_REF R)
+static constexpr auto ArtifactCrewCost {100};
+
+static constexpr auto ShipCrewCost {100};
+static constexpr auto FuelCrewCost {10};
+
+static void Buy(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, want_to_buy)
-		|| PLAYER_SAID(R, im_ready_to_buy))
+	if (PlayerSaid(R, want_to_buy)
+		|| PlayerSaid(R, im_ready_to_buy))
 	{
 		NPCPhrase(READY_TO_SELL);
-		if (!GET_GAME_STATE(ROSY_SPHERE))
+		if (!uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE))
 		{
 			NPCPhrase(HAVE_SPHERE);
 		}
-		if (!GET_GAME_STATE(WIMBLIS_TRIDENT_ON_SHIP))
+		if (!uqm::gameState().flag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP))
 		{
 			NPCPhrase(HAVE_ART_1);
 		}
-		if (!GET_GAME_STATE(GLOWING_ROD_ON_SHIP))
+		if (!uqm::gameState().flag(uqm::GameFlag::GLOWING_ROD_ON_SHIP))
 		{
 			NPCPhrase(HAVE_ART_2);
 		}
 		NPCPhrase(SHIPS_AND_FUEL);
 
-		SET_GAME_STATE(KNOW_DRUUGE_SLAVERS, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_DRUUGE_SLAVERS, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, buy_druuge_ship))
+	else if (PlayerSaid(R, buy_druuge_ship))
 	{
-#define SHIP_CREW_COST 100
-		if (GLOBAL_SIS(CrewEnlisted) < SHIP_CREW_COST)
+		if (uqm::gameState().sis().CrewEnlisted < ShipCrewCost)
 		{
 			NPCPhrase(NOT_ENOUGH_CREW);
 		}
@@ -306,87 +308,85 @@ Buy(RESPONSE_REF R)
 		}
 		else
 		{
-			DeltaSISGauges(-SHIP_CREW_COST, 0, 0);
-			SlaveryCount += SHIP_CREW_COST;
+			DeltaSISGauges(-ShipCrewCost, 0, 0);
+			SlaveryCount += ShipCrewCost;
 			AddEscortShips(DRUUGE_SHIP, 1);
 
 			NPCPhrase(BOUGHT_SHIP);
 		}
 	}
-#define ARTIFACT_CREW_COST 100
-	else if (PLAYER_SAID(R, buy_rosy_sphere))
+	else if (PlayerSaid(R, buy_rosy_sphere))
 	{
-		if (GLOBAL_SIS(CrewEnlisted) < ARTIFACT_CREW_COST)
+		if (uqm::gameState().sis().CrewEnlisted < ArtifactCrewCost)
 		{
 			NPCPhrase(NOT_ENOUGH_CREW);
 		}
 		else
 		{
-			DeltaSISGauges(-ARTIFACT_CREW_COST, 0, 0);
-			SlaveryCount += ARTIFACT_CREW_COST;
-			SET_GAME_STATE(ROSY_SPHERE_ON_SHIP, 1);
-			SET_GAME_STATE(ROSY_SPHERE, 1);
+			DeltaSISGauges(-ArtifactCrewCost, 0, 0);
+			SlaveryCount += ArtifactCrewCost;
+			uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE, static_cast<uint32_t>(1));
 
 			NPCPhrase(BOUGHT_SPHERE);
 		}
 	}
-	else if (PLAYER_SAID(R, buy_art_1))
+	else if (PlayerSaid(R, buy_art_1))
 	{
-		if (GLOBAL_SIS(CrewEnlisted) < ARTIFACT_CREW_COST)
+		if (uqm::gameState().sis().CrewEnlisted < ArtifactCrewCost)
 		{
 			NPCPhrase(NOT_ENOUGH_CREW);
 		}
 		else
 		{
-			DeltaSISGauges(-ARTIFACT_CREW_COST, 0, 0);
-			SlaveryCount += ARTIFACT_CREW_COST;
-			SET_GAME_STATE(WIMBLIS_TRIDENT_ON_SHIP, 1);
+			DeltaSISGauges(-ArtifactCrewCost, 0, 0);
+			SlaveryCount += ArtifactCrewCost;
+			uqm::gameState().setFlag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP, static_cast<uint32_t>(1));
 
 			NPCPhrase(BOUGHT_ART_1);
 		}
 	}
-	else if (PLAYER_SAID(R, buy_art_2))
+	else if (PlayerSaid(R, buy_art_2))
 	{
-		if (GLOBAL_SIS(CrewEnlisted) < ARTIFACT_CREW_COST)
+		if (uqm::gameState().sis().CrewEnlisted < ArtifactCrewCost)
 		{
 			NPCPhrase(NOT_ENOUGH_CREW);
 		}
 		else
 		{
-			DeltaSISGauges(-ARTIFACT_CREW_COST, 0, 0);
-			SlaveryCount += ARTIFACT_CREW_COST;
-			SET_GAME_STATE(GLOWING_ROD_ON_SHIP, 1);
+			DeltaSISGauges(-ArtifactCrewCost, 0, 0);
+			SlaveryCount += ArtifactCrewCost;
+			uqm::gameState().setFlag(uqm::GameFlag::GLOWING_ROD_ON_SHIP, static_cast<uint32_t>(1));
 
 			NPCPhrase(BOUGHT_ART_2);
 		}
 	}
-	else if (PLAYER_SAID(R, buy_fuel))
+	else if (PlayerSaid(R, buy_fuel))
 	{
-#define FUEL_CREW_COST 10
-		if (GLOBAL_SIS(CrewEnlisted) < FUEL_CREW_COST)
+		if (uqm::gameState().sis().CrewEnlisted < FuelCrewCost)
 		{
 			NPCPhrase(NOT_ENOUGH_CREW);
 		}
 		else
 		{
-			DeltaSISGauges(-FUEL_CREW_COST,
-						   FUEL_CREW_COST * FUEL_TANK_SCALE, 0);
-			SlaveryCount += FUEL_CREW_COST;
+			DeltaSISGauges(-FuelCrewCost,
+						   FuelCrewCost * FuelTankScale, 0);
+			SlaveryCount += FuelCrewCost;
 
 			NPCPhrase(BOUGHT_FUEL);
 		}
 	}
 
 	Response(buy_druuge_ship, Buy);
-	if (!GET_GAME_STATE(ROSY_SPHERE))
+	if (!uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE))
 	{
 		Response(buy_rosy_sphere, Buy);
 	}
-	if (!GET_GAME_STATE(WIMBLIS_TRIDENT_ON_SHIP))
+	if (!uqm::gameState().flag(uqm::GameFlag::WIMBLIS_TRIDENT_ON_SHIP))
 	{
 		Response(buy_art_1, Buy);
 	}
-	if (!GET_GAME_STATE(GLOWING_ROD_ON_SHIP))
+	if (!uqm::gameState().flag(uqm::GameFlag::GLOWING_ROD_ON_SHIP))
 	{
 		Response(buy_art_2, Buy);
 	}
@@ -398,10 +398,9 @@ static void Sell(RESPONSE_REF R);
 
 static RESPONSE_REF LastResponse = 0;
 
-static void
-Trade(RESPONSE_REF R)
+static void Trade(RESPONSE_REF R)
 {
-	if (!PLAYER_SAID(R, whats_the_sphere_again))
+	if (!PlayerSaid(R, whats_the_sphere_again))
 	{
 		NPCPhrase(TRADE_FOR_SPHERE);
 		LastResponse = R;
@@ -410,93 +409,92 @@ Trade(RESPONSE_REF R)
 	{
 		NPCPhrase(SPHERE_IS);
 
-		DISABLE_PHRASE(whats_the_sphere_again);
+		DisablePhrase(whats_the_sphere_again);
 	}
 
 	Response(no_way, Sell);
 	Response(way, Sell);
-	if (PHRASE_ENABLED(whats_the_sphere_again))
+	if (PhraseEnabled(whats_the_sphere_again))
 	{
 		Response(whats_the_sphere_again, Trade);
 	}
 }
 
-static void
-DoTransaction(RESPONSE_REF R)
+static void DoTransaction(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, sell_maidens))
+	if (PlayerSaid(R, sell_maidens))
 	{
-		SET_GAME_STATE(MAIDENS_ON_SHIP, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::MAIDENS_ON_SHIP, static_cast<uint32_t>(0));
 	}
-	else if (PLAYER_SAID(R, sell_fragments))
+	else if (PlayerSaid(R, sell_fragments))
 	{
 		uint8_t num_frags {};
 
-		if (GET_GAME_STATE(EGG_CASE0_ON_SHIP))
+		if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE0_ON_SHIP))
 		{
-			SET_GAME_STATE(EGG_CASE0_ON_SHIP, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE0_ON_SHIP, static_cast<uint32_t>(0));
 		}
-		else if (GET_GAME_STATE(EGG_CASE1_ON_SHIP))
+		else if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE1_ON_SHIP))
 		{
-			SET_GAME_STATE(EGG_CASE1_ON_SHIP, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE1_ON_SHIP, static_cast<uint32_t>(0));
 		}
-		else if (GET_GAME_STATE(EGG_CASE2_ON_SHIP))
+		else if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE2_ON_SHIP))
 		{
-			SET_GAME_STATE(EGG_CASE2_ON_SHIP, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::EGG_CASE2_ON_SHIP, static_cast<uint32_t>(0));
 		}
 
-		num_frags = GET_GAME_STATE(FRAGMENTS_BOUGHT) + 1;
-		SET_GAME_STATE(FRAGMENTS_BOUGHT, num_frags);
+		num_frags = uqm::gameState().flag(uqm::GameFlag::FRAGMENTS_BOUGHT) + 1;
+		uqm::gameState().setFlag(uqm::GameFlag::FRAGMENTS_BOUGHT, static_cast<uint32_t>(num_frags));
 	}
-	else if (PLAYER_SAID(R, sell_caster))
+	else if (PlayerSaid(R, sell_caster))
 	{
-		SET_GAME_STATE(BURV_BROADCASTERS_ON_SHIP, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP, static_cast<uint32_t>(0));
 	}
-	else if (PLAYER_SAID(R, sell_spawner))
+	else if (PlayerSaid(R, sell_spawner))
 	{
-		SET_GAME_STATE(PORTAL_SPAWNER_ON_SHIP, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP, static_cast<uint32_t>(0));
 	}
 
-	if (!GET_GAME_STATE(ROSY_SPHERE)
-		&& GET_GAME_STATE(ROSY_SPHERE_ON_SHIP))
+	if (!uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE)
+		&& uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP))
 	{
-		SET_GAME_STATE(ROSY_SPHERE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE, static_cast<uint32_t>(1));
 	}
 	else
 	{
 		uint8_t ship_slots {};
 
-		if (isDifficulty(uqm::Difficulty::Hard) && !(GET_GAME_STATE(HM_ENCOUNTERS) & 1 << READY_TO_BARGAIN))
+		if (isDifficulty(uqm::Difficulty::Hard) && !(uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << READY_TO_BARGAIN))
 		{
 			uint16_t state {};
 
-			state = GET_GAME_STATE(HM_ENCOUNTERS);
+			state = uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS);
 
 			state |= 1 << READY_TO_BARGAIN;
 
-			SET_GAME_STATE(HM_ENCOUNTERS, state);
+			uqm::gameState().setFlag(uqm::GameFlag::HM_ENCOUNTERS, static_cast<uint32_t>(state));
 		}
 
 		uint8_t trade_gas {0};
 		uint8_t ships_to_trade {0};
 		ship_slots = EscortFeasibilityStudy(DRUUGE_SHIP);
-		if (PLAYER_SAID(R, sell_maidens))
+		if (PlayerSaid(R, sell_maidens))
 		{
 			NPCPhrase(BOUGHT_MAIDENS);
 			ships_to_trade = 6;
 		}
-		else if (PLAYER_SAID(R, sell_fragments))
+		else if (PlayerSaid(R, sell_fragments))
 		{
 			NPCPhrase(BOUGHT_FRAGMENTS);
 			ships_to_trade = 1;
 		}
-		else if (PLAYER_SAID(R, sell_caster))
+		else if (PlayerSaid(R, sell_caster))
 		{
 			NPCPhrase(BOUGHT_CASTER);
 			ships_to_trade = 0;
 			trade_gas = 1;
 		}
-		else if (PLAYER_SAID(R, sell_spawner))
+		else if (PlayerSaid(R, sell_spawner))
 		{
 			NPCPhrase(BOUGHT_SPAWNER);
 			ships_to_trade = 3;
@@ -532,27 +530,27 @@ DoTransaction(RESPONSE_REF R)
 			const uint16_t HardLimit = 500;
 			uint32_t FuelOnBoard {};
 
-			FuelOnBoard = GLOBAL_SIS(FuelOnBoard);
-			uint32_t capacity {FUEL_RESERVE};
-			uint8_t slot {NUM_MODULE_SLOTS - 1};
+			FuelOnBoard = uqm::gameState().sis().FuelOnBoard;
+			uint32_t capacity {FuelReserve};
+			uint8_t slot {NumModuleSlots - 1};
 			do
 			{
-				if (GLOBAL_SIS(ModuleSlots[slot]) == FUEL_TANK
-					|| GLOBAL_SIS(ModuleSlots[slot]) == HIGHEFF_FUELSYS)
+				if (uqm::gameState().sis().ModuleSlots[slot] == FUEL_TANK
+					|| uqm::gameState().sis().ModuleSlots[slot] == HIGHEFF_FUELSYS)
 				{
 					uint16_t volume {};
 
-					volume = GLOBAL_SIS(ModuleSlots[slot]) == FUEL_TANK ? FUEL_TANK_CAPACITY : HEFUEL_TANK_CAPACITY;
+					volume = uqm::gameState().sis().ModuleSlots[slot] == FUEL_TANK ? FuelTankCapacity : HefuelTankCapacity;
 					capacity += volume;
 				}
 			} while (slot--);
 			capacity -= FuelOnBoard;
-			uint16_t f {(uint16_t)((capacity + (FUEL_TANK_SCALE >> 1)) / FUEL_TANK_SCALE)};
+			uint16_t f {(uint16_t)((capacity + (FuelTankScale >> 1)) / FuelTankScale)};
 
 			if (isDifficulty(uqm::Difficulty::Hard) && f > HardLimit)
 			{
 				f -= (f - HardLimit);
-				capacity = (f * FUEL_TANK_SCALE) - FuelOnBoard;
+				capacity = (f * FuelTankScale) - FuelOnBoard;
 			}
 
 			while (capacity > 0x3FFFL)
@@ -591,19 +589,18 @@ DoTransaction(RESPONSE_REF R)
 	}
 }
 
-static void
-Sell(RESPONSE_REF R)
+static void Sell(RESPONSE_REF R)
 {
 	RESPONSE_FUNC RespFunc {};
 
-	if (PLAYER_SAID(R, want_to_sell))
+	if (PlayerSaid(R, want_to_sell))
 	{
 		NPCPhrase(READY_TO_BUY);
 	}
-	else if (PLAYER_SAID(R, no_way)
-			 || PLAYER_SAID(R, way))
+	else if (PlayerSaid(R, no_way)
+			 || PlayerSaid(R, way))
 	{
-		if (PLAYER_SAID(R, no_way))
+		if (PlayerSaid(R, no_way))
 		{
 			NPCPhrase(OK_REGULAR_DEAL);
 		}
@@ -611,22 +608,22 @@ Sell(RESPONSE_REF R)
 		{
 			NPCPhrase(OK_HERES_SPHERE);
 
-			SET_GAME_STATE(ROSY_SPHERE_ON_SHIP, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::ROSY_SPHERE_ON_SHIP, static_cast<uint32_t>(1));
 		}
 
 		DoTransaction(LastResponse);
 	}
-	else if (PLAYER_SAID(R, sell_maidens)
-			 || PLAYER_SAID(R, sell_fragments)
-			 || PLAYER_SAID(R, sell_caster)
-			 || PLAYER_SAID(R, sell_spawner))
+	else if (PlayerSaid(R, sell_maidens)
+			 || PlayerSaid(R, sell_fragments)
+			 || PlayerSaid(R, sell_caster)
+			 || PlayerSaid(R, sell_spawner))
 	{
 		DoTransaction(R);
 	}
 
-	if (!GET_GAME_STATE(ROSY_SPHERE))
+	if (!uqm::gameState().flag(uqm::GameFlag::ROSY_SPHERE))
 	{
-		if ((isDifficulty(uqm::Difficulty::Hard) && GET_GAME_STATE(HM_ENCOUNTERS) & 1 << READY_TO_BARGAIN) || !isDifficulty(uqm::Difficulty::Hard))
+		if ((isDifficulty(uqm::Difficulty::Hard) && uqm::gameState().flag(uqm::GameFlag::HM_ENCOUNTERS) & 1 << READY_TO_BARGAIN) || !isDifficulty(uqm::Difficulty::Hard))
 		{
 			RespFunc = (RESPONSE_FUNC)Trade;
 		}
@@ -639,49 +636,48 @@ Sell(RESPONSE_REF R)
 	{
 		RespFunc = (RESPONSE_FUNC)Sell;
 	}
-	if (GET_GAME_STATE(MAIDENS_ON_SHIP))
+	if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP))
 	{
 		Response(sell_maidens, RespFunc);
 	}
-	if ((GET_GAME_STATE(EGG_CASE0_ON_SHIP)
-		 || GET_GAME_STATE(EGG_CASE1_ON_SHIP)
-		 || GET_GAME_STATE(EGG_CASE2_ON_SHIP))
-		&& GET_GAME_STATE(FRAGMENTS_BOUGHT) < 2)
+	if ((uqm::gameState().flag(uqm::GameFlag::EGG_CASE0_ON_SHIP)
+		 || uqm::gameState().flag(uqm::GameFlag::EGG_CASE1_ON_SHIP)
+		 || uqm::gameState().flag(uqm::GameFlag::EGG_CASE2_ON_SHIP))
+		&& uqm::gameState().flag(uqm::GameFlag::FRAGMENTS_BOUGHT) < 2)
 	{
 		Response(sell_fragments, RespFunc);
 	}
-	if (GET_GAME_STATE(BURV_BROADCASTERS_ON_SHIP))
+	if (uqm::gameState().flag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP))
 	{
 		Response(sell_caster, RespFunc);
 	}
-	if (GET_GAME_STATE(PORTAL_SPAWNER_ON_SHIP))
+	if (uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP))
 	{
 		Response(sell_spawner, RespFunc);
 	}
 	Response(done_selling, TradeWorld);
 }
 
-static void
-ExplainSlaveTrade(RESPONSE_REF R)
+static void ExplainSlaveTrade(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, want_to_buy))
+	if (PlayerSaid(R, want_to_buy))
 	{
 		NPCPhrase(WE_SELL_FOR_CREW);
 	}
-	else if (PLAYER_SAID(R, isnt_this_slave_trading))
+	else if (PlayerSaid(R, isnt_this_slave_trading))
 	{
 		NPCPhrase(NO_SLAVE_TRADE);
 
-		SET_GAME_STATE(KNOW_DRUUGE_SLAVERS, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_DRUUGE_SLAVERS, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, what_do_with_crew))
+	else if (PlayerSaid(R, what_do_with_crew))
 	{
 		NPCPhrase(HAVE_FUN);
 
-		SET_GAME_STATE(KNOW_DRUUGE_SLAVERS, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_DRUUGE_SLAVERS, static_cast<uint32_t>(2));
 	}
 
-	switch (GET_GAME_STATE(KNOW_DRUUGE_SLAVERS))
+	switch (uqm::gameState().flag(uqm::GameFlag::KNOW_DRUUGE_SLAVERS))
 	{
 		case 0:
 			Response(isnt_this_slave_trading, ExplainSlaveTrade);
@@ -694,14 +690,13 @@ ExplainSlaveTrade(RESPONSE_REF R)
 	Response(im_ready_to_buy, Buy);
 }
 
-static void
-TradeWorld(RESPONSE_REF R)
+static void TradeWorld(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_at_trade_world))
+	if (PlayerSaid(R, whats_up_at_trade_world))
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(DRUUGE_HOME_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::DRUUGE_HOME_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -712,9 +707,9 @@ TradeWorld(RESPONSE_REF R)
 				break;
 			case 2:
 				NPCPhrase(GEN_INFO_AT_TRADE_WORLD_3);
-				if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) < 2)
+				if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 2)
 				{
-					SET_GAME_STATE(KNOW_ABOUT_SHATTERED, 2);
+					uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 				}
 				break;
 			case 3:
@@ -722,28 +717,28 @@ TradeWorld(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(DRUUGE_HOME_INFO, NumVisits);
-		DISABLE_PHRASE(whats_up_at_trade_world);
+		uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_HOME_INFO, static_cast<uint32_t>(NumVisits));
+		DisablePhrase(whats_up_at_trade_world);
 	}
-	else if (PLAYER_SAID(R, done_selling))
+	else if (PlayerSaid(R, done_selling))
 	{
 		NPCPhrase(OK_DONE_SELLING);
 	}
-	else if (PLAYER_SAID(R, done_buying))
+	else if (PlayerSaid(R, done_buying))
 	{
 		NPCPhrase(OK_DONE_BUYING);
 	}
-	else if (PLAYER_SAID(R, i_will_never_trade_crew))
+	else if (PlayerSaid(R, i_will_never_trade_crew))
 	{
 		NPCPhrase(YOUR_LOSS);
 	}
 
-	if (PHRASE_ENABLED(whats_up_at_trade_world))
+	if (PhraseEnabled(whats_up_at_trade_world))
 	{
 		Response(whats_up_at_trade_world, TradeWorld);
 	}
 	Response(want_to_sell, Sell);
-	if (GET_GAME_STATE(KNOW_DRUUGE_SLAVERS) == 3)
+	if (uqm::gameState().flag(uqm::GameFlag::KNOW_DRUUGE_SLAVERS) == 3)
 	{
 		Response(want_to_buy, Buy);
 	}
@@ -754,21 +749,20 @@ TradeWorld(RESPONSE_REF R)
 	Response(bye, ExitConversation);
 }
 
-static void
-BombAmbush(RESPONSE_REF R)
+static void BombAmbush(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_at_bomb_planet))
+	if (PlayerSaid(R, whats_up_at_bomb_planet))
 	{
 		NPCPhrase(GEN_INFO_AT_BOMB_PLANET);
-		SET_GAME_STATE(BOMB_VISITS, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(2));
 	}
-	else if (PLAYER_SAID(R, we_get_bomb))
+	else if (PlayerSaid(R, we_get_bomb))
 	{
 		NPCPhrase(NOT_GET_BOMB);
-		SET_GAME_STATE(BOMB_VISITS, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(3));
 	}
 
-	switch (GET_GAME_STATE(BOMB_VISITS))
+	switch (uqm::gameState().flag(uqm::GameFlag::BOMB_VISITS))
 	{
 		case 1:
 			Response(whats_up_at_bomb_planet, BombAmbush);
@@ -783,14 +777,13 @@ BombAmbush(RESPONSE_REF R)
 	Response(bye, ExitConversation);
 }
 
-static void
-Space(RESPONSE_REF R)
+static void Space(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_in_space))
+	if (PlayerSaid(R, whats_up_in_space))
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(DRUUGE_SPACE_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::DRUUGE_SPACE_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -807,20 +800,19 @@ Space(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(DRUUGE_SPACE_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_SPACE_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_in_space);
+		DisablePhrase(whats_up_in_space);
 	}
 
-	if (PHRASE_ENABLED(whats_up_in_space))
+	if (PhraseEnabled(whats_up_in_space))
 	{
 		Response(whats_up_in_space, Space);
 	}
 	Response(bye, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -832,11 +824,11 @@ Intro(void)
 		return;
 	}
 
-	if (GET_GAME_STATE(DRUUGE_MANNER))
+	if (uqm::gameState().flag(uqm::GameFlag::DRUUGE_MANNER))
 	{
-		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+		if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 		{
-			NumVisits = GET_GAME_STATE(DRUUGE_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::DRUUGE_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -847,11 +839,11 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(DRUUGE_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(DRUUGE_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::DRUUGE_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -862,15 +854,15 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(DRUUGE_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_VISITS, static_cast<uint32_t>(NumVisits));
 		}
 
 		setSegue(Segue_hostile);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7))
 	{
 		{
-			NumVisits = GET_GAME_STATE(DRUUGE_HOME_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::DRUUGE_HOME_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -890,28 +882,28 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(DRUUGE_HOME_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 		}
-		if (GET_GAME_STATE(ATTACKED_DRUUGE)
-			&& !GET_GAME_STATE(DRUUGE_DISCLAIMER))
+		if (uqm::gameState().flag(uqm::GameFlag::ATTACKED_DRUUGE)
+			&& !uqm::gameState().flag(uqm::GameFlag::DRUUGE_DISCLAIMER))
 		{
 			// There is no HOSTILE_TRADE voice track that we know of
 			// so this is currently disabled
 			//NPCPhrase (HOSTILE_TRADE);
-			SET_GAME_STATE(DRUUGE_DISCLAIMER, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_DISCLAIMER, static_cast<uint32_t>(1));
 		}
-		if (GET_GAME_STATE(MAIDENS_ON_SHIP)
-			&& !GET_GAME_STATE(SCANNED_MAIDENS))
+		if (uqm::gameState().flag(uqm::GameFlag::MAIDENS_ON_SHIP)
+			&& !uqm::gameState().flag(uqm::GameFlag::SCANNED_MAIDENS))
 		{
 			NPCPhrase(SCAN_MAIDENS);
-			SET_GAME_STATE(SCANNED_MAIDENS, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::SCANNED_MAIDENS, static_cast<uint32_t>(1));
 		}
-		if ((GET_GAME_STATE(EGG_CASE0_ON_SHIP)
-			 || GET_GAME_STATE(EGG_CASE1_ON_SHIP)
-			 || GET_GAME_STATE(EGG_CASE2_ON_SHIP))
-			&& !GET_GAME_STATE(SCANNED_FRAGMENTS))
+		if ((uqm::gameState().flag(uqm::GameFlag::EGG_CASE0_ON_SHIP)
+			 || uqm::gameState().flag(uqm::GameFlag::EGG_CASE1_ON_SHIP)
+			 || uqm::gameState().flag(uqm::GameFlag::EGG_CASE2_ON_SHIP))
+			&& !uqm::gameState().flag(uqm::GameFlag::SCANNED_FRAGMENTS))
 		{
-			if (GET_GAME_STATE(FRAGMENTS_BOUGHT) < 2)
+			if (uqm::gameState().flag(uqm::GameFlag::FRAGMENTS_BOUGHT) < 2)
 			{
 				NPCPhrase(SCAN_FRAGMENTS);
 			}
@@ -919,40 +911,40 @@ Intro(void)
 			{
 				NPCPhrase(ENOUGH_FRAGMENTS);
 			}
-			SET_GAME_STATE(SCANNED_FRAGMENTS, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::SCANNED_FRAGMENTS, static_cast<uint32_t>(1));
 		}
-		if (GET_GAME_STATE(BURV_BROADCASTERS_ON_SHIP)
-			&& !GET_GAME_STATE(SCANNED_CASTER))
+		if (uqm::gameState().flag(uqm::GameFlag::BURV_BROADCASTERS_ON_SHIP)
+			&& !uqm::gameState().flag(uqm::GameFlag::SCANNED_CASTER))
 		{
 			NPCPhrase(SCAN_DRUUGE_CASTER);
-			SET_GAME_STATE(SCANNED_CASTER, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::SCANNED_CASTER, static_cast<uint32_t>(1));
 		}
-		if (GET_GAME_STATE(PORTAL_SPAWNER_ON_SHIP)
-			&& !GET_GAME_STATE(SCANNED_SPAWNER))
+		if (uqm::gameState().flag(uqm::GameFlag::PORTAL_SPAWNER_ON_SHIP)
+			&& !uqm::gameState().flag(uqm::GameFlag::SCANNED_SPAWNER))
 		{
 			NPCPhrase(SCAN_ARILOU_SPAWNER);
-			SET_GAME_STATE(SCANNED_SPAWNER, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::SCANNED_SPAWNER, static_cast<uint32_t>(1));
 		}
 
 		TradeWorld((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
+	else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		if (GET_GAME_STATE(BOMB_VISITS))
+		if (uqm::gameState().flag(uqm::GameFlag::BOMB_VISITS))
 		{
 			NPCPhrase(SUBSEQ_BOMB_WORLD_HELLO);
 		}
 		else
 		{
 			NPCPhrase(INIT_BOMB_WORLD_HELLO);
-			SET_GAME_STATE(BOMB_VISITS, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::BOMB_VISITS, static_cast<uint32_t>(1));
 		}
 
 		BombAmbush((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(ATTACKED_DRUUGE))
+	else if (uqm::gameState().flag(uqm::GameFlag::ATTACKED_DRUUGE))
 	{
-		NumVisits = GET_GAME_STATE(DRUUGE_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::DRUUGE_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -963,18 +955,18 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(DRUUGE_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_VISITS, static_cast<uint32_t>(NumVisits));
 
 		setSegue(Segue_hostile);
 	}
 	else
 	{
 		NumVisits = 0;
-		if (GetHeadLink(&GLOBAL(built_ship_q)) == 0)
+		if (GetHeadLink(&uqm::gameState().game().built_ship_q) == 0)
 		{
-			for (NumVisits = 0; NumVisits < NUM_MODULE_SLOTS; ++NumVisits)
+			for (NumVisits = 0; NumVisits < NumModuleSlots; ++NumVisits)
 			{
-				const uint8_t which_module {GLOBAL_SIS(ModuleSlots[NumVisits])};
+				const uint8_t which_module {uqm::gameState().sis().ModuleSlots[NumVisits]};
 				if (which_module >= GUN_WEAPON
 					&& which_module <= CANNON_WEAPON)
 				{
@@ -986,7 +978,7 @@ Intro(void)
 
 		if (NumVisits)
 		{
-			NumVisits = GET_GAME_STATE(DRUUGE_SALVAGE);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::DRUUGE_SALVAGE);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -997,14 +989,14 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(DRUUGE_SALVAGE, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_SALVAGE, static_cast<uint32_t>(NumVisits));
 
 			setSegue(Segue_hostile);
 			AttemptedSalvage = true;
 		}
 		else
 		{
-			NumVisits = GET_GAME_STATE(DRUUGE_VISITS);
+			NumVisits = uqm::gameState().flag(uqm::GameFlag::DRUUGE_VISITS);
 			switch (NumVisits++)
 			{
 				case 0:
@@ -1016,37 +1008,34 @@ Intro(void)
 					--NumVisits;
 					break;
 			}
-			SET_GAME_STATE(DRUUGE_VISITS, NumVisits);
+			uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_VISITS, static_cast<uint32_t>(NumVisits));
 
 			Space((RESPONSE_REF)0);
 		}
 	}
 }
 
-static uint16_t
-uninit_druuge(void)
+static uint16_t uninit_druuge(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_druuge_enc(void)
+static void post_druuge_enc(void)
 {
 	if (getSegue() == Segue_hostile
 		&& !AttemptedSalvage
-		&& !GET_GAME_STATE(DRUUGE_MANNER))
+		&& !uqm::gameState().flag(uqm::GameFlag::DRUUGE_MANNER))
 	{
-		if (!GET_GAME_STATE(ATTACKED_DRUUGE))
+		if (!uqm::gameState().flag(uqm::GameFlag::ATTACKED_DRUUGE))
 		{
-			SET_GAME_STATE(ATTACKED_DRUUGE, 1);
-			SET_GAME_STATE(DRUUGE_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::ATTACKED_DRUUGE, static_cast<uint32_t>(1));
+			uqm::gameState().setFlag(uqm::GameFlag::DRUUGE_VISITS, static_cast<uint32_t>(0));
 		}
 	}
 }
 
-LOCDATA*
-init_druuge_comm(void)
+LOCDATA* init_druuge_comm(void)
 {
 	SlaveryCount = 0;
 	AttemptedSalvage = false;
@@ -1055,14 +1044,14 @@ init_druuge_comm(void)
 	druuge_desc.post_encounter_func = post_druuge_enc;
 	druuge_desc.uninit_encounter_func = uninit_druuge;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
-	druuge_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
-	druuge_desc.AlienTextBaseline.y = RES_SCALE(64);
-	druuge_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	druuge_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
+	druuge_desc.AlienTextBaseline.y = ResScale(64);
+	druuge_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
-	if ((GET_GAME_STATE(DRUUGE_MANNER) == 0
-		 && (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
+	if ((uqm::gameState().flag(uqm::GameFlag::DRUUGE_MANNER) == 0
+		 && (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);

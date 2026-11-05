@@ -30,30 +30,30 @@ static LOCDATA spathi_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		SPATHI_PMAP_ANIM, /* AlienFrame */
-		SPATHI_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		SpathiPmapAnim, /* AlienFrame */
+		SpathiFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		SPATHI_COLOR_MAP, /* AlienColorMap */
-		SPATHI_MUSIC, /* AlienSong */
+		SpathiColorMap, /* AlienColorMap */
+		SpathiMusic, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			FWIFFO_MUSIC,  /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			FwiffoMusic,  /* AlienAltSong */
 		},
-		SPATHI_CONVERSATION_PHRASES, /* PlayerPhrases */
+		SpathiConversationPhrases, /* PlayerPhrases */
 		8, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				1,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				1,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				0,
@@ -61,9 +61,9 @@ static LOCDATA spathi_desc =
 				(1 << 1),			/* BlockMask */
 			},
 								{
-				7,			   /* StartIndex */
-				9,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				7,			  /* StartIndex */
+				9,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond / 20,
@@ -71,9 +71,9 @@ static LOCDATA spathi_desc =
 				(1 << 0), /* BlockMask */
 			},
 								{
-				16,			   /* StartIndex */
-				4,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				16,			  /* StartIndex */
+				4,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 10,
@@ -82,14 +82,14 @@ static LOCDATA spathi_desc =
 			},
 								{20,											   /* StartIndex */
 			 4,												   /* NumFrames */
-			 YOYO_ANIM,										   /* AnimFlags */
+			 YoyoAnim,										   /* AnimFlags */
 			 GameTicksPerSecond / 15, GameTicksPerSecond / 15, /* FrameRate */
 			 GameTicksPerSecond / 15, GameTicksPerSecond / 15, /* FrameRate */
 			 (1 << 5)},
 								{
-				24,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				24,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -99,9 +99,9 @@ static LOCDATA spathi_desc =
 
 
 								{
-				34,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				34,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -109,9 +109,9 @@ static LOCDATA spathi_desc =
 				(1 << 3),				/* BlockMask */
 			},
 								{
-				38,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				38,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -119,9 +119,9 @@ static LOCDATA spathi_desc =
 				0,						/* BlockMask */
 			},
 								{
-				41,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				41,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				0, /* FrameRate */
 				GameTicksPerSecond,
@@ -174,56 +174,55 @@ static LOCDATA spathi_desc =
 		nullptr,
 };
 
-static void
-ExitConversation(RESPONSE_REF Response)
+static void ExitConversation(RESPONSE_REF Response)
 {
-	const uint8_t SpaCrew = ifEasyDifficulty(MAX_CREW_SIZE, 1);
+	const uint8_t SpaCrew = ifEasyDifficulty(MaxCrewSize, 1);
 	setSegue(Segue_peace);
 
-	if (PLAYER_SAID(Response, bye_ally_space))
+	if (PlayerSaid(Response, bye_ally_space))
 	{
 		NPCPhrase(GOODBYE_ALLY_SPACE);
 	}
-	else if (PLAYER_SAID(Response, bye_friendly_space))
+	else if (PlayerSaid(Response, bye_friendly_space))
 	{
 		NPCPhrase(GOODBYE_FRIENDLY_SPACE);
 	}
-	else if (PLAYER_SAID(Response, part_in_peace))
+	else if (PlayerSaid(Response, part_in_peace))
 	{
 		NPCPhrase(KEEP_IT_SECRET);
 	}
-	else if (PLAYER_SAID(Response, we_sorry_space))
+	else if (PlayerSaid(Response, we_sorry_space))
 	{
 		NPCPhrase(APOLOGIZE_AT_HOMEWORLD);
 	}
-	else if (PLAYER_SAID(Response, give_info_space))
+	else if (PlayerSaid(Response, give_info_space))
 	{
 		NPCPhrase(HERES_SOME_INFO);
 	}
-	else if (PLAYER_SAID(Response, bye_angry_space))
+	else if (PlayerSaid(Response, bye_angry_space))
 	{
 		NPCPhrase(GOODBYE_ANGRY_SPACE);
 	}
-	else if (PLAYER_SAID(Response, attack_you_now))
+	else if (PlayerSaid(Response, attack_you_now))
 	{
 		NPCPhrase(YIPES);
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(Response, we_fight_again_space))
+	else if (PlayerSaid(Response, we_fight_again_space))
 	{
 		NPCPhrase(OK_FIGHT_AGAIN_SPACE);
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(Response, die_slugboy)
-			 || PLAYER_SAID(Response, we_fight_1)
-			 || PLAYER_SAID(Response, we_fight_2)
-			 || PLAYER_SAID(Response, pay_for_crimes)
-			 || PLAYER_SAID(Response, tell_me_coordinates)
-			 || PLAYER_SAID(Response, changed_mind))
+	else if (PlayerSaid(Response, die_slugboy)
+			 || PlayerSaid(Response, we_fight_1)
+			 || PlayerSaid(Response, we_fight_2)
+			 || PlayerSaid(Response, pay_for_crimes)
+			 || PlayerSaid(Response, tell_me_coordinates)
+			 || PlayerSaid(Response, changed_mind))
 	{
-		if (PLAYER_SAID(Response, tell_me_coordinates))
+		if (PlayerSaid(Response, tell_me_coordinates))
 		{
 			NPCPhrase(FAKE_COORDINATES);
 		}
@@ -231,7 +230,7 @@ ExitConversation(RESPONSE_REF Response)
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(Response, join_us))
+	else if (PlayerSaid(Response, join_us))
 	{
 		if (EscortFeasibilityStudy(SPATHI_SHIP) == 0)
 		{
@@ -245,10 +244,10 @@ ExitConversation(RESPONSE_REF Response)
 			AddEscortShips(SPATHI_SHIP, 1);
 			/* Make the Eluder escort captained by Fwiffo alone */
 			SetEscortCrewComplement(SPATHI_SHIP, SpaCrew,
-									NAME_OFFSET + NUM_CAPTAINS_NAMES);
+									NameOffset + NumCaptainsNames);
 		}
 	}
-	else if (PLAYER_SAID(Response, join_us_nomad))
+	else if (PlayerSaid(Response, join_us_nomad))
 	{
 		if ((EscortFeasibilityStudy(SPATHI_SHIP) == 0
 			 || CountEscortShips(SPATHI_SHIP) > 2))
@@ -267,136 +266,135 @@ ExitConversation(RESPONSE_REF Response)
 
 static uint8_t join_us_refusals;
 
-static void
-SpathiOnPluto(RESPONSE_REF R)
+static void SpathiOnPluto(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, hi_there))
+	if (PlayerSaid(R, hi_there))
 	{
 		NPCPhrase(ARE_YOU_SURE);
 	}
-	else if (PLAYER_SAID(R, dont_kill))
+	else if (PlayerSaid(R, dont_kill))
 	{
 		NPCPhrase(OK_WONT);
 	}
-	else if (PLAYER_SAID(R, youre_forgiven))
+	else if (PlayerSaid(R, youre_forgiven))
 	{
 		NPCPhrase(THANKS_FOR_FORGIVENESS);
 	}
-	else if (PLAYER_SAID(R, you_wont_die_yet))
+	else if (PlayerSaid(R, you_wont_die_yet))
 	{
 		NPCPhrase(ETERNAL_GRATITUDE);
 	}
-	else if (PLAYER_SAID(R, you_may_live))
+	else if (PlayerSaid(R, you_may_live))
 	{
 		NPCPhrase(GEE_THANKS);
 	}
-	else if (PLAYER_SAID(R, youve_got_me_all_wrong))
+	else if (PlayerSaid(R, youve_got_me_all_wrong))
 	{
 		NPCPhrase(SORRY_NO_COORDS);
 	}
-	else if (PLAYER_SAID(R, what_doing_on_pluto_1))
+	else if (PlayerSaid(R, what_doing_on_pluto_1))
 	{
 		NPCPhrase(ABOUT_20_YEARS_AGO);
 
-		DISABLE_PHRASE(what_doing_on_pluto_1);
+		DisablePhrase(what_doing_on_pluto_1);
 	}
-	else if (PLAYER_SAID(R, what_doing_on_pluto_2))
+	else if (PlayerSaid(R, what_doing_on_pluto_2))
 	{
 		NPCPhrase(WHEN_URQUAN_ARRIVED);
 
-		DISABLE_PHRASE(what_doing_on_pluto_2);
+		DisablePhrase(what_doing_on_pluto_2);
 	}
-	else if (PLAYER_SAID(R, what_doing_on_pluto_3))
+	else if (PlayerSaid(R, what_doing_on_pluto_3))
 	{
 		NPCPhrase(STATIONED_ON_EARTH_MOON);
 
-		DISABLE_PHRASE(what_doing_on_pluto_3);
+		DisablePhrase(what_doing_on_pluto_3);
 	}
-	else if (PLAYER_SAID(R, what_about_ilwrath))
+	else if (PlayerSaid(R, what_about_ilwrath))
 	{
 		NPCPhrase(ABOUT_ILWRATH);
 
-		DISABLE_PHRASE(what_about_ilwrath);
+		DisablePhrase(what_about_ilwrath);
 	}
-	else if (PLAYER_SAID(R, when_ilwrath))
+	else if (PlayerSaid(R, when_ilwrath))
 	{
 		NPCPhrase(THEN_ILWRATH);
 
-		DISABLE_PHRASE(when_ilwrath);
+		DisablePhrase(when_ilwrath);
 	}
-	else if (PLAYER_SAID(R, what_about_moonbase))
+	else if (PlayerSaid(R, what_about_moonbase))
 	{
 		NPCPhrase(SET_UP_BASE);
 
-		DISABLE_PHRASE(what_about_moonbase);
+		DisablePhrase(what_about_moonbase);
 	}
-	else if (PLAYER_SAID(R, what_about_other_spathi))
+	else if (PlayerSaid(R, what_about_other_spathi))
 	{
 		NPCPhrase(SPATHI_ARE);
 
-		DISABLE_PHRASE(what_about_other_spathi);
+		DisablePhrase(what_about_other_spathi);
 	}
-	else if (PLAYER_SAID(R, what_about_other_spathi))
+	else if (PlayerSaid(R, what_about_other_spathi))
 	{
 		NPCPhrase(THEN_ILWRATH);
 
-		DISABLE_PHRASE(what_about_other_spathi);
+		DisablePhrase(what_about_other_spathi);
 	}
-	else if (PLAYER_SAID(R, how_many_crew))
+	else if (PlayerSaid(R, how_many_crew))
 	{
 		NPCPhrase(THOUSANDS);
 
-		DISABLE_PHRASE(how_many_crew);
+		DisablePhrase(how_many_crew);
 	}
-	else if (PLAYER_SAID(R, really_thousands))
+	else if (PlayerSaid(R, really_thousands))
 	{
 		NPCPhrase(JUST_ME);
 
-		DISABLE_PHRASE(really_thousands);
+		DisablePhrase(really_thousands);
 	}
-	else if (PLAYER_SAID(R, full_of_monsters))
+	else if (PlayerSaid(R, full_of_monsters))
 	{
 		NPCPhrase(HOW_TRUE);
 
-		DISABLE_PHRASE(full_of_monsters);
+		DisablePhrase(full_of_monsters);
 	}
-	else if (PLAYER_SAID(R, what_enemy))
+	else if (PlayerSaid(R, what_enemy))
 	{
 		NPCPhrase(ENEMY_IS);
 
-		DISABLE_PHRASE(what_enemy);
+		DisablePhrase(what_enemy);
 	}
-	else if (PLAYER_SAID(R, why_you_here))
+	else if (PlayerSaid(R, why_you_here))
 	{
 		NPCPhrase(DREW_SHORT_STRAW);
 
-		DISABLE_PHRASE(why_you_here);
+		DisablePhrase(why_you_here);
 	}
-	else if (PLAYER_SAID(R, where_are_urquan))
+	else if (PlayerSaid(R, where_are_urquan))
 	{
 		NPCPhrase(URQUAN_LEFT);
 
-		DISABLE_PHRASE(where_are_urquan);
+		DisablePhrase(where_are_urquan);
 	}
-	else if (PLAYER_SAID(R, what_about_other_races))
+	else if (PlayerSaid(R, what_about_other_races))
 	{
 		NPCPhrase(ABOUT_OTHER_RACES);
 
-		DISABLE_PHRASE(what_about_other_races);
+		DisablePhrase(what_about_other_races);
 	}
-	else if (PLAYER_SAID(R, what_blaze_of_glory))
+	else if (PlayerSaid(R, what_blaze_of_glory))
 	{
 		NPCPhrase(BLAZE_IS);
 
-		DISABLE_PHRASE(what_blaze_of_glory);
+		DisablePhrase(what_blaze_of_glory);
 	}
-	else if (PLAYER_SAID(R, what_about_yourself))
+	else if (PlayerSaid(R, what_about_yourself))
 	{
 		NPCPhrase(ABOUT_MYSELF);
 
-		DISABLE_PHRASE(what_about_yourself);
+		DisablePhrase(what_about_yourself);
 	}
-	else if (PLAYER_SAID(R, join_us))
+	else if (PlayerSaid(R, join_us))
 	{
 		if (join_us_refusals == 0)
 		{
@@ -414,80 +412,80 @@ SpathiOnPluto(RESPONSE_REF R)
 		}
 	}
 
-	if (PHRASE_ENABLED(what_doing_on_pluto_1))
+	if (PhraseEnabled(what_doing_on_pluto_1))
 	{
 		Response(what_doing_on_pluto_1, SpathiOnPluto);
 	}
-	else if (PHRASE_ENABLED(what_doing_on_pluto_2))
+	else if (PhraseEnabled(what_doing_on_pluto_2))
 	{
 		Response(what_doing_on_pluto_2, SpathiOnPluto);
 	}
-	else if (PHRASE_ENABLED(what_doing_on_pluto_3))
+	else if (PhraseEnabled(what_doing_on_pluto_3))
 	{
 		Response(what_doing_on_pluto_3, SpathiOnPluto);
 	}
 	else
 	{
-		if (PHRASE_ENABLED(what_about_ilwrath))
+		if (PhraseEnabled(what_about_ilwrath))
 		{
 			Response(what_about_ilwrath, SpathiOnPluto);
 		}
-		else if (PHRASE_ENABLED(when_ilwrath))
+		else if (PhraseEnabled(when_ilwrath))
 		{
 			Response(when_ilwrath, SpathiOnPluto);
 		}
 
-		if (PHRASE_ENABLED(what_about_moonbase))
+		if (PhraseEnabled(what_about_moonbase))
 		{
 			Response(what_about_moonbase, SpathiOnPluto);
 		}
-		else if (PHRASE_ENABLED(what_about_other_spathi))
+		else if (PhraseEnabled(what_about_other_spathi))
 		{
 			Response(what_about_other_spathi, SpathiOnPluto);
 		}
 		else
 		{
-			if (PHRASE_ENABLED(how_many_crew))
+			if (PhraseEnabled(how_many_crew))
 			{
 				Response(how_many_crew, SpathiOnPluto);
 			}
-			else if (PHRASE_ENABLED(really_thousands))
+			else if (PhraseEnabled(really_thousands))
 			{
 				Response(really_thousands, SpathiOnPluto);
 			}
-			else if (PHRASE_ENABLED(full_of_monsters))
+			else if (PhraseEnabled(full_of_monsters))
 			{
 				Response(full_of_monsters, SpathiOnPluto);
 			}
 
-			if (PHRASE_ENABLED(what_enemy))
+			if (PhraseEnabled(what_enemy))
 			{
 				Response(what_enemy, SpathiOnPluto);
 			}
-			else if (PHRASE_ENABLED(why_you_here))
+			else if (PhraseEnabled(why_you_here))
 			{
 				Response(why_you_here, SpathiOnPluto);
 			}
 		}
 	}
-	if (PHRASE_ENABLED(where_are_urquan))
+	if (PhraseEnabled(where_are_urquan))
 	{
 		Response(where_are_urquan, SpathiOnPluto);
 	}
-	else if (PHRASE_ENABLED(what_about_other_races))
+	else if (PhraseEnabled(what_about_other_races))
 	{
 		Response(what_about_other_races, SpathiOnPluto);
 	}
-	else if (PHRASE_ENABLED(what_blaze_of_glory))
+	else if (PhraseEnabled(what_blaze_of_glory))
 	{
 		Response(what_blaze_of_glory, SpathiOnPluto);
 	}
-	else if (PHRASE_ENABLED(what_about_yourself))
+	else if (PhraseEnabled(what_about_yourself))
 	{
 		Response(what_about_yourself, SpathiOnPluto);
 	}
 
-	if (!PHRASE_ENABLED(full_of_monsters))
+	if (!PhraseEnabled(full_of_monsters))
 	{
 		Response(join_us, ExitConversation);
 	}
@@ -498,10 +496,9 @@ SpathiOnPluto(RESPONSE_REF R)
 	Response(changed_mind, ExitConversation);
 }
 
-static void
-SpathiMustGrovel(RESPONSE_REF R)
+static void SpathiMustGrovel(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, identify))
+	if (PlayerSaid(R, identify))
 	{
 		NPCPhrase(I_FWIFFO);
 
@@ -509,7 +506,7 @@ SpathiMustGrovel(RESPONSE_REF R)
 		Response(youre_forgiven, SpathiOnPluto);
 		Response(die_slugboy, ExitConversation);
 	}
-	else if (PLAYER_SAID(R, do_cultural))
+	else if (PlayerSaid(R, do_cultural))
 	{
 		NPCPhrase(WEZZY_WEZZAH);
 
@@ -517,7 +514,7 @@ SpathiMustGrovel(RESPONSE_REF R)
 		Response(you_wont_die_yet, SpathiOnPluto);
 		Response(we_fight_2, ExitConversation);
 	}
-	else if (PLAYER_SAID(R, begin_ritual))
+	else if (PlayerSaid(R, begin_ritual))
 	{
 		NPCPhrase(MUST_DO_RITUAL_AT_HOME);
 
@@ -534,14 +531,13 @@ SpathiMustGrovel(RESPONSE_REF R)
 	}
 }
 
-static void
-SpathiAllies(RESPONSE_REF R)
+static void SpathiAllies(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -552,46 +548,46 @@ SpathiAllies(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PLAYER_SAID(R, whats_up_space_2))
+	else if (PlayerSaid(R, whats_up_space_2))
 	{
 		NPCPhrase(GENERAL_INFO_SPACE_2);
 
-		DISABLE_PHRASE(whats_up_space_2);
+		DisablePhrase(whats_up_space_2);
 	}
-	else if (PLAYER_SAID(R, give_us_info_from_space))
+	else if (PlayerSaid(R, give_us_info_from_space))
 	{
 		NPCPhrase(GET_INFO_FROM_SPATHIWA);
 
-		DISABLE_PHRASE(give_us_info_from_space);
+		DisablePhrase(give_us_info_from_space);
 	}
-	else if (PLAYER_SAID(R, give_us_resources_space))
+	else if (PlayerSaid(R, give_us_resources_space))
 	{
 		NPCPhrase(GET_RESOURCES_FROM_SPATHIWA);
 
-		DISABLE_PHRASE(give_us_resources_space);
+		DisablePhrase(give_us_resources_space);
 	}
-	else if (PLAYER_SAID(R, what_do_for_fun))
+	else if (PlayerSaid(R, what_do_for_fun))
 	{
 		NPCPhrase(DO_THIS_FOR_FUN);
 
-		DISABLE_PHRASE(what_do_for_fun);
+		DisablePhrase(what_do_for_fun);
 	}
 
-	if (PHRASE_ENABLED(whats_up_space_2))
+	if (PhraseEnabled(whats_up_space_2))
 	{
 		Response(whats_up_space_2, SpathiAllies);
 	}
-	if (PHRASE_ENABLED(give_us_info_from_space))
+	if (PhraseEnabled(give_us_info_from_space))
 	{
 		Response(give_us_info_from_space, SpathiAllies);
 	}
-	if (PHRASE_ENABLED(give_us_resources_space))
+	if (PhraseEnabled(give_us_resources_space))
 	{
 		Response(give_us_resources_space, SpathiAllies);
 	}
-	if (PHRASE_ENABLED(what_do_for_fun))
+	if (PhraseEnabled(what_do_for_fun))
 	{
 		Response(what_do_for_fun, SpathiAllies);
 	}
@@ -602,14 +598,13 @@ SpathiAllies(RESPONSE_REF R)
 	Response(bye_ally_space, ExitConversation);
 }
 
-static void
-SpathiFriendly(RESPONSE_REF R)
+static void SpathiFriendly(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -620,26 +615,26 @@ SpathiFriendly(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PLAYER_SAID(R, since_friendly_give_stuff))
+	else if (PlayerSaid(R, since_friendly_give_stuff))
 	{
 		NPCPhrase(GIVE_ADVICE);
 
-		DISABLE_PHRASE(since_friendly_give_stuff);
+		DisablePhrase(since_friendly_give_stuff);
 	}
-	else if (PLAYER_SAID(R, whats_up_space_1))
+	else if (PlayerSaid(R, whats_up_space_1))
 	{
 		NPCPhrase(GENERAL_INFO_SPACE_1);
 
-		DISABLE_PHRASE(whats_up_space_1);
+		DisablePhrase(whats_up_space_1);
 	}
 
-	if (PHRASE_ENABLED(whats_up_space_1))
+	if (PhraseEnabled(whats_up_space_1))
 	{
 		Response(whats_up_space_1, SpathiFriendly);
 	}
-	if (PHRASE_ENABLED(since_friendly_give_stuff))
+	if (PhraseEnabled(since_friendly_give_stuff))
 	{
 		Response(since_friendly_give_stuff, SpathiFriendly);
 	}
@@ -648,63 +643,62 @@ SpathiFriendly(RESPONSE_REF R)
 
 static void SpathiNeutral(RESPONSE_REF R);
 
-static void
-SpathiBefriend(RESPONSE_REF R)
+static void SpathiBefriend(RESPONSE_REF R)
 {
 	RESPONSE_REF pStr[2];
 
 	uint8_t InfoLeft {false};
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = 0;
-	if (PLAYER_SAID(R, come_in_peace))
+	if (PlayerSaid(R, come_in_peace))
 	{
 		NPCPhrase(AGAINST_NATURE);
 	}
-	else if (PLAYER_SAID(R, looking_for_a_few_good_squids))
+	else if (PlayerSaid(R, looking_for_a_few_good_squids))
 	{
 		NPCPhrase(URQUAN_SLAVES);
 
-		DISABLE_PHRASE(looking_for_a_few_good_squids);
+		DisablePhrase(looking_for_a_few_good_squids);
 	}
-	else if (PLAYER_SAID(R, why_slaves))
+	else if (PlayerSaid(R, why_slaves))
 	{
 		NPCPhrase(UMGAH_TRICK);
 
-		DISABLE_PHRASE(why_slaves);
+		DisablePhrase(why_slaves);
 	}
-	else if (PLAYER_SAID(R, tell_us_about_you))
+	else if (PlayerSaid(R, tell_us_about_you))
 	{
 		NPCPhrase(ABOUT_US);
 
-		DISABLE_PHRASE(tell_us_about_you);
+		DisablePhrase(tell_us_about_you);
 		LastStack = 1;
 	}
-	else if (PLAYER_SAID(R, what_you_really_want))
+	else if (PlayerSaid(R, what_you_really_want))
 	{
 		NPCPhrase(WANT_THIS);
 
-		DISABLE_PHRASE(what_you_really_want);
+		DisablePhrase(what_you_really_want);
 	}
-	else if (PLAYER_SAID(R, how_about_alliance))
+	else if (PlayerSaid(R, how_about_alliance))
 	{
 		NPCPhrase(SURE);
 
-		DISABLE_PHRASE(how_about_alliance);
+		DisablePhrase(how_about_alliance);
 	}
 
-	if (PHRASE_ENABLED(looking_for_a_few_good_squids))
+	if (PhraseEnabled(looking_for_a_few_good_squids))
 	{
 		pStr[0] = looking_for_a_few_good_squids;
 	}
-	else if (PHRASE_ENABLED(why_slaves))
+	else if (PhraseEnabled(why_slaves))
 	{
 		pStr[0] = why_slaves;
 	}
-	if (PHRASE_ENABLED(tell_us_about_you))
+	if (PhraseEnabled(tell_us_about_you))
 	{
 		pStr[1] = tell_us_about_you;
 	}
-	else if (PHRASE_ENABLED(what_you_really_want))
+	else if (PhraseEnabled(what_you_really_want))
 	{
 		pStr[1] = what_you_really_want;
 	}
@@ -719,7 +713,7 @@ SpathiBefriend(RESPONSE_REF R)
 		InfoLeft = true;
 		Response(pStr[LastStack], SpathiBefriend);
 	}
-	if (PHRASE_ENABLED(how_about_alliance))
+	if (PhraseEnabled(how_about_alliance))
 	{
 		InfoLeft = true;
 		Response(how_about_alliance, SpathiBefriend);
@@ -727,72 +721,70 @@ SpathiBefriend(RESPONSE_REF R)
 
 	if (!InfoLeft)
 	{
-		SET_GAME_STATE(SPATHI_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_STACK1, static_cast<uint32_t>(1));
 		SpathiNeutral(R);
 	}
 }
 
-static void
-SpathiAntagonize(RESPONSE_REF R)
+static void SpathiAntagonize(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, prepare_to_die))
+	if (PlayerSaid(R, prepare_to_die))
 	{
 		NPCPhrase(ALWAYS_PREPARED);
 
-		SET_GAME_STATE(SPATHI_STACK2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_STACK2, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, heard_youre_cowards))
+	else if (PlayerSaid(R, heard_youre_cowards))
 	{
 		NPCPhrase(DARN_TOOTIN);
 
-		DISABLE_PHRASE(heard_youre_cowards);
+		DisablePhrase(heard_youre_cowards);
 	}
-	else if (PLAYER_SAID(R, wanna_fight))
+	else if (PlayerSaid(R, wanna_fight))
 	{
 		NPCPhrase(YES_WE_DO);
 
-		DISABLE_PHRASE(wanna_fight);
+		DisablePhrase(wanna_fight);
 	}
-	else if (PLAYER_SAID(R, so_lets_fight))
+	else if (PlayerSaid(R, so_lets_fight))
 	{
 		NPCPhrase(OK_LETS_FIGHT);
 
-		DISABLE_PHRASE(so_lets_fight);
+		DisablePhrase(so_lets_fight);
 	}
-	else if (PLAYER_SAID(R, so_lets_fight_already))
+	else if (PlayerSaid(R, so_lets_fight_already))
 	{
 		NPCPhrase(DONT_REALLY_WANT_TO_FIGHT);
 
-		DISABLE_PHRASE(so_lets_fight_already);
+		DisablePhrase(so_lets_fight_already);
 	}
 
-	if (PHRASE_ENABLED(wanna_fight))
+	if (PhraseEnabled(wanna_fight))
 	{
 		Response(wanna_fight, SpathiAntagonize);
 	}
-	else if (PHRASE_ENABLED(so_lets_fight))
+	else if (PhraseEnabled(so_lets_fight))
 	{
 		Response(so_lets_fight, SpathiAntagonize);
 	}
-	else if (PHRASE_ENABLED(so_lets_fight_already))
+	else if (PhraseEnabled(so_lets_fight_already))
 	{
 		Response(so_lets_fight_already, SpathiAntagonize);
 	}
-	if (PHRASE_ENABLED(heard_youre_cowards))
+	if (PhraseEnabled(heard_youre_cowards))
 	{
 		Response(heard_youre_cowards, SpathiAntagonize);
 	}
 	Response(attack_you_now, ExitConversation);
 }
 
-static void
-SpathiNeutral(RESPONSE_REF R)
+static void SpathiNeutral(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -803,22 +795,22 @@ SpathiNeutral(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 	}
-	else if (PLAYER_SAID(R, look_weird))
+	else if (PlayerSaid(R, look_weird))
 	{
 		NPCPhrase(YOU_LOOK_WEIRD);
 
-		SET_GAME_STATE(SPATHI_STACK0, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_STACK0, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, no_look_really_weird))
+	else if (PlayerSaid(R, no_look_really_weird))
 	{
 		NPCPhrase(NO_YOU_LOOK_REALLY_WEIRD);
 
-		SET_GAME_STATE(SPATHI_STACK0, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_STACK0, static_cast<uint32_t>(2));
 	}
 
-	switch (GET_GAME_STATE(SPATHI_STACK0))
+	switch (uqm::gameState().flag(uqm::GameFlag::SPATHI_STACK0))
 	{
 		case 0:
 			Response(look_weird, SpathiNeutral);
@@ -827,11 +819,11 @@ SpathiNeutral(RESPONSE_REF R)
 			Response(no_look_really_weird, SpathiNeutral);
 			break;
 	}
-	if (GET_GAME_STATE(SPATHI_STACK1) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_STACK1) == 0)
 	{
 		Response(come_in_peace, SpathiBefriend);
 	}
-	if (GET_GAME_STATE(SPATHI_STACK2) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::SPATHI_STACK2) == 0)
 	{
 		Response(prepare_to_die, SpathiAntagonize);
 	}
@@ -842,13 +834,12 @@ SpathiNeutral(RESPONSE_REF R)
 	Response(part_in_peace, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t Manner {};
 
-	Manner = GET_GAME_STATE(SPATHI_MANNER);
-	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1)
+	Manner = uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER);
+	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1)
 	{
 		join_us_refusals = 0;
 
@@ -857,10 +848,10 @@ Intro(void)
 		/* if already know password from Melnorme,
 			 * but haven't visited Spathiwa yet . . .
 			 */
-		if (GET_GAME_STATE(SPATHI_HOME_VISITS) == 7)
+		if (uqm::gameState().flag(uqm::GameFlag::SPATHI_HOME_VISITS) == 7)
 		{
-			SET_GAME_STATE(KNOW_SPATHI_PASSWORD, 0);
-			SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::KNOW_SPATHI_PASSWORD, static_cast<uint32_t>(0));
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
 		}
 		SetHomeworldKnown(SPATHI_HOME);
 
@@ -878,7 +869,7 @@ Intro(void)
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SPATHI_VISITS);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SPATHI_VISITS);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -889,7 +880,7 @@ Intro(void)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SPATHI_VISITS, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(NumVisits));
 
 		Response(give_info_space, ExitConversation);
 		Response(we_sorry_space, ExitConversation);
@@ -900,7 +891,7 @@ Intro(void)
 	{
 		SpathiAllies((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(SPATHI_QUEST))
+	else if (uqm::gameState().flag(uqm::GameFlag::SPATHI_QUEST))
 	{
 		SpathiFriendly((RESPONSE_REF)0);
 	}
@@ -910,59 +901,56 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_spathi(void)
+static uint16_t uninit_spathi(void)
 {
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_spathi_enc(void)
+static void post_spathi_enc(void)
 {
 	uint8_t Manner {};
 
-	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1)
+	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1)
 	{
-		SET_GAME_STATE(FOUND_PLUTO_SPATHI, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::FOUND_PLUTO_SPATHI, static_cast<uint32_t>(2));
 	}
 	else if (getSegue() == Segue_hostile
-			 && (Manner = GET_GAME_STATE(SPATHI_MANNER)) != 2)
+			 && (Manner = uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER)) != 2)
 	{
-		SET_GAME_STATE(SPATHI_MANNER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SPATHI_MANNER, static_cast<uint32_t>(1));
 		if (Manner != 1)
 		{
-			SET_GAME_STATE(SPATHI_VISITS, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::SPATHI_VISITS, static_cast<uint32_t>(0));
 			/* if don't know about Spathi via Melnorme . . . */
-			if (GET_GAME_STATE(SPATHI_HOME_VISITS) != 7)
+			if (uqm::gameState().flag(uqm::GameFlag::SPATHI_HOME_VISITS) != 7)
 			{
-				SET_GAME_STATE(SPATHI_HOME_VISITS, 0);
+				uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(0));
 			}
 		}
 	}
 }
 
-LOCDATA*
-init_spathi_comm(void)
+LOCDATA* init_spathi_comm(void)
 {
 	spathi_desc.init_encounter_func = Intro;
 	spathi_desc.post_encounter_func = post_spathi_enc;
 	spathi_desc.uninit_encounter_func = uninit_spathi;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
-	spathi_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	spathi_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	spathi_desc.AlienTextBaseline.y = 0;
-	spathi_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	spathi_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	// use alternate Fwiffo track if available
-	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1)
+	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1)
 	{
-		altResFlags |= USE_ALT_SONG;
+		altResFlags |= UseAltSong;
 	}
 
-	if (GET_GAME_STATE(FOUND_PLUTO_SPATHI) == 1
-		|| GET_GAME_STATE(SPATHI_MANNER) == 3
+	if (uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI) == 1
+		|| uqm::gameState().flag(uqm::GameFlag::SPATHI_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)
 	{
 		setSegue(Segue_peace);

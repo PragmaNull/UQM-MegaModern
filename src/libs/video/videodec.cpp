@@ -22,7 +22,7 @@
 #include "core/string/StringUtils.h"
 #include "../../uqm/units.h"
 
-#define MAX_REG_DECODERS 31
+static constexpr auto MaxRegDecoders {31};
 
 static bool vd_inited = false;
 static TFB_PixelFormat vd_vidfmt;
@@ -35,7 +35,7 @@ struct TFB_RegVideoDecoder
 	const char* ext;
 	const TFB_VideoDecoderFuncs* funcs;
 };
-static TFB_RegVideoDecoder vd_decoders[MAX_REG_DECODERS + 1] =
+static TFB_RegVideoDecoder vd_decoders[MaxRegDecoders + 1] =
 	{
 		{true,  true,	 "duk",	&dukv_DecoderVtbl},
 		{false, false, nullptr, nullptr		   }, // null term
@@ -43,8 +43,7 @@ static TFB_RegVideoDecoder vd_decoders[MAX_REG_DECODERS + 1] =
 
 static void vd_computeMasks(uint32_t mask, uint32_t* shift, uint32_t* loss);
 
-const char*
-VideoDecoder_GetName(TFB_VideoDecoder* decoder)
+const char* VideoDecoder_GetName(TFB_VideoDecoder* decoder)
 {
 	if (!decoder || !decoder->funcs)
 	{
@@ -123,8 +122,7 @@ void VideoDecoder_Uninit(void)
 	vd_inited = false;
 }
 
-TFB_RegVideoDecoder*
-VideoDecoder_Register(const char* fileext, TFB_VideoDecoderFuncs* decvtbl)
+TFB_RegVideoDecoder* VideoDecoder_Register(const char* fileext, TFB_VideoDecoderFuncs* decvtbl)
 {
 	TFB_RegVideoDecoder* info {};
 	TFB_RegVideoDecoder* newslot = nullptr;
@@ -152,7 +150,7 @@ VideoDecoder_Register(const char* fileext, TFB_VideoDecoderFuncs* decvtbl)
 		}
 	}
 
-	if (info >= vd_decoders + MAX_REG_DECODERS)
+	if (info >= vd_decoders + MaxRegDecoders)
 	{
 		uqm::log::warn("VideoDecoder_Register(): Decoders limit reached");
 		return nullptr;
@@ -190,7 +188,7 @@ VideoDecoder_Register(const char* fileext, TFB_VideoDecoderFuncs* decvtbl)
 
 void VideoDecoder_Unregister(TFB_RegVideoDecoder* regdec)
 {
-	if (regdec < vd_decoders || regdec >= vd_decoders + MAX_REG_DECODERS || !regdec->ext || !regdec->funcs)
+	if (regdec < vd_decoders || regdec >= vd_decoders + MaxRegDecoders || !regdec->ext || !regdec->funcs)
 	{
 		uqm::log::warn("VideoDecoder_Unregister(): "
 					   "Invalid or expired decoder passed");
@@ -202,8 +200,7 @@ void VideoDecoder_Unregister(TFB_RegVideoDecoder* regdec)
 	regdec->funcs = nullptr;
 }
 
-const TFB_VideoDecoderFuncs*
-VideoDecoder_Lookup(const char* fileext)
+const TFB_VideoDecoderFuncs* VideoDecoder_Lookup(const char* fileext)
 {
 	const TFB_RegVideoDecoder* info {};
 
@@ -213,8 +210,7 @@ VideoDecoder_Lookup(const char* fileext)
 	return info->ext ? info->funcs : nullptr;
 }
 
-TFB_VideoDecoder*
-VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
+TFB_VideoDecoder* VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 {
 	const TFB_RegVideoDecoder* info {};
 
@@ -267,8 +263,8 @@ VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 		return nullptr;
 	}
 
-	decoder->w = RES_SCALE(decoder->w);
-	decoder->h = RES_SCALE(decoder->h) - IF_HD(7);
+	decoder->w = ResScale(decoder->w);
+	decoder->h = ResScale(decoder->h) - IfHd(7);
 
 	return decoder;
 }
@@ -314,8 +310,7 @@ float VideoDecoder_Seek(TFB_VideoDecoder* decoder, float pos)
 	return decoder->pos;
 }
 
-uint32_t
-VideoDecoder_SeekFrame(TFB_VideoDecoder* decoder, uint32_t frame)
+uint32_t VideoDecoder_SeekFrame(TFB_VideoDecoder* decoder, uint32_t frame)
 {
 	if (!decoder)
 	{
@@ -352,8 +347,7 @@ void VideoDecoder_Free(TFB_VideoDecoder* decoder)
 }
 
 // BEGIN: adapted from SDL
-static void
-vd_computeMasks(uint32_t mask, uint32_t* shift, uint32_t* loss)
+static void vd_computeMasks(uint32_t mask, uint32_t* shift, uint32_t* loss)
 {
 	*shift = 0;
 	*loss = 8;

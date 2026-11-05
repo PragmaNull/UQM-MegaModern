@@ -46,8 +46,8 @@ typedef enum
 	NUM_WIDGET_TYPES
 } WIDGET_TYPE;
 
-#define WIDGET_TEXTENTRY_WIDTH 32
-#define WIDGET_CONTROLENTRY_WIDTH 16
+inline constexpr auto WidgetTextentryWidth {32};
+inline constexpr auto WidgetControlentryWidth {16};
 
 typedef struct _widget
 {
@@ -179,7 +179,7 @@ typedef struct _widget_textentry
 	// can be nullptr, in which case SELECT is ignored
 	void (*onChange)(struct _widget_textentry* self);
 	const char* category;
-	char value[WIDGET_TEXTENTRY_WIDTH];
+	char value[WidgetTextentryWidth];
 	int maxlen;
 	WIDGET_TEXTENTRY_STATE state;
 	int cursor_pos;
@@ -200,7 +200,7 @@ typedef struct _widget_controlentry
 	const char* category;
 	int controlindex;
 	int highlighted;
-	char controlname[2][WIDGET_CONTROLENTRY_WIDTH];
+	char controlname[2][WidgetControlentryWidth];
 } WIDGET_CONTROLENTRY;
 
 void DrawShadowedBox(GFXRECT* r, Color bg, Color dark, Color medium);

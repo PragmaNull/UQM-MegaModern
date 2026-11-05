@@ -66,13 +66,12 @@ uqstl::atomic<bool> MainExited {false};
 
 // Open or close the periodically occuring QuasiSpace portal.
 // It changes the appearant portal size when necessary.
-static void
-checkArilouGate(void)
+static void checkArilouGate(void)
 {
 	uint8_t counter {};
 
-	counter = GET_GAME_STATE(ARILOU_SPACE_COUNTER);
-	if (GET_GAME_STATE(ARILOU_SPACE) == OPENING)
+	counter = uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE_COUNTER);
+	if (uqm::gameState().flag(uqm::GameFlag::ARILOU_SPACE) == OPENING)
 	{ // The portal is opening or fully open
 		if (counter < 9)
 		{
@@ -86,12 +85,11 @@ checkArilouGate(void)
 			--counter;
 		}
 	}
-	SET_GAME_STATE(ARILOU_SPACE_COUNTER, counter);
+	uqm::gameState().setFlag(uqm::GameFlag::ARILOU_SPACE_COUNTER, static_cast<uint32_t>(counter));
 }
 
 // Battle frame callback function.
-static void
-on_battle_frame(void)
+static void on_battle_frame(void)
 {
 	GameClockTick();
 	checkArilouGate();
@@ -104,8 +102,7 @@ on_battle_frame(void)
 	DrawAutoPilotMessage(false);
 }
 
-static void
-BackgroundInitKernel(TimeCount TimeOut)
+static void BackgroundInitKernel(TimeCount TimeOut)
 {
 	LoadMasterShipList(TaskSwitch);
 	TaskSwitch();
@@ -149,7 +146,7 @@ void ProcessUtilityKeys(void)
 			flags ^= uqm::GfxFlags::Fullscreen;
 		}
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			flags ^= uqm::GfxFlags::Scale_Bilinear;
 		}
@@ -201,14 +198,13 @@ void ProcessUtilityKeys(void)
 #endif /* DEBUG */
 }
 
-static void
-SetRandomMenuMusic(void)
+static void SetRandomMenuMusic(void)
 {
 	const time_t t = time(nullptr);
 	const uqstl::tm tm {uqm::localtime(t)};
 
 	srand(t);
-	Rando = (rand() % NUM_MM_THEMES);
+	Rando = (rand() % NumMmThemes);
 	optMaskOfDeceit = tm.tm_mon == 3 && tm.tm_mday == 1;
 }
 
@@ -217,8 +213,7 @@ extern AudioDriverType snddriver;
 extern AudioFlags soundflags;
 
 // Releases the kernel and tells the main thread that Starcon2Main ends.
-static void
-ShutdownKernel(void)
+static void ShutdownKernel(void)
 {
 	UninitGameKernel();
 	FreeMasterShipList();
@@ -249,7 +244,7 @@ int Starcon2Main(void* threadArg)
 						   "pack to run properly.");
 		uqm::log::critical("This file is typically called "
 						   "mm-{}.{}.{}-content.uqm.  UQM was expecting",
-						   UQM_MAJOR_VERSION, UQM_MINOR_VERSION, UQM_PATCH_VERSION);
+						   UqmMajorVersion, UqmMinorVersion, UqmPatchVersion);
 		uqm::log::critical("it in the {}/packages directory.",
 						   baseContentPath);
 		uqm::log::critical("Either your installation did not install the "
@@ -288,7 +283,7 @@ int Starcon2Main(void* threadArg)
 	uqm::log::info("Set Seed Type: {}", toString(uqm::UQMOptions::read().seedType.value));
 	uqm::log::info("Set Seed: {}", uqm::UQMOptions::read().customSeed.value);
 	uqm::log::info("Set Difficulty: {:s}", uqm::UQMOptions::read().optDifficulty.value);
-	uqm::log::info("Set Extended: {}", BOOL_STR(uqm::UQMOptions::read().extended));
+	uqm::log::info("Set Extended: {}", BoolStr(uqm::UQMOptions::read().extended));
 	uqm::log::info("Set Nomad: {:s}", uqm::UQMOptions::read().nomad.value);
 
 	while (StartGame())
@@ -309,10 +304,10 @@ int Starcon2Main(void* threadArg)
 		if (LastActivity == (CHECK_LOAD | CHECK_RESTART))
 		{
 			uqm::log::info("New Game Seed Type: {}", toString(uqm::currentSeed().type));
-			uqm::log::info("New Game Seed: {}", GLOBAL_SIS(Seed));
+			uqm::log::info("New Game Seed: {}", uqm::gameState().sis().Seed);
 			uqm::log::info("New Game Difficulty: {:s}", getDifficulty());
 			uqm::log::info("New Game Extended: {}",
-						   BOOL_STR(GLOBAL_SIS(Extended)));
+						   BoolStr(uqm::gameState().sis().Extended));
 			uqm::log::info("New Game Nomad: {:s}", getNomadMode());
 		}
 
@@ -339,15 +334,15 @@ int Starcon2Main(void* threadArg)
 			}
 
 			if ((uqm::currentActivity() & START_ENCOUNTER)
-				|| GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
+				|| uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 			{
-				if (GET_GAME_STATE(CHMMR_BOMB_STATE) == 2
-					&& !GET_GAME_STATE(STARBASE_AVAILABLE))
+				if (uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2
+					&& !uqm::gameState().flag(uqm::GameFlag::STARBASE_AVAILABLE))
 				{ /* BGD mode */
 					InstallBombAtEarth();
 				}
-				else if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
-						 || GET_GAME_STATE(CHMMR_BOMB_STATE) == 2)
+				else if (uqm::gameState().flag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
+						 || uqm::gameState().flag(uqm::GameFlag::CHMMR_BOMB_STATE) == 2)
 				{
 					uqm::currentActivity() |= START_ENCOUNTER;
 					VisitStarBase();
@@ -372,7 +367,7 @@ int Starcon2Main(void* threadArg)
 				uqm::currentActivity() = uqm::makeWord(IN_INTERPLANETARY, 0);
 
 				DrawAutoPilotMessage(true);
-				SetGameClockRate(INTERPLANETARY_CLOCK_RATE);
+				SetGameClockRate(InterplanetaryClockRate);
 				ExploreSolarSys();
 			}
 			else
@@ -381,7 +376,7 @@ int Starcon2Main(void* threadArg)
 				uqm::currentActivity() = uqm::makeWord(IN_HYPERSPACE, 0);
 
 				DrawAutoPilotMessage(true);
-				SetGameClockRate(HYPERSPACE_CLOCK_RATE);
+				SetGameClockRate(HyperspaceClockRate);
 				Battle(&on_battle_frame);
 			}
 
@@ -392,9 +387,9 @@ int Starcon2Main(void* threadArg)
 			if (!(uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
 				&& (uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE
 					// if died for some reason
-					|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0))
+					|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0))
 			{
-				if (GET_GAME_STATE(KOHR_AH_KILLED_ALL))
+				if (uqm::gameState().flag(uqm::GameFlag::KOHR_AH_KILLED_ALL))
 				{
 					InitCommunication(BLACKURQ_CONVERSATION);
 					if (uqm::UQMOptions::read().gameOver)

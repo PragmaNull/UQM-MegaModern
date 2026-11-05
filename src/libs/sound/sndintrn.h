@@ -26,7 +26,7 @@
 #include "core/stl/vector.h"
 #include "core/thread/Mutex.h"
 
-#define PAD_SCOPE_BYTES 256
+inline constexpr auto PadScopeBytes {256};
 
 extern void* _GetMusicData(const ResourceFile& resource);
 extern bool _ReleaseMusicData(void* handle);

@@ -33,13 +33,12 @@ PRIMITIVE _locPrim;
 
 FONT _CurFontPtr;
 
-#define DEFAULT_FORE_COLOR BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F)
-#define DEFAULT_BACK_COLOR BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x00), 0x00)
+static constexpr auto DefaultForeColor {BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)};
+static constexpr auto DefaultBackColor {BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)};
 
-#define DEFAULT_DRAW_MODE MAKE_DRAW_MODE(DRAW_DEFAULT, 255)
+static constexpr auto DefaultDrawMode {MAKE_DRAW_MODE(DRAW_DEFAULT, 255)};
 
-GFXCONTEXT
-SetContext(GFXCONTEXT Context)
+GFXCONTEXT SetContext(GFXCONTEXT Context)
 {
 	GFXCONTEXT LastContext {_pCurContext};
 	if (Context != LastContext)
@@ -47,10 +46,10 @@ SetContext(GFXCONTEXT Context)
 		if (LastContext)
 		{
 			UnsetContextFlags(
-				uqm::makeWord(0, GRAPHICS_ACTIVE | DRAWABLE_ACTIVE));
+				uqm::makeWord(0, GraphicsActiveFlag | DrawableActiveFlag));
 			SetContextFlags(
 				uqm::makeWord(0, _GraphicsStatusFlags
-									 & (GRAPHICS_ACTIVE | DRAWABLE_ACTIVE)));
+									 & (GraphicsActiveFlag | DrawableActiveFlag)));
 
 			DeactivateContext();
 		}
@@ -60,7 +59,7 @@ SetContext(GFXCONTEXT Context)
 		{
 			ActivateContext();
 
-			_GraphicsStatusFlags &= ~(GRAPHICS_ACTIVE | DRAWABLE_ACTIVE);
+			_GraphicsStatusFlags &= ~(GraphicsActiveFlag | DrawableActiveFlag);
 			_GraphicsStatusFlags |= uqm::highByte(_get_context_flags());
 
 			SetPrimColor(&_locPrim, _get_context_fg_color());
@@ -74,11 +73,9 @@ SetContext(GFXCONTEXT Context)
 }
 
 #ifdef DEBUG
-GFXCONTEXT
-CreateContextAux(const char* name)
+GFXCONTEXT CreateContextAux(const char* name)
 #else  /* if !defined(DEBUG) */
-GFXCONTEXT
-CreateContextAux(void)
+GFXCONTEXT CreateContextAux(void)
 #endif /* !defined(DEBUG) */
 {
 	GFXCONTEXT NewContext {new CONTEXT_DESC {}};
@@ -92,9 +89,9 @@ CreateContextAux(void)
 		contextEnd = &NewContext->next;
 #endif /* DEBUG */
 
-		NewContext->Mode = DEFAULT_DRAW_MODE;
-		NewContext->ForeGroundColor = DEFAULT_FORE_COLOR;
-		NewContext->BackGroundColor = DEFAULT_BACK_COLOR;
+		NewContext->Mode = DefaultDrawMode;
+		NewContext->ForeGroundColor = DefaultForeColor;
+		NewContext->BackGroundColor = DefaultBackColor;
 	}
 
 	return NewContext;
@@ -104,8 +101,7 @@ CreateContextAux(void)
 // Loop through the list of context to the pointer which points to the
 // specified context. This is either 'firstContext' or the address of
 // the 'next' field of some other context.
-static GFXCONTEXT*
-FindContextPtr(GFXCONTEXT context)
+static GFXCONTEXT* FindContextPtr(GFXCONTEXT context)
 {
 	GFXCONTEXT* ptr;
 
@@ -160,7 +156,7 @@ Color SetContextForeGroundColor(Color color)
 
 	if (!ContextActive())
 	{
-		return DEFAULT_FORE_COLOR;
+		return DefaultForeColor;
 	}
 
 	oldColor = _get_context_fg_color();
@@ -168,9 +164,9 @@ Color SetContextForeGroundColor(Color color)
 	{
 		SwitchContextForeGroundColor(color);
 
-		if (!(_get_context_fbk_flags() & FBK_IMAGE))
+		if (!(_get_context_fbk_flags() & FbkImage))
 		{
-			SetContextFBkFlags(FBK_DIRTY);
+			SetContextFBkFlags(FbkDirty);
 		}
 	}
 	SetPrimColor(&_locPrim, color);
@@ -182,7 +178,7 @@ Color GetContextForeGroundColor(void)
 {
 	if (!ContextActive())
 	{
-		return DEFAULT_FORE_COLOR;
+		return DefaultForeColor;
 	}
 
 	return _get_context_fg_color();
@@ -194,7 +190,7 @@ Color SetContextBackGroundColor(Color color)
 
 	if (!ContextActive())
 	{
-		return DEFAULT_BACK_COLOR;
+		return DefaultBackColor;
 	}
 
 	oldColor = _get_context_bg_color();
@@ -210,20 +206,19 @@ Color GetContextBackGroundColor(void)
 {
 	if (!ContextActive())
 	{
-		return DEFAULT_BACK_COLOR;
+		return DefaultBackColor;
 	}
 
 	return _get_context_bg_color();
 }
 
-DrawMode
-SetContextDrawMode(DrawMode mode)
+DrawMode SetContextDrawMode(DrawMode mode)
 {
 	DrawMode oldMode;
 
 	if (!ContextActive())
 	{
-		return DEFAULT_DRAW_MODE;
+		return DefaultDrawMode;
 	}
 
 	oldMode = _get_context_draw_mode();
@@ -232,20 +227,18 @@ SetContextDrawMode(DrawMode mode)
 	return oldMode;
 }
 
-DrawMode
-GetContextDrawMode(void)
+DrawMode GetContextDrawMode(void)
 {
 	if (!ContextActive())
 	{
-		return DEFAULT_DRAW_MODE;
+		return DefaultDrawMode;
 	}
 
 	return _get_context_draw_mode();
 }
 
 // Returns a rect based at 0,0 and the size of context foreground frame
-static inline GFXRECT
-_get_context_fg_rect(void)
+static inline GFXRECT _get_context_fg_rect(void)
 {
 	GFXRECT r = {
 		{0, 0},
@@ -301,15 +294,13 @@ bool GetContextClipRect(GFXRECT* lpRect)
 	return (bool)(_pCurContext->ClipRect.extent.width != 0);
 }
 
-GFXPOINT
-SetContextOrigin(GFXPOINT orgOffset)
+GFXPOINT SetContextOrigin(GFXPOINT orgOffset)
 {
 	// XXX: This is a hack, kind of. But that's what the original did.
 	return SetFrameHot(_CurFramePtr, orgOffset);
 }
 
-FRAME
-SetContextFontEffect(FRAME EffectFrame)
+FRAME SetContextFontEffect(FRAME EffectFrame)
 {
 	if (!ContextActive())
 	{
@@ -323,11 +314,11 @@ SetContextFontEffect(FRAME EffectFrame)
 
 		if (EffectFrame != 0)
 		{
-			SetContextFBkFlags(FBK_IMAGE);
+			SetContextFBkFlags(FbkImage);
 		}
 		else
 		{
-			UnsetContextFBkFlags(FBK_IMAGE);
+			UnsetContextFBkFlags(FbkImage);
 		}
 	}
 
@@ -339,7 +330,7 @@ void FixContextFontEffect(void)
 	int16_t w {};
 	int16_t h {};
 
-	if (!ContextActive() || (_get_context_font_backing() != 0 && !(_get_context_fbk_flags() & FBK_DIRTY)))
+	if (!ContextActive() || (_get_context_font_backing() != 0 && !(_get_context_fbk_flags() & FbkDirty)))
 	{
 		return;
 	}
@@ -356,13 +347,13 @@ void FixContextFontEffect(void)
 	}
 
 	img = TFB_DrawImage_CreateForScreen(w, h, true);
-	if (_get_context_fbk_flags() & FBK_IMAGE)
+	if (_get_context_fbk_flags() & FbkImage)
 	{ // image pattern backing
 		FRAME EffectFrame = _get_context_fonteff();
 
 		TFB_DrawImage_Image(EffectFrame->image,
 							-EffectFrame->HotSpot.x, -EffectFrame->HotSpot.y,
-							0, uqm::TFBScaleMode::None, nullptr, DRAW_REPLACE_MODE, img);
+							0, uqm::TFBScaleMode::None, nullptr, DrawReplaceMode, img);
 	}
 	else
 	{ // solid color backing
@@ -372,17 +363,16 @@ void FixContextFontEffect(void)
 		  };
 		const Color color = _get_context_fg_color();
 
-		TFB_DrawImage_Rect(&r, color, DRAW_REPLACE_MODE, img);
+		TFB_DrawImage_Rect(&r, color, DrawReplaceMode, img);
 	}
 
 	_pCurContext->FontBacking = img;
-	UnsetContextFBkFlags(FBK_DIRTY);
+	UnsetContextFBkFlags(FbkDirty);
 }
 
 // 'area' may be nullptr to copy the entire GFXCONTEXT cliprect
 // 'area' is relative to the GFXCONTEXT cliprect
-DRAWABLE
-CopyContextRect(const GFXRECT* area)
+DRAWABLE CopyContextRect(const GFXRECT* area)
 {
 	GFXRECT clipRect;
 	GFXRECT fgRect;
@@ -409,7 +399,7 @@ CopyContextRect(const GFXRECT* area)
 		return nullptr;
 	}
 
-	if (_CurFramePtr->Type == SCREEN_DRAWABLE)
+	if (_CurFramePtr->Type == ScreenDrawable)
 	{
 		return LoadDisplayPixmap(&r, nullptr);
 	}
@@ -420,20 +410,17 @@ CopyContextRect(const GFXRECT* area)
 }
 
 #ifdef DEBUG
-const char*
-GetContextName(GFXCONTEXT context)
+const char* GetContextName(GFXCONTEXT context)
 {
 	return context->name;
 }
 
-GFXCONTEXT
-GetFirstContext(void)
+GFXCONTEXT GetFirstContext(void)
 {
 	return firstContext;
 }
 
-GFXCONTEXT
-GetNextContext(GFXCONTEXT context)
+GFXCONTEXT GetNextContext(GFXCONTEXT context)
 {
 	return context->next;
 }

@@ -54,30 +54,28 @@ typedef DRAWABLE_DESC* DRAWABLE;
 
 typedef uint16_t TIME_VALUE;
 
-#define TIME_SHIFT 8
-#define MAX_TIME_VALUE ((1 << TIME_SHIFT) + 1)
+inline constexpr auto TimeShift {8};
+inline constexpr auto MaxTimeValue {((1 << TimeShift) + 1)};
 
 
-static inline bool
-sameColor(Color c1, Color c2)
+static inline bool sameColor(Color c1, Color c2)
 {
 	return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b && c1.a == c2.a;
 }
 
-static inline bool
-sameColor24(Color c1, Color c2)
+static inline bool sameColor24(Color c1, Color c2)
 {
 	return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b;
 }
 
 // Transform a 5-bits color component to an 8-bits color component.
 // Form 1, calculates '(r5 / 31.0) * 255.0, highest value is 0xff:
-#define CC5TO8(c) (((c) << 3) | ((c) >> 2))
+constexpr auto Cc5to8(auto c) { return (((c) << 3) | ((c) >> 2)); }
 // Form 2, calculates '(r5 / 32.0) * 256.0, highest value is 0xf8:
-//#define CC5TO8(c) ((c) << 3)
+//#define Cc5to8(c) ((c) << 3)
 
-#define BUILD_COLOR(col, c256) col
-// BUILD_COLOR used to combine a 15-bit RGB color tripple with a
+constexpr Color BuildColor(Color col, [[maybe_unused]] int c256) { return col; }
+// BuildColor used to combine a 15-bit RGB color tripple with a
 // destination VGA palette index into a 32-bit value.
 // Now, it is an empty wrapper which returns the first argument,
 // which is of type Color, and ignores the second argument,
@@ -96,67 +94,23 @@ sameColor24(Color c1, Color c2)
 
 // Turn a 15 bits color into a 24-bits color.
 // r, g, and b are each 5-bits color components.
-static inline Color
-colorFromRgb15(uint8_t r, uint8_t g, uint8_t b)
+constexpr Color colorFromRgb15(uint8_t r, uint8_t g, uint8_t b)
 {
-	Color c;
-	c.r = CC5TO8(r);
-	c.g = CC5TO8(g);
-	c.b = CC5TO8(b);
-	c.a = 0xff;
-
-	return c;
+	return {static_cast<uint8_t>(Cc5to8(r)), static_cast<uint8_t>(Cc5to8(g)), static_cast<uint8_t>(Cc5to8(b)), 0xff};
 }
-#define MAKE_RGB15(r, g, b) colorFromRgb15((r), (g), (b))
+constexpr Color MakeRgb15(uint8_t r, uint8_t g, uint8_t b) { return colorFromRgb15(r, g, b); }
 
-#ifdef NOTYET /* Need C'99 support */
-#define MAKE_RGB15(r, g, b) (Color) { \
-	.r = CC5TO8(r),                   \
-	.g = CC5TO8(g),                   \
-	.b = CC5TO8(b),                   \
-	.a = 0xff}
-#endif
-
-// Temporary, until we can use C'99 features. Then MAKE_RGB15 will be usable
-// anywhere.
-// This define is intended for global initialisations, where the
-// expression must be constant.
-#define MAKE_RGB15_INIT(r, g, b) { \
-	CC5TO8(r),                     \
-	CC5TO8(g),                     \
-	CC5TO8(b),                     \
-	0xff}
-
-// This define is intended for global initialisations, where the
-// expression must be constant.
-#define MAKE_RGBA_INIT(r, g, b, a) { \
-	(r),                             \
-	(g),                             \
-	(b),                             \
-	(a)}
-
-static inline Color
-buildColorRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+constexpr Color buildColorRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
-	Color c;
-	c.r = r;
-	c.g = g;
-	c.b = b;
-	c.a = a;
-
-	return c;
+	return {r, g, b, a};
 }
-#define BUILD_COLOR_RGBA(r, g, b, a) \
-	buildColorRgba((r), (g), (b), (a))
+constexpr Color BuildColorRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a) { return buildColorRgba(r, g, b, a); }
 
-#define BUILD_SHADE_RGBA(s) \
-	buildColorRgba((s), (s), (s), 0xFF)
+constexpr auto BuildShadeRgba(auto s) { return buildColorRgba((s), (s), (s), 0xFF); }
 
-#define BUILD_COLOR_RGB(r, g, b) \
-	buildColorRgba((r), (g), (b), 0xFF)
+constexpr auto BuildColorRgb(auto r, auto g, auto b) { return buildColorRgba((r), (g), (b), 0xFF); }
 
-static inline void
-IncreaseBrightness(uint8_t* ch, uint8_t value)
+static inline void IncreaseBrightness(uint8_t* ch, uint8_t value)
 {
 	int c {};
 	if (*ch < 128)
@@ -183,8 +137,7 @@ IncreaseBrightness(uint8_t* ch, uint8_t value)
 	}
 }
 
-static inline bool
-AreTheyShades(Color first_color, Color second_color)
+static inline bool AreTheyShades(Color first_color, Color second_color)
 {
 	return (bool)((first_color.r == first_color.g
 				   && first_color.g == first_color.b)
@@ -192,8 +145,7 @@ AreTheyShades(Color first_color, Color second_color)
 					  && second_color.g == second_color.b));
 }
 
-static inline Color
-CreateAvgShade(Color first_color, Color second_color)
+static inline Color CreateAvgShade(Color first_color, Color second_color)
 {
 	Color temp;
 
@@ -235,16 +187,16 @@ CreateAvgShade(Color first_color, Color second_color)
 
 
 typedef uint8_t CREATE_FLAGS;
-// WANT_MASK is deprecated (and non-functional). It used to generate a bitmap
+// WantMask is deprecated (and non-functional). It used to generate a bitmap
 // of changed pixels for a target DRAWABLE, so that DRAW_SUBTRACTIVE could
 // paint background pixels over them, i.e. a revert draw. The backgrounds
 // are fully erased now instead.
-#define WANT_MASK (CREATE_FLAGS)(1 << 0)
-#define WANT_PIXMAP (CREATE_FLAGS)(1 << 1)
-// MAPPED_TO_DISPLAY is deprecated but still checked by LoadDisplayPixmap().
+inline constexpr auto WantMask {(CREATE_FLAGS)(1 << 0)};
+inline constexpr auto WantPixmap {(CREATE_FLAGS)(1 << 1)};
+// MappedToDisplay is deprecated but still checked by LoadDisplayPixmap().
 // Its former use was to indicate a pre-scaled graphic for the display.
-#define MAPPED_TO_DISPLAY (CREATE_FLAGS)(1 << 2)
-#define WANT_ALPHA (CREATE_FLAGS)(1 << 3)
+inline constexpr auto MappedToDisplay {(CREATE_FLAGS)(1 << 2)};
+inline constexpr auto WantAlpha {(CREATE_FLAGS)(1 << 3)};
 
 struct EXTENT
 {
@@ -310,7 +262,7 @@ typedef struct rect
 } GFXRECT;
 
 // Kruzen: Thanks to JMS, using this to draw ovals
-// Overflows happen in HD with Starmap and max zoom (Fuel circles)
+// Overflows happen in HdResolutionFactor with Starmap and max zoom (Fuel circles)
 typedef struct drect
 {
 	DPOINT corner;
@@ -322,29 +274,25 @@ typedef struct line
 	GFXPOINT first, second;
 } LINE;
 
-static inline GFXPOINT
-MAKE_POINT(int16_t x, int16_t y)
+static inline GFXPOINT MAKE_POINT(int16_t x, int16_t y)
 {
 	GFXPOINT pt = {x, y};
 	return pt;
 }
 
-static inline DPOINT
-MAKE_DPOINT(int32_t x, int32_t y)
+static inline DPOINT MAKE_DPOINT(int32_t x, int32_t y)
 {
 	DPOINT pt = {x, y};
 	return pt;
 }
 
-static inline EXTENT
-MAKE_EXTENT(int16_t width, int16_t height)
+static inline EXTENT MAKE_EXTENT(int16_t width, int16_t height)
 {
 	EXTENT ext = {width, height};
 	return ext;
 }
 
-static inline DEXTENT
-MAKE_DEXTENT(int32_t width, int32_t height)
+static inline DEXTENT MAKE_DEXTENT(int32_t width, int32_t height)
 {
 	DEXTENT ext = {width, height};
 	return ext;
@@ -353,8 +301,7 @@ MAKE_DEXTENT(int32_t width, int32_t height)
 // Kruzen: Some DrawOval() calls still use standard rect where overflow is impossible as it's 2 figures away from that
 // Used to draw SOI and planet orbits
 // To avoid any typedef conflicts - transform standard GFXRECT to DRECT
-static inline DRECT
-RECT_TO_DRECT(GFXRECT r)
+static inline DRECT RECT_TO_DRECT(GFXRECT r)
 {
 	DRECT dr = {
 		{r.corner.x,	 r.corner.y	   },
@@ -373,49 +320,42 @@ RECT_TO_DRECT(GFXRECT r)
 //	line->second.y = y2;
 //}
 
-static inline void
-MAKE_LINE(LINE* line, GFXPOINT first, GFXPOINT second)
+static inline void MAKE_LINE(LINE* line, GFXPOINT first, GFXPOINT second)
 {
 	line->first = first;
 	line->second = second;
 }
 
-static inline bool
-pointsEqual(GFXPOINT p1, GFXPOINT p2)
+static inline bool pointsEqual(GFXPOINT p1, GFXPOINT p2)
 {
 	return p1.x == p2.x && p1.y == p2.y;
 }
 
-static inline bool
-extentsEqual(EXTENT e1, EXTENT e2)
+static inline bool extentsEqual(EXTENT e1, EXTENT e2)
 {
 	return e1.width == e2.width && e1.height == e2.height;
 }
 
-static inline bool
-rectsEqual(GFXRECT r1, GFXRECT r2)
+static inline bool rectsEqual(GFXRECT r1, GFXRECT r2)
 {
 	return pointsEqual(r1.corner, r2.corner)
 		&& extentsEqual(r1.extent, r2.extent);
 }
 
-static inline bool
-pointWithinRect(GFXRECT r, GFXPOINT p)
+static inline bool pointWithinRect(GFXRECT r, GFXPOINT p)
 {
 	return p.x >= r.corner.x && p.y >= r.corner.y
 		&& p.x < r.corner.x + r.extent.width
 		&& p.y < r.corner.y + r.extent.height;
 }
 
-static inline double
-ptDistance(GFXPOINT p1, GFXPOINT p2)
+static inline double ptDistance(GFXPOINT p1, GFXPOINT p2)
 {
 	return (sqrt(pow((double)p2.x - (double)p1.x, 2)
 				 + pow((double)p2.y - (double)p1.y, 2)));
 }
 
-static inline double
-calcDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
+static inline double calcDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 {
 	const double dx = (double)x2 - (double)x1;
 	const double dy = (double)y2 - (double)y1;
@@ -423,40 +363,35 @@ calcDistance(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
 	return (sqrt(pow(dx, 2) + pow(dy, 2)));
 }
 
-static inline void
-printPt(GFXPOINT pt, char* Str)
+static inline void printPt(GFXPOINT pt, char* Str)
 {
 	fmt::print("{} = {} x {}\n", Str, pt.x, pt.y);
 }
 #define PRINT_PT(pt) \
 	printPt(pt, #pt)
 
-static inline void
-printDPt(DPOINT dPt, char* Str)
+static inline void printDPt(DPOINT dPt, char* Str)
 {
 	fmt::print("{} = {} x {}\n", Str, dPt.x, dPt.y);
 }
 #define PRINT_DPT(dpt) \
 	printDPt(dpt, #dpt)
 
-static inline void
-printExt(EXTENT ext, char* Str)
+static inline void printExt(EXTENT ext, char* Str)
 {
 	fmt::print("{} = {} x {}\n", Str, ext.width, ext.height);
 }
 #define PRINT_EXT(ext) \
 	printExt(ext, #ext)
 
-static inline void
-printDExt(DEXTENT dExt, char* Str)
+static inline void printDExt(DEXTENT dExt, char* Str)
 {
 	fmt::print("{} = {} x {}\n", Str, dExt.width, dExt.height);
 }
 #define PRINT_DEXT(dext) \
 	printDExt(dext, #dext)
 
-static inline void
-printRect(GFXRECT r, char* Str)
+static inline void printRect(GFXRECT r, char* Str)
 {
 	fmt::print("{}.corner = {} x {}\n", Str, r.corner.x, r.corner.y);
 	fmt::print("{}.extent = {} x {}\n", Str, r.extent.width, r.extent.height);
@@ -464,8 +399,7 @@ printRect(GFXRECT r, char* Str)
 #define PRINT_RECT(rect) \
 	printRect(rect, #rect)
 
-static inline void
-printDRect(DRECT r, char* Str)
+static inline void printDRect(DRECT r, char* Str)
 {
 	fmt::print("{}.corner = {} x {}\n", Str, r.corner.x, r.corner.y);
 	fmt::print("{}.extent = {} x {}\n", Str, r.extent.width, r.extent.height);
@@ -473,14 +407,12 @@ printDRect(DRECT r, char* Str)
 #define PRINT_DRECT(drect) \
 	printDRect(drect, #drect)
 
-static inline void
-ZeroPoint(GFXPOINT* pt)
+static inline void ZeroPoint(GFXPOINT* pt)
 {
 	pt->x = pt->y = ~0;
 }
 
-static inline bool
-ValidPoint(GFXPOINT pt)
+static inline bool ValidPoint(GFXPOINT pt)
 {
 	return (bool)(pt.x != ~0 && pt.y != ~0);
 }
@@ -527,7 +459,7 @@ const typedef void* COLORMAPPTR;
 
 typedef uint8_t BATCH_FLAGS;
 // This flag is currently unused but it might make sense to restore it
-#define BATCH_BUILD_PAGE (BATCH_FLAGS)(1 << 0)
+inline constexpr auto BatchBuildPage {(BATCH_FLAGS)(1 << 0)};
 
 typedef struct
 {
@@ -538,12 +470,12 @@ typedef struct
 
 typedef uint8_t INTERSECT_CODE;
 
-#define INTERSECT_LEFT (INTERSECT_CODE)(1 << 0)
-#define INTERSECT_TOP (INTERSECT_CODE)(1 << 1)
-#define INTERSECT_RIGHT (INTERSECT_CODE)(1 << 2)
-#define INTERSECT_BOTTOM (INTERSECT_CODE)(1 << 3)
-#define INTERSECT_NOCLIP (INTERSECT_CODE)(1 << 7)
-#define INTERSECT_ALL_SIDES (INTERSECT_CODE)(INTERSECT_LEFT | INTERSECT_TOP | INTERSECT_RIGHT | INTERSECT_BOTTOM)
+inline constexpr auto IntersectLeft {(INTERSECT_CODE)(1 << 0)};
+inline constexpr auto IntersectTop {(INTERSECT_CODE)(1 << 1)};
+inline constexpr auto IntersectRight {(INTERSECT_CODE)(1 << 2)};
+inline constexpr auto IntersectBottom {(INTERSECT_CODE)(1 << 3)};
+inline constexpr auto IntersectNoclip {(INTERSECT_CODE)(1 << 7)};
+inline constexpr auto IntersectAllSides {(INTERSECT_CODE)(IntersectLeft | IntersectTop | IntersectRight | IntersectBottom)};
 
 typedef GFXPOINT HOT_SPOT;
 
@@ -571,8 +503,8 @@ typedef enum
 	// except the Text primitives.
 	// DrawMode.factor: ignored
 	// Text: supported (except DRAW_ALPHA via Color.a)
-	// RGBA sources (WANT_ALPHA): per-pixel alpha blending performed
-	// RGBA targets (WANT_ALPHA): replace directly supported
+	// RGBA sources (WantAlpha): per-pixel alpha blending performed
+	// RGBA targets (WantAlpha): replace directly supported
 	DRAW_ADDITIVE,
 	// Pixel channels of the source FRAME or Color channels of
 	// a primitive are modulated by (DrawMode.factor / 255) and added
@@ -580,8 +512,8 @@ typedef enum
 	// DrawMode.factor range: -32767..32767 (negative values make
 	//    draw subtractive); 255 = 1:1 ratio
 	// Text: not yet supported
-	// RGBA sources (WANT_ALPHA): alpha channel ignored
-	// RGBA targets (WANT_ALPHA): not yet supported
+	// RGBA sources (WantAlpha): alpha channel ignored
+	// RGBA targets (WantAlpha): not yet supported
 	DRAW_ALPHA,
 	// Pixel channels of the source FRAME or Color channels of
 	// a primitive are modulated by (DrawMode.factor / 255) and added
@@ -589,8 +521,8 @@ typedef enum
 	// (1 - DrawMode.factor / 255)
 	// DrawMode.factor range: 0..255; 255 = fully opaque
 	// Text: supported
-	// RGBA sources (WANT_ALPHA): alpha channel ignored
-	// RGBA targets (WANT_ALPHA): not yet supported
+	// RGBA sources (WantAlpha): alpha channel ignored
+	// RGBA targets (WantAlpha): not yet supported
 	DRAW_MULTIPLY,
 	// Pixel channels of the source FRAME or Color channels of
 	// a primitive are modulated by (channel / 255) and multiplied
@@ -598,8 +530,8 @@ typedef enum
 	// (channel / 255)
 	// DrawMode.factor range: not yet supported
 	// Text: supported
-	// RGBA sources (WANT_ALPHA): alpha channel ignored
-	// RGBA targets (WANT_ALPHA): not yet supported
+	// RGBA sources (WantAlpha): alpha channel ignored
+	// RGBA targets (WantAlpha): not yet supported
 	DRAW_OVERLAY,
 	DRAW_SCREEN,
 	DRAW_GRAYSCALE, // To get true grayscale - factor should be == 128
@@ -616,20 +548,17 @@ typedef struct
 	int16_t factor;
 } DrawMode;
 
-#define DRAW_REPLACE_MODE MAKE_DRAW_MODE(DRAW_REPLACE, 0)
-#define DRAW_FACTOR_1 0xff
-#define TRANSFER_ALPHA 0x7fff
+inline constexpr auto DrawFactor1 {0xff};
+inline constexpr auto TransferAlpha {0x7fff};
 
-#define DESAT_AMOUNT 0xBE
+inline constexpr auto DesatAmount {0xBE};
 
-static inline DrawMode
-MAKE_DRAW_MODE(DrawKind kind, int16_t factor)
+constexpr DrawMode MAKE_DRAW_MODE(DrawKind kind, int16_t factor)
 {
-	DrawMode mode;
-	mode.kind = kind;
-	mode.factor = factor;
-	return mode;
+	return {static_cast<uint8_t>(kind), factor};
 }
+
+inline constexpr DrawMode DrawReplaceMode {MAKE_DRAW_MODE(DRAW_REPLACE, 0)};
 
 typedef enum
 {
@@ -695,10 +624,10 @@ extern void ClearDrawable(void);
 extern void ClearScreen(void);
 #ifdef DEBUG
 extern GFXCONTEXT CreateContextAux(const char* name);
-#define CreateContext(name) CreateContextAux((name))
-#else /* if !defined(DEBUG) */
+constexpr auto CreateContext(auto name) { return CreateContextAux((name)); }
+#else  /* if !defined(DEBUG) */
 extern GFXCONTEXT CreateContextAux(void);
-#define CreateContext(name) CreateContextAux()
+constexpr auto CreateContext(auto name) { return CreateContextAux(); }
 #endif /* !defined(DEBUG) */
 extern bool DestroyContext(GFXCONTEXT ContextRef);
 extern DRAWABLE CreateDisplay(CREATE_FLAGS CreateFlags, int16_t* pwidth,
@@ -755,7 +684,7 @@ extern bool WriteFramePixelIndexes(FRAME frame, const uint8_t* pixels,
 extern void SetFrameTransparentColor(FRAME, Color);
 extern bool IsFrameIndexed(FRAME Frame);
 
-// If the frame is an active SCREEN_DRAWABLE, this call must be
+// If the frame is an active ScreenDrawable, this call must be
 // preceeded by FlushGraphics() for draw commands to have taken effect
 extern Color GetFramePixel(FRAME, GFXPOINT pixelPt);
 

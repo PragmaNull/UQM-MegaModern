@@ -2,11 +2,9 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define CHMMR_COLOR_MAP "comm.chmmr.colortable"
-#define CHMMR_CONVERSATION_PHRASES "comm.chmmr.dialogue"
-#define CHMMR_FONT "comm.chmmr.font"
-#define CHMMR_MUSIC "comm.chmmr.music"
-#define CHMMR_PROCESS_MUSIC "comm.chmmr.process.music"
-#define CHMMR_PMAP_ANIM "comm.chmmr.graphics"
-#define CHMMR_RED_PMAP_ANIM "comm.chmmr.red.graphics"
-#define CHMMR_SCRIPT "comm.chmmr.script"
+inline constexpr uqgsl::czstring ChmmrColorMap {"comm.chmmr.colortable"};
+inline constexpr uqgsl::czstring ChmmrConversationPhrases {"comm.chmmr.dialogue"};
+inline constexpr uqgsl::czstring ChmmrFont {"comm.chmmr.font"};
+inline constexpr uqgsl::czstring ChmmrMusic {"comm.chmmr.music"};
+inline constexpr uqgsl::czstring ChmmrProcessMusic {"comm.chmmr.process.music"};
+inline constexpr uqgsl::czstring ChmmrPmapAnim {"comm.chmmr.graphics"};

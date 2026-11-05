@@ -22,16 +22,16 @@
 #include "libs/inplib.h"
 
 
-int musicVolume = NORMAL_VOLUME;
+int musicVolume = NormalVolume;
 float musicVolumeScale;
 float sfxVolumeScale;
 float speechVolumeScale;
-TFB_SoundSource soundSource[NUM_SOUNDSOURCES];
+TFB_SoundSource soundSource[NumSoundsources];
 
 
 void StopSound(void)
 {
-	for (int i {FIRST_SFX_SOURCE}; i <= LAST_SFX_SOURCE; ++i)
+	for (int i {FirstSfxSource}; i <= LastSfxSource; ++i)
 	{
 		StopSource(i);
 	}
@@ -62,7 +62,7 @@ void StopSource(int iSource)
 
 bool SoundPlaying(void)
 {
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		const TFB_SoundSample* sample {};
 		sample = soundSource[i].sample;
@@ -94,7 +94,7 @@ bool SoundPlaying(void)
 // perhaps later change to condvar implementation
 void WaitForSoundEnd(uint16_t Channel)
 {
-	while (Channel == TFBSOUND_WAIT_ALL ?
+	while (Channel == TfbsoundWaitAll ?
 			   SoundPlaying() :
 			   ChannelPlaying(Channel))
 	{
@@ -123,7 +123,7 @@ void UninitSound(void)
 
 void SetSFXVolume(float volume)
 {
-	for (int i {FIRST_SFX_SOURCE}; i <= LAST_SFX_SOURCE; ++i)
+	for (int i {FirstSfxSource}; i <= LastSfxSource; ++i)
 	{
 		audio_Sourcef(soundSource[i].handle, audio_GAIN, volume);
 	}
@@ -131,11 +131,10 @@ void SetSFXVolume(float volume)
 
 void SetSpeechVolume(float volume)
 {
-	audio_Sourcef(soundSource[SPEECH_SOURCE].handle, audio_GAIN, volume);
+	audio_Sourcef(soundSource[SpeechSource].handle, audio_GAIN, volume);
 }
 
-TimeCount
-FadeMusic(uint8_t end_vol, TimePeriod TimeInterval)
+TimeCount FadeMusic(uint8_t end_vol, TimePeriod TimeInterval)
 {
 	if (QuitPosted || TimeInterval < TimePeriod {}) // Don't make users wait for fades
 	{

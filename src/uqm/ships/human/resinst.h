@@ -2,15 +2,15 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define HUMAN_BIG_MASK_PMAP_ANIM "ship.earthling.graphics.human.large"
-#define HUMAN_CAPTAIN_MASK_PMAP_ANIM "ship.earthling.graphics.captain"
-#define HUMAN_ICON_MASK_PMAP_ANIM "ship.earthling.icons"
-#define HUMAN_MED_MASK_PMAP_ANIM "ship.earthling.graphics.human.medium"
-#define HUMAN_MICON_MASK_PMAP_ANIM "ship.earthling.meleeicons"
-#define HUMAN_RACE_STRINGS "ship.earthling.text"
-#define HUMAN_SHIP_SOUNDS "ship.earthling.sounds"
-#define HUMAN_SML_MASK_PMAP_ANIM "ship.earthling.graphics.human.small"
-#define HUMAN_VICTORY_SONG "ship.earthling.ditty"
-#define SATURN_BIG_MASK_PMAP_ANIM "ship.earthling.graphics.saturn.large"
-#define SATURN_MED_MASK_PMAP_ANIM "ship.earthling.graphics.saturn.medium"
-#define SATURN_SML_MASK_PMAP_ANIM "ship.earthling.graphics.saturn.small"
+inline constexpr uqgsl::czstring HumanBigMaskPmapAnim {"ship.earthling.graphics.human.large"};
+inline constexpr uqgsl::czstring HumanCaptainMaskPmapAnim {"ship.earthling.graphics.captain"};
+inline constexpr uqgsl::czstring HumanIconMaskPmapAnim {"ship.earthling.icons"};
+inline constexpr uqgsl::czstring HumanMedMaskPmapAnim {"ship.earthling.graphics.human.medium"};
+inline constexpr uqgsl::czstring HumanMiconMaskPmapAnim {"ship.earthling.meleeicons"};
+inline constexpr uqgsl::czstring HumanRaceStrings {"ship.earthling.text"};
+inline constexpr uqgsl::czstring HumanShipSounds {"ship.earthling.sounds"};
+inline constexpr uqgsl::czstring HumanSmlMaskPmapAnim {"ship.earthling.graphics.human.small"};
+inline constexpr uqgsl::czstring HumanVictorySong {"ship.earthling.ditty"};
+inline constexpr uqgsl::czstring SaturnBigMaskPmapAnim {"ship.earthling.graphics.saturn.large"};
+inline constexpr uqgsl::czstring SaturnMedMaskPmapAnim {"ship.earthling.graphics.saturn.medium"};
+inline constexpr uqgsl::czstring SaturnSmlMaskPmapAnim {"ship.earthling.graphics.saturn.small"};

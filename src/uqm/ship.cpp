@@ -48,18 +48,21 @@ void animation_preprocess(ELEMENT* ElementPtr)
 	{
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 
 		ElementPtr->turn_wait = ElementPtr->next_turn;
 	}
 }
 
 
-STATUS_FLAGS
-inertial_thrust(ELEMENT* ElementPtr)
+STATUS_FLAGS inertial_thrust(ELEMENT* ElementPtr)
 {
-#define MAX_ALLOWED_SPEED WORLD_TO_VELOCITY(DISPLAY_TO_WORLD(RES_SCALE(18)))
-#define MAX_ALLOWED_SPEED_SQR ((uint32_t)MAX_ALLOWED_SPEED * MAX_ALLOWED_SPEED)
+	const auto MaxAllowedSpeed = [&] {
+		return WorldToVelocity(DisplayToWorld(ResScale(18)));
+	};
+	const auto MaxAllowedSpeedSqr = [&] {
+		return ((uint32_t)MaxAllowedSpeed() * MaxAllowedSpeed());
+	};
 
 	uint16_t CurrentAngle {};
 	uint16_t max_thrust {};
@@ -69,7 +72,7 @@ inertial_thrust(ELEMENT* ElementPtr)
 	VELOCITY_DESC* VelocityPtr {&ElementPtr->velocity};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	CurrentAngle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
+	CurrentAngle = FacingToAngle(StarShipPtr->ShipFacing);
 	const uint16_t TravelAngle {GetVelocityTravelAngle(VelocityPtr)};
 	thrust_increment = StarShipPtr->RaceDescPtr->characteristics.thrust_increment;
 	max_thrust = StarShipPtr->RaceDescPtr->characteristics.max_thrust;
@@ -77,15 +80,15 @@ inertial_thrust(ELEMENT* ElementPtr)
 	{ // inertialess acceleration (Skiff)
 		SetVelocityVector(VelocityPtr,
 						  max_thrust, StarShipPtr->ShipFacing);
-		return (SHIP_AT_MAX_SPEED);
+		return (ShipAtMaxSpeed);
 	}
 	else if (TravelAngle == CurrentAngle
 			 && (StarShipPtr->cur_status_flags
-				 & (SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED))
-			 && !(StarShipPtr->cur_status_flags & SHIP_IN_GRAVITY_WELL))
+				 & (ShipAtMaxSpeed | ShipBeyondMaxSpeed))
+			 && !(StarShipPtr->cur_status_flags & ShipInGravityWell))
 	{ // already maxed-out acceleration
 		return (StarShipPtr->cur_status_flags
-				& (SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED));
+				& (ShipAtMaxSpeed | ShipBeyondMaxSpeed));
 	}
 	else
 	{
@@ -94,25 +97,25 @@ inertial_thrust(ELEMENT* ElementPtr)
 		int16_t cur_delta_x {};
 		int16_t cur_delta_y {};
 
-		thrust_increment = WORLD_TO_VELOCITY(thrust_increment);
+		thrust_increment = WorldToVelocity(thrust_increment);
 		GetCurrentVelocityComponents(VelocityPtr, &cur_delta_x, &cur_delta_y);
 		const uint32_t current_speed {VelocitySquared(cur_delta_x, cur_delta_y)};
-		delta_x = cur_delta_x + COSINE(CurrentAngle, thrust_increment);
-		delta_y = cur_delta_y + SINE(CurrentAngle, thrust_increment);
+		delta_x = cur_delta_x + Cosine(CurrentAngle, thrust_increment);
+		delta_y = cur_delta_y + Sine(CurrentAngle, thrust_increment);
 		uint32_t desired_speed {VelocitySquared(delta_x, delta_y)};
-		const uint32_t max_speed {VelocitySquared(WORLD_TO_VELOCITY(max_thrust), 0)};
+		const uint32_t max_speed {VelocitySquared(WorldToVelocity(max_thrust), 0)};
 
 		if (desired_speed <= max_speed)
 		{ // normal acceleration
 			SetVelocityComponents(VelocityPtr, delta_x, delta_y);
 		}
-		else if (((StarShipPtr->cur_status_flags & SHIP_IN_GRAVITY_WELL)
-				  && desired_speed <= MAX_ALLOWED_SPEED_SQR)
+		else if (((StarShipPtr->cur_status_flags & ShipInGravityWell)
+				  && desired_speed <= MaxAllowedSpeedSqr())
 				 || desired_speed < current_speed)
 		{ // acceleration in a gravity well within max allowed
 			// deceleration after gravity whip
 			SetVelocityComponents(VelocityPtr, delta_x, delta_y);
-			return (SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED);
+			return (ShipAtMaxSpeed | ShipBeyondMaxSpeed);
 		}
 		else if (TravelAngle == CurrentAngle)
 		{ // normal max acceleration, same vector
@@ -121,7 +124,7 @@ inertial_thrust(ELEMENT* ElementPtr)
 				SetVelocityVector(VelocityPtr, max_thrust,
 								  StarShipPtr->ShipFacing);
 			}
-			return (SHIP_AT_MAX_SPEED);
+			return (ShipAtMaxSpeed);
 		}
 		else
 		{ // maxed-out acceleration at an angle to current travel vector
@@ -131,10 +134,10 @@ inertial_thrust(ELEMENT* ElementPtr)
 			VELOCITY_DESC v = *VelocityPtr;
 
 			DeltaVelocityComponents(&v,
-									COSINE(CurrentAngle, thrust_increment >> 1)
-										- COSINE(TravelAngle, thrust_increment),
-									SINE(CurrentAngle, thrust_increment >> 1)
-										- SINE(TravelAngle, thrust_increment));
+									Cosine(CurrentAngle, thrust_increment >> 1)
+										- Cosine(TravelAngle, thrust_increment),
+									Sine(CurrentAngle, thrust_increment >> 1)
+										- Sine(TravelAngle, thrust_increment));
 			GetCurrentVelocityComponents(&v, &cur_delta_x, &cur_delta_y);
 			desired_speed = VelocitySquared(cur_delta_x, cur_delta_y);
 			if (desired_speed > max_speed)
@@ -143,7 +146,7 @@ inertial_thrust(ELEMENT* ElementPtr)
 				{
 					*VelocityPtr = v;
 				}
-				return (SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED);
+				return (ShipAtMaxSpeed | ShipBeyondMaxSpeed);
 			}
 
 			*VelocityPtr = v;
@@ -159,7 +162,7 @@ void DrawHDMeleeBorder(STARSHIP* StarShipPtr)
 	GFXRECT r;
 
 	if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE
-		&& StarShipPtr->playerNr != RPG_PLAYER_NUM)
+		&& StarShipPtr->playerNr != RpgPlayerNum)
 	{
 		return;
 	}
@@ -168,10 +171,10 @@ void DrawHDMeleeBorder(STARSHIP* StarShipPtr)
 
 	r.corner.x = 0;
 	r.corner.y = 4 + y;
-	r.extent.width = STATUS_WIDTH;
-	r.extent.height = SHIP_STATUS_HEIGHT - 4;
+	r.extent.width = StatusWidth();
+	r.extent.height = ShipStatusHeight() - 4;
 
-	DrawRenderedBox(&r, false, NULL_COLOR, THICK_OUTER_BEVEL, false);
+	DrawRenderedBox(&r, false, NullColor, THICK_OUTER_BEVEL, false);
 }
 
 void ship_preprocess(ELEMENT* ElementPtr)
@@ -184,17 +187,17 @@ void ship_preprocess(ELEMENT* ElementPtr)
 
 	cur_status_flags =
 		StarShipPtr->cur_status_flags
-		& ~(LEFT | RIGHT | THRUST | WEAPON | SPECIAL);
-	if (!(ElementPtr->state_flags & APPEARING))
+		& ~(LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag);
+	if (!(ElementPtr->state_flags & Appearing))
 	{
 		cur_status_flags |= StarShipPtr->ship_input_state
-						  & (LEFT | RIGHT | THRUST | WEAPON | SPECIAL);
+						  & (LeftFlag | RightFlag | ThrustFlag | WeaponFlag | SpecialFlag);
 	}
 	else
 	{ // Preprocessing for the first time
 		ElementPtr->crew_level = RDPtr->ship_info.crew_level;
 
-		if (ElementPtr->playerNr == NPC_PLAYER_NUM
+		if (ElementPtr->playerNr == NpcPlayerNum
 			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{ // Sa-Matra
 			STAMP s;
@@ -213,7 +216,7 @@ void ship_preprocess(ELEMENT* ElementPtr)
 			GFXCONTEXT OldContext {SetContext(StatusContext)};
 			DrawCaptainsWindow(StarShipPtr);
 
-			if (IS_HD)
+			if (IsHd())
 			{
 				DrawHDMeleeBorder(StarShipPtr);
 			}
@@ -243,8 +246,8 @@ void ship_preprocess(ELEMENT* ElementPtr)
 		}
 		else
 		{
-			ElementPtr->current.location.x = LOG_SPACE_WIDTH >> 1;
-			ElementPtr->current.location.y = LOG_SPACE_HEIGHT >> 1;
+			ElementPtr->current.location.x = LogSpaceWidth() >> 1;
+			ElementPtr->current.location.y = LogSpaceHeight() >> 1;
 			ElementPtr->next.location = ElementPtr->current.location;
 			InitIntersectStartPoint(ElementPtr);
 			InitIntersectEndPoint(ElementPtr);
@@ -278,22 +281,22 @@ void ship_preprocess(ELEMENT* ElementPtr)
 	{
 		--ElementPtr->turn_wait;
 	}
-	else if (cur_status_flags & (LEFT | RIGHT))
+	else if (cur_status_flags & (LeftFlag | RightFlag))
 	{
-		if (cur_status_flags & LEFT)
+		if (cur_status_flags & LeftFlag)
 		{
 			StarShipPtr->ShipFacing =
-				NORMALIZE_FACING(StarShipPtr->ShipFacing - 1);
+				NormalizeFacing(StarShipPtr->ShipFacing - 1);
 		}
 		else
 		{
 			StarShipPtr->ShipFacing =
-				NORMALIZE_FACING(StarShipPtr->ShipFacing + 1);
+				NormalizeFacing(StarShipPtr->ShipFacing + 1);
 		}
 		ElementPtr->next.image.frame =
 			SetAbsFrameIndex(ElementPtr->next.image.frame,
 							 StarShipPtr->ShipFacing);
-		ElementPtr->state_flags |= CHANGING;
+		ElementPtr->state_flags |= Changing;
 
 		ElementPtr->turn_wait = RDPtr->characteristics.turn_wait;
 	}
@@ -302,18 +305,18 @@ void ship_preprocess(ELEMENT* ElementPtr)
 	{
 		--ElementPtr->thrust_wait;
 	}
-	else if (cur_status_flags & THRUST)
+	else if (cur_status_flags & ThrustFlag)
 	{
 		const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
 		StarShipPtr->cur_status_flags &=
-			~(SHIP_AT_MAX_SPEED
-			  | SHIP_BEYOND_MAX_SPEED
-			  | SHIP_IN_GRAVITY_WELL);
+			~(ShipAtMaxSpeed
+			  | ShipBeyondMaxSpeed
+			  | ShipInGravityWell);
 		StarShipPtr->cur_status_flags |= thrust_status;
 
 		ElementPtr->thrust_wait = RDPtr->characteristics.thrust_wait;
 
-		if (!OBJECT_CLOAKED(ElementPtr)
+		if (!ObjectCloaked(ElementPtr)
 			&& uqm::lowByte(uqm::currentActivity()) <= IN_ENCOUNTER)
 		{
 			spawn_ion_trail(ElementPtr, 0, 0);
@@ -343,7 +346,7 @@ void ship_postprocess(ELEMENT* ElementPtr)
 		--StarShipPtr->weapon_counter;
 	}
 	else if ((StarShipPtr->cur_status_flags
-			  & WEAPON)
+			  & WeaponFlag)
 			 && DeltaEnergy(ElementPtr,
 							-RDPtr->characteristics.weapon_energy_cost))
 	{
@@ -407,10 +410,10 @@ void ship_postprocess(ELEMENT* ElementPtr)
 void collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			   ELEMENT* ElementPtr1, GFXPOINT* pPt1)
 {
-	if (!(ElementPtr1->state_flags & FINITE_LIFE))
+	if (!(ElementPtr1->state_flags & FiniteLife))
 	{
-		ElementPtr0->state_flags |= COLLISION;
-		if (GRAVITY_MASS(ElementPtr1->mass_points))
+		ElementPtr0->state_flags |= Collision;
+		if (GravityMass(ElementPtr1->mass_points))
 		{
 			// Collision with a planet.
 			int16_t damage {};
@@ -434,8 +437,7 @@ void collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	(void)pPt1; /* Satisfying compiler (unused parameter) */
 }
 
-static bool
-spawn_ship(STARSHIP* StarShipPtr)
+static bool spawn_ship(STARSHIP* StarShipPtr)
 {
 	HELEMENT hShip {};
 
@@ -495,16 +497,16 @@ spawn_ship(STARSHIP* StarShipPtr)
 		ShipElementPtr->playerNr = StarShipPtr->playerNr;
 		ShipElementPtr->crew_level = 0;
 		ShipElementPtr->mass_points = RDPtr->characteristics.ship_mass;
-		ShipElementPtr->state_flags = APPEARING | PLAYER_SHIP | IGNORE_SIMILAR;
+		ShipElementPtr->state_flags = Appearing | PlayerShip | IgnoreSimilar;
 		ShipElementPtr->turn_wait = 0;
 		ShipElementPtr->thrust_wait = 0;
-		ShipElementPtr->life_span = NORMAL_LIFE;
+		ShipElementPtr->life_span = NormalLife;
 		ShipElementPtr->colorCycleIndex = 0;
 
 		SetPrimType(&DisplayArray[ShipElementPtr->PrimIndex], STAMP_PRIM);
 		ShipElementPtr->current.image.farray = RDPtr->ship_data.ship;
 
-		if (ShipElementPtr->playerNr == NPC_PLAYER_NUM
+		if (ShipElementPtr->playerNr == NpcPlayerNum
 			&& uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 		{
 			// This is the Sa-Matra
@@ -512,13 +514,13 @@ spawn_ship(STARSHIP* StarShipPtr)
 			ShipElementPtr->current.image.frame =
 				SetAbsFrameIndex(RDPtr->ship_data.ship[0],
 								 StarShipPtr->ShipFacing);
-			ShipElementPtr->current.location.x = LOG_SPACE_WIDTH >> 1;
-			ShipElementPtr->current.location.y = LOG_SPACE_HEIGHT >> 1;
+			ShipElementPtr->current.location.x = LogSpaceWidth() >> 1;
+			ShipElementPtr->current.location.y = LogSpaceHeight() >> 1;
 			++ShipElementPtr->life_span;
 		}
 		else
 		{
-			StarShipPtr->ShipFacing = NORMALIZE_FACING(uqm::random().next());
+			StarShipPtr->ShipFacing = NormalizeFacing(uqm::random().next());
 			if (inHQSpace())
 			{ // Only one ship is ever spawned in HyperSpace -- flagship
 				uint16_t facing = uqm::flagship().shipFacing;
@@ -535,7 +537,7 @@ spawn_ship(STARSHIP* StarShipPtr)
 				//GLOBAL (ShipFacing) = StarShipPtr->ShipFacing + 1;
 				StarShipPtr->ShipFacing = facing;
 
-				if (IS_HD)
+				if (IsHd())
 				{
 					const uint16_t numFrames = GetFrameCount(RDPtr->ship_data.ship[0]);
 					const DrawMode mode = MAKE_DRAW_MODE(DRAW_LINEARBURN, 0xFF);
@@ -543,11 +545,11 @@ spawn_ship(STARSHIP* StarShipPtr)
 
 					if (inHyperSpace())
 					{
-						c = BUILD_COLOR_RGB(0xFF, 0x00, 0x00);
+						c = BuildColorRgb(0xFF, 0x00, 0x00);
 					}
 					else
 					{
-						c = BUILD_COLOR_RGB(0x00, 0xE4, 0x00);
+						c = BuildColorRgb(0x00, 0xE4, 0x00);
 					}
 
 					for (uint16_t i {0}; i < numFrames; i++)
@@ -562,9 +564,9 @@ spawn_ship(STARSHIP* StarShipPtr)
 			do
 			{
 				ShipElementPtr->current.location.x =
-					WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
+					WrapX(DisplayAlignX(uqm::random().next()));
 				ShipElementPtr->current.location.y =
-					WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
+					WrapY(DisplayAlignY(uqm::random().next()));
 			} while (CalculateGravity(ShipElementPtr)
 					 || TimeSpaceMatterConflict(ShipElementPtr));
 		}
@@ -624,14 +626,14 @@ bool GetInitialStarShips(void)
 {
 	if (uqm::lowByte(uqm::currentActivity()) == SUPER_MELEE)
 	{
-		HSTARSHIP ships[NUM_PLAYERS];
+		HSTARSHIP ships[NumPlayers];
 
 		if (!GetInitialMeleeStarShips(ships))
 		{
 			return false;
 		}
 
-		for (uint16_t i {0}; i < NUM_PLAYERS; i++)
+		for (uint16_t i {0}; i < NumPlayers; i++)
 		{
 			const uint16_t playerI = GetPlayerOrder(i);
 
@@ -647,7 +649,7 @@ bool GetInitialStarShips(void)
 	}
 	else
 	{
-		for (int i {NUM_PLAYERS}; i > 0; --i)
+		for (int i {NumPlayers}; i > 0; --i)
 		{
 			if (!GetNextStarShip(nullptr, i - 1))
 			{

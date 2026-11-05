@@ -2,4 +2,4 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define MELNORME_CODE "ship.melnorme.code"
+inline constexpr uqgsl::czstring MelnormeCode {"ship.melnorme.code"};

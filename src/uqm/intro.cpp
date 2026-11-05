@@ -108,14 +108,12 @@ typedef struct
 
 static bool DoPresentation(void* pIS);
 
-static Color
-commandColor(const uqm::SlideCommand& cmd)
+static Color commandColor(const uqm::SlideCommand& cmd)
 {
-	return BUILD_COLOR_RGBA(cmd.color[0], cmd.color[1], cmd.color[2], 0xff);
+	return BuildColorRgba(cmd.color[0], cmd.color[1], cmd.color[2], 0xff);
 }
 
-static bool
-DoFadeScreen(PRESENTATION_INPUT_STATE* pPIS, int msecs, uint8_t FadeType)
+static bool DoFadeScreen(PRESENTATION_INPUT_STATE* pPIS, int msecs, uint8_t FadeType)
 {
 	pPIS->TimeOut = FadeScreen((ScreenFadeType)FadeType, msecs * c_gameSecond / 1000)
 				  + c_gameSecond / 10;
@@ -123,8 +121,7 @@ DoFadeScreen(PRESENTATION_INPUT_STATE* pPIS, int msecs, uint8_t FadeType)
 	return true;
 }
 
-static void
-DrawTextEffect(TEXT* pText, Color Fore, Color Back, bool traced)
+static void DrawTextEffect(TEXT* pText, Color Fore, Color Back, bool traced)
 {
 	if (traced)
 	{
@@ -137,8 +134,7 @@ DrawTextEffect(TEXT* pText, Color Fore, Color Back, bool traced)
 	}
 }
 
-static void
-Present_BatchGraphics(PRESENTATION_INPUT_STATE* pPIS)
+static void Present_BatchGraphics(PRESENTATION_INPUT_STATE* pPIS)
 {
 	if (!pPIS->Batched)
 	{
@@ -147,8 +143,7 @@ Present_BatchGraphics(PRESENTATION_INPUT_STATE* pPIS)
 	}
 }
 
-static void
-Present_UnbatchGraphics(PRESENTATION_INPUT_STATE* pPIS, bool bYield)
+static void Present_UnbatchGraphics(PRESENTATION_INPUT_STATE* pPIS, bool bYield)
 {
 	if (pPIS->Batched)
 	{
@@ -161,14 +156,23 @@ Present_UnbatchGraphics(PRESENTATION_INPUT_STATE* pPIS, bool bYield)
 	}
 }
 
-static void
-Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
+static void Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 {
-#define MODULE_YOFS_P -(RES_SCALE(79) + IF_HD(33))
-#define DRIVE_TOP_Y_P (DRIVE_TOP_Y + MODULE_YOFS_P)
-#define JET_TOP_Y_P (JET_TOP_Y + MODULE_YOFS_P)
-#define MODULE_TOP_Y_P (MODULE_TOP_Y + MODULE_YOFS_P)
-#define MODULE_TOP_X_P MODULE_TOP_X
+	const auto ModuleYofsP = [&] {
+		return -(ResScale(79) + IfHd(33));
+	};
+	const auto DriveTopYP = [&] {
+		return (DriveTopY() + ModuleYofsP());
+	};
+	const auto JetTopYP = [&] {
+		return (JetTopY() + ModuleYofsP());
+	};
+	const auto ModuleTopYP = [&] {
+		return (ModuleTopY() + ModuleYofsP());
+	};
+	const auto ModuleTopXP = [&] {
+		return ModuleTopX();
+	};
 	FRAME SisFrame {};
 	STAMP s;
 	GFXRECT r;
@@ -179,15 +183,15 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 
 	GFXCONTEXT OldContext {SetContext(OffScreenContext)};
 
-	FRAME SkelFrame {CaptureDrawable(LoadGraphic(SISSKEL_MASK_PMAP_ANIM))};
-	FRAME ModuleFrame {CaptureDrawable(LoadGraphic(SISMODS_MASK_PMAP_ANIM))};
+	FRAME SkelFrame {CaptureDrawable(LoadGraphic(SisskelMaskPmapAnimRes))};
+	FRAME ModuleFrame {CaptureDrawable(LoadGraphic(SismodsMaskPmapAnimRes))};
 
 	GetFrameRect(SkelFrame, &r);
 	SisFrame = CaptureDrawable(CreateDrawable(
-		WANT_PIXMAP | WANT_ALPHA, r.extent.width, r.extent.height, 1));
+		WantPixmap | WantAlpha, r.extent.width, r.extent.height, 1));
 	SetContextFGFrame(SisFrame);
 	SetContextClipRect(nullptr);
-	SisBack = BUILD_COLOR_RGBA(0, 0, 0, 0);
+	SisBack = BuildColorRgba(0, 0, 0, 0);
 	SetContextBackGroundColor(SisBack);
 	ClearDrawable();
 
@@ -196,60 +200,60 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 	s.origin.y = 0;
 	DrawStamp(&s);
 
-	for (slot = 0; slot < NUM_DRIVE_SLOTS; ++slot)
+	for (slot = 0; slot < NumDriveSlots; ++slot)
 	{
-		piece = GLOBAL_SIS(DriveSlots[slot]);
-		if (piece < EMPTY_SLOT)
+		piece = uqm::gameState().sis().DriveSlots[slot];
+		if (piece < EmptySlot)
 		{
-			s.origin.x = DRIVE_TOP_X;
-			s.origin.y = DRIVE_TOP_Y_P;
-			s.origin.x += slot * SHIP_PIECE_OFFSET;
+			s.origin.x = DriveTopX();
+			s.origin.y = DriveTopYP();
+			s.origin.x += slot * ShipPieceOffset();
 			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
 			DrawStamp(&s);
 		}
 	}
-	for (slot = 0; slot < NUM_JET_SLOTS; ++slot)
+	for (slot = 0; slot < NumJetSlots; ++slot)
 	{
-		piece = GLOBAL_SIS(JetSlots[slot]);
-		if (piece < EMPTY_SLOT)
+		piece = uqm::gameState().sis().JetSlots[slot];
+		if (piece < EmptySlot)
 		{
-			s.origin.x = JET_TOP_X;
-			s.origin.y = JET_TOP_Y_P;
-			s.origin.x += slot * SHIP_PIECE_OFFSET;
+			s.origin.x = JetTopX();
+			s.origin.y = JetTopYP();
+			s.origin.x += slot * ShipPieceOffset();
 			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
 			DrawStamp(&s);
 		}
 	}
-	for (slot = 0; slot < NUM_MODULE_SLOTS; ++slot)
+	for (slot = 0; slot < NumModuleSlots; ++slot)
 	{
-		piece = GLOBAL_SIS(ModuleSlots[slot]);
-		if (piece < EMPTY_SLOT)
+		piece = uqm::gameState().sis().ModuleSlots[slot];
+		if (piece < EmptySlot)
 		{
-			s.origin.x = MODULE_TOP_X_P;
-			s.origin.y = MODULE_TOP_Y_P;
-			s.origin.x += slot * SHIP_PIECE_OFFSET;
+			s.origin.x = ModuleTopXP();
+			s.origin.y = ModuleTopYP();
+			s.origin.x += slot * ShipPieceOffset();
 			s.frame = SetAbsFrameIndex(ModuleFrame, piece);
 			if (piece >= BOMB_MODULE_0)
 			{ // Blue glow around the bomb - mimic PC-DOS pre-rendered cutscene
 				const Color oldColor = SetContextForeGroundColor(
-					BUILD_COLOR_RGB(0x00, 0x00, 0x5F));
+					BuildColorRgb(0x00, 0x00, 0x5F));
 
-				s.origin.y += RES_SCALE(2);
+				s.origin.y += ResScale(2);
 				DrawFilledStamp(&s);
 
-				s.origin.y -= RES_SCALE(4);
+				s.origin.y -= ResScale(4);
 				DrawFilledStamp(&s);
 
 				SetContextForeGroundColor(
-					BUILD_COLOR_RGB(0x00, 0x07, 0xFF));
+					BuildColorRgb(0x00, 0x07, 0xFF));
 
-				s.origin.y += RES_SCALE(1);
+				s.origin.y += ResScale(1);
 				DrawFilledStamp(&s);
 
-				s.origin.y += RES_SCALE(2);
+				s.origin.y += ResScale(2);
 				DrawFilledStamp(&s);
 
-				s.origin.y -= RES_SCALE(1);
+				s.origin.y -= ResScale(1);
 				SetContextForeGroundColor(oldColor);
 			}
 			DrawStamp(&s);
@@ -269,8 +273,7 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 	pPIS->SisFrame = SisFrame;
 }
 
-static void
-DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool* skip)
+static void DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool* skip)
 {
 	TEXT Text;
 
@@ -283,35 +286,32 @@ DoSpinText(const char* buf, int16_t x, int16_t y, FRAME repair, bool* skip)
 	font_DrawText_Fade(&Text, repair, skip);
 }
 
-static void
-DoSpinLine(LINE* l, Color front, Color back, bool* skip)
+static void DoSpinLine(LINE* l, Color front, Color back, bool* skip)
 {
 	if (!*skip)
 	{
 		SetContextForeGroundColor(back);
-		DrawLine(l, RES_SCALE(1));
+		DrawLine(l, ResScale(1));
 		PlayMenuSound(MENU_SOUND_TEXT);
 		SleepThread(c_gameSecond / 16);
 	}
 	SetContextForeGroundColor(front);
-	DrawLine(l, RES_SCALE(1));
+	DrawLine(l, ResScale(1));
 }
 
-static void
-DoSpinStatBox(GFXRECT* r, Color front, Color back, bool* skip)
+static void DoSpinStatBox(GFXRECT* r, Color front, Color back, bool* skip)
 {
 	if (!*skip)
 	{
-		DrawStarConBox(r, RES_SCALE(1), back, back, false, BLACK_COLOR, false, BLACK_COLOR);
+		DrawStarConBox(r, ResScale(1), back, back, false, BlackColor, false, BlackColor);
 		PlayMenuSound(MENU_SOUND_TEXT);
 		SleepThread(c_gameSecond / 16);
 	}
-	DrawStarConBox(r, RES_SCALE(1), front, front, false, BLACK_COLOR, false, BLACK_COLOR);
+	DrawStarConBox(r, ResScale(1), front, front, false, BlackColor, false, BlackColor);
 }
 
-static void
-DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Color front, Color back,
-		   bool* skip)
+static void DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Color front, Color back,
+					   bool* skip)
 {
 	TEXT Text;
 	uint16_t i {};
@@ -319,9 +319,9 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 	GFXPOINT c;
 	GFXRECT chd;
 
-	sq.corner.x = x + RES_SCALE(63);
-	sq.corner.y = y - RES_SCALE(5);
-	sq.extent.width = sq.extent.height = RES_SCALE(5);
+	sq.corner.x = x + ResScale(63);
+	sq.corner.y = y - ResScale(5);
+	sq.extent.width = sq.extent.height = ResScale(5);
 
 	chd.extent.width = chd.extent.height = 4;
 
@@ -352,7 +352,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 		}
 		SetContextForeGroundColor(front);
 		DrawFilledRectangle(&sq);
-		sq.corner.x += RES_SCALE(6);
+		sq.corner.x += ResScale(6);
 
 		UpdateInputState();
 		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT))
@@ -362,13 +362,13 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 	}
 	for (i = 0; i < empty; i++)
 	{
-		c.x = sq.corner.x + RES_SCALE(2);
-		c.y = sq.corner.y + RES_SCALE(2);
+		c.x = sq.corner.x + ResScale(2);
+		c.y = sq.corner.y + ResScale(2);
 		if (!*skip)
 		{
 			SetContextForeGroundColor(back);
-			DrawStarConBox(&sq, RES_SCALE(1), back, back, false, BLACK_COLOR, false, BLACK_COLOR);
-			if (IS_HD)
+			DrawStarConBox(&sq, ResScale(1), back, back, false, BlackColor, false, BlackColor);
+			if (IsHd())
 			{
 				chd.corner = c;
 				DrawFilledRectangle(&chd);
@@ -381,8 +381,8 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 			SleepThread(c_gameSecond / 16);
 		}
 		SetContextForeGroundColor(front);
-		DrawStarConBox(&sq, RES_SCALE(1), front, front, false, BLACK_COLOR, false, BLACK_COLOR);
-		if (IS_HD)
+		DrawStarConBox(&sq, ResScale(1), front, front, false, BlackColor, false, BlackColor);
+		if (IsHd())
 		{
 			chd.corner = c;
 			DrawFilledRectangle(&chd);
@@ -391,7 +391,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 		{
 			DrawPoint(&c);
 		}
-		sq.corner.x += RES_SCALE(6);
+		sq.corner.x += ResScale(6);
 
 		UpdateInputState();
 		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT))
@@ -401,8 +401,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 	}
 }
 
-static void
-Present_DrawMovieFrame(PRESENTATION_INPUT_STATE* pPIS)
+static void Present_DrawMovieFrame(PRESENTATION_INPUT_STATE* pPIS)
 {
 	STAMP s;
 
@@ -412,8 +411,7 @@ Present_DrawMovieFrame(PRESENTATION_INPUT_STATE* pPIS)
 	DrawStamp(&s);
 }
 
-static bool
-ShowPresentationFile(const char* name)
+static bool ShowPresentationFile(const char* name)
 {
 	const auto text {uqm::readTextFile(uqm::contentDir(), name)};
 	const auto commands {text ? uqm::slideshowFromJson(*text) : uqstl::nullopt};
@@ -463,14 +461,13 @@ const static SHIPMAP ship_map[] = {
 	{MMRNMHRM_ID,	  "mmrnmhrm",	  "MMRNMHRM",		  " TRANSFORMER",  128, 84 },
 };
 
-#define NUM_SHIPS (sizeof(ship_map) / sizeof(SHIPMAP))
+static constexpr uint16_t NumShips {static_cast<uint16_t>(uqstl::size(ship_map))};
 
-static uint16_t shipID = NUM_SHIPS;
-static uint16_t raceID = NUM_SHIPS;
+static uint16_t shipID = NumShips;
+static uint16_t raceID = NumShips;
 static bool linespun = false;
 
-static void
-SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
+static void SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 {
 	//TODO Nullicious: Get rid of goto :(
 	if (!uqm::currentSeed().ships)
@@ -478,26 +475,26 @@ SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 		goto SeedDittyPassThru;
 	}
 
-	for (shipID = 0; shipID < NUM_SHIPS; shipID++)
+	for (shipID = 0; shipID < NumShips; shipID++)
 	{
 		if (!strcasecmp(str.data(), ship_map[shipID].ditty))
 		{
 			break;
 		}
 	}
-	if (shipID >= NUM_SHIPS)
+	if (shipID >= NumShips)
 	{
 		goto SeedDittyPassThru;
 	}
 
-	for (raceID = 0; raceID < NUM_SHIPS; raceID++)
+	for (raceID = 0; raceID < NumShips; raceID++)
 	{
 		if (SeedShip(ship_map[raceID].sID, false) == ship_map[shipID].sID)
 		{
 			break;
 		}
 	}
-	if (raceID >= NUM_SHIPS)
+	if (raceID >= NumShips)
 	{
 		goto SeedDittyPassThru;
 	}
@@ -507,15 +504,14 @@ SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 	return;
 
 SeedDittyPassThru:
-	shipID = raceID = NUM_SHIPS;
+	shipID = raceID = NumShips;
 	fmt::format_to_sz_n(buf, "ship.{}.ditty", str);
 	return;
 }
 
-static void
-SeedLineSpin(int* x1, int* y1, int* x2, int* y2)
+static void SeedLineSpin(int* x1, int* y1, int* x2, int* y2)
 {
-	if (!uqm::currentSeed().ships || !x1 || !x2 || !y1 || !y2 || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
+	if (!uqm::currentSeed().ships || !x1 || !x2 || !y1 || !y2 || shipID == raceID || shipID >= NumShips || raceID >= NumShips)
 	{
 		goto SeedLineSpinPassThru;
 	}
@@ -524,7 +520,7 @@ SeedLineSpin(int* x1, int* y1, int* x2, int* y2)
 	{
 		*x2 -= ship_map[raceID].width - 80; // Shorten line for Spinning Blade
 	}
-	if (ship_map[shipID].sID == DRUUGE_ID && !IS_HD && ship_map[raceID].width > 80 && *y1 == 21)
+	if (ship_map[shipID].sID == DRUUGE_ID && !IsHd() && ship_map[raceID].width > 80 && *y1 == 21)
 	{ // Line for High-recoil Cannon in SD, needs to move down for wide ships
 		*y1 += 10;
 		*y2 += 10;
@@ -533,19 +529,18 @@ SeedLineSpinPassThru:
 	return;
 }
 
-static void
-SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
+static void SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 {
-	if (!uqm::currentSeed().ships || !x || !y || shipID == raceID || shipID >= NUM_SHIPS || raceID >= NUM_SHIPS)
+	if (!uqm::currentSeed().ships || !x || !y || shipID == raceID || shipID >= NumShips || raceID >= NumShips)
 	{
 		goto SeedTextSpinPassThru;
 	}
 
-	if (ship_map[shipID].sID == SPATHI_ID && IS_HD && ship_map[raceID].sID != ARILOU_ID && ship_map[raceID].width > 80 && (*x == 25 || *x == 40))
+	if (ship_map[shipID].sID == SPATHI_ID && IsHd() && ship_map[raceID].sID != ARILOU_ID && ship_map[raceID].width > 80 && (*x == 25 || *x == 40))
 	{
 		*x -= 15; // Rear-firing Missile Launch Tube, move left for wide ships
 	}
-	if (ship_map[shipID].sID == DRUUGE_ID && !IS_HD && ship_map[raceID].width > 80 && *x == 108)
+	if (ship_map[shipID].sID == DRUUGE_ID && !IsHd() && ship_map[raceID].width > 80 && *x == 108)
 	{
 		*y += 10; // This is High-recoil Cannon, move down for wide ships
 	}
@@ -581,13 +576,13 @@ SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 		case KOHR_AH_ID:
 		case MYCON_ID:
 		case THRADDASH_ID: // Right hand huggers
-			if ((ship_map[shipID].sID == EARTHLING_ID || (ship_map[shipID].sID == KOHR_AH_ID && IS_HD)) && ship_map[raceID].sID == ARILOU_ID)
+			if ((ship_map[shipID].sID == EARTHLING_ID || (ship_map[shipID].sID == KOHR_AH_ID && IsHd())) && ship_map[raceID].sID == ARILOU_ID)
 			{ // Special case - ship doesn't have room, cuts to "ARILOU"
 				buf -= 8 * sizeof(char);
 				*x += ship_map[shipID].width - 50;
 				break;
 			}
-			if (ship_map[shipID].sID == CHENJESU_ID && IS_HD)
+			if (ship_map[shipID].sID == CHENJESU_ID && IsHd())
 			{
 				*x -= 10; // Better centering the gap over the broodhome
 			}
@@ -642,7 +637,7 @@ SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 				buf -= 8 * sizeof(char);
 				break;
 			}
-			if (ship_map[shipID].sID == UMGAH_ID && !IS_HD)
+			if (ship_map[shipID].sID == UMGAH_ID && !IsHd())
 			{ // Right hand hugger but squeeze it a little
 				*x += (ship_map[shipID].width - ship_map[raceID].width)
 					* 4 / 5;
@@ -653,7 +648,7 @@ SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 		case SUPOX_ID: // Lefties but line break when long
 			if (ship_map[raceID].width > 80)
 			{
-				const char* pad = (IS_HD ? "\n   " : "\n       ");
+				const char* pad = (IsHd() ? "\n   " : "\n       ");
 				uqm::utf8StringCopy(buf, size, pad);
 				buf += strlen(pad) * sizeof(char);
 			}
@@ -674,8 +669,7 @@ SeedTextSpinPassThru:
 	return;
 }
 
-static bool
-DoPresentation(void* pIS)
+static bool DoPresentation(void* pIS)
 {
 	PRESENTATION_INPUT_STATE* pPIS = (PRESENTATION_INPUT_STATE*)pIS;
 
@@ -724,7 +718,7 @@ DoPresentation(void* pIS)
 		const uqm::SlideCommand& cmd {(*pPIS->Commands)[pPIS->OperIndex]};
 		pPIS->OperIndex++;
 
-		if ((cmd.resolution == uqm::SlideResolution::Sd && IS_HD) || (cmd.resolution == uqm::SlideResolution::Hd && !IS_HD))
+		if ((cmd.resolution == uqm::SlideResolution::Sd && IsHd()) || (cmd.resolution == uqm::SlideResolution::Hd && !IsHd()))
 		{
 			continue;
 		}
@@ -733,14 +727,14 @@ DoPresentation(void* pIS)
 		{
 			case uqm::SlideOp::Dims:
 				{ /* set dimensions */
-					const int w {cmd.width << RESOLUTION_FACTOR};
-					const int h {cmd.height << RESOLUTION_FACTOR};
+					const int w {cmd.width << resolutionFactor};
+					const int h {cmd.height << resolutionFactor};
 
 					pPIS->clip_r.extent.width = w;
 					pPIS->clip_r.extent.height = h;
 					/* center on screen */
-					pPIS->clip_r.corner.x = (SCREEN_WIDTH - w) / 2;
-					pPIS->clip_r.corner.y = (SCREEN_HEIGHT - h) / 2;
+					pPIS->clip_r.corner.x = (CanvasWidth - w) / 2;
+					pPIS->clip_r.corner.y = (CanvasHeight - h) / 2;
 					SetContextClipRect(&pPIS->clip_r);
 					break;
 				}
@@ -797,7 +791,7 @@ DoPresentation(void* pIS)
 						DestroyMusic(pPIS->MusicRef);
 					}
 
-					pPIS->MusicRef = LoadMusic(pPIS->Buffer);
+					pPIS->MusicRef = LoadMusicInstance(pPIS->Buffer);
 					PlayMusic(pPIS->MusicRef, false, 1);
 					break;
 				}
@@ -810,7 +804,7 @@ DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::WaitDitty:
 				{ /* wait for ditty to end */
-					while (PlayingStream(MUSIC_SOURCE))
+					while (PlayingStream(MusicSource))
 					{
 						if (CurrentInputState.menu[KEY_MENU_CANCEL]
 							|| (uqm::currentActivity() & CHECK_ABORT))
@@ -901,8 +895,8 @@ DoPresentation(void* pIS)
 					t.align = ALIGN_CENTER;
 					t.pStr = cmd.text.c_str();
 					t.CharCount = (uint16_t)~0;
-					t.baseline.x = RES_SCALE(cmd.x);
-					t.baseline.y = RES_SCALE(cmd.y);
+					t.baseline.x = ResScale(cmd.x);
+					t.baseline.y = ResScale(cmd.y);
 					DrawTextEffect(&t, pPIS->TextColor, pPIS->TextBackColor,
 								   pPIS->TextTraced);
 					break;
@@ -922,8 +916,8 @@ DoPresentation(void* pIS)
 						uqm::utf8StringCopy(pPIS->Buffer, sizeof(pPIS->Buffer),
 											cmd.text.c_str());
 					}
-					x <<= RESOLUTION_FACTOR;
-					y <<= RESOLUTION_FACTOR;
+					x <<= resolutionFactor;
+					y <<= resolutionFactor;
 
 					if (pPIS->HaveFrame
 						&& (pPIS->GetRect.extent.width > 0
@@ -938,26 +932,26 @@ DoPresentation(void* pIS)
 					if (uqm::currentSeed().ships && !strncmp(pPIS->Buffer, "SPATHI", 6))
 					{ // Manually space the SPATHI text
 						DoSpinText("SP", x,
-								   y + RES_SCALE(7),
+								   y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
-						DoSpinText("A", x + RES_SCALE(16),
-								   y + RES_SCALE(7),
+						DoSpinText("A", x + ResScale(16),
+								   y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
-						DoSpinText("THI", x + RES_SCALE(25),
-								   y + RES_SCALE(7),
+						DoSpinText("THI", x + ResScale(25),
+								   y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
 						if (ship_map[shipID].sID == UR_QUAN_ID)
 						{ // All for a ship that won't occur anyway
-							x -= RES_SCALE(52);
-							y += RES_SCALE(11);
+							x -= ResScale(52);
+							y += ResScale(11);
 						}
-						DoSpinText(&(pPIS->Buffer[6]), x + RES_SCALE(52),
-								   y + RES_SCALE(7),
+						DoSpinText(&(pPIS->Buffer[6]), x + ResScale(52),
+								   y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
 					}
 					else
 					{
-						DoSpinText(pPIS->Buffer, x, y + RES_SCALE(7),
+						DoSpinText(pPIS->Buffer, x, y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
 					}
 
@@ -976,8 +970,8 @@ DoPresentation(void* pIS)
 
 					pPIS->NumSpinStat++;
 
-					const int x {pPIS->StatBox.corner.x + RES_SCALE(3)};
-					const int y {pPIS->StatBox.corner.y + RES_SCALE(1) + (leading * pPIS->NumSpinStat)};
+					const int x {pPIS->StatBox.corner.x + ResScale(3)};
+					const int y {pPIS->StatBox.corner.y + ResScale(1) + (leading * pPIS->NumSpinStat)};
 
 					if (pPIS->NumSpinStat > 8)
 					{
@@ -1002,7 +996,7 @@ DoPresentation(void* pIS)
 						t.CharCount = (uint16_t)~0;
 						t.baseline = MAKE_POINT(x, y);
 						DrawTextEffect(&t,
-									   BUILD_COLOR_RGBA(0xFF, 0x55, 0x55, 0xFF),
+									   BuildColorRgba(0xFF, 0x55, 0x55, 0xFF),
 									   pPIS->TextBackColor, pPIS->TextTraced);
 					}
 					else
@@ -1050,11 +1044,11 @@ DoPresentation(void* pIS)
 					}
 					pPIS->tfade_r = pPIS->clip_r;
 					pPIS->tfade_r.corner.y = 0;
-					pPIS->tfade_r.extent.height = SCREEN_HEIGHT;
+					pPIS->tfade_r.extent.height = CanvasHeight;
 					for (i = 0; i < pPIS->LinesCount; ++i, y += leading)
 					{
 						pPIS->TextLines[i].align = ALIGN_CENTER;
-						pPIS->TextLines[i].baseline.x = SCREEN_WIDTH / 2;
+						pPIS->TextLines[i].baseline.x = CanvasWidth / 2;
 						pPIS->TextLines[i].baseline.y = y;
 					}
 
@@ -1141,11 +1135,11 @@ DoPresentation(void* pIS)
 						}
 						s.frame = pPIS->RotatedFrame;
 					}
-					s.origin.x = cmd.x << RESOLUTION_FACTOR;
-					s.origin.y = cmd.y << RESOLUTION_FACTOR;
+					s.origin.x = cmd.x << resolutionFactor;
+					s.origin.y = cmd.y << resolutionFactor;
 					const uqm::TFBScaleMode old_mode {
 						SetGraphicScaleMode(drawSis ? uqm::TFBScaleMode::Nearest : uqm::TFBScaleMode::Bilinear)};
-					const int old_scale {SetGraphicScale(cmd.scale.value_or(GSCALE_IDENTITY))};
+					const int old_scale {SetGraphicScale(cmd.scale.value_or(GscaleIdentity))};
 					DrawStamp(&s);
 					SetGraphicScale(old_scale);
 					SetGraphicScaleMode(old_mode);
@@ -1192,10 +1186,10 @@ DoPresentation(void* pIS)
 				{ /* draw simple line */
 					LINE l;
 
-					l.first.x = RES_SCALE(cmd.x);
-					l.first.y = RES_SCALE(cmd.y);
-					l.second.x = RES_SCALE(cmd.x2);
-					l.second.y = RES_SCALE(cmd.y2);
+					l.first.x = ResScale(cmd.x);
+					l.first.y = ResScale(cmd.y);
+					l.second.x = ResScale(cmd.x2);
+					l.second.y = ResScale(cmd.y2);
 
 					SetContextForeGroundColor(pPIS->TextColor);
 					DrawLine(&l, 1);
@@ -1213,10 +1207,10 @@ DoPresentation(void* pIS)
 					}
 					LINE l;
 
-					x1 <<= RESOLUTION_FACTOR;
-					x2 <<= RESOLUTION_FACTOR;
-					y1 <<= RESOLUTION_FACTOR;
-					y2 <<= RESOLUTION_FACTOR;
+					x1 <<= resolutionFactor;
+					x2 <<= resolutionFactor;
+					y1 <<= resolutionFactor;
+					y2 <<= resolutionFactor;
 
 					if (pPIS->HaveFrame
 						&& (pPIS->GetRect.extent.width > 0
@@ -1258,10 +1252,14 @@ DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::StatBox:
 				{ /* draw stat box for spin */
-#define STATBOX_WIDTH RES_SCALE(122)
-#define STATBOX_HEIGHT RES_SCALE(60)
-					int x {cmd.x << RESOLUTION_FACTOR};
-					int y {cmd.y << RESOLUTION_FACTOR};
+					const auto StatboxWidth = [&] {
+						return ResScale(122);
+					};
+					const auto StatboxHeight = [&] {
+						return ResScale(60);
+					};
+					int x {cmd.x << resolutionFactor};
+					int y {cmd.y << resolutionFactor};
 					pPIS->NumSpinStat = 0;
 
 					if (pPIS->HaveFrame
@@ -1274,7 +1272,7 @@ DoPresentation(void* pIS)
 
 					pPIS->StatBox.corner = MAKE_POINT(x, y);
 					pPIS->StatBox.extent =
-						MAKE_EXTENT(STATBOX_WIDTH, STATBOX_HEIGHT);
+						MAKE_EXTENT(StatboxWidth(), StatboxHeight());
 
 					DoSpinStatBox(&pPIS->StatBox, pPIS->TextColor,
 								  pPIS->TextBackColor, &pPIS->Skip);
@@ -1355,8 +1353,7 @@ DoPresentation(void* pIS)
 	return false;
 }
 
-static bool
-ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
+static bool ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 {
 	GFXRECT OldRect;
 	PRESENTATION_INPUT_STATE pis;
@@ -1368,9 +1365,9 @@ ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 	GFXCONTEXT OldContext {SetContext(ScreenContext)};
 	GetContextClipRect(&OldRect);
 	FONT OldFont {SetContextFont(nullptr)};
-	SetContextBackGroundColor(BLACK_COLOR);
+	SetContextBackGroundColor(BlackColor);
 
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
+	SetMenuSounds(MenuSoundNone, MenuSoundNone);
 	pis.InputFunc = DoPresentation;
 	pis.LastDrawKind = -1;
 	pis.TextVPos = uqm::SlideTextAlign::Bottom;
@@ -1379,11 +1376,11 @@ ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 	pis.LastSyncTime = pis.StartTime;
 	DoInput(&pis, true);
 
-	if (pis.MusicRef && PlayingStream(MUSIC_SOURCE))
+	if (pis.MusicRef && PlayingStream(MusicSource))
 	{
 		SleepThreadUntil(FadeMusic(0, c_gameSecond));
 		StopMusic();
-		FadeMusic(NORMAL_VOLUME, TimePeriod {});
+		FadeMusic(NormalVolume, TimePeriod {});
 	}
 
 	DestroyMusic(pis.MusicRef);
@@ -1401,8 +1398,7 @@ ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 	return true;
 }
 
-static bool
-DoVideoInput(void* pIS)
+static bool DoVideoInput(void* pIS)
 {
 	const VIDEO_INPUT_STATE* pVIS = (VIDEO_INPUT_STATE*)pIS;
 
@@ -1450,21 +1446,19 @@ DoVideoInput(void* pIS)
 	return true;
 }
 
-static void
-FadeClearScreen(void)
+static void FadeClearScreen(void)
 {
 	SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
 
 	// clear the screen with black
 	SetContext(ScreenContext);
-	SetContextBackGroundColor(BLACK_COLOR);
+	SetContextBackGroundColor(BlackColor);
 	ClearDrawable();
 
 	FadeScreen(FadeAllToColor, TimePeriod {});
 }
 
-static bool
-ShowLegacyVideo(LEGACY_VIDEO vid)
+static bool ShowLegacyVideo(LEGACY_VIDEO vid)
 {
 	VIDEO_INPUT_STATE vis;
 
@@ -1478,7 +1472,7 @@ ShowLegacyVideo(LEGACY_VIDEO vid)
 
 	vis.InputFunc = DoVideoInput;
 	vis.CurVideo = ref;
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
+	SetMenuSounds(MenuSoundNone, MenuSoundNone);
 	DoInput(&vis, true);
 
 	StopLegacyVideo(ref);

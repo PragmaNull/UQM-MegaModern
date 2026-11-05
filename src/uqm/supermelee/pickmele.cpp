@@ -43,21 +43,19 @@
 #include "uqm/random/UQMRandom.h"
 
 
-#define NUM_PICKMELEE_ROWS 2
-#define NUM_PICKMELEE_COLUMNS 7
+static constexpr auto NumPickmeleeRows {2};
+static constexpr auto NumPickmeleeColumns {7};
 
-#define PICK_X_OFFS RES_SCALE(57)
-#define PICK_Y_OFFS RES_SCALE(24)
-#define PICK_SIDE_OFFS RES_SCALE(100)
+static auto PickXOffs() { return ResScale(57); }
+static auto PickYOffs() { return ResScale(24); }
+static auto PickSideOffs() { return ResScale(100); }
 
-#define NAME_AREA_HEIGHT RES_SCALE(7)
-#define MELEE_WIDTH RES_SCALE(149)
-#define MELEE_HEIGHT (RES_SCALE(48) + NAME_AREA_HEIGHT)
+static auto NameAreaHeight() { return ResScale(7); }
+static auto MeleeWidth() { return ResScale(149); }
+static auto MeleeHeight() { return (ResScale(48) + NameAreaHeight()); }
 
-#define PICKSHIP_TEAM_NAME_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x1F), 0x09)
-#define PICKSHIP_TEAM_START_VALUE_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x04, 0x05, 0x1F), 0x4B)
+static constexpr auto PickshipTeamNameTextColor {BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)};
+static constexpr auto PickshipTeamStartValueColor {BuildColor(MakeRgb15(0x04, 0x05, 0x1F), 0x4B)};
 
 
 #ifdef NETPLAY
@@ -68,27 +66,23 @@ static void reportShipSelected(GETMELEE_STATE* gms, uint16_t index);
 FRAME PickMeleeFrame;
 
 
-static FleetShipIndex
-PickMelee_GetShipIndex(uint8_t row, uint8_t col)
+static FleetShipIndex PickMelee_GetShipIndex(uint8_t row, uint8_t col)
 {
-	return row * NUM_PICKMELEE_COLUMNS + col;
+	return row * NumPickmeleeColumns + col;
 }
 
-static uint8_t
-PickMelee_GetShipRow(FleetShipIndex index)
+static uint8_t PickMelee_GetShipRow(FleetShipIndex index)
 {
-	return index / NUM_PICKMELEE_COLUMNS;
+	return index / NumPickmeleeColumns;
 }
 
-static uint8_t
-PickMelee_GetShipColumn(int index)
+static uint8_t PickMelee_GetShipColumn(int index)
 {
-	return index % NUM_PICKMELEE_COLUMNS;
+	return index % NumPickmeleeColumns;
 }
 
 // Returns the <index>th ship in the queue, or 0 if it is not available.
-static HSTARSHIP
-MeleeShipByQueueIndex(const QUEUE* queue, uint16_t index)
+static HSTARSHIP MeleeShipByQueueIndex(const QUEUE* queue, uint16_t index)
 {
 	HSTARSHIP hShip {};
 	HSTARSHIP hNextShip {};
@@ -114,8 +108,7 @@ MeleeShipByQueueIndex(const QUEUE* queue, uint16_t index)
 }
 
 // Returns the <index>th available ship in the queue.
-static HSTARSHIP
-MeleeShipByUsedIndex(const QUEUE* queue, uint16_t index)
+static HSTARSHIP MeleeShipByUsedIndex(const QUEUE* queue, uint16_t index)
 {
 	HSTARSHIP hShip {};
 	HSTARSHIP hNextShip {};
@@ -136,8 +129,7 @@ MeleeShipByUsedIndex(const QUEUE* queue, uint16_t index)
 }
 
 #if 0
-static uint16_t
-queueIndexFromShip (HSTARSHIP hShip)
+static uint16_t queueIndexFromShip (HSTARSHIP hShip)
 {
 	uint16_t result;
 	STARSHIP *StarShipPtr = LockStarShip (queue, hShip);
@@ -147,16 +139,15 @@ queueIndexFromShip (HSTARSHIP hShip)
 #endif
 
 // Pre: called does not hold the graphics lock
-static void
-PickMelee_ChangedSelection(GETMELEE_STATE* gms, uint16_t playerI)
+static void PickMelee_ChangedSelection(GETMELEE_STATE* gms, uint16_t playerI)
 {
 	GFXRECT r;
 
-	r.corner.x = SAFE_X + PICK_X_OFFS + ((ICON_WIDTH + RES_SCALE(2)) * gms->player[playerI].col);
-	r.corner.y = SAFE_Y + PICK_Y_OFFS + ((ICON_HEIGHT + RES_SCALE(2)) * gms->player[playerI].row) + ((1 - playerI) * PICK_SIDE_OFFS);
+	r.corner.x = SafeX() + PickXOffs() + ((IconWidth() + ResScale(2)) * gms->player[playerI].col);
+	r.corner.y = SafeY() + PickYOffs() + ((IconHeight() + ResScale(2)) * gms->player[playerI].row) + ((1 - playerI) * PickSideOffs());
 
-	r.extent.width = (ICON_WIDTH + RES_SCALE(2));
-	r.extent.height = (ICON_HEIGHT + RES_SCALE(2));
+	r.extent.width = (IconWidth() + ResScale(2));
+	r.extent.height = (IconHeight() + ResScale(2));
 	Flash_setRect(gms->player[playerI].flashContext, &r);
 }
 
@@ -201,18 +192,17 @@ bool setShipSelected(GETMELEE_STATE* gms, uint16_t playerI, uint16_t choice,
 }
 
 // Returns false if aborted.
-static bool
-SelectShip_processInput(GETMELEE_STATE* gms, uint16_t playerI,
-						BATTLE_INPUT_STATE inputState)
+static bool SelectShip_processInput(GETMELEE_STATE* gms, uint16_t playerI,
+									BATTLE_INPUT_STATE inputState)
 {
-	if (inputState & BATTLE_WEAPON)
+	if (inputState & BattleWeapon)
 	{
-		if (gms->player[playerI].col == NUM_PICKMELEE_COLUMNS && gms->player[playerI].row == 0)
+		if (gms->player[playerI].col == NumPickmeleeColumns && gms->player[playerI].row == 0)
 		{
 			// Random ship
 			(void)setShipSelected(gms, playerI, (uint16_t)~0, true);
 		}
-		else if (gms->player[playerI].col == NUM_PICKMELEE_COLUMNS && gms->player[playerI].row == 1)
+		else if (gms->player[playerI].col == NumPickmeleeColumns && gms->player[playerI].row == 1)
 		{
 			// Selected exit
 			if (ConfirmExit())
@@ -236,30 +226,30 @@ SelectShip_processInput(GETMELEE_STATE* gms, uint16_t playerI,
 
 		uint16_t new_row {gms->player[playerI].row};
 		uint16_t new_col {gms->player[playerI].col};
-		if (inputState & BATTLE_LEFT)
+		if (inputState & BattleLeft)
 		{
 			if (new_col-- == 0)
 			{
-				new_col = NUM_PICKMELEE_COLUMNS;
+				new_col = NumPickmeleeColumns;
 			}
 		}
-		else if (inputState & BATTLE_RIGHT)
+		else if (inputState & BattleRight)
 		{
-			if (new_col++ == NUM_PICKMELEE_COLUMNS)
+			if (new_col++ == NumPickmeleeColumns)
 			{
 				new_col = 0;
 			}
 		}
-		if (inputState & BATTLE_THRUST)
+		if (inputState & BattleThrust)
 		{
 			if (new_row-- == 0)
 			{
-				new_row = NUM_PICKMELEE_ROWS - 1;
+				new_row = NumPickmeleeRows - 1;
 			}
 		}
-		else if (inputState & BATTLE_DOWN)
+		else if (inputState & BattleDown)
 		{
-			if (++new_row == NUM_PICKMELEE_ROWS)
+			if (++new_row == NumPickmeleeRows)
 			{
 				new_row = 0;
 			}
@@ -286,16 +276,17 @@ bool selectShipHuman(HumanInputContext* context, GETMELEE_STATE* gms)
 	return SelectShip_processInput(gms, context->playerNr, inputState);
 }
 
+static constexpr auto ComputerSelectionDelay {(c_gameSecond / 2)};
+
 bool selectShipComputer(ComputerInputContext* context, GETMELEE_STATE* gms)
 {
-#define COMPUTER_SELECTION_DELAY (c_gameSecond / 2)
 	const TimeCount now = GetTimeCounter();
-	if (now < gms->player[context->playerNr].timeIn + COMPUTER_SELECTION_DELAY)
+	if (now < gms->player[context->playerNr].timeIn + ComputerSelectionDelay)
 	{
 		return true;
 	}
 
-	return SelectShip_processInput(gms, context->playerNr, BATTLE_WEAPON);
+	return SelectShip_processInput(gms, context->playerNr, BattleWeapon);
 	// Simulate selection of the random choice button.
 }
 
@@ -321,13 +312,12 @@ bool selectShipNetwork(NetworkInputContext* context, GETMELEE_STATE* gms)
 // to the chosen (or randomly selected) ship, or to 0 if 'exit' has
 // been chosen.
 /* TODO: Include player timeouts */
-static bool
-DoGetMelee(GETMELEE_STATE* gms)
+static bool DoGetMelee(GETMELEE_STATE* gms)
 {
 	bool done {};
 	uint16_t playerI {};
 
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_NONE);
+	SetMenuSounds(MenuSoundNone, MenuSoundNone);
 
 	if (!gms->Initialized)
 	{
@@ -335,7 +325,7 @@ DoGetMelee(GETMELEE_STATE* gms)
 		return true;
 	}
 
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (playerI = 0; playerI < NumPlayers; playerI++)
 	{
 		if (!gms->player[playerI].selecting)
 		{
@@ -365,7 +355,7 @@ DoGetMelee(GETMELEE_STATE* gms)
 	}
 
 	done = true;
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (playerI = 0; playerI < NumPlayers; playerI++)
 	{
 		if (!gms->player[playerI].selecting)
 		{
@@ -401,7 +391,7 @@ aborted:
 #ifdef NETPLAY
 	flushPacketQueues();
 #endif
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (playerI = 0; playerI < NumPlayers; playerI++)
 	{
 		if (!gms->player[playerI].selecting)
 		{
@@ -415,8 +405,7 @@ aborted:
 	return false;
 }
 
-static uint16_t
-GetRaceQueueValue(const QUEUE* queue)
+static uint16_t GetRaceQueueValue(const QUEUE* queue)
 {
 	HSTARSHIP hBattleShip {};
 	HSTARSHIP hNextShip {};
@@ -445,8 +434,7 @@ GetRaceQueueValue(const QUEUE* queue)
 // 'frame' is the PickMeleeFrame for the player.
 // 'shipI' is the index in the ship list.
 // Pre: caller holds the graphics lock.
-static void
-CrossOutShip(FRAME frame, uint16_t shipNr)
+static void CrossOutShip(FRAME frame, uint16_t shipNr)
 {
 	STAMP s;
 	const uint8_t row = PickMelee_GetShipRow(shipNr);
@@ -456,8 +444,8 @@ CrossOutShip(FRAME frame, uint16_t shipNr)
 
 	SetContextFGFrame(frame);
 
-	s.origin.x = RES_SCALE(3) + ((ICON_WIDTH + RES_SCALE(2)) * col);
-	s.origin.y = RES_SCALE(9) + ((ICON_HEIGHT + RES_SCALE(2)) * row);
+	s.origin.x = ResScale(3) + ((IconWidth() + ResScale(2)) * col);
+	s.origin.y = ResScale(9) + ((IconHeight() + ResScale(2)) * row);
 	s.frame = SetAbsFrameIndex(StatusFrame, 3);
 	// Cross for through the ship image.
 	DrawStamp(&s);
@@ -467,8 +455,7 @@ CrossOutShip(FRAME frame, uint16_t shipNr)
 
 // Draw the value of the fleet in the top right of the PickMeleeFrame.
 // Pre: caller holds the graphics lock.
-static void
-UpdatePickMeleeFleetValue(FRAME frame, uint16_t which_player)
+static void UpdatePickMeleeFleetValue(FRAME frame, uint16_t which_player)
 {
 	GFXRECT r;
 	TEXT t;
@@ -480,19 +467,19 @@ UpdatePickMeleeFleetValue(FRAME frame, uint16_t which_player)
 
 	// Erase the old value text.
 	GetFrameRect(frame, &r);
-	r.extent.width -= RES_SCALE(4);
+	r.extent.width -= ResScale(4);
 	t.baseline.x = r.extent.width;
-	r.corner.x = r.extent.width - RES_SCALE(6 * 3);
-	r.corner.y = RES_SCALE(2);
-	r.extent.width = RES_SCALE(6 * 3);
-	r.extent.height = RES_SCALE(7 - 2);
-	SetContextForeGroundColor(PICK_BG_COLOR);
+	r.corner.x = r.extent.width - ResScale(6 * 3);
+	r.corner.y = ResScale(2);
+	r.extent.width = ResScale(6 * 3);
+	r.extent.height = ResScale(7 - 2);
+	SetContextForeGroundColor(PickBgColor);
 	DrawFilledRectangle(&r);
 
 	// Draw the new value text.
 	char buf[40] {};
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{}", value);
-	t.baseline.y = RES_SCALE(7);
+	t.baseline.y = ResScale(7);
 	t.align = ALIGN_RIGHT;
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
@@ -504,7 +491,7 @@ UpdatePickMeleeFleetValue(FRAME frame, uint16_t which_player)
 	{
 		SetContextFont(TinyFontBold);
 	}
-	SetContextForeGroundColor(PICK_VALUE_COLOR);
+	SetContextForeGroundColor(PickValueColor);
 	font_DrawText(&t);
 
 	SetContext(OldContext);
@@ -523,11 +510,11 @@ void BuildPickMeleeFrame(void)
 	}
 
 	PickMeleeFrame = CaptureDrawable(CreateDrawable(
-		WANT_PIXMAP, MELEE_WIDTH, MELEE_HEIGHT, 2));
+		WantPixmap, MeleeWidth(), MeleeHeight(), 2));
 	s.origin.x = 0;
 	s.origin.y = 0;
 
-	s.frame = CaptureDrawable(LoadGraphic(MELEE_PICK_MASK_PMAP_ANIM));
+	s.frame = CaptureDrawable(LoadGraphic(MeleePickMaskPmapAnimRes));
 	SetContextFGFrame(PickMeleeFrame);
 	DrawStamp(&s);
 
@@ -547,7 +534,7 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 {
 	GFXCONTEXT OldContext {SetContext(OffScreenContext)};
 
-	for (uint16_t i {0}; i < NUM_SIDES; ++i)
+	for (uint16_t i {0}; i < NumSides; ++i)
 	{
 		GFXRECT r;
 		TEXT t;
@@ -561,19 +548,19 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 
 		GetFrameRect(s.frame, &r);
 		t.baseline.x = r.extent.width >> 1;
-		t.baseline.y = r.extent.height - NAME_AREA_HEIGHT + RES_SCALE(4);
+		t.baseline.y = r.extent.height - NameAreaHeight() + ResScale(4);
 
-		r.corner.x += RES_SCALE(2);
-		r.corner.y += RES_SCALE(2);
-		r.extent.width -= RES_SCALE((2 * 2) + (RES_DESCALE(ICON_WIDTH) + 2) + 1);
-		r.extent.height -= RES_SCALE(2 * 2) + NAME_AREA_HEIGHT;
-		SetContextForeGroundColor(PICK_BG_COLOR);
+		r.corner.x += ResScale(2);
+		r.corner.y += ResScale(2);
+		r.extent.width -= ResScale((2 * 2) + (ResDescale(IconWidth()) + 2) + 1);
+		r.extent.height -= ResScale(2 * 2) + NameAreaHeight();
+		SetContextForeGroundColor(PickBgColor);
 		DrawFilledRectangle(&r);
 
-		r.corner.x += RES_SCALE(2);
-		r.extent.width += RES_SCALE((RES_DESCALE(ICON_WIDTH) + 2) - (2 * 2));
+		r.corner.x += ResScale(2);
+		r.extent.width += ResScale((ResDescale(IconWidth()) + 2) - (2 * 2));
 		r.corner.y += r.extent.height;
-		r.extent.height = NAME_AREA_HEIGHT;
+		r.extent.height = NameAreaHeight();
 		DrawFilledRectangle(&r);
 
 		// Team name at the bottom of the frame:
@@ -588,23 +575,23 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 		{
 			SetContextFont(TinyFontBold);
 		}
-		SetContextForeGroundColor(PICKSHIP_TEAM_NAME_TEXT_COLOR);
+		SetContextForeGroundColor(PickshipTeamNameTextColor);
 		font_DrawText(&t);
 
 		char buf[30] {};
 		// Total team value of the starting team:
 		fmt::format_to_n(buf, sizeof(buf) - 1, "{}", MeleeSetup_getFleetValue(setup, sideI));
-		t.baseline.x = RES_SCALE(4);
-		t.baseline.y = RES_SCALE(7);
+		t.baseline.x = ResScale(4);
+		t.baseline.y = ResScale(7);
 		t.align = ALIGN_LEFT;
 		t.pStr = buf;
 		t.CharCount = (uint16_t)~0;
-		SetContextForeGroundColor(PICKSHIP_TEAM_START_VALUE_COLOR);
+		SetContextForeGroundColor(PickshipTeamStartValueColor);
 		font_DrawText(&t);
 
 		assert(CountLinks(&race_q[side]) == 0);
 
-		for (FleetShipIndex index {0}; index < MELEE_FLEET_SIZE; index++)
+		for (FleetShipIndex index {0}; index < MeleeFleetSize; index++)
 		{
 			MeleeShip StarShip;
 
@@ -628,8 +615,8 @@ void FillPickMeleeFrame(MeleeSetup* setup)
 				// Draw the icon.
 				const uint8_t row {PickMelee_GetShipRow(index)};
 				const uint8_t col {PickMelee_GetShipColumn(index)};
-				s.origin.x = RES_SCALE(4) + ((ICON_WIDTH + RES_SCALE(2)) * col);
-				s.origin.y = RES_SCALE(10) + ((ICON_HEIGHT + RES_SCALE(2)) * row);
+				s.origin.x = ResScale(4) + ((IconWidth() + ResScale(2)) * col);
+				s.origin.y = ResScale(10) + ((IconHeight() + ResScale(2)) * row);
 				s.frame = MasterPtr->ShipInfo.icons;
 				DrawStamp(&s);
 
@@ -662,15 +649,14 @@ void DestroyPickMeleeFrame(void)
 }
 
 // Pre: caller holds the graphics lock.
-static void
-DrawPickMeleeFrame(uint16_t which_player)
+static void DrawPickMeleeFrame(uint16_t which_player)
 {
 	STAMP s;
 
 	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	s.frame = SetAbsFrameIndex(PickMeleeFrame, which_player);
-	s.origin.x = PICK_X_OFFS - RES_SCALE(3);
-	s.origin.y = PICK_Y_OFFS - RES_SCALE(9) + ((1 - which_player) * PICK_SIDE_OFFS);
+	s.origin.x = PickXOffs() - ResScale(3);
+	s.origin.y = PickYOffs() - ResScale(9) + ((1 - which_player) * PickSideOffs());
 	DrawStamp(&s);
 	// Draw the selection box to screen.
 
@@ -684,7 +670,7 @@ void MeleeGameOver(void)
 	bool ButtonState {};
 
 	// Show the battle result.
-	for (uint16_t playerI {0}; playerI < NUM_PLAYERS; playerI++)
+	for (uint16_t playerI {0}; playerI < NumPlayers; playerI++)
 	{
 		DrawPickMeleeFrame(playerI);
 	}
@@ -726,15 +712,14 @@ void MeleeShipDeath(STARSHIP* ship)
 }
 
 // Post: the NetState for all players is NetState_interBattle
-static bool
-GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
+static bool GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 {
 	uint16_t playerI {};
 	GETMELEE_STATE gmstate;
 	TimeCount now;
 
 #ifdef NETPLAY
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (playerI = 0; playerI < NumPlayers; playerI++)
 	{
 		if ((playerMask & (1 << playerI)) == 0)
 		{
@@ -758,7 +743,7 @@ GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 	now = GetTimeCounter();
 	gmstate.InputFunc = DoGetMelee;
 	gmstate.Initialized = false;
-	for (uint16_t i {0}; i < NUM_PLAYERS; ++i)
+	for (uint16_t i {0}; i < NumPlayers; ++i)
 	{
 		// We have to use uqm::random().next() results in specific order
 		playerI = GetPlayerOrder(i);
@@ -780,7 +765,7 @@ GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 
 		gmstate.player[playerI].timeIn = now;
 		gmstate.player[playerI].row = 0;
-		gmstate.player[playerI].col = NUM_PICKMELEE_COLUMNS;
+		gmstate.player[playerI].col = NumPickmeleeColumns;
 #ifdef NETPLAY
 		gmstate.player[playerI].remoteSelected = false;
 #endif
@@ -831,7 +816,7 @@ GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 	WaitForSoundEnd(0);
 
 
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (playerI = 0; playerI < NumPlayers; playerI++)
 	{
 		if (!gmstate.player[playerI].selecting)
 		{
@@ -872,7 +857,7 @@ GetMeleeStarShips(uint16_t playerMask, HSTARSHIP* ships)
 	}
 
 #ifdef NETPLAY
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (playerI = 0; playerI < NumPlayers; playerI++)
 	{
 		if ((playerMask & (1 << playerI)) == 0)
 		{
@@ -899,7 +884,7 @@ bool GetInitialMeleeStarShips(HSTARSHIP* result)
 	uint16_t playerI {};
 	uint16_t playerMask {};
 
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (playerI = 0; playerI < NumPlayers; playerI++)
 	{
 		FRAME frame {SetAbsFrameIndex(PickMeleeFrame, playerI)};
 		UpdatePickMeleeFleetValue(frame, playerI);
@@ -912,7 +897,7 @@ bool GetInitialMeleeStarShips(HSTARSHIP* result)
 	FlushColorXForms();
 
 	playerMask = 0;
-	for (playerI = 0; playerI < NUM_PLAYERS; playerI++)
+	for (playerI = 0; playerI < NumPlayers; playerI++)
 	{
 		playerMask |= (1 << playerI);
 	}
@@ -924,7 +909,7 @@ bool GetInitialMeleeStarShips(HSTARSHIP* result)
 bool GetNextMeleeStarShip(uint16_t which_player, HSTARSHIP* result)
 {
 	uint16_t playerMask {};
-	HSTARSHIP ships[NUM_PLAYERS];
+	HSTARSHIP ships[NumPlayers];
 
 	DrawPickMeleeFrame(which_player);
 
@@ -962,10 +947,9 @@ bool updateMeleeSelection(GETMELEE_STATE* gms, uint16_t playerI, uint16_t ship)
 	return true;
 }
 
-static void
-reportShipSelected(GETMELEE_STATE* gms, uint16_t index)
+static void reportShipSelected(GETMELEE_STATE* gms, uint16_t index)
 {
-	for (size_t playerI {0}; playerI < NUM_PLAYERS; playerI++)
+	for (size_t playerI {0}; playerI < NumPlayers; playerI++)
 	{
 		NetConnection* conn = netConnections[playerI];
 

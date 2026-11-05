@@ -24,50 +24,50 @@
 #include "uqm/random/UQMRandom.h"
 
 // Core characteristics
-#define MAX_CREW 20
-#define MAX_ENERGY 10
-#define ENERGY_REGENERATION 2
-#define ENERGY_WAIT 6
-#define MAX_THRUST 30
-#define THRUST_INCREMENT 6
-#define THRUST_WAIT 2
-#define TURN_WAIT 2
-#define SHIP_MASS 3
+static constexpr auto MaxCrew {20};
+static constexpr auto MaxEnergy {10};
+static constexpr auto EnergyRegeneration {2};
+static constexpr auto EnergyWait {6};
+static constexpr auto MaxThrust {30};
+static constexpr auto ThrustIncrement {6};
+static constexpr auto ThrustWait {2};
+static constexpr auto TurnWait {2};
+static constexpr auto ShipMass {3};
 
 // Twin Pulse Cannon
-#define WEAPON_ENERGY_COST 1
-#define WEAPON_WAIT 0
-#define YEHAT_OFFSET RES_SCALE(16)
-#define LAUNCH_OFFS DISPLAY_TO_WORLD(RES_SCALE(8))
-#define MISSILE_SPEED DISPLAY_TO_WORLD(20)
-#define MISSILE_LIFE 10
-#define MISSILE_HITS 1
-#define MISSILE_DAMAGE 1
-#define MISSILE_OFFSET RES_SCALE(1)
+static constexpr auto WeaponEnergyCost {1};
+static constexpr auto WeaponWait {0};
+static auto YehatOffset() { return ResScale(16); }
+static auto LaunchOffs() { return DisplayToWorld(ResScale(8)); }
+static constexpr auto MissileSpeed {DisplayToWorld(20)};
+static constexpr auto MissileLife {10};
+static constexpr auto MissileHits {1};
+static constexpr auto MissileDamage {1};
+static auto MissileOffset() { return ResScale(1); }
 
 // Force Shield
-#define SPECIAL_ENERGY_COST 3
-#define SPECIAL_WAIT 2
-#define SHIELD_LIFE 10
+static constexpr auto SpecialEnergyCost {3};
+static constexpr auto SpecialWait {2};
+static constexpr auto ShieldLife {10};
 
-// HD
-#define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
+// HdResolutionFactor
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
 static RACE_DESC yehat_desc =
 	{
 		{/* SHIP_INFO */
 		 "terminator",
-		 FIRES_FORE | SHIELD_DEFENSE,
+		 FiresFore | ShieldDefense,
 		 23, /* Super Melee cost */
-		 MAX_CREW, MAX_CREW,
-		 MAX_ENERGY, MAX_ENERGY,
-		 YEHAT_RACE_STRINGS,
-		 YEHAT_ICON_MASK_PMAP_ANIM,
-		 YEHAT_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrew,
+		 MaxEnergy, MaxEnergy,
+		 YehatRaceStrings,
+		 YehatIconMaskPmapAnim,
+		 YehatMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			750 / SPHERE_RADIUS_INCREMENT * 2, /* Initial SoI radius */
+			750 / SphereRadiusIncrement * 2, /* Initial SoI radius */
 			{
 				/* Known location (center of SoI) */
 				4970,
@@ -75,38 +75,38 @@ static RACE_DESC yehat_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 YEHAT_BIG_MASK_PMAP_ANIM,
-			 YEHAT_MED_MASK_PMAP_ANIM,
-			 YEHAT_SML_MASK_PMAP_ANIM,
+			 YehatBigMaskPmapAnim,
+			 YehatMedMaskPmapAnim,
+			 YehatSmlMaskPmapAnim,
 		 },
 		 {
-			 YEHAT_CANNON_BIG_MASK_PMAP_ANIM,
-			 YEHAT_CANNON_MED_MASK_PMAP_ANIM,
-			 YEHAT_CANNON_SML_MASK_PMAP_ANIM,
+			 YehatCannonBigMaskPmapAnim,
+			 YehatCannonMedMaskPmapAnim,
+			 YehatCannonSmlMaskPmapAnim,
 		 },
 		 {
-			 SHIELD_BIG_MASK_ANIM,
-			 SHIELD_MED_MASK_ANIM,
-			 SHIELD_SML_MASK_ANIM,
+			 ShieldBigMaskAnim,
+			 ShieldMedMaskAnim,
+			 ShieldSmlMaskAnim,
 		 },
-		 {YEHAT_CAPTAIN_MASK_PMAP_ANIM,
+		 {YehatCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 YEHAT_VICTORY_SONG,
-		 YEHAT_SHIP_SOUNDS,
+		 YehatVictorySong,
+		 YehatShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -114,7 +114,7 @@ static RACE_DESC yehat_desc =
 		 nullptr},
 		{
 			0,
-			MISSILE_SPEED * MISSILE_LIFE / 3,
+			MissileSpeed * MissileLife / 3,
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -125,8 +125,7 @@ static RACE_DESC yehat_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t
-initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
+static uint16_t initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -135,17 +134,17 @@ initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
-	MissileBlock.pixoffs = YEHAT_OFFSET;
-	MissileBlock.speed = MISSILE_SPEED_HD;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.pixoffs = YehatOffset();
+	MissileBlock.speed = MissileSpeedHd();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset();
 
-	const int32_t offs_x {-SINE(FACING_TO_ANGLE(MissileBlock.face), LAUNCH_OFFS)};
-	const int32_t offs_y {COSINE(FACING_TO_ANGLE(MissileBlock.face), LAUNCH_OFFS)};
+	const int32_t offs_x {-Sine(FacingToAngle(MissileBlock.face), LaunchOffs())};
+	const int32_t offs_y {Cosine(FacingToAngle(MissileBlock.face), LaunchOffs())};
 
 	MissileBlock.cx = ShipPtr->next.location.x + offs_x;
 	MissileBlock.cy = ShipPtr->next.location.y + offs_y;
@@ -158,9 +157,8 @@ initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	return (2);
 }
 
-static void
-yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-				   uint16_t ConcernCounter)
+static void yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+							   uint16_t ConcernCounter)
 {
 	STARSHIP* StarShipPtr {};
 
@@ -169,14 +167,14 @@ yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	if (lpEvalDesc->ObjectPtr && lpEvalDesc->MoveState == ENTICE)
 	{
 		ShieldStatus = 0;
-		if (!(lpEvalDesc->ObjectPtr->state_flags & (FINITE_LIFE | CREW_OBJECT)))
+		if (!(lpEvalDesc->ObjectPtr->state_flags & (FiniteLife | CrewObject)))
 		{
 			lpEvalDesc->MoveState = PURSUE;
 		}
 		else if (lpEvalDesc->ObjectPtr->mass_points
-				 || (lpEvalDesc->ObjectPtr->state_flags & CREW_OBJECT))
+				 || (lpEvalDesc->ObjectPtr->state_flags & CrewObject))
 		{
-			if (!(lpEvalDesc->ObjectPtr->state_flags & FINITE_LIFE))
+			if (!(lpEvalDesc->ObjectPtr->state_flags & FiniteLife))
 			{
 				lpEvalDesc->which_turn <<= 1;
 			}
@@ -203,24 +201,24 @@ yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	if (StarShipPtr->special_counter == 0)
 	{
-		StarShipPtr->ship_input_state &= ~SPECIAL;
+		StarShipPtr->ship_input_state &= ~SpecialFlag;
 		if (ShieldStatus)
 		{
-			if (ShipPtr->life_span <= NORMAL_LIFE + 1
+			if (ShipPtr->life_span <= NormalLife + 1
 				&& (ShieldStatus > 0 || lpEvalDesc->ObjectPtr)
 				&& lpEvalDesc->which_turn <= 2
 				&& (ShieldStatus > 0
 					|| (lpEvalDesc->ObjectPtr->state_flags
-						& PLAYER_SHIP) /* means IMMEDIATE WEAPON */
+						& PlayerShip) /* means IMMEDIATE WeaponFlag */
 					|| PlotIntercept(lpEvalDesc->ObjectPtr,
 									 ShipPtr, 2, 0))
 				&& (uqm::random().next() & 3))
 			{
-				StarShipPtr->ship_input_state |= SPECIAL;
+				StarShipPtr->ship_input_state |= SpecialFlag;
 			}
 
 			if (lpEvalDesc->ObjectPtr
-				&& !(lpEvalDesc->ObjectPtr->state_flags & CREW_OBJECT))
+				&& !(lpEvalDesc->ObjectPtr->state_flags & CrewObject))
 			{
 				lpEvalDesc->ObjectPtr = 0;
 			}
@@ -233,22 +231,21 @@ yehat_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
-			  & IMMEDIATE_WEAPON))
+			  & ImmediateWeapon))
 		{
 			lpEvalDesc->MoveState = PURSUE;
 		}
 	}
 	ship_intelligence(ShipPtr, ObjectsOfConcern, ConcernCounter);
 	/*
-	if (StarShipPtr->RaceDescPtr->ship_info.energy_level <= SPECIAL_ENERGY_COST)
-		StarShipPtr->ship_input_state &= ~WEAPON;
+	if (StarShipPtr->RaceDescPtr->ship_info.energy_level <= SpecialEnergyCost)
+		StarShipPtr->ship_input_state &= ~WeaponFlag;
 */
 }
 
-static void
-yehat_postprocess(ELEMENT* ElementPtr)
+static void yehat_postprocess(ELEMENT* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & NONSOLID))
+	if (!(ElementPtr->state_flags & Nonsolid))
 	{
 		STARSHIP* StarShipPtr {};
 
@@ -256,7 +253,7 @@ yehat_postprocess(ELEMENT* ElementPtr)
 		/* take care of shield effect */
 		if (StarShipPtr->special_counter > 0)
 		{
-			if (ElementPtr->life_span == NORMAL_LIFE)
+			if (ElementPtr->life_span == NormalLife)
 			{
 				StarShipPtr->special_counter = 0;
 			}
@@ -265,7 +262,7 @@ yehat_postprocess(ELEMENT* ElementPtr)
 #ifdef OLD
 				SetPrimColor(
 					&DisplayArray[ElementPtr->PrimIndex],
-					BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
+					BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
 				SetPrimType(
 					&DisplayArray[ElementPtr->PrimIndex],
 					STAMPFILL_PRIM);
@@ -275,12 +272,12 @@ yehat_postprocess(ELEMENT* ElementPtr)
 								 /* YEHAT_SHIELD_ON */
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 							 ElementPtr);
-				DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST);
+				DeltaEnergy(ElementPtr, -SpecialEnergyCost);
 			}
 		}
 
 #ifdef OLD
-		if (ElementPtr->life_span > NORMAL_LIFE)
+		if (ElementPtr->life_span > NormalLife)
 		{
 			HELEMENT hShipElement;
 
@@ -292,9 +289,9 @@ yehat_postprocess(ELEMENT* ElementPtr)
 				LockElement(hShipElement, &ShipElementPtr);
 				ShipElementPtr->playerNr = ElementPtr->playerNr;
 				ShipElementPtr->state_flags =
-					/* in place of APPEARING */
-					(CHANGING | PRE_PROCESS | POST_PROCESS)
-					| FINITE_LIFE | NONSOLID;
+					/* in place of Appearing */
+					(Changing | PreProcessFlag | PostProcessFlag)
+					| FiniteLife | Nonsolid;
 				SetPrimType(
 					&DisplayArray[ShipElementPtr->PrimIndex],
 					STAMP_PRIM);
@@ -320,18 +317,17 @@ yehat_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-yehat_preprocess(ELEMENT* ElementPtr)
+static void yehat_preprocess(ELEMENT* ElementPtr)
 {
-	if (!(ElementPtr->state_flags & APPEARING))
+	if (!(ElementPtr->state_flags & Appearing))
 	{
 		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
-		if ((ElementPtr->life_span > NORMAL_LIFE
+		if ((ElementPtr->life_span > NormalLife
 			 /* take care of shield effect */
-			 && --ElementPtr->life_span == NORMAL_LIFE)
-			|| (ElementPtr->life_span == NORMAL_LIFE
+			 && --ElementPtr->life_span == NormalLife)
+			|| (ElementPtr->life_span == NormalLife
 				&& ElementPtr->next.image.farray
 					   == StarShipPtr->RaceDescPtr->ship_data.special))
 		{
@@ -345,25 +341,25 @@ yehat_preprocess(ELEMENT* ElementPtr)
 			ElementPtr->next.image.frame =
 				SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.ship[0],
 								 ElementPtr->next.image.frame);
-			ElementPtr->state_flags |= CHANGING;
+			ElementPtr->state_flags |= Changing;
 		}
 
-		if ((StarShipPtr->cur_status_flags & SPECIAL)
+		if ((StarShipPtr->cur_status_flags & SpecialFlag)
 			&& StarShipPtr->special_counter == 0)
 		{
-			if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SPECIAL_ENERGY_COST)
+			if (StarShipPtr->RaceDescPtr->ship_info.energy_level < SpecialEnergyCost)
 			{
-				DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST); /* so text will flash */
+				DeltaEnergy(ElementPtr, -SpecialEnergyCost); /* so text will flash */
 			}
 			else
 			{
-				ElementPtr->life_span = SHIELD_LIFE + NORMAL_LIFE;
+				ElementPtr->life_span = ShieldLife + NormalLife;
 
 				ElementPtr->next.image.farray = StarShipPtr->RaceDescPtr->ship_data.special;
 				ElementPtr->next.image.frame =
 					SetEquFrameIndex(StarShipPtr->RaceDescPtr->ship_data.special[0],
 									 ElementPtr->next.image.frame);
-				ElementPtr->state_flags |= CHANGING;
+				ElementPtr->state_flags |= Changing;
 
 				StarShipPtr->special_counter =
 					StarShipPtr->RaceDescPtr->characteristics.special_wait;
@@ -372,21 +368,20 @@ yehat_preprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_yehat(void)
+RACE_DESC* init_yehat(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
-		yehat_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		yehat_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		yehat_desc.cyborg_control.WeaponRange = MISSILE_SPEED_HD * MISSILE_LIFE / 3;
+		yehat_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		yehat_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
+		yehat_desc.cyborg_control.WeaponRange = MissileSpeedHd() * MissileLife / 3;
 	}
 	else
 	{
-		yehat_desc.characteristics.max_thrust = MAX_THRUST;
-		yehat_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		yehat_desc.characteristics.max_thrust = MaxThrust;
+		yehat_desc.characteristics.thrust_increment = ThrustIncrement;
 		yehat_desc.cyborg_control.WeaponRange =
-			MISSILE_SPEED * MISSILE_LIFE / 3;
+			MissileSpeed * MissileLife / 3;
 	}
 
 	yehat_desc.preprocess_func = yehat_preprocess;

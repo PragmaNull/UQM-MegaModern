@@ -2,11 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define VUX_COLOR_MAP "comm.vux.colortable"
-#define VUX_CONVERSATION_PHRASES "comm.vux.dialogue"
-#define VUX_FONT "comm.vux.font"
-#define VUX_MUSIC "comm.vux.music"
-#define VUX_ZEX_MUSIC "comm.vux.zex.music"
-#define VUX_PMAP_ANIM "comm.vux.graphics"
-#define VUX_ZEX_PMAP_ANIM "comm.vux.zex.graphics"
-#define VUX_SCRIPT "comm.vux.script"
+inline constexpr uqgsl::czstring VuxColorMap {"comm.vux.colortable"};
+inline constexpr uqgsl::czstring VuxConversationPhrases {"comm.vux.dialogue"};
+inline constexpr uqgsl::czstring VuxFont {"comm.vux.font"};
+inline constexpr uqgsl::czstring VuxMusic {"comm.vux.music"};
+inline constexpr uqgsl::czstring VuxZexMusic {"comm.vux.zex.music"};
+inline constexpr uqgsl::czstring VuxPmapAnim {"comm.vux.graphics"};
+inline constexpr uqgsl::czstring VuxZexPmapAnim {"comm.vux.zex.graphics"};

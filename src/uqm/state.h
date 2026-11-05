@@ -39,18 +39,18 @@ extern void InitGroupInfo(bool FirstTime);
 extern void UninitGroupInfo(void);
 extern bool GetGroupInfo(uint32_t offset, uint8_t which_group);
 extern uint32_t PutGroupInfo(uint32_t offset, uint8_t which_group);
-#define GROUPS_RANDOM ((uint32_t)(0L))
-#define GROUPS_ADD_NEW ((uint32_t)(~0L))
-#define GROUP_LIST ((uint8_t)0)
-#define GROUP_INIT_IP ((uint8_t)~0)
+inline constexpr auto GroupsRandom {((uint32_t)(0L))};
+inline constexpr auto GroupsAddNew {((uint32_t)(~0L))};
+inline constexpr auto GroupList {((uint8_t)0)};
+inline constexpr auto GroupInitIp {((uint8_t)~0)};
 // Initialize IP group list (ip_group_q) from the actual groups
-// (not GROUP_LIST) in one of the state files
-#define GROUP_LOAD_IP GROUP_LIST
+// (not GroupList) in one of the state files
+inline constexpr auto GroupLoadIp {GroupList};
 // Read IP group list into ip_group_q from the list entry
-// (GROUP_LIST) in one of the state files
-#define GROUP_SAVE_IP ((uint8_t)~0)
+// (GroupList) in one of the state files
+inline constexpr auto GroupSaveIp {((uint8_t)~0)};
 // Write IP group list from ip_group_q to the list entry
-// (GROUP_LIST) in one of the state files
+// (GroupList) in one of the state files
 extern void BuildGroups(void);
 extern void findRaceSOI(void);
 
@@ -71,16 +71,14 @@ inline constexpr int NUM_STATE_FILES {3};
 // Returns the state files of a new game, empty.
 [[nodiscard]] uqstl::array<GAME_STATE_FILE, NUM_STATE_FILES> MakeStateFiles(void);
 
-#define STARINFO_FILE 0
+inline constexpr auto StarinfoFile {0};
 //"starinfo.dat"
-#define STAR_BUFSIZE (NUM_SOLAR_SYSTEMS * sizeof(uint32_t) \
-					  + 3800 * (3 * sizeof(uint32_t)))
-#define RANDGRPINFO_FILE 1
+inline constexpr auto RandgrpinfoFile {1};
 //"randgrp.dat"
-#define RAND_BUFSIZE (4 * 1024)
-#define DEFGRPINFO_FILE 2
+inline constexpr auto RandBufsize {(4 * 1024)};
+inline constexpr auto DefgrpinfoFile {2};
 //"defgrp.dat"
-#define DEF_BUFSIZE (10 * 1024)
+inline constexpr auto DefBufsize {(10 * 1024)};
 
 typedef enum
 {
@@ -97,8 +95,7 @@ int ReadStateFile(void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_FILE* f
 int WriteStateFile(const void* lpBuf, uint16_t size, uint16_t count, GAME_STATE_FILE* fp);
 int SeekStateFile(GAME_STATE_FILE* fp, long offset, int whence);
 
-static inline uint16_t
-sread_8(GAME_STATE_FILE* fp, uint8_t* v)
+static inline uint16_t sread_8(GAME_STATE_FILE* fp, uint8_t* v)
 {
 	uint8_t t {};
 	if (!v) /* read value ignored */
@@ -108,8 +105,7 @@ sread_8(GAME_STATE_FILE* fp, uint8_t* v)
 	return ReadStateFile(v, 1, 1, fp);
 }
 
-static inline uint16_t
-sread_16(GAME_STATE_FILE* fp, uint16_t* v)
+static inline uint16_t sread_16(GAME_STATE_FILE* fp, uint16_t* v)
 {
 	uint16_t t {};
 	if (!v) /* read value ignored */
@@ -119,8 +115,7 @@ sread_16(GAME_STATE_FILE* fp, uint16_t* v)
 	return ReadStateFile(v, 2, 1, fp);
 }
 
-static inline uint16_t
-sread_16s(GAME_STATE_FILE* fp, int16_t* v)
+static inline uint16_t sread_16s(GAME_STATE_FILE* fp, int16_t* v)
 {
 	uint16_t t {};
 	const uint16_t ret {sread_16(fp, &t)};
@@ -132,8 +127,7 @@ sread_16s(GAME_STATE_FILE* fp, int16_t* v)
 	return ret;
 }
 
-static inline uint16_t
-sread_32(GAME_STATE_FILE* fp, uint32_t* v)
+static inline uint16_t sread_32(GAME_STATE_FILE* fp, uint32_t* v)
 {
 	uint32_t t {};
 	if (!v) /* read value ignored */
@@ -143,8 +137,7 @@ sread_32(GAME_STATE_FILE* fp, uint32_t* v)
 	return ReadStateFile(v, 4, 1, fp);
 }
 
-static inline uint16_t
-sread_a32(GAME_STATE_FILE* fp, uint32_t* ar, uint16_t count)
+static inline uint16_t sread_a32(GAME_STATE_FILE* fp, uint32_t* ar, uint16_t count)
 {
 	assert(ar != nullptr);
 
@@ -158,26 +151,22 @@ sread_a32(GAME_STATE_FILE* fp, uint32_t* ar, uint16_t count)
 	return 1;
 }
 
-static inline uint16_t
-swrite_8(GAME_STATE_FILE* fp, uint8_t v)
+static inline uint16_t swrite_8(GAME_STATE_FILE* fp, uint8_t v)
 {
 	return WriteStateFile(&v, 1, 1, fp);
 }
 
-static inline uint16_t
-swrite_16(GAME_STATE_FILE* fp, uint16_t v)
+static inline uint16_t swrite_16(GAME_STATE_FILE* fp, uint16_t v)
 {
 	return WriteStateFile(&v, 2, 1, fp);
 }
 
-static inline uint16_t
-swrite_32(GAME_STATE_FILE* fp, uint32_t v)
+static inline uint16_t swrite_32(GAME_STATE_FILE* fp, uint32_t v)
 {
 	return WriteStateFile(&v, 4, 1, fp);
 }
 
-static inline uint16_t
-swrite_a32(GAME_STATE_FILE* fp, const uint32_t* ar, uint16_t count)
+static inline uint16_t swrite_a32(GAME_STATE_FILE* fp, const uint32_t* ar, uint16_t count)
 {
 	for (; count > 0; --count, ++ar)
 	{

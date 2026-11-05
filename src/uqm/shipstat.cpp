@@ -25,14 +25,16 @@
 #include "menustat.h"
 #include "util.h"
 
+static constexpr auto LowFuelColor {BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E)};
+
 void DrawCrewFuelString(int16_t y, int16_t state)
 {
 	STAMP Stamp;
 
-	Stamp.origin.y = y + GAUGE_YOFFS + STARCON_TEXT_HEIGHT;
+	Stamp.origin.y = y + GaugeYoffs() + StarconTextHeight();
 	if (state == 0)
 	{
-		Stamp.origin.x = CREW_XOFFS + RES_SCALE(RES_DESCALE(STAT_WIDTH) >> 1) + RES_SCALE(5);
+		Stamp.origin.x = CrewXoffs() + ResScale(ResDescale(StatWidth()) >> 1) + ResScale(5);
 		if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 		{
 			Stamp.frame = SetAbsFrameIndex(StatusFrame, 4);
@@ -44,7 +46,7 @@ void DrawCrewFuelString(int16_t y, int16_t state)
 		DrawStamp(&Stamp);
 	}
 
-	Stamp.origin.x = ENERGY_XOFFS + RES_SCALE(RES_DESCALE(STAT_WIDTH) >> 1) - RES_SCALE(4);
+	Stamp.origin.x = EnergyXoffs() + ResScale(ResDescale(StatWidth()) >> 1) - ResScale(4);
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
 		Stamp.frame = SetAbsFrameIndex(StatusFrame, 5);
@@ -55,14 +57,14 @@ void DrawCrewFuelString(int16_t y, int16_t state)
 	}
 	if (state >= 0)
 	{
-		if (IS_HD)
+		if (IsHd())
 		{
 			GFXRECT r;
 			GetFrameRect(Stamp.frame, &r);
 			r.corner.x += Stamp.origin.x;
 			r.corner.y += Stamp.origin.y;
 			SetContextForeGroundColor(
-				BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x0A), 0x08));
+				BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
 			DrawFilledRectangle(&r);
 		}
 
@@ -70,14 +72,12 @@ void DrawCrewFuelString(int16_t y, int16_t state)
 	}
 	else
 	{
-#define LOW_FUEL_COLOR BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x0A), 0x0E)
-		SetContextForeGroundColor(LOW_FUEL_COLOR);
+		SetContextForeGroundColor(LowFuelColor);
 		DrawFilledStamp(&Stamp);
 	}
 }
 
-static void
-DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
+static void DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
 {
 	TEXT Text;
 
@@ -87,14 +87,14 @@ DrawShipNameString(const char* pStr, uint16_t CharCount, int16_t y)
 	Text.CharCount = CharCount;
 	Text.align = ALIGN_CENTER;
 
-	Text.baseline.y = STARCON_TEXT_HEIGHT + RES_SCALE(3) + y;
-	Text.baseline.x = STATUS_WIDTH >> 1;
+	Text.baseline.y = StarconTextHeight() + ResScale(3) + y;
+	Text.baseline.x = StatusWidth() >> 1;
 
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x10, 0x10, 0x10), 0x19));
+		BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x19));
 	font_DrawText(&Text);
-	Text.baseline.y -= RES_SCALE(1);
-	SetContextForeGroundColor(BLACK_COLOR);
+	Text.baseline.y -= ResScale(1);
+	SetContextForeGroundColor(BlackColor);
 	font_DrawText(&Text);
 
 	SetContextFont(OldFont);
@@ -105,11 +105,11 @@ void ClearShipStatus(int16_t y)
 	GFXRECT r;
 
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x0A), 0x08));
-	r.corner.x = RES_SCALE(2);
-	r.corner.y = RES_SCALE(3) + y;
-	r.extent.width = STATUS_WIDTH - RES_SCALE(4);
-	r.extent.height = SHIP_INFO_HEIGHT - RES_SCALE(3);
+		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
+	r.corner.x = ResScale(2);
+	r.corner.y = ResScale(3) + y;
+	r.extent.width = StatusWidth() - ResScale(4);
+	r.extent.height = ShipInfoHeight() - ResScale(3);
 	DrawFilledRectangle(&r);
 }
 
@@ -118,35 +118,35 @@ void OutlineShipStatus(int16_t y)
 	GFXRECT r;
 
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x08, 0x08, 0x08), 0x1F));
+		BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F));
 	r.corner.x = 0;
-	r.corner.y = RES_SCALE(1) + y;
-	r.extent.width = STATUS_WIDTH;
-	r.extent.height = RES_SCALE(1);
+	r.corner.y = ResScale(1) + y;
+	r.extent.width = StatusWidth();
+	r.extent.height = ResScale(1);
 	DrawFilledRectangle(&r);
-	r.corner.y += RES_SCALE(1);
-	r.extent.width -= RES_SCALE(1);
+	r.corner.y += ResScale(1);
+	r.extent.width -= ResScale(1);
 	DrawFilledRectangle(&r);
-	r.extent.width = RES_SCALE(1);
-	r.extent.height = SHIP_INFO_HEIGHT - RES_SCALE(2);
+	r.extent.width = ResScale(1);
+	r.extent.height = ShipInfoHeight() - ResScale(2);
 	DrawFilledRectangle(&r);
-	r.corner.x += RES_SCALE(1);
+	r.corner.x += ResScale(1);
 	DrawFilledRectangle(&r);
 
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x10, 0x10, 0x10), 0x19));
-	r.corner.x = STATUS_WIDTH - RES_SCALE(1);
+		BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x19));
+	r.corner.x = StatusWidth() - ResScale(1);
 	DrawFilledRectangle(&r);
-	r.corner.x = STATUS_WIDTH - RES_SCALE(2);
-	r.corner.y += RES_SCALE(1);
-	r.extent.height -= RES_SCALE(1);
+	r.corner.x = StatusWidth() - ResScale(2);
+	r.corner.y += ResScale(1);
+	r.extent.height -= ResScale(1);
 	DrawFilledRectangle(&r);
 
-	SetContextForeGroundColor(BLACK_COLOR);
+	SetContextForeGroundColor(BlackColor);
 	r.corner.x = 0;
 	r.corner.y = y;
-	r.extent.width = STATUS_WIDTH;
-	r.extent.height = RES_SCALE(1);
+	r.extent.width = StatusWidth();
+	r.extent.height = ResScale(1);
 	DrawFilledRectangle(&r);
 }
 
@@ -197,104 +197,102 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 	}
 	ClearShipStatus(y);
 
-	Stamp.origin.x = (STATUS_WIDTH >> 1);
-	Stamp.origin.y = RES_SCALE(31) + y;
+	Stamp.origin.x = (StatusWidth() >> 1);
+	Stamp.origin.y = ResScale(31) + y;
 	Stamp.frame = IncFrameIndex(SIPtr->icons);
 	DrawStamp(&Stamp);
 
 	{
 		int16_t crew_height {}, energy_height {};
 
-#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
-		if (!IS_HD)
+		if (!IsHd())
 		{
-			crew_height = ((MIN(SIPtr->max_crew, MAX_CREW_SIZE) + 1) & ~1) + 1;
+			crew_height = ((uqstl::min<uint16_t>(SIPtr->max_crew, MaxCrewSize) + 1) & ~1) + 1;
 		}
 		else
 		{
-			crew_height = ((MIN(SIPtr->max_crew, MAX_CREW_SIZE) + 1) * RES_SCALE(1));
+			crew_height = ((uqstl::min<uint16_t>(SIPtr->max_crew, MaxCrewSize) + 1) * ResScale(1));
 		}
-		energy_height = (((SIPtr->max_energy + 1) >> 1) << RES_TRP(1)) + RES_SCALE(1);
-#undef MIN
+		energy_height = (((SIPtr->max_energy + 1) >> 1) << ResTrp(1)) + ResScale(1);
 
-		if (!IS_HD)
+		if (!IsHd())
 		{
 			// Dark gray line on the bottom of crew box
 			SetContextForeGroundColor(
-				BUILD_COLOR(MAKE_RGB15(0x08, 0x08, 0x08), 0x1F));
-			r.corner.x = CREW_XOFFS - RES_SCALE(1);
-			r.corner.y = GAUGE_YOFFS + RES_SCALE(1) + y;
-			r.extent.width = STAT_WIDTH + RES_SCALE(2);
-			r.extent.height = RES_SCALE(1);
+				BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F));
+			r.corner.x = CrewXoffs() - ResScale(1);
+			r.corner.y = GaugeYoffs() + ResScale(1) + y;
+			r.extent.width = StatWidth() + ResScale(2);
+			r.extent.height = ResScale(1);
 			DrawFilledRectangle(&r);
 			// Dark gray line on the right of crew box
-			r.corner.x = ENERGY_XOFFS - RES_SCALE(1);
+			r.corner.x = EnergyXoffs() - ResScale(1);
 			DrawFilledRectangle(&r);
 			// Dark gray line on the right of energy box
-			r.corner.x = ENERGY_XOFFS + STAT_WIDTH;
+			r.corner.x = EnergyXoffs() + StatWidth();
 			r.corner.y -= energy_height;
-			r.extent.width = RES_SCALE(1);
+			r.extent.width = ResScale(1);
 			r.extent.height = energy_height;
 			DrawFilledRectangle(&r);
 			// Dark gray line on the right of crew box
-			r.corner.x = CREW_XOFFS + STAT_WIDTH;
-			r.corner.y = (GAUGE_YOFFS + RES_SCALE(1) + y) - crew_height;
-			r.extent.width = RES_SCALE(1);
+			r.corner.x = CrewXoffs() + StatWidth();
+			r.corner.y = (GaugeYoffs() + ResScale(1) + y) - crew_height;
+			r.extent.width = ResScale(1);
 			r.extent.height = crew_height;
 			DrawFilledRectangle(&r);
 
 			// Light gray line on the top of crew box
 			SetContextForeGroundColor(
-				BUILD_COLOR(MAKE_RGB15(0x10, 0x10, 0x10), 0x19));
-			r.corner.x = CREW_XOFFS - RES_SCALE(1);
-			r.corner.y = GAUGE_YOFFS - crew_height + y;
-			r.extent.width = STAT_WIDTH + RES_SCALE(2);
-			r.extent.height = RES_SCALE(1);
+				BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x19));
+			r.corner.x = CrewXoffs() - ResScale(1);
+			r.corner.y = GaugeYoffs() - crew_height + y;
+			r.extent.width = StatWidth() + ResScale(2);
+			r.extent.height = ResScale(1);
 			DrawFilledRectangle(&r);
 			// Light gray line on the top of energy box
-			r.corner.x = ENERGY_XOFFS - RES_SCALE(1);
-			r.corner.y = GAUGE_YOFFS - energy_height + y;
+			r.corner.x = EnergyXoffs() - ResScale(1);
+			r.corner.y = GaugeYoffs() - energy_height + y;
 			DrawFilledRectangle(&r);
 			// Light gray line on the left of energy box
-			r.extent.width = RES_SCALE(1);
-			r.extent.height = energy_height + RES_SCALE(1);
+			r.extent.width = ResScale(1);
+			r.extent.height = energy_height + ResScale(1);
 			DrawFilledRectangle(&r);
 			// Light gray line on the left of crew box
-			r.corner.x = CREW_XOFFS - RES_SCALE(1);
-			r.corner.y = GAUGE_YOFFS - crew_height + y;
-			r.extent.height = crew_height + RES_SCALE(1);
+			r.corner.x = CrewXoffs() - ResScale(1);
+			r.corner.y = GaugeYoffs() - crew_height + y;
+			r.extent.height = crew_height + ResScale(1);
 			DrawFilledRectangle(&r);
 
-			SetContextForeGroundColor(BLACK_COLOR);
+			SetContextForeGroundColor(BlackColor);
 
 			// Black rectangle behind green crew boxes
-			r.extent.width = STAT_WIDTH;
-			r.corner.x = CREW_XOFFS;
+			r.extent.width = StatWidth();
+			r.corner.x = CrewXoffs();
 			r.extent.height = crew_height;
-			r.corner.y = y - r.extent.height + GAUGE_YOFFS + RES_SCALE(1);
+			r.corner.y = y - r.extent.height + GaugeYoffs() + ResScale(1);
 			DrawFilledRectangle(&r);
 
 			// Black rectangle behind red energy boxes
-			r.extent.width = STAT_WIDTH;
-			r.corner.x = ENERGY_XOFFS;
+			r.extent.width = StatWidth();
+			r.corner.x = EnergyXoffs();
 			r.extent.height = energy_height;
-			r.corner.y = y - r.extent.height + GAUGE_YOFFS + RES_SCALE(1);
+			r.corner.y = y - r.extent.height + GaugeYoffs() + ResScale(1);
 			DrawFilledRectangle(&r);
 		}
 		else
 		{
-			r.corner.x = CREW_XOFFS - 4;
-			r.corner.y = GAUGE_YOFFS - crew_height + y;
-			r.extent.width = STAT_WIDTH + 8;
+			r.corner.x = CrewXoffs() - 4;
+			r.corner.y = GaugeYoffs() - crew_height + y;
+			r.extent.width = StatWidth() + 8;
 			r.extent.height = crew_height + 8;
-			DrawRenderedBox(&r, true, BLACK_COLOR, THIN_INNER_BEVEL,
+			DrawRenderedBox(&r, true, BlackColor, THIN_INNER_BEVEL,
 							false);
 
-			r.corner.x = ENERGY_XOFFS - 4;
-			r.corner.y = GAUGE_YOFFS - energy_height + y;
-			r.extent.width = STAT_WIDTH + 8;
+			r.corner.x = EnergyXoffs() - 4;
+			r.corner.y = GaugeYoffs() - energy_height + y;
+			r.extent.width = StatWidth() + 8;
 			r.extent.height = energy_height + 8;
-			DrawRenderedBox(&r, true, BLACK_COLOR, THIN_INNER_BEVEL,
+			DrawRenderedBox(&r, true, BlackColor, THIN_INNER_BEVEL,
 							false);
 		}
 	}
@@ -310,7 +308,7 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 			char buf[30] {};
 			TEXT Text;
 
-			FONT OldFont {SetContextFont(MENU_BOOL(TinyFontBold, TinyFont))};
+			FONT OldFont {SetContextFont(MenuBool(TinyFontBold, TinyFont))};
 
 			if (!StarShipPtr)
 			{ // In Melee menu
@@ -325,7 +323,7 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 
 				if (is3DO(uqm::UQMOptions::read().whichMenu))
 				{
-					replaceChar(buf, UNICHAR_SPACE, UNICHAR_TAB);
+					replaceChar(buf, UnicharSpace, UnicharTab);
 				}
 
 				Text.pStr = buf;
@@ -333,20 +331,20 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 			}
 			Text.align = ALIGN_CENTER;
 
-			Text.baseline.x = STATUS_WIDTH >> 1;
-			Text.baseline.y = y + GAUGE_YOFFS + RES_SCALE(3)
-							+ RES_SCALE(MENU_BOOL(6, 0));
+			Text.baseline.x = StatusWidth() >> 1;
+			Text.baseline.y = y + GaugeYoffs() + ResScale(3)
+							+ ResScale(MenuBool(6, 0));
 
-			SetContextForeGroundColor(BLACK_COLOR);
+			SetContextForeGroundColor(BlackColor);
 			font_DrawText(&Text);
 
 			SetContextFont(OldFont);
 		}
 	}
-	else if (StarShipPtr->playerNr == RPG_PLAYER_NUM)
+	else if (StarShipPtr->playerNr == RpgPlayerNum)
 	{ // This is SIS
 		DrawCrewFuelString(y, 0);
-		DrawShipNameString(GLOBAL_SIS(ShipName), (uint16_t)~0, y);
+		DrawShipNameString(uqm::gameState().sis().ShipName, (uint16_t)~0, y);
 	}
 
 	{
@@ -371,6 +369,12 @@ void InitShipStatus(SHIP_INFO* SIPtr, STARSHIP* StarShipPtr, GFXRECT* pClipRect,
 	SetContext(OldContext);
 }
 
+static constexpr auto CrewUnitColor {BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)};
+
+static constexpr auto RobotUnitColor {BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08)};
+static constexpr auto PlayerUnitColor {BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)};
+static constexpr auto FuelUnitColor {BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x04)};
+
 // Pre: -crew_delta <= ShipInfoPtr->crew_level
 //      crew_delta <= ShipInfoPtr->max_crew - ShipInfoPtr->crew_level
 void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
@@ -386,10 +390,10 @@ void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
 
 	const int16_t x {0};
 	// Y coordinates for the crew and energy rectangles
-	y = GAUGE_YOFFS + y_offs;
+	y = GaugeYoffs() + y_offs;
 
-	r.extent.width = UNIT_WIDTH;
-	r.extent.height = UNIT_HEIGHT;
+	r.extent.width = UnitWidth();
+	r.extent.height = UnitHeight();
 
 	if (crew_delta != 0)
 	{
@@ -398,70 +402,65 @@ void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
 		uint16_t blockI {};
 		uint16_t newCrewLevel {};
 
-#define MIN(a, b) (((a) <= (b)) ? (a) : (b))
-		oldNumBlocks = MIN(ShipInfoPtr->crew_level, MAX_CREW_SIZE);
+		oldNumBlocks = uqstl::min<uint16_t>(ShipInfoPtr->crew_level, MaxCrewSize);
 		newCrewLevel = ShipInfoPtr->crew_level + crew_delta;
-		newNumBlocks = MIN(newCrewLevel, MAX_CREW_SIZE);
-#undef MIN
+		newNumBlocks = uqstl::min<uint16_t>(newCrewLevel, MaxCrewSize);
 
 		if (crew_delta > 0)
 		{
-			r.corner.y = (y + RES_SCALE(1)) - (((oldNumBlocks + 1) >> 1) * (UNIT_HEIGHT + RES_SCALE(1)));
-#define CREW_UNIT_COLOR BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x00), 0x02)
-#define ROBOT_UNIT_COLOR BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x0A), 0x08)
+			r.corner.y = (y + ResScale(1)) - (((oldNumBlocks + 1) >> 1) * (UnitHeight() + ResScale(1)));
 			SetContextForeGroundColor(
-				(ShipInfoPtr->ship_flags & CREW_IMMUNE) ?
-					ROBOT_UNIT_COLOR :
-					CREW_UNIT_COLOR);
+				(ShipInfoPtr->ship_flags & CrewImmune) ?
+					RobotUnitColor :
+					CrewUnitColor);
 			for (blockI = oldNumBlocks; blockI < newNumBlocks; blockI++)
 			{
-				r.corner.x = x + (CREW_XOFFS + RES_SCALE(1));
+				r.corner.x = x + (CrewXoffs() + ResScale(1));
 				if (!(blockI & 1))
 				{
-					r.corner.x += UNIT_WIDTH + RES_SCALE(1);
-					r.corner.y -= UNIT_HEIGHT + RES_SCALE(1);
+					r.corner.x += UnitWidth() + ResScale(1);
+					r.corner.y -= UnitHeight() + ResScale(1);
 				}
 				DrawFilledRectangle(&r);
 			}
 		}
 		else /* crew_delta < 0 */
 		{
-			SetContextForeGroundColor(BLACK_COLOR);
-			r.corner.y = (y + RES_SCALE(1)) - (((oldNumBlocks + 2) >> 1) * (UNIT_HEIGHT + RES_SCALE(1)));
+			SetContextForeGroundColor(BlackColor);
+			r.corner.y = (y + ResScale(1)) - (((oldNumBlocks + 2) >> 1) * (UnitHeight() + ResScale(1)));
 			for (blockI = oldNumBlocks; blockI > newNumBlocks; blockI--)
 			{
-				r.corner.x = x + (CREW_XOFFS + RES_SCALE(1) + UNIT_WIDTH + RES_SCALE(1));
+				r.corner.x = x + (CrewXoffs() + ResScale(1) + UnitWidth() + ResScale(1));
 				if (!(blockI & 1))
 				{
-					r.corner.x -= UNIT_WIDTH + RES_SCALE(1);
-					r.corner.y += UNIT_HEIGHT + RES_SCALE(1);
+					r.corner.x -= UnitWidth() + ResScale(1);
+					r.corner.y += UnitHeight() + ResScale(1);
 				}
 				DrawFilledRectangle(&r);
 			}
 		}
 
-		if (ShipInfoPtr->ship_flags & PLAYER_CAPTAIN)
+		if (ShipInfoPtr->ship_flags & PlayerCaptain)
 		{
-			if (((ShipInfoPtr->crew_level > MAX_CREW_SIZE) != (newCrewLevel > MAX_CREW_SIZE) || ShipInfoPtr->crew_level == 0) && newCrewLevel != 0)
+			if (((ShipInfoPtr->crew_level > MaxCrewSize) != (newCrewLevel > MaxCrewSize) || ShipInfoPtr->crew_level == 0) && newCrewLevel != 0)
 			{
 				// The block indicating the captain needs to change color.
-#define PLAYER_UNIT_COLOR BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x1F), 0x09)
 				SetContextForeGroundColor(
-					(newCrewLevel > MAX_CREW_SIZE) ?
-						CREW_UNIT_COLOR :
-						PLAYER_UNIT_COLOR);
-				r.corner.x = x + (CREW_XOFFS + RES_SCALE(1)) + (UNIT_WIDTH + RES_SCALE(1));
-				r.corner.y = y - UNIT_HEIGHT;
+					(newCrewLevel > MaxCrewSize) ?
+						CrewUnitColor :
+						PlayerUnitColor);
+				r.corner.x = x + (CrewXoffs() + ResScale(1)) + (UnitWidth() + ResScale(1));
+				r.corner.y = y - UnitHeight();
 				DrawFilledRectangle(&r);
 			}
 		}
 
 		ShipInfoPtr->crew_level = newCrewLevel;
-		if (ShipInfoPtr->max_crew > MAX_CREW_SIZE || ShipInfoPtr->ship_flags & PLAYER_CAPTAIN)
+		if (ShipInfoPtr->max_crew > MaxCrewSize || ShipInfoPtr->ship_flags & PlayerCaptain)
 		{
 			// All crew doesn't fit in the graphics; print a number.
 			// Always print a number for the SIS in the full game.
-			y_offs += SAFE_X;
+			y_offs += SafeX();
 			DrawBattleCrewAmount(ShipInfoPtr, y_offs);
 		}
 	}
@@ -470,16 +469,15 @@ void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
 	{
 		if (energy_delta > 0)
 		{
-#define FUEL_UNIT_COLOR BUILD_COLOR(MAKE_RGB15(0x14, 0x00, 0x00), 0x04)
-			SetContextForeGroundColor(FUEL_UNIT_COLOR);
-			r.corner.y = (y + RES_SCALE(1)) - (((ShipInfoPtr->energy_level + 1) >> 1) * (UNIT_HEIGHT + RES_SCALE(1)));
+			SetContextForeGroundColor(FuelUnitColor);
+			r.corner.y = (y + ResScale(1)) - (((ShipInfoPtr->energy_level + 1) >> 1) * (UnitHeight() + ResScale(1)));
 			do
 			{
-				r.corner.x = x + (ENERGY_XOFFS + RES_SCALE(1));
+				r.corner.x = x + (EnergyXoffs() + ResScale(1));
 				if (!(ShipInfoPtr->energy_level & 1))
 				{
-					r.corner.x += UNIT_WIDTH + RES_SCALE(1);
-					r.corner.y -= UNIT_HEIGHT + RES_SCALE(1);
+					r.corner.x += UnitWidth() + ResScale(1);
+					r.corner.y -= UnitHeight() + ResScale(1);
 				}
 				DrawFilledRectangle(&r);
 				++ShipInfoPtr->energy_level;
@@ -487,15 +485,15 @@ void DeltaStatistics(SHIP_INFO* ShipInfoPtr, int16_t y_offs,
 		}
 		else
 		{
-			SetContextForeGroundColor(BLACK_COLOR);
-			r.corner.y = (y + RES_SCALE(1)) - (((ShipInfoPtr->energy_level + 2) >> 1) * (UNIT_HEIGHT + RES_SCALE(1)));
+			SetContextForeGroundColor(BlackColor);
+			r.corner.y = (y + ResScale(1)) - (((ShipInfoPtr->energy_level + 2) >> 1) * (UnitHeight() + ResScale(1)));
 			do
 			{
-				r.corner.x = x + (ENERGY_XOFFS + RES_SCALE(1) + UNIT_WIDTH + RES_SCALE(1));
+				r.corner.x = x + (EnergyXoffs() + ResScale(1) + UnitWidth() + ResScale(1));
 				if (!(ShipInfoPtr->energy_level & 1))
 				{
-					r.corner.x -= UNIT_WIDTH + RES_SCALE(1);
-					r.corner.y += UNIT_HEIGHT + RES_SCALE(1);
+					r.corner.x -= UnitWidth() + ResScale(1);
+					r.corner.y += UnitHeight() + ResScale(1);
 				}
 				DrawFilledRectangle(&r);
 				--ShipInfoPtr->energy_level;

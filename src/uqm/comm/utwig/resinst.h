@@ -2,10 +2,10 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define UTWIG_COLOR_MAP "comm.utwig.colortable"
-#define UTWIG_CONVERSATION_PHRASES "comm.utwig.dialogue"
-#define UTWIG_FONT "comm.utwig.font"
-#define UTWIG_MUSIC "comm.utwig.music"
-#define UTWIG_PMAP_ANIM "comm.utwig.graphics"
-#define UTWIG_SCRIPT "comm.utwig.script"
-#define UTWIG_ULTRON_MUSIC "comm.utwig.ultron.music"
+inline constexpr uqgsl::czstring UtwigColorMap {"comm.utwig.colortable"};
+inline constexpr uqgsl::czstring UtwigConversationPhrases {"comm.utwig.dialogue"};
+inline constexpr uqgsl::czstring UtwigFont {"comm.utwig.font"};
+inline constexpr uqgsl::czstring UtwigMusic {"comm.utwig.music"};
+inline constexpr uqgsl::czstring UtwigPmapAnim {"comm.utwig.graphics"};
+
+inline constexpr uqgsl::czstring UtwigUltronMusic {"comm.utwig.ultron.music"};

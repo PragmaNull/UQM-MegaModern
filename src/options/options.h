@@ -58,7 +58,7 @@ inline bool isValidNebulaeVolume(const int& value)
 
 inline bool isSaneSeed(const int& value)
 {
-	return SANE_SEED(value);
+	return SaneSeed(value);
 }
 
 inline bool isValidControlTemplate(const int& value)

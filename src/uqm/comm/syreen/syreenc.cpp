@@ -31,30 +31,30 @@ static LOCDATA syreen_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		SYREEN_PMAP_ANIM, /* AlienFrame */
-		SYREEN_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		SyreenPmapAnim, /* AlienFrame */
+		SyreenFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		SYREEN_COLOR_MAP, /* AlienColorMap */
-		SYREEN_MUSIC, /* AlienSong */
+		SyreenColorMap, /* AlienColorMap */
+		SyreenMusic, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
-		SYREEN_CONVERSATION_PHRASES, /* PlayerPhrases */
+		SyreenConversationPhrases, /* PlayerPhrases */
 		15, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				5,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				5,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -62,9 +62,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				7,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				7,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -72,9 +72,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				9,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				9,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -82,9 +82,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				11,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				11,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -92,9 +92,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				13,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				13,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -102,9 +102,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				15,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				15,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -112,9 +112,9 @@ static LOCDATA syreen_desc =
 				(1 << 12),				/* BlockMask */
 			},
 								{
-				17,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				17,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -122,9 +122,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				19,			 /* StartIndex */
-				2,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				19,			/* StartIndex */
+				2,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -132,9 +132,9 @@ static LOCDATA syreen_desc =
 				(1 << 13),
 			},
 								{
-				21,			 /* StartIndex */
-				6,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				21,			/* StartIndex */
+				6,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -142,9 +142,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				27,		   /* StartIndex */
-				4,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				27,		  /* StartIndex */
+				4,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -152,9 +152,9 @@ static LOCDATA syreen_desc =
 				(1 << 14),				/* BlockMask */
 			},
 								{
-				31,			   /* StartIndex */
-				6,			   /* NumFrames */
-				CIRCULAR_ANIM, /* AnimFlags */
+				31,			  /* StartIndex */
+				6,			  /* NumFrames */
+				CircularAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -162,9 +162,9 @@ static LOCDATA syreen_desc =
 				0,						/* BlockMask */
 			},
 								{
-				37,			 /* StartIndex */
-				4,			 /* NumFrames */
-				RANDOM_ANIM, /* AnimFlags */
+				37,			/* StartIndex */
+				4,			/* NumFrames */
+				RandomAnim, /* AnimFlags */
 				GameTicksPerSecond / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond / 15,
@@ -172,9 +172,9 @@ static LOCDATA syreen_desc =
 				0,						 /* BlockMask */
 			},
 								{
-				41,		   /* StartIndex */
-				3,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				41,		  /* StartIndex */
+				3,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -184,8 +184,8 @@ static LOCDATA syreen_desc =
 								{
 				44, /* StartIndex */
 				4,	/* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond / 6,
 				0, /* FrameRate */
 				GameTicksPerSecond * 3,
@@ -195,8 +195,8 @@ static LOCDATA syreen_desc =
 								{
 				48, /* StartIndex */
 				3,	/* NumFrames */
-				YOYO_ANIM
-					| WAIT_TALKING, /* AnimFlags */
+				YoyoAnim
+					| WaitTalking, /* AnimFlags */
 				GameTicksPerSecond * 2 / 15,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond * 10,
@@ -245,46 +245,45 @@ static FILTER_DESC syreen_filters =
 				1,	/* Opacity index */
 				-1, /* Frame index */
 				DRAW_ALPHA,
-				/* DrawKind*/	  //maybe try multiply?
-				SWITCH_OFF_ANIMS, /* Flags */
+				/* DrawKind*/	//maybe try multiply?
+				SwitchOffAnims, /* Flags */
 			},
 								  }
 };
 
-static void
-FriendlyExit(RESPONSE_REF R)
+static void FriendlyExit(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
-	if (PLAYER_SAID(R, bye))
+	if (PlayerSaid(R, bye))
 	{
 		NPCPhrase(GOODBYE);
 	}
-	else if (PLAYER_SAID(R, im_on_my_way)
-			 || PLAYER_SAID(R, doing_this_for_you)
-			 || PLAYER_SAID(R, if_i_die))
+	else if (PlayerSaid(R, im_on_my_way)
+			 || PlayerSaid(R, doing_this_for_you)
+			 || PlayerSaid(R, if_i_die))
 	{
 		NPCPhrase(GOOD_LUCK);
 	}
-	else if (PLAYER_SAID(R, bye_before_vault))
+	else if (PlayerSaid(R, bye_before_vault))
 	{
 		NPCPhrase(GOODBYE_BEFORE_VAULT);
 	}
-	else if (PLAYER_SAID(R, bye_after_vault))
+	else if (PlayerSaid(R, bye_after_vault))
 	{
 		NPCPhrase(GOODBYE_AFTER_VAULT);
 	}
-	else if (PLAYER_SAID(R, bye_before_ambush))
+	else if (PlayerSaid(R, bye_before_ambush))
 	{
 		NPCPhrase(GOODBYE_BEFORE_AMBUSH);
 	}
-	else if (PLAYER_SAID(R, bye_after_ambush))
+	else if (PlayerSaid(R, bye_after_ambush))
 	{
 		NPCPhrase(GOODBYE_AFTER_AMBUSH);
 	}
 	else
 	{
-		if (PLAYER_SAID(R, hands_off))
+		if (PlayerSaid(R, hands_off))
 		{
 			SetCustomBaseLine(3, MAKE_POINT(108, 81), ALIGN_CENTER);
 			SetCustomBaseLine(4, MAKE_POINT(80, 49), ALIGN_CENTER);
@@ -292,7 +291,7 @@ FriendlyExit(RESPONSE_REF R)
 
 			NPCPhrase(OK_WONT_USE_HANDS);
 		}
-		else if (PLAYER_SAID(R, not_much_more_to_say))
+		else if (PlayerSaid(R, not_much_more_to_say))
 		{
 			NPCPhrase(THEN_STOP_TALKING);
 		}
@@ -307,12 +306,12 @@ FriendlyExit(RESPONSE_REF R)
 
 		AlienTalkSegue(2);
 
-		CommData.AlienTextFColor = WHITE_COLOR;
+		CommData.AlienTextFColor = WhiteColor;
 		FadeScreen(FadeAllToBlack, TimePeriod {});
 
 		DrawSISFrame();
 		DrawSISMessage(nullptr);
-		DrawSISTitle(GLOBAL_SIS(PlanetName));
+		DrawSISTitle(uqm::gameState().sis().PlanetName);
 		SetCommDarkMode(false);
 		RedrawSISComWindow();
 
@@ -321,7 +320,7 @@ FriendlyExit(RESPONSE_REF R)
 
 		BlockTalkingAnim(1, 2); // Several hours later block (New)
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			SwitchSequences(true);
 			EnableTalkingAnim(true);
@@ -330,15 +329,14 @@ FriendlyExit(RESPONSE_REF R)
 		FadeScreen(FadeAllToColor, c_gameSecond / 2);
 		AlienTalkSegue((uint16_t)~0);
 
-		SET_GAME_STATE(PLAYER_HAD_SEX, 1);
-		SET_GAME_STATE(PLAYER_HAVING_SEX, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HAD_SEX, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HAVING_SEX, static_cast<uint32_t>(0));
 	}
 }
 
-static void
-Sex(RESPONSE_REF R)
+static void Sex(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, in_the_spirit))
+	if (PlayerSaid(R, in_the_spirit))
 	{
 		SetCustomBaseLine(3, MAKE_POINT(98, 21), ALIGN_CENTER);
 		SetCustomBaseLine(4, MAKE_POINT(156, 51), ALIGN_CENTER);
@@ -346,7 +344,7 @@ Sex(RESPONSE_REF R)
 
 		NPCPhrase(OK_SPIRIT);
 	}
-	else if (PLAYER_SAID(R, what_in_mind))
+	else if (PlayerSaid(R, what_in_mind))
 	{
 		SetCustomBaseLine(0, MAKE_POINT(3, 0), ALIGN_LEFT);
 		SetCustomBaseLine(1, MAKE_POINT(3, 0), ALIGN_LEFT);
@@ -357,59 +355,58 @@ Sex(RESPONSE_REF R)
 
 		NPCPhrase(SOMETHING_LIKE_THIS);
 	}
-	else if (PLAYER_SAID(R, disease))
+	else if (PlayerSaid(R, disease))
 	{
 		NPCPhrase(JUST_RELAX);
 	}
-	else if (PLAYER_SAID(R, what_happens_if_i_touch_this))
+	else if (PlayerSaid(R, what_happens_if_i_touch_this))
 	{
 		NPCPhrase(THIS_HAPPENS);
 
-		DISABLE_PHRASE(what_happens_if_i_touch_this);
+		DisablePhrase(what_happens_if_i_touch_this);
 	}
-	else if (PLAYER_SAID(R, are_you_sure_this_is_ok))
+	else if (PlayerSaid(R, are_you_sure_this_is_ok))
 	{
 		NPCPhrase(YES_SURE);
 
-		DISABLE_PHRASE(are_you_sure_this_is_ok);
+		DisablePhrase(are_you_sure_this_is_ok);
 	}
-	else if (PLAYER_SAID(R, boy_they_never_taught))
+	else if (PlayerSaid(R, boy_they_never_taught))
 	{
 		NPCPhrase(THEN_LET_ME_TEACH);
 
-		DISABLE_PHRASE(boy_they_never_taught);
+		DisablePhrase(boy_they_never_taught);
 	}
 
-	if (!PHRASE_ENABLED(what_happens_if_i_touch_this)
-		&& !PHRASE_ENABLED(are_you_sure_this_is_ok)
-		&& !PHRASE_ENABLED(boy_they_never_taught))
+	if (!PhraseEnabled(what_happens_if_i_touch_this)
+		&& !PhraseEnabled(are_you_sure_this_is_ok)
+		&& !PhraseEnabled(boy_they_never_taught))
 	{
 		Response(not_much_more_to_say, FriendlyExit);
 	}
 	else
 	{
-		if (PHRASE_ENABLED(what_happens_if_i_touch_this))
+		if (PhraseEnabled(what_happens_if_i_touch_this))
 		{
 			Response(what_happens_if_i_touch_this, Sex);
 		}
-		if (PHRASE_ENABLED(are_you_sure_this_is_ok))
+		if (PhraseEnabled(are_you_sure_this_is_ok))
 		{
 			Response(are_you_sure_this_is_ok, Sex);
 		}
-		if (PHRASE_ENABLED(boy_they_never_taught))
+		if (PhraseEnabled(boy_they_never_taught))
 		{
 			Response(boy_they_never_taught, Sex);
 		}
 	}
 }
 
-static void
-Foreplay(RESPONSE_REF R)
+static void Foreplay(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_my_reward)
-		|| PLAYER_SAID(R, what_about_us))
+	if (PlayerSaid(R, whats_my_reward)
+		|| PlayerSaid(R, what_about_us))
 	{
-		if (PLAYER_SAID(R, whats_my_reward))
+		if (PlayerSaid(R, whats_my_reward))
 		{
 			NPCPhrase(HERES_REWARD);
 		}
@@ -423,30 +420,30 @@ Foreplay(RESPONSE_REF R)
 
 		AlienTalkSegue(1);
 
-		CommData.AlienTextFColor = BUILD_COLOR_RGBA(85, 255, 255, 0);
+		CommData.AlienTextFColor = BuildColorRgba(85, 255, 255, 0);
 		SetCommDarkMode(true);
 
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
 					  c_gameSecond);
 
-		if (IS_HD)
+		if (IsHd())
 		{
 			EngageFilters(&syreen_filters);
 		}
 
-		/*if (!EXTENDED)
+		/*if (!IsExtended())
 			{
 				CommData.AlienFrame = SetAbsFrameIndex
 					(CommData.AlienFrame, 63);
-				CommData.AlienTalkDesc.AnimFlags |= PAUSE_TALKING;
+				CommData.AlienTalkDesc.AnimFlags |= PauseTalking;
 				RunOneTimeSequence(16, 0);
 		}*/
 		// For future ideas maybe
 
 		AlienTalkSegue((uint16_t)~0);
-		SET_GAME_STATE(PLAYER_HAVING_SEX, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::PLAYER_HAVING_SEX, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, why_lights_off))
+	else if (PlayerSaid(R, why_lights_off))
 	{
 		SetCustomBaseLine(1, MAKE_POINT(60, 41), ALIGN_CENTER);
 		SetCustomBaseLine(2, MAKE_POINT(180, 41), ALIGN_CENTER);
@@ -454,20 +451,20 @@ Foreplay(RESPONSE_REF R)
 
 		NPCPhrase(LIGHTS_OFF_BECAUSE);
 
-		DISABLE_PHRASE(why_lights_off);
+		DisablePhrase(why_lights_off);
 	}
-	else if (PLAYER_SAID(R, evil_monster))
+	else if (PlayerSaid(R, evil_monster))
 	{
 		NPCPhrase(NOT_EVIL_MONSTER);
 
-		DISABLE_PHRASE(evil_monster);
+		DisablePhrase(evil_monster);
 	}
 
-	if (PHRASE_ENABLED(why_lights_off))
+	if (PhraseEnabled(why_lights_off))
 	{
 		Response(why_lights_off, Foreplay);
 	}
-	else if (PHRASE_ENABLED(evil_monster))
+	else if (PhraseEnabled(evil_monster))
 	{
 		Response(evil_monster, Foreplay);
 	}
@@ -480,26 +477,25 @@ Foreplay(RESPONSE_REF R)
 	Response(hands_off, FriendlyExit);
 }
 
-static void
-AfterAmbush(RESPONSE_REF R)
+static void AfterAmbush(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, what_now_after_ambush))
+	if (PlayerSaid(R, what_now_after_ambush))
 	{
 		NPCPhrase(DO_THIS_AFTER_AMBUSH);
 
-		DISABLE_PHRASE(what_now_after_ambush);
+		DisablePhrase(what_now_after_ambush);
 	}
-	else if (PLAYER_SAID(R, what_about_you))
+	else if (PlayerSaid(R, what_about_you))
 	{
 		NPCPhrase(ABOUT_ME);
 
-		DISABLE_PHRASE(what_about_you);
+		DisablePhrase(what_about_you);
 	}
-	else if (PLAYER_SAID(R, whats_up_after_ambush))
+	else if (PlayerSaid(R, whats_up_after_ambush))
 	{
 		uint8_t NumVisits {};
 
-		NumVisits = GET_GAME_STATE(SYREEN_INFO);
+		NumVisits = uqm::gameState().flag(uqm::GameFlag::SYREEN_INFO);
 		switch (NumVisits++)
 		{
 			case 0:
@@ -516,235 +512,232 @@ AfterAmbush(RESPONSE_REF R)
 				--NumVisits;
 				break;
 		}
-		SET_GAME_STATE(SYREEN_INFO, NumVisits);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_INFO, static_cast<uint32_t>(NumVisits));
 
-		DISABLE_PHRASE(whats_up_after_ambush);
+		DisablePhrase(whats_up_after_ambush);
 	}
 
-	if (PHRASE_ENABLED(what_about_you))
+	if (PhraseEnabled(what_about_you))
 	{
 		Response(what_about_you, AfterAmbush);
 	}
-	else if (!GET_GAME_STATE(PLAYER_HAD_SEX))
+	else if (!uqm::gameState().flag(uqm::GameFlag::PLAYER_HAD_SEX))
 	{
 		Response(what_about_us, Foreplay);
 	}
-	if (PHRASE_ENABLED(what_now_after_ambush))
+	if (PhraseEnabled(what_now_after_ambush))
 	{
 		Response(what_now_after_ambush, AfterAmbush);
 	}
-	if (PHRASE_ENABLED(whats_up_after_ambush))
+	if (PhraseEnabled(whats_up_after_ambush))
 	{
 		Response(whats_up_after_ambush, AfterAmbush);
 	}
 	Response(bye_after_ambush, FriendlyExit);
 }
 
-static void
-AmbushReady(RESPONSE_REF R)
+static void AmbushReady(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, repeat_plan))
+	if (PlayerSaid(R, repeat_plan))
 	{
 		NPCPhrase(OK_REPEAT_PLAN);
 
-		DISABLE_PHRASE(repeat_plan);
+		DisablePhrase(repeat_plan);
 	}
 
-	if (PHRASE_ENABLED(repeat_plan))
+	if (PhraseEnabled(repeat_plan))
 	{
 		Response(repeat_plan, AmbushReady);
 	}
 	Response(bye_before_ambush, FriendlyExit);
 }
 
-static void
-SyreenShuttle(RESPONSE_REF R)
+static void SyreenShuttle(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_next_step))
+	if (PlayerSaid(R, whats_next_step))
 	{
 		NPCPhrase(OPEN_VAULT);
 
-		DISABLE_PHRASE(whats_next_step);
+		DisablePhrase(whats_next_step);
 	}
-	else if (PLAYER_SAID(R, what_do_i_get_for_this))
+	else if (PlayerSaid(R, what_do_i_get_for_this))
 	{
 		NPCPhrase(GRATITUDE);
 
-		DISABLE_PHRASE(what_do_i_get_for_this);
+		DisablePhrase(what_do_i_get_for_this);
 	}
-	else if (PLAYER_SAID(R, not_sure))
+	else if (PlayerSaid(R, not_sure))
 	{
 		NPCPhrase(PLEASE);
 
-		DISABLE_PHRASE(not_sure);
+		DisablePhrase(not_sure);
 	}
-	else if (PLAYER_SAID(R, where_is_it))
+	else if (PlayerSaid(R, where_is_it))
 	{
 		NPCPhrase(DONT_KNOW_WHERE);
 		NPCPhrase(GIVE_SHUTTLE);
 
-		SET_GAME_STATE(SYREEN_SHUTTLE, 1);
-		SET_GAME_STATE(SYREEN_SHUTTLE_ON_SHIP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP, static_cast<uint32_t>(1));
 
-		DISABLE_PHRASE(where_is_it);
+		DisablePhrase(where_is_it);
 	}
-	else if (PLAYER_SAID(R, been_there))
+	else if (PlayerSaid(R, been_there))
 	{
 		NPCPhrase(GREAT);
 		NPCPhrase(GIVE_SHUTTLE);
 
-		SET_GAME_STATE(SYREEN_SHUTTLE, 1);
-		SET_GAME_STATE(SYREEN_SHUTTLE_ON_SHIP, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_SHUTTLE_ON_SHIP, static_cast<uint32_t>(1));
 
-		DISABLE_PHRASE(been_there);
+		DisablePhrase(been_there);
 	}
 
-	if (PHRASE_ENABLED(whats_next_step))
+	if (PhraseEnabled(whats_next_step))
 	{
 		Response(whats_next_step, SyreenShuttle);
 	}
 	else
 	{
-		if (!GET_GAME_STATE(KNOW_SYREEN_VAULT))
+		if (!uqm::gameState().flag(uqm::GameFlag::KNOW_SYREEN_VAULT))
 		{
-			if (PHRASE_ENABLED(where_is_it))
+			if (PhraseEnabled(where_is_it))
 			{
 				Response(where_is_it, SyreenShuttle);
 			}
 		}
 		else
 		{
-			if (PHRASE_ENABLED(been_there))
+			if (PhraseEnabled(been_there))
 			{
 				Response(been_there, SyreenShuttle);
 			}
 		}
-		if (!PHRASE_ENABLED(where_is_it)
-			|| !PHRASE_ENABLED(been_there))
+		if (!PhraseEnabled(where_is_it)
+			|| !PhraseEnabled(been_there))
 		{
 			Response(im_on_my_way, FriendlyExit);
 			Response(doing_this_for_you, FriendlyExit);
 			Response(if_i_die, FriendlyExit);
 		}
 	}
-	if (PHRASE_ENABLED(what_do_i_get_for_this))
+	if (PhraseEnabled(what_do_i_get_for_this))
 	{
 		Response(what_do_i_get_for_this, SyreenShuttle);
 	}
-	if (PHRASE_ENABLED(not_sure))
+	if (PhraseEnabled(not_sure))
 	{
 		Response(not_sure, SyreenShuttle);
 	}
 }
 
-static void
-NormalSyreen(RESPONSE_REF R)
+static void NormalSyreen(RESPONSE_REF R)
 {
 	uint8_t i {};
 	RESPONSE_REF pStr[4];
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
-	if (PLAYER_SAID(R, we_here_to_help))
+	if (PlayerSaid(R, we_here_to_help))
 	{
 		NPCPhrase(NO_NEED_HELP);
 	}
-	else if (PLAYER_SAID(R, we_need_help))
+	else if (PlayerSaid(R, we_need_help))
 	{
 		NPCPhrase(CANT_GIVE_HELP);
 	}
-	else if (PLAYER_SAID(R, know_about_deep_children))
+	else if (PlayerSaid(R, know_about_deep_children))
 	{
 		NPCPhrase(WHAT_ABOUT_DEEP_CHILDREN);
 
-		DISABLE_PHRASE(know_about_deep_children);
+		DisablePhrase(know_about_deep_children);
 	}
-	else if (PLAYER_SAID(R, mycons_involved))
+	else if (PlayerSaid(R, mycons_involved))
 	{
 		NPCPhrase(WHAT_PROOF);
 
-		SET_GAME_STATE(KNOW_ABOUT_SHATTERED, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, have_no_proof))
+	else if (PlayerSaid(R, have_no_proof))
 	{
 		NPCPhrase(NEED_PROOF);
 
-		SET_GAME_STATE(SYREEN_WANT_PROOF, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_WANT_PROOF, static_cast<uint32_t>(1));
 	}
-	else if (PLAYER_SAID(R, have_proof))
+	else if (PlayerSaid(R, have_proof))
 	{
 		NPCPhrase(SEE_PROOF);
 
-		DISABLE_PHRASE(have_proof);
+		DisablePhrase(have_proof);
 	}
-	else if (PLAYER_SAID(R, what_doing_here))
+	else if (PlayerSaid(R, what_doing_here))
 	{
 		NPCPhrase(OUR_NEW_WORLD);
 
-		SET_GAME_STATE(SYREEN_STACK0, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK0, static_cast<uint32_t>(1));
 		LastStack = 1;
 	}
-	else if (PLAYER_SAID(R, what_about_war))
+	else if (PlayerSaid(R, what_about_war))
 	{
 		NPCPhrase(ABOUT_WAR);
 
-		SET_GAME_STATE(SYREEN_STACK0, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK0, static_cast<uint32_t>(2));
 		LastStack = 1;
 	}
-	else if (PLAYER_SAID(R, help_us))
+	else if (PlayerSaid(R, help_us))
 	{
 		NPCPhrase(WONT_HELP);
 
-		SET_GAME_STATE(SYREEN_STACK0, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK0, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, what_about_history))
+	else if (PlayerSaid(R, what_about_history))
 	{
 		NPCPhrase(BEFORE_WAR);
 
-		SET_GAME_STATE(SYREEN_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK1, static_cast<uint32_t>(1));
 		LastStack = 2;
 	}
-	else if (PLAYER_SAID(R, what_about_homeworld))
+	else if (PlayerSaid(R, what_about_homeworld))
 	{
 		NPCPhrase(ABOUT_HOMEWORLD);
 
-		SET_GAME_STATE(SYREEN_STACK1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK1, static_cast<uint32_t>(2));
 		LastStack = 2;
 	}
-	else if (PLAYER_SAID(R, what_happened))
+	else if (PlayerSaid(R, what_happened))
 	{
 		NPCPhrase(DONT_KNOW_HOW);
 
-		SET_GAME_STATE(KNOW_SYREEN_WORLD_SHATTERED, 1);
-		SET_GAME_STATE(SYREEN_STACK1, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::KNOW_SYREEN_WORLD_SHATTERED, static_cast<uint32_t>(1));
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK1, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, what_about_outfit))
+	else if (PlayerSaid(R, what_about_outfit))
 	{
 		NPCPhrase(HOPE_YOU_LIKE_IT);
 
-		SET_GAME_STATE(SYREEN_STACK2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK2, static_cast<uint32_t>(1));
 		LastStack = 3;
 	}
-	else if (PLAYER_SAID(R, where_mates))
+	else if (PlayerSaid(R, where_mates))
 	{
 		NPCPhrase(MATES_KILLED);
 
-		SET_GAME_STATE(SYREEN_STACK2, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK2, static_cast<uint32_t>(2));
 		LastStack = 3;
 	}
-	else if (PLAYER_SAID(R, get_lonely))
+	else if (PlayerSaid(R, get_lonely))
 	{
 		NPCPhrase(MAKE_OUT_ALL_RIGHT);
 
-		SET_GAME_STATE(SYREEN_STACK2, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_STACK2, static_cast<uint32_t>(3));
 	}
-	else if (PLAYER_SAID(R, look_at_egg_sacks))
+	else if (PlayerSaid(R, look_at_egg_sacks))
 	{
 		NPCPhrase(HORRIBLE_TRUTH);
 
 		setSegue(Segue_peace);
-		SET_GAME_STATE(SYREEN_HOME_VISITS, 0);
-		SET_GAME_STATE(SYREEN_KNOW_ABOUT_MYCON, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_HOME_VISITS, static_cast<uint32_t>(0));
+		uqm::gameState().setFlag(uqm::GameFlag::SYREEN_KNOW_ABOUT_MYCON, static_cast<uint32_t>(1));
 
 		if (!SyreenVoiceFix && usingSpeech)
 		{
@@ -753,12 +746,12 @@ NormalSyreen(RESPONSE_REF R)
 		return;
 	}
 
-	if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) < 3)
+	if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 3)
 	{
-		if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) == 2
-			&& GET_GAME_STATE(KNOW_SYREEN_WORLD_SHATTERED))
+		if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) == 2
+			&& uqm::gameState().flag(uqm::GameFlag::KNOW_SYREEN_WORLD_SHATTERED))
 		{
-			if (PHRASE_ENABLED(know_about_deep_children))
+			if (PhraseEnabled(know_about_deep_children))
 			{
 				pStr[0] = know_about_deep_children;
 			}
@@ -770,11 +763,11 @@ NormalSyreen(RESPONSE_REF R)
 	}
 	else
 	{
-		if (GET_GAME_STATE(EGG_CASE0_ON_SHIP)
-			|| GET_GAME_STATE(EGG_CASE1_ON_SHIP)
-			|| GET_GAME_STATE(EGG_CASE2_ON_SHIP))
+		if (uqm::gameState().flag(uqm::GameFlag::EGG_CASE0_ON_SHIP)
+			|| uqm::gameState().flag(uqm::GameFlag::EGG_CASE1_ON_SHIP)
+			|| uqm::gameState().flag(uqm::GameFlag::EGG_CASE2_ON_SHIP))
 		{
-			if (PHRASE_ENABLED(have_proof))
+			if (PhraseEnabled(have_proof))
 			{
 				pStr[0] = have_proof;
 			}
@@ -783,12 +776,12 @@ NormalSyreen(RESPONSE_REF R)
 				pStr[0] = look_at_egg_sacks;
 			}
 		}
-		else if (!GET_GAME_STATE(SYREEN_WANT_PROOF))
+		else if (!uqm::gameState().flag(uqm::GameFlag::SYREEN_WANT_PROOF))
 		{
 			pStr[0] = have_no_proof;
 		}
 	}
-	switch (GET_GAME_STATE(SYREEN_STACK0))
+	switch (uqm::gameState().flag(uqm::GameFlag::SYREEN_STACK0))
 	{
 		case 0:
 			pStr[1] = what_doing_here;
@@ -800,7 +793,7 @@ NormalSyreen(RESPONSE_REF R)
 			pStr[1] = help_us;
 			break;
 	}
-	switch (GET_GAME_STATE(SYREEN_STACK1))
+	switch (uqm::gameState().flag(uqm::GameFlag::SYREEN_STACK1))
 	{
 		case 0:
 			pStr[2] = what_about_history;
@@ -812,7 +805,7 @@ NormalSyreen(RESPONSE_REF R)
 			pStr[2] = what_happened;
 			break;
 	}
-	switch (GET_GAME_STATE(SYREEN_STACK2))
+	switch (uqm::gameState().flag(uqm::GameFlag::SYREEN_STACK2))
 	{
 		case 0:
 			pStr[3] = what_about_outfit;
@@ -838,78 +831,76 @@ NormalSyreen(RESPONSE_REF R)
 	Response(bye, FriendlyExit);
 }
 
-static void
-InitialSyreen(RESPONSE_REF R)
+static void InitialSyreen(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, we_are_vice_squad))
+	if (PlayerSaid(R, we_are_vice_squad))
 	{
 		NPCPhrase(OK_VICE);
 		NPCPhrase(HOW_CAN_YOU_BE_HERE);
 	}
-	else if (PLAYER_SAID(R, we_are_the_one_for_you_baby))
+	else if (PlayerSaid(R, we_are_the_one_for_you_baby))
 	{
 		NPCPhrase(MAYBE_CAPTAIN);
 		NPCPhrase(HOW_CAN_YOU_BE_HERE);
 	}
-	else if (PLAYER_SAID(R, we_are_vindicator))
+	else if (PlayerSaid(R, we_are_vindicator))
 	{
 		NPCPhrase(WELCOME_VINDICATOR);
 		NPCPhrase(HOW_CAN_YOU_BE_HERE);
 	}
-	else if (PLAYER_SAID(R, we_are_impressed))
+	else if (PlayerSaid(R, we_are_impressed))
 	{
 		NPCPhrase(SO_AM_I_CAPTAIN);
 		NPCPhrase(HOW_CAN_YOU_BE_HERE);
 	}
-	else if (PLAYER_SAID(R, i_need_you))
+	else if (PlayerSaid(R, i_need_you))
 	{
 		NPCPhrase(OK_NEED);
 
-		DISABLE_PHRASE(i_need_you);
-		DISABLE_PHRASE(i_need_touch_o_vision);
+		DisablePhrase(i_need_you);
+		DisablePhrase(i_need_touch_o_vision);
 	}
-	else if (PLAYER_SAID(R, i_need_touch_o_vision))
+	else if (PlayerSaid(R, i_need_touch_o_vision))
 	{
 		NPCPhrase(TOUCH_O_VISION);
 
-		DISABLE_PHRASE(i_need_you);
-		DISABLE_PHRASE(i_need_touch_o_vision);
+		DisablePhrase(i_need_you);
+		DisablePhrase(i_need_touch_o_vision);
 	}
 
 	Response(we_here_to_help, NormalSyreen);
 	Response(we_need_help, NormalSyreen);
-	if (PHRASE_ENABLED(i_need_you))
+	if (PhraseEnabled(i_need_you))
 	{
 		Response(i_need_you, InitialSyreen);
 	}
-	if (PHRASE_ENABLED(i_need_touch_o_vision))
+	if (PhraseEnabled(i_need_touch_o_vision))
 	{
 		Response(i_need_touch_o_vision, InitialSyreen);
 	}
 }
 
-static void
-PlanAmbush(RESPONSE_REF R)
+static void PlanAmbush(RESPONSE_REF R)
 {
 	(void)R; // ignored
 	NPCPhrase(OK_FOUND_VAULT);
 
-	SET_GAME_STATE(MYCON_AMBUSH, 1);
+	uqm::gameState().setFlag(uqm::GameFlag::MYCON_AMBUSH, static_cast<uint32_t>(1));
 	// This is redundant but left here for clarity
-	SET_GAME_STATE(SYREEN_HOME_VISITS, 0);
+	uqm::gameState().setFlag(uqm::GameFlag::SYREEN_HOME_VISITS, static_cast<uint32_t>(0));
 
 	// Send ambush fleet to Organon.  EncounterPercent for the
 	// Syreen is 0, so this is purely decorative.
-	if (EXTENDED)
+	if (IsExtended())
 	{
 		HFLEETINFO hSyreen =
-			GetStarShipFromIndex(&GLOBAL(avail_race_q), SYREEN_SHIP);
+			GetStarShipFromIndex(&uqm::gameState().game().avail_race_q, SYREEN_SHIP);
 		FLEET_INFO* SyreenPtr =
-			LockFleetInfo(&GLOBAL(avail_race_q), hSyreen);
+			LockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
 
 		if (SyreenPtr)
 		{
-			SyreenPtr->actual_strength = 300 / SPHERE_RADIUS_INCREMENT * 2;
+			SyreenPtr->actual_strength = 300 / SphereRadiusIncrement * 2;
 			SyreenPtr->loc = SeedFleetLocation(SyreenPtr, plot_map, HOME);
 			StartSphereTracking(SYREEN_SHIP);
 			const GFXPOINT loc = SeedFleetLocation(SyreenPtr, plot_map,
@@ -917,32 +908,30 @@ PlanAmbush(RESPONSE_REF R)
 			SetRaceDest(SYREEN_SHIP, loc.x, loc.y, 15, (uint8_t)~0);
 		}
 
-		UnlockFleetInfo(&GLOBAL(avail_race_q), hSyreen);
+		UnlockFleetInfo(&uqm::gameState().game().avail_race_q, hSyreen);
 	}
 
 	Response(whats_my_reward, Foreplay);
 	Response(bye_after_vault, FriendlyExit);
 }
 
-static void
-SyreenVault(RESPONSE_REF R)
+static void SyreenVault(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, vault_hint))
+	if (PlayerSaid(R, vault_hint))
 	{
 		NPCPhrase(OK_HINT);
 
-		DISABLE_PHRASE(vault_hint);
+		DisablePhrase(vault_hint);
 	}
 
-	if (PHRASE_ENABLED(vault_hint))
+	if (PhraseEnabled(vault_hint))
 	{
 		Response(vault_hint, SyreenVault);
 	}
 	Response(bye_before_vault, FriendlyExit);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	uint8_t NumVisits {};
 
@@ -956,8 +945,8 @@ Intro(void)
 		return;
 	}
 
-	NumVisits = GET_GAME_STATE(SYREEN_HOME_VISITS);
-	if (GET_GAME_STATE(MYCON_KNOW_AMBUSH))
+	NumVisits = uqm::gameState().flag(uqm::GameFlag::SYREEN_HOME_VISITS);
+	if (uqm::gameState().flag(uqm::GameFlag::MYCON_KNOW_AMBUSH))
 	{
 		switch (NumVisits++)
 		{
@@ -979,7 +968,7 @@ Intro(void)
 
 		AfterAmbush((RESPONSE_REF)0);
 	}
-	else if (GET_GAME_STATE(MYCON_AMBUSH))
+	else if (uqm::gameState().flag(uqm::GameFlag::MYCON_AMBUSH))
 	{
 		switch (NumVisits++)
 		{
@@ -991,7 +980,7 @@ Intro(void)
 
 		AmbushReady((RESPONSE_REF)0);
 	}
-	else if (!GET_GAME_STATE(SYREEN_KNOW_ABOUT_MYCON))
+	else if (!uqm::gameState().flag(uqm::GameFlag::SYREEN_KNOW_ABOUT_MYCON))
 	{
 		switch (NumVisits++)
 		{
@@ -1023,7 +1012,7 @@ Intro(void)
 		}
 	}
 
-	else if (!GET_GAME_STATE(SYREEN_SHUTTLE) && (SyreenVoiceFix || !usingSpeech))
+	else if (!uqm::gameState().flag(uqm::GameFlag::SYREEN_SHUTTLE) && (SyreenVoiceFix || !usingSpeech))
 	{
 		switch (NumVisits++)
 		{
@@ -1036,7 +1025,7 @@ Intro(void)
 		SyreenShuttle((RESPONSE_REF)0);
 	}
 
-	else if (GET_GAME_STATE(SHIP_VAULT_UNLOCKED))
+	else if (uqm::gameState().flag(uqm::GameFlag::SHIP_VAULT_UNLOCKED))
 	{
 		PlanAmbush((RESPONSE_REF)0);
 		// XXX: PlanAmbush() sets SYREEN_HOME_VISITS=0, but then this value
@@ -1061,37 +1050,34 @@ Intro(void)
 
 		SyreenVault((RESPONSE_REF)0);
 	}
-	SET_GAME_STATE(SYREEN_HOME_VISITS, NumVisits);
+	uqm::gameState().setFlag(uqm::GameFlag::SYREEN_HOME_VISITS, static_cast<uint32_t>(NumVisits));
 }
 
-static uint16_t
-uninit_syreen(void)
+static uint16_t uninit_syreen(void)
 {
 	FlushCustomBaseLine();
 	uqm::lua().endComm();
 	return (0);
 }
 
-static void
-post_syreen_enc(void)
+static void post_syreen_enc(void)
 {
 	// nothing defined so far
 }
 
-LOCDATA*
-init_syreen_comm(void)
+LOCDATA* init_syreen_comm(void)
 {
 	syreen_desc.init_encounter_func = Intro;
 	syreen_desc.post_encounter_func = post_syreen_enc;
 	syreen_desc.uninit_encounter_func = uninit_syreen;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	syreen_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+	syreen_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	syreen_desc.AlienTextBaseline.y = 0;
-	syreen_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	syreen_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	setSegue(Segue_peace);
 	LOCDATA* retval {&syreen_desc};

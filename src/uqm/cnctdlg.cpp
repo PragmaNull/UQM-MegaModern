@@ -30,10 +30,10 @@
 #include "options/options.h"
 
 
-#define MCD_WIDTH RES_SCALE(260)
-#define MCD_HEIGHT RES_SCALE(110)
+static auto McdWidth() { return ResScale(260); }
+static auto McdHeight() { return ResScale(110); }
 
-#define MENU_FRAME_RATE (c_gameSecond / 20)
+static constexpr auto MenuFrameRate {(c_gameSecond / 20)};
 
 typedef struct connect_dialog_state
 {
@@ -74,22 +74,20 @@ static int do_connect(WIDGET* self, int event);
 static int do_listen(WIDGET* self, int event);
 static int do_cancel(WIDGET* self, int event);
 
-static void
-MCD_DrawMenuScreen(WIDGET* _self, int x, int y)
+static void MCD_DrawMenuScreen(WIDGET* _self, int x, int y)
 {
 	const WIDGET_MENU_SCREEN* self = (WIDGET_MENU_SCREEN*)_self;
 
-	int widget_y {y + RES_SCALE(8)};
+	int widget_y {y + ResScale(8)};
 	for (int widget_index {0}; widget_index < self->num_children; widget_index++)
 	{
 		WIDGET* c = self->child[widget_index];
 		(*c->draw)(c, x, widget_y);
-		widget_y += (*c->height)(c) + RES_SCALE(8);
+		widget_y += (*c->height)(c) + ResScale(8);
 	}
 }
 
-static void
-MCD_DrawButton(WIDGET* _self, int x, int y)
+static void MCD_DrawButton(WIDGET* _self, int x, int y)
 {
 	const WIDGET_BUTTON* self = (WIDGET_BUTTON*)_self;
 	Color oldtext;
@@ -99,10 +97,10 @@ MCD_DrawButton(WIDGET* _self, int x, int y)
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
 
-	selected = MENU_HIGHLIGHT_COLOR;
-	inactive = MENU_TEXT_COLOR;
+	selected = MenuHighlightColor;
+	inactive = MenuTextColor;
 
-	t.baseline.x = RES_SCALE(160);
+	t.baseline.x = ResScale(160);
 	t.baseline.y = y;
 	t.align = ALIGN_CENTER;
 	t.CharCount = ~0;
@@ -122,8 +120,7 @@ MCD_DrawButton(WIDGET* _self, int x, int y)
 	(void)x;
 }
 
-static void
-MCD_DrawSlider(WIDGET* _self, int x, int y)
+static void MCD_DrawSlider(WIDGET* _self, int x, int y)
 {
 	WIDGET_SLIDER* self = (WIDGET_SLIDER*)_self;
 	Color oldtext;
@@ -133,10 +130,10 @@ MCD_DrawSlider(WIDGET* _self, int x, int y)
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
 	GFXRECT r;
-	const int tick = RES_SCALE(RES_DESCALE(MCD_WIDTH) / 8);
+	const int tick = ResScale(ResDescale(McdWidth()) / 8);
 
-	default_color = MENU_TEXT_COLOR;
-	selected = MENU_HIGHLIGHT_COLOR;
+	default_color = MenuTextColor;
+	selected = MenuHighlightColor;
 
 	t.baseline.x = x;
 	t.baseline.y = y;
@@ -154,16 +151,16 @@ MCD_DrawSlider(WIDGET* _self, int x, int y)
 	font_DrawText(&t);
 
 	r.corner.x = t.baseline.x + 3 * tick;
-	r.corner.y = t.baseline.y - RES_SCALE(4);
-	r.extent.height = RES_SCALE(2);
+	r.corner.y = t.baseline.y - ResScale(4);
+	r.extent.height = ResScale(2);
 	r.extent.width = 3 * tick;
 	DrawFilledRectangle(&r);
 
-	r.extent.width = RES_SCALE(3);
-	r.extent.height = RES_SCALE(8);
-	r.corner.y = t.baseline.y - RES_SCALE(7);
+	r.extent.width = ResScale(3);
+	r.extent.height = ResScale(8);
+	r.corner.y = t.baseline.y - ResScale(7);
 	r.corner.x = t.baseline.x + 3 * tick + (3 * tick * (self->value - self->min) / (self->max - self->min))
-			   - RES_SCALE(1);
+			   - ResScale(1);
 	DrawFilledRectangle(&r);
 
 	(*self->draw_value)(self, t.baseline.x + 7 * tick, t.baseline.y);
@@ -173,8 +170,7 @@ MCD_DrawSlider(WIDGET* _self, int x, int y)
 	SetContextForeGroundColor(oldtext);
 }
 
-static void
-MCD_DrawTextEntry(WIDGET* _self, int x, int y)
+static void MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 {
 	WIDGET_TEXTENTRY* self = (WIDGET_TEXTENTRY*)_self;
 	Color oldtext;
@@ -185,9 +181,9 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 	FRAME oldFontEffect = SetContextFontEffect(nullptr);
 	TEXT t;
 
-	default_color = MENU_TEXT_COLOR;
-	selected = MENU_HIGHLIGHT_COLOR;
-	inactive = MENU_TEXT_COLOR;
+	default_color = MenuTextColor;
+	selected = MenuHighlightColor;
+	inactive = MenuTextColor;
 
 	BatchGraphics();
 
@@ -207,7 +203,7 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 	font_DrawText(&t);
 
 	/* Force string termination */
-	self->value[WIDGET_TEXTENTRY_WIDTH - 1] = 0;
+	self->value[WidgetTextentryWidth - 1] = 0;
 
 	t.baseline.y = y;
 	t.CharCount = (uint16_t)uqm::utf8StringCount(self->value);
@@ -215,7 +211,7 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 
 	if (!(self->state & WTE_EDITING))
 	{ // normal or selected state
-		t.baseline.x = RES_SCALE(160);
+		t.baseline.x = ResScale(160);
 		t.align = ALIGN_CENTER;
 
 		if (widget_focus == _self)
@@ -232,23 +228,23 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 	{ // editing state
 		uint16_t i {};
 		GFXRECT text_r;
-		uint8_t char_deltas[WIDGET_TEXTENTRY_WIDTH];
+		uint8_t char_deltas[WidgetTextentryWidth];
 		GFXRECT r;
 		int16_t leading {};
 
-		t.baseline.x = x + (RES_SCALE(90));
+		t.baseline.x = x + (ResScale(90));
 		t.align = ALIGN_LEFT;
 
 		// calc background box dimensions
 		// XXX: this may need some tuning, especially if a
 		//   different font is used. The font 'leading' values
 		//   are not what they should be.
-#define BOX_VERT_OFFSET RES_SCALE(2)
+		const auto BoxVertOffset {ResScale(2)};
 		GetContextFontLeading(&leading);
-		r.corner.x = t.baseline.x - RES_SCALE(1);
-		r.corner.y = t.baseline.y - leading + BOX_VERT_OFFSET;
-		r.extent.width = MCD_WIDTH - r.corner.x - RES_SCALE(10);
-		r.extent.height = leading - RES_SCALE(1);
+		r.corner.x = t.baseline.x - ResScale(1);
+		r.corner.y = t.baseline.y - leading + BoxVertOffset;
+		r.extent.width = McdWidth() - r.corner.x - ResScale(10);
+		r.extent.height = leading - ResScale(1);
 
 		TextRect(&t, &text_r, char_deltas);
 #if 0
@@ -273,7 +269,7 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 		}
 		if (self->cursor_pos < t.CharCount) /* cursor mid-line */
 		{
-			r.corner.x -= RES_SCALE(1);
+			r.corner.x -= ResScale(1);
 		}
 
 		if (self->state & WTE_BLOCKCUR)
@@ -284,34 +280,34 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 
 			if (self->cursor_pos == t.CharCount)
 			{ // cursor at end-line -- use insertion point
-				r.extent.width = RES_SCALE(1);
-				r.corner.x -= IF_HD(3);
+				r.extent.width = ResScale(1);
+				r.corner.x -= IfHd(3);
 			}
 			else if (self->cursor_pos + 1 == t.CharCount)
 			{ // extra pixel for last char margin
-				r.extent.width = (int16_t)*pchar_deltas - IF_HD(3);
-				r.corner.x += RES_SCALE(1);
+				r.extent.width = (int16_t)*pchar_deltas - IfHd(3);
+				r.corner.x += ResScale(1);
 			}
 			else
 			{ // normal mid-line char
 				r.extent.width = (int16_t)*pchar_deltas;
-				r.corner.x += RES_SCALE(1);
+				r.corner.x += ResScale(1);
 			}
 		}
 		else
 		{ // Insertion point cursor
-			r.corner.y = r.corner.y + RES_SCALE(1);
-			r.extent.height = r.extent.height - RES_SCALE(2);
-			r.extent.width = RES_SCALE(1);
+			r.corner.y = r.corner.y + ResScale(1);
+			r.extent.height = r.extent.height - ResScale(2);
+			r.extent.width = ResScale(1);
 
 			if (self->cursor_pos == t.CharCount)
 			{
-				text_r.corner.x -= IF_HD(3);
+				text_r.corner.x -= IfHd(3);
 			}
 		}
 		// position cursor within input field rect
-		r.corner.x += RES_SCALE(1);
-		SetContextForeGroundColor(MENU_CURSOR_COLOR);
+		r.corner.x += ResScale(1);
+		SetContextForeGroundColor(MenuCursorColor);
 		DrawFilledRectangle(&r);
 
 		SetContextForeGroundColor(inactive);
@@ -327,8 +323,7 @@ MCD_DrawTextEntry(WIDGET* _self, int x, int y)
 /* Text entry stuff, mostly C&Ped from setupmenu.c.  Could use some
  * refactoring, as redraw_menu () is the only real change. */
 
-static bool
-OnTextEntryChange(TEXTENTRY_STATE* pTES)
+static bool OnTextEntryChange(TEXTENTRY_STATE* pTES)
 {
 	WIDGET_TEXTENTRY* widget = (WIDGET_TEXTENTRY*)pTES->CbParam;
 
@@ -349,20 +344,18 @@ OnTextEntryChange(TEXTENTRY_STATE* pTES)
 	return true; // allow change
 }
 
-static bool
-OnTextEntryFrame(TEXTENTRY_STATE* pTES)
+static bool OnTextEntryFrame(TEXTENTRY_STATE* pTES)
 {
 	DrawConnectDialog();
 
 	SleepThreadUntil(pTES->NextTime);
-	pTES->NextTime = GetTimeCounter() + MENU_FRAME_RATE;
+	pTES->NextTime = GetTimeCounter() + MenuFrameRate;
 
 	(void)pTES;	 // satisfying compiler
 	return true; // continue
 }
 
-static int
-OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
+static int OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 { // Going to edit the text
 	TEXTENTRY_STATE tes;
 	char revert_buf[256];
@@ -377,7 +370,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 
 	// text entry setup
 	tes.Initialized = false;
-	tes.NextTime = GetTimeCounter() + MENU_FRAME_RATE;
+	tes.NextTime = GetTimeCounter() + MenuFrameRate;
 	tes.BaseStr = widget->value;
 	tes.MaxSize = widget->maxlen;
 	tes.CursorPos = widget->cursor_pos;
@@ -385,7 +378,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 	tes.ChangeCallback = OnTextEntryChange;
 	tes.FrameCallback = OnTextEntryFrame;
 
-	// SetMenuSounds (0, MENU_SOUND_SELECT);
+	// SetMenuSounds (0, MenuSoundSelect);
 	if (!DoTextEntry(&tes))
 	{ // editing failed (canceled) -- revert the changes
 		uqm::utf8StringCopy(widget->value, widget->maxlen, revert_buf);
@@ -406,8 +399,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 
 /* Button response routines */
 
-static int
-do_connect(WIDGET* self, int event)
+static int do_connect(WIDGET* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -425,8 +417,7 @@ do_connect(WIDGET* self, int event)
 	return false;
 }
 
-static int
-do_listen(WIDGET* self, int event)
+static int do_listen(WIDGET* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -443,8 +434,7 @@ do_listen(WIDGET* self, int event)
 	return false;
 }
 
-static int
-do_cancel(WIDGET* self, int event)
+static int do_cancel(WIDGET* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -456,8 +446,7 @@ do_cancel(WIDGET* self, int event)
 }
 
 
-static void
-CreateWidgets(void)
+static void CreateWidgets(void)
 {
 	int i {};
 
@@ -472,11 +461,11 @@ CreateWidgets(void)
 		buttons[i].height = Widget_HeightOneLine;
 		buttons[i].width = Widget_WidthFullScreen;
 	}
-	buttons[0].name = GAME_STRING(NETMELEE_STRING_BASE + 19);
+	buttons[0].name = GameString(NETMELEE_STRING_BASE + 19);
 	// "Connect to remote host"
-	buttons[1].name = GAME_STRING(NETMELEE_STRING_BASE + 20);
+	buttons[1].name = GameString(NETMELEE_STRING_BASE + 20);
 	// "Wait for incoming connection"
-	buttons[2].name = GAME_STRING(NETMELEE_STRING_BASE + 21);
+	buttons[2].name = GameString(NETMELEE_STRING_BASE + 21);
 	// "Cancel"
 
 	buttons[0].handleEvent = do_connect;
@@ -507,7 +496,7 @@ CreateWidgets(void)
 	slider.max = netplayOptions.getMaxFrameInputDelay();
 	slider.step = 1;
 	slider.value = netplayOptions.getFrameInputDelay();
-	slider.category = GAME_STRING(NETMELEE_STRING_BASE + 24);
+	slider.category = GameString(NETMELEE_STRING_BASE + 24);
 	// "Net Delay"
 
 	for (i = 0; i < 2; i++)
@@ -520,14 +509,14 @@ CreateWidgets(void)
 		texts[i].height = Widget_HeightOneLine;
 		texts[i].width = Widget_WidthFullScreen;
 		texts[i].handleEventSelect = OnTextEntryEvent;
-		texts[i].maxlen = WIDGET_TEXTENTRY_WIDTH - RES_SCALE(1);
+		texts[i].maxlen = WidgetTextentryWidth - ResScale(1);
 		texts[i].state = WTE_NORMAL;
 		texts[i].cursor_pos = 0;
 	}
 
-	texts[0].category = GAME_STRING(NETMELEE_STRING_BASE + 22);
+	texts[0].category = GameString(NETMELEE_STRING_BASE + 22);
 	// "Host"
-	texts[1].category = GAME_STRING(NETMELEE_STRING_BASE + 23);
+	texts[1].category = GameString(NETMELEE_STRING_BASE + 23);
 	// "Port"
 
 	/* We sometimes assign to these internals; cannot strncpy over self! */
@@ -543,26 +532,24 @@ CreateWidgets(void)
 	menu.receiveFocus((WIDGET*)&menu, WIDGET_EVENT_DOWN);
 }
 
-static void
-DrawConnectDialog(void)
+static void DrawConnectDialog(void)
 {
 	GFXRECT r;
 
-	r.extent.width = MCD_WIDTH;
-	r.extent.height = MCD_HEIGHT;
-	r.corner.x = (SCREEN_WIDTH - r.extent.width) >> 1;
-	r.corner.y = (SCREEN_HEIGHT - r.extent.height) >> 1;
+	r.extent.width = McdWidth();
+	r.extent.height = McdHeight();
+	r.corner.x = (CanvasWidth - r.extent.width) >> 1;
+	r.corner.y = (CanvasHeight - r.extent.height) >> 1;
 
 
-	DrawShadowedBox(&r, SHADOWBOX_BACKGROUND_COLOR,
-					SHADOWBOX_DARK_COLOR, SHADOWBOX_MEDIUM_COLOR);
+	DrawShadowedBox(&r, ShadowboxBackgroundColor,
+					ShadowboxDarkColor, ShadowboxMediumColor);
 
 	menu.draw((WIDGET*)&menu,
-			  r.corner.x + RES_SCALE(10), r.corner.y + RES_SCALE(10));
+			  r.corner.x + ResScale(10), r.corner.y + ResScale(10));
 }
 
-static bool
-DoMeleeConnectDialog(CONNECT_DIALOG_STATE* state)
+static bool DoMeleeConnectDialog(CONNECT_DIALOG_STATE* state)
 {
 	bool changed {};
 
@@ -619,7 +606,7 @@ DoMeleeConnectDialog(CONNECT_DIALOG_STATE* state)
 		DrawConnectDialog();
 	}
 
-	SleepThreadUntil(state->NextTime + MENU_FRAME_RATE);
+	SleepThreadUntil(state->NextTime + MenuFrameRate);
 	state->NextTime = GetTimeCounter();
 	return !((uqm::currentActivity() & CHECK_ABORT) || done);
 }
@@ -628,7 +615,7 @@ bool MeleeConnectDialog(int side)
 {
 	CONNECT_DIALOG_STATE state;
 
-	PlayerFont = LoadFont(PLAYER_FONT);
+	PlayerFont = LoadFont(PlayerFontRes);
 
 	state.Initialized = false;
 	state.which_side = side;

@@ -9,7 +9,7 @@
 namespace
 {
 
-// Reads "<delimiter>n<delimiter>" at the start of 'str' and adds RES_SCALE(n) to 'offset'.
+// Reads "<delimiter>n<delimiter>" at the start of 'str' and adds ResScale(n) to 'offset'.
 // Returns the text after the marker, or 'str' if it has no valid marker.
 const char* skipMarker(const char* str, char delimiter, int16_t* offset)
 {
@@ -36,7 +36,7 @@ const char* skipMarker(const char* str, char delimiter, int16_t* offset)
 
 	if (value != 0)
 	{
-		*offset += RES_SCALE(value);
+		*offset += ResScale(value);
 	}
 	return str + end + 1;
 }

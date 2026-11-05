@@ -40,8 +40,7 @@ static bool block = false;
 //   of overhead to convert UniChar back to UTF8 string. This overhead
 //   will probably be offset by removal of looped string-compare overhead ;)
 
-static int
-ReadOneChar(joy_char_t* ch, const char* str)
+static int ReadOneChar(joy_char_t* ch, const char* str)
 {
 	const char* next = uqm::skipUTF8Chars(str, 1);
 	const int len = next - str;
@@ -52,8 +51,7 @@ ReadOneChar(joy_char_t* ch, const char* str)
 	return len;
 }
 
-static uqstl::vector<joy_char_t>
-LoadJoystickAlpha(const char* str, int* count)
+static uqstl::vector<joy_char_t> LoadJoystickAlpha(const char* str, int* count)
 {
 	int c {};
 	int i {};
@@ -78,9 +76,8 @@ LoadJoystickAlpha(const char* str, int* count)
 	return chars;
 }
 
-static int
-JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
-			  int setsize)
+static int JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
+						 int setsize)
 {
 	int i {};
 
@@ -90,15 +87,13 @@ JoyCharFindIn(const joy_char_t* ch, const joy_char_t* set,
 	return (i < setsize) ? i : -1;
 }
 
-static int
-JoyCharIsLower(const joy_char_t* ch, TEXTENTRY_STATE* pTES)
+static int JoyCharIsLower(const joy_char_t* ch, TEXTENTRY_STATE* pTES)
 {
 	return 0 <= JoyCharFindIn(ch, pTES->JoyLower.data(), pTES->JoyRegLength);
 }
 
-static void
-JoyCharSwitchReg(joy_char_t* ch, const joy_char_t* from,
-				 const joy_char_t* to, int regsize)
+static void JoyCharSwitchReg(joy_char_t* ch, const joy_char_t* from,
+							 const joy_char_t* to, int regsize)
 {
 	const int i = JoyCharFindIn(ch, from, regsize);
 	if (i >= 0)
@@ -107,18 +102,16 @@ JoyCharSwitchReg(joy_char_t* ch, const joy_char_t* from,
 	}
 }
 
-static void
-JoyCharToUpper(joy_char_t* outch, const joy_char_t* ch,
-			   TEXTENTRY_STATE* pTES)
+static void JoyCharToUpper(joy_char_t* outch, const joy_char_t* ch,
+						   TEXTENTRY_STATE* pTES)
 {
 	*outch = *ch;
 	JoyCharSwitchReg(outch, pTES->JoyLower.data(), pTES->JoyUpper.data(),
 					 pTES->JoyRegLength);
 }
 
-static void
-JoyCharToLower(joy_char_t* outch, const joy_char_t* ch,
-			   TEXTENTRY_STATE* pTES)
+static void JoyCharToLower(joy_char_t* outch, const joy_char_t* ch,
+						   TEXTENTRY_STATE* pTES)
 {
 	*outch = *ch;
 	JoyCharSwitchReg(outch, pTES->JoyUpper.data(), pTES->JoyLower.data(),
@@ -143,19 +136,19 @@ void FlushCursorRect(void)
 	cursor.extent.width = 0;
 }
 
-static void
-FlashCursor(void)
+static constexpr auto BlinkRate {(c_gameSecond / 32)};
+
+static void FlashCursor(void)
 {
 	static TimeCount NextTime {};
 	static uint32_t cycle_index = 0;
 
-	const static Color cycle_tab[] = CURSOR_COLOR_CYCLE_TABLE;
+	const auto& cycle_tab {CursorColorCycleTable};
 	const size_t cycleCount = std::size(cycle_tab);
-#define BLINK_RATE (c_gameSecond / 32)
 
 	if (GetTimeCounter() >= NextTime)
 	{
-		NextTime = GetTimeCounter() + BLINK_RATE;
+		NextTime = GetTimeCounter() + BlinkRate;
 
 		GFXCONTEXT OldContext {SetContext(curContext)};
 
@@ -163,10 +156,10 @@ FlashCursor(void)
 		{
 			GFXRECT r;
 
-			r.corner.x = SIS_ORG_X + RES_SCALE(1);
-			r.corner.y = SIS_ORG_Y - SIS_MESSAGE_HEIGHT;
-			r.extent.width = SIS_MESSAGE_WIDTH;
-			r.extent.height = SIS_MESSAGE_HEIGHT - RES_SCALE(1);
+			r.corner.x = SisOrgX() + ResScale(1);
+			r.corner.y = SisOrgY() - SisMessageHeight();
+			r.extent.width = SisMessageWidth();
+			r.extent.height = SisMessageHeight() - ResScale(1);
 			SetContextFGFrame(Screen);
 			SetContextClipRect(&r);
 		}
@@ -214,7 +207,7 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 
 		// load joystick alphabet
 		{
-			const uqm::StringTablePtr joyAlpha {uqm::loadStringTable(JOYSTICK_ALPHA_STRTAB)};
+			const uqm::StringTablePtr joyAlpha {uqm::loadStringTable(JoystickAlphaStrtabRes)};
 			pTES->JoyAlpha = LoadJoystickAlpha(joyAlpha->text(0), &pTES->JoyAlphaLength);
 			pTES->JoyUpper = LoadJoystickAlpha(joyAlpha->text(1), &pTES->JoyRegLength);
 			pTES->JoyLower = LoadJoystickAlpha(joyAlpha->text(2), &lwlen);
@@ -253,9 +246,9 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 
 	// process the pending character buffer
 	uqm::UniChar ch {GetNextCharacter()};
-	if (TextEntry3DO && ch == UNICHAR_SPACE)
+	if (TextEntry3DO && ch == UnicharSpace)
 	{
-		ch = UNICHAR_TAB;
+		ch = UnicharTab;
 	}
 	if (!ch && PulsedInputState.menu[KEY_MENU_ANY])
 	{ // keyboard repeat, but only when buffer empty
@@ -284,9 +277,9 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 			}
 		}
 		ch = GetNextCharacter();
-		if (TextEntry3DO && ch == UNICHAR_SPACE)
+		if (TextEntry3DO && ch == UnicharSpace)
 		{
-			ch = UNICHAR_TAB;
+			ch = UnicharTab;
 		}
 	}
 

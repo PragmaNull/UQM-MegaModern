@@ -24,47 +24,47 @@
 #include "libs/mathlib.h"
 
 // Core characteristics
-#define SYREEN_MAX_CREW_SIZE MAX_CREW_SIZE
-#define MAX_CREW 12
-#define MAX_ENERGY 16
-#define ENERGY_REGENERATION 1
-#define ENERGY_WAIT 6
-#define MAX_THRUST /* DISPLAY_TO_WORLD (8) */ 36
-#define THRUST_INCREMENT /* DISPLAY_TO_WORLD (2) */ 9
-#define THRUST_WAIT 1
-#define TURN_WAIT 1
-#define SHIP_MASS 2
+
+static constexpr auto MaxCrew {12};
+static constexpr auto MaxEnergy {16};
+static constexpr auto EnergyRegeneration {1};
+static constexpr auto EnergyWait {6};
+static constexpr auto MaxThrust {36};
+static constexpr auto ThrustIncrement {9};
+static constexpr auto ThrustWait {1};
+static constexpr auto TurnWait {1};
+static constexpr auto ShipMass {2};
 
 // Particle Beam Stiletto
-#define WEAPON_ENERGY_COST 1
-#define WEAPON_WAIT 8
-#define SYREEN_OFFSET RES_SCALE(30)
-#define MISSILE_SPEED DISPLAY_TO_WORLD(30)
-#define MISSILE_LIFE 10
-#define MISSILE_HITS 1
-#define MISSILE_DAMAGE 2
-#define MISSILE_OFFSET RES_SCALE(3)
+static constexpr auto WeaponEnergyCost {1};
+static constexpr auto WeaponWait {8};
+static auto SyreenOffset() { return ResScale(30); }
+static constexpr auto MissileSpeed {DisplayToWorld(30)};
+static constexpr auto MissileLife {10};
+static constexpr auto MissileHits {1};
+static constexpr auto MissileDamage {2};
+static auto MissileOffset() { return ResScale(3); }
 
 // Syreen song
-#define SPECIAL_ENERGY_COST 5
-#define SPECIAL_WAIT 20
-#define ABANDONER_RANGE RES_SCALE(208) /* originally SPACE_HEIGHT */
-#define MAX_ABANDONERS 8
+static constexpr auto SpecialEnergyCost {5};
+static constexpr auto SpecialWait {20};
+static auto AbandonerRange() { return ResScale(208); } /* originally SpaceHeight() */
+static constexpr auto MaxAbandoners {8};
 
-// HD
-#define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
+// HdResolutionFactor
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
 static RACE_DESC syreen_desc =
 	{
 		{/* SHIP_INFO */
 		 "penetrator",
-		 FIRES_FORE,
+		 FiresFore,
 		 13, /* Super Melee cost */
-		 MAX_CREW, SYREEN_MAX_CREW_SIZE,
-		 MAX_ENERGY, MAX_ENERGY,
-		 SYREEN_RACE_STRINGS,
-		 SYREEN_ICON_MASK_PMAP_ANIM,
-		 SYREEN_MICON_MASK_PMAP_ANIM,
+		 MaxCrew, MaxCrewSize,
+		 MaxEnergy, MaxEnergy,
+		 SyreenRaceStrings,
+		 SyreenIconMaskPmapAnim,
+		 SyreenMiconMaskPmapAnim,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -76,38 +76,38 @@ static RACE_DESC syreen_desc =
 			},
 		 },
 		{
-			MAX_THRUST,
-			THRUST_INCREMENT,
-			ENERGY_REGENERATION,
-			WEAPON_ENERGY_COST,
-			SPECIAL_ENERGY_COST,
-			ENERGY_WAIT,
-			TURN_WAIT,
-			THRUST_WAIT,
-			WEAPON_WAIT,
-			SPECIAL_WAIT,
-			SHIP_MASS,
+			MaxThrust,
+			ThrustIncrement,
+			EnergyRegeneration,
+			WeaponEnergyCost,
+			SpecialEnergyCost,
+			EnergyWait,
+			TurnWait,
+			ThrustWait,
+			WeaponWait,
+			SpecialWait,
+			ShipMass,
 		 },
 		{{
-			 SYREEN_BIG_MASK_PMAP_ANIM,
-			 SYREEN_MED_MASK_PMAP_ANIM,
-			 SYREEN_SML_MASK_PMAP_ANIM,
+			 SyreenBigMaskPmapAnim,
+			 SyreenMedMaskPmapAnim,
+			 SyreenSmlMaskPmapAnim,
 		 },
 		 {
-			 DAGGER_BIG_MASK_PMAP_ANIM,
-			 DAGGER_MED_MASK_PMAP_ANIM,
-			 DAGGER_SML_MASK_PMAP_ANIM,
+			 DaggerBigMaskPmapAnim,
+			 DaggerMedMaskPmapAnim,
+			 DaggerSmlMaskPmapAnim,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
-		 {SYREEN_CAPTAIN_MASK_PMAP_ANIM,
+		 {SyreenCaptainMaskPmapAnim,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 SYREEN_VICTORY_SONG,
-		 SYREEN_SHIP_SOUNDS,
+		 SyreenVictorySong,
+		 SyreenShipSounds,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},
@@ -115,7 +115,7 @@ static RACE_DESC syreen_desc =
 		 nullptr},
 		{
 			0,
-			(MISSILE_SPEED * MISSILE_LIFE * 2 / 3),
+			(MissileSpeed * MissileLife * 2 / 3),
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -126,8 +126,7 @@ static RACE_DESC syreen_desc =
 		0, /* CodeRef */
 };
 
-static uint16_t
-initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
+static uint16_t initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
 {
 	STARSHIP* StarShipPtr {};
 	MISSILE_BLOCK MissileBlock;
@@ -138,23 +137,22 @@ initialize_dagger(ELEMENT* ShipPtr, HELEMENT DaggerArray[])
 	MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 	MissileBlock.face = MissileBlock.index = StarShipPtr->ShipFacing;
 	MissileBlock.sender = ShipPtr->playerNr;
-	MissileBlock.flags = IGNORE_SIMILAR;
-	MissileBlock.pixoffs = SYREEN_OFFSET;
-	MissileBlock.speed = MISSILE_SPEED_HD;
-	MissileBlock.hit_points = MISSILE_HITS;
-	MissileBlock.damage = MISSILE_DAMAGE;
-	MissileBlock.life = MISSILE_LIFE;
+	MissileBlock.flags = IgnoreSimilar;
+	MissileBlock.pixoffs = SyreenOffset();
+	MissileBlock.speed = MissileSpeedHd();
+	MissileBlock.hit_points = MissileHits;
+	MissileBlock.damage = MissileDamage;
+	MissileBlock.life = MissileLife;
 	MissileBlock.preprocess_func = nullptr;
-	MissileBlock.blast_offs = MISSILE_OFFSET;
+	MissileBlock.blast_offs = MissileOffset();
 	DaggerArray[0] = initialize_missile(&MissileBlock);
 
 	return (1);
 }
 
-static void
-spawn_crew(ELEMENT* ElementPtr)
+static void spawn_crew(ELEMENT* ElementPtr)
 {
-	if (ElementPtr->state_flags & PLAYER_SHIP)
+	if (ElementPtr->state_flags & PlayerShip)
 	{
 		HELEMENT hCrew {AllocElement()};
 		if (hCrew != 0)
@@ -164,7 +162,7 @@ spawn_crew(ELEMENT* ElementPtr)
 			LockElement(hCrew, &CrewPtr);
 			CrewPtr->next.location = ElementPtr->next.location;
 			CrewPtr->playerNr = ElementPtr->playerNr;
-			CrewPtr->state_flags = APPEARING | NONSOLID | FINITE_LIFE;
+			CrewPtr->state_flags = Appearing | Nonsolid | FiniteLife;
 			CrewPtr->life_span = 0;
 			CrewPtr->death_func = spawn_crew;
 			CrewPtr->pParent = ElementPtr->pParent;
@@ -187,7 +185,7 @@ spawn_crew(ELEMENT* ElementPtr)
 			LockElement(hElement, &ObjPtr);
 			hNextElement = GetSuccElement(ObjPtr);
 
-			if ((ObjPtr->state_flags & PLAYER_SHIP)
+			if ((ObjPtr->state_flags & PlayerShip)
 				&& !elementsOfSamePlayer(ObjPtr, ElementPtr)
 				&& ObjPtr->crew_level > 1)
 			{
@@ -204,18 +202,18 @@ spawn_crew(ELEMENT* ElementPtr)
 					dy = -dy;
 				}
 
-				dx = WORLD_TO_DISPLAY(dx);
-				dy = WORLD_TO_DISPLAY(dy);
-				if (dx <= ABANDONER_RANGE && dy <= ABANDONER_RANGE
+				dx = WorldToDisplay(dx);
+				dy = WorldToDisplay(dy);
+				if (dx <= AbandonerRange() && dy <= AbandonerRange()
 					&& (d_squared = (uint32_t)((uint16_t)dx * (uint16_t)dx)
 								  + (uint32_t)((uint16_t)dy * (uint16_t)dy))
-						   <= (uint32_t)((uint16_t)ABANDONER_RANGE * (uint16_t)ABANDONER_RANGE))
+						   <= (uint32_t)((uint16_t)AbandonerRange() * (uint16_t)AbandonerRange()))
 				{
 					uint16_t crew_loss {};
 
 					if (!antiCheat(ElementPtr, true, uqm::GodModeFlags::NoDamage))
 					{
-						crew_loss = ((MAX_ABANDONERS * (ABANDONER_RANGE - square_root(d_squared))) / ABANDONER_RANGE) + 1;
+						crew_loss = ((MaxAbandoners * (AbandonerRange() - square_root(d_squared))) / AbandonerRange()) + 1;
 					}
 					else
 					{
@@ -236,9 +234,8 @@ spawn_crew(ELEMENT* ElementPtr)
 	}
 }
 
-static void
-syreen_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
-					uint16_t ConcernCounter)
+static void syreen_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
+								uint16_t ConcernCounter)
 {
 	ship_intelligence(ShipPtr,
 					  ObjectsOfConcern, ConcernCounter);
@@ -251,29 +248,28 @@ syreen_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 		GetElementStarShip(ShipPtr, &StarShipPtr);
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
-		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & CREW_IMMUNE)
+		if (!(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & CrewImmune)
 			&& StarShipPtr->special_counter == 0
 			&& lpEvalDesc->ObjectPtr->crew_level > 1
 			&& lpEvalDesc->which_turn <= 14)
 		{
-			StarShipPtr->ship_input_state |= SPECIAL;
+			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
 		else
 		{
-			StarShipPtr->ship_input_state &= ~SPECIAL;
+			StarShipPtr->ship_input_state &= ~SpecialFlag;
 		}
 	}
 }
 
-static void
-syreen_postprocess(ELEMENT* ElementPtr)
+static void syreen_postprocess(ELEMENT* ElementPtr)
 {
 	STARSHIP* StarShipPtr {};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	if ((StarShipPtr->cur_status_flags & SPECIAL)
+	if ((StarShipPtr->cur_status_flags & SpecialFlag)
 		&& StarShipPtr->special_counter == 0
-		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
+		&& DeltaEnergy(ElementPtr, -SpecialEnergyCost))
 	{
 		ProcessSound(GetSound(
 						 /* SYREEN_SONG */
@@ -286,21 +282,20 @@ syreen_postprocess(ELEMENT* ElementPtr)
 	}
 }
 
-RACE_DESC*
-init_syreen(void)
+RACE_DESC* init_syreen(void)
 {
-	if (IS_HD)
+	if (IsHd())
 	{
-		syreen_desc.characteristics.max_thrust = RES_SCALE(MAX_THRUST);
-		syreen_desc.characteristics.thrust_increment = RES_SCALE(THRUST_INCREMENT);
-		syreen_desc.cyborg_control.WeaponRange = (MISSILE_SPEED_HD * MISSILE_LIFE * 2 / 3);
+		syreen_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		syreen_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
+		syreen_desc.cyborg_control.WeaponRange = (MissileSpeedHd() * MissileLife * 2 / 3);
 	}
 	else
 	{
-		syreen_desc.characteristics.max_thrust = MAX_THRUST;
-		syreen_desc.characteristics.thrust_increment = THRUST_INCREMENT;
+		syreen_desc.characteristics.max_thrust = MaxThrust;
+		syreen_desc.characteristics.thrust_increment = ThrustIncrement;
 		syreen_desc.cyborg_control.WeaponRange =
-			(MISSILE_SPEED * MISSILE_LIFE * 2 / 3);
+			(MissileSpeed * MissileLife * 2 / 3);
 	}
 
 	syreen_desc.postprocess_func = syreen_postprocess;

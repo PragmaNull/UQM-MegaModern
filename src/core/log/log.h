@@ -18,7 +18,7 @@ namespace log = ::spdlog;
 #define UQM_LOG_WARN(...) SPDLOG_WARN(__VA_ARGS__)
 #define UQM_LOG_ERROR(...) SPDLOG_ERROR(__VA_ARGS__)
 #define UQM_LOG_CRITICAL(...) SPDLOG_CRITICAL(__VA_ARGS__)
- 
+
 
 namespace error
 {

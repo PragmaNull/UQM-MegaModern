@@ -37,8 +37,7 @@ void Alarm_uninit(void)
 	s_alarms.clear();
 }
 
-static Alarm*
-Alarm_add(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg)
+static Alarm* Alarm_add(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg)
 {
 	auto alarm {uqstl::make_unique<Alarm>(Alarm {time, callback, arg})};
 	Alarm* result {alarm.get()};
@@ -46,14 +45,12 @@ Alarm_add(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg)
 	return result;
 }
 
-Alarm*
-Alarm_addAbsolute(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg)
+Alarm* Alarm_addAbsolute(AlarmTime time, AlarmCallback callback, AlarmCallbackArg arg)
 {
 	return Alarm_add(time, callback, arg);
 }
 
-Alarm*
-Alarm_addRelative(AlarmTime delay, AlarmCallback callback, AlarmCallbackArg arg)
+Alarm* Alarm_addRelative(AlarmTime delay, AlarmCallback callback, AlarmCallbackArg arg)
 {
 	return Alarm_add(GetTimeMs() + delay, callback, arg);
 }
@@ -87,8 +84,7 @@ bool Alarm_processOne(void)
 	return true;
 }
 
-AlarmTime
-Alarm_nextTime(void)
+AlarmTime Alarm_nextTime(void)
 {
 	return s_alarms.empty() ? AlarmTime::max() : s_alarms.begin()->first;
 }

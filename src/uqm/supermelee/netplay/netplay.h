@@ -22,9 +22,9 @@
 #define UQM_SUPERMELEE_NETPLAY_NETPLAY_H_
 
 // NETPLAY can either be unset (in which case we will never get here)
-// NETPLAY_FULL, or NETPLAY_IPV4 (disables IPv6)
-#define NETPLAY_IPV4 1
-#define NETPLAY_FULL 2
+// NetplayFull, or NetplayIpv4 (disables IPv6)
+inline constexpr auto NetplayIpv4 {1};
+
 
 #include "core/stl/expected.h"
 #include "core/stl/system_error.h"
@@ -32,12 +32,12 @@
 // The result of a netplay operation.
 using NetResult = uqstl::expected<void, uqstl::error_code>;
 
-#define NETPLAY_PROTOCOL_VERSION_MAJOR 0
-#define NETPLAY_PROTOCOL_VERSION_MINOR 4
+inline constexpr auto NetplayProtocolVersionMajor {0};
+inline constexpr auto NetplayProtocolVersionMinor {4};
 
-#define NETPLAY_MIN_UQM_VERSION_MAJOR UQM_MAJOR_VERSION
-#define NETPLAY_MIN_UQM_VERSION_MINOR UQM_MINOR_VERSION
-#define NETPLAY_MIN_UQM_VERSION_PATCH UQM_PATCH_VERSION
+inline constexpr auto NetplayMinUqmVersionMajor {UqmMajorVersion};
+inline constexpr auto NetplayMinUqmVersionMinor {UqmMinorVersion};
+inline constexpr auto NetplayMinUqmVersionPatch {UqmPatchVersion};
 
 #undef NETPLAY_DEBUG
 /* Extra debugging for netplay */
@@ -51,19 +51,19 @@ using NetResult = uqstl::expected<void, uqstl::error_code>;
 		  * connection are still in sync.
 		  * If not enabled, incoming checksum packets will be ignored.
 		  * TODO: make compilation of crc.c and checksum.c conditional. */
-#define NETPLAY_CHECKSUM_INTERVAL 1
+inline constexpr auto NetplayChecksumInterval {1};
 /* If NETPLAY_CHECKSUM is defined, this define determines
 		 * every how many frames a checksum packet is sent. */
 
-#define NETPLAY_READBUFSIZE 2048
-#define NETPLAY_CONNECTTIMEOUT 2000
+inline constexpr auto NetplayReadbufsize {2048};
+inline constexpr auto NetplayConnecttimeout {2000};
 /* Time to wait for a connect() to succeed. In ms. */
 //#define NETPLAY_LISTENTIMEOUT   30000
 //		/* Time to wait for a listen() to succeed. In ms. */
-#define NETPLAY_RETRYDELAY 2000
+inline constexpr auto NetplayRetrydelay {2000};
 /* Time to wait after all addresses of a host have been tried
 		 * before starting retrying them all. In ms. */
-#define NETPLAY_LISTEN_BACKLOG 2
+inline constexpr auto NetplayListenBacklog {2};
 /* Second argument to listen(). */
 
 

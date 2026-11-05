@@ -2,4 +2,4 @@
    should not be edited directly.  Modify the master resource list
    instead and regenerate. */
 
-#define HUMAN_CODE "ship.earthling.code"
+inline constexpr uqgsl::czstring HumanCode {"ship.earthling.code"};

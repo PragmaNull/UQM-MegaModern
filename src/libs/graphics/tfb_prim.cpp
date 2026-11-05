@@ -38,7 +38,7 @@ void TFB_Prim_Point(GFXPOINT* p, Color color, DrawMode mode, GFXPOINT ctxOrigin,
 	r.corner.y = p->y + ctxOrigin.y;
 	r.extent.width = r.extent.height = !scaled ? 1 : 3;
 
-	if (_CurFramePtr->Type == SCREEN_DRAWABLE)
+	if (_CurFramePtr->Type == ScreenDrawable)
 	{
 		TFB_DrawScreen_Rect(&r, color, mode, TFB_SCREEN_MAIN);
 	}
@@ -65,13 +65,13 @@ void TFB_Prim_Rect(GFXRECT* r, Color color, DrawMode mode, GFXPOINT ctxOrigin, b
 	arm.extent.width = scale;
 	TFB_Prim_FillRect(&arm, color, mode, ctxOrigin);
 	// rounding error correction here
-	arm.corner.x += ((r->extent.width * gscale + (GSCALE_IDENTITY >> 1))
-					 / GSCALE_IDENTITY)
+	arm.corner.x += ((r->extent.width * gscale + (GscaleIdentity >> 1))
+					 / GscaleIdentity)
 				  - scale;
 	TFB_Prim_FillRect(&arm, color, mode, ctxOrigin);
 	arm.corner.x = r->corner.x;
-	arm.corner.y += ((r->extent.height * gscale + (GSCALE_IDENTITY >> 1))
-					 / GSCALE_IDENTITY)
+	arm.corner.y += ((r->extent.height * gscale + (GscaleIdentity >> 1))
+					 / GscaleIdentity)
 				  - scale;
 	arm.extent.width = r->extent.width;
 	arm.extent.height = scale;
@@ -91,17 +91,17 @@ void TFB_Prim_FillRect(GFXRECT* r, Color color, DrawMode mode, GFXPOINT ctxOrigi
 	//   We scale the rect size just to be consistent with stamp prim,
 	//   which does same. The caller must scale the origin!
 	const int gscale {GetGraphicScale()};
-	if (gscale != GSCALE_IDENTITY)
+	if (gscale != GscaleIdentity)
 	{ // rounding error correction here
 		rect.extent.width = (rect.extent.width * gscale
-							 + (GSCALE_IDENTITY >> 1))
-						  / GSCALE_IDENTITY;
+							 + (GscaleIdentity >> 1))
+						  / GscaleIdentity;
 		rect.extent.height = (rect.extent.height * gscale
-							  + (GSCALE_IDENTITY >> 1))
-						   / GSCALE_IDENTITY;
+							  + (GscaleIdentity >> 1))
+						   / GscaleIdentity;
 	}
 
-	if (_CurFramePtr->Type == SCREEN_DRAWABLE)
+	if (_CurFramePtr->Type == ScreenDrawable)
 	{
 		TFB_DrawScreen_Rect(&rect, color, mode, TFB_SCREEN_MAIN);
 	}
@@ -120,7 +120,7 @@ void TFB_Prim_Line(LINE* line, Color color, DrawMode mode, GFXPOINT ctxOrigin,
 	const int x2 {line->second.x + ctxOrigin.x};
 	const int y2 {line->second.y + ctxOrigin.y};
 
-	if (_CurFramePtr->Type == SCREEN_DRAWABLE)
+	if (_CurFramePtr->Type == ScreenDrawable)
 	{
 		TFB_DrawScreen_Line(x1, y1, x2, y2, color, mode, TFB_SCREEN_MAIN, thickness);
 	}
@@ -170,14 +170,14 @@ void TFB_Prim_Stamp(STAMP* stmp, DrawMode mode, GFXPOINT ctxOrigin, bool unscale
 
 	if (unscaled)
 	{
-		scaleMode = GSCALE_IDENTITY;
+		scaleMode = GscaleIdentity;
 	}
 	else
 	{
 		scaleMode = GetGraphicScale();
 	}
 
-	if (_CurFramePtr->Type == SCREEN_DRAWABLE)
+	if (_CurFramePtr->Type == ScreenDrawable)
 	{
 		TFB_DrawScreen_Image(img, x, y, scaleMode,
 							 GetGraphicScaleMode(), cmap, mode, TFB_SCREEN_MAIN);
@@ -222,14 +222,14 @@ void TFB_Prim_StampFill(STAMP* stmp, Color color, DrawMode mode, GFXPOINT ctxOri
 
 	if (unscaled)
 	{
-		scaleMode = GSCALE_IDENTITY;
+		scaleMode = GscaleIdentity;
 	}
 	else
 	{
 		scaleMode = GetGraphicScale();
 	}
 
-	if (_CurFramePtr->Type == SCREEN_DRAWABLE)
+	if (_CurFramePtr->Type == ScreenDrawable)
 	{
 		TFB_DrawScreen_FilledImage(img, x, y, scaleMode,
 								   GetGraphicScaleMode(), color, mode, TFB_SCREEN_MAIN);
@@ -251,7 +251,7 @@ void TFB_Prim_FontChar(GFXPOINT charOrigin, TFB_Char* fontChar, TFB_Image* backi
 	x = charOrigin.x + ctxOrigin.x;
 	y = charOrigin.y + ctxOrigin.y;
 
-	if (_CurFramePtr->Type == SCREEN_DRAWABLE)
+	if (_CurFramePtr->Type == ScreenDrawable)
 	{
 		TFB_DrawScreen_FontChar(fontChar, backing, x, y, mode,
 								TFB_SCREEN_MAIN);

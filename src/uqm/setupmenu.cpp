@@ -124,12 +124,11 @@ static float maxGamma = 2.5f;
 // The gamma slider uses an exponential curve
 // We use y = e^(2.1972*(x-1)) curve to give us a nice spread of
 // gamma values 0.11 < g < 9.0 centered at g=1.0
-#define GAMMA_CURVE_B 2.1972f
+static constexpr auto GammaCurveB {2.1972f};
 static float minGammaX;
 static float maxGammaX;
 
-static WIDGET*
-find_menu(uqstl::string_view id)
+static WIDGET* find_menu(uqstl::string_view id)
 {
 	const uqm::MenuDef* const menu {menuDefinition->find(id)};
 	if (menu == nullptr)
@@ -139,8 +138,7 @@ find_menu(uqstl::string_view id)
 	return (WIDGET*)(&menus[static_cast<size_t>(menu - menuDefinition->menus.data())]);
 }
 
-static int
-quit_main_menu(WIDGET* self, int event)
+static int quit_main_menu(WIDGET* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -151,8 +149,7 @@ quit_main_menu(WIDGET* self, int event)
 	return false;
 }
 
-static int
-quit_sub_menu(WIDGET* self, int event)
+static int quit_sub_menu(WIDGET* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -165,8 +162,7 @@ quit_sub_menu(WIDGET* self, int event)
 	return false;
 }
 
-static int
-start_new_game(WIDGET* self, int event)
+static int start_new_game(WIDGET* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -178,8 +174,7 @@ start_new_game(WIDGET* self, int event)
 	return false;
 }
 
-static int
-cancel_new_game(WIDGET* self, int event)
+static int cancel_new_game(WIDGET* self, int event)
 {
 	if (event == WIDGET_EVENT_SELECT)
 	{
@@ -191,8 +186,7 @@ cancel_new_game(WIDGET* self, int event)
 	return false;
 }
 
-static int
-random_seed(WIDGET* self, int event)
+static int random_seed(WIDGET* self, int event)
 {
 	if (event != WIDGET_EVENT_SELECT)
 	{
@@ -209,8 +203,7 @@ random_seed(WIDGET* self, int event)
 }
 
 // Keeps the values of the new game menu valid together. The type Original has no seed value and no ship seeding.
-static void
-new_game_setting_changed(const uqm::SettingBase& setting)
+static void new_game_setting_changed(const uqm::SettingBase& setting)
 {
 	NewGameSettings& values {*newGameSettings};
 	if (setting.key() == "seed.type")
@@ -228,8 +221,7 @@ new_game_setting_changed(const uqm::SettingBase& setting)
 	menuWidgets->refresh();
 }
 
-static void
-populate_editkeys(int templat)
+static void populate_editkeys(int templat)
 {
 	int j {};
 
@@ -241,21 +233,19 @@ populate_editkeys(int templat)
 		{
 			InterrogateInputState(templat, i, j,
 								  controlentries[i].controlname[j],
-								  WIDGET_CONTROLENTRY_WIDTH);
+								  WidgetControlentryWidth);
 		}
 	}
 }
 
-static void
-rename_template(WIDGET_TEXTENTRY* self)
+static void rename_template(WIDGET_TEXTENTRY* self)
 {
 	uqm::strncpy_safe(uqm::input_templates[editTemplate].name, self->value);
 }
 
-#define MENU_FRAME_RATE (c_gameSecond / 20)
+static constexpr auto MenuFrameRate {(c_gameSecond / 20)};
 
-static bool
-DoSetupMenu(SETUP_MENU_STATE* pInputState)
+static bool DoSetupMenu(SETUP_MENU_STATE* pInputState)
 {
 	/* Cancel any presses of the Pause key. */
 	GamePaused = false;
@@ -271,8 +261,8 @@ DoSetupMenu(SETUP_MENU_STATE* pInputState)
 		}
 		menuWidgets->refresh();
 		Widget_SetFont(PlyrFont);
-		Widget_SetWindowColors(SHADOWBOX_BACKGROUND_COLOR,
-							   SHADOWBOX_DARK_COLOR, SHADOWBOX_MEDIUM_COLOR);
+		Widget_SetWindowColors(ShadowboxBackgroundColor,
+							   ShadowboxDarkColor, ShadowboxMediumColor);
 
 		current = nullptr;
 		next = find_menu("main");
@@ -325,21 +315,19 @@ DoSetupMenu(SETUP_MENU_STATE* pInputState)
 		Widget_Event(WIDGET_EVENT_DELETE);
 	}
 
-	SleepThreadUntil(pInputState->NextTime + MENU_FRAME_RATE);
+	SleepThreadUntil(pInputState->NextTime + MenuFrameRate);
 	pInputState->NextTime = GetTimeCounter();
 	return !((uqm::currentActivity() & CHECK_ABORT) || (next == nullptr));
 }
 
-static void
-redraw_menu(void)
+static void redraw_menu(void)
 {
 	BatchGraphics();
 	(*next->draw)(next, 0, 0);
 	UnbatchGraphics();
 }
 
-static bool
-OnTextEntryChange(TEXTENTRY_STATE* pTES)
+static bool OnTextEntryChange(TEXTENTRY_STATE* pTES)
 {
 	WIDGET_TEXTENTRY* widget = (WIDGET_TEXTENTRY*)pTES->CbParam;
 
@@ -360,19 +348,17 @@ OnTextEntryChange(TEXTENTRY_STATE* pTES)
 	return true; // allow change
 }
 
-static bool
-OnTextEntryFrame(TEXTENTRY_STATE* pTES)
+static bool OnTextEntryFrame(TEXTENTRY_STATE* pTES)
 {
 	redraw_menu();
 
 	SleepThreadUntil(pTES->NextTime);
-	pTES->NextTime = GetTimeCounter() + MENU_FRAME_RATE;
+	pTES->NextTime = GetTimeCounter() + MenuFrameRate;
 
 	return true; // continue
 }
 
-static int
-OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
+static int OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 { // Going to edit the text
 	TEXTENTRY_STATE tes;
 	char revert_buf[256];
@@ -387,7 +373,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 
 	// text entry setup
 	tes.Initialized = false;
-	tes.NextTime = GetTimeCounter() + MENU_FRAME_RATE;
+	tes.NextTime = GetTimeCounter() + MenuFrameRate;
 	tes.BaseStr = widget->value;
 	tes.MaxSize = widget->maxlen;
 	tes.CursorPos = widget->cursor_pos;
@@ -395,7 +381,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 	tes.ChangeCallback = OnTextEntryChange;
 	tes.FrameCallback = OnTextEntryFrame;
 
-	SetMenuSounds(MENU_SOUND_NONE, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundNone, MenuSoundSelect);
 	if (!DoTextEntry(&tes))
 	{ // editing failed (canceled) -- revert the changes
 		uqm::utf8StringCopy(widget->value, widget->maxlen, revert_buf);
@@ -407,7 +393,7 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 			(*(widget->onChange))(widget);
 		}
 	}
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 
 	widget->state = WTE_NORMAL;
 	redraw_menu();
@@ -415,29 +401,25 @@ OnTextEntryEvent(WIDGET_TEXTENTRY* widget)
 	return true; // event handled
 }
 
-static inline float
-gammaCurve(float x)
+static inline float gammaCurve(float x)
 {
 	// The slider uses an exponential curve
-	return exp((x - 1) * GAMMA_CURVE_B);
+	return exp((x - 1) * GammaCurveB);
 }
 
-static inline float
-solveGammaCurve(float y)
+static inline float solveGammaCurve(float y)
 {
-	return log(y) / GAMMA_CURVE_B + 1;
+	return log(y) / GammaCurveB + 1;
 }
 
-static int
-gammaToSlider(float gamma)
+static int gammaToSlider(float gamma)
 {
 	const float x = solveGammaCurve(gamma);
 	const float step = (maxGammaX - minGammaX) / 100;
 	return (int)((x - minGammaX) / step + 0.5);
 }
 
-static float
-sliderToGamma(int value)
+static float sliderToGamma(int value)
 {
 	const float step = (maxGammaX - minGammaX) / 100;
 	const float x = minGammaX + step * value;
@@ -446,8 +428,7 @@ sliderToGamma(int value)
 	return (fabs(g - 1.0f) < 0.001f) ? 1.0f : g;
 }
 
-static void
-updateGammaBounds(bool useUpper)
+static void updateGammaBounds(bool useUpper)
 {
 	float g {NAN};
 	float x {NAN};
@@ -482,8 +463,7 @@ updateGammaBounds(bool useUpper)
 	}
 }
 
-static int
-gamma_HandleEventSlider(WIDGET* _self, int event)
+static int gamma_HandleEventSlider(WIDGET* _self, int event)
 {
 	WIDGET_SLIDER* self = (WIDGET_SLIDER*)_self;
 	const int prevValue = self->value;
@@ -530,8 +510,7 @@ gamma_HandleEventSlider(WIDGET* _self, int event)
 	return true;
 }
 
-static void
-populate_gamma(void)
+static void populate_gamma(void)
 {
 	const float gamma {uqm::UQMOptions::read().gamma.value};
 	const bool whichBound {gamma < maxGamma};
@@ -549,15 +528,14 @@ populate_gamma(void)
 	gammaSlider.value = gammaToSlider(gamma);
 }
 
-static void
-gamma_DrawValue(WIDGET_SLIDER* self, int x, int y)
+static void gamma_DrawValue(WIDGET_SLIDER* self, int x, int y)
 {
 	TEXT t;
 	char buf[16] {};
 	float gamma = sliderToGamma(self->value);
 	fmt::format_to_sz_n(buf, "{:.4}", gamma);
 
-	t.baseline.x = x + RES_SCALE(6);
+	t.baseline.x = x + ResScale(6);
 	t.baseline.y = y;
 	t.align = ALIGN_LEFT;
 	t.CharCount = ~0;
@@ -566,8 +544,7 @@ gamma_DrawValue(WIDGET_SLIDER* self, int x, int y)
 	font_DrawText(&t);
 }
 
-static void
-rebind_control(WIDGET_CONTROLENTRY* widget)
+static void rebind_control(WIDGET_CONTROLENTRY* widget)
 {
 	const int templat = editTemplate;
 	const int control = widget->controlindex;
@@ -580,8 +557,7 @@ rebind_control(WIDGET_CONTROLENTRY* widget)
 	FlushInput();
 }
 
-static void
-clear_control(WIDGET_CONTROLENTRY* widget)
+static void clear_control(WIDGET_CONTROLENTRY* widget)
 {
 	const int templat = editTemplate;
 	const int control = widget->controlindex;
@@ -591,8 +567,7 @@ clear_control(WIDGET_CONTROLENTRY* widget)
 	populate_editkeys(templat);
 }
 
-static int
-count_widgets(WIDGET** widgets)
+static int count_widgets(WIDGET** widgets)
 {
 	int count {};
 
@@ -601,8 +576,7 @@ count_widgets(WIDGET** widgets)
 	return count;
 }
 
-static bool
-open_menu(uqstl::string_view id)
+static bool open_menu(uqstl::string_view id)
 {
 	WIDGET* menu {find_menu(id)};
 	if (menu == nullptr)
@@ -620,8 +594,7 @@ open_menu(uqstl::string_view id)
 	return true;
 }
 
-static void
-read_menu_definition(void)
+static void read_menu_definition(void)
 {
 	menuDefinition = menuMode == MenuMode::NewGame ? uqm::readMenuDefinition("ui.newgamemenu", *newGameSettings) : uqm::readSetupMenuDefinition();
 	if (!menuDefinition)
@@ -632,8 +605,7 @@ read_menu_definition(void)
 }
 
 // Sets up the widgets that the menu definition does not build.
-static void
-init_shared_widgets(void)
+static void init_shared_widgets(void)
 {
 	const bool newGame {menuMode == MenuMode::NewGame};
 	uqm::initButtonWidget(backButton, menuDefinition->back.label, menuDefinition->back.tooltip, newGame ? cancel_new_game : quit_sub_menu);
@@ -673,7 +645,7 @@ init_shared_widgets(void)
 	layoutName.height = Widget_HeightOneLine;
 	layoutName.width = Widget_WidthFullScreen;
 	layoutName.handleEventSelect = OnTextEntryEvent;
-	layoutName.maxlen = WIDGET_TEXTENTRY_WIDTH - 1;
+	layoutName.maxlen = WidgetTextentryWidth - 1;
 	layoutName.state = WTE_NORMAL;
 	layoutName.onChange = rename_template;
 
@@ -693,13 +665,12 @@ init_shared_widgets(void)
 	}
 }
 
-static void
-init_widgets(void)
+static void init_widgets(void)
 {
 	if (setup_frame == nullptr || optRequiresReload)
 	{
 		// Load the different menus depending on the resolution factor.
-		setup_frame = CaptureDrawable(LoadGraphic(MENUBKG_PMAP_ANIM));
+		setup_frame = CaptureDrawable(LoadGraphic(MenubkgPmapAnimRes));
 		LoadArrows();
 	}
 
@@ -709,7 +680,7 @@ init_widgets(void)
 	uqm::MenuWidgets::Hooks hooks {};
 	hooks.isAddonAvailable = uqm::isMenuAddonAvailable;
 	hooks.addonUnavailable = [] {
-		DoPopupWindow(GAME_STRING(MAINMENU_STRING_BASE + 36));
+		DoPopupWindow(GameString(MAINMENU_STRING_BASE + 36));
 		Widget_SetFont(PlyrFont);
 	};
 	hooks.settingChanged = [](const uqm::SettingBase& setting) {
@@ -794,11 +765,10 @@ init_widgets(void)
 		screen.num_children = count_widgets(screen.child);
 	}
 
-	testSounds = uqm::loadSoundBank(TEST_SOUNDS).release();
+	testSounds = uqm::loadSoundBank(TestSoundsRes).release();
 }
 
-static void
-clean_up_widgets(void)
+static void clean_up_widgets(void)
 {
 	menus.clear();
 	menuWidgets.reset();
@@ -819,8 +789,7 @@ clean_up_widgets(void)
 }
 
 // Logs the open setup menu for the "dumpmenu" input script command.
-static void
-dump_setup_menu(void)
+static void dump_setup_menu(void)
 {
 	if (current == nullptr || current->tag != WIDGET_TYPE_MENU_SCREEN)
 	{
@@ -878,12 +847,11 @@ dump_setup_menu(void)
 }
 
 // Applies the settings that take effect when the player leaves the setup menu.
-static void
-apply_settings(void)
+static void apply_settings(void)
 {
 	auto& uqmOptions {uqm::UQMOptions::edit()};
 
-	const int factor {uqm::isAddonAvailable(HD_MODE) ? *uqmOptions.resolutionFactor : 0};
+	const int factor {uqm::isAddonAvailable(HdMode) ? *uqmOptions.resolutionFactor : 0};
 	if (factor != (int)resolutionFactor)
 	{
 		SleepThreadUntil(FadeScreen(FadeAllToBlack, c_gameSecond / 2));
@@ -891,7 +859,7 @@ apply_settings(void)
 	}
 
 	uqm::WindowStyle windowStyle {*uqmOptions.windowEmulationMode};
-	if (windowStyle != uqm::WindowStyle::UQM && !uqm::isAddonAvailable(WINDOW_MODE(resolutionFactor, uqstl::to_underlying(windowStyle))))
+	if (windowStyle != uqm::WindowStyle::UQM && !uqm::isAddonAvailable(WindowModeName(resolutionFactor, uqstl::to_underlying(windowStyle))))
 	{
 		windowStyle = uqm::WindowStyle::UQM;
 		uqmOptions.windowEmulationMode = windowStyle;
@@ -942,13 +910,13 @@ apply_settings(void)
 
 		ResetOffset();
 
-		RESOLUTION_FACTOR = resolutionFactor;
+		resolutionFactor = resolutionFactor;
 		CanvasWidth = 320 << resolutionFactor;
-		CanvasHeight = DOS_BOOL(240, 200) << resolutionFactor;
+		CanvasHeight = DosBool(240, 200) << resolutionFactor;
 
 		if (*uqmOptions.loresBlowupScale < 6)
 		{
-			h = DOS_BOOL(240, 200) * (uqmOptions.loresBlowupScale.value + 1);
+			h = DosBool(240, 200) * (uqmOptions.loresBlowupScale.value + 1);
 			SavedHeight = h;
 			uqmOptions.resolution.value.y = static_cast<uint32_t>(SavedHeight);
 		}
@@ -992,7 +960,7 @@ void SetupMenu(void)
 
 	s.InputFunc = DoSetupMenu;
 	s.initialized = false;
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	init_widgets();
 
 	SetInputScriptMenuDump(dump_setup_menu);
@@ -1002,8 +970,8 @@ void SetupMenu(void)
 	apply_settings();
 	clean_up_widgets();
 
-	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN,
-				  MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundUp | MenuSoundDown,
+				  MenuSoundSelect);
 }
 
 uqstl::optional<uqm::GameSeed> NewGameMenu(void)
@@ -1019,7 +987,7 @@ uqstl::optional<uqm::GameSeed> NewGameMenu(void)
 	SETUP_MENU_STATE s;
 	s.InputFunc = DoSetupMenu;
 	s.initialized = false;
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	init_widgets();
 
 	SetInputScriptMenuDump(dump_setup_menu);
@@ -1035,7 +1003,7 @@ uqstl::optional<uqm::GameSeed> NewGameMenu(void)
 	newGameSettings.reset();
 	menuMode = MenuMode::Setup;
 
-	SetMenuSounds(MENU_SOUND_UP | MENU_SOUND_DOWN,
-				  MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundUp | MenuSoundDown,
+				  MenuSoundSelect);
 	return result;
 }

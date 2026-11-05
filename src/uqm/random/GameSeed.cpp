@@ -33,7 +33,7 @@ GameSeed newGameSeed(const OptionsStruct& options)
 int32_t randomSeedValue()
 {
 	std::random_device device {};
-	std::uniform_int_distribution<int32_t> distribution {MIN_SEED, MAX_SEED};
+	std::uniform_int_distribution<int32_t> distribution {MinSeed, MaxSeed};
 	return distribution(device);
 }
 

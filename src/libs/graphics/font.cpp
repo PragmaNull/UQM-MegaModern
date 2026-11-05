@@ -30,8 +30,7 @@
 
 static inline TFB_Char* getCharFrame(FONT_DESC* fontPtr, uqm::UniChar ch);
 
-TFB_Char*
-GetFrameForFPS(uqm::UniChar ch)
+TFB_Char* GetFrameForFPS(uqm::UniChar ch)
 {
 	if (StarConFont && !(uqm::currentActivity() & CHECK_ABORT))
 	{
@@ -84,7 +83,7 @@ bool DestroyFont(FONT FontRef)
 		SetContextFont((FONT) nullptr);
 	}
 
-	return (FreeFont(FontRef));
+	return (_ReleaseFontData(FontRef));
 }
 
 // Returns the GFXRECT of any given TEXT
@@ -163,7 +162,7 @@ void font_DrawTracedText(TEXT* pText, Color text, Color trace)
 {
 	// Preserve current foreground color for full correctness
 	const Color oldfg = SetContextForeGroundColor(trace);
-	const uint8_t stroke = RES_SCALE(1);
+	const uint8_t stroke = ResScale(1);
 	const GFXPOINT t_baseline = pText->baseline;
 	GFXPOINT offset;
 
@@ -190,8 +189,7 @@ void font_DrawTracedText(TEXT* pText, Color text, Color trace)
 }
 
 // Alt stuff to handle 2 fonts at once (for Orz)
-uint8_t
-font_DrawTextAlt(TEXT* lpText, uint8_t swap, FONT AltFontPtr, uqm::UniChar key)
+uint8_t font_DrawTextAlt(TEXT* lpText, uint8_t swap, FONT AltFontPtr, uqm::UniChar key)
 {
 	GFXRECT ClipRect;
 	GFXPOINT origin;
@@ -218,7 +216,7 @@ void font_DrawTracedTextAlt(TEXT* pText, Color text, Color trace, FONT AltFontPt
 {
 	// Preserve current foreground color for full correctness
 	const Color oldfg = SetContextForeGroundColor(trace);
-	const uint8_t stroke = RES_SCALE(1);
+	const uint8_t stroke = ResScale(1);
 	const GFXPOINT t_baseline = pText->baseline;
 	GFXPOINT offset;
 	static uint8_t swap = 0;
@@ -279,15 +277,15 @@ void font_DrawShadowedText(TEXT* pText, uint8_t direction,
 			break;
 	}
 
-	pText->baseline.x += RES_SCALE(shadow_angle.x);
-	pText->baseline.y += RES_SCALE(shadow_angle.y);
+	pText->baseline.x += ResScale(shadow_angle.x);
+	pText->baseline.y += ResScale(shadow_angle.y);
 
 	OldColor = SetContextForeGroundColor(shadow_color);
 
 	font_DrawText(pText);
 
-	pText->baseline.x -= RES_SCALE(shadow_angle.x);
-	pText->baseline.y -= RES_SCALE(shadow_angle.y);
+	pText->baseline.x -= ResScale(shadow_angle.x);
+	pText->baseline.y -= ResScale(shadow_angle.y);
 
 	SetContextForeGroundColor(text_color);
 
@@ -334,7 +332,7 @@ bool GetContextFontDispWidth(int16_t* pwidth)
 
 bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 {
-	uint8_t char_delta_array[MAX_DELTAS];
+	uint8_t char_delta_array[MaxDeltas];
 
 	FONT FontPtr {_CurFontPtr};
 	if (FontPtr != 0 && lpText->CharCount != 0)
@@ -353,10 +351,10 @@ bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 		if (pdelta == 0)
 		{
 			pdelta = char_delta_array;
-			if (num_chars > MAX_DELTAS)
+			if (num_chars > MaxDeltas)
 			{
-				num_chars = MAX_DELTAS;
-				lpText->CharCount = MAX_DELTAS;
+				num_chars = MaxDeltas;
+				lpText->CharCount = MaxDeltas;
 			}
 		}
 
@@ -405,7 +403,7 @@ bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 
 				width += charFrame->disp.width + FontPtr->CharSpace;
 
-				if (num_chars && next_ch < MAX_UNICODE
+				if (num_chars && next_ch < MaxUnicode
 					&& FontPtr->KernTab[ch] != (uint8_t)~0
 					&& !(FontPtr->KernTab[ch]
 						 & (FontPtr->KernTab[next_ch] >> 2)))
@@ -435,7 +433,7 @@ bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 			}
 			else if (lpText->align == ALIGN_CENTER)
 			{
-				pRect->corner.x = -RES_SCALE((RES_DESCALE(width) >> 1));
+				pRect->corner.x = -ResScale((ResDescale(width) >> 1));
 			}
 			else
 			{
@@ -520,7 +518,7 @@ void _text_blt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin)
 
 			origin.x += fontChar->disp.width + FontPtr->CharSpace;
 
-			if (num_chars && next_ch < MAX_UNICODE
+			if (num_chars && next_ch < MaxUnicode
 				&& FontPtr->KernTab[ch] != (uint8_t)~0
 				&& !(FontPtr->KernTab[ch]
 					 & (FontPtr->KernTab[next_ch] >> 2)))
@@ -564,8 +562,8 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 		r.extent.width = w;
 		r.extent.height = h;
 
-		TFB_DrawImage_Rect(&r, _get_context_bg_color(), DRAW_REPLACE_MODE, b_first);
-		TFB_DrawImage_Rect(&r, _get_context_fg_color(), DRAW_REPLACE_MODE, b_second);
+		TFB_DrawImage_Rect(&r, _get_context_bg_color(), DrawReplaceMode, b_first);
+		TFB_DrawImage_Rect(&r, _get_context_fg_color(), DrawReplaceMode, b_second);
 	}
 	else
 	{
@@ -632,7 +630,7 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 				if (repair && !*skip)
 				{
 					TFB_DrawImage_Image(repair->image, -r.corner.x, -r.corner.y,
-										0, uqm::TFBScaleMode::None, nullptr, DRAW_REPLACE_MODE, b_clear);
+										0, uqm::TFBScaleMode::None, nullptr, DrawReplaceMode, b_clear);
 					TFB_Prim_FontChar(origin, fontChar, b_clear, MAKE_DRAW_MODE(DRAW_GRAYSCALE, 0xff),
 									  ctxOrigin);
 				}
@@ -653,7 +651,7 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 			{
 				origin.x += fontChar->disp.width + FontPtr->CharSpace;
 
-				if (num_chars && next_ch < MAX_UNICODE
+				if (num_chars && next_ch < MaxUnicode
 					&& FontPtr->KernTab[ch] != (uint8_t)~0
 					&& !(FontPtr->KernTab[ch]
 						 & (FontPtr->KernTab[next_ch] >> 2)))
@@ -688,7 +686,7 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 				 uqm::UniChar key, FONT AltFontPtr)
 {
-	uint8_t char_delta_array[MAX_DELTAS];
+	uint8_t char_delta_array[MaxDeltas];
 
 	FONT FontPtr {_CurFontPtr};
 	if (FontPtr != 0 && lpText->CharCount != 0)
@@ -707,10 +705,10 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 		if (pdelta == 0)
 		{
 			pdelta = char_delta_array;
-			if (num_chars > MAX_DELTAS)
+			if (num_chars > MaxDeltas)
 			{
-				num_chars = MAX_DELTAS;
-				lpText->CharCount = MAX_DELTAS;
+				num_chars = MaxDeltas;
+				lpText->CharCount = MaxDeltas;
 			}
 		}
 
@@ -772,7 +770,7 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 
 				width += charFrame->disp.width + FontPtr->CharSpace;
 
-				if (num_chars && next_ch < MAX_UNICODE
+				if (num_chars && next_ch < MaxUnicode
 					&& FontPtr->KernTab[ch] != (uint8_t)~0
 					&& !(FontPtr->KernTab[ch]
 						 & (FontPtr->KernTab[next_ch] >> 2)))
@@ -802,7 +800,7 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 			}
 			else if (lpText->align == ALIGN_CENTER)
 			{
-				pRect->corner.x = -RES_SCALE((RES_DESCALE(width) >> 1));
+				pRect->corner.x = -ResScale((ResDescale(width) >> 1));
 			}
 			else
 			{
@@ -826,9 +824,8 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 	return (false);
 }
 
-uint8_t
-_text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swap,
-			  FONT AltFontPtr, uqm::UniChar key)
+uint8_t _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swap,
+					  FONT AltFontPtr, uqm::UniChar key)
 { // Kruzen: To create text using 2 fonts (Orz case)
 	// Safest way to do so without going too deep into
 	// original code
@@ -868,7 +865,7 @@ _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swa
 		r.corner = MAKE_HOT_SPOT(0, 0);
 		r.extent = MAKE_EXTENT(w, h);
 
-		TFB_DrawImage_Rect(&r, color, DRAW_REPLACE_MODE, ext);
+		TFB_DrawImage_Rect(&r, color, DrawReplaceMode, ext);
 	}
 	else
 	{
@@ -938,7 +935,7 @@ _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swa
 
 			origin.x += fontChar->disp.width + FontPtr->CharSpace;
 
-			if (num_chars && next_ch < MAX_UNICODE
+			if (num_chars && next_ch < MaxUnicode
 				&& FontPtr->KernTab[ch] != (uint8_t)~0
 				&& !(FontPtr->KernTab[ch]
 					 & (FontPtr->KernTab[next_ch] >> 2)))
@@ -959,10 +956,9 @@ _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swa
 	return swap;
 }
 
-static inline TFB_Char*
-getCharFrame(FONT_DESC* fontPtr, uqm::UniChar ch)
+static inline TFB_Char* getCharFrame(FONT_DESC* fontPtr, uqm::UniChar ch)
 {
-	const uqm::UniChar pageStart = ch & CHARACTER_PAGE_MASK;
+	const uqm::UniChar pageStart = ch & CharacterPageMask;
 
 	FONT_PAGE* page = fontPtr->fontPages;
 	for (;;)

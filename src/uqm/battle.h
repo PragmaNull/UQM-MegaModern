@@ -25,7 +25,7 @@ typedef uint32_t BattleFrameCounter;
 #endif
 
 #include "init.h"
-// For NUM_SIDES
+// For NumSides
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -43,7 +43,7 @@ typedef struct battlestate_struct
 	BattleFrameCallback* frame_cb;
 } BATTLE_STATE;
 
-extern uint8_t battle_counter[NUM_SIDES];
+extern uint8_t battle_counter[NumSides];
 extern bool instantVictory;
 #if defined(NETPLAY)
 extern BattleFrameCounter battleFrameCount;
@@ -51,7 +51,7 @@ extern BattleFrameCounter battleFrameCount;
 #ifdef NETPLAY
 uint16_t GetPlayerOrder(uint16_t i);
 #else
-#define GetPlayerOrder(i) (i)
+constexpr auto GetPlayerOrder(const auto& i) { return (i); }
 #endif
 
 bool Battle(BattleFrameCallback*);

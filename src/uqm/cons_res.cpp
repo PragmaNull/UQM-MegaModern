@@ -25,7 +25,7 @@
 #include "nameref.h"
 #include "setup.h"
 #include "units.h"
-// for NUM_VIEWS
+// for NumViews
 #include "planets/planets.h"
 // for NUMBER_OF_PLANET_TYPES, PLANET_SHIELDED
 
@@ -46,7 +46,7 @@ const static char* planet_types[] = {
 const static char* planet_sizes[] = {
 	"large", "medium", "small"};
 
-FRAME planet[NUM_VIEWS];
+FRAME planet[NumViews];
 static char buffer[80] {};
 
 void load_gravity_well(uint8_t selector)
@@ -55,15 +55,15 @@ void load_gravity_well(uint8_t selector)
 
 	if (selector == SA_MATRA)
 	{
-		if (EXTENDED && uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
+		if (IsExtended() && uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
 		{
 			planet[0] = CaptureDrawable(
-				LoadGraphic(SCENERY_MASK_PMAP_ANIM));
+				LoadGraphic(SceneryMaskPmapAnimRes));
 		}
 		else
 		{
 			planet[0] = CaptureDrawable(
-				LoadGraphic(SAMATRA_BIG_MASK_PMAP_ANIM));
+				LoadGraphic(SamatraBigMaskPmapAnimRes));
 		}
 		planet[1] = planet[2] = 0;
 	}
@@ -79,7 +79,7 @@ void load_gravity_well(uint8_t selector)
 			ptype = planet_types[selector];
 		}
 
-		for (i = 0; i < NUM_VIEWS; ++i)
+		for (i = 0; i < NumViews; ++i)
 		{
 			fmt::format_to_sz_n(buffer, "planet.{}.{}", ptype, planet_sizes[i]);
 			planet[i] = CaptureDrawable(LoadGraphic(buffer));
@@ -90,42 +90,39 @@ void load_gravity_well(uint8_t selector)
 
 void free_gravity_well(void)
 {
-	for (uint16_t i {0}; i < NUM_VIEWS; ++i)
+	for (uint16_t i {0}; i < NumViews; ++i)
 	{
 		DestroyDrawable(ReleaseDrawable(planet[i]));
 		planet[i] = 0;
 	}
 }
 
-FRAME
-load_life_form(uint8_t selector)
+FRAME load_life_form(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "graphics.life.{}", selector);
 	return CaptureDrawable(LoadGraphic(buffer));
 }
 
-MUSIC_REF
-load_orbit_theme(uint8_t selector)
+MUSIC_REF load_orbit_theme(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "music.orbit{}", selector + 1);
-	return LoadMusic(buffer);
+	return LoadMusicInstance(buffer);
 }
 
-MUSIC_REF
-loadMainMenuMusic(uint8_t selector)
+MUSIC_REF loadMainMenuMusic(uint8_t selector)
 {
 	fmt::format_to_sz_n(buffer, "music.mainmenu{}", selector + 1);
-	return LoadMusic(buffer);
+	return LoadMusicInstance(buffer);
 }
 
 int num_orbit_themes(void)
 {
 	if (VolasPackPresent)
 	{
-		return NUM_ORBIT_THEMES;
+		return NumOrbitThemes;
 	}
 	else
 	{
-		return NUM_ORBIT_THEMES - 1;
+		return NumOrbitThemes - 1;
 	}
 }

@@ -128,30 +128,30 @@ static LOCDATA melnorme_desc =
 		nullptr, /* init_encounter_func */
 		nullptr, /* post_encounter_func */
 		nullptr, /* uninit_encounter_func */
-		MELNORME_PMAP_ANIM, /* AlienFrame */
-		MELNORME_FONT, /* AlienFont */
-		WHITE_COLOR_INIT, /* AlienTextFColor */
-		BLACK_COLOR_INIT, /* AlienTextBColor */
+		MelnormePmapAnim, /* AlienFrame */
+		MelnormeFont, /* AlienFont */
+		WhiteColor, /* AlienTextFColor */
+		BlackColor, /* AlienTextBColor */
 		{0, 0}, /* AlienTextBaseline */
 		0,
-		/* SIS_TEXT_WIDTH - 16, */  /* AlienTextWidth */
+		/* SisTextWidth() - 16, */  /* AlienTextWidth */
 		ALIGN_CENTER, /* AlienTextAlign */
 		VALIGN_TOP, /* AlienTextValign */
-		MELNORME_COLOR_MAP, /* AlienColorMap */
-		MELNORME_MUSIC, /* AlienSong */
+		MelnormeColorMap, /* AlienColorMap */
+		MelnormeMusic, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
-		MELNORME_CONVERSATION_PHRASES, /* PlayerPhrases */
+		MelnormeConversationPhrases, /* PlayerPhrases */
 		5, /* NumAnimations */
 		{
 								/* AlienAmbientArray (ambient animations) */
 			{
-				6,		   /* StartIndex */
-				5,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				6,		  /* StartIndex */
+				5,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 12,
 				0, /* FrameRate */
 				GameTicksPerSecond * 4,
@@ -159,9 +159,9 @@ static LOCDATA melnorme_desc =
 				(1 << 1),				/* BlockMask */
 			},
 								{
-				11,		   /* StartIndex */
-				9,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				11,		  /* StartIndex */
+				9,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 20,
 				0, /* FrameRate */
 				GameTicksPerSecond * 4,
@@ -169,9 +169,9 @@ static LOCDATA melnorme_desc =
 				(1 << 0),				/* BlockMask */
 			},
 								{
-				20,		   /* StartIndex */
-				2,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				20,		  /* StartIndex */
+				2,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -179,9 +179,9 @@ static LOCDATA melnorme_desc =
 				0,						/* BlockMask */
 			},
 								{
-				22,		   /* StartIndex */
-				2,		   /* NumFrames */
-				YOYO_ANIM, /* AnimFlags */
+				22,		  /* StartIndex */
+				2,		  /* NumFrames */
+				YoyoAnim, /* AnimFlags */
 				GameTicksPerSecond / 10,
 				GameTicksPerSecond / 15, /* FrameRate */
 				GameTicksPerSecond,
@@ -190,9 +190,9 @@ static LOCDATA melnorme_desc =
 			},
 								{
 				/* Flagship picture */
-				24,							   /* StartIndex */
-				1,							   /* NumFrames */
-				CIRCULAR_ANIM | ANIM_DISABLED, /* AnimFlags */
+				24,							 /* StartIndex */
+				1,							 /* NumFrames */
+				CircularAnim | AnimDisabled, /* AnimFlags */
 				0,
 				0, /* FrameRate */
 				0,
@@ -260,7 +260,7 @@ typedef enum
 {
 	TECH_TYPE_MODULE,		 // Flagship modules
 							 //  subtype = moduleId, info = cost
-							 //   Cost will be scaled by MODULE_COST_SCALE.
+							 //   Cost will be scaled by ModuleCostScale.
 	TECH_TYPE_LANDER_SHIELD, // Lander shield enhancements
 							 //  subtype = disaster type, info = unused
 	TECH_TYPE_STATE			 // Other game state changes
@@ -301,8 +301,7 @@ const static TechData tech_data_table[] =
 const size_t NUM_TECHNOLOGIES = std::size(tech_data_table);
 
 // Lookup function to get the data for a particular tech
-const static TechData*
-GetTechData(TechId_t techId)
+const static TechData* GetTechData(TechId_t techId)
 {
 	size_t i = 0;
 	for (i = 0; i < NUM_TECHNOLOGIES; ++i)
@@ -317,20 +316,17 @@ GetTechData(TechId_t techId)
 
 
 // 'stateId' is a uqm::GameFlag.
-static bool
-HasStateTech(int stateId)
+static bool HasStateTech(int stateId)
 {
 	return uqm::gameState().flag(static_cast<uqm::GameFlag>(stateId)) != 0;
 }
 
-static void
-GrantStateTech(int stateId, uint8_t value)
+static void GrantStateTech(int stateId, uint8_t value)
 {
 	uqm::gameState().setFlag(static_cast<uqm::GameFlag>(stateId), value);
 }
 
-static bool
-HasTech(TechId_t techId)
+static bool HasTech(TechId_t techId)
 {
 	const TechData* techData = GetTechData(techId);
 	if (!techData)
@@ -341,17 +337,16 @@ HasTech(TechId_t techId)
 	switch (techData->type)
 	{
 		case TECH_TYPE_MODULE:
-			return GLOBAL(ModuleCost[techData->subtype]) != 0;
+			return uqm::gameState().game().ModuleCost[techData->subtype] != 0;
 		case TECH_TYPE_LANDER_SHIELD:
-			return (GET_GAME_STATE(LANDER_SHIELDS) & (1 << techData->subtype)) != 0;
+			return (uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS) & (1 << techData->subtype)) != 0;
 		case TECH_TYPE_STATE:
 			return HasStateTech(techData->subtype);
 	}
 	return false;
 }
 
-static void
-GrantTech(TechId_t techId)
+static void GrantTech(TechId_t techId)
 {
 	const TechData* techData = GetTechData(techId);
 	if (!techData)
@@ -362,12 +357,12 @@ GrantTech(TechId_t techId)
 	switch (techData->type)
 	{
 		case TECH_TYPE_MODULE:
-			GLOBAL(ModuleCost[techData->subtype]) = techData->info / MODULE_COST_SCALE;
+			uqm::gameState().game().ModuleCost[techData->subtype] = techData->info / ModuleCostScale;
 			return;
 		case TECH_TYPE_LANDER_SHIELD:
 			{
-				const uint16_t state = GET_GAME_STATE(LANDER_SHIELDS) | (1 << techData->subtype);
-				SET_GAME_STATE(LANDER_SHIELDS, state);
+				const uint16_t state = uqm::gameState().flag(uqm::GameFlag::LANDER_SHIELDS) | (1 << techData->subtype);
+				uqm::gameState().setFlag(uqm::GameFlag::LANDER_SHIELDS, static_cast<uint32_t>(state));
 				return;
 			}
 		case TECH_TYPE_STATE:
@@ -376,8 +371,7 @@ GrantTech(TechId_t techId)
 	}
 }
 
-static int
-countTech(void)
+static int countTech(void)
 {
 	uint8_t numTech = 0;
 	uint8_t i = 0;
@@ -464,8 +458,7 @@ GetNumLines(const int array[])
 
 // Get the line, with range checking.
 // Returns the last line if the desired one is out of range.
-static int
-GetLineSafe(const int array[], size_t linenum)
+static int GetLineSafe(const int array[], size_t linenum)
 {
 	const size_t array_size = GetNumLines(array);
 	assert(array_size > 0);
@@ -487,37 +480,36 @@ typedef struct
 
 // Right now, all techs have the same price.
 // Unless Hard Mode is enabled.
-#define TECHPRICE (75 * BIO_CREDIT_VALUE)
+static constexpr auto Techprice {(75 * BioCreditValueDefault)};
 
 TechSaleData tech_sale_catalog[] =
 	{
-		{TECH_MODULE_BLASTER,		  TECHPRICE, NEW_TECH_1,	 OK_BUY_NEW_TECH_1 },
-		{TECH_LANDER_SPEED,			TECHPRICE, NEW_TECH_2,  OK_BUY_NEW_TECH_2 },
-		{TECH_MODULE_ANTIMISSILE,	  TECHPRICE, NEW_TECH_3,	 OK_BUY_NEW_TECH_3 },
-		{TECH_LANDER_SHIELD_BIO,		 TECHPRICE, NEW_TECH_4,	OK_BUY_NEW_TECH_4 },
-		{TECH_LANDER_CARGO,			TECHPRICE, NEW_TECH_5,  OK_BUY_NEW_TECH_5 },
-		{TECH_MODULE_BIGFUELTANK,	  TECHPRICE, NEW_TECH_6,	 OK_BUY_NEW_TECH_6 },
-		{TECH_LANDER_RAPIDFIRE,		TECHPRICE, NEW_TECH_7,  OK_BUY_NEW_TECH_7 },
-		{TECH_LANDER_SHIELD_QUAKE,	   TECHPRICE, NEW_TECH_8,  OK_BUY_NEW_TECH_8 },
-		{TECH_MODULE_TRACKING,		   TECHPRICE, NEW_TECH_9,  OK_BUY_NEW_TECH_9 },
-		{TECH_LANDER_SHIELD_LIGHTNING, TECHPRICE, NEW_TECH_10, OK_BUY_NEW_TECH_10},
-		{TECH_LANDER_SHIELD_HEAT,	  TECHPRICE, NEW_TECH_11, OK_BUY_NEW_TECH_11},
-		{TECH_MODULE_CANNON,			 TECHPRICE, NEW_TECH_12, OK_BUY_NEW_TECH_12},
-		{TECH_MODULE_FURNACE,		  TECHPRICE, NEW_TECH_13, OK_BUY_NEW_TECH_13},
+		{TECH_MODULE_BLASTER,		  Techprice, NEW_TECH_1,	 OK_BUY_NEW_TECH_1 },
+		{TECH_LANDER_SPEED,			Techprice, NEW_TECH_2,  OK_BUY_NEW_TECH_2 },
+		{TECH_MODULE_ANTIMISSILE,	  Techprice, NEW_TECH_3,	 OK_BUY_NEW_TECH_3 },
+		{TECH_LANDER_SHIELD_BIO,		 Techprice, NEW_TECH_4,	OK_BUY_NEW_TECH_4 },
+		{TECH_LANDER_CARGO,			Techprice, NEW_TECH_5,  OK_BUY_NEW_TECH_5 },
+		{TECH_MODULE_BIGFUELTANK,	  Techprice, NEW_TECH_6,	 OK_BUY_NEW_TECH_6 },
+		{TECH_LANDER_RAPIDFIRE,		Techprice, NEW_TECH_7,  OK_BUY_NEW_TECH_7 },
+		{TECH_LANDER_SHIELD_QUAKE,	   Techprice, NEW_TECH_8,  OK_BUY_NEW_TECH_8 },
+		{TECH_MODULE_TRACKING,		   Techprice, NEW_TECH_9,  OK_BUY_NEW_TECH_9 },
+		{TECH_LANDER_SHIELD_LIGHTNING, Techprice, NEW_TECH_10, OK_BUY_NEW_TECH_10},
+		{TECH_LANDER_SHIELD_HEAT,	  Techprice, NEW_TECH_11, OK_BUY_NEW_TECH_11},
+		{TECH_MODULE_CANNON,			 Techprice, NEW_TECH_12, OK_BUY_NEW_TECH_12},
+		{TECH_MODULE_FURNACE,		  Techprice, NEW_TECH_13, OK_BUY_NEW_TECH_13},
 };
 const size_t NUM_TECH_ITEMS = std::size(tech_sale_catalog);
 
 // Return the next tech for sale that the player doesn't already have.
 // Returns nullptr if the player has all the techs.
-static TechSaleData*
-GetNextTechForSale(void)
+static TechSaleData* GetNextTechForSale(void)
 {
 	uint8_t i = 0;
 	uint8_t j = 0;
 
-	if (isDifficulty(uqm::Difficulty::Hard) && CurStarDescPtr)
+	if (isDifficulty(uqm::Difficulty::Hard) && CurStarDescPtr())
 	{
-		switch (CurStarDescPtr->Index)
+		switch (CurStarDescPtr()->Index)
 		{
 			case MELNORME0_DEFINED:
 				i = TECH_MODULE_CANNON;
@@ -568,7 +560,7 @@ GetNextTechForSale(void)
 			}
 		}
 	}
-	else if (isDifficulty(uqm::Difficulty::Hard) && !CurStarDescPtr)
+	else if (isDifficulty(uqm::Difficulty::Hard) && !CurStarDescPtr())
 	{
 		return nullptr;
 	}
@@ -591,39 +583,38 @@ static StatMsgMode prevMsgMode;
 
 static void DoFirstMeeting(RESPONSE_REF R);
 
-static uint16_t
-ShipWorth(void)
+static uint16_t ShipWorth(void)
 {
 	uint8_t i {};
 	int8_t crew_pods {};
 	uint16_t worth {};
 
-	worth = GLOBAL_SIS(NumLanders)
-		  * GLOBAL(ModuleCost[PLANET_LANDER]);
-	for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
+	worth = uqm::gameState().sis().NumLanders
+		  * uqm::gameState().game().ModuleCost[PLANET_LANDER];
+	for (i = 0; i < NumDriveSlots; ++i)
 	{
-		if (GLOBAL_SIS(DriveSlots[i]) < EMPTY_SLOT)
+		if (uqm::gameState().sis().DriveSlots[i] < EmptySlot)
 		{
-			worth += GLOBAL(ModuleCost[FUSION_THRUSTER]);
+			worth += uqm::gameState().game().ModuleCost[FUSION_THRUSTER];
 		}
 	}
-	for (i = 0; i < NUM_JET_SLOTS; ++i)
+	for (i = 0; i < NumJetSlots; ++i)
 	{
-		if (GLOBAL_SIS(JetSlots[i]) < EMPTY_SLOT)
+		if (uqm::gameState().sis().JetSlots[i] < EmptySlot)
 		{
-			worth += GLOBAL(ModuleCost[TURNING_JETS]);
+			worth += uqm::gameState().game().ModuleCost[TURNING_JETS];
 		}
 	}
 
-	crew_pods = -(int8_t)((GLOBAL_SIS(CrewEnlisted) + CREW_POD_CAPACITY - 1)
-						  / CREW_POD_CAPACITY);
-	for (i = 0; i < NUM_MODULE_SLOTS; ++i)
+	crew_pods = -(int8_t)((uqm::gameState().sis().CrewEnlisted + CrewPodCapacity - 1)
+						  / CrewPodCapacity);
+	for (i = 0; i < NumModuleSlots; ++i)
 	{
-		const uint8_t which_module {GLOBAL_SIS(ModuleSlots[i])};
+		const uint8_t which_module {uqm::gameState().sis().ModuleSlots[i]};
 		if (which_module < BOMB_MODULE_0
 			&& (which_module != CREW_POD || ++crew_pods > 0))
 		{
-			worth += GLOBAL(ModuleCost[which_module]);
+			worth += uqm::gameState().game().ModuleCost[which_module];
 		}
 	}
 
@@ -635,8 +626,7 @@ static SIS_STATE SIS_copy;
 
 // Extract method to return the response string index
 // for stripping a given module.
-static int
-GetStripModuleRef(int moduleID)
+static int GetStripModuleRef(int moduleID)
 {
 	switch (moduleID)
 	{
@@ -673,8 +663,7 @@ GetStripModuleRef(int moduleID)
 	return 0;
 }
 
-static uint32_t
-getStripRandomSeed(void)
+static uint32_t getStripRandomSeed(void)
 {
 	uint32_t x {};
 	uint32_t y {};
@@ -683,63 +672,62 @@ getStripRandomSeed(void)
 	// vary the deal when stuck at the same general location again.
 	// It is still possible but unlikely for encounters to move the ship into
 	// another truncation sector so the player could choose from 2 deals.
-	x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)) / 100;
-	y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y)) / 100;
+	x = LogxToUniverse(uqm::gameState().sis().log_x) / 100;
+	y = LogyToUniverse(uqm::gameState().sis().log_y) / 100;
 	// prime numbers help randomness
-	return y * 1013 + x + GLOBAL_SIS(NumLanders)
-		 + GLOBAL_SIS(ModuleSlots[1]) + GLOBAL_SIS(ModuleSlots[4])
-		 + GLOBAL_SIS(ModuleSlots[7]) + GLOBAL_SIS(ModuleSlots[10]);
+	return y * 1013 + x + uqm::gameState().sis().NumLanders
+		 + uqm::gameState().sis().ModuleSlots[1] + uqm::gameState().sis().ModuleSlots[4]
+		 + uqm::gameState().sis().ModuleSlots[7] + uqm::gameState().sis().ModuleSlots[10];
 }
 
-static bool
-StripShip(uint16_t fuel_required)
+static bool StripShip(uint16_t fuel_required)
 {
 	uint8_t i {};
 	uint8_t which_module {};
 	int8_t crew_pods {};
 
-	SET_GAME_STATE(MELNORME_RESCUE_REFUSED, 0);
+	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_RESCUE_REFUSED, static_cast<uint32_t>(0));
 
-	crew_pods = -(int8_t)((GLOBAL_SIS(CrewEnlisted) + CREW_POD_CAPACITY - 1)
-						  / CREW_POD_CAPACITY);
+	crew_pods = -(int8_t)((uqm::gameState().sis().CrewEnlisted + CrewPodCapacity - 1)
+						  / CrewPodCapacity);
 	if (fuel_required == 0)
 	{
 		uqm::gameState().sis() = SIS_copy;
-		DeltaSISGauges(UNDEFINED_DELTA, rescue_fuel, UNDEFINED_DELTA);
+		DeltaSISGauges(UndefinedDelta, rescue_fuel, UndefinedDelta);
 	}
 	else if (fuel_required == (uint16_t)~0)
 	{
-		GLOBAL_SIS(NumLanders) = 0;
-		for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
+		uqm::gameState().sis().NumLanders = 0;
+		for (i = 0; i < NumDriveSlots; ++i)
 		{
-			GLOBAL_SIS(DriveSlots[i]) = EMPTY_SLOT + 0;
+			uqm::gameState().sis().DriveSlots[i] = EmptySlot + 0;
 		}
-		for (i = 0; i < NUM_JET_SLOTS; ++i)
+		for (i = 0; i < NumJetSlots; ++i)
 		{
-			GLOBAL_SIS(JetSlots[i]) = EMPTY_SLOT + 1;
+			uqm::gameState().sis().JetSlots[i] = EmptySlot + 1;
 		}
-		if (GLOBAL_SIS(FuelOnBoard) > FUEL_RESERVE)
+		if (uqm::gameState().sis().FuelOnBoard > FuelReserve)
 		{
-			GLOBAL_SIS(FuelOnBoard) = FUEL_RESERVE;
+			uqm::gameState().sis().FuelOnBoard = FuelReserve;
 		}
-		GLOBAL_SIS(TotalBioMass) = 0;
-		GLOBAL_SIS(TotalElementMass) = 0;
+		uqm::gameState().sis().TotalBioMass = 0;
+		uqm::gameState().sis().TotalElementMass = 0;
 		for (i = 0; i < NUM_ELEMENT_CATEGORIES; ++i)
 		{
-			GLOBAL_SIS(ElementAmounts[i]) = 0;
+			uqm::gameState().sis().ElementAmounts[i] = 0;
 		}
-		for (i = 0; i < NUM_MODULE_SLOTS; ++i)
+		for (i = 0; i < NumModuleSlots; ++i)
 		{
-			which_module = GLOBAL_SIS(ModuleSlots[i]);
+			which_module = uqm::gameState().sis().ModuleSlots[i];
 			if (which_module < BOMB_MODULE_0
 				&& (which_module != CREW_POD
 					|| ++crew_pods > 0))
 			{
-				GLOBAL_SIS(ModuleSlots[i]) = EMPTY_SLOT + 2;
+				uqm::gameState().sis().ModuleSlots[i] = EmptySlot + 2;
 			}
 		}
 
-		DeltaSISGauges(UNDEFINED_DELTA, UNDEFINED_DELTA, UNDEFINED_DELTA);
+		DeltaSISGauges(UndefinedDelta, UndefinedDelta, UndefinedDelta);
 	}
 	else if (fuel_required)
 	{
@@ -763,8 +751,8 @@ StripShip(uint16_t fuel_required)
 			module_count[i] = 0;
 		}
 
-		uint32_t capacity {FUEL_RESERVE};
-		uint8_t slot {NUM_MODULE_SLOTS - 1};
+		uint32_t capacity {FuelReserve};
+		uint8_t slot {NumModuleSlots - 1};
 		do
 		{
 			if (SIS_copy.ModuleSlots[slot] == FUEL_TANK
@@ -772,7 +760,7 @@ StripShip(uint16_t fuel_required)
 			{
 				uint16_t volume {};
 
-				volume = SIS_copy.ModuleSlots[slot] == FUEL_TANK ? FUEL_TANK_CAPACITY : HEFUEL_TANK_CAPACITY;
+				volume = SIS_copy.ModuleSlots[slot] == FUEL_TANK ? FuelTankCapacity : HefuelTankCapacity;
 				capacity += volume;
 			}
 		} while (slot--);
@@ -781,9 +769,9 @@ StripShip(uint16_t fuel_required)
 			fuel_required = capacity;
 		}
 
-		bays = -(int8_t)((SIS_copy.TotalElementMass + STORAGE_BAY_CAPACITY - 1)
-						 / STORAGE_BAY_CAPACITY);
-		for (i = 0; i < NUM_MODULE_SLOTS; ++i)
+		bays = -(int8_t)((SIS_copy.TotalElementMass + StorageBayCapacity - 1)
+						 / StorageBayCapacity);
+		for (i = 0; i < NumModuleSlots; ++i)
 		{
 			which_module = SIS_copy.ModuleSlots[i];
 			if (which_module == CREW_POD)
@@ -796,7 +784,7 @@ StripShip(uint16_t fuel_required)
 			}
 		}
 
-		worth = fuel_required / FUEL_TANK_SCALE;
+		worth = fuel_required / FuelTankScale;
 		uint16_t total {0};
 		uint8_t num_searches {0};
 		beg_mod = end_mod = (uint8_t)~0;
@@ -813,35 +801,35 @@ StripShip(uint16_t fuel_required)
 					--SIS_copy.NumLanders;
 					break;
 				case FUSION_THRUSTER:
-					for (i = 0; i < NUM_DRIVE_SLOTS; ++i)
+					for (i = 0; i < NumDriveSlots; ++i)
 					{
-						if (SIS_copy.DriveSlots[i] < EMPTY_SLOT)
+						if (SIS_copy.DriveSlots[i] < EmptySlot)
 						{
 							break;
 						}
 					}
-					if (i == NUM_DRIVE_SLOTS)
+					if (i == NumDriveSlots)
 					{
 						continue;
 					}
-					SIS_copy.DriveSlots[i] = EMPTY_SLOT + 0;
+					SIS_copy.DriveSlots[i] = EmptySlot + 0;
 					break;
 				case TURNING_JETS:
-					for (i = 0; i < NUM_JET_SLOTS; ++i)
+					for (i = 0; i < NumJetSlots; ++i)
 					{
-						if (SIS_copy.JetSlots[i] < EMPTY_SLOT)
+						if (SIS_copy.JetSlots[i] < EmptySlot)
 						{
 							break;
 						}
 					}
-					if (i == NUM_JET_SLOTS)
+					if (i == NumJetSlots)
 					{
 						continue;
 					}
-					SIS_copy.JetSlots[i] = EMPTY_SLOT + 1;
+					SIS_copy.JetSlots[i] = EmptySlot + 1;
 					break;
 				case CREW_POD:
-					i = uqm::highByte(uqm::lowWord(rand_val)) % NUM_MODULE_SLOTS;
+					i = uqm::highByte(uqm::lowWord(rand_val)) % NumModuleSlots;
 					which_module = SIS_copy.ModuleSlots[i];
 					if (which_module >= BOMB_MODULE_0
 						|| which_module == FUEL_TANK
@@ -853,7 +841,7 @@ StripShip(uint16_t fuel_required)
 					{
 						continue;
 					}
-					SIS_copy.ModuleSlots[i] = EMPTY_SLOT + 2;
+					SIS_copy.ModuleSlots[i] = EmptySlot + 2;
 					break;
 			}
 
@@ -866,7 +854,7 @@ StripShip(uint16_t fuel_required)
 				end_mod = which_module;
 			}
 			++module_count[which_module];
-			total += GLOBAL(ModuleCost[which_module]);
+			total += uqm::gameState().game().ModuleCost[which_module];
 		}
 
 		if (total == 0)
@@ -905,95 +893,93 @@ StripShip(uint16_t fuel_required)
 	return (true);
 }
 
-static void
-ExitConversation(RESPONSE_REF R)
+static void ExitConversation(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, no_trade_now))
+	if (PlayerSaid(R, no_trade_now))
 	{
 		NPCPhrase(OK_NO_TRADE_NOW_BYE);
 	}
-	else if (PLAYER_SAID(R, youre_on))
+	else if (PlayerSaid(R, youre_on))
 	{
 		NPCPhrase(YOU_GIVE_US_NO_CHOICE);
 
-		SET_GAME_STATE(MELNORME_ANGER, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(1));
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, so_we_can_attack))
+	else if (PlayerSaid(R, so_we_can_attack))
 	{
 		NPCPhrase(DECEITFUL_HUMAN);
 
-		SET_GAME_STATE(MELNORME_ANGER, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(2));
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, bye_melnorme_slightly_angry))
+	else if (PlayerSaid(R, bye_melnorme_slightly_angry))
 	{
 		NPCPhrase(MELNORME_SLIGHTLY_ANGRY_GOODBYE);
 	}
-	else if (PLAYER_SAID(R, ok_strip_me))
+	else if (PlayerSaid(R, ok_strip_me))
 	{
-		if (ShipWorth() < 4000 / MODULE_COST_SCALE)
+		if (ShipWorth() < 4000 / ModuleCostScale)
 		{
 			/* is ship worth stripping */
 			NPCPhrase(NOT_WORTH_STRIPPING);
 		}
 		else
 		{
-			SET_GAME_STATE(MELNORME_ANGER, 0);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(0));
 
 			StripShip((uint16_t)~0);
 			NPCPhrase(FAIR_JUSTICE);
 		}
 	}
-	else if (PLAYER_SAID(R, fight_some_more))
+	else if (PlayerSaid(R, fight_some_more))
 	{
 		NPCPhrase(OK_FIGHT_SOME_MORE);
 
-		SET_GAME_STATE(MELNORME_ANGER, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(3));
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, bye_melnorme_pissed_off))
+	else if (PlayerSaid(R, bye_melnorme_pissed_off))
 	{
 		NPCPhrase(MELNORME_PISSED_OFF_GOODBYE);
 	}
-	else if (PLAYER_SAID(R, well_if_thats_the_way_you_feel))
+	else if (PlayerSaid(R, well_if_thats_the_way_you_feel))
 	{
 		NPCPhrase(WE_FIGHT_AGAIN);
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, you_hate_us_so_we_go_away))
+	else if (PlayerSaid(R, you_hate_us_so_we_go_away))
 	{
 		NPCPhrase(HATE_YOU_GOODBYE);
 	}
-	else if (PLAYER_SAID(R, take_it))
+	else if (PlayerSaid(R, take_it))
 	{
 		StripShip(0);
 		NPCPhrase(HAPPY_TO_HAVE_RESCUED);
 	}
-	else if (PLAYER_SAID(R, leave_it))
+	else if (PlayerSaid(R, leave_it))
 	{
-		SET_GAME_STATE(MELNORME_RESCUE_REFUSED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_RESCUE_REFUSED, static_cast<uint32_t>(1));
 		NPCPhrase(MAYBE_SEE_YOU_LATER);
 	}
-	else if (PLAYER_SAID(R, no_help))
+	else if (PlayerSaid(R, no_help))
 	{
-		SET_GAME_STATE(MELNORME_RESCUE_REFUSED, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_RESCUE_REFUSED, static_cast<uint32_t>(1));
 		NPCPhrase(GOODBYE_AND_GOODLUCK);
 	}
-	else if (PLAYER_SAID(R, no_changed_mind))
+	else if (PlayerSaid(R, no_changed_mind))
 	{
 		NPCPhrase(GOODBYE_AND_GOODLUCK_AGAIN);
 	}
-	else if (PLAYER_SAID(R, be_leaving_now)
-			 || PLAYER_SAID(R, goodbye))
+	else if (PlayerSaid(R, be_leaving_now)
+			 || PlayerSaid(R, goodbye))
 	{
 		NPCPhrase(FRIENDLY_GOODBYE);
 	}
 }
 
-static void
-DoRescue(RESPONSE_REF R)
+static void DoRescue(RESPONSE_REF R)
 {
 	int16_t dx {};
 	int16_t dy {};
@@ -1001,17 +987,17 @@ DoRescue(RESPONSE_REF R)
 
 	(void)R; // ignored
 	// JSD Replace old method for locating SOL with plot method
-	//dx = LOGX_TO_UNIVERSE (GLOBAL_SIS (log_x))
+	//dx = LogxToUniverse (GLOBAL_SIS (log_x))
 	//		- SOL_X;
-	//dy = LOGY_TO_UNIVERSE (GLOBAL_SIS (log_y))
+	//dy = LogyToUniverse (GLOBAL_SIS (log_y))
 	//		- SOL_Y;
-	dx = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x))
+	dx = LogxToUniverse(uqm::gameState().sis().log_x)
 	   - plot_map[SOL_DEFINED].star_pt.x;
-	dy = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y))
+	dy = LogyToUniverse(uqm::gameState().sis().log_y)
 	   - plot_map[SOL_DEFINED].star_pt.y;
 	fuel_required = square_root(
 						(uint32_t)((long)dx * dx + (long)dy * dy))
-				  + (2 * FUEL_TANK_SCALE);
+				  + (2 * FuelTankScale);
 
 	if (StripShip(fuel_required))
 	{
@@ -1021,25 +1007,22 @@ DoRescue(RESPONSE_REF R)
 }
 
 // Extract method for getting the player's current credits.
-static uint16_t
-GetAvailableCredits(void)
+static uint16_t GetAvailableCredits(void)
 {
-	return uqm::makeWord(GET_GAME_STATE(MELNORME_CREDIT0),
-						 GET_GAME_STATE(MELNORME_CREDIT1));
+	return uqm::makeWord(uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT0),
+						 uqm::gameState().flag(uqm::GameFlag::MELNORME_CREDIT1));
 }
 
 // Extract method for setting the player's current credits.
-static void
-SetAvailableCredits(uint16_t credits)
+static void SetAvailableCredits(uint16_t credits)
 {
-	SET_GAME_STATE(MELNORME_CREDIT0, uqm::lowByte(credits));
-	SET_GAME_STATE(MELNORME_CREDIT1, uqm::highByte(credits));
+	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_CREDIT0, static_cast<uint32_t>(uqm::lowByte(credits)));
+	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_CREDIT1, static_cast<uint32_t>(uqm::highByte(credits)));
 }
 
 // Now returns whether the purchase succeeded instead of the remaining
 // credit balance.  Use GetAvailableCredits() to get the latter.
-static bool
-DeltaCredit(int16_t delta_credit)
+static bool DeltaCredit(int16_t delta_credit)
 {
 	uint16_t Credit = GetAvailableCredits();
 
@@ -1064,10 +1047,9 @@ DeltaCredit(int16_t delta_credit)
 // Extract methods to process the giving of various bits of information to the
 // player.  Ideally, we'd want to merge these three into a single parameterized
 // function, but the nature of the XXX_GAME_STATE() code makes that tricky.
-static void
-CurrentEvents(void)
+static void CurrentEvents(void)
 {
-	const uint8_t stack = GET_GAME_STATE(MELNORME_EVENTS_INFO_STACK);
+	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_EVENTS_INFO_STACK);
 	const int phraseId = GetLineSafe(ok_buy_event_lines, stack);
 	switch (phraseId)
 	{
@@ -1079,13 +1061,12 @@ CurrentEvents(void)
 			break;
 	}
 	NPCPhrase(phraseId);
-	SET_GAME_STATE(MELNORME_EVENTS_INFO_STACK, stack + 1);
+	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_EVENTS_INFO_STACK, static_cast<uint32_t>(stack + 1));
 }
 
-static void
-AlienRaces(void)
+static void AlienRaces(void)
 {
-	const uint8_t stack = GET_GAME_STATE(MELNORME_ALIEN_INFO_STACK);
+	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_ALIEN_INFO_STACK);
 	const int phraseId = GetLineSafe(ok_buy_alien_race_lines, stack);
 	// Two pieces of alien knowledge trigger state changes.
 	switch (phraseId)
@@ -1106,19 +1087,19 @@ AlienRaces(void)
 			SetHomeworldKnown(SLYLANDRO_HOME);
 			break;
 		case OK_BUY_ALIEN_RACE_14:
-			if (!GET_GAME_STATE(FOUND_PLUTO_SPATHI))
+			if (!uqm::gameState().flag(uqm::GameFlag::FOUND_PLUTO_SPATHI))
 			{
-				SET_GAME_STATE(KNOW_SPATHI_PASSWORD, 1);
-				SET_GAME_STATE(SPATHI_HOME_VISITS, 7);
+				uqm::gameState().setFlag(uqm::GameFlag::KNOW_SPATHI_PASSWORD, static_cast<uint32_t>(1));
+				uqm::gameState().setFlag(uqm::GameFlag::SPATHI_HOME_VISITS, static_cast<uint32_t>(7));
 			}
 			SetHomeworldKnown(SPATHI_HOME);
 			break;
 		case OK_BUY_ALIEN_RACE_15:
-			if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) < 2)
+			if (uqm::gameState().flag(uqm::GameFlag::KNOW_ABOUT_SHATTERED) < 2)
 			{
-				SET_GAME_STATE(KNOW_ABOUT_SHATTERED, 2);
+				uqm::gameState().setFlag(uqm::GameFlag::KNOW_ABOUT_SHATTERED, static_cast<uint32_t>(2));
 			}
-			SET_GAME_STATE(KNOW_SYREEN_WORLD_SHATTERED, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::KNOW_SYREEN_WORLD_SHATTERED, static_cast<uint32_t>(1));
 			SetHomeworldKnown(SYREEN_HOME);
 			break;
 		case OK_BUY_ALIEN_RACE_16:
@@ -1126,24 +1107,23 @@ AlienRaces(void)
 			break;
 	}
 	NPCPhrase(phraseId);
-	SET_GAME_STATE(MELNORME_ALIEN_INFO_STACK, stack + 1);
+	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ALIEN_INFO_STACK, static_cast<uint32_t>(stack + 1));
 }
 
-static void
-History(void)
+static void History(void)
 {
-	const uint8_t stack = GET_GAME_STATE(MELNORME_HISTORY_INFO_STACK);
+	const uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_HISTORY_INFO_STACK);
 	const int phraseId = GetLineSafe(ok_buy_history_lines, stack);
 	NPCPhrase(phraseId);
-	SET_GAME_STATE(MELNORME_HISTORY_INFO_STACK, stack + 1);
+	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_HISTORY_INFO_STACK, static_cast<uint32_t>(stack + 1));
 }
 
 // extract method to tell if we have any information left to sell to the player.
 static bool AnyInfoLeftToSell(void)
 {
-	return GET_GAME_STATE(MELNORME_EVENTS_INFO_STACK) < NUM_EVENT_ITEMS
-		|| GET_GAME_STATE(MELNORME_ALIEN_INFO_STACK) < NUM_ALIEN_RACE_ITEMS
-		|| GET_GAME_STATE(MELNORME_HISTORY_INFO_STACK) < NUM_HISTORY_ITEMS;
+	return uqm::gameState().flag(uqm::GameFlag::MELNORME_EVENTS_INFO_STACK) < NUM_EVENT_ITEMS
+		|| uqm::gameState().flag(uqm::GameFlag::MELNORME_ALIEN_INFO_STACK) < NUM_ALIEN_RACE_ITEMS
+		|| uqm::gameState().flag(uqm::GameFlag::MELNORME_HISTORY_INFO_STACK) < NUM_HISTORY_ITEMS;
 }
 
 static void NatureOfConversation(RESPONSE_REF R);
@@ -1151,24 +1131,25 @@ static void NatureOfConversation(RESPONSE_REF R);
 static uint8_t AskedToBuy;
 
 
-static void
-DoBuy(RESPONSE_REF R)
+static constexpr auto InfoCost {75};
+
+static void DoBuy(RESPONSE_REF R)
 {
 	int16_t needed_credit {};
-	const uint8_t FuelCost = BIO_CREDIT_VALUE / 2;
+	const uint8_t FuelCost = BioCreditValueDefault / 2;
 
 	const uint16_t credit {GetAvailableCredits()};
 
-	uint32_t capacity {FUEL_RESERVE};
-	uint8_t slot {NUM_MODULE_SLOTS - 1};
+	uint32_t capacity {FuelReserve};
+	uint8_t slot {NumModuleSlots - 1};
 	do
 	{
-		if (GLOBAL_SIS(ModuleSlots[slot]) == FUEL_TANK
-			|| GLOBAL_SIS(ModuleSlots[slot]) == HIGHEFF_FUELSYS)
+		if (uqm::gameState().sis().ModuleSlots[slot] == FUEL_TANK
+			|| uqm::gameState().sis().ModuleSlots[slot] == HIGHEFF_FUELSYS)
 		{
 			uint16_t volume {};
 
-			volume = GLOBAL_SIS(ModuleSlots[slot]) == FUEL_TANK ? FUEL_TANK_CAPACITY : HEFUEL_TANK_CAPACITY;
+			volume = uqm::gameState().sis().ModuleSlots[slot] == FUEL_TANK ? FuelTankCapacity : HefuelTankCapacity;
 			capacity += volume;
 		}
 	} while (slot--);
@@ -1181,35 +1162,35 @@ DoBuy(RESPONSE_REF R)
 
 		NatureOfConversation(R);
 	}
-	else if (PLAYER_SAID(R, buy_fuel)
-			 || PLAYER_SAID(R, buy_1_fuel)
-			 || PLAYER_SAID(R, buy_5_fuel)
-			 || PLAYER_SAID(R, buy_10_fuel)
-			 || PLAYER_SAID(R, buy_25_fuel)
-			 || PLAYER_SAID(R, fill_me_up))
+	else if (PlayerSaid(R, buy_fuel)
+			 || PlayerSaid(R, buy_1_fuel)
+			 || PlayerSaid(R, buy_5_fuel)
+			 || PlayerSaid(R, buy_10_fuel)
+			 || PlayerSaid(R, buy_25_fuel)
+			 || PlayerSaid(R, fill_me_up))
 	{
 		needed_credit = 0;
-		if (PLAYER_SAID(R, buy_1_fuel))
+		if (PlayerSaid(R, buy_1_fuel))
 		{
 			needed_credit = 1;
 		}
-		else if (PLAYER_SAID(R, buy_5_fuel))
+		else if (PlayerSaid(R, buy_5_fuel))
 		{
 			needed_credit = 5;
 		}
-		else if (PLAYER_SAID(R, buy_10_fuel))
+		else if (PlayerSaid(R, buy_10_fuel))
 		{
 			needed_credit = 10;
 		}
-		else if (PLAYER_SAID(R, buy_25_fuel))
+		else if (PlayerSaid(R, buy_25_fuel))
 		{
 			needed_credit = 25;
 		}
-		else if (PLAYER_SAID(R, fill_me_up))
+		else if (PlayerSaid(R, fill_me_up))
 		{
-			const int16_t remainingCapacity = (capacity - GLOBAL_SIS(FuelOnBoard)
-											   + FUEL_TANK_SCALE - 1)
-											/ FUEL_TANK_SCALE;
+			const int16_t remainingCapacity = (capacity - uqm::gameState().sis().FuelOnBoard
+											   + FuelTankScale - 1)
+											/ FuelTankScale;
 
 			if (credit < remainingCapacity && !uqm::UQMOptions::read().infiniteCredits)
 			{
@@ -1223,17 +1204,17 @@ DoBuy(RESPONSE_REF R)
 
 		if (needed_credit == 0)
 		{
-			if (!GET_GAME_STATE(MELNORME_FUEL_PROCEDURE))
+			if (!uqm::gameState().flag(uqm::GameFlag::MELNORME_FUEL_PROCEDURE))
 			{
 				NPCPhrase(BUY_FUEL_INTRO);
-				SET_GAME_STATE(MELNORME_FUEL_PROCEDURE, 1);
+				uqm::gameState().setFlag(uqm::GameFlag::MELNORME_FUEL_PROCEDURE, static_cast<uint32_t>(1));
 			}
 		}
 		else
 		{
-			if (GLOBAL_SIS(FuelOnBoard) / FUEL_TANK_SCALE
+			if (uqm::gameState().sis().FuelOnBoard / FuelTankScale
 					+ needed_credit
-				> capacity / FUEL_TANK_SCALE)
+				> capacity / FuelTankScale)
 			{
 				NPCPhrase(NO_ROOM_FOR_FUEL);
 				goto TryFuelAgain;
@@ -1242,14 +1223,14 @@ DoBuy(RESPONSE_REF R)
 			if (((int)(needed_credit * FuelCost) <= (int)credit)
 				|| uqm::UQMOptions::read().infiniteCredits)
 			{
-				if (EXTENDED && PLAYER_SAID(R, fill_me_up))
+				if (IsExtended() && PlayerSaid(R, fill_me_up))
 				{
 					NPCPhrase(OK_FILL_YOU_UP);
 				}
 
 				NPCPhrase(GOT_FUEL);
 
-				uint32_t f {(uint32_t)needed_credit * FUEL_TANK_SCALE};
+				uint32_t f {(uint32_t)needed_credit * FuelTankScale};
 				while (f > 0x3FFFL)
 				{
 					DeltaSISGauges(0, 0x3FFF, 0);
@@ -1265,7 +1246,7 @@ DoBuy(RESPONSE_REF R)
 			{
 				DeltaCredit(-needed_credit);
 			}
-			if (GLOBAL_SIS(FuelOnBoard) >= capacity)
+			if (uqm::gameState().sis().FuelOnBoard >= capacity)
 			{
 				goto BuyBuyBuy;
 			}
@@ -1280,8 +1261,8 @@ TryFuelAgain:
 		Response(fill_me_up, DoBuy);
 		Response(done_buying_fuel, DoBuy);
 	}
-	else if (PLAYER_SAID(R, buy_technology)
-			 || PLAYER_SAID(R, buy_new_tech))
+	else if (PlayerSaid(R, buy_technology)
+			 || PlayerSaid(R, buy_new_tech))
 	{
 		// Note that this code no longer uses the MELNORME_TECH_STACK state
 		// buts, as they're not needed; we can tell what technologies the
@@ -1291,14 +1272,14 @@ TryFuelAgain:
 		TechSaleData* nextTech {};
 
 		// If it's our first time, give an introduction.
-		if (!GET_GAME_STATE(MELNORME_TECH_PROCEDURE))
+		if (!uqm::gameState().flag(uqm::GameFlag::MELNORME_TECH_PROCEDURE))
 		{
 			NPCPhrase(BUY_NEW_TECH_INTRO);
-			SET_GAME_STATE(MELNORME_TECH_PROCEDURE, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME_TECH_PROCEDURE, static_cast<uint32_t>(1));
 		}
 
 		// Did the player just attempt to buy a tech?
-		if (PLAYER_SAID(R, buy_new_tech))
+		if (PlayerSaid(R, buy_new_tech))
 		{
 			nextTech = GetNextTechForSale();
 			if (!nextTech)
@@ -1327,46 +1308,45 @@ TryFuelAgain:
 
 		if (isDifficulty(uqm::Difficulty::Hard) && countTech())
 		{
-			nextTech->price = TECHPRICE + countTech() * 50;
+			nextTech->price = Techprice + countTech() * 50;
 			NPCPhrase(NEED_MORE_CREDIT0);
-			NPCNumber(nextTech->price - TECHPRICE, nullptr);
+			NPCNumber(nextTech->price - Techprice, nullptr);
 			NPCPhrase(NEED_MORE_CREDIT1);
 		}
 
 		Response(buy_new_tech, DoBuy);
 		Response(no_buy_new_tech, DoBuy);
 	}
-	else if (PLAYER_SAID(R, buy_info)
-			 || PLAYER_SAID(R, buy_current_events)
-			 || PLAYER_SAID(R, buy_alien_races)
-			 || PLAYER_SAID(R, buy_history))
+	else if (PlayerSaid(R, buy_info)
+			 || PlayerSaid(R, buy_current_events)
+			 || PlayerSaid(R, buy_alien_races)
+			 || PlayerSaid(R, buy_history))
 	{
-		if (!GET_GAME_STATE(MELNORME_INFO_PROCEDURE))
+		if (!uqm::gameState().flag(uqm::GameFlag::MELNORME_INFO_PROCEDURE))
 		{
 			NPCPhrase(BUY_INFO_INTRO);
-			SET_GAME_STATE(MELNORME_INFO_PROCEDURE, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME_INFO_PROCEDURE, static_cast<uint32_t>(1));
 		}
-		else if (PLAYER_SAID(R, buy_info))
+		else if (PlayerSaid(R, buy_info))
 		{
 			NPCPhrase(OK_BUY_INFO);
 		}
 		else
 		{
-#define INFO_COST 75
-			if (!uqm::UQMOptions::read().infiniteCredits && !DeltaCredit(-INFO_COST))
+			if (!uqm::UQMOptions::read().infiniteCredits && !DeltaCredit(-InfoCost))
 			{
 				goto BuyBuyBuy;
 			}
 
-			if (PLAYER_SAID(R, buy_current_events))
+			if (PlayerSaid(R, buy_current_events))
 			{
 				CurrentEvents();
 			}
-			else if (PLAYER_SAID(R, buy_alien_races))
+			else if (PlayerSaid(R, buy_alien_races))
 			{
 				AlienRaces();
 			}
-			else if (PLAYER_SAID(R, buy_history))
+			else if (PlayerSaid(R, buy_history))
 			{
 				History();
 			}
@@ -1378,15 +1358,15 @@ TryFuelAgain:
 			goto BuyBuyBuy;
 		}
 
-		if (GET_GAME_STATE(MELNORME_EVENTS_INFO_STACK) < NUM_EVENT_ITEMS)
+		if (uqm::gameState().flag(uqm::GameFlag::MELNORME_EVENTS_INFO_STACK) < NUM_EVENT_ITEMS)
 		{
 			Response(buy_current_events, DoBuy);
 		}
-		if (GET_GAME_STATE(MELNORME_ALIEN_INFO_STACK) < NUM_ALIEN_RACE_ITEMS)
+		if (uqm::gameState().flag(uqm::GameFlag::MELNORME_ALIEN_INFO_STACK) < NUM_ALIEN_RACE_ITEMS)
 		{
 			Response(buy_alien_races, DoBuy);
 		}
-		if (GET_GAME_STATE(MELNORME_HISTORY_INFO_STACK) < NUM_HISTORY_ITEMS)
+		if (uqm::gameState().flag(uqm::GameFlag::MELNORME_HISTORY_INFO_STACK) < NUM_HISTORY_ITEMS)
 		{
 			Response(buy_history, DoBuy);
 		}
@@ -1394,15 +1374,15 @@ TryFuelAgain:
 	}
 	else
 	{
-		if (PLAYER_SAID(R, done_buying_fuel))
+		if (PlayerSaid(R, done_buying_fuel))
 		{
 			NPCPhrase(OK_DONE_BUYING_FUEL);
 		}
-		else if (PLAYER_SAID(R, no_buy_new_tech))
+		else if (PlayerSaid(R, no_buy_new_tech))
 		{
 			NPCPhrase(OK_NO_BUY_NEW_TECH);
 		}
-		else if (PLAYER_SAID(R, done_buying_info))
+		else if (PlayerSaid(R, done_buying_info))
 		{
 			NPCPhrase(OK_DONE_BUYING_INFO);
 		}
@@ -1412,7 +1392,7 @@ TryFuelAgain:
 		}
 
 BuyBuyBuy:
-		if (GLOBAL_SIS(FuelOnBoard) < capacity)
+		if (uqm::gameState().sis().FuelOnBoard < capacity)
 		{
 			Response(buy_fuel, DoBuy);
 		}
@@ -1430,19 +1410,18 @@ BuyBuyBuy:
 	}
 }
 
-static void
-DoSell(RESPONSE_REF R)
+static void DoSell(RESPONSE_REF R)
 {
 	uint8_t num_new_rainbows {};
 	uint16_t rainbow_mask {};
 	int16_t added_credit {};
 	int what_to_sell_queued = 0;
-	const uint8_t BioCreditValue = ifHardDifficulty(1, BIO_CREDIT_VALUE);
+	const uint8_t BioCreditValue = ifHardDifficulty(1, BioCreditValueDefault);
 
 	rainbow_mask = uqm::makeWord(
-		GET_GAME_STATE(RAINBOW_WORLD0),
-		GET_GAME_STATE(RAINBOW_WORLD1));
-	num_new_rainbows = -(int8_t)(GET_GAME_STATE(MELNORME_RAINBOW_COUNT));
+		uqm::gameState().flag(uqm::GameFlag::RAINBOW_WORLD0),
+		uqm::gameState().flag(uqm::GameFlag::RAINBOW_WORLD1));
+	num_new_rainbows = -(int8_t)(uqm::gameState().flag(uqm::GameFlag::MELNORME_RAINBOW_COUNT));
 	while (rainbow_mask)
 	{
 		if (rainbow_mask & 1)
@@ -1453,24 +1432,24 @@ DoSell(RESPONSE_REF R)
 		rainbow_mask >>= 1;
 	}
 
-	if (!PLAYER_SAID(R, sell))
+	if (!PlayerSaid(R, sell))
 	{
-		if (PLAYER_SAID(R, sell_life_data))
+		if (PlayerSaid(R, sell_life_data))
 		{
 			TimeCount TimeIn;
 			const int16_t beast_value = 0;
 			bool Sleepy = true;
 
-			if (EXTENDED && GET_GAME_STATE(VUX_BEAST_ON_SHIP) == 2
-				&& GET_GAME_STATE(VUX_BEAST) == 2)
+			if (IsExtended() && uqm::gameState().flag(uqm::GameFlag::VUX_BEAST_ON_SHIP) == 2
+				&& uqm::gameState().flag(uqm::GameFlag::VUX_BEAST) == 2)
 			{
-				SET_GAME_STATE(VUX_BEAST_ON_SHIP, 0);
+				uqm::gameState().setFlag(uqm::GameFlag::VUX_BEAST_ON_SHIP, static_cast<uint32_t>(0));
 			}
 
-			added_credit = GLOBAL_SIS(TotalBioMass) * BioCreditValue + beast_value;
+			added_credit = uqm::gameState().sis().TotalBioMass * BioCreditValue + beast_value;
 
 			NPCPhrase(SOLD_LIFE_DATA1);
-			NPCNumber(GLOBAL_SIS(TotalBioMass), nullptr);
+			NPCNumber(uqm::gameState().sis().TotalBioMass, nullptr);
 			NPCPhrase(SOLD_LIFE_DATA2);
 			NPCNumber(added_credit, nullptr);
 			NPCPhrase(SOLD_LIFE_DATA3);
@@ -1496,14 +1475,14 @@ DoSell(RESPONSE_REF R)
 				(uint8_t)NUM_ELEMENT_CATEGORIES,
 				(uint8_t)NUM_ELEMENT_CATEGORIES);
 
-			while (GLOBAL_SIS(TotalBioMass) && Sleepy)
+			while (uqm::gameState().sis().TotalBioMass && Sleepy)
 			{
 				Sleepy = !(AnyButtonPress(true)
 						   || uqm::currentActivity() & CHECK_ABORT);
 
 				UpdateDuty(true);
 
-				--GLOBAL_SIS(TotalBioMass);
+				--uqm::gameState().sis().TotalBioMass;
 				TaskSwitch();
 				DeltaCredit(BioCreditValue);
 				DrawCargoStrings(
@@ -1511,12 +1490,12 @@ DoSell(RESPONSE_REF R)
 					(uint8_t)NUM_ELEMENT_CATEGORIES);
 			}
 
-			if (!Sleepy && GLOBAL_SIS(TotalBioMass))
+			if (!Sleepy && uqm::gameState().sis().TotalBioMass)
 			{
 				DeltaCredit(
-					GLOBAL_SIS(TotalBioMass)
+					uqm::gameState().sis().TotalBioMass
 					* BioCreditValue);
-				GLOBAL_SIS(TotalBioMass) = 0;
+				uqm::gameState().sis().TotalBioMass = 0;
 			}
 			else
 			{
@@ -1527,7 +1506,7 @@ DoSell(RESPONSE_REF R)
 					Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & CHECK_ABORT);
 				}
 			}
-			ClearSISRect(DRAW_SIS_DISPLAY);
+			ClearSISRect(DrawSisDisplay);
 		}
 		else /* if (R == sell_rainbow_locations) */
 		{
@@ -1544,18 +1523,18 @@ DoSell(RESPONSE_REF R)
 			NPCPhrase(SOLD_RAINBOW_LOCATIONS3);
 
 			uint8_t planets {num_new_rainbows};
-			num_new_rainbows += GET_GAME_STATE(MELNORME_RAINBOW_COUNT);
-			SET_GAME_STATE(MELNORME_RAINBOW_COUNT, num_new_rainbows);
+			num_new_rainbows += uqm::gameState().flag(uqm::GameFlag::MELNORME_RAINBOW_COUNT);
+			uqm::gameState().setFlag(uqm::GameFlag::MELNORME_RAINBOW_COUNT, static_cast<uint32_t>(num_new_rainbows));
 			num_new_rainbows = 0;
 
-			if (!EXTENDED)
+			if (!IsExtended())
 			{
 				DeltaCredit(added_credit);
 			}
 			else
 			{
 				// queue WHAT_TO_SELL before talk-segue
-				if (GLOBAL_SIS(TotalBioMass))
+				if (uqm::gameState().sis().TotalBioMass)
 				{
 					NPCPhrase(WHAT_TO_SELL);
 					what_to_sell_queued = 1;
@@ -1607,21 +1586,21 @@ DoSell(RESPONSE_REF R)
 						Sleepy = !(AnyButtonPress(true) || uqm::currentActivity() & CHECK_ABORT);
 					}
 				}
-				ClearSISRect(DRAW_SIS_DISPLAY);
+				ClearSISRect(DrawSisDisplay);
 			}
 		}
 
 		AskedToBuy = false;
 	}
 
-	if (GLOBAL_SIS(TotalBioMass) || num_new_rainbows)
+	if (uqm::gameState().sis().TotalBioMass || num_new_rainbows)
 	{
 		if (!what_to_sell_queued)
 		{
 			NPCPhrase(WHAT_TO_SELL);
 		}
 
-		if (GLOBAL_SIS(TotalBioMass))
+		if (uqm::gameState().sis().TotalBioMass)
 		{
 			Response(sell_life_data, DoSell);
 		}
@@ -1633,26 +1612,25 @@ DoSell(RESPONSE_REF R)
 	}
 	else
 	{
-		if (PLAYER_SAID(R, sell))
+		if (PlayerSaid(R, sell))
 		{
 			NPCPhrase(NOTHING_TO_SELL);
 		}
-		DISABLE_PHRASE(sell);
+		DisablePhrase(sell);
 
 		NatureOfConversation(R);
 	}
 }
 
 
-static void
-NatureOfConversation(RESPONSE_REF R)
+static void NatureOfConversation(RESPONSE_REF R)
 {
 	uint8_t num_new_rainbows {};
 	uint16_t rainbow_mask {};
 
-	if (PLAYER_SAID(R, get_on_with_business))
+	if (PlayerSaid(R, get_on_with_business))
 	{
-		SET_GAME_STATE(MELNORME_YACK_STACK2, 5);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK2, static_cast<uint32_t>(5));
 		R = 0;
 	}
 
@@ -1661,19 +1639,19 @@ NatureOfConversation(RESPONSE_REF R)
 	const uint16_t Credit {GetAvailableCredits()};
 	if (R == 0)
 	{
-		uint8_t stack = GET_GAME_STATE(MELNORME_YACK_STACK2) - 5;
+		uint8_t stack = uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK2) - 5;
 		NPCPhrase(GetLineSafe(hello_and_down_to_business_lines, stack));
 		if (stack < (NUM_HELLO_LINES - 1))
 		{
 			++stack;
 		}
-		SET_GAME_STATE(MELNORME_YACK_STACK2, stack + 5);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK2, static_cast<uint32_t>(stack + 5));
 	}
 
 	rainbow_mask = uqm::makeWord(
-		GET_GAME_STATE(RAINBOW_WORLD0),
-		GET_GAME_STATE(RAINBOW_WORLD1));
-	num_new_rainbows = -(int8_t)(GET_GAME_STATE(MELNORME_RAINBOW_COUNT));
+		uqm::gameState().flag(uqm::GameFlag::RAINBOW_WORLD0),
+		uqm::gameState().flag(uqm::GameFlag::RAINBOW_WORLD1));
+	num_new_rainbows = -(int8_t)(uqm::gameState().flag(uqm::GameFlag::MELNORME_RAINBOW_COUNT));
 	while (rainbow_mask)
 	{
 		if (rainbow_mask & 1)
@@ -1684,15 +1662,15 @@ NatureOfConversation(RESPONSE_REF R)
 		rainbow_mask >>= 1;
 	}
 
-	if (GLOBAL_SIS(FuelOnBoard) > 0
-		|| GLOBAL_SIS(TotalBioMass)
+	if (uqm::gameState().sis().FuelOnBoard > 0
+		|| uqm::gameState().sis().TotalBioMass
 		|| Credit
 		|| num_new_rainbows
 		|| uqm::UQMOptions::read().infiniteCredits)
 	{
-		if (!GET_GAME_STATE(TRADED_WITH_MELNORME))
+		if (!uqm::gameState().flag(uqm::GameFlag::TRADED_WITH_MELNORME))
 		{
-			SET_GAME_STATE(TRADED_WITH_MELNORME, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::TRADED_WITH_MELNORME, static_cast<uint32_t>(1));
 
 			NPCPhrase(TRADING_INFO);
 		}
@@ -1708,22 +1686,22 @@ NatureOfConversation(RESPONSE_REF R)
 
 			AlienTalkSegue((uint16_t)~0);
 		}
-		else if (PLAYER_SAID(R, why_turned_purple))
+		else if (PlayerSaid(R, why_turned_purple))
 		{
-			SET_GAME_STATE(WHY_MELNORME_PURPLE, 1);
+			uqm::gameState().setFlag(uqm::GameFlag::WHY_MELNORME_PURPLE, static_cast<uint32_t>(1));
 
 			NPCPhrase(TURNED_PURPLE_BECAUSE);
 		}
-		else if (PLAYER_SAID(R, done_selling))
+		else if (PlayerSaid(R, done_selling))
 		{
 			NPCPhrase(OK_DONE_SELLING);
 		}
-		else if (PLAYER_SAID(R, done_buying))
+		else if (PlayerSaid(R, done_buying))
 		{
 			NPCPhrase(OK_DONE_BUYING);
 		}
 
-		if (!GET_GAME_STATE(WHY_MELNORME_PURPLE) && !uqm::UQMOptions::read().infiniteCredits)
+		if (!uqm::gameState().flag(uqm::GameFlag::WHY_MELNORME_PURPLE) && !uqm::UQMOptions::read().infiniteCredits)
 		{
 			Response(why_turned_purple, NatureOfConversation);
 		}
@@ -1731,7 +1709,7 @@ NatureOfConversation(RESPONSE_REF R)
 		{
 			Response(buy, DoBuy);
 		}
-		if (PHRASE_ENABLED(sell))
+		if (PhraseEnabled(sell))
 		{
 			Response(sell, DoSell);
 		}
@@ -1739,7 +1717,7 @@ NatureOfConversation(RESPONSE_REF R)
 	}
 	else /* needs to be rescued */
 	{
-		if (GET_GAME_STATE(MELNORME_RESCUE_REFUSED))
+		if (uqm::gameState().flag(uqm::GameFlag::MELNORME_RESCUE_REFUSED))
 		{
 			NPCPhrase(CHANGED_MIND);
 
@@ -1748,13 +1726,13 @@ NatureOfConversation(RESPONSE_REF R)
 		}
 		else
 		{
-			uint8_t num_rescues = GET_GAME_STATE(MELNORME_RESCUE_COUNT);
+			uint8_t num_rescues = uqm::gameState().flag(uqm::GameFlag::MELNORME_RESCUE_COUNT);
 			NPCPhrase(GetLineSafe(rescue_lines, num_rescues));
 
 			if (num_rescues < NUM_RESCUE_LINES - 1)
 			{
 				++num_rescues;
-				SET_GAME_STATE(MELNORME_RESCUE_COUNT, num_rescues);
+				uqm::gameState().setFlag(uqm::GameFlag::MELNORME_RESCUE_COUNT, static_cast<uint32_t>(num_rescues));
 			}
 
 			NPCPhrase(SHOULD_WE_HELP_YOU);
@@ -1767,10 +1745,9 @@ NatureOfConversation(RESPONSE_REF R)
 
 static uint8_t local_stack0, local_stack1;
 
-static void
-DoBluster(RESPONSE_REF R)
+static void DoBluster(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, trade_is_for_the_weak))
+	if (PlayerSaid(R, trade_is_for_the_weak))
 	{
 		NPCPhrase(WERE_NOT_AFRAID);
 		AlienTalkSegue((uint16_t)~0);
@@ -1778,36 +1755,36 @@ DoBluster(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 					  c_gameSecond / 2);
 
-		SET_GAME_STATE(MELNORME_YACK_STACK2, 4);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK2, static_cast<uint32_t>(4));
 	}
-	else if (PLAYER_SAID(R, why_blue_light))
+	else if (PlayerSaid(R, why_blue_light))
 	{
-		SET_GAME_STATE(WHY_MELNORME_BLUE, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::WHY_MELNORME_BLUE, static_cast<uint32_t>(1));
 
 		NPCPhrase(BLUE_IS_MAD);
 	}
-	else if (PLAYER_SAID(R, we_strong_1))
+	else if (PlayerSaid(R, we_strong_1))
 	{
 		local_stack0 = 1;
 		NPCPhrase(YOU_NOT_STRONG_1);
 	}
-	else if (PLAYER_SAID(R, we_strong_2))
+	else if (PlayerSaid(R, we_strong_2))
 	{
 		local_stack0 = 2;
 		NPCPhrase(YOU_NOT_STRONG_2);
 	}
-	else if (PLAYER_SAID(R, we_strong_3))
+	else if (PlayerSaid(R, we_strong_3))
 	{
 		local_stack0 = 3;
 		NPCPhrase(YOU_NOT_STRONG_3);
 	}
-	else if (PLAYER_SAID(R, just_testing))
+	else if (PlayerSaid(R, just_testing))
 	{
 		local_stack1 = 1;
 		NPCPhrase(REALLY_TESTING);
 	}
 
-	if (!GET_GAME_STATE(WHY_MELNORME_BLUE))
+	if (!uqm::gameState().flag(uqm::GameFlag::WHY_MELNORME_BLUE))
 	{
 		Response(why_blue_light, DoBluster);
 	}
@@ -1837,11 +1814,10 @@ DoBluster(RESPONSE_REF R)
 	Response(youre_on, ExitConversation);
 }
 
-static void
-yack0_respond(void)
+static void yack0_respond(void)
 {
 
-	switch (GET_GAME_STATE(MELNORME_YACK_STACK0))
+	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK0))
 	{
 		case 0:
 			Response(we_are_from_alliance, DoFirstMeeting);
@@ -1852,10 +1828,9 @@ yack0_respond(void)
 	}
 }
 
-static void
-yack1_respond(void)
+static void yack1_respond(void)
 {
-	switch (GET_GAME_STATE(MELNORME_YACK_STACK1))
+	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK1))
 	{
 		case 0:
 			Response(what_about_yourselves, DoFirstMeeting);
@@ -1869,10 +1844,9 @@ yack1_respond(void)
 	}
 }
 
-static void
-yack2_respond(void)
+static void yack2_respond(void)
 {
-	switch (GET_GAME_STATE(MELNORME_YACK_STACK2))
+	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK2))
 	{
 		case 0:
 			Response(what_about_universe, DoFirstMeeting);
@@ -1889,8 +1863,7 @@ yack2_respond(void)
 	}
 }
 
-static void
-DoFirstMeeting(RESPONSE_REF R)
+static void DoFirstMeeting(RESPONSE_REF R)
 {
 	uint8_t last_stack = 0;
 	using VoidFunc = void (*)(void);
@@ -1905,7 +1878,7 @@ DoFirstMeeting(RESPONSE_REF R)
 	{
 		uint8_t business_count {};
 
-		business_count = GET_GAME_STATE(MELNORME_BUSINESS_COUNT);
+		business_count = uqm::gameState().flag(uqm::GameFlag::MELNORME_BUSINESS_COUNT);
 		switch (business_count++)
 		{
 			case 0:
@@ -1919,49 +1892,49 @@ DoFirstMeeting(RESPONSE_REF R)
 				--business_count;
 				break;
 		}
-		SET_GAME_STATE(MELNORME_BUSINESS_COUNT, business_count);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_BUSINESS_COUNT, static_cast<uint32_t>(business_count));
 	}
-	else if (PLAYER_SAID(R, we_are_from_alliance))
+	else if (PlayerSaid(R, we_are_from_alliance))
 	{
-		SET_GAME_STATE(MELNORME_YACK_STACK0, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK0, static_cast<uint32_t>(1));
 		NPCPhrase(KNOW_OF_YOU);
 	}
-	else if (PLAYER_SAID(R, how_know))
+	else if (PlayerSaid(R, how_know))
 	{
-		SET_GAME_STATE(MELNORME_YACK_STACK0, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK0, static_cast<uint32_t>(2));
 		NPCPhrase(KNOW_BECAUSE);
 	}
-	else if (PLAYER_SAID(R, what_about_yourselves))
+	else if (PlayerSaid(R, what_about_yourselves))
 	{
 		last_stack = 1;
-		SET_GAME_STATE(MELNORME_YACK_STACK1, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK1, static_cast<uint32_t>(1));
 		NPCPhrase(NO_TALK_ABOUT_OURSELVES);
 	}
-	else if (PLAYER_SAID(R, what_factors))
+	else if (PlayerSaid(R, what_factors))
 	{
 		last_stack = 1;
-		SET_GAME_STATE(MELNORME_YACK_STACK1, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK1, static_cast<uint32_t>(2));
 		NPCPhrase(FACTORS_ARE);
 	}
-	else if (PLAYER_SAID(R, what_about_universe))
+	else if (PlayerSaid(R, what_about_universe))
 	{
 		last_stack = 2;
-		SET_GAME_STATE(MELNORME_YACK_STACK2, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK2, static_cast<uint32_t>(1));
 		NPCPhrase(NO_FREE_LUNCH);
 	}
-	else if (PLAYER_SAID(R, giving_is_good_1))
+	else if (PlayerSaid(R, giving_is_good_1))
 	{
 		last_stack = 2;
-		SET_GAME_STATE(MELNORME_YACK_STACK2, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK2, static_cast<uint32_t>(2));
 		NPCPhrase(GIVING_IS_BAD_1);
 	}
-	else if (PLAYER_SAID(R, giving_is_good_2))
+	else if (PlayerSaid(R, giving_is_good_2))
 	{
 		last_stack = 2;
-		SET_GAME_STATE(MELNORME_YACK_STACK2, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK2, static_cast<uint32_t>(3));
 		NPCPhrase(GIVING_IS_BAD_2);
 	}
-	else if (PLAYER_SAID(R, yes_really_testing))
+	else if (PlayerSaid(R, yes_really_testing))
 	{
 		NPCPhrase(TEST_RESULTS);
 		AlienTalkSegue((uint16_t)~0);
@@ -1969,9 +1942,9 @@ DoFirstMeeting(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
 					  c_gameSecond / 2);
 	}
-	else if (PLAYER_SAID(R, we_apologize))
+	else if (PlayerSaid(R, we_apologize))
 	{
-		SET_GAME_STATE(MELNORME_ANGER, 0);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_ANGER, static_cast<uint32_t>(0));
 		NPCPhrase(APOLOGY_ACCEPTED);
 		AlienTalkSegue((uint16_t)~0);
 
@@ -1988,14 +1961,13 @@ DoFirstMeeting(RESPONSE_REF R)
 	Response(no_trade_now, ExitConversation);
 }
 
-static void
-DoMelnormeMiffed(RESPONSE_REF R)
+static void DoMelnormeMiffed(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
 		uint8_t miffed_count {};
 
-		miffed_count = GET_GAME_STATE(MELNORME_MIFFED_COUNT);
+		miffed_count = uqm::gameState().flag(uqm::GameFlag::MELNORME_MIFFED_COUNT);
 		switch (miffed_count++)
 		{
 			case 0:
@@ -2009,39 +1981,39 @@ DoMelnormeMiffed(RESPONSE_REF R)
 				NPCPhrase(HELLO_SLIGHTLY_ANGRY_3);
 				break;
 		}
-		SET_GAME_STATE(MELNORME_MIFFED_COUNT, miffed_count);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_MIFFED_COUNT, static_cast<uint32_t>(miffed_count));
 
 		AlienTalkSegue((uint16_t)~0);
 
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 					  c_gameSecond / 2);
 	}
-	else if (PLAYER_SAID(R, explore_relationship))
+	else if (PlayerSaid(R, explore_relationship))
 	{
-		SET_GAME_STATE(MELNORME_YACK_STACK3, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK3, static_cast<uint32_t>(1));
 
 		NPCPhrase(EXAMPLE_OF_RELATIONSHIP);
 	}
-	else if (PLAYER_SAID(R, excuse_1))
+	else if (PlayerSaid(R, excuse_1))
 	{
-		SET_GAME_STATE(MELNORME_YACK_STACK3, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK3, static_cast<uint32_t>(2));
 
 		NPCPhrase(NO_EXCUSE_1);
 	}
-	else if (PLAYER_SAID(R, excuse_2))
+	else if (PlayerSaid(R, excuse_2))
 	{
-		SET_GAME_STATE(MELNORME_YACK_STACK3, 3);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK3, static_cast<uint32_t>(3));
 
 		NPCPhrase(NO_EXCUSE_2);
 	}
-	else if (PLAYER_SAID(R, excuse_3))
+	else if (PlayerSaid(R, excuse_3))
 	{
-		SET_GAME_STATE(MELNORME_YACK_STACK3, 4);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK3, static_cast<uint32_t>(4));
 
 		NPCPhrase(NO_EXCUSE_3);
 	}
 
-	switch (GET_GAME_STATE(MELNORME_YACK_STACK3))
+	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK3))
 	{
 		case 0:
 			Response(explore_relationship, DoMelnormeMiffed);
@@ -2061,14 +2033,13 @@ DoMelnormeMiffed(RESPONSE_REF R)
 	Response(bye_melnorme_slightly_angry, ExitConversation);
 }
 
-static void
-DoMelnormePissed(RESPONSE_REF R)
+static void DoMelnormePissed(RESPONSE_REF R)
 {
 	if (R == 0)
 	{
 		uint8_t pissed_count {};
 
-		pissed_count = GET_GAME_STATE(MELNORME_PISSED_COUNT);
+		pissed_count = uqm::gameState().flag(uqm::GameFlag::MELNORME_PISSED_COUNT);
 		switch (pissed_count++)
 		{
 			case 0:
@@ -2082,27 +2053,27 @@ DoMelnormePissed(RESPONSE_REF R)
 				NPCPhrase(HELLO_PISSED_OFF_3);
 				break;
 		}
-		SET_GAME_STATE(MELNORME_PISSED_COUNT, pissed_count);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_PISSED_COUNT, static_cast<uint32_t>(pissed_count));
 
 		AlienTalkSegue((uint16_t)~0);
 
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 					  c_gameSecond / 2);
 	}
-	else if (PLAYER_SAID(R, beg_forgiveness))
+	else if (PlayerSaid(R, beg_forgiveness))
 	{
-		SET_GAME_STATE(MELNORME_YACK_STACK4, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK4, static_cast<uint32_t>(1));
 
 		NPCPhrase(LOTS_TO_MAKE_UP_FOR);
 	}
-	else if (PLAYER_SAID(R, you_are_so_right))
+	else if (PlayerSaid(R, you_are_so_right))
 	{
-		SET_GAME_STATE(MELNORME_YACK_STACK4, 2);
+		uqm::gameState().setFlag(uqm::GameFlag::MELNORME_YACK_STACK4, static_cast<uint32_t>(2));
 
 		NPCPhrase(ONE_LAST_CHANCE);
 	}
 
-	switch (GET_GAME_STATE(MELNORME_YACK_STACK4))
+	switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK4))
 	{
 		case 0:
 			Response(beg_forgiveness, DoMelnormePissed);
@@ -2118,13 +2089,12 @@ DoMelnormePissed(RESPONSE_REF R)
 	Response(bye_melnorme_pissed_off, ExitConversation);
 }
 
-static void
-DoMelnormeHate(RESPONSE_REF R)
+static void DoMelnormeHate(RESPONSE_REF R)
 {
 	uint8_t hate_count {};
 
 	(void)R; // ignored
-	hate_count = GET_GAME_STATE(MELNORME_HATE_COUNT);
+	hate_count = uqm::gameState().flag(uqm::GameFlag::MELNORME_HATE_COUNT);
 	switch (hate_count++)
 	{
 		case 0:
@@ -2138,7 +2108,7 @@ DoMelnormeHate(RESPONSE_REF R)
 			NPCPhrase(HELLO_HATE_YOU_3);
 			break;
 	}
-	SET_GAME_STATE(MELNORME_HATE_COUNT, hate_count);
+	uqm::gameState().setFlag(uqm::GameFlag::MELNORME_HATE_COUNT, static_cast<uint32_t>(hate_count));
 
 	AlienTalkSegue((uint16_t)~0);
 
@@ -2149,29 +2119,28 @@ DoMelnormeHate(RESPONSE_REF R)
 	Response(you_hate_us_so_we_go_away, ExitConversation);
 }
 
-static void
-Intro(void)
+static void Intro(void)
 {
 	prevMsgMode = SetStatusMessageMode(SMM_CREDITS);
 
-	if (IS_HD)
+	if (IsHd())
 	{
-		CommData.AlienAmbientArray[2].AnimFlags |= TRIGGER_FULL_REDRAW;
-		CommData.AlienAmbientArray[3].AnimFlags |= TRIGGER_FULL_REDRAW;
-		CommData.AlienAmbientArray[4].AnimFlags &= ~CIRCULAR_ANIM;
+		CommData.AlienAmbientArray[2].AnimFlags |= TriggerFullRedraw;
+		CommData.AlienAmbientArray[3].AnimFlags |= TriggerFullRedraw;
+		CommData.AlienAmbientArray[4].AnimFlags &= ~CircularAnim;
 	}
 
-	if (GET_GAME_STATE(MET_MELNORME) == 0)
+	if (uqm::gameState().flag(uqm::GameFlag::MET_MELNORME) == 0)
 	{
-		SET_GAME_STATE(MET_MELNORME, 1);
+		uqm::gameState().setFlag(uqm::GameFlag::MET_MELNORME, static_cast<uint32_t>(1));
 		DoFirstMeeting(0);
 	}
 	else
 	{
-		switch (GET_GAME_STATE(MELNORME_ANGER))
+		switch (uqm::gameState().flag(uqm::GameFlag::MELNORME_ANGER))
 		{
 			case 0:
-				if (GET_GAME_STATE(MELNORME_YACK_STACK2) <= 5)
+				if (uqm::gameState().flag(uqm::GameFlag::MELNORME_YACK_STACK2) <= 5)
 				{
 					DoFirstMeeting(0);
 				}
@@ -2193,15 +2162,13 @@ Intro(void)
 	}
 }
 
-static uint16_t
-uninit_melnorme(void)
+static uint16_t uninit_melnorme(void)
 {
 	uqm::lua().endComm();
 	return 0;
 }
 
-static void
-post_melnorme_enc(void)
+static void post_melnorme_enc(void)
 {
 	if (prevMsgMode != SMM_UNDEFINED)
 	{
@@ -2210,21 +2177,20 @@ post_melnorme_enc(void)
 	DrawStatusMessage(nullptr);
 }
 
-LOCDATA*
-init_melnorme_comm(void)
+LOCDATA* init_melnorme_comm(void)
 {
 	melnorme_desc.init_encounter_func = Intro;
 	melnorme_desc.post_encounter_func = post_melnorme_enc;
 	melnorme_desc.uninit_encounter_func = uninit_melnorme;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
 	melnorme_desc.AlienTextBaseline.x =
-		TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
+		TextXOffs() + (SisTextWidth() >> 1);
 	melnorme_desc.AlienTextBaseline.y = 0;
-	melnorme_desc.AlienTextWidth = SIS_TEXT_WIDTH - RES_SCALE(16);
+	melnorme_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	local_stack0 = 0;
 	local_stack1 = 0;

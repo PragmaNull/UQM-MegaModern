@@ -14,7 +14,7 @@
 
 // A group header describes battle groups present in a star system. There is
 //    at most 1 group header per system.
-// 'Random' group info file (RANDGRPINFO_FILE) always contains only one
+// 'Random' group info file (RandgrpinfoFile) always contains only one
 //    group header record, which describes the last-visited star system,
 //    (which may be the current system). Thus the randomly generated groups
 //    are valid for 7 days (set in PutGroupInfo) after the player leaves
@@ -29,10 +29,10 @@ typedef struct
 	//   by going to HSpace and stay there till such time)
 	// star_index is the index of a star this group header
 	//   applies to; ~0 means uninited
-	uint32_t GroupOffset[NUM_SAVED_BATTLE_GROUPS + 1];
+	uint32_t GroupOffset[NumSavedBattleGroups + 1];
 	// Absolute offsets of group definitions in a state file
 	// Group 0 is a list of groups present in solarsys
-	//    (RANDGRPINFO_FILE only)
+	//    (RandgrpinfoFile only)
 	// Groups 1..max are definitions of actual battle groups
 	//    containing ship makeup and status
 

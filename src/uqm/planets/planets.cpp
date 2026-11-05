@@ -81,7 +81,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 	DestroyDrawable(ReleaseDrawable(Orbit->TintFrame));
 	Orbit->TintFrame = 0;
 
-	Orbit->TintColor = BLACK_COLOR;
+	Orbit->TintColor = BlackColor;
 
 	if (Orbit->TopoColors)
 	{
@@ -159,8 +159,7 @@ void DestroyOrbitStruct(PLANET_ORBIT* Orbit, int16_t height)
 }
 
 
-static void
-CreatePlanetContext(void)
+static void CreatePlanetContext(void)
 {
 	GFXRECT r;
 
@@ -173,14 +172,13 @@ CreatePlanetContext(void)
 	PlanetContext = CreateContext("PlanetContext");
 	SetContext(PlanetContext);
 	SetContextFGFrame(Screen);
-	r.extent.height -= MAP_HEIGHT + MAP_BORDER_HEIGHT;
+	r.extent.height -= MapHeight() + MapBorderHeight();
 	SetContextClipRect(&r);
 
 	SetContext(oldContext);
 }
 
-static void
-DestroyPlanetContext(void)
+static void DestroyPlanetContext(void)
 {
 	if (PlanetContext)
 	{
@@ -204,7 +202,7 @@ void DrawScannedObjects(bool Reversed)
 						   GetPredElement(ElementPtr) :
 						   GetSuccElement(ElementPtr);
 
-		if (ElementPtr->state_flags & APPEARING)
+		if (ElementPtr->state_flags & Appearing)
 		{
 			STAMP s;
 
@@ -228,72 +226,72 @@ void DrawPlanetSurfaceBorder(void)
 
 	// Expand the context clip-rect so that we can tweak the existing border
 	clipRect = oldClipRect;
-	clipRect.corner.x -= RES_SCALE(1);
-	clipRect.extent.width += RES_SCALE(2);
-	clipRect.extent.height += RES_SCALE(1);
+	clipRect.corner.x -= ResScale(1);
+	clipRect.extent.width += ResScale(2);
+	clipRect.extent.height += ResScale(1);
 	SetContextClipRect(&clipRect);
 
 	BatchGraphics();
 
 	// Border bulk
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x0A), 0x08));
+		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
 	r.corner.x = 0;
-	r.corner.y = clipRect.extent.height - MAP_HEIGHT - MAP_BORDER_HEIGHT;
+	r.corner.y = clipRect.extent.height - MapHeight() - MapBorderHeight();
 	r.extent.width = clipRect.extent.width;
-	r.extent.height = MAP_BORDER_HEIGHT - RES_SCALE(2);
+	r.extent.height = MapBorderHeight() - ResScale(2);
 	DrawFilledRectangle(&r);
 
-	SetContextForeGroundColor(SIS_BOTTOM_RIGHT_BORDER_COLOR);
+	SetContextForeGroundColor(SisBottomRightBorderColor);
 
 	// Border top shadow line
-	r.extent.width -= RES_SCALE(1);
-	r.extent.height = RES_SCALE(1);
-	r.corner.x = RES_SCALE(1);
-	r.corner.y -= RES_SCALE(1);
+	r.extent.width -= ResScale(1);
+	r.extent.height = ResScale(1);
+	r.corner.x = ResScale(1);
+	r.corner.y -= ResScale(1);
 	DrawFilledRectangle(&r);
 
-	// XXX: We will need bulk left and right rects here if MAP_WIDTH changes
+	// XXX: We will need bulk left and right rects here if MapWidth() changes
 
 	// Right shadow line
-	r.extent.width = RES_SCALE(1);
-	r.extent.height = MAP_HEIGHT + RES_SCALE(2);
-	r.corner.y += MAP_BORDER_HEIGHT - RES_SCALE(1);
-	r.corner.x = clipRect.extent.width - RES_SCALE(1);
+	r.extent.width = ResScale(1);
+	r.extent.height = MapHeight() + ResScale(2);
+	r.corner.y += MapBorderHeight() - ResScale(1);
+	r.corner.x = clipRect.extent.width - ResScale(1);
 	DrawFilledRectangle(&r);
 
-	SetContextForeGroundColor(SIS_LEFT_BORDER_COLOR);
+	SetContextForeGroundColor(SisLeftBorderColor);
 
 	// Left shadow line
-	r.corner.x -= MAP_WIDTH + RES_SCALE(1);
+	r.corner.x -= MapWidth() + ResScale(1);
 	DrawFilledRectangle(&r);
 
 	// Border bottom shadow line
-	r.extent.width = MAP_WIDTH + RES_SCALE(2);
-	r.extent.height = RES_SCALE(1);
+	r.extent.width = MapWidth() + ResScale(2);
+	r.extent.height = ResScale(1);
 	DrawFilledRectangle(&r);
 
 	if (isPC(uqm::UQMOptions::read().landerStyle))
 	{
-		r.corner.x = RES_SCALE(UQM_MAP_WIDTH - SC2_MAP_WIDTH)
-				   - SIS_ORG_X + RES_SCALE(1) + SAFE_POS(1);
-		r.corner.y = clipRect.extent.height - MAP_HEIGHT - RES_SCALE(1);
-		r.extent.width = RES_SCALE(1);
-		r.extent.height = MAP_HEIGHT;
-		SetContextForeGroundColor(SIS_BOTTOM_RIGHT_BORDER_COLOR);
+		r.corner.x = ResScale(UqmMapWidth - Sc2MapWidth)
+				   - SisOrgX() + ResScale(1) + SafePos(1);
+		r.corner.y = clipRect.extent.height - MapHeight() - ResScale(1);
+		r.extent.width = ResScale(1);
+		r.extent.height = MapHeight();
+		SetContextForeGroundColor(SisBottomRightBorderColor);
 		DrawFilledRectangle(&r);
-		r.corner.x += RES_SCALE(1);
-		r.extent.width = RES_SCALE(4);
-		r.corner.y -= RES_SCALE(1);
-		r.extent.height += RES_SCALE(2);
+		r.corner.x += ResScale(1);
+		r.extent.width = ResScale(4);
+		r.corner.y -= ResScale(1);
+		r.extent.height += ResScale(2);
 		SetContextForeGroundColor(
-			BUILD_COLOR_RGBA(0x52, 0x52, 0x52, 0xFF));
+			BuildColorRgba(0x52, 0x52, 0x52, 0xFF));
 		DrawFilledRectangle(&r);
-		r.corner.x += RES_SCALE(4);
-		r.extent.width = RES_SCALE(1);
-		r.corner.y += RES_SCALE(1);
-		r.extent.height -= RES_SCALE(2);
-		SetContextForeGroundColor(SIS_LEFT_BORDER_COLOR);
+		r.corner.x += ResScale(4);
+		r.extent.width = ResScale(1);
+		r.corner.y += ResScale(1);
+		r.extent.height -= ResScale(2);
+		SetContextForeGroundColor(SisLeftBorderColor);
 		DrawFilledRectangle(&r);
 
 		DrawBorder(LANDER_DOS_FRAME);
@@ -318,8 +316,7 @@ typedef enum
 
 } DRAW_ORBITAL_MODE;
 
-static void
-DrawEnterOrbitText(GFXRECT rect)
+static void DrawEnterOrbitText(GFXRECT rect)
 {
 	TEXT text;
 	FRAME OldFontEffect {};
@@ -334,13 +331,13 @@ DrawEnterOrbitText(GFXRECT rect)
 
 	text.baseline = rect.corner;
 	text.baseline.x += rect.extent.width >> 1;
-	text.baseline.y += RES_SCALE(4) + leading - RES_SCALE(4);
+	text.baseline.y += ResScale(4) + leading - ResScale(4);
 	text.align = ALIGN_CENTER;
 
 	const int16_t og_baseline_x {text.baseline.x};
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
-						GAME_STRING(NAVIGATION_STRING_BASE + 8));
+						GameString(NAVIGATION_STRING_BASE + 8));
 
 	text.align = ALIGN_CENTER;
 	{
@@ -372,20 +369,20 @@ void DrawOrbitMapGraphic(void)
 	if (uqm::UQMOptions::read().sphereType != 1)
 	{
 		const bool HaveString =
-			strlen(GAME_STRING(NAVIGATION_STRING_BASE + 8)) > 0;
+			strlen(GameString(NAVIGATION_STRING_BASE + 8)) > 0;
 
 		s.frame = SetAbsFrameIndex(CaptureDrawable(
-									   LoadGraphic(ORBENTER_PMAP_ANIM)),
+									   LoadGraphic(OrbenterPmapAnimRes)),
 								   HaveString);
 
-		s.origin.x = -SAFE_X;
+		s.origin.x = -SafeX();
 		s.origin.y = 0;
 
 		if (isPC(uqm::UQMOptions::read().landerStyle))
 		{
 			s.origin.x -=
-				RES_SCALE(((UQM_MAP_WIDTH - SC2_MAP_WIDTH) / 2)
-						  + SAFE_NUM(5));
+				ResScale(((UqmMapWidth - Sc2MapWidth) / 2)
+						 + SafeNum(5));
 		}
 
 		DrawStamp(&s);
@@ -403,7 +400,7 @@ void DrawOrbitMapGraphic(void)
 	}
 	else
 	{
-		DrawPlanet(0, BLACK_COLOR);
+		DrawPlanet(0, BlackColor);
 		DestroyDrawable(ReleaseDrawable(pSolarSysState->TopoFrame));
 		pSolarSysState->TopoFrame = 0;
 	}
@@ -419,8 +416,8 @@ void DrawOrbitMapGraphic(void)
 		pPlanetDesc = pSolarSysState->pOrbitalDesc;
 		GeneratePlanetSurface (
 			pPlanetDesc, nullptr, PlanetScale, PlanetScale);
-		ss.origin.x = RES_SCALE (ORIG_SIS_SCREEN_WIDTH >> 1);
-		ss.origin.y = RES_SCALE (191);
+		ss.origin.x = ResScale (OrigSisScreenWidth() >> 1);
+		ss.origin.y = ResScale (191);
 
 		ss.frame = chooseIfHd (Orbit->SphereFrame, CaptureDrawable (
 			RescaleFrame (
@@ -433,8 +430,7 @@ void DrawOrbitMapGraphic(void)
 #endif
 }
 
-static void
-DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
+static void DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 {
 	GFXRECT r;
 
@@ -448,7 +444,7 @@ DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 		SetTransitionSource(nullptr);
 		DrawSISFrame();
 		DrawSISMessage(nullptr);
-		DrawSISTitle(GLOBAL_SIS(PlanetName));
+		DrawSISTitle(uqm::gameState().sis().PlanetName);
 		DrawStarBackGround();
 		DrawPlanetSurfaceBorder();
 	}
@@ -480,7 +476,7 @@ DrawOrbitalDisplay(DRAW_ORBITAL_MODE Mode)
 	if (Mode != DRAW_ORBITAL_WAIT)
 	{
 		SetContext(GetScanContext(nullptr));
-		DrawPlanet(0, BLACK_COLOR);
+		DrawPlanet(0, BlackColor);
 		if (isPC(uqm::UQMOptions::read().landerStyle))
 		{
 			InitPCLander(false);
@@ -548,7 +544,7 @@ void LoadPlanet(FRAME SurfDefFrame)
 
 	if (!PLRPlaying((MUSIC_REF)~0))
 	{
-		PlayMusicResume(LanderMusic, NORMAL_VOLUME);
+		PlayMusicResume(LanderMusic, NormalVolume);
 	}
 
 	if (WaitMode)
@@ -600,7 +596,7 @@ void FreePlanet(void)
 
 	pSolarSysState->OrbitalCMap.reset();
 
-	DestroyOrbitStruct(Orbit, MAP_HEIGHT);
+	DestroyOrbitStruct(Orbit, MapHeight());
 
 	pSolarSysState->SysInfo.PlanetInfo.DiscoveryStrings.reset();
 	FreeLanderFont(&pSolarSysState->SysInfo.PlanetInfo);
@@ -617,9 +613,9 @@ void FreePlanet(void)
 
 void LoadStdLanderFont(PLANET_INFO* info)
 {
-	info->LanderFont = LoadFont(LANDER_FONT);
+	info->LanderFont = LoadFont(LanderFontRes);
 	info->LanderFontEff = CaptureDrawable(
-		LoadGraphic(LANDER_FONTEFF_PMAP_ANIM));
+		LoadGraphic(LanderFonteffPmapAnimRes));
 }
 
 void FreeLanderFont(PLANET_INFO* info)
@@ -630,13 +626,12 @@ void FreeLanderFont(PLANET_INFO* info)
 	info->LanderFontEff = nullptr;
 }
 
-static bool
-DoPlanetOrbit(MENU_STATE* pMS)
+static bool DoPlanetOrbit(MENU_STATE* pMS)
 {
 	bool select = (bool)PulsedInputState.menu[KEY_MENU_SELECT];
 
 	if ((uqm::currentActivity() & (CHECK_ABORT | CHECK_LOAD))
-		|| GLOBAL_SIS(CrewEnlisted) == (uint16_t)~0)
+		|| uqm::gameState().sis().CrewEnlisted == (uint16_t)~0)
 	{
 		return false;
 	}
@@ -725,14 +720,13 @@ DoPlanetOrbit(MENU_STATE* pMS)
 				DrawMenuStateStrings(PM_SCAN, pMS->CurState);
 			}
 		}
-		SetFlashRect(SFR_MENU_3DO, false);
+		SetFlashRect(SfrMenu3do(), false);
 	}
 
 	return true;
 }
 
-static void
-on_input_frame(void)
+static void on_input_frame(void)
 {
 	if (!(uqm::currentActivity() & CHECK_ABORT))
 	{
@@ -746,10 +740,10 @@ void PlanetOrbitMenu(void)
 
 	memset(&MenuState, 0, sizeof MenuState);
 
-	SetFlashRect(SFR_MENU_3DO, false);
+	SetFlashRect(SfrMenu3do(), false);
 
 	MenuState.CurState = SCAN;
-	SetMenuSounds(MENU_SOUND_ARROWS, MENU_SOUND_SELECT);
+	SetMenuSounds(MenuSoundArrows, MenuSoundSelect);
 	InputFrameCallback* oldCallback {SetInputCallback(on_input_frame)};
 
 	MenuState.InputFunc = DoPlanetOrbit;

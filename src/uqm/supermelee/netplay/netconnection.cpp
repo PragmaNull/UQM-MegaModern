@@ -56,12 +56,11 @@ const Agreement Agreement_nothingAgreed {};
 
 // The NetConnection keeps a pointer to the passed NetplayPeerOptions;
 // do not free it as long as the NetConnection exists.
-NetConnection*
-NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
-				   NetConnection_ConnectCallback connectCallback,
-				   NetConnection_CloseCallback closeCallback,
-				   NetConnection_ErrorCallback errorCallback,
-				   NetConnection_DeleteCallback deleteCallback, void* extra)
+NetConnection* NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
+								  NetConnection_ConnectCallback connectCallback,
+								  NetConnection_CloseCallback closeCallback,
+								  NetConnection_ErrorCallback errorCallback,
+								  NetConnection_DeleteCallback deleteCallback, void* extra)
 {
 	NetConnection* conn {new NetConnection {}};
 
@@ -146,7 +145,7 @@ NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
 	conn->stateFlags.agreement = Agreement_nothingAgreed;
 	conn->stateFlags.inputDelay = 0;
 #ifdef NETPLAY_CHECKSUM
-	conn->stateFlags.checksumInterval = NETPLAY_CHECKSUM_INTERVAL;
+	conn->stateFlags.checksumInterval = NetplayChecksumInterval;
 #endif
 
 #ifdef NETPLAY_STATISTICS
@@ -166,8 +165,7 @@ NetConnection_open(int player, const uqm::NetplayPeerOptions* options,
 	return conn;
 }
 
-static void
-NetConnection_doDeleteCallback(NetConnection* conn)
+static void NetConnection_doDeleteCallback(NetConnection* conn)
 {
 	if (conn->deleteCallback != nullptr)
 	{
@@ -177,8 +175,7 @@ NetConnection_doDeleteCallback(NetConnection* conn)
 	}
 }
 
-static void
-NetConnection_delete(NetConnection* conn)
+static void NetConnection_delete(NetConnection* conn)
 {
 	NetConnection_doDeleteCallback(conn);
 	if (conn->stateData != nullptr)
@@ -205,8 +202,7 @@ NetConnection_delete(NetConnection* conn)
 	delete conn;
 }
 
-static void
-Netplay_doCloseCallback(NetConnection* conn)
+static void Netplay_doCloseCallback(NetConnection* conn)
 {
 	if (conn->closeCallback != nullptr)
 	{
@@ -218,8 +214,7 @@ Netplay_doCloseCallback(NetConnection* conn)
 
 // Auxiliary function for closing, used by both NetConnection_connectionClosed() and
 // NetConnection_close()
-static void
-NetConnection_doClose(NetConnection* conn)
+static void NetConnection_doClose(NetConnection* conn)
 {
 	conn->stateFlags.connected = false;
 	conn->stateFlags.disconnected = true;
@@ -259,8 +254,7 @@ void NetConnection_setStateData(NetConnection* conn,
 	conn->stateData = stateData;
 }
 
-NetConnectionStateData*
-NetConnection_getStateData(const NetConnection* conn)
+NetConnectionStateData* NetConnection_getStateData(const NetConnection* conn)
 {
 	return conn->stateData;
 }
@@ -282,8 +276,7 @@ void NetConnection_setReadyCallback(NetConnection* conn,
 	conn->readyCallbackArg = arg;
 }
 
-NetConnection_ReadyCallback
-NetConnection_getReadyCallback(const NetConnection* conn)
+NetConnection_ReadyCallback NetConnection_getReadyCallback(const NetConnection* conn)
 {
 	return conn->readyCallback;
 }
@@ -300,8 +293,7 @@ void NetConnection_setResetCallback(NetConnection* conn,
 	conn->resetCallbackArg = arg;
 }
 
-NetConnection_ResetCallback
-NetConnection_getResetCallback(const NetConnection* conn)
+NetConnection_ResetCallback NetConnection_getResetCallback(const NetConnection* conn)
 {
 	return conn->resetCallback;
 }
@@ -329,8 +321,7 @@ void NetConnection_setState(NetConnection* conn, NetState state)
 	conn->state = state;
 }
 
-NetState
-NetConnection_getState(const NetConnection* conn)
+NetState NetConnection_getState(const NetConnection* conn)
 {
 	return conn->state;
 }
@@ -340,8 +331,7 @@ bool NetConnection_getDiscriminant(const NetConnection* conn)
 	return conn->stateFlags.discriminant;
 }
 
-const uqm::NetplayPeerOptions*
-NetConnection_getPeerOptions(const NetConnection* conn)
+const uqm::NetplayPeerOptions* NetConnection_getPeerOptions(const NetConnection* conn)
 {
 	return conn->options;
 }
@@ -356,29 +346,25 @@ int NetConnection_getPlayerNr(const NetConnection* conn)
 	return conn->player;
 }
 
-size_t
-NetConnection_getInputDelay(const NetConnection* conn)
+size_t NetConnection_getInputDelay(const NetConnection* conn)
 {
 	return conn->stateFlags.inputDelay;
 }
 
 #ifdef NETPLAY_CHECKSUM
-ChecksumBuffer*
-NetConnection_getChecksumBuffer(NetConnection* conn)
+ChecksumBuffer* NetConnection_getChecksumBuffer(NetConnection* conn)
 {
 	return &conn->checksumBuffer;
 }
 
-size_t
-NetConnection_getChecksumInterval(const NetConnection* conn)
+size_t NetConnection_getChecksumInterval(const NetConnection* conn)
 {
 	return conn->stateFlags.checksumInterval;
 }
 #endif /* NETPLAY_CHECKSUM */
 
 #ifdef NETPLAY_STATISTICS
-NetStatistics*
-NetConnection_getStatistics(NetConnection* conn)
+NetStatistics* NetConnection_getStatistics(NetConnection* conn)
 {
 	return &conn->statistics;
 }
