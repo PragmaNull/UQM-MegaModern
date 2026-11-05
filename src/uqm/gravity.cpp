@@ -199,7 +199,7 @@ bool TimeSpaceMatterConflict(ELEMENT* ElementPtr)
 								 TestElementPtr->current.image.frame);
 			TestElementControl.EndPoint = TestElementControl.IntersectStamp.origin;
 			if (DrawablesIntersect(&ElementControl,
-								   &TestElementControl, MAX_TIME_VALUE))
+								   &TestElementControl, MaxTimeValue))
 			{
 				UnlockElement(hTestElement);
 

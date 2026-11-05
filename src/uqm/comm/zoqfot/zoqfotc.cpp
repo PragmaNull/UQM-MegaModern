@@ -58,9 +58,9 @@ static LOCDATA zoqfot_desc =
 		ZOQFOTPIK_COLOR_MAP, /* AlienColorMap */
 		ZOQFOTPIK_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		ZOQFOTPIK_CONVERSATION_PHRASES, /* PlayerPhrases */
 		3, /* NumAnimations */
@@ -994,7 +994,7 @@ init_zoqfot_comm(void)
 	zoqfot_desc.post_encounter_func = post_zoqfot_enc;
 	zoqfot_desc.uninit_encounter_func = uninit_zoqfot;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

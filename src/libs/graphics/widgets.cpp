@@ -33,9 +33,9 @@ WIDGET* widget_focus = nullptr;
 #define WIDGET_ACTIVE_COLOR \
 	MENU_HIGHLIGHT_COLOR
 #define WIDGET_INACTIVE_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x18, 0x18, 0x1F), 0x00)
+	BuildColor(MakeRgb15(0x18, 0x18, 0x1F), 0x00)
 #define PAGE_BUTTON_INACTIVE_COLOR \
-	BUILD_COLOR_RGBA(0xA3, 0x2C, 0x00, 0xFF)
+	BuildColorRgba(0xA3, 0x2C, 0x00, 0xFF)
 #define WIDGET_INACTIVE_SELECTED_COLOR \
 	WHITE_COLOR
 #define WIDGET_CURSOR_COLOR \
@@ -45,18 +45,18 @@ WIDGET* widget_focus = nullptr;
 #define WIDGET_DIALOG_TEXT_COLOR \
 	WIDGET_CURSOR_COLOR
 #define WIDGET_BONUS_COLOR \
-	BUILD_COLOR_RGBA(0xDF, 0x6A, 0x13, 0xFF)
+	BuildColorRgba(0xDF, 0x6A, 0x13, 0xFF)
 
 #define WIDGET_ENABLED_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x00, 0x18, 0x00), 0x00)
+	BuildColor(MakeRgb15(0x00, 0x18, 0x00), 0x00)
 #define WIDGET_DISABLED_COLOR \
 	PCMENU_TOP_LEFT_BORDER_COLOR
 #define WIDGET_TOOLTIP_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0xD2, 0xB4, 0x8C), 0x00)
+	BuildColor(MakeRgb15(0xD2, 0xB4, 0x8C), 0x00)
 #define WIDGET_LABEL_COLOR \
-	BUILD_COLOR_RGBA(0x00, 0x77, 0x77, 0xFF)
+	BuildColorRgba(0x00, 0x77, 0x77, 0xFF)
 #define WIDGET_WARNING_COLOR \
-	BUILD_COLOR_RGBA(0xB1, 0x27, 0x47, 0xFF)
+	BuildColorRgba(0xB1, 0x27, 0x47, 0xFF)
 
 #define ONSCREEN DOS_BOOL(13, 10)
 // The pos from the page edge where we need to start scrolling
@@ -66,11 +66,11 @@ WIDGET* widget_focus = nullptr;
 #define RSTEP RES_SCALE(RES_DESCALE(SCREEN_WIDTH) / 2 + 7)
 
 static Color win_bg_clr =
-	BUILD_COLOR(MAKE_RGB15_INIT(0x18, 0x18, 0x1F), 0x00);
+	BuildColor(MakeRgb15(0x18, 0x18, 0x1F), 0x00);
 static Color win_medium_clr =
-	BUILD_COLOR(MAKE_RGB15_INIT(0x10, 0x10, 0x18), 0x00);
+	BuildColor(MakeRgb15(0x10, 0x10, 0x18), 0x00);
 static Color win_dark_clr =
-	BUILD_COLOR(MAKE_RGB15_INIT(0x08, 0x08, 0x10), 0x00);
+	BuildColor(MakeRgb15(0x08, 0x08, 0x10), 0x00);
 
 static FONT cur_font;
 

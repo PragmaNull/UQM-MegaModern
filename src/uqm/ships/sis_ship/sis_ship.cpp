@@ -106,9 +106,9 @@ static RACE_DESC sis_desc =
 		 16, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
-		 NULL_RESOURCE,
+		 NullResource,
 		 SIS_ICON_MASK_PMAP_ANIM,
-		 NULL_RESOURCE,
+		 NullResource,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -143,9 +143,9 @@ static RACE_DESC sis_desc =
 			 BLASTER_SML_MASK_PMAP_ANIM,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
 		 {SIS_CAPTAIN_MASK_PMAP_ANIM,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
@@ -457,14 +457,14 @@ spawn_point_defense(ELEMENT* ElementPtr)
 		Color LaserColor;
 		const static Color ColorRange[] =
 			{
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x03, 0x00), 0x7F),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x07, 0x00), 0x7E),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0A, 0x00), 0x7D),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0E, 0x00), 0x7C),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x11, 0x00), 0x7B),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x15, 0x00), 0x7A),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x18, 0x00), 0x79),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x1C, 0x00), 0x78),
+				BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F),
+				BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7E),
+				BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7D),
+				BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7C),
+				BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B),
+				BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A),
+				BuildColor(MakeRgb15(0x1F, 0x18, 0x00), 0x79),
+				BuildColor(MakeRgb15(0x1F, 0x1C, 0x00), 0x78),
 			};
 
 		bool PaidFor {false};
@@ -986,14 +986,14 @@ init_sis(void)
 	{
 		for (i = 0; i < NUM_VIEWS; ++i)
 		{
-			new_sis_desc.ship_data.ship_rsc[i] = NULL_RESOURCE;
-			new_sis_desc.ship_data.weapon_rsc[i] = NULL_RESOURCE;
-			new_sis_desc.ship_data.special_rsc[i] = NULL_RESOURCE;
+			new_sis_desc.ship_data.ship_rsc[i] = NullResource;
+			new_sis_desc.ship_data.weapon_rsc[i] = NullResource;
+			new_sis_desc.ship_data.special_rsc[i] = NullResource;
 		}
-		new_sis_desc.ship_info.icons_rsc = NULL_RESOURCE;
-		new_sis_desc.ship_data.captain_control.captain_rsc = NULL_RESOURCE;
-		new_sis_desc.ship_data.victory_ditty_rsc = NULL_RESOURCE;
-		new_sis_desc.ship_data.ship_sounds_rsc = NULL_RESOURCE;
+		new_sis_desc.ship_info.icons_rsc = NullResource;
+		new_sis_desc.ship_data.captain_control.captain_rsc = NullResource;
+		new_sis_desc.ship_data.victory_ditty_rsc = NullResource;
+		new_sis_desc.ship_data.ship_sounds_rsc = NullResource;
 
 		new_sis_desc.ship_data.ship_rsc[0] = SIS_HYPER_MASK_PMAP_ANIM;
 

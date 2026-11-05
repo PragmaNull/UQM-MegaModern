@@ -93,7 +93,7 @@ void ClearSISRect(uint8_t ClearFlags)
 
 	GFXCONTEXT OldContext {SetContext(StatusContext)};
 	OldColor = SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x0A), 0x08));
+		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
 
 	//r.corner.x = RES_SCALE (2);
 	//r.extent.width = STATUS_WIDTH - RES_SCALE (4); Unused
@@ -156,7 +156,7 @@ void DrawSISTitle(const char* pStr)
 		buf = pStr;
 
 		SetContextFont(TinyFontBold);
-		uqstl::ranges::replace(buf, UNICHAR_SPACE, UNICHAR_TAB);
+		uqstl::ranges::replace(buf, UnicharSpace, UnicharTab);
 		t.pStr = buf.c_str();
 		t.CharCount = (uint16_t)~0;
 	}
@@ -183,7 +183,7 @@ void DrawSISTitle(const char* pStr)
 void DrawHyperCoords(GFXPOINT universe)
 {
 	char buf[100] {};
-	const char* SpaceOrNull = (isPC(uqm::UQMOptions::read().whichFonts) ? STR_SPACE : "");
+	const char* SpaceOrNull = (isPC(uqm::UQMOptions::read().whichFonts) ? StrSpace : "");
 
 	fmt::format_to_sz_n(buf, "{:03}.{:01}{}:{}{:03}.{:01}",
 						universe.x / 10, universe.x % 10,
@@ -334,7 +334,7 @@ bool DrawSISMessageEx(const char* pStr, int16_t CurPos, int16_t ExPos,
 			char buf[100];
 
 			uqm::utf8StringCopy(buf, sizeof(buf), pStr);
-			replaceChar(buf, UNICHAR_SPACE, UNICHAR_TAB);
+			replaceChar(buf, UnicharSpace, UnicharTab);
 
 			t.pStr = buf;
 			t.CharCount = (uint16_t)~0;
@@ -498,13 +498,13 @@ void DateToString(char* buf, size_t bufLen,
 	switch (uqm::UQMOptions::read().optDateFormat)
 	{
 		case uqm::DateFormat::MMM_dd_yyyy: //MMM dd.yyyy ie: Mar 01.2500
-			fmt::format_to_sz_n(buf, bufLen, "{} {:02}" STR_MIDDLE_DOT "{:04}",
+			fmt::format_to_sz_n(buf, bufLen, "{} {:02}{}{:04}",
 								GAME_STRING(MONTHS_STRING_BASE + month_index - 1),
-								day_index, year_index);
+								day_index, StrMiddleDot, year_index);
 			break;
 		case uqm::DateFormat::MM_dd_yyyy: //MM.dd.yyyy  ie: 03.01.2500
-			fmt::format_to_sz_n(buf, bufLen, "{:02}" STR_MIDDLE_DOT "{:02}" STR_MIDDLE_DOT "{:04}", month_index,
-								day_index, year_index);
+			fmt::format_to_sz_n(buf, bufLen, "{:02}{}{:02}{}{:04}", month_index, StrMiddleDot,
+								day_index, StrMiddleDot, year_index);
 			break;
 		case uqm::DateFormat::dd_MMM_yyyy: //dd MMM yyyy ie: 01 Mar 2500
 			fmt::format_to_sz_n(buf, bufLen, "{:02} {} {:04}", day_index,
@@ -512,8 +512,8 @@ void DateToString(char* buf, size_t bufLen,
 								year_index);
 			break;
 		case uqm::DateFormat::dd_MM_yyyy: //dd MM yyyy  ie: 01.03.2500
-			fmt::format_to_sz_n(buf, bufLen, "{:02}" STR_MIDDLE_DOT "{:02}" STR_MIDDLE_DOT "{:04}", day_index,
-								month_index, year_index);
+			fmt::format_to_sz_n(buf, bufLen, "{:02}{}{:02}{}{:04}", day_index, StrMiddleDot,
+								month_index, StrMiddleDot, year_index);
 			break;
 	}
 }
@@ -559,7 +559,7 @@ void DrawStatusMessage(const char* pStr)
 				fmt::format_to_sz_n(buf, "{} {}",
 									(isPC(uqm::UQMOptions::read().whichMenu) && isPC(uqm::UQMOptions::read().whichFonts)) ?
 										GAME_STRING(STATUS_STRING_BASE + 2) :
-										STR_INFINITY_SIGN,				  // "UNLIMITED"
+										StrInfinitySign,				  // "UNLIMITED"
 									GAME_STRING(STATUS_STRING_BASE + 0)); // "Cr"
 			}
 			else
@@ -574,7 +574,7 @@ void DrawStatusMessage(const char* pStr)
 				fmt::format_to_sz_n(buf, "{} {}",
 									(isPC(uqm::UQMOptions::read().whichMenu) && isPC(uqm::UQMOptions::read().whichFonts)) ?
 										GAME_STRING(STATUS_STRING_BASE + 2) :
-										STR_INFINITY_SIGN,				  // "UNLIMITED"
+										StrInfinitySign,				  // "UNLIMITED"
 									GAME_STRING(STATUS_STRING_BASE + 1)); // "RU"
 			}
 			else
@@ -625,7 +625,7 @@ void DrawStatusMessage(const char* pStr)
 		SetContextFont(TinyFontBold);
 
 		uqm::utf8StringCopy(buf, sizeof(buf), pStr);
-		replaceChar(buf, UNICHAR_SPACE, UNICHAR_TAB);
+		replaceChar(buf, UnicharSpace, UnicharTab);
 
 		t.pStr = buf;
 		t.CharCount = (uint16_t)~0;
@@ -1344,7 +1344,7 @@ DeltaSISGauges_crewDelta(int16_t crew_delta)
 		SetContextForeGroundColor(BLACK_COLOR);
 		DrawFilledRectangle(&r);
 		SetContextForeGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x00, 0x0E, 0x00), 0x6C));
+			BuildColor(MakeRgb15(0x00, 0x0E, 0x00), 0x6C));
 		font_DrawText(&t);
 	}
 }
@@ -1419,7 +1419,7 @@ DeltaSISGauges_fuelDelta(int32_t fuel_delta)
 		}
 		DrawFilledRectangle(&r);
 		SetContextForeGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x13, 0x00, 0x00), 0x2C));
+			BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C));
 		font_DrawText(&t);
 	}
 }
@@ -1453,7 +1453,7 @@ DeltaSISGauges_resunitDelta(int16_t resunit_delta)
 
 		GetStatusMessageRect(&r);
 		SetContextForeGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x00, 0x08, 0x00), 0x6E));
+			BuildColor(MakeRgb15(0x00, 0x08, 0x00), 0x6E));
 		DrawFilledRectangle(&r);
 	}
 
@@ -2076,7 +2076,7 @@ void DrawFuelInFTanks(bool isOutfit)
 
 	if (isOutfit)
 	{
-		c = BUILD_COLOR(MAKE_RGB15(0x0B, 0x00, 0x00), 0x2E);
+		c = BuildColor(MakeRgb15(0x0B, 0x00, 0x00), 0x2E);
 	}
 	else
 	{

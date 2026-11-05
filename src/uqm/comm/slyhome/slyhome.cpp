@@ -43,9 +43,9 @@ static LOCDATA slylandro_desc =
 		SLYLANDRO_COLOR_MAP, /* AlienColorMap */
 		SLYLANDRO_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		SLYLANDRO_CONVERSATION_PHRASES, /* PlayerPhrases */
 		13, /* NumAnimations */
@@ -1003,7 +1003,7 @@ init_slylandro_comm(void)
 	slylandro_desc.post_encounter_func = post_slylandro_enc;
 	slylandro_desc.uninit_encounter_func = uninit_slylandro;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

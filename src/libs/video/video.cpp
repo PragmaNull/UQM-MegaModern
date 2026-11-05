@@ -23,8 +23,8 @@
 #include "uqm/units.h"
 
 
-#define NULL_VIDEO_REF (0)
-static VIDEO_REF _cur_video = NULL_VIDEO_REF;
+static constexpr VIDEO_REF NullVideoRef {nullptr};
+static VIDEO_REF _cur_video = NullVideoRef;
 static MUSIC_REF _cur_speech = 0;
 
 bool InitVideoPlayer(bool useCDROM)
@@ -61,7 +61,7 @@ void VidStop(void)
 		TFB_StopVideo(_cur_video);
 	}
 	_cur_speech = 0;
-	_cur_video = NULL_VIDEO_REF;
+	_cur_video = NullVideoRef;
 }
 
 VIDEO_REF
@@ -70,7 +70,7 @@ VidPlaying(void)
 {
 	if (!_cur_video)
 	{
-		return NULL_VIDEO_REF;
+		return NullVideoRef;
 	}
 
 	if (TFB_VideoPlaying(_cur_video))
@@ -78,7 +78,7 @@ VidPlaying(void)
 		return _cur_video;
 	}
 
-	return NULL_VIDEO_REF;
+	return NullVideoRef;
 }
 
 bool VidProcessFrame(void)
@@ -144,7 +144,7 @@ VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
 		TFB_StopVideo(_cur_video);
 	}
 	_cur_speech = 0;
-	_cur_video = NULL_VIDEO_REF;
+	_cur_video = NullVideoRef;
 
 	// play video in the center of the screen
 	if (TFB_PlayVideo(vid, (CanvasWidth - vid->w) / 2,
@@ -169,7 +169,7 @@ VidPlayEx(VIDEO_REF vid, MUSIC_REF AudRef, MUSIC_REF SpeechRef,
 VIDEO_TYPE
 VidPlay(VIDEO_REF VidRef)
 {
-	return VidPlayEx(VidRef, 0, 0, VID_NO_LOOP);
+	return VidPlayEx(VidRef, 0, 0, VidNoLoop);
 }
 
 VIDEO_REF
@@ -178,7 +178,7 @@ _init_video_file(const char* pStr)
 	TFB_VideoDecoder* dec {VideoDecoder_Load(uqm::contentDir(), pStr)};
 	if (!dec)
 	{
-		return NULL_VIDEO_REF;
+		return NullVideoRef;
 	}
 
 	TFB_VideoClip* vid {new TFB_VideoClip {}};

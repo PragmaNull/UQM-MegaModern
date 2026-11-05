@@ -33,9 +33,9 @@
 #include "libs/graphics/sdl/pure.h"
 #include "core/stl/atomic.h"
 
-#define KBDBUFSIZE (1 << 8)
+static constexpr auto Kbdbufsize {(1 << 8)};
 static int kbdhead = 0, kbdtail = 0;
-static uqm::UniChar kbdbuf[KBDBUFSIZE];
+static uqm::UniChar kbdbuf[Kbdbufsize];
 static uqm::UniChar lastchar;
 
 static bool set_character_mode = false;
@@ -44,8 +44,6 @@ static bool set_character_mode = false;
 
 static uqstl::atomic<int>* menu_vec;
 static int num_menu;
-// The last vector element is the character repeat "key"
-#define KEY_MENU_ANY (num_menu - 1)
 static uqstl::atomic<int>* flight_vec;
 static int num_templ;
 static int num_flight;
@@ -153,7 +151,7 @@ static bool loadKeyConfiguration()
 		for (size_t control = 0; control < keyTemplate.bindings.size(); ++control)
 		{
 			const auto& gestures {keyTemplate.bindings[control]};
-			for (size_t alternate = 0; alternate < gestures.size() && alternate < MAX_FLIGHT_ALTERNATES; ++alternate)
+			for (size_t alternate = 0; alternate < gestures.size() && alternate < MaxFlightAlternates; ++alternate)
 			{
 				fmt::format_to_sz_n(key, "keys.{}.{}.{}", templ + 1, flight_res_names[control], alternate + 1);
 				res_PutString(key, gestures[alternate].c_str());
@@ -162,8 +160,7 @@ static bool loadKeyConfiguration()
 	}
 	return true;
 }
-#define CONTROL_PTR(i, j, k) \
-	(controls.data() + ((i) * num_flight + (j)) * MAX_FLIGHT_ALTERNATES + (k))
+constexpr auto ControlPtr(auto i, auto j, auto k) { return (controls.data() + ((i)*num_flight + (j)) * MaxFlightAlternates + (k)); }
 
 static void
 register_flight_controls(void)
@@ -187,9 +184,9 @@ register_flight_controls(void)
 		}
 		for (j = 0; j < num_flight; j++)
 		{
-			for (k = 0; k < MAX_FLIGHT_ALTERNATES; k++)
+			for (k = 0; k < MaxFlightAlternates; k++)
 			{
-				VCONTROL_GESTURE* g = CONTROL_PTR(i, j, k);
+				VCONTROL_GESTURE* g = ControlPtr(i, j, k);
 				fmt::format_to_sz_n(buf, "keys.{}.{}.{}", i + 1,
 									flight_res_names[j], k + 1);
 				if (!res_IsString(buf))
@@ -216,7 +213,7 @@ initKeyConfig(void)
 		exit(EXIT_FAILURE);
 	}
 
-	controls.assign(static_cast<size_t>(num_templ) * num_flight * MAX_FLIGHT_ALTERNATES, VCONTROL_GESTURE {});
+	controls.assign(static_cast<size_t>(num_templ) * num_flight * MaxFlightAlternates, VCONTROL_GESTURE {});
 
 	/* First, load in the menu keys */
 	LoadResourceIndex(uqm::contentDir(), "menu.key.json", "menu.");
@@ -387,7 +384,7 @@ GetNextCharacter(void)
 		return 0;
 	}
 	const uqm::UniChar result {kbdbuf[kbdhead]};
-	kbdhead = (kbdhead + 1) & (KBDBUFSIZE - 1);
+	kbdhead = (kbdhead + 1) & (Kbdbufsize - 1);
 	return result;
 }
 
@@ -494,7 +491,7 @@ void ProcessInputEvent(const SDL_Event* Event)
 				return;
 			}
 
-			newtail = (kbdtail + 1) & (KBDBUFSIZE - 1);
+			newtail = (kbdtail + 1) & (Kbdbufsize - 1);
 
 			/* ignore the char if the buffer is full */
 			if (newtail != kbdhead)
@@ -523,17 +520,17 @@ void TFB_ResetControls(void)
 void InterrogateInputState(int templat, int control, int index, char* buffer,
 						   int maxlen)
 {
-	VCONTROL_GESTURE* g = CONTROL_PTR(templat, control, index);
+	VCONTROL_GESTURE* g = ControlPtr(templat, control, index);
 
-	const char xbx_buttons[SDL_GAMEPAD_BUTTON_COUNT][16] =
+	const uqgsl::czstring xbx_buttons[SDL_GAMEPAD_BUTTON_COUNT] =
 		{
 			"A", "B", "X", "Y", "Back", "Guide", "Start",
 			"LStick", "RStick", "LShoulder", "RShoulder",
 			"DUp", "DDown", "DLeft", "DRight", "Misc"};
 
-	const char ds4_buttons[SDL_GAMEPAD_BUTTON_COUNT][16] =
+	const uqgsl::czstring ds4_buttons[SDL_GAMEPAD_BUTTON_COUNT] =
 		{
-			STR_CROSS, STR_CIRCLE, STR_SQUARE, STR_TRIANGLE,
+			StrCross, StrCircle, StrSquare, StrTriangle,
 			"Share", "PS", "Options", "L3", "R3", "L1", "R1",
 			"DUp", "DDown", "DLeft", "DRight", "TouchPad"};
 
@@ -548,7 +545,7 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 			"L2", "R2"};
 
 	if (templat >= num_templ || control >= num_flight
-		|| index >= MAX_FLIGHT_ALTERNATES)
+		|| index >= MaxFlightAlternates)
 	{
 		uqm::log::warn("InterrogateInputState(): invalid control index");
 		buffer[0] = 0;
@@ -618,11 +615,11 @@ void InterrogateInputState(int templat, int control, int index, char* buffer,
 
 void RemoveInputState(int templat, int control, int index)
 {
-	VCONTROL_GESTURE* g = CONTROL_PTR(templat, control, index);
+	VCONTROL_GESTURE* g = ControlPtr(templat, control, index);
 	char keybuf[40] {};
 
 	if (templat >= num_templ || control >= num_flight
-		|| index >= MAX_FLIGHT_ALTERNATES)
+		|| index >= MaxFlightAlternates)
 	{
 		uqm::log::warn("RemoveInputState(): invalid control index");
 		return;
@@ -646,7 +643,7 @@ void RebindInputState(int templat, int control, int index)
 	char valbuf[40] {};
 
 	if (templat >= num_templ || control >= num_flight
-		|| index >= MAX_FLIGHT_ALTERNATES)
+		|| index >= MaxFlightAlternates)
 	{
 		uqm::log::warn("RebindInputState(): invalid control index");
 		return;
@@ -665,7 +662,7 @@ void RebindInputState(int templat, int control, int index)
 	/* And now, add the new binding. */
 	VControl_AddGestureBinding(&g,
 							   (flight_vec + templat * num_flight + control));
-	*CONTROL_PTR(templat, control, index) = g;
+	*ControlPtr(templat, control, index) = g;
 	fmt::format_to_sz_n(keybuf, "keys.{}.{}.{}", templat + 1,
 						flight_res_names[control], index + 1);
 	VControl_DumpGesture({valbuf, sizeof(valbuf)}, &g);
@@ -688,7 +685,7 @@ void SaveKeyConfiguration(const uqm::io::Directory& path)
 		keyTemplate.bindings.resize(static_cast<size_t>(num_flight));
 		for (size_t control = 0; control < keyTemplate.bindings.size(); ++control)
 		{
-			for (size_t alternate = 0; alternate < MAX_FLIGHT_ALTERNATES; ++alternate)
+			for (size_t alternate = 0; alternate < MaxFlightAlternates; ++alternate)
 			{
 				fmt::format_to_sz_n(key, "keys.{}.{}.{}", templ + 1, flight_res_names[control], alternate + 1);
 				if (res_IsString(key))

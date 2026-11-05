@@ -58,7 +58,6 @@ typedef enum
 // forward-declare
 typedef struct tfb_sounddecoder TFB_SoundDecoder;
 
-#define THIS_PTR TFB_SoundDecoder*
 
 typedef struct tfb_sounddecoderfunc
 {
@@ -68,20 +67,19 @@ typedef struct tfb_sounddecoderfunc
 	// Make and delete the decoder struct, which starts with a TFB_SoundDecoder.
 	TFB_SoundDecoder* (*Create)(void);
 	void (*Destroy)(TFB_SoundDecoder*);
-	int (*GetError)(THIS_PTR);
-	bool (*Init)(THIS_PTR);
-	void (*Term)(THIS_PTR);
-	bool (*Open)(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
-	void (*Close)(THIS_PTR);
-	int (*Decode)(THIS_PTR, void* buf, int32_t bufsize);
+	int (*GetError)(TFB_SoundDecoder*);
+	bool (*Init)(TFB_SoundDecoder*);
+	void (*Term)(TFB_SoundDecoder*);
+	bool (*Open)(TFB_SoundDecoder*, const uqm::io::Directory& dir, const char* filename);
+	void (*Close)(TFB_SoundDecoder*);
+	int (*Decode)(TFB_SoundDecoder*, void* buf, int32_t bufsize);
 	// returns <0 on error, ==0 when no more data, >0 bytes returned
-	uint32_t (*Seek)(THIS_PTR, uint32_t pcm_pos);
+	uint32_t (*Seek)(TFB_SoundDecoder*, uint32_t pcm_pos);
 	// returns the pcm position set
-	uint32_t (*GetFrame)(THIS_PTR);
+	uint32_t (*GetFrame)(TFB_SoundDecoder*);
 
 } TFB_SoundDecoderFuncs;
 
-#undef THIS_PTR
 
 struct tfb_sounddecoder
 {

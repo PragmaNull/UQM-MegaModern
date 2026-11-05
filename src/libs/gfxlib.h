@@ -54,8 +54,8 @@ typedef DRAWABLE_DESC* DRAWABLE;
 
 typedef uint16_t TIME_VALUE;
 
-#define TIME_SHIFT 8
-#define MAX_TIME_VALUE ((1 << TIME_SHIFT) + 1)
+inline constexpr auto TimeShift {8};
+inline constexpr auto MaxTimeValue {((1 << TimeShift) + 1)};
 
 
 static inline bool
@@ -72,12 +72,12 @@ sameColor24(Color c1, Color c2)
 
 // Transform a 5-bits color component to an 8-bits color component.
 // Form 1, calculates '(r5 / 31.0) * 255.0, highest value is 0xff:
-#define CC5TO8(c) (((c) << 3) | ((c) >> 2))
+constexpr auto Cc5to8(auto c) { return (((c) << 3) | ((c) >> 2)); }
 // Form 2, calculates '(r5 / 32.0) * 256.0, highest value is 0xf8:
-//#define CC5TO8(c) ((c) << 3)
+//#define Cc5to8(c) ((c) << 3)
 
-#define BUILD_COLOR(col, c256) col
-// BUILD_COLOR used to combine a 15-bit RGB color tripple with a
+constexpr Color BuildColor(Color col, [[maybe_unused]] int c256) { return col; }
+// BuildColor used to combine a 15-bit RGB color tripple with a
 // destination VGA palette index into a 32-bit value.
 // Now, it is an empty wrapper which returns the first argument,
 // which is of type Color, and ignores the second argument,
@@ -96,64 +96,23 @@ sameColor24(Color c1, Color c2)
 
 // Turn a 15 bits color into a 24-bits color.
 // r, g, and b are each 5-bits color components.
-static inline Color
+constexpr Color
 colorFromRgb15(uint8_t r, uint8_t g, uint8_t b)
 {
-	Color c;
-	c.r = CC5TO8(r);
-	c.g = CC5TO8(g);
-	c.b = CC5TO8(b);
-	c.a = 0xff;
-
-	return c;
+	return {static_cast<uint8_t>(Cc5to8(r)), static_cast<uint8_t>(Cc5to8(g)), static_cast<uint8_t>(Cc5to8(b)), 0xff};
 }
-#define MAKE_RGB15(r, g, b) colorFromRgb15((r), (g), (b))
+constexpr Color MakeRgb15(uint8_t r, uint8_t g, uint8_t b) { return colorFromRgb15(r, g, b); }
 
-#ifdef NOTYET /* Need C'99 support */
-#define MAKE_RGB15(r, g, b) (Color) { \
-	.r = CC5TO8(r),                   \
-	.g = CC5TO8(g),                   \
-	.b = CC5TO8(b),                   \
-	.a = 0xff}
-#endif
-
-// Temporary, until we can use C'99 features. Then MAKE_RGB15 will be usable
-// anywhere.
-// This define is intended for global initialisations, where the
-// expression must be constant.
-#define MAKE_RGB15_INIT(r, g, b) { \
-	CC5TO8(r),                     \
-	CC5TO8(g),                     \
-	CC5TO8(b),                     \
-	0xff}
-
-// This define is intended for global initialisations, where the
-// expression must be constant.
-#define MAKE_RGBA_INIT(r, g, b, a) { \
-	(r),                             \
-	(g),                             \
-	(b),                             \
-	(a)}
-
-static inline Color
+constexpr Color
 buildColorRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
-	Color c;
-	c.r = r;
-	c.g = g;
-	c.b = b;
-	c.a = a;
-
-	return c;
+	return {r, g, b, a};
 }
-#define BUILD_COLOR_RGBA(r, g, b, a) \
-	buildColorRgba((r), (g), (b), (a))
+constexpr Color BuildColorRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a) { return buildColorRgba(r, g, b, a); }
 
-#define BUILD_SHADE_RGBA(s) \
-	buildColorRgba((s), (s), (s), 0xFF)
+constexpr auto BuildShadeRgba(auto s) { return buildColorRgba((s), (s), (s), 0xFF); }
 
-#define BUILD_COLOR_RGB(r, g, b) \
-	buildColorRgba((r), (g), (b), 0xFF)
+constexpr auto BuildColorRgb(auto r, auto g, auto b) { return buildColorRgba((r), (g), (b), 0xFF); }
 
 static inline void
 IncreaseBrightness(uint8_t* ch, uint8_t value)
@@ -235,16 +194,16 @@ CreateAvgShade(Color first_color, Color second_color)
 
 
 typedef uint8_t CREATE_FLAGS;
-// WANT_MASK is deprecated (and non-functional). It used to generate a bitmap
+// WantMask is deprecated (and non-functional). It used to generate a bitmap
 // of changed pixels for a target DRAWABLE, so that DRAW_SUBTRACTIVE could
 // paint background pixels over them, i.e. a revert draw. The backgrounds
 // are fully erased now instead.
-#define WANT_MASK (CREATE_FLAGS)(1 << 0)
-#define WANT_PIXMAP (CREATE_FLAGS)(1 << 1)
-// MAPPED_TO_DISPLAY is deprecated but still checked by LoadDisplayPixmap().
+inline constexpr auto WantMask {(CREATE_FLAGS)(1 << 0)};
+inline constexpr auto WantPixmap {(CREATE_FLAGS)(1 << 1)};
+// MappedToDisplay is deprecated but still checked by LoadDisplayPixmap().
 // Its former use was to indicate a pre-scaled graphic for the display.
-#define MAPPED_TO_DISPLAY (CREATE_FLAGS)(1 << 2)
-#define WANT_ALPHA (CREATE_FLAGS)(1 << 3)
+inline constexpr auto MappedToDisplay {(CREATE_FLAGS)(1 << 2)};
+inline constexpr auto WantAlpha {(CREATE_FLAGS)(1 << 3)};
 
 struct EXTENT
 {
@@ -527,7 +486,7 @@ const typedef void* COLORMAPPTR;
 
 typedef uint8_t BATCH_FLAGS;
 // This flag is currently unused but it might make sense to restore it
-#define BATCH_BUILD_PAGE (BATCH_FLAGS)(1 << 0)
+inline constexpr auto BatchBuildPage {(BATCH_FLAGS)(1 << 0)};
 
 typedef struct
 {
@@ -538,12 +497,12 @@ typedef struct
 
 typedef uint8_t INTERSECT_CODE;
 
-#define INTERSECT_LEFT (INTERSECT_CODE)(1 << 0)
-#define INTERSECT_TOP (INTERSECT_CODE)(1 << 1)
-#define INTERSECT_RIGHT (INTERSECT_CODE)(1 << 2)
-#define INTERSECT_BOTTOM (INTERSECT_CODE)(1 << 3)
-#define INTERSECT_NOCLIP (INTERSECT_CODE)(1 << 7)
-#define INTERSECT_ALL_SIDES (INTERSECT_CODE)(INTERSECT_LEFT | INTERSECT_TOP | INTERSECT_RIGHT | INTERSECT_BOTTOM)
+inline constexpr auto IntersectLeft {(INTERSECT_CODE)(1 << 0)};
+inline constexpr auto IntersectTop {(INTERSECT_CODE)(1 << 1)};
+inline constexpr auto IntersectRight {(INTERSECT_CODE)(1 << 2)};
+inline constexpr auto IntersectBottom {(INTERSECT_CODE)(1 << 3)};
+inline constexpr auto IntersectNoclip {(INTERSECT_CODE)(1 << 7)};
+inline constexpr auto IntersectAllSides {(INTERSECT_CODE)(IntersectLeft | IntersectTop | IntersectRight | IntersectBottom)};
 
 typedef GFXPOINT HOT_SPOT;
 
@@ -571,8 +530,8 @@ typedef enum
 	// except the Text primitives.
 	// DrawMode.factor: ignored
 	// Text: supported (except DRAW_ALPHA via Color.a)
-	// RGBA sources (WANT_ALPHA): per-pixel alpha blending performed
-	// RGBA targets (WANT_ALPHA): replace directly supported
+	// RGBA sources (WantAlpha): per-pixel alpha blending performed
+	// RGBA targets (WantAlpha): replace directly supported
 	DRAW_ADDITIVE,
 	// Pixel channels of the source FRAME or Color channels of
 	// a primitive are modulated by (DrawMode.factor / 255) and added
@@ -580,8 +539,8 @@ typedef enum
 	// DrawMode.factor range: -32767..32767 (negative values make
 	//    draw subtractive); 255 = 1:1 ratio
 	// Text: not yet supported
-	// RGBA sources (WANT_ALPHA): alpha channel ignored
-	// RGBA targets (WANT_ALPHA): not yet supported
+	// RGBA sources (WantAlpha): alpha channel ignored
+	// RGBA targets (WantAlpha): not yet supported
 	DRAW_ALPHA,
 	// Pixel channels of the source FRAME or Color channels of
 	// a primitive are modulated by (DrawMode.factor / 255) and added
@@ -589,8 +548,8 @@ typedef enum
 	// (1 - DrawMode.factor / 255)
 	// DrawMode.factor range: 0..255; 255 = fully opaque
 	// Text: supported
-	// RGBA sources (WANT_ALPHA): alpha channel ignored
-	// RGBA targets (WANT_ALPHA): not yet supported
+	// RGBA sources (WantAlpha): alpha channel ignored
+	// RGBA targets (WantAlpha): not yet supported
 	DRAW_MULTIPLY,
 	// Pixel channels of the source FRAME or Color channels of
 	// a primitive are modulated by (channel / 255) and multiplied
@@ -598,8 +557,8 @@ typedef enum
 	// (channel / 255)
 	// DrawMode.factor range: not yet supported
 	// Text: supported
-	// RGBA sources (WANT_ALPHA): alpha channel ignored
-	// RGBA targets (WANT_ALPHA): not yet supported
+	// RGBA sources (WantAlpha): alpha channel ignored
+	// RGBA targets (WantAlpha): not yet supported
 	DRAW_OVERLAY,
 	DRAW_SCREEN,
 	DRAW_GRAYSCALE, // To get true grayscale - factor should be == 128
@@ -616,20 +575,18 @@ typedef struct
 	int16_t factor;
 } DrawMode;
 
-#define DRAW_REPLACE_MODE MAKE_DRAW_MODE(DRAW_REPLACE, 0)
-#define DRAW_FACTOR_1 0xff
-#define TRANSFER_ALPHA 0x7fff
+inline constexpr auto DrawFactor1 {0xff};
+inline constexpr auto TransferAlpha {0x7fff};
 
-#define DESAT_AMOUNT 0xBE
+inline constexpr auto DesatAmount {0xBE};
 
-static inline DrawMode
+constexpr DrawMode
 MAKE_DRAW_MODE(DrawKind kind, int16_t factor)
 {
-	DrawMode mode;
-	mode.kind = kind;
-	mode.factor = factor;
-	return mode;
+	return {static_cast<uint8_t>(kind), factor};
 }
+
+inline constexpr DrawMode DrawReplaceMode {MAKE_DRAW_MODE(DRAW_REPLACE, 0)};
 
 typedef enum
 {
@@ -695,10 +652,10 @@ extern void ClearDrawable(void);
 extern void ClearScreen(void);
 #ifdef DEBUG
 extern GFXCONTEXT CreateContextAux(const char* name);
-#define CreateContext(name) CreateContextAux((name))
-#else /* if !defined(DEBUG) */
+constexpr auto CreateContext(auto name) { return CreateContextAux((name)); }
+#else  /* if !defined(DEBUG) */
 extern GFXCONTEXT CreateContextAux(void);
-#define CreateContext(name) CreateContextAux()
+constexpr auto CreateContext(auto name) { return CreateContextAux(); }
 #endif /* !defined(DEBUG) */
 extern bool DestroyContext(GFXCONTEXT ContextRef);
 extern DRAWABLE CreateDisplay(CREATE_FLAGS CreateFlags, int16_t* pwidth,

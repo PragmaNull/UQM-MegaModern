@@ -49,7 +49,7 @@ static LOCDATA commander_desc =
 		COMMANDER_MUSIC, /* AlienSong */
 		{
 								COMMANDER_INIT_PMAP_ANIM, /* AlienAltFrame */
-			NULL_RESOURCE,			  /* AlienAltColorMap */
+			NullResource,			  /* AlienAltColorMap */
 			COMMANDER_LOWPOW_MUSIC,	  /* AlienAltSong */
 		},
 		COMMANDER_CONVERSATION_PHRASES, /* PlayerPhrases */
@@ -742,10 +742,10 @@ GiveRadios(RESPONSE_REF R)
 			StopMusic();
 			CommData.AlienSong = LoadMusic(CommData.AlienSongRes);
 
-			SetMusicVolume(MUTE_VOLUME);
+			SetMusicVolume(MuteVolume);
 			PlayMusic(CommData.AlienSong, true, 1);
 			SeekMusic(MusicPos);
-			FadeMusic(NORMAL_VOLUME, c_gameSecond);
+			FadeMusic(NormalVolume, c_gameSecond);
 
 			altResFlags &= ~USE_ALT_SONG;
 		}
@@ -849,7 +849,7 @@ init_commander_comm()
 	commander_desc.post_encounter_func = post_commander_enc;
 	commander_desc.uninit_encounter_func = uninit_commander;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

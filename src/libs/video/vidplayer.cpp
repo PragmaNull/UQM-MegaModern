@@ -76,9 +76,9 @@ msecToTimeCount(int32_t msec)
 static bool
 processAudioSyncedFrame(VIDEO_REF vid)
 {
-#define MAX_FRAME_LAG 8
-#define LAG_FRACTION 6
-#define SYNC_BIAS 1 / 3
+	constexpr auto MaxFrameLag {8};
+	constexpr auto LagFraction {6};
+	constexpr int SyncBiasDivisor {3};
 	int ret {};
 	uint32_t want_frame {};
 	int32_t wait_msec {};
@@ -122,8 +122,8 @@ processAudioSyncedFrame(VIDEO_REF vid)
 	//  *relatively* smooth
 	//
 	const uint32_t prev_want_frame {vid->cur_frame - vid->lag_cnt};
-	if (want_frame > prev_want_frame - MAX_FRAME_LAG
-		&& want_frame <= prev_want_frame + MAX_FRAME_LAG)
+	if (want_frame > prev_want_frame - MaxFrameLag
+		&& want_frame <= prev_want_frame + MaxFrameLag)
 	{
 		// we will draw the next frame right now, thus +1
 		vid->lag_cnt = vid->cur_frame + 1 - want_frame;
@@ -146,15 +146,15 @@ processAudioSyncedFrame(VIDEO_REF vid)
 	GFXCONTEXT oldContext {SetContext(nullptr)};
 	TFB_DrawScreen_Image(vid->frame,
 						 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
-						 nullptr, DRAW_REPLACE_MODE, TFB_SCREEN_MAIN);
+						 nullptr, DrawReplaceMode, TFB_SCREEN_MAIN);
 	SetContext(oldContext);
 	FlushGraphics(); // needed to prevent half-frame updates
 
 	// increase interframe with positive lag-count to allow audio to catch up
 	// decrease interframe with negative lag-count to allow video to catch up
 	wait_msec = vid->decoder->interframe_wait
-			  - (int)vid->decoder->interframe_wait * SYNC_BIAS
-			  + (int)vid->decoder->interframe_wait * vid->lag_cnt / LAG_FRACTION;
+			  - (int)vid->decoder->interframe_wait / SyncBiasDivisor
+			  + (int)vid->decoder->interframe_wait * vid->lag_cnt / LagFraction;
 	vid->frame_time = Now + msecToTimeCount(wait_msec);
 
 	ret = VideoDecoder_Decode(vid->decoder);
@@ -196,7 +196,7 @@ processMuteFrame(VIDEO_REF vid)
 		GFXCONTEXT oldContext {SetContext(nullptr)};
 		TFB_DrawScreen_Image(vid->frame,
 							 vid->dst_rect.corner.x, vid->dst_rect.corner.y, 0, uqm::TFBScaleMode::None,
-							 nullptr, DRAW_REPLACE_MODE, TFB_SCREEN_MAIN);
+							 nullptr, DrawReplaceMode, TFB_SCREEN_MAIN);
 		SetContext(oldContext);
 		FlushGraphics(); // needed to prevent half-frame updates
 
@@ -307,7 +307,7 @@ bool TFB_PlayVideo(VIDEO_REF vid, uint32_t x, uint32_t y)
 
 	vid->playing = true;
 
-	loop_music = !vid->decoder->audio_synced && vid->loop_frame != VID_NO_LOOP;
+	loop_music = !vid->decoder->audio_synced && vid->loop_frame != VidNoLoop;
 	if (vid->hAudio)
 	{
 		PLRPlaySong(vid->hAudio, (bool)loop_music, 1);

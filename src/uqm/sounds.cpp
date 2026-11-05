@@ -31,15 +31,15 @@ void PlaySound(SOUND S, SoundPosition Pos, ELEMENT* PositionalObject,
 			   uint8_t Priority)
 {
 	uint8_t chan {};
-	static uint8_t lru_channel[NUM_FX_CHANNELS] = {0, 1, 2, 3};
-	static SOUND channel[NUM_FX_CHANNELS] = {0, 0, 0, 0}; // NOLINT(misc-const-correctness)
+	static uint8_t lru_channel[NumFxChannels] = {0, 1, 2, 3};
+	static SOUND channel[NumFxChannels] = {0, 0, 0, 0}; // NOLINT(misc-const-correctness)
 
 	if (S == 0)
 	{
 		return;
 	}
 
-	for (chan = 0; chan < NUM_FX_CHANNELS; ++chan)
+	for (chan = 0; chan < NumFxChannels; ++chan)
 	{
 		if (S == channel[chan])
 		{
@@ -47,17 +47,17 @@ void PlaySound(SOUND S, SoundPosition Pos, ELEMENT* PositionalObject,
 		}
 	}
 
-	if (chan == NUM_FX_CHANNELS)
+	if (chan == NumFxChannels)
 	{
-		for (chan = 0; chan < NUM_FX_CHANNELS; ++chan)
+		for (chan = 0; chan < NumFxChannels; ++chan)
 		{
-			if (!ChannelPlaying(chan + MIN_FX_CHANNEL))
+			if (!ChannelPlaying(chan + MinFxChannel))
 			{
 				break;
 			}
 		}
 
-		if (chan == NUM_FX_CHANNELS)
+		if (chan == NumFxChannels)
 		{
 			chan = lru_channel[0];
 		}
@@ -65,18 +65,18 @@ void PlaySound(SOUND S, SoundPosition Pos, ELEMENT* PositionalObject,
 
 	channel[chan] = S;
 
-	for (uint8_t c {0}; c < NUM_FX_CHANNELS - 1; ++c)
+	for (uint8_t c {0}; c < NumFxChannels - 1; ++c)
 	{
 		if (lru_channel[c] == chan)
 		{
 			memmove(&lru_channel[c], &lru_channel[c + 1],
-					(NUM_FX_CHANNELS - 1) - c);
+					(NumFxChannels - 1) - c);
 			break;
 		}
 	}
-	lru_channel[NUM_FX_CHANNELS - 1] = chan;
+	lru_channel[NumFxChannels - 1] = chan;
 
-	PlaySoundEffect(S, chan + MIN_FX_CHANNEL, Pos, PositionalObject, Priority);
+	PlaySoundEffect(S, chan + MinFxChannel, Pos, PositionalObject, Priority);
 }
 
 void PlayMenuSound(MENU_SOUND_EFFECT S)
@@ -145,7 +145,7 @@ NotPositional(void)
 /* Updates positional sound effects */
 void UpdateSoundPositions(void)
 {
-	for (uint16_t i {FIRST_SFX_CHANNEL}; i <= LAST_SFX_CHANNEL; ++i)
+	for (uint16_t i {FirstSfxChannel}; i <= LastSfxChannel; ++i)
 	{
 		if (!ChannelPlaying(i))
 		{
@@ -184,7 +184,7 @@ void RemoveSoundsForObject(ELEMENT* PosObj)
 {
 	int i {};
 
-	for (i = FIRST_SFX_CHANNEL; i <= LAST_SFX_CHANNEL; ++i)
+	for (i = FirstSfxChannel; i <= LastSfxChannel; ++i)
 	{
 		if (GetPositionalObject(i) == PosObj)
 		{

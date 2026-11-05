@@ -409,7 +409,7 @@ drawFPSText(uqstl::string_view text, int x, int y, Color color)
 	tr.corner.x = tr.corner.y = 0;
 	tr.extent.width = w;
 	tr.extent.height = h;
-	TFB_DrawImage_Rect(&tr, color, DRAW_REPLACE_MODE, img);
+	TFB_DrawImage_Rect(&tr, color, DrawReplaceMode, img);
 
 	for (const char c : text)
 	{
@@ -440,8 +440,8 @@ RenderFPS(int fps, int renderFps)
 		TFB_ClearFPSCanvas();
 
 		const int x = 2 << resolutionFactor;
-		drawFPSText(fmt::format("CPU: {}", fps), x, 7 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0x00, 0xFF));
-		drawFPSText(fmt::format("GPU: {}", renderFps), x, 16 << resolutionFactor, BUILD_COLOR_RGBA(0x00, 0xFF, 0xFF, 0xFF));
+		drawFPSText(fmt::format("CPU: {}", fps), x, 7 << resolutionFactor, BuildColorRgba(0x00, 0xFF, 0x00, 0xFF));
+		drawFPSText(fmt::format("GPU: {}", renderFps), x, 16 << resolutionFactor, BuildColorRgba(0x00, 0xFF, 0xFF, 0xFF));
 	}
 }
 

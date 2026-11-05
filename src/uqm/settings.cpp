@@ -83,7 +83,7 @@ void PauseMusic(void)
 
 void PlayMusicResume(MUSIC_REF MusicRef, uint8_t Volume)
 {
-	SetMusicVolume(MUTE_VOLUME);
+	SetMusicVolume(MuteVolume);
 	PlayMusic(MusicRef, true, 1);
 
 	if (OkayToResume())
@@ -107,7 +107,7 @@ void PlaySoundEffect(SOUND S, uint16_t Channel, SoundPosition Pos,
 {
 	if (!(uqm::globalFlags() & SOUND_DISABLED))
 	{
-		SetChannelVolume(Channel, MAX_VOLUME >> 1, Priority);
+		SetChannelVolume(Channel, MaxVolume >> 1, Priority);
 		//SetChannelRate (Channel, GetSampleRate (S), Priority);
 		PlayChannel(Channel, S, Pos, PositionalObject, Priority);
 	}

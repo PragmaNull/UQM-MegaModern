@@ -100,9 +100,9 @@ static RACE_DESC utwig_desc =
 			 LANCE_SML_MASK_PMAP_ANIM,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
 		 {UTWIG_CAPTAIN_MASK_PMAP_ANIM,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
@@ -336,7 +336,7 @@ utwig_preprocess(ELEMENT* ElementPtr)
 	{
 		// The shield is off.
 		SetPrimColor(lpPrim,
-					 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1C, 0x00), 0x78));
+					 BuildColor(MakeRgb15(0x1F, 0x1C, 0x00), 0x78));
 		ElementPtr->colorCycleIndex = 0;
 		ElementPtr->life_span = NORMAL_LIFE;
 		SetPrimType(lpPrim, STAMP_PRIM);
@@ -352,18 +352,18 @@ utwig_preprocess(ELEMENT* ElementPtr)
 		 */
 		const static Color colorTable[] =
 			{
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x15, 0x00), 0x7a),
-				//BUILD_COLOR (MAKE_RGB15_INIT (0x1F, 0x11, 0x00), 0x7b),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0E, 0x00), 0x7c),
-				//BUILD_COLOR (MAKE_RGB15_INIT (0x1F, 0x0A, 0x00), 0x7d),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x07, 0x00), 0x7e),
-				//BUILD_COLOR (MAKE_RGB15_INIT (0x1F, 0x03, 0x00), 0x7f),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x00, 0x00), 0x2a),
-				//BUILD_COLOR (MAKE_RGB15_INIT (0x1B, 0x00, 0x00), 0x2b),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x17, 0x00, 0x00), 0x2c),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x13, 0x00, 0x00), 0x2d),
-				BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x2e),
-				//BUILD_COLOR (MAKE_RGB15_INIT (0x0B, 0x00, 0x00), 0x2f),
+				BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7a),
+				//BuildColor (MakeRgb15 (0x1F, 0x11, 0x00), 0x7b),
+				BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7c),
+				//BuildColor (MakeRgb15 (0x1F, 0x0A, 0x00), 0x7d),
+				BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7e),
+				//BuildColor (MakeRgb15 (0x1F, 0x03, 0x00), 0x7f),
+				BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x2a),
+				//BuildColor (MakeRgb15 (0x1B, 0x00, 0x00), 0x2b),
+				BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2c),
+				BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2d),
+				BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2e),
+				//BuildColor (MakeRgb15 (0x0B, 0x00, 0x00), 0x2f),
 			};
 		const size_t colorTableCount = std::size(colorTable);
 

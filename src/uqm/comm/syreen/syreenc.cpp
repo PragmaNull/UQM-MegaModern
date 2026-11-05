@@ -43,9 +43,9 @@ static LOCDATA syreen_desc =
 		SYREEN_COLOR_MAP, /* AlienColorMap */
 		SYREEN_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		SYREEN_CONVERSATION_PHRASES, /* PlayerPhrases */
 		15, /* NumAnimations */
@@ -423,7 +423,7 @@ Foreplay(RESPONSE_REF R)
 
 		AlienTalkSegue(1);
 
-		CommData.AlienTextFColor = BUILD_COLOR_RGBA(85, 255, 255, 0);
+		CommData.AlienTextFColor = BuildColorRgba(85, 255, 255, 0);
 		SetCommDarkMode(true);
 
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 1),
@@ -1085,7 +1085,7 @@ init_syreen_comm(void)
 	syreen_desc.post_encounter_func = post_syreen_enc;
 	syreen_desc.uninit_encounter_func = uninit_syreen;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

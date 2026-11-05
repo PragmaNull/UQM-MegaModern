@@ -181,7 +181,7 @@ void* _GetCelData(const ResourceFile& resource)
 		uqm::log::warn("Couldn't get cel data for '{}'", resource.path);
 		return nullptr;
 	}
-	Drawable->Flags = WANT_PIXMAP;
+	Drawable->Flags = WantPixmap;
 	Drawable->MaxIndex = count - 1;
 	for (int i {count - 1}; i >= 0; --i)
 	{

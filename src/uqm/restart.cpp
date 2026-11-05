@@ -82,7 +82,7 @@ void InitMenuMusic(void)
 {
 	if (uqm::UQMOptions::read().mainMenuMusic && !(menuMusic))
 	{
-		FadeMusic(MUTE_VOLUME, TimePeriod {});
+		FadeMusic(MuteVolume, TimePeriod {});
 		menuMusic = loadMainMenuMusic(Rando);
 		PlayMusic(menuMusic, true, 1);
 
@@ -91,7 +91,7 @@ void InitMenuMusic(void)
 			SeekMusic(GetMusicPosition());
 		}
 
-		FadeMusic(NORMAL_VOLUME + 70, c_gameSecond * 3);
+		FadeMusic(NormalVolume + 70, c_gameSecond * 3);
 	}
 }
 
@@ -99,14 +99,14 @@ void UninitMenuMusic(void)
 {
 	if (menuMusic)
 	{
-		SleepThreadUntil(FadeMusic(MUTE_VOLUME, c_gameSecond));
+		SleepThreadUntil(FadeMusic(MuteVolume, c_gameSecond));
 
 		SetMusicPosition();
 		StopMusic();
 		DestroyMusic(menuMusic);
 		menuMusic = 0;
 
-		FadeMusic(NORMAL_VOLUME, TimePeriod {});
+		FadeMusic(NormalVolume, TimePeriod {});
 	}
 }
 
@@ -339,7 +339,7 @@ InitPulseText(void)
 	{
 		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 69 + i);
 
-		frame = CaptureDrawable(CreateDrawable(WANT_PIXMAP, SCREEN_WIDTH,
+		frame = CaptureDrawable(CreateDrawable(WantPixmap, SCREEN_WIDTH,
 											   SCREEN_HEIGHT, 1));
 		SetFrameTransparentColor(frame, BLACK_COLOR);
 		OldFrame = SetContextFGFrame(frame);

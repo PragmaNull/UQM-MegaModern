@@ -256,8 +256,8 @@ add_text(int status, TEXT* pTextIn)
 					if (!IsDarkMode)
 					{
 						SetContextForeGroundColor(
-							BUILD_COLOR(
-								MAKE_RGB15(0x00, 0x00, 0x14), 0x01));
+							BuildColor(
+								MakeRgb15(0x00, 0x00, 0x14), 0x01));
 					}
 					else
 					{
@@ -275,7 +275,7 @@ add_text(int status, TEXT* pTextIn)
 					else
 					{
 						SetContextForeGroundColor(
-							BUILD_COLOR_RGBA(0x00, 0x00, 0xAA, 0xFF));
+							BuildColorRgba(0x00, 0x00, 0xAA, 0xFF));
 					}
 					break;
 				}
@@ -289,7 +289,7 @@ add_text(int status, TEXT* pTextIn)
 					else
 					{
 						SetContextForeGroundColor(
-							BUILD_COLOR_RGBA(0x55, 0x55, 0xFF, 0xFF));
+							BuildColorRgba(0x55, 0x55, 0xFF, 0xFF));
 					}
 					break;
 				}
@@ -299,7 +299,7 @@ add_text(int status, TEXT* pTextIn)
 		locText = *pTextIn;
 		locText.baseline.x -= RES_SCALE(8);
 		locText.CharCount = (uint16_t)~0;
-		locText.pStr = STR_BULLET;
+		locText.pStr = StrBullet;
 		font_DrawText(&locText);
 
 		locText = *pTextIn;
@@ -731,7 +731,7 @@ FeedbackPlayerPhrase(char* pStr)
 		else
 		{
 			SetContextForeGroundColor(
-				BUILD_COLOR_RGBA(0x55, 0x55, 0xFF, 0xFF));
+				BuildColorRgba(0x55, 0x55, 0xFF, 0xFF));
 		}
 
 		ct.baseline.y += RES_SCALE(16);
@@ -894,8 +894,8 @@ FadePlayerUI(void)
 		GFXCONTEXT OldContext {SetContext(ScreenContext)};
 
 		SetContextForeGroundColor(
-			BUILD_COLOR_RGBA(
-				0x00, 0x00, 0x00, DRAW_FACTOR_1 * 0.02 * fadeIndex));
+			BuildColorRgba(
+				0x00, 0x00, 0x00, DrawFactor1 * 0.02 * fadeIndex));
 
 		BatchGraphics();
 
@@ -1050,7 +1050,7 @@ DoTalkSegue(TALKING_STATE* pTS)
 			const uint32_t delay = RecalculateDelay(strlen(SubtitleText.pStr), false);
 			const uint8_t read_speed = speed_array[uqm::globalFlags() & READ_SPEED_MASK];
 
-			if (delay > 0 || read_speed == VERY_SLOW)
+			if (delay > 0 || read_speed == VerySlow)
 			{
 				bool awake = false;
 				const bool block = (!wantTalkingAnim() || IsDarkMode
@@ -1068,7 +1068,7 @@ DoTalkSegue(TALKING_STATE* pTS)
 
 				while (!awake)
 				{
-					if (read_speed != VERY_SLOW
+					if (read_speed != VerySlow
 						&& GetTimeCounter() >= TimeOut)
 					{
 						awake = true;
@@ -1446,8 +1446,8 @@ DoConvSummary(SUMMARY_STATE* pSS)
 			mt.baseline.y = t.baseline.y;
 			mt.align = ALIGN_CENTER;
 			fmt::format_to_sz_n(buffer, "{}{}{}", // "MORE"
-								STR_MIDDLE_DOT, GAME_STRING(FEEDBACK_STRING_BASE + 1),
-								STR_MIDDLE_DOT);
+								StrMiddleDot, GAME_STRING(FEEDBACK_STRING_BASE + 1),
+								StrMiddleDot);
 
 			if (CommData.AlienConv == ORZ_CONVERSATION)
 			{ // MB: nasty hack: remove '$'s from conversation for Orz
@@ -1726,7 +1726,7 @@ DoCommunication(ENCOUNTER_STATE* pES)
 	StopMusic();
 	StopSound();
 	StopTrack();
-	SleepThreadUntil(FadeMusic(NORMAL_VOLUME, TimePeriod {}) + c_gameSecond / 60);
+	SleepThreadUntil(FadeMusic(NormalVolume, TimePeriod {}) + c_gameSecond / 60);
 
 	UninitOscilloscope();
 
@@ -1884,14 +1884,14 @@ HailAlien(void)
 	// init subtitle cache context
 	TextCacheContext = CreateContext("TextCacheContext");
 	//TextCacheFrame = CaptureDrawable (
-	//		CreateDrawable (WANT_PIXMAP, SIS_SCREEN_WIDTH,
+	//		CreateDrawable (WantPixmap, SIS_SCREEN_WIDTH,
 	//		SIS_SCREEN_HEIGHT - SLIDER_Y - SLIDER_HEIGHT + 2, 1));
 	// BW: previous lines were just a complex and wrong way of obtaining 107
 	TextCacheFrame = CaptureDrawable(
-		CreateDrawable(WANT_PIXMAP, SIS_SCREEN_WIDTH, SLIDER_Y, 1));
+		CreateDrawable(WantPixmap, SIS_SCREEN_WIDTH, SLIDER_Y, 1));
 	SetContext(TextCacheContext);
 	SetContextFGFrame(TextCacheFrame);
-	TextBack = BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x01), 0x00);
+	TextBack = BuildColor(MakeRgb15(0x00, 0x00, 0x01), 0x00);
 	// Color key for the background.
 	SetContextBackGroundColor(TextBack);
 	ClearDrawable();

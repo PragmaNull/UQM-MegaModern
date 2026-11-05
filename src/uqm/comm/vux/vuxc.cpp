@@ -41,7 +41,7 @@ static LOCDATA vux_desc =
 		VUX_MUSIC, /* AlienSong */
 		{
 								VUX_ZEX_PMAP_ANIM, /* AlienAltFrame */
-			NULL_RESOURCE,	   /* AlienAltColorMap */
+			NullResource,	   /* AlienAltColorMap */
 			VUX_ZEX_MUSIC,	   /* AlienAltSong */
 		},
 		VUX_CONVERSATION_PHRASES, /* PlayerPhrases */
@@ -919,7 +919,7 @@ init_vux_comm(void)
 	vux_desc.post_encounter_func = post_vux_enc;
 	vux_desc.uninit_encounter_func = uninit_vux;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
 	vux_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1)
 								 + (SIS_TEXT_WIDTH >> 2) - SAFE_NUM_SCL(4);

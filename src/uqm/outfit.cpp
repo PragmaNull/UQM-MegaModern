@@ -1378,7 +1378,7 @@ bool DoOutfit(MENU_STATE* pMS)
 
 			ScreenTransition(uqm::UQMOptions::read().scrTrans, nullptr);
 
-			PlayMusicResume(pMS->hMusic, NORMAL_VOLUME);
+			PlayMusicResume(pMS->hMusic, NormalVolume);
 
 			UnbatchGraphics();
 

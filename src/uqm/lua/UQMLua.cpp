@@ -203,7 +203,7 @@ bool UQMLua::beginComm(const luaUqm_custom_Function* customFuncs, RESOURCE scrip
 		lua_pop(m_state.get(), 1);
 	}
 
-	if (scriptRes == NULL_RESOURCE)
+	if (scriptRes == NullResource)
 	{
 		return true;
 	}

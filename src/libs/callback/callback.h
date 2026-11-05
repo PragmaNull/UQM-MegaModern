@@ -28,7 +28,7 @@ typedef void* CallbackID;
 typedef void* CallbackID;
 // Uniquely identifies a queued callback.
 #endif
-#define CallbackID_invalid ((CallbackID) nullptr)
+inline constexpr auto CallbackID_invalid {((CallbackID) nullptr)};
 
 typedef void* CallbackArg;
 typedef void (*CallbackFunction)(CallbackArg arg);

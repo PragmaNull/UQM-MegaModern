@@ -90,9 +90,9 @@ static RACE_DESC arilou_desc =
 			 ARILOU_SML_MASK_PMAP_ANIM,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
 		 {
 			 WARP_BIG_MASK_PMAP_ANIM,
@@ -146,7 +146,7 @@ initialize_autoaim_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 	LaserBlock.sender = ShipPtr->playerNr;
 	LaserBlock.flags = IGNORE_SIMILAR;
 	LaserBlock.pixoffs = RES_SCALE(ARILOU_OFFSET);
-	LaserBlock.color = BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x0A), 0x0E);
+	LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E);
 	LaserArray[0] = initialize_laser(&LaserBlock);
 
 	return (1);

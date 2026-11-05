@@ -67,7 +67,7 @@ ClearReportArea(int16_t startx)
 	SetContextBackGroundColor(BLACK_COLOR);
 	ClearDrawable();
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x00, 0x07, 0x00), 0x57));
+		BuildColor(MakeRgb15(0x00, 0x07, 0x00), 0x57));
 
 	s.origin.y = RES_SCALE(1);
 	for (y = 0; y < NUM_CELL_ROWS; ++y)
@@ -125,7 +125,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 	t.baseline.y = r.extent.height + RES_SCALE(1);
 	// Text vertical alignment
 	uint16_t row_cells {0};
-	fgcolor = BUILD_COLOR(MAKE_RGB15(0x00, 0x1F, 0x00), 0xFF);
+	fgcolor = BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0xFF);
 
 	if (contextRect.extent.width < SCALED_MAP_WIDTH)
 	{
@@ -384,7 +384,7 @@ void DoDiscoveryReport(SOUND_REF ReadOutSounds)
 			OldFontEffect = SetContextFontEffect(nullptr);
 		}
 
-		uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+		uqm::lua().beginComm(nullptr, NullResource);
 		uqstl::late_constructed<uqstl::string> interpolatedReport {};
 		const PLANET_INFO& planetInfo {pSolarSysState->SysInfo.PlanetInfo};
 		uqstl::string_view report {planetInfo.DiscoveryStrings->text(planetInfo.DiscoveryIndex)};

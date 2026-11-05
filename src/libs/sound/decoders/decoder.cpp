@@ -33,23 +33,22 @@
 #include "aiffaud.h"
 
 
-#define MAX_REG_DECODERS 31
+static constexpr auto MaxRegDecoders {31};
 
-#define THIS_PTR TFB_SoundDecoder*
 
 const static char* bufa_GetName(void);
 static bool bufa_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void bufa_TermModule(void);
 static TFB_SoundDecoder* bufa_Create(void);
 static void bufa_Destroy(TFB_SoundDecoder* decoder);
-static int bufa_GetError(THIS_PTR);
-static bool bufa_Init(THIS_PTR);
-static void bufa_Term(THIS_PTR);
-static bool bufa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
-static void bufa_Close(THIS_PTR);
-static int bufa_Decode(THIS_PTR, void* buf, int32_t bufsize);
-static uint32_t bufa_Seek(THIS_PTR, uint32_t pcm_pos);
-static uint32_t bufa_GetFrame(THIS_PTR);
+static int bufa_GetError(TFB_SoundDecoder*);
+static bool bufa_Init(TFB_SoundDecoder*);
+static void bufa_Term(TFB_SoundDecoder*);
+static bool bufa_Open(TFB_SoundDecoder*, const uqm::io::Directory& dir, const char* filename);
+static void bufa_Close(TFB_SoundDecoder*);
+static int bufa_Decode(TFB_SoundDecoder*, void* buf, int32_t bufsize);
+static uint32_t bufa_Seek(TFB_SoundDecoder*, uint32_t pcm_pos);
+static uint32_t bufa_GetFrame(TFB_SoundDecoder*);
 
 TFB_SoundDecoderFuncs bufa_DecoderVtbl =
 	{
@@ -74,14 +73,14 @@ static bool nula_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void nula_TermModule(void);
 static TFB_SoundDecoder* nula_Create(void);
 static void nula_Destroy(TFB_SoundDecoder* decoder);
-static int nula_GetError(THIS_PTR);
-static bool nula_Init(THIS_PTR);
-static void nula_Term(THIS_PTR);
-static bool nula_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
-static void nula_Close(THIS_PTR);
-static int nula_Decode(THIS_PTR, void* buf, int32_t bufsize);
-static uint32_t nula_Seek(THIS_PTR, uint32_t pcm_pos);
-static uint32_t nula_GetFrame(THIS_PTR);
+static int nula_GetError(TFB_SoundDecoder*);
+static bool nula_Init(TFB_SoundDecoder*);
+static void nula_Term(TFB_SoundDecoder*);
+static bool nula_Open(TFB_SoundDecoder*, const uqm::io::Directory& dir, const char* filename);
+static void nula_Close(TFB_SoundDecoder*);
+static int nula_Decode(TFB_SoundDecoder*, void* buf, int32_t bufsize);
+static uint32_t nula_Seek(TFB_SoundDecoder*, uint32_t pcm_pos);
+static uint32_t nula_GetFrame(TFB_SoundDecoder*);
 
 TFB_SoundDecoderFuncs nula_DecoderVtbl =
 	{
@@ -110,8 +109,6 @@ typedef struct tfb_nullsounddecoder
 
 } TFB_NullSoundDecoder;
 
-#undef THIS_PTR
-
 
 struct TFB_RegSoundDecoder
 {
@@ -120,7 +117,7 @@ struct TFB_RegSoundDecoder
 	const char* ext;
 	const TFB_SoundDecoderFuncs* funcs;
 };
-static TFB_RegSoundDecoder sd_decoders[MAX_REG_DECODERS + 1] =
+static TFB_RegSoundDecoder sd_decoders[MaxRegDecoders + 1] =
 	{
 		{true,  true,	 "wav",	&wava_DecoderVtbl},
 		{true,  true,	 "mod",	&moda_DecoderVtbl},
@@ -244,7 +241,7 @@ SoundDecoder_Register(const char* fileext, TFB_SoundDecoderFuncs* decvtbl)
 		}
 	}
 
-	if (info >= sd_decoders + MAX_REG_DECODERS)
+	if (info >= sd_decoders + MaxRegDecoders)
 	{
 		uqm::log::warn("SoundDecoder_Register(): Decoders limit reached");
 		return nullptr;
@@ -282,7 +279,7 @@ SoundDecoder_Register(const char* fileext, TFB_SoundDecoderFuncs* decvtbl)
 
 void SoundDecoder_Unregister(TFB_RegSoundDecoder* regdec)
 {
-	if (regdec < sd_decoders || regdec >= sd_decoders + MAX_REG_DECODERS || !regdec->ext || !regdec->funcs)
+	if (regdec < sd_decoders || regdec >= sd_decoders + MaxRegDecoders || !regdec->ext || !regdec->funcs)
 	{
 		uqm::log::warn("SoundDecoder_Unregister(): "
 					   "Invalid or expired decoder passed");
@@ -698,8 +695,6 @@ SoundDecoder_GetFrame(TFB_SoundDecoder* decoder)
 	return decoder->funcs->GetFrame(decoder);
 }
 
-#define THIS_PTR TFB_SoundDecoder* This
-
 const static char*
 bufa_GetName(void)
 {
@@ -737,7 +732,7 @@ bufa_Destroy(TFB_SoundDecoder* decoder)
 }
 
 static int
-bufa_GetError(THIS_PTR)
+bufa_GetError(TFB_SoundDecoder* This)
 {
 	return 0; // error? what error?!
 
@@ -745,7 +740,7 @@ bufa_GetError(THIS_PTR)
 }
 
 static bool
-bufa_Init(THIS_PTR)
+bufa_Init(TFB_SoundDecoder* This)
 {
 	This->need_swap = false;
 	This->buffered_max_pcm = This->buffer_size / This->bytes_per_samp;
@@ -755,13 +750,13 @@ bufa_Init(THIS_PTR)
 }
 
 static void
-bufa_Term(THIS_PTR)
+bufa_Term(TFB_SoundDecoder* This)
 {
 	bufa_Close(This); // ensure cleanup
 }
 
 static bool
-bufa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
+bufa_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
 	// this should never be called
 	uqm::log::debug("bufa_Open(): dead function called");
@@ -774,7 +769,7 @@ bufa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 }
 
 static void
-bufa_Close(THIS_PTR)
+bufa_Close(TFB_SoundDecoder* This)
 {
 	// restore the status quo
 	This->buffer = This->storage.data();
@@ -782,7 +777,7 @@ bufa_Close(THIS_PTR)
 }
 
 static int
-bufa_Decode(THIS_PTR, void* buf, int32_t bufsize)
+bufa_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 {
 	uint32_t dec_pcm {bufsize / This->bytes_per_samp};
 	if (dec_pcm > This->buffered_max_pcm - This->buffered_cur_pcm)
@@ -805,7 +800,7 @@ bufa_Decode(THIS_PTR, void* buf, int32_t bufsize)
 }
 
 static uint32_t
-bufa_Seek(THIS_PTR, uint32_t pcm_pos)
+bufa_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 {
 	if (pcm_pos > This->buffered_max_pcm)
 	{
@@ -817,7 +812,7 @@ bufa_Seek(THIS_PTR, uint32_t pcm_pos)
 }
 
 static uint32_t
-bufa_GetFrame(THIS_PTR)
+bufa_GetFrame(TFB_SoundDecoder* This)
 {
 	return 0; // only 1 frame
 
@@ -862,7 +857,7 @@ nula_Destroy(TFB_SoundDecoder* decoder)
 }
 
 static int
-nula_GetError(THIS_PTR)
+nula_GetError(TFB_SoundDecoder* This)
 {
 	return 0; // error? what error?!
 
@@ -870,7 +865,7 @@ nula_GetError(THIS_PTR)
 }
 
 static bool
-nula_Init(THIS_PTR)
+nula_Init(TFB_SoundDecoder* This)
 {
 	TFB_NullSoundDecoder* nula = (TFB_NullSoundDecoder*)This;
 
@@ -880,14 +875,14 @@ nula_Init(THIS_PTR)
 }
 
 static void
-nula_Term(THIS_PTR)
+nula_Term(TFB_SoundDecoder* This)
 {
 	//TFB_NullSoundDecoder* nula = (TFB_NullSoundDecoder*) This;
 	nula_Close(This); // ensure cleanup
 }
 
 static bool
-nula_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
+nula_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
 	This->frequency = 11025;
 	This->format = decoder_formats.mono16;
@@ -900,7 +895,7 @@ nula_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 }
 
 static void
-nula_Close(THIS_PTR)
+nula_Close(TFB_SoundDecoder* This)
 {
 	TFB_NullSoundDecoder* nula = (TFB_NullSoundDecoder*)This;
 
@@ -908,7 +903,7 @@ nula_Close(THIS_PTR)
 }
 
 static int
-nula_Decode(THIS_PTR, void* buf, int32_t bufsize)
+nula_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 {
 	TFB_NullSoundDecoder* nula = (TFB_NullSoundDecoder*)This;
 
@@ -930,7 +925,7 @@ nula_Decode(THIS_PTR, void* buf, int32_t bufsize)
 }
 
 static uint32_t
-nula_Seek(THIS_PTR, uint32_t pcm_pos)
+nula_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 {
 	TFB_NullSoundDecoder* nula = (TFB_NullSoundDecoder*)This;
 
@@ -945,7 +940,7 @@ nula_Seek(THIS_PTR, uint32_t pcm_pos)
 }
 
 static uint32_t
-nula_GetFrame(THIS_PTR)
+nula_GetFrame(TFB_SoundDecoder* This)
 {
 	return 0; // only 1 frame
 

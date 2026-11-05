@@ -104,7 +104,7 @@ static FONT_SIZE_DEF CreditsFont[] =
 static FRAME
 Credits_MakeTransFrame(int w, int h, Color TransColor)
 {
-	FRAME f {CaptureDrawable(CreateDrawable(WANT_PIXMAP, w, h, 1))};
+	FRAME f {CaptureDrawable(CreateDrawable(WantPixmap, w, h, 1))};
 	SetFrameTransparentColor(f, TransColor);
 
 	FRAME OldFrame {SetContextFGFrame(f)};
@@ -778,7 +778,7 @@ void Credits(bool WithOuttakes)
 		StopMusic();
 		DestroyMusic(hMusic);
 	}
-	FadeMusic(NORMAL_VOLUME, TimePeriod {});
+	FadeMusic(NormalVolume, TimePeriod {});
 
 	FreeCredits();
 }

@@ -111,7 +111,7 @@ static bool DoPresentation(void* pIS);
 static Color
 commandColor(const uqm::SlideCommand& cmd)
 {
-	return BUILD_COLOR_RGBA(cmd.color[0], cmd.color[1], cmd.color[2], 0xff);
+	return BuildColorRgba(cmd.color[0], cmd.color[1], cmd.color[2], 0xff);
 }
 
 static bool
@@ -184,10 +184,10 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 
 	GetFrameRect(SkelFrame, &r);
 	SisFrame = CaptureDrawable(CreateDrawable(
-		WANT_PIXMAP | WANT_ALPHA, r.extent.width, r.extent.height, 1));
+		WantPixmap | WantAlpha, r.extent.width, r.extent.height, 1));
 	SetContextFGFrame(SisFrame);
 	SetContextClipRect(nullptr);
-	SisBack = BUILD_COLOR_RGBA(0, 0, 0, 0);
+	SisBack = BuildColorRgba(0, 0, 0, 0);
 	SetContextBackGroundColor(SisBack);
 	ClearDrawable();
 
@@ -232,7 +232,7 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 			if (piece >= BOMB_MODULE_0)
 			{ // Blue glow around the bomb - mimic PC-DOS pre-rendered cutscene
 				const Color oldColor = SetContextForeGroundColor(
-					BUILD_COLOR_RGB(0x00, 0x00, 0x5F));
+					BuildColorRgb(0x00, 0x00, 0x5F));
 
 				s.origin.y += RES_SCALE(2);
 				DrawFilledStamp(&s);
@@ -241,7 +241,7 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 				DrawFilledStamp(&s);
 
 				SetContextForeGroundColor(
-					BUILD_COLOR_RGB(0x00, 0x07, 0xFF));
+					BuildColorRgb(0x00, 0x07, 0xFF));
 
 				s.origin.y += RES_SCALE(1);
 				DrawFilledStamp(&s);
@@ -463,10 +463,10 @@ const static SHIPMAP ship_map[] = {
 	{MMRNMHRM_ID,	  "mmrnmhrm",	  "MMRNMHRM",		  " TRANSFORMER",  128, 84 },
 };
 
-static constexpr uint16_t c_numShips {static_cast<uint16_t>(uqstl::size(ship_map))};
+static constexpr uint16_t NumShips {static_cast<uint16_t>(uqstl::size(ship_map))};
 
-static uint16_t shipID = c_numShips;
-static uint16_t raceID = c_numShips;
+static uint16_t shipID = NumShips;
+static uint16_t raceID = NumShips;
 static bool linespun = false;
 
 static void
@@ -478,26 +478,26 @@ SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 		goto SeedDittyPassThru;
 	}
 
-	for (shipID = 0; shipID < c_numShips; shipID++)
+	for (shipID = 0; shipID < NumShips; shipID++)
 	{
 		if (!strcasecmp(str.data(), ship_map[shipID].ditty))
 		{
 			break;
 		}
 	}
-	if (shipID >= c_numShips)
+	if (shipID >= NumShips)
 	{
 		goto SeedDittyPassThru;
 	}
 
-	for (raceID = 0; raceID < c_numShips; raceID++)
+	for (raceID = 0; raceID < NumShips; raceID++)
 	{
 		if (SeedShip(ship_map[raceID].sID, false) == ship_map[shipID].sID)
 		{
 			break;
 		}
 	}
-	if (raceID >= c_numShips)
+	if (raceID >= NumShips)
 	{
 		goto SeedDittyPassThru;
 	}
@@ -507,7 +507,7 @@ SeedDitty(uqstl::span<char> buf, uqstl::string_view str)
 	return;
 
 SeedDittyPassThru:
-	shipID = raceID = c_numShips;
+	shipID = raceID = NumShips;
 	fmt::format_to_sz_n(buf, "ship.{}.ditty", str);
 	return;
 }
@@ -515,7 +515,7 @@ SeedDittyPassThru:
 static void
 SeedLineSpin(int* x1, int* y1, int* x2, int* y2)
 {
-	if (!uqm::currentSeed().ships || !x1 || !x2 || !y1 || !y2 || shipID == raceID || shipID >= c_numShips || raceID >= c_numShips)
+	if (!uqm::currentSeed().ships || !x1 || !x2 || !y1 || !y2 || shipID == raceID || shipID >= NumShips || raceID >= NumShips)
 	{
 		goto SeedLineSpinPassThru;
 	}
@@ -536,7 +536,7 @@ SeedLineSpinPassThru:
 static void
 SeedTextSpin(char* buf, size_t size, uqgsl::czstring str, int* x, int* y)
 {
-	if (!uqm::currentSeed().ships || !x || !y || shipID == raceID || shipID >= c_numShips || raceID >= c_numShips)
+	if (!uqm::currentSeed().ships || !x || !y || shipID == raceID || shipID >= NumShips || raceID >= NumShips)
 	{
 		goto SeedTextSpinPassThru;
 	}
@@ -810,7 +810,7 @@ DoPresentation(void* pIS)
 				}
 			case uqm::SlideOp::WaitDitty:
 				{ /* wait for ditty to end */
-					while (PlayingStream(MUSIC_SOURCE))
+					while (PlayingStream(MusicSource))
 					{
 						if (CurrentInputState.menu[KEY_MENU_CANCEL]
 							|| (uqm::currentActivity() & CHECK_ABORT))
@@ -1002,7 +1002,7 @@ DoPresentation(void* pIS)
 						t.CharCount = (uint16_t)~0;
 						t.baseline = MAKE_POINT(x, y);
 						DrawTextEffect(&t,
-									   BUILD_COLOR_RGBA(0xFF, 0x55, 0x55, 0xFF),
+									   BuildColorRgba(0xFF, 0x55, 0x55, 0xFF),
 									   pPIS->TextBackColor, pPIS->TextTraced);
 					}
 					else
@@ -1379,11 +1379,11 @@ ShowSlidePresentation(const uqstl::vector<uqm::SlideCommand>& commands)
 	pis.LastSyncTime = pis.StartTime;
 	DoInput(&pis, true);
 
-	if (pis.MusicRef && PlayingStream(MUSIC_SOURCE))
+	if (pis.MusicRef && PlayingStream(MusicSource))
 	{
 		SleepThreadUntil(FadeMusic(0, c_gameSecond));
 		StopMusic();
-		FadeMusic(NORMAL_VOLUME, TimePeriod {});
+		FadeMusic(NormalVolume, TimePeriod {});
 	}
 
 	DestroyMusic(pis.MusicRef);

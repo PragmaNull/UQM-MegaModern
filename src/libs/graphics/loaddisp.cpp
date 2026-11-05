@@ -31,7 +31,7 @@ LoadDisplayPixmap(const GFXRECT* area, FRAME frame)
 
 	if (!buffer)
 	{ // asked to create a new DRAWABLE instead
-		buffer = CreateDrawable(WANT_PIXMAP | MAPPED_TO_DISPLAY,
+		buffer = CreateDrawable(WantPixmap | MappedToDisplay,
 								area->extent.width, area->extent.height, 1);
 		if (!buffer)
 		{
@@ -49,7 +49,7 @@ LoadDisplayPixmap(const GFXRECT* area, FRAME frame)
 
 	if (_CurFramePtr->Type != SCREEN_DRAWABLE
 		|| frame->Type == SCREEN_DRAWABLE
-		|| !(GetFrameParentDrawable(frame)->Flags & MAPPED_TO_DISPLAY))
+		|| !(GetFrameParentDrawable(frame)->Flags & MappedToDisplay))
 	{
 		uqm::log::warn("Unimplemented function activated: "
 					   "LoadDisplayPixmap()");

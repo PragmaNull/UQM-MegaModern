@@ -714,33 +714,33 @@ typedef enum
 		0,					 /* MMRNMHRM_SHIP */     \
 		uqm::makeByte(1, 5), /* YEHAT_REBEL_SHIP */
 
-#define RACE_COLORS                                                                   \
-	BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x10), 0x53),	  /* ARILOU_SHIP */       \
-		MAKE_RGBA_INIT(0xB5, 0xB5, 0xB5, 0xFF),				  /* CHMMR_SHIP */        \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x01, 0x1F), 0x4D), /* HUMAN_SHIP */        \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x0E, 0x00, 0x0E), 0x36), /* ORZ_SHIP */          \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x06, 0x08), 0x62), /* PKUNK_SHIP */        \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x0A, 0x06, 0x00), 0x77), /* SHOFIXTI_SHIP */     \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x0C, 0x05, 0x00), 0x76), /* SPATHI_SHIP */       \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x0C, 0x05, 0x00), 0x76), /* SUPOX_SHIP */        \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x06, 0x08), 0x62), /* THRADDASH_SHIP */    \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x06, 0x08), 0x62), /* UTWIG_SHIP */        \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x10), 0x53), /* VUX_SHIP */          \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x0A, 0x00, 0x11), 0x3D), /* YEHAT_SHIP */        \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x06, 0x08), 0x62), /* MELNORME_SHIP */     \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x2D), /* DRUUGE_SHIP */       \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x0E, 0x00, 0x0E), 0x36), /* ILWRATH_SHIP */      \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x0E, 0x00, 0x0E), 0x36), /* MYCON_SHIP */        \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x0C, 0x05, 0x00), 0x76), /* SLYLANDRO_SHIP */    \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x0A, 0x00, 0x11), 0x3D), /* UMGAH_SHIP */        \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x08, 0x00), 0x6E), /* URQUAN_SHIP */       \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x2D), /* ZOQFOTPIK_SHIP */    \
-		MAKE_RGBA_INIT(0x51, 0x18, 0x8B, 0xFF),				  /* SYREEN_SHIP */       \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x06, 0x06, 0x06), 0x20), /* BLACK_URQUAN_SHIP */ \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x12, 0x10, 0x1F), 0x00), /* ANDROSYNTH_SHIP */   \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x15, 0x1C), 0x00), /* CHENJESU_SHIP */     \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x18, 0x18, 0x18), 0x00), /* MMRNMHRM_SHIP */     \
-		BUILD_COLOR(MAKE_RGB15_INIT(0x14, 0x07, 0x1F), 0x39), /* YEHAT_REBEL_SHIP */
+#define RACE_COLORS                                                            \
+	BuildColor(MakeRgb15(0x00, 0x00, 0x10), 0x53),	   /* ARILOU_SHIP */       \
+		BuildColorRgba(0xB5, 0xB5, 0xB5, 0xFF),		   /* CHMMR_SHIP */        \
+		BuildColor(MakeRgb15(0x00, 0x01, 0x1F), 0x4D), /* HUMAN_SHIP */        \
+		BuildColor(MakeRgb15(0x0E, 0x00, 0x0E), 0x36), /* ORZ_SHIP */          \
+		BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x62), /* PKUNK_SHIP */        \
+		BuildColor(MakeRgb15(0x0A, 0x06, 0x00), 0x77), /* SHOFIXTI_SHIP */     \
+		BuildColor(MakeRgb15(0x0C, 0x05, 0x00), 0x76), /* SPATHI_SHIP */       \
+		BuildColor(MakeRgb15(0x0C, 0x05, 0x00), 0x76), /* SUPOX_SHIP */        \
+		BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x62), /* THRADDASH_SHIP */    \
+		BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x62), /* UTWIG_SHIP */        \
+		BuildColor(MakeRgb15(0x00, 0x00, 0x10), 0x53), /* VUX_SHIP */          \
+		BuildColor(MakeRgb15(0x0A, 0x00, 0x11), 0x3D), /* YEHAT_SHIP */        \
+		BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x62), /* MELNORME_SHIP */     \
+		BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D), /* DRUUGE_SHIP */       \
+		BuildColor(MakeRgb15(0x0E, 0x00, 0x0E), 0x36), /* ILWRATH_SHIP */      \
+		BuildColor(MakeRgb15(0x0E, 0x00, 0x0E), 0x36), /* MYCON_SHIP */        \
+		BuildColor(MakeRgb15(0x0C, 0x05, 0x00), 0x76), /* SLYLANDRO_SHIP */    \
+		BuildColor(MakeRgb15(0x0A, 0x00, 0x11), 0x3D), /* UMGAH_SHIP */        \
+		BuildColor(MakeRgb15(0x00, 0x08, 0x00), 0x6E), /* URQUAN_SHIP */       \
+		BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D), /* ZOQFOTPIK_SHIP */    \
+		BuildColorRgba(0x51, 0x18, 0x8B, 0xFF),		   /* SYREEN_SHIP */       \
+		BuildColor(MakeRgb15(0x06, 0x06, 0x06), 0x20), /* BLACK_URQUAN_SHIP */ \
+		BuildColor(MakeRgb15(0x12, 0x10, 0x1F), 0x00), /* ANDROSYNTH_SHIP */   \
+		BuildColor(MakeRgb15(0x00, 0x15, 0x1C), 0x00), /* CHENJESU_SHIP */     \
+		BuildColor(MakeRgb15(0x18, 0x18, 0x18), 0x00), /* MMRNMHRM_SHIP */     \
+		BuildColor(MakeRgb15(0x14, 0x07, 0x1F), 0x39), /* YEHAT_REBEL_SHIP */
 
 // JMS: For showing the SC1-era situation in starmap
 #define WAR_ERA_STRENGTHS                                      \

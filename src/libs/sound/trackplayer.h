@@ -22,21 +22,21 @@
 #include "core/misc/bittricks.h"
 #include "libs/callback/callback.h"
 
-#define ACCEL_SCROLL_SPEED 300
+inline constexpr auto AccelScrollSpeed {300};
 
-#define VERY_SLOW 0
-#define SLOW 12
-#define MODERATE_SPEED 16
-#define FAST 24
-#define VERY_FAST 32
+inline constexpr auto VerySlow {0};
+inline constexpr auto Slow {12};
+inline constexpr auto ModerateSpeed {16};
+inline constexpr auto Fast {24};
+inline constexpr auto VeryFast {32};
 
 static const uint8_t speed_array[] =
 	{
-		VERY_SLOW,
-		SLOW,
-		MODERATE_SPEED,
-		FAST,
-		VERY_FAST};
+		VerySlow,
+		Slow,
+		ModerateSpeed,
+		Fast,
+		VeryFast};
 
 extern void PlayTrack(void);
 extern void StopTrack(void);

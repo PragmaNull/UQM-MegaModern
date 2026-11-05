@@ -35,21 +35,19 @@
 #include "oggaud.h"
 
 
-#define THIS_PTR TFB_SoundDecoder* This
-
 const static char* ova_GetName(void);
 static bool ova_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void ova_TermModule(void);
 static TFB_SoundDecoder* ova_Create(void);
 static void ova_Destroy(TFB_SoundDecoder* decoder);
-static int ova_GetError(THIS_PTR);
-static bool ova_Init(THIS_PTR);
-static void ova_Term(THIS_PTR);
-static bool ova_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
-static void ova_Close(THIS_PTR);
-static int ova_Decode(THIS_PTR, void* buf, int32_t bufsize);
-static uint32_t ova_Seek(THIS_PTR, uint32_t pcm_pos);
-static uint32_t ova_GetFrame(THIS_PTR);
+static int ova_GetError(TFB_SoundDecoder* This);
+static bool ova_Init(TFB_SoundDecoder* This);
+static void ova_Term(TFB_SoundDecoder* This);
+static bool ova_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
+static void ova_Close(TFB_SoundDecoder* This);
+static int ova_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize);
+static uint32_t ova_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos);
+static uint32_t ova_GetFrame(TFB_SoundDecoder* This);
 
 TFB_SoundDecoderFuncs ova_DecoderVtbl =
 	{
@@ -149,7 +147,7 @@ ova_Destroy(TFB_SoundDecoder* decoder)
 }
 
 static int
-ova_GetError(THIS_PTR)
+ova_GetError(TFB_SoundDecoder* This)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 	const int ret = ova->last_error;
@@ -158,7 +156,7 @@ ova_GetError(THIS_PTR)
 }
 
 static bool
-ova_Init(THIS_PTR)
+ova_Init(TFB_SoundDecoder* This)
 {
 	//TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*) This;
 	This->need_swap = false;
@@ -166,14 +164,14 @@ ova_Init(THIS_PTR)
 }
 
 static void
-ova_Term(THIS_PTR)
+ova_Term(TFB_SoundDecoder* This)
 {
 	//TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*) This;
 	ova_Close(This); // ensure cleanup
 }
 
 static bool
-ova_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
+ova_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 
@@ -230,7 +228,7 @@ ova_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 }
 
 static void
-ova_Close(THIS_PTR)
+ova_Close(TFB_SoundDecoder* This)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 
@@ -238,7 +236,7 @@ ova_Close(THIS_PTR)
 }
 
 static int
-ova_Decode(THIS_PTR, void* buf, int32_t bufsize)
+ova_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 	long rc {};
@@ -264,7 +262,7 @@ ova_Decode(THIS_PTR, void* buf, int32_t bufsize)
 }
 
 static uint32_t
-ova_Seek(THIS_PTR, uint32_t pcm_pos)
+ova_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 {
 	TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 
@@ -281,7 +279,7 @@ ova_Seek(THIS_PTR, uint32_t pcm_pos)
 }
 
 static uint32_t
-ova_GetFrame(THIS_PTR)
+ova_GetFrame(TFB_SoundDecoder* This)
 {
 	const TFB_OggSoundDecoder* ova = (TFB_OggSoundDecoder*)This;
 	// this is the closest to a frame there is in ogg vorbis stream

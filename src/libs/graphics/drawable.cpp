@@ -86,7 +86,7 @@ request_drawable(uint16_t NumFrames, DRAWABLE_TYPE DrawableType,
 		if (DrawableType == RAM_DRAWABLE && width > 0 && height > 0)
 		{
 			FramePtr->image = TFB_DrawImage_New(TFB_DrawCanvas_New_TrueColor(
-				width, height, (flags & WANT_ALPHA) ? true : false));
+				width, height, (flags & WantAlpha) ? true : false));
 		}
 
 		FramePtr->Type = DrawableType;
@@ -108,7 +108,7 @@ request_indexed_drawable(Color* palette, int16_t width, int16_t height)
 		return nullptr;
 	}
 
-	Drawable->Flags = WANT_PIXMAP;
+	Drawable->Flags = WantPixmap;
 	Drawable->MaxIndex = 0;
 
 	{
@@ -141,7 +141,7 @@ CreateDisplay(CREATE_FLAGS CreateFlags, int16_t* pwidth, int16_t* pheight)
 	// TODO: CanvasWidth and CanvasHeight should be passed in
 	//   instead of returned.
 	Drawable = request_drawable(1, SCREEN_DRAWABLE,
-								(CreateFlags & (WANT_PIXMAP | WANT_MASK)),
+								(CreateFlags & (WantPixmap | WantMask)),
 								CanvasWidth, CanvasHeight);
 	if (Drawable)
 	{
@@ -182,7 +182,7 @@ CreateDrawable(CREATE_FLAGS CreateFlags, int16_t width, int16_t height, uint16_t
 	DRAWABLE Drawable {};
 
 	Drawable = request_drawable(num_frames, RAM_DRAWABLE,
-								(CreateFlags & (WANT_MASK | WANT_PIXMAP | WANT_ALPHA | MAPPED_TO_DISPLAY)),
+								(CreateFlags & (WantMask | WantPixmap | WantAlpha | MappedToDisplay)),
 								width, height);
 	if (Drawable)
 	{
@@ -291,7 +291,7 @@ RotateFrame(FRAME Frame, int angle_deg)
 
 	assert(Frame->Type != SCREEN_DRAWABLE);
 
-	DRAWABLE Drawable {request_drawable(1, RAM_DRAWABLE, WANT_PIXMAP, 0, 0)};
+	DRAWABLE Drawable {request_drawable(1, RAM_DRAWABLE, WantPixmap, 0, 0)};
 	if (!Drawable)
 	{
 		return 0;
@@ -349,7 +349,7 @@ Color GetFramePixel(FRAME frame, GFXPOINT pixelPt)
 
 	if (!frame)
 	{
-		return BUILD_COLOR_RGBA(0, 0, 0, 0);
+		return BuildColorRgba(0, 0, 0, 0);
 	}
 
 	assert(frame->Type != SCREEN_DRAWABLE);
@@ -369,7 +369,7 @@ makeMatchingFrame(FRAME frame, int width, int height)
 	const bool dst_has_alpha =
 		SDL_GetPixelFormatDetails(((SDL_Surface*)(frame->image->NormalImg))->format)->Amask != 0;
 
-	const CREATE_FLAGS flags {dst_has_alpha ? WANT_ALPHA : GetFrameParentDrawable(frame)->Flags};
+	const CREATE_FLAGS flags {dst_has_alpha ? WantAlpha : GetFrameParentDrawable(frame)->Flags};
 	DRAWABLE drawable {CreateDrawable(flags, width, height, 1)};
 	if (!drawable)
 	{

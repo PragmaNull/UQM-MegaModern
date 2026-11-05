@@ -221,10 +221,10 @@ initialize_megawatt_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 	LASER_BLOCK LaserBlock;
 	const static Color cycle_array[] =
 		{
-			BUILD_COLOR(MAKE_RGB15_INIT(0x17, 0x00, 0x00), 0x2B),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x03, 0x00), 0x7F),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x11, 0x00), 0x7B),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x03, 0x00), 0x7F),
+			BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
+			BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F),
+			BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B),
+			BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F),
 		};
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
@@ -366,11 +366,11 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 					};
 				const static Color color_tab[] =
 					{
-						BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x10), 0x53),
-						BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x0E), 0x54),
-						BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x0C), 0x55),
-						BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x09), 0x56),
-						BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x07), 0x57),
+						BuildColor(MakeRgb15(0x00, 0x00, 0x10), 0x53),
+						BuildColor(MakeRgb15(0x00, 0x00, 0x0E), 0x54),
+						BuildColor(MakeRgb15(0x00, 0x00, 0x0C), 0x55),
+						BuildColor(MakeRgb15(0x00, 0x00, 0x09), 0x56),
+						BuildColor(MakeRgb15(0x00, 0x00, 0x07), 0x57),
 					};
 				uint32_t max_speed {};
 
@@ -577,7 +577,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 		LaserBlock.sender = SattPtr->playerNr;
 		LaserBlock.flags = IGNORE_SIMILAR;
 		LaserBlock.pixoffs = 0;
-		LaserBlock.color = BUILD_COLOR(MAKE_RGB15(0x00, 0x01, 0x1F), 0x4D);
+		LaserBlock.color = BuildColor(MakeRgb15(0x00, 0x01, 0x1F), 0x4D);
 		HELEMENT hPointDefense {initialize_laser(&LaserBlock)};
 		if (hPointDefense)
 		{

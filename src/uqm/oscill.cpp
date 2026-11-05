@@ -46,7 +46,7 @@ void InitOscilloscope(FRAME scopeBg)
 		const EXTENT size = GetFrameBounds(scope_frame);
 
 		scopeWork = CaptureDrawable(CreateDrawable(
-			WANT_PIXMAP | MAPPED_TO_DISPLAY,
+			WantPixmap | MappedToDisplay,
 			size.width, size.height, 1));
 
 		// assume and subtract the borders
@@ -68,13 +68,13 @@ void UninitOscilloscope(void)
 uint8_t
 ScaleHeightByVolume(uint8_t scope_data, bool toScale)
 {
-	if (!toScale || musicVolume == NORMAL_VOLUME)
+	if (!toScale || musicVolume == NormalVolume)
 	{
 		return scope_data;
 	}
 	else
 	{
-		const float scale = (float)musicVolume / NORMAL_VOLUME;
+		const float scale = (float)musicVolume / NormalVolume;
 		float res {NAN};
 
 		if (scope_data >= (scopeSize.height / 2))

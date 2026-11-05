@@ -27,12 +27,12 @@
 #include "core/thread/Mutex.h"
 
 /* How many binding slots are allocated at once. */
-#define POOL_CHUNK_SIZE 64
+static constexpr auto PoolChunkSize {64};
 
 /* Total number of key input buckets. SDL scatters key symbols through
  * the entire 32-bit space, so we do not rely on being able to declare
  * an array with one entry per key. */
-#define KEYBOARD_INPUT_BUCKETS 512
+static constexpr auto KeyboardInputBuckets {512};
 
 typedef struct vcontrol_keybinding
 {
@@ -44,7 +44,7 @@ typedef struct vcontrol_keybinding
 
 typedef struct vcontrol_keypool
 {
-	keybinding pool[POOL_CHUNK_SIZE];
+	keybinding pool[PoolChunkSize];
 	int remaining;
 	struct vcontrol_keypool* next;
 } keypool;
@@ -101,7 +101,7 @@ static uqstl::vector<default_binding> default_bindings UQM_GUARDED_BY(s_vcontrol
 
 #endif /* HAVE_JOYSTICK */
 
-static keybinding* bindings[KEYBOARD_INPUT_BUCKETS] UQM_GUARDED_BY(s_vcontrolLock);
+static keybinding* bindings[KeyboardInputBuckets] UQM_GUARDED_BY(s_vcontrolLock);
 
 static keypool* pool UQM_GUARDED_BY(s_vcontrolLock);
 
@@ -113,9 +113,9 @@ static keypool*
 allocate_key_chunk(void) UQM_REQUIRES(s_vcontrolLock)
 {
 	auto* x {new keypool {}};
-	x->remaining = POOL_CHUNK_SIZE;
+	x->remaining = PoolChunkSize;
 	x->next = nullptr;
-	for (int i {}; i < POOL_CHUNK_SIZE; i++)
+	for (int i {}; i < PoolChunkSize; i++)
 	{
 		x->pool[i].target = nullptr;
 		x->pool[i].keycode = SDLK_UNKNOWN;
@@ -299,7 +299,7 @@ key_init(void) UQM_REQUIRES(s_vcontrolLock)
 {
 	unsigned int i {};
 	pool = allocate_key_chunk();
-	for (i = 0; i < KEYBOARD_INPUT_BUCKETS; i++)
+	for (i = 0; i < KeyboardInputBuckets; i++)
 	{
 		bindings[i] = nullptr;
 	}
@@ -321,7 +321,7 @@ static void
 key_uninit(void) UQM_REQUIRES(s_vcontrolLock)
 {
 	free_key_pool(pool);
-	for (unsigned int i {0}; i < KEYBOARD_INPUT_BUCKETS; i++)
+	for (unsigned int i {0}; i < KeyboardInputBuckets; i++)
 	{
 		bindings[i] = nullptr;
 	}
@@ -424,7 +424,7 @@ add_binding(keybinding** newptr, uqstl::atomic<int>* target, sdl_key_t keycode) 
 	/* Now find a free binding within it */
 
 	newbinding = nullptr;
-	for (i = 0; i < POOL_CHUNK_SIZE; i++)
+	for (i = 0; i < PoolChunkSize; i++)
 	{
 		if (searchbase->pool[i].target == nullptr)
 		{
@@ -503,7 +503,7 @@ activate(keybinding* i, sdl_key_t keycode)
 		if (i->keycode == keycode)
 		{
 			updateTarget(*i->target, [](int v) {
-				return (v + 1) | VCONTROL_STARTBIT;
+				return (v + 1) | VcontrolStartbit;
 			});
 		}
 		i = i->next;
@@ -518,7 +518,7 @@ deactivate(keybinding* i, sdl_key_t keycode)
 		if (i->keycode == keycode)
 		{
 			updateTarget(*i->target, [](int v) {
-				return (v & VCONTROL_MASK) > 0 ? ((v & VCONTROL_MASK) - 1) | (v & VCONTROL_STARTBIT) : v;
+				return (v & VcontrolMask) > 0 ? ((v & VcontrolMask) - 1) | (v & VcontrolStartbit) : v;
 			});
 		}
 		i = i->next;
@@ -652,7 +652,7 @@ void VControl_RemoveGestureBinding(VCONTROL_GESTURE* g, uqstl::atomic<int>* targ
 int VControl_AddKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target)
 {
 	const uqm::LockGuard lock {s_vcontrolLock};
-	add_binding(&bindings[symbol % KEYBOARD_INPUT_BUCKETS], target,
+	add_binding(&bindings[symbol % KeyboardInputBuckets], target,
 				symbol);
 	return 0;
 }
@@ -660,7 +660,7 @@ int VControl_AddKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target)
 void VControl_RemoveKeyBinding(sdl_key_t symbol, uqstl::atomic<int>* target)
 {
 	const uqm::LockGuard lock {s_vcontrolLock};
-	remove_binding(&bindings[symbol % KEYBOARD_INPUT_BUCKETS], target,
+	remove_binding(&bindings[symbol % KeyboardInputBuckets], target,
 				   symbol);
 }
 
@@ -872,13 +872,13 @@ void VControl_RemoveAllBindings(void)
 void VControl_ProcessKeyDown(sdl_key_t symbol)
 {
 	const uqm::LockGuard lock {s_vcontrolLock};
-	activate(bindings[symbol % KEYBOARD_INPUT_BUCKETS], symbol);
+	activate(bindings[symbol % KeyboardInputBuckets], symbol);
 }
 
 void VControl_ProcessKeyUp(sdl_key_t symbol)
 {
 	const uqm::LockGuard lock {s_vcontrolLock};
-	deactivate(bindings[symbol % KEYBOARD_INPUT_BUCKETS], symbol);
+	deactivate(bindings[symbol % KeyboardInputBuckets], symbol);
 }
 
 void VControl_ProcessJoyButtonDown(int port, int button)
@@ -996,7 +996,7 @@ void VControl_ResetInput(void)
 	const keypool* base = pool;
 	while (base != nullptr)
 	{
-		for (int i {0}; i < POOL_CHUNK_SIZE; i++)
+		for (int i {0}; i < PoolChunkSize; i++)
 		{
 			if (base->pool[i].target)
 			{
@@ -1017,11 +1017,11 @@ void VControl_BeginFrame(void)
 	keypool* base = pool;
 	while (base != nullptr)
 	{
-		for (int i {0}; i < POOL_CHUNK_SIZE; i++)
+		for (int i {0}; i < PoolChunkSize; i++)
 		{
 			if (base->pool[i].target)
 			{
-				base->pool[i].target->fetch_and(VCONTROL_MASK);
+				base->pool[i].target->fetch_and(VcontrolMask);
 			}
 		}
 		base = base->next;
@@ -1136,13 +1136,13 @@ int VControl_GetLastGesture(VCONTROL_GESTURE* g)
 
 /* Actual maximum line and token sizes are two less than this, since
  * we need space for the \n\0 at the end */
-#define LINE_SIZE 256
-#define TOKEN_SIZE 64
+static constexpr auto LineSize {256};
+static constexpr auto TokenSize {64};
 
 typedef struct vcontrol_parse_state
 {
-	char line[LINE_SIZE] {};
-	char token[TOKEN_SIZE] {};
+	char line[LineSize] {};
+	char token[TokenSize] {};
 	int index {};
 	int error {};
 	int linenum {};
@@ -1163,7 +1163,7 @@ next_token(parse_state* state)
 	}
 
 	index = 0;
-	while (index < (TOKEN_SIZE - 1) && state->line[base + index]
+	while (index < (TokenSize - 1) && state->line[base + index]
 		   && !isspace(state->line[base + index]))
 	{
 		state->token[index] = state->line[base + index];

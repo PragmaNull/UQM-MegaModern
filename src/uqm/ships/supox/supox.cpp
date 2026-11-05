@@ -98,9 +98,9 @@ static RACE_DESC supox_desc =
 			 GOB_SML_MASK_PMAP_ANIM,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
 		 {SUPOX_CAPTAIN_MASK_PMAP_ANIM,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,

@@ -199,8 +199,8 @@ getFlagshipLocation(void)
 
 // These need to be global in case something else uses them
 // after shipseed write to them
-FRAME Xform = NULL_RESOURCE;
-FRAME Ywing = NULL_RESOURCE;
+FRAME Xform = NullResource;
+FRAME Ywing = NullResource;
 
 static void
 ip_group_preprocess(ELEMENT* ElementPtr)

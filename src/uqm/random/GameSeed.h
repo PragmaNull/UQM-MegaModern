@@ -29,7 +29,7 @@ struct GameSeed
 // The seed of a new game from the settings. Hard difficulty with the type Planet gets a random value.
 [[nodiscard]] GameSeed newGameSeed(const OptionsStruct& options);
 
-// A random value in MIN_SEED..MAX_SEED.
+// A random value in MinSeed..MAX_SEED.
 [[nodiscard]] int32_t randomSeedValue();
 
 // The seed of the current game. The original seed if no game session runs.

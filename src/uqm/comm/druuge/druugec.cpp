@@ -46,9 +46,9 @@ static LOCDATA druuge_desc =
 		DRUUGE_COLOR_MAP, /* AlienColorMap */
 		DRUUGE_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		DRUUGE_CONVERSATION_PHRASES, /* PlayerPhrases */
 		11, /* NumAnimations */
@@ -1055,7 +1055,7 @@ init_druuge_comm(void)
 	druuge_desc.post_encounter_func = post_druuge_enc;
 	druuge_desc.uninit_encounter_func = uninit_druuge;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
 	druuge_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	druuge_desc.AlienTextBaseline.y = RES_SCALE(64);

@@ -20,7 +20,7 @@ public:
 	[[nodiscard]] static uint32_t multiplier() noexcept
 	{
 		const GameSeed& seed {currentSeed()};
-		if (seed.type == SeedType::Planet && SANE_SEED(seed.value))
+		if (seed.type == SeedType::Planet && SaneSeed(seed.value))
 		{
 			return static_cast<uint32_t>(seed.value);
 		}

@@ -47,9 +47,9 @@ static LOCDATA talkpet_desc =
 		TALKING_PET_COLOR_MAP, /* AlienColorMap */
 		TALKING_PET_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		TALKING_PET_CONVERSATION_PHRASES, /* PlayerPhrases */
 		18, /* NumAnimations */
@@ -951,7 +951,7 @@ init_talkpet_comm(void)
 	talkpet_desc.post_encounter_func = post_talkpet_enc;
 	talkpet_desc.uninit_encounter_func = uninit_talkpet;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

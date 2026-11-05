@@ -180,7 +180,7 @@ decorate_vortex (ELEMENT *ElementPtr)
 						vortex_ships[EncounterPtr->race_id] =
 								CaptureDrawable (
 									CreateDrawable (
-										WANT_PIXMAP | WANT_ALPHA,
+										WantPixmap | WantAlpha,
 										GetFrameWidth (
 											ElementPtr->next.image.frame),
 										GetFrameHeight (
@@ -191,8 +191,8 @@ decorate_vortex (ELEMENT *ElementPtr)
 						old = SetContext (tmp);
 						SetContextFGFrame (
 								vortex_ships[EncounterPtr->race_id]);
-						trans = BUILD_COLOR (
-								MAKE_RGB15 (0x10, 0x00, 0x10), 0x00);
+						trans = BuildColor (
+								MakeRgb15 (0x10, 0x00, 0x10), 0x00);
 						SetContextBackGroundColor (trans);
 						ClearDrawable ();
 						SetFrameTransparentColor (
@@ -569,19 +569,19 @@ bool LoadHyperspace(void)
 
 	SetContext(RadarContext);
 	SetContextBackGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x00, 0x0E, 0x00), 0x6C));
+		BuildColor(MakeRgb15(0x00, 0x0E, 0x00), 0x6C));
 
 	SetContext(SpaceContext);
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 	{ // Hyperspace Color
 		SetContextBackGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x07, 0x00, 0x00), 0x2F));
+			BuildColor(MakeRgb15(0x07, 0x00, 0x00), 0x2F));
 		SetColorMap(GetColorMapAddress(hypercmaps[0], 0));
 	}
 	else
 	{ // Quasispace Color
 		SetContextBackGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x00, 0x1A, 0x00), 0x2F));
+			BuildColor(MakeRgb15(0x00, 0x1A, 0x00), 0x2F));
 		SetColorMap(GetColorMapAddress(hypercmaps[1], 0));
 		SET_GAME_STATE(USED_BROADCASTER, 0);
 		SET_GAME_STATE(BROADCASTER_RESPONSE, 0);
@@ -1536,7 +1536,7 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 
 	ClearDrawable();
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x00, 0x10, 0x00), 0x6B));
+		BuildColor(MakeRgb15(0x00, 0x10, 0x00), 0x6B));
 
 	sx = ux - (RADAR_SCAN_WIDTH >> 1);
 	if (sx < 0)

@@ -53,7 +53,7 @@ void spawn_planet(void)
 			PlanetElementPtr->state_flags |= NONSOLID;
 			SetPrimType(&DisplayArray[PlanetElementPtr->PrimIndex], POINT_PRIM);
 			SetPrimColor(&DisplayArray[PlanetElementPtr->PrimIndex],
-						 BUILD_COLOR_RGBA(0x00, 0x00, 0x00, 0x00));
+						 BuildColorRgba(0x00, 0x00, 0x00, 0x00));
 			PlanetElementPtr->current.location.x =
 				WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
 			PlanetElementPtr->current.location.y =
@@ -284,9 +284,9 @@ void do_damage(ELEMENT* ElementPtr, int16_t damage)
 }
 
 #define CREW_COLOR_LOW_INTENSITY \
-	BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x00), 0x02)
+	BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)
 #define CREW_COLOR_HIGH_INTENSITY \
-	BUILD_COLOR(MAKE_RGB15(0x0A, 0x1E, 0x0A), 0x0A)
+	BuildColor(MakeRgb15(0x0A, 0x1E, 0x0A), 0x0A)
 void crew_preprocess(ELEMENT* ElementPtr)
 {
 	HELEMENT hTarget {};
@@ -434,7 +434,7 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 			CrewPtr->current.image.farray = stars_misc;
 		}
 		SetPrimColor(&DisplayArray[CrewPtr->PrimIndex],
-					 BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x00), 0x02));
+					 BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02));
 		CrewPtr->preprocess_func = crew_preprocess;
 		CrewPtr->collision_func = crew_collision;
 
@@ -493,7 +493,7 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 			}
 
 			DrawablesIntersect(&CrewIntersect,
-							   &ShipIntersect, MAX_TIME_VALUE);
+							   &ShipIntersect, MaxTimeValue);
 
 			CrewPtr->current.location.x =
 				DISPLAY_TO_WORLD(CrewIntersect.EndPoint.x);

@@ -58,7 +58,7 @@ static LOCDATA commander_desc =
 		COMMANDER_MUSIC, /* AlienSong */
 		{
 								COMMANDER_PMAP_ANIM_RED, /* AlienAltFrame */
-			NULL_RESOURCE,			 /* AlienAltColorMap */
+			NullResource,			 /* AlienAltColorMap */
 			STARBASE_ALT_MUSIC,		 /* AlienAltSong */
 		},
 		STARBASE_CONVERSATION_PHRASES, /* PlayerPhrases */
@@ -2192,7 +2192,7 @@ init_starbase_comm()
 	commander_desc.post_encounter_func = post_starbase_enc;
 	commander_desc.uninit_encounter_func = uninit_starbase;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

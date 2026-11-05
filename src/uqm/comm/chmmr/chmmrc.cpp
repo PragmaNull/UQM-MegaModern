@@ -50,8 +50,8 @@ static LOCDATA chmmr_desc =
 		CHMMR_COLOR_MAP, /* AlienColorMap */
 		CHMMR_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE,		 /* AlienAltFrame */
-			NULL_RESOURCE,		 /* AlienAltColorMap */
+								NullResource,		 /* AlienAltFrame */
+			NullResource,		 /* AlienAltColorMap */
 			CHMMR_PROCESS_MUSIC, /* AlienAltSong */
 		},
 		CHMMR_CONVERSATION_PHRASES, /* PlayerPhrases */
@@ -785,7 +785,7 @@ init_chmmr_comm(void)
 	chmmr_desc.post_encounter_func = post_chmmr_enc;
 	chmmr_desc.uninit_encounter_func = uninit_chmmr;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

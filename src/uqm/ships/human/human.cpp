@@ -101,9 +101,9 @@ RACE_DESC human_desc =
 			 SATURN_SML_MASK_PMAP_ANIM,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
 		 {HUMAN_CAPTAIN_MASK_PMAP_ANIM,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
@@ -248,7 +248,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 					LaserBlock.sender = ShipPtr->playerNr;
 					LaserBlock.flags = IGNORE_SIMILAR;
 					LaserBlock.pixoffs = 0;
-					LaserBlock.color = BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F);
+					LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F);
 					hPointDefense = initialize_laser(&LaserBlock);
 					if (hPointDefense)
 					{

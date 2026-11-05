@@ -98,7 +98,7 @@ ClearBackGround(GFXRECT* pClipRect)
 	clearRect.corner.x = 0;
 	clearRect.corner.y = 0;
 	clearRect.extent = pClipRect->extent;
-	TFB_Prim_FillRect(&clearRect, color, DRAW_REPLACE_MODE,
+	TFB_Prim_FillRect(&clearRect, color, DrawReplaceMode,
 					  pClipRect->corner);
 }
 
@@ -115,7 +115,7 @@ void DrawBatch(PRIMITIVE* lpBasePrim, PRIM_LINKS PrimLinks,
 
 		BatchGraphics();
 
-		if (BatchFlags & BATCH_BUILD_PAGE)
+		if (BatchFlags & BatchBuildPage)
 		{
 			ClearBackGround(&ValidRect);
 		}
@@ -149,7 +149,7 @@ void DrawBatch(PRIMITIVE* lpBasePrim, PRIM_LINKS PrimLinks,
 					if (flags & HYPER_TO_QUASI_COLOR)
 					{
 						TFB_Prim_Stamp(&lpWorkPrim->Object.Stamp,
-									   MAKE_DRAW_MODE(DRAW_HYPTOQUAS, TRANSFER_ALPHA),
+									   MAKE_DRAW_MODE(DRAW_HYPTOQUAS, TransferAlpha),
 									   origin, (bool)(flags & UNSCALED_STAMP));
 					}
 					else
@@ -163,7 +163,7 @@ void DrawBatch(PRIMITIVE* lpBasePrim, PRIM_LINKS PrimLinks,
 					if (flags & HS_STARMASK)
 					{
 						TFB_Prim_StampFill(&lpWorkPrim->Object.Stamp, color,
-										   MAKE_DRAW_MODE(DRAW_OVERLAY, TRANSFER_ALPHA),
+										   MAKE_DRAW_MODE(DRAW_OVERLAY, TransferAlpha),
 										   origin, (bool)(flags & UNSCALED_STAMP));
 					}
 					else

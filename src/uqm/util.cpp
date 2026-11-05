@@ -263,7 +263,7 @@ void DrawBorderPadding(uint32_t videoWidth)
 
 	if (videoWidth)
 	{
-		SetContextForeGroundColor(BUILD_SHADE_RGBA(0x0C));
+		SetContextForeGroundColor(BuildShadeRgba(0x0C));
 	}
 	else
 	{
@@ -372,7 +372,7 @@ DrawPauseText(GFXRECT* rect)
 
 	FONT OldFont {SetContextFont(DOS_BOOL(LabelFont, StarConFont))};
 	OldColor = SetContextForeGroundColor(
-		BUILD_SHADE_RGBA(DOS_BOOL(0x74, 0x6B)));
+		BuildShadeRgba(DOS_BOOL(0x74, 0x6B)));
 
 	// Blank out the text
 	block = *rect;
@@ -440,12 +440,12 @@ bool PauseGame(void)
 	r.corner.y = (ctxRect.extent.height - r.extent.height) >> 1;
 	saveStamp = SaveContextFrame(&ctxRect);
 
-	mode = MAKE_DRAW_MODE(DRAW_DESATURATE, DESAT_AMOUNT);
+	mode = MAKE_DRAW_MODE(DRAW_DESATURATE, DesatAmount);
 	oldMode = SetContextDrawMode(mode);
 	DrawFilledRectangle(&ctxRect);
 	SetContextDrawMode(oldMode);
 	OldColor = SetContextForeGroundColor(
-		BUILD_COLOR_RGBA(0x00, 0x00, 0x00, 0x30));
+		BuildColorRgba(0x00, 0x00, 0x00, 0x30));
 	DrawFilledRectangle(&ctxRect);
 	SetContextForeGroundColor(OldColor);
 
@@ -722,7 +722,7 @@ void formatFuelValue(uint32_t coarseFuel, uqstl::span<char> buf)
 	}
 	else
 	{
-		fmt::format_to_sz_n(buf, "{}", STR_INFINITY_SIGN);
+		fmt::format_to_sz_n(buf, "{}", StrInfinitySign);
 	}
 }
 

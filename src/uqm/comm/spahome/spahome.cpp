@@ -43,8 +43,8 @@ static LOCDATA spahome_desc =
 		SPATHI_HOME_COLOR_MAP, /* AlienColorMap */
 		SPATHI_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
+								NullResource,  /* AlienAltFrame */
+			NullResource,  /* AlienAltColorMap */
 			SPAHOME_MUSIC, /* AlienAltSong */
 		},
 		SPATHI_HOME_CONVERSATION_PHRASES, /* PlayerPhrases */
@@ -1117,7 +1117,7 @@ init_spahome_comm()
 	spahome_desc.post_encounter_func = post_spahome_enc;
 	spahome_desc.uninit_encounter_func = uninit_spahome;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

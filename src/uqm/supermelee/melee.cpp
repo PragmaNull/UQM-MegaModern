@@ -130,30 +130,30 @@ enum
 #define MELEE_STATUS_HEIGHT RES_SCALE(38)
 
 #define MELEE_BACKGROUND_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x14, 0x00, 0x00), 0x04)
+	BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x04)
 #define MELEE_TITLE_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x1F, 0x0A, 0x0A), 0x0C)
+	BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x0C)
 #define MELEE_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x1F, 0x0A, 0x0A), 0x0C)
+	BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x0C)
 #define MELEE_TEAM_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x0A), 0x0E)
+	BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E)
 
 #define STATE_BACKGROUND_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x14), 0x01)
+	BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)
 #define STATE_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x14), 0x03)
+	BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)
 #define ACTIVE_STATE_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x0A, 0x1F, 0x1F), 0x0B)
+	BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)
 #define UNAVAILABLE_STATE_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x1F), 0x09)
+	BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)
 #define HI_STATE_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x0A, 0x1F, 0x1F), 0x0B)
+	BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)
 #define HI_STATE_BACKGROUND_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x1F), 0x09)
+	BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)
 
 // XXX: The following entries are unused:
 #define LIST_INFO_BACKGROUND_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x14, 0x00, 0x14), 0x05)
+	BuildColor(MakeRgb15(0x14, 0x00, 0x14), 0x05)
 #define LIST_INFO_TITLE_COLOR \
 	WHITE_COLOR
 #define LIST_INFO_TEXT_COLOR \
@@ -161,70 +161,70 @@ enum
 #define LIST_INFO_CURENTRY_TEXT_COLOR \
 	WHITE_COLOR
 #define HI_LIST_INFO_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x14, 0x00, 0x00), 0x04)
+	BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x04)
 #define HI_LIST_INFO_BACKGROUND_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x1F, 0x0A, 0x1F), 0x0D)
+	BuildColor(MakeRgb15(0x1F, 0x0A, 0x1F), 0x0D)
 
 #define TEAM_NAME_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x0F, 0x10, 0x1B), 0x00)
+	BuildColor(MakeRgb15(0x0F, 0x10, 0x1B), 0x00)
 #define TEAM_NAME_TEXT_COLOR_DOS \
-	BUILD_COLOR_RGBA(0xAA, 0x00, 0x00, 0xFF)
+	BuildColorRgba(0xAA, 0x00, 0x00, 0xFF)
 #define TEAM_NAME_EDIT_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x17, 0x18, 0x1D), 0x00)
+	BuildColor(MakeRgb15(0x17, 0x18, 0x1D), 0x00)
 #define TEAM_NAME_EDIT_TEXT_COLOR_DOS \
-	BUILD_COLOR_RGBA(0xFF, 0x55, 0xFF, 0xFF)
+	BuildColorRgba(0xFF, 0x55, 0xFF, 0xFF)
 #define TEAM_NAME_EDIT_RECT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x14, 0x00, 0x14), 0x05)
+	BuildColor(MakeRgb15(0x14, 0x00, 0x14), 0x05)
 #define TEAM_NAME_EDIT_CURS_COLOR \
 	WHITE_COLOR
 
 #define SHIPBOX_TOPLEFT_COLOR_NORMAL \
-	BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x09), 0x56)
+	BuildColor(MakeRgb15(0x00, 0x00, 0x09), 0x56)
 #define SHIPBOX_BOTTOMRIGHT_COLOR_NORMAL \
-	BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x0E), 0x54)
+	BuildColor(MakeRgb15(0x00, 0x00, 0x0E), 0x54)
 #define SHIPBOX_INTERIOR_COLOR_NORMAL \
-	BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x0C), 0x55)
+	BuildColor(MakeRgb15(0x00, 0x00, 0x0C), 0x55)
 
 #define SHIPBOX_TOPLEFT_COLOR_HILITE \
-	BUILD_COLOR(MAKE_RGB15(0x07, 0x00, 0x0C), 0x3E)
+	BuildColor(MakeRgb15(0x07, 0x00, 0x0C), 0x3E)
 #define SHIPBOX_BOTTOMRIGHT_COLOR_HILITE \
-	BUILD_COLOR(MAKE_RGB15(0x0C, 0x00, 0x14), 0x3C)
+	BuildColor(MakeRgb15(0x0C, 0x00, 0x14), 0x3C)
 #define SHIPBOX_INTERIOR_COLOR_HILITE \
-	BUILD_COLOR(MAKE_RGB15(0x0A, 0x00, 0x11), 0x3D)
+	BuildColor(MakeRgb15(0x0A, 0x00, 0x11), 0x3D)
 
 #define MELEE_STATUS_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x00), 0x02)
+	BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)
 
 #define BUTTON_LABEL_COLOR \
-	BUILD_SHADE_RGBA(0x8A)
+	BuildShadeRgba(0x8A)
 #define BUTTON_LABEL_HILITE \
-	BUILD_COLOR_RGBA(0xF8, 0xE0, 0x00, 0xFF)
+	BuildColorRgba(0xF8, 0xE0, 0x00, 0xFF)
 
 #define BATTLE_TRACE_COLOR \
-	BUILD_COLOR_RGBA(0x1F, 0x00, 0x1F, 0xFF)
+	BuildColorRgba(0x1F, 0x00, 0x1F, 0xFF)
 #define BATTLE_TRACE_HL_COLOR \
-	BUILD_COLOR_RGBA(0x3E, 0x00, 0x3E, 0xFF)
+	BuildColorRgba(0x3E, 0x00, 0x3E, 0xFF)
 
 #define CONTROL_BOX_COLOR \
-	BUILD_COLOR_RGBA(0x02, 0x04, 0x3E, 0xFF)
+	BuildColorRgba(0x02, 0x04, 0x3E, 0xFF)
 #define CONTROL_BOX_HL_COLOR \
-	BUILD_COLOR_RGBA(0x04, 0x08, 0x7C, 0xFF)
+	BuildColorRgba(0x04, 0x08, 0x7C, 0xFF)
 #define CONTROL_TEXT_COLOR \
-	BUILD_COLOR_RGBA(0x23, 0x8C, 0xD2, 0xFF)
+	BuildColorRgba(0x23, 0x8C, 0xD2, 0xFF)
 #define CONTROL_TEXT_HL_COLOR \
-	BUILD_COLOR_RGBA(0x28, 0xA0, 0xF0, 0xFF)
+	BuildColorRgba(0x28, 0xA0, 0xF0, 0xFF)
 #define CONTROL_TEXT_TRACE_COLOR \
-	BUILD_COLOR_RGBA(0x28, 0x28, 0x7C, 0xFF)
+	BuildColorRgba(0x28, 0x28, 0x7C, 0xFF)
 #define CONTROL_TEXT_TRACE_HL_COLOR \
-	BUILD_COLOR_RGBA(0x3C, 0x3C, 0xBA, 0xFF)
+	BuildColorRgba(0x3C, 0x3C, 0xBA, 0xFF)
 
 #define SHIP_PICK_TEXT_SHADED_COLOR \
-	BUILD_SHADE_RGBA(0x45)
+	BuildShadeRgba(0x45)
 #define SHIP_PICK_TEXT_COLOR \
-	BUILD_SHADE_RGBA(0x74)
+	BuildShadeRgba(0x74)
 
 #define TEAM_PICK_TEXT_COLOR \
-	BUILD_COLOR_RGB(0x32, 0x32, 0x9B)
+	BuildColorRgb(0x32, 0x32, 0x9B)
 
 
 // Loaded from melee/melebkgd.ani
@@ -2173,7 +2173,7 @@ StartMelee(MELEE_STATE* pMS)
 		SetMusicPosition();
 		StopMusic();
 	}
-	FadeMusic(NORMAL_VOLUME, TimePeriod {});
+	FadeMusic(NormalVolume, TimePeriod {});
 	if (pMS->hMusic)
 	{
 		DestroyMusic(pMS->hMusic);
@@ -2188,7 +2188,7 @@ StartMelee(MELEE_STATE* pMS)
 		}
 		BuildAndDrawShipList(pMS);
 
-		WaitForSoundEnd(TFBSOUND_WAIT_ALL);
+		WaitForSoundEnd(TfbsoundWaitAll);
 
 		load_gravity_well((uint8_t)((uint16_t)uqm::random().next() % NUMBER_OF_PLANET_TYPES));
 		Battle(nullptr);
@@ -2603,7 +2603,7 @@ bool DoMelee(MELEE_STATE* pMS)
 		{
 			pMS->hMusic = LoadMusic(MELEE_MUSIC);
 
-			PlayMusicResume(pMS->hMusic, NORMAL_VOLUME);
+			PlayMusicResume(pMS->hMusic, NormalVolume);
 		}
 
 		InitMelee(pMS);
@@ -2815,7 +2815,7 @@ void Melee(void)
 		DoInput(&MenuState, true);
 
 		StopMusic();
-		WaitForSoundEnd(TFBSOUND_WAIT_ALL);
+		WaitForSoundEnd(TfbsoundWaitAll);
 
 		WriteMeleeConfig(&MenuState);
 		FreeMeleeInfo(&MenuState);

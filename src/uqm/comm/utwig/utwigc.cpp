@@ -43,8 +43,8 @@ static LOCDATA utwig_desc =
 		UTWIG_COLOR_MAP, /* AlienColorMap */
 		UTWIG_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE,		/* AlienAltFrame */
-			NULL_RESOURCE,		/* AlienAltColorMap */
+								NullResource,		/* AlienAltFrame */
+			NullResource,		/* AlienAltColorMap */
 			UTWIG_ULTRON_MUSIC, /* AlienAltSong */
 		},
 		UTWIG_CONVERSATION_PHRASES, /* PlayerPhrases */
@@ -1061,7 +1061,7 @@ init_utwig_comm(void)
 	utwig_desc.post_encounter_func = post_utwig_enc;
 	utwig_desc.uninit_encounter_func = uninit_utwig;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

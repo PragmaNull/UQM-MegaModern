@@ -758,7 +758,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 	r.extent.width = RADAR_WIDTH + RES_SCALE(3);
 	BatchGraphics();
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x0A), 0x08));
+		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
 	if (s.frame && uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
 		if (beg_index == PM_CREW)

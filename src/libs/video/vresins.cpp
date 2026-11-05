@@ -44,7 +44,7 @@ GetLegacyVideoData(const ResourceArg& arg, RESOURCE_DATA* resdata)
 	const char* const audio {resourceStringField(arg, "audio")};
 	const char* const speech {resourceStringField(arg, "speech")};
 	const uqstl::optional<int64_t> loop {resourceIntField(arg, "loop")};
-	const uint32_t loopFrame {loop ? static_cast<uint32_t>(*loop) : VID_NO_LOOP};
+	const uint32_t loopFrame {loop ? static_cast<uint32_t>(*loop) : VidNoLoop};
 
 	uqm::log::info("\t'{}' -- video, audio '{}', speech '{}', loop frame {}", video, audio != nullptr ? audio : "", speech != nullptr ? speech : "",
 				   loop ? fmt::format("{}", loopFrame) : "none");

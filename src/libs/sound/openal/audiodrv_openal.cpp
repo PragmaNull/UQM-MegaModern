@@ -200,7 +200,7 @@ openAL_Init(audio_Driver* driver, AudioFlags flags)
 	alListenerfv(AL_VELOCITY, listenerVel);
 	alListenerfv(AL_ORIENTATION, listenerOri);
 
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		float zero[3] = {0.0f, 0.0f, 0.0f};
 
@@ -235,7 +235,7 @@ void openAL_Uninit(void)
 {
 	UninitStreamDecoder();
 
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		const uqm::LockGuard lock {soundSource[i].stream_mutex};
 		if (soundSource[i].sample && soundSource[i].sample->decoder)

@@ -276,7 +276,7 @@ void InitGalaxy(void)
 		{
 			SetPrimType(&DisplayArray[p], STAMP_PRIM);
 			SetPrimColor(&DisplayArray[p],
-						 BUILD_COLOR(MAKE_RGB15(0x0B, 0x0B, 0x1F), 0x09));
+						 BuildColor(MakeRgb15(0x0B, 0x0B, 0x1F), 0x09));
 
 			if (useScenery && i == (BIG_STAR_COUNT + MED_STAR_COUNT - 1))
 			{ //Set SA-MATRA as background image on the second Star layer
@@ -316,20 +316,20 @@ void InitGalaxy(void)
 				if (uqm::lowByte(uqm::currentActivity()) != IN_HYPERSPACE)
 				{
 					SetPrimColor(&DisplayArray[p],
-								 BUILD_COLOR(
-									 MAKE_RGB15(0x15, 0x15, 0x15), 0x07));
+								 BuildColor(
+									 MakeRgb15(0x15, 0x15, 0x15), 0x07));
 				}
 				else if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 				{
 					SetPrimColor(&DisplayArray[p],
-								 BUILD_COLOR(
-									 MAKE_RGB15(0x14, 0x00, 0x00), 0x8C));
+								 BuildColor(
+									 MakeRgb15(0x14, 0x00, 0x00), 0x8C));
 				}
 				else
 				{
 					SetPrimColor(&DisplayArray[p],
-								 BUILD_COLOR(
-									 MAKE_RGB15(0x00, 0x0E, 0x00), 0x8C));
+								 BuildColor(
+									 MakeRgb15(0x00, 0x0E, 0x00), 0x8C));
 				}
 			}
 		}

@@ -147,7 +147,7 @@ noSound_Init(audio_Driver* driver, AudioFlags flags)
 	uqm::log::info("Using nosound audio driver.");
 	uqm::log::info("Initializing mixer.");
 
-	if (!mixer_Init(nosound_freq, MIX_FORMAT_MAKE(1, 1),
+	if (!mixer_Init(nosound_freq, MixFormatMake(1, 1),
 					MIX_QUALITY_LOW, MIX_FAKE_DATA))
 	{
 		uqm::log::error("Mixer initialization failed: {:x}",
@@ -166,7 +166,7 @@ noSound_Init(audio_Driver* driver, AudioFlags flags)
 	uqm::log::info("Sound decoders initialized.");
 
 	*driver = noSound_Driver;
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		audio_GenSources(1, &soundSource[i].handle);
 	}
@@ -189,7 +189,7 @@ void noSound_Uninit(void)
 {
 	UninitStreamDecoder();
 
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		const uqm::LockGuard lock {soundSource[i].stream_mutex};
 		if (soundSource[i].sample && soundSource[i].sample->decoder)

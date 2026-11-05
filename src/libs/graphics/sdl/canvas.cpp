@@ -728,7 +728,7 @@ TFB_DrawCanvas_FillMask(SDL_Surface* base, DrawMode mode, Color* fill)
 			return;
 		}
 
-		if (mode.factor == TRANSFER_ALPHA)
+		if (mode.factor == TransferAlpha)
 		{
 			mode.factor = 0xFF;
 		}

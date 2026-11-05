@@ -75,7 +75,7 @@ DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
 	font_DrawText(&t);
 
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x0A), 0x0E));
+		BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E));
 	t.baseline.y = text_base_y + SAFE_Y + (text_spacing_y * NewState);
 	t.pStr = GAME_STRING(STARBASE_STRING_BASE + 1 + NewState);
 	t.CharCount = (uint16_t)~0;
@@ -375,7 +375,7 @@ bool DoStarBase(MENU_STATE* pMS)
 		DrawBaseStateStrings((STARBASE_STATE)~0, pMS->CurState);
 		ScreenTransition(uqm::UQMOptions::read().scrTrans, nullptr);
 
-		PlayMusicResume(pMS->hMusic, NORMAL_VOLUME);
+		PlayMusicResume(pMS->hMusic, NormalVolume);
 
 		DrawBorderPadding(0);
 

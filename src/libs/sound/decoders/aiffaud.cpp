@@ -40,18 +40,17 @@
 
 typedef uint32_t aiff_ID;
 
-#define aiff_MAKE_ID(x1, x2, x3, x4) \
-	(((x1) << 24) | ((x2) << 16) | ((x3) << 8) | (x4))
+constexpr auto AiffMakeId(auto x1, auto x2, auto x3, auto x4) { return (((x1) << 24) | ((x2) << 16) | ((x3) << 8) | (x4)); }
 
-#define aiff_FormID aiff_MAKE_ID('F', 'O', 'R', 'M')
-#define aiff_FormVersionID aiff_MAKE_ID('F', 'V', 'E', 'R')
-#define aiff_CommonID aiff_MAKE_ID('C', 'O', 'M', 'M')
-#define aiff_SoundDataID aiff_MAKE_ID('S', 'S', 'N', 'D')
+static constexpr auto aiff_FormID {AiffMakeId('F', 'O', 'R', 'M')};
+static constexpr auto aiff_FormVersionID {AiffMakeId('F', 'V', 'E', 'R')};
+static constexpr auto aiff_CommonID {AiffMakeId('C', 'O', 'M', 'M')};
+static constexpr auto aiff_SoundDataID {AiffMakeId('S', 'S', 'N', 'D')};
 
-#define aiff_FormTypeAIFF aiff_MAKE_ID('A', 'I', 'F', 'F')
-#define aiff_FormTypeAIFC aiff_MAKE_ID('A', 'I', 'F', 'C')
+static constexpr auto aiff_FormTypeAIFF {AiffMakeId('A', 'I', 'F', 'F')};
+static constexpr auto aiff_FormTypeAIFC {AiffMakeId('A', 'I', 'F', 'C')};
 
-#define aiff_CompressionTypeSDX2 aiff_MAKE_ID('S', 'D', 'X', '2')
+static constexpr auto aiff_CompressionTypeSDX2 {AiffMakeId('S', 'D', 'X', '2')};
 
 
 typedef struct
@@ -60,7 +59,7 @@ typedef struct
 	uint32_t size;
 } aiff_ChunkHeader;
 
-#define AIFF_CHUNK_HDR_SIZE (4 + 4)
+static constexpr auto AiffChunkHdrSize {(4 + 4)};
 
 typedef struct
 {
@@ -82,7 +81,7 @@ typedef struct
 						   /* this is actually stored as IEEE-754 80bit in files */
 } aiff_CommonChunk;
 
-#define AIFF_COMM_SIZE (2 + 4 + 2 + 10)
+static constexpr auto AiffCommSize {(2 + 4 + 2 + 10)};
 
 typedef struct
 {
@@ -94,7 +93,7 @@ typedef struct
 	char extName[32];	   /* compression type name */
 } aiff_ExtCommonChunk;
 
-#define AIFF_EXT_COMM_SIZE (AIFF_COMM_SIZE + 4)
+static constexpr auto AiffExtCommSize {(AiffCommSize + 4)};
 
 typedef struct
 {
@@ -102,24 +101,22 @@ typedef struct
 	uint32_t blockSize; /* size of alignment blocks */
 } aiff_SoundDataChunk;
 
-#define AIFF_SSND_SIZE (4 + 4)
+static constexpr auto AiffSsndSize {(4 + 4)};
 
-
-#define THIS_PTR TFB_SoundDecoder* This
 
 const static char* aifa_GetName(void);
 static bool aifa_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void aifa_TermModule(void);
 static TFB_SoundDecoder* aifa_Create(void);
 static void aifa_Destroy(TFB_SoundDecoder* decoder);
-static int aifa_GetError(THIS_PTR);
-static bool aifa_Init(THIS_PTR);
-static void aifa_Term(THIS_PTR);
-static bool aifa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
-static void aifa_Close(THIS_PTR);
-static int aifa_Decode(THIS_PTR, void* buf, int32_t bufsize);
-static uint32_t aifa_Seek(THIS_PTR, uint32_t pcm_pos);
-static uint32_t aifa_GetFrame(THIS_PTR);
+static int aifa_GetError(TFB_SoundDecoder* This);
+static bool aifa_Init(TFB_SoundDecoder* This);
+static void aifa_Term(TFB_SoundDecoder* This);
+static bool aifa_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
+static void aifa_Close(TFB_SoundDecoder* This);
+static int aifa_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize);
+static uint32_t aifa_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos);
+static uint32_t aifa_GetFrame(TFB_SoundDecoder* This);
 
 TFB_SoundDecoderFuncs aifa_DecoderVtbl =
 	{
@@ -208,7 +205,7 @@ aifa_Destroy(TFB_SoundDecoder* decoder)
 }
 
 static int
-aifa_GetError(THIS_PTR)
+aifa_GetError(TFB_SoundDecoder* This)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 	const int ret = aifa->last_error;
@@ -217,7 +214,7 @@ aifa_GetError(THIS_PTR)
 }
 
 static bool
-aifa_Init(THIS_PTR)
+aifa_Init(TFB_SoundDecoder* This)
 {
 	//TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*) This;
 	This->need_swap = !aifa_formats->want_big_endian;
@@ -225,7 +222,7 @@ aifa_Init(THIS_PTR)
 }
 
 static void
-aifa_Term(THIS_PTR)
+aifa_Term(TFB_SoundDecoder* This)
 {
 	//TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*) This;
 	aifa_Close(This); // ensure cleanup
@@ -322,7 +319,7 @@ aifa_readCommonChunk(TFB_AiffSoundDecoder* aifa, uint32_t size,
 					 aiff_ExtCommonChunk* fmt)
 {
 	memset(fmt, 0, sizeof(*fmt));
-	if (size < AIFF_COMM_SIZE)
+	if (size < AiffCommSize)
 	{
 		aifa->last_error = aifae_BadFile;
 		return 0;
@@ -333,9 +330,9 @@ aifa_readCommonChunk(TFB_AiffSoundDecoder* aifa, uint32_t size,
 		aifa->last_error = errno;
 		return 0;
 	}
-	int bytes {AIFF_COMM_SIZE};
+	int bytes {AiffCommSize};
 
-	if (size >= AIFF_EXT_COMM_SIZE)
+	if (size >= AiffExtCommSize)
 	{
 		if (!read_be_32(aifa->fp, &fmt->extTypeID))
 		{
@@ -361,7 +358,7 @@ aifa_readSoundDataChunk(TFB_AiffSoundDecoder* aifa,
 }
 
 static bool
-aifa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
+aifa_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 	aiff_FileHeader fileHdr;
@@ -405,7 +402,7 @@ aifa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 	}
 
 	for (remSize = fileHdr.chunk.size - sizeof(aiff_ID); remSize > 0;
-		 remSize -= ((chunkHdr.size + 1) & ~1) + AIFF_CHUNK_HDR_SIZE)
+		 remSize -= ((chunkHdr.size + 1) & ~1) + AiffChunkHdrSize)
 	{
 		if (!aifa_readChunkHeader(aifa, &chunkHdr))
 		{
@@ -432,7 +429,7 @@ aifa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 				return false;
 			}
 			aifa->data_ofs = aifa->fp->tell() + data.offset;
-			aifa->fp->seek(chunkHdr.size - AIFF_SSND_SIZE, uqm::io::SeekFrom::Current);
+			aifa->fp->seek(chunkHdr.size - AiffSsndSize, uqm::io::SeekFrom::Current);
 		}
 		else
 		{ // skip uninteresting chunk
@@ -544,7 +541,7 @@ aifa_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 }
 
 static void
-aifa_Close(THIS_PTR)
+aifa_Close(TFB_SoundDecoder* This)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 
@@ -556,7 +553,7 @@ aifa_Close(THIS_PTR)
 }
 
 static int
-aifa_Decode(THIS_PTR, void* buf, int32_t bufsize)
+aifa_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 	switch (aifa->comp_type)
@@ -640,7 +637,7 @@ aifa_DecodeSDX2(TFB_AiffSoundDecoder* aifa, void* buf, int32_t bufsize)
 }
 
 static uint32_t
-aifa_Seek(THIS_PTR, uint32_t pcm_pos)
+aifa_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 {
 	TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*)This;
 
@@ -660,7 +657,7 @@ aifa_Seek(THIS_PTR, uint32_t pcm_pos)
 }
 
 static uint32_t
-aifa_GetFrame(THIS_PTR)
+aifa_GetFrame(TFB_SoundDecoder* This)
 {
 	//TFB_AiffSoundDecoder* aifa = (TFB_AiffSoundDecoder*) This;
 	return 0; // only 1 frame for now

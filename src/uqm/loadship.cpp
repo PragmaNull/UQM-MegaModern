@@ -27,7 +27,7 @@
 #include "uqm/random/UQMRandom.h"
 
 static RESOURCE code_resources[] = {
-	NULL_RESOURCE,
+	NullResource,
 	ARILOU_CODE,
 	CHMMR_CODE,
 	HUMAN_CODE,
@@ -231,7 +231,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 	RDPtrSwap->CodeRef = CodeRefSwap;
 
 	RDPtr->fleet = RDPtrSwap->fleet;
-	if (RDPtr->ship_info.icons_rsc != NULL_RESOURCE)
+	if (RDPtr->ship_info.icons_rsc != NullResource)
 	{
 		RDPtr->ship_info.icons = CaptureDrawable(LoadGraphic(
 			RDPtr->ship_info.icons_rsc));
@@ -241,7 +241,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 		}
 	}
 
-	if (RDPtr->ship_info.melee_icon_rsc != NULL_RESOURCE)
+	if (RDPtr->ship_info.melee_icon_rsc != NullResource)
 	{
 		RDPtr->ship_info.melee_icon = CaptureDrawable(LoadGraphic(
 			RDPtr->ship_info.melee_icon_rsc));
@@ -251,7 +251,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 		}
 	}
 
-	if (RDPtrSwap->ship_info.race_strings_rsc != NULL_RESOURCE)
+	if (RDPtrSwap->ship_info.race_strings_rsc != NullResource)
 	{
 		RDPtr->ship_info.race_strings = uqm::loadStringTable(
 											RDPtrSwap->ship_info.race_strings_rsc)
@@ -278,7 +278,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 			goto BadLoad;
 		}
 
-		if (RawPtr->weapon_rsc[0] != NULL_RESOURCE)
+		if (RawPtr->weapon_rsc[0] != NullResource)
 		{
 			if (!load_animation(RawPtr->weapon,
 								RawPtr->weapon_rsc[0],
@@ -289,7 +289,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 			}
 		}
 
-		if (RawPtr->special_rsc[0] != NULL_RESOURCE)
+		if (RawPtr->special_rsc[0] != NullResource)
 		{
 			if (!load_animation(RawPtr->special,
 								RawPtr->special_rsc[0],
@@ -300,7 +300,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 			}
 		}
 
-		if (RDPtrSwap->ship_data.captain_control.captain_rsc != NULL_RESOURCE)
+		if (RDPtrSwap->ship_data.captain_control.captain_rsc != NullResource)
 		{
 			RawPtr->captain_control.background = CaptureDrawable(LoadGraphic(
 				RDPtrSwap->ship_data.captain_control.captain_rsc));
@@ -310,7 +310,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 			}
 		}
 
-		if (RDPtrSwap->ship_data.victory_ditty_rsc != NULL_RESOURCE)
+		if (RDPtrSwap->ship_data.victory_ditty_rsc != NullResource)
 		{
 			RawPtr->victory_ditty =
 				LoadMusic(RDPtrSwap->ship_data.victory_ditty_rsc);
@@ -320,7 +320,7 @@ load_ship(SPECIES_ID SpeciesID, bool LoadBattleData)
 			}
 		}
 
-		if (RawPtr->ship_sounds_rsc != NULL_RESOURCE)
+		if (RawPtr->ship_sounds_rsc != NullResource)
 		{
 			RawPtr->ship_sounds = uqm::loadSoundBank(RawPtr->ship_sounds_rsc).release();
 			if (!RawPtr->ship_sounds)

@@ -341,7 +341,7 @@ InitEncounter(void)
 	MUSIC_REF MR {LoadMusic(REDALERT_MUSIC)};
 	PlayMusic(MR, false, 1);
 	FRAME SegueFrame {GetStarBackGround(true)};
-	WaitForSoundEnd(TFBSOUND_WAIT_ALL);
+	WaitForSoundEnd(TfbsoundWaitAll);
 	StopMusic();
 	DestroyMusic(MR);
 	s.origin.x = s.origin.y = 0;
@@ -360,7 +360,7 @@ InitEncounter(void)
 	t.align = ALIGN_CENTER;
 
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x14), 0x01));
+		BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01));
 	if (inHQSpace())
 	{
 		t.pStr = GAME_STRING(ENCOUNTER_STRING_BASE + 0);
@@ -574,7 +574,7 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 		}
 		else
 		{
-			SetContextForeGroundColor(BUILD_SHADE_RGBA(0x50));
+			SetContextForeGroundColor(BuildShadeRgba(0x50));
 			DrawFilledRectangle(&r1);
 			DrawFilledRectangle(&r2);
 		}
@@ -801,8 +801,8 @@ UninitEncounter(void)
 							t.pStr = buf;
 							t.CharCount = (uint16_t)~0;
 							SetContextForeGroundColor(
-								BUILD_COLOR(
-									MAKE_RGB15(0x00, 0x00, 0x18), 0x50));
+								BuildColor(
+									MakeRgb15(0x00, 0x00, 0x18), 0x50));
 							font_DrawText(&t);
 							UnbatchGraphics();
 							DeltaSISGauges(0, 0, j);
@@ -920,7 +920,7 @@ UninitEncounter(void)
 					t.pStr = buf;
 					t.CharCount = (uint16_t)~0;
 					SetContextForeGroundColor(
-						BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x18), 0x50));
+						BuildColor(MakeRgb15(0x00, 0x00, 0x18), 0x50));
 					font_DrawText(&t);
 
 
@@ -1029,7 +1029,7 @@ void EncounterBattle(void)
 
 	//    FreeSC2Data ();
 	//    DestroyFont (ReleaseFont (MicroFont));
-	WaitForSoundEnd(TFBSOUND_WAIT_ALL);
+	WaitForSoundEnd(TfbsoundWaitAll);
 	//    DestroySound (ReleaseSound (MenuSounds));
 
 	if (uqm::globalFlags() & CYBORG_ENABLED)

@@ -60,7 +60,7 @@
 #define FIGHTER_WEAPON_WAIT 8
 #define FIGHTER_LASER_RANGE DISPLAY_TO_WORLD(RES_SCALE(40) + FIGHTER_OFFSET)
 #define ION_LIFE 1
-#define START_ION_COLOR BUILD_COLOR_RGBA(0xfc, 0xb8, 0xfc, 0xff)
+#define START_ION_COLOR BuildColorRgba(0xfc, 0xb8, 0xfc, 0xff)
 
 // HD
 #define MISSILE_SPEED_HD RES_SCALE(MISSILE_SPEED)
@@ -177,7 +177,7 @@ fighter_postprocess(ELEMENT* ElementPtr)
 	LaserBlock.sender = ElementPtr->playerNr;
 	LaserBlock.flags = IGNORE_SIMILAR;
 	LaserBlock.pixoffs = FIGHTER_OFFSET;
-	LaserBlock.color = BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x0A), 0x0E);
+	LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E);
 	HELEMENT Laser {initialize_laser(&LaserBlock)};
 	if (Laser)
 	{
@@ -204,10 +204,10 @@ fighter_postprocess(ELEMENT* ElementPtr)
 //{
 //	static const Color colorTable[] =
 //	{
-//		MAKE_RGBA_INIT(0xfc, 0x7c, 0xfc, 0xff),
-//		MAKE_RGBA_INIT(0xfc, 0x40, 0xfc, 0xff),
-//		MAKE_RGBA_INIT(0xd0, 0x14, 0xd0, 0xff),
-//		MAKE_RGBA_INIT(0x90, 0x08, 0x94, 0xff),
+//		BuildColorRgba(0xfc, 0x7c, 0xfc, 0xff),
+//		BuildColorRgba(0xfc, 0x40, 0xfc, 0xff),
+//		BuildColorRgba(0xd0, 0x14, 0xd0, 0xff),
+//		BuildColorRgba(0x90, 0x08, 0x94, 0xff),
 //	};
 //	const size_t colorTabCount = ARRAY_SIZE (colorTable);
 //

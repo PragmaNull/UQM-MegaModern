@@ -44,9 +44,9 @@ static LOCDATA ilwrath_desc =
 		ILWRATH_COLOR_MAP, /* AlienColorMap */
 		ILWRATH_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		ILWRATH_CONVERSATION_PHRASES, /* PlayerPhrases */
 		4, /* NumAnimations */
@@ -758,7 +758,7 @@ init_ilwrath_comm(void)
 	ilwrath_desc.post_encounter_func = post_ilwrath_enc;
 	ilwrath_desc.uninit_encounter_func = uninit_ilwrath;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
 	ilwrath_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	ilwrath_desc.AlienTextBaseline.y = RES_SCALE(64);

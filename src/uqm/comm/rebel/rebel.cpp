@@ -42,9 +42,9 @@ static LOCDATA yehat_desc =
 		YEHAT_COLOR_MAP, /* AlienColorMap */
 		YEHAT_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			REBEL_MUSIC,   /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			REBEL_MUSIC,  /* AlienAltSong */
 		},
 		REBEL_CONVERSATION_PHRASES, /* PlayerPhrases */
 		15, /* NumAnimations */
@@ -489,7 +489,7 @@ init_rebel_yehat_comm(void)
 
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
 	yehat_desc.AlienTextBaseline.x = SIS_SCREEN_WIDTH * 2 / 3;
 	yehat_desc.AlienTextBaseline.y = RES_SCALE(107 * 2 / 3);

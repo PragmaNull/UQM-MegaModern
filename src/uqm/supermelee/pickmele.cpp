@@ -55,9 +55,9 @@
 #define MELEE_HEIGHT (RES_SCALE(48) + NAME_AREA_HEIGHT)
 
 #define PICKSHIP_TEAM_NAME_TEXT_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x1F), 0x09)
+	BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)
 #define PICKSHIP_TEAM_START_VALUE_COLOR \
-	BUILD_COLOR(MAKE_RGB15(0x04, 0x05, 0x1F), 0x4B)
+	BuildColor(MakeRgb15(0x04, 0x05, 0x1F), 0x4B)
 
 
 #ifdef NETPLAY
@@ -523,7 +523,7 @@ void BuildPickMeleeFrame(void)
 	}
 
 	PickMeleeFrame = CaptureDrawable(CreateDrawable(
-		WANT_PIXMAP, MELEE_WIDTH, MELEE_HEIGHT, 2));
+		WantPixmap, MELEE_WIDTH, MELEE_HEIGHT, 2));
 	s.origin.x = 0;
 	s.origin.y = 0;
 

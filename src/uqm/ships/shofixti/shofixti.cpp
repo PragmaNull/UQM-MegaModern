@@ -175,12 +175,12 @@ destruct_preprocess(ELEMENT* ElementPtr)
 		if (ElementPtr->life_span == DESTRUCT_SWITCH + 2)
 		{
 			SetPrimColor(lpPrim,
-						 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x0A), 0x0E));
+						 BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E));
 		}
 		else
 		{
 			SetPrimColor(lpPrim,
-						 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
+						 BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
 		}
 	}
 	else if (ElementPtr->life_span < DESTRUCT_SWITCH)
@@ -192,28 +192,28 @@ destruct_preprocess(ELEMENT* ElementPtr)
 		ElementPtr->next.image.frame =
 			IncFrameIndex(ElementPtr->current.image.frame);
 		if (sameColor(color,
-					  BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F)))
+					  BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)))
 		{
 			SetPrimColor(lpPrim,
-						 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x0A), 0x0E));
+						 BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E));
 		}
 		else if (sameColor(color,
-						   BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x0A), 0x0E)))
+						   BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E)))
 		{
 			SetPrimColor(lpPrim,
-						 BUILD_COLOR(MAKE_RGB15(0x1F, 0x0A, 0x0A), 0x0C));
+						 BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x0C));
 		}
 		else if (sameColor(color,
-						   BUILD_COLOR(MAKE_RGB15(0x1F, 0x0A, 0x0A), 0x0C)))
+						   BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x0C)))
 		{
 			SetPrimColor(lpPrim,
-						 BUILD_COLOR(MAKE_RGB15(0x14, 0x0A, 0x00), 0x06));
+						 BuildColor(MakeRgb15(0x14, 0x0A, 0x00), 0x06));
 		}
 		else if (sameColor(color,
-						   BUILD_COLOR(MAKE_RGB15(0x14, 0x0A, 0x00), 0x06)))
+						   BuildColor(MakeRgb15(0x14, 0x0A, 0x00), 0x06)))
 		{
 			SetPrimColor(lpPrim,
-						 BUILD_COLOR(MAKE_RGB15(0x14, 0x00, 0x00), 0x04));
+						 BuildColor(MakeRgb15(0x14, 0x00, 0x00), 0x04));
 		}
 	}
 	else
@@ -245,7 +245,7 @@ destruct_preprocess(ELEMENT* ElementPtr)
 			SetPrimType(&DisplayArray[DestructPtr->PrimIndex],
 						STAMPFILL_PRIM);
 			SetPrimColor(&DisplayArray[DestructPtr->PrimIndex],
-						 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
+						 BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
 			DestructPtr->current.image.farray =
 				StarShipPtr->RaceDescPtr->ship_data.special;
 			DestructPtr->current.image.frame =
@@ -530,9 +530,9 @@ init_shofixti(void)
 		new_shofixti_desc.ship_data.ship_rsc[0] = OLDSHOF_BIG_MASK_PMAP_ANIM;
 		new_shofixti_desc.ship_data.ship_rsc[1] = OLDSHOF_MED_MASK_PMAP_ANIM;
 		new_shofixti_desc.ship_data.ship_rsc[2] = OLDSHOF_SML_MASK_PMAP_ANIM;
-		new_shofixti_desc.ship_data.special_rsc[0] = NULL_RESOURCE;
-		new_shofixti_desc.ship_data.special_rsc[1] = NULL_RESOURCE;
-		new_shofixti_desc.ship_data.special_rsc[2] = NULL_RESOURCE;
+		new_shofixti_desc.ship_data.special_rsc[0] = NullResource;
+		new_shofixti_desc.ship_data.special_rsc[1] = NullResource;
+		new_shofixti_desc.ship_data.special_rsc[2] = NullResource;
 		new_shofixti_desc.ship_data.captain_control.captain_rsc =
 			OLDSHOF_CAPTAIN_MASK_PMAP_ANIM;
 		// JMS: Tanaka also has a corresponding limpeted ship status icon in melee.

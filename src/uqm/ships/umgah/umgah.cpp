@@ -90,8 +90,8 @@ static RACE_DESC umgah_desc =
 		 },
 		 {
 			 SPRITZ_MASK_PMAP_ANIM,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
 		 },
 		 {
 			 CONE_BIG_MASK_ANIM,

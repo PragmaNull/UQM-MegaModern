@@ -210,7 +210,7 @@ void InitSphereRotation(int direction, bool shielded, uint16_t width,
 		// We need a scratch frame so that we can apply throbbing
 		// to the shield, so create one
 		Orbit->ObjectFrame = CaptureDrawable(CreateDrawable(
-			WANT_PIXMAP | WANT_ALPHA,
+			WantPixmap | WantAlpha,
 			GetFrameWidth(Orbit->ObjectFrame),
 			GetFrameHeight(Orbit->ObjectFrame), 2));
 	}
@@ -537,7 +537,7 @@ renderTintFrame(Color tintColor)
 	DrawStamp(&s);
 
 	// apply the tint
-	mode = MAKE_DRAW_MODE(DRAW_ADDITIVE, DRAW_FACTOR_1 * is_red);
+	mode = MAKE_DRAW_MODE(DRAW_ADDITIVE, DrawFactor1 * is_red);
 
 	oldMode = SetContextDrawMode(mode);
 	SetContextForeGroundColor(tintColor);

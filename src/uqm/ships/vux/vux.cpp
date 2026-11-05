@@ -104,8 +104,8 @@ static RACE_DESC vux_desc =
 		 },
 		 {
 			 SLIME_MASK_PMAP_ANIM,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
 		 },
 		 {
 			 LIMPETS_BIG_MASK_PMAP_ANIM,
@@ -271,7 +271,7 @@ initialize_horrific_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 	LaserBlock.sender = ShipPtr->playerNr;
 	LaserBlock.flags = IGNORE_SIMILAR;
 	LaserBlock.pixoffs = VUX_OFFSET;
-	LaserBlock.color = BUILD_COLOR(MAKE_RGB15(0x0A, 0x1F, 0x0A), 0x0A);
+	LaserBlock.color = BuildColor(MakeRgb15(0x0A, 0x1F, 0x0A), 0x0A);
 	LaserArray[0] = initialize_laser(&LaserBlock);
 
 	return (1);

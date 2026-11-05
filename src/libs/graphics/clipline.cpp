@@ -57,7 +57,7 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 		return ((INTERSECT_CODE)0);
 	}
 
-	INTERSECT_CODE intersect_code {INTERSECT_NOCLIP};
+	INTERSECT_CODE intersect_code {IntersectNoclip};
 	x0 = y0 = 0;
 	abs_delta_x = (pLine->second.x - pLine->first.x) << 1;
 	abs_delta_y = (pLine->second.y - pLine->first.y) << 1;
@@ -68,12 +68,12 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 		if (pLine->first.x < xmin)
 		{
 			pLine->first.x = xmin;
-			intersect_code |= INTERSECT_LEFT;
+			intersect_code |= IntersectLeft;
 		}
 		if (pLine->second.x > xmax)
 		{
 			pLine->second.x = xmax;
-			intersect_code |= INTERSECT_RIGHT;
+			intersect_code |= IntersectRight;
 		}
 	}
 	else if (abs_delta_x == 0)
@@ -91,12 +91,12 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 		if (pLine->first.y < ymin)
 		{
 			pLine->first.y = ymin;
-			intersect_code |= INTERSECT_TOP;
+			intersect_code |= IntersectTop;
 		}
 		if (pLine->second.y > ymax)
 		{
 			pLine->second.y = ymax;
-			intersect_code |= INTERSECT_BOTTOM;
+			intersect_code |= IntersectBottom;
 		}
 	}
 	else
@@ -139,7 +139,7 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 				{
 					return ((INTERSECT_CODE)0);
 				}
-				intersect_code |= INTERSECT_LEFT;
+				intersect_code |= IntersectLeft;
 			}
 			if (x1 > xmax)
 			{
@@ -147,7 +147,7 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 				{
 					return ((INTERSECT_CODE)0);
 				}
-				intersect_code |= INTERSECT_RIGHT;
+				intersect_code |= IntersectRight;
 			}
 			if (y0 < ymin)
 			{
@@ -155,8 +155,8 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 				{
 					return ((INTERSECT_CODE)0);
 				}
-				intersect_code |= INTERSECT_TOP;
-				intersect_code &= ~INTERSECT_LEFT;
+				intersect_code |= IntersectTop;
+				intersect_code &= ~IntersectLeft;
 			}
 			if (y1 > ymax)
 			{
@@ -164,8 +164,8 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 				{
 					return ((INTERSECT_CODE)0);
 				}
-				intersect_code |= INTERSECT_BOTTOM;
-				intersect_code &= ~INTERSECT_RIGHT;
+				intersect_code |= IntersectBottom;
+				intersect_code &= ~IntersectRight;
 			}
 		}
 		else
@@ -179,7 +179,7 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 				{
 					return ((INTERSECT_CODE)0);
 				}
-				intersect_code |= INTERSECT_TOP;
+				intersect_code |= IntersectTop;
 			}
 			if (y1 > ymax)
 			{
@@ -187,7 +187,7 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 				{
 					return ((INTERSECT_CODE)0);
 				}
-				intersect_code |= INTERSECT_BOTTOM;
+				intersect_code |= IntersectBottom;
 			}
 			if (x0 < xmin)
 			{
@@ -195,8 +195,8 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 				{
 					return ((INTERSECT_CODE)0);
 				}
-				intersect_code |= INTERSECT_LEFT;
-				intersect_code &= ~INTERSECT_TOP;
+				intersect_code |= IntersectLeft;
+				intersect_code &= ~IntersectTop;
 			}
 			if (x1 > xmax)
 			{
@@ -204,8 +204,8 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 				{
 					return ((INTERSECT_CODE)0);
 				}
-				intersect_code |= INTERSECT_RIGHT;
-				intersect_code &= ~INTERSECT_BOTTOM;
+				intersect_code |= IntersectRight;
+				intersect_code &= ~IntersectBottom;
 			}
 		}
 
@@ -224,15 +224,15 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 			pLine->first.y -= y0;
 
 			y_code = (INTERSECT_CODE)(intersect_code
-									  & (INTERSECT_TOP | INTERSECT_BOTTOM));
-			if (y_code && y_code != (INTERSECT_TOP | INTERSECT_BOTTOM))
+									  & (IntersectTop | IntersectBottom));
+			if (y_code && y_code != (IntersectTop | IntersectBottom))
 			{
-				intersect_code ^= (INTERSECT_TOP | INTERSECT_BOTTOM);
+				intersect_code ^= (IntersectTop | IntersectBottom);
 			}
 		}
 	}
 
-	if (!(intersect_code & INTERSECT_ALL_SIDES))
+	if (!(intersect_code & IntersectAllSides))
 	{
 		if (abs_delta_x > abs_delta_y)
 		{
@@ -245,7 +245,7 @@ _clip_line(const DRECT* pClipRect, BRESENHAM_LINE* pLine)
 	}
 	else
 	{
-		intersect_code &= ~INTERSECT_NOCLIP;
+		intersect_code &= ~IntersectNoclip;
 		if (abs_delta_x > abs_delta_y)
 		{
 			pLine->error_term = (int16_t)((x0 * (long)abs_delta_y) - (y0 * (long)abs_delta_x)) - (abs_delta_x >> 1);

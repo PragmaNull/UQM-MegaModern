@@ -199,7 +199,7 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	}
 
 	uqm::log::info("Initializing mixer.");
-	if (!mixer_Init(desired.freq, MIX_FORMAT_MAKE(2, desired.channels),
+	if (!mixer_Init(desired.freq, MixFormatMake(2, desired.channels),
 					quality, MIX_NOFLAGS))
 	{
 		uqm::log::error("Mixer initialization failed: {:x}",
@@ -222,7 +222,7 @@ mixSDL_Init(audio_Driver* driver, AudioFlags flags)
 	uqm::log::info("Sound decoders initialized.");
 
 	*driver = mixSDL_Driver;
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		audio_GenSources(1, &soundSource[i].handle);
 	}
@@ -247,7 +247,7 @@ void mixSDL_Uninit(void)
 {
 	UninitStreamDecoder();
 
-	for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+	for (int i {0}; i < NumSoundsources; ++i)
 	{
 		const uqm::LockGuard lock {soundSource[i].stream_mutex};
 		if (soundSource[i].sample && soundSource[i].sample->decoder)

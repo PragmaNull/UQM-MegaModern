@@ -294,7 +294,7 @@ ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
 													+ ((originalRect.extent.height - r.extent.height) >> 1);
 			ObjectIntersect.EndPoint = ObjectIntersect.IntersectStamp.origin;
 		} while (!DrawablesIntersect(&ObjectIntersect,
-									 &ShipIntersect, MAX_TIME_VALUE));
+									 &ShipIntersect, MaxTimeValue));
 
 		ObjectIntersect.IntersectStamp.origin.x += STATUS_WIDTH >> 1;
 		ObjectIntersect.IntersectStamp.origin.y += RES_SCALE(31);

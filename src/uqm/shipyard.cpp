@@ -488,7 +488,7 @@ showRemainingCrew(void)
 
 	if (CheckAlliance(SHOFIXTI_SHIP) == GOOD_GUY)
 	{
-		const auto fmtResult = fmt::format_to_n(buf, sizeof(buf) - 1, "{}", STR_INFINITY_SIGN);
+		const auto fmtResult = fmt::format_to_n(buf, sizeof(buf) - 1, "{}", StrInfinitySign);
 		*fmtResult.out = '\0';
 	}
 	else if (remaining_crew == 0)
@@ -1151,8 +1151,8 @@ ShowShipCrew(SHIP_FRAGMENT* StarShipPtr, const GFXRECT* pRect)
 		DrawFilledRectangle(&r);
 	}
 	SetContextForeGroundColor((StarShipPtr->crew_level != 0) ?
-								  (BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x00), 0x02)) :
-								  (BUILD_COLOR(MAKE_RGB15(0x12, 0x00, 0x00), 0x2B)));
+								  (BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02)) :
+								  (BuildColor(MakeRgb15(0x12, 0x00, 0x00), 0x2B)));
 	font_DrawText(&t);
 
 	if (!uqm::UQMOptions::read().captainNames)
@@ -1170,7 +1170,7 @@ ShowShipCrew(SHIP_FRAGMENT* StarShipPtr, const GFXRECT* pRect)
 		r.corner.y = t.baseline.y - RES_SCALE(6);
 		r.extent.width = SHIP_WIN_WIDTH;
 		r.extent.height = RES_SCALE(6);
-		const Color shady = BUILD_COLOR_RGBA(0x00, 0x00, 0x00, 0x80);
+		const Color shady = BuildColorRgba(0x00, 0x00, 0x00, 0x80);
 		SetContextForeGroundColor(shady);
 		DrawFilledRectangle(&r);
 
@@ -2580,7 +2580,7 @@ DrawBluePrint(MENU_STATE* pMS)
 	}
 
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x1F), 0x09));
+		BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09));
 	for (num_frames = 0; num_frames < NUM_MODULE_SLOTS; ++num_frames)
 	{
 		const uint8_t which_piece {GLOBAL_SIS(ModuleSlots[num_frames])};
@@ -2745,7 +2745,7 @@ bool DoShipyard(MENU_STATE* pMS)
 			ScreenTransition(uqm::UQMOptions::read().scrTrans, nullptr);
 			UnbatchGraphics();
 
-			PlayMusicResume(pMS->hMusic, NORMAL_VOLUME);
+			PlayMusicResume(pMS->hMusic, NormalVolume);
 
 			ShowCombatShip(pMS, (uint16_t)~0, nullptr);
 

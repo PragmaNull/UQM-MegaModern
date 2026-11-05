@@ -956,10 +956,10 @@ void blt_prim(SDL_Surface* src, SDL_Rect src_r, RenderPixelFn plot, int factor,
 			SDL_GetRGBA(p, srcfmt, srcpal, &r, &g, &b, &a);
 			// TODO: handle source pixel alpha; plot() should probably
 			//   get a source alpha parameter
-			// Kruzen: Done via TRANSFER_ALPHA flag, although a bit ugly
+			// Kruzen: Done via TransferAlpha flag, although a bit ugly
 			p = SDL_MapSurfaceRGBA(dst, r, g, b, a);
 
-			plot(dst, dst_r.x + x, dst_r.y + y, p, factor == TRANSFER_ALPHA ? a : factor);
+			plot(dst, dst_r.x + x, dst_r.y + y, p, factor == TransferAlpha ? a : factor);
 		}
 	}
 }
@@ -1035,7 +1035,7 @@ void blt_filtered_prim(SDL_Surface* layer, RenderPixelFn plot, int factor,
 				ab = (*bp >> (bsfmt->Ashift)) & 0xFF;
 
 				plot(base, x, y, fill ? color : lp,
-					 factor == TRANSFER_ALPHA ? al : factor);
+					 factor == TransferAlpha ? al : factor);
 
 				// Reapply alpha to pixel since every plot function nukes it
 				*bp &= ~(bsfmt->Amask);

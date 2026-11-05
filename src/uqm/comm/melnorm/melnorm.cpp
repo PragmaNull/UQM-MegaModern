@@ -140,9 +140,9 @@ static LOCDATA melnorme_desc =
 		MELNORME_COLOR_MAP, /* AlienColorMap */
 		MELNORME_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		MELNORME_CONVERSATION_PHRASES, /* PlayerPhrases */
 		5, /* NumAnimations */
@@ -2217,7 +2217,7 @@ init_melnorme_comm(void)
 	melnorme_desc.post_encounter_func = post_melnorme_enc;
 	melnorme_desc.uninit_encounter_func = uninit_melnorme;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

@@ -237,7 +237,7 @@ void DrawPlanetSurfaceBorder(void)
 
 	// Border bulk
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x0A), 0x08));
+		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
 	r.corner.x = 0;
 	r.corner.y = clipRect.extent.height - MAP_HEIGHT - MAP_BORDER_HEIGHT;
 	r.extent.width = clipRect.extent.width;
@@ -287,7 +287,7 @@ void DrawPlanetSurfaceBorder(void)
 		r.corner.y -= RES_SCALE(1);
 		r.extent.height += RES_SCALE(2);
 		SetContextForeGroundColor(
-			BUILD_COLOR_RGBA(0x52, 0x52, 0x52, 0xFF));
+			BuildColorRgba(0x52, 0x52, 0x52, 0xFF));
 		DrawFilledRectangle(&r);
 		r.corner.x += RES_SCALE(4);
 		r.extent.width = RES_SCALE(1);
@@ -548,7 +548,7 @@ void LoadPlanet(FRAME SurfDefFrame)
 
 	if (!PLRPlaying((MUSIC_REF)~0))
 	{
-		PlayMusicResume(LanderMusic, NORMAL_VOLUME);
+		PlayMusicResume(LanderMusic, NormalVolume);
 	}
 
 	if (WaitMode)

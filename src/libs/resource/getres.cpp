@@ -67,7 +67,7 @@ void* LoadResourceFromPath(const char* path, ResourceLoadFileFun* loadFun)
 const char*
 res_GetResourceType(RESOURCE res)
 {
-	if (res == NULL_RESOURCE)
+	if (res == NullResource)
 	{
 		uqm::log::warn("Trying to get type of null resource");
 		return nullptr;
@@ -89,7 +89,7 @@ res_GetResourceType(RESOURCE res)
 // Get a resource by its resource ID.
 void* res_GetResource(RESOURCE res)
 {
-	if (res == NULL_RESOURCE)
+	if (res == NullResource)
 	{
 		uqm::log::warn("Trying to get null resource");
 		return nullptr;
@@ -121,7 +121,7 @@ void* res_GetResource(RESOURCE res)
 uint32_t
 res_GetIntResource(RESOURCE res)
 {
-	if (res == NULL_RESOURCE)
+	if (res == NullResource)
 	{
 		uqm::log::warn("Trying to get null resource");
 		return 0;

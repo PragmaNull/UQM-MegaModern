@@ -94,9 +94,9 @@ static RACE_DESC mycon_desc =
 			 PLASMA_SML_MASK_PMAP_ANIM,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
 		 {MYCON_CAPTAIN_MASK_PMAP_ANIM,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,

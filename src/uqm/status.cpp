@@ -363,12 +363,12 @@ void DrawCaptainsWindow(STARSHIP* StarShipPtr)
 	r.extent.height = SHIP_STATUS_HEIGHT - CAPTAIN_YOFFS
 					+ RES_SCALE(MENU_BOOL(NDOS_NUM(2), 1));
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x0A), 0x08));
+		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
 	DrawFilledRectangle(&r);
 
 	// Left border of the status panel.
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x08, 0x08, 0x08), 0x1F));
+		BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F));
 	r.corner.x = RES_SCALE(1);
 	r.corner.y = y_offs + SHIP_INFO_HEIGHT;
 	r.extent.width = RES_SCALE(1);
@@ -380,7 +380,7 @@ void DrawCaptainsWindow(STARSHIP* StarShipPtr)
 
 	// Lower and right border of the status panel.
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x10, 0x10, 0x10), 0x19));
+		BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x19));
 	r.corner.x = STATUS_WIDTH - RES_SCALE(1);
 	r.corner.y = y_offs + SHIP_INFO_HEIGHT;
 	r.extent.width = RES_SCALE(1);
@@ -405,7 +405,7 @@ void DrawCaptainsWindow(STARSHIP* StarShipPtr)
 		// Actual Captain's Window
 		// Darker grey rectangle at bottom and right of captain's window
 		SetContextForeGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x08, 0x08, 0x08), 0x1F));
+			BuildColor(MakeRgb15(0x08, 0x08, 0x08), 0x1F));
 		r.corner.x = CAPTAIN_WIDTH + CAPTAIN_XOFFS;
 		r.corner.y = y;
 		r.extent.width = RES_SCALE(1);
@@ -419,7 +419,7 @@ void DrawCaptainsWindow(STARSHIP* StarShipPtr)
 
 		// Light grey rectangle at top and left of captains window
 		SetContextForeGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x10, 0x10, 0x10), 0x19));
+			BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x19));
 		r.corner.x = CAPTAIN_XOFFS - RES_SCALE(1);
 		r.extent.width = CAPTAIN_WIDTH + RES_SCALE(2);
 		r.corner.y = y - RES_SCALE(1);
@@ -456,7 +456,7 @@ void DrawCaptainsWindow(STARSHIP* StarShipPtr)
 		t.pStr = GLOBAL_SIS(CommanderName);
 		t.CharCount = (uint16_t)~0;
 		SetContextForeGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x00), 0x02));
+			BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02));
 		SetContextFont(MENU_BOOL(TinyFontBold, TinyFont));
 		font_DrawText(&t);
 	}
@@ -639,11 +639,11 @@ void PostProcessStatus(ELEMENT* ShipPtr)
 					{
 						const static Color flash_tab0[] =
 							{
-								BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x2D),
-								BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x19, 0x19), 0x24),
-								BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x11, 0x00), 0x7B),
-								BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x1C, 0x00), 0x78),
-								BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x1F, 0x1F), 0x0F),
+								BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D),
+								BuildColor(MakeRgb15(0x1F, 0x19, 0x19), 0x24),
+								BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B),
+								BuildColor(MakeRgb15(0x1F, 0x1C, 0x00), 0x78),
+								BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F),
 							};
 
 						c = flash_tab0[i];
@@ -660,21 +660,21 @@ void PostProcessStatus(ELEMENT* ShipPtr)
 						{
 							const static Color flash_tab1[] =
 								{
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1E, 0x1F, 0x12), 0x70),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x1F, 0x0A), 0x0E),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x1F, 0x00), 0x71),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x1C, 0x00), 0x78),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x18, 0x00), 0x79),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x15, 0x00), 0x7A),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x11, 0x00), 0x7B),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0E, 0x00), 0x7C),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x0A, 0x00), 0x7D),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x07, 0x00), 0x7E),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x03, 0x00), 0x7F),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x1B, 0x00, 0x00), 0x2A),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x17, 0x00, 0x00), 0x2B),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x13, 0x00, 0x00), 0x2C),
-									BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x2D),
+									BuildColor(MakeRgb15(0x1E, 0x1F, 0x12), 0x70),
+									BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E),
+									BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x71),
+									BuildColor(MakeRgb15(0x1F, 0x1C, 0x00), 0x78),
+									BuildColor(MakeRgb15(0x1F, 0x18, 0x00), 0x79),
+									BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A),
+									BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B),
+									BuildColor(MakeRgb15(0x1F, 0x0E, 0x00), 0x7C),
+									BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7D),
+									BuildColor(MakeRgb15(0x1F, 0x07, 0x00), 0x7E),
+									BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F),
+									BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2A),
+									BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
+									BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C),
+									BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D),
 								};
 
 							c = flash_tab1[i];
@@ -707,28 +707,28 @@ void PostProcessStatus(ELEMENT* ShipPtr)
 								case 0:
 									r.corner.x = CAPTAIN_XOFFS + RES_SCALE(15);
 									i = CAPTAIN_WIDTH - RES_SCALE((15 + 1) << 1);
-									c = BUILD_COLOR(MAKE_RGB15(0x13, 0x00, 0x00), 0x2C);
+									c = BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C);
 									break;
 								case 1:
 									r.corner.x = CAPTAIN_XOFFS + RES_SCALE(16);
 									i = CAPTAIN_WIDTH - RES_SCALE((17 + 1) << 1);
-									c = BUILD_COLOR(MAKE_RGB15(0x07, 0x00, 0x00), 0x2F);
+									c = BuildColor(MakeRgb15(0x07, 0x00, 0x00), 0x2F);
 									break;
 								case 2:
 									r.corner.x = CAPTAIN_XOFFS + RES_SCALE(18);
 									i = CAPTAIN_WIDTH - RES_SCALE((20 + 1) << 1);
-									c = BUILD_COLOR(MAKE_RGB15(0x1B, 0x00, 0x00), 0x2A);
+									c = BuildColor(MakeRgb15(0x1B, 0x00, 0x00), 0x2A);
 									break;
 								case 3:
 									r.corner.x = CAPTAIN_XOFFS + RES_SCALE(21);
 									i = CAPTAIN_WIDTH - RES_SCALE((24 + 1) << 1);
-									c = BUILD_COLOR(MAKE_RGB15(0x1F, 0x00, 0x00), 0x29);
+									c = BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x29);
 									break;
 								case 4:
 									r.corner.x = CAPTAIN_XOFFS + RES_SCALE(25);
 									i = RES_SCALE(1);
 									r.extent.width = RES_SCALE(2);
-									c = BUILD_COLOR(MAKE_RGB15(0x1F, 0x50, 0x05), 0x28);
+									c = BuildColor(MakeRgb15(0x1F, 0x50, 0x05), 0x28);
 									break;
 								default:
 									// Should not happen.
@@ -751,9 +751,9 @@ void PostProcessStatus(ELEMENT* ShipPtr)
 							{
 								const static Color flash_tab2[] =
 									{
-										BUILD_COLOR(MAKE_RGB15_INIT(0x17, 0x00, 0x00), 0x2B),
-										BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x2D),
-										BUILD_COLOR(MAKE_RGB15_INIT(0x0B, 0x00, 0x00), 0x2E),
+										BuildColor(MakeRgb15(0x17, 0x00, 0x00), 0x2B),
+										BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D),
+										BuildColor(MakeRgb15(0x0B, 0x00, 0x00), 0x2E),
 									};
 
 								c = flash_tab2[i];

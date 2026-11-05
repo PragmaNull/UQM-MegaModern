@@ -42,9 +42,9 @@ static LOCDATA umgah_desc =
 		UMGAH_COLOR_MAP, /* AlienColorMap */
 		UMGAH_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		UMGAH_CONVERSATION_PHRASES, /* PlayerPhrases */
 		16, /* NumAnimations */
@@ -800,7 +800,7 @@ init_umgah_comm(void)
 	umgah_desc.post_encounter_func = post_umgah_enc;
 	umgah_desc.uninit_encounter_func = uninit_umgah;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

@@ -39,7 +39,7 @@ static LOCDATA urquan_desc =
 		URQUAN_COLOR_MAP, /* AlienColorMap */
 		URQUAN_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE,		 /* AlienAltFrame */
+								NullResource,		 /* AlienAltFrame */
 			URQUAN_ALTCOLOR_MAP, /* AlienAltColorMap */
 			URQUAN_PROBE_MUSIC,	 /* AlienAltSong */
 		},
@@ -618,7 +618,7 @@ init_urquan_comm(void)
 	urquan_desc.post_encounter_func = post_urquan_enc;
 	urquan_desc.uninit_encounter_func = uninit_urquan;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
 	urquan_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	urquan_desc.AlienTextBaseline.y = 0;

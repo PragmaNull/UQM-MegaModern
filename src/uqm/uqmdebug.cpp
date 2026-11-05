@@ -1959,21 +1959,21 @@ hsvaToRgba(double hue, double sat, double val, uint8_t alpha)
 	switch (hi)
 	{
 		case 0:
-			return BUILD_COLOR_RGBA(vb, tb, pb, alpha);
+			return BuildColorRgba(vb, tb, pb, alpha);
 		case 1:
-			return BUILD_COLOR_RGBA(qb, vb, pb, alpha);
+			return BuildColorRgba(qb, vb, pb, alpha);
 		case 2:
-			return BUILD_COLOR_RGBA(pb, vb, tb, alpha);
+			return BuildColorRgba(pb, vb, tb, alpha);
 		case 3:
-			return BUILD_COLOR_RGBA(pb, qb, vb, alpha);
+			return BuildColorRgba(pb, qb, vb, alpha);
 		case 4:
-			return BUILD_COLOR_RGBA(tb, pb, vb, alpha);
+			return BuildColorRgba(tb, pb, vb, alpha);
 		case 5:
-			return BUILD_COLOR_RGBA(vb, pb, qb, alpha);
+			return BuildColorRgba(vb, pb, qb, alpha);
 	}
 
 	// Should not happen.
-	return BUILD_COLOR_RGBA(0, 0, 0, alpha);
+	return BuildColorRgba(0, 0, 0, alpha);
 }
 
 // Returns true iff this context has a visible FRAME.

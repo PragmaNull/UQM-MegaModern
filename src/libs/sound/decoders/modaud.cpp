@@ -31,21 +31,20 @@
 
 #include <mikmod.h>
 
-#define THIS_PTR TFB_SoundDecoder* This
 
 const static char* moda_GetName(void);
 static bool moda_InitModule(AudioFlags flags, const TFB_DecoderFormats*);
 static void moda_TermModule(void);
 static TFB_SoundDecoder* moda_Create(void);
 static void moda_Destroy(TFB_SoundDecoder* decoder);
-static int moda_GetError(THIS_PTR);
-static bool moda_Init(THIS_PTR);
-static void moda_Term(THIS_PTR);
-static bool moda_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
-static void moda_Close(THIS_PTR);
-static int moda_Decode(THIS_PTR, void* buf, int32_t bufsize);
-static uint32_t moda_Seek(THIS_PTR, uint32_t pcm_pos);
-static uint32_t moda_GetFrame(THIS_PTR);
+static int moda_GetError(TFB_SoundDecoder* This);
+static bool moda_Init(TFB_SoundDecoder* This);
+static void moda_Term(TFB_SoundDecoder* This);
+static bool moda_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename);
+static void moda_Close(TFB_SoundDecoder* This);
+static int moda_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize);
+static uint32_t moda_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos);
+static uint32_t moda_GetFrame(TFB_SoundDecoder* This);
 
 TFB_SoundDecoderFuncs moda_DecoderVtbl =
 	{
@@ -307,7 +306,7 @@ moda_Destroy(TFB_SoundDecoder* decoder)
 }
 
 static int
-moda_GetError(THIS_PTR)
+moda_GetError(TFB_SoundDecoder* This)
 {
 	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 	const int ret = moda->last_error;
@@ -316,7 +315,7 @@ moda_GetError(THIS_PTR)
 }
 
 static bool
-moda_Init(THIS_PTR)
+moda_Init(TFB_SoundDecoder* This)
 {
 	//TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*) This;
 	This->need_swap =
@@ -325,14 +324,14 @@ moda_Init(THIS_PTR)
 }
 
 static void
-moda_Term(THIS_PTR)
+moda_Term(TFB_SoundDecoder* This)
 {
 	//TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*) This;
 	moda_Close(This); // ensure cleanup
 }
 
 static bool
-moda_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
+moda_Open(TFB_SoundDecoder* This, const uqm::io::Directory& dir, const char* filename)
 {
 	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 
@@ -380,7 +379,7 @@ moda_Open(THIS_PTR, const uqm::io::Directory& dir, const char* filename)
 }
 
 static void
-moda_Close(THIS_PTR)
+moda_Close(TFB_SoundDecoder* This)
 {
 	TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 
@@ -392,7 +391,7 @@ moda_Close(THIS_PTR)
 }
 
 static int
-moda_Decode(THIS_PTR, void* buf, int32_t bufsize)
+moda_Decode(TFB_SoundDecoder* This, void* buf, int32_t bufsize)
 {
 	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 	const volatile ULONG* poutsize {};
@@ -410,7 +409,7 @@ moda_Decode(THIS_PTR, void* buf, int32_t bufsize)
 }
 
 static uint32_t
-moda_Seek(THIS_PTR, uint32_t pcm_pos)
+moda_Seek(TFB_SoundDecoder* This, uint32_t pcm_pos)
 {
 	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 
@@ -421,7 +420,7 @@ moda_Seek(THIS_PTR, uint32_t pcm_pos)
 }
 
 static uint32_t
-moda_GetFrame(THIS_PTR)
+moda_GetFrame(TFB_SoundDecoder* This)
 {
 	const TFB_ModSoundDecoder* moda = (TFB_ModSoundDecoder*)This;
 	return moda->module->sngpos;

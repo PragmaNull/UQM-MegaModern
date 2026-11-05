@@ -166,7 +166,7 @@ DoPickBattleShip(MENU_STATE* pMS)
 
 #ifdef NEVER
 			SetContextForeGroundColor(
-				BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x0A), 0x1D));
+				BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x1D));
 			DrawRectangle(&pMS->flash_rect0, false);
 #endif /* NEVER */
 			pMS->first_item.y = new_row;
@@ -277,10 +277,10 @@ ChangeSelection:
 					SetContextForeGroundColor (WHITE_COLOR);
 				else
 					SetContextForeGroundColor (
-						BUILD_COLOR (MAKE_RGB15 (0x14, 0x0A, 0x00), 0x0C));*/
+						BuildColor (MakeRgb15 (0x14, 0x0A, 0x00), 0x0C));*/
 
 				SetContextForeGroundColor(
-					BUILD_COLOR(MAKE_RGB15(0x14, 0x0A, 0x00), 0x0C));
+					BuildColor(MakeRgb15(0x14, 0x0A, 0x00), 0x0C));
 
 				font_DrawText(&t);
 				SetContextForeGroundColor(BLACK_COLOR);
@@ -320,10 +320,10 @@ ChangeSelection:
 					SetContextForeGroundColor (WHITE_COLOR);
 				else
 					SetContextForeGroundColor (
-							BUILD_COLOR (MAKE_RGB15 (0x00, 0x14, 0x00), 0x02));*/
+							BuildColor (MakeRgb15 (0x00, 0x14, 0x00), 0x02));*/
 
 				SetContextForeGroundColor(
-					BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x00), 0x02));
+					BuildColor(MakeRgb15(0x00, 0x14, 0x00), 0x02));
 				font_DrawText(&t);
 			}
 
@@ -548,7 +548,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 	else
 	{
 		SetContextForeGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x12, 0x12, 0x12), 0x17));
+			BuildColor(MakeRgb15(0x12, 0x12, 0x12), 0x17));
 	}
 
 	SetContextFont(StarConFont);
@@ -597,7 +597,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 			{
 				/* Ship ran away */
 				SetContextForeGroundColor(
-					BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x14), 0x01));
+					BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01));
 				DrawFilledStamp(&s);
 			}
 		}

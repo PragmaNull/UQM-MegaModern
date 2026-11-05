@@ -564,8 +564,8 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 		r.extent.width = w;
 		r.extent.height = h;
 
-		TFB_DrawImage_Rect(&r, _get_context_bg_color(), DRAW_REPLACE_MODE, b_first);
-		TFB_DrawImage_Rect(&r, _get_context_fg_color(), DRAW_REPLACE_MODE, b_second);
+		TFB_DrawImage_Rect(&r, _get_context_bg_color(), DrawReplaceMode, b_first);
+		TFB_DrawImage_Rect(&r, _get_context_fg_color(), DrawReplaceMode, b_second);
 	}
 	else
 	{
@@ -632,7 +632,7 @@ void _text_blt_fade(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, FRAME
 				if (repair && !*skip)
 				{
 					TFB_DrawImage_Image(repair->image, -r.corner.x, -r.corner.y,
-										0, uqm::TFBScaleMode::None, nullptr, DRAW_REPLACE_MODE, b_clear);
+										0, uqm::TFBScaleMode::None, nullptr, DrawReplaceMode, b_clear);
 					TFB_Prim_FontChar(origin, fontChar, b_clear, MAKE_DRAW_MODE(DRAW_GRAYSCALE, 0xff),
 									  ctxOrigin);
 				}
@@ -868,7 +868,7 @@ _text_blt_alt(GFXRECT* pClipRect, TEXT* TextPtr, GFXPOINT ctxOrigin, uint8_t swa
 		r.corner = MAKE_HOT_SPOT(0, 0);
 		r.extent = MAKE_EXTENT(w, h);
 
-		TFB_DrawImage_Rect(&r, color, DRAW_REPLACE_MODE, ext);
+		TFB_DrawImage_Rect(&r, color, DrawReplaceMode, ext);
 	}
 	else
 	{

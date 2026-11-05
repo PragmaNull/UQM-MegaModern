@@ -25,7 +25,6 @@
 // forward-declare
 typedef struct tfb_videodecoder TFB_VideoDecoder;
 
-#define THIS_PTR TFB_VideoDecoder*
 
 typedef struct tfb_videodecoderfunc
 {
@@ -35,16 +34,16 @@ typedef struct tfb_videodecoderfunc
 	// Make and delete the decoder struct, which starts with a TFB_VideoDecoder.
 	TFB_VideoDecoder* (*Create)(void);
 	void (*Destroy)(TFB_VideoDecoder*);
-	int (*GetError)(THIS_PTR);
-	bool (*Init)(THIS_PTR, TFB_PixelFormat* fmt);
-	void (*Term)(THIS_PTR);
-	bool (*Open)(THIS_PTR, const uqm::io::Directory& dir, const char* filename);
-	void (*Close)(THIS_PTR);
-	int (*DecodeNext)(THIS_PTR);
-	uint32_t (*SeekFrame)(THIS_PTR, uint32_t frame);
-	float (*SeekTime)(THIS_PTR, float time);
-	uint32_t (*GetFrame)(THIS_PTR);
-	float (*GetTime)(THIS_PTR);
+	int (*GetError)(TFB_VideoDecoder*);
+	bool (*Init)(TFB_VideoDecoder*, TFB_PixelFormat* fmt);
+	void (*Term)(TFB_VideoDecoder*);
+	bool (*Open)(TFB_VideoDecoder*, const uqm::io::Directory& dir, const char* filename);
+	void (*Close)(TFB_VideoDecoder*);
+	int (*DecodeNext)(TFB_VideoDecoder*);
+	uint32_t (*SeekFrame)(TFB_VideoDecoder*, uint32_t frame);
+	float (*SeekTime)(TFB_VideoDecoder*, float time);
+	uint32_t (*GetFrame)(TFB_VideoDecoder*);
+	float (*GetTime)(TFB_VideoDecoder*);
 
 } TFB_VideoDecoderFuncs;
 
@@ -53,19 +52,18 @@ typedef struct tfb_videodecoderfunc
 typedef struct tfb_videocallbacks
 {
 	// any decoder calls these
-	void (*BeginFrame)(THIS_PTR);
-	void (*EndFrame)(THIS_PTR);
-	void* (*GetCanvasLine)(THIS_PTR, uint32_t line);
+	void (*BeginFrame)(TFB_VideoDecoder*);
+	void (*EndFrame)(TFB_VideoDecoder*);
+	void* (*GetCanvasLine)(TFB_VideoDecoder*, uint32_t line);
 	// non-audio-driven decoders call this to figure out
 	// when the next frame should be drawn
-	uint32_t (*GetTicks)(THIS_PTR);
+	uint32_t (*GetTicks)(TFB_VideoDecoder*);
 	// non-audio-driven decoders call this to inform
 	// the player when the next frame should be drawn
-	bool (*SetTimer)(THIS_PTR, uint32_t msecs);
+	bool (*SetTimer)(TFB_VideoDecoder*, uint32_t msecs);
 
 } TFB_VideoCallbacks;
 
-#undef THIS_PTR
 
 struct tfb_videodecoder
 {

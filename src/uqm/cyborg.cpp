@@ -308,7 +308,7 @@ PlotIntercept(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 						Control1.EndPoint.x = WORLD_TO_DISPLAY(Pt1.x);
 						Control1.EndPoint.y = WORLD_TO_DISPLAY(Pt1.y);
 						when = DrawablesIntersect(&Control0,
-												  &Control1, MAX_TIME_VALUE);
+												  &Control1, MaxTimeValue);
 						if (when)
 						{
 							if (when == 1

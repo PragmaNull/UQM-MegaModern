@@ -44,8 +44,8 @@ static LOCDATA shofixti_desc =
 		SHOFIXTI_MUSIC, /* AlienSong */
 		{
 								SHOFIXTI_ALT_PMAP_ANIM, /* AlienAltFrame */
-			NULL_RESOURCE,			/* AlienAltColorMap */
-			NULL_RESOURCE,			/* AlienAltSong */
+			NullResource,			/* AlienAltColorMap */
+			NullResource,			/* AlienAltSong */
 		},
 		SHOFIXTI_CONVERSATION_PHRASES, /* PlayerPhrases */
 		11, /* NumAnimations */
@@ -685,7 +685,7 @@ init_shofixti_comm(void)
 	shofixti_desc.post_encounter_func = post_shofixti_enc;
 	shofixti_desc.uninit_encounter_func = uninit_shofixti;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 	if (EXTENDED)

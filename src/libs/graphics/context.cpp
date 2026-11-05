@@ -33,8 +33,8 @@ PRIMITIVE _locPrim;
 
 FONT _CurFontPtr;
 
-#define DEFAULT_FORE_COLOR BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F)
-#define DEFAULT_BACK_COLOR BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x00), 0x00)
+#define DEFAULT_FORE_COLOR BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)
+#define DEFAULT_BACK_COLOR BuildColor(MakeRgb15(0x00, 0x00, 0x00), 0x00)
 
 #define DEFAULT_DRAW_MODE MAKE_DRAW_MODE(DRAW_DEFAULT, 255)
 
@@ -362,7 +362,7 @@ void FixContextFontEffect(void)
 
 		TFB_DrawImage_Image(EffectFrame->image,
 							-EffectFrame->HotSpot.x, -EffectFrame->HotSpot.y,
-							0, uqm::TFBScaleMode::None, nullptr, DRAW_REPLACE_MODE, img);
+							0, uqm::TFBScaleMode::None, nullptr, DrawReplaceMode, img);
 	}
 	else
 	{ // solid color backing
@@ -372,7 +372,7 @@ void FixContextFontEffect(void)
 		  };
 		const Color color = _get_context_fg_color();
 
-		TFB_DrawImage_Rect(&r, color, DRAW_REPLACE_MODE, img);
+		TFB_DrawImage_Rect(&r, color, DrawReplaceMode, img);
 	}
 
 	_pCurContext->FontBacking = img;

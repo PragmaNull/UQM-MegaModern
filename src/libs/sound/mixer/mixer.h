@@ -108,23 +108,21 @@ typedef enum
  * bits 08..15: channels
  * bits 15..31: meaningless
  */
-#define MIX_FORMAT_DUMMYID 0x00170000
-#define MIX_FORMAT_BPC(f) ((f) & 0xff)
-#define MIX_FORMAT_CHANS(f) (((f) >> 8) & 0xff)
-#define MIX_FORMAT_BPC_MAX 2
-#define MIX_FORMAT_CHANS_MAX 2
-#define MIX_FORMAT_MAKE(b, c) \
-	(MIX_FORMAT_DUMMYID | ((b) & 0xff) | (((c) & 0xff) << 8))
+inline constexpr auto MixFormatDummyid {0x00170000};
+constexpr auto MixFormatBpc(auto f) { return ((f) & 0xff); }
+constexpr auto MixFormatChans(auto f) { return (((f) >> 8) & 0xff); }
+inline constexpr auto MixFormatBpcMax {2};
+inline constexpr auto MixFormatChansMax {2};
+constexpr auto MixFormatMake(auto b, auto c) { return (MixFormatDummyid | ((b) & 0xff) | (((c) & 0xff) << 8)); }
 
-#define MIX_FORMAT_SAMPSIZE(f) \
-	(MIX_FORMAT_BPC(f) * MIX_FORMAT_CHANS(f))
+constexpr auto MixFormatSampsize(auto f) { return (MixFormatBpc(f) * MixFormatChans(f)); }
 
 typedef enum
 {
-	MIX_FORMAT_MONO8 = MIX_FORMAT_MAKE(1, 1),
-	MIX_FORMAT_STEREO8 = MIX_FORMAT_MAKE(1, 2),
-	MIX_FORMAT_MONO16 = MIX_FORMAT_MAKE(2, 1),
-	MIX_FORMAT_STEREO16 = MIX_FORMAT_MAKE(2, 2)
+	MIX_FORMAT_MONO8 = MixFormatMake(1, 1),
+	MIX_FORMAT_STEREO8 = MixFormatMake(1, 2),
+	MIX_FORMAT_MONO16 = MixFormatMake(2, 1),
+	MIX_FORMAT_STEREO16 = MixFormatMake(2, 2)
 
 } mixer_Format;
 
@@ -175,7 +173,7 @@ typedef struct _mixer_Buffer
 
 } mixer_Buffer;
 
-#define mixer_bufMagic 0x4258494DU /* MIXB in LSB */
+inline constexpr auto mixer_bufMagic {0x4258494DU}; /* MIXB in LSB */
 
 struct _mixer_Source
 {
@@ -198,7 +196,7 @@ struct _mixer_Source
 	float samplecache;
 };
 
-#define mixer_srcMagic 0x5358494DU /* MIXS in LSB */
+inline constexpr auto mixer_srcMagic {0x5358494DU}; /* MIXS in LSB */
 
 /*************************************************
  *  General interface

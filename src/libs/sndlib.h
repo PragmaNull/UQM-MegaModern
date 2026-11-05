@@ -88,16 +88,16 @@ extern bool InstallAudioResTypes(void);
 extern MUSIC_REF LoadMusicInstance(RESOURCE res);
 extern bool DestroyMusic(MUSIC_REF MusicRef);
 
-#define MAX_CHANNELS 8
-#define MAX_VOLUME 255
-#define NORMAL_VOLUME 160
-#define MUTE_VOLUME 0
+inline constexpr auto MaxChannels {8};
+inline constexpr auto MaxVolume {255};
+inline constexpr auto NormalVolume {160};
+inline constexpr auto MuteVolume {0};
 
-#define FIRST_SFX_CHANNEL 0
-#define MIN_FX_CHANNEL 1
-#define NUM_FX_CHANNELS 4
-#define LAST_SFX_CHANNEL (MIN_FX_CHANNEL + NUM_FX_CHANNELS - 1)
-#define NUM_SFX_CHANNELS (MIN_FX_CHANNEL + NUM_FX_CHANNELS)
+inline constexpr auto FirstSfxChannel {0};
+inline constexpr auto MinFxChannel {1};
+inline constexpr auto NumFxChannels {4};
+inline constexpr auto LastSfxChannel {(MinFxChannel + NumFxChannels - 1)};
+inline constexpr auto NumSfxChannels {(MinFxChannel + NumFxChannels)};
 
 extern void PLRPlaySong(MUSIC_REF MusicRef, bool Continuous, uint8_t Priority);
 extern void PLRStop(MUSIC_REF MusicRef);
@@ -123,7 +123,7 @@ extern bool SoundPlaying(void);
 extern uint32_t PLRGetPos(void);
 
 extern void WaitForSoundEnd(uint16_t Channel);
-#define TFBSOUND_WAIT_ALL ((uint16_t)~0)
+inline constexpr auto TfbsoundWaitAll {((uint16_t)~0)};
 
 extern TimeCount FadeMusic(uint8_t end_vol, TimePeriod TimeInterval);
 extern uint8_t GetCurrMusicVol(void);

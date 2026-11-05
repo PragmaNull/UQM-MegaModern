@@ -22,7 +22,7 @@
 #include "core/string/StringUtils.h"
 #include "../../uqm/units.h"
 
-#define MAX_REG_DECODERS 31
+static constexpr auto MaxRegDecoders {31};
 
 static bool vd_inited = false;
 static TFB_PixelFormat vd_vidfmt;
@@ -35,7 +35,7 @@ struct TFB_RegVideoDecoder
 	const char* ext;
 	const TFB_VideoDecoderFuncs* funcs;
 };
-static TFB_RegVideoDecoder vd_decoders[MAX_REG_DECODERS + 1] =
+static TFB_RegVideoDecoder vd_decoders[MaxRegDecoders + 1] =
 	{
 		{true,  true,	 "duk",	&dukv_DecoderVtbl},
 		{false, false, nullptr, nullptr		   }, // null term
@@ -152,7 +152,7 @@ VideoDecoder_Register(const char* fileext, TFB_VideoDecoderFuncs* decvtbl)
 		}
 	}
 
-	if (info >= vd_decoders + MAX_REG_DECODERS)
+	if (info >= vd_decoders + MaxRegDecoders)
 	{
 		uqm::log::warn("VideoDecoder_Register(): Decoders limit reached");
 		return nullptr;
@@ -190,7 +190,7 @@ VideoDecoder_Register(const char* fileext, TFB_VideoDecoderFuncs* decvtbl)
 
 void VideoDecoder_Unregister(TFB_RegVideoDecoder* regdec)
 {
-	if (regdec < vd_decoders || regdec >= vd_decoders + MAX_REG_DECODERS || !regdec->ext || !regdec->funcs)
+	if (regdec < vd_decoders || regdec >= vd_decoders + MaxRegDecoders || !regdec->ext || !regdec->funcs)
 	{
 		uqm::log::warn("VideoDecoder_Unregister(): "
 					   "Invalid or expired decoder passed");

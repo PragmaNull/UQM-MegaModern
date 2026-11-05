@@ -370,8 +370,8 @@ void object_animation(ELEMENT* ElementPtr)
 					s = ((frame_amount + 1)- frame_index) >> 1;
 
 				SetPrimColor (pPrim,
-						BUILD_COLOR (
-							0x8000 | MAKE_RGB15 (0x1F, 0x1F, 0x1F), s));*/
+						BuildColor (
+							0x8000 | MakeRgb15 (0x1F, 0x1F, 0x1F), s));*/
 
 				SetPrimColor(pPrim, WHITE_COLOR);
 				if (frame_index == (frame_amount))
@@ -1029,7 +1029,7 @@ CheckObjectCollision(uint16_t index)
 		}
 
 		if (!DrawablesIntersect(&LanderControl,
-								&ElementControl, MAX_TIME_VALUE))
+								&ElementControl, MaxTimeValue))
 		{
 			continue;
 		}
@@ -1615,12 +1615,12 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 
 				// XXX: Shouldn't this color-cycle with damage_index?
 				//   damage_index is used, but only as a VGA index!
-				/*SetContextForeGroundColor (BUILD_COLOR (
-						MAKE_RGB15 (0x1F, 0x1F, 0x1F) | 0x8000,
+				/*SetContextForeGroundColor (BuildColor (
+						MakeRgb15 (0x1F, 0x1F, 0x1F) | 0x8000,
 						damage_index));*/
 				SetContextForeGroundColor(
-					BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F),
-								damage_index));
+					BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F),
+							   damage_index));
 				DrawFilledStamp(&shield_s);
 			}
 			DrawStamp(&lander_s);
@@ -2444,7 +2444,7 @@ void MaskLanderGraphics(void)
 		FRAME mods = CaptureDrawable(LoadGraphic(LANDER_MODS_PMAP_ANIM));
 		FRAME lander {};
 		FRAME mask {};
-		const DrawMode mode = MAKE_DRAW_MODE(DRAW_REPLACE, DRAW_FACTOR_1);
+		const DrawMode mode = MAKE_DRAW_MODE(DRAW_REPLACE, DrawFactor1);
 
 		// Reload landersprites for remasking
 		DestroyDrawable(ReleaseDrawable(LanderFrame[0]));
@@ -2795,23 +2795,23 @@ void PlanetSide(GFXPOINT planetLoc)
 	PSD.MineralText[1] = PSD.MineralText[0];
 	PSD.MineralText[2] = PSD.MineralText[1];
 
-	PSD.ColorCycle[0] = BUILD_COLOR(MAKE_RGB15(0x1F, 0x03, 0x00), 0x7F);
-	PSD.ColorCycle[1] = BUILD_COLOR(MAKE_RGB15(0x1F, 0x0A, 0x00), 0x7D);
-	PSD.ColorCycle[2] = BUILD_COLOR(MAKE_RGB15(0x1F, 0x11, 0x00), 0x7B);
-	PSD.ColorCycle[3] = BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x00), 0x71);
+	PSD.ColorCycle[0] = BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F);
+	PSD.ColorCycle[1] = BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7D);
+	PSD.ColorCycle[2] = BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B);
+	PSD.ColorCycle[3] = BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x71);
 	for (index = 4; index < (NUM_TEXT_FRAMES >> 1) - 4; ++index)
 	{
 		PSD.ColorCycle[index] =
-			BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F);
+			BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F);
 	}
 	PSD.ColorCycle[(NUM_TEXT_FRAMES >> 1) - 4] =
-		BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x00), 0x71);
+		BuildColor(MakeRgb15(0x1F, 0x1F, 0x00), 0x71);
 	PSD.ColorCycle[(NUM_TEXT_FRAMES >> 1) - 3] =
-		BUILD_COLOR(MAKE_RGB15(0x1F, 0x11, 0x00), 0x7B);
+		BuildColor(MakeRgb15(0x1F, 0x11, 0x00), 0x7B);
 	PSD.ColorCycle[(NUM_TEXT_FRAMES >> 1) - 2] =
-		BUILD_COLOR(MAKE_RGB15(0x1F, 0x0A, 0x00), 0x7D);
+		BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7D);
 	PSD.ColorCycle[(NUM_TEXT_FRAMES >> 1) - 1] =
-		BUILD_COLOR(MAKE_RGB15(0x1F, 0x03, 0x00), 0x7F);
+		BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F);
 	planetSideDesc = &PSD;
 
 	index = NORMALIZE_FACING(uqm::random().next());

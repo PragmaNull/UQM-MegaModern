@@ -97,9 +97,9 @@ static RACE_DESC ilwrath_desc =
 			 FIRE_SML_MASK_PMAP_ANIM,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
 		 {ILWRATH_CAPTAIN_MASK_PMAP_ANIM,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
@@ -257,33 +257,33 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 				&& ((status_flags & SPECIAL) || !sameColor(color, BLACK_COLOR))))
 		{
 			if (sameColor(color,
-						  BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F)))
+						  BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F)))
 			{
 				SetPrimType(lpPrim, STAMP_PRIM);
 			}
 			else if (sameColor(color,
-							   BUILD_COLOR(MAKE_RGB15(0x0A, 0x1F, 0x1F), 0x0B)))
+							   BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)))
 			{
 				SetPrimColor(lpPrim,
-							 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
+							 BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
 			}
 			else if (sameColor(color,
-							   BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x14), 0x03)))
+							   BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)))
 			{
 				SetPrimColor(lpPrim,
-							 BUILD_COLOR(MAKE_RGB15(0x0A, 0x1F, 0x1F), 0x0B));
+							 BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B));
 			}
 			else if (sameColor(color,
-							   BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x1F), 0x09)))
+							   BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)))
 			{
 				SetPrimColor(lpPrim,
-							 BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x14), 0x03));
+							 BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03));
 			}
 			else if (sameColor(color,
-							   BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x14), 0x01)))
+							   BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)))
 			{
 				SetPrimColor(lpPrim,
-							 BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x1F), 0x09));
+							 BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09));
 			}
 			else
 			{
@@ -292,7 +292,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 								 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 2),
 							 ElementPtr);
 				SetPrimColor(lpPrim,
-							 BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x14), 0x01));
+							 BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01));
 				if (weapon_discharge)
 				{
 					uint16_t facing {StarShipPtr->ShipFacing};
@@ -365,33 +365,33 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 		else if (!sameColor(color, BLACK_COLOR))
 		{
 			if (sameColor(color,
-						  BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x14), 0x01)))
+						  BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01)))
 			{
 				SetPrimColor(lpPrim, BLACK_COLOR);
 				Untarget(ElementPtr);
 			}
 			else if (sameColor(color,
-							   BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x1F), 0x09)))
+							   BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09)))
 			{
 				SetPrimColor(lpPrim,
-							 BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x14), 0x01));
+							 BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01));
 			}
 			else if (sameColor(color,
-							   BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x14), 0x03)))
+							   BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03)))
 			{
 				SetPrimColor(lpPrim,
-							 BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x1F), 0x09));
+							 BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09));
 			}
 			else if (sameColor(color,
-							   BUILD_COLOR(MAKE_RGB15(0x0A, 0x1F, 0x1F), 0x0B)))
+							   BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B)))
 			{
 				SetPrimColor(lpPrim,
-							 BUILD_COLOR(MAKE_RGB15(0x00, 0x14, 0x14), 0x03));
+							 BuildColor(MakeRgb15(0x00, 0x14, 0x14), 0x03));
 			}
 			else
 			{
 				SetPrimColor(lpPrim,
-							 BUILD_COLOR(MAKE_RGB15(0x0A, 0x1F, 0x1F), 0x0B));
+							 BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B));
 			}
 
 			ElementPtr->state_flags |= CHANGING;
@@ -403,7 +403,7 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 		&& DeltaEnergy(ElementPtr, -SPECIAL_ENERGY_COST))
 	{
 		SetPrimColor(lpPrim,
-					 BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
+					 BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
 		SetPrimType(lpPrim, STAMPFILL_PRIM);
 
 		ProcessSound(GetSound(

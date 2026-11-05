@@ -667,9 +667,9 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 								collide(ElementPtr, TestElementPtr);
 
 								ProcessCollisions(GetHeadElement(), ElementPtr,
-												  MAX_TIME_VALUE, process_flags);
+												  MaxTimeValue, process_flags);
 								ProcessCollisions(GetHeadElement(), TestElementPtr,
-												  MAX_TIME_VALUE, process_flags);
+												  MaxTimeValue, process_flags);
 							}
 						}
 						UnlockElement(hTestElement);
@@ -736,7 +736,7 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 			&& !(ElementPtr->state_flags & COLLISION))
 		{
 			ProcessCollisions(hNextElement, ElementPtr,
-							  MAX_TIME_VALUE, PRE_PROCESS);
+							  MaxTimeValue, PRE_PROCESS);
 		}
 
 		if (ElementPtr->state_flags & PLAYER_SHIP)
@@ -956,7 +956,7 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 					&& !(PostElementPtr->state_flags & COLLISION))
 				{
 					ProcessCollisions(GetHeadElement(), PostElementPtr,
-									  MAX_TIME_VALUE, PRE_PROCESS | POST_PROCESS);
+									  MaxTimeValue, PRE_PROCESS | POST_PROCESS);
 				}
 				UnlockElement(hPostElement);
 				hPostElement = hNextElement;
@@ -1132,7 +1132,7 @@ void RedrawQueue(bool clear)
 			nth_frame += skip_frames;
 			if (clear)
 			{
-				ClearDrawable(); // this is for BATCH_BUILD_PAGE effect, but not scaled by SetGraphicScale
+				ClearDrawable(); // this is for BatchBuildPage effect, but not scaled by SetGraphicScale
 			}
 
 			if (uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) != uqm::TFBScaleMode::Step)
@@ -1144,7 +1144,7 @@ void RedrawQueue(bool clear)
 				SetGraphicScale(scale);
 			}
 
-			DrawBatch(DisplayArray, DisplayLinks, 0); //BATCH_BUILD_PAGE);
+			DrawBatch(DisplayArray, DisplayLinks, 0); //BatchBuildPage);
 			SetGraphicScale(0);
 		}
 

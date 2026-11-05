@@ -63,7 +63,7 @@ void StopChannel(uint16_t channel, uint8_t Priority)
 static void
 CheckFinishedChannels(void)
 {
-	for (int i {FIRST_SFX_SOURCE}; i <= LAST_SFX_SOURCE; ++i)
+	for (int i {FirstSfxSource}; i <= LastSfxSource; ++i)
 	{
 		audio_IntVal state {};
 
@@ -140,7 +140,7 @@ void SetChannelVolume(uint16_t channel, uint16_t volume, uint8_t priority)
 // I can probably ignore it.
 {
 	audio_Sourcef(soundSource[channel].handle, audio_GAIN,
-				  (volume / (float)MAX_VOLUME) * sfxVolumeScale);
+				  (volume / (float)MaxVolume) * sfxVolumeScale);
 	(void)priority; // ignored
 }
 
@@ -224,7 +224,7 @@ SoundBank::~SoundBank()
 	for (TFB_SoundSample* const sample : m_samples)
 	{
 		// Check all sources and see if we are currently playing this sample
-		for (int i {0}; i < NUM_SOUNDSOURCES; ++i)
+		for (int i {0}; i < NumSoundsources; ++i)
 		{
 			if (soundSource[i].sample == sample)
 			{ // Playing this sample. Have to stop it.

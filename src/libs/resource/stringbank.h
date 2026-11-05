@@ -23,11 +23,11 @@
 #include <stdio.h>
 #endif
 
-#define STRBANK_CHUNK_SIZE (1024 - sizeof(void*) - sizeof(int))
+inline constexpr auto StrbankChunkSize {(1024 - sizeof(void*) - sizeof(int))};
 
 typedef struct _stringbank_chunk
 {
-	char data[STRBANK_CHUNK_SIZE];
+	char data[StrbankChunkSize];
 	int len;
 	struct _stringbank_chunk* next;
 } stringbank;

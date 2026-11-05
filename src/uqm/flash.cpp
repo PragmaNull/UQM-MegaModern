@@ -624,11 +624,11 @@ Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int denom)
 		case FlashType_highlight:
 			{
 				// Clear the destination just in case
-				SetContextBackGroundColor(BUILD_COLOR_RGBA(0, 0, 0, 0));
+				SetContextBackGroundColor(BuildColorRgba(0, 0, 0, 0));
 				ClearDrawable();
 				// Draw the frame at modulated strength (0 < strength <= 128)
 				SetContextDrawMode(MAKE_DRAW_MODE(DRAW_ADDITIVE,
-												  DRAW_FACTOR_1 * blendedNumer / blendedDenom));
+												  DrawFactor1 * blendedNumer / blendedDenom));
 				s.frame = context->original;
 				DrawStamp(&s);
 				break;
@@ -650,12 +650,12 @@ Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int denom)
 				}
 
 				// Draw the first frame at full strength
-				SetContextDrawMode(DRAW_REPLACE_MODE);
+				SetContextDrawMode(DrawReplaceMode);
 				s.frame = first;
 				DrawStamp(&s);
 				// Merge in the final frame
 				SetContextDrawMode(MAKE_DRAW_MODE(DRAW_ALPHA,
-												  DRAW_FACTOR_1 * blendedNumer / blendedDenom));
+												  DrawFactor1 * blendedNumer / blendedDenom));
 				s.frame = final;
 				DrawStamp(&s);
 				break;
@@ -665,12 +665,12 @@ Flash_makeFrame(FlashContext* context, FRAME dest, int numer, int denom)
 				GFXPOINT oldOrigin;
 
 				// Draw the original at full strength
-				SetContextDrawMode(DRAW_REPLACE_MODE);
+				SetContextDrawMode(DrawReplaceMode);
 				s.frame = context->original;
 				DrawStamp(&s);
 				// Add or subtract the overlay at partial strength
 				SetContextDrawMode(MAKE_DRAW_MODE(DRAW_ADDITIVE,
-												  DRAW_FACTOR_1 * blendedNumer / blendedDenom));
+												  DrawFactor1 * blendedNumer / blendedDenom));
 				s.frame = context->u.overlay.frame;
 				// Offset the draw origin to hit the right area
 				oldOrigin = SetContextOrigin(GetFrameHot(s.frame));
@@ -712,7 +712,7 @@ Flash_prepareCacheFrame(FlashContext* context, uint16_t index)
 	else
 #endif /* BEGIN_AND_END_FRMAE_EXCEPTIONS */
 	{
-		context->cache[index] = CaptureDrawable(CreateDrawable(WANT_PIXMAP,
+		context->cache[index] = CaptureDrawable(CreateDrawable(WantPixmap,
 															   context->rect.extent.width, context->rect.extent.height, 1));
 		Flash_makeFrame(context, context->cache[index],
 						index, context->cacheSize - 1);
@@ -825,7 +825,7 @@ Flash_drawUncachedFrame(FlashContext* context, int numer, int denom)
 		// Painting to the screen; we need a temporary frame to draw to.
 		FRAME work {};
 
-		work = CaptureDrawable(CreateDrawable(WANT_PIXMAP,
+		work = CaptureDrawable(CreateDrawable(WantPixmap,
 											  context->rect.extent.width, context->rect.extent.height, 1));
 		Flash_makeFrame(context, work, numer, denom);
 		Flash_drawFrame(context, work, false);

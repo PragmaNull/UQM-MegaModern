@@ -543,11 +543,11 @@ spawn_ship(STARSHIP* StarShipPtr)
 
 					if (inHyperSpace())
 					{
-						c = BUILD_COLOR_RGB(0xFF, 0x00, 0x00);
+						c = BuildColorRgb(0xFF, 0x00, 0x00);
 					}
 					else
 					{
-						c = BUILD_COLOR_RGB(0x00, 0xE4, 0x00);
+						c = BuildColorRgb(0x00, 0xE4, 0x00);
 					}
 
 					for (uint16_t i {0}; i < numFrames; i++)

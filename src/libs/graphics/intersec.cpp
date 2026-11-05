@@ -153,8 +153,8 @@ frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
 		long error {};
 
 		uint32_t start {(uint32_t)cycle0 * (uint32_t)(t0 - 1)};
-		time_error0 = start & ((1 << TIME_SHIFT) - 1);
-		if ((start >>= (uint32_t)TIME_SHIFT) > 0)
+		time_error0 = start & ((1 << TimeShift) - 1);
+		if ((start >>= (uint32_t)TimeShift) > 0)
 		{
 			if ((error = (long)xerror0
 					   - (long)dx_0 * (long)start)
@@ -184,8 +184,8 @@ frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
 		}
 
 		start = (uint32_t)cycle1 * (uint32_t)(t0 - 1);
-		time_error1 = start & ((1 << TIME_SHIFT) - 1);
-		if ((start >>= (uint32_t)TIME_SHIFT) > 0)
+		time_error1 = start & ((1 << TimeShift) - 1);
+		if ((start >>= (uint32_t)TimeShift) > 0)
 		{
 			if ((error = (long)xerror1
 					   - (long)dx_1 * (long)start)
@@ -219,7 +219,7 @@ frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
 	do
 	{
 		++t0;
-		if ((time_error0 += cycle0) >= (1 << TIME_SHIFT))
+		if ((time_error0 += cycle0) >= (1 << TimeShift))
 		{
 			if ((xerror0 -= dx_0) <= 0)
 			{
@@ -233,10 +233,10 @@ frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
 			}
 
 			check0 = true;
-			time_error0 -= (1 << TIME_SHIFT);
+			time_error0 -= (1 << TimeShift);
 		}
 
-		if ((time_error1 += cycle1) >= (1 << TIME_SHIFT))
+		if ((time_error1 += cycle1) >= (1 << TimeShift))
 		{
 			if ((xerror1 -= dx_1) <= 0)
 			{
@@ -250,7 +250,7 @@ frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
 			}
 
 			check1 = true;
-			time_error1 -= (1 << TIME_SHIFT);
+			time_error1 -= (1 << TimeShift);
 		}
 
 		if (check0 || check1)
@@ -297,9 +297,9 @@ DrawablesIntersect(INTERSECT_CONTROL* pControl0,
 	{
 		return ((TIME_VALUE)0);
 	}
-	else if (max_time_val > MAX_TIME_VALUE)
+	else if (max_time_val > MaxTimeValue)
 	{
-		max_time_val = MAX_TIME_VALUE;
+		max_time_val = MaxTimeValue;
 	}
 
 	pControl0->last_time_val = pControl1->last_time_val = 0;
@@ -446,7 +446,7 @@ DrawablesIntersect(INTERSECT_CONTROL* pControl0,
 					fract = (long)dx * (long)dy;
 				}
 
-				if ((time_beg <<= TIME_SHIFT) < fract)
+				if ((time_beg <<= TimeShift) < fract)
 				{
 					time_y_0 = 0;
 				}
@@ -456,7 +456,7 @@ DrawablesIntersect(INTERSECT_CONTROL* pControl0,
 				}
 
 				if (time_end >= fract /* just in case of overflow */
-					|| (time_end <<= TIME_SHIFT) >= fract * (long)max_time_val)
+					|| (time_end <<= TimeShift) >= fract * (long)max_time_val)
 				{
 					time_y_1 = max_time_val - 1;
 				}

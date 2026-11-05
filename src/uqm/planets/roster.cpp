@@ -119,7 +119,7 @@ getSupportShipIcon(ROSTER_STATE* rosterState)
 static void
 flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
 {
-	static Color c = BUILD_COLOR(MAKE_RGB15_INIT(0x1F, 0x00, 0x00), 0x24);
+	static Color c = BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x24);
 	static TimeCount NextTime {};
 
 	drawSupportShip(rosterState, true, saveFrame);
@@ -133,20 +133,20 @@ flashSupportShip(ROSTER_STATE* rosterState, bool saveFrame)
 		 * different colors due to rounding errors, but the old code wasn't
 		 * original anyhow, and you can't tell the difference visually.
 		 * - SvdB
-		if (c >= BUILD_COLOR (MAKE_RGB15 (0x1F, 0x19, 0x19), 0x24))
-			c = BUILD_COLOR (MAKE_RGB15 (0x1F, 0x00, 0x00), 0x24);
+		if (c >= BuildColor (MakeRgb15 (0x1F, 0x19, 0x19), 0x24))
+			c = BuildColor (MakeRgb15 (0x1F, 0x00, 0x00), 0x24);
 		else
-			c += BUILD_COLOR (MAKE_RGB15 (0x00, 0x02, 0x02), 0x00);
+			c += BuildColor (MakeRgb15 (0x00, 0x02, 0x02), 0x00);
 		*/
 
-		if (c.g >= CC5TO8(0x19))
+		if (c.g >= Cc5to8(0x19))
 		{
-			c = BUILD_COLOR(MAKE_RGB15(0x1F, 0x00, 0x00), 0x24);
+			c = BuildColor(MakeRgb15(0x1F, 0x00, 0x00), 0x24);
 		}
 		else
 		{
-			c.g += CC5TO8(0x02);
-			c.b += CC5TO8(0x02);
+			c.g += Cc5to8(0x02);
+			c.b += Cc5to8(0x02);
 		}
 		SetContextForeGroundColor(c);
 

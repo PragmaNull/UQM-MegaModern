@@ -479,7 +479,7 @@ ChangeSunColor(void)
 #define STAR_COLOR_INDEX 0xFF
 
 	c = GetColorMapColor(GetColorMapTableIndex(SunCMap, 0), STAR_COLOR_INDEX);
-	mode = MAKE_DRAW_MODE(DRAW_ALPHA, TRANSFER_ALPHA);
+	mode = MAKE_DRAW_MODE(DRAW_ALPHA, TransferAlpha);
 	maskOffset = GetFrameCount(SunFrame) - SUN_ZOOM_SIZES;
 	sizeIter = maskOffset / SUN_ZOOM_SIZES;
 
@@ -745,11 +745,11 @@ LoadSolarSys(void)
 #define NUM_TEMP_RANGES 5
 	Color temp_color_array[NUM_TEMP_RANGES] =
 		{
-			BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x0E), 0x54),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x06, 0x08), 0x62),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x0B, 0x00), 0x6D),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x2D),
-			BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x08, 0x00), 0x75),
+			BuildColor(MakeRgb15(0x00, 0x00, 0x0E), 0x54),
+			BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x62),
+			BuildColor(MakeRgb15(0x00, 0x0B, 0x00), 0x6D),
+			BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D),
+			BuildColor(MakeRgb15(0x0F, 0x08, 0x00), 0x75),
 		};
 
 	if (NebulaFrame)
@@ -1049,7 +1049,7 @@ CheckIntersect(void)
 
 	if (pCurDesc != pSolarSysState->SunDesc /* can't intersect with sun */
 		&& DrawablesIntersect(&ShipIntersect,
-							  &PlanetIntersect, MAX_TIME_VALUE))
+							  &PlanetIntersect, MaxTimeValue))
 	{
 #ifdef DEBUG_SOLARSYS
 		uqm::log::debug("0: Planet {}, Moon {}", PlanetOffset,
@@ -1099,7 +1099,7 @@ CheckIntersect(void)
 				PlanetIntersect.IntersectStamp.origin.y);*/
 
 		if (DrawablesIntersect(&ShipIntersect,
-							   &PlanetIntersect, MAX_TIME_VALUE))
+							   &PlanetIntersect, MaxTimeValue))
 		{
 #ifdef DEBUG_SOLARSYS
 			uqm::log::debug("1: Planet {}, Moon {}", PlanetOffset,
@@ -2169,7 +2169,7 @@ playSpaceMusic(void)
 	// XXX: This is quite hacky
 	if (!PLRPlaying((MUSIC_REF)~0) && (LastActivity != CHECK_LOAD || NextActivity))
 	{
-		PlayMusicResume(SpaceMusic, NORMAL_VOLUME);
+		PlayMusicResume(SpaceMusic, NormalVolume);
 	}
 }
 
@@ -2654,7 +2654,7 @@ DrawSystem(int16_t radius, bool IsInnerSystem)
 		GFXRECT clipRect;
 
 		GetContextClipRect(&clipRect);
-		SolarSysFrame = CaptureDrawable(CreateDrawable(WANT_PIXMAP,
+		SolarSysFrame = CaptureDrawable(CreateDrawable(WantPixmap,
 													   clipRect.extent.width, clipRect.extent.height, 1));
 	}
 
@@ -2792,7 +2792,7 @@ CreateStarBackGround(uqm::UQMRandom& SysRNG, FRAME nebula, FRAME junk)
 	GetContextClipRect(&clipRect);
 
 	// Prepare a pre-drawn stars frame for this system
-	frame = CaptureDrawable(CreateDrawable(WANT_PIXMAP,
+	frame = CaptureDrawable(CreateDrawable(WantPixmap,
 										   clipRect.extent.width, clipRect.extent.height, 1));
 	SetContext(OffScreenContext);
 	SetContextFGFrame(frame);

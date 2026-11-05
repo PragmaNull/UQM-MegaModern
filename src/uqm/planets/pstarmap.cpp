@@ -230,7 +230,7 @@ flashCurrentLocation(GFXPOINT* where, bool force)
 		GFXCONTEXT OldContext {SetContext(SpaceContext)};
 
 		OldColor = SetContextForeGroundColor(
-			BUILD_COLOR(MAKE_RGB15(c, c, c), c));
+			BuildColor(MakeRgb15(c, c, c), c));
 		s.origin.x = UNIVERSE_TO_DISPX(universe.x);
 		s.origin.y = UNIVERSE_TO_DISPY(universe.y);
 		s.frame = IncFrameIndex(StarMapFrame);
@@ -340,7 +340,7 @@ DrawAutoPilot(GFXPOINT* pDstPt)
 	delta = xerror = yerror = cycle >> 1;
 
 	SetContextForeGroundColor(
-		BUILD_COLOR(MAKE_RGB15(0x04, 0x04, 0x1F), 0x01));
+		BuildColor(MakeRgb15(0x04, 0x04, 0x1F), 0x01));
 
 	delta &= ~1;
 	while (delta--)
@@ -1101,15 +1101,15 @@ DrawRaceName(TEXT* t, Color* c)
 {
 	// The text color is slightly lighter than the color of
 	// the SoI.
-	c->r = (c->r >= 0xff - CC5TO8(0x03)) ?
+	c->r = (c->r >= 0xff - Cc5to8(0x03)) ?
 			   0xff :
-			   c->r + CC5TO8(0x03);
-	c->g = (c->g >= 0xff - CC5TO8(0x03)) ?
+			   c->r + Cc5to8(0x03);
+	c->g = (c->g >= 0xff - Cc5to8(0x03)) ?
 			   0xff :
-			   c->g + CC5TO8(0x03);
-	c->b = (c->b >= 0xff - CC5TO8(0x03)) ?
+			   c->g + Cc5to8(0x03);
+	c->b = (c->b >= 0xff - Cc5to8(0x03)) ?
 			   0xff :
-			   c->b + CC5TO8(0x03);
+			   c->b + Cc5to8(0x03);
 
 	SetContextForeGroundColor(*c);
 	font_DrawText(t);
@@ -1130,32 +1130,32 @@ Color RaceColor(uint16_t index)
 	{
 		static constexpr Color StarseedColors[] =
 			{
-				BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x00, 0x17), 0x00), // ARILOU_SHIP Bold blue
-				BUILD_COLOR(MAKE_RGB15_INIT(0x10, 0x15, 0x19), 0x00), // CHMMR_SHIP Pale blue-grey
-				BUILD_COLOR(MAKE_RGB15_INIT(0x09, 0x09, 0x1B), 0x00), // HUMAN_SHIP Blue
-				BUILD_COLOR(MAKE_RGB15_INIT(0x0D, 0x00, 0x05), 0x00), // ORZ_SHIP Plum
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1C, 0x07, 0x19), 0x00), // PKUNK_SHIP Pinkunk
-				BUILD_COLOR(MAKE_RGB15_INIT(0x0A, 0x06, 0x00), 0x00), // SHOFIXTI_SHIP Marsupial brown
-				BUILD_COLOR(MAKE_RGB15_INIT(0x15, 0x12, 0x03), 0x00), // SPATHI_SHIP Mustard yellow
-				BUILD_COLOR(MAKE_RGB15_INIT(0x05, 0x14, 0x01), 0x00), // SUPOX_SHIP Leaf green
-				BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x06, 0x08), 0x00), // THRADDASH_SHIP Dark cyan
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1A, 0x16, 0x12), 0x00), // UTWIG_SHIP Beige
-				BUILD_COLOR(MAKE_RGB15_INIT(0x06, 0x16, 0x0F), 0x00), // VUX_SHIP Very Ugly Aqua
-				BUILD_COLOR(MAKE_RGB15_INIT(0x0A, 0x00, 0x11), 0x00), // YEHAT_SHIP Royal purple
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1A, 0x16, 0x08), 0x00), // MELNORME_SHIP Yellowish
-				BUILD_COLOR(MAKE_RGB15_INIT(0x0F, 0x00, 0x00), 0x00), // DRUUGE_SHIP Crimson (tm)
-				BUILD_COLOR(MAKE_RGB15_INIT(0x0E, 0x00, 0x0E), 0x00), // ILWRATH_SHIP Purple
-				BUILD_COLOR(MAKE_RGB15_INIT(0x14, 0x00, 0x0C), 0x00), // MYCON_SHIP Fungal fuchsia
-				BUILD_COLOR(MAKE_RGB15_INIT(0x1D, 0x00, 0x07), 0x00), // SLYLANDRO_SHIP Red Alert
-				BUILD_COLOR(MAKE_RGB15_INIT(0x0B, 0x0C, 0x00), 0x00), // UMGAH_SHIP Olive
-				BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x08, 0x00), 0x00), // URQUAN_SHIP Dark Green
-				BUILD_COLOR(MAKE_RGB15_INIT(0x16, 0x0D, 0x00), 0x00), // ZOQFOTPIK_SHIP Orange
-				BUILD_COLOR(MAKE_RGB15_INIT(0x15, 0x07, 0x03), 0x00), // SYREEN_SHIP Slightly-orange red
-				BUILD_COLOR(MAKE_RGB15_INIT(0x06, 0x06, 0x06), 0x00), // BLACK_URQUAN_SHIP Dark grey
-				BUILD_COLOR(MAKE_RGB15_INIT(0x09, 0x00, 0x15), 0x00), // ANDROSYNTH_SHIP Violet
-				BUILD_COLOR(MAKE_RGB15_INIT(0x00, 0x15, 0x1C), 0x00), // CHENJESU_SHIP Cyan
-				BUILD_COLOR(MAKE_RGB15_INIT(0x10, 0x10, 0x10), 0x00), // MMRNMHRM_SHIP Silver
-				BUILD_COLOR(MAKE_RGB15_INIT(0x19, 0x10, 0x1F), 0x00), // YEHAT_REBEL_SHIP Lavender
+				BuildColor(MakeRgb15(0x00, 0x00, 0x17), 0x00), // ARILOU_SHIP Bold blue
+				BuildColor(MakeRgb15(0x10, 0x15, 0x19), 0x00), // CHMMR_SHIP Pale blue-grey
+				BuildColor(MakeRgb15(0x09, 0x09, 0x1B), 0x00), // HUMAN_SHIP Blue
+				BuildColor(MakeRgb15(0x0D, 0x00, 0x05), 0x00), // ORZ_SHIP Plum
+				BuildColor(MakeRgb15(0x1C, 0x07, 0x19), 0x00), // PKUNK_SHIP Pinkunk
+				BuildColor(MakeRgb15(0x0A, 0x06, 0x00), 0x00), // SHOFIXTI_SHIP Marsupial brown
+				BuildColor(MakeRgb15(0x15, 0x12, 0x03), 0x00), // SPATHI_SHIP Mustard yellow
+				BuildColor(MakeRgb15(0x05, 0x14, 0x01), 0x00), // SUPOX_SHIP Leaf green
+				BuildColor(MakeRgb15(0x00, 0x06, 0x08), 0x00), // THRADDASH_SHIP Dark cyan
+				BuildColor(MakeRgb15(0x1A, 0x16, 0x12), 0x00), // UTWIG_SHIP Beige
+				BuildColor(MakeRgb15(0x06, 0x16, 0x0F), 0x00), // VUX_SHIP Very Ugly Aqua
+				BuildColor(MakeRgb15(0x0A, 0x00, 0x11), 0x00), // YEHAT_SHIP Royal purple
+				BuildColor(MakeRgb15(0x1A, 0x16, 0x08), 0x00), // MELNORME_SHIP Yellowish
+				BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x00), // DRUUGE_SHIP Crimson (tm)
+				BuildColor(MakeRgb15(0x0E, 0x00, 0x0E), 0x00), // ILWRATH_SHIP Purple
+				BuildColor(MakeRgb15(0x14, 0x00, 0x0C), 0x00), // MYCON_SHIP Fungal fuchsia
+				BuildColor(MakeRgb15(0x1D, 0x00, 0x07), 0x00), // SLYLANDRO_SHIP Red Alert
+				BuildColor(MakeRgb15(0x0B, 0x0C, 0x00), 0x00), // UMGAH_SHIP Olive
+				BuildColor(MakeRgb15(0x00, 0x08, 0x00), 0x00), // URQUAN_SHIP Dark Green
+				BuildColor(MakeRgb15(0x16, 0x0D, 0x00), 0x00), // ZOQFOTPIK_SHIP Orange
+				BuildColor(MakeRgb15(0x15, 0x07, 0x03), 0x00), // SYREEN_SHIP Slightly-orange red
+				BuildColor(MakeRgb15(0x06, 0x06, 0x06), 0x00), // BLACK_URQUAN_SHIP Dark grey
+				BuildColor(MakeRgb15(0x09, 0x00, 0x15), 0x00), // ANDROSYNTH_SHIP Violet
+				BuildColor(MakeRgb15(0x00, 0x15, 0x1C), 0x00), // CHENJESU_SHIP Cyan
+				BuildColor(MakeRgb15(0x10, 0x10, 0x10), 0x00), // MMRNMHRM_SHIP Silver
+				BuildColor(MakeRgb15(0x19, 0x10, 0x1F), 0x00), // YEHAT_REBEL_SHIP Lavender
 			};
 
 		static constexpr uint16_t NumColors = uqstl::size(StarseedColors);
@@ -1166,13 +1166,13 @@ Color RaceColor(uint16_t index)
 		}
 	}
 	// Hot pink (just a fail state but also reserved)
-	return Color BUILD_COLOR(MAKE_RGB15_INIT(0x1C, 0x00, 0x0C), 0x00);
+	return BuildColor(MakeRgb15(0x1C, 0x00, 0x0C), 0x00);
 #if 0
 	// A way to choose colors entirely "fairly", although colors don't really map
 	// in such an even distribution.
 		uint8_t i, j, k;
 		for (i = 0; i < 3; i++) for (j = 0; j < 3; j++) for (k = 0; k < 3; k++)
-			race_colors[i * 9 + j * 3 + k] = (Color) BUILD_COLOR (MAKE_RGB15_INIT (14 * i + 1, 14 * j + 1, 14 * k + 1), 0x00);
+			race_colors[i * 9 + j * 3 + k] = (Color) BuildColor (MakeRgb15 (14 * i + 1, 14 * j + 1, 14 * k + 1), 0x00);
 #endif
 }
 
@@ -1227,16 +1227,16 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 	{
 		SDPtr = &star_array[0];
 		SetContextForeGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x07), 0x57));
+			BuildColor(MakeRgb15(0x00, 0x00, 0x07), 0x57));
 		SetContextBackGroundColor(BLACK_COLOR);
 	}
 	else
 	{
 		SDPtr = &star_array[NUM_SOLAR_SYSTEMS + 1];
 		SetContextForeGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x00, 0x0B, 0x00), 0x6D));
+			BuildColor(MakeRgb15(0x00, 0x0B, 0x00), 0x6D));
 		SetContextBackGroundColor(
-			BUILD_COLOR(MAKE_RGB15(0x00, 0x08, 0x00), 0x6E));
+			BuildColor(MakeRgb15(0x00, 0x08, 0x00), 0x6E));
 	}
 	ClearDrawable();
 
@@ -1483,7 +1483,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 				}
 				else if (nameplate[j].index & DEATH_SOI)
 				{
-					c = BUILD_SHADE_RGBA(0x80);
+					c = BuildShadeRgba(0x80);
 				}
 				else
 				{
@@ -1523,7 +1523,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 				}
 				else if (nameplate[currMax - j].index & DEATH_SOI)
 				{
-					c = BUILD_SHADE_RGBA(0x80);
+					c = BuildShadeRgba(0x80);
 				}
 				else
 				{
@@ -1577,7 +1577,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 					pStr[5] = (k % 16 > 9 ? k % 16 - 10 + 'A' : k % 16 + '0');
 					pStr[6] = '\0';
 					SetContextFont(TinyFontBold);
-					SetContextForeGroundColor(BUILD_COLOR(MAKE_RGB15(i, j, k), 0x00));
+					SetContextForeGroundColor(BuildColor(MakeRgb15(i, j, k), 0x00));
 					t.baseline.x = UNIVERSE_TO_DISPX(300 * j + (k / 16 ? 150 : 0));
 					t.baseline.y = UNIVERSE_TO_DISPY(300 * i + k % 16 * 300 / 16) + 3;
 					t.align = ALIGN_CENTER;
@@ -1594,7 +1594,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 		const GFXPOINT* CNPtr {&constel_array[0]};
 
 		oldColor = SetContextForeGroundColor(
-			BUILD_COLOR_RGBA(c, c, c, 0xFF));
+			BuildColorRgba(c, c, c, 0xFF));
 
 		while (CNPtr->x < MAX_X_UNIVERSE && CNPtr->y < MAX_Y_UNIVERSE)
 		{ // Have to add 2 because of HD nature (can't get exact middle of 4x4)
@@ -1636,7 +1636,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 			pStr[1] = 0;
 			SetContextFont(TinyFontBold);
 			// "Quasispace Green"
-			SetContextForeGroundColor(BUILD_COLOR(MAKE_RGB15(0x00, 0x1A, 0x00), 0x2F));
+			SetContextForeGroundColor(BuildColor(MakeRgb15(0x00, 0x1A, 0x00), 0x2F));
 			t.baseline.x = UNIVERSE_TO_DISPX(portal_map[i].star_pt.x);
 			t.baseline.y = UNIVERSE_TO_DISPY(portal_map[i].star_pt.y) + 3;
 			t.align = ALIGN_CENTER;
@@ -2119,14 +2119,14 @@ UpdateCursorInfo(std::span<char> prevbuf)
 				if (which_starmap == WAR_ERA_STARMAP)
 				{
 					SetContextForeGroundColor(
-						BUILD_COLOR(
-							MAKE_RGB15(0x18, 0x00, 0x00), 0x00));
+						BuildColor(
+							MakeRgb15(0x18, 0x00, 0x00), 0x00));
 				}
 				else
 				{
 					SetContextForeGroundColor(
-						BUILD_COLOR(
-							MAKE_RGB15(0x0E, 0xA7, 0xD9), 0x00));
+						BuildColor(
+							MakeRgb15(0x0E, 0xA7, 0xD9), 0x00));
 				}
 
 				DrawSISMessageEx(buf, -1, -1, DSME_MYCOLOR);
@@ -2220,7 +2220,7 @@ SplitStarName(STAR_SEARCH_STATE* pSS)
 	pSS->ClusterPos = 0;
 
 	// skip leading space
-	for (next = buf; *next != '\0' && uqm::getCharFromString((const char**)&next) == (isPC(uqm::UQMOptions::read().whichFonts) ? UNICHAR_SPACE : UNICHAR_TAB);
+	for (next = buf; *next != '\0' && uqm::getCharFromString((const char**)&next) == (isPC(uqm::UQMOptions::read().whichFonts) ? UnicharSpace : UnicharTab);
 		 buf = next)
 		;
 	if (*buf == '\0')
@@ -2231,14 +2231,14 @@ SplitStarName(STAR_SEARCH_STATE* pSS)
 	pSS->Prefix = buf;
 
 	// See if player gave a prefix
-	for (buf = next; *next != '\0' && uqm::getCharFromString((const char**)&next) != (isPC(uqm::UQMOptions::read().whichFonts) ? UNICHAR_SPACE : UNICHAR_TAB);
+	for (buf = next; *next != '\0' && uqm::getCharFromString((const char**)&next) != (isPC(uqm::UQMOptions::read().whichFonts) ? UnicharSpace : UnicharTab);
 		 buf = next)
 		;
 	if (*buf != '\0')
 	{ // found possibly separating ' '
 		sep = buf;
 		// skip separating space
-		for (buf = next; *next != '\0' && uqm::getCharFromString((const char**)&next) == (isPC(uqm::UQMOptions::read().whichFonts) ? UNICHAR_SPACE : UNICHAR_TAB);
+		for (buf = next; *next != '\0' && uqm::getCharFromString((const char**)&next) == (isPC(uqm::UQMOptions::read().whichFonts) ? UnicharSpace : UnicharTab);
 			 buf = next)
 			;
 	}

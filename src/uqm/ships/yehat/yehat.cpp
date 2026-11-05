@@ -265,7 +265,7 @@ yehat_postprocess(ELEMENT* ElementPtr)
 #ifdef OLD
 				SetPrimColor(
 					&DisplayArray[ElementPtr->PrimIndex],
-					BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
+					BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
 				SetPrimType(
 					&DisplayArray[ElementPtr->PrimIndex],
 					STAMPFILL_PRIM);

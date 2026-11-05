@@ -43,9 +43,9 @@ static LOCDATA thradd_desc =
 		THRADD_COLOR_MAP, /* AlienColorMap */
 		THRADD_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		THRADD_CONVERSATION_PHRASES, /* PlayerPhrases */
 		8, /* NumAnimations */
@@ -1073,7 +1073,7 @@ init_thradd_comm(void)
 	thradd_desc.post_encounter_func = post_thradd_enc;
 	thradd_desc.uninit_encounter_func = uninit_thradd;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

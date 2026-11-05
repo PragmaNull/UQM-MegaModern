@@ -42,9 +42,9 @@ static LOCDATA supox_desc =
 		SUPOX_COLOR_MAP, /* AlienColorMap */
 		SUPOX_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		SUPOX_CONVERSATION_PHRASES, /* PlayerPhrases */
 		4, /* NumAnimations */
@@ -762,7 +762,7 @@ init_supox_comm(void)
 	supox_desc.post_encounter_func = post_supox_enc;
 	supox_desc.uninit_encounter_func = uninit_supox;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

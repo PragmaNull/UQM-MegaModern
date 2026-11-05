@@ -339,7 +339,7 @@ initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 		LaserBlock.sender = ShipPtr->playerNr;
 		LaserBlock.flags = 0;
 		LaserBlock.pixoffs = 0;
-		LaserBlock.color = BUILD_COLOR(MAKE_RGB15(0x1F, 0x0A, 0x0A), 0x0C);
+		LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x0C);
 		LaserBlock.face = facing;
 
 		ex = cx + COSINE(angle, LASER_RANGE);

@@ -98,7 +98,7 @@ DoRunAway(STARSHIP* StarShipPtr)
 			~(SHIP_AT_MAX_SPEED | SHIP_BEYOND_MAX_SPEED);
 
 		SetPrimColor(&DisplayArray[ElementPtr->PrimIndex],
-					 BUILD_COLOR(MAKE_RGB15(0x0B, 0x00, 0x00), 0x2E));
+					 BuildColor(MakeRgb15(0x0B, 0x00, 0x00), 0x2E));
 		// XXX: I think this is supposed to be the same as the
 		// first entry of the color cycle table in flee_preeprocess,
 		// but it is slightly different (0x0A as red value). - SvdB.
@@ -287,7 +287,7 @@ void BattleSong(bool DoPlay)
 
 	if (DoPlay)
 	{
-		PlayMusicResume(BattleRef, NORMAL_VOLUME);
+		PlayMusicResume(BattleRef, NormalVolume);
 	}
 }
 

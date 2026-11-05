@@ -47,9 +47,9 @@ static LOCDATA yehat_desc =
 		YEHAT_COLOR_MAP, /* AlienColorMap */
 		YEHAT_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		YEHAT_CONVERSATION_PHRASES, /* PlayerPhrases */
 		15, /* NumAnimations */
@@ -739,7 +739,7 @@ init_yehat_comm(void)
 	yehat_desc.post_encounter_func = post_yehat_enc;
 	yehat_desc.uninit_encounter_func = uninit_yehat;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

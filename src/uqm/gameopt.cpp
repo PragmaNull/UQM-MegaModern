@@ -277,8 +277,8 @@ DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 			lf.baseline.x =
 				r.corner.x + (r.extent.width >> 1) - RES_SCALE(1);
 
-			BackGround = BUILD_COLOR(MAKE_RGB15(0x0A, 0x0A, 0x1F), 0x09);
-			ForeGround = BUILD_COLOR(MAKE_RGB15(0x0A, 0x1F, 0x1F), 0x0B);
+			BackGround = BuildColor(MakeRgb15(0x0A, 0x0A, 0x1F), 0x09);
+			ForeGround = BuildColor(MakeRgb15(0x0A, 0x1F, 0x1F), 0x0B);
 		}
 		else
 		{ // Naming the flagship
@@ -286,8 +286,8 @@ DrawNameString(bool nameCaptain, char* Str, uint16_t CursorPos,
 			r.corner.y = RES_SCALE(20);
 			lf.baseline.x = r.corner.x + (r.extent.width >> 1);
 
-			BackGround = BUILD_COLOR(MAKE_RGB15(0x0F, 0x00, 0x00), 0x2D);
-			ForeGround = BUILD_COLOR(MAKE_RGB15(0x1F, 0x0A, 0x00), 0x7D);
+			BackGround = BuildColor(MakeRgb15(0x0F, 0x00, 0x00), 0x2D);
+			ForeGround = BuildColor(MakeRgb15(0x1F, 0x0A, 0x00), 0x7D);
 		}
 		lf.baseline.y = r.corner.y + r.extent.height - RES_SCALE(1);
 		lf.align = ALIGN_CENTER;
@@ -1551,7 +1551,7 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		t.CharCount = (uint16_t)~0;
 		if (is3DO(uqm::UQMOptions::read().whichFonts))
 		{
-			replaceChar(buf, UNICHAR_SPACE, UNICHAR_TAB);
+			replaceChar(buf, UnicharSpace, UnicharTab);
 		}
 		font_DrawText(&t);
 		t.align = ALIGN_CENTER;
@@ -1579,7 +1579,7 @@ DrawSavegameSummary(PICK_GAME_STATE* pickState, uint16_t gameIndex)
 		}
 		if (is3DO(uqm::UQMOptions::read().whichFonts))
 		{
-			replaceChar(buf, UNICHAR_SPACE, UNICHAR_TAB);
+			replaceChar(buf, UnicharSpace, UnicharTab);
 		}
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
@@ -1941,7 +1941,7 @@ PickGame(bool saving, bool fromMainMenu)
 	SleepThreadUntil(TimeOut);
 	PauseMusic();
 	StopSound();
-	FadeMusic(NORMAL_VOLUME, TimePeriod {});
+	FadeMusic(NormalVolume, TimePeriod {});
 
 	// draw the current savegame and fade in
 	SetTransitionSource(nullptr);

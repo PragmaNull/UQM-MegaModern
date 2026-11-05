@@ -24,11 +24,11 @@
 #include "libs/sndlib.h"
 
 
-#define FIRST_SFX_SOURCE 0
-#define LAST_SFX_SOURCE (FIRST_SFX_SOURCE + NUM_SFX_CHANNELS - 1)
-#define MUSIC_SOURCE (LAST_SFX_SOURCE + 1)
-#define SPEECH_SOURCE (MUSIC_SOURCE + 1)
-#define NUM_SOUNDSOURCES (SPEECH_SOURCE + 1)
+inline constexpr auto FirstSfxSource {0};
+inline constexpr auto LastSfxSource {(FirstSfxSource + NumSfxChannels - 1)};
+inline constexpr auto MusicSource {(LastSfxSource + 1)};
+inline constexpr auto SpeechSource {(MusicSource + 1)};
+inline constexpr auto NumSoundsources {(SpeechSource + 1)};
 
 typedef struct
 {

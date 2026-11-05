@@ -91,9 +91,9 @@ static RACE_DESC samatra_desc =
 		 16, /* Super Melee cost */
 		 MAX_CREW, MAX_CREW,
 		 MAX_ENERGY, MAX_ENERGY,
-		 NULL_RESOURCE,
-		 NULL_RESOURCE,
-		 NULL_RESOURCE,
+		 NullResource,
+		 NullResource,
+		 NullResource,
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
@@ -135,7 +135,7 @@ static RACE_DESC samatra_desc =
 		 {SAMATRA_CAPTAIN_MASK_PMAP_ANIM,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
 		  0, 0, 0, 0, 0},
-		 NULL_RESOURCE,
+		 NullResource,
 		 SAMATRA_SHIP_SOUNDS,
 		 {nullptr, nullptr, nullptr},
 		 {nullptr, nullptr, nullptr},

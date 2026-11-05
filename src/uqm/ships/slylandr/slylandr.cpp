@@ -89,14 +89,14 @@ static RACE_DESC slylandro_desc =
 			 SLYLANDRO_SML_MASK_PMAP_ANIM,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
 		 {
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
-			 NULL_RESOURCE,
+			 NullResource,
+			 NullResource,
+			 NullResource,
 		 },
 		 {SLYLANDRO_CAPTAIN_MASK_PMAP_ANIM,
 		  nullptr, nullptr, nullptr, nullptr, nullptr,
@@ -224,22 +224,22 @@ initialize_lightning(ELEMENT* ElementPtr, HELEMENT LaserArray[])
 				case 0:
 					SetPrimColor(
 						&DisplayArray[LaserPtr->PrimIndex],
-						BUILD_COLOR(MAKE_RGB15(0x1F, 0x1F, 0x1F), 0x0F));
+						BuildColor(MakeRgb15(0x1F, 0x1F, 0x1F), 0x0F));
 					break;
 				case 1:
 					SetPrimColor(
 						&DisplayArray[LaserPtr->PrimIndex],
-						BUILD_COLOR(MAKE_RGB15(0x16, 0x17, 0x1F), 0x42));
+						BuildColor(MakeRgb15(0x16, 0x17, 0x1F), 0x42));
 					break;
 				case 2:
 					SetPrimColor(
 						&DisplayArray[LaserPtr->PrimIndex],
-						BUILD_COLOR(MAKE_RGB15(0x06, 0x07, 0x1F), 0x4A));
+						BuildColor(MakeRgb15(0x06, 0x07, 0x1F), 0x4A));
 					break;
 				case 3:
 					SetPrimColor(
 						&DisplayArray[LaserPtr->PrimIndex],
-						BUILD_COLOR(MAKE_RGB15(0x00, 0x00, 0x18), 0x50));
+						BuildColor(MakeRgb15(0x00, 0x00, 0x18), 0x50));
 					break;
 			}
 		}

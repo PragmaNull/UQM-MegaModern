@@ -239,13 +239,13 @@ void AdvanceLoadProgress(void)
 
 		if (i == MAX_LOAD_ENTRIES)
 		{
-			SetContextForeGroundColor(BUILD_COLOR_RGBA(0, 192, 0, 255));
+			SetContextForeGroundColor(BuildColorRgba(0, 192, 0, 255));
 			i = 0;
 		}
 		else
 		{
 			SetContextForeGroundColor(
-				BUILD_COLOR_RGBA(0, 128, 192, 255));
+				BuildColorRgba(0, 128, 192, 255));
 			i++;
 		}
 		DrawFilledRectangle(&r);

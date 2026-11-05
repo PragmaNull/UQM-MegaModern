@@ -253,9 +253,9 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 
 	// process the pending character buffer
 	uqm::UniChar ch {GetNextCharacter()};
-	if (TextEntry3DO && ch == UNICHAR_SPACE)
+	if (TextEntry3DO && ch == UnicharSpace)
 	{
-		ch = UNICHAR_TAB;
+		ch = UnicharTab;
 	}
 	if (!ch && PulsedInputState.menu[KEY_MENU_ANY])
 	{ // keyboard repeat, but only when buffer empty
@@ -284,9 +284,9 @@ bool DoTextEntry(TEXTENTRY_STATE* pTES)
 			}
 		}
 		ch = GetNextCharacter();
-		if (TextEntry3DO && ch == UNICHAR_SPACE)
+		if (TextEntry3DO && ch == UnicharSpace)
 		{
-			ch = UNICHAR_TAB;
+			ch = UnicharTab;
 		}
 	}
 

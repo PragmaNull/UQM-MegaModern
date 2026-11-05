@@ -98,13 +98,13 @@ static inline bool mixer_CheckBufferState(mixer_Buffer* buf,
 										  const char* FuncName);
 
 /* Clipping boundaries */
-#define MIX_S16_MAX ((float)INT16_MAX)
-#define MIX_S16_MIN ((float)INT16_MIN)
-#define MIX_S8_MAX ((float)INT8_MAX)
-#define MIX_S8_MIN ((float)INT8_MIN)
+inline constexpr auto MixS16Max {((float)INT16_MAX)};
+inline constexpr auto MixS16Min {((float)INT16_MIN)};
+inline constexpr auto MixS8Max {((float)INT8_MAX)};
+inline constexpr auto MixS8Min {((float)INT8_MIN)};
 
 /* Channel gain adjustment for clipping reduction */
-#define MIX_GAIN_ADJ (0.75f)
+inline constexpr auto MixGainAdj {(0.75f)};
 
 /* The Mixer */
 static inline bool mixer_SourceGetNextSample(mixer_Source* src,

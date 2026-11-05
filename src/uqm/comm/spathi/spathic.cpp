@@ -42,9 +42,9 @@ static LOCDATA spathi_desc =
 		SPATHI_COLOR_MAP, /* AlienColorMap */
 		SPATHI_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			FWIFFO_MUSIC,  /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			FWIFFO_MUSIC, /* AlienAltSong */
 		},
 		SPATHI_CONVERSATION_PHRASES, /* PlayerPhrases */
 		8, /* NumAnimations */
@@ -949,7 +949,7 @@ init_spathi_comm(void)
 	spathi_desc.post_encounter_func = post_spathi_enc;
 	spathi_desc.uninit_encounter_func = uninit_spathi;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 
 	spathi_desc.AlienTextBaseline.x = TEXT_X_OFFS + (SIS_TEXT_WIDTH >> 1);
 	spathi_desc.AlienTextBaseline.y = 0;

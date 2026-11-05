@@ -342,7 +342,7 @@ PrintCoarseScanPC(void)
 
 	fmt::format_to_sz_n(buf, "{}{} c",
 						pSolarSysState->SysInfo.PlanetInfo.SurfaceTemperature,
-						STR_DEGREE_SIGN);
+						StrDegreeSign);
 
 	if (uqm::UQMOptions::read().hazardColors) // Planet Temperature
 	{
@@ -447,7 +447,7 @@ PrintCoarseScanPC(void)
 	{
 		val = -val;
 	}
-	fmt::format_to_sz_n(buf, "{}{}", val, STR_DEGREE_SIGN);
+	fmt::format_to_sz_n(buf, "{}{}", val, StrDegreeSign);
 	PrintScanText(&t);
 
 	UnbatchGraphics();
@@ -501,28 +501,28 @@ PrintCoarseScan3DO(void)
 	val = ((pSolarSysState->SysInfo.PlanetInfo.PlanetToSunDist * 100L
 			+ (EARTH_RADIUS >> 1))
 		   / EARTH_RADIUS);
-	MakeScanValue(buf, val, STR_EARTH_SIGN);
+	MakeScanValue(buf, val, StrEarthSign);
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING;
 
 	if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity
 		== GAS_GIANT_ATMOSPHERE)
 	{
-		uqm::strncpy_safe(buf, STR_INFINITY_SIGN);
+		uqm::strncpy_safe(buf, StrInfinitySign);
 	}
 	else
 	{
 		val = (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity * 100
 			   + (EARTH_ATMOSPHERE >> 1))
 			/ EARTH_ATMOSPHERE;
-		MakeScanValue(buf, val, STR_EARTH_SIGN);
+		MakeScanValue(buf, val, StrEarthSign);
 	}
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING;
 
 	fmt::format_to_sz_n(buf, "{}{}",
 						pSolarSysState->SysInfo.PlanetInfo.SurfaceTemperature,
-						STR_DEGREE_SIGN);
+						StrDegreeSign);
 
 	if (uqm::UQMOptions::read().hazardColors) // Planet Temperature
 	{
@@ -570,7 +570,7 @@ PrintCoarseScan3DO(void)
 	{
 		val = 1;
 	}
-	MakeScanValue(buf, val, STR_EARTH_SIGN);
+	MakeScanValue(buf, val, StrEarthSign);
 
 	if (uqm::UQMOptions::read().hazardColors)
 	{
@@ -581,7 +581,7 @@ PrintCoarseScan3DO(void)
 	t.baseline.y += SCAN_LEADING;
 
 	val = pSolarSysState->SysInfo.PlanetInfo.PlanetRadius;
-	MakeScanValue(buf, val, STR_EARTH_SIGN);
+	MakeScanValue(buf, val, StrEarthSign);
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING;
 
@@ -590,7 +590,7 @@ PrintCoarseScan3DO(void)
 	{
 		val = 1;
 	}
-	MakeScanValue(buf, val, STR_EARTH_SIGN);
+	MakeScanValue(buf, val, StrEarthSign);
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING;
 
@@ -599,12 +599,12 @@ PrintCoarseScan3DO(void)
 	{
 		val = -val;
 	}
-	fmt::format_to_sz_n(buf, "{}{}", val, STR_DEGREE_SIGN);
+	fmt::format_to_sz_n(buf, "{}{}", val, StrDegreeSign);
 	PrintScanText(&t);
 	t.baseline.y += SCAN_LEADING;
 
 	val = GetRotationalPeriod();
-	MakeDayValue(buf, val, STR_EARTH_SIGN);
+	MakeDayValue(buf, val, StrEarthSign);
 	PrintScanText(&t);
 
 	UnbatchGraphics();
@@ -731,7 +731,7 @@ flashPlanetLocation(void)
 	}
 
 	SetContext(ScanContext);
-	SetContextForeGroundColor(BUILD_COLOR(MAKE_RGB15(c, c, c), c));
+	SetContextForeGroundColor(BuildColor(MakeRgb15(c, c, c), c));
 	drawPlanetCursor(true);
 }
 

@@ -218,7 +218,7 @@ void SetPlanetColors(COLORMAPPTR cmap)
 	{
 		ctab = (cbase + 2) + i * 3;
 
-		*c = BUILD_COLOR_RGBA(ctab[0], ctab[1], ctab[2], 0xFF);
+		*c = BuildColorRgba(ctab[0], ctab[1], ctab[2], 0xFF);
 	}
 
 	SetColorMapColors(colors.data(), cmap, 0, numcolors);
@@ -341,7 +341,7 @@ ExpandLevelMasks(PLANET_ORBIT* Orbit)
 	if (PlanetInfo->AxialTilt == 0)
 	{
 		Orbit->TopoMask = CaptureDrawable(
-			CreateDrawable(WANT_PIXMAP, halfBound, height, 1));
+			CreateDrawable(WantPixmap, halfBound, height, 1));
 
 		WriteFramePixelColors(Orbit->TopoMask, colors, halfBound, height);
 	}
@@ -364,7 +364,7 @@ ExpandLevelMasks(PLANET_ORBIT* Orbit)
 		// Get the closest acceptable value (always ceil)
 
 		dupe = CaptureDrawable(
-			CreateDrawable(WANT_PIXMAP, halfBound, height, 1));
+			CreateDrawable(WantPixmap, halfBound, height, 1));
 		WriteFramePixelColors(dupe, colors, halfBound, height);
 
 		Orbit->TopoMask = CaptureDrawable(
@@ -462,8 +462,8 @@ RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 					pBatch->Object.Point.y = pt.y;
 
 					SetPrimColor(pBatch,
-								 BUILD_COLOR_RGBA(0x01 * (num_frames + 1),
-												  0x00, 0x00, 0xFF));
+								 BuildColorRgba(0x01 * (num_frames + 1),
+												0x00, 0x00, 0xFF));
 
 					if (--i == 0)
 					{ // flush the batch and start the next one
@@ -566,7 +566,7 @@ RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
 		ctab = (cbase + 2) + d * 3;
 
 		// using new truecolor tables ripped from DOS version
-		*pix = BUILD_COLOR_RGB(ctab[0], ctab[1], ctab[2]);
+		*pix = BuildColorRgb(ctab[0], ctab[1], ctab[2]);
 	}
 
 	WriteFramePixelColors(DstFrame, map, w, h);
@@ -951,12 +951,12 @@ CreateShieldMask(uint16_t radius)
 	const uint16_t shielddiam = (shieldradius << 1) + 1;
 
 	ShieldFrame = CaptureDrawable(
-		CreateDrawable(WANT_PIXMAP | WANT_ALPHA,
+		CreateDrawable(WantPixmap | WantAlpha,
 					   shielddiam, shielddiam, 1));
 
 	Color* pix {Orbit->ScratchArray};
 	//  This is 100% transparent.
-	clear = BUILD_COLOR_RGBA(0, 0, 0, 0);
+	clear = BuildColorRgba(0, 0, 0, 0);
 
 	for (y = -shieldradius; y <= shieldradius; y++)
 	{
@@ -1003,16 +1003,16 @@ CreateShieldMask(uint16_t radius)
 			{
 				if (alpha != 255)
 				{
-					*pix = BUILD_COLOR_RGBA(red, 0, 0, alpha);
+					*pix = BuildColorRgba(red, 0, 0, alpha);
 				}
 				else
 				{
-					*pix = BUILD_COLOR_RGBA(255, 0, 0, red);
+					*pix = BuildColorRgba(255, 0, 0, red);
 				}
 			}
 			else
 			{
-				*pix = BUILD_COLOR_RGBA(red, 0, 0, alpha);
+				*pix = BuildColorRgba(red, 0, 0, alpha);
 			}
 		}
 	}
@@ -1155,11 +1155,11 @@ ApplyShieldTint(void)
 	SetContextClipRect(nullptr);
 	GetContextClipRect(&r);
 
-	tint = BUILD_COLOR_RGBA(0xff, 0x00, 0x00, 0xff);
+	tint = BuildColorRgba(0xff, 0x00, 0x00, 0xff);
 #ifdef USE_ALPHA_SHIELD
 	mode = MAKE_DRAW_MODE(DRAW_ALPHA, 150);
 #else
-	mode = MAKE_DRAW_MODE(DRAW_ADDITIVE, DRAW_FACTOR_1);
+	mode = MAKE_DRAW_MODE(DRAW_ADDITIVE, DrawFactor1);
 #endif
 	oldMode = SetContextDrawMode(mode);
 	SetContextForeGroundColor(tint);
@@ -1259,7 +1259,7 @@ void RenderPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
 	const int shLevel {shield_level(offset)};
 
 	Color* pix {Orbit->ScratchArray};
-	clear = BUILD_COLOR_RGBA(0, 0, 0, 0);
+	clear = BuildColorRgba(0, 0, 0, 0);
 
 	if ((Orbit->scanType < NUM_SCAN_TYPES) && Orbit->ScanColors)
 	{
@@ -1430,14 +1430,14 @@ void RenderDOSPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset)
 				RotateFrame(dupeframe, PlanetInfo->AxialTilt));
 			GetFrameRect(rotFrame, &r);
 			baseframe = CaptureDrawable(
-				CreateDrawable(WANT_PIXMAP, (int16_t)width, trueheight, 1));
+				CreateDrawable(WantPixmap, (int16_t)width, trueheight, 1));
 
 			// Draw everything in offscreen context
 			GFXCONTEXT oldContext {SetContext(OffScreenContext)};
 			SetContextFGFrame(baseframe);
 			SetContextClipRect(nullptr);
 
-			oldMode = SetContextDrawMode(DRAW_REPLACE_MODE);
+			oldMode = SetContextDrawMode(DrawReplaceMode);
 
 			SetFrameHot(rotFrame, MAKE_HOT_SPOT(0, 0));
 
@@ -1499,7 +1499,7 @@ void Render3DOPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
 	Color* c {Orbit->ScratchArray};
 	Color* shade {Orbit->ShadeColors};
 	Color* pixels {Orbit->TopoColors + offset};
-	clear = BUILD_COLOR_RGBA(0, 0, 0, 0);
+	clear = BuildColorRgba(0, 0, 0, 0);
 
 	for (pt.y = 0, y = -radius; pt.y <= tworadius; ++pt.y, ++y)
 	{
@@ -2078,7 +2078,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 		if (forOrbit && uqm::UQMOptions::read().scanStyle != uqm::EmulationMode::PC)
 		{
 			Orbit->TintFrame = CaptureDrawable(CreateDrawable(
-				WANT_PIXMAP, width, height, 1));
+				WantPixmap, width, height, 1));
 		}
 		else
 		{
@@ -2110,7 +2110,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 	if (!forOrbit || uqm::UQMOptions::read().sphereType)
 	{ // UQM & 3DO sphere
 		Orbit->SphereFrame = CaptureDrawable(CreateDrawable(
-			WANT_PIXMAP | WANT_ALPHA, diameter, diameter, 2));
+			WantPixmap | WantAlpha, diameter, diameter, 2));
 
 		Orbit->TopoColors = new Color[height * (width + spherespanx)];
 
@@ -2154,7 +2154,7 @@ planet_orbit_init(uint16_t width, uint16_t height, bool forOrbit)
 			CaptureDrawable(LoadGraphic(DOS_PLANET_MASK_ANIM));
 
 		Orbit->TopoMask = CaptureDrawable(CreateDrawable(
-			WANT_PIXMAP, (int16_t)width, (int16_t)height, 1));
+			WantPixmap, (int16_t)width, (int16_t)height, 1));
 
 		Orbit->sphereBytes = new uint8_t[GetFrameWidth(Orbit->SphereFrame) * GetFrameHeight(Orbit->SphereFrame)];
 
@@ -2756,7 +2756,7 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 			break;
 	}
 	pSolarSysState->TopoFrame = CaptureDrawable(
-		CreateDrawable(WANT_PIXMAP, (int16_t)width,
+		CreateDrawable(WantPixmap, (int16_t)width,
 					   (int16_t)height, 1));
 
 	RenderTopography(pSolarSysState->TopoFrame,
@@ -2969,7 +2969,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 				uint16_t x {};
 
 				pSolarSysState->ScanFrame[i] = CaptureDrawable(
-					CreateDrawable(WANT_PIXMAP, (int16_t)width,
+					CreateDrawable(WantPixmap, (int16_t)width,
 								   (int16_t)height, 1));
 
 				uqstl::vector<Color> mapBuf(width * height);
@@ -2998,7 +2998,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 			for (i = 0; i < NUM_SCAN_TYPES; i++)
 			{
 				pSolarSysState->ScanFrame[i] = CaptureDrawable(
-					CreateDrawable(WANT_PIXMAP, (int16_t)width,
+					CreateDrawable(WantPixmap, (int16_t)width,
 								   (int16_t)height, 1));
 
 				RenderTopography(pSolarSysState->ScanFrame[i],
@@ -3024,7 +3024,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 			uqstl::vector<int8_t> scaledTopo(SCALED_MAP_WIDTH * 4 * MAP_HEIGHT * 4);
 
 			Orbit->TopoZoomFrame = CaptureDrawable(CreateDrawable(
-				WANT_PIXMAP, width << 2, height << 2, 1));
+				WantPixmap, width << 2, height << 2, 1));
 
 			TopoScale4x(scaledTopo.data(), Orbit->lpTopoData,
 						PlanDataPtr->num_faults, PlanDataPtr->fault_depth * (PLANALGO(PlanDataPtr->Type) == CRATERED_ALGO ? 2 : 1));

@@ -42,9 +42,9 @@ static LOCDATA pkunk_desc =
 		PKUNK_COLOR_MAP, /* AlienColorMap */
 		PKUNK_MUSIC, /* AlienSong */
 		{
-								NULL_RESOURCE, /* AlienAltFrame */
-			NULL_RESOURCE, /* AlienAltColorMap */
-			NULL_RESOURCE, /* AlienAltSong */
+								NullResource, /* AlienAltFrame */
+			NullResource, /* AlienAltColorMap */
+			NullResource, /* AlienAltSong */
 		},
 		PKUNK_CONVERSATION_PHRASES, /* PlayerPhrases */
 		3, /* NumAnimations */
@@ -1188,7 +1188,7 @@ init_pkunk_comm(void)
 	pkunk_desc.post_encounter_func = post_pkunk_enc;
 	pkunk_desc.uninit_encounter_func = uninit_pkunk;
 
-	uqm::lua().beginComm(nullptr, NULL_RESOURCE);
+	uqm::lua().beginComm(nullptr, NullResource);
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 

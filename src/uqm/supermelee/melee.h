@@ -44,8 +44,8 @@ typedef struct melee_state MELEE_STATE;
 
 extern FRAME PickMeleeFrame;
 
-#define PICK_BG_COLOR BUILD_COLOR(MAKE_RGB15(0x00, 0x01, 0x0F), 0x01)
-#define PICK_VALUE_COLOR BUILD_COLOR(MAKE_RGB15(0x13, 0x00, 0x00), 0x2C)
+#define PICK_BG_COLOR BuildColor(MakeRgb15(0x00, 0x01, 0x0F), 0x01)
+#define PICK_VALUE_COLOR BuildColor(MakeRgb15(0x13, 0x00, 0x00), 0x2C)
 // Used for the current fleet value in the next ship selection
 // in SuperMelee.
 

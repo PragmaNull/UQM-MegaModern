@@ -56,7 +56,7 @@ bool load_animation(FRAME* pixarray, RESOURCE big_res, RESOURCE med_res, RESOURC
 	}
 	pixarray[0] = CaptureDrawable(d);
 
-	if (med_res != NULL_RESOURCE)
+	if (med_res != NullResource)
 	{
 		d = LoadGraphic(med_res);
 		if (!d)
@@ -66,7 +66,7 @@ bool load_animation(FRAME* pixarray, RESOURCE big_res, RESOURCE med_res, RESOURC
 	}
 	pixarray[1] = CaptureDrawable(d);
 
-	if (sml_res != NULL_RESOURCE)
+	if (sml_res != NullResource)
 	{
 		d = LoadGraphic(sml_res);
 		if (!d)

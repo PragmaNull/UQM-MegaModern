@@ -68,7 +68,7 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 		offset += static_cast<int32_t>(uqstl::chrono::duration_cast<GameTicks>(FloatSeconds {SoundDecoder_GetTime(decoder)}).count());
 	}
 
-	if (source == MUSIC_SOURCE)
+	if (source == MusicSource)
 	{
 		soundSource[source].start_time = TimeCount {};
 	}
@@ -80,7 +80,7 @@ void PlayStream(TFB_SoundSample* sample, uint32_t source, bool looping, bool sco
 	if (scope)
 	{ // Prealloc the scope buffer in advance so that we do not
 		// realloc it a zillion times
-		soundSource[source].sbuf_size = sample->num_buffers * decoder->buffer_size + PAD_SCOPE_BYTES;
+		soundSource[source].sbuf_size = sample->num_buffers * decoder->buffer_size + PadScopeBytes;
 		soundSource[source].sbuffer.assign(soundSource[source].sbuf_size, 0);
 	}
 
@@ -619,7 +619,7 @@ StreamDecoderTaskFunc(uqstl::stop_token stopToken)
 
 		processMusicFade();
 
-		for (i = MUSIC_SOURCE; i < NUM_SOUNDSOURCES; ++i)
+		for (i = MusicSource; i < NumSoundsources; ++i)
 		{
 			TFB_SoundSource* source = &soundSource[i];
 
@@ -676,38 +676,38 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	long delta {};
 	uint8_t* sbuffer {};
 	// AGC variables
-#define DEF_PAGE_MAX 28000
-#define AGC_PAGE_COUNT 16
-	static int page_sum = DEF_PAGE_MAX * AGC_PAGE_COUNT;
-	static int pages[AGC_PAGE_COUNT] =
+	constexpr auto DefPageMax {28000};
+	constexpr auto AgcPageCount {16};
+	static int page_sum = DefPageMax * AgcPageCount;
+	static int pages[AgcPageCount] =
 		{
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
-			DEF_PAGE_MAX,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
+			DefPageMax,
 		};
 	static int page_head;
-#define AGC_FRAME_COUNT 8
+	constexpr auto AgcFrameCount {8};
 	static int frame_sum;
 	static int frames;
-	static int avg_amp = DEF_PAGE_MAX; // running amplitude (sort of) average
-#define VAD_MIN_ENERGY 100
+	static int avg_amp = DefPageMax; // running amplitude (sort of) average
+	constexpr auto VadMinEnergy {100};
 
 
 	// Prefer speech to music
-	int source_num {SPEECH_SOURCE};
+	int source_num {SpeechSource};
 	TFB_SoundSource* source {&soundSource[source_num]};
 	source->stream_mutex.lock();
 	if (wantSpeech && (!source->sample || !source->sample->decoder || !source->sample->decoder->is_null))
@@ -721,7 +721,7 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	{ // We do not have speech -- use music waveform
 		source->stream_mutex.unlock();
 
-		source_num = MUSIC_SOURCE;
+		source_num = MusicSource;
 		source = &soundSource[source_num];
 		source->stream_mutex.lock();
 
@@ -816,24 +816,24 @@ int GraphForegroundStream(uint8_t* data, int32_t width, int32_t height,
 	energy /= width;
 
 	// Very basic VAD. We don't want to count speech pauses in the average
-	if (energy > VAD_MIN_ENERGY)
+	if (energy > VadMinEnergy)
 	{
 		// Record the maximum amplitude (sort of)
 		frame_sum += max_a;
 		++frames;
-		if (frames == AGC_FRAME_COUNT)
+		if (frames == AgcFrameCount)
 		{ // Got a full page
-			frame_sum /= AGC_FRAME_COUNT;
+			frame_sum /= AgcFrameCount;
 			// Record the page
 			page_sum -= pages[page_head];
 			page_sum += frame_sum;
 			pages[page_head] = frame_sum;
-			page_head = (page_head + 1) % AGC_PAGE_COUNT;
+			page_head = (page_head + 1) % AgcPageCount;
 
 			frame_sum = 0;
 			frames = 0;
 
-			avg_amp = page_sum / AGC_PAGE_COUNT;
+			avg_amp = page_sum / AgcPageCount;
 		}
 	}
 

@@ -32,7 +32,7 @@ enum
 extern int TFB_InitInput(int driver, int flags);
 extern void TFB_UninitInput(void);
 
-#define MAX_FLIGHT_ALTERNATES 2
+inline constexpr auto MaxFlightAlternates {2};
 
 extern void TFB_SetInputVectors(uqstl::atomic<int>* menu, int num_menu, uqstl::atomic<int>* flight, int num_flight, int num_templ);
 
