@@ -42,8 +42,8 @@ static constexpr auto ShipMass {1};
 // Dart Gun
 static constexpr auto WeaponEnergyCost {1};
 static auto ShofixtiOffset() { return chooseIfHd(15, 51); }
-static auto MissileOffset() { return RES_SCALE(1); }
-static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(24)};
+static auto MissileOffset() { return ResScale(1); }
+static constexpr auto MissileSpeed {DisplayToWorld(24)};
 static constexpr auto MissileLife {10};
 static constexpr auto MissileHits {1};
 static constexpr auto MissileDamage {1};
@@ -51,14 +51,14 @@ static constexpr auto MissileDamage {1};
 // Glory Device
 static constexpr auto SpecialEnergyCost {0};
 static constexpr auto SpecialSauce {180};
-static auto DestructRange() { return RES_SCALE(SpecialSauce); }
+static auto DestructRange() { return ResScale(SpecialSauce); }
 static constexpr auto MaxDestruction {(SpecialSauce / 10)};
 
 // Full game: Tanaka/Katana's damaged ships
 static constexpr auto NumLimpets {3};
 
 // HdResolutionFactor
-static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
 static RACE_DESC shofixti_desc =
 	{
@@ -267,7 +267,7 @@ destruct_preprocess(ELEMENT* ElementPtr)
    when it self-destructs, we'll need to see some Orz functions */
 #include "../orz/orz.h"
 #include "uqm/random/UQMRandom.h"
-#define ORZ_MARINE(ptr) (ptr->preprocess_func == intruder_preprocess && ptr->collision_func == marine_collision)
+constexpr auto OrzMarine(const auto& ptr) { return (ptr->preprocess_func == intruder_preprocess && ptr->collision_func == marine_collision); }
 
 static void
 self_destruct_kill_objects(ELEMENT* ElementPtr)
@@ -285,7 +285,7 @@ self_destruct_kill_objects(ELEMENT* ElementPtr)
 		LockElement(hElement, &ObjPtr);
 		hNextElement = GetSuccElement(ObjPtr);
 
-		if (!CollidingElement(ObjPtr) && !ORZ_MARINE(ObjPtr))
+		if (!CollidingElement(ObjPtr) && !OrzMarine(ObjPtr))
 		{
 			UnlockElement(hElement);
 			continue;
@@ -301,8 +301,8 @@ self_destruct_kill_objects(ELEMENT* ElementPtr)
 		{
 			delta_y = -delta_y;
 		}
-		delta_x = WORLD_TO_DISPLAY(delta_x);
-		delta_y = WORLD_TO_DISPLAY(delta_y);
+		delta_x = WorldToDisplay(delta_x);
+		delta_y = WorldToDisplay(delta_y);
 		dist = delta_x * delta_x + delta_y * delta_y;
 		if (delta_x <= DestructRange() && delta_y <= DestructRange()
 			&& (int)dist <= DestructRange() * DestructRange())
@@ -320,7 +320,7 @@ self_destruct_kill_objects(ELEMENT* ElementPtr)
 					}
 				}
 			}
-			else if (!GRAVITY_MASS(ObjPtr->mass_points))
+			else if (!GravityMass(ObjPtr->mass_points))
 			{
 				if (destruction < ObjPtr->hit_points)
 				{
@@ -502,8 +502,8 @@ init_shofixti(void)
 
 	if (IsHd())
 	{
-		shofixti_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		shofixti_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		shofixti_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		shofixti_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		shofixti_desc.cyborg_control.WeaponRange = MissileSpeedHd() * MissileLife;
 	}
 	else
@@ -561,7 +561,7 @@ init_shofixti(void)
 
 				/* This should be the same as MinThrustIncrement() in vux.c */
 				const auto MinThrustIncrement = [&] {
-					return DISPLAY_TO_WORLD(RES_SCALE(1));
+					return DisplayToWorld(ResScale(1));
 				};
 
 				if (new_shofixti_desc.characteristics.thrust_increment <= MinThrustIncrement())
@@ -574,7 +574,7 @@ init_shofixti(void)
 					uint16_t num_thrusts {};
 
 					num_thrusts = new_shofixti_desc.characteristics.max_thrust / new_shofixti_desc.characteristics.thrust_increment;
-					new_shofixti_desc.characteristics.thrust_increment -= RES_SCALE(1);
+					new_shofixti_desc.characteristics.thrust_increment -= ResScale(1);
 					new_shofixti_desc.characteristics.max_thrust =
 						new_shofixti_desc.characteristics.thrust_increment * num_thrusts;
 				}

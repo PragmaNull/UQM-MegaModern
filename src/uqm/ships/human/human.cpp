@@ -29,7 +29,7 @@ static constexpr auto MaxEnergy {18};
 static constexpr auto EnergyRegeneration {1};
 static constexpr auto EnergyWait {8};
 static constexpr auto MaxThrust {24};
-static auto MaxThrustHd() { return RES_SCALE(MaxThrust); }
+static auto MaxThrustHd() { return ResScale(MaxThrust); }
 static constexpr auto ThrustIncrement {3};
 static constexpr auto ThrustWait {4};
 static constexpr auto TurnWait {1};
@@ -38,12 +38,12 @@ static constexpr auto ShipMass {6};
 // Nuke
 static constexpr auto WeaponEnergyCost {9};
 static constexpr auto WeaponWait {10};
-static auto HumanOffset() { return RES_SCALE(42); }
-static auto NukeOffset() { return RES_SCALE(8); }
-static auto MinMissileSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(10)); }
-static auto MaxMissileSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(20)); }
+static auto HumanOffset() { return ResScale(42); }
+static auto NukeOffset() { return ResScale(8); }
+static auto MinMissileSpeed() { return DisplayToWorld(ResScale(10)); }
+static auto MaxMissileSpeed() { return DisplayToWorld(ResScale(20)); }
 static auto MissileSpeed() { return (MaxThrustHd() >= MinMissileSpeed() ? MaxThrustHd() : MinMissileSpeed()); }
-static auto ThrustScale() { return DISPLAY_TO_WORLD(RES_SCALE(1)); }
+static auto ThrustScale() { return DisplayToWorld(ResScale(1)); }
 static constexpr auto MissileLife {60};
 static constexpr auto MissileHits {1};
 static constexpr auto MissileDamage {4};
@@ -52,7 +52,7 @@ static constexpr auto TrackWait {3};
 // Point-Defense Laser
 static constexpr auto SpecialEnergyCost {4};
 static constexpr auto SpecialWait {9};
-#define LASER_RANGE (uint16_t)RES_SCALE(100)
+#define LASER_RANGE (uint16_t)ResScale(100)
 
 RACE_DESC human_desc =
 	{
@@ -198,7 +198,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 
 			LockElement(hObject, &ObjectPtr);
 			hNextObject = GetPredElement(ObjectPtr);
-			if (ObjectPtr != ShipPtr && CollidingElement(ObjectPtr) && !OBJECT_CLOAKED(ObjectPtr))
+			if (ObjectPtr != ShipPtr && CollidingElement(ObjectPtr) && !ObjectCloaked(ObjectPtr))
 			{
 				int16_t delta_x {};
 				int16_t delta_y {};
@@ -213,8 +213,8 @@ spawn_point_defense(ELEMENT* ElementPtr)
 				{
 					delta_y = -delta_y;
 				}
-				delta_x = WORLD_TO_DISPLAY(delta_x);
-				delta_y = WORLD_TO_DISPLAY(delta_y);
+				delta_x = WorldToDisplay(delta_x);
+				delta_y = WorldToDisplay(delta_y);
 				if ((uint16_t)delta_x <= LASER_RANGE && (uint16_t)delta_y <= LASER_RANGE && (uint16_t)delta_x * (uint16_t)delta_x + (uint16_t)delta_y * (uint16_t)delta_y <= LASER_RANGE * LASER_RANGE)
 				{
 					HELEMENT hPointDefense {};
@@ -281,7 +281,7 @@ initialize_nuke(ELEMENT* ShipPtr, HELEMENT NukeArray[])
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = 0;
 	MissileBlock.pixoffs = HumanOffset();
-	MissileBlock.speed = RES_SCALE(MissileSpeed());
+	MissileBlock.speed = ResScale(MissileSpeed());
 	MissileBlock.hit_points = MissileHits;
 	MissileBlock.damage = MissileDamage;
 	MissileBlock.life = MissileLife;
@@ -355,7 +355,7 @@ init_human(void)
 	if (IsHd())
 	{
 		human_desc.characteristics.max_thrust = MaxThrustHd();
-		human_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		human_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		human_desc.cyborg_control.WeaponRange = LongRangeWeaponHd;
 	}
 	else

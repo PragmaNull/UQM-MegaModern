@@ -34,8 +34,8 @@
 #include <stdlib.h>
 
 
-static auto ConfirmWinWidth() { return RES_SCALE(84); }
-static auto ConfirmWinHeight() { return RES_SCALE(26); }
+static auto ConfirmWinWidth() { return ResScale(84); }
+static auto ConfirmWinHeight() { return ResScale(26); }
 
 bool WarpFromMenu = false;
 
@@ -66,20 +66,20 @@ DrawConfirmationWindow(bool answer, bool confirm)
 
 
 	t.baseline.x = r.corner.x + (r.extent.width >> 1);
-	t.baseline.y = r.corner.y + RES_SCALE(10);
-	t.pStr = GAME_STRING(QUITMENU_STRING_BASE); // "Really Quit?"
+	t.baseline.y = r.corner.y + ResScale(10);
+	t.pStr = GameString(QUITMENU_STRING_BASE); // "Really Quit?"
 	t.align = ALIGN_CENTER;
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
-	t.baseline.y += RES_SCALE(10);
+	t.baseline.y += ResScale(10);
 	t.baseline.x = r.corner.x + (r.extent.width >> 2);
-	t.pStr = GAME_STRING(QUITMENU_STRING_BASE + 1); // "Yes"
+	t.pStr = GameString(QUITMENU_STRING_BASE + 1); // "Yes"
 	SetContextForeGroundColor(
 		answer ? (confirm ? WhiteColor : MenuHighlightColor) :
 				 BlackColor);
 	font_DrawText(&t);
 	t.baseline.x += (r.extent.width >> 1);
-	t.pStr = GAME_STRING(QUITMENU_STRING_BASE + 2); // "No"
+	t.pStr = GameString(QUITMENU_STRING_BASE + 2); // "No"
 	SetContextForeGroundColor(
 		answer ? BlackColor : MenuHighlightColor);
 	font_DrawText(&t);
@@ -120,8 +120,8 @@ bool DoConfirmExit(void)
 		SetContextClipRect(nullptr);
 
 		GetContextClipRect(&ctxRect);
-		r.extent.width = ConfirmWinWidth() + RES_SCALE(4);
-		r.extent.height = ConfirmWinHeight() + RES_SCALE(4);
+		r.extent.width = ConfirmWinWidth() + ResScale(4);
+		r.extent.height = ConfirmWinHeight() + ResScale(4);
 		r.corner.x = (ctxRect.extent.width - r.extent.width) >> 1;
 		r.corner.y = (ctxRect.extent.height - r.extent.height) >> 1;
 		s = SaveContextFrame(&ctxRect);

@@ -37,10 +37,10 @@
 static constexpr auto NumPickShipRows {2};
 static constexpr auto NumPickShipColumns {6};
 
-static auto FlagshipXOffs() { return RES_SCALE(65); }
-static auto FlagshipYOffs() { return RES_SCALE(4); }
-static auto FlagshipWidth() { return RES_SCALE(22); }
-static auto FlagshipHeight() { return RES_SCALE(48); }
+static auto FlagshipXOffs() { return ResScale(65); }
+static auto FlagshipYOffs() { return ResScale(4); }
+static auto FlagshipWidth() { return ResScale(22); }
+static auto FlagshipHeight() { return ResScale(48); }
 
 FRAME PickFrame;
 GFXPOINT frameOrigin;
@@ -176,28 +176,28 @@ ChangeSelection:
 			if (pMS->first_item.x == (NumPickShipColumns >> 1))
 			{
 				pMS->flash_rect0.corner.x =
-					pMS->flash_rect1.corner.x - RES_SCALE(2) + FlagshipXOffs();
+					pMS->flash_rect1.corner.x - ResScale(2) + FlagshipXOffs();
 				pMS->flash_rect0.corner.y =
-					pMS->flash_rect1.corner.y - RES_SCALE(2) + FlagshipYOffs();
-				pMS->flash_rect0.extent.width = FlagshipWidth() + RES_SCALE(4);
-				pMS->flash_rect0.extent.height = FlagshipHeight() + RES_SCALE(4);
+					pMS->flash_rect1.corner.y - ResScale(2) + FlagshipYOffs();
+				pMS->flash_rect0.extent.width = FlagshipWidth() + ResScale(4);
+				pMS->flash_rect0.extent.height = FlagshipHeight() + ResScale(4);
 
 				hBattleShip = GetTailLink(&race_q[0]); /* Flagship */
 			}
 			else
 			{
 				new_col = pMS->first_item.x;
-				pMS->flash_rect0.corner.x = RES_SCALE(5) + pMS->flash_rect1.corner.x
-										  - RES_SCALE(2) + ((IconWidth() + RES_SCALE(4)) * new_col);
+				pMS->flash_rect0.corner.x = ResScale(5) + pMS->flash_rect1.corner.x
+										  - ResScale(2) + ((IconWidth() + ResScale(4)) * new_col);
 				if (new_col > (NumPickShipColumns >> 1))
 				{
 					--new_col;
 					pMS->flash_rect0.corner.x += FlagshipWidth() - IconWidth();
 				}
-				pMS->flash_rect0.corner.y = RES_SCALE(16) + pMS->flash_rect1.corner.y
-										  - RES_SCALE(2) + ((IconHeight() + RES_SCALE(4)) * pMS->first_item.y);
-				pMS->flash_rect0.extent.width = IconWidth() + RES_SCALE(4);
-				pMS->flash_rect0.extent.height = IconHeight() + RES_SCALE(4);
+				pMS->flash_rect0.corner.y = ResScale(16) + pMS->flash_rect1.corner.y
+										  - ResScale(2) + ((IconHeight() + ResScale(4)) * pMS->first_item.y);
+				pMS->flash_rect0.extent.width = IconWidth() + ResScale(4);
+				pMS->flash_rect0.extent.height = IconHeight() + ResScale(4);
 
 				ship_index = (pMS->first_item.y * NumPickShipColumns)
 						   + new_col;
@@ -227,10 +227,10 @@ ChangeSelection:
 			pMS->CurFrame = (FRAME)hBattleShip;
 
 			SetContextForeGroundColor(BlackColor);
-			r.corner.x = pMS->flash_rect1.corner.x + RES_SCALE(6) - RES_SCALE(1);
-			r.corner.y = pMS->flash_rect1.corner.y + RES_SCALE(5) - RES_SCALE(1);
-			r.extent.width = ((IconWidth() + RES_SCALE(4)) * 3) - RES_SCALE(4);
-			r.extent.height = RES_SCALE(7);
+			r.corner.x = pMS->flash_rect1.corner.x + ResScale(6) - ResScale(1);
+			r.corner.y = pMS->flash_rect1.corner.y + ResScale(5) - ResScale(1);
+			r.extent.width = ((IconWidth() + ResScale(4)) * 3) - ResScale(4);
+			r.extent.height = ResScale(7);
 
 			if (IsHd())
 			{
@@ -252,7 +252,7 @@ ChangeSelection:
 				SetContextFont(isPC(uqm::UQMOptions::read().whichFonts) ? TinyFont : TinyFontBold);
 
 				t.baseline.x = r.corner.x + (r.extent.width >> 1);
-				t.baseline.y = r.corner.y + (r.extent.height - RES_SCALE(1));
+				t.baseline.y = r.corner.y + (r.extent.height - ResScale(1));
 				t.align = ALIGN_CENTER;
 
 				StarShipPtr = LockStarShip(&race_q[0], hBattleShip);
@@ -286,7 +286,7 @@ ChangeSelection:
 				SetContextForeGroundColor(BlackColor);
 			}
 
-			r.corner.x += (IconWidth() + RES_SCALE(4))
+			r.corner.x += (IconWidth() + ResScale(4))
 							* ((NumPickShipColumns >> 1) + 1)
 						+ FlagshipWidth() - IconWidth();
 
@@ -487,7 +487,7 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 
 void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 {
-#define PICK_NAME_HEIGHT RES_SCALE(6);
+#define PICK_NAME_HEIGHT ResScale(6);
 	HSTARSHIP hBattleShip {};
 	HSTARSHIP hNextShip {};
 	const STARSHIP* StarShipPtr {};
@@ -535,7 +535,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 	FRAME OldFontEffect {SetContextFontEffect(nullptr)};
 
 	t.baseline.x = pick_r.corner.x + (pick_r.extent.width >> 1);
-	t.baseline.y = pick_r.corner.y + pick_r.extent.height - RES_SCALE(5);
+	t.baseline.y = pick_r.corner.y + pick_r.extent.height - ResScale(5);
 	t.align = ALIGN_CENTER;
 	t.pStr = GLOBAL_SIS(ShipName);
 	t.CharCount = (uint16_t)~0;
@@ -570,13 +570,13 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 			const uint16_t ship_index {StarShipPtr->index};
 
 			s.origin.x = pick_r.corner.x
-					   + (RES_SCALE(5) + ((IconWidth() + RES_SCALE(4)) * (ship_index % NumPickShipColumns)));
+					   + (ResScale(5) + ((IconWidth() + ResScale(4)) * (ship_index % NumPickShipColumns)));
 			if ((ship_index % NumPickShipColumns) >= (NumPickShipColumns >> 1))
 			{
-				s.origin.x += FlagshipWidth() + RES_SCALE(4);
+				s.origin.x += FlagshipWidth() + ResScale(4);
 			}
 			s.origin.y = pick_r.corner.y
-					   + (RES_SCALE(16) + ((IconHeight() + RES_SCALE(4)) * (ship_index / NumPickShipColumns)));
+					   + (ResScale(16) + ((IconHeight() + ResScale(4)) * (ship_index / NumPickShipColumns)));
 			s.frame = StarShipPtr->icons;
 			r.corner = s.origin;
 
@@ -589,7 +589,7 @@ void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 				if (StarShipPtr->SpeciesID == NO_ID)
 				{
 					/* Dead ship - mark with an X. */
-					s.origin.x -= RES_SCALE(1);
+					s.origin.x -= ResScale(1);
 					s.frame = SetAbsFrameIndex(StatusFrame, 3);
 					DrawStamp(&s);
 				}

@@ -39,17 +39,17 @@ static constexpr auto ShipMass {8};
 static constexpr auto WeaponEnergyCost {0};
 static constexpr auto WeaponWait {7};
 
-static auto MissileSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(30)); }
+static auto MissileSpeed() { return DisplayToWorld(ResScale(30)); }
 static constexpr auto MissileLife {10};
 static constexpr auto MissileHits {1};
 static constexpr auto MissileDamage {1};
-static auto MissileOffset() { return RES_SCALE(1); }
-static auto LaunchXoffs0() { return DISPLAY_TO_WORLD(RES_SCALE(5)); }
-static auto LaunchYoffs0() { return -DISPLAY_TO_WORLD(chooseIfHd(18, 63)); }
-static auto LaunchXoffs1() { return DISPLAY_TO_WORLD(chooseIfHd(13, 48)); }
-static auto LaunchYoffs1() { return -DISPLAY_TO_WORLD(chooseIfHd(9, 25)); }
-static auto LaunchXoffs2() { return DISPLAY_TO_WORLD(chooseIfHd(17, 64)); }
-static auto LaunchYoffs2() { return -DISPLAY_TO_WORLD(chooseIfHd(4, 11)); }
+static auto MissileOffset() { return ResScale(1); }
+static auto LaunchXoffs0() { return DisplayToWorld(ResScale(5)); }
+static auto LaunchYoffs0() { return -DisplayToWorld(chooseIfHd(18, 63)); }
+static auto LaunchXoffs1() { return DisplayToWorld(chooseIfHd(13, 48)); }
+static auto LaunchYoffs1() { return -DisplayToWorld(chooseIfHd(9, 25)); }
+static auto LaunchXoffs2() { return DisplayToWorld(chooseIfHd(17, 64)); }
+static auto LaunchYoffs2() { return -DisplayToWorld(chooseIfHd(4, 11)); }
 
 // Shield
 static constexpr auto SpecialEnergyCost {1};
@@ -171,11 +171,11 @@ initialize_lance(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 				sin0 = LaunchYoffs2();
 				break;
 		}
-		angle = FACING_TO_ANGLE(MissileBlock.face) + Quadrant;
-		cos1cos0 = COSINE(angle, cos0);
-		sin1sin0 = SINE(angle, sin0);
-		sin1cos0 = SINE(angle, cos0);
-		cos1sin0 = COSINE(angle, sin0);
+		angle = FacingToAngle(MissileBlock.face) + Quadrant;
+		cos1cos0 = Cosine(angle, cos0);
+		sin1sin0 = Sine(angle, sin0);
+		sin1cos0 = Sine(angle, cos0);
+		cos1sin0 = Cosine(angle, sin0);
 
 		cos0 = cos1cos0 - sin1sin0;
 		sin0 = sin1cos0 + cos1sin0;
@@ -393,8 +393,8 @@ init_utwig(void)
 {
 	if (IsHd())
 	{
-		utwig_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		utwig_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		utwig_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		utwig_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		utwig_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else

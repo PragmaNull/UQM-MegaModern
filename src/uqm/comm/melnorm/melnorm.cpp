@@ -683,8 +683,8 @@ getStripRandomSeed(void)
 	// vary the deal when stuck at the same general location again.
 	// It is still possible but unlikely for encounters to move the ship into
 	// another truncation sector so the player could choose from 2 deals.
-	x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)) / 100;
-	y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y)) / 100;
+	x = LogxToUniverse(GLOBAL_SIS(log_x)) / 100;
+	y = LogyToUniverse(GLOBAL_SIS(log_y)) / 100;
 	// prime numbers help randomness
 	return y * 1013 + x + GLOBAL_SIS(NumLanders)
 		 + GLOBAL_SIS(ModuleSlots[1]) + GLOBAL_SIS(ModuleSlots[4])
@@ -908,29 +908,29 @@ StripShip(uint16_t fuel_required)
 static void
 ExitConversation(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, no_trade_now))
+	if (PlayerSaid(R, no_trade_now))
 	{
 		NPCPhrase(OK_NO_TRADE_NOW_BYE);
 	}
-	else if (PLAYER_SAID(R, youre_on))
+	else if (PlayerSaid(R, youre_on))
 	{
 		NPCPhrase(YOU_GIVE_US_NO_CHOICE);
 
 		SET_GAME_STATE(MELNORME_ANGER, 1);
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, so_we_can_attack))
+	else if (PlayerSaid(R, so_we_can_attack))
 	{
 		NPCPhrase(DECEITFUL_HUMAN);
 
 		SET_GAME_STATE(MELNORME_ANGER, 2);
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, bye_melnorme_slightly_angry))
+	else if (PlayerSaid(R, bye_melnorme_slightly_angry))
 	{
 		NPCPhrase(MELNORME_SLIGHTLY_ANGRY_GOODBYE);
 	}
-	else if (PLAYER_SAID(R, ok_strip_me))
+	else if (PlayerSaid(R, ok_strip_me))
 	{
 		if (ShipWorth() < 4000 / ModuleCostScale)
 		{
@@ -945,48 +945,48 @@ ExitConversation(RESPONSE_REF R)
 			NPCPhrase(FAIR_JUSTICE);
 		}
 	}
-	else if (PLAYER_SAID(R, fight_some_more))
+	else if (PlayerSaid(R, fight_some_more))
 	{
 		NPCPhrase(OK_FIGHT_SOME_MORE);
 
 		SET_GAME_STATE(MELNORME_ANGER, 3);
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, bye_melnorme_pissed_off))
+	else if (PlayerSaid(R, bye_melnorme_pissed_off))
 	{
 		NPCPhrase(MELNORME_PISSED_OFF_GOODBYE);
 	}
-	else if (PLAYER_SAID(R, well_if_thats_the_way_you_feel))
+	else if (PlayerSaid(R, well_if_thats_the_way_you_feel))
 	{
 		NPCPhrase(WE_FIGHT_AGAIN);
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, you_hate_us_so_we_go_away))
+	else if (PlayerSaid(R, you_hate_us_so_we_go_away))
 	{
 		NPCPhrase(HATE_YOU_GOODBYE);
 	}
-	else if (PLAYER_SAID(R, take_it))
+	else if (PlayerSaid(R, take_it))
 	{
 		StripShip(0);
 		NPCPhrase(HAPPY_TO_HAVE_RESCUED);
 	}
-	else if (PLAYER_SAID(R, leave_it))
+	else if (PlayerSaid(R, leave_it))
 	{
 		SET_GAME_STATE(MELNORME_RESCUE_REFUSED, 1);
 		NPCPhrase(MAYBE_SEE_YOU_LATER);
 	}
-	else if (PLAYER_SAID(R, no_help))
+	else if (PlayerSaid(R, no_help))
 	{
 		SET_GAME_STATE(MELNORME_RESCUE_REFUSED, 1);
 		NPCPhrase(GOODBYE_AND_GOODLUCK);
 	}
-	else if (PLAYER_SAID(R, no_changed_mind))
+	else if (PlayerSaid(R, no_changed_mind))
 	{
 		NPCPhrase(GOODBYE_AND_GOODLUCK_AGAIN);
 	}
-	else if (PLAYER_SAID(R, be_leaving_now)
-			 || PLAYER_SAID(R, goodbye))
+	else if (PlayerSaid(R, be_leaving_now)
+			 || PlayerSaid(R, goodbye))
 	{
 		NPCPhrase(FRIENDLY_GOODBYE);
 	}
@@ -1001,13 +1001,13 @@ DoRescue(RESPONSE_REF R)
 
 	(void)R; // ignored
 	// JSD Replace old method for locating SOL with plot method
-	//dx = LOGX_TO_UNIVERSE (GLOBAL_SIS (log_x))
+	//dx = LogxToUniverse (GLOBAL_SIS (log_x))
 	//		- SOL_X;
-	//dy = LOGY_TO_UNIVERSE (GLOBAL_SIS (log_y))
+	//dy = LogyToUniverse (GLOBAL_SIS (log_y))
 	//		- SOL_Y;
-	dx = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x))
+	dx = LogxToUniverse(GLOBAL_SIS(log_x))
 	   - plot_map[SOL_DEFINED].star_pt.x;
-	dy = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y))
+	dy = LogyToUniverse(GLOBAL_SIS(log_y))
 	   - plot_map[SOL_DEFINED].star_pt.y;
 	fuel_required = square_root(
 						(uint32_t)((long)dx * dx + (long)dy * dy))
@@ -1183,31 +1183,31 @@ DoBuy(RESPONSE_REF R)
 
 		NatureOfConversation(R);
 	}
-	else if (PLAYER_SAID(R, buy_fuel)
-			 || PLAYER_SAID(R, buy_1_fuel)
-			 || PLAYER_SAID(R, buy_5_fuel)
-			 || PLAYER_SAID(R, buy_10_fuel)
-			 || PLAYER_SAID(R, buy_25_fuel)
-			 || PLAYER_SAID(R, fill_me_up))
+	else if (PlayerSaid(R, buy_fuel)
+			 || PlayerSaid(R, buy_1_fuel)
+			 || PlayerSaid(R, buy_5_fuel)
+			 || PlayerSaid(R, buy_10_fuel)
+			 || PlayerSaid(R, buy_25_fuel)
+			 || PlayerSaid(R, fill_me_up))
 	{
 		needed_credit = 0;
-		if (PLAYER_SAID(R, buy_1_fuel))
+		if (PlayerSaid(R, buy_1_fuel))
 		{
 			needed_credit = 1;
 		}
-		else if (PLAYER_SAID(R, buy_5_fuel))
+		else if (PlayerSaid(R, buy_5_fuel))
 		{
 			needed_credit = 5;
 		}
-		else if (PLAYER_SAID(R, buy_10_fuel))
+		else if (PlayerSaid(R, buy_10_fuel))
 		{
 			needed_credit = 10;
 		}
-		else if (PLAYER_SAID(R, buy_25_fuel))
+		else if (PlayerSaid(R, buy_25_fuel))
 		{
 			needed_credit = 25;
 		}
-		else if (PLAYER_SAID(R, fill_me_up))
+		else if (PlayerSaid(R, fill_me_up))
 		{
 			const int16_t remainingCapacity = (capacity - GLOBAL_SIS(FuelOnBoard)
 											   + FuelTankScale - 1)
@@ -1244,7 +1244,7 @@ DoBuy(RESPONSE_REF R)
 			if (((int)(needed_credit * FuelCost) <= (int)credit)
 				|| uqm::UQMOptions::read().infiniteCredits)
 			{
-				if (IsExtended() && PLAYER_SAID(R, fill_me_up))
+				if (IsExtended() && PlayerSaid(R, fill_me_up))
 				{
 					NPCPhrase(OK_FILL_YOU_UP);
 				}
@@ -1282,8 +1282,8 @@ TryFuelAgain:
 		Response(fill_me_up, DoBuy);
 		Response(done_buying_fuel, DoBuy);
 	}
-	else if (PLAYER_SAID(R, buy_technology)
-			 || PLAYER_SAID(R, buy_new_tech))
+	else if (PlayerSaid(R, buy_technology)
+			 || PlayerSaid(R, buy_new_tech))
 	{
 		// Note that this code no longer uses the MELNORME_TECH_STACK state
 		// buts, as they're not needed; we can tell what technologies the
@@ -1300,7 +1300,7 @@ TryFuelAgain:
 		}
 
 		// Did the player just attempt to buy a tech?
-		if (PLAYER_SAID(R, buy_new_tech))
+		if (PlayerSaid(R, buy_new_tech))
 		{
 			nextTech = GetNextTechForSale();
 			if (!nextTech)
@@ -1338,17 +1338,17 @@ TryFuelAgain:
 		Response(buy_new_tech, DoBuy);
 		Response(no_buy_new_tech, DoBuy);
 	}
-	else if (PLAYER_SAID(R, buy_info)
-			 || PLAYER_SAID(R, buy_current_events)
-			 || PLAYER_SAID(R, buy_alien_races)
-			 || PLAYER_SAID(R, buy_history))
+	else if (PlayerSaid(R, buy_info)
+			 || PlayerSaid(R, buy_current_events)
+			 || PlayerSaid(R, buy_alien_races)
+			 || PlayerSaid(R, buy_history))
 	{
 		if (!GET_GAME_STATE(MELNORME_INFO_PROCEDURE))
 		{
 			NPCPhrase(BUY_INFO_INTRO);
 			SET_GAME_STATE(MELNORME_INFO_PROCEDURE, 1);
 		}
-		else if (PLAYER_SAID(R, buy_info))
+		else if (PlayerSaid(R, buy_info))
 		{
 			NPCPhrase(OK_BUY_INFO);
 		}
@@ -1359,15 +1359,15 @@ TryFuelAgain:
 				goto BuyBuyBuy;
 			}
 
-			if (PLAYER_SAID(R, buy_current_events))
+			if (PlayerSaid(R, buy_current_events))
 			{
 				CurrentEvents();
 			}
-			else if (PLAYER_SAID(R, buy_alien_races))
+			else if (PlayerSaid(R, buy_alien_races))
 			{
 				AlienRaces();
 			}
-			else if (PLAYER_SAID(R, buy_history))
+			else if (PlayerSaid(R, buy_history))
 			{
 				History();
 			}
@@ -1395,15 +1395,15 @@ TryFuelAgain:
 	}
 	else
 	{
-		if (PLAYER_SAID(R, done_buying_fuel))
+		if (PlayerSaid(R, done_buying_fuel))
 		{
 			NPCPhrase(OK_DONE_BUYING_FUEL);
 		}
-		else if (PLAYER_SAID(R, no_buy_new_tech))
+		else if (PlayerSaid(R, no_buy_new_tech))
 		{
 			NPCPhrase(OK_NO_BUY_NEW_TECH);
 		}
-		else if (PLAYER_SAID(R, done_buying_info))
+		else if (PlayerSaid(R, done_buying_info))
 		{
 			NPCPhrase(OK_DONE_BUYING_INFO);
 		}
@@ -1454,9 +1454,9 @@ DoSell(RESPONSE_REF R)
 		rainbow_mask >>= 1;
 	}
 
-	if (!PLAYER_SAID(R, sell))
+	if (!PlayerSaid(R, sell))
 	{
-		if (PLAYER_SAID(R, sell_life_data))
+		if (PlayerSaid(R, sell_life_data))
 		{
 			TimeCount TimeIn;
 			const int16_t beast_value = 0;
@@ -1634,7 +1634,7 @@ DoSell(RESPONSE_REF R)
 	}
 	else
 	{
-		if (PLAYER_SAID(R, sell))
+		if (PlayerSaid(R, sell))
 		{
 			NPCPhrase(NOTHING_TO_SELL);
 		}
@@ -1651,7 +1651,7 @@ NatureOfConversation(RESPONSE_REF R)
 	uint8_t num_new_rainbows {};
 	uint16_t rainbow_mask {};
 
-	if (PLAYER_SAID(R, get_on_with_business))
+	if (PlayerSaid(R, get_on_with_business))
 	{
 		SET_GAME_STATE(MELNORME_YACK_STACK2, 5);
 		R = 0;
@@ -1709,17 +1709,17 @@ NatureOfConversation(RESPONSE_REF R)
 
 			AlienTalkSegue((uint16_t)~0);
 		}
-		else if (PLAYER_SAID(R, why_turned_purple))
+		else if (PlayerSaid(R, why_turned_purple))
 		{
 			SET_GAME_STATE(WHY_MELNORME_PURPLE, 1);
 
 			NPCPhrase(TURNED_PURPLE_BECAUSE);
 		}
-		else if (PLAYER_SAID(R, done_selling))
+		else if (PlayerSaid(R, done_selling))
 		{
 			NPCPhrase(OK_DONE_SELLING);
 		}
-		else if (PLAYER_SAID(R, done_buying))
+		else if (PlayerSaid(R, done_buying))
 		{
 			NPCPhrase(OK_DONE_BUYING);
 		}
@@ -1732,7 +1732,7 @@ NatureOfConversation(RESPONSE_REF R)
 		{
 			Response(buy, DoBuy);
 		}
-		if (PHRASE_ENABLED(sell))
+		if (PhraseEnabled(sell))
 		{
 			Response(sell, DoSell);
 		}
@@ -1771,7 +1771,7 @@ static uint8_t local_stack0, local_stack1;
 static void
 DoBluster(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, trade_is_for_the_weak))
+	if (PlayerSaid(R, trade_is_for_the_weak))
 	{
 		NPCPhrase(WERE_NOT_AFRAID);
 		AlienTalkSegue((uint16_t)~0);
@@ -1781,28 +1781,28 @@ DoBluster(RESPONSE_REF R)
 
 		SET_GAME_STATE(MELNORME_YACK_STACK2, 4);
 	}
-	else if (PLAYER_SAID(R, why_blue_light))
+	else if (PlayerSaid(R, why_blue_light))
 	{
 		SET_GAME_STATE(WHY_MELNORME_BLUE, 1);
 
 		NPCPhrase(BLUE_IS_MAD);
 	}
-	else if (PLAYER_SAID(R, we_strong_1))
+	else if (PlayerSaid(R, we_strong_1))
 	{
 		local_stack0 = 1;
 		NPCPhrase(YOU_NOT_STRONG_1);
 	}
-	else if (PLAYER_SAID(R, we_strong_2))
+	else if (PlayerSaid(R, we_strong_2))
 	{
 		local_stack0 = 2;
 		NPCPhrase(YOU_NOT_STRONG_2);
 	}
-	else if (PLAYER_SAID(R, we_strong_3))
+	else if (PlayerSaid(R, we_strong_3))
 	{
 		local_stack0 = 3;
 		NPCPhrase(YOU_NOT_STRONG_3);
 	}
-	else if (PLAYER_SAID(R, just_testing))
+	else if (PlayerSaid(R, just_testing))
 	{
 		local_stack1 = 1;
 		NPCPhrase(REALLY_TESTING);
@@ -1922,47 +1922,47 @@ DoFirstMeeting(RESPONSE_REF R)
 		}
 		SET_GAME_STATE(MELNORME_BUSINESS_COUNT, business_count);
 	}
-	else if (PLAYER_SAID(R, we_are_from_alliance))
+	else if (PlayerSaid(R, we_are_from_alliance))
 	{
 		SET_GAME_STATE(MELNORME_YACK_STACK0, 1);
 		NPCPhrase(KNOW_OF_YOU);
 	}
-	else if (PLAYER_SAID(R, how_know))
+	else if (PlayerSaid(R, how_know))
 	{
 		SET_GAME_STATE(MELNORME_YACK_STACK0, 2);
 		NPCPhrase(KNOW_BECAUSE);
 	}
-	else if (PLAYER_SAID(R, what_about_yourselves))
+	else if (PlayerSaid(R, what_about_yourselves))
 	{
 		last_stack = 1;
 		SET_GAME_STATE(MELNORME_YACK_STACK1, 1);
 		NPCPhrase(NO_TALK_ABOUT_OURSELVES);
 	}
-	else if (PLAYER_SAID(R, what_factors))
+	else if (PlayerSaid(R, what_factors))
 	{
 		last_stack = 1;
 		SET_GAME_STATE(MELNORME_YACK_STACK1, 2);
 		NPCPhrase(FACTORS_ARE);
 	}
-	else if (PLAYER_SAID(R, what_about_universe))
+	else if (PlayerSaid(R, what_about_universe))
 	{
 		last_stack = 2;
 		SET_GAME_STATE(MELNORME_YACK_STACK2, 1);
 		NPCPhrase(NO_FREE_LUNCH);
 	}
-	else if (PLAYER_SAID(R, giving_is_good_1))
+	else if (PlayerSaid(R, giving_is_good_1))
 	{
 		last_stack = 2;
 		SET_GAME_STATE(MELNORME_YACK_STACK2, 2);
 		NPCPhrase(GIVING_IS_BAD_1);
 	}
-	else if (PLAYER_SAID(R, giving_is_good_2))
+	else if (PlayerSaid(R, giving_is_good_2))
 	{
 		last_stack = 2;
 		SET_GAME_STATE(MELNORME_YACK_STACK2, 3);
 		NPCPhrase(GIVING_IS_BAD_2);
 	}
-	else if (PLAYER_SAID(R, yes_really_testing))
+	else if (PlayerSaid(R, yes_really_testing))
 	{
 		NPCPhrase(TEST_RESULTS);
 		AlienTalkSegue((uint16_t)~0);
@@ -1970,7 +1970,7 @@ DoFirstMeeting(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 0),
 					  c_gameSecond / 2);
 	}
-	else if (PLAYER_SAID(R, we_apologize))
+	else if (PlayerSaid(R, we_apologize))
 	{
 		SET_GAME_STATE(MELNORME_ANGER, 0);
 		NPCPhrase(APOLOGY_ACCEPTED);
@@ -2017,25 +2017,25 @@ DoMelnormeMiffed(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 					  c_gameSecond / 2);
 	}
-	else if (PLAYER_SAID(R, explore_relationship))
+	else if (PlayerSaid(R, explore_relationship))
 	{
 		SET_GAME_STATE(MELNORME_YACK_STACK3, 1);
 
 		NPCPhrase(EXAMPLE_OF_RELATIONSHIP);
 	}
-	else if (PLAYER_SAID(R, excuse_1))
+	else if (PlayerSaid(R, excuse_1))
 	{
 		SET_GAME_STATE(MELNORME_YACK_STACK3, 2);
 
 		NPCPhrase(NO_EXCUSE_1);
 	}
-	else if (PLAYER_SAID(R, excuse_2))
+	else if (PlayerSaid(R, excuse_2))
 	{
 		SET_GAME_STATE(MELNORME_YACK_STACK3, 3);
 
 		NPCPhrase(NO_EXCUSE_2);
 	}
-	else if (PLAYER_SAID(R, excuse_3))
+	else if (PlayerSaid(R, excuse_3))
 	{
 		SET_GAME_STATE(MELNORME_YACK_STACK3, 4);
 
@@ -2090,13 +2090,13 @@ DoMelnormePissed(RESPONSE_REF R)
 		XFormColorMap(GetColorMapAddress(CommData.AlienColorMap, 2),
 					  c_gameSecond / 2);
 	}
-	else if (PLAYER_SAID(R, beg_forgiveness))
+	else if (PlayerSaid(R, beg_forgiveness))
 	{
 		SET_GAME_STATE(MELNORME_YACK_STACK4, 1);
 
 		NPCPhrase(LOTS_TO_MAKE_UP_FOR);
 	}
-	else if (PLAYER_SAID(R, you_are_so_right))
+	else if (PlayerSaid(R, you_are_so_right))
 	{
 		SET_GAME_STATE(MELNORME_YACK_STACK4, 2);
 
@@ -2225,7 +2225,7 @@ init_melnorme_comm(void)
 	melnorme_desc.AlienTextBaseline.x =
 		TextXOffs() + (SisTextWidth() >> 1);
 	melnorme_desc.AlienTextBaseline.y = 0;
-	melnorme_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	melnorme_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	local_stack0 = 0;
 	local_stack1 = 0;

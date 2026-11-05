@@ -72,7 +72,7 @@ enum
 };
 
 static auto ChooserX() { return (CanvasWidth >> 1); }
-static auto ChooserY() { return ((CanvasHeight >> 1) - RES_SCALE(12)); }
+static auto ChooserY() { return ((CanvasHeight >> 1) - ResScale(12)); }
 
 // Kruzen: Having this ref separated gains more control
 // We can load and free it whenever we want and not rely on menu volume
@@ -121,31 +121,31 @@ void DrawToolTips(MENU_STATE* pMS, int answer)
 	SetContextFont(TinyFont);
 
 	GetFrameRect(SetRelFrameIndex(pMS->CurFrame, 2), &r);
-	r.corner.y += ChooserY() + r.extent.height + RES_SCALE(1);
+	r.corner.y += ChooserY() + r.extent.height + ResScale(1);
 
 	s.frame = SetRelFrameIndex(pMS->CurFrame, 3);
 	r.extent = GetFrameBounds(s.frame);
-	r.corner.x = RES_SCALE(
-		(RES_DESCALE(CanvasWidth) - RES_DESCALE(r.extent.width)) >> 1);
+	r.corner.x = ResScale(
+		(ResDescale(CanvasWidth) - ResDescale(r.extent.width)) >> 1);
 	s.origin = r.corner;
 	DrawStamp(&s);
 
 	SetContextForeGroundColor(BlackColor);
 
-	t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 66 + answer);
+	t.pStr = GameString(MAINMENU_STRING_BASE + 66 + answer);
 	const int line_count {SplitString(t.pStr, '\n', 30, lines, bank)};
 
 	t.baseline.x = r.corner.x
-				 + RES_SCALE(RES_DESCALE(r.extent.width) >> 1);
-	t.baseline.y = r.corner.y + RES_SCALE(10)
-				 + RES_SCALE(line_count < 2 ? 8 : (line_count > 2 ? 0 : 3));
+				 + ResScale(ResDescale(r.extent.width) >> 1);
+	t.baseline.y = r.corner.y + ResScale(10)
+				 + ResScale(line_count < 2 ? 8 : (line_count > 2 ? 0 : 3));
 	for (uint16_t i {0}; i < line_count; i++)
 	{
 		t.pStr = lines[i];
 		t.align = ALIGN_CENTER;
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
-		t.baseline.y += RES_SCALE(8);
+		t.baseline.y += ResScale(8);
 	}
 
 	StringBank_Free(bank);
@@ -167,12 +167,12 @@ DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 
 	t.align = ALIGN_CENTER;
 	t.baseline.x = s.origin.x;
-	t.baseline.y = s.origin.y - RES_SCALE(20);
+	t.baseline.y = s.origin.y - ResScale(20);
 
 	for (uint16_t i {0}; i <= 2; i++)
 	{
-		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 56
-							 + (!i ? 1 : (i > 1 ? 2 : 0)));
+		t.pStr = GameString(MAINMENU_STRING_BASE + 56
+							+ (!i ? 1 : (i > 1 ? 2 : 0)));
 		t.CharCount = (uint16_t)uqm::utf8StringCount(t.pStr);
 
 		SetContextForeGroundColor(
@@ -181,7 +181,7 @@ DrawDiffChooser(MENU_STATE* pMS, int answer, bool confirm)
 				BlackColor);
 		font_DrawText(&t);
 
-		t.baseline.y += RES_SCALE(23);
+		t.baseline.y += ResScale(23);
 	}
 
 	SetContextFont(oldFont);
@@ -308,7 +308,7 @@ DoDiffChooser(MENU_STATE* pMS)
 }
 
 static auto MainTextX() { return (CanvasWidth >> 1); }
-static auto MainTextY() { return (RES_SCALE(42) - DOS_NUM_SCL(20)); }
+static auto MainTextY() { return (ResScale(42) - DosNumScl(20)); }
 
 FRAME TextCache[5];
 
@@ -337,7 +337,7 @@ InitPulseText(void)
 
 	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
 	{
-		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 69 + i);
+		t.pStr = GameString(MAINMENU_STRING_BASE + 69 + i);
 
 		frame = CaptureDrawable(CreateDrawable(WantPixmap, CanvasWidth,
 											   CanvasHeight, 1));
@@ -394,7 +394,7 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 
 	for (uint16_t i {START_NEW_GAME}; i < NUM_MENU_ELEMENTS; i++)
 	{
-		t.pStr = GAME_STRING(MAINMENU_STRING_BASE + 69 + i);
+		t.pStr = GameString(MAINMENU_STRING_BASE + 69 + i);
 		font_DrawText(&t);
 		t.baseline.y += leading;
 	}
@@ -406,8 +406,8 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 						UqmMajorVersion, UqmMinorVersion, UqmPatchVersion,
 						chooseIfHd<const char*>(UQM_EXTRA_VERSION, "HD " UQM_EXTRA_VERSION));
 	t.pStr = buf;
-	t.baseline.x = CanvasWidth - RES_SCALE(2);
-	t.baseline.y = CanvasHeight - RES_SCALE(2);
+	t.baseline.x = CanvasWidth - ResScale(2);
+	t.baseline.y = CanvasHeight - ResScale(2);
 	t.align = ALIGN_RIGHT;
 	font_DrawText(&t);
 
@@ -415,10 +415,10 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 	if (uqm::UQMOptions::read().mainMenuMusic)
 	{
 		fmt::format_to_sz_n(buf, "{} {}",
-							GAME_STRING(MAINMENU_STRING_BASE + 61),
-							GAME_STRING(MAINMENU_STRING_BASE + 62 + Rando));
-		t.baseline.x = RES_SCALE(2);
-		t.baseline.y = CanvasHeight - RES_SCALE(2);
+							GameString(MAINMENU_STRING_BASE + 61),
+							GameString(MAINMENU_STRING_BASE + 62 + Rando));
+		t.baseline.x = ResScale(2);
+		t.baseline.y = CanvasHeight - ResScale(2);
 		t.align = ALIGN_LEFT;
 		font_DrawText(&t);
 	}
@@ -446,7 +446,7 @@ RestartMessage(void)
 	}
 
 	SetFlashRect(nullptr, false);
-	DoPopupWindow(GAME_STRING(MAINMENU_STRING_BASE + 35));
+	DoPopupWindow(GameString(MAINMENU_STRING_BASE + 35));
 	// Got to restart -message
 	SetMenuSounds(MenuSoundUp | MenuSoundDown, MenuSoundSelect);
 	SetTransitionSource(nullptr);
@@ -550,7 +550,7 @@ DoRestart(MENU_STATE* pMS)
 				{
 					SetFlashRect(nullptr, false);
 					DoPopupWindow(
-						GAME_STRING(MAINMENU_STRING_BASE + 65));
+						GameString(MAINMENU_STRING_BASE + 65));
 					// Got to restart -message
 					SetMenuSounds(
 						MenuSoundUp | MenuSoundDown,
@@ -694,7 +694,7 @@ DoRestart(MENU_STATE* pMS)
 	//else if (MouseButtonDown)
 	//{
 	//	Flash_pause (pMS->flashContext);
-	//	DoPopupWindow (GAME_STRING (MAINMENU_STRING_BASE + 54));
+	//	DoPopupWindow (GameString (MAINMENU_STRING_BASE + 54));
 	//			// Mouse not supported message
 	//	SetMenuSounds (MenuSoundUp | MenuSoundDown, MenuSoundSelect);
 

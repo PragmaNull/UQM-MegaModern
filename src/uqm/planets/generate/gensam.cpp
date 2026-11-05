@@ -141,8 +141,8 @@ GenerateSaMatra_reinitNpcs(SOLARSYS_STATE* solarSys)
 			org = planetOuterLocation(solarSys->SunDesc[0].PlanetByte);
 			angle = ARCTAN(uqm::flagship().ipLocation.x - org.x,
 						   uqm::flagship().ipLocation.y - org.y);
-			uqm::flagship().ipLocation.x = org.x + COSINE(angle, 3000);
-			uqm::flagship().ipLocation.y = org.y + SINE(angle, 3000);
+			uqm::flagship().ipLocation.x = org.x + Cosine(angle, 3000);
+			uqm::flagship().ipLocation.y = org.y + Sine(angle, 3000);
 			XFormIPLoc(&uqm::flagship().ipLocation,
 					   &uqm::flagship().shipStamp.origin, true);
 		}
@@ -268,9 +268,9 @@ GenerateSaMatra_generateMoons(SOLARSYS_STATE* solarSys,
 			{
 				pMoonDesc->radius = MinMoonRadius() + (2 * MoonDelta());
 				rand_val = SysGenRNG->next();
-				angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
-				pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
-				pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
+				angle = NormalizeAngle(uqm::lowWord(rand_val));
+				pMoonDesc->location.x = Cosine(angle, pMoonDesc->radius);
+				pMoonDesc->location.y = Sine(angle, pMoonDesc->radius);
 				ComputeSpeed(pMoonDesc, true, 1);
 			}
 		}
@@ -501,10 +501,10 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 		GroupPtr->task = ON_STATION | IGNORE_FLAGSHIP;
 		GroupPtr->sys_loc = 0;
 		GroupPtr->dest_loc = solarSys->SunDesc[0].PlanetByte + 1;
-		GroupPtr->orbit_pos = NORMALIZE_FACING(ANGLE_TO_FACING(b1));
+		GroupPtr->orbit_pos = NormalizeFacing(AngleToFacing(b1));
 		GroupPtr->group_counter = 0;
-		GroupPtr->loc.x = org.x + COSINE(b1, StationRadius);
-		GroupPtr->loc.y = org.y + SINE(b1, StationRadius);
+		GroupPtr->loc.x = org.x + Cosine(b1, StationRadius);
+		GroupPtr->loc.y = org.y + Sine(b1, StationRadius);
 		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
 		hGroup = hNextGroup;
 	}
@@ -518,10 +518,10 @@ BuildUrquanGuard(SOLARSYS_STATE* solarSys)
 		GroupPtr->task = ON_STATION | IGNORE_FLAGSHIP;
 		GroupPtr->sys_loc = 0;
 		GroupPtr->dest_loc = solarSys->SunDesc[0].PlanetByte + 1;
-		GroupPtr->orbit_pos = NORMALIZE_FACING(ANGLE_TO_FACING(b1));
+		GroupPtr->orbit_pos = NormalizeFacing(AngleToFacing(b1));
 		GroupPtr->group_counter = 0;
-		GroupPtr->loc.x = org.x + COSINE(b1, StationRadius);
-		GroupPtr->loc.y = org.y + SINE(b1, StationRadius);
+		GroupPtr->loc.x = org.x + Cosine(b1, StationRadius);
+		GroupPtr->loc.y = org.y + Sine(b1, StationRadius);
 		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
 		hGroup = hNextGroup;
 	}

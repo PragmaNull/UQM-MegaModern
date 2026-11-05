@@ -47,13 +47,13 @@ static constexpr auto ShieldGlowComp {120};
 static constexpr auto ShieldReflectComp {100};
 
 static constexpr auto NumBatchPoints {64};
-static auto Radius() { return RES_SCALE(33); }
+static auto Radius() { return ResScale(33); }
 //2*Radius()
 static auto Tworadius() { return (Radius() << 1); }
 //Radius()^2
-#define RADIUS_2(a) (a * a)
+constexpr auto Radius2(const auto& a) { return (a * a); }
 // distance beyond which all pixels are transparent (for aa)
-#define RADIUS_THRES(a) ((a + 1) * (a + 1))
+constexpr auto RadiusThres(const auto& a) { return ((a + 1) * (a + 1)); }
 
 #if 0
 static auto SphereSpanX() { return (MapWidth() >> 1); }
@@ -170,13 +170,13 @@ ColorDelta(uint16_t scan, uint32_t avg)
 	{
 		int8_t diff = 0;
 
-		if (avg > (uint32_t)MAX_BRIGHTNESS(scan))
+		if (avg > (uint32_t)MaxBrightness(scan))
 		{
-			diff = -(int8_t)(avg - MAX_BRIGHTNESS(scan));
+			diff = -(int8_t)(avg - MaxBrightness(scan));
 		}
-		else if (avg < (uint32_t)MIN_BRIGHTNESS(scan))
+		else if (avg < (uint32_t)MinBrightness(scan))
 		{
-			diff = MIN_BRIGHTNESS(scan) - avg;
+			diff = MinBrightness(scan) - avg;
 		}
 
 		return diff;
@@ -409,7 +409,7 @@ RenderLevelMasks(FRAME mask, int8_t* pTopoData, bool SurfDef)
 	SetPrimNextLink(&pBatch[-1], EndOfList);
 
 	const PlanetFrame* PlanDataPtr {&PlanData[pSolarSysState->pOrbitalDesc->data_index & ~PLANET_SHIELDED]};
-	const uint8_t AlgoType {PLANALGO(PlanDataPtr->Type)};
+	const uint8_t AlgoType {Planalgo(PlanDataPtr->Type)};
 
 	if (SurfDef)
 	{ // Planets given by a pixmap have elevations between -128 and +128
@@ -507,7 +507,7 @@ RenderTopography(FRAME DstFrame, int8_t* pTopoData, int w, int h,
 	}
 
 	const PlanetFrame* PlanDataPtr {&PlanData[pSolarSysState->pOrbitalDesc->data_index & ~PLANET_SHIELDED]};
-	const uint8_t AlgoType {PLANALGO(PlanDataPtr->Type)};
+	const uint8_t AlgoType {Planalgo(PlanDataPtr->Type)};
 
 	if (SurfDef)
 	{ // Planets given by a pixmap have elevations between -128 and
@@ -882,7 +882,7 @@ CreateSphereTiltMap(int angle, uint16_t height, uint16_t radius)
 
 			rad_2 = x * x + y_2;
 
-			if (rad_2 >= RADIUS_THRES(radius))
+			if (rad_2 >= RadiusThres(radius))
 			{ // pixel won't be present
 				ppt->p[0].x = x + radius;
 				ppt->p[0].y = y + radius;
@@ -932,7 +932,7 @@ CreateSphereTiltMap(int angle, uint16_t height, uint16_t radius)
 // made by this routine, but a filter can be applied if desired too.
 
 // HALO rim size
-static auto ShieldHalo() { return RES_SCALE(playerInPlanetOrbit() ? 7 : 14); }
+static auto ShieldHalo() { return ResScale(playerInPlanetOrbit() ? 7 : 14); }
 static auto ShieldRadius() { return (Radius() + ShieldHalo()); }
 
 
@@ -968,13 +968,13 @@ CreateShieldMask(uint16_t radius)
 			int alpha = 255;
 			double rad {NAN};
 
-			if (rad_2 >= RADIUS_THRES(shieldradius))
+			if (rad_2 >= RadiusThres(shieldradius))
 			{ // outside all bounds
 				*pix = clear;
 				continue;
 			}
 			// Inside the halo
-			if (rad_2 <= RADIUS_2(radius))
+			if (rad_2 <= Radius2(radius))
 			{ // planet's pixels, ours transparent
 				*pix = clear;
 				continue;
@@ -1032,7 +1032,7 @@ SaveBackFrame(uint16_t radius)
 	const uint16_t shieldradius = ShieldRadius() * radius / Radius();
 	const uint16_t shielddiam = (shieldradius << 1) + 1;
 
-	r.corner = MAKE_POINT((RES_SCALE(OrigSisScreenWidth() >> 1))
+	r.corner = MAKE_POINT((ResScale(OrigSisScreenWidth() >> 1))
 							  - (shieldradius + 1),
 						  PLANET_ORG_Y - (shieldradius + 1));
 	r.extent.height = r.extent.width = shielddiam;
@@ -1049,7 +1049,7 @@ SaveBackFrame(uint16_t radius)
 //  the throbbing cycle is tied to the planet rotation cycle
 static constexpr auto ShieldThrobs {12};
 // throb cycles per revolution
-static auto ThrobCycle() { return ((RES_SCALE(OriginalMapWidth()) << 8) / ShieldThrobs); }
+static auto ThrobCycle() { return ((ResScale(OriginalMapWidth()) << 8) / ShieldThrobs); }
 static auto ThrobHalfCycle() { return (ThrobCycle() >> 1); }
 
 static constexpr auto ThrobMaxLevel {256};
@@ -1492,7 +1492,7 @@ void Render3DOPlanetSphere(PLANET_ORBIT* Orbit, FRAME MaskFrame, int offset,
 	Color clear;
 	GFXPOINT pt;
 	const uint16_t spherespanx = height;
-	const uint16_t radius = (spherespanx >> 1) - IF_HD(2);
+	const uint16_t radius = (spherespanx >> 1) - IfHd(2);
 	const uint16_t tworadius = radius << 1;
 	const uint16_t diameter = tworadius + 1;
 
@@ -2685,7 +2685,7 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 	r.extent.height = height;
 
 	memset(Orbit->lpTopoData, 0, width * height);
-	switch (PLANALGO(PlanDataPtr->Type))
+	switch (Planalgo(PlanDataPtr->Type))
 	{
 		case GasGiantAlgo:
 			MakeGasGiant(PlanDataPtr->num_faults,
@@ -2753,7 +2753,7 @@ void generate_surface_frame(uint16_t width, uint16_t height, PLANET_ORBIT* Orbit
 						   -(PlanDataPtr->fault_depth << 2),
 						   false, width);
 			}
-			if (PLANALGO(PlanDataPtr->Type) == CrateredAlgo)
+			if (Planalgo(PlanDataPtr->Type) == CrateredAlgo)
 			{
 				DitherMap(Orbit->lpTopoData, width, height);
 			}
@@ -2855,7 +2855,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 	else
 	{
 		spherespanx = height;
-		radius = (height >> 1) - IF_HD(2);
+		radius = (height >> 1) - IfHd(2);
 		ForIP = true;
 
 		useDosSpheres = false;
@@ -3032,7 +3032,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 				WantPixmap, width << 2, height << 2, 1));
 
 			TopoScale4x(scaledTopo.data(), Orbit->lpTopoData,
-						PlanDataPtr->num_faults, PlanDataPtr->fault_depth * (PLANALGO(PlanDataPtr->Type) == CrateredAlgo ? 2 : 1));
+						PlanDataPtr->num_faults, PlanDataPtr->fault_depth * (Planalgo(PlanDataPtr->Type) == CrateredAlgo ? 2 : 1));
 			RenderTopography(Orbit->TopoZoomFrame, scaledTopo.data(),
 							 ScaledMapWidth() * 4, MapHeight() * 4, SurfDef, nullptr);
 		}
@@ -3080,7 +3080,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 		}
 	}
 
-	if (PLANALGO(PlanDataPtr->Type) == GasGiantAlgo
+	if (Planalgo(PlanDataPtr->Type) == GasGiantAlgo
 		|| (customTexture && use3DOSpheres))
 	{ // convert topo data to a light map, based on relative
 		// map point elevations
@@ -3110,7 +3110,7 @@ void GeneratePlanetSurface(PLANET_DESC* pPlanetDesc, FRAME SurfDefFrame,
 	{
 		uint16_t facing {};
 		facing =
-			NORMALIZE_FACING(ANGLE_TO_FACING(ARCTAN(loc.x, loc.y)));
+			NormalizeFacing(AngleToFacing(ARCTAN(loc.x, loc.y)));
 
 		if (useDosSpheres)
 		{

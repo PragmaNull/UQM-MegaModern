@@ -181,7 +181,7 @@ void DrawSISFrame(void)
 		// Vertical line on the right side of SIS Message
 		r.corner.y = 1;
 		r.extent.width = 1;
-		r.extent.height = SafeY() + SisMessageHeight() - DOS_NUM(1);
+		r.extent.height = SafeY() + SisMessageHeight() - DosNum(1);
 		r.corner.x = SisOrgX() + SisMessageBoxWidth();
 		DrawFilledRectangle(&r);
 
@@ -237,10 +237,10 @@ void DrawSISFrame(void)
 	else
 	{
 		SetContextForeGroundColor(BlackColor);
-		r.corner.x = SisOrgX() - RES_SCALE(1);
-		r.corner.y = SisOrgY() - RES_SCALE(1);
-		r.extent.width = SisScreenWidth() + RES_SCALE(2);
-		r.extent.height = SisScreenHeight() + RES_SCALE(2);
+		r.corner.x = SisOrgX() - ResScale(1);
+		r.corner.y = SisOrgY() - ResScale(1);
+		r.extent.width = SisScreenWidth() + ResScale(2);
+		r.extent.height = SisScreenHeight() + ResScale(2);
 		DrawFilledRectangle(&r);
 	}
 

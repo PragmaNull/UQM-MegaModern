@@ -58,7 +58,7 @@ DrawPCMenuFrame(GFXRECT* r)
 	}
 	else
 	{
-		DrawStarConBox(r, RES_SCALE(1), PcmenuTopLeftBorderColor,
+		DrawStarConBox(r, ResScale(1), PcmenuTopLeftBorderColor,
 					   PcmenuBottomRightBorderColor, true,
 					   PcmenuBackgroundColor, false, NullColor);
 	}
@@ -67,16 +67,16 @@ DrawPCMenuFrame(GFXRECT* r)
 	// This actually draws a rectangle, with the top and left segments just
 	// within the total area, but these segments are drawn over in the next
 	// step.
-	r->corner.x += RES_SCALE(1);
-	r->corner.y += RES_SCALE(1);
-	r->extent.height -= RES_SCALE(2);
-	r->extent.width -= RES_SCALE(2);
+	r->corner.x += ResScale(1);
+	r->corner.y += ResScale(1);
+	r->extent.height -= ResScale(2);
+	r->extent.width -= ResScale(2);
 }
 
 static constexpr auto AltManifest {0x80};
 static constexpr auto AltExitManifest {0x81};
 
-static auto PcMenuHeight() { return (RES_SCALE(8)); }
+static auto PcMenuHeight() { return (ResScale(8)); }
 
 static char pm_crew_str[128];
 static char pm_fuel_str[128];
@@ -94,14 +94,14 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 
 	pos = beg_index + NewState;
 	const int num_items {1 + end_index - beg_index};
-	r->extent.width -= RES_SCALE(1);
+	r->extent.width -= ResScale(1);
 
 	// Gray rectangle behind PC menu
 	rt = *r;
-	rt.corner.x -= RES_SCALE(1);
-	rt.corner.y += PcMenuHeight() - DOS_BOOL_SCL(12, 3);
-	rt.extent.width += RES_SCALE(2);
-	rt.extent.height += DOS_BOOL_SCL(2, -6);
+	rt.corner.x -= ResScale(1);
+	rt.corner.y += PcMenuHeight() - DosBoolScl(12, 3);
+	rt.extent.width += ResScale(2);
+	rt.extent.height += DosBoolScl(2, -6);
 	if (!uqm::UQMOptions::read().customBorder)
 	{
 		DrawFilledRectangle(&rt);
@@ -117,21 +117,21 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 	{
 		r->corner.y += (r->extent.height - (num_items * PcMenuHeight())) / 2;
 	}
-	r->extent.height = num_items * PcMenuHeight() + RES_SCALE(3);
+	r->extent.height = num_items * PcMenuHeight() + ResScale(3);
 
-	r->corner.y += DOS_NUM_SCL(1);
-	r->corner.y -= SAFE_NUM_SCL(4);
+	r->corner.y += DosNumScl(1);
+	r->corner.y -= SafeNumScl(4);
 
 	DrawPCMenuFrame(r);
 
 	FONT OldFont {SetContextFont(StarConFont)};
 	t.align = ALIGN_LEFT;
-	t.baseline.x = r->corner.x + RES_SCALE(2);
-	t.baseline.y = r->corner.y + PcMenuHeight() - RES_SCALE(1);
+	t.baseline.x = r->corner.x + ResScale(2);
+	t.baseline.y = r->corner.y + PcMenuHeight() - ResScale(1);
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
-	r->corner.x += RES_SCALE(1);
-	r->extent.width -= RES_SCALE(2);
+	r->corner.x += ResScale(1);
+	r->extent.width -= ResScale(2);
 	for (uint16_t i {beg_index}; i <= end_index; i++)
 	{
 		// To compensate for the read speed menu entries
@@ -142,7 +142,7 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 		uqm::utf8StringCopy(buf, sizeof buf,
 							(i == PM_FUEL) ? pm_fuel_str :
 							(i == PM_CREW) ? pm_crew_str :
-											 GAME_STRING(MAINMENU_STRING_BASE + j));
+											 GameString(MAINMENU_STRING_BASE + j));
 		if (hilite && pos == i)
 		{
 			// Currently selected menu option.
@@ -151,8 +151,8 @@ DrawPCMenu(uint8_t beg_index, uint8_t end_index, uint8_t NewState, uint8_t hilit
 				SetContextForeGroundColor(
 					PcmenuSelectionBackgroundColor);
 				r->corner.y = t.baseline.y - PcMenuHeight()
-							+ RES_SCALE(2);
-				r->extent.height = PcMenuHeight() - RES_SCALE(1);
+							+ ResScale(2);
+				r->extent.height = PcMenuHeight() - ResScale(1);
 				if (uqm::UQMOptions::read().customBorder)
 				{
 					STAMP s;
@@ -652,12 +652,12 @@ IndexToText(int Index)
 			break;
 	}
 
-	if (i == -1 || !strlen(GAME_STRING(PLAYMENU_STRING_BASE + i)))
+	if (i == -1 || !strlen(GameString(PLAYMENU_STRING_BASE + i)))
 	{
 		return nullptr;
 	}
 
-	return GAME_STRING(PLAYMENU_STRING_BASE + i);
+	return GameString(PLAYMENU_STRING_BASE + i);
 }
 
 static void
@@ -681,7 +681,7 @@ Draw3DOMenuText(GFXRECT* r, int Index)
 	if (!uqm::UQMOptions::read().customBorder)
 	{
 		block = *r;
-		block.corner.y += DOS_NUM_SCL(2);
+		block.corner.y += DosNumScl(2);
 		block.extent.height = leading;
 		DrawFilledRectangle(&block); // with PmRectColor
 	}
@@ -692,7 +692,7 @@ Draw3DOMenuText(GFXRECT* r, int Index)
 
 	text.align = ALIGN_CENTER;
 	text.baseline.x = r->corner.x + (r->extent.width >> 1);
-	text.baseline.y = r->corner.y + leading - NDOS_NUM_SCL(2);
+	text.baseline.y = r->corner.y + leading - NdosNumScl(2);
 	text.pStr = AlignText(IndexToText(Index),
 						  &text.baseline.x);
 	text.CharCount = (uint16_t)~0;
@@ -746,16 +746,16 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 	GetContextClipRect(&r);
 	s.origin.x = RadarX() - r.corner.x;
 	s.origin.y = RadarY() - r.corner.y;
-	r.corner.x = s.origin.x - RES_SCALE(1);
+	r.corner.x = s.origin.x - ResScale(1);
 	if (uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC)
 	{
-		r.corner.y = s.origin.y - PcMenuHeight() - IF_HD(2);
+		r.corner.y = s.origin.y - PcMenuHeight() - IfHd(2);
 	}
 	else
 	{
-		r.corner.y = s.origin.y - RES_SCALE(11) + DOS_NUM_SCL(3);
+		r.corner.y = s.origin.y - ResScale(11) + DosNumScl(3);
 	}
-	r.extent.width = RadarWidth() + RES_SCALE(3);
+	r.extent.width = RadarWidth() + ResScale(3);
 	BatchGraphics();
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x0A, 0x0A, 0x0A), 0x08));
@@ -764,13 +764,13 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 		if (beg_index == PM_CREW)
 		{
 			fmt::format_to_sz_n(pm_crew_str, "{}({})",
-								GAME_STRING(MAINMENU_STRING_BASE + static_cast<int>(PM_CREW)),
+								GameString(MAINMENU_STRING_BASE + static_cast<int>(PM_CREW)),
 								GLOBAL(CrewCost));
 		}
 		if (beg_index == PM_FUEL)
 		{
 			fmt::format_to_sz_n(pm_fuel_str, "{}({})",
-								GAME_STRING(MAINMENU_STRING_BASE + static_cast<int>(PM_FUEL)),
+								GameString(MAINMENU_STRING_BASE + static_cast<int>(PM_FUEL)),
 								GLOBAL(FuelCost));
 		}
 		if (beg_index == PM_SOUND_ON)
@@ -811,7 +811,7 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 					break;
 			}
 		}
-		r.extent.height = RadarHeight() + RES_SCALE(12);
+		r.extent.height = RadarHeight() + ResScale(12);
 
 		DrawPCMenu(beg_index, end_index, (uint8_t)NewState, hilite, &r);
 		s.frame = 0;
@@ -824,12 +824,12 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 	else
 	{
 		// Gray rectangle behind Lander and HyperSpace radar
-		r.corner.x -= RES_SCALE(1);
-		r.corner.y += DOS_NUM_SCL(5);
-		r.extent.width += RES_SCALE(1);
+		r.corner.x -= ResScale(1);
+		r.corner.y += DosNumScl(5);
+		r.extent.width += ResScale(1);
 		r.extent.height = RadarHeight()
-						+ RES_SCALE(isPC(uqm::UQMOptions::read().whichMenu) ? 9 : 12);
-		r.extent.height -= DOS_NUM_SCL(6);
+						+ ResScale(isPC(uqm::UQMOptions::read().whichMenu) ? 9 : 12);
+		r.extent.height -= DosNumScl(6);
 
 		if (!uqm::UQMOptions::read().customBorder)
 		{
@@ -859,8 +859,8 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 		switch (beg_index + NewState)
 		{
 			case PM_CREW:
-				t.baseline.x = s.origin.x + RadarWidth() - RES_SCALE(2);
-				t.baseline.y = s.origin.y + RadarHeight() - RES_SCALE(2);
+				t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
+				t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
 				t.align = ALIGN_RIGHT;
 				t.CharCount = (uint16_t)~0;
 				t.pStr = buf;
@@ -877,8 +877,8 @@ void DrawMenuStateStrings(uint8_t beg_index, int16_t NewState)
 				font_DrawText(&t);
 				break;
 			case PM_FUEL:
-				t.baseline.x = s.origin.x + RadarWidth() - RES_SCALE(2);
-				t.baseline.y = s.origin.y + RadarHeight() - RES_SCALE(2);
+				t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
+				t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
 				t.align = ALIGN_RIGHT;
 				t.CharCount = (uint16_t)~0;
 				t.pStr = buf;
@@ -918,28 +918,28 @@ void DrawMineralHelpers(void)
 
 	BatchGraphics();
 
-	DrawFlagStatDisplay(""); // (GAME_STRING (STATUS_STRING_BASE + 6));
+	DrawFlagStatDisplay(""); // (GameString (STATUS_STRING_BASE + 6));
 
 	SetContextFont(TinyFont);
 
 	GetContextFontLeading(&leading);
-	leading -= RES_SCALE(1);
+	leading -= ResScale(1);
 
 	const auto ElementOrgY = [&] {
-		return RES_SCALE(24);
+		return ResScale(24);
 	};
 	const auto ElementSpacingY = [&] {
-		return RES_SCALE(9);
+		return ResScale(9);
 	};
 
 	const auto ElementCol0 = [&] {
-		return RES_SCALE(10);
+		return ResScale(10);
 	};
 	const auto ElementCol1 = [&] {
-		return RES_SCALE(32);
+		return ResScale(32);
 	};
 	const auto ElementCol2 = [&] {
-		return RES_SCALE(58);
+		return ResScale(58);
 	};
 
 	// setup element icons
@@ -949,13 +949,13 @@ void DrawMineralHelpers(void)
 	s.origin.y = ElementOrgY();
 	// setup element worths
 	t.baseline.x = ElementCol1();
-	t.baseline.y = ElementOrgY() + RES_SCALE(3);
+	t.baseline.y = ElementOrgY() + ResScale(3);
 	t.align = ALIGN_RIGHT;
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
 
 	r.extent = GetFrameBounds(s.frame);
-	r.corner.x = ElementCol0() - RES_SCALE(3);
+	r.corner.x = ElementCol0() - ResScale(3);
 
 	// draw element icons and worths
 	for (uint16_t i {0}; i < NUM_ELEMENT_CATEGORIES; ++i)
@@ -972,7 +972,7 @@ void DrawMineralHelpers(void)
 
 		// print x'es
 		fmt::format_to_sz_n(buf, "x");
-		t.baseline.x -= RES_SCALE(11);
+		t.baseline.x -= ResScale(11);
 		font_DrawText(&t);
 
 		// print the element amount
@@ -986,12 +986,12 @@ void DrawMineralHelpers(void)
 	}
 
 	SetContextForeGroundColor(BlackColor);
-	r.corner.y = s.origin.y - RES_SCALE(3);
+	r.corner.y = s.origin.y - ResScale(3);
 	DrawFilledRectangle(&r);
 
 	s.frame = SetAbsFrameIndex(s.frame, 68);
-	s.origin.x = r.corner.x + RES_RECENTER(r.extent.height);
-	s.origin.y = r.corner.y + RES_RECENTER(r.extent.height);
+	s.origin.x = r.corner.x + ResRecenter(r.extent.height);
+	s.origin.y = r.corner.y + ResRecenter(r.extent.height);
 	DrawStamp(&s);
 
 	// print the bio amount
@@ -1001,40 +1001,40 @@ void DrawMineralHelpers(void)
 	font_DrawText(&t);
 	t.baseline.y += ElementSpacingY();
 
-	r.corner.x = RES_SCALE(4);
-	r.corner.y = t.baseline.y - RES_SCALE(7);
-	r.extent.width = FieldWidth() - RES_SCALE(3);
-	r.extent.height = RES_SCALE(1);
+	r.corner.x = ResScale(4);
+	r.corner.y = t.baseline.y - ResScale(7);
+	r.extent.width = FieldWidth() - ResScale(3);
+	r.extent.height = ResScale(1);
 	SetContextForeGroundColor(CargoSelectedBackColor);
 	DrawFilledRectangle(&r);
 
 	SetContextForeGroundColor(ModuleNameColor);
 	t.align = ALIGN_LEFT;
-	t.baseline.x = r.corner.x + RES_SCALE(2);
-	t.baseline.y = r.corner.y + leading + RES_SCALE(1);
-	t.pStr = GAME_STRING(STATUS_STRING_BASE + 8); // FUEL:
+	t.baseline.x = r.corner.x + ResScale(2);
+	t.baseline.y = r.corner.y + leading + ResScale(1);
+	t.pStr = GameString(STATUS_STRING_BASE + 8); // FUEL:
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	t.baseline.y += leading;
-	t.pStr = GAME_STRING(STATUS_STRING_BASE + 9); // CREW:
+	t.pStr = GameString(STATUS_STRING_BASE + 9); // CREW:
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	t.baseline.y += leading;
-	t.pStr = GAME_STRING(STATUS_STRING_BASE + 10); // LAND.:
+	t.pStr = GameString(STATUS_STRING_BASE + 10); // LAND.:
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	t.baseline.y += leading;
-	t.pStr = GAME_STRING(STATUS_STRING_BASE + 11); // CARGO:
+	t.pStr = GameString(STATUS_STRING_BASE + 11); // CARGO:
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	SetContextForeGroundColor(ModulePriceColor);
 	t.align = ALIGN_RIGHT;
-	t.baseline.x = r.extent.width + RES_SCALE(2);
-	t.baseline.y = r.corner.y + leading + RES_SCALE(1);
+	t.baseline.x = r.extent.width + ResScale(2);
+	t.baseline.y = r.corner.y + leading + ResScale(1);
 	t.pStr = WholeFuelValue();
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);

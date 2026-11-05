@@ -232,10 +232,10 @@ void AdvanceLoadProgress(void)
 		GFXRECT r;
 		static uint16_t i = 0;
 
-		r.corner.x = RES_SCALE(16);
-		r.corner.y = CanvasHeight - DOS_BOOL_SCL(50, 30);
-		r.extent.height = RES_SCALE(15);
-		r.extent.width = RES_SCALE((i + 1) * 7);
+		r.corner.x = ResScale(16);
+		r.corner.y = CanvasHeight - DosBoolScl(50, 30);
+		r.extent.height = ResScale(15);
+		r.extent.width = ResScale((i + 1) * 7);
 
 		if (i == MaxLoadEntries)
 		{

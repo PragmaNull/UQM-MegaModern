@@ -80,9 +80,9 @@ extern uqstl::vector<uint32_t> g_addonList;
 
 inline constexpr uqgsl::czstring HdMode {"mm-hd"};
 
-#define DOS_MODE(a) ((a) ? "dos-mode-hd" : "dos-mode-sd")
-#define THREEDO_MODE(a) ((a) ? "3do-mode-hd" : "3do-mode-sd")
-#define WINDOW_MODE(a, b) ((b) == 0 ? DOS_MODE(a) : THREEDO_MODE(a))
+constexpr auto DosMode(const auto& a) { return ((a) ? "dos-mode-hd" : "dos-mode-sd"); }
+constexpr auto ThreedoMode(const auto& a) { return ((a) ? "3do-mode-hd" : "3do-mode-sd"); }
+constexpr auto WindowModeName(const auto& a, const auto& b) { return ((b) == 0 ? DosMode(a) : ThreedoMode(a)); }
 
 inline constexpr auto BaseContentName {"mm-" UQM_MAJOR_VERSION_S "." UQM_MINOR_VERSION_S "." UQM_PATCH_VERSION_S "-content.uqm"};
 

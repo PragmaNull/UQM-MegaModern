@@ -34,13 +34,13 @@ static constexpr auto ShipMass {7};
 // Plasmoid
 static constexpr auto WeaponEnergyCost {20};
 static constexpr auto WeaponWait {5};
-static auto MyconOffset() { return RES_SCALE(24); }
+static auto MyconOffset() { return ResScale(24); }
 static constexpr auto MissileOffset {0};
 static constexpr auto NumPlasmas {11};
 static constexpr auto NumGloballs {8};
 static constexpr auto PlasmaDuration {13};
 static constexpr auto MissileLife {(NumPlasmas * PlasmaDuration)};
-static auto MissileSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(8)); }
+static auto MissileSpeed() { return DisplayToWorld(ResScale(8)); }
 static constexpr auto MissileDamage {10};
 static constexpr auto TrackWait {1};
 
@@ -110,7 +110,7 @@ static RACE_DESC mycon_desc =
 		 nullptr},
 		{
 			0,
-			DISPLAY_TO_WORLD(800),
+			DisplayToWorld(800),
 			nullptr,
 		 },
 		(UNINIT_FUNC*)nullptr,
@@ -152,7 +152,7 @@ plasma_preprocess(ELEMENT* ElementPtr)
 	{
 		uint16_t facing {};
 
-		facing = NORMALIZE_FACING(ANGLE_TO_FACING(
+		facing = NormalizeFacing(AngleToFacing(
 			GetVelocityTravelAngle(&ElementPtr->velocity)));
 		if (TrackShip(ElementPtr, &facing) > 0)
 		{
@@ -280,24 +280,24 @@ mycon_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		int32_t delta_x {};
 		int32_t delta_y {};
 
-		travel_facing = NORMALIZE_FACING(
-			ANGLE_TO_FACING(GetVelocityTravelAngle(&ShipPtr->velocity)
-							+ HalfCircle));
+		travel_facing = NormalizeFacing(
+			AngleToFacing(GetVelocityTravelAngle(&ShipPtr->velocity)
+						  + HalfCircle));
 		delta_x = lpEvalDesc->ObjectPtr->current.location.x
 				- ShipPtr->current.location.x;
 		delta_y = lpEvalDesc->ObjectPtr->current.location.y
 				- ShipPtr->current.location.y;
-		direction_facing = NORMALIZE_FACING(
-			ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)));
+		direction_facing = NormalizeFacing(
+			AngleToFacing(ARCTAN(delta_x, delta_y)));
 
-		if (NORMALIZE_FACING(direction_facing
-							 - StarShipPtr->ShipFacing
-							 + ANGLE_TO_FACING(Quadrant))
-				<= ANGLE_TO_FACING(HalfCircle)
+		if (NormalizeFacing(direction_facing
+							- StarShipPtr->ShipFacing
+							+ AngleToFacing(Quadrant))
+				<= AngleToFacing(HalfCircle)
 			&& (!(StarShipPtr->cur_status_flags & (ShipBeyondMaxSpeed | ShipInGravityWell))
-				|| NORMALIZE_FACING(direction_facing
-									- travel_facing + ANGLE_TO_FACING(Octant))
-					   <= ANGLE_TO_FACING(Quadrant)))
+				|| NormalizeFacing(direction_facing
+								   - travel_facing + AngleToFacing(Octant))
+					   <= AngleToFacing(Quadrant)))
 		{
 			StarShipPtr->ship_input_state |= WeaponFlag;
 		}
@@ -306,7 +306,7 @@ mycon_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 	if (StarShipPtr->special_counter == 0)
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
-		StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = DISPLAY_TO_WORLD(RES_SCALE(800));
+		StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = DisplayToWorld(ResScale(800));
 		if (ShipPtr->crew_level < StarShipPtr->RaceDescPtr->ship_info.max_crew)
 		{
 			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = MissileSpeed() * MissileLife;
@@ -388,15 +388,15 @@ init_mycon(void)
 {
 	if (IsHd())
 	{
-		mycon_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		mycon_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
-		mycon_desc.cyborg_control.WeaponRange = DISPLAY_TO_WORLD(3200);
+		mycon_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		mycon_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
+		mycon_desc.cyborg_control.WeaponRange = DisplayToWorld(3200);
 	}
 	else
 	{
 		mycon_desc.characteristics.max_thrust = MaxThrust;
 		mycon_desc.characteristics.thrust_increment = ThrustIncrement;
-		mycon_desc.cyborg_control.WeaponRange = DISPLAY_TO_WORLD(800);
+		mycon_desc.cyborg_control.WeaponRange = DisplayToWorld(800);
 	}
 
 	mycon_desc.postprocess_func = mycon_postprocess;

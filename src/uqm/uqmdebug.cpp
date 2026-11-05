@@ -59,13 +59,13 @@ void doInstantMove(void)
 	{
 		// If no destination has been selected, use the current location
 		// as the destination.
-		uqm::flagship().autopilot.setTarget({LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)), LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y))});
+		uqm::flagship().autopilot.setTarget({LogxToUniverse(GLOBAL_SIS(log_x)), LogyToUniverse(GLOBAL_SIS(log_y))});
 	}
 	else
 	{
 		// A new destination has been selected.
-		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(uqm::flagship().autopilot.target().x);
-		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(uqm::flagship().autopilot.target().y);
+		GLOBAL_SIS(log_x) = UniverseToLogx(uqm::flagship().autopilot.target().x);
+		GLOBAL_SIS(log_y) = UniverseToLogy(uqm::flagship().autopilot.target().y);
 	}
 
 	// Check for a solar systems at the destination.
@@ -498,7 +498,7 @@ void dumpEvent(FILE* out, const EVENT* eventPtr)
 void dumpEvents(FILE* out)
 {
 	LockGameClock();
-	ForAllEvents(dumpEventCallback, out);
+	ForAllEvents(reinterpret_cast<void (*)(LINK*, void*)>(dumpEventCallback), out);
 	UnlockGameClock();
 }
 
@@ -880,7 +880,7 @@ starRecurse(STAR_DESC* star, void* arg)
 
 	SolarSysState.SunDesc[0].pPrevDesc = 0;
 	SolarSysState.SunDesc[0].rand_seed = SysGenRNGDebug->next();
-	SolarSysState.SunDesc[0].data_index = STAR_TYPE(star->Type);
+	SolarSysState.SunDesc[0].data_index = StarType(star->Type);
 	SolarSysState.SunDesc[0].location.x = 0;
 	SolarSysState.SunDesc[0].location.y = 0;
 	//SolarSysState.SunDesc[0].radius = MinZoomRadius;
@@ -1051,8 +1051,8 @@ void dumpSystem(FILE* out, const STAR_DESC* star, const SOLARSYS_STATE* system)
 
 	GetClusterName(star, name);
 	fmt::format_to_sz_n(buf, "{} {}",
-						bodyColorString(STAR_COLOR(star->Type)),
-						starTypeString(STAR_TYPE(star->Type)));
+						bodyColorString(StarColor(star->Type)),
+						starTypeString(StarType(star->Type)));
 
 	fmt::print(out, "{:>22}  ({:3}.{:1}, {:3}.{:1}) {:>19}  {}\n",
 			   name,
@@ -1662,9 +1662,9 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 			   "\tDensity: {}\n"
 			   "\tElements:\n",
 			   planetTypeString(index),
-			   worldSizeString(PLANSIZE(planetType->Type)),
-			   bodyColorString(PLANCOLOR(planetType->Type)),
-			   worldGenAlgoString(PLANALGO(planetType->Type)),
+			   worldSizeString(Plansize(planetType->Type)),
+			   bodyColorString(Plancolor(planetType->Type)),
+			   worldGenAlgoString(Planalgo(planetType->Type)),
 			   tectonicsString(planetType->BaseTectonics),
 			   atmosphereString(uqm::highNibble(planetType->AtmoAndDensity)),
 			   densityString(uqm::lowNibble(planetType->AtmoAndDensity)));
@@ -1677,11 +1677,11 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 			continue;
 		}
 		fmt::print(out, "\t\t0 to {} {}-quality (+{}) deposits of {} ({})\n",
-				   DEPOSIT_QUANTITY(entry->Density),
-				   depositQualityString(DEPOSIT_QUALITY(entry->Density)),
-				   DEPOSIT_QUALITY(entry->Density) * 5,
-				   GAME_STRING(ELEMENTS_STRING_BASE + entry->ElementType),
-				   GAME_STRING(CARGO_STRING_BASE + 2 + ElementCategory(entry->ElementType)));
+				   DepositQuantity(entry->Density),
+				   depositQualityString(DepositQuality(entry->Density)),
+				   DepositQuality(entry->Density) * 5,
+				   GameString(ELEMENTS_STRING_BASE + entry->ElementType),
+				   GameString(CARGO_STRING_BASE + 2 + ElementCategory(entry->ElementType)));
 	}
 	fmt::print(out, "\n");
 }
@@ -1695,19 +1695,19 @@ planetTypeString(int typeIndex)
 	{
 		// "Gas Giant"
 		fmt::format_to_sz_n(typeStr, "{}",
-							GAME_STRING(SCAN_STRING_BASE + 4 + 51));
+							GameString(SCAN_STRING_BASE + 4 + 51));
 	}
 	else
 	{
 		// "<type> World" (eg. "Water World")
 		fmt::format_to_sz_n(typeStr, "{} {}",
-							GAME_STRING(SCAN_STRING_BASE + 4 + typeIndex),
-							GAME_STRING(SCAN_STRING_BASE + 4 + 50));
+							GameString(SCAN_STRING_BASE + 4 + typeIndex),
+							GameString(SCAN_STRING_BASE + 4 + 50));
 	}
 	return typeStr;
 }
 
-// size is what you get from PLANSIZE (planetFrame.Type)
+// size is what you get from Plansize (planetFrame.Type)
 const char*
 worldSizeString(uint8_t size)
 {
@@ -1725,7 +1725,7 @@ worldSizeString(uint8_t size)
 	}
 }
 
-// algo is what you get from PLANALGO (planetFrame.Type)
+// algo is what you get from Planalgo (planetFrame.Type)
 const char*
 worldGenAlgoString(uint8_t algo)
 {
@@ -1808,7 +1808,7 @@ densityString(uint8_t density)
 	}
 }
 
-// quality is what you get from DEPOSIT_QUALITY (elementEntry.Density)
+// quality is what you get from DepositQuality (elementEntry.Density)
 const char*
 depositQualityString(uint8_t quality)
 {
@@ -1922,7 +1922,7 @@ void dumpStrings(FILE* out)
 			categoryI++;
 		}
 		fmt::print(out, "[ {} + {} ]  {}\n", categories[categoryI].name,
-				   stringI - categories[categoryI].base, GAME_STRING((uint16_t)stringI));
+				   stringI - categories[categoryI].base, GameString((uint16_t)stringI));
 	}
 }
 

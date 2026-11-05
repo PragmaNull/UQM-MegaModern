@@ -38,21 +38,21 @@ static constexpr auto ShipMass {2};
 // Particle Beam Stiletto
 static constexpr auto WeaponEnergyCost {1};
 static constexpr auto WeaponWait {8};
-static auto SyreenOffset() { return RES_SCALE(30); }
-static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(30)};
+static auto SyreenOffset() { return ResScale(30); }
+static constexpr auto MissileSpeed {DisplayToWorld(30)};
 static constexpr auto MissileLife {10};
 static constexpr auto MissileHits {1};
 static constexpr auto MissileDamage {2};
-static auto MissileOffset() { return RES_SCALE(3); }
+static auto MissileOffset() { return ResScale(3); }
 
 // Syreen song
 static constexpr auto SpecialEnergyCost {5};
 static constexpr auto SpecialWait {20};
-static auto AbandonerRange() { return RES_SCALE(208); } /* originally SpaceHeight() */
+static auto AbandonerRange() { return ResScale(208); } /* originally SpaceHeight() */
 static constexpr auto MaxAbandoners {8};
 
 // HdResolutionFactor
-static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
 static RACE_DESC syreen_desc =
 	{
@@ -204,8 +204,8 @@ spawn_crew(ELEMENT* ElementPtr)
 					dy = -dy;
 				}
 
-				dx = WORLD_TO_DISPLAY(dx);
-				dy = WORLD_TO_DISPLAY(dy);
+				dx = WorldToDisplay(dx);
+				dy = WorldToDisplay(dy);
 				if (dx <= AbandonerRange() && dy <= AbandonerRange()
 					&& (d_squared = (uint32_t)((uint16_t)dx * (uint16_t)dx)
 								  + (uint32_t)((uint16_t)dy * (uint16_t)dy))
@@ -291,8 +291,8 @@ init_syreen(void)
 {
 	if (IsHd())
 	{
-		syreen_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		syreen_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		syreen_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		syreen_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		syreen_desc.cyborg_control.WeaponRange = (MissileSpeedHd() * MissileLife * 2 / 3);
 	}
 	else

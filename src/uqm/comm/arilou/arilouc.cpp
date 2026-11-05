@@ -237,29 +237,29 @@ ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
-	if (PLAYER_SAID(R, bye_angry_space))
+	if (PlayerSaid(R, bye_angry_space))
 	{
 		NPCPhrase(GOODBYE_ANGRY_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_friendly_space))
+	else if (PlayerSaid(R, bye_friendly_space))
 	{
 		NPCPhrase(GOODBYE_FRIENDLY_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_friendly_homeworld))
+	else if (PlayerSaid(R, bye_friendly_homeworld))
 	{
 		NPCPhrase(GOODBYE_FRDLY_HOMEWORLD);
 	}
-	else if (PLAYER_SAID(R, lets_fight))
+	else if (PlayerSaid(R, lets_fight))
 	{
 		NPCPhrase(NO_FIGHT);
 	}
-	else if (PLAYER_SAID(R, bug_eyed_fruitcakes))
+	else if (PlayerSaid(R, bug_eyed_fruitcakes))
 	{
 		NPCPhrase(WE_NEVER_FRIENDS);
 
 		SET_GAME_STATE(ARILOU_MANNER, 2);
 	}
-	else if (PLAYER_SAID(R, best_if_i_killed_you))
+	else if (PlayerSaid(R, best_if_i_killed_you))
 	{
 		NPCPhrase(WICKED_HUMAN);
 
@@ -275,51 +275,51 @@ ArilouHome(RESPONSE_REF R)
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
-	if (PLAYER_SAID(R, confused_by_hello))
+	if (PlayerSaid(R, confused_by_hello))
 	{
 		NPCPhrase(CONFUSED_RESPONSE);
 	}
-	else if (PLAYER_SAID(R, happy_by_hello))
+	else if (PlayerSaid(R, happy_by_hello))
 	{
 		NPCPhrase(HAPPY_RESPONSE);
 	}
-	else if (PLAYER_SAID(R, miffed_by_hello))
+	else if (PlayerSaid(R, miffed_by_hello))
 	{
 		NPCPhrase(MIFFED_RESPONSE);
 	}
-	else if (PLAYER_SAID(R, ok_lets_be_friends))
+	else if (PlayerSaid(R, ok_lets_be_friends))
 	{
 		NPCPhrase(NO_ALLY_BUT_MUCH_GIVE);
 	}
-	else if (PLAYER_SAID(R, what_about_war))
+	else if (PlayerSaid(R, what_about_war))
 	{
 		NPCPhrase(ABOUT_WAR);
 
 		SET_GAME_STATE(ARILOU_STACK_1, 1);
 		SetHomeworldKnown(SHOFIXTI_HOME);
 	}
-	else if (PLAYER_SAID(R, what_about_urquan))
+	else if (PlayerSaid(R, what_about_urquan))
 	{
 		NPCPhrase(ABOUT_URQUAN);
 
 		SET_GAME_STATE(ARILOU_STACK_1, 2);
 		SetHomeworldKnown(SYREEN_HOME);
 	}
-	else if (PLAYER_SAID(R, tell_arilou_about_tpet))
+	else if (PlayerSaid(R, tell_arilou_about_tpet))
 	{
 		NPCPhrase(BAD_NEWS_ABOUT_TPET);
 
 		LastStack = 1;
 		SET_GAME_STATE(ARILOU_STACK_2, 1);
 	}
-	else if (PLAYER_SAID(R, what_do_about_tpet))
+	else if (PlayerSaid(R, what_do_about_tpet))
 	{
 		NPCPhrase(DANGEROUS_BUT_USEFUL);
 
 		LastStack = 1;
 		SET_GAME_STATE(ARILOU_STACK_2, 2);
 	}
-	else if (PLAYER_SAID(R, learned_about_umgah))
+	else if (PlayerSaid(R, learned_about_umgah))
 	{
 		if (GET_GAME_STATE(ARILOU_CHECKED_UMGAH) != 2)
 		{
@@ -336,7 +336,7 @@ ArilouHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(learned_about_umgah);
 	}
-	else if (PLAYER_SAID(R, umgah_acting_weird))
+	else if (PlayerSaid(R, umgah_acting_weird))
 	{
 		NPCPhrase(WELL_GO_CHECK);
 
@@ -344,35 +344,35 @@ ArilouHome(RESPONSE_REF R)
 		AddEvent(RELATIVE_EVENT, 0, 10, 0, ARILOU_UMGAH_CHECK);
 		DISABLE_PHRASE(umgah_acting_weird);
 	}
-	else if (PLAYER_SAID(R, what_do_now))
+	else if (PlayerSaid(R, what_do_now))
 	{
 		NPCPhrase(GO_FIND_OUT);
 
 		SET_GAME_STATE(ARILOU_CHECKED_UMGAH, 3);
 		SetHomeworldKnown(UMGAH_HOME);
 	}
-	else if (PLAYER_SAID(R, what_did_on_earth))
+	else if (PlayerSaid(R, what_did_on_earth))
 	{
 		NPCPhrase(DID_THIS);
 
 		LastStack = 2;
 		SET_GAME_STATE(ARILOU_STACK_3, 1);
 	}
-	else if (PLAYER_SAID(R, why_did_this))
+	else if (PlayerSaid(R, why_did_this))
 	{
 		NPCPhrase(IDF_PARASITES);
 
 		LastStack = 2;
 		SET_GAME_STATE(ARILOU_STACK_3, 2);
 	}
-	else if (PLAYER_SAID(R, tell_more))
+	else if (PlayerSaid(R, tell_more))
 	{
 		NPCPhrase(NOT_NOW);
 
 		LastStack = 2;
 		SET_GAME_STATE(ARILOU_STACK_3, 3);
 	}
-	else if (PLAYER_SAID(R, what_give_me))
+	else if (PlayerSaid(R, what_give_me))
 	{
 		NPCPhrase(ABOUT_PORTAL);
 
@@ -382,19 +382,19 @@ ArilouHome(RESPONSE_REF R)
 		R = about_portal_again;
 		DISABLE_PHRASE(what_give_me);
 	}
-	else if (PLAYER_SAID(R, what_about_tpet))
+	else if (PlayerSaid(R, what_about_tpet))
 	{
 		NPCPhrase(ABOUT_TPET);
 
 		SET_GAME_STATE(ARILOU_STACK_4, 1);
 	}
-	else if (PLAYER_SAID(R, about_portal_again))
+	else if (PlayerSaid(R, about_portal_again))
 	{
 		NPCPhrase(PORTAL_AGAIN);
 
 		DISABLE_PHRASE(about_portal_again);
 	}
-	else if (PLAYER_SAID(R, got_it))
+	else if (PlayerSaid(R, got_it))
 	{
 		if (GET_GAME_STATE(ARILOU_HOME_VISITS) == 1)
 		{
@@ -407,7 +407,7 @@ ArilouHome(RESPONSE_REF R)
 		SET_GAME_STATE(PORTAL_SPAWNER_ON_SHIP, 1);
 	}
 #ifdef NEVER
-	else if (PLAYER_SAID(R, got_tpet))
+	else if (PlayerSaid(R, got_tpet))
 	{
 		NPCPhrase(OK_GOT_TPET);
 
@@ -453,7 +453,7 @@ ArilouHome(RESPONSE_REF R)
 			{
 				pStr[1] = umgah_acting_weird;
 			}
-			else if (PHRASE_ENABLED(learned_about_umgah) && PHRASE_ENABLED(umgah_acting_weird))
+			else if (PhraseEnabled(learned_about_umgah) && PhraseEnabled(umgah_acting_weird))
 			{
 				pStr[1] = learned_about_umgah;
 			}
@@ -502,7 +502,7 @@ ArilouHome(RESPONSE_REF R)
 		{
 			Response(got_it, ArilouHome);
 		}
-		else if (PHRASE_ENABLED(about_portal_again) && !GET_GAME_STATE(PORTAL_SPAWNER))
+		else if (PhraseEnabled(about_portal_again) && !GET_GAME_STATE(PORTAL_SPAWNER))
 		{
 			Response(about_portal_again, ArilouHome);
 		}
@@ -517,32 +517,32 @@ ArilouHome(RESPONSE_REF R)
 static void
 AngryHomeArilou(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, invaders_from_mars))
+	if (PlayerSaid(R, invaders_from_mars))
 	{
 		NPCPhrase(HAD_OUR_REASONS);
 
 		DISABLE_PHRASE(invaders_from_mars);
 	}
-	else if (PLAYER_SAID(R, why_should_i_trust))
+	else if (PlayerSaid(R, why_should_i_trust))
 	{
 		NPCPhrase(TRUST_BECAUSE);
 
 		DISABLE_PHRASE(why_should_i_trust);
 	}
-	else if (PLAYER_SAID(R, what_about_interference))
+	else if (PlayerSaid(R, what_about_interference))
 	{
 		NPCPhrase(INTERFERENCE_NECESSARY);
 
 		DISABLE_PHRASE(what_about_interference);
 	}
-	else if (PLAYER_SAID(R, i_just_like_to_leave))
+	else if (PlayerSaid(R, i_just_like_to_leave))
 	{
 		NPCPhrase(SORRY_NO_LEAVE);
 
 		DISABLE_PHRASE(i_just_like_to_leave);
 	}
 
-	if (PHRASE_ENABLED(invaders_from_mars))
+	if (PhraseEnabled(invaders_from_mars))
 	{
 		Response(invaders_from_mars, AngryHomeArilou);
 	}
@@ -551,18 +551,18 @@ AngryHomeArilou(RESPONSE_REF R)
 		Response(bug_eyed_fruitcakes, ExitConversation);
 	}
 
-	if (PHRASE_ENABLED(why_should_i_trust))
+	if (PhraseEnabled(why_should_i_trust))
 	{
 		Response(why_should_i_trust, AngryHomeArilou);
 	}
-	else if (PHRASE_ENABLED(what_about_interference))
+	else if (PhraseEnabled(what_about_interference))
 	{
 		Response(what_about_interference, AngryHomeArilou);
 	}
 
 	Response(ok_lets_be_friends, ArilouHome);
 
-	if (PHRASE_ENABLED(i_just_like_to_leave))
+	if (PhraseEnabled(i_just_like_to_leave))
 	{
 		Response(i_just_like_to_leave, AngryHomeArilou);
 	}
@@ -571,7 +571,7 @@ AngryHomeArilou(RESPONSE_REF R)
 static void
 AngrySpaceArilou(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, im_sorry))
+	if (PlayerSaid(R, im_sorry))
 	{
 		NPCPhrase(APOLOGIZE_AT_HOMEWORLD);
 
@@ -579,7 +579,7 @@ AngrySpaceArilou(RESPONSE_REF R)
 	}
 
 	Response(lets_fight, ExitConversation);
-	if (PHRASE_ENABLED(im_sorry))
+	if (PhraseEnabled(im_sorry))
 	{
 		Response(im_sorry, AngrySpaceArilou);
 	}
@@ -591,20 +591,20 @@ FriendlySpaceArilou(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, confused_by_hello))
+	if (PlayerSaid(R, confused_by_hello))
 	{
 		NPCPhrase(CONFUSED_RESPONSE);
 	}
-	else if (PLAYER_SAID(R, happy_by_hello))
+	else if (PlayerSaid(R, happy_by_hello))
 	{
 		NPCPhrase(HAPPY_RESPONSE);
 	}
-	else if (PLAYER_SAID(R, miffed_by_hello))
+	else if (PlayerSaid(R, miffed_by_hello))
 	{
 		NPCPhrase(MIFFED_RESPONSE);
 	}
-	else if (PLAYER_SAID(R, whats_up_1)
-			 || PLAYER_SAID(R, whats_up_2))
+	else if (PlayerSaid(R, whats_up_1)
+			 || PlayerSaid(R, whats_up_2))
 	{
 		NumVisits = GET_GAME_STATE(ARILOU_INFO);
 		switch (NumVisits++)
@@ -627,26 +627,26 @@ FriendlySpaceArilou(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_2);
 	}
-	else if (PLAYER_SAID(R, why_you_here))
+	else if (PlayerSaid(R, why_you_here))
 	{
 		NPCPhrase(LEARN_THINGS);
 
 		SET_GAME_STATE(ARILOU_STACK_5, 1);
 	}
-	else if (PLAYER_SAID(R, what_things))
+	else if (PlayerSaid(R, what_things))
 	{
 		NPCPhrase(THESE_THINGS);
 
 		SET_GAME_STATE(ARILOU_STACK_5, 2);
 	}
-	else if (PLAYER_SAID(R, why_do_it))
+	else if (PlayerSaid(R, why_do_it))
 	{
 		NPCPhrase(DO_IT_BECAUSE);
 
 		SET_GAME_STATE(ARILOU_STACK_5, 3);
 	}
-	else if (PLAYER_SAID(R, give_me_info_1)
-			 || PLAYER_SAID(R, give_me_info_2))
+	else if (PlayerSaid(R, give_me_info_1)
+			 || PlayerSaid(R, give_me_info_2))
 	{
 		NumVisits = GET_GAME_STATE(ARILOU_HINTS);
 		switch (NumVisits++)
@@ -688,7 +688,7 @@ FriendlySpaceArilou(RESPONSE_REF R)
 			Response(why_do_it, FriendlySpaceArilou);
 			break;
 	}
-	if (PHRASE_ENABLED(whats_up_2))
+	if (PhraseEnabled(whats_up_2))
 	{
 		if (GET_GAME_STATE(ARILOU_INFO) == 0)
 		{
@@ -699,7 +699,7 @@ FriendlySpaceArilou(RESPONSE_REF R)
 			Response(whats_up_2, FriendlySpaceArilou);
 		}
 	}
-	if (PHRASE_ENABLED(give_me_info_2))
+	if (PhraseEnabled(give_me_info_2))
 	{
 		if (GET_GAME_STATE(ARILOU_HINTS) == 0)
 		{
@@ -917,7 +917,7 @@ init_arilou_comm(void)
 
 	arilou_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	arilou_desc.AlienTextBaseline.y = 0;
-	arilou_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	arilou_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) > 1
 		|| GET_GAME_STATE(ARILOU_MANNER) == 3

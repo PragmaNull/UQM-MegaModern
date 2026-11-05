@@ -35,7 +35,7 @@ typedef struct velocity_desc
 	EXTENT incr;
 } VELOCITY_DESC;
 
-#define ZeroVelocityComponents(pv) memset(pv, 0, sizeof(*(pv)))
+constexpr auto ZeroVelocityComponents(const auto& pv) { return memset(pv, 0, sizeof(*(pv))); }
 #define GetVelocityTravelAngle(pv) (pv)->TravelAngle
 
 extern void GetCurrentVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t* pdy);
@@ -70,8 +70,8 @@ inline constexpr auto VelocityShift {5};
 inline constexpr auto VelocityScale {(1 << VelocityShift)};
 
 
-#define VELOCITY_TO_WORLD(v) ((v) >> VelocityShift)
-#define WORLD_TO_VELOCITY(l) ((l) << VelocityShift)
+constexpr auto VelocityToWorld(const auto& v) { return ((v) >> VelocityShift); }
+constexpr auto WorldToVelocity(const auto& l) { return ((l) << VelocityShift); }
 
 #if 0 //defined(__cplusplus)
 }

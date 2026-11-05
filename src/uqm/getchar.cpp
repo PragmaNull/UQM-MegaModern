@@ -164,10 +164,10 @@ FlashCursor(void)
 		{
 			GFXRECT r;
 
-			r.corner.x = SisOrgX() + RES_SCALE(1);
+			r.corner.x = SisOrgX() + ResScale(1);
 			r.corner.y = SisOrgY() - SisMessageHeight();
 			r.extent.width = SisMessageWidth();
-			r.extent.height = SisMessageHeight() - RES_SCALE(1);
+			r.extent.height = SisMessageHeight() - ResScale(1);
 			SetContextFGFrame(Screen);
 			SetContextClipRect(&r);
 		}

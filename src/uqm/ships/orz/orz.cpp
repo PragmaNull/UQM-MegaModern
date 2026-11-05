@@ -41,7 +41,7 @@ static constexpr auto ShipMass {4};
 static constexpr auto WeaponEnergyCost {(MaxEnergy / 3)};
 static constexpr auto WeaponWait {4};
 
-static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(30)};
+static constexpr auto MissileSpeed {DisplayToWorld(30)};
 static constexpr auto MissileLife {12};
 static constexpr auto MissileHits {2};
 static constexpr auto MissileDamage {3};
@@ -50,8 +50,8 @@ static constexpr auto MissileOffset {1};
 // Marine
 static constexpr auto SpecialEnergyCost {0};
 static constexpr auto SpecialWait {12};
-static auto MarineMaxThrust() { return RES_SCALE(32); }
-static auto MarineThrustIncrement() { return RES_SCALE(8); }
+static auto MarineMaxThrust() { return ResScale(32); }
+static auto MarineThrustIncrement() { return ResScale(8); }
 static constexpr auto MarineHitPoints {3};
 static constexpr auto MarineMassPoints {1};
 static constexpr auto MaxMarines {8};
@@ -60,11 +60,11 @@ static constexpr auto IonLife {1};
 static constexpr auto StartIonColor {BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A)};
 
 // Rotating Turret
-static auto TurretOffset() { return RES_SCALE(14); }
+static auto TurretOffset() { return ResScale(14); }
 static constexpr auto TurretWait {3};
 
 // HdResolutionFactor
-static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
 static RACE_DESC orz_desc =
 	{
@@ -177,8 +177,8 @@ initialize_turret_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 		TurretPtr->turn_wait = TurretWait + 1;
 	}
 	MissileBlock.face = MissileBlock.index =
-		NORMALIZE_FACING(StarShipPtr->ShipFacing
-						 + TurretPtr->thrust_wait);
+		NormalizeFacing(StarShipPtr->ShipFacing
+						+ TurretPtr->thrust_wait);
 	UnlockElement(GetSuccElement(ShipPtr));
 
 	MissileBlock.sender = ShipPtr->playerNr;
@@ -283,7 +283,7 @@ orz_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			&& (StarShipPtr->cur_status_flags
 				& (ShipAtMaxSpeed | ShipBeyondMaxSpeed))
 			&& !(StarShipPtr->ship_input_state & ThrustFlag)
-			&& NORMALIZE_ANGLE(
+			&& NormalizeAngle(
 				   GetVelocityTravelAngle(&ShipPtr->velocity)
 				   - ARCTAN(
 					   lpEvalDesc->ObjectPtr->next.location.x
@@ -304,17 +304,17 @@ orz_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			int16_t delta_facing {};
 			uint16_t facing {}; //, orig_facing;
 
-			facing = NORMALIZE_FACING(StarShipPtr->ShipFacing
-									  + TurretPtr->thrust_wait);
+			facing = NormalizeFacing(StarShipPtr->ShipFacing
+									 + TurretPtr->thrust_wait);
 			if ((delta_facing = TrackShip(TurretPtr, &facing)) > 0)
 			{
 				StarShipPtr->ship_input_state |= SpecialFlag;
-				if (delta_facing == ANGLE_TO_FACING(HalfCircle))
+				if (delta_facing == AngleToFacing(HalfCircle))
 				{
 					delta_facing += (((uint8_t)uqm::random().next() & 1) << 1) - 1;
 				}
 
-				if (delta_facing < ANGLE_TO_FACING(HalfCircle))
+				if (delta_facing < AngleToFacing(HalfCircle))
 				{
 					StarShipPtr->ship_input_state |= RightFlag;
 				}
@@ -331,9 +331,9 @@ orz_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			&& StarShipPtr->RaceDescPtr->ship_info.crew_level > (uint8_t)(StarShipPtr->RaceDescPtr->ship_info.max_crew >> 2)
 			&& !(EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags
 				 & PointDefense)
-			&& (MANEUVERABILITY(
+			&& (Maneuverability(
 					&EnemyStarShipPtr->RaceDescPtr->cyborg_control)
-					< RESOLUTION_COMPENSATED(SlowShip)
+					< ResolutionCompensated(SlowShip)
 				|| lpEvalDesc->which_turn <= 12
 				|| count_marines(StarShipPtr, false) < 2))
 		{
@@ -419,8 +419,8 @@ void intruder_preprocess(ELEMENT* ElementPtr)
 			{
 				--ElementPtr->thrust_wait;
 
-				s.origin.x = RES_SCALE(16 + (ElementPtr->turn_wait & 3) * 9);
-				s.origin.y = RES_SCALE(14 + (ElementPtr->turn_wait >> 2) * 11);
+				s.origin.x = ResScale(16 + (ElementPtr->turn_wait & 3) * 9);
+				s.origin.y = ResScale(14 + (ElementPtr->turn_wait >> 2) * 11);
 				s.frame = SetAbsFrameIndex(ElementPtr->next.image.farray[0],
 										   GetFrameCount(ElementPtr->next.image.farray[0]) - 2);
 				if (IsHd()) // Clear background
@@ -438,8 +438,8 @@ void intruder_preprocess(ELEMENT* ElementPtr)
 				UnlockElement(hElement);
 				hElement = 0;
 LeftShip:
-				s.origin.x = RES_SCALE(16 + (ElementPtr->turn_wait & 3) * 9);
-				s.origin.y = RES_SCALE(14 + (ElementPtr->turn_wait >> 2) * 11);
+				s.origin.x = ResScale(16 + (ElementPtr->turn_wait & 3) * 9);
+				s.origin.y = ResScale(14 + (ElementPtr->turn_wait >> 2) * 11);
 				s.frame = ElementPtr->next.image.frame;
 				ModifySilhouette(ShipPtr, &s, ModifySwap);
 			}
@@ -469,8 +469,8 @@ LeftShip:
 					}
 
 					++ElementPtr->thrust_wait;
-					s.origin.x = RES_SCALE(16 + (ElementPtr->turn_wait & 3) * 9);
-					s.origin.y = RES_SCALE(14 + (ElementPtr->turn_wait >> 2) * 11);
+					s.origin.x = ResScale(16 + (ElementPtr->turn_wait & 3) * 9);
+					s.origin.y = ResScale(14 + (ElementPtr->turn_wait >> 2) * 11);
 					s.frame = SetAbsFrameIndex(ElementPtr->next.image.farray[0],
 											   GetFrameCount(ElementPtr->next.image.farray[0]) - 1);
 					ModifySilhouette(ShipPtr, &s, 0);
@@ -500,7 +500,7 @@ LeftShip:
 					StarShipPtr->RaceDescPtr->ship_data.special[0], 21);
 		ElementPtr->thrust_wait = 0;
 		ElementPtr->turn_wait =
-			uqm::makeByte(0, NORMALIZE_FACING((uint8_t)uqm::random().next()));
+			uqm::makeByte(0, NormalizeFacing((uint8_t)uqm::random().next()));
 		ElementPtr->preprocess_func = marine_preprocess;
 	}
 }
@@ -516,7 +516,7 @@ spawn_marine_ion_trail(ELEMENT* ElementPtr, STARSHIP* StarShipPtr,
 		uint16_t angle {};
 		ELEMENT* IonElementPtr {};
 
-		angle = FACING_TO_ANGLE(facing) + HalfCircle;
+		angle = FacingToAngle(facing) + HalfCircle;
 
 		InsertElement(hIonElement, GetHeadElement());
 		LockElement(hIonElement, &IonElementPtr);
@@ -534,9 +534,9 @@ spawn_marine_ion_trail(ELEMENT* ElementPtr, STARSHIP* StarShipPtr,
 		IonElementPtr->colorCycleIndex = 0;
 		IonElementPtr->current.location = ElementPtr->current.location;
 		IonElementPtr->current.location.x +=
-			(int16_t)COSINE(angle, DISPLAY_TO_WORLD(RES_SCALE(2)));
+			(int16_t)Cosine(angle, DisplayToWorld(ResScale(2)));
 		IonElementPtr->current.location.y +=
-			(int16_t)SINE(angle, DISPLAY_TO_WORLD(RES_SCALE(2)));
+			(int16_t)Sine(angle, DisplayToWorld(ResScale(2)));
 		IonElementPtr->death_func = ion_preprocess;
 
 		SetElementStarShip(IonElementPtr, StarShipPtr);
@@ -597,23 +597,23 @@ marine_preprocess(ELEMENT* ElementPtr)
 		{
 			LockElement(hObject, &ObjectPtr);
 			hNextObject = GetSuccElement(ObjectPtr);
-			if (GRAVITY_MASS(ObjectPtr->mass_points))
+			if (GravityMass(ObjectPtr->mass_points))
 			{
 				delta_x = ObjectPtr->current.location.x
 						- ElementPtr->current.location.x;
-				delta_x = WRAP_DELTA_X(delta_x);
+				delta_x = WrapDeltaX(delta_x);
 
 				delta_y = ObjectPtr->current.location.y
 						- ElementPtr->current.location.y;
-				delta_y = WRAP_DELTA_Y(delta_y);
-				if ((long)delta_x * delta_x + (long)delta_y * delta_y <= (long)(DISPLAY_TO_WORLD(GravityThreshold())
-																				* DISPLAY_TO_WORLD(GravityThreshold())))
+				delta_y = WrapDeltaY(delta_y);
+				if ((long)delta_x * delta_x + (long)delta_y * delta_y <= (long)(DisplayToWorld(GravityThreshold())
+																				* DisplayToWorld(GravityThreshold())))
 				{
-					pfacing = ANGLE_TO_FACING(ARCTAN(delta_x, delta_y));
-					delta_facing = NORMALIZE_FACING(
-						pfacing - ANGLE_TO_FACING(GetVelocityTravelAngle(&ElementPtr->velocity))
-						+ ANGLE_TO_FACING(Octant));
-					if (delta_facing <= ANGLE_TO_FACING(Quadrant))
+					pfacing = AngleToFacing(ARCTAN(delta_x, delta_y));
+					delta_facing = NormalizeFacing(
+						pfacing - AngleToFacing(GetVelocityTravelAngle(&ElementPtr->velocity))
+						+ AngleToFacing(Octant));
+					if (delta_facing <= AngleToFacing(Quadrant))
 					{
 						hTarget = hObject;
 						hNextObject = 0;
@@ -624,7 +624,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 			}
 			else if ((ObjectPtr->state_flags & PlayerShip)
 					 && ObjectPtr->crew_level
-					 && !OBJECT_CLOAKED(ObjectPtr))
+					 && !ObjectCloaked(ObjectPtr))
 			{
 				if (!elementsOfSamePlayer(ObjectPtr, ElementPtr))
 				{
@@ -651,26 +651,26 @@ marine_preprocess(ELEMENT* ElementPtr)
 			LockElement(hTarget, &ObjectPtr);
 			delta_x = ObjectPtr->current.location.x
 					- ElementPtr->current.location.x;
-			delta_x = WRAP_DELTA_X(delta_x);
+			delta_x = WrapDeltaX(delta_x);
 			delta_y = ObjectPtr->current.location.y
 					- ElementPtr->current.location.y;
-			delta_y = WRAP_DELTA_Y(delta_y);
-			if (GRAVITY_MASS(ObjectPtr->mass_points))
+			delta_y = WrapDeltaY(delta_y);
+			if (GravityMass(ObjectPtr->mass_points))
 			{
-				delta_facing = NORMALIZE_FACING(pfacing - facing
-												+ ANGLE_TO_FACING(Octant));
+				delta_facing = NormalizeFacing(pfacing - facing
+											   + AngleToFacing(Octant));
 
-				if (delta_facing > ANGLE_TO_FACING(Quadrant))
+				if (delta_facing > AngleToFacing(Quadrant))
 				{
 					delta_facing = 0;
 				}
 				else
 				{
-					if (delta_facing == ANGLE_TO_FACING(Octant))
+					if (delta_facing == AngleToFacing(Octant))
 					{
 						facing += (((int16_t)uqm::random().next() & 1) << 1) - 1;
 					}
-					else if (delta_facing < ANGLE_TO_FACING(Octant))
+					else if (delta_facing < AngleToFacing(Octant))
 					{
 						++facing;
 					}
@@ -695,7 +695,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 					ElementPtr->state_flags |= Changing;
 				}
 
-				num_frames = RES_DESCALE(WORLD_TO_TURN(
+				num_frames = ResDescale(WorldToTurn(
 					square_root((long)delta_x * delta_x
 								+ (long)delta_y * delta_y)));
 
@@ -713,16 +713,16 @@ marine_preprocess(ELEMENT* ElementPtr)
 				delta_y = ((int32_t)ObjectPtr->current.location.y + delta_y)
 						- (int32_t)ElementPtr->current.location.y;
 
-				delta_facing = NORMALIZE_FACING(
-					ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)) - facing);
+				delta_facing = NormalizeFacing(
+					AngleToFacing(ARCTAN(delta_x, delta_y)) - facing);
 
 				if (delta_facing > 0)
 				{
-					if (delta_facing == ANGLE_TO_FACING(HalfCircle))
+					if (delta_facing == AngleToFacing(HalfCircle))
 					{
 						facing += (((uint8_t)uqm::random().next() & 1) << 1) - 1;
 					}
-					else if (delta_facing < ANGLE_TO_FACING(HalfCircle))
+					else if (delta_facing < AngleToFacing(HalfCircle))
 					{
 						++facing;
 					}
@@ -735,7 +735,7 @@ marine_preprocess(ELEMENT* ElementPtr)
 			UnlockElement(hTarget);
 		}
 
-		ElementPtr->turn_wait = uqm::makeByte(0, NORMALIZE_FACING(facing));
+		ElementPtr->turn_wait = uqm::makeByte(0, NormalizeFacing(facing));
 		if (delta_facing == 0
 			|| ((ElementPtr->thrust_wait & (ShipBeyondMaxSpeed >> 6))
 				&& !(ElementPtr->thrust_wait & (ShipInGravityWell >> 6))))
@@ -799,7 +799,7 @@ void marine_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			ElementPtr0->state_flags |= Collision;
 		}
 
-		if (GRAVITY_MASS(ElementPtr1->mass_points))
+		if (GravityMass(ElementPtr1->mass_points))
 		{
 			ElementPtr0->state_flags |= Nonsolid | FiniteLife;
 			ElementPtr0->hit_points = 0;
@@ -849,8 +849,8 @@ void marine_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				ElementPtr0->state_flags &= ~CrewObject;
 				SetPrimType(&DisplayArray[ElementPtr0->PrimIndex], NoPrim);
 				ElementPtr0->preprocess_func = intruder_preprocess;
-				s.origin.x = RES_SCALE(16 + (ElementPtr0->turn_wait & 3) * 9);
-				s.origin.y = RES_SCALE(14 + (ElementPtr0->turn_wait >> 2) * 11);
+				s.origin.x = ResScale(16 + (ElementPtr0->turn_wait & 3) * 9);
+				s.origin.y = ResScale(14 + (ElementPtr0->turn_wait >> 2) * 11);
 				s.frame = ElementPtr0->next.image.frame;
 				ModifySilhouette(ElementPtr1, &s, 0);
 
@@ -934,16 +934,16 @@ turret_postprocess(ELEMENT* ElementPtr)
 
 					TurretPtr->turn_wait = TurretWait;
 				}
-				facing = NORMALIZE_FACING(StarShipPtr->ShipFacing
-										  + TurretPtr->thrust_wait);
+				facing = NormalizeFacing(StarShipPtr->ShipFacing
+										 + TurretPtr->thrust_wait);
 				StarShipPtr->RaceDescPtr->ship_info.ship_flags &=
 					~(FiresFore | FiresRight | FiresAft | FiresLeft);
 				StarShipPtr->RaceDescPtr->ship_info.ship_flags |= FiresFore
-															   << (NORMALIZE_FACING(facing + ANGLE_TO_FACING(Octant))
-																   / ANGLE_TO_FACING(Quadrant));
+															   << (NormalizeFacing(facing + AngleToFacing(Octant))
+																   / AngleToFacing(Quadrant));
 				TurretPtr->current.image.frame = SetAbsFrameIndex(
 					TurretPtr->current.image.frame, facing);
-				facing = FACING_TO_ANGLE(facing);
+				facing = FacingToAngle(facing);
 				if (StarShipPtr->cur_status_flags & WeaponFlag)
 				{
 					HELEMENT hTurretEffect {};
@@ -957,9 +957,9 @@ turret_postprocess(ELEMENT* ElementPtr)
 						&& (hTurretEffect = AllocElement()))
 					{
 						TurretPtr->current.location.x -=
-							COSINE(facing, DISPLAY_TO_WORLD(RES_SCALE(2)));
+							Cosine(facing, DisplayToWorld(ResScale(2)));
 						TurretPtr->current.location.y -=
-							SINE(facing, DISPLAY_TO_WORLD(RES_SCALE(2)));
+							Sine(facing, DisplayToWorld(ResScale(2)));
 
 						LockElement(hTurretEffect, &TurretEffectPtr);
 						TurretEffectPtr->playerNr = ElementPtr->playerNr;
@@ -969,18 +969,18 @@ turret_postprocess(ELEMENT* ElementPtr)
 
 						TurretEffectPtr->current.location.x =
 							TurretPtr->current.location.x
-							+ COSINE(facing,
-									 DISPLAY_TO_WORLD(TurretOffset()));
+							+ Cosine(facing,
+									 DisplayToWorld(TurretOffset()));
 						TurretEffectPtr->current.location.y =
 							TurretPtr->current.location.y
-							+ SINE(facing,
-								   DISPLAY_TO_WORLD(TurretOffset()));
+							+ Sine(facing,
+								   DisplayToWorld(TurretOffset()));
 						TurretEffectPtr->current.image.farray =
 							StarShipPtr->RaceDescPtr->ship_data.special;
 						TurretEffectPtr->current.image.frame =
 							SetAbsFrameIndex(
 								StarShipPtr->RaceDescPtr->ship_data.special[0],
-								ANGLE_TO_FACING(FullCircle));
+								AngleToFacing(FullCircle));
 
 						TurretEffectPtr->preprocess_func = animate;
 
@@ -1026,21 +1026,21 @@ turret_postprocess(ELEMENT* ElementPtr)
 				SpaceMarinePtr->hit_points = MarineHitPoints;
 				SpaceMarinePtr->mass_points = MarineMassPoints;
 
-				facing = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
+				facing = FacingToAngle(StarShipPtr->ShipFacing);
 				SpaceMarinePtr->current.location.x =
 					ShipPtr->current.location.x
-					- COSINE(facing, DISPLAY_TO_WORLD(TurretOffset() << ((resolutionFactor + 1) / 2)));
+					- Cosine(facing, DisplayToWorld(TurretOffset() << ((resolutionFactor + 1) / 2)));
 				SpaceMarinePtr->current.location.y =
 					ShipPtr->current.location.y
-					- SINE(facing, DISPLAY_TO_WORLD(TurretOffset() << ((resolutionFactor + 1) / 2)));
+					- Sine(facing, DisplayToWorld(TurretOffset() << ((resolutionFactor + 1) / 2)));
 				SpaceMarinePtr->current.image.farray =
 					StarShipPtr->RaceDescPtr->ship_data.special;
 				SpaceMarinePtr->current.image.frame = SetAbsFrameIndex(
 					StarShipPtr->RaceDescPtr->ship_data.special[0], 20);
 
 				SpaceMarinePtr->turn_wait =
-					uqm::makeByte(0, NORMALIZE_FACING(
-										 ANGLE_TO_FACING(facing + HalfCircle)));
+					uqm::makeByte(0, NormalizeFacing(
+										 AngleToFacing(facing + HalfCircle)));
 				SpaceMarinePtr->preprocess_func = marine_preprocess;
 				SpaceMarinePtr->collision_func = marine_collision;
 
@@ -1125,8 +1125,8 @@ init_orz(void)
 {
 	if (IsHd())
 	{
-		orz_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		orz_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		orz_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		orz_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		orz_desc.cyborg_control.WeaponRange = MissileSpeedHd() * MissileLife;
 	}
 	else

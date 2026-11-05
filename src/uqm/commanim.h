@@ -88,7 +88,6 @@ inline constexpr auto OneShotAnim {TalkIntro};
 // Set in AlienAmbientArray for animations that should be
 // disabled after they run once.
 
-#define BLOCK_ALL_BEFORE_ME(m) ((1 << m) - 1)
 
 typedef struct
 {

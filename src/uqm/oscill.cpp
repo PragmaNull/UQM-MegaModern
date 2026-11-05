@@ -50,8 +50,8 @@ void InitOscilloscope(FRAME scopeBg)
 			size.width, size.height, 1));
 
 		// assume and subtract the borders
-		scopeSize.width = RES_DESCALE(size.width);
-		scopeSize.height = RES_DESCALE(size.height);
+		scopeSize.width = ResDescale(size.width);
+		scopeSize.height = ResDescale(size.height);
 		scopeData.resize(static_cast<size_t>(scopeSize.width));
 
 		scope_init = 1;
@@ -130,13 +130,13 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 		{
 			LINE line;
 
-			line.first.x = RES_SCALE(i);
-			line.first.y = RES_SCALE(ScaleHeightByVolume(scope_data[i],
-														 toScale));
-			line.second.x = RES_SCALE(i + 1);
-			line.second.y = RES_SCALE(ScaleHeightByVolume(
+			line.first.x = ResScale(i);
+			line.first.y = ResScale(ScaleHeightByVolume(scope_data[i],
+														toScale));
+			line.second.x = ResScale(i + 1);
+			line.second.y = ResScale(ScaleHeightByVolume(
 				scope_data[i + 1], toScale));
-			DrawLine(&line, RES_SCALE(1));
+			DrawLine(&line, ResScale(1));
 		}
 	}
 	else
@@ -144,10 +144,10 @@ void DrawOscilloscopeLines(STAMP* s, uint8_t* scope_data, bool nonStop, bool toS
 		LINE line;
 
 		line.first.x = 0;
-		line.first.y = RES_SCALE((scopeSize.height / 2));
-		line.second.x = RES_SCALE(scopeSize.width);
+		line.first.y = ResScale((scopeSize.height / 2));
+		line.second.x = ResScale(scopeSize.width);
 		line.second.y = line.first.y;
-		DrawLine(&line, RES_SCALE(1));
+		DrawLine(&line, ResScale(1));
 	}
 
 	SetContext(oldContext);

@@ -272,27 +272,27 @@ ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, bye_hostile_2))
+	if (PlayerSaid(R, bye_hostile_2))
 	{
 		NPCPhrase(GOODBYE_HOSTILE_2);
 	}
-	else if (PLAYER_SAID(R, bye_hostile_1))
+	else if (PlayerSaid(R, bye_hostile_1))
 	{
 		NPCPhrase(GOODBYE_HOSTILE_1);
 
 		SET_GAME_STATE(THRADD_HOSTILE_STACK_5, 1);
 	}
-	else if (PLAYER_SAID(R, submit_1))
+	else if (PlayerSaid(R, submit_1))
 	{
 		NPCPhrase(NO_SUBMIT_1);
 
 		SET_GAME_STATE(THRADD_HOSTILE_STACK_2, 1);
 	}
-	else if (PLAYER_SAID(R, submit_2))
+	else if (PlayerSaid(R, submit_2))
 	{
 		NPCPhrase(NO_SUBMIT_2);
 	}
-	else if (PLAYER_SAID(R, got_idea))
+	else if (PlayerSaid(R, got_idea))
 	{
 		NPCPhrase(GOOD_IDEA);
 
@@ -300,11 +300,11 @@ ExitConversation(RESPONSE_REF R)
 		AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_THRADD_MISSION);
 		SET_GAME_STATE(THRADD_STACK_1, 5);
 	}
-	else if (PLAYER_SAID(R, bye_hostile_helix))
+	else if (PlayerSaid(R, bye_hostile_helix))
 	{
 		NPCPhrase(GOODBYE_HOSTILE_HELIX);
 	}
-	else if (PLAYER_SAID(R, bye_ally))
+	else if (PlayerSaid(R, bye_ally))
 	{
 		uint8_t NumVisits {};
 
@@ -328,42 +328,42 @@ ExitConversation(RESPONSE_REF R)
 		SET_GAME_STATE(THRADD_STACK_1, NumVisits);
 		setSegue(Segue_peace);
 	}
-	else if (PLAYER_SAID(R, may_i_land))
+	else if (PlayerSaid(R, may_i_land))
 	{
 		NPCPhrase(SURE_LAND);
 
 		SET_GAME_STATE(HELIX_UNPROTECTED, 1);
 		setSegue(Segue_peace);
 	}
-	else if (PLAYER_SAID(R, demand_to_land))
+	else if (PlayerSaid(R, demand_to_land))
 	{
 		NPCPhrase(NO_DEMAND);
 	}
-	else if (PLAYER_SAID(R, i_need_to_land_lie))
+	else if (PlayerSaid(R, i_need_to_land_lie))
 	{
 		NPCPhrase(CAUGHT_LIE);
 	}
 	else
 	{
-		if (PLAYER_SAID(R, contemplative))
+		if (PlayerSaid(R, contemplative))
 		{
 			NPCPhrase(OK_CONTEMPLATIVE);
 
 			SET_GAME_STATE(THRADD_DEMEANOR, 0);
 		}
-		else if (PLAYER_SAID(R, friendly))
+		else if (PlayerSaid(R, friendly))
 		{
 			NPCPhrase(OK_FRIENDLY);
 
 			SET_GAME_STATE(THRADD_DEMEANOR, 1);
 		}
-		else if (PLAYER_SAID(R, wacky))
+		else if (PlayerSaid(R, wacky))
 		{
 			NPCPhrase(OK_WACKY);
 
 			SET_GAME_STATE(THRADD_DEMEANOR, 2);
 		}
-		else if (PLAYER_SAID(R, just_like_us))
+		else if (PlayerSaid(R, just_like_us))
 		{
 			NPCPhrase(OK_JUST_LIKE_YOU);
 
@@ -380,19 +380,19 @@ ThraddAllies(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, why_you_here_ally))
+	if (PlayerSaid(R, why_you_here_ally))
 	{
 		NPCPhrase(GUARDING_HELIX_ALLY);
 
 		DISABLE_PHRASE(why_you_here_ally);
 	}
-	else if (PLAYER_SAID(R, whats_helix_ally))
+	else if (PlayerSaid(R, whats_helix_ally))
 	{
 		NPCPhrase(HELIX_IS_ALLY);
 
 		DISABLE_PHRASE(whats_helix_ally);
 	}
-	else if (PLAYER_SAID(R, whats_up_ally))
+	else if (PlayerSaid(R, whats_up_ally))
 	{
 		NumVisits = GET_GAME_STATE(THRADD_INFO);
 		switch (NumVisits++)
@@ -415,7 +415,7 @@ ThraddAllies(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_ally);
 	}
-	else if (PLAYER_SAID(R, how_goes_culture))
+	else if (PlayerSaid(R, how_goes_culture))
 	{
 		NumVisits = GET_GAME_STATE(THRADD_DEMEANOR);
 		switch (NumVisits & ((1 << 2) - 1))
@@ -469,24 +469,24 @@ ThraddAllies(RESPONSE_REF R)
 
 	if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 	{
-		if (PHRASE_ENABLED(why_you_here_ally))
+		if (PhraseEnabled(why_you_here_ally))
 		{
 			Response(why_you_here_ally, ThraddAllies);
 		}
 		else
 		{
-			if (PHRASE_ENABLED(whats_helix_ally))
+			if (PhraseEnabled(whats_helix_ally))
 			{
 				Response(whats_helix_ally, ThraddAllies);
 			}
 			Response(may_i_land, ExitConversation);
 		}
 	}
-	if (PHRASE_ENABLED(whats_up_ally))
+	if (PhraseEnabled(whats_up_ally))
 	{
 		Response(whats_up_ally, ThraddAllies);
 	}
-	if (PHRASE_ENABLED(how_goes_culture))
+	if (PhraseEnabled(how_goes_culture))
 	{
 		Response(how_goes_culture, ThraddAllies);
 	}
@@ -496,19 +496,19 @@ ThraddAllies(RESPONSE_REF R)
 static void
 ThraddDemeanor(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, you_decide))
+	if (PlayerSaid(R, you_decide))
 	{
 		NPCPhrase(OK_CULTURE_20);
 
 		SET_GAME_STATE(THRADD_CULTURE, 1);
 	}
-	else if (PLAYER_SAID(R, fat))
+	else if (PlayerSaid(R, fat))
 	{
 		NPCPhrase(OK_FAT);
 
 		SET_GAME_STATE(THRADD_CULTURE, 2);
 	}
-	else if (PLAYER_SAID(R, the_slave_empire))
+	else if (PlayerSaid(R, the_slave_empire))
 	{
 		SET_GAME_STATE(THRADD_CULTURE, 3);
 
@@ -525,25 +525,25 @@ ThraddDemeanor(RESPONSE_REF R)
 static void
 ThraddCulture(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, be_polite))
+	if (PlayerSaid(R, be_polite))
 	{
 		NPCPhrase(OK_POLITE);
 
 		SET_GAME_STATE(THRADD_INTRO, 0);
 	}
-	else if (PLAYER_SAID(R, use_rhymes))
+	else if (PlayerSaid(R, use_rhymes))
 	{
 		NPCPhrase(OK_RHYMES);
 
 		SET_GAME_STATE(THRADD_INTRO, 1);
 	}
-	else if (PLAYER_SAID(R, speak_pig_latin))
+	else if (PlayerSaid(R, speak_pig_latin))
 	{
 		NPCPhrase(OK_PIG_LATIN);
 
 		SET_GAME_STATE(THRADD_INTRO, 2);
 	}
-	else if (PLAYER_SAID(R, just_the_way_we_do))
+	else if (PlayerSaid(R, just_the_way_we_do))
 	{
 		NPCPhrase(OK_WAY_YOU_DO);
 
@@ -574,25 +574,25 @@ ThraddWorship(RESPONSE_REF R)
 static void
 HelixWorld(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, why_you_here_hostile))
+	if (PlayerSaid(R, why_you_here_hostile))
 	{
 		NPCPhrase(NONE_OF_YOUR_CONCERN);
 
 		SET_GAME_STATE(THRADD_CULTURE, 1);
 	}
-	else if (PLAYER_SAID(R, what_about_this_world))
+	else if (PlayerSaid(R, what_about_this_world))
 	{
 		NPCPhrase(BLUE_HELIX);
 
 		SET_GAME_STATE(THRADD_INTRO, 1);
 	}
-	else if (PLAYER_SAID(R, whats_helix_hostile))
+	else if (PlayerSaid(R, whats_helix_hostile))
 	{
 		NPCPhrase(HELIX_IS_HOSTILE);
 
 		SET_GAME_STATE(THRADD_INTRO, 2);
 	}
-	else if (PLAYER_SAID(R, i_need_to_land_lie))
+	else if (PlayerSaid(R, i_need_to_land_lie))
 	{
 		NPCPhrase(CAUGHT_LIE);
 
@@ -626,14 +626,14 @@ HelixWorld(RESPONSE_REF R)
 static void
 ThraddHostile(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_hostile_1))
+	if (PlayerSaid(R, whats_up_hostile_1))
 	{
 		NPCPhrase(GENERAL_INFO_HOSTILE_1);
 
 		SET_GAME_STATE(THRADD_INFO, 1);
 		DISABLE_PHRASE(whats_up_hostile_2);
 	}
-	else if (PLAYER_SAID(R, whats_up_hostile_2))
+	else if (PlayerSaid(R, whats_up_hostile_2))
 	{
 		uint8_t NumVisits {};
 
@@ -655,48 +655,48 @@ ThraddHostile(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_hostile_2);
 	}
-	else if (PLAYER_SAID(R, what_about_you_1))
+	else if (PlayerSaid(R, what_about_you_1))
 	{
 		NPCPhrase(ABOUT_US_1);
 
 		SET_GAME_STATE(THRADD_STACK_1, 1);
 	}
-	else if (PLAYER_SAID(R, what_about_you_2))
+	else if (PlayerSaid(R, what_about_you_2))
 	{
 		NPCPhrase(ABOUT_US_2);
 
 		SET_GAME_STATE(THRADD_STACK_1, 2);
 	}
-	else if (PLAYER_SAID(R, what_about_urquan_1))
+	else if (PlayerSaid(R, what_about_urquan_1))
 	{
 		NPCPhrase(ABOUT_URQUAN_1);
 
 		SET_GAME_STATE(THRADD_STACK_1, 3);
 	}
-	else if (PLAYER_SAID(R, what_about_urquan_2))
+	else if (PlayerSaid(R, what_about_urquan_2))
 	{
 		NPCPhrase(ABOUT_URQUAN_2);
 
 		SET_GAME_STATE(THRADD_STACK_1, 4);
 	}
-	else if (PLAYER_SAID(R, be_friends_1))
+	else if (PlayerSaid(R, be_friends_1))
 	{
 		NPCPhrase(NO_FRIENDS_1);
 
 		SET_GAME_STATE(THRADD_HOSTILE_STACK_3, 1);
 	}
-	else if (PLAYER_SAID(R, be_friends_2))
+	else if (PlayerSaid(R, be_friends_2))
 	{
 		NPCPhrase(NO_FRIENDS_2);
 		DISABLE_PHRASE(be_friends_2);
 	}
-	else if (PLAYER_SAID(R, how_impressed_urquan_1))
+	else if (PlayerSaid(R, how_impressed_urquan_1))
 	{
 		NPCPhrase(IMPRESSED_LIKE_SO_1);
 
 		SET_GAME_STATE(THRADD_HOSTILE_STACK_4, 1);
 	}
-	else if (PLAYER_SAID(R, how_impressed_urquan_2))
+	else if (PlayerSaid(R, how_impressed_urquan_2))
 	{
 		NPCPhrase(IMPRESSED_LIKE_SO_2);
 
@@ -707,7 +707,7 @@ ThraddHostile(RESPONSE_REF R)
 	{
 		Response(whats_up_hostile_1, ThraddHostile);
 	}
-	else if (PHRASE_ENABLED(whats_up_hostile_2))
+	else if (PhraseEnabled(whats_up_hostile_2))
 	{
 		Response(whats_up_hostile_2, ThraddHostile);
 	}
@@ -748,7 +748,7 @@ ThraddHostile(RESPONSE_REF R)
 	{
 		Response(be_friends_1, ThraddHostile);
 	}
-	else if (PHRASE_ENABLED(be_friends_2))
+	else if (PhraseEnabled(be_friends_2))
 	{
 		Response(be_friends_2, ThraddHostile);
 	}
@@ -1079,7 +1079,7 @@ init_thradd_comm(void)
 
 	thradd_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	thradd_desc.AlienTextBaseline.y = 0;
-	thradd_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	thradd_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if (GET_GAME_STATE(THRADD_MANNER)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)

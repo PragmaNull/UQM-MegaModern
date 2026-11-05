@@ -76,11 +76,11 @@ bool isMenuAddonAvailable(uqstl::string_view addon)
 	const bool hd {*UQMOptions::read().resolutionFactor != 0};
 	if (addon == "dos-mode")
 	{
-		return isAddonAvailable(DOS_MODE(hd));
+		return isAddonAvailable(DosMode(hd));
 	}
 	if (addon == "3do-mode")
 	{
-		return isAddonAvailable(THREEDO_MODE(hd));
+		return isAddonAvailable(ThreedoMode(hd));
 	}
 	if (addon == "directional-joystick")
 	{
@@ -122,13 +122,13 @@ static void applyGraphicsSettings()
 	const int blowup {*options.loresBlowupScale};
 	if (blowup == 0)
 	{
-		SavedWidth = RES_SCALE(320);
-		SavedHeight = RES_SCALE(DOS_BOOL(240, 200));
+		SavedWidth = ResScale(320);
+		SavedHeight = ResScale(DosBool(240, 200));
 	}
 	else if (blowup < 6)
 	{
 		SavedWidth = 320 * (1 + blowup);
-		SavedHeight = DOS_BOOL(240, 200) * (1 + blowup);
+		SavedHeight = DosBool(240, 200) * (1 + blowup);
 	}
 	else
 	{

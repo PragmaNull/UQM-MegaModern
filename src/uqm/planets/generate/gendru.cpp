@@ -81,8 +81,8 @@ GenerateDruuge_generatePlanets(SOLARSYS_STATE* solarSys)
 		pPlanet->radius = EarthRadius * 50L / 100;
 		pPlanet->NumPlanets = 0;
 		const uint16_t angle {HalfCircle - Octant};
-		pPlanet->location.x = COSINE(angle, pPlanet->radius);
-		pPlanet->location.y = SINE(angle, pPlanet->radius);
+		pPlanet->location.x = Cosine(angle, pPlanet->radius);
+		pPlanet->location.y = Sine(angle, pPlanet->radius);
 		pPlanet->rand_seed =
 			uqm::makeDword(pPlanet->location.x, pPlanet->location.y);
 		ComputeSpeed(pPlanet, false, 1);
@@ -112,7 +112,7 @@ GenerateDruuge_generateName(const SOLARSYS_STATE* solarSys,
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),
-							GAME_STRING(PLANET_NUMBER_BASE + 41));
+							GameString(PLANET_NUMBER_BASE + 41));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}

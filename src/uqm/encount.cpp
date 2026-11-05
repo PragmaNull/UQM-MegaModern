@@ -187,9 +187,9 @@ void BuildBattle(uint16_t which_player)
 						{
 							uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 												sizeof(GLOBAL_SIS(PlanetName)),
-												GAME_STRING(PLANET_NUMBER_BASE + 32));
+												GameString(PLANET_NUMBER_BASE + 32));
 							DrawSISTitle(
-								GAME_STRING(PLANET_NUMBER_BASE + 32));
+								GameString(PLANET_NUMBER_BASE + 32));
 						}
 
 						load_gravity_well(selector);
@@ -355,20 +355,20 @@ InitEncounter(void)
 	DrawStamp(&s);
 
 	//    t.baseline.x = SisScreenWidth() >> 1;
-	t.baseline.x = RES_SCALE(OrigSisScreenWidth() >> 1);
-	t.baseline.y = RES_SCALE(10);
+	t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
+	t.baseline.y = ResScale(10);
 	t.align = ALIGN_CENTER;
 
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x00, 0x00, 0x14), 0x01));
 	if (inHQSpace())
 	{
-		t.pStr = GAME_STRING(ENCOUNTER_STRING_BASE + 0);
+		t.pStr = GameString(ENCOUNTER_STRING_BASE + 0);
 		// "ENCOUNTER IN"
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
-		t.baseline.y += RES_SCALE(12);
-		t.pStr = GAME_STRING(ENCOUNTER_STRING_BASE + 1);
+		t.baseline.y += ResScale(12);
+		t.pStr = GameString(ENCOUNTER_STRING_BASE + 1);
 		// "DEEP SPACE"
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
@@ -377,23 +377,23 @@ InitEncounter(void)
 	{
 		char buf[256];
 
-		t.pStr = GAME_STRING(ENCOUNTER_STRING_BASE + 2);
+		t.pStr = GameString(ENCOUNTER_STRING_BASE + 2);
 		// "ENCOUNTER AT"
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
-		t.baseline.y += RES_SCALE(12);
+		t.baseline.y += ResScale(12);
 		GetClusterName(CurStarDescPtr(), buf);
 		t.pStr = buf;
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
-		t.baseline.y += RES_SCALE(12);
+		t.baseline.y += ResScale(12);
 		t.pStr = GLOBAL_SIS(PlanetName);
 		t.CharCount = (uint16_t)~0;
 		font_DrawText(&t);
 	}
 	DrawSISMessage(nullptr);
 
-	s.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1);
+	s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
 	s.origin.y = SisScreenHeight() >> 1;
 	s.frame = planet[0];
 	DrawStamp(&s);
@@ -444,8 +444,8 @@ InitEncounter(void)
 				radius <<= resolutionFactor;
 
 				const uint16_t angle {ARCTAN(s.origin.x, s.origin.y)};
-				s.origin.x = (COSINE(angle, radius));
-				s.origin.y = (SINE(angle, radius));
+				s.origin.x = (Cosine(angle, radius));
+				s.origin.y = (Sine(angle, radius));
 			}
 			else
 			{
@@ -454,8 +454,8 @@ InitEncounter(void)
 			}
 			s.frame = SetAbsFrameIndex(FragPtr->icons, 0);
 			GetFrameRect(s.frame, &r);
-			s.origin.x += RES_SCALE(OrigSisScreenWidth() >> 1) - (r.extent.width >> 1);
-			s.origin.y += RES_SCALE(OrigSisScreenHeight() >> 1) - (r.extent.height >> 1);
+			s.origin.x += ResScale(OrigSisScreenWidth() >> 1) - (r.extent.width >> 1);
+			s.origin.y += ResScale(OrigSisScreenHeight() >> 1) - (r.extent.height >> 1);
 			DrawStamp(&s);
 
 			UnlockShipFrag(&GLOBAL(npc_built_ship_q), hStarShip);
@@ -491,13 +491,13 @@ InitEncounter(void)
 //	TEXT t1, t2;
 //	GFXRECT r1, r2, res;
 //
-//	t1.baseline.x = pRect->corner.x + RES_SCALE(100);
-//	t1.baseline.y = pRect->corner.y + RES_SCALE(45);
+//	t1.baseline.x = pRect->corner.x + ResScale(100);
+//	t1.baseline.y = pRect->corner.y + ResScale(45);
 //	t1.align = ALIGN_CENTER;
 //	t1.pStr = str1;
 //	t1.CharCount = (uint16_t)~0;
 //	t2 = t1;
-//	t2.baseline.y += RES_SCALE(11);
+//	t2.baseline.y += ResScale(11);
 //	t2.pStr = str2;
 //
 //	TextRect (&t1, &r1, nullptr);
@@ -530,13 +530,13 @@ DrawFadeText(const char* str1, const char* str2, bool fade_in,
 	const static Color fade_cycle[] = SCAVENGE_TEXT_COLOR_TABLE;
 	constexpr auto NumFades {(std::size(fade_cycle))};
 
-	t1.baseline.x = pRect->corner.x + RES_SCALE(100);
-	t1.baseline.y = pRect->corner.y + RES_SCALE(45);
+	t1.baseline.x = pRect->corner.x + ResScale(100);
+	t1.baseline.y = pRect->corner.y + ResScale(45);
 	t1.align = ALIGN_CENTER;
 	t1.pStr = str1;
 	t1.CharCount = (uint16_t)~0;
 	t2 = t1;
-	t2.baseline.y += RES_SCALE(11);
+	t2.baseline.y += ResScale(11);
 	t2.pStr = str2;
 
 	TextRect(&t1, &r1, nullptr);
@@ -730,8 +730,8 @@ UninitEncounter(void)
 
 								DrawStatusMessage(nullptr);
 
-								ship_s.origin.x = scavenge_r.corner.x + RES_SCALE(32);
-								ship_s.origin.y = scavenge_r.corner.y + RES_SCALE(56);
+								ship_s.origin.x = scavenge_r.corner.x + ResScale(32);
+								ship_s.origin.y = scavenge_r.corner.y + ResScale(56);
 								ship_s.frame = IncFrameIndex(FragPtr->icons);
 								DrawStamp(&ship_s);
 								SetContextForeGroundColor(MdkgrayColor);
@@ -741,14 +741,14 @@ UninitEncounter(void)
 								uqm::utf8StringCopy(buf, sizeof buf,
 													uqm::toUpperUtf8(FragPtr->race_strings->text(0)).c_str());
 
-								t.baseline.x = scavenge_r.corner.x + RES_SCALE(100);
-								t.baseline.y = scavenge_r.corner.y + RES_SCALE(68);
+								t.baseline.x = scavenge_r.corner.x + ResScale(100);
+								t.baseline.y = scavenge_r.corner.y + ResScale(68);
 								t.align = ALIGN_CENTER;
 								t.pStr = buf;
 								t.CharCount = (uint16_t)~0;
 								font_DrawText(&t);
-								t.baseline.y += RES_SCALE(6);
-								t.pStr = GAME_STRING(
+								t.baseline.y += ResScale(6);
+								t.pStr = GameString(
 									ENCOUNTER_STRING_BASE + 3);
 								// "BATTLE GROUP"
 								t.CharCount = (uint16_t)~0;
@@ -758,24 +758,24 @@ UninitEncounter(void)
 
 								SetContextFont(MicroFont);
 
-								str1 = GAME_STRING(
+								str1 = GameString(
 									ENCOUNTER_STRING_BASE + 4);
 								// "Enemy Ships"
-								str2 = GAME_STRING(
+								str2 = GameString(
 									ENCOUNTER_STRING_BASE + 5);
 								// "Destroyed"
 
 								DrawFadeText(str1, str2, true, &scavenge_r);
 							}
 
-							r.corner.y = scavenge_r.corner.y + RES_SCALE(9);
-							r.extent.height = RES_SCALE(22);
+							r.corner.y = scavenge_r.corner.y + ResScale(9);
+							r.extent.height = ResScale(22);
 
 							SetContextForeGroundColor(BlackColor);
 
-							r.extent.width = RES_SCALE(34);
+							r.extent.width = ResScale(34);
 							r.corner.x = scavenge_r.corner.x + scavenge_r.extent.width
-									   - (RES_SCALE(10) + r.extent.width);
+									   - (ResScale(10) + r.extent.width);
 							BatchGraphics(); // to avoid blinking text
 
 							// Back of the RU counter
@@ -796,8 +796,8 @@ UninitEncounter(void)
 							fmt::format_to_n(buf, sizeof(buf) - 1, "{}", RecycleAmount);
 							t.baseline.x =
 								r.corner.x + r.extent.width
-								- RES_SCALE(1);
-							t.baseline.y = r.corner.y + RES_SCALE(14);
+								- ResScale(1);
+							t.baseline.y = r.corner.y + ResScale(14);
 							t.align = ALIGN_RIGHT;
 							t.pStr = buf;
 							t.CharCount = (uint16_t)~0;
@@ -810,7 +810,7 @@ UninitEncounter(void)
 
 							if ((VictoryState++ - 1) % MaxDeadDisplayed)
 							{
-								ship_s.origin.x += RES_SCALE(17);
+								ship_s.origin.x += ResScale(17);
 							}
 							else
 							{
@@ -819,11 +819,11 @@ UninitEncounter(void)
 
 								r.corner.x =
 									scavenge_r.corner.x
-									+ RES_SCALE(10);
+									+ ResScale(10);
 								r.extent.width =
-									RES_SCALE(132)
+									ResScale(132)
 									- (textRect.extent.width
-									   + RES_SCALE(1));
+									   + ResScale(1));
 
 								// Pause between erasing
 								if (Sleepy)
@@ -835,10 +835,10 @@ UninitEncounter(void)
 								ClearRectBack(&r);
 
 								ship_s.origin.x =
-									r.corner.x + RES_SCALE(2);
+									r.corner.x + ResScale(2);
 								ship_s.origin.y =
 									scavenge_r.corner.y
-									+ RES_SCALE(12);
+									+ ResScale(12);
 							}
 
 							if (Sleepy)
@@ -907,16 +907,16 @@ UninitEncounter(void)
 				if (!CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_ESCAPE])
 				{
 					SetContextForeGroundColor(BlackColor);
-					r.corner.x = scavenge_r.corner.x + RES_SCALE(10);
-					r.extent.width = RES_SCALE(132);
+					r.corner.x = scavenge_r.corner.x + ResScale(10);
+					r.extent.width = ResScale(132);
 
 					// The whole stat stripe
 					ClearRectBack(&r);
 
 					fmt::format_to_n(buf, sizeof(buf) - 1, "{} {}", RecycleAmount,
-									 GAME_STRING(STATUS_STRING_BASE + 1)); // "RU"
+									 GameString(STATUS_STRING_BASE + 1)); // "RU"
 					t.baseline.x = r.corner.x + (r.extent.width >> 1);
-					t.baseline.y = r.corner.y + RES_SCALE(14);
+					t.baseline.y = r.corner.y + ResScale(14);
 					t.align = ALIGN_CENTER;
 					t.pStr = buf;
 					t.CharCount = (uint16_t)~0;
@@ -925,9 +925,9 @@ UninitEncounter(void)
 					font_DrawText(&t);
 
 
-					str1 = GAME_STRING(ENCOUNTER_STRING_BASE + 6);
+					str1 = GameString(ENCOUNTER_STRING_BASE + 6);
 					// "Debris"
-					str2 = GAME_STRING(ENCOUNTER_STRING_BASE + 7);
+					str2 = GameString(ENCOUNTER_STRING_BASE + 7);
 					// "Scavenged"
 
 					DrawFadeText(str1, str2, true, &scavenge_r);

@@ -42,9 +42,9 @@ static constexpr auto ShipMass {1};
 // Triple Miniguns
 static constexpr auto WeaponEnergyCost {1};
 static constexpr auto WeaponWait {0};
-static auto PkunkOffset() { return RES_SCALE(15); }
-static auto MissileOffset() { return RES_SCALE(1); }
-static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(24)};
+static auto PkunkOffset() { return ResScale(15); }
+static auto MissileOffset() { return ResScale(1); }
+static constexpr auto MissileSpeed {DisplayToWorld(24)};
 static constexpr auto MissileLife {5};
 static constexpr auto MissileHits {1};
 static constexpr auto MissileDamage {1};
@@ -57,7 +57,7 @@ static constexpr auto SpecialWait {16};
 static constexpr auto PhoenixLife {12};
 static constexpr auto StartPhoenixColor {BuildColor(MakeRgb15(0x1F, 0x15, 0x00), 0x7A)};
 static constexpr auto TransitionLife {1};
-static auto TransitionSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(20)); }
+static auto TransitionSpeed() { return DisplayToWorld(ResScale(20)); }
 
 static RACE_DESC pkunk_desc =
 	{
@@ -204,7 +204,7 @@ initialize_bug_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = PkunkOffset();
-	MissileBlock.speed = RES_SCALE(MissileSpeed);
+	MissileBlock.speed = ResScale(MissileSpeed);
 	MissileBlock.hit_points = MissileHits;
 	MissileBlock.damage = MissileDamage;
 	MissileBlock.life = MissileLife;
@@ -215,12 +215,12 @@ initialize_bug_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	{
 		MissileBlock.face =
 			StarShipPtr->ShipFacing
-			+ (ANGLE_TO_FACING(Quadrant) * i);
+			+ (AngleToFacing(Quadrant) * i);
 		if (i == 2)
 		{
-			MissileBlock.face += ANGLE_TO_FACING(Quadrant);
+			MissileBlock.face += AngleToFacing(Quadrant);
 		}
-		MissileBlock.face = NORMALIZE_FACING(MissileBlock.face);
+		MissileBlock.face = NormalizeFacing(MissileBlock.face);
 
 		if ((MissileArray[i] = initialize_missile(&MissileBlock)))
 		{
@@ -231,8 +231,8 @@ initialize_bug_missile(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 			LockElement(MissileArray[i], &MissilePtr);
 			GetCurrentVelocityComponentsSdword(&ShipPtr->velocity, &dx, &dy);
 			DeltaVelocityComponents(&MissilePtr->velocity, dx, dy);
-			MissilePtr->current.location.x -= VELOCITY_TO_WORLD(dx);
-			MissilePtr->current.location.y -= VELOCITY_TO_WORLD(dy);
+			MissilePtr->current.location.x -= VelocityToWorld(dx);
+			MissilePtr->current.location.y -= VelocityToWorld(dy);
 
 			MissilePtr->preprocess_func = animate;
 			UnlockElement(MissileArray[i]);
@@ -293,8 +293,8 @@ new_pkunk(ELEMENT* ElementPtr)
 	StarShipPtr->RaceDescPtr->ship_info.crew_level = MaxCrew;
 	StarShipPtr->RaceDescPtr->ship_info.energy_level = MaxEnergy;
 	/* fix vux impairment */
-	StarShipPtr->RaceDescPtr->characteristics.max_thrust = RES_SCALE(MaxThrust);
-	StarShipPtr->RaceDescPtr->characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+	StarShipPtr->RaceDescPtr->characteristics.max_thrust = ResScale(MaxThrust);
+	StarShipPtr->RaceDescPtr->characteristics.thrust_increment = ResScale(ThrustIncrement);
 	StarShipPtr->RaceDescPtr->characteristics.turn_wait = TurnWait;
 	StarShipPtr->RaceDescPtr->characteristics.thrust_wait = ThrustWait;
 	StarShipPtr->RaceDescPtr->characteristics.special_wait = 0;
@@ -311,7 +311,7 @@ new_pkunk(ELEMENT* ElementPtr)
 	ElementPtr->thrust_wait = 0;
 	ElementPtr->life_span = NormalLife;
 
-	StarShipPtr->ShipFacing = NORMALIZE_FACING(uqm::random().next());
+	StarShipPtr->ShipFacing = NormalizeFacing(uqm::random().next());
 	ElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.ship;
 	ElementPtr->current.image.frame = SetAbsFrameIndex(
 		StarShipPtr->RaceDescPtr->ship_data.ship[0],
@@ -321,9 +321,9 @@ new_pkunk(ELEMENT* ElementPtr)
 	do
 	{
 		ElementPtr->current.location.x =
-			WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
+			WrapX(DisplayAlignX(uqm::random().next()));
 		ElementPtr->current.location.y =
-			WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
+			WrapY(DisplayAlignY(uqm::random().next()));
 	} while (CalculateGravity(ElementPtr)
 			 || TimeSpaceMatterConflict(ElementPtr));
 
@@ -364,9 +364,9 @@ intercept_pkunk_death(ELEMENT* ElementPtr)
 	}
 
 	LockElement(StarShipPtr->hShip, &ShipPtr);
-	// GRAVITY_MASS() indicates a warp-out here. If Pkunk dies while warping
+	// GravityMass() indicates a warp-out here. If Pkunk dies while warping
 	// out, there is no reincarnation.
-	if (!GRAVITY_MASS(ShipPtr->mass_points + 1))
+	if (!GravityMass(ShipPtr->mass_points + 1))
 	{
 		// XXX: Hack: Set mass_points to indicate a reincarnation to
 		//   FindAliveStarShip()
@@ -453,23 +453,23 @@ phoenix_transition(ELEMENT* ElementPtr)
 			angle = ElementPtr->mass_points;
 
 			ShipImagePtr->current.location.x +=
-				COSINE(angle, TransitionSpeed());
+				Cosine(angle, TransitionSpeed());
 			ShipImagePtr->current.location.y +=
-				SINE(angle, TransitionSpeed());
+				Sine(angle, TransitionSpeed());
 			ElementPtr->preprocess_func = nullptr;
 		}
 		else
 		{
-			angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
+			angle = FacingToAngle(StarShipPtr->ShipFacing);
 
 			// JMS_GFX: Circumventing overflows by using temp variables
 			// instead of subtracting straight from the GFXPOINT sized
 			// ShipImagePtr->current.location.
-			const int32_t temp_x {(int32_t)ShipImagePtr->current.location.x - COSINE(angle, TransitionSpeed()) * (ElementPtr->life_span - 1)};
-			const int32_t temp_y {(int32_t)ShipImagePtr->current.location.y - SINE(angle, TransitionSpeed()) * (ElementPtr->life_span - 1)};
+			const int32_t temp_x {(int32_t)ShipImagePtr->current.location.x - Cosine(angle, TransitionSpeed()) * (ElementPtr->life_span - 1)};
+			const int32_t temp_y {(int32_t)ShipImagePtr->current.location.y - Sine(angle, TransitionSpeed()) * (ElementPtr->life_span - 1)};
 
-			ShipImagePtr->current.location.x = WRAP_X(temp_x);
-			ShipImagePtr->current.location.y = WRAP_Y(temp_y);
+			ShipImagePtr->current.location.x = WrapX(temp_x);
+			ShipImagePtr->current.location.y = WrapY(temp_y);
 		}
 
 		ShipImagePtr->mass_points = (uint8_t)angle;
@@ -560,8 +560,8 @@ pkunk_preprocess(ELEMENT* ElementPtr)
 			const uint16_t facing {StarShipPtr->ShipFacing};
 			for (uint16_t angle {Octant}; angle < FullCircle; angle += Quadrant)
 			{
-				StarShipPtr->ShipFacing = NORMALIZE_FACING(
-					facing + ANGLE_TO_FACING(angle));
+				StarShipPtr->ShipFacing = NormalizeFacing(
+					facing + AngleToFacing(angle));
 				phoenix_transition(ElementPtr);
 			}
 			StarShipPtr->ShipFacing = facing;
@@ -647,8 +647,8 @@ init_pkunk(void)
 
 	if (IsHd())
 	{
-		pkunk_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		pkunk_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		pkunk_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		pkunk_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		pkunk_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd + 4;
 	}
 	else

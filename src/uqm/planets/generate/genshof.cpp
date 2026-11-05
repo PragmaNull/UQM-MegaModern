@@ -258,7 +258,7 @@ GenerateShofixti_generateName(const SOLARSYS_STATE* solarSys,
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),
-							GAME_STRING(PLANET_NUMBER_BASE + 35));
+							GameString(PLANET_NUMBER_BASE + 35));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}

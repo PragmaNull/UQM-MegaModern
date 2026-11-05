@@ -148,7 +148,7 @@ void GetClusterName(const STAR_DESC* pSD, char buf[])
 	char* pBuf {buf};
 	if (pSD->Prefix)
 	{
-		pStr = GAME_STRING(STAR_NUMBER_BASE + pSD->Prefix - 1);
+		pStr = GameString(STAR_NUMBER_BASE + pSD->Prefix - 1);
 		if (pStr)
 		{
 			while ((*pBuf++ = *pStr++))
@@ -156,7 +156,7 @@ void GetClusterName(const STAR_DESC* pSD, char buf[])
 			pBuf[-1] = ' ';
 		}
 	}
-	if ((pStr = GAME_STRING(pSD->Postfix)) == 0)
+	if ((pStr = GameString(pSD->Postfix)) == 0)
 	{
 		*pBuf = '\0';
 	}
@@ -330,34 +330,42 @@ void SeedStarmap(STAR_DESC* starmap)
 		rand_val = StarGenRNG->next();
 		// 469 is the default number of dwarf stars, and 24 the number of
 		// giant. Super giant is handled elsewhere.
-		starmap[i].Type = MAKE_STAR(uqm::lowByte(rand_val) % (469 + 24) >= 24 ? DWARF_STAR : GIANT_STAR,
-									uqm::highByte(rand_val) % NUM_STAR_COLORS,
-									-1);
+		starmap[i].Type = MakeStar(uqm::lowByte(rand_val) % (469 + 24) >= 24 ? DWARF_STAR : GIANT_STAR,
+								   uqm::highByte(rand_val) % NUM_STAR_COLORS,
+								   -1);
 		starmap[i].Index = 0;
 	}
 }
 
 // Functions which know how a plotmap works call it "plot" so they can access
 // these internal define functions.
-#define PLOT_HARDCODE(id) (!plot[id].star && plot[id].star_pt.x != ~0 && plot[id].star_pt.y != ~0)
-#define PLOT_SET(id) (plot[id].star && plot[id].star_pt.x != ~0 && plot[id].star_pt.y != ~0)
-#define PLOT_MAX(pi, pj) ((pi > pj) ?                \
-							  plot[pi].dist_sq[pj] : \
-							  plot[pj].dist_sq[pi])
-#define PLOT_MIN(pi, pj) ((pi < pj) ?                \
-							  plot[pi].dist_sq[pj] : \
-							  plot[pj].dist_sq[pi])
-#define PLOT_MAX_SET(pi, pj, value)   \
-	if (pi > pj)                      \
-		plot[pi].dist_sq[pj] = value; \
-	else                              \
+constexpr auto PlotHardcode(auto* plot, const auto& id) { return (!plot[id].star && plot[id].star_pt.x != ~0 && plot[id].star_pt.y != ~0); }
+constexpr auto PlotSet(auto* plot, const auto& id) { return (plot[id].star && plot[id].star_pt.x != ~0 && plot[id].star_pt.y != ~0); }
+constexpr auto PlotMax(auto* plot, const auto& pi, const auto& pj) { return ((pi > pj) ? plot[pi].dist_sq[pj] : plot[pj].dist_sq[pi]); }
+constexpr auto PlotMin(auto* plot, const auto& pi, const auto& pj) { return ((pi < pj) ? plot[pi].dist_sq[pj] : plot[pj].dist_sq[pi]); }
+constexpr void PlotMaxSet(auto* plot, auto pi, auto pj, auto value)
+{
+	if (pi > pj)
+	{
+		plot[pi].dist_sq[pj] = value;
+	}
+	else
+	{
 		plot[pj].dist_sq[pi] = value;
-#define PLOT_MIN_SET(pi, pj, value)   \
-	if (pi < pj)                      \
-		plot[pi].dist_sq[pj] = value; \
-	else                              \
+	}
+}
+constexpr void PlotMinSet(auto* plot, auto pi, auto pj, auto value)
+{
+	if (pi < pj)
+	{
+		plot[pi].dist_sq[pj] = value;
+	}
+	else
+	{
 		plot[pj].dist_sq[pi] = value;
-#define PLOT_WEIGHT(id) (plot[id].dist_sq[id])
+	}
+}
+constexpr auto& PlotWeight(auto* plot, const auto& id) { return (plot[id].dist_sq[id]); }
 
 // This is purely for debugging purposes - print out the plot name by ID
 void print_plot_id(uint16_t plot_id)
@@ -434,40 +442,40 @@ void SetPlotLength(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB,
 	}
 
 	// If the plots already have a min or max, remove it from the plot_weight
-	if (PLOT_MIN(plotA, plotB) > 0)
+	if (PlotMin(plot, plotA, plotB) > 0)
 	{
 #ifdef DEBUG_STARSEED_TRACE
 		fmt::print(stderr, "SetPlotLength reducing plot min ");
 		print_plot_id(plotA);
-		fmt::print(stderr, " (weight {}) to ", PLOT_WEIGHT(plotA));
+		fmt::print(stderr, " (weight {}) to ", PlotWeight(plot, plotA));
 		print_plot_id(plotB);
-		fmt::print(stderr, " (weight {}), min {}\n", PLOT_WEIGHT(plotB),
-				   (uint16_t)sqrt(PLOT_MIN(plotA, plotB)));
+		fmt::print(stderr, " (weight {}), min {}\n", PlotWeight(plot, plotB),
+				   (uint16_t)sqrt(PlotMin(plot, plotA, plotB)));
 #endif
-		PLOT_WEIGHT(plotA) -= (uint16_t)sqrt(PLOT_MIN(plotA, plotB));
-		PLOT_WEIGHT(plotB) -= (uint16_t)sqrt(PLOT_MIN(plotA, plotB));
+		PlotWeight(plot, plotA) -= (uint16_t)sqrt(PlotMin(plot, plotA, plotB));
+		PlotWeight(plot, plotB) -= (uint16_t)sqrt(PlotMin(plot, plotA, plotB));
 	}
-	if (PLOT_MAX(plotA, plotB) != 0 && PLOT_MAX(plotA, plotB) < MaxPlot * MaxPlot)
+	if (PlotMax(plot, plotA, plotB) != 0 && PlotMax(plot, plotA, plotB) < MaxPlot * MaxPlot)
 	{
 #ifdef DEBUG_STARSEED_TRACE
 		fmt::print(stderr, "SetPlotLength reducing plot max ");
 		print_plot_id(plotA);
-		fmt::print(stderr, " (weight {}) to ", PLOT_WEIGHT(plotA));
+		fmt::print(stderr, " (weight {}) to ", PlotWeight(plot, plotA));
 		print_plot_id(plotB);
-		fmt::print(stderr, " (weight {}), max {}\n", PLOT_WEIGHT(plotB),
-				   MaxPlot - (uint16_t)sqrt(PLOT_MAX(plotA, plotB)));
+		fmt::print(stderr, " (weight {}), max {}\n", PlotWeight(plot, plotB),
+				   MaxPlot - (uint16_t)sqrt(PlotMax(plot, plotA, plotB)));
 #endif
-		PLOT_WEIGHT(plotA) += (uint16_t)sqrt(PLOT_MAX(plotA, plotB)) - MaxPlot;
-		PLOT_WEIGHT(plotB) += (uint16_t)sqrt(PLOT_MAX(plotA, plotB)) - MaxPlot;
+		PlotWeight(plot, plotA) += (uint16_t)sqrt(PlotMax(plot, plotA, plotB)) - MaxPlot;
+		PlotWeight(plot, plotB) += (uint16_t)sqrt(PlotMax(plot, plotA, plotB)) - MaxPlot;
 	}
 
 	// Now set the plot lengths
-	PLOT_MIN_SET(plotA, plotB, min * min);
-	PLOT_MAX_SET(plotA, plotB, max * max);
+	PlotMinSet(plot, plotA, plotB, min * min);
+	PlotMaxSet(plot, plotA, plotB, max * max);
 
 	// Now we increase the weights
-	PLOT_WEIGHT(plotA) += min + MaxPlot - max;
-	PLOT_WEIGHT(plotB) += min + MaxPlot - max;
+	PlotWeight(plot, plotA) += min + MaxPlot - max;
+	PlotWeight(plot, plotB) += min + MaxPlot - max;
 }
 
 // Internal. (although it could be shared)
@@ -486,12 +494,12 @@ ConnectedPlot(PLOT_LOCATION* plot, uint16_t plotA, uint16_t plotB)
 		return 0;
 	}
 	// Plot MIN (capped at max pweight) + MAX weight - PLOT MAX (if valid)
-	return (PLOT_MIN(plotA, plotB) > MaxPweight ?
+	return (PlotMin(plot, plotA, plotB) > MaxPweight ?
 				MaxPweight :
-				PLOT_MIN(plotA, plotB))
-		 + ((PLOT_MAX(plotA, plotB) == 0 || PLOT_MAX(plotA, plotB) > MaxPweight) ?
+				PlotMin(plot, plotA, plotB))
+		 + ((PlotMax(plot, plotA, plotB) == 0 || PlotMax(plot, plotA, plotB) > MaxPweight) ?
 				0 :
-				MaxPweight - PLOT_MAX(plotA, plotB));
+				MaxPweight - PlotMax(plot, plotA, plotB));
 }
 
 // Used by GetNextPlot to re-iterate on a failed plot after pop-back.
@@ -516,7 +524,7 @@ GetNextPlot(PLOT_LOCATION* plot)
 	}
 
 	// If we're already working on one, continue to try that one.
-	if (next_plot < NUM_PLOTS && !PLOT_SET(next_plot))
+	if (next_plot < NUM_PLOTS && !PlotSet(plot, next_plot))
 	{
 		return next_plot;
 	}
@@ -524,7 +532,7 @@ GetNextPlot(PLOT_LOCATION* plot)
 	// If we have hard coded plots still waiting to be placed, do one.
 	for (i = 0; i < NUM_PLOTS; i++)
 	{
-		if (PLOT_HARDCODE(i))
+		if (PlotHardcode(plot, i))
 		{
 			return next_plot = i;
 		}
@@ -536,7 +544,7 @@ GetNextPlot(PLOT_LOCATION* plot)
 	// [Otherwise try and find one that's connected to the last one.]
 	for (i = 0; i < NUM_PLOTS && next_plot < NUM_PLOTS; i++)
 	{
-		if (ConnectedPlot (plot, next_plot, i) > top_weight && !PLOT_SET(i))
+		if (ConnectedPlot (plot, next_plot, i) > top_weight && !PlotSet(plot, i))
 		{
 			plot_id = i;
 			top_weight = ConnectedPlot (plot, next_plot, i);
@@ -547,10 +555,10 @@ GetNextPlot(PLOT_LOCATION* plot)
 	// Otherwise find the heaviest plot available.
 	for (i = 0; i < NUM_PLOTS; i++)
 	{
-		if ((PLOT_WEIGHT(i) > top_weight) && !(PLOT_SET(i)))
+		if ((PlotWeight(plot, i) > top_weight) && !(PlotSet(plot, i)))
 		{
 			plot_id = i;
-			top_weight = PLOT_WEIGHT(i);
+			top_weight = PlotWeight(plot, i);
 		}
 	}
 
@@ -558,7 +566,7 @@ GetNextPlot(PLOT_LOCATION* plot)
 	// unassigned plots without weight, find the first one:
 	if (top_weight == 0)
 	{
-		while ((plot_id < NUM_PLOTS) && (PLOT_SET(plot_id)))
+		while ((plot_id < NUM_PLOTS) && (PlotSet(plot, plot_id)))
 		{
 			plot_id++;
 		}
@@ -905,7 +913,7 @@ bool CheckValid(PLOT_LOCATION* plot, uint16_t plot_id)
 				   plot_id);
 		return false;
 	}
-	if (!PLOT_SET(plot_id))
+	if (!PlotSet(plot, plot_id))
 	{
 		fmt::print(stderr, "CheckValid (plotmap, plot_id) called {}.\n"
 						   "with un-set plot:",
@@ -918,20 +926,20 @@ bool CheckValid(PLOT_LOCATION* plot, uint16_t plot_id)
 		{
 			continue; // Don't check yourself
 		}
-		if (!PLOT_SET(i))
+		if (!PlotSet(plot, i))
 		{
 			continue;
 		}
-		if (PLOT_MIN(plot_id, i) == 0 && PLOT_MAX(plot_id, i) == MaxPweight)
+		if (PlotMin(plot, plot_id, i) == 0 && PlotMax(plot, plot_id, i) == MaxPweight)
 		{
 			continue;
 		}
 		distance_sq = ((plot[plot_id].star_pt.x - plot[i].star_pt.x) * (plot[plot_id].star_pt.x - plot[i].star_pt.x) + (plot[plot_id].star_pt.y - plot[i].star_pt.y) * (plot[plot_id].star_pt.y - plot[i].star_pt.y));
 #ifdef DEBUG_STARSEED_TRACE_X
 		fmt::print(stderr, "__dsq {} mindsq {} maxdsq {}__", distance_sq,
-				   PLOT_MIN(plot_id, i), PLOT_MAX(plot_id, i));
+				   PlotMin(plot, plot_id, i), PlotMax(plot, plot_id, i));
 #endif
-		if (distance_sq < PLOT_MIN(plot_id, i) || (distance_sq > PLOT_MAX(plot_id, i) && PLOT_MAX(plot_id, i) > 0))
+		if (distance_sq < PlotMin(plot, plot_id, i) || (distance_sq > PlotMax(plot, plot_id, i) && PlotMax(plot, plot_id, i) > 0))
 		{
 			return false;
 		}
@@ -1002,53 +1010,53 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 	}
 
 	// Section 1: change the star to the right size for the plot
-	if (STAR_TYPE(StarmapArray[i].Type) == SUPER_GIANT_STAR)
+	if (StarType(StarmapArray[i].Type) == SUPER_GIANT_STAR)
 	{
-		star->Type = MAKE_STAR(
+		star->Type = MakeStar(
 			SUPER_GIANT_STAR,
-			STAR_COLOR(star->Type),
-			STAR_OWNER(star->Type));
+			StarColor(star->Type),
+			StarOwner(star->Type));
 	}
-	if (STAR_TYPE(StarmapArray[i].Type) == GIANT_STAR)
+	if (StarType(StarmapArray[i].Type) == GIANT_STAR)
 	{
-		star->Type = MAKE_STAR(
+		star->Type = MakeStar(
 			GIANT_STAR,
-			STAR_COLOR(star->Type),
-			STAR_OWNER(star->Type));
+			StarColor(star->Type),
+			StarOwner(star->Type));
 	}
-	if (STAR_TYPE(StarmapArray[i].Type) == DWARF_STAR)
+	if (StarType(StarmapArray[i].Type) == DWARF_STAR)
 	{
-		star->Type = MAKE_STAR(
+		star->Type = MakeStar(
 			DWARF_STAR,
-			STAR_COLOR(star->Type),
-			STAR_OWNER(star->Type));
+			StarColor(star->Type),
+			StarOwner(star->Type));
 	}
 
 	// Section 2: change colors of stars based on plot
 	// Specific homeworlds that work best with their correct color star (SOL)
 	if (NeedsHabitable(star->Index))
 	{
-		const uint8_t star_color = STAR_COLOR(star->Type);
+		const uint8_t star_color = StarColor(star->Type);
 		const uint32_t rand_val = GetRandomSeedForStar(star);
 
-		if (STAR_TYPE(star->Type) == DWARF_STAR && star_color == RED_BODY)
+		if (StarType(star->Type) == DWARF_STAR && star_color == RED_BODY)
 		{
 			const uint8_t color_array[] = {BLUE_BODY, GREEN_BODY, ORANGE_BODY,
 										   WHITE_BODY, YELLOW_BODY};
 
-			star->Type = MAKE_STAR(
-				STAR_TYPE(star->Type), color_array[rand_val % 5],
-				STAR_OWNER(star->Type));
+			star->Type = MakeStar(
+				StarType(star->Type), color_array[rand_val % 5],
+				StarOwner(star->Type));
 		}
-		else if (STAR_TYPE(star->Type) == GIANT_STAR
+		else if (StarType(star->Type) == GIANT_STAR
 				 && (star_color == BLUE_BODY || star_color == GREEN_BODY
 					 || star_color == WHITE_BODY))
 		{
 			const uint8_t color_array[] = {ORANGE_BODY, RED_BODY, YELLOW_BODY};
 
-			star->Type = MAKE_STAR(
-				STAR_TYPE(star->Type), color_array[rand_val % 3],
-				STAR_OWNER(star->Type));
+			star->Type = MakeStar(
+				StarType(star->Type), color_array[rand_val % 3],
+				StarOwner(star->Type));
 		}
 	}
 	if (star->Index == SOL_DEFINED)
@@ -1059,17 +1067,17 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 	// All other channels are false gods
 	if (star->Index == ILWRATH_DEFINED)
 	{
-		const uint16_t newcolor = (STAR_COLOR(star->Type) + uqm::currentSeed().value) % 5;
+		const uint16_t newcolor = (StarColor(star->Type) + uqm::currentSeed().value) % 5;
 		if (uqm::currentSeed().value % 44 == 0 || uqm::currentSeed().value % 100 == 44)
 		{
 			star->Type = StarmapArray[i].Type;
 		}
 		else
 		{
-			star->Type = MAKE_STAR(
-				STAR_TYPE(star->Type),
+			star->Type = MakeStar(
+				StarType(star->Type),
 				newcolor >= GREEN_BODY ? newcolor + 1 : newcolor,
-				STAR_OWNER(star->Type));
+				StarOwner(star->Type));
 		}
 	}
 #if 0
@@ -1077,37 +1085,37 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 	// Not needed any more, after altering shofixti code a bit
 	if (star->Index == SHOFIXTI_DEFINED)
 	{
-		uint16_t newcolor = (STAR_COLOR (star->Type) + uqm::currentSeed().value) % 5;
-		star->Type = MAKE_STAR (
-			STAR_TYPE (star->Type),
+		uint16_t newcolor = (StarColor (star->Type) + uqm::currentSeed().value) % 5;
+		star->Type = MakeStar (
+			StarType (star->Type),
 			newcolor >= ORANGE_BODY ? newcolor + 1 : newcolor,
-			STAR_OWNER (star->Type));
+			StarOwner (star->Type));
 	}
 #endif
 	// Green, Blue, and White giants are too hot for spathis.
 	// This is an asthetic choice but a good one.
 	if (star->Index == SPATHI_DEFINED)
 	{
-		if (STAR_COLOR(star->Type) == WHITE_BODY)
+		if (StarColor(star->Type) == WHITE_BODY)
 		{
-			star->Type = MAKE_STAR(
-				STAR_TYPE(star->Type),
+			star->Type = MakeStar(
+				StarType(star->Type),
 				YELLOW_BODY,
-				STAR_OWNER(star->Type));
+				StarOwner(star->Type));
 		}
-		if (STAR_COLOR(star->Type) == BLUE_BODY)
+		if (StarColor(star->Type) == BLUE_BODY)
 		{
-			star->Type = MAKE_STAR(
-				STAR_TYPE(star->Type),
+			star->Type = MakeStar(
+				StarType(star->Type),
 				ORANGE_BODY,
-				STAR_OWNER(star->Type));
+				StarOwner(star->Type));
 		}
-		if (STAR_COLOR(star->Type) == GREEN_BODY)
+		if (StarColor(star->Type) == GREEN_BODY)
 		{
-			star->Type = MAKE_STAR(
-				STAR_TYPE(star->Type),
+			star->Type = MakeStar(
+				StarType(star->Type),
 				RED_BODY,
-				STAR_OWNER(star->Type));
+				StarOwner(star->Type));
 		}
 	}
 	// Supox will NOT be the same color as rainbow world
@@ -1124,9 +1132,9 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 		}
 		// This will either increment or decriment based on even/odd
 		// and then % 6 to put back into star_color.
-		star->Type = MAKE_STAR(DWARF_STAR,
-							   (STAR_COLOR(starmap[j].Type) + 6 + STAR_COLOR(starmap[j].Type) % 2 - (STAR_COLOR(starmap[j].Type) + 1) % 2) % 6,
-							   STAR_OWNER(star->Type));
+		star->Type = MakeStar(DWARF_STAR,
+							  (StarColor(starmap[j].Type) + 6 + StarColor(starmap[j].Type) % 2 - (StarColor(starmap[j].Type) + 1) % 2) % 6,
+							  StarOwner(star->Type));
 	}
 	// Rainbow worlds all get RAINBOW0's color, whatever it is.
 	// We will use that later in the alien dialogs.
@@ -1140,9 +1148,9 @@ void Plotify(STAR_DESC* starmap, STAR_DESC* star)
 				return; // It doesn't have one
 			}
 		}
-		star->Type = MAKE_STAR(STAR_TYPE(star->Type),
-							   STAR_COLOR(starmap[j].Type),
-							   STAR_OWNER(star->Type));
+		star->Type = MakeStar(StarType(star->Type),
+							  StarColor(starmap[j].Type),
+							  StarOwner(star->Type));
 	}
 
 	// Section 3: Mess with names of star systems
@@ -1383,7 +1391,7 @@ SeedPlot(PLOT_LOCATION* plotmap, STAR_DESC* starmap)
 	// choose a plot by weight
 	if ((plot_id = GetNextPlot(plotmap)) == NUM_PLOTS)
 	{
-		// Sanity check the placements - they all pass PLOT_SET(id)
+		// Sanity check the placements - they all pass PlotSet(plot, id)
 		// but may be missing from starmap.
 		//
 		// All plots are assigned, but any without location allocated
@@ -1980,73 +1988,73 @@ MMRNMHRM_ID:
 // zoqfot        3761, 5333,	4000, 5437	-239, -104	260.647	320		81.45
 //
 // Default starmaps for races and plots
-// {{2908, 269}, MAKE_STAR (DWARF_STAR, BLUE_BODY, -1), SHOFIXTI_DEFINED, 4, 82},
-// {{4923, 294}, MAKE_STAR (DWARF_STAR, YELLOW_BODY, -1), YEHAT_DEFINED, 3, 74},
-// {{ 522, 525}, MAKE_STAR (DWARF_STAR, YELLOW_BODY, -1), PKUNK_DEFINED, 3, 92},
-// {{6858, 577}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), MYCON_TRAP_DEFINED, 0, 123},
-// {{4681, 916}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), RAINBOW0_DEFINED, 6, 75},
-// {{9333, 937}, MAKE_STAR (SUPER_GIANT_STAR, YELLOW_BODY, -1), MELNORME0_DEFINED, 2, 5},
-// {{1559, 993}, MAKE_STAR (SUPER_GIANT_STAR, RED_BODY, -1), MELNORME1_DEFINED, 1, 80},
-// {{1752, 1450}, MAKE_STAR (DWARF_STAR, YELLOW_BODY, -1), SOL_DEFINED, 0, 129},
-// {{4333, 1687}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), VUX_DEFINED, 2, 88},
-// {{3345, 1931}, MAKE_STAR (DWARF_STAR, YELLOW_BODY, -1), START_COLONY_DEFINED, 0, 98},
-// {{3352, 1940}, MAKE_STAR (SUPER_GIANT_STAR, WHITE_BODY, -1), MELNORME2_DEFINED, 0, 97},
-// {{4221, 1986}, MAKE_STAR (DWARF_STAR, BLUE_BODY, -1), MAIDENS_DEFINED, 1, 100},
-// {{6479, 2062}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), EGG_CASE1_DEFINED, 3, 71},
-// {{2104, 2083}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), ZOQ_SCOUT_DEFINED, 0, 118},
-// {{6291, 2208}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), MYCON_DEFINED, 5, 71},
-// {{ 742, 2268}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), CHMMR_DEFINED, 0, 117},
-// {{6395, 2312}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), SUN_DEVICE_DEFINED, 2, 12},
-// {{3713, 2537}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), ORZ_DEFINED, 3, 86},
-// {{3587, 2566}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), ANDROSYNTH_DEFINED, 7, 86},
-// {{3654, 2587}, MAKE_STAR (SUPER_GIANT_STAR, GREEN_BODY, -1), MELNORME3_DEFINED, 1, 86},
-// {{3721, 2619}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), TAALO_PROTECTOR_DEFINED, 4, 86},
-// {{6008, 2631}, MAKE_STAR (DWARF_STAR, YELLOW_BODY, -1), EGG_CASE0_DEFINED, 2, 14},
-// {{3499, 2648}, MAKE_STAR (DWARF_STAR, BLUE_BODY, -1), EXCAVATION_SITE_DEFINED, 1, 87},
-// {{6354, 2729}, MAKE_STAR (DWARF_STAR, WHITE_BODY, -1), EGG_CASE2_DEFINED, 3, 12},
-// {{9469, 2806}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), DRUUGE_DEFINED, 6, 61},
-// {{6020, 2979}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), RAINBOW1_DEFINED, 3, 13},
-// {{9000, 3250}, MAKE_STAR (DWARF_STAR, RED_BODY, -1), ALGOLITES_DEFINED, 0, 113},
-// {{2354, 3291}, MAKE_STAR (SUPER_GIANT_STAR, RED_BODY, -1), MELNORME4_DEFINED, 1, 106},
-// {{1104, 3333}, MAKE_STAR (DWARF_STAR, WHITE_BODY, -1), MOTHER_ARK_DEFINED, 4, 84},
-// {{1758, 3418}, MAKE_STAR (DWARF_STAR, BLUE_BODY, -1), SPATHI_MONUMENT_DEFINED, 2, 108},
-// {{ 229, 3666}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), ILWRATH_DEFINED, 1, 76},
-// {{2416, 3687}, MAKE_STAR (GIANT_STAR, ORANGE_BODY, -1), SPATHI_DEFINED, 5, 109},
-// {{4125, 3770}, MAKE_STAR (DWARF_STAR, BLUE_BODY, -1), SYREEN_DEFINED, 0, 114},
-// {{5937, 3937}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), SHIP_VAULT_DEFINED, 5, 10},
-// {{5708, 4604}, MAKE_STAR (DWARF_STAR, RED_BODY, -1), URQUAN0_DEFINED, 0, 104},
-// {{5006, 5011}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), URQUAN1_DEFINED, 3, 11},
-// {{3679, 5068}, MAKE_STAR (DWARF_STAR, YELLOW_BODY, -1), ZOQ_COLONY0_DEFINED, 3, 17},
-// {{7416, 5083}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), RAINBOW2_DEFINED, 3, 68},
-// {{3770, 5250}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), ZOQ_COLONY1_DEFINED, 2, 17},
-// {{7020, 5291}, MAKE_STAR (DWARF_STAR, BLUE_BODY, -1), KOHRAH0_DEFINED, 2, 68},
-// {{3416, 5437}, MAKE_STAR (DWARF_STAR, BLUE_BODY, -1), ZOQ_COLONY3_DEFINED, 2, 16},
-// {{4000, 5437}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), ZOQFOT_DEFINED, 1, 18},
-// {{3937, 5625}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), ZOQ_COLONY2_DEFINED, 2, 18},
-// {{9645, 5791}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), BURVIXESE_DEFINED, 0, 130},
-// {{6200, 5935}, MAKE_STAR (DWARF_STAR, YELLOW_BODY, -1), SAMATRA_DEFINED, 4, 21},
-// {{1978, 5968}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), TALKING_PET_DEFINED, 2, 54},
-// {{4625, 6000}, MAKE_STAR (DWARF_STAR, BLUE_BODY, -1), URQUAN2_DEFINED, 1, 131},
-// {{1578, 6668}, MAKE_STAR (SUPER_GIANT_STAR, GREEN_BODY, -1), MELNORME5_DEFINED, 1, 56},
-// {{5145, 6958}, MAKE_STAR (DWARF_STAR, BLUE_BODY, -1), KOHRAH1_DEFINED, 8, 28},
-// {{8625, 7000}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), RAINBOW3_DEFINED, 1, 41},
-// {{ 395, 7458}, MAKE_STAR (DWARF_STAR, BLUE_BODY, -1), RAINBOW4_DEFINED, 2, 60},
-// {{6479, 7541}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), KOHRAH2_DEFINED, 0, 38},
-// {{5875, 7729}, MAKE_STAR (SUPER_GIANT_STAR, YELLOW_BODY, -1), MELNORME6_DEFINED, 1, 34},
-// {{2836, 7857}, MAKE_STAR (DWARF_STAR, WHITE_BODY, -1), RAINBOW5_DEFINED, 5, 53},
-// {{ 562, 8000}, MAKE_STAR (GIANT_STAR, GREEN_BODY, -1), URQUAN_WRECK_DEFINED, 1, 59},
-// {{5437, 8270}, MAKE_STAR (DWARF_STAR, RED_BODY, -1), RAINBOW6_DEFINED, 5, 48},
-// {{2535, 8358}, MAKE_STAR (DWARF_STAR, YELLOW_BODY, -1), THRADD_DEFINED, 4, 53},
-// {{2582, 8507}, MAKE_STAR (SUPER_GIANT_STAR, YELLOW_BODY, -1), MELNORME7_DEFINED, 1, 2},
-// {{7666, 8666}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), RAINBOW7_DEFINED, 2, 46},
-// {{2776, 8673}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), AQUA_HELIX_DEFINED, 6, 53},
-// {{8630, 8693}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), UTWIG_DEFINED, 2, 3},
-// {{8534, 8797}, MAKE_STAR (DWARF_STAR, ORANGE_BODY, -1), RAINBOW8_DEFINED, 3, 3},
-// {{ 333, 8916}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), DESTROYED_STARBASE_DEFINED, 3, 57}, // here
-// {{9960, 9042}, MAKE_STAR (GIANT_STAR, WHITE_BODY, -1), RAINBOW9_DEFINED, 0, 42},
-// {{7414, 9124}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), SUPOX_DEFINED, 2, 47},
-// {{8500, 9372}, MAKE_STAR (DWARF_STAR, YELLOW_BODY, -1), BOMB_DEFINED, 6, 45},
-// {{9159, 9745}, MAKE_STAR (SUPER_GIANT_STAR, BLUE_BODY, -1), MELNORME8_DEFINED, 1, 4},
-// {{5704, 9795}, MAKE_STAR (DWARF_STAR, YELLOW_BODY, -1), VUX_BEAST_DEFINED, 4, 49},
-// {{ 333, 9812}, MAKE_STAR (DWARF_STAR, GREEN_BODY, -1), SLYLANDRO_DEFINED, 2, 27},
+// {{2908, 269}, MakeStar (DWARF_STAR, BLUE_BODY, -1), SHOFIXTI_DEFINED, 4, 82},
+// {{4923, 294}, MakeStar (DWARF_STAR, YELLOW_BODY, -1), YEHAT_DEFINED, 3, 74},
+// {{ 522, 525}, MakeStar (DWARF_STAR, YELLOW_BODY, -1), PKUNK_DEFINED, 3, 92},
+// {{6858, 577}, MakeStar (DWARF_STAR, GREEN_BODY, -1), MYCON_TRAP_DEFINED, 0, 123},
+// {{4681, 916}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), RAINBOW0_DEFINED, 6, 75},
+// {{9333, 937}, MakeStar (SUPER_GIANT_STAR, YELLOW_BODY, -1), MELNORME0_DEFINED, 2, 5},
+// {{1559, 993}, MakeStar (SUPER_GIANT_STAR, RED_BODY, -1), MELNORME1_DEFINED, 1, 80},
+// {{1752, 1450}, MakeStar (DWARF_STAR, YELLOW_BODY, -1), SOL_DEFINED, 0, 129},
+// {{4333, 1687}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), VUX_DEFINED, 2, 88},
+// {{3345, 1931}, MakeStar (DWARF_STAR, YELLOW_BODY, -1), START_COLONY_DEFINED, 0, 98},
+// {{3352, 1940}, MakeStar (SUPER_GIANT_STAR, WHITE_BODY, -1), MELNORME2_DEFINED, 0, 97},
+// {{4221, 1986}, MakeStar (DWARF_STAR, BLUE_BODY, -1), MAIDENS_DEFINED, 1, 100},
+// {{6479, 2062}, MakeStar (DWARF_STAR, GREEN_BODY, -1), EGG_CASE1_DEFINED, 3, 71},
+// {{2104, 2083}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), ZOQ_SCOUT_DEFINED, 0, 118},
+// {{6291, 2208}, MakeStar (DWARF_STAR, GREEN_BODY, -1), MYCON_DEFINED, 5, 71},
+// {{ 742, 2268}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), CHMMR_DEFINED, 0, 117},
+// {{6395, 2312}, MakeStar (DWARF_STAR, GREEN_BODY, -1), SUN_DEVICE_DEFINED, 2, 12},
+// {{3713, 2537}, MakeStar (DWARF_STAR, GREEN_BODY, -1), ORZ_DEFINED, 3, 86},
+// {{3587, 2566}, MakeStar (DWARF_STAR, GREEN_BODY, -1), ANDROSYNTH_DEFINED, 7, 86},
+// {{3654, 2587}, MakeStar (SUPER_GIANT_STAR, GREEN_BODY, -1), MELNORME3_DEFINED, 1, 86},
+// {{3721, 2619}, MakeStar (DWARF_STAR, GREEN_BODY, -1), TAALO_PROTECTOR_DEFINED, 4, 86},
+// {{6008, 2631}, MakeStar (DWARF_STAR, YELLOW_BODY, -1), EGG_CASE0_DEFINED, 2, 14},
+// {{3499, 2648}, MakeStar (DWARF_STAR, BLUE_BODY, -1), EXCAVATION_SITE_DEFINED, 1, 87},
+// {{6354, 2729}, MakeStar (DWARF_STAR, WHITE_BODY, -1), EGG_CASE2_DEFINED, 3, 12},
+// {{9469, 2806}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), DRUUGE_DEFINED, 6, 61},
+// {{6020, 2979}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), RAINBOW1_DEFINED, 3, 13},
+// {{9000, 3250}, MakeStar (DWARF_STAR, RED_BODY, -1), ALGOLITES_DEFINED, 0, 113},
+// {{2354, 3291}, MakeStar (SUPER_GIANT_STAR, RED_BODY, -1), MELNORME4_DEFINED, 1, 106},
+// {{1104, 3333}, MakeStar (DWARF_STAR, WHITE_BODY, -1), MOTHER_ARK_DEFINED, 4, 84},
+// {{1758, 3418}, MakeStar (DWARF_STAR, BLUE_BODY, -1), SPATHI_MONUMENT_DEFINED, 2, 108},
+// {{ 229, 3666}, MakeStar (DWARF_STAR, GREEN_BODY, -1), ILWRATH_DEFINED, 1, 76},
+// {{2416, 3687}, MakeStar (GIANT_STAR, ORANGE_BODY, -1), SPATHI_DEFINED, 5, 109},
+// {{4125, 3770}, MakeStar (DWARF_STAR, BLUE_BODY, -1), SYREEN_DEFINED, 0, 114},
+// {{5937, 3937}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), SHIP_VAULT_DEFINED, 5, 10},
+// {{5708, 4604}, MakeStar (DWARF_STAR, RED_BODY, -1), URQUAN0_DEFINED, 0, 104},
+// {{5006, 5011}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), URQUAN1_DEFINED, 3, 11},
+// {{3679, 5068}, MakeStar (DWARF_STAR, YELLOW_BODY, -1), ZOQ_COLONY0_DEFINED, 3, 17},
+// {{7416, 5083}, MakeStar (DWARF_STAR, GREEN_BODY, -1), RAINBOW2_DEFINED, 3, 68},
+// {{3770, 5250}, MakeStar (DWARF_STAR, GREEN_BODY, -1), ZOQ_COLONY1_DEFINED, 2, 17},
+// {{7020, 5291}, MakeStar (DWARF_STAR, BLUE_BODY, -1), KOHRAH0_DEFINED, 2, 68},
+// {{3416, 5437}, MakeStar (DWARF_STAR, BLUE_BODY, -1), ZOQ_COLONY3_DEFINED, 2, 16},
+// {{4000, 5437}, MakeStar (DWARF_STAR, GREEN_BODY, -1), ZOQFOT_DEFINED, 1, 18},
+// {{3937, 5625}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), ZOQ_COLONY2_DEFINED, 2, 18},
+// {{9645, 5791}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), BURVIXESE_DEFINED, 0, 130},
+// {{6200, 5935}, MakeStar (DWARF_STAR, YELLOW_BODY, -1), SAMATRA_DEFINED, 4, 21},
+// {{1978, 5968}, MakeStar (DWARF_STAR, GREEN_BODY, -1), TALKING_PET_DEFINED, 2, 54},
+// {{4625, 6000}, MakeStar (DWARF_STAR, BLUE_BODY, -1), URQUAN2_DEFINED, 1, 131},
+// {{1578, 6668}, MakeStar (SUPER_GIANT_STAR, GREEN_BODY, -1), MELNORME5_DEFINED, 1, 56},
+// {{5145, 6958}, MakeStar (DWARF_STAR, BLUE_BODY, -1), KOHRAH1_DEFINED, 8, 28},
+// {{8625, 7000}, MakeStar (DWARF_STAR, GREEN_BODY, -1), RAINBOW3_DEFINED, 1, 41},
+// {{ 395, 7458}, MakeStar (DWARF_STAR, BLUE_BODY, -1), RAINBOW4_DEFINED, 2, 60},
+// {{6479, 7541}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), KOHRAH2_DEFINED, 0, 38},
+// {{5875, 7729}, MakeStar (SUPER_GIANT_STAR, YELLOW_BODY, -1), MELNORME6_DEFINED, 1, 34},
+// {{2836, 7857}, MakeStar (DWARF_STAR, WHITE_BODY, -1), RAINBOW5_DEFINED, 5, 53},
+// {{ 562, 8000}, MakeStar (GIANT_STAR, GREEN_BODY, -1), URQUAN_WRECK_DEFINED, 1, 59},
+// {{5437, 8270}, MakeStar (DWARF_STAR, RED_BODY, -1), RAINBOW6_DEFINED, 5, 48},
+// {{2535, 8358}, MakeStar (DWARF_STAR, YELLOW_BODY, -1), THRADD_DEFINED, 4, 53},
+// {{2582, 8507}, MakeStar (SUPER_GIANT_STAR, YELLOW_BODY, -1), MELNORME7_DEFINED, 1, 2},
+// {{7666, 8666}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), RAINBOW7_DEFINED, 2, 46},
+// {{2776, 8673}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), AQUA_HELIX_DEFINED, 6, 53},
+// {{8630, 8693}, MakeStar (DWARF_STAR, GREEN_BODY, -1), UTWIG_DEFINED, 2, 3},
+// {{8534, 8797}, MakeStar (DWARF_STAR, ORANGE_BODY, -1), RAINBOW8_DEFINED, 3, 3},
+// {{ 333, 8916}, MakeStar (DWARF_STAR, GREEN_BODY, -1), DESTROYED_STARBASE_DEFINED, 3, 57}, // here
+// {{9960, 9042}, MakeStar (GIANT_STAR, WHITE_BODY, -1), RAINBOW9_DEFINED, 0, 42},
+// {{7414, 9124}, MakeStar (DWARF_STAR, GREEN_BODY, -1), SUPOX_DEFINED, 2, 47},
+// {{8500, 9372}, MakeStar (DWARF_STAR, YELLOW_BODY, -1), BOMB_DEFINED, 6, 45},
+// {{9159, 9745}, MakeStar (SUPER_GIANT_STAR, BLUE_BODY, -1), MELNORME8_DEFINED, 1, 4},
+// {{5704, 9795}, MakeStar (DWARF_STAR, YELLOW_BODY, -1), VUX_BEAST_DEFINED, 4, 49},
+// {{ 333, 9812}, MakeStar (DWARF_STAR, GREEN_BODY, -1), SLYLANDRO_DEFINED, 2, 27},
 #endif

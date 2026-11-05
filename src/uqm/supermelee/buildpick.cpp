@@ -97,7 +97,7 @@ void RepairBuildPickFrame(GFXRECT* pRect, GFXPOINT* origin)
 
 	r.corner.x = origin->x;
 	r.corner.y = origin->y;
-	r.extent.width = r.extent.height = RES_SCALE(16);
+	r.extent.width = r.extent.height = ResScale(16);
 
 	GFXCONTEXT OldContext {SetContext(SpaceContext)};
 	GetContextClipRect(&OldRect);
@@ -132,8 +132,8 @@ void DrawPickIcon(MeleeShip ship, bool DrawErase)
 
 	GetFrameRect(BuildPickFrame, &r);
 
-	s.origin.x = r.corner.x + RES_SCALE(20) + (ship % NumPickCols) * RES_SCALE(18);
-	s.origin.y = r.corner.y + RES_SCALE(5) + (ship / NumPickCols) * RES_SCALE(18);
+	s.origin.x = r.corner.x + ResScale(20) + (ship % NumPickCols) * ResScale(18);
+	s.origin.y = r.corner.y + ResScale(5) + (ship / NumPickCols) * ResScale(18);
 
 	s.frame = GetShipIconsFromIndex(ship);
 
@@ -192,8 +192,8 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 	Text.pStr = buf;
 	Text.CharCount = (uint16_t)uqm::utf8StringCount(buf);
 	Text.align = ALIGN_CENTER;
-	Text.baseline.y = r.corner.y + RES_SCALE(8) + RES_SCALE(1);
-	Text.baseline.x = r.corner.x + (r.extent.width >> 1) + RES_SCALE(1);
+	Text.baseline.y = r.corner.y + ResScale(8) + ResScale(1);
+	Text.baseline.x = r.corner.x + (r.extent.width >> 1) + ResScale(1);
 
 	GFXCONTEXT oldContext {SetContext(SpaceContext)};
 	DrawTooltipBox();
@@ -203,15 +203,15 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 	font_DrawText(&Text);
 
 	SetContextForeGroundColor(TooltipColorNameFront);
-	Text.baseline.x -= RES_SCALE(1);
-	Text.baseline.y -= RES_SCALE(1);
+	Text.baseline.x -= ResScale(1);
+	Text.baseline.y -= ResScale(1);
 	font_DrawText(&Text);
 
 	SetContextForeGroundColor(TooltipColorDescFront);
 
 	uqm::utf8StringCopy(buf, sizeof buf,
 						SIPtr->race_strings->text(SIPtr->race_strings->size() - 1));
-	Text.baseline.y += RES_SCALE(2);
+	Text.baseline.y += ResScale(2);
 
 	{
 		uqstl::vector<uqstl::string> tokens;
@@ -220,7 +220,7 @@ void DrawTooltip(SHIP_INFO* SIPtr)
 		{
 			Text.pStr = (const char*)tok.c_str();
 			Text.CharCount = (uint16_t)uqm::utf8StringCount(Text.pStr);
-			Text.baseline.y += RES_SCALE(9);
+			Text.baseline.y += ResScale(9);
 			font_DrawText(&Text);
 		}
 	}

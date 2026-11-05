@@ -49,7 +49,7 @@ void DrawCurrentPlanetSphere(void)
 	PLANET_ORBIT* Orbit = &pSolarSysState->Orbit;
 	GFXCONTEXT oldContext = SetContext(PlanetContext);
 
-	s.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1);
+	s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
 	s.origin.y = PLANET_ORG_Y;
 
 	{ // re-render current frame
@@ -92,7 +92,7 @@ void DrawCurrentPlanetSphere(void)
 							   pSolarSysState->pOrbitalDesc->data_index
 								   & PLANET_SHIELDED,
 							   throbShield, rotwidth, rotheight,
-							   (rotheight >> 1) - IF_HD(2));
+							   (rotheight >> 1) - IfHd(2));
 		}
 	}
 	BatchGraphics();
@@ -127,7 +127,7 @@ void DrawPlanetSphere(int x, int y, bool back)
 	// Draw background on static image and not during zoom
 	if (Orbit->BackFrame && back)
 	{
-		s.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1);
+		s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
 		s.origin.y = PLANET_ORG_Y;
 		s.frame = Orbit->BackFrame;
 		DrawStamp(&s);
@@ -156,7 +156,7 @@ void DrawDefaultPlanetSphere(void)
 {
 	GFXCONTEXT oldContext {SetContext(PlanetContext)};
 	DrawPlanetSphere(
-		RES_SCALE(OrigSisScreenWidth() >> 1), PLANET_ORG_Y, true);
+		ResScale(OrigSisScreenWidth() >> 1), PLANET_ORG_Y, true);
 	SetContext(oldContext);
 }
 
@@ -283,7 +283,7 @@ void PrepareNextRotationFrame(void)
 		RenderPlanetSphere(Orbit, Orbit->SphereFrame, rotPointIndex,
 						   pSolarSysState->pOrbitalDesc->data_index & PLANET_SHIELDED,
 						   throbShield, rotwidth, rotheight,
-						   (rotheight >> 1) - IF_HD(2));
+						   (rotheight >> 1) - IfHd(2));
 	}
 
 	if (throbShield)
@@ -369,13 +369,13 @@ void PrepareNextRotationFrameForIP(PLANET_DESC* pPlanetDesc, int16_t frameCounte
 					   pPlanetDesc->rotPointIndex,
 					   pPlanetDesc->data_index & PLANET_SHIELDED,
 					   false, pPlanetDesc->rotwidth, pPlanetDesc->rotheight,
-					   (pPlanetDesc->rotheight >> 1) - IF_HD(2)); // Radius
+					   (pPlanetDesc->rotheight >> 1) - IfHd(2)); // Radius
 	Orbit->SphereFrame->image->dirty = true;
 	// BW: slightly hacky but, in DrawTexturedBody, the call
 	// to DrawStamp won't re-blit the frame unless scale has changed.
 }
 
-static auto ZoomRate() { return RES_SCALE(35); }
+static auto ZoomRate() { return ResScale(35); }
 static constexpr auto ZoomTime {(GameTicksPerSecond * 6 / 5)};
 
 // This takes care of zooming the planet sphere into place
@@ -431,11 +431,11 @@ void ZoomInPlanetSphere(void)
 		}
 
 		// start from beyond the screen
-		pt.x = RES_SCALE(OrigSisScreenWidth() >> 1)
+		pt.x = ResScale(OrigSisScreenWidth() >> 1)
 			 + (int)(dx * (1.0 - scale)
-						 * RES_SCALE(OrigSisScreenWidth() * 6 / 10)
+						 * ResScale(OrigSisScreenWidth() * 6 / 10)
 					 + 0.5);
-		pt.y = PLANET_ORG_Y + (int)(dy * (1.0 - scale) * (RES_SCALE(ScanScreenHeight()) * 6 / 10) + 0.5);
+		pt.y = PLANET_ORG_Y + (int)(dy * (1.0 - scale) * (ResScale(ScanScreenHeight()) * 6 / 10) + 0.5);
 
 		SetContext(PlanetContext);
 
@@ -458,7 +458,7 @@ void ZoomInPlanetSphere(void)
 
 		if (Now >= RenderNextTime)
 		{
-			RenderNextTime = Now + PLANET_ROTATION_RATE(uqm::UQMOptions::read().sphereType);
+			RenderNextTime = Now + PlanetRotationRate(uqm::UQMOptions::read().sphereType);
 			PrepareNextRotationFrame();
 		}
 
@@ -488,7 +488,7 @@ void RotatePlanetSphere(bool keepRate, STAMP* onTop)
 
 	if (Now >= NextTime)
 	{
-		NextTime = Now + PLANET_ROTATION_RATE(uqm::UQMOptions::read().sphereType);
+		NextTime = Now + PlanetRotationRate(uqm::UQMOptions::read().sphereType);
 
 		if (Now >= OutNextTime)
 		{
@@ -614,7 +614,7 @@ void DrawPlanet(int tintY, Color tintColor)
 			edge.corner.x = tintFrame->HotSpot.x;
 			edge.corner.y = clipRect.extent.height;
 
-			for (i = 0x90; i > 0; i -= 0x90 / RES_SCALE(3))
+			for (i = 0x90; i > 0; i -= 0x90 / ResScale(3))
 			{
 				tintColor.a = i;
 				SetContextForeGroundColor(tintColor);

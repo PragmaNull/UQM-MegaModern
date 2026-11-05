@@ -77,26 +77,25 @@ UnlockLink(const QUEUE* pq, HLINK h)
 	}
 }
 
-#define GetFreeList(pq) (pq)->free_list
-#define SetFreeList(pq, h) (pq)->free_list = (h)
-#define AllocQueueTab(pq, n) \
-	((pq)->pq_tab = new uint8_t[(uint16_t)(pq)->object_size * (uint16_t)((pq)->num_objects = (uint8_t)(n))])
+constexpr auto GetFreeList(const auto& pq) { return (pq)->free_list; }
+constexpr auto SetFreeList(const auto& pq, const auto& h) { return (pq)->free_list = (h); }
+constexpr auto AllocQueueTab(const auto& pq, const auto& n) { return ((pq)->pq_tab = new uint8_t[(uint16_t)(pq)->object_size * (uint16_t)((pq)->num_objects = (uint8_t)(n))]); }
 #define FreeQueueTab(pq)   \
 	delete[] (pq)->pq_tab; \
 	(pq)->pq_tab = nullptr
-#define SizeQueueTab(pq) (uint16_t)((pq)->num_objects)
-#define GetLinkAddr(pq, i) (HLINK)((pq)->pq_tab + ((pq)->object_size * ((i) - 1)))
+constexpr auto SizeQueueTab(const auto& pq) { return (uint16_t)((pq)->num_objects); }
+constexpr auto GetLinkAddr(const auto& pq, const auto& i) { return (HLINK)((pq)->pq_tab + ((pq)->object_size * ((i)-1))); }
 
-#define SetLinkSize(pq, s) ((pq)->object_size = (uint16_t)(s))
-#define GetLinkSize(pq) (uint16_t)((pq)->object_size)
-#define GetHeadLink(pq) ((pq)->head)
-#define SetHeadLink(pq, h) ((pq)->head = (h))
-#define GetTailLink(pq) ((pq)->tail)
-#define SetTailLink(pq, h) ((pq)->tail = (h))
-#define _GetPredLink(lpE) ((lpE)->pred)
-#define _SetPredLink(lpE, h) ((lpE)->pred = (h))
-#define _GetSuccLink(lpE) ((lpE)->succ)
-#define _SetSuccLink(lpE, h) ((lpE)->succ = (h))
+constexpr auto SetLinkSize(const auto& pq, const auto& s) { return ((pq)->object_size = (uint16_t)(s)); }
+constexpr auto GetLinkSize(const auto& pq) { return (uint16_t)((pq)->object_size); }
+constexpr auto GetHeadLink(const auto& pq) { return ((pq)->head); }
+constexpr auto SetHeadLink(const auto& pq, const auto& h) { return ((pq)->head = (h)); }
+constexpr auto GetTailLink(const auto& pq) { return ((pq)->tail); }
+constexpr auto SetTailLink(const auto& pq, const auto& h) { return ((pq)->tail = (h)); }
+constexpr auto _GetPredLink(const auto& lpE) { return ((lpE)->pred); }
+constexpr auto _SetPredLink(const auto& lpE, const auto& h) { return ((lpE)->pred = (h)); }
+constexpr auto _GetSuccLink(const auto& lpE) { return ((lpE)->succ); }
+constexpr auto _SetSuccLink(const auto& lpE, const auto& h) { return ((lpE)->succ = (h)); }
 
 extern bool InitQueue(QUEUE* pq, uint16_t num_elements, OBJ_SIZE size);
 extern bool UninitQueue(QUEUE* pq);

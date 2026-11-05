@@ -35,12 +35,12 @@ extern "C" {
 typedef struct melee_state MELEE_STATE;
 
 inline constexpr auto NumMeleeRows {2};
-inline auto NumMeleeColumns() { return SAFE_BOOL(7, 6); }
+inline auto NumMeleeColumns() { return SafeBool(7, 6); }
 //#define NumMeleeColumns() 7
 inline auto TrueMeleeFleetSize() { return (NumMeleeRows * NumMeleeColumns()); }
 inline constexpr auto MeleeFleetSize {(14)};
-inline auto IconWidth() { return RES_SCALE(16); }
-inline auto IconHeight() { return RES_SCALE(16); }
+inline auto IconWidth() { return ResScale(16); }
+inline auto IconHeight() { return ResScale(16); }
 
 extern FRAME PickMeleeFrame;
 

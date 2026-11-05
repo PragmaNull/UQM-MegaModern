@@ -304,8 +304,7 @@ LockStarShip(const QUEUE* pq, HSTARSHIP h)
 	return (STARSHIP*)LockLink(pq, h);
 }
 
-#define UnlockStarShip(pq, h) UnlockLink(pq, h)
-#define FreeStarShip(pq, h) FreeLink(pq, h)
+constexpr auto UnlockStarShip(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
 
 
 typedef HLINK HSHIPFRAG;
@@ -338,8 +337,8 @@ LockShipFrag(const QUEUE* pq, HSHIPFRAG h)
 	return (SHIP_FRAGMENT*)LockLink(pq, h);
 }
 
-#define UnlockShipFrag(pq, h) UnlockLink(pq, h)
-#define FreeShipFrag(pq, h) FreeLink(pq, h)
+constexpr auto UnlockShipFrag(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
+constexpr auto FreeShipFrag(const auto& pq, const auto& h) { return FreeLink(pq, h); }
 
 
 typedef HLINK HFLEETINFO;
@@ -408,7 +407,7 @@ LockFleetInfo(const QUEUE* pq, HFLEETINFO h)
 	return (FLEET_INFO*)LockLink(pq, h);
 }
 
-#define UnlockFleetInfo(pq, h) UnlockLink(pq, h)
+constexpr auto UnlockFleetInfo(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
 
 // Used as index into avail_race_q.
 typedef enum
@@ -508,64 +507,64 @@ typedef enum
 		YEHAT_SHIP,		   /* YEHAT_REBEL_CONVERSATION */    \
 		HUMAN_SHIP		   /* INVALID_CONVERSATION */
 
-#define LOG_TO_IP(s) ((s) << 1)
-#define RACE_IP_SPEED                          \
-	LOG_TO_IP(40),	   /* ARILOU_SHIP */       \
-		LOG_TO_IP(27), /* CHMMR_SHIP */        \
-		LOG_TO_IP(24), /* HUMAN_SHIP */        \
-		LOG_TO_IP(40), /* ORZ_SHIP */          \
-		LOG_TO_IP(40), /* PKUNK_SHIP */        \
-		LOG_TO_IP(35), /* SHOFIXTI_SHIP */     \
-		LOG_TO_IP(48), /* SPATHI_SHIP */       \
-		LOG_TO_IP(40), /* SUPOX_SHIP */        \
-		LOG_TO_IP(28), /* THRADDASH_SHIP */    \
-		LOG_TO_IP(30), /* UTWIG_SHIP */        \
-		LOG_TO_IP(21), /* VUX_SHIP */          \
-		LOG_TO_IP(30), /* YEHAT_SHIP */        \
-		LOG_TO_IP(40), /* MELNORME_SHIP */     \
-		LOG_TO_IP(20), /* DRUUGE_SHIP */       \
-		LOG_TO_IP(25), /* ILWRATH_SHIP */      \
-		LOG_TO_IP(27), /* MYCON_SHIP */        \
-		LOG_TO_IP(60), /* SLYLANDRO_SHIP */    \
-		LOG_TO_IP(18), /* UMGAH_SHIP */        \
-		LOG_TO_IP(30), /* URQUAN_SHIP */       \
-		LOG_TO_IP(40), /* ZOQFOTPIK_SHIP */    \
-		LOG_TO_IP(36), /* SYREEN_SHIP */       \
-		LOG_TO_IP(30), /* BLACK_URQUAN_SHIP */ \
-		LOG_TO_IP(24), /* ANDROSYNTH_SHIP */   \
-		LOG_TO_IP(27), /* CHENJESU_SHIP */     \
-		LOG_TO_IP(50), /* MMRNMHRM_SHIP */     \
-		LOG_TO_IP(30), /* YEHAT_REBEL_SHIP */  \
-		LOG_TO_IP(90), /* URQUAN_DRONE_SHIP */
+constexpr auto LogToIp(const auto& s) { return ((s) << 1); }
+#define RACE_IP_SPEED                        \
+	LogToIp(40),	 /* ARILOU_SHIP */       \
+		LogToIp(27), /* CHMMR_SHIP */        \
+		LogToIp(24), /* HUMAN_SHIP */        \
+		LogToIp(40), /* ORZ_SHIP */          \
+		LogToIp(40), /* PKUNK_SHIP */        \
+		LogToIp(35), /* SHOFIXTI_SHIP */     \
+		LogToIp(48), /* SPATHI_SHIP */       \
+		LogToIp(40), /* SUPOX_SHIP */        \
+		LogToIp(28), /* THRADDASH_SHIP */    \
+		LogToIp(30), /* UTWIG_SHIP */        \
+		LogToIp(21), /* VUX_SHIP */          \
+		LogToIp(30), /* YEHAT_SHIP */        \
+		LogToIp(40), /* MELNORME_SHIP */     \
+		LogToIp(20), /* DRUUGE_SHIP */       \
+		LogToIp(25), /* ILWRATH_SHIP */      \
+		LogToIp(27), /* MYCON_SHIP */        \
+		LogToIp(60), /* SLYLANDRO_SHIP */    \
+		LogToIp(18), /* UMGAH_SHIP */        \
+		LogToIp(30), /* URQUAN_SHIP */       \
+		LogToIp(40), /* ZOQFOTPIK_SHIP */    \
+		LogToIp(36), /* SYREEN_SHIP */       \
+		LogToIp(30), /* BLACK_URQUAN_SHIP */ \
+		LogToIp(24), /* ANDROSYNTH_SHIP */   \
+		LogToIp(27), /* CHENJESU_SHIP */     \
+		LogToIp(50), /* MMRNMHRM_SHIP */     \
+		LogToIp(30), /* YEHAT_REBEL_SHIP */  \
+		LogToIp(90), /* URQUAN_DRONE_SHIP */
 
-#define LOG_TO_HYPER(s) (WORLD_TO_VELOCITY(s) >> 1)
-#define RACE_HYPER_SPEED                                     \
-	LOG_TO_HYPER(RES_SCALE(40)),	 /* ARILOU_SHIP */       \
-		LOG_TO_HYPER(RES_SCALE(27)), /* CHMMR_SHIP */        \
-		LOG_TO_HYPER(RES_SCALE(24)), /* HUMAN_SHIP */        \
-		LOG_TO_HYPER(RES_SCALE(40)), /* ORZ_SHIP */          \
-		LOG_TO_HYPER(RES_SCALE(40)), /* PKUNK_SHIP */        \
-		LOG_TO_HYPER(RES_SCALE(35)), /* SHOFIXTI_SHIP */     \
-		LOG_TO_HYPER(RES_SCALE(48)), /* SPATHI_SHIP */       \
-		LOG_TO_HYPER(RES_SCALE(40)), /* SUPOX_SHIP */        \
-		LOG_TO_HYPER(RES_SCALE(50)), /* THRADDASH_SHIP */    \
-		LOG_TO_HYPER(RES_SCALE(30)), /* UTWIG_SHIP */        \
-		LOG_TO_HYPER(RES_SCALE(21)), /* VUX_SHIP */          \
-		LOG_TO_HYPER(RES_SCALE(30)), /* YEHAT_SHIP */        \
-		LOG_TO_HYPER(RES_SCALE(40)), /* MELNORME_SHIP */     \
-		LOG_TO_HYPER(RES_SCALE(20)), /* DRUUGE_SHIP */       \
-		LOG_TO_HYPER(RES_SCALE(25)), /* ILWRATH_SHIP */      \
-		LOG_TO_HYPER(RES_SCALE(27)), /* MYCON_SHIP */        \
-		LOG_TO_HYPER(RES_SCALE(60)), /* SLYLANDRO_SHIP */    \
-		LOG_TO_HYPER(RES_SCALE(18)), /* UMGAH_SHIP */        \
-		LOG_TO_HYPER(RES_SCALE(30)), /* URQUAN_SHIP */       \
-		LOG_TO_HYPER(RES_SCALE(40)), /* ZOQFOTPIK_SHIP */    \
-		LOG_TO_HYPER(RES_SCALE(36)), /* SYREEN_SHIP */       \
-		LOG_TO_HYPER(RES_SCALE(30)), /* BLACK_URQUAN_SHIP */ \
-		LOG_TO_HYPER(RES_SCALE(45)), /* ANDROSYNTH_SHIP */   \
-		LOG_TO_HYPER(RES_SCALE(27)), /* CHENJESU_SHIP */     \
-		LOG_TO_HYPER(RES_SCALE(50)), /* MMRNMHRM_SHIP */     \
-		LOG_TO_HYPER(RES_SCALE(30)), /* YEHAT_REBEL_SHIP */
+constexpr auto LogToHyper(const auto& s) { return (WorldToVelocity(s) >> 1); }
+#define RACE_HYPER_SPEED                                  \
+	LogToHyper(ResScale(40)),	  /* ARILOU_SHIP */       \
+		LogToHyper(ResScale(27)), /* CHMMR_SHIP */        \
+		LogToHyper(ResScale(24)), /* HUMAN_SHIP */        \
+		LogToHyper(ResScale(40)), /* ORZ_SHIP */          \
+		LogToHyper(ResScale(40)), /* PKUNK_SHIP */        \
+		LogToHyper(ResScale(35)), /* SHOFIXTI_SHIP */     \
+		LogToHyper(ResScale(48)), /* SPATHI_SHIP */       \
+		LogToHyper(ResScale(40)), /* SUPOX_SHIP */        \
+		LogToHyper(ResScale(50)), /* THRADDASH_SHIP */    \
+		LogToHyper(ResScale(30)), /* UTWIG_SHIP */        \
+		LogToHyper(ResScale(21)), /* VUX_SHIP */          \
+		LogToHyper(ResScale(30)), /* YEHAT_SHIP */        \
+		LogToHyper(ResScale(40)), /* MELNORME_SHIP */     \
+		LogToHyper(ResScale(20)), /* DRUUGE_SHIP */       \
+		LogToHyper(ResScale(25)), /* ILWRATH_SHIP */      \
+		LogToHyper(ResScale(27)), /* MYCON_SHIP */        \
+		LogToHyper(ResScale(60)), /* SLYLANDRO_SHIP */    \
+		LogToHyper(ResScale(18)), /* UMGAH_SHIP */        \
+		LogToHyper(ResScale(30)), /* URQUAN_SHIP */       \
+		LogToHyper(ResScale(40)), /* ZOQFOTPIK_SHIP */    \
+		LogToHyper(ResScale(36)), /* SYREEN_SHIP */       \
+		LogToHyper(ResScale(30)), /* BLACK_URQUAN_SHIP */ \
+		LogToHyper(ResScale(45)), /* ANDROSYNTH_SHIP */   \
+		LogToHyper(ResScale(27)), /* CHENJESU_SHIP */     \
+		LogToHyper(ResScale(50)), /* MMRNMHRM_SHIP */     \
+		LogToHyper(ResScale(30)), /* YEHAT_REBEL_SHIP */
 
 #define RACE_HYPERSPACE_PERCENT     \
 	20,		/* ARILOU_SHIP */       \

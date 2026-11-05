@@ -256,35 +256,35 @@ FriendlyExit(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
-	if (PLAYER_SAID(R, bye))
+	if (PlayerSaid(R, bye))
 	{
 		NPCPhrase(GOODBYE);
 	}
-	else if (PLAYER_SAID(R, im_on_my_way)
-			 || PLAYER_SAID(R, doing_this_for_you)
-			 || PLAYER_SAID(R, if_i_die))
+	else if (PlayerSaid(R, im_on_my_way)
+			 || PlayerSaid(R, doing_this_for_you)
+			 || PlayerSaid(R, if_i_die))
 	{
 		NPCPhrase(GOOD_LUCK);
 	}
-	else if (PLAYER_SAID(R, bye_before_vault))
+	else if (PlayerSaid(R, bye_before_vault))
 	{
 		NPCPhrase(GOODBYE_BEFORE_VAULT);
 	}
-	else if (PLAYER_SAID(R, bye_after_vault))
+	else if (PlayerSaid(R, bye_after_vault))
 	{
 		NPCPhrase(GOODBYE_AFTER_VAULT);
 	}
-	else if (PLAYER_SAID(R, bye_before_ambush))
+	else if (PlayerSaid(R, bye_before_ambush))
 	{
 		NPCPhrase(GOODBYE_BEFORE_AMBUSH);
 	}
-	else if (PLAYER_SAID(R, bye_after_ambush))
+	else if (PlayerSaid(R, bye_after_ambush))
 	{
 		NPCPhrase(GOODBYE_AFTER_AMBUSH);
 	}
 	else
 	{
-		if (PLAYER_SAID(R, hands_off))
+		if (PlayerSaid(R, hands_off))
 		{
 			SetCustomBaseLine(3, MAKE_POINT(108, 81), ALIGN_CENTER);
 			SetCustomBaseLine(4, MAKE_POINT(80, 49), ALIGN_CENTER);
@@ -292,7 +292,7 @@ FriendlyExit(RESPONSE_REF R)
 
 			NPCPhrase(OK_WONT_USE_HANDS);
 		}
-		else if (PLAYER_SAID(R, not_much_more_to_say))
+		else if (PlayerSaid(R, not_much_more_to_say))
 		{
 			NPCPhrase(THEN_STOP_TALKING);
 		}
@@ -338,7 +338,7 @@ FriendlyExit(RESPONSE_REF R)
 static void
 Sex(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, in_the_spirit))
+	if (PlayerSaid(R, in_the_spirit))
 	{
 		SetCustomBaseLine(3, MAKE_POINT(98, 21), ALIGN_CENTER);
 		SetCustomBaseLine(4, MAKE_POINT(156, 51), ALIGN_CENTER);
@@ -346,7 +346,7 @@ Sex(RESPONSE_REF R)
 
 		NPCPhrase(OK_SPIRIT);
 	}
-	else if (PLAYER_SAID(R, what_in_mind))
+	else if (PlayerSaid(R, what_in_mind))
 	{
 		SetCustomBaseLine(0, MAKE_POINT(3, 0), ALIGN_LEFT);
 		SetCustomBaseLine(1, MAKE_POINT(3, 0), ALIGN_LEFT);
@@ -357,46 +357,46 @@ Sex(RESPONSE_REF R)
 
 		NPCPhrase(SOMETHING_LIKE_THIS);
 	}
-	else if (PLAYER_SAID(R, disease))
+	else if (PlayerSaid(R, disease))
 	{
 		NPCPhrase(JUST_RELAX);
 	}
-	else if (PLAYER_SAID(R, what_happens_if_i_touch_this))
+	else if (PlayerSaid(R, what_happens_if_i_touch_this))
 	{
 		NPCPhrase(THIS_HAPPENS);
 
 		DISABLE_PHRASE(what_happens_if_i_touch_this);
 	}
-	else if (PLAYER_SAID(R, are_you_sure_this_is_ok))
+	else if (PlayerSaid(R, are_you_sure_this_is_ok))
 	{
 		NPCPhrase(YES_SURE);
 
 		DISABLE_PHRASE(are_you_sure_this_is_ok);
 	}
-	else if (PLAYER_SAID(R, boy_they_never_taught))
+	else if (PlayerSaid(R, boy_they_never_taught))
 	{
 		NPCPhrase(THEN_LET_ME_TEACH);
 
 		DISABLE_PHRASE(boy_they_never_taught);
 	}
 
-	if (!PHRASE_ENABLED(what_happens_if_i_touch_this)
-		&& !PHRASE_ENABLED(are_you_sure_this_is_ok)
-		&& !PHRASE_ENABLED(boy_they_never_taught))
+	if (!PhraseEnabled(what_happens_if_i_touch_this)
+		&& !PhraseEnabled(are_you_sure_this_is_ok)
+		&& !PhraseEnabled(boy_they_never_taught))
 	{
 		Response(not_much_more_to_say, FriendlyExit);
 	}
 	else
 	{
-		if (PHRASE_ENABLED(what_happens_if_i_touch_this))
+		if (PhraseEnabled(what_happens_if_i_touch_this))
 		{
 			Response(what_happens_if_i_touch_this, Sex);
 		}
-		if (PHRASE_ENABLED(are_you_sure_this_is_ok))
+		if (PhraseEnabled(are_you_sure_this_is_ok))
 		{
 			Response(are_you_sure_this_is_ok, Sex);
 		}
-		if (PHRASE_ENABLED(boy_they_never_taught))
+		if (PhraseEnabled(boy_they_never_taught))
 		{
 			Response(boy_they_never_taught, Sex);
 		}
@@ -406,10 +406,10 @@ Sex(RESPONSE_REF R)
 static void
 Foreplay(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_my_reward)
-		|| PLAYER_SAID(R, what_about_us))
+	if (PlayerSaid(R, whats_my_reward)
+		|| PlayerSaid(R, what_about_us))
 	{
-		if (PLAYER_SAID(R, whats_my_reward))
+		if (PlayerSaid(R, whats_my_reward))
 		{
 			NPCPhrase(HERES_REWARD);
 		}
@@ -446,7 +446,7 @@ Foreplay(RESPONSE_REF R)
 		AlienTalkSegue((uint16_t)~0);
 		SET_GAME_STATE(PLAYER_HAVING_SEX, 1);
 	}
-	else if (PLAYER_SAID(R, why_lights_off))
+	else if (PlayerSaid(R, why_lights_off))
 	{
 		SetCustomBaseLine(1, MAKE_POINT(60, 41), ALIGN_CENTER);
 		SetCustomBaseLine(2, MAKE_POINT(180, 41), ALIGN_CENTER);
@@ -456,18 +456,18 @@ Foreplay(RESPONSE_REF R)
 
 		DISABLE_PHRASE(why_lights_off);
 	}
-	else if (PLAYER_SAID(R, evil_monster))
+	else if (PlayerSaid(R, evil_monster))
 	{
 		NPCPhrase(NOT_EVIL_MONSTER);
 
 		DISABLE_PHRASE(evil_monster);
 	}
 
-	if (PHRASE_ENABLED(why_lights_off))
+	if (PhraseEnabled(why_lights_off))
 	{
 		Response(why_lights_off, Foreplay);
 	}
-	else if (PHRASE_ENABLED(evil_monster))
+	else if (PhraseEnabled(evil_monster))
 	{
 		Response(evil_monster, Foreplay);
 	}
@@ -483,19 +483,19 @@ Foreplay(RESPONSE_REF R)
 static void
 AfterAmbush(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, what_now_after_ambush))
+	if (PlayerSaid(R, what_now_after_ambush))
 	{
 		NPCPhrase(DO_THIS_AFTER_AMBUSH);
 
 		DISABLE_PHRASE(what_now_after_ambush);
 	}
-	else if (PLAYER_SAID(R, what_about_you))
+	else if (PlayerSaid(R, what_about_you))
 	{
 		NPCPhrase(ABOUT_ME);
 
 		DISABLE_PHRASE(what_about_you);
 	}
-	else if (PLAYER_SAID(R, whats_up_after_ambush))
+	else if (PlayerSaid(R, whats_up_after_ambush))
 	{
 		uint8_t NumVisits {};
 
@@ -521,7 +521,7 @@ AfterAmbush(RESPONSE_REF R)
 		DISABLE_PHRASE(whats_up_after_ambush);
 	}
 
-	if (PHRASE_ENABLED(what_about_you))
+	if (PhraseEnabled(what_about_you))
 	{
 		Response(what_about_you, AfterAmbush);
 	}
@@ -529,11 +529,11 @@ AfterAmbush(RESPONSE_REF R)
 	{
 		Response(what_about_us, Foreplay);
 	}
-	if (PHRASE_ENABLED(what_now_after_ambush))
+	if (PhraseEnabled(what_now_after_ambush))
 	{
 		Response(what_now_after_ambush, AfterAmbush);
 	}
-	if (PHRASE_ENABLED(whats_up_after_ambush))
+	if (PhraseEnabled(whats_up_after_ambush))
 	{
 		Response(whats_up_after_ambush, AfterAmbush);
 	}
@@ -543,14 +543,14 @@ AfterAmbush(RESPONSE_REF R)
 static void
 AmbushReady(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, repeat_plan))
+	if (PlayerSaid(R, repeat_plan))
 	{
 		NPCPhrase(OK_REPEAT_PLAN);
 
 		DISABLE_PHRASE(repeat_plan);
 	}
 
-	if (PHRASE_ENABLED(repeat_plan))
+	if (PhraseEnabled(repeat_plan))
 	{
 		Response(repeat_plan, AmbushReady);
 	}
@@ -560,25 +560,25 @@ AmbushReady(RESPONSE_REF R)
 static void
 SyreenShuttle(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_next_step))
+	if (PlayerSaid(R, whats_next_step))
 	{
 		NPCPhrase(OPEN_VAULT);
 
 		DISABLE_PHRASE(whats_next_step);
 	}
-	else if (PLAYER_SAID(R, what_do_i_get_for_this))
+	else if (PlayerSaid(R, what_do_i_get_for_this))
 	{
 		NPCPhrase(GRATITUDE);
 
 		DISABLE_PHRASE(what_do_i_get_for_this);
 	}
-	else if (PLAYER_SAID(R, not_sure))
+	else if (PlayerSaid(R, not_sure))
 	{
 		NPCPhrase(PLEASE);
 
 		DISABLE_PHRASE(not_sure);
 	}
-	else if (PLAYER_SAID(R, where_is_it))
+	else if (PlayerSaid(R, where_is_it))
 	{
 		NPCPhrase(DONT_KNOW_WHERE);
 		NPCPhrase(GIVE_SHUTTLE);
@@ -588,7 +588,7 @@ SyreenShuttle(RESPONSE_REF R)
 
 		DISABLE_PHRASE(where_is_it);
 	}
-	else if (PLAYER_SAID(R, been_there))
+	else if (PlayerSaid(R, been_there))
 	{
 		NPCPhrase(GREAT);
 		NPCPhrase(GIVE_SHUTTLE);
@@ -599,7 +599,7 @@ SyreenShuttle(RESPONSE_REF R)
 		DISABLE_PHRASE(been_there);
 	}
 
-	if (PHRASE_ENABLED(whats_next_step))
+	if (PhraseEnabled(whats_next_step))
 	{
 		Response(whats_next_step, SyreenShuttle);
 	}
@@ -607,31 +607,31 @@ SyreenShuttle(RESPONSE_REF R)
 	{
 		if (!GET_GAME_STATE(KNOW_SYREEN_VAULT))
 		{
-			if (PHRASE_ENABLED(where_is_it))
+			if (PhraseEnabled(where_is_it))
 			{
 				Response(where_is_it, SyreenShuttle);
 			}
 		}
 		else
 		{
-			if (PHRASE_ENABLED(been_there))
+			if (PhraseEnabled(been_there))
 			{
 				Response(been_there, SyreenShuttle);
 			}
 		}
-		if (!PHRASE_ENABLED(where_is_it)
-			|| !PHRASE_ENABLED(been_there))
+		if (!PhraseEnabled(where_is_it)
+			|| !PhraseEnabled(been_there))
 		{
 			Response(im_on_my_way, FriendlyExit);
 			Response(doing_this_for_you, FriendlyExit);
 			Response(if_i_die, FriendlyExit);
 		}
 	}
-	if (PHRASE_ENABLED(what_do_i_get_for_this))
+	if (PhraseEnabled(what_do_i_get_for_this))
 	{
 		Response(what_do_i_get_for_this, SyreenShuttle);
 	}
-	if (PHRASE_ENABLED(not_sure))
+	if (PhraseEnabled(not_sure))
 	{
 		Response(not_sure, SyreenShuttle);
 	}
@@ -645,100 +645,100 @@ NormalSyreen(RESPONSE_REF R)
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
-	if (PLAYER_SAID(R, we_here_to_help))
+	if (PlayerSaid(R, we_here_to_help))
 	{
 		NPCPhrase(NO_NEED_HELP);
 	}
-	else if (PLAYER_SAID(R, we_need_help))
+	else if (PlayerSaid(R, we_need_help))
 	{
 		NPCPhrase(CANT_GIVE_HELP);
 	}
-	else if (PLAYER_SAID(R, know_about_deep_children))
+	else if (PlayerSaid(R, know_about_deep_children))
 	{
 		NPCPhrase(WHAT_ABOUT_DEEP_CHILDREN);
 
 		DISABLE_PHRASE(know_about_deep_children);
 	}
-	else if (PLAYER_SAID(R, mycons_involved))
+	else if (PlayerSaid(R, mycons_involved))
 	{
 		NPCPhrase(WHAT_PROOF);
 
 		SET_GAME_STATE(KNOW_ABOUT_SHATTERED, 3);
 	}
-	else if (PLAYER_SAID(R, have_no_proof))
+	else if (PlayerSaid(R, have_no_proof))
 	{
 		NPCPhrase(NEED_PROOF);
 
 		SET_GAME_STATE(SYREEN_WANT_PROOF, 1);
 	}
-	else if (PLAYER_SAID(R, have_proof))
+	else if (PlayerSaid(R, have_proof))
 	{
 		NPCPhrase(SEE_PROOF);
 
 		DISABLE_PHRASE(have_proof);
 	}
-	else if (PLAYER_SAID(R, what_doing_here))
+	else if (PlayerSaid(R, what_doing_here))
 	{
 		NPCPhrase(OUR_NEW_WORLD);
 
 		SET_GAME_STATE(SYREEN_STACK0, 1);
 		LastStack = 1;
 	}
-	else if (PLAYER_SAID(R, what_about_war))
+	else if (PlayerSaid(R, what_about_war))
 	{
 		NPCPhrase(ABOUT_WAR);
 
 		SET_GAME_STATE(SYREEN_STACK0, 2);
 		LastStack = 1;
 	}
-	else if (PLAYER_SAID(R, help_us))
+	else if (PlayerSaid(R, help_us))
 	{
 		NPCPhrase(WONT_HELP);
 
 		SET_GAME_STATE(SYREEN_STACK0, 3);
 	}
-	else if (PLAYER_SAID(R, what_about_history))
+	else if (PlayerSaid(R, what_about_history))
 	{
 		NPCPhrase(BEFORE_WAR);
 
 		SET_GAME_STATE(SYREEN_STACK1, 1);
 		LastStack = 2;
 	}
-	else if (PLAYER_SAID(R, what_about_homeworld))
+	else if (PlayerSaid(R, what_about_homeworld))
 	{
 		NPCPhrase(ABOUT_HOMEWORLD);
 
 		SET_GAME_STATE(SYREEN_STACK1, 2);
 		LastStack = 2;
 	}
-	else if (PLAYER_SAID(R, what_happened))
+	else if (PlayerSaid(R, what_happened))
 	{
 		NPCPhrase(DONT_KNOW_HOW);
 
 		SET_GAME_STATE(KNOW_SYREEN_WORLD_SHATTERED, 1);
 		SET_GAME_STATE(SYREEN_STACK1, 3);
 	}
-	else if (PLAYER_SAID(R, what_about_outfit))
+	else if (PlayerSaid(R, what_about_outfit))
 	{
 		NPCPhrase(HOPE_YOU_LIKE_IT);
 
 		SET_GAME_STATE(SYREEN_STACK2, 1);
 		LastStack = 3;
 	}
-	else if (PLAYER_SAID(R, where_mates))
+	else if (PlayerSaid(R, where_mates))
 	{
 		NPCPhrase(MATES_KILLED);
 
 		SET_GAME_STATE(SYREEN_STACK2, 2);
 		LastStack = 3;
 	}
-	else if (PLAYER_SAID(R, get_lonely))
+	else if (PlayerSaid(R, get_lonely))
 	{
 		NPCPhrase(MAKE_OUT_ALL_RIGHT);
 
 		SET_GAME_STATE(SYREEN_STACK2, 3);
 	}
-	else if (PLAYER_SAID(R, look_at_egg_sacks))
+	else if (PlayerSaid(R, look_at_egg_sacks))
 	{
 		NPCPhrase(HORRIBLE_TRUTH);
 
@@ -758,7 +758,7 @@ NormalSyreen(RESPONSE_REF R)
 		if (GET_GAME_STATE(KNOW_ABOUT_SHATTERED) == 2
 			&& GET_GAME_STATE(KNOW_SYREEN_WORLD_SHATTERED))
 		{
-			if (PHRASE_ENABLED(know_about_deep_children))
+			if (PhraseEnabled(know_about_deep_children))
 			{
 				pStr[0] = know_about_deep_children;
 			}
@@ -774,7 +774,7 @@ NormalSyreen(RESPONSE_REF R)
 			|| GET_GAME_STATE(EGG_CASE1_ON_SHIP)
 			|| GET_GAME_STATE(EGG_CASE2_ON_SHIP))
 		{
-			if (PHRASE_ENABLED(have_proof))
+			if (PhraseEnabled(have_proof))
 			{
 				pStr[0] = have_proof;
 			}
@@ -841,34 +841,34 @@ NormalSyreen(RESPONSE_REF R)
 static void
 InitialSyreen(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, we_are_vice_squad))
+	if (PlayerSaid(R, we_are_vice_squad))
 	{
 		NPCPhrase(OK_VICE);
 		NPCPhrase(HOW_CAN_YOU_BE_HERE);
 	}
-	else if (PLAYER_SAID(R, we_are_the_one_for_you_baby))
+	else if (PlayerSaid(R, we_are_the_one_for_you_baby))
 	{
 		NPCPhrase(MAYBE_CAPTAIN);
 		NPCPhrase(HOW_CAN_YOU_BE_HERE);
 	}
-	else if (PLAYER_SAID(R, we_are_vindicator))
+	else if (PlayerSaid(R, we_are_vindicator))
 	{
 		NPCPhrase(WELCOME_VINDICATOR);
 		NPCPhrase(HOW_CAN_YOU_BE_HERE);
 	}
-	else if (PLAYER_SAID(R, we_are_impressed))
+	else if (PlayerSaid(R, we_are_impressed))
 	{
 		NPCPhrase(SO_AM_I_CAPTAIN);
 		NPCPhrase(HOW_CAN_YOU_BE_HERE);
 	}
-	else if (PLAYER_SAID(R, i_need_you))
+	else if (PlayerSaid(R, i_need_you))
 	{
 		NPCPhrase(OK_NEED);
 
 		DISABLE_PHRASE(i_need_you);
 		DISABLE_PHRASE(i_need_touch_o_vision);
 	}
-	else if (PLAYER_SAID(R, i_need_touch_o_vision))
+	else if (PlayerSaid(R, i_need_touch_o_vision))
 	{
 		NPCPhrase(TOUCH_O_VISION);
 
@@ -878,11 +878,11 @@ InitialSyreen(RESPONSE_REF R)
 
 	Response(we_here_to_help, NormalSyreen);
 	Response(we_need_help, NormalSyreen);
-	if (PHRASE_ENABLED(i_need_you))
+	if (PhraseEnabled(i_need_you))
 	{
 		Response(i_need_you, InitialSyreen);
 	}
-	if (PHRASE_ENABLED(i_need_touch_o_vision))
+	if (PhraseEnabled(i_need_touch_o_vision))
 	{
 		Response(i_need_touch_o_vision, InitialSyreen);
 	}
@@ -927,14 +927,14 @@ PlanAmbush(RESPONSE_REF R)
 static void
 SyreenVault(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, vault_hint))
+	if (PlayerSaid(R, vault_hint))
 	{
 		NPCPhrase(OK_HINT);
 
 		DISABLE_PHRASE(vault_hint);
 	}
 
-	if (PHRASE_ENABLED(vault_hint))
+	if (PhraseEnabled(vault_hint))
 	{
 		Response(vault_hint, SyreenVault);
 	}
@@ -1091,7 +1091,7 @@ init_syreen_comm(void)
 
 	syreen_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	syreen_desc.AlienTextBaseline.y = 0;
-	syreen_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	syreen_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	setSegue(Segue_peace);
 	LOCDATA* retval {&syreen_desc};

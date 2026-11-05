@@ -47,7 +47,7 @@ static constexpr auto ConeLife {1};
 // Retropropulsion
 static constexpr auto SpecialEnergyCost {1};
 static constexpr auto SpecialWait {2};
-static auto JumpDist() { return DISPLAY_TO_WORLD(RES_SCALE(40)); }
+static auto JumpDist() { return DisplayToWorld(ResScale(40)); }
 
 static RACE_DESC umgah_desc =
 	{
@@ -169,7 +169,7 @@ cone_preprocess(ELEMENT* ElementPtr)
 	GetElementStarShip(ElementPtr, &StarShipPtr);
 	StarShipPtr->RaceDescPtr->ship_data.special[0] =
 		SetRelFrameIndex(StarShipPtr->RaceDescPtr->ship_data.special[0],
-						 ANGLE_TO_FACING(FullCircle));
+						 AngleToFacing(FullCircle));
 
 	ElementPtr->state_flags |= Appearing;
 }
@@ -244,15 +244,15 @@ umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			this_turn = (uint8_t)lpEvalDesc->which_turn;
 		}
 
-		EnoughJuice = (bool)((WORLD_TO_TURN(RES_DESCALE(
+		EnoughJuice = (bool)((WorldToTurn(ResDescale(
 								 JumpDist() * StarShipPtr->RaceDescPtr->ship_info.energy_level
 								 / SpecialEnergyCost)))
 							 > this_turn);
 		const int32_t delta_x {lpEvalDesc->ObjectPtr->next.location.x - ShipPtr->next.location.x};
 		const int32_t delta_y {lpEvalDesc->ObjectPtr->next.location.y - ShipPtr->next.location.y};
-		EnemyBehind = (bool)(NORMALIZE_ANGLE(
+		EnemyBehind = (bool)(NormalizeAngle(
 								 ARCTAN(delta_x, delta_y)
-								 - (FACING_TO_ANGLE(StarShipPtr->ShipFacing)
+								 - (FacingToAngle(StarShipPtr->ShipFacing)
 									+ HalfCircle)
 								 + (Octant + (Octant >> 2)))
 							 <= ((Octant + (Octant >> 2)) << 1));
@@ -262,9 +262,9 @@ umgah_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			&& ((StarShipPtr->old_status_flags & SpecialFlag)
 				|| EnemyBehind
 				|| (this_turn > 6
-					&& MANEUVERABILITY(
+					&& Maneuverability(
 						   &EnemyStarShipPtr->RaceDescPtr->cyborg_control)
-						   <= RESOLUTION_COMPENSATED(SlowShip))
+						   <= ResolutionCompensated(SlowShip))
 				|| (this_turn >= 16 && this_turn <= 24)))
 		{
 			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = (LongRangeWeapon << 3);
@@ -422,10 +422,10 @@ umgah_preprocess(ELEMENT* ElementPtr)
 							 /* ZIP_BACKWARDS */
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
 						 ElementPtr);
-			facing = FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HalfCircle;
+			facing = FacingToAngle(StarShipPtr->ShipFacing) + HalfCircle;
 			DeltaVelocityComponents(&ElementPtr->velocity,
-									COSINE(facing, WORLD_TO_VELOCITY(JumpDist())),
-									SINE(facing, WORLD_TO_VELOCITY(JumpDist())));
+									Cosine(facing, WorldToVelocity(JumpDist())),
+									Sine(facing, WorldToVelocity(JumpDist())));
 			StarShipPtr->cur_status_flags &=
 				~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
 
@@ -445,8 +445,8 @@ init_umgah(void)
 {
 	if (IsHd())
 	{
-		umgah_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		umgah_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		umgah_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		umgah_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		umgah_desc.cyborg_control.WeaponRange = (LongRangeWeaponHd << 2);
 	}
 	else

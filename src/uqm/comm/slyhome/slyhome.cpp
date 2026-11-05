@@ -250,41 +250,41 @@ static void HomeWorld(RESPONSE_REF R);
 static void
 HumanInfo(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, happy_to_tell_more))
+	if (PlayerSaid(R, happy_to_tell_more))
 	{
 		NPCPhrase(TELL_MORE);
 
 		SET_GAME_STATE(SLYLANDRO_STACK4, 1);
 	}
-	else if (PLAYER_SAID(R, would_you_like_to_know_more))
+	else if (PlayerSaid(R, would_you_like_to_know_more))
 	{
 		NPCPhrase(YES_TELL_MORE);
 	}
-	else if (PLAYER_SAID(R, we_come_from_earth))
+	else if (PlayerSaid(R, we_come_from_earth))
 	{
 		NPCPhrase(OK_EARTH);
 
 		SET_GAME_STATE(SLYLANDRO_KNOW_EARTH, 1);
 	}
-	else if (PLAYER_SAID(R, we_explore))
+	else if (PlayerSaid(R, we_explore))
 	{
 		NPCPhrase(OK_EXPLORE);
 
 		SET_GAME_STATE(SLYLANDRO_KNOW_EXPLORE, 1);
 	}
-	else if (PLAYER_SAID(R, we_fight_urquan))
+	else if (PlayerSaid(R, we_fight_urquan))
 	{
 		NPCPhrase(URQUAN_NICE_GUYS);
 
 		SET_GAME_STATE(SLYLANDRO_KNOW_URQUAN, 1);
 	}
-	else if (PLAYER_SAID(R, not_same_urquan))
+	else if (PlayerSaid(R, not_same_urquan))
 	{
 		NPCPhrase(PERSONALITY_CHANGE);
 
 		SET_GAME_STATE(SLYLANDRO_KNOW_URQUAN, 2);
 	}
-	else if (PLAYER_SAID(R, we_gather))
+	else if (PlayerSaid(R, we_gather))
 	{
 		NPCPhrase(MAYBE_INTERESTED);
 
@@ -328,29 +328,29 @@ HumanInfo(RESPONSE_REF R)
 static void
 SlylandroInfo(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, like_more_about_you))
+	if (PlayerSaid(R, like_more_about_you))
 	{
 		NPCPhrase(SURE_KNOW_WHAT);
 	}
-	else if (PLAYER_SAID(R, what_about_home))
+	else if (PlayerSaid(R, what_about_home))
 	{
 		NPCPhrase(ABOUT_HOME);
 
 		DISABLE_PHRASE(what_about_home);
 	}
-	else if (PLAYER_SAID(R, what_about_culture))
+	else if (PlayerSaid(R, what_about_culture))
 	{
 		NPCPhrase(ABOUT_CULTURE);
 
 		DISABLE_PHRASE(what_about_culture);
 	}
-	else if (PLAYER_SAID(R, what_about_history))
+	else if (PlayerSaid(R, what_about_history))
 	{
 		NPCPhrase(ABOUT_HISTORY);
 
 		DISABLE_PHRASE(what_about_history);
 	}
-	else if (PLAYER_SAID(R, what_about_biology))
+	else if (PlayerSaid(R, what_about_biology))
 	{
 		NPCPhrase(ABOUT_BIOLOGY);
 
@@ -358,22 +358,22 @@ SlylandroInfo(RESPONSE_REF R)
 	}
 
 	uint8_t InfoLeft {false};
-	if (PHRASE_ENABLED(what_about_home))
+	if (PhraseEnabled(what_about_home))
 	{
 		InfoLeft = true;
 		Response(what_about_home, SlylandroInfo);
 	}
-	if (PHRASE_ENABLED(what_about_culture))
+	if (PhraseEnabled(what_about_culture))
 	{
 		InfoLeft = true;
 		Response(what_about_culture, SlylandroInfo);
 	}
-	if (PHRASE_ENABLED(what_about_history))
+	if (PhraseEnabled(what_about_history))
 	{
 		InfoLeft = true;
 		Response(what_about_history, SlylandroInfo);
 	}
-	if (PHRASE_ENABLED(what_about_biology))
+	if (PhraseEnabled(what_about_biology))
 	{
 		InfoLeft = true;
 		Response(what_about_biology, SlylandroInfo);
@@ -389,38 +389,38 @@ SlylandroInfo(RESPONSE_REF R)
 static void
 FixBug(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, think_about_rep_priorities))
+	if (PlayerSaid(R, think_about_rep_priorities))
 	{
 		NPCPhrase(UH_OH);
 	}
-	else if (PLAYER_SAID(R, hunt_them_down))
+	else if (PlayerSaid(R, hunt_them_down))
 	{
 		NPCPhrase(GROW_TOO_FAST);
 
 		DISABLE_PHRASE(hunt_them_down);
 	}
-	else if (PLAYER_SAID(R, sue_melnorme))
+	else if (PlayerSaid(R, sue_melnorme))
 	{
 		NPCPhrase(SIGNED_WAIVER);
 
 		DISABLE_PHRASE(sue_melnorme);
 	}
-	else if (PLAYER_SAID(R, recall_signal))
+	else if (PlayerSaid(R, recall_signal))
 	{
 		NPCPhrase(NOT_THIS_MODEL);
 
 		DISABLE_PHRASE(recall_signal);
 	}
 
-	if (PHRASE_ENABLED(hunt_them_down))
+	if (PhraseEnabled(hunt_them_down))
 	{
 		Response(hunt_them_down, FixBug);
 	}
-	if (PHRASE_ENABLED(sue_melnorme))
+	if (PhraseEnabled(sue_melnorme))
 	{
 		Response(sue_melnorme, FixBug);
 	}
-	if (PHRASE_ENABLED(recall_signal))
+	if (PhraseEnabled(recall_signal))
 	{
 		Response(recall_signal, FixBug);
 	}
@@ -430,34 +430,34 @@ FixBug(RESPONSE_REF R)
 static void
 ProbeBug(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, probe_has_bug))
+	if (PlayerSaid(R, probe_has_bug))
 	{
 		NPCPhrase(NO_IT_DOESNT);
 	}
-	else if (PLAYER_SAID(R, tell_me_about_rep_2))
+	else if (PlayerSaid(R, tell_me_about_rep_2))
 	{
 		NPCPhrase(REP_NO_PROBLEM);
 
 		DISABLE_PHRASE(tell_me_about_rep_2);
 	}
-	else if (PLAYER_SAID(R, what_about_rep_priorities))
+	else if (PlayerSaid(R, what_about_rep_priorities))
 	{
 		NPCPhrase(MAXIMUM_SO_WHAT);
 
 		DISABLE_PHRASE(what_about_rep_priorities);
 	}
-	else if (PLAYER_SAID(R, tell_me_about_attack))
+	else if (PlayerSaid(R, tell_me_about_attack))
 	{
 		NPCPhrase(ATTACK_NO_PROBLEM);
 
 		DISABLE_PHRASE(tell_me_about_attack);
 	}
 
-	if (PHRASE_ENABLED(tell_me_about_rep_2))
+	if (PhraseEnabled(tell_me_about_rep_2))
 	{
 		Response(tell_me_about_rep_2, ProbeBug);
 	}
-	else if (PHRASE_ENABLED(what_about_rep_priorities))
+	else if (PhraseEnabled(what_about_rep_priorities))
 	{
 		Response(what_about_rep_priorities, ProbeBug);
 	}
@@ -465,7 +465,7 @@ ProbeBug(RESPONSE_REF R)
 	{
 		Response(think_about_rep_priorities, FixBug);
 	}
-	if (PHRASE_ENABLED(tell_me_about_attack))
+	if (PhraseEnabled(tell_me_about_attack))
 	{
 		Response(tell_me_about_attack, ProbeBug);
 	}
@@ -480,59 +480,59 @@ ProbeFunction(RESPONSE_REF R)
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = 0;
-	if (PLAYER_SAID(R, talk_more_probe_attack))
+	if (PlayerSaid(R, talk_more_probe_attack))
 	{
 		NPCPhrase(NO_PROBLEM_BUT_SURE);
 	}
-	else if (PLAYER_SAID(R, tell_me_about_basics))
+	else if (PlayerSaid(R, tell_me_about_basics))
 	{
 		NPCPhrase(BASIC_COMMANDS);
 
 		SET_GAME_STATE(PLAYER_KNOWS_PROGRAM, 1);
 		DISABLE_PHRASE(tell_basics_again);
 	}
-	else if (PLAYER_SAID(R, tell_basics_again))
+	else if (PlayerSaid(R, tell_basics_again))
 	{
 		NPCPhrase(OK_BASICS_AGAIN);
 
 		DISABLE_PHRASE(tell_basics_again);
 	}
-	else if (PLAYER_SAID(R, what_effect))
+	else if (PlayerSaid(R, what_effect))
 	{
 		NPCPhrase(AFFECTS_BEHAVIOR);
 
 		SET_GAME_STATE(PLAYER_KNOWS_EFFECTS, 1);
 		DISABLE_PHRASE(what_effect);
 	}
-	else if (PLAYER_SAID(R, tell_me_about_rep_1))
+	else if (PlayerSaid(R, tell_me_about_rep_1))
 	{
 		NPCPhrase(ABOUT_REP);
 
 		LastStack = 2;
 		SET_GAME_STATE(SLYLANDRO_STACK8, 3);
 	}
-	else if (PLAYER_SAID(R, what_set_priority))
+	else if (PlayerSaid(R, what_set_priority))
 	{
 		NPCPhrase(MAXIMUM);
 
 		SET_GAME_STATE(PLAYER_KNOWS_PRIORITY, 1);
 		DISABLE_PHRASE(what_set_priority);
 	}
-	else if (PLAYER_SAID(R, how_does_probe_defend))
+	else if (PlayerSaid(R, how_does_probe_defend))
 	{
 		NPCPhrase(ONLY_SELF_DEFENSE);
 
 		LastStack = 1;
 		SET_GAME_STATE(SLYLANDRO_STACK9, 1);
 	}
-	else if (PLAYER_SAID(R, combat_behavior))
+	else if (PlayerSaid(R, combat_behavior))
 	{
 		NPCPhrase(MISSILE_BATTERIES);
 
 		LastStack = 1;
 		SET_GAME_STATE(SLYLANDRO_STACK9, 2);
 	}
-	else if (PLAYER_SAID(R, what_missile_batteries))
+	else if (PlayerSaid(R, what_missile_batteries))
 	{
 		NPCPhrase(LIGHTNING_ONLY_FOR_HARVESTING);
 
@@ -557,7 +557,7 @@ ProbeFunction(RESPONSE_REF R)
 			pStr[1] = tell_me_about_rep_1;
 			break;
 		case 3:
-			if (PHRASE_ENABLED(what_set_priority))
+			if (PhraseEnabled(what_set_priority))
 			{
 				pStr[1] = what_set_priority;
 			}
@@ -580,12 +580,12 @@ ProbeFunction(RESPONSE_REF R)
 			{
 				Response(probe_has_bug, ProbeBug);
 			}
-			if (PHRASE_ENABLED(what_effect))
+			if (PhraseEnabled(what_effect))
 			{
 				Response(what_effect, ProbeFunction);
 			}
 		}
-		if (PHRASE_ENABLED(tell_basics_again))
+		if (PhraseEnabled(tell_basics_again))
 		{
 			Response(tell_basics_again, ProbeFunction);
 		}
@@ -621,61 +621,61 @@ ProbeInfo(RESPONSE_REF R)
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
-	if (PLAYER_SAID(R, what_are_probes))
+	if (PlayerSaid(R, what_are_probes))
 	{
 		NPCPhrase(PROBES_ARE);
 
 		SET_GAME_STATE(SLYLANDRO_STACK5, 1);
 	}
-	else if (PLAYER_SAID(R, know_more_probe))
+	else if (PlayerSaid(R, know_more_probe))
 	{
 		NPCPhrase(OK_WHAT_MORE_PROBE);
 	}
-	else if (PLAYER_SAID(R, why_probe_always_attack))
+	else if (PlayerSaid(R, why_probe_always_attack))
 	{
 		NPCPhrase(ONLY_DEFEND);
 
 		SET_GAME_STATE(SLYLANDRO_STACK6, 1);
 	}
-	else if (PLAYER_SAID(R, talk_more_probe_attack))
+	else if (PlayerSaid(R, talk_more_probe_attack))
 	{
 		ProbeFunction(R);
 		return;
 	}
-	else if (PLAYER_SAID(R, where_probes_from))
+	else if (PlayerSaid(R, where_probes_from))
 	{
 		NPCPhrase(PROBES_FROM_MELNORME);
 
 		LastStack = 1;
 		SET_GAME_STATE(SLYLANDRO_STACK7, 1);
 	}
-	else if (PLAYER_SAID(R, why_sell))
+	else if (PlayerSaid(R, why_sell))
 	{
 		NPCPhrase(SELL_FOR_INFO);
 
 		LastStack = 1;
 		SET_GAME_STATE(SLYLANDRO_STACK7, 2);
 	}
-	else if (PLAYER_SAID(R, how_long_ago))
+	else if (PlayerSaid(R, how_long_ago))
 	{
 		NPCPhrase(FIFTY_THOUSAND_ROTATIONS);
 
 		SET_GAME_STATE(SLYLANDRO_STACK7, 3);
 	}
-	else if (PLAYER_SAID(R, whats_probes_mission))
+	else if (PlayerSaid(R, whats_probes_mission))
 	{
 		NPCPhrase(SEEK_OUT_NEW_LIFE);
 
 		LastStack = 2;
 		SET_GAME_STATE(SLYLANDRO_STACK8, 1);
 	}
-	else if (PLAYER_SAID(R, if_only_one))
+	else if (PlayerSaid(R, if_only_one))
 	{
 		NPCPhrase(THEY_REPLICATE);
 
 		SET_GAME_STATE(SLYLANDRO_STACK8, 2);
 	}
-	else if (PLAYER_SAID(R, enough_problem))
+	else if (PlayerSaid(R, enough_problem))
 	{
 		NPCPhrase(OK_ENOUGH_PROBLEM);
 	}
@@ -745,96 +745,96 @@ HomeWorld(RESPONSE_REF R)
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
-	if (PLAYER_SAID(R, we_are_us))
+	if (PlayerSaid(R, we_are_us))
 	{
 		NPCPhrase(TERRIBLY_EXCITING);
 
 		SET_GAME_STATE(SLYLANDRO_STACK1, 1);
 		DISABLE_PHRASE(we_are_us);
 	}
-	else if (PLAYER_SAID(R, what_other_visitors))
+	else if (PlayerSaid(R, what_other_visitors))
 	{
 		NPCPhrase(VISITORS);
 
 		SET_GAME_STATE(PLAYER_KNOWS_PROBE, 1);
 		SET_GAME_STATE(SLYLANDRO_STACK1, 2);
 	}
-	else if (PLAYER_SAID(R, any_other_visitors))
+	else if (PlayerSaid(R, any_other_visitors))
 	{
 		NPCPhrase(LONG_AGO);
 
 		SET_GAME_STATE(SLYLANDRO_STACK1, 3);
 	}
-	else if (PLAYER_SAID(R, what_about_sentient_milieu))
+	else if (PlayerSaid(R, what_about_sentient_milieu))
 	{
 		NPCPhrase(MET_TAALO_THEY_ARE_FROM);
 
 		SET_GAME_STATE(SLYLANDRO_STACK1, 4);
 	}
-	else if (PLAYER_SAID(R, who_else))
+	else if (PlayerSaid(R, who_else))
 	{
 		NPCPhrase(PRECURSORS);
 
 		SET_GAME_STATE(SLYLANDRO_STACK1, 5);
 	}
-	else if (PLAYER_SAID(R, precursors_yow))
+	else if (PlayerSaid(R, precursors_yow))
 	{
 		NPCPhrase(ABOUT_PRECURSORS);
 
 		SET_GAME_STATE(SLYLANDRO_STACK1, 6);
 	}
-	else if (PLAYER_SAID(R, must_know_more))
+	else if (PlayerSaid(R, must_know_more))
 	{
 		NPCPhrase(ALL_WE_KNOW);
 
 		SET_GAME_STATE(SLYLANDRO_STACK1, 7);
 	}
-	else if (PLAYER_SAID(R, who_are_you))
+	else if (PlayerSaid(R, who_are_you))
 	{
 		NPCPhrase(WE_ARE_SLY);
 
 		LastStack = 1;
 		SET_GAME_STATE(SLYLANDRO_STACK2, 1);
 	}
-	else if (PLAYER_SAID(R, where_are_you))
+	else if (PlayerSaid(R, where_are_you))
 	{
 		NPCPhrase(DOWN_HERE);
 
 		LastStack = 2;
 		SET_GAME_STATE(SLYLANDRO_STACK3, 1);
 	}
-	else if (PLAYER_SAID(R, thats_impossible_1))
+	else if (PlayerSaid(R, thats_impossible_1))
 	{
 		NPCPhrase(NO_ITS_NOT_1);
 
 		LastStack = 2;
 		SET_GAME_STATE(SLYLANDRO_STACK3, 2);
 	}
-	else if (PLAYER_SAID(R, thats_impossible_2))
+	else if (PlayerSaid(R, thats_impossible_2))
 	{
 		NPCPhrase(NO_ITS_NOT_2);
 
 		LastStack = 2;
 		SET_GAME_STATE(SLYLANDRO_STACK3, 3);
 	}
-	else if (PLAYER_SAID(R, like_more_about_you))
+	else if (PlayerSaid(R, like_more_about_you))
 	{
 		SlylandroInfo(R);
 		return;
 	}
-	else if (PLAYER_SAID(R, enough_about_me))
+	else if (PlayerSaid(R, enough_about_me))
 	{
 		NPCPhrase(OK_ENOUGH_YOU);
 	}
-	else if (PLAYER_SAID(R, enough_info))
+	else if (PlayerSaid(R, enough_info))
 	{
 		NPCPhrase(OK_ENOUGH_INFO);
 	}
-	else if (PLAYER_SAID(R, enough_probe))
+	else if (PlayerSaid(R, enough_probe))
 	{
 		NPCPhrase(OK_ENOUGH_PROBE);
 	}
-	else if (PLAYER_SAID(R, mega_self_destruct))
+	else if (PlayerSaid(R, mega_self_destruct))
 	{
 		NPCPhrase(WHY_YES_THERE_IS);
 
@@ -875,7 +875,7 @@ HomeWorld(RESPONSE_REF R)
 			pStr[1] = who_are_you;
 			break;
 		case 1:
-			if (PHRASE_ENABLED(like_more_about_you))
+			if (PhraseEnabled(like_more_about_you))
 			{
 				pStr[1] = like_more_about_you;
 			}
@@ -926,7 +926,7 @@ HomeWorld(RESPONSE_REF R)
 				Response(what_are_probes, ProbeInfo);
 				break;
 			case 1:
-				if (PHRASE_ENABLED(know_more_probe))
+				if (PhraseEnabled(know_more_probe))
 				{
 					Response(know_more_probe, ProbeInfo);
 				}

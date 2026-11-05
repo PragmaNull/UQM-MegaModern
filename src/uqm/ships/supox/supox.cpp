@@ -37,9 +37,9 @@ static constexpr auto ShipMass {4};
 // Gob launcher
 static constexpr auto WeaponEnergyCost {1};
 static constexpr auto WeaponWait {2};
-static auto SupoxOffset() { return RES_SCALE(23); }
+static auto SupoxOffset() { return ResScale(23); }
 static constexpr auto MissileOffset {2};
-static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(30)};
+static constexpr auto MissileSpeed {DisplayToWorld(30)};
 static constexpr auto MissileLife {10};
 static constexpr auto MissileHits {1};
 static constexpr auto MissileDamage {1};
@@ -51,7 +51,7 @@ static constexpr auto SpecialWait {0};
 /* Unused except to initialize supox_desc.special_wait */
 
 // HdResolutionFactor
-static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
 static RACE_DESC supox_desc =
 	{
@@ -150,16 +150,16 @@ supox_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				- ShipPtr->next.location.y;
 		const uint16_t direction_angle {ARCTAN(delta_x, delta_y)};
 
-		LinedUp = (bool)(NORMALIZE_ANGLE(NORMALIZE_ANGLE(direction_angle
-														 - FACING_TO_ANGLE(StarShipPtr->ShipFacing))
-										 + Quadrant)
+		LinedUp = (bool)(NormalizeAngle(NormalizeAngle(direction_angle
+													   - FacingToAngle(StarShipPtr->ShipFacing))
+										+ Quadrant)
 						 <= HalfCircle);
 
 		if (!LinedUp
 			|| lpEvalDesc->which_turn > 20
-			|| NORMALIZE_ANGLE(
+			|| NormalizeAngle(
 				   lpEvalDesc->facing
-				   - (FACING_TO_ANGLE(StarShipPtr->ShipFacing)
+				   - (FacingToAngle(StarShipPtr->ShipFacing)
 					  + HalfCircle)
 				   + Octant)
 				   > Quadrant)
@@ -249,7 +249,7 @@ supox_preprocess(ELEMENT* ElementPtr)
 				++ElementPtr->thrust_wait;
 			}
 
-			add_facing = ANGLE_TO_FACING(HalfCircle);
+			add_facing = AngleToFacing(HalfCircle);
 		}
 		if (StarShipPtr->cur_status_flags & LeftFlag)
 		{
@@ -260,11 +260,11 @@ supox_preprocess(ELEMENT* ElementPtr)
 
 			if (add_facing)
 			{
-				add_facing += ANGLE_TO_FACING(Octant);
+				add_facing += AngleToFacing(Octant);
 			}
 			else
 			{
-				add_facing = -ANGLE_TO_FACING(Quadrant);
+				add_facing = -AngleToFacing(Quadrant);
 			}
 		}
 		else if (StarShipPtr->cur_status_flags & RightFlag)
@@ -276,18 +276,18 @@ supox_preprocess(ELEMENT* ElementPtr)
 
 			if (add_facing)
 			{
-				add_facing -= ANGLE_TO_FACING(Octant);
+				add_facing -= AngleToFacing(Octant);
 			}
 			else
 			{
-				add_facing = ANGLE_TO_FACING(Quadrant);
+				add_facing = AngleToFacing(Quadrant);
 			}
 		}
 
 		if (add_facing)
 		{
 			const uint16_t facing {StarShipPtr->ShipFacing};
-			StarShipPtr->ShipFacing = NORMALIZE_FACING(
+			StarShipPtr->ShipFacing = NormalizeFacing(
 				facing + add_facing);
 			const STATUS_FLAGS thrust_status {inertial_thrust(ElementPtr)};
 			StarShipPtr->cur_status_flags &=
@@ -305,8 +305,8 @@ init_supox(void)
 {
 	if (IsHd())
 	{
-		supox_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		supox_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		supox_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		supox_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		supox_desc.cyborg_control.WeaponRange = (MissileSpeedHd() * MissileLife) >> 1;
 	}
 	else

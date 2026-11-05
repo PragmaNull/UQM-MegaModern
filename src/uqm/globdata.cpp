@@ -403,10 +403,10 @@ bool InitGameStructures(void)
 
 	uqm::utf8StringCopy(GLOBAL_SIS(ShipName),
 						sizeof(GLOBAL_SIS(ShipName)),
-						GAME_STRING(NAMING_STRING_BASE + 6)); // UNNAMED
+						GameString(NAMING_STRING_BASE + 6)); // UNNAMED
 	uqm::utf8StringCopy(GLOBAL_SIS(CommanderName),
 						sizeof(GLOBAL_SIS(CommanderName)),
-						GAME_STRING(NAMING_STRING_BASE + 6)); // UNNAMED
+						GameString(NAMING_STRING_BASE + 6)); // UNNAMED
 
 	SetRaceAllied(HUMAN_SHIP, true);
 	CloneShipFragment(HUMAN_SHIP, &GLOBAL(built_ship_q), 0);
@@ -422,8 +422,8 @@ bool InitGameStructures(void)
 		StartSphereTracking(SPATHI_SHIP);
 	}
 
-	GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(plot_map[SOL_DEFINED].star_pt.x);
-	GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(plot_map[SOL_DEFINED].star_pt.y);
+	GLOBAL_SIS(log_x) = UniverseToLogx(plot_map[SOL_DEFINED].star_pt.x);
+	GLOBAL_SIS(log_y) = UniverseToLogy(plot_map[SOL_DEFINED].star_pt.y);
 	CurStarDescPtr() = 0;
 	uqm::flagship().autopilot.clear();
 

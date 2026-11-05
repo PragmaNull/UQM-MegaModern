@@ -350,7 +350,7 @@ CombatIsInevitable(RESPONSE_REF R)
 		}
 		Response(bye, CombatIsInevitable);
 	}
-	else if (PLAYER_SAID(R, destruct_code))
+	else if (PlayerSaid(R, destruct_code))
 	{
 		NPCPhrase(DESTRUCT_SEQUENCE);
 		setSegue(Segue_victory);
@@ -359,7 +359,7 @@ CombatIsInevitable(RESPONSE_REF R)
 	{
 		uint8_t NumVisits {};
 
-		if (PLAYER_SAID(R, threat))
+		if (PlayerSaid(R, threat))
 		{
 			NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_THREAT);
 			switch (NumVisits++)
@@ -380,7 +380,7 @@ CombatIsInevitable(RESPONSE_REF R)
 			}
 			SET_GAME_STATE(SLYLANDRO_PROBE_THREAT, NumVisits);
 		}
-		else if (PLAYER_SAID(R, something_wrong))
+		else if (PlayerSaid(R, something_wrong))
 		{
 			NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_WRONG);
 			switch (NumVisits++)
@@ -401,7 +401,7 @@ CombatIsInevitable(RESPONSE_REF R)
 			}
 			SET_GAME_STATE(SLYLANDRO_PROBE_WRONG, NumVisits);
 		}
-		else if (PLAYER_SAID(R, we_are_us))
+		else if (PlayerSaid(R, we_are_us))
 		{
 			NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_ID);
 			switch (NumVisits++)
@@ -423,8 +423,8 @@ CombatIsInevitable(RESPONSE_REF R)
 						// Probe's coordinate system is +/-{Y,X} relative to home
 						// If homeworld X or Y are < 5000, we will flip the sign
 						// (and always say Y before X)
-						dx = (plot_map[SLYLANDRO_DEFINED].star_pt.x - LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x))) * (plot_map[SLYLANDRO_DEFINED].star_pt.x > 5000 ? 1 : -1);
-						dy = (plot_map[SLYLANDRO_DEFINED].star_pt.y - LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y))) * (plot_map[SLYLANDRO_DEFINED].star_pt.y > 5000 ? 1 : -1);
+						dx = (plot_map[SLYLANDRO_DEFINED].star_pt.x - LogxToUniverse(GLOBAL_SIS(log_x))) * (plot_map[SLYLANDRO_DEFINED].star_pt.x > 5000 ? 1 : -1);
+						dy = (plot_map[SLYLANDRO_DEFINED].star_pt.y - LogyToUniverse(GLOBAL_SIS(log_y))) * (plot_map[SLYLANDRO_DEFINED].star_pt.y > 5000 ? 1 : -1);
 
 						NPCPhrase(THIS_IS_PROBE_40);
 						sayCoord(dy);
@@ -438,7 +438,7 @@ CombatIsInevitable(RESPONSE_REF R)
 			}
 			SET_GAME_STATE(SLYLANDRO_PROBE_ID, NumVisits);
 		}
-		else if (PLAYER_SAID(R, why_attack))
+		else if (PlayerSaid(R, why_attack))
 		{
 			NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_INFO);
 			switch (NumVisits++)
@@ -459,7 +459,7 @@ CombatIsInevitable(RESPONSE_REF R)
 			}
 			SET_GAME_STATE(SLYLANDRO_PROBE_INFO, NumVisits);
 		}
-		else if (PLAYER_SAID(R, bye))
+		else if (PlayerSaid(R, bye))
 		{
 			NumVisits = GET_GAME_STATE(SLYLANDRO_PROBE_EXIT);
 			switch (NumVisits++)
@@ -567,7 +567,7 @@ init_slyland_comm(void)
 	slylandro_desc.AlienTextBaseline.x =
 		TextXOffs() + (SisTextWidth() >> 1);
 	slylandro_desc.AlienTextBaseline.y = 0;
-	slylandro_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	slylandro_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	setSegue(Segue_hostile);
 	LOCDATA* retval {&slylandro_desc};

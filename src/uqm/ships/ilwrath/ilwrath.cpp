@@ -42,8 +42,8 @@ static constexpr auto LookAhead {4};
 static constexpr auto WeaponEnergyCost {1};
 static constexpr auto WeaponWait {0};
 static constexpr auto MissileLife {8};
-static auto IlwrathOffset() { return RES_SCALE(29); }
-static auto MissileSpeed() { return RES_SCALE(MaxThrust); }
+static auto IlwrathOffset() { return ResScale(29); }
+static auto MissileSpeed() { return ResScale(MaxThrust); }
 static constexpr auto MissileHits {1};
 static constexpr auto MissileDamage {1};
 static constexpr auto MissileOffset {0};
@@ -173,7 +173,7 @@ ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				&& ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 10)))
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
-		if (OBJECT_CLOAKED(ShipPtr))
+		if (ObjectCloaked(ShipPtr))
 		{
 			StarShipPtr->ship_input_state &= ~LeftFlag | RightFlag;
 			StarShipPtr->ship_input_state |= ThrustFlag;
@@ -185,7 +185,7 @@ ilwrath_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				 || !GET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER)))
 	{
 		StarShipPtr->ship_input_state &= ~SpecialFlag;
-		if (!OBJECT_CLOAKED(ShipPtr)
+		if (!ObjectCloaked(ShipPtr)
 			&& !(StarShipPtr->ship_input_state & WeaponFlag))
 		{
 			StarShipPtr->ship_input_state |= SpecialFlag;
@@ -225,8 +225,8 @@ initialize_flame(ELEMENT* ShipPtr, HELEMENT FlameArray[])
 		LockElement(FlameArray[0], &FlamePtr);
 		GetCurrentVelocityComponentsSdword(&ShipPtr->velocity, &dx, &dy);
 		DeltaVelocityComponents(&FlamePtr->velocity, dx, dy);
-		FlamePtr->current.location.x -= VELOCITY_TO_WORLD(dx);
-		FlamePtr->current.location.y -= VELOCITY_TO_WORLD(dy);
+		FlamePtr->current.location.x -= VelocityToWorld(dx);
+		FlamePtr->current.location.y -= VelocityToWorld(dy);
 
 		FlamePtr->collision_func = flame_collision;
 		FlamePtr->turn_wait = 0;
@@ -317,8 +317,8 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 						UnlockElement(ElementPtr->hTarget);
 
 						StarShipPtr->ShipFacing =
-							NORMALIZE_FACING(
-								ANGLE_TO_FACING(ARCTAN(dx0, dy0)));
+							NormalizeFacing(
+								AngleToFacing(ARCTAN(dx0, dy0)));
 #ifdef NOTYET
 						if (ElementPtr->thrust_wait == 0
 							&& (StarShipPtr->cur_status_flags & ThrustFlag))
@@ -341,8 +341,8 @@ ilwrath_preprocess(ELEMENT* ElementPtr)
 								dx0 -= dx1;
 								dy0 -= dy1;
 								StarShipPtr->ShipFacing =
-									NORMALIZE_FACING(
-										ANGLE_TO_FACING(ARCTAN(dx0, dy0)));
+									NormalizeFacing(
+										AngleToFacing(ARCTAN(dx0, dy0)));
 							} while (StarShipPtr->ShipFacing != last_facing);
 						}
 #endif /* NOTYET */
@@ -422,9 +422,9 @@ init_ilwrath(void)
 {
 	if (IsHd())
 	{
-		ilwrath_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
+		ilwrath_desc.characteristics.max_thrust = ResScale(MaxThrust);
 		ilwrath_desc.characteristics.thrust_increment =
-			RES_SCALE(ThrustIncrement);
+			ResScale(ThrustIncrement);
 		ilwrath_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else

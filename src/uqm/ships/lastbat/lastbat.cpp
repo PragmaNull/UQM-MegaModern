@@ -47,7 +47,7 @@ static constexpr auto WeaponWait {((c_gameSecond / BattleFrameRateTicks) * 10)};
 static constexpr auto CometDamage {2};
 static constexpr auto CometOffset {0};
 static auto CometHits() { return difficultyCase(10, 12, 15); }
-static auto CometSpeed() { return RES_SCALE(DISPLAY_TO_WORLD(ifEasyDifficulty(12, 10))); } // Kryzen: 17
+static auto CometSpeed() { return ResScale(DisplayToWorld(ifEasyDifficulty(12, 10))); } // Kryzen: 17
 static constexpr auto CometLife {2};
 static constexpr auto CometTurnWait {3}; // Kruzen: 2 \  // compensate high speed with lesser maneuverability
 static auto MaxComets() { return difficultyCase(2, 3, 4); }
@@ -57,14 +57,14 @@ static constexpr auto WeaponEnergyCost {2};
 
 // Green sentinel
 static constexpr auto SpecialWait {((c_gameSecond / BattleFrameRateTicks) * 3)};
-static auto SentinelSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(8)); }
+static auto SentinelSpeed() { return DisplayToWorld(ResScale(8)); }
 static constexpr auto SentinelLife {2};
 static constexpr auto SentinelOffset {0};
 static auto SentinelHits() { return difficultyCase(9, 10, 12); }
 static auto SentinelDamage() { return difficultyCase(1, 1, 2); }
 static constexpr auto TrackWait {1};
 static constexpr auto AnimationWait {1};
-static auto RecoilVelocity() { return WORLD_TO_VELOCITY(RES_SCALE(DISPLAY_TO_WORLD(ifEasyDifficulty(10, 8)))); }
+static auto RecoilVelocity() { return WorldToVelocity(ResScale(DisplayToWorld(ifEasyDifficulty(10, 8)))); }
 static auto MaxRecoilVelocity() { return (RecoilVelocity() * 4); }
 static auto MaxSentinels() { return difficultyCase(4, 4, 5); }
 static constexpr auto SpecialEnergyCost {3};
@@ -278,7 +278,7 @@ spawn_comet(ELEMENT* ElementPtr)
 			{
 				CometPtr->velocity = ElementPtr->velocity;
 				CometPtr->hit_points = ElementPtr->hit_points;
-				facing = ANGLE_TO_FACING(
+				facing = AngleToFacing(
 					GetVelocityTravelAngle(&CometPtr->velocity));
 			}
 
@@ -288,7 +288,7 @@ spawn_comet(ELEMENT* ElementPtr)
 			}
 			else
 			{
-				facing = NORMALIZE_FACING(facing);
+				facing = NormalizeFacing(facing);
 				if (TrackShip(CometPtr, &facing) > 0)
 				{
 					SetVelocityVector(&CometPtr->velocity,
@@ -510,7 +510,7 @@ sentinel_preprocess(ELEMENT* ElementPtr)
 
 		if (!(ElementPtr->state_flags & Nonsolid))
 		{
-			facing = ANGLE_TO_FACING(
+			facing = AngleToFacing(
 				GetVelocityTravelAngle(&ElementPtr->velocity));
 		}
 		else
@@ -520,7 +520,7 @@ sentinel_preprocess(ELEMENT* ElementPtr)
 			SetVelocityVector(&ElementPtr->velocity,
 							  SentinelSpeed(), facing);
 		}
-		facing = NORMALIZE_FACING(facing);
+		facing = NormalizeFacing(facing);
 		if (ElementPtr->hTarget == 0)
 		{
 			uint16_t f {facing};
@@ -585,12 +585,12 @@ sentinel_preprocess(ELEMENT* ElementPtr)
 
 			delta_x = (int32_t)TargetPtr->current.location.x
 					- (int32_t)ElementPtr->current.location.x;
-			delta_x = WRAP_DELTA_X(delta_x);
+			delta_x = WrapDeltaX(delta_x);
 			delta_y = (int32_t)TargetPtr->current.location.y
 					- (int32_t)ElementPtr->current.location.y;
-			delta_y = WRAP_DELTA_Y(delta_y);
+			delta_y = WrapDeltaY(delta_y);
 
-			if ((num_frames = RES_DESCALE(WORLD_TO_TURN(
+			if ((num_frames = ResDescale(WorldToTurn(
 					 square_root((long)delta_x * delta_x
 								 + (long)delta_y * delta_y))))
 				== 0)
@@ -604,19 +604,19 @@ sentinel_preprocess(ELEMENT* ElementPtr)
 
 			delta_x = ((int32_t)TargetPtr->current.location.x + (int32_t)delta_x)
 					- (int32_t)ElementPtr->current.location.x;
-			delta_x = WRAP_DELTA_X(delta_x);
+			delta_x = WrapDeltaX(delta_x);
 			delta_y = ((int32_t)TargetPtr->current.location.y + (int32_t)delta_y)
 					- (int32_t)ElementPtr->current.location.y;
-			delta_y = WRAP_DELTA_Y(delta_y);
+			delta_y = WrapDeltaY(delta_y);
 
 			UnlockElement(hTarget);
 
-			delta_x = NORMALIZE_FACING(
-				ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)) - facing);
+			delta_x = NormalizeFacing(
+				AngleToFacing(ARCTAN(delta_x, delta_y)) - facing);
 
 			if (delta_x > 0)
 			{
-				if (delta_x <= ANGLE_TO_FACING(HalfCircle))
+				if (delta_x <= AngleToFacing(HalfCircle))
 				{
 					++facing;
 				}
@@ -651,8 +651,8 @@ sentinel_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			angle = ARCTAN(pPt0->x - pPt1->x, pPt0->y - pPt1->y);
 
 			SetVelocityComponents(&ElementPtr0->velocity,
-								  COSINE(angle, WORLD_TO_VELOCITY(SentinelSpeed())),
-								  SINE(angle, WORLD_TO_VELOCITY(SentinelSpeed())));
+								  Cosine(angle, WorldToVelocity(SentinelSpeed())),
+								  Sine(angle, WorldToVelocity(SentinelSpeed())));
 			ElementPtr0->turn_wait = TrackWait;
 			ElementPtr0->state_flags |= Collision | DefyPhysics;
 		}
@@ -669,7 +669,7 @@ sentinel_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 
 		if ((ElementPtr1->state_flags & PlayerShip)
 			&& ElementPtr1->crew_level
-			&& !GRAVITY_MASS(ElementPtr1->mass_points + 1))
+			&& !GravityMass(ElementPtr1->mass_points + 1))
 		{
 			int32_t cur_delta_x {};
 			int32_t cur_delta_y {};
@@ -695,8 +695,8 @@ sentinel_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			angle = GetVelocityTravelAngle(&ElementPtr0->velocity);
 			const auto recoilVelocity {RecoilVelocity()};
 			DeltaVelocityComponents(&ElementPtr1->velocity,
-									COSINE(angle, recoilVelocity),
-									SINE(angle, recoilVelocity));
+									Cosine(angle, recoilVelocity),
+									Sine(angle, recoilVelocity));
 			GetCurrentVelocityComponentsSdword(&ElementPtr1->velocity,
 											   &cur_delta_x, &cur_delta_y);
 			if ((long)cur_delta_x * (long)cur_delta_x
@@ -705,8 +705,8 @@ sentinel_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 			{
 				angle = ARCTAN(cur_delta_x, cur_delta_y);
 				SetVelocityComponents(&ElementPtr1->velocity,
-									  COSINE(angle, MaxRecoilVelocity()),
-									  SINE(angle, MaxRecoilVelocity()));
+									  Cosine(angle, MaxRecoilVelocity()),
+									  Sine(angle, MaxRecoilVelocity()));
 			}
 			if (isDifficulty(uqm::Difficulty::Hard))
 			{
@@ -879,11 +879,11 @@ samatra_preprocess(ELEMENT* ElementPtr)
 					STAMP_PRIM);
 				GeneratorPtr->current.location.x =
 					((LogSpaceWidth() >> 1)
-					 + DISPLAY_TO_WORLD((offs[StarShipPtr->RaceDescPtr->characteristics.max_thrust].x)))
+					 + DisplayToWorld((offs[StarShipPtr->RaceDescPtr->characteristics.max_thrust].x)))
 					& ~((ScaledOne << MaxVisReduction) - 1);
 				GeneratorPtr->current.location.y =
 					((LogSpaceHeight() >> 1)
-					 + DISPLAY_TO_WORLD((offs[StarShipPtr->RaceDescPtr->characteristics.max_thrust].y)))
+					 + DisplayToWorld((offs[StarShipPtr->RaceDescPtr->characteristics.max_thrust].y)))
 					& ~((ScaledOne << MaxVisReduction) - 1);
 				GeneratorPtr->current.image.farray =
 					StarShipPtr->RaceDescPtr->ship_data.special;

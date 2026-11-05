@@ -72,16 +72,16 @@ drawSupportShip(ROSTER_STATE* rosterState, bool filled, bool saveFrame)
 		return;
 	}
 
-	s.origin.x = RES_SCALE(rosterState->curShipPt.x);
-	s.origin.y = RES_SCALE(rosterState->curShipPt.y);
+	s.origin.x = ResScale(rosterState->curShipPt.x);
+	s.origin.y = ResScale(rosterState->curShipPt.y);
 	s.frame = rosterState->curShipFrame;
 
 	if (saveFrame)
 	{
 		savedShipFrame_r.corner.x = s.origin.x;
 		savedShipFrame_r.corner.y = s.origin.y;
-		savedShipFrame_r.extent.width = RES_SCALE(16);
-		savedShipFrame_r.extent.height = RES_SCALE(16);
+		savedShipFrame_r.extent.width = ResScale(16);
+		savedShipFrame_r.extent.height = ResScale(16);
 
 		savedShipFrame = SaveContextFrame(&savedShipFrame_r);
 

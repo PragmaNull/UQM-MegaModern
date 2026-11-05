@@ -38,13 +38,13 @@
 static constexpr auto LoadTeamNameTextColor {BuildColor(MakeRgb15(0x0F, 0x10, 0x1B), 0x00)};
 static constexpr auto LoadTeamNameTextColorHilite {BuildColor(MakeRgb15(0x17, 0x18, 0x1D), 0x00)};
 
-static auto LoadMeleeBoxWidth() { return RES_SCALE(34); }
+static auto LoadMeleeBoxWidth() { return ResScale(34); }
 
-static auto LoadMeleeBoxSpace() { return RES_SCALE(1); }
+static auto LoadMeleeBoxSpace() { return ResScale(1); }
 
 //Team names in loadmele.c
-static auto TeamNameLBoxWidth() { return RES_SCALE(244); }
-static auto TeamNameLBoxHeight() { return RES_SCALE(10); }
+static auto TeamNameLBoxWidth() { return ResScale(244); }
+static auto TeamNameLBoxHeight() { return ResScale(10); }
 
 
 static void DrawFileStrings(MELEE_STATE* pMS);
@@ -151,7 +151,7 @@ DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
 		GFXRECT r;
 
 		r.corner.x = origin->x;
-		r.corner.y = origin->y - TeamNameLBoxHeight() + RES_SCALE(3);
+		r.corner.y = origin->y - TeamNameLBoxHeight() + ResScale(3);
 		r.extent.width = TeamNameLBoxWidth();
 		r.extent.height = TeamNameLBoxHeight();
 
@@ -181,7 +181,7 @@ DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
 		fmt::format_to_n(buf, sizeof(buf) - 1, "{}", MeleeTeam_getValue(team));
 		Text.baseline = *origin;
 		Text.baseline.x += NumMeleeColumns() * (LoadMeleeBoxWidth() + LoadMeleeBoxSpace())
-						 - RES_SCALE(1);
+						 - ResScale(1);
 		Text.align = ALIGN_RIGHT;
 		Text.pStr = buf;
 		Text.CharCount = (uint16_t)~0;
@@ -193,8 +193,8 @@ DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
 	{
 		STAMP s;
 
-		s.origin.x = origin->x + RES_SCALE(1);
-		s.origin.y = origin->y + RES_SCALE(4);
+		s.origin.x = origin->x + ResScale(1);
+		s.origin.y = origin->y + ResScale(4);
 		for (FleetShipIndex slotI {0}; slotI < MeleeFleetSize; slotI++)
 		{
 			uint8_t StarShip {};
@@ -209,7 +209,7 @@ DrawFileString(const MeleeTeam* team, const GFXPOINT* origin,
 			{
 				s.frame = GetShipIconsFromIndex(StarShip);
 				DrawStamp(&s);
-				s.origin.x += RES_SCALE(17);
+				s.origin.x += ResScale(17);
 			}
 		}
 	}
@@ -242,9 +242,9 @@ FillFileView(MELEE_STATE* pMS)
 	return true;
 }
 
-static auto FileStringOriginX() { return RES_SCALE(5 + DOS_NUM(2)); }
-static auto FileStringOriginY() { return RES_SCALE(32 - DOS_NUM(1)); }
-static auto EntryHeight() { return RES_SCALE(32); }
+static auto FileStringOriginX() { return ResScale(5 + DosNum(2)); }
+static auto FileStringOriginY() { return ResScale(32 - DosNum(1)); }
+static auto EntryHeight() { return ResScale(32); }
 
 static void
 SelectFileString(MELEE_STATE* pMS, bool hilite)
@@ -548,7 +548,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	{
 		/* "Balanced Team 1" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GAME_STRING(MELEE_STRING_BASE + 4));
+		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 4));
 		MeleeTeam_setShip(*list, i++, MELEE_ANDROSYNTH);
 		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
 		MeleeTeam_setShip(*list, i++, MELEE_DRUUGE);
@@ -564,7 +564,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	{
 		/* "Balanced Team 2" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GAME_STRING(MELEE_STRING_BASE + 5));
+		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 5));
 		MeleeTeam_setShip(*list, i++, MELEE_ARILOU);
 		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
 		MeleeTeam_setShip(*list, i++, MELEE_EARTHLING);
@@ -582,7 +582,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	{
 		/* "200 points" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GAME_STRING(MELEE_STRING_BASE + 6));
+		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 6));
 		MeleeTeam_setShip(*list, i++, MELEE_ANDROSYNTH);
 		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
 		MeleeTeam_setShip(*list, i++, MELEE_DRUUGE);
@@ -600,7 +600,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	{
 		/* "Behemoth Zenith" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GAME_STRING(MELEE_STRING_BASE + 7));
+		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 7));
 		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
 		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
 		MeleeTeam_setShip(*list, i++, MELEE_CHMMR);
@@ -617,7 +617,7 @@ InitPreBuilt(MELEE_STATE* pMS)
 	{
 		/* "The Peeled Eyes" */
 		FleetShipIndex i = 0;
-		MeleeTeam_setName(*list, GAME_STRING(MELEE_STRING_BASE + 8));
+		MeleeTeam_setName(*list, GameString(MELEE_STRING_BASE + 8));
 		MeleeTeam_setShip(*list, i++, MELEE_URQUAN);
 		MeleeTeam_setShip(*list, i++, MELEE_CHENJESU);
 		MeleeTeam_setShip(*list, i++, MELEE_MYCON);

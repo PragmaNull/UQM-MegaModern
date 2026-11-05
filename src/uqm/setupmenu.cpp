@@ -557,7 +557,7 @@ gamma_DrawValue(WIDGET_SLIDER* self, int x, int y)
 	float gamma = sliderToGamma(self->value);
 	fmt::format_to_sz_n(buf, "{:.4}", gamma);
 
-	t.baseline.x = x + RES_SCALE(6);
+	t.baseline.x = x + ResScale(6);
 	t.baseline.y = y;
 	t.align = ALIGN_LEFT;
 	t.CharCount = ~0;
@@ -709,7 +709,7 @@ init_widgets(void)
 	uqm::MenuWidgets::Hooks hooks {};
 	hooks.isAddonAvailable = uqm::isMenuAddonAvailable;
 	hooks.addonUnavailable = [] {
-		DoPopupWindow(GAME_STRING(MAINMENU_STRING_BASE + 36));
+		DoPopupWindow(GameString(MAINMENU_STRING_BASE + 36));
 		Widget_SetFont(PlyrFont);
 	};
 	hooks.settingChanged = [](const uqm::SettingBase& setting) {
@@ -891,7 +891,7 @@ apply_settings(void)
 	}
 
 	uqm::WindowStyle windowStyle {*uqmOptions.windowEmulationMode};
-	if (windowStyle != uqm::WindowStyle::UQM && !uqm::isAddonAvailable(WINDOW_MODE(resolutionFactor, uqstl::to_underlying(windowStyle))))
+	if (windowStyle != uqm::WindowStyle::UQM && !uqm::isAddonAvailable(WindowModeName(resolutionFactor, uqstl::to_underlying(windowStyle))))
 	{
 		windowStyle = uqm::WindowStyle::UQM;
 		uqmOptions.windowEmulationMode = windowStyle;
@@ -944,11 +944,11 @@ apply_settings(void)
 
 		resolutionFactor = resolutionFactor;
 		CanvasWidth = 320 << resolutionFactor;
-		CanvasHeight = DOS_BOOL(240, 200) << resolutionFactor;
+		CanvasHeight = DosBool(240, 200) << resolutionFactor;
 
 		if (*uqmOptions.loresBlowupScale < 6)
 		{
-			h = DOS_BOOL(240, 200) * (uqmOptions.loresBlowupScale.value + 1);
+			h = DosBool(240, 200) * (uqmOptions.loresBlowupScale.value + 1);
 			SavedHeight = h;
 			uqmOptions.resolution.value.y = static_cast<uint32_t>(SavedHeight);
 		}

@@ -51,8 +51,8 @@ LockMasterShip(const QUEUE* pq, HMASTERSHIP h)
 	return (MASTER_SHIP_INFO*)LockLink(pq, h);
 }
 
-#define UnlockMasterShip(pq, h) UnlockLink(pq, h)
-#define FreeMasterShip(pq, h) FreeLink(pq, h)
+constexpr auto UnlockMasterShip(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
+
 
 extern void LoadMasterShipList(void (*YieldProcessing)(void));
 extern void FreeMasterShipList(void);

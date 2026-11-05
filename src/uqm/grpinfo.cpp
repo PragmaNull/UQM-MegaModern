@@ -712,7 +712,7 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 			{
 				task = ON_STATION;
 			}
-			GroupPtr->orbit_pos = NORMALIZE_FACING(
+			GroupPtr->orbit_pos = NormalizeFacing(
 				uqm::lowByte(uqm::highWord(rand_val)));
 
 			group_loc = pSolarSysState->SunDesc[0].NumPlanets;
@@ -739,9 +739,9 @@ bool GetGroupInfo(uint32_t offset, uint8_t which_group)
 				GFXPOINT org;
 
 				org = planetOuterLocation(group_loc - 1);
-				angle = FACING_TO_ANGLE(GroupPtr->orbit_pos + 1);
-				GroupPtr->loc.x = org.x + COSINE(angle, StationRadius);
-				GroupPtr->loc.y = org.y + SINE(angle, StationRadius);
+				angle = FacingToAngle(GroupPtr->orbit_pos + 1);
+				GroupPtr->loc.x = org.x + Cosine(angle, StationRadius);
+				GroupPtr->loc.y = org.y + Sine(angle, StationRadius);
 				group_loc = 0;
 			}
 

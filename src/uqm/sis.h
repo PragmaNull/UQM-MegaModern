@@ -91,24 +91,24 @@ enum
 inline constexpr auto EmptySlot {NUM_MODULES};
 inline constexpr auto NumBombModules {10};
 
-inline auto SafePad() { return SAFE_NEG(3); }
+inline auto SafePad() { return SafeNeg(3); }
 
-inline auto DriveSideX() { return (RES_SCALE(31) - SafePad()); }
-inline auto DriveSideY() { return RES_SCALE(56); }
-inline auto DriveTopX() { return (RES_SCALE(33) - SafePad()); }
-inline auto DriveTopY() { return (RES_SCALE(86) - DOS_NUM_SCL(21)); }
+inline auto DriveSideX() { return (ResScale(31) - SafePad()); }
+inline auto DriveSideY() { return ResScale(56); }
+inline auto DriveTopX() { return (ResScale(33) - SafePad()); }
+inline auto DriveTopY() { return (ResScale(86) - DosNumScl(21)); }
 
-inline auto JetSideX() { return (RES_SCALE(71) - SafePad()); }
-inline auto JetSideY() { return RES_SCALE(48); }
-inline auto JetTopX() { return (RES_SCALE(70) - SafePad()); }
-inline auto JetTopY() { return (RES_SCALE(94) - DOS_NUM_SCL(21)); }
+inline auto JetSideX() { return (ResScale(71) - SafePad()); }
+inline auto JetSideY() { return ResScale(48); }
+inline auto JetTopX() { return (ResScale(70) - SafePad()); }
+inline auto JetTopY() { return (ResScale(94) - DosNumScl(21)); }
 
-inline auto ModuleSideX() { return (RES_SCALE(17) - SafePad()); }
-inline auto ModuleSideY() { return RES_SCALE(14); }
-inline auto ModuleTopX() { return (RES_SCALE(17) - SafePad()); }
-inline auto ModuleTopY() { return (RES_SCALE(117) - DOS_NUM_SCL(21)); }
+inline auto ModuleSideX() { return (ResScale(17) - SafePad()); }
+inline auto ModuleSideY() { return ResScale(14); }
+inline auto ModuleTopX() { return (ResScale(17) - SafePad()); }
+inline auto ModuleTopY() { return (ResScale(117) - DosNumScl(21)); }
 
-inline auto ShipPieceOffset() { return RES_SCALE(12); }
+inline auto ShipPieceOffset() { return ResScale(12); }
 
 inline constexpr auto MaxBuiltShips {12};
 /* Maximum number of ships escorting the SIS */

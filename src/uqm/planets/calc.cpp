@@ -62,7 +62,7 @@ static void
 CalcSysInfo(SYSTEM_INFO* SysInfoPtr)
 {
 	SysInfoPtr->StarSize = pSolarSysState->SunDesc[0].data_index;
-	switch (STAR_COLOR(CurStarDescPtr()->Type))
+	switch (StarColor(CurStarDescPtr()->Type))
 	{
 		case BLUE_BODY:
 			SysInfoPtr->StarIntensity = BLUE_SUN_INTENSITY;
@@ -84,7 +84,7 @@ CalcSysInfo(SYSTEM_INFO* SysInfoPtr)
 			break;
 	}
 
-	switch (STAR_TYPE(CurStarDescPtr()->Type))
+	switch (StarType(CurStarDescPtr()->Type))
 	{
 		case DWARF_STAR:
 			SysInfoPtr->StarEnergy =
@@ -105,7 +105,7 @@ static uint16_t
 GeneratePlanetComposition(PLANET_INFO* PlanetInfoPtr, int16_t SurfaceTemp,
 						  int16_t radius)
 {
-	if (PLANSIZE(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
+	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
 	{
 		PlanetInfoPtr->Weather = 7 << 5;
 		return (GasGiantAtmosphere);
@@ -224,7 +224,7 @@ static constexpr auto TiltRange {180};
 static uint16_t
 CalcRotation(PLANET_INFO* PlanetInfoPtr)
 {
-	if (PLANSIZE(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
+	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
 	{
 		return ((uint16_t)CalcFromBase(80, 80));
 	}
@@ -289,7 +289,7 @@ CalcLifeChance(const PLANET_INFO* PlanetInfoPtr)
 {
 	int16_t life_var = 0;
 
-	if (PLANSIZE(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
+	if (Plansize(PlanetInfoPtr->PlanDataPtr->Type) == GAS_GIANT)
 	{
 		return -1;
 	}
@@ -523,7 +523,7 @@ void DoPlanetaryAnalysis(SYSTEM_INFO* SysInfoPtr, PLANET_DESC* pPlanetDesc)
 			- (uqm::lowWord(SysGenRNG->next())
 			   % (SysInfoPtr->PlanetInfo.PlanetDensity / 10));
 
-		switch (PLANSIZE(SysInfoPtr->PlanetInfo.PlanDataPtr->Type))
+		switch (Plansize(SysInfoPtr->PlanetInfo.PlanDataPtr->Type))
 		{
 			case SMALL_ROCKY_WORLD:
 				SysInfoPtr->PlanetInfo.PlanetRadius = CalcHalfBaseVariance(SmallRadius);
@@ -558,7 +558,7 @@ void DoPlanetaryAnalysis(SYSTEM_INFO* SysInfoPtr, PLANET_DESC* pPlanetDesc)
 		SysInfoPtr->PlanetInfo.LifeChance = CalcLifeChance(&SysInfoPtr->PlanetInfo);
 
 #ifdef DEBUG_PLANET_CALC
-		radius = (int16_t)((uint32_t)UNSCALE_RADIUS(radius) * 100 / UNSCALE_RADIUS(EarthRadius));
+		radius = (int16_t)((uint32_t)UnscaleRadius(radius) * 100 / UnscaleRadius(EarthRadius));
 		uqm::log::debug("\tOrbital Distance   : {}.{:02} AU", radius / 100, radius % 100);
 		//log_add (log_Debug, "\tPlanetary Mass : {}.%02d Earth masses",
 		// SysInfoPtr->PlanetInfo.PlanetMass / 100,

@@ -28,11 +28,11 @@
 #include "races.h"
 #include "setup.h"
 
-#define MANEUVERABILITY(pi) ((pi)->ManeuverabilityIndex)
-#define WEAPON_RANGE(pi) ((pi)->WeaponRange)
+constexpr auto Maneuverability(const auto& pi) { return ((pi)->ManeuverabilityIndex); }
+constexpr auto GetWeaponRange(const auto& pi) { return ((pi)->WeaponRange); }
 
-#define WORLD_TO_TURN(d) ((d) >> 6)
-#define RESOLUTION_COMPENSATED(speed) (RES_SCALE(RES_SCALE(speed)))
+constexpr auto WorldToTurn(const auto& d) { return ((d) >> 6); }
+constexpr auto ResolutionCompensated(const auto& speed) { return (ResScale(ResScale(speed))); }
 
 extern BATTLE_INPUT_STATE computer_intelligence(
 	ComputerInputContext* context, STARSHIP* StarShipPtr);

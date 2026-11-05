@@ -165,7 +165,7 @@ static void
 Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 {
 	const auto ModuleYofsP = [&] {
-		return -(RES_SCALE(79) + IF_HD(33));
+		return -(ResScale(79) + IfHd(33));
 	};
 	const auto DriveTopYP = [&] {
 		return (DriveTopY() + ModuleYofsP());
@@ -244,22 +244,22 @@ Present_GenerateSIS(PRESENTATION_INPUT_STATE* pPIS)
 				const Color oldColor = SetContextForeGroundColor(
 					BuildColorRgb(0x00, 0x00, 0x5F));
 
-				s.origin.y += RES_SCALE(2);
+				s.origin.y += ResScale(2);
 				DrawFilledStamp(&s);
 
-				s.origin.y -= RES_SCALE(4);
+				s.origin.y -= ResScale(4);
 				DrawFilledStamp(&s);
 
 				SetContextForeGroundColor(
 					BuildColorRgb(0x00, 0x07, 0xFF));
 
-				s.origin.y += RES_SCALE(1);
+				s.origin.y += ResScale(1);
 				DrawFilledStamp(&s);
 
-				s.origin.y += RES_SCALE(2);
+				s.origin.y += ResScale(2);
 				DrawFilledStamp(&s);
 
-				s.origin.y -= RES_SCALE(1);
+				s.origin.y -= ResScale(1);
 				SetContextForeGroundColor(oldColor);
 			}
 			DrawStamp(&s);
@@ -299,12 +299,12 @@ DoSpinLine(LINE* l, Color front, Color back, bool* skip)
 	if (!*skip)
 	{
 		SetContextForeGroundColor(back);
-		DrawLine(l, RES_SCALE(1));
+		DrawLine(l, ResScale(1));
 		PlayMenuSound(MENU_SOUND_TEXT);
 		SleepThread(c_gameSecond / 16);
 	}
 	SetContextForeGroundColor(front);
-	DrawLine(l, RES_SCALE(1));
+	DrawLine(l, ResScale(1));
 }
 
 static void
@@ -312,11 +312,11 @@ DoSpinStatBox(GFXRECT* r, Color front, Color back, bool* skip)
 {
 	if (!*skip)
 	{
-		DrawStarConBox(r, RES_SCALE(1), back, back, false, BlackColor, false, BlackColor);
+		DrawStarConBox(r, ResScale(1), back, back, false, BlackColor, false, BlackColor);
 		PlayMenuSound(MENU_SOUND_TEXT);
 		SleepThread(c_gameSecond / 16);
 	}
-	DrawStarConBox(r, RES_SCALE(1), front, front, false, BlackColor, false, BlackColor);
+	DrawStarConBox(r, ResScale(1), front, front, false, BlackColor, false, BlackColor);
 }
 
 static void
@@ -329,9 +329,9 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 	GFXPOINT c;
 	GFXRECT chd;
 
-	sq.corner.x = x + RES_SCALE(63);
-	sq.corner.y = y - RES_SCALE(5);
-	sq.extent.width = sq.extent.height = RES_SCALE(5);
+	sq.corner.x = x + ResScale(63);
+	sq.corner.y = y - ResScale(5);
+	sq.extent.width = sq.extent.height = ResScale(5);
 
 	chd.extent.width = chd.extent.height = 4;
 
@@ -362,7 +362,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 		}
 		SetContextForeGroundColor(front);
 		DrawFilledRectangle(&sq);
-		sq.corner.x += RES_SCALE(6);
+		sq.corner.x += ResScale(6);
 
 		UpdateInputState();
 		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT))
@@ -372,12 +372,12 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 	}
 	for (i = 0; i < empty; i++)
 	{
-		c.x = sq.corner.x + RES_SCALE(2);
-		c.y = sq.corner.y + RES_SCALE(2);
+		c.x = sq.corner.x + ResScale(2);
+		c.y = sq.corner.y + ResScale(2);
 		if (!*skip)
 		{
 			SetContextForeGroundColor(back);
-			DrawStarConBox(&sq, RES_SCALE(1), back, back, false, BlackColor, false, BlackColor);
+			DrawStarConBox(&sq, ResScale(1), back, back, false, BlackColor, false, BlackColor);
 			if (IsHd())
 			{
 				chd.corner = c;
@@ -391,7 +391,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 			SleepThread(c_gameSecond / 16);
 		}
 		SetContextForeGroundColor(front);
-		DrawStarConBox(&sq, RES_SCALE(1), front, front, false, BlackColor, false, BlackColor);
+		DrawStarConBox(&sq, ResScale(1), front, front, false, BlackColor, false, BlackColor);
 		if (IsHd())
 		{
 			chd.corner = c;
@@ -401,7 +401,7 @@ DoSpinStat(char* buf, int16_t x, int16_t y, uint16_t filled, uint16_t empty, Col
 		{
 			DrawPoint(&c);
 		}
-		sq.corner.x += RES_SCALE(6);
+		sq.corner.x += ResScale(6);
 
 		UpdateInputState();
 		if (CurrentInputState.menu[KEY_MENU_CANCEL] || (uqm::currentActivity() & CHECK_ABORT))
@@ -911,8 +911,8 @@ DoPresentation(void* pIS)
 					t.align = ALIGN_CENTER;
 					t.pStr = cmd.text.c_str();
 					t.CharCount = (uint16_t)~0;
-					t.baseline.x = RES_SCALE(cmd.x);
-					t.baseline.y = RES_SCALE(cmd.y);
+					t.baseline.x = ResScale(cmd.x);
+					t.baseline.y = ResScale(cmd.y);
 					DrawTextEffect(&t, pPIS->TextColor, pPIS->TextBackColor,
 								   pPIS->TextTraced);
 					break;
@@ -948,26 +948,26 @@ DoPresentation(void* pIS)
 					if (uqm::currentSeed().ships && !strncmp(pPIS->Buffer, "SPATHI", 6))
 					{ // Manually space the SPATHI text
 						DoSpinText("SP", x,
-								   y + RES_SCALE(7),
+								   y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
-						DoSpinText("A", x + RES_SCALE(16),
-								   y + RES_SCALE(7),
+						DoSpinText("A", x + ResScale(16),
+								   y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
-						DoSpinText("THI", x + RES_SCALE(25),
-								   y + RES_SCALE(7),
+						DoSpinText("THI", x + ResScale(25),
+								   y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
 						if (ship_map[shipID].sID == UR_QUAN_ID)
 						{ // All for a ship that won't occur anyway
-							x -= RES_SCALE(52);
-							y += RES_SCALE(11);
+							x -= ResScale(52);
+							y += ResScale(11);
 						}
-						DoSpinText(&(pPIS->Buffer[6]), x + RES_SCALE(52),
-								   y + RES_SCALE(7),
+						DoSpinText(&(pPIS->Buffer[6]), x + ResScale(52),
+								   y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
 					}
 					else
 					{
-						DoSpinText(pPIS->Buffer, x, y + RES_SCALE(7),
+						DoSpinText(pPIS->Buffer, x, y + ResScale(7),
 								   SetAbsFrameIndex(pPIS->Frame, 0), &pPIS->Skip);
 					}
 
@@ -986,8 +986,8 @@ DoPresentation(void* pIS)
 
 					pPIS->NumSpinStat++;
 
-					const int x {pPIS->StatBox.corner.x + RES_SCALE(3)};
-					const int y {pPIS->StatBox.corner.y + RES_SCALE(1) + (leading * pPIS->NumSpinStat)};
+					const int x {pPIS->StatBox.corner.x + ResScale(3)};
+					const int y {pPIS->StatBox.corner.y + ResScale(1) + (leading * pPIS->NumSpinStat)};
 
 					if (pPIS->NumSpinStat > 8)
 					{
@@ -1202,10 +1202,10 @@ DoPresentation(void* pIS)
 				{ /* draw simple line */
 					LINE l;
 
-					l.first.x = RES_SCALE(cmd.x);
-					l.first.y = RES_SCALE(cmd.y);
-					l.second.x = RES_SCALE(cmd.x2);
-					l.second.y = RES_SCALE(cmd.y2);
+					l.first.x = ResScale(cmd.x);
+					l.first.y = ResScale(cmd.y);
+					l.second.x = ResScale(cmd.x2);
+					l.second.y = ResScale(cmd.y2);
 
 					SetContextForeGroundColor(pPIS->TextColor);
 					DrawLine(&l, 1);
@@ -1269,10 +1269,10 @@ DoPresentation(void* pIS)
 			case uqm::SlideOp::StatBox:
 				{ /* draw stat box for spin */
 					const auto StatboxWidth = [&] {
-						return RES_SCALE(122);
+						return ResScale(122);
 					};
 					const auto StatboxHeight = [&] {
-						return RES_SCALE(60);
+						return ResScale(60);
 					};
 					int x {cmd.x << resolutionFactor};
 					int y {cmd.y << resolutionFactor};

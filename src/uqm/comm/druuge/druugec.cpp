@@ -207,7 +207,7 @@ static bool AttemptedSalvage = false;
 static void
 ExitConversation(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, bye))
+	if (PlayerSaid(R, bye))
 	{
 		setSegue(Segue_peace);
 
@@ -278,8 +278,8 @@ static constexpr auto FuelCrewCost {10};
 static void
 Buy(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, want_to_buy)
-		|| PLAYER_SAID(R, im_ready_to_buy))
+	if (PlayerSaid(R, want_to_buy)
+		|| PlayerSaid(R, im_ready_to_buy))
 	{
 		NPCPhrase(READY_TO_SELL);
 		if (!GET_GAME_STATE(ROSY_SPHERE))
@@ -298,7 +298,7 @@ Buy(RESPONSE_REF R)
 
 		SET_GAME_STATE(KNOW_DRUUGE_SLAVERS, 3);
 	}
-	else if (PLAYER_SAID(R, buy_druuge_ship))
+	else if (PlayerSaid(R, buy_druuge_ship))
 	{
 		if (GLOBAL_SIS(CrewEnlisted) < ShipCrewCost)
 		{
@@ -317,7 +317,7 @@ Buy(RESPONSE_REF R)
 			NPCPhrase(BOUGHT_SHIP);
 		}
 	}
-	else if (PLAYER_SAID(R, buy_rosy_sphere))
+	else if (PlayerSaid(R, buy_rosy_sphere))
 	{
 		if (GLOBAL_SIS(CrewEnlisted) < ArtifactCrewCost)
 		{
@@ -333,7 +333,7 @@ Buy(RESPONSE_REF R)
 			NPCPhrase(BOUGHT_SPHERE);
 		}
 	}
-	else if (PLAYER_SAID(R, buy_art_1))
+	else if (PlayerSaid(R, buy_art_1))
 	{
 		if (GLOBAL_SIS(CrewEnlisted) < ArtifactCrewCost)
 		{
@@ -348,7 +348,7 @@ Buy(RESPONSE_REF R)
 			NPCPhrase(BOUGHT_ART_1);
 		}
 	}
-	else if (PLAYER_SAID(R, buy_art_2))
+	else if (PlayerSaid(R, buy_art_2))
 	{
 		if (GLOBAL_SIS(CrewEnlisted) < ArtifactCrewCost)
 		{
@@ -363,7 +363,7 @@ Buy(RESPONSE_REF R)
 			NPCPhrase(BOUGHT_ART_2);
 		}
 	}
-	else if (PLAYER_SAID(R, buy_fuel))
+	else if (PlayerSaid(R, buy_fuel))
 	{
 		if (GLOBAL_SIS(CrewEnlisted) < FuelCrewCost)
 		{
@@ -403,7 +403,7 @@ static RESPONSE_REF LastResponse = 0;
 static void
 Trade(RESPONSE_REF R)
 {
-	if (!PLAYER_SAID(R, whats_the_sphere_again))
+	if (!PlayerSaid(R, whats_the_sphere_again))
 	{
 		NPCPhrase(TRADE_FOR_SPHERE);
 		LastResponse = R;
@@ -417,7 +417,7 @@ Trade(RESPONSE_REF R)
 
 	Response(no_way, Sell);
 	Response(way, Sell);
-	if (PHRASE_ENABLED(whats_the_sphere_again))
+	if (PhraseEnabled(whats_the_sphere_again))
 	{
 		Response(whats_the_sphere_again, Trade);
 	}
@@ -426,11 +426,11 @@ Trade(RESPONSE_REF R)
 static void
 DoTransaction(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, sell_maidens))
+	if (PlayerSaid(R, sell_maidens))
 	{
 		SET_GAME_STATE(MAIDENS_ON_SHIP, 0);
 	}
-	else if (PLAYER_SAID(R, sell_fragments))
+	else if (PlayerSaid(R, sell_fragments))
 	{
 		uint8_t num_frags {};
 
@@ -450,11 +450,11 @@ DoTransaction(RESPONSE_REF R)
 		num_frags = GET_GAME_STATE(FRAGMENTS_BOUGHT) + 1;
 		SET_GAME_STATE(FRAGMENTS_BOUGHT, num_frags);
 	}
-	else if (PLAYER_SAID(R, sell_caster))
+	else if (PlayerSaid(R, sell_caster))
 	{
 		SET_GAME_STATE(BURV_BROADCASTERS_ON_SHIP, 0);
 	}
-	else if (PLAYER_SAID(R, sell_spawner))
+	else if (PlayerSaid(R, sell_spawner))
 	{
 		SET_GAME_STATE(PORTAL_SPAWNER_ON_SHIP, 0);
 	}
@@ -482,23 +482,23 @@ DoTransaction(RESPONSE_REF R)
 		uint8_t trade_gas {0};
 		uint8_t ships_to_trade {0};
 		ship_slots = EscortFeasibilityStudy(DRUUGE_SHIP);
-		if (PLAYER_SAID(R, sell_maidens))
+		if (PlayerSaid(R, sell_maidens))
 		{
 			NPCPhrase(BOUGHT_MAIDENS);
 			ships_to_trade = 6;
 		}
-		else if (PLAYER_SAID(R, sell_fragments))
+		else if (PlayerSaid(R, sell_fragments))
 		{
 			NPCPhrase(BOUGHT_FRAGMENTS);
 			ships_to_trade = 1;
 		}
-		else if (PLAYER_SAID(R, sell_caster))
+		else if (PlayerSaid(R, sell_caster))
 		{
 			NPCPhrase(BOUGHT_CASTER);
 			ships_to_trade = 0;
 			trade_gas = 1;
 		}
-		else if (PLAYER_SAID(R, sell_spawner))
+		else if (PlayerSaid(R, sell_spawner))
 		{
 			NPCPhrase(BOUGHT_SPAWNER);
 			ships_to_trade = 3;
@@ -598,14 +598,14 @@ Sell(RESPONSE_REF R)
 {
 	RESPONSE_FUNC RespFunc {};
 
-	if (PLAYER_SAID(R, want_to_sell))
+	if (PlayerSaid(R, want_to_sell))
 	{
 		NPCPhrase(READY_TO_BUY);
 	}
-	else if (PLAYER_SAID(R, no_way)
-			 || PLAYER_SAID(R, way))
+	else if (PlayerSaid(R, no_way)
+			 || PlayerSaid(R, way))
 	{
-		if (PLAYER_SAID(R, no_way))
+		if (PlayerSaid(R, no_way))
 		{
 			NPCPhrase(OK_REGULAR_DEAL);
 		}
@@ -618,10 +618,10 @@ Sell(RESPONSE_REF R)
 
 		DoTransaction(LastResponse);
 	}
-	else if (PLAYER_SAID(R, sell_maidens)
-			 || PLAYER_SAID(R, sell_fragments)
-			 || PLAYER_SAID(R, sell_caster)
-			 || PLAYER_SAID(R, sell_spawner))
+	else if (PlayerSaid(R, sell_maidens)
+			 || PlayerSaid(R, sell_fragments)
+			 || PlayerSaid(R, sell_caster)
+			 || PlayerSaid(R, sell_spawner))
 	{
 		DoTransaction(R);
 	}
@@ -666,17 +666,17 @@ Sell(RESPONSE_REF R)
 static void
 ExplainSlaveTrade(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, want_to_buy))
+	if (PlayerSaid(R, want_to_buy))
 	{
 		NPCPhrase(WE_SELL_FOR_CREW);
 	}
-	else if (PLAYER_SAID(R, isnt_this_slave_trading))
+	else if (PlayerSaid(R, isnt_this_slave_trading))
 	{
 		NPCPhrase(NO_SLAVE_TRADE);
 
 		SET_GAME_STATE(KNOW_DRUUGE_SLAVERS, 1);
 	}
-	else if (PLAYER_SAID(R, what_do_with_crew))
+	else if (PlayerSaid(R, what_do_with_crew))
 	{
 		NPCPhrase(HAVE_FUN);
 
@@ -699,7 +699,7 @@ ExplainSlaveTrade(RESPONSE_REF R)
 static void
 TradeWorld(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_at_trade_world))
+	if (PlayerSaid(R, whats_up_at_trade_world))
 	{
 		uint8_t NumVisits {};
 
@@ -727,20 +727,20 @@ TradeWorld(RESPONSE_REF R)
 		SET_GAME_STATE(DRUUGE_HOME_INFO, NumVisits);
 		DISABLE_PHRASE(whats_up_at_trade_world);
 	}
-	else if (PLAYER_SAID(R, done_selling))
+	else if (PlayerSaid(R, done_selling))
 	{
 		NPCPhrase(OK_DONE_SELLING);
 	}
-	else if (PLAYER_SAID(R, done_buying))
+	else if (PlayerSaid(R, done_buying))
 	{
 		NPCPhrase(OK_DONE_BUYING);
 	}
-	else if (PLAYER_SAID(R, i_will_never_trade_crew))
+	else if (PlayerSaid(R, i_will_never_trade_crew))
 	{
 		NPCPhrase(YOUR_LOSS);
 	}
 
-	if (PHRASE_ENABLED(whats_up_at_trade_world))
+	if (PhraseEnabled(whats_up_at_trade_world))
 	{
 		Response(whats_up_at_trade_world, TradeWorld);
 	}
@@ -759,12 +759,12 @@ TradeWorld(RESPONSE_REF R)
 static void
 BombAmbush(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_at_bomb_planet))
+	if (PlayerSaid(R, whats_up_at_bomb_planet))
 	{
 		NPCPhrase(GEN_INFO_AT_BOMB_PLANET);
 		SET_GAME_STATE(BOMB_VISITS, 2);
 	}
-	else if (PLAYER_SAID(R, we_get_bomb))
+	else if (PlayerSaid(R, we_get_bomb))
 	{
 		NPCPhrase(NOT_GET_BOMB);
 		SET_GAME_STATE(BOMB_VISITS, 3);
@@ -788,7 +788,7 @@ BombAmbush(RESPONSE_REF R)
 static void
 Space(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_in_space))
+	if (PlayerSaid(R, whats_up_in_space))
 	{
 		uint8_t NumVisits {};
 
@@ -814,7 +814,7 @@ Space(RESPONSE_REF R)
 		DISABLE_PHRASE(whats_up_in_space);
 	}
 
-	if (PHRASE_ENABLED(whats_up_in_space))
+	if (PhraseEnabled(whats_up_in_space))
 	{
 		Response(whats_up_in_space, Space);
 	}
@@ -1060,8 +1060,8 @@ init_druuge_comm(void)
 	uqm::lua().beginComm(nullptr, NullResource);
 
 	druuge_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
-	druuge_desc.AlienTextBaseline.y = RES_SCALE(64);
-	druuge_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	druuge_desc.AlienTextBaseline.y = ResScale(64);
+	druuge_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if ((GET_GAME_STATE(DRUUGE_MANNER) == 0
 		 && (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))

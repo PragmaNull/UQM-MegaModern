@@ -66,29 +66,29 @@ InitializeDOSLanderPos(void)
 		return;
 	}
 
-	if (lander_pos[0].x != RES_SCALE(temp[0].x))
+	if (lander_pos[0].x != ResScale(temp[0].x))
 	{
 		for (i = 0; i < MaxLanders; i++)
 		{
-			lander_pos[i].x = RES_SCALE(temp[i].x);
-			lander_pos[i].y = RES_SCALE(temp[i].y);
+			lander_pos[i].x = ResScale(temp[i].x);
+			lander_pos[i].y = ResScale(temp[i].y);
 		}
 	}
 }
 
 // This is all for drawing the DOS version modules menu
-static auto ModuleOrgY() { return RES_SCALE(36); }
-static auto ModuleSpacingY() { return RES_SCALE(16); }
+static auto ModuleOrgY() { return ResScale(36); }
+static auto ModuleSpacingY() { return ResScale(16); }
 
-static auto ModuleCol0() { return RES_SCALE(5); }
-static auto ModuleCol1() { return RES_SCALE(61); }
+static auto ModuleCol0() { return ResScale(5); }
+static auto ModuleCol1() { return ResScale(61); }
 
-static auto ModuleSelOrgX() { return (ModuleCol0() - RES_SCALE(1)); }
-static auto ModuleSelWidth() { return (FieldWidth() - RES_SCALE(3)); }
+static auto ModuleSelOrgX() { return (ModuleCol0() - ResScale(1)); }
+static auto ModuleSelWidth() { return (FieldWidth() - ResScale(3)); }
 
-static auto NameOfsY() { return RES_SCALE(2); }
-static auto TextBaseline() { return RES_SCALE(6); }
-static auto TextSpacingY() { return RES_SCALE(7); }
+static auto NameOfsY() { return ResScale(2); }
+static auto TextBaseline() { return ResScale(6); }
+static auto TextSpacingY() { return ResScale(7); }
 
 static constexpr auto MaxVisModules {5};
 
@@ -133,7 +133,7 @@ DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 									  ModuleSelectedColor :
 									  ModuleNameColor);
 		t.baseline.y = r.corner.y + TextBaseline();
-		t.pStr = GAME_STRING(index + DosStarbaseStringBase);
+		t.pStr = GameString(index + DosStarbaseStringBase);
 		t.CharCount = uqm::utf8StringPos(t.pStr, ' ');
 		font_DrawText(&t);
 		t.baseline.y += TextSpacingY();
@@ -146,8 +146,8 @@ DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 									  ModuleSelectedColor :
 									  ModulePriceColor);
 		t.align = ALIGN_RIGHT;
-		t.baseline.x = ModuleCol1() - RES_SCALE(2);
-		t.baseline.y -= RES_SCALE(3);
+		t.baseline.x = ModuleCol1() - ResScale(2);
+		t.baseline.y -= ResScale(3);
 		fmt::format_to_sz_n(buf, "{}",
 							GLOBAL(ModuleCost[index]) * ModuleCostScale);
 		t.pStr = buf;
@@ -157,10 +157,10 @@ DrawModuleStatus(uint16_t index, uint16_t pos, bool selected)
 	else
 	{
 		SetContextForeGroundColor(ModulePriceColor);
-		r.corner.x += RES_SCALE(21);
-		r.corner.y += RES_SCALE(6);
+		r.corner.x += ResScale(21);
+		r.corner.y += ResScale(6);
 		r.extent.width >>= 2;
-		r.extent.height = RES_SCALE(2);
+		r.extent.height = ResScale(2);
 		DrawFilledRectangle(&r);
 	}
 }
@@ -171,14 +171,14 @@ DrawModuleDisplay(MODULES_STATE* modState)
 	TEXT t;
 	GFXRECT r;
 
-	r.corner.x = RES_SCALE(2);
-	r.corner.y = RES_SCALE(20);
-	r.extent.width = FieldWidth() + RES_SCALE(1);
-	r.extent.height = (RES_SCALE(129) - r.corner.y);
+	r.corner.x = ResScale(2);
+	r.corner.y = ResScale(20);
+	r.extent.width = FieldWidth() + ResScale(1);
+	r.extent.height = (ResScale(129) - r.corner.y);
 
 	if (!uqm::UQMOptions::read().customBorder && !IsHd())
 	{
-		DrawStarConBox(&r, RES_SCALE(1),
+		DrawStarConBox(&r, ResScale(1),
 					   ShadowboxMediumColor, ShadowboxDarkColor,
 					   true, ModuleBackColor, false, Transparent);
 	}
@@ -189,10 +189,10 @@ DrawModuleDisplay(MODULES_STATE* modState)
 
 	// print the "MODULES" title
 	SetContextFont(StarConFont);
-	t.baseline.x = (StatusWidth() >> 1) - RES_SCALE(1);
-	t.baseline.y = r.corner.y + RES_SCALE(7);
+	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
+	t.baseline.y = r.corner.y + ResScale(7);
 	t.align = ALIGN_CENTER;
-	t.pStr = GAME_STRING(STARBASE_STRING_BASE + 11);
+	t.pStr = GameString(STARBASE_STRING_BASE + 11);
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(ModuleSelectedColor);
 	font_DrawText(&t);
@@ -282,7 +282,7 @@ DrawModuleMenuText(GFXRECT* r, int Index)
 	GFXRECT block;
 	char buf[256];
 
-	if (IsDos() || !strlen(GAME_STRING(TdoStarbaseStringBase + Index)))
+	if (IsDos() || !strlen(GameString(TdoStarbaseStringBase + Index)))
 	{
 		return;
 	}
@@ -296,7 +296,7 @@ DrawModuleMenuText(GFXRECT* r, int Index)
 	if (!uqm::UQMOptions::read().customBorder)
 	{
 		block = *r;
-		block.extent.height = (leading << 1) - RES_SCALE(1);
+		block.extent.height = (leading << 1) - ResScale(1);
 		DrawFilledRectangle(&block);
 	}
 	else
@@ -305,11 +305,11 @@ DrawModuleMenuText(GFXRECT* r, int Index)
 	}
 
 	text.baseline.x = r->corner.x + (r->extent.width >> 1);
-	text.baseline.y = r->corner.y + leading - RES_SCALE(1);
+	text.baseline.y = r->corner.y + leading - ResScale(1);
 	const int16_t og_baseline_x {text.baseline.x};
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
-						GAME_STRING(TdoStarbaseStringBase + Index));
+						GameString(TdoStarbaseStringBase + Index));
 
 	text.align = ALIGN_CENTER;
 	{
@@ -345,10 +345,10 @@ DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
 
 	if (!IsDos())
 	{
-		r.corner.x = s.origin.x - RES_SCALE(1);
-		r.corner.y = s.origin.y - RES_SCALE(11);
-		r.extent.width = RadarWidth() + RES_SCALE(2);
-		r.extent.height = RES_SCALE(11);
+		r.corner.x = s.origin.x - ResScale(1);
+		r.corner.y = s.origin.y - ResScale(11);
+		r.extent.width = RadarWidth() + ResScale(2);
+		r.extent.height = ResScale(11);
 		//	ClearSISRect (ClearSisRadar); // blinks otherwise
 		SetContextForeGroundColor(MenuForegroundColor);
 		if (!uqm::UQMOptions::read().customBorder)
@@ -363,17 +363,17 @@ DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
 	{
 		GFXRECT dosRect;
 
-		dosRect.corner.x = RES_SCALE(2);
-		dosRect.corner.y = RadarY() - RES_SCALE(1);
-		dosRect.extent.width = RadarWidth() + RES_SCALE(4);
-		dosRect.extent.height = RadarHeight() + RES_SCALE(2);
+		dosRect.corner.x = ResScale(2);
+		dosRect.corner.y = RadarY() - ResScale(1);
+		dosRect.extent.width = RadarWidth() + ResScale(4);
+		dosRect.extent.height = RadarHeight() + ResScale(2);
 
 		if (uqm::UQMOptions::read().customBorder)
 		{
-			dosRect.corner.x += RES_SCALE(2);
-			dosRect.corner.y += RES_SCALE(2);
-			dosRect.extent.width -= RES_SCALE(4);
-			dosRect.extent.height -= RES_SCALE(4);
+			dosRect.corner.x += ResScale(2);
+			dosRect.corner.y += ResScale(2);
+			dosRect.extent.width -= ResScale(4);
+			dosRect.extent.height -= ResScale(4);
 			SetContextForeGroundColor(BlackColor);
 			DrawFilledRectangle(&dosRect);
 		}
@@ -414,8 +414,8 @@ DrawModuleStrings(MENU_STATE* pMS, uint8_t NewModule)
 		DrawModuleMenuText(&r, NewModule);
 
 		// Print the module cost.
-		t.baseline.x = s.origin.x + RadarWidth() - RES_SCALE(2);
-		t.baseline.y = s.origin.y + RadarHeight() - RES_SCALE(2);
+		t.baseline.x = s.origin.x + RadarWidth() - ResScale(2);
+		t.baseline.y = s.origin.y + RadarHeight() - ResScale(2);
 		t.align = ALIGN_RIGHT;
 		t.CharCount = (uint16_t)~0;
 		t.pStr = buf;
@@ -472,7 +472,7 @@ DrawEscapePodText(GFXRECT rect)
 	GFXRECT block;
 	char buf[256];
 
-	if (!strlen(GAME_STRING(EndStarbaseStringBase + 1)))
+	if (!strlen(GameString(EndStarbaseStringBase + 1)))
 	{
 		return;
 	}
@@ -481,28 +481,28 @@ DrawEscapePodText(GFXRECT rect)
 	OldColor = SetContextForeGroundColor(BlackColor);
 
 	block = rect;
-	block.corner.x += DOS_BOOL_SCL(171, 9);
-	block.corner.y += RES_SCALE(38);
-	block.extent.width = RES_SCALE(36);
-	block.extent.height = RES_SCALE(6);
+	block.corner.x += DosBoolScl(171, 9);
+	block.corner.y += ResScale(38);
+	block.extent.width = ResScale(36);
+	block.extent.height = ResScale(6);
 	DrawFilledRectangle(&block);
 
-	block.corner.x += RES_SCALE(9);
+	block.corner.x += ResScale(9);
 	block.corner.y += block.extent.height;
-	block.extent.width = RES_SCALE(19);
+	block.extent.width = ResScale(19);
 	DrawFilledRectangle(&block);
 
 	GetContextFontLeading(&leading);
 
 	text.baseline = rect.corner;
-	text.baseline.x += DOS_BOOL_SCL(189, 27);
-	text.baseline.y += RES_SCALE(39);
+	text.baseline.x += DosBoolScl(189, 27);
+	text.baseline.y += ResScale(39);
 	text.align = ALIGN_CENTER;
 
 	const int16_t og_baseline_x {text.baseline.x};
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
-						GAME_STRING(EndStarbaseStringBase + 1));
+						GameString(EndStarbaseStringBase + 1));
 
 	text.align = ALIGN_CENTER;
 	SetContextForeGroundColor(LanderPodTextColor);
@@ -534,7 +534,7 @@ DrawNoLandersText(GFXRECT rect)
 	Color OldColor;
 	GFXRECT block;
 
-	if (IsDos() || !strlen(GAME_STRING(EndStarbaseStringBase)))
+	if (IsDos() || !strlen(GameString(EndStarbaseStringBase)))
 	{
 		return;
 	}
@@ -543,17 +543,17 @@ DrawNoLandersText(GFXRECT rect)
 	OldColor = SetContextForeGroundColor(BlackColor);
 
 	block = rect;
-	block.corner.y += RES_SCALE(9);
-	block.extent.width = RES_SCALE(162) - IF_HD(3);
-	block.extent.height = RES_SCALE(20);
+	block.corner.y += ResScale(9);
+	block.extent.width = ResScale(162) - IfHd(3);
+	block.extent.height = ResScale(20);
 	DrawFilledRectangle(&block);
 
 	text.baseline = rect.corner;
-	text.baseline.x += RES_SCALE(81);
-	text.baseline.y += RES_SCALE(17);
+	text.baseline.x += ResScale(81);
+	text.baseline.y += ResScale(17);
 	text.align = ALIGN_CENTER;
 	text.pStr = AlignText(
-		(const char*)GAME_STRING(EndStarbaseStringBase),
+		(const char*)GameString(EndStarbaseStringBase),
 		&text.baseline.x);
 	text.CharCount = (uint16_t)~0;
 
@@ -564,9 +564,9 @@ DrawNoLandersText(GFXRECT rect)
 	SetContextForeGroundColor(OldColor);
 }
 
-static auto LanderX() { return (RES_SCALE(24) - SafePad()); }
-static auto LanderY() { return RES_SCALE(67); }
-static auto LanderWidth() { return RES_SCALE(15); }
+static auto LanderX() { return (ResScale(24) - SafePad()); }
+static auto LanderY() { return ResScale(67); }
+static auto LanderWidth() { return ResScale(15); }
 
 static void
 DisplayLanders(MENU_STATE* pMS)
@@ -1000,9 +1000,9 @@ DoInstallModule(MENU_STATE* pMS)
 				if (IsDos() && (NewState == PLANET_LANDER || NewState == EmptySlot + 3))
 				{
 					pMS->flash_rect0.corner.x = lander_pos[NewItem].x
-											  - RES_SCALE(1);
+											  - ResScale(1);
 					pMS->flash_rect0.corner.y = lander_pos[NewItem].y
-											  - RES_SCALE(1);
+											  - ResScale(1);
 				}
 				else
 				{
@@ -1022,76 +1022,76 @@ InitFlash:
 					case PLANET_LANDER:
 					case EmptySlot + 3:
 						pMS->flash_rect0.corner.x =
-							DOS_BOOL(LanderX(), RES_SCALE(LanderDosX))
-							- RES_SCALE(1);
+							DosBool(LanderX(), ResScale(LanderDosX))
+							- ResScale(1);
 						pMS->flash_rect0.corner.y =
-							DOS_BOOL(LanderY(), RES_SCALE(LanderDosY))
-							- RES_SCALE(1);
+							DosBool(LanderY(), ResScale(LanderDosY))
+							- ResScale(1);
 						pMS->flash_rect0.extent.width =
-							RES_SCALE(11 + 2);
+							ResScale(11 + 2);
 						pMS->flash_rect0.extent.height =
-							RES_SCALE(13 + 2);
+							ResScale(13 + 2);
 
 						w = LanderWidth();
 						break;
 					case FUSION_THRUSTER:
 					case EmptySlot + 0:
 						pMS->flash_rect0.corner.x =
-							DriveTopX() - RES_SCALE(1);
+							DriveTopX() - ResScale(1);
 						pMS->flash_rect0.corner.y =
-							DriveTopY() - RES_SCALE(1);
-						pMS->flash_rect0.extent.width = RES_SCALE(8);
-						pMS->flash_rect0.extent.height = RES_SCALE(6);
+							DriveTopY() - ResScale(1);
+						pMS->flash_rect0.extent.width = ResScale(8);
+						pMS->flash_rect0.extent.height = ResScale(6);
 
 						pMS->flash_rect1.corner.x =
-							DriveSideX() - RES_SCALE(1) + IF_HD(5);
+							DriveSideX() - ResScale(1) + IfHd(5);
 						pMS->flash_rect1.corner.y =
-							DriveSideY() - RES_SCALE(1) - IF_HD(10);
+							DriveSideY() - ResScale(1) - IfHd(10);
 						pMS->flash_rect1.extent.width =
-							RES_SCALE(12) - IF_HD(10);
+							ResScale(12) - IfHd(10);
 						pMS->flash_rect1.extent.height =
-							RES_SCALE(7) + IF_HD(4);
+							ResScale(7) + IfHd(4);
 
 						//pMS->flash_rect2 = pMS->flash_rect0;
-						//pMS->flash_rect2.corner.y += RES_SCALE (90);
+						//pMS->flash_rect2.corner.y += ResScale (90);
 						break;
 					case TURNING_JETS:
 					case EmptySlot + 1:
 						pMS->flash_rect0.corner.x =
-							JetTopX() - RES_SCALE(1) - IF_HD(6);
+							JetTopX() - ResScale(1) - IfHd(6);
 						pMS->flash_rect0.corner.y =
-							JetTopY() - RES_SCALE(1);
-						pMS->flash_rect0.extent.width = RES_SCALE(9);
-						pMS->flash_rect0.extent.height = RES_SCALE(10);
+							JetTopY() - ResScale(1);
+						pMS->flash_rect0.extent.width = ResScale(9);
+						pMS->flash_rect0.extent.height = ResScale(10);
 
 						pMS->flash_rect1.corner.x =
-							JetSideX() - RES_SCALE(1) - IF_HD(6);
+							JetSideX() - ResScale(1) - IfHd(6);
 						pMS->flash_rect1.corner.y =
-							JetSideY() - RES_SCALE(1) + IF_HD(4);
-						pMS->flash_rect1.extent.width = RES_SCALE(7);
-						pMS->flash_rect1.extent.height = RES_SCALE(4);
+							JetSideY() - ResScale(1) + IfHd(4);
+						pMS->flash_rect1.extent.width = ResScale(7);
+						pMS->flash_rect1.extent.height = ResScale(4);
 
 						//pMS->flash_rect2 = pMS->flash_rect0;
-						//pMS->flash_rect2.corner.y += RES_SCALE (70);
+						//pMS->flash_rect2.corner.y += ResScale (70);
 						break;
 					default:
 						pMS->flash_rect0.corner.x =
-							ModuleTopX() - RES_SCALE(1);
+							ModuleTopX() - ResScale(1);
 						pMS->flash_rect0.corner.y =
-							ModuleTopY() - RES_SCALE(1);
+							ModuleTopY() - ResScale(1);
 						pMS->flash_rect0.extent.width =
-							ShipPieceOffset() + RES_SCALE(2)
-							+ RES_SCALE(uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC);
-						pMS->flash_rect0.extent.height = RES_SCALE(34);
+							ShipPieceOffset() + ResScale(2)
+							+ ResScale(uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC);
+						pMS->flash_rect0.extent.height = ResScale(34);
 
 						pMS->flash_rect1.corner.x =
-							ModuleSideX() - RES_SCALE(1);
+							ModuleSideX() - ResScale(1);
 						pMS->flash_rect1.corner.y =
-							ModuleSideY() - RES_SCALE(1);
+							ModuleSideY() - ResScale(1);
 						pMS->flash_rect1.extent.width =
-							ShipPieceOffset() + RES_SCALE(2)
-							+ RES_SCALE(uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC);
-						pMS->flash_rect1.extent.height = RES_SCALE(25);
+							ShipPieceOffset() + ResScale(2)
+							+ ResScale(uqm::UQMOptions::read().whichMenu == uqm::EmulationMode::PC);
+						pMS->flash_rect1.extent.height = ResScale(25);
 						break;
 				}
 
@@ -1099,9 +1099,9 @@ InitFlash:
 				if (IsDos() && (NewState == PLANET_LANDER || NewState == EmptySlot + 3))
 				{
 					pMS->flash_rect0.corner.x =
-						lander_pos[pMS->delta_item].x - RES_SCALE(1);
+						lander_pos[pMS->delta_item].x - ResScale(1);
 					pMS->flash_rect0.corner.y =
-						lander_pos[pMS->delta_item].y - RES_SCALE(1);
+						lander_pos[pMS->delta_item].y - ResScale(1);
 				}
 				else
 				{
@@ -1115,7 +1115,7 @@ InitFlash:
 			ManipulateModules(new_slot_piece);
 			if (pMS->CurState < EmptySlot)
 			{ // flash with PC menus too
-				SetFlashRect(DOS_BOOL(SfrMenuAny(), SfrMenuNon()), false);
+				SetFlashRect(DosBool(SfrMenuAny(), SfrMenuNon()), false);
 			}
 			else
 			{
@@ -1285,7 +1285,7 @@ bool DoOutfit(MENU_STATE* pMS)
 			pMS->CurState = OUTFIT_FUEL;
 			pMS->ModuleFrame = CaptureDrawable(
 				LoadGraphic(SismodsMaskPmapAnimRes));
-			s.origin.x = IsPad() ? (-SafeX() + RES_SCALE(3)) : 0;
+			s.origin.x = IsPad() ? (-SafeX() + ResScale(3)) : 0;
 			s.origin.y = 0;
 			s.frame = CaptureDrawable(
 				LoadGraphic(OutfitPmapAnimRes));
@@ -1302,8 +1302,8 @@ bool DoOutfit(MENU_STATE* pMS)
 			SetTransitionSource(nullptr);
 			BatchGraphics();
 			DrawSISFrame();
-			DrawSISMessage(GAME_STRING(STARBASE_STRING_BASE + 2));
-			DrawSISTitle(GAME_STRING(STARBASE_STRING_BASE));
+			DrawSISMessage(GameString(STARBASE_STRING_BASE + 2));
+			DrawSISTitle(GameString(STARBASE_STRING_BASE));
 
 			SetContext(SpaceContext);
 

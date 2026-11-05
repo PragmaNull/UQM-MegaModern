@@ -34,16 +34,16 @@ static constexpr auto ShipMass {10};
 // Buzzsaw
 static constexpr auto WeaponEnergyCost {6};
 static constexpr auto WeaponWait {6};
-static auto MissileOffset() { return RES_SCALE(9); }
-static auto KohrAhOffset() { return RES_SCALE(28); }
-static auto MissileSpeed() { return RES_SCALE(64); }
+static auto MissileOffset() { return ResScale(9); }
+static auto KohrAhOffset() { return ResScale(28); }
+static auto MissileSpeed() { return ResScale(64); }
 static constexpr auto MissileLife {64};
 /* actually, it's as long as you hold the button down.*/
 static constexpr auto MissileHits {10};
 static constexpr auto MissileDamage {4};
 static constexpr auto SawRate {0};
 static constexpr auto MaxSaws {8};
-static auto ActivateRange() { return RES_SCALE(224); }
+static auto ActivateRange() { return ResScale(224); }
 /* Originally SpaceWidth() - the distance within which
 		 * stationary sawblades will home */
 static constexpr auto TrackWait {4};
@@ -54,8 +54,8 @@ static auto FragmentRange() { return (FragmentLife * FragmentSpeed()); }
 // F.R.I.E.D.
 static constexpr auto SpecialEnergyCost {(MaxEnergySize / 2)};
 static constexpr auto SpecialWait {9};
-static auto GasOffset() { return RES_SCALE(2); }
-static auto GasSpeed() { return RES_SCALE(16); }
+static auto GasOffset() { return ResScale(2); }
+static auto GasSpeed() { return ResScale(16); }
 static constexpr auto GasRate {2}; /* Controls animation of the gas cloud decay - the decay
                     * animation advances one frame every GasRate frames. */
 static constexpr auto GasHits {100};
@@ -208,10 +208,10 @@ buzztrack_preprocess(ELEMENT* ElementPtr)
 			delta_y = eptr->current.location.y
 					- ElementPtr->current.location.y;
 			UnlockElement(ElementPtr->hTarget);
-			delta_x = WRAP_DELTA_X(delta_x);
-			delta_y = WRAP_DELTA_Y(delta_y);
-			facing = NORMALIZE_FACING(
-				ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)));
+			delta_x = WrapDeltaX(delta_x);
+			delta_y = WrapDeltaY(delta_y);
+			facing = NormalizeFacing(
+				AngleToFacing(ARCTAN(delta_x, delta_y)));
 
 			if (delta_x < 0)
 			{
@@ -221,8 +221,8 @@ buzztrack_preprocess(ELEMENT* ElementPtr)
 			{
 				delta_y = -delta_y;
 			}
-			delta_x = WORLD_TO_DISPLAY(delta_x);
-			delta_y = WORLD_TO_DISPLAY(delta_y);
+			delta_x = WorldToDisplay(delta_x);
+			delta_y = WorldToDisplay(delta_y);
 			if (delta_x >= ActivateRange()
 				|| delta_y >= ActivateRange()
 				|| (uint32_t)((uint16_t)delta_x * delta_x)
@@ -235,7 +235,7 @@ buzztrack_preprocess(ELEMENT* ElementPtr)
 			{
 				ElementPtr->thrust_wait = TrackWait;
 				SetVelocityVector(&ElementPtr->velocity,
-								  DISPLAY_TO_WORLD(RES_SCALE(2)), facing);
+								  DisplayToWorld(ResScale(2)), facing);
 			}
 		}
 	}
@@ -515,7 +515,7 @@ spawn_gas_cloud(ELEMENT* ElementPtr)
 	MissileBlock.index = 0;
 	MissileBlock.sender = ElementPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
-	MissileBlock.pixoffs = RES_SCALE(20);
+	MissileBlock.pixoffs = ResScale(20);
 	MissileBlock.speed = GasSpeed();
 	MissileBlock.hit_points = GasHits;
 	MissileBlock.damage = GasDamage;
@@ -526,9 +526,9 @@ spawn_gas_cloud(ELEMENT* ElementPtr)
 
 	GetCurrentVelocityComponentsSdword(&ElementPtr->velocity, &dx, &dy);
 	for (MissileBlock.face = 0;
-		 MissileBlock.face < ANGLE_TO_FACING(FullCircle);
+		 MissileBlock.face < AngleToFacing(FullCircle);
 		 MissileBlock.face +=
-		 (ANGLE_TO_FACING(FullCircle) / NumGasClouds))
+		 (AngleToFacing(FullCircle) / NumGasClouds))
 	{
 		HELEMENT hGasCloud {initialize_missile(&MissileBlock)};
 		if (hGasCloud)
@@ -588,8 +588,8 @@ init_black_urquan(void)
 {
 	if (IsHd())
 	{
-		black_urquan_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		black_urquan_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		black_urquan_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		black_urquan_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		black_urquan_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else

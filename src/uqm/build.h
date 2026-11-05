@@ -34,9 +34,7 @@ inline constexpr auto NumClassLabels {2};
 inline constexpr auto NameOffset {(NumRaceLabels + NumClassLabels)};
 inline constexpr auto NumCaptainsNames {16};
 
-#define PickCaptainName() (((uint16_t)uqm::random().next() \
-							& (NumCaptainsNames - 1))      \
-						   + NameOffset)
+constexpr auto PickCaptainName() { return (((uint16_t)uqm::random().next() & (NumCaptainsNames - 1)) + NameOffset); }
 
 extern HLINK Build(QUEUE* pQueue, SPECIES_ID SpeciesID);
 extern HSHIPFRAG CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue,

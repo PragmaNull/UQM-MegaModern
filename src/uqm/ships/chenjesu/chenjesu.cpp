@@ -38,9 +38,9 @@ static constexpr auto ShipMass {10};
 // Photon Shard
 static constexpr auto WeaponEnergyCost {5};
 static constexpr auto WeaponWait {0};
-static auto ChenjesuOffset() { return RES_SCALE(16); }
+static auto ChenjesuOffset() { return ResScale(16); }
 static constexpr auto MissileOffset {0};
-static auto MissileSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(16)); }
+static auto MissileSpeed() { return DisplayToWorld(ResScale(16)); }
 static constexpr auto MissileLife {90};
 /* actually, it's as long as you hold the button down. */
 static constexpr auto MissileHits {10};
@@ -48,7 +48,7 @@ static constexpr auto MissileDamage {6};
 static constexpr auto NumSparkles {8};
 
 // Shrapnel
-static auto FragmentOffset() { return RES_SCALE(2); }
+static auto FragmentOffset() { return ResScale(2); }
 static constexpr auto NumFragments {8};
 static constexpr auto FragmentLife {10};
 static auto FragmentSpeed() { return MissileSpeed(); }
@@ -60,8 +60,8 @@ static constexpr auto FragmentDamage {2};
 // DOGI
 static constexpr auto SpecialEnergyCost {MaxEnergy};
 static constexpr auto SpecialWait {0};
-static auto DoggyOffset() { return RES_SCALE(18); }
-static auto DoggySpeed() { return DISPLAY_TO_WORLD(RES_SCALE(8)); }
+static auto DoggyOffset() { return ResScale(18); }
+static auto DoggySpeed() { return DisplayToWorld(ResScale(8)); }
 static constexpr auto EnergyDrain {10};
 static constexpr auto MaxDoggies {4};
 static constexpr auto DoggyHits {3};
@@ -161,9 +161,9 @@ crystal_postprocess(ELEMENT* ElementPtr)
 	MissileBlock.blast_offs = FragmentOffset();
 
 	for (MissileBlock.face = 0;
-		 MissileBlock.face < ANGLE_TO_FACING(FullCircle);
+		 MissileBlock.face < AngleToFacing(FullCircle);
 		 MissileBlock.face +=
-		 (ANGLE_TO_FACING(FullCircle) / NumFragments))
+		 (AngleToFacing(FullCircle) / NumFragments))
 	{
 		HELEMENT hFragment {initialize_missile(&MissileBlock)};
 		if (hFragment)
@@ -266,36 +266,36 @@ doggy_preprocess(ELEMENT* ElementPtr)
 		int16_t delta_facing {};
 
 		facing = orig_facing =
-			NORMALIZE_FACING(ANGLE_TO_FACING(
+			NormalizeFacing(AngleToFacing(
 				GetVelocityTravelAngle(&ElementPtr->velocity)));
 		if ((delta_facing = TrackShip(ElementPtr, &facing)) < 0)
 		{
-			facing = NORMALIZE_FACING(uqm::random().next());
+			facing = NormalizeFacing(uqm::random().next());
 		}
 		else
 		{
 			ELEMENT* ShipPtr {};
 
 			LockElement(ElementPtr->hTarget, &ShipPtr);
-			facing = NORMALIZE_FACING(ANGLE_TO_FACING(
+			facing = NormalizeFacing(AngleToFacing(
 				ARCTAN(ShipPtr->current.location.x - ElementPtr->current.location.x,
 					   ShipPtr->current.location.y - ElementPtr->current.location.y)));
-			delta_facing = NORMALIZE_FACING(facing - GetFrameIndex(ShipPtr->current.image.frame));
+			delta_facing = NormalizeFacing(facing - GetFrameIndex(ShipPtr->current.image.frame));
 			UnlockElement(ElementPtr->hTarget);
 
-			if (delta_facing > ANGLE_TO_FACING(HalfCircle - Octant) && delta_facing < ANGLE_TO_FACING(HalfCircle + Octant))
+			if (delta_facing > AngleToFacing(HalfCircle - Octant) && delta_facing < AngleToFacing(HalfCircle + Octant))
 			{
-				if (delta_facing >= ANGLE_TO_FACING(HalfCircle))
+				if (delta_facing >= AngleToFacing(HalfCircle))
 				{
-					facing -= ANGLE_TO_FACING(Quadrant);
+					facing -= AngleToFacing(Quadrant);
 				}
 				else
 				{
-					facing += ANGLE_TO_FACING(Quadrant);
+					facing += AngleToFacing(Quadrant);
 				}
 			}
 
-			facing = NORMALIZE_FACING(facing);
+			facing = NormalizeFacing(facing);
 		}
 
 		if (facing != orig_facing)
@@ -392,16 +392,16 @@ spawn_doggy(ELEMENT* ElementPtr)
 		}
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
-		angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HalfCircle;
+		angle = FacingToAngle(StarShipPtr->ShipFacing) + HalfCircle;
 		DoggyElementPtr->current.location.x = ElementPtr->next.location.x
-											+ COSINE(angle, DISPLAY_TO_WORLD(ChenjesuOffset() + DoggyOffset()));
+											+ Cosine(angle, DisplayToWorld(ChenjesuOffset() + DoggyOffset()));
 		DoggyElementPtr->current.location.y = ElementPtr->next.location.y
-											+ SINE(angle, DISPLAY_TO_WORLD(ChenjesuOffset() + DoggyOffset()));
+											+ Sine(angle, DisplayToWorld(ChenjesuOffset() + DoggyOffset()));
 		DoggyElementPtr->current.image.farray = StarShipPtr->RaceDescPtr->ship_data.special;
 		DoggyElementPtr->current.image.frame = StarShipPtr->RaceDescPtr->ship_data.special[0];
 
 		SetVelocityVector(&DoggyElementPtr->velocity,
-						  DoggySpeed(), NORMALIZE_FACING(ANGLE_TO_FACING(angle)));
+						  DoggySpeed(), NormalizeFacing(AngleToFacing(angle)));
 
 		SetElementStarShip(DoggyElementPtr, StarShipPtr);
 
@@ -432,13 +432,13 @@ chenjesu_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		if ((lpEvalDesc->which_turn <= 16
-			 && MANEUVERABILITY(
+			 && Maneuverability(
 					&EnemyStarShipPtr->RaceDescPtr->cyborg_control)
-					>= RESOLUTION_COMPENSATED(MediumShip))
-			|| (MANEUVERABILITY(
+					>= ResolutionCompensated(MediumShip))
+			|| (Maneuverability(
 					&EnemyStarShipPtr->RaceDescPtr->cyborg_control)
-					<= RESOLUTION_COMPENSATED(SlowShip)
-				&& WEAPON_RANGE(
+					<= ResolutionCompensated(SlowShip)
+				&& GetWeaponRange(
 					   &EnemyStarShipPtr->RaceDescPtr->cyborg_control)
 					   >= chooseIfHd(LongRangeWeapon, LongRangeWeaponHd) * 3 / 4
 				&& (EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags & SeekingWeapon)))
@@ -688,8 +688,8 @@ init_chenjesu(void)
 {
 	if (IsHd())
 	{
-		chenjesu_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		chenjesu_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		chenjesu_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		chenjesu_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		chenjesu_desc.cyborg_control.WeaponRange = LongRangeWeaponHd;
 	}
 	else

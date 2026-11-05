@@ -128,15 +128,15 @@ ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
-	if (PLAYER_SAID(R, bye_neutral))
+	if (PlayerSaid(R, bye_neutral))
 	{
 		NPCPhrase(GOODBYE_NEUTRAL);
 	}
-	else if (PLAYER_SAID(R, what_do_i_do_now))
+	else if (PlayerSaid(R, what_do_i_do_now))
 	{
 		NPCPhrase(FIX_IT);
 	}
-	else if (PLAYER_SAID(R, thanks_now_we_eat_you))
+	else if (PlayerSaid(R, thanks_now_we_eat_you))
 	{
 		NPCPhrase(HIDEOUS_MONSTERS);
 
@@ -144,19 +144,19 @@ ExitConversation(RESPONSE_REF R)
 		SET_GAME_STATE(SUPOX_HOME_VISITS, 0);
 		SET_GAME_STATE(SUPOX_VISITS, 0);
 	}
-	else if (PLAYER_SAID(R, bye_after_space))
+	else if (PlayerSaid(R, bye_after_space))
 	{
 		NPCPhrase(GOODBYE_AFTER_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_before_space))
+	else if (PlayerSaid(R, bye_before_space))
 	{
 		NPCPhrase(GOODBYE_BEFORE_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_allied_homeworld))
+	else if (PlayerSaid(R, bye_allied_homeworld))
 	{
 		NPCPhrase(GOODBYE_ALLIED_HOMEWORLD);
 	}
-	else if (PLAYER_SAID(R, can_you_help))
+	else if (PlayerSaid(R, can_you_help))
 	{
 		NPCPhrase(HOW_HELP);
 		if (EscortFeasibilityStudy(SUPOX_SHIP) == 0)
@@ -184,13 +184,13 @@ AlliedHome(RESPONSE_REF R)
 
 	News = GET_GAME_STATE(SUPOX_WAR_NEWS);
 	NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
-	if (PLAYER_SAID(R, how_went_war))
+	if (PlayerSaid(R, how_went_war))
 	{
 		NPCPhrase(ABOUT_BATTLE);
 
 		News |= (1 << 0);
 	}
-	else if (PLAYER_SAID(R, how_goes_war))
+	else if (PlayerSaid(R, how_goes_war))
 	{
 		if (NumVisits == 1)
 		{
@@ -215,7 +215,7 @@ AlliedHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(how_goes_war);
 	}
-	else if (PLAYER_SAID(R, learn_new_info))
+	else if (PlayerSaid(R, learn_new_info))
 	{
 		if (NumVisits < 5)
 		{
@@ -230,7 +230,7 @@ AlliedHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(learn_new_info);
 	}
-	else if (PLAYER_SAID(R, what_now_homeworld))
+	else if (PlayerSaid(R, what_now_homeworld))
 	{
 		if (NumVisits < 5)
 		{
@@ -243,13 +243,13 @@ AlliedHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(what_now_homeworld);
 	}
-	else if (PLAYER_SAID(R, how_is_ultron))
+	else if (PlayerSaid(R, how_is_ultron))
 	{
 		NPCPhrase(ULTRON_IS_GREAT);
 
 		DISABLE_PHRASE(how_is_ultron);
 	}
-	else if (IsExtended() && PLAYER_SAID(R, give_info))
+	else if (IsExtended() && PlayerSaid(R, give_info))
 	{
 		NPCPhrase(GOOD_HINTS);
 
@@ -264,25 +264,25 @@ AlliedHome(RESPONSE_REF R)
 			Response(how_went_war, AlliedHome);
 		}
 	}
-	else if (PHRASE_ENABLED(how_goes_war)
+	else if (PhraseEnabled(how_goes_war)
 			 && ((NumVisits == 1 && News == 0)
 				 || (NumVisits && News < 2)))
 	{
 		Response(how_goes_war, AlliedHome);
 	}
-	if (PHRASE_ENABLED(learn_new_info))
+	if (PhraseEnabled(learn_new_info))
 	{
 		Response(learn_new_info, AlliedHome);
 	}
-	if (PHRASE_ENABLED(what_now_homeworld))
+	if (PhraseEnabled(what_now_homeworld))
 	{
 		Response(what_now_homeworld, AlliedHome);
 	}
-	if (PHRASE_ENABLED(how_is_ultron))
+	if (PhraseEnabled(how_is_ultron))
 	{
 		Response(how_is_ultron, AlliedHome);
 	}
-	if (IsExtended() && PHRASE_ENABLED(give_info))
+	if (IsExtended() && PhraseEnabled(give_info))
 	{
 		Response(give_info, AlliedHome);
 	}
@@ -298,7 +298,7 @@ BeforeKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, whats_up_before_space))
+	if (PlayerSaid(R, whats_up_before_space))
 	{
 		NumVisits = GET_GAME_STATE(SUPOX_INFO);
 		switch (NumVisits++)
@@ -315,18 +315,18 @@ BeforeKohrAh(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_before_space);
 	}
-	else if (PLAYER_SAID(R, what_now_before_space))
+	else if (PlayerSaid(R, what_now_before_space))
 	{
 		NPCPhrase(DO_THIS_BEFORE_SPACE);
 
 		DISABLE_PHRASE(what_now_before_space);
 	}
 
-	if (PHRASE_ENABLED(whats_up_before_space))
+	if (PhraseEnabled(whats_up_before_space))
 	{
 		Response(whats_up_before_space, BeforeKohrAh);
 	}
-	if (PHRASE_ENABLED(what_now_before_space))
+	if (PhraseEnabled(what_now_before_space))
 	{
 		Response(what_now_before_space, BeforeKohrAh);
 	}
@@ -338,7 +338,7 @@ AfterKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, whats_up_after_space))
+	if (PlayerSaid(R, whats_up_after_space))
 	{
 		NumVisits = GET_GAME_STATE(SUPOX_INFO);
 		switch (NumVisits++)
@@ -355,18 +355,18 @@ AfterKohrAh(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_after_space);
 	}
-	else if (PLAYER_SAID(R, what_now_after_space))
+	else if (PlayerSaid(R, what_now_after_space))
 	{
 		NPCPhrase(DO_THIS_AFTER_SPACE);
 
 		DISABLE_PHRASE(what_now_after_space);
 	}
 
-	if (PHRASE_ENABLED(whats_up_after_space))
+	if (PhraseEnabled(whats_up_after_space))
 	{
 		Response(whats_up_after_space, AfterKohrAh);
 	}
-	if (PHRASE_ENABLED(what_now_after_space))
+	if (PhraseEnabled(what_now_after_space))
 	{
 		Response(what_now_after_space, AfterKohrAh);
 	}
@@ -382,53 +382,53 @@ NeutralSupox(RESPONSE_REF R)
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
-	if (PLAYER_SAID(R, i_am))
+	if (PlayerSaid(R, i_am))
 	{
 		NPCPhrase(WE_ARE_SUPOX);
 
 		SET_GAME_STATE(SUPOX_STACK1, 1);
 		DISABLE_PHRASE(i_am);
 	}
-	else if (PLAYER_SAID(R, my_ship))
+	else if (PlayerSaid(R, my_ship))
 	{
 		NPCPhrase(OUR_SHIP);
 
 		SET_GAME_STATE(SUPOX_STACK1, 2);
 		DISABLE_PHRASE(my_ship);
 	}
-	else if (PLAYER_SAID(R, from_alliance))
+	else if (PlayerSaid(R, from_alliance))
 	{
 		NPCPhrase(FROM_SUPOX);
 
 		SET_GAME_STATE(SUPOX_STACK1, 3);
 		DISABLE_PHRASE(from_alliance);
 	}
-	else if (PLAYER_SAID(R, are_you_copying))
+	else if (PlayerSaid(R, are_you_copying))
 	{
 		NPCPhrase(YEAH_SORRY);
 
 		SET_GAME_STATE(SUPOX_STACK1, 4);
 	}
-	else if (PLAYER_SAID(R, why_copy))
+	else if (PlayerSaid(R, why_copy))
 	{
 		NPCPhrase(SYMBIOTS);
 
 		SET_GAME_STATE(SUPOX_STACK1, 5);
 	}
-	else if (PLAYER_SAID(R, tell_us_of_your_species))
+	else if (PlayerSaid(R, tell_us_of_your_species))
 	{
 		NPCPhrase(OUR_SPECIES);
 
 		LastStack = 1;
 		SET_GAME_STATE(SUPOX_STACK2, 1);
 	}
-	else if (PLAYER_SAID(R, plants_arent_intelligent))
+	else if (PlayerSaid(R, plants_arent_intelligent))
 	{
 		NPCPhrase(PROVES_WERE_SPECIAL);
 
 		SET_GAME_STATE(SUPOX_STACK2, 2);
 	}
-	else if (PLAYER_SAID(R, anyone_around_here))
+	else if (PlayerSaid(R, anyone_around_here))
 	{
 		NPCPhrase(UTWIG_NEARBY);
 
@@ -436,21 +436,21 @@ NeutralSupox(RESPONSE_REF R)
 		SET_GAME_STATE(SUPOX_WAR_NEWS, 1);
 		StartSphereTracking(UTWIG_SHIP);
 	}
-	else if (PLAYER_SAID(R, what_relation_to_utwig))
+	else if (PlayerSaid(R, what_relation_to_utwig))
 	{
 		NPCPhrase(UTWIG_ALLIES);
 
 		LastStack = 2;
 		SET_GAME_STATE(SUPOX_WAR_NEWS, 1);
 	}
-	else if (PLAYER_SAID(R, whats_wrong_with_utwig))
+	else if (PlayerSaid(R, whats_wrong_with_utwig))
 	{
 		NPCPhrase(BROKE_ULTRON);
 
 		LastStack = 2;
 		SET_GAME_STATE(SUPOX_WAR_NEWS, 2);
 	}
-	else if (PLAYER_SAID(R, whats_ultron))
+	else if (PlayerSaid(R, whats_ultron))
 	{
 		NPCPhrase(TAKE_ULTRON);
 
@@ -462,29 +462,29 @@ NeutralSupox(RESPONSE_REF R)
 
 		return;
 	}
-	else if (PLAYER_SAID(R, what_do_i_do_now))
+	else if (PlayerSaid(R, what_do_i_do_now))
 	{
 		NPCPhrase(FIX_IT);
 	}
-	else if (PLAYER_SAID(R, got_fixed_ultron))
+	else if (PlayerSaid(R, got_fixed_ultron))
 	{
 		NPCPhrase(GOOD_GIVE_TO_UTWIG);
 
 		SET_GAME_STATE(SUPOX_ULTRON_HELP, 1);
 	}
-	else if (PLAYER_SAID(R, look_i_repaired_lots))
+	else if (PlayerSaid(R, look_i_repaired_lots))
 	{
 		NPCPhrase(ALMOST_THERE);
 
 		SET_GAME_STATE(SUPOX_ULTRON_HELP, 1);
 	}
-	else if (PLAYER_SAID(R, look_i_slightly_repaired))
+	else if (PlayerSaid(R, look_i_slightly_repaired))
 	{
 		NPCPhrase(GREAT_DO_MORE);
 
 		SET_GAME_STATE(SUPOX_ULTRON_HELP, 1);
 	}
-	else if (PLAYER_SAID(R, where_get_repairs))
+	else if (PlayerSaid(R, where_get_repairs))
 	{
 		NPCPhrase(ANCIENT_RHYME);
 
@@ -494,7 +494,7 @@ NeutralSupox(RESPONSE_REF R)
 		}
 		SET_GAME_STATE(SUPOX_ULTRON_HELP, 1);
 	}
-	else if (PLAYER_SAID(R, give_info))
+	else if (PlayerSaid(R, give_info))
 	{
 		NPCPhrase(GOOD_HINTS);
 
@@ -587,7 +587,7 @@ NeutralSupox(RESPONSE_REF R)
 				break;
 		}
 	}
-	if (IsExtended() && NumVisits && PHRASE_ENABLED(give_info))
+	if (IsExtended() && NumVisits && PhraseEnabled(give_info))
 	{
 		Response(give_info, NeutralSupox);
 	}
@@ -768,7 +768,7 @@ init_supox_comm(void)
 
 	supox_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	supox_desc.AlienTextBaseline.y = 0;
-	supox_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	supox_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if (!GET_GAME_STATE(SUPOX_HOSTILE)
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)

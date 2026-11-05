@@ -59,60 +59,60 @@ void DrawStarConBox(GFXRECT* pRect, int16_t BorderWidth, Color TopLeftColor,
 
 	if (BorderWidth == 0)
 	{
-		BorderWidth = RES_SCALE(2);
+		BorderWidth = ResScale(2);
 	}
 
 	locRect.corner = pRect->corner;
 	locRect.extent.width = pRect->extent.width;
-	locRect.extent.height = RES_SCALE(1);
+	locRect.extent.height = ResScale(1);
 	DrawFilledRectangle(&locRect);
 
-	if (BorderWidth == RES_SCALE(2))
+	if (BorderWidth == ResScale(2))
 	{
-		locRect.corner.x += RES_SCALE(1);
-		locRect.corner.y += RES_SCALE(1);
-		locRect.extent.width -= RES_SCALE(2);
+		locRect.corner.x += ResScale(1);
+		locRect.corner.y += ResScale(1);
+		locRect.extent.width -= ResScale(2);
 		DrawFilledRectangle(&locRect);
 	}
 
 	locRect.corner = pRect->corner;
-	locRect.extent.width = RES_SCALE(1);
+	locRect.extent.width = ResScale(1);
 	locRect.extent.height = pRect->extent.height;
 	DrawFilledRectangle(&locRect);
 
-	if (BorderWidth == RES_SCALE(2))
+	if (BorderWidth == ResScale(2))
 	{
-		locRect.corner.x += RES_SCALE(1);
-		locRect.corner.y += RES_SCALE(1);
-		locRect.extent.height -= RES_SCALE(2);
+		locRect.corner.x += ResScale(1);
+		locRect.corner.y += ResScale(1);
+		locRect.extent.height -= ResScale(2);
 		DrawFilledRectangle(&locRect);
 	}
 
 	SetContextForeGroundColor(BottomRightColor);
-	locRect.corner.x = pRect->corner.x + pRect->extent.width - RES_SCALE(1);
-	locRect.corner.y = pRect->corner.y + RES_SCALE(1);
-	locRect.extent.height = pRect->extent.height - RES_SCALE(1);
+	locRect.corner.x = pRect->corner.x + pRect->extent.width - ResScale(1);
+	locRect.corner.y = pRect->corner.y + ResScale(1);
+	locRect.extent.height = pRect->extent.height - ResScale(1);
 	DrawFilledRectangle(&locRect);
 
-	if (BorderWidth == RES_SCALE(2))
+	if (BorderWidth == ResScale(2))
 	{
-		locRect.corner.x -= RES_SCALE(1);
-		locRect.corner.y += RES_SCALE(1);
-		locRect.extent.height -= RES_SCALE(2);
+		locRect.corner.x -= ResScale(1);
+		locRect.corner.y += ResScale(1);
+		locRect.extent.height -= ResScale(2);
 		DrawFilledRectangle(&locRect);
 	}
 
 	locRect.corner.x = pRect->corner.x;
 	locRect.extent.width = pRect->extent.width;
-	locRect.corner.y = pRect->corner.y + pRect->extent.height - RES_SCALE(1);
-	locRect.extent.height = RES_SCALE(1);
+	locRect.corner.y = pRect->corner.y + pRect->extent.height - ResScale(1);
+	locRect.extent.height = ResScale(1);
 	DrawFilledRectangle(&locRect);
 
-	if (BorderWidth == RES_SCALE(2))
+	if (BorderWidth == ResScale(2))
 	{
-		locRect.corner.x += RES_SCALE(1);
-		locRect.corner.y -= RES_SCALE(1);
-		locRect.extent.width -= RES_SCALE(2);
+		locRect.corner.x += ResScale(1);
+		locRect.corner.y -= ResScale(1);
+		locRect.extent.width -= ResScale(2);
 		DrawFilledRectangle(&locRect);
 	}
 
@@ -131,23 +131,23 @@ void DrawStarConBox(GFXRECT* pRect, int16_t BorderWidth, Color TopLeftColor,
 
 		locRect.corner.x = pRect->corner.x;
 		locRect.corner.y = pRect->corner.y + pRect->extent.height
-						 - RES_SCALE(1);
-		locRect.extent.width = RES_SCALE(1);
-		locRect.extent.height = RES_SCALE(1);
+						 - ResScale(1);
+		locRect.extent.width = ResScale(1);
+		locRect.extent.height = ResScale(1);
 		DrawFilledRectangle(&locRect);
 		locRect.corner.x = pRect->corner.x + pRect->extent.width
-						 - RES_SCALE(1);
+						 - ResScale(1);
 		locRect.corner.y = pRect->corner.y;
 		DrawFilledRectangle(&locRect);
 
-		if (BorderWidth == RES_SCALE(2))
+		if (BorderWidth == ResScale(2))
 		{
-			locRect.corner.x -= RES_SCALE(1);
-			locRect.corner.y += RES_SCALE(1);
+			locRect.corner.x -= ResScale(1);
+			locRect.corner.y += ResScale(1);
 			DrawFilledRectangle(&locRect);
-			locRect.corner.x = pRect->corner.x + RES_SCALE(1);
+			locRect.corner.x = pRect->corner.x + ResScale(1);
 			locRect.corner.y = pRect->corner.y + pRect->extent.height
-							 - RES_SCALE(2);
+							 - ResScale(2);
 			DrawFilledRectangle(&locRect);
 		}
 	}
@@ -178,20 +178,20 @@ void DrawRenderedBox(GFXRECT* r, bool filled, Color fill_color, int type,
 
 		if (type == SPECIAL_BEVEL)
 		{
-			r->corner.x += RES_SCALE(4);
-			r->corner.y += RES_SCALE(4);
-			r->extent.width -= RES_SCALE(8);
-			r->extent.height -= RES_SCALE(8);
+			r->corner.x += ResScale(4);
+			r->corner.y += ResScale(4);
+			r->extent.width -= ResScale(8);
+			r->extent.height -= ResScale(8);
 		}
 
 		DrawFilledRectangle(r);
 
 		if (type == SPECIAL_BEVEL)
 		{
-			r->corner.x -= RES_SCALE(4);
-			r->corner.y -= RES_SCALE(4);
-			r->extent.width += RES_SCALE(8);
-			r->extent.height += RES_SCALE(8);
+			r->corner.x -= ResScale(4);
+			r->corner.y -= ResScale(4);
+			r->extent.width += ResScale(8);
+			r->extent.height += ResScale(8);
 		}
 
 		SetContextForeGroundColor(OldColor);
@@ -201,8 +201,8 @@ void DrawRenderedBox(GFXRECT* r, bool filled, Color fill_color, int type,
 
 	if (type == SPECIAL_BEVEL)
 	{
-		columns -= RES_SCALE(8);
-		rows -= RES_SCALE(8);
+		columns -= ResScale(8);
+		rows -= ResScale(8);
 	}
 
 	for (i = 0; i < columns; i++)
@@ -252,7 +252,7 @@ void DrawBorderPadding(uint32_t videoWidth)
 {
 	GFXRECT r;
 	const uint16_t safe_x =
-		(videoWidth && videoWidth < 280 ? SAFE_NEG(4) * 2 : SafeX());
+		(videoWidth && videoWidth < 280 ? SafeNeg(4) * 2 : SafeX());
 
 	if (!safe_x)
 	{
@@ -309,10 +309,10 @@ void DrawRadarBorder(void)
 
 	GFXCONTEXT OldContext {SetContext(StatusContext)};
 
-	r.corner.x = RES_SCALE(4) - RES_SCALE(1);
-	r.corner.y = RadarY() - RES_SCALE(1);
-	r.extent.width = RadarWidth() + RES_SCALE(2);
-	r.extent.height = RadarHeight() + RES_SCALE(2);
+	r.corner.x = ResScale(4) - ResScale(1);
+	r.corner.y = RadarY() - ResScale(1);
+	r.extent.width = RadarWidth() + ResScale(2);
+	r.extent.height = RadarHeight() + ResScale(2);
 
 	if (IsHd() || uqm::UQMOptions::read().customBorder)
 	{
@@ -321,7 +321,7 @@ void DrawRadarBorder(void)
 	}
 	else
 	{
-		DrawStarConBox(&r, RES_SCALE(1), AltShadowboxTopLeft,
+		DrawStarConBox(&r, ResScale(1), AltShadowboxTopLeft,
 					   AltShadowboxBottomRight, false, Transparent, false,
 					   Transparent);
 	}
@@ -365,32 +365,32 @@ DrawPauseText(GFXRECT* rect)
 	Color OldColor;
 	GFXRECT block;
 
-	if (!strlen(GAME_STRING(QUITMENU_STRING_BASE + 4)))
+	if (!strlen(GameString(QUITMENU_STRING_BASE + 4)))
 	{
 		return;
 	}
 
-	FONT OldFont {SetContextFont(DOS_BOOL(LabelFont, StarConFont))};
+	FONT OldFont {SetContextFont(DosBool(LabelFont, StarConFont))};
 	OldColor = SetContextForeGroundColor(
-		BuildShadeRgba(DOS_BOOL(0x74, 0x6B)));
+		BuildShadeRgba(DosBool(0x74, 0x6B)));
 
 	// Blank out the text
 	block = *rect;
-	block.extent.width -= RES_SCALE(4);
-	block.extent.height -= RES_SCALE(4);
-	block.corner.x += RES_SCALE(2);
-	block.corner.y += RES_SCALE(2);
+	block.extent.width -= ResScale(4);
+	block.extent.height -= ResScale(4);
+	block.corner.x += ResScale(2);
+	block.corner.y += ResScale(2);
 	DrawFilledRectangle(&block);
 
 	SetContextForeGroundColor(
-		DOS_BOOL(ShadowboxDarkColor, WhiteColor));
+		DosBool(ShadowboxDarkColor, WhiteColor));
 
 	text.baseline = rect->corner;
 	text.baseline.x += rect->extent.width >> 1;
-	text.baseline.y += RES_SCALE(10);
+	text.baseline.y += ResScale(10);
 	text.align = ALIGN_CENTER;
 	text.pStr = AlignText(
-		(const char*)GAME_STRING(QUITMENU_STRING_BASE + 4),
+		(const char*)GameString(QUITMENU_STRING_BASE + 4),
 		&text.baseline.x);
 	text.CharCount = (uint16_t)~0;
 
@@ -649,8 +649,8 @@ get_fuel_to_sol(void)
 {
 	GFXPOINT pt;
 
-	pt.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-	pt.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+	pt.x = LogxToUniverse(GLOBAL_SIS(log_x));
+	pt.y = LogyToUniverse(GLOBAL_SIS(log_y));
 
 	// JSD Replace old hard coded SOL with plot based SOL
 	//pt.x -= SOL_X;
@@ -674,14 +674,14 @@ void DrawFlagStatDisplay(const char* str)
 	TEXT t;
 	GFXRECT r;
 
-	r.corner.x = RES_SCALE(2);
-	r.corner.y = RES_SCALE(20);
-	r.extent.width = FieldWidth() + RES_SCALE(1);
-	r.extent.height = (RES_SCALE(129) - r.corner.y);
+	r.corner.x = ResScale(2);
+	r.corner.y = ResScale(20);
+	r.extent.width = FieldWidth() + ResScale(1);
+	r.extent.height = (ResScale(129) - r.corner.y);
 
 	if (!uqm::UQMOptions::read().customBorder && !IsHd())
 	{
-		DrawStarConBox(&r, RES_SCALE(1),
+		DrawStarConBox(&r, ResScale(1),
 					   ShadowboxMediumColor, ShadowboxDarkColor,
 					   true, ModuleBackColor, false, Transparent);
 	}
@@ -692,8 +692,8 @@ void DrawFlagStatDisplay(const char* str)
 
 	// print the "str" title
 	SetContextFont(StarConFont);
-	t.baseline.x = (StatusWidth() >> 1) - RES_SCALE(1);
-	t.baseline.y = r.corner.y + RES_SCALE(7);
+	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
+	t.baseline.y = r.corner.y + ResScale(7);
 	t.align = ALIGN_CENTER;
 	t.pStr = str;
 	t.CharCount = (uint16_t)~0;

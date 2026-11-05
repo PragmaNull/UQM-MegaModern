@@ -23,6 +23,7 @@
 #include "units.h"
 #include "velocity.h"
 #include "libs/gfxlib.h"
+#include "colors.h"
 
 #if 0 //defined(__cplusplus)
 extern "C" {
@@ -205,25 +206,22 @@ extern PRIMITIVE DisplayArray[MaxDisplayPrims];
 inline constexpr auto MaxCrewSize {42};
 inline constexpr auto MaxEnergySize {42};
 inline constexpr auto MaxShipMass {10};
-#define GRAVITY_MASS(m) ((m) > MaxShipMass * 10)
-inline auto GravityThreshold() { return (uint16_t)RES_SCALE(255); }
+constexpr auto GravityMass(const auto& m) { return ((m) > MaxShipMass * 10); }
+inline auto GravityThreshold() { return (uint16_t)ResScale(255); }
 
-#define OBJECT_CLOAKED(eptr)                                             \
-	(GetPrimType(&DisplayArray[(eptr)->PrimIndex]) >= NUM_PRIMS          \
-	 || (GetPrimType(&DisplayArray[(eptr)->PrimIndex]) == STAMPFILL_PRIM \
-		 && sameColor(GetPrimColor(&DisplayArray[(eptr)->PrimIndex]), BlackColor)))
+constexpr auto ObjectCloaked(const auto& eptr) { return (GetPrimType(&DisplayArray[(eptr)->PrimIndex]) >= NUM_PRIMS || (GetPrimType(&DisplayArray[(eptr)->PrimIndex]) == STAMPFILL_PRIM && sameColor(GetPrimColor(&DisplayArray[(eptr)->PrimIndex]), BlackColor))); }
 
 
 extern HELEMENT AllocElement(void);
 extern void FreeElement(HELEMENT hElement);
-#define PutElement(h) PutQueue(&disp_q, h)
-#define InsertElement(h, i) InsertQueue(&disp_q, h, i)
-#define GetHeadElement() GetHeadLink(&disp_q)
-#define GetTailElement() GetTailLink(&disp_q)
+constexpr auto PutElement(const auto& h) { return PutQueue(&disp_q, h); }
+constexpr auto InsertElement(const auto& h, const auto& i) { return InsertQueue(&disp_q, h, i); }
+constexpr auto GetHeadElement() { return GetHeadLink(&disp_q); }
+constexpr auto GetTailElement() { return GetTailLink(&disp_q); }
 #define LockElement(h, ppe) (*(ppe) = (ELEMENT*)LockLink(&disp_q, h))
-#define UnlockElement(h) UnlockLink(&disp_q, h)
-#define GetPredElement(l) _GetPredLink(l)
-#define GetSuccElement(l) _GetSuccLink(l)
+constexpr auto UnlockElement(const auto& h) { return UnlockLink(&disp_q, h); }
+constexpr auto GetPredElement(const auto& l) { return _GetPredLink(l); }
+constexpr auto GetSuccElement(const auto& l) { return _GetSuccLink(l); }
 extern void RemoveElement(HLINK hLink);
 
 // XXX: The following functions should not really be here

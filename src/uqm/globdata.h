@@ -294,10 +294,8 @@ enum
 	uqm::gameState().flag(uqm::GameFlag::SName)
 
 // For dynamic variable names
-#define D_SET_GAME_STATE(SName, val) \
-	setGameStateUint(SName, static_cast<uint32_t>(val))
-#define D_GET_GAME_STATE(SName) \
-	getGameStateUint(SName)
+constexpr auto DSetGameState(const auto& SName, const auto& val) { return setGameStateUint(SName, static_cast<uint32_t>(val)); }
+constexpr auto DGetGameState(const auto& SName) { return getGameStateUint(SName); }
 
 extern GFXCONTEXT RadarContext;
 
@@ -368,7 +366,7 @@ inline T ifHardDifficulty(T trueVal, T falseVal) { return isDifficulty(uqm::Diff
 
 // Extended
 inline auto IsExtended() { return (GLOBAL_SIS(Extended) ? true : false); }
-#define EXT_CASE(a, b) (!IsExtended() ? (a) : (b))
+
 
 // Nomad
 static inline uqm::NomadMode getNomadMode() { return GLOBAL_SIS(Nomad); }
@@ -442,7 +440,7 @@ ZeroAdvancedAutoPilot(void)
 	SET_GAME_STATE(ADV_AUTOPILOT_SAVE_Y, c_noLocation);
 }
 
-#define BOOL_STR(a) ((a) ? "True" : "False")
+constexpr auto BoolStr(const auto& a) { return ((a) ? "True" : "False"); }
 
 // Earth Coordinates
 inline constexpr auto EarthOuterX {-725};

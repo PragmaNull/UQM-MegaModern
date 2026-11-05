@@ -36,18 +36,18 @@ static constexpr auto ShipMass {7};
 // Ion Blasters
 static constexpr auto WeaponEnergyCost {2};
 static constexpr auto WeaponWait {12};
-static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(30)};
+static constexpr auto MissileSpeed {DisplayToWorld(30)};
 static constexpr auto MissileLife {15};
-static auto MissileOffset() { return RES_SCALE(3); }
-static auto ThraddashOffset() { return RES_SCALE(9); }
+static auto MissileOffset() { return ResScale(3); }
+static auto ThraddashOffset() { return ResScale(9); }
 static constexpr auto MissileHits {2};
 static constexpr auto MissileDamage {1};
 
 // Afterburner
 static constexpr auto SpecialEnergyCost {1};
 static constexpr auto SpecialWait {0};
-static auto SpecialThrustIncrement() { return RES_SCALE(12); }
-static auto SpecialMaxThrust() { return RES_SCALE(72); }
+static auto SpecialThrustIncrement() { return ResScale(12); }
+static auto SpecialMaxThrust() { return ResScale(72); }
 static constexpr auto NapalmLife {48};
 static constexpr auto NapalmOffset {0};
 static constexpr auto NapalmHits {1};
@@ -57,10 +57,10 @@ static constexpr auto NapalmDecayRate {5};
 		 * decay one step (one animation frame) per NapalmDecayRate
 		 * frames. */
 static constexpr auto NumNapalmFades {6};
-static auto StationarySpeed() { return WORLD_TO_VELOCITY(DISPLAY_TO_WORLD(RES_SCALE(4))); }
+static auto StationarySpeed() { return WorldToVelocity(DisplayToWorld(ResScale(4))); }
 
 // HdResolutionFactor
-static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
 
 static RACE_DESC thraddash_desc =
@@ -172,12 +172,12 @@ thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			if ((StarShipPtr->ship_input_state & ThrustFlag)
 				|| (ShipPtr->turn_wait == 0
 					&& !(StarShipPtr->ship_input_state & (LeftFlag | RightFlag)))
-				|| NORMALIZE_FACING(ANGLE_TO_FACING(
-										GetVelocityTravelAngle(
-											&ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr->velocity)
-										+ HalfCircle + Octant)
-									- StarShipPtr->ShipFacing)
-					   > ANGLE_TO_FACING(Quadrant))
+				|| NormalizeFacing(AngleToFacing(
+									   GetVelocityTravelAngle(
+										   &ObjectsOfConcern[ENEMY_WEAPON_INDEX].ObjectPtr->velocity)
+									   + HalfCircle + Octant)
+								   - StarShipPtr->ShipFacing)
+					   > AngleToFacing(Quadrant))
 			{
 				StarShipPtr->ship_input_state |= SpecialFlag;
 			}
@@ -211,16 +211,16 @@ thraddash_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				if ((lpEvalDesc->which_turn > 24
 					 && !(StarShipPtr->ship_input_state & (LeftFlag | RightFlag)))
 					|| (lpEvalDesc->which_turn <= 16
-						&& NORMALIZE_ANGLE(direction_angle
-										   - (FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HalfCircle)
-										   + Quadrant)
+						&& NormalizeAngle(direction_angle
+										  - (FacingToAngle(StarShipPtr->ShipFacing) + HalfCircle)
+										  + Quadrant)
 							   <= HalfCircle
 						&& (lpEvalDesc->which_turn < 12
-							|| NORMALIZE_ANGLE(direction_angle
-											   - (GetVelocityTravelAngle(
-													  &lpEvalDesc->ObjectPtr->velocity)
-												  + HalfCircle)
-											   + (Octant + 2))
+							|| NormalizeAngle(direction_angle
+											  - (GetVelocityTravelAngle(
+													 &lpEvalDesc->ObjectPtr->velocity)
+												 + HalfCircle)
+											  + (Octant + 2))
 								   <= ((Octant + 2) << 1))))
 				{
 					StarShipPtr->ship_input_state |= SpecialFlag;
@@ -417,8 +417,8 @@ init_thraddash(void)
 {
 	if (IsHd())
 	{
-		thraddash_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		thraddash_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		thraddash_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		thraddash_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		thraddash_desc.cyborg_control.WeaponRange = (MissileSpeedHd() * MissileLife) >> 1;
 	}
 	else

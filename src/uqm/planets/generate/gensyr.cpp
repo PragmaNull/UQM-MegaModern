@@ -124,8 +124,8 @@ GenerateSyreen_generateMoons(SOLARSYS_STATE* solarSys,
 		if (uqm::isOriginalSeed() || uqm::isStarSeed())
 		{
 			pMoonDesc->radius = MinMoonRadius();
-			pMoonDesc->location.x = COSINE(Quadrant, pMoonDesc->radius);
-			pMoonDesc->location.y = SINE(Quadrant, pMoonDesc->radius);
+			pMoonDesc->location.x = Cosine(Quadrant, pMoonDesc->radius);
+			pMoonDesc->location.y = Sine(Quadrant, pMoonDesc->radius);
 			ComputeSpeed(pMoonDesc, true, 1);
 		}
 	}
@@ -148,7 +148,7 @@ GenerateSyreen_generateName(const SOLARSYS_STATE* solarSys,
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),
-							GAME_STRING(PLANET_NUMBER_BASE + 39));
+							GameString(PLANET_NUMBER_BASE + 39));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}

@@ -67,7 +67,7 @@ frame_intersect(INTERSECT_CONTROL* pControl0, GFXRECT* pr0,
 	IB1.Box.extent.width = GetFrameWidth(IB1.FramePtr);
 	IB1.Box.extent.height = GetFrameHeight(IB1.FramePtr);
 
-	const int32_t iterator {RES_SCALE(1)};
+	const int32_t iterator {ResScale(1)};
 
 	int32_t dx_0 {pr0->extent.width};
 	int32_t dy_0 {pr0->extent.height};

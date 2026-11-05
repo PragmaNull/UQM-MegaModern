@@ -37,9 +37,9 @@ static constexpr auto ShipMass {5};
 // Main weapon
 static constexpr auto WeaponEnergyCost {1};
 static constexpr auto WeaponWait {0};
-static auto ZoqfotpikOffset() { return RES_SCALE(13); }
+static auto ZoqfotpikOffset() { return ResScale(13); }
 static constexpr auto MissileOffset {0};
-static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(10)};
+static constexpr auto MissileSpeed {DisplayToWorld(10)};
 /* Used by the cyborg only. */
 static constexpr auto MissileLife {10};
 static constexpr auto MissileRange {(MissileSpeed * MissileLife)};
@@ -55,10 +55,10 @@ static constexpr auto SpecialWait {6};
 static constexpr auto TongueSpeed {0};
 static constexpr auto TongueHits {1};
 static constexpr auto TongueDamage {12};
-static auto TongueOffset() { return RES_SCALE(4); }
+static auto TongueOffset() { return ResScale(4); }
 
 // HdResolutionFactor
-static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 static auto MissileRangeHd() { return (MissileSpeedHd() * MissileLife); }
 
 static RACE_DESC zoqfotpik_desc =
@@ -158,12 +158,12 @@ spit_preprocess(ELEMENT* ElementPtr)
 			index >>= 1;
 		}
 
-		speed = WORLD_TO_VELOCITY(DISPLAY_TO_WORLD(
-									  RES_SCALE(GetFrameCount(ElementPtr->next.image.frame)) - index)
-								  << 1);
+		speed = WorldToVelocity(DisplayToWorld(
+									ResScale(GetFrameCount(ElementPtr->next.image.frame)) - index)
+								<< 1);
 		SetVelocityComponents(&ElementPtr->velocity,
-							  (int16_t)COSINE(angle, speed),
-							  (int16_t)SINE(angle, speed));
+							  (int16_t)Cosine(angle, speed),
+							  (int16_t)Sine(angle, speed));
 
 		/* turn_wait is abused here to control the animation speed. */
 		ElementPtr->turn_wait = SpitWait;
@@ -186,8 +186,8 @@ initialize_spit(ELEMENT* ShipPtr, HELEMENT SpitArray[])
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = ZoqfotpikOffset();
-	MissileBlock.speed = DISPLAY_TO_WORLD(
-							 RES_SCALE(GetFrameCount(StarShipPtr->RaceDescPtr->ship_data.weapon[0])))
+	MissileBlock.speed = DisplayToWorld(
+							 ResScale(GetFrameCount(StarShipPtr->RaceDescPtr->ship_data.weapon[0])))
 					  << 1;
 	MissileBlock.hit_points = MissileHits;
 	MissileBlock.damage = MissileDamage;
@@ -277,10 +277,10 @@ spawn_tongue(ELEMENT* ElementPtr)
 			TonguePtr->turn_wait = ElementPtr->turn_wait - 1;
 
 			GetFrameRect(TonguePtr->current.image.frame, &r);
-			const int32_t x_offs {DISPLAY_TO_WORLD(r.extent.width >> 1)};
-			const int32_t y_offs {DISPLAY_TO_WORLD(r.extent.height >> 1)};
+			const int32_t x_offs {DisplayToWorld(r.extent.width >> 1)};
+			const int32_t y_offs {DisplayToWorld(r.extent.height >> 1)};
 
-			angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
+			angle = FacingToAngle(StarShipPtr->ShipFacing);
 			if (angle > HalfCircle && angle < FullCircle)
 			{
 				TonguePtr->current.location.x -= x_offs;
@@ -336,7 +336,7 @@ zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					- ShipPtr->next.location.x;
 			delta_y = lpEnemyEvalDesc->ObjectPtr->next.location.y
 					- ShipPtr->next.location.y;
-			if (StarShipPtr->ShipFacing == NORMALIZE_FACING(ANGLE_TO_FACING(ARCTAN(delta_x, delta_y))))
+			if (StarShipPtr->ShipFacing == NormalizeFacing(AngleToFacing(ARCTAN(delta_x, delta_y))))
 			{
 				StarShipPtr->ship_input_state |= SpecialFlag;
 			}
@@ -365,7 +365,7 @@ zoqfotpik_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 #endif /* NEVER */
 								))
 					&& ship_weapons(ShipPtr,
-									ObjectsOfConcern->ObjectPtr, DISPLAY_TO_WORLD(RES_SCALE(20))))
+									ObjectsOfConcern->ObjectPtr, DisplayToWorld(ResScale(20))))
 				{
 					StarShipPtr->ship_input_state |= WeaponFlag;
 					break;
@@ -405,8 +405,8 @@ init_zoqfotpik(void)
 {
 	if (IsHd())
 	{
-		zoqfotpik_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		zoqfotpik_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		zoqfotpik_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		zoqfotpik_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		zoqfotpik_desc.cyborg_control.WeaponRange = MissileRangeHd();
 	}
 	else

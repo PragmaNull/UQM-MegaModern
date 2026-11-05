@@ -228,9 +228,9 @@ void DrawPlanetSurfaceBorder(void)
 
 	// Expand the context clip-rect so that we can tweak the existing border
 	clipRect = oldClipRect;
-	clipRect.corner.x -= RES_SCALE(1);
-	clipRect.extent.width += RES_SCALE(2);
-	clipRect.extent.height += RES_SCALE(1);
+	clipRect.corner.x -= ResScale(1);
+	clipRect.extent.width += ResScale(2);
+	clipRect.extent.height += ResScale(1);
 	SetContextClipRect(&clipRect);
 
 	BatchGraphics();
@@ -241,58 +241,58 @@ void DrawPlanetSurfaceBorder(void)
 	r.corner.x = 0;
 	r.corner.y = clipRect.extent.height - MapHeight() - MapBorderHeight();
 	r.extent.width = clipRect.extent.width;
-	r.extent.height = MapBorderHeight() - RES_SCALE(2);
+	r.extent.height = MapBorderHeight() - ResScale(2);
 	DrawFilledRectangle(&r);
 
 	SetContextForeGroundColor(SisBottomRightBorderColor);
 
 	// Border top shadow line
-	r.extent.width -= RES_SCALE(1);
-	r.extent.height = RES_SCALE(1);
-	r.corner.x = RES_SCALE(1);
-	r.corner.y -= RES_SCALE(1);
+	r.extent.width -= ResScale(1);
+	r.extent.height = ResScale(1);
+	r.corner.x = ResScale(1);
+	r.corner.y -= ResScale(1);
 	DrawFilledRectangle(&r);
 
 	// XXX: We will need bulk left and right rects here if MapWidth() changes
 
 	// Right shadow line
-	r.extent.width = RES_SCALE(1);
-	r.extent.height = MapHeight() + RES_SCALE(2);
-	r.corner.y += MapBorderHeight() - RES_SCALE(1);
-	r.corner.x = clipRect.extent.width - RES_SCALE(1);
+	r.extent.width = ResScale(1);
+	r.extent.height = MapHeight() + ResScale(2);
+	r.corner.y += MapBorderHeight() - ResScale(1);
+	r.corner.x = clipRect.extent.width - ResScale(1);
 	DrawFilledRectangle(&r);
 
 	SetContextForeGroundColor(SisLeftBorderColor);
 
 	// Left shadow line
-	r.corner.x -= MapWidth() + RES_SCALE(1);
+	r.corner.x -= MapWidth() + ResScale(1);
 	DrawFilledRectangle(&r);
 
 	// Border bottom shadow line
-	r.extent.width = MapWidth() + RES_SCALE(2);
-	r.extent.height = RES_SCALE(1);
+	r.extent.width = MapWidth() + ResScale(2);
+	r.extent.height = ResScale(1);
 	DrawFilledRectangle(&r);
 
 	if (isPC(uqm::UQMOptions::read().landerStyle))
 	{
-		r.corner.x = RES_SCALE(UqmMapWidth - Sc2MapWidth)
-				   - SisOrgX() + RES_SCALE(1) + SAFE_POS(1);
-		r.corner.y = clipRect.extent.height - MapHeight() - RES_SCALE(1);
-		r.extent.width = RES_SCALE(1);
+		r.corner.x = ResScale(UqmMapWidth - Sc2MapWidth)
+				   - SisOrgX() + ResScale(1) + SafePos(1);
+		r.corner.y = clipRect.extent.height - MapHeight() - ResScale(1);
+		r.extent.width = ResScale(1);
 		r.extent.height = MapHeight();
 		SetContextForeGroundColor(SisBottomRightBorderColor);
 		DrawFilledRectangle(&r);
-		r.corner.x += RES_SCALE(1);
-		r.extent.width = RES_SCALE(4);
-		r.corner.y -= RES_SCALE(1);
-		r.extent.height += RES_SCALE(2);
+		r.corner.x += ResScale(1);
+		r.extent.width = ResScale(4);
+		r.corner.y -= ResScale(1);
+		r.extent.height += ResScale(2);
 		SetContextForeGroundColor(
 			BuildColorRgba(0x52, 0x52, 0x52, 0xFF));
 		DrawFilledRectangle(&r);
-		r.corner.x += RES_SCALE(4);
-		r.extent.width = RES_SCALE(1);
-		r.corner.y += RES_SCALE(1);
-		r.extent.height -= RES_SCALE(2);
+		r.corner.x += ResScale(4);
+		r.extent.width = ResScale(1);
+		r.corner.y += ResScale(1);
+		r.extent.height -= ResScale(2);
 		SetContextForeGroundColor(SisLeftBorderColor);
 		DrawFilledRectangle(&r);
 
@@ -334,13 +334,13 @@ DrawEnterOrbitText(GFXRECT rect)
 
 	text.baseline = rect.corner;
 	text.baseline.x += rect.extent.width >> 1;
-	text.baseline.y += RES_SCALE(4) + leading - RES_SCALE(4);
+	text.baseline.y += ResScale(4) + leading - ResScale(4);
 	text.align = ALIGN_CENTER;
 
 	const int16_t og_baseline_x {text.baseline.x};
 
 	uqm::utf8StringCopy((char*)buf, sizeof(buf),
-						GAME_STRING(NAVIGATION_STRING_BASE + 8));
+						GameString(NAVIGATION_STRING_BASE + 8));
 
 	text.align = ALIGN_CENTER;
 	{
@@ -372,7 +372,7 @@ void DrawOrbitMapGraphic(void)
 	if (uqm::UQMOptions::read().sphereType != 1)
 	{
 		const bool HaveString =
-			strlen(GAME_STRING(NAVIGATION_STRING_BASE + 8)) > 0;
+			strlen(GameString(NAVIGATION_STRING_BASE + 8)) > 0;
 
 		s.frame = SetAbsFrameIndex(CaptureDrawable(
 									   LoadGraphic(OrbenterPmapAnimRes)),
@@ -384,8 +384,8 @@ void DrawOrbitMapGraphic(void)
 		if (isPC(uqm::UQMOptions::read().landerStyle))
 		{
 			s.origin.x -=
-				RES_SCALE(((UqmMapWidth - Sc2MapWidth) / 2)
-						  + SAFE_NUM(5));
+				ResScale(((UqmMapWidth - Sc2MapWidth) / 2)
+						 + SafeNum(5));
 		}
 
 		DrawStamp(&s);
@@ -419,8 +419,8 @@ void DrawOrbitMapGraphic(void)
 		pPlanetDesc = pSolarSysState->pOrbitalDesc;
 		GeneratePlanetSurface (
 			pPlanetDesc, nullptr, PlanetScale, PlanetScale);
-		ss.origin.x = RES_SCALE (OrigSisScreenWidth() >> 1);
-		ss.origin.y = RES_SCALE (191);
+		ss.origin.x = ResScale (OrigSisScreenWidth() >> 1);
+		ss.origin.y = ResScale (191);
 
 		ss.frame = chooseIfHd (Orbit->SphereFrame, CaptureDrawable (
 			RescaleFrame (

@@ -85,7 +85,7 @@ GenerateSlylandro_generateName(const SOLARSYS_STATE* solarSys,
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),
-							GAME_STRING(PLANET_NUMBER_BASE + 36));
+							GameString(PLANET_NUMBER_BASE + 36));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}

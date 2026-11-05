@@ -254,17 +254,17 @@ DoRamble(RESPONSE_REF R)
 
 	if (!(GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 	{
-		if (!PLAYER_SAID(R, come_in_peace)
-			&& !PLAYER_SAID(R, gonna_die))
+		if (!PlayerSaid(R, come_in_peace)
+			&& !PlayerSaid(R, gonna_die))
 		{
 			Counter = (GET_GAME_STATE(MYCON_INSULTS) + 1) & 7;
 			SET_GAME_STATE(MYCON_INSULTS, Counter);
 			MadeChoice = 1;
 		}
 	}
-	else if (!PLAYER_SAID(R, lets_be_friends)
-			 && !PLAYER_SAID(R, came_to_homeworld)
-			 && !PLAYER_SAID(R, submit_to_us))
+	else if (!PlayerSaid(R, lets_be_friends)
+			 && !PlayerSaid(R, came_to_homeworld)
+			 && !PlayerSaid(R, submit_to_us))
 	{
 		Counter = (GET_GAME_STATE(MYCON_INFO) + 1) & 15;
 		SET_GAME_STATE(MYCON_INFO, Counter);
@@ -277,19 +277,19 @@ CombatIsInevitable(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, bye_space))
+	if (PlayerSaid(R, bye_space))
 	{
 		NPCPhrase(BYE_AND_DIE_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_homeworld))
+	else if (PlayerSaid(R, bye_homeworld))
 	{
 		NPCPhrase(BYE_AND_DIE_HOMEWORLD);
 	}
-	else if (PLAYER_SAID(R, like_to_land))
+	else if (PlayerSaid(R, like_to_land))
 	{
 		NPCPhrase(NEVER_LET_LAND);
 	}
-	else if (PLAYER_SAID(R, bye_sun_device))
+	else if (PlayerSaid(R, bye_sun_device))
 	{
 		NPCPhrase(GOODBYE_SUN_DEVICE);
 
@@ -313,32 +313,32 @@ CombatIsInevitable(RESPONSE_REF R)
 static void
 SunDevice(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_sun_device))
+	if (PlayerSaid(R, whats_up_sun_device))
 	{
 		NPCPhrase(GENERAL_INFO_SUN_DEVICE);
 
 		DISABLE_PHRASE(whats_up_sun_device);
 	}
-	else if (PLAYER_SAID(R, how_goes_implanting))
+	else if (PlayerSaid(R, how_goes_implanting))
 	{
 		NPCPhrase(UNFORSEEN_DELAYS);
 
 		DISABLE_PHRASE(how_goes_implanting);
 	}
-	else if (PLAYER_SAID(R, i_have_a_cunning_plan))
+	else if (PlayerSaid(R, i_have_a_cunning_plan))
 	{
 		NPCPhrase(WONT_FALL_FOR_TRICK);
 
 		SET_GAME_STATE(NO_TRICK_AT_SUN, 1);
 	}
 
-	if (PHRASE_ENABLED(whats_up_sun_device))
+	if (PhraseEnabled(whats_up_sun_device))
 	{
 		Response(whats_up_sun_device, SunDevice);
 	}
 	if (GET_GAME_STATE(MYCON_FELL_FOR_AMBUSH))
 	{
-		if (PHRASE_ENABLED(how_goes_implanting) && GET_GAME_STATE(MYCON_FELL_FOR_AMBUSH))
+		if (PhraseEnabled(how_goes_implanting) && GET_GAME_STATE(MYCON_FELL_FOR_AMBUSH))
 		{
 			Response(how_goes_implanting, SunDevice);
 		}
@@ -355,34 +355,34 @@ SunDevice(RESPONSE_REF R)
 static void
 TrickMycon(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, i_have_a_cunning_plan))
+	if (PlayerSaid(R, i_have_a_cunning_plan))
 	{
 		NPCPhrase(TELL_US_ABOUT_WORLD);
 
 		DISABLE_PHRASE(i_have_a_cunning_plan);
 	}
-	else if (PLAYER_SAID(R, clue_1))
+	else if (PlayerSaid(R, clue_1))
 	{
 		NPCPhrase(RESPONSE_1);
 
 		DISABLE_PHRASE(clue_1);
 	}
-	else if (PLAYER_SAID(R, clue_2))
+	else if (PlayerSaid(R, clue_2))
 	{
 		NPCPhrase(RESPONSE_2);
 
 		DISABLE_PHRASE(clue_2);
 	}
-	else if (PLAYER_SAID(R, clue_3))
+	else if (PlayerSaid(R, clue_3))
 	{
 		NPCPhrase(RESPONSE_3);
 
 		DISABLE_PHRASE(clue_3);
 	}
 
-	if (PHRASE_ENABLED(clue_1) == 0
-		&& PHRASE_ENABLED(clue_2) == 0
-		&& PHRASE_ENABLED(clue_3) == 0)
+	if (PhraseEnabled(clue_1) == 0
+		&& PhraseEnabled(clue_2) == 0
+		&& PhraseEnabled(clue_3) == 0)
 	{
 		NPCPhrase(WE_GO_TO_IMPLANT);
 
@@ -395,15 +395,15 @@ TrickMycon(RESPONSE_REF R)
 		NPCPhrase(AMBUSH_TAIL);
 	}
 
-	if (PHRASE_ENABLED(clue_1))
+	if (PhraseEnabled(clue_1))
 	{
 		Response(clue_1, TrickMycon);
 	}
-	if (PHRASE_ENABLED(clue_2))
+	if (PhraseEnabled(clue_2))
 	{
 		Response(clue_2, TrickMycon);
 	}
-	if (PHRASE_ENABLED(clue_3))
+	if (PhraseEnabled(clue_3))
 	{
 		Response(clue_3, TrickMycon);
 	}
@@ -414,7 +414,7 @@ NormalMycon(RESPONSE_REF R)
 {
 	RESPONSE_FUNC RespFunc {};
 
-	if (PLAYER_SAID(R, what_about_shattered))
+	if (PlayerSaid(R, what_about_shattered))
 	{
 		NPCPhrase(ABOUT_SHATTERED);
 
@@ -438,11 +438,11 @@ NormalMycon(RESPONSE_REF R)
 	}
 	if (!(GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 7)))
 	{
-		if (PHRASE_ENABLED(come_in_peace))
+		if (PhraseEnabled(come_in_peace))
 		{
 			Response(come_in_peace, RespFunc);
 		}
-		if (PHRASE_ENABLED(gonna_die))
+		if (PhraseEnabled(gonna_die))
 		{
 			Response(gonna_die, RespFunc);
 		}
@@ -534,15 +534,15 @@ NormalMycon(RESPONSE_REF R)
 					break;
 			}
 		}
-		if (PHRASE_ENABLED(lets_be_friends))
+		if (PhraseEnabled(lets_be_friends))
 		{
 			Response(lets_be_friends, RespFunc);
 		}
-		if (PHRASE_ENABLED(came_to_homeworld))
+		if (PhraseEnabled(came_to_homeworld))
 		{
 			Response(came_to_homeworld, RespFunc);
 		}
-		if (PHRASE_ENABLED(submit_to_us))
+		if (PhraseEnabled(submit_to_us))
 		{
 			Response(submit_to_us, RespFunc);
 		}
@@ -704,7 +704,7 @@ init_mycon_comm(void)
 
 	mycon_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	mycon_desc.AlienTextBaseline.y = 0;
-	mycon_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	mycon_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	MadeChoice = 0;
 

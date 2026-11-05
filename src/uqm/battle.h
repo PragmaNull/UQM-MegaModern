@@ -51,7 +51,7 @@ extern BattleFrameCounter battleFrameCount;
 #ifdef NETPLAY
 uint16_t GetPlayerOrder(uint16_t i);
 #else
-#define GetPlayerOrder(i) (i)
+constexpr auto GetPlayerOrder(const auto& i) { return (i); }
 #endif
 
 bool Battle(BattleFrameCallback*);

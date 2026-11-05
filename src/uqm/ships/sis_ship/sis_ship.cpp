@@ -69,17 +69,17 @@ static constexpr auto WeaponEnergyCost {1};
 		 * the enum that is used for module IDs. Bigger gun = higher value.
 		 */
 static constexpr auto WeaponWait {6};
-static constexpr auto BlasterSpeed {DISPLAY_TO_WORLD(24)};
+static constexpr auto BlasterSpeed {DisplayToWorld(24)};
 static constexpr auto BlasterLife {12};
 /* This value is greatly increased, based in part on the enum used
 		 * for module IDs (bigger gun == longer life). See the first half of
 		 * InitWeaponSlots */
 static constexpr auto MaxTracking {3};
 static auto TrackerEnergyCost() { return ifHardDifficulty(6, 3); }
-static auto BlasterOffset() { return RES_SCALE(8); }
-static auto SisVertOffset() { return RES_SCALE(28); }
+static auto BlasterOffset() { return ResScale(8); }
+static auto SisVertOffset() { return ResScale(28); }
 /* Used for foward, spread, and rear slots */
-static auto SisHorzOffset() { return RES_SCALE(20); }
+static auto SisHorzOffset() { return ResScale(20); }
 /* Used for side slot */
 
 /* Secondary weapon */
@@ -87,11 +87,11 @@ static constexpr auto SpecialEnergyCost {0};
 /* Increased by 1 for each point defense module */
 static constexpr auto AntimissileEnergyInc {1};
 static constexpr auto SpecialWait {9};
-#define LASER_RANGE (uint16_t)RES_SCALE(100)
+#define LASER_RANGE (uint16_t)ResScale(100)
 static constexpr auto MaxDefense {8};
 
 // HdResolutionFactor
-static auto BlasterSpeedHd() { return RES_SCALE(BlasterSpeed); }
+static auto BlasterSpeedHd() { return ResScale(BlasterSpeed); }
 static auto BlasterSpeedBool() { return chooseIfHd(BlasterSpeed, BlasterSpeedHd()); }
 
 
@@ -272,8 +272,8 @@ LeaveAutoPilot:
 		int16_t facing {};
 		GFXPOINT universe;
 
-		universe.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-		universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+		universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
+		universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
 		udx = uqm::flagship().autopilot.target().x - universe.x;
 		udy = -(uqm::flagship().autopilot.target().y - universe.y);
 		if ((dx = (int16_t)udx) < 0)
@@ -284,22 +284,22 @@ LeaveAutoPilot:
 		{
 			dy = -dy;
 		}
-		if (dx <= RES_SCALE(1) && dy <= RES_SCALE(1))
+		if (dx <= ResScale(1) && dy <= ResScale(1))
 		{
 			goto LeaveAutoPilot;
 		}
 
-		facing = NORMALIZE_FACING(ANGLE_TO_FACING(ARCTAN(udx, udy)));
+		facing = NormalizeFacing(AngleToFacing(ARCTAN(udx, udy)));
 
 		/* This prevents ship from flying backwards on auto-pilot.
 		 * It could also theoretically abort autopilot in a bad savegame */
 		if ((StarShipPtr->cur_status_flags & ShipAtMaxSpeed)
 			/*|| (ElementPtr->state_flags & Appearing)*/)
 		{
-			if (NORMALIZE_FACING(StarShipPtr->ShipFacing
-								 + ANGLE_TO_FACING(Quadrant)
-								 - facing)
-				> ANGLE_TO_FACING(HalfCircle))
+			if (NormalizeFacing(StarShipPtr->ShipFacing
+								+ AngleToFacing(Quadrant)
+								- facing)
+				> AngleToFacing(HalfCircle))
 			{
 				goto LeaveAutoPilot;
 			}
@@ -309,16 +309,16 @@ LeaveAutoPilot:
 		else if ((int)facing != (int)StarShipPtr->ShipFacing
 				 && ElementPtr->turn_wait == 0)
 		{
-			if (NORMALIZE_FACING(
+			if (NormalizeFacing(
 					StarShipPtr->ShipFacing - facing)
-				>= ANGLE_TO_FACING(HalfCircle))
+				>= AngleToFacing(HalfCircle))
 			{
-				facing = NORMALIZE_FACING(facing - 1);
+				facing = NormalizeFacing(facing - 1);
 				StarShipPtr->cur_status_flags |= RightFlag;
 			}
 			else if ((int)StarShipPtr->ShipFacing != (int)facing)
 			{
-				facing = NORMALIZE_FACING(facing + 1);
+				facing = NormalizeFacing(facing + 1);
 				StarShipPtr->cur_status_flags |= LeftFlag;
 			}
 
@@ -339,8 +339,8 @@ LeaveAutoPilot:
 		else
 		{
 			AccelerateDirection = -1;
-			udx = dx << IF_HD(4);
-			udy = dy << IF_HD(4);
+			udx = dx << IfHd(4);
+			udy = dy << IfHd(4);
 		}
 	}
 
@@ -350,7 +350,7 @@ LeaveAutoPilot:
 		int16_t speed {};
 		int16_t velocity_increment {};
 
-		velocity_increment = WORLD_TO_VELOCITY(
+		velocity_increment = WorldToVelocity(
 			StarShipPtr->RaceDescPtr->characteristics.thrust_increment);
 
 		if ((dist = square_root((long)udx * udx + (long)udy * udy)) == 0)
@@ -379,7 +379,7 @@ LeaveAutoPilot:
 
 			AccelerateDirection = 0;
 
-			max_velocity = WORLD_TO_VELOCITY(
+			max_velocity = WorldToVelocity(
 				StarShipPtr->RaceDescPtr->characteristics.max_thrust);
 
 			dy = (speed / velocity_increment + 1)
@@ -475,7 +475,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 
 			LockElement(hObject, &ObjectPtr);
 			hNextObject = GetPredElement(ObjectPtr);
-			if (ObjectPtr != ShipPtr && CollidingElement(ObjectPtr) && !OBJECT_CLOAKED(ObjectPtr))
+			if (ObjectPtr != ShipPtr && CollidingElement(ObjectPtr) && !ObjectCloaked(ObjectPtr))
 			{
 				int32_t delta_x {ObjectPtr->next.location.x - ShipPtr->next.location.x};
 				int32_t delta_y {ObjectPtr->next.location.y - ShipPtr->next.location.y};
@@ -487,8 +487,8 @@ spawn_point_defense(ELEMENT* ElementPtr)
 				{
 					delta_y = -delta_y;
 				}
-				delta_x = WORLD_TO_DISPLAY(delta_x);
-				delta_y = WORLD_TO_DISPLAY(delta_y);
+				delta_x = WorldToDisplay(delta_x);
+				delta_y = WorldToDisplay(delta_y);
 				if ((uint16_t)delta_x <= LASER_RANGE && (uint16_t)delta_y <= LASER_RANGE && (uint16_t)delta_x * (uint16_t)delta_x + (uint16_t)delta_y * (uint16_t)delta_y <= LASER_RANGE * LASER_RANGE)
 				{
 					HELEMENT hPointDefense {};
@@ -649,7 +649,7 @@ blaster_preprocess(ELEMENT* ElementPtr)
 	{
 		uint16_t facing {};
 
-		facing = NORMALIZE_FACING(ANGLE_TO_FACING(
+		facing = NormalizeFacing(AngleToFacing(
 			GetVelocityTravelAngle(&ElementPtr->velocity)));
 		if (TrackShip(ElementPtr, &facing) > 0)
 		{
@@ -678,8 +678,8 @@ initialize_blasters(ELEMENT* ShipPtr, HELEMENT BlasterArray[])
 		MissileBlock.cy = ShipPtr->next.location.y;
 		MissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.weapon;
 		MissileBlock.sender = ShipPtr->playerNr;
-		MissileBlock.face = NORMALIZE_FACING(StarShipPtr->ShipFacing
-											 + MissileBlock.face);
+		MissileBlock.face = NormalizeFacing(StarShipPtr->ShipFacing
+											+ MissileBlock.face);
 
 		BlasterArray[i] = initialize_missile(&MissileBlock);
 		if (BlasterArray[i])
@@ -724,8 +724,8 @@ sis_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			}
 			lpEvalDesc->ObjectPtr = nullptr;
 		}
-		else if (MANEUVERABILITY(&StarShipPtr->RaceDescPtr->cyborg_control)
-					 < RESOLUTION_COMPENSATED(MediumShip)
+		else if (Maneuverability(&StarShipPtr->RaceDescPtr->cyborg_control)
+					 < ResolutionCompensated(MediumShip)
 				 && lpEvalDesc->MoveState == ENTICE
 				 && (!(lpEvalDesc->ObjectPtr->state_flags & CrewObject)
 					 || lpEvalDesc->which_turn <= 8)
@@ -758,15 +758,15 @@ sis_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				- ShipPtr->current.location.x;
 		delta_y = lpEvalDesc->ObjectPtr->current.location.y
 				- ShipPtr->current.location.y;
-		direction_facing = NORMALIZE_FACING(
-			ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)));
+		direction_facing = NormalizeFacing(
+			AngleToFacing(ARCTAN(delta_x, delta_y)));
 
 		ship_flags = StarShipPtr->RaceDescPtr->ship_info.ship_flags;
 		for (fire_flags = FiresFore, facing = StarShipPtr->ShipFacing;
 			 fire_flags <= FiresLeft;
 			 fire_flags <<= 1, facing += Quadrant)
 		{
-			if ((ship_flags & fire_flags) && NORMALIZE_FACING(direction_facing - facing + ANGLE_TO_FACING(Octant)) <= ANGLE_TO_FACING(Quadrant))
+			if ((ship_flags & fire_flags) && NormalizeFacing(direction_facing - facing + AngleToFacing(Octant)) <= AngleToFacing(Quadrant))
 			{
 				StarShipPtr->ship_input_state |= WeaponFlag;
 				break;
@@ -838,23 +838,23 @@ InitWeaponSlots(RACE_DESC* RaceDescPtr, const uint8_t* ModuleSlots)
 				lpMB[1] = lpMB[0];
 				++lpMB;
 				++SisData->num_blasters;
-				lpMB->face = NORMALIZE_FACING(-1);
+				lpMB->face = NormalizeFacing(-1);
 				break;
 			case 2: /* SIDE WeaponFlag */
 				RaceDescPtr->ship_info.ship_flags |=
 					FiresLeft | FiresRight;
 				lpMB->pixoffs = SisHorzOffset();
-				lpMB->face = ANGLE_TO_FACING(Quadrant);
+				lpMB->face = AngleToFacing(Quadrant);
 				/* copy it because there are two */
 				lpMB[1] = lpMB[0];
 				++lpMB;
 				++SisData->num_blasters;
-				lpMB->face = NORMALIZE_FACING(-ANGLE_TO_FACING(Quadrant));
+				lpMB->face = NormalizeFacing(-AngleToFacing(Quadrant));
 				break;
 			case NumModuleSlots - 1: /* TAIL WeaponFlag */
 				RaceDescPtr->ship_info.ship_flags |= FiresAft;
 				lpMB->pixoffs = SisVertOffset();
-				lpMB->face = ANGLE_TO_FACING(HalfCircle);
+				lpMB->face = AngleToFacing(HalfCircle);
 				break;
 		}
 
@@ -927,7 +927,7 @@ InitDriveSlots(RACE_DESC* RaceDescPtr, const uint8_t* DriveSlots)
 		switch (DriveSlots[i])
 		{
 			case FUSION_THRUSTER:
-				RaceDescPtr->characteristics.max_thrust += RES_SCALE(2);
+				RaceDescPtr->characteristics.max_thrust += ResScale(2);
 				++RaceDescPtr->characteristics.thrust_wait;
 				break;
 		}
@@ -964,8 +964,8 @@ init_sis(void)
 
 	if (IsHd())
 	{
-		sis_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		sis_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		sis_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		sis_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		sis_desc.cyborg_control.WeaponRange = BlasterSpeedHd() * BlasterLife;
 	}
 	else
@@ -998,7 +998,7 @@ init_sis(void)
 		new_sis_desc.preprocess_func = sis_hyper_preprocess;
 		new_sis_desc.postprocess_func = sis_hyper_postprocess;
 
-		new_sis_desc.characteristics.max_thrust -= RES_SCALE(4);
+		new_sis_desc.characteristics.max_thrust -= ResScale(4);
 	}
 	else
 	{

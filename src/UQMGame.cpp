@@ -278,7 +278,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 
 	optWindowType = WindowStyle::UQM;
 	const WindowStyle windowStyle {*options.windowEmulationMode};
-	if (windowStyle != WindowStyle::UQM && isAddonAvailable(WINDOW_MODE(resolutionFactor, uqstl::to_underlying(windowStyle))))
+	if (windowStyle != WindowStyle::UQM && isAddonAvailable(WindowModeName(resolutionFactor, uqstl::to_underlying(windowStyle))))
 	{
 		optWindowType = windowStyle;
 	}
@@ -286,7 +286,7 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	Vec2u windowSize {*options.resolution};
 	{
 		const int w = 320;
-		const int h = (DOS_BOOL(240, 200));
+		const int h = (DosBool(240, 200));
 
 		const int loresBlowup = options.loresBlowupScale.value;
 		const int scaleFactor = loresBlowup + 1; // stored value starts with 0

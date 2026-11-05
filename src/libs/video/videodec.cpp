@@ -267,8 +267,8 @@ VideoDecoder_Load(const uqm::io::Directory& dir, const char* filename)
 		return nullptr;
 	}
 
-	decoder->w = RES_SCALE(decoder->w);
-	decoder->h = RES_SCALE(decoder->h) - IF_HD(7);
+	decoder->w = ResScale(decoder->w);
+	decoder->h = ResScale(decoder->h) - IfHd(7);
 
 	return decoder;
 }

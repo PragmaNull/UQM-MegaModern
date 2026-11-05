@@ -90,8 +90,8 @@ GenerateSpathi_generatePlanets(SOLARSYS_STATE* solarSys)
 		{
 			pPlanet->radius = EarthRadius * 1150L / 100;
 			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
-			pPlanet->location.x = COSINE(angle, pPlanet->radius);
-			pPlanet->location.y = SINE(angle, pPlanet->radius);
+			pPlanet->location.x = Cosine(angle, pPlanet->radius);
+			pPlanet->location.y = Sine(angle, pPlanet->radius);
 			pPlanet->data_index = WATER_WORLD;
 			ComputeSpeed(pPlanet, false, 1);
 		}
@@ -155,10 +155,10 @@ GenerateSpathi_generateMoons(SOLARSYS_STATE* solarSys,
 
 			pMoonDesc->data_index = PELLUCID_WORLD;
 			pMoonDesc->radius = MinMoonRadius() + MoonDelta();
-			angle = NORMALIZE_ANGLE(
+			angle = NormalizeAngle(
 				uqm::lowWord(SysGenRNG->next()));
-			pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
-			pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
+			pMoonDesc->location.x = Cosine(angle, pMoonDesc->radius);
+			pMoonDesc->location.y = Sine(angle, pMoonDesc->radius);
 			ComputeSpeed(pMoonDesc, true, 1);
 		}
 		else
@@ -185,7 +185,7 @@ GenerateSpathi_generateName(const SOLARSYS_STATE* solarSys,
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),
-							GAME_STRING(PLANET_NUMBER_BASE + 37));
+							GameString(PLANET_NUMBER_BASE + 37));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}

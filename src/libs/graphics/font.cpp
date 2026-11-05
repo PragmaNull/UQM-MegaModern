@@ -163,7 +163,7 @@ void font_DrawTracedText(TEXT* pText, Color text, Color trace)
 {
 	// Preserve current foreground color for full correctness
 	const Color oldfg = SetContextForeGroundColor(trace);
-	const uint8_t stroke = RES_SCALE(1);
+	const uint8_t stroke = ResScale(1);
 	const GFXPOINT t_baseline = pText->baseline;
 	GFXPOINT offset;
 
@@ -218,7 +218,7 @@ void font_DrawTracedTextAlt(TEXT* pText, Color text, Color trace, FONT AltFontPt
 {
 	// Preserve current foreground color for full correctness
 	const Color oldfg = SetContextForeGroundColor(trace);
-	const uint8_t stroke = RES_SCALE(1);
+	const uint8_t stroke = ResScale(1);
 	const GFXPOINT t_baseline = pText->baseline;
 	GFXPOINT offset;
 	static uint8_t swap = 0;
@@ -279,15 +279,15 @@ void font_DrawShadowedText(TEXT* pText, uint8_t direction,
 			break;
 	}
 
-	pText->baseline.x += RES_SCALE(shadow_angle.x);
-	pText->baseline.y += RES_SCALE(shadow_angle.y);
+	pText->baseline.x += ResScale(shadow_angle.x);
+	pText->baseline.y += ResScale(shadow_angle.y);
 
 	OldColor = SetContextForeGroundColor(shadow_color);
 
 	font_DrawText(pText);
 
-	pText->baseline.x -= RES_SCALE(shadow_angle.x);
-	pText->baseline.y -= RES_SCALE(shadow_angle.y);
+	pText->baseline.x -= ResScale(shadow_angle.x);
+	pText->baseline.y -= ResScale(shadow_angle.y);
 
 	SetContextForeGroundColor(text_color);
 
@@ -435,7 +435,7 @@ bool TextRect(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta)
 			}
 			else if (lpText->align == ALIGN_CENTER)
 			{
-				pRect->corner.x = -RES_SCALE((RES_DESCALE(width) >> 1));
+				pRect->corner.x = -ResScale((ResDescale(width) >> 1));
 			}
 			else
 			{
@@ -802,7 +802,7 @@ bool TextRectAlt(TEXT* lpText, GFXRECT* pRect, uint8_t* pdelta, uint8_t swap,
 			}
 			else if (lpText->align == ALIGN_CENTER)
 			{
-				pRect->corner.x = -RES_SCALE((RES_DESCALE(width) >> 1));
+				pRect->corner.x = -ResScale((ResDescale(width) >> 1));
 			}
 			else
 			{

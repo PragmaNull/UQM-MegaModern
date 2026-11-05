@@ -31,23 +31,22 @@ extern "C" {
 extern LOCDATA CommData;
 extern char shared_phrase_buf[2048];
 
-#define PLAYER_SAID(r, i) ((r) == (i))
-#define PHRASE_ENABLED(p) (*CommData.ConversationPhrases->text((p) - 1) != '\0')
+constexpr auto PlayerSaid(const auto& r, const auto& i) { return ((r) == (i)); }
+constexpr auto PhraseEnabled(const auto& p) { return (*CommData.ConversationPhrases->text((p)-1) != '\0'); }
 #define DISABLE_PHRASE(p) (CommData.ConversationPhrases->set((p) - 1, uqstl::string_view {"", 1}))
 
-#define Response(i, a) \
-	DoResponsePhrase(i, (RESPONSE_FUNC)a, 0)
 
 typedef uint16_t RESPONSE_REF;
 
 typedef void (*RESPONSE_FUNC)(RESPONSE_REF R);
 
 extern void DoResponsePhrase(RESPONSE_REF R, RESPONSE_FUNC response_func, char* ContstructStr);
+inline void Response(RESPONSE_REF i, RESPONSE_FUNC a) { DoResponsePhrase(i, a, nullptr); }
 
 // The CallbackFunction is queued and executes synchronously
 // on the Starcon2Main thread
 extern void NPCPhrase_cb(int index, CallbackFunction cb);
-#define NPCPhrase(index) NPCPhrase_cb((index), nullptr)
+constexpr auto NPCPhrase(const auto& index) { return NPCPhrase_cb((index), nullptr); }
 extern void NPCPhrase_splice(int index);
 extern void NPCNumber(int number, const char* fmt);
 

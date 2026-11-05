@@ -40,26 +40,26 @@ static constexpr auto ShipMass {6};
 static constexpr auto WeaponEnergyCost {1};
 static constexpr auto WeaponWait {0};
 static auto VuxOffset() { return chooseIfHd(12, 38); }
-static auto LaserBase() { return RES_SCALE(150); }
-#define LASER_RANGE DISPLAY_TO_WORLD(LaserBase() + VuxOffset())
+static auto LaserBase() { return ResScale(150); }
+#define LASER_RANGE DisplayToWorld(LaserBase() + VuxOffset())
 
 // Limpet
 static constexpr auto SpecialEnergyCost {2};
 static constexpr auto SpecialWait {7};
-static auto LimpetSpeed() { return RES_SCALE(25); }
-static auto LimpetOffset() { return RES_SCALE(8); }
+static auto LimpetSpeed() { return ResScale(25); }
+static auto LimpetOffset() { return ResScale(8); }
 static constexpr auto LimpetLife {80};
 static constexpr auto LimpetHits {1};
 static constexpr auto LimpetDamage {0};
-static auto MinThrustIncrement() { return DISPLAY_TO_WORLD(RES_SCALE(1)); }
+static auto MinThrustIncrement() { return DisplayToWorld(ResScale(1)); }
 
 // Aggressive Entry
-static auto WarpOffset() { return RES_SCALE(46); }
+static auto WarpOffset() { return ResScale(46); }
 /* How far outside of the laser range can the ship warp in. */
-static auto MaxxEntryDist() { return DISPLAY_TO_WORLD((LaserBase() + VuxOffset() + WarpOffset()) << 1); }
-static auto MaxyEntryDist() { return DISPLAY_TO_WORLD((LaserBase() + VuxOffset() + WarpOffset()) << 1); }
+static auto MaxxEntryDist() { return DisplayToWorld((LaserBase() + VuxOffset() + WarpOffset()) << 1); }
+static auto MaxyEntryDist() { return DisplayToWorld((LaserBase() + VuxOffset() + WarpOffset()) << 1); }
 /* Originally, the warp distance was:
-		 * DISPLAY_TO_WORLD (SpaceHeight() << 1)
+		 * DisplayToWorld (SpaceHeight() << 1)
 		 * where SpaceHeight() = CanvasHeight
 		 * But in reality this should be relative to the laser-range. */
 
@@ -143,7 +143,7 @@ limpet_preprocess(ELEMENT* ElementPtr)
 	uint16_t orig_facing {};
 	int16_t delta_facing {};
 
-	facing = orig_facing = NORMALIZE_FACING(ANGLE_TO_FACING(
+	facing = orig_facing = NormalizeFacing(AngleToFacing(
 		GetVelocityTravelAngle(&ElementPtr->velocity)));
 	if ((delta_facing = TrackShip(ElementPtr, &facing)) > 0)
 	{
@@ -187,7 +187,7 @@ limpet_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 				uint16_t num_thrusts {};
 
 				num_thrusts = RDPtr->characteristics.max_thrust / RDPtr->characteristics.thrust_increment;
-				RDPtr->characteristics.thrust_increment -= RES_SCALE(1);
+				RDPtr->characteristics.thrust_increment -= ResScale(1);
 				RDPtr->characteristics.max_thrust =
 					RDPtr->characteristics.thrust_increment * num_thrusts;
 			}
@@ -266,8 +266,8 @@ initialize_horrific_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 	LaserBlock.face = StarShipPtr->ShipFacing;
 	LaserBlock.cx = ShipPtr->next.location.x;
 	LaserBlock.cy = ShipPtr->next.location.y;
-	LaserBlock.ex = COSINE(FACING_TO_ANGLE(LaserBlock.face), LASER_RANGE);
-	LaserBlock.ey = SINE(FACING_TO_ANGLE(LaserBlock.face), LASER_RANGE);
+	LaserBlock.ex = Cosine(FacingToAngle(LaserBlock.face), LASER_RANGE);
+	LaserBlock.ey = Sine(FacingToAngle(LaserBlock.face), LASER_RANGE);
 	LaserBlock.sender = ShipPtr->playerNr;
 	LaserBlock.flags = IgnoreSimilar;
 	LaserBlock.pixoffs = VuxOffset();
@@ -361,7 +361,7 @@ vux_preprocess(ELEMENT* ElementPtr)
 			// But handy in debugging as a single VUX limpet incapacitates Sa-Matra completely.
 			if (uqm::lowByte(uqm::currentActivity()) == IN_LAST_BATTLE)
 			{
-				SA_MATRA_EXTRA_DIST += RES_SCALE(1000);
+				SA_MATRA_EXTRA_DIST += ResScale(1000);
 			}
 
 			do
@@ -379,16 +379,16 @@ vux_preprocess(ELEMENT* ElementPtr)
 
 				const int32_t dx {OtherShipPtr->current.location.x - temp_x};
 				const int32_t dy {OtherShipPtr->current.location.y - temp_y};
-				facing = NORMALIZE_FACING(
-					ANGLE_TO_FACING(ARCTAN(dx, dy)));
+				facing = NormalizeFacing(
+					AngleToFacing(ARCTAN(dx, dy)));
 				ElementPtr->current.image.frame =
 					SetAbsFrameIndex(ElementPtr->current.image.frame,
 									 facing);
 
 				ElementPtr->current.location.x =
-					WRAP_X(DISPLAY_ALIGN(temp_x));
+					WrapX(DisplayAlign(temp_x));
 				ElementPtr->current.location.y =
-					WRAP_Y(DISPLAY_ALIGN(temp_y));
+					WrapY(DisplayAlign(temp_y));
 			} while (CalculateGravity(ElementPtr)
 					 || TimeSpaceMatterConflict(ElementPtr));
 
@@ -412,8 +412,8 @@ init_vux(void)
 {
 	if (IsHd())
 	{
-		vux_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		vux_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		vux_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		vux_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		vux_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else

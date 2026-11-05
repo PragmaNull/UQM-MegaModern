@@ -120,7 +120,7 @@ void NotifyOthers(uint16_t which_race, uint8_t target_loc)
 				// XXX: orbit_pos was abused to store the previous
 				//   group destination, before the intercept task.
 				GroupPtr->dest_loc = GroupPtr->orbit_pos;
-				GroupPtr->orbit_pos = NORMALIZE_FACING(uqm::random().next());
+				GroupPtr->orbit_pos = NormalizeFacing(uqm::random().next());
 #ifdef OLD
 				GroupPtr->dest_loc = (uint8_t)(((uint16_t)uqm::random().next()
 												% pSolarSysState->SunDesc[0].NumPlanets)
@@ -225,10 +225,10 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 
 	int16_t radius {zoomRadiusForLocation(group_loc)};
 	dest_pt = locationToDisplay(GroupPtr->loc, radius);
-	EPtr->current.location.x = DISPLAY_TO_WORLD(dest_pt.x)
+	EPtr->current.location.x = DisplayToWorld(dest_pt.x)
 							 + (int16_t)(LogSpaceWidth() >> 1)
 							 - (LogSpaceWidth() >> (MaxReduction + 1));
-	EPtr->current.location.y = DISPLAY_TO_WORLD(dest_pt.y)
+	EPtr->current.location.y = DisplayToWorld(dest_pt.y)
 							 + (int16_t)(LogSpaceHeight() >> 1)
 							 - (LogSpaceHeight() >> (MaxReduction + 1));
 
@@ -392,19 +392,19 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 					org = planetOuterLocation(target_loc - 1);
 				}
 
-				angle = FACING_TO_ANGLE(GroupPtr->orbit_pos + 1);
-				dest_pt.x = org.x + COSINE(angle, orbit_dist);
-				dest_pt.y = org.y + SINE(angle, orbit_dist);
+				angle = FacingToAngle(GroupPtr->orbit_pos + 1);
+				dest_pt.x = org.x + Cosine(angle, orbit_dist);
+				dest_pt.y = org.y + Sine(angle, orbit_dist);
 				if (GroupPtr->loc.x == dest_pt.x
 					&& GroupPtr->loc.y == dest_pt.y)
 				{
 					uint8_t next_loc {};
 
-					GroupPtr->orbit_pos = NORMALIZE_FACING(
-						ANGLE_TO_FACING(angle));
-					angle += FACING_TO_ANGLE(1);
-					dest_pt.x = org.x + COSINE(angle, orbit_dist);
-					dest_pt.y = org.y + SINE(angle, orbit_dist);
+					GroupPtr->orbit_pos = NormalizeFacing(
+						AngleToFacing(angle));
+					angle += FacingToAngle(1);
+					dest_pt.x = org.x + Cosine(angle, orbit_dist);
+					dest_pt.y = org.y + Sine(angle, orbit_dist);
 
 					EPtr->thrust_wait = (uint8_t)~0;
 					if (GroupPtr->group_counter)
@@ -473,8 +473,8 @@ ip_group_preprocess(ELEMENT* ElementPtr)
 				EPtr->thrust_wait = TrackWait;
 			}
 
-			vdx = COSINE(angle, speed);
-			vdy = SINE(angle, speed);
+			vdx = Cosine(angle, speed);
+			vdy = Sine(angle, speed);
 			SetVelocityComponents(&EPtr->velocity, vdx, vdy);
 		}
 
@@ -562,8 +562,8 @@ CheckGetAway:
 
 					if (target_loc == GroupPtr->dest_loc)
 					{
-						GroupPtr->orbit_pos = NORMALIZE_FACING(
-							ANGLE_TO_FACING(angle + HalfCircle));
+						GroupPtr->orbit_pos = NormalizeFacing(
+							AngleToFacing(angle + HalfCircle));
 						GroupPtr->group_counter =
 							((uint16_t)uqm::random().next() % MaxRevolutions)
 							<< FacingShift;
@@ -573,10 +573,10 @@ CheckGetAway:
 					// different from how the flagship enters, but similar
 					// in the way that the group will never show up in any
 					// of the corners.
-					entryPt.x = RES_SCALE(OrigSisScreenWidth() >> 1)
-							  - COSINE(angle, SisScreenWidth() * 9 / 16);
-					entryPt.y = RES_SCALE(OrigSisScreenHeight() >> 1)
-							  - SINE(angle, SisScreenHeight() * 9 / 16);
+					entryPt.x = ResScale(OrigSisScreenWidth() >> 1)
+							  - Cosine(angle, SisScreenWidth() * 9 / 16);
+					entryPt.y = ResScale(OrigSisScreenHeight() >> 1)
+							  - Sine(angle, SisScreenHeight() * 9 / 16);
 					GroupPtr->loc = displayToLocation(entryPt,
 													  MaxZoomRadius);
 					group_loc = target_loc;
@@ -600,7 +600,7 @@ CheckGetAway:
 				{
 					suggestedFrame =
 						SetAbsFrameIndex(EPtr->next.image.farray[0],
-										 2 + NORMALIZE_FACING(ANGLE_TO_FACING(ARCTAN(delta_x, delta_y))));
+										 2 + NormalizeFacing(AngleToFacing(ARCTAN(delta_x, delta_y))));
 				}
 
 				// Set ship sprite when player entering the system (image
@@ -671,7 +671,7 @@ CheckGetAway:
 
 				EPtr->next.image.frame =
 					SetAbsFrameIndex(EPtr->next.image.farray[0],
-									 2 + NORMALIZE_FACING(ANGLE_TO_FACING(ARCTAN(delta_x, delta_y))));
+									 2 + NormalizeFacing(AngleToFacing(ARCTAN(delta_x, delta_y))));
 
 				GroupPtr->flags |= CanTurn;
 			}
@@ -689,10 +689,10 @@ CheckGetAway:
 	GroupPtr->loc.y += vdy;
 
 	dest_pt = locationToDisplay(GroupPtr->loc, radius);
-	EPtr->next.location.x = DISPLAY_TO_WORLD(dest_pt.x)
+	EPtr->next.location.x = DisplayToWorld(dest_pt.x)
 						  + (int16_t)(LogSpaceWidth() >> 1)
 						  - (LogSpaceWidth() >> (MaxReduction + 1));
-	EPtr->next.location.y = DISPLAY_TO_WORLD(dest_pt.y)
+	EPtr->next.location.y = DisplayToWorld(dest_pt.y)
 						  + (int16_t)(LogSpaceHeight() >> 1)
 						  - (LogSpaceHeight() >> (MaxReduction + 1));
 
@@ -914,11 +914,11 @@ spawn_ip_group(IP_GROUP* GroupPtr)
 			pt = locationToDisplay(GroupPtr->loc, radius);
 
 			IPSHIPElementPtr->current.location.x =
-				DISPLAY_TO_WORLD(pt.x)
+				DisplayToWorld(pt.x)
 				+ (int16_t)(LogSpaceWidth() >> 1)
 				- (LogSpaceWidth() >> (MaxReduction + 1));
 			IPSHIPElementPtr->current.location.y =
-				DISPLAY_TO_WORLD(pt.y)
+				DisplayToWorld(pt.y)
 				+ (int16_t)(LogSpaceHeight() >> 1)
 				- (LogSpaceHeight() >> (MaxReduction + 1));
 		}
@@ -988,10 +988,10 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 		adjustDeltaVforZoom(radius, &vdx, &vdy);
 
 		pt = locationToDisplay(uqm::flagship().ipLocation, radius);
-		ElementPtr->current.location.x = DISPLAY_TO_WORLD(pt.x)
+		ElementPtr->current.location.x = DisplayToWorld(pt.x)
 									   + (int16_t)(LogSpaceWidth() >> 1)
 									   - (LogSpaceWidth() >> (MaxReduction + 1));
-		ElementPtr->current.location.y = DISPLAY_TO_WORLD(pt.y)
+		ElementPtr->current.location.y = DisplayToWorld(pt.y)
 									   + (int16_t)(LogSpaceHeight() >> 1)
 									   - (LogSpaceHeight() >> (MaxReduction + 1));
 		InitIntersectStartPoint(ElementPtr);
@@ -1000,10 +1000,10 @@ flag_ship_preprocess(ELEMENT* ElementPtr)
 		uqm::flagship().ipLocation.y += vdy;
 
 		pt = locationToDisplay(uqm::flagship().ipLocation, radius);
-		ElementPtr->next.location.x = DISPLAY_TO_WORLD(pt.x)
+		ElementPtr->next.location.x = DisplayToWorld(pt.x)
 									+ (int16_t)(LogSpaceWidth() >> 1)
 									- (LogSpaceWidth() >> (MaxReduction + 1));
-		ElementPtr->next.location.y = DISPLAY_TO_WORLD(pt.y)
+		ElementPtr->next.location.y = DisplayToWorld(pt.y)
 									+ (int16_t)(LogSpaceHeight() >> 1)
 									- (LogSpaceHeight() >> (MaxReduction + 1));
 
@@ -1086,11 +1086,11 @@ spawn_flag_ship(void)
 		AdjustInitialPosition();
 
 		FlagShipElementPtr->current.location.x =
-			DISPLAY_TO_WORLD(uqm::flagship().shipStamp.origin.x)
+			DisplayToWorld(uqm::flagship().shipStamp.origin.x)
 			+ (int16_t)(LogSpaceWidth() >> 1)
 			- (LogSpaceWidth() >> (MaxReduction + 1));
 		FlagShipElementPtr->current.location.y =
-			DISPLAY_TO_WORLD(uqm::flagship().shipStamp.origin.y)
+			DisplayToWorld(uqm::flagship().shipStamp.origin.y)
 			+ (int16_t)(LogSpaceHeight() >> 1)
 			- (LogSpaceHeight() >> (MaxReduction + 1));
 

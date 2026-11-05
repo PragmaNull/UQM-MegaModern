@@ -557,7 +557,7 @@ void MoveGalaxy(VIEW_STATE view_state, int32_t dx, int32_t dy)
 			for (i = star_counts[iss]; i > 0; --i, ++pprim, ++ppt)
 			{
 				// ppt->x &= (LogSpaceWidth() - 1);
-				ppt->x = WRAP_VAL(ppt->x, wrap_around);
+				ppt->x = WrapVal(ppt->x, wrap_around);
 				if (meleeScaleModeIsStep)
 				{
 					pprim->Object.Point.x = (ppt->x - dx) >> reduction;

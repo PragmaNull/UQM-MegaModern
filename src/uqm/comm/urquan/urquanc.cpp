@@ -174,14 +174,14 @@ CombatIsInevitable(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, you_must_surrender))
+	if (PlayerSaid(R, you_must_surrender))
 	{
 		NPCPhrase(NOPE);
 	}
-	else if (PLAYER_SAID(R, whats_up_1)
-			 || PLAYER_SAID(R, whats_up_2)
-			 || PLAYER_SAID(R, whats_up_3)
-			 || PLAYER_SAID(R, whats_up_4))
+	else if (PlayerSaid(R, whats_up_1)
+			 || PlayerSaid(R, whats_up_2)
+			 || PlayerSaid(R, whats_up_3)
+			 || PlayerSaid(R, whats_up_4))
 	{
 		uint8_t NumVisits {};
 
@@ -204,46 +204,46 @@ CombatIsInevitable(RESPONSE_REF R)
 		}
 		SET_GAME_STATE(URQUAN_INFO, NumVisits);
 	}
-	else if (PLAYER_SAID(R, i_wont_surrender))
+	else if (PlayerSaid(R, i_wont_surrender))
 	{
 		NPCPhrase(BAD_CHOICE);
 	}
-	else if (PLAYER_SAID(R, i_will_surrender))
+	else if (PlayerSaid(R, i_will_surrender))
 	{
 		NPCPhrase(GOOD_CHOICE);
 
 		setSegue(Segue_defeat);
 	}
-	else if (PLAYER_SAID(R, like_to_leave))
+	else if (PlayerSaid(R, like_to_leave))
 	{
 		NPCPhrase(INDEPENDENCE_IS_BAD);
 	}
-	else if (PLAYER_SAID(R, bye_wars_over))
+	else if (PlayerSaid(R, bye_wars_over))
 	{
 		NPCPhrase(GOODBYE_WARS_OVER);
 
 		setSegue(Segue_peace);
 	}
-	else if (PLAYER_SAID(R, bye_sub_hypno))
+	else if (PlayerSaid(R, bye_sub_hypno))
 	{
 		NPCPhrase(GOODBYE_AND_DIE_SUB_HYPNO);
 	}
-	else if (PLAYER_SAID(R, bye_init_hypno))
+	else if (PlayerSaid(R, bye_init_hypno))
 	{
 		NPCPhrase(GOODBYE_AND_DIE_INIT_HYPNO);
 
 		SET_GAME_STATE(URQUAN_HYPNO_VISITS, 1);
 	}
-	else if (PLAYER_SAID(R, terran_amphibian)
-			 || PLAYER_SAID(R, talking_pet_on_steroids))
+	else if (PlayerSaid(R, terran_amphibian)
+			 || PlayerSaid(R, talking_pet_on_steroids))
 	{
 		NPCPhrase(BAD_NEWS);
 
 		setSegue(Segue_peace);
 		SET_GAME_STATE(URQUAN_HYPNO_VISITS, 1);
 	}
-	else if (PLAYER_SAID(R, falling_asleep)
-			 || PLAYER_SAID(R, someone_else_controlled))
+	else if (PlayerSaid(R, falling_asleep)
+			 || PlayerSaid(R, someone_else_controlled))
 	{
 		NPCPhrase(SOUNDS_FAMILIAR);
 
@@ -255,11 +255,11 @@ CombatIsInevitable(RESPONSE_REF R)
 static void
 DescribePet(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, wascally_little_guy))
+	if (PlayerSaid(R, wascally_little_guy))
 	{
 		NPCPhrase(WHAT_IT_LOOK_LIKE);
 	}
-	else if (PLAYER_SAID(R, turd_and_toad))
+	else if (PlayerSaid(R, turd_and_toad))
 	{
 		NPCPhrase(WHAT_IS_TURD_AND_TOAD);
 
@@ -268,7 +268,7 @@ DescribePet(RESPONSE_REF R)
 
 	Response(terran_amphibian, CombatIsInevitable);
 	Response(talking_pet_on_steroids, CombatIsInevitable);
-	if (PHRASE_ENABLED(turd_and_toad))
+	if (PhraseEnabled(turd_and_toad))
 	{
 		Response(turd_and_toad, DescribePet);
 	}
@@ -277,11 +277,11 @@ DescribePet(RESPONSE_REF R)
 static void
 DescribeCompulsion(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, alien_mind_control))
+	if (PlayerSaid(R, alien_mind_control))
 	{
 		NPCPhrase(WHAT_FELT_LIKE);
 	}
-	else if (PLAYER_SAID(R, before_coffee))
+	else if (PlayerSaid(R, before_coffee))
 	{
 		NPCPhrase(EXPLAIN);
 
@@ -290,7 +290,7 @@ DescribeCompulsion(RESPONSE_REF R)
 
 	Response(falling_asleep, CombatIsInevitable);
 	Response(someone_else_controlled, CombatIsInevitable);
-	if (PHRASE_ENABLED(before_coffee))
+	if (PhraseEnabled(before_coffee))
 	{
 		Response(before_coffee, DescribeCompulsion);
 	}
@@ -299,19 +299,19 @@ DescribeCompulsion(RESPONSE_REF R)
 static void
 MentionCompulsion(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, compulsion))
+	if (PlayerSaid(R, compulsion))
 	{
 		NPCPhrase(WHAT_COMPULSION);
 
 		SET_GAME_STATE(MENTIONED_PET_COMPULSION, 1);
 	}
-	else if (PLAYER_SAID(R, possessed_by_devil))
+	else if (PlayerSaid(R, possessed_by_devil))
 	{
 		NPCPhrase(STUPID_DEVIL);
 
 		DISABLE_PHRASE(possessed_by_devil);
 	}
-	else if (PLAYER_SAID(R, why_explain))
+	else if (PlayerSaid(R, why_explain))
 	{
 		NPCPhrase(MUST_EXPLAIN);
 
@@ -320,11 +320,11 @@ MentionCompulsion(RESPONSE_REF R)
 
 	Response(wascally_little_guy, DescribePet);
 	Response(alien_mind_control, DescribeCompulsion);
-	if (PHRASE_ENABLED(possessed_by_devil))
+	if (PhraseEnabled(possessed_by_devil))
 	{
 		Response(possessed_by_devil, MentionCompulsion);
 	}
-	if (PHRASE_ENABLED(why_explain))
+	if (PhraseEnabled(why_explain))
 	{
 		Response(why_explain, MentionCompulsion);
 	}
@@ -339,34 +339,34 @@ UrquanHypno(RESPONSE_REF R)
 		{
 			NPCPhrase(INIT_URQUAN_WAKE_UP);
 		}
-		else if (PLAYER_SAID(R, where_am_i))
+		else if (PlayerSaid(R, where_am_i))
 		{
 			NPCPhrase(YOU_ARE_HERE);
 
 			DISABLE_PHRASE(where_am_i);
 		}
-		else if (PLAYER_SAID(R, why_does_my_head_hurt))
+		else if (PlayerSaid(R, why_does_my_head_hurt))
 		{
 			NPCPhrase(HURTS_BECAUSE);
 
 			DISABLE_PHRASE(why_does_my_head_hurt);
 		}
-		else if (PLAYER_SAID(R, what_about_2_weeks))
+		else if (PlayerSaid(R, what_about_2_weeks))
 		{
 			NPCPhrase(ABOUT_2_WEEKS);
 
 			DISABLE_PHRASE(what_about_2_weeks);
 		}
 
-		if (PHRASE_ENABLED(where_am_i))
+		if (PhraseEnabled(where_am_i))
 		{
 			Response(where_am_i, UrquanHypno);
 		}
-		if (PHRASE_ENABLED(why_does_my_head_hurt))
+		if (PhraseEnabled(why_does_my_head_hurt))
 		{
 			Response(why_does_my_head_hurt, UrquanHypno);
 		}
-		if (PHRASE_ENABLED(what_about_2_weeks))
+		if (PhraseEnabled(what_about_2_weeks))
 		{
 			Response(what_about_2_weeks, UrquanHypno);
 		}
@@ -379,24 +379,24 @@ UrquanHypno(RESPONSE_REF R)
 		{
 			NPCPhrase(SUBSEQUENT_URQUAN_WAKE_UP);
 		}
-		else if (PLAYER_SAID(R, uh_oh))
+		else if (PlayerSaid(R, uh_oh))
 		{
 			NPCPhrase(NO_UH_OH);
 
 			DISABLE_PHRASE(uh_oh);
 		}
-		else if (PLAYER_SAID(R, stop_meeting))
+		else if (PlayerSaid(R, stop_meeting))
 		{
 			NPCPhrase(NO_STOP_MEETING);
 
 			DISABLE_PHRASE(stop_meeting);
 		}
 
-		if (PHRASE_ENABLED(uh_oh))
+		if (PhraseEnabled(uh_oh))
 		{
 			Response(uh_oh, UrquanHypno);
 		}
-		if (PHRASE_ENABLED(stop_meeting))
+		if (PhraseEnabled(stop_meeting))
 		{
 			Response(stop_meeting, UrquanHypno);
 		}
@@ -411,7 +411,7 @@ UrquanHypno(RESPONSE_REF R)
 static void
 NormalUrquan(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, i_surrender))
+	if (PlayerSaid(R, i_surrender))
 	{
 		NPCPhrase(DISOBEDIENCE_PUNISHED);
 
@@ -420,7 +420,7 @@ NormalUrquan(RESPONSE_REF R)
 	}
 	else
 	{
-		if (PLAYER_SAID(R, key_phrase))
+		if (PlayerSaid(R, key_phrase))
 		{
 			NPCPhrase(URQUAN_STORY);
 
@@ -455,34 +455,34 @@ NormalUrquan(RESPONSE_REF R)
 static void
 LoserUrquan(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, why_flee))
+	if (PlayerSaid(R, why_flee))
 	{
 		NPCPhrase(FLEE_BECAUSE);
 
 		DISABLE_PHRASE(why_flee);
 	}
-	else if (PLAYER_SAID(R, what_happens_now))
+	else if (PlayerSaid(R, what_happens_now))
 	{
 		NPCPhrase(HAPPENS_NOW);
 
 		DISABLE_PHRASE(what_happens_now);
 	}
-	else if (PLAYER_SAID(R, what_about_you))
+	else if (PlayerSaid(R, what_about_you))
 	{
 		NPCPhrase(ABOUT_US);
 
 		DISABLE_PHRASE(what_about_you);
 	}
 
-	if (PHRASE_ENABLED(why_flee))
+	if (PhraseEnabled(why_flee))
 	{
 		Response(why_flee, LoserUrquan);
 	}
-	if (PHRASE_ENABLED(what_happens_now))
+	if (PhraseEnabled(what_happens_now))
 	{
 		Response(what_happens_now, LoserUrquan);
 	}
-	if (PHRASE_ENABLED(what_about_you))
+	if (PhraseEnabled(what_about_you))
 	{
 		Response(what_about_you, LoserUrquan);
 	}
@@ -622,7 +622,7 @@ init_urquan_comm(void)
 
 	urquan_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	urquan_desc.AlienTextBaseline.y = 0;
-	urquan_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	urquan_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	const uint32_t GrpOffs {GET_GAME_STATE(URQUAN_PROBE_GRPOFFS)};
 

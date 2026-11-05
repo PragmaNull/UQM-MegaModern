@@ -161,13 +161,13 @@ bool LoadKernel(int argc, char* argv[])
 		}
 	}
 
-	if (IsPad() && uqm::isAddonAvailable(THREEDO_MODE(IsHd())))
+	if (IsPad() && uqm::isAddonAvailable(ThreedoMode(IsHd())))
 	{
-		uqm::loadAddon(THREEDO_MODE(IsHd()));
+		uqm::loadAddon(ThreedoMode(IsHd()));
 	}
-	if (IsDos() && uqm::isAddonAvailable(DOS_MODE(IsHd())))
+	if (IsDos() && uqm::isAddonAvailable(DosMode(IsHd())))
 	{
-		uqm::loadAddon(DOS_MODE(IsHd()));
+		uqm::loadAddon(DosMode(IsHd()));
 	}
 
 	usingSpeech = (bool)uqm::UQMOptions::read().useSpeech;

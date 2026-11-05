@@ -244,7 +244,7 @@ static LOCDATA yehat_desc =
 static void
 ExitConversation(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, bye_rebel))
+	if (PlayerSaid(R, bye_rebel))
 	{
 		NPCPhrase(GOODBYE_REBEL);
 	}
@@ -256,63 +256,63 @@ static void
 RebelInfo(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
-	if (PLAYER_SAID(R, give_info_rebels))
+	if (PlayerSaid(R, give_info_rebels))
 	{
 		NPCPhrase(WHAT_INFO);
 	}
-	else if (PLAYER_SAID(R, what_about_urquan))
+	else if (PlayerSaid(R, what_about_urquan))
 	{
 		NPCPhrase(ABOUT_URQUAN);
 
 		DISABLE_PHRASE(what_about_urquan);
 	}
-	else if (PLAYER_SAID(R, what_about_royalty))
+	else if (PlayerSaid(R, what_about_royalty))
 	{
 		NPCPhrase(ABOUT_ROYALTY);
 
 		DISABLE_PHRASE(what_about_royalty);
 	}
-	else if (PLAYER_SAID(R, what_about_war))
+	else if (PlayerSaid(R, what_about_war))
 	{
 		NPCPhrase(ABOUT_WAR);
 		SetHomeworldKnown(SHOFIXTI_HOME);
 
 		DISABLE_PHRASE(what_about_war);
 	}
-	else if (PLAYER_SAID(R, what_about_vux))
+	else if (PlayerSaid(R, what_about_vux))
 	{
 		NPCPhrase(ABOUT_VUX);
 
 		DISABLE_PHRASE(what_about_vux);
 	}
-	else if (PLAYER_SAID(R, what_about_clue))
+	else if (PlayerSaid(R, what_about_clue))
 	{
 		NPCPhrase(ABOUT_CLUE);
 
 		DISABLE_PHRASE(what_about_clue);
 	}
 
-	if (PHRASE_ENABLED(what_about_urquan))
+	if (PhraseEnabled(what_about_urquan))
 	{
 		Response(what_about_urquan, RebelInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_royalty))
+	if (PhraseEnabled(what_about_royalty))
 	{
 		Response(what_about_royalty, RebelInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_war))
+	if (PhraseEnabled(what_about_war))
 	{
 		Response(what_about_war, RebelInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_vux))
+	if (PhraseEnabled(what_about_vux))
 	{
 		Response(what_about_vux, RebelInfo);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_clue))
+	if (PhraseEnabled(what_about_clue))
 	{
 		Response(what_about_clue, RebelInfo);
 		InfoLeft = true;
@@ -330,7 +330,7 @@ Rebels(RESPONSE_REF R)
 {
 	uint16_t NumVisits {};
 
-	if (PLAYER_SAID(R, how_goes_revolution))
+	if (PlayerSaid(R, how_goes_revolution))
 	{
 		NumVisits = GET_GAME_STATE(YEHAT_REBEL_INFO);
 		switch (NumVisits++)
@@ -353,7 +353,7 @@ Rebels(RESPONSE_REF R)
 
 		DISABLE_PHRASE(how_goes_revolution);
 	}
-	else if (PLAYER_SAID(R, any_ships))
+	else if (PlayerSaid(R, any_ships))
 	{
 		if (!ShipsReady(YEHAT_SHIP))
 		{
@@ -384,7 +384,7 @@ Rebels(RESPONSE_REF R)
 
 		DISABLE_PHRASE(any_ships);
 	}
-	else if (PLAYER_SAID(R, what_about_pkunk_rebel))
+	else if (PlayerSaid(R, what_about_pkunk_rebel))
 	{
 		if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK))
 		{
@@ -397,12 +397,12 @@ Rebels(RESPONSE_REF R)
 
 		SET_GAME_STATE(YEHAT_REBEL_TOLD_PKUNK, 1);
 	}
-	else if (PLAYER_SAID(R, enough_info))
+	else if (PlayerSaid(R, enough_info))
 	{
 		NPCPhrase(OK_ENOUGH_INFO);
 	}
 
-	if (PHRASE_ENABLED(how_goes_revolution))
+	if (PhraseEnabled(how_goes_revolution))
 	{
 		Response(how_goes_revolution, Rebels);
 	}
@@ -412,11 +412,11 @@ Rebels(RESPONSE_REF R)
 	{
 		Response(what_about_pkunk_rebel, Rebels);
 	}
-	if (PHRASE_ENABLED(any_ships))
+	if (PhraseEnabled(any_ships))
 	{
 		Response(any_ships, Rebels);
 	}
-	if (PHRASE_ENABLED(give_info_rebels))
+	if (PhraseEnabled(give_info_rebels))
 	{
 		Response(give_info_rebels, RebelInfo);
 	}
@@ -492,8 +492,8 @@ init_rebel_yehat_comm(void)
 	uqm::lua().beginComm(nullptr, NullResource);
 
 	yehat_desc.AlienTextBaseline.x = SisScreenWidth() * 2 / 3;
-	yehat_desc.AlienTextBaseline.y = RES_SCALE(107 * 2 / 3);
-	yehat_desc.AlienTextWidth = (SisTextWidth() - RES_SCALE(16)) * 2 / 3;
+	yehat_desc.AlienTextBaseline.y = ResScale(107 * 2 / 3);
+	yehat_desc.AlienTextWidth = (SisTextWidth() - ResScale(16)) * 2 / 3;
 
 	// use alternate "Rebels" track if available
 	altResFlags |= UseAltSong;

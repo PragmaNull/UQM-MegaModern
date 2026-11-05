@@ -79,8 +79,8 @@ GenerateThraddash_generatePlanets(SOLARSYS_STATE* solarSys)
 			pPlanet->data_index = PRIMORDIAL_WORLD;
 			pPlanet->radius = EarthRadius * 65L / 100;
 			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
-			pPlanet->location.x = COSINE(angle, pPlanet->radius);
-			pPlanet->location.y = SINE(angle, pPlanet->radius);
+			pPlanet->location.x = Cosine(angle, pPlanet->radius);
+			pPlanet->location.y = Sine(angle, pPlanet->radius);
 		}
 		else /* CurStarDescPtr()->Index == THRADD_DEFINED */
 		{
@@ -88,8 +88,8 @@ GenerateThraddash_generatePlanets(SOLARSYS_STATE* solarSys)
 			pPlanet->NumPlanets = 0;
 			pPlanet->radius = EarthRadius * 98L / 100;
 			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
-			pPlanet->location.x = COSINE(angle, pPlanet->radius);
-			pPlanet->location.y = SINE(angle, pPlanet->radius);
+			pPlanet->location.x = Cosine(angle, pPlanet->radius);
+			pPlanet->location.y = Sine(angle, pPlanet->radius);
 		}
 
 		ComputeSpeed(pPlanet, false, 1);

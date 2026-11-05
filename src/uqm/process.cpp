@@ -252,10 +252,10 @@ CalcReduction(int32_t dx, int32_t dy)
 			&& zoom_out <= MaxVisReduction)
 		{
 			const auto HysteresisX = [&] {
-				return DISPLAY_TO_WORLD(RES_SCALE(24));
+				return DisplayToWorld(ResScale(24));
 			};
 			const auto HysteresisY = [&] {
-				return DISPLAY_TO_WORLD(RES_SCALE(20));
+				return DisplayToWorld(ResScale(20));
 			};
 			if (((sdx + HysteresisX())
 				 << (MaxVisReduction - next_reduction))
@@ -338,16 +338,16 @@ CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 #endif
 	int32_t dx {((int32_t)(LogSpaceWidth() >> 1) - pNewScrollPt->x)};
 	int32_t dy {((int32_t)(LogSpaceHeight() >> 1) - pNewScrollPt->y)};
-	dx = WRAP_DELTA_X(dx);
-	dy = WRAP_DELTA_Y(dy);
+	dx = WrapDeltaX(dx);
+	dy = WrapDeltaY(dy);
 	const bool meleeScaleModeIsTFBStep {uqm::toTFBScaleMode(uqm::UQMOptions::read().meleeScale) == uqm::TFBScaleMode::Step};
 	if (ships_alive == 1 && (!meleeScaleModeIsTFBStep || isNetwork()))
 	{
 		const auto OrgJumpX = [&] {
-			return ((int32_t)DISPLAY_ALIGN(LogSpaceWidth() / 75));
+			return ((int32_t)DisplayAlign(LogSpaceWidth() / 75));
 		};
 		const auto OrgJumpY = [&] {
-			return ((int32_t)DISPLAY_ALIGN(LogSpaceHeight() / 75));
+			return ((int32_t)DisplayAlign(LogSpaceHeight() / 75));
 		};
 		if (dx > OrgJumpX())
 		{
@@ -399,8 +399,8 @@ CalcView(DPOINT* pNewScrollPt, int16_t next_reduction,
 
 			// Always align the origin on a whole pixel to reduce the
 			// amount of object positioning jitter
-			SpaceOrg.x = DISPLAY_ALIGN((int)(LogSpaceWidth() >> 1) - (LogSpaceWidth() * next_reduction / (MaxZoomOut << 2)));
-			SpaceOrg.y = DISPLAY_ALIGN((int)(LogSpaceHeight() >> 1) - (LogSpaceHeight() * next_reduction / (MaxZoomOut << 2)));
+			SpaceOrg.x = DisplayAlign((int)(LogSpaceWidth() >> 1) - (LogSpaceWidth() * next_reduction / (MaxZoomOut << 2)));
+			SpaceOrg.y = DisplayAlign((int)(LogSpaceHeight() >> 1) - (LogSpaceHeight() * next_reduction / (MaxZoomOut << 2)));
 		}
 		zoom_out = next_reduction;
 		view_state = VIEW_CHANGE;
@@ -652,9 +652,9 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 							TestElementPtr->IntersectControl.IntersectStamp.origin =
 								TestSavePt;
 							TestElementPtr->next.location.x =
-								DISPLAY_TO_WORLD(TestSavePt.x);
+								DisplayToWorld(TestSavePt.x);
 							TestElementPtr->next.location.y =
-								DISPLAY_TO_WORLD(TestSavePt.y);
+								DisplayToWorld(TestSavePt.y);
 							InitIntersectEndPoint(TestElementPtr);
 						}
 					}
@@ -666,9 +666,9 @@ ProcessCollisions(HELEMENT hSuccElement, ELEMENT* ElementPtr,
 							ElementPtr->IntersectControl.IntersectStamp.origin =
 								SavePt;
 							ElementPtr->next.location.x =
-								DISPLAY_TO_WORLD(SavePt.x);
+								DisplayToWorld(SavePt.x);
 							ElementPtr->next.location.y =
-								DISPLAY_TO_WORLD(SavePt.y);
+								DisplayToWorld(SavePt.y);
 							InitIntersectEndPoint(ElementPtr);
 
 							if (!(state_flags & FiniteLife) && !(test_state_flags & FiniteLife))
@@ -754,19 +754,19 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 			if (max_reduction > opt_max_zoom_out
 				&& min_reduction > opt_max_zoom_out)
 			{
-				Origin.x = DISPLAY_ALIGN(ElementPtr->next.location.x);
-				Origin.y = DISPLAY_ALIGN(ElementPtr->next.location.y);
+				Origin.x = DisplayAlign(ElementPtr->next.location.x);
+				Origin.y = DisplayAlign(ElementPtr->next.location.y);
 			}
 
-			int32_t dx {DISPLAY_ALIGN(ElementPtr->next.location.x) - Origin.x};
-			dx = WRAP_DELTA_X(dx);
-			int32_t dy {DISPLAY_ALIGN(ElementPtr->next.location.y) - Origin.y};
-			dy = WRAP_DELTA_Y(dy);
+			int32_t dx {DisplayAlign(ElementPtr->next.location.x) - Origin.x};
+			dx = WrapDeltaX(dx);
+			int32_t dy {DisplayAlign(ElementPtr->next.location.y) - Origin.y};
+			dy = WrapDeltaY(dy);
 
 			if (sides_active <= 2 || ElementPtr->playerNr == 0)
 			{
-				Origin.x = DISPLAY_ALIGN(Origin.x + (dx >> 1));
-				Origin.y = DISPLAY_ALIGN(Origin.y + (dy >> 1));
+				Origin.x = DisplayAlign(Origin.x + (dx >> 1));
+				Origin.y = DisplayAlign(Origin.y + (dy >> 1));
 
 				if (dx < 0)
 				{
@@ -781,8 +781,8 @@ PreProcessQueue(int32_t* pscroll_x, int32_t* pscroll_y)
 			else if (max_reduction > opt_max_zoom_out
 					 && min_reduction <= opt_max_zoom_out)
 			{
-				Origin.x = DISPLAY_ALIGN(Origin.x + (dx >> 1));
-				Origin.y = DISPLAY_ALIGN(Origin.y + (dy >> 1));
+				Origin.x = DisplayAlign(Origin.x + (dx >> 1));
+				Origin.y = DisplayAlign(Origin.y + (dy >> 1));
 
 				if (dx < 0)
 				{
@@ -1000,8 +1000,8 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 					const int32_t dx {(int32_t)ElementPtr->next.location.x - (int32_t)ElementPtr->current.location.x};
 					const int32_t dy {(int32_t)ElementPtr->next.location.y - (int32_t)ElementPtr->current.location.y};
 
-					next.x = WRAP_X((int32_t)ElementPtr->current.location.x + (int32_t)delta.x);
-					next.y = WRAP_Y((int32_t)ElementPtr->current.location.y + (int32_t)delta.y);
+					next.x = WrapX((int32_t)ElementPtr->current.location.x + (int32_t)delta.x);
+					next.y = WrapY((int32_t)ElementPtr->current.location.y + (int32_t)delta.y);
 					DisplayArray[ElementPtr->PrimIndex].Object.Line.first.x = CalcDisplayCoord(next.x, SpaceOrg.x, reduction);
 					DisplayArray[ElementPtr->PrimIndex].Object.Line.first.y = CalcDisplayCoord(next.y, SpaceOrg.y, reduction);
 
@@ -1012,8 +1012,8 @@ PostProcessQueue(VIEW_STATE view_state, int32_t scroll_x, int32_t scroll_y)
 				}
 				else
 				{
-					next.x = WRAP_X((int32_t)ElementPtr->next.location.x + (int32_t)delta.x);
-					next.y = WRAP_Y((int32_t)ElementPtr->next.location.y + (int32_t)delta.y);
+					next.x = WrapX((int32_t)ElementPtr->next.location.x + (int32_t)delta.x);
+					next.y = WrapY((int32_t)ElementPtr->next.location.y + (int32_t)delta.y);
 
 					DisplayArray[ElementPtr->PrimIndex].Object.Point.x = CalcDisplayCoord(next.x, SpaceOrg.x, reduction);
 					DisplayArray[ElementPtr->PrimIndex].Object.Point.y = CalcDisplayCoord(next.y, SpaceOrg.y, reduction);

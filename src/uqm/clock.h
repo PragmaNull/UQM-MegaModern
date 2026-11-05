@@ -48,14 +48,13 @@ typedef enum
 	RELATIVE_EVENT
 } EVENT_TYPE;
 
-#define AllocEvent() AllocLink(&uqm::gameState().clock().events())
-#define PutEvent(h) PutQueue(&uqm::gameState().clock().events(), (h))
+HEVENT AllocEvent();
+void PutEvent(HEVENT h);
+void UnlockEvent(HEVENT h);
+void FreeEvent(HEVENT h);
+void ForAllEvents(void (*callback)(LINK*, void*), void* arg);
 #define LockEvent(h, ppe) (*(ppe) = (EVENT*)LockLink(&uqm::gameState().clock().events(), h))
-#define UnlockEvent(h) UnlockLink(&uqm::gameState().clock().events(), (h))
-#define FreeEvent(h) FreeLink(&uqm::gameState().clock().events(), (h))
-#define GetSuccEvent(l) _GetSuccLink(l)
-#define ForAllEvents(callback, arg) ForAllLinks(&uqm::gameState().clock().events(), \
-												(void (*)(LINK*, void*))(callback), (arg))
+constexpr auto GetSuccEvent(const auto& l) { return _GetSuccLink(l); }
 
 // Rates are in seconds per game day
 inline constexpr auto HyperspaceClockRate {5};

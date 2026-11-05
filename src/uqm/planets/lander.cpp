@@ -213,10 +213,10 @@ CreatePCLanderContext(void)
 	SetContext(context);
 	SetContextFGFrame(Screen);
 	r.corner.x += (r.extent.width - MapWidth())
-				+ (SafeX() * 2 + SAFE_NUM_SCL(1));
+				+ (SafeX() * 2 + SafeNumScl(1));
 	r.corner.y += r.extent.height - MapHeight();
-	r.extent.width = RES_SCALE(UqmMapWidth - Sc2MapWidth) - SisOrgX()
-				   + SAFE_POS(1);
+	r.extent.width = ResScale(UqmMapWidth - Sc2MapWidth) - SisOrgX()
+				   + SafePos(1);
 	r.extent.height = MapHeight();
 	SetContextClipRect(&r);
 
@@ -394,14 +394,14 @@ void object_animation(ELEMENT* ElementPtr)
 				{
 					ELEMENT* LavaElementPtr {};
 
-					angle = FACING_TO_ANGLE(ElementPtr->facing);
+					angle = FacingToAngle(ElementPtr->facing);
 					LockElement(hLavaElement, &LavaElementPtr);
 					LavaElementPtr->next.location =
 						ElementPtr->next.location;
 					LavaElementPtr->next.location.x +=
-						COSINE(angle, RES_SCALE(4));
+						Cosine(angle, ResScale(4));
 					LavaElementPtr->next.location.y +=
-						SINE(angle, RES_SCALE(4));
+						Sine(angle, ResScale(4));
 					if (LavaElementPtr->next.location.y < 0)
 					{
 						LavaElementPtr->next.location.y = 0;
@@ -421,7 +421,7 @@ void object_animation(ELEMENT* ElementPtr)
 						LavaElementPtr->next.location.x %=
 							ScaledMapWidth() << MagShift;
 					}
-					LavaElementPtr->facing = NORMALIZE_FACING(
+					LavaElementPtr->facing = NormalizeFacing(
 						ElementPtr->facing + (uqm::random().next() % 3 - 1));
 					UnlockElement(hLavaElement);
 				}
@@ -511,7 +511,7 @@ void object_animation(ELEMENT* ElementPtr)
 					uint16_t rand_val {};
 
 					rand_val = uqm::random().next();
-					angle = NORMALIZE_ANGLE(uqm::lowByte(rand_val));
+					angle = NormalizeAngle(uqm::lowByte(rand_val));
 					ElementPtr->thrust_wait =
 						(uqm::highByte(rand_val) >> 2) + 10;
 				}
@@ -539,25 +539,25 @@ void object_animation(ELEMENT* ElementPtr)
 						}
 						ElementPtr->thrust_wait = 5;
 					}
-					angle = NORMALIZE_ANGLE(angle + HalfCircle);
+					angle = NormalizeAngle(angle + HalfCircle);
 				}
 
 				switch (speed)
 				{
 					case SpeedSlow:
-						speed = WORLD_TO_VELOCITY(2 * 1) >> 2;
+						speed = WorldToVelocity(2 * 1) >> 2;
 						break;
 					case SpeedMedium:
-						speed = WORLD_TO_VELOCITY(2 * 1) >> 1;
+						speed = WorldToVelocity(2 * 1) >> 1;
 						break;
 					case SpeedFast:
-						speed = WORLD_TO_VELOCITY(2 * 1) * 9 / 10;
+						speed = WorldToVelocity(2 * 1) * 9 / 10;
 						break;
 				}
-				speed = RES_SCALE(speed);
+				speed = ResScale(speed);
 
 				SetVelocityComponents(&ElementPtr->velocity,
-									  COSINE(angle, speed), SINE(angle, speed));
+									  Cosine(angle, speed), Sine(angle, speed));
 			}
 		}
 	}
@@ -624,14 +624,14 @@ DeltaLanderCrew(int16_t crew_delta, uint16_t which_disaster)
 
 	if (is3DO(uqm::UQMOptions::read().landerStyle))
 	{
-		s.origin.x = RES_SCALE(11) + (RES_SCALE(6) * (crew_delta % NumCrewCols()));
-		s.origin.y = RES_SCALE(35) - (RES_SCALE(6) * (crew_delta / NumCrewCols()));
+		s.origin.x = ResScale(11) + (ResScale(6) * (crew_delta % NumCrewCols()));
+		s.origin.y = ResScale(35) - (ResScale(6) * (crew_delta / NumCrewCols()));
 		OldContext = SetContext(RadarContext);
 	}
 	else
 	{
-		s.origin.x = RES_SCALE(6) + (RES_SCALE(6) * (crew_delta % NumCrewCols()));
-		s.origin.y = RES_SCALE(39) - (RES_SCALE(6) * (crew_delta / NumCrewCols()));
+		s.origin.x = ResScale(6) + (ResScale(6) * (crew_delta % NumCrewCols()));
+		s.origin.y = ResScale(39) - (ResScale(6) * (crew_delta / NumCrewCols()));
 		OldContext = SetContext(PCLanderContext);
 	}
 
@@ -682,7 +682,7 @@ FillLanderHold(PLANETSIDE_DESC* pPSD, uint16_t scan, uint16_t NumRetrieved)
 				 + tmpholdint;
 
 	s.origin.x = 0;
-	s.origin.y = -(int)RES_SCALE(start_count);
+	s.origin.y = -(int)ResScale(start_count);
 	if (!(start_count & 1))
 	{
 		s.frame = IncFrameIndex(s.frame);
@@ -708,7 +708,7 @@ FillLanderHold(PLANETSIDE_DESC* pPSD, uint16_t scan, uint16_t NumRetrieved)
 			s.frame = DecFrameIndex(s.frame);
 		}
 		DrawStamp(&s);
-		s.origin.y -= RES_SCALE(1);
+		s.origin.y -= ResScale(1);
 	}
 	SetContext(OldContext);
 }
@@ -827,7 +827,7 @@ pickupNode(PLANETSIDE_DESC* pPSD, uint16_t NumRetrieved,
 	pPSD->NumFrames = NumTextFrames;
 	const auto fmtResult = fmt::format_to_n(pPSD->AmountBuf, sizeof(pPSD->AmountBuf) - 1, "{}", NumRetrieved);
 	*fmtResult.out = '\0';
-	const char* pStr {GAME_STRING(EType + Offset)};
+	const char* pStr {GameString(EType + Offset)};
 
 	pPSD->MineralText[0].baseline.x = (MapSurface.width >> 1)
 									+ (ElementControl->EndPoint.x - LanderControl->EndPoint.x);
@@ -958,12 +958,12 @@ shotCreature(ELEMENT* ElementPtr, uint8_t value,
 	{
 		uint16_t angle {};
 
-		angle = FACING_TO_ANGLE(GetFrameIndex(
-									LanderControl->IntersectStamp.frame)
-								- ANGLE_TO_FACING(FullCircle));
+		angle = FacingToAngle(GetFrameIndex(
+								  LanderControl->IntersectStamp.frame)
+							  - AngleToFacing(FullCircle));
 		DeltaVelocityComponents(&ElementPtr->velocity,
-								COSINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))),
-								SINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))));
+								Cosine(angle, WorldToVelocity(ResScale(1))),
+								Sine(angle, WorldToVelocity(ResScale(1))));
 		ElementPtr->thrust_wait = 0;
 		ElementPtr->mass_points |= CreatureAware;
 	}
@@ -1271,12 +1271,12 @@ AddLightning(void)
 												+ ((ScaledMapWidth() << MagShift)
 												   - ((SurfaceWidth() >> 1) - 6))
 												+ (chooseIfHd(static_cast<uint32_t>(uqm::lowByte(rand_val)), rand_val)
-												   % (SurfaceWidth() - RES_SCALE(12))))
+												   % (SurfaceWidth() - ResScale(12))))
 											 % (ScaledMapWidth() << MagShift);
 		LightningElementPtr->next.location.y = (curLanderLoc.y
 												+ ((MapHeight() << MagShift) - ((SurfaceHeight() >> 1) - 6))
 												+ (chooseIfHd(static_cast<uint32_t>(uqm::highByte(rand_val)), rand_val)
-												   % (SurfaceHeight() - RES_SCALE(12))))
+												   % (SurfaceHeight() - ResScale(12))))
 											 % (MapHeight() << MagShift);
 
 		LightningElementPtr->cycle = LightningElementPtr->life_span;
@@ -1352,7 +1352,7 @@ AddGroundDisaster(uint16_t which_disaster)
 		{
 			SetPrimType(pPrim, STAMP_PRIM);
 			GroundDisasterElementPtr->facing =
-				NORMALIZE_FACING(uqm::random().next());
+				NormalizeFacing(uqm::random().next());
 			pPrim->Object.Stamp.frame = LanderFrame[3];
 			GroundDisasterElementPtr->turn_wait = uqm::makeByte(0, 0);
 		}
@@ -1651,7 +1651,7 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 			if (isPC(uqm::UQMOptions::read().landerStyle))
 			{
 				pPSD->MineralText[0].baseline.x = RadarWidth() >> 1;
-				pPSD->MineralText[0].baseline.y = RES_SCALE(8);
+				pPSD->MineralText[0].baseline.y = ResScale(8);
 				// original value
 			}
 			else
@@ -1663,12 +1663,12 @@ ScrollPlanetSide(int16_t dx, int16_t dy, int landingOffset)
 			pPSD->MineralText[1].baseline.x =
 				pPSD->MineralText[0].baseline.x;
 			pPSD->MineralText[1].baseline.y =
-				pPSD->MineralText[0].baseline.y + RES_SCALE(7);
+				pPSD->MineralText[0].baseline.y + ResScale(7);
 			font_DrawText(&pPSD->MineralText[1]);
 			pPSD->MineralText[2].baseline.x =
 				pPSD->MineralText[1].baseline.x;
 			pPSD->MineralText[2].baseline.y =
-				pPSD->MineralText[1].baseline.y + RES_SCALE(7);
+				pPSD->MineralText[1].baseline.y + ResScale(7);
 			font_DrawText(&pPSD->MineralText[2]);
 		}
 	}
@@ -1742,7 +1742,7 @@ AnimateLaunch(FRAME farray, bool isLanding)
 		{
 			// 10 to clear the lander off of the screen
 			ScrollPlanetSide(0, 0,
-							 -(MapSurface.height / 2 + RES_SCALE(10)));
+							 -(MapSurface.height / 2 + ResScale(10)));
 			psNextTime = Now + PlanetSideRate;
 		}
 
@@ -1789,7 +1789,7 @@ AnimateLanderWarmup(void)
 
 	s.frame = SetAbsFrameIndex(
 		is3DO(uqm::UQMOptions::read().landerStyle) ? LanderFrame[0] : LanderFrame[7],
-		(ANGLE_TO_FACING(FullCircle) << 1) + 1);
+		(AngleToFacing(FullCircle) << 1) + 1);
 
 	DrawStamp(&s);
 
@@ -1821,7 +1821,7 @@ AnimateLanderWarmup(void)
 	else
 	{
 		s.frame = SetAbsFrameIndex(s.frame,
-								   (ANGLE_TO_FACING(FullCircle) << 1) + 2);
+								   (AngleToFacing(FullCircle) << 1) + 2);
 	}
 	DrawStamp(&s);
 
@@ -1834,7 +1834,7 @@ AnimateLanderWarmup(void)
 	else
 	{
 		s.frame = SetAbsFrameIndex(s.frame,
-								   (ANGLE_TO_FACING(FullCircle) << 1) + 3);
+								   (AngleToFacing(FullCircle) << 1) + 3);
 		DrawStamp(&s);
 
 		animationInterframe(&TimeIn, 2);
@@ -1862,7 +1862,7 @@ InitPlanetSide(GFXPOINT pt)
 {
 	// Adjust landing location by a random jitter.
 	const auto RandomMiss = [&] {
-		return RES_SCALE(64);
+		return ResScale(64);
 	};
 	// Jitter the X landing point.
 	pt.x -= RandomMiss() - uqm::random().next() % (RandomMiss() << 1);
@@ -1978,7 +1978,7 @@ LanderFire(int16_t facing)
 	DisplayArray[WeaponElementPtr->PrimIndex].Object.Stamp.frame =
 		SetAbsFrameIndex(LanderFrame[0],
 						 /* shot images immediately follow the lander images */
-						 facing + ANGLE_TO_FACING(FullCircle));
+						 facing + AngleToFacing(FullCircle));
 
 	if (CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_UP]
 		|| CurrentInputState.key[static_cast<int>(PlayerControlTemplates[0])][KEY_THRUST])
@@ -1991,11 +1991,11 @@ LanderFire(int16_t facing)
 		wdy = 0;
 	}
 
-	angle = FACING_TO_ANGLE(facing);
+	angle = FacingToAngle(facing);
 	SetVelocityComponents(
 		&WeaponElementPtr->velocity,
-		COSINE(angle, WORLD_TO_VELOCITY(RES_SCALE(2 * 3))) + wdx,
-		SINE(angle, WORLD_TO_VELOCITY(RES_SCALE(2 * 3))) + wdy);
+		Cosine(angle, WorldToVelocity(ResScale(2 * 3))) + wdx,
+		Sine(angle, WorldToVelocity(ResScale(2 * 3))) + wdy);
 
 	UnlockElement(hWeaponElement);
 
@@ -2178,7 +2178,7 @@ LobMineralNode(uint16_t which_node, uint8_t type, const uint16_t amount)
 	DisplayArray[NodeElementPtr->PrimIndex].Object.Stamp.frame =
 		IncFrameIndex(NodeElementPtr->next.image.frame);
 
-	SetVelocityVector(&NodeElementPtr->velocity, RES_SCALE(dist >> 1), angle);
+	SetVelocityVector(&NodeElementPtr->velocity, ResScale(dist >> 1), angle);
 
 	UnlockElement(hNodeElement);
 
@@ -2286,18 +2286,18 @@ DoPlanetSide(LanderInputState* pMS)
 		turn_wait = 0;
 		weapon_wait = 0;
 
-		angle = FACING_TO_ANGLE(GetFrameIndex(LanderFrame[0]));
+		angle = FacingToAngle(GetFrameIndex(LanderFrame[0]));
 		landerSpeedNumer = GET_GAME_STATE(IMPROVED_LANDER_SPEED) ?
-							   WORLD_TO_VELOCITY(2 * RES_SCALE(14)) :
-							   WORLD_TO_VELOCITY(2 * RES_SCALE(8));
+							   WorldToVelocity(2 * ResScale(14)) :
+							   WorldToVelocity(2 * ResScale(8));
 
 #ifdef FAST_FAST
-		landerSpeedNumer = WORLD_TO_VELOCITY(RES_SCALE(48));
+		landerSpeedNumer = WorldToVelocity(ResScale(48));
 #endif
 
 		SetVelocityComponents(&uqm::flagship().velocity,
-							  COSINE(angle, landerSpeedNumer) / LanderSpeedDenom(),
-							  SINE(angle, landerSpeedNumer) / LanderSpeedDenom());
+							  Cosine(angle, landerSpeedNumer) / LanderSpeedDenom(),
+							  Sine(angle, landerSpeedNumer) / LanderSpeedDenom());
 
 		return true;
 	}
@@ -2364,22 +2364,22 @@ DoPlanetSide(LanderInputState* pMS)
 					++index;
 				}
 
-				index = NORMALIZE_FACING(index);
+				index = NormalizeFacing(index);
 				LanderFrame[0] = SetAbsFrameIndex(LanderFrame[0], index);
 
-				angle = FACING_TO_ANGLE(index);
+				angle = FacingToAngle(index);
 				landerSpeedNumer = GET_GAME_STATE(IMPROVED_LANDER_SPEED) ?
-									   WORLD_TO_VELOCITY(RES_SCALE(2 * 14)) :
-									   WORLD_TO_VELOCITY(RES_SCALE(2 * 8));
+									   WorldToVelocity(ResScale(2 * 14)) :
+									   WorldToVelocity(ResScale(2 * 8));
 
 #ifdef FAST_FAST
-				landerSpeedNumer = WORLD_TO_VELOCITY(RES_SCALE(48));
+				landerSpeedNumer = WorldToVelocity(ResScale(48));
 #endif
 
 				SetVelocityComponents(&uqm::flagship().velocity,
-									  COSINE(angle, landerSpeedNumer)
+									  Cosine(angle, landerSpeedNumer)
 										  / LanderSpeedDenom(),
-									  SINE(angle, landerSpeedNumer)
+									  Sine(angle, landerSpeedNumer)
 										  / LanderSpeedDenom());
 
 				turn_wait = ShuttleTurnWait();
@@ -2608,7 +2608,7 @@ IdlePlanetSide(LanderInputState* inputState, TimePeriod howLong)
 	while (GetTimeCounter() < TimeOut)
 	{
 		// 10 to clear the lander off of the screen
-		ScrollPlanetSide(0, 0, -(MapSurface.height / 2 + RES_SCALE(10)));
+		ScrollPlanetSide(0, 0, -(MapSurface.height / 2 + ResScale(10)));
 		SleepThreadUntil(inputState->NextTime);
 		inputState->NextTime += PlanetSideRate;
 	}
@@ -2621,9 +2621,9 @@ static void
 LandingTakeoffSequence(LanderInputState* inputState, bool landing)
 {
 	// We cannot solve a quadratic equation in a macro, so use a sensible max
-	// RES_SCALE (10) to clear the lander off of the screen
+	// ResScale (10) to clear the lander off of the screen
 	const auto DistanceCovered = [&] {
-		return (MapSurface.height / 2 + RES_SCALE(10));
+		return (MapSurface.height / 2 + ResScale(10));
 	};
 	int landingOfs[MaxOffsets];
 	int start {};
@@ -2823,7 +2823,7 @@ void PlanetSide(GFXPOINT planetLoc)
 		BuildColor(MakeRgb15(0x1F, 0x03, 0x00), 0x7F);
 	planetSideDesc = &PSD;
 
-	index = NORMALIZE_FACING(uqm::random().next());
+	index = NormalizeFacing(uqm::random().next());
 	LanderFrame[0] = SetAbsFrameIndex(LanderFrame[0], index);
 	crew_left = 0;
 	damage_index = 0;
@@ -2946,32 +2946,32 @@ DrawMinDatText(void)
 	GFXRECT rect;
 	Color OldColor;
 
-	if (!strlen(GAME_STRING(STATUS_STRING_BASE + 20)) || !strlen(GAME_STRING(STATUS_STRING_BASE + 21)))
+	if (!strlen(GameString(STATUS_STRING_BASE + 20)) || !strlen(GameString(STATUS_STRING_BASE + 21)))
 	{
 		return;
 	}
 
 	OldColor = SetContextForeGroundColor(BlackColor);
-	rect.corner.x = RES_SCALE(5);
-	rect.corner.y = RadarHeight() - RES_SCALE(7);
-	rect.extent.width = RES_SCALE(46);
-	rect.extent.height = RES_SCALE(6);
+	rect.corner.x = ResScale(5);
+	rect.corner.y = RadarHeight() - ResScale(7);
+	rect.extent.width = ResScale(46);
+	rect.extent.height = ResScale(6);
 	DrawFilledRectangle(&rect);
 
 	FONT OldFont {SetContextFont(TinyFontBold)};
 	SetContextForeGroundColor(LandStatMinColor);
 	text.align = ALIGN_LEFT;
-	text.baseline.x = rect.corner.x + RES_SCALE(1);
+	text.baseline.x = rect.corner.x + ResScale(1);
 	text.baseline.y = rect.corner.y + rect.extent.height;
-	text.pStr = GAME_STRING(STATUS_STRING_BASE + 20); // MIN
+	text.pStr = GameString(STATUS_STRING_BASE + 20); // MIN
 	text.CharCount = (uint16_t)~0;
 
 	font_DrawText(&text);
 
 	SetContextForeGroundColor(LandStatDatColor);
 	text.align = ALIGN_RIGHT;
-	text.baseline.x = rect.corner.x + rect.extent.width - RES_SCALE(1);
-	text.pStr = GAME_STRING(STATUS_STRING_BASE + 21); // DAT
+	text.baseline.x = rect.corner.x + rect.extent.width - ResScale(1);
+	text.pStr = GameString(STATUS_STRING_BASE + 21); // DAT
 	text.CharCount = (uint16_t)~0;
 
 	font_DrawText(&text);
@@ -3026,7 +3026,7 @@ void InitLander(uint8_t LanderFlags)
 			else
 			{
 				s.frame = SetAbsFrameIndex(s.frame,
-										   (ANGLE_TO_FACING(FullCircle) << 1) + 3);
+										   (AngleToFacing(FullCircle) << 1) + 3);
 				DrawStamp(&s);
 				s.frame = IncFrameIndex(s.frame);
 			}
@@ -3048,7 +3048,7 @@ void InitLander(uint8_t LanderFlags)
 			else
 			{
 				s.frame = SetAbsFrameIndex(s.frame,
-										   (ANGLE_TO_FACING(FullCircle) << 1) + 2);
+										   (AngleToFacing(FullCircle) << 1) + 2);
 			}
 			DrawStamp(&s);
 		}
@@ -3057,13 +3057,13 @@ void InitLander(uint8_t LanderFlags)
 				   - GLOBAL_SIS(TotalElementMass);
 		if ((int)free_space < (int)(MaxScrounged() << capacity_shift))
 		{
-			r.corner.x = RES_SCALE(1);
-			r.extent.width = RES_SCALE(4);
+			r.corner.x = ResScale(1);
+			r.extent.width = ResScale(4);
 			r.extent.height =
-				RES_SCALE(MaxHoldBars()
-						  - ((free_space >> capacity_shift)
-							 * MaxHoldBars() / MaxScrounged())
-						  + 2);
+				ResScale(MaxHoldBars()
+						 - ((free_space >> capacity_shift)
+							* MaxHoldBars() / MaxScrounged())
+						 + 2);
 			SetContextForeGroundColor(BlackColor);
 			DrawFilledRectangle(&r);
 		}
@@ -3133,25 +3133,25 @@ void InitPCLander(bool Loading)
 
 			inc = MaxHoldBars() - ((free_space >> capacity_shift) * MaxHoldBars() / MaxScrounged()) + 1;
 
-			r.corner = MAKE_POINT(RES_SCALE(1), 0);
-			r.extent = MAKE_EXTENT(RES_SCALE(2), RES_SCALE(inc));
+			r.corner = MAKE_POINT(ResScale(1), 0);
+			r.extent = MAKE_EXTENT(ResScale(2), ResScale(inc));
 			SetContextForeGroundColor(BlackColor);
 			DrawFilledRectangle(&r);
 
-			r.extent = MAKE_EXTENT(RES_SCALE(1), RES_SCALE(1));
+			r.extent = MAKE_EXTENT(ResScale(1), ResScale(1));
 
 			for (uint16_t i {0}; i < inc; i++)
 			{
 				if (i % 2 == 0)
 				{ // Draw grey boxes every 2nd iteration
-					r.corner.y += RES_SCALE(1);
+					r.corner.y += ResScale(1);
 					SetContextForeGroundColor(VdkgrayColor);
 					DrawFilledRectangle(&r);
-					r.corner.x += RES_SCALE(1);
+					r.corner.x += ResScale(1);
 					SetContextForeGroundColor(BlackColor);
 					DrawFilledRectangle(&r);
-					r.corner.x -= RES_SCALE(1);
-					r.corner.y += RES_SCALE(1);
+					r.corner.x -= ResScale(1);
+					r.corner.y += ResScale(1);
 				}
 			}
 		}

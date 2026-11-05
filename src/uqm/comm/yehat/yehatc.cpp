@@ -248,21 +248,21 @@ ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, bye_homeworld))
+	if (PlayerSaid(R, bye_homeworld))
 	{
 		NPCPhrase(GOODBYE_AND_DIE_HOMEWORLD);
 	}
-	else if (PLAYER_SAID(R, bye_royalist))
+	else if (PlayerSaid(R, bye_royalist))
 	{
 		NPCPhrase(GOODBYE_AND_DIE_ROYALIST);
 	}
-	else if (PLAYER_SAID(R, i_demand_you_ally_homeworld))
+	else if (PlayerSaid(R, i_demand_you_ally_homeworld))
 	{
 		NPCPhrase(ENEMY_MUST_DIE);
 
 		SET_GAME_STATE(NO_YEHAT_ALLY_HOME, 1);
 	}
-	else if (PLAYER_SAID(R, bye_space))
+	else if (PlayerSaid(R, bye_space))
 	{
 		if ((uint8_t)uqm::random().next() & 1)
 		{
@@ -275,8 +275,8 @@ ExitConversation(RESPONSE_REF R)
 			setSegue(Segue_peace);
 		}
 	}
-	else if (PLAYER_SAID(R, not_here)
-			 || PLAYER_SAID(R, not_send))
+	else if (PlayerSaid(R, not_here)
+			 || PlayerSaid(R, not_send))
 	{
 		switch (GET_GAME_STATE(YEHAT_REBEL_VISITS))
 		{
@@ -289,7 +289,7 @@ ExitConversation(RESPONSE_REF R)
 		}
 		SET_GAME_STATE(YEHAT_REBEL_VISITS, 1);
 	}
-	else if (PLAYER_SAID(R, ok_send))
+	else if (PlayerSaid(R, ok_send))
 	{
 		NPCPhrase(WE_REVOLT);
 
@@ -320,7 +320,7 @@ ExitConversation(RESPONSE_REF R)
 static void
 Royalists(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, how_is_rebellion))
+	if (PlayerSaid(R, how_is_rebellion))
 	{
 		uint8_t NumVisits {};
 
@@ -339,7 +339,7 @@ Royalists(RESPONSE_REF R)
 
 		DISABLE_PHRASE(how_is_rebellion);
 	}
-	else if (PLAYER_SAID(R, what_about_pkunk_royalist))
+	else if (PlayerSaid(R, what_about_pkunk_royalist))
 	{
 		if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK))
 		{
@@ -352,14 +352,14 @@ Royalists(RESPONSE_REF R)
 
 		SET_GAME_STATE(YEHAT_ROYALIST_TOLD_PKUNK, 1);
 	}
-	else if (PLAYER_SAID(R, sorry_about_revolution))
+	else if (PlayerSaid(R, sorry_about_revolution))
 	{
 		NPCPhrase(ALL_YOUR_FAULT);
 
 		SET_GAME_STATE(NO_YEHAT_INFO, 1);
 	}
 
-	if (PHRASE_ENABLED(how_is_rebellion))
+	if (PhraseEnabled(how_is_rebellion))
 	{
 		Response(how_is_rebellion, Royalists);
 	}
@@ -379,13 +379,13 @@ Royalists(RESPONSE_REF R)
 static void
 StartRevolt(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, shofixti_alive_1))
+	if (PlayerSaid(R, shofixti_alive_1))
 	{
 		NPCPhrase(SEND_HIM_OVER_1);
 
 		SET_GAME_STATE(YEHAT_REBEL_TOLD_PKUNK, 1);
 	}
-	else if (PLAYER_SAID(R, shofixti_alive_2))
+	else if (PlayerSaid(R, shofixti_alive_2))
 	{
 		NPCPhrase(SEND_HIM_OVER_2);
 	}
@@ -407,7 +407,7 @@ YehatHome(RESPONSE_REF R)
 
 	SetHomeworldKnown(YEHAT_HOME);
 
-	if (PLAYER_SAID(R, whats_up_homeworld))
+	if (PlayerSaid(R, whats_up_homeworld))
 	{
 		uint8_t NumVisits {};
 
@@ -426,19 +426,19 @@ YehatHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_homeworld);
 	}
-	else if (PLAYER_SAID(R, at_least_help_us_homeworld))
+	else if (PlayerSaid(R, at_least_help_us_homeworld))
 	{
 		NPCPhrase(NO_HELP_ENEMY);
 
 		SET_GAME_STATE(NO_YEHAT_HELP_HOME, 1);
 	}
-	else if (PLAYER_SAID(R, give_info))
+	else if (PlayerSaid(R, give_info))
 	{
 		NPCPhrase(NO_INFO_FOR_ENEMY);
 
 		SET_GAME_STATE(NO_YEHAT_INFO, 1);
 	}
-	else if (PLAYER_SAID(R, what_about_pkunk_royalist))
+	else if (PlayerSaid(R, what_about_pkunk_royalist))
 	{
 		if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK))
 		{
@@ -452,7 +452,7 @@ YehatHome(RESPONSE_REF R)
 		SET_GAME_STATE(YEHAT_ROYALIST_TOLD_PKUNK, 1);
 	}
 
-	if (PHRASE_ENABLED(whats_up_homeworld))
+	if (PhraseEnabled(whats_up_homeworld))
 	{
 		Response(whats_up_homeworld, YehatHome);
 	}
@@ -485,10 +485,10 @@ YehatSpace(RESPONSE_REF R)
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
-	if (PLAYER_SAID(R, whats_up_space_1)
-		|| PLAYER_SAID(R, whats_up_space_2)
-		|| PLAYER_SAID(R, whats_up_space_3)
-		|| PLAYER_SAID(R, whats_up_space_4))
+	if (PlayerSaid(R, whats_up_space_1)
+		|| PlayerSaid(R, whats_up_space_2)
+		|| PlayerSaid(R, whats_up_space_3)
+		|| PlayerSaid(R, whats_up_space_4))
 	{
 		uint8_t NumVisits {};
 
@@ -514,14 +514,14 @@ YehatSpace(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_space_1);
 	}
-	else if (PLAYER_SAID(R, i_demand_you_ally_space))
+	else if (PlayerSaid(R, i_demand_you_ally_space))
 	{
 		NPCPhrase(WE_CANNOT_1);
 
 		LastStack = 2;
 		SET_GAME_STATE(NO_YEHAT_ALLY_SPACE, 1);
 	}
-	else if (PLAYER_SAID(R, obligation))
+	else if (PlayerSaid(R, obligation))
 	{
 		NPCPhrase(WE_CANNOT_2);
 
@@ -530,20 +530,20 @@ YehatSpace(RESPONSE_REF R)
 
 		return;
 	}
-	else if (PLAYER_SAID(R, at_least_help_us_space))
+	else if (PlayerSaid(R, at_least_help_us_space))
 	{
 		NPCPhrase(SORRY_CANNOT);
 
 		LastStack = 1;
 		SET_GAME_STATE(NO_YEHAT_HELP_SPACE, 1);
 	}
-	else if (PLAYER_SAID(R, dishonor))
+	else if (PlayerSaid(R, dishonor))
 	{
 		NPCPhrase(HERES_A_HINT);
 
 		SET_GAME_STATE(NO_YEHAT_HELP_SPACE, 2);
 	}
-	else if (PLAYER_SAID(R, what_about_pkunk_royalist))
+	else if (PlayerSaid(R, what_about_pkunk_royalist))
 	{
 		if (GET_GAME_STATE(YEHAT_ABSORBED_PKUNK))
 		{
@@ -558,7 +558,7 @@ YehatSpace(RESPONSE_REF R)
 	}
 
 	// SET_FUNCPTR (&PtrDesc, YehatSpace);
-	if (PHRASE_ENABLED(whats_up_space_1))
+	if (PhraseEnabled(whats_up_space_1))
 	{
 		switch (GET_GAME_STATE(YEHAT_REBEL_INFO))
 		{
@@ -744,8 +744,8 @@ init_yehat_comm(void)
 	// generalised in the future.
 
 	yehat_desc.AlienTextBaseline.x = SisScreenWidth() * 2 / 3;
-	yehat_desc.AlienTextBaseline.y = RES_SCALE(107 * 2 / 3);
-	yehat_desc.AlienTextWidth = (SisTextWidth() - RES_SCALE(16)) * 2 / 3;
+	yehat_desc.AlienTextBaseline.y = ResScale(107 * 2 / 3);
+	yehat_desc.AlienTextWidth = (SisTextWidth() - ResScale(16)) * 2 / 3;
 
 	if (uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)
 	{

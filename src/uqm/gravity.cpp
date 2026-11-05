@@ -24,8 +24,8 @@
 
 //#define DEBUG_GRAVITY
 
-static auto DifuseGravity() { return RES_SCALE(175); } // JMS_GFX: Because of the ifdef NEVER this is actually never run. Well, changed it for consistency
-static auto MaxMagnitude() { return RES_SCALE(6); }	   // JMS_GFX: Because of the ifdef NEVER this is actually never run. Well, changed it for consistency
+static auto DifuseGravity() { return ResScale(175); } // JMS_GFX: Because of the ifdef NEVER this is actually never run. Well, changed it for consistency
+static auto MaxMagnitude() { return ResScale(6); }	  // JMS_GFX: Because of the ifdef NEVER this is actually never run. Well, changed it for consistency
 
 bool CalculateGravity(ELEMENT* ElementPtr)
 {
@@ -35,7 +35,7 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 
 	bool retval {false};
 	HasGravity = (bool)(CollidingElement(ElementPtr)
-						&& GRAVITY_MASS(ElementPtr->mass_points + 1));
+						&& GravityMass(ElementPtr->mass_points + 1));
 	for (hTestElement = GetHeadElement();
 		 hTestElement != 0; hTestElement = hSuccElement)
 	{
@@ -46,7 +46,7 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 		if (TestElementPtr != ElementPtr
 			&& CollidingElement(TestElementPtr)
 			&& (TestHasGravity =
-					GRAVITY_MASS(TestElementPtr->mass_points + 1))
+					GravityMass(TestElementPtr->mass_points + 1))
 				   != HasGravity)
 		{
 			uint16_t abs_dx {};
@@ -75,8 +75,8 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 				uqm::log::debug("\tdx = {}, dy = {}", dx, dy);
 			}
 #endif /* DEBUG_GRAVITY */
-			dx = WRAP_DELTA_X(dx);
-			dy = WRAP_DELTA_Y(dy);
+			dx = WrapDeltaX(dx);
+			dy = WrapDeltaY(dy);
 #ifdef DEBUG_GRAVITY
 			if (TestElementPtr->state_flags & PlayerShip)
 			{
@@ -85,8 +85,8 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 #endif /* DEBUG_GRAVITY */
 			abs_dx = dx >= 0 ? dx : -dx;
 			abs_dy = dy >= 0 ? dy : -dy;
-			abs_dx = WORLD_TO_DISPLAY(abs_dx);
-			abs_dy = WORLD_TO_DISPLAY(abs_dy);
+			abs_dx = WorldToDisplay(abs_dx);
+			abs_dy = WorldToDisplay(abs_dy);
 #ifdef DEBUG_GRAVITY
 			if (TestElementPtr->state_flags & PlayerShip)
 			{
@@ -141,8 +141,8 @@ bool CalculateGravity(ELEMENT* ElementPtr)
 					{
 						const uint16_t angle {ARCTAN(dx, dy)};
 						DeltaVelocityComponents(&TestElementPtr->velocity,
-												COSINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))),
-												SINE(angle, WORLD_TO_VELOCITY(RES_SCALE(1))));
+												Cosine(angle, WorldToVelocity(ResScale(1))),
+												Sine(angle, WorldToVelocity(ResScale(1))));
 						if (TestElementPtr->state_flags & PlayerShip)
 						{
 							STARSHIP* StarShipPtr {};
@@ -170,9 +170,9 @@ bool TimeSpaceMatterConflict(ELEMENT* ElementPtr)
 	INTERSECT_CONTROL ElementControl;
 
 	ElementControl.IntersectStamp.origin.x =
-		WORLD_TO_DISPLAY(ElementPtr->current.location.x);
+		WorldToDisplay(ElementPtr->current.location.x);
 	ElementControl.IntersectStamp.origin.y =
-		WORLD_TO_DISPLAY(ElementPtr->current.location.y);
+		WorldToDisplay(ElementPtr->current.location.y);
 	ElementControl.IntersectStamp.frame =
 		SetEquFrameIndex(ElementPtr->current.image.farray[0],
 						 ElementPtr->current.image.frame);
@@ -192,9 +192,9 @@ bool TimeSpaceMatterConflict(ELEMENT* ElementPtr)
 			INTERSECT_CONTROL TestElementControl;
 
 			TestElementControl.IntersectStamp.origin.x =
-				WORLD_TO_DISPLAY(TestElementPtr->current.location.x);
+				WorldToDisplay(TestElementPtr->current.location.x);
 			TestElementControl.IntersectStamp.origin.y =
-				WORLD_TO_DISPLAY(TestElementPtr->current.location.y);
+				WorldToDisplay(TestElementPtr->current.location.y);
 			TestElementControl.IntersectStamp.frame =
 				SetEquFrameIndex(TestElementPtr->current.image.farray[0],
 								 TestElementPtr->current.image.frame);

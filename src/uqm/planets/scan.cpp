@@ -212,20 +212,20 @@ void GetPlanetTitle(uqstl::span<char> buf)
 	{
 		if (!IsExtended())
 		{
-			const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{}", GAME_STRING(SCAN_STRING_BASE + 4 + 51));
+			const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{}", GameString(SCAN_STRING_BASE + 4 + 51));
 			*fmtResult.out = '\0';
 			// Gas Giant
 		}
 		else if (val <= NUMBER_OF_PLANET_TYPES)
 		{
-			const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{}", GAME_STRING(SCAN_STRING_BASE + 4 + 2 + val));
+			const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{}", GameString(SCAN_STRING_BASE + 4 + 2 + val));
 			*fmtResult.out = '\0';
 			// "Color" Gas Giant
 		}
 	}
 	else
 	{
-		const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{} {}", GAME_STRING(SCAN_STRING_BASE + 4 + val), GAME_STRING(SCAN_STRING_BASE + 4 + 50));
+		const auto fmtResult = fmt::format_to_n(buf.data(), buf.size() - 1, "{} {}", GameString(SCAN_STRING_BASE + 4 + val), GameString(SCAN_STRING_BASE + 4 + 50));
 		*fmtResult.out = '\0';
 		// World
 	}
@@ -266,7 +266,7 @@ HazardCase(uint8_t hazard)
 	SetContextForeGroundColor(HazardColor);
 }
 
-static auto ScanTitleY() { return RES_SCALE(13); }
+static auto ScanTitleY() { return ResScale(13); }
 
 static void
 PrintCoarseScanPC(void)
@@ -280,7 +280,7 @@ PrintCoarseScanPC(void)
 	SetContext(PlanetContext);
 
 	t.align = ALIGN_CENTER;
-	t.baseline.x = RES_SCALE(OrigSisScreenWidth() >> 1);
+	t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 	t.baseline.y = ScanTitleY();
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
@@ -293,59 +293,61 @@ PrintCoarseScanPC(void)
 	BatchGraphics();
 	PrintScanText(&t);
 
-	SetContextFont(SAFE_BOOL(TinyFont, TinyFontCond));
+	SetContextFont(SafeBool(TinyFont, TinyFontCond));
 
 	const auto LeftSideBaselineXPc = [&] {
-		return RES_SCALE(2);
+		return ResScale(2);
 	};
 	const auto RightSideBaselineXPc = [&] {
-		return (SisScreenWidth() - RES_SCALE(73) + SafeX());
+		return (SisScreenWidth() - ResScale(73) + SafeX());
 	};
 	const auto ScanBaselineYPc = [&] {
-		return (PLANET_ORG_Y - RES_SCALE(13));
+		return (PLANET_ORG_Y - ResScale(13));
 	};
 	const auto ScanLeadingPc = [&] {
-		return RES_SCALE(10);
+		return ResScale(10);
 	};
 
-#define ORBITSCAN_TEXT(a) (GAME_STRING(ORBITSCAN_STRING_BASE + (a)))
+	const auto OrbitscanText {[&](auto a) {
+		return (GameString(ORBITSCAN_STRING_BASE + (a)));
+	}};
 
 	t.baseline.y = ScanBaselineYPc();
 	t.align = ALIGN_LEFT;
 
-	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(0));
+	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(0));
 	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Orbit: "
 
 	val = ((pSolarSysState->SysInfo.PlanetInfo.PlanetToSunDist * 100L
 			+ (EarthRadius >> 1))
 		   / EarthRadius);
-	MakeScanValue(buf, val, ORBITSCAN_TEXT(1)); // " a.u."
+	MakeScanValue(buf, val, OrbitscanText(1)); // " a.u."
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(2));
+	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(2));
 	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Atmo: "
 
 	if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity
 		== GasGiantAtmosphere)
 	{
-		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(3)); // "Super Thick"
+		uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(3)); // "Super Thick"
 	}
 	else if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == 0)
 	{
-		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(4)); // "Vacuum"
+		uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(4)); // "Vacuum"
 	}
 	else
 	{
 		val = (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity * 100
 			   + (EarthAtmosphere >> 1))
 			/ EarthAtmosphere;
-		MakeScanValue(buf, val, ORBITSCAN_TEXT(5)); // " atm"
+		MakeScanValue(buf, val, OrbitscanText(5)); // " atm"
 	}
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(6));
+	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(6));
 	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Temp: "
 
 	fmt::format_to_sz_n(buf, "{}{} c",
@@ -360,16 +362,16 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(7));
+	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(7));
 	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Weather: "
 
 	if (pSolarSysState->SysInfo.PlanetInfo.AtmoDensity == 0)
 	{
-		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(8)); // "None"
+		uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(8)); // "None"
 	}
 	else
 	{
-		fmt::format_to_sz_n(buf, "{} {}", ORBITSCAN_TEXT(9), // "Class"
+		fmt::format_to_sz_n(buf, "{} {}", OrbitscanText(9), // "Class"
 							pSolarSysState->SysInfo.PlanetInfo.Weather + 1);
 	}
 
@@ -381,16 +383,16 @@ PrintCoarseScanPC(void)
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(10));
+	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(10));
 	PrintScanTitlePC(&t, buf, LeftSideBaselineXPc()); // "Tectonics: "
 
-	if (PLANSIZE(pSolarSysState->SysInfo.PlanetInfo.PlanDataPtr->Type) == GAS_GIANT)
+	if (Plansize(pSolarSysState->SysInfo.PlanetInfo.PlanDataPtr->Type) == GAS_GIANT)
 	{
-		uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(8)); // "None"
+		uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(8)); // "None"
 	}
 	else
 	{
-		fmt::format_to_sz_n(buf, "{} {}", ORBITSCAN_TEXT(9), // "Class"
+		fmt::format_to_sz_n(buf, "{} {}", OrbitscanText(9), // "Class"
 							pSolarSysState->SysInfo.PlanetInfo.Tectonics + 1);
 	}
 
@@ -403,7 +405,7 @@ PrintCoarseScanPC(void)
 
 	t.baseline.y = ScanBaselineYPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(11));
+	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(11));
 	PrintScanTitlePC(&t, buf, RightSideBaselineXPc()); // "Mass: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.PlanetRadius;
@@ -415,19 +417,19 @@ PrintCoarseScanPC(void)
 	{
 		val = 1;
 	}
-	MakeScanValue(buf, val, ORBITSCAN_TEXT(12)); // " e.s."
+	MakeScanValue(buf, val, OrbitscanText(12)); // " e.s."
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(13));
+	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(13));
 	PrintScanTitlePC(&t, buf, RightSideBaselineXPc()); // "Radius: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.PlanetRadius;
-	MakeScanValue(buf, val, ORBITSCAN_TEXT(12)); // " e.s."
+	MakeScanValue(buf, val, OrbitscanText(12)); // " e.s."
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(14));
+	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(14));
 	PrintScanTitlePC(&t, buf, RightSideBaselineXPc()); // "Gravity: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.SurfaceGravity;
@@ -435,19 +437,19 @@ PrintCoarseScanPC(void)
 	{
 		val = 1;
 	}
-	MakeScanValue(buf, val, ORBITSCAN_TEXT(15)); // " g."
+	MakeScanValue(buf, val, OrbitscanText(15)); // " g."
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(16));
+	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(16));
 	PrintScanTitlePC(&t, buf, RightSideBaselineXPc()); // "Day: "
 
 	val = GetRotationalPeriod();
-	MakeDayValue(buf, val, ORBITSCAN_TEXT(17)); // " days"
+	MakeDayValue(buf, val, OrbitscanText(17)); // " days"
 	PrintScanText(&t);
 	t.baseline.y += ScanLeadingPc();
 
-	uqm::utf8StringCopy(buf, sizeof(buf), ORBITSCAN_TEXT(18));
+	uqm::utf8StringCopy(buf, sizeof(buf), OrbitscanText(18));
 	PrintScanTitlePC(&t, buf, RightSideBaselineXPc()); // "Tilt: "
 
 	val = pSolarSysState->SysInfo.PlanetInfo.AxialTilt;
@@ -465,7 +467,7 @@ static void
 PrintCoarseScan3DO(void)
 {
 	const auto ScanLeading = [&] {
-		return RES_SCALE(19);
+		return ResScale(19);
 	};
 	int32_t val {};
 	TEXT t;
@@ -485,7 +487,7 @@ PrintCoarseScan3DO(void)
 	BatchGraphics();
 
 	t.align = ALIGN_CENTER;
-	t.baseline.x = RES_SCALE(OrigSisScreenWidth() >> 1);
+	t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 	t.baseline.y = ScanTitleY();
 	t.pStr = buf;
 	t.CharCount = (uint16_t)~0;
@@ -495,19 +497,19 @@ PrintCoarseScan3DO(void)
 
 	s.frame = SetAbsFrameIndex(SpaceJunkFrame, frameIndex);
 
-	s.origin.x = PlanetOrgX() - RES_SCALE(107);
-	s.origin.y = PLANET_ORG_Y - RES_SCALE(46) + UseDosSpheres();
+	s.origin.x = PlanetOrgX() - ResScale(107);
+	s.origin.y = PLANET_ORG_Y - ResScale(46) + UseDosSpheres();
 
 	DrawStamp(&s);
 
 	const auto ScanBaselineY = [&] {
-		return (PLANET_ORG_Y - RES_SCALE(36) + UseDosSpheres());
+		return (PLANET_ORG_Y - ResScale(36) + UseDosSpheres());
 	};
 	const auto LeftSideBaselineX = [&] {
-		return (PlanetOrgX() - RES_SCALE(78));
+		return (PlanetOrgX() - ResScale(78));
 	};
 	const auto RightSideBaselineX = [&] {
-		return (PlanetOrgX() + RES_SCALE(78));
+		return (PlanetOrgX() + ResScale(78));
 	};
 
 	t.baseline.x = LeftSideBaselineX();
@@ -560,7 +562,7 @@ PrintCoarseScan3DO(void)
 	t.baseline.y += ScanLeading();
 
 	fmt::format_to_sz_n(buf, "<{}>",
-						PLANSIZE(
+						Plansize(
 							pSolarSysState->SysInfo.PlanetInfo.PlanDataPtr->Type)
 								== GAS_GIANT ?
 							0 :
@@ -916,19 +918,19 @@ DoPickPlanetSide(MENU_STATE* pMS)
 		{
 			if (CurrentInputState.menu[KEY_MENU_LEFT])
 			{
-				dx = -RES_SCALE(1);
+				dx = -ResScale(1);
 			}
 			if (CurrentInputState.menu[KEY_MENU_RIGHT])
 			{
-				dx = RES_SCALE(1);
+				dx = ResScale(1);
 			}
 			if (CurrentInputState.menu[KEY_MENU_UP])
 			{
-				dy = -RES_SCALE(1);
+				dy = -ResScale(1);
 			}
 			if (CurrentInputState.menu[KEY_MENU_DOWN])
 			{
-				dy = RES_SCALE(1);
+				dy = ResScale(1);
 			}
 
 			// Triple the cursor speed when the "Next" key is held down
@@ -1004,7 +1006,7 @@ drawLandingFuelUsage(uint16_t fuel)
 		old_status_message_mode = SetStatusMessageMode(SMM_WARNING);
 	}
 
-	fmt::format_to_n(buf, sizeof(buf) - 1, "{}{:1.1}", GAME_STRING(NAVIGATION_STRING_BASE + 5), (float)fuel / FuelTankScale);
+	fmt::format_to_n(buf, sizeof(buf) - 1, "{}{:1.1}", GameString(NAVIGATION_STRING_BASE + 5), (float)fuel / FuelTankScale);
 	DrawStatusMessage(buf);
 
 	if (old_status_message_mode != SMM_UNDEFINED)
@@ -1306,7 +1308,7 @@ ScanPlanet(uint16_t scanType)
 		return (OriginalMapHeight() + NumFlashColors + 1);
 	};
 	const auto ScanLines = [&] {
-		return RES_SCALE(ScanLinesOg());
+		return ResScale(ScanLinesOg());
 	};
 #define SCAN_LINE_WAIT (TimePeriod {ScanDuration()} / ScanLinesOg())
 	// For taming the scan FPS on underpowered devices
@@ -1358,18 +1360,18 @@ ScanPlanet(uint16_t scanType)
 		static TimeCount TimeOutDraw;
 		TimeCount Now;
 
-		t.baseline.x = RES_SCALE(OrigSisScreenWidth() >> 1);
-		t.baseline.y = SisScreenHeight() - MapHeight() - RES_SCALE(7);
+		t.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
+		t.baseline.y = SisScreenHeight() - MapHeight() - ResScale(7);
 		t.align = ALIGN_CENTER;
 		t.CharCount = (uint16_t)~0;
 
-		t.pStr = GAME_STRING(SCAN_STRING_BASE + scan);
+		t.pStr = GameString(SCAN_STRING_BASE + scan);
 
 		SetContext(PlanetContext);
 		r.corner.x = 0;
-		r.corner.y = t.baseline.y - RES_SCALE(10);
+		r.corner.y = t.baseline.y - ResScale(10);
 		r.extent.width = SisScreenWidth();
-		r.extent.height = t.baseline.y - r.corner.y + RES_SCALE(1);
+		r.extent.height = t.baseline.y - r.corner.y + ResScale(1);
 		RepairBackRect(&r);
 
 		SetContextFont(MicroFont);
@@ -1410,7 +1412,7 @@ ScanPlanet(uint16_t scanType)
 
 					TimeOut = Now + SCAN_LINE_WAIT;
 
-					i += RES_SCALE(1);
+					i += ResScale(1);
 
 					if (Now >= TimeOutDraw)
 					{
@@ -1571,15 +1573,15 @@ CreateScanContext(bool inSpace)
 	GFXCONTEXT context {CreateContext("ScanContext")};
 	SetContext(context);
 	SetContextFGFrame(Screen);
-	x_offset = RES_DESCALE(r.extent.width - ScaledMapWidth());
+	x_offset = ResDescale(r.extent.width - ScaledMapWidth());
 	r.extent.width = ScaledMapWidth();
 	if (inSpace && x_offset > 0)
 	{
 		x_offset >>= 1;
 		x_offset += 2;
-		r.extent.width -= RES_SCALE(5);
+		r.extent.width -= ResScale(5);
 	}
-	r.corner.x += RES_SCALE(x_offset);
+	r.corner.x += ResScale(x_offset);
 	r.corner.y += r.extent.height - MapHeight();
 	r.extent.height = MapHeight();
 

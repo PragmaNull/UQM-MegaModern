@@ -756,7 +756,7 @@ Flash_drawFrame(FlashContext* context, FRAME frame, bool pcRect)
 	{
 		const Color color = GetFlashPCColor();
 		DrawStarConBox(
-			&context->rect, RES_SCALE(1), color, color, false,
+			&context->rect, ResScale(1), color, color, false,
 			Transparent, false, Transparent);
 	}
 

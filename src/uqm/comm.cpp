@@ -235,17 +235,17 @@ add_text(int status, TEXT* pTextIn)
 	}
 	else if (GetContextFontLeading(&leading), status <= -4)
 	{
-		text_width = (int16_t)(SisScreenWidth() - RES_SCALE(8)
+		text_width = (int16_t)(SisScreenWidth() - ResScale(8)
 							   - (TextXOffs() << 2)
-							   - (arrow.extent.width + RES_SCALE(2)));
+							   - (arrow.extent.width + ResScale(2)));
 
 		pText = pTextIn;
 	}
 	else
 	{
-		text_width = (int16_t)(SisScreenWidth() - RES_SCALE(8)
+		text_width = (int16_t)(SisScreenWidth() - ResScale(8)
 							   - (TextXOffs() << 2)
-							   - (arrow.extent.width + RES_SCALE(2)));
+							   - (arrow.extent.width + ResScale(2)));
 
 		switch (status)
 		{
@@ -297,7 +297,7 @@ add_text(int status, TEXT* pTextIn)
 
 		maxchars = pTextIn->CharCount;
 		locText = *pTextIn;
-		locText.baseline.x -= RES_SCALE(8);
+		locText.baseline.x -= ResScale(8);
 		locText.CharCount = (uint16_t)~0;
 		locText.pStr = StrBullet;
 		font_DrawText(&locText);
@@ -540,8 +540,8 @@ void DrawCommBorder(GFXRECT r)
 
 	// Expand the context clip-rect so that we can tweak the existing border
 	clipRect = oldClipRect;
-	clipRect.corner.x -= RES_SCALE(1);
-	clipRect.extent.width += RES_SCALE(2);
+	clipRect.corner.x -= ResScale(1);
+	clipRect.extent.width += ResScale(2);
 	SetContextClipRect(&clipRect);
 
 	// Border foreground
@@ -553,12 +553,12 @@ void DrawCommBorder(GFXRECT r)
 
 	// Border top shadow line
 	SetContextForeGroundColor(SisBottomRightBorderColor);
-	r.extent.height = RES_SCALE(1);
+	r.extent.height = ResScale(1);
 	DrawFilledRectangle(&r);
 
 	// Border bottom shadow line
 	SetContextForeGroundColor(SisLeftBorderColor);
-	r.corner.y += SliderHeight() - RES_SCALE(1);
+	r.corner.y += SliderHeight() - ResScale(1);
 	DrawFilledRectangle(&r);
 
 	SetContextClipRect(&oldClipRect);
@@ -622,12 +622,12 @@ RefreshResponsesSpecial(ENCOUNTER_STATE* pES)
 	BatchGraphics();
 
 	DrawSISComWindow();
-	y = SliderY() + SliderHeight() + RES_SCALE(is3DO(uqm::UQMOptions::read().whichFonts));
+	y = SliderY() + SliderHeight() + ResScale(is3DO(uqm::UQMOptions::read().whichFonts));
 	for (response = pES->top_response; response < pES->num_responses;
 		 ++response)
 	{
 		pES->response_list[response].response_text.baseline.x =
-			TextXOffs() + RES_SCALE(8);
+			TextXOffs() + ResScale(8);
 		pES->response_list[response].response_text.baseline.y =
 			y + leading;
 		pES->response_list[response].response_text.align = ALIGN_LEFT;
@@ -658,12 +658,12 @@ RefreshResponses(ENCOUNTER_STATE* pES)
 	BatchGraphics();
 
 	DrawSISComWindow();
-	y = SliderY() + SliderHeight() + RES_SCALE(is3DO(uqm::UQMOptions::read().whichFonts));
+	y = SliderY() + SliderHeight() + ResScale(is3DO(uqm::UQMOptions::read().whichFonts));
 	for (response = pES->top_response; response < pES->num_responses;
 		 ++response)
 	{
 		pES->response_list[response].response_text.baseline.x =
-			TextXOffs() + RES_SCALE(8);
+			TextXOffs() + ResScale(8);
 		pES->response_list[response].response_text.baseline.y =
 			y + leading;
 		pES->response_list[response].response_text.align = ALIGN_LEFT;
@@ -679,12 +679,12 @@ RefreshResponses(ENCOUNTER_STATE* pES)
 
 	if (pES->top_response)
 	{
-		s.origin.y = SliderY() + SliderHeight() + RES_SCALE(1);
+		s.origin.y = SliderY() + SliderHeight() + ResScale(1);
 		s.frame = SetAbsFrameIndex(ActivityFrame, 6);
 	}
 	else if (y > SisScreenHeight())
 	{
-		s.origin.y = SisScreenHeight() - RES_SCALE(2);
+		s.origin.y = SisScreenHeight() - ResScale(2);
 		s.frame = SetAbsFrameIndex(ActivityFrame, 7);
 	}
 	else
@@ -696,7 +696,7 @@ RefreshResponses(ENCOUNTER_STATE* pES)
 		GFXRECT r;
 
 		GetFrameRect(s.frame, &r);
-		s.origin.x = SisScreenWidth() - r.extent.width - RES_SCALE(1);
+		s.origin.x = SisScreenWidth() - r.extent.width - ResScale(1);
 		DrawStamp(&s);
 	}
 
@@ -714,14 +714,14 @@ FeedbackPlayerPhrase(char* pStr)
 	{
 		TEXT ct;
 
-		ct.baseline.x = RES_SCALE(OrigSisScreenWidth() >> 1);
-		ct.baseline.y = SliderY() + SliderHeight() + RES_SCALE(13);
+		ct.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
+		ct.baseline.y = SliderY() + SliderHeight() + ResScale(13);
 		ct.align = ALIGN_CENTER;
 		ct.CharCount = (uint16_t)~0;
 
 		if (!IsDarkMode)
 		{
-			ct.pStr = GAME_STRING(FEEDBACK_STRING_BASE);
+			ct.pStr = GameString(FEEDBACK_STRING_BASE);
 			// "(In response to your statement)"
 			SetContextForeGroundColor(CommResponseIntroTextColor);
 			font_DrawText(&ct);
@@ -734,7 +734,7 @@ FeedbackPlayerPhrase(char* pStr)
 				BuildColorRgba(0x55, 0x55, 0xFF, 0xFF));
 		}
 
-		ct.baseline.y += RES_SCALE(16);
+		ct.baseline.y += ResScale(16);
 		ct.pStr = pStr;
 		add_text(-4, &ct);
 	}
@@ -1317,7 +1317,7 @@ static bool
 DoConvSummary(SUMMARY_STATE* pSS)
 {
 	const auto DeltaYSummary = [&] {
-		return RES_SCALE(8);
+		return ResScale(8);
 	};
 #define MAX_SUMM_ROWS (SliderY() / DeltaYSummary()) - 1
 
@@ -1364,8 +1364,8 @@ DoConvSummary(SUMMARY_STATE* pSS)
 
 		SetContextForeGroundColor(CommHistoryTextColor);
 
-		r.extent.width -= RES_SCALE(2 + 2);
-		t.baseline.x = RES_SCALE(2);
+		r.extent.width -= ResScale(2 + 2);
+		t.baseline.x = ResScale(2);
 		t.align = ALIGN_LEFT;
 		t.baseline.y = DeltaYSummary();
 
@@ -1444,11 +1444,11 @@ DoConvSummary(SUMMARY_STATE* pSS)
 			TEXT mt;
 			char buffer[128];
 
-			mt.baseline.x = RES_SCALE(OrigSisScreenWidth() >> 1);
+			mt.baseline.x = ResScale(OrigSisScreenWidth() >> 1);
 			mt.baseline.y = t.baseline.y;
 			mt.align = ALIGN_CENTER;
 			fmt::format_to_sz_n(buffer, "{}{}{}", // "MORE"
-								StrMiddleDot, GAME_STRING(FEEDBACK_STRING_BASE + 1),
+								StrMiddleDot, GameString(FEEDBACK_STRING_BASE + 1),
 								StrMiddleDot);
 
 			if (CommData.AlienConv == ORZ_CONVERSATION)
@@ -1922,14 +1922,14 @@ HailAlien(void)
 		{
 			// set the position of outtakes comm
 			CommWndRect.corner.x = ((CanvasWidth - CommWndRect.extent.width) / 2);
-			CommWndRect.corner.y = RES_SCALE(5);
+			CommWndRect.corner.y = ResScale(5);
 			r.corner = CommWndRect.corner;
 			SetContextClipRect(&r);
 		}
 		else
 		{
-			const GFXPOINT Log = MAKE_POINT(LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)),
-											LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y)));
+			const GFXPOINT Log = MAKE_POINT(LogxToUniverse(GLOBAL_SIS(log_x)),
+											LogyToUniverse(GLOBAL_SIS(log_y)));
 
 			r.corner.x = SisOrgX();
 			r.corner.y = SisOrgY();
@@ -1942,9 +1942,9 @@ HailAlien(void)
 			if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) == (uint8_t)~0
 				&& GET_GAME_STATE(STARBASE_AVAILABLE))
 			{ // Talking to allied Starbase
-				DrawSISMessage(GAME_STRING(STARBASE_STRING_BASE + 1));
+				DrawSISMessage(GameString(STARBASE_STRING_BASE + 1));
 				// "Starbase Commander"
-				DrawSISTitle(GAME_STRING(STARBASE_STRING_BASE + 0));
+				DrawSISTitle(GameString(STARBASE_STRING_BASE + 0));
 				// "Starbase"
 			}
 			else
@@ -2484,8 +2484,8 @@ void SetCustomBaseLine(uint16_t sentence, GFXPOINT bl, TEXT_ALIGN align)
 
 	CUSTOM_BASELINE* cur {new CUSTOM_BASELINE {}};
 	cur->index = sentence;
-	cur->baseline.x = RES_SCALE(bl.x);
-	cur->baseline.y = RES_SCALE(bl.y);
+	cur->baseline.x = ResScale(bl.x);
+	cur->baseline.y = ResScale(bl.y);
 	cur->align = align;
 
 	if (head_node == nullptr)

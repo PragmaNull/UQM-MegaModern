@@ -125,26 +125,26 @@ ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
-	if (PLAYER_SAID(R, friendly_bye_space))
+	if (PlayerSaid(R, friendly_bye_space))
 	{
 		NPCPhrase(FRIENDLY_GOODBYE_SPACE);
 	}
-	else if (PLAYER_SAID(R, neutral_bye_space))
+	else if (PlayerSaid(R, neutral_bye_space))
 	{
 		NPCPhrase(NEUTRAL_GOODBYE_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_angry))
+	else if (PlayerSaid(R, bye_angry))
 	{
 		NPCPhrase(GOODBYE_ANGRY);
 	}
-	else if (PLAYER_SAID(R, bye_friendly))
+	else if (PlayerSaid(R, bye_friendly))
 	{
 		NPCPhrase(GOODBYE_FRIENDLY);
 	}
-	else if (PLAYER_SAID(R, we_here_to_help)
-			 || PLAYER_SAID(R, we_need_help))
+	else if (PlayerSaid(R, we_here_to_help)
+			 || PlayerSaid(R, we_need_help))
 	{
-		if (PLAYER_SAID(R, we_here_to_help))
+		if (PlayerSaid(R, we_here_to_help))
 		{
 			NPCPhrase(NEED_HELP);
 		}
@@ -175,7 +175,7 @@ ExitConversation(RESPONSE_REF R)
 			}
 		}
 	}
-	else if (PLAYER_SAID(R, try_to_be_nicer))
+	else if (PlayerSaid(R, try_to_be_nicer))
 	{
 		NPCPhrase(CANT_ASK_FOR_MORE);
 		NPCPhrase(VISIT_OUR_HOMEWORLD);
@@ -185,10 +185,10 @@ ExitConversation(RESPONSE_REF R)
 		SET_GAME_STATE(PKUNK_HOME_VISITS, 0);
 		SET_GAME_STATE(PKUNK_INFO, 0);
 	}
-	else if (PLAYER_SAID(R, must_conquer)
-			 || PLAYER_SAID(R, obey))
+	else if (PlayerSaid(R, must_conquer)
+			 || PlayerSaid(R, obey))
 	{
-		if (PLAYER_SAID(R, obey))
+		if (PlayerSaid(R, obey))
 		{
 			NPCPhrase(NO_OBEY);
 		}
@@ -200,13 +200,13 @@ ExitConversation(RESPONSE_REF R)
 		}
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, die_idiot_fools))
+	else if (PlayerSaid(R, die_idiot_fools))
 	{
 		NPCPhrase(VERY_WELL);
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, suit_yourself))
+	else if (PlayerSaid(R, suit_yourself))
 	{
 		NPCPhrase(GOODBYE_MIGRATION);
 	}
@@ -215,24 +215,24 @@ ExitConversation(RESPONSE_REF R)
 		uint8_t ReasonMask {};
 
 		ReasonMask = GET_GAME_STATE(PKUNK_REASONS);
-		if (PLAYER_SAID(R, good_reason_1))
+		if (PlayerSaid(R, good_reason_1))
 		{
 			NPCPhrase(WE_GO_HOME_1);
 			ReasonMask |= GoodReason1;
 			AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_PKUNK_MISSION);
 		}
-		else if (PLAYER_SAID(R, good_reason_2))
+		else if (PlayerSaid(R, good_reason_2))
 		{
 			NPCPhrase(WE_GO_HOME_2);
 			ReasonMask |= GoodReason2;
 			AddEvent(RELATIVE_EVENT, 0, 0, 0, ADVANCE_PKUNK_MISSION);
 		}
-		else if (PLAYER_SAID(R, bad_reason_1))
+		else if (PlayerSaid(R, bad_reason_1))
 		{
 			NPCPhrase(NO_GO_HOME_1);
 			ReasonMask |= BadReason1;
 		}
-		else if (PLAYER_SAID(R, bad_reason_2))
+		else if (PlayerSaid(R, bad_reason_2))
 		{
 			NPCPhrase(NO_GO_HOME_2);
 			ReasonMask |= BadReason2;
@@ -246,26 +246,26 @@ static void PkunkHome(RESPONSE_REF R);
 static void
 PkunkAngry(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, why_insults))
+	if (PlayerSaid(R, why_insults))
 	{
 		NPCPhrase(RELEASE_TENSION);
 
 		DISABLE_PHRASE(why_insults);
 	}
-	else if (PLAYER_SAID(R, what_about_you))
+	else if (PlayerSaid(R, what_about_you))
 	{
 		NPCPhrase(ABOUT_US);
 
 		DISABLE_PHRASE(what_about_you);
 	}
-	else if (PLAYER_SAID(R, should_be_friends))
+	else if (PlayerSaid(R, should_be_friends))
 	{
 		NPCPhrase(YES_FRIENDS);
 
 		DISABLE_PHRASE(should_be_friends);
 	}
 
-	if (PHRASE_ENABLED(should_be_friends))
+	if (PhraseEnabled(should_be_friends))
 	{
 		Response(should_be_friends, PkunkAngry);
 	}
@@ -281,11 +281,11 @@ PkunkAngry(RESPONSE_REF R)
 		}
 	}
 	Response(die_idiot_fools, ExitConversation);
-	if (PHRASE_ENABLED(why_insults))
+	if (PhraseEnabled(why_insults))
 	{
 		Response(why_insults, PkunkAngry);
 	}
-	if (PHRASE_ENABLED(what_about_you))
+	if (PhraseEnabled(what_about_you))
 	{
 		Response(what_about_you, PkunkAngry);
 	}
@@ -295,13 +295,13 @@ PkunkAngry(RESPONSE_REF R)
 static void
 DiscussConquer(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, we_conquer))
+	if (PlayerSaid(R, we_conquer))
 	{
 		NPCPhrase(WHY_CONQUER);
 
 		DISABLE_PHRASE(we_conquer);
 	}
-	else if (PLAYER_SAID(R, conquer_because_1))
+	else if (PlayerSaid(R, conquer_because_1))
 	{
 #if 0
 		NPCPhrase (NOT_CONQUER_10);
@@ -314,14 +314,14 @@ DiscussConquer(RESPONSE_REF R)
 
 		DISABLE_PHRASE(conquer_because_1);
 	}
-	else if (PLAYER_SAID(R, conquer_because_2))
+	else if (PlayerSaid(R, conquer_because_2))
 	{
 		NPCPhrase(NOT_CONQUER_2);
 
 		DISABLE_PHRASE(conquer_because_2);
 	}
 
-	if (PHRASE_ENABLED(conquer_because_1))
+	if (PhraseEnabled(conquer_because_1))
 	{
 #if 0
 		char buf[ALLIANCE_NAME_BUFSIZE];
@@ -336,7 +336,7 @@ DiscussConquer(RESPONSE_REF R)
 #endif
 		Response(conquer_because_1, DiscussConquer);
 	}
-	if (PHRASE_ENABLED(conquer_because_2))
+	if (PhraseEnabled(conquer_because_2))
 	{
 		Response(conquer_because_2, DiscussConquer);
 	}
@@ -347,17 +347,17 @@ DiscussConquer(RESPONSE_REF R)
 static void
 OfferAlliance(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, we_are_vindicator))
+	if (PlayerSaid(R, we_are_vindicator))
 	{
 		NPCPhrase(WHY_YOU_HERE);
 	}
-	else if (PLAYER_SAID(R, exploring_universe))
+	else if (PlayerSaid(R, exploring_universe))
 	{
 		NPCPhrase(SENSE_DEEPER_CONFLICT);
 
 		DISABLE_PHRASE(exploring_universe);
 	}
-	else if (PLAYER_SAID(R, fun_cruise))
+	else if (PlayerSaid(R, fun_cruise))
 	{
 		NPCPhrase(REPRESS);
 
@@ -366,11 +366,11 @@ OfferAlliance(RESPONSE_REF R)
 
 	Response(we_here_to_help, ExitConversation);
 	Response(we_need_help, ExitConversation);
-	if (PHRASE_ENABLED(exploring_universe))
+	if (PhraseEnabled(exploring_universe))
 	{
 		Response(exploring_universe, OfferAlliance);
 	}
-	if (PHRASE_ENABLED(fun_cruise))
+	if (PhraseEnabled(fun_cruise))
 	{
 		Response(fun_cruise, OfferAlliance);
 	}
@@ -380,62 +380,62 @@ static void
 AboutPkunk(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
-	if (PLAYER_SAID(R, what_about_you))
+	if (PlayerSaid(R, what_about_you))
 	{
 		NPCPhrase(ABOUT_US);
 	}
-	else if (PLAYER_SAID(R, what_about_history))
+	else if (PlayerSaid(R, what_about_history))
 	{
 		NPCPhrase(ABOUT_HISTORY);
 
 		DISABLE_PHRASE(what_about_history);
 	}
-	else if (PLAYER_SAID(R, what_about_yehat))
+	else if (PlayerSaid(R, what_about_yehat))
 	{
 		NPCPhrase(ABOUT_YEHAT);
 
 		DISABLE_PHRASE(what_about_yehat);
 	}
-	else if (PLAYER_SAID(R, what_about_culture))
+	else if (PlayerSaid(R, what_about_culture))
 	{
 		NPCPhrase(ABOUT_CULTURE);
 
 		DISABLE_PHRASE(what_about_culture);
 	}
-	else if (PLAYER_SAID(R, elaborate_culture))
+	else if (PlayerSaid(R, elaborate_culture))
 	{
 		NPCPhrase(OK_ELABORATE_CULTURE);
 
 		DISABLE_PHRASE(elaborate_culture);
 	}
-	else if (PLAYER_SAID(R, what_about_future))
+	else if (PlayerSaid(R, what_about_future))
 	{
 		NPCPhrase(ABOUT_FUTURE);
 
 		DISABLE_PHRASE(what_about_future);
 	}
 
-	if (PHRASE_ENABLED(what_about_history))
+	if (PhraseEnabled(what_about_history))
 	{
 		Response(what_about_history, AboutPkunk);
 		InfoLeft = true;
 	}
-	else if (PHRASE_ENABLED(what_about_yehat))
+	else if (PhraseEnabled(what_about_yehat))
 	{
 		Response(what_about_yehat, AboutPkunk);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_culture))
+	if (PhraseEnabled(what_about_culture))
 	{
 		Response(what_about_culture, AboutPkunk);
 		InfoLeft = true;
 	}
-	else if (PHRASE_ENABLED(elaborate_culture))
+	else if (PhraseEnabled(elaborate_culture))
 	{
 		Response(elaborate_culture, AboutPkunk);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_future))
+	if (PhraseEnabled(what_about_future))
 	{
 		Response(what_about_future, AboutPkunk);
 		InfoLeft = true;
@@ -452,51 +452,51 @@ static void
 AboutIlwrath(RESPONSE_REF R)
 {
 	uint8_t InfoLeft {false};
-	if (PLAYER_SAID(R, what_about_ilwrath))
+	if (PlayerSaid(R, what_about_ilwrath))
 	{
 		NPCPhrase(ABOUT_ILWRATH);
 	}
-	else if (PLAYER_SAID(R, why_ilwrath_fight))
+	else if (PlayerSaid(R, why_ilwrath_fight))
 	{
 		NPCPhrase(ILWRATH_FIGHT_BECAUSE);
 
 		DISABLE_PHRASE(why_ilwrath_fight);
 	}
-	else if (PLAYER_SAID(R, when_fight_start))
+	else if (PlayerSaid(R, when_fight_start))
 	{
 		NPCPhrase(FIGHT_START_WHEN);
 
 		DISABLE_PHRASE(when_fight_start);
 	}
-	else if (PLAYER_SAID(R, how_goes_fight))
+	else if (PlayerSaid(R, how_goes_fight))
 	{
 		NPCPhrase(FIGHT_GOES);
 
 		DISABLE_PHRASE(how_goes_fight);
 	}
-	else if (PLAYER_SAID(R, how_stop_fight))
+	else if (PlayerSaid(R, how_stop_fight))
 	{
 		NPCPhrase(STOP_FIGHT_LIKE_SO);
 
 		DISABLE_PHRASE(how_stop_fight);
 	}
 
-	if (PHRASE_ENABLED(why_ilwrath_fight))
+	if (PhraseEnabled(why_ilwrath_fight))
 	{
 		Response(why_ilwrath_fight, AboutIlwrath);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(when_fight_start))
+	if (PhraseEnabled(when_fight_start))
 	{
 		Response(when_fight_start, AboutIlwrath);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(how_goes_fight))
+	if (PhraseEnabled(how_goes_fight))
 	{
 		Response(how_goes_fight, AboutIlwrath);
 		InfoLeft = true;
 	}
-	if (PHRASE_ENABLED(how_stop_fight))
+	if (PhraseEnabled(how_stop_fight))
 	{
 		Response(how_stop_fight, AboutIlwrath);
 		InfoLeft = true;
@@ -514,21 +514,21 @@ PkunkHome(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, no_conquest))
+	if (PlayerSaid(R, no_conquest))
 	{
 		NPCPhrase(GOOD_IDEA);
 	}
-	else if (PLAYER_SAID(R, enough_ilwrath))
+	else if (PlayerSaid(R, enough_ilwrath))
 	{
 		NPCPhrase(OK_ENOUGH_ILWRATH);
 	}
-	else if (PLAYER_SAID(R, enough_about_you))
+	else if (PlayerSaid(R, enough_about_you))
 	{
 		NPCPhrase(OK_ENOUGH_ABOUT_US);
 	}
-	else if (PLAYER_SAID(R, where_fleet_1)
-			 || PLAYER_SAID(R, where_fleet_2)
-			 || PLAYER_SAID(R, where_fleet_3))
+	else if (PlayerSaid(R, where_fleet_1)
+			 || PlayerSaid(R, where_fleet_2)
+			 || PlayerSaid(R, where_fleet_3))
 	{
 		SET_GAME_STATE(PKUNK_SWITCH, 1);
 		if (!(GET_GAME_STATE(PKUNK_MISSION) & 1))
@@ -570,9 +570,9 @@ PkunkHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(where_fleet_1);
 	}
-	else if (PLAYER_SAID(R, am_worried_1)
-			 || PLAYER_SAID(R, am_worried_2)
-			 || PLAYER_SAID(R, am_worried_3))
+	else if (PlayerSaid(R, am_worried_1)
+			 || PlayerSaid(R, am_worried_2)
+			 || PlayerSaid(R, am_worried_3))
 	{
 		NumVisits = GET_GAME_STATE(PKUNK_WORRY);
 		switch (NumVisits++)
@@ -592,7 +592,7 @@ PkunkHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(am_worried_1);
 	}
-	else if (PLAYER_SAID(R, try_to_be_nicer))
+	else if (PlayerSaid(R, try_to_be_nicer))
 	{
 		NPCPhrase(CANT_ASK_FOR_MORE);
 		if (!GET_GAME_STATE(CLEAR_SPINDLE))
@@ -609,20 +609,20 @@ PkunkHome(RESPONSE_REF R)
 		SET_GAME_STATE(PKUNK_VISITS, 0);
 		SET_GAME_STATE(PKUNK_HOME_VISITS, 0);
 	}
-	else if (PLAYER_SAID(R, what_about_ilwrath))
+	else if (PlayerSaid(R, what_about_ilwrath))
 	{
 		NPCPhrase(ABOUT_ILWRATH /* ILWRATH_GONE */);
 
 		DISABLE_PHRASE(what_about_ilwrath);
 	}
 
-	if (PHRASE_ENABLED(we_conquer) && GET_GAME_STATE(PKUNK_MANNER) == 0)
+	if (PhraseEnabled(we_conquer) && GET_GAME_STATE(PKUNK_MANNER) == 0)
 	{
 		Response(we_conquer, DiscussConquer);
 	}
 	if (GET_GAME_STATE(PKUNK_ON_THE_MOVE))
 	{
-		if (PHRASE_ENABLED(where_fleet_1) && !GET_GAME_STATE(PKUNK_SWITCH))
+		if (PhraseEnabled(where_fleet_1) && !GET_GAME_STATE(PKUNK_SWITCH))
 		{
 			switch (GET_GAME_STATE(PKUNK_FLEET))
 			{
@@ -637,8 +637,8 @@ PkunkHome(RESPONSE_REF R)
 					break;
 			}
 		}
-		else if (!PHRASE_ENABLED(where_fleet_1)
-				 && PHRASE_ENABLED(am_worried_1)
+		else if (!PhraseEnabled(where_fleet_1)
+				 && PhraseEnabled(am_worried_1)
 				 && (GET_GAME_STATE(PKUNK_MISSION) & 1))
 		{
 			switch (GET_GAME_STATE(PKUNK_WORRY))
@@ -659,11 +659,11 @@ PkunkHome(RESPONSE_REF R)
 	{
 		Response(we_are_vindicator, OfferAlliance);
 	}
-	if (PHRASE_ENABLED(what_about_you))
+	if (PhraseEnabled(what_about_you))
 	{
 		Response(what_about_you, AboutPkunk);
 	}
-	if (PHRASE_ENABLED(what_about_ilwrath))
+	if (PhraseEnabled(what_about_ilwrath))
 	{
 		if (!GET_GAME_STATE(ILWRATH_DECEIVED))
 		{
@@ -682,7 +682,7 @@ PkunkFriendlySpace(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, whats_up_space))
+	if (PlayerSaid(R, whats_up_space))
 	{
 		if (ShipsReady(PKUNK_SHIP) && GET_GAME_STATE(PKUNK_MANNER) == 3)
 		{
@@ -724,7 +724,7 @@ PkunkFriendlySpace(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_space);
 	}
-	else if (PLAYER_SAID(R, how_goes_war))
+	else if (PlayerSaid(R, how_goes_war))
 	{
 		NumVisits = GET_GAME_STATE(PKUNK_WAR);
 		switch (NumVisits++)
@@ -750,7 +750,7 @@ PkunkFriendlySpace(RESPONSE_REF R)
 
 		DISABLE_PHRASE(how_goes_war);
 	}
-	else if (PLAYER_SAID(R, tell_my_fortune))
+	else if (PlayerSaid(R, tell_my_fortune))
 	{
 		NumVisits = GET_GAME_STATE(PKUNK_FORTUNE);
 		switch (NumVisits++)
@@ -786,15 +786,15 @@ PkunkFriendlySpace(RESPONSE_REF R)
 		DISABLE_PHRASE(tell_my_fortune);
 	}
 
-	if (PHRASE_ENABLED(whats_up_space))
+	if (PhraseEnabled(whats_up_space))
 	{
 		Response(whats_up_space, PkunkFriendlySpace);
 	}
-	if (!GET_GAME_STATE(PKUNK_DONE_WAR) && PHRASE_ENABLED(how_goes_war))
+	if (!GET_GAME_STATE(PKUNK_DONE_WAR) && PhraseEnabled(how_goes_war))
 	{
 		Response(how_goes_war, PkunkFriendlySpace);
 	}
-	if (PHRASE_ENABLED(tell_my_fortune))
+	if (PhraseEnabled(tell_my_fortune))
 	{
 		Response(tell_my_fortune, PkunkFriendlySpace);
 	}
@@ -806,27 +806,27 @@ PkunkNeutralSpace(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, form_alliance))
+	if (PlayerSaid(R, form_alliance))
 	{
 		NPCPhrase(GO_TO_HOMEWORLD);
 		SetHomeworldKnown(PKUNK_HOME);
 
 		DISABLE_PHRASE(form_alliance);
 	}
-	else if (PLAYER_SAID(R, can_you_help))
+	else if (PlayerSaid(R, can_you_help))
 	{
 		NPCPhrase(GO_TO_HOMEWORLD_AGAIN);
 		SetHomeworldKnown(PKUNK_HOME);
 
 		DISABLE_PHRASE(can_you_help);
 	}
-	else if (PLAYER_SAID(R, hostile_greeting))
+	else if (PlayerSaid(R, hostile_greeting))
 	{
 		NPCPhrase(DONT_BE_HOSTILE);
 
 		DISABLE_PHRASE(hostile_greeting);
 	}
-	else if (PLAYER_SAID(R, whats_up_neutral))
+	else if (PlayerSaid(R, whats_up_neutral))
 	{
 		NumVisits = GET_GAME_STATE(PKUNK_INFO);
 		switch (NumVisits++)
@@ -850,15 +850,15 @@ PkunkNeutralSpace(RESPONSE_REF R)
 		DISABLE_PHRASE(whats_up_neutral);
 	}
 
-	if (PHRASE_ENABLED(form_alliance))
+	if (PhraseEnabled(form_alliance))
 	{
 		Response(form_alliance, PkunkNeutralSpace);
 	}
-	else if (PHRASE_ENABLED(can_you_help))
+	else if (PhraseEnabled(can_you_help))
 	{
 		Response(can_you_help, PkunkNeutralSpace);
 	}
-	if (PHRASE_ENABLED(hostile_greeting))
+	if (PhraseEnabled(hostile_greeting))
 	{
 		Response(hostile_greeting, PkunkNeutralSpace);
 	}
@@ -866,7 +866,7 @@ PkunkNeutralSpace(RESPONSE_REF R)
 	{
 		Response(obey, ExitConversation);
 	}
-	if (PHRASE_ENABLED(whats_up_neutral))
+	if (PhraseEnabled(whats_up_neutral))
 	{
 		Response(whats_up_neutral, PkunkNeutralSpace);
 	}
@@ -1194,7 +1194,7 @@ init_pkunk_comm(void)
 
 	pkunk_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	pkunk_desc.AlienTextBaseline.y = 0;
-	pkunk_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	pkunk_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if (GET_GAME_STATE(PKUNK_MANNER) == 3
 		|| uqm::lowByte(uqm::currentActivity()) == WON_LAST_BATTLE)

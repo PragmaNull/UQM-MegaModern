@@ -81,16 +81,11 @@ inline constexpr auto StarTypeMask {(uint8_t)((0xFF << StarTypeShift) & ~StarCol
 inline constexpr auto StarOwnerMask {(uint8_t)((0xFF << StarOwnerShift) & ~(StarColorMask | StarTypeMask))};
 inline constexpr auto StarUnknownMask {(StarOwnerMask & ~OWNER_PLAYER)};
 
-#define MAKE_STAR(t, c, o)                                         \
-	(uint8_t)((((uint8_t)(t) << StarTypeShift) & StarTypeMask)     \
-			  | (((uint8_t)(c) << StarColorShift) & StarColorMask) \
-			  | (((uint8_t)(o) << StarOwnerShift) & StarOwnerMask))
-#define STAR_TYPE(f) (uint8_t)(((f) & StarTypeMask) >> StarTypeShift)
-#define STAR_COLOR(f) (uint8_t)(((f) & StarColorMask) >> StarColorShift)
-#define STAR_OWNER(f) (uint8_t)(((f) & StarOwnerMask) >> StarOwnerShift)
-#define STAR_UNKNOWN(f) (bool)((STAR_OWNER(f)      \
-								& StarUnknownMask) \
-							   == StarUnknownMask)
+constexpr auto MakeStar(const auto& t, const auto& c, const auto& o) { return (uint8_t)((((uint8_t)(t) << StarTypeShift) & StarTypeMask) | (((uint8_t)(c) << StarColorShift) & StarColorMask) | (((uint8_t)(o) << StarOwnerShift) & StarOwnerMask)); }
+constexpr auto StarType(const auto& f) { return (uint8_t)(((f)&StarTypeMask) >> StarTypeShift); }
+constexpr auto StarColor(const auto& f) { return (uint8_t)(((f)&StarColorMask) >> StarColorShift); }
+constexpr auto StarOwner(const auto& f) { return (uint8_t)(((f)&StarOwnerMask) >> StarOwnerShift); }
+
 
 inline constexpr auto PlanSizeMask {0x03};
 
@@ -99,9 +94,9 @@ inline constexpr auto CrateredAlgo {(1 << 2)};
 inline constexpr auto GasGiantAlgo {(2 << 2)};
 inline constexpr auto PlanAlgoMask {0x0C};
 
-#define PLANSIZE(type) ((uint8_t)((type) & PlanSizeMask))
-#define PLANALGO(type) ((uint8_t)((type) & PlanAlgoMask))
-#define PLANCOLOR(type) uqm::highNibble(type)
+constexpr auto Plansize(const auto& type) { return ((uint8_t)((type)&PlanSizeMask)); }
+constexpr auto Planalgo(const auto& type) { return ((uint8_t)((type)&PlanAlgoMask)); }
+constexpr auto Plancolor(const auto& type) { return uqm::highNibble(type); }
 
 inline constexpr auto ThinAtmosphere {10};
 inline constexpr auto NormalAtmosphere {75};

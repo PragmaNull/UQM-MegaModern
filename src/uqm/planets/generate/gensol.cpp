@@ -134,7 +134,7 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 		pCurDesc->rand_seed = SysGenRNG->next();
 		const uint32_t rand_val {pCurDesc->rand_seed};
 		const uint16_t word_val {uqm::lowWord(rand_val)};
-		pCurDesc->angle = NORMALIZE_ANGLE((uint16_t)uqm::highByte(word_val));
+		pCurDesc->angle = NormalizeAngle((uint16_t)uqm::highByte(word_val));
 
 		switch (planetI)
 		{
@@ -148,7 +148,7 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 				pCurDesc->radius = EarthRadius * 72L / 100;
 				pCurDesc->NumPlanets = 0;
 				pCurDesc->angle =
-					NORMALIZE_ANGLE(FullCircle - pCurDesc->angle);
+					NormalizeAngle(FullCircle - pCurDesc->angle);
 				break;
 			case 2: /* EARTH */
 				pCurDesc->data_index = WATER_WORLD | PLANET_SHIELDED;
@@ -191,8 +191,8 @@ GenerateSol_generatePlanets(SOLARSYS_STATE* solarSys)
 				break;
 		}
 		pCurDesc->orb_speed = FullCircle / (365.25 * pow((float)pCurDesc->radius / EarthRadius, 1.5));
-		pCurDesc->location.x = COSINE(pCurDesc->angle, pCurDesc->radius);
-		pCurDesc->location.y = SINE(pCurDesc->angle, pCurDesc->radius);
+		pCurDesc->location.x = Cosine(pCurDesc->angle, pCurDesc->radius);
+		pCurDesc->location.y = Sine(pCurDesc->angle, pCurDesc->radius);
 	}
 
 	return true;
@@ -217,9 +217,9 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 				solarSys->MoonDesc[0].radius = MinMoonRadius();
 				angle = HalfCircle + Quadrant;
 				solarSys->MoonDesc[0].location.x =
-					COSINE(angle, solarSys->MoonDesc[0].radius);
+					Cosine(angle, solarSys->MoonDesc[0].radius);
 				solarSys->MoonDesc[0].location.y =
-					SINE(angle, solarSys->MoonDesc[0].radius);
+					Sine(angle, solarSys->MoonDesc[0].radius);
 				solarSys->MoonDesc[0].orb_speed = FullCircle / 11.46;
 
 				/* Luna: */
@@ -227,11 +227,11 @@ GenerateSol_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 				solarSys->MoonDesc[1].radius = MinMoonRadius()
 											 + (4 - 1) * MoonDelta();
 				rand_val = SysGenRNG->next();
-				angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
+				angle = NormalizeAngle(uqm::lowWord(rand_val));
 				solarSys->MoonDesc[1].location.x =
-					COSINE(angle, solarSys->MoonDesc[1].radius);
+					Cosine(angle, solarSys->MoonDesc[1].radius);
 				solarSys->MoonDesc[1].location.y =
-					SINE(angle, solarSys->MoonDesc[1].radius);
+					Sine(angle, solarSys->MoonDesc[1].radius);
 				solarSys->MoonDesc[1].orb_speed = FullCircle / 27.32;
 				break;
 			}
@@ -279,7 +279,7 @@ GenerateSol_generateName(const SOLARSYS_STATE* solarSys,
 
 	uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 						sizeof(GLOBAL_SIS(PlanetName)),
-						GAME_STRING(PLANET_NUMBER_BASE + planetNr));
+						GameString(PLANET_NUMBER_BASE + planetNr));
 	SET_GAME_STATE(BATTLE_PLANET,
 				   solarSys->PlanetDesc[planetNr].data_index);
 
@@ -700,8 +700,8 @@ GenerateSol_generateEnergy(const SOLARSYS_STATE* solarSys,
 
 		if (info)
 		{
-			info->loc_pt.x = RES_SCALE(20);
-			info->loc_pt.y = MapHeight() - RES_SCALE(8);
+			info->loc_pt.x = ResScale(20);
+			info->loc_pt.y = MapHeight() - ResScale(8);
 		}
 
 		return 1; // only matters when count is requested

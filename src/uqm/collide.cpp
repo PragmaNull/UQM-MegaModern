@@ -47,7 +47,7 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 	dy_rel = ElementPtr0->next.location.y
 		   - ElementPtr1->next.location.y;
 	ImpactAngle0 = ARCTAN(dx_rel, dy_rel);
-	ImpactAngle1 = NORMALIZE_ANGLE(ImpactAngle0 + HalfCircle);
+	ImpactAngle1 = NormalizeAngle(ImpactAngle0 + HalfCircle);
 
 	GetCurrentVelocityComponents(&ElementPtr0->velocity, &dx0, &dy0);
 	TravelAngle0 = GetVelocityTravelAngle(&ElementPtr0->velocity);
@@ -58,7 +58,7 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 	RelTravelAngle = ARCTAN(dx_rel, dy_rel);
 	speed = square_root((long)dx_rel * dx_rel + (long)dy_rel * dy_rel);
 
-	Directness = NORMALIZE_ANGLE(RelTravelAngle - ImpactAngle0);
+	Directness = NormalizeAngle(RelTravelAngle - ImpactAngle0);
 	if (Directness <= Quadrant || Directness >= HalfCircle + Quadrant)
 	/* shapes just scraped each other but still collided,
 			 * they will collide again unless we fudge it.
@@ -106,9 +106,9 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 
 		mass0 = ElementPtr0->mass_points /* << 2 */;
 		mass1 = ElementPtr1->mass_points /* << 2 */;
-		scalar = (long)SINE(Directness, speed << 1) * (mass0 * mass1);
+		scalar = (long)Sine(Directness, speed << 1) * (mass0 * mass1);
 
-		if (!GRAVITY_MASS(ElementPtr0->mass_points + 1))
+		if (!GravityMass(ElementPtr0->mass_points + 1))
 		{
 			if (ElementPtr0->state_flags & PlayerShip)
 			{
@@ -132,8 +132,8 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 
 			speed = (int16_t)(scalar / ((long)mass0 * (mass0 + mass1)));
 			DeltaVelocityComponents(&ElementPtr0->velocity,
-									COSINE(ImpactAngle0, speed),
-									SINE(ImpactAngle0, speed));
+									Cosine(ImpactAngle0, speed),
+									Sine(ImpactAngle0, speed));
 
 			GetCurrentVelocityComponents(&ElementPtr0->velocity, &dx0, &dy0);
 			if (dx0 < 0)
@@ -145,17 +145,17 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 				dy0 = -dy0;
 			}
 
-			if (VELOCITY_TO_WORLD(dx0 + dy0) < ScaledOne)
+			if (VelocityToWorld(dx0 + dy0) < ScaledOne)
 			{
 				SetVelocityComponents(&ElementPtr0->velocity,
-									  COSINE(ImpactAngle0,
-											 WORLD_TO_VELOCITY(ScaledOne) - 1),
-									  SINE(ImpactAngle0,
-										   WORLD_TO_VELOCITY(ScaledOne) - 1));
+									  Cosine(ImpactAngle0,
+											 WorldToVelocity(ScaledOne) - 1),
+									  Sine(ImpactAngle0,
+										   WorldToVelocity(ScaledOne) - 1));
 			}
 		}
 
-		if (!GRAVITY_MASS(ElementPtr1->mass_points + 1))
+		if (!GravityMass(ElementPtr1->mass_points + 1))
 		{
 			if (ElementPtr1->state_flags & PlayerShip)
 			{
@@ -179,8 +179,8 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 
 			speed = (int16_t)(scalar / ((long)mass1 * (mass0 + mass1)));
 			DeltaVelocityComponents(&ElementPtr1->velocity,
-									COSINE(ImpactAngle1, speed),
-									SINE(ImpactAngle1, speed));
+									Cosine(ImpactAngle1, speed),
+									Sine(ImpactAngle1, speed));
 
 			GetCurrentVelocityComponents(&ElementPtr1->velocity, &dx1, &dy1);
 			if (dx1 < 0)
@@ -192,13 +192,13 @@ void collide(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1)
 				dy1 = -dy1;
 			}
 
-			if (VELOCITY_TO_WORLD(dx1 + dy1) < ScaledOne)
+			if (VelocityToWorld(dx1 + dy1) < ScaledOne)
 			{
 				SetVelocityComponents(&ElementPtr1->velocity,
-									  COSINE(ImpactAngle1,
-											 WORLD_TO_VELOCITY(ScaledOne) - 1),
-									  SINE(ImpactAngle1,
-										   WORLD_TO_VELOCITY(ScaledOne) - 1));
+									  Cosine(ImpactAngle1,
+											 WorldToVelocity(ScaledOne) - 1),
+									  Sine(ImpactAngle1,
+										   WorldToVelocity(ScaledOne) - 1));
 			}
 		}
 #ifdef DEBUG_COLLIDE

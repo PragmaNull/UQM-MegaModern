@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-inline auto FieldWidth() { return (StatusWidth() - RES_SCALE(5)); }
+inline auto FieldWidth() { return (StatusWidth() - ResScale(5)); }
 
 extern void CargoMenu(void);
 extern bool RosterMenu(void);

@@ -183,57 +183,57 @@ RaveParty(void)
 static void
 ByeBye(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, ok_i_will_get_radios))
+	if (PlayerSaid(R, ok_i_will_get_radios))
 	{
 		NPCPhrase(THANKS_FOR_HELPING);
 	}
-	else if (PLAYER_SAID(R, well_go_get_them_now))
+	else if (PlayerSaid(R, well_go_get_them_now))
 	{
 		NPCPhrase(GLAD_WHEN_YOU_COME_BACK);
 	}
-	else if (PLAYER_SAID(R, we_will_take_care_of_base))
+	else if (PlayerSaid(R, we_will_take_care_of_base))
 	{
 		NPCPhrase(GOOD_LUCK_WITH_BASE);
 
 		SET_GAME_STATE(WILL_DESTROY_BASE, 1);
 	}
-	else if (PLAYER_SAID(R, take_care_of_base_again))
+	else if (PlayerSaid(R, take_care_of_base_again))
 	{
 		NPCPhrase(GOOD_LUCK_AGAIN);
 	}
-	else if (PLAYER_SAID(R, base_was_abandoned)
-			 || PLAYER_SAID(R, i_lied_it_was_abandoned))
+	else if (PlayerSaid(R, base_was_abandoned)
+			 || PlayerSaid(R, i_lied_it_was_abandoned))
 	{
 		NPCPhrase(IT_WAS_ABANDONED);
 		NPCPhrase(HERE_COMES_ILWRATH);
 
 		SET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER, 1);
 	}
-	else if (PLAYER_SAID(R, oh_yes_big_fight))
+	else if (PlayerSaid(R, oh_yes_big_fight))
 	{
 		NPCPhrase(IM_GLAD_YOU_WON);
 		NPCPhrase(HERE_COMES_ILWRATH);
 
 		SET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER, 1);
 	}
-	else if (PLAYER_SAID(R, i_cant_talk_about_it))
+	else if (PlayerSaid(R, i_cant_talk_about_it))
 	{
 		NPCPhrase(IM_SURE_IT_WAS_DIFFICULT);
 		NPCPhrase(HERE_COMES_ILWRATH);
 
 		SET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER, 1);
 	}
-	else if (PLAYER_SAID(R, cook_their_butts)
-			 || PLAYER_SAID(R, overthrow_evil_aliens)
-			 || PLAYER_SAID(R, annihilate_those_monsters))
+	else if (PlayerSaid(R, cook_their_butts)
+			 || PlayerSaid(R, overthrow_evil_aliens)
+			 || PlayerSaid(R, annihilate_those_monsters))
 	{
 		SET_GAME_STATE(PROBE_ILWRATH_ENCOUNTER, 0);
 
-		if (PLAYER_SAID(R, cook_their_butts))
+		if (PlayerSaid(R, cook_their_butts))
 		{
 			NPCPhrase(COOK_BUTTS);
 		}
-		else if (PLAYER_SAID(R, overthrow_evil_aliens))
+		else if (PlayerSaid(R, overthrow_evil_aliens))
 		{
 			NPCPhrase(OVERTHROW_ALIENS);
 		}
@@ -253,25 +253,25 @@ ByeBye(RESPONSE_REF R)
 	}
 	else
 	{
-		if (PLAYER_SAID(R, name_1))
+		if (PlayerSaid(R, name_1))
 		{
 			NPCPhrase(OK_THE_NAFS);
 
 			SET_GAME_STATE(NEW_ALLIANCE_NAME, 0);
 		}
-		else if (PLAYER_SAID(R, name_2))
+		else if (PlayerSaid(R, name_2))
 		{
 			NPCPhrase(OK_THE_CAN);
 
 			SET_GAME_STATE(NEW_ALLIANCE_NAME, 1);
 		}
-		else if (PLAYER_SAID(R, name_3))
+		else if (PlayerSaid(R, name_3))
 		{
 			NPCPhrase(OK_THE_UFW);
 
 			SET_GAME_STATE(NEW_ALLIANCE_NAME, 2);
 		}
-		else /* if (PLAYER_SAID (R, name_4)) */
+		else /* if (PlayerSaid (R, name_4)) */
 		{
 			NPCPhrase(OK_THE_NAME_IS_EMPIRE);
 
@@ -287,7 +287,7 @@ static void GiveRadios(RESPONSE_REF R);
 static void
 NoRadioactives(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, yes_this_is_supply_ship))
+	if (PlayerSaid(R, yes_this_is_supply_ship))
 	{
 		NPCPhrase(ABOUT_TIME);
 
@@ -303,26 +303,26 @@ NoRadioactives(RESPONSE_REF R)
 	}
 	else
 	{
-		if (PLAYER_SAID(R, where_can_i_get_radios))
+		if (PlayerSaid(R, where_can_i_get_radios))
 		{
 			NPCPhrase(RADIOS_ON_MERCURY);
 
 			DISABLE_PHRASE(where_can_i_get_radios);
 		}
-		else if (PLAYER_SAID(R, no_but_well_help))
+		else if (PlayerSaid(R, no_but_well_help))
 		{
 			NPCPhrase(THE_WHAT_FROM_WHERE);
 		}
-		else if (PLAYER_SAID(R, what_slave_planet)
-				 || PLAYER_SAID(R, i_lied))
+		else if (PlayerSaid(R, what_slave_planet)
+				 || PlayerSaid(R, i_lied))
 		{
 			NPCPhrase(DONT_KNOW_WHO_YOU_ARE);
 		}
-		else if (PLAYER_SAID(R, plumb_out))
+		else if (PlayerSaid(R, plumb_out))
 		{
 			NPCPhrase(WHAT_KIND_OF_IDIOT);
 		}
-		else if (PLAYER_SAID(R, i_lost_my_lander))
+		else if (PlayerSaid(R, i_lost_my_lander))
 		{
 			NPCPhrase(HERE_IS_A_NEW_LANDER);
 			++GLOBAL_SIS(NumLanders);
@@ -331,21 +331,21 @@ NoRadioactives(RESPONSE_REF R)
 
 			SET_GAME_STATE(LANDERS_LOST, 1);
 		}
-		else if (PLAYER_SAID(R, i_lost_another_lander))
+		else if (PlayerSaid(R, i_lost_another_lander))
 		{
 			NPCPhrase(HERE_IS_ANOTHER_LANDER);
 			++GLOBAL_SIS(NumLanders);
 			DrawLanders();
 			DeltaSISGauges(4, 0, 0);
 		}
-		else if (PLAYER_SAID(R, need_fuel_mercury) || PLAYER_SAID(R, need_fuel_luna))
+		else if (PlayerSaid(R, need_fuel_mercury) || PlayerSaid(R, need_fuel_luna))
 		{
 			NPCPhrase(GIVE_FUEL);
 			DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
 			SET_GAME_STATE(GIVEN_FUEL_BEFORE, 1);
 		}
-		else if (PLAYER_SAID(R, need_fuel_again))
+		else if (PlayerSaid(R, need_fuel_again))
 		{
 			NPCPhrase(GIVE_FUEL_AGAIN);
 			DeltaSISGauges(0, 5 * FuelTankScale, 0);
@@ -382,7 +382,7 @@ NoRadioactives(RESPONSE_REF R)
 			}
 
 			Response(ok_i_will_get_radios, ByeBye);
-			if (PHRASE_ENABLED(where_can_i_get_radios))
+			if (PhraseEnabled(where_can_i_get_radios))
 			{
 				Response(where_can_i_get_radios, NoRadioactives);
 			}
@@ -393,7 +393,7 @@ NoRadioactives(RESPONSE_REF R)
 static void
 AskAfterRadios(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, i_lost_my_lander))
+	if (PlayerSaid(R, i_lost_my_lander))
 	{
 		NPCPhrase(HERE_IS_A_NEW_LANDER);
 		++GLOBAL_SIS(NumLanders);
@@ -402,26 +402,26 @@ AskAfterRadios(RESPONSE_REF R)
 
 		SET_GAME_STATE(LANDERS_LOST, 1);
 	}
-	else if (PLAYER_SAID(R, i_lost_another_lander))
+	else if (PlayerSaid(R, i_lost_another_lander))
 	{
 		NPCPhrase(HERE_IS_ANOTHER_LANDER);
 		++GLOBAL_SIS(NumLanders);
 		DrawLanders();
 		DeltaSISGauges(4, 0, 0);
 	}
-	else if (PLAYER_SAID(R, need_fuel_mercury) || PLAYER_SAID(R, need_fuel_luna))
+	else if (PlayerSaid(R, need_fuel_mercury) || PlayerSaid(R, need_fuel_luna))
 	{
 		NPCPhrase(GIVE_FUEL);
 		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
 		SET_GAME_STATE(GIVEN_FUEL_BEFORE, 1);
 	}
-	else if (PLAYER_SAID(R, need_fuel_again))
+	else if (PlayerSaid(R, need_fuel_again))
 	{
 		NPCPhrase(GIVE_FUEL_AGAIN);
 		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 	}
-	else if (PLAYER_SAID(R, where_get_radios))
+	else if (PlayerSaid(R, where_get_radios))
 	{
 		NPCPhrase(RADIOS_ON_MERCURY);
 
@@ -453,7 +453,7 @@ AskAfterRadios(RESPONSE_REF R)
 			}
 		}
 		Response(well_go_get_them_now, ByeBye);
-		if (PHRASE_ENABLED(where_get_radios))
+		if (PhraseEnabled(where_get_radios))
 		{
 			Response(where_get_radios, AskAfterRadios);
 		}
@@ -463,7 +463,7 @@ AskAfterRadios(RESPONSE_REF R)
 static void
 BaseDestroyed(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, we_fought_them))
+	if (PlayerSaid(R, we_fought_them))
 	{
 		NPCPhrase(YOU_REALLY_FOUGHT_BASE);
 
@@ -473,7 +473,7 @@ BaseDestroyed(RESPONSE_REF R)
 	}
 	else
 	{
-		if (PLAYER_SAID(R, we_are_here_to_help))
+		if (PlayerSaid(R, we_are_here_to_help))
 		{
 			NPCPhrase(BASE_ON_MOON);
 		}
@@ -494,7 +494,7 @@ TellMoonBase(RESPONSE_REF R)
 	{
 		NPCPhrase(DEALT_WITH_BASE_YET);
 	}
-	else if (PLAYER_SAID(R, i_lost_my_lander))
+	else if (PlayerSaid(R, i_lost_my_lander))
 	{
 		NPCPhrase(HERE_IS_A_NEW_LANDER);
 		++GLOBAL_SIS(NumLanders);
@@ -503,26 +503,26 @@ TellMoonBase(RESPONSE_REF R)
 
 		SET_GAME_STATE(LANDERS_LOST, 1);
 	}
-	else if (PLAYER_SAID(R, i_lost_another_lander))
+	else if (PlayerSaid(R, i_lost_another_lander))
 	{
 		NPCPhrase(HERE_IS_ANOTHER_LANDER);
 		++GLOBAL_SIS(NumLanders);
 		DrawLanders();
 		DeltaSISGauges(4, 0, 0);
 	}
-	else if (PLAYER_SAID(R, need_fuel_mercury) || PLAYER_SAID(R, need_fuel_luna))
+	else if (PlayerSaid(R, need_fuel_mercury) || PlayerSaid(R, need_fuel_luna))
 	{
 		NPCPhrase(GIVE_FUEL);
 		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 
 		SET_GAME_STATE(GIVEN_FUEL_BEFORE, 1);
 	}
-	else if (PLAYER_SAID(R, need_fuel_again))
+	else if (PlayerSaid(R, need_fuel_again))
 	{
 		NPCPhrase(GIVE_FUEL_AGAIN);
 		DeltaSISGauges(0, 5 * FuelTankScale, 0);
 	}
-	else if (PLAYER_SAID(R, we_are_here_to_help))
+	else if (PlayerSaid(R, we_are_here_to_help))
 	{
 		NPCPhrase(BASE_ON_MOON);
 	}
@@ -596,55 +596,55 @@ static void
 RevealSelf(RESPONSE_REF R)
 {
 	uint8_t stack {0};
-	if (PLAYER_SAID(R, we_are_vindicator))
+	if (PlayerSaid(R, we_are_vindicator))
 	{
 		NPCPhrase(THATS_IMPOSSIBLE);
 
 		DISABLE_PHRASE(we_are_vindicator);
 	}
-	else if (PLAYER_SAID(R, our_mission_was_secret))
+	else if (PlayerSaid(R, our_mission_was_secret))
 	{
 		NPCPhrase(ACKNOWLEDGE_SECRET);
 
 		DISABLE_PHRASE(our_mission_was_secret);
 	}
-	else if (PLAYER_SAID(R, first_give_info))
+	else if (PlayerSaid(R, first_give_info))
 	{
 		NPCPhrase(ASK_AWAY);
 
 		stack = 1;
 		DISABLE_PHRASE(first_give_info);
 	}
-	else if (PLAYER_SAID(R, whats_this_starbase))
+	else if (PlayerSaid(R, whats_this_starbase))
 	{
 		NPCPhrase(STARBASE_IS);
 
 		stack = 1;
 		DISABLE_PHRASE(whats_this_starbase);
 	}
-	else if (PLAYER_SAID(R, what_about_earth))
+	else if (PlayerSaid(R, what_about_earth))
 	{
 		NPCPhrase(HAPPENED_TO_EARTH);
 
 		stack = 1;
 		DISABLE_PHRASE(what_about_earth);
 	}
-	else if (PLAYER_SAID(R, where_are_urquan))
+	else if (PlayerSaid(R, where_are_urquan))
 	{
 		NPCPhrase(URQUAN_LEFT);
 
 		stack = 1;
 		DISABLE_PHRASE(where_are_urquan);
 	}
-	else if (PLAYER_SAID(R, it_went_away))
+	else if (PlayerSaid(R, it_went_away))
 	{
 		NPCPhrase(DEEP_TROUBLE);
 	}
-	else if (PLAYER_SAID(R, we_destroyed_it))
+	else if (PlayerSaid(R, we_destroyed_it))
 	{
 		NPCPhrase(GOOD_NEWS);
 	}
-	else if (PLAYER_SAID(R, what_probe))
+	else if (PlayerSaid(R, what_probe))
 	{
 		NPCPhrase(SURE_HOPE);
 	}
@@ -653,34 +653,34 @@ RevealSelf(RESPONSE_REF R)
 	{
 		if (stack == 1)
 		{
-			if (PHRASE_ENABLED(first_give_info))
+			if (PhraseEnabled(first_give_info))
 			{
 				Response(first_give_info, RevealSelf);
 			}
-			else if (PHRASE_ENABLED(whats_this_starbase))
+			else if (PhraseEnabled(whats_this_starbase))
 			{
 				Response(whats_this_starbase, RevealSelf);
 			}
-			else if (PHRASE_ENABLED(what_about_earth))
+			else if (PhraseEnabled(what_about_earth))
 			{
 				Response(what_about_earth, RevealSelf);
 			}
-			else if (PHRASE_ENABLED(where_are_urquan))
+			else if (PhraseEnabled(where_are_urquan))
 			{
 				Response(where_are_urquan, RevealSelf);
 			}
-			else if (PHRASE_ENABLED(what_was_red_thing))
+			else if (PhraseEnabled(what_was_red_thing))
 			{
 				Response(what_was_red_thing, TellProbe);
 			}
 		}
 		else
 		{
-			if (PHRASE_ENABLED(we_are_vindicator))
+			if (PhraseEnabled(we_are_vindicator))
 			{
 				Response(we_are_vindicator, RevealSelf);
 			}
-			else if (PHRASE_ENABLED(our_mission_was_secret))
+			else if (PhraseEnabled(our_mission_was_secret))
 			{
 				Response(our_mission_was_secret, RevealSelf);
 			}
@@ -702,7 +702,7 @@ RevealSelf(RESPONSE_REF R)
 static void
 GiveRadios(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, we_will_transfer_now))
+	if (PlayerSaid(R, we_will_transfer_now))
 	{
 		SET_GAME_STATE(RADIOACTIVES_PROVIDED, 1);
 
@@ -756,11 +756,11 @@ GiveRadios(RESPONSE_REF R)
 	}
 	else
 	{
-		if (PLAYER_SAID(R, what_will_you_give_us))
+		if (PlayerSaid(R, what_will_you_give_us))
 		{
 			NPCPhrase(MESSAGE_GARBLED_1);
 		}
-		else if (PLAYER_SAID(R, before_radios_we_need_info))
+		else if (PlayerSaid(R, before_radios_we_need_info))
 		{
 			NPCPhrase(MESSAGE_GARBLED_2);
 		}
@@ -864,10 +864,10 @@ init_commander_comm()
 	}
 
 
-	commander_desc.AlienTextWidth = RES_SCALE(143);
-	commander_desc.AlienTextBaseline.x = RES_SCALE(164)
-									   - (SAFE_NEG(2) * 2);
-	commander_desc.AlienTextBaseline.y = RES_SCALE(20);
+	commander_desc.AlienTextWidth = ResScale(143);
+	commander_desc.AlienTextBaseline.x = ResScale(164)
+									   - (SafeNeg(2) * 2);
+	commander_desc.AlienTextBaseline.y = ResScale(20);
 
 	setSegue(Segue_peace);
 	LOCDATA* retval {&commander_desc};

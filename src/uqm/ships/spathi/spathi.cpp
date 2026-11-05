@@ -35,11 +35,11 @@ static constexpr auto ShipMass {5};
 static constexpr auto WeaponEnergyCost {2};
 static constexpr auto WeaponWait {0};
 static auto SpathiForwardOffset() { return chooseIfHd(16, 59); }
-static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(30)};
+static constexpr auto MissileSpeed {DisplayToWorld(30)};
 static constexpr auto MissileLife {10};
 static constexpr auto MissileHits {1};
 static constexpr auto MissileDamage {1};
-static auto MissileOffset() { return RES_SCALE(1); }
+static auto MissileOffset() { return ResScale(1); }
 static constexpr auto MissileRange {(MissileSpeed * MissileLife)};
 /* This is for the cyborg only. */
 
@@ -47,15 +47,15 @@ static constexpr auto MissileRange {(MissileSpeed * MissileLife)};
 static constexpr auto SpecialEnergyCost {3};
 static constexpr auto SpecialWait {7};
 static auto SpathiRearOffset() { return chooseIfHd(20, 71); }
-static auto DiscriminatorSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(8)); }
+static auto DiscriminatorSpeed() { return DisplayToWorld(ResScale(8)); }
 static constexpr auto DiscriminatorLife {30};
 static constexpr auto DiscriminatorHits {1};
 static constexpr auto DiscriminatorDamage {2};
-static auto DiscriminatorOffset() { return RES_SCALE(4); }
+static auto DiscriminatorOffset() { return ResScale(4); }
 static constexpr auto TrackWait {1};
 
 // HdResolutionFactor
-static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 static auto MissileRangeHd() { return (MissileSpeedHd() * MissileLife); }
 
 static RACE_DESC spathi_desc =
@@ -166,8 +166,8 @@ spawn_butt_missile(ELEMENT* ShipPtr)
 	ButtMissileBlock.cy = ShipPtr->next.location.y;
 	ButtMissileBlock.farray = StarShipPtr->RaceDescPtr->ship_data.special;
 	ButtMissileBlock.face = ButtMissileBlock.index =
-		NORMALIZE_FACING(StarShipPtr->ShipFacing
-						 + ANGLE_TO_FACING(HalfCircle));
+		NormalizeFacing(StarShipPtr->ShipFacing
+						+ AngleToFacing(HalfCircle));
 	ButtMissileBlock.sender = ShipPtr->playerNr;
 	ButtMissileBlock.flags = 0;
 	ButtMissileBlock.pixoffs = SpathiRearOffset();
@@ -217,31 +217,31 @@ spathi_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		int32_t delta_x {};
 		int32_t delta_y {};
 
-		travel_facing = NORMALIZE_FACING(
-			ANGLE_TO_FACING(GetVelocityTravelAngle(&ShipPtr->velocity)
-							+ HalfCircle));
+		travel_facing = NormalizeFacing(
+			AngleToFacing(GetVelocityTravelAngle(&ShipPtr->velocity)
+						  + HalfCircle));
 		delta_x = lpEvalDesc->ObjectPtr->current.location.x
 				- ShipPtr->current.location.x;
 		delta_y = lpEvalDesc->ObjectPtr->current.location.y
 				- ShipPtr->current.location.y;
-		direction_facing = NORMALIZE_FACING(
-			ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)));
+		direction_facing = NormalizeFacing(
+			AngleToFacing(ARCTAN(delta_x, delta_y)));
 
-		if (NORMALIZE_FACING(direction_facing
-							 - (StarShipPtr->ShipFacing + ANGLE_TO_FACING(HalfCircle))
-							 + ANGLE_TO_FACING(Quadrant))
-				<= ANGLE_TO_FACING(HalfCircle)
+		if (NormalizeFacing(direction_facing
+							- (StarShipPtr->ShipFacing + AngleToFacing(HalfCircle))
+							+ AngleToFacing(Quadrant))
+				<= AngleToFacing(HalfCircle)
 			&& (lpEvalDesc->which_turn <= 8
-				|| NORMALIZE_FACING(direction_facing
-									+ ANGLE_TO_FACING(HalfCircle)
-									- ANGLE_TO_FACING(GetVelocityTravelAngle(
-										&lpEvalDesc->ObjectPtr->velocity))
-									+ ANGLE_TO_FACING(Quadrant))
-					   <= ANGLE_TO_FACING(HalfCircle))
+				|| NormalizeFacing(direction_facing
+								   + AngleToFacing(HalfCircle)
+								   - AngleToFacing(GetVelocityTravelAngle(
+									   &lpEvalDesc->ObjectPtr->velocity))
+								   + AngleToFacing(Quadrant))
+					   <= AngleToFacing(HalfCircle))
 			&& (!(StarShipPtr->cur_status_flags & (ShipBeyondMaxSpeed | ShipInGravityWell))
-				|| NORMALIZE_FACING(direction_facing
-									- travel_facing + ANGLE_TO_FACING(Quadrant))
-					   <= ANGLE_TO_FACING(HalfCircle)))
+				|| NormalizeFacing(direction_facing
+								   - travel_facing + AngleToFacing(Quadrant))
+					   <= AngleToFacing(HalfCircle)))
 		{
 			StarShipPtr->ship_input_state |= SpecialFlag;
 		}
@@ -295,8 +295,8 @@ init_spathi(void)
 {
 	if (IsHd())
 	{
-		spathi_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		spathi_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		spathi_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		spathi_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		spathi_desc.cyborg_control.WeaponRange = MissileRangeHd();
 	}
 	else

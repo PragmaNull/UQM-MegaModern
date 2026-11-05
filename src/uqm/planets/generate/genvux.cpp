@@ -87,8 +87,8 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 			pPlanet->data_index = REDUX_WORLD;
 			pPlanet->radius = EarthRadius * 212L / 100;
 			angle = ARCTAN(pPlanet->location.x, pPlanet->location.y);
-			pPlanet->location.x = COSINE(angle, pPlanet->radius);
-			pPlanet->location.y = SINE(angle, pPlanet->radius);
+			pPlanet->location.x = Cosine(angle, pPlanet->radius);
+			pPlanet->location.y = Sine(angle, pPlanet->radius);
 		}
 		else
 		{
@@ -113,8 +113,8 @@ GenerateVux_generatePlanets(SOLARSYS_STATE* solarSys)
 				pPlanet->NumPlanets = 0;
 			}
 
-			pPlanet->location.x = COSINE(angle, pPlanet->radius);
-			pPlanet->location.y = SINE(angle, pPlanet->radius);
+			pPlanet->location.x = Cosine(angle, pPlanet->radius);
+			pPlanet->location.y = Sine(angle, pPlanet->radius);
 			pPlanet->rand_seed = uqm::makeDword(
 				pPlanet->location.x,
 				pPlanet->location.y);

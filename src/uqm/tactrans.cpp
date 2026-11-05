@@ -603,22 +603,22 @@ explosion_preprocess(ELEMENT* ShipPtr)
 			ElementPtr->current.image.frame = explosion[0];
 			uint32_t rand_val {uqm::random().next()};
 			angle = uqm::lowByte(uqm::highWord(rand_val));
-			dist = DISPLAY_TO_WORLD(RES_SCALE(uqm::lowByte(uqm::lowWord(rand_val)) % 8));
+			dist = DisplayToWorld(ResScale(uqm::lowByte(uqm::lowWord(rand_val)) % 8));
 			if (uqm::highByte(uqm::lowWord(rand_val)) < 256 * 1 / 3)
 			{
-				dist += DISPLAY_TO_WORLD(RES_SCALE(8));
+				dist += DisplayToWorld(ResScale(8));
 			}
 			ElementPtr->current.location.x =
-				ShipPtr->current.location.x + COSINE(angle, dist);
+				ShipPtr->current.location.x + Cosine(angle, dist);
 			ElementPtr->current.location.y =
-				ShipPtr->current.location.y + SINE(angle, dist);
+				ShipPtr->current.location.y + Sine(angle, dist);
 			ElementPtr->preprocess_func = animation_preprocess;
 			rand_val = uqm::random().next();
 			angle = uqm::lowByte(uqm::lowWord(rand_val));
-			dist = WORLD_TO_VELOCITY(
-				DISPLAY_TO_WORLD(RES_SCALE(uqm::highByte(uqm::lowWord(rand_val)) % 5)));
+			dist = WorldToVelocity(
+				DisplayToWorld(ResScale(uqm::highByte(uqm::lowWord(rand_val)) % 5)));
 			SetVelocityComponents(&ElementPtr->velocity,
-								  COSINE(angle, dist), SINE(angle, dist));
+								  Cosine(angle, dist), Sine(angle, dist));
 			UnlockElement(hElement);
 		}
 	} while (--i);
@@ -816,9 +816,9 @@ void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 		STARSHIP* StarShipPtr {};
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
-		angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HalfCircle;
+		angle = FacingToAngle(StarShipPtr->ShipFacing) + HalfCircle;
 		GetFrameRect(StarShipPtr->RaceDescPtr->ship_data.ship[0], &r);
-		r.extent.height = DISPLAY_TO_WORLD(r.extent.height + r.corner.y);
+		r.extent.height = DisplayToWorld(r.extent.height + r.corner.y);
 
 		InsertElement(hIonElement, GetHeadElement());
 		LockElement(hIonElement, &IonElementPtr);
@@ -849,9 +849,9 @@ void spawn_ion_trail(ELEMENT* ElementPtr, int16_t x_offset, int16_t y_offset)
 		IonElementPtr->colorCycleIndex = 0;
 		IonElementPtr->current.location = ElementPtr->current.location;
 		IonElementPtr->current.location.x +=
-			(int16_t)COSINE(angle, r.extent.height) + x_offset;
+			(int16_t)Cosine(angle, r.extent.height) + x_offset;
 		IonElementPtr->current.location.y +=
-			(int16_t)SINE(angle, r.extent.height) + y_offset;
+			(int16_t)Sine(angle, r.extent.height) + y_offset;
 		IonElementPtr->death_func = cycle_ion_trail;
 
 		SetElementStarShip(IonElementPtr, StarShipPtr);
@@ -928,13 +928,13 @@ void ship_transition(ELEMENT* ElementPtr)
 		else if ((hShipImage = AllocElement()))
 		{
 			const auto TransitionSpeed = [&] {
-				return DISPLAY_TO_WORLD(RES_SCALE(40));
+				return DisplayToWorld(ResScale(40));
 			};
 			uint16_t angle {};
 
 			PutElement(hShipImage);
 
-			angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
+			angle = FacingToAngle(StarShipPtr->ShipFacing);
 
 			LockElement(hShipImage, &ShipImagePtr);
 			ShipImagePtr->playerNr = NeutralPlayerNum;
@@ -954,9 +954,9 @@ void ship_transition(ELEMENT* ElementPtr)
 			if (!(ElementPtr->state_flags & PlayerShip))
 			{
 				ShipImagePtr->current.location.x +=
-					COSINE(angle, TransitionSpeed());
+					Cosine(angle, TransitionSpeed());
 				ShipImagePtr->current.location.y +=
-					SINE(angle, TransitionSpeed());
+					Sine(angle, TransitionSpeed());
 				ElementPtr->preprocess_func = nullptr;
 			}
 			else if (ElementPtr->crew_level)
@@ -964,11 +964,11 @@ void ship_transition(ELEMENT* ElementPtr)
 				// JMS_GFX: Circumventing overflows by using temp variables
 				// instead of subtracting straight from the GFXPOINT sized
 				// ShipImagePtr->current.location.
-				const int32_t temp_x = (int32_t)ShipImagePtr->current.location.x - COSINE(angle, TransitionSpeed()) * (ElementPtr->life_span - 1);
-				const int32_t temp_y = (int32_t)ShipImagePtr->current.location.y - SINE(angle, TransitionSpeed()) * (ElementPtr->life_span - 1);
+				const int32_t temp_x = (int32_t)ShipImagePtr->current.location.x - Cosine(angle, TransitionSpeed()) * (ElementPtr->life_span - 1);
+				const int32_t temp_y = (int32_t)ShipImagePtr->current.location.y - Sine(angle, TransitionSpeed()) * (ElementPtr->life_span - 1);
 
-				ShipImagePtr->current.location.x = WRAP_X(temp_x);
-				ShipImagePtr->current.location.y = WRAP_Y(temp_y);
+				ShipImagePtr->current.location.x = WrapX(temp_x);
+				ShipImagePtr->current.location.y = WrapY(temp_y);
 			}
 			ShipImagePtr->preprocess_func = ship_transition;
 			ShipImagePtr->death_func = cycle_ion_trail;

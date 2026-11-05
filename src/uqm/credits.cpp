@@ -38,10 +38,10 @@
 #include "libs/graphics/drawable.h"
 
 // Rates in pixel lines per second
-static auto CreditsBaseRate() { return RES_SCALE(9); }
-static auto CreditsMaxRate() { return RES_SCALE(130); }
+static auto CreditsBaseRate() { return ResScale(9); }
+static auto CreditsMaxRate() { return ResScale(130); }
 // Maximum frame rate
-static auto CreditsFrameRate() { return RES_SCALE(36); }
+static auto CreditsFrameRate() { return ResScale(36); }
 
 static constexpr auto CreditsTimeout {(c_gameSecond * 5)};
 
@@ -736,7 +736,7 @@ void Credits(bool WithOuttakes)
 	// set the position of outtakes comm
 	CommWndRect.corner.x = (screenRect.extent.width - CommWndRect.extent.width)
 						 / 2;
-	CommWndRect.corner.y = RES_SCALE(5);
+	CommWndRect.corner.y = ResScale(5);
 
 	InitCredits();
 	SetInputCallback(on_input_frame);

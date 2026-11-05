@@ -34,14 +34,14 @@ static constexpr auto ShipMass {5};
 // Mass Driver
 static constexpr auto WeaponEnergyCost {4};
 static constexpr auto WeaponWait {10};
-static auto DruugeOffset() { return RES_SCALE(24); }
-static auto MissileOffset() { return RES_SCALE(6); }
-static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(30)};
+static auto DruugeOffset() { return ResScale(24); }
+static auto MissileOffset() { return ResScale(6); }
+static constexpr auto MissileSpeed {DisplayToWorld(30)};
 static constexpr auto MissileLife {20};
 static constexpr auto MissileRange {(MissileSpeed * MissileLife)};
 static constexpr auto MissileHits {4};
 static constexpr auto MissileDamage {6};
-static auto RecoilVelocity() { return WORLD_TO_VELOCITY(DISPLAY_TO_WORLD(RES_SCALE(6))); }
+static auto RecoilVelocity() { return WorldToVelocity(DisplayToWorld(ResScale(6))); }
 static auto MaxRecoilVelocity() { return (RecoilVelocity() * 4); }
 
 // Furnace
@@ -49,7 +49,7 @@ static constexpr auto SpecialEnergyCost {16};
 static constexpr auto SpecialWait {30};
 
 // HdResolutionFactor
-static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 static auto MissileRangeHd() { return (MissileSpeedHd() * MissileLife); }
 
 static RACE_DESC druuge_desc =
@@ -132,7 +132,7 @@ cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 
 	if ((ElementPtr1->state_flags & PlayerShip)
 		&& ElementPtr1->crew_level
-		&& !GRAVITY_MASS(ElementPtr1->mass_points + 1))
+		&& !GravityMass(ElementPtr1->mass_points + 1))
 	{
 		uint16_t angle {};
 		int16_t cur_delta_x {};
@@ -143,11 +143,11 @@ cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		StarShipPtr->cur_status_flags &=
 			~(ShipAtMaxSpeed | ShipBeyondMaxSpeed);
 
-		angle = FACING_TO_ANGLE(
+		angle = FacingToAngle(
 			GetFrameIndex(ElementPtr0->next.image.frame));
 		DeltaVelocityComponents(&ElementPtr1->velocity,
-								COSINE(angle, RecoilVelocity()),
-								SINE(angle, RecoilVelocity()));
+								Cosine(angle, RecoilVelocity()),
+								Sine(angle, RecoilVelocity()));
 		GetCurrentVelocityComponents(&ElementPtr1->velocity,
 									 &cur_delta_x, &cur_delta_y);
 		if ((long)cur_delta_x * (long)cur_delta_x
@@ -156,8 +156,8 @@ cannon_collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 		{
 			angle = ARCTAN(cur_delta_x, cur_delta_y);
 			SetVelocityComponents(&ElementPtr1->velocity,
-								  COSINE(angle, MaxRecoilVelocity()),
-								  SINE(angle, MaxRecoilVelocity()));
+								  Cosine(angle, MaxRecoilVelocity()),
+								  Sine(angle, MaxRecoilVelocity()));
 		}
 	}
 }
@@ -213,7 +213,7 @@ druuge_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		lpEvalDesc->MoveState = ENTICE;
 	}
 	else if (lpEvalDesc->ObjectPtr
-			 && lpEvalDesc->which_turn <= RES_DESCALE(WORLD_TO_TURN(RES_SCALE(MissileRange) * 3 / 4)))
+			 && lpEvalDesc->which_turn <= ResDescale(WorldToTurn(ResScale(MissileRange) * 3 / 4)))
 	{
 		GetElementStarShip(lpEvalDesc->ObjectPtr, &EnemyStarShipPtr);
 		ship_flags = EnemyStarShipPtr->RaceDescPtr->ship_info.ship_flags;
@@ -273,10 +273,10 @@ druuge_postprocess(ELEMENT* ElementPtr)
 
 		StarShipPtr->cur_status_flags &= ~ShipAtMaxSpeed;
 
-		angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing) + HalfCircle;
+		angle = FacingToAngle(StarShipPtr->ShipFacing) + HalfCircle;
 		DeltaVelocityComponents(&ElementPtr->velocity,
-								COSINE(angle, RecoilVelocity()),
-								SINE(angle, RecoilVelocity()));
+								Cosine(angle, RecoilVelocity()),
+								Sine(angle, RecoilVelocity()));
 		GetCurrentVelocityComponentsSdword(&ElementPtr->velocity,
 										   &cur_delta_x, &cur_delta_y);
 		if ((long)cur_delta_x * (long)cur_delta_x
@@ -285,8 +285,8 @@ druuge_postprocess(ELEMENT* ElementPtr)
 		{
 			angle = ARCTAN(cur_delta_x, cur_delta_y);
 			SetVelocityComponents(&ElementPtr->velocity,
-								  COSINE(angle, MaxRecoilVelocity()),
-								  SINE(angle, MaxRecoilVelocity()));
+								  Cosine(angle, MaxRecoilVelocity()),
+								  Sine(angle, MaxRecoilVelocity()));
 		}
 	}
 }
@@ -327,8 +327,8 @@ init_druuge(void)
 {
 	if (IsHd())
 	{
-		druuge_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		druuge_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		druuge_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		druuge_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		druuge_desc.cyborg_control.WeaponRange = MissileRangeHd();
 	}
 	else

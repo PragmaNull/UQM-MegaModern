@@ -37,25 +37,25 @@ static constexpr auto TurnWait {2};
 static constexpr auto YwingEnergyRegeneration {1};
 static constexpr auto YwingSpecialEnergyCost {MaxEnergy};
 static constexpr auto YwingEnergyWait {6};
-static auto YwingMaxThrust() { return RES_SCALE(50); }
-static auto YwingThrustIncrement() { return RES_SCALE(10); }
+static auto YwingMaxThrust() { return ResScale(50); }
+static auto YwingThrustIncrement() { return ResScale(10); }
 static constexpr auto YwingThrustWait {0};
 static constexpr auto YwingTurnWait {14};
 
 // X-Wing Lasers
-static auto MmrnmhrmOffset() { return RES_SCALE(16); }
+static auto MmrnmhrmOffset() { return ResScale(16); }
 static constexpr auto WeaponEnergyCost {1};
 static constexpr auto WeaponWait {0};
-static auto CenterOffs() { return DISPLAY_TO_WORLD(RES_SCALE(4)); }
-static auto WingOffs() { return DISPLAY_TO_WORLD(chooseIfHd(10, 48)); }
-#define LASER_RANGE DISPLAY_TO_WORLD(RES_SCALE(125) + MmrnmhrmOffset())
+static auto CenterOffs() { return DisplayToWorld(ResScale(4)); }
+static auto WingOffs() { return DisplayToWorld(chooseIfHd(10, 48)); }
+#define LASER_RANGE DisplayToWorld(ResScale(125) + MmrnmhrmOffset())
 
 // Y-Wing Missiles
 static constexpr auto YwingWeaponEnergyCost {1};
 static constexpr auto YwingWeaponWait {20};
-static auto LaunchOffs() { return DISPLAY_TO_WORLD(RES_SCALE(4)); }
+static auto LaunchOffs() { return DisplayToWorld(ResScale(4)); }
 static constexpr auto MissileOffset {0};
-static auto MissileSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(20)); }
+static auto MissileSpeed() { return DisplayToWorld(ResScale(20)); }
 static constexpr auto MissileLife {40};
 static constexpr auto MissileHits {1};
 static constexpr auto MissileDamage {1};
@@ -249,8 +249,8 @@ mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 		{
 			if (lpEvalDesc->which_turn > 8)
 			{
-				if (MANEUVERABILITY(&EnemyStarShipPtr->RaceDescPtr->cyborg_control) <= RESOLUTION_COMPENSATED(SlowShip)
-					|| NORMALIZE_ANGLE(
+				if (Maneuverability(&EnemyStarShipPtr->RaceDescPtr->cyborg_control) <= ResolutionCompensated(SlowShip)
+					|| NormalizeAngle(
 						   direction_angle - travel_angle + Quadrant)
 						   > HalfCircle)
 				{
@@ -271,7 +271,7 @@ mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			if (lpEvalDesc->which_turn < 16)
 			{
 				if (lpEvalDesc->which_turn <= 8
-					|| NORMALIZE_ANGLE(
+					|| NormalizeAngle(
 						   direction_angle - travel_angle + Octant)
 						   <= Quadrant)
 				{
@@ -279,7 +279,7 @@ mmrnmhrm_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				}
 			}
 			else if (lpEvalDesc->which_turn > 32
-					 && NORMALIZE_ANGLE(
+					 && NormalizeAngle(
 							direction_angle - travel_angle + Quadrant)
 							> HalfCircle)
 			{
@@ -325,9 +325,9 @@ initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 
 	GetElementStarShip(ShipPtr, &StarShipPtr);
 	const uint16_t facing {StarShipPtr->ShipFacing};
-	angle = FACING_TO_ANGLE(facing);
-	cx = ShipPtr->next.location.x + COSINE(angle, CenterOffs());
-	cy = ShipPtr->next.location.y + SINE(angle, CenterOffs());
+	angle = FacingToAngle(facing);
+	cx = ShipPtr->next.location.x + Cosine(angle, CenterOffs());
+	cy = ShipPtr->next.location.y + Sine(angle, CenterOffs());
 
 	if (ShipPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.ship)
 	{
@@ -342,10 +342,10 @@ initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 		LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x0C);
 		LaserBlock.face = facing;
 
-		ex = cx + COSINE(angle, LASER_RANGE);
-		ey = cy + SINE(angle, LASER_RANGE);
-		offs_x = -SINE(angle, WingOffs());
-		offs_y = COSINE(angle, WingOffs());
+		ex = cx + Cosine(angle, LASER_RANGE);
+		ey = cy + Sine(angle, LASER_RANGE);
+		offs_x = -Sine(angle, WingOffs());
+		offs_y = Cosine(angle, WingOffs());
 
 		LaserBlock.cx = cx + offs_x;
 		LaserBlock.cy = cy + offs_y;
@@ -385,9 +385,9 @@ initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 		TorpBlock.preprocess_func = missile_preprocess;
 		TorpBlock.blast_offs = MissileOffset;
 
-		TorpBlock.face = TorpBlock.index = NORMALIZE_FACING(facing - 1);
-		offs_x = -SINE(FACING_TO_ANGLE(TorpBlock.face), LaunchOffs());
-		offs_y = COSINE(FACING_TO_ANGLE(TorpBlock.face), LaunchOffs());
+		TorpBlock.face = TorpBlock.index = NormalizeFacing(facing - 1);
+		offs_x = -Sine(FacingToAngle(TorpBlock.face), LaunchOffs());
+		offs_y = Cosine(FacingToAngle(TorpBlock.face), LaunchOffs());
 
 		TorpBlock.cx = cx + offs_x;
 		TorpBlock.cy = cy + offs_y;
@@ -398,7 +398,7 @@ initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 			UnlockElement(WeaponArray[0]);
 		}
 
-		TorpBlock.face = TorpBlock.index = NORMALIZE_FACING(facing + 1);
+		TorpBlock.face = TorpBlock.index = NormalizeFacing(facing + 1);
 
 		TorpBlock.cx = cx - offs_x;
 		TorpBlock.cy = cy - offs_y;
@@ -446,7 +446,7 @@ mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 
 		if (ElementPtr->next.image.farray == StarShipPtr->RaceDescPtr->ship_data.special)
 		{
-			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = RES_SCALE(LongRangeWeapon - 1);
+			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = ResScale(LongRangeWeapon - 1);
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~ImmediateWeapon;
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= SeekingWeapon;
 			StarShipPtr->RaceDescPtr->ship_data.weapon_sound_index = 2;
@@ -456,7 +456,7 @@ mmrnmhrm_postprocess(ELEMENT* ElementPtr)
 		}
 		else
 		{
-			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = RES_SCALE(CloseRangeWeapon);
+			StarShipPtr->RaceDescPtr->cyborg_control.WeaponRange = ResScale(CloseRangeWeapon);
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags &= ~SeekingWeapon;
 			StarShipPtr->RaceDescPtr->ship_info.ship_flags |= ImmediateWeapon;
 			StarShipPtr->RaceDescPtr->ship_data.weapon_sound_index = 0;
@@ -524,8 +524,8 @@ init_mmrnmhrm(void)
 
 	if (IsHd())
 	{
-		mmrnmhrm_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		mmrnmhrm_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		mmrnmhrm_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		mmrnmhrm_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		mmrnmhrm_desc.cyborg_control.WeaponRange = CloseRangeWeaponHd;
 	}
 	else

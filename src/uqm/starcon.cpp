@@ -288,7 +288,7 @@ int Starcon2Main(void* threadArg)
 	uqm::log::info("Set Seed Type: {}", toString(uqm::UQMOptions::read().seedType.value));
 	uqm::log::info("Set Seed: {}", uqm::UQMOptions::read().customSeed.value);
 	uqm::log::info("Set Difficulty: {:s}", uqm::UQMOptions::read().optDifficulty.value);
-	uqm::log::info("Set Extended: {}", BOOL_STR(uqm::UQMOptions::read().extended));
+	uqm::log::info("Set Extended: {}", BoolStr(uqm::UQMOptions::read().extended));
 	uqm::log::info("Set Nomad: {:s}", uqm::UQMOptions::read().nomad.value);
 
 	while (StartGame())
@@ -312,7 +312,7 @@ int Starcon2Main(void* threadArg)
 			uqm::log::info("New Game Seed: {}", GLOBAL_SIS(Seed));
 			uqm::log::info("New Game Difficulty: {:s}", getDifficulty());
 			uqm::log::info("New Game Extended: {}",
-						   BOOL_STR(GLOBAL_SIS(Extended)));
+						   BoolStr(GLOBAL_SIS(Extended)));
 			uqm::log::info("New Game Nomad: {:s}", getNomadMode());
 		}
 

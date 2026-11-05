@@ -48,24 +48,24 @@
 // devices the player actually possesses.
 //#define DEBUG_DEVICES
 
-static auto DeviceIconWidth() { return RES_SCALE(16); }
-static auto DeviceIconHeight() { return RES_SCALE(16); }
+static auto DeviceIconWidth() { return ResScale(16); }
+static auto DeviceIconHeight() { return ResScale(16); }
 
-static auto DeviceOrgY() { return RES_SCALE(33); }
-static auto DeviceSpacingY() { return (DeviceIconHeight() + RES_SCALE(2)); }
+static auto DeviceOrgY() { return ResScale(33); }
+static auto DeviceSpacingY() { return (DeviceIconHeight() + ResScale(2)); }
 
-static auto DeviceCol0() { return RES_SCALE(4); }
-static auto DeviceCol1() { return RES_SCALE(40); }
+static auto DeviceCol0() { return ResScale(4); }
+static auto DeviceCol1() { return ResScale(40); }
 
 static auto DeviceSelOrgX() { return (DeviceCol0() + DeviceIconWidth()); }
-static auto DeviceSelWidth() { return (FieldWidth() + RES_SCALE(2) - DeviceSelOrgX()); }
+static auto DeviceSelWidth() { return (FieldWidth() + ResScale(2) - DeviceSelOrgX()); }
 
-static auto IconOfsY() { return RES_SCALE(1); }
-static auto NameOfsY() { return RES_SCALE(2); }
-static auto TextBaseline() { return RES_SCALE(6); }
-static auto TextSpacingY() { return RES_SCALE(7); }
+static auto IconOfsY() { return ResScale(1); }
+static auto NameOfsY() { return ResScale(2); }
+static auto TextBaseline() { return ResScale(6); }
+static auto TextSpacingY() { return ResScale(7); }
 
-static auto MaxVisDevices() { return ((RES_SCALE(129) - DeviceOrgY()) / DeviceSpacingY()); }
+static auto MaxVisDevices() { return ((ResScale(129) - DeviceOrgY()) / DeviceSpacingY()); }
 
 
 typedef enum
@@ -92,8 +92,8 @@ EraseDevicesBackground (void)
 {
 	GFXRECT r;
 
-	r.corner.x = RES_SCALE (3); 
-	r.extent.width = FieldWidth() - RES_SCALE (1); 
+	r.corner.x = ResScale (3); 
+	r.extent.width = FieldWidth() - ResScale (1); 
 	r.corner.y = DeviceOrgY();
 	r.extent.height = MaxVisDevices() * DeviceSpacingY();
 	SetContextForeGroundColor (DevicesBackColor);
@@ -135,7 +135,7 @@ DrawDevice(uint16_t device, uint16_t pos, bool selected)
 								  DevicesSelectedNameColor :
 								  DevicesNameColor);
 	t.baseline.y = r.corner.y + TextBaseline();
-	t.pStr = GAME_STRING(device + DEVICE_STRING_BASE + 1);
+	t.pStr = GameString(device + DEVICE_STRING_BASE + 1);
 	t.CharCount = uqm::utf8StringPos(t.pStr, ' ');
 	font_DrawText(&t);
 	t.baseline.y += TextSpacingY();
@@ -152,16 +152,16 @@ DrawDevicesDisplay(DEVICES_STATE* devState)
 	STAMP s;
 	int16_t cy {};
 
-	r.corner.x = RES_SCALE(2);
-	r.corner.y = RES_SCALE(20);
-	r.extent.width = FieldWidth() + RES_SCALE(1);
+	r.corner.x = ResScale(2);
+	r.corner.y = ResScale(20);
+	r.extent.width = FieldWidth() + ResScale(1);
 	// XXX: Shouldn't the height be 1 less? This draws the bottom border
 	//   1 pixel too low. Or if not, why do we need another box anyway?
-	r.extent.height = (RES_SCALE(129) - r.corner.y);
+	r.extent.height = (ResScale(129) - r.corner.y);
 
 	if (!uqm::UQMOptions::read().customBorder && !IsHd())
 	{
-		DrawStarConBox(&r, RES_SCALE(1),
+		DrawStarConBox(&r, ResScale(1),
 					   ShadowboxMediumColor, ShadowboxDarkColor,
 					   true, DevicesBackColor, false, Transparent);
 	}
@@ -172,10 +172,10 @@ DrawDevicesDisplay(DEVICES_STATE* devState)
 
 	// print the "DEVICES" title
 	SetContextFont(StarConFont);
-	t.baseline.x = (StatusWidth() >> 1) - RES_SCALE(1);
-	t.baseline.y = r.corner.y + RES_SCALE(7);
+	t.baseline.x = (StatusWidth() >> 1) - ResScale(1);
+	t.baseline.y = r.corner.y + ResScale(7);
 	t.align = ALIGN_CENTER;
-	t.pStr = GAME_STRING(DEVICE_STRING_BASE);
+	t.pStr = GameString(DEVICE_STRING_BASE);
 	t.CharCount = (uint16_t)~0;
 	SetContextForeGroundColor(DevicesSelectedNameColor);
 	font_DrawText(&t);
@@ -491,8 +491,8 @@ InvokeDevice(uint8_t which_device)
 					if (IsExtended() && inHyperSpace())
 					{
 						SaveLastLoc(MAKE_POINT(
-							LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)),
-							LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y))));
+							LogxToUniverse(GLOBAL_SIS(log_x)),
+							LogyToUniverse(GLOBAL_SIS(log_y))));
 					}
 
 					SET_GAME_STATE(PORTAL_COUNTER, 1);

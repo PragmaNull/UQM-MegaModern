@@ -99,7 +99,7 @@ signedDivWithError(long val, long divisor)
 		invert = 1;
 		val = -val;
 	}
-	val = (val + ROUNDING_ERROR(divisor)) / divisor;
+	val = (val + RoundingError(divisor)) / divisor;
 	return invert ? -val : val;
 }
 
@@ -114,8 +114,8 @@ universeToDispx(long ux)
 							  MaxXUniverse + MapFitX())
 		 + ((OrigSisScreenWidth() - 1) >> 1);
 }
-#define UNIVERSE_TO_DISPX(ux) RES_SCALE(universeToDispx(ux))
-#define ORIG_UNIVERSE_TO_DISPX(ux) universeToDispx(ux)
+constexpr auto UniverseToDispx(const auto& ux) { return ResScale(universeToDispx(ux)); }
+constexpr auto OrigUniverseToDispx(const auto& ux) { return universeToDispx(ux); }
 
 static inline int16_t
 universeToDispy(long uy)
@@ -125,8 +125,8 @@ universeToDispy(long uy)
 							  MaxYUniverse + 2)
 		 + ((OrigSisScreenHeight() - 1) >> 1);
 }
-#define UNIVERSE_TO_DISPY(uy) RES_SCALE(universeToDispy(uy))
-#define ORIG_UNIVERSE_TO_DISPY(uy) universeToDispy(uy)
+constexpr auto UniverseToDispy(const auto& uy) { return ResScale(universeToDispy(uy)); }
+constexpr auto OrigUniverseToDispy(const auto& uy) { return universeToDispy(uy); }
 
 static inline int16_t
 dispxToUniverse(int16_t dx)
@@ -137,8 +137,8 @@ dispxToUniverse(int16_t dx)
 			 / OrigSisScreenWidth()
 		 + mapOrigin.x;
 }
-#define DISP_TO_UNIVERSEX(dx) dispxToUniverse(RES_DESCALE(dx))
-#define ORIG_DISP_TO_UNIVERSEX(dx) dispxToUniverse(dx)
+constexpr auto DispToUniversex(const auto& dx) { return dispxToUniverse(ResDescale(dx)); }
+constexpr auto OrigDispToUniversex(const auto& dx) { return dispxToUniverse(dx); }
 
 static inline int16_t
 dispyToUniverse(int16_t dy)
@@ -149,8 +149,8 @@ dispyToUniverse(int16_t dy)
 			 / OrigSisScreenHeight()
 		 + mapOrigin.y;
 }
-#define DISP_TO_UNIVERSEY(dy) dispyToUniverse(RES_DESCALE(dy))
-#define ORIG_DISP_TO_UNIVERSEY(dy) dispyToUniverse(dy)
+constexpr auto DispToUniversey(const auto& dy) { return dispyToUniverse(ResDescale(dy)); }
+constexpr auto OrigDispToUniversey(const auto& dy) { return dispyToUniverse(dy); }
 
 // Old school HdResolutionFactor-mod code for Malin's Sol ellipse.
 static inline int16_t
@@ -188,10 +188,8 @@ universeToDispy2(int16_t uy)
 	return v;
 }
 
-#define UNIVERSE_TO_DISPX2(ux) \
-	(IsHd() ? universeToDispx2(ux) : universeToDispx(ux))
-#define UNIVERSE_TO_DISPY2(uy) \
-	(IsHd() ? universeToDispy2(uy) : universeToDispy(uy))
+constexpr auto UniverseToDispx2(const auto& ux) { return (IsHd() ? universeToDispx2(ux) : universeToDispx(ux)); }
+constexpr auto UniverseToDispy2(const auto& uy) { return (IsHd() ? universeToDispy2(uy) : universeToDispy(uy)); }
 
 static bool transition_pending;
 
@@ -231,8 +229,8 @@ flashCurrentLocation(GFXPOINT* where, bool force)
 
 		OldColor = SetContextForeGroundColor(
 			BuildColor(MakeRgb15(c, c, c), c));
-		s.origin.x = UNIVERSE_TO_DISPX(universe.x);
-		s.origin.y = UNIVERSE_TO_DISPY(universe.y);
+		s.origin.x = UniverseToDispx(universe.x);
+		s.origin.y = UniverseToDispy(universe.y);
 		s.frame = IncFrameIndex(StarMapFrame);
 		DrawFilledStamp(&s);
 		SetContextForeGroundColor(OldColor);
@@ -266,8 +264,8 @@ DrawMarker(GFXPOINT dest, uint8_t type)
 	}
 
 	s.origin = MAKE_POINT(
-		UNIVERSE_TO_DISPX(dest.x),
-		UNIVERSE_TO_DISPY(dest.y));
+		UniverseToDispx(dest.x),
+		UniverseToDispy(dest.y));
 	s.frame = SetAbsFrameIndex(MiscDataFrame, 106 + type);
 
 	DrawStamp(&s);
@@ -293,8 +291,8 @@ DrawAutoPilot(GFXPOINT* pDstPt)
 	}
 	else
 	{
-		pt.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-		pt.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+		pt.x = LogxToUniverse(GLOBAL_SIS(log_x));
+		pt.y = LogyToUniverse(GLOBAL_SIS(log_y));
 	}
 
 	if (IsHd())
@@ -302,10 +300,10 @@ DrawAutoPilot(GFXPOINT* pDstPt)
 		s.frame = DecFrameIndex(stars_in_space);
 	}
 
-	pt.x = UNIVERSE_TO_DISPX(pt.x);
-	pt.y = UNIVERSE_TO_DISPY(pt.y);
+	pt.x = UniverseToDispx(pt.x);
+	pt.y = UniverseToDispy(pt.y);
 
-	dx = UNIVERSE_TO_DISPX(pDstPt->x) - pt.x;
+	dx = UniverseToDispx(pDstPt->x) - pt.x;
 	if (dx >= 0)
 	{
 		xincr = 1;
@@ -317,7 +315,7 @@ DrawAutoPilot(GFXPOINT* pDstPt)
 	}
 	dx <<= 1;
 
-	dy = UNIVERSE_TO_DISPY(pDstPt->y) - pt.y;
+	dy = UniverseToDispy(pDstPt->y) - pt.y;
 	if (dy >= 0)
 	{
 		yincr = 1;
@@ -376,29 +374,29 @@ static void
 GetSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
 {
 	const long diameter {(long)(FleetPtr->known_strength * SphereRadiusIncrement)};
-	pRect->extent.width = UNIVERSE_TO_DISPX(diameter)
-						- UNIVERSE_TO_DISPX(0);
+	pRect->extent.width = UniverseToDispx(diameter)
+						- UniverseToDispx(0);
 	if (pRect->extent.width < 0)
 	{
 		pRect->extent.width = -pRect->extent.width;
 	}
 	else if (pRect->extent.width == 0)
 	{
-		pRect->extent.width = RES_SCALE(1);
+		pRect->extent.width = ResScale(1);
 	}
-	pRect->extent.height = UNIVERSE_TO_DISPY(diameter)
-						 - UNIVERSE_TO_DISPY(0);
+	pRect->extent.height = UniverseToDispy(diameter)
+						 - UniverseToDispy(0);
 	if (pRect->extent.height < 0)
 	{
 		pRect->extent.height = -pRect->extent.height;
 	}
 	else if (pRect->extent.height == 0)
 	{
-		pRect->extent.height = RES_SCALE(1);
+		pRect->extent.height = ResScale(1);
 	}
 
-	pRect->corner.x = UNIVERSE_TO_DISPX(FleetPtr->known_loc.x);
-	pRect->corner.y = UNIVERSE_TO_DISPY(FleetPtr->known_loc.y);
+	pRect->corner.x = UniverseToDispx(FleetPtr->known_loc.x);
+	pRect->corner.y = UniverseToDispy(FleetPtr->known_loc.y);
 	pRect->corner.x -= pRect->extent.width >> 1;
 	pRect->corner.y -= pRect->extent.height >> 1;
 
@@ -407,7 +405,7 @@ GetSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
 
 		t.baseline.x = pRect->corner.x + (pRect->extent.width >> 1);
 		t.baseline.y = pRect->corner.y + (pRect->extent.height >> 1)
-					 - RES_SCALE(1);
+					 - ResScale(1);
 		t.align = ALIGN_CENTER;
 		t.CharCount = (uint16_t)~0;
 		t.pStr = FleetPtr->race_strings->text(1);
@@ -415,28 +413,28 @@ GetSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
 
 		if (pRepairRect->corner.x <= 0)
 		{
-			pRepairRect->corner.x = RES_SCALE(1);
+			pRepairRect->corner.x = ResScale(1);
 		}
 		else if (pRepairRect->corner.x + pRepairRect->extent.width >= SisScreenWidth())
 		{
 			pRepairRect->corner.x =
 				SisScreenWidth() - pRepairRect->extent.width
-				- RES_SCALE(1);
+				- ResScale(1);
 		}
 		if (pRepairRect->corner.y <= 0)
 		{
-			pRepairRect->corner.y = RES_SCALE(1);
+			pRepairRect->corner.y = ResScale(1);
 		}
 		else if (pRepairRect->corner.y + pRepairRect->extent.height >= SisScreenHeight())
 		{
 			pRepairRect->corner.y =
 				SisScreenHeight() - pRepairRect->extent.height
-				- RES_SCALE(1);
+				- ResScale(1);
 		}
 
 		BoxUnion(pRepairRect, pRect, pRepairRect);
-		pRepairRect->extent.width += RES_SCALE(1);
-		pRepairRect->extent.height += RES_SCALE(1);
+		pRepairRect->extent.width += ResScale(1);
+		pRepairRect->extent.height += ResScale(1);
 	}
 }
 
@@ -447,53 +445,53 @@ GetWarEraSphereRect(FLEET_INFO* FleetPtr, GFXRECT* pRect, GFXRECT* pRepairRect)
 	const long diameter = (long)(WarEraStrength(FleetPtr->SpeciesID) * SphereRadiusIncrement);
 	const GFXPOINT loc = SeedFleetLocation(FleetPtr, plot_map, WAR_ERA);
 
-	pRect->extent.width = UNIVERSE_TO_DISPX(diameter)
-						- UNIVERSE_TO_DISPX(0);
+	pRect->extent.width = UniverseToDispx(diameter)
+						- UniverseToDispx(0);
 	if (pRect->extent.width < 0)
 	{
 		pRect->extent.width = -pRect->extent.width;
 	}
 	else if (pRect->extent.width == 0)
 	{
-		pRect->extent.width = RES_SCALE(1);
+		pRect->extent.width = ResScale(1);
 	}
-	pRect->extent.height = UNIVERSE_TO_DISPY(diameter)
-						 - UNIVERSE_TO_DISPY(0);
+	pRect->extent.height = UniverseToDispy(diameter)
+						 - UniverseToDispy(0);
 	if (pRect->extent.height < 0)
 	{
 		pRect->extent.height = -pRect->extent.height;
 	}
 	else if (pRect->extent.height == 0)
 	{
-		pRect->extent.height = RES_SCALE(1);
+		pRect->extent.height = ResScale(1);
 	}
 
-	pRect->corner.x = UNIVERSE_TO_DISPX(loc.x);
-	pRect->corner.y = UNIVERSE_TO_DISPY(loc.y);
+	pRect->corner.x = UniverseToDispx(loc.x);
+	pRect->corner.y = UniverseToDispy(loc.y);
 	pRect->corner.x -= pRect->extent.width >> 1;
 	pRect->corner.y -= pRect->extent.height >> 1;
 
 	if (pRepairRect->corner.x <= 0)
 	{
-		pRepairRect->corner.x = RES_SCALE(1);
+		pRepairRect->corner.x = ResScale(1);
 	}
 	else if (pRepairRect->corner.x + pRepairRect->extent.width >= SisScreenWidth())
 	{
-		pRepairRect->corner.x = SisScreenWidth() - pRepairRect->extent.width - RES_SCALE(1);
+		pRepairRect->corner.x = SisScreenWidth() - pRepairRect->extent.width - ResScale(1);
 	}
 
 	if (pRepairRect->corner.y <= 0)
 	{
-		pRepairRect->corner.y = RES_SCALE(1);
+		pRepairRect->corner.y = ResScale(1);
 	}
 	else if (pRepairRect->corner.y + pRepairRect->extent.height >= SisScreenHeight())
 	{
-		pRepairRect->corner.y = SisScreenHeight() - pRepairRect->extent.height - RES_SCALE(1);
+		pRepairRect->corner.y = SisScreenHeight() - pRepairRect->extent.height - ResScale(1);
 	}
 
 	BoxUnion(pRepairRect, pRect, pRepairRect);
-	pRepairRect->extent.width += RES_SCALE(1);
-	pRepairRect->extent.height += RES_SCALE(1);
+	pRepairRect->extent.width += ResScale(1);
+	pRepairRect->extent.height += ResScale(1);
 }
 
 static unsigned int
@@ -508,8 +506,8 @@ FuelRequiredTo(GFXPOINT dest)
 	}
 	else
 	{
-		pt.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-		pt.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+		pt.x = LogxToUniverse(GLOBAL_SIS(log_x));
+		pt.y = LogyToUniverse(GLOBAL_SIS(log_y));
 	}
 
 	pt.x -= dest.x;
@@ -529,13 +527,13 @@ FuelRequiredTo(GFXPOINT dest)
 }
 
 // Begin Malin's fuel to Sol ellipse code. Edited by Kruzen
-#define MATH_ROUND(X) ((X) + ((int)((X) + 0.5) > (X) ? 1 : 0))
+constexpr auto MathRound(const auto& X) { return ((X) + ((int)((X) + 0.5) > (X) ? 1 : 0)); }
 
 GFXPOINT
 GetPointOfEllipse(double a, double b, double radian)
 {
 	const double t[2] = {a * cos(radian), b * sin(radian)};
-	return GFXPOINT {(int16_t)MATH_ROUND(t[0]), (int16_t)MATH_ROUND(t[1])};
+	return GFXPOINT {(int16_t)MathRound(t[0]), (int16_t)MathRound(t[1])};
 }
 
 GFXPOINT
@@ -552,7 +550,7 @@ RotatePoint(GFXPOINT p, GFXPOINT Pivot, double radian)
 	const double x = Pivot.x + (d[0] * cosine[0] - d[1] * cosine[1]);
 	const double y = Pivot.y + (d[0] * cosine[1] + d[1] * cosine[0]);
 
-	return GFXPOINT {(int16_t)MATH_ROUND(x), (int16_t)MATH_ROUND(y)};
+	return GFXPOINT {(int16_t)MathRound(x), (int16_t)MathRound(y)};
 }
 
 // Kruzen: Merged together with overflow check. Functions above are redundant
@@ -560,14 +558,14 @@ GFXPOINT
 CalcEllipsePoint(double a, double b, double rad_one, double rad_two, GFXPOINT Pivot)
 {
 	const double q[2] = {a * cos(rad_one), b * sin(rad_one)};
-	const double w[2] = {MATH_ROUND(q[0]) + Pivot.x, MATH_ROUND(q[1]) + Pivot.y};
+	const double w[2] = {MathRound(q[0]) + Pivot.x, MathRound(q[1]) + Pivot.y};
 
 	const double d[2] = {w[0] - Pivot.x, w[1] - Pivot.y};
 	const double cosine[2] = {cos(rad_two), sin(rad_two)};
 	double x = Pivot.x + (d[0] * cosine[0] - d[1] * cosine[1]);
 	double y = Pivot.y + (d[0] * cosine[1] + d[1] * cosine[0]);
 
-	x = MATH_ROUND(x);
+	x = MathRound(x);
 	if (x > 32767.0)
 	{
 		x = 32767.0;
@@ -577,7 +575,7 @@ CalcEllipsePoint(double a, double b, double rad_one, double rad_two, GFXPOINT Pi
 		x = -32768.0;
 	}
 
-	y = MATH_ROUND(y);
+	y = MathRound(y);
 	if (y > 32767.0)
 	{
 		y = 32767.0;
@@ -587,7 +585,7 @@ CalcEllipsePoint(double a, double b, double rad_one, double rad_two, GFXPOINT Pi
 		y = -32768.0;
 	}
 
-	return GFXPOINT {UNIVERSE_TO_DISPX2(x), UNIVERSE_TO_DISPY2(y)};
+	return GFXPOINT {UniverseToDispx2(x), UniverseToDispy2(y)};
 }
 
 bool onScreen(LINE* l, bool ignoreX, bool ignoreY)
@@ -609,8 +607,8 @@ DrawNoReturnZone(void)
 	const double halfFuel = GLOBAL_SIS(FuelOnBoard) / 2;
 
 	sol = plot_map[SOL_DEFINED].star_pt;
-	sis = GFXPOINT {(int16_t)LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)),
-					(int16_t)LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y))};
+	sis = GFXPOINT {(int16_t)LogxToUniverse(GLOBAL_SIS(log_x)),
+					(int16_t)LogyToUniverse(GLOBAL_SIS(log_y))};
 
 	dist = (double)FuelRequiredTo(sol) / 2;
 
@@ -736,22 +734,22 @@ GetFuelRect(DRECT* r, int32_t diameter, GFXPOINT corner)
 	}
 
 	// Calculate in case of overflow
-	width = RES_SCALE(signedDivWithError(((diameter - mapOrigin.x) << zoomLevel)
-											 * OrigSisScreenWidth(),
-										 MaxXUniverse + MapFitX())
-					  + ((OrigSisScreenWidth() - 1) >> 1))
-		  - UNIVERSE_TO_DISPX(0); // Cannot overflow in current HdResolutionFactor resolution
+	width = ResScale(signedDivWithError(((diameter - mapOrigin.x) << zoomLevel)
+											* OrigSisScreenWidth(),
+										MaxXUniverse + MapFitX())
+					 + ((OrigSisScreenWidth() - 1) >> 1))
+		  - UniverseToDispx(0); // Cannot overflow in current HdResolutionFactor resolution
 
 	if (width < 0)
 	{
 		width = -width;
 	}
 
-	height = RES_SCALE(signedDivWithError(((mapOrigin.y - diameter) << zoomLevel)
-											  * OrigSisScreenHeight(),
-										  MaxYUniverse + 2)
-					   + ((OrigSisScreenHeight() - 1) >> 1))
-		   - UNIVERSE_TO_DISPY(0); // Cannot overflow in current HdResolutionFactor resolution
+	height = ResScale(signedDivWithError(((mapOrigin.y - diameter) << zoomLevel)
+											 * OrigSisScreenHeight(),
+										 MaxYUniverse + 2)
+					  + ((OrigSisScreenHeight() - 1) >> 1))
+		   - UniverseToDispy(0); // Cannot overflow in current HdResolutionFactor resolution
 
 	if (height < 0)
 	{
@@ -759,8 +757,8 @@ GetFuelRect(DRECT* r, int32_t diameter, GFXPOINT corner)
 	}
 
 	// SIS cannot leave universe boundaries, so cannot overflow either
-	x = UNIVERSE_TO_DISPX(corner.x) - (width >> 1);
-	y = UNIVERSE_TO_DISPY(corner.y) - (height >> 1);
+	x = UniverseToDispx(corner.x) - (width >> 1);
+	y = UniverseToDispy(corner.y) - (height >> 1);
 
 	r->corner.x = x;
 	r->corner.y = y;
@@ -787,8 +785,8 @@ DrawFuelCircle(bool secondary)
 	}
 	else
 	{
-		corner.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-		corner.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+		corner.x = LogxToUniverse(GLOBAL_SIS(log_x));
+		corner.y = LogyToUniverse(GLOBAL_SIS(log_y));
 	}
 
 	GetFuelRect(&r, OnBoardFuel << 1, corner);
@@ -835,8 +833,8 @@ DrawFuelEllipse ()
 	double halfFuel = GLOBAL_SIS (FuelOnBoard) / 2;
 
 	sol = (GFXPOINT){ SOL_X, SOL_Y };
-	sis = (GFXPOINT){ LOGX_TO_UNIVERSE (GLOBAL_SIS (log_x)),
-			LOGY_TO_UNIVERSE (GLOBAL_SIS (log_y)) };
+	sis = (GFXPOINT){ LogxToUniverse (GLOBAL_SIS (log_x)),
+			LogyToUniverse (GLOBAL_SIS (log_y)) };
 
 	dist = FuelRequiredTo (sol) / 2;
 
@@ -847,13 +845,13 @@ DrawFuelEllipse ()
 	center = MAKE_POINT ((sis.x + sol.x) / 2, (sis.y + sol.y) / 2);
 
 	// convert starmap coords to screen coords
-	center.x = UNIVERSE_TO_DISPX (center.x);
-	center.y = UNIVERSE_TO_DISPY (center.y);
+	center.x = UniverseToDispx (center.x);
+	center.y = UniverseToDispy (center.y);
 
-	halfFuel = UNIVERSE_TO_DISPX (halfFuel) - UNIVERSE_TO_DISPX (0);
+	halfFuel = UniverseToDispx (halfFuel) - UniverseToDispx (0);
 	if (halfFuel < 0)
 		halfFuel = -halfFuel;
-	ry = UNIVERSE_TO_DISPY (ry) - UNIVERSE_TO_DISPY (0);
+	ry = UniverseToDispy (ry) - UniverseToDispy (0);
 	if (ry < 0)
 		ry = -ry;
 
@@ -1027,7 +1025,7 @@ bool isStarMarked(const int star_index, const char* marker_state)
 		starIndex = (uint16_t)(CurStarDescPtr() - star_array);
 	}
 
-	const uint32_t starData {D_GET_GAME_STATE(markerBuf(starIndex, marker_state))};
+	const uint32_t starData {DGetGameState(markerBuf(starIndex, marker_state))};
 
 	return (starData >> (starIndex % 32)) & 1;
 }
@@ -1041,9 +1039,9 @@ void setStarMarked(const int star_index, const char* marker_state)
 		starIndex = (uint16_t)(CurStarDescPtr() - star_array);
 	}
 
-	uint32_t starData {D_GET_GAME_STATE(markerBuf(starIndex, marker_state))};
+	uint32_t starData {DGetGameState(markerBuf(starIndex, marker_state))};
 	starData ^= (1 << (starIndex % 32));
-	D_SET_GAME_STATE(markerBuf(starIndex, marker_state), starData);
+	DSetGameState(markerBuf(starIndex, marker_state), starData);
 }
 
 static int16_t
@@ -1059,7 +1057,7 @@ CheckTextsIntersect(GFXRECT* curr, GFXRECT* prev)
 		return 0;
 	}
 
-	return ((prev->extent.height + RES_SCALE(1)) - abs(curr->corner.y - prev->corner.y));
+	return ((prev->extent.height + ResScale(1)) - abs(curr->corner.y - prev->corner.y));
 }
 
 static void
@@ -1068,7 +1066,7 @@ AdjustTextRect(GFXRECT* r, TEXT* t)
 	int16_t offs {};
 	if (r->corner.x <= 0)
 	{
-		offs = r->corner.x - RES_SCALE(1);
+		offs = r->corner.x - ResScale(1);
 		t->baseline.x -= offs;
 		r->corner.x -= offs;
 	}
@@ -1076,13 +1074,13 @@ AdjustTextRect(GFXRECT* r, TEXT* t)
 			 >= SisScreenWidth())
 	{
 		offs = (r->corner.x + r->extent.width)
-			 - SisScreenWidth() + RES_SCALE(1);
+			 - SisScreenWidth() + ResScale(1);
 		t->baseline.x -= offs;
 		r->corner.x -= offs;
 	}
 	if (r->corner.y <= 0)
 	{
-		offs = r->corner.y - RES_SCALE(1);
+		offs = r->corner.y - ResScale(1);
 		t->baseline.y -= offs;
 		r->corner.y -= offs;
 	}
@@ -1090,7 +1088,7 @@ AdjustTextRect(GFXRECT* r, TEXT* t)
 			 >= SisScreenHeight())
 	{
 		offs = (r->corner.y + r->extent.height)
-			 - SisScreenHeight() + RES_SCALE(1);
+			 - SisScreenHeight() + ResScale(1);
 		t->baseline.y -= offs;
 		r->corner.y -= offs;
 	}
@@ -1249,41 +1247,41 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 	}
 
 	{ // Horizontal lines
-		r.corner.x = UNIVERSE_TO_DISPX(0);
+		r.corner.x = UniverseToDispx(0);
 		r.extent.width = (SisScreenWidth() << zoomLevel)
-					   - (RES_SCALE(1) << zoomLevel);
-		r.extent.height = RES_SCALE(1);
+					   - (ResScale(1) << zoomLevel);
+		r.extent.height = ResScale(1);
 
 		for (i = MaxYUniverse; i >= 0; i -= GridDelta)
 		{
-			r.corner.y = UNIVERSE_TO_DISPY(i);
+			r.corner.y = UniverseToDispy(i);
 			DrawFilledRectangle(&r);
 		}
 
-		r.corner.y = UNIVERSE_TO_DISPY(0);
+		r.corner.y = UniverseToDispy(0);
 		DrawFilledRectangle(&r);
 
 		// Vertical lines
-		r.corner.y = UNIVERSE_TO_DISPY(MaxYUniverse) + RES_SCALE(1);
-		r.extent.width = RES_SCALE(1);
-		r.extent.height = (SisScreenHeight() << zoomLevel) - RES_SCALE(1);
+		r.corner.y = UniverseToDispy(MaxYUniverse) + ResScale(1);
+		r.extent.width = ResScale(1);
+		r.extent.height = (SisScreenHeight() << zoomLevel) - ResScale(1);
 
 		for (i = 0; i < MaxYUniverse; i += GridDelta)
 		{
-			r.corner.x = UNIVERSE_TO_DISPX(i);
+			r.corner.x = UniverseToDispx(i);
 			DrawFilledRectangle(&r);
 		}
 
 		// Edge rounding error compensation
 		// so the bar wouldn't leak over the edge
-		r.corner.x = UNIVERSE_TO_DISPX(MaxXUniverse);
-		r.corner.y = UNIVERSE_TO_DISPY(MaxYUniverse);
-		r.extent.height = (SisScreenHeight() << zoomLevel) + RES_SCALE(1);
-		if (r.extent.height - RES_SCALE(1)
-			> (-(UNIVERSE_TO_DISPY(MaxYUniverse)
-				 - UNIVERSE_TO_DISPY(0))))
+		r.corner.x = UniverseToDispx(MaxXUniverse);
+		r.corner.y = UniverseToDispy(MaxYUniverse);
+		r.extent.height = (SisScreenHeight() << zoomLevel) + ResScale(1);
+		if (r.extent.height - ResScale(1)
+			> (-(UniverseToDispy(MaxYUniverse)
+				 - UniverseToDispy(0))))
 		{
-			r.extent.height -= RES_SCALE(1);
+			r.extent.height -= ResScale(1);
 		}
 		DrawFilledRectangle(&r);
 	}
@@ -1371,7 +1369,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 					t.baseline.x = r.corner.x + (r.extent.width >> 1);
 					t.baseline.y = r.corner.y + (r.extent.height >> 1)
-								 - RES_SCALE(1);
+								 - ResScale(1);
 					t.align = ALIGN_CENTER;
 
 					// For drawing War-Era starmap.
@@ -1382,7 +1380,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 							case PKUNK_SHIP:
 							case THRADDASH_SHIP:
 							case DRUUGE_SHIP:
-								t.pStr = GAME_STRING(STAR_STRING_BASE + 132);
+								t.pStr = GameString(STAR_STRING_BASE + 132);
 								t.CharCount = (uint16_t)strlen(t.pStr);
 								break;
 							case ANDROSYNTH_SHIP:
@@ -1434,7 +1432,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 				t.baseline.x = r.corner.x + (r.extent.width >> 1);
 				t.baseline.y = r.corner.y + (r.extent.height >> 1)
-							 - RES_SCALE(1);
+							 - ResScale(1);
 				t.align = ALIGN_CENTER;
 
 				TextRect(&t, &r, nullptr);
@@ -1495,8 +1493,8 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 				AdjustTextRect(&r, &t);
 
-				r.corner.y += RES_SCALE(1);
-				r.extent.height -= RES_SCALE(2);
+				r.corner.y += ResScale(1);
+				r.extent.height -= ResScale(2);
 
 				if (r.corner.y > (SisScreenHeight() >> 1))
 				{
@@ -1535,8 +1533,8 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 				AdjustTextRect(&r, &t);
 
-				r.corner.y += RES_SCALE(1);
-				r.extent.height -= RES_SCALE(2);
+				r.corner.y += ResScale(1);
+				r.extent.height -= ResScale(2);
 
 				for (k = 1; k < j; k++)
 				{
@@ -1579,8 +1577,8 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 					pStr[6] = '\0';
 					SetContextFont(TinyFontBold);
 					SetContextForeGroundColor(BuildColor(MakeRgb15(i, j, k), 0x00));
-					t.baseline.x = UNIVERSE_TO_DISPX(300 * j + (k / 16 ? 150 : 0));
-					t.baseline.y = UNIVERSE_TO_DISPY(300 * i + k % 16 * 300 / 16) + 3;
+					t.baseline.x = UniverseToDispx(300 * j + (k / 16 ? 150 : 0));
+					t.baseline.y = UniverseToDispy(300 * i + k % 16 * 300 / 16) + 3;
 					t.align = ALIGN_CENTER;
 					t.pStr = pStr;
 					t.CharCount = 10;
@@ -1591,7 +1589,7 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 #else
 		Color oldColor;
 		LINE l;
-		const uint8_t c = 0x3F + IF_HD(0x11);
+		const uint8_t c = 0x3F + IfHd(0x11);
 		const GFXPOINT* CNPtr {&constel_array[0]};
 
 		oldColor = SetContextForeGroundColor(
@@ -1599,11 +1597,11 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 		while (CNPtr->x < MaxXUniverse && CNPtr->y < MaxYUniverse)
 		{ // Have to add 2 because of HdResolutionFactor nature (can't get exact middle of 4x4)
-			l.first.x = UNIVERSE_TO_DISPX(CNPtr->x) + IF_HD(2);
-			l.first.y = UNIVERSE_TO_DISPY(CNPtr->y) + IF_HD(2);
+			l.first.x = UniverseToDispx(CNPtr->x) + IfHd(2);
+			l.first.y = UniverseToDispy(CNPtr->y) + IfHd(2);
 			CNPtr++;
-			l.second.x = UNIVERSE_TO_DISPX(CNPtr->x) + IF_HD(2);
-			l.second.y = UNIVERSE_TO_DISPY(CNPtr->y) + IF_HD(2);
+			l.second.x = UniverseToDispx(CNPtr->x) + IfHd(2);
+			l.second.y = UniverseToDispy(CNPtr->y) + IfHd(2);
 			CNPtr++;
 			DrawLine(&l, 1);
 		}
@@ -1638,8 +1636,8 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 			SetContextFont(TinyFontBold);
 			// "Quasispace Green"
 			SetContextForeGroundColor(BuildColor(MakeRgb15(0x00, 0x1A, 0x00), 0x2F));
-			t.baseline.x = UNIVERSE_TO_DISPX(portal_map[i].star_pt.x);
-			t.baseline.y = UNIVERSE_TO_DISPY(portal_map[i].star_pt.y) + 3;
+			t.baseline.x = UniverseToDispx(portal_map[i].star_pt.x);
+			t.baseline.y = UniverseToDispy(portal_map[i].star_pt.y) + 3;
 			t.align = ALIGN_CENTER;
 			t.pStr = pStr;
 			t.CharCount = 2;
@@ -1680,8 +1678,8 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 
 		const uint8_t star_type {SDPtr->Type};
 
-		s.origin.x = UNIVERSE_TO_DISPX(SDPtr->star_pt.x);
-		s.origin.y = UNIVERSE_TO_DISPY(SDPtr->star_pt.y);
+		s.origin.x = UniverseToDispx(SDPtr->star_pt.x);
+		s.origin.y = UniverseToDispy(SDPtr->star_pt.y);
 		if (which_space <= 1)
 		{
 			if (which_starmap == NORMAL_STARMAP
@@ -1695,16 +1693,16 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 				&& SDPtr->Index != SOL_DEFINED)
 			{
 				s.frame = SetRelFrameIndex(visitedStarsFrame,
-										   STAR_TYPE(star_type)
+										   StarType(star_type)
 												   * NUM_STAR_COLORS
-											   + STAR_COLOR(star_type));
+											   + StarColor(star_type));
 			}
 			else
 			{
 				s.frame = SetRelFrameIndex(star_frame,
-										   STAR_TYPE(star_type)
+										   StarType(star_type)
 												   * NUM_STAR_COLORS
-											   + STAR_COLOR(star_type));
+											   + StarColor(star_type));
 			}
 
 			++i;
@@ -1730,13 +1728,13 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 	{
 		if (which_space <= 1)
 		{
-			s.origin.x = UNIVERSE_TO_DISPX(plot_map[ARILOU_DEFINED].star_pt.x);
-			s.origin.y = UNIVERSE_TO_DISPY(plot_map[ARILOU_DEFINED].star_pt.y);
+			s.origin.x = UniverseToDispx(plot_map[ARILOU_DEFINED].star_pt.x);
+			s.origin.y = UniverseToDispy(plot_map[ARILOU_DEFINED].star_pt.y);
 		}
 		else
 		{
-			s.origin.x = UNIVERSE_TO_DISPX(QuasiSpaceX);
-			s.origin.y = UNIVERSE_TO_DISPY(QuasiSpaceY);
+			s.origin.x = UniverseToDispx(QuasiSpaceX);
+			s.origin.y = UniverseToDispy(QuasiSpaceY);
 		}
 		s.frame = SetRelFrameIndex(star_frame,
 								   (int)GIANT_STAR * (int)NUM_STAR_COLORS + (int)GREEN_BODY);
@@ -1771,8 +1769,8 @@ DrawStarMap(uint16_t race_update, GFXRECT* pClipRect)
 	{
 		GetContextClipRect(&r);
 		LoadIntoExtraScreen(&r);
-		DrawCursor(UNIVERSE_TO_DISPX(cursorLoc.x),
-				   UNIVERSE_TO_DISPY(cursorLoc.y));
+		DrawCursor(UniverseToDispx(cursorLoc.x),
+				   UniverseToDispy(cursorLoc.y));
 		flashCurrentLocation(nullptr, true);
 	}
 
@@ -1859,14 +1857,14 @@ UpdateCursorLocation(int sx, int sy, const GFXPOINT* newpt)
 	STAMP s;
 	GFXPOINT pt;
 
-	pt.x = ORIG_UNIVERSE_TO_DISPX(cursorLoc.x);
-	pt.y = ORIG_UNIVERSE_TO_DISPY(cursorLoc.y);
+	pt.x = OrigUniverseToDispx(cursorLoc.x);
+	pt.y = OrigUniverseToDispy(cursorLoc.y);
 
 	if (newpt)
 	{ // absolute move
 		sx = sy = 0;
-		s.origin.x = ORIG_UNIVERSE_TO_DISPX(newpt->x);
-		s.origin.y = ORIG_UNIVERSE_TO_DISPY(newpt->y);
+		s.origin.x = OrigUniverseToDispx(newpt->x);
+		s.origin.y = OrigUniverseToDispy(newpt->y);
 		cursorLoc = *newpt;
 	}
 	else
@@ -1877,8 +1875,8 @@ UpdateCursorLocation(int sx, int sy, const GFXPOINT* newpt)
 
 	if (sx)
 	{
-		cursorLoc.x = ORIG_DISP_TO_UNIVERSEX(s.origin.x) - sx;
-		while (ORIG_UNIVERSE_TO_DISPX(cursorLoc.x) == pt.x)
+		cursorLoc.x = OrigDispToUniversex(s.origin.x) - sx;
+		while (OrigUniverseToDispx(cursorLoc.x) == pt.x)
 		{
 			cursorLoc.x += sx;
 		}
@@ -1892,13 +1890,13 @@ UpdateCursorLocation(int sx, int sy, const GFXPOINT* newpt)
 			cursorLoc.x = MaxXUniverse;
 		}
 
-		s.origin.x = ORIG_UNIVERSE_TO_DISPX(cursorLoc.x);
+		s.origin.x = OrigUniverseToDispx(cursorLoc.x);
 	}
 
 	if (sy)
 	{
-		cursorLoc.y = ORIG_DISP_TO_UNIVERSEY(s.origin.y) + sy;
-		while (ORIG_UNIVERSE_TO_DISPY(cursorLoc.y) == pt.y)
+		cursorLoc.y = OrigDispToUniversey(s.origin.y) + sy;
+		while (OrigUniverseToDispy(cursorLoc.y) == pt.y)
 		{
 			cursorLoc.y -= sy;
 		}
@@ -1912,7 +1910,7 @@ UpdateCursorLocation(int sx, int sy, const GFXPOINT* newpt)
 			cursorLoc.y = MaxYUniverse;
 		}
 
-		s.origin.y = ORIG_UNIVERSE_TO_DISPY(cursorLoc.y);
+		s.origin.y = OrigUniverseToDispy(cursorLoc.y);
 	}
 
 	if (s.origin.x < 0 || s.origin.y < 0
@@ -1922,14 +1920,14 @@ UpdateCursorLocation(int sx, int sy, const GFXPOINT* newpt)
 		mapOrigin = cursorLoc;
 		DrawStarMap(0, nullptr);
 
-		s.origin.x = ORIG_UNIVERSE_TO_DISPX(cursorLoc.x);
-		s.origin.y = ORIG_UNIVERSE_TO_DISPY(cursorLoc.y);
+		s.origin.x = OrigUniverseToDispx(cursorLoc.x);
+		s.origin.y = OrigUniverseToDispy(cursorLoc.y);
 	}
 	else
 	{
 		BatchGraphics();
-		EraseCursor(RES_SCALE(pt.x), RES_SCALE(pt.y));
-		DrawCursor(RES_SCALE(s.origin.x), RES_SCALE(s.origin.y));
+		EraseCursor(ResScale(pt.x), ResScale(pt.y));
+		DrawCursor(ResScale(s.origin.x), ResScale(s.origin.y));
 		flashCurrentLocation(nullptr, true);
 		UnbatchGraphics();
 	}
@@ -1962,24 +1960,24 @@ UpdateCursorInfo(std::span<char> prevbuf)
 
 	if (which_starmap == NORMAL_STARMAP)
 	{ // "(Star Search: F6 | Toggle Maps: F7)"
-		uqm::utf8StringCopy(buf, sizeof(buf), GAME_STRING(FEEDBACK_STRING_BASE + 2 + (is3DO(uqm::UQMOptions::read().whichFonts) || IsPad())));
+		uqm::utf8StringCopy(buf, sizeof(buf), GameString(FEEDBACK_STRING_BASE + 2 + (is3DO(uqm::UQMOptions::read().whichFonts) || IsPad())));
 	}
 	else
 	{
 		uqm::utf8StringCopy(buf, sizeof(buf),
-							GAME_STRING(FEEDBACK_STRING_BASE + 3 + which_starmap));
+							GameString(FEEDBACK_STRING_BASE + 3 + which_starmap));
 	}
 
-	pt.x = UNIVERSE_TO_DISPX(cursorLoc.x);
-	pt.y = UNIVERSE_TO_DISPY(cursorLoc.y);
+	pt.x = UniverseToDispx(cursorLoc.x);
+	pt.y = UniverseToDispy(cursorLoc.y);
 
 	SDPtr = BestSDPtr = 0;
 	while ((SDPtr = FindStar(SDPtr, &cursorLoc, 75, 75)))
 	{
-		if (UNIVERSE_TO_DISPX(SDPtr->star_pt.x) == pt.x
-			&& UNIVERSE_TO_DISPY(SDPtr->star_pt.y) == pt.y
+		if (UniverseToDispx(SDPtr->star_pt.x) == pt.x
+			&& UniverseToDispy(SDPtr->star_pt.y) == pt.y
 			&& (BestSDPtr == 0
-				|| STAR_TYPE(SDPtr->Type) >= STAR_TYPE(BestSDPtr->Type)))
+				|| StarType(SDPtr->Type) >= StarType(BestSDPtr->Type)))
 		{
 			BestSDPtr = SDPtr;
 		}
@@ -1999,7 +1997,7 @@ UpdateCursorInfo(std::span<char> prevbuf)
 		{
 			// "UNKNOWN" string
 			uqm::utf8StringCopy(buf, sizeof(buf),
-								GAME_STRING(STAR_STRING_BASE + 132));
+								GameString(STAR_STRING_BASE + 132));
 		}
 		else if (GET_GAME_STATE(ARILOU_SPACE_SIDE) < 2 || whichPortal == NumHyperVortices)
 		{
@@ -2015,7 +2013,7 @@ UpdateCursorInfo(std::span<char> prevbuf)
 			// portal_map[whichPortal].star_pt - coords of the exit
 			//                  nearest_star - STAR_DESC* of nearest constell.
 			char starnameBuf[CursorInfoBufsize] = "";
-			uqm::utf8StringCopy(starnameBuf, sizeof(starnameBuf), GAME_STRING(portal_map[whichPortal].nearest_star->Postfix));
+			uqm::utf8StringCopy(starnameBuf, sizeof(starnameBuf), GameString(portal_map[whichPortal].nearest_star->Postfix));
 			// Abbreviate names longer than 11 at the 10th (or less)
 			// non-vowel character.
 			if (strlen(starnameBuf) > 11)
@@ -2044,7 +2042,7 @@ UpdateCursorInfo(std::span<char> prevbuf)
 		// Kruzen: bucket to avoid cursor misplacement due to
 		// asymmetric DISP_TO_UNIVERSE functions
 
-		int16_t bucket {DISP_TO_UNIVERSEX(pt.x)};
+		int16_t bucket {DispToUniversex(pt.x)};
 		if (bucket < 0)
 		{
 			cursorLoc.x = 0;
@@ -2053,7 +2051,7 @@ UpdateCursorInfo(std::span<char> prevbuf)
 		{
 			cursorLoc.x = MaxXUniverse;
 		}
-		bucket = DISP_TO_UNIVERSEY(pt.y);
+		bucket = DispToUniversey(pt.y);
 		if (bucket < 0)
 		{
 			cursorLoc.y = 0;
@@ -2078,12 +2076,12 @@ UpdateCursorInfo(std::span<char> prevbuf)
 			ari_pt.y = QuasiSpaceY;
 		}
 
-		if (UNIVERSE_TO_DISPX(ari_pt.x) == pt.x
-			&& UNIVERSE_TO_DISPY(ari_pt.y) == pt.y)
+		if (UniverseToDispx(ari_pt.x) == pt.x
+			&& UniverseToDispy(ari_pt.y) == pt.y)
 		{
 			cursorLoc = ari_pt;
 			uqm::utf8StringCopy(buf, sizeof(buf),
-								GAME_STRING(STAR_STRING_BASE + 132));
+								GameString(STAR_STRING_BASE + 132));
 		}
 	}
 
@@ -2137,7 +2135,7 @@ UpdateCursorInfo(std::span<char> prevbuf)
 			else
 			{ // In QS, don't display star search button - the search is
 				// unusable.
-				const char* sz GAME_STRING(NAVIGATION_STRING_BASE + 1);
+				const char* sz {GameString(NAVIGATION_STRING_BASE + 1)};
 				uqm::strncpy_safe(buf, sz);
 				DrawSISMessage(buf);
 			}
@@ -2158,7 +2156,7 @@ UpdateFuelRequirement(void)
 	const uint16_t fuel_required = FuelRequired();
 
 	fmt::format_to_n(buf, sizeof(buf) - 1, "{} {}.{}",
-					 GAME_STRING(NAVIGATION_STRING_BASE + 4),
+					 GameString(NAVIGATION_STRING_BASE + 4),
 					 fuel_required / FuelTankScale,
 					 (fuel_required % FuelTankScale) / 10);
 
@@ -2195,7 +2193,7 @@ starNameLess(int index1, int index2)
 	const STAR_DESC& star2 {star_array[index2]};
 	if (star1.Postfix != star2.Postfix)
 	{
-		return uqm::utf8StringCompare(GAME_STRING(star1.Postfix), GAME_STRING(star2.Postfix)) < 0;
+		return uqm::utf8StringCompare(GameString(star1.Postfix), GameString(star2.Postfix)) < 0;
 	}
 	return star1.Prefix < star2.Prefix;
 }
@@ -2287,7 +2285,7 @@ FindNextStarIndex(STAR_SEARCH_STATE* pSS, int from, bool WithinClust)
 	{
 		const STAR_DESC* SDPtr = &star_array[pSS->SortedStars[i]];
 		char FullName[StarSearchBufsize];
-		const char* ClusterName = GAME_STRING(SDPtr->Postfix);
+		const char* ClusterName = GameString(SDPtr->Postfix);
 		const char* sptr {};
 		const char* dptr {};
 		int dlen {};
@@ -2673,8 +2671,8 @@ AdvancedAutoPilot(void)
 	uint8_t index = 0;
 	const uint16_t KnownQSPortals = GET_GAME_STATE(KNOW_QS_PORTAL);
 
-	current_position.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-	current_position.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+	current_position.x = LogxToUniverse(GLOBAL_SIS(log_x));
+	current_position.y = LogyToUniverse(GLOBAL_SIS(log_y));
 
 	if (pointsEqual(current_position, destination))
 	{
@@ -2746,8 +2744,8 @@ DoMoveCursor(MENU_STATE* pMS)
 		}
 		else
 		{
-			universe.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-			universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+			universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
+			universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
 		}
 		flashCurrentLocation(&universe, false);
 
@@ -2775,8 +2773,8 @@ DoMoveCursor(MENU_STATE* pMS)
 			{
 				SaveLastLoc(
 					MAKE_POINT(
-						LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x)),
-						LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y))));
+						LogxToUniverse(GLOBAL_SIS(log_x)),
+						LogyToUniverse(GLOBAL_SIS(log_y))));
 			}
 
 			if (uqm::UQMOptions::read().advancedAutoPilot
@@ -3135,8 +3133,8 @@ UpdateMap(void)
 				}
 
 				GetSphereRect(FleetPtr, &temp_r0, &last_r);
-				last_r.extent.width += RES_SCALE(1) + IF_HD(1);	 // dot in HdResolutionFactor is 5px wide for AA to work
-				last_r.extent.height += RES_SCALE(1) + IF_HD(1); // so we have to add extra 1
+				last_r.extent.width += ResScale(1) + IfHd(1);  // dot in HdResolutionFactor is 5px wide for AA to work
+				last_r.extent.height += ResScale(1) + IfHd(1); // so we have to add extra 1
 				VisibleChange = false;
 				do
 				{
@@ -3171,8 +3169,8 @@ UpdateMap(void)
 						goto DoneSphereMove;
 					}
 
-					r.extent.width += RES_SCALE(1) + IF_HD(1);
-					r.extent.height += RES_SCALE(1) + IF_HD(1);
+					r.extent.width += ResScale(1) + IfHd(1);
+					r.extent.height += ResScale(1) + IfHd(1);
 					if (temp_r0.corner.x != temp_r1.corner.x
 						|| temp_r0.corner.y != temp_r1.corner.y)
 					{ // Ignore name stacking during movement
@@ -3211,10 +3209,10 @@ DoneSphereMove:
 				--delta;
 
 				GetSphereRect(FleetPtr, &temp_r0, &last_r);
-				last_r.extent.width += RES_SCALE(1);
-				last_r.extent.height += RES_SCALE(1);
+				last_r.extent.width += ResScale(1);
+				last_r.extent.height += ResScale(1);
 				// Kruzen: Font size to clean up double space because of text stacking now
-				last_r.extent.height = uqstl::max(last_r.extent.height, static_cast<int16_t>(RES_SCALE(14)));
+				last_r.extent.height = uqstl::max(last_r.extent.height, static_cast<int16_t>(ResScale(14)));
 				VisibleChange = false;
 
 				/*printf("{}: {}\n", raceName (index),
@@ -3247,8 +3245,8 @@ DoneSphereMove:
 						MapDrawn = true;
 						goto DoneSphereGrowth;
 					}
-					r.extent.width += RES_SCALE(1);
-					r.extent.height += RES_SCALE(1);
+					r.extent.width += ResScale(1);
+					r.extent.height += ResScale(1);
 					if ((temp_r0.extent.height != temp_r1.extent.height) && !(str > 0 && FleetPtr->known_strength == 0))
 					{ // Update race SOI size IF the race didn't die out
 						VisibleChange = true;
@@ -3283,7 +3281,7 @@ DoneSphereGrowth:
 template <typename T>
 auto ifGamepad(T gamepadValue, T keyboardValue = {0})
 {
-	return RES_SCALE(uqm::UQMOptions::read().optControllerType != uqm::ControllerType::KeyboardMouse ? gamepadValue : keyboardValue);
+	return ResScale(uqm::UQMOptions::read().optControllerType != uqm::ControllerType::KeyboardMouse ? gamepadValue : keyboardValue);
 }
 
 static void
@@ -3299,13 +3297,13 @@ DrawStarmapHelper(void)
 
 	BatchGraphics();
 
-	DrawFlagStatDisplay(GAME_STRING(STATUS_STRING_BASE + 7));
+	DrawFlagStatDisplay(GameString(STATUS_STRING_BASE + 7));
 
 	SetContextFont(TinyFont);
 	GetContextFontLeading(&leading);
 
-	r.corner.x = RES_SCALE(4);
-	r.corner.y = RES_SCALE(34);
+	r.corner.x = ResScale(4);
+	r.corner.y = ResScale(34);
 
 	const int frame_index {uqm::UQMOptions::read().optControllerType == uqm::ControllerType::KeyboardMouse ? 0 : 5 * uqstl::to_underlying(uqm::UQMOptions::read().optControllerType.value)};
 
@@ -3316,97 +3314,97 @@ DrawStarmapHelper(void)
 
 	SetContextForeGroundColor(ModuleNameColor);
 	t.align = ALIGN_LEFT;
-	t.baseline.x = r.corner.x + RES_SCALE(12) - ifGamepad(2);
+	t.baseline.x = r.corner.x + ResScale(12) - ifGamepad(2);
 	t.baseline.y = s.origin.y + leading;
-	t.pStr = GAME_STRING(STATUS_STRING_BASE + 12);
+	t.pStr = GameString(STATUS_STRING_BASE + 12);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	// :Add->O
-	s.origin.y += RES_SCALE(10);
+	s.origin.y += ResScale(10);
 	s.frame = SetAbsFrameIndex(SubmenuFrame, frame_index + 1);
 	DrawStamp(&s);
 
 	t.align = ALIGN_LEFT;
-	t.baseline.x = r.corner.x + RES_SCALE(16) - ifGamepad(6);
+	t.baseline.x = r.corner.x + ResScale(16) - ifGamepad(6);
 	t.baseline.y = s.origin.y + leading;
-	t.pStr = GAME_STRING(STATUS_STRING_BASE + 13);
+	t.pStr = GameString(STATUS_STRING_BASE + 13);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
-	s.origin.x = t.baseline.x + RES_SCALE(28);
-	s.origin.y += RES_SCALE(4);
+	s.origin.x = t.baseline.x + ResScale(28);
+	s.origin.y += ResScale(4);
 	s.frame = SetAbsFrameIndex(MiscDataFrame, 108);
 	DrawStamp(&s);
 
 	// Cursor Speed
 	s.origin.x = r.corner.x;
-	s.origin.y += RES_SCALE(6);
+	s.origin.y += ResScale(6);
 	s.frame = SetAbsFrameIndex(SubmenuFrame, frame_index + 2);
 	DrawStamp(&s);
 
 	t.align = ALIGN_LEFT;
-	t.baseline.x = r.corner.x + RES_SCALE(18) - ifGamepad(8);
+	t.baseline.x = r.corner.x + ResScale(18) - ifGamepad(8);
 	t.baseline.y = s.origin.y + leading;
 	t.pStr = ":";
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
-	s.origin.x = t.baseline.x + RES_SCALE(7);
-	s.origin.y += RES_SCALE(4);
+	s.origin.x = t.baseline.x + ResScale(7);
+	s.origin.y += ResScale(4);
 	s.frame = SetAbsFrameIndex(MiscDataFrame, 48);
 	DrawStamp(&s);
 
 	t.align = ALIGN_LEFT;
-	t.baseline.x += RES_SCALE(13);
-	t.pStr = GAME_STRING(STATUS_STRING_BASE + 14);
+	t.baseline.x += ResScale(13);
+	t.pStr = GameString(STATUS_STRING_BASE + 14);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	// :Search
 	s.frame = SetAbsFrameIndex(SubmenuFrame, frame_index + 3);
 	s.origin.x = r.corner.x;
-	s.origin.y += RES_SCALE(7) - ifGamepad(1);
+	s.origin.y += ResScale(7) - ifGamepad(1);
 	DrawStamp(&s);
 
-	t.baseline.x = s.origin.x + RES_SCALE(12) + ifGamepad(11);
-	t.baseline.y = s.origin.y + leading + RES_SCALE(5) - ifGamepad(5);
-	t.pStr = GAME_STRING(STATUS_STRING_BASE + 15);
+	t.baseline.x = s.origin.x + ResScale(12) + ifGamepad(11);
+	t.baseline.y = s.origin.y + leading + ResScale(5) - ifGamepad(5);
+	t.pStr = GameString(STATUS_STRING_BASE + 15);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	// :Zoom
 	s.frame = SetAbsFrameIndex(SubmenuFrame, frame_index + 4);
-	s.origin.y += RES_SCALE(21) - ifGamepad(11);
+	s.origin.y += ResScale(21) - ifGamepad(11);
 	DrawStamp(&s);
 
-	t.baseline.x = s.origin.x + RES_SCALE(30) - ifGamepad(18);
-	t.baseline.y = s.origin.y + leading + RES_SCALE(5);
-	t.pStr = GAME_STRING(STATUS_STRING_BASE + 16);
+	t.baseline.x = s.origin.x + ResScale(30) - ifGamepad(18);
+	t.baseline.y = s.origin.y + leading + ResScale(5);
+	t.pStr = GameString(STATUS_STRING_BASE + 16);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	// Separator
-	r.corner.y = RES_SCALE(118);
-	r.extent.width = FieldWidth() - RES_SCALE(3);
-	r.extent.height = RES_SCALE(1);
+	r.corner.y = ResScale(118);
+	r.extent.width = FieldWidth() - ResScale(3);
+	r.extent.height = ResScale(1);
 	SetContextForeGroundColor(CargoSelectedBackColor);
 	DrawFilledRectangle(&r);
 
 	// FUEL:
 	SetContextForeGroundColor(ModuleNameColor);
 	t.align = ALIGN_LEFT;
-	t.baseline.x = r.corner.x + RES_SCALE(2);
-	t.baseline.y = r.corner.y + leading + RES_SCALE(1);
-	t.pStr = GAME_STRING(STATUS_STRING_BASE + 8); // FUEL:
+	t.baseline.x = r.corner.x + ResScale(2);
+	t.baseline.y = r.corner.y + leading + ResScale(1);
+	t.pStr = GameString(STATUS_STRING_BASE + 8); // FUEL:
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	// Current amount of fuel
 	SetContextForeGroundColor(ModulePriceColor);
 	t.align = ALIGN_RIGHT;
-	t.baseline.x = r.extent.width + RES_SCALE(2);
-	t.baseline.y = r.corner.y + leading + RES_SCALE(1);
+	t.baseline.x = r.extent.width + ResScale(2);
+	t.baseline.y = r.corner.y + leading + ResScale(1);
 	t.pStr = WholeFuelValue();
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
@@ -3438,8 +3436,8 @@ bool StarMap(void)
 	}
 	else
 	{
-		universe.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-		universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+		universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
+		universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
 	}
 
 	cursorLoc = uqm::flagship().autopilot.target();
@@ -3491,8 +3489,8 @@ bool StarMap(void)
 	GetContextClipRect(&clip_r);
 	SetContext(OldContext);
 	LoadIntoExtraScreen(&clip_r);
-	DrawCursor(UNIVERSE_TO_DISPX(cursorLoc.x),
-			   UNIVERSE_TO_DISPY(cursorLoc.y));
+	DrawCursor(UniverseToDispx(cursorLoc.x),
+			   UniverseToDispy(cursorLoc.y));
 	UnbatchGraphics();
 
 	SetMenuSounds(MenuSoundNone, MenuSoundNone);

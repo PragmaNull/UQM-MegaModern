@@ -159,9 +159,9 @@ GenerateChmmr_generateMoons(SOLARSYS_STATE* solarSys, PLANET_DESC* planet)
 
 		pMoonDesc->radius = MinMoonRadius();
 		const uint32_t rand_val {SysGenRNG->next()};
-		angle = NORMALIZE_ANGLE(uqm::lowWord(rand_val));
-		pMoonDesc->location.x = COSINE(angle, pMoonDesc->radius);
-		pMoonDesc->location.y = SINE(angle, pMoonDesc->radius);
+		angle = NormalizeAngle(uqm::lowWord(rand_val));
+		pMoonDesc->location.x = Cosine(angle, pMoonDesc->radius);
+		pMoonDesc->location.y = Sine(angle, pMoonDesc->radius);
 		ComputeSpeed(pMoonDesc, true, 1);
 	}
 

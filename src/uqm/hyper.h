@@ -29,8 +29,8 @@ extern "C" {
 
 inline constexpr auto NumRadarScreens {12};
 
-inline auto RadarScanWidth() { return RES_DESCALE(UnitScreenWidth() * NumRadarScreens); }
-inline auto RadarScanHeight() { return RES_DESCALE(UnitScreenHeight() * NumRadarScreens); }
+inline auto RadarScanWidth() { return ResDescale(UnitScreenWidth() * NumRadarScreens); }
+inline auto RadarScanHeight() { return ResDescale(UnitScreenHeight() * NumRadarScreens); }
 
 // QuasiSpace coordinates of the two-way portal
 inline constexpr auto QuasiSpaceX {5000};

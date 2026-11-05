@@ -55,9 +55,9 @@ void spawn_planet(void)
 			SetPrimColor(&DisplayArray[PlanetElementPtr->PrimIndex],
 						 BuildColorRgba(0x00, 0x00, 0x00, 0x00));
 			PlanetElementPtr->current.location.x =
-				WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
+				WrapX(DisplayAlignX(uqm::random().next()));
 			PlanetElementPtr->current.location.y =
-				WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
+				WrapY(DisplayAlignY(uqm::random().next()));
 			PlanetElementPtr->collision_func = nullptr;
 			PlanetElementPtr->postprocess_func = nullptr;
 			ZeroVelocityComponents(&PlanetElementPtr->velocity);
@@ -75,9 +75,9 @@ void spawn_planet(void)
 			do
 			{
 				PlanetElementPtr->current.location.x =
-					WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
+					WrapX(DisplayAlignX(uqm::random().next()));
 				PlanetElementPtr->current.location.y =
-					WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
+					WrapY(DisplayAlignY(uqm::random().next()));
 			} while (CalculateGravity(PlanetElementPtr)
 					 || TimeSpaceMatterConflict(PlanetElementPtr));
 		}
@@ -94,8 +94,8 @@ void spawn_planet(void)
 		pt.x += 1200;
 		pt.y += 780;
 
-		pt.x = WRAP_X(pt.x);
-		pt.y = WRAP_Y(pt.y);
+		pt.x = WrapX(pt.x);
+		pt.y = WrapY(pt.y);
 
 		SetStarPoint(pt, 31);
 	}
@@ -123,7 +123,7 @@ spawn_rubble(ELEMENT* AsteroidElementPtr)
 
 		if (!IsHd())
 		{
-			RubbleElementPtr->current.image.frame = SetAbsFrameIndex(asteroid[0], ANGLE_TO_FACING(FullCircle));
+			RubbleElementPtr->current.image.frame = SetAbsFrameIndex(asteroid[0], AngleToFacing(FullCircle));
 		}
 		else
 		{
@@ -159,7 +159,7 @@ asteroid_preprocess(ELEMENT* ElementPtr)
 
 		if (!IsHd())
 		{
-			ElementPtr->next.image.frame = SetAbsFrameIndex(ElementPtr->current.image.frame, NORMALIZE_FACING(frame_index));
+			ElementPtr->next.image.frame = SetAbsFrameIndex(ElementPtr->current.image.frame, NormalizeFacing(frame_index));
 		}
 		else
 		{
@@ -209,12 +209,12 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 				AsteroidElementPtr->current.location.x = LogSpaceWidth();
 			}
 			AsteroidElementPtr->current.location.y =
-				WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
+				WrapY(DisplayAlignY(uqm::random().next()));
 		}
 		else
 		{
 			AsteroidElementPtr->current.location.x =
-				WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
+				WrapX(DisplayAlignX(uqm::random().next()));
 			if (!(val & (1 << 1)))
 			{
 				AsteroidElementPtr->current.location.y = 0;
@@ -230,7 +230,7 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 			// of function arguments may vary per system, which may break
 			// synchronisation on network games.
 			const int16_t magnitude =
-				DISPLAY_TO_WORLD(((int16_t)uqm::random().next() & 7) + 4);
+				DisplayToWorld(((int16_t)uqm::random().next() & 7) + 4);
 			const uint16_t facing = (uint16_t)uqm::random().next();
 			SetVelocityVector(&AsteroidElementPtr->velocity, magnitude,
 							  facing);
@@ -238,7 +238,7 @@ void spawn_asteroid(ELEMENT* ElementPtr)
 		AsteroidElementPtr->current.image.farray = asteroid;
 		AsteroidElementPtr->current.image.frame =
 			SetAbsFrameIndex(asteroid[0],
-							 NORMALIZE_FACING(uqm::random().next()));
+							 NormalizeFacing(uqm::random().next()));
 		AsteroidElementPtr->turn_wait =
 			AsteroidElementPtr->thrust_wait =
 				(uint8_t)uqm::random().next() & (uint8_t)((1 << 2) - 1);
@@ -268,7 +268,7 @@ void do_damage(ELEMENT* ElementPtr, int16_t damage)
 			ElementPtr->state_flags |= Nonsolid;
 		}
 	}
-	else if (!GRAVITY_MASS(ElementPtr->mass_points))
+	else if (!GravityMass(ElementPtr->mass_points))
 	{
 		if ((uint8_t)damage < ElementPtr->hit_points)
 		{
@@ -318,7 +318,7 @@ void crew_preprocess(ELEMENT* ElementPtr)
 	if (hTarget)
 	{
 		const auto CrewDelta = [&] {
-			return RES_SCALE(ScaledOne);
+			return ResScale(ScaledOne);
 		};
 		int16_t delta {};
 		ELEMENT* ShipPtr {};
@@ -326,7 +326,7 @@ void crew_preprocess(ELEMENT* ElementPtr)
 		LockElement(hTarget, &ShipPtr);
 		delta = ShipPtr->current.location.x
 			  - ElementPtr->current.location.x;
-		delta = WRAP_DELTA_X(delta);
+		delta = WrapDeltaX(delta);
 		if (delta > 0)
 		{
 			ElementPtr->next.location.x += CrewDelta();
@@ -337,7 +337,7 @@ void crew_preprocess(ELEMENT* ElementPtr)
 		}
 
 		delta = ShipPtr->current.location.y - ElementPtr->current.location.y;
-		delta = WRAP_DELTA_Y(delta);
+		delta = WrapDeltaY(delta);
 		if (delta > 0)
 		{
 			ElementPtr->next.location.y += CrewDelta();
@@ -405,11 +405,11 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 	else
 	{
 		const auto MoreThanEnough = [&] {
-			return RES_SCALE(100);
+			return ResScale(100);
 		};
 		direction += HalfCircle;
-		dx = COSINE(direction, MoreThanEnough());
-		dy = SINE(direction, MoreThanEnough());
+		dx = Cosine(direction, MoreThanEnough());
+		dy = Sine(direction, MoreThanEnough());
 	}
 
 	while (crew_loss-- && (hCrew = AllocElement()))
@@ -499,9 +499,9 @@ void AbandonShip(ELEMENT* ShipPtr, ELEMENT* TargetPtr,
 							   &ShipIntersect, MaxTimeValue);
 
 			CrewPtr->current.location.x =
-				DISPLAY_TO_WORLD(CrewIntersect.EndPoint.x);
+				DisplayToWorld(CrewIntersect.EndPoint.x);
 			CrewPtr->current.location.y =
-				DISPLAY_TO_WORLD(CrewIntersect.EndPoint.y);
+				DisplayToWorld(CrewIntersect.EndPoint.y);
 		}
 		UnlockElement(hCrew);
 	}

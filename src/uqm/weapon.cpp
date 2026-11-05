@@ -65,21 +65,21 @@ initialize_laser(LASER_BLOCK* pLaserBlock)
 		LaserElementPtr->blast_offset = 1;
 
 		LaserElementPtr->current.location.x = pLaserBlock->cx
-											+ COSINE(FACING_TO_ANGLE(pLaserBlock->face),
-													 DISPLAY_TO_WORLD(pLaserBlock->pixoffs));
+											+ Cosine(FacingToAngle(pLaserBlock->face),
+													 DisplayToWorld(pLaserBlock->pixoffs));
 		LaserElementPtr->current.location.y = pLaserBlock->cy
-											+ SINE(FACING_TO_ANGLE(pLaserBlock->face),
-												   DISPLAY_TO_WORLD(pLaserBlock->pixoffs));
+											+ Sine(FacingToAngle(pLaserBlock->face),
+												   DisplayToWorld(pLaserBlock->pixoffs));
 		SetPrimType(&DisplayArray[LaserElementPtr->PrimIndex], LINE_PRIM);
 		SetPrimColor(&DisplayArray[LaserElementPtr->PrimIndex],
 					 pLaserBlock->color);
 		LaserElementPtr->current.image.frame = DecFrameIndex(stars_in_space);
 		LaserElementPtr->current.image.farray = &stars_in_space;
 		SetVelocityComponents(&LaserElementPtr->velocity,
-							  WORLD_TO_VELOCITY((pLaserBlock->cx + pLaserBlock->ex)
-												- LaserElementPtr->current.location.x),
-							  WORLD_TO_VELOCITY((pLaserBlock->cy + pLaserBlock->ey)
-												- LaserElementPtr->current.location.y));
+							  WorldToVelocity((pLaserBlock->cx + pLaserBlock->ex)
+											  - LaserElementPtr->current.location.x),
+							  WorldToVelocity((pLaserBlock->cy + pLaserBlock->ey)
+											  - LaserElementPtr->current.location.y));
 		UnlockElement(hLaserElement);
 	}
 
@@ -113,19 +113,19 @@ initialize_missile(MISSILE_BLOCK* pMissileBlock)
 		MissileElementPtr->collision_func = weapon_collision_cb;
 		MissileElementPtr->blast_offset = (uint8_t)pMissileBlock->blast_offs;
 
-		angle = FACING_TO_ANGLE(pMissileBlock->face);
+		angle = FacingToAngle(pMissileBlock->face);
 		MissileElementPtr->current.location.x = pMissileBlock->cx
-											  + COSINE(angle, DISPLAY_TO_WORLD(pMissileBlock->pixoffs));
+											  + Cosine(angle, DisplayToWorld(pMissileBlock->pixoffs));
 		MissileElementPtr->current.location.y = pMissileBlock->cy
-											  + SINE(angle, DISPLAY_TO_WORLD(pMissileBlock->pixoffs));
+											  + Sine(angle, DisplayToWorld(pMissileBlock->pixoffs));
 
-		delta_x = COSINE(angle, WORLD_TO_VELOCITY(pMissileBlock->speed));
-		delta_y = SINE(angle, WORLD_TO_VELOCITY(pMissileBlock->speed));
+		delta_x = Cosine(angle, WorldToVelocity(pMissileBlock->speed));
+		delta_y = Sine(angle, WorldToVelocity(pMissileBlock->speed));
 		SetVelocityComponents(&MissileElementPtr->velocity,
 							  delta_x, delta_y);
 
-		MissileElementPtr->current.location.x -= VELOCITY_TO_WORLD(delta_x);
-		MissileElementPtr->current.location.y -= VELOCITY_TO_WORLD(delta_y);
+		MissileElementPtr->current.location.x -= VelocityToWorld(delta_x);
+		MissileElementPtr->current.location.y -= VelocityToWorld(delta_y);
 		UnlockElement(hMissileElement);
 	}
 
@@ -206,25 +206,25 @@ weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 			BlastElementPtr->state_flags = Appearing | FiniteLife | Nonsolid;
 			SetPrimType(&DisplayArray[BlastElementPtr->PrimIndex], STAMP_PRIM);
 
-			BlastElementPtr->current.location.x = DISPLAY_TO_WORLD(pWPt->x);
-			BlastElementPtr->current.location.y = DISPLAY_TO_WORLD(pWPt->y);
+			BlastElementPtr->current.location.x = DisplayToWorld(pWPt->x);
+			BlastElementPtr->current.location.y = DisplayToWorld(pWPt->y);
 
 			const uint16_t angle {GetVelocityTravelAngle(&WeaponElementPtr->velocity)};
 			if ((blast_offs = WeaponElementPtr->blast_offset) > 0)
 			{
 				BlastElementPtr->current.location.x +=
-					COSINE(angle, DISPLAY_TO_WORLD(blast_offs));
+					Cosine(angle, DisplayToWorld(blast_offs));
 				BlastElementPtr->current.location.y +=
-					SINE(angle, DISPLAY_TO_WORLD(blast_offs));
+					Sine(angle, DisplayToWorld(blast_offs));
 			}
 
 			blast_index =
-				NORMALIZE_FACING(ANGLE_TO_FACING(angle + HalfCircle));
+				NormalizeFacing(AngleToFacing(angle + HalfCircle));
 			blast_index = ((blast_index >> 2) << 1) + (blast_index & 0x3 ? 1 : 0);
 
 			num_blast_frames =
 				GetFrameCount(WeaponElementPtr->next.image.frame);
-			if (num_blast_frames <= ANGLE_TO_FACING(FullCircle))
+			if (num_blast_frames <= AngleToFacing(FullCircle))
 			{
 				BlastElementPtr->life_span = 2;
 				BlastElementPtr->current.image.farray = blast;
@@ -234,7 +234,7 @@ weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 			else
 			{
 				BlastElementPtr->life_span = num_blast_frames
-										   - ANGLE_TO_FACING(FullCircle);
+										   - AngleToFacing(FullCircle);
 				BlastElementPtr->turn_wait = BlastElementPtr->next_turn = 0;
 				BlastElementPtr->preprocess_func = animation_preprocess;
 				BlastElementPtr->current.image.farray =
@@ -242,7 +242,7 @@ weapon_collision(ELEMENT* WeaponElementPtr, GFXPOINT* pWPt,
 				BlastElementPtr->current.image.frame =
 					SetAbsFrameIndex(
 						BlastElementPtr->current.image.farray[0],
-						ANGLE_TO_FACING(FullCircle));
+						AngleToFacing(FullCircle));
 			}
 
 			UnlockElement(hBlastElement);
@@ -298,7 +298,7 @@ ModifySilhouette(ELEMENT* ElementPtr, STAMP* modify_stamp,
 									 &ShipIntersect, MaxTimeValue));
 
 		ObjectIntersect.IntersectStamp.origin.x += StatusWidth() >> 1;
-		ObjectIntersect.IntersectStamp.origin.y += RES_SCALE(31);
+		ObjectIntersect.IntersectStamp.origin.y += ResScale(31);
 	}
 
 	ObjectIntersect.IntersectStamp.origin.y +=
@@ -352,7 +352,7 @@ TrackShip(ELEMENT* Tracker, uint16_t* pfacing)
 		hNextShip = GetSuccElement(Trackee);
 		if ((Trackee->state_flags & PlayerShip)
 			&& !elementsOfSamePlayer(Trackee, Tracker)
-			&& (!OBJECT_CLOAKED(Trackee)
+			&& (!ObjectCloaked(Trackee)
 				|| ((Tracker->state_flags & PlayerShip)
 					&& (Tracker->state_flags & Appearing))))
 		{
@@ -382,10 +382,10 @@ CheckTracking:
 							- Tracker->current.location.y;
 				}
 
-				delta_x = WRAP_DELTA_X(delta_x);
-				delta_y = WRAP_DELTA_Y(delta_y);
-				delta_facing = NORMALIZE_FACING(
-					ANGLE_TO_FACING(ARCTAN(delta_x, delta_y)) - *pfacing);
+				delta_x = WrapDeltaX(delta_x);
+				delta_y = WrapDeltaY(delta_y);
+				delta_facing = NormalizeFacing(
+					AngleToFacing(ARCTAN(delta_x, delta_y)) - *pfacing);
 
 				if (delta_x < 0)
 				{
@@ -414,11 +414,11 @@ CheckTracking:
 	if (best_delta_facing > 0)
 	{
 		uint16_t facing {*pfacing};
-		if (best_delta_facing == ANGLE_TO_FACING(HalfCircle))
+		if (best_delta_facing == AngleToFacing(HalfCircle))
 		{
 			facing += (((uint8_t)uqm::random().next() & 1) << 1) - 1;
 		}
-		else if (best_delta_facing < ANGLE_TO_FACING(HalfCircle))
+		else if (best_delta_facing < AngleToFacing(HalfCircle))
 		{
 			++facing;
 		}
@@ -426,7 +426,7 @@ CheckTracking:
 		{
 			--facing;
 		}
-		*pfacing = NORMALIZE_FACING(facing);
+		*pfacing = NormalizeFacing(facing);
 	}
 
 	return (best_delta_facing);

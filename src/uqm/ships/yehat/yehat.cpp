@@ -37,13 +37,13 @@ static constexpr auto ShipMass {3};
 // Twin Pulse Cannon
 static constexpr auto WeaponEnergyCost {1};
 static constexpr auto WeaponWait {0};
-static auto YehatOffset() { return RES_SCALE(16); }
-static auto LaunchOffs() { return DISPLAY_TO_WORLD(RES_SCALE(8)); }
-static constexpr auto MissileSpeed {DISPLAY_TO_WORLD(20)};
+static auto YehatOffset() { return ResScale(16); }
+static auto LaunchOffs() { return DisplayToWorld(ResScale(8)); }
+static constexpr auto MissileSpeed {DisplayToWorld(20)};
 static constexpr auto MissileLife {10};
 static constexpr auto MissileHits {1};
 static constexpr auto MissileDamage {1};
-static auto MissileOffset() { return RES_SCALE(1); }
+static auto MissileOffset() { return ResScale(1); }
 
 // Force Shield
 static constexpr auto SpecialEnergyCost {3};
@@ -51,7 +51,7 @@ static constexpr auto SpecialWait {2};
 static constexpr auto ShieldLife {10};
 
 // HdResolutionFactor
-static auto MissileSpeedHd() { return RES_SCALE(MissileSpeed); }
+static auto MissileSpeedHd() { return ResScale(MissileSpeed); }
 
 static RACE_DESC yehat_desc =
 	{
@@ -144,8 +144,8 @@ initialize_standard_missiles(ELEMENT* ShipPtr, HELEMENT MissileArray[])
 	MissileBlock.preprocess_func = nullptr;
 	MissileBlock.blast_offs = MissileOffset();
 
-	const int32_t offs_x {-SINE(FACING_TO_ANGLE(MissileBlock.face), LaunchOffs())};
-	const int32_t offs_y {COSINE(FACING_TO_ANGLE(MissileBlock.face), LaunchOffs())};
+	const int32_t offs_x {-Sine(FacingToAngle(MissileBlock.face), LaunchOffs())};
+	const int32_t offs_y {Cosine(FacingToAngle(MissileBlock.face), LaunchOffs())};
 
 	MissileBlock.cx = ShipPtr->next.location.x + offs_x;
 	MissileBlock.cy = ShipPtr->next.location.y + offs_y;
@@ -377,8 +377,8 @@ init_yehat(void)
 {
 	if (IsHd())
 	{
-		yehat_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		yehat_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		yehat_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		yehat_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		yehat_desc.cyborg_control.WeaponRange = MissileSpeedHd() * MissileLife / 3;
 	}
 	else

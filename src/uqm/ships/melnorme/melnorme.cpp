@@ -40,10 +40,10 @@ static constexpr auto ShipMass {7};
 // Blaster Pulse
 static constexpr auto WeaponEnergyCost {5};
 static constexpr auto WeaponWait {1};
-static auto MelnormeOffset() { return RES_SCALE(24); }
+static auto MelnormeOffset() { return ResScale(24); }
 static constexpr auto LevelCounter {72};
 static constexpr auto MaxPump {4};
-static constexpr auto PumpupSpeed {DISPLAY_TO_WORLD(45)};
+static constexpr auto PumpupSpeed {DisplayToWorld(45)};
 static constexpr auto PumpupLife {10};
 static constexpr auto PumpupDamage {2};
 static constexpr auto MinPumpitudeAnims {3};
@@ -53,14 +53,14 @@ static constexpr auto ReverseDir {(uint8_t)(1 << 7)};
 // Confusion Pulse
 static constexpr auto SpecialEnergyCost {20};
 static constexpr auto SpecialWait {20};
-static auto CmissileSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(30)); }
+static auto CmissileSpeed() { return DisplayToWorld(ResScale(30)); }
 static constexpr auto CmissileLife {20};
 static constexpr auto CmissileHits {200};
 static constexpr auto CmissileDamage {0};
-static auto CmissileOffset() { return RES_SCALE(4); }
+static auto CmissileOffset() { return ResScale(4); }
 
 // HdResolutionFactor
-static auto PumpupSpeedHd() { return RES_SCALE(PumpupSpeed); }
+static auto PumpupSpeedHd() { return ResScale(PumpupSpeed); }
 
 static RACE_DESC melnorme_desc =
 	{
@@ -247,10 +247,10 @@ pump_up_postprocess(ELEMENT* ElementPtr)
 			EPtr->preprocess_func = pump_up_preprocess;
 			EPtr->postprocess_func = 0;
 
-			angle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
+			angle = FacingToAngle(StarShipPtr->ShipFacing);
 			SetVelocityComponents(&EPtr->velocity,
-								  COSINE(angle, WORLD_TO_VELOCITY(PumpupSpeedHd())),
-								  SINE(angle, WORLD_TO_VELOCITY(PumpupSpeedHd())));
+								  Cosine(angle, WorldToVelocity(PumpupSpeedHd())),
+								  Sine(angle, WorldToVelocity(PumpupSpeedHd())));
 
 			ProcessSound(GetSound(
 							 StarShipPtr->RaceDescPtr->ship_data.ship_sounds, 1),
@@ -334,7 +334,7 @@ initialize_pump_up(ELEMENT* ShipPtr, HELEMENT PumpUpArray[])
 	MissileBlock.sender = ShipPtr->playerNr;
 	MissileBlock.flags = IgnoreSimilar;
 	MissileBlock.pixoffs = MelnormeOffset();
-	MissileBlock.speed = DISPLAY_TO_WORLD(MelnormeOffset());
+	MissileBlock.speed = DisplayToWorld(MelnormeOffset());
 	MissileBlock.hit_points = PumpupDamage;
 	MissileBlock.damage = PumpupDamage;
 	MissileBlock.life = 2;
@@ -781,8 +781,8 @@ init_melnorme(void)
 {
 	if (IsHd())
 	{
-		melnorme_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		melnorme_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		melnorme_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		melnorme_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		melnorme_desc.cyborg_control.WeaponRange = PumpupSpeedHd() * PumpupLife;
 	}
 	else

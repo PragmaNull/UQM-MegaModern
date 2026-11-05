@@ -103,8 +103,8 @@ GenerateUtwig_generatePlanets(SOLARSYS_STATE* solarSys)
 			pPlanet->NumPlanets = 1;
 			pPlanet->radius = EarthRadius * 174L / 100;
 			const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
-			pPlanet->location.x = COSINE(angle, pPlanet->radius);
-			pPlanet->location.y = SINE(angle, pPlanet->radius);
+			pPlanet->location.x = Cosine(angle, pPlanet->radius);
+			pPlanet->location.y = Sine(angle, pPlanet->radius);
 			ComputeSpeed(pPlanet, false, 1);
 		}
 		else
@@ -181,7 +181,7 @@ GenerateUtwig_generateName(const SOLARSYS_STATE* solarSys,
 
 		uqm::utf8StringCopy(GLOBAL_SIS(PlanetName),
 							sizeof(GLOBAL_SIS(PlanetName)),
-							GAME_STRING(PLANET_NUMBER_BASE + 40));
+							GameString(PLANET_NUMBER_BASE + 40));
 
 		SET_GAME_STATE(BATTLE_PLANET, pPlanetDesc.data_index);
 	}

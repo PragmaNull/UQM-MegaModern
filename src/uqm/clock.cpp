@@ -199,3 +199,9 @@ void MoveGameClockDays(uint16_t days)
 	}
 	gameClock().restartDay();
 }
+
+HEVENT AllocEvent() { return AllocLink(&uqm::gameState().clock().events()); }
+void PutEvent(HEVENT h) { PutQueue(&uqm::gameState().clock().events(), h); }
+void UnlockEvent(HEVENT h) { UnlockLink(&uqm::gameState().clock().events(), h); }
+void FreeEvent(HEVENT h) { FreeLink(&uqm::gameState().clock().events(), h); }
+void ForAllEvents(void (*callback)(LINK*, void*), void* arg) { ForAllLinks(&uqm::gameState().clock().events(), callback, arg); }

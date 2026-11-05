@@ -464,38 +464,38 @@ AllianceInfo(RESPONSE_REF R)
 {
 	static uint8_t AllianceMask = 0;
 
-	if (PLAYER_SAID(R, what_about_alliance))
+	if (PlayerSaid(R, what_about_alliance))
 	{
 		NPCPhrase(WHICH_ALLIANCE);
 		AllianceMask = 0;
 	}
-	else if (PLAYER_SAID(R, shofixti))
+	else if (PlayerSaid(R, shofixti))
 	{
 		NPCPhrase(ABOUT_SHOFIXTI);
 		AllianceMask |= AllianceShofixti;
 		SetHomeworldKnown(SHOFIXTI_HOME);
 	}
-	else if (PLAYER_SAID(R, yehat))
+	else if (PlayerSaid(R, yehat))
 	{
 		NPCPhrase(ABOUT_YEHAT);
 		AllianceMask |= AllianceYehat;
 	}
-	else if (PLAYER_SAID(R, arilou))
+	else if (PlayerSaid(R, arilou))
 	{
 		NPCPhrase(ABOUT_ARILOU);
 		AllianceMask |= AllianceArilou;
 	}
-	else if (PLAYER_SAID(R, chenjesu))
+	else if (PlayerSaid(R, chenjesu))
 	{
 		NPCPhrase(ABOUT_CHENJESU);
 		AllianceMask |= AllianceChenjesu;
 	}
-	else if (PLAYER_SAID(R, mmrnmhrm))
+	else if (PlayerSaid(R, mmrnmhrm))
 	{
 		NPCPhrase(ABOUT_MMRNMHRM);
 		AllianceMask |= AllianceMmrnmhrm;
 	}
-	else if (PLAYER_SAID(R, syreen))
+	else if (PlayerSaid(R, syreen))
 	{
 		NPCPhrase(ABOUT_SYREEN);
 		AllianceMask |= AllianceSyreen;
@@ -541,43 +541,43 @@ HierarchyInfo(RESPONSE_REF R)
 {
 	static uint8_t HierarchyMask = 0;
 
-	if (PLAYER_SAID(R, what_about_hierarchy))
+	if (PlayerSaid(R, what_about_hierarchy))
 	{
 		NPCPhrase(WHICH_HIERARCHY);
 		HierarchyMask = 0;
 	}
-	else if (PLAYER_SAID(R, urquan))
+	else if (PlayerSaid(R, urquan))
 	{
 		NPCPhrase(ABOUT_URQUAN);
 		HierarchyMask |= HierarchyUrquan;
 	}
-	else if (PLAYER_SAID(R, mycon))
+	else if (PlayerSaid(R, mycon))
 	{
 		NPCPhrase(ABOUT_MYCON);
 		HierarchyMask |= HierarchyMycon;
 	}
-	else if (PLAYER_SAID(R, spathi))
+	else if (PlayerSaid(R, spathi))
 	{
 		NPCPhrase(ABOUT_SPATHI);
 		HierarchyMask |= HierarchySpathi;
 	}
-	else if (PLAYER_SAID(R, umgah))
+	else if (PlayerSaid(R, umgah))
 	{
 		NPCPhrase(ABOUT_UMGAH);
 		HierarchyMask |= HierarchyUmgah;
 	}
-	else if (PLAYER_SAID(R, androsynth))
+	else if (PlayerSaid(R, androsynth))
 	{
 		NPCPhrase(ABOUT_ANDROSYNTH);
 		HierarchyMask |= HierarchyAndrosynth;
 		SetHomeworldKnown(ANDROSYNTH_HOME);
 	}
-	else if (PLAYER_SAID(R, ilwrath))
+	else if (PlayerSaid(R, ilwrath))
 	{
 		NPCPhrase(ABOUT_ILWRATH);
 		HierarchyMask |= HierarchyIlwrath;
 	}
-	else if (PLAYER_SAID(R, vux))
+	else if (PlayerSaid(R, vux))
 	{
 		NPCPhrase(ABOUT_VUX);
 		HierarchyMask |= HierarchyVux;
@@ -623,22 +623,22 @@ AlienRaces(RESPONSE_REF R)
 {
 	static uint8_t RacesMask = 0;
 
-	if (PLAYER_SAID(R, alien_races))
+	if (PlayerSaid(R, alien_races))
 	{
 		NPCPhrase(WHICH_ALIEN);
 		RacesMask = 0;
 	}
-	else if (PLAYER_SAID(R, enough_alliance))
+	else if (PlayerSaid(R, enough_alliance))
 	{
 		NPCPhrase(OK_ENOUGH_ALLIANCE);
 		RacesMask |= RacesAlliance;
 	}
-	else if (PLAYER_SAID(R, enough_hierarchy))
+	else if (PlayerSaid(R, enough_hierarchy))
 	{
 		NPCPhrase(OK_ENOUGH_HIERARCHY);
 		RacesMask |= RacesHierarchy;
 	}
-	else if (PLAYER_SAID(R, what_about_other))
+	else if (PlayerSaid(R, what_about_other))
 	{
 		NPCPhrase(ABOUT_OTHER);
 		RacesMask |= RacesOther;
@@ -669,27 +669,27 @@ WarInfo(RESPONSE_REF R)
 {
 	static uint8_t WarMask = 0;
 
-	if (PLAYER_SAID(R, the_war))
+	if (PlayerSaid(R, the_war))
 	{
 		NPCPhrase(WHICH_WAR);
 		WarMask = 0;
 	}
-	else if (PLAYER_SAID(R, what_started_war))
+	else if (PlayerSaid(R, what_started_war))
 	{
 		NPCPhrase(URQUAN_STARTED_WAR);
 		WarMask |= WarStarted;
 	}
-	else if (PLAYER_SAID(R, what_was_war_like))
+	else if (PlayerSaid(R, what_was_war_like))
 	{
 		NPCPhrase(WAR_WAS_LIKE_SO);
 		WarMask |= WarWasLike;
 	}
-	else if (PLAYER_SAID(R, why_lose_war))
+	else if (PlayerSaid(R, why_lose_war))
 	{
 		NPCPhrase(LOST_WAR_BECAUSE);
 		WarMask |= WarLost;
 	}
-	else if (PLAYER_SAID(R, what_after_war))
+	else if (PlayerSaid(R, what_after_war))
 	{
 		NPCPhrase(AFTER_WAR);
 		WarMask |= WarAftermath;
@@ -723,22 +723,22 @@ AncientHistory(RESPONSE_REF R)
 {
 	static uint8_t AncientMask = 0;
 
-	if (PLAYER_SAID(R, ancient_history))
+	if (PlayerSaid(R, ancient_history))
 	{
 		NPCPhrase(WHICH_ANCIENT);
 		AncientMask = 0;
 	}
-	else if (PLAYER_SAID(R, precursors))
+	else if (PlayerSaid(R, precursors))
 	{
 		NPCPhrase(ABOUT_PRECURSORS);
 		AncientMask |= AncientPrecursors;
 	}
-	else if (PLAYER_SAID(R, old_races))
+	else if (PlayerSaid(R, old_races))
 	{
 		NPCPhrase(ABOUT_OLD_RACES);
 		AncientMask |= AncientRaces;
 	}
-	else if (PLAYER_SAID(R, aliens_on_earth))
+	else if (PlayerSaid(R, aliens_on_earth))
 	{
 		NPCPhrase(ABOUT_ALIENS_ON_EARTH);
 		AncientMask |= AncientEarth;
@@ -764,26 +764,26 @@ TellHistory(RESPONSE_REF R)
 {
 	RESPONSE_REF pstack[3];
 
-	if (PLAYER_SAID(R, history))
+	if (PlayerSaid(R, history))
 	{
 		NPCPhrase(WHICH_HISTORY);
 		stack0 = 0;
 		stack1 = 0;
 		stack2 = 0;
 	}
-	else if (PLAYER_SAID(R, enough_aliens))
+	else if (PlayerSaid(R, enough_aliens))
 	{
 		NPCPhrase(OK_ENOUGH_ALIENS);
 
 		stack0 = 1;
 	}
-	else if (PLAYER_SAID(R, enough_war))
+	else if (PlayerSaid(R, enough_war))
 	{
 		NPCPhrase(OK_ENOUGH_WAR);
 
 		stack1 = 1;
 	}
-	else if (PLAYER_SAID(R, enough_ancient))
+	else if (PlayerSaid(R, enough_ancient))
 	{
 		NPCPhrase(OK_ENOUGH_ANCIENT);
 
@@ -843,27 +843,27 @@ DefeatUrquan(RESPONSE_REF R)
 {
 	static uint8_t DefeatMask = 0;
 
-	if (PLAYER_SAID(R, how_defeat))
+	if (PlayerSaid(R, how_defeat))
 	{
 		NPCPhrase(DEFEAT_LIKE_SO);
 		DefeatMask = 0;
 	}
-	else if (PLAYER_SAID(R, how_find_urquan))
+	else if (PlayerSaid(R, how_find_urquan))
 	{
 		NPCPhrase(FIND_URQUAN);
 		DefeatMask |= HowFindUrquan;
 	}
-	else if (PLAYER_SAID(R, how_fight_urquan))
+	else if (PlayerSaid(R, how_fight_urquan))
 	{
 		NPCPhrase(FIGHT_URQUAN);
 		DefeatMask |= HowFightUrquan;
 	}
-	else if (PLAYER_SAID(R, how_ally))
+	else if (PlayerSaid(R, how_ally))
 	{
 		NPCPhrase(ALLY_LIKE_SO);
 		DefeatMask |= HowAllyAgainstUrquan;
 	}
-	else if (PLAYER_SAID(R, how_get_strong))
+	else if (PlayerSaid(R, how_get_strong))
 	{
 		NPCPhrase(STRONG_LIKE_SO);
 		DefeatMask |= HowStrongAgainstUrquan;
@@ -1129,7 +1129,7 @@ TellMission(RESPONSE_REF R)
 {
 	RESPONSE_REF pstack[4];
 
-	if (PLAYER_SAID(R, our_mission))
+	if (PlayerSaid(R, our_mission))
 	{
 		NPCPhrase(WHICH_MISSION);
 		stack0 = 0;
@@ -1137,31 +1137,31 @@ TellMission(RESPONSE_REF R)
 		stack2 = 0;
 		stack3 = 0;
 	}
-	else if (PLAYER_SAID(R, where_get_minerals))
+	else if (PlayerSaid(R, where_get_minerals))
 	{
 		NPCPhrase(GET_MINERALS);
 
 		stack0 = 1;
 	}
-	else if (PLAYER_SAID(R, what_about_aliens))
+	else if (PlayerSaid(R, what_about_aliens))
 	{
 		NPCPhrase(ABOUT_ALIENS);
 
 		stack1 = 1;
 	}
-	else if (PLAYER_SAID(R, what_do_now))
+	else if (PlayerSaid(R, what_do_now))
 	{
 		AnalyzeCondition();
 
 		stack2 = 1;
 	}
-	else if (PLAYER_SAID(R, what_about_urquan))
+	else if (PlayerSaid(R, what_about_urquan))
 	{
 		NPCPhrase(MUST_DEFEAT);
 
 		stack3 = 1;
 	}
-	else if (PLAYER_SAID(R, enough_defeat))
+	else if (PlayerSaid(R, enough_defeat))
 	{
 		NPCPhrase(OK_ENOUGH_DEFEAT);
 
@@ -1240,7 +1240,7 @@ TellStarBase(RESPONSE_REF R)
 {
 	RESPONSE_REF pstack[4];
 
-	if (PLAYER_SAID(R, starbase_functions))
+	if (PlayerSaid(R, starbase_functions))
 	{
 		NPCPhrase(WHICH_FUNCTION);
 		stack0 = 0;
@@ -1248,43 +1248,43 @@ TellStarBase(RESPONSE_REF R)
 		stack2 = 0;
 		stack3 = 0;
 	}
-	else if (PLAYER_SAID(R, tell_me_about_fuel))
+	else if (PlayerSaid(R, tell_me_about_fuel))
 	{
 		NPCPhrase(ABOUT_FUEL);
 
 		stack1 = 1;
 	}
-	else if (PLAYER_SAID(R, tell_me_about_crew))
+	else if (PlayerSaid(R, tell_me_about_crew))
 	{
 		NPCPhrase(ABOUT_CREW);
 
 		stack2 = 2;
 	}
-	else if (PLAYER_SAID(R, tell_me_about_modules))
+	else if (PlayerSaid(R, tell_me_about_modules))
 	{
 		NPCPhrase(ABOUT_MODULES);
 
 		stack0 = 1;
 	}
-	else if (PLAYER_SAID(R, tell_me_about_ships))
+	else if (PlayerSaid(R, tell_me_about_ships))
 	{
 		NPCPhrase(ABOUT_SHIPS);
 
 		stack2 = 1;
 	}
-	else if (PLAYER_SAID(R, tell_me_about_ru))
+	else if (PlayerSaid(R, tell_me_about_ru))
 	{
 		NPCPhrase(ABOUT_RU);
 
 		stack3 = 1;
 	}
-	else if (PLAYER_SAID(R, tell_me_about_minerals))
+	else if (PlayerSaid(R, tell_me_about_minerals))
 	{
 		NPCPhrase(ABOUT_MINERALS);
 
 		stack3 = 2;
 	}
-	else if (PLAYER_SAID(R, tell_me_about_life))
+	else if (PlayerSaid(R, tell_me_about_life))
 	{
 		NPCPhrase(ABOUT_LIFE);
 
@@ -1362,19 +1362,19 @@ static void NormalStarbase(RESPONSE_REF R);
 static void
 NeedInfo(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, need_info))
+	if (PlayerSaid(R, need_info))
 	{
 		NPCPhrase(WHAT_KIND_OF_INFO);
 	}
-	else if (PLAYER_SAID(R, enough_starbase))
+	else if (PlayerSaid(R, enough_starbase))
 	{
 		NPCPhrase(OK_ENOUGH_STARBASE);
 	}
-	else if (PLAYER_SAID(R, enough_history))
+	else if (PlayerSaid(R, enough_history))
 	{
 		NPCPhrase(OK_ENOUGH_HISTORY);
 	}
-	else if (PLAYER_SAID(R, enough_mission))
+	else if (PlayerSaid(R, enough_mission))
 	{
 		NPCPhrase(OK_ENOUGH_MISSION);
 	}
@@ -2006,15 +2006,15 @@ CheckBulletins(bool Repeat)
 static void
 NormalStarbase(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, no_need_info))
+	if (PlayerSaid(R, no_need_info))
 	{
 		NPCPhrase(OK_NO_NEED_INFO);
 	}
-	else if (PLAYER_SAID(R, new_devices))
+	else if (PlayerSaid(R, new_devices))
 	{
 		DiscussDevices(true);
 	}
-	else if (PLAYER_SAID(R, repeat_bulletins))
+	else if (PlayerSaid(R, repeat_bulletins))
 	{
 		CheckBulletins(true);
 	}
@@ -2203,10 +2203,10 @@ init_starbase_comm()
 	// Initialise Lua for string interpolation. This will be
 	// generalised in the future.
 
-	commander_desc.AlienTextWidth = RES_SCALE(143);
-	commander_desc.AlienTextBaseline.x = RES_SCALE(164)
-									   - (SAFE_NEG(2) * 2);
-	commander_desc.AlienTextBaseline.y = RES_SCALE(20);
+	commander_desc.AlienTextWidth = ResScale(143);
+	commander_desc.AlienTextBaseline.x = ResScale(164)
+									   - (SafeNeg(2) * 2);
+	commander_desc.AlienTextBaseline.y = ResScale(20);
 
 	// use alternate Starbase track if available
 	altResFlags |= UseAltSong;

@@ -106,7 +106,7 @@ bool GenerateDefault_generateName(const SOLARSYS_STATE* solarSys,
 {
 	const uint16_t i = planetIndex(solarSys, world);
 	uqm::utf8StringCopy(GLOBAL_SIS(PlanetName), sizeof(GLOBAL_SIS(PlanetName)),
-						GAME_STRING(PLANET_NUMBER_BASE + (9 + 7) + i));
+						GameString(PLANET_NUMBER_BASE + (9 + 7) + i));
 	SET_GAME_STATE(BATTLE_PLANET, world->data_index);
 
 	return true;
@@ -286,7 +286,7 @@ void GeneratePlanets(SOLARSYS_STATE* solarSys)
 
 		uint8_t num_moons {0};
 		const uint8_t type {PlanData[planet->data_index & ~PLANET_SHIELDED].Type};
-		switch (PLANSIZE(type))
+		switch (Plansize(type))
 		{
 			case LARGE_ROCKY_WORLD:
 				if (byte_val < 0x00FF * 25 / 100)
@@ -365,7 +365,7 @@ GenerateWorlds(uint8_t whichType)
 	return planet;
 }
 
-static constexpr auto DwarfGasgDist {SCALE_RADIUS(12)};
+static constexpr auto DwarfGasgDist {ScaleRadius(12)};
 
 void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 {
@@ -399,8 +399,8 @@ void GenerateGasGiantRanged(SOLARSYS_STATE* solarSys)
 		pPlanet->radius =
 			uqm::rangeMinMax(DwarfGasgDist, MaxPlanetRadius, rand);
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
-		pPlanet->location.x = COSINE(angle, pPlanet->radius);
-		pPlanet->location.y = SINE(angle, pPlanet->radius);
+		pPlanet->location.x = Cosine(angle, pPlanet->radius);
+		pPlanet->location.y = Sine(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
 	}
 }

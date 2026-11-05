@@ -59,7 +59,7 @@ STATUS_FLAGS
 inertial_thrust(ELEMENT* ElementPtr)
 {
 	const auto MaxAllowedSpeed = [&] {
-		return WORLD_TO_VELOCITY(DISPLAY_TO_WORLD(RES_SCALE(18)));
+		return WorldToVelocity(DisplayToWorld(ResScale(18)));
 	};
 	const auto MaxAllowedSpeedSqr = [&] {
 		return ((uint32_t)MaxAllowedSpeed() * MaxAllowedSpeed());
@@ -73,7 +73,7 @@ inertial_thrust(ELEMENT* ElementPtr)
 	VELOCITY_DESC* VelocityPtr {&ElementPtr->velocity};
 
 	GetElementStarShip(ElementPtr, &StarShipPtr);
-	CurrentAngle = FACING_TO_ANGLE(StarShipPtr->ShipFacing);
+	CurrentAngle = FacingToAngle(StarShipPtr->ShipFacing);
 	const uint16_t TravelAngle {GetVelocityTravelAngle(VelocityPtr)};
 	thrust_increment = StarShipPtr->RaceDescPtr->characteristics.thrust_increment;
 	max_thrust = StarShipPtr->RaceDescPtr->characteristics.max_thrust;
@@ -98,13 +98,13 @@ inertial_thrust(ELEMENT* ElementPtr)
 		int16_t cur_delta_x {};
 		int16_t cur_delta_y {};
 
-		thrust_increment = WORLD_TO_VELOCITY(thrust_increment);
+		thrust_increment = WorldToVelocity(thrust_increment);
 		GetCurrentVelocityComponents(VelocityPtr, &cur_delta_x, &cur_delta_y);
 		const uint32_t current_speed {VelocitySquared(cur_delta_x, cur_delta_y)};
-		delta_x = cur_delta_x + COSINE(CurrentAngle, thrust_increment);
-		delta_y = cur_delta_y + SINE(CurrentAngle, thrust_increment);
+		delta_x = cur_delta_x + Cosine(CurrentAngle, thrust_increment);
+		delta_y = cur_delta_y + Sine(CurrentAngle, thrust_increment);
 		uint32_t desired_speed {VelocitySquared(delta_x, delta_y)};
-		const uint32_t max_speed {VelocitySquared(WORLD_TO_VELOCITY(max_thrust), 0)};
+		const uint32_t max_speed {VelocitySquared(WorldToVelocity(max_thrust), 0)};
 
 		if (desired_speed <= max_speed)
 		{ // normal acceleration
@@ -135,10 +135,10 @@ inertial_thrust(ELEMENT* ElementPtr)
 			VELOCITY_DESC v = *VelocityPtr;
 
 			DeltaVelocityComponents(&v,
-									COSINE(CurrentAngle, thrust_increment >> 1)
-										- COSINE(TravelAngle, thrust_increment),
-									SINE(CurrentAngle, thrust_increment >> 1)
-										- SINE(TravelAngle, thrust_increment));
+									Cosine(CurrentAngle, thrust_increment >> 1)
+										- Cosine(TravelAngle, thrust_increment),
+									Sine(CurrentAngle, thrust_increment >> 1)
+										- Sine(TravelAngle, thrust_increment));
 			GetCurrentVelocityComponents(&v, &cur_delta_x, &cur_delta_y);
 			desired_speed = VelocitySquared(cur_delta_x, cur_delta_y);
 			if (desired_speed > max_speed)
@@ -287,12 +287,12 @@ void ship_preprocess(ELEMENT* ElementPtr)
 		if (cur_status_flags & LeftFlag)
 		{
 			StarShipPtr->ShipFacing =
-				NORMALIZE_FACING(StarShipPtr->ShipFacing - 1);
+				NormalizeFacing(StarShipPtr->ShipFacing - 1);
 		}
 		else
 		{
 			StarShipPtr->ShipFacing =
-				NORMALIZE_FACING(StarShipPtr->ShipFacing + 1);
+				NormalizeFacing(StarShipPtr->ShipFacing + 1);
 		}
 		ElementPtr->next.image.frame =
 			SetAbsFrameIndex(ElementPtr->next.image.frame,
@@ -317,7 +317,7 @@ void ship_preprocess(ELEMENT* ElementPtr)
 
 		ElementPtr->thrust_wait = RDPtr->characteristics.thrust_wait;
 
-		if (!OBJECT_CLOAKED(ElementPtr)
+		if (!ObjectCloaked(ElementPtr)
 			&& uqm::lowByte(uqm::currentActivity()) <= IN_ENCOUNTER)
 		{
 			spawn_ion_trail(ElementPtr, 0, 0);
@@ -414,7 +414,7 @@ void collision(ELEMENT* ElementPtr0, GFXPOINT* pPt0,
 	if (!(ElementPtr1->state_flags & FiniteLife))
 	{
 		ElementPtr0->state_flags |= Collision;
-		if (GRAVITY_MASS(ElementPtr1->mass_points))
+		if (GravityMass(ElementPtr1->mass_points))
 		{
 			// Collision with a planet.
 			int16_t damage {};
@@ -522,7 +522,7 @@ spawn_ship(STARSHIP* StarShipPtr)
 		}
 		else
 		{
-			StarShipPtr->ShipFacing = NORMALIZE_FACING(uqm::random().next());
+			StarShipPtr->ShipFacing = NormalizeFacing(uqm::random().next());
 			if (inHQSpace())
 			{ // Only one ship is ever spawned in HyperSpace -- flagship
 				uint16_t facing = uqm::flagship().shipFacing;
@@ -566,9 +566,9 @@ spawn_ship(STARSHIP* StarShipPtr)
 			do
 			{
 				ShipElementPtr->current.location.x =
-					WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
+					WrapX(DisplayAlignX(uqm::random().next()));
 				ShipElementPtr->current.location.y =
-					WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
+					WrapY(DisplayAlignY(uqm::random().next()));
 			} while (CalculateGravity(ShipElementPtr)
 					 || TimeSpaceMatterConflict(ShipElementPtr));
 		}

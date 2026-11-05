@@ -249,34 +249,34 @@ ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
-	if (PLAYER_SAID(R, bye_neutral))
+	if (PlayerSaid(R, bye_neutral))
 	{
 		NPCPhrase(GOODBYE_NEUTRAL);
 	}
-	else if (PLAYER_SAID(R, bye_after_space))
+	else if (PlayerSaid(R, bye_after_space))
 	{
 		NPCPhrase(GOODBYE_AFTER_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_before_space))
+	else if (PlayerSaid(R, bye_before_space))
 	{
 		NPCPhrase(GOODBYE_BEFORE_SPACE);
 	}
-	else if (PLAYER_SAID(R, bye_allied_homeworld))
+	else if (PlayerSaid(R, bye_allied_homeworld))
 	{
 		NPCPhrase(GOODBYE_ALLIED_HOMEWORLD);
 	}
-	else if (PLAYER_SAID(R, bye_bomb))
+	else if (PlayerSaid(R, bye_bomb))
 	{
 		NPCPhrase(GOODBYE_BOMB);
 	}
-	else if (PLAYER_SAID(R, demand_bomb))
+	else if (PlayerSaid(R, demand_bomb))
 	{
 		NPCPhrase(GUARDS_FIGHT);
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, got_ultron)
-			 || PLAYER_SAID(R, hey_wait_got_ultron))
+	else if (PlayerSaid(R, got_ultron)
+			 || PlayerSaid(R, hey_wait_got_ultron))
 	{
 		if (GET_GAME_STATE(GLOBAL_FLAGS_AND_DATA) & (1 << 6))
 		{
@@ -288,7 +288,7 @@ ExitConversation(RESPONSE_REF R)
 		}
 		else
 		{
-			if (PLAYER_SAID(R, got_ultron))
+			if (PlayerSaid(R, got_ultron))
 			{
 				NPCPhrase(DONT_WANT_TO_LOOK);
 			}
@@ -301,7 +301,7 @@ ExitConversation(RESPONSE_REF R)
 				switch (GET_GAME_STATE(UTWIG_INFO))
 				{
 					case 0:
-						if (PLAYER_SAID(R, got_ultron))
+						if (PlayerSaid(R, got_ultron))
 						{
 							NPCPhrase(SICK_TRICK_1);
 						}
@@ -313,7 +313,7 @@ ExitConversation(RESPONSE_REF R)
 						}
 						break;
 					case 1:
-						if (PLAYER_SAID(R, got_ultron))
+						if (PlayerSaid(R, got_ultron))
 						{
 							NPCPhrase(SICK_TRICK_2);
 						}
@@ -362,7 +362,7 @@ ExitConversation(RESPONSE_REF R)
 			}
 		}
 	}
-	else if (PLAYER_SAID(R, can_you_help))
+	else if (PlayerSaid(R, can_you_help))
 	{
 		NPCPhrase(HOW_HELP);
 		if (EscortFeasibilityStudy(UTWIG_SHIP) == 0)
@@ -390,13 +390,13 @@ AlliedHome(RESPONSE_REF R)
 
 	News = GET_GAME_STATE(UTWIG_WAR_NEWS);
 	NumVisits = GET_GAME_STATE(UTWIG_SUPOX_MISSION);
-	if (PLAYER_SAID(R, how_went_war))
+	if (PlayerSaid(R, how_went_war))
 	{
 		NPCPhrase(ABOUT_BATTLE);
 
 		News |= (1 << 0);
 	}
-	else if (PLAYER_SAID(R, how_goes_war))
+	else if (PlayerSaid(R, how_goes_war))
 	{
 		if (NumVisits == 1)
 		{
@@ -421,7 +421,7 @@ AlliedHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(how_goes_war);
 	}
-	else if (PLAYER_SAID(R, learn_new_info))
+	else if (PlayerSaid(R, learn_new_info))
 	{
 		if (NumVisits < 5)
 		{
@@ -436,7 +436,7 @@ AlliedHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(learn_new_info);
 	}
-	else if (PLAYER_SAID(R, what_now_homeworld))
+	else if (PlayerSaid(R, what_now_homeworld))
 	{
 		if (NumVisits < 5)
 		{
@@ -449,7 +449,7 @@ AlliedHome(RESPONSE_REF R)
 
 		DISABLE_PHRASE(what_now_homeworld);
 	}
-	else if (PLAYER_SAID(R, how_is_ultron))
+	else if (PlayerSaid(R, how_is_ultron))
 	{
 		NPCPhrase(ULTRON_IS_GREAT);
 
@@ -464,21 +464,21 @@ AlliedHome(RESPONSE_REF R)
 			Response(how_went_war, AlliedHome);
 		}
 	}
-	else if (PHRASE_ENABLED(how_goes_war)
+	else if (PhraseEnabled(how_goes_war)
 			 && ((NumVisits == 1 && News == 0)
 				 || (NumVisits && News < 2)))
 	{
 		Response(how_goes_war, AlliedHome);
 	}
-	if (PHRASE_ENABLED(learn_new_info))
+	if (PhraseEnabled(learn_new_info))
 	{
 		Response(learn_new_info, AlliedHome);
 	}
-	if (PHRASE_ENABLED(what_now_homeworld))
+	if (PhraseEnabled(what_now_homeworld))
 	{
 		Response(what_now_homeworld, AlliedHome);
 	}
-	if (PHRASE_ENABLED(how_is_ultron))
+	if (PhraseEnabled(how_is_ultron))
 	{
 		Response(how_is_ultron, AlliedHome);
 	}
@@ -494,7 +494,7 @@ BeforeKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, whats_up_before_space))
+	if (PlayerSaid(R, whats_up_before_space))
 	{
 		NumVisits = GET_GAME_STATE(UTWIG_INFO);
 		switch (NumVisits++)
@@ -511,18 +511,18 @@ BeforeKohrAh(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_before_space);
 	}
-	else if (PLAYER_SAID(R, what_now_before_space))
+	else if (PlayerSaid(R, what_now_before_space))
 	{
 		NPCPhrase(DO_THIS_BEFORE_SPACE);
 
 		DISABLE_PHRASE(what_now_before_space);
 	}
 
-	if (PHRASE_ENABLED(whats_up_before_space))
+	if (PhraseEnabled(whats_up_before_space))
 	{
 		Response(whats_up_before_space, BeforeKohrAh);
 	}
-	if (PHRASE_ENABLED(what_now_before_space))
+	if (PhraseEnabled(what_now_before_space))
 	{
 		Response(what_now_before_space, BeforeKohrAh);
 	}
@@ -534,7 +534,7 @@ AfterKohrAh(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, whats_up_after_space))
+	if (PlayerSaid(R, whats_up_after_space))
 	{
 		NumVisits = GET_GAME_STATE(UTWIG_INFO);
 		switch (NumVisits++)
@@ -551,18 +551,18 @@ AfterKohrAh(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_after_space);
 	}
-	else if (PLAYER_SAID(R, what_now_after_space))
+	else if (PlayerSaid(R, what_now_after_space))
 	{
 		NPCPhrase(DO_THIS_AFTER_SPACE);
 
 		DISABLE_PHRASE(what_now_after_space);
 	}
 
-	if (PHRASE_ENABLED(whats_up_after_space))
+	if (PhraseEnabled(whats_up_after_space))
 	{
 		Response(whats_up_after_space, AfterKohrAh);
 	}
-	if (PHRASE_ENABLED(what_now_after_space))
+	if (PhraseEnabled(what_now_after_space))
 	{
 		Response(what_now_after_space, AfterKohrAh);
 	}
@@ -577,25 +577,25 @@ NeutralUtwig(RESPONSE_REF R)
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = pStr[3] = 0;
-	if (PLAYER_SAID(R, we_are_vindicator))
+	if (PlayerSaid(R, we_are_vindicator))
 	{
 		NPCPhrase(WOULD_BE_HAPPY_BUT);
 
 		SET_GAME_STATE(UTWIG_STACK1, 1);
 	}
-	else if (PLAYER_SAID(R, why_sad))
+	else if (PlayerSaid(R, why_sad))
 	{
 		NPCPhrase(ULTRON_BROKE);
 
 		SET_GAME_STATE(UTWIG_STACK1, 2);
 	}
-	else if (PLAYER_SAID(R, what_ultron))
+	else if (PlayerSaid(R, what_ultron))
 	{
 		NPCPhrase(GLORIOUS_ULTRON);
 
 		SET_GAME_STATE(UTWIG_STACK1, 3);
 	}
-	else if (PLAYER_SAID(R, dont_be_babies))
+	else if (PlayerSaid(R, dont_be_babies))
 	{
 		NPCPhrase(MOCK_OUR_PAIN);
 
@@ -608,21 +608,21 @@ NeutralUtwig(RESPONSE_REF R)
 		SET_GAME_STATE(BOMB_VISITS, 0);
 		return;
 	}
-	else if (PLAYER_SAID(R, real_sorry_about_ultron))
+	else if (PlayerSaid(R, real_sorry_about_ultron))
 	{
 		NPCPhrase(APPRECIATE_SYMPATHY);
 
 		SET_GAME_STATE(UTWIG_STACK1, 4);
 		return;
 	}
-	else if (PLAYER_SAID(R, what_about_you_1))
+	else if (PlayerSaid(R, what_about_you_1))
 	{
 		NPCPhrase(ABOUT_US_1);
 
 		LastStack = 2;
 		SET_GAME_STATE(UTWIG_WAR_NEWS, 1);
 	}
-	else if (PLAYER_SAID(R, what_about_you_2))
+	else if (PlayerSaid(R, what_about_you_2))
 	{
 		NPCPhrase(ABOUT_US_2);
 
@@ -630,21 +630,21 @@ NeutralUtwig(RESPONSE_REF R)
 		StartSphereTracking(SUPOX_SHIP);
 		SET_GAME_STATE(UTWIG_WAR_NEWS, 2);
 	}
-	else if (PLAYER_SAID(R, what_about_you_3))
+	else if (PlayerSaid(R, what_about_you_3))
 	{
 		NPCPhrase(ABOUT_US_3);
 
 		SET_GAME_STATE(UTWIG_WAR_NEWS, 3);
 		SetHomeworldKnown(SUPOX_HOME);
 	}
-	else if (PLAYER_SAID(R, what_about_urquan_1))
+	else if (PlayerSaid(R, what_about_urquan_1))
 	{
 		NPCPhrase(ABOUT_URQUAN_1);
 
 		LastStack = 3;
 		SET_GAME_STATE(UTWIG_STACK2, 1);
 	}
-	else if (PLAYER_SAID(R, what_about_urquan_2))
+	else if (PlayerSaid(R, what_about_urquan_2))
 	{
 		NPCPhrase(ABOUT_URQUAN_2);
 
@@ -714,25 +714,25 @@ BombWorld(RESPONSE_REF R)
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = 0;
-	if (PLAYER_SAID(R, why_you_here))
+	if (PlayerSaid(R, why_you_here))
 	{
 		NPCPhrase(WE_GUARD_BOMB);
 
 		SET_GAME_STATE(BOMB_STACK1, 1);
 	}
-	else if (PLAYER_SAID(R, what_about_bomb))
+	else if (PlayerSaid(R, what_about_bomb))
 	{
 		NPCPhrase(ABOUT_BOMB);
 
 		SET_GAME_STATE(BOMB_STACK1, 2);
 	}
-	else if (PLAYER_SAID(R, give_us_bomb_or_die))
+	else if (PlayerSaid(R, give_us_bomb_or_die))
 	{
 		NPCPhrase(GUARDS_WARN);
 
 		SET_GAME_STATE(BOMB_STACK1, 3);
 	}
-	else if (PLAYER_SAID(R, demand_bomb))
+	else if (PlayerSaid(R, demand_bomb))
 	{
 		NPCPhrase(GUARDS_FIGHT);
 
@@ -744,20 +744,20 @@ BombWorld(RESPONSE_REF R)
 		SET_GAME_STATE(BOMB_VISITS, 0);
 		return;
 	}
-	else if (PLAYER_SAID(R, may_we_have_bomb))
+	else if (PlayerSaid(R, may_we_have_bomb))
 	{
 		NPCPhrase(NO_BOMB);
 
 		LastStack = 1;
 		SET_GAME_STATE(BOMB_STACK2, 1);
 	}
-	else if (PLAYER_SAID(R, please))
+	else if (PlayerSaid(R, please))
 	{
 		NPCPhrase(SORRY_NO_BOMB);
 
 		SET_GAME_STATE(BOMB_STACK2, 2);
 	}
-	else if (PLAYER_SAID(R, whats_up_bomb))
+	else if (PlayerSaid(R, whats_up_bomb))
 	{
 		if (GET_GAME_STATE(BOMB_INFO))
 		{
@@ -810,7 +810,7 @@ BombWorld(RESPONSE_REF R)
 		Response(pStr[LastStack], BombWorld);
 	}
 
-	if (PHRASE_ENABLED(whats_up_bomb) && (GET_GAME_STATE(BOMB_STACK1) > 1))
+	if (PhraseEnabled(whats_up_bomb) && (GET_GAME_STATE(BOMB_STACK1) > 1))
 	{
 		Response(whats_up_bomb, BombWorld);
 	}
@@ -1066,8 +1066,8 @@ init_utwig_comm(void)
 	// generalised in the future.
 
 	utwig_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
-	utwig_desc.AlienTextBaseline.y = RES_SCALE(64);
-	utwig_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	utwig_desc.AlienTextBaseline.y = ResScale(64);
+	utwig_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	// use alternate 'Happy Utwig!' track
 	if (GET_GAME_STATE(UTWIG_HAVE_ULTRON))

@@ -179,7 +179,7 @@ CombatIsInevitable(RESPONSE_REF R)
 
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, bye))
+	if (PlayerSaid(R, bye))
 	{
 		if (GET_GAME_STATE(KOHR_AH_BYES) == 0)
 		{
@@ -192,32 +192,32 @@ CombatIsInevitable(RESPONSE_REF R)
 
 		SET_GAME_STATE(KOHR_AH_BYES, 1);
 	}
-	else if (PLAYER_SAID(R, guess_thats_all))
+	else if (PlayerSaid(R, guess_thats_all))
 	{
 		NPCPhrase(THEN_DIE);
 	}
-	else if (PLAYER_SAID(R, what_are_you_hovering_over))
+	else if (PlayerSaid(R, what_are_you_hovering_over))
 	{
 		NPCPhrase(BONE_PILE);
 
 		SET_GAME_STATE(KOHR_AH_INFO, 1);
 	}
-	else if (PLAYER_SAID(R, you_sure_are_creepy))
+	else if (PlayerSaid(R, you_sure_are_creepy))
 	{
 		NPCPhrase(YES_CREEPY);
 
 		SET_GAME_STATE(KOHR_AH_INFO, 2);
 	}
-	else if (PLAYER_SAID(R, stop_that_gross_blinking))
+	else if (PlayerSaid(R, stop_that_gross_blinking))
 	{
 		NPCPhrase(DIE_HUMAN);
 
 		SET_GAME_STATE(KOHR_AH_INFO, 3);
 	}
-	else if (PLAYER_SAID(R, threat_1)
-			 || PLAYER_SAID(R, threat_2)
-			 || PLAYER_SAID(R, threat_3)
-			 || PLAYER_SAID(R, threat_4))
+	else if (PlayerSaid(R, threat_1)
+			 || PlayerSaid(R, threat_2)
+			 || PlayerSaid(R, threat_3)
+			 || PlayerSaid(R, threat_4))
 	{
 		NumVisits = GET_GAME_STATE(KOHR_AH_REASONS);
 		switch (NumVisits++)
@@ -238,10 +238,10 @@ CombatIsInevitable(RESPONSE_REF R)
 		}
 		SET_GAME_STATE(KOHR_AH_REASONS, NumVisits);
 	}
-	else if (PLAYER_SAID(R, plead_1)
-			 || PLAYER_SAID(R, plead_2)
-			 || PLAYER_SAID(R, plead_3)
-			 || PLAYER_SAID(R, plead_4))
+	else if (PlayerSaid(R, plead_1)
+			 || PlayerSaid(R, plead_2)
+			 || PlayerSaid(R, plead_3)
+			 || PlayerSaid(R, plead_4))
 	{
 		NumVisits = GET_GAME_STATE(KOHR_AH_PLEAD);
 		switch (NumVisits++)
@@ -263,10 +263,10 @@ CombatIsInevitable(RESPONSE_REF R)
 		}
 		SET_GAME_STATE(KOHR_AH_PLEAD, NumVisits);
 	}
-	else if (PLAYER_SAID(R, why_kill_all_1)
-			 || PLAYER_SAID(R, why_kill_all_2)
-			 || PLAYER_SAID(R, why_kill_all_3)
-			 || PLAYER_SAID(R, why_kill_all_4))
+	else if (PlayerSaid(R, why_kill_all_1)
+			 || PlayerSaid(R, why_kill_all_2)
+			 || PlayerSaid(R, why_kill_all_3)
+			 || PlayerSaid(R, why_kill_all_4))
 	{
 		NumVisits = GET_GAME_STATE(KOHR_AH_REASONS);
 		switch (NumVisits++)
@@ -287,10 +287,10 @@ CombatIsInevitable(RESPONSE_REF R)
 		}
 		SET_GAME_STATE(KOHR_AH_REASONS, NumVisits);
 	}
-	else if (PLAYER_SAID(R, please_dont_kill_1)
-			 || PLAYER_SAID(R, please_dont_kill_2)
-			 || PLAYER_SAID(R, please_dont_kill_3)
-			 || PLAYER_SAID(R, please_dont_kill_4))
+	else if (PlayerSaid(R, please_dont_kill_1)
+			 || PlayerSaid(R, please_dont_kill_2)
+			 || PlayerSaid(R, please_dont_kill_3)
+			 || PlayerSaid(R, please_dont_kill_4))
 	{
 		NumVisits = GET_GAME_STATE(KOHR_AH_PLEAD);
 		switch (NumVisits++)
@@ -311,10 +311,10 @@ CombatIsInevitable(RESPONSE_REF R)
 		}
 		SET_GAME_STATE(KOHR_AH_PLEAD, NumVisits);
 	}
-	else if (PLAYER_SAID(R, bye_frenzy_1)
-			 || PLAYER_SAID(R, bye_frenzy_2)
-			 || PLAYER_SAID(R, bye_frenzy_3)
-			 || PLAYER_SAID(R, bye_frenzy_4))
+	else if (PlayerSaid(R, bye_frenzy_1)
+			 || PlayerSaid(R, bye_frenzy_2)
+			 || PlayerSaid(R, bye_frenzy_3)
+			 || PlayerSaid(R, bye_frenzy_4))
 	{
 		NumVisits = GET_GAME_STATE(KOHR_AH_INFO);
 		switch (NumVisits++)
@@ -391,50 +391,50 @@ Frenzy(RESPONSE_REF R)
 static void
 KohrAhStory(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, key_phrase))
+	if (PlayerSaid(R, key_phrase))
 	{
 		NPCPhrase(RESPONSE_TO_KEY_PHRASE);
 
 		SET_GAME_STATE(KNOW_KOHR_AH_STORY, 2);
 	}
-	else if (PLAYER_SAID(R, why_do_you_destroy))
+	else if (PlayerSaid(R, why_do_you_destroy))
 	{
 		NPCPhrase(WE_WERE_SLAVES);
 
 		DISABLE_PHRASE(why_do_you_destroy);
 	}
-	else if (PLAYER_SAID(R, relationship_with_urquan))
+	else if (PlayerSaid(R, relationship_with_urquan))
 	{
 		NPCPhrase(WE_ARE_URQUAN_TOO);
 
 		DISABLE_PHRASE(relationship_with_urquan);
 	}
-	else if (PLAYER_SAID(R, what_about_culture))
+	else if (PlayerSaid(R, what_about_culture))
 	{
 		NPCPhrase(BONE_GARDENS);
 
 		DISABLE_PHRASE(what_about_culture);
 	}
-	else if (PLAYER_SAID(R, how_leave_me_alone))
+	else if (PlayerSaid(R, how_leave_me_alone))
 	{
 		NPCPhrase(YOU_DIE);
 
 		DISABLE_PHRASE(how_leave_me_alone);
 	}
 
-	if (PHRASE_ENABLED(why_do_you_destroy))
+	if (PhraseEnabled(why_do_you_destroy))
 	{
 		Response(why_do_you_destroy, KohrAhStory);
 	}
-	if (PHRASE_ENABLED(relationship_with_urquan))
+	if (PhraseEnabled(relationship_with_urquan))
 	{
 		Response(relationship_with_urquan, KohrAhStory);
 	}
-	if (PHRASE_ENABLED(what_about_culture))
+	if (PhraseEnabled(what_about_culture))
 	{
 		Response(what_about_culture, KohrAhStory);
 	}
-	if (PHRASE_ENABLED(how_leave_me_alone))
+	if (PhraseEnabled(how_leave_me_alone))
 	{
 		Response(how_leave_me_alone, KohrAhStory);
 	}
@@ -606,7 +606,7 @@ init_blackurq_comm(void)
 
 	blackurq_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	blackurq_desc.AlienTextBaseline.y = 0;
-	blackurq_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	blackurq_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if (!GET_GAME_STATE(KOHR_AH_KILLED_ALL)
 		&& uqm::lowByte(uqm::currentActivity()) != WON_LAST_BATTLE)

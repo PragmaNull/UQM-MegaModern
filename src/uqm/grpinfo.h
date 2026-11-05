@@ -90,8 +90,8 @@ LockIpGroup(const QUEUE* pq, HIPGROUP h)
 	return (IP_GROUP*)LockLink(pq, h);
 }
 
-#define UnlockIpGroup(pq, h) UnlockLink(pq, h)
-#define FreeIpGroup(pq, h) FreeLink(pq, h)
+constexpr auto UnlockIpGroup(const auto& pq, const auto& h) { return UnlockLink(pq, h); }
+constexpr auto FreeIpGroup(const auto& pq, const auto& h) { return FreeLink(pq, h); }
 
 extern HIPGROUP BuildGroup(QUEUE* pDstQueue, uint8_t race_id);
 

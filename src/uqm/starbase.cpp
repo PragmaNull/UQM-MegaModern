@@ -44,14 +44,14 @@ static void
 DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
 {
 	TEXT t;
-	const uint16_t text_base_y = RES_SCALE(106 + 28);
-	const uint16_t text_spacing_y = RES_SCALE(23 - 4);
+	const uint16_t text_base_y = ResScale(106 + 28);
+	const uint16_t text_spacing_y = ResScale(23 - 4);
 
 	SetContext(ScreenContext);
 	SetContextFont(StarConFont);
 	SetContextForeGroundColor(BlackColor);
 
-	t.baseline.x = RES_SCALE(73 - 4) + SafeX();
+	t.baseline.x = ResScale(73 - 4) + SafeX();
 	t.align = ALIGN_CENTER;
 
 	if (OldState == (STARBASE_STATE)~0)
@@ -61,7 +61,7 @@ DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
 		{
 			if (OldState != NewState)
 			{
-				t.pStr = GAME_STRING(STARBASE_STRING_BASE + 1 + OldState);
+				t.pStr = GameString(STARBASE_STRING_BASE + 1 + OldState);
 				t.CharCount = (uint16_t)~0;
 				font_DrawText(&t);
 			}
@@ -70,14 +70,14 @@ DrawBaseStateStrings(STARBASE_STATE OldState, STARBASE_STATE NewState)
 	}
 
 	t.baseline.y = text_base_y + SafeY() + (text_spacing_y * OldState);
-	t.pStr = GAME_STRING(STARBASE_STRING_BASE + 1 + OldState);
+	t.pStr = GameString(STARBASE_STRING_BASE + 1 + OldState);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E));
 	t.baseline.y = text_base_y + SafeY() + (text_spacing_y * NewState);
-	t.pStr = GAME_STRING(STARBASE_STRING_BASE + 1 + NewState);
+	t.pStr = GameString(STARBASE_STRING_BASE + 1 + NewState);
 	t.CharCount = (uint16_t)~0;
 	font_DrawText(&t);
 }
@@ -157,20 +157,20 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 	{
 		r.corner = Side.origin;
 		r.extent.width = ShipPieceOffset();
-		r.extent.height = RES_SCALE(1);
+		r.extent.height = ResScale(1);
 		OldColor = SetContextForeGroundColor(BlackColor);
 		if (!IsHd())
 		{
 			DrawFilledRectangle(&r);
 		}
-		r.corner.y += RES_SCALE(23 - 1);
+		r.corner.y += ResScale(23 - 1);
 		if (!IsHd())
 		{
 			DrawFilledRectangle(&r);
 		}
 
-		r.extent.width = RES_SCALE(1);
-		r.extent.height = RES_SCALE(8);
+		r.extent.width = ResScale(1);
+		r.extent.height = ResScale(8);
 		if (RepairSlot == 2)
 		{
 			r.corner = Side.origin;
@@ -178,7 +178,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 			{
 				DrawFilledRectangle(&r);
 			}
-			r.corner.y += RES_SCALE(15);
+			r.corner.y += ResScale(15);
 			if (!IsHd())
 			{
 				DrawFilledRectangle(&r);
@@ -192,7 +192,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 			{
 				DrawFilledRectangle(&r);
 			}
-			r.corner.y += RES_SCALE(15);
+			r.corner.y += ResScale(15);
 			if (!IsHd())
 			{
 				DrawFilledRectangle(&r);
@@ -221,19 +221,19 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 		{
 			r.corner = Top.origin;
 			r.extent.width = ShipPieceOffset();
-			r.extent.height = RES_SCALE(1);
+			r.extent.height = ResScale(1);
 			if (!IsHd())
 			{
 				DrawFilledRectangle(&r);
 			}
-			r.corner.y += RES_SCALE(32 - 1);
+			r.corner.y += ResScale(32 - 1);
 			if (!IsHd())
 			{
 				DrawFilledRectangle(&r);
 			}
 
-			r.extent.width = RES_SCALE(1);
-			r.extent.height = RES_SCALE(12);
+			r.extent.width = ResScale(1);
+			r.extent.height = ResScale(12);
 			if (RepairSlot == 2)
 			{
 				r.corner = Top.origin;
@@ -241,7 +241,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 				{
 					DrawFilledRectangle(&r);
 				}
-				r.corner.y += RES_SCALE(20);
+				r.corner.y += ResScale(20);
 				if (!IsHd())
 				{
 					DrawFilledRectangle(&r);
@@ -256,7 +256,7 @@ void DrawShipPiece(FRAME ModuleFrame, uint16_t which_piece, uint16_t which_slot,
 				{
 					DrawFilledRectangle(&r);
 				}
-				r.corner.y += RES_SCALE(20);
+				r.corner.y += ResScale(20);
 				if (!IsHd())
 				{
 					DrawFilledRectangle(&r);
@@ -509,8 +509,8 @@ DoTimePassage(void)
 		//log_add (log_Debug, "startangle:{} angle:{}, radius:{}, speed:{}, days:{} X:{}, y:{}", 10, newAngle, MinMoonRadius(), FullCircle / 11.46, daysElapsed(), starbase_coords.x, starbase_coords.y);
 
 		// Translate the coordinates on a circle to an ellipse and update the ship's graphics' coordinates on the screen.
-		uqm::flagship().shipStamp.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1) + starbase_coords.x;
-		uqm::flagship().shipStamp.origin.y = RES_SCALE(OrigSisScreenHeight() >> 1) + (starbase_coords.y >> 1);
+		uqm::flagship().shipStamp.origin.x = ResScale(OrigSisScreenWidth() >> 1) + starbase_coords.x;
+		uqm::flagship().shipStamp.origin.y = ResScale(OrigSisScreenHeight() >> 1) + (starbase_coords.y >> 1);
 	}
 }
 
@@ -626,8 +626,8 @@ void InstallBombAtEarth(void)
 {
 	DoTimePassage();
 
-	uqm::flagship().shipStamp.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1);
-	uqm::flagship().shipStamp.origin.y = RES_SCALE(OrigSisScreenHeight() >> 1);
+	uqm::flagship().shipStamp.origin.x = ResScale(OrigSisScreenWidth() >> 1);
+	uqm::flagship().shipStamp.origin.y = ResScale(OrigSisScreenHeight() >> 1);
 
 	SetContext(ScreenContext);
 	SetTransitionSource(nullptr);

@@ -285,30 +285,30 @@ ExitConversation(RESPONSE_REF R)
 	setSegue(Segue_peace);
 	SET_GAME_STATE(SHIP_TO_COMPEL, 0);
 
-	if (PLAYER_SAID(R, compel_urquan))
+	if (PlayerSaid(R, compel_urquan))
 	{
 		NPCPhrase(HERE_WE_GO);
 
 		SET_GAME_STATE(URQUAN_MESSED_UP, 1);
 	}
-	else if (PLAYER_SAID(R, wish_to_go_now))
+	else if (PlayerSaid(R, wish_to_go_now))
 	{
 		NPCPhrase(EXCELLENT_IDEA);
 	}
-	else if (PLAYER_SAID(R, bye_onboard))
+	else if (PlayerSaid(R, bye_onboard))
 	{
 		NPCPhrase(GOODBYE_ONBOARD);
 	}
-	else if (PLAYER_SAID(R, compel_that_ship))
+	else if (PlayerSaid(R, compel_that_ship))
 	{
 		NPCPhrase(SAVING_MY_POWER);
 	}
-	else if (PLAYER_SAID(R, ok_lets_do_it)
-			 || PLAYER_SAID(R, want_kill_1)
-			 || PLAYER_SAID(R, want_kill_2)
-			 || PLAYER_SAID(R, want_kill_3))
+	else if (PlayerSaid(R, ok_lets_do_it)
+			 || PlayerSaid(R, want_kill_1)
+			 || PlayerSaid(R, want_kill_2)
+			 || PlayerSaid(R, want_kill_3))
 	{
-		if (PLAYER_SAID(R, ok_lets_do_it))
+		if (PlayerSaid(R, ok_lets_do_it))
 		{
 			NPCPhrase(COMING_ABOARD);
 		}
@@ -329,24 +329,24 @@ ExitConversation(RESPONSE_REF R)
 static void
 MindFuckUrquan(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, what_now))
+	if (PlayerSaid(R, what_now))
 	{
 		NPCPhrase(DO_THIS);
 
 		DISABLE_PHRASE(what_now);
 	}
-	else if (PLAYER_SAID(R, im_scared))
+	else if (PlayerSaid(R, im_scared))
 	{
 		NPCPhrase(STUPID_FOP);
 
 		DISABLE_PHRASE(im_scared);
 	}
 
-	if (PHRASE_ENABLED(what_now))
+	if (PhraseEnabled(what_now))
 	{
 		Response(what_now, MindFuckUrquan);
 	}
-	if (PHRASE_ENABLED(im_scared))
+	if (PhraseEnabled(im_scared))
 	{
 		Response(im_scared, MindFuckUrquan);
 	}
@@ -372,7 +372,7 @@ MindControl(RESPONSE_REF R)
 {
 	RESPONSE_FUNC RespFunc {};
 
-	if (PLAYER_SAID(R, what_about_powers))
+	if (PlayerSaid(R, what_about_powers))
 	{
 		NPCPhrase(NOT_POWERS_BUT_FLOWERS);
 
@@ -396,36 +396,36 @@ MindControl(RESPONSE_REF R)
 static void
 PetInfo(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, about_your_race))
+	if (PlayerSaid(R, about_your_race))
 	{
 		NPCPhrase(WHAT_ABOUT_RACE);
 	}
-	else if (PLAYER_SAID(R, what_about_physiology))
+	else if (PlayerSaid(R, what_about_physiology))
 	{
 		NPCPhrase(NO_TALK_ABOUT_SELF);
 
 		DISABLE_PHRASE(what_about_physiology);
 	}
-	else if (PLAYER_SAID(R, what_about_your_history))
+	else if (PlayerSaid(R, what_about_your_history))
 	{
 		NPCPhrase(ABOUT_HISTORY);
 
 		DISABLE_PHRASE(what_about_your_history);
 	}
-	else if (PLAYER_SAID(R, sentient_milieu))
+	else if (PlayerSaid(R, sentient_milieu))
 	{
 		NPCPhrase(ABOUT_SENTIENT_MILIEU);
 
 		DISABLE_PHRASE(sentient_milieu);
 	}
-	else if (PLAYER_SAID(R, what_about_war))
+	else if (PlayerSaid(R, what_about_war))
 	{
 		NPCPhrase(ABOUT_WAR);
 
 		DISABLE_PHRASE(what_about_war);
 	}
 
-	if (PHRASE_ENABLED(what_about_physiology))
+	if (PhraseEnabled(what_about_physiology))
 	{
 		Response(what_about_physiology, PetInfo);
 	}
@@ -433,15 +433,15 @@ PetInfo(RESPONSE_REF R)
 	{
 		Response(what_about_powers, MindControl);
 	}
-	if (PHRASE_ENABLED(what_about_your_history))
+	if (PhraseEnabled(what_about_your_history))
 	{
 		Response(what_about_your_history, PetInfo);
 	}
-	else if (PHRASE_ENABLED(sentient_milieu))
+	else if (PhraseEnabled(sentient_milieu))
 	{
 		Response(sentient_milieu, PetInfo);
 	}
-	else if (PHRASE_ENABLED(what_about_war))
+	else if (PhraseEnabled(what_about_war))
 	{
 		Response(what_about_war, PetInfo);
 	}
@@ -453,7 +453,7 @@ PetDevice(RESPONSE_REF R)
 {
 	uint8_t NumVisits {};
 
-	if (PLAYER_SAID(R, whats_up_onboard))
+	if (PlayerSaid(R, whats_up_onboard))
 	{
 		NumVisits = GET_GAME_STATE(TALKING_PET_INFO);
 		switch (NumVisits++)
@@ -488,7 +488,7 @@ PetDevice(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_onboard);
 	}
-	else if (PLAYER_SAID(R, any_suggestions))
+	else if (PlayerSaid(R, any_suggestions))
 	{
 		NumVisits = GET_GAME_STATE(TALKING_PET_SUGGESTIONS);
 		switch (NumVisits++)
@@ -523,11 +523,11 @@ PetDevice(RESPONSE_REF R)
 
 		DISABLE_PHRASE(any_suggestions);
 	}
-	else if (PLAYER_SAID(R, enough_info))
+	else if (PlayerSaid(R, enough_info))
 	{
 		NPCPhrase(OK_ENOUGH_INFO);
 	}
-	else if (PLAYER_SAID(R, you_lied))
+	else if (PlayerSaid(R, you_lied))
 	{
 		NPCPhrase(SO_WHAT);
 
@@ -538,11 +538,11 @@ PetDevice(RESPONSE_REF R)
 	{
 		Response(compel_that_ship, ExitConversation);
 	}
-	if (PHRASE_ENABLED(whats_up_onboard))
+	if (PhraseEnabled(whats_up_onboard))
 	{
 		Response(whats_up_onboard, PetDevice);
 	}
-	if (PHRASE_ENABLED(any_suggestions))
+	if (PhraseEnabled(any_suggestions))
 	{
 		Response(any_suggestions, PetDevice);
 	}
@@ -561,20 +561,20 @@ CompelPlayer(RESPONSE_REF R)
 
 	uint8_t LastStack {0};
 	pStr[0] = pStr[1] = pStr[2] = 0;
-	if (PLAYER_SAID(R, what_are_you))
+	if (PlayerSaid(R, what_are_you))
 	{
 		NPCPhrase(JUST_TALKING_PET);
 
 		DISABLE_PHRASE(what_are_you);
 	}
-	else if (PLAYER_SAID(R, what_do_to_umgah))
+	else if (PlayerSaid(R, what_do_to_umgah))
 	{
 		NPCPhrase(DID_NOTHING);
 
 		DISABLE_PHRASE(what_do_to_umgah);
 		LastStack = 1;
 	}
-	else if (PLAYER_SAID(R, we_are_vindicator))
+	else if (PlayerSaid(R, we_are_vindicator))
 	{
 		NPCPhrase(GOOD_FOR_YOU);
 
@@ -583,19 +583,19 @@ CompelPlayer(RESPONSE_REF R)
 	}
 	else if (R != 0)
 	{
-		if (PLAYER_SAID(R, bye_at_umgah))
+		if (PlayerSaid(R, bye_at_umgah))
 		{
 			NPCPhrase(GOODBYE_AT_UMGAH);
 		}
-		else if (PLAYER_SAID(R, must_explain_presence))
+		else if (PlayerSaid(R, must_explain_presence))
 		{
 			NPCPhrase(EXPLAIN_NOTHING_MONKEY_BOY);
 		}
-		else if (PLAYER_SAID(R, umgah_zombies))
+		else if (PlayerSaid(R, umgah_zombies))
 		{
 			NPCPhrase(WORKS_LIKE_THIS);
 		}
-		else if (PLAYER_SAID(R, talking_pets_dumb))
+		else if (PlayerSaid(R, talking_pets_dumb))
 		{
 			NPCPhrase(OH_NO_YOU_DONT);
 		}
@@ -615,7 +615,7 @@ CompelPlayer(RESPONSE_REF R)
 		return;
 	}
 
-	if (PHRASE_ENABLED(what_are_you))
+	if (PhraseEnabled(what_are_you))
 	{
 		pStr[0] = what_are_you;
 	}
@@ -625,7 +625,7 @@ CompelPlayer(RESPONSE_REF R)
 	}
 	if (GET_GAME_STATE(KNOW_UMGAH_ZOMBIES))
 	{
-		if (PHRASE_ENABLED(what_do_to_umgah))
+		if (PhraseEnabled(what_do_to_umgah))
 		{
 			pStr[1] = what_do_to_umgah;
 		}
@@ -634,7 +634,7 @@ CompelPlayer(RESPONSE_REF R)
 			pStr[1] = umgah_zombies;
 		}
 	}
-	if (PHRASE_ENABLED(we_are_vindicator))
+	if (PhraseEnabled(we_are_vindicator))
 	{
 		pStr[2] = we_are_vindicator;
 	}
@@ -662,7 +662,7 @@ static void PetDeal(RESPONSE_REF R);
 static void
 KillPet(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, must_kill))
+	if (PlayerSaid(R, must_kill))
 	{
 		NPCPhrase(DONT_KILL);
 		AlienTalkSegue((uint16_t)~0);
@@ -678,86 +678,86 @@ KillPet(RESPONSE_REF R)
 static void
 PetDeal(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, what_kind_of_deal))
+	if (PlayerSaid(R, what_kind_of_deal))
 	{
 		NPCPhrase(HELP_DEFEAT_URQUAN);
 
 		DISABLE_PHRASE(what_kind_of_deal);
 	}
-	else if (PLAYER_SAID(R, how_trust))
+	else if (PlayerSaid(R, how_trust))
 	{
 		NPCPhrase(TRUST);
 
 		DISABLE_PHRASE(how_trust);
 	}
-	else if (PLAYER_SAID(R, boneless_dweeb))
+	else if (PlayerSaid(R, boneless_dweeb))
 	{
 		NPCPhrase(YOUR_BONELESS_DWEEB);
 
 		DISABLE_PHRASE(boneless_dweeb);
 	}
-	else if (PLAYER_SAID(R, what_are_you_really))
+	else if (PlayerSaid(R, what_are_you_really))
 	{
 		NPCPhrase(POOR_DNYARRI);
 
 		DISABLE_PHRASE(what_are_you_really);
 	}
-	else if (PLAYER_SAID(R, hard_to_believe))
+	else if (PlayerSaid(R, hard_to_believe))
 	{
 		NPCPhrase(ITS_TRUE);
 
 		SET_GAME_STATE(DNYARRI_LIED, 1);
 		DISABLE_PHRASE(hard_to_believe);
 	}
-	else if (PLAYER_SAID(R, bullshit))
+	else if (PlayerSaid(R, bullshit))
 	{
 		NPCPhrase(WORTH_A_TRY);
 
 		DISABLE_PHRASE(bullshit);
 	}
-	else if (PLAYER_SAID(R, kill_you))
+	else if (PlayerSaid(R, kill_you))
 	{
 		NPCPhrase(PLEASE_DONT);
 
 		DISABLE_PHRASE(kill_you);
 	}
 
-	if (PHRASE_ENABLED(what_kind_of_deal))
+	if (PhraseEnabled(what_kind_of_deal))
 	{
 		Response(what_kind_of_deal, PetDeal);
 	}
 	else
 	{
-		if (PHRASE_ENABLED(how_trust))
+		if (PhraseEnabled(how_trust))
 		{
 			Response(how_trust, PetDeal);
 		}
-		else if (PHRASE_ENABLED(boneless_dweeb))
+		else if (PhraseEnabled(boneless_dweeb))
 		{
 			Response(boneless_dweeb, PetDeal);
 		}
 		Response(ok_lets_do_it, ExitConversation);
 	}
-	if (PHRASE_ENABLED(what_are_you_really))
+	if (PhraseEnabled(what_are_you_really))
 	{
 		Response(what_are_you_really, PetDeal);
 	}
 	else
 	{
-		if (PHRASE_ENABLED(hard_to_believe) && !GET_GAME_STATE(LEARNED_TALKING_PET))
+		if (PhraseEnabled(hard_to_believe) && !GET_GAME_STATE(LEARNED_TALKING_PET))
 		{
 			Response(hard_to_believe, PetDeal);
 		}
-		else if (PHRASE_ENABLED(bullshit) && GET_GAME_STATE(LEARNED_TALKING_PET))
+		else if (PhraseEnabled(bullshit) && GET_GAME_STATE(LEARNED_TALKING_PET))
 		{
 			Response(bullshit, PetDeal);
 		}
 	}
-	if (PHRASE_ENABLED(kill_you))
+	if (PhraseEnabled(kill_you))
 	{
 		Response(kill_you, PetDeal);
 	}
-	else if (PHRASE_ENABLED(must_kill))
+	else if (PhraseEnabled(must_kill))
 	{
 		Response(must_kill, KillPet);
 	}
@@ -957,7 +957,7 @@ init_talkpet_comm(void)
 
 	talkpet_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	talkpet_desc.AlienTextBaseline.y = 0;
-	talkpet_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	talkpet_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	if (uqm::lowByte(uqm::currentActivity()) != IN_LAST_BATTLE)
 	{

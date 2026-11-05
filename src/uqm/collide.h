@@ -29,29 +29,23 @@ inline constexpr auto CollisionTurnWait {1};
 inline constexpr auto CollisionThrustWait {3};
 
 inline constexpr auto SkipCollision {(Nonsolid | Disappearing)};
-#define CollidingElement(e) \
-	(!((e)->state_flags & SkipCollision))
-#define CollisionPossible(e0, e1)                                        \
-	(CollidingElement(e0)                                                \
-	 && (!(((e1)->state_flags & (e0)->state_flags) & Collision)          \
-		 && ((!(((e1)->state_flags & (e0)->state_flags) & IgnoreSimilar) \
-			  || (e1)->pParent != (e0)->pParent))                        \
-		 && ((e1)->mass_points || (e0)->mass_points)))
+constexpr auto CollidingElement(const auto& e) { return (!((e)->state_flags & SkipCollision)); }
+constexpr auto CollisionPossible(const auto& e0, const auto& e1) { return (CollidingElement(e0) && (!(((e1)->state_flags & (e0)->state_flags) & Collision) && ((!(((e1)->state_flags & (e0)->state_flags) & IgnoreSimilar) || (e1)->pParent != (e0)->pParent)) && ((e1)->mass_points || (e0)->mass_points))); }
 
 #define InitIntersectStartPoint(eptr)                      \
 	{                                                      \
 		(eptr)->IntersectControl.IntersectStamp.origin.x = \
-			WORLD_TO_DISPLAY((eptr)->current.location.x);  \
+			WorldToDisplay((eptr)->current.location.x);    \
 		(eptr)->IntersectControl.IntersectStamp.origin.y = \
-			WORLD_TO_DISPLAY((eptr)->current.location.y);  \
+			WorldToDisplay((eptr)->current.location.y);    \
 	}
 
-#define InitIntersectEndPoint(eptr)                    \
-	{                                                  \
-		(eptr)->IntersectControl.EndPoint.x =          \
-			WORLD_TO_DISPLAY((eptr)->next.location.x); \
-		(eptr)->IntersectControl.EndPoint.y =          \
-			WORLD_TO_DISPLAY((eptr)->next.location.y); \
+#define InitIntersectEndPoint(eptr)                  \
+	{                                                \
+		(eptr)->IntersectControl.EndPoint.x =        \
+			WorldToDisplay((eptr)->next.location.x); \
+		(eptr)->IntersectControl.EndPoint.y =        \
+			WorldToDisplay((eptr)->next.location.y); \
 	}
 
 #define InitIntersectFrame(eptr)                           \

@@ -47,10 +47,10 @@ inline constexpr auto UqmMapWidth {243};
 inline constexpr auto UqmMapHeight {75};
 inline auto OriginalMapWidth() { return (uqm::UQMOptions::read().planetTexture ? UqmMapWidth - 1 : Sc2MapWidth); }
 inline auto OriginalMapHeight() { return (uqm::UQMOptions::read().planetTexture ? UqmMapHeight : Sc2MapHeight); }
-inline auto MapWidth() { return RES_SCALE(UqmMapWidth); }
-inline auto MapHeight() { return RES_SCALE(Sc2MapHeight); }
-inline auto ScaledMapWidth() { return RES_SCALE(((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SAFE_NUM(33)); }
-inline auto UnscaledMapWidth() { return (((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SAFE_NUM(33)); }
+inline auto MapWidth() { return ResScale(UqmMapWidth); }
+inline auto MapHeight() { return ResScale(Sc2MapHeight); }
+inline auto ScaledMapWidth() { return ResScale(((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SafeNum(33)); }
+inline auto UnscaledMapWidth() { return (((is3DO(uqm::UQMOptions::read().landerStyle) ? UqmMapWidth : Sc2MapWidth)) - SafeNum(33)); }
 
 #define MAP_DIMENSIONS           \
 	{Sc2MapWidth, Sc2MapHeight}, \
@@ -78,23 +78,23 @@ enum
 inline auto MaxScrounged() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 64 : 50); }
 inline auto MaxHoldBars() { return (isPC(uqm::UQMOptions::read().landerStyle) ? 64 : 50); }
 
-#define SCALE_RADIUS(r) ((r) << 6)
-#define UNSCALE_RADIUS(r) ((r) >> 6)
-inline constexpr auto MaxZoomRadius {SCALE_RADIUS(128)};
+constexpr auto ScaleRadius(const auto& r) { return ((r) << 6); }
+constexpr auto UnscaleRadius(const auto& r) { return ((r) >> 6); }
+inline constexpr auto MaxZoomRadius {ScaleRadius(128)};
 inline constexpr auto MinZoomRadius {(MaxZoomRadius >> 3)};
-inline constexpr auto EarthRadius {SCALE_RADIUS(8)};
+inline constexpr auto EarthRadius {ScaleRadius(8)};
 inline constexpr auto EarthHours {240};
 
-inline constexpr auto MinPlanetRadius {SCALE_RADIUS(4)};
-inline constexpr auto MaxPlanetRadius {SCALE_RADIUS(124)};
+inline constexpr auto MinPlanetRadius {ScaleRadius(4)};
+inline constexpr auto MaxPlanetRadius {ScaleRadius(124)};
 
-inline auto DisplayFactor() { return RES_SCALE((OrigSisScreenWidth() >> 1) - 8); }
+inline auto DisplayFactor() { return ResScale((OrigSisScreenWidth() >> 1) - 8); }
 inline auto DisplayFactorUs() { return ((OrigSisScreenWidth() >> 1) - 8); }
 
 inline constexpr auto NumScandotTransitions {4};
 
-inline auto MinMoonRadius() { return RES_SCALE(35); }
-inline auto MoonDelta() { return RES_SCALE(20); }
+inline auto MinMoonRadius() { return ResScale(35); }
+inline auto MoonDelta() { return ResScale(20); }
 
 inline constexpr auto MaxSuns {1};
 inline constexpr auto MaxPlanets {16};
@@ -102,32 +102,31 @@ inline constexpr auto MaxMoons {4};
 inline constexpr auto MaxGenMoons {MaxMoons};
 inline constexpr auto MaxGenPlanets {9};
 
-inline auto MapBorderHeight() { return RES_SCALE(5); }
+inline auto MapBorderHeight() { return ResScale(5); }
 
 //#define ScanScreenHeight() \//
 //		(SisScreenHeight() - MapHeight() - MapBorderHeight())
 
 // Unscaled so that the math generates a proper output for HdResolutionFactor
-inline auto ScanScreenHeight() { return (OrigSisScreenHeight() - Sc2MapHeight - RES_DESCALE(MapBorderHeight())); }
+inline auto ScanScreenHeight() { return (OrigSisScreenHeight() - Sc2MapHeight - ResDescale(MapBorderHeight())); }
 
-inline auto PcRotationRate() { return (c_gameSecond / RES_SCALE(12)); }
-inline auto ThreedoRotationRate() { return (c_gameSecond * 6 / RES_SCALE(Sc2MapWidth)); }
+inline auto PcRotationRate() { return (c_gameSecond / ResScale(12)); }
+inline auto ThreedoRotationRate() { return (c_gameSecond * 6 / ResScale(Sc2MapWidth)); }
 inline auto UqmRotationRate() { return (c_gameSecond * 12 / MapWidth()); }
 
-#define PLANET_ROTATION_RATE(a) (!a ? PcRotationRate() : \
-									  (a == 1 ? ThreedoRotationRate() : UqmRotationRate()))
+constexpr auto PlanetRotationRate(const auto& a) { return (!a ? PcRotationRate() : (a == 1 ? ThreedoRotationRate() : UqmRotationRate())); }
 
 extern bool useDosSpheres;
-inline auto UseDosSpheres() { return RES_SCALE(useDosSpheres ? 2 : 0); }
+inline auto UseDosSpheres() { return ResScale(useDosSpheres ? 2 : 0); }
 
-inline auto PlanetOrgX() { return RES_SCALE(OrigSisScreenWidth() >> 1); }
+inline auto PlanetOrgX() { return ResScale(OrigSisScreenWidth() >> 1); }
 #define PLANET_ORG_Y \
-	RES_SCALE(ScanScreenHeight() >> 1) - UseDosSpheres()
+	ResScale(ScanScreenHeight() >> 1) - UseDosSpheres()
 
 inline constexpr auto NumRaceRuins {16};
 
-#define MIN_BRIGHTNESS(a) ((a == ENERGY_SCAN) ? (50) : (55))
-#define MAX_BRIGHTNESS(a) ((a == ENERGY_SCAN) ? (90) : (135))
+constexpr auto MinBrightness(const auto& a) { return ((a == ENERGY_SCAN) ? (50) : (55)); }
+constexpr auto MaxBrightness(const auto& a) { return ((a == ENERGY_SCAN) ? (90) : (135)); }
 
 typedef struct planet_desc PLANET_DESC;
 typedef struct star_desc STAR_DESC;

@@ -43,7 +43,7 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 		uint8_t num_possible {};
 
 		num_possible = uqm::lowByte(SysGenRNG->next())
-					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
+					 % (DepositQuantity(eptr->Density) + 1);
 		while (num_possible--)
 		{
 			uint16_t deposit_quality_fine {};
@@ -54,7 +54,7 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 			int32_t temp_deposit_quality {};
 
 			deposit_quality_fine = (uqm::lowWord(SysGenRNG->next()) % 100)
-								 + (DEPOSIT_QUALITY(eptr->Density)
+								 + (DepositQuality(eptr->Density)
 									+ SysInfoPtr->StarSize)
 									   * 50;
 
@@ -140,7 +140,7 @@ CalcLifeForms(const SYSTEM_INFO* SysInfoPtr, uint16_t which_life,
 			  NODE_INFO* info)
 {
 	uint16_t num_life_forms {0};
-	if (PLANSIZE(SysInfoPtr->PlanetInfo.PlanDataPtr->Type) != GAS_GIANT)
+	if (Plansize(SysInfoPtr->PlanetInfo.PlanDataPtr->Type) != GAS_GIANT)
 	{
 		int16_t life_var {};
 
@@ -270,7 +270,7 @@ scaleMapWidth(int16_t value)
 		percentage = scaleThing(UnscaledMapWidth(), widthPick());
 	}
 
-	return RES_SCALE((int16_t)(value * percentage));
+	return ResScale((int16_t)(value * percentage));
 }
 
 static int16_t
@@ -283,7 +283,7 @@ scaleMapHeight(int16_t value)
 		percentage = scaleThing(Sc2MapHeight, heightPick());
 	}
 
-	return RES_SCALE((int16_t)(value * percentage));
+	return ResScale((int16_t)(value * percentage));
 }
 
 void GenerateRandomLocation(GFXPOINT* loc)
@@ -354,7 +354,7 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 		uint8_t depositQuality = 0;
 
 		num_possible = uqm::lowByte(SysGenRNG->next())
-					 % (DEPOSIT_QUANTITY(eptr->Density) + 1);
+					 % (DepositQuantity(eptr->Density) + 1);
 
 		if (num_possible == 0 && OpenSeason)
 		{
@@ -365,7 +365,7 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 		}
 		else
 		{
-			depositQuality = DEPOSIT_QUALITY(eptr->Density);
+			depositQuality = DepositQuality(eptr->Density);
 			info->type = eptr->ElementType;
 		}
 

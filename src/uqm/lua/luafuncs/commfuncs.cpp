@@ -257,7 +257,7 @@ luaUqm_comm_isPhraseEnabled(lua_State* luaState)
 		return 1;
 	}
 
-	lua_pushboolean(luaState, PHRASE_ENABLED(phraseId));
+	lua_pushboolean(luaState, PhraseEnabled(phraseId));
 	return 1;
 }
 
@@ -544,7 +544,7 @@ luaUqm_comm_getConstellation(lua_State* luaState)
 	char dialog[256];
 	const STAR_DESC* SDPtr = FindNearestConstellation(star_array, plot_map[plot_id].star_pt);
 	fmt::format_to_sz_n(dialog, "{}",
-						GAME_STRING(SDPtr->Postfix));
+						GameString(SDPtr->Postfix));
 	CheckCase(prime_text, dialog);
 	lua_pushstring(luaState, dialog);
 	RoboTrack[0] = ROBOT_POSTFIX_0 + SDPtr->Postfix;
@@ -577,7 +577,7 @@ luaUqm_comm_getColor(lua_State* luaState)
 	}
 
 	uqstl::string dialog {};
-	switch (STAR_COLOR(plot_map[plot_id].star->Type))
+	switch (StarColor(plot_map[plot_id].star->Type))
 	{
 		case RED_BODY:
 			dialog = "red";

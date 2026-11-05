@@ -31,8 +31,8 @@ extern "C" {
 
 #ifdef COMM_INTERNAL
 
-inline auto SliderY() { return (RES_SCALE(107)); }
-inline auto SliderHeight() { return RES_SCALE((!usingSpeech && isPC(uqm::UQMOptions::read().smoothScroll)) ? 4 : DOS_BOOL(15, 4)); }
+inline auto SliderY() { return (ResScale(107)); }
+inline auto SliderHeight() { return ResScale((!usingSpeech && isPC(uqm::UQMOptions::read().smoothScroll)) ? 4 : DosBool(15, 4)); }
 
 #include "commanim.h"
 
@@ -131,7 +131,7 @@ signaledFreezeTalkingAnim(void)
 
 #endif
 
-inline auto TextXOffs() { return RES_SCALE(1); }
+inline auto TextXOffs() { return ResScale(1); }
 
 inline auto SisTextWidth() { return (SisScreenWidth() - (TextXOffs() << 1)); }
 

@@ -90,8 +90,8 @@ GenerateRainbowWorld_generatePlanets(SOLARSYS_STATE* solarSys)
 		{
 			angle -= Quadrant;
 		}
-		pPlanet->location.x = COSINE(angle, pPlanet->radius);
-		pPlanet->location.y = SINE(angle, pPlanet->radius);
+		pPlanet->location.x = Cosine(angle, pPlanet->radius);
+		pPlanet->location.y = Sine(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
 	}
 
@@ -160,7 +160,7 @@ GenerateSlylandro(SOLARSYS_STATE* solarSys)
 		GroupPtr->sys_loc = solarSys->SunDesc[0].PlanetByte + 1;
 		GroupPtr->dest_loc = GroupPtr->sys_loc;
 		GroupPtr->orbit_pos =
-			NORMALIZE_FACING(ANGLE_TO_FACING(angle));
+			NormalizeFacing(AngleToFacing(angle));
 		GroupPtr->group_counter = 0;
 		UnlockIpGroup(&GLOBAL(ip_group_q), hGroup);
 

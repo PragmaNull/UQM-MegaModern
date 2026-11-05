@@ -184,8 +184,8 @@ _init_video_file(const char* pStr)
 	TFB_VideoClip* vid {new TFB_VideoClip {}};
 	vid->decoder = dec;
 	vid->length = dec->length;
-	vid->w = vid->decoder->w - IF_HD(4);
-	vid->h = vid->decoder->h + IF_HD(7);
+	vid->w = vid->decoder->w - IfHd(4);
+	vid->h = vid->decoder->h + IfHd(7);
 
 	return (VIDEO_REF)vid;
 }

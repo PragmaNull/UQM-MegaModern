@@ -7,15 +7,15 @@
 #include "uqm/units.h"
 
 
-inline constexpr auto CloseRangeWeapon {DISPLAY_TO_WORLD(50)};
-inline constexpr auto LongRangeWeapon {DISPLAY_TO_WORLD(1000)};
+inline constexpr auto CloseRangeWeapon {DisplayToWorld(50)};
+inline constexpr auto LongRangeWeapon {DisplayToWorld(1000)};
 inline constexpr auto FastShip {150};
 inline constexpr auto MediumShip {45};
 inline constexpr auto SlowShip {25};
 
 
-inline constexpr auto CloseRangeWeaponHd {DISPLAY_TO_WORLD(200)};
-inline constexpr auto LongRangeWeaponHd {DISPLAY_TO_WORLD(4000)};
+inline constexpr auto CloseRangeWeaponHd {DisplayToWorld(200)};
+inline constexpr auto LongRangeWeaponHd {DisplayToWorld(4000)};
 
 // JMS_GFX: Multiplied by 4*4=16 because of the way the ManeuverabilityIndex
 // is calculated in InitCyborg () (cyborg.c).

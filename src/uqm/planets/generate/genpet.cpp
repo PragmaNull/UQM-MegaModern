@@ -76,8 +76,8 @@ GenerateTalkingPet_generatePlanets(SOLARSYS_STATE* solarSys)
 		pPlanet->data_index = TELLURIC_WORLD;
 		pPlanet->radius = EarthRadius * 204L / 100;
 		const uint16_t angle {ARCTAN(pPlanet->location.x, pPlanet->location.y)};
-		pPlanet->location.x = COSINE(angle, pPlanet->radius);
-		pPlanet->location.y = SINE(angle, pPlanet->radius);
+		pPlanet->location.x = Cosine(angle, pPlanet->radius);
+		pPlanet->location.y = Sine(angle, pPlanet->radius);
 		ComputeSpeed(pPlanet, false, 1);
 	}
 	else
@@ -251,8 +251,8 @@ ZapToUrquanEncounter(void)
 		EncounterPtr->loc_pt = SeedFleetLocation(UmgahPtr, plot_map, SAMATRA_DEFINED);
 		UnlockFleetInfo(&GLOBAL(avail_race_q), hUmgah);
 
-		EncounterPtr->log_x = UNIVERSE_TO_LOGX(EncounterPtr->loc_pt.x);
-		EncounterPtr->log_y = UNIVERSE_TO_LOGY(EncounterPtr->loc_pt.y);
+		EncounterPtr->log_x = UniverseToLogx(EncounterPtr->loc_pt.x);
+		EncounterPtr->log_y = UniverseToLogy(EncounterPtr->loc_pt.y);
 		GLOBAL_SIS(log_x) = EncounterPtr->log_x;
 		GLOBAL_SIS(log_y) = EncounterPtr->log_y;
 		UnlockFleetInfo(&GLOBAL(avail_race_q), hStarShip);

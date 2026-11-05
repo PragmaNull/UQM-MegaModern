@@ -252,7 +252,7 @@ GetMelnormeRef(void)
 		return 0;
 	}
 
-	return D_GET_GAME_STATE(RefVar);
+	return DGetGameState(RefVar);
 }
 
 static void
@@ -266,5 +266,5 @@ SetMelnormeRef(uint32_t Ref)
 		return;
 	}
 
-	D_SET_GAME_STATE(RefVar, Ref);
+	DSetGameState(RefVar, Ref);
 }

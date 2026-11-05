@@ -186,19 +186,19 @@ ExitConversation(RESPONSE_REF R)
 {
 	setSegue(Segue_peace);
 
-	if (PLAYER_SAID(R, bye))
+	if (PlayerSaid(R, bye))
 	{
 		NPCPhrase(GOODBYE);
 	}
-	else if (PLAYER_SAID(R, bye_shielded))
+	else if (PlayerSaid(R, bye_shielded))
 	{
 		NPCPhrase(GOODBYE_SHIELDED);
 	}
-	else if (PLAYER_SAID(R, bye_after_bomb))
+	else if (PlayerSaid(R, bye_after_bomb))
 	{
 		NPCPhrase(GOODBYE_AFTER_BOMB);
 	}
-	else if (PLAYER_SAID(R, proceed))
+	else if (PlayerSaid(R, proceed))
 	{
 		int i {};
 
@@ -226,10 +226,10 @@ ExitConversation(RESPONSE_REF R)
 
 		/* transport player to Earth */
 		// JSD replace old method of teleport to SOL with new method
-		// GLOBAL_SIS (log_x) = UNIVERSE_TO_LOGX (SOL_X);
-		// GLOBAL_SIS (log_y) = UNIVERSE_TO_LOGY (SOL_Y);
-		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(plot_map[SOL_DEFINED].star_pt.x);
-		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(plot_map[SOL_DEFINED].star_pt.y);
+		// GLOBAL_SIS (log_x) = UniverseToLogx (SOL_X);
+		// GLOBAL_SIS (log_y) = UniverseToLogy (SOL_Y);
+		GLOBAL_SIS(log_x) = UniverseToLogx(plot_map[SOL_DEFINED].star_pt.x);
+		GLOBAL_SIS(log_y) = UniverseToLogy(plot_map[SOL_DEFINED].star_pt.y);
 		uqm::flagship().shipFacing = 1;
 		/* At Earth or at Starbase */
 		uqm::flagship().ipPlanet = EarthIndex + 1;
@@ -256,8 +256,8 @@ ExitConversation(RESPONSE_REF R)
 			/* XXX : this should be unhardcoded eventually */
 			/* transport to Starbase */
 			/* note: if uqm::UQMOptions::read().orbitingPlanets is enabled, this will be corrected in DoTimePassage */
-			uqm::flagship().shipStamp.origin.x = RES_SCALE(OrigSisScreenWidth() >> 1) + COSINE(HalfCircle + Quadrant, MinMoonRadius());
-			uqm::flagship().shipStamp.origin.y = RES_SCALE(OrigSisScreenHeight() >> 1) + SINE(HalfCircle + Quadrant, MinMoonRadius() >> 1);
+			uqm::flagship().shipStamp.origin.x = ResScale(OrigSisScreenWidth() >> 1) + Cosine(HalfCircle + Quadrant, MinMoonRadius());
+			uqm::flagship().shipStamp.origin.y = ResScale(OrigSisScreenHeight() >> 1) + Sine(HalfCircle + Quadrant, MinMoonRadius() >> 1);
 		}
 		else
 		{ /* 'Beating Game Differently' mode - never visited Starbase,
@@ -312,7 +312,7 @@ ExitConversation(RESPONSE_REF R)
 		GLOBAL_SIS(ModuleSlots[8]) = BOMB_MODULE_5;
 		GLOBAL_SIS(ModuleSlots[9]) = BOMB_MODULE_2;
 	}
-	else if (PLAYER_SAID(R, perhaps_not_install))
+	else if (PlayerSaid(R, perhaps_not_install))
 	{
 		NPCPhrase(YES);
 
@@ -327,25 +327,25 @@ NotReady(RESPONSE_REF R)
 	{
 		NPCPhrase(RETURN_WHEN_READY);
 	}
-	else if (PLAYER_SAID(R, further_assistance))
+	else if (PlayerSaid(R, further_assistance))
 	{
 		NPCPhrase(NO_FURTHER_ASSISTANCE);
 
 		DISABLE_PHRASE(further_assistance);
 	}
-	else if (PLAYER_SAID(R, tech_help))
+	else if (PlayerSaid(R, tech_help))
 	{
 		NPCPhrase(USE_OUR_SHIPS_BEFORE);
 
 		SetRaceAllied(CHMMR_SHIP, true);
 	}
-	else if (PLAYER_SAID(R, where_weapon))
+	else if (PlayerSaid(R, where_weapon))
 	{
 		NPCPhrase(PRECURSOR_WEAPON);
 
 		DISABLE_PHRASE(where_weapon);
 	}
-	else if (PLAYER_SAID(R, where_distraction))
+	else if (PlayerSaid(R, where_distraction))
 	{
 		NPCPhrase(PSYCHIC_WEAPONRY);
 
@@ -356,15 +356,15 @@ NotReady(RESPONSE_REF R)
 	{
 		Response(tech_help, NotReady);
 	}
-	else if (PHRASE_ENABLED(further_assistance))
+	else if (PhraseEnabled(further_assistance))
 	{
 		Response(further_assistance, NotReady);
 	}
-	if (PHRASE_ENABLED(where_weapon) && !GET_GAME_STATE(UTWIG_BOMB_ON_SHIP))
+	if (PhraseEnabled(where_weapon) && !GET_GAME_STATE(UTWIG_BOMB_ON_SHIP))
 	{
 		Response(where_weapon, NotReady);
 	}
-	if (PHRASE_ENABLED(where_distraction) && !GET_GAME_STATE(TALKING_PET_ON_SHIP))
+	if (PhraseEnabled(where_distraction) && !GET_GAME_STATE(TALKING_PET_ON_SHIP))
 	{
 		Response(where_distraction, NotReady);
 	}
@@ -378,40 +378,40 @@ ImproveBomb(RESPONSE_REF R)
 	{
 		NPCPhrase(WE_WILL_IMPROVE_BOMB);
 	}
-	else if (PLAYER_SAID(R, what_now))
+	else if (PlayerSaid(R, what_now))
 	{
 		NPCPhrase(MODIFY_VESSEL);
 
 		DISABLE_PHRASE(what_now);
 	}
-	else if (PLAYER_SAID(R, wont_hurt_my_ship))
+	else if (PlayerSaid(R, wont_hurt_my_ship))
 	{
 		NPCPhrase(WILL_DESTROY_IT);
 
 		DISABLE_PHRASE(wont_hurt_my_ship);
 	}
-	else if (PLAYER_SAID(R, bummer_about_my_ship))
+	else if (PlayerSaid(R, bummer_about_my_ship))
 	{
 		NPCPhrase(DEAD_SILENCE);
 
 		DISABLE_PHRASE(bummer_about_my_ship);
 	}
-	else if (PLAYER_SAID(R, other_assistance))
+	else if (PlayerSaid(R, other_assistance))
 	{
 		NPCPhrase(USE_OUR_SHIPS_AFTER);
 
 		SetRaceAllied(CHMMR_SHIP, true);
 	}
 
-	if (PHRASE_ENABLED(what_now))
+	if (PhraseEnabled(what_now))
 	{
 		Response(what_now, ImproveBomb);
 	}
-	else if (PHRASE_ENABLED(wont_hurt_my_ship))
+	else if (PhraseEnabled(wont_hurt_my_ship))
 	{
 		Response(wont_hurt_my_ship, ImproveBomb);
 	}
-	else if (PHRASE_ENABLED(bummer_about_my_ship))
+	else if (PhraseEnabled(bummer_about_my_ship))
 	{
 		Response(bummer_about_my_ship, ImproveBomb);
 	}
@@ -427,9 +427,9 @@ static void
 ChmmrFree(RESPONSE_REF R)
 {
 	if (R == 0
-		|| PLAYER_SAID(R, i_am_captain)
-		|| PLAYER_SAID(R, i_am_savior)
-		|| PLAYER_SAID(R, i_am_silly))
+		|| PlayerSaid(R, i_am_captain)
+		|| PlayerSaid(R, i_am_savior)
+		|| PlayerSaid(R, i_am_silly))
 	{
 		NPCPhrase(WHY_HAVE_YOU_FREED_US);
 		AlienTalkSegue((uint16_t)~0);
@@ -489,36 +489,36 @@ static void ChmmrShielded(RESPONSE_REF R);
 static void
 ChmmrAdvice(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, need_advice))
+	if (PlayerSaid(R, need_advice))
 	{
 		NPCPhrase(WHAT_ADVICE);
 	}
-	else if (PLAYER_SAID(R, how_defeat_urquan))
+	else if (PlayerSaid(R, how_defeat_urquan))
 	{
 		NPCPhrase(DEFEAT_LIKE_SO);
 
 		SET_GAME_STATE(CHMMR_BOMB_STATE, 1);
 		DISABLE_PHRASE(how_defeat_urquan);
 	}
-	else if (PLAYER_SAID(R, what_about_tpet))
+	else if (PlayerSaid(R, what_about_tpet))
 	{
 		NPCPhrase(SCARY_BUT_USEFUL);
 
 		DISABLE_PHRASE(what_about_tpet);
 	}
-	else if (PLAYER_SAID(R, what_about_bomb))
+	else if (PlayerSaid(R, what_about_bomb))
 	{
 		NPCPhrase(ABOUT_BOMB);
 
 		DISABLE_PHRASE(what_about_bomb);
 	}
-	else if (PLAYER_SAID(R, what_about_sun_device))
+	else if (PlayerSaid(R, what_about_sun_device))
 	{
 		NPCPhrase(ABOUT_SUN_DEVICE);
 
 		DISABLE_PHRASE(what_about_sun_device);
 	}
-	else if (PLAYER_SAID(R, what_about_samatra))
+	else if (PlayerSaid(R, what_about_samatra))
 	{
 		NPCPhrase(ABOUT_SAMATRA);
 
@@ -526,27 +526,27 @@ ChmmrAdvice(RESPONSE_REF R)
 	}
 
 	uint8_t AdviceLeft {0};
-	if (PHRASE_ENABLED(how_defeat_urquan))
+	if (PhraseEnabled(how_defeat_urquan))
 	{
 		Response(how_defeat_urquan, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_tpet) && GET_GAME_STATE(TALKING_PET_ON_SHIP))
+	if (PhraseEnabled(what_about_tpet) && GET_GAME_STATE(TALKING_PET_ON_SHIP))
 	{
 		Response(what_about_tpet, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_bomb) && GET_GAME_STATE(UTWIG_BOMB_ON_SHIP))
+	if (PhraseEnabled(what_about_bomb) && GET_GAME_STATE(UTWIG_BOMB_ON_SHIP))
 	{
 		Response(what_about_bomb, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_sun_device) && GET_GAME_STATE(SUN_DEVICE_ON_SHIP))
+	if (PhraseEnabled(what_about_sun_device) && GET_GAME_STATE(SUN_DEVICE_ON_SHIP))
 	{
 		Response(what_about_sun_device, ChmmrAdvice);
 		AdviceLeft = true;
 	}
-	if (PHRASE_ENABLED(what_about_samatra) && GET_GAME_STATE(AWARE_OF_SAMATRA))
+	if (PhraseEnabled(what_about_samatra) && GET_GAME_STATE(AWARE_OF_SAMATRA))
 	{
 		Response(what_about_samatra, ChmmrAdvice);
 		AdviceLeft = true;
@@ -562,31 +562,31 @@ ChmmrAdvice(RESPONSE_REF R)
 static void
 ChmmrShielded(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, find_out_whats_up))
+	if (PlayerSaid(R, find_out_whats_up))
 	{
 		NPCPhrase(HYBRID_PROCESS);
 
 		DISABLE_PHRASE(find_out_whats_up);
 	}
-	else if (PLAYER_SAID(R, need_help))
+	else if (PlayerSaid(R, need_help))
 	{
 		NPCPhrase(CANT_HELP);
 
 		SET_GAME_STATE(CHMMR_STACK, 1);
 	}
-	else if (PLAYER_SAID(R, why_no_help))
+	else if (PlayerSaid(R, why_no_help))
 	{
 		NPCPhrase(LONG_TIME);
 
 		SET_GAME_STATE(CHMMR_STACK, 2);
 	}
-	else if (PLAYER_SAID(R, what_if_more_energy))
+	else if (PlayerSaid(R, what_if_more_energy))
 	{
 		NPCPhrase(DANGER_TO_US);
 
 		SET_GAME_STATE(CHMMR_STACK, 3);
 	}
-	else if (PLAYER_SAID(R, enough_advice))
+	else if (PlayerSaid(R, enough_advice))
 	{
 		NPCPhrase(OK_ENOUGH_ADVICE);
 	}
@@ -603,11 +603,11 @@ ChmmrShielded(RESPONSE_REF R)
 			Response(what_if_more_energy, ChmmrShielded);
 			break;
 	}
-	if (PHRASE_ENABLED(find_out_whats_up))
+	if (PhraseEnabled(find_out_whats_up))
 	{
 		Response(find_out_whats_up, ChmmrShielded);
 	}
-	if (PHRASE_ENABLED(need_advice))
+	if (PhraseEnabled(need_advice))
 	{
 		Response(need_advice, ChmmrAdvice);
 	}
@@ -617,7 +617,7 @@ ChmmrShielded(RESPONSE_REF R)
 static void
 AfterBomb(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, whats_up_after_bomb))
+	if (PlayerSaid(R, whats_up_after_bomb))
 	{
 		if (GET_GAME_STATE(CHMMR_STACK))
 		{
@@ -632,18 +632,18 @@ AfterBomb(RESPONSE_REF R)
 
 		DISABLE_PHRASE(whats_up_after_bomb);
 	}
-	else if (PLAYER_SAID(R, what_do_after_bomb))
+	else if (PlayerSaid(R, what_do_after_bomb))
 	{
 		NPCPhrase(DO_AFTER_BOMB);
 
 		DISABLE_PHRASE(what_do_after_bomb);
 	}
 
-	if (PHRASE_ENABLED(whats_up_after_bomb))
+	if (PhraseEnabled(whats_up_after_bomb))
 	{
 		Response(whats_up_after_bomb, AfterBomb);
 	}
-	if (PHRASE_ENABLED(what_do_after_bomb))
+	if (PhraseEnabled(what_do_after_bomb))
 	{
 		Response(what_do_after_bomb, AfterBomb);
 	}
@@ -799,7 +799,7 @@ init_chmmr_comm(void)
 
 	chmmr_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1);
 	chmmr_desc.AlienTextBaseline.y = 0;
-	chmmr_desc.AlienTextWidth = SisTextWidth() - RES_SCALE(16);
+	chmmr_desc.AlienTextWidth = SisTextWidth() - ResScale(16);
 
 	setSegue(Segue_peace);
 	LOCDATA* retval {&chmmr_desc};

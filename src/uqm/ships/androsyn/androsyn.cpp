@@ -38,9 +38,9 @@ static constexpr auto ShipMass {6};
 // Bubbles
 static constexpr auto WeaponEnergyCost {3};
 static constexpr auto WeaponWait {0};
-static auto AndrosynthOffset() { return RES_SCALE(14); }
-static auto MissileOffset() { return RES_SCALE(3); }
-static auto MissileSpeed() { return DISPLAY_TO_WORLD(RES_SCALE(8)); }
+static auto AndrosynthOffset() { return ResScale(14); }
+static auto MissileOffset() { return ResScale(3); }
+static auto MissileSpeed() { return DisplayToWorld(ResScale(8)); }
 static constexpr auto MissileLife {200};
 static constexpr auto MissileHits {3};
 static constexpr auto MissileDamage {2};
@@ -50,8 +50,8 @@ static constexpr auto TrackWait {2};
 static constexpr auto SpecialEnergyCost {2};
 static constexpr auto BlazerDegeneration {(-1)};
 static constexpr auto SpecialWait {0};
-static auto BlazerOffset() { return RES_SCALE(10); }
-static auto BlazerThrust() { return RES_SCALE(60); }
+static auto BlazerOffset() { return ResScale(10); }
+static auto BlazerThrust() { return ResScale(60); }
 static constexpr auto BlazerTurnWait {1};
 static constexpr auto BlazerDamage {3};
 static constexpr auto BlazerMass {1};
@@ -218,19 +218,19 @@ bubble_preprocess(ELEMENT* ElementPtr)
 		uint16_t facing {};
 		int16_t delta_facing {};
 
-		facing = NORMALIZE_FACING(ANGLE_TO_FACING(
+		facing = NormalizeFacing(AngleToFacing(
 			GetVelocityTravelAngle(&ElementPtr->velocity)));
 		if ((delta_facing = TrackShip(ElementPtr, &facing)) == -1)
 		{
 			facing = (uint16_t)uqm::random().next();
 		}
-		else if (delta_facing <= ANGLE_TO_FACING(HalfCircle))
+		else if (delta_facing <= AngleToFacing(HalfCircle))
 		{
-			facing += (uint16_t)uqm::random().next() & (ANGLE_TO_FACING(HalfCircle) - 1);
+			facing += (uint16_t)uqm::random().next() & (AngleToFacing(HalfCircle) - 1);
 		}
 		else
 		{
-			facing -= (uint16_t)uqm::random().next() & (ANGLE_TO_FACING(HalfCircle) - 1);
+			facing -= (uint16_t)uqm::random().next() & (AngleToFacing(HalfCircle) - 1);
 		}
 		SetVelocityVector(&ElementPtr->velocity,
 						  MissileSpeed(), facing);
@@ -314,10 +314,10 @@ androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 			if (lpEvalDesc->which_turn <= 16
 				&& (StarShipPtr->special_counter > 0
 					|| StarShipPtr->RaceDescPtr->ship_info.energy_level < MaxEnergy / 3
-					|| ((WEAPON_RANGE(&pEnemyStarShip->RaceDescPtr->cyborg_control) <= RES_SCALE(CloseRangeWeapon)
+					|| ((GetWeaponRange(&pEnemyStarShip->RaceDescPtr->cyborg_control) <= ResScale(CloseRangeWeapon)
 						 && lpEvalDesc->ObjectPtr->crew_level > BlazerDamage)
 						|| (lpEvalDesc->ObjectPtr->crew_level > (BlazerDamage * 3)
-							&& MANEUVERABILITY(&pEnemyStarShip->RaceDescPtr->cyborg_control) > RESOLUTION_COMPENSATED(SlowShip)))))
+							&& Maneuverability(&pEnemyStarShip->RaceDescPtr->cyborg_control) > ResolutionCompensated(SlowShip)))))
 			{
 				lpEvalDesc->MoveState = ENTICE;
 			}
@@ -332,12 +332,12 @@ androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 				 && ObjectsOfConcern[ENEMY_WEAPON_INDEX].which_turn <= 4)
 				|| (lpEvalDesc->ObjectPtr
 					&& StarShipPtr->RaceDescPtr->ship_info.energy_level >= MaxEnergy / 3
-					&& (WEAPON_RANGE(&pEnemyStarShip->RaceDescPtr->cyborg_control) >= WEAPON_RANGE(&StarShipPtr->RaceDescPtr->cyborg_control) << 1
+					&& (GetWeaponRange(&pEnemyStarShip->RaceDescPtr->cyborg_control) >= GetWeaponRange(&StarShipPtr->RaceDescPtr->cyborg_control) << 1
 						|| (lpEvalDesc->which_turn < 16
-							&& (WEAPON_RANGE(&pEnemyStarShip->RaceDescPtr->cyborg_control) > RES_SCALE(CloseRangeWeapon)
+							&& (GetWeaponRange(&pEnemyStarShip->RaceDescPtr->cyborg_control) > ResScale(CloseRangeWeapon)
 								|| lpEvalDesc->ObjectPtr->crew_level <= BlazerDamage)
 							&& (lpEvalDesc->ObjectPtr->crew_level <= (BlazerDamage * 3)
-								|| MANEUVERABILITY(&pEnemyStarShip->RaceDescPtr->cyborg_control) <= RESOLUTION_COMPENSATED(SlowShip))))))
+								|| Maneuverability(&pEnemyStarShip->RaceDescPtr->cyborg_control) <= ResolutionCompensated(SlowShip))))))
 			{
 				StarShipPtr->ship_input_state |= SpecialFlag;
 			}
@@ -373,8 +373,8 @@ androsynth_intelligence(ELEMENT* ShipPtr, EVALUATE_DESC* ObjectsOfConcern,
 					lpEvalDesc->ObjectPtr->next.location.y - ShipPtr->next.location.y;
 				const uint16_t direction_facing {ARCTAN(delta_x, delta_y)};
 
-				if (NORMALIZE_ANGLE(travel_facing
-									- direction_facing + Octant)
+				if (NormalizeAngle(travel_facing
+								   - direction_facing + Octant)
 					<= Quadrant)
 				{
 					StarShipPtr->ship_input_state |= WeaponFlag;
@@ -535,7 +535,7 @@ androsynth_preprocess(ELEMENT* ElementPtr)
 				}
 
 				SetVelocityVector(&ElementPtr->velocity,
-								  BlazerThrust(), NORMALIZE_FACING(facing));
+								  BlazerThrust(), NormalizeFacing(facing));
 				cur_status_flags |= ShipAtMaxSpeed | ShipBeyondMaxSpeed;
 			}
 		}
@@ -555,8 +555,8 @@ init_androsynth(void)
 {
 	if (IsHd())
 	{
-		androsynth_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		androsynth_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		androsynth_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		androsynth_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		androsynth_desc.cyborg_control.WeaponRange = LongRangeWeaponHd >> 2;
 	}
 	else

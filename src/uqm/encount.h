@@ -79,17 +79,17 @@ struct encounter
 	int32_t log_x, log_y;
 };
 
-#define AllocEncounter() AllocLink(&GLOBAL(encounter_q))
-#define PutEncounter(h) PutQueue(&GLOBAL(encounter_q), h)
-#define InsertEncounter(h, i) InsertQueue(&GLOBAL(encounter_q), h, i)
-#define GetHeadEncounter() GetHeadLink(&GLOBAL(encounter_q))
-#define GetTailEncounter() GetTailLink(&GLOBAL(encounter_q))
+constexpr auto AllocEncounter() { return AllocLink(&GLOBAL(encounter_q)); }
+constexpr auto PutEncounter(const auto& h) { return PutQueue(&GLOBAL(encounter_q), h); }
+constexpr auto InsertEncounter(const auto& h, const auto& i) { return InsertQueue(&GLOBAL(encounter_q), h, i); }
+constexpr auto GetHeadEncounter() { return GetHeadLink(&GLOBAL(encounter_q)); }
+
 #define LockEncounter(h, ppe) (*(ppe) = (ENCOUNTER*)LockLink(&GLOBAL(encounter_q), h))
-#define UnlockEncounter(h) UnlockLink(&GLOBAL(encounter_q), h)
-#define RemoveEncounter(h) RemoveQueue(&GLOBAL(encounter_q), h)
-#define FreeEncounter(h) FreeLink(&GLOBAL(encounter_q), h)
-#define GetPredEncounter(l) _GetPredLink(l)
-#define GetSuccEncounter(l) _GetSuccLink(l)
+constexpr auto UnlockEncounter(const auto& h) { return UnlockLink(&GLOBAL(encounter_q), h); }
+constexpr auto RemoveEncounter(const auto& h) { return RemoveQueue(&GLOBAL(encounter_q), h); }
+constexpr auto FreeEncounter(const auto& h) { return FreeLink(&GLOBAL(encounter_q), h); }
+
+constexpr auto GetSuccEncounter(const auto& l) { return _GetSuccLink(l); }
 
 enum
 {

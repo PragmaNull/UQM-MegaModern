@@ -198,9 +198,9 @@ enum
 };
 inline constexpr auto Nothing {(uint8_t)(~0)};
 
-#define MINERAL_DEPOSIT(qn, ql) uqm::makeByte(qn, ql)
-#define DEPOSIT_QUANTITY(md) uqm::lowNibble(md)
-#define DEPOSIT_QUALITY(md) uqm::highNibble(md)
+constexpr auto MineralDeposit(const auto& qn, const auto& ql) { return uqm::makeByte(qn, ql); }
+constexpr auto DepositQuantity(const auto& md) { return uqm::lowNibble(md); }
+constexpr auto DepositQuality(const auto& md) { return uqm::highNibble(md); }
 
 inline constexpr auto MaxElementUnits {0xF};
 

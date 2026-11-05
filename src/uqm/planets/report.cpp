@@ -69,7 +69,7 @@ ClearReportArea(int16_t startx)
 	SetContextForeGroundColor(
 		BuildColor(MakeRgb15(0x00, 0x07, 0x00), 0x57));
 
-	s.origin.y = RES_SCALE(1);
+	s.origin.y = ResScale(1);
 	for (y = 0; y < NumCellRows; ++y)
 	{
 		s.origin.x = startx;
@@ -84,9 +84,9 @@ ClearReportArea(int16_t startx)
 				DrawFilledStamp(&s);
 			}
 
-			s.origin.x += r.extent.width + RES_SCALE(1);
+			s.origin.x += r.extent.width + ResScale(1);
 		}
-		s.origin.y += r.extent.height + RES_SCALE(1);
+		s.origin.y += r.extent.height + ResScale(1);
 	}
 
 	UnbatchGraphics();
@@ -109,7 +109,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 	uint16_t first_line_length = 0;
 
 	fmt::format_to_n(end_page_buf, sizeof(end_page_buf) - 1, "{}\n",
-					 GAME_STRING(static_cast<int>(SCAN_STRING_BASE) + static_cast<int>(NUM_SCAN_TYPES)));
+					 GameString(static_cast<int>(SCAN_STRING_BASE) + static_cast<int>(NUM_SCAN_TYPES)));
 	end_page_len = uqm::utf8StringCount(end_page_buf);
 
 	GetFrameRect(SetAbsFrameIndex(SpaceJunkFrame, 18), &r);
@@ -122,23 +122,23 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 
 	FlushInput();
 
-	t.baseline.y = r.extent.height + RES_SCALE(1);
+	t.baseline.y = r.extent.height + ResScale(1);
 	// Text vertical alignment
 	uint16_t row_cells {0};
 	fgcolor = BuildColor(MakeRgb15(0x00, 0x1F, 0x00), 0xFF);
 
 	if (contextRect.extent.width < ScaledMapWidth())
 	{
-		startx = RES_SCALE(1); // Special case if we're in space
+		startx = ResScale(1); // Special case if we're in space
 	}
 	else
 	{ // In DOS version first cell is 3p away from the edge of the
 		// context, and 2 in UQM
-		startx = RES_SCALE(RES_DESCALE(r.extent.width) >> 1)
-			   + (isPC(uqm::UQMOptions::read().landerStyle) ? RES_SCALE(1) : 0);
+		startx = ResScale(ResDescale(r.extent.width) >> 1)
+			   + (isPC(uqm::UQMOptions::read().landerStyle) ? ResScale(1) : 0);
 	}
 
-	startx += SAFE_NUM_SCL(1);
+	startx += SafeNumScl(1);
 
 	if (StrLen)
 	{
@@ -208,7 +208,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 			}
 		}
 
-		t.baseline.x = startx + (col_cells * (r.extent.width + RES_SCALE(1)));
+		t.baseline.x = startx + (col_cells * (r.extent.width + ResScale(1)));
 
 		do
 		{
@@ -306,13 +306,13 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 						}
 					}
 					t.pStr = pNextStr;
-					t.baseline.x += r.extent.width + RES_SCALE(1);
+					t.baseline.x += r.extent.width + ResScale(1);
 					// Text spacing
 				}
 
 				++col_cells;
 				last_c = uqm::getCharFromString(&t.pStr);
-				t.baseline.x += r.extent.width + RES_SCALE(1);
+				t.baseline.x += r.extent.width + ResScale(1);
 				// Space spacing
 
 				if (curr_line >= 0 && last_c == '\n')
@@ -322,7 +322,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 			}
 		} while (col_cells <= NumCellCols() && last_c != '\n' && StrLen);
 
-		t.baseline.y += r.extent.height + RES_SCALE(1);
+		t.baseline.y += r.extent.height + ResScale(1);
 		// Text vertical spacing
 		if (++row_cells == NumCellRows || StrLen == 0)
 		{
@@ -337,7 +337,7 @@ MakeReport(SOUND_REF ReadOutSounds, const char* pStr, uint16_t StrLen)
 				break;
 			}
 
-			t.baseline.y = r.extent.height + RES_SCALE(1);
+			t.baseline.y = r.extent.height + ResScale(1);
 			// Text vertical alignment
 			row_cells = 0;
 			if (StrLen)

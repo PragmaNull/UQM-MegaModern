@@ -327,7 +327,7 @@ CombatIsInevitable(RESPONSE_REF R)
 
 	setSegue(Segue_hostile);
 
-	if (PLAYER_SAID(R, ok_take_beast))
+	if (PlayerSaid(R, ok_take_beast))
 	{
 		NPCPhrase(FOOL_AIEE0);
 		NPCPhrase(FOOL_AIEE1);
@@ -342,16 +342,16 @@ CombatIsInevitable(RESPONSE_REF R)
 		SET_GAME_STATE(ZEX_IS_DEAD, 1);
 		setSegue(Segue_peace);
 	}
-	else if (PLAYER_SAID(R, try_any_way))
+	else if (PlayerSaid(R, try_any_way))
 	{
 		NPCPhrase(NOPE);
 
 		SET_GAME_STATE(VUX_STACK_1, 4);
 	}
-	else if (PLAYER_SAID(R, kill_you_squids_1)
-			 || PLAYER_SAID(R, kill_you_squids_2)
-			 || PLAYER_SAID(R, kill_you_squids_3)
-			 || PLAYER_SAID(R, kill_you_squids_4))
+	else if (PlayerSaid(R, kill_you_squids_1)
+			 || PlayerSaid(R, kill_you_squids_2)
+			 || PlayerSaid(R, kill_you_squids_3)
+			 || PlayerSaid(R, kill_you_squids_4))
 	{
 		NPCPhrase(WE_FIGHT);
 
@@ -361,10 +361,10 @@ CombatIsInevitable(RESPONSE_REF R)
 			SET_GAME_STATE(VUX_STACK_2, NumVisits);
 		}
 	}
-	else if (PLAYER_SAID(R, cant_we_be_friends_1)
-			 || PLAYER_SAID(R, cant_we_be_friends_2)
-			 || PLAYER_SAID(R, cant_we_be_friends_3)
-			 || PLAYER_SAID(R, cant_we_be_friends_4))
+	else if (PlayerSaid(R, cant_we_be_friends_1)
+			 || PlayerSaid(R, cant_we_be_friends_2)
+			 || PlayerSaid(R, cant_we_be_friends_3)
+			 || PlayerSaid(R, cant_we_be_friends_4))
 	{
 		NumVisits = GET_GAME_STATE(VUX_STACK_3);
 		switch (NumVisits++)
@@ -385,7 +385,7 @@ CombatIsInevitable(RESPONSE_REF R)
 		}
 		SET_GAME_STATE(VUX_STACK_3, NumVisits);
 	}
-	else if (PLAYER_SAID(R, bye_hostile_space))
+	else if (PlayerSaid(R, bye_hostile_space))
 	{
 		NumVisits = GET_GAME_STATE(VUX_STACK_4);
 		switch (NumVisits++)
@@ -406,7 +406,7 @@ CombatIsInevitable(RESPONSE_REF R)
 		}
 		SET_GAME_STATE(VUX_STACK_4, NumVisits);
 	}
-	else if (PLAYER_SAID(R, bye_zex))
+	else if (PlayerSaid(R, bye_zex))
 	{
 		NPCPhrase(GOODBYE_ZEX);
 
@@ -459,55 +459,55 @@ Menagerie(RESPONSE_REF R)
 	uint8_t LastStack {};
 	RESPONSE_REF pStr[3];
 
-	if (PLAYER_SAID(R, i_have_beast)
-		|| PLAYER_SAID(R, why_trust_1)
-		|| PLAYER_SAID(R, why_trust_2)
-		|| PLAYER_SAID(R, why_trust_3))
+	if (PlayerSaid(R, i_have_beast)
+		|| PlayerSaid(R, why_trust_1)
+		|| PlayerSaid(R, why_trust_2)
+		|| PlayerSaid(R, why_trust_3))
 	{
-		if (PLAYER_SAID(R, i_have_beast))
+		if (PlayerSaid(R, i_have_beast))
 		{
 			NPCPhrase(GIVE_BEAST);
 		}
-		else if (PLAYER_SAID(R, why_trust_1))
+		else if (PlayerSaid(R, why_trust_1))
 		{
 			NPCPhrase(TRUST_1);
 
 			DISABLE_PHRASE(why_trust_1);
 		}
-		else if (PLAYER_SAID(R, why_trust_2))
+		else if (PlayerSaid(R, why_trust_2))
 		{
 			NPCPhrase(TRUST_2);
 
 			DISABLE_PHRASE(why_trust_2);
 		}
-		else if (PLAYER_SAID(R, why_trust_3))
+		else if (PlayerSaid(R, why_trust_3))
 		{
 			NPCPhrase(TRUST_3);
 
 			DISABLE_PHRASE(why_trust_3);
 		}
 
-		if (PHRASE_ENABLED(why_trust_1))
+		if (PhraseEnabled(why_trust_1))
 		{
 			Response(why_trust_1, Menagerie);
 		}
-		else if (PHRASE_ENABLED(why_trust_2))
+		else if (PhraseEnabled(why_trust_2))
 		{
 			Response(why_trust_2, Menagerie);
 		}
-		else if (PHRASE_ENABLED(why_trust_3))
+		else if (PhraseEnabled(why_trust_3))
 		{
 			Response(why_trust_3, Menagerie);
 		}
 		Response(ok_take_beast, CombatIsInevitable);
 	}
-	else if (PLAYER_SAID(R, kill_you))
+	else if (PlayerSaid(R, kill_you))
 	{
 		NPCPhrase(FIGHT_AGAIN);
 
 		setSegue(Segue_hostile);
 	}
-	else if (PLAYER_SAID(R, regardless))
+	else if (PlayerSaid(R, regardless))
 	{
 		NPCPhrase(THEN_FIGHT);
 
@@ -558,19 +558,19 @@ Menagerie(RESPONSE_REF R)
 			}
 			SET_GAME_STATE(ZEX_VISITS, NumVisits);
 		}
-		else if (PLAYER_SAID(R, what_you_do_here))
+		else if (PlayerSaid(R, what_you_do_here))
 		{
 			NPCPhrase(MY_MENAGERIE);
 
 			SET_GAME_STATE(ZEX_STACK_1, 1);
 		}
-		else if (PLAYER_SAID(R, what_about_menagerie))
+		else if (PlayerSaid(R, what_about_menagerie))
 		{
 			NPCPhrase(NEED_NEW_CREATURE);
 
 			SET_GAME_STATE(ZEX_STACK_1, 2);
 		}
-		else if (PLAYER_SAID(R, what_about_creature))
+		else if (PlayerSaid(R, what_about_creature))
 		{
 			NPCPhrase(ABOUT_CREATURE);
 
@@ -580,40 +580,40 @@ Menagerie(RESPONSE_REF R)
 			R = about_creature_again;
 			DISABLE_PHRASE(what_about_creature);
 		}
-		else if (PLAYER_SAID(R, about_creature_again))
+		else if (PlayerSaid(R, about_creature_again))
 		{
 			NPCPhrase(CREATURE_AGAIN);
 
 			DISABLE_PHRASE(about_creature_again);
 		}
-		else if (PLAYER_SAID(R, why_dont_you_attack))
+		else if (PlayerSaid(R, why_dont_you_attack))
 		{
 			NPCPhrase(LIKE_YOU);
 
 			LastStack = 1;
 			SET_GAME_STATE(ZEX_STACK_2, 1);
 		}
-		else if (PLAYER_SAID(R, why_like_me))
+		else if (PlayerSaid(R, why_like_me))
 		{
 			NPCPhrase(LIKE_BECAUSE);
 
 			LastStack = 1;
 			SET_GAME_STATE(ZEX_STACK_2, 2);
 		}
-		else if (PLAYER_SAID(R, are_you_a_pervert))
+		else if (PlayerSaid(R, are_you_a_pervert))
 		{
 			NPCPhrase(CALL_ME_WHAT_YOU_WISH);
 
 			SET_GAME_STATE(ZEX_STACK_2, 3);
 		}
-		else if (PLAYER_SAID(R, take_by_force))
+		else if (PlayerSaid(R, take_by_force))
 		{
 			NPCPhrase(PRECURSOR_DEVICE);
 
 			LastStack = 2;
 			SET_GAME_STATE(ZEX_STACK_3, 1);
 		}
-		else if (PLAYER_SAID(R, you_lied))
+		else if (PlayerSaid(R, you_lied))
 		{
 			NPCPhrase(YUP_LIED);
 
@@ -640,7 +640,7 @@ Menagerie(RESPONSE_REF R)
 					pStr[0] = what_about_creature;
 					break;
 				case 3:
-					if (PHRASE_ENABLED(about_creature_again))
+					if (PhraseEnabled(about_creature_again))
 					{
 						pStr[0] = about_creature_again;
 					}
@@ -693,25 +693,25 @@ Menagerie(RESPONSE_REF R)
 static void
 NormalVux(RESPONSE_REF R)
 {
-	if (PLAYER_SAID(R, why_so_mean))
+	if (PlayerSaid(R, why_so_mean))
 	{
 		NPCPhrase(URQUAN_SLAVES);
 
 		SET_GAME_STATE(VUX_STACK_1, 1);
 	}
-	else if (PLAYER_SAID(R, deeper_reason))
+	else if (PlayerSaid(R, deeper_reason))
 	{
 		NPCPhrase(OLD_INSULT);
 
 		SET_GAME_STATE(VUX_STACK_1, 2);
 	}
-	else if (PLAYER_SAID(R, if_we_apologize))
+	else if (PlayerSaid(R, if_we_apologize))
 	{
 		NPCPhrase(PROBABLY_NOT);
 
 		SET_GAME_STATE(VUX_STACK_1, 3);
 	}
-	else if (PLAYER_SAID(R, whats_up_hostile))
+	else if (PlayerSaid(R, whats_up_hostile))
 	{
 		uint8_t NumVisits {};
 
@@ -799,7 +799,7 @@ NormalVux(RESPONSE_REF R)
 			break;
 	}
 
-	if (PHRASE_ENABLED(whats_up_hostile))
+	if (PhraseEnabled(whats_up_hostile))
 	{
 		Response(whats_up_hostile, NormalVux);
 	}
@@ -922,9 +922,9 @@ init_vux_comm(void)
 	uqm::lua().beginComm(nullptr, NullResource);
 
 	vux_desc.AlienTextBaseline.x = TextXOffs() + (SisTextWidth() >> 1)
-								 + (SisTextWidth() >> 2) - SAFE_NUM_SCL(4);
+								 + (SisTextWidth() >> 2) - SafeNumScl(4);
 	vux_desc.AlienTextBaseline.y = 0;
-	vux_desc.AlienTextWidth = ((SisTextWidth() - RES_SCALE(16)) >> 1)
+	vux_desc.AlienTextWidth = ((SisTextWidth() - ResScale(16)) >> 1)
 							+ SafeX();
 
 	// use alternate "ZEX" track and frame if available

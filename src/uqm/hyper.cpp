@@ -309,8 +309,8 @@ void MoveSIS(int32_t* pdx, int32_t* pdy)
 		hyper_dy += new_dy;
 
 		// These macros are also used in the fuel estimate on the starmap.
-		adj_dx = LOGX_TO_UNIVERSE(16 * hyper_dx);
-		adj_dy = MaxYUniverse - LOGY_TO_UNIVERSE(16 * hyper_dy);
+		adj_dx = LogxToUniverse(16 * hyper_dx);
+		adj_dy = MaxYUniverse - LogyToUniverse(16 * hyper_dy);
 
 		hyper_dist = square_root(adj_dx * adj_dx + adj_dy * adj_dy)
 				   + hyper_extra;
@@ -346,8 +346,8 @@ void check_hyperspace_encounter(void)
 		{
 			RACE_HYPERSPACE_PERCENT};
 
-	universe.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-	universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+	universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
+	universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
 	for (hStarShip = GetHeadLink(&GLOBAL(avail_race_q)), Type = 0;
 		 hStarShip && (uqm::currentActivity() & IN_BATTLE);
 		 hStarShip = hNextShip, ++Type)
@@ -621,8 +621,8 @@ ElementToUniverse(ELEMENT* ElementPtr, GFXPOINT* pPt)
 		  + (ElementPtr->next.location.x - (LogSpaceWidth() >> 1));
 	log_y = GLOBAL_SIS(log_y)
 		  + (ElementPtr->next.location.y - (LogSpaceHeight() >> 1));
-	pPt->x = LOGX_TO_UNIVERSE(log_x);
-	pPt->y = LOGY_TO_UNIVERSE(log_y);
+	pPt->x = LogxToUniverse(log_x);
+	pPt->y = LogyToUniverse(log_y);
 }
 
 static void
@@ -720,10 +720,10 @@ InterplanetaryTransition(ELEMENT* ElementPtr)
 			//		QUASISPACE_PORTALS_HYPERSPACE_ENDPOINTS;
 
 			index = CurStarDescPtr() - &star_array[NumSolarSystems + 1];
-			//GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(portal_pt[index].x);
-			//GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(portal_pt[index].y);
-			GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(portal_map[index].star_pt.x);
-			GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(portal_map[index].star_pt.y);
+			//GLOBAL_SIS(log_x) = UniverseToLogx(portal_pt[index].x);
+			//GLOBAL_SIS(log_y) = UniverseToLogy(portal_pt[index].y);
+			GLOBAL_SIS(log_x) = UniverseToLogx(portal_map[index].star_pt.x);
+			GLOBAL_SIS(log_y) = UniverseToLogy(portal_map[index].star_pt.y);
 
 			// JMS: This QS portal's HS coordinates are revealed on QS map
 			// the next time the player visits QS.
@@ -747,8 +747,8 @@ ArilouSpaceTransition(void)
 	if (GET_GAME_STATE(ARILOU_SPACE_SIDE) <= 1)
 	{
 		// From HyperSpace to QuasiSpace.
-		GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(QuasiSpaceX);
-		GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(QuasiSpaceY);
+		GLOBAL_SIS(log_x) = UniverseToLogx(QuasiSpaceX);
+		GLOBAL_SIS(log_y) = UniverseToLogy(QuasiSpaceY);
 		if (GET_GAME_STATE(PORTAL_COUNTER) == 0)
 		{
 			// Periodically appearing portal.
@@ -773,15 +773,15 @@ ArilouSpaceTransition(void)
 		if (!IsExtended() || (IsExtended() && !ValidPoint(LoadLastLoc())))
 		{
 			// JSD Converting hard coded ARILOU portal to plot based
-			//GLOBAL_SIS (log_x) = UNIVERSE_TO_LOGX (ArilouSpaceX);
-			//GLOBAL_SIS (log_y) = UNIVERSE_TO_LOGY (ArilouSpaceY);
-			GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(plot_map[ARILOU_DEFINED].star_pt.x);
-			GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(plot_map[ARILOU_DEFINED].star_pt.y);
+			//GLOBAL_SIS (log_x) = UniverseToLogx (ArilouSpaceX);
+			//GLOBAL_SIS (log_y) = UniverseToLogy (ArilouSpaceY);
+			GLOBAL_SIS(log_x) = UniverseToLogx(plot_map[ARILOU_DEFINED].star_pt.x);
+			GLOBAL_SIS(log_y) = UniverseToLogy(plot_map[ARILOU_DEFINED].star_pt.y);
 		}
 		else if (IsExtended() && ValidPoint(LoadLastLoc()))
 		{
-			GLOBAL_SIS(log_x) = UNIVERSE_TO_LOGX(LoadLastLoc().x);
-			GLOBAL_SIS(log_y) = UNIVERSE_TO_LOGY(LoadLastLoc().y);
+			GLOBAL_SIS(log_x) = UniverseToLogx(LoadLastLoc().x);
+			GLOBAL_SIS(log_y) = UniverseToLogy(LoadLastLoc().y);
 
 			ZeroLastLoc();
 		}
@@ -804,12 +804,12 @@ unhyper_transition(ELEMENT* ElementPtr)
 		int32_t udy = 0;
 
 		GetElementStarShip(ElementPtr, &StarShipPtr);
-		universe.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-		universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+		universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
+		universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
 		udx = uqm::flagship().autopilot.target().x - universe.x;
 		udy = -(uqm::flagship().autopilot.target().y - universe.y);
 
-		facing = NORMALIZE_FACING(ANGLE_TO_FACING(ARCTAN(udx, udy)));
+		facing = NormalizeFacing(AngleToFacing(ARCTAN(udx, udy)));
 		StarShipPtr->ShipFacing = facing;
 		SetElementStarShip(ElementPtr, StarShipPtr);
 	}
@@ -819,11 +819,11 @@ unhyper_transition(ELEMENT* ElementPtr)
 	uint16_t frame_index {GetFrameIndex(ElementPtr->current.image.frame)};
 	if (frame_index == 0)
 	{
-		frame_index += ANGLE_TO_FACING(FullCircle);
+		frame_index += AngleToFacing(FullCircle);
 	}
-	else if (frame_index < ANGLE_TO_FACING(FullCircle))
+	else if (frame_index < AngleToFacing(FullCircle))
 	{
-		frame_index = NORMALIZE_FACING(frame_index + 1);
+		frame_index = NormalizeFacing(frame_index + 1);
 	}
 	else if (++frame_index == GetFrameCount(ElementPtr->current.image.frame))
 	{
@@ -863,10 +863,10 @@ init_transition(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 	int16_t num_turns {};
 	STARSHIP* StarShipPtr {};
 
-	dx = WORLD_TO_VELOCITY(ElementPtr0->next.location.x
-						   - ElementPtr1->next.location.x);
-	dy = WORLD_TO_VELOCITY(ElementPtr0->next.location.y
-						   - ElementPtr1->next.location.y);
+	dx = WorldToVelocity(ElementPtr0->next.location.x
+						 - ElementPtr1->next.location.x);
+	dy = WorldToVelocity(ElementPtr0->next.location.y
+						 - ElementPtr1->next.location.y);
 
 	ElementPtr1->state_flags |= Nonsolid;
 	ElementPtr1->preprocess_func = unhyper_transition;
@@ -875,9 +875,9 @@ init_transition(ELEMENT* ElementPtr0, ELEMENT* ElementPtr1,
 
 	GetElementStarShip(ElementPtr1, &StarShipPtr);
 	num_turns = GetFrameCount(ElementPtr1->next.image.frame)
-			  - ANGLE_TO_FACING(FullCircle)
-			  + NORMALIZE_FACING(ANGLE_TO_FACING(FullCircle)
-								 - StarShipPtr->ShipFacing);
+			  - AngleToFacing(FullCircle)
+			  + NormalizeFacing(AngleToFacing(FullCircle)
+								- StarShipPtr->ShipFacing);
 	if (num_turns == 0)
 	{
 		num_turns = 1;
@@ -961,29 +961,29 @@ bool hyper_transition(ELEMENT* ElementPtr)
 			int32_t udy = 0;
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
-			universe.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-			universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+			universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
+			universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
 			udx = uqm::flagship().autopilot.target().x - universe.x;
 			udy = -(uqm::flagship().autopilot.target().y - universe.y);
 
 			facing =
-				NORMALIZE_FACING(ANGLE_TO_FACING(ARCTAN(udx, udy)));
+				NormalizeFacing(AngleToFacing(ARCTAN(udx, udy)));
 			StarShipPtr->ShipFacing = facing;
 			SetElementStarShip(ElementPtr, StarShipPtr);
 		}
 
 		uint16_t frame_index {GetFrameIndex(ElementPtr->current.image.frame)};
-		if (frame_index-- <= ANGLE_TO_FACING(FullCircle))
+		if (frame_index-- <= AngleToFacing(FullCircle))
 		{
 			STARSHIP* StarShipPtr {};
 
-			if (frame_index == ANGLE_TO_FACING(FullCircle) - 1)
+			if (frame_index == AngleToFacing(FullCircle) - 1)
 			{
 				frame_index = 0;
 			}
 			else
 			{
-				frame_index = NORMALIZE_FACING(frame_index);
+				frame_index = NormalizeFacing(frame_index);
 			}
 
 			GetElementStarShip(ElementPtr, &StarShipPtr);
@@ -1133,13 +1133,13 @@ AllocHyperElement(const GFXPOINT* elem_pt)
 			long lx {};
 			long ly {};
 
-			lx = UNIVERSE_TO_LOGX(elem_pt->x)
+			lx = UniverseToLogx(elem_pt->x)
 			   + (LogSpaceWidth() >> 1) - GLOBAL_SIS(log_x);
-			HyperSpaceElementPtr->current.location.x = WRAP_X(lx);
+			HyperSpaceElementPtr->current.location.x = WrapX(lx);
 
-			ly = UNIVERSE_TO_LOGY(elem_pt->y)
+			ly = UniverseToLogy(elem_pt->y)
 			   + (LogSpaceHeight() >> 1) - GLOBAL_SIS(log_y);
-			HyperSpaceElementPtr->current.location.y = WRAP_Y(ly);
+			HyperSpaceElementPtr->current.location.y = WrapY(ly);
 		}
 
 		SetPrimType(&DisplayArray[HyperSpaceElementPtr->PrimIndex],
@@ -1193,9 +1193,9 @@ AddAmbientElement(void)
 		}
 
 		HyperSpaceElementPtr->current.location.x =
-			(LogSpaceWidth() >> 1) + DISPLAY_TO_WORLD(dx);
+			(LogSpaceWidth() >> 1) + DisplayToWorld(dx);
 		HyperSpaceElementPtr->current.location.y =
-			(LogSpaceHeight() >> 1) + DISPLAY_TO_WORLD(dy);
+			(LogSpaceHeight() >> 1) + DisplayToWorld(dy);
 		HyperSpaceElementPtr->current.image.farray = &stars_in_space;
 
 		if (uqm::highWord(rand_val) & 7)
@@ -1454,8 +1454,8 @@ AddEncounterElement(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse)
 		} while ((uint32_t)((long)dx * dx + (long)dy * dy) > radius_squared);
 
 		EncounterPtr->loc_pt = enc_pt;
-		EncounterPtr->log_x = UNIVERSE_TO_LOGX(enc_pt.x);
-		EncounterPtr->log_y = UNIVERSE_TO_LOGY(enc_pt.y);
+		EncounterPtr->log_x = UniverseToLogx(enc_pt.x);
+		EncounterPtr->log_y = UniverseToLogy(enc_pt.y);
 	}
 
 	HELEMENT hElement {AllocHyperElement(&enc_pt)};
@@ -1567,12 +1567,12 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 	r.corner.y = (int16_t)((long)(MaxYUniverse - ey)
 						   * RadarHeight() / RadarScanHeight())
 			   - oy;
-	r.extent.width = RES_SCALE(1);
+	r.extent.width = ResScale(1);
 	r.extent.height = ((int16_t)((long)(MaxYUniverse - sy)
 								 * RadarHeight() / RadarScanHeight())
 					   - oy)
 					- r.corner.y
-					+ RES_SCALE(1);
+					+ ResScale(1);
 	for (ux = sx; ux <= ex; ux += GridOffset)
 	{
 		r.corner.x = (int16_t)((long)ux * RadarWidth() / RadarScanWidth())
@@ -1583,8 +1583,8 @@ DrawHyperGrid(int16_t ux, int16_t uy, int16_t ox, int16_t oy)
 	r.corner.x = (int16_t)((long)sx * RadarWidth() / RadarScanWidth()) - ox;
 	r.extent.width = ((int16_t)((long)ex * RadarWidth() / RadarScanWidth())
 					  - ox)
-				   - r.corner.x + RES_SCALE(1);
-	r.extent.height = RES_SCALE(1);
+				   - r.corner.x + ResScale(1);
+	r.extent.height = ResScale(1);
 	for (uy = sy; uy <= ey; uy += GridOffset)
 	{
 		r.corner.y = (int16_t)((long)(MaxYUniverse - uy)
@@ -1654,13 +1654,13 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 			uint16_t cur_facing {};
 			uint16_t delta_facing {};
 
-			cur_facing = ANGLE_TO_FACING(
+			cur_facing = AngleToFacing(
 				GetVelocityTravelAngle(&ElementPtr->velocity));
-			delta_facing = NORMALIZE_FACING(cur_facing - ANGLE_TO_FACING(ARCTAN(puniverse->x - EncounterPtr->loc_pt.x, puniverse->y - EncounterPtr->loc_pt.y)));
+			delta_facing = NormalizeFacing(cur_facing - AngleToFacing(ARCTAN(puniverse->x - EncounterPtr->loc_pt.x, puniverse->y - EncounterPtr->loc_pt.y)));
 			if (delta_facing || (delta_x == 0 && delta_y == 0))
 			{
 				int16_t speed {RaceHyperSpeed((RACE_ID)EncounterPtr->race_id)};
-				if (delta_facing < ANGLE_TO_FACING(HalfCircle))
+				if (delta_facing < AngleToFacing(HalfCircle))
 				{
 					--cur_facing;
 				}
@@ -1668,11 +1668,11 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 				{
 					++cur_facing;
 				}
-				if (NORMALIZE_FACING(delta_facing
-									 + ANGLE_TO_FACING(Octant))
-					> ANGLE_TO_FACING(Quadrant))
+				if (NormalizeFacing(delta_facing
+									+ AngleToFacing(Octant))
+					> AngleToFacing(Quadrant))
 				{
-					if (delta_facing < ANGLE_TO_FACING(HalfCircle))
+					if (delta_facing < AngleToFacing(HalfCircle))
 					{
 						--cur_facing;
 					}
@@ -1682,10 +1682,10 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 					}
 					speed >>= 1;
 				}
-				cur_facing = FACING_TO_ANGLE(cur_facing);
+				cur_facing = FacingToAngle(cur_facing);
 				SetVelocityComponents(&ElementPtr->velocity,
-									  COSINE(cur_facing, speed),
-									  SINE(cur_facing, speed));
+									  Cosine(cur_facing, speed),
+									  Sine(cur_facing, speed));
 				GetNextVelocityComponents(&ElementPtr->velocity,
 										  &delta_x, &delta_y, 1);
 
@@ -1694,8 +1694,8 @@ ProcessEncounter(ENCOUNTER* EncounterPtr, GFXPOINT* puniverse,
 		}
 		EncounterPtr->log_x += delta_x;
 		EncounterPtr->log_y -= delta_y;
-		EncounterPtr->loc_pt.x = LOGX_TO_UNIVERSE(EncounterPtr->log_x);
-		EncounterPtr->loc_pt.y = LOGY_TO_UNIVERSE(EncounterPtr->log_y);
+		EncounterPtr->loc_pt.x = LogxToUniverse(EncounterPtr->log_x);
+		EncounterPtr->loc_pt.y = LogyToUniverse(EncounterPtr->log_y);
 
 		encounter_radius = EncounterPtr->radius + (GridOffset >> 1);
 		delta_x = EncounterPtr->loc_pt.x - EncounterPtr->origin.x;
@@ -1865,8 +1865,8 @@ void SeedUniverse(void)
 
 	static uint16_t frameCounter = 0; // BW
 
-	universe.x = LOGX_TO_UNIVERSE(GLOBAL_SIS(log_x));
-	universe.y = LOGY_TO_UNIVERSE(GLOBAL_SIS(log_y));
+	universe.x = LogxToUniverse(GLOBAL_SIS(log_x));
+	universe.y = LogyToUniverse(GLOBAL_SIS(log_y));
 
 	FRAME blip_frame {SetAbsFrameIndex(stars_in_space, 90)};
 
@@ -1899,7 +1899,7 @@ void SeedUniverse(void)
 			{
 				ex = SDPtr->star_pt.x;
 				ey = SDPtr->star_pt.y;
-				uint8_t star_type {STAR_TYPE(SDPtr->Type)};
+				uint8_t star_type {StarType(SDPtr->Type)};
 				if (arilouSpaceSide >= 2 && ex == ArilouHomeX && ey == ArilouHomeY)
 				{
 					star_type = SUPER_GIANT_STAR;
@@ -2083,10 +2083,10 @@ void SeedUniverse(void)
 		while ((SDPtr = FindStar(SDPtr, &universe, Xoffs(), Yoffs())))
 		{
 			const uint8_t star_type = SDPtr->Type;
-			const uint8_t star_color = STAR_COLOR(star_type);
+			const uint8_t star_color = StarColor(star_type);
 
-			lx = UNIVERSE_TO_LOGX(SDPtr->star_pt.x) - GLOBAL_SIS(log_x);
-			ly = UNIVERSE_TO_LOGY(SDPtr->star_pt.y) - GLOBAL_SIS(log_y);
+			lx = UniverseToLogx(SDPtr->star_pt.x) - GLOBAL_SIS(log_x);
+			ly = UniverseToLogy(SDPtr->star_pt.y) - GLOBAL_SIS(log_y);
 
 			if (AnimatedHyperspace())
 			{
@@ -2098,14 +2098,14 @@ void SeedUniverse(void)
 				else
 				{
 					star_frame = SetAbsFrameIndex(hyperstars[1],
-												  STAR_TYPE(star_type) * NumFrames + frameCounter);
+												  StarType(star_type) * NumFrames + frameCounter);
 				}
 			}
 			else
 			{
 				star_frame = SetAbsFrameIndex(
 					hyperstars[1 + (arilouSpaceSide >> 1)],
-					STAR_TYPE(star_type) * NUM_STAR_COLORS
+					StarType(star_type) * NUM_STAR_COLORS
 						+ star_color);
 			}
 
@@ -2139,13 +2139,13 @@ void SeedUniverse(void)
 
 				HyperSpaceElementPtr->current.image.frame =
 					SetAbsFrameIndex(hyperstars[1],
-									 96 + STAR_TYPE(star_type));
+									 96 + StarType(star_type));
 
 				PrimIndex = &HyperSpaceElementPtr->PrimIndex;
 
 				SetPrimType(&DisplayArray[*PrimIndex], STAMPFILL_PRIM);
 				SetPrimColor(&DisplayArray[*PrimIndex],
-							 GetMaskColor(STAR_COLOR(star_type)));
+							 GetMaskColor(StarColor(star_type)));
 				SetPrimFlags(&DisplayArray[*PrimIndex], HsStarmask);
 
 				HyperSpaceElementPtr->state_flags =

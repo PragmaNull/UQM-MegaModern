@@ -40,7 +40,7 @@ static constexpr auto ShipMass {1};
 static constexpr auto WeaponEnergyCost {2};
 static constexpr auto WeaponWait {1};
 static constexpr auto ArilouOffset {9};
-static constexpr auto LaserRangeSd {DISPLAY_TO_WORLD(100 + ArilouOffset)};
+static constexpr auto LaserRangeSd {DisplayToWorld(100 + ArilouOffset)};
 
 // Teleporter
 static constexpr auto SpecialEnergyCost {3};
@@ -48,7 +48,7 @@ static constexpr auto SpecialWait {2};
 static constexpr auto HyperLife {5};
 
 // HdResolutionFactor Values
-static auto LaserRangeHd() { return RES_SCALE(LaserRangeSd); }
+static auto LaserRangeHd() { return ResScale(LaserRangeSd); }
 
 static RACE_DESC arilou_desc =
 	{
@@ -135,17 +135,17 @@ initialize_autoaim_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 	LaserBlock.face = orig_facing = StarShipPtr->ShipFacing;
 	if ((delta_facing = TrackShip(ShipPtr, &LaserBlock.face)) > 0)
 	{
-		LaserBlock.face = NORMALIZE_FACING(orig_facing + delta_facing);
+		LaserBlock.face = NormalizeFacing(orig_facing + delta_facing);
 	}
 	ShipPtr->hTarget = 0;
 
 	LaserBlock.cx = ShipPtr->next.location.x;
 	LaserBlock.cy = ShipPtr->next.location.y;
-	LaserBlock.ex = COSINE(FACING_TO_ANGLE(LaserBlock.face), LaserRange);
-	LaserBlock.ey = SINE(FACING_TO_ANGLE(LaserBlock.face), LaserRange);
+	LaserBlock.ex = Cosine(FacingToAngle(LaserBlock.face), LaserRange);
+	LaserBlock.ey = Sine(FacingToAngle(LaserBlock.face), LaserRange);
 	LaserBlock.sender = ShipPtr->playerNr;
 	LaserBlock.flags = IgnoreSimilar;
-	LaserBlock.pixoffs = RES_SCALE(ArilouOffset);
+	LaserBlock.pixoffs = ResScale(ArilouOffset);
 	LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x1F, 0x0A), 0x0E);
 	LaserArray[0] = initialize_laser(&LaserBlock);
 
@@ -299,22 +299,22 @@ arilou_preprocess(ELEMENT* ElementPtr)
 					do
 					{
 						ElementPtr->next.location.x =
-							WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
+							WrapX(DisplayAlignX(uqm::random().next()));
 						ElementPtr->next.location.y =
-							WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
+							WrapY(DisplayAlignY(uqm::random().next()));
 
 						dx = ((int32_t)ElementPtr->next.location.x - (LogSpaceWidth() >> 1));
 						dy = ((int32_t)ElementPtr->next.location.y - (LogSpaceHeight() >> 1));
 
 						dist = sqrt(dx * dx + dy * dy);
-					} while (dist < (RES_SCALE(2800)));
+					} while (dist < (ResScale(2800)));
 				}
 				else
 				{
 					ElementPtr->next.location.x =
-						WRAP_X(DISPLAY_ALIGN_X(uqm::random().next()));
+						WrapX(DisplayAlignX(uqm::random().next()));
 					ElementPtr->next.location.y =
-						WRAP_Y(DISPLAY_ALIGN_Y(uqm::random().next()));
+						WrapY(DisplayAlignY(uqm::random().next()));
 				}
 			}
 		}
@@ -328,8 +328,8 @@ init_arilou(void)
 {
 	if (IsHd())
 	{
-		arilou_desc.characteristics.max_thrust = RES_SCALE(MaxThrust);
-		arilou_desc.characteristics.thrust_increment = RES_SCALE(ThrustIncrement);
+		arilou_desc.characteristics.max_thrust = ResScale(MaxThrust);
+		arilou_desc.characteristics.thrust_increment = ResScale(ThrustIncrement);
 		arilou_desc.cyborg_control.WeaponRange = LaserRangeHd() >> 1;
 	}
 	else

@@ -231,7 +231,7 @@ void SaveEncounters(yyjson_mut_doc* doc, yyjson_mut_val* root)
 			addInt(doc, ship, "max_energy", ShipInfo.max_energy);
 		}
 
-		addPoint(doc, encounter, "log", RES_DESCALE(EncounterPtr->log_x), RES_DESCALE(EncounterPtr->log_y));
+		addPoint(doc, encounter, "log", ResDescale(EncounterPtr->log_x), ResDescale(EncounterPtr->log_y));
 
 		UnlockEncounter(hEncounter);
 		hEncounter = hNextEncounter;
@@ -307,7 +307,7 @@ void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, uqm::GameState& ga
 	const uqm::FlagshipState& flagship {gameState.flagship()};
 	addPoint(doc, state, "autopilot", flagship.autopilot.target().x, flagship.autopilot.target().y);
 	addPoint(doc, state, "ip_location", flagship.ipLocation.x, flagship.ipLocation.y);
-	addPoint(doc, state, "ShipOrigin", RES_DESCALE(flagship.shipStamp.origin.x), RES_DESCALE(flagship.shipStamp.origin.y));
+	addPoint(doc, state, "ShipOrigin", ResDescale(flagship.shipStamp.origin.x), ResDescale(flagship.shipStamp.origin.y));
 	addInt(doc, state, "ShipFacing", flagship.shipFacing);
 	addInt(doc, state, "ip_planet", flagship.ipPlanet);
 	addInt(doc, state, "in_orbit", flagship.inOrbit);
@@ -326,7 +326,7 @@ void SaveGameState(yyjson_mut_doc* doc, yyjson_mut_val* root, uqm::GameState& ga
 void SaveSisState(yyjson_mut_doc* doc, yyjson_mut_val* obj, const SIS_STATE& SS)
 {
 	yyjson_mut_val* sis {yyjson_mut_obj_add_obj(doc, obj, "sis")};
-	addPoint(doc, sis, "log", RES_DESCALE(SS.log_x), RES_DESCALE(SS.log_y));
+	addPoint(doc, sis, "log", ResDescale(SS.log_x), ResDescale(SS.log_y));
 	addInt(doc, sis, "ResUnits", SS.ResUnits);
 	addInt(doc, sis, "FuelOnBoard", SS.FuelOnBoard);
 	addInt(doc, sis, "CrewEnlisted", SS.CrewEnlisted);
@@ -406,7 +406,7 @@ PrepareSummary(SUMMARY_DESC* SummPtr, const char* name)
 		case IN_LAST_BATTLE:
 			uqm::utf8StringCopy(SummPtr->SS.PlanetName,
 								sizeof(SummPtr->SS.PlanetName),
-								GAME_STRING(PLANET_NUMBER_BASE + 32)); // Sa-Matra
+								GameString(PLANET_NUMBER_BASE + 32)); // Sa-Matra
 			break;
 	}
 
@@ -461,7 +461,7 @@ SaveProblemMessage(STAMP* MsgStamp)
 
 	// TODO: This should probably just use DoPopupWindow()
 
-	ppStr[0] = GAME_STRING(SAVEGAME_STRING_BASE + 2);
+	ppStr[0] = GameString(SAVEGAME_STRING_BASE + 2);
 
 	SetContextFont(StarConFont);
 
@@ -488,21 +488,21 @@ SaveProblemMessage(STAMP* MsgStamp)
 		}
 		t.baseline.y += 11;
 	}
-	t.baseline.x = (RES_SCALE(OrigSisScreenWidth() >> 1)
+	t.baseline.x = (ResScale(OrigSisScreenWidth() >> 1)
 					- (r.extent.width >> 1))
 				 - r.corner.x;
-	t.baseline.y = (RES_SCALE(OrigSisScreenHeight() >> 1)
+	t.baseline.y = (ResScale(OrigSisScreenHeight() >> 1)
 					- (r.extent.height >> 1))
 				 - r.corner.y;
-	r.corner.x += t.baseline.x - RES_SCALE(4);
-	r.corner.y += t.baseline.y - RES_SCALE(4);
-	r.extent.width += RES_SCALE(8);
-	r.extent.height += RES_SCALE(8);
+	r.corner.x += t.baseline.x - ResScale(4);
+	r.corner.y += t.baseline.y - ResScale(4);
+	r.extent.width += ResScale(8);
+	r.extent.height += ResScale(8);
 
 	*MsgStamp = SaveContextFrame(&r);
 
 	BatchGraphics();
-	DrawStarConBox(&r, RES_SCALE(2), ShadowboxMediumColor,
+	DrawStarConBox(&r, ResScale(2), ShadowboxMediumColor,
 				   ShadowboxDarkColor, true, DkgrayColor, true, Transparent);
 	SetContextForeGroundColor(
 		isPC(uqm::UQMOptions::read().whichFonts) ? WhiteColor : LtgrayColor);

@@ -88,13 +88,12 @@ enum
 };
 
 
-#define GAME_STRING(i) (GameStrings->text(i))
-
 inline constexpr auto DosStarbaseStringBase {(STARBASE_STRING_BASE + 12)};
 inline constexpr auto TdoStarbaseStringBase {(DosStarbaseStringBase + NUM_PURCHASE_MODULES)};
 inline constexpr auto EndStarbaseStringBase {(TdoStarbaseStringBase + NUM_PURCHASE_MODULES)};
 
 extern uqm::StringTablePtr GameStrings;
+inline auto GameString(auto i) { return GameStrings->text(i); }
 
 extern void SetCursorRect(GFXRECT* r, GFXCONTEXT context);
 extern void FlushCursorRect(void);
