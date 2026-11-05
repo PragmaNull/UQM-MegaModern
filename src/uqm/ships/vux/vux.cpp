@@ -41,7 +41,7 @@ static constexpr auto WeaponEnergyCost {1};
 static constexpr auto WeaponWait {0};
 static auto VuxOffset() { return chooseIfHd(12, 38); }
 static auto LaserBase() { return ResScale(150); }
-#define LASER_RANGE DisplayToWorld(LaserBase() + VuxOffset())
+static auto LaserRange() { return DisplayToWorld(LaserBase() + VuxOffset()); }
 
 // Limpet
 static constexpr auto SpecialEnergyCost {2};
@@ -266,8 +266,8 @@ initialize_horrific_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 	LaserBlock.face = StarShipPtr->ShipFacing;
 	LaserBlock.cx = ShipPtr->next.location.x;
 	LaserBlock.cy = ShipPtr->next.location.y;
-	LaserBlock.ex = Cosine(FacingToAngle(LaserBlock.face), LASER_RANGE);
-	LaserBlock.ey = Sine(FacingToAngle(LaserBlock.face), LASER_RANGE);
+	LaserBlock.ex = Cosine(FacingToAngle(LaserBlock.face), LaserRange());
+	LaserBlock.ey = Sine(FacingToAngle(LaserBlock.face), LaserRange());
 	LaserBlock.sender = ShipPtr->playerNr;
 	LaserBlock.flags = IgnoreSimilar;
 	LaserBlock.pixoffs = VuxOffset();

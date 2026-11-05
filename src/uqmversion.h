@@ -17,27 +17,28 @@
 #ifndef UQMVERSION_H
 #define UQMVERSION_H
 
-inline constexpr auto UqmMajorVersion {0};
+// The resource compiler reads these macros, so they cannot be constexpr.
+#define UQM_MAJOR_VERSION 0
 #define UQM_MAJOR_VERSION_S "0"
-inline constexpr auto UqmMinorVersion {8};
+#define UQM_MINOR_VERSION 8
 #define UQM_MINOR_VERSION_S "8"
-#ifdef RC_INVOKED
-// Versions in resource files must be integers.
-inline constexpr auto UqmPatchVersion {4};
-
-#else
-inline constexpr auto UqmPatchVersion {4};
-#endif
+#define UQM_PATCH_VERSION 4
 #define UQM_PATCH_VERSION_S "4"
+#define UQM_REVISION_VERSION 0
 #if defined(DEBUG)
 #define UQM_EXTRA_VERSION "MegaMod Debug"
 #else
 #define UQM_EXTRA_VERSION "MegaMod"
 #endif
-/* The final version is interpreted as:
- * printf ("{}.{}.{}{}", UqmMajorVersion, UqmMinorVersion,
- * 		UqmPatchVersion, UQM_EXTRA_VERSION);
- */
+#define UQM_STRING_VERSION UQM_MAJOR_VERSION_S "." UQM_MINOR_VERSION_S "." UQM_PATCH_VERSION_S " " UQM_EXTRA_VERSION
 
+#ifndef RC_INVOKED
+inline constexpr auto UqmMajorVersion {UQM_MAJOR_VERSION};
+inline constexpr auto UqmMinorVersion {UQM_MINOR_VERSION};
+inline constexpr auto UqmPatchVersion {UQM_PATCH_VERSION};
+inline constexpr const char* UqmExtraVersion {UQM_EXTRA_VERSION};
+inline constexpr const char* UqmExtraVersionHd {"HD " UQM_EXTRA_VERSION};
+inline constexpr const char* UqmStringVersion {UQM_STRING_VERSION};
+#endif
 
 #endif

@@ -61,13 +61,10 @@ extern NetStateData netStateData[];
 typedef void (*NetConnectionStateData_ReleaseFunction)(
 	NetConnectionStateData* stateData);
 
-#define NETCONNECTION_STATE_DATA_COMMON \
-	NetConnectionStateData_ReleaseFunction releaseFunction;
-
 struct
 	NetConnectionStateData
 {
-	NETCONNECTION_STATE_DATA_COMMON
+	NetConnectionStateData_ReleaseFunction releaseFunction;
 };
 
 void NetConnectionStateData_release(NetConnectionStateData* stateData);

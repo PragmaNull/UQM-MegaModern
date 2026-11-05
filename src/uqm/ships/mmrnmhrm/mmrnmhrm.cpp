@@ -48,7 +48,7 @@ static constexpr auto WeaponEnergyCost {1};
 static constexpr auto WeaponWait {0};
 static auto CenterOffs() { return DisplayToWorld(ResScale(4)); }
 static auto WingOffs() { return DisplayToWorld(chooseIfHd(10, 48)); }
-#define LASER_RANGE DisplayToWorld(ResScale(125) + MmrnmhrmOffset())
+static auto LaserRange() { return DisplayToWorld(ResScale(125) + MmrnmhrmOffset()); }
 
 // Y-Wing Missiles
 static constexpr auto YwingWeaponEnergyCost {1};
@@ -342,8 +342,8 @@ initialize_dual_weapons(ELEMENT* ShipPtr, HELEMENT WeaponArray[])
 		LaserBlock.color = BuildColor(MakeRgb15(0x1F, 0x0A, 0x0A), 0x0C);
 		LaserBlock.face = facing;
 
-		ex = cx + Cosine(angle, LASER_RANGE);
-		ey = cy + Sine(angle, LASER_RANGE);
+		ex = cx + Cosine(angle, LaserRange());
+		ey = cy + Sine(angle, LaserRange());
 		offs_x = -Sine(angle, WingOffs());
 		offs_y = Cosine(angle, WingOffs());
 

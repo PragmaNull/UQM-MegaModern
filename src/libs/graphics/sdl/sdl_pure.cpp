@@ -296,7 +296,7 @@ int TFB_Pure_ConfigureVideo(uqm::GfxDriver driver, uqm::GfxFlags flags, int widt
 
 	fmt::format_to_sz_n(caption, "The Ur-Quan Masters v{}.{}.{} {}",
 						UqmMajorVersion, UqmMinorVersion, UqmPatchVersion,
-						(resFactor ? "HD " UQM_EXTRA_VERSION : UQM_EXTRA_VERSION));
+						(resFactor ? UqmExtraVersionHd : UqmExtraVersion));
 
 	if (window == nullptr)
 	{

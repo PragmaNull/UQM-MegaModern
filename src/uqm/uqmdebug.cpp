@@ -738,7 +738,7 @@ void showSpheres(bool Animated)
 			FleetPtr = LockFleetInfo(&uqm::gameState().game().avail_race_q, hStarShip);
 			hNextShip = _GetSuccLink(FleetPtr);
 
-			if ((FleetPtr->actual_strength != INFINITE_RADIUS) && (FleetPtr->known_strength != FleetPtr->actual_strength))
+			if ((FleetPtr->actual_strength != InfiniteRadius) && (FleetPtr->known_strength != FleetPtr->actual_strength))
 			{
 				FleetPtr->known_strength = FleetPtr->actual_strength;
 				FleetPtr->known_loc = FleetPtr->loc;
@@ -1667,7 +1667,7 @@ void dumpPlanetType(FILE* out, int index, const PlanetFrame* planetType)
 			   tectonicsString(planetType->BaseTectonics),
 			   atmosphereString(uqm::highNibble(planetType->AtmoAndDensity)),
 			   densityString(uqm::lowNibble(planetType->AtmoAndDensity)));
-	for (i = 0; i < NUM_USEFUL_ELEMENTS; i++)
+	for (i = 0; i < NumUsefulElements; i++)
 	{
 		const ELEMENT_ENTRY* entry;
 		entry = &planetType->UsefulElements[i];

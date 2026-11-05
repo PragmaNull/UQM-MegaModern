@@ -294,7 +294,7 @@ void BuildGroups(void)
 				goto FoundHome;
 			}
 
-			if (encounter_radius == INFINITE_RADIUS)
+			if (encounter_radius == InfiniteRadius)
 			{
 				encounter_radius = (MaxXUniverse + 1) << 1;
 			}
@@ -320,7 +320,7 @@ void BuildGroups(void)
 				// EncounterPercent is only used in practice for the Slylandro
 				// Probes, for the rest of races the chance of encounter is
 				// calced directly below from the distance to the Homeworld
-				if (FleetPtr->actual_strength != INFINITE_RADIUS)
+				if (FleetPtr->actual_strength != InfiniteRadius)
 				{
 					i = 70 - (uint16_t)((uint32_t)square_root(d_squared) * 60L / encounter_radius);
 				}
@@ -330,7 +330,7 @@ void BuildGroups(void)
 					&& (BestPercent == 0
 						|| (uqm::highWord(rand_val) % (i + BestPercent)) < i))
 				{
-					if (FleetPtr->actual_strength == INFINITE_RADIUS)
+					if (FleetPtr->actual_strength == InfiniteRadius)
 					{ // The prevailing encounter chance is hereby limitted
 						// to 4% for races with infinite SoI (currently, it
 						// is only the Slylandro Probes)
@@ -442,7 +442,7 @@ void findRaceSOI(void)
 			uint16_t encounter_radius {};
 			uint32_t d_squared {};
 
-			if (FleetPtr->actual_strength == INFINITE_RADIUS)
+			if (FleetPtr->actual_strength == InfiniteRadius)
 			{
 				encounter_radius = (MaxXUniverse + 1) << 1;
 			}

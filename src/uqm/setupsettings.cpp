@@ -17,9 +17,9 @@
 #include "uqm/random/UQMRandom.h"
 
 #if defined(DIRECTIONAL_JOY)
-#define HAVE_DIRECTIONAL_JOYSTICK true
+static constexpr bool HaveDirectionalJoystick {true};
 #else
-#define HAVE_DIRECTIONAL_JOYSTICK false
+static constexpr bool HaveDirectionalJoystick {false};
 #endif
 
 namespace uqm
@@ -84,7 +84,7 @@ bool isMenuAddonAvailable(uqstl::string_view addon)
 	}
 	if (addon == "directional-joystick")
 	{
-		return HAVE_DIRECTIONAL_JOYSTICK;
+		return HaveDirectionalJoystick;
 	}
 	return isAddonAvailable(uqstl::string {addon}.c_str());
 }

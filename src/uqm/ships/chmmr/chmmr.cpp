@@ -38,7 +38,7 @@ static constexpr auto ShipMass {10};
 static constexpr auto WeaponEnergyCost {2};
 static constexpr auto WeaponWait {0};
 static auto ChmmrOffset() { return ResScale(18); }
-#define LASER_RANGE DisplayToWorld(ResScale(150))
+static auto LaserRange() { return DisplayToWorld(ResScale(150)); }
 static constexpr auto NumCycles {4};
 
 // Tractor Beam
@@ -234,8 +234,8 @@ initialize_megawatt_laser(ELEMENT* ShipPtr, HELEMENT LaserArray[])
 				  + DisplayToWorld(r.corner.x);
 	LaserBlock.cy = DisplayAlign(ShipPtr->next.location.y)
 				  + DisplayToWorld(r.corner.y);
-	LaserBlock.ex = Cosine(FacingToAngle(LaserBlock.face), LASER_RANGE);
-	LaserBlock.ey = Sine(FacingToAngle(LaserBlock.face), LASER_RANGE);
+	LaserBlock.ex = Cosine(FacingToAngle(LaserBlock.face), LaserRange());
+	LaserBlock.ey = Sine(FacingToAngle(LaserBlock.face), LaserRange());
 	LaserBlock.sender = ShipPtr->playerNr;
 	LaserBlock.flags = IgnoreSimilar;
 	LaserBlock.pixoffs = 0;
@@ -375,11 +375,11 @@ chmmr_postprocess(ELEMENT* ElementPtr)
 				// calculate tractor beam effect
 				angle = FacingToAngle(StarShipPtr->ShipFacing);
 				dx = (ElementPtr->next.location.x
-					  + Cosine(angle, (LASER_RANGE / 3)
+					  + Cosine(angle, (LaserRange() / 3)
 										  + DisplayToWorld(ChmmrOffset())))
 				   - ShipElementPtr->next.location.x;
 				dy = (ElementPtr->next.location.y
-					  + Sine(angle, (LASER_RANGE / 3)
+					  + Sine(angle, (LaserRange() / 3)
 										+ DisplayToWorld(ChmmrOffset())))
 				   - ShipElementPtr->next.location.y;
 				angle = ARCTAN(dx, dy);

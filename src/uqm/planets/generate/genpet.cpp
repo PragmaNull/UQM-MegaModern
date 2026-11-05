@@ -112,7 +112,7 @@ GenerateTalkingPet_generateOrbital(SOLARSYS_STATE* solarSys,
 			if (!uqm::gameState().flag(uqm::GameFlag::UMGAH_ZOMBIE_BLOBBIES))
 			{
 				CloneShipFragment(UMGAH_SHIP,
-								  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
+								  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 				InitCommunication(UMGAH_CONVERSATION);
 			}
 			else

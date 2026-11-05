@@ -484,7 +484,7 @@ StartSphereTracking(RACE_ID race)
 		}
 	}
 	else if (FleetPtr->known_strength == 0
-			 && FleetPtr->actual_strength != INFINITE_RADIUS)
+			 && FleetPtr->actual_strength != InfiniteRadius)
 	{
 		FleetPtr->known_strength = 1;
 		FleetPtr->known_loc = FleetPtr->loc;
@@ -741,7 +741,7 @@ NameCaptain(QUEUE* pQueue, SPECIES_ID SpeciesID)
 	return name_index;
 }
 
-// crew_level can be set to INFINITE_FLEET for a ship which is to
+// crew_level can be set to InfiniteFleet for a ship which is to
 // represent an infinite number of ships.
 HSHIPFRAG
 CloneShipFragment(RACE_ID shipIndex, QUEUE* pDstQueue, uint16_t crew_level)

@@ -1319,7 +1319,9 @@ DoConvSummary(SUMMARY_STATE* pSS)
 	const auto DeltaYSummary = [&] {
 		return ResScale(8);
 	};
-#define MAX_SUMM_ROWS (SliderY() / DeltaYSummary()) - 1
+	const auto MaxSummRows = [&] {
+		return (SliderY() / DeltaYSummary()) - 1;
+	};
 
 	if (!pSS->Initialized)
 	{
@@ -1371,7 +1373,7 @@ DoConvSummary(SUMMARY_STATE* pSS)
 
 		SetContextFont(TinyFont);
 
-		for (row = 0; row < MAX_SUMM_ROWS && pSS->NextSub;
+		for (row = 0; row < MaxSummRows() && pSS->NextSub;
 			 ++row, pSS->NextSub = GetNextTrackSubtitle(pSS->NextSub))
 		{
 			const char* next = nullptr;
@@ -1391,7 +1393,7 @@ DoConvSummary(SUMMARY_STATE* pSS)
 			}
 
 			t.CharCount = (uint16_t)~0;
-			for (; row < MAX_SUMM_ROWS && !getLineWithinWidth(&t, &next, r.extent.width, (uint16_t)~0);
+			for (; row < MaxSummRows() && !getLineWithinWidth(&t, &next, r.extent.width, (uint16_t)~0);
 				 ++row)
 			{
 				if (CommData.AlienConv == ORZ_CONVERSATION)
@@ -1415,7 +1417,7 @@ DoConvSummary(SUMMARY_STATE* pSS)
 				t.CharCount = (uint16_t)~0;
 			}
 
-			if (row >= MAX_SUMM_ROWS)
+			if (row >= MaxSummRows())
 			{ // no more space on screen, but some text left over
 				// from the current subtitle
 				pSS->LeftOver = next;
@@ -1439,7 +1441,7 @@ DoConvSummary(SUMMARY_STATE* pSS)
 			t.baseline.y += DeltaYSummary();
 		}
 
-		if (row >= MAX_SUMM_ROWS && (pSS->NextSub || pSS->LeftOver))
+		if (row >= MaxSummRows() && (pSS->NextSub || pSS->LeftOver))
 		{ // draw *MORE*
 			TEXT mt;
 			char buffer[128];

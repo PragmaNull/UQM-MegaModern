@@ -50,7 +50,7 @@ void DrawCurrentPlanetSphere(void)
 	GFXCONTEXT oldContext = SetContext(PlanetContext);
 
 	s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
-	s.origin.y = PLANET_ORG_Y;
+	s.origin.y = PlanetOrgY();
 
 	{ // re-render current frame
 		rotFrameIndex ^= 1;
@@ -128,7 +128,7 @@ void DrawPlanetSphere(int x, int y, bool back)
 	if (Orbit->BackFrame && back)
 	{
 		s.origin.x = ResScale(OrigSisScreenWidth() >> 1);
-		s.origin.y = PLANET_ORG_Y;
+		s.origin.y = PlanetOrgY();
 		s.frame = Orbit->BackFrame;
 		DrawStamp(&s);
 	}
@@ -156,7 +156,7 @@ void DrawDefaultPlanetSphere(void)
 {
 	GFXCONTEXT oldContext {SetContext(PlanetContext)};
 	DrawPlanetSphere(
-		ResScale(OrigSisScreenWidth() >> 1), PLANET_ORG_Y, true);
+		ResScale(OrigSisScreenWidth() >> 1), PlanetOrgY(), true);
 	SetContext(oldContext);
 }
 
@@ -435,7 +435,7 @@ void ZoomInPlanetSphere(void)
 			 + (int)(dx * (1.0 - scale)
 						 * ResScale(OrigSisScreenWidth() * 6 / 10)
 					 + 0.5);
-		pt.y = PLANET_ORG_Y + (int)(dy * (1.0 - scale) * (ResScale(ScanScreenHeight()) * 6 / 10) + 0.5);
+		pt.y = PlanetOrgY() + (int)(dy * (1.0 - scale) * (ResScale(ScanScreenHeight()) * 6 / 10) + 0.5);
 
 		SetContext(PlanetContext);
 

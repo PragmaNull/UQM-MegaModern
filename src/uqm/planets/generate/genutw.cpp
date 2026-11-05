@@ -209,7 +209,7 @@ GenerateUtwig_generateOrbital(SOLARSYS_STATE* solarSys,
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			CloneShipFragment(UTWIG_SHIP,
-							  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
+							  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
 			if (CurStarDescPtr()->Index == UTWIG_DEFINED)

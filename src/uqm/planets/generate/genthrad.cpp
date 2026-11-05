@@ -122,7 +122,7 @@ GenerateThraddash_generateOrbital(SOLARSYS_STATE* solarSys,
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			CloneShipFragment(THRADDASH_SHIP, &uqm::gameState().game().npc_built_ship_q,
-							  INFINITE_FLEET);
+							  InfiniteFleet);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
 			if (CurStarDescPtr()->Index == THRADD_DEFINED)

@@ -40,7 +40,6 @@ enum
 	NUM_ELEMENT_CATEGORIES
 };
 
-#define ElementCategory(et) (Elements[et] & 0x7)
 
 /*------------------------------ Global Data ------------------------------ */
 
@@ -205,6 +204,7 @@ constexpr auto DepositQuality(const auto& md) { return uqm::highNibble(md); }
 inline constexpr auto MaxElementUnits {0xF};
 
 const extern uint8_t* Elements;
+inline auto ElementCategory(const auto& et) { return Elements[et] & 0x7; }
 
 #if 0 //defined(__cplusplus)
 }

@@ -50,14 +50,11 @@ struct BattleInputHandlers
 	DeleteInputContextFunction deleteContext;
 };
 
-#define INPUT_CONTEXT_COMMON       \
-	BattleInputHandlers* handlers; \
-	uint16_t playerNr;
-
 // Base "class" for all ...InputContext structures
 struct InputContext
 {
-	INPUT_CONTEXT_COMMON
+	BattleInputHandlers* handlers;
+	uint16_t playerNr;
 };
 
 struct ComputerInputContext : InputContext

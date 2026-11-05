@@ -1034,7 +1034,7 @@ SaveBackFrame(uint16_t radius)
 
 	r.corner = MAKE_POINT((ResScale(OrigSisScreenWidth() >> 1))
 							  - (shieldradius + 1),
-						  PLANET_ORG_Y - (shieldradius + 1));
+						  PlanetOrgY() - (shieldradius + 1));
 	r.extent.height = r.extent.width = shielddiam;
 
 	FRAME BackFrame {CaptureDrawable(CopyFrameRect(GetStarBackFround(), &r))};

@@ -193,7 +193,7 @@ GenerateMycon_generateOrbital(SOLARSYS_STATE* solarSys,
 					|| !uqm::gameState().flag(uqm::GameFlag::MYCON_FELL_FOR_AMBUSH))
 				{
 					CloneShipFragment(MYCON_SHIP,
-									  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
+									  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 				}
 				else
 				{

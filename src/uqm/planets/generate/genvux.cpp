@@ -155,7 +155,7 @@ GenerateVux_generateOrbital(SOLARSYS_STATE* solarSys, PLANET_DESC* world)
 		assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 		CloneShipFragment(VUX_SHIP,
-						  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
+						  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 		if (CurStarDescPtr()->Index == VUX_DEFINED)
 		{
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));

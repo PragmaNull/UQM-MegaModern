@@ -234,9 +234,9 @@ void GetPlanetTitle(uqstl::span<char> buf)
 static void
 HazardCase(uint8_t hazard)
 {
-#define HAZARD_CASE(a, b)    \
-	((a) ? DullYellowColor : \
-		   ((b) ? BrightRedColor : ScanInfoColor))
+	const auto PickHazardColor = [](bool a, bool b) {
+		return a ? DullYellowColor : (b ? BrightRedColor : ScanInfoColor);
+	};
 	Color HazardColor;
 
 	const uint16_t Temperature = GetThermalHazardRating(
@@ -247,16 +247,16 @@ HazardCase(uint8_t hazard)
 	switch (hazard)
 	{
 		case LAVASPOT_DISASTER:
-			HazardColor = HAZARD_CASE(Temperature > 1 && Temperature < 5,
-									  Temperature > 4);
+			HazardColor = PickHazardColor(Temperature > 1 && Temperature < 5,
+										  Temperature > 4);
 			break;
 		case LIGHTNING_DISASTER:
 			HazardColor =
-				HAZARD_CASE(Weather > 2 && Weather < 5, Weather > 4);
+				PickHazardColor(Weather > 2 && Weather < 5, Weather > 4);
 			break;
 		case EARTHQUAKE_DISASTER:
-			HazardColor = HAZARD_CASE(Tectonics > 2 && Tectonics < 6,
-									  Tectonics > 5);
+			HazardColor = PickHazardColor(Tectonics > 2 && Tectonics < 6,
+										  Tectonics > 5);
 			break;
 		default:
 			HazardColor = ScanInfoColor;
@@ -302,7 +302,7 @@ PrintCoarseScanPC(void)
 		return (SisScreenWidth() - ResScale(73) + SafeX());
 	};
 	const auto ScanBaselineYPc = [&] {
-		return (PLANET_ORG_Y - ResScale(13));
+		return (PlanetOrgY() - ResScale(13));
 	};
 	const auto ScanLeadingPc = [&] {
 		return ResScale(10);
@@ -498,12 +498,12 @@ PrintCoarseScan3DO(void)
 	s.frame = SetAbsFrameIndex(SpaceJunkFrame, frameIndex);
 
 	s.origin.x = PlanetOrgX() - ResScale(107);
-	s.origin.y = PLANET_ORG_Y - ResScale(46) + UseDosSpheres();
+	s.origin.y = PlanetOrgY() - ResScale(46) + UseDosSpheres();
 
 	DrawStamp(&s);
 
 	const auto ScanBaselineY = [&] {
-		return (PLANET_ORG_Y - ResScale(36) + UseDosSpheres());
+		return (PlanetOrgY() - ResScale(36) + UseDosSpheres());
 	};
 	const auto LeftSideBaselineX = [&] {
 		return (PlanetOrgX() - ResScale(78));
@@ -1310,7 +1310,9 @@ ScanPlanet(uint16_t scanType)
 	const auto ScanLines = [&] {
 		return ResScale(ScanLinesOg());
 	};
-#define SCAN_LINE_WAIT (TimePeriod {ScanDuration()} / ScanLinesOg())
+	const auto ScanLineWait = [&] {
+		return TimePeriod {ScanDuration()} / ScanLinesOg();
+	};
 	// For taming the scan FPS on underpowered devices
 	const auto ScanLineFps = [&] {
 		return (c_gameSecond / chooseIfHd(42, 60));
@@ -1410,7 +1412,7 @@ ScanPlanet(uint16_t scanType)
 						break;
 					}
 
-					TimeOut = Now + SCAN_LINE_WAIT;
+					TimeOut = Now + ScanLineWait();
 
 					i += ResScale(1);
 

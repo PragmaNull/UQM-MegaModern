@@ -52,7 +52,7 @@ static constexpr auto TrackWait {3};
 // Point-Defense Laser
 static constexpr auto SpecialEnergyCost {4};
 static constexpr auto SpecialWait {9};
-#define LASER_RANGE (uint16_t)ResScale(100)
+static auto LaserRange() { return (uint16_t)ResScale(100); }
 
 RACE_DESC human_desc =
 	{
@@ -215,7 +215,7 @@ spawn_point_defense(ELEMENT* ElementPtr)
 				}
 				delta_x = WorldToDisplay(delta_x);
 				delta_y = WorldToDisplay(delta_y);
-				if ((uint16_t)delta_x <= LASER_RANGE && (uint16_t)delta_y <= LASER_RANGE && (uint16_t)delta_x * (uint16_t)delta_x + (uint16_t)delta_y * (uint16_t)delta_y <= LASER_RANGE * LASER_RANGE)
+				if ((uint16_t)delta_x <= LaserRange() && (uint16_t)delta_y <= LaserRange() && (uint16_t)delta_x * (uint16_t)delta_x + (uint16_t)delta_y * (uint16_t)delta_y <= LaserRange() * LaserRange())
 				{
 					HELEMENT hPointDefense {};
 					LASER_BLOCK LaserBlock;

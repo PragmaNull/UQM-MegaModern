@@ -121,8 +121,7 @@ extern bool useDosSpheres;
 inline auto UseDosSpheres() { return ResScale(useDosSpheres ? 2 : 0); }
 
 inline auto PlanetOrgX() { return ResScale(OrigSisScreenWidth() >> 1); }
-#define PLANET_ORG_Y \
-	ResScale(ScanScreenHeight() >> 1) - UseDosSpheres()
+inline auto PlanetOrgY() { return ResScale(ScanScreenHeight() >> 1) - UseDosSpheres(); }
 
 inline constexpr auto NumRaceRuins {16};
 

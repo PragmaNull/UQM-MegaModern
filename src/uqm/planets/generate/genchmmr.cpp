@@ -236,7 +236,7 @@ GenerateChmmr_generateOrbital(SOLARSYS_STATE* solarSys,
 			else
 			{
 				CloneShipFragment(ILWRATH_SHIP,
-								  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
+								  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 			}
 
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 6));

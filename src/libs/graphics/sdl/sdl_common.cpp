@@ -649,7 +649,7 @@ void TFB_ScreenShot(void)
 	auto now = std::chrono::system_clock::now();
 	auto fullPath = fmt::format("{}{:%Y-%m-%d %H-%M-%S} v{}.{}.{} {}.png", shotDirName, now,
 								UqmMajorVersion, UqmMinorVersion, UqmPatchVersion,
-								chooseIfHd<const char*>(UQM_EXTRA_VERSION, "HD " UQM_EXTRA_VERSION));
+								chooseIfHd<const char*>(UqmExtraVersion, UqmExtraVersionHd));
 
 	if (std::filesystem::exists(shotDirName))
 	{

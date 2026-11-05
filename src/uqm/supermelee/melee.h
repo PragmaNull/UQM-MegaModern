@@ -67,6 +67,8 @@ typedef uint8_t MELEE_OPTIONS;
 extern "C" {
 #endif
 
+inline constexpr auto MeleeStateIndexDone {((uint16_t)-1)};
+
 struct melee_state
 {
 	bool (*InputFunc)(struct melee_state* pInputState);
@@ -83,9 +85,8 @@ struct melee_state
 	// The ship currently displayed. Not really needed.
 	// Also the current ship position when selecting a ship.
 	uint16_t CurIndex;
-#define MELEE_STATE_INDEX_DONE ((uint16_t)-1)
 	// Current position in the team string when editing it.
-	// Set to MELEE_STATE_INDEX_DONE when done.
+	// Set to MeleeStateIndexDone when done.
 	bool buildPickConfirmed;
 	// Used by DoPickShip () to communicate to the calling
 	// function BuildPickShip() whether a ship has been selected

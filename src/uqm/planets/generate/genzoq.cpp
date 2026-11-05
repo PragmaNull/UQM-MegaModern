@@ -192,7 +192,7 @@ GenerateZoqFotPik_generateOrbital(SOLARSYS_STATE* solarSys,
 			}
 
 			CloneShipFragment(ZOQFOTPIK_SHIP,
-							  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
+							  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));

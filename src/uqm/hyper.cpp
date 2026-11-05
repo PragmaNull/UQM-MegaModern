@@ -397,7 +397,7 @@ void check_hyperspace_encounter(void)
 				percent = 0;
 			}
 
-			if (encounter_radius != INFINITE_RADIUS)
+			if (encounter_radius != InfiniteRadius)
 			{
 				encounter_radius =
 					(encounter_radius * SphereRadiusIncrement) >> 1;

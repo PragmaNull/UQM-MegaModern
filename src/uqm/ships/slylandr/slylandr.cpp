@@ -63,7 +63,7 @@ static RACE_DESC slylandro_desc =
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			INFINITE_RADIUS, /* Initial sphere of influence radius */
+			InfiniteRadius, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
 				333,

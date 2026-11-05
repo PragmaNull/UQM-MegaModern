@@ -216,6 +216,8 @@ struct ELEMENT_ENTRY
 
 // PlanetFrame describes a type of planet. It is not used to describe
 // individual planets.
+inline constexpr auto NumUsefulElements {8};
+
 struct PlanetFrame
 {
 	uint8_t Type;
@@ -241,8 +243,7 @@ struct PlanetFrame
 			 * bits 4-7: atmosphere, one of LIGHT, MEDIUM, HEAVY, or
 			 *           (no define for this) super thick.
 			 */
-#define NUM_USEFUL_ELEMENTS 8
-	ELEMENT_ENTRY UsefulElements[NUM_USEFUL_ELEMENTS];
+	ELEMENT_ENTRY UsefulElements[NumUsefulElements];
 	/* Minerals on the planet */
 
 	RESOURCE CMapInstance;

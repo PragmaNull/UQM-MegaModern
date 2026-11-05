@@ -487,7 +487,6 @@ GetEncounterStarShip(STARSHIP* LastStarShipPtr, uint16_t which_player)
 
 void DrawArmadaPickShip(bool draw_salvage_frame, GFXRECT* pPickRect)
 {
-#define PICK_NAME_HEIGHT ResScale(6);
 	HSTARSHIP hBattleShip {};
 	HSTARSHIP hNextShip {};
 	const STARSHIP* StarShipPtr {};

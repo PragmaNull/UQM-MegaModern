@@ -404,7 +404,7 @@ DrawRestartMenuGraphic(MENU_STATE* pMS)
 	SetContextForeGroundColor(WhiteColor);
 	fmt::format_to_sz_n(buf, "v{}.{}.{} {}",
 						UqmMajorVersion, UqmMinorVersion, UqmPatchVersion,
-						chooseIfHd<const char*>(UQM_EXTRA_VERSION, "HD " UQM_EXTRA_VERSION));
+						chooseIfHd<const char*>(UqmExtraVersion, UqmExtraVersionHd));
 	t.pStr = buf;
 	t.baseline.x = CanvasWidth - ResScale(2);
 	t.baseline.y = CanvasHeight - ResScale(2);

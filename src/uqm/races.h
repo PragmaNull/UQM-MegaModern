@@ -191,12 +191,13 @@ typedef struct
 	FRAME melee_icon;
 } SHIP_INFO;
 
+inline constexpr auto InfiniteRadius {((uint16_t)~0)};
+
 typedef struct
 {
 	uint16_t strength;
 	GFXPOINT known_loc;
 
-#define INFINITE_RADIUS ((uint16_t)~0)
 } FLEET_STUFF;
 
 typedef struct
@@ -309,12 +310,14 @@ constexpr auto UnlockStarShip(const auto& pq, const auto& h) { return UnlockLink
 
 typedef HLINK HSHIPFRAG;
 
+inline constexpr auto InfiniteFleet {((uint16_t)~0)};
+
 struct SHIP_FRAGMENT : SHIP_BASE
 {
 	uint8_t race_id;
 	uint8_t index;
 	uint16_t crew_level;
-	/* For ships in npc_built_ship_q, the value INFINITE_FLEET for
+	/* For ships in npc_built_ship_q, the value InfiniteFleet for
 			 * crew_level indicates an infinite number of ships. */
 	uint16_t max_crew;
 
@@ -326,8 +329,6 @@ struct SHIP_FRAGMENT : SHIP_BASE
 	uqm::StringTable* race_strings;
 	FRAME icons;
 	FRAME melee_icon; /* Only used by Shipyard */
-
-#define INFINITE_FLEET ((uint16_t)~0)
 };
 
 static inline SHIP_FRAGMENT*

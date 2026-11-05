@@ -219,7 +219,7 @@ check_race_growth(void)
 		hNextShip = _GetSuccLink(FleetPtr);
 
 		if (FleetPtr->actual_strength
-			&& FleetPtr->actual_strength != INFINITE_RADIUS)
+			&& FleetPtr->actual_strength != InfiniteRadius)
 		{
 			int16_t delta_strength {(int8_t)FleetPtr->growth};
 			if (FleetPtr->growth_err_term <= FleetPtr->growth_fract)
@@ -630,7 +630,7 @@ kohr_ah_genocide_event(int arg)
 
 		if (Index != BLACK_URQUAN_SHIP
 			&& Index != URQUAN_SHIP
-			&& FleetPtr->actual_strength != INFINITE_RADIUS)
+			&& FleetPtr->actual_strength != InfiniteRadius)
 		{
 			int16_t dx {};
 			int16_t dy {};

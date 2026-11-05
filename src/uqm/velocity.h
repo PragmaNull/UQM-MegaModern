@@ -36,7 +36,7 @@ typedef struct velocity_desc
 } VELOCITY_DESC;
 
 constexpr auto ZeroVelocityComponents(const auto& pv) { return memset(pv, 0, sizeof(*(pv))); }
-#define GetVelocityTravelAngle(pv) (pv)->TravelAngle
+constexpr auto& GetVelocityTravelAngle(auto* pv) { return pv->TravelAngle; }
 
 extern void GetCurrentVelocityComponents(VELOCITY_DESC* velocityptr, int16_t* pdx, int16_t* pdy);
 

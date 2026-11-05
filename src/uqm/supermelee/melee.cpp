@@ -1330,7 +1330,7 @@ Deselect(uint8_t opt)
 				{
 					DrawShipBoxCurrent(pMeleeState, false);
 				}
-				else if (pMeleeState->CurIndex == MELEE_STATE_INDEX_DONE)
+				else if (pMeleeState->CurIndex == MeleeStateIndexDone)
 				{
 					// Not currently editing the team name.
 					if (IsHd())
@@ -1407,7 +1407,7 @@ Select(uint8_t opt)
 				{
 					DrawShipBoxCurrent(pMeleeState, true);
 				}
-				else if (pMeleeState->CurIndex == MELEE_STATE_INDEX_DONE)
+				else if (pMeleeState->CurIndex == MeleeStateIndexDone)
 				{
 					// Not currently editing the team name.
 					if (IsHd())
@@ -1792,7 +1792,7 @@ DoEdit(MELEE_STATE* pMS)
 				DoTextEntry(&tes);
 
 				// done entering
-				pMS->CurIndex = MELEE_STATE_INDEX_DONE;
+				pMS->CurIndex = MeleeStateIndexDone;
 				if (!tes.Success || !Melee_LocalChange_teamName(pMS, pMS->side, buf))
 				{
 					// The team name was not changed, so it was not redrawn.
@@ -2734,7 +2734,7 @@ void Melee(void)
 #endif
 
 		MenuState.currentShip = MELEE_NONE;
-		MenuState.CurIndex = MELEE_STATE_INDEX_DONE;
+		MenuState.CurIndex = MeleeStateIndexDone;
 		InitMeleeLoadState(&MenuState);
 
 		uqm::currentActivity() = SUPER_MELEE;
@@ -3044,7 +3044,7 @@ Melee_Change_teamName(MELEE_STATE* pMS, uint16_t side, const char* name)
 		return false;
 	}
 
-	if (pMS->row != NumMeleeRows || pMS->side != side || pMeleeState->CurIndex == MELEE_STATE_INDEX_DONE)
+	if (pMS->row != NumMeleeRows || pMS->side != side || pMeleeState->CurIndex == MeleeStateIndexDone)
 	{
 		// The team name is not currently being edited, so we can
 		// update it on screen. If it was edited, then this function

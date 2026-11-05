@@ -126,7 +126,7 @@ GenerateSupox_generateOrbital(SOLARSYS_STATE* solarSys,
 			assert(CountLinks(&uqm::gameState().game().npc_built_ship_q) == 0);
 
 			CloneShipFragment(SUPOX_SHIP, &uqm::gameState().game().npc_built_ship_q,
-							  INFINITE_FLEET);
+							  InfiniteFleet);
 
 			uqm::currentActivity() |= START_INTERPLANETARY;
 			uqm::gameState().setFlag(uqm::GameFlag::GLOBAL_FLAGS_AND_DATA, static_cast<uint32_t>(1 << 7));

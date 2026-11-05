@@ -222,7 +222,7 @@ void BuildBattle(uint16_t which_player)
 			BuiltShipPtr = LockStarShip(&race_q[which_player], hBuiltShip);
 			BuiltShipPtr->captains_name_index = FragPtr->captains_name_index;
 			BuiltShipPtr->playerNr = which_player;
-			if (FragPtr->crew_level != INFINITE_FLEET)
+			if (FragPtr->crew_level != InfiniteFleet)
 			{
 				BuiltShipPtr->crew_level = FragPtr->crew_level;
 			}
@@ -273,7 +273,7 @@ bool FleetIsInfinite(uint16_t playerNr)
 	}
 
 	const SHIP_FRAGMENT* FragPtr {LockShipFrag(pQueue, hShipFrag)};
-	const bool ret {(FragPtr->crew_level == INFINITE_FLEET)};
+	const bool ret {(FragPtr->crew_level == InfiniteFleet)};
 	UnlockShipFrag(pQueue, hShipFrag);
 
 	return ret;
@@ -305,7 +305,7 @@ void UpdateShipFragCrew(STARSHIP* StarShipPtr)
 
 		if (ship == StarShipPtr)
 		{
-			assert(frag->crew_level != INFINITE_FLEET);
+			assert(frag->crew_level != InfiniteFleet);
 
 			// Record crew left after the battle */
 			frag->crew_level = ship->crew_level;
@@ -423,7 +423,7 @@ InitEncounter(void)
 			GFXRECT r;
 
 			const SHIP_FRAGMENT* FragPtr {LockShipFrag(&uqm::gameState().game().npc_built_ship_q, hStarShip)};
-			if (FragPtr->crew_level != INFINITE_FLEET)
+			if (FragPtr->crew_level != InfiniteFleet)
 			{
 				hNextShip = _GetSuccLink(FragPtr);
 			}

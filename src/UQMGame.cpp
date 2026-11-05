@@ -168,12 +168,12 @@ uqstl::pair<int, bool> UQMGame::setup(uqstl::span<uqgsl::zstring> args)
 	{
 		uqm::log::info("{}.{}.{} {}\n", UqmMajorVersion, UqmMinorVersion,
 					   UqmPatchVersion,
-					   (resolutionFactor ? "HD " UQM_EXTRA_VERSION : UQM_EXTRA_VERSION));
+					   (resolutionFactor ? UqmExtraVersionHd : UqmExtraVersion));
 		//log_showBox(false, false);
 		return {EXIT_SUCCESS, true};
 	}
 
-	uqm::log::info("!! The Ur-Quan Masters v{}.{}.{} {} (compiled {} {})", UqmMajorVersion, UqmMinorVersion, UqmPatchVersion, (resolutionFactor ? "HD " UQM_EXTRA_VERSION : UQM_EXTRA_VERSION), __DATE__, __TIME__);
+	uqm::log::info("!! The Ur-Quan Masters v{}.{}.{} {} (compiled {} {})", UqmMajorVersion, UqmMinorVersion, UqmPatchVersion, (resolutionFactor ? UqmExtraVersionHd : UqmExtraVersion), __DATE__, __TIME__);
 	uqm::log::info("!! This software comes with ABSOLUTELY NO WARRANTY;");
 	uqm::log::info("!! for details see the included 'COPYING' file.");
 

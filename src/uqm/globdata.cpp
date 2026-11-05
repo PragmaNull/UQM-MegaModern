@@ -485,7 +485,7 @@ static constexpr auto SampleSize {1000};
 // calculate how many fall into each time category.
 void SeedDEBUG()
 {
-#define START 123000
+	constexpr uint32_t SampleSeedStart {123000};
 	const uqm::GameSeed save {uqm::currentSeed()};
 	uqm::GameSeed sample {save};
 	//uint16_t histogram[100] = {[0 ... 99] = 0};
@@ -505,7 +505,7 @@ void SeedDEBUG()
 		myRNG = true;
 	}
 	StarGenRNG->reseed(123456);
-	for (sample.value = START; sample.value < (START + SampleSize); ++sample.value)
+	for (sample.value = SampleSeedStart; sample.value < (SampleSeedStart + SampleSize); ++sample.value)
 	{
 		uqm::gameState().setSeed(sample);
 		start_clock = clock();

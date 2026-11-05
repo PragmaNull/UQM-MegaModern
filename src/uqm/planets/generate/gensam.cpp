@@ -306,7 +306,7 @@ GenerateSaMatra_generateOrbital(SOLARSYS_STATE* solarSys,
 										   && uqm::gameState().flag(uqm::GameFlag::KOHR_AH_FRENZY) ?
 									   BLACK_URQUAN_SHIP :
 									   URQUAN_SHIP),
-								  &uqm::gameState().game().npc_built_ship_q, INFINITE_FLEET);
+								  &uqm::gameState().game().npc_built_ship_q, InfiniteFleet);
 			}
 			else
 			{

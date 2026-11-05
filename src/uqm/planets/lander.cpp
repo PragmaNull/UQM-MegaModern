@@ -161,9 +161,9 @@ static constexpr auto ExplosionLife {10};
 // How long to wait after the lander explodes, so that the full
 // gravity of the player's situation sinks in
 static constexpr auto ExplosionWait {(GameTicksPerSecond * 2)};
-#define EXPLOSION_WAIT_FRAMES (TimePeriod {ExplosionWait} / PlanetSideRate)
+static constexpr auto ExplosionWaitFrames {TimePeriod {ExplosionWait} / PlanetSideRate};
 // The actual number of frame that the explosion and wait takes is:
-//   ExplosionLife * 3 + EXPLOSION_WAIT_FRAMES
+//   ExplosionLife * 3 + ExplosionWaitFrames
 
 static constexpr auto DeathExplosion {0};
 
@@ -2315,7 +2315,7 @@ DoPlanetSide(LanderInputState* pMS)
 
 	else if (!crew_left && !damage_index)
 	{ // Dead, damage dealt, and exploding
-		if (explosion_index > ExplosionLife + EXPLOSION_WAIT_FRAMES)
+		if (explosion_index > ExplosionLife + ExplosionWaitFrames)
 		{
 			return false;
 		}

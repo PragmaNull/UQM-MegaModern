@@ -37,7 +37,7 @@ CalcMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 {
 	const ELEMENT_ENTRY* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
 	uint16_t num_deposits {0};
-	uint8_t j {NUM_USEFUL_ELEMENTS};
+	uint8_t j {NumUsefulElements};
 	do
 	{
 		uint8_t num_possible {};
@@ -347,7 +347,7 @@ CustomMineralDeposits(const SYSTEM_INFO* SysInfoPtr, uint16_t which_deposit,
 
 	const ELEMENT_ENTRY* eptr {&SysInfoPtr->PlanetInfo.PlanDataPtr->UsefulElements[0]};
 	uint16_t num_deposits {0};
-	uint8_t j {NUM_USEFUL_ELEMENTS};
+	uint8_t j {NumUsefulElements};
 	do
 	{
 		uint8_t num_possible {};

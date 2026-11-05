@@ -76,7 +76,7 @@ static RACE_DESC melnorme_desc =
 		 nullptr, nullptr, nullptr},
 		{
 			/* FLEET_STUFF */
-			INFINITE_RADIUS, /* Initial sphere of influence radius */
+			InfiniteRadius, /* Initial sphere of influence radius */
 			{
 				/* Known location (center of SoI) */
 				MaxXUniverse >> 1,
